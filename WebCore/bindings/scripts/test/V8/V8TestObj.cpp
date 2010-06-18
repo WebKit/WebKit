@@ -22,6 +22,7 @@
 #include "V8TestObj.h"
 
 #include "ExceptionCode.h"
+#include "HTMLNames.h"
 #include "RuntimeEnabledFeatures.h"
 #include "ScriptCallStack.h"
 #include "SerializedScriptValue.h"
@@ -151,19 +152,156 @@ static void testObjAttrAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Valu
     return;
 }
 
-static v8::Handle<v8::Value> attrWithExceptionAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+static v8::Handle<v8::Value> reflectedStringAttrAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
-    INC_STATS("DOM.TestObj.attrWithException._get");
+    INC_STATS("DOM.TestObj.reflectedStringAttr._get");
     TestObj* imp = V8TestObj::toNative(info.Holder());
-    return v8::Integer::New(imp->attrWithException());
+    return v8String(imp->getAttribute(WebCore::HTMLNames::reflectedstringattrAttr));
 }
 
-static void attrWithExceptionAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+static void reflectedStringAttrAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
-    INC_STATS("DOM.TestObj.attrWithException._set");
+    INC_STATS("DOM.TestObj.reflectedStringAttr._set");
+    TestObj* imp = V8TestObj::toNative(info.Holder());
+    V8Parameter<WithNullCheck> v = value;
+    imp->setAttribute(WebCore::HTMLNames::reflectedstringattrAttr, v);
+    return;
+}
+
+static v8::Handle<v8::Value> reflectedIntegralAttrAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+{
+    INC_STATS("DOM.TestObj.reflectedIntegralAttr._get");
+    TestObj* imp = V8TestObj::toNative(info.Holder());
+    return v8::Integer::New(imp->getIntegralAttribute(WebCore::HTMLNames::reflectedintegralattrAttr));
+}
+
+static void reflectedIntegralAttrAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+{
+    INC_STATS("DOM.TestObj.reflectedIntegralAttr._set");
     TestObj* imp = V8TestObj::toNative(info.Holder());
     int v = toInt32(value);
-    imp->setAttrWithException(v);
+    imp->setIntegralAttribute(WebCore::HTMLNames::reflectedintegralattrAttr, v);
+    return;
+}
+
+static v8::Handle<v8::Value> reflectedBooleanAttrAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+{
+    INC_STATS("DOM.TestObj.reflectedBooleanAttr._get");
+    TestObj* imp = V8TestObj::toNative(info.Holder());
+    return v8Boolean(imp->hasAttribute(WebCore::HTMLNames::reflectedbooleanattrAttr));
+}
+
+static void reflectedBooleanAttrAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+{
+    INC_STATS("DOM.TestObj.reflectedBooleanAttr._set");
+    TestObj* imp = V8TestObj::toNative(info.Holder());
+    bool v = value->BooleanValue();
+    imp->setBooleanAttribute(WebCore::HTMLNames::reflectedbooleanattrAttr, v);
+    return;
+}
+
+static v8::Handle<v8::Value> reflectedURLAttrAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+{
+    INC_STATS("DOM.TestObj.reflectedURLAttr._get");
+    TestObj* imp = V8TestObj::toNative(info.Holder());
+    return v8String(imp->getURLAttribute(WebCore::HTMLNames::reflectedurlattrAttr));
+}
+
+static void reflectedURLAttrAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+{
+    INC_STATS("DOM.TestObj.reflectedURLAttr._set");
+    TestObj* imp = V8TestObj::toNative(info.Holder());
+    V8Parameter<WithNullCheck> v = value;
+    imp->setAttribute(WebCore::HTMLNames::reflectedurlattrAttr, v);
+    return;
+}
+
+static v8::Handle<v8::Value> reflectedStringAttrAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+{
+    INC_STATS("DOM.TestObj.reflectedStringAttr._get");
+    TestObj* imp = V8TestObj::toNative(info.Holder());
+    return v8String(imp->getAttribute(WebCore::HTMLNames::customContentStringAttrAttr));
+}
+
+static void reflectedStringAttrAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+{
+    INC_STATS("DOM.TestObj.reflectedStringAttr._set");
+    TestObj* imp = V8TestObj::toNative(info.Holder());
+    V8Parameter<WithNullCheck> v = value;
+    imp->setAttribute(WebCore::HTMLNames::customContentStringAttrAttr, v);
+    return;
+}
+
+static v8::Handle<v8::Value> reflectedCustomIntegralAttrAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+{
+    INC_STATS("DOM.TestObj.reflectedCustomIntegralAttr._get");
+    TestObj* imp = V8TestObj::toNative(info.Holder());
+    return v8::Integer::New(imp->getIntegralAttribute(WebCore::HTMLNames::customContentIntegralAttrAttr));
+}
+
+static void reflectedCustomIntegralAttrAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+{
+    INC_STATS("DOM.TestObj.reflectedCustomIntegralAttr._set");
+    TestObj* imp = V8TestObj::toNative(info.Holder());
+    int v = toInt32(value);
+    imp->setIntegralAttribute(WebCore::HTMLNames::customContentIntegralAttrAttr, v);
+    return;
+}
+
+static v8::Handle<v8::Value> reflectedCustomBooleanAttrAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+{
+    INC_STATS("DOM.TestObj.reflectedCustomBooleanAttr._get");
+    TestObj* imp = V8TestObj::toNative(info.Holder());
+    return v8Boolean(imp->hasAttribute(WebCore::HTMLNames::customContentBooleanAttrAttr));
+}
+
+static void reflectedCustomBooleanAttrAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+{
+    INC_STATS("DOM.TestObj.reflectedCustomBooleanAttr._set");
+    TestObj* imp = V8TestObj::toNative(info.Holder());
+    bool v = value->BooleanValue();
+    imp->setBooleanAttribute(WebCore::HTMLNames::customContentBooleanAttrAttr, v);
+    return;
+}
+
+static v8::Handle<v8::Value> reflectedURLAttrAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+{
+    INC_STATS("DOM.TestObj.reflectedURLAttr._get");
+    TestObj* imp = V8TestObj::toNative(info.Holder());
+    return v8String(imp->getURLAttribute(WebCore::HTMLNames::customContentURLAttrAttr));
+}
+
+static void reflectedURLAttrAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+{
+    INC_STATS("DOM.TestObj.reflectedURLAttr._set");
+    TestObj* imp = V8TestObj::toNative(info.Holder());
+    V8Parameter<WithNullCheck> v = value;
+    imp->setAttribute(WebCore::HTMLNames::customContentURLAttrAttr, v);
+    return;
+}
+
+static v8::Handle<v8::Value> attrWithGetterExceptionAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+{
+    INC_STATS("DOM.TestObj.attrWithGetterException._get");
+    TestObj* imp = V8TestObj::toNative(info.Holder());
+    ExceptionCode ec = 0;
+    int v = imp->attrWithGetterException(ec);
+    if (UNLIKELY(ec)) {
+        V8Proxy::setDOMException(ec);
+        return v8::Handle<v8::Value>();
+    }
+    return v8::Integer::New(v);
+}
+
+static void attrWithGetterExceptionAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+{
+    INC_STATS("DOM.TestObj.attrWithGetterException._set");
+    TestObj* imp = V8TestObj::toNative(info.Holder());
+    int v = toInt32(value);
+    ExceptionCode ec = 0;
+    imp->setAttrWithGetterException(v, ec);
+    if (UNLIKELY(ec))
+        V8Proxy::setDOMException(ec);
     return;
 }
 
@@ -171,13 +309,7 @@ static v8::Handle<v8::Value> attrWithSetterExceptionAttrGetter(v8::Local<v8::Str
 {
     INC_STATS("DOM.TestObj.attrWithSetterException._get");
     TestObj* imp = V8TestObj::toNative(info.Holder());
-    ExceptionCode ec = 0;
-    int v = imp->attrWithSetterException(ec);
-    if (UNLIKELY(ec)) {
-        V8Proxy::setDOMException(ec);
-        return v8::Handle<v8::Value>();
-    }
-    return v8::Integer::New(v);
+    return v8::Integer::New(imp->attrWithSetterException());
 }
 
 static void attrWithSetterExceptionAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
@@ -192,20 +324,45 @@ static void attrWithSetterExceptionAttrSetter(v8::Local<v8::String> name, v8::Lo
     return;
 }
 
-static v8::Handle<v8::Value> attrWithGetterExceptionAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+static v8::Handle<v8::Value> stringAttrWithGetterExceptionAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
-    INC_STATS("DOM.TestObj.attrWithGetterException._get");
+    INC_STATS("DOM.TestObj.stringAttrWithGetterException._get");
     TestObj* imp = V8TestObj::toNative(info.Holder());
-    return v8::Integer::New(imp->attrWithGetterException());
+    ExceptionCode ec = 0;
+    String v = imp->stringAttrWithGetterException(ec);
+    if (UNLIKELY(ec)) {
+        V8Proxy::setDOMException(ec);
+        return v8::Handle<v8::Value>();
+    }
+    return v8String(v);
 }
 
-static void attrWithGetterExceptionAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+static void stringAttrWithGetterExceptionAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
-    INC_STATS("DOM.TestObj.attrWithGetterException._set");
+    INC_STATS("DOM.TestObj.stringAttrWithGetterException._set");
     TestObj* imp = V8TestObj::toNative(info.Holder());
-    int v = toInt32(value);
+    V8Parameter<> v = value;
     ExceptionCode ec = 0;
-    imp->setAttrWithGetterException(v, ec);
+    imp->setStringAttrWithGetterException(v, ec);
+    if (UNLIKELY(ec))
+        V8Proxy::setDOMException(ec);
+    return;
+}
+
+static v8::Handle<v8::Value> stringAttrWithSetterExceptionAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+{
+    INC_STATS("DOM.TestObj.stringAttrWithSetterException._get");
+    TestObj* imp = V8TestObj::toNative(info.Holder());
+    return v8String(imp->stringAttrWithSetterException());
+}
+
+static void stringAttrWithSetterExceptionAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+{
+    INC_STATS("DOM.TestObj.stringAttrWithSetterException._set");
+    TestObj* imp = V8TestObj::toNative(info.Holder());
+    V8Parameter<> v = value;
+    ExceptionCode ec = 0;
+    imp->setStringAttrWithSetterException(v, ec);
     if (UNLIKELY(ec))
         V8Proxy::setDOMException(ec);
     return;
@@ -715,7 +872,7 @@ static v8::Handle<v8::Value> overloadedMethodCallback(const v8::Arguments& args)
         return overloadedMethod3Callback(args);
     if (args.Length() == 1)
         return overloadedMethod4Callback(args);
-    V8Proxy::setDOMException(SYNTAX_ERR);
+    V8Proxy::throwTypeError();
     return notHandledByInterceptor();
 }
 
@@ -738,12 +895,30 @@ static const BatchedAttribute TestObjAttrs[] = {
     {"stringAttr", TestObjInternal::stringAttrAttrGetter, TestObjInternal::stringAttrAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
     // Attribute 'testObjAttr' (Type: 'attribute' ExtAttr: '')
     {"testObjAttr", TestObjInternal::testObjAttrAttrGetter, TestObjInternal::testObjAttrAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
-    // Attribute 'attrWithException' (Type: 'attribute' ExtAttr: '')
-    {"attrWithException", TestObjInternal::attrWithExceptionAttrGetter, TestObjInternal::attrWithExceptionAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
-    // Attribute 'attrWithSetterException' (Type: 'attribute' ExtAttr: '')
-    {"attrWithSetterException", TestObjInternal::attrWithSetterExceptionAttrGetter, TestObjInternal::attrWithSetterExceptionAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    // Attribute 'reflectedStringAttr' (Type: 'attribute' ExtAttr: 'Reflect')
+    {"reflectedStringAttr", TestObjInternal::reflectedStringAttrAttrGetter, TestObjInternal::reflectedStringAttrAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    // Attribute 'reflectedIntegralAttr' (Type: 'attribute' ExtAttr: 'Reflect')
+    {"reflectedIntegralAttr", TestObjInternal::reflectedIntegralAttrAttrGetter, TestObjInternal::reflectedIntegralAttrAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    // Attribute 'reflectedBooleanAttr' (Type: 'attribute' ExtAttr: 'Reflect')
+    {"reflectedBooleanAttr", TestObjInternal::reflectedBooleanAttrAttrGetter, TestObjInternal::reflectedBooleanAttrAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    // Attribute 'reflectedURLAttr' (Type: 'attribute' ExtAttr: 'ReflectURL')
+    {"reflectedURLAttr", TestObjInternal::reflectedURLAttrAttrGetter, TestObjInternal::reflectedURLAttrAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    // Attribute 'reflectedStringAttr' (Type: 'attribute' ExtAttr: 'Reflect')
+    {"reflectedStringAttr", TestObjInternal::reflectedStringAttrAttrGetter, TestObjInternal::reflectedStringAttrAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    // Attribute 'reflectedCustomIntegralAttr' (Type: 'attribute' ExtAttr: 'Reflect')
+    {"reflectedCustomIntegralAttr", TestObjInternal::reflectedCustomIntegralAttrAttrGetter, TestObjInternal::reflectedCustomIntegralAttrAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    // Attribute 'reflectedCustomBooleanAttr' (Type: 'attribute' ExtAttr: 'Reflect')
+    {"reflectedCustomBooleanAttr", TestObjInternal::reflectedCustomBooleanAttrAttrGetter, TestObjInternal::reflectedCustomBooleanAttrAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    // Attribute 'reflectedURLAttr' (Type: 'attribute' ExtAttr: 'ReflectURL')
+    {"reflectedURLAttr", TestObjInternal::reflectedURLAttrAttrGetter, TestObjInternal::reflectedURLAttrAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
     // Attribute 'attrWithGetterException' (Type: 'attribute' ExtAttr: '')
     {"attrWithGetterException", TestObjInternal::attrWithGetterExceptionAttrGetter, TestObjInternal::attrWithGetterExceptionAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    // Attribute 'attrWithSetterException' (Type: 'attribute' ExtAttr: '')
+    {"attrWithSetterException", TestObjInternal::attrWithSetterExceptionAttrGetter, TestObjInternal::attrWithSetterExceptionAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    // Attribute 'stringAttrWithGetterException' (Type: 'attribute' ExtAttr: '')
+    {"stringAttrWithGetterException", TestObjInternal::stringAttrWithGetterExceptionAttrGetter, TestObjInternal::stringAttrWithGetterExceptionAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    // Attribute 'stringAttrWithSetterException' (Type: 'attribute' ExtAttr: '')
+    {"stringAttrWithSetterException", TestObjInternal::stringAttrWithSetterExceptionAttrGetter, TestObjInternal::stringAttrWithSetterExceptionAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
     // Attribute 'customAttr' (Type: 'attribute' ExtAttr: 'Custom')
     {"customAttr", V8TestObj::customAttrAccessorGetter, V8TestObj::customAttrAccessorSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
     // Attribute 'scriptStringAttr' (Type: 'readonly attribute' ExtAttr: 'ConvertScriptString')

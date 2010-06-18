@@ -22,6 +22,7 @@
 #include "WebDOMTestObj.h"
 
 #include "AtomicString.h"
+#include "HTMLNames.h"
 #include "KURL.h"
 #include "SerializedScriptValue.h"
 #include "TestObj.h"
@@ -173,20 +174,153 @@ void WebDOMTestObj::setTestObjAttr(const WebDOMTestObj& newTestObjAttr)
     impl()->setTestObjAttr(toWebCore(newTestObjAttr));
 }
 
-int WebDOMTestObj::attrWithException() const
+WebDOMString WebDOMTestObj::reflectedStringAttr() const
 {
     if (!impl())
-        return 0;
+        return WebDOMString();
 
-    return impl()->attrWithException();
+    return static_cast<const WebCore::String&>(impl()->getAttribute(WebCore::HTMLNames::reflectedstringattrAttr));
 }
 
-void WebDOMTestObj::setAttrWithException(int newAttrWithException)
+void WebDOMTestObj::setReflectedStringAttr(const WebDOMString& newReflectedStringAttr)
 {
     if (!impl())
         return;
 
-    impl()->setAttrWithException(newAttrWithException);
+    impl()->setAttribute(WebCore::HTMLNames::reflectedstringattrAttr, newReflectedStringAttr);
+}
+
+int WebDOMTestObj::reflectedIntegralAttr() const
+{
+    if (!impl())
+        return 0;
+
+    return impl()->getIntegralAttribute(WebCore::HTMLNames::reflectedintegralattrAttr);
+}
+
+void WebDOMTestObj::setReflectedIntegralAttr(int newReflectedIntegralAttr)
+{
+    if (!impl())
+        return;
+
+    impl()->setIntegralAttribute(WebCore::HTMLNames::reflectedintegralattrAttr, newReflectedIntegralAttr);
+}
+
+bool WebDOMTestObj::reflectedBooleanAttr() const
+{
+    if (!impl())
+        return false;
+
+    return impl()->hasAttribute(WebCore::HTMLNames::reflectedbooleanattrAttr);
+}
+
+void WebDOMTestObj::setReflectedBooleanAttr(bool newReflectedBooleanAttr)
+{
+    if (!impl())
+        return;
+
+    impl()->setBooleanAttribute(WebCore::HTMLNames::reflectedbooleanattrAttr, newReflectedBooleanAttr);
+}
+
+WebDOMString WebDOMTestObj::reflectedURLAttr() const
+{
+    if (!impl())
+        return WebDOMString();
+
+    return static_cast<const WebCore::String&>(impl()->getURLAttribute(WebCore::HTMLNames::reflectedurlattrAttr));
+}
+
+void WebDOMTestObj::setReflectedURLAttr(const WebDOMString& newReflectedURLAttr)
+{
+    if (!impl())
+        return;
+
+    impl()->setAttribute(WebCore::HTMLNames::reflectedurlattrAttr, newReflectedURLAttr);
+}
+
+WebDOMString WebDOMTestObj::reflectedStringAttr() const
+{
+    if (!impl())
+        return WebDOMString();
+
+    return static_cast<const WebCore::String&>(impl()->getAttribute(WebCore::HTMLNames::customContentStringAttrAttr));
+}
+
+void WebDOMTestObj::setReflectedStringAttr(const WebDOMString& newReflectedStringAttr)
+{
+    if (!impl())
+        return;
+
+    impl()->setAttribute(WebCore::HTMLNames::customContentStringAttrAttr, newReflectedStringAttr);
+}
+
+int WebDOMTestObj::reflectedCustomIntegralAttr() const
+{
+    if (!impl())
+        return 0;
+
+    return impl()->getIntegralAttribute(WebCore::HTMLNames::customContentIntegralAttrAttr);
+}
+
+void WebDOMTestObj::setReflectedCustomIntegralAttr(int newReflectedCustomIntegralAttr)
+{
+    if (!impl())
+        return;
+
+    impl()->setIntegralAttribute(WebCore::HTMLNames::customContentIntegralAttrAttr, newReflectedCustomIntegralAttr);
+}
+
+bool WebDOMTestObj::reflectedCustomBooleanAttr() const
+{
+    if (!impl())
+        return false;
+
+    return impl()->hasAttribute(WebCore::HTMLNames::customContentBooleanAttrAttr);
+}
+
+void WebDOMTestObj::setReflectedCustomBooleanAttr(bool newReflectedCustomBooleanAttr)
+{
+    if (!impl())
+        return;
+
+    impl()->setBooleanAttribute(WebCore::HTMLNames::customContentBooleanAttrAttr, newReflectedCustomBooleanAttr);
+}
+
+WebDOMString WebDOMTestObj::reflectedURLAttr() const
+{
+    if (!impl())
+        return WebDOMString();
+
+    return static_cast<const WebCore::String&>(impl()->getURLAttribute(WebCore::HTMLNames::customContentURLAttrAttr));
+}
+
+void WebDOMTestObj::setReflectedURLAttr(const WebDOMString& newReflectedURLAttr)
+{
+    if (!impl())
+        return;
+
+    impl()->setAttribute(WebCore::HTMLNames::customContentURLAttrAttr, newReflectedURLAttr);
+}
+
+int WebDOMTestObj::attrWithGetterException() const
+{
+    if (!impl())
+        return 0;
+
+    WebCore::ExceptionCode ec = 0;
+    int result = impl()->attrWithGetterException(ec);
+    webDOMRaiseError(static_cast<WebDOMExceptionCode>(ec));
+    return result;
+}
+
+void WebDOMTestObj::setAttrWithGetterException(int newAttrWithGetterException)
+{
+    if (!impl())
+        return;
+
+    WebCore::ExceptionCode ec = 0;
+    impl()->setAttrWithGetterException(newAttrWithGetterException, ec);
+    webDOMRaiseError(static_cast<WebDOMExceptionCode>(ec));
 }
 
 int WebDOMTestObj::attrWithSetterException() const
@@ -194,10 +328,7 @@ int WebDOMTestObj::attrWithSetterException() const
     if (!impl())
         return 0;
 
-    WebCore::ExceptionCode ec = 0;
-    int result = impl()->attrWithSetterException(ec);
-    webDOMRaiseError(static_cast<WebDOMExceptionCode>(ec));
-    return result;
+    return impl()->attrWithSetterException();
 }
 
 void WebDOMTestObj::setAttrWithSetterException(int newAttrWithSetterException)
@@ -210,21 +341,42 @@ void WebDOMTestObj::setAttrWithSetterException(int newAttrWithSetterException)
     webDOMRaiseError(static_cast<WebDOMExceptionCode>(ec));
 }
 
-int WebDOMTestObj::attrWithGetterException() const
+WebDOMString WebDOMTestObj::stringAttrWithGetterException() const
 {
     if (!impl())
-        return 0;
+        return WebDOMString();
 
-    return impl()->attrWithGetterException();
+    WebCore::ExceptionCode ec = 0;
+    WebDOMString result = impl()->stringAttrWithGetterException(ec);
+    webDOMRaiseError(static_cast<WebDOMExceptionCode>(ec));
+    return static_cast<const WebCore::String&>(result);
 }
 
-void WebDOMTestObj::setAttrWithGetterException(int newAttrWithGetterException)
+void WebDOMTestObj::setStringAttrWithGetterException(const WebDOMString& newStringAttrWithGetterException)
 {
     if (!impl())
         return;
 
     WebCore::ExceptionCode ec = 0;
-    impl()->setAttrWithGetterException(newAttrWithGetterException, ec);
+    impl()->setStringAttrWithGetterException(newStringAttrWithGetterException, ec);
+    webDOMRaiseError(static_cast<WebDOMExceptionCode>(ec));
+}
+
+WebDOMString WebDOMTestObj::stringAttrWithSetterException() const
+{
+    if (!impl())
+        return WebDOMString();
+
+    return static_cast<const WebCore::String&>(impl()->stringAttrWithSetterException());
+}
+
+void WebDOMTestObj::setStringAttrWithSetterException(const WebDOMString& newStringAttrWithSetterException)
+{
+    if (!impl())
+        return;
+
+    WebCore::ExceptionCode ec = 0;
+    impl()->setStringAttrWithSetterException(newStringAttrWithSetterException, ec);
     webDOMRaiseError(static_cast<WebDOMExceptionCode>(ec));
 }
 

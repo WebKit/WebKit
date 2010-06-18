@@ -177,9 +177,10 @@ void HTMLVideoElement::setPoster(const String& value)
     setAttribute(posterAttr, value);
 }
 
-bool HTMLVideoElement::isURLAttribute(Attribute* attr) const
+bool HTMLVideoElement::isURLAttribute(Attribute* attribute) const
 {
-    return attr->name() == posterAttr;
+    return HTMLMediaElement::isURLAttribute(attribute)
+        || attribute->name() == posterAttr;
 }
 
 const QualifiedName& HTMLVideoElement::imageSourceAttributeName() const
@@ -258,4 +259,5 @@ void HTMLVideoElement::willMoveToNewOwnerDocument()
 }
 
 }
+
 #endif

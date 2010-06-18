@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.
+ * Copyright (C) 2006, 2010 Apple Inc. All right reserved.
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
@@ -23,10 +23,10 @@ module html {
     interface HTMLPreElement : HTMLElement {
         // FIXME: DOM spec says that width should be of type DOMString
         // see http://bugs.webkit.org/show_bug.cgi?id=8992
-        attribute long width;
+        attribute [Reflect] long width;
         
         // Extensions
-        attribute boolean wrap;
+        attribute [Reflect] boolean wrap;
     };
 
 }

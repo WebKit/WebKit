@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple, Inc.
+ * Copyright (C) 2006, 2007, 2010 Apple, Inc. All rights reserved.
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
@@ -23,19 +23,18 @@ module html {
     interface [
         GenerateNativeConverter
     ] HTMLOptionElement : HTMLElement {
-        readonly attribute  HTMLFormElement      form;
-                 attribute  boolean              defaultSelected;
+        readonly attribute HTMLFormElement form;
+        attribute [Reflect=selected] boolean defaultSelected;
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
-                 attribute  [ConvertNullToNullString] DOMString            text
-                     setter raises(DOMException);
+        attribute [ConvertNullToNullString] DOMString text setter raises(DOMException);
 #else
-        readonly attribute  DOMString            text;
+        readonly attribute DOMString text;
 #endif
-        readonly attribute  long                 index;
-                 attribute  boolean              disabled;
-                 attribute  [ConvertNullToNullString] DOMString            label;
-                 attribute  boolean              selected;
-                 attribute  [ConvertNullToNullString] DOMString            value;
+        readonly attribute long index;
+        attribute [Reflect] boolean disabled;
+        attribute [Reflect] DOMString label;
+        attribute boolean selected;
+        attribute [ConvertNullToNullString] DOMString value;
     };
 
 }

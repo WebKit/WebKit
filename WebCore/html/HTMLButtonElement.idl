@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.
+ * Copyright (C) 2006, 2010 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
@@ -21,21 +21,26 @@
 module html {
 
     interface HTMLButtonElement : HTMLElement {
-        readonly attribute  HTMLFormElement      form;
-                 attribute  boolean              formNoValidate;
-        readonly attribute  ValidityState        validity;
-                 attribute  [ConvertNullToNullString] DOMString            accessKey;
-                 attribute  boolean              disabled;
-                 attribute  boolean              autofocus;
-                 attribute  [ConvertNullToNullString] DOMString            name;
-        readonly attribute  DOMString            type;
-                 attribute  [ConvertNullToNullString] DOMString            value;
-        readonly attribute boolean               willValidate;
-        readonly attribute DOMString             validationMessage;
-        boolean  checkValidity();
+        readonly attribute HTMLFormElement form;
+
+        attribute [Reflect] boolean formNoValidate;
+        readonly attribute ValidityState validity;
+
+        attribute [Reflect] DOMString accessKey;
+        attribute [Reflect] boolean disabled;
+        attribute [Reflect] boolean autofocus;
+        attribute [Reflect] DOMString name;
+        readonly attribute DOMString type;
+        attribute [Reflect] DOMString value;
+
+        readonly attribute boolean willValidate;
+        readonly attribute DOMString validationMessage;
+        boolean checkValidity();
         void setCustomValidity(in [ConvertUndefinedOrNullToNullString] DOMString error);
+
         void click();
-        readonly attribute  NodeList              labels;
+
+        readonly attribute NodeList labels;
     };
 
 }

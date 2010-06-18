@@ -101,6 +101,12 @@ public:
     void setAttribute(const QualifiedName&, const AtomicString& value, ExceptionCode&);
     void removeAttribute(const QualifiedName&, ExceptionCode&);
 
+    // Typed getters and setters for language bindings.
+    int getIntegralAttribute(const QualifiedName& attributeName) const;
+    void setIntegralAttribute(const QualifiedName& attributeName, int value);
+    unsigned getUnsignedIntegralAttribute(const QualifiedName& attributeName) const;
+    void setUnsignedIntegralAttribute(const QualifiedName& attributeName, unsigned value);
+
     // Call this to get the value of an attribute that is known not to be the style
     // attribute or one of the SVG animatable attributes.
     bool fastHasAttribute(const QualifiedName&) const;

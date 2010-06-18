@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc.
+ * Copyright (C) 2006, 2007, 2010 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
@@ -21,43 +21,33 @@
 module html {
 
     interface HTMLTableElement : HTMLElement {
-
-        // could raise excepetions on setting.
-                 attribute HTMLTableCaptionElement caption
-                     setter raises(DOMException);
-                 attribute HTMLTableSectionElement tHead
-                     setter raises(DOMException);
-                 attribute HTMLTableSectionElement tFoot
-                     setter raises(DOMException);
+        attribute HTMLTableCaptionElement caption setter raises(DOMException);
+        attribute HTMLTableSectionElement tHead setter raises(DOMException);
+        attribute HTMLTableSectionElement tFoot setter raises(DOMException);
 
         readonly attribute HTMLCollection rows;
         readonly attribute HTMLCollection tBodies;
-                 attribute [ConvertNullToNullString] DOMString align;
-                 attribute [ConvertNullToNullString] DOMString bgColor;
-                 attribute [ConvertNullToNullString] DOMString border;
-                 attribute [ConvertNullToNullString] DOMString cellPadding;
-                 attribute [ConvertNullToNullString] DOMString cellSpacing;
+        attribute [Reflect] DOMString align;
+        attribute [Reflect] DOMString bgColor;
+        attribute [Reflect] DOMString border;
+        attribute [Reflect] DOMString cellPadding;
+        attribute [Reflect] DOMString cellSpacing;
 
-        // FIXME: the obj-c attribute is called frameBorders
-                 attribute [ConvertNullToNullString] DOMString frame;
+        attribute [Reflect] DOMString frame;
 
-                 attribute [ConvertNullToNullString] DOMString rules;
-                 attribute [ConvertNullToNullString] DOMString summary;
-                 attribute [ConvertNullToNullString] DOMString width;
+        attribute [Reflect] DOMString rules;
+        attribute [Reflect] DOMString summary;
+        attribute [Reflect] DOMString width;
 
-        HTMLElement        createTHead();
-        void               deleteTHead();
+        HTMLElement createTHead();
+        void deleteTHead();
         HTMLElement        createTFoot();
-        void               deleteTFoot();
-        HTMLElement        createCaption();
-        void               deleteCaption();
+        void deleteTFoot();
+        HTMLElement createCaption();
+        void deleteCaption();
 
-        HTMLElement insertRow(in long index)
-            raises(DOMException);
-
-        void deleteRow(in long index)
-            raises(DOMException);
-
+        HTMLElement insertRow(in long index) raises(DOMException);
+        void deleteRow(in long index) raises(DOMException);
     };
 
 }

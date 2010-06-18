@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2009, 2010 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
@@ -25,25 +25,25 @@ module html {
         DelegatingGetOwnPropertySlot,
         CustomCall
     ] HTMLAppletElement : HTMLElement {
-                 attribute [ConvertNullToNullString, Reflect] DOMString align;
-                 attribute [ConvertNullToNullString, Reflect] DOMString alt;
-                 attribute [ConvertNullToNullString, Reflect] DOMString archive;
-                 attribute [ConvertNullToNullString, Reflect] DOMString code;
-                 attribute [ConvertNullToNullString, Reflect=codebase] DOMString codeBase;
-                 attribute [ConvertNullToNullString, Reflect] DOMString height;
+        attribute [Reflect] DOMString align;
+        attribute [Reflect] DOMString alt;
+        attribute [Reflect] DOMString archive;
+        attribute [Reflect] DOMString code;
+        attribute [Reflect] DOMString codeBase;
+        attribute [Reflect] DOMString height;
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
-                 attribute [ConvertNullToNullString, Reflect] DOMString hspace;
+        attribute [Reflect] DOMString hspace;
 #else
-                 attribute [ConvertFromString] long hspace;
+        attribute [Reflect] long hspace;
 #endif
-                 attribute [ConvertNullToNullString, Reflect] DOMString name;
-                 attribute [ConvertNullToNullString, Reflect] DOMString object;
+        attribute [Reflect] DOMString name;
+        attribute [Reflect] DOMString object;
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
-                 attribute [ConvertNullToNullString, Reflect] DOMString vspace;
+        attribute [Reflect] DOMString vspace;
 #else
-                 attribute [ConvertFromString] long vspace;
+        attribute [Reflect] long vspace;
 #endif
-                 attribute [ConvertNullToNullString, Reflect] DOMString width;
+        attribute [Reflect] DOMString width;
     };
 
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.
+ * Copyright (C) 2006, 2010 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -21,11 +21,11 @@ module html {
 
     interface HTMLScriptElement : HTMLElement {
         attribute [ConvertNullToNullString] DOMString text;
-        attribute [ConvertNullToNullString] DOMString htmlFor;
-        attribute [ConvertNullToNullString] DOMString event;
-        attribute [ConvertNullToNullString] DOMString charset;
-        attribute boolean defer;
-        attribute [ConvertNullToNullString] DOMString src;
-        attribute [ConvertNullToNullString] DOMString type;
+        attribute [Reflect=for] DOMString htmlFor;
+        attribute [Reflect] DOMString event;
+        attribute [Reflect] DOMString charset;
+        attribute [Reflect] boolean defer;
+        attribute [ReflectURL] DOMString src;
+        attribute [Reflect] DOMString type;
     };
 }

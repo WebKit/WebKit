@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc.
+ * Copyright (C) 2006, 2007, 2010 Apple Inc. ALl rights reserved.
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
@@ -21,21 +21,16 @@
 module html {
 
     interface HTMLTableRowElement : HTMLElement {
-
-        readonly attribute long            rowIndex;
-        readonly attribute long            sectionRowIndex;
-        readonly attribute HTMLCollection  cells;
-                 attribute [ConvertNullToNullString] DOMString       align;
-                 attribute [ConvertNullToNullString] DOMString       bgColor;
-                 attribute [ConvertNullToNullString] DOMString       ch;
-                 attribute [ConvertNullToNullString] DOMString       chOff;
-                 attribute [ConvertNullToNullString] DOMString       vAlign;
-
-        HTMLElement        insertCell(in long index)
-            raises(DOMException);
-        void               deleteCell(in long index)
-            raises(DOMException);
-
+        readonly attribute long rowIndex;
+        readonly attribute long sectionRowIndex;
+        readonly attribute HTMLCollection cells;
+        attribute [Reflect] DOMString align;
+        attribute [Reflect] DOMString bgColor;
+        attribute [Reflect=char] DOMString ch;
+        attribute [Reflect=charoff] DOMString chOff;
+        attribute [Reflect] DOMString vAlign;
+        HTMLElement insertCell(in long index) raises(DOMException);
+        void deleteCell(in long index) raises(DOMException);
     };
 
 }
