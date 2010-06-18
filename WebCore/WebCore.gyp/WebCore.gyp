@@ -726,7 +726,7 @@
         '<@(webcore_files)',
 
         # For WebCoreSystemInterface, Mac-only.
-        '../../WebKit/mac/WebCoreSupport/WebSystemInterface.m',
+        '../../WebKit/mac/WebCoreSupport/WebSystemInterface.mm',
       ],
       'sources/': [
         # Exclude JSC custom bindings.
