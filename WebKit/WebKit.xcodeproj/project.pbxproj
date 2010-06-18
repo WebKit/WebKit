@@ -42,6 +42,8 @@
 		1A77B02F0EE7730500C8A1F9 /* WebPluginRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A77B02D0EE7730500C8A1F9 /* WebPluginRequest.m */; };
 		1A8DED500EE88B8A00F25022 /* HostedNetscapePluginStream.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A8DED4E0EE88B8A00F25022 /* HostedNetscapePluginStream.h */; };
 		1A8DED510EE88B8A00F25022 /* HostedNetscapePluginStream.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A8DED4F0EE88B8A00F25022 /* HostedNetscapePluginStream.mm */; };
+		1AA879B611CBE9BF003C664F /* WebPlatformStrategies.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AA879B411CBE9BF003C664F /* WebPlatformStrategies.h */; };
+		1AA879B711CBE9BF003C664F /* WebPlatformStrategies.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AA879B511CBE9BF003C664F /* WebPlatformStrategies.mm */; };
 		1AAF58940EDCCF15008D883D /* WebKitPluginAgent.defs in Headers */ = {isa = PBXBuildFile; fileRef = 1AAF588A0EDCCEA3008D883D /* WebKitPluginAgent.defs */; settings = {ATTRIBUTES = (Private, ); }; };
 		1AAF58950EDCCF15008D883D /* WebKitPluginAgentReply.defs in Headers */ = {isa = PBXBuildFile; fileRef = 1AAF588B0EDCCEA3008D883D /* WebKitPluginAgentReply.defs */; settings = {ATTRIBUTES = (Private, ); }; };
 		1AAF58960EDCCF15008D883D /* WebKitPluginClient.defs in Headers */ = {isa = PBXBuildFile; fileRef = 1AAF588C0EDCCEA3008D883D /* WebKitPluginClient.defs */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -392,6 +394,8 @@
 		1A77B02D0EE7730500C8A1F9 /* WebPluginRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WebPluginRequest.m; sourceTree = "<group>"; };
 		1A8DED4E0EE88B8A00F25022 /* HostedNetscapePluginStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HostedNetscapePluginStream.h; sourceTree = "<group>"; };
 		1A8DED4F0EE88B8A00F25022 /* HostedNetscapePluginStream.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = HostedNetscapePluginStream.mm; sourceTree = "<group>"; };
+		1AA879B411CBE9BF003C664F /* WebPlatformStrategies.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPlatformStrategies.h; sourceTree = "<group>"; };
+		1AA879B511CBE9BF003C664F /* WebPlatformStrategies.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebPlatformStrategies.mm; sourceTree = "<group>"; };
 		1AAF588A0EDCCEA3008D883D /* WebKitPluginAgent.defs */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.mig; path = WebKitPluginAgent.defs; sourceTree = "<group>"; };
 		1AAF588B0EDCCEA3008D883D /* WebKitPluginAgentReply.defs */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.mig; path = WebKitPluginAgentReply.defs; sourceTree = "<group>"; };
 		1AAF588C0EDCCEA3008D883D /* WebKitPluginClient.defs */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.mig; path = WebKitPluginClient.defs; sourceTree = "<group>"; };
@@ -1242,6 +1246,8 @@
 				84723BE4056D719E0044BFEA /* WebKeyGenerator.m */,
 				A7D3C5BA0B5773C5002CA450 /* WebPasteboardHelper.h */,
 				A7D3C5BB0B5773C5002CA450 /* WebPasteboardHelper.mm */,
+				1AA879B411CBE9BF003C664F /* WebPlatformStrategies.h */,
+				1AA879B511CBE9BF003C664F /* WebPlatformStrategies.mm */,
 				0A2D87FB107AF52B00CDDEE3 /* WebPluginHalterClient.h */,
 				0A2D87FC107AF52B00CDDEE3 /* WebPluginHalterClient.mm */,
 				93EB178E09F88D510091F8FF /* WebSystemInterface.h */,
@@ -1539,6 +1545,7 @@
 				0FD3B0F81076C3F700039B96 /* WebWindowAnimation.h in Headers */,
 				41F4484F10338E8C0030E55E /* WebWorkersPrivate.h in Headers */,
 				C0C5B3EE1177A4A0002B0AEF /* WebUserContentURLPattern.h in Headers */,
+				1AA879B611CBE9BF003C664F /* WebPlatformStrategies.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1896,6 +1903,7 @@
 				0FD3B0F91076C3F700039B96 /* WebWindowAnimation.m in Sources */,
 				41F4485010338E8C0030E55E /* WebWorkersPrivate.mm in Sources */,
 				C0C5B3EF1177A4A0002B0AEF /* WebUserContentURLPattern.mm in Sources */,
+				1AA879B711CBE9BF003C664F /* WebPlatformStrategies.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -86,6 +86,7 @@
 #import "WebPDFView.h"
 #import "WebPanelAuthenticationHandler.h"
 #import "WebPasteboardHelper.h"
+#import "WebPlatformStrategies.h"
 #import "WebPluginDatabase.h"
 #import "WebPluginHalterClient.h"
 #import "WebPolicyDelegate.h"
@@ -655,6 +656,10 @@ static bool shouldEnableLoadDeferring()
 #endif
         WebKitInitializeApplicationCachePathIfNecessary();
         patchMailRemoveAttributesMethod();
+        
+        // Initialize our platform strategies.
+        WebPlatformStrategies::initialize();
+
         didOneTimeInitialization = true;
     }
 

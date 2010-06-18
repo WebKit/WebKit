@@ -23,43 +23,21 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PlatformStrategies_h
-#define PlatformStrategies_h
+#ifndef WebPlatformStrategies_h
+#define WebPlatformStrategies_h
 
-#if USE(PLATFORM_STRATEGIES)
+#include <WebCore/PlatformStrategies.h>
 
-namespace WebCore {
-
-class PluginStrategy;
-
-class PlatformStrategies {
+class WebPlatformStrategies : public WebCore::PlatformStrategies {
 public:
-    PluginStrategy* pluginStrategy()
-    {
-        if (!m_pluginStrategy)
-            m_pluginStrategy = createPluginStrategy();
+    static void initialize();
+    
+private:
+    WebPlatformStrategies();
+    
+    // WebCore::PlatformStrategies
+    virtual WebCore::PluginStrategy* createPluginStrategy();
 
-        return m_pluginStrategy;
-    }
-
-protected:
-    PlatformStrategies()
-        : m_pluginStrategy(0)
-    {
-    }
-    virtual ~PlatformStrategies() { }
-
-private:    
-    virtual PluginStrategy* createPluginStrategy() = 0;
-
-    PluginStrategy* m_pluginStrategy;
 };
 
-PlatformStrategies* platformStrategies();
-void setPlatformStrategies(PlatformStrategies*);
-    
-} // namespace WebCore
-
-#endif // USE(PLATFORM_STRATEGIES)
-
-#endif // PlatformStrategies_h
+#endif // WebPlatformStrategies_h
