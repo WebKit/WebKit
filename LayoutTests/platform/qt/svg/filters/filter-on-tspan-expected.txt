@@ -5,12 +5,12 @@ layer at (0,0) size 800x600
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
       RenderSVGResourceFilter {filter} [id="filter"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
         [feFlood flood-color="#008000" flood-opacity="1.00"]
-    RenderSVGText {text} at (100,100) size 110x20 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,-16) size 75x20
+    RenderSVGText {text} at (100,84) size 110x20 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 75x20
         chunk 1 text run 1 at (100.00,100.00) startOffset 0 endOffset 12 width 75.00: "Die ist ein "
       RenderSVGTSpan {tspan} at (0,0) size 31x20
-        RenderSVGInlineText {#text} at (75,-16) size 31x20
+        RenderSVGInlineText {#text} at (75,0) size 31x20
           [filter="filter"] RenderSVGResourceFilter {filter} at (0,0) size 0x0
           chunk 1 text run 2 at (175.00,100.00) startOffset 0 endOffset 4 width 31.00: "Test"
-      RenderSVGInlineText {#text} at (106,-16) size 4x20
+      RenderSVGInlineText {#text} at (106,0) size 4x20
         chunk 1 text run 3 at (206.00,100.00) startOffset 0 endOffset 1 width 4.00: "."

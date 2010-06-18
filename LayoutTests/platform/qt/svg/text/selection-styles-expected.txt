@@ -12,41 +12,41 @@ layer at (0,0) size 800x504
             RenderSVGGradientStop {stop} [offset=0.00] [color=#FF0000]
             RenderSVGGradientStop {stop} [offset=1.00] [color=#008000]
         RenderSVGContainer {g} at (9,10) size 640x386 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,0.00)}]
-          RenderSVGText {text} at (0,30) size 390x25 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,-20) size 390x25
+          RenderSVGText {text} at (0,10) size 390x25 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 390x25
               chunk 1 text run 1 at (0.00,30.00) startOffset 0 endOffset 47 width 390.00: "Selected text should be filled with solid blue."
-          RenderSVGText {text} at (0,60) size 416x25 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,-20) size 416x25
+          RenderSVGText {text} at (0,40) size 416x25 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 416x25
               chunk 1 text run 1 at (0.00,60.00) startOffset 0 endOffset 48 width 416.00: "Selected text should be stroked with solid blue."
-          RenderSVGText {text} at (0,90) size 379x25 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,-20) size 379x25
+          RenderSVGText {text} at (0,70) size 379x25 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 379x25
               chunk 1 text run 1 at (0.00,90.00) startOffset 0 endOffset 45 width 379.00: "Selected text should be filled with gradient."
-          RenderSVGText {text} at (0,120) size 405x25 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,-20) size 405x25
+          RenderSVGText {text} at (0,100) size 405x25 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 405x25
               chunk 1 text run 1 at (0.00,120.00) startOffset 0 endOffset 46 width 405.00: "Selected text should be stroked with gradient."
-          RenderSVGText {text} at (0,150) size 295x25 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,-20) size 295x25
+          RenderSVGText {text} at (0,130) size 295x25 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 295x25
               chunk 1 text run 1 at (0.00,150.00) startOffset 0 endOffset 35 width 295.00: "Selected text should get invisible."
-          RenderSVGText {text} at (0,180) size 638x25 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,-20) size 638x25
+          RenderSVGText {text} at (0,160) size 638x25 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 638x25
               chunk 1 text run 1 at (0.00,180.00) startOffset 0 endOffset 73 width 638.00: "Selected text should have both gradient fill, solid stroke and background"
-          RenderSVGText {text} at (0,240) size 638x25 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,-20) size 638x25
+          RenderSVGText {text} at (0,220) size 638x25 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 638x25
               chunk 1 text run 1 at (0.00,240.00) startOffset 0 endOffset 73 width 638.00: "Selected text should have both gradient fill, solid stroke and background"
-          RenderSVGText {text} at (0,270) size 638x25 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,-20) size 638x25
+          RenderSVGText {text} at (0,250) size 638x25 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 638x25
               chunk 1 text run 1 at (0.00,270.00) startOffset 0 endOffset 73 width 638.00: "Selected text should have both gradient fill, solid stroke and background"
-          RenderSVGText {text} at (0,300) size 638x25 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,-20) size 638x25
+          RenderSVGText {text} at (0,280) size 638x25 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 638x25
               chunk 1 text run 1 at (0.00,300.00) startOffset 0 endOffset 73 width 638.00: "Selected text should have both gradient fill, solid stroke and background"
-          RenderSVGText {text} at (0,330) size 638x25 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,-20) size 638x25
+          RenderSVGText {text} at (0,310) size 638x25 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 638x25
               chunk 1 text run 1 at (0.00,330.00) startOffset 0 endOffset 73 width 638.00: "Selected text should have both gradient fill, solid stroke and background"
-          RenderSVGText {text} at (0,360) size 638x25 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,-20) size 638x25
+          RenderSVGText {text} at (0,340) size 638x25 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 638x25
               chunk 1 text run 1 at (0.00,360.00) startOffset 0 endOffset 73 width 638.00: "Selected text should have both gradient fill, solid stroke and background"
-          RenderSVGText {text} at (0,390) size 638x25 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,-20) size 638x25
+          RenderSVGText {text} at (0,370) size 638x25 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 638x25
               chunk 1 text run 1 at (0.00,390.00) startOffset 0 endOffset 73 width 638.00: "Selected text should have both gradient fill, solid stroke and background"
       RenderText {#text} at (0,0) size 0x0
 selection start: position 0 of child 0 {#text} of child 3 {text} of child 3 {g} of child 1 {svg} of child 3 {body} of child 0 {html} of document

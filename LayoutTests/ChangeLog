@@ -1,3 +1,26 @@
+2010-06-18  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Not reviewed. Rebaselined Qt test results.
+
+        * platform/qt/svg/custom/broken-internal-references-expected.txt:
+        * platform/qt/svg/custom/empty-mask-expected.txt:
+        * platform/qt/svg/custom/mask-invalidation-expected.txt:
+        * platform/qt/svg/custom/stroke-width-large-expected.txt:
+        * platform/qt/svg/custom/text-xy-updates-SVGList-expected.txt:
+        * platform/qt/svg/custom/use-on-symbol-inside-pattern-expected.txt:
+        * platform/qt/svg/dom/altGlyph-dom-expected.txt: Added.
+        * platform/qt/svg/filters/feColorMatrix-values-expected.txt:
+        * platform/qt/svg/filters/feComposite-expected.txt:
+        * platform/qt/svg/filters/filter-on-tspan-expected.txt:
+        * platform/qt/svg/filters/sourceAlpha-expected.txt:
+        * platform/qt/svg/text/lengthAdjust-text-metrics-expected.txt: Added.
+        * platform/qt/svg/text/selection-background-color-expected.txt:
+        * platform/qt/svg/text/selection-doubleclick-expected.txt:
+        * platform/qt/svg/text/selection-styles-expected.txt:
+        * platform/qt/svg/text/selection-tripleclick-expected.txt:
+        * platform/qt/svg/zoom/page/zoom-coords-viewattr-01-b-expected.txt:
+        * platform/qt/svg/zoom/text/zoom-coords-viewattr-01-b-expected.txt:
+
 2010-06-18  Kent Tamura  <tkent@chromium.org>
 
         Unreviewed, test expectation update.
