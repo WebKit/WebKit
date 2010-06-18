@@ -260,7 +260,10 @@ static bool pluginGetProperty(NPObject* obj, NPIdentifier name, NPVariant* resul
 {
     PluginObject* plugin = reinterpret_cast<PluginObject*>(obj);
     if (name == pluginPropertyIdentifiers[ID_PROPERTY_PROPERTY]) {
-        STRINGZ_TO_NPVARIANT("property", *result);
+        static const char* originalString = "property";
+        char* buf = static_cast<char*>(browser->memalloc(strlen(originalString) + 1));
+        strcpy(buf, originalString);
+        STRINGZ_TO_NPVARIANT(buf, *result);
         return true;
     } else if (name == pluginPropertyIdentifiers[ID_PROPERTY_EVENT_LOGGING]) {
         BOOLEAN_TO_NPVARIANT(plugin->eventLogging, *result);
