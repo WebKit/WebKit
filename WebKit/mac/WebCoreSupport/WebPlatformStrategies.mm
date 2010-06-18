@@ -30,6 +30,10 @@
 #import <WebCore/BlockExceptions.h>
 #import <wtf/StdLibExtras.h>
 
+#ifdef BUILDING_ON_TIGER
+-typedef unsigned NSUInteger;
+#endif
+
 using namespace WebCore;
 
 void WebPlatformStrategies::initialize()

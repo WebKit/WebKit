@@ -1,5 +1,11 @@
 2010-06-18  Anders Carlsson  <andersca@apple.com>
 
+        Fix Tiger build.
+        
+        * WebCoreSupport/WebPlatformStrategies.mm:
+
+2010-06-18  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Darin Adler.
 
         Get rid of PluginDataMac.mm and use the plug-in strategy instead
