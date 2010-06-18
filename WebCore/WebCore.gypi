@@ -3154,6 +3154,8 @@
             'rendering/RenderImage.h',
             'rendering/RenderImageGeneratedContent.cpp',
             'rendering/RenderImageGeneratedContent.h',
+            'rendering/RenderIndicator.cpp',
+            'rendering/RenderIndicator.h',
             'rendering/RenderInline.cpp',
             'rendering/RenderInline.h',
             'rendering/RenderLayer.cpp',

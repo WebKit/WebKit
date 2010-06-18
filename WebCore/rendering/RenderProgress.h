@@ -23,13 +23,14 @@
 
 #if ENABLE(PROGRESS_TAG)
 #include "RenderBlock.h"
+#include "RenderIndicator.h"
 
 namespace WebCore {
 
 class HTMLProgressElement;
 class ShadowBlockElement;
 
-class RenderProgress : public RenderBlock {
+class RenderProgress : public RenderIndicator {
 public:
     RenderProgress(HTMLProgressElement*);
     virtual ~RenderProgress();
@@ -45,17 +46,17 @@ public:
 private:
     virtual const char* renderName() const { return "RenderProgress"; }
     virtual bool isProgress() const { return true; }
-    virtual void layout();
     virtual void updateFromElement();
     virtual void paint(PaintInfo&, int tx, int ty);
-    virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
 
-    virtual bool requiresForcedStyleRecalcPropagation() const { return true; }
+    virtual void layoutParts();
+    virtual bool shouldHaveParts() const;
+
+    IntRect valuePartRect() const;
 
     void animationTimerFired(Timer<RenderProgress>*);
     void updateAnimationState();
-    void updateValuePartState();
-    PassRefPtr<RenderStyle> createStyleForValuePart(RenderStyle*);
+    void updatePartsState();
 
     double m_position;
     double m_animationStartTime;

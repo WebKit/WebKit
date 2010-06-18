@@ -55,8 +55,16 @@ private:
 class ShadowBlockElement : public ShadowElement<HTMLDivElement> {
 public:
     static PassRefPtr<ShadowBlockElement> create(Node*);
+    static PassRefPtr<ShadowBlockElement> createForPart(Node*, PseudoId);
+    static bool partShouldHaveStyle(const RenderObject* parentRenderer, PseudoId pseudoId);
+    void layoutAsPart(const IntRect& partRect);
+    void updateStyleForPart(PseudoId);
+
 protected:
     ShadowBlockElement(Node*);
+
+private:
+    static PassRefPtr<RenderStyle> createStyleForPart(RenderObject*, PseudoId);
 };
 
 class ShadowInputElement : public ShadowElement<HTMLInputElement> {

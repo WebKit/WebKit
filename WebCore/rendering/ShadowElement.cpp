@@ -22,6 +22,8 @@
 #include "ShadowElement.h"
 
 #include "HTMLNames.h"
+#include "RenderTheme.h"
+#include "RenderView.h"
 
 namespace WebCore {
 
@@ -35,6 +37,70 @@ PassRefPtr<ShadowBlockElement> ShadowBlockElement::create(Node* shadowParent)
 ShadowBlockElement::ShadowBlockElement(Node* shadowParent)
     : ShadowElement<HTMLDivElement>(divTag, shadowParent)
 {
+}
+
+void ShadowBlockElement::layoutAsPart(const IntRect& partRect)
+{
+    RenderBox* parentRenderer = toRenderBox(renderer()->parent());
+    RenderBox* selfRenderer = toRenderBox(renderer());
+    IntRect oldRect = selfRenderer->frameRect();
+
+    LayoutStateMaintainer statePusher(parentRenderer->view(), parentRenderer, parentRenderer->size());
+
+    if (oldRect.size() != partRect.size())
+        selfRenderer->setChildNeedsLayout(true, false);
+
+    selfRenderer->layoutIfNeeded();
+    selfRenderer->setFrameRect(partRect);
+
+    if (selfRenderer->checkForRepaintDuringLayout())
+        selfRenderer->repaintDuringLayoutIfMoved(oldRect);
+        
+    statePusher.pop();
+    parentRenderer->addOverflowFromChild(selfRenderer);
+}
+
+void ShadowBlockElement::updateStyleForPart(PseudoId pseudoId)
+{
+    if (renderer()->style()->styleType() != pseudoId)
+        renderer()->setStyle(createStyleForPart(renderer()->parent(), pseudoId));
+}
+
+PassRefPtr<ShadowBlockElement> ShadowBlockElement::createForPart(Node* shadowParent, PseudoId pseudoId)
+{
+    RenderObject* parentRenderer = shadowParent->renderer();
+    RefPtr<RenderStyle> styleForPart = createStyleForPart(parentRenderer, pseudoId);
+    RefPtr<ShadowBlockElement> part = create(shadowParent);
+    part->setRenderer(part->createRenderer(parentRenderer->renderArena(), styleForPart.get()));
+    part->renderer()->setStyle(styleForPart.release());
+    part->setAttached();
+    part->setInDocument();
+    return part.release();
+}
+
+PassRefPtr<RenderStyle> ShadowBlockElement::createStyleForPart(RenderObject* parentRenderer, PseudoId pseudoId)
+{
+    RefPtr<RenderStyle> styleForPart;
+    RenderStyle* pseudoStyle = parentRenderer->getCachedPseudoStyle(pseudoId);
+    if (pseudoStyle)
+        styleForPart = RenderStyle::clone(pseudoStyle);
+    else
+        styleForPart = RenderStyle::create();
+    
+    styleForPart->inheritFrom(parentRenderer->style());
+    styleForPart->setDisplay(BLOCK);
+    styleForPart->setAppearance(NoControlPart);
+    return styleForPart.release();
+}
+
+bool ShadowBlockElement::partShouldHaveStyle(const RenderObject* parentRenderer, PseudoId pseudoId)
+{
+    // We have some -webkit-appearance values for default styles of parts and
+    // that appearance get turned off during RenderStyle creation 
+    // if they have background styles specified.
+    // So !hasAppearance() implies that there are something to be styled.
+    RenderStyle* pseudoStyle = parentRenderer->getCachedPseudoStyle(pseudoId);
+    return !(pseudoStyle && pseudoStyle->hasAppearance());
 }
 
 PassRefPtr<ShadowInputElement> ShadowInputElement::create(Node* shadowParent)

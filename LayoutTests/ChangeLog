@@ -1,3 +1,31 @@
+2010-06-15  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Kent Tamura.
+
+        <meter> should allow styling for each gauge-level and component
+        https://bugs.webkit.org/show_bug.cgi?id=40280
+
+        - Updated expectations because both rendering result, render tree structure,
+          html.css was changed.
+
+        * fast/dom/HTMLMeterElement/meter-styles-changing-pseudo.html: Added.
+        * fast/dom/HTMLMeterElement/meter-styles.html: Added.
+        * platform/chromium/test_expectations.txt:
+        * platform/gtk/Skipped:
+        * platform/mac/fast/dom/HTMLMeterElement/meter-appearances-capacity-expected.checksum:
+        * platform/mac/fast/dom/HTMLMeterElement/meter-element-expected.checksum:
+        * platform/mac/fast/dom/HTMLMeterElement/meter-element-expected.png:
+        * platform/mac/fast/dom/HTMLMeterElement/meter-element-expected.txt:
+        * platform/mac/fast/dom/HTMLMeterElement/meter-optimums-expected.checksum:
+        * platform/mac/fast/dom/HTMLMeterElement/meter-optimums-expected.png:
+        * platform/mac/fast/dom/HTMLMeterElement/meter-styles-changing-pseudo-expected.checksum: Added.
+        * platform/mac/fast/dom/HTMLMeterElement/meter-styles-changing-pseudo-expected.png: Added.
+        * platform/mac/fast/dom/HTMLMeterElement/meter-styles-changing-pseudo-expected.txt: Added.
+        * platform/mac/fast/dom/HTMLMeterElement/meter-styles-expected.checksum: Added.
+        * platform/mac/fast/dom/HTMLMeterElement/meter-styles-expected.png: Added.
+        * platform/mac/fast/dom/HTMLMeterElement/meter-styles-expected.txt: Added.
+        * platform/win/Skipped:
+
 2010-06-17  Fumitoshi Ukai  <ukai@chromium.org>
 
         Reviewed by Alexey Proskuryakov.

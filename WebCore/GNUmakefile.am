@@ -1933,6 +1933,8 @@ webcore_sources += \
 	WebCore/rendering/RenderImage.h \
 	WebCore/rendering/RenderImageGeneratedContent.cpp \
 	WebCore/rendering/RenderImageGeneratedContent.h \
+	WebCore/rendering/RenderIndicator.cpp \
+	WebCore/rendering/RenderIndicator.h \
 	WebCore/rendering/RenderInline.cpp \
 	WebCore/rendering/RenderInline.h \
 	WebCore/rendering/RenderLayer.cpp \

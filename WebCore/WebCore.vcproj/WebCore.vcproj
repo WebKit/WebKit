@@ -28165,6 +28165,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\rendering\RenderIndicator.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\rendering\RenderIndicator.h"
+				>
+			</File>
+			<File
 				RelativePath="..\rendering\RenderInline.cpp"
 				>
 			</File>

@@ -1,0 +1,38 @@
+<html>
+<head>
+<script>
+if (window.layoutTestController)
+    layoutTestController.waitUntilDone();
+
+function test() {
+    // We touch offsetWidth here to ensure following code run after the first layout is done, 
+    // because what we test is side-effect for the the layout and the painting.
+    document.documentElement.offsetWidth;
+    document.getElementById("target1").value = 90;
+    document.getElementById("target2").style.height = "100px";
+    document.getElementById("target3").style.height = "20px";
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+}
+</script>
+<style>
+  meter.styled::-webkit-meter-horizontal-bar { background: gray; }
+  meter.styled::-webkit-meter-horizontal-optimum-value { background: green; }
+  meter.styled::-webkit-meter-horizontal-suboptimal-value { background: yellow; }
+  meter.styled::-webkit-meter-horizontal-even-less-good-value { background: red; }
+  meter.vstyled::-webkit-meter-vertical-bar { background: gray; }
+  meter.vstyled::-webkit-meter-vertical-optimum-value { background: blue; }
+  meter.vstyled::-webkit-meter-vertical-suboptimal-value { background: purple; }
+  meter.vstyled::-webkit-meter-vertical-even-less-good-value { background: white; }
+</style>
+</head>
+<body onload="test()">
+  <h1>Dynamically changing pseudo classes</h1>
+  <p>Following meter gauge should be green - Changing the paseudo class by changing value attribute</p>
+  <meter class="styled" id="target1" min="0" max="100" low="30" high="60" optimum="100" value="10" ></meter>
+  <p>Following meter gauge should be blue - Changing the pseudo class by changing direction from horizontal to vertical.</p>  
+  <meter class="vstyled" id="target2" style="height:20px; width:80px;" id="target" min="0" max="100" low="30" high="60" optimum="100" value="90" ></meter>
+  <p>Following meter gauge should be native looking green - Changing the pseudo class by changing direction from vertical to horizontal.</p>  
+  <meter class="vstyled" id="target3" style="height:100px; width:80px;" id="target" min="0" max="100" low="30" high="60" optimum="100" value="90" ></meter>
+</body>
+</html>

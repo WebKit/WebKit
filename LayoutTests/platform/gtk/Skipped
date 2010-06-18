@@ -5692,6 +5692,8 @@ fast/dom/HTMLMeterElement/set-meter-properties.html
 fast/dom/HTMLMeterElement/meter-appearances-capacity.html
 fast/dom/HTMLMeterElement/meter-appearances-rating-relevancy.html
 fast/dom/HTMLMeterElement/meter-optimums.html
+fast/dom/HTMLMeterElement/meter-styles.html
+fast/dom/HTMLMeterElement/meter-styles-changing-pseudo.html
 
 # Needs mock support, and build slave Geolocation service
 # See https://bugs.webkit.org/show_bug.cgi?id=36053

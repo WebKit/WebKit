@@ -949,6 +949,7 @@ SOURCES += \
     rendering/RenderIFrame.cpp \
     rendering/RenderImage.cpp \
     rendering/RenderImageGeneratedContent.cpp \
+    rendering/RenderIndicator.cpp \
     rendering/RenderInline.cpp \
     rendering/RenderLayer.cpp \
     rendering/RenderLineBoxList.cpp \
@@ -1732,6 +1733,7 @@ HEADERS += \
     rendering/RenderIFrame.h \
     rendering/RenderImageGeneratedContent.h \
     rendering/RenderImage.h \
+    rendering/RenderIndicator.h \
     rendering/RenderInline.h \
     rendering/RenderLayer.h \
     rendering/RenderLineBoxList.h \

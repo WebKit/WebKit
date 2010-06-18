@@ -1298,6 +1298,7 @@ SET(WebCore_SOURCES
     rendering/RenderIFrame.cpp
     rendering/RenderImage.cpp
     rendering/RenderImageGeneratedContent.cpp
+    rendering/RenderIndicator.cpp
     rendering/RenderInline.cpp
     rendering/RenderLayer.cpp
     rendering/RenderLineBoxList.cpp

@@ -531,6 +531,46 @@ meter::-webkit-meter {
     -webkit-appearance: meter;
 }
 
+meter::-webkit-meter-horizontal-bar {
+    -webkit-appearance: meter;
+    background: -webkit-gradient(linear, left top, left bottom, from(#ddd), to(#ddd), color-stop(0.20, #eee), color-stop(0.45, #ccc), color-stop(0.55, #ccc));
+}
+
+meter::-webkit-meter-vertical-bar {
+    -webkit-appearance: meter;
+    background: -webkit-gradient(linear, left top, right top, from(#ddd), to(#ddd), color-stop(0.20, #eee), color-stop(0.45, #ccc), color-stop(0.55, #ccc));
+}
+
+meter::-webkit-meter-horizontal-optimum-value {
+    -webkit-appearance: meter;
+    background: -webkit-gradient(linear, left top, left bottom, from(#ad7), to(#ad7), color-stop(0.20, #cea), color-stop(0.45, #7a3), color-stop(0.55, #7a3));
+}
+
+meter::-webkit-meter-horizontal-suboptimal-value {
+    -webkit-appearance: meter;
+    background: -webkit-gradient(linear, left top, left bottom, from(#fe7), to(#fe7), color-stop(0.20, #ffc), color-stop(0.45, #db3), color-stop(0.55, #db3));
+}
+
+meter::-webkit-meter-horizontal-even-less-good-value {
+    -webkit-appearance: meter;
+    background: -webkit-gradient(linear, left top, left bottom, from(#f77), to(#f77), color-stop(0.20, #fcc), color-stop(0.45, #d44), color-stop(0.55, #d44));
+}
+
+meter::-webkit-meter-vertical-optimum-value {
+    -webkit-appearance: meter;
+    background: -webkit-gradient(linear, left top, right top, from(#ad7), to(#ad7), color-stop(0.20, #cea), color-stop(0.45, #7a3), color-stop(0.55, #7a3));
+}
+
+meter::-webkit-meter-vertical-suboptimal-value {
+    -webkit-appearance: meter;
+    background: -webkit-gradient(linear, left top, right top, from(#fe7), to(#fe7), color-stop(0.20, #ffc), color-stop(0.45, #db3), color-stop(0.55, #db3));
+}
+ 
+meter::-webkit-meter-vertical-even-less-good-value {
+    -webkit-appearance: meter;
+    background: -webkit-gradient(linear, left top, right top, from(#f77), to(#f77), color-stop(0.20, #fcc), color-stop(0.45, #d44), color-stop(0.55, #d44));
+}
+
 /* progress */
 
 progress {

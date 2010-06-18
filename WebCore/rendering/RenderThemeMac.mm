@@ -839,6 +839,20 @@ bool RenderThemeMac::paintMeter(RenderObject* renderObject, const RenderObject::
     return false;
 }
 
+bool RenderThemeMac::supportsMeter(ControlPart part, bool isHorizontal) const
+{
+    switch (part) {
+    case RelevancyLevelIndicatorPart:
+    case DiscreteCapacityLevelIndicatorPart:
+    case RatingLevelIndicatorPart:
+    case MeterPart:
+    case ContinuousCapacityLevelIndicatorPart:
+        return isHorizontal;
+    default:
+        return false;
+    }
+}
+
 NSLevelIndicatorStyle RenderThemeMac::levelIndicatorStyleFor(ControlPart part) const
 {
     switch (part) {

@@ -23,23 +23,39 @@
 
 #if ENABLE(METER_TAG)
 #include "RenderBlock.h"
+#include "RenderProgress.h" 
 #include "RenderWidget.h"
+
 
 namespace WebCore {
 
 class HTMLMeterElement;
+class ShadowBlockElement;
 
-class RenderMeter : public RenderBlock {
+class RenderMeter : public RenderIndicator {
 public:
     RenderMeter(HTMLMeterElement*);
+    virtual ~RenderMeter();
 
 private:
     virtual const char* renderName() const { return "RenderMeter"; }
     virtual bool isMeter() const { return true; }
-    virtual void layout();
-    virtual void updateFromElement();
     virtual void calcWidth();
     virtual void calcHeight();
+
+    virtual void layoutParts();
+    virtual bool shouldHaveParts() const;
+
+    bool isHorizontal() const;
+    void updatePartsState();    
+    IntRect valuePartRect() const;
+    PseudoId valuePseudoId() const;
+    IntRect barPartRect() const;    
+    PseudoId barPseudoId() const;
+    double valueRatio() const;
+
+    RefPtr<ShadowBlockElement> m_barPart;
+    RefPtr<ShadowBlockElement> m_valuePart;
 };
 
 inline RenderMeter* toRenderMeter(RenderObject* object)

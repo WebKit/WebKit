@@ -174,6 +174,38 @@ PseudoId CSSSelector::pseudoId(PseudoType type)
         ASSERT_NOT_REACHED();
         return NOPSEUDO;
 #endif
+
+#if ENABLE(METER_TAG)
+    case PseudoMeterHorizontalBar:
+        return METER_HORIZONTAL_BAR;
+    case PseudoMeterHorizontalOptimum:
+        return METER_HORIZONTAL_OPTIMUM;
+    case PseudoMeterHorizontalSuboptimal:
+        return METER_HORIZONTAL_SUBOPTIMAL;
+    case PseudoMeterHorizontalEvenLessGood:
+        return METER_HORIZONTAL_EVEN_LESS_GOOD;
+    case PseudoMeterVerticalBar:
+        return METER_VERTICAL_BAR;
+    case PseudoMeterVerticalOptimum:
+        return METER_VERTICAL_OPTIMUM;
+    case PseudoMeterVerticalSuboptimal:
+        return METER_VERTICAL_SUBOPTIMAL;
+    case PseudoMeterVerticalEvenLessGood:
+        return METER_VERTICAL_EVEN_LESS_GOOD;
+#else
+    case PseudoMeterHorizontalBar:
+    case PseudoMeterHorizontalOptimum:
+    case PseudoMeterHorizontalSuboptimal:
+    case PseudoMeterHorizontalEvenLessGood:
+    case PseudoMeterHorizontalEvenLessGood:
+    case PseudoMeterVerticalBar:
+    case PseudoMeterVerticalOptimum:
+    case PseudoMeterVerticalSuboptimal:
+    case PseudoMeterVerticalEvenLessGood:
+        ASSERT_NOT_REACHED();
+        return NOPSEUDO;
+#endif
+
     case PseudoInputListButton:
 #if ENABLE(DATALIST)
         return INPUT_LIST_BUTTON;
@@ -304,6 +336,18 @@ static HashMap<AtomicStringImpl*, CSSSelector::PseudoType>* nameToPseudoTypeMap(
 #if ENABLE(PROGRESS_TAG)
     DEFINE_STATIC_LOCAL(AtomicString, progressBarValue, ("-webkit-progress-bar-value"));
 #endif
+
+#if ENABLE(METER_TAG)
+    DEFINE_STATIC_LOCAL(AtomicString, meterHorizontalBar, ("-webkit-meter-horizontal-bar"));
+    DEFINE_STATIC_LOCAL(AtomicString, meterHorizontalOptimumValue, ("-webkit-meter-horizontal-optimum-value"));
+    DEFINE_STATIC_LOCAL(AtomicString, meterHorizontalSuboptimalValue, ("-webkit-meter-horizontal-suboptimal-value"));
+    DEFINE_STATIC_LOCAL(AtomicString, meterHorizontalEvenLessGoodValue, ("-webkit-meter-horizontal-even-less-good-value"));
+    DEFINE_STATIC_LOCAL(AtomicString, meterVerticalBar, ("-webkit-meter-vertical-bar"));
+    DEFINE_STATIC_LOCAL(AtomicString, meterVerticalOptimumValue, ("-webkit-meter-vertical-optimum-value"));
+    DEFINE_STATIC_LOCAL(AtomicString, meterVerticalSuboptimalValue, ("-webkit-meter-vertical-suboptimal-value"));
+    DEFINE_STATIC_LOCAL(AtomicString, meterVerticalEvenLessGoodValue, ("-webkit-meter-vertical-even-less-good-value"));
+#endif
+
     DEFINE_STATIC_LOCAL(AtomicString, required, ("required"));
     DEFINE_STATIC_LOCAL(AtomicString, resizer, ("-webkit-resizer"));
     DEFINE_STATIC_LOCAL(AtomicString, root, ("root"));
@@ -401,6 +445,16 @@ static HashMap<AtomicStringImpl*, CSSSelector::PseudoType>* nameToPseudoTypeMap(
 #if ENABLE(PROGRESS_TAG)
         nameToPseudoType->set(progressBarValue.impl(), CSSSelector::PseudoProgressBarValue);
 #endif
+#if ENABLE(METER_TAG)
+        nameToPseudoType->set(meterHorizontalBar.impl(), CSSSelector::PseudoMeterHorizontalBar);
+        nameToPseudoType->set(meterHorizontalOptimumValue.impl(), CSSSelector::PseudoMeterHorizontalOptimum);
+        nameToPseudoType->set(meterHorizontalSuboptimalValue.impl(), CSSSelector::PseudoMeterHorizontalSuboptimal);
+        nameToPseudoType->set(meterHorizontalEvenLessGoodValue.impl(), CSSSelector::PseudoMeterHorizontalEvenLessGood);
+        nameToPseudoType->set(meterVerticalBar.impl(), CSSSelector::PseudoMeterVerticalBar);
+        nameToPseudoType->set(meterVerticalOptimumValue.impl(), CSSSelector::PseudoMeterVerticalOptimum);
+        nameToPseudoType->set(meterVerticalSuboptimalValue.impl(), CSSSelector::PseudoMeterVerticalSuboptimal);
+        nameToPseudoType->set(meterVerticalEvenLessGoodValue.impl(), CSSSelector::PseudoMeterVerticalEvenLessGood);
+#endif
         nameToPseudoType->set(root.impl(), CSSSelector::PseudoRoot);
         nameToPseudoType->set(windowInactive.impl(), CSSSelector::PseudoWindowInactive);
         nameToPseudoType->set(decrement.impl(), CSSSelector::PseudoDecrement);
@@ -483,6 +537,14 @@ void CSSSelector::extractPseudoType() const
     case PseudoMediaControlsFullscreenButton:
     case PseudoMediaControlsTimelineContainer:
     case PseudoMediaControlsVolumeSliderContainer:
+    case PseudoMeterHorizontalBar:
+    case PseudoMeterHorizontalOptimum:
+    case PseudoMeterHorizontalSuboptimal:
+    case PseudoMeterHorizontalEvenLessGood:
+    case PseudoMeterVerticalBar:
+    case PseudoMeterVerticalOptimum:
+    case PseudoMeterVerticalSuboptimal:
+    case PseudoMeterVerticalEvenLessGood:
     case PseudoOuterSpinButton:
     case PseudoProgressBarValue:
     case PseudoResizer:

@@ -1,3 +1,105 @@
+2010-06-16  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Kent Tamura.
+
+        <meter> should allow styling for each gauge-level and component
+        https://bugs.webkit.org/show_bug.cgi?id=40280
+
+        - Introduced following new pseudo classes for <meter> element.
+        
+          - -webkit-meter-horizontal-bar
+          - -webkit-meter-vertical-bar
+          - -webkit-meter-horizontal-optimum-value
+          - -webkit-meter-vertical-optimum-value
+          - -webkit-meter-horizontal-suboptimal-value
+          - -webkit-meter-vertical-suboptimal-value
+          - -webkit-meter-horizontal-even-less-good-value
+          - -webkit-meter-vertical-even-less-good-value
+        
+        - Introduced 2 shadow nodes for RenderMeter to handle CSS styling. 
+          one for bar part and another for value part.
+        - Removed RenderTheme::paintMeter() implementation because it can be
+          handled by styled painting without RenderTheme.
+        - Pulled RenderIndicator up to super class from RenderProgress,
+          then make RenderMeter a subclass of it.
+        - Moved shadow related methods from RenderProgress to ShadowBlockElement
+          to share it with RenderMeter.
+        - Added rules for html.css for new pseudo classes.
+        
+        Tests: fast/dom/HTMLMeterElement/meter-styles-changing-pseudo.html
+               fast/dom/HTMLMeterElement/meter-styles.html
+
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSSelector.cpp:
+        (WebCore::CSSSelector::pseudoId):
+        (WebCore::nameToPseudoTypeMap):
+        (WebCore::CSSSelector::extractPseudoType):
+        * css/CSSSelector.h:
+        (WebCore::CSSSelector::):
+        * css/html.css:
+        (meter::-webkit-meter-horizontal-bar):
+        (meter::-webkit-meter-vertical-bar):
+        (meter::-webkit-meter-horizontal-optimum-value):
+        (meter::-webkit-meter-horizontal-suboptimal-value):
+        (meter::-webkit-meter-horizontal-even-less-good-value):
+        (meter::-webkit-meter-vertical-optimum-value):
+        (meter::-webkit-meter-vertical-suboptimal-value):
+        (meter::-webkit-meter-vertical-even-less-good-value):
+        * rendering/RenderIndicator.cpp: Added.
+        (WebCore::RenderIndicator::RenderIndicator):
+        (WebCore::RenderIndicator::~RenderIndicator):
+        (WebCore::RenderIndicator::layout):
+        (WebCore::RenderIndicator::styleDidChange):
+        (WebCore::RenderIndicator::updateFromElement):
+        (WebCore::RenderIndicator::hasParts):
+        (WebCore::RenderIndicator::requestLayoutForParts):
+        * rendering/RenderIndicator.h: Added.
+        (WebCore::RenderIndicator::requiresForcedStyleRecalcPropagation):
+        * rendering/RenderMeter.cpp:
+        (WebCore::RenderMeter::RenderMeter):
+        (WebCore::RenderMeter::~RenderMeter):
+        (WebCore::RenderMeter::layoutParts): Added.
+        (WebCore::RenderMeter::shouldHaveParts): Added.
+        (WebCore::RenderMeter::valueRatio): Added.
+        (WebCore::RenderMeter::barPartRect): Added.
+        (WebCore::RenderMeter::valuePartRect): Added.
+        (WebCore::RenderMeter::isHorizontal): Added.
+        (WebCore::RenderMeter::valuePseudoId): Added.
+        (WebCore::RenderMeter::barPseudoId): Added.
+        (WebCore::RenderMeter::updatePartsState): Added.
+        * rendering/RenderMeter.h:
+        * rendering/RenderProgress.cpp:
+        (WebCore::RenderProgress::RenderProgress):
+        (WebCore::RenderProgress::updateFromElement):
+        (WebCore::RenderProgress::paint):
+        (WebCore::RenderProgress::layoutParts): Added.
+        (WebCore::RenderProgress::shouldHaveParts): Added.
+        (WebCore::RenderProgress::updatePartsState):
+        (WebCore::RenderProgress::valuePartRect):
+        * rendering/RenderProgress.h:
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::isControlStyled):
+        (WebCore::RenderTheme::paintMeter):
+        * rendering/RenderTheme.h:
+        (WebCore::RenderTheme::supportsMeter): Added.
+        * rendering/RenderThemeMac.h:
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::supportsMeter): Added.
+        * rendering/ShadowElement.cpp:
+        (WebCore::ShadowBlockElement::layoutAsPart): Added.
+        (WebCore::ShadowBlockElement::updateStyleForPart): Added.
+        (WebCore::ShadowBlockElement::createForPart): Added.
+        (WebCore::ShadowBlockElement::createStyleForPart): Added.
+        (WebCore::ShadowBlockElement::partShouldHaveStyle): Added.
+        * rendering/ShadowElement.h:
+        * rendering/style/RenderStyleConstants.h:
+        (WebCore::):
+
 2010-06-17  Fumitoshi Ukai  <ukai@chromium.org>
 
         Reviewed by Alexey Proskuryakov.
