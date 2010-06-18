@@ -145,9 +145,9 @@ void GraphicsWebView::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
 
     A WebView renders web content based on a URL.
 
-    This type is made available by importing the \c org.webkit module:
+    This type is made available by importing the \c QtWebKit module:
 
-    \bold{import org.webkit 1.0}
+    \bold{import QtWebKit 1.0}
 
     If the width and height of the item is not set, they will
     dynamically adjust to a size appropriate for the content.
@@ -160,7 +160,7 @@ void GraphicsWebView::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
     usually laying out the web content to fit the preferredWidth.
 
     \qml
-    import org.webkit 1.0
+    import QtWebKit 1.0
 
     WebView {
         url: "http://www.nokia.com"

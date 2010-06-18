@@ -2,6 +2,14 @@
 
         Reviewed by Simon Hausmann.
 
+        [Qt] Fix documentation for the declarative module import.
+
+        * declarative/qdeclarativewebview.cpp:
+
+2010-06-18  Alexis Menard  <alexis.menard@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
         Fix documentation issue on the onAlert handler.
         Fix compilation issue with QT_NO_ACTION.
 
