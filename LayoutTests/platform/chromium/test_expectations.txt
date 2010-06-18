@@ -2637,8 +2637,8 @@ BUGWK37074 DEFER : fast/dom/HTMLMeterElement/set-meter-properties.html = TEXT
 BUGWK37074 DEFER : fast/dom/HTMLMeterElement/meter-appearances-capacity.html = FAIL
 BUGWK37074 DEFER : fast/dom/HTMLMeterElement/meter-appearances-rating-relevancy.html = FAIL
 BUGWK37074 DEFER : fast/dom/HTMLMeterElement/meter-optimums.html = FAIL
-BUGWK37074 DEFER : fast/dom/HTMLMeterElement/meter-styles.html = MISSING
-BUGWK37074 DEFER : fast/dom/HTMLMeterElement/meter-styles-changing-pseudo.html = MISSING
+BUGWK37074 DEFER : fast/dom/HTMLMeterElement/meter-styles.html = IMAGE+TEXT
+BUGWK37074 DEFER : fast/dom/HTMLMeterElement/meter-styles-changing-pseudo.html = IMAGE+TEXT
 
 // WebKit roll 56004 -> 56026
 BUG38278 : fast/events/continuous-platform-wheelevent-in-scrolling-div.html = TIMEOUT
