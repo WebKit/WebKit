@@ -1,3 +1,11 @@
+2010-06-18  Andy Estes  <aestes@apple.com>
+
+        Rubber-stamped by Sam Weinig.
+
+        Update copyright header.
+
+        * html/HTMLLinkElement.h:
+
 2010-06-17  Andy Estes  <aestes@apple.com>
 
         Reviewed by Dan Bernstein.
