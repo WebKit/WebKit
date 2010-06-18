@@ -1,3 +1,22 @@
+2010-06-18  Adam Barth  <abarth@webkit.org>
+
+        Rubber-stamped by Eric Seidel.
+
+        Fix the namespace indent for HTML5Lexer.  This patch changes
+        white-space only.
+
+        * html/HTML5Lexer.h:
+        (WebCore::HTML5Lexer::):
+        (WebCore::HTML5Lexer::lineNumber):
+        (WebCore::HTML5Lexer::columnNumber):
+        (WebCore::HTML5Lexer::state):
+        (WebCore::HTML5Lexer::setState):
+        (WebCore::HTML5Lexer::skipLeadingNewLineForListing):
+        (WebCore::HTML5Lexer::InputStreamPreprocessor::InputStreamPreprocessor):
+        (WebCore::HTML5Lexer::InputStreamPreprocessor::nextInputCharacter):
+        (WebCore::HTML5Lexer::InputStreamPreprocessor::peek):
+        (WebCore::HTML5Lexer::InputStreamPreprocessor::advance):
+
 2010-06-18  Fumitoshi Ukai  <ukai@chromium.org>
 
         Unreviewed test breakage fix.
