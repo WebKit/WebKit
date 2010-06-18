@@ -86,62 +86,88 @@ static void checkCandidate(WebBasePluginPackage **currentPlugin, WebBasePluginPa
         *currentPlugin = *candidatePlugin;
 }
 
+struct PluginPackageCandidates {
+    PluginPackageCandidates()
+        : webPlugin(nil)
+        , machoPlugin(nil)
+#ifdef SUPPORT_CFM
+        , CFMPlugin(nil)
+#endif
+    {
+    }
+    
+    void update(WebBasePluginPackage *plugin)
+    {
+        if ([plugin isKindOfClass:[WebPluginPackage class]]) {
+            checkCandidate(&webPlugin, &plugin);
+            return;
+        }
+            
+#if ENABLE(NETSCAPE_PLUGIN_API)
+        if([plugin isKindOfClass:[WebNetscapePluginPackage class]]) {
+            WebExecutableType executableType = [(WebNetscapePluginPackage *)plugin executableType];
+#ifdef SUPPORT_CFM
+            if (executableType == WebCFMExecutableType) {
+                checkCandidate(&CFMPlugin, &plugin);
+                return;
+            }
+#endif // SUPPORT_CFM
+            if (executableType == WebMachOExecutableType) {
+                checkCandidate(&machoPlugin, &plugin);
+                return;
+            }
+        }
+#endif
+        ASSERT_NOT_REACHED();
+    }
+    
+    WebBasePluginPackage *bestCandidate()
+    {
+        // Allow other plug-ins to win over QT because if the user has installed a plug-in that can handle a type
+        // that the QT plug-in can handle, they probably intended to override QT.
+        if (webPlugin && ![webPlugin isQuickTimePlugIn])
+            return webPlugin;
+    
+        if (machoPlugin && ![machoPlugin isQuickTimePlugIn])
+            return machoPlugin;
+        
+#ifdef SUPPORT_CFM
+        if (CFMPlugin && ![CFMPlugin isQuickTimePlugIn])
+            return CFMPlugin;
+#endif // SUPPORT_CFM
+        
+        if (webPlugin)
+            return webPlugin;
+        if (machoPlugin)
+            return machoPlugin;
+#ifdef SUPPORT_CFM
+        if (CFMPlugin)
+            return CFMPlugin;
+#endif
+        return nil;
+    }
+    
+    WebBasePluginPackage *webPlugin;
+    WebBasePluginPackage *machoPlugin;
+#ifdef SUPPORT_CFM
+    WebBasePluginPackage *CFMPlugin;
+#endif
+};
+
 - (WebBasePluginPackage *)pluginForKey:(NSString *)key withEnumeratorSelector:(SEL)enumeratorSelector
 {
+    PluginPackageCandidates candidates;
     WebBasePluginPackage *plugin = nil;
-    WebBasePluginPackage *webPlugin = nil;
-#ifdef SUPPORT_CFM
-    WebBasePluginPackage *CFMPlugin = nil;
-#endif
-    WebBasePluginPackage *machoPlugin = nil;    
 
-    NSEnumerator *pluginEnumerator = [plugins objectEnumerator];
     key = [key lowercaseString];
+    NSEnumerator *pluginEnumerator = [plugins objectEnumerator];
 
     while ((plugin = [pluginEnumerator nextObject]) != nil) {
-        if ([[[plugin performSelector:enumeratorSelector] allObjects] containsObject:key]) {
-            if ([plugin isKindOfClass:[WebPluginPackage class]]) 
-                checkCandidate(&webPlugin, &plugin);
-#if ENABLE(NETSCAPE_PLUGIN_API)
-            else if([plugin isKindOfClass:[WebNetscapePluginPackage class]]) {
-                WebExecutableType executableType = [(WebNetscapePluginPackage *)plugin executableType];
-#ifdef SUPPORT_CFM
-                if (executableType == WebCFMExecutableType) {
-                    checkCandidate(&CFMPlugin, &plugin);
-                } else 
-#endif // SUPPORT_CFM
-                if (executableType == WebMachOExecutableType) {
-                    checkCandidate(&machoPlugin, &plugin);
-                } else {
-                    ASSERT_NOT_REACHED();
-                }
-            } else {
-                ASSERT_NOT_REACHED();
-            }
-#endif
-        }
+        if ([[[plugin performSelector:enumeratorSelector] allObjects] containsObject:key])
+            candidates.update(plugin);
     }
 
-    // Allow other plug-ins to win over QT because if the user has installed a plug-in that can handle a type
-    // that the QT plug-in can handle, they probably intended to override QT.
-    if (webPlugin && ![webPlugin isQuickTimePlugIn])
-        return webPlugin;
-    
-    else if (machoPlugin && ![machoPlugin isQuickTimePlugIn])
-        return machoPlugin;
-#ifdef SUPPORT_CFM
-    else if (CFMPlugin && ![CFMPlugin isQuickTimePlugIn])
-        return CFMPlugin;
-#endif // SUPPORT_CFM
-    else if (webPlugin)
-        return webPlugin;
-    else if (machoPlugin)
-        return machoPlugin;
-#ifdef SUPPORT_CFM
-    else if (CFMPlugin)
-        return CFMPlugin;
-#endif
-    return nil;
+    return candidates.bestCandidate();
 }
 
 - (WebBasePluginPackage *)pluginForMIMEType:(NSString *)MIMEType

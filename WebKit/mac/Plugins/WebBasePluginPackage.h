@@ -26,8 +26,6 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebCore/WebCoreViewFactory.h>
-
 #if ENABLE(NETSCAPE_PLUGIN_API)
 #import <WebKit/npfunctions.h>
 #else

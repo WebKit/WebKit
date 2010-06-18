@@ -91,7 +91,7 @@
     return WebCFAutorelease(WKCopyCFLocalizationPreferredName(NULL));
 }
 
-- (NSString *)pathByResolvingSymlinksAndAliasesInPath:(NSString *)thePath
+static NSString *pathByResolvingSymlinksAndAliases(NSString *thePath)
 {
     NSString *newPath = [thePath stringByResolvingSymlinksInPath];
 
@@ -122,7 +122,7 @@
     if (!(self = [super init]))
         return nil;
         
-    path = [[self pathByResolvingSymlinksAndAliasesInPath:pluginPath] retain];
+    path = [pathByResolvingSymlinksAndAliases(pluginPath) copy];
     bundle = [[NSBundle alloc] initWithPath:path];
 #ifndef __ppc__
     // 32-bit PowerPC is the only platform where non-bundled CFM plugins are supported

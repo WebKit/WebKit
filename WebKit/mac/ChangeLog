@@ -1,5 +1,27 @@
 2010-06-18  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        Clean up WebPluginDatabase.mm
+        https://bugs.webkit.org/show_bug.cgi?id=40866
+
+        * Plugins/WebBasePluginPackage.h:
+        * Plugins/WebBasePluginPackage.mm:
+        (pathByResolvingSymlinksAndAliases):
+        (-[WebBasePluginPackage initWithPath:]):
+        Change an instance method into a static function.
+        
+        * Plugins/WebPluginDatabase.mm:
+        (PluginPackageCandidates::PluginPackageCandidates):
+        (PluginPackageCandidates::update):
+        (PluginPackageCandidates::bestCandidate):
+        Add a new PluginPackageCandidates class.
+        
+        (-[WebPluginDatabase pluginForKey:withEnumeratorSelector:]):
+        Use PluginPackageCandidates here.
+
+2010-06-18  Anders Carlsson  <andersca@apple.com>
+
         Fix Tiger build.
         
         * WebCoreSupport/WebPlatformStrategies.mm:
