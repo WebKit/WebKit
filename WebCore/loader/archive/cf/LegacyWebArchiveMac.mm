@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-static const NSString *LegacyWebArchiveResourceResponseKey = @"WebResourceResponse";
+static NSString * const LegacyWebArchiveResourceResponseKey = @"WebResourceResponse";
 
 // FIXME: If is is possible to parse in a serialized NSURLResponse manually, without using
 // NSKeyedUnarchiver, manipulating plists directly, we would prefer to do that instead.

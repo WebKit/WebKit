@@ -1,3 +1,16 @@
+2010-06-18  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Fix build errors when building with clang++.
+
+        * loader/archive/cf/LegacyWebArchiveMac.mm:
+        Move the const qualifier to the right place.
+
+        * page/EditorClient.h:
+        * platform/Pasteboard.h:
+        Use @class when forward declaring Objective-C classes in Objective-C.
+
 2010-06-18  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Geoff Garen.

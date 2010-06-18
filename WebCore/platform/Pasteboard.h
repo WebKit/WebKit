@@ -43,9 +43,15 @@
 // knowledge of the frame and editor or moved into the editing directory.
 
 #if PLATFORM(MAC)
+#ifdef __OBJC__
+@class NSFileWrapper;
+@class NSPasteboard;
+@class NSArray;
+#else
 class NSFileWrapper;
 class NSPasteboard;
 class NSArray;
+#endif
 #endif
 
 #if PLATFORM(WIN)

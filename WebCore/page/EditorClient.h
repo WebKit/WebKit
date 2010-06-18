@@ -34,10 +34,17 @@
 #include <wtf/Vector.h>
 
 #if PLATFORM(MAC)
+#ifdef __OBJC__
+@class NSArray;
+@class NSData;
+@class NSString;
+@class NSURL;
+#else
 class NSArray;
 class NSData;
 class NSString;
 class NSURL;
+#endif
 #endif
 
 namespace WebCore {
