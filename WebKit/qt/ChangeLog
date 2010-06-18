@@ -1,3 +1,16 @@
+2010-06-18  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Reviewed by Antti Koivisto.
+
+        REGRESSION(r60958) [Qt] qwebpage::inputMethods auto-test fails
+        https://bugs.webkit.org/show_bug.cgi?id=40830
+
+        When activating a regular input method field, always set or unset the ImhHiddenText
+        input method hint.
+
+        * WebCoreSupport/EditorClientQt.cpp:
+        (WebCore::EditorClientQt::setInputMethodState):
+
 2010-06-18  Alexis Menard  <alexis.menard@nokia.com>
 
         Reviewed by Simon Hausmann.
