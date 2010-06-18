@@ -3486,6 +3486,7 @@ security/block-test.html
 # Tests in svg/ directory
 #   Tests failing
 svg/filters/feColorMatrix-values.svg
+svg/dom/altGlyph-dom.xhtml
 svg/custom/embedded-svg-disallowed-in-dashboard.xml
 svg/custom/getSubStringLength.html
 svg/custom/getscreenctm-in-mixed-content2.xhtml
@@ -4155,6 +4156,7 @@ svg/hixie/viewbox/004.xml
 svg/hixie/viewbox/preserveAspectRatio/001.xml
 svg/hixie/viewbox/preserveAspectRatio/002.xml
 svg/text/foreignObject-repaint.xml
+svg/text/lengthAdjust-text-metrics.html
 svg/text/kerning.svg
 svg/text/multichar-glyph.svg
 svg/text/text-align-01-b.svg

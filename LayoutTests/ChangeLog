@@ -1,3 +1,16 @@
+2010-06-18  Dirk Schulze  <krit@webkit.org>
+
+        Not reviewed. Rebaseline gtk results.
+
+        * platform/gtk/Skipped:
+        * platform/gtk/svg/custom/broken-internal-references-expected.txt:
+        * platform/gtk/svg/filters/filter-on-filter-for-text-expected.txt:
+        * platform/gtk/svg/filters/filter-on-tspan-expected.txt:
+        * platform/gtk/svg/text/text-hkern-expected.txt:
+        * platform/gtk/svg/text/text-hkern-on-vertical-text-expected.txt:
+        * platform/gtk/svg/text/text-vkern-expected.txt:
+        * platform/gtk/svg/text/text-vkern-on-horizontal-text-expected.txt:
+
 2010-06-18  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Not reviewed. Rebaseline win results.
