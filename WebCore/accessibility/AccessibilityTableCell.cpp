@@ -71,7 +71,7 @@ bool AccessibilityTableCell::accessibilityIsIgnored() const
 AccessibilityObject* AccessibilityTableCell::parentTable() const
 {
     if (!m_renderer || !m_renderer->isTableCell())
-        return false;
+        return 0;
     
     return axObjectCache()->getOrCreate(toRenderTableCell(m_renderer)->table());
 }

@@ -53,7 +53,8 @@ FontPlatformData::FontPlatformData(NSFont *nsFont, bool syntheticBold, bool synt
 
 FontPlatformData::FontPlatformData(const FontPlatformData& f)
 {
-    m_font = f.m_font && f.m_font != reinterpret_cast<NSFont *>(-1) ? static_cast<const NSFont *>(CFRetain(f.m_font)) : f.m_font;
+    m_font = f.m_font && f.m_font != reinterpret_cast<NSFont *>(-1) ? const_cast<NSFont *>(static_cast<const NSFont *>(CFRetain(f.m_font))) : f.m_font;
+
     m_syntheticBold = f.m_syntheticBold;
     m_syntheticOblique = f.m_syntheticOblique;
     m_size = f.m_size;

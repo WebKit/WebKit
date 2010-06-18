@@ -108,7 +108,7 @@ PassRefPtr<StorageArea> StorageNamespaceImpl::storageArea(PassRefPtr<SecurityOri
 
     RefPtr<SecurityOrigin> origin = prpOrigin;
     RefPtr<StorageAreaImpl> storageArea;
-    if (storageArea = m_storageAreaMap.get(origin))
+    if ((storageArea = m_storageAreaMap.get(origin)))
         return storageArea.release();
 
     storageArea = StorageAreaImpl::create(m_storageType, origin, m_syncManager, m_quota);

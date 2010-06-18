@@ -26,7 +26,7 @@
 
 namespace WebCore {
 
-class CSSNamespace;
+struct CSSNamespace;
 class CSSParser;
 class CSSRule;
 class DocLoader;

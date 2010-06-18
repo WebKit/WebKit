@@ -651,7 +651,7 @@ void HTMLFormElement::getNamedElements(const AtomicString& name, Vector<RefPtr<N
 
     // see if we have seen something with this name before
     RefPtr<HTMLFormControlElement> aliasElem;
-    if (aliasElem = elementForAlias(name)) {
+    if ((aliasElem = elementForAlias(name))) {
         bool found = false;
         for (unsigned n = 0; n < namedItems.size(); n++) {
             if (namedItems[n] == aliasElem.get()) {

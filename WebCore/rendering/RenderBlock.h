@@ -38,7 +38,7 @@ class RenderInline;
 struct BidiRun;
 
 template <class Iterator, class Run> class BidiResolver;
-template <class Iterator> class MidpointState;
+template <class Iterator> struct MidpointState;
 typedef BidiResolver<InlineIterator, BidiRun> InlineBidiResolver;
 typedef MidpointState<InlineIterator> LineMidpointState;
 

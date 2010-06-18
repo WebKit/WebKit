@@ -57,7 +57,7 @@ namespace WebCore {
 // invoking our constructor or destructor. This allows us to have a vector even for a struct
 // that's not copyable.
 namespace WTF {
-    template<> class VectorTraits<WebCore::FrameData> : public SimpleClassVectorTraits {};
+    template<> struct VectorTraits<WebCore::FrameData> : public SimpleClassVectorTraits {};
 }
 
 namespace WebCore {

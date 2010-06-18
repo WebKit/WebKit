@@ -29,7 +29,7 @@
 #ifdef __OBJC__
 @class NSFont;
 #else
-class NSFont;
+typedef struct NSFont NSFont;
 #endif
 
 typedef struct CGFont* CGFontRef;
@@ -51,7 +51,8 @@ class String;
 inline CTFontRef toCTFontRef(NSFont *nsFont) { return reinterpret_cast<CTFontRef>(nsFont); }
 #endif
 
-struct FontPlatformData {
+class FontPlatformData {
+  public:
     FontPlatformData(float size, bool syntheticBold, bool syntheticOblique)
         : m_syntheticBold(syntheticBold)
         , m_syntheticOblique(syntheticOblique)

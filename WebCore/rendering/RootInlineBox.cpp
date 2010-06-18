@@ -411,7 +411,7 @@ void RootInlineBox::setLineBreakInfo(RenderObject* obj, unsigned breakPos, const
 EllipsisBox* RootInlineBox::ellipsisBox() const
 {
     if (!m_hasEllipsisBox)
-        return false;
+        return 0;
     return gEllipsisBoxMap->get(this);
 }
 

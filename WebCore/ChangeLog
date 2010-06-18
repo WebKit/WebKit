@@ -1,3 +1,38 @@
+2010-06-17  Nicolas Weber  <thakis@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Fix various warnings that are reported when building with clang
+        https://bugs.webkit.org/show_bug.cgi?id=40503
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::labelElementContainer):
+        * accessibility/AccessibilityTableCell.cpp:
+        (WebCore::AccessibilityTableCell::parentTable):
+        * bindings/v8/NPV8Object.cpp:
+        (WebCore::npObjectTypeInfo):
+        * bindings/v8/custom/V8HTMLAudioElementConstructor.cpp:
+        (WebCore::):
+        * bindings/v8/custom/V8HTMLImageElementConstructor.cpp:
+        (WebCore::):
+        * bindings/v8/custom/V8HTMLOptionElementConstructor.cpp:
+        (WebCore::):
+        * css/CSSStyleSheet.h:
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::getNamedElements):
+        * inspector/InspectorValues.cpp:
+        (WebCore::InspectorObject::getObject):
+        (WebCore::InspectorObject::getArray):
+        * page/animation/AnimationBase.h:
+        * platform/graphics/BitmapImage.h:
+        (WTF::):
+        * platform/graphics/mac/FontPlatformData.h:
+        * rendering/RenderBlock.h:
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::ellipsisBox):
+        * storage/StorageNamespaceImpl.cpp:
+        (WebCore::StorageNamespaceImpl::storageArea):
+
 2010-06-17  Kwang Yul Seo  <skyul@company100.net>
 
         Reviewed by Pavel Feldman.

@@ -1256,11 +1256,11 @@ static HTMLLabelElement* labelForElement(Element* element)
 HTMLLabelElement* AccessibilityRenderObject::labelElementContainer() const
 {
     if (!m_renderer)
-        return false;
+        return 0;
 
     // the control element should not be considered part of the label
     if (isControl())
-        return false;
+        return 0;
     
     // find if this has a parent that is a label
     for (Node* parentNode = m_renderer->node(); parentNode; parentNode = parentNode->parentNode()) {
