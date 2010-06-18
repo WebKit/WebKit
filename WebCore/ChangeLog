@@ -1,3 +1,20 @@
+2010-06-18  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        https://bugs.webkit.org/show_bug.cgi?id=40852
+        <rdar://problem/8105498> Limit simultaneous DNS prefetch request number (40852)
+
+        No change in functionality, so no tests.
+
+        We still queue up to 64 names, but only make up to 8 requests at once. If there are names
+        remaining in queue, we retry after a short timeout (which is easier than posting
+        notifications from client callback).
+
+        * platform/network/cf/DNSCFNet.cpp:
+        (WebCore::DNSResolveQueue::add):
+        (WebCore::DNSResolveQueue::fired):
+
 2010-06-18  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Simon Fraser.
