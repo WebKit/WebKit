@@ -69,7 +69,7 @@ PASS gl.getError() is 0
 PASS gl.getUniform(matProgram, mval2Loc) is [1, 2, 3, 4]
 PASS gl.getUniform(matProgram, mval3Loc) is [5, 6, 7, 8, 9, 10, 11, 12, 13]
 PASS gl.getUniform(matProgram, mval4Loc) is [14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29]
-PASS gl.getVertexAttrib(1, gl.VERTEX_ATTRIB_ARRAY_BUFFER_BINDING) is non-null.
+PASS gl.getVertexAttrib(1, gl.VERTEX_ATTRIB_ARRAY_BUFFER_BINDING) is buffer
 PASS gl.getVertexAttrib(1, gl.VERTEX_ATTRIB_ARRAY_ENABLED) is true
 PASS gl.getVertexAttrib(1, gl.VERTEX_ATTRIB_ARRAY_SIZE) is 4
 PASS (gl.getVertexAttrib(1, gl.VERTEX_ATTRIB_ARRAY_STRIDE) == 0) || (gl.getVertexAttrib(1, gl.VERTEX_ATTRIB_ARRAY_STRIDE) == 4 * gl.sizeInBytes(gl.FLOAT)) is true
@@ -77,6 +77,10 @@ PASS gl.getVertexAttrib(1, gl.VERTEX_ATTRIB_ARRAY_TYPE) is gl.FLOAT
 PASS gl.getVertexAttrib(1, gl.VERTEX_ATTRIB_ARRAY_NORMALIZED) is false
 PASS gl.getVertexAttrib(1, gl.VERTEX_ATTRIB_ARRAY_ENABLED) is false
 PASS gl.getVertexAttrib(1, gl.CURRENT_VERTEX_ATTRIB) is [5, 6, 7, 8]
+PASS gl.getError() is 0
+PASS gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_NAME) is null
+PASS gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_NAME) is null
+PASS gl.getVertexAttrib(1, gl.VERTEX_ATTRIB_ARRAY_BUFFER_BINDING) is null
 PASS gl.getError() is 0
 PASS successfullyParsed is true
 

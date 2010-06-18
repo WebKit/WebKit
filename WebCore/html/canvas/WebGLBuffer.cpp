@@ -37,11 +37,6 @@ PassRefPtr<WebGLBuffer> WebGLBuffer::create(WebGLRenderingContext* ctx)
     return adoptRef(new WebGLBuffer(ctx));
 }
 
-PassRefPtr<WebGLBuffer> WebGLBuffer::create(WebGLRenderingContext* ctx, Platform3DObject obj)
-{
-    return adoptRef(new WebGLBuffer(ctx, obj));
-}
-
 WebGLBuffer::WebGLBuffer(WebGLRenderingContext* ctx)
     : CanvasObject(ctx)
     , m_elementArrayBufferByteLength(0)
@@ -49,14 +44,6 @@ WebGLBuffer::WebGLBuffer(WebGLRenderingContext* ctx)
     , m_nextAvailableCacheEntry(0)
 {
     setObject(context()->graphicsContext3D()->createBuffer());
-    clearCachedMaxIndices();
-}
-
-WebGLBuffer::WebGLBuffer(WebGLRenderingContext* ctx, Platform3DObject obj)
-    : CanvasObject(ctx)
-    , m_nextAvailableCacheEntry(0)
-{
-    setObject(obj, false);
     clearCachedMaxIndices();
 }
 

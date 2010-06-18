@@ -1116,9 +1116,9 @@ WebGLGetInfo WebGLRenderingContext::getFramebufferAttachmentParameter(unsigned l
         m_context->getFramebufferAttachmentParameteriv(target, attachment, GraphicsContext3D::FRAMEBUFFER_ATTACHMENT_OBJECT_NAME, &value);
         switch (type) {
         case GraphicsContext3D::RENDERBUFFER:
-            return WebGLGetInfo(findRenderbuffer(static_cast<Platform3DObject>(value)));
+            return WebGLGetInfo(PassRefPtr<WebGLRenderbuffer>(findRenderbuffer(static_cast<Platform3DObject>(value))));
         case GraphicsContext3D::TEXTURE:
-            return WebGLGetInfo(findTexture(static_cast<Platform3DObject>(value)));
+            return WebGLGetInfo(PassRefPtr<WebGLTexture>(findTexture(static_cast<Platform3DObject>(value))));
         default:
             // FIXME: raise exception?
             return WebGLGetInfo();
@@ -1601,11 +1601,7 @@ WebGLGetInfo WebGLRenderingContext::getVertexAttrib(unsigned long index, unsigne
     case GraphicsContext3D::VERTEX_ATTRIB_ARRAY_BUFFER_BINDING: {
         int name = 0;
         m_context->getVertexAttribiv(index, pname, &name);
-        if (name == 0)
-            return WebGLGetInfo();
-        RefPtr<WebGLBuffer> tmp = WebGLBuffer::create(this, name);
-        addObject(tmp.get());
-        return WebGLGetInfo(PassRefPtr<WebGLBuffer>(tmp));
+        return WebGLGetInfo(PassRefPtr<WebGLBuffer>(findBuffer(static_cast<Platform3DObject>(name))));
     }
     case GraphicsContext3D::VERTEX_ATTRIB_ARRAY_ENABLED:
     case GraphicsContext3D::VERTEX_ATTRIB_ARRAY_NORMALIZED: {
@@ -3140,26 +3136,38 @@ void WebGLRenderingContext::detachAndRemoveAllObjects()
     m_canvasObjects.clear();
 }
 
-PassRefPtr<WebGLTexture> WebGLRenderingContext::findTexture(Platform3DObject obj)
+WebGLTexture* WebGLRenderingContext::findTexture(Platform3DObject obj)
 {
+    if (!obj)
+        return 0;
     HashSet<RefPtr<CanvasObject> >::iterator pend = m_canvasObjects.end();
     for (HashSet<RefPtr<CanvasObject> >::iterator it = m_canvasObjects.begin(); it != pend; ++it) {
-        if ((*it)->isTexture() && (*it)->object() == obj) {
-            RefPtr<WebGLTexture> tex = reinterpret_cast<WebGLTexture*>((*it).get());
-            return tex.release();
-        }
+        if ((*it)->isTexture() && (*it)->object() == obj)
+            return reinterpret_cast<WebGLTexture*>((*it).get());
     }
     return 0;
 }
 
-PassRefPtr<WebGLRenderbuffer> WebGLRenderingContext::findRenderbuffer(Platform3DObject obj)
+WebGLRenderbuffer* WebGLRenderingContext::findRenderbuffer(Platform3DObject obj)
 {
+    if (!obj)
+        return 0;
     HashSet<RefPtr<CanvasObject> >::iterator pend = m_canvasObjects.end();
     for (HashSet<RefPtr<CanvasObject> >::iterator it = m_canvasObjects.begin(); it != pend; ++it) {
-        if ((*it)->isRenderbuffer() && (*it)->object() == obj) {
-            RefPtr<WebGLRenderbuffer> buffer = reinterpret_cast<WebGLRenderbuffer*>((*it).get());
-            return buffer.release();
-        }
+        if ((*it)->isRenderbuffer() && (*it)->object() == obj)
+            return reinterpret_cast<WebGLRenderbuffer*>((*it).get());
+    }
+    return 0;
+}
+
+WebGLBuffer* WebGLRenderingContext::findBuffer(Platform3DObject obj)
+{
+    if (!obj)
+        return 0;
+    HashSet<RefPtr<CanvasObject> >::iterator pend = m_canvasObjects.end();
+    for (HashSet<RefPtr<CanvasObject> >::iterator it = m_canvasObjects.begin(); it != pend; ++it) {
+        if ((*it)->isBuffer() && (*it)->object() == obj)
+            return reinterpret_cast<WebGLBuffer*>((*it).get());
     }
     return 0;
 }

@@ -192,7 +192,7 @@ gl.bufferData(gl.ARRAY_BUFFER, array, gl.DYNAMIC_DRAW);
 // 1 for these tests instead.
 gl.enableVertexAttribArray(1);
 gl.vertexAttribPointer(1, 4, gl.FLOAT, false, 0, 0);
-shouldBeNonNull('gl.getVertexAttrib(1, gl.VERTEX_ATTRIB_ARRAY_BUFFER_BINDING)');
+shouldBe('gl.getVertexAttrib(1, gl.VERTEX_ATTRIB_ARRAY_BUFFER_BINDING)', 'buffer');
 shouldBe('gl.getVertexAttrib(1, gl.VERTEX_ATTRIB_ARRAY_ENABLED)', 'true');
 shouldBe('gl.getVertexAttrib(1, gl.VERTEX_ATTRIB_ARRAY_SIZE)', '4');
 shouldBe('(gl.getVertexAttrib(1, gl.VERTEX_ATTRIB_ARRAY_STRIDE) == 0) || (gl.getVertexAttrib(1, gl.VERTEX_ATTRIB_ARRAY_STRIDE) == 4 * gl.sizeInBytes(gl.FLOAT))', 'true');
@@ -202,6 +202,15 @@ gl.disableVertexAttribArray(1);
 shouldBe('gl.getVertexAttrib(1, gl.VERTEX_ATTRIB_ARRAY_ENABLED)', 'false');
 gl.vertexAttrib4f(1, 5, 6, 7, 8);
 shouldBe('gl.getVertexAttrib(1, gl.CURRENT_VERTEX_ATTRIB)', '[5, 6, 7, 8]');
+shouldBe('gl.getError()', '0');
+
+// Test cases where name == 0
+gl.deleteTexture(texture);
+shouldBeNull('gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_NAME)');
+gl.deleteRenderbuffer(renderbuffer);
+shouldBeNull('gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_NAME)');
+gl.deleteBuffer(buffer);
+shouldBeNull('gl.getVertexAttrib(1, gl.VERTEX_ATTRIB_ARRAY_BUFFER_BINDING)');
 shouldBe('gl.getError()', '0');
 
 successfullyParsed = true;

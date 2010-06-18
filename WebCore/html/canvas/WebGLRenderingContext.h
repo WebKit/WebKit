@@ -315,8 +315,9 @@ class WebKitCSSMatrix;
 
         void addObject(CanvasObject*);
         void detachAndRemoveAllObjects();
-        PassRefPtr<WebGLTexture> findTexture(Platform3DObject);
-        PassRefPtr<WebGLRenderbuffer> findRenderbuffer(Platform3DObject);
+        WebGLTexture* findTexture(Platform3DObject);
+        WebGLRenderbuffer* findRenderbuffer(Platform3DObject);
+        WebGLBuffer* findBuffer(Platform3DObject);
 
         void markContextChanged();
         void cleanupAfterGraphicsCall(bool changed)

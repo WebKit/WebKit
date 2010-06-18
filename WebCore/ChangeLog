@@ -1,3 +1,19 @@
+2010-06-18  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        Fix WebGLRenderingContext helper functions find{Texture/Renderbuffer/Buffer}
+        https://bugs.webkit.org/show_bug.cgi?id=40176
+
+        * html/canvas/WebGLBuffer.cpp: Remove constructor with existing name.
+        * html/canvas/WebGLBuffer.h: Ditto.
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::getVertexAttrib): Use findBuffer instead of creating a new WebGLBuffer.
+        (WebCore::WebGLRenderingContext::findTexture): Deal with name == 0 case and return raw pointer.
+        (WebCore::WebGLRenderingContext::findRenderbuffer): Ditto.
+        (WebCore::WebGLRenderingContext::findBuffer): Find WebGLBuffer object using given name.
+        * html/canvas/WebGLRenderingContext.h: Add findBuffer function declaration, change return type to raw pointer.
+
 2010-06-18  Tony Gentilcore  <tonyg@chromium.org>
 
         Reviewed by David Levin.
