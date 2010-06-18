@@ -2621,7 +2621,7 @@ BUG38375 : plugins/round-trip-npobject.html = TEXT
 BUG38376 WIN : editing/deleting/5390681-2.html = IMAGE+TEXT
 
 // HTMLProgressElement related tests deferred due to r55980.
-BUG38227 : fast/dom/HTMLProgressElement/progress-element.html = FAIL
+BUG38227 SKIP : fast/dom/HTMLProgressElement/progress-element.html = FAIL
 BUG38227 : fast/dom/HTMLProgressElement/progress-bar-value-pseudo-element.html = FAIL
 
 // HTMLMeterElement related tests deferred due to https://bugs.webkit.org/show_bug.cgi?id=37074.
