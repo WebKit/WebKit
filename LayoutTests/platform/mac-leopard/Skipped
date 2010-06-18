@@ -32,6 +32,7 @@ media/media-fullscreen-not-in-document.html
 accessibility/aria-list-and-listitem.html
 accessibility/aria-hidden-with-elements.html
 platform/mac/accessibility/aria-treegrid.html
+platform/mac/accessibility/inherited-presentational-lists.html
 platform/mac/accessibility/stale-table-rows.html
 platform/mac/accessibility/parent-of-table-row-is-table.html
 
