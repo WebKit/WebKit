@@ -1735,7 +1735,7 @@ bool AccessibilityRenderObject::accessibilityIsIgnored() const
     if (roleValue() == IgnoredRole)
         return true;
     
-    if (roleValue() == PresentationalRole)
+    if (roleValue() == PresentationalRole || inheritsPresentationalRole())
         return true;
     
     // An ARIA tree can only have tree items and static text as children.
@@ -3049,6 +3049,49 @@ AccessibilityOrientation AccessibilityRenderObject::orientation() const
         return AccessibilityOrientationVertical;
     
     return AccessibilityObject::orientation();
+}
+    
+bool AccessibilityRenderObject::inheritsPresentationalRole() const
+{
+    // ARIA spec says that when a parent object is presentational, and it has required child elements,
+    // those child elements are also presentational. For example, <li> becomes presentational from <ul>.
+    // http://www.w3.org/WAI/PF/aria/complete#presentation
+
+    HashSet<QualifiedName>* possibleParentTagNames = 0;
+    switch (roleValue()) {
+    case ListItemRole:
+    case ListMarkerRole:
+        DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, listItemParents, ());
+        if (listItemParents.isEmpty()) {
+            listItemParents.add(ulTag);
+            listItemParents.add(olTag);
+            listItemParents.add(dlTag);
+        }
+        possibleParentTagNames = &listItemParents;
+        break;
+    default:
+        break;
+    }
+    
+    // Not all elements need to check for this, only ones that are required children.
+    if (!possibleParentTagNames)
+        return false;
+    
+    for (AccessibilityObject* parent = parentObject(); parent; parent = parent->parentObject()) { 
+        if (!parent->isAccessibilityRenderObject())
+            continue;
+        
+        Node* elementNode = static_cast<AccessibilityRenderObject*>(parent)->node();
+        if (!elementNode || !elementNode->isElementNode())
+            continue;
+        
+        // If native tag of the parent element matches an acceptable name, then return
+        // based on its presentational status.
+        if (possibleParentTagNames->contains(static_cast<Element*>(elementNode)->tagQName()))
+            return parent->roleValue() == PresentationalRole;
+    }
+    
+    return false;
 }
     
 bool AccessibilityRenderObject::isPresentationalChildOfAriaRole() const

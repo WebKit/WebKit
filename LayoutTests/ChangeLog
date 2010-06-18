@@ -1,3 +1,13 @@
+2010-06-18  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by David Kilzer.
+
+        AX: presentational role needs to be inherited by required elements
+        https://bugs.webkit.org/show_bug.cgi?id=40132
+
+        * platform/mac/accessibility/inherited-presentational-lists-expected.txt: Added.
+        * platform/mac/accessibility/inherited-presentational-lists.html: Added.
+
 2010-06-18  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Ojan Vafai.

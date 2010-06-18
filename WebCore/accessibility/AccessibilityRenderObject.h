@@ -30,6 +30,7 @@
 #define AccessibilityRenderObject_h
 
 #include "AccessibilityObject.h"
+#include "RenderObject.h"
 
 namespace WebCore {
     
@@ -47,7 +48,6 @@ class HTMLSelectElement;
 class IntPoint;
 class IntSize;
 class Node;
-class RenderObject;
 class RenderListBox;
 class RenderTextControl;
 class RenderView;
@@ -169,6 +169,11 @@ public:
     
     void setRenderer(RenderObject* renderer) { m_renderer = renderer; }
     RenderObject* renderer() const { return m_renderer; }
+    Node* node() const 
+    { 
+        return m_renderer ? m_renderer->node() : 0; 
+    };
+
     RenderView* topRenderer() const;
     RenderTextControl* textControl() const;
     Document* document() const;
@@ -305,6 +310,7 @@ private:
     virtual bool ariaLiveRegionAtomic() const;
     virtual bool ariaLiveRegionBusy() const;    
     
+    bool inheritsPresentationalRole() const;
     void setNeedsToUpdateChildren() const { m_childrenDirty = true; }
     
     mutable AccessibilityRole m_roleForMSAA;

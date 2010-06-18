@@ -1,3 +1,18 @@
+2010-06-18  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by David Kilzer.
+
+        AX: presentational role needs to be inherited by required elements
+        https://bugs.webkit.org/show_bug.cgi?id=40132
+
+        Test: platform/mac/accessibility/inherited-presentational-lists.html
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::accessibilityIsIgnored):
+        (WebCore::AccessibilityRenderObject::inheritsPresentationalRole):
+        * accessibility/AccessibilityRenderObject.h:
+        (WebCore::AccessibilityRenderObject::node):
+
 2010-06-18  Darin Adler  <darin@apple.com>
 
         Fix GTK build after reflection change.
