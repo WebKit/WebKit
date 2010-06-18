@@ -34,7 +34,6 @@
 #if ENABLE(WEB_SOCKETS)
 
 #include "PlatformString.h"
-#include "Timer.h"
 #include "WebSocketChannelClient.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/Threading.h>
@@ -120,8 +119,7 @@ public:
     void resume()
     {
         m_suspended = false;
-        if ((m_pendingConnected || !m_pendingMessages.isEmpty() || m_pendingClosed) && !m_resumeTimer.isActive())
-            m_resumeTimer.startOneShot(0);
+        processPendingEvents();
     }
 
 protected:
@@ -133,7 +131,6 @@ protected:
         , m_suspended(false)
         , m_pendingConnected(false)
         , m_pendingClosed(false)
-        , m_resumeTimer(this, &ThreadableWebSocketChannelClientWrapper::resumeTimerFired)
     {
     }
 
@@ -160,12 +157,6 @@ protected:
         }
     }
 
-    void resumeTimerFired(Timer<ThreadableWebSocketChannelClientWrapper>* timer)
-    {
-        ASSERT_UNUSED(timer, timer == &m_resumeTimer);
-        processPendingEvents();
-    }
-
     WebSocketChannelClient* m_client;
     bool m_syncMethodDone;
     bool m_sent;
@@ -174,7 +165,6 @@ protected:
     bool m_pendingConnected;
     Vector<String> m_pendingMessages;
     bool m_pendingClosed;
-    Timer<ThreadableWebSocketChannelClientWrapper> m_resumeTimer;
 };
 
 } // namespace WebCore
