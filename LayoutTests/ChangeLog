@@ -1,3 +1,14 @@
+2010-06-17  Andy Estes  <aestes@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        <rdar://problem/8091385> Test that removing a stylesheet link element in a listener to its
+        beforeload event does not crash WebCore.
+        https://bugs.webkit.org/show_bug.cgi?id=40742
+
+        * fast/dom/beforeload/remove-link-in-beforeload-listener-expected.txt: Added.
+        * fast/dom/beforeload/remove-link-in-beforeload-listener.html: Added.
+
 2010-06-18  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed. Update Qt specific expected files after r61418.

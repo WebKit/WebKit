@@ -1,3 +1,31 @@
+2010-06-17  Andy Estes  <aestes@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        <rdar://problem/8091385> Prevent a crash in WebCore when removing a stylesheet link element in
+        in a listener to its beforeload event.
+        https://bugs.webkit.org/show_bug.cgi?id=40742
+        
+        Postpone loading of link elements until after they have been inserted into the DOM and
+        attached. This prevents DOM mutations triggered by beforeload handlers from firing in the
+        midst of DOM insertion, which can lead to assertion failures and crashes.
+
+        Test: fast/dom/beforeload/remove-link-in-beforeload-listener.html
+
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::HTMLLinkElement): Initialize m_shouldProcessAfterAttach to false.
+        (WebCore::HTMLLinkElement::processCallback): Add a static callback function which calls
+        HTMLLinkElement::process().
+        (WebCore::HTMLLinkElement::insertedIntoDocument): Instead of calling process() directly, set
+        m_shouldProcessAfterAttach to true to indicate that process() should be called after attach().
+        (WebCore::HTMLLinkElement::removedFromDocument): Set m_shouldProcessAfterAttach to false.
+        (WebCore::HTMLLinkElement::attach): If m_shouldProcessAfterAttach is true, register
+        HTMLLinkElement::processCallback() as a post-attach callback.
+        * html/HTMLLinkElement.h: Add m_shouldProcessAfterAttach.
+        (WebCore::HTMLLinkElement::canLazyAttach): Override canLazyAttach() to return false to
+        indicate that a full attach should be performed.  This ensures the post-attach callbacks are
+        fired.
+
 2010-06-18  Chris Fleizach  <cfleizach@apple.com>
 
         Unreviewed. Windows build fix.

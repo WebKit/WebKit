@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2003, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2003, 2006, 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
  * Copyright (C) 2009 Rob Buis (rwlbuis@gmail.com)
  *
  * This library is free software; you can redistribute it and/or
@@ -51,6 +51,7 @@ inline HTMLLinkElement::HTMLLinkElement(const QualifiedName& tagName, Document* 
     , m_disabledState(Unset)
     , m_loading(false)
     , m_createdByParser(createdByParser)
+    , m_shouldProcessAfterAttach(false)
 {
     ASSERT(hasTagName(linkTag));
 }
@@ -229,12 +230,24 @@ void HTMLLinkElement::process()
         document()->updateStyleSelector();
     }
 }
+    
+void HTMLLinkElement::processCallback(Node* node)
+{
+    ASSERT_ARG(node, node && node->hasTagName(linkTag));
+    static_cast<HTMLLinkElement*>(node)->process();
+}
 
 void HTMLLinkElement::insertedIntoDocument()
 {
     HTMLElement::insertedIntoDocument();
     document()->addStyleSheetCandidateNode(this, m_createdByParser);
-    process();
+
+    // Since processing a stylesheet link causes a beforeload event
+    // to fire, it is possible for JavaScript to remove the element in the midst
+    // of it being inserted into the DOM, which can lead to assertion failures
+    // and crashes. Avoid this by postponing the beforeload/load until after
+    // attach.
+    m_shouldProcessAfterAttach = true;
 }
 
 void HTMLLinkElement::removedFromDocument()
@@ -246,8 +259,20 @@ void HTMLLinkElement::removedFromDocument()
     // FIXME: It's terrible to do a synchronous update of the style selector just because a <style> or <link> element got removed.
     if (document()->renderer())
         document()->updateStyleSelector();
+    
+    m_shouldProcessAfterAttach = false;
 }
 
+void HTMLLinkElement::attach()
+{
+    if (m_shouldProcessAfterAttach) {
+        m_shouldProcessAfterAttach = false;
+        queuePostAttachCallback(&HTMLLinkElement::processCallback, this);
+    }
+
+    HTMLElement::attach();
+}
+    
 void HTMLLinkElement::finishParsingChildren()
 {
     m_createdByParser = false;
