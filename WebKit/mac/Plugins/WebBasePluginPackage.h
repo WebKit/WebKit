@@ -82,8 +82,11 @@ typedef void (*BP_CreatePluginMIMETypesPreferencesFuncPtr)(void);
 - (NSString *)pluginDescription;
 - (NSBundle *)bundle;
 
-- (NSEnumerator *)extensionEnumerator;
-- (NSEnumerator *)MIMETypeEnumerator;
+- (BOOL)supportsExtension:(NSString *)extension;
+- (BOOL)supportsMIMEType:(NSString *)MIMEType;
+
+- (NSArray *)MIMETypes;
+
 - (NSString *)descriptionForMIMEType:(NSString *)MIMEType;
 - (NSString *)MIMETypeForExtension:(NSString *)extension;
 - (NSArray *)extensionsForMIMEType:(NSString *)MIMEType;

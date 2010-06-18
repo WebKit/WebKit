@@ -154,32 +154,35 @@ struct PluginPackageCandidates {
 #endif
 };
 
-- (WebBasePluginPackage *)pluginForKey:(NSString *)key withEnumeratorSelector:(SEL)enumeratorSelector
-{
-    PluginPackageCandidates candidates;
-    WebBasePluginPackage *plugin = nil;
-
-    key = [key lowercaseString];
-    NSEnumerator *pluginEnumerator = [plugins objectEnumerator];
-
-    while ((plugin = [pluginEnumerator nextObject]) != nil) {
-        if ([[[plugin performSelector:enumeratorSelector] allObjects] containsObject:key])
-            candidates.update(plugin);
-    }
-
-    return candidates.bestCandidate();
-}
-
 - (WebBasePluginPackage *)pluginForMIMEType:(NSString *)MIMEType
 {
-    return [self pluginForKey:[MIMEType lowercaseString]
-       withEnumeratorSelector:@selector(MIMETypeEnumerator)];
+    PluginPackageCandidates candidates;
+    
+    MIMEType = [MIMEType lowercaseString];
+    NSEnumerator *pluginEnumerator = [plugins objectEnumerator];
+    
+    while (WebBasePluginPackage *plugin = [pluginEnumerator nextObject]) {
+        if ([plugin supportsMIMEType:MIMEType])
+            candidates.update(plugin);
+    }
+    
+    return candidates.bestCandidate();
 }
 
 - (WebBasePluginPackage *)pluginForExtension:(NSString *)extension
 {
-    WebBasePluginPackage *plugin = [self pluginForKey:[extension lowercaseString]
-                               withEnumeratorSelector:@selector(extensionEnumerator)];
+    PluginPackageCandidates candidates;
+    
+    extension = [extension lowercaseString];
+    NSEnumerator *pluginEnumerator = [plugins objectEnumerator];
+    
+    while (WebBasePluginPackage *plugin = [pluginEnumerator nextObject]) {
+        if ([plugin supportsExtension:extension])
+            candidates.update(plugin);
+    }
+    
+    WebBasePluginPackage *plugin = candidates.bestCandidate();
+    
     if (!plugin) {
         // If no plug-in was found from the extension, attempt to map from the extension to a MIME type
         // and find the a plug-in from the MIME type. This is done in case the plug-in has not fully specified
@@ -302,7 +305,7 @@ static NSArray *additionalWebPlugInPaths;
     NSMutableSet *MIMETypes = [[NSMutableSet alloc] init];
     pluginEnumerator = [plugins objectEnumerator];
     while ((plugin = [pluginEnumerator nextObject]) != nil)
-        [MIMETypes addObjectsFromArray:[[plugin MIMETypeEnumerator] allObjects]];
+        [MIMETypes addObjectsFromArray:[plugin MIMETypes]];
     
     // Register plug-in views and representations.
     NSEnumerator *MIMEEnumerator = [MIMETypes objectEnumerator];
@@ -436,9 +439,10 @@ static NSArray *additionalWebPlugInPaths;
     ASSERT(plugin);
 
     // Unregister plug-in's MIME type registrations
-    NSEnumerator *MIMETypeEnumerator = [plugin MIMETypeEnumerator];
-    NSString *MIMEType;
-    while ((MIMEType = [MIMETypeEnumerator nextObject])) {
+    NSArray *MIMETypes = [plugin MIMETypes];
+    for (NSUInteger i = 0; i < [MIMETypes count]; ++i) {
+        NSString *MIMEType = [MIMETypes objectAtIndex:i];
+
         if ([registeredMIMETypes containsObject:MIMEType]) {
             if (self == sharedDatabase)
                 [WebView _unregisterPluginMIMEType:MIMEType];

@@ -303,14 +303,19 @@ static NSString *pathByResolvingSymlinksAndAliases(NSString *thePath)
     return pluginDescription;
 }
 
-- (NSEnumerator *)extensionEnumerator
+- (NSArray *)MIMETypes
 {
-    return [extensionToMIME keyEnumerator];
+    return [MIMEToExtensions allKeys];
 }
 
-- (NSEnumerator *)MIMETypeEnumerator
+- (BOOL)supportsExtension:(NSString *)extension
 {
-    return [MIMEToExtensions keyEnumerator];
+    return [extensionToMIME objectForKey:extension] != 0;
+}
+
+- (BOOL)supportsMIMEType:(NSString *)MIMEType
+{
+    return [MIMEToExtensions objectForKey:MIMEType] != 0;
 }
 
 - (NSString *)descriptionForMIMEType:(NSString *)MIMEType

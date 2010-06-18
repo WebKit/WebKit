@@ -2,6 +2,26 @@
 
         Reviewed by Sam Weinig.
 
+        Get rid of the NSEnumerators from WebBasePluginPackage
+        https://bugs.webkit.org/show_bug.cgi?id=40868
+
+        * Plugins/WebBasePluginPackage.h:
+        * Plugins/WebBasePluginPackage.mm:
+        (-[WebBasePluginPackage MIMETypes]):
+        (-[WebBasePluginPackage supportsExtension:]):
+        (-[WebBasePluginPackage supportsMIMEType:]):
+        * Plugins/WebPluginDatabase.mm:
+        (-[WebPluginDatabase pluginForMIMEType:]):
+        (-[WebPluginDatabase pluginForExtension:]):
+        (-[WebPluginDatabase refresh]):
+        (-[WebPluginDatabase _removePlugin:]):
+        * WebCoreSupport/WebPlatformStrategies.mm:
+        (WebPlatformStrategies::getPluginInfo):
+
+2010-06-18  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
         Make WebCoreSystemInterface.h a C++ only header
         https://bugs.webkit.org/show_bug.cgi?id=40867
 

@@ -31,7 +31,7 @@
 #import <wtf/StdLibExtras.h>
 
 #ifdef BUILDING_ON_TIGER
--typedef unsigned NSUInteger;
+typedef unsigned NSUInteger;
 #endif
 
 using namespace WebCore;
@@ -72,21 +72,23 @@ void WebPlatformStrategies::getPluginInfo(Vector<WebCore::PluginInfo>& plugins)
         pluginInfo.file = [plugin filename];
         pluginInfo.desc = [plugin pluginDescription];
 
-        NSEnumerator* MIMETypeEnumerator = [plugin MIMETypeEnumerator];
-        while (NSString* MIME = [MIMETypeEnumerator nextObject]) {
-            MimeClassInfo mime;
+        NSArray *MIMETypes = [plugin MIMETypes];
+        for (NSUInteger i = 0; i < [MIMETypes count]; ++i) {
+            NSString *MIMEType = [MIMETypes objectAtIndex:i];
 
-            mime.type = String(MIME).lower();
+            MimeClassInfo mimeClassInfo;
+
+            mimeClassInfo.type = String(MIMEType).lower();
             
-            NSArray *extensions = [plugin extensionsForMIMEType:MIME];
+            NSArray *extensions = [plugin extensionsForMIMEType:MIMEType];
             for (NSUInteger i = 0; i < [extensions count]; ++i) {
                 NSString *extension = [extensions objectAtIndex:i];
-                mime.extensions.append(extension);
+                mimeClassInfo.extensions.append(extension);
             }
 
-            mime.desc = [plugin descriptionForMIMEType:MIME];
+            mimeClassInfo.desc = [plugin descriptionForMIMEType:MIMEType];
             
-            pluginInfo.mimes.append(mime);
+            pluginInfo.mimes.append(mimeClassInfo);
         }
 
         plugins.append(pluginInfo);
