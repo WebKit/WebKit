@@ -1,5 +1,14 @@
 2010-06-18  Nikolas Zimmermann  <nzimmermann@rim.com>
 
+        Not reviewed. Rebaseline mac-snowleopard results.
+
+        * platform/mac/svg/W3C-SVG-1.1/text-intro-05-t-expected.txt:
+        * platform/mac/svg/custom/junk-data-expected.txt:
+        * platform/mac/svg/custom/missing-xlink-expected.txt:
+        * platform/mac/svg/text/text-intro-05-t-expected.txt:
+
+2010-06-18  Nikolas Zimmermann  <nzimmermann@rim.com>
+
         Not reviewed. Rebaseline mac-tiger test results.
 
         * platform/mac-tiger/svg/W3C-SVG-1.1/metadata-example-01-b-expected.txt:
