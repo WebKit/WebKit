@@ -1,3 +1,14 @@
+2010-06-17  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Remove some unnecessary checks that cause compiler warnings.
+        https://bugs.webkit.org/show_bug.cgi?id=40772
+
+        * bindings/v8/custom/V8SQLResultSetRowListCustom.cpp:
+        (WebCore::V8SQLResultSetRowList::itemCallback):
+        * bindings/v8/npruntime.cpp:
+
 2010-06-18  Mikhail Naganov  <mnaganov@chromium.org>
 
         Reviewed by Yury Semikhatsky.

@@ -296,7 +296,6 @@ NPObject* _NPN_RetainObject(NPObject* npObject)
 void _NPN_DeallocateObject(NPObject* npObject)
 {
     ASSERT(npObject);
-    ASSERT(npObject->referenceCount >= 0);
 
     if (npObject) {
         // NPObjects that remain in pure C++ may never have wrappers.
