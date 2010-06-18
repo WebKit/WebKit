@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
@@ -25,24 +25,25 @@ module html {
         DelegatingGetOwnPropertySlot,
         CustomCall
     ] HTMLEmbedElement : HTMLElement {
-    attribute [Reflect] DOMString align;
+                 attribute [ConvertNullToNullString, Reflect] DOMString align;
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
-    attribute [Reflect] DOMString height;
+                 attribute [ConvertNullToNullString, Reflect] DOMString height;
 #else
-    attribute [Reflect] long height;
+                 attribute [ConvertFromString] long height;
 #endif
-    attribute [Reflect] DOMString name;
-    attribute [Reflect] DOMString src;
-    attribute [Reflect] DOMString type;
+                 attribute [ConvertNullToNullString, Reflect] DOMString name;
+                 attribute [ConvertNullToNullString, Reflect] DOMString src;
+                 attribute [ConvertNullToNullString, Reflect] DOMString type;
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
-    attribute [Reflect] DOMString width;
+                 attribute [ConvertNullToNullString, Reflect] DOMString width;
 #else
-    attribute [Reflect] long width;
+                 attribute [ConvertFromString] long width;
 #endif
 
 #if defined(ENABLE_SVG) && ENABLE_SVG
 #if !defined(LANGUAGE_OBJECTIVE_C) || !LANGUAGE_OBJECTIVE_C || defined(ENABLE_SVG_DOM_OBJC_BINDINGS) && ENABLE_SVG_DOM_OBJC_BINDINGS
-    [SVGCheckSecurityDocument] SVGDocument getSVGDocument() raises(DOMException);
+        [SVGCheckSecurityDocument] SVGDocument getSVGDocument()
+            raises(DOMException);
 #endif
 #endif
     };

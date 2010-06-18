@@ -20,7 +20,7 @@
 module html {
 
     interface HTMLBRElement : HTMLElement {
-        attribute [Reflect] DOMString clear;
+        attribute [ConvertNullToNullString, Reflect] DOMString clear;
     };
 
 }

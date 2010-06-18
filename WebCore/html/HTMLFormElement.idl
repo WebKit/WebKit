@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2006 Apple Computer, Inc.
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
@@ -24,20 +24,19 @@ module html {
         HasIndexGetter,
         HasOverridingNameGetter
     ] HTMLFormElement : HTMLElement {
-        readonly attribute HTMLCollection elements;
-        readonly attribute long length;
-
-        attribute [Reflect] DOMString name;
-        attribute [Reflect] boolean noValidate;
-        attribute [Reflect=accept_charset] DOMString acceptCharset;
-        attribute [Reflect] DOMString action;
-        attribute [ConvertNullToNullString] DOMString encoding;  /* Netscape/Firefox legacy attribute. Same as enctype. */
-        attribute [ConvertNullToNullString] DOMString enctype;
-        attribute [Reflect] DOMString method;
-        attribute [Reflect] DOMString target;
+        readonly attribute HTMLCollection  elements;
+        readonly attribute long            length;
+                 attribute [ConvertNullToNullString] DOMString       name;
+                 attribute boolean         noValidate;
+                 attribute [ConvertNullToNullString] DOMString       acceptCharset;
+                 attribute [ConvertNullToNullString] DOMString       action;
+                 attribute [ConvertNullToNullString] DOMString       encoding;  /* Netscape/Firefox legacy attribute. Same as enctype. */
+                 attribute [ConvertNullToNullString] DOMString       enctype;
+                 attribute [ConvertNullToNullString] DOMString       method;
+                 attribute [ConvertNullToNullString] DOMString       target;
         
         [CallWith=DynamicFrame] void submit();
         void reset();
-        boolean checkValidity();
+        boolean  checkValidity();
     };
 }

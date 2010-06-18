@@ -4,7 +4,7 @@
  *           (C) 2001 Peter Kelly (pmk@post.com)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
  *           (C) 2007 David Smith (catfish.man@gmail.com)
- * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
  *           (C) 2007 Eric Seidel (eric@webkit.org)
  *
  * This library is free software; you can redistribute it and/or
@@ -1529,30 +1529,6 @@ KURL Element::getURLAttribute(const QualifiedName& name) const
     }
 #endif
     return document()->completeURL(deprecatedParseURL(getAttribute(name)));
-}
-
-int Element::getIntegralAttribute(const QualifiedName& attributeName) const
-{
-    return getAttribute(attributeName).string().toInt();
-}
-
-void Element::setIntegralAttribute(const QualifiedName& attributeName, int value)
-{
-    // FIXME: Need an AtomicString version of String::number.
-    ExceptionCode ec;
-    setAttribute(attributeName, String::number(value), ec);
-}
-
-unsigned Element::getUnsignedIntegralAttribute(const QualifiedName& attributeName) const
-{
-    return getAttribute(attributeName).string().toUInt();
-}
-
-void Element::setUnsignedIntegralAttribute(const QualifiedName& attributeName, unsigned value)
-{
-    // FIXME: Need an AtomicString version of String::number.
-    ExceptionCode ec;
-    setAttribute(attributeName, String::number(value), ec);
 }
 
 } // namespace WebCore

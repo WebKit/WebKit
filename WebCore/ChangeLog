@@ -1,3 +1,170 @@
+2010-06-17  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r61379.
+        http://trac.webkit.org/changeset/61379
+        https://bugs.webkit.org/show_bug.cgi?id=40813
+
+        Broke multiple tests on all platforms (Requested by tkent on
+        #webkit).
+
+        * bindings/scripts/CodeGenerator.pm:
+        * bindings/scripts/CodeGeneratorCPP.pm:
+        * bindings/scripts/CodeGeneratorGObject.pm:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * bindings/scripts/CodeGeneratorObjC.pm:
+        * bindings/scripts/CodeGeneratorV8.pm:
+        * bindings/scripts/test/CPP/WebDOMTestObj.cpp:
+        (WebDOMTestObj::attrWithException):
+        (WebDOMTestObj::setAttrWithException):
+        (WebDOMTestObj::attrWithSetterException):
+        (WebDOMTestObj::attrWithGetterException):
+        (WebDOMTestObj::setAttrWithGetterException):
+        * bindings/scripts/test/CPP/WebDOMTestObj.h:
+        * bindings/scripts/test/GObject/WebKitDOMTestCallback.cpp:
+        (webkit_dom_test_callback_callback_with_class1param):
+        (webkit_dom_test_callback_callback_with_class2param):
+        (webkit_dom_test_callback_callback_with_non_bool_return_type):
+        * bindings/scripts/test/GObject/WebKitDOMTestObj.cpp:
+        (webkit_dom_test_obj_void_method):
+        (webkit_dom_test_obj_void_method_with_args):
+        (webkit_dom_test_obj_int_method):
+        (webkit_dom_test_obj_int_method_with_args):
+        (webkit_dom_test_obj_obj_method):
+        (webkit_dom_test_obj_obj_method_with_args):
+        (webkit_dom_test_obj_method_that_requires_all_args):
+        (webkit_dom_test_obj_method_that_requires_all_args_and_throws):
+        (webkit_dom_test_obj_serialized_value):
+        (webkit_dom_test_obj_method_with_exception):
+        (webkit_dom_test_obj_with_dynamic_frame):
+        (webkit_dom_test_obj_with_dynamic_frame_and_arg):
+        (webkit_dom_test_obj_with_dynamic_frame_and_optional_arg):
+        (webkit_dom_test_obj_with_dynamic_frame_and_user_gesture):
+        (webkit_dom_test_obj_with_dynamic_frame_and_user_gesture_asad):
+        (webkit_dom_test_obj_with_script_state_void):
+        (webkit_dom_test_obj_with_script_state_obj):
+        (webkit_dom_test_obj_with_script_state_void_exception):
+        (webkit_dom_test_obj_with_script_state_obj_exception):
+        (webkit_dom_test_obj_with_script_execution_context):
+        (webkit_dom_test_obj_method_with_optional_arg):
+        (webkit_dom_test_obj_method_with_non_optional_arg_and_optional_arg):
+        (webkit_dom_test_obj_method_with_non_optional_arg_and_two_optional_args):
+        (webkit_dom_test_obj_get_read_only_int_attr):
+        (webkit_dom_test_obj_get_read_only_string_attr):
+        (webkit_dom_test_obj_get_read_only_test_obj_attr):
+        (webkit_dom_test_obj_get_int_attr):
+        (webkit_dom_test_obj_set_int_attr):
+        (webkit_dom_test_obj_get_long_long_attr):
+        (webkit_dom_test_obj_set_long_long_attr):
+        (webkit_dom_test_obj_get_unsigned_long_long_attr):
+        (webkit_dom_test_obj_set_unsigned_long_long_attr):
+        (webkit_dom_test_obj_get_string_attr):
+        (webkit_dom_test_obj_set_string_attr):
+        (webkit_dom_test_obj_get_test_obj_attr):
+        (webkit_dom_test_obj_set_test_obj_attr):
+        (webkit_dom_test_obj_get_attr_with_exception):
+        (webkit_dom_test_obj_set_attr_with_exception):
+        (webkit_dom_test_obj_get_attr_with_setter_exception):
+        (webkit_dom_test_obj_set_attr_with_setter_exception):
+        (webkit_dom_test_obj_get_attr_with_getter_exception):
+        (webkit_dom_test_obj_set_attr_with_getter_exception):
+        (webkit_dom_test_obj_get_script_string_attr):
+        (webkit_dom_test_obj_get_conditional_attr1):
+        (webkit_dom_test_obj_set_conditional_attr1):
+        (webkit_dom_test_obj_get_conditional_attr2):
+        (webkit_dom_test_obj_set_conditional_attr2):
+        (webkit_dom_test_obj_get_conditional_attr3):
+        (webkit_dom_test_obj_set_conditional_attr3):
+        (webkit_dom_test_obj_get_description):
+        (webkit_dom_test_obj_get_id):
+        (webkit_dom_test_obj_set_id):
+        (webkit_dom_test_obj_get_hash):
+        (webkit_dom_test_obj_set_property):
+        (webkit_dom_test_obj_get_property):
+        (webkit_dom_test_obj_class_init):
+        * bindings/scripts/test/GObject/WebKitDOMTestObj.h:
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::):
+        (WebCore::jsTestObjAttrWithException):
+        (WebCore::jsTestObjAttrWithSetterException):
+        (WebCore::jsTestObjAttrWithGetterException):
+        (WebCore::setJSTestObjAttrWithException):
+        (WebCore::setJSTestObjAttrWithGetterException):
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethod):
+        * bindings/scripts/test/JS/JSTestObj.h:
+        * bindings/scripts/test/ObjC/DOMTestObj.h:
+        * bindings/scripts/test/ObjC/DOMTestObj.mm:
+        (-[DOMTestObj attrWithException]):
+        (-[DOMTestObj setAttrWithException:]):
+        (-[DOMTestObj attrWithSetterException]):
+        (-[DOMTestObj attrWithGetterException]):
+        (-[DOMTestObj setAttrWithGetterException:]):
+        * bindings/scripts/test/TestObj.idl:
+        * bindings/scripts/test/V8/V8TestObj.cpp:
+        (WebCore::TestObjInternal::attrWithExceptionAttrGetter):
+        (WebCore::TestObjInternal::attrWithExceptionAttrSetter):
+        (WebCore::TestObjInternal::attrWithSetterExceptionAttrGetter):
+        (WebCore::TestObjInternal::attrWithGetterExceptionAttrGetter):
+        (WebCore::TestObjInternal::attrWithGetterExceptionAttrSetter):
+        (WebCore::TestObjInternal::overloadedMethodCallback):
+        (WebCore::):
+        * dom/Element.cpp:
+        * dom/Element.h:
+        * html/HTMLAnchorElement.idl:
+        * html/HTMLAppletElement.idl:
+        * html/HTMLAreaElement.idl:
+        * html/HTMLBRElement.idl:
+        * html/HTMLBaseElement.idl:
+        * html/HTMLBaseFontElement.idl:
+        * html/HTMLBlockquoteElement.idl:
+        * html/HTMLBodyElement.idl:
+        * html/HTMLButtonElement.idl:
+        * html/HTMLDListElement.idl:
+        * html/HTMLDirectoryElement.idl:
+        * html/HTMLDivElement.idl:
+        * html/HTMLElement.idl:
+        * html/HTMLEmbedElement.idl:
+        * html/HTMLFontElement.idl:
+        * html/HTMLFormElement.idl:
+        * html/HTMLFrameElement.idl:
+        * html/HTMLFrameSetElement.idl:
+        * html/HTMLHRElement.idl:
+        * html/HTMLHeadElement.idl:
+        * html/HTMLHeadingElement.idl:
+        * html/HTMLHtmlElement.idl:
+        * html/HTMLIFrameElement.idl:
+        * html/HTMLImageElement.idl:
+        * html/HTMLInputElement.idl:
+        * html/HTMLIsIndexElement.idl:
+        * html/HTMLLIElement.idl:
+        * html/HTMLLabelElement.idl:
+        * html/HTMLLegendElement.idl:
+        * html/HTMLLinkElement.idl:
+        * html/HTMLMapElement.idl:
+        * html/HTMLMediaElement.idl:
+        * html/HTMLMenuElement.idl:
+        * html/HTMLMetaElement.idl:
+        * html/HTMLModElement.idl:
+        * html/HTMLOListElement.idl:
+        * html/HTMLObjectElement.idl:
+        * html/HTMLOptGroupElement.idl:
+        * html/HTMLOptionElement.idl:
+        * html/HTMLParagraphElement.idl:
+        * html/HTMLParamElement.idl:
+        * html/HTMLPreElement.idl:
+        * html/HTMLQuoteElement.idl:
+        * html/HTMLScriptElement.idl:
+        * html/HTMLStyleElement.idl:
+        * html/HTMLTableCaptionElement.idl:
+        * html/HTMLTableCellElement.idl:
+        * html/HTMLTableColElement.idl:
+        * html/HTMLTableElement.idl:
+        * html/HTMLTableRowElement.idl:
+        * html/HTMLTableSectionElement.idl:
+        * html/HTMLTextAreaElement.idl:
+        * html/HTMLUListElement.idl:
+        * html/HTMLVideoElement.idl:
+        * svg/SVGElement.idl:
+
 2010-06-17  Rob Buis  <rwlbuis@gmail.com>
 
         Reviewed by Dave Hyatt.

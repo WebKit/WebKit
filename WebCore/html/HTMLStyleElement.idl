@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2006 Apple Computer, Inc.
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
@@ -21,9 +21,9 @@
 module html {
 
     interface HTMLStyleElement : HTMLElement {
-        attribute boolean disabled;
-        attribute [Reflect] DOMString media;
-        attribute [Reflect] DOMString type;
+        attribute  boolean              disabled;
+        attribute  [ConvertNullToNullString] DOMString            media;
+        attribute  [ConvertNullToNullString] DOMString            type;
 
         // DOM Level 2 Style
         readonly attribute StyleSheet sheet;

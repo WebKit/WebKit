@@ -20,7 +20,7 @@
 module html {
 
     interface HTMLBlockquoteElement : HTMLElement {
-        attribute [Reflect] DOMString cite;
+        attribute [ConvertNullToNullString, Reflect] DOMString cite;
     };
 
 }

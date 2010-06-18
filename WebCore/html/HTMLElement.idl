@@ -26,11 +26,11 @@ module html {
     ] HTMLElement : Element {
                  // iht.com relies on id returning the empty string when no id is present. 
                  // Other browsers do this as well. So we don't convert null to JS null.
-                 attribute [Reflect] DOMString id;
-                 attribute [Reflect] DOMString title;
-                 attribute [Reflect] DOMString lang;
-                 attribute [Reflect] DOMString dir;
-                 attribute [Reflect=class] DOMString className;
+                 attribute [ConvertNullToNullString, Reflect] DOMString id;
+                 attribute [ConvertNullToNullString, Reflect] DOMString title;
+                 attribute [ConvertNullToNullString, Reflect] DOMString lang;
+                 attribute [ConvertNullToNullString, Reflect] DOMString dir;
+                 attribute [ConvertNullToNullString, Reflect=class] DOMString className;
 
                  attribute long            tabIndex;
                  attribute boolean         draggable;

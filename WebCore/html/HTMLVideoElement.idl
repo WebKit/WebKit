@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2007 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,19 +28,22 @@ module html {
         Conditional=VIDEO,
         GenerateNativeConverter
     ] HTMLVideoElement : HTMLMediaElement {
-        attribute [Reflect] unsigned long width;
-        attribute [Reflect] unsigned long height;
+        attribute unsigned long width;
+        attribute unsigned long height;
         readonly attribute unsigned long videoWidth;
         readonly attribute unsigned long videoHeight;
-        attribute [ConvertNullToNullString] DOMString poster;
+                 attribute [ConvertNullToNullString] DOMString poster;
 
         readonly attribute boolean webkitSupportsFullscreen;
         readonly attribute boolean webkitDisplayingFullscreen;
 
-        [NeedsUserGestureCheck] void webkitEnterFullscreen() raises (DOMException);
+        [NeedsUserGestureCheck] void webkitEnterFullscreen()
+            raises (DOMException);
         void webkitExitFullscreen();
     
-        [NeedsUserGestureCheck] void webkitEnterFullScreen() raises (DOMException);
+        [NeedsUserGestureCheck] void webkitEnterFullScreen()
+            raises (DOMException);
         void webkitExitFullScreen();
+
     };
 }

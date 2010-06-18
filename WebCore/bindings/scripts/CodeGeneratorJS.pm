@@ -3,7 +3,7 @@
 # Copyright (C) 2006 Anders Carlsson <andersca@mac.com>
 # Copyright (C) 2006, 2007 Samuel Weinig <sam@webkit.org>
 # Copyright (C) 2006 Alexey Proskuryakov <ap@webkit.org>
-# Copyright (C) 2006, 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
+# Copyright (C) 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
 # Copyright (C) 2009 Cameron McCormack <cam@mcc.id.au>
 # Copyright (C) Research In Motion Limited 2010. All rights reserved.
 #
@@ -1570,9 +1570,20 @@ sub GenerateImplementation
                             push(@implContent, "    JSValue result =  " . NativeToJSValue($attribute->signature, 0, $implClassName, "", "imp.$implGetterFunctionName()", "castedThis") . ";\n");
                         }
                     } else {
-                        my $getterExpression = "imp->" . $codeGenerator->GetterExpressionPrefix(\%implIncludes, $interfaceName, $attribute) . ")";
-                        my $jsType = NativeToJSValue($attribute->signature, 0, $implClassName, $implClassNameForValueConversion, $getterExpression, "castedThis");
                         push(@implContent, "    $implClassName* imp = static_cast<$implClassName*>(castedThis->impl());\n");
+                        my $value;
+                        my $reflect = $attribute->signature->extendedAttributes->{"Reflect"};
+                        my $reflectURL = $attribute->signature->extendedAttributes->{"ReflectURL"};
+                        if ($reflect || $reflectURL) {
+                            my $contentAttributeName = (($reflect || $reflectURL) eq "1") ? $name : ($reflect || $reflectURL);
+                            my $namespace = $codeGenerator->NamespaceForAttributeName($interfaceName, $contentAttributeName);
+                            $implIncludes{"${namespace}.h"} = 1;
+                            my $getAttributeFunctionName = $reflectURL ? "getURLAttribute" : "getAttribute";
+                            $value = "imp->$getAttributeFunctionName(${namespace}::${contentAttributeName}Attr)"
+                        } else {
+                            $value = "imp->$implGetterFunctionName()";
+                        }
+                        my $jsType = NativeToJSValue($attribute->signature, 0, $implClassName, $implClassNameForValueConversion, $value, "castedThis");
                         if ($codeGenerator->IsSVGAnimatedType($type)) {
                             push(@implContent, "    RefPtr<$type> obj = $jsType;\n");
                             push(@implContent, "    JSValue result =  toJS(exec, castedThis->globalObject(), obj.get(), imp);\n");
@@ -1723,10 +1734,17 @@ sub GenerateImplementation
                                 push(@implContent, "    imp->commitChange(podImp, castedThis);\n");
                             } else {
                                 my $nativeValue = JSValueToNative($attribute->signature, "value");
-                                my $setterExpressionPrefix = $codeGenerator->SetterExpressionPrefix(\%implIncludes, $interfaceName, $attribute);
-
                                 push(@implContent, "    ExceptionCode ec = 0;\n") if @{$attribute->setterExceptions};
-                                push(@implContent, "    imp->$setterExpressionPrefix$nativeValue");
+                                my $reflect = $attribute->signature->extendedAttributes->{"Reflect"};
+                                my $reflectURL = $attribute->signature->extendedAttributes->{"ReflectURL"};
+                                if ($reflect || $reflectURL) {
+                                    my $contentAttributeName = (($reflect || $reflectURL) eq "1") ? $name : ($reflect || $reflectURL);
+                                    my $namespace = $codeGenerator->NamespaceForAttributeName($interfaceName, $contentAttributeName);
+                                    $implIncludes{"${namespace}.h"} = 1;
+                                    push(@implContent, "    imp->setAttribute(${namespace}::${contentAttributeName}Attr, $nativeValue");
+                                } else {
+                                    push(@implContent, "    imp->set$implSetterFunctionName($nativeValue");
+                                }
                                 push(@implContent, ", ec") if @{$attribute->setterExceptions};
                                 push(@implContent, ");\n");
                                 push(@implContent, "    setDOMException(exec, ec);\n") if @{$attribute->setterExceptions};
@@ -2312,7 +2330,7 @@ sub JSValueToNative
     return "static_cast<SVGPaint::SVGPaintType>($value.toInt32(exec))" if $type eq "SVGPaintType";
 
     if ($type eq "DOMString") {
-        return "valueToStringWithNullCheck(exec, $value)" if $signature->extendedAttributes->{"ConvertNullToNullString"} || $signature->extendedAttributes->{"Reflect"} || $signature->extendedAttributes->{"ReflectURL"};
+        return "valueToStringWithNullCheck(exec, $value)" if $signature->extendedAttributes->{"ConvertNullToNullString"};
         return "valueToStringWithUndefinedOrNullCheck(exec, $value)" if $signature->extendedAttributes->{"ConvertUndefinedOrNullToNullString"};
         return "ustringToString($value.toString(exec))";
     }
@@ -2404,6 +2422,13 @@ sub NativeToJSValue
         } else {
             return "toJS(exec, $globalObject, JSSVGDynamicPODTypeWrapperCache<$nativeType, $implClassNameForValueConversion>::lookupOrCreateWrapper(imp, &${implClassNameForValueConversion}::$getter, &${implClassNameForValueConversion}::$setter).get(), JSSVGContextCache::svgContextForDOMObject(castedThis));"
         }
+    }
+
+    if ($codeGenerator->IsSVGAnimatedType($type)) {
+        # Some SVGFE*Element.idl use 'operator' as attribute name, rewrite as '_operator' to avoid clashes with C/C++
+        $value =~ s/operator\(\)/_operator\(\)/ if ($value =~ /operator/);
+        $value =~ s/\(\)//;
+        $value .= "Animated()";
     }
 
     if ($type eq "CSSStyleDeclaration") {

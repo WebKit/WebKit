@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2009, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2009 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
@@ -21,20 +21,21 @@
 module html {
 
     interface HTMLIFrameElement : HTMLElement {
-        attribute [Reflect] DOMString align;
-        attribute [Reflect] DOMString frameBorder;
-        attribute [Reflect] DOMString height;
-        attribute [Reflect] DOMString longDesc;
-        attribute [Reflect] DOMString marginHeight;
-        attribute [Reflect] DOMString marginWidth;
-        attribute [Reflect] DOMString name;
-        attribute [Reflect] DOMString sandbox;
-        attribute [Reflect] DOMString scrolling;
-        attribute [CustomSetter, Reflect] DOMString src;
-        attribute [Reflect] DOMString width;
+
+                 attribute [ConvertNullToNullString, Reflect] DOMString       align;
+                 attribute [ConvertNullToNullString, Reflect=frameborder] DOMString       frameBorder;
+                 attribute [ConvertNullToNullString, Reflect] DOMString       height;
+                 attribute [ConvertNullToNullString, Reflect=longdesc] DOMString       longDesc;
+                 attribute [ConvertNullToNullString, Reflect=marginheight] DOMString       marginHeight;
+                 attribute [ConvertNullToNullString, Reflect=marginwidth] DOMString       marginWidth;
+                 attribute [ConvertNullToNullString, Reflect] DOMString       name;
+                 attribute [ConvertNullToNullString, Reflect] DOMString       sandbox;
+                 attribute [ConvertNullToNullString, Reflect] DOMString       scrolling;
+                 attribute [ConvertNullToNullString, CustomSetter, Reflect] DOMString       src;
+                 attribute [ConvertNullToNullString, Reflect] DOMString       width;
 
         // Introduced in DOM Level 2:
-        readonly attribute [CheckFrameSecurity] Document contentDocument;
+        readonly attribute [CheckFrameSecurity] Document        contentDocument;
 
         // Extensions
         readonly attribute DOMWindow contentWindow;
@@ -45,6 +46,7 @@ module html {
             raises(DOMException);
 #endif
 #endif
+
     };
 
 }

@@ -20,8 +20,8 @@
 module html {
 
     interface HTMLBaseElement : HTMLElement {
-        attribute [Reflect] DOMString href;
-        attribute [Reflect] DOMString target;
+        attribute [ConvertNullToNullString, Reflect] DOMString href;
+        attribute [ConvertNullToNullString, Reflect] DOMString target;
     };
 
 }

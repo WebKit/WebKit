@@ -21,7 +21,6 @@
 #include "config.h"
 #include "JSTestObj.h"
 
-#include "HTMLNames.h"
 #include "JSEventListener.h"
 #include "JSTestObj.h"
 #include "JSlog.h"
@@ -47,7 +46,7 @@ ASSERT_CLASS_FITS_IN_CELL(JSTestObj);
 #define THUNK_GENERATOR(generator)
 #endif
 
-static const HashTableValue JSTestObjTableValues[30] =
+static const HashTableValue JSTestObjTableValues[21] =
 {
     { "readOnlyIntAttr", DontDelete | ReadOnly, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjReadOnlyIntAttr), (intptr_t)0 THUNK_GENERATOR(0) },
     { "readOnlyStringAttr", DontDelete | ReadOnly, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjReadOnlyStringAttr), (intptr_t)0 THUNK_GENERATOR(0) },
@@ -57,18 +56,9 @@ static const HashTableValue JSTestObjTableValues[30] =
     { "unsignedLongLongAttr", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjUnsignedLongLongAttr), (intptr_t)setJSTestObjUnsignedLongLongAttr THUNK_GENERATOR(0) },
     { "stringAttr", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjStringAttr), (intptr_t)setJSTestObjStringAttr THUNK_GENERATOR(0) },
     { "testObjAttr", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjTestObjAttr), (intptr_t)setJSTestObjTestObjAttr THUNK_GENERATOR(0) },
-    { "reflectedStringAttr", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjReflectedStringAttr), (intptr_t)setJSTestObjReflectedStringAttr THUNK_GENERATOR(0) },
-    { "reflectedIntegralAttr", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjReflectedIntegralAttr), (intptr_t)setJSTestObjReflectedIntegralAttr THUNK_GENERATOR(0) },
-    { "reflectedBooleanAttr", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjReflectedBooleanAttr), (intptr_t)setJSTestObjReflectedBooleanAttr THUNK_GENERATOR(0) },
-    { "reflectedURLAttr", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjReflectedURLAttr), (intptr_t)setJSTestObjReflectedURLAttr THUNK_GENERATOR(0) },
-    { "reflectedStringAttr", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjReflectedStringAttr), (intptr_t)setJSTestObjReflectedStringAttr THUNK_GENERATOR(0) },
-    { "reflectedCustomIntegralAttr", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjReflectedCustomIntegralAttr), (intptr_t)setJSTestObjReflectedCustomIntegralAttr THUNK_GENERATOR(0) },
-    { "reflectedCustomBooleanAttr", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjReflectedCustomBooleanAttr), (intptr_t)setJSTestObjReflectedCustomBooleanAttr THUNK_GENERATOR(0) },
-    { "reflectedURLAttr", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjReflectedURLAttr), (intptr_t)setJSTestObjReflectedURLAttr THUNK_GENERATOR(0) },
-    { "attrWithGetterException", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjAttrWithGetterException), (intptr_t)setJSTestObjAttrWithGetterException THUNK_GENERATOR(0) },
+    { "attrWithException", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjAttrWithException), (intptr_t)setJSTestObjAttrWithException THUNK_GENERATOR(0) },
     { "attrWithSetterException", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjAttrWithSetterException), (intptr_t)setJSTestObjAttrWithSetterException THUNK_GENERATOR(0) },
-    { "stringAttrWithGetterException", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjStringAttrWithGetterException), (intptr_t)setJSTestObjStringAttrWithGetterException THUNK_GENERATOR(0) },
-    { "stringAttrWithSetterException", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjStringAttrWithSetterException), (intptr_t)setJSTestObjStringAttrWithSetterException THUNK_GENERATOR(0) },
+    { "attrWithGetterException", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjAttrWithGetterException), (intptr_t)setJSTestObjAttrWithGetterException THUNK_GENERATOR(0) },
     { "customAttr", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjCustomAttr), (intptr_t)setJSTestObjCustomAttr THUNK_GENERATOR(0) },
     { "scriptStringAttr", DontDelete | ReadOnly, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjScriptStringAttr), (intptr_t)0 THUNK_GENERATOR(0) },
 #if ENABLE(Condition1)
@@ -88,7 +78,7 @@ static const HashTableValue JSTestObjTableValues[30] =
 };
 
 #undef THUNK_GENERATOR
-static JSC_CONST_HASHTABLE HashTable JSTestObjTable = { 69, 63, JSTestObjTableValues, 0 };
+static JSC_CONST_HASHTABLE HashTable JSTestObjTable = { 66, 63, JSTestObjTableValues, 0 };
 /* Hash table for constructor */
 #if ENABLE(JIT)
 #define THUNK_GENERATOR(generator) , generator
@@ -297,113 +287,31 @@ JSValue jsTestObjTestObjAttr(ExecState* exec, JSValue slotBase, const Identifier
     return result;
 }
 
-JSValue jsTestObjReflectedStringAttr(ExecState* exec, JSValue slotBase, const Identifier&)
+JSValue jsTestObjAttrWithException(ExecState* exec, JSValue slotBase, const Identifier&)
 {
     JSTestObj* castedThis = static_cast<JSTestObj*>(asObject(slotBase));
     UNUSED_PARAM(exec);
     TestObj* imp = static_cast<TestObj*>(castedThis->impl());
-    JSValue result = jsString(exec, imp->getAttribute(WebCore::HTMLNames::reflectedstringattrAttr));
-    return result;
-}
-
-JSValue jsTestObjReflectedIntegralAttr(ExecState* exec, JSValue slotBase, const Identifier&)
-{
-    JSTestObj* castedThis = static_cast<JSTestObj*>(asObject(slotBase));
-    UNUSED_PARAM(exec);
-    TestObj* imp = static_cast<TestObj*>(castedThis->impl());
-    JSValue result = jsNumber(exec, imp->getIntegralAttribute(WebCore::HTMLNames::reflectedintegralattrAttr));
-    return result;
-}
-
-JSValue jsTestObjReflectedBooleanAttr(ExecState* exec, JSValue slotBase, const Identifier&)
-{
-    JSTestObj* castedThis = static_cast<JSTestObj*>(asObject(slotBase));
-    UNUSED_PARAM(exec);
-    TestObj* imp = static_cast<TestObj*>(castedThis->impl());
-    JSValue result = jsBoolean(imp->hasAttribute(WebCore::HTMLNames::reflectedbooleanattrAttr));
-    return result;
-}
-
-JSValue jsTestObjReflectedURLAttr(ExecState* exec, JSValue slotBase, const Identifier&)
-{
-    JSTestObj* castedThis = static_cast<JSTestObj*>(asObject(slotBase));
-    UNUSED_PARAM(exec);
-    TestObj* imp = static_cast<TestObj*>(castedThis->impl());
-    JSValue result = jsString(exec, imp->getURLAttribute(WebCore::HTMLNames::reflectedurlattrAttr));
-    return result;
-}
-
-JSValue jsTestObjReflectedStringAttr(ExecState* exec, JSValue slotBase, const Identifier&)
-{
-    JSTestObj* castedThis = static_cast<JSTestObj*>(asObject(slotBase));
-    UNUSED_PARAM(exec);
-    TestObj* imp = static_cast<TestObj*>(castedThis->impl());
-    JSValue result = jsString(exec, imp->getAttribute(WebCore::HTMLNames::customContentStringAttrAttr));
-    return result;
-}
-
-JSValue jsTestObjReflectedCustomIntegralAttr(ExecState* exec, JSValue slotBase, const Identifier&)
-{
-    JSTestObj* castedThis = static_cast<JSTestObj*>(asObject(slotBase));
-    UNUSED_PARAM(exec);
-    TestObj* imp = static_cast<TestObj*>(castedThis->impl());
-    JSValue result = jsNumber(exec, imp->getIntegralAttribute(WebCore::HTMLNames::customContentIntegralAttrAttr));
-    return result;
-}
-
-JSValue jsTestObjReflectedCustomBooleanAttr(ExecState* exec, JSValue slotBase, const Identifier&)
-{
-    JSTestObj* castedThis = static_cast<JSTestObj*>(asObject(slotBase));
-    UNUSED_PARAM(exec);
-    TestObj* imp = static_cast<TestObj*>(castedThis->impl());
-    JSValue result = jsBoolean(imp->hasAttribute(WebCore::HTMLNames::customContentBooleanAttrAttr));
-    return result;
-}
-
-JSValue jsTestObjReflectedURLAttr(ExecState* exec, JSValue slotBase, const Identifier&)
-{
-    JSTestObj* castedThis = static_cast<JSTestObj*>(asObject(slotBase));
-    UNUSED_PARAM(exec);
-    TestObj* imp = static_cast<TestObj*>(castedThis->impl());
-    JSValue result = jsString(exec, imp->getURLAttribute(WebCore::HTMLNames::customContentURLAttrAttr));
-    return result;
-}
-
-JSValue jsTestObjAttrWithGetterException(ExecState* exec, JSValue slotBase, const Identifier&)
-{
-    JSTestObj* castedThis = static_cast<JSTestObj*>(asObject(slotBase));
-    ExceptionCode ec = 0;
-    TestObj* imp = static_cast<TestObj*>(castedThis->impl());
-    JSC::JSValue result = jsNumber(exec, imp->attrWithGetterException(ec));
-    setDOMException(exec, ec);
+    JSValue result = jsNumber(exec, imp->attrWithException());
     return result;
 }
 
 JSValue jsTestObjAttrWithSetterException(ExecState* exec, JSValue slotBase, const Identifier&)
 {
     JSTestObj* castedThis = static_cast<JSTestObj*>(asObject(slotBase));
-    UNUSED_PARAM(exec);
-    TestObj* imp = static_cast<TestObj*>(castedThis->impl());
-    JSValue result = jsNumber(exec, imp->attrWithSetterException());
-    return result;
-}
-
-JSValue jsTestObjStringAttrWithGetterException(ExecState* exec, JSValue slotBase, const Identifier&)
-{
-    JSTestObj* castedThis = static_cast<JSTestObj*>(asObject(slotBase));
     ExceptionCode ec = 0;
     TestObj* imp = static_cast<TestObj*>(castedThis->impl());
-    JSC::JSValue result = jsString(exec, imp->stringAttrWithGetterException(ec));
+    JSC::JSValue result = jsNumber(exec, imp->attrWithSetterException(ec));
     setDOMException(exec, ec);
     return result;
 }
 
-JSValue jsTestObjStringAttrWithSetterException(ExecState* exec, JSValue slotBase, const Identifier&)
+JSValue jsTestObjAttrWithGetterException(ExecState* exec, JSValue slotBase, const Identifier&)
 {
     JSTestObj* castedThis = static_cast<JSTestObj*>(asObject(slotBase));
     UNUSED_PARAM(exec);
     TestObj* imp = static_cast<TestObj*>(castedThis->impl());
-    JSValue result = jsString(exec, imp->stringAttrWithSetterException());
+    JSValue result = jsNumber(exec, imp->attrWithGetterException());
     return result;
 }
 
@@ -527,69 +435,11 @@ void setJSTestObjTestObjAttr(ExecState* exec, JSObject* thisObject, JSValue valu
     imp->setTestObjAttr(toTestObj(value));
 }
 
-void setJSTestObjReflectedStringAttr(ExecState* exec, JSObject* thisObject, JSValue value)
+void setJSTestObjAttrWithException(ExecState* exec, JSObject* thisObject, JSValue value)
 {
     JSTestObj* castedThis = static_cast<JSTestObj*>(thisObject);
     TestObj* imp = static_cast<TestObj*>(castedThis->impl());
-    imp->setAttribute(WebCore::HTMLNames::reflectedstringattrAttr, valueToStringWithNullCheck(exec, value));
-}
-
-void setJSTestObjReflectedIntegralAttr(ExecState* exec, JSObject* thisObject, JSValue value)
-{
-    JSTestObj* castedThis = static_cast<JSTestObj*>(thisObject);
-    TestObj* imp = static_cast<TestObj*>(castedThis->impl());
-    imp->setIntegralAttribute(WebCore::HTMLNames::reflectedintegralattrAttr, value.toInt32(exec));
-}
-
-void setJSTestObjReflectedBooleanAttr(ExecState* exec, JSObject* thisObject, JSValue value)
-{
-    JSTestObj* castedThis = static_cast<JSTestObj*>(thisObject);
-    TestObj* imp = static_cast<TestObj*>(castedThis->impl());
-    imp->setBooleanAttribute(WebCore::HTMLNames::reflectedbooleanattrAttr, value.toBoolean(exec));
-}
-
-void setJSTestObjReflectedURLAttr(ExecState* exec, JSObject* thisObject, JSValue value)
-{
-    JSTestObj* castedThis = static_cast<JSTestObj*>(thisObject);
-    TestObj* imp = static_cast<TestObj*>(castedThis->impl());
-    imp->setAttribute(WebCore::HTMLNames::reflectedurlattrAttr, valueToStringWithNullCheck(exec, value));
-}
-
-void setJSTestObjReflectedStringAttr(ExecState* exec, JSObject* thisObject, JSValue value)
-{
-    JSTestObj* castedThis = static_cast<JSTestObj*>(thisObject);
-    TestObj* imp = static_cast<TestObj*>(castedThis->impl());
-    imp->setAttribute(WebCore::HTMLNames::customContentStringAttrAttr, valueToStringWithNullCheck(exec, value));
-}
-
-void setJSTestObjReflectedCustomIntegralAttr(ExecState* exec, JSObject* thisObject, JSValue value)
-{
-    JSTestObj* castedThis = static_cast<JSTestObj*>(thisObject);
-    TestObj* imp = static_cast<TestObj*>(castedThis->impl());
-    imp->setIntegralAttribute(WebCore::HTMLNames::customContentIntegralAttrAttr, value.toInt32(exec));
-}
-
-void setJSTestObjReflectedCustomBooleanAttr(ExecState* exec, JSObject* thisObject, JSValue value)
-{
-    JSTestObj* castedThis = static_cast<JSTestObj*>(thisObject);
-    TestObj* imp = static_cast<TestObj*>(castedThis->impl());
-    imp->setBooleanAttribute(WebCore::HTMLNames::customContentBooleanAttrAttr, value.toBoolean(exec));
-}
-
-void setJSTestObjReflectedURLAttr(ExecState* exec, JSObject* thisObject, JSValue value)
-{
-    JSTestObj* castedThis = static_cast<JSTestObj*>(thisObject);
-    TestObj* imp = static_cast<TestObj*>(castedThis->impl());
-    imp->setAttribute(WebCore::HTMLNames::customContentURLAttrAttr, valueToStringWithNullCheck(exec, value));
-}
-
-void setJSTestObjAttrWithGetterException(ExecState* exec, JSObject* thisObject, JSValue value)
-{
-    JSTestObj* castedThis = static_cast<JSTestObj*>(thisObject);
-    TestObj* imp = static_cast<TestObj*>(castedThis->impl());
-    ExceptionCode ec = 0;
-    imp->setAttrWithGetterException(value.toInt32(exec), ec);
-    setDOMException(exec, ec);
+    imp->setAttrWithException(value.toInt32(exec));
 }
 
 void setJSTestObjAttrWithSetterException(ExecState* exec, JSObject* thisObject, JSValue value)
@@ -601,21 +451,12 @@ void setJSTestObjAttrWithSetterException(ExecState* exec, JSObject* thisObject, 
     setDOMException(exec, ec);
 }
 
-void setJSTestObjStringAttrWithGetterException(ExecState* exec, JSObject* thisObject, JSValue value)
+void setJSTestObjAttrWithGetterException(ExecState* exec, JSObject* thisObject, JSValue value)
 {
     JSTestObj* castedThis = static_cast<JSTestObj*>(thisObject);
     TestObj* imp = static_cast<TestObj*>(castedThis->impl());
     ExceptionCode ec = 0;
-    imp->setStringAttrWithGetterException(ustringToString(value.toString(exec)), ec);
-    setDOMException(exec, ec);
-}
-
-void setJSTestObjStringAttrWithSetterException(ExecState* exec, JSObject* thisObject, JSValue value)
-{
-    JSTestObj* castedThis = static_cast<JSTestObj*>(thisObject);
-    TestObj* imp = static_cast<TestObj*>(castedThis->impl());
-    ExceptionCode ec = 0;
-    imp->setStringAttrWithSetterException(ustringToString(value.toString(exec)), ec);
+    imp->setAttrWithGetterException(value.toInt32(exec), ec);
     setDOMException(exec, ec);
 }
 
@@ -1175,7 +1016,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod(ExecStat
         return jsTestObjPrototypeFunctionOverloadedMethod3(exec);
     if (exec->argumentCount() == 1)
         return jsTestObjPrototypeFunctionOverloadedMethod4(exec);
-    return throwVMTypeError(exec);
+    return JSValue::encode(throwTypeError(exec));
 }
 
 JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, TestObj* object)
