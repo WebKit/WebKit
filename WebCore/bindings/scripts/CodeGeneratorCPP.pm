@@ -679,18 +679,7 @@ sub GenerateImplementation
             # - GETTER
             my $getterSig = "$attributeType $className\:\:$attributeName() const\n";
             my $hasGetterException = @{$attribute->getterExceptions};
-            my $getterContentHead;
-            my $reflect = $attribute->signature->extendedAttributes->{"Reflect"};
-            my $reflectURL = $attribute->signature->extendedAttributes->{"ReflectURL"};
-            if ($reflect || $reflectURL) {
-                my $contentAttributeName = (($reflect || $reflectURL) eq "1") ? $attributeName : ($reflect || $reflectURL);
-                my $namespace = $codeGenerator->NamespaceForAttributeName($interfaceName, $contentAttributeName);
-                $implIncludes{"${namespace}.h"} = 1;
-                my $getAttributeFunctionName = $reflectURL ? "getURLAttribute" : "getAttribute";
-                $getterContentHead = "impl()->${getAttributeFunctionName}(WebCore::${namespace}::${contentAttributeName}Attr";
-            } else {
-                $getterContentHead = "impl()->" . $codeGenerator->WK_lcfirst($attributeName) . "(";
-            }
+            my $getterContentHead = "impl()->" . $codeGenerator->GetterExpressionPrefix(\%implIncludes, $interfaceName, $attribute);
             my $getterContentTail = ")";
 
             # Special cases
@@ -698,8 +687,6 @@ sub GenerateImplementation
             if ($attribute->signature->extendedAttributes->{"ConvertToString"}) {
                 $getterContentHead = "WebCore::String::number(" . $getterContentHead;
                 $getterContentTail .= ")";
-            } elsif ($attribute->signature->extendedAttributes->{"ConvertFromString"}) {
-                $getterContentTail .= ".toInt()";
             } elsif ($attribute->signature->type eq "SerializedScriptValue") {
                 $getterContentHead = "$getterContentHead";
                 $getterContentTail .= "->toString()";                
@@ -750,10 +737,8 @@ sub GenerateImplementation
                 my $argName = "new" . ucfirst($attributeName);
                 my $arg = GetCPPTypeGetter($argName, $idlType);
 
-                # The definition of ConvertFromString and ConvertToString is flipped for the setter
-                if ($attribute->signature->extendedAttributes->{"ConvertFromString"}) {
-                    $arg = "WebCore::String::number($arg)";
-                } elsif ($attribute->signature->extendedAttributes->{"ConvertToString"}) {
+                # The definition of ConvertToString is flipped for the setter
+                if ($attribute->signature->extendedAttributes->{"ConvertToString"}) {
                     $arg = "WebCore::String($arg).toInt()";
                 }
 
@@ -762,18 +747,10 @@ sub GenerateImplementation
                 push(@implContent, "{\n");
                 push(@implContent, AddEarlyReturnStatement());
 
-                my $reflect = $attribute->signature->extendedAttributes->{"Reflect"};
-                my $reflectURL = $attribute->signature->extendedAttributes->{"ReflectURL"};
                 push(@implContent, "    $exceptionInit\n") if $hasSetterException;
                 my $ec = $hasSetterException ? ", ec" : "";
-                if ($reflect || $reflectURL) {
-                    my $contentAttributeName = (($reflect || $reflectURL) eq "1") ? $attributeName : ($reflect || $reflectURL);
-                    my $namespace = $codeGenerator->NamespaceForAttributeName($interfaceName, $contentAttributeName);
-                    $implIncludes{"${namespace}.h"} = 1;
-                    push(@implContent, "    impl()->setAttribute(WebCore::${namespace}::${contentAttributeName}Attr, $arg$ec);\n");
-                } else {
-                    push(@implContent, "    impl()->$coreSetterName($arg$ec);\n");
-                }
+                my $setterExpressionPrefix = $codeGenerator->SetterExpressionPrefix(\%implIncludes, $interfaceName, $attribute);
+                push(@implContent, "    impl()->$setterExpressionPrefix$arg$ec);\n");
                 push(@implContent, "    $exceptionRaiseOnError\n") if $hasSetterException;
                 push(@implContent, "}\n\n");
             }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc.
+ * Copyright (C) 2006, 2007, 2010 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
@@ -21,23 +21,21 @@
 module html {
 
     interface HTMLTableCellElement : HTMLElement {
-
-        readonly attribute long            cellIndex;
-                 attribute [ConvertNullToNullString] DOMString       abbr;
-                 attribute [ConvertNullToNullString] DOMString       align;
-                 attribute [ConvertNullToNullString] DOMString       axis;
-                 attribute [ConvertNullToNullString] DOMString       bgColor;
-                 attribute [ConvertNullToNullString] DOMString       ch;
-                 attribute [ConvertNullToNullString] DOMString       chOff;
-                 attribute long            colSpan;
-                 attribute [ConvertNullToNullString] DOMString       headers;
-                 attribute [ConvertNullToNullString] DOMString       height;
-                 attribute boolean         noWrap;
-                 attribute long            rowSpan;
-                 attribute [ConvertNullToNullString] DOMString       scope;
-                 attribute [ConvertNullToNullString] DOMString       vAlign;
-                 attribute [ConvertNullToNullString] DOMString       width;
-
+        readonly attribute long cellIndex;
+        attribute [Reflect] DOMString abbr;
+        attribute [Reflect] DOMString align;
+        attribute [Reflect] DOMString axis;
+        attribute [Reflect] DOMString bgColor;
+        attribute [Reflect=char] DOMString ch;
+        attribute [Reflect=charoff] DOMString chOff;
+        attribute long colSpan;
+        attribute [Reflect] DOMString headers;
+        attribute [Reflect] DOMString height;
+        attribute boolean noWrap;
+        attribute long rowSpan;
+        attribute [Reflect] DOMString scope;
+        attribute [Reflect] DOMString vAlign;
+        attribute [Reflect] DOMString width;
     };
 
 }

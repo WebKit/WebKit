@@ -1,3 +1,145 @@
+2010-06-17  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Implement additional DOM attribute reflection for bindings
+        https://bugs.webkit.org/show_bug.cgi?id=39936
+
+        - Added support for [Reflect] for long, unsigned long, and boolean
+          attributes.
+        - Fixed code that set attributes like this: <video controls="controls">
+          to instead set them like this: <video controls>.
+        - Added lots more uses of [Reflect].
+        - Removed now-unneeded [ConvertFromString].
+        - Made [Reflect] imply [ConvertNullToNullString] so we can get rid
+          of most uses of the latter.
+        - Made [Reflect] automatically lowercase the name of the reflected
+          content attribute to minimize the need to specify a custom content
+          attribute name.
+
+        One thing this patch does *not* do is remove the unneeded functions
+        in the various DOM classes that are no longer used by the bindings.
+        We should do that in a followup.
+
+        * bindings/scripts/CodeGenerator.pm: Added new functions so code
+        can be shared across bindings, GetterExpressionPrefix and
+        SetterExpressionPrefix. We can do a lot more refactoring like
+        this in the future.
+
+        * bindings/scripts/CodeGeneratorCPP.pm: Removed unneeded
+        ConvertFromString handling, changed to use the new
+        GetterExpressionPrefix and SetterExpressionPrefix functions
+        to better handle reflected DOM attributes.
+
+        * bindings/scripts/CodeGeneratorGObject.pm: Removed unneeded
+        ConvertFromString handling, changed to use the new
+        GetterExpressionPrefix and SetterExpressionPrefix functions
+        to better handle reflected DOM attributes. Fixed a few things
+        in the output so the .cpp file will have more WebKit style.
+        The .h file should be GTK style, but the .cpp file can be the
+        standard WebKit style eventually.
+
+        * bindings/scripts/CodeGeneratorJS.pm: Changed to use the new
+        GetterExpressionPrefix and SetterExpressionPrefix functions
+        and removed a now-unneeded IsSVGAnimatedType special case since
+        the new functions take care of it. Made reflected attributes
+        automatically convert null to the null string without a
+        separate ConvertNullToNullString attribute.
+
+        * bindings/scripts/CodeGeneratorObjC.pm: Changed to use the new
+        GetterExpressionPrefix and SetterExpressionPrefix functions
+        and removed a now-unneeded IsSVGAnimatedType special case since
+        the new functions take care of it. Redid the special cases for
+        ownerDocument and for operator to fit better with the new code
+        paths. Removed unneeded ConvertFromString handling.
+
+        * bindings/scripts/CodeGeneratorV8.pm: Changed to use the new
+        GetterExpressionPrefix and SetterExpressionPrefix functions
+        and removed a now-unneeded IsSVGAnimatedType special case since
+        the new functions take care of it. Made reflected attributes
+        automatically convert null to the null string without a
+        separate ConvertNullToNullString attribute.
+
+        * bindings/scripts/test/TestObj.idl: Added some test cases for
+        content attribute reflection and for exceptions in string-typed
+        attributes.
+
+        * bindings/scripts/test/CPP/WebKitDOMTestObj.cpp: Updated.
+        * bindings/scripts/test/CPP/WebKitDOMTestObj.h: Ditto.
+        * bindings/scripts/test/GObject/WebKitDOMTestObj.cpp: Ditto.
+        * bindings/scripts/test/GObject/WebKitDOMTestObj.h: Ditto.
+        * bindings/scripts/test/JS/JSTestObj.cpp: Ditto.
+        * bindings/scripts/test/JS/JSTestObj.h: Ditto.
+        * bindings/scripts/test/ObjC/DOMTestObj.h: Ditto.
+        * bindings/scripts/test/ObjC/DOMTestObj.mm: Ditto.
+        * bindings/scripts/test/V8/V8TestObj.cpp: Ditto.
+
+        * dom/Element.cpp:
+        (WebCore::Element::getIntegralAttribute): Added.
+        (WebCore::Element::setIntegralAttribute): Added.
+        (WebCore::Element::getUnsignedIntegralAttribute): Added.
+        (WebCore::Element::setUnsignedIntegralAttribute): Added.
+        * dom/Element.h: Added new attribute get/set functions for bindings.
+
+        * html/HTMLAnchorElement.idl:
+        * html/HTMLAppletElement.idl:
+        * html/HTMLAreaElement.idl:
+        * html/HTMLBRElement.idl:
+        * html/HTMLBaseElement.idl:
+        * html/HTMLBaseFontElement.idl:
+        * html/HTMLBlockquoteElement.idl:
+        * html/HTMLBodyElement.idl:
+        * html/HTMLButtonElement.idl:
+        * html/HTMLDListElement.idl:
+        * html/HTMLDirectoryElement.idl:
+        * html/HTMLDivElement.idl:
+        * html/HTMLElement.idl:
+        * html/HTMLEmbedElement.idl:
+        * html/HTMLFontElement.idl:
+        * html/HTMLFormElement.idl:
+        * html/HTMLFrameElement.idl:
+        * html/HTMLFrameSetElement.idl:
+        * html/HTMLHRElement.idl:
+        * html/HTMLHeadElement.idl:
+        * html/HTMLHeadingElement.idl:
+        * html/HTMLHtmlElement.idl:
+        * html/HTMLIFrameElement.idl:
+        * html/HTMLImageElement.idl:
+        * html/HTMLInputElement.idl:
+        * html/HTMLIsIndexElement.idl:
+        * html/HTMLLIElement.idl:
+        * html/HTMLLabelElement.idl:
+        * html/HTMLLegendElement.idl:
+        * html/HTMLLinkElement.idl:
+        * html/HTMLMapElement.idl:
+        * html/HTMLMediaElement.idl:
+        * html/HTMLMenuElement.idl:
+        * html/HTMLMetaElement.idl:
+        * html/HTMLModElement.idl:
+        * html/HTMLOListElement.idl:
+        * html/HTMLObjectElement.idl:
+        * html/HTMLOptGroupElement.idl:
+        * html/HTMLOptionElement.idl:
+        * html/HTMLParagraphElement.idl:
+        * html/HTMLParamElement.idl:
+        * html/HTMLPreElement.idl:
+        * html/HTMLQuoteElement.idl:
+        * html/HTMLScriptElement.idl:
+        * html/HTMLStyleElement.idl:
+        * html/HTMLTableCaptionElement.idl:
+        * html/HTMLTableCellElement.idl:
+        * html/HTMLTableColElement.idl:
+        * html/HTMLTableElement.idl:
+        * html/HTMLTableRowElement.idl:
+        * html/HTMLTableSectionElement.idl:
+        * html/HTMLTextAreaElement.idl:
+        * html/HTMLUListElement.idl:
+        * html/HTMLVideoElement.idl:
+        * svg/SVGElement.idl:
+        Added more uses of [Reflect]. Got rid of uses of [ConvertNullToNullString] that
+        are now unneeded since [Reflect] now implies that. Changed formatting to be
+        simpler and consistent without all the lining up and multiple lines.
+
 2010-06-17  MORITA Hajime  <morrita@google.com>
 
         Unreviewd, fixed a build break.

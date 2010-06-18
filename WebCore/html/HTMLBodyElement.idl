@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2009, 2010 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
@@ -21,12 +21,12 @@
 module html {
 
     interface HTMLBodyElement : HTMLElement {
-        attribute [ConvertNullToNullString, Reflect=alink] DOMString aLink;
-        attribute [ConvertNullToNullString, Reflect] DOMString background;
-        attribute [ConvertNullToNullString, Reflect=bgcolor] DOMString bgColor;
-        attribute [ConvertNullToNullString, Reflect] DOMString link;
-        attribute [ConvertNullToNullString, Reflect] DOMString text;
-        attribute [ConvertNullToNullString, Reflect=vlink] DOMString vLink;
+        attribute [Reflect] DOMString aLink;
+        attribute [Reflect] DOMString background;
+        attribute [Reflect] DOMString bgColor;
+        attribute [Reflect] DOMString link;
+        attribute [Reflect] DOMString text;
+        attribute [Reflect] DOMString vLink;
 
 #if !defined(LANGUAGE_OBJECTIVE_C) || !LANGUAGE_OBJECTIVE_C
         // Event handler attributes

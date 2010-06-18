@@ -39,6 +39,7 @@
 #import "DOMlogInternal.h"
 #import "EventListener.h"
 #import "ExceptionHandlers.h"
+#import "HTMLNames.h"
 #import "JSMainThreadExecState.h"
 #import "KURL.h"
 #import "ObjCEventListener.h"
@@ -151,25 +152,123 @@
     IMPL->setTestObjAttr(core(newTestObjAttr));
 }
 
-- (int)attrWithException
+- (NSString *)reflectedStringAttr
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->attrWithException();
+    return IMPL->getAttribute(WebCore::HTMLNames::reflectedstringattrAttr);
 }
 
-- (void)setAttrWithException:(int)newAttrWithException
+- (void)setReflectedStringAttr:(NSString *)newReflectedStringAttr
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setAttrWithException(newAttrWithException);
+    IMPL->setAttribute(WebCore::HTMLNames::reflectedstringattrAttr, newReflectedStringAttr);
+}
+
+- (int)reflectedIntegralAttr
+{
+    WebCore::JSMainThreadNullState state;
+    return IMPL->getIntegralAttribute(WebCore::HTMLNames::reflectedintegralattrAttr);
+}
+
+- (void)setReflectedIntegralAttr:(int)newReflectedIntegralAttr
+{
+    WebCore::JSMainThreadNullState state;
+    IMPL->setIntegralAttribute(WebCore::HTMLNames::reflectedintegralattrAttr, newReflectedIntegralAttr);
+}
+
+- (BOOL)reflectedBooleanAttr
+{
+    WebCore::JSMainThreadNullState state;
+    return IMPL->hasAttribute(WebCore::HTMLNames::reflectedbooleanattrAttr);
+}
+
+- (void)setReflectedBooleanAttr:(BOOL)newReflectedBooleanAttr
+{
+    WebCore::JSMainThreadNullState state;
+    IMPL->setBooleanAttribute(WebCore::HTMLNames::reflectedbooleanattrAttr, newReflectedBooleanAttr);
+}
+
+- (NSString *)reflectedURLAttr
+{
+    WebCore::JSMainThreadNullState state;
+    return IMPL->getURLAttribute(WebCore::HTMLNames::reflectedurlattrAttr);
+}
+
+- (void)setReflectedURLAttr:(NSString *)newReflectedURLAttr
+{
+    WebCore::JSMainThreadNullState state;
+    IMPL->setAttribute(WebCore::HTMLNames::reflectedurlattrAttr, newReflectedURLAttr);
+}
+
+- (NSString *)reflectedStringAttr
+{
+    WebCore::JSMainThreadNullState state;
+    return IMPL->getAttribute(WebCore::HTMLNames::customContentStringAttrAttr);
+}
+
+- (void)setReflectedStringAttr:(NSString *)newReflectedStringAttr
+{
+    WebCore::JSMainThreadNullState state;
+    IMPL->setAttribute(WebCore::HTMLNames::customContentStringAttrAttr, newReflectedStringAttr);
+}
+
+- (int)reflectedCustomIntegralAttr
+{
+    WebCore::JSMainThreadNullState state;
+    return IMPL->getIntegralAttribute(WebCore::HTMLNames::customContentIntegralAttrAttr);
+}
+
+- (void)setReflectedCustomIntegralAttr:(int)newReflectedCustomIntegralAttr
+{
+    WebCore::JSMainThreadNullState state;
+    IMPL->setIntegralAttribute(WebCore::HTMLNames::customContentIntegralAttrAttr, newReflectedCustomIntegralAttr);
+}
+
+- (BOOL)reflectedCustomBooleanAttr
+{
+    WebCore::JSMainThreadNullState state;
+    return IMPL->hasAttribute(WebCore::HTMLNames::customContentBooleanAttrAttr);
+}
+
+- (void)setReflectedCustomBooleanAttr:(BOOL)newReflectedCustomBooleanAttr
+{
+    WebCore::JSMainThreadNullState state;
+    IMPL->setBooleanAttribute(WebCore::HTMLNames::customContentBooleanAttrAttr, newReflectedCustomBooleanAttr);
+}
+
+- (NSString *)reflectedURLAttr
+{
+    WebCore::JSMainThreadNullState state;
+    return IMPL->getURLAttribute(WebCore::HTMLNames::customContentURLAttrAttr);
+}
+
+- (void)setReflectedURLAttr:(NSString *)newReflectedURLAttr
+{
+    WebCore::JSMainThreadNullState state;
+    IMPL->setAttribute(WebCore::HTMLNames::customContentURLAttrAttr, newReflectedURLAttr);
+}
+
+- (int)attrWithGetterException
+{
+    WebCore::JSMainThreadNullState state;
+    WebCore::ExceptionCode ec = 0;
+    int result = IMPL->attrWithGetterException(ec);
+    WebCore::raiseOnDOMError(ec);
+    return result;
+}
+
+- (void)setAttrWithGetterException:(int)newAttrWithGetterException
+{
+    WebCore::JSMainThreadNullState state;
+    WebCore::ExceptionCode ec = 0;
+    IMPL->setAttrWithGetterException(newAttrWithGetterException, ec);
+    WebCore::raiseOnDOMError(ec);
 }
 
 - (int)attrWithSetterException
 {
     WebCore::JSMainThreadNullState state;
-    WebCore::ExceptionCode ec = 0;
-    int result = IMPL->attrWithSetterException(ec);
-    WebCore::raiseOnDOMError(ec);
-    return result;
+    return IMPL->attrWithSetterException();
 }
 
 - (void)setAttrWithSetterException:(int)newAttrWithSetterException
@@ -180,17 +279,34 @@
     WebCore::raiseOnDOMError(ec);
 }
 
-- (int)attrWithGetterException
-{
-    WebCore::JSMainThreadNullState state;
-    return IMPL->attrWithGetterException();
-}
-
-- (void)setAttrWithGetterException:(int)newAttrWithGetterException
+- (NSString *)stringAttrWithGetterException
 {
     WebCore::JSMainThreadNullState state;
     WebCore::ExceptionCode ec = 0;
-    IMPL->setAttrWithGetterException(newAttrWithGetterException, ec);
+    NSString *result = IMPL->stringAttrWithGetterException(ec);
+    WebCore::raiseOnDOMError(ec);
+    return result;
+}
+
+- (void)setStringAttrWithGetterException:(NSString *)newStringAttrWithGetterException
+{
+    WebCore::JSMainThreadNullState state;
+    WebCore::ExceptionCode ec = 0;
+    IMPL->setStringAttrWithGetterException(newStringAttrWithGetterException, ec);
+    WebCore::raiseOnDOMError(ec);
+}
+
+- (NSString *)stringAttrWithSetterException
+{
+    WebCore::JSMainThreadNullState state;
+    return IMPL->stringAttrWithSetterException();
+}
+
+- (void)setStringAttrWithSetterException:(NSString *)newStringAttrWithSetterException
+{
+    WebCore::JSMainThreadNullState state;
+    WebCore::ExceptionCode ec = 0;
+    IMPL->setStringAttrWithSetterException(newStringAttrWithSetterException, ec);
     WebCore::raiseOnDOMError(ec);
 }
 

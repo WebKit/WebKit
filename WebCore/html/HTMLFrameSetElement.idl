@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2009 Apple Inc. All rights reserve
+ * Copyright (C) 2006, 2007, 2009, 2010 Apple Inc. All rights reserve
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
@@ -23,8 +23,8 @@ module html {
     interface [
         HasOverridingNameGetter
     ] HTMLFrameSetElement : HTMLElement {
-        attribute [ConvertNullToNullString] DOMString cols;
-        attribute [ConvertNullToNullString] DOMString rows;
+        attribute [Reflect] DOMString cols;
+        attribute [Reflect] DOMString rows;
 
 #if !defined(LANGUAGE_OBJECTIVE_C) || !LANGUAGE_OBJECTIVE_C
         // Event handler attributes

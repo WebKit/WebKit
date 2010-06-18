@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2009, 2010 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
@@ -26,37 +26,36 @@ module html {
         CustomCall
     ] HTMLObjectElement : HTMLElement {
         readonly attribute HTMLFormElement form;
-                 attribute [ConvertNullToNullString, Reflect] DOMString       code;
-                 attribute [ConvertNullToNullString, Reflect] DOMString       align;
-                 attribute [ConvertNullToNullString, Reflect] DOMString       archive;
-                 attribute [ConvertNullToNullString, Reflect] DOMString       border;
-                 attribute [ConvertNullToNullString, Reflect=codebase] DOMString       codeBase;
-                 attribute [ConvertNullToNullString, Reflect=codetype] DOMString       codeType;
-                 attribute [ConvertNullToNullString, ReflectURL] DOMString       data;
-                 attribute boolean         declare;
-                 attribute [ConvertNullToNullString, Reflect] DOMString       height;
-                 attribute long            hspace;
-                 attribute [ConvertNullToNullString, Reflect] DOMString       name;
-                 attribute [ConvertNullToNullString, Reflect] DOMString       standby;
-                 attribute [ConvertNullToNullString, Reflect] DOMString       type;
-                 attribute [ConvertNullToNullString, Reflect=usemap] DOMString       useMap;
-                 attribute long            vspace;
-                 attribute [ConvertNullToNullString, Reflect] DOMString       width;
-        readonly attribute boolean         willValidate;
+        attribute [Reflect] DOMString code;
+        attribute [Reflect] DOMString align;
+        attribute [Reflect] DOMString archive;
+        attribute [Reflect] DOMString border;
+        attribute [Reflect] DOMString codeBase;
+        attribute [Reflect] DOMString codeType;
+        attribute [ReflectURL] DOMString data;
+        attribute [Reflect] boolean declare;
+        attribute [Reflect] DOMString height;
+        attribute [Reflect] long hspace;
+        attribute [Reflect] DOMString name;
+        attribute [Reflect] DOMString standby;
+        attribute [Reflect] DOMString type;
+        attribute [Reflect] DOMString useMap;
+        attribute [Reflect] long vspace;
+        attribute [Reflect] DOMString width;
+        readonly attribute boolean willValidate;
 
         // Introduced in DOM Level 2:
-        readonly attribute [CheckFrameSecurity] Document        contentDocument;
+        readonly attribute [CheckFrameSecurity] Document contentDocument;
 
 #if defined(ENABLE_SVG) && ENABLE_SVG
 #if !defined(LANGUAGE_OBJECTIVE_C) || !LANGUAGE_OBJECTIVE_C || defined(ENABLE_SVG_DOM_OBJC_BINDINGS) && ENABLE_SVG_DOM_OBJC_BINDINGS
-        [SVGCheckSecurityDocument] SVGDocument getSVGDocument()
-            raises(DOMException);
+        [SVGCheckSecurityDocument] SVGDocument getSVGDocument() raises(DOMException);
 #endif
 #endif
 
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
         // Objective-C extension:
-        readonly attribute URL             absoluteImageURL;
+        readonly attribute URL absoluteImageURL;
 #endif
     };
 

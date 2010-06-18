@@ -3,7 +3,7 @@
 # Copyright (C) 2006 Anders Carlsson <andersca@mac.com> 
 # Copyright (C) 2006, 2007 Samuel Weinig <sam@webkit.org>
 # Copyright (C) 2006 Alexey Proskuryakov <ap@webkit.org>
-# Copyright (C) 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
+# Copyright (C) 2006, 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
 # Copyright (C) 2009 Cameron McCormack <cam@mcc.id.au>
 # Copyright (C) 2010 Google Inc.
 #
@@ -1175,13 +1175,9 @@ sub GenerateImplementation
             } elsif ($attributeName eq "frame") {
                 # Special case attribute frame to be frameBorders.
                 $attributeInterfaceName .= "Borders";
-            } elsif ($attributeName eq "ownerDocument") {
-                # FIXME: for now special case attribute ownerDocument to call document, this is incorrect
-                # legacy behavior. (see http://bugs.webkit.org/show_bug.cgi?id=10889)
-                $attributeName = "document";
-            } elsif ($codeGenerator->IsSVGAnimatedType($idlType)) {
-                # Special case for animated types.
-                $attributeName .= "Animated";
+            } elsif ($attributeName eq "operator") {
+                # Avoid clash with C++ keyword.
+                $attributeInterfaceName = "_operator";
             }
 
             $attributeNames{$attributeInterfaceName} = 1;
@@ -1189,23 +1185,14 @@ sub GenerateImplementation
             # - GETTER
             my $getterSig = "- ($attributeType)$attributeInterfaceName\n";
 
-            # Some SVGFE*Element.idl use 'operator' as attribute name, rewrite as '_operator' to avoid clashes with C/C++
-            $attributeName =~ s/operatorAnimated/_operatorAnimated/ if ($attributeName =~ /operatorAnimated/);
-            $getterSig =~ s/operator/_operator/ if ($getterSig =~ /operator/);
+            my $getterExpressionPrefix = $codeGenerator->GetterExpressionPrefix(\%implIncludes, $interfaceName, $attribute);
+
+            # FIXME: Special case attribute ownerDocument to call document. This makes it return the
+            # document when called on the document itself. Legacy behavior, see <https://bugs.webkit.org/show_bug.cgi?id=10889>.
+            $getterExpressionPrefix =~ s/\bownerDocument\b/document/;
 
             my $hasGetterException = @{$attribute->getterExceptions};
-            my $getterContentHead;
-            my $reflect = $attribute->signature->extendedAttributes->{"Reflect"};
-            my $reflectURL = $attribute->signature->extendedAttributes->{"ReflectURL"};
-            if ($reflect || $reflectURL) {
-                my $contentAttributeName = (($reflect || $reflectURL) eq "1") ? $attributeName : ($reflect || $reflectURL);
-                my $namespace = $codeGenerator->NamespaceForAttributeName($interfaceName, $contentAttributeName);
-                $implIncludes{"${namespace}.h"} = 1;
-                my $getAttributeFunctionName = $reflectURL ? "getURLAttribute" : "getAttribute";
-                $getterContentHead = "IMPL->${getAttributeFunctionName}(WebCore::${namespace}::${contentAttributeName}Attr";
-            } else {
-                $getterContentHead = "IMPL->" . $codeGenerator->WK_lcfirst($attributeName) . "(";
-            }
+            my $getterContentHead = "IMPL->$getterExpressionPrefix";
             my $getterContentTail = ")";
 
             # Special case for DOMSVGNumber
@@ -1256,8 +1243,6 @@ sub GenerateImplementation
             } elsif ($attribute->signature->extendedAttributes->{"ConvertToString"}) {
                 $getterContentHead = "WebCore::String::number(" . $getterContentHead;
                 $getterContentTail .= ")";
-            } elsif ($attribute->signature->extendedAttributes->{"ConvertFromString"}) {
-                $getterContentTail .= ".toInt()";
             } elsif ($codeGenerator->IsPodType($idlType) or $idlType eq "Date") {
                 $getterContentHead = "kit($getterContentHead";
                 $getterContentTail .= ")";
@@ -1316,10 +1301,8 @@ sub GenerateImplementation
                 my $argName = "new" . ucfirst($attributeInterfaceName);
                 my $arg = GetObjCTypeGetter($argName, $idlType);
 
-                # The definition of ConvertFromString and ConvertToString is flipped for the setter
-                if ($attribute->signature->extendedAttributes->{"ConvertFromString"}) {
-                    $arg = "WebCore::String::number($arg)";
-                } elsif ($attribute->signature->extendedAttributes->{"ConvertToString"}) {
+                # The definition of ConvertToString is flipped for the setter
+                if ($attribute->signature->extendedAttributes->{"ConvertToString"}) {
                     $arg = "WebCore::String($arg).toInt()";
                 }
 
@@ -1346,18 +1329,10 @@ sub GenerateImplementation
                         push(@implContent, "    IMPL->$coreSetterName($arg);\n");
                     }
                 } else {
-                    my $reflect = $attribute->signature->extendedAttributes->{"Reflect"};
-                    my $reflectURL = $attribute->signature->extendedAttributes->{"ReflectURL"};
-                    push(@implContent, "    $exceptionInit\n") if $hasSetterException;
+                    my $setterExpressionPrefix = $codeGenerator->SetterExpressionPrefix(\%implIncludes, $interfaceName, $attribute);
                     my $ec = $hasSetterException ? ", ec" : "";
-                    if ($reflect || $reflectURL) {
-                        my $contentAttributeName = (($reflect || $reflectURL) eq "1") ? $attributeName : ($reflect || $reflectURL);
-                        my $namespace = $codeGenerator->NamespaceForAttributeName($interfaceName, $contentAttributeName);
-                        $implIncludes{"${namespace}.h"} = 1;
-                        push(@implContent, "    IMPL->setAttribute(WebCore::${namespace}::${contentAttributeName}Attr, $arg$ec);\n");
-                    } else {
-                        push(@implContent, "    IMPL->$coreSetterName($arg$ec);\n");
-                    }
+                    push(@implContent, "    $exceptionInit\n") if $hasSetterException;
+                    push(@implContent, "    IMPL->$setterExpressionPrefix$arg$ec);\n");
                     push(@implContent, "    $exceptionRaiseOnError\n") if $hasSetterException;
                 }
 

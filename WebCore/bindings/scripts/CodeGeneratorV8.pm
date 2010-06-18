@@ -677,7 +677,7 @@ END
         my $reflect = $attribute->signature->extendedAttributes->{"Reflect"};
         if ($getterStringUsesImp && $reflect && IsNodeSubType($dataNode) && $codeGenerator->IsStringType($attrType)) {
             # Generate super-compact call for regular attribute getter:
-            my $contentAttributeName = $reflect eq "1" ? $attrName : $reflect;
+            my $contentAttributeName = $reflect eq "1" ? lc $attrName : $reflect;
             my $namespace = $codeGenerator->NamespaceForAttributeName($interfaceName, $contentAttributeName);
             $implIncludes{"${namespace}.h"} = 1;
             push(@implContentDecls, "    return getElementStringAttr(info, ${namespace}::${contentAttributeName}Attr);\n");
@@ -708,34 +708,13 @@ END
         $attrName = $attribute->signature->extendedAttributes->{"v8referenceattr"};
     }
 
-    my $getterFunc = $codeGenerator->WK_lcfirst($attrName);
-
-    if ($codeGenerator->IsSVGAnimatedType($attribute->signature->type)) {
-        # Some SVGFE*Element.idl use 'operator' as attribute name; rewrite as '_operator' to avoid clashes with C/C++
-        $getterFunc = "_" . $getterFunc if ($attrName =~ /operator/);
-        $getterFunc .= "Animated";
-    }
-
     my $returnType = GetTypeFromSignature($attribute->signature);
 
     my $getterString;
     if ($getterStringUsesImp) {
-        my $reflect = $attribute->signature->extendedAttributes->{"Reflect"};
-        my $reflectURL = $attribute->signature->extendedAttributes->{"ReflectURL"};
-        if ($reflect || $reflectURL) {
-            my $contentAttributeName = ($reflect || $reflectURL) eq "1" ? $attrName : ($reflect || $reflectURL);
-            my $namespace = $codeGenerator->NamespaceForAttributeName($interfaceName, $contentAttributeName);
-            $implIncludes{"${namespace}.h"} = 1;
-            my $getAttributeFunctionName = $reflectURL ? "getURLAttribute" : "getAttribute";
-            $getterString = "imp->$getAttributeFunctionName(${namespace}::${contentAttributeName}Attr";
-        } else {
-            $getterString = "imp->$getterFunc(";
-        }
+        $getterString = "imp->" . $codeGenerator->GetterExpressionPrefix(\%implIncludes, $interfaceName, $attribute);
         $getterString .= "ec" if $useExceptions;
         $getterString .= ")";
-        if ($nativeType eq "int" and $attribute->signature->extendedAttributes->{"ConvertFromString"}) {
-            $getterString .= ".toInt()";
-        }
     } else {
         $getterString = "impInstance";
     }
@@ -887,7 +866,7 @@ END
         my $reflectURL = $attribute->signature->extendedAttributes->{"ReflectURL"};
         if (($reflect || $reflectURL) && IsNodeSubType($dataNode) && $codeGenerator->IsStringType($attrType)) {
             # Generate super-compact call for regular attribute setter:
-            my $contentAttributeName = ($reflect || $reflectURL) eq "1" ? $attrName : ($reflect || $reflectURL);
+            my $contentAttributeName = ($reflect || $reflectURL) eq "1" ? lc $attrName : ($reflect || $reflectURL);
             my $namespace = $codeGenerator->NamespaceForAttributeName($interfaceName, $contentAttributeName);
             $implIncludes{"${namespace}.h"} = 1;
             push(@implContentDecls, "    setElementStringAttr(info, ${namespace}::${contentAttributeName}Attr, value);\n");
@@ -912,14 +891,7 @@ END
         push(@implContentDecls, "    $nativeType v = " . JSValueToNative($attribute->signature, "value") . ";\n");
     }
 
-    my $result = "";
-    if ($nativeType eq "int" and $attribute->signature->extendedAttributes->{"ConvertFromString"}) {
-        $result .= "WebCore::String::number(";
-    }
-    $result .= "v";
-    if ($nativeType eq "int" and $attribute->signature->extendedAttributes->{"ConvertFromString"}) {
-        $result .= ")";
-    }
+    my $result = "v";
     my $returnType = GetTypeFromSignature($attribute->signature);
     if (IsRefPtrType($returnType)) {
         $result = "WTF::getPtr(" . $result . ")";
@@ -935,15 +907,8 @@ END
     if ($implClassName eq "float") {
         push(@implContentDecls, "    *imp = $result;\n");
     } else {
-        my $implSetterFunctionName = $codeGenerator->WK_ucfirst($attrName);
-        my $reflect = $attribute->signature->extendedAttributes->{"Reflect"};
-        my $reflectURL = $attribute->signature->extendedAttributes->{"ReflectURL"};
-        if ($reflect || $reflectURL) {
-            my $contentAttributeName = ($reflect || $reflectURL) eq "1" ? $attrName : ($reflect || $reflectURL);
-            my $namespace = $codeGenerator->NamespaceForAttributeName($interfaceName, $contentAttributeName);
-            $implIncludes{"${namespace}.h"} = 1;
-            push(@implContentDecls, "    imp->setAttribute(${namespace}::${contentAttributeName}Attr, $result");
-        } elsif ($attribute->signature->type eq "EventListener") {
+        if ($attribute->signature->type eq "EventListener") {
+            my $implSetterFunctionName = $codeGenerator->WK_ucfirst($attrName);
             $implIncludes{"V8AbstractEventListener.h"} = 1;
             push(@implContentDecls, "    transferHiddenDependency(info.Holder(), imp->$attrName(), value, V8${interfaceName}::eventListenerCacheIndex);\n");
             if ($interfaceName eq "WorkerContext" and $attribute->signature->name eq "onerror") {
@@ -954,7 +919,8 @@ END
                 push(@implContentDecls, "    imp->set$implSetterFunctionName(V8DOMWrapper::getEventListener(value, true, ListenerFindOrCreate)");
             }
         } else {
-            push(@implContentDecls, "    imp->set$implSetterFunctionName($result");
+            my $setterExpressionPrefix = $codeGenerator->SetterExpressionPrefix(\%implIncludes, $interfaceName, $attribute);
+            push(@implContentDecls, "    imp->$setterExpressionPrefix$result");
         }
         push(@implContentDecls, ", ec") if $useExceptions;
         push(@implContentDecls, ");\n");
@@ -2712,7 +2678,7 @@ sub GetNativeTypeFromSignature
         my $mode = "";
         if ($signature->extendedAttributes->{"ConvertUndefinedOrNullToNullString"}) {
             $mode = "WithUndefinedOrNullCheck";
-        } elsif ($signature->extendedAttributes->{"ConvertNullToNullString"}) {
+        } elsif ($signature->extendedAttributes->{"ConvertNullToNullString"} || $signature->extendedAttributes->{"Reflect"} || $signature->extendedAttributes->{"ReflectURL"}) {
             $mode = "WithNullCheck";
         }
         $type .= "<$mode>";

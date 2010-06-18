@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.
+ * Copyright (C) 2006, 2010 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
@@ -22,8 +22,8 @@ module html {
 
     interface HTMLLegendElement : HTMLElement {
         readonly attribute HTMLFormElement form;
-        attribute [ConvertNullToNullString] DOMString accessKey;
-        attribute [ConvertNullToNullString] DOMString align;
+        attribute [Reflect] DOMString accessKey;
+        attribute [Reflect] DOMString align;
     };
 
 }

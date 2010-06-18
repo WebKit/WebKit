@@ -40,6 +40,16 @@ module test {
         attribute DOMString                stringAttr;
         attribute TestObj                  testObjAttr;
 
+        // Reflected DOM attributes
+        attribute [Reflect] DOMString reflectedStringAttr;
+        attribute [Reflect] long reflectedIntegralAttr;
+        attribute [Reflect] boolean reflectedBooleanAttr;
+        attribute [ReflectURL] DOMString reflectedURLAttr;
+        attribute [Reflect=customContentStringAttr] DOMString reflectedStringAttr;
+        attribute [Reflect=customContentIntegralAttr] long reflectedCustomIntegralAttr;
+        attribute [Reflect=customContentBooleanAttr] boolean reflectedCustomBooleanAttr;
+        attribute [ReflectURL=customContentURLAttr] DOMString reflectedURLAttr;
+
         // Methods
         void    voidMethod();
         void    voidMethodWithArgs(in long intArg, in DOMString strArg, in TestObj objArg);
@@ -55,10 +65,11 @@ module test {
         void serializedValue(in SerializedScriptValue serializedArg);
 
         // Exceptions
-        void    methodWithException() raises(DOMException);
-        attribute long attrWithException raises(DOMException);
-        attribute long attrWithSetterException getter raises(DOMException);
-        attribute long attrWithGetterException setter raises(DOMException);
+        void methodWithException() raises(DOMException);
+        attribute long attrWithGetterException getter raises(DOMException);
+        attribute long attrWithSetterException setter raises(DOMException);
+        attribute DOMString stringAttrWithGetterException getter raises(DOMException);
+        attribute DOMString stringAttrWithSetterException setter raises(DOMException);
 
         // 'Custom' extended attribute
         attribute [Custom] long            customAttr;

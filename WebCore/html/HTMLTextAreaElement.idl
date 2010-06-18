@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.
+ * Copyright (C) 2006, 2010 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
@@ -21,36 +21,35 @@
 module html {
 
     interface HTMLTextAreaElement : HTMLElement {
-                 attribute  [ConvertNullToNullString] DOMString            defaultValue;
-        readonly attribute  HTMLFormElement      form;
-        readonly attribute  ValidityState        validity;
-                 attribute  [ConvertNullToNullString] DOMString            accessKey;
-                 attribute  long                 cols;
-                 attribute  boolean              disabled;
-                 attribute  boolean              autofocus;
-                 attribute  long                 maxLength
-                     setter raises(DOMException);
-                 attribute  [ConvertNullToNullString] DOMString            name;
-                 attribute  [ConvertNullToNullString, Reflect] DOMString   placeholder;
-                 attribute  boolean              readOnly;
-                 attribute  boolean              required;
-                 attribute  long                 rows;
-        readonly attribute  DOMString            type;
-                 attribute  [ConvertNullToNullString] DOMString            value;
-        readonly attribute  unsigned long        textLength;
+        attribute [ConvertNullToNullString] DOMString defaultValue;
+        readonly attribute  HTMLFormElement form;
+        readonly attribute  ValidityState validity;
+        attribute DOMString accessKey;
+        attribute long cols;
+        attribute boolean disabled;
+        attribute boolean autofocus;
+        attribute long maxLength setter raises(DOMException);
+        attribute [ConvertNullToNullString] DOMString name;
+        attribute [Reflect] DOMString placeholder;
+        attribute boolean readOnly;
+        attribute  boolean required;
+        attribute long rows;
+        readonly attribute  DOMString type;
+        attribute [ConvertNullToNullString] DOMString value;
+        readonly attribute  unsigned long textLength;
         
-        void     select();
+        void select();
 
-        readonly attribute boolean         willValidate;
-        readonly attribute DOMString       validationMessage;
-        boolean  checkValidity();
-        void     setCustomValidity(in [ConvertUndefinedOrNullToNullString] DOMString error);
+        readonly attribute boolean willValidate;
+        readonly attribute DOMString validationMessage;
+        boolean checkValidity();
+        void setCustomValidity(in [ConvertUndefinedOrNullToNullString] DOMString error);
 
        // WinIE & FireFox extension:
-                 attribute long selectionStart;
-                 attribute long selectionEnd;
+        attribute long selectionStart;
+        attribute long selectionEnd;
         void setSelectionRange(in long start, in long end);
-        readonly attribute  NodeList              labels;
+        readonly attribute  NodeList labels;
     };
 
 }

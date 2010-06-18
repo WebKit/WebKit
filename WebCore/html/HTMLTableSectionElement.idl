@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc.
+ * Copyright (C) 2006, 2007, 2010 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
@@ -23,18 +23,13 @@ module html {
     interface [
         GenerateNativeConverter
     ] HTMLTableSectionElement : HTMLElement {
-
-                 attribute [ConvertNullToNullString] DOMString       align;
-                 attribute [ConvertNullToNullString] DOMString       ch;
-                 attribute [ConvertNullToNullString] DOMString       chOff;
-                 attribute [ConvertNullToNullString] DOMString       vAlign;
-        readonly attribute HTMLCollection  rows;
-
-        HTMLElement        insertRow(in long index)
-            raises(DOMException);
-        void               deleteRow(in long index)
-            raises(DOMException);
-
+        attribute [Reflect] DOMString align;
+        attribute [Reflect=char] DOMString ch;
+        attribute [Reflect=charoff] DOMString chOff;
+        attribute [Reflect] DOMString vAlign;
+        readonly attribute HTMLCollection rows;
+        HTMLElement insertRow(in long index) raises(DOMException);
+        void deleteRow(in long index) raises(DOMException);
     };
 
 }

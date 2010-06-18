@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.
+ * Copyright (C) 2006, 2010 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -20,8 +20,8 @@
 module html {
 
     interface HTMLOptGroupElement : HTMLElement {
-        attribute  boolean              disabled;
-        attribute  [ConvertNullToNullString] DOMString            label;
+        attribute [Reflect] boolean disabled;
+        attribute [Reflect] DOMString label;
     };
 
 }
