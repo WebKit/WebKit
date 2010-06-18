@@ -1,5 +1,18 @@
 2010-06-18  Nikolas Zimmermann  <nzimmermann@rim.com>
 
+        Not reviewed. Rebaseline win results.
+
+        * platform/win/svg/W3C-SVG-1.1/animate-elem-82-t-expected.txt: Added.
+        * platform/win/svg/W3C-SVG-1.1/coords-trans-01-b-expected.txt:
+        * platform/win/svg/custom/broken-internal-references-expected.txt:
+        * platform/win/svg/custom/clip-path-referencing-use2-expected.txt:
+        * platform/win/svg/custom/image-with-transform-clip-filter-expected.txt:
+        * platform/win/svg/custom/junk-data-expected.txt: Added.
+        * platform/win/svg/custom/missing-xlink-expected.txt: Added.
+        * platform/win/svg/filters/feColorMatrix-values-expected.txt:
+
+2010-06-18  Nikolas Zimmermann  <nzimmermann@rim.com>
+
         Not reviewed. Rebaseline mac-snowleopard results.
 
         * platform/mac/svg/W3C-SVG-1.1/text-intro-05-t-expected.txt:
