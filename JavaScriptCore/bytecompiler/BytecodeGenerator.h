@@ -363,7 +363,12 @@ namespace JSC {
         RegisterID* emitNextPropertyName(RegisterID* dst, RegisterID* base, RegisterID* i, RegisterID* size, RegisterID* iter, Label* target);
 
         RegisterID* emitCatch(RegisterID*, Label* start, Label* end);
-        void emitThrow(RegisterID* exc) { emitUnaryNoDstOp(op_throw, exc); }
+        void emitThrow(RegisterID* exc)
+        { 
+            m_usesExceptions = true;
+            emitUnaryNoDstOp(op_throw, exc);
+        }
+
         RegisterID* emitNewError(RegisterID* dst, bool isReferenceError, JSValue message);
         void emitPushNewScope(RegisterID* dst, const Identifier& property, RegisterID* value);
 
@@ -552,6 +557,7 @@ namespace JSC {
 
         unsigned m_emitNodeDepth;
 
+        bool m_usesExceptions;
         bool m_regeneratingForExceptionInfo;
         CodeBlock* m_codeBlockBeingRegeneratedFrom;
 

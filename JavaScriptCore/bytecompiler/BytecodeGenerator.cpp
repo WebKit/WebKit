@@ -156,7 +156,7 @@ void BytecodeGenerator::generate()
     m_codeBlock->setIsNumericCompareFunction(instructions() == m_globalData->numericCompareFunction(m_scopeChain->globalObject()->globalExec()));
 
 #if !ENABLE(OPCODE_SAMPLING)
-    if (!m_regeneratingForExceptionInfo && (m_codeType == FunctionCode || m_codeType == EvalCode))
+    if (!m_regeneratingForExceptionInfo && !m_usesExceptions && (m_codeType == FunctionCode || m_codeType == EvalCode))
         m_codeBlock->clearExceptionInfo();
 #endif
 
@@ -219,6 +219,7 @@ BytecodeGenerator::BytecodeGenerator(ProgramNode* programNode, const Debugger* d
     , m_globalData(&scopeChain.globalObject()->globalExec()->globalData())
     , m_lastOpcodeID(op_end)
     , m_emitNodeDepth(0)
+    , m_usesExceptions(false)
     , m_regeneratingForExceptionInfo(false)
     , m_codeBlockBeingRegeneratedFrom(0)
 {
@@ -304,6 +305,7 @@ BytecodeGenerator::BytecodeGenerator(FunctionBodyNode* functionBody, const Debug
     , m_globalData(&scopeChain.globalObject()->globalExec()->globalData())
     , m_lastOpcodeID(op_end)
     , m_emitNodeDepth(0)
+    , m_usesExceptions(false)
     , m_regeneratingForExceptionInfo(false)
     , m_codeBlockBeingRegeneratedFrom(0)
 {
@@ -405,6 +407,7 @@ BytecodeGenerator::BytecodeGenerator(EvalNode* evalNode, const Debugger* debugge
     , m_globalData(&scopeChain.globalObject()->globalExec()->globalData())
     , m_lastOpcodeID(op_end)
     , m_emitNodeDepth(0)
+    , m_usesExceptions(false)
     , m_regeneratingForExceptionInfo(false)
     , m_codeBlockBeingRegeneratedFrom(0)
 {
@@ -1842,6 +1845,7 @@ RegisterID* BytecodeGenerator::emitNextPropertyName(RegisterID* dst, RegisterID*
 
 RegisterID* BytecodeGenerator::emitCatch(RegisterID* targetRegister, Label* start, Label* end)
 {
+    m_usesExceptions = true;
 #if ENABLE(JIT)
     HandlerInfo info = { start->bind(0, 0), end->bind(0, 0), instructions().size(), m_dynamicScopeDepth + m_baseScopeDepth, CodeLocationLabel() };
 #else

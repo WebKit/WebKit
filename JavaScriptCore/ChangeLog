@@ -1,3 +1,24 @@
+2010-06-17  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Don't throw away exception information for functions that use exceptions
+        https://bugs.webkit.org/show_bug.cgi?id=40786
+
+        Simple patch to stop JSC from throwing away the exception information
+        of a function that uses "exceptiony" features like try and throw.  This
+        is a speed up for catching expressions but it's difficult to quantify as
+        the old cost of reparsing is amortised over all exceptions caught in the
+        effected function.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::reparseForExceptionInfoIfNecessary):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::generate):
+        (JSC::BytecodeGenerator::emitCatch):
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::emitThrow):
+
 2010-06-18  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.
