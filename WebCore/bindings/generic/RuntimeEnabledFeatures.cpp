@@ -31,8 +31,7 @@
 #include "config.h"
 #include "RuntimeEnabledFeatures.h"
 
-#include "Database.h"
-#include "DatabaseSync.h"
+#include "AbstractDatabase.h"
 #include "MediaPlayer.h"
 #include "SharedWorkerRepository.h"
 #include "WebSocket.h"
@@ -95,12 +94,12 @@ bool RuntimeEnabledFeatures::webSocketEnabled()
 #if ENABLE(DATABASE)
 bool RuntimeEnabledFeatures::openDatabaseEnabled()
 {
-    return Database::isAvailable();
+    return AbstractDatabase::isAvailable();
 }
 
 bool RuntimeEnabledFeatures::openDatabaseSyncEnabled()
 {
-    return DatabaseSync::isAvailable();
+    return AbstractDatabase::isAvailable();
 }
 #endif
 

@@ -44,9 +44,6 @@ typedef int ExceptionCode;
 // Instances of this class should be created and used only on the worker's context thread.
 class DatabaseSync : public RefCounted<DatabaseSync> {
 public:
-    static void setIsAvailable(bool);
-    static bool isAvailable();
-
     ~DatabaseSync();
 
     // Direct support for the DOM API

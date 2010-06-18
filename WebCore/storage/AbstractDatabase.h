@@ -41,6 +41,9 @@ class SecurityOrigin;
 
 class AbstractDatabase : public ThreadSafeShared<AbstractDatabase> {
 public:
+    static bool isAvailable();
+    static void setIsAvailable(bool available);
+
     virtual ~AbstractDatabase();
 
     virtual ScriptExecutionContext* scriptExecutionContext() const = 0;

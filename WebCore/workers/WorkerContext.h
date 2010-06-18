@@ -30,9 +30,6 @@
 #if ENABLE(WORKERS)
 
 #include "AtomicStringHash.h"
-#include "Database.h"
-#include "DatabaseSync.h"
-#include "DatabaseCallback.h"
 #include "EventListener.h"
 #include "EventNames.h"
 #include "EventTarget.h"
@@ -47,6 +44,8 @@
 namespace WebCore {
 
     class Database;
+    class DatabaseCallback;
+    class DatabaseSync;
     class NotificationCenter;
     class ScheduledAction;
     class WorkerLocation;

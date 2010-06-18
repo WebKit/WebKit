@@ -24,9 +24,9 @@
 #include "qwebpage_p.h"
 #include "qwebplugindatabase_p.h"
 
+#include "AbstractDatabase.h"
 #include "Cache.h"
 #include "CrossOriginPreflightResultCache.h"
-#include "Database.h"
 #include "FontCache.h"
 #include "Page.h"
 #include "PageCache.h"
@@ -217,7 +217,7 @@ void QWebSettingsPrivate::apply()
 #if ENABLE(DATABASE)
         value = attributes.value(QWebSettings::OfflineStorageDatabaseEnabled,
                                       global->attributes.value(QWebSettings::OfflineStorageDatabaseEnabled));
-        WebCore::Database::setIsAvailable(value);
+        WebCore::AbstractDatabase::setIsAvailable(value);
 #endif
 
         value = attributes.value(QWebSettings::OfflineWebApplicationCacheEnabled,

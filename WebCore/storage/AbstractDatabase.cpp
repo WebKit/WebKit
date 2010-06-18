@@ -33,6 +33,18 @@
 
 namespace WebCore {
 
+static bool isDatabaseAvailable = true;
+
+bool AbstractDatabase::isAvailable()
+{
+    return isDatabaseAvailable;
+}
+
+void AbstractDatabase::setIsAvailable(bool available)
+{
+    isDatabaseAvailable = available;
+}
+
 AbstractDatabase::~AbstractDatabase()
 {
 }

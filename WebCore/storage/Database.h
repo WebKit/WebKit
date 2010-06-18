@@ -58,9 +58,6 @@ typedef int ExceptionCode;
 
 class Database : public AbstractDatabase {
 public:
-    static void setIsAvailable(bool);
-    static bool isAvailable();
-
     virtual ~Database();
 
     // Direct support for the DOM API

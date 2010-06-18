@@ -31,6 +31,7 @@
 
 #if ENABLE(DATABASE)
 #include "Database.h"
+#include "DatabaseSync.h"
 #include "JSDatabase.h"
 #include "JSDatabaseCallback.h"
 #include "JSDatabaseSync.h"

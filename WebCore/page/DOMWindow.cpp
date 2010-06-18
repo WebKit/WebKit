@@ -26,6 +26,7 @@
 #include "config.h"
 #include "DOMWindow.h"
 
+#include "AbstractDatabase.h"
 #include "Base64.h"
 #include "BarInfo.h"
 #include "BeforeUnloadEvent.h"
@@ -1224,7 +1225,7 @@ double DOMWindow::devicePixelRatio() const
 PassRefPtr<Database> DOMWindow::openDatabase(const String& name, const String& version, const String& displayName, unsigned long estimatedSize, PassRefPtr<DatabaseCallback> creationCallback, ExceptionCode& ec)
 {
     RefPtr<Database> database = 0;
-    if (m_frame && Database::isAvailable() && m_frame->document()->securityOrigin()->canAccessDatabase())
+    if (m_frame && AbstractDatabase::isAvailable() && m_frame->document()->securityOrigin()->canAccessDatabase())
         database = Database::openDatabase(m_frame->document(), name, version, displayName, estimatedSize, creationCallback, ec);
 
     if (!database && !ec)

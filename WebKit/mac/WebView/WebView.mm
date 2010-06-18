@@ -103,13 +103,13 @@
 #import <Foundation/NSURLConnection.h>
 #import <JavaScriptCore/APICast.h>
 #import <JavaScriptCore/JSValueRef.h>
+#import <WebCore/AbstractDatabase.h>
 #import <WebCore/ApplicationCacheStorage.h>
 #import <WebCore/BackForwardList.h>
 #import <WebCore/Cache.h>
 #import <WebCore/ColorMac.h>
 #import <WebCore/CSSComputedStyleDeclaration.h>
 #import <WebCore/Cursor.h>
-#import <WebCore/Database.h>
 #import <WebCore/Document.h>
 #import <WebCore/DocumentLoader.h>
 #import <WebCore/DragController.h>
@@ -1357,7 +1357,7 @@ static bool fastDocumentTeardownEnabled()
     settings->setMinimumLogicalFontSize([preferences minimumLogicalFontSize]);
     settings->setPluginsEnabled([preferences arePlugInsEnabled]);
 #if ENABLE(DATABASE)
-    Database::setIsAvailable([preferences databasesEnabled]);
+    AbstractDatabase::setIsAvailable([preferences databasesEnabled]);
 #endif
     settings->setLocalStorageEnabled([preferences localStorageEnabled]);
     settings->setExperimentalNotificationsEnabled([preferences experimentalNotificationsEnabled]);

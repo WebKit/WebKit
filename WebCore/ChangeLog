@@ -1,3 +1,29 @@
+2010-06-15  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Move isAvailable()/setIsAvailable() from Database/DatabaseSync to AbstractDatabase.
+        https://bugs.webkit.org/show_bug.cgi?id=39041
+
+        * WebCore.base.exp
+        * bindings/generic/RuntimeEnabledFeatures.cpp:
+        (WebCore::RuntimeEnabledFeatures::openDatabaseEnabled):
+        (WebCore::RuntimeEnabledFeatures::openDatabaseSyncEnabled):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::openDatabase):
+        * storage/AbstractDatabase.cpp:
+        (WebCore::AbstractDatabase::isAvailable):
+        (WebCore::AbstractDatabase::setIsAvailable):
+        * storage/AbstractDatabase.h:
+        * storage/Database.cpp:
+        * storage/Database.h:
+        * storage/DatabaseSync.cpp:
+        * storage/DatabaseSync.h:
+        * workers/WorkerContext.cpp:
+        (WebCore::WorkerContext::openDatabase):
+        (WebCore::WorkerContext::openDatabaseSync):
+        * workers/WorkerContext.h:
+
 2010-06-18  Adam Barth  <abarth@webkit.org>
 
         Rubber-stamped by Eric Seidel.

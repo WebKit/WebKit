@@ -73,18 +73,6 @@ const String& Database::databaseInfoTableName()
     return name;
 }
 
-static bool isDatabaseAvailable = true;
-
-void Database::setIsAvailable(bool available)
-{
-    isDatabaseAvailable = available;
-}
-
-bool Database::isAvailable()
-{
-    return isDatabaseAvailable;
-}
-
 static Mutex& guidMutex()
 {
     // Note: We don't have to use AtomicallyInitializedStatic here because
