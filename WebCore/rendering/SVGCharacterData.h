@@ -90,12 +90,6 @@ struct SVGChar {
     AffineTransform characterTransform() const;
 };
 
-struct SVGTextDecorationInfo {
-    // ETextDecoration is meant to be used here
-    HashMap<int, RenderObject*> fillServerMap;
-    HashMap<int, RenderObject*> strokeServerMap;
-};
-
 } // namespace WebCore
 
 #endif // ENABLE(SVG)

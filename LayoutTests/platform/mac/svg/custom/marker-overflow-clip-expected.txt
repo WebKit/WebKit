@@ -7,6 +7,6 @@ layer at (0,0) size 800x600
       RenderPath {rect} at (0,0) size 50x50 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00 L100.00,0.00 L100.00,100.00 L0.00,100.00 Z"]
     RenderPath {rect} at (0,0) size 25x25 [fill={[type=SOLID] [color=#000000]}] [data="M0.00,0.00 L25.00,0.00 L25.00,25.00 L0.00,25.00 Z"]
     RenderPath {path} at (0,0) size 250x250 [start marker=marker] [data="M100.00,100.00 L100.00,100.00"]
-    RenderSVGText {text} at (30,20) size 298x18 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,-14) size 298x18
+    RenderSVGText {text} at (30,6) size 298x18 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 298x18
         chunk 1 text run 1 at (30.00,20.00) startOffset 0 endOffset 45 width 298.00: "There should be a 150x150 green rect at 25x25"

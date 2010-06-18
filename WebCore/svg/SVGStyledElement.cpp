@@ -228,11 +228,6 @@ void SVGStyledElement::parseMappedAttribute(Attribute* attr)
 
 bool SVGStyledElement::isKnownAttribute(const QualifiedName& attrName)
 {
-    // Recognize all style related SVG CSS properties
-    int propId = SVGStyledElement::cssPropertyIdForSVGAttributeName(attrName);
-    if (propId > 0)
-        return true;
-
     return isIdAttributeName(attrName) || attrName == HTMLNames::styleAttr; 
 }
 

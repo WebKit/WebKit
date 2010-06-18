@@ -204,6 +204,12 @@ void RootInlineBox::childRemoved(InlineBox* box)
 
 int RootInlineBox::verticallyAlignBoxes(int heightOfBlock, GlyphOverflowAndFallbackFontsMap& textBoxDataMap)
 {
+#if ENABLE(SVG)
+    // SVG will handle vertical alignment on its own.
+    if (isSVGRootInlineBox())
+        return 0;
+#endif
+
     int maxPositionTop = 0;
     int maxPositionBottom = 0;
     int maxAscent = 0;

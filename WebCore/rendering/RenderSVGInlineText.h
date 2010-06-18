@@ -36,28 +36,19 @@ public:
 
 private:
     virtual const char* renderName() const { return "RenderSVGInlineText"; }
-        
+
     virtual void styleDidChange(StyleDifference, const RenderStyle*);
 
     // FIXME: We need objectBoundingBox for DRT results and filters at the moment.
     // This should be fixed to give back the objectBoundingBox of the text root.
     virtual FloatRect objectBoundingBox() const { return FloatRect(); }
 
-    virtual void absoluteRects(Vector<IntRect>& rects, int tx, int ty);
-    virtual void absoluteQuads(Vector<FloatQuad>&);
-
     virtual bool requiresLayer() const { return false; }
-    virtual IntRect selectionRectForRepaint(RenderBoxModelObject* repaintContainer, bool clipToVisibleContent = true);
     virtual bool isSVGText() const { return true; }
 
     virtual IntRect localCaretRect(InlineBox*, int caretOffset, int* extraWidthToEndOfLine = 0);
-    virtual VisiblePosition positionForPoint(const IntPoint&);
-
-    virtual void destroy();
 
     virtual InlineTextBox* createTextBox();
-    IntRect computeRepaintRectForRange(RenderBoxModelObject* repaintContainer, int startPos, int endPos);
-    FloatQuad computeRepaintQuadForRange(RenderBoxModelObject* repaintContainer, int startPos, int endPos);
 };
 
 }

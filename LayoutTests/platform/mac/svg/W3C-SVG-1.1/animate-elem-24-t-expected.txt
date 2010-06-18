@@ -3,35 +3,35 @@ layer at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-    RenderSVGContainer {g} at (43,39) size 288x238
+    RenderSVGContainer {g} at (42,38) size 289x236
       RenderSVGContainer {g} at (70,92) size 149x133
-        RenderSVGText {text} at (70,110) size 149x23 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,-18) size 149x23
+        RenderSVGText {text} at (70,92) size 149x23 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 149x23
             chunk 1 text run 1 at (70.00,110.00) startOffset 0 endOffset 18 width 149.00: "Text from 0s to 3s"
-        RenderSVGText {text} at (100,185) size 80x23 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,-18) size 80x23
+        RenderSVGText {text} at (100,167) size 80x23 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 80x23
             chunk 1 text run 1 at (100.00,185.00) startOffset 0 endOffset 10 width 80.00: "Text at 6s"
-        RenderSVGText {text} at (100,220) size 80x23 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,-18) size 80x23
+        RenderSVGText {text} at (100,202) size 80x23 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 80x23
             chunk 1 text run 1 at (100.00,220.00) startOffset 0 endOffset 10 width 80.00: "Text at 9s"
-      RenderSVGContainer {g} at (43,39) size 288x238
-        RenderSVGText {text} at (0,0) size 77x16 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,-14) size 77x16
+      RenderSVGContainer {g} at (42,38) size 289x236
+        RenderSVGText {text} at (0,-15) size 77x16 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 77x16
             chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 11 width 76.84: "It's alive!"
-        RenderSVGText {text} at (0,0) size 154x33 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,-28) size 154x33
+        RenderSVGText {text} at (0,-30) size 154x33 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 154x33
             chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 11 width 153.68: "It's alive!"
-        RenderSVGText {text} at (100,270) size 231x49 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,-42) size 231x49
+        RenderSVGText {text} at (100,225) size 231x49 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 231x49
             chunk 1 text run 1 at (100.00,270.00) startOffset 0 endOffset 11 width 230.52: "It's alive!"
-      RenderSVGContainer {g} at (43,39) size 75x53 [transform={m=((1.00,0.00)(0.00,1.00)) t=(50.00,90.00)}]
-        RenderSVGText {text} at (0,0) size 77x16 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,-14) size 77x16
+      RenderSVGContainer {g} at (42,38) size 76x53 [transform={m=((1.00,0.00)(0.00,1.00)) t=(50.00,90.00)}]
+        RenderSVGText {text} at (0,-15) size 77x16 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 77x16
             chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 11 width 76.84: "It's alive!"
           RenderSVGInlineText {#text} at (0,0) size 0x0
           RenderSVGInlineText {#text} at (0,0) size 0x0
           RenderSVGInlineText {#text} at (0,0) size 0x0
-    RenderSVGText {text} at (10,340) size 264x46 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,-36) size 264x46
+    RenderSVGText {text} at (10,304) size 264x46 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 264x46
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 264.00: "$Revision: 1.7 $"
     RenderPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00 L479.00,1.00 L479.00,359.00 L1.00,359.00 Z"]

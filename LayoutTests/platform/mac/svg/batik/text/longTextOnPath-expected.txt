@@ -3,8 +3,8 @@ layer at (0,0) size 800x600
 layer at (0,0) size 450x500
   RenderSVGRoot {svg} at (0,0) size 450x500
     RenderSVGContainer {g} at (20,26) size 407x449
-      RenderSVGText {text} at (98,40) size 254x17 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,-14) size 254x17
+      RenderSVGText {text} at (98,26) size 254x17 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 254x17
           chunk 1 (middle anchor) text run 1 at (98.00,40.00) startOffset 0 endOffset 38 width 254.00: "Long text on a path test for selection"
       RenderSVGHiddenContainer {defs} at (0,0) size 0x0
         RenderPath {path} at (25,149) size 400x282 [stroke={[type=SOLID] [color=#0000FF]}] [data="M25.00,150.00 L425.00,150.00 M25.00,170.00 L425.00,170.00 M25.00,190.00 L425.00,190.00 M25.00,210.00 L425.00,210.00 M25.00,230.00 L425.00,230.00 M25.00,250.00 L425.00,250.00 M25.00,270.00 L425.00,270.00 M25.00,290.00 L425.00,290.00 M25.00,310.00 L425.00,310.00 M25.00,330.00 L425.00,330.00 M25.00,350.00 L425.00,350.00 M25.00,370.00 L425.00,370.00 M25.00,390.00 L425.00,390.00 M25.00,410.00 L425.00,410.00 M25.00,430.00 L425.00,430.00 M25.00,450.00"]
@@ -12,9 +12,9 @@ layer at (0,0) size 450x500
         RenderSVGContainer {g} at (25,149) size 400x282
           RenderPath {path} at (25,149) size 400x282 [stroke={[type=SOLID] [color=#0000FF]}] [data="M25.00,150.00 L425.00,150.00 M25.00,170.00 L425.00,170.00 M25.00,190.00 L425.00,190.00 M25.00,210.00 L425.00,210.00 M25.00,230.00 L425.00,230.00 M25.00,250.00 L425.00,250.00 M25.00,270.00 L425.00,270.00 M25.00,290.00 L425.00,290.00 M25.00,310.00 L425.00,310.00 M25.00,330.00 L425.00,330.00 M25.00,350.00 L425.00,350.00 M25.00,370.00 L425.00,370.00 M25.00,390.00 L425.00,390.00 M25.00,410.00 L425.00,410.00 M25.00,430.00 L425.00,430.00 M25.00,450.00"]
       RenderPath {rect} at (20,100) size 205x375 [fill={[type=SOLID] [color=#C8C8FF]}] [data="M20.00,100.00 L225.00,100.00 L225.00,475.00 L20.00,475.00 Z"]
-      RenderSVGText {text} at (26,150) size 406x263 contains 1 chunk(s)
+      RenderSVGText {text} at (21,132) size 406x263 contains 1 chunk(s)
         RenderSVGTextPath {textPath} at (0,0) size 406x263
-          RenderSVGInlineText {#text} at (-5,-18) size 406x263
+          RenderSVGInlineText {#text} at (0,0) size 406x263
             chunk 1 text run 1 at (26.00,150.00) startOffset 0 endOffset 410 width 3210.00: "This is an example of a very long string that is split across multiple lines via the textPath tag. The purpose of this test is to ensure that text-selection can keep up even when relatively large numbers of characters are part of the selection. Since I haven't reached the end yet, let me keep going with more really quite useless text just to see if we hit a limit where it really starts to slow things down. "
             chunk 1 text run 2 at (31.50,310.00) startOffset 0 endOffset 85 width 693.00: "However if it hasn't slowed down by now I'm guessing that it won't slow down at all. "
             chunk 1 text run 3 at (26.50,330.00) startOffset 0 endOffset 79 width 613.00: "But you never know for sure until you try it, so I am, and here is the result. "

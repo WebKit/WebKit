@@ -39,6 +39,10 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
 
+#if ENABLE(SVG)
+#include "SVGRootInlineBox.h"
+#endif
+
 using namespace std;
 using namespace WTF;
 using namespace Unicode;
@@ -345,21 +349,13 @@ void RenderBlock::computeHorizontalPositionsForLine(RootInlineBox* lineBox, bool
             HashSet<const SimpleFontData*> fallbackFonts;
             GlyphOverflow glyphOverflow;
             r->m_box->setWidth(rt->width(r->m_start, r->m_stop - r->m_start, totWidth, firstLine, &fallbackFonts, &glyphOverflow));
-            if (!fallbackFonts.isEmpty()
-#if ENABLE(SVG)
-                    && !isSVGText()
-#endif
-            ) {
+            if (!fallbackFonts.isEmpty()) {
                 ASSERT(r->m_box->isText());
                 GlyphOverflowAndFallbackFontsMap::iterator it = textBoxDataMap.add(static_cast<InlineTextBox*>(r->m_box), make_pair(Vector<const SimpleFontData*>(), GlyphOverflow())).first;
                 ASSERT(it->second.first.isEmpty());
                 copyToVector(fallbackFonts, it->second.first);
             }
-            if ((glyphOverflow.top || glyphOverflow.bottom || glyphOverflow.left || glyphOverflow.right)
-#if ENABLE(SVG)
-                && !isSVGText()
-#endif
-            ) {
+            if ((glyphOverflow.top || glyphOverflow.bottom || glyphOverflow.left || glyphOverflow.right)) {
                 ASSERT(r->m_box->isText());
                 GlyphOverflowAndFallbackFontsMap::iterator it = textBoxDataMap.add(static_cast<InlineTextBox*>(r->m_box), make_pair(Vector<const SimpleFontData*>(), GlyphOverflow())).first;
                 it->second.second = glyphOverflow;
@@ -742,16 +738,31 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintTop, i
                     if (lineBox) {
                         lineBox->setEndsWithBreak(previousLineBrokeCleanly);
 
-                        // Now we position all of our text runs horizontally.
+#if ENABLE(SVG)
+                        bool isSVGRootInlineBox = lineBox->isSVGRootInlineBox();
+#else
+                        bool isSVGRootInlineBox = false;
+#endif
+
                         GlyphOverflowAndFallbackFontsMap textBoxDataMap;
-                        computeHorizontalPositionsForLine(lineBox, firstLine, resolver.firstRun(), trailingSpaceRun, end.atEnd(), textBoxDataMap);
+
+                        // Now we position all of our text runs horizontally.
+                        if (!isSVGRootInlineBox)
+                            computeHorizontalPositionsForLine(lineBox, firstLine, resolver.firstRun(), trailingSpaceRun, end.atEnd(), textBoxDataMap);
 
                         // Now position our text runs vertically.
                         computeVerticalPositionsForLine(lineBox, resolver.firstRun(), textBoxDataMap);
 
 #if ENABLE(SVG)
-                        // Special SVG text layout code
-                        lineBox->computePerCharacterLayoutInformation();
+                        // SVG text layout code computes vertical & horizontal positions on its own.
+                        // Note that we still need to execute computeVerticalPositionsForLine() as
+                        // it calls InlineTextBox::positionLineBox(), which tracks whether the box
+                        // contains reversed text or not. If we wouldn't do that editing and thus
+                        // text selection in RTL boxes would not work as expected.
+                        if (isSVGRootInlineBox) {
+                            ASSERT(isSVGText());
+                            static_cast<SVGRootInlineBox*>(lineBox)->computePerCharacterLayoutInformation();
+                        }
 #endif
 
 #if PLATFORM(MAC)

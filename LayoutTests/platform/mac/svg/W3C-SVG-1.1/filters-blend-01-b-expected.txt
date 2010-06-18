@@ -40,28 +40,28 @@ layer at (0,0) size 480x360
       RenderPath {rect} at (90,264) size 360x30 [opacity=0.50] [fill={[type=SOLID] [color=#0000FF]}] [data="M30.00,88.00 L150.00,88.00 L150.00,98.00 L30.00,98.00 Z"]
         [filter="BlendLighten"] RenderSVGResourceFilter {filter} at (30,88) size 120x10
       RenderSVGContainer {g} at (15,33) size 78x258
-        RenderSVGText {text} at (5,17) size 21x8 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,-6) size 21x8
+        RenderSVGText {text} at (5,11) size 21x8 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 21x8
             chunk 1 text run 1 at (5.00,17.00) startOffset 0 endOffset 6 width 21.00: "Normal"
-        RenderSVGText {text} at (5,30) size 26x8 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,-6) size 26x8
+        RenderSVGText {text} at (5,24) size 26x8 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 26x8
             chunk 1 text run 1 at (5.00,30.00) startOffset 0 endOffset 8 width 26.00: "Multiply"
-        RenderSVGText {text} at (5,43) size 26x8 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,-6) size 26x8
+        RenderSVGText {text} at (5,37) size 26x8 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 26x8
             chunk 1 text run 1 at (5.00,43.00) startOffset 0 endOffset 8 width 26.00: "Multiply"
-        RenderSVGText {text} at (5,56) size 26x8 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,-6) size 26x8
+        RenderSVGText {text} at (5,50) size 26x8 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 26x8
             chunk 1 text run 1 at (5.00,56.00) startOffset 0 endOffset 8 width 26.00: "Multiply"
-        RenderSVGText {text} at (5,69) size 19x8 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,-6) size 19x8
+        RenderSVGText {text} at (5,63) size 19x8 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 19x8
             chunk 1 text run 1 at (5.00,69.00) startOffset 0 endOffset 6 width 19.00: "Screen"
-        RenderSVGText {text} at (5,82) size 21x8 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,-6) size 21x8
+        RenderSVGText {text} at (5,76) size 21x8 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 21x8
             chunk 1 text run 1 at (5.00,82.00) startOffset 0 endOffset 6 width 21.00: "Darken"
-        RenderSVGText {text} at (5,95) size 23x8 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,-6) size 23x8
+        RenderSVGText {text} at (5,89) size 23x8 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 23x8
             chunk 1 text run 1 at (5.00,95.00) startOffset 0 endOffset 7 width 23.00: "Lighten"
-    RenderSVGText {text} at (3,112) size 78x14 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,-11) size 78x14
+    RenderSVGText {text} at (3,101) size 78x14 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 78x14
         chunk 1 text run 1 at (3.00,112.00) startOffset 0 endOffset 16 width 78.00: "$Revision: 1.8 $"
     RenderPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000] [stroke width=0.50]}] [data="M1.00,1.00 L159.00,1.00 L159.00,119.00 L1.00,119.00 Z"]

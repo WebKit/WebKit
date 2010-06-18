@@ -20,8 +20,7 @@
 #include "config.h"
 #include "SVGTextQuery.h"
 
-// FIXME: This code is currently deactivated, until the SVG Text rewrite patch lands.
-#if ENABLE(SVG) && 0
+#if ENABLE(SVG)
 #include "FloatConversion.h"
 #include "InlineFlowBox.h"
 #include "RenderBlock.h"

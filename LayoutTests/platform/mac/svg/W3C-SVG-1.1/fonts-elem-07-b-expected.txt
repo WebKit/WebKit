@@ -5,12 +5,12 @@ layer at (0,0) size 480x360
     RenderSVGContainer {g} at (30,4) size 372x239
       RenderSVGHiddenContainer {defs} at (0,0) size 0x0
       RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-      RenderSVGText {text} at (56,35) size 346x40 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,-31) size 346x40
+      RenderSVGText {text} at (56,4) size 346x40 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 346x40
           chunk 1 text run 1 at (56.00,35.00) startOffset 0 endOffset 22 width 346.00: "Basic SVG font element"
       RenderSVGContainer {g} at (30,81) size 346x162
-        RenderSVGText {text} at (30,130) size 105x22 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,-17) size 105x22
+        RenderSVGText {text} at (30,113) size 105x22 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 105x22
             chunk 1 text run 1 at (30.00,130.00) startOffset 0 endOffset 13 width 105.00: "Placed Glyphs"
         RenderSVGContainer {g} at (164,81) size 212x162 [transform={m=((1.00,0.00)(-0.00,-1.00)) t=(165.00,140.00)}]
           RenderPath {line} at (165,139) size 210x2 [stroke={[type=SOLID] [color=#888888]}] [fill={[type=SOLID] [color=#000000]}] [data="M0.00,0.00 L210.00,0.00"]
@@ -26,15 +26,15 @@ layer at (0,0) size 480x360
             RenderPath {line} at (343,81) size 2x162 [stroke={[type=SOLID] [color=#888888] [stroke width=50.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M6106.00,-3500.00 L6106.00,2000.00"]
             RenderPath {path} at (346,108) size 27x46 [transform={m=((1.00,0.00)(0.00,1.00)) t=(6106.00,0.00)}] [fill={[type=SOLID] [color=#000000]}] [data="M770.00,-196.00 C770.00,-278.67,750.00,-340.67,710.00,-382.00 C670.00,-423.33,609.33,-444.33,528.00,-445.00 C471.33,-445.00,417.67,-434.33,367.00,-413.00 C303.00,-385.00,271.00,-346.67,271.00,-298.00 C271.00,-262.00,293.67,-244.00,339.00,-244.00 C363.00,-244.00,390.00,-252.00,420.00,-268.00 C450.00,-284.00,482.33,-292.33,517.00,-293.00 C549.67,-292.33,574.00,-284.33,590.00,-269.00 C606.00,-253.67,614.00,-231.00,614.00,-201.00 C614.00,-169.00,601.67,-140.33,577.00,-115.00 C552.33,-89.67,514.33,-67.33,463.00,-48.00 C357.00,-24.00,272.00,26.67,208.00,104.00 C139.33,186.00,105.00,286.00,105.00,404.00 C105.00,539.33,150.00,679.00,240.00,823.00 C340.00,983.00,452.67,1063.00,578.00,1063.00 C643.33,1063.00,716.33,1047.67,797.00,1017.00 C899.00,977.67,950.00,929.67,950.00,873.00 C950.00,847.67,941.67,825.33,925.00,806.00 C908.33,786.67,887.67,776.67,863.00,776.00 C843.67,776.00,827.00,781.67,813.00,793.00 C799.00,804.33,785.00,816.00,771.00,828.00 C731.67,859.33,667.33,875.00,578.00,875.00 C510.00,875.00,442.67,814.33,376.00,693.00 C315.33,581.67,285.00,485.33,285.00,404.00 C285.00,316.00,315.00,246.67,375.00,196.00 C431.00,148.67,503.00,125.00,591.00,125.00 C631.00,125.00,673.67,135.67,719.00,157.00 L835.00,219.00 C855.00,229.67,869.33,235.00,878.00,235.00 C902.67,235.00,924.00,225.33,942.00,206.00 C960.00,186.67,969.00,164.00,969.00,138.00 C969.00,69.33,883.67,10.00,713.00,-40.00 C732.33,-65.33,746.67,-91.00,756.00,-117.00 C765.33,-143.00,770.00,-169.33,770.00,-196.00 Z"]
             RenderPath {line} at (373,81) size 3x162 [stroke={[type=SOLID] [color=#888888] [stroke width=50.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M7158.00,-3500.00 L7158.00,2000.00"]
-      RenderSVGText {text} at (65,210) size 74x22 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,-17) size 74x22
+      RenderSVGText {text} at (65,193) size 74x22 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 74x22
           chunk 1 text run 1 at (65.00,210.00) startOffset 0 endOffset 8 width 74.00: "SVG Font"
-      RenderSVGContainer {g} at (165,154) size 210x83 [transform={m=((1.00,0.00)(0.00,1.00)) t=(165.00,220.00)}]
+      RenderSVGContainer {g} at (165,151) size 210x83 [transform={m=((1.00,0.00)(0.00,1.00)) t=(165.00,220.00)}]
         RenderPath {line} at (165,219) size 210x2 [stroke={[type=SOLID] [color=#888888]}] [fill={[type=SOLID] [color=#000000]}] [data="M0.00,0.00 L210.00,0.00"]
-        RenderSVGText {text} at (0,0) size 210x83 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,-66) size 210x83
+        RenderSVGText {text} at (0,-69) size 210x83 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 210x83
             chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 5 width 209.71: "Ay\x{D6}@\x{E7}"
-    RenderSVGText {text} at (10,340) size 264x46 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,-36) size 264x46
+    RenderSVGText {text} at (10,304) size 264x46 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 264x46
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 264.00: "$Revision: 1.7 $"
     RenderPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00 L479.00,1.00 L479.00,359.00 L1.00,359.00 Z"]

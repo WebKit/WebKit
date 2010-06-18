@@ -1,9 +1,8 @@
 /*
- * This file is part of the WebKit project.
- *
  * Copyright (C) 2006 Oliver Hunt <ojh16@student.canterbury.ac.nz>
  *           (C) 2006 Apple Computer Inc.
  *           (C) 2007 Nikolas Zimmermann <zimmermann@kde.org>
+ * Copyright (C) Research In Motion Limited 2010. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -23,24 +22,42 @@
  */
 
 #include "config.h"
+#include "SVGInlineFlowBox.h"
 
 #if ENABLE(SVG)
-#include "SVGInlineFlowBox.h"
-#include "SVGNames.h"
+#include "GraphicsContext.h"
+#include "SVGRenderSupport.h"
 
 namespace WebCore {
 
-using namespace SVGNames;
-
-void SVGInlineFlowBox::paint(RenderObject::PaintInfo&, int, int)
+void SVGInlineFlowBox::paint(RenderObject::PaintInfo& paintInfo, int, int)
 {
-    ASSERT_NOT_REACHED();
+    ASSERT(paintInfo.phase == PaintPhaseForeground);
+
+    RenderObject* boxRenderer = renderer();
+    ASSERT(boxRenderer);
+
+    RenderObject::PaintInfo childPaintInfo(paintInfo);
+    childPaintInfo.context->save();
+
+    RenderSVGResourceFilter* filter = 0;
+    FloatRect repaintRect = boxRenderer->repaintRectInLocalCoordinates();
+
+    if (SVGRenderBase::prepareToRenderSVGContent(boxRenderer, childPaintInfo, repaintRect, filter)) {
+        for (InlineBox* child = firstChild(); child; child = child->nextOnLine())
+            child->paint(childPaintInfo, 0, 0);
+    }
+
+    SVGRenderBase::finishRenderSVGContent(boxRenderer, childPaintInfo, filter, paintInfo.context);
+    childPaintInfo.context->restore();
 }
 
-int SVGInlineFlowBox::placeBoxesHorizontally(int, int&, int&, bool&, GlyphOverflowAndFallbackFontsMap&)
+IntRect SVGInlineFlowBox::calculateBoundaries() const
 {
-    // no-op
-    return 0;
+    IntRect childRect;
+    for (InlineBox* child = firstChild(); child; child = child->nextOnLine())
+        childRect.unite(child->calculateBoundaries());
+    return childRect;
 }
 
 } // namespace WebCore

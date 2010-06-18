@@ -26,11 +26,7 @@
 #if ENABLE(SVG)
 #include "RenderSVGInline.h"
 
-#include "FloatQuad.h"
-#include "RenderBlock.h"
 #include "SVGInlineFlowBox.h"
-#include "SVGInlineTextBox.h"
-#include "SVGRootInlineBox.h"
 
 namespace WebCore {
     
@@ -44,25 +40,6 @@ InlineFlowBox* RenderSVGInline::createInlineFlowBox()
     InlineFlowBox* box = new (renderArena()) SVGInlineFlowBox(this);
     box->setHasVirtualHeight();
     return box;
-}
-
-void RenderSVGInline::absoluteRects(Vector<IntRect>& rects, int, int)
-{
-    InlineFlowBox* firstBox = firstLineBox();
-
-    RootInlineBox* rootBox = firstBox ? firstBox->root() : 0;
-    RenderBox* object = rootBox ? rootBox->block() : 0;
-
-    if (!object)
-        return;
-
-    int xRef = object->x();
-    int yRef = object->y();
-
-    for (InlineFlowBox* curr = firstBox; curr; curr = curr->nextLineBox()) {
-        FloatRect rect(xRef + curr->x(), yRef + curr->y(), curr->width(), curr->height());
-        rects.append(enclosingIntRect(localToAbsoluteQuad(rect).boundingBox()));
-    }
 }
 
 FloatRect RenderSVGInline::objectBoundingBox() const
@@ -89,23 +66,19 @@ FloatRect RenderSVGInline::repaintRectInLocalCoordinates() const
     return FloatRect();
 }
 
-void RenderSVGInline::absoluteQuads(Vector<FloatQuad>& quads)
+IntRect RenderSVGInline::clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer)
 {
-    InlineFlowBox* firstBox = firstLineBox();
+    return SVGRenderBase::clippedOverflowRectForRepaint(this, repaintContainer);
+}
 
-    RootInlineBox* rootBox = firstBox ? firstBox->root() : 0;
-    RenderBox* object = rootBox ? rootBox->block() : 0;
+void RenderSVGInline::computeRectForRepaint(RenderBoxModelObject* repaintContainer, IntRect& repaintRect, bool fixed)
+{
+    SVGRenderBase::computeRectForRepaint(this, repaintContainer, repaintRect, fixed);
+}
 
-    if (!object)
-        return;
-
-    int xRef = object->x();
-    int yRef = object->y();
-
-    for (InlineFlowBox* curr = firstBox; curr; curr = curr->nextLineBox()) {
-        FloatRect rect(xRef + curr->x(), yRef + curr->y(), curr->width(), curr->height());
-        quads.append(localToAbsoluteQuad(rect));
-    }
+void RenderSVGInline::mapLocalToContainer(RenderBoxModelObject* repaintContainer, bool useTransforms, bool fixed, TransformState& transformState) const
+{
+    SVGRenderBase::mapLocalToContainer(this, repaintContainer, useTransforms, fixed, transformState);
 }
 
 }

@@ -20,8 +20,7 @@
 #ifndef SVGTextQuery_h
 #define SVGTextQuery_h
 
-// FIXME: This code is currently deactivated, until the SVG Text rewrite patch lands.
-#if ENABLE(SVG) && 0
+#if ENABLE(SVG)
 #include "FloatRect.h"
 #include <wtf/Vector.h>
 

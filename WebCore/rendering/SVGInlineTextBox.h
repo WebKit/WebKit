@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2007 Rob Buis <buis@kde.org>
  *           (C) 2007 Nikolas Zimmermann <zimmermann@kde.org>
+ * Copyright (C) Research In Motion Limited 2010. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -24,60 +25,74 @@
 
 #if ENABLE(SVG)
 #include "InlineTextBox.h"
-#include "RenderSVGResource.h"
+#include "SVGTextChunkLayoutInfo.h"
+#include "SVGTextLayoutUtilities.h"
 
 namespace WebCore {
 
+class RenderSVGResource;
 class SVGRootInlineBox;
 
-struct SVGChar;
 struct SVGCharacterLayoutInfo;
 struct SVGLastGlyphInfo;
-struct SVGTextDecorationInfo;
-struct SVGTextPaintInfo;
 
 class SVGInlineTextBox : public InlineTextBox {
 public:
-    SVGInlineTextBox(RenderObject* obj);
+    SVGInlineTextBox(RenderObject*);
+
+    virtual bool isSVGInlineTextBox() const { return true; }
 
     virtual int virtualHeight() const { return m_height; }
-    void setHeight(int h) { m_height = h; }
+    void setHeight(int height) { m_height = height; }
 
     virtual int selectionTop() { return m_y; }
     virtual int selectionHeight() { return m_height; }
-
     virtual int offsetForPosition(int x, bool includePartialGlyphs = true) const;
     virtual int positionForOffset(int offset) const;
 
-    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, int x, int y, int tx, int ty);
+    virtual void paint(RenderObject::PaintInfo&, int tx, int ty);
     virtual IntRect selectionRect(int absx, int absy, int startPos, int endPos);
 
-    // SVGs custom paint text method
-    void paintCharacters(RenderObject::PaintInfo&, int tx, int ty, const SVGChar&, const UChar* chars, int length, SVGTextPaintInfo&);
+    virtual void selectionStartEnd(int& startPos, int& endPos);
+    void mapStartEndPositionsIntoChunkPartCoordinates(int& startPos, int& endPos, const SVGTextChunkPart&) const;
 
-    // SVGs custom paint selection method
-    void paintSelection(int boxStartOffset, const SVGChar&, const UChar*, int length, GraphicsContext*, RenderStyle*, const Font&);
-
-    // SVGs custom paint decoration method
-    void paintDecoration(ETextDecoration, GraphicsContext*, int tx, int ty, int width, const SVGChar&, const SVGTextDecorationInfo&);
- 
     SVGRootInlineBox* svgRootInlineBox() const;
 
     // Helper functions shared with SVGRootInlineBox     
-    float calculateGlyphWidth(RenderStyle* style, int offset, int extraCharsAvailable, int& charsConsumed, String& glyphName) const;
-    float calculateGlyphHeight(RenderStyle*, int offset, int extraCharsAvailable) const;
-
-    FloatRect calculateGlyphBoundaries(RenderStyle*, int offset, const SVGChar&) const;
-    SVGChar* closestCharacterToPosition(int x, int y, int& offset) const;
+    void measureCharacter(RenderStyle*, int position, int& charsConsumed, String& glyphName, String& unicodeString, float& glyphWidth, float& glyphHeight) const;
+    FloatRect calculateGlyphBoundaries(RenderStyle*, int position, const SVGChar&) const;
 
     void buildLayoutInformation(SVGCharacterLayoutInfo&, SVGLastGlyphInfo&);
 
+    const AffineTransform& chunkTransformation() const { return m_chunkTransformation; }
+    void setChunkTransformation(const AffineTransform& transform) { m_chunkTransformation = transform; }
+    void addChunkPartInformation(const SVGTextChunkPart& part) { m_svgTextChunkParts.append(part); }
+    const Vector<SVGTextChunkPart>& svgTextChunkParts() const { return m_svgTextChunkParts; }
+
+    virtual IntRect calculateBoundaries() const;
+
 private:
-    friend class RenderSVGInlineText;
-    bool svgCharacterHitsPosition(int x, int y, int& offset) const;
-    bool chunkSelectionStartEnd(const UChar* chunk, int chunkLength, int& selectionStart, int& selectionEnd);
-    
+    TextRun constructTextRun(RenderStyle*) const;
+    AffineTransform buildChunkTransformation(SVGChar& firstCharacter) const;
+
+    bool acquirePaintingResource(GraphicsContext*&, RenderStyle*);
+    void releasePaintingResource(GraphicsContext*&);
+
+    bool prepareGraphicsContextForTextPainting(GraphicsContext*&, TextRun&, RenderStyle*);
+    void restoreGraphicsContextAfterTextPainting(GraphicsContext*&, TextRun&);
+
+    void paintDecoration(GraphicsContext*, const FloatPoint& textOrigin, ETextDecoration, bool hasSelection);
+    void paintDecorationWithStyle(GraphicsContext*, const FloatPoint& textOrigin, RenderStyle*, ETextDecoration);
+    void paintSelection(GraphicsContext*, const FloatPoint& textOrigin, RenderStyle*);
+    void paintText(GraphicsContext*, const FloatPoint& textOrigin, RenderStyle*, RenderStyle* selectionStyle, bool hasSelection);
+
+private:
     int m_height;
+    AffineTransform m_chunkTransformation;
+    Vector<SVGTextChunkPart> m_svgTextChunkParts;
+    mutable SVGTextChunkPart m_currentChunkPart;
+    RenderSVGResource* m_paintingResource;
+    int m_paintingResourceMode;
 };
 
 } // namespace WebCore

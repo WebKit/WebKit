@@ -1,0 +1,11 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+    RenderSVGContainer {g} at (410,5) size 135x55
+      RenderPath {svg:rect} at (410,5) size 135x55 [fill={[type=SOLID] [color=#FF0000] [opacity=0.40]}] [data="M82.06,1.00 L108.82,1.00 L108.82,12.00 L82.06,12.00 Z"]
+    RenderSVGText {text} at (10,1) size 140x11 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 140x11
+        chunk 1 text run 1 at (10.00,10.00) startOffset 0 endOffset 15 width 68.00: "Text to Stretch"
+selection start: position 8 of child 0 {#text} of child 5 {text} of child 0 {svg} of document
+selection end:   position 11 of child 0 {#text} of child 5 {text} of child 0 {svg} of document

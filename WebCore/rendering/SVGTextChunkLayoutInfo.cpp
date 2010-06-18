@@ -22,8 +22,7 @@
 #include "config.h"
 #include "SVGTextChunkLayoutInfo.h"
 
-// FIXME: This code is currently deactivated, until the SVG Text rewrite patch lands.
-#if ENABLE(SVG) && 0
+#if ENABLE(SVG)
 #include "InlineFlowBox.h"
 #include "SVGInlineTextBox.h"
 #include "SVGRenderStyle.h"
@@ -277,8 +276,7 @@ void SVGTextChunkLayoutInfo::recursiveBuildTextChunks(InlineFlowBox* start)
             InlineTextBox* textBox = static_cast<InlineTextBox*>(curr);
 
             unsigned length = textBox->len();
-            if (!length)
-                continue;
+            ASSERT(length > 0);
 
 #if DEBUG_CHUNK_BUILDING > 1
             fprintf(stderr, " -> Handle inline text box (%p) with %i characters (start: %i, end: %i), handlingTextPath=%i\n",

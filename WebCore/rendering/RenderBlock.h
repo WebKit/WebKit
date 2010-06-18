@@ -227,7 +227,19 @@ protected:
 
     virtual bool hasLineIfEmpty() const;
     bool layoutOnlyPositionedObjects();
-    
+
+#if ENABLE(SVG)
+protected:
+
+    // Only used by RenderSVGText, which explicitely overrides RenderBlock::layoutBlock(), do NOT use for anything else.
+    void forceLayoutInlineChildren()
+    {
+        int repaintTop = 0;
+        int repaintBottom = 0;
+        layoutInlineChildren(true, repaintTop, repaintBottom);
+    }
+#endif
+
 private:
     virtual RenderObjectChildList* virtualChildren() { return children(); }
     virtual const RenderObjectChildList* virtualChildren() const { return children(); }

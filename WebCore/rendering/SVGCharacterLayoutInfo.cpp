@@ -67,7 +67,7 @@ static float calculateBaselineShift(RenderObject* item)
     return baselineShift;
 }
 
-SVGCharacterLayoutInfo::SVGCharacterLayoutInfo(Vector<SVGChar>& chars)
+SVGCharacterLayoutInfo::SVGCharacterLayoutInfo()
     : curx(0.0f)
     , cury(0.0f)
     , angle(0.0f)
@@ -78,7 +78,6 @@ SVGCharacterLayoutInfo::SVGCharacterLayoutInfo(Vector<SVGChar>& chars)
     , pathExtraAdvance(0.0f)
     , pathTextLength(0.0f)
     , pathChunkLength(0.0f)
-    , svgChars(chars)
     , nextDrawnSeperated(false)
     , xStackChanged(false)
     , yStackChanged(false)

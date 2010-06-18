@@ -41,8 +41,10 @@ public:
     void setHeight(int h) { m_height = h; }
 
     virtual void paint(RenderObject::PaintInfo&, int tx, int ty);
-    virtual int placeBoxesHorizontally(int x, int& leftPosition, int& rightPosition, bool& needsWordSpacing, GlyphOverflowAndFallbackFontsMap&);
-    
+
+    virtual IntRect calculateBoundaries() const;
+    void layoutFlowBox();
+
 private:
     int m_height;
 };

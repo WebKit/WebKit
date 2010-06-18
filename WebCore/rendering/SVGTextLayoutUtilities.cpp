@@ -272,40 +272,45 @@ float cummulatedWidthOfInlineBoxCharacterRange(SVGInlineBoxCharacterRange& range
 {
     ASSERT(!range.isOpen());
     ASSERT(range.isClosed());
-    ASSERT(range.box->isInlineTextBox());
+    ASSERT(range.box->isSVGInlineTextBox());
 
     InlineTextBox* textBox = static_cast<InlineTextBox*>(range.box);
     RenderText* text = textBox->textRenderer();
     RenderStyle* style = text->style();
-
-    return style->font().floatWidth(svgTextRunForInlineTextBox(text->characters() + textBox->start() + range.startOffset, range.endOffset - range.startOffset, style, textBox, 0));
+    return style->font().floatWidth(svgTextRunForInlineTextBox(text->characters() + textBox->start() + range.startOffset, range.endOffset - range.startOffset, style, textBox));
 }
 
 float cummulatedHeightOfInlineBoxCharacterRange(SVGInlineBoxCharacterRange& range)
 {
     ASSERT(!range.isOpen());
     ASSERT(range.isClosed());
-    ASSERT(range.box->isInlineTextBox());
+    ASSERT(range.box->isSVGInlineTextBox());
 
     InlineTextBox* textBox = static_cast<InlineTextBox*>(range.box);
-    RenderText* text = textBox->textRenderer();
-    const Font& font = text->style()->font();
-
-    return (range.endOffset - range.startOffset) * (font.ascent() + font.descent());
+    return (range.endOffset - range.startOffset) * textBox->textRenderer()->style()->font().height();
 }
 
-TextRun svgTextRunForInlineTextBox(const UChar* characters, int length, const RenderStyle* style, const InlineTextBox* textBox, float xPosition)
+TextRun svgTextRunForInlineTextBox(const UChar* characters, int length, const RenderStyle* style, const InlineTextBox* textBox)
 {
     ASSERT(textBox);
     ASSERT(style);
 
-    TextRun run(characters, length, false, static_cast<int>(xPosition), textBox->toAdd(), textBox->direction() == RTL, textBox->m_dirOverride || style->visuallyOrdered());
+    TextRun run(characters
+                , length
+                , false /* allowTabs */
+                , 0 /* xPos, only relevant with allowTabs=true */
+                , 0 /* padding, only relevant for justified text, not relevant for SVG */
+                , textBox->direction() == RTL
+                , textBox->m_dirOverride || style->visuallyOrdered() /* directionalOverride */);
 
 #if ENABLE(SVG_FONTS)
     run.setReferencingRenderObject(textBox->textRenderer()->parent());
 #endif
 
-    // We handle letter & word spacing ourselves
+    // Disable any word/character rounding.
+    run.disableRoundingHacks();
+
+    // We handle letter & word spacing ourselves.
     run.disableSpacing();
     return run;
 }

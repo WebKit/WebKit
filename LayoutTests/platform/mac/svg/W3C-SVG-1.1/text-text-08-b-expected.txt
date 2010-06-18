@@ -3,19 +3,19 @@ layer at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
     RenderSVGContainer {g} at (17,0) size 463x255
-      RenderSVGText {text} at (19,60) size 395x77 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,-64) size 395x77
+      RenderSVGText {text} at (19,-4) size 395x77 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 395x77
           chunk 1 text run 1 at (19.00,60.00) startOffset 0 endOffset 11 width 395.00: "Normal Text"
-      RenderSVGText {text} at (19,120) size 345x77 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,-64) size 345x77
+      RenderSVGText {text} at (19,56) size 345x77 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 345x77
           chunk 1 text run 1 at (19.00,120.00) startOffset 0 endOffset 12 width 345.00: "Fill opacity"
-      RenderSVGText {text} at (19,180) size 465x77 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,-64) size 465x77
+      RenderSVGText {text} at (19,116) size 465x77 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 465x77
           chunk 1 text run 1 at (19.00,180.00) startOffset 0 endOffset 14 width 465.00: "Stroke opacity"
-      RenderSVGText {text} at (19,240) size 242x77 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,-64) size 242x77
+      RenderSVGText {text} at (19,176) size 242x77 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 242x77
           chunk 1 text run 1 at (19.00,240.00) startOffset 0 endOffset 7 width 242.00: "Opacity"
-    RenderSVGText {text} at (10,340) size 264x46 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,-36) size 264x46
+    RenderSVGText {text} at (10,304) size 264x46 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 264x46
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 264.00: "$Revision: 1.3 $"
     RenderPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00 L479.00,1.00 L479.00,359.00 L1.00,359.00 Z"]

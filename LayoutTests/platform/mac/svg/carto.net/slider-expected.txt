@@ -4,8 +4,8 @@ layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 625x469
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
     RenderPath {rect} at (0,0) size 800x600 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M-2000.00,-2000.00 L4000.00,-2000.00 L4000.00,4000.00 L-2000.00,4000.00 Z"]
-    RenderSVGText {text} at (258,40) size 508x22 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,-18) size 508x22
+    RenderSVGText {text} at (258,22) size 508x22 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 508x22
         chunk 1 (middle anchor) text run 1 at (258.00,40.00) startOffset 0 endOffset 52 width 508.00: "Demonstration of the carto.net SVG GUI slider object"
     RenderSVGContainer {g} at (546,44) size 17x92
       RenderPath {line} at (548,44) size 13x92 [stroke={[type=SOLID] [color=#000000] [opacity=0.00] [stroke width=15.00] [line cap=SQUARE]}] [fill={[type=SOLID] [color=#000000] [opacity=0.00]}] [data="M710.00,65.00 L710.00,165.00"]
@@ -35,9 +35,9 @@ layer at (0,0) size 800x600
         RenderSVGContainer {g} at (362,307) size 17x15
           RenderSVGViewportContainer {svg} at (362,307) size 17x15
             RenderPath {line} at (362,307) size 17x15 [stroke={[type=SOLID] [color=#696969] [stroke width=5.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M0.00,-10.00 L0.00,10.00"]
-    RenderSVGText {text} at (20,700) size 62x18 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,-14) size 62x18
+    RenderSVGText {text} at (20,686) size 62x18 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 62x18
         chunk 1 text run 1 at (20.00,700.00) startOffset 0 endOffset 10 width 62.00: "Statusbar:"
-    RenderSVGText {text} at (500,600) size 303x18 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,-14) size 303x18
+    RenderSVGText {text} at (500,586) size 303x18 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 303x18
         chunk 1 text run 1 at (500.00,600.00) startOffset 0 endOffset 50 width 303.00: "Click on this text to randomly reposition slider 4"

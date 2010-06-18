@@ -3,38 +3,38 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
     RenderSVGContainer {g} at (1,46) size 786x438
-      RenderSVGText {text} at (19,61) size 76x39 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,-32) size 76x39
+      RenderSVGText {text} at (19,29) size 76x39 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 76x39
           chunk 1 text run 1 at (19.00,61.00) startOffset 0 endOffset 5 width 76.00: "Plain"
-      RenderSVGText {text} at (142,61) size 80x39 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,-32) size 80x39
+      RenderSVGText {text} at (142,29) size 80x39 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 80x39
           chunk 1 text run 1 at (142.00,61.00) startOffset 0 endOffset 6 width 80.00: "Italic"
-      RenderSVGText {text} at (257,60) size 79x39 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,-32) size 79x39
+      RenderSVGText {text} at (257,28) size 79x39 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 79x39
           chunk 1 text run 1 at (257.00,60.00) startOffset 0 endOffset 4 width 79.00: "Bold"
-      RenderSVGText {text} at (224,110) size 153x39 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,-32) size 153x39
+      RenderSVGText {text} at (224,78) size 153x39 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 153x39
           chunk 1 text run 1 at (224.00,110.00) startOffset 0 endOffset 9 width 153.00: "Underline"
-      RenderSVGText {text} at (39,147) size 203x39 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,-32) size 203x39
+      RenderSVGText {text} at (39,115) size 203x39 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 203x39
           chunk 1 text run 1 at (39.00,147.00) startOffset 0 endOffset 12 width 203.00: "Line through"
-      RenderSVGText {text} at (1,200) size 471x39 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,-32) size 471x39
+      RenderSVGText {text} at (1,168) size 471x39 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 471x39
           chunk 1 text run 1 at (1.00,200.00) startOffset 0 endOffset 27 width 471.00: "Bold, italic and underlined"
       RenderSVGContainer {g} at (81,371) size 638x113
         RenderPath {rect} at (81,373) size 638x111 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [data="M50.00,225.00 L430.00,225.00 L430.00,289.00 L50.00,289.00 Z"]
         RenderSVGContainer {g} at (91,371) size 579x113
-          RenderSVGText {text} at (55,245) size 343x27 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,-22) size 343x27
+          RenderSVGText {text} at (55,223) size 343x27 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 343x27
               chunk 1 text run 1 at (55.00,245.00) startOffset 0 endOffset 34 width 343.00: "Each line of text which flows in a"
-          RenderSVGText {text} at (55,265) size 347x27 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,-22) size 347x27
+          RenderSVGText {text} at (55,243) size 347x27 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 347x27
               chunk 1 text run 1 at (55.00,265.00) startOffset 0 endOffset 32 width 347.00: "rectangular box has to be broken"
-          RenderSVGText {text} at (55,285) size 212x27 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,-22) size 212x27
+          RenderSVGText {text} at (55,263) size 212x27 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 212x27
               chunk 1 text run 1 at (55.00,285.00) startOffset 0 endOffset 21 width 212.00: "into separated lines."
-    RenderSVGText {text} at (10,340) size 264x46 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,-36) size 264x46
+    RenderSVGText {text} at (10,304) size 264x46 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 264x46
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 264.00: "$Revision: 1.8 $"
     RenderPath {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00 L479.00,1.00 L479.00,359.00 L1.00,359.00 Z"]
 selection start: position 0 of child 0 {#text} of child 1 {text} of child 13 {g} of child 32 {svg} of document

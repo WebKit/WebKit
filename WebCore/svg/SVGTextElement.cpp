@@ -132,16 +132,6 @@ void SVGTextElement::synchronizeProperty(const QualifiedName& attrName)
         synchronizeTransform();
 }
 
-void SVGTextElement::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)
-{
-    SVGTextPositioningElement::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
-
-    if (!renderer())
-        return;
-
-    renderer()->setNeedsLayout(true);
-}
-
 }
 
 #endif // ENABLE(SVG)

@@ -3,33 +3,33 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-      RenderSVGText {text} at (0,0) size 163x18 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,-14) size 163x18
+      RenderSVGText {text} at (0,-14) size 163x18 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 163x18
           chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 25 width 163.00: "Referenced character data"
       RenderPath {path} at (100,140) size 100x10 [fill={[type=SOLID] [color=#000000]}] [data="M100.00,150.00 L150.00,140.00 L200.00,150.00"]
-    RenderSVGText {text} at (100,50) size 77x18 contains 1 chunk(s)
+    RenderSVGText {text} at (100,36) size 77x18 contains 1 chunk(s)
       RenderSVGInline {a} at (0,0) size 77x18
         RenderSVGTSpan {tspan} at (0,0) size 77x18
-          RenderSVGInlineText {#text} at (0,-14) size 77x18
+          RenderSVGInlineText {#text} at (0,0) size 77x18
             chunk 1 text run 1 at (100.00,50.00) startOffset 0 endOffset 13 width 77.00: "tspan in link"
-    RenderSVGText {text} at (100,100) size 232x18 contains 1 chunk(s)
+    RenderSVGText {text} at (100,86) size 232x18 contains 1 chunk(s)
       RenderSVGInline {a} at (0,0) size 232x18
         RenderSVGInline {tref} at (0,0) size 232x18
-          RenderSVGInlineText {#text} at (0,-14) size 167x18
+          RenderSVGInlineText {#text} at (0,0) size 167x18
             chunk 1 text run 1 at (100.00,100.00) startOffset 0 endOffset 26 width 167.00: "Referenced character data "
-          RenderSVGInlineText {#text} at (167,-14) size 65x18
+          RenderSVGInlineText {#text} at (167,0) size 65x18
             chunk 1 text run 2 at (267.00,100.00) startOffset 0 endOffset 12 width 65.00: "tref in link"
-    RenderSVGText {text} at (101,140) size 99x28 contains 1 chunk(s)
+    RenderSVGText {text} at (97,126) size 99x28 contains 1 chunk(s)
       RenderSVGInline {a} at (0,0) size 99x28
         RenderSVGTextPath {textPath} at (0,0) size 99x28
-          RenderSVGInlineText {#text} at (-4,-14) size 99x28
+          RenderSVGInlineText {#text} at (0,0) size 99x28
             chunk 1 text run 1 at (101.96,140.39) startOffset 0 endOffset 16 width 95.00: "textPath in link"
-    RenderSVGText {text} at (100,200) size 110x18 contains 1 chunk(s)
+    RenderSVGText {text} at (100,186) size 110x18 contains 1 chunk(s)
       RenderSVGInline {a} at (0,0) size 110x18
         RenderSVGTSpan {altGlyph} at (0,0) size 12x18
-          RenderSVGInlineText {#text} at (0,-14) size 12x18
+          RenderSVGInlineText {#text} at (0,0) size 12x18
             chunk 1 text run 1 at (100.00,200.00) startOffset 0 endOffset 1 width 12.00: "A"
-        RenderSVGInlineText {#text} at (12,-14) size 98x18
+        RenderSVGInlineText {#text} at (12,0) size 98x18
           chunk 1 text run 2 at (112.00,200.00) startOffset 0 endOffset 15 width 98.00: "ltGlyph content"
     RenderSVGText {text}
       RenderSVGInline {a} at (0,0) size 0x0

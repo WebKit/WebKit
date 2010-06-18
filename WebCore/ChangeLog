@@ -1,3 +1,186 @@
+2010-06-18  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Dirk Schulze.
+
+        Modernize SVG Text code, following the HTML design
+        https://bugs.webkit.org/show_bug.cgi?id=40663
+
+        SVG Text does not support subpixel positioning
+        https://bugs.webkit.org/show_bug.cgi?id=12172
+
+        RenderSVGText can't do partial repaints
+        https://bugs.webkit.org/show_bug.cgi?id=15386
+
+        HTML and SVG need to share more text painting code
+        https://bugs.webkit.org/show_bug.cgi?id=15644
+
+        Rewrite SVG Text rendering, only keeping the layout of the actual characters/chunks as it was.
+        We're now drawing SVG Text very similar to HTML Text, utilizing the SVGInlineFlowBox/SVGInlineTextBox structure,
+        instead of painting all text content of a <text> element from the SVGRootInlineBox, as it was the last years.
+
+        Rough overview of the changes:
+        - Partial repainting support for text selections (startPos/endPos are respected), no more redrawing of the whole <text> content while selecting
+        - Subpixel positioning (near pixel-perfect rendering for all W3C tests that contain text, finally!)
+          -> much better textPath results, characters now align as expected, as all rounding hacks are disabled for SVG text runs, and subpixel precision is used while painting
+        - No more custom handling of selection, the standard methods offsetFromPosition() / selectionRectForText() are used instead.
+        - Selection works as expected on stretched/squeezed text (lengthAdjust="spacingAndGlyphs"), takes 'includePartialGlyphs' into account - just like HTML text
+        - Correct text decoration drawing (proper with and positions and rendering-order, underline/overline before text, strike-through afterwards)
+        - Proper sizing of all InlineBoxes, starting from the SVGRootInlineBox, down to every single flow & text box
+          -> correct DRT results, no more weird negative offsets of text runs, etc. Looks exactly like the HTML text test results.
+        - Rewritten SVGTextContentElement API to take per-character / per-chunk transformations into account.
+        - Speeeeeed! Drawing is much faster now.
+
+        Add 24 new testcases covering basic selection features and the SVGTextContentElement API. Each test draws a half-opaque red rectangle, calculated using
+        SVGTextContentElement API to highlight the area that is supposed to be selected. Then eventSender API is utilized to move the mouse to the calculated
+        start origin, holding it down and moving it to the end position.
+
+        A detailed list of tests that show progression, can be found in the corresponding LayoutTests/ChangeLog.
+        Note that this requires a rebaselining of all SVG tests containing text elements.
+
+        Tests: svg/hixie/text/001.xml (moved from svg/hixie/text/001-broken.xml)
+               svg/text/lengthAdjust-text-metrics.html
+               svg/text/select-textLength-spacing-squeeze-1.svg
+               svg/text/select-textLength-spacing-squeeze-2.svg
+               svg/text/select-textLength-spacing-squeeze-3.svg
+               svg/text/select-textLength-spacing-squeeze-4.svg
+               svg/text/select-textLength-spacing-stretch-1.svg
+               svg/text/select-textLength-spacing-stretch-2.svg
+               svg/text/select-textLength-spacing-stretch-3.svg
+               svg/text/select-textLength-spacing-stretch-4.svg
+               svg/text/select-textLength-spacingAndGlyphs-squeeze-1.svg
+               svg/text/select-textLength-spacingAndGlyphs-squeeze-2.svg
+               svg/text/select-textLength-spacingAndGlyphs-squeeze-3.svg
+               svg/text/select-textLength-spacingAndGlyphs-squeeze-4.svg
+               svg/text/select-textLength-spacingAndGlyphs-stretch-1.svg
+               svg/text/select-textLength-spacingAndGlyphs-stretch-2.svg
+               svg/text/select-textLength-spacingAndGlyphs-stretch-3.svg
+               svg/text/select-textLength-spacingAndGlyphs-stretch-4.svg
+               svg/text/select-x-list-1.svg
+               svg/text/select-x-list-2.svg
+               svg/text/select-x-list-3.svg
+               svg/text/select-x-list-4.svg
+               svg/text/select-x-list-with-tspans-1.svg
+               svg/text/select-x-list-with-tspans-2.svg
+               svg/text/select-x-list-with-tspans-3.svg
+               svg/text/select-x-list-with-tspans-4.svg
+
+        * rendering/InlineBox.h: Remove not needed isInlineBox() method.
+        (WebCore::InlineBox::isInlineTextBox): Constify this method.
+        (WebCore::InlineBox::isSVGInlineTextBox): Added, with ENABLE(SVG) guards, just like the existing isSVGRootInlineBox().
+        (WebCore::InlineBox::isSVGRootInlineBox): Constify this method.
+        (WebCore::InlineBox::calculateBoundaries): Added, with ENABLE(SVG) guards, used to calculate the whole boundaries of a InlineText/FlowBox, only used in SVG text.
+        * rendering/InlineFlowBox.h: Devirtualize placeBoxesHorizontally(), SVG no more overrides it.
+        * rendering/InlineTextBox.h: Virtualize selectionStartEnd() - SVGInlineTextBox needs to change start/endPositions based on the current text chunk part that it's rendering.
+                                     SVGTextChunkLayoutInfo.h contains a detailed documentation what a SVGTextChunk/SVGTextChunkPart is, and why they are necessary.
+        (WebCore::InlineTextBox::isInlineTextBox): Constify this method.
+        * rendering/RenderBlock.h:
+        (WebCore::RenderBlock::forceLayoutInlineChildren): Add helper method, used only by RenderSVGText, to use a simplified layout strategy, which is a big speed win.
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::computeHorizontalPositionsForLine): Remove all isSVGText() special cases, as this function is not called anymore for SVG text.
+        (WebCore::RenderBlock::layoutInlineChildren): Don't call computeHorizontalPositionsForLine() for SVG text. computePerCharacterLayoutInformation() overrides it anyway.
+        * rendering/RenderSVGInline.cpp: Remove custom absoluteRects/absoluteQuads code, all shared with RenderInline now.
+        (WebCore::RenderSVGInline::clippedOverflowRectForRepaint): Added, forward to SVGRenderBase, just like all other non-text SVG renderers do.
+        (WebCore::RenderSVGInline::computeRectForRepaint): Ditto.
+        (WebCore::RenderSVGInline::mapLocalToContainer): Ditto
+        * rendering/RenderSVGInline.h: 
+        * rendering/RenderSVGInlineText.cpp: Remove destroy() hack, which called setNeedsLayoutAndPrefWidthsRecalc/repaint on destruction.
+                                             As repaint rects work properly now, this hack is no longer necessary, it was only hiding the real problem.
+        (WebCore::RenderSVGInlineText::styleDidChange): Don't skip RenderText::styleDidChange() anymore, which automatically schedules layout changes for us.
+        (WebCore::RenderSVGInlineText::localCaretRect): Remove outdated comment, localCaretRect() is not yet needed in SVG text code.
+        * rendering/RenderSVGInlineText.h: Remove custom absoluteRects/absoluteQuads/selectionRectForRepaint/positionForPoint/destroy/computeRectForRepaint* code, all shared with RenderText now.
+        * rendering/RenderSVGText.cpp: 
+        (WebCore::RenderSVGText::mapLocalToContainer): Take x/y translation into account, but do NOT include in localToParentTransform(), as that would affect rendering.
+        (WebCore::RenderSVGText::layout): Use super-simplified layout strategy, removing a lot of uncessary stuff done by RenderBlock, that SVG does not need.
+        (WebCore::RenderSVGText::absoluteRects): Remove dead-code, retreving the RenderSVGRoot* object, not necessary since a longer time.
+        (WebCore::RenderSVGText::absoluteQuads): Ditto.
+        (WebCore::RenderSVGText::paint): Early exit if we're not in PaintPhaseForeground/PaintPhaseSelfOutline. We're not interessted in other phases.
+        (WebCore::RenderSVGText::strokeBoundingBox): Fix stroke width calculation, no need to special case SVGFonts.
+        * rendering/RenderSVGText.h: Remove updateFirstLineBlock/updateFirstLetter overrides, the new RenderSVGText::layout() code, doesn't use these methods at all.
+                                     We asked RenderBlock to layout before, which was calling updateFirstLetter & co, this is gone now, as it was all not needed.
+        (WebCore::RenderSVGText::objectBoundingBox): Directly return the frameRect here, inlined for speed.
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::verticallyAlignBoxes): Early-exit if we're a SVGRootInlineBox. SVG handles this on its own.
+        * rendering/RootInlineBox.h: Devirtualize verticallyAlignBoxes(), SVG no longer overrides it. Remove virtual computePerCharacterLayoutInformation() method, only lives in SVGRootInlineBox now.
+        * rendering/SVGCharacterData.h: Remove no longer needed SVGTextDecorationInfo.
+        * rendering/SVGCharacterLayoutInfo.cpp: Don't pass a reference to a Vector<SVGChar> to SVGCharacterLayoutInfo, let it create it.
+        (WebCore::SVGCharacterLayoutInfo::SVGCharacterLayoutInfo):
+        * rendering/SVGCharacterLayoutInfo.h:
+        * rendering/SVGInlineFlowBox.cpp: 
+        (WebCore::SVGInlineFlowBox::paint): Ask children to paint.
+        (WebCore::SVGInlineFlowBox::calculateBoundaries): Calculate boundaries by uniting all direct children boundaries.
+        * rendering/SVGInlineFlowBox.h: Remove placeBoxesHorizontally, which does not get called anymore, and does not need to be overriden.
+        * rendering/SVGInlineTextBox.cpp: 
+        (WebCore::SVGInlineTextBox::SVGInlineTextBox): Don't use abbrevations for variable names, initialize new member variables.
+        (WebCore::SVGInlineTextBox::measureCharacter): New helper function extracted from buildLayoutInformation, replacing calculateGlyphWidth/Height.
+        (WebCore::SVGInlineTextBox::offsetForPosition): Implement this method by utilizing Font::offsetForPosition(), but respecting the text chunk parts.
+        (WebCore::SVGInlineTextBox::positionForOffset): No change here, still not used.
+        (WebCore::SVGInlineTextBox::selectionRect): Rewritten, utilizing Font::selectionRectForText(), taking text chunk parts into account, and the supplied startPos/endPos.
+        (WebCore::SVGInlineTextBox::paint): Rewritten, to handle paint servers much more elegant, than the old solution. See code for details, too much to explain here.
+        (WebCore::SVGInlineTextBox::acquirePaintingResource): Helper function, used from paint().
+        (WebCore::SVGInlineTextBox::releasePaintingResource): Ditto.
+        (WebCore::SVGInlineTextBox::prepareGraphicsContextForTextPainting): Ditto.
+        (WebCore::SVGInlineTextBox::restoreGraphicsContextAfterTextPainting): Ditto.
+        (WebCore::SVGInlineTextBox::constructTextRun): Helper function centralizing the creation of a TextRun object, used to draw/measure SVG text.
+        (WebCore::SVGInlineTextBox::mapStartEndPositionsIntoChunkPartCoordinates): Important helper function, mapping a startPos/endPos from InlineTextBox
+                                                                                   coordinate space to the SVGInlineTextBox, respecting the current text chunk part.
+        (WebCore::SVGInlineTextBox::selectionStartEnd): Call InlineTextBox::selectionStartEnd(), and apply post fixes when m_currentChunkPart is set. (called when painting a selected chunk part)
+        (WebCore::positionOffsetForDecoration): Refactored from old paintDecoration() code.
+        (WebCore::thicknessForDecoration): Ditto.
+        (WebCore::findRenderObjectDefininingTextDecoration): Ditto.
+        (WebCore::SVGInlineTextBox::paintDecoration): Ditto. (Can not share the code with HTML, as we need floating point precision, and directly call fillRect, instead of drawHighlightForText.)
+        (WebCore::SVGInlineTextBox::paintDecorationWithStyle): Ditto.
+        (WebCore::SVGInlineTextBox::paintSelection): New method, painting text selections with floating-point precision.
+        (WebCore::SVGInlineTextBox::paintText): New method, painting text with floating-point precision, correctly handling selected text, removing the need for special SVG text sub-paint phases.
+                                                (GlyphFill/StrokeSelectionPhase, GlyphFill/StrokePhase)
+        (WebCore::SVGInlineTextBox::buildLayoutInformation): Use new measureCharacter() helper function, renamed some variables, to avoid abbrevations.
+        (WebCore::SVGInlineTextBox::calculateGlyphBoundaries): Rewritten to use new measureCharacter() helper function.
+        (WebCore::SVGInlineTextBox::calculateBoundaries): Rewritten to take text chunk parts into account, serves as central method used to layout InlineBoxes (see SVGRootInlineBox.)
+        * rendering/SVGInlineTextBox.h:
+        (WebCore::SVGInlineTextBox::isSVGInlineTextBox): Added.
+        (WebCore::SVGInlineTextBox::setHeight): Rename variable, to avoid abbrevations.
+        (WebCore::SVGInlineTextBox::chunkTransformation): New helper function, returning the transformation, that gets applied to the complete text chunk, if any.
+        (WebCore::SVGInlineTextBox::setChunkTransformation): New helper function used by SVGRrootInlineBox, to set the chunk transformation, during text chunk part propagation phase.
+        (WebCore::SVGInlineTextBox::addChunkPartInformation): Ditto.
+        (WebCore::SVGInlineTextBox::svgTextChunkParts): Ditto.
+        * rendering/SVGRootInlineBox.cpp: Virtually rewritten, to be designed more like HTMLs RootInlineBox, diving into children for painting.
+        (WebCore::SVGRootInlineBox::paint): Ask children to paint, nothing more. No more traversing through the SVGTextChunks, figuring out which part to render, this is done in layout phase now.
+        (WebCore::SVGRootInlineBox::computePerCharacterLayoutInformation): Completly redesigned, see SVGTextChunkLayoutInfo.h for a high-level overview.
+        (WebCore::SVGRootInlineBox::buildLayoutInformation): Just small cleanups, nothing changed here.
+        (WebCore::SVGRootInlineBox::layoutChildBoxes): New helper function, extracted from old layoutInlineBoxes().
+        (WebCore::SVGRootInlineBox::layoutRootBox): Ditto.
+        (WebCore::SVGRootInlineBox::propagateTextChunkPartInformation): Key-concept of the new design, builds "text chunk parts" and propagates that knownledge to all child SVGInlineTextBoxes.
+        * rendering/SVGRootInlineBox.h:
+        (WebCore::SVGRootInlineBox::isSVGRootInlineBox): Constified method.
+        (WebCore::SVGRootInlineBox::setHeight): Change variable name, to avoid abbrevations.
+        * rendering/SVGTextChunkLayoutInfo.cpp: Remove if 0, enable compilation.
+        * rendering/SVGTextChunkLayoutInfo.h: Add large comment explaining text chunk parts, the key concept of the new design. Remove SVGTextChunkWalker & friends, no longer used.
+        (WebCore::SVGTextChunkPart::SVGTextChunkPart):
+        (WebCore::SVGTextChunkPart::isValid):
+        (WebCore::SVGTextChunk::SVGTextChunk):
+        (WebCore::SVGTextChunkLayoutInfo::SVGTextChunkLayoutInfo):
+        (WebCore::SVGTextChunkLayoutInfo::textChunks):
+        * rendering/SVGTextLayoutUtilities.cpp:
+        (WebCore::cummulatedWidthOfInlineBoxCharacterRange):
+        (WebCore::cummulatedHeightOfInlineBoxCharacterRange):
+        (WebCore::svgTextRunForInlineTextBox): Disable rounding hacks, explain parameters with comments, why they have which values.
+        * rendering/SVGTextLayoutUtilities.h: Remove SVGTextPaintSubphase and SVGTextPaintInfo.
+        * rendering/SVGTextQuery.cpp: Remove if 0, enable compilation.
+        * rendering/SVGTextQuery.h: Ditto.
+        * svg/SVGStyledElement.cpp: Very important change! Do not treat CSS attributes as recognized attributes, that would lead to setNeedsLayout() calls, reducing performance!
+                                    This hack existed, as we were not dealing with text updates correctly, now that RenderSVGInlineText::styleDidChange is fixed, it's no longer necessary.
+        (WebCore::SVGStyledElement::isKnownAttribute):
+        * svg/SVGTextContentElement.cpp: Completely remove the SVGTextContentElement API, that manually traversed all text chunks, instead use the new SVGTextQuery API.
+        (WebCore::SVGTextContentElement::getNumberOfChars):
+        (WebCore::SVGTextContentElement::getComputedTextLength):
+        (WebCore::SVGTextContentElement::getSubStringLength):
+        (WebCore::SVGTextContentElement::getStartPositionOfChar):
+        (WebCore::SVGTextContentElement::getEndPositionOfChar):
+        (WebCore::SVGTextContentElement::getExtentOfChar):
+        (WebCore::SVGTextContentElement::getRotationOfChar):
+        (WebCore::SVGTextContentElement::getCharNumAtPosition):
+        * svg/SVGTextElement.cpp: Very important change! Do not calls setNeedsLayout() on RenderSVGText, if childrenChanged() has been called.
+        * svg/SVGTextElement.h: Completly remove childrenChanged() - no longer necessary, updates work as expected without it now.
+
 2010-06-18  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
 
         Reviewed by David Levin.

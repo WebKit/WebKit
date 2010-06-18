@@ -127,7 +127,7 @@ public:
     void determineSpacingForFlowBoxes(bool lastLine, RenderObject* endObject);
     int getFlowSpacingWidth();
     bool onEndChain(RenderObject* endObject);
-    virtual int placeBoxesHorizontally(int x, bool& needsWordSpacing, GlyphOverflowAndFallbackFontsMap&);
+    int placeBoxesHorizontally(int x, bool& needsWordSpacing, GlyphOverflowAndFallbackFontsMap&);
     void computeLogicalBoxHeights(int& maxPositionTop, int& maxPositionBottom,
                                   int& maxAscent, int& maxDescent, bool strictMode, GlyphOverflowAndFallbackFontsMap&);
     void adjustMaxAscentAndDescent(int& maxAscent, int& maxDescent,

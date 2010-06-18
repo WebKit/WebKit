@@ -61,14 +61,10 @@ public:
     int selectionBottom() const { return lineBottom(); }
     int selectionHeight() const { return max(0, selectionBottom() - selectionTop()); }
 
-    virtual int verticallyAlignBoxes(int heightOfBlock, GlyphOverflowAndFallbackFontsMap&);
+    int verticallyAlignBoxes(int heightOfBlock, GlyphOverflowAndFallbackFontsMap&);
     void setLineTopBottomPositions(int top, int bottom);
 
     virtual RenderLineBoxList* rendererLineBoxes() const;
-
-#if ENABLE(SVG)
-    virtual void computePerCharacterLayoutInformation() { }
-#endif
 
     RenderObject* lineBreakObj() const { return m_lineBreakObj; }
     BidiStatus lineBreakBidiStatus() const;
