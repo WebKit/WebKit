@@ -1,3 +1,27 @@
+2010-06-18  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Remove unneeded custom code for WebSocket.send
+        https://bugs.webkit.org/show_bug.cgi?id=38180
+
+        We don't appear to require a custom binding here.  The old function was
+        wacky in two ways:
+
+        1) It required all of its arguments.
+
+        2) If the toString of its argument threw, it would catch the exception
+           and re-throw a different exception.
+
+        I've kept the first behavior but changed the second (and documented it
+        with a test).
+
+        Test: websocket/tests/send-throw.html
+
+        * bindings/js/JSWebSocketCustom.cpp:
+        * bindings/v8/custom/V8WebSocketCustom.cpp:
+        * websockets/WebSocket.idl:
+
 2010-06-15  Dumitru Daniliuc  <dumi@chromium.org>
 
         Reviewed by Adam Barth.

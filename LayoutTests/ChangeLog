@@ -1,3 +1,22 @@
+2010-06-18  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Remove unneeded custom code for WebSocket.send
+        https://bugs.webkit.org/show_bug.cgi?id=38180
+
+        Test what happens when you pass an object to WebSocket.send that throws
+        when you convert it to a string.
+
+        * websocket/tests/script-tests/send-throw.js: Added.
+        (endTest):
+        (FIRST_MESSAGE_TO_SEND.toString):
+        (ws.onopen):
+        (ws.onclose):
+        (timeOutCallback):
+        * websocket/tests/send-throw-expected.txt: Added.
+        * websocket/tests/send-throw.html: Added.
+
 2010-06-18  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Not reviewed. Try to turn Gtk 32-bit Linux Debug green again.

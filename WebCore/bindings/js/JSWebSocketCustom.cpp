@@ -44,21 +44,6 @@ using namespace JSC;
 
 namespace WebCore {
 
-// Custom functions
-JSValue JSWebSocket::send(ExecState* exec)
-{
-    if (exec->argumentCount() < 1)
-        return throwError(exec, createSyntaxError(exec, "Not enough arguments"));
-
-    const String& msg = ustringToString(exec->argument(0).toString(exec));
-    if (exec->hadException())
-        return throwError(exec, createSyntaxError(exec, "bad message data."));
-    ExceptionCode ec = 0;
-    JSValue ret = jsBoolean(impl()->send(msg, ec));
-    setDOMException(exec, ec);
-    return ret;
-}
-
 EncodedJSValue JSC_HOST_CALL JSWebSocketConstructor::constructJSWebSocket(ExecState* exec)
 {
     JSWebSocketConstructor* jsConstructor = static_cast<JSWebSocketConstructor*>(exec->callee());

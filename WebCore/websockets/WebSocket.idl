@@ -56,8 +56,7 @@ module websockets {
         attribute EventListener onerror;
         attribute EventListener onclose;
 
-        [Custom] boolean send(in DOMString data)
-          raises(DOMException);
+        [RequiresAllArguments] boolean send(in DOMString data) raises(DOMException);
         void close();
 
         // EventTarget interface

@@ -93,24 +93,6 @@ v8::Handle<v8::Value> V8WebSocket::constructorCallback(const v8::Arguments& args
     return args.Holder();
 }
 
-v8::Handle<v8::Value> V8WebSocket::sendCallback(const v8::Arguments& args)
-{
-    INC_STATS("DOM.WebSocket.send()");
-    WebSocket* webSocket = V8WebSocket::toNative(args.Holder());
-
-    ExceptionCode ec = 0;
-    bool ret = false;
-    if (args.Length() < 1)
-        return throwError("Not enough arguments", V8Proxy::SyntaxError);
-    else {
-        String msg = toWebCoreString(args[0]);
-        ret = webSocket->send(msg, ec);
-    }
-    if (ec)
-        return throwError(ec);
-    return v8Boolean(ret);
-}
-
 }  // namespace WebCore
 
 #endif  // ENABLE(WEB_SOCKETS)
