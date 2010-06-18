@@ -86,6 +86,7 @@ devtools.InspectorBackendImpl = function()
     this.installInspectorControllerDelegate_("stopProfiling");
     this.installInspectorControllerDelegate_("stopTimelineProfiler");
     this.installInspectorControllerDelegate_("storeLastActivePanel");
+    this.installInspectorControllerDelegate_("takeHeapSnapshot");
 
     this.installInspectorControllerDelegate_("getAllStyles");
     this.installInspectorControllerDelegate_("getStyles");
@@ -249,17 +250,6 @@ devtools.InspectorBackendImpl.prototype.pauseInDebugger = function()
 };
 
 }
-
-
-/**
- * @override
- */
-devtools.InspectorBackendImpl.prototype.takeHeapSnapshot = function()
-{
-    devtools.tools.getProfilerAgent().startProfiling(devtools.ProfilerAgent.ProfilerModules.PROFILER_MODULE_HEAP_SNAPSHOT
-        | devtools.ProfilerAgent.ProfilerModules.PROFILER_MODULE_HEAP_STATS
-        | devtools.ProfilerAgent.ProfilerModules.PROFILER_MODULE_JS_CONSTRUCTORS);
-};
 
 
 /**

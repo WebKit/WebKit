@@ -105,28 +105,11 @@ devtools.ProfilerAgent.prototype._getNextLogLines = function(immediately)
  */
 devtools.ProfilerAgent.prototype.startProfiling = function(modules)
 {
-    var cmd = new devtools.DebugCommand("profile", {
-        "modules": modules,
-        "command": "resume"});
-    devtools.DebuggerAgent.sendCommand_(cmd);
-    RemoteDebuggerAgent.processDebugCommands();
     if (modules & devtools.ProfilerAgent.ProfilerModules.PROFILER_MODULE_HEAP_SNAPSHOT) {
+        InspectorBackend.takeHeapSnapshot();
         // Active modules will not change, instead, a snapshot will be logged.
         this._getNextLogLines();
     }
-};
-
-
-/**
- * Stops profiling.
- */
-devtools.ProfilerAgent.prototype.stopProfiling = function(modules)
-{
-    var cmd = new devtools.DebugCommand("profile", {
-        "modules": modules,
-        "command": "pause"});
-    devtools.DebuggerAgent.sendCommand_(cmd);
-    RemoteDebuggerAgent.processDebugCommands();
 };
 
 

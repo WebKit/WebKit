@@ -292,6 +292,12 @@ void InspectorBackend::clearProfiles()
     if (m_inspectorController)
         m_inspectorController->clearProfiles();
 }
+
+void InspectorBackend::takeHeapSnapshot()
+{
+    if (m_inspectorController)
+        m_inspectorController->takeHeapSnapshot();
+}
 #endif
 
 void InspectorBackend::setInjectedScriptSource(const String& source)

@@ -52,4 +52,11 @@ PassRefPtr<ScriptProfile> ScriptProfiler::stop(ScriptState* state, const String&
     return profile ? ScriptProfile::create(profile) : 0;
 }
 
+void ScriptProfiler::takeHeapSnapshot()
+{
+    v8::V8::ResumeProfilerEx(v8::PROFILER_MODULE_HEAP_SNAPSHOT
+                             | v8::PROFILER_MODULE_HEAP_STATS
+                             | v8::PROFILER_MODULE_JS_CONSTRUCTORS);
+}
+
 } // namespace WebCore

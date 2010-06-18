@@ -108,6 +108,8 @@ public:
 
     void removeProfile(unsigned uid);
     void clearProfiles();
+
+    void takeHeapSnapshot();
 #endif
 
     void setInjectedScriptSource(const String& source);

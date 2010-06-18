@@ -932,7 +932,7 @@ WebInspector.HeapSnapshotProfileType.prototype = {
 
     buttonClicked: function()
     {
-        InspectorBackend.takeHeapSnapshot();
+        devtools.tools.getProfilerAgent().startProfiling(devtools.ProfilerAgent.ProfilerModules.PROFILER_MODULE_HEAP_SNAPSHOT);
     },
 
     get welcomeMessage()
