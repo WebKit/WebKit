@@ -1,3 +1,21 @@
+2010-06-18  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Add platform strategies for WebKit2.
+        https://bugs.webkit.org/show_bug.cgi?id=40863
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp: Added.
+        (WebKit::WebPlatformStrategies::initialize):
+        (WebKit::WebPlatformStrategies::WebPlatformStrategies):
+        (WebKit::WebPlatformStrategies::createPluginStrategy):
+        (WebKit::WebPlatformStrategies::refreshPlugins):
+        (WebKit::WebPlatformStrategies::getPluginInfo):
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.h: Added.
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::WebProcess):
+
 2010-06-18  Sam Weinig  <weinig@apple.com>
 
         Rolling http://trac.webkit.org/changeset/61297 back in.

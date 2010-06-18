@@ -30,6 +30,7 @@
 #include "WebCoreTypeArgumentMarshalling.h"
 #include "WebFrame.h"
 #include "WebPage.h"
+#include "WebPlatformStrategies.h"
 #include "WebPreferencesStore.h"
 #include "WebProcessMessageKinds.h"
 #include <wtf/PassRefPtr.h>
@@ -52,6 +53,8 @@ WebProcess& WebProcess::shared()
 WebProcess::WebProcess()
     : m_inDidClose(false)
 {
+    // Initialize our platform strategies.
+    WebPlatformStrategies::initialize();
 }
 
 void WebProcess::initialize(CoreIPC::Connection::Identifier serverIdentifier, RunLoop* runLoop)

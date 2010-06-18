@@ -28,6 +28,8 @@
 		1A30066E1110F4F70031937C /* ResponsivenessTimer.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A30066C1110F4F70031937C /* ResponsivenessTimer.h */; };
 		1A30EAC6115D7DA30053E937 /* ConnectionMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A30EAC5115D7DA30053E937 /* ConnectionMac.cpp */; };
 		1A39A54B1149D0700083E625 /* WebProcessMain.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC111B02112F5D1900337BAB /* WebProcessMain.mm */; };
+		1A3E736111CC2659007BD539 /* WebPlatformStrategies.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A3E735F11CC2659007BD539 /* WebPlatformStrategies.h */; };
+		1A3E736211CC2659007BD539 /* WebPlatformStrategies.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3E736011CC2659007BD539 /* WebPlatformStrategies.cpp */; };
 		1A433F0D113C53DD00FACDE9 /* WebErrors.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A433F0C113C53DD00FACDE9 /* WebErrors.h */; };
 		1A50DB66110A3D57000D3FE5 /* WebProcess.app in CopyFiles */ = {isa = PBXBuildFile; fileRef = 1A50DB1E110A3BDC000D3FE5 /* WebProcess.app */; };
 		1A594ABA112A1FB6009DE7C7 /* WebUIClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A594AB8112A1FB6009DE7C7 /* WebUIClient.cpp */; };
@@ -233,6 +235,8 @@
 		1058C7B1FEA5585E11CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
 		1A30066C1110F4F70031937C /* ResponsivenessTimer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResponsivenessTimer.h; sourceTree = "<group>"; };
 		1A30EAC5115D7DA30053E937 /* ConnectionMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConnectionMac.cpp; sourceTree = "<group>"; };
+		1A3E735F11CC2659007BD539 /* WebPlatformStrategies.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPlatformStrategies.h; sourceTree = "<group>"; };
+		1A3E736011CC2659007BD539 /* WebPlatformStrategies.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebPlatformStrategies.cpp; sourceTree = "<group>"; };
 		1A433F0C113C53DD00FACDE9 /* WebErrors.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebErrors.h; sourceTree = "<group>"; };
 		1A4F976A100E7B6600637A18 /* Base.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
 		1A4F976B100E7B6600637A18 /* DebugRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = DebugRelease.xcconfig; sourceTree = "<group>"; };
@@ -599,6 +603,8 @@
 				BC032D6A10F4378D0058C15A /* WebFrameLoaderClient.h */,
 				BC111A59112F4FBB00337BAB /* WebInspectorClient.cpp */,
 				BC032D6D10F4378D0058C15A /* WebInspectorClient.h */,
+				1A3E736011CC2659007BD539 /* WebPlatformStrategies.cpp */,
+				1A3E735F11CC2659007BD539 /* WebPlatformStrategies.h */,
 			);
 			path = WebCoreSupport;
 			sourceTree = "<group>";
@@ -994,6 +1000,7 @@
 				BC204EF211C83EC8008F3375 /* WKBundleInitialize.h in Headers */,
 				BC20528111C94284008F3375 /* WKBundlePage.h in Headers */,
 				BC20528811C943A5008F3375 /* InjectedBundlePageClient.h in Headers */,
+				1A3E736111CC2659007BD539 /* WebPlatformStrategies.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1152,6 +1159,7 @@
 				BC204EEE11C83EC8008F3375 /* WKBundle.cpp in Sources */,
 				BC20528211C94284008F3375 /* WKBundlePage.cpp in Sources */,
 				BC20528911C943A5008F3375 /* InjectedBundlePageClient.cpp in Sources */,
+				1A3E736211CC2659007BD539 /* WebPlatformStrategies.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
