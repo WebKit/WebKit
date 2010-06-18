@@ -1,3 +1,10 @@
+2010-06-17  MORITA Hajime  <morrita@google.com>
+
+        Unreviewd, fixed a build break.
+
+        * css/CSSSelector.cpp:
+        (WebCore::CSSSelector::pseudoId):
+
 2010-06-16  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Kent Tamura.

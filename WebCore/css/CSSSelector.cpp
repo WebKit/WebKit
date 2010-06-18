@@ -197,7 +197,6 @@ PseudoId CSSSelector::pseudoId(PseudoType type)
     case PseudoMeterHorizontalOptimum:
     case PseudoMeterHorizontalSuboptimal:
     case PseudoMeterHorizontalEvenLessGood:
-    case PseudoMeterHorizontalEvenLessGood:
     case PseudoMeterVerticalBar:
     case PseudoMeterVerticalOptimum:
     case PseudoMeterVerticalSuboptimal:
