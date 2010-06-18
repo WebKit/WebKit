@@ -1710,7 +1710,6 @@ BUG22777 MAC : fast/overflow/hit-test-overflow-controls.html = IMAGE+TEXT
 BUG23475 MAC : fast/invalid/missing-end-tag.xhtml = IMAGE
 BUG23475 MAC : fast/parser/xhtml-alternate-entities.xml = IMAGE
 BUG23475 MAC : fast/xsl/xslt-extra-content-at-end.xml = IMAGE
-BUG23475 MAC : svg/custom/junk-data.svg = IMAGE
 
 // 116/136 of the repaint tests fail due to invalidation that doesn't match; further triage necessary
 BUG23473 MAC : fast/repaint = IMAGE
