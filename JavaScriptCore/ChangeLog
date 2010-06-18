@@ -1,3 +1,9 @@
+2010-06-18  Leandro Pereira  <leandro@profusion.mobi>
+
+        [EFL] Unreviewed build fix.
+
+        * wtf/CMakeLists.txt: Add MD5.cpp.
+
 2010-06-17  Shu Chang  <chang.shu@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

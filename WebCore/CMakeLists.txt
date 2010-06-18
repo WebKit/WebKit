@@ -1021,6 +1021,7 @@ SET(WebCore_SOURCES
     inspector/InspectorResource.cpp
     inspector/InspectorValues.cpp
     inspector/InspectorTimelineAgent.cpp
+    inspector/ScriptBreakpoint.cpp
     inspector/TimelineRecordFactory.cpp
 
     loader/Cache.cpp

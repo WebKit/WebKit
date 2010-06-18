@@ -5,6 +5,7 @@ SET(WTF_SOURCES
     FastMalloc.cpp
     HashTable.cpp
     MainThread.cpp
+    MD5.cpp
     RandomNumber.cpp
     RefCountedLeakCounter.cpp
     StringExtras.cpp

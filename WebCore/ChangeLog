@@ -1,3 +1,9 @@
+2010-06-18  Leandro Pereira  <leandro@profusion.mobi>
+
+        [EFL] Unreviewed build fix.
+
+        * CMakeLists.txt: Add inspector/ScriptBreakpoint.cpp.
+
 2010-06-18  Andy Estes  <aestes@apple.com>
 
         Rubber-stamped by Sam Weinig.
