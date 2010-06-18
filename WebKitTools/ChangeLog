@@ -1,3 +1,14 @@
+2010-06-18  Sam Weinig  <weinig@apple.com>
+
+        Rolling http://trac.webkit.org/changeset/61297 back in.
+
+        * MiniBrowser/MiniBrowser.xcodeproj/project.pbxproj:
+        * MiniBrowser/mac/WebBundle/WebBundleMain.c: Removed.
+        * MiniBrowser/mac/WebBundle/WebBundleMain.m: Added.
+        (_didClearWindow):
+        (_didCreatePage):
+        (WKBundleInitialize):
+
 2010-06-18  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Darin Adler.

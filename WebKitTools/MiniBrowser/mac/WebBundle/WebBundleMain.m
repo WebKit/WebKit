@@ -24,14 +24,31 @@
  */
 
 #include <stdio.h>
+#include <Cocoa/Cocoa.h>
 #include <WebKit2/WKBundle.h>
+#include <WebKit2/WKBundlePage.h>
 #include <WebKit2/WKBundleInitialize.h>
+#include <WebKit2/WKURLCF.h>
 
 static WKBundleRef globalBundle;
 
+void _didClearWindow(WKBundlePageRef page, WKBundleFrameRef frame, JSContextRef ctx, JSObjectRef window, const void *clientInfo)
+{
+    CFURLRef cfURL = WKURLCopyCFURL(0, WKBundlePageGetMainFrameURL(page));
+    NSLog(@"WKBundlePageClient - _didClearWindowForFrame %@", [(NSURL *)cfURL absoluteString]);
+    CFRelease(cfURL);
+}
+
 void _didCreatePage(WKBundlePageRef page, const void* clientInfo)
 {
-    printf("WKBundleClient - didCreatePage\n");
+    NSLog(@"WKBundleClient - didCreatePage\n");
+
+    WKBundlePageClient client = {
+        0,
+        0,
+        _didClearWindow
+    };
+    WKBundlePageSetClient(page, &client);
 }
 
 void WKBundleInitialize(WKBundleRef bundle)

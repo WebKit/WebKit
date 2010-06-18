@@ -101,6 +101,10 @@
 		BC204EF011C83EC8008F3375 /* WKBundleAPICast.h in Headers */ = {isa = PBXBuildFile; fileRef = BC204EEB11C83EC8008F3375 /* WKBundleAPICast.h */; };
 		BC204EF111C83EC8008F3375 /* WKBundleBase.h in Headers */ = {isa = PBXBuildFile; fileRef = BC204EEC11C83EC8008F3375 /* WKBundleBase.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BC204EF211C83EC8008F3375 /* WKBundleInitialize.h in Headers */ = {isa = PBXBuildFile; fileRef = BC204EED11C83EC8008F3375 /* WKBundleInitialize.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		BC20528111C94284008F3375 /* WKBundlePage.h in Headers */ = {isa = PBXBuildFile; fileRef = BC20527F11C94284008F3375 /* WKBundlePage.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		BC20528211C94284008F3375 /* WKBundlePage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC20528011C94284008F3375 /* WKBundlePage.cpp */; };
+		BC20528811C943A5008F3375 /* InjectedBundlePageClient.h in Headers */ = {isa = PBXBuildFile; fileRef = BC20528611C943A5008F3375 /* InjectedBundlePageClient.h */; };
+		BC20528911C943A5008F3375 /* InjectedBundlePageClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC20528711C943A5008F3375 /* InjectedBundlePageClient.cpp */; };
 		BC20EBB0116EEB0800094A50 /* WKString.h in Headers */ = {isa = PBXBuildFile; fileRef = BC20EBAE116EEB0800094A50 /* WKString.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BC20EBB1116EEB0800094A50 /* WKString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC20EBAF116EEB0800094A50 /* WKString.cpp */; };
 		BC20EBB4116EEF7A00094A50 /* WKURL.h in Headers */ = {isa = PBXBuildFile; fileRef = BC20EBB2116EEF7A00094A50 /* WKURL.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -310,6 +314,10 @@
 		BC204EEB11C83EC8008F3375 /* WKBundleAPICast.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKBundleAPICast.h; sourceTree = "<group>"; };
 		BC204EEC11C83EC8008F3375 /* WKBundleBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKBundleBase.h; sourceTree = "<group>"; };
 		BC204EED11C83EC8008F3375 /* WKBundleInitialize.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKBundleInitialize.h; sourceTree = "<group>"; };
+		BC20527F11C94284008F3375 /* WKBundlePage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKBundlePage.h; sourceTree = "<group>"; };
+		BC20528011C94284008F3375 /* WKBundlePage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKBundlePage.cpp; sourceTree = "<group>"; };
+		BC20528611C943A5008F3375 /* InjectedBundlePageClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectedBundlePageClient.h; sourceTree = "<group>"; };
+		BC20528711C943A5008F3375 /* InjectedBundlePageClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedBundlePageClient.cpp; sourceTree = "<group>"; };
 		BC20EBAE116EEB0800094A50 /* WKString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKString.h; sourceTree = "<group>"; };
 		BC20EBAF116EEB0800094A50 /* WKString.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKString.cpp; sourceTree = "<group>"; };
 		BC20EBB2116EEF7A00094A50 /* WKURL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKURL.h; sourceTree = "<group>"; };
@@ -782,6 +790,8 @@
 				BC204EE411C83E9C008F3375 /* mac */,
 				BC204EE011C83E98008F3375 /* InjectedBundle.cpp */,
 				BC204EE111C83E98008F3375 /* InjectedBundle.h */,
+				BC20528711C943A5008F3375 /* InjectedBundlePageClient.cpp */,
+				BC20528611C943A5008F3375 /* InjectedBundlePageClient.h */,
 			);
 			path = InjectedBundle;
 			sourceTree = "<group>";
@@ -810,6 +820,8 @@
 				BC204EEB11C83EC8008F3375 /* WKBundleAPICast.h */,
 				BC204EEC11C83EC8008F3375 /* WKBundleBase.h */,
 				BC204EED11C83EC8008F3375 /* WKBundleInitialize.h */,
+				BC20528011C94284008F3375 /* WKBundlePage.cpp */,
+				BC20527F11C94284008F3375 /* WKBundlePage.h */,
 			);
 			path = c;
 			sourceTree = "<group>";
@@ -980,6 +992,8 @@
 				BC204EF011C83EC8008F3375 /* WKBundleAPICast.h in Headers */,
 				BC204EF111C83EC8008F3375 /* WKBundleBase.h in Headers */,
 				BC204EF211C83EC8008F3375 /* WKBundleInitialize.h in Headers */,
+				BC20528111C94284008F3375 /* WKBundlePage.h in Headers */,
+				BC20528811C943A5008F3375 /* InjectedBundlePageClient.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1136,6 +1150,8 @@
 				BC204EE211C83E98008F3375 /* InjectedBundle.cpp in Sources */,
 				BC204EE611C83EA9008F3375 /* InjectedBundleMac.cpp in Sources */,
 				BC204EEE11C83EC8008F3375 /* WKBundle.cpp in Sources */,
+				BC20528211C94284008F3375 /* WKBundlePage.cpp in Sources */,
+				BC20528911C943A5008F3375 /* InjectedBundlePageClient.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

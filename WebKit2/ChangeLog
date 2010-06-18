@@ -1,3 +1,27 @@
+2010-06-18  Sam Weinig  <weinig@apple.com>
+
+        Rolling http://trac.webkit.org/changeset/61297 back in.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp: Added.
+        (WKBundlePageSetClient):
+        (WKBundlePageGetMainFrameURL):
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.h: Added.
+        * WebProcess/InjectedBundle/InjectedBundlePageClient.cpp: Added.
+        (WebKit::InjectedBundlePageClient::InjectedBundlePageClient):
+        (WebKit::InjectedBundlePageClient::initialize):
+        (WebKit::InjectedBundlePageClient::didClearWindowObjectForFrame):
+        * WebProcess/InjectedBundle/InjectedBundlePageClient.h: Added.
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDidClearWindowObjectInWorld):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::initializeInjectedBundleClient):
+        (WebKit::WebPage::mainFrameURL):
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::injectedBundleClient):
+        * mac/WebKit2.exp:
+        * win/WebKit2.vcproj:
+
 2010-06-17  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.
