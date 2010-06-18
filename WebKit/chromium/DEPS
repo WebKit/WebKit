@@ -137,8 +137,6 @@ deps_os = {
     # Linux, actually.
     'tools/xdisplaycheck':
       Var('chromium_svn')+'/tools/xdisplaycheck@'+Var('chromium_rev'),
-    'tools/data_pack':
-      Var('chromium_svn')+'/tools/data_pack@'+Var('chromium_rev'),
     'third_party/yasm/source/patched-yasm':
       From('chromium_deps', 'src/third_party/yasm/source/patched-yasm'),
   },

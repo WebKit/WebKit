@@ -1,3 +1,12 @@
+2010-06-17  Tony Chang  <tony@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        [chromium] cleanup redundant DEPS value and remove buildbot cleanup code
+        https://bugs.webkit.org/show_bug.cgi?id=40615
+
+        * DEPS: tools/data_pack was listed twice for linux (harmless, but unnecessary)
+
 2010-06-17  Jeremy Moskovich  <jeremy@chromium.org>
 
         Reviewed by Darin Fisher.

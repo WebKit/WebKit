@@ -1,3 +1,12 @@
+2010-06-17  Tony Chang  <tony@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        [chromium] cleanup redundant DEPS value and remove buildbot cleanup code
+        https://bugs.webkit.org/show_bug.cgi?id=40615
+
+        * Scripts/update-webkit-chromium: remove directory removal of third_party in old checkouts
+
 2010-06-17  Ada Chan  <adachan@apple.com>
 
         Rolling out http://trac.webkit.org/changeset/61297 due to build errors.
