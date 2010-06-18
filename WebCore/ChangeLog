@@ -1,3 +1,21 @@
+2010-06-17  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by David Kilzer.
+
+        (Landed by Dirk Pranke).
+
+        Check for a null frame before setting drag selection.
+        https://bugs.webkit.org/show_bug.cgi?id=38893
+        Same Layout test as https://bugs.webkit.org/show_bug.cgi?id=37168.
+
+        Test: editing/pasteboard/drag-drop-iframe-refresh-crash.html  
+
+        Note that you need to run the test manually 20-30 times for the crash
+        to reproduce.
+
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::setSelection):
+
 2010-06-17  Benjamin Poulain  <benjamin.poulain@nokia.com>
 
         Reviewed by Simon Hausmann.
