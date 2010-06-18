@@ -1,5 +1,15 @@
 2010-06-18  Nikolas Zimmermann  <nzimmermann@rim.com>
 
+        Not reviewed. Rebaseline mac-tiger test results.
+
+        * platform/mac-tiger/svg/W3C-SVG-1.1/metadata-example-01-b-expected.txt:
+        * platform/mac-tiger/svg/hixie/text/003-expected.txt:
+        * platform/mac-tiger/svg/hixie/text/003a-expected.txt:
+        * platform/mac-tiger/svg/hixie/viewbox/preserveAspectRatio/001-expected.txt:
+        * platform/mac-tiger/svg/hixie/viewbox/preserveAspectRatio/002-expected.txt:
+
+2010-06-18  Nikolas Zimmermann  <nzimmermann@rim.com>
+
         Not reviewed. Rebaselined Qt test results.
 
         * platform/qt/svg/custom/broken-internal-references-expected.txt:
