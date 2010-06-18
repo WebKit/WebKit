@@ -49,6 +49,7 @@
 #include "WebMimeRegistry.h"
 #include "WebPluginContainerImpl.h"
 #include "WebPluginListBuilderImpl.h"
+#include "WebSandboxSupport.h"
 #include "WebScreenInfo.h"
 #include "WebString.h"
 #include "WebURL.h"
@@ -59,12 +60,10 @@
 
 #if OS(WINDOWS)
 #include "WebRect.h"
-#include "WebSandboxSupport.h"
 #include "WebThemeEngine.h"
 #endif
 
 #if OS(LINUX)
-#include "WebSandboxSupport.h"
 #include "WebFontInfo.h"
 #include "WebFontRenderStyle.h"
 #endif
@@ -401,6 +400,22 @@ void ChromiumBridge::getRenderStyleForStrike(const char* font, int sizeAndStyle,
         WebFontInfo::renderStyleForStrike(font, sizeAndStyle, &style);
 
     style.toFontRenderStyle(result);
+}
+#endif
+
+#if OS(DARWIN)
+bool ChromiumBridge::loadFont(NSFont* srcFont, ATSFontContainerRef* out)
+{
+    WebSandboxSupport* ss = webKitClient()->sandboxSupport();
+    if (ss)
+        return ss->loadFont(srcFont, out);
+
+    // This function should only be called in response to an error loading a
+    // font due to being blocked by the sandbox.
+    // This by definition shouldn't happen if there is no sandbox support.
+    ASSERT_NOT_REACHED();
+    *out = 0;
+    return false;
 }
 #endif
 

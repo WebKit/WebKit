@@ -1,3 +1,14 @@
+2010-06-17  Jeremy Moskovich  <jeremy@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [Chromium API] Implement WebSandboxSupport on OS X and add stubs to allow
+        OOP loading of fonts.
+
+        https://bugs.webkit.org/show_bug.cgi?id=40544
+
+        * platform/chromium/ChromiumBridge.h: Add prototype for loadFont()
+
 2010-06-17  Nicolas Weber  <thakis@chromium.org>
 
         Reviewed by Eric Seidel.

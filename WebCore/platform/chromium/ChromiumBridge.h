@@ -44,6 +44,16 @@ typedef struct NPObject NPObject;
 typedef struct _NPP NPP_t;
 typedef NPP_t* NPP;
 
+#if OS(DARWIN)
+typedef struct CGFont* CGFontRef;
+typedef uintptr_t ATSFontContainerRef;
+#ifdef __OBJC__
+@class NSFont;
+#else
+class NSFont;
+#endif
+#endif // OS(DARWIN)
+
 #if OS(WINDOWS)
 typedef struct HFONT__* HFONT;
 #endif
@@ -126,6 +136,9 @@ namespace WebCore {
 #if OS(LINUX)
         static void getRenderStyleForStrike(const char* family, int sizeAndStyle, FontRenderStyle* result);
         static String getFontFamilyForCharacters(const UChar*, size_t numCharacters);
+#endif
+#if OS(DARWIN)
+        static bool loadFont(NSFont* srcFont, ATSFontContainerRef* out);
 #endif
 
         // Forms --------------------------------------------------------------

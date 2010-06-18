@@ -77,6 +77,7 @@
                 'public/linux/WebRenderTheme.h',
                 'public/x11/WebScreenInfoFactory.h',
                 'public/mac/WebInputEventFactory.h',
+                'public/mac/WebSandboxSupport.h',
                 'public/mac/WebScreenInfoFactory.h',
                 'public/WebAccessibilityCache.h',
                 'public/WebAccessibilityObject.h',
