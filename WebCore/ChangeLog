@@ -1,3 +1,9 @@
+2010-06-18  Yury Semikhatsky  <yurys@chromium.org>
+
+        Unreviewed: Qt build fix.
+
+        * inspector/InspectorController.cpp:
+
 2010-06-18  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Ojan Vafai.
