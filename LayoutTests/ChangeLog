@@ -10,6 +10,12 @@
 
         Unreviewed, expectations update.
 
+        Update chromium baselines after http://trac.webkit.org/changeset/61418.
+
+2010-06-18  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Unreviewed, expectations update.
+
         Update chromium-linux baselines after http://trac.webkit.org/changeset/61393.
 
 2010-06-18  Dimitri Glazkov  <dglazkov@chromium.org>
