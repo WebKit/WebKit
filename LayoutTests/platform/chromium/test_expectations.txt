@@ -941,7 +941,6 @@ BUG10304 LINUX : svg/W3C-SVG-1.1/animate-elem-04-t.svg = FAIL
 BUG10304 LINUX : svg/W3C-SVG-1.1/animate-elem-05-t.svg = FAIL
 BUG10304 LINUX : svg/W3C-SVG-1.1/animate-elem-06-t.svg = FAIL
 BUG10304 LINUX : svg/W3C-SVG-1.1/animate-elem-07-t.svg = FAIL
-BUG10304 LINUX RELEASE: svg/W3C-SVG-1.1/animate-elem-30-t.svg = IMAGE
 BUG10304 LINUX : svg/W3C-SVG-1.1/fonts-desc-02-t.svg = FAIL
 BUG10304 LINUX : svg/W3C-SVG-1.1/interact-zoom-01-t.svg = FAIL
 BUG10304 LINUX : svg/W3C-SVG-1.1/text-spacing-01-b.svg = FAIL
@@ -1961,7 +1960,6 @@ BUG9798 WIN DEBUG : http/tests/xmlhttprequest/encode-request-url-2.html = TIMEOU
 BUG9797 BUG9798 WIN RELEASE SLOW : http/tests/xmlhttprequest/state-after-network-error.html = PASS
 BUG9797 LINUX DEBUG : svg/carto.net/colourpicker.svg = FAIL
 BUG9798 LINUX RELEASE : svg/carto.net/colourpicker.svg = FAIL
-BUG9798 LINUX : svg/custom/invisible-text-after-scrolling.xhtml = IMAGE
 BUG9798 LINUX RELEASE : tables/mozilla/bugs/45621.html = FAIL
 BUG9798 LINUX DEBUG SLOW : tables/mozilla/bugs/45621.html = FAIL
 //also BUG24868 (crash)
@@ -2098,7 +2096,7 @@ BUG18656 MAC RELEASE : fast/dom/Window/window-lookup-precedence.html = FAIL
 BUG18656 MAC DEBUG : fast/dom/Window/window-lookup-precedence.html = FAIL
 
 // Test failures caused by re-enabling skia asserts.
-BUG18896 LINUX WIN DEBUG : svg/batik/paints/gradientLimit.svg = TIMEOUT FAIL
+BUG18896 WIN DEBUG : svg/batik/paints/gradientLimit.svg = TIMEOUT FAIL
 
 // Test failures from WebKit merge 46894 to 46977
 BUG26737 : fast/js/prototypes.html = FAIL
@@ -2484,9 +2482,6 @@ BUG31252 : http/tests/security/listener/xss-inactive-closure.html = TEXT
 
 BUG31623 WIN: http/tests/appcache/remove-cache.html = PASS TEXT TIMEOUT
 
-// WebKit roll 52769 -> 52793
-BUG31642 LINUX DEBUG: svg/W3C-SVG-1.1/animate-elem-30-t.svg = IMAGE CRASH
-
 // WebKit roll 52852 -> 52867
 BUG32018 : websocket/tests/frame-lengths.html = PASS TIMEOUT
 BUG32018 DEBUG : websocket/tests/simple-stress.html = PASS TEXT TIMEOUT
@@ -2720,9 +2715,7 @@ BUG33812 SKIP : fast/dom/icon-url-property.html = FAIL
 // Failing with webkit roll 57659 -> 57677.
 BUG41817 WIN LINUX : fast/backgrounds/svg-as-background-1.html = IMAGE PASS
 BUG41817 WIN LINUX : fast/backgrounds/svg-as-background-3.html = IMAGE PASS
-BUG41817 MAC LINUX : svg/text/text-intro-05-t.svg = IMAGE PASS
-BUG41817 LINUX : svg/text/text-text-07-t.svg = IMAGE PASS
-BUG41817 LINUX : svg/text/text-tselect-02-f.svg = IMAGE PASS
+BUG41817 MAC : svg/text/text-intro-05-t.svg = IMAGE PASS
 
 BUG42044 WIN : http/tests/security/xss-DENIED-mime-type-execute-as-html.html = PASS TIMEOUT
 
@@ -2796,9 +2789,6 @@ BUG43960 WIN LINUX : fast/css/input-search-padding.html = IMAGE+TEXT
 BUG43960 MAC : fast/css/input-search-padding.html = IMAGE
 
 BUGWK38705 : http/tests/security/sandbox-inherit-to-initial-document-2.html = TEXT
-
-BUG43495 LINUX : svg/W3C-SVG-1.1/render-groups-01-b.svg = IMAGE
-BUG43495 LINUX : svg/W3C-SVG-1.1/render-groups-03-t.svg = IMAGE
 
 // Needs new baselines
 BUGJAMESR WIN MAC : fast/css/nested-rounded-corners.html = IMAGE MISSING
