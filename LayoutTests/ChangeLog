@@ -2,6 +2,14 @@
 
         Unreviewed.
 
+        I bet this test passes now.  :)
+
+        * platform/qt/Skipped:
+
+2010-06-17  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed.
+
         Skip fast/preloader tests on GTK and Qt because they don't implement
         dumpResourceResponseMIMETypes.
 
