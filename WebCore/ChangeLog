@@ -1,3 +1,15 @@
+2010-06-17  Benjamin Poulain  <benjamin.poulain@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Get rid of the the unused imageSize of ImageDecoderQt::internalHandleCurrentImage()
+        https://bugs.webkit.org/show_bug.cgi?id=40620
+
+        Remove an unused variable.
+
+        * platform/graphics/qt/ImageDecoderQt.cpp:
+        (WebCore::ImageDecoderQt::internalHandleCurrentImage):
+
 2010-06-17  Jeremy Moskovich  <jeremy@chromium.org>
 
         Reviewed by Darin Fisher.

@@ -198,7 +198,6 @@ bool ImageDecoderQt::internalHandleCurrentImage(size_t frameIndex)
     }
 
     // now into the RGBA32Buffer - even if the image is not
-    QSize imageSize = img.size();
     RGBA32Buffer* const buffer = &m_frameBufferCache[frameIndex];
     buffer->setRect(m_reader->currentImageRect());
     buffer->setStatus(RGBA32Buffer::FrameComplete);
