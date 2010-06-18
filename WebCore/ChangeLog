@@ -1,3 +1,19 @@
+2010-06-18  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r61405.
+        http://trac.webkit.org/changeset/61405
+        https://bugs.webkit.org/show_bug.cgi?id=40838
+
+        broke chromium mac compile (Requested by tonyg-cr1 on
+        #webkit).
+
+        * bindings/v8/ScriptSourceCode.h:
+        (WebCore::ScriptSourceCode::ScriptSourceCode):
+        * bindings/v8/V8Proxy.cpp:
+        (WebCore::V8Proxy::compileScript):
+        (WebCore::V8Proxy::evaluate):
+        * bindings/v8/V8Proxy.h:
+
 2010-06-18  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Dimitri Glazkov.
