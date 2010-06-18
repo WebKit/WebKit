@@ -262,7 +262,6 @@ void InspectorFrontend::resourceTrackingWasDisabled()
     callSimpleFunction("resourceTrackingWasDisabled");
 }
 
-
 void InspectorFrontend::searchingForNodeWasEnabled()
 {
     callSimpleFunction("searchingForNodeWasEnabled");
@@ -271,6 +270,16 @@ void InspectorFrontend::searchingForNodeWasEnabled()
 void InspectorFrontend::searchingForNodeWasDisabled()
 {
     callSimpleFunction("searchingForNodeWasDisabled");
+}
+
+void InspectorFrontend::monitoringXHRWasEnabled()
+{
+    callSimpleFunction("monitoringXHRWasEnabled");
+}
+
+void InspectorFrontend::monitoringXHRWasDisabled()
+{
+    callSimpleFunction("monitoringXHRWasDisabled");
 }
 
 void InspectorFrontend::updatePauseOnExceptionsState(long state)

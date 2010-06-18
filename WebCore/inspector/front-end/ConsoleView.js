@@ -399,7 +399,13 @@ WebInspector.ConsoleView.prototype = {
             return;
         }
 
-        this._contextMenu.show(event);
+        var contextMenu = new WebInspector.ContextMenu();
+        if (!WebInspector.monitoringXHREnabled)
+            contextMenu.appendItem(WebInspector.UIString("Enable XMLHttpRequest logging"), InspectorBackend.enableMonitoringXHR.bind(InspectorBackend));
+        else
+            contextMenu.appendItem(WebInspector.UIString("Disable XMLHttpRequest logging"), InspectorBackend.disableMonitoringXHR.bind(InspectorBackend));
+        contextMenu.appendItem(WebInspector.UIString("Clear Console"), this.requestClearMessages.bind(this));
+        contextMenu.show(event);
     },
 
     _messagesSelectStart: function(event)
@@ -444,8 +450,6 @@ WebInspector.ConsoleView.prototype = {
         var clearConsoleHandler = this.requestClearMessages.bind(this);
         var shortcutL = shortcut.makeDescriptor("l", WebInspector.KeyboardShortcut.Modifiers.Ctrl);
         this._shortcuts[shortcutL.key] = clearConsoleHandler;
-        this._contextMenu = new WebInspector.ContextMenu();
-        this._contextMenu.appendItem(WebInspector.UIString("Clear Console"), clearConsoleHandler);
 
         var section = WebInspector.shortcutsHelp.section(WebInspector.UIString("Console"));
         var keys = WebInspector.isMac() ? [ shortcutK.name, shortcutL.name ] : [ shortcutL.name ];

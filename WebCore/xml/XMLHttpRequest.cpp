@@ -900,7 +900,7 @@ void XMLHttpRequest::didFinishLoading(unsigned long identifier)
 
 #if ENABLE(INSPECTOR)
     if (InspectorController* inspector = scriptExecutionContext()->inspectorController())
-        inspector->resourceRetrievedByXMLHttpRequest(identifier, m_responseText);
+        inspector->resourceRetrievedByXMLHttpRequest(identifier, m_responseText, m_url, m_lastSendURL, m_lastSendLineNumber);
 #endif
 
     bool hadLoader = m_loader;

@@ -1,3 +1,16 @@
+2010-06-17  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: bring XHR console records back.
+        - adds "Enable XHR Monitor" / "Disable XHR Monitor" actions to the console's context menu
+        - make the chosen option persist in the settings.
+
+        https://bugs.webkit.org/show_bug.cgi?id=40799
+
+        * src/js/InspectorControllerImpl.js:
+        (devtools.InspectorBackendImpl):
+
 2010-06-15  Dumitru Daniliuc  <dumi@chromium.org>
 
         Reviewed by Adam Barth.

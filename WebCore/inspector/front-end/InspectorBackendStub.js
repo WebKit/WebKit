@@ -32,7 +32,6 @@ if (!window.InspectorBackend) {
 
 WebInspector.InspectorBackendStub = function()
 {
-    this._searchingForNode = false;
     this._attachedWindowHeight = 0;
     this._timelineEnabled = false;
 }
@@ -64,11 +63,6 @@ WebInspector.InspectorBackendStub.prototype = {
     {
     },
 
-    searchingForNode: function()
-    {
-        return this._searchingForNode;
-    },
-
     getOuterHTML: function()
     {
     },
@@ -83,11 +77,6 @@ WebInspector.InspectorBackendStub.prototype = {
 
     search: function(sourceRow, query)
     {
-    },
-
-    toggleNodeSearch: function()
-    {
-        this._searchingForNode = !this._searchingForNode;
     },
 
     setAttachedWindowHeight: function(height)
@@ -154,6 +143,16 @@ WebInspector.InspectorBackendStub.prototype = {
     disableSearchingForNode: function()
     {
         WebInspector.searchingForNodeWasDisabled();
+    },
+
+    enableMonitoringXHR: function()
+    {
+        WebInspector.monitoringXHRWasEnabled();
+    },
+
+    disableMonitoringXHR: function()
+    {
+        WebInspector.monitoringXHRWasDisabled();
     },
 
     reloadPage: function()

@@ -45,9 +45,11 @@ devtools.InspectorBackendImpl = function()
     this.installInspectorControllerDelegate_("copyNode");
     this.installInspectorControllerDelegate_("deleteCookie");
     this.installInspectorControllerDelegate_("didEvaluateForTestInFrontend");
+    this.installInspectorControllerDelegate_("disableMonitoringXHR");
     this.installInspectorControllerDelegate_("disableResourceTracking");
     this.installInspectorControllerDelegate_("disableSearchingForNode");
     this.installInspectorControllerDelegate_("disableTimeline");
+    this.installInspectorControllerDelegate_("enableMonitoringXHR");
     this.installInspectorControllerDelegate_("enableResourceTracking");
     this.installInspectorControllerDelegate_("enableSearchingForNode");
     this.installInspectorControllerDelegate_("enableTimeline");

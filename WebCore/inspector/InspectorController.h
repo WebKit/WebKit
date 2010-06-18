@@ -170,13 +170,14 @@ public:
     void didReceiveContentLength(unsigned long identifier, int lengthReceived);
     void didFinishLoading(unsigned long identifier);
     void didFailLoading(unsigned long identifier, const ResourceError&);
-    void resourceRetrievedByXMLHttpRequest(unsigned long identifier, const ScriptString& sourceString);
+    void resourceRetrievedByXMLHttpRequest(unsigned long identifier, const ScriptString& sourceString, const String& url, const String& sendURL, unsigned sendLineNumber);
     void scriptImported(unsigned long identifier, const String& sourceString);
 
     void enableResourceTracking(bool always = false, bool reload = true);
     void disableResourceTracking(bool always = false);
     bool resourceTrackingEnabled() const { return m_resourceTrackingEnabled; }
-    void ensureResourceTrackingSettingsLoaded();
+
+    void ensureSettingsLoaded();
 
     void startTimelineProfiler();
     void stopTimelineProfiler();
@@ -278,6 +279,7 @@ private:
 
     // Following are used from InspectorBackend and internally.
     void setSearchingForNode(bool enabled);
+    void setMonitoringXHR(bool enabled);
     void storeLastActivePanel(const String& panelName);
     InspectorDOMAgent* domAgent() { return m_domAgent.get(); }
     void releaseDOMAgent();
@@ -355,9 +357,10 @@ private:
 #endif
     unsigned m_groupLevel;
     bool m_searchingForNode;
+    bool m_monitoringXHR;
     ConsoleMessage* m_previousMessage;
     bool m_resourceTrackingEnabled;
-    bool m_resourceTrackingSettingsLoaded;
+    bool m_settingsLoaded;
     RefPtr<InspectorBackend> m_inspectorBackend;
     RefPtr<InjectedScriptHost> m_injectedScriptHost;
 

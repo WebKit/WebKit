@@ -65,6 +65,9 @@ public:
     void enableSearchingForNode();
     void disableSearchingForNode();
 
+    void enableMonitoringXHR();
+    void disableMonitoringXHR();
+
     void enableResourceTracking(bool always);
     void disableResourceTracking(bool always);
     void getResourceContent(long callId, unsigned long identifier);

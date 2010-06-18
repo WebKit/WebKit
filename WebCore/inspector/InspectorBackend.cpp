@@ -109,6 +109,18 @@ void InspectorBackend::disableSearchingForNode()
         m_inspectorController->setSearchingForNode(false);
 }
 
+void InspectorBackend::enableMonitoringXHR()
+{
+    if (m_inspectorController)
+        m_inspectorController->setMonitoringXHR(true);
+}
+
+void InspectorBackend::disableMonitoringXHR()
+{
+    if (m_inspectorController)
+        m_inspectorController->setMonitoringXHR(false);
+}
+
 void InspectorBackend::enableResourceTracking(bool always)
 {
     if (m_inspectorController)

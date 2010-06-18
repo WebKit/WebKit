@@ -1297,6 +1297,16 @@ WebInspector.searchingForNodeWasDisabled = function()
     this.panels.elements.searchingForNodeWasDisabled();
 }
 
+WebInspector.monitoringXHRWasEnabled = function()
+{
+    this.monitoringXHREnabled = true;
+}
+
+WebInspector.monitoringXHRWasDisabled = function()
+{
+    this.monitoringXHREnabled = false;
+}
+
 WebInspector.attachDebuggerWhenShown = function()
 {
     this.panels.scripts.attachDebuggerWhenShown();
