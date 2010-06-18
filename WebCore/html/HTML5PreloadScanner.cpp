@@ -155,7 +155,7 @@ void HTML5PreloadScanner::processToken()
         return;
 
     PreloadTask task(m_token);
-    m_lexer.setState(HTML5TreeBuilder::adjustedLexerState(m_lexer.state(), task.tagName()));
+    m_lexer.setState(HTML5TreeBuilder::adjustedLexerState(m_lexer.state(), task.tagName(), m_document->frame()));
     if (task.tagName() == scriptTag) {
         // The tree builder handles scriptTag separately from the other lexer
         // state adjustments, so we need to handle it separately too.

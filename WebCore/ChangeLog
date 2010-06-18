@@ -1,3 +1,20 @@
+2010-06-17  Tony Gentilcore  <tonyg@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Prevent HTML5PreloadScanner from loading resources in <noscript> tags.
+        https://bugs.webkit.org/show_bug.cgi?id=40779
+
+        No new tests. Will create a layout test in a subsequent patch.
+
+        * html/HTML5PreloadScanner.cpp:
+        (WebCore::HTML5PreloadScanner::processToken):
+        * html/HTML5TreeBuilder.cpp:
+        (WebCore::HTML5TreeBuilder::adjustedLexerState):
+        (WebCore::HTML5TreeBuilder::passTokenToLegacyParser):
+        (WebCore::HTML5TreeBuilder::isScriptingFlagEnabled):
+        * html/HTML5TreeBuilder.h:
+
 2010-06-17  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
