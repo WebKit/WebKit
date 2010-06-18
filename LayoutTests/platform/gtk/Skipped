@@ -5653,10 +5653,6 @@ fast/media/print-restores-previous-mediatype.html
 # https://bugs.webkit.org/show_bug.cgi?id=36467
 fast/loader/stateobjects/replacestate-in-iframe.html
 
-# Fails on the 32 bits bots with off-by-one size after zoom out
-# See https://bugs.webkit.org/show_bug.cgi?id=36491
-fast/css/zoom-body-scroll.html
-
 # Fails on GTK+ since https://bugs.webkit.org/show_bug.cgi?id=25195 got in
 # See https://bugs.webkit.org/show_bug.cgi?id=36627 for what's needed
 # for a real fix.
@@ -5824,8 +5820,10 @@ http/tests/inspector/resource-parameters.html
 # Some results are one pixel off on the 64-bit bot
 # https://bugs.webkit.org/show_bug.cgi?id=39022
 css1/box_properties/acid_test.html
+fast/css/zoom-body-scroll.html
 svg/custom/svg-fonts-with-no-element-reference.html
 svg/filters/parent-children-with-same-filter.svg
+svg/overflow/overflow-on-inner-svg-element.svg
 
 # New test needs enhanced frameloader delegate logging in DRT
 # Discussed in https://bugs.webkit.org/show_bug.cgi?id=38928
@@ -5893,3 +5891,7 @@ fast/forms/basic-textareas-quirks.html
 
 # Fake italics do not work: https://bugs.webkit.org/show_bug.cgi?id=40856
 fast/text/fake-italic.html
+
+# This test crashes randomly on some of our bots
+# https://bugs.webkit.org/show_bug.cgi?id=40859
+media/video-controls-rendering.html
