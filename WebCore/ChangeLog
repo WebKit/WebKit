@@ -1,3 +1,21 @@
+2010-06-18  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Ojan Vafai.
+
+        https://bugs.webkit.org/show_bug.cgi?id=39798
+        No selection change notification for editing operation that doesn't change the selection's DOM position
+        
+        Some editing operations change the selection visually without affecting its position within 
+        the DOM.  This was previously known to occur for certain typing commands, but it can also 
+        occur for some Pastes and changes to block style.
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::appliedEditing):
+        (WebCore::Editor::unappliedEditing):
+        (WebCore::Editor::reappliedEditing):
+        (WebCore::Editor::changeSelectionAfterCommand):
+        * editing/Editor.h:
+
 2010-06-18  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Unreviewed build fix.

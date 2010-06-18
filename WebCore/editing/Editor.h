@@ -324,7 +324,7 @@ private:
     PassRefPtr<Range> firstVisibleRange(const String&, bool caseFlag);
     PassRefPtr<Range> lastVisibleRange(const String&, bool caseFlag);
     
-    void changeSelectionAfterCommand(const VisibleSelection& newSelection, bool closeTyping, bool clearTypingStyle, EditCommand*);
+    void changeSelectionAfterCommand(const VisibleSelection& newSelection, bool closeTyping, bool clearTypingStyle);
 };
 
 inline void Editor::setStartNewKillRingSequence(bool flag)
