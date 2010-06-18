@@ -1,3 +1,11 @@
+2010-06-18  Leandro Pereira  <leandro@profusion.mobi>
+
+        Unreviewed.
+
+        Adding myself to the committers list.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2010-06-17  Tony Chang  <tony@chromium.org>
 
         Reviewed by Kent Tamura.
