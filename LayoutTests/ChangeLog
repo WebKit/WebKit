@@ -1,3 +1,36 @@
+2010-06-18  Martin Robinson  <mrobinson@igalia.com>
+
+        Unreviewed.
+
+        Adding baselines for new tests and correcting one incorrect baseline.
+
+        * platform/gtk/media/video-replaces-poster-expected.txt: Correting this incorrect baseline.
+        * platform/gtk/svg/hixie/text/001-expected.txt: Added.
+        * platform/gtk/svg/text/select-textLength-spacing-squeeze-1-expected.txt: Added.
+        * platform/gtk/svg/text/select-textLength-spacing-squeeze-2-expected.txt: Added.
+        * platform/gtk/svg/text/select-textLength-spacing-squeeze-3-expected.txt: Added.
+        * platform/gtk/svg/text/select-textLength-spacing-squeeze-4-expected.txt: Added.
+        * platform/gtk/svg/text/select-textLength-spacing-stretch-1-expected.txt: Added.
+        * platform/gtk/svg/text/select-textLength-spacing-stretch-2-expected.txt: Added.
+        * platform/gtk/svg/text/select-textLength-spacing-stretch-3-expected.txt: Added.
+        * platform/gtk/svg/text/select-textLength-spacing-stretch-4-expected.txt: Added.
+        * platform/gtk/svg/text/select-textLength-spacingAndGlyphs-squeeze-1-expected.txt: Added.
+        * platform/gtk/svg/text/select-textLength-spacingAndGlyphs-squeeze-2-expected.txt: Added.
+        * platform/gtk/svg/text/select-textLength-spacingAndGlyphs-squeeze-3-expected.txt: Added.
+        * platform/gtk/svg/text/select-textLength-spacingAndGlyphs-squeeze-4-expected.txt: Added.
+        * platform/gtk/svg/text/select-textLength-spacingAndGlyphs-stretch-1-expected.txt: Added.
+        * platform/gtk/svg/text/select-textLength-spacingAndGlyphs-stretch-2-expected.txt: Added.
+        * platform/gtk/svg/text/select-textLength-spacingAndGlyphs-stretch-3-expected.txt: Added.
+        * platform/gtk/svg/text/select-textLength-spacingAndGlyphs-stretch-4-expected.txt: Added.
+        * platform/gtk/svg/text/select-x-list-1-expected.txt: Added.
+        * platform/gtk/svg/text/select-x-list-2-expected.txt: Added.
+        * platform/gtk/svg/text/select-x-list-3-expected.txt: Added.
+        * platform/gtk/svg/text/select-x-list-4-expected.txt: Added.
+        * platform/gtk/svg/text/select-x-list-with-tspans-1-expected.txt: Added.
+        * platform/gtk/svg/text/select-x-list-with-tspans-2-expected.txt: Added.
+        * platform/gtk/svg/text/select-x-list-with-tspans-3-expected.txt: Added.
+        * platform/gtk/svg/text/select-x-list-with-tspans-4-expected.txt: Added.
+
 2010-06-18  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.
