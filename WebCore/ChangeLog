@@ -2,6 +2,20 @@
 
         Reviewed by Eric Seidel.
 
+        HTML5PreloadScanner parses <script> in DataState
+        https://bugs.webkit.org/show_bug.cgi?id=40804
+
+        The ScriptDataState is handled separately from the rest of the lexer
+        state changes because it's more complicted in the tree builder.  The
+        easiest thing is to just handle it separately in the preloader too.
+
+        * html/HTML5PreloadScanner.cpp:
+        (WebCore::HTML5PreloadScanner::processToken):
+
+2010-06-17  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         Add CSS scanning to HTML5PreloadScanner
         https://bugs.webkit.org/show_bug.cgi?id=40802
 
