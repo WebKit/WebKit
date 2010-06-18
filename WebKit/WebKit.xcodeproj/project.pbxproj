@@ -311,7 +311,7 @@
 		9398112C0824BF01008DF038 /* WebCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F738C9EA03FAD3DF0321FBE0 /* WebCore.framework */; };
 		9398112E0824BF01008DF038 /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 93D623DD051E791F002F47DD /* libicucore.dylib */; };
 		9398112F0824BF01008DF038 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 830E81E005853AC000AD0891 /* Security.framework */; };
-		93EB178D09F88D460091F8FF /* WebSystemInterface.m in Sources */ = {isa = PBXBuildFile; fileRef = 93EB178C09F88D460091F8FF /* WebSystemInterface.m */; };
+		93EB178D09F88D460091F8FF /* WebSystemInterface.mm in Sources */ = {isa = PBXBuildFile; fileRef = 93EB178C09F88D460091F8FF /* WebSystemInterface.mm */; };
 		93EB178F09F88D510091F8FF /* WebSystemInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 93EB178E09F88D510091F8FF /* WebSystemInterface.h */; };
 		93FDE9330D79CAF30074F029 /* WebHistoryInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 93FDE9320D79CAF30074F029 /* WebHistoryInternal.h */; };
 		A70936AF0B5608DC00CDB48E /* WebDragClient.h in Headers */ = {isa = PBXBuildFile; fileRef = A70936AD0B5608DC00CDB48E /* WebDragClient.h */; };
@@ -596,7 +596,7 @@
 		93C6F14507920B93002449CD /* WebFrameViewPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebFrameViewPrivate.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		93D1FE13067EB10B009CE68A /* WebNSObjectExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebNSObjectExtras.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		93D623DD051E791F002F47DD /* libicucore.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libicucore.dylib; path = /usr/lib/libicucore.dylib; sourceTree = "<absolute>"; };
-		93EB178C09F88D460091F8FF /* WebSystemInterface.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WebSystemInterface.m; sourceTree = "<group>"; };
+		93EB178C09F88D460091F8FF /* WebSystemInterface.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebSystemInterface.mm; sourceTree = "<group>"; };
 		93EB178E09F88D510091F8FF /* WebSystemInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSystemInterface.h; sourceTree = "<group>"; };
 		93FDE9320D79CAF30074F029 /* WebHistoryInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebHistoryInternal.h; sourceTree = "<group>"; };
 		9CAE9D070252A4130ECA16EA /* WebPreferencesPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebPreferencesPrivate.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -1251,7 +1251,7 @@
 				0A2D87FB107AF52B00CDDEE3 /* WebPluginHalterClient.h */,
 				0A2D87FC107AF52B00CDDEE3 /* WebPluginHalterClient.mm */,
 				93EB178E09F88D510091F8FF /* WebSystemInterface.h */,
-				93EB178C09F88D460091F8FF /* WebSystemInterface.m */,
+				93EB178C09F88D460091F8FF /* WebSystemInterface.mm */,
 				F5F7174C02885C5B018635CA /* WebViewFactory.h */,
 				F5F7174D02885C5B018635CA /* WebViewFactory.mm */,
 			);
@@ -1889,7 +1889,7 @@
 				51079D170CED11B00077247D /* WebSecurityOrigin.mm in Sources */,
 				BC26C6A510B7447A00B687ED /* WebSerializedJSValue.mm in Sources */,
 				939810CC0824BF01008DF038 /* WebStringTruncator.mm in Sources */,
-				93EB178D09F88D460091F8FF /* WebSystemInterface.m in Sources */,
+				93EB178D09F88D460091F8FF /* WebSystemInterface.mm in Sources */,
 				936A2DE80FD2D08000D312DB /* WebTextCompletionController.mm in Sources */,
 				1A74A28F0F4F75400082E228 /* WebTextInputWindowController.m in Sources */,
 				F834AAD80E64B1C700E2737C /* WebTextIterator.mm in Sources */,

@@ -59,30 +59,27 @@ typedef struct _NSRect NSRect;
 @class QTMovie;
 @class QTMovieView;
 #else
-typedef struct NSArray NSArray;
-typedef struct NSButtonCell NSButtonCell;
-typedef struct NSData NSData;
-typedef struct NSDate NSDate;
-typedef struct NSEvent NSEvent;
-typedef struct NSFont NSFont;
-typedef struct NSImage NSImage;
-typedef struct NSMenu NSMenu;
-typedef struct NSMutableArray NSMutableArray;
-typedef struct NSMutableURLRequest NSMutableURLRequest;
-typedef struct NSURLRequest NSURLRequest;
-typedef struct NSString NSString;
-typedef struct NSTextFieldCell NSTextFieldCell;
-typedef struct NSURLConnection NSURLConnection;
-typedef struct NSURLResponse NSURLResponse;
-typedef struct NSView NSView;
-typedef struct objc_object *id;
-typedef struct QTMovie QTMovie;
-typedef struct QTMovieView QTMovieView;
+class NSArray;
+class NSButtonCell;
+class NSData;
+class NSDate;
+class NSEvent;
+class NSFont;
+class NSImage;
+class NSMenu;
+class NSMutableArray;
+class NSMutableURLRequest;
+class NSURLRequest;
+class NSString;
+class NSTextFieldCell;
+class NSURLConnection;
+class NSURLResponse;
+class NSView;
+class QTMovie;
+class QTMovieView;
 #endif
 
-#ifdef __cplusplus
 extern "C" {
-#endif
 
 // In alphabetical order.
 
@@ -177,8 +174,6 @@ extern NSMutableArray *(*wkNoteOpenPanelFiles)(NSArray *);
 extern void* wkNoteOpenPanelFiles;
 #endif
 
-#ifdef __cplusplus
 }
-#endif
 
 #endif

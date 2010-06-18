@@ -161,7 +161,7 @@
 		BCB9F8B01124E07700A137E0 /* WebPolicyClient.h in Headers */ = {isa = PBXBuildFile; fileRef = BCB9F8AE1124E07700A137E0 /* WebPolicyClient.h */; };
 		BCC56F791159957D001CCAF9 /* MachPort.h in Headers */ = {isa = PBXBuildFile; fileRef = BCC56F771159957D001CCAF9 /* MachPort.h */; };
 		BCC5715B115ADAEF001CCAF9 /* WebSystemInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = BCC57159115ADAEF001CCAF9 /* WebSystemInterface.h */; };
-		BCC5715C115ADAEF001CCAF9 /* WebSystemInterface.m in Sources */ = {isa = PBXBuildFile; fileRef = BCC5715A115ADAEF001CCAF9 /* WebSystemInterface.m */; };
+		BCC5715C115ADAEF001CCAF9 /* WebSystemInterface.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCC5715A115ADAEF001CCAF9 /* WebSystemInterface.mm */; };
 		BCC57162115ADB42001CCAF9 /* NotImplemented.h in Headers */ = {isa = PBXBuildFile; fileRef = BCC57161115ADB42001CCAF9 /* NotImplemented.h */; };
 		BCC938E11180DE440085E5FE /* WKContextPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = BCC938E01180DE440085E5FE /* WKContextPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCD0042D110C1E27003B8A67 /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BCD0042C110C1E27003B8A67 /* CoreServices.framework */; };
@@ -378,7 +378,7 @@
 		BCB9F8AE1124E07700A137E0 /* WebPolicyClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPolicyClient.h; sourceTree = "<group>"; };
 		BCC56F771159957D001CCAF9 /* MachPort.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MachPort.h; sourceTree = "<group>"; };
 		BCC57159115ADAEF001CCAF9 /* WebSystemInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSystemInterface.h; sourceTree = "<group>"; };
-		BCC5715A115ADAEF001CCAF9 /* WebSystemInterface.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WebSystemInterface.m; sourceTree = "<group>"; };
+		BCC5715A115ADAEF001CCAF9 /* WebSystemInterface.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebSystemInterface.mm; sourceTree = "<group>"; };
 		BCC57161115ADB42001CCAF9 /* NotImplemented.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NotImplemented.h; sourceTree = "<group>"; };
 		BCC938E01180DE440085E5FE /* WKContextPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKContextPrivate.h; sourceTree = "<group>"; };
 		BCD0042C110C1E27003B8A67 /* CoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreServices.framework; path = /System/Library/Frameworks/CoreServices.framework; sourceTree = "<absolute>"; };
@@ -716,7 +716,7 @@
 			children = (
 				BC111ADF112F5BC200337BAB /* WebErrorsMac.mm */,
 				BCC57159115ADAEF001CCAF9 /* WebSystemInterface.h */,
-				BCC5715A115ADAEF001CCAF9 /* WebSystemInterface.m */,
+				BCC5715A115ADAEF001CCAF9 /* WebSystemInterface.mm */,
 			);
 			path = mac;
 			sourceTree = "<group>";
@@ -1138,7 +1138,7 @@
 				BC9E95D411449B0300870E71 /* UpdateChunk.cpp in Sources */,
 				BC0092F7115837A300E0AE2A /* RunLoopMac.mm in Sources */,
 				BC0092F8115837A300E0AE2A /* WorkQueueMac.cpp in Sources */,
-				BCC5715C115ADAEF001CCAF9 /* WebSystemInterface.m in Sources */,
+				BCC5715C115ADAEF001CCAF9 /* WebSystemInterface.mm in Sources */,
 				1A30EAC6115D7DA30053E937 /* ConnectionMac.cpp in Sources */,
 				BC8452A71162C80900CAB9B5 /* DrawingArea.cpp in Sources */,
 				BC8699B6116AADAA002A925B /* WKView.mm in Sources */,

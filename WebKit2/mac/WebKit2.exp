@@ -1,5 +1,4 @@
 .objc_class_name_WKView
-_InitWebCoreSystemInterface
 _WKBundlePageGetMainFrameURL
 _WKBundlePageSetClient
 _WKBundleSetClient
@@ -43,6 +42,7 @@ _WKStringRetain
 _WKURLCopyCFURL
 _WKURLCreateWithCFURL
 _WKURLRelease
+__Z26InitWebCoreSystemInterfacev
 __ZN6WebKit10WebProcess10initializeEjP7RunLoop
 __ZN6WebKit10WebProcess6sharedEv
 __ZN7RunLoop21initializeMainRunLoopEv
