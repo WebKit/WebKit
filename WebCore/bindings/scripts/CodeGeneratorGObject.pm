@@ -410,7 +410,7 @@ EOF
     }
 
     if (!$done) {
-        push(@txtGetProps, "        g_value_set_$_gtype(value, ${convertFunction}coreSelf->${getPropNameFunction}(${exception})${postConvertFunction});\n");
+        push(@txtGetProps, "        g_value_set_$_gtype(value, ${convertFunction}coreSelf->${getterExpressionPrefix}${exception})${postConvertFunction});\n");
     }
 
     push(@txtGetProps, "        break;\n    }\n");

@@ -1,3 +1,14 @@
+2010-06-18  Martin Robinson  <mrobinson@igalia.com>
+
+        Unreviewed.
+
+        Fix the GTK+ build after r61413 and 61379.
+
+        * bindings/scripts/CodeGeneratorGObject.pm:
+        Produce a g_value_set that uses getterExpressionPrefix instead of the raw getter.
+        * bindings/scripts/test/GObject/WebKitDOMTestObj.cpp:
+        (webkit_dom_test_obj_get_property): Update expected test results.
+
 2010-06-18  Leandro Pereira  <leandro@profusion.mobi>
 
         [EFL] Unreviewed build fix.
