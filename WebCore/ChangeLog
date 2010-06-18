@@ -1,3 +1,17 @@
+2010-06-18  Ananth Jasty  <ext-ananth.jasty@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Text spacing miscalculation when using wordSpacing.
+        https://bugs.webkit.org/show_bug.cgi?id=40483
+
+        Removed wordSpacing compensation in FontQt whitespace width
+        calculation. The QFontMetrics::width() overload that takes
+        a character does not take QFont's word spacing into account.
+
+        * platform/graphics/qt/FontQt.cpp:
+        (WebCore::Font::floatWidthForComplexText):
+
 2010-06-18  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin Adler.
