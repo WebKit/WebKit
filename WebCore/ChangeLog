@@ -1,3 +1,31 @@
+2010-06-17  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        WebSocket: resume should not process buffer if already processing.
+        https://bugs.webkit.org/show_bug.cgi?id=39340
+
+        Test: websocket/tests/alert-in-event-handler.html
+
+        While running an event handler of WebSocket object, it may be suspended
+        and resumed in various reason. e.g. alert() will suspend/resume
+        ActiveDOM objects. In chromium, sending IPC message would also
+        suspend/resume ActiveDOM objects.
+        If resume process pending buffer in this case, another event might
+        be fired while running the initial event handler.
+        Thus, resume should not process pending buffer immediately.
+        Pending buffer would be processed after the current task has been
+        finished.
+
+        * websockets/ThreadableWebSocketChannelClientWrapper.h:
+        * websockets/WebSocketChannel.cpp:
+        (WebCore::WebSocketChannel::WebSocketChannel):
+        (WebCore::WebSocketChannel::resume):
+         Just set one shot timer for resumeTimerFired() if not yet set.
+        (WebCore::WebSocketChannel::resumeTimerFired):
+         Process pending event after resume was called.
+        * websockets/WebSocketChannel.h:
+
 2010-06-17  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

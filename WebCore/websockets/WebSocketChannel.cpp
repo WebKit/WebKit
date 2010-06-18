@@ -58,6 +58,7 @@ WebSocketChannel::WebSocketChannel(ScriptExecutionContext* context, WebSocketCha
     , m_handshake(url, protocol, context)
     , m_buffer(0)
     , m_bufferSize(0)
+    , m_resumeTimer(this, &WebSocketChannel::resumeTimerFired)
     , m_suspended(false)
     , m_closed(false)
     , m_unhandledBufferedAmount(0)
@@ -125,12 +126,8 @@ void WebSocketChannel::suspend()
 void WebSocketChannel::resume()
 {
     m_suspended = false;
-    RefPtr<WebSocketChannel> protect(this); // The client can close the channel, potentially removing the last reference.
-    while (!m_suspended && m_client && m_buffer)
-        if (!processBuffer())
-            break;
-    if (!m_suspended && m_client && m_closed && m_handle)
-        didClose(m_handle.get());
+    if ((m_buffer || m_closed) && m_client && !m_resumeTimer.isActive())
+        m_resumeTimer.startOneShot(0);
 }
 
 void WebSocketChannel::didOpen(SocketStreamHandle* handle)
@@ -234,6 +231,7 @@ bool WebSocketChannel::processBuffer()
     ASSERT(!m_suspended);
     ASSERT(m_client);
     ASSERT(m_buffer);
+
     if (m_handshake.mode() == WebSocketHandshake::Incomplete) {
         int headerLength = m_handshake.readServerHandshake(m_buffer, m_bufferSize);
         if (headerLength <= 0)
@@ -316,6 +314,18 @@ bool WebSocketChannel::processBuffer()
         return m_buffer;
     }
     return false;
+}
+
+void WebSocketChannel::resumeTimerFired(Timer<WebSocketChannel>* timer)
+{
+    ASSERT_UNUSED(timer, timer == &m_resumeTimer);
+
+    RefPtr<WebSocketChannel> protect(this); // The client can close the channel, potentially removing the last reference.
+    while (!m_suspended && m_client && m_buffer)
+        if (!processBuffer())
+            break;
+    if (!m_suspended && m_client && m_closed && m_handle)
+        didClose(m_handle.get());
 }
 
 }  // namespace WebCore

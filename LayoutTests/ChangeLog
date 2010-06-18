@@ -1,3 +1,17 @@
+2010-06-17  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        WebSocket: resume should not process buffer if already processing.
+        https://bugs.webkit.org/show_bug.cgi?id=39340
+
+        Reviewed by Alexey Proskuryakov.
+
+        * websocket/tests/alert-in-event-handler-expected.txt: Added.
+        * websocket/tests/alert-in-event-handler.html: Added.
+        * websocket/tests/script-tests/alert-in-event-handler.js: Added.
+        * websocket/tests/send2_wsh.py: Added.
+
 2010-06-17  Kent Tamura  <tkent@chromium.org>
 
         Unreviewed, test expectation update.
