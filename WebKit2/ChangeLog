@@ -1,3 +1,12 @@
+2010-06-17  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Fix a race condition during startup where we would never send the InitializeConnection message to the server.
+
+        * Platform/CoreIPC/mac/ConnectionMac.cpp:
+        (CoreIPC::Connection::open):
+
 2010-06-17  Ada Chan  <adachan@apple.com>
 
         Rolling out http://trac.webkit.org/changeset/61297 due to build errors.

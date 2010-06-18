@@ -78,12 +78,11 @@ bool Connection::open()
         // Create the receive port.
         mach_port_allocate(mach_task_self(), MACH_PORT_RIGHT_RECEIVE, &m_receivePort);
 
+        m_isConnected = true;
+        
         // Send the initialize message, which contains a send right for the server to use.
         send(CoreIPCMessage::InitializeConnection, 0, MachPort(m_receivePort, MACH_MSG_TYPE_MAKE_SEND));
 
-        // We're now connected.
-        m_isConnected = true;
-        
         // Set the dead name handler for our send port.
         initializeDeadNameSource();
     }
