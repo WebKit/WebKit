@@ -2,6 +2,27 @@
 
         Reviewed by Darin Adler.
 
+        noAccess url schemes block access to inline stylesheets
+        https://bugs.webkit.org/show_bug.cgi?id=32309
+
+        Instead of using baseURL() to grab the security context we should just
+        use finalURL directly.  When I wrote the original patch that added this
+        security check, finalURL didn't exist yet.
+
+        If finalURL is an empty URL, that means we generated the style sheet
+        from text that didn't have a URL.  It would be slightly safer to store
+        a bit on CSSStyleSheet indicating whether it came from an inline style
+        sheet, but I think this check is fairly accurate.
+
+        Test: http/tests/security/data-url-inline.css.html
+
+        * css/CSSStyleSheet.cpp:
+        (WebCore::CSSStyleSheet::cssRules):
+
+2010-06-18  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Adler.
+
         Remove unneeded custom code for WebSocket.send
         https://bugs.webkit.org/show_bug.cgi?id=38180
 
