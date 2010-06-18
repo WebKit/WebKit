@@ -1,3 +1,12 @@
+2010-06-18  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed. Update Qt specific expected files after r61418.
+
+        * platform/qt/editing/pasteboard/paste-text-005-expected.txt:
+        * platform/qt/editing/pasteboard/paste-text-006-expected.txt:
+        * platform/qt/editing/pasteboard/paste-text-007-expected.txt:
+        * platform/qt/editing/pasteboard/paste-text-014-expected.txt:
+
 2010-06-18  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by David Kilzer.
