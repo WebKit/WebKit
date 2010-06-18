@@ -54,7 +54,7 @@ HTML5ScriptRunner::HTML5ScriptRunner(Document* document, HTML5ScriptRunnerHost* 
 HTML5ScriptRunner::~HTML5ScriptRunner()
 {
     // FIXME: Should we be passed a "done loading/parsing" callback sooner than destruction?
-    if (m_parsingBlockingScript.cachedScript && m_parsingBlockingScript.watchingForLoad)
+    if (m_parsingBlockingScript.cachedScript && m_parsingBlockingScript.watchingForLoad())
         stopWatchingForLoad(m_parsingBlockingScript);
 }
 
@@ -107,7 +107,7 @@ void HTML5ScriptRunner::executePendingScript()
     ScriptSourceCode sourceCode = sourceFromPendingScript(m_parsingBlockingScript, errorOccurred);
 
     // Stop watching loads before executeScript to prevent recursion if the script reloads itself.
-    if (m_parsingBlockingScript.cachedScript && m_parsingBlockingScript.watchingForLoad)
+    if (m_parsingBlockingScript.cachedScript && m_parsingBlockingScript.watchingForLoad())
         stopWatchingForLoad(m_parsingBlockingScript);
 
     // Clear the pending script before possible rentrancy from executeScript()
@@ -141,18 +141,30 @@ void HTML5ScriptRunner::executeScript(Element* element, const ScriptSourceCode& 
     m_host->executeScript(sourceCode);
 }
 
+bool HTML5ScriptRunner::hasScriptsWaitingForLoad() const
+{
+    // We're only actually waiting for a load.  This allows us to ignore load
+    // callbacks when CachedResource::addClient calls notifyFinished because
+    // of a cache hit (not because of a load we were set up to wait for).
+    return m_parsingBlockingScript.watchingForLoadState == PendingScript::WatchingForLoad;
+}
+
 void HTML5ScriptRunner::watchForLoad(PendingScript& pendingScript)
 {
-    ASSERT(!pendingScript.watchingForLoad);
+    ASSERT(!pendingScript.watchingForLoad());
+    // CachedResource::addClient will call notifyFinished if the load is already
+    // complete.  We set watchingForLoadState to RegisteringForWatch so that we
+    // know to ignore any notifyFinished call during addClient.
+    pendingScript.watchingForLoadState = PendingScript::RegisteringForWatch;
     m_host->watchForLoad(pendingScript.cachedScript.get());
-    pendingScript.watchingForLoad = true;
+    pendingScript.watchingForLoadState = PendingScript::WatchingForLoad;
 }
 
 void HTML5ScriptRunner::stopWatchingForLoad(PendingScript& pendingScript)
 {
-    ASSERT(pendingScript.watchingForLoad);
+    ASSERT(pendingScript.watchingForLoad());
     m_host->stopWatchingForLoad(pendingScript.cachedScript.get());
-    pendingScript.watchingForLoad = false;
+    pendingScript.watchingForLoadState = PendingScript::NotWatchingForLoad;
 }
 
 // This function should match 10.2.5.11 "An end tag whose tag name is 'script'"
@@ -190,10 +202,15 @@ bool HTML5ScriptRunner::executeParsingBlockingScripts()
     return true;
 }
 
-bool HTML5ScriptRunner::executeScriptsWaitingForLoad(CachedResource*)
+bool HTML5ScriptRunner::executeScriptsWaitingForLoad(CachedResource* cachedScript)
 {
+    // Callers should check hasScriptsWaitingForLoad() before calling
+    // to prevent parser or script re-entry during due to
+    // CachedResource::addClient calling notifyFinished on cache-hits.
+    ASSERT(hasScriptsWaitingForLoad());
     ASSERT(!m_scriptNestingLevel);
     ASSERT(haveParsingBlockingScript());
+    ASSERT_UNUSED(cachedScript, m_parsingBlockingScript.cachedScript == cachedScript);
     ASSERT(m_parsingBlockingScript.cachedScript->isLoaded());
     return executeParsingBlockingScripts();
 }
@@ -202,7 +219,7 @@ bool HTML5ScriptRunner::executeScriptsWaitingForStylesheets()
 {
     // Callers should check hasScriptsWaitingForStylesheets() before calling
     // to prevent parser or script re-entry during </style> parsing.
-    ASSERT(m_hasScriptsWaitingForStylesheets);
+    ASSERT(hasScriptsWaitingForStylesheets());
     ASSERT(!m_scriptNestingLevel);
     ASSERT(m_document->haveStylesheetsLoaded());
     return executeParsingBlockingScripts();
@@ -228,11 +245,14 @@ void HTML5ScriptRunner::requestScript(Element* script)
     }
     m_parsingBlockingScript.cachedScript = cachedScript;
 
-    // We only care about a load callback if cachedScript is not already
-    // in the cache.  Callers will attempt to run the m_parsingBlockingScript
-    // if possible before returning control to the parser.
-    if (!m_parsingBlockingScript.cachedScript->isLoaded())
-        watchForLoad(m_parsingBlockingScript);
+    // Always call watchForLoad, even if the script is already loaded.
+    // CachedResource may purge its data if it has no clients, which would cause
+    // later script execution to fail.  watchForLoad sets m_parsingBlockingScript
+    // to the RegisteringForWatch state so we know to ignore any
+    // executeScriptsWaitingForLoad callbacks during the watchForLoad call.
+    watchForLoad(m_parsingBlockingScript);
+    // Callers will attempt to run the m_parsingBlockingScript if possible
+    // before returning control to the parser.
 }
 
 // This method is meant to match the HTML5 definition of "running a script"

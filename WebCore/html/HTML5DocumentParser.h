@@ -198,9 +198,12 @@ private:
     OwnPtr<HTML5ScriptRunner> m_scriptRunner;
     OwnPtr<HTML5TreeBuilder> m_treeConstructor;
     OwnPtr<HTML5PreloadScanner> m_preloadScanner;
+
     bool m_endWasDelayed;
     int m_writeNestingLevel;
 
+    // Used for yielding the parser to make WebKit applications more responsive.
+    // FIXME: This should a separate class, used by HTML5DocumentParser.
     double m_parserTimeLimit;
     int m_parserChunkSize;
     Timer<HTML5DocumentParser> m_continueNextChunkTimer;

@@ -1,3 +1,61 @@
+2010-06-17  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        REGRESSION(HTML5 parser): editing/selection/leave-requested-block.html can fail or crash
+        https://bugs.webkit.org/show_bug.cgi?id=40764
+
+        HTML5ScriptRunner was careful to only call CachedResource::addClient
+        for cases where the resource was not already loaded.  This was to
+        avoid getting synchronous notifyFinished callbacks from inside
+        addClient.  (The old HTMLDocumentParser also has hacks to work around
+        addClient's synchronous notifyFinished behavior for already-loaded
+        resources as well.)
+
+        It turns out that CachedResource will mark itself as purgeable if it
+        has no clients, thus it could have its data cleared (but itself not
+        deleted) in the case where we yield back to the runloop to wait for
+        CSS to load before executing the loaded script.
+
+        The fix is to act more like the old parser and always call addClient
+        on every CachedScript we load.  But unlike the old parser, we're
+        careful not to re-enter from addClient -> notifyFinished
+        using guards in HTML5DocumentParser::watchForLoad.
+
+        I do not know how to make a CachedResource purge itself
+        from a LayoutTest, so this is not currently testable.
+        If anyone knows how I'm happy to make a test.
+
+        * html/HTML5DocumentParser.cpp:
+        (WebCore::HTML5DocumentParser::watchForLoad):
+         - It is now expected to call watchForLoad with a loaded script.
+        (WebCore::HTML5DocumentParser::notifyFinished):
+         - Now that watchForLoad is called with loaded scripts, notifyFinished
+           may be be called from addClient, thus we may be in the middle of
+           script execution when it's called.  It's OK.  We pass the call
+           along to HTML5ScriptRunner::executeScriptsWaitingForLoad
+           and it knows how to ignore the call in that case.
+        * html/HTML5DocumentParser.h:
+         - Document these member variables more.
+        * html/HTML5ScriptRunner.cpp:
+        (WebCore::HTML5ScriptRunner::~HTML5ScriptRunner):
+        (WebCore::HTML5ScriptRunner::executePendingScript):
+        (WebCore::HTML5ScriptRunner::hasScriptsWaitingForLoad):
+        (WebCore::HTML5ScriptRunner::watchForLoad):
+         - Set the pending script to RegisteringForWatch state before
+           watching and WatchingForLoad after.
+        (WebCore::HTML5ScriptRunner::stopWatchingForLoad):
+         - Set the pending script to NotWatchingForLoad.
+        (WebCore::HTML5ScriptRunner::executeScriptsWaitingForLoad):
+         - Assert that callers checked hasScriptsWaitingForLoad()
+        (WebCore::HTML5ScriptRunner::requestScript):
+        * html/HTML5ScriptRunner.h:
+        (WebCore::HTML5ScriptRunner::PendingScript::):
+        (WebCore::HTML5ScriptRunner::PendingScript::PendingScript):
+        (WebCore::HTML5ScriptRunner::PendingScript::watchingForLoad):
+        * html/HTML5ScriptRunnerHost.h:
+         - Document the new expectations of watchForLoad
+
 2010-06-17  Tony Gentilcore  <tonyg@chromium.org>
 
         Reviewed by Eric Seidel.
