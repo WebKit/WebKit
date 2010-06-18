@@ -130,7 +130,7 @@ ApplicationCacheResource* ApplicationCache::resourceForRequest(const ResourceReq
 {
     // We only care about HTTP/HTTPS GET requests.
     if (!requestIsHTTPOrHTTPSGet(request))
-        return false;
+        return 0;
 
     KURL url(request.url());
     if (url.hasFragmentIdentifier())

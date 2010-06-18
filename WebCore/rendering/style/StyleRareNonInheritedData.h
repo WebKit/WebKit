@@ -50,7 +50,7 @@ class StyleTransformData;
 struct ContentData;
 
 #if ENABLE(DASHBOARD_SUPPORT)
-class StyleDashboardRegion;
+struct StyleDashboardRegion;
 #endif
 
 #if ENABLE(XBL)

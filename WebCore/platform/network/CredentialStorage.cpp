@@ -77,7 +77,7 @@ static String protectionSpaceMapKeyFromURL(const KURL& url)
     if (directoryURL.length() > directoryURLPathStart + 1) {
         int index = directoryURL.reverseFind('/');
         ASSERT(index > 0);
-        directoryURL = directoryURL.substring(0, (static_cast<unsigned>(index) != directoryURLPathStart) ? index : directoryURLPathStart + 1);
+        directoryURL = directoryURL.substring(0, (static_cast<unsigned>(index) != directoryURLPathStart) ? static_cast<unsigned>(index) : directoryURLPathStart + 1);
     }
     ASSERT(directoryURL.length() == directoryURLPathStart + 1 || directoryURL[directoryURL.length() - 1] != '/');
 

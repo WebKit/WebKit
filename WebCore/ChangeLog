@@ -2,6 +2,25 @@
 
         Reviewed by Dan Bernstein.
 
+        Fix some (not all) clang++ warnings.
+
+        * dom/Position.h:
+        (WebCore::lastOffsetInNode):
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::deleteInsignificantText):
+        * loader/appcache/ApplicationCache.cpp:
+        (WebCore::ApplicationCache::resourceForRequest):
+        * platform/graphics/mac/ComplexTextController.cpp:
+        (WebCore::ComplexTextController::offsetForPosition):
+        (WebCore::ComplexTextController::collectComplexTextRuns):
+        * platform/network/CredentialStorage.cpp:
+        (WebCore::protectionSpaceMapKeyFromURL):
+        * rendering/style/StyleRareNonInheritedData.h:
+
+2010-06-18  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dan Bernstein.
+
         Add stubbed out WebPlatformStrategies class to WebKit.
         https://bugs.webkit.org/show_bug.cgi?id=40851
 
