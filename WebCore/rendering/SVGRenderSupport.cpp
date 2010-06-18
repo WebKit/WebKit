@@ -86,7 +86,6 @@ bool SVGRenderBase::prepareToRenderSVGContent(RenderObject* object, RenderObject
 {
 #if !ENABLE(FILTERS)
     UNUSED_PARAM(filter);
-    UNUSED_PARAM(rootFilter);
 #endif
 
     ASSERT(object);
