@@ -1,3 +1,12 @@
+2010-06-18  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Unreviewed build fix.
+
+        [EFL] Build break on Debug build.
+        https://bugs.webkit.org/show_bug.cgi?id=40810
+
+        * CMakeLists.txt: Add CSSPreloadScanner.cpp
+
 2010-06-18  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Yury Semikhatsky.

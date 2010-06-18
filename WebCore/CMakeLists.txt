@@ -895,6 +895,7 @@ SET(WebCore_SOURCES
     html/Blob.cpp
     html/BlobBuilder.cpp
     html/CollectionCache.cpp
+    html/CSSPreloadScanner.cpp
     html/DOMDataGridDataSource.cpp
     html/DOMFormData.cpp
     html/DataGridColumn.cpp
