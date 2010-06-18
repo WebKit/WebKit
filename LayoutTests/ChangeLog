@@ -1,3 +1,17 @@
+2010-06-18  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        Incorrect handling of multiple BOMs scattered through a file.
+        https://bugs.webkit.org/show_bug.cgi?id=40865
+
+        Put a few more BOMs into this testcase so that it hits the other cases
+        that were missed before.
+
+        * fast/js/resources/bom-in-file-retains-correct-offset.js:
+        (g.f):
+        (g):
+
 2010-06-18  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Unreviewed, expectations update.

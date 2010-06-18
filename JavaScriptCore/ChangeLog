@@ -1,3 +1,18 @@
+2010-06-18  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        Incorrect handling of multiple BOMs scattered through a file.
+        https://bugs.webkit.org/show_bug.cgi?id=40865
+
+        When determining the offset of open and close braces in a source
+        with BOMs we were finishing our count early as we failed to account
+        for BOMs prior to the open/close brace positions effecting those
+        positions.
+
+        * parser/Lexer.cpp:
+        (JSC::Lexer::sourceCode):
+
 2010-06-17  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Sam Weinig.
