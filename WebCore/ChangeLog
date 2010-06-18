@@ -1,3 +1,22 @@
+2010-06-18  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Add PlatformStrategies and PluginStrategy classes.
+        https://bugs.webkit.org/show_bug.cgi?id=40850
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/PlatformStrategies.cpp: Added.
+        (WebCore::PlatformStrategies::~PlatformStrategies):
+        (WebCore::platformStrategies):
+        (WebCore::setPlatformStrategies):
+        * platform/PlatformStrategies.h: Added.
+        (WebCore::PlatformStrategies::pluginStrategy):
+        (WebCore::PlatformStrategies::PlatformStrategies):
+        * plugins/PluginData.cpp:
+        * plugins/PluginStrategy.h: Added.
+        (WebCore::PluginStrategy::~PluginStrategy):
+
 2010-06-18  Martin Robinson  <mrobinson@igalia.com>
 
         Unreviewed.

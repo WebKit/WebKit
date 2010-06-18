@@ -24,6 +24,9 @@
 #include "config.h"
 #include "PluginData.h"
 
+#include "PlatformStrategies.h"
+#include "PluginStrategy.h"
+
 namespace WebCore {
 
 PluginData::PluginData(const Page* page)

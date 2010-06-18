@@ -427,6 +427,7 @@
 		1A8F6BC50DB55CDC001DB794 /* ManifestParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A8F6BBA0DB55CDC001DB794 /* ManifestParser.cpp */; };
 		1A8F6BC60DB55CDC001DB794 /* ManifestParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A8F6BBB0DB55CDC001DB794 /* ManifestParser.h */; };
 		1A98956B0AA78F80005EF5EF /* KURLCFNet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A98956A0AA78F80005EF5EF /* KURLCFNet.cpp */; };
+		1AA8799011CBE846003C664F /* PluginStrategy.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AA8798F11CBE846003C664F /* PluginStrategy.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1AB1AE7A0C051FDE00139F4F /* zoomInCursor.png in Resources */ = {isa = PBXBuildFile; fileRef = 1AB1AE780C051FDE00139F4F /* zoomInCursor.png */; };
 		1AB1AE7B0C051FDE00139F4F /* zoomOutCursor.png in Resources */ = {isa = PBXBuildFile; fileRef = 1AB1AE790C051FDE00139F4F /* zoomOutCursor.png */; };
 		1AB7FC680A8B92EC00D9D37B /* XPathEvaluator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AB7FC470A8B92EC00D9D37B /* XPathEvaluator.cpp */; };
@@ -475,6 +476,8 @@
 		1AD2316E0CD269E700C1F194 /* JSSQLTransactionCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AD2316D0CD269E700C1F194 /* JSSQLTransactionCustom.cpp */; };
 		1AD51A140CB59CD300953D11 /* DatabaseTracker.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AD51A120CB59CD300953D11 /* DatabaseTracker.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1AD51A150CB59CD300953D11 /* DatabaseTracker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AD51A130CB59CD300953D11 /* DatabaseTracker.cpp */; };
+		1AD8F81B11CAB9E900E93E54 /* PlatformStrategies.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AD8F81911CAB9E900E93E54 /* PlatformStrategies.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		1AD8F81C11CAB9E900E93E54 /* PlatformStrategies.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AD8F81A11CAB9E900E93E54 /* PlatformStrategies.cpp */; };
 		1ADA14100E1AE5D900023EE5 /* PluginMainThreadScheduler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1ADA140E0E1AE5D900023EE5 /* PluginMainThreadScheduler.cpp */; };
 		1ADA14110E1AE5D900023EE5 /* PluginMainThreadScheduler.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ADA140F0E1AE5D900023EE5 /* PluginMainThreadScheduler.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1AE2AA1E0A1CDAB400B42B25 /* JSHTMLAreaElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AE2AA0A0A1CDAB300B42B25 /* JSHTMLAreaElement.cpp */; };
@@ -5970,6 +5973,7 @@
 		1A8F6BBA0DB55CDC001DB794 /* ManifestParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ManifestParser.cpp; sourceTree = "<group>"; };
 		1A8F6BBB0DB55CDC001DB794 /* ManifestParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ManifestParser.h; sourceTree = "<group>"; };
 		1A98956A0AA78F80005EF5EF /* KURLCFNet.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = KURLCFNet.cpp; sourceTree = "<group>"; };
+		1AA8798F11CBE846003C664F /* PluginStrategy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginStrategy.h; sourceTree = "<group>"; };
 		1AB1AE780C051FDE00139F4F /* zoomInCursor.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = zoomInCursor.png; sourceTree = "<group>"; };
 		1AB1AE790C051FDE00139F4F /* zoomOutCursor.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = zoomOutCursor.png; sourceTree = "<group>"; };
 		1AB7FC470A8B92EC00D9D37B /* XPathEvaluator.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = XPathEvaluator.cpp; sourceTree = "<group>"; };
@@ -6024,6 +6028,8 @@
 		1AD2316D0CD269E700C1F194 /* JSSQLTransactionCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSQLTransactionCustom.cpp; sourceTree = "<group>"; };
 		1AD51A120CB59CD300953D11 /* DatabaseTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DatabaseTracker.h; sourceTree = "<group>"; };
 		1AD51A130CB59CD300953D11 /* DatabaseTracker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DatabaseTracker.cpp; sourceTree = "<group>"; };
+		1AD8F81911CAB9E900E93E54 /* PlatformStrategies.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformStrategies.h; sourceTree = "<group>"; };
+		1AD8F81A11CAB9E900E93E54 /* PlatformStrategies.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PlatformStrategies.cpp; sourceTree = "<group>"; };
 		1ADA140E0E1AE5D900023EE5 /* PluginMainThreadScheduler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PluginMainThreadScheduler.cpp; sourceTree = "<group>"; };
 		1ADA140F0E1AE5D900023EE5 /* PluginMainThreadScheduler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginMainThreadScheduler.h; sourceTree = "<group>"; };
 		1AE2A9F00A1CDA5700B42B25 /* HTMLAreaElement.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = HTMLAreaElement.idl; sourceTree = "<group>"; };
@@ -11821,6 +11827,7 @@
 				1ADA140E0E1AE5D900023EE5 /* PluginMainThreadScheduler.cpp */,
 				1ADA140F0E1AE5D900023EE5 /* PluginMainThreadScheduler.h */,
 				76FF17E211235673001D61B5 /* PluginViewNone.cpp */,
+				1AA8798F11CBE846003C664F /* PluginStrategy.h */,
 				0AFDAC3C10F5448C00E1F3D2 /* PluginWidget.h */,
 			);
 			path = plugins;
@@ -15915,6 +15922,8 @@
 				932871BF0B20DEB70049035A /* PlatformMenuDescription.h */,
 				935C476709AC4D4300A6AAB4 /* PlatformMouseEvent.h */,
 				BCEC01D60C274EB4009F4EC9 /* PlatformScreen.h */,
+				1AD8F81A11CAB9E900E93E54 /* PlatformStrategies.cpp */,
+				1AD8F81911CAB9E900E93E54 /* PlatformStrategies.h */,
 				935C476A09AC4D4F00A6AAB4 /* PlatformWheelEvent.h */,
 				0668E1890ADD9624004128E0 /* PopupMenu.h */,
 				ABC128760B33AA6D00C693D5 /* PopupMenuClient.h */,
@@ -19442,6 +19451,8 @@
 				E1BE512E0CF6C512002EA959 /* XSLTUnicodeSort.h in Headers */,
 				97DD4D870FDF4D6E00ECF9A4 /* XSSAuditor.h in Headers */,
 				CE172E011136E8CE0062A533 /* ZoomMode.h in Headers */,
+				1AD8F81B11CAB9E900E93E54 /* PlatformStrategies.h in Headers */,
+				1AA8799011CBE846003C664F /* PluginStrategy.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -21752,6 +21763,7 @@
 				E1BE512D0CF6C512002EA959 /* XSLTUnicodeSort.cpp in Sources */,
 				97DD4D860FDF4D6E00ECF9A4 /* XSSAuditor.cpp in Sources */,
 				200B190911C277D900DCCD3A /* ScriptBreakpoint.cpp in Sources */,
+				1AD8F81C11CAB9E900E93E54 /* PlatformStrategies.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
