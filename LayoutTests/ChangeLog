@@ -1,5 +1,15 @@
 2010-06-17  Adam Barth  <abarth@webkit.org>
 
+        Unreviewed.
+
+        Skip fast/preloader tests on GTK and Qt because they don't implement
+        dumpResourceResponseMIMETypes.
+
+        * platform/gtk/Skipped:
+        * platform/qt/Skipped:
+
+2010-06-17  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Eric Seidel.
 
         Add CSS scanning to HTML5PreloadScanner
