@@ -1,5 +1,5 @@
 TARGET  = qmlwebkitplugin
-TARGETPATH = org/webkit
+TARGETPATH = QtWebKit
 
 TEMPLATE = lib
 CONFIG += qt plugin

@@ -1,3 +1,11 @@
+2010-06-18  Alexis Menard  <alexis.menard@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Change the target path to QtWebKit.
+
+        * declarative/declarative.pro:
+
 2010-06-15  Dumitru Daniliuc  <dumi@chromium.org>
 
         Reviewed by Adam Barth.

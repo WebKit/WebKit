@@ -1,3 +1,11 @@
+2010-06-18  Alexis Menard  <alexis.menard@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [qt] Better check for the declarative plugin inclusion.
+
+        * WebKit.pro:
+
 2010-06-17  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
 
         Reviewed by Eric Seidel.
