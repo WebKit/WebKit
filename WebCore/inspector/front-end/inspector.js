@@ -1344,7 +1344,7 @@ WebInspector.parsedScriptSource = function(sourceID, sourceURL, source, starting
 
 WebInspector.restoredBreakpoint = function(sourceID, sourceURL, line, enabled, condition)
 {
-    this.breakpointManager.addBreakpoint(sourceID, sourceURL, line, enabled, condition);
+    this.breakpointManager.restoredBreakpoint(sourceID, sourceURL, line, enabled, condition);
 }
 
 WebInspector.failedToParseScriptSource = function(sourceURL, source, startingLine, errorLine, errorMessage)

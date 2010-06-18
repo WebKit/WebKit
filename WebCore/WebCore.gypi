@@ -1702,6 +1702,7 @@
             'inspector/InspectorValues.cpp',
             'inspector/InspectorValues.h',
             'inspector/InspectorWorkerResource.h',
+            'inspector/ScriptBreakpoint.cpp',
             'inspector/ScriptBreakpoint.h',
             'inspector/ScriptDebugListener.h',
             'inspector/ScriptGCEventListener.h',

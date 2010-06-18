@@ -62,6 +62,7 @@
 #include "InspectorDatabaseResource.h"
 #include "InspectorFrontend.h"
 #include "InspectorResource.h"
+#include "InspectorValues.h"
 #include "InspectorWorkerResource.h"
 #include "InspectorTimelineAgent.h"
 #include "Page.h"
@@ -86,6 +87,7 @@
 #include <wtf/text/CString.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/ListHashSet.h>
+#include <wtf/MD5.h>
 #include <wtf/RefCounted.h>
 #include <wtf/StdLibExtras.h>
 
@@ -142,6 +144,27 @@ static const unsigned expireConsoleMessagesStep = 100;
 
 static unsigned s_inspectorControllerCount;
 
+namespace {
+
+String md5Base16(const String& string)
+{
+    static const char digits[] = "0123456789abcdef";
+
+    MD5 md5;
+    md5.addBytes(reinterpret_cast<const uint8_t*>(string.characters()), string.length() * 2);
+    Vector<uint8_t, 16> digest;
+    md5.checksum(digest);
+
+    Vector<char, 32> result;
+    for (int i = 0; i < 16; ++i) {
+        result.append(digits[(digest[i] >> 4) & 0xf]);
+        result.append(digits[digest[i] & 0xf]);
+    }
+    return String(result.data(), result.size());
+}
+
+}
+
 InspectorController::InspectorController(Page* page, InspectorClient* client)
     : m_inspectedPage(page)
     , m_client(client)
@@ -162,6 +185,7 @@ InspectorController::InspectorController(Page* page, InspectorClient* client)
     , m_debuggerEnabled(false)
     , m_attachDebuggerWhenShown(false)
     , m_pausedScriptState(0)
+    , m_breakpointsLoaded(false)
     , m_profilerEnabled(!WTF_USE_JSC)
     , m_recordingUserInitiatedProfile(false)
     , m_currentUserInitiatedProfileNumber(-1)
@@ -234,7 +258,7 @@ void InspectorController::setSetting(const String& key, const String& value)
 
 void InspectorController::setSessionSettings(const String& settingsJSON)
 {
-    m_sessionSettings = InspectorValue::readJSON(settingsJSON);
+    m_sessionSettings = InspectorValue::parseJSON(settingsJSON);
 }
 
 void InspectorController::inspect(Node* node)
@@ -692,6 +716,8 @@ void InspectorController::didCommitLoad(DocumentLoader* loader)
 #if ENABLE(JAVASCRIPT_DEBUGGER)
         m_sourceIDToURL.clear();
         m_scriptIDToContent.clear();
+        m_stickyBreakpoints.clear();
+        m_breakpointsLoaded = false;
 #endif
 #if ENABLE(JAVASCRIPT_DEBUGGER) && USE(JSC)
         m_profiles.clear();
@@ -1714,10 +1740,12 @@ void InspectorController::setBreakpoint(const String& sourceID, unsigned lineNum
     if (url.isEmpty())
         return;
 
-    HashMap<String, SourceBreakpoints>::iterator it = m_stickyBreakpoints.find(url);
+    String key = md5Base16(url);
+    HashMap<String, SourceBreakpoints>::iterator it = m_stickyBreakpoints.find(key);
     if (it == m_stickyBreakpoints.end())
-        it = m_stickyBreakpoints.set(url, SourceBreakpoints()).first;
+        it = m_stickyBreakpoints.set(key, SourceBreakpoints()).first;
     it->second.set(lineNumber, breakpoint);
+    saveBreakpoints();
 }
 
 void InspectorController::removeBreakpoint(const String& sourceID, unsigned lineNumber)
@@ -1728,9 +1756,10 @@ void InspectorController::removeBreakpoint(const String& sourceID, unsigned line
     if (url.isEmpty())
         return;
 
-    HashMap<String, SourceBreakpoints>::iterator it = m_stickyBreakpoints.find(url);
+    HashMap<String, SourceBreakpoints>::iterator it = m_stickyBreakpoints.find(md5Base16(url));
     if (it != m_stickyBreakpoints.end())
         it->second.remove(lineNumber);
+    saveBreakpoints();
 }
 
 // JavaScriptDebugListener functions
@@ -1743,7 +1772,8 @@ void InspectorController::didParseSource(const String& sourceID, const String& u
     if (url.isEmpty())
         return;
 
-    HashMap<String, SourceBreakpoints>::iterator it = m_stickyBreakpoints.find(url);
+    loadBreakpoints();
+    HashMap<String, SourceBreakpoints>::iterator it = m_stickyBreakpoints.find(md5Base16(url));
     if (it != m_stickyBreakpoints.end()) {
         for (SourceBreakpoints::iterator breakpointIt = it->second.begin(); breakpointIt != it->second.end(); ++breakpointIt) {
             if (firstLine <= breakpointIt->first) {
@@ -1795,6 +1825,45 @@ void InspectorController::didEvaluateForTestInFrontend(long callId, const String
     function.appendArgument(callId);
     function.appendArgument(jsonResult);
     function.call();
+}
+
+String InspectorController::breakpointsSettingKey()
+{
+    DEFINE_STATIC_LOCAL(String, keyPrefix, ("breakpoints:"));
+    return keyPrefix + md5Base16(m_mainResource->requestURL());
+}
+
+void InspectorController::loadBreakpoints()
+{
+    if (m_breakpointsLoaded)
+        return;
+    m_breakpointsLoaded = true;
+
+    RefPtr<InspectorValue> parsedSetting = InspectorValue::parseJSON(setting(breakpointsSettingKey()));
+    if (!parsedSetting)
+        return;
+    RefPtr<InspectorObject> breakpoints = parsedSetting->asObject();
+    if (!breakpoints)
+        return;
+    for (InspectorObject::iterator it = breakpoints->begin(); it != breakpoints->end(); ++it) {
+        RefPtr<InspectorObject> breakpointsForURL = it->second->asObject();
+        if (!breakpointsForURL)
+            continue;
+        HashMap<String, SourceBreakpoints>::iterator sourceBreakpointsIt = m_stickyBreakpoints.set(it->first, SourceBreakpoints()).first;
+        ScriptBreakpoint::sourceBreakpointsFromInspectorObject(breakpointsForURL, &sourceBreakpointsIt->second);
+    }
+}
+
+void InspectorController::saveBreakpoints()
+{
+    RefPtr<InspectorObject> breakpoints = InspectorObject::create();
+    for (HashMap<String, SourceBreakpoints>::iterator it(m_stickyBreakpoints.begin()); it != m_stickyBreakpoints.end(); ++it) {
+        if (it->second.isEmpty())
+            continue;
+        RefPtr<InspectorObject> breakpointsForURL = ScriptBreakpoint::inspectorObjectFromSourceBreakpoints(it->second);
+        breakpoints->set(it->first, breakpointsForURL);
+    }
+    setSetting(breakpointsSettingKey(), breakpoints->toJSONString());
 }
 
 static Path quadToPath(const FloatQuad& quad)

@@ -1,3 +1,42 @@
+2010-06-18  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: persist breakpoints in inspector settings.
+        https://bugs.webkit.org/show_bug.cgi?id=14190
+
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::InspectorController):
+        (WebCore::InspectorController::setSessionSettings):
+        (WebCore::InspectorController::didCommitLoad):
+        (WebCore::InspectorController::setBreakpoint):
+        (WebCore::InspectorController::removeBreakpoint):
+        (WebCore::InspectorController::didParseSource):
+        (WebCore::InspectorController::breakpointsSettingKey):
+        (WebCore::InspectorController::loadBreakpoints):
+        (WebCore::InspectorController::saveBreakpoints):
+        * inspector/InspectorController.h:
+        * inspector/InspectorValues.cpp:
+        (WebCore::InspectorValue::parseJSON):
+        * inspector/InspectorValues.h:
+        * inspector/ScriptBreakpoint.cpp: Added.
+        (WebCore::ScriptBreakpoint::sourceBreakpointsFromInspectorObject):
+        (WebCore::ScriptBreakpoint::inspectorObjectFromSourceBreakpoints):
+        * inspector/ScriptBreakpoint.h:
+        * inspector/front-end/BreakpointManager.js:
+        (WebInspector.BreakpointManager.prototype.addBreakpoint):
+        (WebInspector.BreakpointManager.prototype.restoredBreakpoint):
+        (WebInspector.BreakpointManager.prototype.breakpointsForSourceID):
+        (WebInspector.BreakpointManager.prototype.breakpointsForURL):
+        (WebInspector.BreakpointManager.prototype._addBreakpoint):
+        * inspector/front-end/inspector.js:
+        (WebInspector.restoredBreakpoint):
+
 2010-06-18  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam Weinig.

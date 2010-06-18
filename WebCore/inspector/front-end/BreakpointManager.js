@@ -38,6 +38,7 @@ WebInspector.BreakpointManager.prototype = {
         if (this._oneTimeBreakpoint)
             this._removeBreakpointFromBackend(this._oneTimeBreakpoint);
         this._oneTimeBreakpoint = breakpoint;
+        // FIXME(40669): one time breakpoint will be persisted in inspector settings if not hit.
         this._saveBreakpointOnBackend(breakpoint);
     },
 
@@ -51,15 +52,15 @@ WebInspector.BreakpointManager.prototype = {
 
     addBreakpoint: function(sourceID, sourceURL, line, enabled, condition)
     {
-        var breakpoint = new WebInspector.Breakpoint(this, sourceID, sourceURL, line, enabled, condition);
-        if (this._breakpoints[breakpoint.id])
-            return;
-        if (this._oneTimeBreakpoint && (this._oneTimeBreakpoint.id == breakpoint.id))
-            delete this._oneTimeBreakpoint;
-        this._breakpoints[breakpoint.id] = breakpoint;
-        this._saveBreakpointOnBackend(breakpoint);
-        this.dispatchEventToListeners("breakpoint-added", breakpoint);
-    },    
+        var breakpoint = this._addBreakpoint(sourceID, sourceURL, line, enabled, condition);
+        if (breakpoint)
+            this._saveBreakpointOnBackend(breakpoint);
+    },
+
+    restoredBreakpoint: function(sourceID, sourceURL, line, enabled, condition)
+    {
+        this._addBreakpoint(sourceID, sourceURL, line, enabled, condition);
+    },
 
     removeBreakpoint: function(breakpoint)
     {
@@ -78,7 +79,7 @@ WebInspector.BreakpointManager.prototype = {
                 breakpoints.push(this._breakpoints[id]);
         }
         return breakpoints;
-    },    
+    },
 
     breakpointsForURL: function(url)
     {
@@ -87,13 +88,25 @@ WebInspector.BreakpointManager.prototype = {
             if (this._breakpoints[id].url === url)
                 breakpoints.push(this._breakpoints[id]);
         }
-        return breakpoints;        
+        return breakpoints;
     },
 
     reset: function()
     {
         this._breakpoints = {};
         delete this._oneTimeBreakpoint;
+    },
+
+    _addBreakpoint: function(sourceID, sourceURL, line, enabled, condition)
+    {
+        var breakpoint = new WebInspector.Breakpoint(this, sourceID, sourceURL, line, enabled, condition);
+        if (this._breakpoints[breakpoint.id])
+            return;
+        if (this._oneTimeBreakpoint && (this._oneTimeBreakpoint.id == breakpoint.id))
+            delete this._oneTimeBreakpoint;
+        this._breakpoints[breakpoint.id] = breakpoint;
+        this.dispatchEventToListeners("breakpoint-added", breakpoint);
+        return breakpoint;
     },
 
     _saveBreakpointOnBackend: function(breakpoint)

@@ -499,7 +499,7 @@ PassRefPtr<InspectorArray> InspectorValue::asArray()
     return 0;
 }
 
-PassRefPtr<InspectorValue> InspectorValue::readJSON(const String& json)
+PassRefPtr<InspectorValue> InspectorValue::parseJSON(const String& json)
 {
     const UChar* start = json.characters();
     const UChar* end = json.characters() + json.length();

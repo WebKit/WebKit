@@ -1340,6 +1340,7 @@ webcore_sources += \
 	WebCore/inspector/InspectorValues.cpp \
 	WebCore/inspector/InspectorValues.h \
 	WebCore/inspector/InspectorWorkerResource.h \
+	WebCore/inspector/ScriptBreakpoint.cpp \
 	WebCore/inspector/ScriptBreakpoint.h \
 	WebCore/inspector/ScriptDebugListener.h \
 	WebCore/inspector/ScriptGCEventListener.h \

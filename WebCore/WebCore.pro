@@ -721,6 +721,7 @@ SOURCES += \
     inspector/InspectorResource.cpp \
     inspector/InspectorTimelineAgent.cpp \
     inspector/InspectorValues.cpp \
+    inspector/ScriptBreakpoint.cpp \
     inspector/TimelineRecordFactory.cpp \
     loader/archive/ArchiveFactory.cpp \
     loader/archive/ArchiveResource.cpp \
