@@ -1389,7 +1389,6 @@ BUG23498 MAC : fast/css/text-overflow-ellipsis.html = IMAGE
 BUG23498 MAC : fast/css/word-space-extra.html = IMAGE
 BUG23498 MAC : fast/css-generated-content/014.html = IMAGE
 BUG23498 MAC : fast/dom/focus-contenteditable.html = IMAGE
-BUG23498 MAC : fast/dom/stripNullFromTextNodes.html = IMAGE
 BUG23498 MAC : fast/dynamic/008.html = IMAGE
 BUG23498 MAC : fast/dynamic/anchor-lock.html = IMAGE
 BUG23498 MAC : fast/dynamic/insert-before-table-part-in-continuation.html = IMAGE
@@ -2876,3 +2875,5 @@ BUG46603 : fast/frames/lots-of-objects.html = PASS TIMEOUT
 // LayoutTestController::pageProperty is not implemented for Chromium yet.
 BUGWK35961 : printing/page-rule-selection.html = TEXT
 
+// Needs to implement layoutTestController.dumpResourceResponseMIMETypes()
+BUG46872 : fast/preloader = TEXT
