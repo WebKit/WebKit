@@ -1,3 +1,11 @@
+2010-06-18  Kent Tamura  <tkent@chromium.org>
+
+        Unreviewed, test expectation update.
+
+        * platform/chromium/test_expectations.txt:
+          Merge text_expectations.txt of Chromium tree.
+          Mainly for <progress> and <meter>.
+
 2010-06-18  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Dirk Schulze.

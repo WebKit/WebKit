@@ -2440,7 +2440,7 @@ BUG30343 LINUX : fast/css/large-number-round-trip.html = TEXT
 // did not get flaky here and moving to Apache made the appcache tests less
 // flaky on those platforms.
 BUG25977 WIN DEBUG : http/tests/appcache/access-via-redirect.php = TIMEOUT PASS
-BUG25977 WIN DEBUG : http/tests/appcache/auth.html = TIMEOUT PASS
+BUG25977 WIN : http/tests/appcache/auth.html = TIMEOUT PASS
 BUG25977 WIN DEBUG : http/tests/appcache/crash-when-navigating-away-then-back.html = TIMEOUT PASS
 BUG25977 WIN DEBUG : http/tests/appcache/empty-manifest.html = TIMEOUT PASS
 // This test is slow on windows, but sometimes times out indefinitely.
@@ -2627,18 +2627,19 @@ BUG38375 : plugins/round-trip-npobject.html = TEXT
 BUG38376 WIN : editing/deleting/5390681-2.html = IMAGE+TEXT
 
 // HTMLProgressElement related tests deferred due to r55980.
-BUG38227 DEFER : fast/dom/HTMLProgressElement/progress-element.html = MISSING
-BUG38227 DEFER : fast/dom/HTMLProgressElement/set-progress-properties.html = TEXT
-BUG38227 SKIP : fast/dom/HTMLProgressElement/progress-bar-value-pseudo-element.html = FAIL
+BUG38227 : fast/dom/HTMLProgressElement/progress-element.html = FAIL
+BUG38227 : fast/dom/HTMLProgressElement/progress-bar-value-pseudo-element.html = FAIL
 
 // HTMLMeterElement related tests deferred due to https://bugs.webkit.org/show_bug.cgi?id=37074.
-BUGWK37074 DEFER : fast/dom/HTMLMeterElement/meter-element.html = FAIL
-BUGWK37074 DEFER : fast/dom/HTMLMeterElement/set-meter-properties.html = TEXT
-BUGWK37074 DEFER : fast/dom/HTMLMeterElement/meter-appearances-capacity.html = FAIL
-BUGWK37074 DEFER : fast/dom/HTMLMeterElement/meter-appearances-rating-relevancy.html = FAIL
-BUGWK37074 DEFER : fast/dom/HTMLMeterElement/meter-optimums.html = FAIL
-BUGWK37074 DEFER : fast/dom/HTMLMeterElement/meter-styles.html = IMAGE+TEXT
-BUGWK37074 DEFER : fast/dom/HTMLMeterElement/meter-styles-changing-pseudo.html = IMAGE+TEXT
+BUGWK37074 : fast/dom/HTMLMeterElement/meter-element.html = FAIL
+BUGWK37074 : fast/dom/HTMLMeterElement/meter-appearances-capacity.html = FAIL
+BUGWK37074 : fast/dom/HTMLMeterElement/meter-appearances-rating-relevancy.html = FAIL
+BUGWK37074 : fast/dom/HTMLMeterElement/meter-optimums.html = FAIL
+BUGWK37074 : fast/dom/HTMLMeterElement/meter-styles.html = FAIL
+BUGWK37074 : fast/dom/HTMLMeterElement/meter-styles-changing-pseudo.html = FAIL
+
+// Need rebaseline fo METER_TAG and PROGRESS_TAG.
+BUGTKENT : fast/dom/prototype-inheritance.html = TEXT
 
 // WebKit roll 56004 -> 56026
 BUG38278 : fast/events/continuous-platform-wheelevent-in-scrolling-div.html = TIMEOUT
