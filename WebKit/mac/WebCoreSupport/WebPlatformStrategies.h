@@ -27,8 +27,9 @@
 #define WebPlatformStrategies_h
 
 #include <WebCore/PlatformStrategies.h>
+#include <WebCore/PluginStrategy.h>
 
-class WebPlatformStrategies : public WebCore::PlatformStrategies {
+class WebPlatformStrategies : public WebCore::PlatformStrategies, private WebCore::PluginStrategy {
 public:
     static void initialize();
     
@@ -38,6 +39,9 @@ private:
     // WebCore::PlatformStrategies
     virtual WebCore::PluginStrategy* createPluginStrategy();
 
+    // WebCore::PluginStrategy
+    virtual void refreshPlugins();
+    virtual void getPluginInfo(Vector<WebCore::PluginInfo>&);
 };
 
 #endif // WebPlatformStrategies_h

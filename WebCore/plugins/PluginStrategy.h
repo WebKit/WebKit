@@ -37,7 +37,7 @@ public:
     virtual void refreshPlugins() = 0;
     virtual void getPluginInfo(Vector<PluginInfo>&) = 0;
 
-private:
+protected:
     virtual ~PluginStrategy() { }
 };
 

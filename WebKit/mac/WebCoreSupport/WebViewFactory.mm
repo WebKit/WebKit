@@ -35,7 +35,6 @@
 #import <WebKit/WebNSUserDefaultsExtras.h>
 #import <WebKit/WebNSObjectExtras.h>
 #import <WebKit/WebNSViewExtras.h>
-#import <WebKit/WebPluginDatabase.h>
 #import <WebKitSystemInterface.h>
 #import <wtf/Assertions.h>
 
@@ -63,16 +62,6 @@
         [[[self alloc] init] release];
     }
     ASSERT([[self sharedFactory] isKindOfClass:self]);
-}
-
-- (NSArray *)pluginsInfo
-{
-    return [[WebPluginDatabase sharedDatabase] plugins];
-}
-
-- (void)refreshPlugins
-{
-    [[WebPluginDatabase sharedDatabase] refresh];
 }
 
 - (NSString *)inputElementAltText

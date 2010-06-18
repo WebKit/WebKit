@@ -24,8 +24,10 @@
 #include "config.h"
 #include "PluginData.h"
 
+#if USE(PLATFORM_STRATEGIES)
 #include "PlatformStrategies.h"
 #include "PluginStrategy.h"
+#endif
 
 namespace WebCore {
 
@@ -62,5 +64,19 @@ String PluginData::pluginNameForMimeType(const String& mimeType) const
 
     return String();
 }
+
+#if USE(PLATFORM_STRATEGIES)
+void PluginData::refresh()
+{
+    platformStrategies()->pluginStrategy()->refreshPlugins();
+}
+
+void PluginData::initPlugins()
+{
+    ASSERT(m_plugins.isEmpty());
+    
+    platformStrategies()->pluginStrategy()->getPluginInfo(m_plugins);
+}
+#endif
 
 }

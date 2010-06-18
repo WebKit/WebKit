@@ -1,5 +1,20 @@
 2010-06-18  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Darin Adler.
+
+        Get rid of PluginDataMac.mm and use the plug-in strategy instead
+        https://bugs.webkit.org/show_bug.cgi?id=40860
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/mac/WebCoreViewFactory.h:
+        * plugins/PluginData.cpp:
+        (WebCore::PluginData::refresh):
+        (WebCore::PluginData::initPlugins):
+        * plugins/PluginStrategy.h:
+        * plugins/mac/PluginDataMac.mm: Removed.
+
+2010-06-18  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Dan Bernstein.
 
         Fix some (not all) clang++ warnings.

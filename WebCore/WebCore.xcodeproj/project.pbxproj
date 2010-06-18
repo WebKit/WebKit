@@ -3460,7 +3460,6 @@
 		A9C6E4F00D745E38006442E9 /* PluginArray.h in Headers */ = {isa = PBXBuildFile; fileRef = A9C6E4EE0D745E38006442E9 /* PluginArray.h */; };
 		A9C6E4F30D745E48006442E9 /* PluginData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A9C6E4F10D745E48006442E9 /* PluginData.cpp */; };
 		A9C6E4F40D745E48006442E9 /* PluginData.h in Headers */ = {isa = PBXBuildFile; fileRef = A9C6E4F20D745E48006442E9 /* PluginData.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		A9C6E4F60D745E61006442E9 /* PluginDataMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = A9C6E4F50D745E61006442E9 /* PluginDataMac.mm */; };
 		A9C6E5A50D746458006442E9 /* Navigator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A9C6E5A30D746458006442E9 /* Navigator.cpp */; };
 		A9C6E5A60D746458006442E9 /* Navigator.h in Headers */ = {isa = PBXBuildFile; fileRef = A9C6E5A40D746458006442E9 /* Navigator.h */; };
 		A9C6E6470D7465CA006442E9 /* JSMimeTypeArrayCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A9C6E6460D7465CA006442E9 /* JSMimeTypeArrayCustom.cpp */; };
@@ -8794,7 +8793,6 @@
 		A9C6E4EE0D745E38006442E9 /* PluginArray.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = PluginArray.h; sourceTree = "<group>"; };
 		A9C6E4F10D745E48006442E9 /* PluginData.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = PluginData.cpp; sourceTree = "<group>"; };
 		A9C6E4F20D745E48006442E9 /* PluginData.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = PluginData.h; sourceTree = "<group>"; };
-		A9C6E4F50D745E61006442E9 /* PluginDataMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; name = PluginDataMac.mm; path = mac/PluginDataMac.mm; sourceTree = "<group>"; };
 		A9C6E5A30D746458006442E9 /* Navigator.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Navigator.cpp; sourceTree = "<group>"; };
 		A9C6E5A40D746458006442E9 /* Navigator.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Navigator.h; sourceTree = "<group>"; };
 		A9C6E6460D7465CA006442E9 /* JSMimeTypeArrayCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSMimeTypeArrayCustom.cpp; sourceTree = "<group>"; };
@@ -11823,7 +11821,6 @@
 				A9C6E6610D74671E006442E9 /* PluginArray.idl */,
 				A9C6E4F10D745E48006442E9 /* PluginData.cpp */,
 				A9C6E4F20D745E48006442E9 /* PluginData.h */,
-				A9C6E4F50D745E61006442E9 /* PluginDataMac.mm */,
 				1ADA140E0E1AE5D900023EE5 /* PluginMainThreadScheduler.cpp */,
 				1ADA140F0E1AE5D900023EE5 /* PluginMainThreadScheduler.h */,
 				76FF17E211235673001D61B5 /* PluginViewNone.cpp */,
@@ -21136,7 +21133,6 @@
 				A9C6E4EB0D745E2B006442E9 /* Plugin.cpp in Sources */,
 				A9C6E4EF0D745E38006442E9 /* PluginArray.cpp in Sources */,
 				A9C6E4F30D745E48006442E9 /* PluginData.cpp in Sources */,
-				A9C6E4F60D745E61006442E9 /* PluginDataMac.mm in Sources */,
 				1AC694C70A3B1676003F5049 /* PluginDocument.cpp in Sources */,
 				7693BAD3106C2DCA007B0823 /* PluginHalter.cpp in Sources */,
 				1ADA14100E1AE5D900023EE5 /* PluginMainThreadScheduler.cpp in Sources */,

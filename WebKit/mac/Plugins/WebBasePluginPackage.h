@@ -52,7 +52,7 @@ typedef void (*BP_CreatePluginMIMETypesPreferencesFuncPtr)(void);
 #define WebPluginTypeDescriptionKey     @"WebPluginTypeDescription"
 #define WebPluginTypeEnabledKey         @"WebPluginTypeEnabled"
 
-@interface WebBasePluginPackage : NSObject <WebCorePluginInfo>
+@interface WebBasePluginPackage : NSObject
 {
     NSMutableSet *pluginDatabases;
     

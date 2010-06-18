@@ -25,6 +25,9 @@
 
 #import "WebPlatformStrategies.h"
 
+#import "WebPluginDatabase.h"
+#import "WebPluginPackage.h"
+#import <WebCore/BlockExceptions.h>
 #import <wtf/StdLibExtras.h>
 
 using namespace WebCore;
@@ -39,7 +42,53 @@ WebPlatformStrategies::WebPlatformStrategies()
 {
 }
 
+// PluginStrategy
+
 PluginStrategy* WebPlatformStrategies::createPluginStrategy()
 {
-    return 0;
+    return this;
 }
+
+void WebPlatformStrategies::refreshPlugins()
+{
+    [[WebPluginDatabase sharedDatabase] refresh];
+}
+
+void WebPlatformStrategies::getPluginInfo(Vector<WebCore::PluginInfo>& plugins)
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+
+    NSArray* pluginsArray = [[WebPluginDatabase sharedDatabase] plugins];
+    for (unsigned int i = 0; i < [pluginsArray count]; ++i) {
+        PluginInfo pluginInfo;
+
+        WebPluginPackage *plugin = [pluginsArray objectAtIndex:i];
+    
+        pluginInfo.name = [plugin name];
+        pluginInfo.file = [plugin filename];
+        pluginInfo.desc = [plugin pluginDescription];
+
+        NSEnumerator* MIMETypeEnumerator = [plugin MIMETypeEnumerator];
+        while (NSString* MIME = [MIMETypeEnumerator nextObject]) {
+            MimeClassInfo mime;
+
+            mime.type = String(MIME).lower();
+            
+            NSArray *extensions = [plugin extensionsForMIMEType:MIME];
+            for (NSUInteger i = 0; i < [extensions count]; ++i) {
+                NSString *extension = [extensions objectAtIndex:i];
+                mime.extensions.append(extension);
+            }
+
+            mime.desc = [plugin descriptionForMIMEType:MIME];
+            
+            pluginInfo.mimes.append(mime);
+        }
+
+        plugins.append(pluginInfo);
+    }
+    
+    END_BLOCK_OBJC_EXCEPTIONS;
+}
+
+
