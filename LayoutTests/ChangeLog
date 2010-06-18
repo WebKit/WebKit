@@ -1,3 +1,9 @@
+2010-06-18  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Not reviewed. Try to turn Gtk 32-bit Linux Debug green again.
+
+        * platform/gtk/Skipped:
+
 2010-06-17  Rob Buis  <rwlbuis@gmail.com>
 
         Reviewed by Dave Hyatt.
