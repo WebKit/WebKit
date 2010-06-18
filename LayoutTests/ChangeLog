@@ -1,3 +1,13 @@
+2010-06-18  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Tests that we do not crash while rendering a fixed table layout.
+        https://bugs.webkit.org/show_bug.cgi?id=40812
+
+        * fast/table/zero-colspan-crash-expected.txt: Added.
+        * fast/table/zero-colspan-crash.html: Added.
+
 2010-06-18  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Geoffrey Garen.

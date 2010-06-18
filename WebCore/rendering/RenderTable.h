@@ -75,7 +75,7 @@ public:
         {
         }
 
-        unsigned short span;
+        unsigned span;
         unsigned width; // the calculated position of the column
     };
 

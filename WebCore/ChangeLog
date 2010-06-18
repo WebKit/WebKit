@@ -1,3 +1,20 @@
+2010-06-18  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Convert column span from an unsigned short type to an unsigned int
+        type. Fixes a divide-by-zero crash arising from using a zero colspan
+        value coming from a narrow cast of an int to an unsigned short.
+        https://bugs.webkit.org/show_bug.cgi?id=40812
+
+        Test: fast/table/zero-colspan-crash.html
+
+        * rendering/RenderTable.h: Change span from unsigned short to unsigned int.
+        * rendering/RenderTableSection.cpp: Fix a compiler warning with comparing
+          unsigned int with signed int. Value of an unsigned int here cannot be
+          greater than maximum positive value of a signed int.
+        (WebCore::RenderTableSection::addCell):
+
 2010-06-18  Ananth Jasty  <ext-ananth.jasty@nokia.com>
 
         Reviewed by Simon Hausmann.

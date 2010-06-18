@@ -231,7 +231,7 @@ void RenderTableSection::addCell(RenderTableCell* cell, RenderTableRow* row)
             table()->appendColumn(cSpan);
             currentSpan = cSpan;
         } else {
-            if (cSpan < columns[m_cCol].span)
+            if (cSpan < static_cast<int>(columns[m_cCol].span))
                 table()->splitColumn(m_cCol, cSpan);
             currentSpan = columns[m_cCol].span;
         }
