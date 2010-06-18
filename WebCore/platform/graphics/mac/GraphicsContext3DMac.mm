@@ -383,8 +383,8 @@ static inline void ensureContext(CGLContextObj context)
 
 void GraphicsContext3D::prepareTexture()
 {
+    ensureContext(m_contextObj);
     if (m_attrs.antialias) {
-        ensureContext(m_contextObj);
         ::glBindFramebufferEXT(GL_READ_FRAMEBUFFER_EXT, m_multisampleFBO);
         ::glBindFramebufferEXT(GL_DRAW_FRAMEBUFFER_EXT, m_fbo);
         ::glBlitFramebufferEXT(0, 0, m_currentWidth, m_currentHeight, 0, 0, m_currentWidth, m_currentHeight, GL_COLOR_BUFFER_BIT, GL_LINEAR);

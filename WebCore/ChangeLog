@@ -1,3 +1,13 @@
+2010-06-18  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Simon Fraser.
+
+        WebGL demos show bad flicker
+        https://bugs.webkit.org/show_bug.cgi?id=38560
+
+        * platform/graphics/mac/GraphicsContext3DMac.mm:
+        (WebCore::GraphicsContext3D::prepareTexture): Move ensureContext() out of if-block so it's always executed.
+
 2010-06-18  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.
