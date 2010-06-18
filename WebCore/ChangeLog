@@ -1,3 +1,21 @@
+2010-06-17  Rob Buis  <rwlbuis@gmail.com>
+
+        Reviewed by Dave Hyatt.
+
+        CSS3 "Property is declared twice in rule" test fails
+        https://bugs.webkit.org/show_bug.cgi?id=36282
+
+        Filter out duplicate properties in style declaration.
+
+        Test: fast/css/duplicate-property-in-rule.html
+
+        * css/CSSMutableStyleDeclaration.cpp: Filter out duplicate properties
+        (WebCore::CSSMutableStyleDeclaration::CSSMutableStyleDeclaration):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue): Discard negative padding values
+        * css/CSSStyleSelector.cpp: Remove negative padding check
+        (WebCore::CSSStyleSelector::applyProperty):
+
 2010-06-17  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam Weinig.
