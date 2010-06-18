@@ -3260,6 +3260,8 @@ fast/dom/HTMLHeadElement/textInHead5.html
 fast/dom/HTMLImageElement/image-alt-text.html
 fast/dom/HTMLInputElement/input-image-alt-text.html
 fast/dom/HTMLLinkElement/pending-stylesheet-count.html
+# meter-element.html is temporally disabled.We need to rebaseline.
+Fast/dom/HTMLMeterElement/meter-element.html
 fast/dom/HTMLObjectElement/vspace-hspace-as-number.html
 fast/dom/HTMLStyleElement/insert-parser-generated.html
 fast/dom/HTMLTableElement/colSpan.html
