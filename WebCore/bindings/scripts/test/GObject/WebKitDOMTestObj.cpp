@@ -457,7 +457,7 @@ webkit_dom_test_obj_set_reflected_integral_attr(WebKitDOMTestObj* self, glong va
 {
     g_return_if_fail(self);
     WebCore::TestObj * item = WebKit::core(self);
-    item->setAttribute(WebCore::HTMLNames::reflectedintegralattrAttr, value);
+    item->setIntegralAttribute(WebCore::HTMLNames::reflectedintegralattrAttr, value);
 }
 
 gboolean
@@ -474,7 +474,7 @@ webkit_dom_test_obj_set_reflected_boolean_attr(WebKitDOMTestObj* self, gboolean 
 {
     g_return_if_fail(self);
     WebCore::TestObj * item = WebKit::core(self);
-    item->setAttribute(WebCore::HTMLNames::reflectedbooleanattrAttr, value);
+    item->setBooleanAttribute(WebCore::HTMLNames::reflectedbooleanattrAttr, value);
 }
 
 gchar* 
@@ -529,7 +529,7 @@ webkit_dom_test_obj_set_reflected_custom_integral_attr(WebKitDOMTestObj* self, g
 {
     g_return_if_fail(self);
     WebCore::TestObj * item = WebKit::core(self);
-    item->setAttribute(WebCore::HTMLNames::customContentIntegralAttrAttr, value);
+    item->setIntegralAttribute(WebCore::HTMLNames::customContentIntegralAttrAttr, value);
 }
 
 gboolean
@@ -546,7 +546,7 @@ webkit_dom_test_obj_set_reflected_custom_boolean_attr(WebKitDOMTestObj* self, gb
 {
     g_return_if_fail(self);
     WebCore::TestObj * item = WebKit::core(self);
-    item->setAttribute(WebCore::HTMLNames::customContentBooleanAttrAttr, value);
+    item->setBooleanAttribute(WebCore::HTMLNames::customContentBooleanAttrAttr, value);
 }
 
 gchar* 

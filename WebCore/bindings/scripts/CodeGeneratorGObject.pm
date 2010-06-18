@@ -758,7 +758,7 @@ sub GenerateFunction {
     }
 
     my $functionSigName = $function->signature->name;
-    my $functionSigType = $function->signature->type;
+    my $functionSigType = $prefix eq "set_" ? "void" : $function->signature->type;
     my $functionName = "webkit_dom_" . $decamelize . "_" . $prefix . decamelize($functionSigName);
     my $returnType = GetGlibTypeName($functionSigType);
     my $returnValueIsGDOMType = IsGDOMClassType($functionSigType);
@@ -1045,7 +1045,7 @@ sub GenerateFunctions {
         
         $function->signature(new domSignature());
         $function->signature->name($attribute->signature->name);
-        $function->signature->type("void");
+        $function->signature->type($attribute->signature->type);
         $function->signature->extendedAttributes($attribute->signature->extendedAttributes);
         
         my $param = new domSignature();

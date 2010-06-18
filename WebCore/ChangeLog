@@ -1,3 +1,16 @@
+2010-06-18  Darin Adler  <darin@apple.com>
+
+        Fix GTK build after reflection change.
+
+        * bindings/scripts/CodeGeneratorGObject.pm: Changed code
+        that emits setters to convey the correct type of the attribute.
+        The GObject code generator takes a different approach to attributes
+        than the others, so it's hacked a bit to make it more like them.
+        We should find a way to share more code between the different generators.
+
+        * bindings/scripts/test/GObject/WebKitDOMTestObj.cpp:
+        Updated to expect correct results.
+
 2010-06-18  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed: Qt build fix.
