@@ -20,10 +20,10 @@ layer at (0,0) size 480x360
       RenderSVGContainer {use} at (0,0) size 0x0
       RenderSVGContainer {use} at (0,0) size 0x0
       RenderSVGContainer {use} at (0,0) size 0x0
-    RenderSVGText {text} at (41,35) size 398x27 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,-21) size 398x27
+    RenderSVGText {text} at (41,14) size 398x27 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 398x27
         chunk 1 (middle anchor) text run 1 at (41.50,35.00) startOffset 0 endOffset 39 width 397.00: "External references and computed values"
-    RenderSVGText {text} at (10,340) size 261x46 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,-36) size 261x46
+    RenderSVGText {text} at (10,303) size 261x46 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 261x46
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 261.00: "$Revision: 1.6 $"
     RenderPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00 L479.00,1.00 L479.00,359.00 L1.00,359.00 Z"]

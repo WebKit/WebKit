@@ -2673,7 +2673,6 @@ BUG38656 : fast/media/print-restores-previous-mediatype.html = TEXT
 BUG40680 SKIP : fast/media/media-feature-wgt-view-mode.html = FAIL
 
 // Unknown flakiness.
-BUG38704 WIN RELEASE: svg/text/text-text-06-t.svg = CRASH PASS
 BUG38706 : svg/custom/deep-dynamic-updates.svg = IMAGE+TEXT IMAGE PASS
 
 // Caused by http://trac.webkit.org/changeset/56288/
@@ -2849,8 +2848,6 @@ BUGWK39655 : fast/dom/prototype-property.html = FAIL
 // Hard to pin down which roll introduced the flakiness.
 BUG45106 WIN : svg/clip-path/clip-path-childs-clipped.svg = PASS CRASH
 BUG45106 WIN : svg/clip-path/clip-path-evenodd-nonzero.svg = PASS CRASH
-BUG45106 WIN : svg/clip-path/clip-path-text-and-shape.svg = PASS CRASH
-BUG45106 WIN : svg/text/text-text-04-t.svg = PASS CRASH
 BUG45106 WIN : svg/text/text-text-05-t.svg = PASS CRASH
 
 BUG45720 WIN LINUX : websocket/tests/reload-crash.html = PASS CRASH

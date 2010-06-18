@@ -4,8 +4,8 @@ layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
     RenderSVGContainer {g} at (70,35) size 335x220
-      RenderSVGText {text} at (129,50) size 222x18 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,-15) size 222x18
+      RenderSVGText {text} at (129,35) size 222x18 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 222x18
           chunk 1 (middle anchor) text run 1 at (129.00,50.00) startOffset 0 endOffset 31 width 222.00: "feSpotLight's limitingConeAngle"
       RenderSVGHiddenContainer {defs} at (0,0) size 0x0
         RenderSVGResourceFilter {filter} [id="spotLightA"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
@@ -34,30 +34,30 @@ layer at (0,0) size 480x360
             [SourceGraphic]
       RenderSVGContainer {g} at (70,111) size 335x144 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,-20.00)}]
         RenderSVGContainer {g} at (70,111) size 293x112 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,110.00)}]
-          RenderSVGText {text} at (70,30) size 10x12 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,-9) size 10x12
+          RenderSVGText {text} at (70,21) size 10x12 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 10x12
               chunk 1 text run 1 at (70.00,30.00) startOffset 0 endOffset 2 width 10.00: "30"
-          RenderSVGText {text} at (165,30) size 10x12 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,-9) size 10x12
+          RenderSVGText {text} at (165,21) size 10x12 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 10x12
               chunk 1 text run 1 at (165.00,30.00) startOffset 0 endOffset 2 width 10.00: "20"
-          RenderSVGText {text} at (260,30) size 69x12 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,-9) size 69x12
+          RenderSVGText {text} at (260,21) size 69x12 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 69x12
               chunk 1 text run 1 at (260.00,30.00) startOffset 0 endOffset 16 width 69.00: "Animated (0..50)"
-          RenderSVGText {text} at (355,30) size 5x12 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,-9) size 5x12
+          RenderSVGText {text} at (355,21) size 5x12 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 5x12
               chunk 1 text run 1 at (355.00,30.00) startOffset 0 endOffset 1 width 5.00: "5"
           RenderSVGContainer {g} at (70,211) size 293x12 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,100.00)}]
-            RenderSVGText {text} at (70,30) size 13x12 contains 1 chunk(s)
-              RenderSVGInlineText {#text} at (0,-9) size 13x12
+            RenderSVGText {text} at (70,21) size 13x12 contains 1 chunk(s)
+              RenderSVGInlineText {#text} at (0,0) size 13x12
                 chunk 1 text run 1 at (70.00,30.00) startOffset 0 endOffset 3 width 13.00: "-30"
-            RenderSVGText {text} at (165,30) size 13x12 contains 1 chunk(s)
-              RenderSVGInlineText {#text} at (0,-9) size 13x12
+            RenderSVGText {text} at (165,21) size 13x12 contains 1 chunk(s)
+              RenderSVGInlineText {#text} at (0,0) size 13x12
                 chunk 1 text run 1 at (165.00,30.00) startOffset 0 endOffset 3 width 13.00: "-20"
-            RenderSVGText {text} at (260,30) size 72x12 contains 1 chunk(s)
-              RenderSVGInlineText {#text} at (0,-9) size 72x12
+            RenderSVGText {text} at (260,21) size 72x12 contains 1 chunk(s)
+              RenderSVGInlineText {#text} at (0,0) size 72x12
                 chunk 1 text run 1 at (260.00,30.00) startOffset 0 endOffset 17 width 72.00: "Animated (0..-50)"
-            RenderSVGText {text} at (355,30) size 8x12 contains 1 chunk(s)
-              RenderSVGInlineText {#text} at (0,-9) size 8x12
+            RenderSVGText {text} at (355,21) size 8x12 contains 1 chunk(s)
+              RenderSVGInlineText {#text} at (0,0) size 8x12
                 chunk 1 text run 1 at (355.00,30.00) startOffset 0 endOffset 2 width 8.00: "-5"
         RenderSVGContainer {g} at (70,125) size 335x130
           RenderPath {rect} at (70,125) size 50x30 [transform={m=((1.00,0.00)(0.00,1.00)) t=(70.00,145.00)}] [fill={[type=SOLID] [color=#000000]}] [data="M0.00,0.00 L50.00,0.00 L50.00,30.00 L0.00,30.00 Z"]
@@ -77,7 +77,7 @@ layer at (0,0) size 480x360
           RenderPath {rect} at (355,225) size 50x30 [transform={m=((1.00,0.00)(0.00,1.00)) t=(355.00,245.00)}] [fill={[type=SOLID] [color=#000000]}] [data="M0.00,0.00 L50.00,0.00 L50.00,30.00 L0.00,30.00 Z"]
             [filter="spotLightH"] RenderSVGResourceFilter {filter} at (0,0) size 50x30
     RenderSVGContainer {g} at (10,311) size 228x36
-      RenderSVGText {text} at (10,340) size 228x36 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,-29) size 228x36
+      RenderSVGText {text} at (10,311) size 228x36 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 228x36
           chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 228.00: "$Revision: 1.4 $"
     RenderPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00 L479.00,1.00 L479.00,359.00 L1.00,359.00 Z"]

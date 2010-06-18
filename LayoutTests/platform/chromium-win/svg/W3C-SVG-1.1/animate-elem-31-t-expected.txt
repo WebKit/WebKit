@@ -23,19 +23,19 @@ layer at (0,0) size 480x360
         RenderPath {circle} at (310,10) size 70x70 [stroke={[type=SOLID] [color=#000000] [stroke width=5.00]}] [fill={[type=SOLID] [color=#00FFFF]}] [data="M250.00,30.00 L249.96,31.26 L249.84,32.51 L249.65,33.75 L249.37,34.97 L249.02,36.18 L248.60,37.36 L248.10,38.52 L247.53,39.64 L246.89,40.72 L246.18,41.76 L245.41,42.75 L244.58,43.69 L243.69,44.58 L242.75,45.41 L241.76,46.18 L240.72,46.89 L239.64,47.53 L238.52,48.10 L237.36,48.60 L236.18,49.02 L234.97,49.37 L233.75,49.65 L232.51,49.84 L231.26,49.96 L230.00,50.00 L228.74,49.96 L227.49,49.84 L226.25,49.65 L225.03,49.37 L223.82,49.02 L222.64,48.60 L221.48,48.10 L220.36,47.53 L219.28,46.89 L218.24,46.18 L217.25,45.41 L216.31,44.58 L215.42,43.69 L214.59,42.75 L213.82,41.76 L213.11,40.72 L212.47,39.64 L211.90,38.52 L211.40,37.36 L210.98,36.18 L210.63,34.97 L210.35,33.75 L210.16,32.51 L210.04,31.26 L210.00,30.00 L210.04,28.74 L210.16,27.49 L210.35,26.25 L210.63,25.03 L210.98,23.82 L211.40,22.64 L211.90,21.48 L212.47,20.36 L213.11,19.28 L213.82,18.24 L214.59,17.25 L215.42,16.31 L216.31,15.42 L217.25,14.59 L218.24,13.82 L219.28,13.11 L220.36,12.47 L221.48,11.90 L222.64,11.40 L223.82,10.98 L225.03,10.63 L226.25,10.35 L227.49,10.16 L228.74,10.04 L230.00,10.00 L231.26,10.04 L232.51,10.16 L233.75,10.35 L234.97,10.63 L236.18,10.98 L237.36,11.40 L238.52,11.90 L239.64,12.47 L240.72,13.11 L241.76,13.82 L242.75,14.59 L243.69,15.42 L244.58,16.31 L245.41,17.25 L246.18,18.24 L246.89,19.28 L247.53,20.36 L248.10,21.48 L248.60,22.64 L249.02,23.82 L249.37,25.03 L249.65,26.25 L249.84,27.49 L249.96,28.74 Z"]
       RenderSVGContainer {g} at (310,115) size 70x70
         RenderPath {circle} at (310,115) size 70x70 [stroke={[type=SOLID] [color=#000000] [stroke width=5.00]}] [fill={[type=SOLID] [color=#00FFFF]}] [data="M250.00,100.00 L249.96,101.26 L249.84,102.51 L249.65,103.75 L249.37,104.97 L249.02,106.18 L248.60,107.36 L248.10,108.52 L247.53,109.64 L246.89,110.72 L246.18,111.76 L245.41,112.75 L244.58,113.69 L243.69,114.58 L242.75,115.41 L241.76,116.18 L240.72,116.89 L239.64,117.53 L238.52,118.10 L237.36,118.60 L236.18,119.02 L234.97,119.37 L233.75,119.65 L232.51,119.84 L231.26,119.96 L230.00,120.00 L228.74,119.96 L227.49,119.84 L226.25,119.65 L225.03,119.37 L223.82,119.02 L222.64,118.60 L221.48,118.10 L220.36,117.53 L219.28,116.89 L218.24,116.18 L217.25,115.41 L216.31,114.58 L215.42,113.69 L214.59,112.75 L213.82,111.76 L213.11,110.72 L212.47,109.64 L211.90,108.52 L211.40,107.36 L210.98,106.18 L210.63,104.97 L210.35,103.75 L210.16,102.51 L210.04,101.26 L210.00,100.00 L210.04,98.74 L210.16,97.49 L210.35,96.25 L210.63,95.03 L210.98,93.82 L211.40,92.64 L211.90,91.48 L212.47,90.36 L213.11,89.28 L213.82,88.24 L214.59,87.25 L215.42,86.31 L216.31,85.42 L217.25,84.59 L218.24,83.82 L219.28,83.11 L220.36,82.47 L221.48,81.90 L222.64,81.40 L223.82,80.98 L225.03,80.63 L226.25,80.35 L227.49,80.16 L228.74,80.04 L230.00,80.00 L231.26,80.04 L232.51,80.16 L233.75,80.35 L234.97,80.63 L236.18,80.98 L237.36,81.40 L238.52,81.90 L239.64,82.47 L240.72,83.11 L241.76,83.82 L242.75,84.59 L243.69,85.42 L244.58,86.31 L245.41,87.25 L246.18,88.24 L246.89,89.28 L247.53,90.36 L248.10,91.48 L248.60,92.64 L249.02,93.82 L249.37,95.03 L249.65,96.25 L249.84,97.49 L249.96,98.74 Z"]
-    RenderSVGText {text} at (385,40) size 42x19 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,-15) size 42x19
+    RenderSVGText {text} at (385,25) size 42x19 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 42x19
         chunk 1 text run 1 at (385.00,40.00) startOffset 0 endOffset 7 width 42.00: "display"
-    RenderSVGText {text} at (385,150) size 59x20 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,-16) size 59x20
+    RenderSVGText {text} at (385,134) size 59x20 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 59x20
         chunk 1 text run 1 at (385.00,150.00) startOffset 0 endOffset 10 width 59.00: "visibility"
-    RenderSVGText {text} at (5,235) size 388x33 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,-26) size 388x33
+    RenderSVGText {text} at (5,209) size 388x33 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 388x33
         chunk 1 text run 1 at (5.00,235.00) startOffset 0 endOffset 36 width 388.00: "Test of display attribute animation."
-    RenderSVGText {text} at (5,265) size 393x20 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,-16) size 393x20
+    RenderSVGText {text} at (5,249) size 393x20 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 393x20
         chunk 1 text run 1 at (5.00,265.00) startOffset 0 endOffset 55 width 393.00: "Circles with same color should be visible at same time."
-    RenderSVGText {text} at (10,340) size 261x46 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,-36) size 261x46
+    RenderSVGText {text} at (10,303) size 261x46 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 261x46
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 261.00: "$Revision: 1.6 $"
     RenderPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00 L479.00,1.00 L479.00,359.00 L1.00,359.00 Z"]

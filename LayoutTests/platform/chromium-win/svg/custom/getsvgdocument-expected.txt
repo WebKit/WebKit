@@ -14,8 +14,8 @@ layer at (0,0) size 800x600
           layer at (0,0) size 85x20
             RenderSVGRoot {svg} at (0,0) size 85x20
               RenderPath {rect} at (0,0) size 85x20 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00 L85.00,0.00 L85.00,20.00 L0.00,20.00 Z"]
-              RenderSVGText {text} at (5,16) size 69x19 contains 1 chunk(s)
-                RenderSVGInlineText {#text} at (0,-15) size 69x19
+              RenderSVGText {text} at (5,1) size 69x19 contains 1 chunk(s)
+                RenderSVGInlineText {#text} at (0,0) size 69x19
                   chunk 1 text run 1 at (5.00,16.00) startOffset 0 endOffset 7 width 69.00: "SUCCESS"
         RenderBR {BR} at (85,20) size 0x0
         RenderBR {BR} at (0,20) size 0x19
@@ -25,8 +25,8 @@ layer at (0,0) size 800x600
           layer at (0,0) size 85x20
             RenderSVGRoot {svg} at (0,0) size 85x20
               RenderPath {rect} at (0,0) size 85x20 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00 L85.00,0.00 L85.00,20.00 L0.00,20.00 Z"]
-              RenderSVGText {text} at (5,16) size 69x19 contains 1 chunk(s)
-                RenderSVGInlineText {#text} at (0,-15) size 69x19
+              RenderSVGText {text} at (5,1) size 69x19 contains 1 chunk(s)
+                RenderSVGInlineText {#text} at (0,0) size 69x19
                   chunk 1 text run 1 at (5.00,16.00) startOffset 0 endOffset 7 width 69.00: "SUCCESS"
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0

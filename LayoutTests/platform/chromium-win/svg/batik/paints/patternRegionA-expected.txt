@@ -2,8 +2,8 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 450x500
   RenderSVGRoot {svg} at (0,0) size 450x500
-    RenderSVGText {text} at (114,50) size 222x18 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,-15) size 222x18
+    RenderSVGText {text} at (114,35) size 222x18 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 222x18
         chunk 1 (middle anchor) text run 1 at (114.00,50.00) startOffset 0 endOffset 34 width 222.00: "patternRegion, x, y, width, height"
     RenderSVGContainer {g} at (24,70) size 426x391
       RenderSVGHiddenContainer {defs} at (0,0) size 0x0
@@ -141,8 +141,8 @@ layer at (0,0) size 450x500
                   RenderPath {rect} at (10,10) size 5x5 [fill={[type=SOLID] [color=#6464FF]}] [data="M0.00,0.00 L5.00,0.00 L5.00,5.00 L0.00,5.00 Z"]
                   RenderPath {rect} at (15,15) size 5x5 [fill={[type=SOLID] [color=#6464FF]}] [data="M5.00,5.00 L10.00,5.00 L10.00,10.00 L5.00,10.00 Z"]
       RenderSVGContainer {g} at (30,70) size 192x100 [transform={m=((1.00,0.00)(0.00,1.00)) t=(30.00,90.00)}]
-        RenderSVGText {text} at (0,-5) size 192x18 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,-15) size 192x18
+        RenderSVGText {text} at (0,-20) size 192x18 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 192x18
             chunk 1 text run 1 at (0.00,-5.00) startOffset 0 endOffset 29 width 192.00: "Pattern (4 times actual size)"
         RenderSVGContainer {use} at (30,90) size 80x80 [transform={m=((4.00,0.00)(0.00,4.00)) t=(0.00,0.00)}]
           RenderSVGContainer {g} at (30,90) size 80x80
@@ -162,45 +162,45 @@ layer at (0,0) size 450x500
                 RenderPath {rect} at (90,150) size 20x20 [fill={[type=SOLID] [color=#6464FF]}] [data="M5.00,5.00 L10.00,5.00 L10.00,10.00 L5.00,10.00 Z"]
       RenderSVGContainer {g} at (24,180) size 238x281 [transform={m=((1.00,0.00)(0.00,1.00)) t=(30.00,200.00)}]
         RenderSVGContainer {g} at (29,180) size 180x71
-          RenderSVGText {text} at (0,-5) size 179x18 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,-15) size 179x18
+          RenderSVGText {text} at (0,-20) size 179x18 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 179x18
               chunk 1 text run 1 at (0.00,-5.00) startOffset 0 endOffset 26 width 179.00: "Exact Fit in patternRegion"
           RenderPath {rect} at (29,199) size 102x52 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [id="patternExactFit"]}] [data="M0.00,0.00 L100.00,0.00 L100.00,50.00 L0.00,50.00 Z"]
           RenderPath {rect} at (29,199) size 22x22 [stroke={[type=SOLID] [color=#FFFFFF]}] [fill={[type=SOLID] [color=#000000] [opacity=0.12]}] [data="M0.00,0.00 L20.00,0.00 L20.00,20.00 L0.00,20.00 Z"]
         RenderSVGContainer {g} at (24,250) size 212x71 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,70.00)}]
-          RenderSVGText {text} at (0,-5) size 206x18 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,-15) size 206x18
+          RenderSVGText {text} at (0,-20) size 206x18 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 206x18
               chunk 1 text run 1 at (0.00,-5.00) startOffset 0 endOffset 32 width 206.00: "patternRegion offset to the left"
           RenderPath {rect} at (29,269) size 102x52 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [id="patternTranslateRegionX"]}] [data="M0.00,0.00 L100.00,0.00 L100.00,50.00 L0.00,50.00 Z"]
           RenderPath {rect} at (24,269) size 22x22 [stroke={[type=SOLID] [color=#FFFFFF]}] [fill={[type=SOLID] [color=#000000] [opacity=0.12]}] [data="M-5.00,0.00 L15.00,0.00 L15.00,20.00 L-5.00,20.00 Z"]
         RenderSVGContainer {g} at (29,320) size 209x71 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,140.00)}]
-          RenderSVGText {text} at (0,-5) size 208x18 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,-15) size 208x18
+          RenderSVGText {text} at (0,-20) size 208x18 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 208x18
               chunk 1 text run 1 at (0.00,-5.00) startOffset 0 endOffset 31 width 208.00: "patternRegion offset to the top"
           RenderPath {rect} at (29,339) size 102x52 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [id="patternTranslateRegionY"]}] [data="M0.00,0.00 L100.00,0.00 L100.00,50.00 L0.00,50.00 Z"]
           RenderPath {rect} at (29,334) size 22x22 [stroke={[type=SOLID] [color=#FFFFFF]}] [fill={[type=SOLID] [color=#000000] [opacity=0.12]}] [data="M0.00,-5.00 L20.00,-5.00 L20.00,15.00 L0.00,15.00 Z"]
         RenderSVGContainer {g} at (29,390) size 233x71 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,210.00)}]
-          RenderSVGText {text} at (0,-5) size 232x18 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,-15) size 232x18
+          RenderSVGText {text} at (0,-20) size 232x18 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 232x18
               chunk 1 text run 1 at (0.00,-5.00) startOffset 0 endOffset 36 width 232.00: "patternRegion offset to the top/left"
           RenderPath {rect} at (29,409) size 102x52 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [id="patternTranslateRegionXY"]}] [data="M0.00,0.00 L100.00,0.00 L100.00,50.00 L0.00,50.00 Z"]
           RenderPath {rect} at (39,419) size 22x22 [stroke={[type=SOLID] [color=#FFFFFF]}] [fill={[type=SOLID] [color=#000000] [opacity=0.12]}] [data="M10.00,10.00 L30.00,10.00 L30.00,30.00 L10.00,30.00 Z"]
       RenderSVGContainer {g} at (254,180) size 196x211 [transform={m=((1.00,0.00)(0.00,1.00)) t=(255.00,200.00)}]
         RenderSVGContainer {g} at (254,180) size 196x71
-          RenderSVGText {text} at (0,-5) size 227x18 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,-15) size 227x18
+          RenderSVGText {text} at (0,-20) size 227x18 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 227x18
               chunk 1 text run 1 at (0.00,-5.00) startOffset 0 endOffset 32 width 227.00: "patternRegion wider than content"
           RenderPath {rect} at (254,199) size 102x52 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [id="patternWiderRegion"]}] [data="M0.00,0.00 L100.00,0.00 L100.00,50.00 L0.00,50.00 Z"]
           RenderPath {rect} at (254,199) size 42x22 [stroke={[type=SOLID] [color=#FFFFFF]}] [fill={[type=SOLID] [color=#000000] [opacity=0.12]}] [data="M0.00,0.00 L40.00,0.00 L40.00,20.00 L0.00,20.00 Z"]
         RenderSVGContainer {g} at (254,250) size 196x71 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,70.00)}]
-          RenderSVGText {text} at (0,-5) size 232x18 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,-15) size 232x18
+          RenderSVGText {text} at (0,-20) size 232x18 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 232x18
               chunk 1 text run 1 at (0.00,-5.00) startOffset 0 endOffset 33 width 232.00: "patternRegion higher than content"
           RenderPath {rect} at (254,269) size 102x52 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [id="patternHigherRegion"]}] [data="M0.00,0.00 L100.00,0.00 L100.00,50.00 L0.00,50.00 Z"]
           RenderPath {rect} at (254,269) size 22x42 [stroke={[type=SOLID] [color=#FFFFFF]}] [fill={[type=SOLID] [color=#000000] [opacity=0.12]}] [data="M0.00,0.00 L20.00,0.00 L20.00,40.00 L0.00,40.00 Z"]
         RenderSVGContainer {g} at (254,320) size 196x71 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,140.00)}]
-          RenderSVGText {text} at (0,-5) size 232x18 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,-15) size 232x18
+          RenderSVGText {text} at (0,-20) size 232x18 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 232x18
               chunk 1 text run 1 at (0.00,-5.00) startOffset 0 endOffset 33 width 232.00: "patternRegion higher than content"
           RenderPath {rect} at (254,339) size 102x52 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [id="patternWiderHigherRegion"]}] [data="M0.00,0.00 L100.00,0.00 L100.00,50.00 L0.00,50.00 Z"]
           RenderPath {rect} at (254,339) size 42x42 [stroke={[type=SOLID] [color=#FFFFFF]}] [fill={[type=SOLID] [color=#000000] [opacity=0.12]}] [data="M0.00,0.00 L40.00,0.00 L40.00,40.00 L0.00,40.00 Z"]
