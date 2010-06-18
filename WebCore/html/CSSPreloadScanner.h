@@ -24,39 +24,46 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef HTML5PreloadScanner_h
-#define HTML5PreloadScanner_h
+#ifndef CSSPreloadScanner_h
+#define CSSPreloadScanner_h
 
-#include "CSSPreloadScanner.h"
-#include "HTML5Lexer.h"
-#include "HTML5Token.h"
-#include "SegmentedString.h"
-#include <wtf/Noncopyable.h>
+#include "PlatformString.h"
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
 class Document;
 class HTML5Token;
-class SegmentedString;
 
-class HTML5PreloadScanner : public Noncopyable {
+class CSSPreloadScanner : public Noncopyable {
 public:
-    HTML5PreloadScanner(Document*);
+    CSSPreloadScanner(Document*);
 
-    void appendToEnd(const SegmentedString&);
-    void scan();
+    void reset();
+    void scan(const HTML5Token&, bool scanningBody);
 
 private:
-    void processToken();
-    bool scanningBody() const;
+    enum State {
+        Initial,
+        MaybeComment,
+        Comment,
+        MaybeCommentEnd,
+        RuleStart,
+        Rule,
+        AfterRule,
+        RuleValue,
+        AfterRuleValue
+    };
 
+    inline void tokenize(UChar c);
+    void emitRule();
+
+    State m_state;
+    Vector<UChar, 16> m_rule;
+    Vector<UChar> m_ruleValue;
+
+    bool m_scanningBody;
     Document* m_document;
-    SegmentedString m_source;
-    HTML5Lexer m_lexer;
-    HTML5Token m_token;
-    CSSPreloadScanner m_cssScanner;
-    bool m_bodySeen;
-    bool m_inStyle;
 };
 
 }

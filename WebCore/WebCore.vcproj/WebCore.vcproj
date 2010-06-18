@@ -33208,6 +33208,14 @@
 				RelativePath="..\html\CollectionType.h"
 				>
 			</File>
+ 			<File
+ 				RelativePath="..\html\CSSPreloadScanner.cpp"
+ 				>
+ 			</File>
+ 			<File
+ 				RelativePath="..\html\CSSPreloadScanner.h"
+ 				>
+ 			</File>
 			<File
 				RelativePath="..\html\DataGridColumn.cpp"
 				>

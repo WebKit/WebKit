@@ -244,6 +244,7 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	html/AsyncImageResizer.cpp \
 	html/Blob.cpp \
 	html/CollectionCache.cpp \
+	html/CSSPreloadScanner.cpp \
 	html/DOMFormData.cpp \
 	html/File.cpp \
 	html/FileList.cpp \

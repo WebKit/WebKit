@@ -1,3 +1,28 @@
+2010-06-17  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Add CSS scanning to HTML5PreloadScanner
+        https://bugs.webkit.org/show_bug.cgi?id=40802
+
+        Add a testing framework for the preload scanner.  These test cover
+        basic preloader behavior.  They have a small hack to work around a bug
+        in the preload scanner discovered while writing the tests.  I'll fix
+        the bug and remove the hack in a followup patch.
+
+        * fast/preloader/image-expected.txt: Added.
+        * fast/preloader/image.html: Added.
+        * fast/preloader/link-expected.txt: Added.
+        * fast/preloader/link.html: Added.
+        * fast/preloader/resources/image1.png: Added.
+        * fast/preloader/resources/link1.css: Added.
+        * fast/preloader/resources/script1.js: Added.
+        * fast/preloader/resources/style1.css: Added.
+        * fast/preloader/script-expected.txt: Added.
+        * fast/preloader/script.html: Added.
+        * fast/preloader/style-expected.txt: Added.
+        * fast/preloader/style.html: Added.
+
 2010-06-17  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Unreviewed, Chromium expectations update.

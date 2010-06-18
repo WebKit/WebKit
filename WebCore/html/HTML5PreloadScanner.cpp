@@ -119,7 +119,9 @@ private:
 
 HTML5PreloadScanner::HTML5PreloadScanner(Document* document)
     : m_document(document)
+    , m_cssScanner(document)
     , m_bodySeen(false)
+    , m_inStyle(false)
 {
 }
 
@@ -140,6 +142,15 @@ void HTML5PreloadScanner::scan()
 
 void HTML5PreloadScanner::processToken()
 {
+    if (m_inStyle) {
+        if (m_token.type() == HTML5Token::Character)
+            m_cssScanner.scan(m_token, scanningBody());
+        else if (m_token.type() == HTML5Token::EndTag) {
+            m_inStyle = false;
+            m_cssScanner.reset();
+        }
+    }
+
     if (m_token.type() != HTML5Token::StartTag)
         return;
 
@@ -149,7 +160,15 @@ void HTML5PreloadScanner::processToken()
     if (task.tagName() == bodyTag)
         m_bodySeen = true;
 
-    task.preload(m_document, m_document->body() || m_bodySeen);
+    if (task.tagName() == styleTag)
+        m_inStyle = true;
+
+    task.preload(m_document, scanningBody());
+}
+
+bool HTML5PreloadScanner::scanningBody() const
+{
+    return m_document->body() || m_bodySeen;
 }
 
 }

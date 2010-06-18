@@ -1439,6 +1439,8 @@
             'html/CollectionCache.cpp',
             'html/CollectionCache.h',
             'html/CollectionType.h',
+            'html/CSSPreloadScanner.cpp',
+            'html/CSSPreloadScanner.h',
             'html/DataGridColumn.cpp',
             'html/DataGridColumn.h',
             'html/DOMDataGridDataSource.cpp',

@@ -1,3 +1,40 @@
+2010-06-17  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Add CSS scanning to HTML5PreloadScanner
+        https://bugs.webkit.org/show_bug.cgi?id=40802
+
+        This patch just cribs the CSS preload scanning algorithm from the old
+        preload scanner.  We also invented a way of testing the preload
+        scanner.
+
+        Tests: fast/preloader/image.html
+               fast/preloader/link.html
+               fast/preloader/script.html
+               fast/preloader/style.html
+
+        * Android.mk:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/CSSPreloadScanner.cpp: Added.
+        (WebCore::isWhitespace):
+        (WebCore::CSSPreloadScanner::CSSPreloadScanner):
+        (WebCore::CSSPreloadScanner::reset):
+        (WebCore::CSSPreloadScanner::scan):
+        (WebCore::CSSPreloadScanner::tokenize):
+        (WebCore::CSSPreloadScanner::emitRule):
+        * html/CSSPreloadScanner.h: Added.
+        (WebCore::CSSPreloadScanner::):
+        * html/HTML5PreloadScanner.cpp:
+        (WebCore::HTML5PreloadScanner::HTML5PreloadScanner):
+        (WebCore::HTML5PreloadScanner::processToken):
+        (WebCore::HTML5PreloadScanner::scanningBody):
+        * html/HTML5PreloadScanner.h:
+
 2010-06-17  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by David Kilzer.

@@ -1054,6 +1054,8 @@ webcore_sources += \
 	WebCore/html/CollectionCache.cpp \
 	WebCore/html/CollectionCache.h \
 	WebCore/html/CollectionType.h \
+	WebCore/html/CSSPreloadScanner.cpp \
+	WebCore/html/CSSPreloadScanner.h \
 	WebCore/html/DataGridColumn.cpp \
 	WebCore/html/DataGridColumn.h \
 	WebCore/html/DataGridColumnList.cpp \
