@@ -138,6 +138,11 @@ private:
     bool m_isValid;
 };
 
+inline bool operator<(const WebURL& a, const WebURL& b)
+{
+    return a.spec() < b.spec();
+}
+
 } // namespace WebKit
 
 #endif

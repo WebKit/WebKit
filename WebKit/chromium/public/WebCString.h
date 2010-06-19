@@ -68,6 +68,11 @@ public:
         return *this;
     }
 
+    // Returns 0 if both strings are equals, a value greater than zero if the
+    // first character that does not match has a greater value in this string
+    // than in |other|, or a value less than zero to indicate the opposite.
+    WEBKIT_API int compare(const WebCString& other) const;
+
     WEBKIT_API void reset();
     WEBKIT_API void assign(const WebCString&);
     WEBKIT_API void assign(const char* data, size_t len);
@@ -116,6 +121,11 @@ private:
     void assign(WebCStringPrivate*);
     WebCStringPrivate* m_private;
 };
+
+inline bool operator<(const WebCString& a, const WebCString& b)
+{
+    return a.compare(b) < 0;
+}
 
 } // namespace WebKit
 

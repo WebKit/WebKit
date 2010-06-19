@@ -1,3 +1,17 @@
+2010-06-19  Jay Civelli  <jcivelli@chromium.org>
+
+        Reviewed by David Levin.
+
+        Adding a < operator to WebURLs so they can be used in std::maps.
+        https://bugs.webkit.org/show_bug.cgi?id=40632
+
+        * public/WebCString.h:
+        (WebKit::operator<):
+        * public/WebURL.h:
+        (WebKit::operator<):
+        * src/WebCString.cpp:
+        (WebKit::WebCString::compare):
+
 2010-06-19  Kent Tamura  <tkent@chromium.org>
 
         Unreviewed. Build fix for r61488.

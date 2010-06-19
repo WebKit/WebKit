@@ -41,6 +41,18 @@ namespace WebKit {
 class WebCStringPrivate : public WTF::CStringBuffer {
 };
 
+int WebCString::compare(const WebCString& other) const
+{
+    // A null string is always less than a non null one.
+    if (isNull() != other.isNull())
+        return isNull() ? -1 : 1;
+
+    if (isNull())
+        return 0; // Both WebStrings are null.
+
+    return strcmp(m_private->data(), other.m_private->data());
+}
+
 void WebCString::reset()
 {
     if (m_private) {
