@@ -1,3 +1,26 @@
+2010-06-02  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        [Qt] Support evaluateScriptInIsolatedWorld()
+
+        https://bugs.webkit.org/show_bug.cgi?id=40079
+
+        * Api/headers.pri:
+        * Api/qwebframe.cpp:
+        (QWebFrame::evaluateScriptInIsolatedWorld):
+        * Api/qwebframe.h:
+        * Api/qwebscriptworld.cpp: Added.
+        (QWebScriptWorld::QWebScriptWorld):
+        (QWebScriptWorld::world):
+        (QWebScriptWorld::~QWebScriptWorld):
+        * Api/qwebscriptworld.h: Added.
+        * Api/qwebscriptworld_p.h: Added.
+        (QWebScriptWorldPrivate::QWebScriptWorldPrivate):
+        (QWebScriptWorldPrivate::~QWebScriptWorldPrivate):
+        * WebCoreSupport/DumpRenderTreeSupportQt.cpp:
+        * WebCoreSupport/DumpRenderTreeSupportQt.h:
+
 2010-06-19  Olivier Goffart  <olivier.goffart@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

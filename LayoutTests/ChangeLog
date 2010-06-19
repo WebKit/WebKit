@@ -1,3 +1,20 @@
+2010-06-02  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        [Qt] Support evaluateScriptInIsolatedWorld()
+
+        https://bugs.webkit.org/show_bug.cgi?id=40079
+
+        This initial implementation passes 25 of the 27 tests in
+        http/tests/isolatedworld as well as four others that use the
+        call in LayoutTests.
+
+        Further work/investigation is required to support the two
+        remaining tests.
+
+        * platform/qt/Skipped:
+
 2010-06-19  Kent Tamura  <tkent@chromium.org>
 
         Unreviewed, test expectation update.

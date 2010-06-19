@@ -12,4 +12,5 @@ WEBKIT_API_HEADERS = $$PWD/qwebframe.h \
                      $$PWD/qwebpluginfactory.h \
                      $$PWD/qwebhistory.h \
                      $$PWD/qwebinspector.h \
-                     $$PWD/qwebkitversion.h
+                     $$PWD/qwebkitversion.h \
+                     $$PWD/qwebscriptworld.h

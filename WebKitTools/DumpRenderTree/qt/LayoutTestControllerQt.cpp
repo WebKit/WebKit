@@ -35,6 +35,7 @@
 #include "WorkQueueItemQt.h"
 #include <QDir>
 #include <QLocale>
+#include <qwebscriptworld.h>
 #include <qwebsettings.h>
 
 LayoutTestController::LayoutTestController(WebCore::DumpRenderTree* drt)
@@ -660,6 +661,20 @@ void LayoutTestController::setMockGeolocationError(int code, const QString& mess
 void LayoutTestController::setMockGeolocationPosition(double latitude, double longitude, double accuracy)
 {
     DumpRenderTreeSupportQt::setMockGeolocationPosition(latitude, longitude, accuracy);
+}
+
+void LayoutTestController::evaluateScriptInIsolatedWorld(int worldID, const QString& script)
+{
+    QWebScriptWorld* scriptWorld;
+    if (!worldID) {
+        scriptWorld = new QWebScriptWorld();
+    } else if (!m_worldMap.contains(worldID)) {
+        scriptWorld = new QWebScriptWorld();
+        m_worldMap.insert(worldID, scriptWorld);
+    } else
+        scriptWorld = m_worldMap.value(worldID);
+
+    m_drt->webPage()->mainFrame()->evaluateScriptInIsolatedWorld(scriptWorld, script);
 }
 
 const unsigned LayoutTestController::maxViewWidth = 800;

@@ -338,7 +338,8 @@ QVariant convertValueToQVariant(ExecState* exec, JSValue value, QMetaType::Type 
             if (type == Object || type == Array || type == RTArray) {
                 // Enumerate the contents of the object
                 PropertyNameArray properties(exec);
-                object->getPropertyNames(exec, properties);
+                if (properties.size() > 0)
+                    object->getPropertyNames(exec, properties);
                 PropertyNameArray::const_iterator it = properties.begin();
 
                 QVariantMap result;

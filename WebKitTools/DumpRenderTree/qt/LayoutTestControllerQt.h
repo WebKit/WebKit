@@ -204,6 +204,8 @@ public slots:
 
     void setEditingBehavior(const QString& editingBehavior);
 
+    void evaluateScriptInIsolatedWorld(int worldID, const QString& script);
+
 private slots:
     void processWork();
 
@@ -224,6 +226,7 @@ private:
     bool m_isGeolocationPermissionSet;
     bool m_geolocationPermission;
 
+    QMap<int, QWebScriptWorld*> m_worldMap;
     QUrl m_userStyleSheetLocation;
     QBasicTimer m_timeoutTimer;
     QWebFrame* m_topLoadingFrame;

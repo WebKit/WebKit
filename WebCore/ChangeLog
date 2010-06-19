@@ -1,3 +1,18 @@
+2010-06-02  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        [Qt] Support evaluateScriptInIsolatedWorld()
+
+        https://bugs.webkit.org/show_bug.cgi?id=40079
+
+        getOwnPropertyNames() crashes if PropertyNameArray is size 0. This change allows
+        http/tests/world-reuse.html and didClearWindowObject.html to fail instead of crash.
+
+        * WebCore.pro: Add qwebscriptworld.*
+        * bridge/qt/qt_runtime.cpp:
+        (JSC::Bindings::convertValueToQVariant):
+
 2010-06-19  Tony Gentilcore  <tonyg@chromium.org>
 
         Reviewed by Eric Seidel.
