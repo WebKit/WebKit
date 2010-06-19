@@ -1,3 +1,15 @@
+2010-06-19  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        Bridge documentation: some snippets have the wrong indentation
+        https://bugs.webkit.org/show_bug.cgi?id=40717
+
+        Fixed code snippets
+
+        * docs/webkitsnippets/qtwebkit_bridge_snippets.cpp:
+        (wrapInFunction):
+
 2010-06-02  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Adam Barth.

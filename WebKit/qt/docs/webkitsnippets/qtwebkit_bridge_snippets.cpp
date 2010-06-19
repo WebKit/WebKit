@@ -12,10 +12,10 @@ void wrapInFunction()
     //! [1]
     {
         width: ...,
-            height: ...,
-                toDataURL: function() { ... },
-                    assignToHTMLImageElement: function(element) { ... }
-        }
+        height: ...,
+        toDataURL: function() { ... },
+        assignToHTMLImageElement: function(element) { ... }
+    }
     //! [1]
 #endif
     //! [2]
@@ -24,7 +24,7 @@ void wrapInFunction()
         Q_PROPERTY(QPixmap myPixmap READ getPixmap)
 
     public:
-                QPixmap getPixmap() const;
+        QPixmap getPixmap() const;
     };
 
     /* ... */
@@ -36,21 +36,22 @@ void wrapInFunction()
 #if 0
     //! [3]
     <html>
-            <head>
+        <head>
             <script>
-            function loadImage() {
-        myObject.myPixmap.assignToHTMLImageElement(document.getElementById("imageElement"));
-    }
-    </script>
-            </head>
-            <body onload="loadImage()">
-                         <img id="imageElement" width="300" height="200" />
-                                                                   </body>
-                                                                   </html>
-                                                                   //! [3]
+                function loadImage()
+                {
+                    myObject.myPixmap.assignToHTMLImageElement(document.getElementById("imageElement"));
+                }
+            </script>
+        </head>
+        <body onload="loadImage()">
+            <img id="imageElement" width="300" height="200" />
+        </body>
+    </html>
+//! [3]
 #endif
-                                                                   //! [4]
-                                                                   class MyObject : QObject {
+//! [4]
+class MyObject : QObject {
         Q_OBJECT
 
     public slots:
@@ -161,11 +162,7 @@ void wrapInFunction()
     myQObject.enabled = !myQObject.enabled;
     //! [24]
     //! [25]
-    myQObject.enabled = true;
-
-    ...
-
-    myQObject.enabled = !myQObject.enabled;
+    myDialog.okButton
     //! [25]
     //! [26]
     myDialog.okButton
