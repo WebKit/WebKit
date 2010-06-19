@@ -175,6 +175,8 @@ PASS inner.HTMLMenuElement.isInner is true
 PASS inner.HTMLMenuElement.constructor.isInner is true
 PASS inner.HTMLMetaElement.isInner is true
 PASS inner.HTMLMetaElement.constructor.isInner is true
+PASS inner.HTMLMeterElement.isInner is true
+PASS inner.HTMLMeterElement.constructor.isInner is true
 PASS inner.HTMLModElement.isInner is true
 PASS inner.HTMLModElement.constructor.isInner is true
 PASS inner.HTMLOListElement.isInner is true
@@ -191,6 +193,8 @@ PASS inner.HTMLParamElement.isInner is true
 PASS inner.HTMLParamElement.constructor.isInner is true
 PASS inner.HTMLPreElement.isInner is true
 PASS inner.HTMLPreElement.constructor.isInner is true
+PASS inner.HTMLProgressElement.isInner is true
+PASS inner.HTMLProgressElement.constructor.isInner is true
 PASS inner.HTMLQuoteElement.isInner is true
 PASS inner.HTMLQuoteElement.constructor.isInner is true
 PASS inner.HTMLScriptElement.isInner is true

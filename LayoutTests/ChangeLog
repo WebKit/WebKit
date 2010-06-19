@@ -1,3 +1,65 @@
+2010-06-19  Kent Tamura  <tkent@chromium.org>
+
+        Unreviewed, test expectation update.
+
+        Add expectations for <meter> and <progress>.
+
+        * platform/chromium-linux/fast/dom/HTMLMeterElement: Added.
+        * platform/chromium-linux/fast/dom/HTMLMeterElement/meter-appearances-capacity-expected.checksum: Added.
+        * platform/chromium-linux/fast/dom/HTMLMeterElement/meter-appearances-capacity-expected.png: Added.
+        * platform/chromium-linux/fast/dom/HTMLMeterElement/meter-appearances-rating-relevancy-expected.checksum: Added.
+        * platform/chromium-linux/fast/dom/HTMLMeterElement/meter-appearances-rating-relevancy-expected.png: Added.
+        * platform/chromium-linux/fast/dom/HTMLMeterElement/meter-optimums-expected.checksum: Added.
+        * platform/chromium-linux/fast/dom/HTMLMeterElement/meter-optimums-expected.png: Added.
+        * platform/chromium-linux/fast/dom/HTMLMeterElement/meter-styles-changing-pseudo-expected.checksum: Added.
+        * platform/chromium-linux/fast/dom/HTMLMeterElement/meter-styles-changing-pseudo-expected.png: Added.
+        * platform/chromium-linux/fast/dom/HTMLMeterElement/meter-styles-expected.checksum: Added.
+        * platform/chromium-linux/fast/dom/HTMLMeterElement/meter-styles-expected.png: Added.
+        * platform/chromium-linux/fast/dom/HTMLProgressElement: Added.
+        * platform/chromium-linux/fast/dom/HTMLProgressElement/progress-element-expected.checksum: Added.
+        * platform/chromium-linux/fast/dom/HTMLProgressElement/progress-element-expected.png: Added.
+        * platform/chromium-mac/fast/dom/HTMLMeterElement: Added.
+        * platform/chromium-mac/fast/dom/HTMLMeterElement/meter-appearances-capacity-expected.checksum: Added.
+        * platform/chromium-mac/fast/dom/HTMLMeterElement/meter-appearances-capacity-expected.png: Added.
+        * platform/chromium-mac/fast/dom/HTMLMeterElement/meter-appearances-rating-relevancy-expected.checksum: Added.
+        * platform/chromium-mac/fast/dom/HTMLMeterElement/meter-appearances-rating-relevancy-expected.png: Added.
+        * platform/chromium-mac/fast/dom/HTMLMeterElement/meter-element-expected.checksum: Added.
+        * platform/chromium-mac/fast/dom/HTMLMeterElement/meter-optimums-expected.checksum: Added.
+        * platform/chromium-mac/fast/dom/HTMLMeterElement/meter-optimums-expected.png: Added.
+        * platform/chromium-mac/fast/dom/HTMLMeterElement/meter-styles-changing-pseudo-expected.checksum: Added.
+        * platform/chromium-mac/fast/dom/HTMLMeterElement/meter-styles-expected.checksum: Added.
+        * platform/chromium-mac/fast/dom/HTMLProgressElement: Added.
+        * platform/chromium-mac/fast/dom/HTMLProgressElement/progress-element-expected.checksum: Added.
+        * platform/chromium-mac/fast/dom/HTMLProgressElement/progress-element-expected.png: Added.
+        * platform/chromium-mac/fast/dom/HTMLProgressElement/progress-element-expected.txt: Added.
+        * platform/chromium-win/fast/dom/HTMLMeterElement: Added.
+        * platform/chromium-win/fast/dom/HTMLMeterElement/meter-appearances-capacity-expected.checksum: Added.
+        * platform/chromium-win/fast/dom/HTMLMeterElement/meter-appearances-capacity-expected.png: Added.
+        * platform/chromium-win/fast/dom/HTMLMeterElement/meter-appearances-capacity-expected.txt: Added.
+        * platform/chromium-win/fast/dom/HTMLMeterElement/meter-appearances-rating-relevancy-expected.checksum: Added.
+        * platform/chromium-win/fast/dom/HTMLMeterElement/meter-appearances-rating-relevancy-expected.png: Added.
+        * platform/chromium-win/fast/dom/HTMLMeterElement/meter-appearances-rating-relevancy-expected.txt: Added.
+        * platform/chromium-win/fast/dom/HTMLMeterElement/meter-element-expected.checksum: Added.
+        * platform/chromium-win/fast/dom/HTMLMeterElement/meter-element-expected.png: Added.
+        * platform/chromium-win/fast/dom/HTMLMeterElement/meter-element-expected.txt: Added.
+        * platform/chromium-win/fast/dom/HTMLMeterElement/meter-optimums-expected.checksum: Added.
+        * platform/chromium-win/fast/dom/HTMLMeterElement/meter-optimums-expected.png: Added.
+        * platform/chromium-win/fast/dom/HTMLMeterElement/meter-optimums-expected.txt: Added.
+        * platform/chromium-win/fast/dom/HTMLMeterElement/meter-styles-changing-pseudo-expected.checksum: Added.
+        * platform/chromium-win/fast/dom/HTMLMeterElement/meter-styles-changing-pseudo-expected.png: Added.
+        * platform/chromium-win/fast/dom/HTMLMeterElement/meter-styles-changing-pseudo-expected.txt: Added.
+        * platform/chromium-win/fast/dom/HTMLMeterElement/meter-styles-expected.checksum: Added.
+        * platform/chromium-win/fast/dom/HTMLMeterElement/meter-styles-expected.png: Added.
+        * platform/chromium-win/fast/dom/HTMLMeterElement/meter-styles-expected.txt: Added.
+        * platform/chromium-win/fast/dom/HTMLProgressElement: Added.
+        * platform/chromium-win/fast/dom/HTMLProgressElement/progress-bar-value-pseudo-element-expected.checksum: Added.
+        * platform/chromium-win/fast/dom/HTMLProgressElement/progress-bar-value-pseudo-element-expected.png: Added.
+        * platform/chromium-win/fast/dom/HTMLProgressElement/progress-element-expected.checksum: Added.
+        * platform/chromium-win/fast/dom/HTMLProgressElement/progress-element-expected.png: Added.
+        * platform/chromium-win/fast/dom/HTMLProgressElement/progress-element-expected.txt: Added.
+        * platform/chromium/fast/dom/prototype-inheritance-expected.txt:
+        * platform/chromium/test_expectations.txt:
+
 2010-06-02  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Adam Barth.
