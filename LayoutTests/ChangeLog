@@ -1,3 +1,15 @@
+2010-06-19  Tony Gentilcore  <tonyg@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Add LayoutTest to ensure resources within <noscript> are not preloaded
+        https://bugs.webkit.org/show_bug.cgi?id=40849
+
+        * fast/preloader/noscript-expected.txt: Added.
+        * fast/preloader/noscript.html: Added.
+        * fast/preloader/resources/noscript-image1.png: Copied from BugsSite/data/mail.
+        * fast/preloader/resources/noscript-image2.png: Copied from BugsSite/data/mail.
+
 2010-06-19  Nikita Vasilyev  <me@elv1s.ru>
 
         Reviewed by Pavel Feldman.
