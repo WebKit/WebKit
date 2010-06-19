@@ -382,7 +382,7 @@ static NSString *pathByResolvingSymlinksAndAliases(NSString *thePath)
     NSString *bundleIdentifier = [[self bundle] bundleIdentifier];
     return [bundleIdentifier _webkit_isCaseInsensitiveEqualToString:JavaCocoaPluginIdentifier] || 
         [bundleIdentifier _webkit_isCaseInsensitiveEqualToString:JavaCarbonPluginIdentifier] ||
-        [[self filename] _webkit_isCaseInsensitiveEqualToString:JavaCFMPluginFilename];
+        [(NSString *)[self filename] _webkit_isCaseInsensitiveEqualToString:JavaCFMPluginFilename];
 }
 
 static inline void swapIntsInHeader(uint8_t* bytes, unsigned length)

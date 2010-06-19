@@ -1,5 +1,12 @@
 2010-06-18  Anders Carlsson  <andersca@apple.com>
 
+        Fix Tiger build.
+
+        * Plugins/WebBasePluginPackage.mm:
+        (-[WebBasePluginPackage isJavaPlugIn]):
+
+2010-06-18  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Sam Weinig.
 
         Change some WebPluginDabase ivars to use WebCore::String instead of NSString.
