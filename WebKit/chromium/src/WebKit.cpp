@@ -41,10 +41,6 @@
 #include "WebSocket.h"
 #include "WorkerContextExecutionProxy.h"
 
-#if USE(V8)
-#include "V8DOMWindowShell.h"
-#endif
-
 #include <wtf/Assertions.h>
 #include <wtf/Threading.h>
 
@@ -82,9 +78,6 @@ void initialize(WebKitClient* webKitClient)
 
 void shutdown()
 {
-#if USE(V8)
-    WebCore::V8DOMWindowShell::uninitializeV8IfNeeded();
-#endif
     s_webKitClient = 0;
 }
 

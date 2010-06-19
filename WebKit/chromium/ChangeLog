@@ -1,3 +1,14 @@
+2010-06-19  Aaron Boodman  <aa@chromium.org>
+
+        Unreviewed, rolling out r61466.
+        http://trac.webkit.org/changeset/61466
+        https://bugs.webkit.org/show_bug.cgi?id=40816
+
+        Landed wrong change
+
+        * src/WebKit.cpp:
+        (WebKit::shutdown):
+
 2010-06-18  Aaron Boodman  <aa@chromium.org>
 
         WebKit API: Undo static hooks into V8 when WebKit is shut downm
