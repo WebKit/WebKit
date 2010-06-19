@@ -289,6 +289,7 @@ WebInspector.StoragePanel.prototype = {
             var column = {};
             column.width = columnIdentifier.length;
             column.title = columnIdentifier;
+            column.sortable = true;
 
             columns[columnIdentifier] = column;
             ++numColumns;
@@ -313,7 +314,43 @@ WebInspector.StoragePanel.prototype = {
         for (var i = 0; i < length; ++i)
             dataGrid.appendChild(nodes[i]);
 
+        dataGrid.addEventListener("sorting changed", this._sortDataGrid.bind(this, dataGrid), this);
         return dataGrid;
+    },
+
+    _sortDataGrid: function(dataGrid)
+    {
+        var nodes = dataGrid.children.slice();
+        var sortColumnIdentifier = dataGrid.sortColumnIdentifier;
+        var sortDirection = dataGrid.sortOrder === "ascending" ? 1 : -1;
+        var columnIsNumeric = true;
+
+        for (var i = 0; i < nodes.length; i++) {
+            if (isNaN(Number(nodes[i].data[sortColumnIdentifier])))
+                columnIsNumeric = false;
+        }
+
+        function comparator(dataGridNode1, dataGridNode2)
+        {
+            var item1 = dataGridNode1.data[sortColumnIdentifier];
+            var item2 = dataGridNode2.data[sortColumnIdentifier];
+
+            var comparison;
+            if (columnIsNumeric) {
+                // Sort numbers based on comparing their values rather than a lexicographical comparison.
+                var number1 = parseFloat(item1);
+                var number2 = parseFloat(item2);
+                comparison = number1 < number2 ? -1 : (number1 > number2 ? 1 : 0);
+            } else
+                comparison = item1 < item2 ? -1 : (item1 > item2 ? 1 : 0);
+
+            return sortDirection * comparison;
+        }
+
+        nodes.sort(comparator);
+        dataGrid.removeChildren();
+        for (var i = 0; i < nodes.length; i++)
+            dataGrid.appendChild(nodes[i]);
     },
 
     updateDOMStorage: function(storageId)

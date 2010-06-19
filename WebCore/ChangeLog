@@ -1,3 +1,18 @@
+2010-06-18  Jessie Berlin  <jberlin@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Bug 19509 - Database Tables in the Inspector should be sortable
+        https://bugs.webkit.org/show_bug.cgi?id=19509
+
+        * inspector/front-end/StoragePanel.js:
+        (WebInspector.StoragePanel.prototype.dataGridForResult):
+        Make each column in the DataGrid sortable.
+        (WebInspector.StoragePanel.prototype._sortDataGrid.comparator):
+        Make sure to sort numeric columns by their numeric values, instead of lexicographically.
+        (WebInspector.StoragePanel.prototype._sortDataGrid):
+        Sort the entries in the DataGrid based on the selected column.
+
 2010-06-18  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Oliver Hunt.
