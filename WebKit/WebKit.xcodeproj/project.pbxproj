@@ -264,7 +264,7 @@
 		939810D60824BF01008DF038 /* WebNetscapePluginPackage.mm in Sources */ = {isa = PBXBuildFile; fileRef = F5F7171F0288493C018635CA /* WebNetscapePluginPackage.mm */; };
 		939810DA0824BF01008DF038 /* WebPluginController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8467275D0367158500CA2ACA /* WebPluginController.mm */; };
 		939810DB0824BF01008DF038 /* WebPluginDatabase.mm in Sources */ = {isa = PBXBuildFile; fileRef = F5F717210288493C018635CA /* WebPluginDatabase.mm */; };
-		939810DC0824BF01008DF038 /* WebPluginPackage.m in Sources */ = {isa = PBXBuildFile; fileRef = 83E4AF4C036659440000E506 /* WebPluginPackage.m */; };
+		939810DC0824BF01008DF038 /* WebPluginPackage.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83E4AF4C036659440000E506 /* WebPluginPackage.mm */; };
 		939810DD0824BF01008DF038 /* npapi.mm in Sources */ = {isa = PBXBuildFile; fileRef = F5F717230288493C018635CA /* npapi.mm */; };
 		939810E30824BF01008DF038 /* WebImageRendererFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = 9CE1F8A302A5C6F30ECA2ACD /* WebImageRendererFactory.m */; };
 		939810E40824BF01008DF038 /* WebJavaScriptTextInputPanel.m in Sources */ = {isa = PBXBuildFile; fileRef = 9345D4EB0365C5B2008635CE /* WebJavaScriptTextInputPanel.m */; };
@@ -550,7 +550,7 @@
 		83E4AF46036652150000E506 /* WebBasePluginPackage.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebBasePluginPackage.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		83E4AF47036652150000E506 /* WebBasePluginPackage.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; indentWidth = 4; path = WebBasePluginPackage.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		83E4AF4B036659440000E506 /* WebPluginPackage.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebPluginPackage.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		83E4AF4C036659440000E506 /* WebPluginPackage.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebPluginPackage.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		83E4AF4C036659440000E506 /* WebPluginPackage.mm */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebPluginPackage.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		83E679780726D7CF006C7A36 /* WebPluginViewFactoryPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebPluginViewFactoryPrivate.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		84311A1205EAAAF00088EDA4 /* WebResource.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebResource.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		84311A1305EAAAF00088EDA4 /* WebResource.mm */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebResource.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -1085,7 +1085,7 @@
 				8467275C0367158500CA2ACA /* WebPluginController.h */,
 				8467275D0367158500CA2ACA /* WebPluginController.mm */,
 				83E4AF4B036659440000E506 /* WebPluginPackage.h */,
-				83E4AF4C036659440000E506 /* WebPluginPackage.m */,
+				83E4AF4C036659440000E506 /* WebPluginPackage.mm */,
 				225F881409F97E8A00423A40 /* WebPluginPrivate.h */,
 				848DFF860365FE6A00CA2ACA /* WebPluginViewFactory.h */,
 				83E679780726D7CF006C7A36 /* WebPluginViewFactoryPrivate.h */,
@@ -1876,7 +1876,7 @@
 				939810DA0824BF01008DF038 /* WebPluginController.mm in Sources */,
 				939810DB0824BF01008DF038 /* WebPluginDatabase.mm in Sources */,
 				0A2D87FE107AF52B00CDDEE3 /* WebPluginHalterClient.mm in Sources */,
-				939810DC0824BF01008DF038 /* WebPluginPackage.m in Sources */,
+				939810DC0824BF01008DF038 /* WebPluginPackage.mm in Sources */,
 				1A77B02F0EE7730500C8A1F9 /* WebPluginRequest.m in Sources */,
 				224100F90918190100D2D266 /* WebPluginsPrivate.m in Sources */,
 				939811080824BF01008DF038 /* WebPolicyDelegate.mm in Sources */,
