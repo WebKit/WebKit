@@ -2096,7 +2096,7 @@ BUG18656 MAC RELEASE : fast/dom/Window/window-lookup-precedence.html = FAIL
 BUG18656 MAC DEBUG : fast/dom/Window/window-lookup-precedence.html = FAIL
 
 // Test failures caused by re-enabling skia asserts.
-BUG18896 WIN DEBUG : svg/batik/paints/gradientLimit.svg = TIMEOUT FAIL
+BUG18896 WIN LINUX DEBUG : svg/batik/paints/gradientLimit.svg = TIMEOUT FAIL
 
 // Test failures from WebKit merge 46894 to 46977
 BUG26737 : fast/js/prototypes.html = FAIL
@@ -2861,3 +2861,7 @@ BUGWK35961 : printing/page-rule-selection.html = TEXT
 BUG46872 : fast/preloader = TEXT
 // Became a flaky crash in http://trac.webkit.org/log/?verbose=on&rev=61417&stop_rev=61393
 BUG46974 WIN : inspector/audits-panel-functional.html = CRASH PASS
+// After enabling progress element, these are failing in debug only.
+BUG46989 MAC DEBUG : fast/dom/HTMLMeterElement/meter-appearances-capacity.html = IMAGE
+BUG46989 MAC DEBUG : fast/dom/HTMLMeterElement/meter-element.html = IMAGE
+BUG46989 MAC DEBUG : fast/dom/HTMLMeterElement/meter-optimums.html = IMAGE
