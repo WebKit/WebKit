@@ -1,3 +1,14 @@
+2010-06-19  Alex Milowski  <alex@milowski.com>
+
+        Reviewed by Darin Adler.
+
+        A fix for a change in https://bugs.webkit.org/show_bug.cgi?id=39941 
+        that caused a compile error in MathML.
+        https://bugs.webkit.org/show_bug.cgi?id=40827
+
+        * mathml/MathMLElement.cpp:
+        (WebCore::MathMLElement::MathMLElement):
+
 2010-06-19  Kartikaya Gupta  <kagupta@rim.com>
 
         Reviewed by Nikolas Zimmermann.
