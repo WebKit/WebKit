@@ -67,7 +67,8 @@ bool ChromiumDataObject::hasData() const
 }
 
 ChromiumDataObject::ChromiumDataObject(const ChromiumDataObject& other)
-    : urlTitle(other.urlTitle)
+    : RefCounted<ChromiumDataObject>()
+    , urlTitle(other.urlTitle)
     , downloadMetadata(other.downloadMetadata)
     , fileExtension(other.fileExtension)
     , filenames(other.filenames)

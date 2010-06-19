@@ -46,13 +46,13 @@ unsigned AutocompletePopupMenuClient::getSuggestionsCount() const
 
 WebString AutocompletePopupMenuClient::getSuggestion(unsigned listIndex) const
 {
-    ASSERT(listIndex >= 0 && listIndex < m_suggestions.size());
+    ASSERT(listIndex < m_suggestions.size());
     return m_suggestions[listIndex];
 }
 
 void AutocompletePopupMenuClient::removeSuggestionAtIndex(unsigned listIndex)
 {
-    ASSERT(listIndex >= 0 && listIndex < m_suggestions.size());
+    ASSERT(listIndex < m_suggestions.size());
     m_suggestions.remove(listIndex);
 }
 

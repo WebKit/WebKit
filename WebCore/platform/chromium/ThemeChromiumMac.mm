@@ -271,7 +271,8 @@ static void updateStates(NSCell* cell, ControlStates states)
     // Window Inactive state
     NSControlTint oldTint = [cell controlTint];
     bool windowInactive = (states & WindowInactiveState);
-    NSControlTint tint = windowInactive ? NSClearControlTint : [NSColor currentControlTint];
+    NSControlTint tint = windowInactive ? static_cast<NSControlTint>(NSClearControlTint)
+                                        : [NSColor currentControlTint];
     if (tint != oldTint)
         [cell setControlTint:tint];
 }

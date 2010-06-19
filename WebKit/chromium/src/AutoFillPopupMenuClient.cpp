@@ -56,7 +56,7 @@ WebString AutoFillPopupMenuClient::getSuggestion(unsigned listIndex) const
         --listIndex;
 
     // FIXME: Modify the PopupMenu to add the label in gray right-justified.
-    ASSERT(listIndex >= 0 && listIndex < m_names.size());
+    ASSERT(listIndex < m_names.size());
 
     WebString suggestion = m_names[listIndex];
     if (m_labels[listIndex].isEmpty())
@@ -68,7 +68,7 @@ WebString AutoFillPopupMenuClient::getSuggestion(unsigned listIndex) const
 void AutoFillPopupMenuClient::removeSuggestionAtIndex(unsigned listIndex)
 {
     // FIXME: Do we want to remove AutoFill suggestions?
-    ASSERT(listIndex >= 0 && listIndex < m_names.size());
+    ASSERT(listIndex < m_names.size());
     m_names.remove(listIndex);
     m_labels.remove(listIndex);
 }
@@ -82,7 +82,7 @@ void AutoFillPopupMenuClient::valueChanged(unsigned listIndex, bool fireEvents)
     if (m_separatorIndex != -1 && listIndex > static_cast<unsigned>(m_separatorIndex))
         --listIndex;
 
-    ASSERT(listIndex >= 0 && listIndex < m_names.size());
+    ASSERT(listIndex < m_names.size());
 
     webView->client()->didAcceptAutoFillSuggestion(WebNode(getTextField()),
                                                    m_names[listIndex],
@@ -99,7 +99,7 @@ void AutoFillPopupMenuClient::selectionChanged(unsigned listIndex, bool fireEven
     if (m_separatorIndex != -1 && listIndex > static_cast<unsigned>(m_separatorIndex))
         --listIndex;
 
-    ASSERT(listIndex >= 0 && listIndex < m_names.size());
+    ASSERT(listIndex < m_names.size());
 
     webView->client()->didSelectAutoFillSuggestion(WebNode(getTextField()),
                                                    m_names[listIndex],

@@ -1,3 +1,22 @@
+2010-06-19  Thomas Van Lenten  <thomasvl@chromium.org>
+
+        Reviewed by David Levin.
+
+        Warnings from -Wextra in a Chromium Mac build
+        1. checks of unsigned >= 0
+        2. enumeral and non-enumeral type in conditional expression
+        3. copy ctors that don't call the super copy ctor or ctor
+        No functionality change so no new tests.
+
+        https://bugs.webkit.org/show_bug.cgi?id=40791
+
+        * platform/chromium/ChromiumDataObject.cpp:
+        (WebCore::ChromiumDataObject::ChromiumDataObject):
+        * platform/chromium/ThemeChromiumMac.mm:
+        (WebCore::updateStates):
+        * rendering/RenderThemeChromiumMac.mm:
+        (WebCore::RenderThemeChromiumMac::updateActiveState):
+
 2010-06-19  Ben Murdoch  <benm@google.com>
 
         Reviewed by Pavel Feldman.

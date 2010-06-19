@@ -91,7 +91,7 @@ void RenderThemeChromiumMac::updateActiveState(NSCell* cell, const RenderObject*
 {
     NSControlTint oldTint = [cell controlTint];
     NSControlTint tint = isActive(o) ? [NSColor currentControlTint] :
-                                       NSClearControlTint;
+                                       static_cast<NSControlTint>(NSClearControlTint);
 
     if (tint != oldTint)
         [cell setControlTint:tint];
