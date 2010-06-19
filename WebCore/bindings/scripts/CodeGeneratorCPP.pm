@@ -145,7 +145,6 @@ sub GetClassName
 
     # special cases
     return "WebDOMString" if $codeGenerator->IsStringType($name) or $name eq "SerializedScriptValue";
-    return "WebDOMAbstractView" if $name eq "DOMWindow";
     return "WebDOMObject" if $name eq "DOMObject";
     return "bool" if $name eq "boolean";
     return $name if $codeGenerator->IsPrimitiveType($name);
@@ -155,10 +154,7 @@ sub GetClassName
 
 sub GetImplClassName
 {
-    my $name = $codeGenerator->StripModule(shift);
-
-    return "DOMWindow" if $name eq "AbstractView";
-    return $name;
+    return $codeGenerator->StripModule(shift);
 }
 
 sub GetParentImplClassName
@@ -203,7 +199,8 @@ sub ShouldSkipTypeInImplementation
 
     return 1 if $typeInfo->signature->extendedAttributes->{"CustomArgumentHandling"}
              or $typeInfo->signature->extendedAttributes->{"CustomGetter"}
-             or $typeInfo->signature->extendedAttributes->{"NeedsUserGestureCheck"};
+             or $typeInfo->signature->extendedAttributes->{"NeedsUserGestureCheck"}
+             or $typeInfo->signature->extendedAttributes->{"CPPCustom"};
 
     # FIXME: We don't generate bindings for SVG related interfaces yet
     return 1 if $typeInfo->signature->name =~ /getSVGDocument/;
@@ -297,12 +294,6 @@ sub AddIncludesForType
         return;
     }
 
-    if ($type eq "DOMWindow") {
-        $implIncludes{"DOMWindow.h"} = 1;
-        $implIncludes{"WebDOMAbstractView.h"} = 1;
-        return;
-    }
-
     if ($type eq "EventListener") {
         $implIncludes{"WebNativeEventListener.h"} = 1;
         return;
@@ -388,12 +379,12 @@ sub GenerateHeader
     push(@headerContent, "    explicit $className($implClassNameWithNamespace*);\n");
 
     # Copy constructor on classes which have the d-ptr
-    if (@{$dataNode->parents} eq 0) {
+    if ($parentName eq "WebDOMObject") {
         push(@headerContent, "    $className(const $className&);\n");
     }
 
     # Destructor
-    if (@{$dataNode->parents} eq 0) {
+    if ($parentName eq "WebDOMObject") {
         push(@headerContent, "    ~$className();\n");
     }
 
@@ -505,7 +496,7 @@ sub GenerateHeader
     push(@headerContent, "\n");
     push(@headerContent, "    $implClassNameWithNamespace* impl() const;\n");
 
-    if (@{$dataNode->parents} eq 0) {
+    if ($parentName eq "WebDOMObject") {
         push(@headerContent, "\nprotected:\n");
         push(@headerContent, "    struct ${className}Private;\n");
         push(@headerContent, "    ${className}Private* m_impl;\n");
@@ -607,7 +598,7 @@ sub GenerateImplementation
     push(@implContent, "#include <wtf/RefPtr.h>\n\n");
 
     # Private datastructure, encapsulating WebCore types
-    if (@{$dataNode->parents} eq 0) {
+    if ($baseClass eq "WebDOMObject") {
         push(@implContent, "struct ${className}::${className}Private {\n");
         push(@implContent, "    ${className}Private($implClassNameWithNamespace* object = 0)\n");
         push(@implContent, "        : impl(object)\n");
@@ -620,12 +611,12 @@ sub GenerateImplementation
     # Constructor
     push(@implContent, "${className}::$className()\n");
     push(@implContent, "    : ${baseClass}()\n");
-    push(@implContent, "    , m_impl(0)\n") if (@{$dataNode->parents} eq 0);
+    push(@implContent, "    , m_impl(0)\n") if ($baseClass eq "WebDOMObject");
     push(@implContent, "{\n");
     push(@implContent, "}\n\n");
 
     push(@implContent, "${className}::$className($implClassNameWithNamespace* impl)\n");
-    if (@{$dataNode->parents} eq 0) {
+    if ($baseClass eq "WebDOMObject") {
         push(@implContent, "    : ${baseClass}()\n");
         push(@implContent, "    , m_impl(new ${className}Private(impl))\n");
         push(@implContent, "{\n");

@@ -26,6 +26,20 @@ namespace WebCore {
 class EventTarget;
 };
 
+class WebDOMDedicatedWorkerContext;
+class WebDOMDOMApplicationCache;
+class WebDOMDOMWindow;
+class WebDOMEventSource;
+class WebDOMMessagePort;
+class WebDOMNode;
+class WebDOMNotification;
+class WebDOMSharedWorker;
+class WebDOMSharedWorkerContext;
+class WebDOMWebSocket;
+class WebDOMWorker;
+class WebDOMXMLHttpRequest;
+class WebDOMXMLHttpRequestUpload;
+
 class WebDOMEventTarget : public WebDOMObject {
 public:
     WebDOMEventTarget();
@@ -35,8 +49,20 @@ public:
 
     WebCore::EventTarget* impl() const;
 
-    // FIXME: Add a possibility to check what kind of EventTarget we have,
-    // to be able to cast eg. a WebDOMEventTarget to a WebDOMNode
+    WebDOMNode toNode();
+    WebDOMDOMWindow toDOMWindow();
+    WebDOMXMLHttpRequest toXMLHttpRequest();
+    WebDOMXMLHttpRequestUpload toXMLHttpRequestUpload();
+    WebDOMMessagePort toMessagePort();
+
+    WebDOMEventSource toEventSource();
+    WebDOMDOMApplicationCache toDOMApplicationCache();
+    WebDOMWorker toWorker();
+    WebDOMDedicatedWorkerContext toDedicatedWorkerContext();
+    WebDOMSharedWorker toSharedWorker();
+    WebDOMSharedWorkerContext toSharedWorkerContext();
+    WebDOMNotification toNotification();
+    WebDOMWebSocket toWebSocket();
 
 protected:
     struct WebDOMEventTargetPrivate;

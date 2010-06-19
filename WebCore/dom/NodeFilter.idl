@@ -21,8 +21,12 @@
 module traversal {
 
     // Introduced in DOM Level 2:
-    interface [CustomMarkFunction, CustomNativeConverter, ObjCProtocol] NodeFilter {
-
+    interface [
+        CustomMarkFunction,
+        CustomNativeConverter,
+        ObjCProtocol,
+        PureInterface
+    ] NodeFilter {
         // Constants returned by acceptNode
         const short               FILTER_ACCEPT                  = 1;
         const short               FILTER_REJECT                  = 2;

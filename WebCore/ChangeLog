@@ -1,3 +1,42 @@
+2010-06-19  Kartikaya Gupta  <kagupta@rim.com>
+
+        Reviewed by Nikolas Zimmermann.
+
+        CPP bindings missing some APIs
+        https://bugs.webkit.org/show_bug.cgi?id=40570
+
+        Add missing C++ DOM API bindings. Specifically:
+        - NodeFilter callback support
+        - Missing custom method implementations in HTMLCollection and HTMLOptionsCollection
+        - Missing EventTarget static type-determination methods
+        - Fix CPP binding generator to not generate d-ptrs for classes that extend EventTarget and just use the parent's d-ptr instead
+        - Switch binding generator to use DOMWindow instead of AbstractView so that necessary W3C-defined methods (e.g. getComputedStyle) are accessible.
+
+        * bindings/cpp/WebDOMDOMWindowCustom.cpp: Added.
+        (WebDOMDOMWindow::addEventListener):
+        (WebDOMDOMWindow::removeEventListener):
+        * bindings/cpp/WebDOMEventTarget.cpp:
+        (toWebKit):
+        * bindings/cpp/WebDOMEventTarget.h:
+        * bindings/cpp/WebDOMHTMLCollectionCustom.cpp: Added.
+        (WebDOMHTMLCollection::item):
+        (WebDOMHTMLCollection::namedItem):
+        * bindings/cpp/WebDOMHTMLOptionsCollectionCustom.cpp: Added.
+        (WebDOMHTMLOptionsCollection::length):
+        (WebDOMHTMLOptionsCollection::setLength):
+        * bindings/cpp/WebDOMNodeFilterCustom.cpp: Added.
+        (WebDOMNodeFilter::acceptNode):
+        (toWebKit):
+        * bindings/cpp/WebNativeNodeFilterCondition.cpp: Added.
+        (WebNativeNodeFilterCondition::WebNativeNodeFilterCondition):
+        (WebNativeNodeFilterCondition::~WebNativeNodeFilterCondition):
+        (WebNativeNodeFilterCondition::acceptNode):
+        * bindings/cpp/WebNativeNodeFilterCondition.h: Added.
+        (WebNativeNodeFilterCondition::create):
+        * bindings/scripts/CodeGeneratorCPP.pm:
+        * dom/NodeFilter.idl:
+        * page/DOMWindow.idl:
+
 2010-06-19  Vangelis Kokkevis  <vangelis@chromium.org>
 
         Reviewed by Dimitri Glazkov.
