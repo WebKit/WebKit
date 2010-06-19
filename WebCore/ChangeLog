@@ -1,3 +1,40 @@
+2010-06-19  Kwang Yul Seo  <skyul@company100.net>
+
+        Reviewed by Kent Tamura.
+
+        [BREWMP] Port SocketStream
+        https://bugs.webkit.org/show_bug.cgi?id=39671
+
+        Port SocketStream with BREW MP's ISocket interface.
+
+        * platform/network/brew/SocketStreamError.h: Added.
+        (WebCore::SocketStreamError::SocketStreamError):
+        * platform/network/brew/SocketStreamHandle.h: Added.
+        (WebCore::SocketStreamHandle::create):
+        * platform/network/brew/SocketStreamHandleBrew.cpp: Added.
+        (WebCore::socketStreamConnectCallback):
+        (WebCore::getHostByNameCallback):
+        (WebCore::socketReadableCallback):
+        (WebCore::networkManager):
+        (WebCore::SocketStreamHandlePrivate::SocketStreamHandlePrivate):
+        (WebCore::SocketStreamHandlePrivate::~SocketStreamHandlePrivate):
+        (WebCore::SocketStreamHandlePrivate::socketConnected):
+        (WebCore::SocketStreamHandlePrivate::socketReadyRead):
+        (WebCore::SocketStreamHandlePrivate::connect):
+        (WebCore::SocketStreamHandlePrivate::send):
+        (WebCore::SocketStreamHandlePrivate::close):
+        (WebCore::SocketStreamHandlePrivate::socketClosed):
+        (WebCore::SocketStreamHandlePrivate::socketError):
+        (WebCore::SocketStreamHandle::SocketStreamHandle):
+        (WebCore::SocketStreamHandle::~SocketStreamHandle):
+        (WebCore::SocketStreamHandle::platformSend):
+        (WebCore::SocketStreamHandle::platformClose):
+        (WebCore::SocketStreamHandle::didReceiveAuthenticationChallenge):
+        (WebCore::SocketStreamHandle::receivedCredential):
+        (WebCore::SocketStreamHandle::receivedRequestToContinueWithoutCredential):
+        (WebCore::SocketStreamHandle::receivedCancellation):
+        * platform/network/brew/SocketStreamHandlePrivate.h: Added.
+
 2010-06-19  Nikita Vasilyev  <me@elv1s.ru>
 
         Reviewed by Pavel Feldman.
