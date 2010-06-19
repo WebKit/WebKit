@@ -1,3 +1,18 @@
+2010-06-19  Ben Murdoch  <benm@google.com>
+
+        Reviewed by Pavel Feldman.
+
+        Fix build break with inspector disabled.
+        https://bugs.webkit.org/show_bug.cgi?id=40790
+
+        Replace a #include with a forward declaration.
+
+        Fixing a build break so no new tests required.
+
+        * inspector/InspectorController.h: Forward declare InspectorValue
+           rather than #including its header which has its content guarded
+           out.
+
 2010-06-19  Zhe Su  <suzhe@chromium.org>
 
         Reviewed by Darin Fisher.

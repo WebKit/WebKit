@@ -32,7 +32,6 @@
 #include "Console.h"
 #include "Cookie.h"
 #include "InspectorDOMAgent.h"
-#include "InspectorValues.h"
 #include "PlatformString.h"
 #include "ScriptArray.h"
 #include "ScriptBreakpoint.h"
@@ -70,6 +69,7 @@ class InspectorCSSStore;
 class InspectorFrontend;
 class InspectorFrontendClient;
 class InspectorTimelineAgent;
+class InspectorValue;
 class KURL;
 class Node;
 class Page;
