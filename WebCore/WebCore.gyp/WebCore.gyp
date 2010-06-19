@@ -896,6 +896,11 @@
             ['exclude', 'rendering/SVG'],
           ],
         }],
+        ['use_accelerated_compositing==1', {
+          'dependencies': [
+            '<(chromium_src_dir)/gpu/gpu.gyp:gles2_c_lib',
+          ],
+        }],
         ['OS=="linux" or OS=="freebsd"', {
           'dependencies': [
             '<(chromium_src_dir)/build/linux/system.gyp:fontconfig',
