@@ -38,6 +38,9 @@
                     { "name": "google-windows-1", "platform": "chromium" },
                     { "name": "google-mac-1", "platform": "chromium" },
                     { "name": "google-linux-1", "platform": "chromium" },
+                    { "name": "google-windows-2", "platform": "chromium" },
+                    { "name": "google-mac-2", "platform": "chromium" },
+                    { "name": "google-linux-2", "platform": "chromium" },
                     { "name": "google-new-tests", "platform": "mac-leopard" }
                   ],
 
@@ -165,11 +168,26 @@
                       "platform": "chromium", "configuration": "release", "architectures": ["i386"],
                       "slavenames": ["google-linux-1"]
                     },
-		    {
-		      "name": "New run-webkit-tests", "type": "NewBuildAndTest", "builddir": "google-new-tests",
-		      "platform": "mac-leopard", "configuration": "release", "architectures": ["i386"],
-		      "slavenames": ["google-new-tests"]
-		    }
+                    {
+                      "name": "Chromium Win Release (Tests)", "type": "NewBuildAndTest", "builddir": "chromium-win-release-tests",
+                      "platform": "chromium", "configuration": "release", "architectures": ["i386"],
+                      "slavenames": ["google-windows-2"]
+                    },
+                    {
+                      "name": "Chromium Mac Release (Tests)", "type": "NewBuildAndTest", "builddir": "chromium-mac-release-tests",
+                      "platform": "chromium", "configuration": "release", "architectures": ["i386"],
+                      "slavenames": ["google-mac-2"]
+                    },
+                    {
+                      "name": "Chromium Linux Release (Tests)", "type": "NewBuildAndTest", "builddir": "chromium-linux-release-tests",
+                      "platform": "chromium", "configuration": "release", "architectures": ["i386"],
+                      "slavenames": ["google-linux-2"]
+                    },
+                    {
+                      "name": "New run-webkit-tests", "type": "NewBuildAndTest", "builddir": "google-new-tests",
+                      "platform": "mac-leopard", "configuration": "release", "architectures": ["i386"],
+                      "slavenames": ["google-new-tests"]
+                    }
                   ],
 
     "schedulers": [ { "type": "AnyBranchScheduler", "name": "trunk", "branches": ["trunk"], "treeStableTimer": 45.0,
@@ -179,7 +197,8 @@
                                        "GTK Linux 32-bit Release", "GTK Linux 32-bit Debug", "GTK Linux 64-bit Debug", "GTK Linux 64-bit Release",
                                        "Qt Linux Release", "Qt Linux Release minimal", "Qt Linux ARMv5 Release", "Qt Linux ARMv7 Release", 
                                        "Qt Windows 32-bit Release", "Qt Windows 32-bit Debug",
-                                       "Chromium Win Release", "Chromium Mac Release", "Chromium Linux Release"]
+                                       "Chromium Win Release", "Chromium Mac Release", "Chromium Linux Release",
+                                       "Chromium Win Release (Tests)", "Chromium Mac Release (Tests)", "Chromium Linux Release (Tests)"]
                     },
                     { "type": "Triggerable", "name": "leopard-intel-release-tests",
                       "builderNames": ["Leopard Intel Release (Tests)"]

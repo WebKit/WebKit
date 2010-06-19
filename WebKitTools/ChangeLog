@@ -1,3 +1,12 @@
+2010-06-18  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Add three more non-core Chromium builders to start testing DumpRenderTree.
+        https://bugs.webkit.org/show_bug.cgi?id=40335
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json: Added 3 builders.
+
 2010-06-18  Drew Wilson  <atwilson@chromium.org>
 
         Reviewed by Darin Fisher.
