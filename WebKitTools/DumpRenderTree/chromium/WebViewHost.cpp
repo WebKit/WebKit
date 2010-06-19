@@ -1031,7 +1031,7 @@ void WebViewHost::reset()
     this->~WebViewHost();
     new (this) WebViewHost(shell);
     setWebWidget(widget);
-    webView()->mainFrame()->clearName();
+    webView()->mainFrame()->setName(WebString());
 }
 
 void WebViewHost::setSelectTrailingWhitespaceEnabled(bool enabled)

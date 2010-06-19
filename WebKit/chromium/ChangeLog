@@ -1,5 +1,20 @@
 2010-06-18  Drew Wilson  <atwilson@chromium.org>
 
+        Reviewed by Darin Fisher.
+
+        [Chromium] Plumbing for top-level frame names
+        https://bugs.webkit.org/show_bug.cgi?id=40430
+
+        * public/WebFrame.h:
+        Removed obsolete clearName() API and added better documentation for
+        setName().
+        * src/WebFrameImpl.cpp:
+        Removed clearName() API.
+        * src/WebFrameImpl.h:
+        Removed clearName() API.
+
+2010-06-18  Drew Wilson  <atwilson@chromium.org>
+
         Reviewed by Dumitru Daniliuc.
 
         Roll chromium DEPS 50089:50171

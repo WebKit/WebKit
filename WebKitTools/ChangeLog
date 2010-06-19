@@ -1,3 +1,14 @@
+2010-06-18  Drew Wilson  <atwilson@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [Chromium] Plumbing for top-level frame names
+        https://bugs.webkit.org/show_bug.cgi?id=40430
+
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::reset):
+        Changed obsolete call to clearName() to use setName(WebString()) instead.
+
 2010-06-18  Sam Weinig  <weinig@apple.com>
 
         Rolling http://trac.webkit.org/changeset/61297 back in.
