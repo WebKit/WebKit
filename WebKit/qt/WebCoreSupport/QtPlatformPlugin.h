@@ -28,6 +28,7 @@
 class QWebSelectMethod;
 class QWebKitPlatformPlugin;
 class QWebNotificationPresenter;
+class QWebSelectData;
 
 namespace WebCore {
 
@@ -35,6 +36,7 @@ class SelectInputMethodWrapper : public QObject, public QtAbstractWebPopup {
     Q_OBJECT
 public:
     SelectInputMethodWrapper(QWebSelectMethod* plugin);
+    ~SelectInputMethodWrapper();
 
     virtual void show();
     virtual void hide();
@@ -45,6 +47,7 @@ private Q_SLOTS:
 
 private:
     QWebSelectMethod* m_plugin;
+    QWebSelectData* m_selectData;
 };
 
 class QtPlatformPlugin {

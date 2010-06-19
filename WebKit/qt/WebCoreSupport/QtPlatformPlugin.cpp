@@ -56,16 +56,24 @@ QWebSelectData::ItemType SelectData::itemType(int index) const
 
 SelectInputMethodWrapper::SelectInputMethodWrapper(QWebSelectMethod* plugin)
     : m_plugin(plugin)
+    , m_selectData(0)
 {
     m_plugin->setParent(this);
     connect(m_plugin, SIGNAL(didHide()), this, SLOT(didHide()));
     connect(m_plugin, SIGNAL(selectItem(int, bool, bool)), this, SLOT(selectItem(int, bool, bool)));
 }
 
+SelectInputMethodWrapper::~SelectInputMethodWrapper()
+{
+    delete m_selectData;
+}
+
 void SelectInputMethodWrapper::show()
 {
-    SelectData data(this);
-    m_plugin->show(data);
+    if (m_selectData)
+        delete m_selectData;
+    m_selectData = new SelectData(this);
+    m_plugin->show(*m_selectData);
 }
 
 void SelectInputMethodWrapper::hide()

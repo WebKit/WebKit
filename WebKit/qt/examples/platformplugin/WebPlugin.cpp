@@ -221,4 +221,4 @@ bool WebPlugin::supportsExtension(Extension extension) const
     return false;
 }
 
-Q_EXPORT_PLUGIN2(qwebselectim, WebPlugin)
+Q_EXPORT_PLUGIN2(platformplugin, WebPlugin)
