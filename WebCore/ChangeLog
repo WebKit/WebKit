@@ -1,3 +1,15 @@
+2010-06-18  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        More clang++ warning fixes.
+
+        * inspector/InspectorFrontendClientLocal.cpp:
+        (WebCore::InspectorFrontendClientLocal::restoreAttachedWindowHeight):
+        * platform/graphics/mac/FontPlatformData.h:
+        * platform/graphics/mac/WebLayer.mm:
+        (-[CALayer _descriptionWithPrefix:]):
+
 2010-06-18  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Unreviewed, build fix.

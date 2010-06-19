@@ -193,7 +193,6 @@ using namespace WebCore;
 {
     CGRect aBounds = [self bounds];
     CGPoint aPos = [self position];
-    CATransform3D t = [self transform];
 
     NSString* selfString = [NSString stringWithFormat:@"%@<%@ 0x%08x> \"%@\" bounds(%.1f, %.1f, %.1f, %.1f) pos(%.1f, %.1f), sublayers=%d masking=%d",
             inPrefix,

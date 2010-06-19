@@ -29,7 +29,7 @@
 #ifdef __OBJC__
 @class NSFont;
 #else
-typedef struct NSFont NSFont;
+class NSFont;
 #endif
 
 typedef struct CGFont* CGFontRef;
