@@ -156,7 +156,7 @@ bool NetscapePluginHostManager::spawnPluginHost(WebNetscapePluginPackage *packag
     
     NSDictionary *hostProperties = [[NSDictionary alloc] initWithObjectsAndKeys:
                                     visibleName, @"visibleName",
-                                    [package path], @"bundlePath",
+                                    (NSString *)[package path], @"bundlePath",
                                     nil];
     
     data = [NSPropertyListSerialization dataFromPropertyList:hostProperties format:NSPropertyListBinaryFormat_v1_0 errorDescription:nil];

@@ -189,13 +189,13 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
     description = [self stringForStringListID:PluginNameOrDescriptionStringNumber andIndex:1];
     if (!description)
         description = filename;
-    [self setPluginDescription:description];
+    pluginDescription = description;
     
     
     NSString *theName = [self stringForStringListID:PluginNameOrDescriptionStringNumber andIndex:2];
     if (!theName)
         theName = filename;
-    [self setName:theName];
+    name = theName;
     
     [self closeResourceFile:resRef];
     
@@ -352,7 +352,7 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
     CFAbsoluteTime currentTime;
     CFAbsoluteTime duration;
 #endif
-    LOG(Plugins, "%f Load timing started for: %@", start, [self name]);
+    LOG(Plugins, "%f Load timing started for: %@", start, (NSString *)[self name]);
 
     if (isLoaded)
         return YES;
@@ -625,9 +625,9 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
         pluginVersion = pluginFuncs.version;
         
         if (pluginFuncs.javaClass)
-            LOG(LiveConnect, "%@:  mach-o entry point for NPP_GetJavaClass = %p", [self name], pluginFuncs.javaClass);
+            LOG(LiveConnect, "%@:  mach-o entry point for NPP_GetJavaClass = %p", (NSString *)[self name], pluginFuncs.javaClass);
         else
-            LOG(LiveConnect, "%@:  no entry point for NPP_GetJavaClass", [self name]);
+            LOG(LiveConnect, "%@:  no entry point for NPP_GetJavaClass", (NSString *)[self name]);
 
 #ifdef SUPPORT_CFM
     }
@@ -736,7 +736,7 @@ TransitionVector tVectorForFunctionPointer(FunctionPointer fp)
     if (!isLoaded)
         return;
     
-    LOG(Plugins, "Unloading %@...", name);
+    LOG(Plugins, "Unloading %@...", (NSString *)name);
 
     // Cannot unload a plug-in package while an instance is still using it
     if (instanceCount > 0) {
