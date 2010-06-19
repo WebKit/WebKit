@@ -1,3 +1,15 @@
+2010-06-19  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        fast/canvas/webgl/get-active-test.html failed in Chrome Mac
+        https://bugs.webkit.org/show_bug.cgi?id=40496
+
+        * src/WebGraphicsContext3DDefaultImpl.cpp: Call makeContextCurrent().
+        (WebKit::WebGraphicsContext3DDefaultImpl::getActiveAttrib):
+        (WebKit::WebGraphicsContext3DDefaultImpl::getActiveUniform):
+        (WebKit::WebGraphicsContext3DDefaultImpl::readPixels):
+
 2010-06-18  Aaron Boodman  <aa@chromium.org>
 
         Remove WebKit::WebDocument::isXHTMLDocument.

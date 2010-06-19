@@ -1,3 +1,13 @@
+2010-06-19  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        fast/canvas/webgl/get-active-test.html failed in Chrome Mac
+        https://bugs.webkit.org/show_bug.cgi?id=40496
+
+        * fast/canvas/webgl/get-active-test-expected.txt: Test of two contexts and two programs, also test the uniform array name ends with "[0]".
+        * fast/canvas/webgl/script-tests/get-active-test.js: Ditto.
+
 2010-06-18  Rob Buis  <rwlbuis@gmail.com>
 
         Reviewed by Darin Adler.

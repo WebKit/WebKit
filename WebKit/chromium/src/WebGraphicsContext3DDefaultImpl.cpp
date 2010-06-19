@@ -1001,6 +1001,7 @@ void WebGraphicsContext3DDefaultImpl::generateMipmap(unsigned long target)
 
 bool WebGraphicsContext3DDefaultImpl::getActiveAttrib(WebGLId program, unsigned long index, ActiveInfo& info)
 {
+    makeContextCurrent();
     if (!program) {
         synthesizeGLError(GL_INVALID_VALUE);
         return false;
@@ -1032,6 +1033,7 @@ bool WebGraphicsContext3DDefaultImpl::getActiveAttrib(WebGLId program, unsigned 
 
 bool WebGraphicsContext3DDefaultImpl::getActiveUniform(WebGLId program, unsigned long index, ActiveInfo& info)
 {
+    makeContextCurrent();
     GLint maxNameLength = -1;
     glGetProgramiv(program, GL_ACTIVE_UNIFORM_MAX_LENGTH, &maxNameLength);
     if (maxNameLength < 0)
@@ -1223,6 +1225,7 @@ DELEGATE_TO_GL_2(polygonOffset, PolygonOffset, double, double)
 
 void WebGraphicsContext3DDefaultImpl::readPixels(long x, long y, unsigned long width, unsigned long height, unsigned long format, unsigned long type, void* pixels)
 {
+    makeContextCurrent();
     // FIXME: remove the two glFlush calls when the driver bug is fixed, i.e.,
     // all previous rendering calls should be done before reading pixels.
     glFlush();

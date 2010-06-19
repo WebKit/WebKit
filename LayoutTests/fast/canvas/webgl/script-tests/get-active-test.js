@@ -11,6 +11,7 @@ var program2 = loadProgram(context2,
                            "resources/noopUniformShader.frag");
 shouldBeNonNull("program2");
 shouldBe("context.getError()", "context.NO_ERROR");
+shouldBe("context2.getError()", "context2.NO_ERROR");
 
 shouldBe("context.getActiveUniform(program, 0).name", "'u_modelViewProjMatrix'");
 shouldBe("context.getActiveUniform(program, 0).type", "context.FLOAT_MAT4");
@@ -45,6 +46,31 @@ for (var ii = 0; ii < info.length; ++ii) {
     shouldBe("info[ii].name", "expected[ii].name");
     shouldBe("info[ii].type", "expected[ii].type");
     shouldBe("info[ii].size", "expected[ii].size");
+}
+
+// we don't know the order the uniforms will appear.
+var info2 = [
+    context2.getActiveUniform(program2, 0),
+    context2.getActiveUniform(program2, 1)
+];
+for (var ii = 0; ii < info2.length; ++ii)
+    shouldBeNonNull("info2[ii]");
+
+var expected2 = [
+    { name: 'ival', type: context2.INT, size: 1 },
+    { name: 'ival2[0]', type: context2.INT, size: 2 }
+];
+
+if (info2[0].name != expected2[0].name) {
+    t = info2[0];
+    info2[0] = info2[1];
+    info2[1] = t;
+}
+
+for (var ii = 0; ii < info2.length; ++ii) {
+    shouldBe("info2[ii].name", "expected2[ii].name");
+    shouldBe("info2[ii].type", "expected2[ii].type");
+    shouldBe("info2[ii].size", "expected2[ii].size");
 }
 
 shouldBeNull("context.getActiveAttrib(program, 2)");
