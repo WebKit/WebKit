@@ -80,10 +80,12 @@
         'WTF_USE_ACCELERATED_COMPOSITING=0',
       ],
       
+      'use_accelerated_compositing%': 0,
       'enable_svg%': 1,
     },
 
     'feature_defines%': '<(feature_defines)',
+    'use_accelerated_compositing%': '<(use_accelerated_compositing)',
     'enable_svg%': '<(enable_svg)',
   },
 }

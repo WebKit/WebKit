@@ -1,3 +1,9 @@
+2010-06-19  Kent Tamura  <tkent@chromium.org>
+
+        Unreviewed. Build fix for r61488.
+
+        * features.gypi: Define use_accelerated_compositing.
+
 2010-06-19  Thomas Van Lenten  <thomasvl@chromium.org>
 
         Reviewed by David Levin.
