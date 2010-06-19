@@ -49,7 +49,7 @@ public:
     ~HTML5TreeBuilder();
 
     void setPaused(bool paused) { m_isPaused = paused; }
-    bool isPaused() { return m_isPaused; }
+    bool isPaused() const { return m_isPaused; }
 
     // The token really should be passed as a const& since it's never modified.
     PassRefPtr<Node> constructTreeFromToken(HTML5Token&);

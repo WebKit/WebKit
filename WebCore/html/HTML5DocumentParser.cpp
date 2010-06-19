@@ -59,7 +59,7 @@ namespace {
 
 class NestingLevelIncrementer : public Noncopyable {
 public:
-    NestingLevelIncrementer(int& counter)
+    explicit NestingLevelIncrementer(int& counter)
         : m_counter(&counter)
     {
         ++(*m_counter);

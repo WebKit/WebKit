@@ -1,3 +1,23 @@
+2010-06-19  Tony Gentilcore  <tonyg@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Some very minor cleanups for HTML5 Parser
+        https://bugs.webkit.org/show_bug.cgi?id=40638
+
+        No new tests because no new functionality.
+
+        * html/HTML5DocumentParser.cpp:
+        (WebCore::): Make ctor explicit.
+        * html/HTML5DocumentParser.h:
+        (WebCore::HTML5DocumentParser::InsertionPointRecord::InsertionPointRecord): Make ctor explicit.
+        * html/HTML5Lexer.cpp:
+        (WebCore::HTMLNames::isEndTagBufferingState): Use switch to generate an efficient table with single branch.
+        * html/HTML5Token.h:
+        (WebCore::HTML5Token::forceQuirks): Add const.
+        * html/HTML5TreeBuilder.h:
+        (WebCore::HTML5TreeBuilder::isPaused): Add const.
+
 2010-06-18  Aaron Boodman  <aa@chromium.org>
 
         Remove WebKit::WebDocument::isXHTMLDocument.

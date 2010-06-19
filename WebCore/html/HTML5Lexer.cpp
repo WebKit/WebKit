@@ -71,14 +71,19 @@ inline bool vectorEqualsString(const Vector<UChar, 32>& vector, const String& st
 
 inline bool isEndTagBufferingState(HTML5Lexer::State state)
 {
-    return state == HTML5Lexer::RCDATAEndTagOpenState
-        || state == HTML5Lexer::RCDATAEndTagNameState
-        || state == HTML5Lexer::RAWTEXTEndTagOpenState
-        || state == HTML5Lexer::RAWTEXTEndTagNameState
-        || state == HTML5Lexer::ScriptDataEndTagOpenState
-        || state == HTML5Lexer::ScriptDataEndTagNameState
-        || state == HTML5Lexer::ScriptDataEscapedEndTagOpenState
-        || state == HTML5Lexer::ScriptDataEscapedEndTagNameState;
+    switch (state) {
+    case HTML5Lexer::RCDATAEndTagOpenState:
+    case HTML5Lexer::RCDATAEndTagNameState:
+    case HTML5Lexer::RAWTEXTEndTagOpenState:
+    case HTML5Lexer::RAWTEXTEndTagNameState:
+    case HTML5Lexer::ScriptDataEndTagOpenState:
+    case HTML5Lexer::ScriptDataEndTagNameState:
+    case HTML5Lexer::ScriptDataEscapedEndTagOpenState:
+    case HTML5Lexer::ScriptDataEscapedEndTagNameState:
+        return true;
+    default:
+        return false;
+    }
 }
 
 }

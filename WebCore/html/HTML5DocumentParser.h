@@ -151,7 +151,7 @@ private:
 
     class InsertionPointRecord {
     public:
-        InsertionPointRecord(InputStream& inputStream)
+        explicit InsertionPointRecord(InputStream& inputStream)
             : m_inputStream(&inputStream)
         {
             m_inputStream->splitInto(m_next);

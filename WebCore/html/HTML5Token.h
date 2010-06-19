@@ -212,7 +212,7 @@ public:
         m_doctypeData->m_systemIdentifier.clear();
     }
 
-    bool forceQuirks()
+    bool forceQuirks() const
     {
         ASSERT(m_type == DOCTYPE);
         return m_doctypeData->m_forceQuirks;
