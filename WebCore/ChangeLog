@@ -14,6 +14,12 @@
 
         Unreviewed, build fix.
 
+        * WebCore.gyp/WebCore.gyp: Modified inclusion rule in to actually add WebSystemInterface.mm.
+
+2010-06-18  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Unreviewed, build fix.
+
         * WebCore.gyp/WebCore.gyp: Renamed WebSystemInterface.m to WebSystemInterface.mm.
 
 2010-06-18  Anders Carlsson  <andersca@apple.com>

@@ -1016,7 +1016,7 @@
             # Use USE_NEW_THEME on Mac.
             ['include', 'platform/Theme\\.cpp$'],
 
-            ['include', 'WebKit/mac/WebCoreSupport/WebSystemInterface\\.m$'],
+            ['include', 'WebKit/mac/WebCoreSupport/WebSystemInterface\\.mm$'],
           ],
           'sources!': [
             # The Mac uses platform/mac/KillRingMac.mm instead of the dummy
