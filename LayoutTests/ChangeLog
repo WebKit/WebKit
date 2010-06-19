@@ -1,3 +1,15 @@
+2010-06-18  Alexey Proskuryakov  <ap@apple.com>
+
+        Test by Chris Brichford.
+
+        https://bugs.webkit.org/show_bug.cgi?id=19759
+        ChildNodeList for an attribute node is not properly invalidated after appending a child
+
+        This issue has been fixed in another bug, just landing an additional test.
+
+        * fast/dom/Attr/child-nodes-length-cache-expected.txt: Added.
+        * fast/dom/Attr/child-nodes-length-cache.html: Added.
+
 2010-06-18  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by Adam Barth.
