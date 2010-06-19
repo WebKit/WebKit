@@ -1,3 +1,15 @@
+2010-06-19  Thiago Macieira <thiago.macieira@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add the WTF_COMPILER_INTEL for when the Intel compiler is used
+        for building. Usually, the Intel compiler masquerades as
+        another compiler in the system and gets away with it, but some
+        times specific fixes are required (such as when using language
+        extensions).
+
+        * wtf/Platform.h:
+
 2010-06-18  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Geoffrey Garen.

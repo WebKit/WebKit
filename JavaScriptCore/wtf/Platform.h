@@ -100,7 +100,10 @@
 #undef _WIN32
 #endif
 
-
+/* COMPILER(INTEL) - Intel C++ Compiler */
+#if defined(__INTEL_COMPILER)
+#define WTF_COMPILER_INTEL 1
+#endif
 
 /* ==== CPU() - the target CPU architecture ==== */
 
