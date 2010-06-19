@@ -1,3 +1,16 @@
+2010-06-19  Victoria Kirst  <vrk@google.com>
+
+        Reviewed by David Levin.
+
+        Modifying the WebMediaPlayer interface to be compatible with
+        a change in chrome.
+        This is a part 2 of 3 one-sided changes to chrome and WebKit. Chrome
+        has been updated, so this commit should NOT break chromium anymore,
+        nor should it cause any test failures.
+        https://bugs.webkit.org/show_bug.cgi?id=39445
+
+        * public/WebMediaPlayer.h: Changed buffered() to be non-const.
+
 2010-06-19  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Dimitri Glazkov.
