@@ -49,7 +49,7 @@ namespace WTF {
         #error WTF_ALIGN macros need alignment control.
     #endif
 
-    #if COMPILER(GCC) && (((__GNUC__ * 100) + __GNUC_MINOR__) >= 303)
+    #if COMPILER(GCC) && !COMPILER(INTEL) && (((__GNUC__ * 100) + __GNUC_MINOR__) >= 303)
         typedef char __attribute__((__may_alias__)) AlignedBufferChar; 
     #else
         typedef char AlignedBufferChar; 

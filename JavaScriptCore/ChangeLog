@@ -2,6 +2,15 @@
 
         Reviewed by Kenneth Rohde Christiansen.
 
+        Don't use __attribute__((may_alias)) with the Intel compiler,
+        as it doesn't understand it.
+
+        * wtf/Vector.h:
+
+2010-06-19  Thiago Macieira <thiago.macieira@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
         Fix compilation with the Intel C++ compiler (11.1.072).
 
         Like RVCT, label pointers must be void*, not const void*.
