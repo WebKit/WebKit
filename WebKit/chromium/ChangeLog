@@ -1,3 +1,41 @@
+2010-06-19  Zhe Su  <suzhe@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [chromium]Refactor input method related APIs.
+        https://bugs.webkit.org/show_bug.cgi?id=40608
+
+        * WebKit.gyp:
+        * public/WebCompositionCommand.h:
+        * public/WebCompositionUnderline.h: Added.
+        (WebKit::WebCompositionUnderline::WebCompositionUnderline):
+        * public/WebTextInputType.h: Added.
+        (WebKit::):
+        * public/WebViewClient.h:
+        * public/WebWidget.h:
+        * public/WebWidgetClient.h:
+        (WebKit::WebWidgetClient::resetInputMethod):
+        * src/CompositionUnderlineBuilder.h: Added.
+        (WebKit::CompositionUnderlineBuilder::CompositionUnderlineBuilder):
+        * src/CompositionUnderlineVectorBuilder.cpp: Added.
+        (WebKit::CompositionUnderlineVectorBuilder::CompositionUnderlineVectorBuilder):
+        * src/CompositionUnderlineVectorBuilder.h: Added.
+        * src/EditorClientImpl.cpp:
+        (WebKit::EditorClientImpl::setInputMethodState):
+        * src/WebPopupMenuImpl.cpp:
+        (WebKit::WebPopupMenuImpl::setComposition):
+        (WebKit::WebPopupMenuImpl::confirmComposition):
+        (WebKit::WebPopupMenuImpl::textInputType):
+        (WebKit::WebPopupMenuImpl::caretOrSelectionBounds):
+        * src/WebPopupMenuImpl.h:
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::handleCompositionEvent):
+        (WebKit::WebViewImpl::setComposition):
+        (WebKit::WebViewImpl::confirmComposition):
+        (WebKit::WebViewImpl::textInputType):
+        (WebKit::WebViewImpl::caretOrSelectionBounds):
+        * src/WebViewImpl.h:
+
 2010-06-19  Victoria Kirst  <vrk@google.com>
 
         Reviewed by David Levin.

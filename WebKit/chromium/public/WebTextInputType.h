@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2010 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -28,16 +28,24 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebCompositionCommand_h
-#define WebCompositionCommand_h
+#ifndef WebTextInputType_h
+#define WebTextInputType_h
 
 namespace WebKit {
 
-// DEPRECATED.
-enum WebCompositionCommand {
-    WebCompositionCommandDiscard,
-    WebCompositionCommandSet,
-    WebCompositionCommandConfirm,
+enum WebTextInputType {
+    // Input caret is not in an editable node, no input method shall be used.
+    WebTextInputTypeNone,
+
+    // Input caret is in a normal editable node, any input method can be used.
+    WebTextInputTypeText,
+
+    // Input caret is in a password box, an input method may be used only if
+    // it's suitable for password input.
+    WebTextInputTypePassword,
+
+    // FIXME: Add more text input types when necessary, eg. Number,
+    // Date, Email, URL, etc.
 };
 
 } // namespace WebKit

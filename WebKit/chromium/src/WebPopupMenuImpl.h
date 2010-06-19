@@ -66,10 +66,21 @@ public:
     virtual bool handleInputEvent(const WebInputEvent&);
     virtual void mouseCaptureLost();
     virtual void setFocus(bool enable);
+
+    // DEPRECATED, will be removed later.
     virtual bool handleCompositionEvent(
         WebCompositionCommand command, int cursorPosition,
         int targetStart, int targetEnd, const WebString& text);
+    virtual bool setComposition(
+        const WebString& text,
+        const WebVector<WebCompositionUnderline>& underlines,
+        int selectionStart, int selectionEnd);
+    virtual bool confirmComposition();
+
+    // DEPRECATED, will be removed later.
     virtual bool queryCompositionStatus(bool* enabled, WebRect* caretRect);
+    virtual WebTextInputType textInputType();
+    virtual WebRect caretOrSelectionBounds();
     virtual void setTextDirection(WebTextDirection direction);
     virtual bool isAcceleratedCompositingActive() const { return false; }
 

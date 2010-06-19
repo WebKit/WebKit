@@ -34,6 +34,8 @@
 #include "WebCanvas.h"
 #include "WebCommon.h"
 #include "WebCompositionCommand.h"
+#include "WebCompositionUnderline.h"
+#include "WebTextInputType.h"
 #include "WebTextDirection.h"
 
 namespace WebKit {
@@ -42,6 +44,7 @@ class WebInputEvent;
 class WebString;
 struct WebRect;
 struct WebSize;
+template <typename T> class WebVector;
 
 class WebWidget {
 public:
@@ -76,16 +79,38 @@ public:
     // Called to inform the WebWidget that it has gained or lost keyboard focus.
     virtual void setFocus(bool) = 0;
 
-    // Called to inform the WebWidget of a composition event.
+    // DEPRECATED. It's replaced by setComposition() and confirmComposition().
     virtual bool handleCompositionEvent(WebCompositionCommand command,
                                         int cursorPosition,
                                         int targetStart,
                                         int targetEnd,
                                         const WebString& text) = 0;
 
-    // Retrieve the status of this WebWidget required by IME APIs.  Upon
-    // success enabled and caretBounds are set.
+    // Called to inform the WebWidget of a new composition text.
+    // If selectionStart and selectionEnd has the same value, then it indicates
+    // the input caret position. If the text is empty, then the existing
+    // composition text will be cancelled.
+    // Returns true if the composition text was set successfully.
+    virtual bool setComposition(
+        const WebString& text,
+        const WebVector<WebCompositionUnderline>& underlines,
+        int selectionStart,
+        int selectionEnd) = 0;
+
+    // Called to inform the WebWidget to confirm an ongoing composition.
+    // Returns true if there is an ongoing composition.
+    virtual bool confirmComposition() = 0;
+
+    // DEPRECATED. It's replaced by textInputType() and
+    // caretOrSelectionBounds().
     virtual bool queryCompositionStatus(bool* enabled, WebRect* caretBounds) = 0;
+
+    // Returns the current text input type of this WebWidget.
+    virtual WebTextInputType textInputType() = 0;
+
+    // Returns the current caret bounds of this WebWidget. The selection bounds
+    // will be returned if a selection range is available.
+    virtual WebRect caretOrSelectionBounds() = 0;
 
     // Changes the text direction of the selected input node.
     virtual void setTextDirection(WebTextDirection) = 0;

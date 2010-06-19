@@ -1,3 +1,15 @@
+2010-06-19  Zhe Su  <suzhe@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [chromium]Refactor input method related APIs.
+        https://bugs.webkit.org/show_bug.cgi?id=40608
+
+        No new tests are needed, because there is no new functionality.
+
+        * page/FocusController.cpp:
+        (WebCore::FocusController::setFocusedNode):
+
 2010-06-19  George Wright  <gwright@rim.com>
 
         Reviewed by George Staikos.

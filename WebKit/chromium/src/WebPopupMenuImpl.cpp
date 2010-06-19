@@ -230,6 +230,7 @@ void WebPopupMenuImpl::setFocus(bool enable)
 {
 }
 
+// DEPRECATED, will be removed later.
 bool WebPopupMenuImpl::handleCompositionEvent(
     WebCompositionCommand command, int cursorPosition, int targetStart,
     int targetEnd, const WebString& imeString)
@@ -237,9 +238,32 @@ bool WebPopupMenuImpl::handleCompositionEvent(
     return false;
 }
 
+bool WebPopupMenuImpl::setComposition(
+    const WebString& text, const WebVector<WebCompositionUnderline>& underlines,
+    int selectionStart, int selectionEnd)
+{
+    return false;
+}
+
+bool WebPopupMenuImpl::confirmComposition()
+{
+    return false;
+}
+
+// DEPRECATED, will be removed later.
 bool WebPopupMenuImpl::queryCompositionStatus(bool* enabled, WebRect* caretRect)
 {
     return false;
+}
+
+WebTextInputType WebPopupMenuImpl::textInputType()
+{
+    return WebTextInputTypeNone;
+}
+
+WebRect WebPopupMenuImpl::caretOrSelectionBounds()
+{
+    return WebRect();
 }
 
 void WebPopupMenuImpl::setTextDirection(WebTextDirection direction)

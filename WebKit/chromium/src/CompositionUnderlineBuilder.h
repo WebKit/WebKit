@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2010 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -28,16 +28,24 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebCompositionCommand_h
-#define WebCompositionCommand_h
+#ifndef CompositionUnderlineBuilder_h
+#define CompositionUnderlineBuilder_h
+
+#include "Editor.h"
+#include "Vector.h"
+#include "WebCompositionUnderline.h"
+#include "WebVector.h"
 
 namespace WebKit {
 
-// DEPRECATED.
-enum WebCompositionCommand {
-    WebCompositionCommandDiscard,
-    WebCompositionCommandSet,
-    WebCompositionCommandConfirm,
+// This class is used for converting from WebCompositionUnderline to
+// WebCore::CompositionUnderline.
+
+class CompositionUnderlineBuilder : public WebCore::CompositionUnderline {
+public:
+    CompositionUnderlineBuilder(const WebCompositionUnderline& u)
+        : WebCore::CompositionUnderline(u.startOffset, u.endOffset,
+                                        WebCore::Color(u.color), u.thick) { }
 };
 
 } // namespace WebKit

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2010 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -28,16 +28,32 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebCompositionCommand_h
-#define WebCompositionCommand_h
+#ifndef WebCompositionUnderline_h
+#define WebCompositionUnderline_h
+
+#include "WebColor.h"
 
 namespace WebKit {
 
-// DEPRECATED.
-enum WebCompositionCommand {
-    WebCompositionCommandDiscard,
-    WebCompositionCommandSet,
-    WebCompositionCommandConfirm,
+// Class WebCompositionUnderline is intended to be used with WebWidget's
+// setComposition() method.
+struct WebCompositionUnderline {
+    WebCompositionUnderline()
+        : startOffset(0)
+        , endOffset(0)
+        , color(0)
+        , thick(false) { }
+
+    WebCompositionUnderline(unsigned s, unsigned e, WebColor c, bool t)
+        : startOffset(s)
+        , endOffset(e)
+        , color(c)
+        , thick(t) { }
+
+    unsigned startOffset;
+    unsigned endOffset;
+    WebColor color;
+    bool thick;
 };
 
 } // namespace WebKit
