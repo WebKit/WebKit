@@ -1,3 +1,16 @@
+2010-06-19  Mirko Damiani  <mirko@develer.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Avoid truncation of zoom factor in QWebFrame's print function.
+        https://bugs.webkit.org/show_bug.cgi?id=40662
+
+        The zoom factor is a qreal number but its value is truncated to an
+        integer. So a cast to qreal is needed to avoid this issue.
+
+        * Api/qwebframe.cpp:
+        (QWebFrame::print):
+
 2010-06-18  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.
