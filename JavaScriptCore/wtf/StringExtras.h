@@ -28,6 +28,7 @@
 
 #include <stdarg.h>
 #include <stdio.h>
+#include <string.h>
 
 #if HAVE(STRINGS_H) 
 #include <strings.h> 

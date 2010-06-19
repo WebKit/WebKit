@@ -1,3 +1,15 @@
+2010-06-19  Kwang Yul Seo  <skyul@company100.net>
+
+        Reviewed by Darin Adler.
+
+        Include <string.h> in StringExtras.h
+        https://bugs.webkit.org/show_bug.cgi?id=40808
+
+        Without string.h, RVCT 2.2 can't compile StringExtras.h.
+        It can't find strlen and strncmp.
+
+        * wtf/StringExtras.h:
+
 2010-06-19  Thiago Macieira <thiago.macieira@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
