@@ -2,6 +2,14 @@
 
         Unreviewed, test expectation update.
 
+        * platform/chromium/test_expectations.txt:
+          - progress-element.html is essentially flaky on Mac.
+          - use-clipped-hit.svg passes recently.
+
+2010-06-19  Kent Tamura  <tkent@chromium.org>
+
+        Unreviewed, test expectation update.
+
         Add expectations for <meter> and <progress>.
 
         * platform/chromium-linux/fast/dom/HTMLMeterElement: Added.

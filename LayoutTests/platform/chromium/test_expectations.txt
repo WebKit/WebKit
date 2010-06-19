@@ -487,6 +487,9 @@ WONTFIX SKIP : fast/events/spatial-navigation = FAIL
 // We're not planning to relax third-party cookie rules any time soon.
 WONTFIX BUG37684 SKIP : http/tests/cookies/third-party-cookie-relaxing.html = FAIL
 
+// <progress> on Mac is always animated.
+WONTFIX MAC : fast/dom/HTMLProgressElement/progress-element.html = IMAGE PASS
+
 // -----------------------------------------------------------------
 // CHROME REWRITTEN TESTS
 // -----------------------------------------------------------------
@@ -908,9 +911,6 @@ BUG32392 SKIP : svg/batik/text/smallFonts.svg = FAIL
 BUG32401 LINUX WIN : svg/custom/marker-changes.svg = IMAGE+TEXT IMAGE
 
 BUG32444 LINUX WIN : svg/hixie/text/003.html = FAIL
-
-// SVG combined with font metrics.
-BUG24198 LINUX : svg/hixie/text/001-broken.xml = FAIL
 
 // SVG masks aren't quite working yet.
 // Might also be related to https://bugs.webkit.org/show_bug.cgi?id=21910
@@ -2554,7 +2554,6 @@ BUG35064 WIN DEBUG : fast/forms/restore-selection-after-layout.html = TEXT PASS
 // WebKit roll 54482 to 54493.
 BUG35242 WIN : svg/W3C-SVG-1.1/filters-conv-01-f.svg = IMAGE+TEXT TEXT
 BUG35242 WIN : svg/W3C-SVG-1.1/text-intro-05-t.svg = IMAGE+TEXT TEXT
-BUG35240 MAC : svg/custom/use-clipped-hit.svg = IMAGE
 
 // WebKit roll 54493 to 54530: new tests.
 BUG35114 : fast/js/parser-syntax-check.html = TEXT
