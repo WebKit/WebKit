@@ -651,7 +651,10 @@ WebInspector.StylePropertiesSection = function(styleRule, subtitle, computedStyl
         if (!subtitle) {
             if (this.styleRule.parentStyleSheet && this.styleRule.parentStyleSheet.href) {
                 var url = this.styleRule.parentStyleSheet.href;
-                this.subtitleElement.appendChild(WebInspector.linkifyResourceAsNode(url, "resources", this.rule.sourceLine + 1));
+                var link = WebInspector.linkifyResourceAsNode(url, "resources", this.rule.sourceLine + 1);
+                link.setAttribute("data-uncopyable", link.textContent);
+                link.textContent = "";
+                this.subtitleElement.appendChild(link);
             } else if (isUserAgent)
                 subtitle = WebInspector.UIString("user agent stylesheet");
             else if (isUser)
@@ -669,7 +672,7 @@ WebInspector.StylePropertiesSection = function(styleRule, subtitle, computedStyl
 
     this.identifier = styleRule.selectorText;
     if (this.subtitle)
-        this.identifier += ":" + this.subtitleElement.textContent;
+        this.identifier += ":" + this.subtitle;
 }
 
 WebInspector.StylePropertiesSection.prototype = {

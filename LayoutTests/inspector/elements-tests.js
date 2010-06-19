@@ -69,7 +69,7 @@ function frontend_getSelectedElementStyles(excludeComputed, excludeMatched)
                 continue;
             if (section.element.previousSibling && section.element.previousSibling.className === "styles-sidebar-separator")
                 result.push("======== " + section.element.previousSibling.textContent + " ========");
-            result.push((section.expanded ? "[expanded] " : "[collapsed] ") + section.titleElement.textContent + " (" + section.subtitleElement.textContent + ")");
+            result.push((section.expanded ? "[expanded] " : "[collapsed] ") + section.titleElement.textContent + " (" + section.subtitleAsText + ")");
             section.expand();
             frontend_dumpStyleTreeOutline(section.propertiesTreeOutline, result);
             result.push("");

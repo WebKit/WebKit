@@ -4042,6 +4042,10 @@ a.worker-item {
     color: inherit;
 }
 
+.styles-section .subtitle::before, .styles-section .subtitle a::before {
+    content: attr(data-uncopyable);
+}
+
 .styles-section .properties {
     display: none;
     margin: 0;

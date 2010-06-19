@@ -82,7 +82,22 @@ WebInspector.Section.prototype = {
         if (this._subtitle === x)
             return;
         this._subtitle = x;
-        this.subtitleElement.innerHTML = x;
+        this.subtitleElement.setAttribute("data-uncopyable", x);
+    },
+
+    get subtitleAsText()
+    {
+        var result = "";
+        var data = this.subtitleElement.getAttribute("data-uncopyable");
+        if (data)
+            result += data;
+        var child = this.subtitleElement.querySelector("[data-uncopyable]");
+        if (child) {
+            var linkData = child.getAttribute("data-uncopyable");
+            if (linkData)
+                result += linkData;
+        }
+        return result;
     },
 
     get expanded()
