@@ -1,3 +1,16 @@
+2010-06-19  Kent Tamura  <tkent@chromium.org>
+
+        Unreviewed, test expectation update.
+
+        Rebaseline for tetDecoration.svg.
+
+        * platform/chromium-linux/svg/batik/text/textDecoration-expected.checksum: Added.
+        * platform/chromium-linux/svg/batik/text/textDecoration-expected.png: Added.
+        * platform/chromium-win/svg/batik/text/textDecoration-expected.checksum: Added.
+        * platform/chromium-win/svg/batik/text/textDecoration-expected.png: Added.
+        * platform/chromium-win/svg/batik/text/textDecoration-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
 2010-06-19  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Dimitri Glazkov.
