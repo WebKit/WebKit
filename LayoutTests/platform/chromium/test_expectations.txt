@@ -2859,3 +2859,5 @@ BUGWK35961 : printing/page-rule-selection.html = TEXT
 
 // Needs to implement layoutTestController.dumpResourceResponseMIMETypes()
 BUG46872 : fast/preloader = TEXT
+// Became a flaky crash in http://trac.webkit.org/log/?verbose=on&rev=61417&stop_rev=61393
+BUG46974 WIN : inspector/audits-panel-functional.html = CRASH PASS
