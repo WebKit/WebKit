@@ -1,3 +1,10 @@
+2010-06-18  Aaron Boodman  <aa@chromium.org>
+
+        Remove WebKit::WebDocument::isXHTMLDocument.
+        https://bugs.webkit.org/show_bug.cgi?id=40815
+
+        * dom/Document.h: remove isXHTML() getter.
+
 2010-06-19  Aaron Boodman  <aa@chromium.org>
 
         Unreviewed, rolling out r61466.
