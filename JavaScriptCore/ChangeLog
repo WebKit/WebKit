@@ -2,6 +2,16 @@
 
         Reviewed by Kenneth Rohde Christiansen.
 
+        Fix compilation with the Intel C++ compiler (11.1.072).
+
+        Like RVCT, label pointers must be void*, not const void*.
+
+        * bytecode/Opcode.h:
+
+2010-06-19  Thiago Macieira <thiago.macieira@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
         Add the WTF_COMPILER_INTEL for when the Intel compiler is used
         for building. Usually, the Intel compiler masquerades as
         another compiler in the system and gets away with it, but some
