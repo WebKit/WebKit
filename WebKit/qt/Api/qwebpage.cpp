@@ -593,7 +593,7 @@ void QWebPagePrivate::timerEvent(QTimerEvent *ev)
     if (timerId == tripleClickTimer.timerId())
         tripleClickTimer.stop();
     else
-        q->QObject::timerEvent(ev);
+        q->timerEvent(ev);
 }
 
 void QWebPagePrivate::mouseMoveEvent(QGraphicsSceneMouseEvent* ev)
