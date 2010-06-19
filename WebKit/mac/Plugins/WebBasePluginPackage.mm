@@ -47,6 +47,7 @@
 #import <mach-o/fat.h>
 #import <mach-o/loader.h>
 
+
 #define JavaCocoaPluginIdentifier   @"com.apple.JavaPluginCocoa"
 #define JavaCarbonPluginIdentifier  @"com.apple.JavaAppletPlugin"
 #define JavaCFMPluginFilename       @"Java Applet Plugin Enabler"
@@ -57,8 +58,6 @@
 @interface NSArray (WebPluginExtensions)
 - (NSArray *)_web_lowercaseStrings;
 @end;
-
-using namespace WebCore;
 
 @implementation WebBasePluginPackage
 
@@ -123,7 +122,7 @@ static NSString *pathByResolvingSymlinksAndAliases(NSString *thePath)
     if (!(self = [super init]))
         return nil;
         
-    path = pathByResolvingSymlinksAndAliases(pluginPath);
+    path = [pathByResolvingSymlinksAndAliases(pluginPath) copy];
     bundle = [[NSBundle alloc] initWithPath:path];
 #ifndef __ppc__
     // 32-bit PowerPC is the only platform where non-bundled CFM plugins are supported
@@ -234,12 +233,12 @@ static NSString *pathByResolvingSymlinksAndAliases(NSString *thePath)
     NSString *theName = [bundle objectForInfoDictionaryKey:WebPluginNameKey];
     if (!theName)
         theName = filename;
-    name = theName;
+    [self setName:theName];
 
     description = [bundle objectForInfoDictionaryKey:WebPluginDescriptionKey];
     if (!description)
         description = filename;
-    pluginDescription = description;
+    [self setPluginDescription:description];
 
     return YES;
 }
@@ -257,6 +256,10 @@ static NSString *pathByResolvingSymlinksAndAliases(NSString *thePath)
     ASSERT(!pluginDatabases || [pluginDatabases count] == 0);
     [pluginDatabases release];
     
+    [name release];
+    [path release];
+    [pluginDescription release];
+
     [MIMEToDescription release];
     [MIMEToExtensions release];
     [extensionToMIME release];
@@ -280,22 +283,22 @@ static NSString *pathByResolvingSymlinksAndAliases(NSString *thePath)
     [super finalize];
 }
 
-- (const String&)name
+- (NSString *)name
 {
     return name;
 }
 
-- (const String&)path
+- (NSString *)path
 {
     return path;
 }
 
-- (String)filename
+- (NSString *)filename
 {
-    return [(NSString *)path lastPathComponent];
+    return [path lastPathComponent];
 }
 
-- (const String&)pluginDescription
+- (NSString *)pluginDescription
 {
     return pluginDescription;
 }
@@ -335,6 +338,24 @@ static NSString *pathByResolvingSymlinksAndAliases(NSString *thePath)
     return bundle;
 }
 
+- (void)setName:(NSString *)theName
+{
+    [name release];
+    name = [theName retain];
+}
+
+- (void)setPath:(NSString *)thePath
+{
+    [path release];
+    path = [thePath retain];
+}
+
+- (void)setPluginDescription:(NSString *)description
+{
+    [pluginDescription release];
+    pluginDescription = [description retain];
+}
+
 - (void)setMIMEToDescriptionDictionary:(NSDictionary *)MIMEToDescriptionDictionary
 {
     [MIMEToDescription release];
@@ -367,7 +388,7 @@ static NSString *pathByResolvingSymlinksAndAliases(NSString *thePath)
 - (NSString *)description
 {
     return [NSString stringWithFormat:@"name: %@\npath: %@\nmimeTypes:\n%@\npluginDescription:%@",
-        (NSString *)name, (NSString *)path, [MIMEToExtensions description], [MIMEToDescription description], (NSString *)pluginDescription];
+        name, path, [MIMEToExtensions description], [MIMEToDescription description], pluginDescription];
 }
 
 - (BOOL)isQuickTimePlugIn
@@ -382,7 +403,7 @@ static NSString *pathByResolvingSymlinksAndAliases(NSString *thePath)
     NSString *bundleIdentifier = [[self bundle] bundleIdentifier];
     return [bundleIdentifier _webkit_isCaseInsensitiveEqualToString:JavaCocoaPluginIdentifier] || 
         [bundleIdentifier _webkit_isCaseInsensitiveEqualToString:JavaCarbonPluginIdentifier] ||
-        [(NSString *)[self filename] _webkit_isCaseInsensitiveEqualToString:JavaCFMPluginFilename];
+        [[path lastPathComponent] _webkit_isCaseInsensitiveEqualToString:JavaCFMPluginFilename];
 }
 
 static inline void swapIntsInHeader(uint8_t* bytes, unsigned length)

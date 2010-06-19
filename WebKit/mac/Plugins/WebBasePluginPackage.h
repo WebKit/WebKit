@@ -26,8 +26,6 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebCore/PluginData.h>
-
 #if ENABLE(NETSCAPE_PLUGIN_API)
 #import <WebKit/npfunctions.h>
 #else
@@ -56,9 +54,9 @@ typedef void (*BP_CreatePluginMIMETypesPreferencesFuncPtr)(void);
 {
     NSMutableSet *pluginDatabases;
     
-    WebCore::String name;
-    WebCore::String path;
-    WebCore::String pluginDescription;
+    NSString *name;
+    NSString *path;
+    NSString *pluginDescription;
 
     NSBundle *bundle;
     CFBundleRef cfBundle;
@@ -78,10 +76,10 @@ typedef void (*BP_CreatePluginMIMETypesPreferencesFuncPtr)(void);
 - (BOOL)load;
 - (void)unload;
 
-- (WebCore::String)filename;
-- (const WebCore::String&)name;
-- (const WebCore::String&)path;
-- (const WebCore::String&)pluginDescription;
+- (NSString *)name;
+- (NSString *)path;
+- (NSString *)filename;
+- (NSString *)pluginDescription;
 - (NSBundle *)bundle;
 
 - (BOOL)supportsExtension:(NSString *)extension;
@@ -93,6 +91,9 @@ typedef void (*BP_CreatePluginMIMETypesPreferencesFuncPtr)(void);
 - (NSString *)MIMETypeForExtension:(NSString *)extension;
 - (NSArray *)extensionsForMIMEType:(NSString *)MIMEType;
 
+- (void)setName:(NSString *)theName;
+- (void)setPath:(NSString *)thePath;
+- (void)setPluginDescription:(NSString *)description;
 - (void)setMIMEToDescriptionDictionary:(NSDictionary *)MIMEToDescriptionDictionary;
 - (void)setMIMEToExtensionsDictionary:(NSDictionary *)MIMEToExtensionsDictionary;
 

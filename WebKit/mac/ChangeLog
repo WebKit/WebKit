@@ -1,3 +1,39 @@
+2010-06-18  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed, rolling out r61459.
+        http://trac.webkit.org/changeset/61459
+        https://bugs.webkit.org/show_bug.cgi?id=40869
+
+        Seems to have broken two tests on the Tiger buildbot:
+
+        dom/html/level2/html/AppletsCollection.html
+        plugins/qt-qwidget-plugin.html
+
+        Anders wasn't on #webkit...
+
+        * Plugins/Hosted/NetscapePluginHostManager.mm:
+        (WebKit::NetscapePluginHostManager::spawnPluginHost):
+        * Plugins/WebBasePluginPackage.h:
+        * Plugins/WebBasePluginPackage.mm:
+        (-[WebBasePluginPackage initWithPath:]):
+        (-[WebBasePluginPackage getPluginInfoFromPLists]):
+        (-[WebBasePluginPackage dealloc]):
+        (-[WebBasePluginPackage name]):
+        (-[WebBasePluginPackage path]):
+        (-[WebBasePluginPackage filename]):
+        (-[WebBasePluginPackage pluginDescription]):
+        (-[WebBasePluginPackage setName:]):
+        (-[WebBasePluginPackage setPath:]):
+        (-[WebBasePluginPackage setPluginDescription:]):
+        (-[WebBasePluginPackage description]):
+        (-[WebBasePluginPackage isJavaPlugIn]):
+        * Plugins/WebNetscapePluginPackage.mm:
+        (-[WebNetscapePluginPackage getPluginInfoFromResources]):
+        (-[WebNetscapePluginPackage _tryLoad]):
+        (-[WebNetscapePluginPackage _unloadWithShutdown:]):
+        * Plugins/WebPluginPackage.mm:
+        (-[WebPluginPackage load]):
+
 2010-06-18  Anders Carlsson  <andersca@apple.com>
 
         Fix Tiger build.
