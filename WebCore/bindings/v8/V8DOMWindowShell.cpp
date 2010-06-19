@@ -117,6 +117,8 @@ static void reportUnsafeJavaScriptAccess(v8::Local<v8::Object> host, v8::AccessT
         V8Proxy::reportUnsafeAccessTo(target, V8Proxy::ReportLater);
 }
 
+bool V8DOMWindowShell::s_isV8Initialized = false;
+
 PassRefPtr<V8DOMWindowShell> V8DOMWindowShell::create(Frame* frame)
 {
     return adoptRef(new V8DOMWindowShell(frame));
@@ -247,25 +249,7 @@ void V8DOMWindowShell::initContextIfNeeded()
     // Create a handle scope for all local handles.
     v8::HandleScope handleScope;
 
-    // Setup the security handlers and message listener. This only has
-    // to be done once.
-    static bool isV8Initialized = false;
-    if (!isV8Initialized) {
-        // Tells V8 not to call the default OOM handler, binding code
-        // will handle it.
-        v8::V8::IgnoreOutOfMemoryException();
-        v8::V8::SetFatalErrorHandler(reportFatalErrorInV8);
-
-        v8::V8::SetGlobalGCPrologueCallback(&V8GCController::gcPrologue);
-        v8::V8::SetGlobalGCEpilogueCallback(&V8GCController::gcEpilogue);
-
-        v8::V8::AddMessageListener(&V8ConsoleMessage::handler);
-
-        v8::V8::SetFailedAccessCheckCallbackFunction(reportUnsafeJavaScriptAccess);
-
-        isV8Initialized = true;
-    }
-
+    initializeV8IfNeeded();
 
     m_context = createNewContext(m_global, 0);
     if (m_context.IsEmpty())
@@ -306,6 +290,43 @@ void V8DOMWindowShell::initContextIfNeeded()
     // FIXME: This is wrong. We should actually do this for the proper world once
     // we do isolated worlds the WebCore way.
     m_frame->loader()->dispatchDidClearWindowObjectInWorld(0);
+}
+
+void V8DOMWindowShell::initializeV8IfNeeded()
+{
+    if (s_isV8Initialized)
+      return;
+
+    // Tells V8 not to call the default OOM handler, binding code
+    // will handle it.
+    v8::V8::IgnoreOutOfMemoryException();
+    v8::V8::SetFatalErrorHandler(reportFatalErrorInV8);
+
+    v8::V8::SetGlobalGCPrologueCallback(&V8GCController::gcPrologue);
+    v8::V8::SetGlobalGCEpilogueCallback(&V8GCController::gcEpilogue);
+
+    v8::V8::AddMessageListener(&V8ConsoleMessage::handler);
+
+    v8::V8::SetFailedAccessCheckCallbackFunction(reportUnsafeJavaScriptAccess);
+
+    s_isV8Initialized = true;
+}
+
+void V8DOMWindowShell::uninitializeV8IfNeeded()
+{
+    if (!s_isV8Initialized)
+      return;
+
+    v8::V8::SetFatalErrorHandler(0);
+    v8::V8::SetGlobalGCPrologueCallback(0);
+    v8::V8::SetGlobalGCEpilogueCallback(0);
+    v8::V8::SetFailedAccessCheckCallbackFunction(0);
+    v8::V8::RemoveMessageListeners(&V8ConsoleMessage::handler);
+
+    // FIXME: This one cannot be undone yet.
+    // v8::V8::IgnoreOutOfMemoryException();
+
+    s_isV8Initialized = false;
 }
 
 v8::Persistent<v8::Context> V8DOMWindowShell::createNewContext(v8::Handle<v8::Object> global, int extensionGroup)

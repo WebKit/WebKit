@@ -1,3 +1,14 @@
+2010-06-18  Aaron Boodman  <aa@chromium.org>
+
+        WebKit API: Undo static hooks into V8 when WebKit is shut down.
+        https://bugs.webkit.org/show_bug.cgi?id=40816
+
+        * bindings/v8/V8DOMWindowShell.cpp:
+        (WebCore::V8DOMWindowShell::initContextIfNeeded):
+        (WebCore::V8DOMWindowShell::initializeV8IfNeeded):
+        (WebCore::V8DOMWindowShell::uninitializeV8IfNeeded):
+        * bindings/v8/V8DOMWindowShell.h:
+
 2010-06-18  Jessie Berlin  <jberlin@webkit.org>
 
         Reviewed by Darin Adler.

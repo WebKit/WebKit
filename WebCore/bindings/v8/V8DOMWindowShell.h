@@ -50,6 +50,8 @@ class String;
 class V8DOMWindowShell : public RefCounted<V8DOMWindowShell> {
 public:
     static PassRefPtr<V8DOMWindowShell> create(Frame*);
+    static void initializeV8IfNeeded();
+    static void uninitializeV8IfNeeded();
 
     v8::Handle<v8::Context> context() const { return m_context; }
 
@@ -119,6 +121,8 @@ private:
     v8::Persistent<v8::Context> m_context;
     v8::Persistent<v8::Object> m_global;
     v8::Persistent<v8::Object> m_document;
+
+    static bool s_isV8Initialized;
 };
 
 } // namespace WebCore
