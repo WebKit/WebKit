@@ -230,6 +230,34 @@ InjectedScript._getPropertyNames = function(object, resultSet)
     return Object.keys(propertyNameSet);
 }
 
+// Automatically generate the list of CSS properties, and convert
+// them to their JavaScript accessible form.
+InjectedScript._hiddenStyleProperties = (function() {
+    var properties = [];
+
+    var keywords = window.getComputedStyle(document.documentElement);
+    for (var i = 0, len = keywords.length; i < len; ++i) {
+        // Strip leading hyphen from "-vendor" properties.
+        var property = keywords[i];
+        if (property.charAt(0) === "-")
+            property = property.substring(1);
+
+        // Turn hypens points into camel case points.
+        properties[i] = property.replace(/\-./g, function(match) {
+            return match.charAt(1).toUpperCase();
+        });
+    }
+
+    return properties;
+})();
+
+InjectedScript._addHiddenStyleProperties = function(resultSet)
+{
+    var hiddenStyleProperties = InjectedScript._hiddenStyleProperties;
+    for (var i = 0, length = hiddenStyleProperties.length; i < length; ++i)
+        resultSet[hiddenStyleProperties[i]] = true;
+}
+
 InjectedScript.getCompletions = function(expression, includeInspectorCommandLineAPI, callFrameId)
 {
     var props = {};
@@ -253,8 +281,12 @@ InjectedScript.getCompletions = function(expression, includeInspectorCommandLine
                 expression = "this";
             expressionResult = InjectedScript._evaluateOn(inspectedWindow.eval, inspectedWindow, expression, false);
         }
-        if (typeof expressionResult == "object")
+
+        if (typeof expressionResult === "object") {
             InjectedScript._populatePropertyNames(expressionResult, props);
+            if (expressionResult.constructor === inspectedWindow.document.documentElement.style.constructor)
+                InjectedScript._addHiddenStyleProperties(props);
+        }
 
         if (includeInspectorCommandLineAPI) {
             for (var prop in InjectedScript._commandLineAPI)
