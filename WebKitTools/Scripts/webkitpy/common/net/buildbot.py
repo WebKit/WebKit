@@ -321,7 +321,7 @@ class BuildBot(object):
             "Windows.*Build",
             "GTK",
             "Qt",
-            "Chromium",
+            "Chromium.*Release$",
         ]
 
     def _parse_last_build_cell(self, builder, cell):
