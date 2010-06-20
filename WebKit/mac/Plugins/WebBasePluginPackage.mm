@@ -47,12 +47,12 @@
 #import <mach-o/fat.h>
 #import <mach-o/loader.h>
 
-#define JavaCocoaPluginIdentifier   @"com.apple.JavaPluginCocoa"
-#define JavaCarbonPluginIdentifier  @"com.apple.JavaAppletPlugin"
+#define JavaCocoaPluginIdentifier   "com.apple.JavaPluginCocoa"
+#define JavaCarbonPluginIdentifier  "com.apple.JavaAppletPlugin"
 #define JavaCFMPluginFilename       @"Java Applet Plugin Enabler"
 
-#define QuickTimeCarbonPluginIdentifier       @"com.apple.QuickTime Plugin.plugin"
-#define QuickTimeCocoaPluginIdentifier        @"com.apple.quicktime.webplugin"
+#define QuickTimeCarbonPluginIdentifier       "com.apple.QuickTime Plugin.plugin"
+#define QuickTimeCocoaPluginIdentifier        "com.apple.quicktime.webplugin"
 
 @interface NSArray (WebPluginExtensions)
 - (NSArray *)_web_lowercaseStrings;
@@ -372,16 +372,14 @@ static NSString *pathByResolvingSymlinksAndAliases(NSString *thePath)
 
 - (BOOL)isQuickTimePlugIn
 {
-    NSString *bundleIdentifier = [[self bundle] bundleIdentifier];
-    return [bundleIdentifier _webkit_isCaseInsensitiveEqualToString:QuickTimeCarbonPluginIdentifier] || 
-        [bundleIdentifier _webkit_isCaseInsensitiveEqualToString:QuickTimeCocoaPluginIdentifier];
+    const String& bundleIdentifier = [self bundleIdentifier];
+    return bundleIdentifier == QuickTimeCocoaPluginIdentifier || bundleIdentifier == QuickTimeCocoaPluginIdentifier;
 }
 
 - (BOOL)isJavaPlugIn
 {
-    NSString *bundleIdentifier = [[self bundle] bundleIdentifier];
-    return [bundleIdentifier _webkit_isCaseInsensitiveEqualToString:JavaCocoaPluginIdentifier] || 
-        [bundleIdentifier _webkit_isCaseInsensitiveEqualToString:JavaCarbonPluginIdentifier] ||
+    const String& bundleIdentifier = [self bundleIdentifier];
+    return bundleIdentifier == JavaCocoaPluginIdentifier || bundleIdentifier == JavaCarbonPluginIdentifier ||
         [(NSString *)[self filename] _webkit_isCaseInsensitiveEqualToString:JavaCFMPluginFilename];
 }
 
@@ -485,6 +483,11 @@ static inline void swapIntsInHeader(uint8_t* bytes, unsigned length)
     ASSERT([pluginDatabases containsObject:database]);
 
     [pluginDatabases removeObject:database];
+}
+
+- (WebCore::String)bundleIdentifier
+{
+    return CFBundleGetIdentifier(cfBundle);
 }
 
 @end

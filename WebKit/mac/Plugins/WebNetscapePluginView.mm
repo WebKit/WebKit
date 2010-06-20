@@ -1234,7 +1234,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
         cValues = (char **)malloc([values count] * sizeof(char *));
     }
 
-    BOOL isWMP = [[[_pluginPackage.get() bundle] bundleIdentifier] isEqualToString:@"com.microsoft.WMP.defaultplugin"];
+    BOOL isWMP = [_pluginPackage.get() bundleIdentifier] == "com.microsoft.WMP.defaultplugin";
     
     unsigned i;
     unsigned count = [keys count];
@@ -2370,9 +2370,9 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     ASSERT(pluginFunctionCallDepth == 0);
 
     PluginMainThreadScheduler::scheduler().registerPlugin(plugin);
-    
-    _isFlash = [[[_pluginPackage.get() bundle] bundleIdentifier] isEqualToString:@"com.macromedia.Flash Player.plugin"];
-    _isSilverlight = [[[_pluginPackage.get() bundle] bundleIdentifier] isEqualToString:@"com.microsoft.SilverlightPlugin"];
+
+    _isFlash = [_pluginPackage.get() bundleIdentifier] == "com.macromedia.Flash Player.plugin";
+    _isSilverlight = [_pluginPackage.get() bundleIdentifier] == "com.microsoft.SilverlightPlugin";
 
     [[self class] setCurrentPluginView:self];
     NPError npErr = [_pluginPackage.get() pluginFuncs]->newp((char *)[_MIMEType.get() cString], plugin, _mode, argsCount, cAttributes, cValues, NULL);

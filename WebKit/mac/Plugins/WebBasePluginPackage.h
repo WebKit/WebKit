@@ -82,7 +82,8 @@ typedef void (*BP_CreatePluginMIMETypesPreferencesFuncPtr)(void);
 - (const WebCore::String&)name;
 - (const WebCore::String&)path;
 - (const WebCore::String&)pluginDescription;
-- (NSBundle *)bundle;
+
+- (WebCore::String)bundleIdentifier;
 
 - (BOOL)supportsExtension:(NSString *)extension;
 - (BOOL)supportsMIMEType:(NSString *)MIMEType;

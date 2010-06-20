@@ -689,6 +689,22 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
         [self _unloadWithShutdown:YES];
 }
 
+
+- (BOOL)supportsSnapshotting
+{
+    if ([self bundleIdentifier] != "com.macromedia.Flash Player.plugin")
+        return YES;
+    
+    // Flash has a bogus Info.plist entry for CFBundleVersionString, so use CFBundleShortVersionString.
+    NSString *versionString = (NSString *)CFDictionaryGetValue(CFBundleGetInfoDictionary(cfBundle), CFSTR("CFBundleShortVersionString"));
+    
+    if (![versionString hasPrefix:@"10.1"])
+        return YES;
+    
+    // Some prerelease versions of Flash 10.1 crash when sent a drawRect event using the CA drawing model: <rdar://problem/7739922>
+    return CFStringCompare((CFStringRef)versionString, CFSTR("10.1.53.60"), kCFCompareNumerically) != kCFCompareLessThan;
+}
+
 @end
 
 #ifdef SUPPORT_CFM

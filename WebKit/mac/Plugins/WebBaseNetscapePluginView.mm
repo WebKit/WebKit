@@ -146,7 +146,7 @@ String WebHaltablePlugin::pluginName() const
 #if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
     // Enable "kiosk mode" when instantiating the QT plug-in inside of Dashboard. See <rdar://problem/6878105>
     if ([[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.apple.dashboard.client"] &&
-        [[[_pluginPackage.get() bundle] bundleIdentifier] isEqualToString:@"com.apple.QuickTime Plugin.plugin"]) {
+        [_pluginPackage.get() bundleIdentifier] == "com.apple.QuickTime Plugin.plugin") {
         RetainPtr<NSMutableArray> mutableKeys(AdoptNS, [keys mutableCopy]);
         RetainPtr<NSMutableArray> mutableValues(AdoptNS, [values mutableCopy]);
 
@@ -578,20 +578,7 @@ String WebHaltablePlugin::pluginName() const
 
 - (BOOL)supportsSnapshotting
 {
-    NSBundle *pluginBundle = [_pluginPackage.get() bundle];
-    if (![[pluginBundle bundleIdentifier] isEqualToString:@"com.macromedia.Flash Player.plugin"])
-        return YES;
-    
-    // Flash has a bogus Info.plist entry for CFBundleVersionString, so use CFBundleShortVersionString.
-    NSString *versionString = [pluginBundle objectForInfoDictionaryKey:@"CFBundleShortVersionString"];
-    
-    static const NSString *flash10dotOnePrefix = @"10.1";
-    if (![versionString hasPrefix:flash10dotOnePrefix])
-        return YES;
-    
-    // Some prerelease versions of Flash 10.1 crash when sent a drawRect event using the CA drawing model: <rdar://problem/7739922>
-    static const CFStringRef knownGoodFlash10dot1Release = CFSTR("10.1.53.60");
-    return CFStringCompare((CFStringRef)versionString, knownGoodFlash10dot1Release, kCFCompareNumerically) != kCFCompareLessThan;
+    return [_pluginPackage.get() supportsSnapshotting];
 }
 
 - (BOOL)hasBeenHalted

@@ -82,7 +82,7 @@ static void checkCandidate(WebBasePluginPackage **currentPlugin, WebBasePluginPa
         return;
     }
 
-    if ([[[*currentPlugin bundle] bundleIdentifier] isEqualToString:[[*candidatePlugin bundle] bundleIdentifier]] && [*candidatePlugin versionNumber] > [*currentPlugin versionNumber]) 
+    if ([*currentPlugin bundleIdentifier] == [*candidatePlugin bundleIdentifier] && [*candidatePlugin versionNumber] > [*currentPlugin versionNumber]) 
         *currentPlugin = *candidatePlugin;
 }
 

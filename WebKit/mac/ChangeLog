@@ -1,5 +1,36 @@
 2010-06-20  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        Remove -[WebBasePluginPackage bundle]
+        https://bugs.webkit.org/show_bug.cgi?id=40892
+
+        Add -[WebBasePluginPackage bundleIdentifier] and switch clients over to it.
+        
+        Move the supportsSnapshotting method over to the plug-in package.
+        
+        * Plugins/Hosted/NetscapePluginHostManager.mm:
+        (WebKit::NetscapePluginHostManager::hostForPackage):
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView initWithFrame:pluginPackage:URL:baseURL:MIMEType:attributeKeys:attributeValues:loadManually:element:WebCore::]):
+        (-[WebBaseNetscapePluginView supportsSnapshotting]):
+        * Plugins/WebBasePluginPackage.h:
+        * Plugins/WebBasePluginPackage.mm:
+        (-[WebBasePluginPackage isQuickTimePlugIn]):
+        (-[WebBasePluginPackage isJavaPlugIn]):
+        (-[WebBasePluginPackage WebCore::]):
+        Call bundleIdentifier directly instead of asking the bundle 
+        * Plugins/WebNetscapePluginPackage.h:
+        * Plugins/WebNetscapePluginPackage.mm:
+        (-[WebNetscapePluginPackage supportsSnapshotting]):
+        * Plugins/WebNetscapePluginView.mm:
+        (-[WebNetscapePluginView setAttributeKeys:andValues:]):
+        (-[WebNetscapePluginView _createPlugin]):
+        * Plugins/WebPluginDatabase.mm:
+        (checkCandidate):
+
+2010-06-20  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Dan Bernstein.
 
         Change some WebPluginDabase ivars to use WebCore::String instead of NSString.
