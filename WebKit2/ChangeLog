@@ -1,3 +1,15 @@
+2010-06-20  Jessie Berlin  <jberlin@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Add #if USE(PLATFORM_STRATEGIES) where WebPlatformStrategies is being used.
+
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.h:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::WebProcess):
+        Only initialize the web platform strategies if PLATFORM_STRATEGIES is being used.
+
 2010-06-19  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

@@ -53,8 +53,10 @@ WebProcess& WebProcess::shared()
 WebProcess::WebProcess()
     : m_inDidClose(false)
 {
+#if USE(PLATFORM_STRATEGIES)
     // Initialize our platform strategies.
     WebPlatformStrategies::initialize();
+#endif // USE(PLATFORM_STRATEGIES)
 }
 
 void WebProcess::initialize(CoreIPC::Connection::Identifier serverIdentifier, RunLoop* runLoop)
