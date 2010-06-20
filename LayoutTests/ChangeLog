@@ -1,3 +1,25 @@
+2010-06-19  Hayato Ito  <hayato@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Add tests for 'page-break-{before,after}: avoid'.
+        All tests are expected to fail due to lack of implementations.
+
+        https://bugs.webkit.org/show_bug.cgi?id=40814
+
+        * printing/page-break-after-avoid-expected.txt: Added.
+        * printing/page-break-after-avoid.html: Added.
+        * printing/page-break-avoid-expected.txt: Added.
+        * printing/page-break-avoid.html: Added.
+        * printing/page-break-before-avoid-expected.txt: Added.
+        * printing/page-break-before-avoid.html: Added.
+        * printing/script-tests/page-break-after-avoid.js: Added.
+        (test):
+        * printing/script-tests/page-break-avoid.js: Added.
+        (test):
+        * printing/script-tests/page-break-before-avoid.js: Added.
+        (test):
+
 2010-06-19  Tony Gentilcore  <tonyg@chromium.org>
 
         Reviewed by Adam Barth.
