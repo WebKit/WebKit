@@ -1318,6 +1318,18 @@ WebInspector.StylePropertyTreeElement.prototype = {
         event.stopPropagation();
     },
 
+    restoreNameElement: function()
+    {
+        // Restore <span class="webkit-css-property"> if it doesn't yet exist or was accidentally deleted.
+        if (this.nameElement === this.listItemElement.querySelector(".webkit-css-property"))
+            return;
+
+        this.nameElement = document.createElement("span");
+        this.nameElement.className = "webkit-css-property";
+        this.nameElement.textContent = "";
+        this.listItemElement.insertBefore(this.nameElement, this.listItemElement.firstChild);
+    },
+
     startEditing: function(selectElement)
     {
         // FIXME: we don't allow editing of longhand properties under a shorthand right now.
@@ -1327,7 +1339,12 @@ WebInspector.StylePropertyTreeElement.prototype = {
         if (WebInspector.isBeingEdited(this.listItemElement) || (this.treeOutline.section && !this.treeOutline.section.editable))
             return;
 
-        var context = { expanded: this.expanded, hasChildren: this.hasChildren, keyDownListener: this.editingKeyDown.bind(this) };
+        var context = {
+            expanded: this.expanded,
+            hasChildren: this.hasChildren,
+            keyDownListener: this.editingKeyDown.bind(this),
+            keyPressListener: this.editingKeyPress.bind(this)
+        };
 
         // Lie about our children to prevent expanding on double click and to collapse shorthands.
         this.hasChildren = false;
@@ -1336,9 +1353,40 @@ WebInspector.StylePropertyTreeElement.prototype = {
             selectElement = this.listItemElement;
 
         this.listItemElement.addEventListener("keydown", context.keyDownListener, false);
+        this.listItemElement.addEventListener("keypress", context.keyPressListener, false);
 
         WebInspector.startEditing(this.listItemElement, this.editingCommitted.bind(this), this.editingCancelled.bind(this), context);
         window.getSelection().setBaseAndExtent(selectElement, 0, selectElement, 1);
+    },
+
+    editingKeyPress: function(event)
+    {
+        var selection = window.getSelection();
+        var colonIndex = this.listItemElement.textContent.indexOf(":");
+        var selectionLeftOffset = event.target.selectionLeftOffset;
+
+        if (colonIndex < 0 || selectionLeftOffset <= colonIndex) {
+            // Complete property names.
+            var character = event.data.toLowerCase();
+            if (character && /[a-z-]/.test(character)) {
+                var prefix = selection.anchorNode.textContent.substring(0, selection.anchorOffset);
+                var property = WebInspector.CSSCompletions.firstStartsWith(prefix + character);
+
+                if (!selection.isCollapsed)
+                    selection.deleteFromDocument();
+
+                this.restoreNameElement();
+
+                if (property) {
+                    if (property !== this.nameElement.textContent)
+                        this.nameElement.textContent = property;
+                    this.nameElement.firstChild.select(prefix.length + 1);
+                    event.preventDefault();
+                }
+            }
+        } else {
+            // FIXME: This should complete property values.
+        }
     },
 
     editingKeyDown: function(event)
@@ -1399,9 +1447,24 @@ WebInspector.StylePropertyTreeElement.prototype = {
             }
 
             replacementString = prefix + number + suffix;
-        } else {
-            // FIXME: this should cycle through known keywords for the current property name.
+        } else if (selection.containsNode(this.nameElement, true)) {
+            var prefix = selectionRange.startContainer.textContent.substring(0, selectionRange.startOffset);
+            var property;
+
+            if (event.keyIdentifier === "Up")
+                property = WebInspector.CSSCompletions.previous(wordString, prefix);
+            else if (event.keyIdentifier === "Down")
+                property = WebInspector.CSSCompletions.next(wordString, prefix);
+
+            var startOffset = selectionRange.startOffset;
+            if (property) {
+                this.nameElement.textContent = property;
+                this.nameElement.firstChild.select(startOffset);
+            }
+            event.preventDefault();
             return;
+        } else {
+            // FIXME: this should cycle through known keywords for the current property value.
         }
 
         var replacementTextNode = document.createTextNode(replacementString);
@@ -1437,6 +1500,7 @@ WebInspector.StylePropertyTreeElement.prototype = {
         if (context.expanded)
             this.expand();
         this.listItemElement.removeEventListener("keydown", context.keyDownListener, false);
+        this.listItemElement.removeEventListener("keypress", context.keyPressListener, false);
         delete this.originalCSSText;
     },
 

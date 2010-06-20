@@ -3904,6 +3904,7 @@
             'inspector/front-end/ConsoleView.js',
             'inspector/front-end/ContextMenu.js',
             'inspector/front-end/CookieItemsView.js',
+            'inspector/front-end/CSSCompletions.js',
             'inspector/front-end/CSSStyleModel.js',
             'inspector/front-end/Database.js',
             'inspector/front-end/DatabaseQueryView.js',

@@ -1,3 +1,31 @@
+2010-06-20  Nikita Vasilyev  <me@elv1s.ru>
+
+        Reviewed by Joseph Pecoraro.
+
+        Web Inspector: Auto-completion for CSS property names in Styles pane
+        https://bugs.webkit.org/show_bug.cgi?id=17374
+
+        Added autocompletion for CSS properties. A suggestion for a property
+        shows when you type. You can also cycle through known property names
+        using the Up and Down arrow keys.
+
+        * WebCore.gypi:
+        * inspector/front-end/CSSCompletions.js: Added.
+        (WebInspector.CSSCompletions):
+        (WebInspector.CSSCompletions.startsWith):
+        (WebInspector.CSSCompletions.firstStartsWith):
+        (WebInspector.CSSCompletions._firstIndexOfPrefix):
+        (WebInspector.CSSCompletions.next):
+        (WebInspector.CSSCompletions.previous):
+        (WebInspector.CSSCompletions._closest):
+        * inspector/front-end/StylesSidebarPane.js:
+        (WebInspector.StylePropertyTreeElement.prototype):
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/inspector.html:
+        * inspector/front-end/utilities.js:
+        (Text.prototype.select):
+        ():
+
 2010-06-14  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Darin Adler.

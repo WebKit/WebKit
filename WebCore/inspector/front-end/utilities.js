@@ -328,6 +328,63 @@ Element.prototype.offsetRelativeToWindow = function(targetWindow)
     return elementOffset;
 }
 
+KeyboardEvent.prototype.__defineGetter__("data", function()
+{
+    // Emulate "data" attribute from DOM 3 TextInput event.
+    // See http://www.w3.org/TR/DOM-Level-3-Events/#events-Events-TextEvent-data
+    switch (this.type) {
+        case "keypress":
+            if (!this.ctrlKey && !this.metaKey)
+                return String.fromCharCode(this.charCode);
+            else
+                return "";
+        case "keydown":
+        case "keyup":
+            if (!this.ctrlKey && !this.metaKey && !this.altKey)
+                return String.fromCharCode(this.which);
+            else
+                return "";
+    }
+});
+
+Text.prototype.select = function(start, end)
+{
+    start = start || 0;
+    end = end || this.textContent.length;
+
+    if (start < 0)
+        start = end + start;
+
+    var selection = window.getSelection();
+    selection.removeAllRanges();
+    var range = document.createRange();
+    range.setStart(this, start);
+    range.setEnd(this, end);
+    selection.addRange(range);
+    return this;
+}
+
+Element.prototype.__defineGetter__("selectionLeftOffset", function() {
+    // Calculate selection offset relative to the current element.
+
+    var selection = window.getSelection();
+    if (!selection.containsNode(this, true))
+        return null;
+
+    var leftOffset = selection.anchorOffset;
+    var node = selection.anchorNode;
+
+    while (node !== this) {
+        while (node.previousSibling) {
+            node = node.previousSibling;
+            leftOffset += node.textContent.length;
+        }
+        node = node.parentNode;
+    }
+
+    return leftOffset;
+});
+
 Node.prototype.isWhitespace = isNodeWhitespace;
 Node.prototype.displayName = nodeDisplayName;
 Node.prototype.isAncestor = function(node)
@@ -670,6 +727,12 @@ Array.prototype.keySet = function()
     for (var i = 0; i < this.length; ++i)
         keys[this[i]] = true;
     return keys;
+}
+
+Array.convert = function(list)
+{
+    // Cast array-like object to an array.
+    return Array.prototype.slice.call(list);
 }
 
 function insertionIndexForObjectInListSortedByFunction(anObject, aList, aFunction)
