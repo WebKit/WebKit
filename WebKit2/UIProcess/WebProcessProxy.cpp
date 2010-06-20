@@ -25,6 +25,7 @@
 
 #include "WebProcessProxy.h"
 
+#include "WebContext.h"
 #include "WebPageNamespace.h"
 #include "WebPageProxy.h"
 #include "WebProcessLauncher.h"
@@ -42,21 +43,21 @@ static uint64_t generatePageID()
     return uniquePageID++;
 }
 
-PassRefPtr<WebProcessProxy> WebProcessProxy::create(ProcessModel processModel, const String& injectedBundlePath)
+PassRefPtr<WebProcessProxy> WebProcessProxy::create(WebContext* context)
 {
-    return adoptRef(new WebProcessProxy(processModel, injectedBundlePath));
+    return adoptRef(new WebProcessProxy(context));
 }
 
-WebProcessProxy::WebProcessProxy(ProcessModel processModel, const String& injectedBundlePath)
+WebProcessProxy::WebProcessProxy(WebContext* context)
     : m_responsivenessTimer(this)
-    , m_processModel(processModel)
+    , m_context(context)
 {
     connect();
 
     // FIXME: We could instead send the bundle path as part of the arguments to process creation?
     // Would that be better than sending a connection?
-    if (!injectedBundlePath.isEmpty())
-        connection()->send(WebProcessMessage::LoadInjectedBundle, 0, CoreIPC::In(injectedBundlePath));
+    if (!context->injectedBundlePath().isEmpty())
+        connection()->send(WebProcessMessage::LoadInjectedBundle, 0, CoreIPC::In(context->injectedBundlePath()));
 }
 
 WebProcessProxy::~WebProcessProxy()
@@ -66,7 +67,7 @@ WebProcessProxy::~WebProcessProxy()
 
 void WebProcessProxy::connect()
 {
-    ProcessInfo info = launchWebProcess(this, m_processModel);
+    ProcessInfo info = launchWebProcess(this, m_context->processModel() == ProcessModelSharedSecondaryThread);
     if (!info.connection) {
         // FIXME: Report an error.
         ASSERT(false);
@@ -164,7 +165,7 @@ void WebProcessProxy::didClose(CoreIPC::Connection*)
         pages[i]->processDidExit();
 
     // This may cause us to be deleted.
-    WebProcessManager::shared().processDidClose(this);    
+    WebProcessManager::shared().processDidClose(this, m_context);
 }
 
 void WebProcessProxy::didBecomeUnresponsive(ResponsivenessTimer*)

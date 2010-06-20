@@ -1,3 +1,23 @@
+2010-06-19  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=40882
+        Add ability to have a WebProcess per WebContext.
+
+        Move to use new shared contexts API.
+
+        * MiniBrowser/mac/AppDelegate.h:
+        * MiniBrowser/mac/AppDelegate.m:
+        (-[BrowserAppDelegate init]):
+        (-[BrowserAppDelegate getCurrentPageNamespace]):
+        (-[BrowserAppDelegate validateMenuItem:]):
+        (-[BrowserAppDelegate _setProcessModel:]):
+        (-[BrowserAppDelegate setSharedProcessProcessModel:]):
+        (-[BrowserAppDelegate setSharedThreadProcessModel:]):
+        * MiniBrowser/win/BrowserView.cpp:
+        (BrowserView::create):
+
 2010-06-02  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Adam Barth.

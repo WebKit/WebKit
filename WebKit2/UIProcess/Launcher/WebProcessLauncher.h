@@ -28,7 +28,6 @@
 
 #include "Connection.h"
 #include "PlatformProcessIdentifier.h"
-#include "ProcessModel.h"
 #include <wtf/RefPtr.h>
 
 namespace WebKit {
@@ -38,7 +37,7 @@ struct ProcessInfo {
     PlatformProcessIdentifier processIdentifier;
 };
 
-ProcessInfo launchWebProcess(CoreIPC::Connection::Client*, ProcessModel);
+ProcessInfo launchWebProcess(CoreIPC::Connection::Client*, bool useThread);
 
 } // namespace WebKit
 

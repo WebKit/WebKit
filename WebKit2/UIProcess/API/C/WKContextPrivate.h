@@ -42,6 +42,8 @@ typedef struct WKContextStatistics WKContextStatistics;
 
 WK_EXPORT void WKContextGetStatistics(WKContextRef context, WKContextStatistics* statistics);
 
+WK_EXPORT WKContextRef WKContextGetSharedThreadContext();
+
 #ifdef __cplusplus
 }
 #endif

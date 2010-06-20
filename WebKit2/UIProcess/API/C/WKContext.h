@@ -32,14 +32,10 @@
 extern "C" {
 #endif
 
-enum {
-    kWKProcessModelSecondaryProcess = 0,
-    kWKProcessModelSecondaryThread = 1
-};
-typedef unsigned long WKProcessModel;
+WK_EXPORT WKContextRef WKContextCreate();
+WK_EXPORT WKContextRef WKContextCreateWithInjectedBundlePath(WKStringRef path);
 
-WK_EXPORT WKContextRef WKContextCreate(WKProcessModel processModel);
-WK_EXPORT WKContextRef WKContextCreateWithInjectedBundlePath(WKProcessModel processModel, WKStringRef path);
+WK_EXPORT WKContextRef WKContextGetSharedProcessContext();
 
 WK_EXPORT void WKContextSetPreferences(WKContextRef context, WKPreferencesRef preferences);
 WK_EXPORT WKPreferencesRef WKContextGetPreferences(WKContextRef context);

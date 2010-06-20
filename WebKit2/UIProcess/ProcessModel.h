@@ -29,8 +29,9 @@
 namespace WebKit {
 
 enum ProcessModel {
-    ProcessModelSecondaryProcess,
-    ProcessModelSecondaryThread
+    ProcessModelSharedSecondaryProcess,
+    ProcessModelSharedSecondaryThread,
+    ProcessModelSecondaryProcess
 };
 
 } // namespace WebKit

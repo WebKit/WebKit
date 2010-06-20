@@ -29,6 +29,7 @@
 #include "WebPageNamespace.h"
 #include "WebPreferences.h"
 #include "WebProcessManager.h"
+#include "WebProcessProxy.h"
 
 #include "WKContextPrivate.h"
 
@@ -43,6 +44,18 @@ namespace WebKit {
 #ifndef NDEBUG
 static WTF::RefCountedLeakCounter webContextCounter("WebContext");
 #endif
+
+WebContext* WebContext::sharedProcessContext()
+{
+    static WebContext* context = new WebContext(ProcessModelSharedSecondaryProcess, String());
+    return context;
+}
+
+WebContext* WebContext::sharedThreadContext()
+{
+    static WebContext* context = new WebContext(ProcessModelSharedSecondaryThread, String());
+    return context;
+}
 
 WebContext::WebContext(ProcessModel processModel, const WebCore::String& injectedBundlePath)
     : m_processModel(processModel)
@@ -66,6 +79,25 @@ WebContext::~WebContext()
 #ifndef NDEBUG
     webContextCounter.decrement();
 #endif
+}
+
+void WebContext::ensureWebProcess()
+{
+    if (m_process && m_process->isValid())
+        return;
+
+    m_process = WebProcessManager::shared().getWebProcess(this);
+}
+
+WebPageProxy* WebContext::createWebPage(WebPageNamespace* pageNamespace)
+{
+    ensureWebProcess();
+    return m_process->createWebPage(pageNamespace);
+}
+
+void WebContext::reviveIfNecessary()
+{
+    ensureWebProcess();
 }
 
 WebPageNamespace* WebContext::createPageNamespace()

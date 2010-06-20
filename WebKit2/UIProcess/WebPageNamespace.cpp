@@ -60,42 +60,23 @@ WebPageNamespace::~WebPageNamespace()
 
 WebPageProxy* WebPageNamespace::createWebPage()
 {
-    ensureWebProcess();
-
-    return m_process->createWebPage(this);
-}
-
-void WebPageNamespace::ensureWebProcess()
-{
-    if (m_process && m_process->isValid())
-        return;
-
-    m_process = WebProcessManager::shared().getWebProcess(m_context->processModel(), m_context->injectedBundlePath());
-}
-
-void WebPageNamespace::reviveIfNecessary()
-{
-    if (m_process->isValid())
-        return;
-
-    // FIXME: The WebContext should hand us the new ProcessProxy based on its process model.
-    m_process = WebProcessManager::shared().getWebProcess(m_context->processModel(), m_context->injectedBundlePath());
+    return m_context->createWebPage(this);
 }
 
 void WebPageNamespace::preferencesDidChange()
 {
-    for (WebProcessProxy::pages_const_iterator it = m_process->pages_begin(), end = m_process->pages_end(); it != end; ++it)
+    for (WebProcessProxy::pages_const_iterator it = process()->pages_begin(), end = process()->pages_end(); it != end; ++it)
         (*it)->preferencesDidChange();
 }
 
 void WebPageNamespace::getStatistics(WKContextStatistics* statistics)
 {
-    if (!m_process)
+    if (!process())
         return;
 
-    statistics->numberOfWKPages += m_process->numberOfPages();
+    statistics->numberOfWKPages += process()->numberOfPages();
 
-    for (WebProcessProxy::pages_const_iterator it = m_process->pages_begin(), end = m_process->pages_end(); it != end; ++it)
+    for (WebProcessProxy::pages_const_iterator it = process()->pages_begin(), end = process()->pages_end(); it != end; ++it)
         (*it)->getStatistics(statistics);
 }
 

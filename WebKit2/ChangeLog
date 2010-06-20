@@ -1,3 +1,79 @@
+2010-06-19  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=40882
+        Add ability to have a WebProcess per WebContext.
+
+        - Move to a one-to-one correspondence of WebContexts to WebProcessProxies.
+        - Add explicit shared contexts for general use.
+        - Only non-shared contexts can use injected bundles.
+
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextCreate):
+        (WKContextCreateWithInjectedBundlePath):
+        (WKContextGetSharedProcessContext):
+        (WKContextGetSharedThreadContext):
+        * UIProcess/API/C/WKContext.h:
+        * UIProcess/API/C/WKContextPrivate.h:
+        Change API for WKContext to no longer take a WKProcessModel type and instead
+        have explicit Create/Get functions for the different kind of contexts. Added
+        two shared contexts, one threaded, one process, and made the threaded on private
+        for now.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView initWithFrame:]):
+        Make WKViews that don't have an explicit context use the shared process
+        context by default.
+
+        * UIProcess/Launcher/WebProcessLauncher.h:
+        * UIProcess/Launcher/mac/WebProcessLauncher.mm:
+        (WebKit::launchWebProcess):
+        * UIProcess/Launcher/win/WebProcessLauncher.cpp:
+        (WebKit::launchWebProcess):
+        Use a boolean argument to note whether we are using a thread or a process
+        instead of using the process model enum.
+
+        * UIProcess/ProcessModel.h:
+        (WebKit::):
+        Convert to using explicit Shared modifier for shared contexts.
+
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::sharedProcessContext):
+        (WebKit::WebContext::sharedThreadContext):
+        (WebKit::WebContext::ensureWebProcess):
+        (WebKit::WebContext::createWebPage):
+        (WebKit::WebContext::reviveIfNecessary):
+        * UIProcess/WebContext.h:
+        (WebKit::WebContext::create):
+        (WebKit::WebContext::process):
+        * UIProcess/WebPageNamespace.cpp:
+        (WebKit::WebPageNamespace::createWebPage):
+        (WebKit::WebPageNamespace::preferencesDidChange):
+        (WebKit::WebPageNamespace::getStatistics):
+        * UIProcess/WebPageNamespace.h:
+        (WebKit::WebPageNamespace::process):
+        (WebKit::WebPageNamespace::reviveIfNecessary):
+        Move WebProcessProxy creation logic up into WebContext.
+
+        * UIProcess/WebProcessManager.cpp:
+        (WebKit::WebProcessManager::getWebProcess):
+        (WebKit::WebProcessManager::processDidClose):
+        * UIProcess/WebProcessManager.h:
+        Keep a map of WebContexts to WebProcessProxies in addition to the two
+        shared processes.
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::create):
+        (WebKit::WebProcessProxy::WebProcessProxy):
+        (WebKit::WebProcessProxy::connect):
+        (WebKit::WebProcessProxy::didClose):
+        * UIProcess/WebProcessProxy.h:
+        Store a WebContext instead of the process model.
+
+        * mac/WebKit2.exp:
+        Add new functions.
+
 2010-06-18  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

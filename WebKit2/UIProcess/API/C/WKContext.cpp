@@ -26,7 +26,6 @@
 #include "WKContext.h"
 #include "WKContextPrivate.h"
 
-#include "ProcessModel.h"
 #include "WKAPICast.h"
 #include "WebContext.h"
 #include "WebPreferences.h"
@@ -36,31 +35,26 @@
 
 using namespace WebKit;
 
-static ProcessModel toWK(WKProcessModel wkProcessModel)
+WKContextRef WKContextCreate()
 {
-    switch (wkProcessModel) {
-        case kWKProcessModelSecondaryProcess:
-            return ProcessModelSecondaryProcess;
-        case kWKProcessModelSecondaryThread:
-            return ProcessModelSecondaryThread;
-        default:
-            ASSERT_NOT_REACHED();
-    }
-
-    // Default to SecondaryProcess if a bad value is passed.
-    return ProcessModelSecondaryProcess;
-}
-
-WKContextRef WKContextCreate(WKProcessModel wkProcessModel)
-{
-    RefPtr<WebContext> context = WebContext::create(toWK(wkProcessModel), WebCore::String());
+    RefPtr<WebContext> context = WebContext::create(WebCore::String());
     return toRef(context.release().releaseRef());
 }
 
-WKContextRef WKContextCreateWithInjectedBundlePath(WKProcessModel wkProcessModel, WKStringRef pathRef)
+WKContextRef WKContextCreateWithInjectedBundlePath(WKStringRef pathRef)
 {
-    RefPtr<WebContext> context = WebContext::create(toWK(wkProcessModel), toWK(pathRef));
+    RefPtr<WebContext> context = WebContext::create(toWK(pathRef));
     return toRef(context.release().releaseRef());
+}
+
+WKContextRef WKContextGetSharedProcessContext()
+{
+    return toRef(WebContext::sharedProcessContext());
+}
+
+WKContextRef WKContextGetSharedThreadContext()
+{
+    return toRef(WebContext::sharedThreadContext());
 }
 
 void WKContextSetPreferences(WKContextRef contextRef, WKPreferencesRef preferencesRef)

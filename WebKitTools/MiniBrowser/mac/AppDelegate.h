@@ -23,8 +23,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+enum ProcessModel {
+    kProcessModelSharedSecondaryThread,
+    kProcessModelSharedSecondaryProcess
+};
+typedef unsigned long ProcessModel;
+
 @interface BrowserAppDelegate : NSObject <NSApplicationDelegate> {
-    WKProcessModel currentProcessModel;
+    ProcessModel currentProcessModel;
     WKPageNamespaceRef threadPageNamespace;
     WKPageNamespaceRef processPageNamespace;
 }

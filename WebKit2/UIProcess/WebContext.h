@@ -28,6 +28,7 @@
 
 #include "ProcessModel.h"
 #include <WebCore/PlatformString.h>
+#include <wtf/Forward.h>
 #include <wtf/HashSet.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -38,17 +39,28 @@ struct WKContextStatistics;
 namespace WebKit {
 
 class WebPageNamespace;
+class WebPageProxy;
 class WebPreferences;
+class WebProcessProxy;
 
 class WebContext : public RefCounted<WebContext> {
 public:
-    static PassRefPtr<WebContext> create(ProcessModel processModel, const WebCore::String& injectedBundlePath)
+    static WebContext* sharedProcessContext();
+    static WebContext* sharedThreadContext();
+
+    static PassRefPtr<WebContext> create(const WebCore::String& injectedBundlePath)
     {
-        return adoptRef(new WebContext(processModel, injectedBundlePath));
+        return adoptRef(new WebContext(ProcessModelSecondaryProcess, injectedBundlePath));
     }
+
     ~WebContext();
 
     ProcessModel processModel() const { return m_processModel; }
+    WebProcessProxy* process() const { return m_process.get(); }
+
+    WebPageProxy* createWebPage(WebPageNamespace*);
+
+    void reviveIfNecessary();
 
     WebPageNamespace* createPageNamespace();
     void pageNamespaceWasDestroyed(WebPageNamespace*);
@@ -64,7 +76,13 @@ public:
 private:
     WebContext(ProcessModel, const WebCore::String& injectedBundlePath);
 
+    void ensureWebProcess();
+
     ProcessModel m_processModel;
+    
+    // FIXME: In the future, this should be one or more WebProcessProxies.
+    RefPtr<WebProcessProxy> m_process;
+
     HashSet<WebPageNamespace*> m_pageNamespaces;
     RefPtr<WebPreferences> m_preferences;
 

@@ -27,7 +27,6 @@
 #define WebPageNamespace_h
 
 #include "WebContext.h"
-#include "WebProcessProxy.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -50,9 +49,8 @@ public:
     WebPageProxy* createWebPage();    
 
     WebContext* context() const { return m_context.get(); }
-    WebProcessProxy* process() const { return m_process.get(); }
-
-    void reviveIfNecessary();
+    WebProcessProxy* process() const { return m_context->process(); }
+    void reviveIfNecessary() { m_context->reviveIfNecessary(); }
 
     void preferencesDidChange();
 
@@ -60,11 +58,8 @@ public:
 
 private:
     WebPageNamespace(WebContext*);
-    
-    void ensureWebProcess();
-    
+
     RefPtr<WebContext> m_context;
-    RefPtr<WebProcessProxy> m_process;
 };
 
 } // namespace WebKit

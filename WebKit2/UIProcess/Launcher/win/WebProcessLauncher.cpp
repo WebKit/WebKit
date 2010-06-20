@@ -53,46 +53,42 @@ static void* webThreadBody(void*)
     return 0;
 }
 
-ProcessInfo launchWebProcess(CoreIPC::Connection::Client* client, ProcessModel model)
+ProcessInfo launchWebProcess(CoreIPC::Connection::Client* client, bool useThread)
 {
     ProcessInfo info = { 0, 0 };
 
     info.connection = CoreIPC::Connection::createServerConnection(serverName, client, RunLoop::main());
     info.connection->open();
 
-    switch (model) {
-        case ProcessModelSecondaryThread: {
-            // FIXME: Pass the handle.
-            if (createThread(webThreadBody, 0, "WebKit2: WebThread")) {
-                info.processIdentifier = ::GetCurrentProcess();
-                return info;
-            }
-            break;
+    if (useThread) {
+        // FIXME: Pass the handle.
+        if (createThread(webThreadBody, 0, "WebKit2: WebThread")) {
+            info.processIdentifier = ::GetCurrentProcess();
+            return info;
         }
-        case ProcessModelSecondaryProcess: {
-            // FIXME: We would like to pass a full path to the .exe here.
+    } else {
+        // FIXME: We would like to pass a full path to the .exe here.
 #ifndef DEBUG_ALL
-            String commandLine(L"WebKit2WebProcess.exe");
+        String commandLine(L"WebKit2WebProcess.exe");
 #else
-            String commandLine(L"WebKit2WebProcess_debug.exe");
+        String commandLine(L"WebKit2WebProcess_debug.exe");
 #endif
 
-            STARTUPINFO startupInfo = { 0 };
-            startupInfo.cb = sizeof(startupInfo);
-            PROCESS_INFORMATION processInformation = { 0 };
-            BOOL result = ::CreateProcessW(0, (LPWSTR)commandLine.charactersWithNullTermination(),
-                                           0, 0, false, 0, 0, 0, &startupInfo, &processInformation);
-            if (!result) {
-                // FIXME: What should we do here?
-                DWORD error = ::GetLastError();
-                ASSERT_NOT_REACHED();
-            }
-
-            // Don't leak the thread handle.
-            ::CloseHandle(processInformation.hThread);
-
-            info.processIdentifier = processInformation.hProcess;
+        STARTUPINFO startupInfo = { 0 };
+        startupInfo.cb = sizeof(startupInfo);
+        PROCESS_INFORMATION processInformation = { 0 };
+        BOOL result = ::CreateProcessW(0, (LPWSTR)commandLine.charactersWithNullTermination(),
+                                       0, 0, false, 0, 0, 0, &startupInfo, &processInformation);
+        if (!result) {
+            // FIXME: What should we do here?
+            DWORD error = ::GetLastError();
+            ASSERT_NOT_REACHED();
         }
+
+        // Don't leak the thread handle.
+        ::CloseHandle(processInformation.hThread);
+
+        info.processIdentifier = processInformation.hProcess;
     }
 
     return info;

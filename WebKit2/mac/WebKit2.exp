@@ -4,6 +4,8 @@ _WKBundlePageSetClient
 _WKBundleSetClient
 _WKContextCreate
 _WKContextCreateWithInjectedBundlePath
+_WKContextGetSharedProcessContext
+_WKContextGetSharedThreadContext
 _WKContextGetStatistics
 _WKContextRelease
 _WKContextRetain

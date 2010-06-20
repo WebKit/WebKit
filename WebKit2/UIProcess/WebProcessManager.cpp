@@ -25,9 +25,7 @@
 
 #include "WebProcessManager.h"
 
-#include <WebCore/PlatformString.h>
-
-using namespace WebCore;
+#include "WebContext.h"
 
 namespace WebKit {
 
@@ -41,31 +39,49 @@ WebProcessManager::WebProcessManager()
 {
 }
 
-WebProcessProxy* WebProcessManager::getWebProcess(ProcessModel processModel, const String& injectedBundlePath)
+WebProcessProxy* WebProcessManager::getWebProcess(WebContext* context)
 {
-    switch (processModel) {
-        case ProcessModelSecondaryProcess:
+    switch (context->processModel()) {
+        case ProcessModelSharedSecondaryProcess: {
             if (!m_sharedProcess)
-                m_sharedProcess = WebProcessProxy::create(processModel, injectedBundlePath);
+                m_sharedProcess = WebProcessProxy::create(context);
             return m_sharedProcess.get();
-        case ProcessModelSecondaryThread:
+        }
+        case ProcessModelSharedSecondaryThread: {
             if (!m_sharedThread)
-                m_sharedThread = WebProcessProxy::create(processModel, injectedBundlePath);
+                m_sharedThread = WebProcessProxy::create(context);
             return m_sharedThread.get();
-    }
+        }
+        case ProcessModelSecondaryProcess: {
+            std::pair<ProcessMap::iterator, bool> result = m_processMap.add(context, 0);
+            if (result.second) {
+                ASSERT(!result.first->second);
+                result.first->second = WebProcessProxy::create(context);
+            }
 
+            ASSERT(result.first->second);
+            return result.first->second.get();
+        }
+    }
     
     ASSERT_NOT_REACHED();
     return 0;
 }
-    
-void WebProcessManager::processDidClose(WebProcessProxy* process)
+
+void WebProcessManager::processDidClose(WebProcessProxy* process, WebContext* context)
 {
     if (process == m_sharedProcess) {
+        ASSERT(context->processModel() == ProcessModelSharedSecondaryProcess);
         m_sharedProcess = 0;
         return;
     }
-    
+
+    ProcessMap::iterator it = m_processMap.find(context);
+    if (it != m_processMap.end()) {
+        ASSERT(it->second == process);
+        m_processMap.remove(it);
+    }
+
     // The shared thread connection should never be closed.
     ASSERT_NOT_REACHED();
 }

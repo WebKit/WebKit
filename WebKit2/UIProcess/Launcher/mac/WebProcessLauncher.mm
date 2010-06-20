@@ -59,7 +59,7 @@ static void* webThreadBody(void* context)
     return 0;
 }
 
-ProcessInfo launchWebProcess(CoreIPC::Connection::Client* client, ProcessModel processModel)
+ProcessInfo launchWebProcess(CoreIPC::Connection::Client* client, bool useThread)
 {
     ProcessInfo info = { 0, 0 };
 
@@ -73,32 +73,27 @@ ProcessInfo launchWebProcess(CoreIPC::Connection::Client* client, ProcessModel p
     info.connection = CoreIPC::Connection::createServerConnection(listeningPort, client, RunLoop::main());
     info.connection->open();
 
-    switch (processModel) {
-        case ProcessModelSecondaryThread: {
-            // Pass it to the thread.
-            if (!createThread(webThreadBody, reinterpret_cast<void*>(listeningPort), "WebKit2: WebThread")) {
-                // FIXME: Destroy ports.
-                return info;
-            }
-            }
-            break;
-        case ProcessModelSecondaryProcess: {
-            NSString *webProcessAppPath = [[NSBundle bundleWithIdentifier:@"com.apple.WebKit2"] pathForAuxiliaryExecutable:@"WebProcess.app"];
-            NSString *webProcessAppExecutablePath = [[NSBundle bundleWithPath:webProcessAppPath] executablePath];
-
-            const char* path = [webProcessAppExecutablePath fileSystemRepresentation];
-            const char* args[] = { path, 0 };
-
-            // Register ourselves.
-            kern_return_t kr = bootstrap_register2(bootstrap_port, (char*)"com.apple.WebKit.WebProcess", listeningPort, /* BOOTSTRAP_PER_PID_SERVICE */ 1);
-            if (kr)
-                NSLog(@"bootstrap_register2 result: %x", kr);
-            
-            int result = posix_spawn(&info.processIdentifier, path, 0, 0, (char *const*)args, *_NSGetEnviron());
-            if (result)
-                NSLog(@"posix_spawn result: %d", result);
+    if (useThread) {
+        // Pass it to the thread.
+        if (!createThread(webThreadBody, reinterpret_cast<void*>(listeningPort), "WebKit2: WebThread")) {
+            // FIXME: Destroy ports.
+            return info;
         }
-        break;
+    } else {
+        NSString *webProcessAppPath = [[NSBundle bundleWithIdentifier:@"com.apple.WebKit2"] pathForAuxiliaryExecutable:@"WebProcess.app"];
+        NSString *webProcessAppExecutablePath = [[NSBundle bundleWithPath:webProcessAppPath] executablePath];
+
+        const char* path = [webProcessAppExecutablePath fileSystemRepresentation];
+        const char* args[] = { path, 0 };
+
+        // Register ourselves.
+        kern_return_t kr = bootstrap_register2(bootstrap_port, (char*)"com.apple.WebKit.WebProcess", listeningPort, /* BOOTSTRAP_PER_PID_SERVICE */ 1);
+        if (kr)
+            NSLog(@"bootstrap_register2 result: %x", kr);
+        
+        int result = posix_spawn(&info.processIdentifier, path, 0, 0, (char *const*)args, *_NSGetEnviron());
+        if (result)
+            NSLog(@"posix_spawn result: %d", result);
     }
 
     return info;
