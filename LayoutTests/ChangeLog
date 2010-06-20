@@ -1,3 +1,19 @@
+2010-06-20  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] NPP_SetWindow seems to not be called when TestNetscapePlugin is moved
+
+        https://bugs.webkit.org/show_bug.cgi?id=36702
+
+        setNPWindowIfNeeded() is called on paint() in PluginViewQt, which doesn't
+        work for DRT. So call it if we are in DRT mode and the window geometry
+        has changed.
+
+        Unskips plugins/reentrant-update-widget-positions.html
+
+        * platform/qt/Skipped:
+
 2010-06-19  Hayato Ito  <hayato@chromium.org>
 
         Reviewed by Adam Barth.
