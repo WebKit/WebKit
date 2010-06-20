@@ -1,5 +1,11 @@
 2010-06-20  Joseph Pecoraro  <joepeck@webkit.org>
 
+        Unreviewed rollout r61506, because it made 1 test crash.
+
+        Causes crash. Will approach the solution in a different way.
+
+2010-06-20  Joseph Pecoraro  <joepeck@webkit.org>
+
         Reviewed by Timothy Hatcher.
 
         Web Inspector: Should Autocomplete Style Properties
