@@ -57,7 +57,7 @@ class Rollout(IRCCommand):
         if len(args) < 2:
             tool.irc().post("%s: Usage: SVN_REVISION REASON" % nick)
             return
-        svn_revision = args[0]
+        svn_revision = args[0].lstrip("r")
         rollout_reason = " ".join(args[1:])
         tool.irc().post("Preparing rollout for r%s..." % svn_revision)
         try:
