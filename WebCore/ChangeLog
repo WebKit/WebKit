@@ -1,3 +1,30 @@
+2010-06-14  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Introduce FormSubmission, the structure representing a form submission.
+        https://bugs.webkit.org/show_bug.cgi?id=40084
+
+        No change in functionality, covered by existing tests.
+
+        * GNUmakefile.am: Added FormSubmission.h/cpp.
+        * WebCore.gypi: Ditto.
+        * WebCore.pro: Ditto.
+        * WebCore.vcproj/WebCore.vcproj: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::prepareFormSubmission): Renamed prepareFormData to prepareFormSubmission,
+            added code for populating a FormSubmission instance, moved the loop of accumulating text input
+            values into this functions (it belongs here logically).
+        (WebCore::HTMLFormElement::submit): Modified to use prepareFormSubmission.
+        * html/HTMLFormElement.h:
+        * loader/FormSubmission.cpp: Added.
+        * loader/FormSubmission.h: Added.
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::submitForm): Modified to use FormSubmission. Stopped plumbing further to keep
+            the patch size down.
+        * loader/FrameLoader.h: Modified submitForm signature.
+
 2010-06-20  Joseph Pecoraro  <joepeck@webkit.org>
 
         Unreviewed rollout r61506, because it made 1 test crash.

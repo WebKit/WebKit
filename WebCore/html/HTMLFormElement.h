@@ -34,6 +34,7 @@ namespace WebCore {
 
 class Event;
 class FormData;
+class FormSubmission;
 class HTMLFormControlElement;
 class HTMLImageElement;
 class HTMLInputElement;
@@ -137,7 +138,7 @@ private:
 
     bool isMailtoForm() const;
     TextEncoding dataEncoding() const;
-    PassRefPtr<FormData> prepareFormData();
+    PassRefPtr<FormSubmission> prepareFormSubmission(Event*, bool lockHistory, FormSubmissionTrigger);
     unsigned formElementIndex(HTMLFormControlElement*);
     // Returns true if the submission should be proceeded.
     bool validateInteractively(Event*);

@@ -57,6 +57,7 @@ class DocumentLoader;
 class Event;
 class FormData;
 class FormState;
+class FormSubmission;
 class Frame;
 class FrameLoaderClient;
 class HistoryItem;
@@ -224,9 +225,7 @@ public:
     void urlSelected(const KURL&, const String& target, PassRefPtr<Event>, bool lockHistory, bool lockBackForwardList, bool userGesture, ReferrerPolicy);
     bool requestFrame(HTMLFrameOwnerElement*, const String& url, const AtomicString& frameName, bool lockHistory = true, bool lockBackForwardList = true);
 
-    void submitForm(const char* action, const String& url,
-        PassRefPtr<FormData>, const String& target, const String& contentType, const String& boundary,
-        bool lockHistory, PassRefPtr<Event>, PassRefPtr<FormState>);
+    void submitForm(PassRefPtr<FormSubmission>);
 
     void stop();
     void stopLoading(UnloadEventPolicy, DatabasePolicy = DatabasePolicyStop);

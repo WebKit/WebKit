@@ -37,6 +37,7 @@
 #include "FormData.h"
 #include "FormDataList.h"
 #include "FormState.h"
+#include "FormSubmission.h"
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
@@ -221,7 +222,7 @@ static void appendMailtoPostFormDataToURL(KURL& url, const FormData& data, const
     url.setQuery(query);
 }
 
-PassRefPtr<FormData> HTMLFormElement::prepareFormData()
+PassRefPtr<FormSubmission> HTMLFormElement::prepareFormSubmission(Event* event, bool lockHistory, FormSubmissionTrigger trigger)
 {
     if (m_formDataBuilder.isPostMethod()) {
         if (m_formDataBuilder.isMultiPartForm() && isMailtoForm()) {
@@ -233,30 +234,43 @@ PassRefPtr<FormData> HTMLFormElement::prepareFormData()
         m_formDataBuilder.setIsMultiPartForm(false);
 
     RefPtr<DOMFormData> domFormData = DOMFormData::create(dataEncoding().encodingForFormSubmission());
+    Vector<pair<String, String> > formValues;
+
     for (unsigned i = 0; i < m_associatedElements.size(); ++i) {
         HTMLFormControlElement* control = m_associatedElements[i];
         if (!control->disabled())
             control->appendFormData(*domFormData, m_formDataBuilder.isMultiPartForm());
-    }
-
-    RefPtr<FormData> result;
-
-    if (m_formDataBuilder.isMultiPartForm())
-        result = FormData::createMultiPart(domFormData->items(), domFormData->encoding(), document());
-    else {
-        result = FormData::create(domFormData->items(), domFormData->encoding());
-        if (m_formDataBuilder.isPostMethod() && isMailtoForm()) {
-            // Convert the form data into a string that we put into the URL.
-            KURL url = document()->completeURL(m_url);
-            appendMailtoPostFormDataToURL(url, *result, m_formDataBuilder.encodingType());
-            m_url = url.string();
-
-            result = FormData::create();
+        if (control->hasLocalName(inputTag)) {
+            HTMLInputElement* input = static_cast<HTMLInputElement*>(control);
+            if (input->isTextField()) {
+                formValues.append(pair<String, String>(input->name(), input->value()));
+                if (input->isSearchField())
+                    input->addSearchResult();
+            }
         }
     }
 
-    result->setIdentifier(generateFormDataIdentifier());
-    return result.release();
+    RefPtr<FormData> formData;
+    String boundary;
+
+    if (m_formDataBuilder.isMultiPartForm()) {
+        formData = FormData::createMultiPart(domFormData->items(), domFormData->encoding(), document());
+        boundary = formData->boundary().data();
+    } else {
+        formData = FormData::create(domFormData->items(), domFormData->encoding());
+        if (m_formDataBuilder.isPostMethod() && isMailtoForm()) {
+            // Convert the form data into a string that we put into the URL.
+            KURL url = document()->completeURL(m_url);
+            appendMailtoPostFormDataToURL(url, *formData, m_formDataBuilder.encodingType());
+            m_url = url.string();
+
+            formData = FormData::create();
+        }
+    }
+
+    formData->setIdentifier(generateFormDataIdentifier());
+    FormSubmission::Method method = m_formDataBuilder.isPostMethod() ? FormSubmission::PostMethod : FormSubmission::GetMethod;
+    return FormSubmission::create(method, m_url, m_target, m_formDataBuilder.encodingType(), FormState::create(this, formValues, document()->frame(), trigger), formData.release(), boundary, lockHistory, event);
 }
 
 bool HTMLFormElement::isMailtoForm() const
@@ -373,18 +387,8 @@ void HTMLFormElement::submit(Event* event, bool activateSubmitButton, bool lockH
     HTMLFormControlElement* firstSuccessfulSubmitButton = 0;
     bool needButtonActivation = activateSubmitButton; // do we need to activate a submit button?
     
-    Vector<pair<String, String> > formValues;
-
     for (unsigned i = 0; i < m_associatedElements.size(); ++i) {
         HTMLFormControlElement* control = m_associatedElements[i];
-        if (control->hasLocalName(inputTag)) {
-            HTMLInputElement* input = static_cast<HTMLInputElement*>(control);
-            if (input->isTextField()) {
-                formValues.append(pair<String, String>(input->name(), input->value()));
-                if (input->isSearchField())
-                    input->addSearchResult();
-            }
-        }
         if (needButtonActivation) {
             if (control->isActivatedSubmit())
                 needButtonActivation = false;
@@ -393,18 +397,13 @@ void HTMLFormElement::submit(Event* event, bool activateSubmitButton, bool lockH
         }
     }
 
-    RefPtr<FormState> formState = FormState::create(this, formValues, frame, formSubmissionTrigger);
-
     if (needButtonActivation && firstSuccessfulSubmitButton)
         firstSuccessfulSubmitButton->setActivatedSubmit(true);
     
     if (m_url.isEmpty())
         m_url = document()->url().string();
 
-    RefPtr<FormData> data = prepareFormData();
-    String boundary = m_formDataBuilder.isMultiPartForm() ? data->boundary().data() : String();
-    const char* method = m_formDataBuilder.isPostMethod() ? "POST" : "GET";
-    frame->loader()->submitForm(method, m_url, data.release(), m_target, m_formDataBuilder.encodingType(), boundary, lockHistory, event, formState.release());
+    frame->loader()->submitForm(prepareFormSubmission(event, lockHistory, formSubmissionTrigger));
 
     if (needButtonActivation && firstSuccessfulSubmitButton)
         firstSuccessfulSubmitButton->setActivatedSubmit(false);

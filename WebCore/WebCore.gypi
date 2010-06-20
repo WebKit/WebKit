@@ -1792,6 +1792,8 @@
             'loader/FTPDirectoryParser.h',
             'loader/FormState.cpp',
             'loader/FormState.h',
+            'loader/FormSubmission.cpp',
+            'loader/FormSubmission.h',
             'loader/FrameLoader.cpp',
             'loader/FrameLoader.h',
             'loader/FrameLoaderClient.h',

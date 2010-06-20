@@ -1387,6 +1387,8 @@ webcore_sources += \
 	WebCore/loader/FTPDirectoryParser.h \
 	WebCore/loader/FormState.cpp \
 	WebCore/loader/FormState.h \
+	WebCore/loader/FormSubmission.cpp \
+	WebCore/loader/FormSubmission.h \
 	WebCore/loader/FrameLoader.cpp \
 	WebCore/loader/FrameLoader.h \
 	WebCore/loader/FrameLoaderClient.h \

@@ -742,6 +742,7 @@ SOURCES += \
     loader/DocumentThreadableLoader.cpp \
     loader/DocumentWriter.cpp \
     loader/FormState.cpp \
+    loader/FormSubmission.cpp \
     loader/FrameLoader.cpp \
     loader/HistoryController.cpp \
     loader/FTPDirectoryDocument.cpp \

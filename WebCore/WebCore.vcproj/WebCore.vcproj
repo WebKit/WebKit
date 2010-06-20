@@ -21953,6 +21953,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\loader\FormSubmission.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\loader\FormSubmission.h"
+				>
+			</File>
+			<File
 				RelativePath="..\loader\FrameLoader.cpp"
 				>
 			</File>

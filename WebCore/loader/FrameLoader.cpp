@@ -53,6 +53,7 @@
 #include "EventNames.h"
 #include "FloatRect.h"
 #include "FormState.h"
+#include "FormSubmission.h"
 #include "Frame.h"
 #include "FrameLoadRequest.h"
 #include "FrameLoaderClient.h"
@@ -460,10 +461,19 @@ Frame* FrameLoader::loadSubframe(HTMLFrameOwnerElement* ownerElement, const KURL
     return frame.get();
 }
 
-void FrameLoader::submitForm(const char* action, const String& url, PassRefPtr<FormData> formData,
-    const String& target, const String& contentType, const String& boundary,
-    bool lockHistory, PassRefPtr<Event> event, PassRefPtr<FormState> formState)
+void FrameLoader::submitForm(PassRefPtr<FormSubmission> submission)
 {
+    // FIXME: Plumb this further in.
+    const char* action = submission->method() == FormSubmission::PostMethod ? "POST" : "GET";
+    RefPtr<FormData> formData = submission->data();
+    RefPtr<FormState> formState = submission->state();
+    String url = submission->action();
+    String target = submission->target();
+    String boundary = submission->boundary();
+    String contentType = submission->contentType();
+    bool lockHistory = submission->lockHistory();
+    RefPtr<Event> event = submission->event();
+
     ASSERT(action);
     ASSERT(strcmp(action, "GET") == 0 || strcmp(action, "POST") == 0);
     ASSERT(formData);

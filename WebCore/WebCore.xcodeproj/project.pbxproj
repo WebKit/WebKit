@@ -782,6 +782,8 @@
 		416E75CB0EDF90C700360E1D /* ScriptCallFrame.h in Headers */ = {isa = PBXBuildFile; fileRef = 416E75C90EDF90C700360E1D /* ScriptCallFrame.h */; };
 		416E75CC0EDF90C700360E1D /* ScriptCallFrame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 416E75CA0EDF90C700360E1D /* ScriptCallFrame.cpp */; };
 		416F45F00ED7B311008215B6 /* ScriptString.h in Headers */ = {isa = PBXBuildFile; fileRef = 416F45EF0ED7B311008215B6 /* ScriptString.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		41885B9311B6FDA6003383BB /* FormSubmission.h in Headers */ = {isa = PBXBuildFile; fileRef = 41885B9111B6FDA6003383BB /* FormSubmission.h */; };
+		41885B9411B6FDA6003383BB /* FormSubmission.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41885B9211B6FDA6003383BB /* FormSubmission.cpp */; };
 		418F88040FF957AE0080F045 /* JSAbstractWorker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 418F88020FF957AE0080F045 /* JSAbstractWorker.cpp */; };
 		418F88050FF957AF0080F045 /* JSAbstractWorker.h in Headers */ = {isa = PBXBuildFile; fileRef = 418F88030FF957AE0080F045 /* JSAbstractWorker.h */; };
 		41A3D58E101C152D00316D07 /* DedicatedWorkerThread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41A3D58C101C152D00316D07 /* DedicatedWorkerThread.cpp */; };
@@ -6358,6 +6360,8 @@
 		416E75C90EDF90C700360E1D /* ScriptCallFrame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptCallFrame.h; sourceTree = "<group>"; };
 		416E75CA0EDF90C700360E1D /* ScriptCallFrame.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptCallFrame.cpp; sourceTree = "<group>"; };
 		416F45EF0ED7B311008215B6 /* ScriptString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptString.h; sourceTree = "<group>"; };
+		41885B9111B6FDA6003383BB /* FormSubmission.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FormSubmission.h; sourceTree = "<group>"; };
+		41885B9211B6FDA6003383BB /* FormSubmission.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FormSubmission.cpp; sourceTree = "<group>"; };
 		418F88020FF957AE0080F045 /* JSAbstractWorker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAbstractWorker.cpp; sourceTree = "<group>"; };
 		418F88030FF957AE0080F045 /* JSAbstractWorker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSAbstractWorker.h; sourceTree = "<group>"; };
 		41A3D58C101C152D00316D07 /* DedicatedWorkerThread.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DedicatedWorkerThread.cpp; path = workers/DedicatedWorkerThread.cpp; sourceTree = "<group>"; };
@@ -15742,6 +15746,8 @@
 				B255990D0D00D8B900BB825C /* EmptyClients.h */,
 				656D37230ADBA5DE00A4554D /* FormState.cpp */,
 				656D37220ADBA5DE00A4554D /* FormState.h */,
+				41885B9111B6FDA6003383BB /* FormSubmission.h */,
+				41885B9211B6FDA6003383BB /* FormSubmission.cpp */,
 				932E16080AF578340025F408 /* FrameLoader.cpp */,
 				656D37240ADBA5DE00A4554D /* FrameLoader.h */,
 				656D37260ADBA5DE00A4554D /* FrameLoaderClient.h */,
@@ -17942,6 +17948,7 @@
 				A8136D380973A8E700D74463 /* FormDataList.h in Headers */,
 				514C764E0CE9234E007EF3CD /* FormDataStreamMac.h in Headers */,
 				656D373A0ADBA5DE00A4554D /* FormState.h in Headers */,
+				41885B9311B6FDA6003383BB /* FormSubmission.h in Headers */,
 				935C476D09AC4D6300A6AAB4 /* FoundationExtras.h in Headers */,
 				65BF022F0974816300C43196 /* Frame.h in Headers */,
 				656D373C0ADBA5DE00A4554D /* FrameLoader.h in Headers */,
@@ -20285,6 +20292,7 @@
 				A8136D390973A8E700D74463 /* FormDataList.cpp in Sources */,
 				514C764F0CE9234E007EF3CD /* FormDataStreamMac.mm in Sources */,
 				656D373B0ADBA5DE00A4554D /* FormState.cpp in Sources */,
+				41885B9411B6FDA6003383BB /* FormSubmission.cpp in Sources */,
 				65BF022E0974816300C43196 /* Frame.cpp in Sources */,
 				932E16090AF578340025F408 /* FrameLoader.cpp in Sources */,
 				65BF02450974819000C43196 /* FrameMac.mm in Sources */,
