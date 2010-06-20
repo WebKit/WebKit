@@ -1631,8 +1631,10 @@ PassRefPtr<Widget> WebFrameLoaderClient::createPlugin(const IntSize& size, HTMLP
             KURL pluginPageURL = document->completeURL(deprecatedParseURL(parameterValue(paramNames, paramValues, "pluginspage")));
             if (!pluginPageURL.protocolInHTTPFamily())
                 pluginPageURL = KURL();
+            NSString *pluginName = pluginPackage ? (NSString *)[pluginPackage name] : nil;
+
             NSError *error = [[NSError alloc] _initWithPluginErrorCode:errorCode
-                                                            contentURL:pluginURL pluginPageURL:pluginPageURL pluginName:[pluginPackage name] MIMEType:MIMEType];
+                                                            contentURL:pluginURL pluginPageURL:pluginPageURL pluginName:pluginName MIMEType:MIMEType];
             CallResourceLoadDelegate(implementations->plugInFailedWithErrorFunc, [m_webFrame.get() webView],
                                      @selector(webView:plugInFailedWithError:dataSource:), error, [m_webFrame.get() _dataSource]);
             [error release];
@@ -1721,7 +1723,8 @@ PassRefPtr<Widget> WebFrameLoaderClient::createJavaAppletWidget(const IntSize& s
     if (!view) {
         WebResourceDelegateImplementationCache* implementations = WebViewGetResourceLoadDelegateImplementations(getWebView(m_webFrame.get()));
         if (implementations->plugInFailedWithErrorFunc) {
-            NSError *error = [[NSError alloc] _initWithPluginErrorCode:WebKitErrorJavaUnavailable contentURL:nil pluginPageURL:nil pluginName:[pluginPackage name] MIMEType:MIMEType];
+            NSString *pluginName = pluginPackage ? (NSString *)[pluginPackage name] : nil;
+            NSError *error = [[NSError alloc] _initWithPluginErrorCode:WebKitErrorJavaUnavailable contentURL:nil pluginPageURL:nil pluginName:pluginName MIMEType:MIMEType];
             CallResourceLoadDelegate(implementations->plugInFailedWithErrorFunc, [m_webFrame.get() webView],
                                      @selector(webView:plugInFailedWithError:dataSource:), error, [m_webFrame.get() _dataSource]);
             [error release];
