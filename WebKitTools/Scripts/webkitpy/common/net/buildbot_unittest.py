@@ -275,6 +275,9 @@ class BuildBotTest(unittest.TestCase):
             {'name': u'Chromium Linux Release', },
             {'name': u'Chromium Mac Release', },
             {'name': u'Chromium Win Release', },
+            {'name': u'Chromium Linux Release (Tests)', },
+            {'name': u'Chromium Mac Release (Tests)', },
+            {'name': u'Chromium Win Release (Tests)', },
             {'name': u'New run-webkit-tests', },
         ]
         name_regexps = [

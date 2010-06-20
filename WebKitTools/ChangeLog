@@ -1,3 +1,18 @@
+2010-06-20  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Python Tests Fail after r61508
+        https://bugs.webkit.org/show_bug.cgi?id=40891
+
+        Test's regex list needed to be updated to match the new
+        regex list in the source code. Added new bots to the
+        example_buildbots list.
+
+        Regex list fixed in r61512. Updated bot list.
+
+        * Scripts/webkitpy/common/net/buildbot_unittest.py:
+
 2010-06-20  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Unreviewed, build fix.
