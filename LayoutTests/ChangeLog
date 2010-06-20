@@ -2,6 +2,28 @@
 
         Reviewed by Adam Barth.
 
+        Add tests for CSS 'orphans' and 'widows' properties.
+        All tests are expected to fail due to lack of implementations.
+
+        https://bugs.webkit.org/show_bug.cgi?id=40821
+
+        * printing/page-break-orphans-and-widows-expected.txt: Added.
+        * printing/page-break-orphans-and-widows.html: Added.
+        * printing/page-break-orphans-expected.txt: Added.
+        * printing/page-break-orphans.html: Added.
+        * printing/page-break-widows-expected.txt: Added.
+        * printing/page-break-widows.html: Added.
+        * printing/script-tests/page-break-orphans-and-widows.js: Added.
+        (test):
+        * printing/script-tests/page-break-orphans.js: Added.
+        (test):
+        * printing/script-tests/page-break-widows.js: Added.
+        (test):
+
+2010-06-19  Hayato Ito  <hayato@chromium.org>
+
+        Reviewed by Adam Barth.
+
         Add tests for 'page-break-{before,after}: avoid'.
         All tests are expected to fail due to lack of implementations.
 
