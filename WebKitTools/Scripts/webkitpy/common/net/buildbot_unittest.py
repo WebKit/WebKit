@@ -285,7 +285,7 @@ class BuildBotTest(unittest.TestCase):
             "Windows.*Build",
             "GTK",
             "Qt",
-            "Chromium",
+            "Chromium.*Release$",
         ]
         expected_builders = [
             {'name': u'Tiger Intel Release', },
