@@ -363,9 +363,8 @@ bool QWebHistory::canGoForward() const
 void QWebHistory::back()
 {
     if (canGoBack()) {
-        d->lst->goBack();
         WebCore::Page* page = d->lst->page();
-        page->goToItem(currentItem().d->item, WebCore::FrameLoadTypeIndexedBackForward);
+        page->goToItem(d->lst->backItem(), WebCore::FrameLoadTypeIndexedBackForward);
     }
 }
 
@@ -378,9 +377,8 @@ void QWebHistory::back()
 void QWebHistory::forward()
 {
     if (canGoForward()) {
-        d->lst->goForward();
         WebCore::Page* page = d->lst->page();
-        page->goToItem(currentItem().d->item, WebCore::FrameLoadTypeIndexedBackForward);
+        page->goToItem(d->lst->forwardItem(), WebCore::FrameLoadTypeIndexedBackForward);
     }
 }
 
@@ -391,9 +389,8 @@ void QWebHistory::forward()
 */
 void QWebHistory::goToItem(const QWebHistoryItem &item)
 {
-    d->lst->goToItem(item.d->item);
     WebCore::Page* page = d->lst->page();
-    page->goToItem(currentItem().d->item, WebCore::FrameLoadTypeIndexedBackForward);
+    page->goToItem(item.d->item, WebCore::FrameLoadTypeIndexedBackForward);
 }
 
 /*!

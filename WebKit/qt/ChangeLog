@@ -1,3 +1,26 @@
+2010-06-20  Jedrzej Nowacki  <jedrzej.nowacki@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        The QWebHistory regression fix.
+
+        After change r51629 and r61207 QWebHistory's function back(),
+        forward(), goToItem() got broken.
+
+        Use page->goToItem() instead of direct actions on the BackForwardList.
+
+        [Qt] REGRESSION(r61207): qwebhistory unit test hangs
+        https://bugs.webkit.org/show_bug.cgi?id=40672
+
+        * Api/qwebhistory.cpp:
+        (QWebHistory::back):
+        (QWebHistory::forward):
+        (QWebHistory::goToItem):
+        * tests/qwebhistory/tst_qwebhistory.cpp:
+        (tst_QWebHistory::init):
+        (tst_QWebHistory::back):
+        (tst_QWebHistory::forward):
+
 2010-06-19  Yael Aharon  <yael.aharon@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
