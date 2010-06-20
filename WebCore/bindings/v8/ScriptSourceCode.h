@@ -31,6 +31,7 @@
 #ifndef ScriptSourceCode_h
 #define ScriptSourceCode_h
 
+#include "CachedResourceHandle.h"
 #include "CachedScript.h"
 #include "KURL.h"
 #include "PlatformString.h"
@@ -41,6 +42,7 @@ class ScriptSourceCode {
 public:
     ScriptSourceCode(const String& source, const KURL& url = KURL(), int startLine = 1)
         : m_source(source)
+        , m_cachedScript(0)
         , m_url(url)
         , m_startLine(startLine)
     {
@@ -50,6 +52,7 @@ public:
     // Not sure if that matters.
     ScriptSourceCode(CachedScript* cs)
         : m_source(cs->script())
+        , m_cachedScript(cs)
         , m_url(ParsedURLString, cs->url())
         , m_startLine(1)
     {
@@ -58,11 +61,13 @@ public:
     bool isEmpty() const { return m_source.isEmpty(); }
 
     const String& source() const { return m_source; }
+    CachedScript* cachedScript() const { return m_cachedScript.get(); }
     const KURL& url() const { return m_url; }
     int startLine() const { return m_startLine; }
 
 private:
     String m_source;
+    CachedResourceHandle<CachedScript> m_cachedScript;
     KURL m_url;
     int m_startLine;
 };

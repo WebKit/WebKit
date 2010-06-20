@@ -1,3 +1,28 @@
+2010-06-19  Tony Gentilcore  <tonyg@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Persist V8's ScriptData to the memory cache.
+        https://bugs.webkit.org/show_bug.cgi?id=38661
+
+        This stores V8's ScriptData in the memory cache and also causes the
+        network platform layer to be notified of the available cacheable
+        metadata.
+
+        Chromium's morejs benchmark showed a ~7% improvement when this was
+        originally submitted (before it had to be rolled back).
+
+        Test: fast/js/parser-high-byte-character.html
+
+        * bindings/v8/ScriptSourceCode.h:
+        (WebCore::ScriptSourceCode::ScriptSourceCode):
+        (WebCore::ScriptSourceCode::cachedScript):
+        * bindings/v8/V8Proxy.cpp:
+        (WebCore::V8Proxy::compileScript):
+        (WebCore::V8Proxy::precompileScript):
+        (WebCore::V8Proxy::evaluate):
+        * bindings/v8/V8Proxy.h:
+
 2010-06-19  Kwang Yul Seo  <skyul@company100.net>
 
         Reviewed by Kent Tamura.
