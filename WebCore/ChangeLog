@@ -1,5 +1,53 @@
 2010-06-21  Nate Chapin  <japhet@chromium.org>
 
+        Reviewed by Adam Barth.
+
+        FrameLoader cleanup: Split high level subframe and plugin
+        loading functions into a separate class.
+        https://bugs.webkit.org/show_bug.cgi?id=40453
+
+        Refactor only, no new tests.
+
+        * Android.mk:
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.base.exp:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/DOMImplementation.cpp:
+        * history/PageCache.cpp:
+        * html/HTMLFrameElementBase.cpp:
+        * html/HTMLMediaElement.cpp:
+        * loader/FrameLoader.cpp:
+        * loader/FrameLoader.h:
+        (WebCore::FrameLoader::subframeLoader):
+        * loader/PluginDocument.cpp:
+        * loader/SubframeLoader.cpp: Added.
+        (WebCore::SubframeLoader::SubframeLoader):
+        (WebCore::toPlugInElement):
+        (WebCore::SubframeLoader::clear):
+        (WebCore::SubframeLoader::requestFrame):
+        (WebCore::SubframeLoader::requestObject):
+        (WebCore::FrameLoader::loadMediaPlayerProxyPlugin):
+        (WebCore::SubframeLoader::createJavaAppletWidget):
+        (WebCore::SubframeLoader::loadSubframe):
+        (WebCore::SubframeLoader::allowPlugins):
+        (WebCore::SubframeLoader::shouldUsePlugin):
+        (WebCore::SubframeLoader::loadPlugin):
+        (WebCore::SubframeLoader::completeURL):
+        * loader/SubframeLoader.h: Added.
+        (WebCore::SubframeLoader::containsPlugins):
+        * page/Page.cpp:
+        * page/XSSAuditor.h:
+        * platform/graphics/wince/MediaPlayerProxy.cpp:
+        * plugins/MimeType.cpp:
+        * rendering/RenderApplet.cpp:
+        * rendering/RenderEmbeddedObject.cpp:
+
+2010-06-21  Nate Chapin  <japhet@chromium.org>
+
         Unreviewed, build fix.
 
         Bad merge, left a reference to m_committedFirstRealDocumentLoad in

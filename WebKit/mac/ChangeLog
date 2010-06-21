@@ -1,3 +1,14 @@
+2010-06-21  Nate Chapin  <japhet@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        FrameLoader cleanup: Split high level subframe and plugin
+        loading functions into a separate class.
+        https://bugs.webkit.org/show_bug.cgi?id=40453
+
+        * WebView/WebFrame.mm:
+        (-[WebFrame _cacheabilityDictionary]):
+
 2010-06-21  Anders Carlsson  <andersca@apple.com>
 
         Another Tiger build fix.

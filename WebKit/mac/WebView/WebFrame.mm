@@ -1223,7 +1223,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     if (documentLoader && !documentLoader->mainDocumentError().isNull())
         [result setObject:(NSError *)documentLoader->mainDocumentError() forKey:WebFrameMainDocumentError];
         
-    if (frameLoader->containsPlugins())
+    if (frameLoader->subframeLoader()->containsPlugins())
         [result setObject:[NSNumber numberWithBool:YES] forKey:WebFrameHasPlugins];
     
     if (DOMWindow* domWindow = _private->coreFrame->domWindow()) {

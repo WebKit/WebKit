@@ -109,7 +109,7 @@ void WebMediaPlayerProxy::initEngine()
         }
     }
     serviceType = "application/x-mplayer2";
-    frame->loader()->requestObject(static_cast<RenderPartObject*>(element->renderer()), url, nullAtom, serviceType, paramNames, paramValues);
+    frame->loader()->subframeLoader()->requestObject(static_cast<RenderPartObject*>(element->renderer()), url, nullAtom, serviceType, paramNames, paramValues);
     m_init = true;
 
 }

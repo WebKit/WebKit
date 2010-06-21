@@ -318,6 +318,7 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	loader/Request.cpp \
 	loader/ResourceLoadNotifier.cpp \
 	loader/ResourceLoader.cpp \
+	loader/SubframeLoader.cpp \
 	loader/SubresourceLoader.cpp \
 	loader/TextDocument.cpp \
 	loader/TextResourceDecoder.cpp \

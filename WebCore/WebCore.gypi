@@ -1835,6 +1835,8 @@
             'loader/ResourceLoadNotifier.h',
             'loader/SinkDocument.cpp',
             'loader/SinkDocument.h',
+            'loader/SubframeLoader.cpp',
+            'loader/SubframeLoader.h',
             'loader/SubresourceLoader.cpp',
             'loader/SubresourceLoader.h',
             'loader/SubresourceLoaderClient.h',

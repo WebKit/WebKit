@@ -67,7 +67,7 @@ namespace WebCore {
     // * ScriptEventListener::createAttributeEventListener - used to create JavaScript event handlers.
     // * HTMLBaseElement::process - used to set the document base URL.
     // * HTMLDocumentParser::parseTag - used to load external JavaScript scripts.
-    // * FrameLoader::requestObject - used to load <object>/<embed> elements.
+    // * SubframeLoader::requestObject - used to load <object>/<embed> elements.
     //
     class XSSAuditor : public Noncopyable {
     public:
@@ -95,7 +95,7 @@ namespace WebCore {
         // Determines whether object should be loaded based on the content of
         // any user-submitted data.
         //
-        // This method is called by FrameLoader::requestObject.
+        // This method is called by SubframeLoader::requestObject.
         bool canLoadObject(const String& url) const;
 
         // Determines whether the base URL should be changed based on the content

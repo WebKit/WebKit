@@ -41,6 +41,7 @@
 #include "RedirectScheduler.h"
 #include "ResourceLoadNotifier.h"
 #include "ResourceRequest.h"
+#include "SubframeLoader.h"
 #include "ThreadableLoader.h"
 #include "Timer.h"
 #include <wtf/Forward.h>
@@ -62,17 +63,10 @@ class FormSubmission;
 class Frame;
 class FrameLoaderClient;
 class HistoryItem;
-class HTMLAppletElement;
 class HTMLFormElement;
-class HTMLFrameOwnerElement;
 class IconLoader;
-class IntSize;
 class NavigationAction;
-#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-class Node;
-#endif
 class ProtectionSpace;
-class RenderEmbeddedObject;
 class ResourceError;
 class ResourceLoader;
 class ResourceResponse;
@@ -84,7 +78,6 @@ class SerializedScriptValue;
 class SharedBuffer;
 class SubstituteData;
 class TextResourceDecoder;
-class Widget;
 
 struct FrameLoadRequest;
 struct WindowFeatures;
@@ -104,6 +97,7 @@ public:
     HistoryController* history() const { return &m_history; }
     ResourceLoadNotifier* notifier() const { return &m_notifer; }
     DocumentWriter* writer() const { return &m_writer; }
+    SubframeLoader* subframeLoader() const { return &m_subframeLoader; }
 
     // FIXME: This is not cool, people. There are too many different functions that all start loads.
     // We should aim to consolidate these into a smaller set of functions, and try to reuse more of
@@ -223,7 +217,6 @@ public:
 
     void changeLocation(const KURL&, const String& referrer, bool lockHistory = true, bool lockBackForwardList = true, bool userGesture = false, bool refresh = false);
     void urlSelected(const KURL&, const String& target, PassRefPtr<Event>, bool lockHistory, bool lockBackForwardList, bool userGesture, ReferrerPolicy);
-    bool requestFrame(HTMLFrameOwnerElement*, const String& url, const AtomicString& frameName, bool lockHistory = true, bool lockBackForwardList = true);
 
     void submitForm(PassRefPtr<FormSubmission>);
 
@@ -245,8 +238,6 @@ public:
 
     void handledOnloadEvents();
     String userAgent(const KURL&) const;
-
-    PassRefPtr<Widget> createJavaAppletWidget(const IntSize&, HTMLAppletElement*, const HashMap<String, String>& args);
 
     void dispatchDidClearWindowObjectInWorld(DOMWrapperWorld*);
     void dispatchDidClearWindowObjectsInAllWorlds();
@@ -283,9 +274,6 @@ public:
     // setURL is a low-level setter and does not trigger loading.
     void setURL(const KURL&);
 
-    bool allowPlugins(ReasonForCallingAllowPlugins);
-    bool containsPlugins() const;
-
     void loadDone();
     void finishedParsing();
     void checkCompleted();
@@ -293,9 +281,6 @@ public:
     void checkDidPerformFirstNavigation();
 
     bool isComplete() const;
-
-    bool requestObject(RenderEmbeddedObject*, const String& url, const AtomicString& frameName,
-        const String& serviceType, const Vector<String>& paramNames, const Vector<String>& paramValues);
 
     KURL completeURL(const String& url);
 
@@ -322,10 +307,6 @@ public:
 
     void open(CachedFrameBase&);
 
-#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-    PassRefPtr<Widget> loadMediaPlayerProxyPlugin(Node*, const KURL&, const Vector<String>& paramNames, const Vector<String>& paramValues);
-#endif
-
     // FIXME: Should these really be public?
     void completed();
     bool allAncestorsAreComplete() const; // including this
@@ -348,6 +329,8 @@ public:
     bool quickRedirectComing() const { return m_quickRedirectComing; }
 
     bool shouldClose();
+    
+    void started();
 
 private:
     bool canCachePageContainingThisFrame();
@@ -357,12 +340,6 @@ private:
 #endif
 
     void checkTimerFired(Timer<FrameLoader>*);
-
-    void started();
-
-    bool shouldUsePlugin(const KURL&, const String& mimeType, bool hasFallback, bool& useFallback);
-    bool loadPlugin(RenderEmbeddedObject*, const KURL&, const String& mimeType,
-        const Vector<String>& paramNames, const Vector<String>& paramValues, bool useFallback);
     
     void navigateWithinDocument(HistoryItem*);
     void navigateToDifferentDocument(HistoryItem*, FrameLoadType);
@@ -438,8 +415,6 @@ private:
     void detachChildren();
     void closeAndRemoveChild(Frame*);
 
-    Frame* loadSubframe(HTMLFrameOwnerElement*, const KURL&, const String& name, const String& referrer);
-
     void loadInSameDocument(const KURL&, SerializedScriptValue* stateObject, bool isNewNavigation);
 
     void provisionalLoadStarted();
@@ -465,6 +440,7 @@ private:
     mutable HistoryController m_history;
     mutable ResourceLoadNotifier m_notifer;
     mutable DocumentWriter m_writer;
+    mutable SubframeLoader m_subframeLoader;
     mutable FrameLoaderStateMachine m_stateMachine;
 
     FrameState m_state;
@@ -503,8 +479,6 @@ private:
     bool m_mayLoadIconLater;
 
     bool m_needsClear;
-
-    bool m_containsPlugIns;
 
     KURL m_submittedFormURL;
 

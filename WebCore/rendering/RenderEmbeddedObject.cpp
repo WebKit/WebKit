@@ -165,7 +165,7 @@ void RenderEmbeddedObject::updateWidget(bool onlyCreateNonNetscapePlugins)
     Vector<String> paramValues;
     Frame* frame = frameView()->frame();
 
-    // The calls to FrameLoader::requestObject within this function can result in a plug-in being initialized.
+    // The calls to SubframeLoader::requestObject within this function can result in a plug-in being initialized.
     // This can run cause arbitrary JavaScript to run and may result in this RenderObject being detached from
     // the render tree and destroyed, causing a crash like <rdar://problem/6954546>.  By extending our lifetime
     // artifically to ensure that we remain alive for the duration of plug-in initialization.
@@ -284,7 +284,7 @@ void RenderEmbeddedObject::updateWidget(bool onlyCreateNonNetscapePlugins)
                 return;
         }
 
-        bool success = objectElement->dispatchBeforeLoadEvent(url) && frame->loader()->requestObject(this, url, objectElement->getAttribute(nameAttr), serviceType, paramNames, paramValues);
+        bool success = objectElement->dispatchBeforeLoadEvent(url) && frame->loader()->subframeLoader()->requestObject(this, url, objectElement->getAttribute(nameAttr), serviceType, paramNames, paramValues);
         if (!success && m_hasFallbackContent)
             objectElement->renderFallbackContent();
 
@@ -319,7 +319,7 @@ void RenderEmbeddedObject::updateWidget(bool onlyCreateNonNetscapePlugins)
         }
 
         if (embedElement->dispatchBeforeLoadEvent(url))
-            frame->loader()->requestObject(this, url, embedElement->getAttribute(nameAttr), serviceType, paramNames, paramValues);
+            frame->loader()->subframeLoader()->requestObject(this, url, embedElement->getAttribute(nameAttr), serviceType, paramNames, paramValues);
     }
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)        
     else if (node()->hasTagName(videoTag) || node()->hasTagName(audioTag)) {
@@ -328,7 +328,7 @@ void RenderEmbeddedObject::updateWidget(bool onlyCreateNonNetscapePlugins)
 
         mediaElement->getPluginProxyParams(kurl, paramNames, paramValues);
         mediaElement->setNeedWidgetUpdate(false);
-        frame->loader()->loadMediaPlayerProxyPlugin(node(), kurl, paramNames, paramValues);
+        frame->loader()->subframeLoader()->loadMediaPlayerProxyPlugin(node(), kurl, paramNames, paramValues);
     }
 #endif
 }

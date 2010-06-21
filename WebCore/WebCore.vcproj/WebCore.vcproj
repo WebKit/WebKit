@@ -22165,6 +22165,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\loader\SubframeLoader.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\loader\SubframeLoader.h"
+				>
+			</File>
+			<File
 				RelativePath="..\loader\SubresourceLoader.cpp"
 				>
 			</File>

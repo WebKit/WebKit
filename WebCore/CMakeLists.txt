@@ -1063,6 +1063,7 @@ SET(WebCore_SOURCES
     loader/ResourceLoadNotifier.cpp
     loader/ResourceLoader.cpp
     loader/SinkDocument.cpp
+    loader/SubframeLoader.cpp
     loader/SubresourceLoader.cpp
     loader/TextDocument.cpp
     loader/TextResourceDecoder.cpp
