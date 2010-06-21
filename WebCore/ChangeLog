@@ -1,3 +1,27 @@
+2010-06-21  Adam Roben  <aroben@apple.com>
+
+        Call NotifyAddrChange again each time we are notified of a change
+
+        NotifyAddrChange only notifies you of a single change. If you want to
+        listen for subsequent changes, you have to call it again.
+
+        Fixes <http://webkit.org/b/33004> NetworkStateNotifier ignores all
+        state changes after the first.
+
+        No test possible, as we don't have a way to modify the system's
+        network adapters when running tests.
+
+        Reviewed by Anders Carlsson.
+
+        * platform/network/win/NetworkStateNotifierWin.cpp:
+        (WebCore::NetworkStateNotifier::addrChangeCallback): Call
+        registerForAddressChange as soon as we're notified of an address
+        change, so we'll also get notified of the *next* address change. I
+        added the call here instead of in addressChanged (which is called
+        later on the main thread) to minimize the time between the callback
+        and registering again (so that we won't miss changes that happen in
+        rapid succession).
+
 2010-06-21  Dan Bernstein  <mitz@apple.com>
 
         Release build fix
