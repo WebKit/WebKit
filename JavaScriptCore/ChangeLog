@@ -1,3 +1,17 @@
+2010-06-21  Kwang Yul Seo  <skyul@company100.net>
+
+        Reviewed by Kent Tamura.
+
+        [BREWMP] Use global new/delete operator overloading with USE_SYSTEM_MALLOC=1
+        https://bugs.webkit.org/show_bug.cgi?id=40653
+
+        Currently, other ports do not use global new/delete operator overloading
+        when USE_SYSTEM_MALLOC=1. Brew MP uses system malloc, but it needs to enable
+        "global fastMalloc new" because the default new/delete causes crash on device.
+        We need to replace them with Brew MP's MALLOC/FREE.
+
+        * wtf/FastMalloc.h:
+
 2010-06-18  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         Reviewed by Simon Hausmann.
