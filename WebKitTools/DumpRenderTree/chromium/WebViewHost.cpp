@@ -918,7 +918,8 @@ void WebViewHost::willSendRequest(WebFrame*, unsigned identifier, WebURLRequest&
     if (!host.empty() && (url.SchemeIs("http") || url.SchemeIs("https"))
         && host != "127.0.0.1"
         && host != "255.255.255.255"
-        && host != "localhost") {
+        && host != "localhost"
+        && !m_shell->allowExternalPages()) {
         printf("Blocked access to external URL %s\n", requestURL.c_str());
 
         // To block the request, we set its URL to an empty one.

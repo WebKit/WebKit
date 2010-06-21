@@ -47,6 +47,7 @@ static const char optionTree[] = "--tree";
 
 static const char optionPixelTestsWithName[] = "--pixel-tests=";
 static const char optionTestShell[] = "--test-shell";
+static const char optionAllowExternalPages[] = "--allow-external-pages";
 
 static void runTest(TestShell& shell, TestParams& params, const string& testName, bool testShellMode)
 {
@@ -89,6 +90,7 @@ int main(int argc, char* argv[])
     Vector<string> tests;
     bool serverMode = false;
     bool testShellMode = false;
+    bool allowExternalPages = false;
     for (int i = 1; i < argc; ++i) {
         string argument(argv[i]);
         if (argument == "-")
@@ -103,7 +105,9 @@ int main(int argc, char* argv[])
         } else if (argument == optionTestShell) {
             testShellMode = true;
             serverMode = true;
-        } else if (argument.size() && argument[0] == '-')
+        } else if (argument == optionAllowExternalPages)
+            allowExternalPages = true;
+        else if (argument.size() && argument[0] == '-')
             fprintf(stderr, "Unknown option: %s\n", argv[i]);
         else
             tests.append(argument);
@@ -115,6 +119,7 @@ int main(int argc, char* argv[])
 
     { // Explicit scope for the TestShell instance.
         TestShell shell(testShellMode);
+        shell.setAllowExternalPages(allowExternalPages);
         if (serverMode && !tests.size()) {
             params.printSeparators = true;
             char testString[2048]; // 2048 is the same as the sizes of other platforms.
