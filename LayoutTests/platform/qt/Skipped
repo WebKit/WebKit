@@ -118,11 +118,6 @@ http/tests/misc/favicon-as-image.html
 http/tests/multipart/invalid-image-data.html
 http/tests/misc/bubble-drag-events.html
 
-# Missing forward entries when dumping back/forward list.
-# https://bugs.webkit.org/show_bug.cgi?id=32470
-http/tests/navigation/dynamic-iframe-dynamic-form-back-entry.html
-http/tests/navigation/parsed-iframe-dynamic-form-back-entry.html
-
 # https://bugs.webkit.org/show_bug.cgi?id=34004
 # [Qt] http/tests/misc/slow-loading-mask.html timed out.
 http/tests/misc/slow-loading-mask.html
