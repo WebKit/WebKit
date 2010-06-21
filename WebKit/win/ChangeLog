@@ -1,3 +1,13 @@
+2010-06-21  Nate Chapin  <japhet@chromium.org>
+
+        Unreviewed, Windows build fix.
+
+        Update WebFrame to use FrameLoaderStateMachine in
+         firstLayoutDone().
+
+        * WebFrame.cpp:
+        (WebFrame::firstLayoutDone):
+
 2010-06-15  Dumitru Daniliuc  <dumi@chromium.org>
 
         Reviewed by Adam Barth.
