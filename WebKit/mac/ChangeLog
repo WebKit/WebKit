@@ -1,3 +1,10 @@
+2010-06-21  Anders Carlsson  <andersca@apple.com>
+
+        Try to fix the PowerPC build.
+
+        * Plugins/WebNetscapePluginPackage.mm:
+        (-[WebNetscapePluginPackage _tryLoad]):
+
 2010-06-21  Nate Chapin  <japhet@chromium.org>
 
         Reviewed by Adam Barth.

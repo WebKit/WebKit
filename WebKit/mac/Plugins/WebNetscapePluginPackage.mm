@@ -536,9 +536,9 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
         // LiveConnect support
         pluginFuncs.javaClass = (JRIGlobalRef)functionPointerForTVector((TransitionVector)pluginFuncs.javaClass);
         if (pluginFuncs.javaClass) {
-            LOG(LiveConnect, "%@:  CFM entry point for NPP_GetJavaClass = %p", [self name], pluginFuncs.javaClass);
+            LOG(LiveConnect, "%@:  CFM entry point for NPP_GetJavaClass = %p", (NSString *)[self pluginInfo].name, pluginFuncs.javaClass);
         } else {
-            LOG(LiveConnect, "%@:  no entry point for NPP_GetJavaClass", [self name]);
+            LOG(LiveConnect, "%@:  no entry point for NPP_GetJavaClass", (NSString *)[self pluginInfo].name);
         }
 
     } else {
