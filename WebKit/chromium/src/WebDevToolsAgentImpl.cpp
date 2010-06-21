@@ -60,6 +60,7 @@
 #include "WebDataSource.h"
 #include "WebDevToolsAgentClient.h"
 #include "WebDevToolsMessageData.h"
+#include "WebDevToolsMessageTransport.h"
 #include "WebFrameImpl.h"
 #include "WebString.h"
 #include "WebURL.h"
@@ -130,8 +131,6 @@ public:
     {
         if (m_transport)
             m_transport->sendMessageToFrontendOnIOThread(data);
-        else
-            WebDevToolsAgentClient::sendMessageToFrontendOnIOThread(data);
     }
 
 private:
@@ -652,14 +651,6 @@ void WebDevToolsAgent::debuggerPauseScript()
 void WebDevToolsAgent::setMessageLoopDispatchHandler(MessageLoopDispatchHandler handler)
 {
     DebuggerAgentManager::setMessageLoopDispatchHandler(handler);
-}
-
-bool WebDevToolsAgent::dispatchMessageFromFrontendOnIOThread(const WebDevToolsMessageData& data)
-{
-    IORPCDelegate transport;
-    ProfilerAgentDelegateStub stub(&transport);
-    ProfilerAgentImpl agent(&stub);
-    return ProfilerAgentDispatch::dispatch(&agent, data);
 }
 
 bool WebDevToolsAgent::dispatchMessageFromFrontendOnIOThread(WebDevToolsMessageTransport* transport, const WebDevToolsMessageData& data)

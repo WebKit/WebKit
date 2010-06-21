@@ -112,6 +112,7 @@
                 'public/WebDevToolsFrontend.h',
                 'public/WebDevToolsFrontendClient.h',
                 'public/WebDevToolsMessageData.h',
+                'public/WebDevToolsMessageTransport.h',
                 'public/WebDocument.h',
                 'public/WebDragData.h',
                 'public/WebEditingAction.h',

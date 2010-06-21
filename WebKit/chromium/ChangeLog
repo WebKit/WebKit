@@ -1,3 +1,22 @@
+2010-06-21  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        [Chromium] Remove usage of static WebDevToolsAgentClient::sendMessageToFrontendOnIOThread.
+
+        Also, move WebDevToolsMessageTransport to its own header file.
+
+        https://bugs.webkit.org/show_bug.cgi?id=40913
+
+        * DEPS:
+        * WebKit.gyp:
+        * public/WebDevToolsAgent.h:
+        * public/WebDevToolsAgentClient.h:
+        * public/WebDevToolsMessageTransport.h: Added.
+        (WebKit::WebDevToolsMessageTransport::~WebDevToolsMessageTransport):
+        * src/WebDevToolsAgentImpl.cpp:
+        (WebKit::):
+
 2010-06-20  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.

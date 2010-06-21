@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2010 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -28,52 +28,21 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebDevToolsAgentClient_h
-#define WebDevToolsAgentClient_h
+#ifndef WebDevToolsMessageTransport_h
+#define WebDevToolsMessageTransport_h
 
 #include "WebCString.h"
 #include "WebCommon.h"
 
 namespace WebKit {
-class WebString;
 struct WebDevToolsMessageData;
 
-class WebDevToolsAgentClient {
+class WebDevToolsMessageTransport {
 public:
-    virtual void sendMessageToFrontend(const WebDevToolsMessageData&) { }
-
-    // Invalidates widget which leads to the repaint.
-    virtual void forceRepaint() { }
-
-    // Returns the identifier of the entity hosting this agent.
-    virtual int hostIdentifier() { return -1; }
-
-    // Notifies host upon runtime feature being enabled/disabled.
-    virtual void runtimeFeatureStateChanged(const WebString& feature, bool enabled) { }
-
-    WEBKIT_API static void sendMessageToFrontendOnIOThread(const WebDevToolsMessageData&);
-
-    virtual WebCString injectedScriptSource() { return WebCString(); }
-    virtual WebCString injectedScriptDispatcherSource() { return WebCString(); }
-    virtual WebCString debuggerScriptSource() { return WebCString(); }
-
-    class WebKitClientMessageLoop {
-    public:
-        virtual ~WebKitClientMessageLoop() { }
-        virtual void run() = 0;
-        virtual void quitNow() = 0;
-    };
-    virtual WebKitClientMessageLoop* createClientMessageLoop() { return 0; }
-
-    virtual bool exposeV8DebuggerProtocol() { return false; }
-
-protected:
-    ~WebDevToolsAgentClient() { }
+    virtual ~WebDevToolsMessageTransport() { }
+    virtual void sendMessageToFrontendOnIOThread(const WebDevToolsMessageData&) = 0;
 };
 
 } // namespace WebKit
-
-// FIXME(40914): Remove after adding #include into devtools_agent_filter.cc
-#include "WebDevToolsMessageTransport.h"
 
 #endif
