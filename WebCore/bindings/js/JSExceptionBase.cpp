@@ -30,14 +30,15 @@
 #include "JSEventException.h"
 #include "JSRangeException.h"
 #include "JSXMLHttpRequestException.h"
+#if ENABLE(DATABASE)
+#include "SQLException.h"
+#include "JSSQLException.h"
+#endif
 #if ENABLE(SVG)
 #include "JSSVGException.h"
 #endif
 #if ENABLE(XPATH)
 #include "JSXPathException.h"
-#endif
-#if ENABLE(XPATH)
-#include "JSSQLException.h"
 #endif
 
 namespace WebCore {
