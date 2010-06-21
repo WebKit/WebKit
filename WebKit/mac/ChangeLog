@@ -1,5 +1,12 @@
 2010-06-21  Dan Bernstein  <mitz@apple.com>
 
+        Build fix
+
+        * WebCoreSupport/WebSystemInterface.mm:
+        (InitWebCoreSystemInterface):
+
+2010-06-21  Dan Bernstein  <mitz@apple.com>
+
         Reviewed by Darin Adler.
 
         WebKit part of implementing the 'hyphens' and 'hyphenate-character' properties
