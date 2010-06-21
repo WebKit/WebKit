@@ -3,15 +3,15 @@
 include(../common.pri)
 
 VPATH += $$PWD
-!CONFIG(release, debug|release) {
-    # Output in JavaScriptCore/<config>
-    JAVASCRIPTCORE_DESTDIR = debug
-    # Use a config-specific target to prevent parallel builds file clashes on Mac
-    JAVASCRIPTCORE_TARGET = jscored
-} else {
-    JAVASCRIPTCORE_DESTDIR = release
-    JAVASCRIPTCORE_TARGET = jscore
-}
+
+# Use a config-specific target to prevent parallel builds file clashes on Mac
+mac: CONFIG(debug, debug|release): JAVASCRIPTCORE_TARGET = jscored
+else: JAVASCRIPTCORE_TARGET = jscore
+
+# Output in JavaScriptCore/<config>
+CONFIG(debug, debug|release) : JAVASCRIPTCORE_DESTDIR = debug
+else: JAVASCRIPTCORE_DESTDIR = release
+
 CONFIG(standalone_package) {
     isEmpty(JSC_GENERATED_SOURCES_DIR):JSC_GENERATED_SOURCES_DIR = $$PWD/generated
 } else {
