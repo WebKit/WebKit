@@ -2871,7 +2871,7 @@ BUG46989 MAC DEBUG : fast/dom/HTMLMeterElement/meter-styles.html = IMAGE
 BUG47035 WIN DEBUG : fast/loader/stateobjects/document-destroyed-navigate-back-with-fragment-scroll.html = PASS TEXT
 BUG47036 WIN SLOW : html5lib/runner.html = PASS
 
-# Related to https://bugs.webkit.org/show_bug.cgi?id=35350
+// Related to https://bugs.webkit.org/show_bug.cgi?id=35350
 BUG45048 : fast/events/show-modal-dialog-onblur-onfocus.html = FAIL
 BUG45048 : fast/harness/resources/modal-dialog.html = FAIL
 BUG45048 : fast/js/sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.2_T10.html = FAIL
