@@ -1,3 +1,9 @@
+2010-06-21  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Unreviewed, fixing a test expectations on Windows.
+
+        * platform/win/fast/dom/prototype-inheritance-expected.txt:
+
 2010-06-21  Drew Wilson  <atwilson@chromium.org>
 
         Unreviewed rollback.
