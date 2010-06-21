@@ -1,3 +1,36 @@
+2010-06-19  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        Need to ensure that we grow the RegisterFile when creating a callframe for host code
+        https://bugs.webkit.org/show_bug.cgi?id=40858
+        <rdar://problem/8108986>
+
+        In the past the use of the callframe in hostcode was much more
+        limited.  Now that we expect the callframe to always be valid
+        we need to grow the RegisterFile so that this is actually the
+        case.  In this particular case the problem was failing to grow
+        the registerfile could lead to a callframe that extended beyond
+        RegisterFiler::end(), so vm re-entry would clobber the callframe
+        other scenarios could also lead to badness.
+
+        I was unable to construct a simple testcase to trigger badness,
+        and any such testcase would be so dependent on exact vm stack
+        layout that it would be unlikely to work as a testcase following
+        any callframe or register allocation changes anyway.
+
+        Thankfully the new assertion I added should help to catch these
+        failures in future, and triggers on a couple of tests currently.
+
+        * interpreter/CallFrame.cpp:
+        (JSC::CallFrame::registerFile):
+        * interpreter/CallFrame.h:
+        (JSC::ExecState::init):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::privateExecute):
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+
 2010-06-21  Satish Sampath  <satish@chromium.org>
 
         Reviewed by Steve Block.

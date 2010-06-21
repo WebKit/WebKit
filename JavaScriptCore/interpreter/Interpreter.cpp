@@ -3645,6 +3645,11 @@ skip_id_custom_self:
         if (callType == CallTypeHost) {
             ScopeChainNode* scopeChain = callFrame->scopeChain();
             CallFrame* newCallFrame = CallFrame::create(callFrame->registers() + registerOffset);
+            if (!registerFile->grow(newCallFrame->registers())) {
+                exceptionValue = createStackOverflowError(callFrame);
+                goto vm_throw;
+            }
+
             newCallFrame->init(0, vPC + OPCODE_LENGTH(op_call), scopeChain, callFrame, argCount, asObject(v));
 
             JSValue returnValue;
@@ -3792,6 +3797,10 @@ skip_id_custom_self:
         if (callType == CallTypeHost) {
             ScopeChainNode* scopeChain = callFrame->scopeChain();
             CallFrame* newCallFrame = CallFrame::create(callFrame->registers() + registerOffset);
+            if (!registerFile->grow(newCallFrame->registers())) {
+                exceptionValue = createStackOverflowError(callFrame);
+                goto vm_throw;
+            }
             newCallFrame->init(0, vPC + OPCODE_LENGTH(op_call_varargs), scopeChain, callFrame, argCount, asObject(v));
             
             JSValue returnValue;
@@ -4110,6 +4119,10 @@ skip_id_custom_self:
         if (constructType == ConstructTypeHost) {
             ScopeChainNode* scopeChain = callFrame->scopeChain();
             CallFrame* newCallFrame = CallFrame::create(callFrame->registers() + registerOffset);
+            if (!registerFile->grow(newCallFrame->registers())) {
+                exceptionValue = createStackOverflowError(callFrame);
+                goto vm_throw;
+            }
             newCallFrame->init(0, vPC + OPCODE_LENGTH(op_construct), scopeChain, callFrame, argCount, asObject(v));
 
             JSValue returnValue;
