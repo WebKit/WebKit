@@ -493,9 +493,9 @@ int LayoutTestController::windowCount()
     return CFArrayGetCount(openWindowsRef);
 }
 
-bool LayoutTestController::elementDoesAutoCompleteForElementWithId(JSStringRef id)
+bool LayoutTestController::elementDoesAutoCompleteForElementWithId(JSStringRef jsString)
 {
-    RetainPtr<CFStringRef> idCF(AdoptCF, JSStringCopyCFString(kCFAllocatorDefault, id));
+    RetainPtr<CFStringRef> idCF(AdoptCF, JSStringCopyCFString(kCFAllocatorDefault, jsString));
     NSString *idNS = (NSString *)idCF.get();
     
     DOMElement *element = [[mainFrame DOMDocument] getElementById:idNS];
@@ -526,7 +526,7 @@ void LayoutTestController::setCacheModel(int cacheModel)
 bool LayoutTestController::isCommandEnabled(JSStringRef name)
 {
     RetainPtr<CFStringRef> nameCF(AdoptCF, JSStringCopyCFString(kCFAllocatorDefault, name));
-    NSString *nameNS = reinterpret_cast<const NSString *>(nameCF.get());
+    NSString *nameNS = (NSString *)nameCF.get();
 
     // Accept command strings with capital letters for first letter without trailing colon.
     if (![nameNS hasSuffix:@":"] && [nameNS length]) {

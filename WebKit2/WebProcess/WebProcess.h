@@ -39,7 +39,7 @@ namespace WebKit {
 
 class InjectedBundle;
 class WebPage;
-class WebPreferencesStore;
+struct WebPreferencesStore;
 
 class WebProcess : CoreIPC::Connection::Client {
 public:

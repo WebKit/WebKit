@@ -56,7 +56,7 @@ namespace WebKit {
 
 class DrawingArea;
 class WebFrame;
-class WebPreferencesStore;
+struct WebPreferencesStore;
 
 class WebPage : public RefCounted<WebPage> {
 public:

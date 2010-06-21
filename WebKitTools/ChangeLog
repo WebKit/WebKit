@@ -1,3 +1,17 @@
+2010-06-21  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Make DumpRenderTree build with clang++
+
+        * DumpRenderTree/mac/DumpRenderTreePasteboard.m:
+        (-[LocalPasteboard setPropertyList:forType:]):
+        * DumpRenderTree/mac/DumpRenderTreeWindow.mm:
+        (-[DumpRenderTreeWindow keyDown:]):
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm:
+        (LayoutTestController::elementDoesAutoCompleteForElementWithId):
+        (LayoutTestController::isCommandEnabled):
+
 2010-06-21  Prasad Tammana  <prasadt@chromium.org>
 
         Reviewed by Darin Adler.

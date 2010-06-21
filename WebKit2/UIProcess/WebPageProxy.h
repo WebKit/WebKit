@@ -65,7 +65,7 @@ class WebMouseEvent;
 class WebPageNamespace;
 class WebProcessProxy;
 class WebWheelEvent;
-class WebNavigationDataStore;
+struct WebNavigationDataStore;
 
 typedef GenericCallback<WKStringRef> RenderTreeExternalRepresentationCallback;
 typedef GenericCallback<WKStringRef> ScriptReturnValueCallback;

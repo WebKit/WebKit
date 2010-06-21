@@ -177,7 +177,7 @@ static NSMutableDictionary *localPasteboards;
     return [dataByType objectForKey:dataType];
 }
 
-- (BOOL)setPropertyList:(id)propertyList forType:(NSString *)dataType;
+- (BOOL)setPropertyList:(id)propertyList forType:(NSString *)dataType
 {
     CFDataRef data = NULL;
     if (propertyList)

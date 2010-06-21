@@ -82,7 +82,7 @@ static CFArrayCallBacks NonRetainingArrayCallbacks = {
     return gLayoutTestController ? gLayoutTestController->windowIsKey() : YES;
 }
 
-- (void)keyDown:(id)sender
+- (void)keyDown:(NSEvent *)event
 {
     // Do nothing, avoiding the beep we'd otherwise get from NSResponder,
     // once we get to the end of the responder chain.

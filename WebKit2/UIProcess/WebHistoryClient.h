@@ -35,7 +35,7 @@ namespace WebCore {
 namespace WebKit {
 
 class WebFrameProxy;
-class WebNavigationDataStore;
+struct WebNavigationDataStore;
 class WebPageProxy;
 
 class WebHistoryClient {

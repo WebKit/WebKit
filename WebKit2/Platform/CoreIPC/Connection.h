@@ -74,7 +74,7 @@ public:
 
     template<typename E, typename T> bool send(E messageID, uint64_t destinationID, const T& arguments);
     
-    static const unsigned long long NoTimeout = 1e10;
+    static const unsigned long long NoTimeout = 10000000000ULL;
     template<typename E, typename T, typename U> bool sendSync(E messageID, uint64_t destinationID, const T& arguments, const U& reply, double timeout);
 
     template<typename E> std::auto_ptr<ArgumentDecoder> waitFor(E messageID, uint64_t destinationID, double timeout);

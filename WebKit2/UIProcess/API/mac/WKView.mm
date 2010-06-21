@@ -176,13 +176,13 @@ using namespace WebCore;
     _data->_page->wheelEvent(wheelEvent);
 }
 
-- (void)keyUp:(NSEvent *)theEvent;
+- (void)keyUp:(NSEvent *)theEvent
 {
     WebKeyboardEvent keyboardEvent = WebEventFactory::createWebKeyboardEvent(theEvent);
     _data->_page->keyEvent(keyboardEvent);
 }
 
-- (void)keyDown:(NSEvent *)theEvent;
+- (void)keyDown:(NSEvent *)theEvent
 {
     WebKeyboardEvent keyboardEvent = WebEventFactory::createWebKeyboardEvent(theEvent);
     _data->_page->keyEvent(keyboardEvent);

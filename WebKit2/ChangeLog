@@ -1,3 +1,18 @@
+2010-06-21  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Make WebKit2 build with clang++
+
+        * Platform/CoreIPC/Connection.h:
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView keyUp:]):
+        (-[WKView keyDown:]):
+        * UIProcess/WebHistoryClient.h:
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebProcess.h:
+
 2010-06-21  Satish Sampath  <satish@chromium.org>
 
         Reviewed by Steve Block.
