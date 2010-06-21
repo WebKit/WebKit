@@ -1,3 +1,11 @@
+2010-06-21  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        Unreviewed.
+
+        Adding myself to the committers list.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2010-06-20  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Dimitri Glazkov.

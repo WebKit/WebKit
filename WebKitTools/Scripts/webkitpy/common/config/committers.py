@@ -120,6 +120,7 @@ committers_unable_to_review = [
     Committer("Jeremy Moskovich", ["playmobil@google.com", "jeremy@chromium.org"], "jeremymos"),
     Committer("Jessie Berlin", ["jberlin@webkit.org", "jberlin@apple.com"]),
     Committer("Jesus Sanchez-Palencia", ["jesus@webkit.org", "jesus.palencia@openbossa.org"], "jeez_"),
+    Committer("Jocelyn Turcotte", "jocelyn.turcotte@nokia.com", "jturcotte"),
     Committer("John Abd-El-Malek", "jam@chromium.org", "jam"),
     Committer("John Gregg", ["johnnyg@google.com", "johnnyg@chromium.org"], "johnnyg"),
     Committer("Joost de Valk", ["joost@webkit.org", "webkit-dev@joostdevalk.nl"], "Altha"),
