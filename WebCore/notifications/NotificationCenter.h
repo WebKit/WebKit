@@ -33,6 +33,7 @@
 
 #include "Notification.h"
 #include "NotificationContents.h"
+#include "ScriptExecutionContext.h"
 #include "WorkerThread.h"
 #include <wtf/OwnPtr.h>
 #include <wtf/PassRefPtr.h>
@@ -42,8 +43,6 @@
 #if ENABLE(NOTIFICATIONS)
 
 namespace WebCore {
-
-    class ScriptExecutionContext;
 
     class NotificationCenter : public RefCounted<NotificationCenter>, public ActiveDOMObject { 
     public:
