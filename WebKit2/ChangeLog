@@ -33,6 +33,82 @@
 
         Rename DrawingAreaProxyUpdateChunk to ChunkedUpdateDrawingArea
         https://bugs.webkit.org/show_bug.cgi?id=40948
+
+        Rename UIProcess version of DrawingAreaUpdateChunk to ChunkedUpdateDrawingAreaProxy,
+        and rename the Mac/Win versions of the various DrawingArea files too.
+        
+        Also rename the DrawingAreaUpdateChunkType enum to ChunkedUpdateDrawingAreaType.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView initWithFrame:pageNamespaceRef:]):
+        * UIProcess/ChunkedUpdateDrawingArea.cpp: Removed.
+        * UIProcess/ChunkedUpdateDrawingArea.h: Removed.
+        * UIProcess/ChunkedUpdateDrawingAreaProxy.cpp: Added.
+        (WebKit::ChunkedUpdateDrawingAreaProxy::ChunkedUpdateDrawingAreaProxy):
+        (WebKit::ChunkedUpdateDrawingAreaProxy::~ChunkedUpdateDrawingAreaProxy):
+        (WebKit::ChunkedUpdateDrawingAreaProxy::paint):
+        (WebKit::ChunkedUpdateDrawingAreaProxy::setSize):
+        (WebKit::ChunkedUpdateDrawingAreaProxy::setPageIsVisible):
+        (WebKit::ChunkedUpdateDrawingAreaProxy::didSetSize):
+        (WebKit::ChunkedUpdateDrawingAreaProxy::update):
+        (WebKit::ChunkedUpdateDrawingAreaProxy::didReceiveMessage):
+        * UIProcess/ChunkedUpdateDrawingAreaProxy.h: Added.
+        (WebKit::ChunkedUpdateDrawingAreaProxy::encode):
+        * UIProcess/DrawingAreaProxy.h:
+        (WebKit::DrawingAreaProxy::):
+        * UIProcess/mac/ChunkedUpdateDrawingAreaProxyMac.mm: Added.
+        (WebKit::ChunkedUpdateDrawingAreaProxy::page):
+        (WebKit::ChunkedUpdateDrawingAreaProxy::ensureBackingStore):
+        (WebKit::ChunkedUpdateDrawingAreaProxy::invalidateBackingStore):
+        (WebKit::ChunkedUpdateDrawingAreaProxy::platformPaint):
+        (WebKit::ChunkedUpdateDrawingAreaProxy::drawUpdateChunkIntoBackingStore):
+        * UIProcess/mac/DrawingAreaProxyUpdateChunkMac.mm: Removed.
+        * UIProcess/win/ChunkedUpdateDrawingAreaProxyWin.cpp: Added.
+        (WebKit::ChunkedUpdateDrawingAreaProxy::page):
+        (WebKit::ChunkedUpdateDrawingAreaProxy::ensureBackingStore):
+        (WebKit::ChunkedUpdateDrawingAreaProxy::invalidateBackingStore):
+        (WebKit::ChunkedUpdateDrawingAreaProxy::platformPaint):
+        (WebKit::ChunkedUpdateDrawingAreaProxy::drawUpdateChunkIntoBackingStore):
+        * UIProcess/win/DrawingAreaProxyUpdateChunkWin.cpp: Removed.
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::WebView):
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/WebPage/ChunkedUpdateDrawingArea.cpp: Added.
+        (WebKit::ChunkedUpdateDrawingArea::ChunkedUpdateDrawingArea):
+        (WebKit::ChunkedUpdateDrawingArea::~ChunkedUpdateDrawingArea):
+        (WebKit::ChunkedUpdateDrawingArea::invalidateWindow):
+        (WebKit::ChunkedUpdateDrawingArea::invalidateContentsAndWindow):
+        (WebKit::ChunkedUpdateDrawingArea::invalidateContentsForSlowScroll):
+        (WebKit::ChunkedUpdateDrawingArea::scroll):
+        (WebKit::ChunkedUpdateDrawingArea::setNeedsDisplay):
+        (WebKit::ChunkedUpdateDrawingArea::display):
+        (WebKit::ChunkedUpdateDrawingArea::scheduleDisplay):
+        (WebKit::ChunkedUpdateDrawingArea::setSize):
+        (WebKit::ChunkedUpdateDrawingArea::suspendPainting):
+        (WebKit::ChunkedUpdateDrawingArea::resumePainting):
+        (WebKit::ChunkedUpdateDrawingArea::didUpdate):
+        (WebKit::ChunkedUpdateDrawingArea::didReceiveMessage):
+        * WebProcess/WebPage/ChunkedUpdateDrawingArea.h: Added.
+        * WebProcess/WebPage/DrawingArea.cpp:
+        (WebKit::DrawingArea::create):
+        * WebProcess/WebPage/DrawingArea.h:
+        (WebKit::DrawingArea::):
+        * WebProcess/WebPage/DrawingAreaUpdateChunk.cpp: Removed.
+        * WebProcess/WebPage/DrawingAreaUpdateChunk.h: Removed.
+        * WebProcess/WebPage/mac/ChunkedUpdateDrawingAreaMac.cpp: Added.
+        (WebKit::ChunkedUpdateDrawingArea::paintIntoUpdateChunk):
+        * WebProcess/WebPage/mac/DrawingAreaUpdateChunkMac.cpp: Removed.
+        * WebProcess/WebPage/win/ChunkedUpdateDrawingAreaWin.cpp: Added.
+        (WebKit::ChunkedUpdateDrawingArea::paintIntoUpdateChunk):
+        * WebProcess/WebPage/win/DrawingAreaUpdateChunkWin.cpp: Removed.
+        * win/WebKit2.vcproj:
+
+2010-06-21  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Rename DrawingAreaProxyUpdateChunk to ChunkedUpdateDrawingArea
+        https://bugs.webkit.org/show_bug.cgi?id=40948
         
         Rename DrawingAreaUpdateChunk to ChunkedUpdateDrawingArea.
 

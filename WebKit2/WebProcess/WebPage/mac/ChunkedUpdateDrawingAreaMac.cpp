@@ -23,41 +23,31 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "DrawingAreaUpdateChunk.h"
+#include "ChunkedUpdateDrawingArea.h"
 
 #include "UpdateChunk.h"
 #include "WebPage.h"
-#include <WebCore/BitmapInfo.h>
 #include <WebCore/GraphicsContext.h>
+#include <wtf/RetainPtr.h>
 
 using namespace WebCore;
 
 namespace WebKit {
 
-void DrawingAreaUpdateChunk::paintIntoUpdateChunk(UpdateChunk* updateChunk)
+void ChunkedUpdateDrawingArea::paintIntoUpdateChunk(UpdateChunk* updateChunk)
 {
-    OwnPtr<HDC> hdc(::CreateCompatibleDC(0));
+    RetainPtr<CGColorSpaceRef> colorSpace(AdoptCF, CGColorSpaceCreateDeviceRGB());
+    RetainPtr<CGContextRef> bitmapContext(AdoptCF, CGBitmapContextCreate(updateChunk->data(), updateChunk->rect().width(), updateChunk->rect().height(), 8, updateChunk->rect().width() * 4, colorSpace.get(), kCGImageAlphaPremultipliedLast));
 
-    void* bits;
-    BitmapInfo bmp = BitmapInfo::createBottomUp(updateChunk->rect().size());
-    OwnPtr<HBITMAP> hbmp(::CreateDIBSection(0, &bmp, DIB_RGB_COLORS, &bits, updateChunk->memory(), 0));
+    // WebCore expects a flipped coordinate system.
+    CGContextTranslateCTM(bitmapContext.get(), 0.0, updateChunk->rect().height());
+    CGContextScaleCTM(bitmapContext.get(), 1.0, -1.0);
 
-    HBITMAP hbmpOld = static_cast<HBITMAP>(::SelectObject(hdc.get(), hbmp.get()));
-
-    GraphicsContext gc(hdc.get());
-    gc.save();
-
-    // FIXME: Is this white fill needed?
-    RECT rect = updateChunk->rect();
-    ::FillRect(hdc.get(), &rect, (HBRUSH)::GetStockObject(WHITE_BRUSH));
-    gc.translate(-updateChunk->rect().x(), -updateChunk->rect().y());
-
-    m_webPage->drawRect(gc, updateChunk->rect());
-
-    gc.restore();
-
-    // Re-select the old HBITMAP
-    ::SelectObject(hdc.get(), hbmpOld);
+    // Now paint into the backing store.
+    GraphicsContext graphicsContext(bitmapContext.get());
+    graphicsContext.translate(-updateChunk->rect().x(), -updateChunk->rect().y());
+    
+    m_webPage->drawRect(graphicsContext, updateChunk->rect());
 }
 
 } // namespace WebKit

@@ -46,7 +46,7 @@ class WebPage;
 class DrawingArea {
 public:
     enum Type {
-        DrawingAreaUpdateChunkType
+        ChunkedUpdateDrawingAreaType
     };
 
     // FIXME: It might make sense to move this create function into a factory style class. 

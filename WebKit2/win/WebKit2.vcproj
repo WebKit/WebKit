@@ -643,11 +643,11 @@
 					>
 				</File>
 				<File
-					RelativePath="..\WebProcess\WebPage\DrawingAreaUpdateChunk.cpp"
+					RelativePath="..\WebProcess\WebPage\ChunkedUpdateDrawingArea.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\WebProcess\WebPage\DrawingAreaUpdateChunk.h"
+					RelativePath="..\WebProcess\WebPage\ChunkedUpdateDrawingArea.h"
 					>
 				</File>
 				<File
@@ -670,7 +670,7 @@
 					Name="win"
 					>
 					<File
-						RelativePath="..\WebProcess\WebPage\win\DrawingAreaUpdateChunkWin.cpp"
+						RelativePath="..\WebProcess\WebPage\win\ChunkedUpdateDrawingAreaWin.cpp"
 						>
 					</File>
 					<File
@@ -780,11 +780,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\UIProcess\ChunkedUpdateDrawingArea.cpp"
+				RelativePath="..\UIProcess\ChunkedUpdateDrawingAreaProxy.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\UIProcess\ChunkedUpdateDrawingArea.h"
+				RelativePath="..\UIProcess\ChunkedUpdateDrawingAreaProxy.h"
 				>
 			</File>
 			<File
@@ -1087,7 +1087,7 @@
 				Name="win"
 				>
 				<File
-					RelativePath="..\UIProcess\win\DrawingAreaProxyUpdateChunkWin.cpp"
+					RelativePath="..\UIProcess\win\ChunkedUpdateDrawingAreaProxyWin.cpp"
 					>
 				</File>
 				<File

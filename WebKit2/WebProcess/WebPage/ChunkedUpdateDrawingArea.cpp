@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "DrawingAreaUpdateChunk.h"
+#include "ChunkedUpdateDrawingArea.h"
 
 #include "DrawingAreaMessageKinds.h"
 #include "DrawingAreaProxyMessageKinds.h"
@@ -37,39 +37,39 @@ using namespace WebCore;
 
 namespace WebKit {
 
-DrawingAreaUpdateChunk::DrawingAreaUpdateChunk(WebPage* webPage)
-    : DrawingArea(DrawingAreaUpdateChunkType, webPage)
+ChunkedUpdateDrawingArea::ChunkedUpdateDrawingArea(WebPage* webPage)
+    : DrawingArea(ChunkedUpdateDrawingAreaType, webPage)
     , m_isWaitingForUpdate(false)
     , m_shouldPaint(true)
-    , m_displayTimer(WebProcess::shared().runLoop(), this, &DrawingAreaUpdateChunk::display)
+    , m_displayTimer(WebProcess::shared().runLoop(), this, &ChunkedUpdateDrawingArea::display)
 {
 }
 
-DrawingAreaUpdateChunk::~DrawingAreaUpdateChunk()
+ChunkedUpdateDrawingArea::~ChunkedUpdateDrawingArea()
 {
 }
 
-void DrawingAreaUpdateChunk::invalidateWindow(const IntRect& rect, bool immediate)
+void ChunkedUpdateDrawingArea::invalidateWindow(const IntRect& rect, bool immediate)
 {
 }
 
-void DrawingAreaUpdateChunk::invalidateContentsAndWindow(const IntRect& rect, bool immediate)
-{
-    setNeedsDisplay(rect);
-}
-
-void DrawingAreaUpdateChunk::invalidateContentsForSlowScroll(const IntRect& rect, bool immediate)
+void ChunkedUpdateDrawingArea::invalidateContentsAndWindow(const IntRect& rect, bool immediate)
 {
     setNeedsDisplay(rect);
 }
 
-void DrawingAreaUpdateChunk::scroll(const IntSize& scrollDelta, const IntRect& rectToScroll, const IntRect& clipRect)
+void ChunkedUpdateDrawingArea::invalidateContentsForSlowScroll(const IntRect& rect, bool immediate)
+{
+    setNeedsDisplay(rect);
+}
+
+void ChunkedUpdateDrawingArea::scroll(const IntSize& scrollDelta, const IntRect& rectToScroll, const IntRect& clipRect)
 {
     // FIXME: Do something much smarter.
     setNeedsDisplay(rectToScroll);
 }
 
-void DrawingAreaUpdateChunk::setNeedsDisplay(const IntRect& rect)
+void ChunkedUpdateDrawingArea::setNeedsDisplay(const IntRect& rect)
 {
     // FIXME: Collect a set of rects/region instead of just the union
     // of all rects.
@@ -77,7 +77,7 @@ void DrawingAreaUpdateChunk::setNeedsDisplay(const IntRect& rect)
     scheduleDisplay();
 }
 
-void DrawingAreaUpdateChunk::display()
+void ChunkedUpdateDrawingArea::display()
 {
     ASSERT(!m_isWaitingForUpdate);
  
@@ -103,7 +103,7 @@ void DrawingAreaUpdateChunk::display()
     m_displayTimer.stop();
 }
 
-void DrawingAreaUpdateChunk::scheduleDisplay()
+void ChunkedUpdateDrawingArea::scheduleDisplay()
 {
     if (!m_shouldPaint)
         return;
@@ -117,7 +117,7 @@ void DrawingAreaUpdateChunk::scheduleDisplay()
     m_displayTimer.startOneShot(0);
 }
 
-void DrawingAreaUpdateChunk::setSize(const IntSize& viewSize)
+void ChunkedUpdateDrawingArea::setSize(const IntSize& viewSize)
 {
     ASSERT(m_shouldPaint);
     ASSERT_ARG(viewSize, !viewSize.isEmpty());
@@ -139,7 +139,7 @@ void DrawingAreaUpdateChunk::setSize(const IntSize& viewSize)
     WebProcess::shared().connection()->send(DrawingAreaProxyMessage::DidSetSize, m_webPage->pageID(), CoreIPC::In(updateChunk));
 }
 
-void DrawingAreaUpdateChunk::suspendPainting()
+void ChunkedUpdateDrawingArea::suspendPainting()
 {
     ASSERT(m_shouldPaint);
     
@@ -147,7 +147,7 @@ void DrawingAreaUpdateChunk::suspendPainting()
     m_displayTimer.stop();
 }
 
-void DrawingAreaUpdateChunk::resumePainting()
+void ChunkedUpdateDrawingArea::resumePainting()
 {
     ASSERT(!m_shouldPaint);
     
@@ -157,7 +157,7 @@ void DrawingAreaUpdateChunk::resumePainting()
     display();
 }
 
-void DrawingAreaUpdateChunk::didUpdate()
+void ChunkedUpdateDrawingArea::didUpdate()
 {
     m_isWaitingForUpdate = false;
 
@@ -165,7 +165,7 @@ void DrawingAreaUpdateChunk::didUpdate()
     display();
 }
 
-void DrawingAreaUpdateChunk::didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder& arguments)
+void ChunkedUpdateDrawingArea::didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder& arguments)
 {
     switch (messageID.get<DrawingAreaMessage::Kind>()) {
         case DrawingAreaMessage::SetSize: {

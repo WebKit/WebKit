@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DrawingAreaUpdateChunk_h
-#define DrawingAreaUpdateChunk_h
+#ifndef ChunkedUpdateDrawingArea_h
+#define ChunkedUpdateDrawingArea_h
 
 #include "DrawingArea.h"
 #include "RunLoop.h"
@@ -34,10 +34,10 @@ namespace WebKit {
 
 class UpdateChunk;
 
-class DrawingAreaUpdateChunk : public DrawingArea {
+class ChunkedUpdateDrawingArea : public DrawingArea {
 public:
-    DrawingAreaUpdateChunk(WebPage*);
-    virtual ~DrawingAreaUpdateChunk();
+    ChunkedUpdateDrawingArea(WebPage*);
+    virtual ~ChunkedUpdateDrawingArea();
 
     virtual void invalidateWindow(const WebCore::IntRect& rect, bool immediate);
     virtual void invalidateContentsAndWindow(const WebCore::IntRect& rect, bool immediate);
@@ -63,9 +63,9 @@ private:
     WebCore::IntRect m_dirtyRect;
     bool m_isWaitingForUpdate;
     bool m_shouldPaint;
-    RunLoop::Timer<DrawingAreaUpdateChunk> m_displayTimer;
+    RunLoop::Timer<ChunkedUpdateDrawingArea> m_displayTimer;
 };
 
 } // namespace WebKit
 
-#endif // DrawingAreaUpdateChunk_h
+#endif // ChunkedUpdateDrawingArea_h

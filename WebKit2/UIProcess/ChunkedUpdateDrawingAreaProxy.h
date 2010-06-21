@@ -50,10 +50,10 @@ class WebView;
 typedef WebView PlatformWebView;
 #endif
 
-class ChunkedUpdateDrawingArea : public DrawingAreaProxy {
+class ChunkedUpdateDrawingAreaProxy : public DrawingAreaProxy {
 public:
-    ChunkedUpdateDrawingArea(PlatformWebView*);
-    virtual ~ChunkedUpdateDrawingArea();
+    ChunkedUpdateDrawingAreaProxy(PlatformWebView*);
+    virtual ~ChunkedUpdateDrawingAreaProxy();
 
     // The DrawingAreaProxy should never be decoded itself. Instead, the DrawingArea should be decoded.
     virtual void encode(CoreIPC::ArgumentEncoder& encoder) const

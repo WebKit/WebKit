@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "ChunkedUpdateDrawingArea.h"
+#include "ChunkedUpdateDrawingAreaProxy.h"
 
 #include "DrawingAreaMessageKinds.h"
 #include "DrawingAreaProxyMessageKinds.h"
@@ -36,12 +36,12 @@ using namespace WebCore;
 
 namespace WebKit {
 
-WebPageProxy* ChunkedUpdateDrawingArea::page()
+WebPageProxy* ChunkedUpdateDrawingAreaProxy::page()
 {
     return toWK([m_webView pageRef]);
 }
 
-void ChunkedUpdateDrawingArea::ensureBackingStore()
+void ChunkedUpdateDrawingAreaProxy::ensureBackingStore()
 {
     if (m_bitmapContext)
         return;
@@ -54,12 +54,12 @@ void ChunkedUpdateDrawingArea::ensureBackingStore()
     CGContextScaleCTM(m_bitmapContext.get(), 1, -1);
 }
 
-void ChunkedUpdateDrawingArea::invalidateBackingStore()
+void ChunkedUpdateDrawingAreaProxy::invalidateBackingStore()
 {
     m_bitmapContext = 0;
 }
 
-void ChunkedUpdateDrawingArea::platformPaint(const IntRect& rect, CGContextRef context)
+void ChunkedUpdateDrawingAreaProxy::platformPaint(const IntRect& rect, CGContextRef context)
 {
     if (!m_bitmapContext)
         return;
@@ -68,7 +68,7 @@ void ChunkedUpdateDrawingArea::platformPaint(const IntRect& rect, CGContextRef c
     CGContextDrawImage(context, CGRectMake(0, 0, CGImageGetWidth(image.get()), CGImageGetHeight(image.get())), image.get());
 }
 
-void ChunkedUpdateDrawingArea::drawUpdateChunkIntoBackingStore(UpdateChunk* updateChunk)
+void ChunkedUpdateDrawingAreaProxy::drawUpdateChunkIntoBackingStore(UpdateChunk* updateChunk)
 {
     ensureBackingStore();
 
