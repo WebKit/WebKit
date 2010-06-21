@@ -35,6 +35,7 @@
 #import "WebNSObjectExtras.h"
 #import "WebNetscapeDeprecatedFunctions.h"
 #import <WebCore/npruntime_impl.h>
+#import <wtf/RetainPtr.h>
 
 #if USE(PLUGIN_HOST_PROCESS)
 #import "NetscapePluginHostManager.h"
@@ -208,7 +209,7 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
     
     OSType type = 0;
 
-    if (bundle) {
+    if (cfBundle) {
         // Bundle
         CFBundleGetPackageInfo(cfBundle, &type, NULL);
 #ifdef SUPPORT_CFM
@@ -230,8 +231,11 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
         return NO;
 
     // Check if the executable is Mach-O or CFM.
-    if (bundle) {
-        NSFileHandle *executableFile = [NSFileHandle fileHandleForReadingAtPath:[bundle executablePath]];
+    if (cfBundle) {
+        RetainPtr<CFURLRef> executableURL(AdoptCF, CFBundleCopyExecutableURL(cfBundle));
+        if (!executableURL)
+            return NO;
+        NSFileHandle *executableFile = [NSFileHandle fileHandleForReadingAtPath:[(NSURL *)executableURL.get() path]];
         NSData *data = [executableFile readDataOfLength:512];
         [executableFile closeFile];
         // Check the length of the data before calling memcmp. We think this fixes 3782543.
@@ -246,11 +250,11 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
 #endif
 
 #if USE(PLUGIN_HOST_PROCESS)
-        NSArray *archs = [bundle executableArchitectures];
+        RetainPtr<CFArrayRef> archs(AdoptCF, CFBundleCopyExecutableArchitectures(cfBundle));
         
-        if ([archs containsObject:[NSNumber numberWithInteger:NSBundleExecutableArchitectureX86_64]])
+        if ([(NSArray *)archs.get() containsObject:[NSNumber numberWithInteger:NSBundleExecutableArchitectureX86_64]])
             pluginHostArchitecture = CPU_TYPE_X86_64;
-        else if ([archs containsObject:[NSNumber numberWithInteger:NSBundleExecutableArchitectureI386]])
+        else if ([(NSArray *)archs.get() containsObject:[NSNumber numberWithInteger:NSBundleExecutableArchitectureI386]])
             pluginHostArchitecture = CPU_TYPE_X86;
         else
             return NO;

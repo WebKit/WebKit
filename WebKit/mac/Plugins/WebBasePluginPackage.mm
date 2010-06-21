@@ -124,15 +124,15 @@ static NSString *pathByResolvingSymlinksAndAliases(NSString *thePath)
         return nil;
         
     path = pathByResolvingSymlinksAndAliases(pluginPath);
-    bundle = [[NSBundle alloc] initWithPath:path];
+    cfBundle = CFBundleCreate(kCFAllocatorDefault, (CFURLRef)[NSURL fileURLWithPath:path]);
+
 #ifndef __ppc__
     // 32-bit PowerPC is the only platform where non-bundled CFM plugins are supported
-    if (!bundle) {
+    if (!cfBundle) {
         [self release];
         return nil;
     }
 #endif
-    cfBundle = CFBundleCreate(NULL, (CFURLRef)[NSURL fileURLWithPath:path]);
     extensionToMIME = [[NSMutableDictionary alloc] init];
     
     return self;
@@ -167,13 +167,22 @@ static NSString *pathByResolvingSymlinksAndAliases(NSString *thePath)
     return pList;
 }
 
+- (id)_objectForInfoDictionaryKey:(NSString *)key
+{
+    CFDictionaryRef bundleInfoDictionary = CFBundleGetInfoDictionary(cfBundle);
+    if (!bundleInfoDictionary)
+        return nil;
+
+    return (id)CFDictionaryGetValue(bundleInfoDictionary, key);
+}
+
 - (BOOL)getPluginInfoFromPLists
 {
-    if (!bundle)
+    if (!cfBundle)
         return NO;
     
     NSDictionary *MIMETypes = nil;
-    NSString *pListFilename = [bundle objectForInfoDictionaryKey:WebPluginMIMETypesFilenameKey];
+    NSString *pListFilename = [self _objectForInfoDictionaryKey:WebPluginMIMETypesFilenameKey];
     
     // Check if the MIME types are claimed in a plist in the user's preferences directory.
     if (pListFilename) {
@@ -191,7 +200,7 @@ static NSString *pathByResolvingSymlinksAndAliases(NSString *thePath)
     }
 
     if (!MIMETypes) {
-        MIMETypes = [bundle objectForInfoDictionaryKey:WebPluginMIMETypesKey];
+        MIMETypes = [self _objectForInfoDictionaryKey:WebPluginMIMETypesKey];
         if (!MIMETypes)
             return NO;
     }
@@ -231,12 +240,12 @@ static NSString *pathByResolvingSymlinksAndAliases(NSString *thePath)
 
     NSString *filename = [self filename];
 
-    NSString *theName = [bundle objectForInfoDictionaryKey:WebPluginNameKey];
+    NSString *theName = [self _objectForInfoDictionaryKey:WebPluginNameKey];
     if (!theName)
         theName = filename;
     name = theName;
 
-    description = [bundle objectForInfoDictionaryKey:WebPluginDescriptionKey];
+    description = [self _objectForInfoDictionaryKey:WebPluginDescriptionKey];
     if (!description)
         description = filename;
     pluginDescription = description;
@@ -246,7 +255,7 @@ static NSString *pathByResolvingSymlinksAndAliases(NSString *thePath)
 
 - (BOOL)load
 {
-    if (bundle && !BP_CreatePluginMIMETypesPreferences)
+    if (cfBundle && !BP_CreatePluginMIMETypesPreferences)
         BP_CreatePluginMIMETypesPreferences = (BP_CreatePluginMIMETypesPreferencesFuncPtr)CFBundleGetFunctionPointerForName(cfBundle, CFSTR("BP_CreatePluginMIMETypesPreferences"));
     
     return YES;
@@ -261,7 +270,6 @@ static NSString *pathByResolvingSymlinksAndAliases(NSString *thePath)
     [MIMEToExtensions release];
     [extensionToMIME release];
 
-    [bundle release];
     if (cfBundle)
         CFRelease(cfBundle);
     
@@ -328,11 +336,6 @@ static NSString *pathByResolvingSymlinksAndAliases(NSString *thePath)
 - (NSArray *)extensionsForMIMEType:(NSString *)MIMEType
 {
     return [MIMEToExtensions objectForKey:MIMEType];
-}
-
-- (NSBundle *)bundle
-{
-    return bundle;
 }
 
 - (void)setMIMEToDescriptionDictionary:(NSDictionary *)MIMEToDescriptionDictionary

@@ -1,5 +1,28 @@
 2010-06-20  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Dan Bernstein.
+
+        Move the NSBundle ivar to WebPluginPackage
+        https://bugs.webkit.org/show_bug.cgi?id=40894
+
+        * Plugins/WebBasePluginPackage.h:
+        * Plugins/WebBasePluginPackage.mm:
+        (-[WebBasePluginPackage initWithPath:]):
+        (-[WebBasePluginPackage _objectForInfoDictionaryKey:]):
+        (-[WebBasePluginPackage getPluginInfoFromPLists]):
+        (-[WebBasePluginPackage load]):
+        (-[WebBasePluginPackage dealloc]):
+        * Plugins/WebNetscapePluginPackage.mm:
+        (-[WebNetscapePluginPackage _initWithPath:]):
+        * Plugins/WebPluginPackage.h:
+        * Plugins/WebPluginPackage.mm:
+        (-[WebPluginPackage initWithPath:]):
+        (-[WebPluginPackage dealloc]):
+        (-[WebPluginPackage viewFactory]):
+        (-[WebPluginPackage load]):
+
+2010-06-20  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Sam Weinig.
 
         Remove -[WebBasePluginPackage bundle]

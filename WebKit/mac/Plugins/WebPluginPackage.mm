@@ -40,12 +40,14 @@ NSString *WebPlugInContainingElementKey =       @"WebPlugInContainingElementKey"
 
 @implementation WebPluginPackage
 
-- initWithPath:(NSString *)pluginPath
+- (id)initWithPath:(NSString *)pluginPath
 {
     if (!(self = [super initWithPath:pluginPath]))
         return nil;
 
-    if (bundle == nil) {
+    nsBundle = [[NSBundle alloc] initWithPath:path];
+
+    if (!nsBundle) {
         [self release];
         return nil;
     }
@@ -59,7 +61,7 @@ NSString *WebPlugInContainingElementKey =       @"WebPlugInContainingElementKey"
         }
     }
     
-    NSFileHandle *executableFile = [NSFileHandle fileHandleForReadingAtPath:[bundle executablePath]];
+    NSFileHandle *executableFile = [NSFileHandle fileHandleForReadingAtPath:[nsBundle executablePath]];
     NSData *data = [executableFile readDataOfLength:512];
     [executableFile closeFile];
     if (![self isNativeLibraryData:data]) {
@@ -75,9 +77,16 @@ NSString *WebPlugInContainingElementKey =       @"WebPlugInContainingElementKey"
     return self;
 }
 
+- (void)dealloc
+{
+    [nsBundle release];
+
+    [super dealloc];
+}
+
 - (Class)viewFactory
 {
-    return [bundle principalClass];
+    return [nsBundle principalClass];
 }
 
 - (BOOL)load
@@ -87,8 +96,8 @@ NSString *WebPlugInContainingElementKey =       @"WebPlugInContainingElementKey"
 #endif
     
     // Load the bundle
-    if (![bundle isLoaded]) {
-        if (![bundle load])
+    if (![nsBundle isLoaded]) {
+        if (![nsBundle load])
             return NO;
     }
     

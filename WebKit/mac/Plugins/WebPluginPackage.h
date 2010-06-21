@@ -32,7 +32,9 @@
 
 @protocol WebPluginViewFactory;
 
-@interface WebPluginPackage : WebBasePluginPackage
+@interface WebPluginPackage : WebBasePluginPackage {
+    NSBundle *nsBundle;
+}
 
 - (Class)viewFactory;
 
