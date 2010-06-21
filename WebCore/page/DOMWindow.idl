@@ -740,8 +740,6 @@ module window {
         attribute [Conditional=FILE_READER|FILE_WRITER] FileErrorConstructor FileError;
         attribute [Conditional=FILE_READER] FileReaderConstructor FileReader;
 
-        attribute BlobBuilderConstructor BlobBuilder;
-
 #endif // defined(LANGUAGE_JAVASCRIPT)
 
 #if defined(V8_BINDING) && V8_BINDING

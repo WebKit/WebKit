@@ -182,7 +182,6 @@ SET(WebCore_IDL_FILES
     dom/WheelEvent.idl
 
     html/Blob.idl
-    html/BlobBuilder.idl
     html/DataGridColumn.idl
     html/DataGridColumnList.idl
     html/DOMFormData.idl

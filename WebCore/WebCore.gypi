@@ -83,7 +83,6 @@
             'dom/WebKitTransitionEvent.idl',
             'dom/WheelEvent.idl',
             'html/Blob.idl',
-            'html/BlobBuilder.idl',
             'html/canvas/WebGLActiveInfo.idl',
             'html/canvas/ArrayBufferView.idl',
             'html/canvas/ArrayBuffer.idl',

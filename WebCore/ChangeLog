@@ -1,3 +1,27 @@
+2010-06-21  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r61585.
+        http://trac.webkit.org/changeset/61585
+        https://bugs.webkit.org/show_bug.cgi?id=40950
+
+        It broke builds (Requested by kinuko on #webkit).
+
+        * Android.derived.jscbindings.mk:
+        * Android.derived.v8bindings.mk:
+        * CMakeLists.txt:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pri:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/BlobBuilder.cpp:
+        (WebCore::BlobBuilder::appendString):
+        (WebCore::BlobBuilder::appendBlob):
+        * html/BlobBuilder.h:
+        * page/DOMWindow.idl:
+
 2010-06-21  Kinuko Yasuda  <kinuko@chromium.org>
 
         Reviewed by Adam Barth.

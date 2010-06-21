@@ -30,7 +30,6 @@
 #include "JSBarInfo.cpp"
 #include "JSBeforeLoadEvent.cpp"
 #include "JSBlob.cpp"
-#include "JSBlobBuilder.cpp"
 #include "JSCanvasGradient.cpp"
 #include "JSCanvasPattern.cpp"
 #include "JSCanvasRenderingContext.cpp"

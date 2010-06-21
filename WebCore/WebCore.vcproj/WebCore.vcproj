@@ -777,14 +777,6 @@
 				>
 			</File>
 			<File
-				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSBlobBuilder.cpp"
-				>
-			</File>
-			<File
-				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSBlobBuilder.h"
-				>
-			</File>
-			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSCanvasGradient.cpp"
 				>
 				<FileConfiguration

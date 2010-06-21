@@ -320,7 +320,6 @@ IDL_BINDINGS += \
     dom/WebKitTransitionEvent.idl \
     dom/WheelEvent.idl \
     html/Blob.idl \
-    html/BlobBuilder.idl \
     html/canvas/ArrayBufferView.idl \
     html/canvas/ArrayBuffer.idl \
     html/canvas/Int8Array.idl \

@@ -1,3 +1,31 @@
+2010-06-21  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r61585.
+        http://trac.webkit.org/changeset/61585
+        https://bugs.webkit.org/show_bug.cgi?id=40950
+
+        It broke builds (Requested by kinuko on #webkit).
+
+        * fast/dom/Window/window-properties-expected.txt:
+        * fast/dom/Window/window-property-descriptors-expected.txt:
+        * fast/dom/constructed-objects-prototypes-expected.txt:
+        * fast/dom/prototype-inheritance-2-expected.txt:
+        * fast/dom/prototype-inheritance-expected.txt:
+        * fast/js/global-constructors-expected.txt:
+        * platform/chromium/fast/dom/prototype-inheritance-expected.txt:
+        * platform/gtk/Skipped:
+        * platform/gtk/fast/dom/Window/window-properties-expected.txt:
+        * platform/gtk/fast/dom/Window/window-property-descriptors-expected.txt:
+        * platform/gtk/fast/dom/prototype-inheritance-expected.txt:
+        * platform/qt/Skipped:
+        * platform/qt/fast/dom/Window/window-properties-expected.txt:
+        * platform/qt/fast/dom/Window/window-property-descriptors-expected.txt:
+        * platform/qt/fast/dom/prototype-inheritance-expected.txt:
+        * platform/win/Skipped:
+        * platform/win/fast/dom/Window/window-property-descriptors-expected.txt:
+        * platform/win/fast/dom/prototype-inheritance-2-expected.txt:
+        * platform/win/fast/dom/prototype-inheritance-expected.txt:
+
 2010-06-21  Kinuko Yasuda  <kinuko@chromium.org>
 
         Reviewed by Adam Barth.
