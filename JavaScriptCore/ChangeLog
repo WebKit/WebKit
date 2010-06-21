@@ -3,7 +3,7 @@
         Reviewed by Adam Roben.
 
         RetainPtr can't be used in HashMaps or HashSets
-        <https://bugs.webkit.org/post_bug.cgi>
+        <https://bugs.webkit.org/show_bug.cgi?id=40938>
         
         Added hashing knowledge similar to that in COMPtr.h.
 
