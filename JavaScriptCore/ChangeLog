@@ -1,3 +1,23 @@
+2010-06-21  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Adam Roben.
+
+        RetainPtr can't be used in HashMaps or HashSets
+        <https://bugs.webkit.org/post_bug.cgi>
+        
+        Added hashing knowledge similar to that in COMPtr.h.
+
+        * wtf/RetainPtr.h:
+        (WTF::RetainPtr::RetainPtr):
+        New function, copied from COMPtr.h but for the type change.
+        (WTF::RetainPtr::isHashTableDeletedValue):
+        Ditto.
+        (WTF::RetainPtr::hashTableDeletedValue):
+        Ditto.
+        Added template code for HashTraits and PtrHash copied from COMPtr.h but for the type change.
+        The only difference is that constructDeletedValue() matches the RefPtr implementation (in HashTraits.h)
+        rather than the COMPtr implementation.
+
 2010-06-19  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Geoffrey Garen.

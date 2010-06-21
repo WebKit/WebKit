@@ -21,6 +21,7 @@
 #ifndef RetainPtr_h
 #define RetainPtr_h
 
+#include "HashTraits.h"
 #include "TypeTraits.h"
 #include <algorithm>
 #include <CoreFoundation/CoreFoundation.h>
@@ -60,6 +61,10 @@ namespace WTF {
         
         RetainPtr(const RetainPtr& o) : m_ptr(o.m_ptr) { if (PtrType ptr = m_ptr) CFRetain(ptr); }
 
+        // Hash table deleted values, which are only constructed and never copied or destroyed.
+        RetainPtr(HashTableDeletedValueType) : m_ptr(hashTableDeletedValue()) { }
+        bool isHashTableDeletedValue() const { return m_ptr == hashTableDeletedValue(); }
+        
         ~RetainPtr() { if (PtrType ptr = m_ptr) CFRelease(ptr); }
         
         template <typename U> RetainPtr(const RetainPtr<U>& o) : m_ptr(o.get()) { if (PtrType ptr = m_ptr) CFRetain(ptr); }
@@ -87,6 +92,8 @@ namespace WTF {
         void swap(RetainPtr&);
 
     private:
+        static T* hashTableDeletedValue() { return reinterpret_cast<T*>(-1); }
+
         PtrType m_ptr;
     };
     
@@ -193,6 +200,23 @@ namespace WTF {
     { 
         return a != b.get(); 
     }
+    
+    template<typename P> struct HashTraits<RetainPtr<P> > : GenericHashTraits<RetainPtr<P> > {
+        static const bool emptyValueIsZero = true;
+        static void constructDeletedValue(RetainPtr<P>& slot) { new (&slot) RetainPtr<P>(HashTableDeletedValue); }
+        static bool isDeletedValue(const RetainPtr<P>& value) { return value == reinterpret_cast<P*>(-1); }
+    };
+    
+    template<typename P> struct PtrHash<RetainPtr<P> > : PtrHash<P*> {
+        using PtrHash<P*>::hash;
+        static unsigned hash(const RetainPtr<P>& key) { return hash(key.get()); }
+        using PtrHash<P*>::equal;
+        static bool equal(const RetainPtr<P>& a, const RetainPtr<P>& b) { return a == b; }
+        static bool equal(P* a, const RetainPtr<P>& b) { return a == b; }
+        static bool equal(const RetainPtr<P>& a, P* b) { return a == b; }
+    };
+    
+    template<typename P> struct DefaultHash<RetainPtr<P> > { typedef PtrHash<RetainPtr<P> > Hash; };
 
 } // namespace WTF
 
