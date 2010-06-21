@@ -1042,6 +1042,7 @@ SET(WebCore_SOURCES
     loader/FTPDirectoryDocument.cpp
     loader/FTPDirectoryParser.cpp
     loader/FormState.cpp
+    loader/FormSubmission.cpp
     loader/FrameLoader.cpp
     loader/HistoryController.cpp
     loader/ImageDocument.cpp

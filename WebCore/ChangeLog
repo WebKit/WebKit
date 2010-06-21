@@ -1,3 +1,12 @@
+2010-06-20  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Unreviewed build fix.
+
+        [EFL] Build break for r61527
+        https://bugs.webkit.org/post_bug.cgi 
+
+        * CMakeLists.txt: Add loader/FormSubmission.cpp
+
 2010-06-20  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Dan Bernstein.
