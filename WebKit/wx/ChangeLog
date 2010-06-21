@@ -1,3 +1,10 @@
+2010-06-21  Kevin Ollivier  <kevino@theolliviers.com>
+
+        Build fix after conversion of WebInterfaceSystem to Obj-C++.
+
+        * WebView.cpp:
+        * wscript:
+
 2010-06-15  Dumitru Daniliuc  <dumi@chromium.org>
 
         Reviewed by Adam Barth.

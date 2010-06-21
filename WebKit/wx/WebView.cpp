@@ -258,10 +258,8 @@ wxWebViewCachePolicy wxWebView::GetCachePolicy()
 }
 
 #if OS(DARWIN)
-// prototype - function is in WebKitSystemInterface.mm
-extern "C" {
+// prototype - function is in WebSystemInterface.mm
 void InitWebCoreSystemInterface(void);
-}
 #endif
 
 BEGIN_EVENT_TABLE(wxWebView, wxWindow)

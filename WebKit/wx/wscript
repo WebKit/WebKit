@@ -109,7 +109,7 @@ def build(bld):
     if sys.platform.startswith('darwin'):
         exts.append('.mm')
         obj.includes += '../mac/WebCoreSupport ../../WebCore/platform/mac'
-        obj.source = "../mac/WebCoreSupport/WebSystemInterface.m"
+        obj.source = "../mac/WebCoreSupport/WebSystemInterface.mm"
     obj.find_sources_in_dirs(webkit_dirs)
 
     if building_on_win32:
