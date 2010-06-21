@@ -1,3 +1,30 @@
+2010-06-20  Hayato Ito  <hayato@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        Add tests for CSS3 Paged Media to make sure page breaks should happen at right places.
+        Two tests (allowed-page-break and page-break-margin-collapsed) are expected to fail
+        due to lack of support.
+
+        https://bugs.webkit.org/show_bug.cgi?id=40770
+
+        * printing/allowed-page-breaks-expected.txt: Added.
+        * printing/allowed-page-breaks.html: Added.
+        * printing/no-content-empty-pages-expected.txt: Added.
+        * printing/no-content-empty-pages.html: Added.
+        * printing/page-break-display-none-expected.txt: Added.
+        * printing/page-break-display-none.html: Added.
+        * printing/page-break-margin-collapsed-expected.txt: Added.
+        * printing/page-break-margin-collapsed.html: Added.
+        * printing/script-tests/allowed-page-breaks.js: Added.
+        (test):
+        * printing/script-tests/no-content-empty-pages.js: Added.
+        (test):
+        * printing/script-tests/page-break-display-none.js: Added.
+        (test):
+        * printing/script-tests/page-break-margin-collapsed.js: Added.
+        (test):
+
 2010-06-20  Kent Tamura  <tkent@chromium.org>
 
         Unreviewed, test expectation update.
