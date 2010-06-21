@@ -1,3 +1,14 @@
+2010-06-21  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        Reviewed by nobody, build fix.
+
+        [Qt] Fix MSVC build.
+
+        The max macro was replacing the max function used in StringImpl.h
+        when compiling moc_NotificationPresenterClientQt.cpp.
+
+        * WebCoreSupport/NotificationPresenterClientQt.cpp:
+
 2010-06-21  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Unreviewed, Symbian build fix.
