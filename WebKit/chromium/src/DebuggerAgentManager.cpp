@@ -265,8 +265,8 @@ void DebuggerAgentManager::setMessageLoopDispatchHandler(WebDevToolsAgent::Messa
 void DebuggerAgentManager::setExposeV8DebuggerProtocol(bool value)
 {
     s_exposeV8DebuggerProtocol = value;
+    WebCore::ScriptDebugServer::shared().setEnabled(!s_exposeV8DebuggerProtocol);
 }
-
 
 void DebuggerAgentManager::setHostId(WebFrameImpl* webframe, int hostId)
 {

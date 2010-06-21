@@ -1,3 +1,13 @@
+2010-06-20  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        [v8] Web Inspector: don't add ScriptDebugServer as v8 listener if browser exposes
+        v8 debugging protocol.
+
+        * src/DebuggerAgentManager.cpp:
+        (WebKit::DebuggerAgentManager::setExposeV8DebuggerProtocol):
+
 2010-06-19  Jay Civelli  <jcivelli@chromium.org>
 
         Reviewed by David Levin.

@@ -72,6 +72,7 @@ ScriptDebugServer& ScriptDebugServer::shared()
 ScriptDebugServer::ScriptDebugServer()
     : m_pauseOnExceptionsState(DontPauseOnExceptions)
     , m_pausedPage(0)
+    , m_enabled(true)
 {
 }
 
@@ -83,6 +84,8 @@ void ScriptDebugServer::setDebuggerScriptSource(const String& scriptSource)
 void ScriptDebugServer::addListener(ScriptDebugListener* listener, Page* page)
 {
 #if ENABLE(V8_SCRIPT_DEBUG_SERVER)
+    if (!m_enabled)
+        return;
     v8::HandleScope scope;
     v8::Local<v8::Context> debuggerContext = v8::Debug::GetDebugContext();
     v8::Context::Scope contextScope(debuggerContext);
@@ -301,9 +304,14 @@ PassRefPtr<JavaScriptCallFrame> ScriptDebugServer::currentCallFrame()
     return m_currentCallFrame;
 }
 
+void ScriptDebugServer::setEnabled(bool value)
+{
+     m_enabled = value;
+}
+
 bool ScriptDebugServer::isDebuggerAlwaysEnabled()
 {
-    return true;
+    return m_enabled;
 }
 
 #if ENABLE(V8_SCRIPT_DEBUG_SERVER)

@@ -1,3 +1,18 @@
+2010-06-20  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        [v8] Web Inspector: don't add ScriptDebugServer as v8 listener if browser exposes
+        v8 debugging protocol.
+        https://bugs.webkit.org/show_bug.cgi?id=40844
+
+        * bindings/v8/ScriptDebugServer.cpp:
+        (WebCore::ScriptDebugServer::ScriptDebugServer):
+        (WebCore::ScriptDebugServer::addListener):
+        (WebCore::ScriptDebugServer::setEnabled):
+        (WebCore::ScriptDebugServer::isDebuggerAlwaysEnabled):
+        * bindings/v8/ScriptDebugServer.h:
+
 2010-06-20  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Unreviewed build fix.

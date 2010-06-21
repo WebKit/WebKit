@@ -94,6 +94,7 @@ public:
 
     PassRefPtr<JavaScriptCallFrame> currentCallFrame();
 
+    void setEnabled(bool);
     bool isDebuggerAlwaysEnabled();
 
 private:
@@ -119,6 +120,7 @@ private:
     OwnHandle<v8::Object> m_executionState;
     OwnPtr<ClientMessageLoop> m_clientMessageLoop;
     Page* m_pausedPage;
+    bool m_enabled;
 };
 
 } // namespace WebCore
