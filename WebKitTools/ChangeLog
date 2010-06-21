@@ -1,3 +1,18 @@
+2010-06-21  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] Unskip plugins/get-url-that-the-resource-load-delegate-will-disallow.html
+
+        It's a Mac-specific test so just add the required LayoutTestController
+        function as a no-op to avoid failing. Similar approach adopted by other
+        ports.
+
+        https://bugs.webkit.org/show_bug.cgi?id=33344
+
+        * DumpRenderTree/qt/LayoutTestControllerQt.h:
+        (LayoutTestController::addDisallowedURL):
+
 2010-06-21  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.
