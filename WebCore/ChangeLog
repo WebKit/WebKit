@@ -1,3 +1,11 @@
+2010-06-21  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Unreviewed, build fix.
+
+        Add a missing include in AsyncImageResizer.h
+
+        * html/AsyncImageResizer.h: Added the IntSize include.
+
 2010-06-21  Adam Roben  <aroben@apple.com>
 
         Call NotifyAddrChange again each time we are notified of a change

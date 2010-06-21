@@ -35,6 +35,7 @@
 
 #include "Blob.h"
 #include "CachedResourceClient.h"
+#include "IntSize.h"
 #include "ScriptValue.h"
 
 namespace WebCore {
