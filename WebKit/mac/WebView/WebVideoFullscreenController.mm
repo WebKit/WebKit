@@ -101,12 +101,12 @@ SOFT_LINK_POINTER(QTKit, QTMovieRateDidChangeNotification, NSString *)
 #endif
 }
 
-- (WebCore::HTMLMediaElement*)mediaElement;
+- (WebCore::HTMLMediaElement*)mediaElement
 {
     return _mediaElement.get();
 }
 
-- (void)setMediaElement:(WebCore::HTMLMediaElement*)mediaElement;
+- (void)setMediaElement:(WebCore::HTMLMediaElement*)mediaElement
 {
 #ifdef BUILDING_ON_TIGER
     // WebVideoFullscreenController is not supported on Tiger:
@@ -133,7 +133,7 @@ SOFT_LINK_POINTER(QTKit, QTMovieRateDidChangeNotification, NSString *)
     return _delegate;
 }
 
-- (void)setDelegate:(id <WebVideoFullscreenControllerDelegate>)delegate;
+- (void)setDelegate:(id <WebVideoFullscreenControllerDelegate>)delegate
 {
     _delegate = delegate;
 }
@@ -229,7 +229,7 @@ static NSWindow *createBackgroundFullscreenWindow(NSRect frame, int level)
         _fadeAnimation = [[WebWindowFadeAnimation alloc] initWithDuration:0.2 window:_backgroundFullscreenWindow initialAlpha:initialAlpha finalAlpha:fadeIn ? 1 : 0];
 }
 
-- (void)enterFullscreen:(NSScreen *)screen;
+- (void)enterFullscreen:(NSScreen *)screen
 {
     if (!screen)
         screen = [NSScreen mainScreen];

@@ -1,5 +1,38 @@
 2010-06-21  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Dan Bernstein.
+
+        Make all of WebKit build with clang++
+
+        * DefaultDelegates/WebDefaultPolicyDelegate.m:
+        (-[WebDefaultPolicyDelegate webView:decidePolicyForMIMEType:request:frame:decisionListener:]):
+        * Plugins/Hosted/NetscapePluginHostManager.mm:
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView resolvedURLStringForURL:target:]):
+        * WebView/WebDynamicScrollBarsView.mm:
+        (-[WebDynamicScrollBarsView setSuppressLayout:]):
+        * WebView/WebHTMLRepresentation.mm:
+        * WebView/WebNavigationData.mm:
+        (-[WebNavigationData initWithURLString:title:originalRequest:response:hasSubstituteData:clientRedirectSource:]):
+        * WebView/WebPDFRepresentation.mm:
+        (-[WebPDFRepresentation setDataSource:]):
+        (-[WebPDFRepresentation receivedData:withDataSource:]):
+        (-[WebPDFRepresentation receivedError:withDataSource:]):
+        * WebView/WebResource.mm:
+        (-[WebResource description]):
+        * WebView/WebSerializedJSValue.mm:
+        (-[WebSerializedJSValue initWithValue:context:exception:]):
+        * WebView/WebVideoFullscreenController.mm:
+        (-[WebVideoFullscreenController WebCore::]):
+        (-[WebVideoFullscreenController setMediaElement:WebCore::]):
+        (-[WebVideoFullscreenController setDelegate:]):
+        (-[WebVideoFullscreenController enterFullscreen:]):
+        * WebView/WebView.mm:
+        (-[WebView _openFrameInNewWindowFromMenu:]):
+        (-[WebView _geolocationDidChangePosition:]):
+
+2010-06-21  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Sam Weinig.
 
         Remove unused dictionary ivars from WebBasePluginPackage

@@ -5395,7 +5395,7 @@ static WebFrameView *containingFrameView(NSView *view)
     NSDictionary *element = [sender representedObject];
     ASSERT([element isKindOfClass:[NSDictionary class]]);
 
-    WebDataSource *dataSource = [[element objectForKey:WebElementFrameKey] dataSource];
+    WebDataSource *dataSource = [(WebFrame *)[element objectForKey:WebElementFrameKey] dataSource];
     NSURLRequest *request = [[dataSource request] copy];
     ASSERT(request);
     
@@ -5780,7 +5780,7 @@ static void layerSyncRunLoopObserverCallBack(CFRunLoopObserverRef, CFRunLoopActi
     return nil;
 }
 
-- (void)_geolocationDidChangePosition:(WebGeolocationPosition *)position;
+- (void)_geolocationDidChangePosition:(WebGeolocationPosition *)position
 {
 #if ENABLE(CLIENT_BASED_GEOLOCATION)
     if (_private && _private->page)

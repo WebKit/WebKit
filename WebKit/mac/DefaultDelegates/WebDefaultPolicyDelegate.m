@@ -60,7 +60,7 @@ static WebDefaultPolicyDelegate *sharedDelegate = nil;
 - (void)webView: (WebView *)wv decidePolicyForMIMEType:(NSString *)type
                                                request:(NSURLRequest *)request
                                                  frame:(WebFrame *)frame
-                                      decisionListener:(id <WebPolicyDecisionListener>)listener;
+                                      decisionListener:(id <WebPolicyDecisionListener>)listener
 {
     if ([[request URL] isFileURL]) {
         BOOL isDirectory = NO;

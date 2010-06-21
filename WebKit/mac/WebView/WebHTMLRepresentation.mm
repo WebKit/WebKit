@@ -29,6 +29,7 @@
 #import "WebHTMLRepresentation.h"
 
 #import "DOMElementInternal.h"
+#import "DOMNodeInternal.h"
 #import "DOMRangeInternal.h"
 #import "WebArchive.h"
 #import "WebBasePluginPackage.h"

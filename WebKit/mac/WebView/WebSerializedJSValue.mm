@@ -40,7 +40,7 @@ using namespace WebCore;
 
 @implementation WebSerializedJSValue
 
-- (id)initWithValue:(JSValueRef)value context:(JSContextRef)sourceContext exception:(JSValueRef*)exception;
+- (id)initWithValue:(JSValueRef)value context:(JSContextRef)sourceContext exception:(JSValueRef*)exception
 {
     ASSERT_ARG(value, value);
     ASSERT_ARG(sourceContext, sourceContext);

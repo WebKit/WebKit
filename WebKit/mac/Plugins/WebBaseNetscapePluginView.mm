@@ -917,7 +917,7 @@ String WebHaltablePlugin::pluginName() const
 }
 
 
-- (CString)resolvedURLStringForURL:(const char*)url target:(const char*)target;
+- (CString)resolvedURLStringForURL:(const char*)url target:(const char*)target
 {
     String relativeURLString = String::fromUTF8(url);
     if (relativeURLString.isNull())

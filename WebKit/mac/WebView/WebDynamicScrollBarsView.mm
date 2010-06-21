@@ -174,7 +174,7 @@ struct WebDynamicScrollBarsViewPrivate {
         [[self contentView] setFrame:[self contentViewFrame]];
 }
 
-- (void)setSuppressLayout:(BOOL)flag;
+- (void)setSuppressLayout:(BOOL)flag
 {
     _private->suppressLayout = flag;
 }

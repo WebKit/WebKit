@@ -277,7 +277,7 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
     return frameName;
 }
 
-- (id)description
+- (NSString *)description
 {
     return [NSString stringWithFormat:@"<%@ %@>", [self className], [self URL]];
 }

@@ -70,15 +70,15 @@
     return PDFDocumentClass;
 }
 
-- (void)setDataSource:(WebDataSource *)dataSource;
+- (void)setDataSource:(WebDataSource *)dataSource
 {
 }
 
-- (void)receivedData:(NSData *)data withDataSource:(WebDataSource *)dataSource;
+- (void)receivedData:(NSData *)data withDataSource:(WebDataSource *)dataSource
 {
 }
 
-- (void)receivedError:(NSError *)error withDataSource:(WebDataSource *)dataSource;
+- (void)receivedError:(NSError *)error withDataSource:(WebDataSource *)dataSource
 {
 }
 

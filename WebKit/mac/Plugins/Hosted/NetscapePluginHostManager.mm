@@ -58,7 +58,7 @@ NetscapePluginHostManager& NetscapePluginHostManager::shared()
     return pluginHostManager;
 }
 
-static const NSString *pluginHostAppName = @"WebKitPluginHost.app";
+static NSString * const pluginHostAppName = @"WebKitPluginHost.app";
 
 NetscapePluginHostManager::NetscapePluginHostManager()
     : m_pluginVendorPort(MACH_PORT_NULL)
