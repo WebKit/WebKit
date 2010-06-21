@@ -67,6 +67,20 @@ DumpRenderTreeDraggingInfo *draggingInfo = nil;
     printf ("CONSOLE MESSAGE: line %d: %s\n", [lineNumber intValue], [message UTF8String]);
 }
 
+- (void)modalWindowWillClose:(NSNotification *)notification
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:NSWindowWillCloseNotification object:nil];
+    [NSApp abortModal];
+}
+
+- (void)webViewRunModal:(WebView *)sender
+{
+    gLayoutTestController->setWindowIsKey(false);
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(modalWindowWillClose:) name:NSWindowWillCloseNotification object:nil];
+    [NSApp runModalForWindow:[sender window]];
+    gLayoutTestController->setWindowIsKey(true);
+}
+
 - (void)webView:(WebView *)sender runJavaScriptAlertPanelWithMessage:(NSString *)message initiatedByFrame:(WebFrame *)frame
 {
     if (!done)

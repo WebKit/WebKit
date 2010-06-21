@@ -1,3 +1,23 @@
+2010-06-21  Prasad Tammana  <prasadt@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        DumpRenderTree should allow tests with modal dialogs
+        https://bugs.webkit.org/show_bug.cgi?id=35350
+
+        * DumpRenderTree/LayoutTestController.cpp:
+        (abortModalCallback):
+        (LayoutTestController::staticFunctions):
+        * DumpRenderTree/LayoutTestController.h:
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm:
+        (LayoutTestController::abortModal):
+        Add abortModal method to LayoutTestController and make it available from script.
+
+        * DumpRenderTree/mac/UIDelegate.mm: Add support for showModalDialog.
+        (-[UIDelegate modalWindowWillClose:]): Observer for NSWindowWillCloseNotifications to call
+        abortModal from when modal window closes.
+        (-[UIDelegate webViewRunModal:]): Delegate method for showModalDialog to run the modal loop.
+
 2010-06-21  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
 
         Unreviewed debug build fix.

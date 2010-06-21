@@ -55,8 +55,9 @@ window.onload = function()
     shouldBe("window.resizeBy.call(targetWindow, 0, 0);", "undefined");
     shouldBe("window.resizeTo.call(targetWindow, 0, 0);", "undefined");
 
+    // FIXME:  showModalDialog now works on DRT and thus breaks this test.  Will uncomment after adding a separate test for Mac for showModalDialog - Bug #39897
     // Throws a TypeError and logs to the error console
-    shouldBe("window.showModalDialog.call(targetWindow);", '"TypeError: Result of expression \'window.showModalDialog\' [undefined] is not an object."');
+    // shouldBe("window.showModalDialog.call(targetWindow);", '"TypeError: Result of expression \'window.showModalDialog\' [undefined] is not an object."');
 
     // - Tests for the Location object -
     // undefined value indicates failure

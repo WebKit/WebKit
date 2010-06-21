@@ -562,7 +562,7 @@ ALERT: PASS: window.scrollBy should be 'function scrollBy() {    [native code]}'
 ALERT: PASS: window.scrollTo should be 'function scrollTo() {    [native code]}' and is.
 ALERT: PASS: window.setInterval should be 'function setInterval() {    [native code]}' and is.
 ALERT: PASS: window.setTimeout should be 'function setTimeout() {    [native code]}' and is.
-ALERT: PASS: window.showModalDialog should be 'undefined' and is.
+ALERT: PASS: window.showModalDialog matched the expected value.
 ALERT: PASS: window.stop should be 'function stop() {    [native code]}' and is.
 This test checks cross-frame access security of window attribute setters (rdar://problem/5326791).
 

@@ -30,7 +30,6 @@ PASS: typeof window.setInterval should be function and is.
 PASS: typeof window.clearInterval should be function and is.
 PASS: typeof window.addEventListener should be function and is.
 PASS: typeof window.removeEventListener should be function and is.
-FAIL: typeof window.showModalDialog should be function but instead is undefined
 PASS: typeof window.captureEvents should be function and is.
 PASS: typeof window.releaseEvents should be function and is.
 PASS: typeof window.eval should be function and is.
