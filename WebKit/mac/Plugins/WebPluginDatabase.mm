@@ -45,6 +45,8 @@
 #import <WebKitSystemInterface.h>
 #import <wtf/Assertions.h>
 
+using namespace WebCore;
+
 static void checkCandidate(WebBasePluginPackage **currentPlugin, WebBasePluginPackage **candidatePlugin);
 
 @interface WebPluginDatabase (Internal)
@@ -304,8 +306,11 @@ static NSArray *additionalWebPlugInPaths;
     // Build a list of MIME types.
     NSMutableSet *MIMETypes = [[NSMutableSet alloc] init];
     pluginEnumerator = [plugins objectEnumerator];
-    while ((plugin = [pluginEnumerator nextObject]) != nil)
-        [MIMETypes addObjectsFromArray:[plugin MIMETypes]];
+    while ((plugin = [pluginEnumerator nextObject])) {
+        const Vector<MimeClassInfo>& mimeTypes = [plugin mimeTypes];
+        for (size_t i = 0; i < mimeTypes.size(); ++i)
+            [MIMETypes addObject:mimeTypes[i].type];
+    }
     
     // Register plug-in views and representations.
     NSEnumerator *MIMEEnumerator = [MIMETypes objectEnumerator];
@@ -439,9 +444,9 @@ static NSArray *additionalWebPlugInPaths;
     ASSERT(plugin);
 
     // Unregister plug-in's MIME type registrations
-    NSArray *MIMETypes = [plugin MIMETypes];
-    for (NSUInteger i = 0; i < [MIMETypes count]; ++i) {
-        NSString *MIMEType = [MIMETypes objectAtIndex:i];
+    const Vector<MimeClassInfo>& mimeTypes = [plugin mimeTypes];
+    for (size_t i = 0; i < mimeTypes.size(); ++i) {
+        NSString *MIMEType = mimeTypes[i].type;
 
         if ([registeredMIMETypes containsObject:MIMEType]) {
             if (self == sharedDatabase)

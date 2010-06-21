@@ -28,6 +28,7 @@
 
 #import <WebKit/WebBasePluginPackage.h>
 
+#import <algorithm>
 #import <WebCore/WebCoreObjCExtras.h>
 #import <WebKit/WebKitNSStringExtras.h>
 #import <WebKit/WebNSObjectExtras.h>
@@ -58,6 +59,7 @@
 - (NSArray *)_web_lowercaseStrings;
 @end;
 
+using namespace std;
 using namespace WebCore;
 
 @implementation WebBasePluginPackage
@@ -330,20 +332,25 @@ static NSString *pathByResolvingSymlinksAndAliases(NSString *thePath)
     ASSERT(extension.lower() == extension);
     
     for (size_t i = 0; i < mimeTypes.size(); ++i) {
-        const MimeClassInfo& mimeClassInfo = mimeTypes[i];
-        
-        for (size_t j = 0; i < mimeClassInfo.extensions.size(); ++j) {
-            if (mimeClassInfo.extensions[j] == extension)
-                return YES;
-        }
+        const Vector<String>& extensions = mimeTypes[i].extensions;
+
+        if (find(extensions.begin(), extensions.end(), extension) != extensions.end())
+            return YES;
     }
 
     return NO;
 }
 
-- (BOOL)supportsMIMEType:(NSString *)MIMEType
+- (BOOL)supportsMIMEType:(const WebCore::String&)mimeType
 {
-    return [MIMEToExtensions objectForKey:MIMEType] != 0;
+    ASSERT(mimeType.lower() == mimeType);
+    
+    for (size_t i = 0; i < mimeTypes.size(); ++i) {
+        if (mimeTypes[i].type == mimeType)
+            return YES;
+    }
+    
+    return NO;
 }
 
 - (NSString *)descriptionForMIMEType:(NSString *)MIMEType
@@ -357,11 +364,10 @@ static NSString *pathByResolvingSymlinksAndAliases(NSString *thePath)
     
     for (size_t i = 0; i < mimeTypes.size(); ++i) {
         const MimeClassInfo& mimeClassInfo = mimeTypes[i];
-        
-        for (size_t j = 0; j < mimeClassInfo.extensions.size(); ++j) {
-            if (mimeClassInfo.extensions[j] == extension)
-                return mimeClassInfo.type;
-        }
+        const Vector<String>& extensions = mimeClassInfo.extensions;
+
+        if (find(extensions.begin(), extensions.end(), extension) != extensions.end())
+            return mimeClassInfo.type;
     }
 
     return nil;
