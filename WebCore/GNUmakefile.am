@@ -2595,6 +2595,20 @@ webcore_sources += \
 endif # END ENABLE_DOM_STORAGE
 
 # ----
+# Speech Input API support
+# ----
+if ENABLE_INPUT_SPEECH
+
+FEATURE_DEFINES += ENABLE_INPUT_SPEECH=1
+webcore_cppflags += -DENABLE_INPUT_SPEECH=1
+
+else
+
+webcore_cppflags += -DENABLE_INPUT_SPEECH=0
+
+endif # END ENABLE_INPUT_SPEECH
+
+# ----
 # Icon Database Support
 # ----
 if ENABLE_ICONDATABASE

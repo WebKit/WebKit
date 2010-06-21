@@ -347,6 +347,14 @@ AC_ARG_ENABLE(indexed_database,
               [],[enable_indexed_database="no"])
 AC_MSG_RESULT([$enable_indexed_database])
 
+# check whether to enable the speech input API
+AC_MSG_CHECKING([whether to enable the speech input API])
+AC_ARG_ENABLE(input_speech,
+              AC_HELP_STRING([--enable-input-speech],
+                             [enable the speech input API [default=no]]),
+              [],[enable_input_speech="no"])
+AC_MSG_RESULT([$enable_input_speech])
+
 # check whether to build with database support
 AC_MSG_CHECKING([whether to enable HTML5 client-side database storage support])
 AC_ARG_ENABLE(database,
@@ -823,6 +831,7 @@ AM_CONDITIONAL([ENABLE_FAST_MOBILE_SCROLLING],[test "$enable_fast_mobile_scrolli
 AM_CONDITIONAL([ENABLE_ICONDATABASE],[test "$enable_icon_database" = "yes"])
 AM_CONDITIONAL([ENABLE_IMAGE_RESIZER],[test "$enable_image_resizer" = "yes"])
 AM_CONDITIONAL([ENABLE_INDEXED_DATABASE],[test "$enable_indexed_database" = "yes"])
+AM_CONDITIONAL([ENABLE_INPUT_SPEECH],[test "$enable_input_speech" = "yes"])
 AM_CONDITIONAL([ENABLE_XHTMLMP],[test "$enable_xhtmlmp" = "yes"])
 AM_CONDITIONAL([ENABLE_XPATH],[test "$enable_xpath" = "yes"])
 AM_CONDITIONAL([ENABLE_XSLT],[test "$enable_xslt" = "yes"])
@@ -898,6 +907,7 @@ Features:
  Icon database support                                    : $enable_icon_database
  Image resizer support                                    : $enable_image_resizer
  SharedWorkers support                                    : $enable_shared_workers
+ Speech input support                                     : $enable_input_speech
  SVG support                                              : $enable_svg
  SVG animation support                                    : $enable_svg_animation
  SVG fonts support                                        : $enable_svg_fonts
