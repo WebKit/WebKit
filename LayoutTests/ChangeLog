@@ -1,3 +1,10 @@
+2010-06-20  Kent Tamura  <tkent@chromium.org>
+
+        Unreviewed, test expectation update.
+
+        * platform/chromium/test_expectations.txt:
+          Update for other <meter> tests and flaky/slow tests
+
 2010-06-20  Tony Gentilcore  <tonyg@chromium.org>
 
         Reviewed by Eric Seidel.

@@ -2861,7 +2861,12 @@ BUGWK35961 : printing/page-rule-selection.html = TEXT
 BUG46872 : fast/preloader = TEXT
 // Became a flaky crash in http://trac.webkit.org/log/?verbose=on&rev=61417&stop_rev=61393
 BUG46974 WIN : inspector/audits-panel-functional.html = CRASH PASS
-// After enabling progress element, these are failing in debug only.
+// After enabling meter element, these are failing in debug only.
 BUG46989 MAC DEBUG : fast/dom/HTMLMeterElement/meter-appearances-capacity.html = IMAGE
 BUG46989 MAC DEBUG : fast/dom/HTMLMeterElement/meter-element.html = IMAGE
 BUG46989 MAC DEBUG : fast/dom/HTMLMeterElement/meter-optimums.html = IMAGE
+BUG46989 MAC DEBUG : fast/dom/HTMLMeterElement/meter-styles-changing-pseudo.html = IMAGE
+BUG46989 MAC DEBUG : fast/dom/HTMLMeterElement/meter-styles.html = IMAGE
+
+BUG47035 WIN DEBUG : fast/loader/stateobjects/document-destroyed-navigate-back-with-fragment-scroll.html = PASS TEXT
+BUG47036 WIN SLOW : html5lib/runner.html = PASS
