@@ -1,3 +1,46 @@
+2010-06-21  Kinuko Yasuda  <kinuko@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Add BlobBuilder.idl to expose BlobBuilder interface
+        https://bugs.webkit.org/show_bug.cgi?id=40593
+
+        Add new layout tests to test BlobBuilder interface.
+        Also update test expectations affected by adding the constructors to DOMWindow.
+
+        * fast/dom/Window/window-properties-expected.txt:
+        * fast/dom/Window/window-property-descriptors-expected.txt:
+        * fast/dom/constructed-objects-prototypes-expected.txt:
+        * fast/dom/prototype-inheritance-2-expected.txt:
+        * fast/dom/prototype-inheritance-expected.txt:
+        * fast/js/global-constructors-expected.txt:
+        * http/tests/local/blob/resources/hybrid-blob-util.js: Added.
+        * http/tests/local/blob/script-tests/TEMPLATE.html: Added.
+        * http/tests/local/blob/script-tests/send-data-blob.js: Added.
+        * http/tests/local/blob/script-tests/send-hybrid-blob.js: Added.
+        * http/tests/local/blob/script-tests/send-sliced-data-blob.js: Added.
+        * http/tests/local/blob/send-data-blob-expected.txt: Added.
+        * http/tests/local/blob/send-data-blob.html: Added.
+        * http/tests/local/blob/send-hybrid-blob-expected.txt: Added.
+        * http/tests/local/blob/send-hybrid-blob.html: Added.
+        * http/tests/local/blob/send-sliced-data-blob-expected.txt: Added.
+        * http/tests/local/blob/send-sliced-data-blob.html: Added.
+        * http/tests/local/resources/file-for-drag-to-send2.txt: Added.
+        * http/tests/resources/post-and-verify-hybrid.cgi: Added.
+        * platform/chromium/fast/dom/prototype-inheritance-expected.txt:
+        * platform/gtk/Skipped: Added send-hybrid-blob.html and send-sliced-data-blob.html because they need eventSender.beginDragWithFiles Blob.slice.
+        * platform/gtk/fast/dom/Window/window-properties-expected.txt:
+        * platform/gtk/fast/dom/Window/window-property-descriptors-expected.txt:
+        * platform/gtk/fast/dom/prototype-inheritance-expected.txt:
+        * platform/qt/Skipped: Added send-hybrid-blob.html and send-sliced-data-blob.html because they need eventSender.beginDragWithFiles Blob.slice.
+        * platform/qt/fast/dom/Window/window-properties-expected.txt:
+        * platform/qt/fast/dom/Window/window-property-descriptors-expected.txt:
+        * platform/qt/fast/dom/prototype-inheritance-expected.txt:
+        * platform/win/Skipped: Added send-hybrid-blob.html and send-sliced-data-blob.html because they need eventSender.beginDragWithFiles Blob.slice.
+        * platform/win/fast/dom/Window/window-property-descriptors-expected.txt:
+        * platform/win/fast/dom/prototype-inheritance-2-expected.txt:
+        * platform/win/fast/dom/prototype-inheritance-expected.txt:
+
 2010-06-21  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.

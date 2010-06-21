@@ -2277,6 +2277,8 @@
 		8988E10F11A3508B00DB732E /* BlobItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 8988E10D11A3508B00DB732E /* BlobItem.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		89BED5EB11BE11CE00448492 /* BlobBuilder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 89BED5E911BE11CE00448492 /* BlobBuilder.cpp */; };
 		89BED5EC11BE11CE00448492 /* BlobBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = 89BED5EA11BE11CE00448492 /* BlobBuilder.h */; };
+		89CD029311C85B870070B791 /* JSBlobBuilder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 89CD029111C85B870070B791 /* JSBlobBuilder.cpp */; };
+		89CD029411C85B870070B791 /* JSBlobBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = 89CD029211C85B870070B791 /* JSBlobBuilder.h */; };
 		8FAC774D119872CB0015AE94 /* JSMainThreadExecState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F934D841189F1EE00508D5D /* JSMainThreadExecState.cpp */; };
 		9302B0BD0D79F82900C7EE83 /* PageGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9302B0BC0D79F82900C7EE83 /* PageGroup.cpp */; };
 		9302B0BF0D79F82C00C7EE83 /* PageGroup.h in Headers */ = {isa = PBXBuildFile; fileRef = 9302B0BE0D79F82C00C7EE83 /* PageGroup.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -7897,6 +7899,9 @@
 		8988E10D11A3508B00DB732E /* BlobItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlobItem.h; sourceTree = "<group>"; };
 		89BED5E911BE11CE00448492 /* BlobBuilder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BlobBuilder.cpp; sourceTree = "<group>"; };
 		89BED5EA11BE11CE00448492 /* BlobBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlobBuilder.h; sourceTree = "<group>"; };
+		89CD027911C859A80070B791 /* BlobBuilder.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = BlobBuilder.idl; sourceTree = "<group>"; };
+		89CD029111C85B870070B791 /* JSBlobBuilder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSBlobBuilder.cpp; sourceTree = "<group>"; };
+		89CD029211C85B870070B791 /* JSBlobBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSBlobBuilder.h; sourceTree = "<group>"; };
 		8F934D831189F1EE00508D5D /* JSMainThreadExecState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMainThreadExecState.h; sourceTree = "<group>"; };
 		8F934D841189F1EE00508D5D /* JSMainThreadExecState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMainThreadExecState.cpp; sourceTree = "<group>"; };
 		9302B0BC0D79F82900C7EE83 /* PageGroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PageGroup.cpp; sourceTree = "<group>"; };
@@ -13423,6 +13428,7 @@
 				2EAFAF0D10E2AF2D007ED3D6 /* Blob.idl */,
 				89BED5E911BE11CE00448492 /* BlobBuilder.cpp */,
 				89BED5EA11BE11CE00448492 /* BlobBuilder.h */,
+				89CD027911C859A80070B791 /* BlobBuilder.idl */,
 				93C441ED0F813A1A00C1A634 /* CollectionCache.cpp */,
 				93C441EE0F813A1A00C1A634 /* CollectionCache.h */,
 				93C441FF0F813AE100C1A634 /* CollectionType.h */,
@@ -13808,6 +13814,8 @@
 				49EECF1A105072F300099FAB /* JSArrayBufferView.h */,
 				2E2D99CB10E2BBDA00496337 /* JSBlob.cpp */,
 				2E2D99CC10E2BBDA00496337 /* JSBlob.h */,
+				89CD029111C85B870070B791 /* JSBlobBuilder.cpp */,
+				89CD029211C85B870070B791 /* JSBlobBuilder.h */,
 				65DF323309D1DE65000BE325 /* JSCanvasGradient.cpp */,
 				65DF323409D1DE65000BE325 /* JSCanvasGradient.h */,
 				65DF323509D1DE65000BE325 /* JSCanvasPattern.cpp */,
@@ -18231,6 +18239,7 @@
 				BC124F000C26447A009E2349 /* JSBarInfo.h in Headers */,
 				BC946348107A936600857193 /* JSBeforeLoadEvent.h in Headers */,
 				2E2D99CE10E2BBDA00496337 /* JSBlob.h in Headers */,
+				89CD029411C85B870070B791 /* JSBlobBuilder.h in Headers */,
 				1449E24C107D4A8400B5793F /* JSCallbackData.h in Headers */,
 				65DF323A09D1DE65000BE325 /* JSCanvasGradient.h in Headers */,
 				65DF323C09D1DE65000BE325 /* JSCanvasPattern.h in Headers */,
@@ -20558,6 +20567,7 @@
 				BC124EFF0C26447A009E2349 /* JSBarInfo.cpp in Sources */,
 				BC946346107A934B00857193 /* JSBeforeLoadEvent.cpp in Sources */,
 				2E2D99CD10E2BBDA00496337 /* JSBlob.cpp in Sources */,
+				89CD029311C85B870070B791 /* JSBlobBuilder.cpp in Sources */,
 				1449E287107D4DB400B5793F /* JSCallbackData.cpp in Sources */,
 				65DF323909D1DE65000BE325 /* JSCanvasGradient.cpp in Sources */,
 				65DF323B09D1DE65000BE325 /* JSCanvasPattern.cpp in Sources */,

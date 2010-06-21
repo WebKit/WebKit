@@ -54,6 +54,7 @@ DOM_CLASSES = \
     BarInfo \
     BeforeLoadEvent \
     Blob \
+    BlobBuilder \
     CDATASection \
     CSSCharsetRule \
     CSSFontFaceRule \
