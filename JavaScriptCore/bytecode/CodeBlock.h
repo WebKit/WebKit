@@ -351,7 +351,8 @@ namespace JSC {
 
         unsigned bytecodeOffset(CallFrame* callFrame, ReturnAddressPtr returnAddress)
         {
-            reparseForExceptionInfoIfNecessary(callFrame);
+            if (!reparseForExceptionInfoIfNecessary(callFrame))
+                return 0;
             return binaryChop<CallReturnOffsetToBytecodeOffset, unsigned, getCallReturnOffset>(callReturnIndexVector().begin(), callReturnIndexVector().size(), getJITCode().offsetOf(returnAddress.value()))->bytecodeOffset;
         }
         
@@ -521,7 +522,7 @@ namespace JSC {
         void printPutByIdOp(ExecState*, int location, Vector<Instruction>::const_iterator&, const char* op) const;
 #endif
 
-        void reparseForExceptionInfoIfNecessary(CallFrame*);
+        bool reparseForExceptionInfoIfNecessary(CallFrame*) WARN_UNUSED_RETURN;
 
         void createRareDataIfNecessary()
         {

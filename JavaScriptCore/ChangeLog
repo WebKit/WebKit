@@ -1,3 +1,50 @@
+2010-06-21  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        Make JSC more resilient in the face of parse failures
+        https://bugs.webkit.org/show_bug.cgi?id=40951
+
+        A number of recent bugs have occurred due to issues like miscounting
+        BOMs, etc which lead to interesting crashes later on.  Adding this
+        logic hardens JSC in the face of these errors, and has no impact on
+        performance (32bit jit actually gets 0.7% faster but I put that down
+        to cache effects).
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::reparseForExceptionInfoIfNecessary):
+        (JSC::CodeBlock::lineNumberForBytecodeOffset):
+        (JSC::CodeBlock::expressionRangeForBytecodeOffset):
+        (JSC::CodeBlock::getByIdExceptionInfoForBytecodeOffset):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::bytecodeOffset):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::execute):
+        (JSC::Interpreter::executeCall):
+        (JSC::Interpreter::executeConstruct):
+        (JSC::Interpreter::prepareForRepeatCall):
+        (JSC::Interpreter::privateExecute):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::privateCompileCTIMachineTrampolines):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::privateCompileCTIMachineTrampolines):
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        * runtime/ArrayPrototype.cpp:
+        (JSC::isNumericCompareFunction):
+        * runtime/Executable.cpp:
+        (JSC::FunctionExecutable::compileForCall):
+        (JSC::FunctionExecutable::compileForConstruct):
+        (JSC::FunctionExecutable::generateJITCodeForCall):
+        (JSC::FunctionExecutable::generateJITCodeForConstruct):
+        (JSC::FunctionExecutable::reparseExceptionInfo):
+        (JSC::EvalExecutable::reparseExceptionInfo):
+        * runtime/Executable.h:
+        (JSC::FunctionExecutable::bytecodeForCall):
+        (JSC::FunctionExecutable::bytecodeForConstruct):
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::numericCompareFunction):
+
 2010-06-21  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Adam Roben.

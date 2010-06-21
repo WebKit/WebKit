@@ -305,12 +305,12 @@ namespace JSC {
             return *m_codeBlockForConstruct;
         }
 
-        FunctionCodeBlock& bytecodeForCall(ExecState* exec, ScopeChainNode* scopeChainNode) 
+        FunctionCodeBlock* bytecodeForCall(ExecState* exec, ScopeChainNode* scopeChainNode) 
         {
             ASSERT(scopeChainNode);
             if (!m_codeBlockForCall)
                 compileForCall(exec, scopeChainNode);
-            return *m_codeBlockForCall;
+            return m_codeBlockForCall;
         }
 
         bool isGeneratedForCall() const
@@ -324,12 +324,12 @@ namespace JSC {
             return *m_codeBlockForCall;
         }
 
-        FunctionCodeBlock& bytecodeForConstruct(ExecState* exec, ScopeChainNode* scopeChainNode) 
+        FunctionCodeBlock* bytecodeForConstruct(ExecState* exec, ScopeChainNode* scopeChainNode) 
         {
             ASSERT(scopeChainNode);
             if (!m_codeBlockForConstruct)
                 compileForConstruct(exec, scopeChainNode);
-            return *m_codeBlockForConstruct;
+            return m_codeBlockForConstruct;
         }
 
         bool isGeneratedForConstruct() const
@@ -383,8 +383,8 @@ namespace JSC {
             m_lastLine = lastLine;
         }
 
-        void compileForCall(ExecState*, ScopeChainNode*);
-        void compileForConstruct(ExecState*, ScopeChainNode*);
+        bool compileForCall(ExecState*, ScopeChainNode*);
+        bool compileForConstruct(ExecState*, ScopeChainNode*);
 
         unsigned m_numVariables : 31;
         bool m_forceUsesArguments : 1;

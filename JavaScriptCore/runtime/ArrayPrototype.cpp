@@ -77,12 +77,14 @@ static inline bool isNumericCompareFunction(ExecState* exec, CallType callType, 
     // If the JIT is enabled then we need to preserve the invariant that every
     // function with a CodeBlock also has JIT code.
     callData.js.functionExecutable->jitCodeForCall(exec, callData.js.scopeChain);
-    CodeBlock& codeBlock = callData.js.functionExecutable->generatedBytecodeForCall();
+    CodeBlock* codeBlock = &callData.js.functionExecutable->generatedBytecodeForCall();
 #else
-    CodeBlock& codeBlock = callData.js.functionExecutable->bytecodeForCall(exec, callData.js.scopeChain);
+    CodeBlock* codeBlock = callData.js.functionExecutable->bytecodeForCall(exec, callData.js.scopeChain);
 #endif
+    if (!codeBlock)
+        return false;
 
-    return codeBlock.isNumericCompareFunction();
+    return codeBlock->isNumericCompareFunction();
 }
 
 // ------------------------------ ArrayPrototype ----------------------------
