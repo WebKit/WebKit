@@ -1,5 +1,11 @@
 2010-06-21  Dan Bernstein  <mitz@apple.com>
 
+        Windows build fix
+
+        * WebCore.vcproj/WebCore.vcproj: Fixed a typo.
+
+2010-06-21  Dan Bernstein  <mitz@apple.com>
+
         Reviewed by Darin Adler.
 
         CSS3: Implement the 'hyphens' and 'hyphenate-character' properties

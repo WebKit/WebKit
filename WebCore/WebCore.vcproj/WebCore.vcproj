@@ -26240,7 +26240,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\platform\text\Hyphentation.cpp"
+					RelativePath="..\platform\text\Hyphenation.cpp"
 					>
 				</File>
 				<File
