@@ -1,3 +1,16 @@
+2010-06-20  Tony Gentilcore  <tonyg@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Test to make sure parsing of async attribute works for HTML script tags
+        and test to make sure that async is not parsed for SVG script tags.
+        https://bugs.webkit.org/show_bug.cgi?id=39026
+
+        * fast/dom/HTMLScriptElement/script-async-attr-expected.txt: Added.
+        * fast/dom/HTMLScriptElement/script-async-attr.html: Added.
+        * svg/dom/SVGScriptElement/script-async-attr-expected.txt: Added.
+        * svg/dom/SVGScriptElement/script-async-attr.svg: Added.
+
 2010-06-20  Tony Chang  <tony@chromium.org>
 
         Not reviewed, just cleaning up svn.

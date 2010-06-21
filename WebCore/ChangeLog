@@ -1,3 +1,35 @@
+2010-06-20  Tony Gentilcore  <tonyg@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Recognize async attribute on HTML script tags.
+        https://bugs.webkit.org/show_bug.cgi?id=39026
+
+        This does not implement async behavior, it only parses the async
+        attribute for HTML script tags. SVG script tags continue to not
+        support the async attribute.
+
+        Tests: fast/dom/HTMLScriptElement/script-async-attr.html
+               svg/dom/SVGScriptElement/script-async-attr.svg
+
+        * dom/ScriptElement.cpp:
+        (WebCore::ScriptElementData::isAsynchronous):
+        (WebCore::ScriptElementData::isDeferred):
+        * dom/ScriptElement.h:
+        * html/HTMLAttributeNames.in:
+        * html/HTMLScriptElement.cpp:
+        (WebCore::HTMLScriptElement::async):
+        (WebCore::HTMLScriptElement::setAsync):
+        (WebCore::HTMLScriptElement::defer):
+        (WebCore::HTMLScriptElement::asyncAttributeValue):
+        (WebCore::HTMLScriptElement::deferAttributeValue):
+        * html/HTMLScriptElement.h:
+        * html/HTMLScriptElement.idl:
+        * svg/SVGScriptElement.cpp:
+        (WebCore::SVGScriptElement::asyncAttributeValue):
+        (WebCore::SVGScriptElement::deferAttributeValue):
+        * svg/SVGScriptElement.h:
+
 2010-06-20  Nikita Vasilyev  <me@elv1s.ru>
 
         Reviewed by Joseph Pecoraro.

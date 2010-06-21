@@ -305,6 +305,20 @@ String ScriptElementData::scriptContent() const
     return String::adopt(val);
 }
 
+bool ScriptElementData::isAsynchronous() const
+{
+    // Only external scripts may be asynchronous.
+    // See: http://dev.w3.org/html5/spec/Overview.html#attr-script-async
+    return !m_scriptElement->sourceAttributeValue().isEmpty() && m_scriptElement->asyncAttributeValue();
+}
+
+bool ScriptElementData::isDeferred() const
+{
+    // Only external scripts may be deferred and async trumps defer to allow for backward compatibility.
+    // See: http://dev.w3.org/html5/spec/Overview.html#attr-script-defer
+    return !m_scriptElement->sourceAttributeValue().isEmpty() && !m_scriptElement->asyncAttributeValue() && m_scriptElement->deferAttributeValue();
+}
+
 ScriptElement* toScriptElement(Element* element)
 {
     if (element->isHTMLElement() && element->hasTagName(HTMLNames::scriptTag))

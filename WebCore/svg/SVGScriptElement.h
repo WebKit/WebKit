@@ -67,6 +67,8 @@ namespace WebCore {
         virtual String languageAttributeValue() const;
         virtual String forAttributeValue() const;
         virtual String eventAttributeValue() const;
+        virtual bool asyncAttributeValue() const;
+        virtual bool deferAttributeValue() const;
 
         virtual void dispatchLoadEvent();
         virtual void dispatchErrorEvent();

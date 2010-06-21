@@ -1,0 +1,51 @@
+<html>
+<head>
+<link rel="stylesheet" href="../../js/resources/js-test-style.css">
+<script src="../../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+
+<script id="s0" src="ignored.js"></script>
+<script id="s1" src="ignored.js" async></script>
+<script id="s2" src="ignored.js" async="async"></script>
+<script id="s3" src="ignored.js" async="ASYNC"></script>
+<script id="s4" src="ignored.js" async="true"></script>
+
+<script>
+description('This test checks for proper parsing of the async attribute on HTML script tags.');
+
+var nextScriptID = 0;
+
+function isAsync(id)
+{
+    return document.getElementById(id).async;
+}
+
+function isDynamicallyInsertedScriptAsync(async)
+{
+    var id = "s" + nextScriptID++;
+    var script = document.createElement("script");
+    script.id = id;
+    script.src = "resources/script-load.js";
+    if (async)
+        script.async = "async";
+    document.getElementsByTagName("head")[0].appendChild(script);
+    return isAsync(id);
+}
+
+shouldBeFalse("isAsync('s0')");
+shouldBeTrue("isAsync('s1')");
+shouldBeTrue("isAsync('s2')");
+shouldBeTrue("isAsync('s3')");
+shouldBeTrue("isAsync('s4')");
+shouldBeTrue("isDynamicallyInsertedScriptAsync(true)");
+shouldBeFalse("isDynamicallyInsertedScriptAsync(false)");
+
+var successfullyParsed = true;
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>
+

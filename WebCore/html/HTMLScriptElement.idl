@@ -24,6 +24,7 @@ module html {
         attribute [Reflect=for] DOMString htmlFor;
         attribute [Reflect] DOMString event;
         attribute [Reflect] DOMString charset;
+        attribute [Reflect] boolean async;
         attribute [Reflect] boolean defer;
         attribute [ReflectURL] DOMString src;
         attribute [Reflect] DOMString type;

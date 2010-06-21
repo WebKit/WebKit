@@ -47,6 +47,9 @@ public:
     String charset() const;
     void setCharset(const String&);
 
+    bool async() const;
+    void setAsync(bool);
+
     bool defer() const;
     void setDefer(bool);
 
@@ -85,6 +88,8 @@ private:
     virtual String languageAttributeValue() const;
     virtual String forAttributeValue() const;
     virtual String eventAttributeValue() const;
+    virtual bool asyncAttributeValue() const;
+    virtual bool deferAttributeValue() const;
 
     virtual void dispatchLoadEvent();
     virtual void dispatchErrorEvent();

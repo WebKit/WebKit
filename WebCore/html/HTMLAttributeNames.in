@@ -43,6 +43,7 @@ aria-valuemax
 aria-valuemin
 aria-valuenow
 aria-valuetext
+async
 autocomplete
 autofocus
 autoplay
