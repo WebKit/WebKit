@@ -1,3 +1,13 @@
+2010-06-21  Balazs Kelemen  <kb@inf.u-szeged.hu>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Avoid unnecessary image conversion in RGBA32Buffer::zeroFill()
+        https://bugs.webkit.org/show_bug.cgi?id=40910
+
+        * platform/image-decoders/qt/RGBA32BufferQt.cpp:
+        (WebCore::RGBA32Buffer::zeroFill):
+
 2010-06-21  Benjamin Poulain  <benjamin.poulain@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

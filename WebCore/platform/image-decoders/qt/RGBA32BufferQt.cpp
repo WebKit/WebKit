@@ -69,7 +69,7 @@ void RGBA32Buffer::clear()
 void RGBA32Buffer::zeroFill()
 {
     if (m_pixmap.isNull() && !m_image.isNull()) {
-        m_pixmap = QPixmap::fromImage(m_image);
+        m_pixmap = QPixmap(m_image.width(), m_image.height());
         m_image = QImage();
     }
     m_pixmap.fill(QColor(0, 0, 0, 0));
