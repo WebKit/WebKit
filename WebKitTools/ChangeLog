@@ -1,3 +1,13 @@
+2010-06-21  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [DRT/Chromium] Initialization for http/tests/loading/
+        https://bugs.webkit.org/show_bug.cgi?id=40902
+
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (TestShell::runFileTest):
+
 2010-06-21  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         Unreviewed.
