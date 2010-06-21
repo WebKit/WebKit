@@ -374,7 +374,7 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
         
 #ifdef SUPPORT_CFM
         if (isCFM) {
-            pluginMainFunc = (MainFuncPtr)CFBundleGetFunctionPointerForName(cfBundle, CFSTR("main") );
+            pluginMainFunc = (MainFuncPtr)CFBundleGetFunctionPointerForName(cfBundle.get(), CFSTR("main") );
             if (!pluginMainFunc)
                 return NO;
         } else {

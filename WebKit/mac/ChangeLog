@@ -1,5 +1,12 @@
 2010-06-21  Anders Carlsson  <andersca@apple.com>
 
+        Another Tiger build fix.
+
+        * Plugins/WebNetscapePluginPackage.mm:
+        (-[WebNetscapePluginPackage _tryLoad]):
+
+2010-06-21  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Sam Weinig.
 
         More WebBasePluginPackage cleanup
