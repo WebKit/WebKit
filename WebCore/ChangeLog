@@ -1,5 +1,15 @@
 2010-06-21  Nate Chapin  <japhet@chromium.org>
 
+        Unreviewed, build fix.
+
+        Bad merge, left a reference to m_committedFirstRealDocumentLoad in
+        http://trac.webkit.org/changeset/61568.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::transitionToCommitted):
+
+2010-06-21  Nate Chapin  <japhet@chromium.org>
+
         Reviewed by Adam Barth.
 
         Remove a couple of FrameLoader's unused boolean members
