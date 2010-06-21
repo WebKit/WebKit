@@ -63,6 +63,7 @@ private:
     void shutdown();
 
     void loadInjectedBundle(const WebCore::String&);
+    void forwardMessageToInjectedBundle(const WebCore::String&);
 
     // CoreIPC::Connection::Client
     void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);

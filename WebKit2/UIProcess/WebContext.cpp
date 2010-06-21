@@ -26,9 +26,11 @@
 #include "WebContext.h"
 
 #include "RunLoop.h"
+#include "WebCoreTypeArgumentMarshalling.h"
 #include "WebPageNamespace.h"
 #include "WebPreferences.h"
 #include "WebProcessManager.h"
+#include "WebProcessMessageKinds.h"
 #include "WebProcessProxy.h"
 
 #include "WKContextPrivate.h"
@@ -79,6 +81,11 @@ WebContext::~WebContext()
 #ifndef NDEBUG
     webContextCounter.decrement();
 #endif
+}
+
+void WebContext::initializeInjectedBundleClient(WKContextInjectedBundleClient* client)
+{
+    m_injectedBundleClient.initialize(client);
 }
 
 void WebContext::ensureWebProcess()
@@ -138,6 +145,21 @@ void WebContext::preferencesDidChange()
         WebPageNamespace* pageNamespace = *it;
         pageNamespace->preferencesDidChange();
     }
+}
+
+// InjectedBundle client
+
+void WebContext::didRecieveMessageFromInjectedBundle(const WebCore::String& message)
+{
+    m_injectedBundleClient.didRecieveMessageFromInjectedBundle(this, message);
+}
+
+void WebContext::postMessageToInjectedBundle(WebCore::StringImpl* message)
+{
+    if (!m_process || !m_process->isValid())
+        return;
+
+    m_process->connection()->send(WebProcessMessage::PostMessage, 0, CoreIPC::In(String(message)));
 }
 
 void WebContext::getStatistics(WKContextStatistics* statistics)

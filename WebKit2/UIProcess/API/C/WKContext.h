@@ -32,13 +32,26 @@
 extern "C" {
 #endif
 
+// Policy Client.
+typedef void (*WKContextDidRecieveMessageFromInjectedBundleCallback)(WKContextRef page, WKStringRef message, const void *clientInfo);
+
+struct WKContextInjectedBundleClient {
+    int                                                                 version;
+    const void *                                                        clientInfo;
+    WKContextDidRecieveMessageFromInjectedBundleCallback                didRecieveMessageFromInjectedBundle;
+};
+typedef struct WKContextInjectedBundleClient WKContextInjectedBundleClient;
+
 WK_EXPORT WKContextRef WKContextCreate();
 WK_EXPORT WKContextRef WKContextCreateWithInjectedBundlePath(WKStringRef path);
-
 WK_EXPORT WKContextRef WKContextGetSharedProcessContext();
 
 WK_EXPORT void WKContextSetPreferences(WKContextRef context, WKPreferencesRef preferences);
 WK_EXPORT WKPreferencesRef WKContextGetPreferences(WKContextRef context);
+
+WK_EXPORT void WKContextSetInjectedBundleClient(WKContextRef context, WKContextInjectedBundleClient * client);
+
+WK_EXPORT void WKContextPostMessageToInjectedBundle(WKContextRef context, WKStringRef message);
 
 WK_EXPORT WKContextRef WKContextRetain(WKContextRef context);
 WK_EXPORT void WKContextRelease(WKContextRef context);

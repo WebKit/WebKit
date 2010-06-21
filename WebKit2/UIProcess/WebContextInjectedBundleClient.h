@@ -23,21 +23,30 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "WKBundle.h"
+#ifndef WebContextInjectedBundleClient_h
+#define WebContextInjectedBundleClient_h
 
-#include "InjectedBundle.h"
-#include "WKAPICast.h"
-#include "WKBundleAPICast.h"
+#include "WKContext.h"
 
-using namespace WebKit;
-
-void WKBundleSetClient(WKBundleRef bundleRef, WKBundleClient * wkClient)
-{
-    if (wkClient && !wkClient->version)
-        toWK(bundleRef)->initializeClient(wkClient);
+namespace WebCore {
+    class String;
 }
 
-void WKBundlePostMessage(WKBundleRef bundleRef, WKStringRef messageRef)
-{
-    toWK(bundleRef)->postMessage(toWK(messageRef));
-}
+namespace WebKit {
+
+class WebContext;
+
+class WebContextInjectedBundleClient {
+public:
+    WebContextInjectedBundleClient();
+    void initialize(WKContextInjectedBundleClient*);
+
+    void didRecieveMessageFromInjectedBundle(WebContext*, const WebCore::String&);
+
+private:
+    WKContextInjectedBundleClient m_client;
+};
+
+} // namespace WebKit
+
+#endif // WebContextInjectedBundleClient_h

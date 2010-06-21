@@ -25,7 +25,13 @@
 
 #include "InjectedBundle.h"
 
+#include "WKAPICast.h"
 #include "WKBundleAPICast.h"
+#include "WebCoreTypeArgumentMarshalling.h"
+#include "WebProcess.h"
+#include "WebProcessProxyMessageKinds.h"
+
+using namespace WebCore;
 
 namespace WebKit {
 
@@ -48,10 +54,21 @@ void InjectedBundle::initializeClient(WKBundleClient* client)
         memset(&m_client, 0, sizeof(m_client));
 }
 
+void InjectedBundle::postMessage(StringImpl* message)
+{
+    WebProcess::shared().connection()->send(WebProcessProxyMessage::PostMessage, 0, CoreIPC::In(String(message)));
+}
+
 void InjectedBundle::didCreatePage(WebPage* page)
 {
     if (m_client.didCreatePage)
-        m_client.didCreatePage(toRef(page), m_client.clientInfo);
+        m_client.didCreatePage(toRef(this), toRef(page), m_client.clientInfo);
+}
+
+void InjectedBundle::didRecieveMessage(const WebCore::String& message)
+{
+    if (m_client.didRecieveMessage)
+        m_client.didRecieveMessage(toRef(this), toRef(message.impl()), m_client.clientInfo);
 }
 
 } // namespace WebKit

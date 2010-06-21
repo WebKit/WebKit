@@ -53,9 +53,11 @@ public:
 
     // API
     void initializeClient(WKBundleClient*);
+    void postMessage(WebCore::StringImpl*);
 
     // Callback hooks
     void didCreatePage(WebPage*);
+    void didRecieveMessage(const WebCore::String&);
 
 private:
     InjectedBundle(const WebCore::String&);

@@ -23,21 +23,27 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "WKBundle.h"
+#ifndef WebProcessProxyMessageKinds_h
+#define WebProcessProxyMessageKinds_h
 
-#include "InjectedBundle.h"
-#include "WKAPICast.h"
-#include "WKBundleAPICast.h"
+// Messages sent from the web process to the WebProcessProxy.
 
-using namespace WebKit;
+#include "MessageID.h"
 
-void WKBundleSetClient(WKBundleRef bundleRef, WKBundleClient * wkClient)
-{
-    if (wkClient && !wkClient->version)
-        toWK(bundleRef)->initializeClient(wkClient);
+namespace WebProcessProxyMessage {
+
+enum Kind {
+    PostMessage
+};
+
 }
 
-void WKBundlePostMessage(WKBundleRef bundleRef, WKStringRef messageRef)
-{
-    toWK(bundleRef)->postMessage(toWK(messageRef));
+namespace CoreIPC {
+
+template<> struct MessageKindTraits<WebProcessProxyMessage::Kind> { 
+    static const MessageClass messageClass = MessageClassWebProcessProxy;
+};
+
 }
+
+#endif // WebProcessProxyMessageKinds_h

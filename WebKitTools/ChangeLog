@@ -1,3 +1,21 @@
+2010-06-21  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Patch for https://bugs.webkit.org/show_bug.cgi?id=40940
+        Add message passing support to the WebKit2 API.
+
+        - Add some test messages.
+
+        * MiniBrowser/mac/AppDelegate.m:
+        (_didRecieveMessageFromInjectedBundle):
+        (-[BrowserAppDelegate init]):
+        * MiniBrowser/mac/WebBundle/WebBundleMain.m:
+        (_didClearWindow):
+        (_didCreatePage):
+        (_didRecieveMessage):
+        (WKBundleInitialize):
+
 2010-06-21  Drew Wilson  <atwilson@chromium.org>
 
         Unreviewed.

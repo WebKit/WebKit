@@ -35,6 +35,17 @@ static NSString *defaultURL = @"http://webkit.org/";
 
 @implementation BrowserAppDelegate
 
+void _didRecieveMessageFromInjectedBundle(WKContextRef context, WKStringRef message, const void *clientInfo)
+{
+    CFStringRef cfMessage = WKStringCopyCFString(0, message);
+    NSLog(@"ContextInjectedBundleClient - didRecieveMessage - message: %@", cfMessage);
+    CFRelease(cfMessage);
+
+    WKStringRef newMessage = WKStringCreateWithCFString(CFSTR("Roger that!"));
+    WKContextPostMessageToInjectedBundle(context, newMessage);
+    WKStringRelease(newMessage);
+}
+
 - (id)init
 {
     self = [super init];
@@ -52,6 +63,14 @@ static NSString *defaultURL = @"http://webkit.org/";
         WKStringRef bundlePath = WKStringCreateWithCFString(bundlePathCF);
 
         WKContextRef processContext = WKContextCreateWithInjectedBundlePath(bundlePath);
+        
+        WKContextInjectedBundleClient bundleClient = {
+            0,      /* version */
+            0,      /* clientInfo */
+            _didRecieveMessageFromInjectedBundle
+        };
+        WKContextSetInjectedBundleClient(processContext, &bundleClient);
+        
         processPageNamespace = WKPageNamespaceCreate(processContext);
         WKContextRelease(processContext);
 

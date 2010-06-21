@@ -26,6 +26,7 @@
 #ifndef WKBundle_h
 #define WKBundle_h
 
+#include <WebKit2/WKBase.h>
 #include <WebKit2/WKBundleBase.h>
 
 #ifdef __cplusplus
@@ -33,16 +34,20 @@ extern "C" {
 #endif
 
 // Client
-typedef void (*WKBundleDidCreatePageCallback)(WKBundlePageRef page, const void *clientInfo);
+typedef void (*WKBundleDidCreatePageCallback)(WKBundleRef bundle, WKBundlePageRef page, const void *clientInfo);
+typedef void (*WKBundleDidRecieveMessageCallback)(WKBundleRef bundle, WKStringRef message, const void *clientInfo);
 
 struct WKBundleClient {
     int                                                                 version;
     const void *                                                        clientInfo;
     WKBundleDidCreatePageCallback                                       didCreatePage;
+    WKBundleDidRecieveMessageCallback                                   didRecieveMessage;
 };
 typedef struct WKBundleClient WKBundleClient;
 
 WK_EXPORT void WKBundleSetClient(WKBundleRef bundle, WKBundleClient * client);
+
+WK_EXPORT void WKBundlePostMessage(WKBundleRef bundle, WKStringRef message);
 
 #ifdef __cplusplus
 }

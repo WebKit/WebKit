@@ -1,3 +1,55 @@
+2010-06-21  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Patch for https://bugs.webkit.org/show_bug.cgi?id=40940
+        Add message passing support to the WebKit2 API.
+
+        Adds message passing for both InjectedBundle -> WebContext
+        and WebContext -> InjectedBundle.
+
+        * Shared/CoreIPCSupport/WebProcessMessageKinds.h:
+        (WebProcessMessage::):
+        * Shared/CoreIPCSupport/WebProcessProxyMessageKinds.h: Added.
+        (WebProcessProxyMessage::):
+        (CoreIPC::):
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextSetInjectedBundleClient):
+        (WKContextPostMessageToInjectedBundle):
+        * UIProcess/API/C/WKContext.h:
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::initializeInjectedBundleClient):
+        (WebKit::WebContext::forwardMessageToWebContext):
+        (WebKit::WebContext::postMessageToInjectedBundle):
+        * UIProcess/WebContext.h:
+        * UIProcess/WebContextInjectedBundleClient.cpp: Added.
+        (WebKit::WebContextInjectedBundleClient::WebContextInjectedBundleClient):
+        (WebKit::WebContextInjectedBundleClient::initialize):
+        (WebKit::WebContextInjectedBundleClient::didRecieveMessageFromInjectedBundle):
+        * UIProcess/WebContextInjectedBundleClient.h: Added.
+        * UIProcess/WebProcessManager.cpp:
+        (WebKit::WebProcessManager::processDidClose):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::didReceiveInjectedBundleMessage):
+        (WebKit::WebProcessProxy::didReceiveMessage):
+        * UIProcess/WebProcessProxy.h:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/InjectedBundle/API/c/WKBundle.cpp:
+        (WKBundlePostMessage):
+        * WebProcess/InjectedBundle/API/c/WKBundle.h:
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::postMessage):
+        (WebKit::InjectedBundle::didCreatePage):
+        (WebKit::InjectedBundle::didRecieveMessage):
+        * WebProcess/InjectedBundle/InjectedBundle.h:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::loadInjectedBundle):
+        (WebKit::WebProcess::forwardMessageToInjectedBundle):
+        (WebKit::WebProcess::didReceiveMessage):
+        * WebProcess/WebProcess.h:
+        * mac/WebKit2.exp:
+        * win/WebKit2.vcproj:
+
 2010-06-21  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

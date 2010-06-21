@@ -23,12 +23,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <stdio.h>
 #include <Cocoa/Cocoa.h>
 #include <WebKit2/WKBundle.h>
-#include <WebKit2/WKBundlePage.h>
 #include <WebKit2/WKBundleInitialize.h>
+#include <WebKit2/WKBundlePage.h>
+#include <WebKit2/WKString.h>
+#include <WebKit2/WKStringCF.h>
 #include <WebKit2/WKURLCF.h>
+#include <stdio.h>
 
 static WKBundleRef globalBundle;
 
@@ -37,9 +39,13 @@ void _didClearWindow(WKBundlePageRef page, WKBundleFrameRef frame, JSContextRef 
     CFURLRef cfURL = WKURLCopyCFURL(0, WKBundlePageGetMainFrameURL(page));
     NSLog(@"WKBundlePageClient - _didClearWindowForFrame %@", [(NSURL *)cfURL absoluteString]);
     CFRelease(cfURL);
+
+    WKStringRef message = WKStringCreateWithCFString(CFSTR("Window was cleared"));
+    WKBundlePostMessage(globalBundle, message);
+    WKStringRelease(message);
 }
 
-void _didCreatePage(WKBundlePageRef page, const void* clientInfo)
+void _didCreatePage(WKBundlePageRef bundle, WKBundlePageRef page, const void* clientInfo)
 {
     NSLog(@"WKBundleClient - didCreatePage\n");
 
@@ -51,6 +57,13 @@ void _didCreatePage(WKBundlePageRef page, const void* clientInfo)
     WKBundlePageSetClient(page, &client);
 }
 
+void _didRecieveMessage(WKBundleRef bundle, WKStringRef message, const void *clientInfo)
+{
+    CFStringRef cfMessage = WKStringCopyCFString(0, message);
+    NSLog(@"WKBundleClient - didRecieveMessage %@\n", cfMessage);
+    CFRelease(cfMessage);
+}
+
 void WKBundleInitialize(WKBundleRef bundle)
 {
     globalBundle = bundle;
@@ -58,7 +71,8 @@ void WKBundleInitialize(WKBundleRef bundle)
     WKBundleClient client = {
         0,
         0,
-        _didCreatePage
+        _didCreatePage,
+        _didRecieveMessage
     };
     WKBundleSetClient(bundle, &client);
 }

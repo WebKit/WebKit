@@ -27,6 +27,7 @@
 #define WebContext_h
 
 #include "ProcessModel.h"
+#include "WebContextInjectedBundleClient.h"
 #include <WebCore/PlatformString.h>
 #include <wtf/Forward.h>
 #include <wtf/HashSet.h>
@@ -55,6 +56,8 @@ public:
 
     ~WebContext();
 
+    void initializeInjectedBundleClient(WKContextInjectedBundleClient*);
+
     ProcessModel processModel() const { return m_processModel; }
     WebProcessProxy* process() const { return m_process.get(); }
 
@@ -70,6 +73,11 @@ public:
     void preferencesDidChange();
 
     const WebCore::String& injectedBundlePath() const { return m_injectedBundlePath; }
+
+    // InjectedBundle client
+    void didRecieveMessageFromInjectedBundle(const WebCore::String&);
+
+    void postMessageToInjectedBundle(WebCore::StringImpl*);
 
     void getStatistics(WKContextStatistics* statistics);
 
@@ -87,6 +95,7 @@ private:
     RefPtr<WebPreferences> m_preferences;
 
     WebCore::String m_injectedBundlePath;
+    WebContextInjectedBundleClient m_injectedBundleClient;
 };
 
 } // namespace WebKit

@@ -76,6 +76,8 @@ private:
 
     void connect();
 
+    void forwardMessageToWebContext(const WebCore::String&);
+
     // CoreIPC::Connection::Client
     void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
     void didReceiveSyncMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*, CoreIPC::ArgumentEncoder*);

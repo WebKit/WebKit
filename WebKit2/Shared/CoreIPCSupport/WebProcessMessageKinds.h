@@ -34,7 +34,8 @@ namespace WebProcessMessage {
 
 enum Kind {
     LoadInjectedBundle,
-    Create
+    Create,
+    PostMessage
 };
 
 }

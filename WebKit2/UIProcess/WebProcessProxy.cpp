@@ -31,6 +31,7 @@
 #include "WebProcessLauncher.h"
 #include "WebProcessManager.h"
 #include "WebProcessMessageKinds.h"
+#include "WebProcessProxyMessageKinds.h"
 #include <WebCore/PlatformString.h>
 
 using namespace WebCore;
@@ -127,8 +128,26 @@ size_t WebProcessProxy::numberOfPages()
     return m_pageMap.size();
 }
 
+void WebProcessProxy::forwardMessageToWebContext(const WebCore::String& message)
+{
+    m_context->didRecieveMessageFromInjectedBundle(message);
+}
+
 void WebProcessProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)
 {
+    if (messageID.is<CoreIPC::MessageClassWebProcessProxy>()) {
+        switch (messageID.get<WebProcessProxyMessage::Kind>()) {
+            case WebProcessProxyMessage::PostMessage: {
+                WebCore::String message;
+                if (!arguments->decode(CoreIPC::Out(message)))
+                    return;
+
+                forwardMessageToWebContext(message);
+                return;
+            }
+        }
+    }
+
     uint64_t pageID = arguments->destinationID();
     if (!pageID)
         return;

@@ -526,6 +526,10 @@
 					RelativePath="..\Shared\CoreIPCSupport\WebProcessMessageKinds.h"
 					>
 				</File>
+				<File
+					RelativePath="..\Shared\CoreIPCSupport\WebProcessProxyMessageKinds.h"
+					>
+				</File>
 			</Filter>
 			<Filter
 				Name="win"
@@ -809,6 +813,14 @@
 			</File>
 			<File
 				RelativePath="..\UIProcess\WebContext.h"
+				>
+			</File>
+			<File
+				RelativePath="..\UIProcess\WebContextInjectedBundleClient.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\UIProcess\WebContextInjectedBundleClient.h"
 				>
 			</File>
 			<File
