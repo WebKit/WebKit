@@ -1345,6 +1345,8 @@ static void tryHyphenating(RenderText* text, const Font& font, int lastSpace, in
 #if !ASSERT_DISABLED
     int prefixWidth = hyphenWidth + textWidth(text, lastSpace, prefixLength, font, xPos, isFixedPitch, collapseWhiteSpace) + lastSpaceWordSpacing;
     ASSERT(xPos + prefixWidth <= availableWidth);
+#else
+    UNUSED_PARAM(isFixedPitch);
 #endif
 
     lineBreak.obj = text;

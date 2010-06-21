@@ -1,5 +1,12 @@
 2010-06-21  Dan Bernstein  <mitz@apple.com>
 
+        Release build fix
+
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::tryHyphenating):
+
+2010-06-21  Dan Bernstein  <mitz@apple.com>
+
         Windows build fix
 
         * WebCore.vcproj/WebCore.vcproj: Fixed a typo.
