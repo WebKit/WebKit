@@ -58,7 +58,7 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
 #define MIMEListStringStringNumber              128
 
 #define RealPlayerAppIndentifier                @"com.RealNetworks.RealOne Player"
-#define RealPlayerPluginFilename                @"RealPlayer Plugin"
+#define RealPlayerPluginFilename                "RealPlayer Plugin"
 
 @interface WebNetscapePluginPackage (Internal)
 - (void)_unloadWithShutdown:(BOOL)shutdown;
@@ -99,7 +99,7 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
 #ifdef SUPPORT_CFM
     if (!isBundle) {
         FSRef fref;
-        OSErr err = FSPathMakeRef((const UInt8 *)[path fileSystemRepresentation], &fref, NULL);
+        OSErr err = FSPathMakeRef((const UInt8 *)[(NSString *)path fileSystemRepresentation], &fref, NULL);
         if (err != noErr)
             return -1;
         
@@ -391,7 +391,7 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
         FSRef fref;
         OSErr err;
         
-        err = FSPathMakeRef((UInt8 *)[path fileSystemRepresentation], &fref, NULL);
+        err = FSPathMakeRef((UInt8 *)[(NSString *)path fileSystemRepresentation], &fref, NULL);
         if (err != noErr) {
             LOG_ERROR("FSPathMakeRef failed. Error=%d", err);
             return NO;
@@ -505,7 +505,7 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
         // Workaround for 3270576. The RealPlayer plug-in fails to load if its preference file is out of date.
         // Launch the RealPlayer application to refresh the file.
         if (npErr != NPERR_NO_ERROR) {
-            if (npErr == NPERR_MODULE_LOAD_FAILED_ERROR && [[self filename] isEqualToString:RealPlayerPluginFilename])
+            if (npErr == NPERR_MODULE_LOAD_FAILED_ERROR && equalIgnoringCase(pluginInfo.file, RealPlayerPluginFilename))
                 [self launchRealPlayer];
             return NO;
         }

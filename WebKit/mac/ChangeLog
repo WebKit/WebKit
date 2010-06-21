@@ -1,5 +1,13 @@
 2010-06-21  Anders Carlsson  <andersca@apple.com>
 
+        Another PowerPC build fix.
+
+        * Plugins/WebNetscapePluginPackage.mm:
+        (-[WebNetscapePluginPackage openResourceFile]):
+        (-[WebNetscapePluginPackage _tryLoad]):
+
+2010-06-21  Anders Carlsson  <andersca@apple.com>
+
         Try to fix the PowerPC build.
 
         * Plugins/WebNetscapePluginPackage.mm:
