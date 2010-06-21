@@ -54,7 +54,7 @@ NSString *WebPlugInContainingElementKey =       @"WebPlugInContainingElementKey"
     
     if (![[pluginPath pathExtension] _webkit_isCaseInsensitiveEqualToString:@"webplugin"]) {
         UInt32 type = 0;
-        CFBundleGetPackageInfo(cfBundle, &type, NULL);
+        CFBundleGetPackageInfo(cfBundle.get(), &type, NULL);
         if (type != FOUR_CHAR_CODE('WBPL')) {
             [self release];
             return nil;
@@ -103,7 +103,7 @@ NSString *WebPlugInContainingElementKey =       @"WebPlugInContainingElementKey"
     
 #if !LOG_DISABLED
     CFAbsoluteTime duration = CFAbsoluteTimeGetCurrent() - start;
-    LOG(Plugins, "principalClass took %f seconds for: %@", duration, (NSString *)[self name]);
+    LOG(Plugins, "principalClass took %f seconds for: %@", duration, (NSString *)[self pluginInfo].name);
 #endif
     return [super load];
 }

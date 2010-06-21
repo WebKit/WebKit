@@ -108,7 +108,7 @@ bool WebHaltablePlugin::isWindowed() const
 
 String WebHaltablePlugin::pluginName() const
 {
-    return [[m_view pluginPackage] name];
+    return [[m_view pluginPackage] pluginInfo].name;
 }
 
 @implementation WebBaseNetscapePluginView

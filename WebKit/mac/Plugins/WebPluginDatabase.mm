@@ -307,9 +307,9 @@ static NSArray *additionalWebPlugInPaths;
     NSMutableSet *MIMETypes = [[NSMutableSet alloc] init];
     pluginEnumerator = [plugins objectEnumerator];
     while ((plugin = [pluginEnumerator nextObject])) {
-        const Vector<MimeClassInfo>& mimeTypes = [plugin mimeTypes];
-        for (size_t i = 0; i < mimeTypes.size(); ++i)
-            [MIMETypes addObject:mimeTypes[i].type];
+        const PluginInfo& pluginInfo = [plugin pluginInfo];
+        for (size_t i = 0; i < pluginInfo.mimes.size(); ++i)
+            [MIMETypes addObject:pluginInfo.mimes[i].type];
     }
     
     // Register plug-in views and representations.
@@ -444,9 +444,9 @@ static NSArray *additionalWebPlugInPaths;
     ASSERT(plugin);
 
     // Unregister plug-in's MIME type registrations
-    const Vector<MimeClassInfo>& mimeTypes = [plugin mimeTypes];
-    for (size_t i = 0; i < mimeTypes.size(); ++i) {
-        NSString *MIMEType = mimeTypes[i].type;
+    const PluginInfo& pluginInfo = [plugin pluginInfo];
+    for (size_t i = 0; i < pluginInfo.mimes.size(); ++i) {
+        NSString *MIMEType = pluginInfo.mimes[i].type;
 
         if ([registeredMIMETypes containsObject:MIMEType]) {
             if (self == sharedDatabase)

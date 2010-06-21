@@ -27,6 +27,7 @@
  */
 
 #import <WebCore/PluginData.h>
+#import <wtf/RetainPtr.h>
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
 #import <WebKit/npfunctions.h>
@@ -56,13 +57,10 @@ typedef void (*BP_CreatePluginMIMETypesPreferencesFuncPtr)(void);
 {
     NSMutableSet *pluginDatabases;
     
-    WebCore::String name;
     WebCore::String path;
-    WebCore::String pluginDescription;
+    WebCore::PluginInfo pluginInfo;
 
-    Vector<WebCore::MimeClassInfo> mimeTypes;
-
-    CFBundleRef cfBundle;
+    RetainPtr<CFBundleRef> cfBundle;
 
     BP_CreatePluginMIMETypesPreferencesFuncPtr BP_CreatePluginMIMETypesPreferences;
 }
@@ -75,12 +73,9 @@ typedef void (*BP_CreatePluginMIMETypesPreferencesFuncPtr)(void);
 - (BOOL)load;
 - (void)unload;
 
-- (WebCore::String)filename;
-- (const WebCore::String&)name;
 - (const WebCore::String&)path;
-- (const WebCore::String&)pluginDescription;
 
-- (const Vector<WebCore::MimeClassInfo>&)mimeTypes;
+- (const WebCore::PluginInfo&)pluginInfo;
 
 - (WebCore::String)bundleIdentifier;
 

@@ -50,7 +50,7 @@
 
 #define JavaCocoaPluginIdentifier   "com.apple.JavaPluginCocoa"
 #define JavaCarbonPluginIdentifier  "com.apple.JavaAppletPlugin"
-#define JavaCFMPluginFilename       @"Java Applet Plugin Enabler"
+#define JavaCFMPluginFilename       "Java Applet Plugin Enabler"
 
 #define QuickTimeCarbonPluginIdentifier       "com.apple.QuickTime Plugin.plugin"
 #define QuickTimeCocoaPluginIdentifier        "com.apple.quicktime.webplugin"
@@ -126,7 +126,7 @@ static NSString *pathByResolvingSymlinksAndAliases(NSString *thePath)
         return nil;
         
     path = pathByResolvingSymlinksAndAliases(pluginPath);
-    cfBundle = CFBundleCreate(kCFAllocatorDefault, (CFURLRef)[NSURL fileURLWithPath:path]);
+    cfBundle.adoptCF(CFBundleCreate(kCFAllocatorDefault, (CFURLRef)[NSURL fileURLWithPath:path]));
 
 #ifndef __ppc__
     // 32-bit PowerPC is the only platform where non-bundled CFM plugins are supported
@@ -170,7 +170,7 @@ static NSString *pathByResolvingSymlinksAndAliases(NSString *thePath)
 
 - (id)_objectForInfoDictionaryKey:(NSString *)key
 {
-    CFDictionaryRef bundleInfoDictionary = CFBundleGetInfoDictionary(cfBundle);
+    CFDictionaryRef bundleInfoDictionary = CFBundleGetInfoDictionary(cfBundle.get());
     if (!bundleInfoDictionary)
         return nil;
 
@@ -233,22 +233,23 @@ static NSString *pathByResolvingSymlinksAndAliases(NSString *thePath)
         description = [MIMEDictionary objectForKey:WebPluginTypeDescriptionKey];
         mimeClassInfo.desc = description;
 
-        mimeTypes.append(mimeClassInfo);
+        pluginInfo.mimes.append(mimeClassInfo);
         if (!description)
             description = @"";
     }
 
-    NSString *filename = [self filename];
+    NSString *filename = [(NSString *)path lastPathComponent];
+    pluginInfo.file = filename;
 
     NSString *theName = [self _objectForInfoDictionaryKey:WebPluginNameKey];
     if (!theName)
         theName = filename;
-    name = theName;
+    pluginInfo.name = theName;
 
     description = [self _objectForInfoDictionaryKey:WebPluginDescriptionKey];
     if (!description)
         description = filename;
-    pluginDescription = description;
+    pluginInfo.desc = description;
 
     return YES;
 }
@@ -256,7 +257,7 @@ static NSString *pathByResolvingSymlinksAndAliases(NSString *thePath)
 - (BOOL)load
 {
     if (cfBundle && !BP_CreatePluginMIMETypesPreferences)
-        BP_CreatePluginMIMETypesPreferences = (BP_CreatePluginMIMETypesPreferencesFuncPtr)CFBundleGetFunctionPointerForName(cfBundle, CFSTR("BP_CreatePluginMIMETypesPreferences"));
+        BP_CreatePluginMIMETypesPreferences = (BP_CreatePluginMIMETypesPreferencesFuncPtr)CFBundleGetFunctionPointerForName(cfBundle.get(), CFSTR("BP_CreatePluginMIMETypesPreferences"));
     
     return YES;
 }
@@ -265,9 +266,6 @@ static NSString *pathByResolvingSymlinksAndAliases(NSString *thePath)
 {
     ASSERT(!pluginDatabases || [pluginDatabases count] == 0);
     [pluginDatabases release];
-    
-    if (cfBundle)
-        CFRelease(cfBundle);
     
     [super dealloc];
 }
@@ -278,15 +276,7 @@ static NSString *pathByResolvingSymlinksAndAliases(NSString *thePath)
     ASSERT(!pluginDatabases || [pluginDatabases count] == 0);
     [pluginDatabases release];
 
-    if (cfBundle)
-        CFRelease(cfBundle);
-
     [super finalize];
-}
-
-- (const String&)name
-{
-    return name;
 }
 
 - (const String&)path
@@ -294,27 +284,17 @@ static NSString *pathByResolvingSymlinksAndAliases(NSString *thePath)
     return path;
 }
 
-- (String)filename
+- (const PluginInfo&)pluginInfo
 {
-    return [(NSString *)path lastPathComponent];
-}
-
-- (const String&)pluginDescription
-{
-    return pluginDescription;
-}
-
-- (const Vector<WebCore::MimeClassInfo>&)mimeTypes
-{
-    return mimeTypes;
+    return pluginInfo;
 }
 
 - (BOOL)supportsExtension:(const String&)extension
 {
     ASSERT(extension.lower() == extension);
     
-    for (size_t i = 0; i < mimeTypes.size(); ++i) {
-        const Vector<String>& extensions = mimeTypes[i].extensions;
+    for (size_t i = 0; i < pluginInfo.mimes.size(); ++i) {
+        const Vector<String>& extensions = pluginInfo.mimes[i].extensions;
 
         if (find(extensions.begin(), extensions.end(), extension) != extensions.end())
             return YES;
@@ -327,8 +307,8 @@ static NSString *pathByResolvingSymlinksAndAliases(NSString *thePath)
 {
     ASSERT(mimeType.lower() == mimeType);
     
-    for (size_t i = 0; i < mimeTypes.size(); ++i) {
-        if (mimeTypes[i].type == mimeType)
+    for (size_t i = 0; i < pluginInfo.mimes.size(); ++i) {
+        if (pluginInfo.mimes[i].type == mimeType)
             return YES;
     }
     
@@ -339,8 +319,8 @@ static NSString *pathByResolvingSymlinksAndAliases(NSString *thePath)
 {
     ASSERT(extension.lower() == extension);
     
-    for (size_t i = 0; i < mimeTypes.size(); ++i) {
-        const MimeClassInfo& mimeClassInfo = mimeTypes[i];
+    for (size_t i = 0; i < pluginInfo.mimes.size(); ++i) {
+        const MimeClassInfo& mimeClassInfo = pluginInfo.mimes[i];
         const Vector<String>& extensions = mimeClassInfo.extensions;
 
         if (find(extensions.begin(), extensions.end(), extension) != extensions.end())
@@ -360,7 +340,7 @@ static NSString *pathByResolvingSymlinksAndAliases(NSString *thePath)
 {
     const String& bundleIdentifier = [self bundleIdentifier];
     return bundleIdentifier == JavaCocoaPluginIdentifier || bundleIdentifier == JavaCarbonPluginIdentifier ||
-        [(NSString *)[self filename] _webkit_isCaseInsensitiveEqualToString:JavaCFMPluginFilename];
+        equalIgnoringCase(pluginInfo.file, JavaCFMPluginFilename);
 }
 
 static inline void swapIntsInHeader(uint8_t* bytes, unsigned length)
@@ -445,7 +425,7 @@ static inline void swapIntsInHeader(uint8_t* bytes, unsigned length)
 - (UInt32)versionNumber
 {
     // CFBundleGetVersionNumber doesn't work with all possible versioning schemes, but we think for now it's good enough for us.
-    return CFBundleGetVersionNumber(cfBundle);
+    return CFBundleGetVersionNumber(cfBundle.get());
 }
 
 - (void)wasAddedToPluginDatabase:(WebPluginDatabase *)database
@@ -467,7 +447,7 @@ static inline void swapIntsInHeader(uint8_t* bytes, unsigned length)
 
 - (WebCore::String)bundleIdentifier
 {
-    return CFBundleGetIdentifier(cfBundle);
+    return CFBundleGetIdentifier(cfBundle.get());
 }
 
 @end

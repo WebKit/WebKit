@@ -107,7 +107,7 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
     }
 #endif
 
-    return CFBundleOpenBundleResourceMap(cfBundle);
+    return CFBundleOpenBundleResourceMap(cfBundle.get());
 }
 
 - (void)closeResourceFile:(ResFileRefNum)resRef
@@ -119,7 +119,7 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
     }
 #endif
 
-    CFBundleCloseBundleResourceMap(cfBundle, resRef);
+    CFBundleCloseBundleResourceMap(cfBundle.get(), resRef);
 }
 
 - (NSString *)stringForStringListID:(SInt16)stringListID andIndex:(SInt16)index
@@ -177,24 +177,25 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
         }
         
         description = [self stringForStringListID:MIMEDescriptionStringNumber
-                                         andIndex:mimeTypes.size()];
+                                         andIndex:pluginInfo.mimes.size()];
         mimeClassInfo.desc = description;
 
-        mimeTypes.append(mimeClassInfo);
+        pluginInfo.mimes.append(mimeClassInfo);
     }
 
-    NSString *filename = [self filename];
+    NSString *filename = [(NSString *)path lastPathComponent];
+    pluginInfo.file = filename;
     
     description = [self stringForStringListID:PluginNameOrDescriptionStringNumber andIndex:1];
     if (!description)
         description = filename;
-    pluginDescription = description;
+    pluginInfo.desc = description;
     
     
     NSString *theName = [self stringForStringListID:PluginNameOrDescriptionStringNumber andIndex:2];
     if (!theName)
         theName = filename;
-    name = theName;
+    pluginInfo.name = theName;
     
     [self closeResourceFile:resRef];
     
@@ -209,7 +210,7 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
 
     if (cfBundle) {
         // Bundle
-        CFBundleGetPackageInfo(cfBundle, &type, NULL);
+        CFBundleGetPackageInfo(cfBundle.get(), &type, NULL);
 #ifdef SUPPORT_CFM
         isBundle = YES;
 #endif
@@ -230,7 +231,7 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
 
     // Check if the executable is Mach-O or CFM.
     if (cfBundle) {
-        RetainPtr<CFURLRef> executableURL(AdoptCF, CFBundleCopyExecutableURL(cfBundle));
+        RetainPtr<CFURLRef> executableURL(AdoptCF, CFBundleCopyExecutableURL(cfBundle.get()));
         if (!executableURL)
             return NO;
         NSFileHandle *executableFile = [NSFileHandle fileHandleForReadingAtPath:[(NSURL *)executableURL.get() path]];
@@ -248,7 +249,7 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
 #endif
 
 #if USE(PLUGIN_HOST_PROCESS)
-        RetainPtr<CFArrayRef> archs(AdoptCF, CFBundleCopyExecutableArchitectures(cfBundle));
+        RetainPtr<CFArrayRef> archs(AdoptCF, CFBundleCopyExecutableArchitectures(cfBundle.get()));
         
         if ([(NSArray *)archs.get() containsObject:[NSNumber numberWithInteger:NSBundleExecutableArchitectureX86_64]])
             pluginHostArchitecture = CPU_TYPE_X86_64;
@@ -325,7 +326,7 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
     if (!cfBundle)
         return;
     
-    if ([(NSString *)CFBundleGetIdentifier(cfBundle) isEqualToString:@"com.lizardtech.NPDjVu"]) {
+    if ([self bundleIdentifier] == "com.lizardtech.NPDjVu") {
         // The DjVu plug-in will crash copying the vtable if it's too big so we cap it to 
         // what the plug-in expects here. 
         // size + version + 40 function pointers.
@@ -354,7 +355,7 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
     CFAbsoluteTime currentTime;
     CFAbsoluteTime duration;
 #endif
-    LOG(Plugins, "%f Load timing started for: %@", start, (NSString *)[self name]);
+    LOG(Plugins, "%f Load timing started for: %@", start, (NSString *)[self pluginInfo].name);
 
     if (isLoaded)
         return YES;
@@ -362,7 +363,7 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
 #ifdef SUPPORT_CFM
     if (isBundle) {
 #endif
-        if (!CFBundleLoadExecutable(cfBundle))
+        if (!CFBundleLoadExecutable(cfBundle.get()))
             return NO;
 #if !LOG_DISABLED
         currentTime = CFAbsoluteTimeGetCurrent();
@@ -378,9 +379,9 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
                 return NO;
         } else {
 #endif
-            NP_Initialize = (NP_InitializeFuncPtr)CFBundleGetFunctionPointerForName(cfBundle, CFSTR("NP_Initialize"));
-            NP_GetEntryPoints = (NP_GetEntryPointsFuncPtr)CFBundleGetFunctionPointerForName(cfBundle, CFSTR("NP_GetEntryPoints"));
-            NP_Shutdown = (NPP_ShutdownProcPtr)CFBundleGetFunctionPointerForName(cfBundle, CFSTR("NP_Shutdown"));
+            NP_Initialize = (NP_InitializeFuncPtr)CFBundleGetFunctionPointerForName(cfBundle.get(), CFSTR("NP_Initialize"));
+            NP_GetEntryPoints = (NP_GetEntryPointsFuncPtr)CFBundleGetFunctionPointerForName(cfBundle.get(), CFSTR("NP_GetEntryPoints"));
+            NP_Shutdown = (NPP_ShutdownProcPtr)CFBundleGetFunctionPointerForName(cfBundle.get(), CFSTR("NP_Shutdown"));
             if (!NP_Initialize || !NP_GetEntryPoints || !NP_Shutdown)
                 return NO;
 #ifdef SUPPORT_CFM
@@ -627,9 +628,9 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
         pluginVersion = pluginFuncs.version;
         
         if (pluginFuncs.javaClass)
-            LOG(LiveConnect, "%@:  mach-o entry point for NPP_GetJavaClass = %p", (NSString *)[self name], pluginFuncs.javaClass);
+            LOG(LiveConnect, "%@:  mach-o entry point for NPP_GetJavaClass = %p", (NSString *)[self pluginInfo].name, pluginFuncs.javaClass);
         else
-            LOG(LiveConnect, "%@:  no entry point for NPP_GetJavaClass", (NSString *)[self name]);
+            LOG(LiveConnect, "%@:  no entry point for NPP_GetJavaClass", (NSString *)[self pluginInfo].name);
 
 #ifdef SUPPORT_CFM
     }
@@ -698,7 +699,7 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
         return YES;
     
     // Flash has a bogus Info.plist entry for CFBundleVersionString, so use CFBundleShortVersionString.
-    NSString *versionString = (NSString *)CFDictionaryGetValue(CFBundleGetInfoDictionary(cfBundle), CFSTR("CFBundleShortVersionString"));
+    NSString *versionString = (NSString *)CFDictionaryGetValue(CFBundleGetInfoDictionary(cfBundle.get()), CFSTR("CFBundleShortVersionString"));
     
     if (![versionString hasPrefix:@"10.1"])
         return YES;
@@ -754,7 +755,7 @@ TransitionVector tVectorForFunctionPointer(FunctionPointer fp)
     if (!isLoaded)
         return;
     
-    LOG(Plugins, "Unloading %@...", (NSString *)name);
+    LOG(Plugins, "Unloading %@...", (NSString *)pluginInfo.name);
 
     // Cannot unload a plug-in package while an instance is still using it
     if (instanceCount > 0) {

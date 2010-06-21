@@ -1,5 +1,55 @@
 2010-06-21  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        More WebBasePluginPackage cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=40944
+
+        * Plugins/Hosted/HostedNetscapePluginStream.mm:
+        (WebKit::HostedNetscapePluginStream::pluginCancelledConnectionError):
+        * Plugins/Hosted/NetscapePluginHostManager.mm:
+        (WebKit::NetscapePluginHostManager::spawnPluginHost):
+        * Plugins/WebBaseNetscapePluginStream.mm:
+        (WebNetscapePluginStream::pluginCancelledConnectionError):
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (WebHaltablePlugin::pluginName):
+        * Plugins/WebBasePluginPackage.h:
+        * Plugins/WebBasePluginPackage.mm:
+        (-[WebBasePluginPackage initWithPath:]):
+        (-[WebBasePluginPackage _objectForInfoDictionaryKey:]):
+        (-[WebBasePluginPackage getPluginInfoFromPLists]):
+        (-[WebBasePluginPackage load]):
+        (-[WebBasePluginPackage dealloc]):
+        (-[WebBasePluginPackage finalize]):
+        (-[WebBasePluginPackage pluginInfo]):
+        (-[WebBasePluginPackage supportsExtension:]):
+        (-[WebBasePluginPackage supportsMIMEType:WebCore::]):
+        (-[WebBasePluginPackage MIMETypeForExtension:]):
+        (-[WebBasePluginPackage isJavaPlugIn]):
+        (-[WebBasePluginPackage versionNumber]):
+        (-[WebBasePluginPackage WebCore::]):
+        * Plugins/WebNetscapePluginPackage.mm:
+        (-[WebNetscapePluginPackage openResourceFile]):
+        (-[WebNetscapePluginPackage closeResourceFile:]):
+        (-[WebNetscapePluginPackage getPluginInfoFromResources]):
+        (-[WebNetscapePluginPackage _initWithPath:]):
+        (-[WebNetscapePluginPackage _applyDjVuWorkaround]):
+        (-[WebNetscapePluginPackage _tryLoad]):
+        (-[WebNetscapePluginPackage supportsSnapshotting]):
+        (-[WebNetscapePluginPackage _unloadWithShutdown:]):
+        * Plugins/WebPluginDatabase.mm:
+        (-[WebPluginDatabase refresh]):
+        (-[WebPluginDatabase _removePlugin:]):
+        * Plugins/WebPluginPackage.mm:
+        (-[WebPluginPackage initWithPath:]):
+        (-[WebPluginPackage load]):
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::createPlugin):
+        * WebCoreSupport/WebPlatformStrategies.mm:
+        (WebPlatformStrategies::getPluginInfo):
+
+2010-06-21  Anders Carlsson  <andersca@apple.com>
+
         Another PowerPC build fix.
 
         * Plugins/WebNetscapePluginPackage.mm:

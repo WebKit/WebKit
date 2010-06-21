@@ -64,16 +64,9 @@ void WebPlatformStrategies::getPluginInfo(Vector<WebCore::PluginInfo>& plugins)
 
     NSArray* pluginsArray = [[WebPluginDatabase sharedDatabase] plugins];
     for (unsigned int i = 0; i < [pluginsArray count]; ++i) {
-        PluginInfo pluginInfo;
-
         WebPluginPackage *plugin = [pluginsArray objectAtIndex:i];
-    
-        pluginInfo.name = [plugin name];
-        pluginInfo.file = [plugin filename];
-        pluginInfo.desc = [plugin pluginDescription];
-        pluginInfo.mimes = [plugin mimeTypes];
 
-        plugins.append(pluginInfo);
+        plugins.append([plugin pluginInfo]);
     }
     
     END_BLOCK_OBJC_EXCEPTIONS;

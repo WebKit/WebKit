@@ -256,7 +256,7 @@ NSError *HostedNetscapePluginStream::pluginCancelledConnectionError() const
     return [[[NSError alloc] _initWithPluginErrorCode:WebKitErrorPlugInCancelledConnection
                                            contentURL:m_responseURL ? m_responseURL.get() : m_requestURL.get()
                                         pluginPageURL:nil
-                                           pluginName:[[m_instance->pluginView() pluginPackage] name]
+                                           pluginName:[[m_instance->pluginView() pluginPackage] pluginInfo].name
                                              MIMEType:m_mimeType.get()] autorelease];
 }
 
