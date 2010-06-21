@@ -269,6 +269,14 @@ WKSoftwareCARendererRef WKSoftwareCARendererCreate(uint32_t contextID);
 void WKSoftwareCARendererDestroy(WKSoftwareCARendererRef);
 void WKSoftwareCARendererRender(WKSoftwareCARendererRef, CGContextRef, CGRect);
 
+typedef struct __WKCARemoteLayerClientRef *WKCARemoteLayerClientRef;
+
+WKCARemoteLayerClientRef WKCARemoteLayerClientMakeWithServerPort(mach_port_t port);
+void WKCARemoteLayerClientInvalidate(WKCARemoteLayerClientRef);
+uint32_t WKCARemoteLayerClientGetClientId(WKCARemoteLayerClientRef);
+void WKCARemoteLayerClientSetLayer(WKCARemoteLayerClientRef, CALayer *);
+CALayer *WKCARemoteLayerClientGetLayer(WKCARemoteLayerClientRef);
+
 #import <mach/mig.h>
 
 CFRunLoopSourceRef WKCreateMIGServerSource(mig_subsystem_t subsystem, mach_port_t serverPort);
