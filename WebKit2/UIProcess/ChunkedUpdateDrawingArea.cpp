@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "DrawingAreaProxyUpdateChunk.h"
+#include "ChunkedUpdateDrawingArea.h"
 
 #include "DrawingAreaMessageKinds.h"
 #include "DrawingAreaProxyMessageKinds.h"
@@ -37,7 +37,7 @@ using namespace WebCore;
 
 namespace WebKit {
 
-DrawingAreaProxyUpdateChunk::DrawingAreaProxyUpdateChunk(PlatformWebView* webView)
+ChunkedUpdateDrawingArea::ChunkedUpdateDrawingArea(PlatformWebView* webView)
     : DrawingAreaProxy(DrawingAreaUpdateChunkType)
     , m_isWaitingForDidSetFrameNotification(false)
     , m_isVisible(true)
@@ -45,11 +45,11 @@ DrawingAreaProxyUpdateChunk::DrawingAreaProxyUpdateChunk(PlatformWebView* webVie
 {
 }
 
-DrawingAreaProxyUpdateChunk::~DrawingAreaProxyUpdateChunk()
+ChunkedUpdateDrawingArea::~ChunkedUpdateDrawingArea()
 {
 }
 
-void DrawingAreaProxyUpdateChunk::paint(const IntRect& rect, PlatformDrawingContext context)
+void ChunkedUpdateDrawingArea::paint(const IntRect& rect, PlatformDrawingContext context)
 {
     if (m_isWaitingForDidSetFrameNotification) {
         WebPageProxy* page = this->page();
@@ -64,7 +64,7 @@ void DrawingAreaProxyUpdateChunk::paint(const IntRect& rect, PlatformDrawingCont
     platformPaint(rect, context);
 }
 
-void DrawingAreaProxyUpdateChunk::setSize(const IntSize& viewSize)
+void ChunkedUpdateDrawingArea::setSize(const IntSize& viewSize)
 {
     WebPageProxy* page = this->page();
     if (!page->isValid())
@@ -84,7 +84,7 @@ void DrawingAreaProxyUpdateChunk::setSize(const IntSize& viewSize)
     page->process()->connection()->send(DrawingAreaMessage::SetSize, page->pageID(), CoreIPC::In(viewSize));
 }
 
-void DrawingAreaProxyUpdateChunk::setPageIsVisible(bool isVisible)
+void ChunkedUpdateDrawingArea::setPageIsVisible(bool isVisible)
 {
     WebPageProxy* page = this->page();
 
@@ -107,7 +107,7 @@ void DrawingAreaProxyUpdateChunk::setPageIsVisible(bool isVisible)
     // FIXME: We should request a full repaint here if needed.
 }
     
-void DrawingAreaProxyUpdateChunk::didSetSize(UpdateChunk* updateChunk)
+void ChunkedUpdateDrawingArea::didSetSize(UpdateChunk* updateChunk)
 {
     ASSERT(m_isWaitingForDidSetFrameNotification);
     m_isWaitingForDidSetFrameNotification = false;
@@ -124,7 +124,7 @@ void DrawingAreaProxyUpdateChunk::didSetSize(UpdateChunk* updateChunk)
     page->process()->responsivenessTimer()->stop();
 }
 
-void DrawingAreaProxyUpdateChunk::update(UpdateChunk* updateChunk)
+void ChunkedUpdateDrawingArea::update(UpdateChunk* updateChunk)
 {
     drawUpdateChunkIntoBackingStore(updateChunk);
 
@@ -132,7 +132,7 @@ void DrawingAreaProxyUpdateChunk::update(UpdateChunk* updateChunk)
     page->process()->connection()->send(DrawingAreaMessage::DidUpdate, page->pageID(), CoreIPC::In());
 }
 
-void DrawingAreaProxyUpdateChunk::didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder& arguments)
+void ChunkedUpdateDrawingArea::didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder& arguments)
 {
     switch (messageID.get<DrawingAreaProxyMessage::Kind>()) {
         case DrawingAreaProxyMessage::Update: {

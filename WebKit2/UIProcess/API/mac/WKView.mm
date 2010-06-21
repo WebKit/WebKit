@@ -29,7 +29,7 @@
 #import "WKAPICast.h"
 
 // Implementation
-#import "DrawingAreaProxyUpdateChunk.h"
+#import "ChunkedUpdateDrawingArea.h"
 #import "PageClientImpl.h"
 #import "RunLoop.h"
 #import "WebContext.h"
@@ -81,7 +81,7 @@ using namespace WebCore;
 
     _data->_page = toWK(pageNamespaceRef)->createWebPage();
     _data->_page->setPageClient(new PageClientImpl(self));
-    _data->_page->initializeWebPage(IntSize(frame.size), new DrawingAreaProxyUpdateChunk(self));
+    _data->_page->initializeWebPage(IntSize(frame.size), new ChunkedUpdateDrawingArea(self));
 
     return self;
 }

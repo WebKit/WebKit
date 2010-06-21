@@ -1,3 +1,14 @@
+2010-06-21  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Anders Carlsson.
+        
+        Rename DrawingAreaProxyUpdateChunk to ChunkedUpdateDrawingArea
+        https://bugs.webkit.org/show_bug.cgi?id=40948
+        
+        Have the script look in WebKit2.
+
+        * Scripts/do-webcore-rename:
+
 2010-06-21  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.

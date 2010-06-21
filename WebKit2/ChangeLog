@@ -1,3 +1,44 @@
+2010-06-21  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Rename DrawingAreaProxyUpdateChunk to ChunkedUpdateDrawingArea
+        https://bugs.webkit.org/show_bug.cgi?id=40948
+        
+        Rename DrawingAreaUpdateChunk to ChunkedUpdateDrawingArea.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView initWithFrame:pageNamespaceRef:]):
+        * UIProcess/ChunkedUpdateDrawingArea.cpp: Added.
+        (WebKit::ChunkedUpdateDrawingArea::ChunkedUpdateDrawingArea):
+        (WebKit::ChunkedUpdateDrawingArea::~ChunkedUpdateDrawingArea):
+        (WebKit::ChunkedUpdateDrawingArea::paint):
+        (WebKit::ChunkedUpdateDrawingArea::setSize):
+        (WebKit::ChunkedUpdateDrawingArea::setPageIsVisible):
+        (WebKit::ChunkedUpdateDrawingArea::didSetSize):
+        (WebKit::ChunkedUpdateDrawingArea::update):
+        (WebKit::ChunkedUpdateDrawingArea::didReceiveMessage):
+        * UIProcess/ChunkedUpdateDrawingArea.h: Added.
+        (WebKit::ChunkedUpdateDrawingArea::encode):
+        * UIProcess/DrawingAreaProxyUpdateChunk.cpp: Removed.
+        * UIProcess/DrawingAreaProxyUpdateChunk.h: Removed.
+        * UIProcess/mac/DrawingAreaProxyUpdateChunkMac.mm:
+        (WebKit::ChunkedUpdateDrawingArea::page):
+        (WebKit::ChunkedUpdateDrawingArea::ensureBackingStore):
+        (WebKit::ChunkedUpdateDrawingArea::invalidateBackingStore):
+        (WebKit::ChunkedUpdateDrawingArea::platformPaint):
+        (WebKit::ChunkedUpdateDrawingArea::drawUpdateChunkIntoBackingStore):
+        * UIProcess/win/DrawingAreaProxyUpdateChunkWin.cpp:
+        (WebKit::ChunkedUpdateDrawingArea::page):
+        (WebKit::ChunkedUpdateDrawingArea::ensureBackingStore):
+        (WebKit::ChunkedUpdateDrawingArea::invalidateBackingStore):
+        (WebKit::ChunkedUpdateDrawingArea::platformPaint):
+        (WebKit::ChunkedUpdateDrawingArea::drawUpdateChunkIntoBackingStore):
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::WebView):
+        * WebKit2.xcodeproj/project.pbxproj:
+        * win/WebKit2.vcproj:
+
 2010-06-21  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

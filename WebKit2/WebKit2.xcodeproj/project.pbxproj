@@ -118,8 +118,8 @@
 		BC2651F611825EF800243E12 /* DrawingAreaProxyUpdateChunkMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC2651F511825EF800243E12 /* DrawingAreaProxyUpdateChunkMac.mm */; };
 		BC2652161182608100243E12 /* DrawingAreaProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC2652121182608100243E12 /* DrawingAreaProxy.cpp */; };
 		BC2652171182608100243E12 /* DrawingAreaProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = BC2652131182608100243E12 /* DrawingAreaProxy.h */; };
-		BC2652181182608100243E12 /* DrawingAreaProxyUpdateChunk.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC2652141182608100243E12 /* DrawingAreaProxyUpdateChunk.cpp */; };
-		BC2652191182608100243E12 /* DrawingAreaProxyUpdateChunk.h in Headers */ = {isa = PBXBuildFile; fileRef = BC2652151182608100243E12 /* DrawingAreaProxyUpdateChunk.h */; };
+		BC2652181182608100243E12 /* ChunkedUpdateDrawingArea.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC2652141182608100243E12 /* ChunkedUpdateDrawingArea.cpp */; };
+		BC2652191182608100243E12 /* ChunkedUpdateDrawingArea.h in Headers */ = {isa = PBXBuildFile; fileRef = BC2652151182608100243E12 /* ChunkedUpdateDrawingArea.h */; };
 		BC2E6E871141971500A63B1E /* RunLoop.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC2E6E771141970C00A63B1E /* RunLoop.cpp */; };
 		BC2E6E881141971500A63B1E /* RunLoop.h in Headers */ = {isa = PBXBuildFile; fileRef = BC2E6E781141970C00A63B1E /* RunLoop.h */; };
 		BC2E6E8C1141971500A63B1E /* WorkItem.h in Headers */ = {isa = PBXBuildFile; fileRef = BC2E6E7C1141970C00A63B1E /* WorkItem.h */; };
@@ -336,8 +336,8 @@
 		BC2651F511825EF800243E12 /* DrawingAreaProxyUpdateChunkMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DrawingAreaProxyUpdateChunkMac.mm; sourceTree = "<group>"; };
 		BC2652121182608100243E12 /* DrawingAreaProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DrawingAreaProxy.cpp; sourceTree = "<group>"; };
 		BC2652131182608100243E12 /* DrawingAreaProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DrawingAreaProxy.h; sourceTree = "<group>"; };
-		BC2652141182608100243E12 /* DrawingAreaProxyUpdateChunk.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DrawingAreaProxyUpdateChunk.cpp; sourceTree = "<group>"; };
-		BC2652151182608100243E12 /* DrawingAreaProxyUpdateChunk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DrawingAreaProxyUpdateChunk.h; sourceTree = "<group>"; };
+		BC2652141182608100243E12 /* ChunkedUpdateDrawingArea.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ChunkedUpdateDrawingArea.cpp; sourceTree = "<group>"; };
+		BC2652151182608100243E12 /* ChunkedUpdateDrawingArea.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChunkedUpdateDrawingArea.h; sourceTree = "<group>"; };
 		BC2E6E771141970C00A63B1E /* RunLoop.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RunLoop.cpp; sourceTree = "<group>"; };
 		BC2E6E781141970C00A63B1E /* RunLoop.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RunLoop.h; sourceTree = "<group>"; };
 		BC2E6E7C1141970C00A63B1E /* WorkItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WorkItem.h; sourceTree = "<group>"; };
@@ -639,8 +639,8 @@
 				BCCF085C113F3B7500C650C5 /* mac */,
 				BC2652121182608100243E12 /* DrawingAreaProxy.cpp */,
 				BC2652131182608100243E12 /* DrawingAreaProxy.h */,
-				BC2652141182608100243E12 /* DrawingAreaProxyUpdateChunk.cpp */,
-				BC2652151182608100243E12 /* DrawingAreaProxyUpdateChunk.h */,
+				BC2652141182608100243E12 /* ChunkedUpdateDrawingArea.cpp */,
+				BC2652151182608100243E12 /* ChunkedUpdateDrawingArea.h */,
 				BC17753E118BABF0007D9E9A /* GenericCallback.h */,
 				BC6EDAA5111271C600E7678B /* PageClient.h */,
 				BC597074116591D000551FCA /* ProcessModel.h */,
@@ -999,7 +999,7 @@
 				BCC938E11180DE440085E5FE /* WKContextPrivate.h in Headers */,
 				BC5F7BB51182376C0052C02C /* DrawingAreaUpdateChunk.h in Headers */,
 				BC2652171182608100243E12 /* DrawingAreaProxy.h in Headers */,
-				BC2652191182608100243E12 /* DrawingAreaProxyUpdateChunk.h in Headers */,
+				BC2652191182608100243E12 /* ChunkedUpdateDrawingArea.h in Headers */,
 				BC177465118B9FF4007D9E9A /* WKPagePrivate.h in Headers */,
 				BC17753F118BABF0007D9E9A /* GenericCallback.h in Headers */,
 				BC204EE311C83E98008F3375 /* InjectedBundle.h in Headers */,
@@ -1164,7 +1164,7 @@
 				BC5F7BB9118237990052C02C /* DrawingAreaUpdateChunkMac.cpp in Sources */,
 				BC2651F611825EF800243E12 /* DrawingAreaProxyUpdateChunkMac.mm in Sources */,
 				BC2652161182608100243E12 /* DrawingAreaProxy.cpp in Sources */,
-				BC2652181182608100243E12 /* DrawingAreaProxyUpdateChunk.cpp in Sources */,
+				BC2652181182608100243E12 /* ChunkedUpdateDrawingArea.cpp in Sources */,
 				BC204EE211C83E98008F3375 /* InjectedBundle.cpp in Sources */,
 				BC204EE611C83EA9008F3375 /* InjectedBundleMac.cpp in Sources */,
 				BC204EEE11C83EC8008F3375 /* WKBundle.cpp in Sources */,

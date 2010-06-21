@@ -780,11 +780,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\UIProcess\DrawingAreaProxyUpdateChunk.cpp"
+				RelativePath="..\UIProcess\ChunkedUpdateDrawingArea.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\UIProcess\DrawingAreaProxyUpdateChunk.h"
+				RelativePath="..\UIProcess\ChunkedUpdateDrawingArea.h"
 				>
 			</File>
 			<File
