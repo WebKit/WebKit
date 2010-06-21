@@ -2762,6 +2762,8 @@
             'platform/text/BidiContext.h',
             'platform/text/BidiResolver.h',
             'platform/text/CharacterNames.h',
+            'platform/text/Hyphenation.cpp',
+            'platform/text/Hyphenation.h',
             'platform/text/ParserUtilities.h',
             'platform/text/PlatformString.h',
             'platform/text/RegularExpression.cpp',

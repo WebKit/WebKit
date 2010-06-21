@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2007 Alexey Proskuryakov <ap@nypop.com>.
- * Copyright (C) 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2009, 2010 Apple Inc. All rights reserved.
  * Copyright (C) 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  * Copyright (C) 2009 Jeff Schiller <codedread@gmail.com>
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
@@ -2154,6 +2154,38 @@ template<> inline CSSPrimitiveValue::operator ColorSpace() const
         default:
             ASSERT_NOT_REACHED();
             return DeviceColorSpace;
+    }
+}
+
+template<> inline CSSPrimitiveValue::CSSPrimitiveValue(Hyphens hyphens)
+    : m_type(CSS_IDENT)
+    , m_hasCachedCSSText(false)
+{
+    switch (hyphens) {
+    case HyphensNone:
+        m_value.ident = CSSValueNone;
+        break;
+    case HyphensManual:
+        m_value.ident = CSSValueManual;
+        break;
+    case HyphensAuto:
+        m_value.ident = CSSValueAuto;
+        break;
+    }
+}
+
+template<> inline CSSPrimitiveValue::operator Hyphens() const
+{
+    switch (m_value.ident) {
+    case CSSValueNone:
+        return HyphensNone;
+    case CSSValueManual:
+        return HyphensManual;
+    case CSSValueAuto:
+        return HyphensAuto;
+    default:
+        ASSERT_NOT_REACHED();
+        return HyphensAuto;
     }
 }
 

@@ -730,3 +730,8 @@ fullscreen
 maximized
 minimized
 windowed
+
+# -webkit-hyphens
+# none
+manual
+# auto

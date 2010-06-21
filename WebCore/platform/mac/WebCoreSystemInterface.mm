@@ -1,5 +1,5 @@
 /*
- * Copyright 2006, 2007, 2008, 2010 Apple Computer, Inc. All rights reserved.
+ * Copyright 2006, 2007, 2008, 2009, 2010 Apple Computer, Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -112,6 +112,8 @@ BOOL (*wkSupportsMultipartXMixedReplace)(NSMutableURLRequest *);
 
 #if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
 NSMutableArray *(*wkNoteOpenPanelFiles)(NSArray *);
+void* wkGetHyphenationLocationBeforeIndex;
 #else
 void* wkNoteOpenPanelFiles;
+CFIndex (*wkGetHyphenationLocationBeforeIndex)(CFStringRef string, CFIndex index);
 #endif

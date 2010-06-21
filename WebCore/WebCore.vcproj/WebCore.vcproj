@@ -26240,6 +26240,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\platform\text\Hyphentation.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\platform\text\Hyphenation.h"
+					>
+				</File>
+				<File
 					RelativePath="..\platform\text\ParserUtilities.h"
 					>
 				</File>

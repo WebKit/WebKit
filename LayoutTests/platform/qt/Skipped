@@ -102,6 +102,9 @@ compositing
 
 fast/loader/subframe-navigate-during-main-frame-load.html
 
+# Hyphenation is not implemented yet.
+fast/text/hyphenate-character.html
+fast/text/hyphens.html
 
 # =========================================================================== #
 #       Failing HTTP tests.                                                   #

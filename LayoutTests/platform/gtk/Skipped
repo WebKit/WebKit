@@ -3124,6 +3124,10 @@ fast/text/basic/generic-family-reset.html
 fast/text/firstline/001.html
 fast/text/firstline/002.html
 fast/text/firstline/003.html
+# Hyphenation is not implemented yet.
+fast/text/hyphenate-character.html
+fast/text/hyphens.html
+
 fast/text/international/001.html
 fast/text/international/002.html
 fast/text/international/003.html

@@ -1246,6 +1246,7 @@ SET(WebCore_SOURCES
 
     platform/text/Base64.cpp
     platform/text/BidiContext.cpp
+    platform/text/Hyphenation.cpp
     platform/text/RegularExpression.cpp
     platform/text/SegmentedString.cpp
     platform/text/String.cpp

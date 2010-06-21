@@ -65,6 +65,9 @@ public:
 
     unsigned short truncation() { return m_truncation; }
 
+    bool hasHyphen() const { return m_hasEllipsisBoxOrHyphen; }
+    void setHasHyphen(bool hasHyphen) { m_hasEllipsisBoxOrHyphen = hasHyphen; }
+
 private:
     virtual int selectionTop();
     virtual int selectionHeight();

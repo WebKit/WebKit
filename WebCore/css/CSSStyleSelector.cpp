@@ -5180,6 +5180,19 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             m_style->setHighlight(primitiveValue->getStringValue());
         return;
     }
+    case CSSPropertyWebkitHyphens: {
+        HANDLE_INHERIT_AND_INITIAL(hyphens, Hyphens);
+        m_style->setHyphens(*primitiveValue);
+        return;
+    }
+    case CSSPropertyWebkitHyphenateCharacter: {
+        HANDLE_INHERIT_AND_INITIAL(hyphenateCharacter, HyphenateCharacter);
+        if (primitiveValue->getIdent() == CSSValueAuto)
+            m_style->setHyphenateCharacter(nullAtom);
+        else
+            m_style->setHyphenateCharacter(primitiveValue->getStringValue());
+        return;
+    }
     case CSSPropertyWebkitBorderFit: {
         HANDLE_INHERIT_AND_INITIAL(borderFit, BorderFit);
         if (primitiveValue->getIdent() == CSSValueBorder)

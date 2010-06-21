@@ -1807,6 +1807,8 @@ webcore_sources += \
 	WebCore/platform/text/BidiContext.h \
 	WebCore/platform/text/BidiResolver.h \
 	WebCore/platform/text/CharacterNames.h \
+	WebCore/platform/text/Hyphenation.cpp \
+	WebCore/platform/text/Hyphenation.h \
 	WebCore/platform/text/ParserUtilities.h \
 	WebCore/platform/text/PlatformString.h \
 	WebCore/platform/text/RegularExpression.cpp \

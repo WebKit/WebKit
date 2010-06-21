@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -44,6 +44,7 @@ StyleRareInheritedData::StyleRareInheritedData()
     , resize(RenderStyle::initialResize())
     , userSelect(RenderStyle::initialUserSelect())
     , colorSpace(DeviceColorSpace)
+    , hyphens(HyphensManual)
 {
 }
 
@@ -69,6 +70,8 @@ StyleRareInheritedData::StyleRareInheritedData(const StyleRareInheritedData& o)
     , resize(o.resize)
     , userSelect(o.userSelect)
     , colorSpace(o.colorSpace)
+    , hyphens(o.hyphens)
+    , hyphenateCharacter(o.hyphenateCharacter)
 {
 }
 
@@ -107,7 +110,9 @@ bool StyleRareInheritedData::operator==(const StyleRareInheritedData& o) const
         && textSizeAdjust == o.textSizeAdjust
         && resize == o.resize
         && userSelect == o.userSelect
-        && colorSpace == o.colorSpace;
+        && colorSpace == o.colorSpace
+        && hyphens == o.hyphens
+        && hyphenateCharacter == o.hyphenateCharacter;
 }
 
 bool StyleRareInheritedData::shadowDataEquivalent(const StyleRareInheritedData& o) const

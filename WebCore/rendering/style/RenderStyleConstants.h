@@ -406,6 +406,8 @@ enum EBackfaceVisibility {
     
 enum ELineClampType { LineClampLineCount, LineClampPercentage };
 
+enum Hyphens { HyphensNone, HyphensManual, HyphensAuto };
+
 } // namespace WebCore
 
 #endif // RenderStyleConstants_h

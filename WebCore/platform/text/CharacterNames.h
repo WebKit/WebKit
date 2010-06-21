@@ -42,6 +42,7 @@ const UChar ethiopicPrefaceColon = 0x1366;
 const UChar hebrewPunctuationGeresh = 0x05F3;
 const UChar hebrewPunctuationGershayim = 0x05F4;
 const UChar horizontalEllipsis = 0x2026;
+const UChar hyphen = 0x2010;
 const UChar hyphenMinus = 0x002D;
 const UChar ideographicComma = 0x3001;
 const UChar ideographicFullStop = 0x3002;

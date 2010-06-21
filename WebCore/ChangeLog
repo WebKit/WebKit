@@ -1,3 +1,107 @@
+2010-06-21  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        CSS3: Implement the 'hyphens' and 'hyphenate-character' properties
+        https://bugs.webkit.org/show_bug.cgi?id=10228
+
+        Tests: fast/text/hyphenate-character.html
+               fast/text/hyphens.html
+
+        Added -webkit-hyphens and -webkit-hyphenate-character as specified in
+        <http://www.w3.org/TR/2010/WD-css3-gcpm-20100608/#hyphenation>.
+
+        * Android.mk: Added Hyphenation.cpp.
+        * CMakeLists.txt: Ditto.
+        * GNUmakefile.am: Added Hyphenation.{cpp,h}.
+        * WebCore.base.exp: Exported wkGetHyphenationLocationBeforeIndex().
+        * WebCore.gypi: Added Hyphenation.{cpp,h}.
+        * WebCore.pro: Added Hyphenation.{cpp,h}.
+        * WebCore.vcproj/WebCore.vcproj: Added Hyphenation.{cpp,h}.
+        * WebCore.xcodeproj/project.pbxproj: Added Hyphenation.{cpp,h}.
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue): Added the -webkit-hyphenate-character
+        and -webkit-hyphens cases.
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue): Validate values for the new properties.
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue): Added. Maps from a Hyphens value to an identifier.
+        (WebCore::CSSPrimitiveValue::operator Hyphens): Added. Maps from an identifier to a Hyphens value.
+        * css/CSSPropertyNames.in: Added -webkit-hyphenate-character and -webkit-hyphens.
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty): Apply the new properties to the RenderStyle.
+        * css/CSSValueKeywords.in:
+        * platform/mac/WebCoreSystemInterface.h: Added wkGetHyphenationLocationBeforeIndex.
+        * platform/mac/WebCoreSystemInterface.mm: Ditto.
+        * platform/text/CharacterNames.h: Added the hyphen character.
+        * platform/text/Hyphenation.cpp: Added.
+        (WebCore::lastHyphenLocation): Added this default implementation for platforms that do not implement
+        hyphenation yet. It calls notImplemented() and returns 0.
+        * platform/text/Hyphenation.h: Added.
+        * platform/text/cf/HyphenationCF.cpp: Added.
+        (WebCore::lastHyphenLocation): Returns the last hyphenation location occurring in the given string before
+        the given index. Uses the current search locale (which is based on the top language preference of the user)
+        for hyphenation.
+        * platform/text/mac/HyphenationMac.mm: Added.
+        (WebCore::lastHyphenLocation): Returns the last hyphenation location occurring in the given string before
+        the given index. Returns 0 if the current search locale is not "en", because the platform only knows how to
+        hyphenate English.
+        * rendering/BidiRun.h:
+        (WebCore::BidiRun::BidiRun): Added a boolean member, m_hasHyphen, and initialized it to false in the constructor.
+        * rendering/InlineBox.h:
+        (WebCore::InlineBox::InlineBox): Renamed m_hasEllipsisBox to m_hasEllipsisBoxOrHyphen, because this bit is now
+        shared by two subclass: RootInlineBox uses it for hasEllipsisBox(), while InlineTextBox uses it for hasHyphen().
+        * rendering/InlineTextBox.cpp:
+        (WebCore::adjustCharactersAndLengthForHyphen): Added this helper function to get the hyphen string from the style
+        and return a UChar* and length for the concatenation of the given text with the hyphen string.
+        (WebCore::InlineTextBox::selectionRect): If the selected range touches the end and the box has a hyphen,
+        compute the width of the text with the hyphen string concatenated to it.
+        (WebCore::InlineTextBox::paint): If the box has a hyphen, draw the text with the hyphen string concatenated to it.
+        (WebCore::InlineTextBox::paintSelection): Similarly concatenate the hyphen string.
+        * rendering/InlineTextBox.h:
+        (WebCore::InlineTextBox::hasHyphen): Added this accessor.
+        (WebCore::InlineTextBox::setHasHyphen): Ditto.
+        * rendering/RenderBlock.h:
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::constructLine): Copy the m_hasHyphen flag from the run to its text box.
+        (WebCore::RenderBlock::computeHorizontalPositionsForLine): Add the width of the hyphen string when computing the
+        width of a box that has a hyphen.
+        (WebCore::RenderBlock::layoutInlineChildren): If the line was hyphenated, set the m_hasHyphen flag on the
+        logically last run.
+        (WebCore::tryHyphenating): Added this helper function which checks if a piece of text that does not fit on the
+        line could be hyphenated such that the part before the hyphen, including the hyphen, would fit. Given the amount
+        of space remaining on the line, it finds the longest prefix that can fit in the remaining space (which leaving room for
+        the hyphen), and then checks for a hyphenation location within that prefix.
+        (WebCore::RenderBlock::findNextLineBreak): In the 'hyphens: none' case, prevent line breaks at soft hyphens.
+        In the 'hyphens: auto' case, try hyphenating when a word will not fit in the remaining space on the line.
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::detachEllipsisBox): Changed to use hasEllipsisBox() and setHasEllipsisBox().
+        (WebCore::RootInlineBox::clearTruncation): Ditto.
+        (WebCore::RootInlineBox::placeEllipsis): Ditto.
+        (WebCore::RootInlineBox::paintEllipsisBox): Ditto.
+        (WebCore::RootInlineBox::nodeAtPoint): Ditto.
+        (WebCore::RootInlineBox::ellipsisBox): Ditto.
+        * rendering/RootInlineBox.h:
+        (WebCore::RootInlineBox::hasEllipsisBox): Added this accessor.
+        (WebCore::RootInlineBox::setHasEllipsisBox): Ditto.
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::diff): Return a layout hint if the hyphens setting or hyphenate-character differs.
+        (WebCore::RenderStyle::hyphenString): Added. For hyphenate-character: auto, returns the hyphen character.
+        * rendering/style/RenderStyle.h:
+        (WebCore::InheritedFlags::hyphens): Added this accessor.
+        (WebCore::InheritedFlags::hyphenateCharacter): Ditto.
+        (WebCore::InheritedFlags::setHyphens): Ditto.
+        (WebCore::InheritedFlags::setHyphenateCharacter): Ditto.
+        (WebCore::InheritedFlags::initialHyphens): Added. Returns HyphensManual.
+        (WebCore::InheritedFlags::initialHyphenateCharacter): Added. Returns the null string, corresponding to
+        a value of 'auto'.
+        * rendering/style/RenderStyleConstants.h:
+        Added a Hyphens enum.
+        * rendering/style/StyleRareInheritedData.cpp:
+        (WebCore::StyleRareInheritedData::StyleRareInheritedData): Initialize and copy the new members.
+        (WebCore::StyleRareInheritedData::operator==): Compare the new members.
+        * rendering/style/StyleRareInheritedData.h: Added two new members: hyphens and hyphenateCharacter.
+
 2010-06-03  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Darin Adler.

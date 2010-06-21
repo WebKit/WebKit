@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -386,7 +386,9 @@ StyleDifference RenderStyle::diff(const RenderStyle* other, unsigned& changedCon
             rareInheritedData->wordWrap != other->rareInheritedData->wordWrap ||
             rareInheritedData->nbspMode != other->rareInheritedData->nbspMode ||
             rareInheritedData->khtmlLineBreak != other->rareInheritedData->khtmlLineBreak ||
-            rareInheritedData->textSecurity != other->rareInheritedData->textSecurity)
+            rareInheritedData->textSecurity != other->rareInheritedData->textSecurity ||
+            rareInheritedData->hyphens != other->rareInheritedData->hyphens ||
+            rareInheritedData->hyphenateCharacter != other->rareInheritedData->hyphenateCharacter)
             return StyleDifferenceLayout;
 
         if (!rareInheritedData->shadowDataEquivalent(*other->rareInheritedData.get()))
@@ -800,6 +802,19 @@ CounterDirectiveMap& RenderStyle::accessCounterDirectives()
     if (!map)
         map.set(new CounterDirectiveMap);
     return *map.get();
+}
+
+const AtomicString& RenderStyle::hyphenString() const
+{
+    ASSERT(hyphens() == HyphensAuto);
+
+    const AtomicString& hyphenateCharacter = rareInheritedData.get()->hyphenateCharacter;
+    if (!hyphenateCharacter.isNull())
+        return hyphenateCharacter;
+
+    // FIXME: This should depend on locale.
+    DEFINE_STATIC_LOCAL(AtomicString, hyphenMinusString, (&hyphen, 1));
+    return hyphenMinusString;
 }
 
 #if ENABLE(DASHBOARD_SUPPORT)

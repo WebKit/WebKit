@@ -1,3 +1,22 @@
+2010-06-21  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Added tests for the 'hyphens' and 'hyphenate-character' properties
+        https://bugs.webkit.org/show_bug.cgi?id=10228
+
+        * fast/text/hyphenate-character.html: Added.
+        * fast/text/hyphens.html: Added.
+        * platform/gtk/Skipped:
+        * platform/mac/fast/text/hyphenate-character-expected.checksum: Added.
+        * platform/mac/fast/text/hyphenate-character-expected.png: Added.
+        * platform/mac/fast/text/hyphenate-character-expected.txt: Added.
+        * platform/mac/fast/text/hyphens-expected.checksum: Added.
+        * platform/mac/fast/text/hyphens-expected.png: Added.
+        * platform/mac/fast/text/hyphens-expected.txt: Added.
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+
 2010-06-21  Dumitru Daniliuc  <dumi@chromium.org>
 
         Unreviewed, fixing expectations.

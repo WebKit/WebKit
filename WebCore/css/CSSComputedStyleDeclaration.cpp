@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2004 Zack Rusin <zack@kde.org>
- * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Alexey Proskuryakov <ap@webkit.org>
  * Copyright (C) 2007 Nicholas Shanks <webkit@nickshanks.com>
  *
@@ -905,6 +905,12 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             if (style->highlight() == nullAtom)
                 return CSSPrimitiveValue::createIdentifier(CSSValueNone);
             return CSSPrimitiveValue::create(style->highlight(), CSSPrimitiveValue::CSS_STRING);
+        case CSSPropertyWebkitHyphens:
+            return CSSPrimitiveValue::create(style->hyphens());
+        case CSSPropertyWebkitHyphenateCharacter:
+            if (style->hyphenateCharacter().isNull())
+                return CSSPrimitiveValue::createIdentifier(CSSValueAuto);
+            return CSSPrimitiveValue::create(style->hyphenateCharacter(), CSSPrimitiveValue::CSS_STRING);
         case CSSPropertyWebkitBorderFit:
             if (style->borderFit() == BorderFitBorder)
                 return CSSPrimitiveValue::createIdentifier(CSSValueBorder);
