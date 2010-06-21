@@ -1473,16 +1473,6 @@ static JSValueRef setWebViewEditableCallback(JSContextRef context, JSObjectRef f
     return JSValueMakeUndefined(context);
 }
 
-
-#if PLATFORM(MAC)
-static JSValueRef abortModalCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-{
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
-    controller->abortModal();
-    return JSValueMakeUndefined(context);
-}
-#endif
-
 static JSValueRef markerTextForListItemCallback(JSContextRef context, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
@@ -1609,9 +1599,6 @@ JSStaticValue* LayoutTestController::staticValues()
 JSStaticFunction* LayoutTestController::staticFunctions()
 {
     static JSStaticFunction staticFunctions[] = {
-#if PLATFORM(MAC)
-        { "abortModal", abortModalCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
-#endif
         { "addDisallowedURL", addDisallowedURLCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "addUserScript", addUserScriptCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "addUserStyleSheet", addUserStyleSheetCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },

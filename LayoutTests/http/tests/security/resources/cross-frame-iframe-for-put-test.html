@@ -459,9 +459,7 @@
             shouldBe("window.scrollTo", "scrollToOld");
             shouldBe("window.setInterval", "setIntervalOld");
             shouldBe("window.setTimeout", "setTimeoutOld");
-
-            // showModalDialog is not implemented on all platforms for DumpRenderTree.  So don't display the values.
-            shouldBe("window.showModalDialog", "showModalDialogOld", true);
+            shouldBe("window.showModalDialog", "showModalDialogOld");
             shouldBe("window.stop", "stopOld");
         }, 0);
     </script>

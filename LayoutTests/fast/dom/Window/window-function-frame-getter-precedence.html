@@ -16,7 +16,7 @@
             document.getElementById("console").appendChild(paragraph);
         }
 
-        function shouldBe(a, b, printOnlyOnFailure)
+        function shouldBe(a, b)
         {
             var evalA;
             try {
@@ -24,10 +24,8 @@
             } catch(e) {
                 evalA = e;
             }
-            if (evalA == b) {
-                if (!printOnlyOnFailure)
-                    log("PASS: " + a + " should be " + b + " and is.", "green");
-            }
+            if (evalA == b)
+                log("PASS: " + a + " should be " + b + " and is.", "green");
             else
                 log("FAIL: " + a + " should be " + b + " but instead is " + evalA, "red");
         }
@@ -39,12 +37,7 @@
             iframe.name = functionName;
             document.body.appendChild(iframe);
 
-            // showModalDialog only works on mac in the DRT.  So run this test only if its defined and print output only on failure.
-            // This'll keep the output consistent on all platforms.
-            if (functionName == "showModalDialog" && window.showModalDialog != undefined)
-                shouldBe("typeof window." + functionName, "object", true);
-            else
-                shouldBe("typeof window." + functionName, "object");
+            shouldBe("typeof window." + functionName, "object");
 
             document.body.removeChild(iframe);
         }

@@ -866,8 +866,3 @@ void LayoutTestController::setEditingBehavior(const char* editingBehavior)
         [[WebPreferences standardPreferences] setEditingBehavior:WebKitEditingWinBehavior];
     [editingBehaviorNS release];
 }
-
-void LayoutTestController::abortModal()
-{
-    [NSApp abortModal];
-}

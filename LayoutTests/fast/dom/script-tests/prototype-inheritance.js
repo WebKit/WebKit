@@ -19,7 +19,7 @@ var skippedProperties = [
     "ArrayBuffer",
     "Int8Array", "Uint8Array", "Int16Array", "Uint16Array", "Int32Array", "Uint32Array", "Float32Array",
     "FileError", "FileReader",
-    "indexedDB", "showModalDialog"
+    "indexedDB"
 ];
 
 var skippedPropertiesSet = {};

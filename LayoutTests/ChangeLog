@@ -1,3 +1,57 @@
+2010-06-21  Drew Wilson  <atwilson@chromium.org>
+
+        Unreviewed rollback.
+
+        Rolling back 61551 and 61555 due to test failures on Linux/Win.
+
+        * fast/dom/Window/window-function-frame-getter-precedence-expected.txt:
+        * fast/dom/Window/window-function-frame-getter-precedence.html:
+        * fast/dom/Window/window-function-name-getter-precedence-expected.txt:
+        * fast/dom/Window/window-function-name-getter-precedence.html:
+        * fast/dom/Window/window-lookup-precedence-expected.txt:
+        * fast/dom/Window/window-lookup-precedence.html:
+        * fast/dom/Window/window-properties-expected.txt:
+        * fast/dom/Window/window-properties.html:
+        * fast/dom/script-tests/prototype-inheritance.js:
+        * fast/events/resources/modal-dialog.html: Removed.
+        * fast/events/show-modal-dialog-onblur-onfocus-expected.txt: Removed.
+        * fast/events/show-modal-dialog-onblur-onfocus.html: Removed.
+        * fast/harness/resources/modal-dialog.html: Removed.
+        * fast/harness/show-modal-dialog-expected.txt: Removed.
+        * fast/harness/show-modal-dialog.html: Removed.
+        * fast/js/sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.1_T1-expected.txt:
+        * fast/js/sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.1_T10-expected.txt:
+        * fast/js/sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.1_T11-expected.txt:
+        * fast/js/sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.1_T2-expected.txt:
+        * fast/js/sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.1_T3-expected.txt:
+        * fast/js/sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.1_T4-expected.txt:
+        * fast/js/sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.1_T5-expected.txt:
+        * fast/js/sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.1_T6-expected.txt:
+        * fast/js/sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.1_T7-expected.txt:
+        * fast/js/sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.1_T8-expected.txt:
+        * fast/js/sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.1_T9-expected.txt:
+        * fast/js/sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.2_T1-expected.txt:
+        * fast/js/sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.2_T10-expected.txt:
+        * fast/js/sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.2_T11-expected.txt:
+        * fast/js/sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.2_T2-expected.txt:
+        * fast/js/sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.2_T3-expected.txt:
+        * fast/js/sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.2_T4-expected.txt:
+        * fast/js/sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.2_T5-expected.txt:
+        * fast/js/sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.2_T6-expected.txt:
+        * fast/js/sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.2_T7-expected.txt:
+        * fast/js/sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.2_T8-expected.txt:
+        * fast/js/sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.2_T9-expected.txt:
+        * http/tests/security/cross-frame-access-call-expected.txt:
+        * http/tests/security/cross-frame-access-call.html:
+        * http/tests/security/cross-frame-access-get-expected.txt:
+        * http/tests/security/cross-frame-access-get.html:
+        * http/tests/security/cross-frame-access-put-expected.txt:
+        * http/tests/security/resources/cross-frame-iframe-for-put-test.html:
+        * platform/chromium/test_expectations.txt:
+        * platform/gtk/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+
 2010-06-21  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Unreviewed, expectations tweak.
