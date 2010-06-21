@@ -60,6 +60,8 @@ typedef void (*BP_CreatePluginMIMETypesPreferencesFuncPtr)(void);
     WebCore::String path;
     WebCore::String pluginDescription;
 
+    Vector<WebCore::MimeClassInfo> mimeTypes;
+
     CFBundleRef cfBundle;
 
     NSDictionary *MIMEToDescription;
@@ -81,6 +83,8 @@ typedef void (*BP_CreatePluginMIMETypesPreferencesFuncPtr)(void);
 - (const WebCore::String&)name;
 - (const WebCore::String&)path;
 - (const WebCore::String&)pluginDescription;
+
+- (const Vector<WebCore::MimeClassInfo>&)mimeTypes;
 
 - (WebCore::String)bundleIdentifier;
 

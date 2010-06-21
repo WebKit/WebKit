@@ -71,25 +71,7 @@ void WebPlatformStrategies::getPluginInfo(Vector<WebCore::PluginInfo>& plugins)
         pluginInfo.name = [plugin name];
         pluginInfo.file = [plugin filename];
         pluginInfo.desc = [plugin pluginDescription];
-
-        NSArray *MIMETypes = [plugin MIMETypes];
-        for (NSUInteger i = 0; i < [MIMETypes count]; ++i) {
-            NSString *MIMEType = [MIMETypes objectAtIndex:i];
-
-            MimeClassInfo mimeClassInfo;
-
-            mimeClassInfo.type = String(MIMEType).lower();
-            
-            NSArray *extensions = [plugin extensionsForMIMEType:MIMEType];
-            for (NSUInteger i = 0; i < [extensions count]; ++i) {
-                NSString *extension = [extensions objectAtIndex:i];
-                mimeClassInfo.extensions.append(extension);
-            }
-
-            mimeClassInfo.desc = [plugin descriptionForMIMEType:MIMEType];
-            
-            pluginInfo.mimes.append(mimeClassInfo);
-        }
+        pluginInfo.mimes = [plugin mimeTypes];
 
         plugins.append(pluginInfo);
     }

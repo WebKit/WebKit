@@ -2,6 +2,22 @@
 
         Reviewed by Dan Bernstein.
 
+        Add a MimeClassInfo Vector to WebBasePluginPackage
+        https://bugs.webkit.org/show_bug.cgi?id=40896
+
+        * Plugins/WebBasePluginPackage.h:
+        * Plugins/WebBasePluginPackage.mm:
+        (-[WebBasePluginPackage getPluginInfoFromPLists]):
+        (-[WebBasePluginPackage WebCore::]):
+        * Plugins/WebNetscapePluginPackage.mm:
+        (-[WebNetscapePluginPackage getPluginInfoFromResources]):
+        * WebCoreSupport/WebPlatformStrategies.mm:
+        (WebPlatformStrategies::getPluginInfo):
+
+2010-06-20  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dan Bernstein.
+
         Move the NSBundle ivar to WebPluginPackage
         https://bugs.webkit.org/show_bug.cgi?id=40894
 

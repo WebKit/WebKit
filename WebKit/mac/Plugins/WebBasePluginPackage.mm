@@ -220,15 +220,24 @@ static NSString *pathByResolvingSymlinksAndAliases(NSString *thePath)
         if (isEnabled && [isEnabled boolValue] == NO)
             continue;
 
+        MimeClassInfo mimeClassInfo;
+        
         extensions = [[MIMEDictionary objectForKey:WebPluginExtensionsKey] _web_lowercaseStrings];
+        for (NSUInteger i = 0; i < [extensions count]; ++i)
+            mimeClassInfo.extensions.append((NSString *)[extensions objectAtIndex:i]);
+
         if ([extensions count] == 0)
             extensions = [NSArray arrayWithObject:@""];
 
+        mimeClassInfo.type = String(MIME).lower();
         MIME = [MIME lowercaseString];
 
         [MIMEToExtensionsDictionary setObject:extensions forKey:MIME];
 
         description = [MIMEDictionary objectForKey:WebPluginTypeDescriptionKey];
+        mimeClassInfo.desc = description;
+
+        mimeTypes.append(mimeClassInfo);
         if (!description)
             description = @"";
 
@@ -306,6 +315,11 @@ static NSString *pathByResolvingSymlinksAndAliases(NSString *thePath)
 - (const String&)pluginDescription
 {
     return pluginDescription;
+}
+
+- (const Vector<WebCore::MimeClassInfo>&)mimeTypes
+{
+    return mimeTypes;
 }
 
 - (NSArray *)MIMETypes

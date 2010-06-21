@@ -43,6 +43,8 @@
 using namespace WebKit;
 #endif
 
+using namespace WebCore;
+
 #ifdef SUPPORT_CFM
 typedef void (* FunctionPointer)(void);
 typedef void (* TransitionVector)(void);
@@ -166,9 +168,15 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
         if (!MIME)
             break;
 
+        MimeClassInfo mimeClassInfo;
+        mimeClassInfo.type = String(MIME).lower();
+
         extensionsList = [[self stringForStringListID:MIMEListStringStringNumber andIndex:i+1] lowercaseString];
         if (extensionsList) {
             extensions = [extensionsList componentsSeparatedByString:@","];
+            for (NSUInteger j = 0; j < [extensions count]; ++j)
+                mimeClassInfo.extensions.append((NSString *)[extensions objectAtIndex:j]);
+
             [MIMEToExtensionsDictionary setObject:extensions forKey:MIME];
         } else
             // DRM and WMP claim MIMEs without extensions. Use a @"" extension in this case.
@@ -176,10 +184,14 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
         
         description = [self stringForStringListID:MIMEDescriptionStringNumber
                                          andIndex:[MIMEToExtensionsDictionary count]];
+        mimeClassInfo.desc = description;
+
         if (description)
             [MIMEToDescriptionDictionary setObject:description forKey:MIME];
         else
             [MIMEToDescriptionDictionary setObject:@"" forKey:MIME];
+        
+        mimeTypes.append(mimeClassInfo);
     }
 
     [self setMIMEToDescriptionDictionary:MIMEToDescriptionDictionary];
