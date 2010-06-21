@@ -1,5 +1,11 @@
 2010-06-20  Anders Carlsson  <andersca@apple.com>
 
+        Fix Tiger build.
+
+        * Plugins/WebNetscapePluginPackage.mm:
+
+2010-06-20  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Dan Bernstein.
 
         Get rid of the old MIMETypes getter method
