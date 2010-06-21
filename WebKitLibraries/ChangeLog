@@ -1,5 +1,11 @@
 2010-06-21  Dan Bernstein  <mitz@apple.com>
 
+        Speculative build fix.
+
+        * WebKitSystemInterface.h:
+
+2010-06-21  Dan Bernstein  <mitz@apple.com>
+
         Reviewed by Darin Adler.
 
         WebKitSystemInterface part of CSS3: Implement the 'hyphens' and 'hyphenate-character' properties

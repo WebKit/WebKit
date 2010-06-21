@@ -300,7 +300,9 @@ NSMutableArray *WKNoteOpenPanelFiles(NSArray *paths);
 void WKSyncSurfaceToView(NSView *view);
 #endif
 
+#if defined(BUILDING_ON_TIGER) || defined(BUILDING_ON_LEOPARD) || defined(BUILDING_ON_SNOW_LEOPARD)
 CFIndex WKGetHyphenationLocationBeforeIndex(CFStringRef string, CFIndex index);
+#endif
 
 #ifdef __cplusplus
 }
