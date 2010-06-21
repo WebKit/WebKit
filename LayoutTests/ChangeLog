@@ -1,3 +1,13 @@
+2010-06-20  Tony Chang  <tony@chromium.org>
+
+        Not reviewed, just cleaning up svn.
+
+        Removing platform/mac-snowleopard/editing since it's empty.  The test
+        results were moved in r60693.
+
+        * platform/mac-snowleopard/editing: Removed.
+        * platform/mac-snowleopard/editing/spelling: Removed.
+
 2010-06-20  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Simon Hausmann.
