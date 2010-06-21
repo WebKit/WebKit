@@ -73,6 +73,7 @@ namespace WebCore {
         // Called from the background thread
         void performImport();
         void performSync();
+        void deleteEmptyDatabase();
 
     private:
         enum OpenDatabaseParamType {

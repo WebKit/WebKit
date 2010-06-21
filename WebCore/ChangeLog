@@ -1,3 +1,46 @@
+2010-06-21  Hans Wennborg  <hans@chromium.org>
+
+        Reviewed by Jeremy Orlow.
+
+        Delete DOM storage databases when they are empty.
+        https://bugs.webkit.org/show_bug.cgi?id=40767
+
+        Even if a page clears its local storage, the database file for it stays around,
+        and there is currently no mechanism that deletes them.
+
+        After doing the "final sync" of a storage area, the StorageAreaSyncMaster should
+        see if the database is empty, and in that case delete it.
+
+        Tests:
+         manual-tests/localstorage-empty-database.html
+
+        * manual-tests/localstorage-empty-database.html:
+        Added link to clear local storage for testing that the file is removed.
+        * storage/LocalStorageTask.cpp:
+        (WebCore::LocalStorageTask::LocalStorageTask):
+        Added local storage task type DeleteEmptyDatabase.
+        (WebCore::LocalStorageTask::performTask):
+        Ditto.
+        * storage/LocalStorageTask.h:
+        (WebCore::LocalStorageTask::):
+        Ditto.
+        (WebCore::LocalStorageTask::createDeleteEmptyDatabase):
+        Ditto.
+        * storage/StorageAreaSync.cpp:
+        (WebCore::StorageAreaSync::scheduleFinalSync):
+        When scheduling final sync, also schedule DeleteEmptyDatabase.
+        (WebCore::StorageAreaSync::sync):
+        Return early if final sync has nothing to sync.
+        (WebCore::StorageAreaSync::deleteEmptyDatabase):
+        Added function to check if a database is empty and in that case delete it.
+        * storage/StorageAreaSync.h:
+        Ditto.
+        * storage/StorageSyncManager.cpp:
+        (WebCore::StorageSyncManager::scheduleDeleteEmptyDatabase):
+        Added function for scheduling DeleteEmptyDatabase task.
+        * storage/StorageSyncManager.h:
+        Ditto.
+
 2010-06-21  Balazs Kelemen  <kb@inf.u-szeged.hu>
 
         Reviewed by Simon Hausmann.

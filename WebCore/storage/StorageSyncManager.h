@@ -47,6 +47,7 @@ namespace WebCore {
 
         bool scheduleImport(PassRefPtr<StorageAreaSync>);
         void scheduleSync(PassRefPtr<StorageAreaSync>);
+        void scheduleDeleteEmptyDatabase(PassRefPtr<StorageAreaSync>);
 
         void close();
 

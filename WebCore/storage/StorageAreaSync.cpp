@@ -31,8 +31,9 @@
 #include "EventNames.h"
 #include "FileSystem.h"
 #include "HTMLElement.h"
-#include "SecurityOrigin.h"
+#include "SQLiteFileSystem.h"
 #include "SQLiteStatement.h"
+#include "SecurityOrigin.h"
 #include "StorageAreaImpl.h"
 #include "StorageSyncManager.h"
 #include "SuddenTermination.h"
@@ -101,6 +102,7 @@ void StorageAreaSync::scheduleFinalSync()
     // we should do it safely.
     m_finalSyncScheduled = true;
     syncTimerFired(&m_syncTimer);
+    m_syncManager->scheduleDeleteEmptyDatabase(this);
 }
 
 void StorageAreaSync::scheduleItemForSync(const String& key, const String& value)
@@ -306,6 +308,8 @@ void StorageAreaSync::sync(bool clearItems, const HashMap<String, String>& items
 {
     ASSERT(!isMainThread());
 
+    if (items.isEmpty() && !clearItems)
+        return;
     if (m_databaseOpenFailed)
         return;
     if (!m_database.isOpen())
@@ -391,6 +395,34 @@ void StorageAreaSync::performSync()
     // The following is balanced by the call to disableSuddenTermination in the
     // syncTimerFired function.
     enableSuddenTermination();
+}
+
+void StorageAreaSync::deleteEmptyDatabase()
+{
+    ASSERT(!isMainThread());
+    if (!m_database.isOpen())
+        return;
+
+    SQLiteStatement query(m_database, "SELECT COUNT(*) FROM ItemTable");
+    if (query.prepare() != SQLResultOk) {
+        LOG_ERROR("Unable to count number of rows in ItemTable for local storage");
+        return;
+    }
+
+    int result = query.step();
+    if (result != SQLResultRow) {
+        LOG_ERROR("No results when counting number of rows in ItemTable for local storage");
+        return;
+    }
+
+    int count = query.getColumnInt(0);
+    if (!count) {
+        query.finalize();
+        m_database.close();
+        String databaseFilename = m_syncManager->fullDatabaseFilename(m_databaseIdentifier);
+        if (!SQLiteFileSystem::deleteDatabaseFile(databaseFilename))
+            LOG_ERROR("Failed to delete database file %s\n", databaseFilename.utf8().data());
+    }
 }
 
 } // namespace WebCore

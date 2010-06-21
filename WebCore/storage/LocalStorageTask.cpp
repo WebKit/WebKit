@@ -39,7 +39,7 @@ LocalStorageTask::LocalStorageTask(Type type, StorageAreaSync* area)
     , m_thread(0)
 {
     ASSERT(m_area);
-    ASSERT(m_type == AreaImport || m_type == AreaSync);
+    ASSERT(m_type == AreaImport || m_type == AreaSync || m_type == DeleteEmptyDatabase);
 }
 
 LocalStorageTask::LocalStorageTask(Type type, LocalStorageThread* thread)
@@ -63,6 +63,9 @@ void LocalStorageTask::performTask()
             break;
         case AreaSync:
             m_area->performSync();
+            break;
+        case DeleteEmptyDatabase:
+            m_area->deleteEmptyDatabase();
             break;
         case TerminateThread:
             m_thread->performTerminate();

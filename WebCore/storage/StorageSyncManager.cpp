@@ -100,6 +100,13 @@ void StorageSyncManager::scheduleSync(PassRefPtr<StorageAreaSync> area)
         m_thread->scheduleTask(LocalStorageTask::createSync(area.get()));
 }
 
+void StorageSyncManager::scheduleDeleteEmptyDatabase(PassRefPtr<StorageAreaSync> area)
+{
+    ASSERT(isMainThread());
+    ASSERT(m_thread);
+    if (m_thread)
+        m_thread->scheduleTask(LocalStorageTask::createDeleteEmptyDatabase(area.get()));
+}
 } // namespace WebCore
 
 #endif // ENABLE(DOM_STORAGE)
