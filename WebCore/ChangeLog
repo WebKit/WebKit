@@ -1,3 +1,38 @@
+2010-06-03  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Plumb FormSubmission through to ScheduledFormSubmission.
+        https://bugs.webkit.org/show_bug.cgi?id=40137
+
+        No behavior change, covered by existing tests.
+
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::prepareFormSubmission): Moved creation of action URL
+            instance here from FrameLoader::submit, because it makes more sense here,
+            also added a FIXME to investigate existing code later.
+        * loader/FormSubmission.cpp:
+        (WebCore::FormSubmission::FormSubmission): Changed action to be a KURL, not a String.
+        (WebCore::FormSubmission::create): Ditto.
+        (WebCore::FormSubmission::populateFrameLoadRequest): Added, moving the logic from
+            FrameLoader::submit closer to the data.
+        * loader/FormSubmission.h:
+        (WebCore::FormSubmission::action): Changed type to KURL.
+        (WebCore::FormSubmission::clearTarget): Added.
+        (WebCore::FormSubmission::referrer): Added.
+        (WebCore::FormSubmission::setReferrer): Added.
+        (WebCore::FormSubmission::origin): Added.
+        (WebCore::FormSubmission::setOrigin): Added.
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::submitForm): Cleaned up to make it more about decision-making,
+            not data manipulation.
+        * loader/RedirectScheduler.cpp:
+        (WebCore::ScheduledFormSubmission::ScheduledFormSubmission): Changed to accept FormSubmission as argument.
+        (WebCore::ScheduledFormSubmission::fire): Changed to use FormSubmission.
+        (WebCore::RedirectScheduler::scheduleFormSubmission): Removed assert that no longer makes sense,
+            changed to use FormSubmission.
+        * loader/RedirectScheduler.h: Updated ScheduledFormSubmission decl to hold FormSubmission ref.
+
 2010-06-21  Satish Sampath  <satish@chromium.org>
 
         Reviewed by Steve Block.

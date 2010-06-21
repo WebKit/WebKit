@@ -36,6 +36,7 @@
 #include "DocumentLoader.h"
 #include "Event.h"
 #include "FormState.h"
+#include "FormSubmission.h"
 #include "Frame.h"
 #include "FrameLoadRequest.h"
 #include "FrameLoader.h"
@@ -170,15 +171,12 @@ private:
 
 class ScheduledFormSubmission : public ScheduledNavigation {
 public:
-    ScheduledFormSubmission(const FrameLoadRequest& frameRequest, bool lockHistory, bool lockBackForwardList, PassRefPtr<Event> event, PassRefPtr<FormState> formState, bool duringLoad)
-        : ScheduledNavigation(0, lockHistory, lockBackForwardList, duringLoad, true)
-        , m_frameRequest(frameRequest)
-        , m_event(event)
-        , m_formState(formState)
+    ScheduledFormSubmission(PassRefPtr<FormSubmission> submission, bool lockBackForwardList, bool duringLoad)
+        : ScheduledNavigation(0, submission->lockHistory(), lockBackForwardList, duringLoad, true)
+        , m_submission(submission)
         , m_wasProcessingUserGesture(UserGestureIndicator::processingUserGesture())
     {
-        ASSERT(!frameRequest.isEmpty());
-        ASSERT(m_formState);
+        ASSERT(m_submission->state());
     }
 
     virtual void fire(Frame* frame)
@@ -189,9 +187,11 @@ public:
         // Now that the timer has fired, we need to repeat the security check which normally is done when
         // selecting a target, in case conditions have changed. Other code paths avoid this by targeting
         // without leaving a time window. If we fail the check just silently drop the form submission.
-        if (!m_formState->sourceFrame()->loader()->shouldAllowNavigation(frame))
+        if (!m_submission->state()->sourceFrame()->loader()->shouldAllowNavigation(frame))
             return;
-        frame->loader()->loadFrameRequest(m_frameRequest, lockHistory(), lockBackForwardList(), m_event, m_formState, SendReferrer);
+        FrameLoadRequest frameRequest;
+        m_submission->populateFrameLoadRequest(frameRequest);
+        frame->loader()->loadFrameRequest(frameRequest, lockHistory(), lockBackForwardList(), m_submission->event(), m_submission->state(), SendReferrer);
     }
 
     // FIXME: Implement didStartTimer? It would make sense to report form
@@ -200,9 +200,7 @@ public:
     // be a behavior change.
 
 private:
-    const FrameLoadRequest m_frameRequest;
-    const RefPtr<Event> m_event;
-    const RefPtr<FormState> m_formState;
+    RefPtr<FormSubmission> m_submission;
     bool m_wasProcessingUserGesture;
 };
 
@@ -286,11 +284,9 @@ void RedirectScheduler::scheduleLocationChange(const String& url, const String& 
     schedule(new ScheduledLocationChange(url, referrer, lockHistory, lockBackForwardList, wasUserGesture, duringLoad));
 }
 
-void RedirectScheduler::scheduleFormSubmission(const FrameLoadRequest& frameRequest,
-    bool lockHistory, PassRefPtr<Event> event, PassRefPtr<FormState> formState)
+void RedirectScheduler::scheduleFormSubmission(PassRefPtr<FormSubmission> submission)
 {
     ASSERT(m_frame->page());
-    ASSERT(!frameRequest.isEmpty());
 
     // FIXME: Do we need special handling for form submissions where the URL is the same
     // as the current one except for the fragment part? See scheduleLocationChange above.
@@ -303,9 +299,9 @@ void RedirectScheduler::scheduleFormSubmission(const FrameLoadRequest& frameRequ
     // to match IE and Opera.
     // See https://bugs.webkit.org/show_bug.cgi?id=32383 for the original motivation for this.
 
-    bool lockBackForwardList = mustLockBackForwardList(m_frame) || (formState->formSubmissionTrigger() == SubmittedByJavaScript && m_frame->tree()->parent());
+    bool lockBackForwardList = mustLockBackForwardList(m_frame) || (submission->state()->formSubmissionTrigger() == SubmittedByJavaScript && m_frame->tree()->parent());
 
-    schedule(new ScheduledFormSubmission(frameRequest, lockHistory, lockBackForwardList, event, formState, duringLoad));
+    schedule(new ScheduledFormSubmission(submission, lockBackForwardList, duringLoad));
 }
 
 void RedirectScheduler::scheduleRefresh(bool wasUserGesture)

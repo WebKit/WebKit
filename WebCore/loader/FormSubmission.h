@@ -31,15 +31,14 @@
 #ifndef FormSubmission_h
 #define FormSubmission_h
 
-#include "PlatformString.h"
-#include <wtf/Forward.h>
-#include <wtf/RefCounted.h>
+#include "KURL.h"
 
 namespace WebCore {
 
 class Event;
 class FormData;
 class FormState;
+class FrameLoadRequest;
 
 class FormSubmission : public RefCounted<FormSubmission> {
 public:
@@ -48,11 +47,14 @@ public:
         PostMethod
     };
 
-    static PassRefPtr<FormSubmission> create(Method, const String& action, const String& target, const String& contentType, PassRefPtr<FormState>, PassRefPtr<FormData>, const String& boundary, bool lockHistory, PassRefPtr<Event>);
+    static PassRefPtr<FormSubmission> create(Method, const KURL& action, const String& target, const String& contentType, PassRefPtr<FormState>, PassRefPtr<FormData>, const String& boundary, bool lockHistory, PassRefPtr<Event>);
+
+    void populateFrameLoadRequest(FrameLoadRequest&);
 
     Method method() const { return m_method; }
-    String action() const { return m_action; }
+    const KURL& action() const { return m_action; }
     String target() const { return m_target; }
+    void clearTarget() { m_target = String(); }
     String contentType() const { return m_contentType; }
     FormState* state() const { return m_formState.get(); }
     FormData* data() const { return m_formData.get(); }
@@ -60,11 +62,16 @@ public:
     bool lockHistory() const { return m_lockHistory; }
     Event* event() const { return m_event.get(); }
 
+    const String& referrer() const { return m_referrer; }
+    void setReferrer(const String& referrer) { m_referrer = referrer; }
+    const String& origin() const { return m_origin; }
+    void setOrigin(const String& origin) { m_origin = origin; }
+
 private:
-    FormSubmission(Method, const String& action, const String& target, const String& contentType, PassRefPtr<FormState>, PassRefPtr<FormData>, const String& boundary, bool lockHistory, PassRefPtr<Event>);
+    FormSubmission(Method, const KURL& action, const String& target, const String& contentType, PassRefPtr<FormState>, PassRefPtr<FormData>, const String& boundary, bool lockHistory, PassRefPtr<Event>);
 
     Method m_method;
-    String m_action;
+    KURL m_action;
     String m_target;
     String m_contentType;
     RefPtr<FormState> m_formState;
@@ -72,6 +79,8 @@ private:
     String m_boundary;
     bool m_lockHistory;
     RefPtr<Event> m_event;
+    String m_referrer;
+    String m_origin;
 };
 
 }

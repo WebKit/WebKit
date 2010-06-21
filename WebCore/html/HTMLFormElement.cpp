@@ -252,6 +252,8 @@ PassRefPtr<FormSubmission> HTMLFormElement::prepareFormSubmission(Event* event, 
 
     RefPtr<FormData> formData;
     String boundary;
+    // FIXME: Figure out whether m_url.isNull check is necessary.
+    KURL actionURL = document()->completeURL(m_url.isNull() ? "" : m_url);
 
     if (m_formDataBuilder.isMultiPartForm()) {
         formData = FormData::createMultiPart(domFormData->items(), domFormData->encoding(), document());
@@ -260,9 +262,9 @@ PassRefPtr<FormSubmission> HTMLFormElement::prepareFormSubmission(Event* event, 
         formData = FormData::create(domFormData->items(), domFormData->encoding());
         if (m_formDataBuilder.isPostMethod() && isMailtoForm()) {
             // Convert the form data into a string that we put into the URL.
-            KURL url = document()->completeURL(m_url);
-            appendMailtoPostFormDataToURL(url, *formData, m_formDataBuilder.encodingType());
-            m_url = url.string();
+            appendMailtoPostFormDataToURL(actionURL, *formData, m_formDataBuilder.encodingType());
+            // FIXME: Why is setting m_url necessary here? This seems wrong if mail form is submitted multiple times?
+            m_url = actionURL.string();
 
             formData = FormData::create();
         }
@@ -270,7 +272,8 @@ PassRefPtr<FormSubmission> HTMLFormElement::prepareFormSubmission(Event* event, 
 
     formData->setIdentifier(generateFormDataIdentifier());
     FormSubmission::Method method = m_formDataBuilder.isPostMethod() ? FormSubmission::PostMethod : FormSubmission::GetMethod;
-    return FormSubmission::create(method, m_url, m_target, m_formDataBuilder.encodingType(), FormState::create(this, formValues, document()->frame(), trigger), formData.release(), boundary, lockHistory, event);
+    String targetOrBaseTarget = m_target.isEmpty() ? document()->baseTarget() : m_target;
+    return FormSubmission::create(method, actionURL, targetOrBaseTarget, m_formDataBuilder.encodingType(), FormState::create(this, formValues, document()->frame(), trigger), formData.release(), boundary, lockHistory, event);
 }
 
 bool HTMLFormElement::isMailtoForm() const

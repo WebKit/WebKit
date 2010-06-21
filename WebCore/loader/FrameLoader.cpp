@@ -463,44 +463,30 @@ Frame* FrameLoader::loadSubframe(HTMLFrameOwnerElement* ownerElement, const KURL
 
 void FrameLoader::submitForm(PassRefPtr<FormSubmission> submission)
 {
-    // FIXME: Plumb this further in.
-    const char* action = submission->method() == FormSubmission::PostMethod ? "POST" : "GET";
-    RefPtr<FormData> formData = submission->data();
-    RefPtr<FormState> formState = submission->state();
-    String url = submission->action();
-    String target = submission->target();
-    String boundary = submission->boundary();
-    String contentType = submission->contentType();
-    bool lockHistory = submission->lockHistory();
-    RefPtr<Event> event = submission->event();
+    ASSERT(submission->method() == FormSubmission::PostMethod || submission->method() == FormSubmission::GetMethod);
 
-    ASSERT(action);
-    ASSERT(strcmp(action, "GET") == 0 || strcmp(action, "POST") == 0);
-    ASSERT(formData);
-    ASSERT(formState);
-    ASSERT(formState->sourceFrame() == m_frame);
+    // FIXME: Find a good spot for these.
+    ASSERT(submission->data());
+    ASSERT(submission->state());
+    ASSERT(submission->state()->sourceFrame() == m_frame);
     
     if (!m_frame->page())
         return;
     
-    KURL u = completeURL(url.isNull() ? "" : url);
-    if (u.isEmpty())
+    if (submission->action().isEmpty())
         return;
 
     if (isDocumentSandboxed(m_frame, SandboxForms))
         return;
 
-    if (protocolIsJavaScript(u)) {
+    if (protocolIsJavaScript(submission->action())) {
         m_isExecutingJavaScriptFormAction = true;
-        m_frame->script()->executeIfJavaScriptURL(u, false, DoNotReplaceDocumentIfJavaScriptURL);
+        m_frame->script()->executeIfJavaScriptURL(submission->action(), false, DoNotReplaceDocumentIfJavaScriptURL);
         m_isExecutingJavaScriptFormAction = false;
         return;
     }
 
-    FrameLoadRequest frameRequest;
-
-    String targetOrBaseTarget = target.isEmpty() ? m_frame->document()->baseTarget() : target;
-    Frame* targetFrame = m_frame->tree()->find(targetOrBaseTarget);
+    Frame* targetFrame = m_frame->tree()->find(submission->target());
     if (!shouldAllowNavigation(targetFrame))
         return;
     if (!targetFrame) {
@@ -508,8 +494,9 @@ void FrameLoader::submitForm(PassRefPtr<FormSubmission> submission)
             return;
 
         targetFrame = m_frame;
-        frameRequest.setFrameName(targetOrBaseTarget);
-    }
+    } else
+        submission->clearTarget();
+
     if (!targetFrame->page())
         return;
 
@@ -526,33 +513,16 @@ void FrameLoader::submitForm(PassRefPtr<FormSubmission> submission)
     // needed any more now that we reset m_submittedFormURL on each mouse or key down event.
 
     if (m_frame->tree()->isDescendantOf(targetFrame)) {
-        if (m_submittedFormURL == u)
+        if (m_submittedFormURL == submission->action())
             return;
-        m_submittedFormURL = u;
+        m_submittedFormURL = submission->action();
     }
 
-    formData->generateFiles(m_frame->document());
-    
-    if (!m_outgoingReferrer.isEmpty())
-        frameRequest.resourceRequest().setHTTPReferrer(m_outgoingReferrer);
+    submission->data()->generateFiles(m_frame->document());
+    submission->setReferrer(m_outgoingReferrer);
+    submission->setOrigin(outgoingOrigin());
 
-    if (strcmp(action, "GET") == 0)
-        u.setQuery(formData->flattenToString());
-    else {
-        frameRequest.resourceRequest().setHTTPMethod("POST");
-        frameRequest.resourceRequest().setHTTPBody(formData);
-
-        // construct some user headers if necessary
-        if (contentType.isNull() || contentType == "application/x-www-form-urlencoded")
-            frameRequest.resourceRequest().setHTTPContentType(contentType);
-        else // contentType must be "multipart/form-data"
-            frameRequest.resourceRequest().setHTTPContentType(contentType + "; boundary=" + boundary);
-    }
-
-    frameRequest.resourceRequest().setURL(u);
-    addHTTPOriginIfNeeded(frameRequest.resourceRequest(), outgoingOrigin());
-
-    targetFrame->redirectScheduler()->scheduleFormSubmission(frameRequest, lockHistory, event, formState);
+    targetFrame->redirectScheduler()->scheduleFormSubmission(submission);
 }
 
 void FrameLoader::stopLoading(UnloadEventPolicy unloadEventPolicy, DatabasePolicy databasePolicy)
