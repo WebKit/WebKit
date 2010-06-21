@@ -2385,6 +2385,7 @@ IDL_BINDINGS += \
 	WebCore/storage/DatabaseCallback.idl \
 	WebCore/storage/DatabaseSync.idl \
 	WebCore/storage/SQLError.idl \
+	WebCore/storage/SQLException.idl \
 	WebCore/storage/SQLResultSet.idl \
 	WebCore/storage/SQLResultSetRowList.idl \
 	WebCore/storage/SQLStatementCallback.idl \
@@ -2440,6 +2441,7 @@ webcore_sources += \
 	WebCore/storage/OriginUsageRecord.cpp \
 	WebCore/storage/OriginUsageRecord.h \
 	WebCore/storage/SQLError.h \
+	WebCore/storage/SQLException.h \
 	WebCore/storage/SQLResultSet.cpp \
 	WebCore/storage/SQLResultSet.h \
 	WebCore/storage/SQLResultSetRowList.cpp \

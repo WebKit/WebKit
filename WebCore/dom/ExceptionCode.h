@@ -78,8 +78,11 @@ namespace WebCore {
 #if ENABLE(SVG)
         , SVGExceptionType
 #endif
-    };        
-    
+#if ENABLE(DATABASE)
+        , SQLExceptionType
+#endif
+    };
+
 
     struct ExceptionCodeDescription {
         const char* typeName; // has spaces and is suitable for use in exception description strings; maximum length is 10 characters

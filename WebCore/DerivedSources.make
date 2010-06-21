@@ -265,6 +265,7 @@ DOM_CLASSES = \
     ScriptProfile \
     ScriptProfileNode \
     SQLError \
+    SQLException \
     SQLResultSet \
     SQLResultSetRowList \
     SQLStatementCallback \

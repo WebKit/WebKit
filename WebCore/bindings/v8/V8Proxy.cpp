@@ -56,6 +56,7 @@
 #include "V8HiddenPropertyName.h"
 #include "V8IsolatedContext.h"
 #include "V8RangeException.h"
+#include "V8SQLException.h"
 #include "V8XMLHttpRequestException.h"
 #include "V8XPathException.h"
 #include "WorkerContext.h"
@@ -700,6 +701,11 @@ void V8Proxy::setDOMException(int exceptionCode)
 #if ENABLE(XPATH)
     case XPathExceptionType:
         exception = toV8(XPathException::create(description));
+        break;
+#endif
+#if ENABLE(DATABASE)
+    case SQLExceptionType:
+        exception = toV8(SQLException::create(description));
         break;
 #endif
     default:

@@ -1,3 +1,39 @@
+2010-06-20  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Adding the SQLException class which will be used to report sync DB errors.
+        https://bugs.webkit.org/show_bug.cgi?id=40607
+
+        * Android.derived.jscbindings.mk:
+        * Android.derived.v8bindings.mk:
+        * CMakeLists.txt:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pri:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::setDOMException):
+        * bindings/js/JSExceptionBase.cpp:
+        (WebCore::toExceptionBase):
+        * bindings/v8/V8Proxy.cpp:
+        (WebCore::V8Proxy::setDOMException):
+        * bindings/v8/V8Proxy.h:
+        * dom/ExceptionCode.cpp:
+        (WebCore::):
+        (WebCore::getExceptionCodeDescription):
+        * dom/ExceptionCode.h:
+        (WebCore::):
+        * page/DOMWindow.idl:
+        * storage/SQLException.h: Added.
+        (WebCore::SQLException::create):
+        (WebCore::SQLException::):
+        (WebCore::SQLException::SQLException):
+        * storage/SQLException.idl: Added.
+
 2010-06-20  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.

@@ -46437,6 +46437,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\storage\SQLException.h"
+				>
+			</File>
+			<File
 				RelativePath="..\storage\SQLResultSet.cpp"
 				>
 			</File>

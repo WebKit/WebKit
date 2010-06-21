@@ -308,6 +308,7 @@ $(patsubst %.h,%.cpp,$(GEN)): $(intermediates)/bindings/%.cpp : $(intermediates)
 GEN := \
     $(intermediates)/bindings/V8Database.h \
     $(intermediates)/bindings/V8SQLError.h \
+    $(intermediates)/bindings/V8SQLException.h \
     $(intermediates)/bindings/V8SQLResultSet.h \
     $(intermediates)/bindings/V8SQLResultSetRowList.h \
     $(intermediates)/bindings/V8SQLTransaction.h

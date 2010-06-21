@@ -327,6 +327,7 @@ $(patsubst %.h,%.cpp,$(GEN)): $(intermediates)/plugins/%.cpp : $(intermediates)/
 GEN := \
     $(intermediates)/storage/JSDatabase.h \
     $(intermediates)/storage/JSSQLError.h \
+    $(intermediates)/storage/JSSQLException.h \
     $(intermediates)/storage/JSSQLResultSet.h \
     $(intermediates)/storage/JSSQLResultSetRowList.h \
     $(intermediates)/storage/JSSQLTransaction.h

@@ -156,6 +156,7 @@ PASS typeof Object.getOwnPropertyDescriptor(window, 'RangeException') is 'object
 PASS typeof Object.getOwnPropertyDescriptor(window, 'Rect') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'ReferenceError') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'RegExp') is 'object'
+PASS typeof Object.getOwnPropertyDescriptor(window, 'SQLException') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'SVGAElement') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'SVGAltGlyphElement') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'SVGAngle') is 'object'

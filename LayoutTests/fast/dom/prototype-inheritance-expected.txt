@@ -285,6 +285,8 @@ PASS inner.Rect.isInner is true
 PASS inner.Rect.constructor.isInner is true
 PASS inner.ReferenceError.isInner is true
 PASS inner.ReferenceError.constructor.isInner is true
+PASS inner.SQLException.isInner is true
+PASS inner.SQLException.constructor.isInner is true
 PASS inner.SVGAElement.isInner is true
 PASS inner.SVGAElement.constructor.isInner is true
 PASS inner.SVGAltGlyphElement.isInner is true

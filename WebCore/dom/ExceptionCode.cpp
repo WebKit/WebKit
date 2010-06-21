@@ -38,6 +38,10 @@
 #include "XPathException.h"
 #endif
 
+#if ENABLE(DATABASE)
+#include "SQLException.h"
+#endif
+
 namespace WebCore {
 
 static const char* const exceptionNames[] = {
@@ -145,6 +149,30 @@ static const char* const svgExceptionDescriptions[] = {
 };
 #endif
 
+#if ENABLE(DATABASE)
+static const char* const sqlExceptionNames[] = {
+    "UNKNOWN_ERR",
+    "DATABASE_ERR",
+    "VERSION_ERR",
+    "TOO_LARGE_ERR",
+    "QUOTA_ERR",
+    "SYNTAX_ERR",
+    "CONSTRAINT_ERR",
+    "TIMEOUT_ERR"
+};
+
+static const char* const sqlExceptionDescriptions[] = {
+    "The operation failed for reasons unrelated to the database.",
+    "The operation failed for some reason related to the database.",
+    "The actual database version did not match the expected version.",
+    "Data returned from the database is too large.",
+    "Quota was exceeded.",
+    "Invalid or unauthorized statement; or the number of arguments did not match the number of ? placeholders.",
+    "A constraint was violated.",
+    "A transaction lock could not be acquired in a reasonable time."
+};
+#endif
+
 void getExceptionCodeDescription(ExceptionCode ec, ExceptionCodeDescription& description)
 {
     ASSERT(ec);
@@ -156,7 +184,7 @@ void getExceptionCodeDescription(ExceptionCode ec, ExceptionCodeDescription& des
     int nameTableSize;
     int nameTableOffset;
     ExceptionType type;
-    
+
     if (code >= RangeException::RangeExceptionOffset && code <= RangeException::RangeExceptionMax) {
         type = RangeExceptionType;
         typeName = "DOM Range";
@@ -202,6 +230,16 @@ void getExceptionCodeDescription(ExceptionCode ec, ExceptionCodeDescription& des
         descriptionTable = svgExceptionDescriptions;
         nameTableSize = sizeof(svgExceptionNames) / sizeof(svgExceptionNames[0]);
         nameTableOffset = SVGException::SVG_WRONG_TYPE_ERR;
+#endif
+#if ENABLE(DATABASE)
+    } else if (code >= SQLException::SQLExceptionOffset && code <= SQLException::SQLExceptionMax) {
+        type = SQLExceptionType;
+        typeName = "DOM SQL";
+        code -= SQLException::SQLExceptionOffset;
+        nameTable = sqlExceptionNames;
+        descriptionTable = sqlExceptionDescriptions;
+        nameTableSize = sizeof(sqlExceptionNames) / sizeof(sqlExceptionNames[0]);
+        nameTableOffset = SQLException::UNKNOWN_ERR;
 #endif
     } else {
         type = DOMExceptionType;
