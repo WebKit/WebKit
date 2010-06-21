@@ -34,17 +34,19 @@ include(../../../WebKit.pri)
 
 QT += declarative
 
-linux-* {
-    # From Creator's src/rpath.pri:
-    # Do the rpath by hand since it's not possible to use ORIGIN in QMAKE_RPATHDIR
-    # this expands to $ORIGIN (after qmake and make), it does NOT read a qmake var.
-    QMAKE_RPATHDIR = $$OUTPUT_DIR/lib $$QMAKE_RPATHDIR
-    MY_RPATH = $$join(QMAKE_RPATHDIR, ":")
+!CONFIG(standalone_package) {
+    linux-* {
+        # From Creator's src/rpath.pri:
+        # Do the rpath by hand since it's not possible to use ORIGIN in QMAKE_RPATHDIR
+        # this expands to $ORIGIN (after qmake and make), it does NOT read a qmake var.
+        QMAKE_RPATHDIR = $$OUTPUT_DIR/lib $$QMAKE_RPATHDIR
+        MY_RPATH = $$join(QMAKE_RPATHDIR, ":")
 
-    QMAKE_LFLAGS += -Wl,-z,origin \'-Wl,-rpath,$${MY_RPATH}\'
-    QMAKE_RPATHDIR =
-} else {
-    QMAKE_RPATHDIR = $$OUTPUT_DIR/lib $$QMAKE_RPATHDIR
+        QMAKE_LFLAGS += -Wl,-z,origin \'-Wl,-rpath,$${MY_RPATH}\'
+        QMAKE_RPATHDIR =
+    } else {
+        QMAKE_RPATHDIR = $$OUTPUT_DIR/lib $$QMAKE_RPATHDIR
+    }
 }
 
 SOURCES += qdeclarativewebview.cpp plugin.cpp
