@@ -25,9 +25,6 @@
 
 #ifndef ExecutableAllocator_h
 #define ExecutableAllocator_h
-
-#if ENABLE(JIT)
-
 #include <stddef.h> // for ptrdiff_t
 #include <limits>
 #include <wtf/Assertions.h>
@@ -82,7 +79,7 @@ inline size_t roundUpAllocationSize(size_t request, size_t granularity)
 
 }
 
-#if ENABLE(ASSEMBLER)
+#if ENABLE(JIT) && ENABLE(ASSEMBLER)
 
 namespace JSC {
 
@@ -318,8 +315,6 @@ inline void* ExecutablePool::poolAllocate(size_t n)
 
 }
 
-#endif // ENABLE(ASSEMBLER)
-
-#endif // ENABLE(JIT)
+#endif // ENABLE(JIT) && ENABLE(ASSEMBLER)
 
 #endif // !defined(ExecutableAllocator)
