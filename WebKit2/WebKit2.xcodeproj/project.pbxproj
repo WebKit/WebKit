@@ -37,6 +37,8 @@
 		1AA1CC5D100FA1A10078DEBC /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AA1CC5C100FA1A10078DEBC /* QuartzCore.framework */; };
 		1AA1CD07100FA1BA0078DEBC /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AA1CD06100FA1BA0078DEBC /* Carbon.framework */; };
 		1AADE6FF10D855FC00D3D63D /* ApplicationServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AADE6FE10D855FC00D3D63D /* ApplicationServices.framework */; };
+		1AEFCC1211D01F96008219D3 /* PluginInfoStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AEFCC1011D01F96008219D3 /* PluginInfoStore.h */; };
+		1AEFCC1311D01F96008219D3 /* PluginInfoStore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AEFCC1111D01F96008219D3 /* PluginInfoStore.cpp */; };
 		1AF3060A111B599E00F96436 /* WebKit2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8DC2EF5B0486A6940098B216 /* WebKit2.framework */; };
 		5DAD729C116FF86200EE5396 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0867D6A5FE840307C02AAC07 /* AppKit.framework */; };
 		8DC2EF530486A6940098B216 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C1666FE841158C02AAC07 /* InfoPlist.strings */; };
@@ -253,6 +255,8 @@
 		1AA1CC5C100FA1A10078DEBC /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = /System/Library/Frameworks/QuartzCore.framework; sourceTree = "<absolute>"; };
 		1AA1CD06100FA1BA0078DEBC /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = /System/Library/Frameworks/Carbon.framework; sourceTree = "<absolute>"; };
 		1AADE6FE10D855FC00D3D63D /* ApplicationServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ApplicationServices.framework; path = System/Library/Frameworks/ApplicationServices.framework; sourceTree = SDKROOT; };
+		1AEFCC1011D01F96008219D3 /* PluginInfoStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginInfoStore.h; sourceTree = "<group>"; };
+		1AEFCC1111D01F96008219D3 /* PluginInfoStore.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PluginInfoStore.cpp; sourceTree = "<group>"; };
 		32DBCF5E0370ADEE00C91783 /* WebKit2Prefix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKit2Prefix.h; sourceTree = "<group>"; };
 		5DAD7294116FF70B00EE5396 /* WebProcess.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = WebProcess.xcconfig; sourceTree = "<group>"; };
 		5DAD73F1116FF90C00EE5396 /* BaseTarget.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = BaseTarget.xcconfig; sourceTree = "<group>"; };
@@ -571,6 +575,23 @@
 			path = CoreIPC;
 			sourceTree = "<group>";
 		};
+		1AEFCC0511D01F34008219D3 /* Plugins */ = {
+			isa = PBXGroup;
+			children = (
+				1AEFCC0D11D01F41008219D3 /* mac */,
+				1AEFCC1011D01F96008219D3 /* PluginInfoStore.h */,
+				1AEFCC1111D01F96008219D3 /* PluginInfoStore.cpp */,
+			);
+			path = Plugins;
+			sourceTree = "<group>";
+		};
+		1AEFCC0D11D01F41008219D3 /* mac */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = mac;
+			sourceTree = "<group>";
+		};
 		32C88DFF0371C24200C91783 /* Other Sources */ = {
 			isa = PBXGroup;
 			children = (
@@ -636,6 +657,7 @@
 			children = (
 				BC032DC410F4387C0058C15A /* API */,
 				BC111B18112F5FB400337BAB /* Launcher */,
+				1AEFCC0511D01F34008219D3 /* Plugins */,
 				BCCF085C113F3B7500C650C5 /* mac */,
 				BC2652121182608100243E12 /* DrawingAreaProxy.cpp */,
 				BC2652131182608100243E12 /* DrawingAreaProxy.h */,
@@ -1010,6 +1032,7 @@
 				BC20528111C94284008F3375 /* WKBundlePage.h in Headers */,
 				BC20528811C943A5008F3375 /* InjectedBundlePageClient.h in Headers */,
 				1A3E736111CC2659007BD539 /* WebPlatformStrategies.h in Headers */,
+				1AEFCC1211D01F96008219D3 /* PluginInfoStore.h in Headers */,
 				BCDE059B11CDA8AE00E41AF1 /* WebContextInjectedBundleClient.h in Headers */,
 				BCB7346E11CEE3FF00EC5002 /* WebProcessProxyMessageKinds.h in Headers */,
 			);
@@ -1171,6 +1194,7 @@
 				BC20528211C94284008F3375 /* WKBundlePage.cpp in Sources */,
 				BC20528911C943A5008F3375 /* InjectedBundlePageClient.cpp in Sources */,
 				1A3E736211CC2659007BD539 /* WebPlatformStrategies.cpp in Sources */,
+				1AEFCC1311D01F96008219D3 /* PluginInfoStore.cpp in Sources */,
 				BCDE059C11CDA8AE00E41AF1 /* WebContextInjectedBundleClient.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

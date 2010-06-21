@@ -23,45 +23,33 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "WebPlatformStrategies.h"
-
-#if USE(PLATFORM_STRATEGIES)
-
 #include "PluginInfoStore.h"
+
+#include <wtf/StdLibExtras.h>
 
 using namespace WebCore;
 
 namespace WebKit {
 
-void WebPlatformStrategies::initialize()
+PluginInfoStore& PluginInfoStore::shared()
 {
-    DEFINE_STATIC_LOCAL(WebPlatformStrategies, platformStrategies, ());
-    setPlatformStrategies(&platformStrategies);
+    DEFINE_STATIC_LOCAL(PluginInfoStore, pluginInfoStore, ());
+    return pluginInfoStore;
 }
 
-WebPlatformStrategies::WebPlatformStrategies()
+PluginInfoStore::PluginInfoStore()
+    : m_pluginListIsUpToDate(false)
 {
 }
 
-// PluginStrategy
-
-PluginStrategy* WebPlatformStrategies::createPluginStrategy()
+void PluginInfoStore::refresh()
 {
-    return this;
+    m_pluginListIsUpToDate = false;
 }
 
-void WebPlatformStrategies::refreshPlugins()
+void PluginInfoStore::getPlugins(Vector<WebCore::PluginInfo>& plugins)
 {
-    // FIXME: This should call out to the UI process.
-    PluginInfoStore::shared().refresh();
-}
-
-void WebPlatformStrategies::getPluginInfo(Vector<WebCore::PluginInfo>& plugins)
-{
-    // FIXME: This should call out to the UI process.
-    PluginInfoStore::shared().getPlugins(plugins);
+    // FIXME: Implement.
 }
 
 } // namespace WebKit
-
-#endif // USE(PLATFORM_STRATEGIES)

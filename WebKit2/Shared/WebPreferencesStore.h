@@ -43,6 +43,7 @@ struct WebPreferencesStore {
     {
         encoder.encode(javaScriptEnabled);
         encoder.encode(loadsImagesAutomatically);
+        encoder.encode(pluginsEnabled);
         encoder.encode(minimumFontSize);
         encoder.encode(minimumLogicalFontSize);
         encoder.encode(defaultFontSize);
@@ -60,6 +61,8 @@ struct WebPreferencesStore {
         if (!decoder.decode(s.javaScriptEnabled))
             return false;
         if (!decoder.decode(s.loadsImagesAutomatically))
+            return false;
+        if (!decoder.decode(s.pluginsEnabled))
             return false;
         if (!decoder.decode(s.minimumFontSize))
             return false;
@@ -86,6 +89,8 @@ struct WebPreferencesStore {
 
     bool javaScriptEnabled;
     bool loadsImagesAutomatically;
+    bool pluginsEnabled;
+    
     uint32_t minimumFontSize;
     uint32_t minimumLogicalFontSize;
     uint32_t defaultFontSize;

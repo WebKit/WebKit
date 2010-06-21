@@ -23,45 +23,36 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "WebPlatformStrategies.h"
+#ifndef PluginInfoStore_h
+#define PluginInfoStore_h
 
-#if USE(PLATFORM_STRATEGIES)
-
-#include "PluginInfoStore.h"
-
-using namespace WebCore;
+#include <WebCore/PluginData.h>
 
 namespace WebKit {
 
-void WebPlatformStrategies::initialize()
-{
-    DEFINE_STATIC_LOCAL(WebPlatformStrategies, platformStrategies, ());
-    setPlatformStrategies(&platformStrategies);
-}
+class PluginInfoStore {
+public:
+    static PluginInfoStore& shared();
+    
+    void refresh();
+    void getPlugins(Vector<WebCore::PluginInfo>& plugins);
+    
+private:
+    // Represents a single plug-in.
+    struct Plugin {
+        WebCore::String path;
+        WebCore::PluginInfo info;
+#if PLATFORM(MAC)
+        cpu_type_t pluginArchitecture;
+#endif
+    };
+    
+    PluginInfoStore();
 
-WebPlatformStrategies::WebPlatformStrategies()
-{
-}
-
-// PluginStrategy
-
-PluginStrategy* WebPlatformStrategies::createPluginStrategy()
-{
-    return this;
-}
-
-void WebPlatformStrategies::refreshPlugins()
-{
-    // FIXME: This should call out to the UI process.
-    PluginInfoStore::shared().refresh();
-}
-
-void WebPlatformStrategies::getPluginInfo(Vector<WebCore::PluginInfo>& plugins)
-{
-    // FIXME: This should call out to the UI process.
-    PluginInfoStore::shared().getPlugins(plugins);
-}
-
+    Vector<Plugin> m_plugins;
+    bool m_pluginListIsUpToDate;
+};
+    
 } // namespace WebKit
 
-#endif // USE(PLATFORM_STRATEGIES)
+#endif // PluginInfoStore_h

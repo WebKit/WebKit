@@ -1,3 +1,32 @@
+2010-06-21  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Add PluginInfoStore class
+        https://bugs.webkit.org/show_bug.cgi?id=40949
+
+        * Shared/WebPreferencesStore.cpp:
+        (WebKit::WebPreferencesStore::WebPreferencesStore):
+        * Shared/WebPreferencesStore.h:
+        (WebKit::WebPreferencesStore::encode):
+        (WebKit::WebPreferencesStore::decode):
+        Add plugInsEnabled to the preferences store.
+
+        * UIProcess/Plugins: Added.
+        * UIProcess/Plugins/PluginInfoStore.cpp: Added.
+        (WebKit::PluginInfoStore::shared):
+        (WebKit::PluginInfoStore::PluginInfoStore):
+        (WebKit::PluginInfoStore::refresh):
+        (WebKit::PluginInfoStore::getPlugins):
+        * UIProcess/Plugins/PluginInfoStore.h: Added.
+        * UIProcess/Plugins/mac: Added.
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebKit::WebPlatformStrategies::refreshPlugins):
+        (WebKit::WebPlatformStrategies::getPluginInfo):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+
 2010-06-21  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Anders Carlsson.

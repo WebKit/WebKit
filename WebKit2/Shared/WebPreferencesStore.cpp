@@ -30,6 +30,7 @@ namespace WebKit {
 WebPreferencesStore::WebPreferencesStore()
     : javaScriptEnabled(true)
     , loadsImagesAutomatically(true)
+    , pluginsEnabled(true)
     , minimumFontSize(9)
     , minimumLogicalFontSize(9)
     , defaultFontSize(16)
