@@ -1045,6 +1045,7 @@ SET(WebCore_SOURCES
     loader/FormState.cpp
     loader/FormSubmission.cpp
     loader/FrameLoader.cpp
+    loader/FrameLoaderStateMachine.cpp
     loader/HistoryController.cpp
     loader/ImageDocument.cpp
     loader/ImageLoader.cpp

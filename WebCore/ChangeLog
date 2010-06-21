@@ -1,3 +1,55 @@
+2010-06-21  Nate Chapin  <japhet@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Remove a couple of FrameLoader's unused boolean members
+        (m_receivedData, m_cancellingWithLoadInProcess) and merge
+        several more into a single state machine called FrameLoaderStateMachine
+        (m_firstLayoutDone, m_creatingInitialEmptyDocument,
+        m_isDisplayingInitialEmptyDocument, m_committedFirstRealDocumentLoad).
+
+        https://bugs.webkit.org/show_bug.cgi?id=39695
+
+        Refactor only, so no new tests.
+
+        * WebCore.base.exp:
+        * WebCore.xcodeproj/project.pbxproj:
+        * loader/DocumentWriter.cpp:
+        (WebCore::DocumentWriter::createDocument):
+        (WebCore::DocumentWriter::begin):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::FrameLoader):
+        (WebCore::FrameLoader::init):
+        (WebCore::FrameLoader::stopLoading):
+        (WebCore::FrameLoader::didOpenURL):
+        (WebCore::FrameLoader::didExplicitOpen):
+        (WebCore::FrameLoader::clear):
+        (WebCore::FrameLoader::didBeginDocument):
+        (WebCore::FrameLoader::finishedParsing):
+        (WebCore::FrameLoader::provisionalLoadStarted):
+        (WebCore::FrameLoader::logCanCachePageDecision):
+        (WebCore::FrameLoader::logCanCacheFrameDecision):
+        (WebCore::FrameLoader::frameHasLoaded):
+        (WebCore::FrameLoader::commitProvisionalLoad):
+        (WebCore::FrameLoader::transitionToCommitted):
+        (WebCore::FrameLoader::finishedLoadingDocument):
+        (WebCore::FrameLoader::checkLoadCompleteForThisFrame):
+        (WebCore::FrameLoader::didFirstLayout):
+        (WebCore::FrameLoader::frameLoadCompleted):
+        (WebCore::FrameLoader::dispatchDidCommitLoad):
+        * loader/FrameLoader.h:
+        (WebCore::FrameLoader::stateMachine):
+        * loader/FrameLoaderStateMachine.cpp: Added.
+        * loader/FrameLoaderStateMachine.h: Added.
+        * loader/HistoryController.cpp:
+        (WebCore::HistoryController::restoreScrollPositionAndViewState):
+        (WebCore::HistoryController::saveDocumentState):
+        * loader/ProgressTracker.cpp:
+        (WebCore::ProgressTracker::incrementProgress):
+        * loader/RedirectScheduler.cpp:
+        (WebCore::RedirectScheduler::scheduleLocationChange):
+        (WebCore::RedirectScheduler::scheduleFormSubmission):
+
 2010-06-21  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Build fix. Fix header includes for ENABLE(DATABASE)

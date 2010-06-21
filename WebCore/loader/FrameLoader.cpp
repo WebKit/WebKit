@@ -192,7 +192,6 @@ FrameLoader::FrameLoader(Frame* frame, FrameLoaderClient* client)
     , m_state(FrameStateCommittedPage)
     , m_loadType(FrameLoadTypeStandard)
     , m_delegateIsHandlingProvisionalLoadError(false)
-    , m_firstLayoutDone(false)
     , m_quickRedirectComing(false)
     , m_sentRedirectNotification(false)
     , m_inStopAllLoaders(false)
@@ -203,15 +202,11 @@ FrameLoader::FrameLoader(Frame* frame, FrameLoaderClient* client)
     , m_isComplete(false)
     , m_isLoadingMainResource(false)
     , m_needsClear(false)
-    , m_receivedData(false)
     , m_containsPlugIns(false)
     , m_checkTimer(this, &FrameLoader::checkTimerFired)
     , m_shouldCallCheckCompleted(false)
     , m_shouldCallCheckLoadComplete(false)
     , m_opener(0)
-    , m_creatingInitialEmptyDocument(false)
-    , m_isDisplayingInitialEmptyDocument(false)
-    , m_committedFirstRealDocumentLoad(false)
     , m_didPerformFirstNavigation(false)
     , m_loadingFromCachedPage(false)
     , m_suppressOpenerInNewFrame(false)
@@ -241,8 +236,7 @@ void FrameLoader::init()
     updateSandboxFlags();
 
     // this somewhat odd set of steps is needed to give the frame an initial empty document
-    m_isDisplayingInitialEmptyDocument = false;
-    m_creatingInitialEmptyDocument = true;
+    m_stateMachine.advanceTo(FrameLoaderStateMachine::CreatingInitialEmptyDocument);
     setPolicyDocumentLoader(m_client->createDocumentLoader(ResourceRequest(KURL(ParsedURLString, "")), SubstituteData()).get());
     setProvisionalDocumentLoader(m_policyDocumentLoader.get());
     setState(FrameStateProvisional);
@@ -251,7 +245,7 @@ void FrameLoader::init()
     writer()->begin(KURL(), false);
     writer()->end();
     m_frame->document()->cancelParsing();
-    m_creatingInitialEmptyDocument = false;
+    m_stateMachine.advanceTo(FrameLoaderStateMachine::DisplayingInitialEmptyDocument);
     m_didCallImplicitClose = true;
 }
 
@@ -553,7 +547,7 @@ void FrameLoader::stopLoading(UnloadEventPolicy unloadEventPolicy, DatabasePolic
         // Dispatching the unload event could have made m_frame->document() null.
         if (m_frame->document() && !m_frame->document()->inPageCache()) {
             // Don't remove event listeners from a transitional empty document (see bug 28716 for more information).
-            bool keepEventListeners = m_isDisplayingInitialEmptyDocument && m_provisionalDocumentLoader
+            bool keepEventListeners = m_stateMachine.isDisplayingInitialEmptyDocument() && m_provisionalDocumentLoader
                 && m_frame->document()->securityOrigin()->isSecureTransitionTo(m_provisionalDocumentLoader->url());
 
             if (!keepEventListeners)
@@ -659,7 +653,7 @@ bool FrameLoader::didOpenURL(const KURL& url)
     // If we are still in the process of initializing an empty document then
     // its frame is not in a consistent state for rendering, so avoid setJSStatusBarText
     // since it may cause clients to attempt to render the frame.
-    if (!m_creatingInitialEmptyDocument) {
+    if (!m_stateMachine.creatingInitialEmptyDocument()) {
         if (DOMWindow* window = m_frame->existingDOMWindow()) {
             window->setStatus(String());
             window->setDefaultStatus(String());
@@ -681,7 +675,8 @@ void FrameLoader::didExplicitOpen()
     m_didCallImplicitClose = false;
 
     // Calling document.open counts as committing the first real document load.
-    m_committedFirstRealDocumentLoad = true;
+    if (!m_stateMachine.committedFirstRealDocumentLoad())
+        m_stateMachine.advanceTo(FrameLoaderStateMachine::DisplayingInitialEmptyDocumentPostCommit);
     
     // Prevent window.open(url) -- eg window.open("about:blank") -- from blowing away results
     // from a subsequent window.document.open / window.document.write call. 
@@ -750,7 +745,8 @@ void FrameLoader::clear(bool clearWindowProperties, bool clearScriptObjects, boo
     m_shouldCallCheckCompleted = false;
     m_shouldCallCheckLoadComplete = false;
 
-    m_isDisplayingInitialEmptyDocument = false;
+    if (m_stateMachine.isDisplayingInitialEmptyDocument() && m_stateMachine.committedFirstRealDocumentLoad())
+        m_stateMachine.advanceTo(FrameLoaderStateMachine::CommittedFirstRealLoad);
 }
 
 void FrameLoader::receivedFirstData()
@@ -802,7 +798,6 @@ void FrameLoader::didBeginDocument(bool dispatch)
     m_isComplete = false;
     m_didCallImplicitClose = false;
     m_isLoadingMainResource = true;
-    m_isDisplayingInitialEmptyDocument = m_creatingInitialEmptyDocument;
 
     if (m_pendingStateObject) {
         m_frame->document()->statePopped(m_pendingStateObject.get());
@@ -913,7 +908,7 @@ void FrameLoader::commitIconURLToIconDatabase(const KURL& icon)
 
 void FrameLoader::finishedParsing()
 {
-    if (m_creatingInitialEmptyDocument)
+    if (m_stateMachine.creatingInitialEmptyDocument())
         return;
 
     m_frame->injectUserScripts(InjectAtDocumentEnd);
@@ -1350,8 +1345,9 @@ void FrameLoader::handleFallbackContent()
 }
 
 void FrameLoader::provisionalLoadStarted()
-{    
-    m_firstLayoutDone = false;
+{
+    if (m_stateMachine.firstLayoutDone())
+        m_stateMachine.advanceTo(FrameLoaderStateMachine::CommittedFirstRealLoad);
     m_frame->redirectScheduler()->cancel(true);
     m_client->provisionalLoadStarted();
 }
@@ -2052,7 +2048,7 @@ bool FrameLoader::isLoading() const
 
 bool FrameLoader::frameHasLoaded() const
 {
-    return m_committedFirstRealDocumentLoad || (m_provisionalDocumentLoader && !m_creatingInitialEmptyDocument); 
+    return m_stateMachine.committedFirstRealDocumentLoad() || (m_provisionalDocumentLoader && !m_stateMachine.creatingInitialEmptyDocument()); 
 }
 
 void FrameLoader::setDocumentLoader(DocumentLoader* loader)
@@ -2149,7 +2145,7 @@ void FrameLoader::commitProvisionalLoad()
     if (m_loadType != FrameLoadTypeReplace)
         closeOldDataSources();
     
-    if (!cachedPage && !m_creatingInitialEmptyDocument)
+    if (!cachedPage && !m_stateMachine.creatingInitialEmptyDocument())
         m_client->makeRepresentation(pdl.get());
     
     transitionToCommitted(cachedPage);
@@ -2312,10 +2308,11 @@ void FrameLoader::transitionToCommitted(PassRefPtr<CachedPage> cachedPage)
     // Tell the client we've committed this URL.
     ASSERT(m_frame->view());
 
-    if (m_creatingInitialEmptyDocument)
+    if (m_stateMachine.creatingInitialEmptyDocument())
         return;
-    
-    m_committedFirstRealDocumentLoad = true;
+
+    if (!m_stateMachine.committedFirstRealDocumentLoad())
+        m_stateMachine.advanceTo(FrameLoaderStateMachine::DisplayingInitialEmptyDocumentPostCommit);
 
     if (!m_client->hasHTMLView())
         receivedFirstData();
@@ -2512,7 +2509,7 @@ void FrameLoader::finishedLoadingDocument(DocumentLoader* loader)
 {
     // FIXME: Platforms shouldn't differ here!
 #if PLATFORM(WIN) || PLATFORM(CHROMIUM)
-    if (m_creatingInitialEmptyDocument)
+    if (m_stateMachine.creatingInitialEmptyDocument())
         return;
 #endif
     
@@ -2704,7 +2701,7 @@ void FrameLoader::checkLoadCompleteForThisFrame()
                 if ((isBackForwardLoadType(m_loadType) || m_loadType == FrameLoadTypeReload || m_loadType == FrameLoadTypeReloadFromOrigin) && page->backForwardList())
                     history()->restoreScrollPositionAndViewState();
 
-            if (m_creatingInitialEmptyDocument || !m_committedFirstRealDocumentLoad)
+            if (m_stateMachine.creatingInitialEmptyDocument() || !m_stateMachine.committedFirstRealDocumentLoad())
                 return;
 
             const ResourceError& error = dl->mainDocumentError();
@@ -2765,7 +2762,8 @@ void FrameLoader::didFirstLayout()
         if (isBackForwardLoadType(m_loadType) && page->backForwardList())
             history()->restoreScrollPositionAndViewState();
 
-    m_firstLayoutDone = true;
+    if (m_stateMachine.committedFirstRealDocumentLoad() && !m_stateMachine.isDisplayingInitialEmptyDocument() && !m_stateMachine.firstLayoutDone())
+        m_stateMachine.advanceTo(FrameLoaderStateMachine::FirstLayoutDone);
     m_client->dispatchDidFirstLayout();
 }
 
@@ -2784,13 +2782,8 @@ void FrameLoader::frameLoadCompleted()
 
     // After a canceled provisional load, firstLayoutDone is false.
     // Reset it to true if we're displaying a page.
-    if (m_documentLoader)
-        m_firstLayoutDone = true;
-}
-
-bool FrameLoader::firstLayoutDone() const
-{
-    return m_firstLayoutDone;
+    if (m_documentLoader && m_stateMachine.committedFirstRealDocumentLoad() && !m_stateMachine.isDisplayingInitialEmptyDocument() && !m_stateMachine.firstLayoutDone())
+        m_stateMachine.advanceTo(FrameLoaderStateMachine::FirstLayoutDone);
 }
 
 void FrameLoader::detachChildren()
@@ -3737,7 +3730,7 @@ void FrameLoader::didChangeIcons(DocumentLoader* loader)
 
 void FrameLoader::dispatchDidCommitLoad()
 {
-    if (m_creatingInitialEmptyDocument)
+    if (m_stateMachine.creatingInitialEmptyDocument())
         return;
 
 #ifndef NDEBUG

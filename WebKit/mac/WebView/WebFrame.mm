@@ -66,6 +66,7 @@
 #import <WebCore/EventNames.h>
 #import <WebCore/Frame.h>
 #import <WebCore/FrameLoader.h>
+#import <WebCore/FrameLoaderStateMachine.h>
 #import <WebCore/FrameTree.h>
 #import <WebCore/GraphicsContext.h>
 #import <WebCore/HTMLFrameOwnerElement.h>
@@ -1051,7 +1052,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 
 - (BOOL)_firstLayoutDone
 {
-    return _private->coreFrame->loader()->firstLayoutDone();
+    return _private->coreFrame->loader()->stateMachine()->firstLayoutDone();
 }
 
 - (WebFrameLoadType)_loadType

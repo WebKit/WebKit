@@ -4875,6 +4875,8 @@
 		CE54FD381016D9A6008B44C8 /* ScriptSourceProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = CE54FD371016D9A6008B44C8 /* ScriptSourceProvider.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CEF418CE1179678C009D112C /* ViewportArguments.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CEF418CC1179678C009D112C /* ViewportArguments.cpp */; };
 		CEF418CF1179678C009D112C /* ViewportArguments.h in Headers */ = {isa = PBXBuildFile; fileRef = CEF418CD1179678C009D112C /* ViewportArguments.h */; };
+		D000EBA211BDAFD400C47726 /* FrameLoaderStateMachine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D000EBA011BDAFD400C47726 /* FrameLoaderStateMachine.cpp */; };
+		D000EBA311BDAFD400C47726 /* FrameLoaderStateMachine.h in Headers */ = {isa = PBXBuildFile; fileRef = D000EBA111BDAFD400C47726 /* FrameLoaderStateMachine.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		D01A27AD10C9BFD800026A42 /* SpaceSplitString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D01A27AB10C9BFD800026A42 /* SpaceSplitString.cpp */; };
 		D01A27AE10C9BFD800026A42 /* SpaceSplitString.h in Headers */ = {isa = PBXBuildFile; fileRef = D01A27AC10C9BFD800026A42 /* SpaceSplitString.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		D05CED290A40BB2C00C5AF38 /* FormatBlockCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D05CED270A40BB2C00C5AF38 /* FormatBlockCommand.cpp */; };
@@ -10427,6 +10429,8 @@
 		CE54FD371016D9A6008B44C8 /* ScriptSourceProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptSourceProvider.h; sourceTree = "<group>"; };
 		CEF418CC1179678C009D112C /* ViewportArguments.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ViewportArguments.cpp; sourceTree = "<group>"; };
 		CEF418CD1179678C009D112C /* ViewportArguments.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewportArguments.h; sourceTree = "<group>"; };
+		D000EBA011BDAFD400C47726 /* FrameLoaderStateMachine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FrameLoaderStateMachine.cpp; sourceTree = "<group>"; };
+		D000EBA111BDAFD400C47726 /* FrameLoaderStateMachine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FrameLoaderStateMachine.h; sourceTree = "<group>"; };
 		D01A27AB10C9BFD800026A42 /* SpaceSplitString.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SpaceSplitString.cpp; sourceTree = "<group>"; };
 		D01A27AC10C9BFD800026A42 /* SpaceSplitString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpaceSplitString.h; sourceTree = "<group>"; };
 		D05CED270A40BB2C00C5AF38 /* FormatBlockCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = FormatBlockCommand.cpp; sourceTree = "<group>"; };
@@ -15771,6 +15775,8 @@
 				932E16080AF578340025F408 /* FrameLoader.cpp */,
 				656D37240ADBA5DE00A4554D /* FrameLoader.h */,
 				656D37260ADBA5DE00A4554D /* FrameLoaderClient.h */,
+				D000EBA011BDAFD400C47726 /* FrameLoaderStateMachine.cpp */,
+				D000EBA111BDAFD400C47726 /* FrameLoaderStateMachine.h */,
 				93B77A370ADD792500EA4B81 /* FrameLoaderTypes.h */,
 				51E4ADB20C42B4CF0042BC55 /* FTPDirectoryDocument.cpp */,
 				51E4ADB30C42B4CF0042BC55 /* FTPDirectoryDocument.h */,
@@ -19477,6 +19483,7 @@
 				E1BE512E0CF6C512002EA959 /* XSLTUnicodeSort.h in Headers */,
 				97DD4D870FDF4D6E00ECF9A4 /* XSSAuditor.h in Headers */,
 				CE172E011136E8CE0062A533 /* ZoomMode.h in Headers */,
+				D000EBA311BDAFD400C47726 /* FrameLoaderStateMachine.h in Headers */,
 				1AD8F81B11CAB9E900E93E54 /* PlatformStrategies.h in Headers */,
 				1AA8799011CBE846003C664F /* PluginStrategy.h in Headers */,
 				B56EBA8511C9FF8100B04477 /* SQLException.h in Headers */,
@@ -21792,6 +21799,7 @@
 				93F19B0508245E59001E9ABC /* XSLTProcessorLibxslt.cpp in Sources */,
 				E1BE512D0CF6C512002EA959 /* XSLTUnicodeSort.cpp in Sources */,
 				97DD4D860FDF4D6E00ECF9A4 /* XSSAuditor.cpp in Sources */,
+				D000EBA211BDAFD400C47726 /* FrameLoaderStateMachine.cpp in Sources */,
 				200B190911C277D900DCCD3A /* ScriptBreakpoint.cpp in Sources */,
 				1AD8F81C11CAB9E900E93E54 /* PlatformStrategies.cpp in Sources */,
 				B525A96611CA2340003A23A8 /* JSSQLException.cpp in Sources */,

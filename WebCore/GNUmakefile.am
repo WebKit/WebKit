@@ -1392,6 +1392,8 @@ webcore_sources += \
 	WebCore/loader/FrameLoader.cpp \
 	WebCore/loader/FrameLoader.h \
 	WebCore/loader/FrameLoaderClient.h \
+	WebCore/loader/FrameLoaderStateMachine.cpp \
+	WebCore/loader/FrameLoaderStateMachine.h \
 	WebCore/loader/FrameLoaderTypes.h \
 	WebCore/loader/HistoryController.cpp \
 	WebCore/loader/HistoryController.h \

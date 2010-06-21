@@ -744,6 +744,7 @@ SOURCES += \
     loader/FormState.cpp \
     loader/FormSubmission.cpp \
     loader/FrameLoader.cpp \
+    loader/FrameLoaderStateMachine.cpp \
     loader/HistoryController.cpp \
     loader/FTPDirectoryDocument.cpp \
     loader/FTPDirectoryParser.cpp \
@@ -1485,6 +1486,7 @@ HEADERS += \
     loader/DocumentThreadableLoader.h \
     loader/FormState.h \
     loader/FrameLoader.h \
+    loader/FrameLoaderStateMachine.h \
     loader/FTPDirectoryDocument.h \
     loader/FTPDirectoryParser.h \
     loader/icon/IconDatabase.h \

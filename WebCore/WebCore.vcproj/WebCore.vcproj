@@ -21973,6 +21973,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\loader\FrameLoaderStateMachine.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\loader\FrameLoaderStateMachine.h"
+				>
+			</File>
+			<File
 				RelativePath="..\loader\FrameLoaderTypes.h"
 				>
 			</File>

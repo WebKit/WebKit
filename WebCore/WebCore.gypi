@@ -1798,6 +1798,8 @@
             'loader/FrameLoader.cpp',
             'loader/FrameLoader.h',
             'loader/FrameLoaderClient.h',
+            'loader/FrameLoaderStateMachine.cpp',
+            'loader/FrameLoaderStateMachine.h',
             'loader/FrameLoaderTypes.h',
             'loader/HistoryController.cpp',
             'loader/HistoryController.h',

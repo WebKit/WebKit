@@ -301,6 +301,7 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	loader/FormState.cpp \
 	loader/FormSubmission.cpp \
 	loader/FrameLoader.cpp \
+	loader/FrameLoaderStateMachine.cpp \
 	loader/HistoryController.cpp \
 	loader/ImageDocument.cpp \
 	loader/ImageLoader.cpp \

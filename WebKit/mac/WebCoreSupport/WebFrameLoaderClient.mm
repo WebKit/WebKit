@@ -84,6 +84,7 @@
 #import <WebCore/FormState.h>
 #import <WebCore/Frame.h>
 #import <WebCore/FrameLoader.h>
+#import <WebCore/FrameLoaderStateMachine.h>
 #import <WebCore/FrameLoaderTypes.h>
 #import <WebCore/FrameTree.h>
 #import <WebCore/FrameView.h>
@@ -1177,7 +1178,7 @@ void WebFrameLoaderClient::transitionToCommittedForNewPage()
     if (usesDocumentViews) {
         // FIXME (Viewless): I assume we want the equivalent of this optimization for viewless mode too.
         bool willProduceHTMLView = [m_webFrame->_private->webFrameView _viewClassForMIMEType:[dataSource _responseMIMEType]] == [WebHTMLView class];
-        bool canSkipCreation = core(m_webFrame.get())->loader()->committingFirstRealLoad() && willProduceHTMLView;
+        bool canSkipCreation = core(m_webFrame.get())->loader()->stateMachine()->committingFirstRealLoad() && willProduceHTMLView;
         if (canSkipCreation) {
             [[m_webFrame->_private->webFrameView documentView] setDataSource:dataSource];
             return;
