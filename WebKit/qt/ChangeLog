@@ -1,3 +1,13 @@
+2010-06-21  Robert Hogan  <robert@webkit.org>
+
+        [Qt] Build fix for Qt on Windows MSVC2008
+
+        Unreviewed, build fix.
+
+        Fix by Jocelyn Turcotte.
+
+        * Api/qwebframe.cpp:
+
 2010-06-21  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         Reviewed by nobody, build fix.
