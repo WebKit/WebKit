@@ -2870,3 +2870,8 @@ BUG46989 MAC DEBUG : fast/dom/HTMLMeterElement/meter-styles.html = IMAGE
 
 BUG47035 WIN DEBUG : fast/loader/stateobjects/document-destroyed-navigate-back-with-fragment-scroll.html = PASS TEXT
 BUG47036 WIN SLOW : html5lib/runner.html = PASS
+
+// CSS3 Hyphenation landed in http://trac.webkit.org/changeset/61548
+// We don't implement it yet.
+BUG47083 : fast/text/hyphenate-character.html = IMAGE+TEXT
+BUG47083 : fast/text/hyphens.html = IMAGE+TEXT

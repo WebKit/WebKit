@@ -1,3 +1,12 @@
+2010-06-21  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Unreviewed, expectations update.
+
+        Mark hyphenation tests as failing on Chromium
+        Hyphenation landed in http://trac.webkit.org/changeset/61548.
+
+        * platform/chromium/test_expectations.txt: Added failing tests.
+
 2010-06-21  Dumitru Daniliuc  <dumi@chromium.org>
 
         Unreviewed, fixing a test expectations on Windows.
