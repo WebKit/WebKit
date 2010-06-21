@@ -66,7 +66,6 @@ typedef void (*BP_CreatePluginMIMETypesPreferencesFuncPtr)(void);
 
     NSDictionary *MIMEToDescription;
     NSDictionary *MIMEToExtensions;
-    NSMutableDictionary *extensionToMIME;
     
     BP_CreatePluginMIMETypesPreferencesFuncPtr BP_CreatePluginMIMETypesPreferences;
 }
@@ -88,13 +87,13 @@ typedef void (*BP_CreatePluginMIMETypesPreferencesFuncPtr)(void);
 
 - (WebCore::String)bundleIdentifier;
 
-- (BOOL)supportsExtension:(NSString *)extension;
+- (BOOL)supportsExtension:(const WebCore::String&)extension;
 - (BOOL)supportsMIMEType:(NSString *)MIMEType;
 
 - (NSArray *)MIMETypes;
 
 - (NSString *)descriptionForMIMEType:(NSString *)MIMEType;
-- (NSString *)MIMETypeForExtension:(NSString *)extension;
+- (NSString *)MIMETypeForExtension:(const WebCore::String&)extension;
 - (NSArray *)extensionsForMIMEType:(NSString *)MIMEType;
 
 - (void)setMIMEToDescriptionDictionary:(NSDictionary *)MIMEToDescriptionDictionary;

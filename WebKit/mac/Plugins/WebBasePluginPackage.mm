@@ -133,7 +133,6 @@ static NSString *pathByResolvingSymlinksAndAliases(NSString *thePath)
         return nil;
     }
 #endif
-    extensionToMIME = [[NSMutableDictionary alloc] init];
     
     return self;
 }
@@ -277,7 +276,6 @@ static NSString *pathByResolvingSymlinksAndAliases(NSString *thePath)
     
     [MIMEToDescription release];
     [MIMEToExtensions release];
-    [extensionToMIME release];
 
     if (cfBundle)
         CFRelease(cfBundle);
@@ -327,9 +325,20 @@ static NSString *pathByResolvingSymlinksAndAliases(NSString *thePath)
     return [MIMEToExtensions allKeys];
 }
 
-- (BOOL)supportsExtension:(NSString *)extension
+- (BOOL)supportsExtension:(const String&)extension
 {
-    return [extensionToMIME objectForKey:extension] != 0;
+    ASSERT(extension.lower() == extension);
+    
+    for (size_t i = 0; i < mimeTypes.size(); ++i) {
+        const MimeClassInfo& mimeClassInfo = mimeTypes[i];
+        
+        for (size_t j = 0; i < mimeClassInfo.extensions.size(); ++j) {
+            if (mimeClassInfo.extensions[j] == extension)
+                return YES;
+        }
+    }
+
+    return NO;
 }
 
 - (BOOL)supportsMIMEType:(NSString *)MIMEType
@@ -342,9 +351,20 @@ static NSString *pathByResolvingSymlinksAndAliases(NSString *thePath)
     return [MIMEToDescription objectForKey:MIMEType];
 }
 
-- (NSString *)MIMETypeForExtension:(NSString *)extension
+- (NSString *)MIMETypeForExtension:(const String&)extension
 {
-    return [extensionToMIME objectForKey:extension];
+    ASSERT(extension.lower() == extension);
+    
+    for (size_t i = 0; i < mimeTypes.size(); ++i) {
+        const MimeClassInfo& mimeClassInfo = mimeTypes[i];
+        
+        for (size_t j = 0; j < mimeClassInfo.extensions.size(); ++j) {
+            if (mimeClassInfo.extensions[j] == extension)
+                return mimeClassInfo.type;
+        }
+    }
+
+    return nil;
 }
 
 - (NSArray *)extensionsForMIMEType:(NSString *)MIMEType
@@ -362,23 +382,6 @@ static NSString *pathByResolvingSymlinksAndAliases(NSString *thePath)
 {
     [MIMEToExtensions release];
     MIMEToExtensions = [MIMEToExtensionsDictionary retain];
-
-    // Reverse the mapping
-    [extensionToMIME removeAllObjects];
-
-    NSEnumerator *MIMEEnumerator = [MIMEToExtensions keyEnumerator], *extensionEnumerator;
-    NSString *MIME, *extension;
-    NSArray *extensions;
-    
-    while ((MIME = [MIMEEnumerator nextObject]) != nil) {
-        extensions = [MIMEToExtensions objectForKey:MIME];
-        extensionEnumerator = [extensions objectEnumerator];
-
-        while ((extension = [extensionEnumerator nextObject]) != nil) {
-            if (![extension isEqualToString:@""])
-                [extensionToMIME setObject:MIME forKey:extension];
-        }
-    }
 }
 
 - (NSString *)description

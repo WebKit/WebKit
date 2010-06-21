@@ -2,6 +2,25 @@
 
         Reviewed by Dan Bernstein.
 
+        Get rid of the extensionToMIME mapping in WebBasePluginPackage
+        https://bugs.webkit.org/show_bug.cgi?id=40897
+
+        Instead of using the extensionToMIME mutable dictionary, use the MIME types vector.
+        While this makes lookup of MIME types based on extensions linear instead of constant,
+        the number of extensions per plug-in is too small for it to matter.
+
+        * Plugins/WebBasePluginPackage.h:
+        * Plugins/WebBasePluginPackage.mm:
+        (-[WebBasePluginPackage initWithPath:]):
+        (-[WebBasePluginPackage dealloc]):
+        (-[WebBasePluginPackage supportsExtension:]):
+        (-[WebBasePluginPackage MIMETypeForExtension:]):
+        (-[WebBasePluginPackage setMIMEToExtensionsDictionary:]):
+
+2010-06-20  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dan Bernstein.
+
         Add a MimeClassInfo Vector to WebBasePluginPackage
         https://bugs.webkit.org/show_bug.cgi?id=40896
 
