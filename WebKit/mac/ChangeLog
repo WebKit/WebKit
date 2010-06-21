@@ -1,3 +1,17 @@
+2010-06-21  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Remove unused dictionary ivars from WebBasePluginPackage
+        https://bugs.webkit.org/show_bug.cgi?id=40928
+
+        * Plugins/WebBasePluginPackage.h:
+        * Plugins/WebBasePluginPackage.mm:
+        (-[WebBasePluginPackage getPluginInfoFromPLists]):
+        (-[WebBasePluginPackage dealloc]):
+        * Plugins/WebNetscapePluginPackage.mm:
+        (-[WebNetscapePluginPackage getPluginInfoFromResources]):
+
 2010-06-21  Dan Bernstein  <mitz@apple.com>
 
         Build fix

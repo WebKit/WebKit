@@ -160,9 +160,6 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
     NSArray *extensions;
     unsigned i;
     
-    NSMutableDictionary *MIMEToExtensionsDictionary = [NSMutableDictionary dictionary];
-    NSMutableDictionary *MIMEToDescriptionDictionary = [NSMutableDictionary dictionary];
-
     for (i=1; 1; i+=2) {
         MIME = [[self stringForStringListID:MIMEListStringStringNumber
                                    andIndex:i] lowercaseString];
@@ -177,26 +174,14 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
             extensions = [extensionsList componentsSeparatedByString:@","];
             for (NSUInteger j = 0; j < [extensions count]; ++j)
                 mimeClassInfo.extensions.append((NSString *)[extensions objectAtIndex:j]);
-
-            [MIMEToExtensionsDictionary setObject:extensions forKey:MIME];
-        } else
-            // DRM and WMP claim MIMEs without extensions. Use a @"" extension in this case.
-            [MIMEToExtensionsDictionary setObject:[NSArray arrayWithObject:@""] forKey:MIME];
+        }
         
         description = [self stringForStringListID:MIMEDescriptionStringNumber
-                                         andIndex:[MIMEToExtensionsDictionary count]];
+                                         andIndex:mimeTypes.size()];
         mimeClassInfo.desc = description;
 
-        if (description)
-            [MIMEToDescriptionDictionary setObject:description forKey:MIME];
-        else
-            [MIMEToDescriptionDictionary setObject:@"" forKey:MIME];
-        
         mimeTypes.append(mimeClassInfo);
     }
-
-    [self setMIMEToDescriptionDictionary:MIMEToDescriptionDictionary];
-    [self setMIMEToExtensionsDictionary:MIMEToExtensionsDictionary];
 
     NSString *filename = [self filename];
     

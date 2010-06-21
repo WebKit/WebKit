@@ -64,9 +64,6 @@ typedef void (*BP_CreatePluginMIMETypesPreferencesFuncPtr)(void);
 
     CFBundleRef cfBundle;
 
-    NSDictionary *MIMEToDescription;
-    NSDictionary *MIMEToExtensions;
-    
     BP_CreatePluginMIMETypesPreferencesFuncPtr BP_CreatePluginMIMETypesPreferences;
 }
 
@@ -90,11 +87,7 @@ typedef void (*BP_CreatePluginMIMETypesPreferencesFuncPtr)(void);
 - (BOOL)supportsExtension:(const WebCore::String&)extension;
 - (BOOL)supportsMIMEType:(const WebCore::String&)MIMEType;
 
-- (NSString *)descriptionForMIMEType:(NSString *)MIMEType;
 - (NSString *)MIMETypeForExtension:(const WebCore::String&)extension;
-
-- (void)setMIMEToDescriptionDictionary:(NSDictionary *)MIMEToDescriptionDictionary;
-- (void)setMIMEToExtensionsDictionary:(NSDictionary *)MIMEToExtensionsDictionary;
 
 - (BOOL)isQuickTimePlugIn;
 - (BOOL)isJavaPlugIn;

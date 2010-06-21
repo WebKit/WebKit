@@ -206,8 +206,6 @@ static NSString *pathByResolvingSymlinksAndAliases(NSString *thePath)
             return NO;
     }
 
-    NSMutableDictionary *MIMEToExtensionsDictionary = [NSMutableDictionary dictionary];
-    NSMutableDictionary *MIMEToDescriptionDictionary = [NSMutableDictionary dictionary];
     NSEnumerator *keyEnumerator = [MIMETypes keyEnumerator];
     NSDictionary *MIMEDictionary;
     NSString *MIME, *description;
@@ -231,9 +229,6 @@ static NSString *pathByResolvingSymlinksAndAliases(NSString *thePath)
             extensions = [NSArray arrayWithObject:@""];
 
         mimeClassInfo.type = String(MIME).lower();
-        MIME = [MIME lowercaseString];
-
-        [MIMEToExtensionsDictionary setObject:extensions forKey:MIME];
 
         description = [MIMEDictionary objectForKey:WebPluginTypeDescriptionKey];
         mimeClassInfo.desc = description;
@@ -241,12 +236,7 @@ static NSString *pathByResolvingSymlinksAndAliases(NSString *thePath)
         mimeTypes.append(mimeClassInfo);
         if (!description)
             description = @"";
-
-        [MIMEToDescriptionDictionary setObject:description forKey:MIME];
     }
-
-    [self setMIMEToExtensionsDictionary:MIMEToExtensionsDictionary];
-    [self setMIMEToDescriptionDictionary:MIMEToDescriptionDictionary];
 
     NSString *filename = [self filename];
 
@@ -276,9 +266,6 @@ static NSString *pathByResolvingSymlinksAndAliases(NSString *thePath)
     ASSERT(!pluginDatabases || [pluginDatabases count] == 0);
     [pluginDatabases release];
     
-    [MIMEToDescription release];
-    [MIMEToExtensions release];
-
     if (cfBundle)
         CFRelease(cfBundle);
     
@@ -322,11 +309,6 @@ static NSString *pathByResolvingSymlinksAndAliases(NSString *thePath)
     return mimeTypes;
 }
 
-- (NSArray *)MIMETypes
-{
-    return [MIMEToExtensions allKeys];
-}
-
 - (BOOL)supportsExtension:(const String&)extension
 {
     ASSERT(extension.lower() == extension);
@@ -353,11 +335,6 @@ static NSString *pathByResolvingSymlinksAndAliases(NSString *thePath)
     return NO;
 }
 
-- (NSString *)descriptionForMIMEType:(NSString *)MIMEType
-{
-    return [MIMEToDescription objectForKey:MIMEType];
-}
-
 - (NSString *)MIMETypeForExtension:(const String&)extension
 {
     ASSERT(extension.lower() == extension);
@@ -371,29 +348,6 @@ static NSString *pathByResolvingSymlinksAndAliases(NSString *thePath)
     }
 
     return nil;
-}
-
-- (NSArray *)extensionsForMIMEType:(NSString *)MIMEType
-{
-    return [MIMEToExtensions objectForKey:MIMEType];
-}
-
-- (void)setMIMEToDescriptionDictionary:(NSDictionary *)MIMEToDescriptionDictionary
-{
-    [MIMEToDescription release];
-    MIMEToDescription = [MIMEToDescriptionDictionary retain];
-}
-
-- (void)setMIMEToExtensionsDictionary:(NSDictionary *)MIMEToExtensionsDictionary
-{
-    [MIMEToExtensions release];
-    MIMEToExtensions = [MIMEToExtensionsDictionary retain];
-}
-
-- (NSString *)description
-{
-    return [NSString stringWithFormat:@"name: %@\npath: %@\nmimeTypes:\n%@\npluginDescription:%@",
-        (NSString *)name, (NSString *)path, [MIMEToExtensions description], [MIMEToDescription description], (NSString *)pluginDescription];
 }
 
 - (BOOL)isQuickTimePlugIn
