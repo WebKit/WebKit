@@ -57,6 +57,7 @@ RGBA32Buffer& RGBA32Buffer::operator=(const RGBA32Buffer& other)
 
 void RGBA32Buffer::clear()
 {
+    m_pixmap = QPixmap();
     m_image = QImage();
     m_status = FrameEmpty;
     // NOTE: Do not reset other members here; clearFrameBufferCache()
@@ -67,7 +68,11 @@ void RGBA32Buffer::clear()
 
 void RGBA32Buffer::zeroFill()
 {
-    m_image.fill(0);
+    if (m_pixmap.isNull() && !m_image.isNull()) {
+        m_pixmap = QPixmap::fromImage(m_image);
+        m_image = QImage();
+    }
+    m_pixmap.fill(QColor(0, 0, 0, 0));
 }
 
 void RGBA32Buffer::copyBitmapData(const RGBA32Buffer& other)
@@ -76,6 +81,7 @@ void RGBA32Buffer::copyBitmapData(const RGBA32Buffer& other)
         return;
 
     m_image = other.m_image;
+    m_pixmap = other.m_pixmap;
     m_size = other.m_size;
     m_hasAlpha = other.m_hasAlpha;
 }
@@ -87,8 +93,9 @@ bool RGBA32Buffer::setSize(int newWidth, int newHeight)
     ASSERT(width() == 0 && height() == 0);
 
     m_size = IntSize(newWidth, newHeight);
-    m_image = QImage(newWidth, newHeight, QImage::Format_ARGB32_Premultiplied);
-    if (m_image.isNull())
+    m_image = QImage();
+    m_pixmap = QPixmap(newWidth, newHeight);
+    if (m_pixmap.isNull())
         return false;
 
     // Zero the image.
@@ -99,10 +106,11 @@ bool RGBA32Buffer::setSize(int newWidth, int newHeight)
 
 QPixmap* RGBA32Buffer::asNewNativeImage() const
 {
-    QPixmap pix = QPixmap::fromImage(m_image);
-    m_image = QImage();
-
-    return new QPixmap(pix);
+    if (m_pixmap.isNull() && !m_image.isNull()) {
+        m_pixmap = QPixmap::fromImage(m_image);
+        m_image = QImage();
+    }
+    return new QPixmap(m_pixmap);
 }
 
 bool RGBA32Buffer::hasAlpha() const
@@ -121,11 +129,12 @@ void RGBA32Buffer::setStatus(FrameStatus status)
 }
 
 // The image must not have format 8888 pre multiplied...
-void RGBA32Buffer::setDecodedImage(const QImage& image)
+void RGBA32Buffer::setPixmap(const QPixmap& pixmap)
 {
-    m_image = image;
-    m_size = image.size();
-    m_hasAlpha = image.hasAlphaChannel();
+    m_pixmap = pixmap;
+    m_image = QImage();
+    m_size = pixmap.size();
+    m_hasAlpha = pixmap.hasAlphaChannel();
 }
 
 int RGBA32Buffer::width() const
