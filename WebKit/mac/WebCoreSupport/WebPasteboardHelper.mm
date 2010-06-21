@@ -37,7 +37,7 @@
 
 using namespace WebCore;
 
-String WebPasteboardHelper::urlFromPasteboard(const NSPasteboard* pasteboard, String* title) const
+String WebPasteboardHelper::urlFromPasteboard(NSPasteboard* pasteboard, String* title) const
 {
     NSURL *URL = [pasteboard _web_bestURL];
     if (title) {
@@ -48,7 +48,7 @@ String WebPasteboardHelper::urlFromPasteboard(const NSPasteboard* pasteboard, St
     return [URL _web_originalDataAsString];
 }
 
-String WebPasteboardHelper::plainTextFromPasteboard(const NSPasteboard *pasteboard) const
+String WebPasteboardHelper::plainTextFromPasteboard(NSPasteboard *pasteboard) const
 {    
     NSArray *types = [pasteboard types];
     
@@ -85,7 +85,7 @@ String WebPasteboardHelper::plainTextFromPasteboard(const NSPasteboard *pasteboa
     return String();
 }
 
-DOMDocumentFragment *WebPasteboardHelper::fragmentFromPasteboard(const NSPasteboard *pasteboard) const
+DOMDocumentFragment *WebPasteboardHelper::fragmentFromPasteboard(NSPasteboard *pasteboard) const
 {   
     return [m_view _documentFragmentFromPasteboard:pasteboard];
 }
