@@ -1,3 +1,11 @@
+2010-06-21  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Unreviewed, Symbian build fix.
+
+        [Qt] Update the def file with recent new exports.
+
+        * symbian/eabi/QtWebKitu.def:
+
 2010-06-21  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Unreviewed build fix.

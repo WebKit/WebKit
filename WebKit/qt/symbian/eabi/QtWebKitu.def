@@ -782,3 +782,4 @@ EXPORTS
 	_ZN23DumpRenderTreeSupportQt20getChildHistoryItemsERK15QWebHistoryItem @ 781 NONAME
 	_ZN23DumpRenderTreeSupportQt23setMockGeolocationErrorEiRK7QString @ 782 NONAME
 	_ZN23DumpRenderTreeSupportQt26setMockGeolocationPositionEddd @ 783 NONAME
+	_ZN23DumpRenderTreeSupportQt29evaluateScriptInIsolatedWorldEP9QWebFrameiRK7QString @ 784 NONAME
