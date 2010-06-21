@@ -1,3 +1,12 @@
+2010-06-21  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Dan Bernstein.
+
+        Chromium/Mac build fix.
+
+        * WebCoreSupport/WebSystemInterface.mm: Change the order of wtf/Platform.h include to let other 
+            headers smell it.
+
 2010-06-21  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Dan Bernstein.

@@ -28,11 +28,11 @@
 
 #import "WebSystemInterface.h"
 
-#import <WebCore/WebCoreSystemInterface.h>
-#import <WebKitSystemInterface.h>
-
 // Needed for builds not using PCH to expose BUILDING_ macros, see bug 32753.
 #include <wtf/Platform.h>
+
+#import <WebCore/WebCoreSystemInterface.h>
+#import <WebKitSystemInterface.h>
 
 #define INIT(function) wk##function = WK##function
 
