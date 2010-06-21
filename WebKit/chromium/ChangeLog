@@ -1,3 +1,18 @@
+2010-06-21  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [Chromium] Enable EVENTSOURCE, FILE_WRITER, and IMAGE_RESIZER
+        https://bugs.webkit.org/show_bug.cgi?id=40905
+
+        EVENTSOURCE: It is already enabled in Chromium browser. This fixes
+        some tests with Chromium DRT.
+
+        FILE_WRITER and IMAGE_RESIZER: Enable experimental features in
+        order to test them before enabling them in Chromium browser.
+
+        * features.gypi:
+
 2010-06-21  Satish Sampath  <satish@chromium.org>
 
         Reviewed by Steve Block.
