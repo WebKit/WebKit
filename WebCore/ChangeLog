@@ -1,3 +1,18 @@
+2010-06-22  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Move HTMLInputStream to its own file
+        https://bugs.webkit.org/show_bug.cgi?id=40974
+
+        No new tests, just code motion.
+
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/HTML5DocumentParser.h:
+
 2010-06-21  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

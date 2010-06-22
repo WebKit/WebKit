@@ -1563,6 +1563,7 @@
             'html/HTMLImageLoader.h',
             'html/HTMLInputElement.cpp',
             'html/HTMLInputElement.h',
+            'html/HTMLInputStream.h',
             'html/HTMLIsIndexElement.cpp',
             'html/HTMLIsIndexElement.h',
             'html/HTMLKeygenElement.cpp',

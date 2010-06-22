@@ -33368,15 +33368,15 @@
 				RelativePath="..\html\FormDataList.h"
 				>
 			</File>
-      <File
+            <File
 				RelativePath="..\html\HTML5DocumentParser.cpp"
 				>
-      </File>
-      <File
+            </File>
+            <File
 				RelativePath="..\html\HTML5DocumentParser.h"
 				>
-      </File>
-      <File
+            </File>
+            <File
 				RelativePath="..\html\HTML5EntityParser.cpp"
 				>
 			</File>
@@ -35428,6 +35428,10 @@
 				RelativePath="..\html\HTMLInputElement.h"
 				>
 			</File>
+            <File
+				RelativePath="..\html\HTMLInputStream.h"
+				>
+            </File>
 			<File
 				RelativePath="..\html\HTMLIsIndexElement.cpp"
 				>
