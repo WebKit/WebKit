@@ -2862,9 +2862,7 @@ BUG46872 : fast/preloader = TEXT
 // Became a flaky crash in http://trac.webkit.org/log/?verbose=on&rev=61417&stop_rev=61393
 BUG46974 WIN : inspector/audits-panel-functional.html = CRASH PASS
 // After enabling meter element, these are failing in debug only.
-BUG46989 MAC DEBUG : fast/dom/HTMLMeterElement/meter-appearances-capacity.html = IMAGE
 BUG46989 MAC DEBUG : fast/dom/HTMLMeterElement/meter-element.html = IMAGE
-BUG46989 MAC DEBUG : fast/dom/HTMLMeterElement/meter-optimums.html = IMAGE
 BUG46989 MAC DEBUG : fast/dom/HTMLMeterElement/meter-styles-changing-pseudo.html = IMAGE
 BUG46989 MAC DEBUG : fast/dom/HTMLMeterElement/meter-styles.html = IMAGE
 
@@ -2877,5 +2875,7 @@ BUG47083 : fast/text/hyphenate-character.html = IMAGE+TEXT
 BUG47083 : fast/text/hyphens.html = IMAGE+TEXT
 
 // Related to https://bugs.webkit.org/show_bug.cgi?id=35350
-BUG45048 : fast/events/show-modal-dialog-onblur-onfocus.html = FAIL
-BUG45048 : fast/harness/show-modal-dialog.html = FAIL
+BUG45048 LINUX MAC : fast/events/show-modal-dialog-onblur-onfocus.html = FAIL
+BUG45048 WIN : fast/events/show-modal-dialog-onblur-onfocus.html = TIMEOUT
+BUG45048 LINUX MAC : fast/harness/show-modal-dialog.html = FAIL
+BUG45048 WIN : fast/harness/show-modal-dialog.html = TIMEOUT

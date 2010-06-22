@@ -1,3 +1,32 @@
+2010-06-22  Kent Tamura  <tkent@chromium.org>
+
+        Unreviewed, test expectation update.
+
+        * platform/chromium-linux/fast/dom/HTMLMeterElement/meter-appearances-capacity-expected.checksum:
+        * platform/chromium-linux/fast/dom/HTMLMeterElement/meter-appearances-capacity-expected.png:
+        * platform/chromium-linux/fast/dom/HTMLMeterElement/meter-appearances-rating-relevancy-expected.checksum:
+        * platform/chromium-linux/fast/dom/HTMLMeterElement/meter-appearances-rating-relevancy-expected.png:
+        * platform/chromium-linux/fast/dom/HTMLMeterElement/meter-optimums-expected.checksum:
+        * platform/chromium-linux/fast/dom/HTMLMeterElement/meter-optimums-expected.png:
+        * platform/chromium-linux/fast/parser/broken-comments-vs-parsing-mode-expected.checksum: Added.
+        * platform/chromium-linux/fast/parser/broken-comments-vs-parsing-mode-expected.png: Added.
+        * platform/chromium-mac/fast/dom/HTMLMeterElement/meter-appearances-capacity-expected.checksum:
+        * platform/chromium-mac/fast/dom/HTMLMeterElement/meter-appearances-capacity-expected.png:
+        * platform/chromium-mac/fast/dom/HTMLMeterElement/meter-optimums-expected.checksum:
+        * platform/chromium-mac/fast/dom/HTMLMeterElement/meter-optimums-expected.png:
+        * platform/chromium-mac/fast/parser/broken-comments-vs-parsing-mode-expected.checksum: Removed.
+        * platform/chromium-mac/fast/parser/broken-comments-vs-parsing-mode-expected.png: Removed.
+        * platform/chromium-win/fast/dom/HTMLMeterElement/meter-appearances-capacity-expected.checksum:
+        * platform/chromium-win/fast/dom/HTMLMeterElement/meter-appearances-capacity-expected.png:
+        * platform/chromium-win/fast/dom/HTMLMeterElement/meter-appearances-rating-relevancy-expected.checksum:
+        * platform/chromium-win/fast/dom/HTMLMeterElement/meter-appearances-rating-relevancy-expected.png:
+        * platform/chromium-win/fast/dom/HTMLMeterElement/meter-optimums-expected.checksum:
+        * platform/chromium-win/fast/dom/HTMLMeterElement/meter-optimums-expected.png:
+        * platform/chromium-win/fast/parser/broken-comments-vs-parsing-mode-expected.checksum:
+        * platform/chromium-win/fast/parser/broken-comments-vs-parsing-mode-expected.png:
+        * platform/chromium-win/fast/parser/broken-comments-vs-parsing-mode-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
 2010-06-22  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
