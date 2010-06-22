@@ -28,7 +28,7 @@
 
 #if USE(ACCELERATED_COMPOSITING)
 
-#import "WebLayer.h"
+#import <QuartzCore/QuartzCore.h>
 
 namespace WebCore {
     class GraphicsLayer;
@@ -39,11 +39,9 @@ namespace WebCore {
 {
     WebCore::GraphicsLayer* m_layerOwner;
     WebCore::GraphicsContext3D* m_context;
-    CGLContextObj m_contextObj;
-    GLuint m_texture;
 }
 
-- (id)initWithContext:(WebCore::GraphicsContext3D*)context;
+- (id)initWithGraphicsContext3D:(WebCore::GraphicsContext3D*)context;
 
 - (CGImageRef)copyImageSnapshotWithColorSpace:(CGColorSpaceRef)colorSpace;
 

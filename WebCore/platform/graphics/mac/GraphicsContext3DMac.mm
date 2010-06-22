@@ -29,6 +29,7 @@
 
 #include "GraphicsContext3D.h"
 
+#import "BlockExceptions.h"
 #include "CanvasObject.h"
 #include "ImageBuffer.h"
 #include "NotImplemented.h"
@@ -38,6 +39,7 @@
 #include "Float32Array.h"
 #include "WebGLFramebuffer.h"
 #include "Int32Array.h"
+#include "WebGLLayer.h"
 #include "WebGLProgram.h"
 #include "WebGLRenderbuffer.h"
 #include "WebGLShader.h"
@@ -146,6 +148,14 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3D::Attributes attrs, HostWi
     
     validateAttributes();
 
+    // Create the WebGLLayer
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
+        m_webGLLayer.adoptNS([[WebGLLayer alloc] initWithGraphicsContext3D:this]);
+#ifndef NDEBUG
+        [m_webGLLayer.get() setName:@"WebGL Layer"];
+#endif    
+    END_BLOCK_OBJC_EXCEPTIONS
+    
     // create a texture to render into
     ::glGenTextures(1, &m_texture);
     ::glBindTexture(GL_TEXTURE_2D, m_texture);

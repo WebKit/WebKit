@@ -30,8 +30,8 @@
 
 #import "WebGLLayer.h"
 
+#import "GraphicsContext3D.h"
 #import "GraphicsLayer.h"
-#import <QuartzCore/QuartzCore.h>
 #import <OpenGL/OpenGL.h>
 #import <wtf/FastMalloc.h>
 #import <wtf/RetainPtr.h>
@@ -41,11 +41,9 @@ using namespace WebCore;
 
 @implementation WebGLLayer
 
--(id)initWithContext:(GraphicsContext3D*)context
+-(id)initWithGraphicsContext3D:(GraphicsContext3D*)context
 {
     m_context = context;
-    m_contextObj = static_cast<CGLContextObj>(context->platformGraphicsContext3D());
-    m_texture = static_cast<GLuint>(context->platformTexture());
     self = [super init];
     return self;
 }
@@ -59,13 +57,13 @@ using namespace WebCore;
     // If needed we will have to set the display mask in the Canvas CGLContext and
     // make sure it matches.
     UNUSED_PARAM(mask);
-    return CGLRetainPixelFormat(CGLGetPixelFormat(m_contextObj));
+    return CGLRetainPixelFormat(CGLGetPixelFormat(m_context->platformGraphicsContext3D()));
 }
 
 -(CGLContextObj)copyCGLContextForPixelFormat:(CGLPixelFormatObj)pixelFormat
 {
     CGLContextObj contextObj;
-    CGLCreateContext(pixelFormat, m_contextObj, &contextObj);
+    CGLCreateContext(pixelFormat, m_context->platformGraphicsContext3D(), &contextObj);
     return contextObj;
 }
 
@@ -86,7 +84,7 @@ using namespace WebCore;
     glLoadIdentity();
 
     glEnable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, m_texture);
+    glBindTexture(GL_TEXTURE_2D, m_context->platformTexture());
     
     glBegin(GL_TRIANGLE_FAN);
         glTexCoord2f(0, 0);
@@ -113,7 +111,7 @@ static void freeData(void *, const void *data, size_t /* size */)
 
 -(CGImageRef)copyImageSnapshotWithColorSpace:(CGColorSpaceRef)colorSpace
 {
-    CGLSetCurrentContext(m_contextObj);
+    CGLSetCurrentContext(m_context->platformGraphicsContext3D());
 
     RetainPtr<CGColorSpaceRef> imageColorSpace = colorSpace;
     if (!imageColorSpace)
@@ -151,7 +149,7 @@ static void freeData(void *, const void *data, size_t /* size */)
 
 @end
 
-@implementation WebGLLayer(WebLayerAdditions)
+@implementation WebGLLayer(WebGLLayerAdditions)
 
 -(void)setLayerOwner:(GraphicsLayer*)aLayer
 {

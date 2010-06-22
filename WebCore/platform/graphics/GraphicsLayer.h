@@ -33,9 +33,6 @@
 #include "FloatPoint.h"
 #include "FloatPoint3D.h"
 #include "FloatSize.h"
-#if ENABLE(3D_CANVAS)
-#include "GraphicsContext3D.h"
-#endif
 #include "GraphicsLayerClient.h"
 #include "IntRect.h"
 #include "TransformationMatrix.h"
@@ -281,6 +278,8 @@ public:
     virtual void setNeedsDisplay() = 0;
     // mark the given rect (in layer coords) as needing dispay. Never goes deep.
     virtual void setNeedsDisplayInRect(const FloatRect&) = 0;
+    
+    virtual void setContentsNeedsDisplay() { };
 
     // Set that the position/size of the contents (image or video).
     IntRect contentsRect() const { return m_contentsRect; }
@@ -302,8 +301,7 @@ public:
     virtual void setContentsBackgroundColor(const Color&) { }
     
 #if ENABLE(3D_CANVAS)
-    virtual void setContentsToGraphicsContext3D(const GraphicsContext3D*) { }
-    virtual void setGraphicsContext3DNeedsDisplay() { }
+    virtual void setContentsToWebGL(PlatformLayer*) { }
 #endif
     // Callback from the underlying graphics system to draw layer contents.
     void paintGraphicsLayerContents(GraphicsContext&, const IntRect& clip);

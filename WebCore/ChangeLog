@@ -1,3 +1,44 @@
+2010-06-22  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        https://bugs.webkit.org/show_bug.cgi?id=40643
+        
+        Final phase of moving ownership of WebGLLayer to GraphicsContext3D.
+        As it turns out, I still have to have a separate CGLContextObj for
+        rendering because Core Animation composites in a separate thread,
+        so we need to disconnect WebGL rendering from CA compositing. But
+        this change is still worthwhile because it reduces dependencies
+        and makes it easier to port WebGL to other platforms.
+        
+        No new tests since this is just restructuring and the current tests
+        are all still valid and do a sufficient test of WebGL functionality.
+
+        * platform/graphics/GraphicsContext3D.h:
+        (WebCore::GraphicsContext3D::platformLayer):
+        * platform/graphics/GraphicsLayer.h:
+        (WebCore::GraphicsLayer::setContentsToWebGL):
+        (WebCore::GraphicsLayer::setWebGLNeedsDisplay):
+        * platform/graphics/mac/GraphicsContext3DMac.mm: Add creation of WebGLLayer
+        (WebCore::GraphicsContext3D::GraphicsContext3D):
+        * platform/graphics/mac/GraphicsLayerCA.h:
+        (WebCore::GraphicsLayerCA::):
+        * platform/graphics/mac/GraphicsLayerCA.mm: Handle setting of WebGLLayer as content the same as for MediaLayer. Also changed WebGL related names for clarity
+        (WebCore::GraphicsLayerCA::GraphicsLayerCA):
+        (WebCore::GraphicsLayerCA::commitLayerChangesBeforeSublayers):
+        (WebCore::GraphicsLayerCA::updateContentsWebGLLayer):
+        (WebCore::GraphicsLayerCA::setContentsToWebGL):
+        (WebCore::GraphicsLayerCA::setWebGLNeedsDisplay):
+        * platform/graphics/mac/WebGLLayer.h:
+        * platform/graphics/mac/WebGLLayer.mm: Got rid of storage for context and texture, now just store GraphicsContext3D and get them from there when needed
+        (-[WebGLLayer copyCGLPixelFormatForDisplayMask:]):
+        (-[WebGLLayer copyCGLContextForPixelFormat:]):
+        (-[WebGLLayer drawInCGLContext:pixelFormat:forLayerTime:displayTime:]):
+        (-[WebGLLayer copyImageSnapshotWithColorSpace:]):
+        * rendering/RenderLayerBacking.cpp: Changed init of WebGL contentsLayer to pass WebGLLayer rather than GraphicsContext3D
+        (WebCore::RenderLayerBacking::updateGraphicsLayerConfiguration):
+        (WebCore::RenderLayerBacking::rendererContentChanged):
+
 2010-06-22  Darin Adler  <darin@apple.com>
 
         Reviewed by Dave Hyatt.

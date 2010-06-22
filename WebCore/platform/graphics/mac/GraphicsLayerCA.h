@@ -89,10 +89,7 @@ public:
 
     virtual void setNeedsDisplay();
     virtual void setNeedsDisplayInRect(const FloatRect&);
-
-#if ENABLE(3D_CANVAS)
-    virtual void setGraphicsContext3DNeedsDisplay();
-#endif
+    virtual void setContentsNeedsDisplay();
     
     virtual void setContentsRect(const IntRect&);
     
@@ -107,7 +104,7 @@ public:
     virtual void setContentsToImage(Image*);
     virtual void setContentsToMedia(PlatformLayer*);
 #if ENABLE(3D_CANVAS)
-    virtual void setContentsToGraphicsContext3D(const GraphicsContext3D*);
+    virtual void setContentsToWebGL(PlatformLayer*);
 #endif
     
     virtual PlatformLayer* platformLayer() const;
@@ -260,7 +257,7 @@ private:
     void updateContentsImage();
     void updateContentsMediaLayer();
 #if ENABLE(3D_CANVAS)
-    void updateContentsGraphicsContext3D();
+    void updateContentsWebGLLayer();
 #endif
     void updateContentsRect();
     void updateGeometryOrientation();
@@ -268,6 +265,7 @@ private:
     void updateReplicatedLayers();
 
     void updateLayerAnimations();
+    void updateContentsNeedsDisplay();
     
     enum StructuralLayerPurpose {
         NoStructuralLayer = 0,
@@ -306,12 +304,13 @@ private:
         ContentsImageChanged = 1 << 17,
         ContentsMediaLayerChanged = 1 << 18,
 #if ENABLE(3D_CANVAS)
-        ContentsGraphicsContext3DChanged = 1 << 19,
+        ContentsWebGLLayerChanged = 1 << 19,
 #endif
         ContentsRectChanged = 1 << 20,
         GeometryOrientationChanged = 1 << 21,
         MaskLayerChanged = 1 << 22,
-        ReplicatedLayerChanged = 1 << 23
+        ReplicatedLayerChanged = 1 << 23,
+        ContentsNeedsDisplay = 1 << 24
     };
     typedef unsigned LayerChangeFlags;
     void noteLayerPropertyChanged(LayerChangeFlags flags);
@@ -333,7 +332,7 @@ private:
         ContentsLayerForImage,
         ContentsLayerForMedia
 #if ENABLE(3D_CANVAS)
-        ,ContentsLayerForGraphicsLayer3D
+        , ContentsLayerForWebGL
 #endif
     };
     
@@ -389,11 +388,6 @@ private:
     Vector<FloatRect> m_dirtyRects;
     
     LayerChangeFlags m_uncommittedChanges;
-    
-#if ENABLE(3D_CANVAS)
-    PlatformGraphicsContext3D m_platformGraphicsContext3D;
-    Platform3DObject m_platformTexture;
-#endif
 };
 
 } // namespace WebCore

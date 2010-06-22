@@ -31,9 +31,6 @@
 
 #import "Animation.h"
 #import "BlockExceptions.h"
-#if ENABLE(3D_CANVAS)
-#import "WebGLLayer.h"
-#endif
 #import "FloatConversion.h"
 #import "FloatRect.h"
 #import "Image.h"
@@ -369,10 +366,6 @@ GraphicsLayerCA::GraphicsLayerCA(GraphicsLayerClient* client)
     , m_contentsLayerPurpose(NoContentsLayer)
     , m_contentsLayerHasBackgroundColor(false)
     , m_uncommittedChanges(NoChange)
-#if ENABLE(3D_CANVAS)
-    , m_platformGraphicsContext3D(NullPlatformGraphicsContext3D)
-    , m_platformTexture(NullPlatform3DObject)
-#endif
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     m_layer.adoptNS([[WebLayer alloc] init]);
@@ -697,6 +690,11 @@ void GraphicsLayerCA::setNeedsDisplayInRect(const FloatRect& rect)
     noteLayerPropertyChanged(DirtyRectsChanged);
 }
 
+void GraphicsLayerCA::setContentsNeedsDisplay()
+{
+    noteLayerPropertyChanged(ContentsNeedsDisplay);
+}
+
 void GraphicsLayerCA::setContentsRect(const IntRect& rect)
 {
     if (rect == m_contentsRect)
@@ -914,8 +912,8 @@ void GraphicsLayerCA::commitLayerChangesBeforeSublayers()
         updateContentsMediaLayer();
     
 #if ENABLE(3D_CANVAS)
-    if (m_uncommittedChanges & ContentsGraphicsContext3DChanged) // Needs to happen before ChildrenChanged
-        updateContentsGraphicsContext3D();
+    if (m_uncommittedChanges & ContentsWebGLLayerChanged) // Needs to happen before ChildrenChanged
+        updateContentsWebGLLayer();
 #endif
     
     if (m_uncommittedChanges & BackgroundColorChanged)  // Needs to happen before ChildrenChanged, and after updating image or video
@@ -968,6 +966,9 @@ void GraphicsLayerCA::commitLayerChangesBeforeSublayers()
 
     if (m_uncommittedChanges & MaskLayerChanged)
         updateMaskLayer();
+
+    if (m_uncommittedChanges & ContentsNeedsDisplay)
+        updateContentsNeedsDisplay();
 
     END_BLOCK_OBJC_EXCEPTIONS
 }
@@ -1390,9 +1391,9 @@ void GraphicsLayerCA::updateContentsMediaLayer()
 }
 
 #if ENABLE(3D_CANVAS)
-void GraphicsLayerCA::updateContentsGraphicsContext3D()
+void GraphicsLayerCA::updateContentsWebGLLayer()
 {
-    // Canvas3D layer was set as m_contentsLayer, and will get parented in updateSublayerList().
+    // WebGLLayer was set as m_contentsLayer, and will get parented in updateSublayerList().
     if (m_contentsLayer) {
         setupContentsLayer(m_contentsLayer.get());
         [m_contentsLayer.get() setNeedsDisplay];
@@ -1716,38 +1717,19 @@ void GraphicsLayerCA::pauseAnimationOnLayer(AnimatedPropertyID property, const S
 }
 
 #if ENABLE(3D_CANVAS)
-void GraphicsLayerCA::setContentsToGraphicsContext3D(const GraphicsContext3D* graphicsContext3D)
+void GraphicsLayerCA::setContentsToWebGL(PlatformLayer* webglLayer)
 {
-    PlatformGraphicsContext3D context = graphicsContext3D->platformGraphicsContext3D();
-    Platform3DObject texture = graphicsContext3D->platformTexture();
-    
-    if (context == m_platformGraphicsContext3D && texture == m_platformTexture)
+    if (webglLayer == m_contentsLayer)
         return;
         
-    m_platformGraphicsContext3D = context;
-    m_platformTexture = texture;
+    m_contentsLayer = webglLayer;
+    if (m_contentsLayer && [m_contentsLayer.get() respondsToSelector:@selector(setLayerOwner:)])
+        [(id)m_contentsLayer.get() setLayerOwner:this];
     
-    noteSublayersChanged();
-    
-    BEGIN_BLOCK_OBJC_EXCEPTIONS
+    m_contentsLayerPurpose = webglLayer ? ContentsLayerForWebGL : NoContentsLayer;
 
-    if (m_platformGraphicsContext3D != NullPlatformGraphicsContext3D && m_platformTexture != NullPlatform3DObject) {
-        // create the inner 3d layer
-        m_contentsLayer.adoptNS([[WebGLLayer alloc] initWithContext:const_cast<GraphicsContext3D*>(graphicsContext3D)]);
-#ifndef NDEBUG
-        [m_contentsLayer.get() setName:@"3D Layer"];
-#endif
-        [m_contentsLayer.get() setLayerOwner:this];
-    } else {
-        // remove the inner layer
-        [m_contentsLayer.get() setLayerOwner:0];
-        m_contentsLayer = 0;
-    }
-    
-    END_BLOCK_OBJC_EXCEPTIONS
-    
-    noteLayerPropertyChanged(ContentsGraphicsContext3DChanged);
-    m_contentsLayerPurpose = m_contentsLayer ? ContentsLayerForGraphicsLayer3D : NoContentsLayer;
+    noteSublayersChanged();
+    noteLayerPropertyChanged(ContentsWebGLLayerChanged);
 }
 #endif
     
@@ -1760,6 +1742,12 @@ void GraphicsLayerCA::repaintLayerDirtyRects()
         [m_layer.get() setNeedsDisplayInRect:m_dirtyRects[i]];
     
     m_dirtyRects.clear();
+}
+
+void GraphicsLayerCA::updateContentsNeedsDisplay()
+{
+    if (m_contentsLayer)
+        [m_contentsLayer.get() setNeedsDisplay];
 }
 
 bool GraphicsLayerCA::createAnimationFromKeyframes(const KeyframeValueList& valueList, const Animation* animation, const String& keyframesName, double timeOffset)
@@ -2566,14 +2554,6 @@ void GraphicsLayerCA::noteLayerPropertyChanged(LayerChangeFlags flags)
     m_uncommittedChanges |= flags;
 }
 
-#if ENABLE(3D_CANVAS)
-void GraphicsLayerCA::setGraphicsContext3DNeedsDisplay()
-{
-    if (m_contentsLayerPurpose == ContentsLayerForGraphicsLayer3D)
-        [m_contentsLayer.get() setNeedsDisplay];
-}
-#endif
-    
 } // namespace WebCore
 
 #endif // USE(ACCELERATED_COMPOSITING)
