@@ -1,5 +1,15 @@
 2010-06-21  Chris Fleizach  <cfleizach@apple.com>
 
+        No review. QT build fix again.
+
+        AX: VoiceOver does not announce WAI-ARIA state change of aria-expanded
+        https://bugs.webkit.org/show_bug.cgi?id=40927
+
+        * accessibility/AXObjectCache.h:
+        (WebCore::AXObjectCache::postNotification):
+
+2010-06-21  Chris Fleizach  <cfleizach@apple.com>
+
         No review. QT build fix.
 
         AX: VoiceOver does not announce WAI-ARIA state change of aria-expanded
