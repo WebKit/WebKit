@@ -3223,18 +3223,16 @@ void AccessibilityRenderObject::contentChanged()
     
 void AccessibilityRenderObject::childrenChanged()
 {
-    // this method is meant as a quick way of marking dirty
-    // a portion of the accessibility tree
-    
+    // This method is meant as a quick way of marking a portion of the accessibility tree dirty.
     if (!m_renderer)
         return;
     
-    // Go up the render parent chain, marking children as dirty.
-    // We can't rely on the accessibilityParent() because it may not exist and we must not create an AX object here either
+    // Go up the accessibility parent chain, but only if the element already exists. This method is
+    // called during render layouts, minimal work should be done. 
+    // If AX elements are created now, they could interrogate the render tree while it's in a funky state.
     // At the same time, process ARIA live region changes.
-    for (RenderObject* renderParent = m_renderer; renderParent; renderParent = renderParent->parent()) {
-        AccessibilityObject* parent = m_renderer->document()->axObjectCache()->get(renderParent);
-        if (!parent || !parent->isAccessibilityRenderObject())
+    for (AccessibilityObject* parent = this; parent; parent = parent->parentObjectIfExists()) {
+        if (!parent->isAccessibilityRenderObject())
             continue;
         
         AccessibilityRenderObject* axParent = static_cast<AccessibilityRenderObject*>(parent);
@@ -3246,7 +3244,7 @@ void AccessibilityRenderObject::childrenChanged()
             
             // If this element supports ARIA live regions, then notify the AT of changes.
             if (axParent->supportsARIALiveRegion())
-                axObjectCache()->postNotification(renderParent, AXObjectCache::AXLiveRegionChanged, true);
+                axObjectCache()->postNotification(axParent->renderer(), AXObjectCache::AXLiveRegionChanged, true);
         }
     }
 }
@@ -3313,8 +3311,7 @@ void AccessibilityRenderObject::addChildren()
     // add all unignored acc children
     for (RefPtr<AccessibilityObject> obj = firstChild(); obj; obj = obj->nextSibling()) {
         if (obj->accessibilityIsIgnored()) {
-            if (!obj->hasChildren())
-                obj->addChildren();
+            obj->updateChildrenIfNecessary();
             AccessibilityChildrenVector children = obj->children();
             unsigned length = children.size();
             for (unsigned i = 0; i < length; ++i)
