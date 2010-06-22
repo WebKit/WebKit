@@ -33,37 +33,37 @@
 
 #if ENABLE(WEB_SOCKETS)
 
+#include "HTTPHeaderMap.h"
 #include "KURL.h"
 #include "PlatformString.h"
-#include <wtf/Vector.h>
 
 namespace WebCore {
 
-class AtomicString;
-
 class WebSocketHandshakeRequest {
 public:
-    WebSocketHandshakeRequest(const KURL&, const String& origin, const String& webSocketProtocol);
+    WebSocketHandshakeRequest(const String& requestMethod, const KURL&);
     ~WebSocketHandshakeRequest();
 
-    // According to current Web Socket protocol specification, four mandatory headers (Upgrade, Connection, Host, and Origin) and
-    // one optional header (WebSocket-Protocol) should be sent in this order, at the beginning of the handshake request.
-    // The remaining headers can be set by using the following function.
-    void addExtraHeaderField(const AtomicString& name, const String& value);
-    void addExtraHeaderField(const char* name, const String& value);
+    String requestMethod() const;
+    KURL url() const;
 
-    // Returns the list of header fields including five special ones.
-    typedef std::pair<AtomicString, String> HeaderField;
-    Vector<HeaderField> headerFields() const;
+    const HTTPHeaderMap& headerFields() const;
+    void addHeaderField(const char* name, const String& value);
+
+    struct Key3 {
+        unsigned char value[8];
+
+        Key3();
+        void set(const unsigned char key3[8]);
+    };
+    Key3 key3() const;
+    void setKey3(const unsigned char key3[8]);
 
 private:
-    String host() const;
-
     KURL m_url;
-    bool m_secure;
-    String m_origin;
-    String m_webSocketProtocol;
-    Vector<HeaderField> m_extraHeaderFields;
+    String m_requestMethod;
+    HTTPHeaderMap m_headerFields;
+    Key3 m_key3;
 };
 
 } // namespace WebCore

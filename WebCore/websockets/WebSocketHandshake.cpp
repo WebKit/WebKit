@@ -279,16 +279,26 @@ WebSocketHandshakeRequest WebSocketHandshake::clientHandshakeRequest() const
     // Keep the following consistent with clientHandshakeMessage().
     // FIXME: do we need to store m_secWebSocketKey1, m_secWebSocketKey2 and
     // m_key3 in WebSocketHandshakeRequest?
-    WebSocketHandshakeRequest request(m_url, clientOrigin(), m_clientProtocol);
+    WebSocketHandshakeRequest request("GET", m_url);
+    request.addHeaderField("Upgrade", "WebSocket");
+    request.addHeaderField("Connection", "Upgrade");
+    request.addHeaderField("Host", hostName(m_url, m_secure));
+    request.addHeaderField("Origin", clientOrigin());
+    if (!m_clientProtocol.isEmpty())
+        request.addHeaderField("Sec-WebSocket-Protocol:", m_clientProtocol);
 
     KURL url = httpURLForAuthenticationAndCookies();
     if (m_context->isDocument()) {
         Document* document = static_cast<Document*>(m_context);
         String cookie = cookieRequestHeaderFieldValue(document, url);
         if (!cookie.isEmpty())
-            request.addExtraHeaderField("Cookie", cookie);
+            request.addHeaderField("Cookie", cookie);
         // Set "Cookie2: <cookie>" if cookies 2 exists for url?
     }
+
+    request.addHeaderField("Sec-WebSocket-Key1", m_secWebSocketKey1);
+    request.addHeaderField("Sec-WebSocket-Key2", m_secWebSocketKey2);
+    request.setKey3(m_key3);
 
     return request;
 }

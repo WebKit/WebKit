@@ -1,3 +1,36 @@
+2010-06-22  Yuta Kitamura  <yutak@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Fix WebSocketHandshakeRequest so that it fits the new handshake protocol.
+
+        The new WebSocket specification (draft 76 and later) allows a browser to
+        send header fields in arbitrary order. Thus we can use a HTTPHeaderMap to
+        store header fields instead of Vector of pairs of a field name and
+        a field value.
+
+        This patch also does refactoring of WebSocketHandshakeRequest class
+        to make it simpler and easier to use.
+
+        Fix WebSocketHandshakeRequest so that it fits the new handshake protocol
+        https://bugs.webkit.org/show_bug.cgi?id=39864
+
+        No new tests, because there is no functional change.
+
+        * websockets/WebSocketHandshake.cpp:
+        (WebCore::WebSocketHandshake::clientHandshakeRequest):
+        * websockets/WebSocketHandshakeRequest.cpp:
+        (WebCore::WebSocketHandshakeRequest::Key3::Key3):
+        (WebCore::WebSocketHandshakeRequest::Key3::set):
+        (WebCore::WebSocketHandshakeRequest::WebSocketHandshakeRequest):
+        (WebCore::WebSocketHandshakeRequest::requestMethod):
+        (WebCore::WebSocketHandshakeRequest::url):
+        (WebCore::WebSocketHandshakeRequest::addHeaderField):
+        (WebCore::WebSocketHandshakeRequest::headerFields):
+        (WebCore::WebSocketHandshakeRequest::key3):
+        (WebCore::WebSocketHandshakeRequest::setKey3):
+        * websockets/WebSocketHandshakeRequest.h:
+
 2010-06-20  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Kent Tamura.

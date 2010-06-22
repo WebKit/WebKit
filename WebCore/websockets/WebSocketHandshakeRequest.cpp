@@ -34,60 +34,60 @@
 
 #include "WebSocketHandshakeRequest.h"
 
-#include "AtomicString.h"
-#include "StringBuilder.h"
-#include <utility>
-#include <wtf/Assertions.h>
+#include <cstring>
 
 using namespace std;
 
 namespace WebCore {
 
-WebSocketHandshakeRequest::WebSocketHandshakeRequest(const KURL& url, const String& origin, const String& webSocketProtocol)
-    : m_url(url)
-    , m_secure(m_url.protocolIs("wss"))
-    , m_origin(origin)
-    , m_webSocketProtocol(webSocketProtocol)
+WebSocketHandshakeRequest::Key3::Key3()
 {
-    ASSERT(!origin.isNull());
+    memset(value, 0, sizeof(value));
+}
+
+void WebSocketHandshakeRequest::Key3::set(const unsigned char key3[8])
+{
+    memcpy(value, key3, sizeof(value));
+}
+
+WebSocketHandshakeRequest::WebSocketHandshakeRequest(const String& requestMethod, const KURL& url)
+    : m_url(url)
+    , m_requestMethod(requestMethod)
+{
 }
 
 WebSocketHandshakeRequest::~WebSocketHandshakeRequest()
 {
 }
 
-void WebSocketHandshakeRequest::addExtraHeaderField(const AtomicString& name, const String& value)
+String WebSocketHandshakeRequest::requestMethod() const
 {
-    m_extraHeaderFields.append(HeaderField(name, value));
+    return m_requestMethod;
 }
 
-void WebSocketHandshakeRequest::addExtraHeaderField(const char* name, const String& value)
+KURL WebSocketHandshakeRequest::url() const
 {
-    m_extraHeaderFields.append(HeaderField(name, value));
+    return m_url;
 }
 
-Vector<WebSocketHandshakeRequest::HeaderField> WebSocketHandshakeRequest::headerFields() const
+void WebSocketHandshakeRequest::addHeaderField(const char* name, const String& value)
 {
-    Vector<HeaderField> fields;
-    fields.append(HeaderField("Upgrade", "WebSocket"));
-    fields.append(HeaderField("Connection", "Upgrade"));
-    fields.append(HeaderField("Host", host()));
-    fields.append(HeaderField("Origin", m_origin));
-    if (!m_webSocketProtocol.isEmpty())
-        fields.append(HeaderField("WebSocket-Protocol", m_webSocketProtocol));
-    fields.append(m_extraHeaderFields);
-    return fields;
+    m_headerFields.add(name, value);
 }
 
-String WebSocketHandshakeRequest::host() const
+const HTTPHeaderMap& WebSocketHandshakeRequest::headerFields() const
 {
-    StringBuilder builder;
-    builder.append(m_url.host().lower());
-    if ((!m_secure && m_url.port() != 80) || (m_secure && m_url.port() != 443)) {
-        builder.append(":");
-        builder.append(String::number(m_url.port()));
-    }
-    return builder.toString();
+    return m_headerFields;
+}
+
+WebSocketHandshakeRequest::Key3 WebSocketHandshakeRequest::key3() const
+{
+    return m_key3;
+}
+
+void WebSocketHandshakeRequest::setKey3(const unsigned char key3[8])
+{
+    m_key3.set(key3);
 }
 
 } // namespace WebCore
