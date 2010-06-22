@@ -1,3 +1,17 @@
+2010-06-22  Tony Gentilcore  <tonyg@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Add layout tests which test line numbers for both inline and event handler
+        scripts in HTML documents.
+        https://bugs.webkit.org/show_bug.cgi?id=40649
+
+        * fast/js/resources/script-line-number.js: Added.
+        (getLineFromError):
+        (assertErrorOnLine):
+        * fast/js/script-line-number-expected.txt: Added.
+        * fast/js/script-line-number.html: Added.
+
 2010-06-22  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

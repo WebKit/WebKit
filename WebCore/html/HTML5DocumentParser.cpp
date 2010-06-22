@@ -220,15 +220,8 @@ void HTML5DocumentParser::pumpLexer(SynchronousMode mode)
         if (!m_lexer->nextToken(m_input.current(), m_token))
             break;
 
-        if (ScriptController* scriptController = script())
-            scriptController->setEventHandlerLineNumber(lineNumber() + 1);
-
         m_treeConstructor->constructTreeFromToken(m_token);
         m_token.clear();
-
-        // FIXME: Why is setEventHandlerLineNumber(0) necessary?
-        if (ScriptController* scriptController = script())
-            scriptController->setEventHandlerLineNumber(0);
 
         // The parser will pause itself when waiting on a script to load or run.
         if (!m_treeConstructor->isPaused())

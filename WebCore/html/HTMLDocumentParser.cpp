@@ -48,7 +48,6 @@
 #include "InspectorTimelineAgent.h"
 #include "Page.h"
 #include "PreloadScanner.h"
-#include "ScriptController.h"
 #include "ScriptSourceCode.h"
 #include "ScriptValue.h"
 #include "XSSAuditor.h"
@@ -1893,18 +1892,12 @@ bool HTMLDocumentParser::finishWasCalled()
 
 PassRefPtr<Node> HTMLDocumentParser::processToken()
 {
-    ScriptController* scriptController = (!m_fragment && m_doc->frame()) ? m_doc->frame()->script() : 0;
-    if (scriptController && scriptController->canExecuteScripts(NotAboutToExecuteScript))
-        // FIXME: Why isn't this m_currentScriptTagStartLineNumber?  I suspect this is wrong.
-        scriptController->setEventHandlerLineNumber(m_currentTagStartLineNumber + 1); // Script line numbers are 1 based.
     if (m_dest > m_buffer) {
         m_currentToken.text = StringImpl::createStrippingNullCharacters(m_buffer, m_dest - m_buffer);
         if (m_currentToken.tagName != commentAtom)
             m_currentToken.tagName = textAtom;
     } else if (m_currentToken.tagName == nullAtom) {
         m_currentToken.reset();
-        if (scriptController)
-            scriptController->setEventHandlerLineNumber(m_lineNumber + 1); // Script line numbers are 1 based.
         return 0;
     }
 
@@ -1922,8 +1915,6 @@ PassRefPtr<Node> HTMLDocumentParser::processToken()
             n = m_treeConstructor->parseToken(&m_currentToken);
     }
     m_currentToken.reset();
-    if (scriptController)
-        scriptController->setEventHandlerLineNumber(0);
 
     return n.release();
 }

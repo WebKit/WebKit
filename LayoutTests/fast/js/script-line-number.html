@@ -1,0 +1,20 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="resources/js-test-style.css">
+<script src="resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script src="resources/script-line-number.js" onload="try { nonExistentFunctionOnLine10(); } catch (e) { assertErrorOnLine(e, 10); }"></script>
+<script>
+try {
+    nonExistentFunctionOnLine13();
+} catch (e) {
+    assertErrorOnLine(e, 13);
+}
+</script>
+<script src="resources/js-test-post.js"></script>
+</body>
+</html>

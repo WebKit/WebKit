@@ -117,9 +117,8 @@ public:
     ScriptValue evaluate(const ScriptSourceCode&, ShouldAllowXSS shouldAllowXSS = DoNotAllowXSS);
     ScriptValue evaluateInWorld(const ScriptSourceCode&, DOMWrapperWorld*, ShouldAllowXSS shouldAllowXSS = DoNotAllowXSS);
 
-    void setEventHandlerLineNumber(int lineno) { m_handlerLineNumber = lineno; }
-    int eventHandlerLineNumber() { return m_handlerLineNumber; }
-
+    int eventHandlerLineNumber() const;
+    
     void setProcessingTimerCallback(bool b) { m_processingTimerCallback = b; }
     bool processingUserGesture(DOMWrapperWorld*) const;
     bool anyPageIsProcessingUserGesture() const;
@@ -187,7 +186,6 @@ private:
 
     ShellMap m_windowShells;
     Frame* m_frame;
-    int m_handlerLineNumber;
     const String* m_sourceURL;
 
     bool m_inExecuteScript;

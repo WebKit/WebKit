@@ -44,7 +44,6 @@
 #include "ResourceHandle.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
-#include "ScriptController.h"
 #include "ScriptElement.h"
 #include "ScriptSourceCode.h"
 #include "ScriptValue.h"
@@ -783,18 +782,11 @@ void XMLDocumentParser::startElementNs(const xmlChar* xmlLocalName, const xmlCha
         return;
     }
 
-    ScriptController* jsProxy = m_doc->frame() ? m_doc->frame()->script() : 0;
-    if (jsProxy && m_doc->frame()->script()->canExecuteScripts(NotAboutToExecuteScript))
-        jsProxy->setEventHandlerLineNumber(lineNumber());
-
     handleElementAttributes(newElement.get(), libxmlAttributes, nb_attributes, ec, m_scriptingPermission);
     if (ec) {
         stopParsing();
         return;
     }
-
-    if (jsProxy)
-        jsProxy->setEventHandlerLineNumber(0);
 
     newElement->beginParsingChildren();
 

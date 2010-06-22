@@ -19502,7 +19502,7 @@
 				B56EBA8511C9FF8100B04477 /* SQLException.h in Headers */,
 				B525A96511CA2340003A23A8 /* JSSQLException.h in Headers */,
 				9719AF0011D09F2C00D45831 /* HTMLInputStream.h in Headers */,
- 				A853123D11D0471B00D4D077 /* FragmentScriptingPermission.h in Headers */,
+				A853123D11D0471B00D4D077 /* FragmentScriptingPermission.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

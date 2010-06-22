@@ -64,8 +64,8 @@ private:
     class PendingScript : public CachedResourceClient {
     public:
         PendingScript()
-            : m_watchingForLoad(false)
-            , startingLineNumber(0)
+            : startingLineNumber(0)
+            , m_watchingForLoad(false)
         {
         }
 
