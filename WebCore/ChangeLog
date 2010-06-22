@@ -1,5 +1,17 @@
 2010-06-22  Darin Adler  <darin@apple.com>
 
+        Reviewed by Alexey Proskuryakov.
+
+        Alexey asked me to take out the autorelease pools because he believes
+        that there is no code that should be running using Objective-C
+        autorelease. Most likely, the code that is triggering these stderr
+        messages is incorrect, and that bug should be fixed instead.
+
+        * workers/WorkerRunLoop.cpp:
+        (WebCore::WorkerRunLoop::run): Roll out use of AutodrainedPool.
+
+2010-06-22  Darin Adler  <darin@apple.com>
+
         Reviewed by Brady Eidson.
 
         Fix autorelease problem seen when running worker regression tests.
