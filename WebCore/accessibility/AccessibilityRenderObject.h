@@ -227,7 +227,8 @@ public:
     virtual bool shouldFocusActiveDescendant() const;
     virtual AccessibilityObject* activeDescendant() const;
     virtual void handleActiveDescendantChanged();
-
+    virtual void handleAriaExpandedChanged();
+    
     virtual VisiblePositionRange visiblePositionRange() const;
     virtual VisiblePositionRange visiblePositionRangeForLine(unsigned) const;
     virtual IntRect boundsForVisiblePositionRange(const VisiblePositionRange&) const;

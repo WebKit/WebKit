@@ -456,6 +456,15 @@ void AXObjectCache::selectedChildrenChanged(RenderObject* renderer)
 #endif
 
 #if HAVE(ACCESSIBILITY)
+void AXObjectCache::handleAriaExpandedChange(RenderObject *renderer)
+{
+    if (!renderer)
+        return;
+    AccessibilityObject* obj = getOrCreate(renderer);
+    if (obj)
+        obj->handleAriaExpandedChanged();
+}
+    
 void AXObjectCache::handleActiveDescendantChanged(RenderObject* renderer)
 {
     if (!renderer)

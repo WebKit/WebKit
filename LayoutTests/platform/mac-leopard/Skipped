@@ -35,6 +35,7 @@ platform/mac/accessibility/aria-treegrid.html
 platform/mac/accessibility/inherited-presentational-lists.html
 platform/mac/accessibility/stale-table-rows.html
 platform/mac/accessibility/parent-of-table-row-is-table.html
+platform/mac/accessibility/aria-expanded-notifications.html
 
 # This test requires ogg codecs
 media/media-can-play-ogg.html

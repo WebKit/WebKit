@@ -2832,6 +2832,39 @@ AccessibilityObject* AccessibilityRenderObject::activeDescendant() const
     return 0;
 }
 
+void AccessibilityRenderObject::handleAriaExpandedChanged()
+{
+    // Find if a parent of this object should handle aria-expanded changes.
+    AccessibilityObject* containerParent = this->parentObject();
+    while (containerParent) {
+        bool foundParent = false;
+        
+        switch (containerParent->roleValue()) {
+        case TreeRole:
+        case TreeGridRole:
+        case GridRole:
+        case TableRole:
+        case BrowserRole:
+            foundParent = true;
+            break;
+        default:
+            break;
+        }
+        
+        if (foundParent)
+            break;
+        
+        containerParent = containerParent->parentObject();
+    }
+    
+    // Post that the row count changed.
+    if (containerParent)
+        axObjectCache()->postNotification(containerParent, document(), AXObjectCache::AXRowCountChanged, true);
+
+    // Post that the specific row either collapsed or expanded.
+    if (roleValue() == RowRole || roleValue() == TreeItemRole)
+        axObjectCache()->postNotification(this, document(), isExpanded() ? AXObjectCache::AXRowExpanded : AXObjectCache::AXRowCollapsed, true);
+}
 
 void AccessibilityRenderObject::handleActiveDescendantChanged()
 {

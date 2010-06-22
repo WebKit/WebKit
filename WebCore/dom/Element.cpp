@@ -639,6 +639,8 @@ void Element::updateAfterAttributeChanged(Attribute* attr)
         document()->axObjectCache()->contentChanged(renderer());
     } else if (attrName == aria_selectedAttr)
         document()->axObjectCache()->selectedChildrenChanged(renderer());
+    else if (attrName == aria_expandedAttr)
+        document()->axObjectCache()->handleAriaExpandedChange(renderer());
 }
     
 void Element::recalcStyleIfNeededAfterAttributeChanged(Attribute* attr)

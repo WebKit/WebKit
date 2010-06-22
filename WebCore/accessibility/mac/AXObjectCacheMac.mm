@@ -91,7 +91,18 @@ void AXObjectCache::postPlatformNotification(AccessibilityObject* obj, AXNotific
         case AXLiveRegionChanged:
             macNotification = NSAccessibilityLiveRegionChangedNotification;
             break;
-        // Does not exist on Mac.
+        case AXRowCountChanged:
+            macNotification = NSAccessibilityRowCountChangedNotification;
+            break;
+#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+        case AXRowExpanded:
+            macNotification = NSAccessibilityRowExpandedNotification;
+            break;
+        case AXRowCollapsed:
+            macNotification = NSAccessibilityRowCollapsedNotification;
+            break;
+#endif
+            // Does not exist on Mac.
         case AXCheckedStateChanged:
         default:
             return;

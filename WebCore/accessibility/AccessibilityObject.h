@@ -450,7 +450,8 @@ public:
     virtual bool shouldFocusActiveDescendant() const { return false; }
     virtual AccessibilityObject* activeDescendant() const { return 0; }    
     virtual void handleActiveDescendantChanged() { }
-
+    virtual void handleAriaExpandedChanged() { }
+    
     static AccessibilityRole ariaRoleToWebCoreRole(const String&);
     static const AtomicString& getAttribute(Node*, const QualifiedName&);
 
