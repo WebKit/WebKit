@@ -1,3 +1,16 @@
+2010-06-22  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Follow the HTML5 spec more closely w.r.t. when to save the insertion point
+        https://bugs.webkit.org/show_bug.cgi?id=40976
+
+        This test no longer asserts.  The output is incorrect, however.  I'll
+        fix the output in the next patch.
+
+        * fast/tokenizer/write-on-load-expected.txt: Added.
+        * fast/tokenizer/write-on-load.html: Added.
+
 2010-06-21  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Reviewed by Alexey Proskuryakov.

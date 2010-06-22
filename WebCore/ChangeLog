@@ -2,6 +2,31 @@
 
         Reviewed by Eric Seidel.
 
+        Follow the HTML5 spec more closely w.r.t. when to save the insertion point
+        https://bugs.webkit.org/show_bug.cgi?id=40976
+
+        The spec always increments the nesting level and saves the insertion
+        point at the same time.  In this patch, we now do those operations
+        packaged as a RAII.
+
+        As a side effect, the test case below no longer ASSERTs.  (The output
+        is wrong, but we'll get to that next.)
+
+        Test: fast/tokenizer/write-on-load.html
+
+        * html/HTML5ScriptRunner.cpp:
+        (WebCore::NestScript::NestScript):
+        (WebCore::NestScript::~NestScript):
+        (WebCore::HTML5ScriptRunner::executePendingScript):
+        (WebCore::HTML5ScriptRunner::executeScript):
+        (WebCore::HTML5ScriptRunner::requestScript):
+        (WebCore::HTML5ScriptRunner::runScript):
+        * html/HTMLInputStream.h:
+
+2010-06-22  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         Expose HTMLInputStream to ScriptRunner so that ScriptRunner can save the insertion point itself
         https://bugs.webkit.org/show_bug.cgi?id=40975
 

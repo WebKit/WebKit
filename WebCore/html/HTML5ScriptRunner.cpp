@@ -43,6 +43,25 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
+class NestScript : public Noncopyable {
+public:
+    NestScript(unsigned& nestingLevel, HTMLInputStream& inputStream)
+        : m_nestingLevel(&nestingLevel)
+        , m_savedInsertionPoint(inputStream)
+    {
+        ++(*m_nestingLevel);
+    }
+
+    ~NestScript()
+    {
+        --(*m_nestingLevel);
+    }
+
+private:
+    unsigned* m_nestingLevel;
+    InsertionPointRecord m_savedInsertionPoint;
+};
+
 HTML5ScriptRunner::HTML5ScriptRunner(Document* document, HTML5ScriptRunnerHost* host)
     : m_document(document)
     , m_host(host)
@@ -114,15 +133,15 @@ void HTML5ScriptRunner::executePendingScript()
     // Clear the pending script before possible rentrancy from executeScript()
     RefPtr<Element> scriptElement = m_parsingBlockingScript.element.release();
     m_parsingBlockingScript = PendingScript();
-
-    m_scriptNestingLevel++;
-    if (errorOccurred)
-        scriptElement->dispatchEvent(createScriptErrorEvent());
-    else {
-        executeScript(scriptElement.get(), sourceCode);
-        scriptElement->dispatchEvent(createScriptLoadEvent());
+    {
+        NestScript nestingLevel(m_scriptNestingLevel, m_host->inputStream());
+        if (errorOccurred)
+            scriptElement->dispatchEvent(createScriptErrorEvent());
+        else {
+            executeScript(scriptElement.get(), sourceCode);
+            scriptElement->dispatchEvent(createScriptLoadEvent());
+        }
     }
-    m_scriptNestingLevel--;
     ASSERT(!m_scriptNestingLevel);
 }
 
@@ -139,8 +158,6 @@ void HTML5ScriptRunner::executeScript(Element* element, const ScriptSourceCode& 
     ASSERT(inScriptExecution());
     if (!m_document->frame())
         return;
-
-    InsertionPointRecord savedInsertionPoint(m_host->inputStream());
     m_document->frame()->script()->executeScript(sourceCode);
 }
 
@@ -236,11 +253,8 @@ void HTML5ScriptRunner::requestScript(Element* script)
     if (!m_host->shouldLoadExternalScriptFromSrc(srcValue))
         return;
     // FIXME: We need to resolve the url relative to the element.
-    {
-        InsertionPointRecord savedInsertionPoint(m_host->inputStream());
-        if (!script->dispatchBeforeLoadEvent(srcValue))
-            return;
-    }
+    if (!script->dispatchBeforeLoadEvent(srcValue))
+        return;
     m_parsingBlockingScript.element = script;
     // This should correctly return 0 for empty or invalid srcValues.
     CachedScript* cachedScript = m_document->docLoader()->requestScript(srcValue, toScriptElement(script)->scriptCharset());
@@ -265,20 +279,22 @@ void HTML5ScriptRunner::requestScript(Element* script)
 void HTML5ScriptRunner::runScript(Element* script, int startingLineNumber)
 {
     ASSERT(!haveParsingBlockingScript());
-    m_scriptNestingLevel++;
-    // Check script type and language, current code uses ScriptElement::shouldExecuteAsJavaScript(), but that may not be HTML5 compliant.
-    notImplemented(); // event for support
+    {
+        NestScript nestingLevel(m_scriptNestingLevel, m_host->inputStream());
 
-    if (script->hasAttribute(srcAttr)) {
-        // FIXME: Handle defer and async
-        requestScript(script);
-    } else {
-        // FIXME: We do not block inline <script> tags on stylesheets to match the
-        // old parser for now.  See https://bugs.webkit.org/show_bug.cgi?id=40047
-        ScriptSourceCode sourceCode(script->textContent(), documentURLForScriptExecution(m_document), startingLineNumber);
-        executeScript(script, sourceCode);
+        // Check script type and language, current code uses ScriptElement::shouldExecuteAsJavaScript(), but that may not be HTML5 compliant.
+        notImplemented(); // event for support
+
+        if (script->hasAttribute(srcAttr)) {
+            // FIXME: Handle defer and async
+            requestScript(script);
+        } else {
+            // FIXME: We do not block inline <script> tags on stylesheets to match the
+            // old parser for now.  See https://bugs.webkit.org/show_bug.cgi?id=40047
+            ScriptSourceCode sourceCode(script->textContent(), documentURLForScriptExecution(m_document), startingLineNumber);
+            executeScript(script, sourceCode);
+        }
     }
-    m_scriptNestingLevel--;
 }
 
 }

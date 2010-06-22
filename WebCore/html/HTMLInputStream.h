@@ -47,7 +47,7 @@ namespace WebCore {
 // m_last is a pointer to the last of the afterInsertionPoint strings.
 // The network adds data at the end of the InputStream, which appends
 // them to the "last" string.
-class HTMLInputStream {
+class HTMLInputStream : public Noncopyable {
 public:
     HTMLInputStream()
         : m_last(&m_first)
@@ -102,7 +102,7 @@ private:
     SegmentedString* m_last;
 };
 
-class InsertionPointRecord {
+class InsertionPointRecord : public Noncopyable {
 public:
     explicit InsertionPointRecord(HTMLInputStream& inputStream)
         : m_inputStream(&inputStream)
