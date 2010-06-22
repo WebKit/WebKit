@@ -2,6 +2,14 @@
 
         Reviewed by Sam Weinig.
 
+        Get rid of more USE_LIBDISPATCH code.
+
+        * Plugins/Hosted/NetscapePluginHostProxy.h:
+
+2010-06-22  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
         Get rid of the USE_LIBDISPATCH code.
 
         * Plugins/Hosted/NetscapePluginHostProxy.mm:

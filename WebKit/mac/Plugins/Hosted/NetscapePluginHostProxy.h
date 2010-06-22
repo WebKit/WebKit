@@ -84,11 +84,7 @@ private:
     mach_port_t m_clientPort;
     mach_port_t m_portSet;
     
-#ifdef USE_LIBDISPATCH
-    dispatch_source_t m_clientPortSource;
-#else
     RetainPtr<CFRunLoopSourceRef> m_clientPortSource;
-#endif
     mach_port_t m_pluginHostPort;
     RetainPtr<CFMachPortRef> m_deadNameNotificationPort;
     
