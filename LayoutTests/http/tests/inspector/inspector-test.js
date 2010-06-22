@@ -18,6 +18,7 @@ function onload()
         if (name.indexOf("frontend_") === 0 && typeof window[name] === "function")
             toInject.push(window[name].toString());
     }
+    toInject.push("frontend_setupTestEnvironment();");
     evaluateInWebInspector(toInject.join("\n"), doit);
 }
 
@@ -98,4 +99,9 @@ function frontend_dumpTreeItem(treeItem, result, prefix)
     var children = treeItem.children;
     for (var i = 0; children && i < children.length; ++i)
         frontend_dumpTreeItem(children[i], result, prefix + "    ");
+}
+
+function frontend_setupTestEnvironment()
+{
+   WebInspector.showElementsPanel();
 }

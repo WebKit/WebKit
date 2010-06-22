@@ -1,3 +1,15 @@
+2010-06-22  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: inspector/elements-panel-limited-children.html test fails
+        https://bugs.webkit.org/show_bug.cgi?id=40924
+
+        * http/tests/inspector/inspector-test.js:
+        (onload):
+        (frontend_setupTestEnvironment): always start inspector test with Elements panel as current one.
+        * inspector/elements-panel-limited-children.html:
+
 2010-06-22  Kent Tamura  <tkent@chromium.org>
 
         Unreviewed, test expectation update.

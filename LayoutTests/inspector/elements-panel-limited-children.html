@@ -55,12 +55,11 @@ function doit()
             preOutput(result);
             notifyDone();
         }
-        evaluateInWebInspector("frontend_expandNode", nodeExpandedCallback);
+        evaluateInWebInspector("frontend_revealAndExpandDataNodeInElementsPanel", nodeExpandedCallback);
     }
 
     evaluateInWebInspector("frontend_loadDOM", domLoadedCallback);
 }
-
 
 // Frontend functions.
 
@@ -106,7 +105,7 @@ function frontend_dumpNode(testController)
     setTimeout(dumpFunction, 0);
 }
 
-function frontend_expandNode(testController)
+function frontend_revealAndExpandDataNodeInElementsPanel(testController)
 {
     var dataDivTreeElement = frontend_getDataTreeElement();
     if (!dataDivTreeElement) {
@@ -140,7 +139,7 @@ function frontend_getDataTreeElement()
     var node = frontend_getDataDOMElement();
     if (!node)
         return null;
-    return WebInspector.panels.elements.treeOutline.createTreeElementFor(node);
+    return WebInspector.panels.elements.treeOutline.findTreeElement(node);
 }
 
 
@@ -150,7 +149,7 @@ function frontend_getDataDOMElement()
 
     for (var nodeId in innerMapping) {
         var node = innerMapping[nodeId];
-        if (node.nodeName === "DIV" || node.getAttribute("id") === "data")
+        if (node.nodeName === "DIV" && node.getAttribute("id") === "data")
             return node;
     }
     return null;
