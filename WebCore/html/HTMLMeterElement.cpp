@@ -191,7 +191,7 @@ HTMLMeterElement::GaugeRegion HTMLMeterElement::gaugeRegion() const
     }
 
     // The optimum range stays between high and low
-    if (lowValue < highValue && theValue < highValue)
+    if (lowValue < theValue && theValue < highValue)
         return GaugeRegionOptimum;
     if (theValue == min() || max() == theValue)
         return GaugeRegionEvenLessGood;

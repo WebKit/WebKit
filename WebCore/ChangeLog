@@ -1,3 +1,18 @@
+2010-06-20  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Kent Tamura.
+
+        <meter> should be yellow when  min < value < low < optimum
+        https://bugs.webkit.org/show_bug.cgi?id=40824
+        
+        Fixed a wrong conditional on HTMLMeterElement::gaugeRegion().
+        
+        * html/HTMLMeterElement.cpp:
+        (WebCore::HTMLMeterElement::gaugeRegion):
+
+        Tests: fast/dom/HTMLMeterElement/meter-appearances-capacity.html
+               fast/dom/HTMLMeterElement/meter-optimums.html
+
 2010-06-22  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
