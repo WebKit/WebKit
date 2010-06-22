@@ -234,9 +234,9 @@ void HTML5ScriptRunner::requestScript(Element* script)
         return;
 
     // FIXME: We need to resolve the url relative to the element.
-    m_parsingBlockingScript.element = script;
     if (!script->dispatchBeforeLoadEvent(srcValue)) // Part of HTML5?
         return;
+    m_parsingBlockingScript.element = script;
     // This should correctly return 0 for empty or invalid srcValues.
     CachedScript* cachedScript = m_document->docLoader()->requestScript(srcValue, toScriptElement(script)->scriptCharset());
     if (!cachedScript) {

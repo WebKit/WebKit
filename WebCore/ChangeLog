@@ -1,3 +1,18 @@
+2010-06-21  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        document.write from BeforeLoad should not assert
+        https://bugs.webkit.org/show_bug.cgi?id=40971
+
+        We're setting the parse blocking script too early.  It's not actually
+        blocking parsing yet.
+
+        Test: fast/tokenizer/write-before-load.html
+
+        * html/HTML5ScriptRunner.cpp:
+        (WebCore::HTML5ScriptRunner::requestScript):
+
 2010-06-21  Chris Fleizach  <cfleizach@apple.com>
 
         No review. QT build fix again.
