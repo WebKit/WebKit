@@ -1,3 +1,42 @@
+2010-06-21  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Darin Fisher.
+
+        [Chromium] Dragging outside the frame immediately causes page to scroll
+        http://webkit.org/b/40461
+
+        This is regression that was introduced at http://webkit.org/b/39725.
+        
+        There are 2 problems:
+        1. It starts auto-scrolling immediately. We should have some delay.
+        2. The scroll continues even after a mouse cursor goes outside a frame.
+           The scroll should be stopped when the curosr has left.
+        
+        This change introduced DragScrollTimer to handle 1. 
+        At the same time, it fixed DragScrollTimer::scrollDistanceFor() to
+        handle 2, We now stop scrolling when the cursor gone.
+        
+        * WebKit.gyp:
+        * src/DragScrollTimer.cpp: Added.
+        (WebKit::distanceToRect):
+        (WebKit::DragScrollTimer::DragScrollTimer):
+        (WebKit::DragScrollTimer::~DragScrollTimer):
+        (WebKit::DragScrollTimer::stop):
+        (WebKit::DragScrollTimer::scroll):
+        (WebKit::DragScrollTimer::update):
+        (WebKit::DragScrollTimer::triggerScroll):
+        (WebKit::DragScrollTimer::scrollDistanceFor):
+        * src/DragScrollTimer.h: Added.
+        (WebKit::DragScrollTimer::fired):
+        (WebKit::DragScrollTimer::shouldScroll):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::WebViewImpl):
+        (WebKit::WebViewImpl::dragSourceEndedAt):
+        (WebKit::WebViewImpl::dragSourceMovedTo):
+        (WebKit::WebViewImpl::dragTargetDrop):
+        (WebKit::WebViewImpl::dragTargetDragEnterOrOver):
+        * src/WebViewImpl.h:
+
 2010-06-21  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Dimitri Glazkov.
