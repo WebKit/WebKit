@@ -1,3 +1,16 @@
+2010-06-22  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        <rdar://problem/8119403> REGRESSION (r61548): PLT is almost 1.5% slower, Google page cycler slower
+        https://bugs.webkit.org/show_bug.cgi?id=41012
+
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::computeHorizontalPositionsForLine): Removed a redundant statement that was
+        left over in the original patch and resulted in double the calls to RenderText::width() here.
+        (WebCore::RenderBlock::findNextLineBreak): Changed the order of evaluating conditions for a
+        potential speedup.
+
 2010-06-22  Darin Adler  <darin@apple.com>
 
         Reviewed by Alexey Proskuryakov.
