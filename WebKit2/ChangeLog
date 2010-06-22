@@ -1,5 +1,20 @@
 2010-06-21  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        Support reading plug-in info from Carbon resources
+        https://bugs.webkit.org/show_bug.cgi?id=40959
+
+        * UIProcess/Plugins/mac/PluginInfoStoreMac.mm:
+        (WebKit::ResourceMap::ResourceMap):
+        (WebKit::ResourceMap::~ResourceMap):
+        (WebKit::ResourceMap::isValid):
+        (WebKit::getStringListResource):
+        (WebKit::getPluginInfoFromCarbonResources):
+        (WebKit::PluginInfoStore::getPluginInfo):
+
+2010-06-21  Anders Carlsson  <andersca@apple.com>
+
         Build fix.
 
         * UIProcess/Plugins/mac/PluginInfoStoreMac.mm:
