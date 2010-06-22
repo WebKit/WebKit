@@ -1,30 +1,29 @@
-Output of this test should match WinIE (no strict SGML comment parsing).
+Output of this test should match HTML5 (no strict SGML comment parsing).
 
-Basic comments (1 PASSED):
-PASSED FAILED-->
+Basic comments (2 PASSED):
+PASSED PASSED
+Comment series (3 PASSED):
+PASSED PASSED PASSED
 
-Comment series (1 PASSED):
-PASSED FAILED-->
+Dash runs (5 PASSED):
+PASSED PASSED PASSED PASSED PASSED
 
-Dash runs (3 PASSED):
-PASSED FAILED PASSED PASSED
+Empty comments (5 PASSED):
+PASSED PASSED PASSED PASSED PASSED
 
-Empty comments (2 PASSED):
-PASSED FAILED--> PASSED
+Multiple lines (4 PASSED):
+PASSED PASSED PASSED PASSED
 
-Multiple lines (1 PASSED):
-PASSED FAILED-->
+Compatibility (7 PASSED):
+PASSED PASSED PASSED PASSED PASSED PASSED PASSED
 
-Compatibility (2 PASSED):
-PASSED FAILED--> PASSED FAILED-->
-
-Tab after comment close:
-FAILED: should be part of the comment -->
+White space after comment close (4 PASSED):
+PASSED PASSED PASSED PASSED
 
 Text after comment close:
-Extra comment after markup declaration close:
+Extra comment after markup declaration close (2 PASSED):
 FAILED: extra comment end and markup declaration close -->
-FAILED: extra comment end w/space and markup declaration close -->
+PASSED PASSED
 
 Nested comment (1 PASSED):
 PASSED (outer nested comment) -->
