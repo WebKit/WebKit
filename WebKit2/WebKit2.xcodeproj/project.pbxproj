@@ -581,8 +581,8 @@
 			isa = PBXGroup;
 			children = (
 				1AEFCC0D11D01F41008219D3 /* mac */,
-				1AEFCC1011D01F96008219D3 /* PluginInfoStore.h */,
 				1AEFCC1111D01F96008219D3 /* PluginInfoStore.cpp */,
+				1AEFCC1011D01F96008219D3 /* PluginInfoStore.h */,
 			);
 			path = Plugins;
 			sourceTree = "<group>";

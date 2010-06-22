@@ -332,6 +332,7 @@ bool PluginInfoStore::getPluginInfo(const WebCore::String& pluginPath, Plugin& p
 
     plugin.path = pluginPath;
     plugin.pluginArchitecture = pluginArchitecture;
+    plugin.bundleIdentifier = CFBundleGetIdentifier(bundle.get());
     plugin.versionNumber = CFBundleGetVersionNumber(bundle.get());
 
     RetainPtr<CFStringRef> filename(AdoptCF, CFURLCopyLastPathComponent(bundleURL.get()));
@@ -347,7 +348,14 @@ bool PluginInfoStore::getPluginInfo(const WebCore::String& pluginPath, Plugin& p
 
 bool PluginInfoStore::shouldUsePlugin(const Plugin& plugin, const Vector<Plugin>& loadedPlugins)
 {
-    // FIXME: Implement
+    for (size_t i = 0; i < loadedPlugins.size(); ++i) {
+        const Plugin& loadedPlugin = loadedPlugins[i];
+
+        // If a plug-in with the same bundle identifier already exists, we don't want to load it.
+        if (loadedPlugin.bundleIdentifier == plugin.bundleIdentifier)
+            return false;
+    }
+
     return true;
 }
 
