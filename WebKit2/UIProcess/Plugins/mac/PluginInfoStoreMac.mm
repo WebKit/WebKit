@@ -191,7 +191,7 @@ bool PluginInfoStore::getPluginInfo(const WebCore::String& pluginPath, Plugin& p
         return false;
     
     // Check that the architecture is valid.
-    cpu_type_t pluginArchitecture;
+    cpu_type_t pluginArchitecture = 0;
     if (!getPluginArchitecture(bundle.get(), pluginArchitecture))
         return false;
 
