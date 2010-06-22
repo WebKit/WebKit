@@ -2,6 +2,25 @@
 
         Reviewed by Eric Seidel.
 
+        Expose HTMLInputStream to ScriptRunner so that ScriptRunner can save the insertion point itself
+        https://bugs.webkit.org/show_bug.cgi?id=40975
+
+        This saves us having to call back into the HTML5DocumentParser each
+        time we need to save the insertion point.  This prepares us for another
+        place we need to save the insertion point.
+
+        * html/HTML5DocumentParser.cpp:
+        * html/HTML5DocumentParser.h:
+        (WebCore::HTML5DocumentParser::inputStream):
+        * html/HTML5ScriptRunner.cpp:
+        (WebCore::HTML5ScriptRunner::executeScript):
+        (WebCore::HTML5ScriptRunner::requestScript):
+        * html/HTML5ScriptRunnerHost.h:
+
+2010-06-22  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         Move HTMLInputStream to its own file
         https://bugs.webkit.org/show_bug.cgi?id=40974
 

@@ -31,6 +31,7 @@ namespace WebCore {
 class AtomicString;
 class CachedResource;
 class Element;
+class HTMLInputStream;
 class ScriptSourceCode;
 
 class HTML5ScriptRunnerHost {
@@ -44,9 +45,7 @@ public:
 
     // Implementors can block certain script loads (for XSSAuditor, etc.)
     virtual bool shouldLoadExternalScriptFromSrc(const AtomicString&) = 0;
-    // Implementors should handle possible rentry before/after calling ScriptController::executeScript
-    virtual void executeScript(const ScriptSourceCode&) = 0;
-    virtual bool dispatchBeforeLoad(Element* script, const AtomicString& srcValue) = 0;
+    virtual HTMLInputStream& inputStream() = 0;
 };
 
 }

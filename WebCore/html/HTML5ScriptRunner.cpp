@@ -33,6 +33,7 @@
 #include "Event.h"
 #include "Frame.h"
 #include "HTML5ScriptRunnerHost.h"
+#include "HTMLInputStream.h"
 #include "HTMLNames.h"
 #include "NotImplemented.h"
 #include "ScriptElement.h"
@@ -135,10 +136,12 @@ void HTML5ScriptRunner::executeScript(Element* element, const ScriptSourceCode& 
     ASSERT(scriptElement);
     if (!scriptElement->shouldExecuteAsJavaScript())
         return;
+    ASSERT(inScriptExecution());
+    if (!m_document->frame())
+        return;
 
-    // Always use the delegate to execute the script so that it can save any
-    // necessary state to prepare for rentrancy.
-    m_host->executeScript(sourceCode);
+    InsertionPointRecord savedInsertionPoint(m_host->inputStream());
+    m_document->frame()->script()->executeScript(sourceCode);
 }
 
 bool HTML5ScriptRunner::hasScriptsWaitingForLoad() const
@@ -233,8 +236,11 @@ void HTML5ScriptRunner::requestScript(Element* script)
     if (!m_host->shouldLoadExternalScriptFromSrc(srcValue))
         return;
     // FIXME: We need to resolve the url relative to the element.
-    if (!m_host->dispatchBeforeLoad(script, srcValue))
-        return;
+    {
+        InsertionPointRecord savedInsertionPoint(m_host->inputStream());
+        if (!script->dispatchBeforeLoadEvent(srcValue))
+            return;
+    }
     m_parsingBlockingScript.element = script;
     // This should correctly return 0 for empty or invalid srcValues.
     CachedScript* cachedScript = m_document->docLoader()->requestScript(srcValue, toScriptElement(script)->scriptCharset());
