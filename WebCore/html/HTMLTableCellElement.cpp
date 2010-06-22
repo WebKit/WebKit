@@ -94,18 +94,15 @@ void HTMLTableCellElement::parseMappedAttribute(Attribute* attr)
         if (renderer() && renderer()->isTableCell())
             toRenderTableCell(renderer())->updateFromElement();
     } else if (attr->name() == nowrapAttr) {
-        // FIXME: What about removing the property when the attribute becomes null?
         if (!attr->isNull())
             addCSSProperty(attr, CSSPropertyWhiteSpace, CSSValueWebkitNowrap);
     } else if (attr->name() == widthAttr) {
-        // FIXME: What about removing the property when the attribute becomes empty, zero or negative?
         if (!attr->value().isEmpty()) {
             int widthInt = attr->value().toInt();
             if (widthInt > 0) // width="0" is ignored for compatibility with WinIE.
                 addCSSLength(attr, CSSPropertyWidth, attr->value());
         }
     } else if (attr->name() == heightAttr) {
-        // FIXME: What about removing the property when the attribute becomes empty, zero or negative?
         if (!attr->value().isEmpty()) {
             int heightInt = attr->value().toInt();
             if (heightInt > 0) // height="0" is ignored for compatibility with WinIE.

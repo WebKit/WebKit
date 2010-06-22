@@ -1,3 +1,10 @@
+2010-06-22  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        * html/HTMLTableCellElement.cpp:
+        (WebCore::HTMLTableCellElement::parseMappedAttribute): Removed incorrect FIXME comments.
+
 2010-06-22  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Anders Carlsson.
