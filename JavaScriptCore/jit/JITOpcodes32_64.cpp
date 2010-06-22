@@ -196,6 +196,7 @@ JIT::Label JIT::privateCompileCTINativeCall(JSGlobalData* globalData, bool isCon
 
     Label nativeCallThunk = align();
 
+#if CPU(X86)
     // Load caller frame's scope chain into this callframe so that whatever we call can
     // get to its global data.
     emitGetFromCallFrameHeaderPtr(RegisterFile::CallerFrame, regT0);
@@ -205,7 +206,6 @@ JIT::Label JIT::privateCompileCTINativeCall(JSGlobalData* globalData, bool isCon
     peek(regT1);
     emitPutToCallFrameHeader(regT1, RegisterFile::ReturnPC);
 
-#if CPU(X86)
     // Calling convention:      f(ecx, edx, ...);
     // Host function signature: f(ExecState*);
     move(callFrameRegister, X86Registers::ecx);
@@ -219,6 +219,28 @@ JIT::Label JIT::privateCompileCTINativeCall(JSGlobalData* globalData, bool isCon
     call(Address(regT1, executableOffsetToFunction));
 
     addPtr(Imm32(16 - sizeof(void*)), stackPointerRegister);
+
+#elif CPU(ARM)
+    // Load caller frame's scope chain into this callframe so that whatever we call can
+    // get to its global data.
+    emitGetFromCallFrameHeaderPtr(RegisterFile::CallerFrame, regT2);
+    emitGetFromCallFrameHeaderPtr(RegisterFile::ScopeChain, regT1, regT2);
+    emitPutToCallFrameHeader(regT1, RegisterFile::ScopeChain);
+
+    preserveReturnAddressAfterCall(regT3); // Callee preserved
+    emitPutToCallFrameHeader(regT3, RegisterFile::ReturnPC);
+
+    // Calling convention:      f(r0 == regT0, r1 == regT1, ...);
+    // Host function signature: f(ExecState*);
+    move(callFrameRegister, ARMRegisters::r0);
+
+    // call the function
+    emitGetFromCallFrameHeaderPtr(RegisterFile::Callee, ARMRegisters::r1);
+    move(regT2, callFrameRegister); // Eagerly restore caller frame register to avoid loading from stack.
+    loadPtr(Address(ARMRegisters::r1, OBJECT_OFFSETOF(JSFunction, m_executable)), regT2);
+    call(Address(regT2, executableOffsetToFunction));
+
+    restoreReturnAddressBeforeReturn(regT3);
 
 #elif ENABLE(JIT_OPTIMIZE_NATIVE_CALL)
 #error "JIT_OPTIMIZE_NATIVE_CALL not yet supported on this platform."
@@ -235,11 +257,18 @@ JIT::Label JIT::privateCompileCTINativeCall(JSGlobalData* globalData, bool isCon
 
     // Handle an exception
     sawException.link(this);
-    peek(regT1);
+
+    // Grab the return address.
+    preserveReturnAddressAfterCall(regT1);
+
     move(ImmPtr(&globalData->exceptionLocation), regT2);
     storePtr(regT1, regT2);
-    poke(callFrameRegister, 1 + OBJECT_OFFSETOF(struct JITStackFrame, callFrame) / sizeof(void*));
-    poke(ImmPtr(FunctionPtr(ctiVMThrowTrampoline).value()));
+    poke(callFrameRegister, OBJECT_OFFSETOF(struct JITStackFrame, callFrame) / sizeof(void*));
+
+    // Set the return address.
+    move(ImmPtr(FunctionPtr(ctiVMThrowTrampoline).value()), regT1);
+    restoreReturnAddressBeforeReturn(regT1);
+
     ret();
 
     return nativeCallThunk;
@@ -273,6 +302,29 @@ JIT::CodePtr JIT::privateCompileCTINativeCall(PassRefPtr<ExecutablePool> executa
 
     addPtr(Imm32(16 - sizeof(void*)), stackPointerRegister);
 
+#elif CPU(ARM)
+    // Load caller frame's scope chain into this callframe so that whatever we call can
+    // get to its global data.
+    emitGetFromCallFrameHeaderPtr(RegisterFile::CallerFrame, regT2);
+    emitGetFromCallFrameHeaderPtr(RegisterFile::ScopeChain, regT1, regT2);
+    emitPutToCallFrameHeader(regT1, RegisterFile::ScopeChain);
+
+    preserveReturnAddressAfterCall(regT3); // Callee preserved
+    emitPutToCallFrameHeader(regT3, RegisterFile::ReturnPC);
+
+    // Calling convention:      f(r0 == regT0, r1 == regT1, ...);
+    // Host function signature: f(ExecState*);
+    move(callFrameRegister, ARMRegisters::r0);
+
+    emitGetFromCallFrameHeaderPtr(RegisterFile::Callee, ARMRegisters::r1);
+    move(regT2, callFrameRegister); // Eagerly restore caller frame register to avoid loading from stack.
+    loadPtr(Address(ARMRegisters::r1, OBJECT_OFFSETOF(JSFunction, m_executable)), regT2);
+
+    // call the function
+    nativeCall = call();
+
+    restoreReturnAddressBeforeReturn(regT3);
+
 #elif ENABLE(JIT_OPTIMIZE_NATIVE_CALL)
 #error "JIT_OPTIMIZE_NATIVE_CALL not yet supported on this platform."
 #else
@@ -287,11 +339,18 @@ JIT::CodePtr JIT::privateCompileCTINativeCall(PassRefPtr<ExecutablePool> executa
 
     // Handle an exception
     sawException.link(this);
-    peek(regT1);
+
+    // Grab the return address.
+    preserveReturnAddressAfterCall(regT1);
+
     move(ImmPtr(&globalData->exceptionLocation), regT2);
     storePtr(regT1, regT2);
-    poke(callFrameRegister, 1 + OBJECT_OFFSETOF(struct JITStackFrame, callFrame) / sizeof(void*));
-    poke(ImmPtr(FunctionPtr(ctiVMThrowTrampoline).value()));
+    poke(callFrameRegister, OBJECT_OFFSETOF(struct JITStackFrame, callFrame) / sizeof(void*));
+
+    // Set the return address.
+    move(ImmPtr(FunctionPtr(ctiVMThrowTrampoline).value()), regT1);
+    restoreReturnAddressBeforeReturn(regT1);
+
     ret();
 
     // All trampolines constructed! copy the code, link up calls, and set the pointers on the Machine object.

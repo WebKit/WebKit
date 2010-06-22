@@ -973,8 +973,11 @@ on MinGW. See https://bugs.webkit.org/show_bug.cgi?id=29268 */
 #define ENABLE_JIT_OPTIMIZE_MOD 1
 #endif
 #endif
-#if (CPU(X86) && USE(JSVALUE32_64)) || (CPU(X86_64) && USE(JSVALUE64))
+#if (CPU(X86) && USE(JSVALUE32_64)) || (CPU(X86_64) && USE(JSVALUE64)) \
+     || CPU(ARM)
+#if ENABLE(JIT) && !defined(ENABLE_JIT_OPTIMIZE_NATIVE_CALL)
 #define ENABLE_JIT_OPTIMIZE_NATIVE_CALL 1
+#endif
 #endif
 
 #if ENABLE(JIT)
