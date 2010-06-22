@@ -1,3 +1,13 @@
+2010-06-22  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Upon closer reading of the spec, we think our behavior is correct.
+        We'll double-check with the working group.
+
+        * fast/tokenizer/write-on-load-expected.txt:
+        * fast/tokenizer/write-on-load.html:
+
 2010-06-20  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Kent Tamura.
