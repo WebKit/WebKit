@@ -25,6 +25,7 @@
 #include "config.h"
 #include "FormDataBuilder.h"
 
+#include "CSSHelper.h"
 #include "Document.h"
 #include "Frame.h"
 #include "FrameLoader.h"
@@ -46,6 +47,12 @@ FormDataBuilder::FormDataBuilder()
 
 FormDataBuilder::~FormDataBuilder()
 {
+}
+
+void FormDataBuilder::parseAction(const String& action)
+{
+    // FIXME: Can we parse into a KURL?
+    m_action = deprecatedParseURL(action);
 }
 
 void FormDataBuilder::parseEncodingType(const String& type)

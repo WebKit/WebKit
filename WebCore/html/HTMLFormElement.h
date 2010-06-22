@@ -136,8 +136,6 @@ private:
 
     void submit(Event*, bool activateSubmitButton, bool lockHistory, FormSubmissionTrigger);
 
-    bool isMailtoForm() const;
-    TextEncoding dataEncoding() const;
     PassRefPtr<FormSubmission> prepareFormSubmission(Event*, bool lockHistory, FormSubmissionTrigger);
     unsigned formElementIndex(HTMLFormControlElement*);
     // Returns true if the submission should be proceeded.
@@ -159,8 +157,6 @@ private:
     Vector<HTMLFormControlElement*> m_associatedElements;
     Vector<HTMLImageElement*> m_imageElements;
 
-    String m_url;
-    String m_target;
     bool m_autocomplete : 1;
     bool m_insubmit : 1;
     bool m_doingsubmit : 1;

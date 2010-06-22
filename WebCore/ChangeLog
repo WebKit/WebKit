@@ -1,3 +1,32 @@
+2010-06-04  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Remove side effects of form submission and prepare FormDataBuilder for splitting up.
+        https://bugs.webkit.org/show_bug.cgi?id=40184
+
+        Refactoring, covered by existing tests.
+
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::prepareFormSubmission):
+            * Changed to use new accessors on FormDataBuilder;
+            * Simplified the logic around action URL;
+            * Removed form submission side effect of element's enctype property being updated when
+                submitting a mailto form;
+            * Removed unnecessary updating of action URL for mailto forms.
+        (WebCore::HTMLFormElement::submit): Moved action URL check into prepareFormSubmission.
+        (WebCore::HTMLFormElement::parseMappedAttribute): Updated to use new methods on FormDataBuilder.
+        * html/HTMLFormElement.h: Removed decls for isMailtoForm and dataEncoding methods;
+            moved m_target and m_url to FormDataBuilder.
+        * platform/network/FormData.cpp:
+        (WebCore::FormData::appendDOMFormData): Removed unnecessary instantiation of FormDataBuilder.
+        * platform/network/FormDataBuilder.cpp:
+        (WebCore::FormDataBuilder::parseAction): Moved from HTMLFormControl.
+        * platform/network/FormDataBuilder.h:
+        (WebCore::FormDataBuilder::action): Ditto.
+        (WebCore::FormDataBuilder::target): Ditto.
+        (WebCore::FormDataBuilder::setTarget): Ditto.
+
 2010-06-22  Yuta Kitamura  <yutak@chromium.org>
 
         Reviewed by Alexey Proskuryakov.

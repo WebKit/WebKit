@@ -26,7 +26,6 @@
 #include "HTMLFormElement.h"
 
 #include "Attribute.h"
-#include "CSSHelper.h"
 #include "DOMFormData.h"
 #include "DOMWindow.h"
 #include "Document.h"
@@ -193,14 +192,6 @@ void HTMLFormElement::submitImplicitly(Event* event, bool fromImplicitSubmission
         prepareSubmit(event);
 }
 
-TextEncoding HTMLFormElement::dataEncoding() const
-{
-    if (isMailtoForm())
-        return UTF8Encoding();
-
-    return m_formDataBuilder.dataEncoding(document());
-}
-
 static void appendMailtoPostFormDataToURL(KURL& url, const FormData& data, const String& encodingType)
 {
     String body = data.flattenToString();
@@ -224,16 +215,19 @@ static void appendMailtoPostFormDataToURL(KURL& url, const FormData& data, const
 
 PassRefPtr<FormSubmission> HTMLFormElement::prepareFormSubmission(Event* event, bool lockHistory, FormSubmissionTrigger trigger)
 {
+    KURL actionURL = document()->completeURL(m_formDataBuilder.action().isEmpty() ? document()->url().string() : m_formDataBuilder.action());
+    bool isMailtoForm = actionURL.protocolIs("mailto");
+
     if (m_formDataBuilder.isPostMethod()) {
-        if (m_formDataBuilder.isMultiPartForm() && isMailtoForm()) {
-            // FIXME: This may fire a DOM Mutation Event. Do we really want this here?
-            setEnctype("application/x-www-form-urlencoded");
+        if (m_formDataBuilder.isMultiPartForm() && isMailtoForm) {
+            m_formDataBuilder.parseEncodingType("application/x-www-form-urlencoded");
             ASSERT(!m_formDataBuilder.isMultiPartForm());
         }
     } else
         m_formDataBuilder.setIsMultiPartForm(false);
 
-    RefPtr<DOMFormData> domFormData = DOMFormData::create(dataEncoding().encodingForFormSubmission());
+    TextEncoding dataEncoding = isMailtoForm ? UTF8Encoding() : m_formDataBuilder.dataEncoding(document());
+    RefPtr<DOMFormData> domFormData = DOMFormData::create(dataEncoding.encodingForFormSubmission());
     Vector<pair<String, String> > formValues;
 
     for (unsigned i = 0; i < m_associatedElements.size(); ++i) {
@@ -252,33 +246,23 @@ PassRefPtr<FormSubmission> HTMLFormElement::prepareFormSubmission(Event* event, 
 
     RefPtr<FormData> formData;
     String boundary;
-    // FIXME: Figure out whether m_url.isNull check is necessary.
-    KURL actionURL = document()->completeURL(m_url.isNull() ? "" : m_url);
 
     if (m_formDataBuilder.isMultiPartForm()) {
         formData = FormData::createMultiPart(domFormData->items(), domFormData->encoding(), document());
         boundary = formData->boundary().data();
     } else {
         formData = FormData::create(domFormData->items(), domFormData->encoding());
-        if (m_formDataBuilder.isPostMethod() && isMailtoForm()) {
+        if (m_formDataBuilder.isPostMethod() && isMailtoForm) {
             // Convert the form data into a string that we put into the URL.
             appendMailtoPostFormDataToURL(actionURL, *formData, m_formDataBuilder.encodingType());
-            // FIXME: Why is setting m_url necessary here? This seems wrong if mail form is submitted multiple times?
-            m_url = actionURL.string();
-
             formData = FormData::create();
         }
     }
 
     formData->setIdentifier(generateFormDataIdentifier());
     FormSubmission::Method method = m_formDataBuilder.isPostMethod() ? FormSubmission::PostMethod : FormSubmission::GetMethod;
-    String targetOrBaseTarget = m_target.isEmpty() ? document()->baseTarget() : m_target;
+    String targetOrBaseTarget = m_formDataBuilder.target().isEmpty() ? document()->baseTarget() : m_formDataBuilder.target();
     return FormSubmission::create(method, actionURL, targetOrBaseTarget, m_formDataBuilder.encodingType(), FormState::create(this, formValues, document()->frame(), trigger), formData.release(), boundary, lockHistory, event);
-}
-
-bool HTMLFormElement::isMailtoForm() const
-{
-    return protocolIs(m_url, "mailto");
 }
 
 static inline HTMLFormControlElement* submitElementFromEvent(const Event* event)
@@ -402,9 +386,6 @@ void HTMLFormElement::submit(Event* event, bool activateSubmitButton, bool lockH
 
     if (needButtonActivation && firstSuccessfulSubmitButton)
         firstSuccessfulSubmitButton->setActivatedSubmit(true);
-    
-    if (m_url.isEmpty())
-        m_url = document()->url().string();
 
     frame->loader()->submitForm(prepareFormSubmission(event, lockHistory, formSubmissionTrigger));
 
@@ -438,9 +419,9 @@ void HTMLFormElement::reset()
 void HTMLFormElement::parseMappedAttribute(Attribute* attr)
 {
     if (attr->name() == actionAttr)
-        m_url = deprecatedParseURL(attr->value());
+        m_formDataBuilder.parseAction(attr->value());
     else if (attr->name() == targetAttr)
-        m_target = attr->value();
+        m_formDataBuilder.setTarget(attr->value());
     else if (attr->name() == methodAttr)
         m_formDataBuilder.parseMethodType(attr->value());
     else if (attr->name() == enctypeAttr)

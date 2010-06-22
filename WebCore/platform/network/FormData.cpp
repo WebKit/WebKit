@@ -204,9 +204,8 @@ void FormData::appendFileRange(const String& filename, long long start, long lon
 
 void FormData::appendKeyValuePairItems(const BlobItemList& items, const TextEncoding& encoding, bool isMultiPartForm, Document* document)
 {
-    FormDataBuilder formDataBuilder;
     if (isMultiPartForm)
-        m_boundary = formDataBuilder.generateUniqueBoundaryString();
+        m_boundary = FormDataBuilder::generateUniqueBoundaryString();
 
     Vector<char> encodedData;
 
@@ -218,7 +217,7 @@ void FormData::appendKeyValuePairItems(const BlobItemList& items, const TextEnco
         ASSERT(key);
         if (isMultiPartForm) {
             Vector<char> header;
-            formDataBuilder.beginMultiPartHeader(header, m_boundary.data(), key->cstr());
+            FormDataBuilder::beginMultiPartHeader(header, m_boundary.data(), key->cstr());
 
             bool shouldGenerateFile = false;
             // If the current type is FILE, then we also need to include the filename
@@ -238,7 +237,7 @@ void FormData::appendKeyValuePairItems(const BlobItemList& items, const TextEnco
                 }
 
                 // We have to include the filename=".." part in the header, even if the filename is empty
-                formDataBuilder.addFilenameToMultiPartHeader(header, encoding, fileName);
+                FormDataBuilder::addFilenameToMultiPartHeader(header, encoding, fileName);
 
                 // If the item is sliced from a file, do not add the content type.
 #if ENABLE(BLOB_SLICE)
@@ -252,11 +251,11 @@ void FormData::appendKeyValuePairItems(const BlobItemList& items, const TextEnco
                     // MIME type of the generated file.
                     String mimeType = MIMETypeRegistry::getMIMETypeForPath(fileName);
                     if (!mimeType.isEmpty())
-                        formDataBuilder.addContentTypeToMultiPartHeader(header, mimeType.latin1());
+                        FormDataBuilder::addContentTypeToMultiPartHeader(header, mimeType.latin1());
                 }
             }
 
-            formDataBuilder.finishMultiPartHeader(header);
+            FormDataBuilder::finishMultiPartHeader(header);
 
             // Append body
             appendData(header.data(), header.size());
@@ -271,12 +270,12 @@ void FormData::appendKeyValuePairItems(const BlobItemList& items, const TextEnco
             if (encodedData.isEmpty() && key->cstr() == "isindex")
                 FormDataBuilder::encodeStringAsFormData(encodedData, stringValue->cstr());
             else
-                formDataBuilder.addKeyValuePairAsFormData(encodedData, key->cstr(), stringValue->cstr());
+                FormDataBuilder::addKeyValuePairAsFormData(encodedData, key->cstr(), stringValue->cstr());
         }
     }
 
     if (isMultiPartForm)
-        formDataBuilder.addBoundaryToMultiPartHeader(encodedData, m_boundary.data(), true);
+        FormDataBuilder::addBoundaryToMultiPartHeader(encodedData, m_boundary.data(), true);
 
     appendData(encodedData.data(), encodedData.size());
 }
