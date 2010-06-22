@@ -177,7 +177,7 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
         }
         
         description = [self stringForStringListID:MIMEDescriptionStringNumber
-                                         andIndex:pluginInfo.mimes.size()];
+                                         andIndex:pluginInfo.mimes.size() + 1];
         mimeClassInfo.desc = description;
 
         pluginInfo.mimes.append(mimeClassInfo);

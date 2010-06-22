@@ -1,3 +1,12 @@
+2010-06-21  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Fix an off-by-one bug I introduced.
+
+        * Plugins/WebNetscapePluginPackage.mm:
+        (-[WebNetscapePluginPackage getPluginInfoFromResources]):
+
 2010-06-21  Nate Chapin  <japhet@chromium.org>
 
         Reviewed by Adam Barth.
