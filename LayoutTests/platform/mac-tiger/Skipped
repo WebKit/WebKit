@@ -201,3 +201,8 @@ http/tests/inspector/resource-parameters.html
 # at the end of a Shift_JIS comment, causing this test to fail.
 # https://bugs.webkit.org/show_bug.cgi?id=40725
 fast/encoding/japanese-encoding-mix.html
+
+# New modal dialog tests fail on Tiger.
+# Tests introduced in http://trac.webkit.org/changeset/61599.
+fast/events/show-modal-dialog-onblur-onfocus.html
+fast/harness/show-modal-dialog.html

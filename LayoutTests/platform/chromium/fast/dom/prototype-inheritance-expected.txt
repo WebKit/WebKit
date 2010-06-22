@@ -747,8 +747,6 @@ PASS inner.setInterval.isInner is true
 PASS inner.setInterval.constructor.isInner is true
 PASS inner.setTimeout.isInner is true
 PASS inner.setTimeout.constructor.isInner is true
-PASS inner.showModalDialog.isInner is true
-PASS inner.showModalDialog.constructor.isInner is true
 FAIL inner.status.isInner should be true. Was false.
 FAIL inner.status.constructor.isInner should be true. Was false.
 FAIL inner.statusbar.isInner should be true. Was false.

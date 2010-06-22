@@ -1,5 +1,12 @@
 2010-06-21  Dmitry Titov  <dimich@chromium.org>
 
+        Unreviewed, skip new modal tests on Tiger and update expected result for Chromium.
+
+        * platform/chromium/fast/dom/prototype-inheritance-expected.txt:
+        * platform/mac-tiger/Skipped:
+
+2010-06-21  Dmitry Titov  <dimich@chromium.org>
+
         Unreviewed, fixing qt-specific expected results for r61599
 
         * platform/qt/fast/dom/Window/window-properties-expected.txt:
