@@ -119,6 +119,12 @@ RGBA32Buffer* GIFImageDecoder::frameBufferAtIndex(size_t index)
     return &frame;
 }
 
+bool GIFImageDecoder::setFailed()
+{
+    m_reader.clear();
+    return ImageDecoder::setFailed();
+}
+
 void GIFImageDecoder::clearFrameBufferCache(size_t clearBeforeFrame)
 {
     // In some cases, like if the decoder was destroyed while animating, we
@@ -300,9 +306,6 @@ void GIFImageDecoder::decode(unsigned haltAtFrame, GIFQuery query)
     // has failed.
     if (!m_reader->read((const unsigned char*)m_data->data() + m_readOffset, m_data->size() - m_readOffset, query, haltAtFrame) && isAllDataReceived())
         setFailed();
-
-    if (failed())
-        m_reader.clear();
 }
 
 bool GIFImageDecoder::initFrameBuffer(unsigned frameIndex)

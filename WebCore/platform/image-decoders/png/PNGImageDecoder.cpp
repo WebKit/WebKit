@@ -125,10 +125,8 @@ public:
         PNGImageDecoder* decoder = static_cast<PNGImageDecoder*>(png_get_progressive_ptr(m_png));
 
         // We need to do the setjmp here. Otherwise bad things will happen.
-        if (setjmp(m_png->jmpbuf)) {
-            close();
+        if (setjmp(m_png->jmpbuf))
             return decoder->setFailed();
-        }
 
         const char* segment;
         while (unsigned segmentLength = data.getSomeData(segment, m_readOffset)) {
@@ -166,6 +164,7 @@ private:
 };
 
 PNGImageDecoder::PNGImageDecoder()
+    : m_doNothingOnFailure(false)
 {
 }
 
@@ -204,6 +203,14 @@ RGBA32Buffer* PNGImageDecoder::frameBufferAtIndex(size_t index)
     return &frame;
 }
 
+bool PNGImageDecoder::setFailed()
+{
+    if (m_doNothingOnFailure)
+        return false;
+    m_reader.clear();
+    return ImageDecoder::setFailed();
+}
+
 void PNGImageDecoder::headerAvailable()
 {
     png_structp png = m_reader->pngPtr();
@@ -217,8 +224,15 @@ void PNGImageDecoder::headerAvailable()
         return;
     }
     
-    // We can fill in the size now that the header is available.
-    if (!setSize(width, height)) {
+    // We can fill in the size now that the header is available.  Avoid memory
+    // corruption issues by neutering setFailed() during this call; if we don't
+    // do this, failures will cause |m_reader| to be deleted, and our jmpbuf
+    // will cease to exist.  Note that we'll still properly set the failure flag
+    // in this case as soon as we longjmp().
+    m_doNothingOnFailure = true;
+    bool result = setSize(width, height);
+    m_doNothingOnFailure = false;
+    if (!result) {
         longjmp(png->jmpbuf, 1);
         return;
     }
@@ -373,8 +387,9 @@ void PNGImageDecoder::decode(bool onlySize)
     // has failed.
     if (!m_reader->decode(*m_data, onlySize) && isAllDataReceived())
         setFailed();
-    
-    if (failed() || isComplete())
+    // If we're done decoding the image, we don't need the PNGImageReader
+    // anymore.  (If we failed, |m_reader| has already been cleared.)
+    else if (isComplete())
         m_reader.clear();
 }
 

@@ -1,3 +1,56 @@
+2010-06-22  Peter Kasting  <pkasting@google.com>
+
+        Reviewed by Adam Barth.
+
+        Override setFailed() in each image decoder to clean up any temporary
+        objects.
+        https://bugs.webkit.org/show_bug.cgi?id=35411
+        
+        In a few cases, we need to be careful to avoid deleting objects until
+        after they're no longer needed.  These cases usually mean some jumping
+        through hoops, to the detriment of code simplicity.
+
+        No layout tests because this does not change the visible output of
+        decoding in any way.
+
+        * platform/image-decoders/ImageDecoder.h:
+        (WebCore::ImageDecoder::setData):
+        * platform/image-decoders/bmp/BMPImageDecoder.cpp:
+        (WebCore::BMPImageDecoder::setFailed):
+        (WebCore::BMPImageDecoder::decode):
+        * platform/image-decoders/bmp/BMPImageDecoder.h:
+        * platform/image-decoders/bmp/BMPImageReader.cpp:
+        (WebCore::BMPImageReader::decodeBMP):
+        (WebCore::BMPImageReader::readInfoHeaderSize):
+        (WebCore::BMPImageReader::processInfoHeader):
+        (WebCore::BMPImageReader::readInfoHeader):
+        (WebCore::BMPImageReader::processBitmasks):
+        (WebCore::BMPImageReader::processColorTable):
+        (WebCore::BMPImageReader::processRLEData):
+        (WebCore::BMPImageReader::processNonRLEData):
+        * platform/image-decoders/bmp/BMPImageReader.h:
+        (WebCore::BMPImageReader::):
+        * platform/image-decoders/gif/GIFImageDecoder.cpp:
+        (WebCore::GIFImageDecoder::setFailed):
+        (WebCore::GIFImageDecoder::decode):
+        * platform/image-decoders/gif/GIFImageDecoder.h:
+        * platform/image-decoders/ico/ICOImageDecoder.cpp:
+        (WebCore::ICOImageDecoder::setFailed):
+        (WebCore::ICOImageDecoder::decode):
+        * platform/image-decoders/ico/ICOImageDecoder.h:
+        * platform/image-decoders/jpeg/JPEGImageDecoder.cpp:
+        (WebCore::JPEGImageReader::decode):
+        (WebCore::JPEGImageDecoder::setFailed):
+        (WebCore::JPEGImageDecoder::decode):
+        * platform/image-decoders/jpeg/JPEGImageDecoder.h:
+        * platform/image-decoders/png/PNGImageDecoder.cpp:
+        (WebCore::PNGImageReader::decode):
+        (WebCore::PNGImageDecoder::PNGImageDecoder):
+        (WebCore::PNGImageDecoder::setFailed):
+        (WebCore::PNGImageDecoder::headerAvailable):
+        (WebCore::PNGImageDecoder::decode):
+        * platform/image-decoders/png/PNGImageDecoder.h:
+
 2010-06-04  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Darin Adler.

@@ -116,6 +116,13 @@ RGBA32Buffer* ICOImageDecoder::frameBufferAtIndex(size_t index)
     return buffer;
 }
 
+bool ICOImageDecoder::setFailed()
+{
+    m_bmpReaders.clear();
+    m_pngDecoders.clear();
+    return ImageDecoder::setFailed();
+}
+
 // static
 bool ICOImageDecoder::compareEntries(const IconDirectoryEntry& a, const IconDirectoryEntry& b)
 {
@@ -147,6 +154,13 @@ void ICOImageDecoder::decode(size_t index, bool onlySize)
     // has failed.
     if ((!decodeDirectory() || (!onlySize && !decodeAtIndex(index))) && isAllDataReceived())
         setFailed();
+    // If we're done decoding this frame, we don't need the BMPImageReader or
+    // PNGImageDecoder anymore.  (If we failed, these have already been
+    // cleared.)
+    else if ((m_frameBufferCache.size() > index) && (m_frameBufferCache[index].status() == RGBA32Buffer::FrameComplete)) {
+        m_bmpReaders[index].clear();
+        m_pngDecoders[index].clear();
+    }
 }
 
 bool ICOImageDecoder::decodeDirectory()

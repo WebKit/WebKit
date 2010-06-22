@@ -79,7 +79,7 @@ bool BMPImageReader::decodeBMP(bool onlySize)
     ASSERT(m_buffer);  // Parent should set this before asking us to decode!
     if (m_buffer->status() == RGBA32Buffer::FrameEmpty) {
         if (!m_buffer->setSize(m_parent->size().width(), m_parent->size().height()))
-            return setFailed();  // Unable to allocate.
+            return m_parent->setFailed(); // Unable to allocate.
         m_buffer->setStatus(RGBA32Buffer::FramePartial);
         // setSize() calls eraseARGB(), which resets the alpha flag, so we force
         // it back to false here.  We'll set it true below in all cases where
@@ -95,10 +95,11 @@ bool BMPImageReader::decodeBMP(bool onlySize)
 
     // Decode the data.
     if ((m_andMaskState != Decoding) && !pastEndOfImage(0)) {
-        if ((m_infoHeader.biCompression == RLE4) || (m_infoHeader.biCompression == RLE8) || (m_infoHeader.biCompression == RLE24)) {
-            if (!processRLEData())
-                return false;
-        } else if (!processNonRLEData(false, 0))
+        if ((m_infoHeader.biCompression != RLE4) && (m_infoHeader.biCompression != RLE8) && (m_infoHeader.biCompression != RLE24)) {
+            const ProcessingResult result = processNonRLEData(false, 0);
+            if (result != Success)
+                return (result == Failure) ? m_parent->setFailed() : false;
+        } else if (!processRLEData())
             return false;
     }
 
@@ -114,8 +115,11 @@ bool BMPImageReader::decodeBMP(bool onlySize)
 
         m_andMaskState = Decoding;
     }
-    if ((m_andMaskState == Decoding) && !processNonRLEData(false, 0))
-        return false;
+    if (m_andMaskState == Decoding) {
+        const ProcessingResult result = processNonRLEData(false, 0);
+        if (result != Success)
+            return (result == Failure) ? m_parent->setFailed() : false;
+    }
 
     // Done!
     m_buffer->setStatus(RGBA32Buffer::FrameComplete);
@@ -136,7 +140,7 @@ bool BMPImageReader::readInfoHeaderSize()
     // problematic or at least confusing in other places), or to overrun the
     // image data.
     if (((m_headerOffset + m_infoHeader.biSize) < m_headerOffset) || (m_imgDataOffset && (m_imgDataOffset < (m_headerOffset + m_infoHeader.biSize))))
-        return setFailed();
+        return m_parent->setFailed();
 
     // See if this is a header size we understand:
     // OS/2 1.x: 12
@@ -149,7 +153,7 @@ bool BMPImageReader::readInfoHeaderSize()
     else if ((m_infoHeader.biSize >= 16) && (m_infoHeader.biSize <= 64) && (!(m_infoHeader.biSize & 3) || (m_infoHeader.biSize == 42) || (m_infoHeader.biSize == 46)))
         m_isOS22x = true;
     else
-        return setFailed();
+        return m_parent->setFailed();
 
     return true;
 }
@@ -164,11 +168,11 @@ bool BMPImageReader::processInfoHeader()
 
     // Sanity-check header values.
     if (!isInfoHeaderValid())
-        return setFailed();
+        return m_parent->setFailed();
 
     // Set our size.
     if (!m_parent->setSize(m_infoHeader.biWidth, m_infoHeader.biHeight))
-        return setFailed();
+        return m_parent->setFailed();
 
     // For paletted images, bitmaps can set biClrUsed to 0 to mean "all
     // colors", so set it to the maximum number of colors for this bit depth.
@@ -228,7 +232,7 @@ bool BMPImageReader::readInfoHeader()
             m_infoHeader.biCompression = RLE24;
             m_isOS22x = true;
         } else if (biCompression > 5)
-            return setFailed();  // Some type we don't understand.
+            return m_parent->setFailed(); // Some type we don't understand.
         else
             m_infoHeader.biCompression = static_cast<CompressionType>(biCompression);
     }
@@ -395,7 +399,7 @@ bool BMPImageReader::processBitmasks()
         // Fail if we don't have enough file space for the bitmasks.
         static const size_t SIZEOF_BITMASKS = 12;
         if (((m_headerOffset + m_infoHeader.biSize + SIZEOF_BITMASKS) < (m_headerOffset + m_infoHeader.biSize)) || (m_imgDataOffset && (m_imgDataOffset < (m_headerOffset + m_infoHeader.biSize + SIZEOF_BITMASKS))))
-            return setFailed();
+            return m_parent->setFailed();
 
         // Read bitmasks.
         if ((m_data->size() - m_decodedOffset) < SIZEOF_BITMASKS)
@@ -435,7 +439,7 @@ bool BMPImageReader::processBitmasks()
         // Make sure bitmask does not overlap any other bitmasks.
         for (int j = 0; j < i; ++j) {
             if (tempMask & m_bitMasks[j])
-                return setFailed();
+                return m_parent->setFailed();
         }
 
         // Count offset into pixel data.
@@ -448,7 +452,7 @@ bool BMPImageReader::processBitmasks()
 
         // Make sure bitmask is contiguous.
         if (tempMask)
-            return setFailed();
+            return m_parent->setFailed();
 
         // Since RGBABuffer tops out at 8 bits per channel, adjust the shift
         // amounts to use the most significant 8 bits of the channel.
@@ -467,7 +471,7 @@ bool BMPImageReader::processColorTable()
 
     // Fail if we don't have enough file space for the color table.
     if (((m_headerOffset + m_infoHeader.biSize + m_tableSizeInBytes) < (m_headerOffset + m_infoHeader.biSize)) || (m_imgDataOffset && (m_imgDataOffset < (m_headerOffset + m_infoHeader.biSize + m_tableSizeInBytes))))
-        return setFailed();
+        return m_parent->setFailed();
 
     // Read color table.
     if ((m_decodedOffset > m_data->size()) || ((m_data->size() - m_decodedOffset) < m_tableSizeInBytes))
@@ -529,10 +533,10 @@ bool BMPImageReader::processRLEData()
         const uint8_t count = m_data->data()[m_decodedOffset];
         const uint8_t code = m_data->data()[m_decodedOffset + 1];
         if ((count || (code != 1)) && pastEndOfImage(0))
-            return setFailed();
+            return m_parent->setFailed();
 
         // Decode.
-        if (count == 0) {
+        if (!count) {
             switch (code) {
             case 0:  // Magic token: EOL
                 // Skip any remaining pixels in this row.
@@ -562,7 +566,7 @@ bool BMPImageReader::processRLEData()
                 if (dx || dy)
                     m_buffer->setHasAlpha(true);
                 if (((m_coord.x() + dx) > m_parent->size().width()) || pastEndOfImage(dy))
-                    return setFailed();
+                    return m_parent->setFailed();
 
                 // Skip intervening pixels.
                 m_coord.move(dx, m_isTopDown ? dy : -dy);
@@ -571,18 +575,22 @@ bool BMPImageReader::processRLEData()
                 break;
             }
 
-            default:  // Absolute mode
+            default: { // Absolute mode
                 // |code| pixels specified as in BI_RGB, zero-padded at the end
                 // to a multiple of 16 bits.
                 // Because processNonRLEData() expects m_decodedOffset to
                 // point to the beginning of the pixel data, bump it past
                 // the escape bytes and then reset if decoding failed.
                 m_decodedOffset += 2;
-                if (!processNonRLEData(true, code)) {
+                const ProcessingResult result = processNonRLEData(true, code);
+                if (result == Failure)
+                    return m_parent->setFailed();
+                if (result == InsufficientData) {
                     m_decodedOffset -= 2;
                     return false;
                 }
                 break;
+            }
             }
         } else {  // Encoded mode
             // The following color data is repeated for |count| total pixels.
@@ -608,7 +616,7 @@ bool BMPImageReader::processRLEData()
                     colorIndexes[1] &= 0xf;
                 }
                 if ((colorIndexes[0] >= m_infoHeader.biClrUsed) || (colorIndexes[1] >= m_infoHeader.biClrUsed))
-                    return setFailed();
+                    return m_parent->setFailed();
                 for (int which = 0; m_coord.x() < endX; ) {
                     setI(colorIndexes[which]);
                     which = !which;
@@ -620,10 +628,10 @@ bool BMPImageReader::processRLEData()
     }
 }
 
-bool BMPImageReader::processNonRLEData(bool inRLE, int numPixels)
+BMPImageReader::ProcessingResult BMPImageReader::processNonRLEData(bool inRLE, int numPixels)
 {
     if (m_decodedOffset > m_data->size())
-        return false;
+        return InsufficientData;
 
     if (!inRLE)
         numPixels = m_parent->size().width();
@@ -631,7 +639,7 @@ bool BMPImageReader::processNonRLEData(bool inRLE, int numPixels)
     // Fail if we're being asked to decode more pixels than remain in the row.
     const int endX = m_coord.x() + numPixels;
     if (endX > m_parent->size().width())
-        return setFailed();
+        return Failure;
 
     // Determine how many bytes of data the requested number of pixels
     // requires.
@@ -648,7 +656,7 @@ bool BMPImageReader::processNonRLEData(bool inRLE, int numPixels)
     while (!pastEndOfImage(0)) {
         // Bail if we don't have enough data for the desired number of pixels.
         if ((m_data->size() - m_decodedOffset) < paddedNumBytes)
-            return false;
+            return InsufficientData;
 
         if (m_infoHeader.biBitCount < 16) {
             // Paletted data.  Pixels are stored little-endian within bytes.
@@ -672,7 +680,7 @@ bool BMPImageReader::processNonRLEData(bool inRLE, int numPixels)
                             m_coord.move(1, 0);
                     } else {
                         if (colorIndex >= m_infoHeader.biClrUsed)
-                            return setFailed();
+                            return Failure;
                         setI(colorIndex);
                     }
                     pixelData <<= m_infoHeader.biBitCount;
@@ -713,24 +721,17 @@ bool BMPImageReader::processNonRLEData(bool inRLE, int numPixels)
         // Success, keep going.
         m_decodedOffset += paddedNumBytes;
         if (inRLE)
-            return true;
+            return Success;
         moveBufferToNextRow();
     }
 
     // Finished decoding whole image.
-    return true;
+    return Success;
 }
 
 void BMPImageReader::moveBufferToNextRow()
 {
     m_coord.move(-m_coord.x(), m_isTopDown ? 1 : -1);
-}
-
-bool BMPImageReader::setFailed()
-{
-    m_parent->setFailed();
-    m_colorTable.clear();
-    return false;
 }
 
 } // namespace WebCore

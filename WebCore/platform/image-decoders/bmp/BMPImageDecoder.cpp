@@ -77,6 +77,12 @@ RGBA32Buffer* BMPImageDecoder::frameBufferAtIndex(size_t index)
     return buffer;
 }
 
+bool BMPImageDecoder::setFailed()
+{
+    m_reader.clear();
+    return ImageDecoder::setFailed();
+}
+
 void BMPImageDecoder::decode(bool onlySize)
 {
     if (failed())
@@ -86,6 +92,10 @@ void BMPImageDecoder::decode(bool onlySize)
     // has failed.
     if (!decodeHelper(onlySize) && isAllDataReceived())
         setFailed();
+    // If we're done decoding the image, we don't need the BMPImageReader
+    // anymore.  (If we failed, |m_reader| has already been cleared.)
+    else if (!m_frameBufferCache.isEmpty() && (m_frameBufferCache.first().status() == RGBA32Buffer::FrameComplete))
+        m_reader.clear();
 }
 
 bool BMPImageDecoder::decodeHelper(bool onlySize)

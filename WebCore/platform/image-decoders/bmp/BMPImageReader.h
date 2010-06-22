@@ -97,6 +97,11 @@ namespace WebCore {
             NotYetDecoded,
             Decoding,
         };
+        enum ProcessingResult {
+            Success,
+            Failure,
+            InsufficientData,
+        };
 
         // These are based on the Windows BITMAPINFOHEADER and RGBTRIPLE
         // structs, but with unnecessary entries removed.
@@ -161,14 +166,18 @@ namespace WebCore {
 
         // Processes a set of non-RLE-compressed pixels.  Two cases:
         //   * inRLE = true: the data is inside an RLE-encoded bitmap.  Tries to
-        //     process |numPixels| pixels on the current row; returns true on
-        //     success.
+        //     process |numPixels| pixels on the current row.
         //   * inRLE = false: the data is inside a non-RLE-encoded bitmap.
         //     |numPixels| is ignored.  Expects |m_coord| to point at the
         //     beginning of the next row to be decoded.  Tries to process as
-        //     many complete rows as possible.  Returns true if the whole image
-        //     was decoded.
-        bool processNonRLEData(bool inRLE, int numPixels);
+        //     many complete rows as possible.  Returns InsufficientData if
+        //     there wasn't enough data to decode the whole image.
+        //
+        // This function returns a ProcessingResult instead of a bool so that it
+        // can avoid calling m_parent->setFailed(), which could lead to memory
+        // corruption since that will delete |this| but some callers still want
+        // to access member variables after this returns.
+        ProcessingResult processNonRLEData(bool inRLE, int numPixels);
 
         // Returns true if the current y-coordinate plus |numRows| would be past
         // the end of the image.  Here "plus" means "toward the end of the
@@ -260,11 +269,6 @@ namespace WebCore {
         // of the "next" row, where "next" is above or below the current row
         // depending on the value of |m_isTopDown|.
         void moveBufferToNextRow();
-
-        // Sets the "decode failure" flag and clears any local storage.  For
-        // caller convenience (since so many callers want to return false after
-        // calling this), returns false to enable easy tailcalling.
-        bool setFailed();
 
         // The decoder that owns us.
         ImageDecoder* m_parent;
