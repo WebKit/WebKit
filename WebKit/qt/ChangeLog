@@ -1,3 +1,12 @@
+2010-06-22  Tasuku Suzuki  <tasuku.suzuki@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Fix compilation with QT_NO_COMBOBOX.
+
+        * WebCoreSupport/ChromeClientQt.cpp:
+        (WebCore::ChromeClientQt::createSelectPopup):
+
 2010-06-21  Robert Hogan  <robert@webkit.org>
 
         [Qt] Build fix for Qt on Windows MSVC2008
