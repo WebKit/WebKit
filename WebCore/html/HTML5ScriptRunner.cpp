@@ -232,9 +232,8 @@ void HTML5ScriptRunner::requestScript(Element* script)
     // Allow the host to disllow script loads (using the XSSAuditor, etc.)
     if (!m_host->shouldLoadExternalScriptFromSrc(srcValue))
         return;
-
     // FIXME: We need to resolve the url relative to the element.
-    if (!script->dispatchBeforeLoadEvent(srcValue)) // Part of HTML5?
+    if (!m_host->dispatchBeforeLoad(script, srcValue))
         return;
     m_parsingBlockingScript.element = script;
     // This should correctly return 0 for empty or invalid srcValues.

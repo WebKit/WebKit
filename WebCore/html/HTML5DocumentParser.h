@@ -72,6 +72,7 @@ public:
     virtual void stopWatchingForLoad(CachedResource*);
     virtual bool shouldLoadExternalScriptFromSrc(const AtomicString&);
     virtual void executeScript(const ScriptSourceCode&);
+    virtual bool dispatchBeforeLoad(Element* script, const AtomicString& srcValue);
 
     // CachedResourceClient
     virtual void notifyFinished(CachedResource*);

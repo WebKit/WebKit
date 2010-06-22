@@ -2,6 +2,17 @@
 
         Reviewed by Eric Seidel.
 
+        Save the insertion point before beforeload events
+        https://bugs.webkit.org/show_bug.cgi?id=40973
+
+        Update expected results to show the proper document.write order.
+
+        * fast/tokenizer/write-before-load-expected.txt:
+
+2010-06-21  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         document.write from BeforeLoad should not assert
         https://bugs.webkit.org/show_bug.cgi?id=40971
 

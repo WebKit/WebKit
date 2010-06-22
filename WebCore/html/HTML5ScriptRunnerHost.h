@@ -30,6 +30,7 @@ namespace WebCore {
 
 class AtomicString;
 class CachedResource;
+class Element;
 class ScriptSourceCode;
 
 class HTML5ScriptRunnerHost {
@@ -45,6 +46,7 @@ public:
     virtual bool shouldLoadExternalScriptFromSrc(const AtomicString&) = 0;
     // Implementors should handle possible rentry before/after calling ScriptController::executeScript
     virtual void executeScript(const ScriptSourceCode&) = 0;
+    virtual bool dispatchBeforeLoad(Element* script, const AtomicString& srcValue) = 0;
 };
 
 }

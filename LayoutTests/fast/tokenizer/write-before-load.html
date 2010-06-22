@@ -6,7 +6,7 @@ if (window.layoutTestController)
 function doubleWrite(number)
 {
     document.write("<script>document.write(" + number + ")</scr" +
-                   "ipt><script>document.write(" + (number + 1) + ")</scr" + "ipt>")
+                   "ipt> <script>document.write(" + (number + 1) + ")</scr" + "ipt> ")
 }
 </script>
 2
