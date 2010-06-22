@@ -462,6 +462,51 @@ TestSuite.prototype.testProfilerTab = function()
 
 
 /**
+ * Tests that heap profiler works.
+ */
+TestSuite.prototype.testHeapProfiler = function()
+{
+    this.showPanel("profiles");
+
+    var panel = WebInspector.panels.profiles;
+    var test = this;
+
+    function findDisplayedNode() {
+        var node = panel.visibleView.dataGrid.children[0];
+        if (!node) {
+            // Profile hadn't been queried yet, re-schedule.
+            window.setTimeout(findDisplayedNode, 100);
+            return;
+        }
+
+        // Iterate over displayed functions and find node called "A"
+        // If found, this will mean that we actually have taken heap snapshot.
+        while (node) {
+            if (node.constructorName.indexOf("A") !== -1) {
+                test.releaseControl();
+                return;
+            }
+            node = node.traverseNextNode(false, null, true);
+        }
+
+        test.fail();
+    }
+
+    function findVisibleView() {
+        if (!panel.visibleView) {
+            setTimeout(findVisibleView, 0);
+            return;
+        }
+        setTimeout(findDisplayedNode, 0);
+    }
+
+    WebInspector.HeapSnapshotProfileType.prototype.buttonClicked();
+    findVisibleView();
+    this.takeControl();
+};
+
+
+/**
  * Tests that scripts tab can be open and populated with inspected scripts.
  */
 TestSuite.prototype.testShowScriptsTab = function()

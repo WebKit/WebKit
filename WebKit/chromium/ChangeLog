@@ -1,3 +1,16 @@
+2010-06-22  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        [Chromium] Add a sanity test for heap profiler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=40917
+
+        * src/js/Tests.js:
+        (.TestSuite.prototype.testHeapProfiler.findDisplayedNode):
+        (.TestSuite.prototype.testHeapProfiler.findVisibleView):
+        (.TestSuite.prototype.testHeapProfiler):
+
 2010-06-21  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Darin Fisher.
