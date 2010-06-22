@@ -116,15 +116,9 @@ NetscapePluginHostProxy::NetscapePluginHostProxy(mach_port_t clientPort, mach_po
     
     CFRunLoopAddSource(CFRunLoopGetCurrent(), deathPortSource.get(), kCFRunLoopDefaultMode);
     
-#ifdef USE_LIBDISPATCH
-    // FIXME: Unfortunately we can't use a dispatch source here until <rdar://problem/6393180> has been resolved.
-    m_clientPortSource = dispatch_source_mig_create(m_clientPort, WKWebKitPluginClient_subsystem.maxsize, 0, 
-                                                    dispatch_get_main_queue(), WebKitPluginClient_server);
-#else
     m_clientPortSource.adoptCF(WKCreateMIGServerSource((mig_subsystem_t)&WKWebKitPluginClient_subsystem, m_clientPort));
     CFRunLoopAddSource(CFRunLoopGetCurrent(), m_clientPortSource.get(), kCFRunLoopDefaultMode);
     CFRunLoopAddSource(CFRunLoopGetCurrent(), m_clientPortSource.get(), (CFStringRef)NSEventTrackingRunLoopMode);
-#endif
 }
 
 NetscapePluginHostProxy::~NetscapePluginHostProxy()
@@ -139,12 +133,8 @@ NetscapePluginHostProxy::~NetscapePluginHostProxy()
     }
     
     ASSERT(m_clientPortSource);
-#ifdef USE_LIBDISPATCH
-    dispatch_release(m_clientPortSource);
-#else
     CFRunLoopSourceInvalidate(m_clientPortSource.get());
     m_clientPortSource = 0;
-#endif
 }
 
 void NetscapePluginHostProxy::pluginHostDied()

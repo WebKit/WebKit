@@ -2,6 +2,16 @@
 
         Reviewed by Sam Weinig.
 
+        Get rid of the USE_LIBDISPATCH code.
+
+        * Plugins/Hosted/NetscapePluginHostProxy.mm:
+        (WebKit::NetscapePluginHostProxy::NetscapePluginHostProxy):
+        (WebKit::NetscapePluginHostProxy::~NetscapePluginHostProxy):
+
+2010-06-22  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
         Wean NetscapePluginHostManager of any knowledge about WebNetscapePluginPackage
         https://bugs.webkit.org/show_bug.cgi?id=41006
 
