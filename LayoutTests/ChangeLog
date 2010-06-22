@@ -1,3 +1,10 @@
+2010-06-21  Dmitry Titov  <dimich@chromium.org>
+
+        Unreviewed, fixing qt-specific expected results for r61599
+
+        * platform/qt/fast/dom/Window/window-properties-expected.txt:
+        * platform/qt/fast/dom/prototype-inheritance-expected.txt:
+
 2010-06-21  Prasad Tammana  <prasadt@chromium.org>
 
         Reviewed by Darin Adler, Dmitry Titov.
