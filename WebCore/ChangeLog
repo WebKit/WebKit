@@ -1,3 +1,16 @@
+2010-06-22  Darin Adler  <darin@apple.com>
+
+        Reviewed by Brady Eidson.
+
+        Fix autorelease problem seen when running worker regression tests.
+        We were seeing logs to stderr saying autorelease was used without
+        an autorelease pool being set up.
+
+        * workers/WorkerRunLoop.cpp:
+        (WebCore::WorkerRunLoop::run): Use an AutodrainedPool as the file
+        thread, icon database, and database thread do. No effect on platforms
+        other than Mac.
+
 2010-06-22  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler.
