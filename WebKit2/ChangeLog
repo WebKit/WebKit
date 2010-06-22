@@ -1,5 +1,19 @@
 2010-06-22  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        Use the ArgumentCoder class template for decoding
+        https://bugs.webkit.org/show_bug.cgi?id=41021
+
+        * Platform/CoreIPC/ArgumentCoder.h:
+        (CoreIPC::ArgumentCoder::decode):
+        * Platform/CoreIPC/ArgumentDecoder.h:
+        (CoreIPC::ArgumentDecoder::decode):
+        * Shared/WebCoreTypeArgumentMarshalling.h:
+        (CoreIPC::):
+
+2010-06-22  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Dan Bernstein.
 
         Change the encode functions to be specializations of a class template

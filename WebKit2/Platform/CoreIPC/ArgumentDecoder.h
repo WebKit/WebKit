@@ -26,24 +26,12 @@
 #ifndef ArgumentDecoder_h
 #define ArgumentDecoder_h
 
+#include "ArgumentCoder.h"
 #include "Attachment.h"
 #include <wtf/Deque.h>
-#include <wtf/TypeTraits.h>
 #include <wtf/Vector.h>
 
 namespace CoreIPC {
-
-class ArgumentDecoder;
-class Attachment;
-
-namespace ArgumentCoders {
-
-template<typename T> bool decode(ArgumentDecoder& decoder, T& t)
-{
-    return WTF::RemovePointer<T>::Type::decode(decoder, t);
-}
-
-}
 
 class ArgumentDecoder {
 public:
@@ -67,7 +55,7 @@ public:
     // Generic type decode function.
     template<typename T> bool decode(T& t)
     {
-        return ArgumentCoders::decode<T>(*this, t);
+        return ArgumentCoder<T>::decode(this, t);
     }
 
     // This overload exists so we can pass temporaries to decode. In the Star Trek future, it 
