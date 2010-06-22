@@ -34,17 +34,43 @@
 #include <WebCore/PlatformString.h>
 
 namespace CoreIPC {
+
+template<> struct ArgumentCoder<WebCore::IntPoint> {
+    static void encode(ArgumentEncoder* encoder, const WebCore::IntPoint& p)
+    {
+        encoder->encode(CoreIPC::In(p.x(), p.y()));
+    };
+};
+
+template<> struct ArgumentCoder<WebCore::IntSize> {
+    static void encode(ArgumentEncoder* encoder, const WebCore::IntSize& s)
+    {
+        encoder->encode(CoreIPC::In(s.width(), s.height()));
+    };
+};
+
+template<> struct ArgumentCoder<WebCore::IntRect> {
+    static void encode(ArgumentEncoder* encoder, const WebCore::IntRect& r)
+    {
+        encoder->encode(CoreIPC::In(r.location(), r.size()));
+    };
+};
+
+template<> struct ArgumentCoder<WebCore::String> {
+    static void encode(ArgumentEncoder* encoder, const WebCore::String& string)
+    {
+        uint32_t length = string.length();
+        encoder->encode(length);
+        encoder->encodeBytes(reinterpret_cast<const uint8_t*>(string.characters()), length * sizeof(UChar));
+    }
+};
+
 namespace ArgumentCoders {
 
 // FIXME: IntPoint/IntSize/IntRect/FloatPoint/FloatSize/FloatRect should all
 // be able to be treated as POD-like types and thus memcpy-able.  
 
 // WebCore::IntPoint
-template<> inline void encode(ArgumentEncoder& encoder, const WebCore::IntPoint& p)
-{
-    encoder.encode(CoreIPC::In(p.x(), p.y()));
-}
-
 template<> inline bool decode(ArgumentDecoder& decoder, WebCore::IntPoint& p)
 {
     int x;
@@ -58,11 +84,6 @@ template<> inline bool decode(ArgumentDecoder& decoder, WebCore::IntPoint& p)
 }
 
 // WebCore::IntSize
-template<> inline void encode(ArgumentEncoder& encoder, const WebCore::IntSize& s)
-{
-    encoder.encode(CoreIPC::In(s.width(), s.height()));
-}
-
 template<> inline bool decode(ArgumentDecoder& decoder, WebCore::IntSize& s)
 {
     int width;
@@ -76,11 +97,6 @@ template<> inline bool decode(ArgumentDecoder& decoder, WebCore::IntSize& s)
 }
 
 // WebCore::IntRect
-template<> inline void encode(ArgumentEncoder& encoder, const WebCore::IntRect& r)
-{
-    encoder.encode(CoreIPC::In(r.location(), r.size()));
-}
-
 template<> inline bool decode(ArgumentDecoder& decoder, WebCore::IntRect& r)
 {
     WebCore::IntPoint location;
@@ -94,11 +110,6 @@ template<> inline bool decode(ArgumentDecoder& decoder, WebCore::IntRect& r)
 }
 
 // WebCore::FloatPoint
-template<> inline void encode(ArgumentEncoder& encoder, const WebCore::FloatPoint& p)
-{
-    encoder.encode(CoreIPC::In(p.x(), p.y()));
-}
-
 template<> inline bool decode(ArgumentDecoder& decoder, WebCore::FloatPoint& p)
 {
     float x;
@@ -112,11 +123,6 @@ template<> inline bool decode(ArgumentDecoder& decoder, WebCore::FloatPoint& p)
 }
 
 // WebCore::FloatSize
-template<> inline void encode(ArgumentEncoder& encoder, const WebCore::FloatSize& s)
-{
-    encoder.encode(CoreIPC::In(s.width(), s.height()));
-}
-
 template<> inline bool decode(ArgumentDecoder& decoder, WebCore::FloatSize& s)
 {
     float width;
@@ -130,11 +136,6 @@ template<> inline bool decode(ArgumentDecoder& decoder, WebCore::FloatSize& s)
 }
 
 // WebCore::FloatRect
-template<> inline void encode(ArgumentEncoder& encoder, const WebCore::FloatRect& r)
-{
-    encoder.encode(CoreIPC::In(r.location(), r.size()));
-}
-
 template<> inline bool decode(ArgumentDecoder& decoder, WebCore::FloatRect& r)
 {
     WebCore::FloatPoint location;
@@ -148,13 +149,6 @@ template<> inline bool decode(ArgumentDecoder& decoder, WebCore::FloatRect& r)
 }
 
 // WebCore::String
-template<> inline void encode(ArgumentEncoder& encoder, const WebCore::String& s)
-{
-    uint32_t length = s.length();
-    encoder.encode(length);
-    encoder.encodeBytes(reinterpret_cast<const uint8_t*>(s.characters()), length * sizeof(UChar));
-}
-
 template<> inline bool decode(ArgumentDecoder& decoder, WebCore::String& s)
 {
     uint32_t length;

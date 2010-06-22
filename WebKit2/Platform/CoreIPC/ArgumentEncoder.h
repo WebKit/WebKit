@@ -26,6 +26,7 @@
 #ifndef ArgumentEncoder_h
 #define ArgumentEncoder_h
 
+#include "ArgumentCoder.h"
 #include "Attachment.h"
 #include <wtf/TypeTraits.h>
 #include <wtf/Vector.h>
@@ -33,15 +34,6 @@
 namespace CoreIPC {
 
 class ArgumentEncoder;
-
-namespace ArgumentCoders {
-
-template<typename T> void encode(ArgumentEncoder& encoder, const T& t)
-{
-    t.encode(encoder);
-}
-
-}
 
 class ArgumentEncoder {
 public:
@@ -61,7 +53,7 @@ public:
     // Generic type encode function.
     template<typename T> void encode(const T& t)
     {
-        ArgumentCoders::encode<T>(*this, t);
+        ArgumentCoder<T>::encode(this, t);
     }
 
     uint8_t* buffer() const { return m_buffer; }

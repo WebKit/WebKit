@@ -40,6 +40,7 @@
 		1AEFCC1211D01F96008219D3 /* PluginInfoStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AEFCC1011D01F96008219D3 /* PluginInfoStore.h */; };
 		1AEFCC1311D01F96008219D3 /* PluginInfoStore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AEFCC1111D01F96008219D3 /* PluginInfoStore.cpp */; };
 		1AEFCCBD11D02C5E008219D3 /* PluginInfoStoreMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AEFCCBC11D02C5E008219D3 /* PluginInfoStoreMac.mm */; };
+		1AEFD27911D16C81008219D3 /* ArgumentCoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AEFD27811D16C81008219D3 /* ArgumentCoder.h */; };
 		1AF3060A111B599E00F96436 /* WebKit2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8DC2EF5B0486A6940098B216 /* WebKit2.framework */; };
 		5DAD729C116FF86200EE5396 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0867D6A5FE840307C02AAC07 /* AppKit.framework */; };
 		8DC2EF530486A6940098B216 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C1666FE841158C02AAC07 /* InfoPlist.strings */; };
@@ -259,6 +260,7 @@
 		1AEFCC1011D01F96008219D3 /* PluginInfoStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginInfoStore.h; sourceTree = "<group>"; };
 		1AEFCC1111D01F96008219D3 /* PluginInfoStore.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PluginInfoStore.cpp; sourceTree = "<group>"; };
 		1AEFCCBC11D02C5E008219D3 /* PluginInfoStoreMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PluginInfoStoreMac.mm; sourceTree = "<group>"; };
+		1AEFD27811D16C81008219D3 /* ArgumentCoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArgumentCoder.h; sourceTree = "<group>"; };
 		32DBCF5E0370ADEE00C91783 /* WebKit2Prefix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKit2Prefix.h; sourceTree = "<group>"; };
 		5DAD7294116FF70B00EE5396 /* WebProcess.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = WebProcess.xcconfig; sourceTree = "<group>"; };
 		5DAD73F1116FF90C00EE5396 /* BaseTarget.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = BaseTarget.xcconfig; sourceTree = "<group>"; };
@@ -562,6 +564,7 @@
 			isa = PBXGroup;
 			children = (
 				BCC56F751159955E001CCAF9 /* mac */,
+				1AEFD27811D16C81008219D3 /* ArgumentCoder.h */,
 				BC032D9D10F437D10058C15A /* ArgumentDecoder.cpp */,
 				BC032D9E10F437D10058C15A /* ArgumentDecoder.h */,
 				BC032D9F10F437D10058C15A /* ArgumentEncoder.cpp */,
@@ -1038,6 +1041,7 @@
 				1AEFCC1211D01F96008219D3 /* PluginInfoStore.h in Headers */,
 				BCDE059B11CDA8AE00E41AF1 /* WebContextInjectedBundleClient.h in Headers */,
 				BCB7346E11CEE3FF00EC5002 /* WebProcessProxyMessageKinds.h in Headers */,
+				1AEFD27911D16C81008219D3 /* ArgumentCoder.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
