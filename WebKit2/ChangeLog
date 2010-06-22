@@ -2,6 +2,28 @@
 
         Reviewed by Sam Weinig.
 
+        Have PluginInfoStoreMac actually get plug-in info and populate the plug-in list
+        https://bugs.webkit.org/show_bug.cgi?id=40957
+
+        * UIProcess/Plugins/PluginInfoStore.cpp:
+        (WebKit::PluginInfoStore::loadPluginsIfNecessary):
+        (WebKit::PluginInfoStore::loadPluginsInDirectory):
+        (WebKit::PluginInfoStore::loadPlugin):
+        (WebKit::PluginInfoStore::getPlugins):
+        * UIProcess/Plugins/PluginInfoStore.h:
+        * UIProcess/Plugins/mac/PluginInfoStoreMac.mm: Added.
+        (WebKit::PluginInfoStore::pluginDirectories):
+        (WebKit::PluginInfoStore::pluginPathsInDirectory):
+        (WebKit::getPluginArchitecture):
+        (WebKit::getPluginInfoFromPropertyLists):
+        (WebKit::PluginInfoStore::getPluginInfo):
+        (WebKit::PluginInfoStore::shouldUsePlugin):
+        * WebKit2.xcodeproj/project.pbxproj:
+
+2010-06-21  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
         Add PluginInfoStore class
         https://bugs.webkit.org/show_bug.cgi?id=40949
 

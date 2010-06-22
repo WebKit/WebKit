@@ -38,17 +38,28 @@ public:
     void getPlugins(Vector<WebCore::PluginInfo>& plugins);
     
 private:
+    PluginInfoStore();
+
     // Represents a single plug-in.
     struct Plugin {
         WebCore::String path;
         WebCore::PluginInfo info;
 #if PLATFORM(MAC)
         cpu_type_t pluginArchitecture;
+        unsigned versionNumber;
 #endif
     };
-    
-    PluginInfoStore();
 
+    void loadPluginsIfNecessary();
+    void loadPluginsInDirectory(const WebCore::String& directory);
+    void loadPlugin(const WebCore::String& pluginPath);
+    
+    // Platform specific member functions.
+    static Vector<WebCore::String> pluginDirectories();
+    static Vector<WebCore::String> pluginPathsInDirectory(const WebCore::String& directory);
+    static bool getPluginInfo(const WebCore::String& pluginPath, Plugin& plugin);
+    static bool shouldUsePlugin(const Plugin& plugin, const Vector<Plugin>& loadedPlugins);
+    
     Vector<Plugin> m_plugins;
     bool m_pluginListIsUpToDate;
 };
