@@ -1,3 +1,21 @@
+2010-06-22  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Wean NetscapePluginHostManager of any knowledge about WebNetscapePluginPackage
+        https://bugs.webkit.org/show_bug.cgi?id=41006
+
+        * Plugins/Hosted/NetscapePluginHostManager.h:
+        * Plugins/Hosted/NetscapePluginHostManager.mm:
+        (WebKit::NetscapePluginHostManager::hostForPlugin):
+        (WebKit::NetscapePluginHostManager::spawnPluginHost):
+        (WebKit::NetscapePluginHostManager::instantiatePlugin):
+        (WebKit::NetscapePluginHostManager::createPropertyListFile):
+        * Plugins/Hosted/WebHostedNetscapePluginView.mm:
+        (-[WebHostedNetscapePluginView createPlugin]):
+        * Plugins/WebNetscapePluginPackage.mm:
+        (-[WebNetscapePluginPackage createPropertyListFile]):
+
 2010-06-21  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

@@ -111,7 +111,7 @@ extern "C" {
     accleratedCompositingEnabled = [[[self webView] preferences] acceleratedCompositingEnabled];
 #endif
     
-    _proxy = NetscapePluginHostManager::shared().instantiatePlugin(_pluginPackage.get(), self, _MIMEType.get(), _attributeKeys.get(), _attributeValues.get(), userAgent, _sourceURL.get(), 
+    _proxy = NetscapePluginHostManager::shared().instantiatePlugin([_pluginPackage.get() path], [_pluginPackage.get() pluginHostArchitecture], [_pluginPackage.get() bundleIdentifier], self, _MIMEType.get(), _attributeKeys.get(), _attributeValues.get(), userAgent, _sourceURL.get(), 
                                                                    _mode == NP_FULL, _isPrivateBrowsingEnabled, accleratedCompositingEnabled);
     if (!_proxy) 
         return NO;

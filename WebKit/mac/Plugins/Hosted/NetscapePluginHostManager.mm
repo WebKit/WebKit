@@ -48,6 +48,7 @@ extern "C" {
 }
 
 using namespace std;
+using namespace WebCore;
 
 namespace WebKit {
 
@@ -69,9 +70,9 @@ NetscapePluginHostManager::~NetscapePluginHostManager()
 {
 }
 
-NetscapePluginHostProxy* NetscapePluginHostManager::hostForPackage(WebNetscapePluginPackage *package, bool useProxiedOpenPanel)
+NetscapePluginHostProxy* NetscapePluginHostManager::hostForPlugin(const WebCore::String& pluginPath, cpu_type_t pluginArchitecture, const String& bundleIdentifier, bool useProxiedOpenPanel)
 {
-    pair<PluginHostMap::iterator, bool> result = m_pluginHosts.add(package, 0);
+    pair<PluginHostMap::iterator, bool> result = m_pluginHosts.add(pluginPath, 0);
     
     // The package was already in the map, just return it.
     if (!result.second)
@@ -85,7 +86,7 @@ NetscapePluginHostProxy* NetscapePluginHostManager::hostForPackage(WebNetscapePl
     
     mach_port_t pluginHostPort;
     ProcessSerialNumber pluginHostPSN;
-    if (!spawnPluginHost(package, clientPort, pluginHostPort, pluginHostPSN, useProxiedOpenPanel)) {
+    if (!spawnPluginHost(pluginPath, pluginArchitecture, clientPort, pluginHostPort, pluginHostPSN, useProxiedOpenPanel)) {
         mach_port_destroy(mach_task_self(), clientPort);
         m_pluginHosts.remove(result.first);
         return 0;
@@ -93,17 +94,16 @@ NetscapePluginHostProxy* NetscapePluginHostManager::hostForPackage(WebNetscapePl
     
     // Since Flash NPObjects add methods dynamically, we don't want to cache when a property/method doesn't exist
     // on an object because it could be added later.
-    bool shouldCacheMissingPropertiesAndMethods = [package bundleIdentifier] != "com.macromedia.Flash Player.plugin";
+    bool shouldCacheMissingPropertiesAndMethods = bundleIdentifier != "com.macromedia.Flash Player.plugin";
     
     NetscapePluginHostProxy* hostProxy = new NetscapePluginHostProxy(clientPort, pluginHostPort, pluginHostPSN, shouldCacheMissingPropertiesAndMethods);
     
-    CFRetain(package);
     result.first->second = hostProxy;
     
     return hostProxy;
 }
 
-bool NetscapePluginHostManager::spawnPluginHost(WebNetscapePluginPackage *package, mach_port_t clientPort, mach_port_t& pluginHostPort, ProcessSerialNumber& pluginHostPSN, bool useProxiedOpenPanel)
+bool NetscapePluginHostManager::spawnPluginHost(const String& pluginPath, cpu_type_t pluginArchitecture, mach_port_t clientPort, mach_port_t& pluginHostPort, ProcessSerialNumber& pluginHostPSN, bool useProxiedOpenPanel)
 {
     if (m_pluginVendorPort == MACH_PORT_NULL) {
         if (!initializeVendorPort())
@@ -121,7 +121,7 @@ bool NetscapePluginHostManager::spawnPluginHost(WebNetscapePluginPackage *packag
     
     NSDictionary *launchProperties = [[NSDictionary alloc] initWithObjectsAndKeys:
                                       pluginHostAppExecutablePath, @"pluginHostPath",
-                                      [NSNumber numberWithInt:[package pluginHostArchitecture]], @"cpuType",
+                                      [NSNumber numberWithInt:pluginArchitecture], @"cpuType",
                                       localization.get(), @"localization",
                                       [NSNumber numberWithBool:useProxiedOpenPanel], @"useProxiedOpenPanel",
                                       nil];
@@ -152,11 +152,11 @@ bool NetscapePluginHostManager::spawnPluginHost(WebNetscapePluginPackage *packag
     NSString *visibleName = [NSString stringWithFormat:UI_STRING("%@ (%@ Internet plug-in)",
                                                                  "visible name of the plug-in host process. The first argument is the plug-in name "
                                                                  "and the second argument is the application name."),
-                             [(NSString *)[package pluginInfo].file stringByDeletingPathExtension], [[NSProcessInfo processInfo] processName]];
+                             [[(NSString*)pluginPath lastPathComponent] stringByDeletingPathExtension], [[NSProcessInfo processInfo] processName]];
     
     NSDictionary *hostProperties = [[NSDictionary alloc] initWithObjectsAndKeys:
                                     visibleName, @"visibleName",
-                                    (NSString *)[package path], @"bundlePath",
+                                    (NSString *)pluginPath, @"bundlePath",
                                     nil];
     
     data = [NSPropertyListSerialization dataFromPropertyList:hostProperties format:NSPropertyListBinaryFormat_v1_0 errorDescription:nil];
@@ -215,10 +215,10 @@ void NetscapePluginHostManager::pluginHostDied(NetscapePluginHostProxy* pluginHo
     }
 }
 
-PassRefPtr<NetscapePluginInstanceProxy> NetscapePluginHostManager::instantiatePlugin(WebNetscapePluginPackage *pluginPackage, WebHostedNetscapePluginView *pluginView, NSString *mimeType, NSArray *attributeKeys, NSArray *attributeValues, NSString *userAgent, NSURL *sourceURL, bool fullFrame, bool isPrivateBrowsingEnabled, bool isAcceleratedCompositingEnabled)
+PassRefPtr<NetscapePluginInstanceProxy> NetscapePluginHostManager::instantiatePlugin(const String& pluginPath, cpu_type_t pluginArchitecture, const String& bundleIdentifier, WebHostedNetscapePluginView *pluginView, NSString *mimeType, NSArray *attributeKeys, NSArray *attributeValues, NSString *userAgent, NSURL *sourceURL, bool fullFrame, bool isPrivateBrowsingEnabled, bool isAcceleratedCompositingEnabled)
 {
     WebPreferences *preferences = [[pluginView webView] preferences];
-    NetscapePluginHostProxy* hostProxy = hostForPackage(pluginPackage, [preferences usesProxiedOpenPanel]);
+    NetscapePluginHostProxy* hostProxy = hostForPlugin(pluginPath, pluginArchitecture, bundleIdentifier, [preferences usesProxiedOpenPanel]);
     if (!hostProxy)
         return 0;
 
@@ -257,7 +257,7 @@ PassRefPtr<NetscapePluginInstanceProxy> NetscapePluginHostManager::instantiatePl
         pluginHostDied(hostProxy);
 
         // Try to spawn it again.
-        hostProxy = hostForPackage(pluginPackage, [preferences usesProxiedOpenPanel]);
+        hostProxy = hostForPlugin(pluginPath, pluginArchitecture, bundleIdentifier, [preferences usesProxiedOpenPanel]);
         
         // Create a new instance.
         instance = NetscapePluginInstanceProxy::create(hostProxy, pluginView, fullFrame);
@@ -277,11 +277,11 @@ PassRefPtr<NetscapePluginInstanceProxy> NetscapePluginHostManager::instantiatePl
     return instance.release();
 }
 
-void NetscapePluginHostManager::createPropertyListFile(WebNetscapePluginPackage *package)
+void NetscapePluginHostManager::createPropertyListFile(const String& pluginPath, cpu_type_t pluginArchitecture)
 {   
     NSString *pluginHostAppPath = [[NSBundle bundleWithIdentifier:@"com.apple.WebKit"] pathForAuxiliaryExecutable:pluginHostAppName];
     NSString *pluginHostAppExecutablePath = [[NSBundle bundleWithPath:pluginHostAppPath] executablePath];
-    NSString *bundlePath = [package path];
+    NSString *bundlePath = pluginPath;
 
     pid_t pid;
     posix_spawnattr_t attr;
@@ -289,7 +289,7 @@ void NetscapePluginHostManager::createPropertyListFile(WebNetscapePluginPackage 
     
     // Set the architecture.
     size_t ocount = 0;
-    int cpuTypes[1] = { [package pluginHostArchitecture] };
+    int cpuTypes[] = { pluginArchitecture };
     posix_spawnattr_setbinpref_np(&attr, 1, cpuTypes, &ocount);
     
     // Spawn the plug-in host and tell it to call the registration function.
