@@ -2,6 +2,20 @@
 
         Reviewed by Sam Weinig.
 
+        Add a SimpleArgumentCoder class template that works on POD types
+        https://bugs.webkit.org/show_bug.cgi?id=41023
+
+        * Platform/CoreIPC/SimpleArgumentCoder.h: Added.
+        (CoreIPC::SimpleArgumentCoder::encode):
+        (CoreIPC::SimpleArgumentCoder::decode):
+        * Shared/WebCoreTypeArgumentMarshalling.h:
+        (CoreIPC::):
+        * WebKit2.xcodeproj/project.pbxproj:
+
+2010-06-22  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
         Use the ArgumentCoder class template for decoding
         https://bugs.webkit.org/show_bug.cgi?id=41021
 

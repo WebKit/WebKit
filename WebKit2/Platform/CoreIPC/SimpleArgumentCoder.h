@@ -23,47 +23,25 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebCoreTypeArgumentMarshalling_h
-#define WebCoreTypeArgumentMarshalling_h
+#ifndef SimpleArgumentCoder_h
+#define SimpleArgumentCoder_h
 
-#include "ArgumentDecoder.h"
-#include "ArgumentEncoder.h"
-#include "Arguments.h"
-#include "SimpleArgumentCoder.h"
-#include <WebCore/FloatRect.h>
-#include <WebCore/IntRect.h>
-#include <WebCore/PlatformString.h>
+#include "ArgumentCoder.h"
 
 namespace CoreIPC {
 
-template<> struct ArgumentCoder<WebCore::IntPoint> : SimpleArgumentCoder<WebCore::IntPoint> { };
-template<> struct ArgumentCoder<WebCore::IntSize> : SimpleArgumentCoder<WebCore::IntSize> { };
-template<> struct ArgumentCoder<WebCore::IntRect> : SimpleArgumentCoder<WebCore::IntRect> { };
-
-template<> struct ArgumentCoder<WebCore::String> {
-    static void encode(ArgumentEncoder* encoder, const WebCore::String& string)
+// An argument coder works on POD types
+template<typename T> struct SimpleArgumentCoder {
+    static void encode(ArgumentEncoder* encoder, const T& t)
     {
-        uint32_t length = string.length();
-        encoder->encode(length);
-        encoder->encodeBytes(reinterpret_cast<const uint8_t*>(string.characters()), length * sizeof(UChar));
+        encoder->encodeBytes(reinterpret_cast<const uint8_t*>(&t), sizeof(T));
     }
-    
-    static bool decode(ArgumentDecoder* decoder, WebCore::String& s)
+    static bool decode(ArgumentDecoder* decoder, T& t)
     {
-        uint32_t length;
-        if (!decoder->decode(length))
-            return false;
-        
-        UChar* buffer;
-        WebCore::String string = WebCore::String::createUninitialized(length, buffer);
-        if (!decoder->decodeBytes(reinterpret_cast<uint8_t*>(buffer), length * sizeof(UChar)))
-            return false;
-        
-        s = string;
-        return true;
+        return decoder->decodeBytes(reinterpret_cast<uint8_t*>(&t), sizeof(T));
     }
 };
-
+    
 } // namespace CoreIPC
 
-#endif // WebCoreTypeArgumentMarshalling_h
+#endif // SimpleArgumentCoder_h
