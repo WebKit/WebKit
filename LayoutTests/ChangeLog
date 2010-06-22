@@ -1,3 +1,18 @@
+2010-06-22  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Geoffrey Garen.
+
+        Two fast/dynamic tests needlessly depend on legacy <tag<tag> parsing behavior
+        https://bugs.webkit.org/show_bug.cgi?id=40946
+
+        These two tests would fail when we turned on
+        the HTML5 Lexer code path for DocumentFragment parsing.
+        This old parser quirk is covered by several other tests
+        including fast/invalid/016.html.
+
+        * fast/dynamic/insertAdjacentHTML.html:
+        * fast/dynamic/insertAdjacentText.html:
+
 2010-06-22  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler.
