@@ -1,0 +1,5 @@
+This test verifies that showModalDialog implementation in DRT works.
+
+You need to disable pop-up blocker for this test to run successfully.
+
+Modal dialog closing.

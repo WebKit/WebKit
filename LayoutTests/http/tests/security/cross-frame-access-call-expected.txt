@@ -82,6 +82,5 @@ PASS: window.moveBy.call(targetWindow, 0, 0); should be 'undefined' and is.
 PASS: window.moveTo.call(targetWindow, 0, 0); should be 'undefined' and is.
 PASS: window.resizeBy.call(targetWindow, 0, 0); should be 'undefined' and is.
 PASS: window.resizeTo.call(targetWindow, 0, 0); should be 'undefined' and is.
-PASS: window.showModalDialog.call(targetWindow); should be 'TypeError: Result of expression 'window.showModalDialog' [undefined] is not an object.' and is.
 PASS: window.location.toString.call(targetWindow.location) should be 'undefined' and is.
 

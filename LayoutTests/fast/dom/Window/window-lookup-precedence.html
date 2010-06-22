@@ -38,6 +38,9 @@ function checkValue(name, original) {
 function check(prop) {
     var name = prop[0];
     var original = win[name];
+    // showModalDialog is not currently implemented in DumpRenderTree for all platforms.
+    if (name == "showModalDialog")
+      return;
     // Check subframe precedence.
     try {
       subframe[name] = name;

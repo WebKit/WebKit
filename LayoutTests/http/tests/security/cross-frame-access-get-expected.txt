@@ -533,7 +533,6 @@ PASS: canGet('targetWindow.scrollBy') should be 'false' and is.
 PASS: canGet('targetWindow.scrollTo') should be 'false' and is.
 PASS: canGet('targetWindow.setInterval') should be 'false' and is.
 PASS: canGet('targetWindow.setTimeout') should be 'false' and is.
-PASS: canGet('targetWindow.showModalDialog') should be 'false' and is.
 PASS: canGet('targetWindow.stop') should be 'false' and is.
 
 ----- tests for getting of not allowed Attributes -----

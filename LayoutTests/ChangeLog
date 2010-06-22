@@ -1,3 +1,97 @@
+2010-06-21  Prasad Tammana  <prasadt@chromium.org>
+
+        Reviewed by Darin Adler, Dmitry Titov.
+
+        DumpRenderTree should allow tests with modal dialogs
+        https://bugs.webkit.org/show_bug.cgi?id=35350
+
+        Added a new test show-modal-dialog.html to harness tests to verify that showModalDialog works.
+
+        Added a new test, show-modal-dialog-onblur-onfocus.html, that takes advantage of the showModalDialog
+        functionality added to UIDelegate.mm.  The test is only enabled on mac for now.  This test will catch
+        regressions on the bug fix for https://bugs.webkit.org/show_bug.cgi?id=33962.
+
+        Support for showModalDialog affected the expected output for many tests that operate under the assumption
+        that the method is undefined.  Modified the tests accordingly, in some cases disabled showModalDialog (not
+        currently tested anyway.  Opened a bug to add showModalDialog specific tests where appropriate - Bug# 39897.
+
+        * fast/dom/Window/window-function-frame-getter-precedence-expected.txt:
+        * fast/dom/Window/window-function-frame-getter-precedence.html:
+        * fast/dom/Window/window-function-name-getter-precedence-expected.txt:
+        * fast/dom/Window/window-function-name-getter-precedence.html:
+        * fast/dom/Window/window-lookup-precedence-expected.txt:
+        * fast/dom/Window/window-lookup-precedence.html:
+        * fast/dom/Window/window-properties-expected.txt:
+        * fast/dom/Window/window-properties.html:
+        * fast/dom/script-tests/prototype-inheritance.js:
+        Tweak tests so that showModalDialog part gets exercised only if its defined to keep output consistent across platforms.
+        Where its not possible, skip the test for showModalDialog, which is not currently exercised anyway.
+
+        * fast/events/resources/modal-dialog.html: Added.
+        * fast/events/show-modal-dialog-onblur-onfocus-expected.txt: Added.
+        * fast/events/show-modal-dialog-onblur-onfocus.html: Added.
+        * fast/harness/resources/modal-dialog.html: Added.
+        * fast/harness/show-modal-dialog-expected.txt: Added.
+        * fast/harness/show-modal-dialog.html: Added.
+        New tests that take advantage of showModalDialog in DRT.
+
+        * fast/js/sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.1_T1-expected.txt:
+        * fast/js/sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.1_T10-expected.txt:
+        * fast/js/sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.1_T11-expected.txt:
+        * fast/js/sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.1_T2-expected.txt:
+        * fast/js/sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.1_T3-expected.txt:
+        * fast/js/sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.1_T4-expected.txt:
+        * fast/js/sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.1_T5-expected.txt:
+        * fast/js/sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.1_T6-expected.txt:
+        * fast/js/sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.1_T7-expected.txt:
+        * fast/js/sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.1_T8-expected.txt:
+        * fast/js/sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.1_T9-expected.txt:
+        * fast/js/sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.2_T1-expected.txt:
+        * fast/js/sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.2_T10-expected.txt:
+        * fast/js/sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.2_T11-expected.txt:
+        * fast/js/sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.2_T2-expected.txt:
+        * fast/js/sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.2_T3-expected.txt:
+        * fast/js/sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.2_T4-expected.txt:
+        * fast/js/sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.2_T5-expected.txt:
+        * fast/js/sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.2_T6-expected.txt:
+        * fast/js/sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.2_T7-expected.txt:
+        * fast/js/sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.2_T8-expected.txt:
+        * fast/js/sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.2_T9-expected.txt:
+        Update the expected output to reflect the fact that these tests pass now.  Skip the tests on gtk, qt and win.  They were all expected
+        to fail anyway.  So no coverage lost.
+
+        * http/tests/security/cross-frame-access-call-expected.txt:
+        * http/tests/security/cross-frame-access-call.html:
+        * http/tests/security/cross-frame-access-get-expected.txt:
+        * http/tests/security/cross-frame-access-get.html:
+        * http/tests/security/cross-frame-access-put-expected.txt:
+        Skip showModalDialog to make test pass for all platforms.  Added a FIXME with bug # to add a test specifically for showModalDialog.
+
+        * http/tests/security/resources/cross-frame-iframe-for-put-test.html:
+        * platform/chromium-mac/fast/dom/Window/window-function-frame-getter-precedence-expected.txt: Removed.
+        * platform/chromium-mac/fast/dom/Window/window-function-name-getter-precedence-expected.txt: Removed.
+        * platform/chromium-mac/http/tests/security/cross-frame-access-get-expected.txt:
+        * platform/chromium-win/fast/dom/Window/window-function-frame-getter-precedence-expected.txt: Removed.
+        * platform/chromium-win/fast/dom/Window/window-function-name-getter-precedence-expected.txt: Removed.
+        * platform/chromium-win/fast/dom/Window/window-lookup-precedence-expected.txt:
+        * platform/chromium-win/http/tests/security/cross-frame-access-get-expected.txt:
+        * platform/chromium-win/http/tests/security/cross-frame-access-put-expected.txt:
+        * platform/chromium/http/tests/security/cross-frame-access-call-expected.txt:
+        * platform/chromium/test_expectations.txt:
+        * platform/gtk/Skipped:
+        * platform/qt/Skipped:
+        * platform/qt/fast/dom/Window/window-function-frame-getter-precedence-expected.txt: Removed.
+        * platform/qt/fast/dom/Window/window-function-name-getter-precedence-expected.txt: Removed.
+        * platform/qt/fast/dom/Window/window-lookup-precedence-expected.txt: Removed.
+        Updaate expected output to reflect test changes.  Removed some platform specific files where the only reason they're different is
+        because of showModalDialog.
+
+        * platform/qt/http/tests/security/cross-frame-access-call-expected.txt:
+        * platform/qt/http/tests/security/cross-frame-access-get-expected.txt:
+        * platform/win/Skipped:
+        Skip failing tests.  Note that there is no test functionality lost.  These are either new tests or tests that were dysfunctional anyway
+        in the absence of showModalDialog in DRT.
+
 2010-06-21  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin.

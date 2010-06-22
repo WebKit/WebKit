@@ -60,8 +60,6 @@ PASS 'function setInterval() { [native code] }' is 'function setInterval() { [na
 PASS 'function setInterval() { [native code] }' is 'function setInterval() { [native code] }'
 PASS 'function setTimeout() { [native code] }' is 'function setTimeout() { [native code] }'
 PASS 'function setTimeout() { [native code] }' is 'function setTimeout() { [native code] }'
-PASS 'function showModalDialog() { [native code] }' is 'function showModalDialog() { [native code] }'
-PASS 'function showModalDialog() { [native code] }' is 'function showModalDialog() { [native code] }'
 PASS 'function stop() { [native code] }' is 'function stop() { [native code] }'
 PASS 'function stop() { [native code] }' is 'function stop() { [native code] }'
 PASS 'function () { [native code] }' is 'function () { [native code] }'
