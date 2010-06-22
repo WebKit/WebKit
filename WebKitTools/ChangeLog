@@ -1,3 +1,19 @@
+2010-06-22  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Remove Gtk 64-Release bot from core since it's broken
+        https://bugs.webkit.org/show_bug.cgi?id=41022
+
+        This bot alone has been responsible for more than 72 hours of
+        commit-queue blockage in the last week.  The bot is broken -- keeps
+        losing its display server or similar.  Until the Gtk folks can fix the
+        bot, we need to remove it from core.  The WebKit community can't keep
+        it green as is.
+
+        * Scripts/webkitpy/common/net/buildbot.py:
+        * Scripts/webkitpy/common/net/buildbot_unittest.py:
+
 2010-06-21  Dumitru Daniliuc  <dumi@chromium.org>
 
         Reviewed by Eric Seidel.

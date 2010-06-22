@@ -286,7 +286,8 @@ class BuildBotTest(unittest.TestCase):
             "Leopard",
             "Tiger",
             "Windows.*Build",
-            "GTK",
+            "GTK.*32",
+            "GTK.*64.*Debug",  # Disallow the 64-bit Release bot which is broken.
             "Qt",
             "Chromium.*Release$",
         ]
@@ -303,7 +304,6 @@ class BuildBotTest(unittest.TestCase):
             {'name': u'GTK Linux 32-bit Release', },
             {'name': u'GTK Linux 32-bit Debug', },
             {'name': u'GTK Linux 64-bit Debug', },
-            {'name': u'GTK Linux 64-bit Release', },
             {'name': u'Qt Linux Release', },
             {'name': u'Qt Linux Release minimal', },
             {'name': u'Qt Linux ARMv5 Release', },
