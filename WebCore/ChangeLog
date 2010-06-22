@@ -1,3 +1,40 @@
+2010-06-22  Tony Gentilcore  <tonyg@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Make PendingScript hold a CachedResourceClient open for its lifetime
+        https://bugs.webkit.org/show_bug.cgi?id=40968
+
+        This replaces the mechanism introduced in r61374 with a simpler
+        approach from preventing unexpected purges; always keep a client open.
+        This will approach will allow deferred scripts to add a client after
+        the resource may have already been loaded without having to worry about
+        the buffer being purged in the meantime.
+
+        No new tests because making a CachedResource purge itself is not
+        testable from a LayoutTest.
+
+        * html/HTML5DocumentParser.cpp:
+        (WebCore::HTML5DocumentParser::watchForLoad):
+        (WebCore::HTML5DocumentParser::notifyFinished):
+        * html/HTML5ScriptRunner.cpp:
+        (WebCore::HTML5ScriptRunner::~HTML5ScriptRunner):
+        (WebCore::HTML5ScriptRunner::sourceFromPendingScript):
+        (WebCore::HTML5ScriptRunner::isPendingScriptReady):
+        (WebCore::HTML5ScriptRunner::executePendingScript):
+        (WebCore::HTML5ScriptRunner::watchForLoad):
+        (WebCore::HTML5ScriptRunner::stopWatchingForLoad):
+        (WebCore::HTML5ScriptRunner::executeScriptsWaitingForLoad):
+        (WebCore::HTML5ScriptRunner::executeScriptsWaitingForStylesheets):
+        (WebCore::HTML5ScriptRunner::requestScript):
+        * html/HTML5ScriptRunner.h:
+        (WebCore::HTML5ScriptRunner::PendingScript::PendingScript):
+        (WebCore::HTML5ScriptRunner::PendingScript::~PendingScript):
+        (WebCore::HTML5ScriptRunner::PendingScript::setCachedScript):
+        (WebCore::HTML5ScriptRunner::PendingScript::cachedScript):
+        (WebCore::HTML5ScriptRunner::PendingScript::notifyFinished):
+        * html/HTML5ScriptRunnerHost.h:
+
 2010-06-22  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.
