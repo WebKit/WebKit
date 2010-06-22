@@ -1,3 +1,63 @@
+2010-06-22  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Fragment parsing needs to go through the HTML5 Parser code path
+        https://bugs.webkit.org/show_bug.cgi?id=40645
+
+        Added a new HTML5DocumentParser::parseHTMLDocumentFragment
+        codepath which optionally calls through to the old fragment
+        parsing path, now renamed parseLegacyHTMLDocumentFragment.
+
+        * dom/Element.cpp:
+        (WebCore::Element::createContextualFragment):
+         - Use document()->createDocumentFragment() instead
+           of DocumentFragment::create() to match other callers
+           (and not depend on DocumentFragment.h).
+         - Update call to parseHTMLDocumentFragment to use the new
+           HTML5 parser codepath.
+        * dom/MappedAttributeEntry.h:
+         - Add a FIXME about this horrible enum placement.
+           Sadly this will cause a world-rebuild for everyone.
+        * html/HTML5DocumentParser.cpp:
+        (WebCore::HTML5DocumentParser::HTML5DocumentParser):
+        (WebCore::HTML5DocumentParser::runScriptsForPausedTreeConstructor):
+         - The main pumpLexer function has gotten to large.  Move the script
+           running logic into this new function.
+         - Handle the case where we have no m_scriptRunner (fragment case).
+        (WebCore::HTML5DocumentParser::pumpLexer):
+         - Use new runScriptsForPausedTreeConstructor().
+        (WebCore::HTML5DocumentParser::executingScript):
+        (WebCore::HTML5DocumentParser::inScriptExecution):
+         - New function to handle the case where m_scriptRunner is null.
+        (WebCore::HTML5DocumentParser::resumeParsingAfterScriptExecution):
+         - Use inScriptExecution() instead of m_scriptRunner->inScriptExecution().
+        (WebCore::HTML5DocumentParser::executeScript): ditto.
+        (WebCore::HTML5DocumentParser::notifyFinished): ditto.
+        (WebCore::HTML5DocumentParser::executeScriptsWaitingForStylesheets): ditto.
+        (WebCore::shouldUseLegacyParser):
+         - Helper function to check the html5ParserEnabled() setting.
+        (WebCore::HTML5DocumentParser::parseHTMLDocumentFragment):
+         - Run HTML5DocumentParser in fragment mode, or optionally run
+           the legacy parser if !html5ParserEnabled().
+        * html/HTML5DocumentParser.h:
+        * html/HTML5TreeBuilder.cpp:
+        (WebCore::HTML5TreeBuilder::HTML5TreeBuilder):
+        (WebCore::HTML5TreeBuilder::passTokenToLegacyParser):
+         - Implement the FragmentScriptingNotAllowed hack for platform/Pasteboard.
+        * html/HTML5TreeBuilder.h:
+        * html/HTMLDocumentParser.cpp:
+        (WebCore::parseLegacyHTMLDocumentFragment):
+         - Renamed from parseHTMLDocumentFragment
+        * html/HTMLDocumentParser.h:
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::insertAdjacentHTML):
+         - Call HTML5DocumentParser::parseHTMLDocumentFragment.
+        * platform/mac/PasteboardMac.mm:
+        (WebCore::Pasteboard::documentFragment): ditto.
+        * xml/XSLTProcessor.cpp:
+        (WebCore::createFragmentFromSource): ditto.
+
 2010-06-22  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Simon Fraser.

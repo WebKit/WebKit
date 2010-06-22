@@ -26,6 +26,7 @@
 #include "config.h"
 #include "HTML5DocumentParser.h"
 
+#include "DocumentFragment.h"
 #include "Element.h"
 #include "Frame.h"
 #include "FrameView.h" // Only for isLayoutTimerActive
@@ -34,7 +35,6 @@
 #include "HTML5ScriptRunner.h"
 #include "HTML5TreeBuilder.h"
 #include "HTMLDocument.h"
-#include "Node.h"
 #include "Page.h"
 #include "XSSAuditor.h"
 #include <wtf/CurrentTime.h>
@@ -95,8 +95,7 @@ static int parserChunkSize(Page* page)
 }
 
 HTML5DocumentParser::HTML5DocumentParser(HTMLDocument* document, bool reportErrors)
-    : DocumentParser()
-    , m_document(document)
+    : m_document(document)
     , m_lexer(new HTML5Lexer)
     , m_scriptRunner(new HTML5ScriptRunner(document, this))
     , m_treeConstructor(new HTML5TreeBuilder(m_lexer.get(), document, reportErrors))
@@ -104,6 +103,22 @@ HTML5DocumentParser::HTML5DocumentParser(HTMLDocument* document, bool reportErro
     , m_writeNestingLevel(0)
     , m_parserTimeLimit(parserTimeLimit(document->page()))
     , m_parserChunkSize(parserChunkSize(document->page()))
+    , m_continueNextChunkTimer(this, &HTML5DocumentParser::continueNextChunkTimerFired)
+{
+    begin();
+}
+
+// FIXME: Member variables should be grouped into self-initializing structs to
+// minimize code duplication between these constructors.
+HTML5DocumentParser::HTML5DocumentParser(DocumentFragment* fragment, FragmentScriptingPermission scriptingPermission)
+    : m_document(fragment->document())
+    , m_lexer(new HTML5Lexer)
+    , m_treeConstructor(new HTML5TreeBuilder(m_lexer.get(), fragment, scriptingPermission))
+    , m_endWasDelayed(false)
+    , m_writeNestingLevel(0)
+    // FIXME: Parser yielding should be a separate class.
+    , m_parserTimeLimit(0)
+    , m_parserChunkSize(0)
     , m_continueNextChunkTimer(this, &HTML5DocumentParser::continueNextChunkTimerFired)
 {
     begin();
@@ -177,6 +192,18 @@ inline bool HTML5DocumentParser::shouldContinueParsing(PumpSession& session)
     return true;
 }
 
+bool HTML5DocumentParser::runScriptsForPausedTreeConstructor()
+{
+    ASSERT(m_treeConstructor->isPaused());
+
+    int scriptStartLine = 0;
+    RefPtr<Element> scriptElement = m_treeConstructor->takeScriptToProcess(scriptStartLine);
+    // We will not have a scriptRunner when parsing a DocumentFragment.
+    if (!m_scriptRunner)
+        return true;
+    return m_scriptRunner->execute(scriptElement.release(), scriptStartLine);
+}
+
 void HTML5DocumentParser::pumpLexer(SynchronousMode mode)
 {
     ASSERT(!m_parserStopped);
@@ -203,14 +230,12 @@ void HTML5DocumentParser::pumpLexer(SynchronousMode mode)
         if (ScriptController* scriptController = script())
             scriptController->setEventHandlerLineNumber(0);
 
+        // The parser will pause itself when waiting on a script to load or run.
         if (!m_treeConstructor->isPaused())
             continue;
 
-        // The parser will pause itself when waiting on a script to load or run.
-        // ScriptRunner executes scripts at the right times and handles reentrancy.
-        int scriptStartLine = 0;
-        RefPtr<Element> scriptElement = m_treeConstructor->takeScriptToProcess(scriptStartLine);
-        bool shouldContinueParsing = m_scriptRunner->execute(scriptElement.release(), scriptStartLine);
+        // If we're paused waiting for a script, we try to execute scripts before continuing.
+        bool shouldContinueParsing = runScriptsForPausedTreeConstructor();
         m_treeConstructor->setPaused(!shouldContinueParsing);
         if (!shouldContinueParsing)
             break;
@@ -341,8 +366,17 @@ bool HTML5DocumentParser::finishWasCalled()
     return m_input.isClosed();
 }
 
+// This function is virtual and just for the DocumentParser interface.
 int HTML5DocumentParser::executingScript() const
 {
+    return inScriptExecution();
+}
+
+// This function is non-virtual and used throughout the implementation.
+bool HTML5DocumentParser::inScriptExecution() const
+{
+    if (!m_scriptRunner)
+        return false;
     return m_scriptRunner->inScriptExecution();
 }
 
@@ -368,7 +402,7 @@ bool HTML5DocumentParser::isWaitingForScripts() const
 
 void HTML5DocumentParser::resumeParsingAfterScriptExecution()
 {
-    ASSERT(!m_scriptRunner->inScriptExecution());
+    ASSERT(!inScriptExecution());
     ASSERT(!m_treeConstructor->isPaused());
 
     pumpLexerIfPossible(AllowYield);
@@ -396,6 +430,7 @@ bool HTML5DocumentParser::shouldLoadExternalScriptFromSrc(const AtomicString& sr
 
 void HTML5DocumentParser::notifyFinished(CachedResource* cachedResource)
 {
+    ASSERT(m_scriptRunner);
     // Ignore calls unless we have a script blocking the parser waiting
     // for its own load.  Otherwise this may be a load callback from
     // CachedResource::addClient because the script was already in the cache.
@@ -404,7 +439,7 @@ void HTML5DocumentParser::notifyFinished(CachedResource* cachedResource)
         ASSERT(m_scriptRunner->inScriptExecution());
         return;
     }
-    ASSERT(!m_scriptRunner->inScriptExecution());
+    ASSERT(!inScriptExecution());
     ASSERT(m_treeConstructor->isPaused());
     // Note: We only ever wait on one script at a time, so we always know this
     // is the one we were waiting on and can un-pause the tree builder.
@@ -417,6 +452,9 @@ void HTML5DocumentParser::notifyFinished(CachedResource* cachedResource)
 
 void HTML5DocumentParser::executeScriptsWaitingForStylesheets()
 {
+    // Document only calls this when the Document owns the DocumentParser
+    // so this will not be called in the DocumentFragment case.
+    ASSERT(m_scriptRunner);
     // Ignore calls unless we have a script blocking the parser waiting on a
     // stylesheet load.  Otherwise we are currently parsing and this
     // is a re-entrant call from encountering a </ style> tag.

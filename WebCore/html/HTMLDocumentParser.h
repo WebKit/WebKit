@@ -26,7 +26,7 @@
 
 #include "CachedResourceClient.h"
 #include "CachedResourceHandle.h"
-#include "MappedAttributeEntry.h"
+#include "FragmentScriptingPermission.h"
 #include "NamedNodeMap.h"
 #include "SegmentedString.h"
 #include "Timer.h"
@@ -440,7 +440,7 @@ private:
     OwnPtr<PreloadScanner> m_preloadScanner;
 };
 
-void parseHTMLDocumentFragment(const String&, DocumentFragment*, FragmentScriptingPermission = FragmentScriptingAllowed);
+void parseLegacyHTMLDocumentFragment(const String&, DocumentFragment*, FragmentScriptingPermission = FragmentScriptingAllowed);
 
 UChar decodeNamedEntity(const char*);
 

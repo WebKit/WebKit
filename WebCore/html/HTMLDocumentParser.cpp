@@ -2099,7 +2099,7 @@ void HTMLDocumentParser::setSrc(const SegmentedString& source)
     m_src = source;
 }
 
-void parseHTMLDocumentFragment(const String& source, DocumentFragment* fragment, FragmentScriptingPermission scriptingPermission)
+void parseLegacyHTMLDocumentFragment(const String& source, DocumentFragment* fragment, FragmentScriptingPermission scriptingPermission)
 {
     HTMLDocumentParser parser(fragment, scriptingPermission);
     parser.setForceSynchronous(true);

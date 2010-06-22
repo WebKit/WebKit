@@ -1,5 +1,36 @@
 2010-06-22  Eric Seidel  <eric@webkit.org>
 
+        Reviewed by Adam Barth.
+
+        Fragment parsing needs to go through the HTML5 Parser code path
+        https://bugs.webkit.org/show_bug.cgi?id=40645
+
+        * fast/canvas/canvas-getContext-invalid-expected.txt:
+         - \0 is now converted to \uFFFD per HTML5.
+        * fast/js/null-char-in-string-expected.txt: ditto.
+        * fast/js/switch-behaviour-expected.txt: ditto.
+        * fast/parser/comment-in-textarea-expected.txt:
+         - <textarea> is parsed in the RCDATA state, which means
+           that comments are ignored, thus the </textarea> in the
+           comment correctly closes the <textarea>.  This test is invalid.
+           Our new behavior matches minefield.
+        * fast/tokenizer/lessthan-terminates-tags-and-attrs-expected.txt:
+         - This test is invalid and probably should just be removed.
+           This same behavior is tested by fast/invalid/016.html.
+        * inspector/timeline-parse-html-expected.txt:
+         - The "extra" ParseHTML is expected.  The HTML5 Parser tells the
+           inspector about every parser pump, even ones which pump no data.
+           The HTML5 parser pumps one last time in finish() to flush any
+           buffered characters.  Eventually we'll teach the inspector to
+           filter out (not display) 0-sized pumps.
+        * storage/domstorage/complex-values-expected.txt:
+         - \0 is now converted to \uFFFD per HTML5
+        * svg/dom/fuzz-path-parser-expected.txt: ditto.
+        * svg/dom/rgb-color-parser-expected.txt: ditto
+        * websocket/tests/bad-sub-protocol-control-chars-expected.txt: ditto.
+
+2010-06-22  Eric Seidel  <eric@webkit.org>
+
         Reviewed by Geoffrey Garen.
 
         Two fast/dynamic tests needlessly depend on legacy <tag<tag> parsing behavior

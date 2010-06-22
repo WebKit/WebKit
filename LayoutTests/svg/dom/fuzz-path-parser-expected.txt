@@ -459,7 +459,7 @@ Parsed as 4 command(s) [MCCC]: M1,1Q2 9,4 1,s6,3 6,9,s6 0,0,6,1 zc2,1 7 0,1 4,Z2
 Parsed as 1 command(s) [M]: M1,1a9,2 6 1 2 2 2,za9 0 2 8,2,3,3 s5,8,8 1,HC5 8 5,8,4 2 c8 4 5 2 5 9,l3 9,H7 s6 2,0 0 a4 9,1 6,3,7,0,M6,
 Could not parse: 
 Could not parse: M
-Could not parse: M
+Could not parse: M�
 Parsed as 2 command(s) [MZ]: M1,1Z0
 PASS successfullyParsed is true
 

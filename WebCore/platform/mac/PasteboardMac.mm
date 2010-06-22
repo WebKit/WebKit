@@ -378,6 +378,10 @@ PassRefPtr<DocumentFragment> Pasteboard::documentFragment(Frame* frame, PassRefP
             }
         }
         if ([HTMLString length] != 0) {
+            // FIXME: FragmentScriptingNotAllowed is a HACK and should
+            // be removed or replaced with an enum with a better name.
+            // FragmentScriptingNotAllowed causes the Parser to remove children
+            // of <script> tags (so javascript doesn't show up in pastes).
             RefPtr<DocumentFragment> fragment = createFragmentFromMarkup(frame->document(), HTMLString, "", FragmentScriptingNotAllowed);
             if (fragment)
                 return fragment.release();

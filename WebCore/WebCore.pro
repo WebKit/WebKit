@@ -1223,6 +1223,7 @@ HEADERS += \
     dom/EventTarget.h \
     dom/ExceptionBase.h \
     dom/ExceptionCode.h \
+    dom/FragmentScriptingPermission.h \
     dom/InputElement.h \
     dom/KeyboardEvent.h \
     dom/MessageChannel.h \

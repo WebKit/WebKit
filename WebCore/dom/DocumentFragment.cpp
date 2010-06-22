@@ -24,12 +24,18 @@
 #include "DocumentFragment.h"
 
 #include "Document.h"
+#include "HTML5DocumentParser.h"
+#include "HTMLDocumentParser.h"
+#include "Page.h"
+#include "Settings.h"
+#include "XMLDocumentParser.h"
 
 namespace WebCore {
 
 inline DocumentFragment::DocumentFragment(Document* document)
     : ContainerNode(document)
 {
+    ASSERT(document);
 }
 
 PassRefPtr<DocumentFragment> DocumentFragment::create(Document* document)
@@ -68,6 +74,28 @@ PassRefPtr<Node> DocumentFragment::cloneNode(bool deep)
     if (deep)
         cloneChildNodes(clone.get());
     return clone.release();
+}
+
+bool DocumentFragment::shouldUseLegacyHTMLParser() const
+{
+    return document()->page() && document()->page()->settings()
+        && !document()->page()->settings()->html5ParserEnabled();
+}
+
+void DocumentFragment::parseHTML(const String& source, FragmentScriptingPermission scriptingPermission)
+{
+    if (shouldUseLegacyHTMLParser())
+        return parseLegacyHTMLDocumentFragment(source, this, scriptingPermission);
+
+    HTML5DocumentParser parser(this, scriptingPermission);
+    parser.write(source, false);
+    parser.finish();
+    ASSERT(!parser.processingData()); // Make sure we're done. <rdar://problem/3963151>
+}
+
+bool DocumentFragment::parseXML(const String& source, Element* parent, FragmentScriptingPermission scriptingPermission)
+{
+    return parseXMLDocumentFragment(source, this, parent, scriptingPermission);
 }
 
 }

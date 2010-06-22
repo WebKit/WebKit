@@ -1136,6 +1136,7 @@
             'dom/ExceptionBase.h',
             'dom/ExceptionCode.cpp',
             'dom/ExceptionCode.h',
+            'dom/FragmentScriptingPermission.h',
             'dom/InputElement.cpp',
             'dom/InputElement.h',
             'dom/KeyboardEvent.cpp',

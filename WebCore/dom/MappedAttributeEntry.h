@@ -48,8 +48,6 @@ enum MappedAttributeEntry {
     , eLastEntry
 };
 
-enum FragmentScriptingPermission { FragmentScriptingAllowed, FragmentScriptingNotAllowed };
-
 }
 
 #endif

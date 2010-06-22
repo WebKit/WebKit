@@ -42,7 +42,6 @@
 #include "FrameView.h"
 #include "HTMLElement.h"
 #include "HTMLNames.h"
-#include "HTMLDocumentParser.h"
 #include "InspectorController.h"
 #include "NodeList.h"
 #include "NodeRenderStyle.h"
@@ -52,7 +51,6 @@
 #include "RenderWidget.h"
 #include "TextIterator.h"
 #include "XMLNames.h"
-#include "XMLDocumentParser.h"
 #include <wtf/text/CString.h>
 
 #if ENABLE(SVG)
@@ -93,12 +91,12 @@ NodeRareData* Element::createRareData()
 
 PassRefPtr<DocumentFragment> Element::createContextualFragment(const String& markup, FragmentScriptingPermission scriptingPermission)
 {
-    RefPtr<DocumentFragment> fragment = DocumentFragment::create(document());
-    
+    RefPtr<DocumentFragment> fragment = document()->createDocumentFragment();
+
     if (document()->isHTMLDocument())
-        parseHTMLDocumentFragment(markup, fragment.get(), scriptingPermission);
+        fragment->parseHTML(markup, scriptingPermission);
     else {
-        if (!parseXMLDocumentFragment(markup, fragment.get(), this, scriptingPermission))
+        if (!fragment->parseXML(markup, this, scriptingPermission))
             // FIXME: We should propagate a syntax error exception out here.
             return 0;
     }

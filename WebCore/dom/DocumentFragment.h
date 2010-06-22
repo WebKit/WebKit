@@ -25,6 +25,7 @@
 #define DocumentFragment_h
 
 #include "ContainerNode.h"
+#include "FragmentScriptingPermission.h"
 
 namespace WebCore {
 
@@ -32,8 +33,13 @@ class DocumentFragment : public ContainerNode {
 public:
     static PassRefPtr<DocumentFragment> create(Document*);
 
+    void parseHTML(const String&, FragmentScriptingPermission = FragmentScriptingAllowed);
+    bool parseXML(const String&, Element* parent, FragmentScriptingPermission = FragmentScriptingAllowed);
+
 private:
     DocumentFragment(Document*);
+
+    bool shouldUseLegacyHTMLParser() const;
 
     virtual String nodeName() const;
     virtual NodeType nodeType() const;

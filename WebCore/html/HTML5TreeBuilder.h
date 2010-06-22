@@ -26,6 +26,7 @@
 #ifndef HTML5TreeBuilder_h
 #define HTML5TreeBuilder_h
 
+#include "FragmentScriptingPermission.h"
 #include "HTML5Lexer.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/OwnPtr.h>
@@ -36,6 +37,7 @@
 namespace WebCore {
 
 class Document;
+class DocumentFragment;
 class Element;
 class Frame;
 class HTML5Token;
@@ -45,7 +47,9 @@ class Node;
 
 class HTML5TreeBuilder : public Noncopyable {
 public:
+    // FIXME: Replace constructors with create() functions returning PassOwnPtrs
     HTML5TreeBuilder(HTML5Lexer*, HTMLDocument*, bool reportErrors);
+    HTML5TreeBuilder(HTML5Lexer*, DocumentFragment*, FragmentScriptingPermission);
     ~HTML5TreeBuilder();
 
     void setPaused(bool paused) { m_isPaused = paused; }
@@ -105,6 +109,11 @@ private:
 
     RefPtr<Element> m_scriptToProcess; // <script> tag which needs processing before resuming the parser.
     int m_scriptToProcessStartLine; // Starting line number of the script tag needing processing.
+
+    // FIXME: FragmentScriptingPermission is a HACK for platform/Pasteboard.
+    // FragmentScriptingNotAllowed causes the Parser to remove children
+    // from <script> tags (so javascript doesn't show up in pastes).
+    FragmentScriptingPermission m_fragmentScriptingPermission;
 };
 
 }

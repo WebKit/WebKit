@@ -39,13 +39,11 @@
 #include "HTMLElementFactory.h"
 #include "HTMLFormElement.h"
 #include "HTMLNames.h"
-#include "HTMLDocumentParser.h"
 #include "RenderWordBreak.h"
 #include "ScriptEventListener.h"
 #include "Settings.h"
 #include "Text.h"
 #include "TextIterator.h"
-#include "XMLDocumentParser.h"
 #include "markup.h"
 #include <wtf/StdLibExtras.h>
 
@@ -549,13 +547,13 @@ Element* HTMLElement::insertAdjacentElement(const String& where, Element* newChi
     return static_cast<Element*>(returnValue); 
 }
 
-void HTMLElement::insertAdjacentHTML(const String& where, const String& html, ExceptionCode& ec)
+void HTMLElement::insertAdjacentHTML(const String& where, const String& markup, ExceptionCode& ec)
 {
     RefPtr<DocumentFragment> fragment = document()->createDocumentFragment();
     if (document()->isHTMLDocument())
-         parseHTMLDocumentFragment(html, fragment.get());
+         fragment->parseHTML(markup);
     else {
-        if (!parseXMLDocumentFragment(html, fragment.get(), this))
+        if (!fragment->parseXML(markup, this))
             // FIXME: We should propagate a syntax error exception out here.
             return;
     }

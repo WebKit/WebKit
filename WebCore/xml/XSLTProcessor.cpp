@@ -33,13 +33,12 @@
 #include "FrameLoader.h"
 #include "FrameView.h"
 #include "HTMLDocument.h"
-#include "HTMLDocumentParser.h" // for parseHTMLDocumentFragment
 #include "Page.h"
 #include "Text.h"
 #include "TextResourceDecoder.h"
-#include "XMLDocumentParser.h"
 #include "loader.h"
 #include "markup.h"
+
 #include <wtf/Assertions.h>
 #include <wtf/Vector.h>
 
@@ -100,14 +99,14 @@ PassRefPtr<Document> XSLTProcessor::createDocumentFromSource(const String& sourc
 
 static inline RefPtr<DocumentFragment> createFragmentFromSource(const String& sourceString, const String& sourceMIMEType, Document* outputDoc)
 {
-    RefPtr<DocumentFragment> fragment = DocumentFragment::create(outputDoc);
+    RefPtr<DocumentFragment> fragment = outputDoc->createDocumentFragment();
 
     if (sourceMIMEType == "text/html")
-        parseHTMLDocumentFragment(sourceString, fragment.get());
+        fragment->parseHTML(sourceString);
     else if (sourceMIMEType == "text/plain")
         fragment->addChild(Text::create(outputDoc, sourceString));
     else {
-        bool successfulParse = parseXMLDocumentFragment(sourceString, fragment.get(), outputDoc->documentElement());
+        bool successfulParse = fragment->parseXML(sourceString, outputDoc->documentElement());
         if (!successfulParse)
             return 0;
     }

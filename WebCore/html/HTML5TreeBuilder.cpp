@@ -26,14 +26,15 @@
 #include "config.h"
 #include "HTML5TreeBuilder.h"
 
+#include "DocumentFragment.h"
 #include "Element.h"
 #include "Frame.h"
 #include "HTML5Lexer.h"
 #include "HTML5Token.h"
 #include "HTMLDocument.h"
+#include "HTMLDocumentParser.h"
 #include "HTMLNames.h"
 #include "LegacyHTMLTreeConstructor.h"
-#include "HTMLDocumentParser.h"
 #include "NotImplemented.h"
 #include "ScriptController.h"
 #include <wtf/UnusedParam.h>
@@ -53,6 +54,22 @@ HTML5TreeBuilder::HTML5TreeBuilder(HTML5Lexer* lexer, HTMLDocument* document, bo
     , m_legacyTreeConstructor(new LegacyHTMLTreeConstructor(document, reportErrors))
     , m_lastScriptElementStartLine(uninitializedLineNumberValue)
     , m_scriptToProcessStartLine(uninitializedLineNumberValue)
+    , m_fragmentScriptingPermission(FragmentScriptingAllowed)
+{
+}
+
+// FIXME: Member variables should be grouped into self-initializing structs to
+// minimize code duplication between these constructors.
+HTML5TreeBuilder::HTML5TreeBuilder(HTML5Lexer* lexer, DocumentFragment* fragment, FragmentScriptingPermission scriptingPermission)
+    : m_document(fragment->document())
+    , m_reportErrors(false) // FIXME: Why not report errors in fragments?
+    , m_isPaused(false)
+    , m_insertionMode(Initial)
+    , m_lexer(lexer)
+    , m_legacyTreeConstructor(new LegacyHTMLTreeConstructor(fragment, scriptingPermission))
+    , m_lastScriptElementStartLine(uninitializedLineNumberValue)
+    , m_scriptToProcessStartLine(uninitializedLineNumberValue)
+    , m_fragmentScriptingPermission(scriptingPermission)
 {
 }
 
@@ -179,10 +196,17 @@ PassRefPtr<Node> HTML5TreeBuilder::passTokenToLegacyParser(HTML5Token& token)
         else
             m_lexer->setState(adjustedLexerState(m_lexer->state(), oldStyleToken.tagName, m_document->frame()));
     } else if (token.type() == HTML5Token::EndTag) {
-        if (oldStyleToken.tagName == scriptTag && insertionMode() != AfterFrameset) {
+        if (oldStyleToken.tagName == scriptTag) {
             if (m_lastScriptElement) {
                 ASSERT(m_lastScriptElementStartLine != uninitializedLineNumberValue);
-                handleScriptEndTag(m_lastScriptElement.get(), m_lastScriptElementStartLine);
+                if (m_fragmentScriptingPermission == FragmentScriptingNotAllowed) {
+                    // FIXME: This is a horrible hack for platform/Pasteboard.
+                    // Clear the <script> tag when using the Parser to create
+                    // a DocumentFragment for pasting so that javascript content
+                    // does not show up in pasted HTML.
+                    m_lastScriptElement->removeChildren();
+                } else if (insertionMode() != AfterFrameset)
+                    handleScriptEndTag(m_lastScriptElement.get(), m_lastScriptElementStartLine);
                 m_lastScriptElement = 0;
                 m_lastScriptElementStartLine = uninitializedLineNumberValue;
             }

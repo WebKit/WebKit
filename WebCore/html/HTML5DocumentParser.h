@@ -27,6 +27,7 @@
 #define HTML5Tokenizer_h
 
 #include "CachedResourceClient.h"
+#include "FragmentScriptingPermission.h"
 #include "HTML5ScriptRunnerHost.h"
 #include "HTML5Token.h"
 #include "HTMLInputStream.h"
@@ -37,18 +38,22 @@
 
 namespace WebCore {
 
+class Document;
+class DocumentFragment;
 class HTMLDocument;
-class LegacyHTMLTreeConstructor;
 class HTML5Lexer;
 class HTML5ScriptRunner;
 class HTML5TreeBuilder;
 class HTML5PreloadScanner;
+class LegacyHTMLTreeConstructor;
 class ScriptController;
 class ScriptSourceCode;
 
 class HTML5DocumentParser :  public DocumentParser, HTML5ScriptRunnerHost, CachedResourceClient {
 public:
+    // FIXME: These constructors should be made private and replaced by create() methods.
     HTML5DocumentParser(HTMLDocument*, bool reportErrors);
+    HTML5DocumentParser(DocumentFragment*, FragmentScriptingPermission);
     virtual ~HTML5DocumentParser();
 
     // DocumentParser
@@ -83,6 +88,7 @@ private:
 
     struct PumpSession;
     inline bool shouldContinueParsing(PumpSession&);
+    bool runScriptsForPausedTreeConstructor();
 
     enum SynchronousMode {
         AllowYield,
@@ -95,6 +101,8 @@ private:
 
     void attemptToEnd();
     void endIfDelayed();
+
+    bool inScriptExecution() const;
     bool inWrite() const { return m_writeNestingLevel > 0; }
 
     ScriptController* script() const;
@@ -104,7 +112,9 @@ private:
     // We hold m_token here because it might be partially complete.
     HTML5Token m_token;
 
-    HTMLDocument* m_document;
+    // We must support parsing into a Document* and not just HTMLDocument*
+    // to support DocumentFragment (which has a Document*).
+    Document* m_document;
     OwnPtr<HTML5Lexer> m_lexer;
     OwnPtr<HTML5ScriptRunner> m_scriptRunner;
     OwnPtr<HTML5TreeBuilder> m_treeConstructor;
