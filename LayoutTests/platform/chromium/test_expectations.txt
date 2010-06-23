@@ -2051,7 +2051,6 @@ BUG14832 : editing/selection/user-drag-element-and-user-select-none.html = FAIL
 
 // WebKit 45017:45086
 BUG15217 : fast/js/dictionary-no-cache.html = FAIL
-BUG15217 MAC : fast/js/switch-behaviour.html = FAIL
 
 // WebKit 45086:45111
 BUG15270 MAC LINUX RELEASE : fast/js/excessive-comma-usage.html = TEXT
@@ -2879,3 +2878,6 @@ BUG45048 LINUX MAC : fast/events/show-modal-dialog-onblur-onfocus.html = FAIL
 BUG45048 WIN : fast/events/show-modal-dialog-onblur-onfocus.html = TIMEOUT
 BUG45048 LINUX MAC : fast/harness/show-modal-dialog.html = FAIL
 BUG45048 WIN : fast/harness/show-modal-dialog.html = TIMEOUT
+
+// WebKit roll 61547:61629. Still need to investigate.
+BUG_HCLAM : fast/js/script-line-number.html = TEXT

@@ -1,3 +1,16 @@
+2010-06-22  Alpha Lam  <hclam@chromium.org>
+
+        Unreviewed. Build fix.
+
+        Rebaseline some test results to make build bots green again.
+
+        * platform/chromium-mac/fast/js/switch-behaviour-expected.txt: Removed.
+        * platform/chromium-mac/websocket/tests/bad-sub-protocol-control-chars-expected.txt:
+        * platform/chromium-win/fast/js/switch-behaviour-expected.txt: Removed.
+        * platform/chromium-win/inspector/timeline-parse-html-expected.txt:
+        * platform/chromium-win/websocket/tests/bad-sub-protocol-control-chars-expected.txt:
+        * platform/chromium/test_expectations.txt:
+
 2010-06-22  Kinuko Yasuda  <kinuko@chromium.org>
 
         Reviewed by Adam Barth.

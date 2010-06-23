@@ -15,5 +15,19 @@ ParseHTML Properties:
     usedHeapSize : <number>
     totalHeapSize : <number>
 }
+ParseHTML Properties:
+{
+    startTime : <number>
+    stackTrace : <object>
+    data : {
+        length : 0
+        startLine : 0
+        endLine : 0
+    }
+    children : <object>
+    endTime : <number>
+    type : 4
+    usedHeapSize : <number>
+    totalHeapSize : <number>
+}
 Test data
-
