@@ -611,7 +611,7 @@ SOURCES += \
     html/FileStreamProxy.cpp \
     html/FileThread.cpp \
     html/FormDataList.cpp \
-    html/HTML5EntityParser.cpp \
+    html/HTMLEntityParser.cpp \
     html/HTMLTokenizer.cpp \
     html/HTML5DocumentParser.cpp \
     html/HTML5PreloadScanner.cpp \

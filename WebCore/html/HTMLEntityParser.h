@@ -24,14 +24,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef HTML5EntityParser_h
-#define HTML5EntityParser_h
+#ifndef HTMLEntityParser_h
+#define HTMLEntityParser_h
 
 #include "SegmentedString.h"
 
 namespace WebCore {
 
-unsigned consumeHTML5Entity(SegmentedString&, bool& notEnoughCharacters, UChar additionalAllowedCharacter = '\0');
+unsigned consumeHTMLEntity(SegmentedString&, bool& notEnoughCharacters, UChar additionalAllowedCharacter = '\0');
 
 }
 

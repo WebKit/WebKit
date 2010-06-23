@@ -249,7 +249,7 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	html/File.cpp \
 	html/FileList.cpp \
 	html/FormDataList.cpp \
-	html/HTML5EntityParser.cpp \
+	html/HTMLEntityParser.cpp \
 	html/HTMLTokenizer.cpp \
 	html/HTML5DocumentParser.cpp \
 	html/HTML5PreloadScanner.cpp \

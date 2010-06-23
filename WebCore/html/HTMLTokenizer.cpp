@@ -29,7 +29,7 @@
 #include "HTMLTokenizer.h"
 
 #include "AtomicString.h"
-#include "HTML5EntityParser.h"
+#include "HTMLEntityParser.h"
 #include "HTML5Token.h"
 #include "HTMLNames.h"
 #include "NotImplemented.h"
@@ -109,7 +109,7 @@ void HTMLTokenizer::reset()
 inline bool HTMLTokenizer::processEntity(SegmentedString& source)
 {
     bool notEnoughCharacters = false;
-    unsigned value = consumeHTML5Entity(source, notEnoughCharacters);
+    unsigned value = consumeHTMLEntity(source, notEnoughCharacters);
     if (notEnoughCharacters)
         return false;
     if (!value)
@@ -918,7 +918,7 @@ bool HTMLTokenizer::nextToken(SegmentedString& source, HTML5Token& token)
 
     BEGIN_STATE(CharacterReferenceInAttributeValueState) {
         bool notEnoughCharacters = false;
-        unsigned value = consumeHTML5Entity(source, notEnoughCharacters, m_additionalAllowedCharacter);
+        unsigned value = consumeHTMLEntity(source, notEnoughCharacters, m_additionalAllowedCharacter);
         if (notEnoughCharacters)
             return shouldEmitBufferedCharacterToken(source);
         if (!value)

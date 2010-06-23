@@ -1,3 +1,29 @@
+2010-06-23  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Rename HTML5EntityParser to HTMLEntityParser
+        https://bugs.webkit.org/show_bug.cgi?id=41048
+
+        Mostly the result of do-webcore-rename, but I tweaked the header guard
+        and the name of the free function.
+
+        * Android.mk:
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/HTML5EntityParser.cpp: Removed.
+        * html/HTML5EntityParser.h: Removed.
+        * html/HTMLEntityParser.cpp: Copied from WebCore/html/HTML5EntityParser.cpp.
+        (WebCore::consumeHTMLEntity):
+        * html/HTMLEntityParser.h: Copied from WebCore/html/HTML5EntityParser.h.
+        * html/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::processEntity):
+        (WebCore::HTMLTokenizer::nextToken):
+
 2010-06-22  Yuta Kitamura  <yutak@chromium.org>
 
         Reviewed by Alexey Proskuryakov.

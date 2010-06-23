@@ -33385,11 +33385,11 @@
 				>
             </File>
             <File
-				RelativePath="..\html\HTML5EntityParser.cpp"
+				RelativePath="..\html\HTMLEntityParser.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\html\HTML5EntityParser.h"
+				RelativePath="..\html\HTMLEntityParser.h"
 				>
 			</File>
 			<File
