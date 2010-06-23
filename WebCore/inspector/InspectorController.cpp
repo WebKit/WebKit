@@ -718,6 +718,8 @@ void InspectorController::didCommitLoad(DocumentLoader* loader)
         m_profiles.clear();
         m_currentUserInitiatedProfileNumber = 1;
         m_nextUserInitiatedProfileNumber = 1;
+        if (m_frontend)
+            m_frontend->resetProfilesPanel();
 #endif
         // unbindAllResources should be called before database and DOM storage
         // resources are cleared so that it has a chance to unbind them.

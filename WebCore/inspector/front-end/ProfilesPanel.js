@@ -124,7 +124,7 @@ WebInspector.ProfilesPanel = function()
 
     this._profiles = [];
     this._profilerEnabled = Preferences.profilerAlwaysEnabled;
-    this.reset();
+    this._reset();
 }
 
 WebInspector.ProfilesPanel.prototype = {
@@ -167,7 +167,7 @@ WebInspector.ProfilesPanel.prototype = {
 
     populateInterface: function()
     {
-        this.reset();
+        this._reset();
         if (this.visible)
             this._populateProfiles();
         else
@@ -189,10 +189,15 @@ WebInspector.ProfilesPanel.prototype = {
             return;
 
         this._profilerEnabled = false;
-        this.reset();
+        this._reset();
     },
 
-    reset: function()
+    resetProfiles: function()
+    {
+        this._reset();
+    },
+
+    _reset: function()
     {
         for (var i = 0; i < this._profiles.length; ++i)
             delete this._profiles[i]._profileView;
@@ -222,7 +227,7 @@ WebInspector.ProfilesPanel.prototype = {
     _clearProfiles: function()
     {
         InspectorBackend.clearProfiles();
-        this.reset();
+        this._reset();
     },
 
     registerProfileType: function(profileType)

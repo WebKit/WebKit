@@ -1,3 +1,25 @@
+2010-06-23  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: do not reset profiles panel on navigation.
+
+        https://bugs.webkit.org/show_bug.cgi?id=41068
+
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::didCommitLoad):
+        * inspector/InspectorFrontend.cpp:
+        (WebCore::InspectorFrontend::resetProfilesPanel):
+        * inspector/InspectorFrontend.h:
+        * inspector/front-end/ProfilesPanel.js:
+        (WebInspector.ProfilesPanel):
+        (WebInspector.ProfilesPanel.prototype.populateInterface):
+        (WebInspector.ProfilesPanel.prototype.profilerWasDisabled):
+        (WebInspector.ProfilesPanel.prototype._reset):
+        (WebInspector.ProfilesPanel.prototype._clearProfiles):
+        * inspector/front-end/inspector.js:
+        (WebInspector.resetProfilesPanel):
+
 2010-06-23  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.

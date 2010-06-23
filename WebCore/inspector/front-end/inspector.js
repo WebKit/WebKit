@@ -1395,6 +1395,12 @@ WebInspector.reset = function()
     this.console.clearMessages();
 }
 
+WebInspector.resetProfilesPanel = function()
+{
+    if (WebInspector.panels.profiles)
+        WebInspector.panels.profiles.resetProfiles();
+}
+
 WebInspector.bringToFront = function()
 {
     InspectorFrontendHost.bringToFront();
