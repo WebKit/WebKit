@@ -1,3 +1,17 @@
+2010-06-22  David Levin  <levin@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        REGRESSION: (r47291): Upload progress events are not fired for simple cross-site XHR.
+        https://bugs.webkit.org/show_bug.cgi?id=39029
+
+        Specifically, WebKit should fire upload events if one or more event listeners are
+        registered on the XMLHttpRequestUpload object when send is called in an async manner.
+
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::createRequest): Allow upload events to be fired when there are
+        handlers for them in the cross-origin simple request case.
+
 2010-06-22  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Adam Barth.

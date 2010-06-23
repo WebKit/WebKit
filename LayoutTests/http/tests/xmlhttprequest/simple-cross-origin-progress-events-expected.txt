@@ -9,3 +9,9 @@ Test 2: The URL is not allowed for cross-origin requests
 onerror (expected)
 Response length: 0
 
+Test 3: The URL is not allowed for cross-origin requests and at least one upload event is listened for before doing the send.
+upload.onloadstart
+onerror (expected)
+Response length: 0
+upload.onerror (expected)
+

@@ -1,3 +1,14 @@
+2010-06-22  David Levin  <levin@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        REGRESSION: (r47291): Upload progress events are not fired for simple cross-site XHR.
+        https://bugs.webkit.org/show_bug.cgi?id=39029
+
+        * http/tests/xmlhttprequest/simple-cross-origin-progress-events-expected.txt: Update results.
+        * http/tests/xmlhttprequest/simple-cross-origin-progress-events.html: Add a test which adds
+          an upload progress event handler before XMLHttpRequest.send() is called.
+
 2010-06-22  Kinuko Yasuda  <kinuko@chromium.org>
 
         Unreviewed.
