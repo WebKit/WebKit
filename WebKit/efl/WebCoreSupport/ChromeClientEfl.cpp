@@ -117,10 +117,16 @@ void ChromeClientEfl::unfocus()
     evas_object_focus_set(m_view, EINA_FALSE);
 }
 
-Page* ChromeClientEfl::createWindow(Frame*, const FrameLoadRequest& request, const WindowFeatures& features)
+Page* ChromeClientEfl::createWindow(Frame*, const FrameLoadRequest& frameLoadRequest, const WindowFeatures& features)
 {
-    notImplemented();
-    return 0;
+    Evas_Object* newView = ewk_view_window_create(m_view, EINA_TRUE, &features);
+    if (!newView)
+        return 0;
+
+    if (!frameLoadRequest.isEmpty())
+        ewk_view_uri_set(newView, frameLoadRequest.resourceRequest().url().string().utf8().data());
+
+    return ewk_view_core_page_get(newView);
 }
 
 void ChromeClientEfl::show()

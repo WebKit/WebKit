@@ -816,8 +816,17 @@ bool FrameLoaderClientEfl::canCachePage() const
 
 Frame* FrameLoaderClientEfl::dispatchCreatePage()
 {
-    notImplemented();
-    return 0;
+    if (!m_view)
+        return 0;
+
+    Evas_Object* newView = ewk_view_window_create(m_view, EINA_FALSE, 0);
+    Evas_Object* mainFrame;
+    if (!newView)
+        mainFrame = m_frame;
+    else
+        mainFrame = ewk_view_frame_main_get(newView);
+
+    return ewk_frame_core_get(mainFrame);
 }
 
 void FrameLoaderClientEfl::dispatchUnableToImplementPolicy(const ResourceError&)

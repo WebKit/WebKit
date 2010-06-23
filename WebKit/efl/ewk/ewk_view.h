@@ -21,9 +21,11 @@
 #ifndef ewk_view_h
 #define ewk_view_h
 
+#include "ewk_history.h"
+#include "ewk_window_features.h"
+
 #include <Evas.h>
 #include <cairo.h>
-#include <ewk_history.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -95,7 +97,7 @@ struct _Ewk_View_Smart_Class {
     Evas_Smart_Class sc; /**< all but 'data' is free to be changed. */
     unsigned long version;
 
-    Evas_Object *(*window_create)(Ewk_View_Smart_Data *sd); /**< creates a new window, requested by webkit */
+    Evas_Object *(*window_create)(Ewk_View_Smart_Data *sd, Eina_Bool javascript, const Ewk_Window_Features *window_features); /**< creates a new window, requested by webkit */
     // hooks to allow different backing stores
     Evas_Object *(*backing_store_add)(Ewk_View_Smart_Data *sd); /**< must be defined */
     Eina_Bool (*scrolls_process)(Ewk_View_Smart_Data *sd); /**< must be defined */

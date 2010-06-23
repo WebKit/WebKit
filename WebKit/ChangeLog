@@ -1,3 +1,37 @@
+2010-06-23  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Add implementaion of new windows for EFL port. Both cases of a link
+        with target="_blank" and a javascript that does window.open() are
+        treated, delegating to browser the role of actually creating the
+        window (or blocking it).
+        https://bugs.webkit.org/show_bug.cgi?id=40930
+
+        * CMakeListsEfl.txt: add new file that wraps the WindowFeatures struct
+        * efl/WebCoreSupport/ChromeClientEfl.cpp:
+        (WebCore::ChromeClientEfl::createWindow): implement method for
+        creating new window by delegating to browser its creation. Browser
+        might decide to continue on the same window by returning the same
+        view object.
+        * efl/WebCoreSupport/FrameLoaderClientEfl.cpp:
+        (WebCore::FrameLoaderClientEfl::dispatchCreatePage): implement method
+        for creating new window when its creation is done by a javascript
+        script.
+        * efl/ewk/EWebKit.h: new header for WindowFeatures.
+        * efl/ewk/ewk_private.h:
+        * efl/ewk/ewk_view.cpp:
+        (ewk_view_window_create): call the method implemented by browser.
+        * efl/ewk/ewk_view.h:
+        * efl/ewk/ewk_window_features.cpp: Added.
+        (ewk_window_features_unref):
+        (ewk_window_features_ref):
+        (ewk_window_features_bool_property_get):
+        (ewk_window_features_int_property_get):
+        (ewk_window_features_new_from_core): create and wrapped struct
+        containing the core struct.
+        * efl/ewk/ewk_window_features.h: Added.
+
 2010-06-18  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.
