@@ -1,3 +1,19 @@
+2010-06-22  Eric Seidel  <eric@webkit.org>
+
+        No review, skipping test due to revealed bug in ClipboardQt.
+
+        editing/execCommand/copy-without-selection.html fails on Qt after r61637
+        https://bugs.webkit.org/show_bug.cgi?id=41025
+
+        The Qt Clipboard::setData code wrongly reinterpret_casts UChar
+        data as char* data.  This was exposed by the previous commit
+        which no long strips \0 characters during innerHTML.
+
+        Skipping the affected test until a Qt person can fix
+        platform/qt/ClipboardQt.cpp
+
+        * platform/qt/Skipped:
+
 2010-06-22  Tony Gentilcore  <tonyg@chromium.org>
 
         Reviewed by Eric Seidel.

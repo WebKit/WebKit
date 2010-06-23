@@ -5439,3 +5439,7 @@ fast/js/sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Con
 fast/js/sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.2_T7.html
 fast/js/sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.1_T9.html
 fast/js/sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.2_T9.html
+
+# Clipboard::setData is broken on Qt
+# https://bugs.webkit.org/show_bug.cgi?id=41025
+editing/execCommand/copy-without-selection.html
