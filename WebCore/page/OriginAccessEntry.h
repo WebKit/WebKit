@@ -28,8 +28,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CrossOriginAccess_h
-#define CrossOriginAccess_h
+#ifndef OriginAccessEntry_h
+#define OriginAccessEntry_h
 
 #include "PlatformString.h"
 
@@ -71,4 +71,4 @@ inline bool operator!=(const OriginAccessEntry& a, const OriginAccessEntry& b)
 
 } // namespace WebCore
 
-#endif // CrossOriginAccess_h
+#endif // OriginAccessEntry_h

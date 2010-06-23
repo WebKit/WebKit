@@ -19,8 +19,8 @@
     This class provides all functionality needed for loading images, style sheets and html
     pages from the web. It has a memory cache for these objects.
 */
-#ifndef FontCustomPlatformData_h_
-#define FontCustomPlatformData_h_
+#ifndef FontCustomPlatformData_h
+#define FontCustomPlatformData_h
 
 #include "FontRenderingMode.h"
 #include <wtf/Noncopyable.h>
@@ -43,4 +43,4 @@ FontCustomPlatformData* createFontCustomPlatformData(SharedBuffer* buffer);
 
 } // namespace WebCore
 
-#endif // FontCustomPlatformData_h_
+#endif // FontCustomPlatformData_h

@@ -19,8 +19,8 @@
     Boston, MA 02110-1301, USA.
 */
 
-#ifndef SVGFEBlend_h
-#define SVGFEBlend_h
+#ifndef FEBlend_h
+#define FEBlend_h
 
 #if ENABLE(FILTERS)
 #include "FilterEffect.h"
@@ -65,4 +65,4 @@ namespace WebCore {
 
 #endif // ENABLE(FILTERS)
 
-#endif // SVGFEBlend_h
+#endif // FEBlend_h

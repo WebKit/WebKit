@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef TOUCHLIST_H_
-#define TOUCHLIST_H_
+#ifndef TouchList_h
+#define TouchList_h
 
 #if ENABLE(TOUCH_EVENTS)
 
@@ -57,4 +57,4 @@ private:
 
 #endif // ENABLE(TOUCH_EVENTS)
 
-#endif /* TOUCHLIST_H_ */
+#endif /* TouchList_h */

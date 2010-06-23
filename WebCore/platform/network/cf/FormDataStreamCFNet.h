@@ -26,8 +26,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef FormDataStreamCFNet_h_
-#define FormDataStreamCFNet_h_
+#ifndef FormDataStreamCFNet_h
+#define FormDataStreamCFNet_h
 
 #include <CoreFoundation/CoreFoundation.h>
 #include <wtf/Forward.h>
@@ -41,4 +41,4 @@ namespace WebCore {
     PassRefPtr<FormData> httpBodyFromRequest(CFURLRequestRef);
 }
 
-#endif FormDataStreamCFNet_h_
+#endif FormDataStreamCFNet_h

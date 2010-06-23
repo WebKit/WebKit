@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef SMILTimeContainer_H
-#define SMILTimeContainer_H
+#ifndef SMILTimeContainer_h
+#define SMILTimeContainer_h
 
 #if ENABLE(SVG)
 

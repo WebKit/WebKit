@@ -24,8 +24,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PluginPackage_H
-#define PluginPackage_H
+#ifndef PluginPackage_h
+#define PluginPackage_h
 
 #include "FileSystem.h"
 #include "PlatformString.h"

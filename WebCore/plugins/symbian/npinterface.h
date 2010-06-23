@@ -16,8 +16,8 @@
     the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
     Boston, MA 02110-1301, USA.
 */
-#ifndef npinterface_H
-#define npinterface_H
+#ifndef npinterface_h
+#define npinterface_h
 
 #include "npfunctions.h"
 #include <QtPlugin>
@@ -34,4 +34,4 @@ QT_BEGIN_NAMESPACE
 Q_DECLARE_INTERFACE(NPInterface, "com.nokia.qts60.webplugin/1.0");
 QT_END_NAMESPACE
 
-#endif // npinterface_H
+#endif // npinterface_h

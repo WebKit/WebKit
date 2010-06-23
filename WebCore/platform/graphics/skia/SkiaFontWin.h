@@ -28,8 +28,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SkiaWinOutlineCache_h
-#define SkiaWinOutlineCache_h
+#ifndef SkiaFontWin_h
+#define SkiaFontWin_h
 
 #include <windows.h>
 #include <usp10.h>
@@ -90,4 +90,4 @@ bool paintSkiaText(GraphicsContext* graphicsContext,
 
 }  // namespace WebCore
 
-#endif  // SkiaWinOutlineCache_h
+#endif  // SkiaFontWin_h

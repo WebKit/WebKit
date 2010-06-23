@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef QTMovieViewTimer_h
-#define QTMovieViewTimer_h
+#ifndef QTMovieWinTimer_h
+#define QTMovieWinTimer_h
 
 // This header should not be included from WebCore.
 // It is used by the QuickTime access DLL. It copies some WebCore code 

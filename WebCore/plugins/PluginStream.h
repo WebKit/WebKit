@@ -24,8 +24,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef PluginStream_H
-#define PluginStream_H
+#ifndef PluginStream_h
+#define PluginStream_h
 
 #include "FileSystem.h"
 #include "KURL.h"

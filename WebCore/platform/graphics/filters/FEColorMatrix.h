@@ -19,8 +19,8 @@
     Boston, MA 02110-1301, USA.
 */
 
-#ifndef SVGFEColorMatrix_h
-#define SVGFEColorMatrix_h
+#ifndef FEColorMatrix_h
+#define FEColorMatrix_h
 
 #if ENABLE(FILTERS)
 #include "FilterEffect.h"
@@ -65,4 +65,4 @@ namespace WebCore {
 
 #endif // ENABLE(FILTERS)
 
-#endif // SVGFEColorMatrix_h
+#endif // FEColorMatrix_h

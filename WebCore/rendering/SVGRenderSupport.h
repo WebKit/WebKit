@@ -21,8 +21,8 @@
  *
  */
 
-#ifndef SVGRenderBase_h
-#define SVGRenderBase_h
+#ifndef SVGRenderSupport_h
+#define SVGRenderSupport_h
 
 #if ENABLE(SVG)
 #include "DashArray.h"
@@ -93,4 +93,4 @@ const RenderObject* findTextRootObject(const RenderObject* start);
 
 #endif // ENABLE(SVG)
 
-#endif // SVGRenderBase_h
+#endif // SVGRenderSupport_h

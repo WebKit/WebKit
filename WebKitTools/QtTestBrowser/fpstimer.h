@@ -25,8 +25,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef fpsmeasure_h
-#define fpsmeasure_h
+#ifndef fpstimer_h
+#define fpstimer_h
 
 #include <QObject>
 #include <QSet>

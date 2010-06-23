@@ -22,8 +22,8 @@
  *
  */
 
-#ifndef SelectionInfo_h
-#define SelectionInfo_h
+#ifndef RenderSelectionInfo_h
+#define RenderSelectionInfo_h
 
 #include "IntRect.h"
 #include "RenderBox.h"
@@ -101,4 +101,4 @@ private:
 } // namespace WebCore
 
 
-#endif // SelectionInfo_h
+#endif // RenderSelectionInfo_h

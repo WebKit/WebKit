@@ -29,8 +29,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef FontPlatformDataWin_h
-#define FontPlatformDataWin_h
+#ifndef FontPlatformDataChromiumWin_h
+#define FontPlatformDataChromiumWin_h
 
 #include "config.h"
 
@@ -131,4 +131,4 @@ private:
 
 } // WebCore
 
-#endif // FontPlatformDataWin_h
+#endif // FontPlatformDataChromiumWin_h

@@ -22,8 +22,8 @@
  *
  */
 
-#ifndef XMLTokenizer_h
-#define XMLTokenizer_h
+#ifndef XMLDocumentParser_h
+#define XMLDocumentParser_h
 
 #include "CachedResourceClient.h"
 #include "CachedResourceHandle.h"
@@ -213,4 +213,4 @@ bool parseXMLDocumentFragment(const String&, DocumentFragment*, Element* parent 
 
 } // namespace WebCore
 
-#endif // XMLTokenizer_h
+#endif // XMLDocumentParser_h

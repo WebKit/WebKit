@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef TOUCH_H_
-#define TOUCH_H_
+#ifndef Touch_h
+#define Touch_h
 
 #if ENABLE(TOUCH_EVENTS)
 
@@ -72,4 +72,4 @@ private:
 
 #endif // ENABLE(TOUCH_EVENTS)
 
-#endif /* TOUCH_H_ */
+#endif /* Touch_h */

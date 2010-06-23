@@ -21,8 +21,8 @@
     Boston, MA 02110-1301, USA.
 */
 
-#ifndef HTMLParser_h
-#define HTMLParser_h
+#ifndef LegacyHTMLTreeConstructor_h
+#define LegacyHTMLTreeConstructor_h
 
 #include "FragmentScriptingPermission.h"
 #include "HTMLParserErrorCodes.h"
@@ -211,4 +211,4 @@ String serializeForNumberType(double);
 
 }
     
-#endif // HTMLParser_h
+#endif // LegacyHTMLTreeConstructor_h

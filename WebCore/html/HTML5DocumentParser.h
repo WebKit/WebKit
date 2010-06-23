@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef HTML5Tokenizer_h
-#define HTML5Tokenizer_h
+#ifndef HTML5DocumentParser_h
+#define HTML5DocumentParser_h
 
 #include "CachedResourceClient.h"
 #include "FragmentScriptingPermission.h"

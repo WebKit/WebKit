@@ -17,8 +17,8 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef _HAVE_WEBKIT_VIDEO_SINK_H
-#define _HAVE_WEBKIT_VIDEO_SINK_H
+#ifndef VideoSinkGStreamer_h
+#define VideoSinkGStreamer_h
 
 #include <glib-object.h>
 #include <gst/video/gstvideosink.h>

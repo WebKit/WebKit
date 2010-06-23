@@ -25,8 +25,8 @@
  *
  */
 
-#ifndef FontPlatformData_H
-#define FontPlatformData_H
+#ifndef FontPlatformData_h
+#define FontPlatformData_h
 
 #include "FontDescription.h"
 #include "GlyphBuffer.h"

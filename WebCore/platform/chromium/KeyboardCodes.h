@@ -28,8 +28,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef KeyboardCodesWin_h
-#define KeyboardCodesWin_h
+#ifndef KeyboardCodes_h
+#define KeyboardCodes_h
 
 #if OS(WINDOWS)
 #include <windows.h>

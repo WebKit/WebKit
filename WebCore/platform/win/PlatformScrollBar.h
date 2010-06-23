@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef PlatformScrollbar_h
-#define PlatformScrollbar_h
+#ifndef PlatformScrollBar_h
+#define PlatformScrollBar_h
 
 #include "Scrollbar.h"
 #include "Timer.h"
@@ -46,5 +46,5 @@ public:
 
 }
 
-#endif // PlatformScrollbar_h
+#endif // PlatformScrollBar_h
 

@@ -22,8 +22,8 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef FormatDataStreamCurl_h
-#define FormatDataStreamCurl_h
+#ifndef FormDataStreamCurl_h
+#define FormDataStreamCurl_h
 
 #include "config.h"
 

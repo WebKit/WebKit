@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef XMLTokenizerScope_h
-#define XMLTokenizerScope_h
+#ifndef XMLDocumentParserScope_h
+#define XMLDocumentParserScope_h
 
 #include <wtf/Noncopyable.h>
 
@@ -59,4 +59,4 @@ namespace WebCore {
 
 } // namespace WebCore
 
-#endif // XMLTokenizerScope_h
+#endif // XMLDocumentParserScope_h

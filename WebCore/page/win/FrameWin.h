@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef FrameWin_H
-#define FrameWin_H
+#ifndef FrameWin_h
+#define FrameWin_h
 
 #include <wtf/Vector.h>
 

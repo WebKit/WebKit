@@ -16,8 +16,8 @@
     the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
     Boston, MA 02110-1301, USA.
 */
-#ifndef QNETWORKREPLYHANDLER_H
-#define QNETWORKREPLYHANDLER_H
+#ifndef QNetworkReplyHandler_h
+#define QNetworkReplyHandler_h
 
 #include <QObject>
 
@@ -113,4 +113,4 @@ private:
 
 }
 
-#endif // QNETWORKREPLYHANDLER_H
+#endif // QNetworkReplyHandler_h

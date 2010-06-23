@@ -22,8 +22,8 @@
  *
  */
 
-#ifndef FontPlatformDataWince_H
-#define FontPlatformDataWince_H
+#ifndef FontPlatformData_h
+#define FontPlatformData_h
 
 #include "FontDescription.h"
 #include "StringImpl.h"

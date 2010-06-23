@@ -24,8 +24,8 @@
  *
  */
 
-#ifndef CrossOriginPreflightResultCacheItem_h
-#define CrossOriginPreflightResultCacheItem_h
+#ifndef CrossOriginPreflightResultCache_h
+#define CrossOriginPreflightResultCache_h
 
 #include "KURLHash.h"
 #include "StringHash.h"

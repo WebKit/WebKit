@@ -16,8 +16,8 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef DATA_SOURCE_GSTREAMER_H
-#define DATA_SOURCE_GSTREAMER_H
+#ifndef DataSourceGStreamer_h
+#define DataSourceGStreamer_h
 
 #include <glib-object.h>
 #include <gst/base/gstbasesrc.h>

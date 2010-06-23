@@ -25,8 +25,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PluginDatabase_H
-#define PluginDatabase_H
+#ifndef PluginDatabase_h
+#define PluginDatabase_h
 
 #include "PlatformString.h"
 #include "PluginPackage.h"
