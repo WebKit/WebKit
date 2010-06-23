@@ -1,3 +1,19 @@
+2010-06-23  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Dan Bernstein.
+
+        Do not set needsLayout when the style attribute changes on an SVG element
+        https://bugs.webkit.org/show_bug.cgi?id=40366
+
+        Tests that setting the style attribute on an SVG element does not cause
+        the render tree's layout flags to go haywire.  The details are involved,
+        please see the bug and test case for details.
+
+        * fast/repaint/svg-layout-root-style-attr-update-expected.checksum: Added.
+        * fast/repaint/svg-layout-root-style-attr-update-expected.png: Added.
+        * fast/repaint/svg-layout-root-style-attr-update-expected.txt: Added.
+        * fast/repaint/svg-layout-root-style-attr-update.html: Added.
+
 2010-06-22  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.

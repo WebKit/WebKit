@@ -1,3 +1,23 @@
+2010-06-23  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Dan Bernstein.
+
+        Do not set needsLayout when the style attribute changes on an SVG element
+        https://bugs.webkit.org/show_bug.cgi?id=40366
+
+        SVGSVGElement::svgAttributeChanged was incorrectly calling renderer()->setNeedsLayout(true)
+        whenever the styleAttr changed on its element.  This could happen during layout in some
+        circumstances due to lazy style attribute synchronization.  When it did, it could cause the
+        layout flags to become inconsistent.  See the test case for details.
+
+        Changes to an element's style attribute always mark an element as needing layout anyway so
+        this call was redundant.
+
+        Test: fast/repaint/svg-layout-root-style-attr-update.html
+
+        * svg/SVGStyledElement.cpp:
+        (WebCore::SVGStyledElement::isKnownAttribute):
+
 2010-06-23  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.
