@@ -36549,6 +36549,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\html\HTMLParserScheduler.h"
+				>
+			</File>
+			<File
+				RelativePath="..\html\HTMLParserScheduler.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\html\HTMLParserErrorCodes.h"
 				>
 			</File>
