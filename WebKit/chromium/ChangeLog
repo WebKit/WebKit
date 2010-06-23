@@ -1,3 +1,17 @@
+2010-06-23  Yuzo Fujishima  <yuzo@google.com>
+
+        Reviewed by Shinichiro Hamaji.
+
+        Make page format data methods accessible from Chromium
+        https://bugs.webkit.org/show_bug.cgi?id=41056
+
+        * public/WebFrame.h:
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::isPageBoxVisible):
+        (WebKit::WebFrameImpl::pageAreaRectInPixels):
+        (WebKit::WebFrameImpl::preferredPageSizeInPixels):
+        * src/WebFrameImpl.h:
+
 2010-06-22  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

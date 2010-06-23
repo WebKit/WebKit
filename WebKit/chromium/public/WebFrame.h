@@ -403,6 +403,17 @@ public:
     // Reformats the WebFrame for screen display.
     virtual void printEnd() = 0;
 
+    // CSS3 Paged Media ----------------------------------------------------
+
+    // Returns true if page box (margin boxes and page borders) is visible.
+    virtual bool isPageBoxVisible(int pageIndex) = 0;
+
+    // Returns the page area rectangle in pixels, assuming 96 pixels per inch.
+    virtual WebRect pageAreaRectInPixels(int pageIndex) = 0;
+
+    // Returns the preferred page size in pixels, assuming 96 pixels per inch.
+    virtual WebSize preferredPageSizeInPixels(int pageIndex) = 0;
+
 
     // Find-in-page --------------------------------------------------------
 

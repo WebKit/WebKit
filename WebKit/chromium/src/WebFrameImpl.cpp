@@ -1279,6 +1279,21 @@ void WebFrameImpl::printEnd()
     m_printContext.clear();
 }
 
+bool WebFrameImpl::isPageBoxVisible(int pageIndex)
+{
+    return frame()->document()->isPageBoxVisible(pageIndex);
+}
+
+WebRect WebFrameImpl::pageAreaRectInPixels(int pageIndex)
+{
+    return frame()->document()->pageAreaRectInPixels(pageIndex);
+}
+
+WebSize WebFrameImpl::preferredPageSizeInPixels(int pageIndex)
+{
+    return frame()->document()->preferredPageSizeInPixels(pageIndex);
+}
+
 bool WebFrameImpl::find(int identifier,
                         const WebString& searchText,
                         const WebFindOptions& options,
