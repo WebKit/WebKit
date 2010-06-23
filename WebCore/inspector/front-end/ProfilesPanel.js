@@ -618,7 +618,8 @@ WebInspector.ProfileGroupSidebarTreeElement = function(title, subtitle)
 WebInspector.ProfileGroupSidebarTreeElement.prototype = {
     onselect: function()
     {
-        WebInspector.panels.profiles.showProfile(this.children[this.children.length - 1].profile);
+        if (this.children.length > 0)
+            WebInspector.panels.profiles.showProfile(this.children[this.children.length - 1].profile);
     }
 }
 

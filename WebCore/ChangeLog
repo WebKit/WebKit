@@ -1,3 +1,14 @@
+2010-06-23  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Fix displaying of several CPU profiles with the same name.
+
+        https://bugs.webkit.org/show_bug.cgi?id=40992
+
+        * inspector/front-end/ProfilesPanel.js:
+        (WebInspector.ProfileGroupSidebarTreeElement.prototype.onselect):
+
 2010-06-23  Adam Barth  <abarth@webkit.org>
 
         Unreviewed.  clean-header-guards that were made dirty by recent
