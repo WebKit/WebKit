@@ -1,5 +1,14 @@
 2010-06-23  Nikolas Zimmermann  <nzimmermann@rim.com>
 
+        Not reviewed. Forgot to include four files in the last commit.
+
+        * platform/mac/svg/custom/bug45331-expected.checksum: Added.
+        * platform/mac/svg/custom/bug45331-expected.png: Added.
+        * platform/mac/svg/custom/bug45331-expected.txt: Added.
+        * svg/custom/bug45331.svg: Added.
+
+2010-06-23  Nikolas Zimmermann  <nzimmermann@rim.com>
+
         Reviewed by Eric Seidel.
 
         Reproducible crash in com.apple.WebCore 0x01ed3784 WebCore::RenderLineBoxList::appendLineBox(WebCore::InlineFlowBox*) + 36
