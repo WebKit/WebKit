@@ -40,6 +40,7 @@ _WKPageSetPageHistoryClient
 _WKPageSetPageLoaderClient
 _WKPageSetPagePolicyClient
 _WKPageSetPageUIClient
+_WKPageStopLoading
 _WKPageTryClose
 _WKStringCopyCFString
 _WKStringCreateWithCFString

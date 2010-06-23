@@ -1,3 +1,10 @@
+2010-06-23  John Sullivan  <sullivan@apple.com>
+
+        Rubber-stamped by Anders Carlsson.
+
+        * mac/WebKit2.exp:
+        Added another symbol needed by Mac clients.
+
 2010-06-23  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.
