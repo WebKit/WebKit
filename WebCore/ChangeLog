@@ -1,3 +1,13 @@
+2010-06-23  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Clear breakpoints before restoring them, not after.
+        https://bugs.webkit.org/show_bug.cgi?id=41071
+
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::enableDebuggerFromFrontend):
+
 2010-06-23  Benjamin Poulain  <benjamin.poulain@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

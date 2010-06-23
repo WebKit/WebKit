@@ -1652,8 +1652,8 @@ void InspectorController::enableDebuggerFromFrontend(bool always)
 
     ASSERT(m_inspectedPage);
 
-    ScriptDebugServer::shared().addListener(this, m_inspectedPage);
     ScriptDebugServer::shared().clearBreakpoints();
+    ScriptDebugServer::shared().addListener(this, m_inspectedPage);
 
     m_debuggerEnabled = true;
     m_frontend->debuggerWasEnabled();
