@@ -1,3 +1,9 @@
+2010-06-23  Leandro Pereira  <leandro@profusion.mobi>
+
+        Unreviewed build fix.
+
+        * CMakeLists.txt: Add runtime/RegExpCache.cpp.
+
 2010-06-22  Renata Hodovan  <hodovan@inf.u-szeged.hu>
 
         Reviewed by Geoffrey Garen.

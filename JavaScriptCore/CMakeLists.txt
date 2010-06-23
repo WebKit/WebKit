@@ -149,6 +149,7 @@ SET(JavaScriptCore_SOURCES
     runtime/PropertySlot.cpp
     runtime/PrototypeFunction.cpp
     runtime/RegExp.cpp
+    runtime/RegExpCache.cpp
     runtime/RegExpConstructor.cpp
     runtime/RegExpObject.cpp
     runtime/RegExpPrototype.cpp
