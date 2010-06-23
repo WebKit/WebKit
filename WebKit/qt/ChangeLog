@@ -1,3 +1,12 @@
+2010-06-23  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Unreviewed Qt package build fix.
+
+        When building without build-webkit, set OUTPUT_DIR if necessary, like
+        in the other .pro files.
+
+        * declarative/declarative.pro:
+
 2010-06-22  Tasuku Suzuki  <tasuku.suzuki@nokia.com>
 
         Reviewed by Simon Hausmann.

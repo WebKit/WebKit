@@ -6,6 +6,8 @@ CONFIG += qt plugin
 
 win32|mac:!wince*:!win32-msvc:!macx-xcode:CONFIG += debug_and_release
 
+isEmpty(OUTPUT_DIR): OUTPUT_DIR = ../../..
+
 QMLDIRFILE = $${_PRO_FILE_PWD_}/qmldir
 copy2build.input = QMLDIRFILE
 CONFIG(QTDIR_build) {
