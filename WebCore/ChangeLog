@@ -56,12 +56,14 @@
 
         Reviewed by Kenneth Rohde Christiansen.
 
+        Bad cast after DOM mutation in RenderMenuList
+        https://bugs.webkit.org/show_bug.cgi?id=40828
+ 
         Firing the onchange event on select which changes its size > 1 causes the select
         object to change from a menulist to a listbox. However, when propogating the events,
         we do a bad cast assuming the object will remain a menulist. Added proper checks to
         make sure we check the renderer after the onchange is fired and propogate the event
         based on correct object type.
-        https://bugs.webkit.org/show_bug.cgi?id=40828 
 
         Test: fast/events/select-onchange-crash.html
 
