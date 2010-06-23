@@ -1,3 +1,32 @@
+2010-06-23  Benjamin Poulain  <benjamin.poulain@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Do not render the full frame when there is some elements with fixed positioning
+        https://bugs.webkit.org/show_bug.cgi?id=33150
+
+        Do not render the full frame when there is some elements with fixed positioning
+        https://bugs.webkit.org/show_bug.cgi?id=33150
+
+        The frame view take into acount the list of fixed object when scrolling
+        the view. If the number of object is lower than a certain threshold, the pixel
+        are blitted, and the invalidated area updated.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::addFixedObject):
+        (WebCore::FrameView::removeFixedObject):
+        (WebCore::FrameView::scrollContentsFastPath):
+        * page/FrameView.h:
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::scrollContents):
+        (WebCore::ScrollView::scrollContentsFastPath):
+        * platform/ScrollView.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::repaintRectIncludingDescendants):
+        * rendering/RenderLayer.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::styleWillChange):
+
 2010-06-23  Mikhail Naganov  <mnaganov@chromium.org>
 
         Reviewed by Pavel Feldman.

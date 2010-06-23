@@ -513,7 +513,8 @@ void ScrollView::scrollContents(const IntSize& scrollDelta)
 
     if (canBlitOnScroll()) { // The main frame can just blit the WebView window
         // FIXME: Find a way to scroll subframes with this faster path
-        hostWindow()->scroll(-scrollDelta, scrollViewRect, clipRect);
+        if (!scrollContentsFastPath(-scrollDelta, scrollViewRect, clipRect))
+            hostWindow()->invalidateContentsForSlowScroll(updateRect, false);
     } else { 
        // We need to go ahead and repaint the entire backing store.  Do it now before moving the
        // windowed plugins.
@@ -525,6 +526,12 @@ void ScrollView::scrollContents(const IntSize& scrollDelta)
 
     // Now blit the backingstore into the window which should be very fast.
     hostWindow()->invalidateWindow(IntRect(), true);
+}
+
+bool ScrollView::scrollContentsFastPath(const IntSize& scrollDelta, const IntRect& rectToScroll, const IntRect& clipRect)
+{
+    hostWindow()->scroll(scrollDelta, rectToScroll, clipRect);
+    return true;
 }
 
 IntPoint ScrollView::windowToContents(const IntPoint& windowPoint) const

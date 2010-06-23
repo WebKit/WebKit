@@ -376,6 +376,14 @@ void RenderLayer::updateLayerPositions(UpdateLayerPositionsFlags flags, IntPoint
         *cachedOffset = oldCachedOffset;
 }
 
+IntRect RenderLayer::repaintRectIncludingDescendants() const
+{
+    IntRect repaintRect = m_repaintRect;
+    for (RenderLayer* child = firstChild(); child; child = child->nextSibling())
+        repaintRect.unite(child->repaintRectIncludingDescendants());
+    return repaintRect;
+}
+
 void RenderLayer::computeRepaintRects()
 {
     RenderBoxModelObject* repaintContainer = renderer()->containerForRepaint();

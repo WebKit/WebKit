@@ -395,6 +395,7 @@ public:
 
     // Return a cached repaint rect, computed relative to the layer renderer's containerForRepaint.
     IntRect repaintRect() const { return m_repaintRect; }
+    IntRect repaintRectIncludingDescendants() const;
     void computeRepaintRects();
     void updateRepaintRectsAfterScroll(bool fixed = false);
     void setNeedsFullRepaint(bool f = true) { m_needsFullRepaint = f; }

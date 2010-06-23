@@ -230,6 +230,9 @@ public:
     static void setRepaintThrottlingMaxDeferredRepaintDelayDuringLoading(double p);
     // On each repaint the delay increses by this amount
     static void setRepaintThrottlingDeferredRepaintDelayIncrementDuringLoading(double p);
+
+protected:
+    virtual bool scrollContentsFastPath(const IntSize& scrollDelta, const IntRect& rectToScroll, const IntRect& clipRect);
     
 private:
     FrameView(Frame*);
