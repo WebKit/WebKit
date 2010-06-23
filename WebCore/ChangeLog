@@ -1,3 +1,33 @@
+2010-06-23  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Eric Seidel.
+
+        Reproducible crash in com.apple.WebCore 0x01ed3784 WebCore::RenderLineBoxList::appendLineBox(WebCore::InlineFlowBox*) + 36
+        https://bugs.webkit.org/show_bug.cgi?id=40953
+
+        REGRESSION (r58209-58231): Memory corruption with invalid SVG
+        https://bugs.webkit.org/show_bug.cgi?id=40173
+
+        Fix several crashes, all related to <foreignObject> and/or invalid SVG documents.
+        - Only allow <svg> nodes, as direct children of a <foreignObject>, not any other "partial" SVG content.
+        - Assure to create RenderSVGRoot objects for <svg> nodes in <foreignObject>, treat them as "outermost SVG elements".
+        - Never allow any partial SVG content to appear in any document. Only <svg> elements are allowed.
+
+        Tests: svg/custom/bug45331.svg
+               svg/foreignObject/disallowed-svg-nodes-as-direct-children.svg
+               svg/foreignObject/no-crash-with-svg-content-in-html-document.svg
+               svg/foreignObject/svg-document-as-direct-child.svg
+               svg/foreignObject/svg-document-in-html-document.svg
+               svg/foreignObject/text-tref-02-b.svg
+
+        * dom/Element.cpp: Added childShouldCreateRenderer, with ENABLE(SVG) guards.
+        (WebCore::Element::childShouldCreateRenderer): Only create a renderer for a SVG child, if we're a SVG element, or if the child is a <svg> element.
+        * dom/Element.h: Added childShouldCreateRenderer, with ENABLE(SVG) guards.
+        * svg/SVGForeignObjectElement.cpp:
+        (WebCore::SVGForeignObjectElement::childShouldCreateRenderer): Disallow arbitary SVG content, only <svg> elements are allowed as direct children of a <foreignObject>
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::isOutermostSVG): Be sure to create RenderSVGRoot objects for <svg> elements inside <foreignObject>
+
 2010-06-22  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

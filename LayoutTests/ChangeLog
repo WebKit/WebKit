@@ -1,3 +1,42 @@
+2010-06-23  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Eric Seidel.
+
+        Reproducible crash in com.apple.WebCore 0x01ed3784 WebCore::RenderLineBoxList::appendLineBox(WebCore::InlineFlowBox*) + 36
+        https://bugs.webkit.org/show_bug.cgi?id=40953
+
+        REGRESSION (r58209-58231): Memory corruption with invalid SVG
+        https://bugs.webkit.org/show_bug.cgi?id=40173
+
+        Added several new layout tests covering the crashes with <foreignObject> and/or invalid SVG documents.
+
+        * platform/mac/svg/custom/bug45331-expected.checksum: Added.
+        * platform/mac/svg/custom/bug45331-expected.png: Added.
+        * platform/mac/svg/custom/bug45331-expected.txt: Added.
+        * platform/mac/svg/foreignObject: Added.
+        * platform/mac/svg/foreignObject/disallowed-svg-nodes-as-direct-children-expected.checksum: Added.
+        * platform/mac/svg/foreignObject/disallowed-svg-nodes-as-direct-children-expected.png: Added.
+        * platform/mac/svg/foreignObject/disallowed-svg-nodes-as-direct-children-expected.txt: Added.
+        * platform/mac/svg/foreignObject/no-crash-with-svg-content-in-html-document-expected.checksum: Added.
+        * platform/mac/svg/foreignObject/no-crash-with-svg-content-in-html-document-expected.png: Added.
+        * platform/mac/svg/foreignObject/no-crash-with-svg-content-in-html-document-expected.txt: Added.
+        * platform/mac/svg/foreignObject/svg-document-as-direct-child-expected.checksum: Added.
+        * platform/mac/svg/foreignObject/svg-document-as-direct-child-expected.png: Added.
+        * platform/mac/svg/foreignObject/svg-document-as-direct-child-expected.txt: Added.
+        * platform/mac/svg/foreignObject/svg-document-in-html-document-expected.checksum: Added.
+        * platform/mac/svg/foreignObject/svg-document-in-html-document-expected.png: Added.
+        * platform/mac/svg/foreignObject/svg-document-in-html-document-expected.txt: Added.
+        * platform/mac/svg/foreignObject/text-tref-02-b-expected.checksum: Added.
+        * platform/mac/svg/foreignObject/text-tref-02-b-expected.png: Added.
+        * platform/mac/svg/foreignObject/text-tref-02-b-expected.txt: Added.
+        * svg/custom/bug45331.svg: Added.
+        * svg/foreignObject: Added.
+        * svg/foreignObject/disallowed-svg-nodes-as-direct-children.svg: Added.
+        * svg/foreignObject/no-crash-with-svg-content-in-html-document.svg: Added.
+        * svg/foreignObject/svg-document-as-direct-child.svg: Added.
+        * svg/foreignObject/svg-document-in-html-document.svg: Added.
+        * svg/foreignObject/text-tref-02-b.svg: Added.
+
 2010-06-22  David Levin  <levin@chromium.org>
 
         Reviewed by nobody (simple qt test fix).

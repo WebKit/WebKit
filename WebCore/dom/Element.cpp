@@ -1555,4 +1555,15 @@ void Element::setUnsignedIntegralAttribute(const QualifiedName& attributeName, u
     setAttribute(attributeName, String::number(value), ec);
 }
 
+#if ENABLE(SVG)
+bool Element::childShouldCreateRenderer(Node* child) const
+{
+    // Only create renderers for SVG elements whose parents are SVG elements, or for proper <svg xmlns="svgNS"> subdocuments.
+    if (child->isSVGElement())
+        return child->hasTagName(SVGNames::svgTag) || isSVGElement();
+
+    return Node::childShouldCreateRenderer(child);
+}
+#endif
+
 } // namespace WebCore
