@@ -857,6 +857,9 @@ fast/ruby/rubyDOM-remove-text2.html
 # https://bugs.webkit.org/show_bug.cgi?id=35961
 printing/page-rule-selection.html
 
+# Missing LayoutTestController::isPageBoxVisible, pageAreaRectInPixels, and preferredPageSizeInPixels.
+printing/page-format-data.html
+
 # ============================================================================= #
 # ------- failing editing/input tests
 # ============================================================================= #

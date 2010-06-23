@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+<head id="head_element">
+<link rel="stylesheet" href="../fast/js/resources/js-test-style.css">
+<script src="../fast/js/resources/js-test-pre.js"></script>
+<style>
+</style>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+    description("This tests page format data");
+
+    function appendStyle(styleString)
+    {
+        var styleElement = document.createElement("style");
+        styleElement.innerHTML = styleString;
+        document.getElementById("head_element").appendChild(styleElement);
+    }
+
+    function inchSize(width, height)
+    {
+        return "(" + Math.floor(width * 96) + "," + Math.floor(height * 96) + ")";
+    }
+
+    function mmSize(width, height)
+    {
+        return "(" + Math.floor(width * 96 / 25.4) + "," + Math.floor(height * 96 / 25.4) + ")";
+    }
+
+    if (window.layoutTestController) {
+        layoutTestController.dumpAsText();
+
+        // Page box visibility tests.
+
+        debug("Test default visibility");
+        shouldBe("layoutTestController.isPageBoxVisible(0)", "true");
+
+        debug("Test display: none. display property doesn't apply to @page");
+        appendStyle("@page {display:none;}");
+        shouldBe("layoutTestController.isPageBoxVisible(0)", "true");
+
+        debug("Test display: inline. display property doesn't apply to @page");
+        appendStyle("@page {display:inline;}");
+        shouldBe("layoutTestController.isPageBoxVisible(0)", "true");
+
+        debug("Test visibility: hidden");
+        appendStyle("@page {visibility:hidden;}");
+        shouldBe("layoutTestController.isPageBoxVisible(0)", "false");
+
+        debug("Test visibility: visible");
+        appendStyle("@page {visibility:visible;}");
+        shouldBe("layoutTestController.isPageBoxVisible(0)", "true");
+
+        debug("");
+
+        // Page size tests
+
+        debug("Test default page size");
+        shouldBe("layoutTestController.preferredPageSizeInPixels(0)", "inchSize(8.5, 11)"); // Letter
+
+        debug("Test auto page size");
+        appendStyle("@page {size:auto;}");
+        shouldBe("layoutTestController.preferredPageSizeInPixels(0)", "inchSize(8.5, 11)");
+
+        debug("Test landscape");
+        appendStyle("@page {size:landscape;}");
+        shouldBe("layoutTestController.preferredPageSizeInPixels(0)", "inchSize(11, 8.5)");
+
+        debug("Test portrait");
+        appendStyle("@page {size:portrait;}");
+        shouldBe("layoutTestController.preferredPageSizeInPixels(0)", "inchSize(8.5, 11)");
+
+        debug("Test a5");
+        appendStyle("@page {size:a5;}");
+        shouldBe("layoutTestController.preferredPageSizeInPixels(0)", "mmSize(148, 210)");
+
+        debug("Test a5 landscape");
+        appendStyle("@page {size:a5 landscape;}");
+        shouldBe("layoutTestController.preferredPageSizeInPixels(0)", "mmSize(210, 148)");
+
+        debug("Test portrait a4");
+        appendStyle("@page {size:portrait a4;}");
+        shouldBe("layoutTestController.preferredPageSizeInPixels(0)", "mmSize(210, 297)");
+
+        debug("Test a3");
+        appendStyle("@page {size:a3;}");
+        shouldBe("layoutTestController.preferredPageSizeInPixels(0)", "mmSize(297, 420)");
+
+        debug("Test b5");
+        appendStyle("@page {size:b5;}");
+        shouldBe("layoutTestController.preferredPageSizeInPixels(0)", "mmSize(176, 250)");
+
+        debug("Test b4");
+        appendStyle("@page {size:b4;}");
+        shouldBe("layoutTestController.preferredPageSizeInPixels(0)", "mmSize(250, 353)");
+
+        debug("Test letter");
+        appendStyle("@page {size:letter;}");
+        shouldBe("layoutTestController.preferredPageSizeInPixels(0)", "inchSize(8.5, 11)");
+
+        debug("Test legal");
+        appendStyle("@page {size:legal;}");
+        shouldBe("layoutTestController.preferredPageSizeInPixels(0)", "inchSize(8.5, 14)");
+
+        debug("Test ledger");
+        appendStyle("@page {size:ledger;}");
+        shouldBe("layoutTestController.preferredPageSizeInPixels(0)", "inchSize(11, 17)");
+
+        debug("Test 10cm");
+        appendStyle("@page {size:10cm;}");
+        shouldBe("layoutTestController.preferredPageSizeInPixels(0)", "mmSize(100, 100)");
+
+        debug("Test 20cm x 30cm");
+        appendStyle("@page {size:20cm 30cm;}");
+        shouldBe("layoutTestController.preferredPageSizeInPixels(0)", "mmSize(200, 300)");
+
+        debug("Test 10000px 20000px");
+        appendStyle("@page {size:10000px 20000px;}");
+        shouldBe("layoutTestController.preferredPageSizeInPixels(0)", "'(10000,20000)'");
+
+        debug("Test invalid page size: -10cm");
+        appendStyle("@page {size:-10cm;}");
+        shouldBe("layoutTestController.preferredPageSizeInPixels(0)", "'(10000,20000)'");
+
+        debug("Test invalid page size: a4 a4");
+        appendStyle("@page {size:a4 a4;}");
+        shouldBe("layoutTestController.preferredPageSizeInPixels(0)", "'(10000,20000)'");
+
+        debug("Test invalid page size: landscape portrait");
+        appendStyle("@page {size:landscape portrait;}");
+        shouldBe("layoutTestController.preferredPageSizeInPixels(0)", "'(10000,20000)'");
+
+        debug("Test invalid page size: 10cm letter");
+        appendStyle("@page {size:10cm letter;}");
+        shouldBe("layoutTestController.preferredPageSizeInPixels(0)", "'(10000,20000)'");
+
+        debug("Test invalid page size: 10cm 10cm 10cm");
+        appendStyle("@page {size:10cm 10cm 10cm;}");
+        shouldBe("layoutTestController.preferredPageSizeInPixels(0)", "'(10000,20000)'");
+
+        debug("Test invalid page size: empty");
+        appendStyle("@page {size:;}");
+        shouldBe("layoutTestController.preferredPageSizeInPixels(0)", "'(10000,20000)'");
+
+        debug("");
+
+        // Page area tests
+
+        debug("Test page area when margin, padding, and border are 0px");
+        appendStyle("@page {margin:0px;padding:0px;border:0px;}");
+        shouldBe("layoutTestController.pageAreaRectInPixels(0)", "'(0,0,10000,20000)'");
+
+        debug("Test non-zero margin, padding, and border");
+        appendStyle("@page {margin:1px 2px 4px 8px; padding:16px 32px 64px 128px; border-width:256px 512px 1024px 2048px;}"); // top, right, bottom, left
+        shouldBe("layoutTestController.pageAreaRectInPixels(0)", "'(2184,273,7270,18635)'");
+
+        debug("Test percentage margin and padding");
+        appendStyle("@page {margin:20% 10%; padding:5%; border-width:0px;}");
+        shouldBe("layoutTestController.pageAreaRectInPixels(0)", "'(1500,2500,7000,15000)'");
+
+        debug("Test visibility: hidden");
+        appendStyle("@page {visibility:hidden}");
+        shouldBe("layoutTestController.pageAreaRectInPixels(0)", "'(1500,2500,7000,15000)'");
+
+        debug("");
+
+    } else {
+        testFailed("This test can be run only with window.layoutTestController");
+    }
+    var successfullyParsed = true;
+</script>
+<script src="../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

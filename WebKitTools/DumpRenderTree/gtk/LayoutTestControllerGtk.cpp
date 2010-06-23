@@ -177,6 +177,24 @@ JSRetainPtr<JSStringRef> LayoutTestController::pageProperty(const char* property
     return JSRetainPtr<JSStringRef>();
 }
 
+bool LayoutTestController::isPageBoxVisible(int pageNumber) const
+{
+    // FIXME: implement
+    return false;
+}
+
+JSRetainPtr<JSStringRef> LayoutTestController::pageAreaRectInPixels(int pageNumber) const
+{
+    // FIXME: implement
+    return JSRetainPtr<JSStringRef>();
+}
+
+JSRetainPtr<JSStringRef> LayoutTestController::preferredPageSizeInPixels(int pageNumber) const
+{
+    // FIXME: implement
+    return JSRetainPtr<JSStringRef>();
+}
+
 size_t LayoutTestController::webHistoryItemCount()
 {
     // FIXME: implement

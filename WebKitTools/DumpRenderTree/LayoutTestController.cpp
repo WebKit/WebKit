@@ -552,6 +552,15 @@ static bool parsePagePropertyParameters(JSContextRef context, int argumentCount,
     }
 }
 
+static bool parsePageNumber(JSContextRef context, int argumentCount, const JSValueRef* arguments, JSValueRef* exception, int& pageNumber)
+{
+    pageNumber = 0;
+    if (argumentCount != 1)
+        return false;
+    pageNumber = static_cast<int>(JSValueToNumber(context, arguments[0], exception));
+    return !*exception;
+}
+
 static JSValueRef pageNumberForElementByIdCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     float pageWidthInPixels = 0;
@@ -591,6 +600,36 @@ static JSValueRef pagePropertyCallback(JSContextRef context, JSObjectRef functio
 
     delete[] propertyName;
     return value;
+}
+
+static JSValueRef isPageBoxVisibleCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    int pageNumber = 0;
+    if (!parsePageNumber(context, argumentCount, arguments, exception, pageNumber))
+        return JSValueMakeUndefined(context);
+
+    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    return JSValueMakeBoolean(context, controller->isPageBoxVisible(pageNumber));
+}
+
+static JSValueRef pageAreaRectInPixelsCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    int pageNumber = 0;
+    if (!parsePageNumber(context, argumentCount, arguments, exception, pageNumber))
+        return JSValueMakeUndefined(context);
+
+    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    return JSValueMakeString(context, controller->pageAreaRectInPixels(pageNumber).get());
+}
+
+static JSValueRef preferredPageSizeInPixelsCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    int pageNumber = 0;
+    if (!parsePageNumber(context, argumentCount, arguments, exception, pageNumber))
+        return JSValueMakeUndefined(context);
+
+    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    return JSValueMakeString(context, controller->preferredPageSizeInPixels(pageNumber).get());
 }
 
 static JSValueRef queueBackNavigationCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
@@ -1651,6 +1690,7 @@ JSStaticFunction* LayoutTestController::staticFunctions()
         { "counterValueForElementById", counterValueForElementByIdCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "grantDesktopNotificationPermission", grantDesktopNotificationPermissionCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete }, 
         { "isCommandEnabled", isCommandEnabledCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "isPageBoxVisible", isPageBoxVisibleCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "keepWebHistory", keepWebHistoryCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "layerTreeAsText", layerTreeAsTextCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "numberOfPages", numberOfPagesCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
@@ -1659,10 +1699,12 @@ JSStaticFunction* LayoutTestController::staticFunctions()
         { "numberOfActiveAnimations", numberOfActiveAnimationsCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "overridePreference", overridePreferenceCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "pageNumberForElementById", pageNumberForElementByIdCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "pageAreaRectInPixels", pageAreaRectInPixelsCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "pageProperty", pagePropertyCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "pathToLocalResource", pathToLocalResourceCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "pauseAnimationAtTimeOnElementWithId", pauseAnimationAtTimeOnElementWithIdCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "pauseTransitionAtTimeOnElementWithId", pauseTransitionAtTimeOnElementWithIdCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "preferredPageSizeInPixels", preferredPageSizeInPixelsCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "sampleSVGAnimationForElementAtTime", sampleSVGAnimationForElementAtTimeCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "printToPDF", dumpAsPDFCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "queueBackNavigation", queueBackNavigationCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },

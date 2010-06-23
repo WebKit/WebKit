@@ -2884,3 +2884,7 @@ BUG_HCLAM : fast/js/script-line-number.html = TEXT
 
 // Added by r61650
 BUG47259 WIN : http/tests/local/blob/send-data-blob.html = TEXT
+
+// LayoutTestController::isPageBoxVisible, pageAreaRectInPixels, and preferredPageSizeInPixels are not implemented yet for Chromium.
+BUGWK37538 : printing/page-format-data.html = TEXT
+

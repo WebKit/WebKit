@@ -218,6 +218,23 @@ JSRetainPtr<JSStringRef> LayoutTestController::pageProperty(const char* property
     return propertyValue;
 }
 
+bool LayoutTestController::isPageBoxVisible(int pageNumber) const
+{
+    return [mainFrame isPageBoxVisible:pageNumber];
+}
+
+JSRetainPtr<JSStringRef> LayoutTestController::pageAreaRectInPixels(int pageNumber) const
+{
+    JSRetainPtr<JSStringRef> propertyValue(Adopt, JSStringCreateWithCFString((CFStringRef)[mainFrame pageAreaRectInPixels:pageNumber]));
+    return propertyValue;
+}
+
+JSRetainPtr<JSStringRef> LayoutTestController::preferredPageSizeInPixels(int pageNumber) const
+{
+    JSRetainPtr<JSStringRef> propertyValue(Adopt, JSStringCreateWithCFString((CFStringRef)[mainFrame preferredPageSizeInPixels:pageNumber]));
+    return propertyValue;
+}
+
 int LayoutTestController::numberOfPages(float pageWidthInPixels, float pageHeightInPixels)
 {
     return [mainFrame numberOfPages:pageWidthInPixels:pageHeightInPixels];

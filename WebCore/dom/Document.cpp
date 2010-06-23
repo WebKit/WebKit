@@ -1502,6 +1502,37 @@ PassRefPtr<RenderStyle> Document::styleForPage(int pageIndex)
     return style.release();
 }
 
+bool Document::isPageBoxVisible(int pageIndex)
+{
+    RefPtr<RenderStyle> style = styleForPage(pageIndex);
+    return style->visibility() != HIDDEN; // display property doesn't apply to @page.
+}
+
+IntRect Document::pageAreaRectInPixels(int pageIndex)
+{
+    RefPtr<RenderStyle> style = styleForPage(pageIndex);
+    IntSize pageSize = preferredPageSizeInPixels(pageIndex);
+    // 100% value for margin-{left,right,top,bottom}. This is used also for top and bottom. http://www.w3.org/TR/CSS2/box.html#value-def-margin-width
+    int maxValue = pageSize.width();
+    int surroundLeft = style->marginLeft().calcValue(maxValue) + style->borderLeft().width() + style->paddingLeft().calcValue(maxValue);
+    int surroundRight = style->marginRight().calcValue(maxValue) + style->borderRight().width() + style->paddingRight().calcValue(maxValue);
+    int surroundTop = style->marginTop().calcValue(maxValue) + style->borderTop().width() + style->paddingTop().calcValue(maxValue);
+    int surroundBottom = style->marginBottom().calcValue(maxValue) + style->borderBottom().width() + style->paddingBottom().calcValue(maxValue);
+    int width = pageSize.width() - surroundLeft - surroundRight;
+    int height = pageSize.height() - surroundTop - surroundBottom;
+
+    return IntRect(surroundLeft, surroundTop, width, height);
+}
+
+IntSize Document::preferredPageSizeInPixels(int pageIndex)
+{
+    RefPtr<RenderStyle> style = styleForPage(pageIndex);
+    LengthSize size = style->pageSize();
+    ASSERT(size.width().isFixed());
+    ASSERT(size.height().isFixed());
+    return IntSize(size.width().calcValue(0), size.height().calcValue(0));
+}
+
 void Document::createStyleSelector()
 {
     bool matchAuthorAndUserStyles = true;

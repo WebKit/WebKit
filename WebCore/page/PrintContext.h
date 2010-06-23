@@ -56,6 +56,9 @@ public:
     // Used by layout tests.
     static int pageNumberForElement(Element*, const FloatSize& pageSizeInPixels);
     static String pageProperty(Frame* frame, const char* propertyName, int pageNumber);
+    static bool isPageBoxVisible(Frame* frame, int pageNumber);
+    static String pageAreaRectInPixels(Frame* frame, int pageNumber);
+    static String preferredPageSizeInPixels(Frame* frame, int pageNumber);
     static int numberOfPages(Frame*, const FloatSize& pageSizeInPixels);
 
 protected:

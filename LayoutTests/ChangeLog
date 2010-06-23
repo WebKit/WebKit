@@ -1,3 +1,17 @@
+2010-06-23  Yuzo Fujishima  <yuzo@google.com>
+
+        Reviewed by Shinichiro Hamaji.
+
+        Implement page format data programming interface.
+        https://bugs.webkit.org/show_bug.cgi?id=37538
+
+        * platform/chromium/test_expectations.txt:
+        * platform/gtk/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+        * printing/page-format-data-expected.txt: Added.
+        * printing/page-format-data.html: Added.
+
 2010-06-23  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Not reviewed. Forgot to include four files in the last commit.

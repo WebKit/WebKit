@@ -30,6 +30,7 @@
 #include "CSSBorderImageValue.h"
 #include "CSSCursorImageValue.h"
 #include "CSSFontFaceRule.h"
+#include "CSSHelper.h"
 #include "CSSImportRule.h"
 #include "CSSMediaRule.h"
 #include "CSSPageRule.h"
@@ -5457,12 +5458,14 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             m_style->setColorSpace(*primitiveValue);
         }
         return;
+    case CSSPropertySize:
+        applyPageSizeProperty(value);
+        return;
     case CSSPropertyInvalid:
         return;
     case CSSPropertyFontStretch:
     case CSSPropertyPage:
     case CSSPropertyQuotes:
-    case CSSPropertySize:
     case CSSPropertyTextLineThrough:
     case CSSPropertyTextLineThroughColor:
     case CSSPropertyTextLineThroughMode:
@@ -5508,6 +5511,161 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         applySVGProperty(id, value);
 #endif
     }
+}
+
+void CSSStyleSelector::applyPageSizeProperty(CSSValue* value)
+{
+    if (!value->isValueList())
+        return;
+    CSSValueList* valueList = static_cast<CSSValueList*>(value);
+    Length width;
+    Length height;
+    switch (valueList->length()) {
+    case 2: {
+        // <length>{2} | <page-size> <orientation>
+        if (!valueList->item(0)->isPrimitiveValue() || !valueList->item(1)->isPrimitiveValue())
+            return;
+        CSSPrimitiveValue* primitiveValue0 = static_cast<CSSPrimitiveValue*>(valueList->item(0));
+        CSSPrimitiveValue* primitiveValue1 = static_cast<CSSPrimitiveValue*>(valueList->item(1));
+        int type0 = primitiveValue0->primitiveType();
+        int type1 = primitiveValue1->primitiveType();
+        if (CSSPrimitiveValue::isUnitTypeLength(type0)) {
+            // <length>{2}
+            if (!CSSPrimitiveValue::isUnitTypeLength(type1))
+                return;
+            width = Length(primitiveValue0->computeLengthIntForLength(style(), m_rootElementStyle), Fixed);
+            height = Length(primitiveValue1->computeLengthIntForLength(style(), m_rootElementStyle), Fixed);
+        } else {
+            // <page-size> <orientation>
+            // The value order is guaranteed. See CSSParser::parseSizeParameter.
+            if (!pageSizeFromName(primitiveValue0, primitiveValue1, width, height))
+                return;
+        }
+        break;
+    }
+    case 1: {
+        // <length> | auto | <page-size> | [ portrait | landscape]
+        if (!valueList->item(0)->isPrimitiveValue())
+            return;
+        CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(valueList->item(0));
+        int type = primitiveValue->primitiveType();
+        if (CSSPrimitiveValue::isUnitTypeLength(type)) {
+            // <length>
+            width = height = Length(primitiveValue->computeLengthIntForLength(style(), m_rootElementStyle), Fixed);
+        } else {
+            if (type != CSSPrimitiveValue::CSS_IDENT)
+                return;
+            switch (primitiveValue->getIdent()) {
+            case CSSValueAuto:
+                // auto
+                if (!pageSizeFromName(0, 0, width, height))
+                    return;
+                break;
+            case CSSValuePortrait:
+            case CSSValueLandscape:
+                // <page-size>
+                if (!pageSizeFromName(0, primitiveValue, width, height))
+                    return;
+                break;
+            default:
+                // [ portrait | landscape]
+                if (!pageSizeFromName(primitiveValue, 0, width, height))
+                    return;
+            }
+        }
+        break;
+    }
+    default:
+        return;
+    }
+    m_style->setPageSize(LengthSize(width, height));
+    return;
+}
+
+bool CSSStyleSelector::pageSizeFromName(CSSPrimitiveValue* pageSizeName, CSSPrimitiveValue* pageOrientation, Length& width, Length& height)
+{
+    static const Length a5Width = mmLength(148), a5Height = mmLength(210);
+    static const Length a4Width = mmLength(210), a4Height = mmLength(297);
+    static const Length a3Width = mmLength(297), a3Height = mmLength(420);
+    static const Length b5Width = mmLength(176), b5Height = mmLength(250);
+    static const Length b4Width = mmLength(250), b4Height = mmLength(353);
+    static const Length letterWidth = inchLength(8.5), letterHeight = inchLength(11);
+    static const Length legalWidth = inchLength(8.5), legalHeight = inchLength(14);
+    static const Length ledgerWidth = inchLength(11), ledgerHeight = inchLength(17);
+
+    // FIXME: Define UA default page size. Assume letter for now.
+    int ident = CSSValueLetter;
+    if (pageSizeName) {
+        if (pageSizeName->primitiveType() != CSSPrimitiveValue::CSS_IDENT)
+            return false;
+        ident = pageSizeName->getIdent();
+    }
+
+    // FIXME: Define UA default page orientation. Assume portrait for now.
+    bool portrait = true;
+    if (pageOrientation) {
+        if (pageOrientation->primitiveType() != CSSPrimitiveValue::CSS_IDENT)
+            return false;
+        switch (pageOrientation->getIdent()) {
+        case CSSValueLandscape:
+            portrait = false;
+            break;
+        case CSSValuePortrait:
+            portrait = true;
+            break;
+        default:
+            return false;
+        }
+    }
+    switch (ident) {
+    case CSSValueA5:
+        width = a5Width;
+        height = a5Height;
+        break;
+    case CSSValueA4:
+        width = a4Width;
+        height = a4Height;
+        break;
+    case CSSValueA3:
+        width = a3Width;
+        height = a3Height;
+        break;
+    case CSSValueB5:
+        width = b5Width;
+        height = b5Height;
+        break;
+    case CSSValueB4:
+        width = b4Width;
+        height = b4Height;
+        break;
+    case CSSValueLetter:
+        width = letterWidth;
+        height = letterHeight;
+        break;
+    case CSSValueLegal:
+        width = legalWidth;
+        height = legalHeight;
+        break;
+    case CSSValueLedger:
+        width = ledgerWidth;
+        height = ledgerHeight;
+        break;
+    default:
+        return false;
+    }
+    if (!portrait)
+        swap(width, height);
+    return true;
+}
+
+Length CSSStyleSelector::mmLength(double mm)
+{
+    return Length(CSSPrimitiveValue::create(mm, CSSPrimitiveValue::CSS_MM)->computeLengthIntForLength(style(), m_rootElementStyle), Fixed);
+}
+
+Length CSSStyleSelector::inchLength(double inch)
+{
+    return Length(CSSPrimitiveValue::create(inch, CSSPrimitiveValue::CSS_IN)->computeLengthIntForLength(style(), m_rootElementStyle), Fixed);
 }
 
 void CSSStyleSelector::mapFillAttachment(FillLayer* layer, CSSValue* value)

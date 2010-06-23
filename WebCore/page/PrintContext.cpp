@@ -218,6 +218,23 @@ String PrintContext::pageProperty(Frame* frame, const char* propertyName, int pa
     return String::format("pageProperty() unimplemented for: %s", propertyName);
 }
 
+bool PrintContext::isPageBoxVisible(Frame* frame, int pageNumber)
+{
+    return frame->document()->isPageBoxVisible(pageNumber);
+}
+
+String PrintContext::pageAreaRectInPixels(Frame* frame, int pageNumber)
+{
+    IntRect pageArea = frame->document()->pageAreaRectInPixels(pageNumber);
+    return String::format("(%d,%d,%d,%d)", pageArea.x(), pageArea.y(), pageArea.width(), pageArea.height());
+}
+
+String PrintContext::preferredPageSizeInPixels(Frame* frame, int pageNumber)
+{
+    IntSize pageSize = frame->document()->preferredPageSizeInPixels(pageNumber);
+    return String::format("(%d,%d)", pageSize.width(), pageSize.height());
+}
+
 int PrintContext::numberOfPages(Frame* frame, const FloatSize& pageSizeInPixels)
 {
     frame->document()->updateLayout();

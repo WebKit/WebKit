@@ -280,4 +280,18 @@ using namespace WebCore;
     return PrintContext::pageProperty(_private->coreFrame, propertyName, pageNumber);
 }
 
+- (bool)isPageBoxVisible:(int)pageNumber
+{
+    return PrintContext::isPageBoxVisible(_private->coreFrame, pageNumber);
+}
+
+- (NSString *)pageAreaRectInPixels:(int)pageNumber
+{
+    return PrintContext::pageAreaRectInPixels(_private->coreFrame, pageNumber);
+}
+
+- (NSString *)preferredPageSizeInPixels:(int)pageNumber;
+{
+    return PrintContext::preferredPageSizeInPixels(_private->coreFrame, pageNumber);
+}
 @end

@@ -1,3 +1,45 @@
+2010-06-23  Yuzo Fujishima  <yuzo@google.com>
+
+        Reviewed by Shinichiro Hamaji.
+
+        Implement page format data programming interface.
+        The final goal is to implement CSS Paged Media Module Level 3 (http://dev.w3.org/csswg/css3-page/).
+        To begin with, this change adds methods to know:
+        - if page box is visible,
+        - the page area rectangle, and
+        - preferred page size.
+
+        https://bugs.webkit.org/show_bug.cgi?id=37538
+
+        Test: printing/page-format-data.html
+
+        * WebCore.base.exp:
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseSizeParameter):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        (WebCore::CSSStyleSelector::applyPageSizeProperty):
+        (WebCore::CSSStyleSelector::pageSizeFromName):
+        (WebCore::CSSStyleSelector::mmLength):
+        (WebCore::CSSStyleSelector::inchLength):
+        * css/CSSStyleSelector.h:
+        * css/html.css:
+        (@page):
+        * dom/Document.cpp:
+        (WebCore::Document::isPageBoxVisible):
+        (WebCore::Document::pageAreaRectInPixels):
+        (WebCore::Document::preferredPageSizeInPixels):
+        * dom/Document.h:
+        * page/PrintContext.cpp:
+        (WebCore::PrintContext::isPageBoxVisible):
+        (WebCore::PrintContext::pageAreaRectInPixels):
+        (WebCore::PrintContext::preferredPageSizeInPixels):
+        * page/PrintContext.h:
+        * rendering/style/RenderStyle.h:
+        (WebCore::InheritedFlags::pageSize):
+        (WebCore::InheritedFlags::setPageSize):
+        * rendering/style/StyleRareNonInheritedData.h:
+
 2010-06-23  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

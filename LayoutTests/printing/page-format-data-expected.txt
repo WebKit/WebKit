@@ -1,0 +1,74 @@
+This tests page format data
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Test default visibility
+PASS layoutTestController.isPageBoxVisible(0) is true
+Test display: none. display property doesn't apply to @page
+PASS layoutTestController.isPageBoxVisible(0) is true
+Test display: inline. display property doesn't apply to @page
+PASS layoutTestController.isPageBoxVisible(0) is true
+Test visibility: hidden
+PASS layoutTestController.isPageBoxVisible(0) is false
+Test visibility: visible
+PASS layoutTestController.isPageBoxVisible(0) is true
+
+Test default page size
+PASS layoutTestController.preferredPageSizeInPixels(0) is inchSize(8.5, 11)
+Test auto page size
+PASS layoutTestController.preferredPageSizeInPixels(0) is inchSize(8.5, 11)
+Test landscape
+PASS layoutTestController.preferredPageSizeInPixels(0) is inchSize(11, 8.5)
+Test portrait
+PASS layoutTestController.preferredPageSizeInPixels(0) is inchSize(8.5, 11)
+Test a5
+PASS layoutTestController.preferredPageSizeInPixels(0) is mmSize(148, 210)
+Test a5 landscape
+PASS layoutTestController.preferredPageSizeInPixels(0) is mmSize(210, 148)
+Test portrait a4
+PASS layoutTestController.preferredPageSizeInPixels(0) is mmSize(210, 297)
+Test a3
+PASS layoutTestController.preferredPageSizeInPixels(0) is mmSize(297, 420)
+Test b5
+PASS layoutTestController.preferredPageSizeInPixels(0) is mmSize(176, 250)
+Test b4
+PASS layoutTestController.preferredPageSizeInPixels(0) is mmSize(250, 353)
+Test letter
+PASS layoutTestController.preferredPageSizeInPixels(0) is inchSize(8.5, 11)
+Test legal
+PASS layoutTestController.preferredPageSizeInPixels(0) is inchSize(8.5, 14)
+Test ledger
+PASS layoutTestController.preferredPageSizeInPixels(0) is inchSize(11, 17)
+Test 10cm
+PASS layoutTestController.preferredPageSizeInPixels(0) is mmSize(100, 100)
+Test 20cm x 30cm
+PASS layoutTestController.preferredPageSizeInPixels(0) is mmSize(200, 300)
+Test 10000px 20000px
+PASS layoutTestController.preferredPageSizeInPixels(0) is '(10000,20000)'
+Test invalid page size: -10cm
+PASS layoutTestController.preferredPageSizeInPixels(0) is '(10000,20000)'
+Test invalid page size: a4 a4
+PASS layoutTestController.preferredPageSizeInPixels(0) is '(10000,20000)'
+Test invalid page size: landscape portrait
+PASS layoutTestController.preferredPageSizeInPixels(0) is '(10000,20000)'
+Test invalid page size: 10cm letter
+PASS layoutTestController.preferredPageSizeInPixels(0) is '(10000,20000)'
+Test invalid page size: 10cm 10cm 10cm
+PASS layoutTestController.preferredPageSizeInPixels(0) is '(10000,20000)'
+Test invalid page size: empty
+PASS layoutTestController.preferredPageSizeInPixels(0) is '(10000,20000)'
+
+Test page area when margin, padding, and border are 0px
+PASS layoutTestController.pageAreaRectInPixels(0) is '(0,0,10000,20000)'
+Test non-zero margin, padding, and border
+PASS layoutTestController.pageAreaRectInPixels(0) is '(2184,273,7270,18635)'
+Test percentage margin and padding
+PASS layoutTestController.pageAreaRectInPixels(0) is '(1500,2500,7000,15000)'
+Test visibility: hidden
+PASS layoutTestController.pageAreaRectInPixels(0) is '(1500,2500,7000,15000)'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

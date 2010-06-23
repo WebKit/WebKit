@@ -727,6 +727,7 @@ iframe {
 
 @page {
     /* FIXME: Define the right default values for page properties. */
+    size: auto;
     margin: 1in;
 }
 

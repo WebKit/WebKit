@@ -2246,13 +2246,13 @@ CSSParser::SizeParameterType CSSParser::parseSizeParameter(CSSValueList* parsedV
     case CSSValueLetter:
         if (prevParamType == None || prevParamType == Orientation) {
             // Normalize to Page Size then Orientation order by prepending.
-            // This is not specified by the CSS3 Paged Media specification, but for simpler processing hereafter.
+            // This is not specified by the CSS3 Paged Media specification, but for simpler processing later (CSSStyleSelector::applyPageSizeProperty).
             parsedValues->prepend(CSSPrimitiveValue::createIdentifier(value->id));
             return PageSize;
         }
         return None;
     case 0:
-        if (validUnit(value, FLength, m_strict) && (prevParamType == None || prevParamType == Length)) {
+        if (validUnit(value, FLength | FNonNeg, m_strict) && (prevParamType == None || prevParamType == Length)) {
             parsedValues->append(CSSPrimitiveValue::create(value->fValue, static_cast<CSSPrimitiveValue::UnitTypes>(value->unit)));
             return Length;
         }
