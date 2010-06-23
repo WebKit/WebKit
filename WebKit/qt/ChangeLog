@@ -1,3 +1,11 @@
+2010-06-23  David Boddie  <dboddie@trolltech.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Doc: Fixed documentation errors.
+
+        * docs/qtwebkit-bridge.qdoc:
+
 2010-06-23  Alessandro Portale  <alessandro.portale@nokia.com>
 
         Reviewed by Simon Hausmann.

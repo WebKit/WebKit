@@ -8,7 +8,7 @@
 
     The QtWebKit bridge is a mechanism that extends WebKit's JavaScript environment to access native
     objects that are represented as \l{QObject}s. It takes advantage of the \l{QObject} introspection,
-    a part of the \l{Qt Object Model}, which makes it easy to integrate with the dynamic JavaScript environment,
+    a part of the \l{Object Model}, which makes it easy to integrate with the dynamic JavaScript environment,
     for example \l{QObject} properties map directly to JavaScript properties.
 
     For example, both JavaScript and QObjects have properties: a construct that represent a getter/setter
@@ -24,7 +24,7 @@
     applications. For example, an application that contains a media-player, playlist manager, and music store.
     The playlist manager is usually best authored as a classic desktop application,
     with the native-looking robust \l{QWidget}s helping with producing that application.
-    The media-player control, which usually looks custom, can be written using \l{The Graphics View framework}
+    The media-player control, which usually looks custom, can be written using the \l{Graphics View framework}
     or with in a declarative way with \l{QtDeclarative}. The music store, which shows dynamic content
     from the internet and gets modified rapidly, is best authored in HTML and maintained on the server.
 
