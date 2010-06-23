@@ -1,3 +1,9 @@
+2010-06-23  James Robinson  <jamesr@chromium.org>
+
+        Unreviewed.  Add my IRC handle to committers.py so the sheriffbot can yell at me.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2010-06-23  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Dimitri Glazkov.
