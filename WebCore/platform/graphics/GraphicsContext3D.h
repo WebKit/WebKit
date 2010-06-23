@@ -435,17 +435,23 @@ namespace WebCore {
 #elif PLATFORM(CHROMIUM)
         PlatformGraphicsContext3D platformGraphicsContext3D() const;
         Platform3DObject platformTexture() const;
+#if USE(ACCELERATED_COMPOSITING)
         // FIXME: Stubbed out for now. Must be implemented to get WebGL working with
         // accelerated compositing.
         PlatformLayer* platformLayer() const { return 0; }
+#endif
 #elif PLATFORM(QT)
         PlatformGraphicsContext3D platformGraphicsContext3D();
         Platform3DObject platformTexture() const;
+#if USE(ACCELERATED_COMPOSITING)
         PlatformLayer* platformLayer() const { return 0; }
+#endif
 #else
         PlatformGraphicsContext3D platformGraphicsContext3D() const { return NullPlatformGraphicsContext3D; }
         Platform3DObject platformTexture() const { return NullPlatform3DObject; }
+#if USE(ACCELERATED_COMPOSITING)
         PlatformLayer* platformLayer() const { return 0; }
+#endif
 #endif
         void makeContextCurrent();
 
