@@ -1369,6 +1369,11 @@ def check_spacing(file_extension, clean_lines, line_number, error):
         error(line_number, 'whitespace/comma', 3,
               'Missing space after ,')
 
+    matched = search(r'^\s*(?P<token1>[a-zA-Z0-9_\*&]+)\s\s+(?P<token2>[a-zA-Z0-9_\*&]+)', line)
+    if matched:
+        error(line_number, 'whitespace/declaration', 3,
+              'Extra space between %s and %s' % (matched.group('token1'), matched.group('token2')))
+
     if file_extension == 'cpp':
         # C++ should have the & or * beside the type not the variable name.
         matched = match(r'\s*\w+(?<!\breturn|\bdelete)\s+(?P<pointer_operator>\*|\&)\w+', line)

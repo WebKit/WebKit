@@ -1542,6 +1542,13 @@ class CppStyleTest(CppStyleTestBase):
         self.assert_lint('f(a, /* name */ b);', '')
         self.assert_lint('f(a, /* name */b);', '')
 
+    def test_declaration(self):
+        self.assert_lint('int a;', '')
+        self.assert_lint('int   a;', 'Extra space between int and a  [whitespace/declaration] [3]')
+        self.assert_lint('int*  a;', 'Extra space between int* and a  [whitespace/declaration] [3]')
+        self.assert_lint('else if { }', '')
+        self.assert_lint('else   if { }', 'Extra space between else and if  [whitespace/declaration] [3]')
+
     def test_pointer_reference_marker_location(self):
         self.assert_lint('int* b;', '', 'foo.cpp')
         self.assert_lint('int *b;',
