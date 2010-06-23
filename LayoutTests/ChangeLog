@@ -1,3 +1,13 @@
+2010-06-22  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Test for Crash when the renderer for the button in <input type="number"> goes away during event handling
+        https://bugs.webkit.org/show_bug.cgi?id=41013
+
+        * fast/forms/input-number-crash-expected.txt: Added.
+        * fast/forms/input-number-crash.html: Added.
+
 2010-06-22  Eric Seidel  <eric@webkit.org>
 
         No review, skipping test due to revealed bug in ClipboardQt.
