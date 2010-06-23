@@ -48,47 +48,43 @@ public:
 
     // Processes the passed in script and any pending scripts if possible.
     bool execute(PassRefPtr<Element> scriptToProcess, int scriptStartLine);
-    // Processes any pending scripts.
+
+    bool hasScriptsWaitingForLoad() const;
     bool executeScriptsWaitingForLoad(CachedResource*);
+
     bool hasScriptsWaitingForStylesheets() const { return m_hasScriptsWaitingForStylesheets; }
     bool executeScriptsWaitingForStylesheets();
 
     bool inScriptExecution() { return !!m_scriptNestingLevel; }
 
 private:
-    // A container for an external script which may be loaded and executed.
-    //
-    // A CachedResourceHandle alone does not prevent the underlying CachedResource
-    // from purging its data buffer. This class holds a dummy client open for its
-    // lifetime in order to guarantee that the data buffer will not be purged.
-    class PendingScript : public CachedResourceClient {
-    public:
+    struct PendingScript {
+        // This state controls whether we need to do anything with this script
+        // when we get a executeScriptsWaitingForLoad callback.
+        // We ignore callbacks during RegisteringForWatch.
+        enum WatchingForLoadState {
+            NotWatchingForLoad,
+            RegisteringForWatch,
+            WatchingForLoad,
+        };
+
         PendingScript()
-            : startingLineNumber(0)
-            , m_watchingForLoad(false)
+            : watchingForLoadState(NotWatchingForLoad)
+            , startingLineNumber(0)
         {
         }
 
-        ~PendingScript();
-
-        bool watchingForLoad() const { return m_watchingForLoad; }
-        void setWatchingForLoad(bool b) { m_watchingForLoad = b; }
-
-        CachedScript* cachedScript() const;
-        void setCachedScript(CachedScript* cachedScript);
-
-        virtual void notifyFinished(CachedResource*)
+        bool watchingForLoad()
         {
+            return watchingForLoadState != NotWatchingForLoad;
         }
 
         RefPtr<Element> element;
+        CachedResourceHandle<CachedScript> cachedScript;
+        WatchingForLoadState watchingForLoadState;
         int startingLineNumber; // Only used for inline script tags.
         // HTML5 has an isReady parameter, however isReady ends up equivalent to
         // m_document->haveStylesheetsLoaded() && cachedScript->isLoaded()
-
-    private:
-        bool m_watchingForLoad; // Did we pass the cachedScript to the HTML5ScriptRunnerHost.
-        CachedResourceHandle<CachedScript> m_cachedScript;
     };
 
     Frame* frame() const;

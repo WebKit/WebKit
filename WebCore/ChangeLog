@@ -1,3 +1,31 @@
+2010-06-22  Eric Seidel  <eric@webkit.org>
+
+        Unreviewed.  Rolling out http://trac.webkit.org/changeset/61638
+        made a few tests crash.
+
+        Make PendingScript hold a CachedResourceClient open for its lifetime
+        https://bugs.webkit.org/show_bug.cgi?id=40968
+
+        * html/HTML5DocumentParser.cpp:
+        (WebCore::HTML5DocumentParser::watchForLoad):
+        (WebCore::HTML5DocumentParser::notifyFinished):
+        * html/HTML5ScriptRunner.cpp:
+        (WebCore::HTML5ScriptRunner::~HTML5ScriptRunner):
+        (WebCore::HTML5ScriptRunner::sourceFromPendingScript):
+        (WebCore::HTML5ScriptRunner::isPendingScriptReady):
+        (WebCore::HTML5ScriptRunner::executePendingScript):
+        (WebCore::HTML5ScriptRunner::hasScriptsWaitingForLoad):
+        (WebCore::HTML5ScriptRunner::watchForLoad):
+        (WebCore::HTML5ScriptRunner::stopWatchingForLoad):
+        (WebCore::HTML5ScriptRunner::executeScriptsWaitingForLoad):
+        (WebCore::HTML5ScriptRunner::executeScriptsWaitingForStylesheets):
+        (WebCore::HTML5ScriptRunner::requestScript):
+        * html/HTML5ScriptRunner.h:
+        (WebCore::HTML5ScriptRunner::PendingScript::):
+        (WebCore::HTML5ScriptRunner::PendingScript::PendingScript):
+        (WebCore::HTML5ScriptRunner::PendingScript::watchingForLoad):
+        * html/HTML5ScriptRunnerHost.h:
+
 2010-06-22  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin Adler.
