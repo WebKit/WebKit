@@ -24,8 +24,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef HTML5Lexer_h
-#define HTML5Lexer_h
+#ifndef HTMLTokenizer_h
+#define HTMLTokenizer_h
 
 #include "AtomicString.h"
 #include "SegmentedString.h"

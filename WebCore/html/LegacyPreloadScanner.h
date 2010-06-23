@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef PreloadScanner_h
-#define PreloadScanner_h
+#ifndef LegacyPreloadScanner_h
+#define LegacyPreloadScanner_h
 
 #include "AtomicString.h"
 #include "SegmentedString.h"

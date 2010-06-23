@@ -21,8 +21,8 @@
     Boston, MA 02110-1301, USA.
 */
 
-#ifndef HTMLTokenizer_h
-#define HTMLTokenizer_h
+#ifndef LegacyHTMLDocumentParser_h
+#define LegacyHTMLDocumentParser_h
 
 #include "CachedResourceClient.h"
 #include "CachedResourceHandle.h"
@@ -446,4 +446,4 @@ UChar decodeNamedEntity(const char*);
 
 } // namespace WebCore
 
-#endif // HTMLTokenizer_h
+#endif // LegacyHTMLDocumentParser_h

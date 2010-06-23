@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef HTML5DocumentParser_h
-#define HTML5DocumentParser_h
+#ifndef HTMLDocumentParser_h
+#define HTMLDocumentParser_h
 
 #include "CachedResourceClient.h"
 #include "FragmentScriptingPermission.h"

@@ -1,5 +1,18 @@
 2010-06-23  Adam Barth  <abarth@webkit.org>
 
+        Unreviewed.  clean-header-guards that were made dirty by recent
+        renames.
+
+        * html/HTMLDocumentParser.h:
+        * html/HTMLPreloadScanner.h:
+        * html/HTMLTokenizer.h:
+        * html/HTMLTreeBuilder.h:
+        * html/LegacyHTMLDocumentParser.h:
+        * html/LegacyHTMLTreeBuilder.h:
+        * html/LegacyPreloadScanner.h:
+
+2010-06-23  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Eric Seidel.
 
         Rename LegacyHTMLTreeConstructor to LegacyHTMLTreeBuilder

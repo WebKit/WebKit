@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef HTML5TreeBuilder_h
-#define HTML5TreeBuilder_h
+#ifndef HTMLTreeBuilder_h
+#define HTMLTreeBuilder_h
 
 #include "FragmentScriptingPermission.h"
 #include "HTMLTokenizer.h"

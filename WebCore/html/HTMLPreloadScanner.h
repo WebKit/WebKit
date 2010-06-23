@@ -24,8 +24,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef HTML5PreloadScanner_h
-#define HTML5PreloadScanner_h
+#ifndef HTMLPreloadScanner_h
+#define HTMLPreloadScanner_h
 
 #include "CSSPreloadScanner.h"
 #include "HTMLTokenizer.h"
