@@ -1,3 +1,19 @@
+2010-06-23  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Add a plug-in info cache to WebPlatformStrategies
+        https://bugs.webkit.org/show_bug.cgi?id=41087
+
+        This is in preparation for proxying the getPlugins call over to the UI process.
+
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebKit::WebPlatformStrategies::WebPlatformStrategies):
+        (WebKit::WebPlatformStrategies::populatePluginCache):
+        (WebKit::WebPlatformStrategies::refreshPlugins):
+        (WebKit::WebPlatformStrategies::getPluginInfo):
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.h:
+
 2010-06-23  Sam Weinig  <sam@webkit.org>
 
         Reviewed by John Sullivan.

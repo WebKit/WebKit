@@ -46,6 +46,12 @@ private:
     // WebCore::PluginStrategy
     virtual void refreshPlugins();
     virtual void getPluginInfo(Vector<WebCore::PluginInfo>&);
+    
+    void populatePluginCache();
+
+    bool m_pluginCacheIsPopulated;
+    bool m_shouldRefreshPlugins;
+    Vector<WebCore::PluginInfo> m_cachedPlugins;
 };
 
 } // namespace WebKit
