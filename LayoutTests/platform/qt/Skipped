@@ -307,6 +307,7 @@ http/tests/xmlhttprequest/access-control-preflight-sync-header-denied.html
 http/tests/xmlhttprequest/access-control-preflight-sync-method-denied.html
 http/tests/xmlhttprequest/access-control-response-with-body-sync.html
 http/tests/xmlhttprequest/cache-override.html
+http/tests/xmlhttprequest/simple-cross-origin-progress-events.html
 # --- http://bugreports.qt.nokia.com/browse/QTBUG-9618
 http/tests/xmlhttprequest/cookies.html
 http/tests/xmlhttprequest/methods-lower-case.html

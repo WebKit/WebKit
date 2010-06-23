@@ -1,3 +1,10 @@
+2010-06-22  David Levin  <levin@chromium.org>
+
+        Reviewed by nobody (simple qt test fix).
+
+        * platform/qt/Skipped: Added an xhr test which requires progress events
+        next to the other xhr test which are disabled due to requiring progress events.
+
 2010-06-22  Kent Tamura  <tkent@chromium.org>
 
         Unreviewed, test expectation update.
