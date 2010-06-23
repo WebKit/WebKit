@@ -1,5 +1,11 @@
 2010-06-22  Eric Seidel  <eric@webkit.org>
 
+        Unreviewed.  Add Tony Gentilcore now that he's a committer.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
+2010-06-22  Eric Seidel  <eric@webkit.org>
+
         Reviewed by Adam Barth.
 
         Remove Gtk 64-Release bot from core since it's broken
