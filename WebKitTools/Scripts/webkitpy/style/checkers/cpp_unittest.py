@@ -1164,28 +1164,30 @@ class CppStyleTest(CppStyleTestBase):
             '')
 
     def test_mismatching_spaces_in_parens(self):
-        self.assert_lint('if (foo ) {', 'Mismatching spaces inside () in if'
+        self.assert_lint('if (foo ) {', 'Extra space before ) in if'
                          '  [whitespace/parens] [5]')
-        self.assert_lint('switch ( foo) {', 'Mismatching spaces inside () in switch'
+        self.assert_lint('switch ( foo) {', 'Extra space after ( in switch'
                          '  [whitespace/parens] [5]')
-        self.assert_lint('for (foo; ba; bar ) {', 'Mismatching spaces inside () in for'
+        self.assert_lint('for (foo; ba; bar ) {', 'Extra space before ) in for'
                          '  [whitespace/parens] [5]')
-        self.assert_lint('for ((foo); (ba); (bar) ) {', 'Mismatching spaces inside () in for'
+        self.assert_lint('for ((foo); (ba); (bar) ) {', 'Extra space before ) in for'
                          '  [whitespace/parens] [5]')
         self.assert_lint('for (; foo; bar) {', '')
         self.assert_lint('for (; (foo); (bar)) {', '')
         self.assert_lint('for ( ; foo; bar) {', '')
         self.assert_lint('for ( ; (foo); (bar)) {', '')
-        self.assert_lint('for ( ; foo; bar ) {', '')
-        self.assert_lint('for ( ; (foo); (bar) ) {', '')
+        self.assert_lint('for ( ; foo; bar ) {', 'Extra space before ) in for'
+                         '  [whitespace/parens] [5]')
+        self.assert_lint('for ( ; (foo); (bar) ) {', 'Extra space before ) in for'
+                         '  [whitespace/parens] [5]')
         self.assert_lint('for (foo; bar; ) {', '')
         self.assert_lint('for ((foo); (bar); ) {', '')
-        self.assert_lint('foreach (foo, foos ) {', 'Mismatching spaces inside () in foreach'
+        self.assert_lint('foreach (foo, foos ) {', 'Extra space before ) in foreach'
                          '  [whitespace/parens] [5]')
-        self.assert_lint('foreach ( foo, foos) {', 'Mismatching spaces inside () in foreach'
+        self.assert_lint('foreach ( foo, foos) {', 'Extra space after ( in foreach'
                          '  [whitespace/parens] [5]')
-        self.assert_lint('while (  foo  ) {', 'Should have zero or one spaces inside'
-                         ' ( and ) in while  [whitespace/parens] [5]')
+        self.assert_lint('while (  foo) {', 'Extra space after ( in while'
+                         '  [whitespace/parens] [5]')
 
     def test_spacing_for_fncall(self):
         self.assert_lint('if (foo) {', '')
@@ -3066,7 +3068,7 @@ class WebKitStyleTest(CppStyleTestBase):
             '')
         self.assert_multi_line_lint(
             '#define TEST_ASSERT(expression) do { if ( !(expression)) { TestsController::shared().testFailed(__FILE__, __LINE__, #expression); return; } } while (0)\n',
-            'Mismatching spaces inside () in if  [whitespace/parens] [5]')
+            'Extra space after ( in if  [whitespace/parens] [5]')
         # FIXME: currently we only check first conditional, so we cannot detect errors in next ones.
         # self.assert_multi_line_lint(
         #     '#define TEST_ASSERT(expression) do { if (!(expression)) { TestsController::shared().testFailed(__FILE__, __LINE__, #expression); return; } } while (0 )\n',

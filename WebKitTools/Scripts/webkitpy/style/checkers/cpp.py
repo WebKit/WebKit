@@ -161,7 +161,7 @@ def up_to_unmatched_closing_paren(s):
 
     Returns:
       A pair of strings (prefix before first unmatched ')',
-      reminder of s after first unmatched ')'), e.g.,
+      remainder of s after first unmatched ')'), e.g.,
       up_to_unmatched_closing_paren("a == (b + c)) { ")
       returns "a == (b + c)", " {".
       Returns None, None if there is no unmatched ')'
@@ -1337,26 +1337,25 @@ def check_spacing(file_extension, clean_lines, line_number, error):
     # there should either be zero or one spaces inside the parens.
     # We don't want: "if ( foo)" or "if ( foo   )".
     # Exception: "for ( ; foo; bar)" and "for (foo; bar; )" are allowed.
-    matched = search(r'\b(?P<statement>if|for|foreach|while|switch)\s*\((?P<reminder>.*)$', line)
+    matched = search(r'\b(?P<statement>if|for|foreach|while|switch)\s*\((?P<remainder>.*)$', line)
     if matched:
         statement = matched.group('statement')
-        condition, rest = up_to_unmatched_closing_paren(matched.group('reminder'))
+        condition, rest = up_to_unmatched_closing_paren(matched.group('remainder'))
         if condition is not None:
             condition_match = search(r'(?P<leading>[ ]*)(?P<separator>.).*[^ ]+(?P<trailing>[ ]*)', condition)
             if condition_match:
                 n_leading = len(condition_match.group('leading'))
                 n_trailing = len(condition_match.group('trailing'))
-                if n_leading != n_trailing:
-                    for_exception = statement == 'for' and (
-                        (condition.startswith(' ;') and n_trailing == 0) or
-                        (condition.endswith('; ')   and n_leading == 0))
+                if n_leading != 0:
+                    for_exception = statement == 'for' and condition.startswith(' ;')
                     if not for_exception:
                         error(line_number, 'whitespace/parens', 5,
-                              'Mismatching spaces inside () in %s' % statement)
-                if n_leading > 1:
-                    error(line_number, 'whitespace/parens', 5,
-                          'Should have zero or one spaces inside ( and ) in %s' %
-                          statement)
+                              'Extra space after ( in %s' % statement)
+                if n_trailing != 0:
+                    for_exception = statement == 'for' and condition.endswith('; ')
+                    if not for_exception:
+                        error(line_number, 'whitespace/parens', 5,
+                              'Extra space before ) in %s' % statement)
 
             # Do not check for more than one command in macros
             in_macro = match(r'\s*#define', line)
