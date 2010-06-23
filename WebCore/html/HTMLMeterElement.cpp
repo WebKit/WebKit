@@ -28,7 +28,7 @@
 #include "FormDataList.h"
 #include "HTMLFormElement.h"
 #include "HTMLNames.h"
-#include "LegacyHTMLTreeConstructor.h"
+#include "LegacyHTMLTreeBuilder.h"
 #include "RenderMeter.h"
 #include <wtf/StdLibExtras.h>
 

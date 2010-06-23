@@ -46,7 +46,7 @@ class HTMLTokenizer;
 class HTMLScriptRunner;
 class HTMLTreeBuilder;
 class HTMLPreloadScanner;
-class LegacyHTMLTreeConstructor;
+class LegacyHTMLTreeBuilder;
 class ScriptController;
 class ScriptSourceCode;
 
@@ -70,9 +70,9 @@ public:
     virtual void executeScriptsWaitingForStylesheets();
     virtual int lineNumber() const;
     virtual int columnNumber() const;
-    // FIXME: HTMLFormControlElement accesses the LegacyHTMLTreeConstructor via this method.
-    // Remove this when the LegacyHTMLTreeConstructor is no longer used.
-    virtual LegacyHTMLTreeConstructor* htmlTreeConstructor() const;
+    // FIXME: HTMLFormControlElement accesses the LegacyHTMLTreeBuilder via this method.
+    // Remove this when the LegacyHTMLTreeBuilder is no longer used.
+    virtual LegacyHTMLTreeBuilder* htmlTreeBuilder() const;
 
     // HTMLScriptRunnerHost
     virtual void watchForLoad(CachedResource*);
@@ -98,7 +98,7 @@ private:
     void pumpTokenizer(SynchronousMode);
     void pumpTokenizerIfPossible(SynchronousMode);
 
-    bool runScriptsForPausedTreeConstructor();
+    bool runScriptsForPausedTreeBuilder();
     void resumeParsingAfterScriptExecution();
 
     void attemptToEnd();
@@ -120,7 +120,7 @@ private:
     Document* m_document;
     OwnPtr<HTMLTokenizer> m_tokenizer;
     OwnPtr<HTMLScriptRunner> m_scriptRunner;
-    OwnPtr<HTMLTreeBuilder> m_treeConstructor;
+    OwnPtr<HTMLTreeBuilder> m_treeBuilder;
     OwnPtr<HTMLPreloadScanner> m_preloadScanner;
     OwnPtr<HTMLParserScheduler> m_parserScheduler;
 

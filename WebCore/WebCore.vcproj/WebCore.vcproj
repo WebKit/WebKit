@@ -36537,11 +36537,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\html\LegacyHTMLTreeConstructor.cpp"
+				RelativePath="..\html\LegacyHTMLTreeBuilder.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\html\LegacyHTMLTreeConstructor.h"
+				RelativePath="..\html\LegacyHTMLTreeBuilder.h"
 				>
 			</File>
 			<File

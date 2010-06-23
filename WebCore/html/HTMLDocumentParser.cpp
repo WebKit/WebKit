@@ -69,7 +69,7 @@ HTMLDocumentParser::HTMLDocumentParser(HTMLDocument* document, bool reportErrors
     : m_document(document)
     , m_tokenizer(new HTMLTokenizer)
     , m_scriptRunner(new HTMLScriptRunner(document, this))
-    , m_treeConstructor(new HTMLTreeBuilder(m_tokenizer.get(), document, reportErrors))
+    , m_treeBuilder(new HTMLTreeBuilder(m_tokenizer.get(), document, reportErrors))
     , m_parserScheduler(new HTMLParserScheduler(this))
     , m_endWasDelayed(false)
     , m_writeNestingLevel(0)
@@ -82,7 +82,7 @@ HTMLDocumentParser::HTMLDocumentParser(HTMLDocument* document, bool reportErrors
 HTMLDocumentParser::HTMLDocumentParser(DocumentFragment* fragment, FragmentScriptingPermission scriptingPermission)
     : m_document(fragment->document())
     , m_tokenizer(new HTMLTokenizer)
-    , m_treeConstructor(new HTMLTreeBuilder(m_tokenizer.get(), fragment, scriptingPermission))
+    , m_treeBuilder(new HTMLTreeBuilder(m_tokenizer.get(), fragment, scriptingPermission))
     , m_endWasDelayed(false)
     , m_writeNestingLevel(0)
 {
@@ -115,7 +115,7 @@ bool HTMLDocumentParser::processingData() const
 
 void HTMLDocumentParser::pumpTokenizerIfPossible(SynchronousMode mode)
 {
-    if (m_parserStopped || m_treeConstructor->isPaused())
+    if (m_parserStopped || m_treeBuilder->isPaused())
         return;
 
     // Once a resume is scheduled, HTMLParserScheduler controls when we next pump.
@@ -140,12 +140,12 @@ void HTMLDocumentParser::resumeParsingAfterYield()
     pumpTokenizer(AllowYield);
 }
 
-bool HTMLDocumentParser::runScriptsForPausedTreeConstructor()
+bool HTMLDocumentParser::runScriptsForPausedTreeBuilder()
 {
-    ASSERT(m_treeConstructor->isPaused());
+    ASSERT(m_treeBuilder->isPaused());
 
     int scriptStartLine = 0;
-    RefPtr<Element> scriptElement = m_treeConstructor->takeScriptToProcess(scriptStartLine);
+    RefPtr<Element> scriptElement = m_treeBuilder->takeScriptToProcess(scriptStartLine);
     // We will not have a scriptRunner when parsing a DocumentFragment.
     if (!m_scriptRunner)
         return true;
@@ -155,7 +155,7 @@ bool HTMLDocumentParser::runScriptsForPausedTreeConstructor()
 void HTMLDocumentParser::pumpTokenizer(SynchronousMode mode)
 {
     ASSERT(!m_parserStopped);
-    ASSERT(!m_treeConstructor->isPaused());
+    ASSERT(!m_treeBuilder->isPaused());
     ASSERT(!isScheduledForResume());
 
     // We tell the InspectorTimelineAgent about every pump, even if we
@@ -168,16 +168,16 @@ void HTMLDocumentParser::pumpTokenizer(SynchronousMode mode)
         if (!m_tokenizer->nextToken(m_input.current(), m_token))
             break;
 
-        m_treeConstructor->constructTreeFromToken(m_token);
+        m_treeBuilder->constructTreeFromToken(m_token);
         m_token.clear();
 
         // The parser will pause itself when waiting on a script to load or run.
-        if (!m_treeConstructor->isPaused())
+        if (!m_treeBuilder->isPaused())
             continue;
 
         // If we're paused waiting for a script, we try to execute scripts before continuing.
-        bool shouldContinueParsing = runScriptsForPausedTreeConstructor();
-        m_treeConstructor->setPaused(!shouldContinueParsing);
+        bool shouldContinueParsing = runScriptsForPausedTreeBuilder();
+        m_treeBuilder->setPaused(!shouldContinueParsing);
         if (!shouldContinueParsing)
             break;
     }
@@ -246,7 +246,7 @@ void HTMLDocumentParser::end()
     pumpTokenizerIfPossible(ForceSynchronous);
 
     // Informs the the rest of WebCore that parsing is really finished (and deletes this).
-    m_treeConstructor->finished();
+    m_treeBuilder->finished();
 }
 
 void HTMLDocumentParser::attemptToEnd()
@@ -309,20 +309,20 @@ int HTMLDocumentParser::columnNumber() const
     return m_tokenizer->columnNumber();
 }
 
-LegacyHTMLTreeConstructor* HTMLDocumentParser::htmlTreeConstructor() const
+LegacyHTMLTreeBuilder* HTMLDocumentParser::htmlTreeBuilder() const
 {
-    return m_treeConstructor->legacyTreeConstructor();
+    return m_treeBuilder->legacyTreeBuilder();
 }
 
 bool HTMLDocumentParser::isWaitingForScripts() const
 {
-    return m_treeConstructor->isPaused();
+    return m_treeBuilder->isPaused();
 }
 
 void HTMLDocumentParser::resumeParsingAfterScriptExecution()
 {
     ASSERT(!inScriptExecution());
-    ASSERT(!m_treeConstructor->isPaused());
+    ASSERT(!m_treeBuilder->isPaused());
 
     pumpTokenizerIfPossible(AllowYield);
 
@@ -359,12 +359,12 @@ void HTMLDocumentParser::notifyFinished(CachedResource* cachedResource)
         return;
     }
     ASSERT(!inScriptExecution());
-    ASSERT(m_treeConstructor->isPaused());
+    ASSERT(m_treeBuilder->isPaused());
     // Note: We only ever wait on one script at a time, so we always know this
     // is the one we were waiting on and can un-pause the tree builder.
-    m_treeConstructor->setPaused(false);
+    m_treeBuilder->setPaused(false);
     bool shouldContinueParsing = m_scriptRunner->executeScriptsWaitingForLoad(cachedResource);
-    m_treeConstructor->setPaused(!shouldContinueParsing);
+    m_treeBuilder->setPaused(!shouldContinueParsing);
     if (shouldContinueParsing)
         resumeParsingAfterScriptExecution();
 }
@@ -380,12 +380,12 @@ void HTMLDocumentParser::executeScriptsWaitingForStylesheets()
     if (!m_scriptRunner->hasScriptsWaitingForStylesheets())
         return;
     ASSERT(!m_scriptRunner->inScriptExecution());
-    ASSERT(m_treeConstructor->isPaused());
+    ASSERT(m_treeBuilder->isPaused());
     // Note: We only ever wait on one script at a time, so we always know this
     // is the one we were waiting on and can un-pause the tree builder.
-    m_treeConstructor->setPaused(false);
+    m_treeBuilder->setPaused(false);
     bool shouldContinueParsing = m_scriptRunner->executeScriptsWaitingForStylesheets();
-    m_treeConstructor->setPaused(!shouldContinueParsing);
+    m_treeBuilder->setPaused(!shouldContinueParsing);
     if (shouldContinueParsing)
         resumeParsingAfterScriptExecution();
 }

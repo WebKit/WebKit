@@ -34,7 +34,7 @@
 #include "HTMLDocument.h"
 #include "LegacyHTMLDocumentParser.h"
 #include "HTMLNames.h"
-#include "LegacyHTMLTreeConstructor.h"
+#include "LegacyHTMLTreeBuilder.h"
 #include "NotImplemented.h"
 #include "ScriptController.h"
 #include <wtf/UnusedParam.h>
@@ -51,7 +51,7 @@ HTMLTreeBuilder::HTMLTreeBuilder(HTMLTokenizer* tokenizer, HTMLDocument* documen
     , m_isPaused(false)
     , m_insertionMode(Initial)
     , m_tokenizer(tokenizer)
-    , m_legacyTreeConstructor(new LegacyHTMLTreeConstructor(document, reportErrors))
+    , m_legacyTreeBuilder(new LegacyHTMLTreeBuilder(document, reportErrors))
     , m_lastScriptElementStartLine(uninitializedLineNumberValue)
     , m_scriptToProcessStartLine(uninitializedLineNumberValue)
     , m_fragmentScriptingPermission(FragmentScriptingAllowed)
@@ -66,7 +66,7 @@ HTMLTreeBuilder::HTMLTreeBuilder(HTMLTokenizer* tokenizer, DocumentFragment* fra
     , m_isPaused(false)
     , m_insertionMode(Initial)
     , m_tokenizer(tokenizer)
-    , m_legacyTreeConstructor(new LegacyHTMLTreeConstructor(fragment, scriptingPermission))
+    , m_legacyTreeBuilder(new LegacyHTMLTreeBuilder(fragment, scriptingPermission))
     , m_lastScriptElementStartLine(uninitializedLineNumberValue)
     , m_scriptToProcessStartLine(uninitializedLineNumberValue)
     , m_fragmentScriptingPermission(scriptingPermission)
@@ -175,7 +175,7 @@ PassRefPtr<Node> HTMLTreeBuilder::passTokenToLegacyParser(HTMLToken& token)
         doctypeToken.m_systemID = token.systemIdentifier();
         doctypeToken.m_forceQuirks = token.forceQuirks();
 
-        m_legacyTreeConstructor->parseDoctypeToken(&doctypeToken);
+        m_legacyTreeBuilder->parseDoctypeToken(&doctypeToken);
         return 0;
     }
 
@@ -183,7 +183,7 @@ PassRefPtr<Node> HTMLTreeBuilder::passTokenToLegacyParser(HTMLToken& token)
     Token oldStyleToken;
     convertToOldStyle(token, oldStyleToken);
 
-    RefPtr<Node> result =  m_legacyTreeConstructor->parseToken(&oldStyleToken);
+    RefPtr<Node> result =  m_legacyTreeBuilder->parseToken(&oldStyleToken);
     if (token.type() == HTMLToken::StartTag) {
         // This work is supposed to be done by the parser, but
         // when using the old parser for we have to do this manually.
@@ -247,8 +247,8 @@ PassRefPtr<Node> HTMLTreeBuilder::processToken(HTMLToken& token, UChar currentCh
 void HTMLTreeBuilder::finished()
 {
     // We should call m_document->finishedParsing() here, except
-    // m_legacyTreeConstructor->finished() does it for us.
-    m_legacyTreeConstructor->finished();
+    // m_legacyTreeBuilder->finished() does it for us.
+    m_legacyTreeBuilder->finished();
 }
 
 bool HTMLTreeBuilder::isScriptingFlagEnabled(Frame* frame)

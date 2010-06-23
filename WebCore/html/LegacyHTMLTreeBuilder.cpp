@@ -23,7 +23,7 @@
 */
 
 #include "config.h"
-#include "LegacyHTMLTreeConstructor.h"
+#include "LegacyHTMLTreeBuilder.h"
 
 #include "CharacterNames.h"
 #include "CSSPropertyNames.h"
@@ -140,7 +140,7 @@ struct HTMLStackElem : Noncopyable {
  *
  */
 
-LegacyHTMLTreeConstructor::LegacyHTMLTreeConstructor(HTMLDocument* doc, bool reportErrors)
+LegacyHTMLTreeBuilder::LegacyHTMLTreeBuilder(HTMLDocument* doc, bool reportErrors)
     : m_document(doc)
     , m_current(doc)
     , m_didRefCurrent(false)
@@ -160,7 +160,7 @@ LegacyHTMLTreeConstructor::LegacyHTMLTreeConstructor(HTMLDocument* doc, bool rep
 {
 }
 
-LegacyHTMLTreeConstructor::LegacyHTMLTreeConstructor(DocumentFragment* frag, FragmentScriptingPermission scriptingPermission)
+LegacyHTMLTreeBuilder::LegacyHTMLTreeBuilder(DocumentFragment* frag, FragmentScriptingPermission scriptingPermission)
     : m_document(frag->document())
     , m_current(frag)
     , m_didRefCurrent(true)
@@ -182,14 +182,14 @@ LegacyHTMLTreeConstructor::LegacyHTMLTreeConstructor(DocumentFragment* frag, Fra
         frag->ref();
 }
 
-LegacyHTMLTreeConstructor::~LegacyHTMLTreeConstructor()
+LegacyHTMLTreeBuilder::~LegacyHTMLTreeBuilder()
 {
     freeBlock();
     if (m_didRefCurrent)
         m_current->deref();
 }
 
-void LegacyHTMLTreeConstructor::reset()
+void LegacyHTMLTreeBuilder::reset()
 {
     ASSERT(!m_isParsingFragment);
 
@@ -214,7 +214,7 @@ void LegacyHTMLTreeConstructor::reset()
         m_parserQuirks->reset();
 }
 
-void LegacyHTMLTreeConstructor::setCurrent(Node* newCurrent) 
+void LegacyHTMLTreeBuilder::setCurrent(Node* newCurrent) 
 {
     bool didRefNewCurrent = newCurrent && newCurrent != m_document;
     if (didRefNewCurrent) 
@@ -230,7 +230,7 @@ inline static int tagPriorityOfNode(Node* n)
     return n->isHTMLElement() ? static_cast<HTMLElement*>(n)->tagPriority() : 0;
 }
 
-inline void LegacyHTMLTreeConstructor::limitDepth(int tagPriority)
+inline void LegacyHTMLTreeBuilder::limitDepth(int tagPriority)
 {
     while (m_treeDepth >= maxDOMTreeDepth)
         popBlock(m_blockStack->tagName);
@@ -240,13 +240,13 @@ inline void LegacyHTMLTreeConstructor::limitDepth(int tagPriority)
     }
 }
 
-inline bool LegacyHTMLTreeConstructor::insertNodeAfterLimitDepth(Node* n, bool flat)
+inline bool LegacyHTMLTreeBuilder::insertNodeAfterLimitDepth(Node* n, bool flat)
 {
     limitDepth(tagPriorityOfNode(n));
     return insertNode(n, flat);
 }
 
-PassRefPtr<Node> LegacyHTMLTreeConstructor::parseToken(Token* t)
+PassRefPtr<Node> LegacyHTMLTreeBuilder::parseToken(Token* t)
 {
     if (!m_skipModeTag.isNull()) {
         if (!t->beginTag && t->tagName == m_skipModeTag)
@@ -337,7 +337,7 @@ PassRefPtr<Node> LegacyHTMLTreeConstructor::parseToken(Token* t)
     return n;
 }
 
-void LegacyHTMLTreeConstructor::parseDoctypeToken(DoctypeToken* t)
+void LegacyHTMLTreeBuilder::parseDoctypeToken(DoctypeToken* t)
 {
     // Ignore any doctype after the first.  Ignore doctypes in fragments.
     if (m_document->doctype() || m_isParsingFragment || m_current != m_document)
@@ -372,7 +372,7 @@ static bool isScopingTag(const AtomicString& tagName)
         || tagName == objectTag || tagName == tableTag || tagName == htmlTag;
 }
 
-bool LegacyHTMLTreeConstructor::insertNode(Node* n, bool flat)
+bool LegacyHTMLTreeBuilder::insertNode(Node* n, bool flat)
 {
     RefPtr<Node> protectNode(n);
 
@@ -429,7 +429,7 @@ bool LegacyHTMLTreeConstructor::insertNode(Node* n, bool flat)
     return true;
 }
 
-bool LegacyHTMLTreeConstructor::handleError(Node* n, bool flat, const AtomicString& localName, int tagPriority)
+bool LegacyHTMLTreeBuilder::handleError(Node* n, bool flat, const AtomicString& localName, int tagPriority)
 {
     // Error handling code.  This is just ad hoc handling of specific parent/child combinations.
     bool handled = false;
@@ -724,22 +724,22 @@ bool LegacyHTMLTreeConstructor::handleError(Node* n, bool flat, const AtomicStri
     return insertNode(n);
 }
 
-typedef bool (LegacyHTMLTreeConstructor::*CreateErrorCheckFunc)(Token* t, RefPtr<Node>&);
+typedef bool (LegacyHTMLTreeBuilder::*CreateErrorCheckFunc)(Token* t, RefPtr<Node>&);
 typedef HashMap<AtomicStringImpl*, CreateErrorCheckFunc> FunctionMap;
 
-bool LegacyHTMLTreeConstructor::textCreateErrorCheck(Token* t, RefPtr<Node>& result)
+bool LegacyHTMLTreeBuilder::textCreateErrorCheck(Token* t, RefPtr<Node>& result)
 {
     result = Text::create(m_document, t->text.get());
     return false;
 }
 
-bool LegacyHTMLTreeConstructor::commentCreateErrorCheck(Token* t, RefPtr<Node>& result)
+bool LegacyHTMLTreeBuilder::commentCreateErrorCheck(Token* t, RefPtr<Node>& result)
 {
     result = Comment::create(m_document, t->text.get());
     return false;
 }
 
-bool LegacyHTMLTreeConstructor::headCreateErrorCheck(Token*, RefPtr<Node>& result)
+bool LegacyHTMLTreeBuilder::headCreateErrorCheck(Token*, RefPtr<Node>& result)
 {
     if (!m_head || m_current->localName() == htmlTag) {
         m_head = HTMLHeadElement::create(m_document);
@@ -749,7 +749,7 @@ bool LegacyHTMLTreeConstructor::headCreateErrorCheck(Token*, RefPtr<Node>& resul
     return false;
 }
 
-bool LegacyHTMLTreeConstructor::bodyCreateErrorCheck(Token*, RefPtr<Node>&)
+bool LegacyHTMLTreeBuilder::bodyCreateErrorCheck(Token*, RefPtr<Node>&)
 {
     // body no longer allowed if we have a frameset
     if (m_haveFrameSet)
@@ -765,7 +765,7 @@ bool LegacyHTMLTreeConstructor::bodyCreateErrorCheck(Token*, RefPtr<Node>&)
     return true;
 }
 
-bool LegacyHTMLTreeConstructor::framesetCreateErrorCheck(Token*, RefPtr<Node>&)
+bool LegacyHTMLTreeBuilder::framesetCreateErrorCheck(Token*, RefPtr<Node>&)
 {
     popBlock(headTag);
     if (m_inBody && !m_haveFrameSet && !m_haveContent) {
@@ -785,7 +785,7 @@ bool LegacyHTMLTreeConstructor::framesetCreateErrorCheck(Token*, RefPtr<Node>&)
     return true;
 }
 
-bool LegacyHTMLTreeConstructor::formCreateErrorCheck(Token* t, RefPtr<Node>& result)
+bool LegacyHTMLTreeBuilder::formCreateErrorCheck(Token* t, RefPtr<Node>& result)
 {
     // Only create a new form if we're not already inside one.
     // This is consistent with other browsers' behavior.
@@ -797,7 +797,7 @@ bool LegacyHTMLTreeConstructor::formCreateErrorCheck(Token* t, RefPtr<Node>& res
     return false;
 }
 
-bool LegacyHTMLTreeConstructor::isindexCreateErrorCheck(Token* t, RefPtr<Node>& result)
+bool LegacyHTMLTreeBuilder::isindexCreateErrorCheck(Token* t, RefPtr<Node>& result)
 {
     RefPtr<Node> n = handleIsindex(t);
     if (!m_inBody)
@@ -809,12 +809,12 @@ bool LegacyHTMLTreeConstructor::isindexCreateErrorCheck(Token* t, RefPtr<Node>& 
     return false;
 }
 
-bool LegacyHTMLTreeConstructor::selectCreateErrorCheck(Token*, RefPtr<Node>&)
+bool LegacyHTMLTreeBuilder::selectCreateErrorCheck(Token*, RefPtr<Node>&)
 {
     return true;
 }
 
-bool LegacyHTMLTreeConstructor::ddCreateErrorCheck(Token* t, RefPtr<Node>& result)
+bool LegacyHTMLTreeBuilder::ddCreateErrorCheck(Token* t, RefPtr<Node>& result)
 {
     pCloserCreateErrorCheck(t, result);
     popBlock(dtTag);
@@ -822,7 +822,7 @@ bool LegacyHTMLTreeConstructor::ddCreateErrorCheck(Token* t, RefPtr<Node>& resul
     return true;
 }
 
-bool LegacyHTMLTreeConstructor::dtCreateErrorCheck(Token* t, RefPtr<Node>& result)
+bool LegacyHTMLTreeBuilder::dtCreateErrorCheck(Token* t, RefPtr<Node>& result)
 {
     pCloserCreateErrorCheck(t, result);
     popBlock(ddTag);
@@ -830,46 +830,46 @@ bool LegacyHTMLTreeConstructor::dtCreateErrorCheck(Token* t, RefPtr<Node>& resul
     return true;
 }
 
-bool LegacyHTMLTreeConstructor::rpCreateErrorCheck(Token*, RefPtr<Node>&)
+bool LegacyHTMLTreeBuilder::rpCreateErrorCheck(Token*, RefPtr<Node>&)
 {
     popBlock(rpTag);
     popBlock(rtTag);
     return true;
 }
 
-bool LegacyHTMLTreeConstructor::rtCreateErrorCheck(Token*, RefPtr<Node>&)
+bool LegacyHTMLTreeBuilder::rtCreateErrorCheck(Token*, RefPtr<Node>&)
 {
     popBlock(rpTag);
     popBlock(rtTag);
     return true;
 }
 
-bool LegacyHTMLTreeConstructor::nestedCreateErrorCheck(Token* t, RefPtr<Node>&)
+bool LegacyHTMLTreeBuilder::nestedCreateErrorCheck(Token* t, RefPtr<Node>&)
 {
     popBlock(t->tagName);
     return true;
 }
 
-bool LegacyHTMLTreeConstructor::nestedPCloserCreateErrorCheck(Token* t, RefPtr<Node>& result)
+bool LegacyHTMLTreeBuilder::nestedPCloserCreateErrorCheck(Token* t, RefPtr<Node>& result)
 {
     pCloserCreateErrorCheck(t, result);
     popBlock(t->tagName);
     return true;
 }
 
-bool LegacyHTMLTreeConstructor::nestedStyleCreateErrorCheck(Token* t, RefPtr<Node>&)
+bool LegacyHTMLTreeBuilder::nestedStyleCreateErrorCheck(Token* t, RefPtr<Node>&)
 {
     return allowNestedRedundantTag(t->tagName);
 }
 
-bool LegacyHTMLTreeConstructor::tableCellCreateErrorCheck(Token*, RefPtr<Node>&)
+bool LegacyHTMLTreeBuilder::tableCellCreateErrorCheck(Token*, RefPtr<Node>&)
 {
     popBlock(tdTag);
     popBlock(thTag);
     return true;
 }
 
-bool LegacyHTMLTreeConstructor::tableSectionCreateErrorCheck(Token*, RefPtr<Node>&)
+bool LegacyHTMLTreeBuilder::tableSectionCreateErrorCheck(Token*, RefPtr<Node>&)
 {
     popBlock(theadTag);
     popBlock(tbodyTag);
@@ -877,19 +877,19 @@ bool LegacyHTMLTreeConstructor::tableSectionCreateErrorCheck(Token*, RefPtr<Node
     return true;
 }
 
-bool LegacyHTMLTreeConstructor::noembedCreateErrorCheck(Token*, RefPtr<Node>&)
+bool LegacyHTMLTreeBuilder::noembedCreateErrorCheck(Token*, RefPtr<Node>&)
 {
     setSkipMode(noembedTag);
     return true;
 }
 
-bool LegacyHTMLTreeConstructor::noframesCreateErrorCheck(Token*, RefPtr<Node>&)
+bool LegacyHTMLTreeBuilder::noframesCreateErrorCheck(Token*, RefPtr<Node>&)
 {
     setSkipMode(noframesTag);
     return true;
 }
 
-bool LegacyHTMLTreeConstructor::noscriptCreateErrorCheck(Token*, RefPtr<Node>&)
+bool LegacyHTMLTreeBuilder::noscriptCreateErrorCheck(Token*, RefPtr<Node>&)
 {
     if (!m_isParsingFragment) {
         Frame* frame = m_document->frame();
@@ -899,14 +899,14 @@ bool LegacyHTMLTreeConstructor::noscriptCreateErrorCheck(Token*, RefPtr<Node>&)
     return true;
 }
 
-bool LegacyHTMLTreeConstructor::pCloserCreateErrorCheck(Token*, RefPtr<Node>&)
+bool LegacyHTMLTreeBuilder::pCloserCreateErrorCheck(Token*, RefPtr<Node>&)
 {
     if (hasPElementInScope())
         popBlock(pTag);
     return true;
 }
 
-bool LegacyHTMLTreeConstructor::pCloserStrictCreateErrorCheck(Token*, RefPtr<Node>&)
+bool LegacyHTMLTreeBuilder::pCloserStrictCreateErrorCheck(Token*, RefPtr<Node>&)
 {
     if (m_document->inCompatMode())
         return true;
@@ -915,7 +915,7 @@ bool LegacyHTMLTreeConstructor::pCloserStrictCreateErrorCheck(Token*, RefPtr<Nod
     return true;
 }
 
-bool LegacyHTMLTreeConstructor::mapCreateErrorCheck(Token*, RefPtr<Node>& result)
+bool LegacyHTMLTreeBuilder::mapCreateErrorCheck(Token*, RefPtr<Node>& result)
 {
     m_currentMapElement = HTMLMapElement::create(m_document);
     result = m_currentMapElement;
@@ -936,48 +936,48 @@ static void mapTagsToFunc(FunctionMap& map, QualifiedName (&names)[ArraySize], C
     }
 }
 
-PassRefPtr<Node> LegacyHTMLTreeConstructor::getNode(Token* t)
+PassRefPtr<Node> LegacyHTMLTreeBuilder::getNode(Token* t)
 {
     // Init our error handling table.
     DEFINE_STATIC_LOCAL(FunctionMap, gFunctionMap, ());
     if (gFunctionMap.isEmpty()) {
         QualifiedName nestedCreateErrorTags[] = { aTag, buttonTag, nobrTag, trTag };
-        mapTagsToFunc(gFunctionMap, nestedCreateErrorTags, &LegacyHTMLTreeConstructor::nestedCreateErrorCheck);
+        mapTagsToFunc(gFunctionMap, nestedCreateErrorTags, &LegacyHTMLTreeBuilder::nestedCreateErrorCheck);
 
         QualifiedName nestedStyleCreateErrorTags[] = { bTag, bigTag, iTag, sTag, smallTag, strikeTag, ttTag, uTag };
-        mapTagsToFunc(gFunctionMap, nestedStyleCreateErrorTags, &LegacyHTMLTreeConstructor::nestedStyleCreateErrorCheck);
+        mapTagsToFunc(gFunctionMap, nestedStyleCreateErrorTags, &LegacyHTMLTreeBuilder::nestedStyleCreateErrorCheck);
 
         QualifiedName pCloserCreateErrorTags[] = { addressTag, articleTag,
             asideTag, blockquoteTag, centerTag, dirTag, divTag, dlTag,
             fieldsetTag, footerTag, h1Tag, h2Tag, h3Tag, h4Tag, h5Tag, h6Tag,
             headerTag, hgroupTag, hrTag, listingTag, menuTag, navTag, olTag,
             pTag, plaintextTag, preTag, sectionTag, ulTag };
-        mapTagsToFunc(gFunctionMap, pCloserCreateErrorTags, &LegacyHTMLTreeConstructor::pCloserCreateErrorCheck);
+        mapTagsToFunc(gFunctionMap, pCloserCreateErrorTags, &LegacyHTMLTreeBuilder::pCloserCreateErrorCheck);
 
-        mapTagToFunc(gFunctionMap, bodyTag, &LegacyHTMLTreeConstructor::bodyCreateErrorCheck);
-        mapTagToFunc(gFunctionMap, ddTag, &LegacyHTMLTreeConstructor::ddCreateErrorCheck);
-        mapTagToFunc(gFunctionMap, dtTag, &LegacyHTMLTreeConstructor::dtCreateErrorCheck);
-        mapTagToFunc(gFunctionMap, formTag, &LegacyHTMLTreeConstructor::formCreateErrorCheck);
-        mapTagToFunc(gFunctionMap, framesetTag, &LegacyHTMLTreeConstructor::framesetCreateErrorCheck);
-        mapTagToFunc(gFunctionMap, headTag, &LegacyHTMLTreeConstructor::headCreateErrorCheck);
-        mapTagToFunc(gFunctionMap, isindexTag, &LegacyHTMLTreeConstructor::isindexCreateErrorCheck);
-        mapTagToFunc(gFunctionMap, mapTag, &LegacyHTMLTreeConstructor::mapCreateErrorCheck);
-        mapTagToFunc(gFunctionMap, liTag, &LegacyHTMLTreeConstructor::nestedPCloserCreateErrorCheck);
-        mapTagToFunc(gFunctionMap, noembedTag, &LegacyHTMLTreeConstructor::noembedCreateErrorCheck);
-        mapTagToFunc(gFunctionMap, noframesTag, &LegacyHTMLTreeConstructor::noframesCreateErrorCheck);
-        mapTagToFunc(gFunctionMap, noscriptTag, &LegacyHTMLTreeConstructor::noscriptCreateErrorCheck);
-        mapTagToFunc(gFunctionMap, tableTag, &LegacyHTMLTreeConstructor::pCloserStrictCreateErrorCheck);
-        mapTagToFunc(gFunctionMap, rpTag, &LegacyHTMLTreeConstructor::rpCreateErrorCheck);
-        mapTagToFunc(gFunctionMap, rtTag, &LegacyHTMLTreeConstructor::rtCreateErrorCheck);
-        mapTagToFunc(gFunctionMap, selectTag, &LegacyHTMLTreeConstructor::selectCreateErrorCheck);
-        mapTagToFunc(gFunctionMap, tdTag, &LegacyHTMLTreeConstructor::tableCellCreateErrorCheck);
-        mapTagToFunc(gFunctionMap, thTag, &LegacyHTMLTreeConstructor::tableCellCreateErrorCheck);
-        mapTagToFunc(gFunctionMap, tbodyTag, &LegacyHTMLTreeConstructor::tableSectionCreateErrorCheck);
-        mapTagToFunc(gFunctionMap, tfootTag, &LegacyHTMLTreeConstructor::tableSectionCreateErrorCheck);
-        mapTagToFunc(gFunctionMap, theadTag, &LegacyHTMLTreeConstructor::tableSectionCreateErrorCheck);
+        mapTagToFunc(gFunctionMap, bodyTag, &LegacyHTMLTreeBuilder::bodyCreateErrorCheck);
+        mapTagToFunc(gFunctionMap, ddTag, &LegacyHTMLTreeBuilder::ddCreateErrorCheck);
+        mapTagToFunc(gFunctionMap, dtTag, &LegacyHTMLTreeBuilder::dtCreateErrorCheck);
+        mapTagToFunc(gFunctionMap, formTag, &LegacyHTMLTreeBuilder::formCreateErrorCheck);
+        mapTagToFunc(gFunctionMap, framesetTag, &LegacyHTMLTreeBuilder::framesetCreateErrorCheck);
+        mapTagToFunc(gFunctionMap, headTag, &LegacyHTMLTreeBuilder::headCreateErrorCheck);
+        mapTagToFunc(gFunctionMap, isindexTag, &LegacyHTMLTreeBuilder::isindexCreateErrorCheck);
+        mapTagToFunc(gFunctionMap, mapTag, &LegacyHTMLTreeBuilder::mapCreateErrorCheck);
+        mapTagToFunc(gFunctionMap, liTag, &LegacyHTMLTreeBuilder::nestedPCloserCreateErrorCheck);
+        mapTagToFunc(gFunctionMap, noembedTag, &LegacyHTMLTreeBuilder::noembedCreateErrorCheck);
+        mapTagToFunc(gFunctionMap, noframesTag, &LegacyHTMLTreeBuilder::noframesCreateErrorCheck);
+        mapTagToFunc(gFunctionMap, noscriptTag, &LegacyHTMLTreeBuilder::noscriptCreateErrorCheck);
+        mapTagToFunc(gFunctionMap, tableTag, &LegacyHTMLTreeBuilder::pCloserStrictCreateErrorCheck);
+        mapTagToFunc(gFunctionMap, rpTag, &LegacyHTMLTreeBuilder::rpCreateErrorCheck);
+        mapTagToFunc(gFunctionMap, rtTag, &LegacyHTMLTreeBuilder::rtCreateErrorCheck);
+        mapTagToFunc(gFunctionMap, selectTag, &LegacyHTMLTreeBuilder::selectCreateErrorCheck);
+        mapTagToFunc(gFunctionMap, tdTag, &LegacyHTMLTreeBuilder::tableCellCreateErrorCheck);
+        mapTagToFunc(gFunctionMap, thTag, &LegacyHTMLTreeBuilder::tableCellCreateErrorCheck);
+        mapTagToFunc(gFunctionMap, tbodyTag, &LegacyHTMLTreeBuilder::tableSectionCreateErrorCheck);
+        mapTagToFunc(gFunctionMap, tfootTag, &LegacyHTMLTreeBuilder::tableSectionCreateErrorCheck);
+        mapTagToFunc(gFunctionMap, theadTag, &LegacyHTMLTreeBuilder::tableSectionCreateErrorCheck);
 
-        gFunctionMap.set(commentAtom.impl(), &LegacyHTMLTreeConstructor::commentCreateErrorCheck);
-        gFunctionMap.set(textAtom.impl(), &LegacyHTMLTreeConstructor::textCreateErrorCheck);
+        gFunctionMap.set(commentAtom.impl(), &LegacyHTMLTreeBuilder::commentCreateErrorCheck);
+        gFunctionMap.set(textAtom.impl(), &LegacyHTMLTreeBuilder::textCreateErrorCheck);
     }
 
     bool proceed = true;
@@ -989,7 +989,7 @@ PassRefPtr<Node> LegacyHTMLTreeConstructor::getNode(Token* t)
     return result.release();
 }
 
-bool LegacyHTMLTreeConstructor::allowNestedRedundantTag(const AtomicString& tagName)
+bool LegacyHTMLTreeBuilder::allowNestedRedundantTag(const AtomicString& tagName)
 {
     // www.liceo.edu.mx is an example of a site that achieves a level of nesting of
     // about 1500 tags, all from a bunch of <b>s.  We will only allow at most 20
@@ -1001,7 +1001,7 @@ bool LegacyHTMLTreeConstructor::allowNestedRedundantTag(const AtomicString& tagN
     return i != cMaxRedundantTagDepth;
 }
 
-void LegacyHTMLTreeConstructor::processCloseTag(Token* t)
+void LegacyHTMLTreeBuilder::processCloseTag(Token* t)
 {
     // Support for really broken html.
     // we never close the body tag, since some stupid web pages close it before the actual end of the doc.
@@ -1031,7 +1031,7 @@ void LegacyHTMLTreeConstructor::processCloseTag(Token* t)
     }
 }
 
-bool LegacyHTMLTreeConstructor::isHeadingTag(const AtomicString& tagName)
+bool LegacyHTMLTreeBuilder::isHeadingTag(const AtomicString& tagName)
 {
     DEFINE_STATIC_LOCAL(TagNameSet, headingTags, ());
     if (headingTags.isEmpty()) {
@@ -1041,7 +1041,7 @@ bool LegacyHTMLTreeConstructor::isHeadingTag(const AtomicString& tagName)
     return headingTags.contains(tagName.impl());
 }
 
-bool LegacyHTMLTreeConstructor::isInline(Node* node) const
+bool LegacyHTMLTreeBuilder::isInline(Node* node) const
 {
     if (node->isTextNode())
         return true;
@@ -1071,7 +1071,7 @@ bool LegacyHTMLTreeConstructor::isInline(Node* node) const
     return false;
 }
 
-bool LegacyHTMLTreeConstructor::isResidualStyleTag(const AtomicString& tagName)
+bool LegacyHTMLTreeBuilder::isResidualStyleTag(const AtomicString& tagName)
 {
     DEFINE_STATIC_LOCAL(HashSet<AtomicStringImpl*>, residualStyleTags, ());
     if (residualStyleTags.isEmpty()) {
@@ -1083,7 +1083,7 @@ bool LegacyHTMLTreeConstructor::isResidualStyleTag(const AtomicString& tagName)
     return residualStyleTags.contains(tagName.impl());
 }
 
-bool LegacyHTMLTreeConstructor::isAffectedByResidualStyle(const AtomicString& tagName)
+bool LegacyHTMLTreeBuilder::isAffectedByResidualStyle(const AtomicString& tagName)
 {
     DEFINE_STATIC_LOCAL(HashSet<AtomicStringImpl*>, unaffectedTags, ());
     if (unaffectedTags.isEmpty()) {
@@ -1095,7 +1095,7 @@ bool LegacyHTMLTreeConstructor::isAffectedByResidualStyle(const AtomicString& ta
     return !unaffectedTags.contains(tagName.impl());
 }
 
-void LegacyHTMLTreeConstructor::handleResidualStyleCloseTagAcrossBlocks(HTMLStackElem* elem)
+void LegacyHTMLTreeBuilder::handleResidualStyleCloseTagAcrossBlocks(HTMLStackElem* elem)
 {
     HTMLStackElem* maxElem = 0;
     bool finished = false;
@@ -1326,7 +1326,7 @@ void LegacyHTMLTreeConstructor::handleResidualStyleCloseTagAcrossBlocks(HTMLStac
     m_handlingResidualStyleAcrossBlocks = false;
 }
 
-void LegacyHTMLTreeConstructor::reopenResidualStyleTags(HTMLStackElem* elem, Node* malformedTableParent)
+void LegacyHTMLTreeBuilder::reopenResidualStyleTags(HTMLStackElem* elem, Node* malformedTableParent)
 {
     // Loop for each tag that needs to be reopened.
     while (elem) {
@@ -1367,7 +1367,7 @@ void LegacyHTMLTreeConstructor::reopenResidualStyleTags(HTMLStackElem* elem, Nod
     }
 }
 
-void LegacyHTMLTreeConstructor::pushBlock(const AtomicString& tagName, int level)
+void LegacyHTMLTreeBuilder::pushBlock(const AtomicString& tagName, int level)
 {
     m_blockStack = new HTMLStackElem(tagName, level, m_current, m_didRefCurrent, m_blockStack);
     if (level >= minBlockLevelTagPriority)
@@ -1380,7 +1380,7 @@ void LegacyHTMLTreeConstructor::pushBlock(const AtomicString& tagName, int level
         m_hasPElementInScope = NotInScope;
 }
 
-void LegacyHTMLTreeConstructor::popBlock(const AtomicString& tagName, bool reportErrors)
+void LegacyHTMLTreeBuilder::popBlock(const AtomicString& tagName, bool reportErrors)
 {
     HTMLStackElem* elem = m_blockStack;
 
@@ -1469,7 +1469,7 @@ void LegacyHTMLTreeConstructor::popBlock(const AtomicString& tagName, bool repor
     reopenResidualStyleTags(residualStyleStack, malformedTableParent);
 }
 
-inline HTMLStackElem* LegacyHTMLTreeConstructor::popOneBlockCommon()
+inline HTMLStackElem* LegacyHTMLTreeBuilder::popOneBlockCommon()
 {
     HTMLStackElem* elem = m_blockStack;
 
@@ -1498,7 +1498,7 @@ inline HTMLStackElem* LegacyHTMLTreeConstructor::popOneBlockCommon()
     return elem;
 }
 
-void LegacyHTMLTreeConstructor::popOneBlock()
+void LegacyHTMLTreeBuilder::popOneBlock()
 {
     // Store the current node before popOneBlockCommon overwrites it.
     Node* lastCurrent = m_current;
@@ -1510,7 +1510,7 @@ void LegacyHTMLTreeConstructor::popOneBlock()
         lastCurrent->deref();
 }
 
-void LegacyHTMLTreeConstructor::moveOneBlockToStack(HTMLStackElem*& head)
+void LegacyHTMLTreeBuilder::moveOneBlockToStack(HTMLStackElem*& head)
 {
     // We'll be using the stack element we're popping, but for the current node.
     // See the two callers for details.
@@ -1532,7 +1532,7 @@ void LegacyHTMLTreeConstructor::moveOneBlockToStack(HTMLStackElem*& head)
     head = elem;
 }
 
-void LegacyHTMLTreeConstructor::checkIfHasPElementInScope()
+void LegacyHTMLTreeBuilder::checkIfHasPElementInScope()
 {
     m_hasPElementInScope = NotInScope;
     HTMLStackElem* elem = m_blockStack;
@@ -1547,13 +1547,13 @@ void LegacyHTMLTreeConstructor::checkIfHasPElementInScope()
     }
 }
 
-void LegacyHTMLTreeConstructor::popInlineBlocks()
+void LegacyHTMLTreeBuilder::popInlineBlocks()
 {
     while (m_blockStack && isInline(m_current))
         popOneBlock();
 }
 
-void LegacyHTMLTreeConstructor::freeBlock()
+void LegacyHTMLTreeBuilder::freeBlock()
 {
     while (m_blockStack)
         popOneBlock();
@@ -1561,7 +1561,7 @@ void LegacyHTMLTreeConstructor::freeBlock()
     ASSERT(!m_treeDepth);
 }
 
-void LegacyHTMLTreeConstructor::createHead()
+void LegacyHTMLTreeBuilder::createHead()
 {
     if (m_head)
         return;
@@ -1589,7 +1589,7 @@ void LegacyHTMLTreeConstructor::createHead()
     }
 }
 
-PassRefPtr<Node> LegacyHTMLTreeConstructor::handleIsindex(Token* t)
+PassRefPtr<Node> LegacyHTMLTreeBuilder::handleIsindex(Token* t)
 {
     RefPtr<Node> n = HTMLDivElement::create(m_document);
 
@@ -1614,7 +1614,7 @@ PassRefPtr<Node> LegacyHTMLTreeConstructor::handleIsindex(Token* t)
     return n.release();
 }
 
-void LegacyHTMLTreeConstructor::startBody()
+void LegacyHTMLTreeBuilder::startBody()
 {
     if (m_inBody)
         return;
@@ -1627,7 +1627,7 @@ void LegacyHTMLTreeConstructor::startBody()
     }
 }
 
-void LegacyHTMLTreeConstructor::finished()
+void LegacyHTMLTreeBuilder::finished()
 {
     // In the case of a completely empty document, here's the place to create the HTML element.
     if (m_current && m_current->isDocumentNode() && !m_document->documentElement())
@@ -1642,7 +1642,7 @@ void LegacyHTMLTreeConstructor::finished()
         m_document->finishedParsing();
 }
 
-void LegacyHTMLTreeConstructor::reportErrorToConsole(HTMLParserErrorCode errorCode, const AtomicString* tagName1, const AtomicString* tagName2, bool closeTags)
+void LegacyHTMLTreeBuilder::reportErrorToConsole(HTMLParserErrorCode errorCode, const AtomicString* tagName1, const AtomicString* tagName2, bool closeTags)
 {    
     Frame* frame = m_document->frame();
     if (!frame)

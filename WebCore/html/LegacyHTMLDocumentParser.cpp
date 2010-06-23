@@ -41,7 +41,7 @@
 #include "FrameView.h"
 #include "HTMLElement.h"
 #include "HTMLNames.h"
-#include "LegacyHTMLTreeConstructor.h"
+#include "LegacyHTMLTreeBuilder.h"
 #include "HTMLScriptElement.h"
 #include "HTMLViewSourceDocument.h"
 #include "ImageLoader.h"
@@ -159,7 +159,7 @@ LegacyHTMLDocumentParser::LegacyHTMLDocumentParser(HTMLDocument* doc, bool repor
     , m_timer(this, &LegacyHTMLDocumentParser::timerFired)
     , m_externalScriptsTimer(this, &LegacyHTMLDocumentParser::executeExternalScriptsTimerFired)
     , m_doc(doc)
-    , m_treeConstructor(new LegacyHTMLTreeConstructor(doc, reportErrors))
+    , m_treeBuilder(new LegacyHTMLTreeBuilder(doc, reportErrors))
     , m_inWrite(false)
     , m_fragment(false)
     , m_scriptingPermission(FragmentScriptingAllowed)
@@ -199,7 +199,7 @@ LegacyHTMLDocumentParser::LegacyHTMLDocumentParser(DocumentFragment* frag, Fragm
     , m_timer(this, &LegacyHTMLDocumentParser::timerFired)
     , m_externalScriptsTimer(this, &LegacyHTMLDocumentParser::executeExternalScriptsTimerFired)
     , m_doc(frag->document())
-    , m_treeConstructor(new LegacyHTMLTreeConstructor(frag, scriptingPermission))
+    , m_treeBuilder(new LegacyHTMLTreeBuilder(frag, scriptingPermission))
     , m_inWrite(false)
     , m_fragment(true)
     , m_scriptingPermission(scriptingPermission)
@@ -431,7 +431,7 @@ LegacyHTMLDocumentParser::State LegacyHTMLDocumentParser::scriptHandler(State st
     if (!inViewSourceMode()) {
         if (!m_scriptTagSrcAttrValue.isEmpty() && m_doc->frame()) {
             // forget what we just got; load from src url instead
-            if (!m_treeConstructor->skipMode() && !followingFrameset) {
+            if (!m_treeBuilder->skipMode() && !followingFrameset) {
                 // The parser might have been stopped by for example a window.close call in an earlier script.
                 // If so, we don't want to load scripts.
                 if (!m_parserStopped && m_scriptNode->dispatchBeforeLoadEvent(m_scriptTagSrcAttrValue) &&
@@ -478,7 +478,7 @@ LegacyHTMLDocumentParser::State LegacyHTMLDocumentParser::scriptHandler(State st
     SegmentedString prependingSrc;
     m_currentPrependingSrc = &prependingSrc;
 
-    if (!m_treeConstructor->skipMode() && !followingFrameset) {
+    if (!m_treeBuilder->skipMode() && !followingFrameset) {
         if (cs) {
             if (savedPrependingSrc)
                 savedPrependingSrc->append(m_src);
@@ -1391,7 +1391,7 @@ LegacyHTMLDocumentParser::State LegacyHTMLDocumentParser::parseTag(SegmentedStri
                         } else if (inViewSourceMode())
                             m_currentToken.addViewSourceChar('v');
 
-                        if (m_currentToken.beginTag && m_currentToken.tagName == scriptTag && !inViewSourceMode() && !m_treeConstructor->skipMode() && m_attrName == srcAttr) {
+                        if (m_currentToken.beginTag && m_currentToken.tagName == scriptTag && !inViewSourceMode() && !m_treeBuilder->skipMode() && m_attrName == srcAttr) {
                             String context(m_rawAttributeBeforeValue.data(), m_rawAttributeBeforeValue.size());
                             if (m_XSSAuditor && !m_XSSAuditor->canLoadExternalScriptFromSrc(attributeValue))
                                 attributeValue = blankURL().string();
@@ -1428,7 +1428,7 @@ LegacyHTMLDocumentParser::State LegacyHTMLDocumentParser::parseTag(SegmentedStri
                     if (isASCIISpace(curchar) || curchar == '>') {
                         AtomicString attributeValue(m_buffer + 1, m_dest - m_buffer - 1);
 
-                        if (m_currentToken.beginTag && m_currentToken.tagName == scriptTag && !inViewSourceMode() && !m_treeConstructor->skipMode() && m_attrName == srcAttr) {
+                        if (m_currentToken.beginTag && m_currentToken.tagName == scriptTag && !inViewSourceMode() && !m_treeBuilder->skipMode() && m_attrName == srcAttr) {
                             String context(m_rawAttributeBeforeValue.data(), m_rawAttributeBeforeValue.size());
                             if (m_XSSAuditor && !m_XSSAuditor->canLoadExternalScriptFromSrc(attributeValue))
                                 attributeValue = blankURL().string();
@@ -1480,7 +1480,7 @@ LegacyHTMLDocumentParser::State LegacyHTMLDocumentParser::parseTag(SegmentedStri
             // compatibility.
             bool isSelfClosingScript = m_currentToken.selfClosingTag && m_currentToken.beginTag && m_currentToken.tagName == scriptTag;
             bool beginTag = !m_currentToken.selfClosingTag && m_currentToken.beginTag;
-            if (m_currentToken.beginTag && m_currentToken.tagName == scriptTag && !inViewSourceMode() && !m_treeConstructor->skipMode()) {
+            if (m_currentToken.beginTag && m_currentToken.tagName == scriptTag && !inViewSourceMode() && !m_treeBuilder->skipMode()) {
                 Attribute* a = 0;
                 m_scriptTagSrcAttrValue = String();
                 m_scriptTagCharsetAttrValue = String();
@@ -1842,7 +1842,7 @@ void LegacyHTMLDocumentParser::end()
     }
 
     if (!inViewSourceMode())
-        m_treeConstructor->finished();
+        m_treeBuilder->finished();
     else
         m_doc->finishedParsing();
 }
@@ -1912,7 +1912,7 @@ PassRefPtr<Node> LegacyHTMLDocumentParser::processToken()
             static_cast<HTMLViewSourceDocument*>(m_doc)->addViewSourceToken(&m_currentToken);
         else
             // pass the token over to the parser, the parser DOES NOT delete the token
-            n = m_treeConstructor->parseToken(&m_currentToken);
+            n = m_treeBuilder->parseToken(&m_currentToken);
     }
     m_currentToken.reset();
 
@@ -1924,7 +1924,7 @@ void LegacyHTMLDocumentParser::processDoctypeToken()
     if (inViewSourceMode())
         static_cast<HTMLViewSourceDocument*>(m_doc)->addViewSourceDoctypeToken(&m_doctypeToken);
     else
-        m_treeConstructor->parseDoctypeToken(&m_doctypeToken);
+        m_treeBuilder->parseDoctypeToken(&m_doctypeToken);
 }
 
 LegacyHTMLDocumentParser::~LegacyHTMLDocumentParser()

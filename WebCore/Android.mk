@@ -264,7 +264,7 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	html/HTMLImageLoader.cpp \
 	html/HTMLNameCollection.cpp \
 	html/HTMLOptionsCollection.cpp \
-	html/LegacyHTMLTreeConstructor.cpp \
+	html/LegacyHTMLTreeBuilder.cpp \
 	html/HTMLParserErrorCodes.cpp \
 	html/HTMLParserScheduler.cpp \
 	html/HTMLTableRowsCollection.cpp \

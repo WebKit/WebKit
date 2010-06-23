@@ -42,7 +42,7 @@ class Element;
 class Frame;
 class HTMLToken;
 class HTMLDocument;
-class LegacyHTMLTreeConstructor;
+class LegacyHTMLTreeBuilder;
 class Node;
 
 class HTMLTreeBuilder : public Noncopyable {
@@ -67,7 +67,7 @@ public:
 
     // FIXME: This is a dirty, rotten hack to keep HTMLFormControlElement happy
     // until we stop using the legacy parser. DO NOT CALL THIS METHOD.
-    LegacyHTMLTreeConstructor* legacyTreeConstructor() const { return m_legacyTreeConstructor.get(); }
+    LegacyHTMLTreeBuilder* legacyTreeBuilder() const { return m_legacyTreeBuilder.get(); }
 
 private:
     // Represents HTML5 "insertion mode"
@@ -99,8 +99,8 @@ private:
     // from within parser actions.
     HTMLTokenizer* m_tokenizer;
 
-    // We're re-using logic from the old LegacyHTMLTreeConstructor while this class is being written.
-    OwnPtr<LegacyHTMLTreeConstructor> m_legacyTreeConstructor;
+    // We're re-using logic from the old LegacyHTMLTreeBuilder while this class is being written.
+    OwnPtr<LegacyHTMLTreeBuilder> m_legacyTreeBuilder;
 
     // These members are intentionally duplicated as the first set is a hack
     // on top of the legacy parser which will eventually be removed.

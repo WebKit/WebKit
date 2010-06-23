@@ -2,6 +2,108 @@
 
         Reviewed by Eric Seidel.
 
+        Rename LegacyHTMLTreeConstructor to LegacyHTMLTreeBuilder
+        https://bugs.webkit.org/show_bug.cgi?id=41053
+
+        There was some debate about whether to call this class (and the
+        non-legacy version) "tree builder" or "tree constructor".  Maciej
+        pointed out that other implementations (including Mozilla and HTML5Lib)
+        call it a tree builder.  The path of least resistance seems to be call
+        it that for now.
+
+        * Android.mk:
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/Document.cpp:
+        * dom/DocumentParser.h:
+        (WebCore::DocumentParser::htmlTreeConstructor):
+        * html/HTMLDocumentParser.cpp:
+        (WebCore::HTMLDocumentParser::htmlTreeConstructor):
+        * html/HTMLDocumentParser.h:
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::removedFromTree):
+        * html/HTMLInputElement.cpp:
+        * html/HTMLMeterElement.cpp:
+        * html/HTMLProgressElement.cpp:
+        * html/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::HTMLTreeBuilder):
+        * html/HTMLTreeBuilder.h:
+        (WebCore::HTMLTreeBuilder::legacyTreeConstructor):
+        * html/LegacyHTMLDocumentParser.cpp:
+        (WebCore::LegacyHTMLDocumentParser::LegacyHTMLDocumentParser):
+        * html/LegacyHTMLDocumentParser.h:
+        (WebCore::LegacyHTMLDocumentParser::htmlTreeConstructor):
+        * html/LegacyHTMLTreeBuilder.cpp: Copied from WebCore/html/LegacyHTMLTreeConstructor.cpp.
+        (WebCore::LegacyHTMLTreeBuilder::LegacyHTMLTreeBuilder):
+        (WebCore::LegacyHTMLTreeBuilder::~LegacyHTMLTreeBuilder):
+        (WebCore::LegacyHTMLTreeBuilder::reset):
+        (WebCore::LegacyHTMLTreeBuilder::setCurrent):
+        (WebCore::LegacyHTMLTreeBuilder::limitDepth):
+        (WebCore::LegacyHTMLTreeBuilder::insertNodeAfterLimitDepth):
+        (WebCore::LegacyHTMLTreeBuilder::parseToken):
+        (WebCore::LegacyHTMLTreeBuilder::parseDoctypeToken):
+        (WebCore::LegacyHTMLTreeBuilder::insertNode):
+        (WebCore::LegacyHTMLTreeBuilder::handleError):
+        (WebCore::LegacyHTMLTreeBuilder::textCreateErrorCheck):
+        (WebCore::LegacyHTMLTreeBuilder::commentCreateErrorCheck):
+        (WebCore::LegacyHTMLTreeBuilder::headCreateErrorCheck):
+        (WebCore::LegacyHTMLTreeBuilder::bodyCreateErrorCheck):
+        (WebCore::LegacyHTMLTreeBuilder::framesetCreateErrorCheck):
+        (WebCore::LegacyHTMLTreeBuilder::formCreateErrorCheck):
+        (WebCore::LegacyHTMLTreeBuilder::isindexCreateErrorCheck):
+        (WebCore::LegacyHTMLTreeBuilder::selectCreateErrorCheck):
+        (WebCore::LegacyHTMLTreeBuilder::ddCreateErrorCheck):
+        (WebCore::LegacyHTMLTreeBuilder::dtCreateErrorCheck):
+        (WebCore::LegacyHTMLTreeBuilder::rpCreateErrorCheck):
+        (WebCore::LegacyHTMLTreeBuilder::rtCreateErrorCheck):
+        (WebCore::LegacyHTMLTreeBuilder::nestedCreateErrorCheck):
+        (WebCore::LegacyHTMLTreeBuilder::nestedPCloserCreateErrorCheck):
+        (WebCore::LegacyHTMLTreeBuilder::nestedStyleCreateErrorCheck):
+        (WebCore::LegacyHTMLTreeBuilder::tableCellCreateErrorCheck):
+        (WebCore::LegacyHTMLTreeBuilder::tableSectionCreateErrorCheck):
+        (WebCore::LegacyHTMLTreeBuilder::noembedCreateErrorCheck):
+        (WebCore::LegacyHTMLTreeBuilder::noframesCreateErrorCheck):
+        (WebCore::LegacyHTMLTreeBuilder::noscriptCreateErrorCheck):
+        (WebCore::LegacyHTMLTreeBuilder::pCloserCreateErrorCheck):
+        (WebCore::LegacyHTMLTreeBuilder::pCloserStrictCreateErrorCheck):
+        (WebCore::LegacyHTMLTreeBuilder::mapCreateErrorCheck):
+        (WebCore::LegacyHTMLTreeBuilder::getNode):
+        (WebCore::LegacyHTMLTreeBuilder::allowNestedRedundantTag):
+        (WebCore::LegacyHTMLTreeBuilder::processCloseTag):
+        (WebCore::LegacyHTMLTreeBuilder::isHeadingTag):
+        (WebCore::LegacyHTMLTreeBuilder::isInline):
+        (WebCore::LegacyHTMLTreeBuilder::isResidualStyleTag):
+        (WebCore::LegacyHTMLTreeBuilder::isAffectedByResidualStyle):
+        (WebCore::LegacyHTMLTreeBuilder::handleResidualStyleCloseTagAcrossBlocks):
+        (WebCore::LegacyHTMLTreeBuilder::reopenResidualStyleTags):
+        (WebCore::LegacyHTMLTreeBuilder::pushBlock):
+        (WebCore::LegacyHTMLTreeBuilder::popBlock):
+        (WebCore::LegacyHTMLTreeBuilder::popOneBlockCommon):
+        (WebCore::LegacyHTMLTreeBuilder::popOneBlock):
+        (WebCore::LegacyHTMLTreeBuilder::moveOneBlockToStack):
+        (WebCore::LegacyHTMLTreeBuilder::checkIfHasPElementInScope):
+        (WebCore::LegacyHTMLTreeBuilder::popInlineBlocks):
+        (WebCore::LegacyHTMLTreeBuilder::freeBlock):
+        (WebCore::LegacyHTMLTreeBuilder::createHead):
+        (WebCore::LegacyHTMLTreeBuilder::handleIsindex):
+        (WebCore::LegacyHTMLTreeBuilder::startBody):
+        (WebCore::LegacyHTMLTreeBuilder::finished):
+        (WebCore::LegacyHTMLTreeBuilder::reportErrorToConsole):
+        * html/LegacyHTMLTreeBuilder.h: Copied from WebCore/html/LegacyHTMLTreeConstructor.h.
+        * html/LegacyHTMLTreeConstructor.cpp: Removed.
+        * html/LegacyHTMLTreeConstructor.h: Removed.
+        * html/StepRange.cpp:
+        * html/ValidityState.cpp:
+        * rendering/RenderSlider.cpp:
+
+2010-06-23  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         Rename the preload scanners
         https://bugs.webkit.org/show_bug.cgi?id=41052
 

@@ -76,7 +76,7 @@
 #include "HTMLMapElement.h"
 #include "HTMLNameCollection.h"
 #include "HTMLNames.h"
-#include "LegacyHTMLTreeConstructor.h"
+#include "LegacyHTMLTreeBuilder.h"
 #include "HTMLStyleElement.h"
 #include "HTMLTitleElement.h"
 #include "LegacyHTMLDocumentParser.h"
