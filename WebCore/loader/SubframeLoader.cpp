@@ -59,7 +59,8 @@ namespace WebCore {
 using namespace HTMLNames;
 
 SubframeLoader::SubframeLoader(Frame* frame)
-    : m_frame(frame)
+    : m_containsPlugins(false)
+    , m_frame(frame)
 {
 }
 

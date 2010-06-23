@@ -1,3 +1,14 @@
+2010-06-22  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Fix uninitialized SubframeLoader::m_containsPlugins
+        https://bugs.webkit.org/show_bug.cgi?id=41035
+
+        * loader/SubframeLoader.cpp:
+        (WebCore::SubframeLoader::SubframeLoader):
+         Initialize m_containsPlugins with false.
+
 2010-06-22  Kinuko Yasuda  <kinuko@chromium.org>
 
         Reviewed by Adam Barth.
