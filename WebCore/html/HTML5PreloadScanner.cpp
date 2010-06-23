@@ -134,7 +134,7 @@ void HTML5PreloadScanner::scan()
 {
     // FIXME: We should save and re-use these tokens in HTML5DocumentParser if
     // the pending script doesn't end up calling document.write.
-    while (m_lexer.nextToken(m_source, m_token)) {
+    while (m_tokenizer.nextToken(m_source, m_token)) {
         processToken();
         m_token.clear();
     }
@@ -155,12 +155,12 @@ void HTML5PreloadScanner::processToken()
         return;
 
     PreloadTask task(m_token);
-    m_lexer.setState(HTML5TreeBuilder::adjustedLexerState(m_lexer.state(), task.tagName(), m_document->frame()));
+    m_tokenizer.setState(HTML5TreeBuilder::adjustedLexerState(m_tokenizer.state(), task.tagName(), m_document->frame()));
     if (task.tagName() == scriptTag) {
-        // The tree builder handles scriptTag separately from the other lexer
+        // The tree builder handles scriptTag separately from the other tokenizer
         // state adjustments, so we need to handle it separately too.
-        ASSERT(m_lexer.state() == HTMLTokenizer::DataState);
-        m_lexer.setState(HTMLTokenizer::ScriptDataState);
+        ASSERT(m_tokenizer.state() == HTMLTokenizer::DataState);
+        m_tokenizer.setState(HTMLTokenizer::ScriptDataState);
     }
 
     if (task.tagName() == bodyTag)

@@ -218,7 +218,7 @@ private:
 
     // We occationally want to emit both a character token and an end tag
     // token (e.g., when lexing script).  We buffer the name of the end tag
-    // token here so we remember it next time we re-enter the lexer.
+    // token here so we remember it next time we re-enter the tokenizer.
     Vector<UChar, 32> m_bufferedEndTagName;
 
     // http://www.whatwg.org/specs/web-apps/current-work/#additional-allowed-character

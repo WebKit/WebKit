@@ -45,12 +45,12 @@ using namespace HTMLNames;
 
 static const int uninitializedLineNumberValue = -1;
 
-HTML5TreeBuilder::HTML5TreeBuilder(HTMLTokenizer* lexer, HTMLDocument* document, bool reportErrors)
+HTML5TreeBuilder::HTML5TreeBuilder(HTMLTokenizer* tokenizer, HTMLDocument* document, bool reportErrors)
     : m_document(document)
     , m_reportErrors(reportErrors)
     , m_isPaused(false)
     , m_insertionMode(Initial)
-    , m_lexer(lexer)
+    , m_tokenizer(tokenizer)
     , m_legacyTreeConstructor(new LegacyHTMLTreeConstructor(document, reportErrors))
     , m_lastScriptElementStartLine(uninitializedLineNumberValue)
     , m_scriptToProcessStartLine(uninitializedLineNumberValue)
@@ -60,12 +60,12 @@ HTML5TreeBuilder::HTML5TreeBuilder(HTMLTokenizer* lexer, HTMLDocument* document,
 
 // FIXME: Member variables should be grouped into self-initializing structs to
 // minimize code duplication between these constructors.
-HTML5TreeBuilder::HTML5TreeBuilder(HTMLTokenizer* lexer, DocumentFragment* fragment, FragmentScriptingPermission scriptingPermission)
+HTML5TreeBuilder::HTML5TreeBuilder(HTMLTokenizer* tokenizer, DocumentFragment* fragment, FragmentScriptingPermission scriptingPermission)
     : m_document(fragment->document())
     , m_reportErrors(false) // FIXME: Why not report errors in fragments?
     , m_isPaused(false)
     , m_insertionMode(Initial)
-    , m_lexer(lexer)
+    , m_tokenizer(tokenizer)
     , m_legacyTreeConstructor(new LegacyHTMLTreeConstructor(fragment, scriptingPermission))
     , m_lastScriptElementStartLine(uninitializedLineNumberValue)
     , m_scriptToProcessStartLine(uninitializedLineNumberValue)
@@ -121,7 +121,7 @@ static void convertToOldStyle(HTML5Token& token, Token& oldStyleToken)
 void HTML5TreeBuilder::handleScriptStartTag()
 {
     notImplemented(); // The HTML frgment case?
-    m_lexer->setState(HTMLTokenizer::ScriptDataState);
+    m_tokenizer->setState(HTMLTokenizer::ScriptDataState);
     notImplemented(); // Save insertion mode.
 }
 
@@ -190,11 +190,11 @@ PassRefPtr<Node> HTML5TreeBuilder::passTokenToLegacyParser(HTML5Token& token)
         if (oldStyleToken.tagName == scriptTag) {
             handleScriptStartTag();
             m_lastScriptElement = static_pointer_cast<Element>(result);
-            m_lastScriptElementStartLine = m_lexer->lineNumber();
+            m_lastScriptElementStartLine = m_tokenizer->lineNumber();
         } else if (oldStyleToken.tagName == preTag || oldStyleToken.tagName == listingTag)
-            m_lexer->skipLeadingNewLineForListing();
+            m_tokenizer->skipLeadingNewLineForListing();
         else
-            m_lexer->setState(adjustedLexerState(m_lexer->state(), oldStyleToken.tagName, m_document->frame()));
+            m_tokenizer->setState(adjustedLexerState(m_tokenizer->state(), oldStyleToken.tagName, m_document->frame()));
     } else if (token.type() == HTML5Token::EndTag) {
         if (oldStyleToken.tagName == scriptTag) {
             if (m_lastScriptElement) {

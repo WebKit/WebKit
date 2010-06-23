@@ -95,8 +95,8 @@ private:
         AllowYield,
         ForceSynchronous,
     };
-    void pumpLexer(SynchronousMode);
-    void pumpLexerIfPossible(SynchronousMode);
+    void pumpTokenizer(SynchronousMode);
+    void pumpTokenizerIfPossible(SynchronousMode);
 
     bool runScriptsForPausedTreeConstructor();
     void resumeParsingAfterScriptExecution();
@@ -118,7 +118,7 @@ private:
     // We must support parsing into a Document* and not just HTMLDocument*
     // to support DocumentFragment (which has a Document*).
     Document* m_document;
-    OwnPtr<HTMLTokenizer> m_lexer;
+    OwnPtr<HTMLTokenizer> m_tokenizer;
     OwnPtr<HTML5ScriptRunner> m_scriptRunner;
     OwnPtr<HTML5TreeBuilder> m_treeConstructor;
     OwnPtr<HTML5PreloadScanner> m_preloadScanner;
