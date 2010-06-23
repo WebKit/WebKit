@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "HTML5DocumentParser.h"
+#include "HTMLDocumentParser.h"
 
 #include "DocumentFragment.h"
 #include "Element.h"
@@ -33,7 +33,7 @@
 #include "HTMLTokenizer.h"
 #include "HTML5PreloadScanner.h"
 #include "HTMLScriptRunner.h"
-#include "HTML5TreeBuilder.h"
+#include "HTMLTreeBuilder.h"
 #include "HTMLDocument.h"
 #include "XSSAuditor.h"
 #include <wtf/CurrentTime.h>
@@ -65,11 +65,11 @@ private:
 
 } // namespace
 
-HTML5DocumentParser::HTML5DocumentParser(HTMLDocument* document, bool reportErrors)
+HTMLDocumentParser::HTMLDocumentParser(HTMLDocument* document, bool reportErrors)
     : m_document(document)
     , m_tokenizer(new HTMLTokenizer)
     , m_scriptRunner(new HTMLScriptRunner(document, this))
-    , m_treeConstructor(new HTML5TreeBuilder(m_tokenizer.get(), document, reportErrors))
+    , m_treeConstructor(new HTMLTreeBuilder(m_tokenizer.get(), document, reportErrors))
     , m_parserScheduler(new HTMLParserScheduler(this))
     , m_endWasDelayed(false)
     , m_writeNestingLevel(0)
@@ -79,17 +79,17 @@ HTML5DocumentParser::HTML5DocumentParser(HTMLDocument* document, bool reportErro
 
 // FIXME: Member variables should be grouped into self-initializing structs to
 // minimize code duplication between these constructors.
-HTML5DocumentParser::HTML5DocumentParser(DocumentFragment* fragment, FragmentScriptingPermission scriptingPermission)
+HTMLDocumentParser::HTMLDocumentParser(DocumentFragment* fragment, FragmentScriptingPermission scriptingPermission)
     : m_document(fragment->document())
     , m_tokenizer(new HTMLTokenizer)
-    , m_treeConstructor(new HTML5TreeBuilder(m_tokenizer.get(), fragment, scriptingPermission))
+    , m_treeConstructor(new HTMLTreeBuilder(m_tokenizer.get(), fragment, scriptingPermission))
     , m_endWasDelayed(false)
     , m_writeNestingLevel(0)
 {
     begin();
 }
 
-HTML5DocumentParser::~HTML5DocumentParser()
+HTMLDocumentParser::~HTMLDocumentParser()
 {
     // FIXME: We'd like to ASSERT that normal operation of this class clears
     // out any delayed actions, but we can't because we're unceremoniously
@@ -97,23 +97,23 @@ HTML5DocumentParser::~HTML5DocumentParser()
     // then we could ASSERT some invariants here.
 }
 
-void HTML5DocumentParser::begin()
+void HTMLDocumentParser::begin()
 {
     // FIXME: Should we reset the tokenizer?
 }
 
-void HTML5DocumentParser::stopParsing()
+void HTMLDocumentParser::stopParsing()
 {
     DocumentParser::stopParsing();
     m_parserScheduler.clear(); // Deleting the scheduler will clear any timers.
 }
 
-bool HTML5DocumentParser::processingData() const
+bool HTMLDocumentParser::processingData() const
 {
     return isScheduledForResume() || inWrite();
 }
 
-void HTML5DocumentParser::pumpTokenizerIfPossible(SynchronousMode mode)
+void HTMLDocumentParser::pumpTokenizerIfPossible(SynchronousMode mode)
 {
     if (m_parserStopped || m_treeConstructor->isPaused())
         return;
@@ -127,20 +127,20 @@ void HTML5DocumentParser::pumpTokenizerIfPossible(SynchronousMode mode)
     pumpTokenizer(mode);
 }
 
-bool HTML5DocumentParser::isScheduledForResume() const
+bool HTMLDocumentParser::isScheduledForResume() const
 {
     return m_parserScheduler && m_parserScheduler->isScheduledForResume();
 }
 
 // Used by HTMLParserScheduler
-void HTML5DocumentParser::resumeParsingAfterYield()
+void HTMLDocumentParser::resumeParsingAfterYield()
 {
     // We should never be here unless we can pump immediately.  Call pumpTokenizer()
     // directly so that ASSERTS will fire if we're wrong.
     pumpTokenizer(AllowYield);
 }
 
-bool HTML5DocumentParser::runScriptsForPausedTreeConstructor()
+bool HTMLDocumentParser::runScriptsForPausedTreeConstructor()
 {
     ASSERT(m_treeConstructor->isPaused());
 
@@ -152,7 +152,7 @@ bool HTML5DocumentParser::runScriptsForPausedTreeConstructor()
     return m_scriptRunner->execute(scriptElement.release(), scriptStartLine);
 }
 
-void HTML5DocumentParser::pumpTokenizer(SynchronousMode mode)
+void HTMLDocumentParser::pumpTokenizer(SynchronousMode mode)
 {
     ASSERT(!m_parserStopped);
     ASSERT(!m_treeConstructor->isPaused());
@@ -194,7 +194,7 @@ void HTML5DocumentParser::pumpTokenizer(SynchronousMode mode)
     didPumpLexer();
 }
 
-void HTML5DocumentParser::willPumpLexer()
+void HTMLDocumentParser::willPumpLexer()
 {
 #if ENABLE(INSPECTOR)
     // FIXME: m_input.current().length() is only accurate if we
@@ -205,7 +205,7 @@ void HTML5DocumentParser::willPumpLexer()
 #endif
 }
 
-void HTML5DocumentParser::didPumpLexer()
+void HTMLDocumentParser::didPumpLexer()
 {
 #if ENABLE(INSPECTOR)
     if (InspectorTimelineAgent* timelineAgent = m_document->inspectorTimelineAgent())
@@ -213,7 +213,7 @@ void HTML5DocumentParser::didPumpLexer()
 #endif
 }
 
-void HTML5DocumentParser::write(const SegmentedString& source, bool isFromNetwork)
+void HTMLDocumentParser::write(const SegmentedString& source, bool isFromNetwork)
 {
     if (m_parserStopped)
         return;
@@ -238,7 +238,7 @@ void HTML5DocumentParser::write(const SegmentedString& source, bool isFromNetwor
     endIfDelayed();
 }
 
-void HTML5DocumentParser::end()
+void HTMLDocumentParser::end()
 {
     ASSERT(!isScheduledForResume());
     // NOTE: This pump should only ever emit buffered character tokens,
@@ -249,7 +249,7 @@ void HTML5DocumentParser::end()
     m_treeConstructor->finished();
 }
 
-void HTML5DocumentParser::attemptToEnd()
+void HTMLDocumentParser::attemptToEnd()
 {
     // finish() indicates we will not receive any more data. If we are waiting on
     // an external script to load, we can't finish parsing quite yet.
@@ -261,7 +261,7 @@ void HTML5DocumentParser::attemptToEnd()
     end();
 }
 
-void HTML5DocumentParser::endIfDelayed()
+void HTMLDocumentParser::endIfDelayed()
 {
     // We don't check inWrite() here since inWrite() will be true if this was
     // called from write().
@@ -272,7 +272,7 @@ void HTML5DocumentParser::endIfDelayed()
     end();
 }
 
-void HTML5DocumentParser::finish()
+void HTMLDocumentParser::finish()
 {
     // We're not going to get any more data off the network, so we close the
     // input stream to indicate EOF.
@@ -280,46 +280,46 @@ void HTML5DocumentParser::finish()
     attemptToEnd();
 }
 
-bool HTML5DocumentParser::finishWasCalled()
+bool HTMLDocumentParser::finishWasCalled()
 {
     return m_input.isClosed();
 }
 
 // This function is virtual and just for the DocumentParser interface.
-int HTML5DocumentParser::executingScript() const
+int HTMLDocumentParser::executingScript() const
 {
     return inScriptExecution();
 }
 
 // This function is non-virtual and used throughout the implementation.
-bool HTML5DocumentParser::inScriptExecution() const
+bool HTMLDocumentParser::inScriptExecution() const
 {
     if (!m_scriptRunner)
         return false;
     return m_scriptRunner->inScriptExecution();
 }
 
-int HTML5DocumentParser::lineNumber() const
+int HTMLDocumentParser::lineNumber() const
 {
     return m_tokenizer->lineNumber();
 }
 
-int HTML5DocumentParser::columnNumber() const
+int HTMLDocumentParser::columnNumber() const
 {
     return m_tokenizer->columnNumber();
 }
 
-LegacyHTMLTreeConstructor* HTML5DocumentParser::htmlTreeConstructor() const
+LegacyHTMLTreeConstructor* HTMLDocumentParser::htmlTreeConstructor() const
 {
     return m_treeConstructor->legacyTreeConstructor();
 }
 
-bool HTML5DocumentParser::isWaitingForScripts() const
+bool HTMLDocumentParser::isWaitingForScripts() const
 {
     return m_treeConstructor->isPaused();
 }
 
-void HTML5DocumentParser::resumeParsingAfterScriptExecution()
+void HTMLDocumentParser::resumeParsingAfterScriptExecution()
 {
     ASSERT(!inScriptExecution());
     ASSERT(!m_treeConstructor->isPaused());
@@ -330,24 +330,24 @@ void HTML5DocumentParser::resumeParsingAfterScriptExecution()
     endIfDelayed();
 }
 
-void HTML5DocumentParser::watchForLoad(CachedResource* cachedScript)
+void HTMLDocumentParser::watchForLoad(CachedResource* cachedScript)
 {
     cachedScript->addClient(this);
 }
 
-void HTML5DocumentParser::stopWatchingForLoad(CachedResource* cachedScript)
+void HTMLDocumentParser::stopWatchingForLoad(CachedResource* cachedScript)
 {
     cachedScript->removeClient(this);
 }
 
-bool HTML5DocumentParser::shouldLoadExternalScriptFromSrc(const AtomicString& srcValue)
+bool HTMLDocumentParser::shouldLoadExternalScriptFromSrc(const AtomicString& srcValue)
 {
     if (!m_XSSAuditor)
         return true;
     return m_XSSAuditor->canLoadExternalScriptFromSrc(srcValue);
 }
 
-void HTML5DocumentParser::notifyFinished(CachedResource* cachedResource)
+void HTMLDocumentParser::notifyFinished(CachedResource* cachedResource)
 {
     ASSERT(m_scriptRunner);
     // Ignore calls unless we have a script blocking the parser waiting
@@ -369,7 +369,7 @@ void HTML5DocumentParser::notifyFinished(CachedResource* cachedResource)
         resumeParsingAfterScriptExecution();
 }
 
-void HTML5DocumentParser::executeScriptsWaitingForStylesheets()
+void HTMLDocumentParser::executeScriptsWaitingForStylesheets()
 {
     // Document only calls this when the Document owns the DocumentParser
     // so this will not be called in the DocumentFragment case.
@@ -390,7 +390,7 @@ void HTML5DocumentParser::executeScriptsWaitingForStylesheets()
         resumeParsingAfterScriptExecution();
 }
 
-ScriptController* HTML5DocumentParser::script() const
+ScriptController* HTMLDocumentParser::script() const
 {
     return m_document->frame() ? m_document->frame()->script() : 0;
 }

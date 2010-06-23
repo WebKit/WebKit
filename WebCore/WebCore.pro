@@ -613,10 +613,10 @@ SOURCES += \
     html/FormDataList.cpp \
     html/HTMLEntityParser.cpp \
     html/HTMLTokenizer.cpp \
-    html/HTML5DocumentParser.cpp \
+    html/HTMLDocumentParser.cpp \
     html/HTML5PreloadScanner.cpp \
     html/HTMLScriptRunner.cpp \
-    html/HTML5TreeBuilder.cpp \
+    html/HTMLTreeBuilder.cpp \
     html/HTMLAllCollection.cpp \
     html/HTMLAnchorElement.cpp \
     html/HTMLAppletElement.cpp \

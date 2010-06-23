@@ -44,18 +44,18 @@ class HTMLDocument;
 class HTMLParserScheduler;
 class HTMLTokenizer;
 class HTMLScriptRunner;
-class HTML5TreeBuilder;
+class HTMLTreeBuilder;
 class HTML5PreloadScanner;
 class LegacyHTMLTreeConstructor;
 class ScriptController;
 class ScriptSourceCode;
 
-class HTML5DocumentParser :  public DocumentParser, HTMLScriptRunnerHost, CachedResourceClient {
+class HTMLDocumentParser :  public DocumentParser, HTMLScriptRunnerHost, CachedResourceClient {
 public:
     // FIXME: These constructors should be made private and replaced by create() methods.
-    HTML5DocumentParser(HTMLDocument*, bool reportErrors);
-    HTML5DocumentParser(DocumentFragment*, FragmentScriptingPermission);
-    virtual ~HTML5DocumentParser();
+    HTMLDocumentParser(HTMLDocument*, bool reportErrors);
+    HTMLDocumentParser(DocumentFragment*, FragmentScriptingPermission);
+    virtual ~HTMLDocumentParser();
 
     // DocumentParser
     virtual void begin();
@@ -120,7 +120,7 @@ private:
     Document* m_document;
     OwnPtr<HTMLTokenizer> m_tokenizer;
     OwnPtr<HTMLScriptRunner> m_scriptRunner;
-    OwnPtr<HTML5TreeBuilder> m_treeConstructor;
+    OwnPtr<HTMLTreeBuilder> m_treeConstructor;
     OwnPtr<HTML5PreloadScanner> m_preloadScanner;
     OwnPtr<HTMLParserScheduler> m_parserScheduler;
 

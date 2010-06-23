@@ -2,6 +2,86 @@
 
         Reviewed by Eric Seidel.
 
+        Yet more HTML5 => HTML renames
+        https://bugs.webkit.org/show_bug.cgi?id=41051
+
+        This patch renames HTML5DocumentParser to HTMLDocumentParser and
+        HTML5TreeBuilder to HTMLTreeBuilder.  There was some discussion about
+        whether to use the name HTMLTreeBuilder or HTMLTreeConstructor, but
+        tree builder seems to be the dominate name in other implementations.
+
+        * Android.mk:
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/DocumentFragment.cpp:
+        (WebCore::DocumentFragment::parseHTML):
+        * html/HTML5DocumentParser.cpp: Removed.
+        * html/HTML5DocumentParser.h: Removed.
+        * html/HTML5PreloadScanner.cpp:
+        (WebCore::HTML5PreloadScanner::scan):
+        (WebCore::HTML5PreloadScanner::processToken):
+        * html/HTML5TreeBuilder.cpp: Removed.
+        * html/HTML5TreeBuilder.h: Removed.
+        * html/HTMLDocument.cpp:
+        (WebCore::HTMLDocument::createParser):
+        * html/HTMLDocumentParser.cpp: Copied from WebCore/html/HTML5DocumentParser.cpp.
+        (WebCore::HTMLDocumentParser::HTMLDocumentParser):
+        (WebCore::HTMLDocumentParser::~HTMLDocumentParser):
+        (WebCore::HTMLDocumentParser::begin):
+        (WebCore::HTMLDocumentParser::stopParsing):
+        (WebCore::HTMLDocumentParser::processingData):
+        (WebCore::HTMLDocumentParser::pumpTokenizerIfPossible):
+        (WebCore::HTMLDocumentParser::isScheduledForResume):
+        (WebCore::HTMLDocumentParser::resumeParsingAfterYield):
+        (WebCore::HTMLDocumentParser::runScriptsForPausedTreeConstructor):
+        (WebCore::HTMLDocumentParser::pumpTokenizer):
+        (WebCore::HTMLDocumentParser::willPumpLexer):
+        (WebCore::HTMLDocumentParser::didPumpLexer):
+        (WebCore::HTMLDocumentParser::write):
+        (WebCore::HTMLDocumentParser::end):
+        (WebCore::HTMLDocumentParser::attemptToEnd):
+        (WebCore::HTMLDocumentParser::endIfDelayed):
+        (WebCore::HTMLDocumentParser::finish):
+        (WebCore::HTMLDocumentParser::finishWasCalled):
+        (WebCore::HTMLDocumentParser::executingScript):
+        (WebCore::HTMLDocumentParser::inScriptExecution):
+        (WebCore::HTMLDocumentParser::lineNumber):
+        (WebCore::HTMLDocumentParser::columnNumber):
+        (WebCore::HTMLDocumentParser::htmlTreeConstructor):
+        (WebCore::HTMLDocumentParser::isWaitingForScripts):
+        (WebCore::HTMLDocumentParser::resumeParsingAfterScriptExecution):
+        (WebCore::HTMLDocumentParser::watchForLoad):
+        (WebCore::HTMLDocumentParser::stopWatchingForLoad):
+        (WebCore::HTMLDocumentParser::shouldLoadExternalScriptFromSrc):
+        (WebCore::HTMLDocumentParser::notifyFinished):
+        (WebCore::HTMLDocumentParser::executeScriptsWaitingForStylesheets):
+        (WebCore::HTMLDocumentParser::script):
+        * html/HTMLDocumentParser.h: Copied from WebCore/html/HTML5DocumentParser.h.
+        * html/HTMLParserScheduler.cpp:
+        (WebCore::HTMLParserScheduler::HTMLParserScheduler):
+        * html/HTMLParserScheduler.h:
+        * html/HTMLTreeBuilder.cpp: Copied from WebCore/html/HTML5TreeBuilder.cpp.
+        (WebCore::HTMLTreeBuilder::HTMLTreeBuilder):
+        (WebCore::HTMLTreeBuilder::~HTMLTreeBuilder):
+        (WebCore::HTMLTreeBuilder::handleScriptStartTag):
+        (WebCore::HTMLTreeBuilder::handleScriptEndTag):
+        (WebCore::HTMLTreeBuilder::takeScriptToProcess):
+        (WebCore::HTMLTreeBuilder::adjustedLexerState):
+        (WebCore::HTMLTreeBuilder::passTokenToLegacyParser):
+        (WebCore::HTMLTreeBuilder::constructTreeFromToken):
+        (WebCore::HTMLTreeBuilder::processToken):
+        (WebCore::HTMLTreeBuilder::finished):
+        (WebCore::HTMLTreeBuilder::isScriptingFlagEnabled):
+        * html/HTMLTreeBuilder.h: Copied from WebCore/html/HTML5TreeBuilder.h.
+
+2010-06-23  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         More HTML5 => HTML renames
         https://bugs.webkit.org/show_bug.cgi?id=41049
 

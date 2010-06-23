@@ -24,7 +24,7 @@
 #include "DocumentFragment.h"
 
 #include "Document.h"
-#include "HTML5DocumentParser.h"
+#include "HTMLDocumentParser.h"
 #include "LegacyHTMLDocumentParser.h"
 #include "Page.h"
 #include "Settings.h"
@@ -87,7 +87,7 @@ void DocumentFragment::parseHTML(const String& source, FragmentScriptingPermissi
     if (shouldUseLegacyHTMLParser())
         return parseLegacyHTMLDocumentFragment(source, this, scriptingPermission);
 
-    HTML5DocumentParser parser(this, scriptingPermission);
+    HTMLDocumentParser parser(this, scriptingPermission);
     parser.write(source, false);
     parser.finish();
     ASSERT(!parser.processingData()); // Make sure we're done. <rdar://problem/3963151>

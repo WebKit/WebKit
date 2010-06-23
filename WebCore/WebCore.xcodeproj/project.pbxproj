@@ -2976,8 +2976,8 @@
 		A86629D209DA2B48009633A5 /* JSMouseEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A86629CC09DA2B47009633A5 /* JSMouseEvent.cpp */; };
 		A86629D309DA2B48009633A5 /* JSKeyboardEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = A86629CD09DA2B47009633A5 /* JSKeyboardEvent.h */; };
 		A86629D409DA2B48009633A5 /* JSKeyboardEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A86629CE09DA2B47009633A5 /* JSKeyboardEvent.cpp */; };
-		A871038A11A2947000DBD50E /* HTML5DocumentParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A871038811A2947000DBD50E /* HTML5DocumentParser.cpp */; };
-		A871038B11A2947000DBD50E /* HTML5DocumentParser.h in Headers */ = {isa = PBXBuildFile; fileRef = A871038911A2947000DBD50E /* HTML5DocumentParser.h */; };
+		A871038A11A2947000DBD50E /* HTMLDocumentParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A871038811A2947000DBD50E /* HTMLDocumentParser.cpp */; };
+		A871038B11A2947000DBD50E /* HTMLDocumentParser.h in Headers */ = {isa = PBXBuildFile; fileRef = A871038911A2947000DBD50E /* HTMLDocumentParser.h */; };
 		A871D4560A127CBC00B12A68 /* HTMLPlugInElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A871D44C0A127CBC00B12A68 /* HTMLPlugInElement.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A871D4570A127CBC00B12A68 /* HTMLPlugInElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A871D44D0A127CBC00B12A68 /* HTMLPlugInElement.cpp */; };
 		A871D4580A127CBC00B12A68 /* HTMLParamElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A871D44E0A127CBC00B12A68 /* HTMLParamElement.h */; };
@@ -3036,8 +3036,8 @@
 		A871DFE30A15376B00B12A68 /* RenderReplaced.h in Headers */ = {isa = PBXBuildFile; fileRef = A871DFDF0A15376B00B12A68 /* RenderReplaced.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A871DFE40A15376B00B12A68 /* RenderWidget.h in Headers */ = {isa = PBXBuildFile; fileRef = A871DFE00A15376B00B12A68 /* RenderWidget.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A871DFE50A15376B00B12A68 /* RenderWidget.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A871DFE10A15376B00B12A68 /* RenderWidget.cpp */; };
-		A879C62511A9D1F70059237A /* HTML5TreeBuilder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A879C62311A9D1F70059237A /* HTML5TreeBuilder.cpp */; };
-		A879C62611A9D1F70059237A /* HTML5TreeBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = A879C62411A9D1F70059237A /* HTML5TreeBuilder.h */; };
+		A879C62511A9D1F70059237A /* HTMLTreeBuilder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A879C62311A9D1F70059237A /* HTMLTreeBuilder.cpp */; };
+		A879C62611A9D1F70059237A /* HTMLTreeBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = A879C62411A9D1F70059237A /* HTMLTreeBuilder.h */; };
 		A87F163511AE841300CBB2E5 /* HTMLScriptRunnerHost.h in Headers */ = {isa = PBXBuildFile; fileRef = A87F163411AE841300CBB2E5 /* HTMLScriptRunnerHost.h */; };
 		A883DF270F3D045D00F19BF6 /* VisibleSelection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A883DF250F3D045D00F19BF6 /* VisibleSelection.cpp */; };
 		A883DF280F3D045D00F19BF6 /* VisibleSelection.h in Headers */ = {isa = PBXBuildFile; fileRef = A883DF260F3D045D00F19BF6 /* VisibleSelection.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -8456,8 +8456,8 @@
 		A86629CC09DA2B47009633A5 /* JSMouseEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSMouseEvent.cpp; sourceTree = "<group>"; };
 		A86629CD09DA2B47009633A5 /* JSKeyboardEvent.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSKeyboardEvent.h; sourceTree = "<group>"; };
 		A86629CE09DA2B47009633A5 /* JSKeyboardEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSKeyboardEvent.cpp; sourceTree = "<group>"; };
-		A871038811A2947000DBD50E /* HTML5DocumentParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTML5DocumentParser.cpp; sourceTree = "<group>"; };
-		A871038911A2947000DBD50E /* HTML5DocumentParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTML5DocumentParser.h; sourceTree = "<group>"; };
+		A871038811A2947000DBD50E /* HTMLDocumentParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLDocumentParser.cpp; sourceTree = "<group>"; };
+		A871038911A2947000DBD50E /* HTMLDocumentParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLDocumentParser.h; sourceTree = "<group>"; };
 		A871D44C0A127CBC00B12A68 /* HTMLPlugInElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HTMLPlugInElement.h; sourceTree = "<group>"; };
 		A871D44D0A127CBC00B12A68 /* HTMLPlugInElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLPlugInElement.cpp; sourceTree = "<group>"; };
 		A871D44E0A127CBC00B12A68 /* HTMLParamElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HTMLParamElement.h; sourceTree = "<group>"; };
@@ -8516,8 +8516,8 @@
 		A871DFDF0A15376B00B12A68 /* RenderReplaced.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderReplaced.h; sourceTree = "<group>"; };
 		A871DFE00A15376B00B12A68 /* RenderWidget.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderWidget.h; sourceTree = "<group>"; };
 		A871DFE10A15376B00B12A68 /* RenderWidget.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderWidget.cpp; sourceTree = "<group>"; };
-		A879C62311A9D1F70059237A /* HTML5TreeBuilder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTML5TreeBuilder.cpp; sourceTree = "<group>"; };
-		A879C62411A9D1F70059237A /* HTML5TreeBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTML5TreeBuilder.h; sourceTree = "<group>"; };
+		A879C62311A9D1F70059237A /* HTMLTreeBuilder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLTreeBuilder.cpp; sourceTree = "<group>"; };
+		A879C62411A9D1F70059237A /* HTMLTreeBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLTreeBuilder.h; sourceTree = "<group>"; };
 		A87F163411AE841300CBB2E5 /* HTMLScriptRunnerHost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLScriptRunnerHost.h; sourceTree = "<group>"; };
 		A883DF250F3D045D00F19BF6 /* VisibleSelection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VisibleSelection.cpp; sourceTree = "<group>"; };
 		A883DF260F3D045D00F19BF6 /* VisibleSelection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VisibleSelection.h; sourceTree = "<group>"; };
@@ -13483,8 +13483,8 @@
 				895253DE116C4F0600CABF00 /* FileThreadTask.h */,
 				A8136D370973A8E700D74463 /* FormDataList.cpp */,
 				A8136D360973A8E700D74463 /* FormDataList.h */,
-				A871038811A2947000DBD50E /* HTML5DocumentParser.cpp */,
-				A871038911A2947000DBD50E /* HTML5DocumentParser.h */,
+				A871038811A2947000DBD50E /* HTMLDocumentParser.cpp */,
+				A871038911A2947000DBD50E /* HTMLDocumentParser.h */,
 				976E895E11C0CA3A00EA9CA9 /* HTMLEntityParser.cpp */,
 				976E895F11C0CA3A00EA9CA9 /* HTMLEntityParser.h */,
 				97E8B35411A23CE200169409 /* HTMLTokenizer.cpp */,
@@ -13495,8 +13495,8 @@
 				A83B3AEF11ADEFF500458809 /* HTMLScriptRunner.h */,
 				A87F163411AE841300CBB2E5 /* HTMLScriptRunnerHost.h */,
 				97E8B3C211A2890800169409 /* HTMLToken.h */,
-				A879C62311A9D1F70059237A /* HTML5TreeBuilder.cpp */,
-				A879C62411A9D1F70059237A /* HTML5TreeBuilder.h */,
+				A879C62311A9D1F70059237A /* HTMLTreeBuilder.cpp */,
+				A879C62411A9D1F70059237A /* HTMLTreeBuilder.h */,
 				BC97E239109144950010D361 /* HTMLAllCollection.cpp */,
 				BC97E238109144950010D361 /* HTMLAllCollection.h */,
 				BC97E23C109146F10010D361 /* HTMLAllCollection.idl */,
@@ -18051,14 +18051,14 @@
 				930908910AF7EDE40081DF01 /* HitTestRequest.h in Headers */,
 				9307F1D80AF2D59000DBA31A /* HitTestResult.h in Headers */,
 				BC3BC29C0E91AB0F00835588 /* HostWindow.h in Headers */,
-				A871038B11A2947000DBD50E /* HTML5DocumentParser.h in Headers */,
+				A871038B11A2947000DBD50E /* HTMLDocumentParser.h in Headers */,
 				976E896111C0CA3A00EA9CA9 /* HTMLEntityParser.h in Headers */,
 				97E8B35711A23CE200169409 /* HTMLTokenizer.h in Headers */,
 				97E7936611C6030900E649BC /* HTML5PreloadScanner.h in Headers */,
 				A83B3AF111ADEFF500458809 /* HTMLScriptRunner.h in Headers */,
 				A87F163511AE841300CBB2E5 /* HTMLScriptRunnerHost.h in Headers */,
 				97E8B3C311A2890800169409 /* HTMLToken.h in Headers */,
-				A879C62611A9D1F70059237A /* HTML5TreeBuilder.h in Headers */,
+				A879C62611A9D1F70059237A /* HTMLTreeBuilder.h in Headers */,
 				BC97E23A109144950010D361 /* HTMLAllCollection.h in Headers */,
 				A8CFF7AB0A156978000A4234 /* HTMLAnchorElement.h in Headers */,
 				A871D45D0A127CBC00B12A68 /* HTMLAppletElement.h in Headers */,
@@ -20393,12 +20393,12 @@
 				5160F4980B0AA75F00C1D2AF /* HistoryItemMac.mm in Sources */,
 				9363B62C0F8E8FE000803810 /* HistoryPropertyList.cpp in Sources */,
 				9307F1D70AF2D59000DBA31A /* HitTestResult.cpp in Sources */,
-				A871038A11A2947000DBD50E /* HTML5DocumentParser.cpp in Sources */,
+				A871038A11A2947000DBD50E /* HTMLDocumentParser.cpp in Sources */,
 				976E896011C0CA3A00EA9CA9 /* HTMLEntityParser.cpp in Sources */,
 				97E8B35611A23CE200169409 /* HTMLTokenizer.cpp in Sources */,
 				97E7936511C6030900E649BC /* HTML5PreloadScanner.cpp in Sources */,
 				A83B3AF011ADEFF500458809 /* HTMLScriptRunner.cpp in Sources */,
-				A879C62511A9D1F70059237A /* HTML5TreeBuilder.cpp in Sources */,
+				A879C62511A9D1F70059237A /* HTMLTreeBuilder.cpp in Sources */,
 				BC97E23B109144950010D361 /* HTMLAllCollection.cpp in Sources */,
 				A8CFF7A40A156978000A4234 /* HTMLAnchorElement.cpp in Sources */,
 				A871D45E0A127CBC00B12A68 /* HTMLAppletElement.cpp in Sources */,

@@ -33377,11 +33377,11 @@
 				>
 			</File>
             <File
-				RelativePath="..\html\HTML5DocumentParser.cpp"
+				RelativePath="..\html\HTMLDocumentParser.cpp"
 				>
             </File>
             <File
-				RelativePath="..\html\HTML5DocumentParser.h"
+				RelativePath="..\html\HTMLDocumentParser.h"
 				>
             </File>
             <File
@@ -33417,11 +33417,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\html\HTML5TreeBuilder.cpp"
+				RelativePath="..\html\HTMLTreeBuilder.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\html\HTML5TreeBuilder.h"
+				RelativePath="..\html\HTMLTreeBuilder.h"
 				>
 			</File>
 			<File

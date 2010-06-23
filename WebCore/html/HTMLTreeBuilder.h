@@ -45,12 +45,12 @@ class HTMLDocument;
 class LegacyHTMLTreeConstructor;
 class Node;
 
-class HTML5TreeBuilder : public Noncopyable {
+class HTMLTreeBuilder : public Noncopyable {
 public:
     // FIXME: Replace constructors with create() functions returning PassOwnPtrs
-    HTML5TreeBuilder(HTMLTokenizer*, HTMLDocument*, bool reportErrors);
-    HTML5TreeBuilder(HTMLTokenizer*, DocumentFragment*, FragmentScriptingPermission);
-    ~HTML5TreeBuilder();
+    HTMLTreeBuilder(HTMLTokenizer*, HTMLDocument*, bool reportErrors);
+    HTMLTreeBuilder(HTMLTokenizer*, DocumentFragment*, FragmentScriptingPermission);
+    ~HTMLTreeBuilder();
 
     void setPaused(bool paused) { m_isPaused = paused; }
     bool isPaused() const { return m_isPaused; }

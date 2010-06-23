@@ -32,11 +32,11 @@
 
 namespace WebCore {
 
-class HTML5DocumentParser;
+class HTMLDocumentParser;
 
 class HTMLParserScheduler :  public Noncopyable {
 public:
-    HTMLParserScheduler(HTML5DocumentParser*);
+    HTMLParserScheduler(HTMLDocumentParser*);
     ~HTMLParserScheduler();
 
     struct PumpSession {
@@ -72,7 +72,7 @@ public:
 private:
     void continueNextChunkTimerFired(Timer<HTMLParserScheduler>*);
 
-    HTML5DocumentParser* m_parser;
+    HTMLDocumentParser* m_parser;
 
     double m_parserTimeLimit;
     int m_parserChunkSize;

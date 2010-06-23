@@ -27,7 +27,7 @@
 #include "HTMLParserScheduler.h"
 
 #include "FrameView.h" // Only for isLayoutTimerActive
-#include "HTML5DocumentParser.h"
+#include "HTMLDocumentParser.h"
 #include "Document.h"
 
 // defaultParserChunkSize is used to define how many tokens the parser will
@@ -60,7 +60,7 @@ static int parserChunkSize(Page* page)
     return defaultParserChunkSize;
 }
 
-HTMLParserScheduler::HTMLParserScheduler(HTML5DocumentParser* parser)
+HTMLParserScheduler::HTMLParserScheduler(HTMLDocumentParser* parser)
     : m_parser(parser)
     , m_parserTimeLimit(parserTimeLimit(m_parser->document()->page()))
     , m_parserChunkSize(parserChunkSize(m_parser->document()->page()))
