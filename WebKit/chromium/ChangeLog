@@ -1,3 +1,10 @@
+2010-06-22  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed: follow up to r61655 to make Chromium tests happy.
+
+        * src/js/InspectorControllerImpl.js:
+        (devtools.InspectorBackendImpl):
+
 2010-06-22  Mikhail Naganov  <mnaganov@chromium.org>
 
         Reviewed by Pavel Feldman.

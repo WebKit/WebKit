@@ -67,6 +67,7 @@ devtools.InspectorBackendImpl = function()
     this.installInspectorControllerDelegate_("highlightDOMNode");
     this.installInspectorControllerDelegate_("hideDOMNodeHighlight");
     this.installInspectorControllerDelegate_("performSearch");
+    this.installInspectorControllerDelegate_("pushNodeByPathToFrontend");
     this.installInspectorControllerDelegate_("releaseWrapperObjectGroup");
     this.installInspectorControllerDelegate_("removeAllScriptsToEvaluateOnLoad");
     this.installInspectorControllerDelegate_("reloadPage");
