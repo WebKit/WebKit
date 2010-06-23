@@ -1,3 +1,17 @@
+2010-06-23  Leandro Pereira  <leandro@profusion.mobi>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [EFL] Add support to CPack (to generate source tarballs)
+        https://bugs.webkit.org/show_bug.cgi?id=41009
+        
+        * CMakeLists.txt:
+        * cmake/OptionsEfl.cmake: Define the default source generator for
+        the EFL port.
+        * cmake/WebKitPackaging.cmake: Added. This file filters the source
+        files so that only files relevant to the selected port are included
+        in the source tarball. See comments for details.
+
 2010-06-22  Eric Seidel  <eric@webkit.org>
 
         Unreviewed.  Test commit for commit-queue@webkit.org.

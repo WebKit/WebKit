@@ -19,7 +19,8 @@ INCLUDE(WebKitFeatures)
 # -----------------------------------------------------------------------------
 # Determine which port will be built
 # -----------------------------------------------------------------------------
-OPTION(PORT "choose which WebKit port to build" "NOPORT")
+SET(ALL_PORTS Efl)
+OPTION(PORT "choose which WebKit port to build (one of ${ALL_PORTS})" "NOPORT")
 
 # -----------------------------------------------------------------------------
 # Find common packages (used by all ports)
@@ -88,6 +89,11 @@ SET(WebKit_LIBRARY_TYPE SHARED)
 # -----------------------------------------------------------------------------
 INCLUDE(OptionsCommon)
 INCLUDE(Options${PORT})
+
+# -----------------------------------------------------------------------------
+# Define packaging
+# -----------------------------------------------------------------------------
+INCLUDE(WebKitPackaging)
 
 # -----------------------------------------------------------------------------
 # Add module directories
