@@ -26,10 +26,10 @@
 #ifndef WebCoreTypeArgumentMarshalling_h
 #define WebCoreTypeArgumentMarshalling_h
 
+#include "ArgumentCoders.h"
 #include "ArgumentDecoder.h"
 #include "ArgumentEncoder.h"
 #include "Arguments.h"
-#include "SimpleArgumentCoder.h"
 #include <WebCore/FloatRect.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/PlatformString.h>

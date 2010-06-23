@@ -2,6 +2,17 @@
 
         Reviewed by Sam Weinig.
 
+        Rename SimpleArgumentCoder.h to ArgumentCoders.h
+
+        * Platform/CoreIPC/ArgumentCoders.h: Copied from Platform/CoreIPC/SimpleArgumentCoder.h.
+        * Platform/CoreIPC/SimpleArgumentCoder.h: Removed.
+        * Shared/WebCoreTypeArgumentMarshalling.h:
+        * WebKit2.xcodeproj/project.pbxproj:
+
+2010-06-23  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
         Add a plug-in info cache to WebPlatformStrategies
         https://bugs.webkit.org/show_bug.cgi?id=41087
 

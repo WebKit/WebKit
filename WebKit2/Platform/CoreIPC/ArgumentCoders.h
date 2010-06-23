@@ -26,7 +26,8 @@
 #ifndef SimpleArgumentCoder_h
 #define SimpleArgumentCoder_h
 
-#include "ArgumentCoder.h"
+#include "ArgumentDecoder.h"
+#include "ArgumentEncoder.h"
 
 namespace CoreIPC {
 
