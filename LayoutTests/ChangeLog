@@ -1,3 +1,10 @@
+2010-06-23  James Robinson  <jamesr@chromium.org>
+
+        Unreviewed.  Add qt baseline due to port specific formatting differences for SVG rects
+        https://bugs.webkit.org/show_bug.cgi?id=40366
+
+        * platform/qt/fast/repaint/svg-layout-root-style-attr-update-expected.txt: Added.
+
 2010-06-23  Cris Neckar  <cdn@chromium.org>
 
         Reviewed by Darin Fisher.
