@@ -1,5 +1,16 @@
 2010-06-23  Stephen White  <senorblanco@chromium.org>
 
+        Unreviewed; correcting bad patch.
+
+        In my haste to land r61710, I mistakenly landed the wrong version, in
+        which a chunk of code was moved.  This patch moves that chunk of code
+        to where it was in the patch that was reviewed.  Mea culpa.
+
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::ImageQualityController::shouldPaintAtLowQuality):
+
+2010-06-23  Stephen White  <senorblanco@chromium.org>
+
         Reviewed by David Hyatt.
 
         This is a tweak to the resize algorithm introduced in r61341, and

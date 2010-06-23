@@ -125,6 +125,12 @@ bool ImageQualityController::shouldPaintAtLowQuality(GraphicsContext* context, R
         if (totalPixels > cInterpolationCutoff)
             return true;
     }
+    // If an animated resize is active, paint in low quality and kick the timer ahead.
+    if (m_animatedResizeIsActive) {
+        m_lastPaintSizeMap.set(object, size);
+        restartTimer();
+        return true;
+    }
     // If this is the first time resizing this image, or its size is the
     // same as the last resize, draw at high res, but record the paint
     // size and set the timer.
@@ -132,12 +138,6 @@ bool ImageQualityController::shouldPaintAtLowQuality(GraphicsContext* context, R
         restartTimer();
         m_lastPaintSizeMap.set(object, size);
         return false;
-    }
-    // If an animated resize is active, paint in low quality and kick the timer ahead.
-    if (m_animatedResizeIsActive) {
-        m_lastPaintSizeMap.set(object, size);
-        restartTimer();
-        return true;
     }
     // If the timer is no longer active, draw at high quality and don't
     // set the timer.
