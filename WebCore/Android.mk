@@ -268,7 +268,7 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	html/HTMLParserErrorCodes.cpp \
 	html/HTMLParserScheduler.cpp \
 	html/HTMLTableRowsCollection.cpp \
-	html/HTMLDocumentParser.cpp \
+	html/LegacyHTMLDocumentParser.cpp \
 	html/HTMLViewSourceDocument.cpp \
 	html/ImageData.cpp \
 	html/ImageResizerThread.cpp \

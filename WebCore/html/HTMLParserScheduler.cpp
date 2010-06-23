@@ -54,7 +54,7 @@ static int parserChunkSize(Page* page)
 {
     // FIXME: We may need to divide the value from customHTMLTokenizerChunkSize
     // by some constant to translate from the "character" based behavior of the
-    // old HTMLDocumentParser to the token-based behavior of this parser.
+    // old LegacyHTMLDocumentParser to the token-based behavior of this parser.
     if (page && page->hasCustomHTMLTokenizerChunkSize())
         return page->customHTMLTokenizerChunkSize();
     return defaultParserChunkSize;

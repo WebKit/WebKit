@@ -47,7 +47,7 @@ struct HTMLStackElem;
 struct Token;
 
 /**
- * The parser for HTML. It receives a stream of tokens from the HTMLDocumentParser, and
+ * The parser for HTML. It receives a stream of tokens from the LegacyHTMLDocumentParser, and
  * builds up the Document structure from it.
  */
 class LegacyHTMLTreeConstructor : public Noncopyable {

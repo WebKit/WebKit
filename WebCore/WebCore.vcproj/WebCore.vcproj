@@ -37577,11 +37577,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\html\HTMLDocumentParser.cpp"
+				RelativePath="..\html\LegacyHTMLDocumentParser.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\html\HTMLDocumentParser.h"
+				RelativePath="..\html\LegacyHTMLDocumentParser.h"
 				>
 			</File>
 			<File

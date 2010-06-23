@@ -26,7 +26,7 @@
 namespace WebCore {
 
     class LegacyHTMLTreeConstructor;
-    class HTMLDocumentParser;
+    class LegacyHTMLDocumentParser;
     class SegmentedString;
     class XSSAuditor;
 
@@ -44,7 +44,7 @@ namespace WebCore {
         virtual bool isWaitingForScripts() const = 0;
         virtual void stopParsing() { m_parserStopped = true; }
         // FIXME: processingData() is only used by DocumentLoader::isLoadingInAPISense
-        // and is very unclear as to what it actually means.  Only HTMLDocumentParser
+        // and is very unclear as to what it actually means.  Only LegacyHTMLDocumentParser
         // actually implements it.
         virtual bool processingData() const { return false; }
         virtual int executingScript() const { return 0; }
@@ -63,7 +63,7 @@ namespace WebCore {
         virtual void executeScriptsWaitingForStylesheets() {}
 
         virtual LegacyHTMLTreeConstructor* htmlTreeConstructor() const { return 0; }
-        virtual HTMLDocumentParser* asHTMLDocumentParser() { return 0; }
+        virtual LegacyHTMLDocumentParser* asHTMLDocumentParser() { return 0; }
 
         XSSAuditor* xssAuditor() const { return m_XSSAuditor; }
         void setXSSAuditor(XSSAuditor* auditor) { m_XSSAuditor = auditor; }

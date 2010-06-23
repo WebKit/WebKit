@@ -32,7 +32,7 @@
 #include "HTML5Lexer.h"
 #include "HTML5Token.h"
 #include "HTMLDocument.h"
-#include "HTMLDocumentParser.h"
+#include "LegacyHTMLDocumentParser.h"
 #include "HTMLNames.h"
 #include "LegacyHTMLTreeConstructor.h"
 #include "NotImplemented.h"

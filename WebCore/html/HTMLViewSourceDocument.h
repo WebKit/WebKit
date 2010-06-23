@@ -42,14 +42,14 @@ public:
         return adoptRef(new HTMLViewSourceDocument(frame, mimeType));
     }
 
-    void addViewSourceToken(Token*); // Used by the HTMLDocumentParser.
+    void addViewSourceToken(Token*); // Used by the LegacyHTMLDocumentParser.
     void addViewSourceText(const String&); // Used by the TextDocumentParser.
     void addViewSourceDoctypeToken(DoctypeToken*);
 
 private:
     HTMLViewSourceDocument(Frame*, const String& mimeType);
 
-    // Returns HTMLDocumentParser or TextDocumentParser based on m_type.
+    // Returns LegacyHTMLDocumentParser or TextDocumentParser based on m_type.
     virtual DocumentParser* createParser();
 
     void createContainingTable();

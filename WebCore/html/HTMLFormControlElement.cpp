@@ -39,7 +39,7 @@
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "LegacyHTMLTreeConstructor.h"
-#include "HTMLDocumentParser.h"
+#include "LegacyHTMLDocumentParser.h"
 #include "LabelsNodeList.h"
 #include "Page.h"
 #include "RenderBox.h"

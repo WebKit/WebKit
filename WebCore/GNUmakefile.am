@@ -1264,8 +1264,8 @@ webcore_sources += \
 	WebCore/html/HTMLTextAreaElement.h \
 	WebCore/html/HTMLTitleElement.cpp \
 	WebCore/html/HTMLTitleElement.h \
-	WebCore/html/HTMLDocumentParser.cpp \
-	WebCore/html/HTMLDocumentParser.h \
+	WebCore/html/LegacyHTMLDocumentParser.cpp \
+	WebCore/html/LegacyHTMLDocumentParser.h \
 	WebCore/html/HTMLUListElement.cpp \
 	WebCore/html/HTMLUListElement.h \
 	WebCore/html/HTMLViewSourceDocument.cpp \

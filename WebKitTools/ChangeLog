@@ -1,3 +1,14 @@
+2010-06-22  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Rename HTMLDocumentParser to LegacyHTMLDocumentParser
+        https://bugs.webkit.org/show_bug.cgi?id=41043
+
+        Update the hash.
+
+        * Scripts/do-webcore-rename:
+
 2010-06-22  Sam Magnuson  <smagnuson@netflix.com>
 
         Reviewed by Shinichiro Hamaji.

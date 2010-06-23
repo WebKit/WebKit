@@ -38,7 +38,7 @@
 #include "FrameView.h"
 #include "HTMLLinkElement.h"
 #include "HTMLStyleElement.h"
-#include "HTMLDocumentParser.h"
+#include "LegacyHTMLDocumentParser.h"
 #include "ProcessingInstruction.h"
 #include "ResourceError.h"
 #include "ResourceHandle.h"

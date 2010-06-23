@@ -25,7 +25,7 @@
 
 #include "Document.h"
 #include "HTML5DocumentParser.h"
-#include "HTMLDocumentParser.h"
+#include "LegacyHTMLDocumentParser.h"
 #include "Page.h"
 #include "Settings.h"
 #include "XMLDocumentParser.h"

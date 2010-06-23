@@ -2481,7 +2481,7 @@
 		93F198E508245E59001E9ABC /* HTMLDocument.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D23C02DE4396018635CA /* HTMLDocument.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93F198E608245E59001E9ABC /* HTMLElement.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D23F02DE4396018635CA /* HTMLElement.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93F198EF08245E59001E9ABC /* LegacyHTMLTreeConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D25102DE4396018635CA /* LegacyHTMLTreeConstructor.h */; };
-		93F198F008245E59001E9ABC /* HTMLDocumentParser.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D25302DE4396018635CA /* HTMLDocumentParser.h */; };
+		93F198F008245E59001E9ABC /* LegacyHTMLDocumentParser.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D25302DE4396018635CA /* LegacyHTMLDocumentParser.h */; };
 		93F198F608245E59001E9ABC /* TextResourceDecoder.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D27902DE43D7018635CA /* TextResourceDecoder.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93F1991808245E59001E9ABC /* Range.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D30402DE4476018635CA /* Range.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93F1992108245E59001E9ABC /* XMLDocumentParser.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D30A02DE4476018635CA /* XMLDocumentParser.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2511,7 +2511,7 @@
 		93F19A9108245E59001E9ABC /* HTMLDocument.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D23B02DE4396018635CA /* HTMLDocument.cpp */; };
 		93F19A9208245E59001E9ABC /* HTMLElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D23E02DE4396018635CA /* HTMLElement.cpp */; };
 		93F19A9B08245E59001E9ABC /* LegacyHTMLTreeConstructor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D25002DE4396018635CA /* LegacyHTMLTreeConstructor.cpp */; };
-		93F19A9C08245E59001E9ABC /* HTMLDocumentParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D25202DE4396018635CA /* HTMLDocumentParser.cpp */; };
+		93F19A9C08245E59001E9ABC /* LegacyHTMLDocumentParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D25202DE4396018635CA /* LegacyHTMLDocumentParser.cpp */; };
 		93F19A9D08245E59001E9ABC /* TextResourceDecoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D27802DE43D7018635CA /* TextResourceDecoder.cpp */; };
 		93F19AB908245E59001E9ABC /* Range.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D30302DE4476018635CA /* Range.cpp */; };
 		93F19ABC08245E59001E9ABC /* XMLDocumentParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D30902DE4476018635CA /* XMLDocumentParser.cpp */; };
@@ -10656,8 +10656,8 @@
 		F523D23F02DE4396018635CA /* HTMLElement.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = HTMLElement.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F523D25002DE4396018635CA /* LegacyHTMLTreeConstructor.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LegacyHTMLTreeConstructor.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F523D25102DE4396018635CA /* LegacyHTMLTreeConstructor.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = LegacyHTMLTreeConstructor.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F523D25202DE4396018635CA /* HTMLDocumentParser.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLDocumentParser.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F523D25302DE4396018635CA /* HTMLDocumentParser.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = HTMLDocumentParser.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		F523D25202DE4396018635CA /* LegacyHTMLDocumentParser.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LegacyHTMLDocumentParser.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		F523D25302DE4396018635CA /* LegacyHTMLDocumentParser.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = LegacyHTMLDocumentParser.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F523D27802DE43D7018635CA /* TextResourceDecoder.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextResourceDecoder.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F523D27902DE43D7018635CA /* TextResourceDecoder.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = TextResourceDecoder.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F523D30302DE4476018635CA /* Range.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Range.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -13558,8 +13558,8 @@
 				F523D23B02DE4396018635CA /* HTMLDocument.cpp */,
 				F523D23C02DE4396018635CA /* HTMLDocument.h */,
 				1A494E290A12354300FDAFC1 /* HTMLDocument.idl */,
-				F523D25202DE4396018635CA /* HTMLDocumentParser.cpp */,
-				F523D25302DE4396018635CA /* HTMLDocumentParser.h */,
+				F523D25202DE4396018635CA /* LegacyHTMLDocumentParser.cpp */,
+				F523D25302DE4396018635CA /* LegacyHTMLDocumentParser.h */,
 				F523D23E02DE4396018635CA /* HTMLElement.cpp */,
 				F523D23F02DE4396018635CA /* HTMLElement.h */,
 				1A494BBB0A122DCD00FDAFC1 /* HTMLElement.idl */,
@@ -18075,7 +18075,7 @@
 				A8EA7CB70A192B9C00A8EF5F /* HTMLDivElement.h in Headers */,
 				A8EA79F70A1916DF00A8EF5F /* HTMLDListElement.h in Headers */,
 				93F198E508245E59001E9ABC /* HTMLDocument.h in Headers */,
-				93F198F008245E59001E9ABC /* HTMLDocumentParser.h in Headers */,
+				93F198F008245E59001E9ABC /* LegacyHTMLDocumentParser.h in Headers */,
 				93309DE8099E64920056E581 /* htmlediting.h in Headers */,
 				93F198E608245E59001E9ABC /* HTMLElement.h in Headers */,
 				A17C81230F2A5CF7005DAAEB /* HTMLElementFactory.h in Headers */,
@@ -20414,7 +20414,7 @@
 				A8EA7CB10A192B9C00A8EF5F /* HTMLDivElement.cpp in Sources */,
 				A8EA79F50A1916DF00A8EF5F /* HTMLDListElement.cpp in Sources */,
 				93F19A9108245E59001E9ABC /* HTMLDocument.cpp in Sources */,
-				93F19A9C08245E59001E9ABC /* HTMLDocumentParser.cpp in Sources */,
+				93F19A9C08245E59001E9ABC /* LegacyHTMLDocumentParser.cpp in Sources */,
 				93309DE7099E64920056E581 /* htmlediting.cpp in Sources */,
 				93F19A9208245E59001E9ABC /* HTMLElement.cpp in Sources */,
 				A17C81220F2A5CF7005DAAEB /* HTMLElementFactory.cpp in Sources */,

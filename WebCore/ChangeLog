@@ -1,3 +1,93 @@
+2010-06-22  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Rename HTMLDocumentParser to LegacyHTMLDocumentParser
+        https://bugs.webkit.org/show_bug.cgi?id=41043
+
+        As requested by Darin Adler.
+
+        * Android.mk:
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSStyleSheet.cpp:
+        (WebCore::CSSStyleSheet::checkLoaded):
+        * dom/Document.cpp:
+        (WebCore::Document::write):
+        * dom/DocumentFragment.cpp:
+        * dom/DocumentParser.h:
+        (WebCore::DocumentParser::asHTMLDocumentParser):
+        * dom/XMLDocumentParserLibxml2.cpp:
+        * dom/XMLDocumentParserQt.cpp:
+        * html/HTML5Lexer.h:
+        (WebCore::HTML5Lexer::columnNumber):
+        * html/HTML5TreeBuilder.cpp:
+        * html/HTMLDocument.cpp:
+        (WebCore::HTMLDocument::createParser):
+        * html/HTMLDocumentParser.cpp: Removed.
+        * html/HTMLDocumentParser.h: Removed.
+        * html/HTMLFormControlElement.cpp:
+        * html/HTMLParserScheduler.cpp:
+        (WebCore::parserChunkSize):
+        * html/HTMLViewSourceDocument.cpp:
+        (WebCore::HTMLViewSourceDocument::createParser):
+        (WebCore::HTMLViewSourceDocument::addViewSourceToken):
+        * html/HTMLViewSourceDocument.h:
+        * html/LegacyHTMLDocumentParser.cpp: Copied from WebCore/html/HTMLDocumentParser.cpp.
+        (WebCore::LegacyHTMLDocumentParser::LegacyHTMLDocumentParser):
+        (WebCore::LegacyHTMLDocumentParser::reset):
+        (WebCore::LegacyHTMLDocumentParser::begin):
+        (WebCore::LegacyHTMLDocumentParser::setForceSynchronous):
+        (WebCore::LegacyHTMLDocumentParser::processListing):
+        (WebCore::LegacyHTMLDocumentParser::parseNonHTMLText):
+        (WebCore::LegacyHTMLDocumentParser::scriptHandler):
+        (WebCore::LegacyHTMLDocumentParser::scriptExecution):
+        (WebCore::LegacyHTMLDocumentParser::parseComment):
+        (WebCore::LegacyHTMLDocumentParser::parseServer):
+        (WebCore::LegacyHTMLDocumentParser::parseProcessingInstruction):
+        (WebCore::LegacyHTMLDocumentParser::parseText):
+        (WebCore::LegacyHTMLDocumentParser::parseEntity):
+        (WebCore::LegacyHTMLDocumentParser::parseDoctype):
+        (WebCore::LegacyHTMLDocumentParser::parseTag):
+        (WebCore::LegacyHTMLDocumentParser::continueProcessing):
+        (WebCore::LegacyHTMLDocumentParser::advance):
+        (WebCore::LegacyHTMLDocumentParser::willWriteHTML):
+        (WebCore::LegacyHTMLDocumentParser::didWriteHTML):
+        (WebCore::LegacyHTMLDocumentParser::write):
+        (WebCore::LegacyHTMLDocumentParser::stopParsing):
+        (WebCore::LegacyHTMLDocumentParser::processingData):
+        (WebCore::LegacyHTMLDocumentParser::timerFired):
+        (WebCore::LegacyHTMLDocumentParser::end):
+        (WebCore::LegacyHTMLDocumentParser::finish):
+        (WebCore::LegacyHTMLDocumentParser::finishWasCalled):
+        (WebCore::LegacyHTMLDocumentParser::processToken):
+        (WebCore::LegacyHTMLDocumentParser::processDoctypeToken):
+        (WebCore::LegacyHTMLDocumentParser::~LegacyHTMLDocumentParser):
+        (WebCore::LegacyHTMLDocumentParser::enlargeBuffer):
+        (WebCore::LegacyHTMLDocumentParser::enlargeScriptBuffer):
+        (WebCore::LegacyHTMLDocumentParser::executeScriptsWaitingForStylesheets):
+        (WebCore::LegacyHTMLDocumentParser::notifyFinished):
+        (WebCore::LegacyHTMLDocumentParser::executeExternalScriptsIfReady):
+        (WebCore::LegacyHTMLDocumentParser::executeExternalScriptsTimerFired):
+        (WebCore::LegacyHTMLDocumentParser::continueExecutingExternalScripts):
+        (WebCore::LegacyHTMLDocumentParser::isWaitingForScripts):
+        (WebCore::LegacyHTMLDocumentParser::setSrc):
+        (WebCore::parseLegacyHTMLDocumentFragment):
+        * html/LegacyHTMLDocumentParser.h: Copied from WebCore/html/HTMLDocumentParser.h.
+        (WebCore::LegacyHTMLDocumentParser::asHTMLDocumentParser):
+        * html/LegacyHTMLTreeConstructor.cpp:
+        (WebCore::LegacyHTMLTreeConstructor::reportErrorToConsole):
+        * html/LegacyHTMLTreeConstructor.h:
+        * loader/FTPDirectoryDocument.cpp:
+        (WebCore::FTPDirectoryDocumentParser::FTPDirectoryDocumentParser):
+        (WebCore::FTPDirectoryDocumentParser::loadDocumentTemplate):
+        (WebCore::FTPDirectoryDocumentParser::finish):
+        * page/XSSAuditor.h:
+
 2010-06-22  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Unreviewed attempt to fix the windows build.
