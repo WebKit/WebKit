@@ -57,6 +57,7 @@ public:
 
     // Callback hooks
     void didCreatePage(WebPage*);
+    void willDestroyPage(WebPage*);
     void didRecieveMessage(const WebCore::String&);
 
 private:

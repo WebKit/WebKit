@@ -1,3 +1,38 @@
+2010-06-23  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=41073
+        WebKit2: Flesh out more of the InjectedBundle client API
+
+        * WebProcess/InjectedBundle/API/c/WKBundle.h:
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.h:
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::willDestroyPage):
+        * WebProcess/InjectedBundle/InjectedBundle.h:
+        * WebProcess/InjectedBundle/InjectedBundlePageClient.cpp:
+        (WebKit::InjectedBundlePageClient::didStartProvisionalLoadForFrame):
+        (WebKit::InjectedBundlePageClient::didReceiveServerRedirectForProvisionalLoadForFrame):
+        (WebKit::InjectedBundlePageClient::didFailProvisionalLoadWithErrorForFrame):
+        (WebKit::InjectedBundlePageClient::didCommitLoadForFrame):
+        (WebKit::InjectedBundlePageClient::didFinishLoadForFrame):
+        (WebKit::InjectedBundlePageClient::didFailLoadWithErrorForFrame):
+        (WebKit::InjectedBundlePageClient::didReceiveTitleForFrame):
+        * WebProcess/InjectedBundle/InjectedBundlePageClient.h:
+        * WebProcess/InjectedBundle/mac/InjectedBundleMac.cpp:
+        (WebKit::InjectedBundle::load): Add some error logging on failure to load the bundle.
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDidReceiveServerRedirectForProvisionalLoad):
+        (WebKit::WebFrameLoaderClient::dispatchDidStartProvisionalLoad):
+        (WebKit::WebFrameLoaderClient::dispatchDidReceiveTitle):
+        (WebKit::WebFrameLoaderClient::dispatchDidCommitLoad):
+        (WebKit::WebFrameLoaderClient::dispatchDidFailProvisionalLoad):
+        (WebKit::WebFrameLoaderClient::dispatchDidFailLoad):
+        (WebKit::WebFrameLoaderClient::dispatchDidFinishLoad):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::close):
+        * mac/WebKit2.exp:
+
 2010-06-22  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

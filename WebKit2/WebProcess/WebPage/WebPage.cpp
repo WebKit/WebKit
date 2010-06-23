@@ -147,6 +147,9 @@ void WebPage::removeWebFrame(uint64_t frameID)
 
 void WebPage::close()
 {
+    if (WebProcess::shared().injectedBundle())
+        WebProcess::shared().injectedBundle()->willDestroyPage(this);
+
     m_mainFrame->coreFrame()->loader()->detachFromParent();
 
     delete m_page;

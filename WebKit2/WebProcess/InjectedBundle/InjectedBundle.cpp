@@ -65,6 +65,12 @@ void InjectedBundle::didCreatePage(WebPage* page)
         m_client.didCreatePage(toRef(this), toRef(page), m_client.clientInfo);
 }
 
+void InjectedBundle::willDestroyPage(WebPage* page)
+{
+    if (m_client.willDestroyPage)
+        m_client.willDestroyPage(toRef(this), toRef(page), m_client.clientInfo);
+}
+
 void InjectedBundle::didRecieveMessage(const WebCore::String& message)
 {
     if (m_client.didRecieveMessage)

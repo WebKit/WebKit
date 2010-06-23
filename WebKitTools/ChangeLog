@@ -1,3 +1,23 @@
+2010-06-23  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=41073
+        WebKit2: Flesh out more of the InjectedBundle client API
+
+        * MiniBrowser/mac/WebBundle/WebBundleMain.m:
+        (_didStartProvisionalLoadForFrame):
+        (_didReceiveServerRedirectForProvisionalLoadForFrame):
+        (_didFailProvisionalLoadWithErrorForFrame):
+        (_didCommitLoadForFrame):
+        (_didFinishLoadForFrame):
+        (_didFailLoadWithErrorForFrame):
+        (_didReceiveTitleForFrame):
+        (_didClearWindowForFrame):
+        (_didCreatePage):
+        (_willDestroyPage):
+        (WKBundleInitialize):
+
 2010-06-23  Yuzo Fujishima  <yuzo@google.com>
 
         Reviewed by Shinichiro Hamaji.

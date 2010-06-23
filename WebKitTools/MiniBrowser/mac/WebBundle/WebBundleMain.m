@@ -34,7 +34,37 @@
 
 static WKBundleRef globalBundle;
 
-void _didClearWindow(WKBundlePageRef page, WKBundleFrameRef frame, JSContextRef ctx, JSObjectRef window, const void *clientInfo)
+// WKBundlePageClient
+
+void _didStartProvisionalLoadForFrame(WKBundlePageRef page, WKBundleFrameRef frame, const void *clientInfo)
+{
+}
+
+void _didReceiveServerRedirectForProvisionalLoadForFrame(WKBundlePageRef page, WKBundleFrameRef frame, const void *clientInfo)
+{
+}
+
+void _didFailProvisionalLoadWithErrorForFrame(WKBundlePageRef page, WKBundleFrameRef frame, const void *clientInfo)
+{
+}
+
+void _didCommitLoadForFrame(WKBundlePageRef page, WKBundleFrameRef frame, const void *clientInfo)
+{
+}
+
+void _didFinishLoadForFrame(WKBundlePageRef page, WKBundleFrameRef frame, const void *clientInfo)
+{
+}
+
+void _didFailLoadWithErrorForFrame(WKBundlePageRef page, WKBundleFrameRef frame, const void *clientInfo)
+{
+}
+
+void _didReceiveTitleForFrame(WKBundlePageRef page, WKStringRef title, WKBundleFrameRef frame, const void *clientInfo)
+{
+}
+
+void _didClearWindowForFrame(WKBundlePageRef page, WKBundleFrameRef frame, JSContextRef ctx, JSObjectRef window, const void *clientInfo)
 {
     CFURLRef cfURL = WKURLCopyCFURL(0, WKBundlePageGetMainFrameURL(page));
     NSLog(@"WKBundlePageClient - _didClearWindowForFrame %@", [(NSURL *)cfURL absoluteString]);
@@ -45,16 +75,31 @@ void _didClearWindow(WKBundlePageRef page, WKBundleFrameRef frame, JSContextRef 
     WKStringRelease(message);
 }
 
-void _didCreatePage(WKBundlePageRef bundle, WKBundlePageRef page, const void* clientInfo)
+
+// WKBundleClient
+
+void _didCreatePage(WKBundleRef bundle, WKBundlePageRef page, const void* clientInfo)
 {
     NSLog(@"WKBundleClient - didCreatePage\n");
 
     WKBundlePageClient client = {
         0,
         0,
-        _didClearWindow
+        _didStartProvisionalLoadForFrame,
+        _didReceiveServerRedirectForProvisionalLoadForFrame,
+        _didFailProvisionalLoadWithErrorForFrame,
+        _didCommitLoadForFrame,
+        _didFinishLoadForFrame,
+        _didFailLoadWithErrorForFrame,
+        _didReceiveTitleForFrame,
+        _didClearWindowForFrame
     };
     WKBundlePageSetClient(page, &client);
+}
+
+void _willDestroyPage(WKBundleRef bundle, WKBundlePageRef page, const void* clientInfo)
+{
+    NSLog(@"WKBundleClient - willDestroyPage\n");
 }
 
 void _didRecieveMessage(WKBundleRef bundle, WKStringRef message, const void *clientInfo)
@@ -72,6 +117,7 @@ void WKBundleInitialize(WKBundleRef bundle)
         0,
         0,
         _didCreatePage,
+        _willDestroyPage,
         _didRecieveMessage
     };
     WKBundleSetClient(bundle, &client);

@@ -36,23 +36,33 @@ namespace WebKit {
 bool InjectedBundle::load()
 {
     RetainPtr<CFStringRef> injectedBundlePathStr(AdoptCF, CFStringCreateWithCharacters(0, reinterpret_cast<const UniChar*>(m_path.characters()), m_path.length()));
-    if (!injectedBundlePathStr)
+    if (!injectedBundlePathStr) {
+        fprintf(stderr, "InjectedBundle::load failed - Could not create the path string.\n");
         return false;
+    }
     
     RetainPtr<CFURLRef> bundleURL(AdoptCF, CFURLCreateWithFileSystemPath(0, injectedBundlePathStr.get(), kCFURLPOSIXPathStyle, false));
-    if (!bundleURL)
+    if (!bundleURL) {
+        fprintf(stderr, "InjectedBundle::load failed - Could not create the url from the path string.\n");
         return false;
+    }
 
     m_platformBundle = CFBundleCreate(0, bundleURL.get());
-    if (!m_platformBundle)
+    if (!m_platformBundle) {
+        fprintf(stderr, "InjectedBundle::load failed - Could not create the bundle.\n");
         return false;
+    }
         
-    if (!CFBundleLoadExecutable(m_platformBundle))
+    if (!CFBundleLoadExecutable(m_platformBundle)) {
+        fprintf(stderr, "InjectedBundle::load failed - Could not load the executable from the bundle.\n");
         return false;
+    }
 
     WKBundleInitializeFunctionPtr initializeFunction = reinterpret_cast<WKBundleInitializeFunctionPtr>(CFBundleGetFunctionPointerForName(m_platformBundle, CFSTR("WKBundleInitialize")));
-    if (!initializeFunction)
+    if (!initializeFunction) {
+        fprintf(stderr, "InjectedBundle::load failed - Could not find the initialize function in the bundle executable.\n");
         return false;
+    }
 
     initializeFunction(toRef(this));
     return true;

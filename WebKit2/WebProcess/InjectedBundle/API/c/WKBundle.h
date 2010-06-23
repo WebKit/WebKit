@@ -35,12 +35,14 @@ extern "C" {
 
 // Client
 typedef void (*WKBundleDidCreatePageCallback)(WKBundleRef bundle, WKBundlePageRef page, const void *clientInfo);
+typedef void (*WKBundleWillDestroyPageCallback)(WKBundleRef bundle, WKBundlePageRef page, const void *clientInfo);
 typedef void (*WKBundleDidRecieveMessageCallback)(WKBundleRef bundle, WKStringRef message, const void *clientInfo);
 
 struct WKBundleClient {
     int                                                                 version;
     const void *                                                        clientInfo;
     WKBundleDidCreatePageCallback                                       didCreatePage;
+    WKBundleWillDestroyPageCallback                                     willDestroyPage;
     WKBundleDidRecieveMessageCallback                                   didRecieveMessage;
 };
 typedef struct WKBundleClient WKBundleClient;

@@ -178,6 +178,10 @@ void WebFrameLoaderClient::dispatchDidReceiveServerRedirectForProvisionalLoad()
     if (!webPage)
         return;
 
+    // Notify the bundle client.
+    webPage->injectedBundleClient().didReceiveServerRedirectForProvisionalLoadForFrame(webPage, m_frame);
+
+    // Notify the UIProcess.
     WebProcess::shared().connection()->send(WebPageProxyMessage::DidReceiveServerRedirectForProvisionalLoadForFrame, webPage->pageID(), CoreIPC::In(m_frame->frameID()));
 }
 
@@ -230,6 +234,10 @@ void WebFrameLoaderClient::dispatchDidStartProvisionalLoad()
     DocumentLoader* provisionalLoader = m_frame->coreFrame()->loader()->provisionalDocumentLoader();
     const String& url = provisionalLoader->url().string();
 
+    // Notify the bundle client.
+    webPage->injectedBundleClient().didStartProvisionalLoadForFrame(webPage, m_frame);
+
+    // Notify the UIProcess.
     WebProcess::shared().connection()->send(WebPageProxyMessage::DidStartProvisionalLoadForFrame, webPage->pageID(), CoreIPC::In(m_frame->frameID(), url));
 }
 
@@ -239,6 +247,10 @@ void WebFrameLoaderClient::dispatchDidReceiveTitle(const String& title)
     if (!webPage)
         return;
 
+    // Notify the bundle client.
+    webPage->injectedBundleClient().didReceiveTitleForFrame(webPage, title, m_frame);
+
+    // Notify the UIProcess.
     WebProcess::shared().connection()->send(WebPageProxyMessage::DidReceiveTitleForFrame, webPage->pageID(), CoreIPC::In(m_frame->frameID(), title));
 }
 
@@ -253,6 +265,10 @@ void WebFrameLoaderClient::dispatchDidCommitLoad()
     if (!webPage)
         return;
 
+    // Notify the bundle client.
+    webPage->injectedBundleClient().didCommitLoadForFrame(webPage, m_frame);
+
+    // Notify the UIProcess.
     WebProcess::shared().connection()->send(WebPageProxyMessage::DidCommitLoadForFrame, webPage->pageID(), CoreIPC::In(m_frame->frameID()));
 }
 
@@ -262,6 +278,10 @@ void WebFrameLoaderClient::dispatchDidFailProvisionalLoad(const ResourceError&)
     if (!webPage)
         return;
 
+    // Notify the bundle client.
+    webPage->injectedBundleClient().didFailProvisionalLoadWithErrorForFrame(webPage, m_frame);
+
+    // Notify the UIProcess.
     WebProcess::shared().connection()->send(WebPageProxyMessage::DidFailProvisionalLoadForFrame, webPage->pageID(), CoreIPC::In(m_frame->frameID()));
 }
 
@@ -271,6 +291,10 @@ void WebFrameLoaderClient::dispatchDidFailLoad(const ResourceError&)
     if (!webPage)
         return;
 
+    // Notify the bundle client.
+    webPage->injectedBundleClient().didFailLoadWithErrorForFrame(webPage, m_frame);
+
+    // Notify the UIProcess.
     WebProcess::shared().connection()->send(WebPageProxyMessage::DidFailLoadForFrame, webPage->pageID(), CoreIPC::In(m_frame->frameID()));
 }
 
@@ -285,6 +309,10 @@ void WebFrameLoaderClient::dispatchDidFinishLoad()
     if (!webPage)
         return;
 
+    // Notify the bundle client.
+    webPage->injectedBundleClient().didFinishLoadForFrame(webPage, m_frame);
+
+    // Notify the UIProcess.
     WebProcess::shared().connection()->send(WebPageProxyMessage::DidFinishLoadForFrame, webPage->pageID(), CoreIPC::In(m_frame->frameID()));
 }
 

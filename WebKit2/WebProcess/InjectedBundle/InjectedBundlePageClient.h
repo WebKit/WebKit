@@ -29,6 +29,10 @@
 #include "WKBundlePage.h"
 #include <JavaScriptCore/JSBase.h>
 
+namespace WebCore {
+    class String;
+}
+
 namespace WebKit {
 
 class WebPage;
@@ -39,6 +43,13 @@ public:
     InjectedBundlePageClient();
     void initialize(WKBundlePageClient*);
 
+    void didStartProvisionalLoadForFrame(WebPage*, WebFrame*);
+    void didReceiveServerRedirectForProvisionalLoadForFrame(WebPage*, WebFrame*);
+    void didFailProvisionalLoadWithErrorForFrame(WebPage*, WebFrame*);
+    void didCommitLoadForFrame(WebPage*, WebFrame*);
+    void didFinishLoadForFrame(WebPage*, WebFrame*);
+    void didFailLoadWithErrorForFrame(WebPage*, WebFrame*);
+    void didReceiveTitleForFrame(WebPage*, const WebCore::String&, WebFrame*);
     void didClearWindowObjectForFrame(WebPage*, WebFrame*, JSContextRef, JSObjectRef);
 
 private:

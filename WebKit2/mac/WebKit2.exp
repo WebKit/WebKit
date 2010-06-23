@@ -34,6 +34,7 @@ _WKPageNamespaceRelease
 _WKPageNamespaceRetain
 _WKPageRelease
 _WKPageReload
+_WKPageRenderTreeExternalRepresentation
 _WKPageRetain
 _WKPageSetPageHistoryClient
 _WKPageSetPageLoaderClient
