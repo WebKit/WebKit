@@ -1,3 +1,19 @@
+2010-06-23  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: InspectorController should be added only once as ScriptDebugListener to
+        ScriptDebugServer.
+        https://bugs.webkit.org/show_bug.cgi?id=41070
+
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::connectFrontend):
+        (WebCore::InspectorController::disconnectFrontend):
+        (WebCore::InspectorController::enableDebuggerFromFrontend):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel): don't call InspectorBackend.enableDebugger if debugger is always enabled,
+        InspectorController will do this on its side when the front end is connected.
+
 2010-06-23  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Yury Semikhatsky.

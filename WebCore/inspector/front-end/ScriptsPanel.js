@@ -169,8 +169,6 @@ WebInspector.ScriptsPanel = function()
     this._registerShortcuts();
 
     this._debuggerEnabled = Preferences.debuggerAlwaysEnabled;
-    if (Preferences.debuggerAlwaysEnabled)
-        this._attachDebuggerWhenShown = true;
 
     WebInspector.breakpointManager.addEventListener("breakpoint-added", this._breakpointAdded, this);
     WebInspector.breakpointManager.addEventListener("breakpoint-removed", this._breakpointRemoved, this);
