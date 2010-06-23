@@ -1,3 +1,16 @@
+2010-06-23  Cris Neckar  <cdn@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [Chromium] Out of bounds write in WebCore::PNGImageDecoder::rowAvailable
+        https://bugs.webkit.org/show_bug.cgi?id=40798
+
+        Tests a PNG with an extra row.
+
+        * fast/images/png-extra-row-crash-expected.txt: Added.
+        * fast/images/png-extra-row-crash.html: Added.
+        * fast/images/resources/png-extra-row-crash.png: Added.
+
 2010-06-23  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Dan Bernstein.
