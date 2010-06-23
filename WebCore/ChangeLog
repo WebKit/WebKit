@@ -1,3 +1,17 @@
+2010-06-23  Kevin Ollivier  <kevino@theolliviers.com>
+
+        Reviewed by Darin Adler.
+
+        Fix PluginViewNone.cpp compilation for ports that also compile PluginView.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=37939
+
+        * plugins/PluginViewNone.cpp:
+        (WebCore::PluginView::handleFocusInEvent):
+        (WebCore::PluginView::handleFocusOutEvent):
+        (WebCore::PluginView::keepAlive):
+        (WebCore::PluginView::privateBrowsingStateChanged):
+        (WebCore::PluginView::setJavaScriptPaused):
+
 2010-06-23  Cris Neckar  <cdn@chromium.org>
 
         Reviewed by Darin Fisher.
