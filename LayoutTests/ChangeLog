@@ -1,3 +1,13 @@
+2010-06-23  Stephen White  <senorblanco@chromium.org>
+
+        Reviewed by David Hyatt.
+
+        Temporarily put the tests broken by the resize change into
+        test_expectations.txt.
+        https://bugs.webkit.org/show_bug.cgi?id=41036
+
+        * platform/chromium/test_expectations.txt:
+
 2010-06-23  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by Kenneth Rohde Christiansen.

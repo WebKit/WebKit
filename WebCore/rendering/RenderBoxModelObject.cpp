@@ -49,7 +49,7 @@ bool RenderBoxModelObject::s_layerWasSelfPainting = false;
 static const double cInterpolationCutoff = 800. * 800.;
 static const double cLowQualityTimeThreshold = 0.500; // 500 ms
 
-typedef HashMap<RenderBoxModelObject*, double> LastPaintTimeMap;
+typedef HashMap<RenderBoxModelObject*, IntSize> LastPaintSizeMap;
 
 class ImageQualityController : public Noncopyable {
 public:
@@ -61,31 +61,38 @@ private:
     void highQualityRepaintTimerFired(Timer<ImageQualityController>*);
     void restartTimer();
 
-    LastPaintTimeMap m_lastPaintTimeMap;
+    LastPaintSizeMap m_lastPaintSizeMap;
     Timer<ImageQualityController> m_timer;
+    bool m_animatedResizeIsActive;
 };
 
 ImageQualityController::ImageQualityController()
     : m_timer(this, &ImageQualityController::highQualityRepaintTimerFired)
+    , m_animatedResizeIsActive(false)
 {
 }
 
 void ImageQualityController::objectDestroyed(RenderBoxModelObject* object)
 {
-    m_lastPaintTimeMap.remove(object);
-    if (m_lastPaintTimeMap.isEmpty())
+    m_lastPaintSizeMap.remove(object);
+    if (m_lastPaintSizeMap.isEmpty()) {
+        m_animatedResizeIsActive = false;
         m_timer.stop();
+    }
 }
     
 void ImageQualityController::highQualityRepaintTimerFired(Timer<ImageQualityController>*)
 {
-    for (LastPaintTimeMap::iterator it = m_lastPaintTimeMap.begin(); it != m_lastPaintTimeMap.end(); ++it)
-        it->first->repaint();
+    if (m_animatedResizeIsActive) {
+        m_animatedResizeIsActive = false;
+        for (LastPaintSizeMap::iterator it = m_lastPaintSizeMap.begin(); it != m_lastPaintSizeMap.end(); ++it)
+            it->first->repaint();
+    }
 }
 
 void ImageQualityController::restartTimer()
 {
-    m_timer.startOneShot(cLowQualityTimeThreshold * 1.05);
+    m_timer.startOneShot(cLowQualityTimeThreshold);
 }
 
 bool ImageQualityController::shouldPaintAtLowQuality(GraphicsContext* context, RenderBoxModelObject* object, Image* image, const IntSize& size)
@@ -100,14 +107,14 @@ bool ImageQualityController::shouldPaintAtLowQuality(GraphicsContext* context, R
     IntSize imageSize(image->width(), image->height());
 
     // Look ourselves up in the hashtable.
-    LastPaintTimeMap::iterator i = m_lastPaintTimeMap.find(object);
+    LastPaintSizeMap::iterator i = m_lastPaintSizeMap.find(object);
 
     const AffineTransform& currentTransform = context->getCTM();
     bool contextIsScaled = !currentTransform.isIdentityOrTranslationOrFlipped();
     if (!contextIsScaled && imageSize == size) {
         // There is no scale in effect. If we had a scale in effect before, we can just remove this object from the list.
-        if (i != m_lastPaintTimeMap.end())
-            m_lastPaintTimeMap.remove(object);
+        if (i != m_lastPaintSizeMap.end())
+            m_lastPaintSizeMap.remove(object);
 
         return false;
     }
@@ -118,16 +125,31 @@ bool ImageQualityController::shouldPaintAtLowQuality(GraphicsContext* context, R
         if (totalPixels > cInterpolationCutoff)
             return true;
     }
-    double newTime = currentTime();
-    if (i != m_lastPaintTimeMap.end() && newTime - i->second >= cLowQualityTimeThreshold && !m_timer.isActive()) {
-        // If it has been at least cLowQualityTimeThreshold seconds since the 
-        // last time a resize was requested, and the timer is no longer active, 
-        // draw at high quality and don't set the timer.
+    // If this is the first time resizing this image, or its size is the
+    // same as the last resize, draw at high res, but record the paint
+    // size and set the timer.
+    if (i == m_lastPaintSizeMap.end() || size == i->second) {
+        restartTimer();
+        m_lastPaintSizeMap.set(object, size);
+        return false;
+    }
+    // If an animated resize is active, paint in low quality and kick the timer ahead.
+    if (m_animatedResizeIsActive) {
+        m_lastPaintSizeMap.set(object, size);
+        restartTimer();
+        return true;
+    }
+    // If the timer is no longer active, draw at high quality and don't
+    // set the timer.
+    if (!m_timer.isActive()) {
         objectDestroyed(object);
         return false;
     }
-    // Draw at low quality first and set a timer for high quality.
-    m_lastPaintTimeMap.set(object, newTime);
+    // This object has been resized to two different sizes while the timer
+    // is active, so draw at low quality, set the flag for animated resizes and
+    // the object to the list for high quality redraw.
+    m_lastPaintSizeMap.set(object, size);
+    m_animatedResizeIsActive = true;
     restartTimer();
     return true;
 }

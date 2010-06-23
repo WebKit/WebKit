@@ -1,3 +1,57 @@
+2010-06-23  Stephen White  <senorblanco@chromium.org>
+
+        Reviewed by David Hyatt.
+
+        This is a tweak to the resize algorithm introduced in r61341, and
+        is a fix for the regression described in
+        https://bugs.webkit.org/show_bug.cgi?id=41036
+
+        The goal is to bring back the some of old behaviour, without regressing
+        too much of the performance gains in r61341.
+
+        The old algorithm was:
+        - on first resize, draw in high quality and record the paint time
+        - if we've already drawn at this size, use the same quality as last time
+        - on subsequent resizes, if the resize occurs within X ms of the
+          previous one, draw at low quality and set a timer (one timer per
+          image).
+        - when each timer expires, draw that image at high quality
+
+        The r61341 algorithm was:  
+        - on first resize, draw the image in low quality, add it to a list of
+          resized images, and set a timer (one timer for all images)
+        - when the timer expires, redraw all resized images in high quality
+
+        The new algorithm is:
+        - on first resize, if no other animated resizes are outstanding, draw in
+          high quality and set the timer (one timer for all images)
+        - if any images have been resized to two different sizes in the last
+          X ms, draw all resized images in low quality and kick the timer
+          forward
+        - when the timer expires, if any animated resizes occured, redraw all
+          resized images in high quality, and reset the flag
+
+        This should cause GUIMark and the IE9 demos to have good performance 
+        after the first frame, while other pages with only static resizes
+        should be unaffected.
+
+        * rendering/RenderBoxModelObject.cpp:
+        Change the LastPaintTimeMap to a LastPaintSizeMap:  we now record the
+        last size an image was resized to, rather than the time it was painted
+        (the time actually became redundant in r61341 when I added the
+        check for m_timer.isActive():  we only care if anything is resizing
+        while the timer is active).
+        (WebCore::ImageQualityController::ImageQualityController):
+        Add an initializer for the m_animatedResizeIsActive flag.
+        (WebCore::ImageQualityController::objectDestroyed):
+        Reset the m_animatedResizeIsActive flag if this was the last object
+        in the list.
+        (WebCore::ImageQualityController::highQualityRepaintTimerFired):
+        Only repaint all the images if there was an animated resize (otherwise,
+        everything is already high quality).
+        (WebCore::ImageQualityController::shouldPaintAtLowQuality):
+        Implement the above algorithm.
+
 2010-06-23  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by Kenneth Rohde Christiansen.
