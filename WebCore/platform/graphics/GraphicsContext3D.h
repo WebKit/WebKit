@@ -26,6 +26,7 @@
 #ifndef GraphicsContext3D_h
 #define GraphicsContext3D_h
 
+#include "GraphicsLayer.h"
 #include "PlatformString.h"
 
 #include <wtf/ListHashSet.h>
@@ -434,12 +435,17 @@ namespace WebCore {
 #elif PLATFORM(CHROMIUM)
         PlatformGraphicsContext3D platformGraphicsContext3D() const;
         Platform3DObject platformTexture() const;
+        // FIXME: Stubbed out for now. Must be implemented to get WebGL working with
+        // accelerated compositing.
+        PlatformLayer* platformLayer() const { return 0; }
 #elif PLATFORM(QT)
         PlatformGraphicsContext3D platformGraphicsContext3D();
         Platform3DObject platformTexture() const;
+        PlatformLayer* platformLayer() const { return 0; }
 #else
         PlatformGraphicsContext3D platformGraphicsContext3D() const { return NullPlatformGraphicsContext3D; }
         Platform3DObject platformTexture() const { return NullPlatform3DObject; }
+        PlatformLayer* platformLayer() const { return 0; }
 #endif
         void makeContextCurrent();
 
