@@ -2,6 +2,14 @@
 
         Reviewed by Anders Carlsson.
 
+        Add missing include to WKRetainPtr.
+
+        * UIProcess/API/cpp/WKRetainPtr.h:
+
+2010-06-23  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
         Fix for https://bugs.webkit.org/show_bug.cgi?id=41073
         WebKit2: Flesh out more of the InjectedBundle client API
 

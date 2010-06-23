@@ -26,6 +26,8 @@
 #ifndef WKRetainPtr_h
 #define WKRetainPtr_h
 
+#include <algorithm>
+
 namespace WebKit {
 
 enum WKAdoptTag { AdoptWK };
