@@ -1093,8 +1093,8 @@ webcore_sources += \
 	WebCore/html/HTMLToken.h \
 	WebCore/html/HTMLDocumentParser.cpp \
 	WebCore/html/HTMLDocumentParser.h \
-	WebCore/html/HTML5PreloadScanner.cpp \
-	WebCore/html/HTML5PreloadScanner.h \
+	WebCore/html/HTMLPreloadScanner.cpp \
+	WebCore/html/HTMLPreloadScanner.h \
 	WebCore/html/HTMLScriptRunner.cpp \
 	WebCore/html/HTMLScriptRunner.h \
 	WebCore/html/HTMLScriptRunnerHost.h \
@@ -1277,8 +1277,8 @@ webcore_sources += \
 	WebCore/html/LabelsNodeList.cpp \
 	WebCore/html/LabelsNodeList.h \
 	WebCore/html/MediaError.h \
-	WebCore/html/PreloadScanner.cpp \
-	WebCore/html/PreloadScanner.h \
+	WebCore/html/LegacyPreloadScanner.cpp \
+	WebCore/html/LegacyPreloadScanner.h \
 	WebCore/html/StepRange.cpp \
 	WebCore/html/StepRange.h \
 	WebCore/html/TextMetrics.h \

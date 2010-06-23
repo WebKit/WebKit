@@ -35,7 +35,7 @@
 #include "DOMWindow.h"
 #include "Frame.h"
 #include "KURL.h"
-#include "PreloadScanner.h"
+#include "LegacyPreloadScanner.h"
 #include "ResourceResponseBase.h"
 #include "ScriptSourceCode.h"
 #include "Settings.h"
@@ -277,7 +277,7 @@ String XSSAuditor::decodeHTMLEntities(const String& string, bool leaveUndecodabl
         if (leaveUndecodableEntitiesUntouched)
             sourceShadow = source;
         bool notEnoughCharacters = false;
-        unsigned entity = PreloadScanner::consumeEntity(source, notEnoughCharacters);
+        unsigned entity = LegacyPreloadScanner::consumeEntity(source, notEnoughCharacters);
         // We ignore notEnoughCharacters because we might as well use this loop
         // to copy the remaining characters into |result|.
 

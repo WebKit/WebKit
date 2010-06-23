@@ -47,7 +47,7 @@
 #include "ImageLoader.h"
 #include "InspectorTimelineAgent.h"
 #include "Page.h"
-#include "PreloadScanner.h"
+#include "LegacyPreloadScanner.h"
 #include "ScriptSourceCode.h"
 #include "ScriptValue.h"
 #include "XSSAuditor.h"
@@ -533,7 +533,7 @@ LegacyHTMLDocumentParser::State LegacyHTMLDocumentParser::scriptHandler(State st
 #if PRELOAD_SCANNER_ENABLED
     if (!m_pendingScripts.isEmpty() && !m_executingScript) {
         if (!m_preloadScanner)
-            m_preloadScanner.set(new PreloadScanner(m_doc));
+            m_preloadScanner.set(new LegacyPreloadScanner(m_doc));
         if (!m_preloadScanner->inProgress()) {
             m_preloadScanner->begin();
             m_preloadScanner->write(m_pendingSrc);
@@ -584,7 +584,7 @@ LegacyHTMLDocumentParser::State LegacyHTMLDocumentParser::scriptExecution(const 
 #if PRELOAD_SCANNER_ENABLED
             // We are stuck waiting for another script. Lets check the source that
             // was just document.write()n for anything to load.
-            PreloadScanner documentWritePreloadScanner(m_doc);
+            LegacyPreloadScanner documentWritePreloadScanner(m_doc);
             documentWritePreloadScanner.begin();
             documentWritePreloadScanner.write(prependingSrc);
             documentWritePreloadScanner.end();

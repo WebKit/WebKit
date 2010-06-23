@@ -2,6 +2,66 @@
 
         Reviewed by Eric Seidel.
 
+        Rename the preload scanners
+        https://bugs.webkit.org/show_bug.cgi?id=41052
+
+        Renames PreloadScanner to LegacyPreloadScanner because this code is now
+        off by default.  Also, rename HTML5PreloadScanner to
+        HTMLPreloadScanner.  We're not calling it PreloadScanner because we've
+        factored out the CSSPreloadScanner and the HTMLPreloadScanner from the
+        original PreloadScanner.
+
+        * Android.mk:
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/HTML5PreloadScanner.cpp: Removed.
+        * html/HTML5PreloadScanner.h: Removed.
+        * html/HTMLDocumentParser.cpp:
+        (WebCore::HTMLDocumentParser::pumpTokenizer):
+        * html/HTMLDocumentParser.h:
+        * html/HTMLPreloadScanner.cpp: Copied from WebCore/html/HTML5PreloadScanner.cpp.
+        (WebCore::HTMLPreloadScanner::HTMLPreloadScanner):
+        (WebCore::HTMLPreloadScanner::appendToEnd):
+        (WebCore::HTMLPreloadScanner::scan):
+        (WebCore::HTMLPreloadScanner::processToken):
+        (WebCore::HTMLPreloadScanner::scanningBody):
+        * html/HTMLPreloadScanner.h: Copied from WebCore/html/HTML5PreloadScanner.h.
+        * html/LegacyHTMLDocumentParser.cpp:
+        (WebCore::LegacyHTMLDocumentParser::scriptHandler):
+        (WebCore::LegacyHTMLDocumentParser::scriptExecution):
+        * html/LegacyHTMLDocumentParser.h:
+        * html/LegacyPreloadScanner.cpp: Copied from WebCore/html/PreloadScanner.cpp.
+        (WebCore::LegacyPreloadScanner::LegacyPreloadScanner):
+        (WebCore::LegacyPreloadScanner::~LegacyPreloadScanner):
+        (WebCore::LegacyPreloadScanner::begin):
+        (WebCore::LegacyPreloadScanner::end):
+        (WebCore::LegacyPreloadScanner::reset):
+        (WebCore::LegacyPreloadScanner::scanningBody):
+        (WebCore::LegacyPreloadScanner::write):
+        (WebCore::LegacyPreloadScanner::clearLastCharacters):
+        (WebCore::LegacyPreloadScanner::rememberCharacter):
+        (WebCore::LegacyPreloadScanner::lastCharactersMatch):
+        (WebCore::LegacyPreloadScanner::consumeEntity):
+        (WebCore::LegacyPreloadScanner::tokenize):
+        (WebCore::LegacyPreloadScanner::processAttribute):
+        (WebCore::LegacyPreloadScanner::emitCharacter):
+        (WebCore::LegacyPreloadScanner::tokenizeCSS):
+        (WebCore::LegacyPreloadScanner::emitTag):
+        (WebCore::LegacyPreloadScanner::emitCSSRule):
+        * html/LegacyPreloadScanner.h: Copied from WebCore/html/PreloadScanner.h.
+        * html/PreloadScanner.cpp: Removed.
+        * html/PreloadScanner.h: Removed.
+        * page/XSSAuditor.cpp:
+        (WebCore::XSSAuditor::decodeHTMLEntities):
+
+2010-06-23  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         Yet more HTML5 => HTML renames
         https://bugs.webkit.org/show_bug.cgi?id=41051
 

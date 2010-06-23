@@ -31,7 +31,7 @@
 #include "Frame.h"
 #include "HTMLParserScheduler.h"
 #include "HTMLTokenizer.h"
-#include "HTML5PreloadScanner.h"
+#include "HTMLPreloadScanner.h"
 #include "HTMLScriptRunner.h"
 #include "HTMLTreeBuilder.h"
 #include "HTMLDocument.h"
@@ -185,7 +185,7 @@ void HTMLDocumentParser::pumpTokenizer(SynchronousMode mode)
     if (isWaitingForScripts()) {
         ASSERT(m_tokenizer->state() == HTMLTokenizer::DataState);
         if (!m_preloadScanner) {
-            m_preloadScanner.set(new HTML5PreloadScanner(m_document));
+            m_preloadScanner.set(new HTMLPreloadScanner(m_document));
             m_preloadScanner->appendToEnd(m_input.current());
         }
         m_preloadScanner->scan();

@@ -45,7 +45,7 @@ class HTMLParserScheduler;
 class HTMLTokenizer;
 class HTMLScriptRunner;
 class HTMLTreeBuilder;
-class HTML5PreloadScanner;
+class HTMLPreloadScanner;
 class LegacyHTMLTreeConstructor;
 class ScriptController;
 class ScriptSourceCode;
@@ -121,7 +121,7 @@ private:
     OwnPtr<HTMLTokenizer> m_tokenizer;
     OwnPtr<HTMLScriptRunner> m_scriptRunner;
     OwnPtr<HTMLTreeBuilder> m_treeConstructor;
-    OwnPtr<HTML5PreloadScanner> m_preloadScanner;
+    OwnPtr<HTMLPreloadScanner> m_preloadScanner;
     OwnPtr<HTMLParserScheduler> m_parserScheduler;
 
     bool m_endWasDelayed;

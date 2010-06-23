@@ -252,7 +252,7 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	html/HTMLEntityParser.cpp \
 	html/HTMLTokenizer.cpp \
 	html/HTMLDocumentParser.cpp \
-	html/HTML5PreloadScanner.cpp \
+	html/HTMLPreloadScanner.cpp \
 	html/HTMLScriptRunner.cpp \
 	html/HTMLTreeBuilder.cpp \
 	html/HTMLAllCollection.cpp \
@@ -272,7 +272,7 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	html/HTMLViewSourceDocument.cpp \
 	html/ImageData.cpp \
 	html/ImageResizerThread.cpp \
-	html/PreloadScanner.cpp \
+	html/LegacyPreloadScanner.cpp \
 	html/TimeRanges.cpp \
 	html/ValidityState.cpp \
 	\

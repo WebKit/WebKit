@@ -33401,11 +33401,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\html\HTML5PreloadScanner.cpp"
+				RelativePath="..\html\HTMLPreloadScanner.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\html\HTML5PreloadScanner.h"
+				RelativePath="..\html\HTMLPreloadScanner.h"
 				>
 			</File>
 			<File
@@ -37733,11 +37733,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\html\PreloadScanner.cpp"
+				RelativePath="..\html\LegacyPreloadScanner.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\html\PreloadScanner.h"
+				RelativePath="..\html\LegacyPreloadScanner.h"
 				>
 			</File>
 			<File

@@ -39,9 +39,9 @@ class Document;
 class HTMLToken;
 class SegmentedString;
 
-class HTML5PreloadScanner : public Noncopyable {
+class HTMLPreloadScanner : public Noncopyable {
 public:
-    HTML5PreloadScanner(Document*);
+    HTMLPreloadScanner(Document*);
 
     void appendToEnd(const SegmentedString&);
     void scan();

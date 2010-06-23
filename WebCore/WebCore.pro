@@ -614,7 +614,7 @@ SOURCES += \
     html/HTMLEntityParser.cpp \
     html/HTMLTokenizer.cpp \
     html/HTMLDocumentParser.cpp \
-    html/HTML5PreloadScanner.cpp \
+    html/HTMLPreloadScanner.cpp \
     html/HTMLScriptRunner.cpp \
     html/HTMLTreeBuilder.cpp \
     html/HTMLAllCollection.cpp \
@@ -704,7 +704,7 @@ SOURCES += \
     html/ImageData.cpp \
     html/ImageResizerThread.cpp \
     html/LabelsNodeList.cpp \
-    html/PreloadScanner.cpp \
+    html/LegacyPreloadScanner.cpp \
     html/StepRange.cpp \
     html/ValidityState.cpp \
     inspector/ConsoleMessage.cpp \
@@ -1444,7 +1444,7 @@ HEADERS += \
     html/ImageData.h \
     html/ImageResizerThread.h \
     html/LabelsNodeList.h \
-    html/PreloadScanner.h \
+    html/LegacyPreloadScanner.h \
     html/StepRange.h \
     html/TimeRanges.h \
     html/ValidityState.h \
