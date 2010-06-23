@@ -355,6 +355,14 @@ void InspectorDOMAgent::pushChildNodesToFrontend(long nodeId)
     m_frontend->setChildNodes(nodeId, children);
 }
 
+long InspectorDOMAgent::pushNodeByPathToFrontend(const String& path)
+{
+    Node* node = nodeForPath(path);
+    if (!node)
+        return 0;
+    return pushNodePathToFrontend(node);
+}
+
 long InspectorDOMAgent::inspectedNode(unsigned long num)
 {
     if (num < m_inspectedNodes.size())
@@ -380,35 +388,6 @@ Node* InspectorDOMAgent::nodeForId(long id)
     if (it != m_idToNode.end())
         return it->second;
     return 0;
-}
-
-Node* InspectorDOMAgent::nodeForPath(const String& path)
-{
-    // The path is of form "1,HTML,2,BODY,1,DIV"
-    Node* node = mainFrameDocument();
-    if (!node)
-        return 0;
-
-    Vector<String> pathTokens;
-    path.split(",", false, pathTokens);
-    for (size_t i = 0; i < pathTokens.size() - 1; i += 2) {
-        bool success = true;
-        unsigned childNumber = pathTokens[i].toUInt(&success);
-        if (!success)
-            return 0;
-        if (childNumber >= innerChildNodeCount(node))
-            return 0;
-
-        Node* child = innerFirstChild(node);
-        String childName = pathTokens[i + 1];
-        for (size_t j = 0; child && j < childNumber; ++j)
-            child = innerNextSibling(child);
-
-        if (!child || child->nodeName() != childName)
-            return 0;
-        node = child;
-    }
-    return node;
 }
 
 void InspectorDOMAgent::getChildNodes(long callId, long nodeId)
@@ -1583,6 +1562,35 @@ bool InspectorDOMAgent::ruleAffectsNode(CSSStyleRule* rule, Node* node)
             return true;
     }
     return false;
+}
+
+Node* InspectorDOMAgent::nodeForPath(const String& path)
+{
+    // The path is of form "1,HTML,2,BODY,1,DIV"
+    Node* node = mainFrameDocument();
+    if (!node)
+        return 0;
+
+    Vector<String> pathTokens;
+    path.split(",", false, pathTokens);
+    for (size_t i = 0; i < pathTokens.size() - 1; i += 2) {
+        bool success = true;
+        unsigned childNumber = pathTokens[i].toUInt(&success);
+        if (!success)
+            return 0;
+        if (childNumber >= innerChildNodeCount(node))
+            return 0;
+
+        Node* child = innerFirstChild(node);
+        String childName = pathTokens[i + 1];
+        for (size_t j = 0; child && j < childNumber; ++j)
+            child = innerNextSibling(child);
+
+        if (!child || child->nodeName() != childName)
+            return 0;
+        node = child;
+    }
+    return node;
 }
 
 ScriptArray InspectorDOMAgent::toArray(const Vector<String>& data)

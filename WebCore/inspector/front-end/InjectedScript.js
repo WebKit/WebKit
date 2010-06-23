@@ -403,13 +403,6 @@ InjectedScript.pushNodeToFrontend = function(objectProxy)
     return InjectedScriptHost.pushNodePathToFrontend(object, false, false);
 }
 
-InjectedScript.nodeByPath = function(path)
-{
-    // We make this call through the injected script only to get a nice
-    // callback for it.
-    return InjectedScriptHost.pushNodeByPathToFrontend(path.join(","));
-}
-
 // Called from within InspectorController on the 'inspected page' side.
 InjectedScript.createProxyObject = function(object, objectId, abbreviate)
 {

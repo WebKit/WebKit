@@ -130,6 +130,7 @@ public:
     void addInspectedNode(long nodeId);
     void performSearch(const String& query, bool runSynchronously);
     void searchCanceled();
+    void pushNodeByPathToFrontend(long callId, const String& path);
 
     void clearConsoleMessages();
 

@@ -1,3 +1,31 @@
+2010-06-22  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: move nodeByPath from InjectedScript to InspectorBackend.
+
+        https://bugs.webkit.org/show_bug.cgi?id=40988
+
+        * inspector/InjectedScriptHost.cpp:
+        * inspector/InjectedScriptHost.h:
+        * inspector/InjectedScriptHost.idl:
+        * inspector/InspectorBackend.cpp:
+        (WebCore::InspectorBackend::pushNodeByPathToFrontend):
+        * inspector/InspectorBackend.h:
+        * inspector/InspectorBackend.idl:
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::pushNodeByPathToFrontend):
+        (WebCore::InspectorDOMAgent::nodeForPath):
+        * inspector/InspectorDOMAgent.h:
+        * inspector/InspectorFrontend.cpp:
+        (WebCore::InspectorFrontend::didPushNodeByPathToFrontend):
+        * inspector/InspectorFrontend.h:
+        * inspector/front-end/DOMAgent.js:
+        * inspector/front-end/ElementsPanel.js:
+        (WebInspector.ElementsPanel.prototype.setDocument):
+        * inspector/front-end/InjectedScript.js:
+        * inspector/front-end/InjectedScriptAccess.js:
+
 2010-06-22  David Levin  <levin@chromium.org>
 
         Reviewed by Alexey Proskuryakov.

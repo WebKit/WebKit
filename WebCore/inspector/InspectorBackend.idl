@@ -105,6 +105,7 @@ module core {
         void addInspectedNode(in long nodeId);
         void performSearch(in DOMString query, in boolean runSynchronously);
         void searchCanceled();
+        void pushNodeByPathToFrontend(in long callId, in DOMString path);
 
         void clearConsoleMessages();
 

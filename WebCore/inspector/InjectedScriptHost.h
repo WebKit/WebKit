@@ -68,7 +68,6 @@ public:
     void copyText(const String& text);
     Node* nodeForId(long nodeId);
     long pushNodePathToFrontend(Node* node, bool withChildren, bool selectInUI);
-    long pushNodeByPathToFrontend(const String& path);
     long inspectedNode(unsigned long num);
 
 #if ENABLE(DATABASE)

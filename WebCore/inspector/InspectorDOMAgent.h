@@ -134,9 +134,9 @@ namespace WebCore {
         void didModifyDOMAttr(Element*);
 
         Node* nodeForId(long nodeId);
-        Node* nodeForPath(const String& path);
         long pushNodePathToFrontend(Node* node);
         void pushChildNodesToFrontend(long nodeId);
+        long pushNodeByPathToFrontend(const String& path);
         long inspectedNode(unsigned long num);
 
     private:
@@ -187,6 +187,7 @@ namespace WebCore {
         String shorthandValue(CSSStyleDeclaration*, const String& shorthandProperty);
         String shorthandPriority(CSSStyleDeclaration*, const String& shorthandProperty);
         bool ruleAffectsNode(CSSStyleRule*, Node*);
+        Node* nodeForPath(const String& path);
         ScriptArray toArray(const Vector<String>& data);
 
         void discardBindings();

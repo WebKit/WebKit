@@ -541,6 +541,15 @@ void InspectorFrontend::didSetOuterHTML(long callId, long nodeId)
     function.call();
 }
 
+void InspectorFrontend::didPushNodeByPathToFrontend(long callId, long nodeId)
+{
+    ScriptFunctionCall function(m_webInspector, "dispatch"); 
+    function.appendArgument("didPushNodeByPathToFrontend");
+    function.appendArgument(callId);
+    function.appendArgument(nodeId);
+    function.call();
+}
+
 void InspectorFrontend::didGetChildNodes(long callId)
 {
     ScriptFunctionCall function(m_webInspector, "dispatch"); 

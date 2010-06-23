@@ -413,6 +413,17 @@ void InspectorBackend::searchCanceled()
         domAgent->searchCanceled();
 }
 
+void InspectorBackend::pushNodeByPathToFrontend(long callId, const String& path)
+{
+    InspectorDOMAgent* domAgent = inspectorDOMAgent();
+    InspectorFrontend* frontend = inspectorFrontend();
+    if (!domAgent || !frontend)
+        return;
+    
+    long id = domAgent->pushNodeByPathToFrontend(path);
+    frontend->didPushNodeByPathToFrontend(callId, id);
+}
+
 void InspectorBackend::clearConsoleMessages()
 {
     if (m_inspectorController)

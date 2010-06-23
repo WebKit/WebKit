@@ -224,9 +224,10 @@ WebInspector.ElementsPanel.prototype = {
             selectNode.call(this, node);
         }
 
-        if (this._selectedPathOnReset)
-            InjectedScriptAccess.getDefault().nodeByPath(this._selectedPathOnReset, selectLastSelectedNode.bind(this));
-        else
+        if (this._selectedPathOnReset) {
+            var callId = WebInspector.Callback.wrap(selectLastSelectedNode.bind(this));
+            InspectorBackend.pushNodeByPathToFrontend(callId, this._selectedPathOnReset);
+        } else
             selectNode.call(this);
         delete this._selectedPathOnReset;
     },

@@ -77,7 +77,6 @@ InjectedScriptAccess._installHandler("getProperties");
 InjectedScriptAccess._installHandler("getPrototypes");
 InjectedScriptAccess._installHandler("openInInspectedWindow");
 InjectedScriptAccess._installHandler("pushNodeToFrontend");
-InjectedScriptAccess._installHandler("nodeByPath");
 InjectedScriptAccess._installHandler("setPropertyValue");
 InjectedScriptAccess._installHandler("evaluateOnSelf");
 
