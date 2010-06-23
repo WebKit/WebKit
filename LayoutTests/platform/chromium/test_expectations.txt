@@ -2881,3 +2881,6 @@ BUG45048 WIN : fast/harness/show-modal-dialog.html = TIMEOUT
 
 // WebKit roll 61547:61629. Still need to investigate.
 BUG_HCLAM : fast/js/script-line-number.html = TEXT
+
+// Added by r61650
+BUG47259 WIN : http/tests/local/blob/send-data-blob.html = TEXT
