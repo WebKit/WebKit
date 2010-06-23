@@ -1,3 +1,9 @@
+2010-06-23  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Not reviewed. Forgot to update result of fast/xpath/namespace-vs-predicate.html after the SVG renderer creation changes.
+
+        * fast/xpath/namespace-vs-predicate-expected.txt:
+
 2010-06-23  Kent Tamura  <tkent@chromium.org>
 
         Unreviewed, test expectation update.
