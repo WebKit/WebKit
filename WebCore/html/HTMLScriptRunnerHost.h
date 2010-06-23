@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef HTML5ScriptRunnerHost_h
-#define HTML5ScriptRunnerHost_h
+#ifndef HTMLScriptRunnerHost_h
+#define HTMLScriptRunnerHost_h
 
 namespace WebCore {
 
@@ -34,9 +34,9 @@ class Element;
 class HTMLInputStream;
 class ScriptSourceCode;
 
-class HTML5ScriptRunnerHost {
+class HTMLScriptRunnerHost {
 public:
-    virtual ~HTML5ScriptRunnerHost() { }
+    virtual ~HTMLScriptRunnerHost() { }
 
     // Implementors must call cachedResource->addClient() immediately.
     virtual void watchForLoad(CachedResource*) = 0;

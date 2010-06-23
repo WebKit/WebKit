@@ -32,7 +32,7 @@
 #include "HTMLParserScheduler.h"
 #include "HTMLTokenizer.h"
 #include "HTML5PreloadScanner.h"
-#include "HTML5ScriptRunner.h"
+#include "HTMLScriptRunner.h"
 #include "HTML5TreeBuilder.h"
 #include "HTMLDocument.h"
 #include "XSSAuditor.h"
@@ -68,7 +68,7 @@ private:
 HTML5DocumentParser::HTML5DocumentParser(HTMLDocument* document, bool reportErrors)
     : m_document(document)
     , m_tokenizer(new HTMLTokenizer)
-    , m_scriptRunner(new HTML5ScriptRunner(document, this))
+    , m_scriptRunner(new HTMLScriptRunner(document, this))
     , m_treeConstructor(new HTML5TreeBuilder(m_tokenizer.get(), document, reportErrors))
     , m_parserScheduler(new HTMLParserScheduler(this))
     , m_endWasDelayed(false)
@@ -353,7 +353,7 @@ void HTML5DocumentParser::notifyFinished(CachedResource* cachedResource)
     // Ignore calls unless we have a script blocking the parser waiting
     // for its own load.  Otherwise this may be a load callback from
     // CachedResource::addClient because the script was already in the cache.
-    // HTML5ScriptRunner may not be ready to handle running that script yet.
+    // HTMLScriptRunner may not be ready to handle running that script yet.
     if (!m_scriptRunner->hasScriptsWaitingForLoad()) {
         ASSERT(m_scriptRunner->inScriptExecution());
         return;

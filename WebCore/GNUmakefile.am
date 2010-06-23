@@ -1090,14 +1090,14 @@ webcore_sources += \
 	WebCore/html/HTMLEntityParser.h \
 	WebCore/html/HTMLTokenizer.cpp \
 	WebCore/html/HTMLTokenizer.h \
-	WebCore/html/HTML5Token.h \
+	WebCore/html/HTMLToken.h \
 	WebCore/html/HTML5DocumentParser.cpp \
 	WebCore/html/HTML5DocumentParser.h \
 	WebCore/html/HTML5PreloadScanner.cpp \
 	WebCore/html/HTML5PreloadScanner.h \
-	WebCore/html/HTML5ScriptRunner.cpp \
-	WebCore/html/HTML5ScriptRunner.h \
-	WebCore/html/HTML5ScriptRunnerHost.h \
+	WebCore/html/HTMLScriptRunner.cpp \
+	WebCore/html/HTMLScriptRunner.h \
+	WebCore/html/HTMLScriptRunnerHost.h \
 	WebCore/html/HTML5TreeBuilder.cpp \
 	WebCore/html/HTML5TreeBuilder.h \
 	WebCore/html/HTMLAllCollection.cpp \

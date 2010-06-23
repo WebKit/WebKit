@@ -32,7 +32,7 @@
 #include "CachedCSSStyleSheet.h"
 #include "DocLoader.h"
 #include "Document.h"
-#include "HTML5Token.h"
+#include "HTMLToken.h"
 
 namespace WebCore {
 
@@ -54,12 +54,12 @@ void CSSPreloadScanner::reset()
     m_ruleValue.clear();
 }
 
-void CSSPreloadScanner::scan(const HTML5Token& token, bool scanningBody)
+void CSSPreloadScanner::scan(const HTMLToken& token, bool scanningBody)
 {
     m_scanningBody = scanningBody;
 
-    const HTML5Token::DataVector& characters = token.characters();
-    for (HTML5Token::DataVector::const_iterator iter = characters.begin();
+    const HTMLToken::DataVector& characters = token.characters();
+    for (HTMLToken::DataVector::const_iterator iter = characters.begin();
          iter != characters.end(); ++iter) {
         tokenize(*iter);
     }

@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "HTML5ScriptRunner.h"
+#include "HTMLScriptRunner.h"
 
 #include "Attribute.h"
 #include "CachedScript.h"
@@ -32,7 +32,7 @@
 #include "Element.h"
 #include "Event.h"
 #include "Frame.h"
-#include "HTML5ScriptRunnerHost.h"
+#include "HTMLScriptRunnerHost.h"
 #include "HTMLInputStream.h"
 #include "HTMLNames.h"
 #include "NotImplemented.h"
@@ -62,7 +62,7 @@ private:
     InsertionPointRecord m_savedInsertionPoint;
 };
 
-HTML5ScriptRunner::HTML5ScriptRunner(Document* document, HTML5ScriptRunnerHost* host)
+HTMLScriptRunner::HTMLScriptRunner(Document* document, HTMLScriptRunnerHost* host)
     : m_document(document)
     , m_host(host)
     , m_scriptNestingLevel(0)
@@ -71,7 +71,7 @@ HTML5ScriptRunner::HTML5ScriptRunner(Document* document, HTML5ScriptRunnerHost* 
     ASSERT(m_host);
 }
 
-HTML5ScriptRunner::~HTML5ScriptRunner()
+HTMLScriptRunner::~HTMLScriptRunner()
 {
     // FIXME: Should we be passed a "done loading/parsing" callback sooner than destruction?
     if (m_parsingBlockingScript.cachedScript && m_parsingBlockingScript.watchingForLoad())
@@ -97,7 +97,7 @@ inline PassRefPtr<Event> createScriptErrorEvent()
     return Event::create(eventNames().errorEvent, true, false);
 }
 
-ScriptSourceCode HTML5ScriptRunner::sourceFromPendingScript(const PendingScript& script, bool& errorOccurred)
+ScriptSourceCode HTMLScriptRunner::sourceFromPendingScript(const PendingScript& script, bool& errorOccurred)
 {
     if (script.cachedScript) {
         errorOccurred = script.cachedScript->errorOccurred();
@@ -108,7 +108,7 @@ ScriptSourceCode HTML5ScriptRunner::sourceFromPendingScript(const PendingScript&
     return ScriptSourceCode(script.element->textContent(), documentURLForScriptExecution(m_document), script.startingLineNumber);
 }
 
-bool HTML5ScriptRunner::isPendingScriptReady(const PendingScript& script)
+bool HTMLScriptRunner::isPendingScriptReady(const PendingScript& script)
 {
     m_hasScriptsWaitingForStylesheets = !m_document->haveStylesheetsLoaded();
     if (m_hasScriptsWaitingForStylesheets)
@@ -118,7 +118,7 @@ bool HTML5ScriptRunner::isPendingScriptReady(const PendingScript& script)
     return true;
 }
 
-void HTML5ScriptRunner::executePendingScript()
+void HTMLScriptRunner::executePendingScript()
 {
     ASSERT(!m_scriptNestingLevel);
     ASSERT(m_document->haveStylesheetsLoaded());
@@ -145,7 +145,7 @@ void HTML5ScriptRunner::executePendingScript()
     ASSERT(!m_scriptNestingLevel);
 }
 
-void HTML5ScriptRunner::executeScript(Element* element, const ScriptSourceCode& sourceCode)
+void HTMLScriptRunner::executeScript(Element* element, const ScriptSourceCode& sourceCode)
 {
     // FIXME: We do not block inline <script> tags on stylesheets for now.
     // When we do,  || !element->hasAttribute(srcAttr) should be removed from
@@ -161,7 +161,7 @@ void HTML5ScriptRunner::executeScript(Element* element, const ScriptSourceCode& 
     m_document->frame()->script()->executeScript(sourceCode);
 }
 
-bool HTML5ScriptRunner::hasScriptsWaitingForLoad() const
+bool HTMLScriptRunner::hasScriptsWaitingForLoad() const
 {
     // We're only actually waiting for a load.  This allows us to ignore load
     // callbacks when CachedResource::addClient calls notifyFinished because
@@ -169,7 +169,7 @@ bool HTML5ScriptRunner::hasScriptsWaitingForLoad() const
     return m_parsingBlockingScript.watchingForLoadState == PendingScript::WatchingForLoad;
 }
 
-void HTML5ScriptRunner::watchForLoad(PendingScript& pendingScript)
+void HTMLScriptRunner::watchForLoad(PendingScript& pendingScript)
 {
     ASSERT(!pendingScript.watchingForLoad());
     // CachedResource::addClient will call notifyFinished if the load is already
@@ -180,7 +180,7 @@ void HTML5ScriptRunner::watchForLoad(PendingScript& pendingScript)
     pendingScript.watchingForLoadState = PendingScript::WatchingForLoad;
 }
 
-void HTML5ScriptRunner::stopWatchingForLoad(PendingScript& pendingScript)
+void HTMLScriptRunner::stopWatchingForLoad(PendingScript& pendingScript)
 {
     ASSERT(pendingScript.watchingForLoad());
     m_host->stopWatchingForLoad(pendingScript.cachedScript.get());
@@ -189,7 +189,7 @@ void HTML5ScriptRunner::stopWatchingForLoad(PendingScript& pendingScript)
 
 // This function should match 10.2.5.11 "An end tag whose tag name is 'script'"
 // Script handling lives outside the tree builder to keep the each class simple.
-bool HTML5ScriptRunner::execute(PassRefPtr<Element> scriptElement, int startLine)
+bool HTMLScriptRunner::execute(PassRefPtr<Element> scriptElement, int startLine)
 {
     ASSERT(scriptElement);
     // FIXME: If scripting is disabled, always just return true;
@@ -199,19 +199,19 @@ bool HTML5ScriptRunner::execute(PassRefPtr<Element> scriptElement, int startLine
 
     if (haveParsingBlockingScript()) {
         if (m_scriptNestingLevel)
-            return false; // Block the parser.  Unwind to the outermost HTML5ScriptRunner::execute before continuing parsing.
+            return false; // Block the parser.  Unwind to the outermost HTMLScriptRunner::execute before continuing parsing.
         if (!executeParsingBlockingScripts())
             return false; // We still have a parsing blocking script, block the parser.
     }
     return true; // Scripts executed as expected, continue parsing.
 }
 
-bool HTML5ScriptRunner::haveParsingBlockingScript() const
+bool HTMLScriptRunner::haveParsingBlockingScript() const
 {
     return !!m_parsingBlockingScript.element;
 }
 
-bool HTML5ScriptRunner::executeParsingBlockingScripts()
+bool HTMLScriptRunner::executeParsingBlockingScripts()
 {
     while (haveParsingBlockingScript()) {
         // We only really need to check once.
@@ -222,7 +222,7 @@ bool HTML5ScriptRunner::executeParsingBlockingScripts()
     return true;
 }
 
-bool HTML5ScriptRunner::executeScriptsWaitingForLoad(CachedResource* cachedScript)
+bool HTMLScriptRunner::executeScriptsWaitingForLoad(CachedResource* cachedScript)
 {
     // Callers should check hasScriptsWaitingForLoad() before calling
     // to prevent parser or script re-entry during due to
@@ -235,7 +235,7 @@ bool HTML5ScriptRunner::executeScriptsWaitingForLoad(CachedResource* cachedScrip
     return executeParsingBlockingScripts();
 }
 
-bool HTML5ScriptRunner::executeScriptsWaitingForStylesheets()
+bool HTMLScriptRunner::executeScriptsWaitingForStylesheets()
 {
     // Callers should check hasScriptsWaitingForStylesheets() before calling
     // to prevent parser or script re-entry during </style> parsing.
@@ -245,7 +245,7 @@ bool HTML5ScriptRunner::executeScriptsWaitingForStylesheets()
     return executeParsingBlockingScripts();
 }
 
-void HTML5ScriptRunner::requestScript(Element* script)
+void HTMLScriptRunner::requestScript(Element* script)
 {
     ASSERT(!m_parsingBlockingScript.element);
     AtomicString srcValue = script->getAttribute(srcAttr);
@@ -276,7 +276,7 @@ void HTML5ScriptRunner::requestScript(Element* script)
 
 // This method is meant to match the HTML5 definition of "running a script"
 // http://www.whatwg.org/specs/web-apps/current-work/multipage/scripting-1.html#running-a-script
-void HTML5ScriptRunner::runScript(Element* script, int startingLineNumber)
+void HTMLScriptRunner::runScript(Element* script, int startingLineNumber)
 {
     ASSERT(!haveParsingBlockingScript());
     {

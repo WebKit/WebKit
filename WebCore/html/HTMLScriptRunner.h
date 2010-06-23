@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef HTML5ScriptRunner_h
-#define HTML5ScriptRunner_h
+#ifndef HTMLScriptRunner_h
+#define HTMLScriptRunner_h
 
 #include "CachedResourceClient.h"
 #include "CachedResourceHandle.h"
@@ -38,13 +38,13 @@ class CachedScript;
 class Document;
 class Element;
 class Frame;
-class HTML5ScriptRunnerHost;
+class HTMLScriptRunnerHost;
 class ScriptSourceCode;
 
-class HTML5ScriptRunner : public Noncopyable {
+class HTMLScriptRunner : public Noncopyable {
 public:
-    HTML5ScriptRunner(Document*, HTML5ScriptRunnerHost*);
-    ~HTML5ScriptRunner();
+    HTMLScriptRunner(Document*, HTMLScriptRunnerHost*);
+    ~HTMLScriptRunner();
 
     // Processes the passed in script and any pending scripts if possible.
     bool execute(PassRefPtr<Element> scriptToProcess, int scriptStartLine);
@@ -96,7 +96,7 @@ private:
     void requestScript(Element*);
     void runScript(Element*, int startingLineNumber);
 
-    // Helpers for dealing with HTML5ScriptRunnerHost
+    // Helpers for dealing with HTMLScriptRunnerHost
     void watchForLoad(PendingScript&);
     void stopWatchingForLoad(PendingScript&);
     void executeScript(Element*, const ScriptSourceCode&);
@@ -105,7 +105,7 @@ private:
     ScriptSourceCode sourceFromPendingScript(const PendingScript&, bool& errorOccurred);
 
     Document* m_document;
-    HTML5ScriptRunnerHost* m_host;
+    HTMLScriptRunnerHost* m_host;
     PendingScript m_parsingBlockingScript;
     unsigned m_scriptNestingLevel;
 

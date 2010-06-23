@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef HTML5Token_h
-#define HTML5Token_h
+#ifndef HTMLToken_h
+#define HTMLToken_h
 
 #include "NamedNodeMap.h"
 #include <wtf/Noncopyable.h>
@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-class HTML5Token : public Noncopyable {
+class HTMLToken : public Noncopyable {
 public:
     enum Type {
         Uninitialized,
@@ -53,7 +53,7 @@ public:
     typedef WTF::Vector<Attribute, 10> AttributeList;
     typedef WTF::Vector<UChar, 1024> DataVector;
 
-    HTML5Token() { clear(); }
+    HTMLToken() { clear(); }
 
     void clear()
     {

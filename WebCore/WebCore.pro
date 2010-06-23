@@ -615,7 +615,7 @@ SOURCES += \
     html/HTMLTokenizer.cpp \
     html/HTML5DocumentParser.cpp \
     html/HTML5PreloadScanner.cpp \
-    html/HTML5ScriptRunner.cpp \
+    html/HTMLScriptRunner.cpp \
     html/HTML5TreeBuilder.cpp \
     html/HTMLAllCollection.cpp \
     html/HTMLAnchorElement.cpp \

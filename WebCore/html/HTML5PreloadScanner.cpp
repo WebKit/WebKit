@@ -43,19 +43,19 @@ namespace {
 
 class PreloadTask {
 public:
-    PreloadTask(const HTML5Token& token)
+    PreloadTask(const HTMLToken& token)
         : m_tagName(token.name().data(), token.name().size())
         , m_linkIsStyleSheet(false)
     {
         processAttributes(token.attributes());
     }
 
-    void processAttributes(const HTML5Token::AttributeList& attributes)
+    void processAttributes(const HTMLToken::AttributeList& attributes)
     {
         if (m_tagName != scriptTag && m_tagName != imgTag && m_tagName != linkTag)
             return;
 
-        for (HTML5Token::AttributeList::const_iterator iter = attributes.begin();
+        for (HTMLToken::AttributeList::const_iterator iter = attributes.begin();
              iter != attributes.end(); ++iter) {
             AtomicString attributeName(iter->m_name.data(), iter->m_name.size());
             String attributeValue(iter->m_value.data(), iter->m_value.size());
@@ -143,15 +143,15 @@ void HTML5PreloadScanner::scan()
 void HTML5PreloadScanner::processToken()
 {
     if (m_inStyle) {
-        if (m_token.type() == HTML5Token::Character)
+        if (m_token.type() == HTMLToken::Character)
             m_cssScanner.scan(m_token, scanningBody());
-        else if (m_token.type() == HTML5Token::EndTag) {
+        else if (m_token.type() == HTMLToken::EndTag) {
             m_inStyle = false;
             m_cssScanner.reset();
         }
     }
 
-    if (m_token.type() != HTML5Token::StartTag)
+    if (m_token.type() != HTMLToken::StartTag)
         return;
 
     PreloadTask task(m_token);

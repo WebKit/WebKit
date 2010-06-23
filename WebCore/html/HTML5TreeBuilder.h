@@ -40,7 +40,7 @@ class Document;
 class DocumentFragment;
 class Element;
 class Frame;
-class HTML5Token;
+class HTMLToken;
 class HTMLDocument;
 class LegacyHTMLTreeConstructor;
 class Node;
@@ -56,7 +56,7 @@ public:
     bool isPaused() const { return m_isPaused; }
 
     // The token really should be passed as a const& since it's never modified.
-    PassRefPtr<Node> constructTreeFromToken(HTML5Token&);
+    PassRefPtr<Node> constructTreeFromToken(HTMLToken&);
     // Must be called when parser is paused before calling the parser again.
     PassRefPtr<Element> takeScriptToProcess(int& scriptStartLine);
 
@@ -78,8 +78,8 @@ private:
         AfterFrameset,
     };
 
-    PassRefPtr<Node> passTokenToLegacyParser(HTML5Token&);
-    PassRefPtr<Node> processToken(HTML5Token&, UChar currentCharacter = 0);
+    PassRefPtr<Node> passTokenToLegacyParser(HTMLToken&);
+    PassRefPtr<Node> processToken(HTMLToken&, UChar currentCharacter = 0);
     
     void handleScriptStartTag();
     void handleScriptEndTag(Element*, int scriptStartLine);

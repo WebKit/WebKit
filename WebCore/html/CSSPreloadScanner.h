@@ -33,14 +33,14 @@
 namespace WebCore {
 
 class Document;
-class HTML5Token;
+class HTMLToken;
 
 class CSSPreloadScanner : public Noncopyable {
 public:
     CSSPreloadScanner(Document*);
 
     void reset();
-    void scan(const HTML5Token&, bool scanningBody);
+    void scan(const HTMLToken&, bool scanningBody);
 
 private:
     enum State {

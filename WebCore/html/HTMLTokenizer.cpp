@@ -30,7 +30,7 @@
 
 #include "AtomicString.h"
 #include "HTMLEntityParser.h"
-#include "HTML5Token.h"
+#include "HTMLToken.h"
 #include "HTMLNames.h"
 #include "NotImplemented.h"
 #include <wtf/CurrentTime.h>
@@ -174,10 +174,10 @@ inline bool HTMLTokenizer::processEntity(SegmentedString& source)
 
 #define _FLUSH_BUFFERED_END_TAG()                                          \
     do {                                                                   \
-        ASSERT(m_token->type() == HTML5Token::Character ||                 \
-               m_token->type() == HTML5Token::Uninitialized);              \
+        ASSERT(m_token->type() == HTMLToken::Character ||                  \
+               m_token->type() == HTMLToken::Uninitialized);               \
         source.advance(m_lineNumber);                                      \
-        if (m_token->type() == HTML5Token::Character)                      \
+        if (m_token->type() == HTMLToken::Character)                       \
             return true;                                                   \
         m_token->beginEndTag(m_bufferedEndTagName);                        \
         m_bufferedEndTagName.clear();                                      \
@@ -201,11 +201,11 @@ inline bool HTMLTokenizer::processEntity(SegmentedString& source)
         return true;                                                       \
     } while (false)
 
-bool HTMLTokenizer::nextToken(SegmentedString& source, HTML5Token& token)
+bool HTMLTokenizer::nextToken(SegmentedString& source, HTMLToken& token)
 {
     // If we have a token in progress, then we're supposed to be called back
     // with the same token so we can finish it.
-    ASSERT(!m_token || m_token == &token || token.type() == HTML5Token::Uninitialized);
+    ASSERT(!m_token || m_token == &token || token.type() == HTMLToken::Uninitialized);
     m_token = &token;
 
     if (!m_bufferedEndTagName.isEmpty() && !isEndTagBufferingState(m_state)) {
@@ -246,7 +246,7 @@ bool HTMLTokenizer::nextToken(SegmentedString& source, HTML5Token& token)
         if (cc == '&')
             ADVANCE_TO(CharacterReferenceInDataState);
         else if (cc == '<') {
-            if (m_token->type() == HTML5Token::Character) {
+            if (m_token->type() == HTMLToken::Character) {
                 // We have a bunch of character tokens queued up that we
                 // are emitting lazily here.
                 return true;
@@ -1455,7 +1455,7 @@ inline bool HTMLTokenizer::isAppropriateEndTag()
 
 inline void HTMLTokenizer::emitCharacter(UChar character)
 {
-    if (m_token->type() != HTML5Token::Character) {
+    if (m_token->type() != HTMLToken::Character) {
         m_token->beginCharacter(character);
         return;
     }
@@ -1479,14 +1479,14 @@ inline void HTMLTokenizer::emitParseError()
 
 inline void HTMLTokenizer::emitCurrentToken()
 {
-    ASSERT(m_token->type() != HTML5Token::Uninitialized);
-    if (m_token->type() == HTML5Token::StartTag)
+    ASSERT(m_token->type() != HTMLToken::Uninitialized);
+    if (m_token->type() == HTMLToken::StartTag)
         m_appropriateEndTagName = m_token->name();
 }
 
 inline bool HTMLTokenizer::shouldEmitBufferedCharacterToken(const SegmentedString& source)
 {
-    return source.isClosed() && m_token->type() == HTML5Token::Character;
+    return source.isClosed() && m_token->type() == HTMLToken::Character;
 }
 
 }

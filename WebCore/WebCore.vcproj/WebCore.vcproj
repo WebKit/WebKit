@@ -33409,11 +33409,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\html\HTML5ScriptRunner.cpp"
+				RelativePath="..\html\HTMLScriptRunner.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\html\HTML5ScriptRunner.h"
+				RelativePath="..\html\HTMLScriptRunner.h"
 				>
 			</File>
 			<File

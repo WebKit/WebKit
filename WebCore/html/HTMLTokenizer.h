@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-class HTML5Token;
+class HTMLToken;
 
 class HTMLTokenizer : public Noncopyable {
 public:
@@ -118,7 +118,7 @@ public:
     // This function returns true if it emits a token.  Otherwise, callers
     // must provide the same (in progress) token on the next call (unless
     // they call reset() first).
-    bool nextToken(SegmentedString&, HTML5Token&);
+    bool nextToken(SegmentedString&, HTMLToken&);
 
     int lineNumber() const { return m_lineNumber; }
     int columnNumber() const { return 1; } // Matches LegacyHTMLDocumentParser.h behavior.
@@ -208,7 +208,7 @@ private:
 
     // m_token is owned by the caller.  If nextToken is not on the stack,
     // this member might be pointing to unallocated memory.
-    HTML5Token* m_token;
+    HTMLToken* m_token;
     int m_lineNumber;
 
     bool m_skipLeadingNewLineForListing;

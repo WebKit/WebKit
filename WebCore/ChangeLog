@@ -2,6 +2,76 @@
 
         Reviewed by Eric Seidel.
 
+        More HTML5 => HTML renames
+        https://bugs.webkit.org/show_bug.cgi?id=41049
+
+        This patch renames HTML5ScriptRunner, HTML5ScriptRunnerHost, and
+        HTML5Token to remove the "5" from their names.  These clases aren't
+        specific to HTML5 and will be used going forward.
+
+        * Android.mk:
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/CSSPreloadScanner.cpp:
+        (WebCore::CSSPreloadScanner::scan):
+        * html/CSSPreloadScanner.h:
+        * html/HTML5DocumentParser.cpp:
+        (WebCore::HTML5DocumentParser::HTML5DocumentParser):
+        (WebCore::HTML5DocumentParser::notifyFinished):
+        * html/HTML5DocumentParser.h:
+        * html/HTML5PreloadScanner.cpp:
+        (WebCore::HTMLNames::PreloadTask::PreloadTask):
+        (WebCore::HTMLNames::PreloadTask::processAttributes):
+        (WebCore::HTML5PreloadScanner::processToken):
+        * html/HTML5PreloadScanner.h:
+        * html/HTML5ScriptRunner.cpp: Removed.
+        * html/HTML5ScriptRunner.h: Removed.
+        * html/HTML5ScriptRunnerHost.h: Removed.
+        * html/HTML5Token.h: Removed.
+        * html/HTML5TreeBuilder.cpp:
+        (WebCore::convertToOldStyle):
+        (WebCore::HTML5TreeBuilder::handleScriptEndTag):
+        (WebCore::HTML5TreeBuilder::passTokenToLegacyParser):
+        (WebCore::HTML5TreeBuilder::constructTreeFromToken):
+        (WebCore::HTML5TreeBuilder::processToken):
+        * html/HTML5TreeBuilder.h:
+        * html/HTMLScriptRunner.cpp: Copied from WebCore/html/HTML5ScriptRunner.cpp.
+        (WebCore::HTMLScriptRunner::HTMLScriptRunner):
+        (WebCore::HTMLScriptRunner::~HTMLScriptRunner):
+        (WebCore::HTMLScriptRunner::sourceFromPendingScript):
+        (WebCore::HTMLScriptRunner::isPendingScriptReady):
+        (WebCore::HTMLScriptRunner::executePendingScript):
+        (WebCore::HTMLScriptRunner::executeScript):
+        (WebCore::HTMLScriptRunner::hasScriptsWaitingForLoad):
+        (WebCore::HTMLScriptRunner::watchForLoad):
+        (WebCore::HTMLScriptRunner::stopWatchingForLoad):
+        (WebCore::HTMLScriptRunner::execute):
+        (WebCore::HTMLScriptRunner::haveParsingBlockingScript):
+        (WebCore::HTMLScriptRunner::executeParsingBlockingScripts):
+        (WebCore::HTMLScriptRunner::executeScriptsWaitingForLoad):
+        (WebCore::HTMLScriptRunner::executeScriptsWaitingForStylesheets):
+        (WebCore::HTMLScriptRunner::requestScript):
+        (WebCore::HTMLScriptRunner::runScript):
+        * html/HTMLScriptRunner.h: Copied from WebCore/html/HTML5ScriptRunner.h.
+        * html/HTMLScriptRunnerHost.h: Copied from WebCore/html/HTML5ScriptRunnerHost.h.
+        (WebCore::HTMLScriptRunnerHost::~HTMLScriptRunnerHost):
+        * html/HTMLToken.h: Copied from WebCore/html/HTML5Token.h.
+        (WebCore::HTMLToken::HTMLToken):
+        * html/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::nextToken):
+        (WebCore::HTMLTokenizer::emitCharacter):
+        (WebCore::HTMLTokenizer::emitCurrentToken):
+        (WebCore::HTMLTokenizer::shouldEmitBufferedCharacterToken):
+        * html/HTMLTokenizer.h:
+
+2010-06-23  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         Rename HTML5EntityParser to HTMLEntityParser
         https://bugs.webkit.org/show_bug.cgi?id=41048
 

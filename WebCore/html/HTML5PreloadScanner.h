@@ -29,14 +29,14 @@
 
 #include "CSSPreloadScanner.h"
 #include "HTMLTokenizer.h"
-#include "HTML5Token.h"
+#include "HTMLToken.h"
 #include "SegmentedString.h"
 #include <wtf/Noncopyable.h>
 
 namespace WebCore {
 
 class Document;
-class HTML5Token;
+class HTMLToken;
 class SegmentedString;
 
 class HTML5PreloadScanner : public Noncopyable {
@@ -53,7 +53,7 @@ private:
     Document* m_document;
     SegmentedString m_source;
     HTMLTokenizer m_tokenizer;
-    HTML5Token m_token;
+    HTMLToken m_token;
     CSSPreloadScanner m_cssScanner;
     bool m_bodySeen;
     bool m_inStyle;

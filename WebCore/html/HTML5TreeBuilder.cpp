@@ -30,7 +30,7 @@
 #include "Element.h"
 #include "Frame.h"
 #include "HTMLTokenizer.h"
-#include "HTML5Token.h"
+#include "HTMLToken.h"
 #include "HTMLDocument.h"
 #include "LegacyHTMLDocumentParser.h"
 #include "HTMLNames.h"
@@ -77,24 +77,24 @@ HTML5TreeBuilder::~HTML5TreeBuilder()
 {
 }
 
-static void convertToOldStyle(HTML5Token& token, Token& oldStyleToken)
+static void convertToOldStyle(HTMLToken& token, Token& oldStyleToken)
 {
     switch (token.type()) {
-    case HTML5Token::Uninitialized:
-    case HTML5Token::DOCTYPE:
+    case HTMLToken::Uninitialized:
+    case HTMLToken::DOCTYPE:
         ASSERT_NOT_REACHED();
         break;
-    case HTML5Token::EndOfFile:
+    case HTMLToken::EndOfFile:
         ASSERT_NOT_REACHED();
         notImplemented();
         break;
-    case HTML5Token::StartTag:
-    case HTML5Token::EndTag: {
-        oldStyleToken.beginTag = (token.type() == HTML5Token::StartTag);
+    case HTMLToken::StartTag:
+    case HTMLToken::EndTag: {
+        oldStyleToken.beginTag = (token.type() == HTMLToken::StartTag);
         oldStyleToken.selfClosingTag = token.selfClosing();
         oldStyleToken.tagName = AtomicString(token.name().data(), token.name().size());
-        const HTML5Token::AttributeList& attributes = token.attributes();
-        for (HTML5Token::AttributeList::const_iterator iter = attributes.begin();
+        const HTMLToken::AttributeList& attributes = token.attributes();
+        for (HTMLToken::AttributeList::const_iterator iter = attributes.begin();
              iter != attributes.end(); ++iter) {
             if (!iter->m_name.isEmpty()) {
                 String name(iter->m_name.data(), iter->m_name.size());
@@ -107,11 +107,11 @@ static void convertToOldStyle(HTML5Token& token, Token& oldStyleToken)
         }
         break;
     }
-    case HTML5Token::Comment:
+    case HTMLToken::Comment:
         oldStyleToken.tagName = commentAtom;
         oldStyleToken.text = StringImpl::create(token.comment().data(), token.comment().size());
         break;
-    case HTML5Token::Character:
+    case HTMLToken::Character:
         oldStyleToken.tagName = textAtom;
         oldStyleToken.text = StringImpl::create(token.characters().data(), token.characters().size());
         break;
@@ -135,7 +135,7 @@ void HTML5TreeBuilder::handleScriptEndTag(Element* scriptElement, int scriptStar
     m_isPaused = true;
     m_scriptToProcess = scriptElement;
     // Lexer line numbers are 0-based, ScriptSourceCode expects 1-based lines,
-    // so we convert here before passing the line number off to HTML5ScriptRunner.
+    // so we convert here before passing the line number off to HTMLScriptRunner.
     m_scriptToProcessStartLine = scriptStartLine + 1;
 }
 
@@ -166,9 +166,9 @@ HTMLTokenizer::State HTML5TreeBuilder::adjustedLexerState(HTMLTokenizer::State s
     return state;
 }
 
-PassRefPtr<Node> HTML5TreeBuilder::passTokenToLegacyParser(HTML5Token& token)
+PassRefPtr<Node> HTML5TreeBuilder::passTokenToLegacyParser(HTMLToken& token)
 {
-    if (token.type() == HTML5Token::DOCTYPE) {
+    if (token.type() == HTMLToken::DOCTYPE) {
         DoctypeToken doctypeToken;
         doctypeToken.m_name.append(token.name().data(), token.name().size());
         doctypeToken.m_publicID = token.publicIdentifier();
@@ -184,7 +184,7 @@ PassRefPtr<Node> HTML5TreeBuilder::passTokenToLegacyParser(HTML5Token& token)
     convertToOldStyle(token, oldStyleToken);
 
     RefPtr<Node> result =  m_legacyTreeConstructor->parseToken(&oldStyleToken);
-    if (token.type() == HTML5Token::StartTag) {
+    if (token.type() == HTMLToken::StartTag) {
         // This work is supposed to be done by the parser, but
         // when using the old parser for we have to do this manually.
         if (oldStyleToken.tagName == scriptTag) {
@@ -195,7 +195,7 @@ PassRefPtr<Node> HTML5TreeBuilder::passTokenToLegacyParser(HTML5Token& token)
             m_tokenizer->skipLeadingNewLineForListing();
         else
             m_tokenizer->setState(adjustedLexerState(m_tokenizer->state(), oldStyleToken.tagName, m_document->frame()));
-    } else if (token.type() == HTML5Token::EndTag) {
+    } else if (token.type() == HTMLToken::EndTag) {
         if (oldStyleToken.tagName == scriptTag) {
             if (m_lastScriptElement) {
                 ASSERT(m_lastScriptElementStartLine != uninitializedLineNumberValue);
@@ -216,7 +216,7 @@ PassRefPtr<Node> HTML5TreeBuilder::passTokenToLegacyParser(HTML5Token& token)
     return result.release();
 }
 
-PassRefPtr<Node> HTML5TreeBuilder::constructTreeFromToken(HTML5Token& token)
+PassRefPtr<Node> HTML5TreeBuilder::constructTreeFromToken(HTMLToken& token)
 {
     // Make MSVC ignore our unreachable code for now.
     if (true)
@@ -226,9 +226,9 @@ PassRefPtr<Node> HTML5TreeBuilder::constructTreeFromToken(HTML5Token& token)
     // emitted.  We instead collect characters and call the parser with a batch.
     // In order to make our first-pass parser code simple, processToken matches
     // the spec in only handling one character at a time.
-    if (token.type() == HTML5Token::Character) {
-        HTML5Token::DataVector characters = token.characters();
-        HTML5Token::DataVector::const_iterator itr = characters.begin();
+    if (token.type() == HTMLToken::Character) {
+        HTMLToken::DataVector characters = token.characters();
+        HTMLToken::DataVector::const_iterator itr = characters.begin();
         for (;itr; ++itr)
             processToken(token, *itr);
         return 0; // FIXME: Should we be returning the Text node?
@@ -236,7 +236,7 @@ PassRefPtr<Node> HTML5TreeBuilder::constructTreeFromToken(HTML5Token& token)
     return processToken(token);
 }
 
-PassRefPtr<Node> HTML5TreeBuilder::processToken(HTML5Token& token, UChar currentCharacter)
+PassRefPtr<Node> HTML5TreeBuilder::processToken(HTMLToken& token, UChar currentCharacter)
 {
     UNUSED_PARAM(token);
     UNUSED_PARAM(currentCharacter);
