@@ -27,7 +27,7 @@
 #define HTML5TreeBuilder_h
 
 #include "FragmentScriptingPermission.h"
-#include "HTML5Lexer.h"
+#include "HTMLTokenizer.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassRefPtr.h>
@@ -48,8 +48,8 @@ class Node;
 class HTML5TreeBuilder : public Noncopyable {
 public:
     // FIXME: Replace constructors with create() functions returning PassOwnPtrs
-    HTML5TreeBuilder(HTML5Lexer*, HTMLDocument*, bool reportErrors);
-    HTML5TreeBuilder(HTML5Lexer*, DocumentFragment*, FragmentScriptingPermission);
+    HTML5TreeBuilder(HTMLTokenizer*, HTMLDocument*, bool reportErrors);
+    HTML5TreeBuilder(HTMLTokenizer*, DocumentFragment*, FragmentScriptingPermission);
     ~HTML5TreeBuilder();
 
     void setPaused(bool paused) { m_isPaused = paused; }
@@ -63,7 +63,7 @@ public:
     // Done, close any open tags, etc.
     void finished();
 
-    static HTML5Lexer::State adjustedLexerState(HTML5Lexer::State, const AtomicString& tagName, Frame*);
+    static HTMLTokenizer::State adjustedLexerState(HTMLTokenizer::State, const AtomicString& tagName, Frame*);
 
     // FIXME: This is a dirty, rotten hack to keep HTMLFormControlElement happy
     // until we stop using the legacy parser. DO NOT CALL THIS METHOD.
@@ -97,7 +97,7 @@ private:
 
     // HTML5 spec requires that we be able to change the state of the lexer
     // from within parser actions.
-    HTML5Lexer* m_lexer;
+    HTMLTokenizer* m_lexer;
 
     // We're re-using logic from the old LegacyHTMLTreeConstructor while this class is being written.
     OwnPtr<LegacyHTMLTreeConstructor> m_legacyTreeConstructor;

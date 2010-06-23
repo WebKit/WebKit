@@ -28,7 +28,7 @@
 #define HTML5PreloadScanner_h
 
 #include "CSSPreloadScanner.h"
-#include "HTML5Lexer.h"
+#include "HTMLTokenizer.h"
 #include "HTML5Token.h"
 #include "SegmentedString.h"
 #include <wtf/Noncopyable.h>
@@ -52,7 +52,7 @@ private:
 
     Document* m_document;
     SegmentedString m_source;
-    HTML5Lexer m_lexer;
+    HTMLTokenizer m_lexer;
     HTML5Token m_token;
     CSSPreloadScanner m_cssScanner;
     bool m_bodySeen;

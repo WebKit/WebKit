@@ -30,7 +30,7 @@
 #include "Element.h"
 #include "Frame.h"
 #include "HTMLParserScheduler.h"
-#include "HTML5Lexer.h"
+#include "HTMLTokenizer.h"
 #include "HTML5PreloadScanner.h"
 #include "HTML5ScriptRunner.h"
 #include "HTML5TreeBuilder.h"
@@ -67,7 +67,7 @@ private:
 
 HTML5DocumentParser::HTML5DocumentParser(HTMLDocument* document, bool reportErrors)
     : m_document(document)
-    , m_lexer(new HTML5Lexer)
+    , m_lexer(new HTMLTokenizer)
     , m_scriptRunner(new HTML5ScriptRunner(document, this))
     , m_treeConstructor(new HTML5TreeBuilder(m_lexer.get(), document, reportErrors))
     , m_parserScheduler(new HTMLParserScheduler(this))
@@ -81,7 +81,7 @@ HTML5DocumentParser::HTML5DocumentParser(HTMLDocument* document, bool reportErro
 // minimize code duplication between these constructors.
 HTML5DocumentParser::HTML5DocumentParser(DocumentFragment* fragment, FragmentScriptingPermission scriptingPermission)
     : m_document(fragment->document())
-    , m_lexer(new HTML5Lexer)
+    , m_lexer(new HTMLTokenizer)
     , m_treeConstructor(new HTML5TreeBuilder(m_lexer.get(), fragment, scriptingPermission))
     , m_endWasDelayed(false)
     , m_writeNestingLevel(0)
@@ -183,7 +183,7 @@ void HTML5DocumentParser::pumpLexer(SynchronousMode mode)
     }
 
     if (isWaitingForScripts()) {
-        ASSERT(m_lexer->state() == HTML5Lexer::DataState);
+        ASSERT(m_lexer->state() == HTMLTokenizer::DataState);
         if (!m_preloadScanner) {
             m_preloadScanner.set(new HTML5PreloadScanner(m_document));
             m_preloadScanner->appendToEnd(m_input.current());

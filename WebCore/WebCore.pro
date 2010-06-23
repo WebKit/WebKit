@@ -612,7 +612,7 @@ SOURCES += \
     html/FileThread.cpp \
     html/FormDataList.cpp \
     html/HTML5EntityParser.cpp \
-    html/HTML5Lexer.cpp \
+    html/HTMLTokenizer.cpp \
     html/HTML5DocumentParser.cpp \
     html/HTML5PreloadScanner.cpp \
     html/HTML5ScriptRunner.cpp \

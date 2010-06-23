@@ -26,7 +26,7 @@
  */
 
 #include "config.h"
-#include "HTML5Lexer.h"
+#include "HTMLTokenizer.h"
 
 #include "AtomicString.h"
 #include "HTML5EntityParser.h"
@@ -69,17 +69,17 @@ inline bool vectorEqualsString(const Vector<UChar, 32>& vector, const String& st
     return !memcmp(stringData, vectorData, vector.size() * sizeof(UChar));
 }
 
-inline bool isEndTagBufferingState(HTML5Lexer::State state)
+inline bool isEndTagBufferingState(HTMLTokenizer::State state)
 {
     switch (state) {
-    case HTML5Lexer::RCDATAEndTagOpenState:
-    case HTML5Lexer::RCDATAEndTagNameState:
-    case HTML5Lexer::RAWTEXTEndTagOpenState:
-    case HTML5Lexer::RAWTEXTEndTagNameState:
-    case HTML5Lexer::ScriptDataEndTagOpenState:
-    case HTML5Lexer::ScriptDataEndTagNameState:
-    case HTML5Lexer::ScriptDataEscapedEndTagOpenState:
-    case HTML5Lexer::ScriptDataEscapedEndTagNameState:
+    case HTMLTokenizer::RCDATAEndTagOpenState:
+    case HTMLTokenizer::RCDATAEndTagNameState:
+    case HTMLTokenizer::RAWTEXTEndTagOpenState:
+    case HTMLTokenizer::RAWTEXTEndTagNameState:
+    case HTMLTokenizer::ScriptDataEndTagOpenState:
+    case HTMLTokenizer::ScriptDataEndTagNameState:
+    case HTMLTokenizer::ScriptDataEscapedEndTagOpenState:
+    case HTMLTokenizer::ScriptDataEscapedEndTagNameState:
         return true;
     default:
         return false;
@@ -88,16 +88,16 @@ inline bool isEndTagBufferingState(HTML5Lexer::State state)
 
 }
 
-HTML5Lexer::HTML5Lexer()
+HTMLTokenizer::HTMLTokenizer()
 {
     reset();
 }
 
-HTML5Lexer::~HTML5Lexer()
+HTMLTokenizer::~HTMLTokenizer()
 {
 }
 
-void HTML5Lexer::reset()
+void HTMLTokenizer::reset()
 {
     m_state = DataState;
     m_token = 0;
@@ -106,7 +106,7 @@ void HTML5Lexer::reset()
     m_additionalAllowedCharacter = '\0';
 }
 
-inline bool HTML5Lexer::processEntity(SegmentedString& source)
+inline bool HTMLTokenizer::processEntity(SegmentedString& source)
 {
     bool notEnoughCharacters = false;
     unsigned value = consumeHTML5Entity(source, notEnoughCharacters);
@@ -201,7 +201,7 @@ inline bool HTML5Lexer::processEntity(SegmentedString& source)
         return true;                                                       \
     } while (false)
 
-bool HTML5Lexer::nextToken(SegmentedString& source, HTML5Token& token)
+bool HTMLTokenizer::nextToken(SegmentedString& source, HTML5Token& token)
 {
     // If we have a token in progress, then we're supposed to be called back
     // with the same token so we can finish it.
@@ -1437,23 +1437,23 @@ bool HTML5Lexer::nextToken(SegmentedString& source, HTML5Token& token)
     return false;
 }
 
-inline bool HTML5Lexer::temporaryBufferIs(const String& expectedString)
+inline bool HTMLTokenizer::temporaryBufferIs(const String& expectedString)
 {
     return vectorEqualsString(m_temporaryBuffer, expectedString);
 }
 
-inline void HTML5Lexer::addToPossibleEndTag(UChar cc)
+inline void HTMLTokenizer::addToPossibleEndTag(UChar cc)
 {
     ASSERT(isEndTagBufferingState(m_state));
     m_bufferedEndTagName.append(cc);
 }
 
-inline bool HTML5Lexer::isAppropriateEndTag()
+inline bool HTMLTokenizer::isAppropriateEndTag()
 {
     return m_bufferedEndTagName == m_appropriateEndTagName;
 }
 
-inline void HTML5Lexer::emitCharacter(UChar character)
+inline void HTMLTokenizer::emitCharacter(UChar character)
 {
     if (m_token->type() != HTML5Token::Character) {
         m_token->beginCharacter(character);
@@ -1462,7 +1462,7 @@ inline void HTML5Lexer::emitCharacter(UChar character)
     m_token->appendToCharacter(character);
 }
 
-inline void HTML5Lexer::emitCodePoint(unsigned value)
+inline void HTMLTokenizer::emitCodePoint(unsigned value)
 {
     if (value < 0xFFFF) {
         emitCharacter(value);
@@ -1472,19 +1472,19 @@ inline void HTML5Lexer::emitCodePoint(unsigned value)
     emitCharacter(U16_TRAIL(value));
 }
 
-inline void HTML5Lexer::emitParseError()
+inline void HTMLTokenizer::emitParseError()
 {
     notImplemented();
 }
 
-inline void HTML5Lexer::emitCurrentToken()
+inline void HTMLTokenizer::emitCurrentToken()
 {
     ASSERT(m_token->type() != HTML5Token::Uninitialized);
     if (m_token->type() == HTML5Token::StartTag)
         m_appropriateEndTagName = m_token->name();
 }
 
-inline bool HTML5Lexer::shouldEmitBufferedCharacterToken(const SegmentedString& source)
+inline bool HTMLTokenizer::shouldEmitBufferedCharacterToken(const SegmentedString& source)
 {
     return source.isClosed() && m_token->type() == HTML5Token::Character;
 }

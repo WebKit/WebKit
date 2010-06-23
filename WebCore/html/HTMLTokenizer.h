@@ -36,7 +36,7 @@ namespace WebCore {
 
 class HTML5Token;
 
-class HTML5Lexer : public Noncopyable {
+class HTMLTokenizer : public Noncopyable {
 public:
     enum State {
         DataState,
@@ -110,8 +110,8 @@ public:
         CDATASectionState,
     };
 
-    HTML5Lexer();
-    ~HTML5Lexer();
+    HTMLTokenizer();
+    ~HTMLTokenizer();
 
     void reset();
 

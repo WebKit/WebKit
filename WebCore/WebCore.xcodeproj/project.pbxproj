@@ -2565,8 +2565,8 @@
 		97DD4D870FDF4D6E00ECF9A4 /* XSSAuditor.h in Headers */ = {isa = PBXBuildFile; fileRef = 97DD4D850FDF4D6E00ECF9A4 /* XSSAuditor.h */; };
 		97E7936511C6030900E649BC /* HTML5PreloadScanner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97E7936311C6030900E649BC /* HTML5PreloadScanner.cpp */; };
 		97E7936611C6030900E649BC /* HTML5PreloadScanner.h in Headers */ = {isa = PBXBuildFile; fileRef = 97E7936411C6030900E649BC /* HTML5PreloadScanner.h */; };
-		97E8B35611A23CE200169409 /* HTML5Lexer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97E8B35411A23CE200169409 /* HTML5Lexer.cpp */; };
-		97E8B35711A23CE200169409 /* HTML5Lexer.h in Headers */ = {isa = PBXBuildFile; fileRef = 97E8B35511A23CE200169409 /* HTML5Lexer.h */; };
+		97E8B35611A23CE200169409 /* HTMLTokenizer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97E8B35411A23CE200169409 /* HTMLTokenizer.cpp */; };
+		97E8B35711A23CE200169409 /* HTMLTokenizer.h in Headers */ = {isa = PBXBuildFile; fileRef = 97E8B35511A23CE200169409 /* HTMLTokenizer.h */; };
 		97E8B3C311A2890800169409 /* HTML5Token.h in Headers */ = {isa = PBXBuildFile; fileRef = 97E8B3C211A2890800169409 /* HTML5Token.h */; };
 		97EF7DFE107E55B700D7C49C /* ScriptControllerBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97EF7DFD107E55B700D7C49C /* ScriptControllerBase.cpp */; };
 		9F6FC1961122E82A00E80196 /* ScriptDebugServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F6FC1941122E82A00E80196 /* ScriptDebugServer.cpp */; };
@@ -8171,8 +8171,8 @@
 		97DD4D850FDF4D6E00ECF9A4 /* XSSAuditor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XSSAuditor.h; sourceTree = "<group>"; };
 		97E7936311C6030900E649BC /* HTML5PreloadScanner.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTML5PreloadScanner.cpp; sourceTree = "<group>"; };
 		97E7936411C6030900E649BC /* HTML5PreloadScanner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTML5PreloadScanner.h; sourceTree = "<group>"; };
-		97E8B35411A23CE200169409 /* HTML5Lexer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTML5Lexer.cpp; sourceTree = "<group>"; };
-		97E8B35511A23CE200169409 /* HTML5Lexer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTML5Lexer.h; sourceTree = "<group>"; };
+		97E8B35411A23CE200169409 /* HTMLTokenizer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLTokenizer.cpp; sourceTree = "<group>"; };
+		97E8B35511A23CE200169409 /* HTMLTokenizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLTokenizer.h; sourceTree = "<group>"; };
 		97E8B3C211A2890800169409 /* HTML5Token.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTML5Token.h; sourceTree = "<group>"; };
 		97EF7DFD107E55B700D7C49C /* ScriptControllerBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptControllerBase.cpp; sourceTree = "<group>"; };
 		9F6FC1941122E82A00E80196 /* ScriptDebugServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptDebugServer.cpp; sourceTree = "<group>"; };
@@ -13481,8 +13481,8 @@
 				A871038911A2947000DBD50E /* HTML5DocumentParser.h */,
 				976E895E11C0CA3A00EA9CA9 /* HTML5EntityParser.cpp */,
 				976E895F11C0CA3A00EA9CA9 /* HTML5EntityParser.h */,
-				97E8B35411A23CE200169409 /* HTML5Lexer.cpp */,
-				97E8B35511A23CE200169409 /* HTML5Lexer.h */,
+				97E8B35411A23CE200169409 /* HTMLTokenizer.cpp */,
+				97E8B35511A23CE200169409 /* HTMLTokenizer.h */,
 				97E7936311C6030900E649BC /* HTML5PreloadScanner.cpp */,
 				97E7936411C6030900E649BC /* HTML5PreloadScanner.h */,
 				A83B3AEE11ADEFF500458809 /* HTML5ScriptRunner.cpp */,
@@ -18047,7 +18047,7 @@
 				BC3BC29C0E91AB0F00835588 /* HostWindow.h in Headers */,
 				A871038B11A2947000DBD50E /* HTML5DocumentParser.h in Headers */,
 				976E896111C0CA3A00EA9CA9 /* HTML5EntityParser.h in Headers */,
-				97E8B35711A23CE200169409 /* HTML5Lexer.h in Headers */,
+				97E8B35711A23CE200169409 /* HTMLTokenizer.h in Headers */,
 				97E7936611C6030900E649BC /* HTML5PreloadScanner.h in Headers */,
 				A83B3AF111ADEFF500458809 /* HTML5ScriptRunner.h in Headers */,
 				A87F163511AE841300CBB2E5 /* HTML5ScriptRunnerHost.h in Headers */,
@@ -20388,7 +20388,7 @@
 				9307F1D70AF2D59000DBA31A /* HitTestResult.cpp in Sources */,
 				A871038A11A2947000DBD50E /* HTML5DocumentParser.cpp in Sources */,
 				976E896011C0CA3A00EA9CA9 /* HTML5EntityParser.cpp in Sources */,
-				97E8B35611A23CE200169409 /* HTML5Lexer.cpp in Sources */,
+				97E8B35611A23CE200169409 /* HTMLTokenizer.cpp in Sources */,
 				97E7936511C6030900E649BC /* HTML5PreloadScanner.cpp in Sources */,
 				A83B3AF011ADEFF500458809 /* HTML5ScriptRunner.cpp in Sources */,
 				A879C62511A9D1F70059237A /* HTML5TreeBuilder.cpp in Sources */,

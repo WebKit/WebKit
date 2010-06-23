@@ -1088,8 +1088,8 @@ webcore_sources += \
 	WebCore/html/FormDataList.h \
 	WebCore/html/HTML5EntityParser.cpp \
 	WebCore/html/HTML5EntityParser.h \
-	WebCore/html/HTML5Lexer.cpp \
-	WebCore/html/HTML5Lexer.h \
+	WebCore/html/HTMLTokenizer.cpp \
+	WebCore/html/HTMLTokenizer.h \
 	WebCore/html/HTML5Token.h \
 	WebCore/html/HTML5DocumentParser.cpp \
 	WebCore/html/HTML5DocumentParser.h \

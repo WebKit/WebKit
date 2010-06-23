@@ -29,7 +29,7 @@
 #include "DocumentFragment.h"
 #include "Element.h"
 #include "Frame.h"
-#include "HTML5Lexer.h"
+#include "HTMLTokenizer.h"
 #include "HTML5Token.h"
 #include "HTMLDocument.h"
 #include "LegacyHTMLDocumentParser.h"
@@ -45,7 +45,7 @@ using namespace HTMLNames;
 
 static const int uninitializedLineNumberValue = -1;
 
-HTML5TreeBuilder::HTML5TreeBuilder(HTML5Lexer* lexer, HTMLDocument* document, bool reportErrors)
+HTML5TreeBuilder::HTML5TreeBuilder(HTMLTokenizer* lexer, HTMLDocument* document, bool reportErrors)
     : m_document(document)
     , m_reportErrors(reportErrors)
     , m_isPaused(false)
@@ -60,7 +60,7 @@ HTML5TreeBuilder::HTML5TreeBuilder(HTML5Lexer* lexer, HTMLDocument* document, bo
 
 // FIXME: Member variables should be grouped into self-initializing structs to
 // minimize code duplication between these constructors.
-HTML5TreeBuilder::HTML5TreeBuilder(HTML5Lexer* lexer, DocumentFragment* fragment, FragmentScriptingPermission scriptingPermission)
+HTML5TreeBuilder::HTML5TreeBuilder(HTMLTokenizer* lexer, DocumentFragment* fragment, FragmentScriptingPermission scriptingPermission)
     : m_document(fragment->document())
     , m_reportErrors(false) // FIXME: Why not report errors in fragments?
     , m_isPaused(false)
@@ -121,7 +121,7 @@ static void convertToOldStyle(HTML5Token& token, Token& oldStyleToken)
 void HTML5TreeBuilder::handleScriptStartTag()
 {
     notImplemented(); // The HTML frgment case?
-    m_lexer->setState(HTML5Lexer::ScriptDataState);
+    m_lexer->setState(HTMLTokenizer::ScriptDataState);
     notImplemented(); // Save insertion mode.
 }
 
@@ -151,17 +151,17 @@ PassRefPtr<Element> HTML5TreeBuilder::takeScriptToProcess(int& scriptStartLine)
     return m_scriptToProcess.release();
 }
 
-HTML5Lexer::State HTML5TreeBuilder::adjustedLexerState(HTML5Lexer::State state, const AtomicString& tagName, Frame* frame)
+HTMLTokenizer::State HTML5TreeBuilder::adjustedLexerState(HTMLTokenizer::State state, const AtomicString& tagName, Frame* frame)
 {
     if (tagName == textareaTag || tagName == titleTag)
-        return HTML5Lexer::RCDATAState;
+        return HTMLTokenizer::RCDATAState;
 
     if (tagName == styleTag || tagName == iframeTag || tagName == xmpTag || tagName == noembedTag
         || tagName == noframesTag || (tagName == noscriptTag && isScriptingFlagEnabled(frame)))
-        return HTML5Lexer::RAWTEXTState;
+        return HTMLTokenizer::RAWTEXTState;
 
     if (tagName == plaintextTag)
-        return HTML5Lexer::PLAINTEXTState;
+        return HTMLTokenizer::PLAINTEXTState;
 
     return state;
 }

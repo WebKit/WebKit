@@ -42,7 +42,7 @@ class Document;
 class DocumentFragment;
 class HTMLDocument;
 class HTMLParserScheduler;
-class HTML5Lexer;
+class HTMLTokenizer;
 class HTML5ScriptRunner;
 class HTML5TreeBuilder;
 class HTML5PreloadScanner;
@@ -118,7 +118,7 @@ private:
     // We must support parsing into a Document* and not just HTMLDocument*
     // to support DocumentFragment (which has a Document*).
     Document* m_document;
-    OwnPtr<HTML5Lexer> m_lexer;
+    OwnPtr<HTMLTokenizer> m_lexer;
     OwnPtr<HTML5ScriptRunner> m_scriptRunner;
     OwnPtr<HTML5TreeBuilder> m_treeConstructor;
     OwnPtr<HTML5PreloadScanner> m_preloadScanner;
