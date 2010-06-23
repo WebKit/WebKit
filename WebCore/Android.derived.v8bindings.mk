@@ -138,6 +138,7 @@ $(patsubst %.h,%.cpp,$(GEN)): $(intermediates)/bindings/%.cpp : $(intermediates)
 # HTML
 GEN := \
     $(intermediates)/bindings/V8Blob.h \
+    $(intermediates)/bindings/V8BlobBuilder.h \
     $(intermediates)/bindings/V8DataGridColumn.h \
     $(intermediates)/bindings/V8DataGridColumnList.h \
     $(intermediates)/bindings/V8File.h \

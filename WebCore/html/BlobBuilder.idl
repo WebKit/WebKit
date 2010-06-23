@@ -28,33 +28,16 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef BlobBuilder_h
-#define BlobBuilder_h
+module html {
+    interface [
+        CanBeConstructed,
+        GenerateNativeConverter,
+        NoStaticTables
+    ] BlobBuilder {
+        Blob getBlob(in [Optional, ConvertUndefinedOrNullToNullString] DOMString contentType);
+        void append(in Blob blob);
+        void append(in DOMString value, in [Optional, ConvertUndefinedOrNullToNullString] DOMString endings) raises (DOMException);
+    };
 
-#include "BlobItem.h"
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
+}
 
-namespace WebCore {
-
-class Blob;
-
-typedef int ExceptionCode;
-
-class BlobBuilder : public RefCounted<BlobBuilder> {
-public:
-    static PassRefPtr<BlobBuilder> create() { return adoptRef(new BlobBuilder()); }
-
-    bool append(PassRefPtr<Blob>);
-    bool append(const String& text, ExceptionCode&);
-    bool append(const String& text, const String& ending, ExceptionCode&);
-
-    PassRefPtr<Blob> getBlob(const String& contentType = String()) const;
-
-private:
-    BlobItemList m_items;
-};
-
-} // namespace WebCore
-
-#endif // BlobBuilder_h
