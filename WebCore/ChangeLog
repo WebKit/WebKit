@@ -1,3 +1,12 @@
+2010-06-22  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Unreviewed Qt/Symbian build fix.
+
+        Fix "make clean" to not try to execute clean commands for
+        the extra targets we use to simulate "make install".
+
+        * WebCore.pro: Use no_clean in CONFIG of extra compilers.
+
 2010-06-22  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.
