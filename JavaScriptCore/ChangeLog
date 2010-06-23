@@ -1,3 +1,20 @@
+2010-06-23  Kwang Yul Seo  <skyul@company100.net>
+
+        Reviewed by Oliver Hunt.
+
+        [GTK] Implement ThreadSpecific with glib
+        https://bugs.webkit.org/show_bug.cgi?id=39829
+
+        Implement ThreadSpecific with glib's GStaticPrivate.
+        This patch makes it possible to build GTK port without pthread.
+
+        * wtf/ThreadSpecific.h:
+        (WTF::::ThreadSpecific):
+        (WTF::::~ThreadSpecific):
+        (WTF::::get):
+        (WTF::::set):
+        (WTF::::destroy):
+
 2010-06-23  Leandro Pereira  <leandro@profusion.mobi>
 
         Unreviewed build fix.
