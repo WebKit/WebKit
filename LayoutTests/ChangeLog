@@ -1,3 +1,11 @@
+2010-06-23  Alpha Lam  <hclam@chromium.org>
+
+        Unreviewed. Build fix.
+
+        Adding test expectation since a test introduced r61607 has not test results.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-06-23  Stephen White  <senorblanco@chromium.org>
 
         Reviewed by David Hyatt.

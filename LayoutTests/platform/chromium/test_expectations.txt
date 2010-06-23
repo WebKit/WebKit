@@ -3050,3 +3050,6 @@ BUG_SENORBLANCO MAC : tables/mozilla/marvin/tr_valign_middle.html = IMAGE
 BUG_SENORBLANCO MAC : tables/mozilla/marvin/tr_valign_top.html = IMAGE
 BUG_SENORBLANCO MAC : tables/mozilla_expected_failures/bugs/97619.html = IMAGE
 BUG_SENORBLANCO MAC : tables/mozilla_expected_failures/bugs/bug6933.html = IMAGE
+
+// r61607 Introduced a new test but with no results.
+BUG_HCLAM : fast/dom/beforeload/remove-bad-object-in-beforeload-listener.html = FAIL
