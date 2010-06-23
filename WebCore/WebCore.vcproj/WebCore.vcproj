@@ -47729,6 +47729,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\websockets\WebSocketHandshakeResponse.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\websockets\WebSocketHandshakeResponse.h"
+				>
+			</File>
+			<File
 				RelativePath="..\websockets\WorkerThreadableWebSocketChannel.cpp"
 				>
 			</File>

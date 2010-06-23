@@ -3777,7 +3777,9 @@ webcore_sources += \
 	WebCore/websockets/WebSocketHandshake.cpp \
 	WebCore/websockets/WebSocketHandshake.h \
 	WebCore/websockets/WebSocketHandshakeRequest.cpp \
-	WebCore/websockets/WebSocketHandshakeRequest.h
+	WebCore/websockets/WebSocketHandshakeRequest.h \
+	WebCore/websockets/WebSocketHandshakeResponse.cpp \
+	WebCore/websockets/WebSocketHandshakeResponse.h
 
 if ENABLE_WORKERS
 webcore_sources += \

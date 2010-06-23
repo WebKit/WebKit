@@ -35,6 +35,7 @@
 #include "WebSocketHandshake.h"
 
 #include "AtomicString.h"
+#include "CharacterNames.h"
 #include "Cookie.h"
 #include "CookieJar.h"
 #include "Document.h"
@@ -55,28 +56,6 @@
 namespace WebCore {
 
 static const char randomCharacterInSecWebSocketKey[] = "!\"#$%&'()*+,-./:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~";
-
-static String extractResponseCode(const char* header, int len, size_t& lineLength)
-{
-    const char* space1 = 0;
-    const char* space2 = 0;
-    const char* p;
-    lineLength = 0;
-    for (p = header; p - header < len; p++, lineLength++) {
-        if (*p == ' ') {
-            if (!space1)
-                space1 = p;
-            else if (!space2)
-                space2 = p;
-        } else if (*p == '\n')
-            break;
-    }
-    if (p - header == len)
-        return String();
-    if (!space1 || !space2)
-        return "";
-    return String(space1 + 1, space2 - space1 - 1);
-}
 
 static String resourceName(const KURL& url)
 {
@@ -102,11 +81,12 @@ static String hostName(const KURL& url, bool secure)
     return builder.toString();
 }
 
+static const size_t maxConsoleMessageSize = 128;
 static String trimConsoleMessage(const char* p, size_t len)
 {
-    String s = String(p, std::min<size_t>(len, 128));
-    if (len > 128)
-        s += "...";
+    String s = String(p, std::min<size_t>(len, maxConsoleMessageSize));
+    if (len > maxConsoleMessageSize)
+        s.append(horizontalEllipsis);
     return s;
 }
 
@@ -322,21 +302,21 @@ void WebSocketHandshake::clearScriptExecutionContext()
 int WebSocketHandshake::readServerHandshake(const char* header, size_t len)
 {
     m_mode = Incomplete;
-    size_t lineLength;
-    const String& code = extractResponseCode(header, len, lineLength);
-    if (code.isNull()) {
-        // Just hasn't been received yet.
+    int statusCode;
+    String statusText;
+    int lineLength = readStatusLine(header, len, statusCode, statusText);
+    if (lineLength == -1)
         return -1;
-    }
-    if (code.isEmpty()) {
+    if (statusCode == -1) {
         m_mode = Failed;
-        m_context->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, "No response code found: " + trimConsoleMessage(header, lineLength), 0, clientOrigin());
         return len;
     }
-    LOG(Network, "response code: %s", code.utf8().data());
-    if (code != "101") {
+    LOG(Network, "response code: %d", statusCode);
+    m_response.setStatusCode(statusCode);
+    m_response.setStatusText(statusText);
+    if (statusCode != 101) {
         m_mode = Failed;
-        m_context->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, "Unexpected response code:" + code, 0, clientOrigin());
+        m_context->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, String::format("Unexpected response code: %d", statusCode), 0, clientOrigin());
         return len;
     }
     m_mode = Normal;
@@ -345,17 +325,14 @@ int WebSocketHandshake::readServerHandshake(const char* header, size_t len)
         m_mode = Incomplete;
         return -1;
     }
-    HTTPHeaderMap headers;
-    const char* headerFields = strnstr(header, "\r\n", len); // skip status line
-    ASSERT(headerFields);
-    headerFields += 2; // skip "\r\n".
-    const char* p = readHTTPHeaders(headerFields, header + len, &headers);
+    const char* p = readHTTPHeaders(header + lineLength, header + len);
     if (!p) {
         LOG(Network, "readHTTPHeaders failed");
         m_mode = Failed;
         return len;
     }
-    if (!processHeaders(headers) || !checkResponseHeaders()) {
+    processHeaders();
+    if (!checkResponseHeaders()) {
         LOG(Network, "header process failed");
         m_mode = Failed;
         return p - header;
@@ -365,6 +342,7 @@ int WebSocketHandshake::readServerHandshake(const char* header, size_t len)
         m_mode = Incomplete;
         return -1;
     }
+    m_response.setChallengeResponse(static_cast<const unsigned char*>(static_cast<const void*>(p)));
     if (memcmp(p, m_expectedChallengeResponse, sizeof(m_expectedChallengeResponse))) {
         m_mode = Failed;
         return (p - header) + sizeof(m_expectedChallengeResponse);
@@ -428,6 +406,11 @@ void WebSocketHandshake::setServerSetCookie2(const String& setCookie2)
     m_setCookie2 = setCookie2;
 }
 
+const WebSocketHandshakeResponse& WebSocketHandshake::serverHandshakeResponse() const
+{
+    return m_response;
+}
+
 KURL WebSocketHandshake::httpURLForAuthenticationAndCookies() const
 {
     KURL url = m_url.copy();
@@ -436,8 +419,70 @@ KURL WebSocketHandshake::httpURLForAuthenticationAndCookies() const
     return url;
 }
 
-const char* WebSocketHandshake::readHTTPHeaders(const char* start, const char* end, HTTPHeaderMap* headers)
+// Returns the header length (including "\r\n"), or -1 if we have not received enough data yet.
+// If the line is malformed or the status code is not a 3-digit number,
+// statusCode and statusText will be set to -1 and a null string, respectively.
+int WebSocketHandshake::readStatusLine(const char* header, size_t headerLength, int& statusCode, String& statusText)
 {
+    statusCode = -1;
+    statusText = String();
+
+    const char* space1 = 0;
+    const char* space2 = 0;
+    const char* p;
+    size_t consumedLength;
+
+    for (p = header, consumedLength = 0; consumedLength < headerLength; p++, consumedLength++) {
+        if (*p == ' ') {
+            if (!space1)
+                space1 = p;
+            else if (!space2)
+                space2 = p;
+        } else if (*p == '\n')
+            break;
+    }
+    if (consumedLength == headerLength)
+        return -1; // We have not received '\n' yet.
+
+    const char* end = p + 1;
+    if (end - header > INT_MAX) {
+        m_context->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, "Status line is too long: " + trimConsoleMessage(header, maxConsoleMessageSize + 1), 0, clientOrigin());
+        return INT_MAX;
+    }
+    int lineLength = end - header;
+
+    if (!space1 || !space2) {
+        m_context->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, "No response code found: " + trimConsoleMessage(header, lineLength - 1), 0, clientOrigin());
+        return lineLength;
+    }
+
+    // The line must end with "\r\n".
+    if (*(end - 2) != '\r') {
+        m_context->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, "Status line does not end with CRLF", 0, clientOrigin());
+        return lineLength;
+    }
+
+    String statusCodeString(space1 + 1, space2 - space1 - 1);
+    if (statusCodeString.length() != 3) // Status code must consist of three digits.
+        return lineLength;
+    for (int i = 0; i < 3; ++i)
+        if (statusCodeString[i] < '0' || statusCodeString[i] > '9') {
+            m_context->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, "Invalid status code: " + statusCodeString, 0, clientOrigin());
+            return lineLength;
+        }
+
+    bool ok = false;
+    statusCode = statusCodeString.toInt(&ok);
+    ASSERT(ok);
+
+    statusText = String(space2 + 1, end - space2 - 3); // Exclude "\r\n".
+    return lineLength;
+}
+
+const char* WebSocketHandshake::readHTTPHeaders(const char* start, const char* end)
+{
+    m_response.clearHeaderFields();
+
     Vector<char> name;
     Vector<char> value;
     for (const char* p = start; p < end; p++) {
@@ -461,10 +506,7 @@ const char* WebSocketHandshake::readHTTPHeaders(const char* start, const char* e
             case ':':
                 break;
             default:
-                if (*p >= 0x41 && *p <= 0x5a)
-                    name.append(*p + 0x20);
-                else
-                    name.append(*p);
+                name.append(*p);
                 continue;
             }
             if (*p == ':') {
@@ -505,36 +547,21 @@ const char* WebSocketHandshake::readHTTPHeaders(const char* start, const char* e
             return 0;
         }
         LOG(Network, "name=%s value=%s", nameStr.string().utf8().data(), valueStr.utf8().data());
-        headers->add(nameStr, valueStr);
+        m_response.addHeaderField(nameStr, valueStr);
     }
     ASSERT_NOT_REACHED();
     return 0;
 }
 
-bool WebSocketHandshake::processHeaders(const HTTPHeaderMap& headers)
+void WebSocketHandshake::processHeaders()
 {
-    for (HTTPHeaderMap::const_iterator it = headers.begin(); it != headers.end(); ++it) {
-        switch (m_mode) {
-        case Normal:
-            if (it->first == "sec-websocket-origin")
-                m_wsOrigin = it->second;
-            else if (it->first == "sec-websocket-location")
-                m_wsLocation = it->second;
-            else if (it->first == "sec-websocket-protocol")
-                m_wsProtocol = it->second;
-            else if (it->first == "set-cookie")
-                m_setCookie = it->second;
-            else if (it->first == "set-cookie2")
-                m_setCookie2 = it->second;
-            continue;
-        case Incomplete:
-        case Failed:
-        case Connected:
-            ASSERT_NOT_REACHED();
-        }
-        ASSERT_NOT_REACHED();
-    }
-    return true;
+    ASSERT(m_mode == Normal);
+    const HTTPHeaderMap& headers = m_response.headerFields();
+    m_wsOrigin = headers.get("sec-websocket-origin");
+    m_wsLocation = headers.get("sec-websocket-location");
+    m_wsProtocol = headers.get("sec-websocket-protocol");
+    m_setCookie = headers.get("set-cookie");
+    m_setCookie2 = headers.get("set-cookie2");
 }
 
 bool WebSocketHandshake::checkResponseHeaders()

@@ -2892,6 +2892,7 @@ contains(DEFINES, ENABLE_WEB_SOCKETS=1) {
         websockets/WebSocketChannelClient.h \
         websockets/WebSocketHandshake.h \
         websockets/WebSocketHandshakeRequest.h \
+        websockets/WebSocketHandshakeResponse.h \
         platform/network/qt/SocketStreamHandlePrivate.h
 
     SOURCES += \
@@ -2899,6 +2900,7 @@ contains(DEFINES, ENABLE_WEB_SOCKETS=1) {
         websockets/WebSocketChannel.cpp \
         websockets/WebSocketHandshake.cpp \
         websockets/WebSocketHandshakeRequest.cpp \
+        websockets/WebSocketHandshakeResponse.cpp \
         websockets/ThreadableWebSocketChannel.cpp \
         platform/network/SocketStreamErrorBase.cpp \
         platform/network/SocketStreamHandleBase.cpp \

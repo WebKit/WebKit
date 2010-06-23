@@ -3805,6 +3805,8 @@
             'websockets/WebSocketHandshake.h',
             'websockets/WebSocketHandshakeRequest.cpp',
             'websockets/WebSocketHandshakeRequest.h',
+            'websockets/WebSocketHandshakeResponse.cpp',
+            'websockets/WebSocketHandshakeResponse.h',
             'websockets/WorkerThreadableWebSocketChannel.cpp',
             'websockets/WorkerThreadableWebSocketChannel.h',
             'workers/AbstractWorker.cpp',

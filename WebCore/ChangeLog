@@ -1,3 +1,48 @@
+2010-06-22  Yuta Kitamura  <yutak@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Add a new class that stores information about WebSocket handshake response.
+
+        In the future, instances of the new class will be passed to the Web Inspector
+        so that it will be able to display information about WebSocket handshake
+        response.
+
+        WebSocket: Add WebSocketHandshakeResponse
+        https://bugs.webkit.org/show_bug.cgi?id=38728
+
+        Test: websocket/tests/handshake-fail-by-no-cr.html
+
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * websockets/WebSocketHandshake.cpp:
+        (WebCore::trimConsoleMessage):
+        (WebCore::WebSocketHandshake::readServerHandshake):
+        (WebCore::WebSocketHandshake::serverHandshakeResponse):
+        (WebCore::WebSocketHandshake::readStatusLine): Moved from extractResponseCode.
+        Add more error checks and make error messages more descriptive.
+        (WebCore::WebSocketHandshake::readHTTPHeaders):
+        (WebCore::WebSocketHandshake::processHeaders):
+        * websockets/WebSocketHandshake.h:
+        * websockets/WebSocketHandshakeResponse.cpp: Added.
+        (WebCore::WebSocketHandshakeResponse::ChallengeResponse::ChallengeResponse):
+        (WebCore::WebSocketHandshakeResponse::ChallengeResponse::set):
+        (WebCore::WebSocketHandshakeResponse::WebSocketHandshakeResponse):
+        (WebCore::WebSocketHandshakeResponse::~WebSocketHandshakeResponse):
+        (WebCore::WebSocketHandshakeResponse::statusCode):
+        (WebCore::WebSocketHandshakeResponse::setStatusCode):
+        (WebCore::WebSocketHandshakeResponse::statusText):
+        (WebCore::WebSocketHandshakeResponse::setStatusText):
+        (WebCore::WebSocketHandshakeResponse::headerFields):
+        (WebCore::WebSocketHandshakeResponse::addHeaderField):
+        (WebCore::WebSocketHandshakeResponse::clearHeaderFields):
+        (WebCore::WebSocketHandshakeResponse::challengeResponse):
+        (WebCore::WebSocketHandshakeResponse::setChallengeResponse):
+        * websockets/WebSocketHandshakeResponse.h: Added.
+
 2010-06-23  Yuzo Fujishima  <yuzo@google.com>
 
         Reviewed by Shinichiro Hamaji.
