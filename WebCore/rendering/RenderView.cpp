@@ -201,6 +201,9 @@ void RenderView::paintBoxDecorations(PaintInfo& paintInfo, int, int)
 #endif
     }
 
+    if (document()->ownerElement() || !view())
+        return;
+
     bool rootFillsViewport = false;
     Node* documentElement = document()->documentElement();
     if (RenderObject* rootRenderer = documentElement ? documentElement->renderer() : 0) {
@@ -210,7 +213,7 @@ void RenderView::paintBoxDecorations(PaintInfo& paintInfo, int, int)
     }
     
     // If painting will entirely fill the view, no need to fill the background.
-    if (elt || (rootFillsViewport && rendererObscuresBackground(firstChild())) || !view())
+    if (rootFillsViewport && rendererObscuresBackground(firstChild()))
         return;
 
     // This code typically only executes if the root element's visibility has been set to hidden,

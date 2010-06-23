@@ -1,3 +1,23 @@
+2010-06-23  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        r61215 broke Acid3
+        https://bugs.webkit.org/show_bug.cgi?id=41034
+        
+        The code added in r61215, which tests whether the root renderer will fill
+        the entire viewport, should not run for subframes. So bail from
+        RenderView::paintBoxDecorations() if document()->ownerElement() is not null.
+        The old code was trying to do this by checking 'elt', but that ends up as 
+        null after the for loop above.
+        
+        We can also bail early if the is no FrameView().
+
+        Test: fast/frames/paint-iframe-background.html
+
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::paintBoxDecorations):
+
 2010-06-23  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Yury Semikhatsky.

@@ -1,3 +1,18 @@
+2010-06-22  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        r61215 broke Acid3
+        https://bugs.webkit.org/show_bug.cgi?id=41034
+        
+        Testcase with a transparent iframe.
+
+        * fast/frames/paint-iframe-background-expected.checksum: Added.
+        * fast/frames/paint-iframe-background-expected.png: Added.
+        * fast/frames/paint-iframe-background-expected.txt: Added.
+        * fast/frames/paint-iframe-background.html: Added.
+        * fast/frames/resources/paint-iframe-background-iframe.html: Added.
+
 2010-06-23  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Not reviewed. Forgot to update result of fast/xpath/namespace-vs-predicate.html after the SVG renderer creation changes.
