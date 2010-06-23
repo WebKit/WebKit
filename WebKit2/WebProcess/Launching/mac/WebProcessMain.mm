@@ -35,7 +35,7 @@
 // FIXME: We should be doing this another way.
 extern "C" kern_return_t bootstrap_look_up2(mach_port_t, const name_t, mach_port_t*, pid_t, uint64_t);
 
-#define SHOW_CRASH_REPORTER 0
+#define SHOW_CRASH_REPORTER 1
 
 using namespace WebKit;
 
