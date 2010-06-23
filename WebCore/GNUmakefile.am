@@ -1226,6 +1226,8 @@ webcore_sources += \
 	WebCore/html/HTMLParserErrorCodes.cpp \
 	WebCore/html/HTMLParserErrorCodes.h \
 	WebCore/html/HTMLParserQuirks.h \
+	WebCore/html/HTMLParserScheduler.cpp \
+	WebCore/html/HTMLParserScheduler.h \
 	WebCore/html/HTMLPlugInElement.cpp \
 	WebCore/html/HTMLPlugInElement.h \
 	WebCore/html/HTMLPlugInImageElement.cpp \

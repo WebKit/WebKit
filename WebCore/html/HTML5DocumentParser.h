@@ -41,6 +41,7 @@ namespace WebCore {
 class Document;
 class DocumentFragment;
 class HTMLDocument;
+class HTMLParserScheduler;
 class HTML5Lexer;
 class HTML5ScriptRunner;
 class HTML5TreeBuilder;
@@ -82,13 +83,13 @@ public:
     // CachedResourceClient
     virtual void notifyFinished(CachedResource*);
 
+    // Exposed for HTMLParserScheduler
+    Document* document() const { return m_document; }
+    void resumeParsingAfterYield();
+
 private:
     void willPumpLexer();
     void didPumpLexer();
-
-    struct PumpSession;
-    inline bool shouldContinueParsing(PumpSession&);
-    bool runScriptsForPausedTreeConstructor();
 
     enum SynchronousMode {
         AllowYield,
@@ -96,12 +97,14 @@ private:
     };
     void pumpLexer(SynchronousMode);
     void pumpLexerIfPossible(SynchronousMode);
-    void continueNextChunkTimerFired(Timer<HTML5DocumentParser>*);
+
+    bool runScriptsForPausedTreeConstructor();
     void resumeParsingAfterScriptExecution();
 
     void attemptToEnd();
     void endIfDelayed();
 
+    bool isScheduledForResume() const;
     bool inScriptExecution() const;
     bool inWrite() const { return m_writeNestingLevel > 0; }
 
@@ -119,15 +122,10 @@ private:
     OwnPtr<HTML5ScriptRunner> m_scriptRunner;
     OwnPtr<HTML5TreeBuilder> m_treeConstructor;
     OwnPtr<HTML5PreloadScanner> m_preloadScanner;
+    OwnPtr<HTMLParserScheduler> m_parserScheduler;
 
     bool m_endWasDelayed;
     int m_writeNestingLevel;
-
-    // Used for yielding the parser to make WebKit applications more responsive.
-    // FIXME: This should a separate class, used by HTML5DocumentParser.
-    double m_parserTimeLimit;
-    int m_parserChunkSize;
-    Timer<HTML5DocumentParser> m_continueNextChunkTimer;
 };
 
 }

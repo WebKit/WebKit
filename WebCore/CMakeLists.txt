@@ -974,6 +974,7 @@ SET(WebCore_SOURCES
     html/HTMLParamElement.cpp
     html/LegacyHTMLTreeConstructor.cpp
     html/HTMLParserErrorCodes.cpp
+    html/HTMLParserScheduler.cpp
     html/HTMLPlugInElement.cpp
     html/HTMLPlugInImageElement.cpp
     html/HTMLPreElement.cpp

@@ -1612,6 +1612,8 @@
             'html/LegacyHTMLTreeConstructor.h',
             'html/HTMLParserErrorCodes.cpp',
             'html/HTMLParserErrorCodes.h',
+            'html/HTMLParserScheduler.cpp',
+            'html/HTMLParserScheduler.h',
             'html/HTMLPlugInElement.cpp',
             'html/HTMLPlugInElement.h',
             'html/HTMLPlugInImageElement.cpp',

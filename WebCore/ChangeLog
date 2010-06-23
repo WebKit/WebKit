@@ -1,3 +1,62 @@
+2010-06-22  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Split out HTML5DocumentParser yield/resume logic into a separate class
+        https://bugs.webkit.org/show_bug.cgi?id=41018
+
+        The HTML5DocumentParser is just the coordinator, and shouldn't have
+        any real parsing logic of his own.  Continuing along that path, I'm
+        moving the when-to-yield/resume logic out into a separate class.
+
+        I could have create a new HTMLParserSchedulerHost virtual interface
+        to allow the HTMLParserScheduler to talk back to the
+        HTML5DocumentParser, but instead I just exposed the one method it
+        needs (resumeParsing()) as a public method.  Since no code besides
+        HTMLDocument (and DocumentFrament) ever should know about the
+        HTML5DocumentParser DocumentParser subclass, no class should ever
+        see the resumeParsing() method anyway.
+
+        Most of this change is just moving code from HTML5DocumentParser
+        to the new HTMLParserScheduler.
+
+        Some of this change is wrapping previous direct access to
+        m_continueNextChunkTimer.isActive() with isScheduledForResume().
+
+        * Android.mk:
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/HTML5DocumentParser.cpp:
+        (WebCore::HTML5DocumentParser::HTML5DocumentParser):
+        (WebCore::HTML5DocumentParser::stopParsing):
+        (WebCore::HTML5DocumentParser::processingData):
+        (WebCore::HTML5DocumentParser::pumpLexerIfPossible):
+        (WebCore::HTML5DocumentParser::isScheduledForResume):
+        (WebCore::HTML5DocumentParser::resumeParsing):
+        (WebCore::HTML5DocumentParser::pumpLexer):
+        (WebCore::HTML5DocumentParser::end):
+        (WebCore::HTML5DocumentParser::attemptToEnd):
+        (WebCore::HTML5DocumentParser::endIfDelayed):
+        * html/HTML5DocumentParser.h:
+        (WebCore::HTML5DocumentParser::document):
+         - Exposed for HTMLParserScheduler.
+        * html/HTMLParserScheduler.cpp: Added.
+        (WebCore::parserTimeLimit): Moved from HTML5DocumentParser.
+        (WebCore::parserChunkSize): ditto.
+        (WebCore::HTMLParserScheduler::HTMLParserScheduler):
+        (WebCore::HTMLParserScheduler::~HTMLParserScheduler):
+        (WebCore::isLayoutTimerActive):
+        (WebCore::HTMLParserScheduler::continueNextChunkTimerFired):
+         - Moved from HTML5DocumentParser.
+        * html/HTMLParserScheduler.h: Added.
+        (WebCore::HTMLParserScheduler::PumpSession::PumpSession):
+         - Moved from HTML5DocumentParser.
+        (WebCore::HTMLParserScheduler::shouldContinueParsing):
+        (WebCore::HTMLParserScheduler::isScheduledForResume):
+
 2010-06-22  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Yury Semikhatsky.

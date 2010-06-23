@@ -3279,6 +3279,8 @@
 		A8E545BD0CA9D1C20097D09B /* DOMSVGAnimatedAngleInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = A8E544BF0CA9D1C20097D09B /* DOMSVGAnimatedAngleInternal.h */; };
 		A8E545BF0CA9D1C20097D09B /* DOMSVGTextElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A8E544C10CA9D1C20097D09B /* DOMSVGTextElement.h */; };
 		A8E545C10CA9D1C20097D09B /* DOMSVGDescElementInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = A8E544C30CA9D1C20097D09B /* DOMSVGDescElementInternal.h */; };
+		A8E6A78111D1661B00311F4A /* HTMLParserScheduler.h in Headers */ = {isa = PBXBuildFile; fileRef = A8E6A77F11D1661B00311F4A /* HTMLParserScheduler.h */; };
+		A8E6A78211D1661B00311F4A /* HTMLParserScheduler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8E6A78011D1661B00311F4A /* HTMLParserScheduler.cpp */; };
 		A8EA73C30A1900E300A8EF5F /* RenderFieldset.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8EA73AF0A1900E300A8EF5F /* RenderFieldset.cpp */; };
 		A8EA73C40A1900E300A8EF5F /* RenderFieldset.h in Headers */ = {isa = PBXBuildFile; fileRef = A8EA73B00A1900E300A8EF5F /* RenderFieldset.h */; };
 		A8EA79F10A1916DF00A8EF5F /* HTMLOListElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A8EA79E50A1916DF00A8EF5F /* HTMLOListElement.h */; };
@@ -8747,6 +8749,8 @@
 		A8E544BF0CA9D1C20097D09B /* DOMSVGAnimatedAngleInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMSVGAnimatedAngleInternal.h; sourceTree = "<group>"; };
 		A8E544C10CA9D1C20097D09B /* DOMSVGTextElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMSVGTextElement.h; sourceTree = "<group>"; };
 		A8E544C30CA9D1C20097D09B /* DOMSVGDescElementInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMSVGDescElementInternal.h; sourceTree = "<group>"; };
+		A8E6A77F11D1661B00311F4A /* HTMLParserScheduler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLParserScheduler.h; sourceTree = "<group>"; };
+		A8E6A78011D1661B00311F4A /* HTMLParserScheduler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLParserScheduler.cpp; sourceTree = "<group>"; };
 		A8EA73AF0A1900E300A8EF5F /* RenderFieldset.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderFieldset.cpp; sourceTree = "<group>"; };
 		A8EA73B00A1900E300A8EF5F /* RenderFieldset.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderFieldset.h; sourceTree = "<group>"; };
 		A8EA79E50A1916DF00A8EF5F /* HTMLOListElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HTMLOListElement.h; sourceTree = "<group>"; };
@@ -13424,8 +13428,6 @@
 		93EEC1EC09C2877700C515D1 /* html */ = {
 			isa = PBXGroup;
 			children = (
-				9719AEFF11D09F2C00D45831 /* HTMLInputStream.h */,
-				49484FAE102CF01E00187DD3 /* canvas */,
 				B0149E7911A4B21500196A7B /* AsyncImageResizer.cpp */,
 				B0149E7A11A4B21500196A7B /* AsyncImageResizer.h */,
 				2EAFAF0B10E2AF2D007ED3D6 /* Blob.cpp */,
@@ -13434,6 +13436,7 @@
 				89BED5E911BE11CE00448492 /* BlobBuilder.cpp */,
 				89BED5EA11BE11CE00448492 /* BlobBuilder.h */,
 				89CD027911C859A80070B791 /* BlobBuilder.idl */,
+				49484FAE102CF01E00187DD3 /* canvas */,
 				93C441ED0F813A1A00C1A634 /* CollectionCache.cpp */,
 				93C441EE0F813A1A00C1A634 /* CollectionCache.h */,
 				93C441FF0F813AE100C1A634 /* CollectionType.h */,
@@ -13609,6 +13612,7 @@
 				A81369B1097374F500D74463 /* HTMLInputElement.cpp */,
 				A81369B0097374F500D74463 /* HTMLInputElement.h */,
 				A80E7E170A1A7CCB007FB8C5 /* HTMLInputElement.idl */,
+				9719AEFF11D09F2C00D45831 /* HTMLInputStream.h */,
 				A81369AF097374F500D74463 /* HTMLIsIndexElement.cpp */,
 				A81369AE097374F500D74463 /* HTMLIsIndexElement.h */,
 				1AE2AA850A1CDCCE00B42B25 /* HTMLIsIndexElement.idl */,
@@ -13675,6 +13679,8 @@
 				BC588B4A0BFA723C00EE679E /* HTMLParserErrorCodes.cpp */,
 				BC588AEF0BFA6CF900EE679E /* HTMLParserErrorCodes.h */,
 				449B19F30FA72ECE0015CA4A /* HTMLParserQuirks.h */,
+				A8E6A78011D1661B00311F4A /* HTMLParserScheduler.cpp */,
+				A8E6A77F11D1661B00311F4A /* HTMLParserScheduler.h */,
 				A871D44D0A127CBC00B12A68 /* HTMLPlugInElement.cpp */,
 				A871D44C0A127CBC00B12A68 /* HTMLPlugInElement.h */,
 				4415292D0E1AE8A000C4A2D0 /* HTMLPlugInImageElement.cpp */,
@@ -19512,6 +19518,7 @@
 				B525A96511CA2340003A23A8 /* JSSQLException.h in Headers */,
 				9719AF0011D09F2C00D45831 /* HTMLInputStream.h in Headers */,
 				A853123D11D0471B00D4D077 /* FragmentScriptingPermission.h in Headers */,
+				A8E6A78111D1661B00311F4A /* HTMLParserScheduler.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -21829,6 +21836,7 @@
 				200B190911C277D900DCCD3A /* ScriptBreakpoint.cpp in Sources */,
 				1AD8F81C11CAB9E900E93E54 /* PlatformStrategies.cpp in Sources */,
 				B525A96611CA2340003A23A8 /* JSSQLException.cpp in Sources */,
+				A8E6A78211D1661B00311F4A /* HTMLParserScheduler.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
