@@ -1,3 +1,13 @@
+2010-06-23  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=41083
+        fast/parser/broken-comments-vs-parsing mode no linger tests for what it used to test
+
+        * fast/parser/broken-comments-vs-parsing-mode.html: Moved broken comment to a place where
+        it doesn't affect output.
+
 2010-06-23  Justin Schuh  <jschuh@chromium.org>
 
         Unreviewed, rolling out r61695.
