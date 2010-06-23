@@ -284,7 +284,16 @@ void RenderEmbeddedObject::updateWidget(bool onlyCreateNonNetscapePlugins)
                 return;
         }
 
-        bool success = objectElement->dispatchBeforeLoadEvent(url) && frame->loader()->subframeLoader()->requestObject(this, url, objectElement->getAttribute(nameAttr), serviceType, paramNames, paramValues);
+        bool beforeLoadAllowedLoad = objectElement->dispatchBeforeLoadEvent(url);
+        
+        // beforeload events can modify the DOM, potentially causing
+        // RenderWidget::destroy() to be called.  Ensure we haven't been
+        // destroyed before continuing.
+        if (!node())
+            return;
+        
+        bool success = beforeLoadAllowedLoad && frame->loader()->subframeLoader()->requestObject(this, url, objectElement->getAttribute(nameAttr), serviceType, paramNames, paramValues);
+    
         if (!success && m_hasFallbackContent)
             objectElement->renderFallbackContent();
 

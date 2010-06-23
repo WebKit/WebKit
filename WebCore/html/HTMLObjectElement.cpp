@@ -243,6 +243,9 @@ void HTMLObjectElement::renderFallbackContent()
 {
     if (m_useFallbackContent)
         return;
+    
+    if (!inDocument())
+        return;
 
     // Before we give up and use fallback content, check to see if this is a MIME type issue.
     if (m_imageLoader && m_imageLoader->image()) {
