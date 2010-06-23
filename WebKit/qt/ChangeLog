@@ -1,3 +1,13 @@
+2010-06-23  Alessandro Portale  <alessandro.portale@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Provide the Webkit Qml plugin with a UID3 on Symbian
+
+        ...otherwise we cannot Symbian sign it.
+
+        * declarative/declarative.pro:
+
 2010-06-23  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Unreviewed Qt package build fix.
