@@ -1,3 +1,15 @@
+2010-06-23  Justin Schuh  <jschuh@chromium.org>
+
+        Unreviewed, rolling out r61695.
+        http://trac.webkit.org/changeset/61695
+        https://bugs.webkit.org/show_bug.cgi?id=40798
+
+        61695 broke all the Linux builds
+
+        * fast/images/png-extra-row-crash-expected.txt: Removed.
+        * fast/images/png-extra-row-crash.html: Removed.
+        * fast/images/resources/png-extra-row-crash.png: Removed.
+
 2010-06-23  James Robinson  <jamesr@chromium.org>
 
         Unreviewed.  Add qt baseline due to port specific formatting differences for SVG rects
