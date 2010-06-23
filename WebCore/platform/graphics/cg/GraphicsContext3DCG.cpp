@@ -39,11 +39,10 @@
 namespace WebCore {
 
 bool GraphicsContext3D::getImageData(Image* image,
-                                     Vector<uint8_t>& outputVector,
+                                     unsigned int format,
+                                     unsigned int type,
                                      bool premultiplyAlpha,
-                                     bool* hasAlphaChannel,
-                                     AlphaOp* neededAlphaOp,
-                                     unsigned int* format)
+                                     Vector<uint8_t>& outputVector)
 {
     if (!image)
         return false;
@@ -52,16 +51,10 @@ bool GraphicsContext3D::getImageData(Image* image,
         return false;
     int width = CGImageGetWidth(cgImage);
     int height = CGImageGetHeight(cgImage);
-    int rowBytes = width * 4;
-    CGImageAlphaInfo info = CGImageGetAlphaInfo(cgImage);
-    *hasAlphaChannel = (info != kCGImageAlphaNone
-                        && info != kCGImageAlphaNoneSkipLast
-                        && info != kCGImageAlphaNoneSkipFirst);
-    if (!premultiplyAlpha && *hasAlphaChannel)
-        // FIXME: must fetch the image data before the premultiplication step
-        *neededAlphaOp = kAlphaDoUnmultiply;
-    *format = RGBA;
-    outputVector.resize(height * rowBytes);
+    // FIXME: we should get rid of this temporary copy where possible.
+    int tempRowBytes = width * 4;
+    Vector<uint8_t> tempVector;
+    tempVector.resize(height * tempRowBytes);
     // Try to reuse the color space from the image to preserve its colors.
     // Some images use a color space (such as indexed) unsupported by the bitmap context.
     CGColorSpaceRef colorSpace = CGImageGetColorSpace(cgImage);
@@ -79,20 +72,36 @@ bool GraphicsContext3D::getImageData(Image* image,
         releaseColorSpace = true;
         break;
     }
-    CGContextRef tmpContext = CGBitmapContextCreate(outputVector.data(),
-                                                    width, height, 8, rowBytes,
-                                                    colorSpace,
-                                                    kCGImageAlphaPremultipliedLast);
+    CGContextRef tempContext = CGBitmapContextCreate(tempVector.data(),
+                                                     width, height, 8, tempRowBytes,
+                                                     colorSpace,
+                                                     // FIXME: change this!
+                                                     kCGImageAlphaPremultipliedLast);
     if (releaseColorSpace)
         CGColorSpaceRelease(colorSpace);
-    if (!tmpContext)
+    if (!tempContext)
         return false;
-    CGContextSetBlendMode(tmpContext, kCGBlendModeCopy);
-    CGContextDrawImage(tmpContext,
+    CGContextSetBlendMode(tempContext, kCGBlendModeCopy);
+    CGContextDrawImage(tempContext,
                        CGRectMake(0, 0, static_cast<CGFloat>(width), static_cast<CGFloat>(height)),
                        cgImage);
-    CGContextRelease(tmpContext);
-    return true;
+    CGContextRelease(tempContext);
+    // Pack the pixel data into the output vector.
+    unsigned long componentsPerPixel, bytesPerComponent;
+    if (!computeFormatAndTypeParameters(format, type, &componentsPerPixel, &bytesPerComponent))
+        return false;
+    int rowBytes = width * componentsPerPixel * bytesPerComponent;
+    outputVector.resize(height * rowBytes);
+    CGImageAlphaInfo info = CGImageGetAlphaInfo(cgImage);
+    bool hasAlphaChannel = (info != kCGImageAlphaNone
+                            && info != kCGImageAlphaNoneSkipLast
+                            && info != kCGImageAlphaNoneSkipFirst);
+    AlphaOp neededAlphaOp = kAlphaDoNothing;
+    if (!premultiplyAlpha && hasAlphaChannel)
+        // FIXME: must fetch the image data before the premultiplication step.
+        neededAlphaOp = kAlphaDoUnmultiply;
+    return packPixels(tempVector.data(), kSourceFormatRGBA8, width, height,
+                      format, type, neededAlphaOp, outputVector.data());
 }
 
 

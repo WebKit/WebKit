@@ -464,48 +464,58 @@ namespace WebCore {
         // like GL_FLOAT, GL_INT, etc.
         int sizeInBytes(int type);
 
+        bool isGLES2Compliant() const;
+
         //----------------------------------------------------------------------
-        // Helpers for texture uploading.
+        // Helpers for texture uploading and pixel readback.
         //
 
-        // Extracts the contents of the given Image into the passed
-        // Vector, obeying the flipY and premultiplyAlpha flags.
-        // Returns the applicable OpenGL format and internalFormat for
-        // the subsequent glTexImage2D or glTexSubImage2D call.
-        // Returns true upon success.
-        bool extractImageData(Image* image,
-                              bool flipY,
-                              bool premultiplyAlpha,
-                              Vector<uint8_t>& imageData,
-                              unsigned int* format,
-                              unsigned int* internalFormat);
+        // Computes the components per pixel and bytes per component
+        // for the given format and type combination. Returns false if
+        // either was an invalid enum.
+        bool computeFormatAndTypeParameters(unsigned int format,
+                                            unsigned int type,
+                                            unsigned long* componentsPerPixel,
+                                            unsigned long* bytesPerComponent);
 
-        // Extracts the contents of the given ImageData into the passed
-        // Vector, obeying the flipY and premultiplyAlpha flags.
-        // Returns true upon success.
-        bool extractImageData(ImageData*,
+        // Extracts the contents of the given Image into the passed Vector,
+        // packing the pixel data according to the given format and type,
+        // and obeying the flipY and premultiplyAlpha flags. Returns true
+        // upon success.
+        bool extractImageData(Image* image,
+                              unsigned int format,
+                              unsigned int type,
                               bool flipY,
                               bool premultiplyAlpha,
                               Vector<uint8_t>& data);
 
-        // Processes the given image data in preparation for uploading
-        // via texImage2D or texSubImage2D. The input data must be in
-        // 4-component format with the alpha channel last (i.e., RGBA
-        // or BGRA), tightly packed, with no space between rows.
+        // Extracts the contents of the given ImageData into the passed Vector,
+        // packing the pixel data according to the given format and type,
+        // and obeying the flipY and premultiplyAlpha flags. Returns true
+        // upon success.
+        bool extractImageData(ImageData*,
+                              unsigned int format,
+                              unsigned int type,
+                              bool flipY,
+                              bool premultiplyAlpha,
+                              Vector<uint8_t>& data);
 
-        enum AlphaOp {
-            kAlphaDoNothing = 0,
-            kAlphaDoPremultiply = 1,
-            kAlphaDoUnmultiply = 2
+        // Flips the given image data vertically, in-place.
+        void flipVertically(void* imageData,
+                            unsigned int width,
+                            unsigned int height,
+                            unsigned int bytesPerPixel,
+                            unsigned int unpackAlignment);
+
+        // Attempt to enumerate all possible native image formats to
+        // reduce the amount of temporary allocations during texture
+        // uploading. This enum must be public because it is accessed
+        // by non-member functions.
+        enum SourceDataFormat {
+            kSourceFormatRGBA8,
+            kSourceFormatRGB8,
+            kSourceFormatBGRA8
         };
-
-        void processImageData(uint8_t* imageData,
-                              unsigned width,
-                              unsigned height,
-                              bool flipVertically,
-                              AlphaOp alphaOp);
-
-        bool isGLES2Compliant() const;
 
         //----------------------------------------------------------------------
         // Entry points for WebGL.
@@ -715,33 +725,49 @@ namespace WebCore {
     private:        
         GraphicsContext3D(Attributes attrs, HostWindow* hostWindow);
 
-        // Helpers for texture uploading.
-        void premultiplyAlpha(unsigned char* rgbaData, int numPixels);
-        void unmultiplyAlpha(uint8_t* imageData, int numPixels);
-
         // Each platform must provide an implementation of this method.
         //
-        // Gets the data for the given Image into outputVector,
-        // without doing any processing of the data (vertical flip or
-        // otherwise).
+        // Gets the data for the given Image into outputVector in the
+        // format specified by the (OpenGL-style) format and type
+        // arguments. Despite the fact that the outputVector contains
+        // uint8_t, if the format and type specify packed pixels, then
+        // it will essentially contain uint16_t after the extraction
+        // process.
         //
-        // premultiplyAlpha indicates whether the user will eventually
-        // want the alpha channel multiplied into the color channels.
+        // If premultiplyAlpha is true, the alpha channel, if any,
+        // will be multiplied into the color channels during the
+        // extraction process. This premultiplication occurs before
+        // any packing of pixel data.
         //
-        // The out parameter hasAlphaChannel indicates whether the
-        // image actually had an alpha channel.
-        //
-        // The out parameter neededAlphaOp should be passed to a
-        // subsequent call of processImageData.
-        //
-        // The out parameter format should be passed to subsequent
-        // invocations of texImage2D and texSubImage2D.
+        // No vertical flip of the image data is performed by this
+        // method.
         bool getImageData(Image* image,
-                          Vector<uint8_t>& outputVector,
+                          unsigned int format,
+                          unsigned int type,
                           bool premultiplyAlpha,
-                          bool* hasAlphaChannel,
-                          AlphaOp* neededAlphaOp,
-                          unsigned int* format);
+                          Vector<uint8_t>& outputVector);
+
+        // Possible alpha operations that may need to occur during
+        // pixel packing. FIXME: kAlphaDoUnmultiply is lossy and must
+        // be removed.
+        enum AlphaOp {
+            kAlphaDoNothing = 0,
+            kAlphaDoPremultiply = 1,
+            kAlphaDoUnmultiply = 2
+        };
+
+        // Helper for getImageData which implements packing of pixel
+        // data into the specified OpenGL destination format and type.
+        // Source data must be in RGBA format with no gaps between
+        // rows. Destination data will have no gaps between rows.
+        bool packPixels(const uint8_t* sourceData,
+                        SourceDataFormat sourceDataFormat,
+                        unsigned int width,
+                        unsigned int height,
+                        unsigned int destinationFormat,
+                        unsigned int destinationType,
+                        AlphaOp alphaOp,
+                        void* destinationData);
 
 #if PLATFORM(MAC)
         // Take into account the user's requested context creation attributes,

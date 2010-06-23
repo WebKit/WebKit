@@ -1,0 +1,568 @@
+<html>
+<head>
+<link rel="stylesheet" href="../../js/resources/js-test-style.css"/>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script src="resources/pnglib.js"></script>
+<script src="resources/webgl-test.js"></script>
+<script src="resources/utils3d.js"> </script>
+<script id="vshader" type="x-shader/x-vertex">
+attribute vec3 g_Position;
+attribute vec2 g_TexCoord0;
+
+varying vec2 texCoord;
+
+void main()
+{
+    gl_Position = vec4(g_Position.x, g_Position.y, g_Position.z, 1.0);
+    texCoord = g_TexCoord0;
+}
+</script>
+
+<script id="fshader" type="x-shader/x-fragment">
+uniform sampler2D tex;
+varying vec2 texCoord;
+
+void main()
+{
+    gl_FragColor = texture2D(tex, texCoord);
+}
+</script>
+
+<script>
+var gl = null;
+var textureLoc = null;
+var successfullyParsed = false;
+
+//----------------------------------------------------------------------
+// Harness
+
+var testCases = [];
+
+function init()
+{
+    if (window.layoutTestController) {
+        layoutTestController.overridePreference("WebKitWebGLEnabled", "1");
+        layoutTestController.dumpAsText();
+        layoutTestController.waitUntilDone();
+    }
+
+    description('Verify texImage2D and texSubImage2D code paths taking HTML data with all format/type combinations');
+
+    debug('Regression test for <a href="https://bugs.webkit.org/show_bug.cgi?id=40319">https://bugs.webkit.org/show_bug.cgi?id=40319</a> : <code>Implement format conversions in texImage2D and texSubImage2D taking HTML data</code>');
+
+    gl = initWebGL("example", "vshader", "fshader", [ "g_Position", "g_TexCoord0" ], [ 0, 0, 0, 1 ], 1);
+    gl.disable(gl.BLEND);
+
+    textureLoc = gl.getUniformLocation(gl.program, "tex");
+
+    var vertices = new WebGLFloatArray([
+         1.0,  1.0, 0.0,
+        -1.0,  1.0, 0.0,
+        -1.0, -1.0, 0.0,
+         1.0,  1.0, 0.0,
+        -1.0, -1.0, 0.0,
+         1.0, -1.0, 0.0]);
+    var texCoords = new WebGLFloatArray([
+        1.0, 1.0,
+        0.0, 1.0,
+        0.0, 0.0,
+        1.0, 1.0,
+        0.0, 0.0,
+        1.0, 0.0]);
+    var texCoordOffset = vertices.byteLength;
+
+    var vbo = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
+    gl.bufferData(gl.ARRAY_BUFFER,
+                  texCoordOffset + texCoords.byteLength,
+                  gl.STATIC_DRAW);
+    gl.bufferSubData(gl.ARRAY_BUFFER, 0, vertices);
+    gl.bufferSubData(gl.ARRAY_BUFFER, texCoordOffset, texCoords);
+
+    gl.enableVertexAttribArray(0);
+    gl.vertexAttribPointer(0, 3, gl.FLOAT, gl.FALSE, 0, 0);
+    gl.enableVertexAttribArray(1);
+    gl.vertexAttribPointer(1, 2, gl.FLOAT, gl.FALSE, 0, texCoordOffset);
+
+    initializeTests();
+}
+
+function initializeTests()
+{
+    // Verify that uploading to packed pixel formats performs the
+    // required conversion and associated loss of precision.
+    for (var useImageData = 0; useImageData < 2; ++useImageData) {
+        for (var useTexSubImage2D = 0; useTexSubImage2D < 2; ++useTexSubImage2D) {
+            testCases.push({
+                useImageData: !!useImageData,
+                useTexSubImage2D: !!useTexSubImage2D,
+                width: 256,
+                height: 1,
+                generator: generateOpaqueGrayscaleRamp,
+                premultiplyAlpha: false,
+                format: gl.RGBA,
+                type: gl.UNSIGNED_BYTE,
+                verifier: allChannelsIncreaseByNoMoreThan,
+                threshold: 1,
+                numOccurrences: 1,
+                description: "RGBA/UNSIGNED_BYTE should maintain full precision of data"
+            });
+            testCases.push({
+                useImageData: !!useImageData,
+                useTexSubImage2D: !!useTexSubImage2D,
+                width: 256,
+                height: 1,
+                generator: generateOpaqueGrayscaleRamp,
+                premultiplyAlpha: false,
+                format: gl.RGBA,
+                type: gl.UNSIGNED_SHORT_4_4_4_4,
+                verifier: allChannelsIncreaseByAtLeast,
+                threshold: 15,
+                numOccurrences: 10,
+                description: "RGBA/UNSIGNED_SHORT_4_4_4_4 must drop low four bits of precision"
+            });
+            testCases.push({
+                useImageData: !!useImageData,
+                useTexSubImage2D: !!useTexSubImage2D,
+                width: 256,
+                height: 1,
+                generator: generateOpaqueGrayscaleRamp,
+                premultiplyAlpha: false,
+                format: gl.RGBA,
+                type: gl.UNSIGNED_SHORT_5_5_5_1,
+                verifier: allChannelsIncreaseByAtLeast,
+                threshold: 7,
+                numOccurrences: 20,
+                description: "RGBA/UNSIGNED_SHORT_5_5_5_1 must drop low three bits of precision"
+            });
+            testCases.push({
+                useImageData: !!useImageData,
+                useTexSubImage2D: !!useTexSubImage2D,
+                width: 256,
+                height: 1,
+                generator: generateOpaqueGrayscaleRamp,
+                premultiplyAlpha: false,
+                format: gl.RGB,
+                type: gl.UNSIGNED_BYTE,
+                verifier: allChannelsIncreaseByNoMoreThan,
+                threshold: 1,
+                numOccurrences: 1,
+                description: "RGB/UNSIGNED_BYTE should maintain full precision of data"
+            });
+            testCases.push({
+                useImageData: !!useImageData,
+                useTexSubImage2D: !!useTexSubImage2D,
+                width: 256,
+                height: 1,
+                generator: generateOpaqueGrayscaleRamp,
+                premultiplyAlpha: false,
+                format: gl.RGB,
+                type: gl.UNSIGNED_SHORT_5_6_5,
+                verifier: allChannelsIncreaseByAtLeast,
+                threshold: 3,
+                numOccurrences: 20,
+                description: "RGB/UNSIGNED_SHORT_5_6_5 must drop low two or three bits of precision"
+            });
+            testCases.push({
+                useImageData: !!useImageData,
+                useTexSubImage2D: !!useTexSubImage2D,
+                width: 256,
+                height: 1,
+                generator: generateTranslucentGrayscaleRamp,
+                premultiplyAlpha: false,
+                format: gl.ALPHA,
+                type: gl.UNSIGNED_BYTE,
+                verifier: alphaChannelIncreasesByNoMoreThan,
+                threshold: 1,
+                numOccurrences: 1,
+                description: "ALPHA/UNSIGNED_BYTE should maintain full precision of data"
+            });
+            testCases.push({
+                useImageData: !!useImageData,
+                useTexSubImage2D: !!useTexSubImage2D,
+                width: 256,
+                height: 1,
+                generator: generateOpaqueGrayscaleRamp,
+                premultiplyAlpha: false,
+                format: gl.LUMINANCE,
+                type: gl.UNSIGNED_BYTE,
+                verifier: allChannelsIncreaseByNoMoreThan,
+                threshold: 1,
+                numOccurrences: 1,
+                description: "LUMINANCE/UNSIGNED_BYTE should maintain full precision of data"
+            });
+            testCases.push({
+                useImageData: !!useImageData,
+                useTexSubImage2D: !!useTexSubImage2D,
+                width: 256,
+                height: 1,
+                generator: generateOpaqueGrayscaleRamp,
+                premultiplyAlpha: false,
+                format: gl.LUMINANCE_ALPHA,
+                type: gl.UNSIGNED_BYTE,
+                verifier: allChannelsIncreaseByNoMoreThan,
+                threshold: 1,
+                numOccurrences: 1,
+                description: "LUMINANCE_ALPHA/UNSIGNED_BYTE should maintain full precision of data"
+            });
+        }
+    }
+
+    // Verify that setting the UNPACK_PREMULTIPLY_ALPHA_WEBGL pixel
+    // store parameter and sending down a zero alpha causes the color
+    // channels to go to zero.
+    for (var useImageData = 0; useImageData < 2; ++useImageData) {
+        for (var useTexSubImage2D = 0; useTexSubImage2D < 2; ++useTexSubImage2D) {
+            testCases.push({
+                useImageData: !!useImageData,
+                useTexSubImage2D: !!useTexSubImage2D,
+                width: 256,
+                height: 1,
+                generator: generateTransparentGrayscaleRamp,
+                premultiplyAlpha: true,
+                format: gl.RGBA,
+                type: gl.UNSIGNED_BYTE,
+                verifier: colorChannelsAreZero,
+                description: "UNPACK_PREMULTIPLY_ALPHA_WEBGL with RGBA/UNSIGNED_BYTE"
+            });
+            testCases.push({
+                useImageData: !!useImageData,
+                useTexSubImage2D: !!useTexSubImage2D,
+                width: 256,
+                height: 1,
+                generator: generateTransparentGrayscaleRamp,
+                premultiplyAlpha: true,
+                format: gl.RGBA,
+                type: gl.UNSIGNED_SHORT_4_4_4_4,
+                verifier: colorChannelsAreZero,
+                description: "UNPACK_PREMULTIPLY_ALPHA_WEBGL with RGBA/UNSIGNED_SHORT_4_4_4_4"
+            });
+            testCases.push({
+                useImageData: !!useImageData,
+                useTexSubImage2D: !!useTexSubImage2D,
+                width: 256,
+                height: 1,
+                generator: generateTransparentGrayscaleRamp,
+                premultiplyAlpha: true,
+                format: gl.RGBA,
+                type: gl.UNSIGNED_SHORT_5_5_5_1,
+                verifier: colorChannelsAreZero,
+                description: "UNPACK_PREMULTIPLY_ALPHA_WEBGL with RGBA/UNSIGNED_SHORT_5_5_5_1"
+            });
+            testCases.push({
+                useImageData: !!useImageData,
+                useTexSubImage2D: !!useTexSubImage2D,
+                width: 256,
+                height: 1,
+                generator: generateTransparentGrayscaleRamp,
+                premultiplyAlpha: true,
+                format: gl.RGB,
+                type: gl.UNSIGNED_BYTE,
+                verifier: colorChannelsAreZero,
+                description: "UNPACK_PREMULTIPLY_ALPHA_WEBGL with RGB/UNSIGNED_BYTE"
+            });
+            testCases.push({
+                useImageData: !!useImageData,
+                useTexSubImage2D: !!useTexSubImage2D,
+                width: 256,
+                height: 1,
+                generator: generateTransparentGrayscaleRamp,
+                premultiplyAlpha: true,
+                format: gl.RGB,
+                type: gl.UNSIGNED_SHORT_5_6_5,
+                verifier: colorChannelsAreZero,
+                description: "UNPACK_PREMULTIPLY_ALPHA_WEBGL with RGB/UNSIGNED_SHORT_5_6_5"
+            });
+            testCases.push({
+                useImageData: !!useImageData,
+                useTexSubImage2D: !!useTexSubImage2D,
+                width: 256,
+                height: 1,
+                generator: generateTransparentGrayscaleRamp,
+                premultiplyAlpha: true,
+                format: gl.ALPHA,
+                type: gl.UNSIGNED_BYTE,
+                verifier: colorChannelsAreZero,
+                description: "UNPACK_PREMULTIPLY_ALPHA_WEBGL with ALPHA/UNSIGNED_BYTE"
+            });
+            testCases.push({
+                useImageData: !!useImageData,
+                useTexSubImage2D: !!useTexSubImage2D,
+                width: 256,
+                height: 1,
+                generator: generateTransparentGrayscaleRamp,
+                premultiplyAlpha: true,
+                format: gl.LUMINANCE,
+                type: gl.UNSIGNED_BYTE,
+                verifier: colorChannelsAreZero,
+                description: "UNPACK_PREMULTIPLY_ALPHA_WEBGL with LUMINANCE/UNSIGNED_BYTE"
+            });
+            testCases.push({
+                useImageData: !!useImageData,
+                useTexSubImage2D: !!useTexSubImage2D,
+                width: 256,
+                height: 1,
+                generator: generateTransparentGrayscaleRamp,
+                premultiplyAlpha: true,
+                format: gl.LUMINANCE_ALPHA,
+                type: gl.UNSIGNED_BYTE,
+                verifier: colorChannelsAreZero,
+                description: "UNPACK_PREMULTIPLY_ALPHA_WEBGL with LUMINANCE_ALPHA/UNSIGNED_BYTE"
+            });
+        }
+    }
+
+    // Produce data for all testcases. Because we load images, some of
+    // these may generate their data asynchronously.
+    generateTestData();
+}
+
+function generateTestData()
+{
+    for (var i = 0; i < testCases.length; i++) {
+        var testCase = testCases[i];
+        var wrapper = null;
+        if (testCase.useImageData)
+            wrapper = new ImageDataWrapper(testCase.width, testCase.height);
+        else
+            wrapper = new ImageWrapper(testCase.width, testCase.height);
+        testCase.wrapper = wrapper;
+        testCase.generator(wrapper);
+        testCase.wrapper.generateData();
+    }
+
+    // See whether we need to run the tests, in case all of them
+    // generated their results synchronously.
+    maybeRunTests();
+}
+
+var ranTests = false;
+
+function maybeRunTests()
+{
+    if (!ranTests)
+        for (var i = 0; i < testCases.length; ++i)
+            if (!testCases[i].wrapper || !testCases[i].wrapper.data)
+                return;
+
+    ranTests = true;
+
+    for (var i = 0; i < testCases.length; ++i)
+        runOneTest(testCases[i]);
+
+    successfullyParsed = true;
+    var epilogue = document.createElement("script");
+    epilogue.onload = finish;
+    epilogue.src = "../../js/resources/js-test-post.js";
+    document.body.appendChild(epilogue);
+}
+
+function testCaseToString(testCase)
+{
+    return (testCase.useTexSubImage2D ? "texSubImage2D" : "texImage2D") +
+            " with " + (testCase.useImageData ? "ImageData" : "Image") +
+            " at " + testCase.width + "x" + testCase.height;
+}
+
+function runOneTest(testCase)
+{
+    debug("Testing " + testCaseToString(testCase));
+    var data = testCase.wrapper.data;
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+    var texture = gl.createTexture();
+    // Bind the texture to texture unit 0.
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+    // Set up texture parameters.
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+    // Set up pixel store parameters.
+    gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, testCase.premultiplyAlpha);
+    // Upload the image into the texture.
+    if (testCase.useTexSubImage2D) {
+        // Initialize the texture to black first.
+        gl.texImage2D(gl.TEXTURE_2D, 0, testCase.format, testCase.width, testCase.height, 0,
+                      testCase.format, testCase.type, null);
+        gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, testCase.format, testCase.type, data);
+    } else {
+        gl.texImage2D(gl.TEXTURE_2D, 0, testCase.format, testCase.format, testCase.type, data);
+    }
+
+    // Point the uniform sampler to texture unit 0.
+    gl.uniform1i(textureLoc, 0);
+    // Draw the triangles.
+    gl.drawArrays(gl.TRIANGLES, 0, 6);
+    // Clean up the texture.
+    gl.deleteTexture(texture);
+
+    // Read back the rendering results.
+    buf = new Uint8Array(testCase.width * testCase.height * 4);
+    gl.readPixels(0, 0, testCase.width, testCase.height, gl.RGBA, gl.UNSIGNED_BYTE, buf);
+    // Run the verification routine.
+    if (testCase.verifier(buf, testCase.threshold, testCase.numOccurrences))
+        testPassed(testCase.description);
+    else
+        testFailed(testCase.description);
+}
+
+function finish() {
+    if (window.layoutTestController) {
+        layoutTestController.notifyDone();
+    }
+}
+
+//----------------------------------------------------------------------
+// Wrappers for programmatic construction of Image and ImageData
+//
+
+function ImageWrapper(width, height)
+{
+    this.pngBuilder_ = new PNGlib(width, height, 256);
+}
+
+ImageWrapper.prototype.getWidth = function() {
+    return this.pngBuilder_.width;
+};
+
+ImageWrapper.prototype.getHeight = function() {
+    return this.pngBuilder_.height;
+};
+
+ImageWrapper.prototype.setPixel = function(x, y, r, g, b, a) {
+    this.pngBuilder_.buffer[this.pngBuilder_.index(x, y)] = this.pngBuilder_.color(r, g, b, a);
+};
+
+// Generates data into "data" property, possibly asynchronously.
+ImageWrapper.prototype.generateData = function() {
+    var that = this;
+    var img = new Image();
+    img.onload = function() {
+        that.data = img;
+        maybeRunTests();
+    };
+    img.src = "data:image/png;base64," + this.pngBuilder_.getBase64();
+};
+
+function ImageDataWrapper(width, height)
+{
+    if (!ImageDataWrapper.tempCanvas) {
+        ImageDataWrapper.tempCanvas = document.createElement("canvas");
+    }
+    this.imageData_ = ImageDataWrapper.tempCanvas.getContext("2d").createImageData(width, height);
+}
+
+ImageDataWrapper.tempCanvas = null;
+
+ImageDataWrapper.prototype.getWidth = function() {
+    return this.imageData_.width;
+};
+
+ImageDataWrapper.prototype.getHeight = function() {
+    return this.imageData_.height;
+};
+
+ImageDataWrapper.prototype.setPixel = function(x, y, r, g, b, a) {
+    var index = 4 * (this.imageData_.width * y + x);
+    this.imageData_.data[index] = r;
+    this.imageData_.data[index + 1] = g;
+    this.imageData_.data[index + 2] = b;
+    this.imageData_.data[index + 3] = a;
+};
+
+ImageDataWrapper.prototype.generateData = function() {
+    this.data = this.imageData_;
+    maybeRunTests();
+};
+
+//----------------------------------------------------------------------
+// Color ramp generation functions
+//
+
+function generateOpaqueGrayscaleRamp(wrapper)
+{
+    var width = wrapper.getWidth();
+    var height = wrapper.getHeight();
+    for (var x = 0; x < width; ++x) {
+        var value = Math.round(255.0 * x / width);
+        for (var y = 0; y < height; ++y)
+            wrapper.setPixel(x, y, value, value, value, 255);
+    }
+}
+
+function generateTranslucentGrayscaleRamp(wrapper)
+{
+    var width = wrapper.getWidth();
+    var height = wrapper.getHeight();
+    for (var x = 0; x < width; ++x) {
+        var value = Math.round(255.0 * x / width);
+        for (var y = 0; y < height; ++y)
+            wrapper.setPixel(x, y, value, value, value, value);
+    }
+}
+
+function generateTransparentGrayscaleRamp(wrapper)
+{
+    var width = wrapper.getWidth();
+    var height = wrapper.getHeight();
+    for (var x = 0; x < width; ++x) {
+        var value = Math.round(255.0 * x / width);
+        for (var y = 0; y < height; ++y)
+            wrapper.setPixel(x, y, value, value, value, 0);
+    }
+}
+
+//----------------------------------------------------------------------
+// Verification routines
+//
+
+function allChannelsIncreaseByNoMoreThan(array, threshold, numOccurrences) {
+    var numFound = 0;
+    for (var i = 4; i < array.length; i += 4)
+        for (var j = 0; j < 4; j++)
+            if (array[i + j] - array[i + j - 4] > threshold)
+                ++numFound;
+
+    return numFound < numOccurrences;
+}
+
+function alphaChannelIncreasesByNoMoreThan(array, threshold, numOccurrences) {
+    var numFound = 0;
+    for (var i = 7; i < array.length; i += 4)
+        if (array[i] - array[i - 4] > threshold)
+            ++numFound;
+
+    return numFound < numOccurrences;
+}
+
+function allChannelsIncreaseByAtLeast(array, threshold, numOccurrences) {
+    var numFound = 0;
+    for (var i = 4; i < array.length; i += 4)
+        for (var j = 0; j < 4; ++j)
+            if (array[i + j] - array[i + j - 4] > threshold)
+                ++numFound;
+
+    return numFound > numOccurrences;
+}
+
+function colorChannelsAreZero(array, threshold, numOccurrences) {
+    var passed = true;
+    var numFailures = 0;
+
+    for (var i = 4; i < array.length; i += 4)
+        for (var j = 0; j < 3; ++j)
+            if (array[i + j] != 0) {
+                passed = false;
+                if (++numFailures < 5)
+                    debug("  array[" + i + "] should have been 0, was " + array[i]);
+            }
+
+    return passed;
+}
+
+</script>
+</head>
+<body onload="init()">
+<canvas id="example" width="256px" height="1px"></canvas>
+<div id="description"></div>
+<div id="console"></div>
+</body>
+</html>

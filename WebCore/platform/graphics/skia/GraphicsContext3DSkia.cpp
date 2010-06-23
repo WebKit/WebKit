@@ -38,11 +38,10 @@
 namespace WebCore {
 
 bool GraphicsContext3D::getImageData(Image* image,
-                                     Vector<uint8_t>& outputVector,
+                                     unsigned int format,
+                                     unsigned int type,
                                      bool premultiplyAlpha,
-                                     bool* hasAlphaChannel,
-                                     AlphaOp* neededAlphaOp,
-                                     unsigned int* format)
+                                     Vector<uint8_t>& outputVector)
 {
     if (!image)
         return false;
@@ -60,18 +59,12 @@ bool GraphicsContext3D::getImageData(Image* image,
     ASSERT(rowBytes == skiaImage->width() * 4);
     uint8_t* pixels = reinterpret_cast<uint8_t*>(skiaImage->getPixels());
     outputVector.resize(rowBytes * height);
-    int size = rowBytes * height;
-    memcpy(outputVector.data(), pixels, size);
-    *hasAlphaChannel = true;
+    AlphaOp neededAlphaOp = kAlphaDoNothing;
     if (!premultiplyAlpha)
         // FIXME: must fetch the image data before the premultiplication step
-        *neededAlphaOp = kAlphaDoUnmultiply;
-    // Convert from BGRA to RGBA. FIXME: add GL_BGRA extension support
-    // to all underlying OpenGL implementations.
-    for (int i = 0; i < size; i += 4)
-        std::swap(outputVector[i], outputVector[i + 2]);
-    *format = RGBA;
-    return true;
+        neededAlphaOp = kAlphaDoUnmultiply;
+    return packPixels(pixels, kSourceFormatBGRA8, skiaImage->width(), height,
+                      format, type, neededAlphaOp, outputVector.data());
 }
 
 } // namespace WebCore

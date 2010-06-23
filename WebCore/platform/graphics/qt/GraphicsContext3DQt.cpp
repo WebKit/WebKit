@@ -1620,11 +1620,10 @@ void GraphicsContext3D::synthesizeGLError(unsigned long error)
 }
 
 bool GraphicsContext3D::getImageData(Image* image,
-                                     Vector<uint8_t>& outputVector,
+                                     unsigned int format,
+                                     unsigned int type,
                                      bool premultiplyAlpha,
-                                     bool* hasAlphaChannel,
-                                     AlphaOp* neededAlphaOp,
-                                     unsigned int* format)
+                                     Vector<uint8_t>& outputVector)
 {
     if (!image)
         return false;
@@ -1632,17 +1631,14 @@ bool GraphicsContext3D::getImageData(Image* image,
     if (!nativePixmap)
         return false;
 
-    *hasAlphaChannel = true;
-    *format = GraphicsContext3D::RGBA;
-
-    *neededAlphaOp = kAlphaDoNothing;
+    AlphaOp neededAlphaOp = kAlphaDoNothing;
     if (!premultiplyAlpha && *hasAlphaChannel)
-        *neededAlphaOp = kAlphaDoUnmultiply;
- 
+        // FIXME: must fetch the image data before the premultiplication step
+        neededAlphaOp = kAlphaDoUnmultiply;
     QImage nativeImage = nativePixmap->toImage().convertToFormat(QImage::Format_ARGB32);
-    outputVector.append(nativeImage.rgbSwapped().bits(), nativeImage.byteCount());
-
-    return true;
+    outputVector.resize(nativeImage.byteCount());
+    return packPixels(nativeImage.rgbSwapped().bits(), kSourceFormatRGBA8, image->width(), image->height(),
+                      format, type, neededAlphaOp, outputVector.data());
 }
 
 }

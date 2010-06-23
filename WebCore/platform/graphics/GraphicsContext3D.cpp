@@ -35,31 +35,75 @@
 
 namespace WebCore {
 
+bool GraphicsContext3D::computeFormatAndTypeParameters(unsigned int format,
+                                                       unsigned int type,
+                                                       unsigned long* componentsPerPixel,
+                                                       unsigned long* bytesPerComponent)
+{
+    switch (format) {
+    case GraphicsContext3D::ALPHA:
+        *componentsPerPixel = 1;
+        break;
+    case GraphicsContext3D::LUMINANCE:
+        *componentsPerPixel = 1;
+        break;
+    case GraphicsContext3D::LUMINANCE_ALPHA:
+        *componentsPerPixel = 2;
+        break;
+    case GraphicsContext3D::RGB:
+        *componentsPerPixel = 3;
+        break;
+    case GraphicsContext3D::RGBA:
+        *componentsPerPixel = 4;
+        break;
+    default:
+        return false;
+    }
+    switch (type) {
+    case GraphicsContext3D::UNSIGNED_BYTE:
+        *bytesPerComponent = sizeof(unsigned char);
+        break;
+    case GraphicsContext3D::UNSIGNED_SHORT_5_6_5:
+    case GraphicsContext3D::UNSIGNED_SHORT_4_4_4_4:
+    case GraphicsContext3D::UNSIGNED_SHORT_5_5_5_1:
+        *componentsPerPixel = 1;
+        *bytesPerComponent = sizeof(unsigned short);
+        break;
+    default:
+        return false;
+    }
+    return true;
+}
+
 bool GraphicsContext3D::extractImageData(Image* image,
+                                         unsigned int format,
+                                         unsigned int type,
                                          bool flipY,
                                          bool premultiplyAlpha,
-                                         Vector<uint8_t>& imageData,
-                                         unsigned int* format,
-                                         unsigned int* internalFormat)
+                                         Vector<uint8_t>& data)
 {
     if (!image)
         return false;
-    AlphaOp alphaOp = kAlphaDoNothing;
-    bool hasAlphaChannel = true;
-    if (!getImageData(image, imageData, premultiplyAlpha,
-                      &hasAlphaChannel, &alphaOp, format))
+    if (!getImageData(image, format, type, premultiplyAlpha, data))
         return false;
-    processImageData(imageData.data(),
-                     image->width(),
-                     image->height(),
-                     flipY,
-                     alphaOp);
-    // For GLES2 tex functions, internalformat has to match format.
-    *internalFormat = *format;
+    if (flipY) {
+        unsigned long componentsPerPixel, bytesPerComponent;
+        if (!computeFormatAndTypeParameters(format, type,
+                                            &componentsPerPixel,
+                                            &bytesPerComponent))
+            return false;
+        // The image data is tightly packed, and we upload it as such.
+        unsigned int unpackAlignment = 1;
+        flipVertically(data.data(), image->width(), image->height(),
+                       componentsPerPixel * bytesPerComponent,
+                       unpackAlignment);
+    }
     return true;
 }
 
 bool GraphicsContext3D::extractImageData(ImageData* imageData,
+                                         unsigned int format,
+                                         unsigned int type,
                                          bool flipY,
                                          bool premultiplyAlpha,
                                          Vector<uint8_t>& data)
@@ -70,83 +114,480 @@ bool GraphicsContext3D::extractImageData(ImageData* imageData,
     int height = imageData->height();
     int dataBytes = width * height * 4;
     data.resize(dataBytes);
-    uint8_t* dst = data.data();
-    uint8_t* src = imageData->data()->data()->data();
-    memcpy(dst, src, dataBytes);
-    processImageData(dst,
-                     width,
-                     height,
-                     flipY,
-                     premultiplyAlpha ? kAlphaDoPremultiply : kAlphaDoNothing);
+    if (!packPixels(imageData->data()->data()->data(),
+                    kSourceFormatRGBA8,
+                    width,
+                    height,
+                    format,
+                    type,
+                    premultiplyAlpha ? kAlphaDoPremultiply : kAlphaDoNothing,
+                    data.data()))
+        return false;
+    if (flipY) {
+        unsigned long componentsPerPixel, bytesPerComponent;
+        if (!computeFormatAndTypeParameters(format, type,
+                                            &componentsPerPixel,
+                                            &bytesPerComponent))
+            return false;
+        // The image data is tightly packed, and we upload it as such.
+        unsigned int unpackAlignment = 1;
+        flipVertically(data.data(), width, height,
+                       componentsPerPixel * bytesPerComponent,
+                       unpackAlignment);
+    }
     return true;
 }
 
-void GraphicsContext3D::processImageData(uint8_t* imageData,
-                                         unsigned width,
-                                         unsigned height,
-                                         bool flipVertically,
-                                         AlphaOp alphaOp)
+void GraphicsContext3D::flipVertically(void* imageData,
+                                       unsigned int width,
+                                       unsigned int height,
+                                       unsigned int bytesPerPixel,
+                                       unsigned int unpackAlignment)
 {
-    switch (alphaOp) {
-    case kAlphaDoPremultiply:
-        premultiplyAlpha(imageData, width * height);
-        break;
-    case kAlphaDoUnmultiply:
-        unmultiplyAlpha(imageData, width * height);
-        break;
-    default:
-        break;
+    if (!width || !height)
+        return;
+    unsigned int validRowBytes = width * bytesPerPixel;
+    unsigned int totalRowBytes = validRowBytes;
+    unsigned int remainder = validRowBytes % unpackAlignment;
+    if (remainder)
+        totalRowBytes += remainder;
+    uint8_t* tempRow = new uint8_t[validRowBytes];
+    uint8_t* data = static_cast<uint8_t*>(imageData);
+    for (unsigned i = 0; i < height / 2; i++) {
+        uint8_t* lowRow = data + (totalRowBytes * i);
+        uint8_t* highRow = data + (totalRowBytes * (height - i - 1));
+        memcpy(tempRow, lowRow, validRowBytes);
+        memcpy(lowRow, highRow, validRowBytes);
+        memcpy(highRow, tempRow, validRowBytes);
     }
+    delete[] tempRow;
+}
 
-    if (flipVertically && width && height) {
-        int rowBytes = width * 4;
-        uint8_t* tempRow = new uint8_t[rowBytes];
-        for (unsigned i = 0; i < height / 2; i++) {
-            uint8_t* lowRow = imageData + (rowBytes * i);
-            uint8_t* highRow = imageData + (rowBytes * (height - i - 1));
-            memcpy(tempRow, lowRow, rowBytes);
-            memcpy(lowRow, highRow, rowBytes);
-            memcpy(highRow, tempRow, rowBytes);
-        }
-        delete[] tempRow;
+// These functions can not be static, or gcc will not allow them to be
+// used as template parameters. Use an anonymous namespace to prevent
+// the need to declare prototypes for them.
+namespace {
+
+//----------------------------------------------------------------------
+// Pixel unpacking routines.
+
+void unpackRGB8ToRGBA8(const uint8_t* source, uint8_t* destination)
+{
+    destination[0] = source[0];
+    destination[1] = source[1];
+    destination[2] = source[2];
+    destination[3] = 0xFF;
+}
+
+void unpackBGRA8ToRGBA8(const uint8_t* source, uint8_t* destination)
+{
+    destination[0] = source[2];
+    destination[1] = source[1];
+    destination[2] = source[0];
+    destination[3] = source[3];
+}
+
+//----------------------------------------------------------------------
+// Pixel packing routines.
+//
+
+void packRGBA8ToA8(const uint8_t* source, uint8_t* destination)
+{
+    destination[0] = source[3];
+}
+
+void packRGBA8ToR8(const uint8_t* source, uint8_t* destination)
+{
+    destination[0] = source[0];
+}
+
+void packRGBA8ToR8Premultiply(const uint8_t* source, uint8_t* destination)
+{
+    float scaleFactor = source[3] / 255.0f;
+    uint8_t sourceR = static_cast<uint8_t>(static_cast<float>(source[0]) * scaleFactor);
+    destination[0] = sourceR;
+}
+
+// FIXME: this routine is lossy and must be removed.
+void packRGBA8ToR8Unmultiply(const uint8_t* source, uint8_t* destination)
+{
+    float scaleFactor = 1.0f / (source[3] ? source[3] / 255.0f : 1.0f);
+    uint8_t sourceR = static_cast<uint8_t>(static_cast<float>(source[0]) * scaleFactor);
+    destination[0] = sourceR;
+}
+
+void packRGBA8ToRA8(const uint8_t* source, uint8_t* destination)
+{
+    destination[0] = source[0];
+    destination[1] = source[3];
+}
+
+void packRGBA8ToRA8Premultiply(const uint8_t* source, uint8_t* destination)
+{
+    float scaleFactor = source[3] / 255.0f;
+    uint8_t sourceR = static_cast<uint8_t>(static_cast<float>(source[0]) * scaleFactor);
+    destination[0] = sourceR;
+    destination[1] = source[3];
+}
+
+// FIXME: this routine is lossy and must be removed.
+void packRGBA8ToRA8Unmultiply(const uint8_t* source, uint8_t* destination)
+{
+    float scaleFactor = 1.0f / (source[3] ? source[3] / 255.0f : 1.0f);
+    uint8_t sourceR = static_cast<uint8_t>(static_cast<float>(source[0]) * scaleFactor);
+    destination[0] = sourceR;
+    destination[1] = source[3];
+}
+
+void packRGBA8ToRGB8(const uint8_t* source, uint8_t* destination)
+{
+    destination[0] = source[0];
+    destination[1] = source[1];
+    destination[2] = source[2];
+}
+
+void packRGBA8ToRGB8Premultiply(const uint8_t* source, uint8_t* destination)
+{
+    float scaleFactor = source[3] / 255.0f;
+    uint8_t sourceR = static_cast<uint8_t>(static_cast<float>(source[0]) * scaleFactor);
+    uint8_t sourceG = static_cast<uint8_t>(static_cast<float>(source[1]) * scaleFactor);
+    uint8_t sourceB = static_cast<uint8_t>(static_cast<float>(source[2]) * scaleFactor);
+    destination[0] = sourceR;
+    destination[1] = sourceG;
+    destination[2] = sourceB;
+}
+
+// FIXME: this routine is lossy and must be removed.
+void packRGBA8ToRGB8Unmultiply(const uint8_t* source, uint8_t* destination)
+{
+    float scaleFactor = 1.0f / (source[3] ? source[3] / 255.0f : 1.0f);
+    uint8_t sourceR = static_cast<uint8_t>(static_cast<float>(source[0]) * scaleFactor);
+    uint8_t sourceG = static_cast<uint8_t>(static_cast<float>(source[1]) * scaleFactor);
+    uint8_t sourceB = static_cast<uint8_t>(static_cast<float>(source[2]) * scaleFactor);
+    destination[0] = sourceR;
+    destination[1] = sourceG;
+    destination[2] = sourceB;
+}
+
+// This is only used when the source format is different than kSourceFormatRGBA8.
+void packRGBA8ToRGBA8(const uint8_t* source, uint8_t* destination)
+{
+    destination[0] = source[0];
+    destination[1] = source[1];
+    destination[2] = source[2];
+    destination[3] = source[3];
+}
+
+void packRGBA8ToRGBA8Premultiply(const uint8_t* source, uint8_t* destination)
+{
+    float scaleFactor = source[3] / 255.0f;
+    uint8_t sourceR = static_cast<uint8_t>(static_cast<float>(source[0]) * scaleFactor);
+    uint8_t sourceG = static_cast<uint8_t>(static_cast<float>(source[1]) * scaleFactor);
+    uint8_t sourceB = static_cast<uint8_t>(static_cast<float>(source[2]) * scaleFactor);
+    destination[0] = sourceR;
+    destination[1] = sourceG;
+    destination[2] = sourceB;
+}
+
+// FIXME: this routine is lossy and must be removed.
+void packRGBA8ToRGBA8Unmultiply(const uint8_t* source, uint8_t* destination)
+{
+    float scaleFactor = 1.0f / (source[3] ? source[3] / 255.0f : 1.0f);
+    uint8_t sourceR = static_cast<uint8_t>(static_cast<float>(source[0]) * scaleFactor);
+    uint8_t sourceG = static_cast<uint8_t>(static_cast<float>(source[1]) * scaleFactor);
+    uint8_t sourceB = static_cast<uint8_t>(static_cast<float>(source[2]) * scaleFactor);
+    destination[0] = sourceR;
+    destination[1] = sourceG;
+    destination[2] = sourceB;
+    destination[3] = source[3];
+}
+
+void packRGBA8ToUnsignedShort4444(const uint8_t* source, uint16_t* destination)
+{
+    *destination = (((source[0] & 0xF0) << 8)
+                    | ((source[1] & 0xF0) << 4)
+                    | (source[2] & 0xF0)
+                    | (source[3] >> 4));
+}
+
+void packRGBA8ToUnsignedShort4444Premultiply(const uint8_t* source, uint16_t* destination)
+{
+    float scaleFactor = source[3] / 255.0f;
+    uint8_t sourceR = static_cast<uint8_t>(static_cast<float>(source[0]) * scaleFactor);
+    uint8_t sourceG = static_cast<uint8_t>(static_cast<float>(source[1]) * scaleFactor);
+    uint8_t sourceB = static_cast<uint8_t>(static_cast<float>(source[2]) * scaleFactor);
+    *destination = (((sourceR & 0xF0) << 8)
+                    | ((sourceG & 0xF0) << 4)
+                    | (sourceB & 0xF0)
+                    | (source[3] >> 4));
+}
+
+// FIXME: this routine is lossy and must be removed.
+void packRGBA8ToUnsignedShort4444Unmultiply(const uint8_t* source, uint16_t* destination)
+{
+    float scaleFactor = 1.0f / (source[3] ? source[3] / 255.0f : 1.0f);
+    uint8_t sourceR = static_cast<uint8_t>(static_cast<float>(source[0]) * scaleFactor);
+    uint8_t sourceG = static_cast<uint8_t>(static_cast<float>(source[1]) * scaleFactor);
+    uint8_t sourceB = static_cast<uint8_t>(static_cast<float>(source[2]) * scaleFactor);
+    *destination = (((sourceR & 0xF0) << 8)
+                    | ((sourceG & 0xF0) << 4)
+                    | (sourceB & 0xF0)
+                    | (source[3] >> 4));
+}
+
+void packRGBA8ToUnsignedShort5551(const uint8_t* source, uint16_t* destination)
+{
+    *destination = (((source[0] & 0xF8) << 8)
+                    | ((source[1] & 0xF8) << 3)
+                    | ((source[2] & 0xF8) >> 2)
+                    | (source[3] >> 7));
+}
+
+void packRGBA8ToUnsignedShort5551Premultiply(const uint8_t* source, uint16_t* destination)
+{
+    float scaleFactor = source[3] / 255.0f;
+    uint8_t sourceR = static_cast<uint8_t>(static_cast<float>(source[0]) * scaleFactor);
+    uint8_t sourceG = static_cast<uint8_t>(static_cast<float>(source[1]) * scaleFactor);
+    uint8_t sourceB = static_cast<uint8_t>(static_cast<float>(source[2]) * scaleFactor);
+    *destination = (((sourceR & 0xF8) << 8)
+                    | ((sourceG & 0xF8) << 3)
+                    | ((sourceB & 0xF8) >> 2)
+                    | (source[3] >> 7));
+}
+
+// FIXME: this routine is lossy and must be removed.
+void packRGBA8ToUnsignedShort5551Unmultiply(const uint8_t* source, uint16_t* destination)
+{
+    float scaleFactor = 1.0f / (source[3] ? source[3] / 255.0f : 1.0f);
+    uint8_t sourceR = static_cast<uint8_t>(static_cast<float>(source[0]) * scaleFactor);
+    uint8_t sourceG = static_cast<uint8_t>(static_cast<float>(source[1]) * scaleFactor);
+    uint8_t sourceB = static_cast<uint8_t>(static_cast<float>(source[2]) * scaleFactor);
+    *destination = (((sourceR & 0xF8) << 8)
+                    | ((sourceG & 0xF8) << 3)
+                    | ((sourceB & 0xF8) >> 2)
+                    | (source[3] >> 7));
+}
+
+void packRGBA8ToUnsignedShort565(const uint8_t* source, uint16_t* destination)
+{
+    *destination = (((source[0] & 0xF8) << 8)
+                    | ((source[1] & 0xFC) << 3)
+                    | ((source[2] & 0xF8) >> 3));
+}
+
+void packRGBA8ToUnsignedShort565Premultiply(const uint8_t* source, uint16_t* destination)
+{
+    float scaleFactor = source[3] / 255.0f;
+    uint8_t sourceR = static_cast<uint8_t>(static_cast<float>(source[0]) * scaleFactor);
+    uint8_t sourceG = static_cast<uint8_t>(static_cast<float>(source[1]) * scaleFactor);
+    uint8_t sourceB = static_cast<uint8_t>(static_cast<float>(source[2]) * scaleFactor);
+    *destination = (((sourceR & 0xF8) << 8)
+                    | ((sourceG & 0xFC) << 3)
+                    | ((sourceB & 0xF8) >> 3));
+}
+
+// FIXME: this routine is lossy and must be removed.
+void packRGBA8ToUnsignedShort565Unmultiply(const uint8_t* source, uint16_t* destination)
+{
+    float scaleFactor = 1.0f / (source[3] ? source[3] / 255.0f : 1.0f);
+    uint8_t sourceR = static_cast<uint8_t>(static_cast<float>(source[0]) * scaleFactor);
+    uint8_t sourceG = static_cast<uint8_t>(static_cast<float>(source[1]) * scaleFactor);
+    uint8_t sourceB = static_cast<uint8_t>(static_cast<float>(source[2]) * scaleFactor);
+    *destination = (((sourceR & 0xF8) << 8)
+                    | ((sourceG & 0xFC) << 3)
+                    | ((sourceB & 0xF8) >> 3));
+}
+
+} // anonymous namespace
+
+// This is used whenever unpacking is necessary; i.e., the source data
+// is not in RGBA8 format.
+template<typename SourceType, typename DestType,
+         void unpackingFunc(const SourceType*, uint8_t*),
+         void packingFunc(const uint8_t*, DestType*)>
+static void doUnpackingAndPacking(const SourceType* sourceData,
+                                  unsigned int numElements,
+                                  unsigned int sourceElementsPerPixel,
+                                  DestType* destinationData,
+                                  unsigned int destinationElementsPerPixel)
+{
+    const SourceType* endPointer = sourceData + numElements;
+    uint8_t temporaryRGBAData[4];
+    while (sourceData < endPointer) {
+        unpackingFunc(sourceData, temporaryRGBAData);
+        packingFunc(temporaryRGBAData, destinationData);
+        sourceData += sourceElementsPerPixel;
+        destinationData += destinationElementsPerPixel;
     }
 }
 
-// Premultiply alpha into color channels.
-void GraphicsContext3D::premultiplyAlpha(unsigned char* rgbaData, int numPixels)
+// This handles all conversions with a faster path for RGBA8 source data.
+template<typename SourceType, typename DestType, void packingFunc(const SourceType*, DestType*)>
+static void doPacking(const SourceType* sourceData,
+                      GraphicsContext3D::SourceDataFormat sourceDataFormat,
+                      unsigned int numElements,
+                      unsigned int sourceElementsPerPixel,
+                      DestType* destinationData,
+                      unsigned int destinationElementsPerPixel)
 {
-    for (int j = 0; j < numPixels; j++) {
-        float r = rgbaData[4*j+0] / 255.0f;
-        float g = rgbaData[4*j+1] / 255.0f;
-        float b = rgbaData[4*j+2] / 255.0f;
-        float a = rgbaData[4*j+3] / 255.0f;
-        rgbaData[4*j+0] = (unsigned char) (r * a * 255.0f);
-        rgbaData[4*j+1] = (unsigned char) (g * a * 255.0f);
-        rgbaData[4*j+2] = (unsigned char) (b * a * 255.0f);
+    switch (sourceDataFormat) {
+    case GraphicsContext3D::kSourceFormatRGBA8: {
+        const SourceType* endPointer = sourceData + numElements;
+        while (sourceData < endPointer) {
+            packingFunc(sourceData, destinationData);
+            sourceData += sourceElementsPerPixel;
+            destinationData += destinationElementsPerPixel;
+        }
+        break;
+    }
+    case GraphicsContext3D::kSourceFormatRGB8: {
+        doUnpackingAndPacking<SourceType, DestType, unpackRGB8ToRGBA8, packingFunc>(sourceData, numElements, sourceElementsPerPixel, destinationData, destinationElementsPerPixel);
+        break;
+    }
+    case GraphicsContext3D::kSourceFormatBGRA8: {
+        doUnpackingAndPacking<SourceType, DestType, unpackBGRA8ToRGBA8, packingFunc>(sourceData, numElements, sourceElementsPerPixel, destinationData, destinationElementsPerPixel);
+        break;
+    }
     }
 }
 
-// Remove premultiplied alpha from color channels.
-// FIXME: this is lossy. Must retrieve original values from HTMLImageElement.
-void GraphicsContext3D::unmultiplyAlpha(unsigned char* rgbaData, int numPixels)
+bool GraphicsContext3D::packPixels(const uint8_t* sourceData,
+                                   GraphicsContext3D::SourceDataFormat sourceDataFormat,
+                                   unsigned int width,
+                                   unsigned int height,
+                                   unsigned int destinationFormat,
+                                   unsigned int destinationType,
+                                   AlphaOp alphaOp,
+                                   void* destinationData)
 {
-    for (int j = 0; j < numPixels; j++) {
-        float r = rgbaData[4*j+0] / 255.0f;
-        float g = rgbaData[4*j+1] / 255.0f;
-        float b = rgbaData[4*j+2] / 255.0f;
-        float a = rgbaData[4*j+3] / 255.0f;
-        if (a > 0.0f) {
-            r /= a;
-            g /= a;
-            b /= a;
-            r = (r > 1.0f) ? 1.0f : r;
-            g = (g > 1.0f) ? 1.0f : g;
-            b = (b > 1.0f) ? 1.0f : b;
-            rgbaData[4*j+0] = (unsigned char) (r * 255.0f);
-            rgbaData[4*j+1] = (unsigned char) (g * 255.0f);
-            rgbaData[4*j+2] = (unsigned char) (b * 255.0f);
+    unsigned int sourceElementsPerPixel = 4;
+    unsigned int numElements = width * height * sourceElementsPerPixel;
+    switch (destinationType) {
+    case UNSIGNED_BYTE: {
+        uint8_t* destination = static_cast<uint8_t*>(destinationData);
+        if (sourceDataFormat == kSourceFormatRGBA8 && destinationFormat == RGBA && alphaOp == kAlphaDoNothing) {
+            // No conversion necessary.
+            memcpy(destinationData, sourceData, numElements);
+            break;
         }
+        switch (destinationFormat) {
+        case RGB:
+            switch (alphaOp) {
+            case kAlphaDoNothing:
+                doPacking<uint8_t, uint8_t, packRGBA8ToRGB8>(sourceData, sourceDataFormat, numElements, sourceElementsPerPixel, destination, 3);
+                break;
+            case kAlphaDoPremultiply:
+                doPacking<uint8_t, uint8_t, packRGBA8ToRGB8Premultiply>(sourceData, sourceDataFormat, numElements, sourceElementsPerPixel, destination, 3);
+                break;
+            case kAlphaDoUnmultiply:
+                doPacking<uint8_t, uint8_t, packRGBA8ToRGB8Unmultiply>(sourceData, sourceDataFormat, numElements, sourceElementsPerPixel, destination, 3);
+                break;
+            }
+            break;
+        case RGBA:
+            switch (alphaOp) {
+            case kAlphaDoNothing:
+                ASSERT(sourceDataFormat != kSourceFormatRGBA8); // Handled above with fast case.
+                doPacking<uint8_t, uint8_t, packRGBA8ToRGBA8>(sourceData, sourceDataFormat, numElements, sourceElementsPerPixel, destination, 4);
+                break;
+            case kAlphaDoPremultiply:
+                doPacking<uint8_t, uint8_t, packRGBA8ToRGBA8Premultiply>(sourceData, sourceDataFormat, numElements, sourceElementsPerPixel, destination, 4);
+                break;
+            case kAlphaDoUnmultiply:
+                doPacking<uint8_t, uint8_t, packRGBA8ToRGBA8Unmultiply>(sourceData, sourceDataFormat, numElements, sourceElementsPerPixel, destination, 4);
+                break;
+            default:
+                ASSERT_NOT_REACHED();
+            }
+            break;
+        case ALPHA:
+            // From the desktop OpenGL conversion rules (OpenGL 2.1
+            // specification, Table 3.15), the alpha channel is chosen
+            // from the RGBA data.
+            doPacking<uint8_t, uint8_t, packRGBA8ToA8>(sourceData, sourceDataFormat, numElements, sourceElementsPerPixel, destination, 1);
+            break;
+        case LUMINANCE:
+            // From the desktop OpenGL conversion rules (OpenGL 2.1
+            // specification, Table 3.15), the red channel is chosen
+            // from the RGBA data.
+            switch (alphaOp) {
+            case kAlphaDoNothing:
+                doPacking<uint8_t, uint8_t, packRGBA8ToR8>(sourceData, sourceDataFormat, numElements, sourceElementsPerPixel, destination, 1);
+                break;
+            case kAlphaDoPremultiply:
+                doPacking<uint8_t, uint8_t, packRGBA8ToR8Premultiply>(sourceData, sourceDataFormat, numElements, sourceElementsPerPixel, destination, 1);
+                break;
+            case kAlphaDoUnmultiply:
+                doPacking<uint8_t, uint8_t, packRGBA8ToR8Unmultiply>(sourceData, sourceDataFormat, numElements, sourceElementsPerPixel, destination, 1);
+                break;
+            }
+            break;
+        case LUMINANCE_ALPHA:
+            // From the desktop OpenGL conversion rules (OpenGL 2.1
+            // specification, Table 3.15), the red and alpha channels
+            // are chosen from the RGBA data.
+            switch (alphaOp) {
+            case kAlphaDoNothing:
+                doPacking<uint8_t, uint8_t, packRGBA8ToRA8>(sourceData, sourceDataFormat, numElements, sourceElementsPerPixel, destination, 2);
+                break;
+            case kAlphaDoPremultiply:
+                doPacking<uint8_t, uint8_t, packRGBA8ToRA8Premultiply>(sourceData, sourceDataFormat, numElements, sourceElementsPerPixel, destination, 2);
+                break;
+            case kAlphaDoUnmultiply:
+                doPacking<uint8_t, uint8_t, packRGBA8ToRA8Unmultiply>(sourceData, sourceDataFormat, numElements, sourceElementsPerPixel, destination, 2);
+                break;
+            }
+            break;
+        }
+        break;
     }
+    case UNSIGNED_SHORT_4_4_4_4: {
+        uint16_t* destination = static_cast<uint16_t*>(destinationData);
+        switch (alphaOp) {
+        case kAlphaDoNothing:
+            doPacking<uint8_t, uint16_t, packRGBA8ToUnsignedShort4444>(sourceData, sourceDataFormat, numElements, sourceElementsPerPixel, destination, 1);
+            break;
+        case kAlphaDoPremultiply:
+            doPacking<uint8_t, uint16_t, packRGBA8ToUnsignedShort4444Premultiply>(sourceData, sourceDataFormat, numElements, sourceElementsPerPixel, destination, 1);
+            break;
+        case kAlphaDoUnmultiply:
+            doPacking<uint8_t, uint16_t, packRGBA8ToUnsignedShort4444Unmultiply>(sourceData, sourceDataFormat, numElements, sourceElementsPerPixel, destination, 1);
+            break;
+        }
+        break;
+    }
+    case UNSIGNED_SHORT_5_5_5_1: {
+        uint16_t* destination = static_cast<uint16_t*>(destinationData);
+        switch (alphaOp) {
+        case kAlphaDoNothing:
+            doPacking<uint8_t, uint16_t, packRGBA8ToUnsignedShort5551>(sourceData, sourceDataFormat, numElements, sourceElementsPerPixel, destination, 1);
+            break;
+        case kAlphaDoPremultiply:
+            doPacking<uint8_t, uint16_t, packRGBA8ToUnsignedShort5551Premultiply>(sourceData, sourceDataFormat, numElements, sourceElementsPerPixel, destination, 1);
+            break;
+        case kAlphaDoUnmultiply:
+            doPacking<uint8_t, uint16_t, packRGBA8ToUnsignedShort5551Unmultiply>(sourceData, sourceDataFormat, numElements, sourceElementsPerPixel, destination, 1);
+            break;
+        }
+        break;
+    }
+    case UNSIGNED_SHORT_5_6_5: {
+        uint16_t* destination = static_cast<uint16_t*>(destinationData);
+        switch (alphaOp) {
+        case kAlphaDoNothing:
+            doPacking<uint8_t, uint16_t, packRGBA8ToUnsignedShort565>(sourceData, sourceDataFormat, numElements, sourceElementsPerPixel, destination, 1);
+            break;
+        case kAlphaDoPremultiply:
+            doPacking<uint8_t, uint16_t, packRGBA8ToUnsignedShort565Premultiply>(sourceData, sourceDataFormat, numElements, sourceElementsPerPixel, destination, 1);
+            break;
+        case kAlphaDoUnmultiply:
+            doPacking<uint8_t, uint16_t, packRGBA8ToUnsignedShort565Unmultiply>(sourceData, sourceDataFormat, numElements, sourceElementsPerPixel, destination, 1);
+            break;
+        }
+        break;
+    }
+    }
+    return true;
 }
 
 } // namespace WebCore

@@ -1,3 +1,52 @@
+2010-06-23  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        Implement format conversions in texImage2D and texSubImage2D taking HTML data
+        https://bugs.webkit.org/show_bug.cgi?id=40319
+
+        Generalized code supporting premultiplication of alpha and
+        vertical flip to pack texture data into requested format and type.
+        Handled incoming image data of various formats, RGBA and BGRA in
+        particular, both to reduce the number of temporary copies during
+        texture upload and to support premultiplying alpha for the
+        texImage2D and texSubImage2D entry points taking ArrayBufferView
+        in a subsequent bug. Added test case exercising all combinations
+        of format/type combinations, premultiplication of alpha, and
+        Image/ImageData upload. (Incorporated pnglib.js under
+        fast/canvas/webgl/resources/ to be able to generate Image elements
+        programmatically.) Tested in Safari on Mac OS X and in Chromium on
+        Mac OS X, Windows and Linux.
+
+        Test: fast/canvas/webgl/tex-image-with-format-and-type.html
+
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::readPixels):
+        (WebCore::WebGLRenderingContext::texImage2DImpl):
+        (WebCore::WebGLRenderingContext::texImage2D):
+        (WebCore::WebGLRenderingContext::texSubImage2DImpl):
+        (WebCore::WebGLRenderingContext::texSubImage2D):
+        (WebCore::WebGLRenderingContext::validateTexFuncFormatAndType):
+        (WebCore::WebGLRenderingContext::validateTexFuncParameters):
+        * platform/graphics/GraphicsContext3D.cpp:
+        (WebCore::GraphicsContext3D::computeFormatAndTypeParameters):
+        (WebCore::GraphicsContext3D::extractImageData):
+        (WebCore::GraphicsContext3D::flipVertically):
+        (WebCore::doUnpackingAndPacking):
+        (WebCore::doPacking):
+        (WebCore::GraphicsContext3D::packPixels):
+        * platform/graphics/GraphicsContext3D.h:
+        (WebCore::GraphicsContext3D::):
+        * platform/graphics/cg/GraphicsContext3DCG.cpp:
+        (WebCore::GraphicsContext3D::getImageData):
+        * platform/graphics/mac/GraphicsContext3DMac.mm:
+        (WebCore::narrowInternalFormat):
+        (WebCore::GraphicsContext3D::texImage2D):
+        * platform/graphics/qt/GraphicsContext3DQt.cpp:
+        (WebCore::GraphicsContext3D::getImageData):
+        * platform/graphics/skia/GraphicsContext3DSkia.cpp:
+        (WebCore::GraphicsContext3D::getImageData):
+
 2010-06-23  Stephen White  <senorblanco@chromium.org>
 
         Unreviewed; correcting bad patch.

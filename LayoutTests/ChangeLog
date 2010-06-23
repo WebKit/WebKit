@@ -1,3 +1,31 @@
+2010-06-23  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        Implement format conversions in texImage2D and texSubImage2D taking HTML data
+        https://bugs.webkit.org/show_bug.cgi?id=40319
+
+        Generalized code supporting premultiplication of alpha and
+        vertical flip to pack texture data into requested format and type.
+        Handled incoming image data of various formats, RGBA and BGRA in
+        particular, both to reduce the number of temporary copies during
+        texture upload and to support premultiplying alpha for the
+        texImage2D and texSubImage2D entry points taking ArrayBufferView
+        in a subsequent bug. Added test case exercising all combinations
+        of format/type combinations, premultiplication of alpha, and
+        Image/ImageData upload. (Incorporated pnglib.js under
+        fast/canvas/webgl/resources/ to be able to generate Image elements
+        programmatically.) Tested in Safari on Mac OS X and in Chromium on
+        Mac OS X, Windows and Linux.
+
+        Test: fast/canvas/webgl/tex-image-with-format-and-type.html
+
+        * fast/canvas/webgl/resources/pnglib.js: Added.
+        ():
+        (.):
+        * fast/canvas/webgl/tex-image-with-format-and-type-expected.txt: Added.
+        * fast/canvas/webgl/tex-image-with-format-and-type.html: Added.
+
 2010-06-23  Alpha Lam  <hclam@chromium.org>
 
         Unreviewed. Build fix.
