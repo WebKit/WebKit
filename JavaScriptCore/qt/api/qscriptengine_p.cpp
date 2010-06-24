@@ -85,5 +85,5 @@ QScriptValuePrivate* QScriptEnginePrivate::newObject() const
 QScriptValuePrivate* QScriptEnginePrivate::globalObject() const
 {
     JSObjectRef globalObject = JSContextGetGlobalObject(m_context);
-    return new QScriptValuePrivate(this, globalObject, globalObject);
+    return new QScriptValuePrivate(this, globalObject);
 }

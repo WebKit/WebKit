@@ -1,3 +1,33 @@
+2010-06-23  Jedrzej Nowacki  <jedrzej.nowacki@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        Optimization of the QScriptValuePrivate.
+
+        Patch change only internals of the QScriptValuePrivate.
+        Most of the QScriptValuePrivate's attributes were moved
+        into an union.
+
+        [Qt] Optimization of the QScriptVAluePrivate.
+        https://bugs.webkit.org/show_bug.cgi?id=40415
+
+        * qt/api/qscriptengine_p.cpp:
+        (QScriptEnginePrivate::globalObject):
+        * qt/api/qscriptvalue_p.h:
+        (QScriptValuePrivate::):
+        (QScriptValuePrivate::~QScriptValuePrivate):
+        (QScriptValuePrivate::QScriptValuePrivate):
+        (QScriptValuePrivate::toString):
+        (QScriptValuePrivate::toNumber):
+        (QScriptValuePrivate::toBool):
+        (QScriptValuePrivate::toObject):
+        (QScriptValuePrivate::equals):
+        (QScriptValuePrivate::strictlyEquals):
+        (QScriptValuePrivate::assignEngine):
+        (QScriptValuePrivate::operator JSValueRef):
+        (QScriptValuePrivate::operator JSObjectRef):
+        (QScriptValuePrivate::refinedJSValue):
+
 2010-06-23  Kwang Yul Seo  <skyul@company100.net>
 
         Reviewed by Oliver Hunt.
