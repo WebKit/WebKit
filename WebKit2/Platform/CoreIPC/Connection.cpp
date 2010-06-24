@@ -99,7 +99,7 @@ std::auto_ptr<ArgumentDecoder> Connection::waitForMessage(MessageID messageID, u
         for (size_t i = 0; i < m_incomingMessages.size(); ++i) {
             const IncomingMessage& message = m_incomingMessages[i];
 
-            if (equalIgnoringFlags(message.messageID(), messageID) && message.arguments()->destinationID() == destinationID) {
+            if (message.messageID() == messageID && message.arguments()->destinationID() == destinationID) {
                 std::auto_ptr<ArgumentDecoder> arguments(message.arguments());
                 
                 // Erase the incoming message.

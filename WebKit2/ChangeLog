@@ -1,3 +1,26 @@
+2010-06-23  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        MessageIDs should always have the most significant bit zeroed out
+        https://bugs.webkit.org/show_bug.cgi?id=41112
+
+        The most significant bit is used by the Mac implementation of CoreIPC, and
+        should always be zero in MessageID objects.
+
+        * Platform/CoreIPC/Connection.cpp:
+        (CoreIPC::Connection::waitForMessage):
+        * Platform/CoreIPC/MessageID.h:
+        (CoreIPC::MessageID::):
+        (CoreIPC::MessageID::MessageID):
+        (CoreIPC::MessageID::operator==):
+        (CoreIPC::MessageID::fromInt):
+        (CoreIPC::MessageID::isSync):
+        (CoreIPC::MessageID::stripMostSignificantBit):
+        * Platform/CoreIPC/mac/ConnectionMac.cpp:
+        (CoreIPC::Connection::sendOutgoingMessage):
+        (CoreIPC::createArgumentDecoder):
+
 2010-06-23  John Sullivan  <sullivan@apple.com>
 
         Rubber-stamped by Anders Carlsson.
