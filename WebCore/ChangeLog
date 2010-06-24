@@ -1,5 +1,13 @@
 2010-06-24  Kent Tamura  <tkent@chromium.org>
 
+        Unreviewed. Build fix for Tiger.
+
+        * platform/mac/ThemeMac.mm:
+        (WebCore::setControlSize):
+        (WebCore::ThemeMac::inflateControlPaintRect):
+
+2010-06-24  Kent Tamura  <tkent@chromium.org>
+
         Unreviewed.  Build fix for Chromium Mac.
 
         * html/HTMLInputElement.cpp:

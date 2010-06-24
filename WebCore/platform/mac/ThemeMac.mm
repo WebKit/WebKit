@@ -114,7 +114,7 @@ static ControlSize controlSizeFromPixelSize(const IntSize* sizes, const IntSize&
 
 static void setControlSize(NSCell* cell, const IntSize* sizes, const IntSize& minZoomedSize, float zoomFactor)
 {
-    NSControlSize size = controlSizeFromPixelSize(sizes, minZoomedSize, zoomFactor);
+    ControlSize size = controlSizeFromPixelSize(sizes, minZoomedSize, zoomFactor);
     if (size != [cell controlSize]) // Only update if we have to, since AppKit does work even if the size is the same.
         [cell setControlSize:size];
 }
@@ -688,7 +688,7 @@ void ThemeMac::inflateControlPaintRect(ControlPart part, ControlStates states, I
         }
         case OuterSpinButtonPart: {
             static const int stepperMargin[4] = { 0, 0, 0, 0};
-            NSControlSize controlSize = controlSizeFromPixelSize(stepperSizes(), zoomedRect.size(), zoomFactor);
+            ControlSize controlSize = controlSizeFromPixelSize(stepperSizes(), zoomedRect.size(), zoomFactor);
             IntSize zoomedSize = stepperSizes()[controlSize];
             zoomedSize.setHeight(zoomedSize.height() * zoomFactor);
             zoomedSize.setWidth(zoomedSize.width() * zoomFactor);
