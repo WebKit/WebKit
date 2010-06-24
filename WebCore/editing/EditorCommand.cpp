@@ -898,6 +898,12 @@ static bool executePasteAndMatchStyle(Frame* frame, Event*, EditorCommandSource,
     return true;
 }
 
+static bool executePasteAsPlainText(Frame* frame, Event*, EditorCommandSource, const String&)
+{
+    frame->editor()->pasteAsPlainText();
+    return true;
+}
+
 static bool executePrint(Frame* frame, Event*, EditorCommandSource, const String&)
 {
     Page* page = frame->page();
@@ -1419,6 +1425,7 @@ static const CommandMap& createCommandMap()
         { "Outdent", { executeOutdent, supported, enabledInRichlyEditableText, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
         { "Paste", { executePaste, supportedPaste, enabledPaste, stateNone, valueNull, notTextInsertion, allowExecutionWhenDisabled } },
         { "PasteAndMatchStyle", { executePasteAndMatchStyle, supportedPaste, enabledPaste, stateNone, valueNull, notTextInsertion, allowExecutionWhenDisabled } },
+        { "PasteAsPlainText", { executePasteAsPlainText, supportedPaste, enabledPaste, stateNone, valueNull, notTextInsertion, allowExecutionWhenDisabled } },
         { "Print", { executePrint, supported, enabled, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
         { "Redo", { executeRedo, supported, enabledRedo, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
         { "RemoveFormat", { executeRemoveFormat, supported, enabledRangeInEditableText, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },

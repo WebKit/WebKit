@@ -353,7 +353,6 @@ static CachedResourceClient* promisedDataClient()
 - (DOMDocumentFragment *)_documentFragmentFromPasteboard:(NSPasteboard *)pasteboard inContext:(DOMRange *)context allowPlainText:(BOOL)allowPlainText;
 - (NSString *)_plainTextFromPasteboard:(NSPasteboard *)pasteboard;
 - (void)_pasteWithPasteboard:(NSPasteboard *)pasteboard allowPlainText:(BOOL)allowPlainText;
-- (void)_pasteAsPlainTextWithPasteboard:(NSPasteboard *)pasteboard;
 - (void)_removeMouseMovedObserverUnconditionally;
 - (void)_removeSuperviewObservers;
 - (void)_removeWindowObservers;
@@ -870,19 +869,6 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
             [[self _frame] _replaceSelectionWithFragment:fragment selectReplacement:NO smartReplace:[self _canSmartReplaceWithPasteboard:pasteboard] matchStyle:NO];
     }
 #endif
-    [webView _setInsertionPasteboard:nil];
-    [webView release];
-}
-
-- (void)_pasteAsPlainTextWithPasteboard:(NSPasteboard *)pasteboard
-{
-    WebView *webView = [[self _webView] retain];
-    [webView _setInsertionPasteboard:pasteboard];
-
-    NSString *text = [self _plainTextFromPasteboard:pasteboard];
-    if ([self _shouldReplaceSelectionWithText:text givenAction:WebViewInsertActionPasted])
-        [[self _frame] _replaceSelectionWithText:text selectReplacement:NO smartReplace:[self _canSmartReplaceWithPasteboard:pasteboard]];
-
     [webView _setInsertionPasteboard:nil];
     [webView release];
 }
@@ -2576,6 +2562,7 @@ WEBCORE_COMMAND(pageDown)
 WEBCORE_COMMAND(pageDownAndModifySelection)
 WEBCORE_COMMAND(pageUp)
 WEBCORE_COMMAND(pageUpAndModifySelection)
+WEBCORE_COMMAND(pasteAsPlainText)
 WEBCORE_COMMAND(selectAll)
 WEBCORE_COMMAND(selectLine)
 WEBCORE_COMMAND(selectParagraph)
@@ -2612,18 +2599,6 @@ WEBCORE_COMMAND(yankAndSelect)
 {
     [pasteboard declareTypes:types owner:[self _topHTMLView]];
     [self writeSelectionWithPasteboardTypes:types toPasteboard:pasteboard];
-    return YES;
-}
-
-- (BOOL)readSelectionFromPasteboard:(NSPasteboard *)pasteboard
-{
-    Frame* coreFrame = core([self _frame]);
-    if (!coreFrame)
-        return NO;
-    if (coreFrame->selection()->isContentRichlyEditable())
-        [self _pasteWithPasteboard:pasteboard allowPlainText:YES];
-    else
-        [self _pasteAsPlainTextWithPasteboard:pasteboard];
     return YES;
 }
 
@@ -5160,17 +5135,6 @@ static BOOL writingDirectionKeyBindingsEnabled()
         [self _pasteWithPasteboard:[NSPasteboard generalPasteboard] allowPlainText:YES];
     else
         coreFrame->editor()->pasteAsPlainText();
-}
-
-- (void)pasteAsPlainText:(id)sender
-{
-    COMMAND_PROLOGUE
-
-    RetainPtr<WebHTMLView> selfProtector = self;
-    RefPtr<Frame> coreFrame = core([self _frame]);
-    if (!coreFrame)
-        return;
-    coreFrame->editor()->pasteAsPlainText();
 }
 
 - (void)closeIfNotCurrentView
