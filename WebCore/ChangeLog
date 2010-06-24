@@ -1,5 +1,29 @@
 2010-06-23  Eric Seidel  <eric@webkit.org>
 
+        Unreviewed.  Fix namespace indent.  Just whitespace changes.
+
+        * dom/DocumentParser.h:
+        (WebCore::DocumentParser::~DocumentParser):
+        (WebCore::DocumentParser::isExecutingScript):
+        (WebCore::DocumentParser::stopParsing):
+        (WebCore::DocumentParser::processingData):
+        (WebCore::DocumentParser::wantsRawData):
+        (WebCore::DocumentParser::writeRawData):
+        (WebCore::DocumentParser::wellFormed):
+        (WebCore::DocumentParser::lineNumber):
+        (WebCore::DocumentParser::columnNumber):
+        (WebCore::DocumentParser::executeScriptsWaitingForStylesheets):
+        (WebCore::DocumentParser::htmlTreeBuilder):
+        (WebCore::DocumentParser::asHTMLDocumentParser):
+        (WebCore::DocumentParser::inViewSourceMode):
+        (WebCore::DocumentParser::setInViewSourceMode):
+        (WebCore::DocumentParser::document):
+        (WebCore::DocumentParser::xssAuditor):
+        (WebCore::DocumentParser::setXSSAuditor):
+        (WebCore::DocumentParser::DocumentParser):
+
+2010-06-23  Eric Seidel  <eric@webkit.org>
+
         Unreviewed.  Speculative build fix for Qt.
 
         Move Document* down onto DocumentParser, since every DocumentParser needs one.
