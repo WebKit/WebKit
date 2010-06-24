@@ -1,3 +1,20 @@
+2010-06-23  Joanmarie Diggs  <joanmarie.diggs@gmail.com>
+
+        Reviewed by Chris Fleizach.
+
+        [Gtk] nameFromChildren is obsolete
+        https://bugs.webkit.org/show_bug.cgi?id=36128
+
+        Look to the AtkText interface implemented by the objects in
+        question.
+
+        Test: platform/gtk/accessibility/name-from-label.html
+
+        * accessibility/gtk/AccessibilityObjectWrapperAtk.cpp:
+        (webkit_accessible_get_name):
+        (webkit_accessible_table_get_column_description):
+        (webkit_accessible_table_get_row_description):
+
 2010-06-23  Kwang Yul Seo  <skyul@company100.net>
 
         Reviewed by Kent Tamura.
