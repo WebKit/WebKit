@@ -1,9 +1,9 @@
-# Build WebTestRunner only on SnowLeopard and later.
+# Build WebKitTestRunner only on Snow Leopard and later.
 
 OSX_VERSION ?= $(shell sw_vers -productVersion | cut -d. -f 2)
-BUILD_MINIBROWSER = $(shell (( $(OSX_VERSION) >= 6 )) && echo "YES" )
+BUILD_WEBKITTESTRUNNER = $(shell (( $(OSX_VERSION) >= 6 )) && echo "YES" )
 
-ifeq "$(BUILD_MINIBROWSER)" "YES"
+ifeq "$(BUILD_WEBKITTESTRUNNER)" "YES"
 
 SCRIPTS_PATH = ../Scripts
 include ../../Makefile.shared

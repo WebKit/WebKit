@@ -1,3 +1,11 @@
+2010-06-24  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Fix WebKitTestRunner Makefile typos.
+
+        * WebKitTestRunner/Makefile:
+
 2010-06-24  Adele Peterson  <adele@apple.com>
 
         Reviewed by Eric Carlson.
