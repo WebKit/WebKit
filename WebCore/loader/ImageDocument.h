@@ -33,9 +33,9 @@ class ImageDocumentElement;
 
 class ImageDocument : public HTMLDocument {
 public:
-    static PassRefPtr<ImageDocument> create(Frame* frame, const KURL& url)
+    static PassRefPtr<ImageDocument> create(Frame* frame)
     {
-        return adoptRef(new ImageDocument(frame, url));
+        return adoptRef(new ImageDocument(frame));
     }
 
     CachedImage* cachedImage();
@@ -47,7 +47,7 @@ public:
     void imageClicked(int x, int y);
 
 private:
-    ImageDocument(Frame*, const KURL&);
+    ImageDocument(Frame*);
 
     virtual DocumentParser* createParser();
     virtual bool isImageDocument() const { return true; }

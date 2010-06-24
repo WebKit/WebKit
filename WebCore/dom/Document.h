@@ -185,13 +185,13 @@ enum PageshowEventPersistence {
     
 class Document : public ContainerNode, public ScriptExecutionContext {
 public:
-    static PassRefPtr<Document> create(Frame* frame, const KURL& url)
+    static PassRefPtr<Document> create(Frame* frame)
     {
-        return adoptRef(new Document(frame, url, false, false));
+        return adoptRef(new Document(frame, false, false));
     }
-    static PassRefPtr<Document> createXHTML(Frame* frame, const KURL& url)
+    static PassRefPtr<Document> createXHTML(Frame* frame)
     {
-        return adoptRef(new Document(frame, url, true, false));
+        return adoptRef(new Document(frame, true, false));
     }
     virtual ~Document();
 
@@ -991,7 +991,7 @@ public:
     const QualifiedName& idAttributeName() const { return m_idAttributeName; }
 
 protected:
-    Document(Frame*, const KURL&, bool isXHTML, bool isHTML);
+    Document(Frame*, bool isXHTML, bool isHTML);
 
     void clearXMLVersion() { m_xmlVersion = String(); }
 

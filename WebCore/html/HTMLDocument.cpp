@@ -81,8 +81,8 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-HTMLDocument::HTMLDocument(Frame* frame, const KURL& url)
-    : Document(frame, url, false, true)
+HTMLDocument::HTMLDocument(Frame* frame)
+    : Document(frame, false, true)
 {
     clearXMLVersion();
     setParseMode(Compat);

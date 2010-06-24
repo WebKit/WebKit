@@ -67,7 +67,7 @@ public:
     void setDecoder(TextResourceDecoder*);
 
 private:
-    PassRefPtr<Document> createDocument(const KURL&);
+    PassRefPtr<Document> createDocument();
 
     Frame* m_frame;
 

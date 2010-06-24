@@ -158,8 +158,8 @@ bool PluginDocumentParser::isWaitingForScripts() const
     return false;
 }
     
-PluginDocument::PluginDocument(Frame* frame, const KURL& url)
-    : HTMLDocument(frame, url)
+PluginDocument::PluginDocument(Frame* frame)
+    : HTMLDocument(frame)
 {
     setParseMode(Compat);
 }

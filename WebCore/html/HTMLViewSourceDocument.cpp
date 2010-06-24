@@ -44,8 +44,8 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-HTMLViewSourceDocument::HTMLViewSourceDocument(Frame* frame, const KURL& url, const String& mimeType)
-    : HTMLDocument(frame, url)
+HTMLViewSourceDocument::HTMLViewSourceDocument(Frame* frame, const String& mimeType)
+    : HTMLDocument(frame)
     , m_type(mimeType)
 {
     setUsesBeforeAfterRules(true);

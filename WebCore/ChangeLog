@@ -1,3 +1,74 @@
+2010-06-24  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r61783.
+        http://trac.webkit.org/changeset/61783
+        https://bugs.webkit.org/show_bug.cgi?id=41179
+
+        Caused a couple of test failures (Requested by japhet on
+        #webkit).
+
+        * dom/DOMImplementation.cpp:
+        (WebCore::DOMImplementation::createDocument):
+        (WebCore::DOMImplementation::createHTMLDocument):
+        * dom/DOMImplementation.h:
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        (WebCore::Document::initSecurityContext):
+        * dom/Document.h:
+        (WebCore::Document::create):
+        (WebCore::Document::createXHTML):
+        * html/HTMLDocument.cpp:
+        (WebCore::HTMLDocument::HTMLDocument):
+        * html/HTMLDocument.h:
+        (WebCore::HTMLDocument::create):
+        * html/HTMLViewSourceDocument.cpp:
+        (WebCore::HTMLViewSourceDocument::HTMLViewSourceDocument):
+        * html/HTMLViewSourceDocument.h:
+        (WebCore::HTMLViewSourceDocument::create):
+        * loader/CachedFont.cpp:
+        (WebCore::CachedFont::ensureSVGFontData):
+        * loader/DocumentWriter.cpp:
+        (WebCore::DocumentWriter::createDocument):
+        (WebCore::DocumentWriter::begin):
+        * loader/DocumentWriter.h:
+        * loader/FTPDirectoryDocument.cpp:
+        (WebCore::FTPDirectoryDocument::FTPDirectoryDocument):
+        * loader/FTPDirectoryDocument.h:
+        (WebCore::FTPDirectoryDocument::create):
+        * loader/ImageDocument.cpp:
+        (WebCore::ImageDocument::ImageDocument):
+        * loader/ImageDocument.h:
+        (WebCore::ImageDocument::create):
+        * loader/MediaDocument.cpp:
+        (WebCore::MediaDocument::MediaDocument):
+        * loader/MediaDocument.h:
+        (WebCore::MediaDocument::create):
+        * loader/PlaceholderDocument.h:
+        (WebCore::PlaceholderDocument::create):
+        (WebCore::PlaceholderDocument::PlaceholderDocument):
+        * loader/PluginDocument.cpp:
+        (WebCore::PluginDocument::PluginDocument):
+        * loader/PluginDocument.h:
+        (WebCore::PluginDocument::create):
+        * loader/SinkDocument.cpp:
+        (WebCore::SinkDocument::SinkDocument):
+        * loader/SinkDocument.h:
+        (WebCore::SinkDocument::create):
+        * loader/TextDocument.cpp:
+        (WebCore::TextDocument::TextDocument):
+        * loader/TextDocument.h:
+        (WebCore::TextDocument::create):
+        * svg/SVGDocument.cpp:
+        (WebCore::SVGDocument::SVGDocument):
+        * svg/SVGDocument.h:
+        (WebCore::SVGDocument::create):
+        * xml/DOMParser.cpp:
+        (WebCore::DOMParser::parseFromString):
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::responseXML):
+        * xml/XSLTProcessor.cpp:
+        (WebCore::XSLTProcessor::createDocumentFromSource):
+
 2010-06-24  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Xan Lopez.
