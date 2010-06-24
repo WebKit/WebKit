@@ -456,7 +456,6 @@ void Interpreter::dumpRegisters(CallFrame* callFrame)
     printf("[ScopeChain]               | %10p | %p \n", it, (*it).scopeChain()); ++it;
     printf("[CallerRegisters]          | %10p | %d \n", it, (*it).i()); ++it;
     printf("[ReturnPC]                 | %10p | %p \n", it, (*it).vPC()); ++it;
-    ++it;
     printf("[ArgumentCount]            | %10p | %d \n", it, (*it).i()); ++it;
     printf("[Callee]                   | %10p | %p \n", it, (*it).function()); ++it;
     printf("-----------------------------------------------------------------------------\n");

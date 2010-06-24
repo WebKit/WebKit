@@ -44,6 +44,8 @@ namespace JSC {
     class JSObject;
     class UString;
 
+    extern const size_t CELL_MASK;
+
 #if USE(JSVALUE64)
     inline intptr_t reinterpretDoubleToIntptr(double value)
     {
@@ -595,7 +597,13 @@ namespace JSC {
 
     inline bool JSValue::isCell() const
     {
+#ifndef NDEBUG
+        bool r = !JSImmediate::isImmediate(asValue());
+        ASSERT(!r || !(JSImmediate::rawValue(asValue()) & CELL_MASK));
+        return r;
+#else
         return !JSImmediate::isImmediate(asValue());
+#endif
     }
 
     inline bool JSValue::isInt32() const

@@ -126,10 +126,10 @@ char* JSValue::description()
         snprintf(description, size, "False");
     else if (isNull())
         snprintf(description, size, "Null");
-    else {
-        ASSERT(isUndefined());
+    else if (isUndefined())
         snprintf(description, size, "Undefined");
-    }
+    else
+        snprintf(description, size, "INVALID");
 
     return description;
 }

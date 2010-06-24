@@ -1,3 +1,23 @@
+ 2010-06-21  Nathan Lawrence  <nlawrence@apple.com>
+
+         Reviewed by Geoff Garen.
+
+         https://bugs.webkit.org/show_bug.cgi?id=40128
+         Fixed broken debug functionality.
+
+         * interpreter/Interpreter.cpp:
+         (JSC::Interpreter::dumpRegisters):
+             Fixed to work with updated call frame.
+         * runtime/JSImmediate.h:
+         (JSC::JSValue::isCell):
+             Added assert for aligned cell.
+         * runtime/JSValue.cpp:
+         (JSC::JSValue::description):
+             Fixed to work with current JSValue implementation.
+         * runtime/JSZombie.cpp:
+         (JSC::JSZombie::leakedZombieStructure):
+             JSombies compile again.
+
 2010-06-24  Leandro Pereira  <leandro@profusion.mobi>
 
         Unreviewed build fix.
