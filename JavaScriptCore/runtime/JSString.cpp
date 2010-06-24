@@ -150,6 +150,7 @@ JSValue JSString::replaceCharacter(ExecState* exec, UChar character, const UStri
         if (replacement.size())
             builder.append(replacement);
         builder.append(UString(string).substr(matchPosition + 1));
+        matchString = 0;
     }
 
     JSGlobalData* globalData = &exec->globalData();

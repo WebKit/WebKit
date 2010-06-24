@@ -1,3 +1,17 @@
+2010-06-24  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Single character string replacement may replace too many characters
+        https://bugs.webkit.org/show_bug.cgi?id=41138
+        <rdar://problem/8097496>
+
+        Simple fix to stop the rope path of single character replacement
+        once the first replacement occurs.
+
+        * runtime/JSString.cpp:
+        (JSC::JSString::replaceCharacter):
+
 2010-06-24  Gabor Loki  <loki@webkit.org>
 
         Reviewed by Gavin Barraclough.
