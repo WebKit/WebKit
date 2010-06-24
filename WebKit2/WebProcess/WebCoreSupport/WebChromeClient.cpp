@@ -27,7 +27,7 @@
 
 #include "DrawingArea.h"
 #include "NotImplemented.h"
-#include "WebCoreTypeArgumentMarshalling.h"
+#include "WebCoreArgumentCoders.h"
 #include "WebFrame.h"
 #include "WebFrameLoaderClient.h"
 #include "WebPage.h"

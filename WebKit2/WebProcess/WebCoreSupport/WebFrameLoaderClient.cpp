@@ -26,7 +26,7 @@
 #include "WebFrameLoaderClient.h"
 
 #include "NotImplemented.h"
-#include "WebCoreTypeArgumentMarshalling.h"
+#include "WebCoreArgumentCoders.h"
 #include "WebErrors.h"
 #include "WebFrame.h"
 #include "WebNavigationDataStore.h"

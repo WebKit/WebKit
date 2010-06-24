@@ -27,7 +27,7 @@
 
 #include "InjectedBundle.h"
 #include "RunLoop.h"
-#include "WebCoreTypeArgumentMarshalling.h"
+#include "WebCoreArgumentCoders.h"
 #include "WebFrame.h"
 #include "WebPage.h"
 #include "WebPlatformStrategies.h"

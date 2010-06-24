@@ -28,7 +28,7 @@
 
 #include "ArgumentDecoder.h"
 #include "ArgumentEncoder.h"
-#include "WebCoreTypeArgumentMarshalling.h"
+#include "WebCoreArgumentCoders.h"
 #include <WebCore/PlatformString.h>
 
 namespace WebKit {

@@ -29,7 +29,7 @@
 #include "DrawingAreaProxyMessageKinds.h"
 #include "MessageID.h"
 #include "UpdateChunk.h"
-#include "WebCoreTypeArgumentMarshalling.h"
+#include "WebCoreArgumentCoders.h"
 #include "WebPageProxy.h"
 #include "WebProcessProxy.h"
 

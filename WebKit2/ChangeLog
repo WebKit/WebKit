@@ -2,6 +2,29 @@
 
         Reviewed by Dan Bernstein.
 
+        Rename WebCoreTypeArgumentMarshalling.h to WebCoreArgumentCoders.h
+
+        * Shared/WebCoreArgumentCoders.h: Copied from Shared/WebCoreTypeArgumentMarshalling.h.
+        * Shared/WebCoreTypeArgumentMarshalling.h: Removed.
+        * Shared/WebEvent.h:
+        * Shared/WebNavigationDataStore.h:
+        * Shared/WebPreferencesStore.h:
+        * Shared/mac/UpdateChunk.cpp:
+        * UIProcess/ChunkedUpdateDrawingAreaProxy.cpp:
+        * UIProcess/WebContext.cpp:
+        * UIProcess/WebPageProxy.cpp:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        * WebProcess/WebPage/ChunkedUpdateDrawingArea.cpp:
+        * WebProcess/WebPage/WebPage.cpp:
+        * WebProcess/WebProcess.cpp:
+
+2010-06-23  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dan Bernstein.
+
         MessageIDs should always have the most significant bit zeroed out
         https://bugs.webkit.org/show_bug.cgi?id=41112
 
