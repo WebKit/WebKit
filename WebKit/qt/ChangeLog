@@ -1,3 +1,11 @@
+2010-06-23  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Unreviewed, Symbian build fix.
+
+        [Qt] Update the def file after r61478.
+
+        * symbian/eabi/QtWebKitu.def:
+
 2010-06-23  David Boddie  <dboddie@trolltech.com>
 
         Reviewed by Simon Hausmann.
