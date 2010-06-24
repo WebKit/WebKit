@@ -1,3 +1,14 @@
+2010-06-23  Tony Chang  <tony@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        layout test for a crash in chromium multipart request handling
+        https://bugs.webkit.org/show_bug.cgi?id=41050
+
+        * http/tests/multipart/policy-ignore-crash-expected.txt: Copied from LayoutTests/editing/pasteboard/copy-crash-with-extraneous-attribute-expected.txt.
+        * http/tests/multipart/policy-ignore-crash.php: Added.
+        * platform/mac/Skipped:
+
 2010-06-23  Andy Estes  <aestes@apple.com>
 
         Reviewed by Alexey Proskuryakov.

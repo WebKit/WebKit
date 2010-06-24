@@ -295,3 +295,6 @@ fast/dom/Geolocation/maximum-age.html
 
 # Filenames aren't filtered out from edit drags yet, see https://bugs.wekit.org/show_bug.cgi?id=38826
 editing/pasteboard/file-drag-to-editable.html
+
+# Hits an assert in FrameLoader.cpp.
+http/tests/multipart/policy-ignore-crash.php
