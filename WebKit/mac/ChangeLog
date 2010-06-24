@@ -1,3 +1,13 @@
+2010-06-24  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Eric Carlson.
+
+        Fix for <rdar://problem/8093680> "Paste and Match Style" should fire paste events
+        https://bugs.webkit.org/show_bug.cgi?id=41085
+
+        * WebView/WebHTMLView.mm: (-[WebHTMLView pasteAsPlainText:]): Reuse code in WebCore
+        which does everything done here and also fires paste events.
+
 2010-06-23  Yuzo Fujishima  <yuzo@google.com>
 
         Reviewed by Shinichiro Hamaji.

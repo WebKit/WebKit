@@ -5166,9 +5166,11 @@ static BOOL writingDirectionKeyBindingsEnabled()
 {
     COMMAND_PROLOGUE
 
-    if (![self _canEdit])
+    RetainPtr<WebHTMLView> selfProtector = self;
+    RefPtr<Frame> coreFrame = core([self _frame]);
+    if (!coreFrame)
         return;
-    [self _pasteAsPlainTextWithPasteboard:[NSPasteboard generalPasteboard]];
+    coreFrame->editor()->pasteAsPlainText();
 }
 
 - (void)closeIfNotCurrentView

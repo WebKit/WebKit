@@ -1,3 +1,13 @@
+2010-06-24  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Eric Carlson.
+
+        Test for <rdar://problem/8093680> "Paste and Match Style" should fire paste events
+        https://bugs.webkit.org/show_bug.cgi?id=41085
+
+        * platform/mac/editing/pasteboard/paste-and-match-style-selector-event-expected.txt: Added.
+        * platform/mac/editing/pasteboard/paste-and-match-style-selector-event.html: Added.
+
 2010-06-24  Mikhail Naganov  <mnaganov@chromium.org>
 
         Unreviewed test expectations update.

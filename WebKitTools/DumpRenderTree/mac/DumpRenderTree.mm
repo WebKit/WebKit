@@ -1185,6 +1185,9 @@ static void resetWebViewToConsistentStateBeforeTesting()
     [WebView _resetOriginAccessWhitelists];
 
     [[MockGeolocationProvider shared] stopTimer];
+    
+    // Clear the contents of the general pasteboard
+    [[NSPasteboard generalPasteboard] declareTypes:[NSArray arrayWithObject:NSStringPboardType] owner:nil];
 }
 
 static void runTest(const string& testPathOrURL)

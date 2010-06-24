@@ -1,3 +1,13 @@
+2010-06-24  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Eric Carlson.
+
+        DumpRenderTree part of testing <rdar://problem/8093680> "Paste and Match Style" should fire paste events
+        https://bugs.webkit.org/show_bug.cgi?id=41085
+
+        * DumpRenderTree/mac/DumpRenderTree.mm: (resetWebViewToConsistentStateBeforeTesting):
+        Clear the general pasteboard in between tests so Cut,Copy, and setData on ClipboardData won't have lasting effects.
+
 2010-06-23  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.
