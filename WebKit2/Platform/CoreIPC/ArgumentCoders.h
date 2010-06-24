@@ -29,6 +29,8 @@
 #include "ArgumentDecoder.h"
 #include "ArgumentEncoder.h"
 
+#include <wtf/Vector.h>
+
 namespace CoreIPC {
 
 // An argument coder works on POD types
@@ -40,6 +42,36 @@ template<typename T> struct SimpleArgumentCoder {
     static bool decode(ArgumentDecoder* decoder, T& t)
     {
         return decoder->decodeBytes(reinterpret_cast<uint8_t*>(&t), sizeof(T));
+    }
+};
+
+template<typename T> struct ArgumentCoder<Vector<T> > {
+    static void encode(ArgumentEncoder* encoder, const Vector<T>& vector)
+    {
+        encoder->encodeUInt64(vector.size());
+        for (size_t i = 0; i < vector.size(); ++i)
+            encoder->encode(vector[i]);
+    }
+
+    static bool decode(ArgumentDecoder* decoder, Vector<T>& vector)
+    {
+        uint64_t size;
+        if (!decoder->decodeUInt64(size))
+            return false;
+
+        Vector<T> tmp;
+        tmp.reserveCapacity(size);
+
+        for (size_t i = 0; i < size; ++i) {
+            T element;
+            if (!decoder->decode(element))
+                return false;
+            
+            tmp.uncheckedAppend(element);
+        }
+
+        vector.swap(tmp);
+        return true;
     }
 };
     

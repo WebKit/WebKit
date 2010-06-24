@@ -2,6 +2,15 @@
 
         Reviewed by Dan Bernstein.
 
+        Add ArgumentCoder for vectors.
+
+        * Platform/CoreIPC/ArgumentCoders.h:
+        (CoreIPC::):
+
+2010-06-23  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dan Bernstein.
+
         Rename WebCoreTypeArgumentMarshalling.h to WebCoreArgumentCoders.h
 
         * Shared/WebCoreArgumentCoders.h: Copied from Shared/WebCoreTypeArgumentMarshalling.h.
