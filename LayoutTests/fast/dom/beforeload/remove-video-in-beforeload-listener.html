@@ -1,0 +1,47 @@
+<html>
+<head>
+    <script src="resources/print.js"></script>
+    <script>
+        if (window.layoutTestController) {
+            layoutTestController.dumpAsText();
+            layoutTestController.waitUntilDone();
+        }
+        
+        var count = 0;
+        var maxCount = 10;
+        var timeout = 100;
+
+        document.addEventListener("beforeload", function(event) {
+            if (event.target && event.target.parentElement)
+                event.target.parentElement.removeChild(event.target);
+        }, true);
+    </script>
+</head>
+<body>
+    <p>This page tests that you can correctly remove a video object in a beforeload listener without causing a crash.</p>
+    <video src="../../../media/content/test.mp4"></video>
+    <div id="console"></div>
+    <script>
+        function checkObjectRemoval()
+        {
+            if (!document.getElementsByTagName("video").length) {
+                print("PASS", "green");
+                if (window.layoutTestController)
+                    layoutTestController.notifyDone();
+                return;
+            }
+            
+            if (++count > maxCount) {
+                print("FAIL", "red");
+                if (window.layoutTestController)
+                    layoutTestController.notifyDone();
+                return;
+            }
+            
+            setTimeout("checkObjectRemoval()", timeout);
+        }
+        
+        setTimeout("checkObjectRemoval()", timeout);
+    </script>
+</body>
+</html>

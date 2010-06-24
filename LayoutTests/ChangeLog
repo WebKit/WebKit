@@ -1,5 +1,31 @@
 2010-06-23  Andy Estes  <aestes@apple.com>
 
+        Reviewed by Alexey Proskuryakov.
+
+        Add additional tests for beforeload events.
+        https://bugs.webkit.org/show_bug.cgi?id=41132
+        
+        Add tests to verify that the following elements can be removed from the
+        DOM during beforeload:
+            * <object type="application/x-shockwave-flash">
+            * <iframe>
+            * <img>
+            * <script src=""> (non-inline)
+            * <video>
+
+        * fast/dom/beforeload/remove-flash-in-beforeload-listener-expected.txt: Added.
+        * fast/dom/beforeload/remove-flash-in-beforeload-listener.html: Added.
+        * fast/dom/beforeload/remove-frame-in-beforeload-listener-expected.txt: Added.
+        * fast/dom/beforeload/remove-frame-in-beforeload-listener.html: Added.
+        * fast/dom/beforeload/remove-image-in-beforeload-listener-expected.txt: Added.
+        * fast/dom/beforeload/remove-image-in-beforeload-listener.html: Added.
+        * fast/dom/beforeload/remove-script-in-beforeload-listener-expected.txt: Added.
+        * fast/dom/beforeload/remove-script-in-beforeload-listener.html: Added.
+        * fast/dom/beforeload/remove-video-in-beforeload-listener-expected.txt: Added.
+        * fast/dom/beforeload/remove-video-in-beforeload-listener.html: Added.
+
+2010-06-23  Andy Estes  <aestes@apple.com>
+
         Reviewed by Joseph Pecoraro.
 
         Refactor beforeload layout tests to share a common implementation of
