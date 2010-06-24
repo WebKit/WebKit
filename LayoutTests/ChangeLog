@@ -1,3 +1,11 @@
+2010-06-24  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Regression(r61749): inspector/debugger-pause-on-debugger-statement.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=41147
+
+        * platform/qt/Skipped: inspector/debugger-pause-on-debugger-statement.html skipped.
+        * platform/qt-linux/Skipped: revert last change, because we only use the general platform/qt/Skipped list.
+
 2010-06-24  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed: disable new inspector test on Qt linux.
