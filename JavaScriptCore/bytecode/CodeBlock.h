@@ -352,7 +352,7 @@ namespace JSC {
         unsigned bytecodeOffset(CallFrame* callFrame, ReturnAddressPtr returnAddress)
         {
             if (!reparseForExceptionInfoIfNecessary(callFrame))
-                return 0;
+                return 1;
             return binaryChop<CallReturnOffsetToBytecodeOffset, unsigned, getCallReturnOffset>(callReturnIndexVector().begin(), callReturnIndexVector().size(), getJITCode().offsetOf(returnAddress.value()))->bytecodeOffset;
         }
         
