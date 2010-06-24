@@ -25,6 +25,7 @@
 #include "Chrome.h"
 #include "DataObjectGtk.h"
 #include "Frame.h"
+#include "GtkVersioning.h"
 #include "Page.h"
 #include "Pasteboard.h"
 #include "TextResourceDecoder.h"
@@ -115,7 +116,7 @@ void PasteboardHelper::getClipboardContents(GtkClipboard* clipboard)
     if (gtk_clipboard_wait_is_target_available(clipboard, gdkMarkupAtom)) {
        if (GtkSelectionData* data = gtk_clipboard_wait_for_contents(clipboard, gdkMarkupAtom)) {
           RefPtr<TextResourceDecoder> decoder(TextResourceDecoder::create("text/plain", "UTF-8", true));
-          String markup(decoder->decode(reinterpret_cast<char*>(data->data), data->length));
+          String markup = String::fromUTF8(gtk_selection_data_get_data(data), gtk_selection_data_get_length(data));
           markup += decoder->flush();
           dataObject->setMarkup(markup);
           gtk_selection_data_free(data);
@@ -141,7 +142,7 @@ void PasteboardHelper::fillSelectionData(GtkSelectionData* selectionData, guint 
 
     else if (info == getIdForTargetType(TargetTypeMarkup)) {
         GOwnPtr<gchar> markup(g_strdup(dataObject->markup().utf8().data()));
-        gtk_selection_data_set(selectionData, selectionData->target, 8,
+        gtk_selection_data_set(selectionData, gdkMarkupAtom, 8,
             reinterpret_cast<const guchar*>(markup.get()), strlen(markup.get()));
 
     } else if (info == getIdForTargetType(TargetTypeURIList)) {
@@ -164,7 +165,7 @@ void PasteboardHelper::fillSelectionData(GtkSelectionData* selectionData, guint 
             result.append(url);
 
         GOwnPtr<gchar> resultData(g_strdup(result.utf8().data()));
-        gtk_selection_data_set(selectionData, selectionData->target, 8,
+        gtk_selection_data_set(selectionData, netscapeURLAtom, 8,
             reinterpret_cast<const guchar*>(resultData.get()), strlen(resultData.get()));
 
     } else if (info == getIdForTargetType(TargetTypeImage))

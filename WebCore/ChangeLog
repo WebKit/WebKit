@@ -1,3 +1,16 @@
+2010-06-24  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        Build fix for building against GTK+ 3.x.
+
+        No new tests as functionality has not changed.
+
+        * platform/gtk/GtkVersioning.h:
+        * platform/gtk/PasteboardHelper.cpp:
+        (WebCore::PasteboardHelper::getClipboardContents):
+        (WebCore::PasteboardHelper::fillSelectionData):
+
 2010-06-24  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

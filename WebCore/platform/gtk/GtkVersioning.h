@@ -51,6 +51,8 @@
 #define gtk_widget_get_window(widget) (widget)->window
 #define gtk_adjustment_get_value(adj) (adj)->value
 #define gtk_dialog_get_content_area(dialog) (dialog)->vbox
+#define gtk_selection_data_get_length(data) (data)->length
+#define gtk_selection_data_get_data(data) (data)->data
 #endif // GTK_CHECK_VERSION(2, 14, 0)
 
 #endif // GtkVersioning_h
