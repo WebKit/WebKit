@@ -34,4 +34,5 @@
 
 @interface DOMNode (WebDOMNodeOperationsPendingPublic)
 - (NSString *)markupString;
+- (NSRect)_renderRect:(bool *)isReplaced;
 @end

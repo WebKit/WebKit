@@ -1,3 +1,14 @@
+2010-06-24  Damian Kaleta  <dkaleta@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Provide a way to obtain the rendered rectangle for box elements.
+
+        * WebCore.base.exp: Export the symbol so we can see it in WebKit.
+        * dom/Node.cpp:
+        (WebCore::Node::renderRect): Added new ethod that will return a rendered rectangle for box elements.
+        * dom/Node.h: Ditto.
+
 2010-06-24  Vangelis Kokkevis  <vangelis@chromium.org>
 
         Reviewed by Darin Fisher.

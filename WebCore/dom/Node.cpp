@@ -676,6 +676,21 @@ IntRect Node::getRect() const
         return renderer()->absoluteBoundingBoxRect();
     return IntRect();
 }
+    
+IntRect Node::renderRect(bool* isReplaced)
+{    
+    RenderObject* hitRenderer = this->renderer();
+    ASSERT(hitRenderer);
+    RenderObject* renderer = hitRenderer;
+    while (renderer && !renderer->isBody() && !renderer->isRoot()) {
+        if (renderer->isRenderBlock() || renderer->isInlineBlockOrInlineTable() || renderer->isReplaced()) {
+            *isReplaced = renderer->isReplaced();
+            return renderer->absoluteBoundingBoxRect(true);
+        }
+        renderer = renderer->parent();
+    }
+    return IntRect();    
+}
 
 bool Node::hasNonEmptyBoundingBox() const
 {

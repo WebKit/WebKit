@@ -1,3 +1,13 @@
+2010-06-24  Damian Kaleta  <dkaleta@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Added an ObjC wrapper to Node::renderRect(bool&).
+
+        * DOM/WebDOMOperations.mm:
+        (-[DOMNode _renderRect:]):
+        * DOM/WebDOMOperationsPrivate.h:
+
 2010-06-24  Adele Peterson  <adele@apple.com>
 
         Reviewed by Eric Carlson.

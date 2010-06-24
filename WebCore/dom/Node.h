@@ -332,6 +332,7 @@ public:
     virtual bool isContentRichlyEditable() const;
     virtual bool shouldUseInputMethod() const;
     virtual IntRect getRect() const;
+    IntRect renderRect(bool* isReplaced);
 
     // Returns true if the node has a non-empty bounding box in layout.
     // This does not 100% guarantee the user can see it, but is pretty close.

@@ -53,9 +53,18 @@ using namespace WebCore;
     return [[[WebArchive alloc] _initWithCoreLegacyWebArchive:LegacyWebArchive::create(core(self))] autorelease];
 }
 
+@end
+
+@implementation DOMNode (WebDOMNodeOperationsPendingPublic)
+
 - (NSString *)markupString
 {
     return createFullMarkup(core(self));
+}
+
+- (NSRect)_renderRect:(bool *)isReplaced
+{
+    return NSRect(core(self)->renderRect(isReplaced));
 }
 
 @end
