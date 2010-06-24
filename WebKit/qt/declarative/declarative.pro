@@ -67,13 +67,6 @@ qmldir.path +=  $$[QT_INSTALL_IMPORTS]/$$TARGETPATH
 
 symbian:{
     TARGET.UID3 = 0x20021321
-    load(data_caging_paths)
-    include($$QT_SOURCE_TREE/demos/symbianpkgrules.pri)
-
-    importFiles.sources = qmlwebkitplugin.dll qmldir
-    importFiles.path = $$QT_IMPORTS_BASE_DIR/$$TARGETPATH
-
-    DEPLOYMENT = importFiles
 }
 
 INSTALLS += target qmldir

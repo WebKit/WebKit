@@ -1,3 +1,11 @@
+2010-06-24  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Unreviewed Symbian build fix.
+
+        The QML WebKit integration needs to be part of QtWebKit.sis
+
+        * WebCore.pro: Deploy qmlwebkitplugin.dll.
+
 2010-06-24  Satish Sampath  <satish@chromium.org>
 
         Reviewed by Kent Tamura.
