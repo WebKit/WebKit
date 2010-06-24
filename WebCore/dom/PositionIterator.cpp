@@ -150,7 +150,7 @@ bool PositionIterator::isCandidate() const
         return !m_offsetInAnchor && !Position::nodeIsUserSelectNone(m_anchorNode->parent());
 
     if (renderer->isText())
-        return Position(*this).inRenderedText() && !Position::nodeIsUserSelectNone(m_anchorNode);
+        return !Position::nodeIsUserSelectNone(m_anchorNode) && Position(*this).inRenderedText();
 
     if (isTableElement(m_anchorNode) || editingIgnoresContent(m_anchorNode))
         return (atStartOfNode() || atEndOfNode()) && !Position::nodeIsUserSelectNone(m_anchorNode->parent());

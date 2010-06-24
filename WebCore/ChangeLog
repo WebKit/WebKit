@@ -1,3 +1,21 @@
+2010-06-23  Alexendar Pavlov  <apavlov@chromium.org>
+
+        Reviewed by David Hyatt.
+
+        Swap checks in Position::isCandidate so that the less expensive
+        nodeIsUserSelectNode  (node && node->renderer() &&
+        node->renderer()->style()->userSelect() == SELECT_NONE) came first.
+
+        (Was Web Inspector: Hangup when expanding elements with enormous
+        text node content in Elements panel).
+
+        https://bugs.webkit.org/show_bug.cgi?id=35926
+
+        * dom/Position.cpp:
+        (WebCore::Position::isCandidate):
+        * dom/PositionIterator.cpp:
+        (WebCore::PositionIterator::isCandidate):
+
 2010-06-23  Kwang Yul Seo  <skyul@company100.net>
 
         Reviewed by Kent Tamura.

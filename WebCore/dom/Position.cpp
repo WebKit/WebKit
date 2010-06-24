@@ -739,7 +739,7 @@ bool Position::isCandidate() const
         return m_offset == 0 && !nodeIsUserSelectNone(node()->parent());
 
     if (renderer->isText())
-        return inRenderedText() && !nodeIsUserSelectNone(node());
+        return !nodeIsUserSelectNone(node()) && inRenderedText();
 
     if (isTableElement(node()) || editingIgnoresContent(node()))
         return (atFirstEditingPositionForNode() || atLastEditingPositionForNode()) && !nodeIsUserSelectNone(node()->parent());
