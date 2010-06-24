@@ -171,10 +171,9 @@ public:
         memset(&m_item, 0, sizeof(m_item));
         // We cannot know, ahead of time, how many glyphs a given script run
         // will produce. We take a guess that script runs will not produce more
-        // than twice as many glyphs as there are code points and fallback if
-        // we find that we are wrong.
-        m_maxGlyphs = m_run.length() * 2;
-        createGlyphArrays();
+        // than twice as many glyphs as there are code points plus a bit of
+        // padding and fallback if we find that we are wrong.
+        createGlyphArrays((m_run.length() + 2) * 2);
 
         m_item.log_clusters = new unsigned short[m_run.length()];
 
@@ -258,10 +257,9 @@ public:
         }
 
         setupFontForScriptRun();
-
-        if (!shapeGlyphs())
-            return false;
+        shapeGlyphs();
         setGlyphXPositions(rtl());
+
         return true;
     }
 
@@ -409,46 +407,34 @@ private:
         delete[] m_xPositions;
     }
 
-    bool createGlyphArrays()
+    void createGlyphArrays(int size)
     {
-        m_item.glyphs = new HB_Glyph[m_maxGlyphs];
-        m_item.attributes = new HB_GlyphAttributes[m_maxGlyphs];
-        m_item.advances = new HB_Fixed[m_maxGlyphs];
-        m_item.offsets = new HB_FixedPoint[m_maxGlyphs];
-        // HB_FixedPoint is a struct, so we must use memset to clear it.
-        memset(m_item.offsets, 0, m_maxGlyphs * sizeof(HB_FixedPoint));
-        m_glyphs16 = new uint16_t[m_maxGlyphs];
-        m_xPositions = new SkScalar[m_maxGlyphs];
+        m_item.glyphs = new HB_Glyph[size];
+        memset(m_item.glyphs, 0, size * sizeof(HB_Glyph));
+        m_item.attributes = new HB_GlyphAttributes[size];
+        memset(m_item.attributes, 0, size * sizeof(HB_GlyphAttributes));
+        m_item.advances = new HB_Fixed[size];
+        memset(m_item.advances, 0, size * sizeof(HB_Fixed));
+        m_item.offsets = new HB_FixedPoint[size];
+        memset(m_item.offsets, 0, size * sizeof(HB_FixedPoint));
 
-        return m_item.glyphs
-            && m_item.attributes
-            && m_item.advances
-            && m_item.offsets
-            && m_glyphs16
-            && m_xPositions;
+        m_glyphs16 = new uint16_t[size];
+        m_xPositions = new SkScalar[size];
+
+        m_item.num_glyphs = size;
     }
 
-    bool expandGlyphArrays()
-    {
-        deleteGlyphArrays();
-        m_maxGlyphs <<= 1;
-        return createGlyphArrays();
-    }
-
-    bool shapeGlyphs()
+    void shapeGlyphs()
     {
         for (;;) {
-            m_item.num_glyphs = m_maxGlyphs;
-            HB_ShapeItem(&m_item);
-            if (m_item.num_glyphs < m_maxGlyphs)
+            if (HB_ShapeItem(&m_item))
                 break;
 
             // We overflowed our arrays. Resize and retry.
-            if (!expandGlyphArrays())
-                return false;
+            // HB_ShapeItem fills in m_item.num_glyphs with the needed size.
+            deleteGlyphArrays();
+            createGlyphArrays(m_item.num_glyphs);
         }
-
-        return true;
     }
 
     void setGlyphXPositions(bool isRTL)
@@ -478,7 +464,6 @@ private:
     unsigned m_offsetX; // Offset in pixels to the start of the next script run.
     unsigned m_pixelWidth; // Width (in px) of the current script run.
     unsigned m_numCodePoints; // Code points in current script run.
-    unsigned m_maxGlyphs; // Current size of all the Harfbuzz arrays.
 
     OwnPtr<TextRun> m_normalizedRun;
     OwnArrayPtr<UChar> m_normalizedBuffer; // A buffer for normalized run.

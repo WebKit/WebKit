@@ -1,3 +1,21 @@
+2010-06-21  Evan Martin  <evan@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        [chromium] overlapping characters in complex text
+        https://bugs.webkit.org/show_bug.cgi?id=40966
+
+        We need to clear all the buffers we hand to Harfbuzz before we use them.
+        While I'm here, refactor the code slightly to make its behavior more
+        clear and correct (previously, we would repeatedly double our buffer
+        size when we could have just sized it correctly on the second try).
+
+        * platform/graphics/chromium/FontLinux.cpp:
+        (WebCore::TextRunWalker::TextRunWalker):
+        (WebCore::TextRunWalker::nextScriptRun):
+        (WebCore::TextRunWalker::createGlyphArrays):
+        (WebCore::TextRunWalker::shapeGlyphs):
+
 2010-06-24  Adele Peterson  <adele@apple.com>
 
         Reviewed by Sam Weinig.
