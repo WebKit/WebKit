@@ -59,11 +59,26 @@ DocumentWriter::DocumentWriter(Frame* frame)
 {
 }
 
+// This is only called by ScriptController::executeIfJavaScriptURL
+// and always contains the result of evaluating a javascript: url.
+// This is the <iframe src="javascript:'html'"> case.
 void DocumentWriter::replaceDocument(const String& html)
 {
     m_frame->loader()->stopAllLoaders();
     begin(m_frame->loader()->url(), true, m_frame->document()->securityOrigin());
-    addData(html);
+
+    if (!str.isNull()) {
+        if (!m_receivedData) {
+            m_receivedData = true;
+            m_frame->document()->setParseMode(Document::Strict);
+        }
+
+        // FIXME: If we wanted to support the <img src='javascript:'imagedata'>
+        // case then we would need to call addData(char*, int) instead.
+        if (DocumentParser* parser = m_frame->document()->parser())
+            parser->write(str, true);
+    }
+
     end();
 }
 
@@ -191,20 +206,6 @@ void DocumentWriter::addData(const char* str, int len, bool flush)
         ASSERT(!parser->wantsRawData());
         parser->write(decoded, true);
     }
-}
-
-void DocumentWriter::addData(const String& str)
-{
-    if (str.isNull())
-        return;
-
-    if (!m_receivedData) {
-        m_receivedData = true;
-        m_frame->document()->setParseMode(Document::Strict);
-    }
-
-    if (DocumentParser* parser = m_frame->document()->parser())
-        parser->write(str, true);
 }
 
 void DocumentWriter::end()
