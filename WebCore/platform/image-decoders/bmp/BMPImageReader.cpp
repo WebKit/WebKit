@@ -172,7 +172,7 @@ bool BMPImageReader::processInfoHeader()
 
     // Set our size.
     if (!m_parent->setSize(m_infoHeader.biWidth, m_infoHeader.biHeight))
-        return m_parent->setFailed();
+        return false;
 
     // For paletted images, bitmaps can set biClrUsed to 0 to mean "all
     // colors", so set it to the maximum number of colors for this bit depth.

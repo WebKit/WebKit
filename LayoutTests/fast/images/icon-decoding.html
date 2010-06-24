@@ -13,6 +13,12 @@
     height: 32px;
     width: 32px;
 }
+.offscreen 
+{
+    position: absolute;
+    left: -100 px;
+    top: -100 px;
+}
 </style>
 </head>
 <body style="margin: 0px;">
@@ -29,6 +35,11 @@
 </div>
 <div class="failure2">
   <img src="resources/2entries.ico">
+</div>
+<div class="offscreen">
+  <!-- We don't care how this displays as long as decoding it doesn't corrupt
+       memory. -->
+  <img src="resources/bad.ico">
 </div>
 </body>
 </html>

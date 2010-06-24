@@ -1,3 +1,16 @@
+2010-06-23  Peter Kasting  <pkasting@google.com>
+
+        Reviewed by Adam Barth.
+
+        REGRESSION (r61619): Memory corruption in open-source ICO decoder
+        https://bugs.webkit.org/show_bug.cgi?id=41107
+        
+        This doesn't contain the updated test results -- I'll get that off the
+        bots after checkin.
+
+        * fast/images/icon-decoding.html: Add test for memory corruption while decoding broken .ico.
+        * fast/images/resources/bad.ico: Added.
+
 2010-06-24  Martin Robinson  <mrobinson@igalia.com>
 
         Unreviewed.

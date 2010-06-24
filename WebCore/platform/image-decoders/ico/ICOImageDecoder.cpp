@@ -255,8 +255,9 @@ bool ICOImageDecoder::processDirectoryEntries()
 
     // The image size is the size of the largest entry.
     const IconDirectoryEntry& dirEntry = m_dirEntries.first();
-    setSize(dirEntry.m_size.width(), dirEntry.m_size.height());
-    return true;
+    // Technically, this next call shouldn't be able to fail, since the width
+    // and height here are each <= 256, and |m_frameSize| is empty.
+    return setSize(dirEntry.m_size.width(), dirEntry.m_size.height());
 }
 
 ICOImageDecoder::IconDirectoryEntry ICOImageDecoder::readDirectoryEntry()
