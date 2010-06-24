@@ -79,10 +79,6 @@ WebInspector.InspectorBackendStub.prototype = {
     {
     },
 
-    setAttachedWindowHeight: function(height)
-    {
-    },
-
     moveByUnrestricted: function(x, y)
     {
     },

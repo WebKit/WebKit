@@ -283,8 +283,6 @@
                 'src/IDBObjectStoreProxy.h',
                 'src/IndexedDatabaseProxy.cpp',
                 'src/IndexedDatabaseProxy.h',
-                'src/InspectorClientImpl.cpp',
-                'src/InspectorClientImpl.h',
                 'src/InspectorFrontendClientImpl.cpp',
                 'src/InspectorFrontendClientImpl.h',
                 'src/linux/WebFontRendering.cpp',

@@ -1098,6 +1098,7 @@ void InspectorController::enableResourceTracking(bool always, bool reload)
     m_resourceTrackingEnabled = true;
     if (m_frontend)
         m_frontend->resourceTrackingWasEnabled();
+    m_client->resourceTrackingWasEnabled();
 
     if (reload)
         m_inspectedPage->mainFrame()->redirectScheduler()->scheduleRefresh(true);
@@ -1115,6 +1116,7 @@ void InspectorController::disableResourceTracking(bool always)
     m_resourceTrackingEnabled = false;
     if (m_frontend)
         m_frontend->resourceTrackingWasDisabled();
+    m_client->resourceTrackingWasDisabled();
 }
 
 void InspectorController::ensureSettingsLoaded()
@@ -1126,6 +1128,7 @@ void InspectorController::ensureSettingsLoaded()
     String resourceTracking = setting(resourceTrackingEnabledSettingName);
     if (resourceTracking == "true")
         m_resourceTrackingEnabled = true;
+    m_client->resourceTrackingWasEnabled();
 
     String monitoringXHR = setting(monitoringXHRSettingName);
     if (monitoringXHR == "true")
@@ -1143,6 +1146,7 @@ void InspectorController::startTimelineProfiler()
     m_timelineAgent = new InspectorTimelineAgent(m_frontend.get());
     if (m_frontend)
         m_frontend->timelineProfilerWasStarted();
+    m_client->timelineProfilerWasStarted();
 }
 
 void InspectorController::stopTimelineProfiler()
@@ -1156,6 +1160,7 @@ void InspectorController::stopTimelineProfiler()
     m_timelineAgent = 0;
     if (m_frontend)
         m_frontend->timelineProfilerWasStopped();
+    m_client->timelineProfilerWasStopped();
 }
 
 #if ENABLE(WORKERS)

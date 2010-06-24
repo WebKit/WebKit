@@ -86,6 +86,7 @@
 #include "Timer.h"
 #include "TypingCommand.h"
 #include "WebAccessibilityObject.h"
+#include "WebDevToolsAgentClient.h"
 #include "WebDevToolsAgentPrivate.h"
 #include "WebDragData.h"
 #include "WebFrameImpl.h"
@@ -101,6 +102,7 @@
 #include "WebString.h"
 #include "WebVector.h"
 #include "WebViewClient.h"
+
 
 #if OS(WINDOWS)
 #include "RenderThemeChromiumWin.h"
@@ -163,9 +165,9 @@ static const PopupContainerSettings suggestionsPopupSettings = {
 
 // WebView ----------------------------------------------------------------
 
-WebView* WebView::create(WebViewClient* client)
+WebView* WebView::create(WebViewClient* client, WebDevToolsAgentClient* devToolsClient)
 {
-    return new WebViewImpl(client);
+    return new WebViewImpl(client, devToolsClient);
 }
 
 void WebView::updateVisitedLinkState(unsigned long long linkHash)
@@ -212,14 +214,13 @@ void WebViewImpl::initializeMainFrame(WebFrameClient* frameClient)
     SecurityOrigin::setLocalLoadPolicy(SecurityOrigin::AllowLocalLoadsForLocalOnly);
 }
 
-WebViewImpl::WebViewImpl(WebViewClient* client)
+WebViewImpl::WebViewImpl(WebViewClient* client, WebDevToolsAgentClient* devToolsClient)
     : m_client(client)
     , m_backForwardListClientImpl(this)
     , m_chromeClientImpl(this)
     , m_contextMenuClientImpl(this)
     , m_dragClientImpl(this)
     , m_editorClientImpl(this)
-    , m_inspectorClientImpl(this)
     , m_observedNewNavigation(false)
 #ifndef NDEBUG
     , m_newNavigationLoader(0)
@@ -256,8 +257,11 @@ WebViewImpl::WebViewImpl(WebViewClient* client)
     // set to impossible point so we always get the first mouse pos
     m_lastMousePosition = WebPoint(-1, -1);
 
+    if (devToolsClient)
+        m_devToolsAgent = static_cast<WebDevToolsAgentImpl*>(WebDevToolsAgent::create(this, devToolsClient));
+
     // the page will take ownership of the various clients
-    m_page.set(new Page(&m_chromeClientImpl, &m_contextMenuClientImpl, &m_editorClientImpl, &m_dragClientImpl, &m_inspectorClientImpl, 0, 0, 0));
+    m_page.set(new Page(&m_chromeClientImpl, &m_contextMenuClientImpl, &m_editorClientImpl, &m_dragClientImpl, m_devToolsAgent.get(), 0, 0, 0));
 
     m_page->backForwardList()->setClient(&m_backForwardListClientImpl);
     m_page->setGroupName(pageGroupName);
@@ -1822,12 +1826,6 @@ void WebViewImpl::setInspectorSetting(const WebString& key,
 WebDevToolsAgent* WebViewImpl::devToolsAgent()
 {
     return m_devToolsAgent.get();
-}
-
-void WebViewImpl::setDevToolsAgent(WebDevToolsAgent* devToolsAgent)
-{
-    ASSERT(!m_devToolsAgent.get()); // May only set once!
-    m_devToolsAgent.set(static_cast<WebDevToolsAgentPrivate*>(devToolsAgent));
 }
 
 WebAccessibilityObject WebViewImpl::accessibilityObject()

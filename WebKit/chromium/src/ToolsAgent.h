@@ -50,9 +50,6 @@ namespace WebKit {
 DEFINE_RPC_CLASS(ToolsAgent, TOOLS_AGENT_STRUCT)
 
 #define TOOLS_AGENT_DELEGATE_STRUCT(METHOD0, METHOD1, METHOD2, METHOD3, METHOD4, METHOD5) \
-    /* Updates focused node on the client. */ \
-    METHOD1(frameNavigate, String /* url */) \
-    \
     /* Response to the DispatchOn*. */ \
     METHOD3(didDispatchOn, int /* call_id */, String /* result */, String /* exception */) \
     \

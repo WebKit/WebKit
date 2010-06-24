@@ -1,3 +1,61 @@
+2010-06-23  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: Inspector cleanup + better DevTools alignment with Inspector.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=41094
+
+        - Merged InspectorClient implementation into WebDevToolsAgent
+        - Changed the way WebDevToolsAgent is initialized (will break chromium bot, needs coordinated landing)
+        - Removed a lot of legacy code from WebDevToolsAgentImpl
+        - Removed a lot of overrides from DevTools.js
+        - Simplified devtools stubs
+        - Got rid of all logic from within InjectDispatch.js
+
+        * WebKit.gyp:
+        * public/WebDevToolsAgent.h:
+        * public/WebView.h:
+        * src/FrameLoaderClientImpl.cpp:
+        (WebKit::FrameLoaderClientImpl::dispatchDidCommitLoad):
+        * src/InspectorFrontendClientImpl.cpp:
+        (WebKit::InspectorFrontendClientImpl::inspectedURLChanged):
+        * src/ToolsAgent.h:
+        * src/WebDevToolsAgentImpl.cpp:
+        (WebKit::):
+        (WebKit::WebDevToolsAgentImpl::initDevToolsAgentHost):
+        (WebKit::WebDevToolsAgentImpl::setApuAgentEnabled):
+        (WebKit::WebDevToolsAgentImpl::jsDispatchOnClient):
+        (WebKit::WebDevToolsAgentImpl::inspectorDestroyed):
+        (WebKit::WebDevToolsAgentImpl::openInspectorFrontend):
+        (WebKit::WebDevToolsAgentImpl::highlight):
+        (WebKit::WebDevToolsAgentImpl::hideHighlight):
+        (WebKit::WebDevToolsAgentImpl::populateSetting):
+        (WebKit::WebDevToolsAgentImpl::storeSetting):
+        (WebKit::WebDevToolsAgentImpl::sendMessageToFrontend):
+        (WebKit::WebDevToolsAgentImpl::resourceTrackingWasEnabled):
+        (WebKit::WebDevToolsAgentImpl::resourceTrackingWasDisabled):
+        (WebKit::WebDevToolsAgentImpl::timelineProfilerWasStarted):
+        (WebKit::WebDevToolsAgentImpl::timelineProfilerWasStopped):
+        * src/WebDevToolsAgentImpl.h:
+        * src/WebDevToolsAgentPrivate.h:
+        * src/WebViewImpl.cpp:
+        (WebKit::WebView::create):
+        (WebKit::WebViewImpl::WebViewImpl):
+        * src/WebViewImpl.h:
+        * src/WebWorkerBase.cpp:
+        (WebKit::WebWorkerBase::initializeLoader):
+        * src/js/DevTools.js:
+        (devtools.ToolsAgent):
+        ():
+        (devtools):
+        * src/js/DevToolsHostStub.js:
+        (.window.setDebuggerScriptSource):
+        (.window.dispatchOnInjectedScript):
+        * src/js/InjectDispatch.js:
+        (dispatch):
+        * src/js/InspectorControllerImpl.js:
+
 2010-06-24  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.
