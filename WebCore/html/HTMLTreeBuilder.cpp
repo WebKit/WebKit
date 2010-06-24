@@ -236,11 +236,71 @@ PassRefPtr<Node> HTMLTreeBuilder::constructTreeFromToken(HTMLToken& token)
     return processToken(token);
 }
 
-PassRefPtr<Node> HTMLTreeBuilder::processToken(HTMLToken& token, UChar currentCharacter)
+PassRefPtr<Node> HTMLTreeBuilder::processToken(HTMLToken& token, UChar cc)
 {
-    UNUSED_PARAM(token);
-    UNUSED_PARAM(currentCharacter);
+reprocessToken:
+    switch (insertionMode()) {
+    case InitialMode: {
+        switch (token.type()) {
+        case HTMLToken::Uninitialized:
+            ASSERT_NOT_REACHED();
+            break;
+        case HTMLToken::DOCTYPE:
+            return insertDoctype(token);
+        case HTMLToken::Comment:
+            return insertComment(token);
+        case HTMLToken::Character:
+            if (cc == '\t' || cc == '\x0A' || cc == '\x0C' || cc == '\x0D' || cc == ' ')
+                return 0;
+            // Fall through
+        case HTMLToken::StartTag:
+        case HTMLToken::EndTag:
+        case HTMLToken::EndOfFile:
+            notImplemented();
+            setInsertionMode(BeforeHTMLMode);
+            goto reprocessToken;
+        }
+        ASSERT_NOT_REACHED();
+        break;
+    }
+    case BeforeHTMLMode:
+    case BeforeHeadMode:
+    case InHeadMode:
+    case InHeadNoscriptMode:
+    case AfterHeadMode:
+    case InBodyMode:
+    case TextMode:
+    case InTableMode:
+    case InTableTextMode:
+    case InCaptionMode:
+    case InColumnGroupMode:
+    case InTableBodyMode:
+    case InRowMode:
+    case InCellMode:
+    case InSelectMode:
+    case InSelectInTableMode:
+    case InForeignContentMode:
+    case AfterBodyMode:
+    case InFramesetMode:
+    case AfterFramesetMode:
+    case AfterAfterBodyMode:
+    case AfterAfterFramesetMode:
+        ASSERT_NOT_REACHED();
+    }
+
     // Implementation coming in the next patch.
+    return 0;
+}
+
+PassRefPtr<Node> HTMLTreeBuilder::insertDoctype(HTMLToken& token)
+{
+    ASSERT_UNUSED(token, token.type() == HTMLToken::DOCTYPE);
+    return 0;
+}
+
+PassRefPtr<Node> HTMLTreeBuilder::insertComment(HTMLToken& token)
+{
+    ASSERT_UNUSED(token, token.type() == HTMLToken::Comment);
     return 0;
 }
 

@@ -2,6 +2,22 @@
 
         Reviewed by Eric Seidel.
 
+        Sketch out InitialMode of HTML5 tree builder
+        https://bugs.webkit.org/show_bug.cgi?id=41126
+
+        Transliterated from the spec.  Currently doesn't do anything.  Mostly
+        an experiment to see where this goes.
+
+        * html/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::processToken):
+        (WebCore::HTMLTreeBuilder::insertDoctype):
+        (WebCore::HTMLTreeBuilder::insertComment):
+        * html/HTMLTreeBuilder.h:
+
+2010-06-23  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         Add all the HTML5 tree builder insertion modes
         https://bugs.webkit.org/show_bug.cgi?id=41124
 
