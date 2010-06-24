@@ -1,3 +1,20 @@
+2010-06-24  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: implement layout tests for debugger
+        https://bugs.webkit.org/show_bug.cgi?id=40774
+
+        * http/tests/inspector/inspector-test.js:
+        (notifyDone):
+        (frontend_showPanel):
+        (frontend_addSniffer.receiver.methodName):
+        (frontend_addSniffer):
+        (frontend_createKeyEvent):
+        (frontend_evaluateInConsole):
+        * inspector/debugger-pause-on-debugger-statement-expected.txt: Added.
+        * inspector/debugger-pause-on-debugger-statement.html: Added.
+
 2010-06-24  Andrey Kosyakov  <caseq@chromium.org>
 
         Reviewed by Yury Semikhatsky.

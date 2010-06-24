@@ -33,8 +33,10 @@ function evaluateInWebInspector(script, callback)
 function notifyDone()
 {
     evaluateInWebInspector("true", function() {
-        if (window.layoutTestController)
+        if (window.layoutTestController) {
             layoutTestController.notifyDone();
+            layoutTestController.closeWebInspector();
+        }
     });
 }
 
@@ -104,4 +106,45 @@ function frontend_dumpTreeItem(treeItem, result, prefix)
 function frontend_setupTestEnvironment()
 {
    WebInspector.showElementsPanel();
+}
+
+function frontend_addSniffer(receiver, methodName, override, opt_sticky)
+{
+    var orig = receiver[methodName];
+    if (typeof orig !== "function")
+        throw ("Cannot find method to override: " + methodName);
+    receiver[methodName] = function(var_args) {
+        try {
+            var result = orig.apply(this, arguments);
+        } finally {
+            if (!opt_sticky)
+                receiver[methodName] = orig;
+        }
+        // In case of exception the override won't be called.
+        try {
+            override.apply(this, arguments);
+        } catch (e) {
+            throw ("Exception in overriden method '" + methodName + "': " + e);
+        }
+        return result;
+    };
+}
+
+function frontend_createKeyEvent(keyIdentifier)
+{
+    var evt = document.createEvent("KeyboardEvent");
+    evt.initKeyboardEvent("keydown", true /* can bubble */, true /* can cancel */, null /* view */, keyIdentifier, "");
+    return evt;
+}
+
+function frontend_evaluateInConsole(code, callback)
+{
+    WebInspector.console.visible = true;
+    WebInspector.console.prompt.text = code;
+    WebInspector.console.promptElement.dispatchEvent(frontend_createKeyEvent("Enter"));
+
+    frontend_addSniffer(WebInspector.ConsoleView.prototype, "addMessage",
+        function(commandResult) {
+            callback(commandResult.toMessageElement().textContent);
+        });
 }

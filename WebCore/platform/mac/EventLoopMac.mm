@@ -32,7 +32,10 @@ void EventLoop::cycle()
 {
     // FIXME: Should this use NSRunLoopCommonModes? Switching to NSRunLoopCommonModes causes Safari to hang in a tight loop.
     [NSApp setWindowsNeedUpdate:YES];
-    NSEvent *event = [NSApp nextEventMatchingMask:NSAnyEventMask untilDate:[NSDate distantFuture] inMode:NSDefaultRunLoopMode dequeue:YES];
+    NSTimeInterval interval = [[NSDate date] timeIntervalSinceReferenceDate];
+    interval += 0.05;
+    NSDate *untilDate = [NSDate dateWithTimeIntervalSinceReferenceDate:interval];
+    NSEvent *event = [NSApp nextEventMatchingMask:NSAnyEventMask untilDate:untilDate inMode:NSDefaultRunLoopMode dequeue:YES];
     [NSApp sendEvent:event];
 }
 

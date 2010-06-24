@@ -101,7 +101,6 @@ private:
     ~ScriptDebugServer();
 
     bool hasBreakpoint(intptr_t sourceID, unsigned lineNumber) const;
-    bool hasListeners() const { return !m_pageListenersMap.isEmpty(); }
     bool hasListenersInterestedInPage(Page*);
 
     void setJavaScriptPaused(const PageGroup&, bool paused);
@@ -131,7 +130,6 @@ private:
 
     void didAddListener(Page*);
     void didRemoveListener(Page*);
-    void didRemoveLastListener();
 
     typedef HashMap<Page*, ListenerSet*> PageListenersMap;
     typedef HashMap<intptr_t, SourceBreakpoints> BreakpointsMap;
@@ -141,6 +139,7 @@ private:
     PauseOnExceptionsState m_pauseOnExceptionsState;
     bool m_pauseOnNextStatement;
     bool m_paused;
+    Page* m_pausedPage;
     bool m_doneProcessingDebuggerEvents;
     bool m_breakpointsActivated;
     JavaScriptCallFrame* m_pauseOnCallFrame;

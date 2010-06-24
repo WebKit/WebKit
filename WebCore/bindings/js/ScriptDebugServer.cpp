@@ -69,6 +69,7 @@ ScriptDebugServer::ScriptDebugServer()
     , m_pauseOnExceptionsState(DontPauseOnExceptions)
     , m_pauseOnNextStatement(false)
     , m_paused(false)
+    , m_pausedPage(0)
     , m_doneProcessingDebuggerEvents(true)
     , m_breakpointsActivated(true)
     , m_pauseOnCallFrame(0)
@@ -113,8 +114,6 @@ void ScriptDebugServer::removeListener(ScriptDebugListener* listener, Page* page
     }
 
     didRemoveListener(page);
-    if (!hasListeners())
-        didRemoveLastListener();
 }
 
 void ScriptDebugServer::pageCreated(Page* page)
@@ -360,8 +359,6 @@ void ScriptDebugServer::dispatchFunctionToListeners(JavaScriptExecutionCallback 
 
     m_callingListeners = true;
 
-    ASSERT(hasListeners());
-
     if (ListenerSet* pageListeners = m_pageListenersMap.get(page)) {
         ASSERT(!pageListeners->isEmpty());
         dispatchFunctionToListeners(*pageListeners, callback);
@@ -443,6 +440,7 @@ void ScriptDebugServer::pauseIfNeeded(Page* page)
     m_pauseOnCallFrame = 0;
     m_pauseOnNextStatement = false;
     m_paused = true;
+    m_pausedPage = page;
 
     dispatchFunctionToListeners(&ScriptDebugServer::dispatchDidPause, page);
 
@@ -458,6 +456,7 @@ void ScriptDebugServer::pauseIfNeeded(Page* page)
     setJavaScriptPaused(page->group(), false);
 
     m_paused = false;
+    m_pausedPage = 0;
 
     dispatchFunctionToListeners(&ScriptDebugServer::dispatchDidContinue, page);
 }
@@ -573,29 +572,19 @@ void ScriptDebugServer::recompileAllJSFunctions(Timer<ScriptDebugServer>*)
 void ScriptDebugServer::didAddListener(Page* page)
 {
     recompileAllJSFunctionsSoon();
-
-    if (page)
-        page->setDebugger(this);
-    else
-        Page::setDebuggerForAllPages(this);
+    page->setDebugger(this);
 }
 
 void ScriptDebugServer::didRemoveListener(Page* page)
 {
-    if (page && hasListenersInterestedInPage(page))
+    if (hasListenersInterestedInPage(page))
         return;
 
+    if (m_pausedPage == page)
+        m_doneProcessingDebuggerEvents = true;
+
     recompileAllJSFunctionsSoon();
-
-    if (page)
-        page->setDebugger(0);
-    else
-        Page::setDebuggerForAllPages(0);
-}
-
-void ScriptDebugServer::didRemoveLastListener()
-{
-    m_doneProcessingDebuggerEvents = true;
+    page->setDebugger(0);
 }
 
 } // namespace WebCore

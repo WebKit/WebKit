@@ -1,3 +1,24 @@
+2010-06-24  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: implement layout tests for debugger
+        https://bugs.webkit.org/show_bug.cgi?id=40774
+
+        Test: inspector/debugger-pause-on-debugger-statement.html
+
+        * bindings/js/ScriptDebugServer.cpp: remove unused obsolete code that deals with global listeners.
+        (WebCore::ScriptDebugServer::ScriptDebugServer):
+        (WebCore::ScriptDebugServer::removeListener):
+        (WebCore::ScriptDebugServer::dispatchFunctionToListeners):
+        (WebCore::ScriptDebugServer::pauseIfNeeded):
+        (WebCore::ScriptDebugServer::didAddListener):
+        (WebCore::ScriptDebugServer::didRemoveListener):
+        * bindings/js/ScriptDebugServer.h:
+        * platform/mac/EventLoopMac.mm:
+        (WebCore::EventLoop::cycle): wait at most 10ms for new event, otherwise layout tests would
+        hang because in their case there may be no events ever.
+
 2010-06-24  Andrey Kosyakov  <caseq@chromium.org>
 
         Reviewed by Yury Semikhatsky.
