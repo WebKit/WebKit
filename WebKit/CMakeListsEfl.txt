@@ -96,12 +96,20 @@ ADD_EXECUTABLE(../Programs/EWebLauncher ${EWebLauncher_SOURCES})
 TARGET_LINK_LIBRARIES(../Programs/EWebLauncher ${EWebLauncher_LIBRARIES})
 ADD_TARGET_PROPERTIES(../Programs/EWebLauncher LINK_FLAGS ${EWebLauncher_LINK_FLAGS})
 
+IF (SHARED_CORE)
+    SET(LIBS_PRIVATE "-l${WTF_LIBRARY_NAME} -l${JavaScriptCore_LIBRARY_NAME} -l${WebCore_LIBRARY_NAME}")
+ELSE ()
+    SET(LIBS_PRIVATE "")
+ENDIF ()
+
 CONFIGURE_FILE(
     efl/ewebkit.pc.in
     ${CMAKE_BINARY_DIR}/WebKit/efl/ewebkit.pc
     @ONLY)
 INSTALL(FILES ${CMAKE_BINARY_DIR}/WebKit/efl/ewebkit.pc
     DESTINATION lib/pkgconfig)
+
+UNSET(LIBS_PRIVATE)
 
 FILE(GLOB EWebKit_HEADERS "${CMAKE_CURRENT_SOURCE_DIR}/efl/ewk/*.h")
 LIST(REMOVE_ITEM EWebKit_HEADERS "${CMAKE_CURRENT_SOURCE_DIR}/efl/ewk/ewk_private.h")

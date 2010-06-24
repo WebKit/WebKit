@@ -8,4 +8,5 @@ Description: Web content engine for EFL applications
 Version: @PROJECT_VERSION@
 Requires: cairo evas ecore
 Libs: -L${libdir} -lewebkit @EXTRA_EWEBKIT_LINK@
+Libs.private: @LIBS_PRIVATE@
 Cflags: -I${includedir}/EWebKit
