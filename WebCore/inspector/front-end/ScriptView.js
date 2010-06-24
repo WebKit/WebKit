@@ -105,7 +105,12 @@ WebInspector.ScriptView.prototype = {
         this.sourceFrame.updateContent(this._prependWhitespace(newBody));
     },
 
-    // The follow methods are pulled from SourceView, since they are
+    _sourceIDForLine: function(line)
+    {
+        return this.script.sourceID;
+    },
+
+    // The following methods are pulled from SourceView, since they are
     // generic and work with ScriptView just fine.
 
     hide: WebInspector.SourceView.prototype.hide,

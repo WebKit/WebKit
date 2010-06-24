@@ -1,3 +1,14 @@
+2010-06-24  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: live edit doesn't work when resource tracking is off
+        https://bugs.webkit.org/show_bug.cgi?id=41076
+
+        * inspector/front-end/ScriptView.js:
+        (WebInspector.ScriptView.prototype._sourceIDForLine): implement this method for ScriptView,
+        it's needed for editLine to work.
+
 2010-06-23  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
