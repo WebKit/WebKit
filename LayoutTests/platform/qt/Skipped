@@ -115,7 +115,6 @@ http/tests/cache/subresource-failover-to-network.html
 http/tests/misc/acid2-pixel.html
 http/tests/misc/acid2.html
 http/tests/misc/favicon-as-image.html
-http/tests/multipart/invalid-image-data.html
 http/tests/misc/bubble-drag-events.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=34004
@@ -263,7 +262,9 @@ http/tests/navigation/timerredirect-goback.html
 http/tests/navigation/timerredirect-subframeload.html
 
 # Failing http multipart test
+http/tests/multipart/invalid-image-data.html
 http/tests/multipart/invalid-image-data-standalone.html
+http/tests/multipart/policy-ignore-crash.php
 
 # =========================================================================== #
 #       Failing xmlhttprequest tests                                          #

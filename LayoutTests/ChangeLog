@@ -1,3 +1,16 @@
+2010-06-23  Tony Chang  <tony@chromium.org>
+
+        Not reviewed, fixing gtk/qt tests
+
+        skip http/tests/multipart/policy-ignore-crash.php on qt and gtk
+        https://bugs.webkit.org/show_bug.cgi?id=41128
+
+        Their network libraries appear to be more strict about identifying
+        multipart boundaries.
+
+        * platform/gtk/Skipped:
+        * platform/qt/Skipped:
+
 2010-06-23  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Reviewed by Chris Fleizach.
