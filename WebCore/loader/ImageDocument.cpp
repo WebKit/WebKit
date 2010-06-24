@@ -25,14 +25,11 @@
 #include "config.h"
 #include "ImageDocument.h"
 
-#include "CSSStyleDeclaration.h"
 #include "CachedImage.h"
 #include "DocumentLoader.h"
-#include "Element.h"
 #include "EventListener.h"
 #include "EventNames.h"
 #include "Frame.h"
-#include "FrameLoader.h"
 #include "FrameLoaderClient.h"
 #include "FrameView.h"
 #include "HTMLImageElement.h"
@@ -41,10 +38,8 @@
 #include "MouseEvent.h"
 #include "NotImplemented.h"
 #include "Page.h"
-#include "SegmentedString.h"
+#include "RawDataDocumentParser.h"
 #include "Settings.h"
-#include "Text.h"
-#include "XMLDocumentParser.h"
 
 using std::min;
 
@@ -76,25 +71,21 @@ private:
     ImageDocument* m_doc;
 };
     
-class ImageDocumentParser : public DocumentParser {
+class ImageDocumentParser : public RawDataDocumentParser {
 public:
     ImageDocumentParser(ImageDocument* document)
-        : DocumentParser(document)
+        : RawDataDocumentParser(document)
     {
     }
-
-    virtual void write(const SegmentedString&, bool appendData);
-    virtual void finish();
-    virtual bool finishWasCalled();
-    virtual bool isWaitingForScripts() const;
-    
-    virtual bool wantsRawData() const { return true; }
-    virtual bool writeRawData(const char* data, int len);
 
     ImageDocument* document() const
     {
         return static_cast<ImageDocument*>(m_document);
     }
+
+private:
+    virtual bool writeRawData(const char* data, int len);
+    virtual void finish();
 };
 
 class ImageDocumentElement : public HTMLImageElement {
@@ -125,12 +116,6 @@ static float pageZoomFactor(Document* document)
 {
     FrameView* view = document->view();
     return view ? view->pageZoomFactor() : 1;
-}
-
-void ImageDocumentParser::write(const SegmentedString&, bool)
-{
-    // <https://bugs.webkit.org/show_bug.cgi?id=25397>: JS code can always call document.write, we need to handle it.
-    notImplemented();
 }
 
 bool ImageDocumentParser::writeRawData(const char*, int)
@@ -178,19 +163,6 @@ void ImageDocumentParser::finish()
     }
 
     document()->finishedParsing();
-}
-
-bool ImageDocumentParser::finishWasCalled()
-{
-    // finish() always calls document()->finishedParsing() so we'll be deleted
-    // after finish().
-    return false;
-}
-
-bool ImageDocumentParser::isWaitingForScripts() const
-{
-    // An image document is never waiting for scripts
-    return false;
 }
     
 // --------

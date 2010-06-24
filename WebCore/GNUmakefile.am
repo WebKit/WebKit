@@ -872,6 +872,7 @@ webcore_sources += \
 	WebCore/dom/Range.h \
 	WebCore/dom/RangeBoundaryPoint.h \
 	WebCore/dom/RangeException.h \
+	WebCore/dom/RawDataDocumentParser.h \
 	WebCore/dom/RegisteredEventListener.cpp \
 	WebCore/dom/RegisteredEventListener.h \
 	WebCore/dom/ScriptElement.cpp \

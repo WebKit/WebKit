@@ -29,11 +29,8 @@
 #include "MediaDocument.h"
 
 #include "DocumentLoader.h"
-#include "Element.h"
-#include "Event.h"
 #include "EventNames.h"
 #include "Frame.h"
-#include "FrameLoader.h"
 #include "FrameLoaderClient.h"
 #include "HTMLEmbedElement.h"
 #include "HTMLNames.h"
@@ -41,42 +38,28 @@
 #include "KeyboardEvent.h"
 #include "MainResourceLoader.h"
 #include "NodeList.h"
-#include "Page.h"
-#include "SegmentedString.h"
-#include "Settings.h"
-#include "Text.h"
-#include "XMLDocumentParser.h"
+#include "RawDataDocumentParser.h"
 
 namespace WebCore {
 
 using namespace HTMLNames;
 
-class MediaDocumentParser : public DocumentParser {
+// FIXME: Share more code with PluginDocumentParser.
+class MediaDocumentParser : public RawDataDocumentParser {
 public:
     MediaDocumentParser(Document* document)
-        : DocumentParser(document)
+        : RawDataDocumentParser(document)
         , m_mediaElement(0)
     {
     }
 
 private:
-    virtual void write(const SegmentedString&, bool appendData);
-    virtual void finish();
-    virtual bool finishWasCalled();
-    virtual bool isWaitingForScripts() const;
-        
-    virtual bool wantsRawData() const { return true; }
     virtual bool writeRawData(const char* data, int len);
-        
+
     void createDocumentStructure();
 
     HTMLMediaElement* m_mediaElement;
 };
-
-void MediaDocumentParser::write(const SegmentedString&, bool)
-{
-    ASSERT_NOT_REACHED();
-}
     
 void MediaDocumentParser::createDocumentStructure()
 {
@@ -116,25 +99,6 @@ bool MediaDocumentParser::writeRawData(const char*, int)
         
     createDocumentStructure();
     finish();
-    return false;
-}
-
-void MediaDocumentParser::finish()
-{
-    if (!m_parserStopped) 
-        document()->finishedParsing();
-}
-
-bool MediaDocumentParser::finishWasCalled()
-{
-    // finish() always calls document()->finishedParsing() so we'll be deleted
-    // after finish().
-    return false;
-}
-
-bool MediaDocumentParser::isWaitingForScripts() const
-{
-    // A media document is never waiting for scripts
     return false;
 }
     

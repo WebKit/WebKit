@@ -516,6 +516,7 @@ SOURCES += \
     dom/ProgressEvent.cpp \
     dom/QualifiedName.cpp \
     dom/Range.cpp \
+    dom/RawDataDocumentParser.h \
     dom/RegisteredEventListener.cpp \
     dom/ScriptElement.cpp \
     dom/ScriptExecutionContext.cpp \

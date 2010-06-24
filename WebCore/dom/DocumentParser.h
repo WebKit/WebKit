@@ -55,7 +55,11 @@ public:
     virtual bool processingData() const { return false; }
 
     virtual bool wantsRawData() const { return false; }
-    virtual bool writeRawData(const char* /*data*/, int /*length*/) { return false; }
+    virtual bool writeRawData(const char* /*data*/, int /*length*/)
+    {
+        ASSERT_NOT_REACHED();
+        return false;
+    }
 
     virtual bool wellFormed() const { return true; }
 

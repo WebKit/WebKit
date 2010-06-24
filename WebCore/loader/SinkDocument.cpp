@@ -26,49 +26,21 @@
 #include "config.h"
 #include "SinkDocument.h"
 
-#include "DocumentParser.h"
+#include "RawDataDocumentParser.h"
 
 namespace WebCore {
-
-class SinkDocumentParser : public DocumentParser {
-public:
-    SinkDocumentParser(Document* document)
-        : DocumentParser(document)
-    {
-    }
-
-private:
-    virtual void write(const SegmentedString&, bool) { ASSERT_NOT_REACHED(); }
-    virtual void finish();
-    virtual bool finishWasCalled();
-    virtual bool isWaitingForScripts() const { return false; }
-        
-    virtual bool wantsRawData() const { return true; }
-    virtual bool writeRawData(const char*, int) { return false; }
-};
-
-void SinkDocumentParser::finish()
-{
-    if (!m_parserStopped) 
-        m_document->finishedParsing();    
-}
-
-bool SinkDocumentParser::finishWasCalled()
-{
-    // finish() always calls m_doc->finishedParsing() so we'll be deleted
-    // after finish().
-    return false;
-}
 
 SinkDocument::SinkDocument(Frame* frame)
     : HTMLDocument(frame)
 {
     setParseMode(Compat);
 }
-    
+
 DocumentParser* SinkDocument::createParser()
 {
-    return new SinkDocumentParser(this);
+    // The basic RawDataDocumentParser does nothing with the data
+    // which is sufficient for our purposes here.
+    return new RawDataDocumentParser(this);
 }
 
 } // namespace WebCore

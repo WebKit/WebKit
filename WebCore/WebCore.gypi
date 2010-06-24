@@ -1199,6 +1199,7 @@
             'dom/Range.h',
             'dom/RangeBoundaryPoint.h',
             'dom/RangeException.h',
+            'dom/RawDataDocumentParser.h',
             'dom/RegisteredEventListener.cpp',
             'dom/RegisteredEventListener.h',
             'dom/ScriptElement.cpp',

@@ -1,3 +1,46 @@
+2010-06-24  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Add RawDataDocumentParser to get rid of a bunch of copy/paste code in DocumentParser subclasses
+        https://bugs.webkit.org/show_bug.cgi?id=41136
+
+        I think this is likely far from the final design,
+        however this is almost entirely minus lines which is a
+        good thing.
+
+        The original authors of these DocumentParser subclasses
+        seem to have just copied the files whole, as they all
+        had the same includes, many of which were unnecessary for
+        some of the files.
+
+        I think eventually the FrameLoader will call a virtual
+        DocumentParser::appendData which will in turn decode
+        and call another write/appendData call.  In the case
+        of these RawDataDocumentParsers, they will just override
+        the low-level appendData call instead of needing
+        DocumentWriter to have a special if based on
+        DocumentParser::wantsRawData.
+
+        No functional change, thus no tests.
+
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/DocumentParser.h:
+        (WebCore::DocumentParser::writeRawData):
+        * loader/ImageDocument.cpp:
+        (WebCore::ImageDocumentParser::ImageDocumentParser):
+        (WebCore::ImageDocumentParser::finish):
+        * loader/MediaDocument.cpp:
+        (WebCore::MediaDocumentParser::MediaDocumentParser):
+        (WebCore::MediaDocumentParser::writeRawData):
+        * loader/PluginDocument.cpp:
+        (WebCore::PluginDocumentParser::PluginDocumentParser):
+        * loader/SinkDocument.cpp:
+        (WebCore::SinkDocument::createParser):
+
 2010-06-23  Peter Kasting  <pkasting@google.com>
 
         Reviewed by Adam Barth.
