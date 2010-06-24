@@ -24,7 +24,9 @@
 #include "Lexer.h"
 
 #include "JSFunction.h"
+
 #include "JSGlobalObjectFunctions.h"
+#include "Identifier.h"
 #include "NodeInfo.h"
 #include "Nodes.h"
 #include "dtoa.h"
@@ -36,10 +38,13 @@
 using namespace WTF;
 using namespace Unicode;
 
-// We can't specify the namespace in yacc's C output, so do it here instead.
+#if ENABLE(RECURSIVE_PARSE)
+#include "JSParser.h"
+#else
 using namespace JSC;
-
 #include "Grammar.h"
+#endif
+
 #include "Lookup.h"
 #include "Lexer.lut.h"
 
@@ -872,7 +877,7 @@ doneIdentifierOrKeyword: {
     m_delimited = false;
     m_buffer16.resize(0);
     const HashEntry* entry = m_keywordTable.entry(m_globalData, *lvalp->ident);
-    token = entry ? entry->lexerValue() : IDENT;
+    token = entry ? entry->lexerValue() : static_cast<int>(IDENT);
     goto returnToken;
 }
 
@@ -893,7 +898,6 @@ returnToken: {
     llocp->last_line = lineNumber;
     llocp->first_column = startOffset;
     llocp->last_column = currentOffset();
-
     m_lastToken = token;
     return token;
 }

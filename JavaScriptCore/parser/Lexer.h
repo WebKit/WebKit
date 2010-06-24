@@ -49,6 +49,8 @@ namespace JSC {
         // Functions for the parser itself.
         int lex(void* lvalp, void* llocp);
         int lineNumber() const { return m_lineNumber; }
+        void setLastLineNumber(int lastLineNumber) { m_lastLineNumber = lastLineNumber; }
+        int lastLineNumber() const { return m_lastLineNumber; }
         bool prevTerminator() const { return m_terminator; }
         SourceCode sourceCode(int openBrace, int closeBrace, int firstLine);
         bool scanRegExp(const Identifier*& pattern, const Identifier*& flags, UChar patternPrefix = 0);
@@ -84,8 +86,9 @@ namespace JSC {
         bool lastTokenWasRestrKeyword() const;
 
         static const size_t initialReadBufferCapacity = 32;
-
+        
         int m_lineNumber;
+        int m_lastLineNumber;
 
         Vector<char> m_buffer8;
         Vector<UChar> m_buffer16;

@@ -323,7 +323,7 @@ inline ThreadSpecific<T>::operator T*()
     if (!ptr) {
         // Set up thread-specific value's memory pointer before invoking constructor, in case any function it calls
         // needs to access the value, to avoid recursion.
-        ptr = static_cast<T*>(fastMalloc(sizeof(T)));
+        ptr = static_cast<T*>(fastZeroedMalloc(sizeof(T)));
         set(ptr);
         new (ptr) T;
     }

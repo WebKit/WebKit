@@ -381,6 +381,9 @@ javascriptcore_sources += \
 	JavaScriptCore/bytecompiler/LabelScope.h \
 	JavaScriptCore/debugger/Debugger.cpp \
 	JavaScriptCore/debugger/Debugger.h \
+	JavaScriptCore/parser/ASTBuilder.h \
+	JavaScriptCore/parser/JSParser.cpp \
+	JavaScriptCore/parser/JSParser.h \
 	JavaScriptCore/parser/Lexer.cpp \
 	JavaScriptCore/parser/Lexer.h \
 	JavaScriptCore/parser/NodeConstructors.h \
@@ -394,6 +397,7 @@ javascriptcore_sources += \
 	JavaScriptCore/parser/ResultType.h \
 	JavaScriptCore/parser/SourceCode.h \
 	JavaScriptCore/parser/SourceProvider.h \
+	JavaScriptCore/parser/SyntaxChecker.h \
 	JavaScriptCore/runtime/ArgList.cpp \
 	JavaScriptCore/runtime/ArgList.h \
 	JavaScriptCore/runtime/Arguments.cpp \

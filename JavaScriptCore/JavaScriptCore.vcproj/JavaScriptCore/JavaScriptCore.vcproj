@@ -1801,6 +1801,18 @@
 			Name="parser"
 			>
 			<File
+				RelativePath="..\..\parser\ASTBuilder.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\parser\JSParser.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\parser\JSParser.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\parser\Lexer.cpp"
 				>
 			</File>
@@ -1850,6 +1862,10 @@
 			</File>
 			<File
 				RelativePath="..\..\parser\SourceProvider.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\parser\SyntaxChecker.h"
 				>
 			</File>
 		</Filter>

@@ -44,6 +44,7 @@
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
+#include <wtf/ThreadSpecific.h>
 
 struct OpaqueJSClass;
 struct OpaqueJSClassContextData;
@@ -220,6 +221,7 @@ namespace JSC {
 #endif
 
         CachedTranscendentalFunction<sin> cachedSin;
+        WTF::ThreadSpecific<char*> stackGuards;
 
         void resetDateCache();
 
