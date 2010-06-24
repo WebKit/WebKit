@@ -1,3 +1,23 @@
+2010-06-24  Adam Roben  <aroben@apple.com>
+
+        Windows build fix
+
+        Fixes <http://webkit.org/b/41158>.
+
+        Reviewed by Anders Carlsson.
+
+        * Shared/win/UpdateChunk.cpp: Updated header name.
+
+        * UIProcess/Plugins/win/PluginInfoStoreWin.cpp: Added.
+        (WebKit::PluginInfoStore::pluginDirectories):
+        (WebKit::PluginInfoStore::pluginPathsInDirectory):
+        (WebKit::PluginInfoStore::getPluginInfo):
+        (WebKit::PluginInfoStore::shouldUsePlugin):
+        Stubbed these out.
+
+        * win/WebKit2.vcproj: Added UIProcess/Plugins to the include path for
+        all configurations. Added UIProcess/Plugins files to the project.
+
 2010-06-23  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

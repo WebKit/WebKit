@@ -23,54 +23,36 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "UpdateChunk.h"
+#include "PluginInfoStore.h"
 
-#include "ArgumentDecoder.h"
-#include "ArgumentEncoder.h"
-#include "WebCoreArgumentCoders.h"
+#include "NotImplemented.h"
 
 using namespace WebCore;
 
 namespace WebKit {
 
-UpdateChunk::UpdateChunk()
-    : m_bitmapSharedMemory(0)
+Vector<String> PluginInfoStore::pluginDirectories()
 {
+    notImplemented();
+    return Vector<String>();
 }
 
-UpdateChunk::UpdateChunk(const IntRect& rect)
-    : m_rect(rect)
+Vector<String> PluginInfoStore::pluginPathsInDirectory(const String& directory)
 {
-    // Create our shared memory mapping.
-    unsigned memorySize = rect.height() * rect.width() * 4;
-    m_bitmapSharedMemory = ::CreateFileMapping(INVALID_HANDLE_VALUE, 0, PAGE_READWRITE, 0, memorySize, 0);
+    notImplemented();
+    return Vector<String>();
 }
 
-UpdateChunk::UpdateChunk(const IntRect& rect, HANDLE bitmapSharedMemory)
-    : m_rect(rect)
-    , m_bitmapSharedMemory(bitmapSharedMemory)
+bool PluginInfoStore::getPluginInfo(const String& pluginPath, Plugin& plugin)
 {
+    notImplemented();
+    return false;
 }
 
-void UpdateChunk::encode(CoreIPC::ArgumentEncoder& encoder) const
+bool PluginInfoStore::shouldUsePlugin(const Plugin& plugin, const Vector<Plugin>& loadedPlugins)
 {
-    encoder.encode(m_rect);
-    encoder.encode(reinterpret_cast<uintptr_t>(m_bitmapSharedMemory));
-}
-
-bool UpdateChunk::decode(CoreIPC::ArgumentDecoder& decoder, UpdateChunk& updateChunk)
-{
-    IntRect rect;
-    if (!decoder.decode(rect))
-        return false;
-    updateChunk.m_rect = rect;
-
-    uintptr_t bitmapSharedMmemory;
-    if (!decoder.decode(bitmapSharedMmemory))
-        return false;
-
-    updateChunk.m_bitmapSharedMemory = reinterpret_cast<HANDLE>(bitmapSharedMmemory);
-    return true;
+    notImplemented();
+    return false;
 }
 
 } // namespace WebKit
