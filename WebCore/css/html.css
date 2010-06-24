@@ -372,6 +372,11 @@ input::-webkit-outer-spin-button {
     -webkit-user-select: none;
 }
 
+input::-webkit-input-speech-button {
+    -webkit-appearance: input-speech-button;
+    display: inline-block;
+}
+
 textarea {
     -webkit-appearance: textarea;
     background-color: white;

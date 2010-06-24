@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006, 2008, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -103,6 +104,20 @@ private:
     bool m_capturing;
     bool m_onUpButton;
 };
+
+#if ENABLE(INPUT_SPEECH)
+
+class InputFieldSpeechButtonElement : public TextControlInnerElement {
+public:
+    static PassRefPtr<InputFieldSpeechButtonElement> create(Document*);
+
+    virtual void defaultEventHandler(Event*);
+
+private:
+    InputFieldSpeechButtonElement(Document*);
+};
+
+#endif // ENABLE(INPUT_SPEECH)
 
 } // namespace
 

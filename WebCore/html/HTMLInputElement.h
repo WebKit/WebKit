@@ -105,6 +105,9 @@ public:
     bool isNumberField() const { return m_type == NUMBER; }
     bool isEmailField() const { return m_type == EMAIL; }
     bool isUrlField() const { return m_type == URL; }
+#if ENABLE(INPUT_SPEECH)
+    virtual bool isSpeechEnabled() const;
+#endif    
 
     bool checked() const { return m_checked; }
     void setChecked(bool, bool sendChangeEvent = false);

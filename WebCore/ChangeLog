@@ -1,3 +1,58 @@
+2010-06-24  Satish Sampath  <satish@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        Add a speech button to input elements, no rendering or actions yet.
+
+        Speech Input: Add a speech button to text input element (no rendering or actions yet)
+        https://bugs.webkit.org/show_bug.cgi?id=40925
+
+        No new tests. Will create a layout test in a subsequent patch.
+
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        * css/CSSSelector.cpp:
+        (WebCore::CSSSelector::pseudoId):
+        (WebCore::nameToPseudoTypeMap):
+        (WebCore::CSSSelector::extractPseudoType):
+        * css/CSSSelector.h:
+        (WebCore::CSSSelector::):
+        * css/CSSValueKeywords.in:
+        * css/html.css:
+        (input::-webkit-input-speech-button):
+        * dom/InputElement.h:
+        * html/HTMLAttributeNames.in:
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::isSpeechEnabled):
+        * html/HTMLInputElement.h:
+        * platform/ThemeTypes.h:
+        (WebCore::):
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::nodeAtPoint):
+        (WebCore::RenderTextControlSingleLine::forwardEvent):
+        (WebCore::RenderTextControlSingleLine::styleDidChange):
+        (WebCore::RenderTextControlSingleLine::hasControlClip):
+        (WebCore::RenderTextControlSingleLine::controlClipRect):
+        (WebCore::RenderTextControlSingleLine::textBlockWidth):
+        (WebCore::RenderTextControlSingleLine::preferredContentWidth):
+        (WebCore::RenderTextControlSingleLine::adjustControlHeightBasedOnLineHeight):
+        (WebCore::RenderTextControlSingleLine::createSubtreeIfNeeded):
+        (WebCore::RenderTextControlSingleLine::createSpeechButtonStyle):
+        (WebCore::RenderTextControlSingleLine::clientPaddingRight):
+        * rendering/RenderTextControlSingleLine.h:
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::adjustStyle):
+        (WebCore::RenderTheme::paint):
+        (WebCore::RenderTheme::paintBorderOnly):
+        (WebCore::RenderTheme::paintDecorations):
+        * rendering/TextControlInnerElements.cpp:
+        (WebCore::InputFieldSpeechButtonElement::InputFieldSpeechButtonElement):
+        (WebCore::InputFieldSpeechButtonElement::create):
+        (WebCore::InputFieldSpeechButtonElement::defaultEventHandler):
+        * rendering/TextControlInnerElements.h:
+        * rendering/style/RenderStyleConstants.h:
+        (WebCore::):
+
 2010-06-24  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Adam Barth.

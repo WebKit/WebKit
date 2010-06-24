@@ -5,6 +5,7 @@
  *               2001-2003 Dirk Mueller (mueller@kde.org)
  * Copyright (C) 2002, 2006, 2007, 2008 Apple Inc. All rights reserved.
  * Copyright (C) 2008 David Smith (catfish.man@gmail.com)
+ * Copyright (C) 2010 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -107,6 +108,10 @@ PseudoId CSSSelector::pseudoId(PseudoType type)
         return FILE_UPLOAD_BUTTON;
     case PseudoInputPlaceholder:
         return INPUT_PLACEHOLDER;
+#if ENABLE(INPUT_SPEECH)
+    case PseudoInputSpeechButton:
+        return INPUT_SPEECH_BUTTON;
+#endif
     case PseudoSliderThumb:
         return SLIDER_THUMB;
     case PseudoSearchCancelButton:
@@ -280,6 +285,9 @@ static HashMap<AtomicStringImpl*, CSSSelector::PseudoType>* nameToPseudoTypeMap(
     DEFINE_STATIC_LOCAL(AtomicString, before, ("before"));
     DEFINE_STATIC_LOCAL(AtomicString, checked, ("checked"));
     DEFINE_STATIC_LOCAL(AtomicString, fileUploadButton, ("-webkit-file-upload-button"));
+#if ENABLE(INPUT_SPEECH)
+    DEFINE_STATIC_LOCAL(AtomicString, inputSpeechButton, ("-webkit-input-speech-button"));
+#endif
     DEFINE_STATIC_LOCAL(AtomicString, defaultString, ("default"));
     DEFINE_STATIC_LOCAL(AtomicString, disabled, ("disabled"));
     DEFINE_STATIC_LOCAL(AtomicString, readOnly, ("read-only"));
@@ -390,6 +398,9 @@ static HashMap<AtomicStringImpl*, CSSSelector::PseudoType>* nameToPseudoTypeMap(
         nameToPseudoType->set(before.impl(), CSSSelector::PseudoBefore);
         nameToPseudoType->set(checked.impl(), CSSSelector::PseudoChecked);
         nameToPseudoType->set(fileUploadButton.impl(), CSSSelector::PseudoFileUploadButton);
+#if ENABLE(INPUT_SPEECH)
+        nameToPseudoType->set(inputSpeechButton.impl(), CSSSelector::PseudoInputSpeechButton);
+#endif
         nameToPseudoType->set(defaultString.impl(), CSSSelector::PseudoDefault);
         nameToPseudoType->set(disabled.impl(), CSSSelector::PseudoDisabled);
         nameToPseudoType->set(readOnly.impl(), CSSSelector::PseudoReadOnly);
@@ -519,6 +530,9 @@ void CSSSelector::extractPseudoType() const
     case PseudoFileUploadButton:
     case PseudoInputListButton:
     case PseudoInputPlaceholder:
+#if ENABLE(INPUT_SPEECH)
+    case PseudoInputSpeechButton:
+#endif
     case PseudoInnerSpinButton:
     case PseudoMediaControlsPanel:
     case PseudoMediaControlsMuteButton:

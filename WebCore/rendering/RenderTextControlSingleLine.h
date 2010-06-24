@@ -29,6 +29,7 @@
 namespace WebCore {
 
 class InputElement;
+class InputFieldSpeechButtonElement;
 class SearchFieldCancelButtonElement;
 class SearchFieldResultsButtonElement;
 class SearchPopupMenu;
@@ -59,7 +60,7 @@ public:
 
 private:
     int preferredDecorationWidthRight() const;
-    virtual bool hasControlClip() const { return m_cancelButton; }
+    virtual bool hasControlClip() const;
     virtual IntRect controlClipRect(int tx, int ty) const;
     virtual bool isTextField() const { return true; }
 
@@ -98,6 +99,9 @@ private:
     PassRefPtr<RenderStyle> createResultsButtonStyle(const RenderStyle* startStyle) const;
     PassRefPtr<RenderStyle> createCancelButtonStyle(const RenderStyle* startStyle) const;
     PassRefPtr<RenderStyle> createOuterSpinButtonStyle() const;
+#if ENABLE(INPUT_SPEECH)
+    PassRefPtr<RenderStyle> createSpeechButtonStyle(const RenderStyle* startStyle) const;
+#endif
 
     void updateCancelButtonVisibility() const;
     EVisibility visibilityForCancelButton() const;
@@ -142,6 +146,9 @@ private:
     RefPtr<SearchFieldResultsButtonElement> m_resultsButton;
     RefPtr<SearchFieldCancelButtonElement> m_cancelButton;
     RefPtr<TextControlInnerElement> m_outerSpinButton;
+#if ENABLE(INPUT_SPEECH)
+    RefPtr<InputFieldSpeechButtonElement> m_speechButton;
+#endif
 
     Timer<RenderTextControlSingleLine> m_searchEventTimer;
     RefPtr<SearchPopupMenu> m_searchPopup;

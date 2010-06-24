@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006, 2008, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -313,5 +314,27 @@ void SpinButtonElement::defaultEventHandler(Event* event)
     if (!event->defaultHandled())
         HTMLDivElement::defaultEventHandler(event);
 }
+
+// ----------------------------
+
+#if ENABLE(INPUT_SPEECH)
+
+inline InputFieldSpeechButtonElement::InputFieldSpeechButtonElement(Document* document)
+    : TextControlInnerElement(document)
+{
+}
+
+PassRefPtr<InputFieldSpeechButtonElement> InputFieldSpeechButtonElement::create(Document* document)
+{
+    return adoptRef(new InputFieldSpeechButtonElement(document));
+}
+
+void InputFieldSpeechButtonElement::defaultEventHandler(Event* event)
+{
+    // FIXME: Start speech recognition here.
+    HTMLDivElement::defaultEventHandler(event);
+}
+
+#endif // ENABLE(INPUT_SPEECH)
 
 }
