@@ -1,3 +1,19 @@
+2010-06-24  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] Small code cleanup in RenderThemeGtk
+        https://bugs.webkit.org/show_bug.cgi?id=40989
+
+        Reduce the amount of duplicated code slightly and prepare this section for
+        future improvements, such as sharing the clipping rectangle calculation with
+        the slow path.
+
+        No new tests as functionality has not changed.
+
+        * platform/gtk/RenderThemeGtk.cpp:
+        (WebCore::paintMozillaGtkWidget): Small code cleanup.
+
 2010-06-24  Nate Chapin  <japhet@chromium.org>
 
         Reviewed by Adam Barth.

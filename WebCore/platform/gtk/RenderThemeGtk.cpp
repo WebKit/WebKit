@@ -299,77 +299,63 @@ static void setMozillaState(const RenderTheme* theme, GtkThemeWidgetType type, R
 
 static bool paintMozillaGtkWidget(const RenderThemeGtk* theme, GtkThemeWidgetType type, RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& rect)
 {
-    GRefPtr<GdkDrawable> pixmap;
-
     // Painting is disabled so just claim to have succeeded
     if (i.context->paintingDisabled())
         return false;
 
-    // No GdkWindow to render to, so return true to fall back
-    if (!i.context->gdkDrawable())
-        // This is slow, used only during printing process
-        pixmap = adoptGRef(gdk_pixmap_new(0, rect.width(), rect.height(), gdk_visual_get_system()->depth));
-
-    GtkWidgetState mozState;
-    setMozillaState(theme, type, o, &mozState);
-
-    int flags;
+    GtkWidgetState widgetState;
+    setMozillaState(theme, type, o, &widgetState);
 
     // We might want to make setting flags the caller's job at some point rather than doing it here.
-    switch (type) {
-    case MOZ_GTK_BUTTON:
+    int flags = 0;
+    if (type == MOZ_GTK_BUTTON)
         flags = GTK_RELIEF_NORMAL;
-        break;
-    case MOZ_GTK_CHECKBUTTON:
-    case MOZ_GTK_RADIOBUTTON:
+    else if (type == MOZ_GTK_CHECKBUTTON || type == MOZ_GTK_RADIOBUTTON)
         flags = theme->isChecked(o);
-        break;
-    default:
-        flags = 0;
-        break;
+
+    GRefPtr<GdkDrawable> drawable(i.context->gdkDrawable());
+    GdkRectangle paintRect, clipRect;
+    if (drawable) {
+        AffineTransform ctm = i.context->getCTM();
+        IntPoint pos = ctm.mapPoint(rect.location());
+        paintRect = IntRect(pos.x(), pos.y(), rect.width(), rect.height());
+
+        // Intersect the cairo rectangle with the target widget region. This  will
+        // prevent the theme drawing code from drawing into regions that cairo will
+        // clip anyway.
+        cairo_t* cr = i.context->platformContext();
+        double clipX1, clipX2, clipY1, clipY2;
+        cairo_clip_extents(cr, &clipX1, &clipY1, &clipX2, &clipY2);
+        IntPoint clipPos = ctm.mapPoint(IntPoint(clipX1, clipY1));
+
+        clipRect.width = clipX2 - clipX1;
+        clipRect.height = clipY2 - clipY1;
+        clipRect.x = clipPos.x();
+        clipRect.y = clipPos.y();
+        gdk_rectangle_intersect(&paintRect, &clipRect, &clipRect);
+
+    } else {
+        // In some situations, like during print previews, this GraphicsContext is not
+        // backed by a GdkDrawable. In those situations, we render onto a pixmap and then
+        // copy the rendered data back to the GraphicsContext via Cairo.
+        drawable = adoptGRef(gdk_pixmap_new(0, rect.width(), rect.height(), gdk_visual_get_system()->depth));
+        paintRect = clipRect = IntRect(0, 0, rect.width(), rect.height());
     }
 
-    GtkTextDirection direction = gtkTextDirection(o->style()->direction());
+    moz_gtk_use_theme_parts(theme->partsForDrawable(drawable.get()));
+    bool success = moz_gtk_widget_paint(type, drawable.get(), &paintRect, &clipRect, &widgetState, flags, gtkTextDirection(o->style()->direction())) == MOZ_GTK_SUCCESS;
 
-    if (pixmap) {
-        GdkRectangle gdkRect = IntRect(0, 0, rect.width(), rect.height());
-
-        moz_gtk_use_theme_parts(theme->partsForDrawable(pixmap.get()));
-
-        bool result = moz_gtk_widget_paint(type, pixmap.get(), &gdkRect, &gdkRect, &mozState, flags, direction) != MOZ_GTK_SUCCESS;
-
-        if (!result) {
-            cairo_t* cr = i.context->platformContext();
-            gdk_cairo_set_source_pixmap(cr, pixmap.get(), rect.x(), rect.y());
-            cairo_paint(cr);
-        }
-
-        return result;
+    // If the drawing was successful and we rendered onto a pixmap, copy the
+    // results back to the original GraphicsContext.
+    if (success && !i.context->gdkDrawable()) {
+        cairo_t* cairoContext = i.context->platformContext();
+        cairo_save(cairoContext);
+        gdk_cairo_set_source_pixmap(cairoContext, drawable.get(), rect.x(), rect.y());
+        cairo_paint(cairoContext);
+        cairo_restore(cairoContext);
     }
 
-    AffineTransform ctm = i.context->getCTM();
-
-    IntPoint pos = ctm.mapPoint(rect.location());
-    GdkRectangle gdkRect = IntRect(pos.x(), pos.y(), rect.width(), rect.height());
-
-    // Find the clip rectangle
-    cairo_t* cr = i.context->platformContext();
-    double clipX1, clipX2, clipY1, clipY2;
-    cairo_clip_extents(cr, &clipX1, &clipY1, &clipX2, &clipY2);
-
-    GdkRectangle gdkClipRect;
-    gdkClipRect.width = clipX2 - clipX1;
-    gdkClipRect.height = clipY2 - clipY1;
-    IntPoint clipPos = ctm.mapPoint(IntPoint(clipX1, clipY1));
-    gdkClipRect.x = clipPos.x();
-    gdkClipRect.y = clipPos.y();
-
-    gdk_rectangle_intersect(&gdkRect, &gdkClipRect, &gdkClipRect);
-
-    // Since the theme renderer is going to be drawing onto this GdkDrawable,
-    // select the appropriate widgets for the drawable depth.
-    moz_gtk_use_theme_parts(theme->partsForDrawable(i.context->gdkDrawable()));
-    return moz_gtk_widget_paint(type, i.context->gdkDrawable(), &gdkRect, &gdkClipRect, &mozState, flags, direction) != MOZ_GTK_SUCCESS;
+    return !success;
 }
 
 static void setButtonPadding(RenderStyle* style)
