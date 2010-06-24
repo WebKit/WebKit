@@ -1,3 +1,23 @@
+2010-06-24  Vangelis Kokkevis  <vangelis@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [Chromium] A WebView can now own a GLES2Context which gets created on
+        demand. This context will typically be created for the gpu compositor
+        and used as a parent context for any elements on the page that use the
+        gpu for rendering (e.g. WebGL) and need to pass their backbuffer directly
+        to the compositor.
+        https://bugs.webkit.org/show_bug.cgi?id=41010
+
+        * public/WebGLES2Context.h:
+        * src/GLES2Context.cpp:
+        (WebCore::GLES2ContextInternal::getWebGLES2Context):
+        (WebCore::GLES2ContextInternal::initialize):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::WebViewImpl):
+        (WebKit::WebViewImpl::gles2Context):
+        * src/WebViewImpl.h:
+
 2010-06-24  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Yury Semikhatsky.

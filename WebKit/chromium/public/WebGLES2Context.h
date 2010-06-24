@@ -45,7 +45,7 @@ class WebGLES2Context : public WebNonCopyable {
 public:
     virtual ~WebGLES2Context() {}
 
-    virtual bool initialize(WebView*) = 0;
+    virtual bool initialize(WebView*, WebGLES2Context* parent) = 0;
     virtual bool makeCurrent() = 0;
     virtual bool destroy() = 0;
     virtual bool swapBuffers() = 0;

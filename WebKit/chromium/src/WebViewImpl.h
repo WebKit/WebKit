@@ -31,6 +31,7 @@
 #ifndef WebViewImpl_h
 #define WebViewImpl_h
 
+#include "WebGLES2Context.h"
 #include "WebNavigationPolicy.h"
 #include "WebPoint.h"
 #include "WebSize.h"
@@ -335,6 +336,10 @@ public:
                                    WebCore::ScrollDirection* scrollDirection,
                                    WebCore::ScrollGranularity* scrollGranularity);
 
+    // Returns the GLES2Context associated with this WebView. One will be created
+    // if it doesn't already exist.
+    WebGLES2Context* gles2Context();
+
 private:
     friend class WebView;  // So WebView::Create can call our constructor
     friend class WTF::RefCounted<WebViewImpl>;
@@ -522,6 +527,8 @@ private:
     bool m_isAcceleratedCompositingActive;
 #endif
     static const WebInputEvent* m_currentInputEvent;
+
+    OwnPtr<WebGLES2Context> m_gles2Context;
 };
 
 } // namespace WebKit

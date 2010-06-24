@@ -93,6 +93,8 @@
 #include "WebImage.h"
 #include "WebInputEvent.h"
 #include "WebInputEventConversion.h"
+#include "WebKit.h"
+#include "WebKitClient.h"
 #include "WebMediaPlayerAction.h"
 #include "WebNode.h"
 #include "WebPoint.h"
@@ -247,6 +249,7 @@ WebViewImpl::WebViewImpl(WebViewClient* client, WebDevToolsAgentClient* devTools
     , m_layerRenderer(0)
     , m_isAcceleratedCompositingActive(false)
 #endif
+    , m_gles2Context(0)
 {
     // WebKit/win/WebView.cpp does the same thing, except they call the
     // KJS specific wrapper around this method. We need to have threading
@@ -2284,7 +2287,23 @@ void WebViewImpl::setRootLayerNeedsDisplay()
     if (m_layerRenderer)
         m_layerRenderer->setNeedsDisplay();
 }
+#endif // USE(ACCELERATED_COMPOSITING)
 
-#endif
+// Returns the GLES2 context associated with this View. If one doesn't exist
+// it will get created first.
+WebGLES2Context* WebViewImpl::gles2Context()
+{
+    if (!m_gles2Context) {
+        m_gles2Context = webKitClient()->createGLES2Context();
+        if (!m_gles2Context)
+            return 0;
+
+        if (!m_gles2Context->initialize(this, 0)) {
+            m_gles2Context.clear();
+            return 0;
+        }
+    }
+    return m_gles2Context.get();
+}
 
 } // namespace WebKit
