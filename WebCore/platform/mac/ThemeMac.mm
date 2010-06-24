@@ -116,7 +116,7 @@ static void setControlSize(NSCell* cell, const IntSize* sizes, const IntSize& mi
 {
     ControlSize size = controlSizeFromPixelSize(sizes, minZoomedSize, zoomFactor);
     if (size != [cell controlSize]) // Only update if we have to, since AppKit does work even if the size is the same.
-        [cell setControlSize:size];
+        [cell setControlSize:(NSControlSize)size];
 }
 
 static void updateStates(NSCell* cell, ControlStates states)
