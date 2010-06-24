@@ -1,3 +1,21 @@
+2010-06-24  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] The url passed to the WebView during layout tests is invalid
+        https://bugs.webkit.org/show_bug.cgi?id=40832
+
+        Set the test URL to the full real file URL and do a small cleanup.
+        Previously a URL like file://relative/path/to/test.html was passed
+        to the WebView. This malformed file URL would be returned by
+        webkit_web_view_get_url and webkit_web_frame_get_url.
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (shouldLogFrameLoadDelegates): Change to take a const string& as the argument.
+        (shouldOpenWebInspector): Change to take a const string& as the argument.
+        (shouldEnableDeveloperExtras): Change to take a const string& as the argument.
+        (runTest): Pass the full file:// URL to the view. Remove the superfluous url variable.
+
 2010-06-24  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

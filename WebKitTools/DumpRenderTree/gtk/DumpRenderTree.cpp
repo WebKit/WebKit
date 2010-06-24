@@ -2,6 +2,7 @@
  * Copyright (C) 2007 Eric Seidel <eric@webkit.org>
  * Copyright (C) 2008 Alp Toker <alp@nuanti.com>
  * Copyright (C) 2009 Jan Alonzo <jmalonzo@gmail.com>
+ * Copyright (C) 2010 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -96,30 +97,19 @@ static WebKitWebHistoryItem* prevTestBFItem = NULL;
 
 const unsigned historyItemIndent = 8;
 
-static gchar* autocorrectURL(const gchar* url)
+static bool shouldLogFrameLoadDelegates(const string& pathOrURL)
 {
-    if (strncmp("http://", url, 7) != 0 && strncmp("https://", url, 8) != 0) {
-        GString* string = g_string_new("file://");
-        g_string_append(string, url);
-        return g_string_free(string, FALSE);
-    }
-
-    return g_strdup(url);
+    return pathOrURL.find("loading/") != string::npos;
 }
 
-static bool shouldLogFrameLoadDelegates(const char* pathOrURL)
+static bool shouldOpenWebInspector(const string& pathOrURL)
 {
-    return strstr(pathOrURL, "loading/");
+    return pathOrURL.find("inspector/") != string::npos;
 }
 
-static bool shouldOpenWebInspector(const char* pathOrURL)
+static bool shouldEnableDeveloperExtras(const string& pathOrURL)
 {
-    return strstr(pathOrURL, "inspector/");
-}
-
-static bool shouldEnableDeveloperExtras(const char* pathOrURL)
-{
-    return shouldOpenWebInspector(pathOrURL) || strstr(pathOrURL, "inspector-enabled/");
+    return shouldOpenWebInspector(pathOrURL) || pathOrURL.find("inspector-enabled/") != string::npos;
 }
 
 void dumpFrameScrollPosition(WebKitWebFrame* frame)
@@ -474,17 +464,23 @@ static void runTest(const string& testPathOrURL)
     ASSERT(!testPathOrURL.empty());
 
     // Look for "'" as a separator between the path or URL, and the pixel dump hash that follows.
-    string pathOrURL(testPathOrURL);
+    string testURL(testPathOrURL);
     string expectedPixelHash;
-
-    size_t separatorPos = pathOrURL.find("'");
+    size_t separatorPos = testURL.find("'");
     if (separatorPos != string::npos) {
-        pathOrURL = string(testPathOrURL, 0, separatorPos);
+        testURL = string(testPathOrURL, 0, separatorPos);
         expectedPixelHash = string(testPathOrURL, separatorPos + 1);
     }
 
-    gchar* url = autocorrectURL(pathOrURL.c_str());
-    const string testURL(url);
+    // Convert the path into a full file URL if it does not look
+    // like an HTTP/S URL (doesn't start with http:// or https://).
+    if (testURL.find("http://") && testURL.find("https://")) {
+        GFile* testFile = g_file_new_for_path(testURL.c_str());
+        gchar* testURLCString = g_file_get_uri(testFile);
+        testURL = testURLCString;
+        g_free(testURLCString);
+        g_object_unref(testFile);
+    }
 
     resetDefaultsToConsistentValues();
 
@@ -494,19 +490,19 @@ static void runTest(const string& testPathOrURL)
 
     gLayoutTestController->setIconDatabaseEnabled(false);
 
-    if (shouldLogFrameLoadDelegates(pathOrURL.c_str()))
+    if (shouldLogFrameLoadDelegates(testURL))
         gLayoutTestController->setDumpFrameLoadCallbacks(true);
 
-    if (shouldEnableDeveloperExtras(pathOrURL.c_str())) {
+    if (shouldEnableDeveloperExtras(testURL)) {
         gLayoutTestController->setDeveloperExtrasEnabled(true);
-        if (shouldOpenWebInspector(pathOrURL.c_str()))
+        if (shouldOpenWebInspector(testURL))
             gLayoutTestController->showWebInspector();
     }
 
     WorkQueue::shared()->clear();
     WorkQueue::shared()->setFrozen(false);
 
-    bool isSVGW3CTest = (gLayoutTestController->testPathOrURL().find("svg/W3C-SVG-1.1") != string::npos);
+    bool isSVGW3CTest = (testURL.find("svg/W3C-SVG-1.1") != string::npos);
     GtkAllocation size;
     size.x = size.y = 0;
     size.width = isSVGW3CTest ? 480 : LayoutTestController::maxViewWidth;
@@ -527,15 +523,12 @@ static void runTest(const string& testPathOrURL)
 
     // Focus the web view before loading the test to avoid focusing problems
     gtk_widget_grab_focus(GTK_WIDGET(webView));
-    webkit_web_view_open(webView, url);
-
-    g_free(url);
-    url = NULL;
+    webkit_web_view_open(webView, testURL.c_str());
 
     gtk_main();
 
     // If developer extras enabled Web Inspector may have been open by the test.
-    if (shouldEnableDeveloperExtras(pathOrURL.c_str())) {
+    if (shouldEnableDeveloperExtras(testURL)) {
         gLayoutTestController->closeWebInspector();
         gLayoutTestController->setDeveloperExtrasEnabled(false);
     }
