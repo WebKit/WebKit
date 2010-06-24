@@ -1,3 +1,22 @@
+2010-06-23  Andy Estes  <aestes@apple.com>
+
+        Reviewed by Joseph Pecoraro.
+
+        Refactor beforeload layout tests to share a common implementation of
+        print() located in fast/dom/beforeload/resources/.
+        https://bugs.webkit.org/show_bug.cgi?id=41127
+
+        * fast/dom/beforeload/flash-before-load.html:
+        * fast/dom/beforeload/frame-before-load.html:
+        * fast/dom/beforeload/image-before-load.html:
+        * fast/dom/beforeload/link-before-load.html:
+        * fast/dom/beforeload/pi-before-load.xhtml:
+        * fast/dom/beforeload/remove-link-in-beforeload-listener.html:
+        * fast/dom/beforeload/script-before-load-dynamic.html:
+        * fast/dom/beforeload/script-before-load-xhtml.xhtml:
+        * fast/dom/beforeload/script-before-load.html:
+        * fast/dom/beforeload/video-before-load.html:
+
 2010-06-23  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Maciej Stachowiak.
