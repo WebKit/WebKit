@@ -2,6 +2,26 @@
 
         Reviewed by Eric Seidel.
 
+        Sketch out BeforeHTMLMode state
+        https://bugs.webkit.org/show_bug.cgi?id=41133
+
+        In this patch, we switch the TreeBuidler over to using AtomicHTMLTokens
+        and sketch out another state.  These states don't actually do anything
+        yet, I'm still just getting the structure of the spec into the code so
+        we can implement the details incrementally.
+
+        * html/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::constructTreeFromToken):
+        (WebCore::HTMLTreeBuilder::processToken):
+        (WebCore::HTMLTreeBuilder::insertDoctype):
+        (WebCore::HTMLTreeBuilder::insertComment):
+        * html/HTMLTreeBuilder.h:
+        (WebCore::HTMLTreeBuilder::parseError):
+
+2010-06-24  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         Add AtomicHTMLToken
         https://bugs.webkit.org/show_bug.cgi?id=41131
 

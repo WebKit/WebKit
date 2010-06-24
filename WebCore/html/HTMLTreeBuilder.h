@@ -36,6 +36,7 @@
 
 namespace WebCore {
 
+class AtomicHTMLToken;
 class Document;
 class DocumentFragment;
 class Element;
@@ -99,10 +100,13 @@ private:
     };
 
     PassRefPtr<Node> passTokenToLegacyParser(HTMLToken&);
-    PassRefPtr<Node> processToken(HTMLToken&, UChar cc = 0);
+    PassRefPtr<Node> processToken(AtomicHTMLToken&, UChar cc = 0);
 
-    PassRefPtr<Node> insertDoctype(HTMLToken&);
-    PassRefPtr<Node> insertComment(HTMLToken&);
+    PassRefPtr<Node> insertDoctype(AtomicHTMLToken&);
+    PassRefPtr<Node> insertComment(AtomicHTMLToken&);
+
+    // FIXME: Implement error reporting.
+    void parseError(AtomicHTMLToken&) { }
 
     void handleScriptStartTag();
     void handleScriptEndTag(Element*, int scriptStartLine);

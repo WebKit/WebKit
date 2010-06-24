@@ -206,27 +206,29 @@ PassRefPtr<Node> HTMLTreeBuilder::passTokenToLegacyParser(HTMLToken& token)
     return result.release();
 }
 
-PassRefPtr<Node> HTMLTreeBuilder::constructTreeFromToken(HTMLToken& token)
+PassRefPtr<Node> HTMLTreeBuilder::constructTreeFromToken(HTMLToken& rawToken)
 {
     // Make MSVC ignore our unreachable code for now.
     if (true)
-        return passTokenToLegacyParser(token);
+        return passTokenToLegacyParser(rawToken);
+
+    AtomicHTMLToken token(rawToken);
 
     // HTML5 expects the tokenizer to call the parser every time a character is
     // emitted.  We instead collect characters and call the parser with a batch.
     // In order to make our first-pass parser code simple, processToken matches
     // the spec in only handling one character at a time.
     if (token.type() == HTMLToken::Character) {
-        HTMLToken::DataVector characters = token.characters();
-        HTMLToken::DataVector::const_iterator itr = characters.begin();
-        for (;itr; ++itr)
-            processToken(token, *itr);
+        StringImpl* characters = token.characters().impl();
+        // FIXME: Calling processToken for each character is probably slow.
+        for (unsigned i = 0; i < characters->length(); ++i)
+            processToken(token, (*characters)[i]);
         return 0; // FIXME: Should we be returning the Text node?
     }
     return processToken(token);
 }
 
-PassRefPtr<Node> HTMLTreeBuilder::processToken(HTMLToken& token, UChar cc)
+PassRefPtr<Node> HTMLTreeBuilder::processToken(AtomicHTMLToken& token, UChar cc)
 {
 reprocessToken:
     switch (insertionMode()) {
@@ -242,18 +244,50 @@ reprocessToken:
         case HTMLToken::Character:
             if (cc == '\t' || cc == '\x0A' || cc == '\x0C' || cc == '\x0D' || cc == ' ')
                 return 0;
-            // Fall through
+            break;
         case HTMLToken::StartTag:
         case HTMLToken::EndTag:
         case HTMLToken::EndOfFile:
-            notImplemented();
-            setInsertionMode(BeforeHTMLMode);
-            goto reprocessToken;
+            break;
         }
-        ASSERT_NOT_REACHED();
-        break;
+        notImplemented();
+        parseError(token);
+        setInsertionMode(BeforeHTMLMode);
+        goto reprocessToken;
     }
-    case BeforeHTMLMode:
+    case BeforeHTMLMode: {
+        switch (token.type()) {
+        case HTMLToken::Uninitialized:
+            ASSERT_NOT_REACHED();
+            break;
+        case HTMLToken::DOCTYPE:
+            parseError(token);
+            return 0;
+        case HTMLToken::Comment:
+            return insertComment(token);
+        case HTMLToken::Character:
+            if (cc == '\t' || cc == '\x0A' || cc == '\x0C' || cc == '\x0D' || cc == ' ')
+                return 0;
+            break;
+        case HTMLToken::StartTag:
+            if (token.name() == htmlTag) {
+                notImplemented();
+                setInsertionMode(BeforeHeadMode);
+                return 0;
+            }
+            break;
+        case HTMLToken::EndTag:
+            if (token.name() == headTag || token.name() == bodyTag || token.name() == htmlTag || token.name() == brTag)
+                break;
+            parseError(token);
+            return 0;
+        case HTMLToken::EndOfFile:
+            break;
+        }
+        notImplemented();
+        setInsertionMode(BeforeHeadMode);
+        goto reprocessToken;
+    }
     case BeforeHeadMode:
     case InHeadMode:
     case InHeadNoscriptMode:
@@ -282,13 +316,13 @@ reprocessToken:
     return 0;
 }
 
-PassRefPtr<Node> HTMLTreeBuilder::insertDoctype(HTMLToken& token)
+PassRefPtr<Node> HTMLTreeBuilder::insertDoctype(AtomicHTMLToken& token)
 {
     ASSERT_UNUSED(token, token.type() == HTMLToken::DOCTYPE);
     return 0;
 }
 
-PassRefPtr<Node> HTMLTreeBuilder::insertComment(HTMLToken& token)
+PassRefPtr<Node> HTMLTreeBuilder::insertComment(AtomicHTMLToken& token)
 {
     ASSERT_UNUSED(token, token.type() == HTMLToken::Comment);
     return 0;
