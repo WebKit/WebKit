@@ -19,7 +19,16 @@ function doit()
     console.groupEnd();
     console.log('1', '2', '3');
     console.groupCollapsed('groupCollapsed');
-
+    console.log({ property: "value" });
+    console.log(42);
+    console.log(true);
+    console.log(null);
+    console.log(undefined);
+    console.log(document);
+    console.log(function() { });
+    console.log(function f() { });
+    console.log([1, 2, 3]);
+    console.log(/regexp.*/);
     dumpConsoleMessagesWithClasses();
 }
 

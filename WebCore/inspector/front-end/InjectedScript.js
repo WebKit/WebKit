@@ -578,14 +578,13 @@ InjectedScript._type = function(obj)
 
 InjectedScript._describe = function(obj, abbreviated)
 {
-    var type1 = InjectedScript._type(obj);
-    var type2 = InjectedScript._className(obj);
+    var type = InjectedScript._type(obj);
 
-    switch (type1) {
+    switch (type) {
     case "object":
     case "node":
     case "array":
-        return type2;
+        return InjectedScript._className(obj);
     case "string":
         if (!abbreviated)
             return obj;
@@ -594,10 +593,8 @@ InjectedScript._describe = function(obj, abbreviated)
         return "\"" + obj + "\"";
     case "function":
         var objectText = InjectedScript._toString(obj);
-        if (!/^function /.test(objectText))
-            objectText = (type2 == "object") ? type1 : type2;
-        else if (abbreviated)
-            objectText = /.*/.exec(obj)[0].replace(/ +$/g, "");
+        if (abbreviated)
+            objectText = /.*/.exec(objectText)[0].replace(/ +$/g, "");
         return objectText;
     default:
         return InjectedScript._toString(obj);
@@ -621,9 +618,7 @@ InjectedScript._className = function(obj)
         return str.replace(/^\[object (.*)\]$/i, "$1");
     } else {
         // V8
-        if (typeof obj !== "object")
-            return "null";
-        return obj.constructor.name || "Object";
+        return obj.constructor && obj.constructor.name || "Object";
     }
 }
 

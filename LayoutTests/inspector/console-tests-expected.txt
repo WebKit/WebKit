@@ -9,6 +9,16 @@ CONSOLE MESSAGE: line 15: repeated
 CONSOLE MESSAGE: line 15: repeated
 CONSOLE MESSAGE: line 15: repeated
 CONSOLE MESSAGE: line 20: 1
+CONSOLE MESSAGE: line 22: [object Object]
+CONSOLE MESSAGE: line 23: 42
+CONSOLE MESSAGE: line 24: true
+CONSOLE MESSAGE: line 25: null
+CONSOLE MESSAGE: line 26: undefined
+CONSOLE MESSAGE: line 27: [object HTMLDocument]
+CONSOLE MESSAGE: line 28: function () { }
+CONSOLE MESSAGE: line 29: function f() { }
+CONSOLE MESSAGE: line 30: 1,2,3
+CONSOLE MESSAGE: line 31: /regexp.*/
 Tests that console logging dumps proper messages.
 
 console-tests.html:9log console-message console-js-source console-log-level
@@ -23,4 +33,14 @@ console-tests.html:18group console-message console-js-source console-log-level c
  console-message console-js-source console-log-level
 console-tests.html:201 2 3 console-message console-js-source console-log-level
 console-tests.html:21groupCollapsed console-message console-js-source console-log-level console-group-title
+console-tests.html:22Object console-message console-js-source console-log-level
+console-tests.html:2342 console-message console-js-source console-log-level
+console-tests.html:24true console-message console-js-source console-log-level
+console-tests.html:25null console-message console-js-source console-log-level
+console-tests.html:26undefined console-message console-js-source console-log-level
+console-tests.html:27Document console-message console-js-source console-log-level
+console-tests.html:28function () { } console-message console-js-source console-log-level
+console-tests.html:29function f() { } console-message console-js-source console-log-level
+console-tests.html:30[1, 2, 3] console-message console-js-source console-log-level
+console-tests.html:31/regexp.*/ console-message console-js-source console-log-level
 

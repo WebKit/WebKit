@@ -1,3 +1,16 @@
+2010-06-24  Andrey Kosyakov  <caseq@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Added tests for representation of various JS values in console log.
+        https://bugs.webkit.org/show_bug.cgi?id=40980
+
+        * inspector/console-log-native-funcs-expected.txt: Added.
+        * inspector/console-tests-expected.txt:
+        * inspector/console-tests.html:
+        * platform/chromium/inspector: Added.
+        * platform/chromium/inspector/console-log-native-funcs-expected.txt: Added.
+
 2010-06-24  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Oliver.

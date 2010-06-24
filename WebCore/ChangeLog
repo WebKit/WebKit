@@ -1,3 +1,17 @@
+2010-06-24  Andrey Kosyakov  <caseq@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Fixed evaluation & logging of null values in console.
+        Changed handling of null and undefined in ScriptValue::toString()
+        to match JSC bindings (i.e. "null" and "undefined" instead of "").
+        https://bugs.webkit.org/show_bug.cgi?id=40980
+
+        * bindings/v8/ScriptValue.cpp:
+        (WebCore::ScriptValue::toString):
+        * inspector/front-end/InjectedScript.js:
+        (injectedScriptConstructor):
+
 2010-06-24  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.
