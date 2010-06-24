@@ -1,3 +1,13 @@
+2010-06-24  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Fix NewRunWebKitTests to work on Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=41180
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg: Added "perl" as first arguments,
+            because Windows fails to understand what we're asking of it.
+
 2010-06-24  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Xan Lopez.
