@@ -71,11 +71,31 @@ public:
 
 private:
     // Represents HTML5 "insertion mode"
-    // http://www.w3.org/TR/html5/syntax.html#insertion-mode
-    // FIXME: Implement remainder of states.
+    // http://www.whatwg.org/specs/web-apps/current-work/multipage/parsing.html#insertion-mode
     enum InsertionMode {
-        Initial,
-        AfterFrameset,
+        InitialMode,
+        BeforeHTMLMode,
+        BeforeHeadMode,
+        InHeadMode,
+        InHeadNoscriptMode,
+        AfterHeadMode,
+        InBodyMode,
+        TextMode,
+        InTableMode,
+        InTableTextMode,
+        InCaptionMode,
+        InColumnGroupMode,
+        InTableBodyMode,
+        InRowMode,
+        InCellMode,
+        InSelectMode,
+        InSelectInTableMode,
+        InForeignContentMode,
+        AfterBodyMode,
+        InFramesetMode,
+        AfterFramesetMode,
+        AfterAfterBodyMode,
+        AfterAfterFramesetMode,
     };
 
     PassRefPtr<Node> passTokenToLegacyParser(HTMLToken&);
