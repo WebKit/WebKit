@@ -1,3 +1,10 @@
+2010-06-24  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Unreviewed test expectations update.
+
+        * platform/chromium-win/svg/text/text-text-05-t-expected.checksum:
+        * platform/chromium-win/svg/text/text-text-05-t-expected.png:
+
 2010-06-24  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed: rebaseline images for r61759 and r61762.
