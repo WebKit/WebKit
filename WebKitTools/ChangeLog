@@ -1,3 +1,13 @@
+2010-06-23  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Build fix, adding new LayoutTestController methods and enabling SVG_FOREIGN_OBJECT.
+
+        * DumpRenderTree/wx/LayoutTestControllerWx.cpp:
+        (LayoutTestController::isPageBoxVisible):
+        (LayoutTestController::pageAreaRectInPixels):
+        (LayoutTestController::preferredPageSizeInPixels):
+        * wx/build/settings.py:
+
 2010-06-23  James Robinson  <jamesr@chromium.org>
 
         Unreviewed.  Add my IRC handle to committers.py so the sheriffbot can yell at me.

@@ -456,3 +456,21 @@ JSRetainPtr<JSStringRef> LayoutTestController::pageProperty(const char* property
 {
 
 }
+
+bool LayoutTestController::isPageBoxVisible(int pageNumber) const
+{
+    // FIXME: Implement
+    return true;
+}
+
+JSRetainPtr<JSStringRef> LayoutTestController::pageAreaRectInPixels(int pageNumber) const
+{
+    // FIXME: Implement
+    return 0;
+}
+
+JSRetainPtr<JSStringRef> LayoutTestController::preferredPageSizeInPixels(int pageNumber) const
+{
+    // FIXME: Implement
+    return 0;
+}
