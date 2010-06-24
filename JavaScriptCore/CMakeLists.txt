@@ -64,6 +64,7 @@ SET(JavaScriptCore_SOURCES
     jit/JITCall32_64.cpp
     jit/JIT.cpp
 
+    parser/JSParser.cpp
     parser/Lexer.cpp
     parser/Nodes.cpp
     parser/Parser.cpp
