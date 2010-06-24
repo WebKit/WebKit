@@ -31,6 +31,7 @@
 #import "LocalCurrentGraphicsContext.h"
 #import "ScrollView.h"
 #import "WebCoreSystemInterface.h"
+#import <Carbon/Carbon.h>
 #include <wtf/StdLibExtras.h>
 
 using namespace std;
@@ -100,17 +101,20 @@ static LengthSize sizeFromFont(const Font& font, const LengthSize& zoomedSize, f
     return sizeFromNSControlSize(controlSizeForFont(font), zoomedSize, zoomFactor, sizes);
 }
 
-static void setControlSize(NSCell* cell, const IntSize* sizes, const IntSize& minZoomedSize, float zoomFactor)
+static ControlSize controlSizeFromPixelSize(const IntSize* sizes, const IntSize& minZoomedSize, float zoomFactor)
 {
-    NSControlSize size;
     if (minZoomedSize.width() >= static_cast<int>(sizes[NSRegularControlSize].width() * zoomFactor) &&
         minZoomedSize.height() >= static_cast<int>(sizes[NSRegularControlSize].height() * zoomFactor))
-        size = NSRegularControlSize;
-    else if (minZoomedSize.width() >= static_cast<int>(sizes[NSSmallControlSize].width() * zoomFactor) &&
-             minZoomedSize.height() >= static_cast<int>(sizes[NSSmallControlSize].height() * zoomFactor))
-        size = NSSmallControlSize;
-    else
-        size = NSMiniControlSize;
+        return NSRegularControlSize;
+    if (minZoomedSize.width() >= static_cast<int>(sizes[NSSmallControlSize].width() * zoomFactor) &&
+        minZoomedSize.height() >= static_cast<int>(sizes[NSSmallControlSize].height() * zoomFactor))
+        return NSSmallControlSize;
+    return NSMiniControlSize;
+}
+
+static void setControlSize(NSCell* cell, const IntSize* sizes, const IntSize& minZoomedSize, float zoomFactor)
+{
+    NSControlSize size = controlSizeFromPixelSize(sizes, minZoomedSize, zoomFactor);
     if (size != [cell controlSize]) // Only update if we have to, since AppKit does work even if the size is the same.
         [cell setControlSize:size];
 }
@@ -147,6 +151,22 @@ static void updateStates(NSCell* cell, ControlStates states)
         
     // Window inactive state does not need to be checked explicitly, since we paint parented to 
     // a view in a window whose key state can be detected.
+}
+
+static ThemeDrawState convertControlStatesToThemeDrawState(ThemeButtonKind kind, ControlStates states)
+{
+    if (states & ReadOnlyState)
+        return kThemeStateUnavailableInactive;
+    if (!(states & EnabledState))
+        return kThemeStateUnavailableInactive;
+
+    // Do not process PressedState if !EnabledState or ReadOnlyState.
+    if (states & PressedState) {
+        if (kind == kThemeIncDecButton || kind == kThemeIncDecButtonSmall || kind == kThemeIncDecButtonMini)
+            return states & SpinUpState ? kThemeStatePressedUp : kThemeStatePressedDown;
+        return kThemeStatePressed;
+    }
+    return kThemeStateActive;
 }
 
 static IntRect inflateRect(const IntRect& zoomedRect, const IntSize& zoomedSize, const int* margins, float zoomFactor)
@@ -469,29 +489,25 @@ static NSControlSize stepperControlSizeForFont(const Font& font)
     return NSMiniControlSize;
 }
 
-static NSStepperCell* stepper(ControlStates states, const IntRect& zoomedRect, float zoomFactor)
+static void paintStepper(ControlStates states, GraphicsContext* context, const IntRect& zoomedRect, float zoomFactor, ScrollView*)
 {
-    static NSStepperCell* cell = [[NSStepperCell alloc] init];
-    setControlSize(cell, stepperSizes(), zoomedRect.size(), zoomFactor);
+    // We don't use NSStepperCell because there are no ways to draw an
+    // NSStepperCell with the up button highlighted.
 
-    updateStates(cell, states);
-    if (states & PressedState && states & SpinUpState) {
-        // FIXME: There is no way to draw a NSSteperCell with the up button hilighted.
-        // Disables the hilight of the down button if the up button is pressed.
-        [cell setHighlighted:NO];
-    }
-    return cell;
-}
+    HIThemeButtonDrawInfo drawInfo;
+    drawInfo.version = 0;
+    drawInfo.state = convertControlStatesToThemeDrawState(kThemeIncDecButton, states);
+    drawInfo.adornment = kThemeAdornmentDefault;
+    ControlSize controlSize = controlSizeFromPixelSize(stepperSizes(), zoomedRect.size(), zoomFactor);
+    if (controlSize == NSSmallControlSize)
+        drawInfo.kind = kThemeIncDecButtonSmall;
+    else if (controlSize == NSMiniControlSize)
+        drawInfo.kind = kThemeIncDecButtonMini;
+    else
+        drawInfo.kind = kThemeIncDecButton;
 
-static void paintStepper(ControlStates states, GraphicsContext* context, const IntRect& zoomedRect, float zoomFactor, ScrollView* scrollView)
-{
-    NSStepperCell* cell = stepper(states, zoomedRect, zoomFactor);
-
-    context->save();
-    NSControlSize controlSize = [cell controlSize];
-    IntSize zoomedSize = stepperSizes()[controlSize];
     IntRect rect(zoomedRect);
-
+    context->save();
     if (zoomFactor != 1.0f) {
         rect.setWidth(rect.width() / zoomFactor);
         rect.setHeight(rect.height() / zoomFactor);
@@ -499,12 +515,15 @@ static void paintStepper(ControlStates states, GraphicsContext* context, const I
         context->scale(FloatSize(zoomFactor, zoomFactor));
         context->translate(-rect.x(), -rect.y());
     }
-
-    BEGIN_BLOCK_OBJC_EXCEPTIONS
-    [cell drawWithFrame:NSRect(rect) inView:ThemeMac::ensuredView(scrollView)];
-    [cell setControlView:nil];
-    END_BLOCK_OBJC_EXCEPTIONS
-
+    CGRect bounds(rect);
+    // Adjust 'bounds' so that HIThemeDrawButton(bounds,...) draws exactly on 'rect'.
+    CGRect backgroundBounds;
+    HIThemeGetButtonBackgroundBounds(&bounds, &drawInfo, &backgroundBounds);
+    if (bounds.origin.x != backgroundBounds.origin.x)
+        bounds.origin.x += bounds.origin.x - backgroundBounds.origin.x;
+    if (bounds.origin.y != backgroundBounds.origin.y)
+        bounds.origin.y += bounds.origin.y - backgroundBounds.origin.y;
+    HIThemeDrawButton(&bounds, &drawInfo, context->platformContext(), kHIThemeOrientationNormal, 0);
     context->restore();
 }
 
@@ -669,8 +688,7 @@ void ThemeMac::inflateControlPaintRect(ControlPart part, ControlStates states, I
         }
         case OuterSpinButtonPart: {
             static const int stepperMargin[4] = { 0, 0, 0, 0};
-            NSCell *cell = stepper(states, zoomedRect, zoomFactor);
-            NSControlSize controlSize = [cell controlSize];
+            NSControlSize controlSize = controlSizeFromPixelSize(stepperSizes(), zoomedRect.size(), zoomFactor);
             IntSize zoomedSize = stepperSizes()[controlSize];
             zoomedSize.setHeight(zoomedSize.height() * zoomFactor);
             zoomedSize.setWidth(zoomedSize.width() * zoomFactor);

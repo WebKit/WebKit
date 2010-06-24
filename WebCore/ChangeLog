@@ -1,3 +1,24 @@
+2010-06-24  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        [Mac] The upper button of <input type=number> has no visual effect on click
+        https://bugs.webkit.org/show_bug.cgi?id=38380
+
+        Because we have no ways to draw an NSStepperCell with its up button
+        highlighted, use HIThemeDrawButton() instead.
+
+        Test: platform/mac/fast/forms/input-appearance-spinbutton-up.html
+
+        * platform/mac/ThemeMac.mm:
+        (WebCore::controlSizeFromPixelSize):
+          New function. Made from a part of setControlSize().
+        (WebCore::setControlSize):
+        (WebCore::convertControlStatesToThemeDrawState):
+        (WebCore::paintStepper): Use HITheme API instead of NSStepperCell.
+        (WebCore::ThemeMac::inflateControlPaintRect):
+          Use controlSizeFromPixelSize().
+
 2010-06-24  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.
