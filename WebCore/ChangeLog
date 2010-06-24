@@ -1,3 +1,10 @@
+2010-06-24  Kent Tamura  <tkent@chromium.org>
+
+        Unreviewed.  Build fix for Chromium Mac.
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::isSpeechEnabled):
+
 2010-06-24  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Unreviewed Symbian build fix.

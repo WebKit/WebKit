@@ -2822,12 +2822,32 @@ bool HTMLInputElement::isSpeechEnabled() const
 {
     switch (inputType()) {
     // FIXME: Add support for RANGE, EMAIL, URL, COLOR and DATE/TIME input types.
-    case TEXT:
+    case NUMBER:
     case PASSWORD:
     case SEARCH:
-    case NUMBER:
     case TELEPHONE:
+    case TEXT:
         return hasAttribute(speechAttr);
+    case BUTTON:
+    case CHECKBOX:
+    case COLOR:
+    case DATE:
+    case DATETIME:
+    case DATETIMELOCAL:
+    case EMAIL:
+    case FILE:
+    case HIDDEN:
+    case IMAGE:
+    case ISINDEX:
+    case MONTH:
+    case RADIO:
+    case RANGE:
+    case RESET:
+    case SUBMIT:
+    case TIME:
+    case URL:
+    case WEEK:
+        return false;
     }
     return false;
 }
