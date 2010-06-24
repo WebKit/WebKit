@@ -1,3 +1,10 @@
+2010-06-24  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Unreviewed test expectations update.
+
+        * platform/chromium-mac/css2.1/t0804-c5510-padn-00-b-ag-expected.checksum: Copied from LayoutTests/platform/mac/css2.1/t0804-c5510-padn-00-b-ag-expected.checksum.
+        * platform/chromium-mac/css2.1/t0804-c5510-padn-00-b-ag-expected.png: Added.
+
 2010-06-24  Adele Peterson  <adele@apple.com>
 
         Reviewed by Eric Carlson.
