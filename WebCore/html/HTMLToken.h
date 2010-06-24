@@ -239,6 +239,11 @@ public:
     }
 
 private:
+    // FIXME: I'm not sure what the final relationship between HTMLToken and
+    // AtomicHTMLToken will be.  I'm marking this a friend for now, but we'll
+    // want to end up with a cleaner interface between the two classes.
+    friend class AtomicHTMLToken;
+
     class DoctypeData {
     public:
         DoctypeData()
@@ -271,6 +276,121 @@ private:
 
     // A pointer into m_attributes used during lexing.
     Attribute* m_currentAttribute;
+};
+
+// FIXME: This class should eventually be named HTMLToken once we move the
+// exiting HTMLToken to be internal to the HTMLTokenizer.
+class AtomicHTMLToken : public Noncopyable {
+public:
+    AtomicHTMLToken(HTMLToken& token)
+        : m_type(token.type())
+    {
+        switch (m_type) {
+        case HTMLToken::Uninitialized:
+            ASSERT_NOT_REACHED();
+            break;
+        case HTMLToken::DOCTYPE:
+            m_name = AtomicString(token.name().data(), token.name().size());
+            m_doctypeData.set(token.m_doctypeData.release());
+            break;
+        case HTMLToken::EndOfFile:
+            break;
+        case HTMLToken::StartTag:
+        case HTMLToken::EndTag: {
+            m_selfClosing = token.selfClosing();
+            m_name = AtomicString(token.name().data(), token.name().size());
+            const HTMLToken::AttributeList& attributes = token.attributes();
+            for (HTMLToken::AttributeList::const_iterator iter = attributes.begin();
+                 iter != attributes.end(); ++iter) {
+                if (!iter->m_name.isEmpty()) {
+                    String name(iter->m_name.data(), iter->m_name.size());
+                    String value(iter->m_value.data(), iter->m_value.size());
+                    RefPtr<Attribute> mappedAttribute = Attribute::createMapped(name, value);
+                    if (!m_attributes)
+                        m_attributes = NamedNodeMap::create();
+                    m_attributes->insertAttribute(mappedAttribute.release(), false);
+                }
+            }
+            break;
+        }
+        case HTMLToken::Comment:
+            m_data = String(token.comment().data(), token.comment().size());
+            break;
+        case HTMLToken::Character:
+            m_data = String(token.characters().data(), token.characters().size());
+            break;
+        }
+    }
+
+    HTMLToken::Type type() const { return m_type; }
+
+    const AtomicString& name() const
+    {
+        ASSERT(m_type == HTMLToken::StartTag || m_type == HTMLToken::EndTag || m_type == HTMLToken::DOCTYPE);
+        return m_name;
+    }
+
+    bool selfClosing() const
+    {
+        ASSERT(m_type == HTMLToken::StartTag || m_type == HTMLToken::EndTag);
+        return m_selfClosing;
+    }
+
+    NamedNodeMap* attributes() const
+    {
+        ASSERT(m_type == HTMLToken::StartTag || m_type == HTMLToken::EndTag);
+        return m_attributes.get();
+    }
+
+    const String& characters() const
+    {
+        ASSERT(m_type == HTMLToken::Character);
+        return m_data;
+    }
+
+    const String& comment() const
+    {
+        ASSERT(m_type == HTMLToken::Comment);
+        return m_data;
+    }
+
+    // FIXME: Distinguish between a missing public identifer and an empty one.
+    const WTF::Vector<UChar>& publicIdentifier() const
+    {
+        ASSERT(m_type == HTMLToken::DOCTYPE);
+        return m_doctypeData->m_publicIdentifier;
+    }
+
+    // FIXME: Distinguish between a missing system identifer and an empty one.
+    const WTF::Vector<UChar>& systemIdentifier() const
+    {
+        ASSERT(m_type == HTMLToken::DOCTYPE);
+        return m_doctypeData->m_systemIdentifier;
+    }
+
+    bool forceQuirks() const
+    {
+        ASSERT(m_type == HTMLToken::DOCTYPE);
+        return m_doctypeData->m_forceQuirks;
+    }
+
+private:
+    HTMLToken::Type m_type;
+
+    // "name" for DOCTYPE, StartTag, and EndTag
+    AtomicString m_name;
+
+    // "characters" for Character
+    // "data" for Comment
+    String m_data;
+
+    // For DOCTYPE
+    OwnPtr<HTMLToken::DoctypeData> m_doctypeData;
+
+    // For StartTag and EndTag
+    bool m_selfClosing;
+
+    RefPtr<NamedNodeMap> m_attributes;
 };
 
 }

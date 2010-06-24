@@ -1,3 +1,30 @@
+2010-06-24  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Add AtomicHTMLToken
+        https://bugs.webkit.org/show_bug.cgi?id=41131
+
+        We need an atomized version of the token for use in the tree builder.
+        Eventually, we should make the existing HTMLToken an internal detail of
+        the HTMLTokenizer.  This new AtomicHTMLToken should be also be more
+        easily cached between the preload scanner and the tree builder.
+
+        * html/HTMLToken.h:
+        (WebCore::AtomicHTMLToken::AtomicHTMLToken):
+        (WebCore::AtomicHTMLToken::type):
+        (WebCore::AtomicHTMLToken::name):
+        (WebCore::AtomicHTMLToken::selfClosing):
+        (WebCore::AtomicHTMLToken::attributes):
+        (WebCore::AtomicHTMLToken::characters):
+        (WebCore::AtomicHTMLToken::comment):
+        (WebCore::AtomicHTMLToken::publicIdentifier):
+        (WebCore::AtomicHTMLToken::systemIdentifier):
+        (WebCore::AtomicHTMLToken::forceQuirks):
+        * html/HTMLTreeBuilder.cpp:
+        (WebCore::convertToOldStyle):
+        (WebCore::HTMLTreeBuilder::passTokenToLegacyParser):
+
 2010-06-24  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

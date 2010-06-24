@@ -77,7 +77,7 @@ HTMLTreeBuilder::~HTMLTreeBuilder()
 {
 }
 
-static void convertToOldStyle(HTMLToken& token, Token& oldStyleToken)
+static void convertToOldStyle(const AtomicHTMLToken& token, Token& oldStyleToken)
 {
     switch (token.type()) {
     case HTMLToken::Uninitialized:
@@ -92,28 +92,17 @@ static void convertToOldStyle(HTMLToken& token, Token& oldStyleToken)
     case HTMLToken::EndTag: {
         oldStyleToken.beginTag = (token.type() == HTMLToken::StartTag);
         oldStyleToken.selfClosingTag = token.selfClosing();
-        oldStyleToken.tagName = AtomicString(token.name().data(), token.name().size());
-        const HTMLToken::AttributeList& attributes = token.attributes();
-        for (HTMLToken::AttributeList::const_iterator iter = attributes.begin();
-             iter != attributes.end(); ++iter) {
-            if (!iter->m_name.isEmpty()) {
-                String name(iter->m_name.data(), iter->m_name.size());
-                String value(iter->m_value.data(), iter->m_value.size());
-                RefPtr<Attribute> mappedAttribute = Attribute::createMapped(name, value);
-                if (!oldStyleToken.attrs)
-                    oldStyleToken.attrs = NamedNodeMap::create();
-                oldStyleToken.attrs->insertAttribute(mappedAttribute.release(), false);
-            }
-        }
+        oldStyleToken.tagName = token.name();
+        oldStyleToken.attrs = token.attributes();
         break;
     }
     case HTMLToken::Comment:
         oldStyleToken.tagName = commentAtom;
-        oldStyleToken.text = StringImpl::create(token.comment().data(), token.comment().size());
+        oldStyleToken.text = token.comment().impl();
         break;
     case HTMLToken::Character:
         oldStyleToken.tagName = textAtom;
-        oldStyleToken.text = StringImpl::create(token.characters().data(), token.characters().size());
+        oldStyleToken.text = token.characters().impl();
         break;
     }
 }
@@ -181,7 +170,8 @@ PassRefPtr<Node> HTMLTreeBuilder::passTokenToLegacyParser(HTMLToken& token)
 
     // For now, we translate into an old-style token for testing.
     Token oldStyleToken;
-    convertToOldStyle(token, oldStyleToken);
+    AtomicHTMLToken atomicToken(token);
+    convertToOldStyle(atomicToken, oldStyleToken);
 
     RefPtr<Node> result =  m_legacyTreeBuilder->parseToken(&oldStyleToken);
     if (token.type() == HTMLToken::StartTag) {
