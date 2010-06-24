@@ -62,13 +62,11 @@
 #include "WebDevToolsMessageData.h"
 #include "WebDevToolsMessageTransport.h"
 #include "WebFrameImpl.h"
-#include "WebRect.h"
 #include "WebString.h"
 #include "WebURL.h"
 #include "WebURLError.h"
 #include "WebURLRequest.h"
 #include "WebURLResponse.h"
-#include "WebViewClient.h"
 #include "WebViewImpl.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/OwnPtr.h>
@@ -106,9 +104,23 @@ void InspectorBackendWeakReferenceCallback(v8::Persistent<v8::Value> object, voi
     object.Dispose();
 }
 
-static const char kResourceTrackingFeatureName[] = "resource-tracking";
-static const char kTimelineFeatureName[] = "timeline-profiler";
+void SetApuAgentEnabledInUtilityContext(v8::Handle<v8::Context> context, bool enabled)
+{
+    v8::HandleScope handleScope;
+    v8::Context::Scope contextScope(context);
+    v8::Handle<v8::Object> dispatcher = v8::Local<v8::Object>::Cast(
+        context->Global()->Get(v8::String::New("ApuAgentDispatcher")));
+    if (dispatcher.IsEmpty())
+        return;
+    dispatcher->Set(v8::String::New("enabled"), v8::Boolean::New(enabled));
+}
+
+// TODO(pfeldman): Make this public in WebDevToolsAgent API.
 static const char kApuAgentFeatureName[] = "apu-agent";
+
+// Keep these in sync with the ones in inject_dispatch.js.
+static const char kTimelineFeatureName[] = "timeline-profiler";
+static const char kResourceTrackingFeatureName[] = "resource-tracking";
 
 class IORPCDelegate : public DevToolsRPC::Delegate, public Noncopyable {
 public:
@@ -300,6 +312,21 @@ void WebDevToolsAgentImpl::didNavigate()
     DebuggerAgentManager::onNavigate();
 }
 
+void WebDevToolsAgentImpl::didCommitProvisionalLoad(WebFrameImpl* webframe, bool isNewNavigation)
+{
+    if (!m_attached)
+        return;
+    WebDataSource* ds = webframe->dataSource();
+    const WebURLRequest& request = ds->request();
+    WebURL url = ds->hasUnreachableURL() ?
+        ds->unreachableURL() :
+        request.url();
+    if (!webframe->parent()) {
+        m_toolsAgentDelegateStub->frameNavigate(WebCore::KURL(url).string());
+        SetApuAgentEnabledInUtilityContext(m_utilityContext, m_apuAgentEnabled);
+    }
+}
+
 void WebDevToolsAgentImpl::didClearWindowObject(WebFrameImpl* webframe)
 {
     DebuggerAgentManager::setHostId(webframe, m_hostId);
@@ -391,6 +418,15 @@ void WebDevToolsAgentImpl::initDevToolsAgentHost()
     devtoolsAgentHost.addProtoFunction(
         "dispatch",
         WebDevToolsAgentImpl::jsDispatchOnClient);
+    devtoolsAgentHost.addProtoFunction(
+        "dispatchToApu",
+        WebDevToolsAgentImpl::jsDispatchToApu);
+    devtoolsAgentHost.addProtoFunction(
+        "evaluateOnSelf",
+        WebDevToolsAgentImpl::jsEvaluateOnSelf);
+    devtoolsAgentHost.addProtoFunction(
+        "runtimeFeatureStateChanged",
+        WebDevToolsAgentImpl::jsOnRuntimeFeatureStateChanged);
     devtoolsAgentHost.build();
 
     v8::HandleScope scope;
@@ -451,6 +487,7 @@ void WebDevToolsAgentImpl::setInspectorFrontendProxyToInspectorController()
 void WebDevToolsAgentImpl::setApuAgentEnabled(bool enabled)
 {
     m_apuAgentEnabled = enabled;
+    SetApuAgentEnabledInUtilityContext(m_utilityContext, enabled);
     InspectorController* ic = m_webViewImpl->page()->inspectorController();
     if (enabled) {
         m_resourceTrackingWasEnabled = ic->resourceTrackingEnabled();
@@ -479,24 +516,54 @@ v8::Handle<v8::Value> WebDevToolsAgentImpl::jsDispatchOnClient(const v8::Argumen
     String message = WebCore::toWebCoreStringWithNullCheck(args[0]);
     if (message.isEmpty() || exceptionCatcher.HasCaught())
         return v8::Undefined();
-
     WebDevToolsAgentImpl* agent = static_cast<WebDevToolsAgentImpl*>(v8::External::Cast(*args.Data())->Value());
+    agent->m_toolsAgentDelegateStub->dispatchOnClient(message);
+    return v8::Undefined();
+}
 
-    if (!agent->m_apuAgentEnabled) {
-        agent->m_toolsAgentDelegateStub->dispatchOnClient(message);
+// static
+v8::Handle<v8::Value> WebDevToolsAgentImpl::jsDispatchToApu(const v8::Arguments& args)
+{
+    v8::TryCatch exceptionCatcher;
+    String message = WebCore::toWebCoreStringWithNullCheck(args[0]);
+    if (message.isEmpty() || exceptionCatcher.HasCaught())
         return v8::Undefined();
-    }
-
-    String method = WebCore::toWebCoreStringWithNullCheck(args[1]);
-    if (method.isEmpty() || exceptionCatcher.HasCaught())
-        return v8::Undefined();
-
-    if (method != "addRecordToTimeline" && method != "updateResource" && method != "addResource")
-        return v8::Undefined();
-
+    WebDevToolsAgentImpl* agent = static_cast<WebDevToolsAgentImpl*>(
+        v8::External::Cast(*args.Data())->Value());
     agent->m_apuAgentDelegateStub->dispatchToApu(message);
     return v8::Undefined();
 }
+
+// static
+v8::Handle<v8::Value> WebDevToolsAgentImpl::jsEvaluateOnSelf(const v8::Arguments& args)
+{
+    String code;
+    {
+        v8::TryCatch exceptionCatcher;
+        code = WebCore::toWebCoreStringWithNullCheck(args[0]);
+        if (code.isEmpty() || exceptionCatcher.HasCaught())
+            return v8::Undefined();
+    }
+    WebDevToolsAgentImpl* agent = static_cast<WebDevToolsAgentImpl*>(v8::External::Cast(*args.Data())->Value());
+    v8::Context::Scope(agent->m_utilityContext);
+    V8Proxy* proxy = V8Proxy::retrieve(agent->m_webViewImpl->page()->mainFrame());
+    v8::Local<v8::Value> result = proxy->runScript(v8::Script::Compile(v8::String::New(code.utf8().data())), true);
+    return result;
+}
+
+// static
+v8::Handle<v8::Value> WebDevToolsAgentImpl::jsOnRuntimeFeatureStateChanged(const v8::Arguments& args)
+{
+    v8::TryCatch exceptionCatcher;
+    String feature = WebCore::toWebCoreStringWithNullCheck(args[0]);
+    bool enabled = args[1]->ToBoolean()->Value();
+    if (feature.isEmpty() || exceptionCatcher.HasCaught())
+        return v8::Undefined();
+    WebDevToolsAgentImpl* agent = static_cast<WebDevToolsAgentImpl*>(v8::External::Cast(*args.Data())->Value());
+    agent->m_client->runtimeFeatureStateChanged(feature, enabled);
+    return v8::Undefined();
+}
+
 
 WebCore::InspectorController* WebDevToolsAgentImpl::inspectorController()
 {
@@ -549,83 +616,6 @@ void WebDevToolsAgentImpl::didFailLoading(unsigned long resourceId, const WebURL
     ResourceError resourceError;
     if (InspectorController* ic = inspectorController())
         ic->didFailLoading(resourceId, resourceError);
-}
-
-void WebDevToolsAgentImpl::inspectorDestroyed()
-{
-    // Our lifetime is bound to the WebViewImpl.
-}
-
-void WebDevToolsAgentImpl::openInspectorFrontend(InspectorController*)
-{
-}
-
-void WebDevToolsAgentImpl::highlight(Node* node)
-{
-    // InspectorController does the actuall tracking of the highlighted node
-    // and the drawing of the highlight. Here we just make sure to invalidate
-    // the rects of the old and new nodes.
-    hideHighlight();
-}
-
-void WebDevToolsAgentImpl::hideHighlight()
-{
-    // FIXME: able to invalidate a smaller rect.
-    // FIXME: Is it important to just invalidate the rect of the node region
-    // given that this is not on a critical codepath?  In order to do so, we'd
-    // have to take scrolling into account.
-    const WebSize& size = m_webViewImpl->size();
-    WebRect damagedRect(0, 0, size.width, size.height);
-    if (m_webViewImpl->client())
-        m_webViewImpl->client()->didInvalidateRect(damagedRect);
-}
-
-void WebDevToolsAgentImpl::populateSetting(const String& key, String* value)
-{
-    WebString string;
-    m_webViewImpl->inspectorSetting(key, &string);
-    *value = string;
-}
-
-void WebDevToolsAgentImpl::storeSetting(const String& key, const String& value)
-{
-    m_webViewImpl->setInspectorSetting(key, value);
-}
-
-bool WebDevToolsAgentImpl::sendMessageToFrontend(const WebCore::String& message)
-{
-    WebDevToolsAgentImpl* devToolsAgent = static_cast<WebDevToolsAgentImpl*>(m_webViewImpl->devToolsAgent());
-    if (!devToolsAgent)
-        return false;
-
-    WebVector<WebString> arguments(size_t(1));
-    arguments[0] = message;
-    WebDevToolsMessageData data;
-    data.className = "ToolsAgentDelegate";
-    data.methodName = "dispatchOnClient";
-    data.arguments.swap(arguments);
-    devToolsAgent->sendRpcMessage(data);
-    return true;
-}
-
-void WebDevToolsAgentImpl::resourceTrackingWasEnabled()
-{
-    m_client->runtimeFeatureStateChanged(kResourceTrackingFeatureName, true);
-}
-
-void WebDevToolsAgentImpl::resourceTrackingWasDisabled()
-{
-    m_client->runtimeFeatureStateChanged(kResourceTrackingFeatureName, false);
-}
-
-void WebDevToolsAgentImpl::timelineProfilerWasStarted()
-{
-    m_client->runtimeFeatureStateChanged(kTimelineFeatureName, true);
-}
-
-void WebDevToolsAgentImpl::timelineProfilerWasStopped()
-{
-    m_client->runtimeFeatureStateChanged(kTimelineFeatureName, false);
 }
 
 void WebDevToolsAgentImpl::evaluateInWebInspector(long callId, const WebString& script)

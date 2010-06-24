@@ -40,13 +40,7 @@ WebInspector._platformFlavor = WebInspector.PlatformFlavor.MacLeopard;
 WebInspector.InspectorFrontendHostStub.prototype = {
     platform: function()
     {
-        var match = navigator.userAgent.match(/Windows NT/);
-        if (match)
-            return "windows";
-        match = navigator.userAgent.match(/Mac OS X/);
-        if (match)
-            return "mac";
-        return "linux";
+        return "mac";
     },
 
     port: function()

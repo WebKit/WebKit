@@ -735,6 +735,9 @@ void FrameLoaderClientImpl::dispatchDidCommitLoad()
 
     if (m_webFrame->client())
         m_webFrame->client()->didCommitProvisionalLoad(m_webFrame, isNewNavigation);
+
+    if (webview->devToolsAgentPrivate())
+        webview->devToolsAgentPrivate()->didCommitProvisionalLoad(m_webFrame, isNewNavigation);
 }
 
 void FrameLoaderClientImpl::dispatchDidFailProvisionalLoad(

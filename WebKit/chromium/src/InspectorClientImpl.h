@@ -28,26 +28,38 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebDevToolsAgentPrivate_h
-#define WebDevToolsAgentPrivate_h
+#ifndef InspectorClientImpl_h
+#define InspectorClientImpl_h
 
-#include "WebDevToolsAgent.h"
+#include "InspectorClient.h"
+#include "InspectorController.h"
+#include <wtf/OwnPtr.h>
 
 namespace WebKit {
-class WebFrameImpl;
 
-class WebDevToolsAgentPrivate : public WebDevToolsAgent {
+class WebDevToolsAgentClient;
+class WebViewImpl;
+
+class InspectorClientImpl : public WebCore::InspectorClient {
 public:
-    // Notifications from FrameLoaderClientImpl:
+    InspectorClientImpl(WebViewImpl*);
+    ~InspectorClientImpl();
 
-    // The window object for the frame has been cleared of any extra properties
-    // that may have been set by script from the previously loaded document.
-    virtual void didClearWindowObject(WebFrameImpl*) = 0;
+    // InspectorClient methods:
+    virtual void inspectorDestroyed();
+    virtual void openInspectorFrontend(WebCore::InspectorController*);
 
-    // The provisional datasource is now committed.  The first part of the
-    // response body has been received, and the encoding of the response body
-    // is known.
-    virtual void didCommitProvisionalLoad(WebFrameImpl*, bool isNewNavigation) = 0;
+    virtual void highlight(WebCore::Node*);
+    virtual void hideHighlight();
+
+    virtual void populateSetting(const WebCore::String& key, WebCore::String* value);
+    virtual void storeSetting(const WebCore::String& key, const WebCore::String& value);
+
+    virtual bool sendMessageToFrontend(const WebCore::String&);
+private:
+
+    // The WebViewImpl of the page being inspected; gets passed to the constructor
+    WebViewImpl* m_inspectedWebView;
 };
 
 } // namespace WebKit

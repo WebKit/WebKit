@@ -121,6 +121,24 @@ devtools.InspectorBackendImpl = function()
 devtools.InspectorBackendImpl.prototype.__proto__ = WebInspector.InspectorBackendStub.prototype;
 
 
+/**
+ * @override
+ */
+devtools.InspectorBackendImpl.prototype.debuggerEnabled = function()
+{
+    return true;
+};
+
+
+/**
+ * @override
+ */
+devtools.InspectorBackendImpl.prototype.profilerEnabled = function()
+{
+    return true;
+};
+
+
 if (!window.v8ScriptDebugServerEnabled) {
 
 devtools.InspectorBackendImpl.prototype.setBreakpoint = function(sourceID, line, enabled, condition)

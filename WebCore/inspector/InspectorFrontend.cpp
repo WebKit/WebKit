@@ -184,6 +184,14 @@ void InspectorFrontend::updateFocusedNode(long nodeId)
     function.call();
 }
 
+void InspectorFrontend::setAttachedWindow(bool attached)
+{
+    ScriptFunctionCall function(m_webInspector, "dispatch"); 
+    function.appendArgument("setAttachedWindow");
+    function.appendArgument(attached);
+    function.call();
+}
+
 void InspectorFrontend::showPanel(int panel)
 {
     const char* showFunctionName;

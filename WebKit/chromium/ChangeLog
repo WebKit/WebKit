@@ -1,3 +1,79 @@
+2010-06-24  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed: revert 61766.
+
+        * WebKit.gyp:
+        * public/WebView.h:
+        * src/FrameLoaderClientImpl.cpp:
+        (WebKit::FrameLoaderClientImpl::dispatchDidCommitLoad):
+        * src/InspectorClientImpl.cpp: Added.
+        (WebKit::InspectorClientImpl::InspectorClientImpl):
+        (WebKit::InspectorClientImpl::~InspectorClientImpl):
+        (WebKit::InspectorClientImpl::inspectorDestroyed):
+        (WebKit::InspectorClientImpl::openInspectorFrontend):
+        (WebKit::invalidateNodeBoundingRect):
+        (WebKit::InspectorClientImpl::highlight):
+        (WebKit::InspectorClientImpl::hideHighlight):
+        (WebKit::InspectorClientImpl::populateSetting):
+        (WebKit::InspectorClientImpl::storeSetting):
+        (WebKit::InspectorClientImpl::sendMessageToFrontend):
+        * src/InspectorClientImpl.h: Added.
+        * src/InspectorFrontendClientImpl.cpp:
+        (WebKit::InspectorFrontendClientImpl::inspectedURLChanged):
+        * src/ToolsAgent.h:
+        * src/WebDevToolsAgentImpl.cpp:
+        (WebKit::):
+        (WebKit::WebDevToolsAgentImpl::didCommitProvisionalLoad):
+        (WebKit::WebDevToolsAgentImpl::initDevToolsAgentHost):
+        (WebKit::WebDevToolsAgentImpl::setApuAgentEnabled):
+        (WebKit::WebDevToolsAgentImpl::jsDispatchOnClient):
+        (WebKit::WebDevToolsAgentImpl::jsDispatchToApu):
+        (WebKit::WebDevToolsAgentImpl::jsEvaluateOnSelf):
+        (WebKit::WebDevToolsAgentImpl::jsOnRuntimeFeatureStateChanged):
+        * src/WebDevToolsAgentImpl.h:
+        * src/WebDevToolsAgentPrivate.h:
+        * src/WebViewImpl.cpp:
+        (WebKit::WebView::create):
+        (WebKit::WebViewImpl::WebViewImpl):
+        (WebKit::WebViewImpl::setDevToolsAgent):
+        * src/WebViewImpl.h:
+        * src/WebWorkerBase.cpp:
+        (WebKit::WebWorkerBase::initializeLoader):
+        * src/js/DevTools.js:
+        (devtools.ToolsAgent):
+        (devtools.ToolsAgent.prototype.frameNavigate_):
+        ():
+        * src/js/DevToolsHostStub.js:
+        (.RemoteDebuggerAgentStub):
+        (.RemoteDebuggerAgentStub.prototype.getContextId):
+        (.RemoteDebuggerAgentStub.prototype.processDebugCommands):
+        (.RemoteProfilerAgentStub):
+        (.RemoteProfilerAgentStub.prototype.getActiveProfilerModules):
+        (.RemoteProfilerAgentStub.prototype.getLogLines):
+        (.RemoteToolsAgentStub):
+        (.RemoteToolsAgentStub.prototype.dispatchOnInjectedScript):
+        (.RemoteToolsAgentStub.prototype.dispatchOnInspectorController):
+        (.ProfilerStubHelper):
+        (.ProfilerStubHelper.GetInstance):
+        (.ProfilerStubHelper.prototype.StopProfiling):
+        (.ProfilerStubHelper.prototype.StartProfiling):
+        (.ProfilerStubHelper.prototype.getActiveProfilerModules):
+        (.ProfilerStubHelper.prototype.getLogLines):
+        (.RemoteDebuggerCommandExecutorStub):
+        (.RemoteDebuggerCommandExecutorStub.prototype.DebuggerCommand):
+        (.RemoteDebuggerCommandExecutorStub.prototype.DebuggerPauseScript):
+        (.RemoteDebuggerCommandExecutorStub.prototype.sendResponse_):
+        (.DevToolsHostStub):
+        (.DevToolsHostStub.prototype.reset):
+        (.DevToolsHostStub.prototype.setting):
+        (.DevToolsHostStub.prototype.setSetting):
+        * src/js/InjectDispatch.js:
+        (ApuAgentDispatcher.dispatchToApu):
+        (dispatch):
+        * src/js/InspectorControllerImpl.js:
+        (devtools.InspectorBackendImpl.prototype.debuggerEnabled):
+        (devtools.InspectorBackendImpl.prototype.profilerEnabled):
+
 2010-06-23  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Yury Semikhatsky.
