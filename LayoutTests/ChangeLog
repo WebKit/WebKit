@@ -1,3 +1,16 @@
+2010-06-22  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Implement IDL attribute for HTML5 hidden
+        https://bugs.webkit.org/show_bug.cgi?id=41039
+
+        Test cases.
+        
+        * fast/html/hidden-attr-dom.html: Added.
+        * fast/html/hidden-attr-dom-expected.txt: Added.
+        * fast/html/script-tests/hidden-attr-dom.js: Added.
+
 2010-06-23  Tony Chang  <tony@chromium.org>
 
         Not reviewed, fixing gtk/qt tests

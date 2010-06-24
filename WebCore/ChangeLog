@@ -1,3 +1,15 @@
+2010-06-22  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Implement IDL attribute for HTML5 hidden
+        https://bugs.webkit.org/show_bug.cgi?id=41039
+
+        Test: fast/html/hidden-attr-dom.html
+
+        * html/HTMLElement.idl: Just add to the IDL file. [Reflect] takes
+        care of the rest.
+
 2010-06-23  Joanmarie Diggs  <joanmarie.diggs@gmail.com>
 
         Reviewed by Chris Fleizach.

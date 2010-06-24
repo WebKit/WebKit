@@ -32,8 +32,9 @@ module html {
                  attribute [Reflect] DOMString dir;
                  attribute [Reflect=class] DOMString className;
 
-                 attribute long            tabIndex;
-                 attribute boolean         draggable;
+                 attribute long              tabIndex;
+                 attribute boolean           draggable;
+                 attribute [Reflect] boolean hidden;
 
         // Extensions
                  attribute [ConvertNullToNullString] DOMString innerHTML
