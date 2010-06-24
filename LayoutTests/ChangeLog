@@ -1,3 +1,201 @@
+2010-06-24  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed: rebaseline images for r61759 and r61762.
+
+        * platform/chromium-linux/svg/text/selection-doubleclick-expected.checksum:
+        * platform/chromium-linux/svg/text/selection-doubleclick-expected.png:
+        * platform/chromium-linux/svg/text/selection-tripleclick-expected.checksum:
+        * platform/chromium-linux/svg/text/selection-tripleclick-expected.png:
+        * platform/chromium-linux/svg/text/text-align-01-b-expected.checksum:
+        * platform/chromium-linux/svg/text/text-align-01-b-expected.png:
+        * platform/chromium-linux/svg/text/text-align-02-b-expected.checksum:
+        * platform/chromium-linux/svg/text/text-align-02-b-expected.png:
+        * platform/chromium-linux/svg/text/text-align-03-b-expected.checksum:
+        * platform/chromium-linux/svg/text/text-align-03-b-expected.png:
+        * platform/chromium-linux/svg/text/text-align-04-b-expected.checksum:
+        * platform/chromium-linux/svg/text/text-align-04-b-expected.png:
+        * platform/chromium-linux/svg/text/text-align-05-b-expected.checksum:
+        * platform/chromium-linux/svg/text/text-align-05-b-expected.png:
+        * platform/chromium-linux/svg/text/text-align-06-b-expected.checksum:
+        * platform/chromium-linux/svg/text/text-align-06-b-expected.png:
+        * platform/chromium-linux/svg/text/text-altglyph-01-b-expected.checksum:
+        * platform/chromium-linux/svg/text/text-altglyph-01-b-expected.png:
+        * platform/chromium-linux/svg/text/text-deco-01-b-expected.checksum:
+        * platform/chromium-linux/svg/text/text-deco-01-b-expected.png:
+        * platform/chromium-linux/svg/text/text-fonts-01-t-expected.checksum:
+        * platform/chromium-linux/svg/text/text-fonts-01-t-expected.png:
+        * platform/chromium-linux/svg/text/text-fonts-02-t-expected.checksum:
+        * platform/chromium-linux/svg/text/text-fonts-02-t-expected.png:
+        * platform/chromium-linux/svg/text/text-intro-05-t-expected.checksum:
+        * platform/chromium-linux/svg/text/text-intro-05-t-expected.png:
+        * platform/chromium-linux/svg/text/text-path-01-b-expected.checksum:
+        * platform/chromium-linux/svg/text/text-path-01-b-expected.png:
+        * platform/chromium-linux/svg/text/text-spacing-01-b-expected.checksum:
+        * platform/chromium-linux/svg/text/text-spacing-01-b-expected.png:
+        * platform/chromium-linux/svg/text/text-text-01-b-expected.checksum:
+        * platform/chromium-linux/svg/text/text-text-01-b-expected.png:
+        * platform/chromium-linux/svg/text/text-text-03-b-expected.checksum:
+        * platform/chromium-linux/svg/text/text-text-03-b-expected.png:
+        * platform/chromium-linux/svg/text/text-text-04-t-expected.checksum:
+        * platform/chromium-linux/svg/text/text-text-04-t-expected.png:
+        * platform/chromium-linux/svg/text/text-text-05-t-expected.checksum:
+        * platform/chromium-linux/svg/text/text-text-05-t-expected.png:
+        * platform/chromium-linux/svg/text/text-text-06-t-expected.checksum:
+        * platform/chromium-linux/svg/text/text-text-06-t-expected.png:
+        * platform/chromium-linux/svg/text/text-text-07-t-expected.checksum:
+        * platform/chromium-linux/svg/text/text-text-07-t-expected.png:
+        * platform/chromium-linux/svg/text/text-text-08-b-expected.checksum:
+        * platform/chromium-linux/svg/text/text-text-08-b-expected.png:
+        * platform/chromium-linux/svg/text/text-tref-01-b-expected.checksum:
+        * platform/chromium-linux/svg/text/text-tref-01-b-expected.png:
+        * platform/chromium-linux/svg/text/text-tselect-01-b-expected.checksum:
+        * platform/chromium-linux/svg/text/text-tselect-01-b-expected.png:
+        * platform/chromium-linux/svg/text/text-tselect-02-f-expected.checksum:
+        * platform/chromium-linux/svg/text/text-tselect-02-f-expected.png:
+        * platform/chromium-linux/svg/text/text-tspan-01-b-expected.checksum:
+        * platform/chromium-linux/svg/text/text-tspan-01-b-expected.png:
+        * platform/chromium-linux/svg/text/text-ws-01-t-expected.checksum:
+        * platform/chromium-linux/svg/text/text-ws-01-t-expected.png:
+        * platform/chromium-linux/svg/text/text-ws-02-t-expected.checksum:
+        * platform/chromium-linux/svg/text/text-ws-02-t-expected.png:
+        * platform/chromium-linux/svg/text/textPathBoundsBug-expected.checksum:
+        * platform/chromium-mac/svg/text/selection-doubleclick-expected.checksum:
+        * platform/chromium-mac/svg/text/selection-doubleclick-expected.png: Removed.
+        * platform/chromium-mac/svg/text/selection-tripleclick-expected.checksum:
+        * platform/chromium-mac/svg/text/selection-tripleclick-expected.png: Removed.
+        * platform/chromium-mac/svg/text/text-align-01-b-expected.checksum:
+        * platform/chromium-mac/svg/text/text-align-01-b-expected.png: Removed.
+        * platform/chromium-mac/svg/text/text-align-02-b-expected.checksum:
+        * platform/chromium-mac/svg/text/text-align-02-b-expected.png: Removed.
+        * platform/chromium-mac/svg/text/text-align-03-b-expected.checksum:
+        * platform/chromium-mac/svg/text/text-align-03-b-expected.png: Removed.
+        * platform/chromium-mac/svg/text/text-align-04-b-expected.checksum:
+        * platform/chromium-mac/svg/text/text-align-04-b-expected.png:
+        * platform/chromium-mac/svg/text/text-align-05-b-expected.checksum:
+        * platform/chromium-mac/svg/text/text-align-05-b-expected.png: Removed.
+        * platform/chromium-mac/svg/text/text-align-06-b-expected.checksum:
+        * platform/chromium-mac/svg/text/text-align-06-b-expected.png: Removed.
+        * platform/chromium-mac/svg/text/text-altglyph-01-b-expected.checksum:
+        * platform/chromium-mac/svg/text/text-altglyph-01-b-expected.png: Removed.
+        * platform/chromium-mac/svg/text/text-deco-01-b-expected.checksum:
+        * platform/chromium-mac/svg/text/text-deco-01-b-expected.png: Removed.
+        * platform/chromium-mac/svg/text/text-fonts-01-t-expected.checksum:
+        * platform/chromium-mac/svg/text/text-fonts-01-t-expected.png: Removed.
+        * platform/chromium-mac/svg/text/text-fonts-02-t-expected.checksum:
+        * platform/chromium-mac/svg/text/text-fonts-02-t-expected.png: Removed.
+        * platform/chromium-mac/svg/text/text-path-01-b-expected.checksum:
+        * platform/chromium-mac/svg/text/text-path-01-b-expected.png:
+        * platform/chromium-mac/svg/text/text-spacing-01-b-expected.checksum:
+        * platform/chromium-mac/svg/text/text-spacing-01-b-expected.png: Removed.
+        * platform/chromium-mac/svg/text/text-text-01-b-expected.checksum:
+        * platform/chromium-mac/svg/text/text-text-01-b-expected.png: Removed.
+        * platform/chromium-mac/svg/text/text-text-03-b-expected.checksum:
+        * platform/chromium-mac/svg/text/text-text-03-b-expected.png: Removed.
+        * platform/chromium-mac/svg/text/text-text-04-t-expected.checksum:
+        * platform/chromium-mac/svg/text/text-text-04-t-expected.png: Removed.
+        * platform/chromium-mac/svg/text/text-text-06-t-expected.checksum:
+        * platform/chromium-mac/svg/text/text-text-06-t-expected.png: Removed.
+        * platform/chromium-mac/svg/text/text-text-07-t-expected.checksum:
+        * platform/chromium-mac/svg/text/text-text-07-t-expected.png: Removed.
+        * platform/chromium-mac/svg/text/text-text-08-b-expected.checksum:
+        * platform/chromium-mac/svg/text/text-text-08-b-expected.png:
+        * platform/chromium-mac/svg/text/text-tref-01-b-expected.checksum:
+        * platform/chromium-mac/svg/text/text-tref-01-b-expected.png: Removed.
+        * platform/chromium-mac/svg/text/text-tselect-01-b-expected.checksum:
+        * platform/chromium-mac/svg/text/text-tselect-01-b-expected.png: Removed.
+        * platform/chromium-mac/svg/text/text-tselect-02-f-expected.checksum:
+        * platform/chromium-mac/svg/text/text-tselect-02-f-expected.png: Removed.
+        * platform/chromium-mac/svg/text/text-tspan-01-b-expected.checksum:
+        * platform/chromium-mac/svg/text/text-tspan-01-b-expected.png: Removed.
+        * platform/chromium-mac/svg/text/text-ws-01-t-expected.checksum:
+        * platform/chromium-mac/svg/text/text-ws-01-t-expected.png: Removed.
+        * platform/chromium-mac/svg/text/text-ws-02-t-expected.checksum:
+        * platform/chromium-mac/svg/text/text-ws-02-t-expected.png: Removed.
+        * platform/chromium-mac/svg/text/textPathBoundsBug-expected.checksum:
+        * platform/chromium-mac/tables/mozilla/bugs/bug1430-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug1430-expected.checksum.
+        * platform/chromium-mac/tables/mozilla/bugs/bug1430-expected.png: Added.
+        * platform/chromium-mac/tables/mozilla/bugs/bug14929-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug14929-expected.checksum.
+        * platform/chromium-mac/tables/mozilla/bugs/bug23235-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug23235-expected.checksum.
+        * platform/chromium-mac/tables/mozilla/bugs/bug23235-expected.png: Added.
+        * platform/chromium-mac/tables/mozilla/bugs/bug2981-2-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug2981-2-expected.checksum.
+        * platform/chromium-mac/tables/mozilla/bugs/bug4427-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug4427-expected.checksum.
+        * platform/chromium-mac/tables/mozilla/bugs/bug6404-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug6404-expected.checksum.
+        * platform/chromium-mac/tables/mozilla/core/col_widths_auto_autoFix-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/core/col_widths_auto_autoFix-expected.checksum.
+        * platform/chromium-mac/tables/mozilla/core/col_widths_auto_autoFix-expected.png: Added.
+        * platform/chromium-mac/tables/mozilla/marvin/tbody_valign_baseline-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/marvin/tbody_valign_baseline-expected.checksum.
+        * platform/chromium-mac/tables/mozilla/marvin/tbody_valign_bottom-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/marvin/tbody_valign_bottom-expected.checksum.
+        * platform/chromium-mac/tables/mozilla/marvin/tbody_valign_middle-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/marvin/tbody_valign_middle-expected.checksum.
+        * platform/chromium-mac/tables/mozilla/marvin/tbody_valign_top-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/marvin/tbody_valign_top-expected.checksum.
+        * platform/chromium-mac/tables/mozilla/marvin/td_valign_baseline-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/marvin/td_valign_baseline-expected.checksum.
+        * platform/chromium-mac/tables/mozilla/marvin/tfoot_valign_baseline-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/marvin/tfoot_valign_baseline-expected.checksum.
+        * platform/chromium-mac/tables/mozilla/marvin/tfoot_valign_bottom-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/marvin/tfoot_valign_bottom-expected.checksum.
+        * platform/chromium-mac/tables/mozilla/marvin/tfoot_valign_middle-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/marvin/tfoot_valign_middle-expected.checksum.
+        * platform/chromium-mac/tables/mozilla/marvin/tfoot_valign_top-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/marvin/tfoot_valign_top-expected.checksum.
+        * platform/chromium-mac/tables/mozilla/marvin/thead_valign_baseline-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/marvin/thead_valign_baseline-expected.checksum.
+        * platform/chromium-mac/tables/mozilla/marvin/thead_valign_bottom-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/marvin/thead_valign_bottom-expected.checksum.
+        * platform/chromium-mac/tables/mozilla/marvin/thead_valign_middle-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/marvin/thead_valign_middle-expected.checksum.
+        * platform/chromium-mac/tables/mozilla/marvin/thead_valign_top-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/marvin/thead_valign_top-expected.checksum.
+        * platform/chromium-mac/tables/mozilla/marvin/tr_valign_baseline-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/marvin/tr_valign_baseline-expected.checksum.
+        * platform/chromium-mac/tables/mozilla_expected_failures/bugs/97619-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla_expected_failures/bugs/97619-expected.checksum.
+        * platform/chromium-win-xp/svg/text/text-fonts-01-t-expected.checksum:
+        * platform/chromium-win-xp/svg/text/text-fonts-01-t-expected.png: Removed.
+        * platform/chromium-win/svg/text/selection-doubleclick-expected.checksum:
+        * platform/chromium-win/svg/text/selection-doubleclick-expected.png:
+        * platform/chromium-win/svg/text/selection-tripleclick-expected.checksum:
+        * platform/chromium-win/svg/text/selection-tripleclick-expected.png:
+        * platform/chromium-win/svg/text/text-align-01-b-expected.checksum:
+        * platform/chromium-win/svg/text/text-align-01-b-expected.png:
+        * platform/chromium-win/svg/text/text-align-02-b-expected.checksum:
+        * platform/chromium-win/svg/text/text-align-02-b-expected.png:
+        * platform/chromium-win/svg/text/text-align-03-b-expected.checksum:
+        * platform/chromium-win/svg/text/text-align-03-b-expected.png:
+        * platform/chromium-win/svg/text/text-align-04-b-expected.checksum:
+        * platform/chromium-win/svg/text/text-align-04-b-expected.png:
+        * platform/chromium-win/svg/text/text-align-05-b-expected.checksum:
+        * platform/chromium-win/svg/text/text-align-05-b-expected.png:
+        * platform/chromium-win/svg/text/text-align-06-b-expected.checksum:
+        * platform/chromium-win/svg/text/text-align-06-b-expected.png:
+        * platform/chromium-win/svg/text/text-altglyph-01-b-expected.checksum:
+        * platform/chromium-win/svg/text/text-altglyph-01-b-expected.png:
+        * platform/chromium-win/svg/text/text-deco-01-b-expected.checksum:
+        * platform/chromium-win/svg/text/text-deco-01-b-expected.png:
+        * platform/chromium-win/svg/text/text-fonts-01-t-expected.checksum:
+        * platform/chromium-win/svg/text/text-fonts-01-t-expected.png:
+        * platform/chromium-win/svg/text/text-fonts-02-t-expected.checksum:
+        * platform/chromium-win/svg/text/text-fonts-02-t-expected.png:
+        * platform/chromium-win/svg/text/text-intro-05-t-expected.checksum:
+        * platform/chromium-win/svg/text/text-intro-05-t-expected.png:
+        * platform/chromium-win/svg/text/text-path-01-b-expected.checksum:
+        * platform/chromium-win/svg/text/text-path-01-b-expected.png:
+        * platform/chromium-win/svg/text/text-spacing-01-b-expected.checksum:
+        * platform/chromium-win/svg/text/text-spacing-01-b-expected.png:
+        * platform/chromium-win/svg/text/text-text-01-b-expected.checksum:
+        * platform/chromium-win/svg/text/text-text-01-b-expected.png:
+        * platform/chromium-win/svg/text/text-text-03-b-expected.checksum:
+        * platform/chromium-win/svg/text/text-text-03-b-expected.png:
+        * platform/chromium-win/svg/text/text-text-04-t-expected.checksum:
+        * platform/chromium-win/svg/text/text-text-04-t-expected.png:
+        * platform/chromium-win/svg/text/text-text-06-t-expected.checksum:
+        * platform/chromium-win/svg/text/text-text-06-t-expected.png:
+        * platform/chromium-win/svg/text/text-text-07-t-expected.checksum:
+        * platform/chromium-win/svg/text/text-text-07-t-expected.png:
+        * platform/chromium-win/svg/text/text-text-08-b-expected.checksum:
+        * platform/chromium-win/svg/text/text-text-08-b-expected.png:
+        * platform/chromium-win/svg/text/text-tref-01-b-expected.checksum:
+        * platform/chromium-win/svg/text/text-tref-01-b-expected.png:
+        * platform/chromium-win/svg/text/text-tselect-01-b-expected.checksum:
+        * platform/chromium-win/svg/text/text-tselect-01-b-expected.png:
+        * platform/chromium-win/svg/text/text-tselect-02-f-expected.checksum:
+        * platform/chromium-win/svg/text/text-tselect-02-f-expected.png:
+        * platform/chromium-win/svg/text/text-tspan-01-b-expected.checksum:
+        * platform/chromium-win/svg/text/text-tspan-01-b-expected.png:
+        * platform/chromium-win/svg/text/text-ws-01-t-expected.checksum:
+        * platform/chromium-win/svg/text/text-ws-01-t-expected.png:
+        * platform/chromium-win/svg/text/text-ws-02-t-expected.checksum:
+        * platform/chromium-win/svg/text/text-ws-02-t-expected.png:
+        * platform/chromium-win/svg/text/textPathBoundsBug-expected.checksum:
+        * platform/chromium-win/svg/text/textPathBoundsBug-expected.png:
+
 2010-06-23  Stephen White  <senorblanco@chromium.org>
 
         Unreviewed; expectations fix.
