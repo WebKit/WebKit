@@ -38,6 +38,8 @@
 #include "LayerChromium.h"
 #include "NotImplemented.h"
 #include "Page.h"
+#include "TransformLayerChromium.h"
+#include "WebGLLayerChromium.h"
 #if PLATFORM(SKIA)
 #include "NativeImageSkia.h"
 #include "PlatformContextSkia.h"
@@ -104,6 +106,22 @@ static GLuint loadShaderProgram(const char* vertexShaderSource, const char* frag
     return programObject;
 }
 
+bool LayerRendererChromium::createLayerShader(ShaderProgramType type, const char* vertexShaderSource, const char* fragmentShaderSource)
+{
+    unsigned programId = loadShaderProgram(vertexShaderSource, fragmentShaderSource);
+    ASSERT(programId);
+
+    ShaderProgram* program = &m_shaderPrograms[type];
+
+    program->m_shaderProgramId = programId;
+    program->m_samplerLocation = glGetUniformLocation(programId, "s_texture");
+    program->m_matrixLocation = glGetUniformLocation(programId, "matrix");
+    program->m_alphaLocation = glGetUniformLocation(programId, "alpha");
+
+    return programId;
+}
+
+
 static void toGLMatrix(float* flattened, const TransformationMatrix& m)
 {
     flattened[0] = m.m11();
@@ -164,6 +182,14 @@ static inline bool compareLayerZ(const LayerChromium* a, const LayerChromium* b)
     return transformA.m43() < transformB.m43();
 }
 
+ShaderProgram::ShaderProgram()
+    : m_shaderProgramId(0)
+    , m_samplerLocation(-1)
+    , m_matrixLocation(-1)
+    , m_alphaLocation(-1)
+{
+}
+
 PassOwnPtr<LayerRendererChromium> LayerRendererChromium::create(Page* page)
 {
     return new LayerRendererChromium(page);
@@ -172,15 +198,13 @@ PassOwnPtr<LayerRendererChromium> LayerRendererChromium::create(Page* page)
 LayerRendererChromium::LayerRendererChromium(Page* page)
     : m_rootLayer(0)
     , m_needsDisplay(false)
-    , m_layerProgramObject(0)
-    , m_borderProgramObject(0)
-    , m_scrollProgramObject(0)
     , m_positionLocation(0)
     , m_texCoordLocation(1)
     , m_page(page)
     , m_rootLayerTextureWidth(0)
     , m_rootLayerTextureHeight(0)
     , m_scrollPosition(IntPoint(-1, -1))
+    , m_currentShaderProgramType(NumShaderProgramTypes)
 {
     m_quadVboIds[Vertices] = m_quadVboIds[LayerElements] = 0;
     m_hardwareCompositing = (initGL() && initializeSharedGLObjects());
@@ -191,9 +215,11 @@ LayerRendererChromium::~LayerRendererChromium()
     if (m_hardwareCompositing) {
         makeContextCurrent();
         glDeleteBuffers(3, m_quadVboIds);
-        glDeleteProgram(m_layerProgramObject);
-        glDeleteProgram(m_scrollProgramObject);
-        glDeleteProgram(m_borderProgramObject);
+
+        for (int i = 0; i < NumShaderProgramTypes; i++) {
+            if (m_shaderPrograms[i].m_shaderProgramId)
+                glDeleteProgram(m_shaderPrograms[i].m_shaderProgramId);
+        }
     }
 
     // Free up all GL textures.
@@ -224,7 +250,21 @@ void LayerRendererChromium::setRootLayerCanvasSize(const IntSize& size)
     m_rootLayerCanvasSize = size;
 }
 
-void LayerRendererChromium::drawTexturedQuad(const TransformationMatrix& matrix, float width, float height, float opacity, bool scrolling)
+void LayerRendererChromium::useShaderProgram(ShaderProgramType programType)
+{
+    if (programType != m_currentShaderProgramType) {
+        ShaderProgram* program = &m_shaderPrograms[programType];
+        glUseProgram(program->m_shaderProgramId);
+        m_currentShaderProgramType = programType;
+
+        // Set the uniform locations matching the program.
+        m_samplerLocation = program->m_samplerLocation;
+        m_matrixLocation = program->m_matrixLocation;
+        m_alphaLocation = program->m_alphaLocation;
+    }
+}
+
+void LayerRendererChromium::drawTexturedQuad(const TransformationMatrix& matrix, float width, float height, float opacity)
 {
     static GLfloat glMatrix[16];
 
@@ -238,10 +278,9 @@ void LayerRendererChromium::drawTexturedQuad(const TransformationMatrix& matrix,
 
     toGLMatrix(&glMatrix[0], renderMatrix);
 
-    int matrixLocation = (scrolling ? m_scrollMatrixLocation : m_matrixLocation);
-    glUniformMatrix4fv(matrixLocation, 1, false, &glMatrix[0]);
+    glUniformMatrix4fv(m_matrixLocation, 1, false, &glMatrix[0]);
 
-    if (!scrolling)
+    if (m_alphaLocation != -1)
         glUniform1f(m_alphaLocation, opacity);
 
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
@@ -265,8 +304,8 @@ void LayerRendererChromium::drawLayers(const IntRect& updateRect, const IntRect&
 
     glBindTexture(GL_TEXTURE_2D, m_rootLayerTextureId);
 
-    unsigned int visibleRectWidth = visibleRect.width();
-    unsigned int visibleRectHeight = visibleRect.height();
+    unsigned visibleRectWidth = visibleRect.width();
+    unsigned visibleRectHeight = visibleRect.height();
     if (visibleRectWidth != m_rootLayerTextureWidth || visibleRectHeight != m_rootLayerTextureHeight) {
         m_rootLayerTextureWidth = visibleRect.width();
         m_rootLayerTextureHeight = visibleRect.height();
@@ -310,10 +349,10 @@ void LayerRendererChromium::drawLayers(const IntRect& updateRect, const IntRect&
         scrolledLayerMatrix.scale3d(1, -1, 1);
 
         // Switch shaders to avoid RGB swizzling.
-        glUseProgram(m_scrollProgramObject);
-        glUniform1i(m_scrollSamplerLocation, 0);
+        useShaderProgram(ScrollLayerProgram);
+        glUniform1i(m_shaderPrograms[ScrollLayerProgram].m_samplerLocation, 0);
 
-        drawTexturedQuad(scrolledLayerMatrix, visibleRect.width(), visibleRect.height(), 1, true);
+        drawTexturedQuad(scrolledLayerMatrix, visibleRect.width(), visibleRect.height(), 1);
 
         glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, contentRect.width(), contentRect.height());
 
@@ -349,11 +388,11 @@ void LayerRendererChromium::drawLayers(const IntRect& updateRect, const IntRect&
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // Render the root layer using a quad that takes up the entire visible area of the window.
-    glUseProgram(m_layerProgramObject);
+    useShaderProgram(ContentLayerProgram);
     glUniform1i(m_samplerLocation, 0);
     TransformationMatrix layerMatrix;
     layerMatrix.translate3d(visibleRect.width() / 2, visibleRect.height() / 2, 0);
-    drawTexturedQuad(layerMatrix, visibleRect.width(), visibleRect.height(), 1, false);
+    drawTexturedQuad(layerMatrix, visibleRect.width(), visibleRect.height(), 1);
 
     // If culling is enabled then we will cull the backface.
     glCullFace(GL_BACK);
@@ -442,13 +481,14 @@ void LayerRendererChromium::drawDebugBorder(LayerChromium* layer, const Transfor
     if (!borderColor.alpha())
         return;
 
-    glUseProgram(m_borderProgramObject);
+    useShaderProgram(DebugBorderProgram);
     TransformationMatrix renderMatrix = matrix;
     IntSize bounds = layer->bounds();
     renderMatrix.scale3d(bounds.width(), bounds.height(), 1);
     renderMatrix.multiply(m_projectionMatrix);
     toGLMatrix(&glMatrix[0], renderMatrix);
-    glUniformMatrix4fv(m_borderMatrixLocation, 1, false, &glMatrix[0]);
+    unsigned borderMatrixLocation = m_shaderPrograms[DebugBorderProgram].m_matrixLocation;
+    glUniformMatrix4fv(borderMatrixLocation, 1, false, &glMatrix[0]);
 
     glUniform4f(m_borderColorLocation, borderColor.red() / 255.0,
                                        borderColor.green() / 255.0,
@@ -460,9 +500,6 @@ void LayerRendererChromium::drawDebugBorder(LayerChromium* layer, const Transfor
     // The indices for the line are stored in the same array as the triangle indices.
     glDrawElements(GL_LINE_LOOP, 4, GL_UNSIGNED_SHORT, (void*)(6 * sizeof(unsigned short)));
     checkGLError();
-
-    // Switch back to the shader program used for layer contents.
-    glUseProgram(m_layerProgramObject);
 }
 
 // Returns true if any part of the layer falls within the visibleRect
@@ -524,11 +561,9 @@ void LayerRendererChromium::updateLayersRecursive(LayerChromium* layer, const Tr
     // Check if the layer falls within the visible bounds of the page.
     bool layerVisible = isLayerVisible(layer, localMatrix, visibleRect);
 
-    bool layerHasContent = layer->drawsContent() || layer->contents();
-
     bool skipLayer = false;
     if (bounds.width() > 2048 || bounds.height() > 2048) {
-        if (layerHasContent)
+        if (layer->drawsContent())
             LOG(LayerRenderer, "Skipping layer with size %d %d", bounds.width(), bounds.height());
         skipLayer = true;
     }
@@ -571,15 +606,16 @@ void LayerRendererChromium::drawLayer(LayerChromium* layer)
     const TransformationMatrix& localMatrix = layer->drawTransform();
     IntSize bounds = layer->bounds();
 
-    // Note that there are two types of layers:
-    // 1. Layers that draw their own content via the GraphicsContext (layer->drawsContent() == true).
-    // 2. Layers that are pure containers of images/video/etc whose content is simply
-    //    copied into the backing texture (layer->contents() == true).
-    if (layer->drawsContent() || layer->contents()) {
-        int textureId = getTextureId(layer);
-        // If no texture has been created for the layer yet then create one now.
-        if (textureId == -1)
-            textureId = assignTextureForLayer(layer);
+    if (layer->drawsContent()) {
+        int textureId;
+        if (layer->ownsTexture())
+            textureId = layer->textureId();
+        else {
+            textureId = getTextureId(layer);
+            // If no texture has been created for the layer yet then create one now.
+            if (textureId == -1)
+                textureId = assignTextureForLayer(layer);
+        }
 
         // Redraw the contents of the layer if necessary.
         if (layer->contentsDirty()) {
@@ -587,14 +623,19 @@ void LayerRendererChromium::drawLayer(LayerChromium* layer)
             layer->updateTextureContents(textureId);
         }
 
+        // FIXME: This is temporary until WebGL layers stop changing the current
+        // context.
+        if (layer->ownsTexture())
+            makeContextCurrent();
+
         if (layer->doubleSided())
             glDisable(GL_CULL_FACE);
         else
             glEnable(GL_CULL_FACE);
 
         glBindTexture(GL_TEXTURE_2D, textureId);
-
-        drawTexturedQuad(localMatrix, bounds.width(), bounds.height(), layer->drawOpacity(), false);
+        useShaderProgram(static_cast<ShaderProgramType>(layer->shaderProgramId()));
+        drawTexturedQuad(localMatrix, bounds.width(), bounds.height(), layer->drawOpacity());
     }
 
     // Draw the debug border if there is one.
@@ -616,14 +657,15 @@ bool LayerRendererChromium::initGL()
     return true;
 }
 
-// Binds the given attribute name to a common location across all three programs
-// used by the compositor. This allows the code to bind the attributes only once
-// even when switching between programs.
-void LayerRendererChromium::bindCommonAttribLocation(int location, char* attribName)
+void LayerRendererChromium::bindCommonAttribLocations(ShaderProgramType program)
 {
-    glBindAttribLocation(m_layerProgramObject, location, attribName);
-    glBindAttribLocation(m_borderProgramObject, location, attribName);
-    glBindAttribLocation(m_scrollProgramObject, location, attribName);
+    unsigned programId = m_shaderPrograms[program].m_shaderProgramId;
+    glBindAttribLocation(programId, m_positionLocation, "a_position");
+    glBindAttribLocation(programId, m_texCoordLocation, "a_texCoord");
+
+    // Re-link the program for the new attribute locations to take effect.
+    glLinkProgram(programId);
+    checkGLError();
 }
 
 bool LayerRendererChromium::initializeSharedGLObjects()
@@ -663,6 +705,19 @@ bool LayerRendererChromium::initializeSharedGLObjects()
         "  gl_FragColor = vec4(texColor.x, texColor.y, texColor.z, texColor.w); \n"
         "}                                                   \n";
 
+    // WebGL layers need to be flipped vertically and their colors shouldn't be
+    // swizzled.
+    char webGLFragmentShaderString[] =
+        "precision mediump float;                            \n"
+        "varying vec2 v_texCoord;                            \n"
+        "uniform sampler2D s_texture;                        \n"
+        "uniform float alpha;                                \n"
+        "void main()                                         \n"
+        "{                                                   \n"
+        "  vec4 texColor = texture2D(s_texture, vec2(v_texCoord.x, 1.0 - v_texCoord.y)); \n"
+        "  gl_FragColor = vec4(texColor.x, texColor.y, texColor.z, texColor.w) * alpha; \n"
+        "}                                                   \n";
+
     // Shaders for drawing the debug borders around the layers.
     char borderVertexShaderString[] =
         "attribute vec4 a_position;   \n"
@@ -692,49 +747,38 @@ bool LayerRendererChromium::initializeSharedGLObjects()
                            0, 1, 2, 3}; // A line path for drawing the layer border.
 
     makeContextCurrent();
-    m_layerProgramObject = loadShaderProgram(vertexShaderString, fragmentShaderString);
-    if (!m_layerProgramObject) {
-        LOG_ERROR("Failed to create shader program for layers");
+
+    if (!createLayerShader(ContentLayerProgram, vertexShaderString, fragmentShaderString)) {
+        LOG_ERROR("Failed to create shader program for content layers");
         return false;
     }
+    LayerChromium::setShaderProgramId(ContentLayerProgram);
 
-    m_scrollProgramObject = loadShaderProgram(vertexShaderString, scrollFragmentShaderString);
-    if (!m_scrollProgramObject) {
+    if (!createLayerShader(WebGLLayerProgram, vertexShaderString, webGLFragmentShaderString)) {
+        LOG_ERROR("Failed to create shader program for WebGL layers");
+        return false;
+    }
+    WebGLLayerChromium::setShaderProgramId(WebGLLayerProgram);
+
+    if (!createLayerShader(ScrollLayerProgram, vertexShaderString, scrollFragmentShaderString)) {
         LOG_ERROR("Failed to create shader program for scrolling layer");
         return false;
     }
 
-    m_borderProgramObject = loadShaderProgram(borderVertexShaderString, borderFragmentShaderString);
-    if (!m_borderProgramObject) {
+    if (!createLayerShader(DebugBorderProgram, borderVertexShaderString, borderFragmentShaderString)) {
         LOG_ERROR("Failed to create shader program for debug borders");
         return false;
     }
 
-    // Specify the attrib location for the position and make it the same for all three programs to
+    // Specify the attrib location for the position and texCoord and make it the same for all programs to
     // avoid binding re-binding the vertex attributes.
-    bindCommonAttribLocation(m_positionLocation, "a_position");
-    bindCommonAttribLocation(m_texCoordLocation, "a_texCoord");
+    bindCommonAttribLocations(ContentLayerProgram);
+    bindCommonAttribLocations(WebGLLayerProgram);
+    bindCommonAttribLocations(DebugBorderProgram);
+    bindCommonAttribLocations(ScrollLayerProgram);
 
-    checkGLError();
-
-    // Re-link the shaders to get the new attrib location to take effect.
-    glLinkProgram(m_layerProgramObject);
-    glLinkProgram(m_borderProgramObject);
-    glLinkProgram(m_scrollProgramObject);
-
-    checkGLError();
-
-    // Get locations of uniforms for the layer content shader program.
-    m_samplerLocation = glGetUniformLocation(m_layerProgramObject, "s_texture");
-    m_matrixLocation = glGetUniformLocation(m_layerProgramObject, "matrix");
-    m_alphaLocation = glGetUniformLocation(m_layerProgramObject, "alpha");
-
-    m_scrollMatrixLocation = glGetUniformLocation(m_scrollProgramObject, "matrix");
-    m_scrollSamplerLocation = glGetUniformLocation(m_scrollProgramObject, "s_texture");
-
-    // Get locations of uniforms for the debug border shader program.
-    m_borderMatrixLocation = glGetUniformLocation(m_borderProgramObject, "matrix");
-    m_borderColorLocation = glGetUniformLocation(m_borderProgramObject, "color");
+    // Get the location of the color uniform for the debug border shader program.
+    m_borderColorLocation = glGetUniformLocation(m_shaderPrograms[DebugBorderProgram].m_shaderProgramId, "color");
 
     glGenBuffers(3, m_quadVboIds);
     glBindBuffer(GL_ARRAY_BUFFER, m_quadVboIds[Vertices]);

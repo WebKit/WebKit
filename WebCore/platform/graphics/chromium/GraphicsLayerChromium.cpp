@@ -48,9 +48,11 @@
 #include "FloatConversion.h"
 #include "FloatRect.h"
 #include "Image.h"
+#include "ImageLayerChromium.h"
 #include "LayerChromium.h"
 #include "PlatformString.h"
 #include "SystemTime.h"
+#include "TransformLayerChromium.h"
 #include <wtf/CurrentTime.h>
 #include <wtf/StringExtras.h>
 #include <wtf/text/CString.h>
@@ -94,7 +96,7 @@ GraphicsLayerChromium::GraphicsLayerChromium(GraphicsLayerClient* client)
     , m_contentsLayerPurpose(NoContentsLayer)
     , m_contentsLayerHasBackgroundColor(false)
 {
-    m_layer = LayerChromium::create(LayerChromium::Layer, this);
+    m_layer = LayerChromium::create(this);
 
     updateDebugIndicators();
 }
@@ -307,18 +309,25 @@ void GraphicsLayerChromium::setContentsToImage(Image* image)
 {
     bool childrenChanged = false;
     if (image) {
-        m_pendingContentsImage = image->nativeImageForCurrentFrame();
-        m_contentsLayerPurpose = ContentsLayerForImage;
-        if (!m_contentsLayer)
+        NativeImagePtr nativeImage = image->nativeImageForCurrentFrame();
+        if (!m_contentsLayer.get() || m_contentsLayerPurpose != ContentsLayerForImage) {
+            RefPtr<ImageLayerChromium> imageLayer = ImageLayerChromium::create(this);
+            setupContentsLayer(imageLayer.get());
+            m_contentsLayer = imageLayer;
+            m_contentsLayerPurpose = ContentsLayerForImage;
             childrenChanged = true;
+        }
+        ImageLayerChromium* imageLayer = static_cast<ImageLayerChromium*>(m_contentsLayer.get());
+        imageLayer->setContents(nativeImage);
+        updateContentsRect();
     } else {
-        m_pendingContentsImage = 0;
-        m_contentsLayerPurpose = NoContentsLayer;
-        if (m_contentsLayer)
+        if (m_contentsLayer) {
             childrenChanged = true;
-    }
 
-    updateContentsImage();
+            // The old contents layer will be removed via updateSublayerList.
+            m_contentsLayer = 0;
+        }
+    }
 
     if (childrenChanged)
         updateSublayerList();
@@ -476,7 +485,7 @@ void GraphicsLayerChromium::updateLayerPreserves3D()
 {
     if (m_preserves3D && !m_transformLayer) {
         // Create the transform layer.
-        m_transformLayer = LayerChromium::create(LayerChromium::TransformLayer, this);
+        m_transformLayer = TransformLayerChromium::create(this);
 
         // Copy the position from this layer.
         updateLayerPosition();
@@ -538,26 +547,6 @@ void GraphicsLayerChromium::updateLayerBackgroundColor()
         setLayerBackgroundColor(*m_contentsLayer, m_backgroundColor);
     else
         clearLayerBackgroundColor(*m_contentsLayer);
-}
-
-void GraphicsLayerChromium::updateContentsImage()
-{
-    if (m_pendingContentsImage) {
-        if (!m_contentsLayer.get()) {
-            RefPtr<LayerChromium> imageLayer = LayerChromium::create(LayerChromium::Layer, this);
-
-            setupContentsLayer(imageLayer.get());
-            m_contentsLayer = imageLayer;
-            // m_contentsLayer will be parented by updateSublayerList.
-        }
-        m_contentsLayer->setContents(m_pendingContentsImage);
-        m_pendingContentsImage = 0;
-
-        updateContentsRect();
-    } else {
-        // No image. m_contentsLayer will be removed via updateSublayerList.
-        m_contentsLayer = 0;
-    }
 }
 
 void GraphicsLayerChromium::updateContentsVideo()

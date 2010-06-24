@@ -52,20 +52,17 @@ class PlatformCanvas;
 
 namespace WebCore {
 
+class GraphicsContext3D;
 class LayerRendererChromium;
 
+// Base class for composited layers. The implementation covers layers that require
+// a GraphicsContext to render their contents. Special layer types are derived from
+// this class.
 class LayerChromium : public RefCounted<LayerChromium> {
 public:
-    enum LayerType { Layer, TransformLayer };
-    enum FilterType { Linear, Nearest, Trilinear, Lanczos };
-    enum ContentsGravityType { Center, Top, Bottom, Left, Right, TopLeft, TopRight,
-                               BottomLeft, BottomRight, Resize, ResizeAspect, ResizeAspectFill };
-
-    static PassRefPtr<LayerChromium> create(LayerType, GraphicsLayerChromium* owner = 0);
+    static PassRefPtr<LayerChromium> create(GraphicsLayerChromium* owner = 0);
 
     ~LayerChromium();
-
-    void display(PlatformGraphicsContext*);
 
     void addSublayer(PassRefPtr<LayerChromium>);
     void insertSublayer(PassRefPtr<LayerChromium>, size_t index);
@@ -92,9 +89,6 @@ public:
 
     void setClearsContext(bool clears) { m_clearsContext = clears; setNeedsCommit(); }
     bool clearsContext() const { return m_clearsContext; }
-
-    void setContentsGravity(ContentsGravityType gravityType) { m_contentsGravity = gravityType; setNeedsCommit(); }
-    ContentsGravityType contentsGravity() const { return m_contentsGravity; }
 
     void setDoubleSided(bool doubleSided) { m_doubleSided = doubleSided; setNeedsCommit(); }
     bool doubleSided() const { return m_doubleSided; }
@@ -152,11 +146,8 @@ public:
     void setGeometryFlipped(bool flipped) { m_geometryFlipped = flipped; setNeedsCommit(); }
     bool geometryFlipped() const { return m_geometryFlipped; }
 
-    void updateTextureContents(unsigned int textureId);
+    virtual void updateTextureContents(unsigned textureId);
     bool contentsDirty() { return m_contentsDirty; }
-
-    void setContents(NativeImagePtr contents);
-    NativeImagePtr contents() const { return m_contents; }
 
     void setDrawTransform(const TransformationMatrix& transform) { m_drawTransform = transform; }
     const TransformationMatrix& drawTransform() const { return m_drawTransform; }
@@ -164,15 +155,33 @@ public:
     void setDrawOpacity(float opacity) { m_drawOpacity = opacity; }
     float drawOpacity() const { return m_drawOpacity; }
 
-    bool drawsContent() { return m_owner && m_owner->drawsContent(); }
+    virtual bool drawsContent() { return m_owner && m_owner->drawsContent(); }
+
+    // Return true if the layer has its own GL texture and false if the texture
+    // needs to be allocated by the compositor.
+    virtual bool ownsTexture() { return false; }
+
+    // Returns the id of the GL texture that stores the contents of this layer.
+    // Derived layer classes that own their own textures should overwrite this method.
+    virtual unsigned textureId() { return m_allocatedTextureId; }
 
     bool preserves3D() { return m_owner && m_owner->preserves3D(); }
 
     void setLayerRenderer(LayerRendererChromium*);
 
-private:
-    LayerChromium(LayerType, GraphicsLayerChromium* owner);
+    static void setShaderProgramId(unsigned shaderProgramId) { m_shaderProgramId = shaderProgramId; }
+    virtual unsigned shaderProgramId() { return m_shaderProgramId; }
 
+protected:
+    GraphicsLayerChromium* m_owner;
+    LayerChromium(GraphicsLayerChromium* owner);
+    void updateTextureRect(void* pixels, const IntSize& bitmapSize, const IntSize& requiredTextureSize, const IntRect& dirtyRect, unsigned textureId);
+
+    IntSize m_bounds;
+    FloatRect m_dirtyRect;
+    bool m_contentsDirty;
+
+private:
     void setNeedsCommit();
 
     void setSuperlayer(LayerChromium* superlayer) { m_superlayer = superlayer; }
@@ -193,17 +202,11 @@ private:
     Vector<RefPtr<LayerChromium> > m_sublayers;
     LayerChromium* m_superlayer;
 
-    GraphicsLayerChromium* m_owner;
-
-    LayerType m_layerType;
-
-    IntSize m_bounds;
     IntSize m_backingStoreSize;
     FloatPoint m_position;
     FloatPoint m_anchorPoint;
     Color m_backgroundColor;
     Color m_borderColor;
-    FloatRect m_dirtyRect;
 
     LayerRendererChromium* m_layerRenderer;
 
@@ -221,8 +224,12 @@ private:
 
     float m_drawOpacity;
 
-    unsigned int m_allocatedTextureId;
+    unsigned m_allocatedTextureId;
     IntSize m_allocatedTextureSize;
+
+    // The shader program used by all layers of this type is the same.
+    // This static can be shadowed by derived classes to use a special shader.
+    static unsigned m_shaderProgramId;
 
     bool m_clearsContext;
     bool m_doubleSided;
@@ -232,15 +239,10 @@ private:
     bool m_geometryFlipped;
     bool m_needsDisplayOnBoundsChange;
 
-    bool m_contentsDirty;
-
-    ContentsGravityType m_contentsGravity;
-    NativeImagePtr m_contents;
     String m_name;
 };
 
 }
-
 #endif // USE(ACCELERATED_COMPOSITING)
 
 #endif
