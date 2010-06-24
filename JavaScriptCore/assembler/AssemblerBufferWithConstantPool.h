@@ -190,6 +190,8 @@ public:
 
     void putIntWithConstantInt(uint32_t insn, uint32_t constant, bool isReusable = false)
     {
+        if (!m_numConsts)
+            m_maxDistance = maxPoolSize;
         flushIfNoSpaceFor(4, 4);
 
         m_loadOffsets.append(AssemblerBuffer::size());
@@ -279,7 +281,6 @@ private:
 
         m_loadOffsets.clear();
         m_numConsts = 0;
-        m_maxDistance = maxPoolSize;
     }
 
     void flushIfNoSpaceFor(int nextInsnSize)
