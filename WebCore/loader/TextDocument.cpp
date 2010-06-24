@@ -184,8 +184,8 @@ bool TextDocumentParser::isWaitingForScripts() const
     return false;
 }
 
-TextDocument::TextDocument(Frame* frame)
-    : HTMLDocument(frame)
+TextDocument::TextDocument(Frame* frame, const KURL& url)
+    : HTMLDocument(frame, url)
 {
 }
 

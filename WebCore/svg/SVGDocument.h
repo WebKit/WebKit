@@ -33,9 +33,9 @@ namespace WebCore {
 
     class SVGDocument : public Document {
     public:
-        static PassRefPtr<SVGDocument> create(Frame* frame)
+        static PassRefPtr<SVGDocument> create(Frame* frame, const KURL& url)
         {
-            return adoptRef(new SVGDocument(frame));
+            return adoptRef(new SVGDocument(frame, url));
         }
 
         virtual ~SVGDocument();
@@ -51,7 +51,7 @@ namespace WebCore {
         void updatePan(const FloatPoint& pos) const;
 
     private:
-        SVGDocument(Frame*);
+        SVGDocument(Frame*, const KURL&);
 
         virtual bool isSVGDocument() const { return true; }
 

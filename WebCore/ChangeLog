@@ -1,3 +1,60 @@
+2010-06-24  Nate Chapin  <japhet@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Take a KURL parameter in Document's constructor.
+        This will remove the one case where Document::url() 
+        and FrameLoader::url() are not equal, allowing us to
+        remove FrameLoader::url().
+
+        https://bugs.webkit.org/show_bug.cgi?id=41166
+
+        Refactor only, no new tests.
+
+        * dom/DOMImplementation.cpp:
+        (WebCore::DOMImplementation::createDocument): Take a KURL and pass it through to Document.
+        (WebCore::DOMImplementation::createHTMLDocument):
+        * dom/DOMImplementation.h:
+        * dom/Document.cpp:
+        (WebCore::Document::Document): Call setURL() for non-empty KURL input parameters.
+        (WebCore::Document::initSecurityContext): m_url is now initialized, so use it instead
+            of m_frame->loader()->url() for initializing the SecurityOrigin.
+        * dom/Document.h:
+        (WebCore::Document::create):
+        (WebCore::Document::createXHTML):
+        * html/HTMLDocument.cpp:
+        * html/HTMLDocument.h: Add KURL parameter to create() and constructor.
+        * html/HTMLViewSourceDocument.cpp:
+        * html/HTMLViewSourceDocument.h: Add KURL parameter to create() and constructor.
+        * loader/CachedFont.cpp:
+        (WebCore::CachedFont::ensureSVGFontData):
+        * loader/DocumentWriter.cpp:
+        (WebCore::DocumentWriter::createDocument): Take a KURL and pass it through to Document.
+        (WebCore::DocumentWriter::begin): Pass existing url parameter to constructors, and remove
+            redundant Document::setURL() call.
+        * loader/DocumentWriter.h:
+        * loader/FTPDirectoryDocument.cpp:
+        * loader/FTPDirectoryDocument.h: Add KURL parameter to create() and constructor.
+        * loader/ImageDocument.cpp:
+        * loader/ImageDocument.h: Add KURL parameter to create() and constructor.
+        * loader/MediaDocument.cpp:
+        * loader/MediaDocument.h: Add KURL parameter to create() and constructor.
+        * loader/PlaceholderDocument.h: Add KURL parameter to create() and constructor.
+        * loader/PluginDocument.cpp:
+        * loader/PluginDocument.h: Add KURL parameter to create() and constructor.
+        * loader/SinkDocument.cpp:
+        * loader/SinkDocument.h: Add KURL parameter to create() and constructor.
+        * loader/TextDocument.cpp:
+        * loader/TextDocument.h: Add KURL parameter to create() and constructor.
+        * svg/SVGDocument.cpp:
+        * svg/SVGDocument.h: Add KURL parameter to create() and constructor.
+        * xml/DOMParser.cpp:
+        (WebCore::DOMParser::parseFromString):
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::responseXML):
+        * xml/XSLTProcessor.cpp:
+        (WebCore::XSLTProcessor::createDocumentFromSource):
+
 2010-06-24  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Sam Weinig.

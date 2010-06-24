@@ -33,13 +33,13 @@ class DOMImplementation;
     
 class FTPDirectoryDocument : public HTMLDocument {
 public:
-    static PassRefPtr<FTPDirectoryDocument> create(Frame* frame)
+    static PassRefPtr<FTPDirectoryDocument> create(Frame* frame, const KURL& url)
     {
-        return adoptRef(new FTPDirectoryDocument(frame));
+        return adoptRef(new FTPDirectoryDocument(frame, url));
     }
 
 private:
-    FTPDirectoryDocument(Frame*);
+    FTPDirectoryDocument(Frame*, const KURL&);
     virtual DocumentParser* createParser();
 };
     

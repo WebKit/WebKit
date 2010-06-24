@@ -195,8 +195,8 @@ bool ImageDocumentParser::isWaitingForScripts() const
     
 // --------
 
-ImageDocument::ImageDocument(Frame* frame)
-    : HTMLDocument(frame)
+ImageDocument::ImageDocument(Frame* frame, const KURL& url)
+    : HTMLDocument(frame, url)
     , m_imageElement(0)
     , m_imageSizeIsKnown(false)
     , m_didShrinkImage(false)
