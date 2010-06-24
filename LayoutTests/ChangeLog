@@ -2,6 +2,14 @@
 
         Unreviewed.
 
+        Updated expected results for a test that differs on the bots.
+
+        * platform/gtk/scrollbars/overflow-scrollbar-combinations-expected.txt:
+
+2010-06-24  Martin Robinson  <mrobinson@igalia.com>
+
+        Unreviewed.
+
         Skip a failing test. Clean up skipped list stragglers. Conglomerate all tests which
         are timing out and don't have attached bugs. Add expected results for some tests and
         unskip them.
