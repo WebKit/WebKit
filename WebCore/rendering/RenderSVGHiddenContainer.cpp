@@ -52,11 +52,6 @@ IntRect RenderSVGHiddenContainer::clippedOverflowRectForRepaint(RenderBoxModelOb
     return IntRect();
 }
 
-void RenderSVGHiddenContainer::absoluteRects(Vector<IntRect>&, int, int)
-{
-    // This subtree does not take up space or paint
-}
-
 void RenderSVGHiddenContainer::absoluteQuads(Vector<FloatQuad>&)
 {
     // This subtree does not take up space or paint

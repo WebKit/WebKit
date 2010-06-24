@@ -81,6 +81,18 @@ void RenderSVGInline::mapLocalToContainer(RenderBoxModelObject* repaintContainer
     SVGRenderBase::mapLocalToContainer(this, repaintContainer, useTransforms, fixed, transformState);
 }
 
+void RenderSVGInline::absoluteQuads(Vector<FloatQuad>& quads)
+{
+    const RenderObject* object = findTextRootObject(this);
+    if (!object)
+        return;
+
+    FloatRect textBoundingBox = object->strokeBoundingBox();
+    for (InlineFlowBox* box = firstLineBox(); box; box = box->nextLineBox())
+        quads.append(localToAbsoluteQuad(FloatRect(textBoundingBox.x() + box->x(), textBoundingBox.y() + box->y(), box->width(), box->height())));
+}
+
+
 }
 
 #endif // ENABLE(SVG)

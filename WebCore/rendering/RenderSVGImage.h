@@ -34,7 +34,8 @@ namespace WebCore {
 
 class SVGImageElement;
 
-class RenderSVGImage : public RenderImage, protected SVGRenderBase {
+class RenderSVGImage : public RenderImage
+                     , protected SVGRenderBase {
 public:
     RenderSVGImage(SVGImageElement*);
 
@@ -46,7 +47,7 @@ private:
 
     virtual const AffineTransform& localToParentTransform() const { return m_localTransform; }
 
-    virtual FloatRect objectBoundingBox() const;
+    virtual FloatRect objectBoundingBox() const { return m_localBounds; }
     virtual FloatRect strokeBoundingBox() const { return m_localBounds; }
     virtual FloatRect repaintRectInLocalCoordinates() const;
 
@@ -83,5 +84,3 @@ private:
 
 #endif // ENABLE(SVG)
 #endif // RenderSVGImage_h
-
-// vim:ts=4:noet

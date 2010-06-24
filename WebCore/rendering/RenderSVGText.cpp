@@ -66,7 +66,6 @@ void RenderSVGText::computeRectForRepaint(RenderBoxModelObject* repaintContainer
 
 void RenderSVGText::mapLocalToContainer(RenderBoxModelObject* repaintContainer, bool fixed, bool useTransforms, TransformState& transformState) const
 {
-    transformState.move(x(), y());
     SVGRenderBase::mapLocalToContainer(this, repaintContainer, fixed, useTransforms, transformState);
 }
 
@@ -140,32 +139,9 @@ bool RenderSVGText::nodeAtPoint(const HitTestRequest&, HitTestResult&, int, int,
     return false;
 }
 
-void RenderSVGText::absoluteRects(Vector<IntRect>& rects, int, int)
-{
-    // Don't use objectBoundingBox here, as it's unites the selection rects. Makes it hard
-    // to spot errors, if there are any using WebInspector. Individually feed them into 'rects'.
-    for (InlineFlowBox* flow = firstLineBox(); flow; flow = flow->nextLineBox()) {
-        for (InlineBox* box = flow->firstChild(); box; box = box->nextOnLine()) {
-            FloatRect boxRect(box->x(), box->y(), box->width(), box->height());
-            // FIXME: crawling up the parent chain to map each rect is very inefficient
-            // we should compute the absoluteTransform outside this loop first.
-            rects.append(enclosingIntRect(localToAbsoluteQuad(boxRect).boundingBox()));
-        }
-    }
-}
-
 void RenderSVGText::absoluteQuads(Vector<FloatQuad>& quads)
 {
-    // Don't use objectBoundingBox here, as it's unites the selection rects. Makes it hard
-    // to spot errors, if there are any using WebInspector. Individually feed them into 'rects'.
-    for (InlineFlowBox* flow = firstLineBox(); flow; flow = flow->nextLineBox()) {
-        for (InlineBox* box = flow->firstChild(); box; box = box->nextOnLine()) {
-            FloatRect boxRect(box->x(), box->y(), box->width(), box->height());
-            // FIXME: crawling up the parent chain to map each quad is very inefficient
-            // we should compute the absoluteTransform outside this loop first.
-            quads.append(localToAbsoluteQuad(boxRect));
-        }
-    }
+    quads.append(localToAbsoluteQuad(strokeBoundingBox()));
 }
 
 void RenderSVGText::paint(PaintInfo& paintInfo, int, int)

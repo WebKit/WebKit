@@ -1931,7 +1931,7 @@ static void drawHighlightForBox(GraphicsContext& context, const FloatQuad& conte
     drawOutlinedQuad(context, contentQuad, contentBoxColor);
 }
 
-static void drawHighlightForLineBoxes(GraphicsContext& context, const Vector<FloatQuad>& lineBoxQuads)
+static void drawHighlightForLineBoxesOrSVGRenderer(GraphicsContext& context, const Vector<FloatQuad>& lineBoxQuads)
 {
     static const Color lineBoxColor(125, 173, 217, 128);
 
@@ -1972,7 +1972,14 @@ void InspectorController::drawNodeHighlight(GraphicsContext& context) const
         overlayRect = view->visibleContentRect();
     context.translate(-overlayRect.x(), -overlayRect.y());
 
-    if (renderer->isBox()) {
+    // RenderSVGRoot should be highlighted through the isBox() code path, all other SVG elements should just dump their absoluteQuads().
+#if ENABLE(SVG)
+    bool isSVGRenderer = renderer->node() && renderer->node()->isSVGElement() && !renderer->isSVGRoot();
+#else
+    bool isSVGRenderer = false;
+#endif
+
+    if (renderer->isBox() && !isSVGRenderer) {
         RenderBox* renderBox = toRenderBox(renderer);
 
         IntRect contentBox = renderBox->contentBoxRect();
@@ -1995,16 +2002,14 @@ void InspectorController::drawNodeHighlight(GraphicsContext& context) const
         absMarginQuad.move(mainFrameOffset);
 
         drawHighlightForBox(context, absContentQuad, absPaddingQuad, absBorderQuad, absMarginQuad);
-    } else if (renderer->isRenderInline()) {
-        RenderInline* renderInline = toRenderInline(renderer);
-
+    } else if (renderer->isRenderInline() || isSVGRenderer) {
         // FIXME: We should show margins/padding/border for inlines.
         Vector<FloatQuad> lineBoxQuads;
-        renderInline->absoluteQuads(lineBoxQuads);
+        renderer->absoluteQuads(lineBoxQuads);
         for (unsigned i = 0; i < lineBoxQuads.size(); ++i)
             lineBoxQuads[i] += mainFrameOffset;
 
-        drawHighlightForLineBoxes(context, lineBoxQuads);
+        drawHighlightForLineBoxesOrSVGRenderer(context, lineBoxQuads);
     }
 }
 

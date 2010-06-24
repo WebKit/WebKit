@@ -1,3 +1,46 @@
+2010-06-24  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Dirk Schulze.
+
+        Inspector & SVG Text have problems, kids of RenderSVGText are not properly placed.
+        https://bugs.webkit.org/show_bug.cgi?id=41143
+
+        Simplify code path taken for SVG text in InspectorController, take the code path currently only used for RenderInline,
+        that just calls absoluteQuads(), and displays the result. Refactored code that all SVG renderers (except RenderSVGRoot)
+        take this code path -> highlighting now works as expected.
+
+        Don't use absoluteClippedOverlowRect() in the various RenderSVG*::absoluteQuads() methods, as we're loosing floating-point precision.
+        Instead use localToAbsoluteQuad(strokeBoundingBox()) in order to highlight the unclipped, unfiltered, etc.. region that this renderer would paint.
+
+        No new tests, as this is only manual testable - at least I didn't find any Inspector-Highlighting tests, if someone knows please mail me.
+
+        * inspector/InspectorController.cpp:
+        (WebCore::drawHighlightForLineBoxesOrSVGRenderer):
+        (WebCore::InspectorController::drawNodeHighlight):
+        * rendering/RenderSVGBlock.cpp:
+        (WebCore::RenderSVGBlock::absoluteRects): ASSERT_NOT_REACHED() here. SVG should only be inspected through absoluteQuads().
+        * rendering/RenderSVGBlock.h: Add absoluteRects() in this base class for RenderForeignObject/RenderSVGText.
+        * rendering/RenderSVGHiddenContainer.cpp: Remove absoluteRects() - RenderSVGModelObject already has it.
+        * rendering/RenderSVGHiddenContainer.h: Ditto.
+        * rendering/RenderSVGImage.cpp: 
+        (WebCore::RenderSVGImage::absoluteRects): ASSERT_NOT_REACHED() here.
+        (WebCore::RenderSVGImage::absoluteQuads): Don't use absoluteClippedOverlowRect() but localToAbsoluteQuad(repaintRectInLocalCoordinates()).
+        * rendering/RenderSVGImage.h:
+        (WebCore::RenderSVGImage::objectBoundingBox): Inlined
+        * rendering/RenderSVGInline.cpp: 
+        (WebCore::RenderSVGInline::absoluteQuads): Take RenderSVGText translation into account, allows inspecting <tspan>/<tref> etc.
+        * rendering/RenderSVGInline.h:
+        * rendering/RenderSVGModelObject.cpp: 
+        (WebCore::RenderSVGModelObject::absoluteRects): ASSERT_NOT_REACHED() here.
+        (WebCore::RenderSVGModelObject::absoluteQuads): Don't use absoluteClippedOverlowRect() but localToAbsoluteQuad(repaintRectInLocalCoordinates()).
+        * rendering/RenderSVGModelObject.h:
+        * rendering/RenderSVGRoot.cpp: Fix typo in license s/aint/along. Need to touch this file in order to let Mac build.
+        * rendering/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::mapLocalToContainer): Remove hack, which moved the transformState by x()/y(). Not needed anymore.
+        (WebCore::RenderSVGText::absoluteQuads): Proper implementation, respecting x/y translation.
+        * rendering/RenderSVGText.h: Reorder some functions. 
+        * rendering/SVGRenderSupport.h: Removed last virtual function strokeBoundingBox().
+
 2010-06-24  Kent Tamura  <tkent@chromium.org>
 
         Unreviewed. Build fix for Tiger.

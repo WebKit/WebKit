@@ -29,13 +29,16 @@ namespace WebCore {
 
 class SVGElement;
 
-class RenderSVGBlock : public RenderBlock, protected SVGRenderBase {
+class RenderSVGBlock : public RenderBlock
+                     , protected SVGRenderBase {
 public:
     RenderSVGBlock(SVGElement*);
 
 private:
     virtual void setStyle(PassRefPtr<RenderStyle>);
     virtual void updateBoxModelInfoFromStyle();
+
+    virtual void absoluteRects(Vector<IntRect>&, int tx, int ty);
 };
 
 }
