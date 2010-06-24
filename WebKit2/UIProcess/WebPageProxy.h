@@ -99,7 +99,7 @@ public:
 
     void loadURL(const WebCore::String&);
     void stopLoading();
-    void reload();
+    void reload(bool reloadFromOrigin);
 
     void goForward();
     bool canGoForward() const { return m_canGoForward; }

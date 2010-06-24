@@ -52,7 +52,12 @@ void WKPageStopLoading(WKPageRef pageRef)
 
 void WKPageReload(WKPageRef pageRef)
 {
-    toWK(pageRef)->reload();
+    toWK(pageRef)->reload(false);
+}
+
+void WKPageReloadFromOrigin(WKPageRef pageRef)
+{
+    toWK(pageRef)->reload(true);
 }
 
 bool WKPageTryClose(WKPageRef pageRef)

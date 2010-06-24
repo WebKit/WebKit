@@ -133,6 +133,7 @@ WK_EXPORT WKPageNamespaceRef WKPageGetPageNamespace(WKPageRef page);
 WK_EXPORT void WKPageLoadURL(WKPageRef page, WKURLRef url);
 WK_EXPORT void WKPageStopLoading(WKPageRef page);
 WK_EXPORT void WKPageReload(WKPageRef page);
+WK_EXPORT void WKPageReloadFromOrigin(WKPageRef page);
 
 WK_EXPORT bool WKPageTryClose(WKPageRef page);
 WK_EXPORT void WKPageClose(WKPageRef page);

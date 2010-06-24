@@ -1,3 +1,23 @@
+2010-06-24  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=41168
+        <rdar://problem/8124605>
+        Webkit2: Add WKPageReloadFromOrigin() to match old-WebKit functionality
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageReload):
+        (WKPageReloadFromOrigin):
+        * UIProcess/API/C/WKPage.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::reload):
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::reload):
+        (WebKit::WebPage::didReceiveMessage):
+        * WebProcess/WebPage/WebPage.h:
+
 2010-06-24  Adam Roben  <aroben@apple.com>
 
         Windows build fix
