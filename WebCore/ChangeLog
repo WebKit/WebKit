@@ -1,5 +1,38 @@
 2010-06-23  Eric Seidel  <eric@webkit.org>
 
+        Unreviewed.  Speculative build fix for Qt.
+
+        Move Document* down onto DocumentParser, since every DocumentParser needs one.
+        https://bugs.webkit.org/show_bug.cgi?id=41117
+
+        XMLDocumentParserQt is a huge pile of donkey barf.
+        I can't believe I ever r+'d the creation of this pile of
+        copy/paste code.
+
+        I clearly missed removing m_doc from this code as well and thus
+        broke Qt.
+
+        We really need to fix both XMLDocumentParserLibxml2 and
+        XMLDocumentParserQt not to be so poorly abstracted so
+        that if we're going to have two of them they can at least
+        share some code.
+
+        * dom/XMLDocumentParserQt.cpp:
+        (WebCore::XMLDocumentParser::XMLDocumentParser):
+        (WebCore::XMLDocumentParser::~XMLDocumentParser):
+        (WebCore::XMLDocumentParser::doWrite):
+        (WebCore::XMLDocumentParser::doEnd):
+        (WebCore::XMLDocumentParser::parse):
+        (WebCore::XMLDocumentParser::startDocument):
+        (WebCore::XMLDocumentParser::parseStartElement):
+        (WebCore::XMLDocumentParser::parseEndElement):
+        (WebCore::XMLDocumentParser::parseProcessingInstruction):
+        (WebCore::XMLDocumentParser::parseCdata):
+        (WebCore::XMLDocumentParser::parseComment):
+        (WebCore::XMLDocumentParser::parseDtd):
+
+2010-06-23  Eric Seidel  <eric@webkit.org>
+
         Reviewed by Adam Barth.
 
         Move Document* down onto DocumentParser, since every DocumentParser needs one.

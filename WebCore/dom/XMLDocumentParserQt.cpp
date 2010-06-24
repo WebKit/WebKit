@@ -77,11 +77,11 @@ QString EntityResolver::resolveUndeclaredEntity(const QString &name)
 
 // --------------------------------
 
-XMLDocumentParser::XMLDocumentParser(Document* _doc, FrameView* _view)
-    : m_doc(_doc)
-    , m_view(_view)
+XMLDocumentParser::XMLDocumentParser(Document* document, FrameView* frameView)
+    : DocumentParser(document)
+    , m_view(frameView)
     , m_wroteText(false)
-    , m_currentNode(_doc)
+    , m_currentNode(document)
     , m_sawError(false)
     , m_sawXSLTransform(false)
     , m_sawFirstElement(false)
@@ -105,7 +105,7 @@ XMLDocumentParser::XMLDocumentParser(Document* _doc, FrameView* _view)
 }
 
 XMLDocumentParser::XMLDocumentParser(DocumentFragment* fragment, Element* parentElement, FragmentScriptingPermission permission)
-    : m_doc(fragment->document())
+    : DocumentParser(fragment->document())
     , m_view(0)
     , m_wroteText(false)
     , m_currentNode(fragment)
@@ -129,8 +129,6 @@ XMLDocumentParser::XMLDocumentParser(DocumentFragment* fragment, Element* parent
     , m_scriptingPermission(permission)
 {
     fragment->ref();
-    if (m_doc)
-        m_doc->ref();
 
     // Add namespaces based on the parent node
     Vector<Element*> elemStack;
@@ -169,8 +167,6 @@ XMLDocumentParser::XMLDocumentParser(DocumentFragment* fragment, Element* parent
 XMLDocumentParser::~XMLDocumentParser()
 {
     clearCurrentNodeStack();
-    if (m_parsingFragment && m_doc)
-        m_doc->deref();
     if (m_pendingScript)
         m_pendingScript->removeClient(this);
     delete m_stream.entityResolver();
@@ -180,7 +176,7 @@ void XMLDocumentParser::doWrite(const String& parseString)
 {
     m_wroteText = true;
 
-    if (m_doc->decoder() && m_doc->decoder()->sawError()) {
+    if (document()->decoder() && document()->decoder()->sawError()) {
         // If the decoder saw an error, report it as fatal (stops parsing)
         handleError(fatal, "Encoding error", lineNumber(), columnNumber());
         return;
@@ -207,10 +203,10 @@ void XMLDocumentParser::doEnd()
 {
 #if ENABLE(XSLT)
     if (m_sawXSLTransform) {
-        m_doc->setTransformSource(new TransformSource(m_originalSourceForTransform));
-        m_doc->setParsing(false); // Make the doc think it's done, so it will apply xsl sheets.
-        m_doc->updateStyleSelector();
-        m_doc->setParsing(true);
+        document()->setTransformSource(new TransformSource(m_originalSourceForTransform));
+        document()->setParsing(false); // Make the doc think it's done, so it will apply xsl sheets.
+        document()->updateStyleSelector();
+        document()->setParsing(true);
         m_parserStopped = true;
     }
 #endif
@@ -365,7 +361,7 @@ void XMLDocumentParser::parse()
             break;
         case QXmlStreamReader::StartElement: {
 #if ENABLE(XHTMLMP)
-            if (m_doc->isXHTMLMPDocument() && !m_hasDocTypeDeclaration) {
+            if (document()->isXHTMLMPDocument() && !m_hasDocTypeDeclaration) {
                 handleError(fatal, "DOCTYPE declaration lost.", lineNumber(), columnNumber());
                 break;
             }
@@ -444,14 +440,14 @@ void XMLDocumentParser::startDocument()
     ExceptionCode ec = 0;
 
     if (!m_parsingFragment) {
-        m_doc->setXMLStandalone(m_stream.isStandaloneDocument(), ec);
+        document()->setXMLStandalone(m_stream.isStandaloneDocument(), ec);
 
         QStringRef version = m_stream.documentVersion();
         if (!version.isEmpty())
-            m_doc->setXMLVersion(version, ec);
+            document()->setXMLVersion(version, ec);
         QStringRef encoding = m_stream.documentEncoding();
         if (!encoding.isEmpty())
-            m_doc->setXMLEncoding(encoding);
+            document()->setXMLEncoding(encoding);
     }
 }
 
@@ -475,7 +471,7 @@ void XMLDocumentParser::parseStartElement()
     }
 
     QualifiedName qName(prefix, localName, uri);
-    RefPtr<Element> newElement = m_doc->createElement(qName, true);
+    RefPtr<Element> newElement = document()->createElement(qName, true);
     if (!newElement) {
         stopParsing();
         return;
@@ -529,8 +525,8 @@ void XMLDocumentParser::parseStartElement()
     if (m_view && !newElement->attached())
         newElement->attach();
 
-    if (isFirstElement && m_doc->frame())
-        m_doc->frame()->loader()->dispatchDocumentElementAvailable();
+    if (isFirstElement && document()->frame())
+        document()->frame()->loader()->dispatchDocumentElementAvailable();
 }
 
 void XMLDocumentParser::parseEndElement()
@@ -574,7 +570,7 @@ void XMLDocumentParser::parseEndElement()
 
 #if ENABLE(XHTMLMP)
     if (!scriptElement->shouldExecuteAsJavaScript())
-        m_doc->setShouldProcessNoscriptElement(true);
+        document()->setShouldProcessNoscriptElement(true);
     else
 #endif
     {
@@ -583,7 +579,7 @@ void XMLDocumentParser::parseEndElement()
             // we have a src attribute
             String scriptCharset = scriptElement->scriptCharset();
             if (element->dispatchBeforeLoadEvent(scriptHref) &&
-                (m_pendingScript = m_doc->docLoader()->requestScript(scriptHref, scriptCharset))) {
+                (m_pendingScript = document()->docLoader()->requestScript(scriptHref, scriptCharset))) {
                 m_scriptElement = element;
                 m_pendingScript->addClient(this);
 
@@ -593,7 +589,7 @@ void XMLDocumentParser::parseEndElement()
             } else
                 m_scriptElement = 0;
         } else
-            m_view->frame()->script()->executeScript(ScriptSourceCode(scriptElement->scriptContent(), m_doc->url(), m_scriptStartLine));
+            m_view->frame()->script()->executeScript(ScriptSourceCode(scriptElement->scriptContent(), document()->url(), m_scriptStartLine));
     }
     m_requestingScript = false;
     popCurrentNode();
@@ -613,7 +609,7 @@ void XMLDocumentParser::parseProcessingInstruction()
 
     // ### handle exceptions
     int exception = 0;
-    RefPtr<ProcessingInstruction> pi = m_doc->createProcessingInstruction(
+    RefPtr<ProcessingInstruction> pi = document()->createProcessingInstruction(
         m_stream.processingInstructionTarget(),
         m_stream.processingInstructionData(), exception);
     if (exception)
@@ -630,7 +626,7 @@ void XMLDocumentParser::parseProcessingInstruction()
 
 #if ENABLE(XSLT)
     m_sawXSLTransform = !m_sawFirstElement && pi->isXSL();
-    if (m_sawXSLTransform && !m_doc->transformSourceDocument())
+    if (m_sawXSLTransform && !document()->transformSourceDocument())
         stopParsing();
 #endif
 }
@@ -639,7 +635,7 @@ void XMLDocumentParser::parseCdata()
 {
     exitText();
 
-    RefPtr<Node> newNode = CDATASection::create(m_doc, m_stream.text());
+    RefPtr<Node> newNode = CDATASection::create(document(), m_stream.text());
     if (!m_currentNode->addChild(newNode.get()))
         return;
     if (m_view && !newNode->attached())
@@ -650,7 +646,7 @@ void XMLDocumentParser::parseComment()
 {
     exitText();
 
-    RefPtr<Node> newNode = Comment::create(m_doc, m_stream.text());
+    RefPtr<Node> newNode = Comment::create(document(), m_stream.text());
     m_currentNode->addChild(newNode.get());
     if (m_view && !newNode->attached())
         newNode->attach();
@@ -695,14 +691,14 @@ void XMLDocumentParser::parseDtd()
             return;
         }
 
-        if (m_doc->isXHTMLMPDocument()) // check if the MIME type is correct with this method
+        if (document()->isXHTMLMPDocument()) // check if the MIME type is correct with this method
             setIsXHTMLMPDocument(true);
         else
             setIsXHTMLDocument(true);
     }
 #endif
 #if ENABLE(WML)
-    else if (m_doc->isWMLDocument()
+    else if (document()->isWMLDocument()
              && publicId != QLatin1String("-//WAPFORUM//DTD WML 1.3//EN")
              && publicId != QLatin1String("-//WAPFORUM//DTD WML 1.2//EN")
              && publicId != QLatin1String("-//WAPFORUM//DTD WML 1.1//EN")
@@ -710,7 +706,7 @@ void XMLDocumentParser::parseDtd()
         handleError(fatal, "Invalid DTD Public ID", lineNumber(), columnNumber());
 #endif
     if (!m_parsingFragment)
-        m_doc->addChild(DocumentType::create(m_doc, name, publicId, systemId));
+        document()->addChild(DocumentType::create(document(), name, publicId, systemId));
 
 }
 }
