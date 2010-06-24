@@ -43,14 +43,22 @@ Vector<String> PluginInfoStore::pluginDirectories()
     return pluginDirectories;
 }
 
+// FIXME: Once the UI process knows the difference between the main thread and the web thread we can drop this and just use
+// String::createCFString.
+static CFStringRef safeCreateCFString(const String& directory)
+{
+    return CFStringCreateWithCharacters(0, reinterpret_cast<const UniChar*>(directory.characters()), directory.length());
+}
+    
 Vector<String> PluginInfoStore::pluginPathsInDirectory(const String& directory)
 {
     Vector<String> pluginPaths;
 
-    NSString *directoryNSString = directory;
-    NSArray *filenames = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:directory error:nil];
+    RetainPtr<CFStringRef> directoryCFString(AdoptCF, safeCreateCFString(directory));
+    
+    NSArray *filenames = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:(NSString *)directoryCFString.get() error:nil];
     for (NSString *filename in filenames)
-        pluginPaths.append([directoryNSString stringByAppendingPathComponent:filename]);
+        pluginPaths.append([(NSString *)directoryCFString.get() stringByAppendingPathComponent:filename]);
     
     return pluginPaths;
 }
@@ -306,7 +314,7 @@ static bool getPluginInfoFromCarbonResources(CFBundleRef bundle, PluginInfo& plu
 
 bool PluginInfoStore::getPluginInfo(const WebCore::String& pluginPath, Plugin& plugin)
 {
-    RetainPtr<CFStringRef> bundlePath(AdoptCF, pluginPath.createCFString());
+    RetainPtr<CFStringRef> bundlePath(AdoptCF, safeCreateCFString(pluginPath));
     RetainPtr<CFURLRef> bundleURL(AdoptCF, CFURLCreateWithFileSystemPath(kCFAllocatorDefault, bundlePath.get(), kCFURLPOSIXPathStyle, false));
 
     // Try to initialize the bundle.

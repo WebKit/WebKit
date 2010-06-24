@@ -43,7 +43,9 @@
 #include <WebCore/FrameLoadRequest.h>
 #include <WebCore/FrameView.h>
 #include <WebCore/HTMLFormElement.h>
+#include <WebCore/MIMETypeRegistry.h>
 #include <WebCore/Page.h>
+#include <WebCore/PluginData.h>
 #include <WebCore/ProgressTracker.h>
 #include <WebCore/ResourceError.h>
 #include <WebCore/Widget.h>
@@ -779,6 +781,21 @@ PassRefPtr<Widget> WebFrameLoaderClient::createJavaAppletWidget(const IntSize&, 
 
 ObjectContentType WebFrameLoaderClient::objectContentType(const KURL& url, const String& mimeType)
 {
+    if (mimeType.isEmpty()) {
+        // FIXME: Try to find the MIME type based on the extension of the URL.
+        return ObjectContentNone;
+    }
+
+    if (WebPage* webPage = m_frame->page()) {
+        if (PluginData* pluginData = webPage->corePage()->pluginData()) {
+            if (pluginData->supportsMimeType(mimeType))
+                return ObjectContentNetscapePlugin;
+        }
+    }
+
+    if (MIMETypeRegistry::isSupportedImageMIMEType(mimeType))
+        return ObjectContentImage;
+
     notImplemented();
     return ObjectContentNone;
 }

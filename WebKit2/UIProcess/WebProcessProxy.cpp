@@ -25,6 +25,7 @@
 
 #include "WebProcessProxy.h"
 
+#include "PluginInfoStore.h"
 #include "WebContext.h"
 #include "WebPageNamespace.h"
 #include "WebPageProxy.h"
@@ -128,9 +129,16 @@ size_t WebProcessProxy::numberOfPages()
     return m_pageMap.size();
 }
 
-void WebProcessProxy::forwardMessageToWebContext(const WebCore::String& message)
+void WebProcessProxy::forwardMessageToWebContext(const String& message)
 {
     m_context->didRecieveMessageFromInjectedBundle(message);
+}
+
+void WebProcessProxy::getPlugins(bool refresh, Vector<PluginInfo>& plugins)
+{
+    if (refresh)
+        PluginInfoStore::shared().refresh();
+    PluginInfoStore::shared().getPlugins(plugins);
 }
 
 void WebProcessProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)
@@ -138,13 +146,18 @@ void WebProcessProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC
     if (messageID.is<CoreIPC::MessageClassWebProcessProxy>()) {
         switch (messageID.get<WebProcessProxyMessage::Kind>()) {
             case WebProcessProxyMessage::PostMessage: {
-                WebCore::String message;
+                String message;
                 if (!arguments->decode(CoreIPC::Out(message)))
                     return;
 
                 forwardMessageToWebContext(message);
                 return;
             }
+                
+            // These are synchronous messages and should never be handled here.
+            case WebProcessProxyMessage::GetPlugins:
+                ASSERT_NOT_REACHED();
+                break;
         }
     }
 
@@ -161,6 +174,28 @@ void WebProcessProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC
 
 void WebProcessProxy::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments, CoreIPC::ArgumentEncoder* reply)
 {
+    if (messageID.is<CoreIPC::MessageClassWebProcessProxy>()) {
+        switch (messageID.get<WebProcessProxyMessage::Kind>()) {
+            case WebProcessProxyMessage::GetPlugins: {
+                bool refresh;
+                if (!arguments->decode(refresh))
+                    return;
+                
+                // FIXME: We should not do this on the main thread!
+                Vector<PluginInfo> plugins;
+                getPlugins(refresh, plugins);
+
+                reply->encode(plugins);
+                break;
+            }
+
+            // These are asynchronous messages and should never be handled here.
+            case WebProcessProxyMessage::PostMessage:
+                ASSERT_NOT_REACHED();
+                break;
+        }
+    }
+    
     uint64_t pageID = arguments->destinationID();
     if (!pageID)
         return;

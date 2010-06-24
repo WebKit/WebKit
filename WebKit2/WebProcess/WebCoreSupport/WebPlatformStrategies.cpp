@@ -28,6 +28,9 @@
 #if USE(PLATFORM_STRATEGIES)
 
 #include "PluginInfoStore.h"
+#include "WebCoreArgumentCoders.h"
+#include "WebProcess.h"
+#include "WebProcessProxyMessageKinds.h"
 
 using namespace WebCore;
 
@@ -59,11 +62,12 @@ void WebPlatformStrategies::populatePluginCache()
 
     ASSERT(m_cachedPlugins.isEmpty());
     
-    // FIXME: This should call out to the UI process.
-    if (m_shouldRefreshPlugins)
-        PluginInfoStore::shared().refresh();
+    Vector<PluginInfo> plugins;
     
-    PluginInfoStore::shared().getPlugins(m_cachedPlugins);
+    // FIXME: Should we do something in case of error here?
+    WebProcess::shared().connection()->sendSync(WebProcessProxyMessage::GetPlugins, 0, CoreIPC::In(m_shouldRefreshPlugins), CoreIPC::Out(plugins), CoreIPC::Connection::NoTimeout);
+    m_cachedPlugins.swap(plugins);
+    
     m_shouldRefreshPlugins = false;
     m_pluginCacheIsPopulated = true;
 }

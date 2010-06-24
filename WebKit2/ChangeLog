@@ -1,5 +1,41 @@
 2010-06-23  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        Have the UI process compute the plug-in data
+        https://bugs.webkit.org/show_bug.cgi?id=41118
+
+        * Shared/CoreIPCSupport/WebProcessProxyMessageKinds.h:
+        (WebProcessProxyMessage::):
+        Add GetPlugin message kind.
+
+        * Shared/WebCoreArgumentCoders.h:
+        Add argument coders for PluginInfo and MimeClassInfo.
+        
+        * UIProcess/Plugins/mac/PluginInfoStoreMac.mm:
+        (WebKit::safeCreateCFString):
+        (WebKit::PluginInfoStore::pluginPathsInDirectory):
+        (WebKit::PluginInfoStore::getPluginInfo):
+        Use safeCreateCFString.
+        
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::getPlugins):
+        Ask the plug-in info store for the plug-in list.
+
+        (WebKit::WebProcessProxy::didReceiveSyncMessage):
+        Handle GetPlugins.
+
+        * UIProcess/WebProcessProxy.h:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::objectContentType):
+        Implement.
+
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebKit::WebPlatformStrategies::populatePluginCache):
+        Send a sync GetPlugins message.
+
+2010-06-23  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Dan Bernstein.
 
         Add ArgumentCoder for vectors.

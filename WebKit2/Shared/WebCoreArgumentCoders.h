@@ -33,6 +33,7 @@
 #include <WebCore/FloatRect.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/PlatformString.h>
+#include <WebCore/PluginData.h>
 
 namespace CoreIPC {
 
@@ -60,6 +61,51 @@ template<> struct ArgumentCoder<WebCore::String> {
             return false;
         
         s = string;
+        return true;
+    }
+};
+
+template<> struct ArgumentCoder<WebCore::MimeClassInfo> {
+    static void encode(ArgumentEncoder* encoder, const WebCore::MimeClassInfo& mimeClassInfo)
+    {
+        encoder->encode(mimeClassInfo.type);
+        encoder->encode(mimeClassInfo.desc);
+        encoder->encode(mimeClassInfo.extensions);
+    }
+
+    static bool decode(ArgumentDecoder* decoder, WebCore::MimeClassInfo& mimeClassInfo)
+    {
+        if (!decoder->decode(mimeClassInfo.type))
+            return false;
+        if (!decoder->decode(mimeClassInfo.desc))
+            return false;
+        if (!decoder->decode(mimeClassInfo.extensions))
+            return false;
+
+        return true;
+    }
+};
+    
+template<> struct ArgumentCoder<WebCore::PluginInfo> {
+    static void encode(ArgumentEncoder* encoder, const WebCore::PluginInfo& pluginInfo)
+    {
+        encoder->encode(pluginInfo.name);
+        encoder->encode(pluginInfo.file);
+        encoder->encode(pluginInfo.desc);
+        encoder->encode(pluginInfo.mimes);
+    }
+    
+    static bool decode(ArgumentDecoder* decoder, WebCore::PluginInfo& pluginInfo)
+    {
+        if (!decoder->decode(pluginInfo.name))
+            return false;
+        if (!decoder->decode(pluginInfo.file))
+            return false;
+        if (!decoder->decode(pluginInfo.desc))
+            return false;
+        if (!decoder->decode(pluginInfo.mimes))
+            return false;
+
         return true;
     }
 };
