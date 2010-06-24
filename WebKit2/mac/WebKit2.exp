@@ -22,6 +22,8 @@ _WKFrameRelease
 _WKFrameRetain
 _WKNavigationDataGetTitle
 _WKNavigationDataGetURL
+_WKNavigationDataRelease
+_WKNavigationDataRetain
 _WKPageClose
 _WKPageGetEstimatedProgress
 _WKPageGetMainFrame
