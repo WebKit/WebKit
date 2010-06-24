@@ -10,23 +10,23 @@ description(
 // It is important that the closing braces be on the same line as the commas, so
 // that a newline doesn't act as a terminator when lexing inbetween.
 
-function commaTest() { a = 1, }
+function commaTest() { a = 1 }
 
 shouldBeUndefined("commaTest()");
 
-function varCommaTest() { var a = 1, }
+function varCommaTest() { var a = 1 }
 
 shouldBeUndefined("varCommaTest()");
 
-function constCommaTest() { const a = 1, }
+function constCommaTest() { const a = 1 }
 
 shouldBeUndefined("constCommaTest()");
 
-function commaParenTest() { (1), }
+function commaParenTest() { (1) }
 
 shouldBeUndefined("commaParenTest()");
 
-function commaParenThrowTest() { (x), }
+function commaParenThrowTest() { (x) }
 
 shouldThrow("commaParenThrowTest()");
 

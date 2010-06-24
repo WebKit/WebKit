@@ -1,3 +1,18 @@
+2010-06-23  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Make the reparsing test use syntax that is actually valid.
+        The old parser had a bug that would lead to it accepting
+        invalid code in some cases.
+
+        * fast/js/script-tests/reparsing-semicolon-insertion.js:
+        (commaTest):
+        (varCommaTest):
+        (constCommaTest):
+        (commaParenTest):
+        (commaParenThrowTest):
+
 2010-06-22  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Simon Fraser.
