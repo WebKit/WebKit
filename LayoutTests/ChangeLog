@@ -1,3 +1,9 @@
+2010-06-24  Yury Semikhatsky  <yurys@chromium.org>
+
+        Unreviewed: disable new inspector test on Qt linux.
+
+        * platform/qt-linux/Skipped:
+
 2010-06-24  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Adam Barth.
