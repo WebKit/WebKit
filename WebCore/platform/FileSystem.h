@@ -59,6 +59,10 @@ typedef struct HINSTANCE__* HINSTANCE;
 typedef HINSTANCE HMODULE;
 #endif
 
+#if PLATFORM(BREWMP)
+typedef struct _IFile IFile;
+#endif
+
 namespace WTF {
 class CString;
 }
@@ -117,6 +121,11 @@ typedef HANDLE PlatformFileHandle;
 // FIXME: -1 is INVALID_HANDLE_VALUE, defined in <winbase.h>. Chromium tries to
 // avoid using Windows headers in headers.  We'd rather move this into the .cpp.
 const PlatformFileHandle invalidPlatformFileHandle = reinterpret_cast<HANDLE>(-1);
+#elif PLATFORM(BREWMP)
+typedef IFile* PlatformFileHandle;
+const PlatformFileHandle invalidPlatformFileHandle = 0;
+typedef void* PlatformModule;
+typedef unsigned PlatformModuleVersion;
 #else
 typedef int PlatformFileHandle;
 const PlatformFileHandle invalidPlatformFileHandle = -1;

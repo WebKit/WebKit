@@ -1,3 +1,32 @@
+2010-06-23  Kwang Yul Seo  <skyul@company100.net>
+
+        Reviewed by Kent Tamura.
+
+        [BREWMP] Port FileSystem
+        https://bugs.webkit.org/show_bug.cgi?id=34323
+
+        Port FileSystem with IFileMgr interface.
+
+        * platform/FileSystem.h:
+        * platform/brew/FileSystemBrew.cpp: Added.
+        (WebCore::getFileSize):
+        (WebCore::getFileModificationTime):
+        (WebCore::fileExists):
+        (WebCore::deleteFile):
+        (WebCore::deleteEmptyDirectory):
+        (WebCore::pathByAppendingComponent):
+        (WebCore::fileSystemRepresentation):
+        (WebCore::canonicalPath):
+        (WebCore::makeAllDirectories):
+        (WebCore::homeDirectoryPath):
+        (WebCore::pathGetFileName):
+        (WebCore::directoryName):
+        (WebCore::openTemporaryFile):
+        (WebCore::closeFile):
+        (WebCore::writeToFile):
+        (WebCore::unloadModule):
+        (WebCore::listDirectory):
+
 2010-06-23  Alexendar Pavlov  <apavlov@chromium.org>
 
         Reviewed by David Hyatt.
