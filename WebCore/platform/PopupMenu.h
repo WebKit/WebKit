@@ -182,7 +182,7 @@ private:
     static void menuUnmapped(GtkWidget*, PopupMenu*);
     static void menuPositionFunction(GtkMenu*, gint*, gint*, gboolean*, PopupMenu*);
     static void menuRemoveItem(GtkWidget*, PopupMenu*);
-#elif PLATFORM(EFL)
+#elif PLATFORM(EFL) || PLATFORM(BREWMP)
     FrameView* m_view;
 #elif PLATFORM(WX)
     wxMenu* m_menu;
