@@ -1,0 +1,355 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 45;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		BC25193E11D15D8B002EBC01 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC7934A411906584005EA8E2 /* Cocoa.framework */; };
+		BC25193F11D15D8B002EBC01 /* WebKit2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC7934AB1190658C005EA8E2 /* WebKit2.framework */; };
+		BC25194011D15D8B002EBC01 /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BCDA2B991191051F00C3BC47 /* JavaScriptCore.framework */; };
+		BC251A3E11D16831002EBC01 /* InjectedBundleMain.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC25184611D15767002EBC01 /* InjectedBundleMain.cpp */; };
+		BC793400118F7C84005EA8E2 /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC7933FF118F7C84005EA8E2 /* main.mm */; };
+		BC793431118F7F19005EA8E2 /* TestController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC793430118F7F19005EA8E2 /* TestController.cpp */; };
+		BC7934A511906584005EA8E2 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC7934A411906584005EA8E2 /* Cocoa.framework */; };
+		BC7934AC1190658C005EA8E2 /* WebKit2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC7934AB1190658C005EA8E2 /* WebKit2.framework */; };
+		BC7934E811906846005EA8E2 /* PlatformWebViewMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC7934E711906846005EA8E2 /* PlatformWebViewMac.mm */; };
+		BC8C795C11D2785D004535A1 /* TestControllerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC8C795B11D2785D004535A1 /* TestControllerMac.mm */; };
+		BCD7D2F811921278006DB7EE /* TestInvocation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCD7D2F711921278006DB7EE /* TestInvocation.cpp */; };
+		BCDA2ABF1190B51A00C3BC47 /* TestInvocationMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCDA2ABE1190B51A00C3BC47 /* TestInvocationMac.mm */; };
+		BCDA2B9A1191051F00C3BC47 /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BCDA2B991191051F00C3BC47 /* JavaScriptCore.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		BC25194111D15D94002EBC01 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = BC25186111D15D54002EBC01;
+			remoteInfo = InjectedBundle;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		8DD76F9E0486AA7600D96B5E /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 8;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		8DD76FA10486AA7600D96B5E /* WebKitTestRunner */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = WebKitTestRunner; sourceTree = BUILT_PRODUCTS_DIR; };
+		BC25184611D15767002EBC01 /* InjectedBundleMain.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedBundleMain.cpp; sourceTree = "<group>"; };
+		BC25186211D15D54002EBC01 /* InjectedBundle.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = InjectedBundle.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
+		BC25186311D15D54002EBC01 /* InjectedBundle-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "InjectedBundle-Info.plist"; sourceTree = "<group>"; };
+		BC25197111D15E61002EBC01 /* InjectedBundle.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = InjectedBundle.xcconfig; sourceTree = "<group>"; };
+		BC251A1711D16774002EBC01 /* WebKitTestRunnerPrefix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKitTestRunnerPrefix.h; sourceTree = "<group>"; };
+		BC251A1811D16795002EBC01 /* WebKitTestRunner.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = WebKitTestRunner.xcconfig; sourceTree = "<group>"; };
+		BC7933FF118F7C84005EA8E2 /* main.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = main.mm; sourceTree = "<group>"; };
+		BC793426118F7D3C005EA8E2 /* Base.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
+		BC793427118F7DAF005EA8E2 /* DebugRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = DebugRelease.xcconfig; sourceTree = "<group>"; };
+		BC79342F118F7F19005EA8E2 /* TestController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestController.h; sourceTree = "<group>"; };
+		BC793430118F7F19005EA8E2 /* TestController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TestController.cpp; sourceTree = "<group>"; };
+		BC7934A411906584005EA8E2 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
+		BC7934AB1190658C005EA8E2 /* WebKit2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = WebKit2.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		BC7934DD119066EC005EA8E2 /* PlatformWebView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformWebView.h; sourceTree = "<group>"; };
+		BC7934E711906846005EA8E2 /* PlatformWebViewMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PlatformWebViewMac.mm; sourceTree = "<group>"; };
+		BC8C795B11D2785D004535A1 /* TestControllerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TestControllerMac.mm; sourceTree = "<group>"; };
+		BCD7D2F611921278006DB7EE /* TestInvocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestInvocation.h; sourceTree = "<group>"; };
+		BCD7D2F711921278006DB7EE /* TestInvocation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TestInvocation.cpp; sourceTree = "<group>"; };
+		BCDA2ABE1190B51A00C3BC47 /* TestInvocationMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TestInvocationMac.mm; sourceTree = "<group>"; };
+		BCDA2B991191051F00C3BC47 /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = JavaScriptCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		8DD76F9B0486AA7600D96B5E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BC7934A511906584005EA8E2 /* Cocoa.framework in Frameworks */,
+				BC7934AC1190658C005EA8E2 /* WebKit2.framework in Frameworks */,
+				BCDA2B9A1191051F00C3BC47 /* JavaScriptCore.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BC25186011D15D54002EBC01 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BC25193E11D15D8B002EBC01 /* Cocoa.framework in Frameworks */,
+				BC25193F11D15D8B002EBC01 /* WebKit2.framework in Frameworks */,
+				BC25194011D15D8B002EBC01 /* JavaScriptCore.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		08FB7794FE84155DC02AAC07 /* WebKitTestRunner */ = {
+			isa = PBXGroup;
+			children = (
+				08FB7795FE84155DC02AAC07 /* Source */,
+				BC25183511D1571D002EBC01 /* InjectedBundle */,
+				BC793401118F7C8A005EA8E2 /* Configurations */,
+				08FB779DFE84155DC02AAC07 /* External Frameworks and Libraries */,
+				BC25194411D15DBE002EBC01 /* Resources */,
+				1AB674ADFE9D54B511CA2CBB /* Products */,
+			);
+			name = WebKitTestRunner;
+			sourceTree = "<group>";
+		};
+		08FB7795FE84155DC02AAC07 /* Source */ = {
+			isa = PBXGroup;
+			children = (
+				BC7933FE118F7C74005EA8E2 /* mac */,
+				BC251A1711D16774002EBC01 /* WebKitTestRunnerPrefix.h */,
+				BC7934DD119066EC005EA8E2 /* PlatformWebView.h */,
+				BC79342F118F7F19005EA8E2 /* TestController.h */,
+				BC793430118F7F19005EA8E2 /* TestController.cpp */,
+				BCD7D2F611921278006DB7EE /* TestInvocation.h */,
+				BCD7D2F711921278006DB7EE /* TestInvocation.cpp */,
+			);
+			name = Source;
+			sourceTree = "<group>";
+		};
+		08FB779DFE84155DC02AAC07 /* External Frameworks and Libraries */ = {
+			isa = PBXGroup;
+			children = (
+				BC7934A411906584005EA8E2 /* Cocoa.framework */,
+				BC7934AB1190658C005EA8E2 /* WebKit2.framework */,
+				BCDA2B991191051F00C3BC47 /* JavaScriptCore.framework */,
+			);
+			name = "External Frameworks and Libraries";
+			sourceTree = "<group>";
+		};
+		1AB674ADFE9D54B511CA2CBB /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				8DD76FA10486AA7600D96B5E /* WebKitTestRunner */,
+				BC25186211D15D54002EBC01 /* InjectedBundle.bundle */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		BC25183511D1571D002EBC01 /* InjectedBundle */ = {
+			isa = PBXGroup;
+			children = (
+				BC25184611D15767002EBC01 /* InjectedBundleMain.cpp */,
+			);
+			path = InjectedBundle;
+			sourceTree = "<group>";
+		};
+		BC25194411D15DBE002EBC01 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				BC25186311D15D54002EBC01 /* InjectedBundle-Info.plist */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		BC7933FE118F7C74005EA8E2 /* mac */ = {
+			isa = PBXGroup;
+			children = (
+				BC7933FF118F7C84005EA8E2 /* main.mm */,
+				BC7934E711906846005EA8E2 /* PlatformWebViewMac.mm */,
+				BCDA2ABE1190B51A00C3BC47 /* TestInvocationMac.mm */,
+				BC8C795B11D2785D004535A1 /* TestControllerMac.mm */,
+			);
+			path = mac;
+			sourceTree = "<group>";
+		};
+		BC793401118F7C8A005EA8E2 /* Configurations */ = {
+			isa = PBXGroup;
+			children = (
+				BC793426118F7D3C005EA8E2 /* Base.xcconfig */,
+				BC793427118F7DAF005EA8E2 /* DebugRelease.xcconfig */,
+				BC25197111D15E61002EBC01 /* InjectedBundle.xcconfig */,
+				BC251A1811D16795002EBC01 /* WebKitTestRunner.xcconfig */,
+			);
+			path = Configurations;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		8DD76F960486AA7600D96B5E /* WebKitTestRunner */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1DEB927408733DD40010E9CD /* Build configuration list for PBXNativeTarget "WebKitTestRunner" */;
+			buildPhases = (
+				8DD76F990486AA7600D96B5E /* Sources */,
+				8DD76F9B0486AA7600D96B5E /* Frameworks */,
+				8DD76F9E0486AA7600D96B5E /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				BC25194211D15D94002EBC01 /* PBXTargetDependency */,
+			);
+			name = WebKitTestRunner;
+			productInstallPath = "$(HOME)/bin";
+			productName = WebKitTestRunner;
+			productReference = 8DD76FA10486AA7600D96B5E /* WebKitTestRunner */;
+			productType = "com.apple.product-type.tool";
+		};
+		BC25186111D15D54002EBC01 /* InjectedBundle */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = BC25186611D15D55002EBC01 /* Build configuration list for PBXNativeTarget "InjectedBundle" */;
+			buildPhases = (
+				BC25185E11D15D54002EBC01 /* Resources */,
+				BC25185F11D15D54002EBC01 /* Sources */,
+				BC25186011D15D54002EBC01 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = InjectedBundle;
+			productName = InjectedBundle;
+			productReference = BC25186211D15D54002EBC01 /* InjectedBundle.bundle */;
+			productType = "com.apple.product-type.bundle";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		08FB7793FE84155DC02AAC07 /* Project object */ = {
+			isa = PBXProject;
+			buildConfigurationList = 1DEB927808733DD40010E9CD /* Build configuration list for PBXProject "WebKitTestRunner" */;
+			compatibilityVersion = "Xcode 3.1";
+			hasScannedForEncodings = 1;
+			mainGroup = 08FB7794FE84155DC02AAC07 /* WebKitTestRunner */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				8DD76F960486AA7600D96B5E /* WebKitTestRunner */,
+				BC25186111D15D54002EBC01 /* InjectedBundle */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		BC25185E11D15D54002EBC01 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		8DD76F990486AA7600D96B5E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BC793400118F7C84005EA8E2 /* main.mm in Sources */,
+				BC793431118F7F19005EA8E2 /* TestController.cpp in Sources */,
+				BC7934E811906846005EA8E2 /* PlatformWebViewMac.mm in Sources */,
+				BCDA2ABF1190B51A00C3BC47 /* TestInvocationMac.mm in Sources */,
+				BCD7D2F811921278006DB7EE /* TestInvocation.cpp in Sources */,
+				BC8C795C11D2785D004535A1 /* TestControllerMac.mm in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BC25185F11D15D54002EBC01 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BC251A3E11D16831002EBC01 /* InjectedBundleMain.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		BC25194211D15D94002EBC01 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = BC25186111D15D54002EBC01 /* InjectedBundle */;
+			targetProxy = BC25194111D15D94002EBC01 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		1DEB927508733DD40010E9CD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = BC251A1811D16795002EBC01 /* WebKitTestRunner.xcconfig */;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		1DEB927608733DD40010E9CD /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = BC251A1811D16795002EBC01 /* WebKitTestRunner.xcconfig */;
+			buildSettings = {
+			};
+			name = Release;
+		};
+		1DEB927908733DD40010E9CD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = BC793427118F7DAF005EA8E2 /* DebugRelease.xcconfig */;
+			buildSettings = {
+				GCC_OPTIMIZATION_LEVEL = 0;
+			};
+			name = Debug;
+		};
+		1DEB927A08733DD40010E9CD /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = BC793427118F7DAF005EA8E2 /* DebugRelease.xcconfig */;
+			buildSettings = {
+			};
+			name = Release;
+		};
+		BC25186411D15D55002EBC01 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = BC25197111D15E61002EBC01 /* InjectedBundle.xcconfig */;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		BC25186511D15D55002EBC01 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = BC25197111D15E61002EBC01 /* InjectedBundle.xcconfig */;
+			buildSettings = {
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		1DEB927408733DD40010E9CD /* Build configuration list for PBXNativeTarget "WebKitTestRunner" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1DEB927508733DD40010E9CD /* Debug */,
+				1DEB927608733DD40010E9CD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		1DEB927808733DD40010E9CD /* Build configuration list for PBXProject "WebKitTestRunner" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1DEB927908733DD40010E9CD /* Debug */,
+				1DEB927A08733DD40010E9CD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		BC25186611D15D55002EBC01 /* Build configuration list for PBXNativeTarget "InjectedBundle" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BC25186411D15D55002EBC01 /* Debug */,
+				BC25186511D15D55002EBC01 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 08FB7793FE84155DC02AAC07 /* Project object */;
+}

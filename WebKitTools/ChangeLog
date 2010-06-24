@@ -1,3 +1,77 @@
+2010-06-23  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Patch for https://bugs.webkit.org/show_bug.cgi?id=41086
+        Add new WebKitTestRunner project (ie. DRT for WebKit2).
+
+        - Mac only.
+        - run-webkit-tests has not been modified to call it yet.
+        - Only dumps the render tree at this time. 
+
+        * WebKitTestRunner: Added.
+        * WebKitTestRunner/Configurations: Added.
+        * WebKitTestRunner/Configurations/Base.xcconfig: Added.
+        * WebKitTestRunner/Configurations/DebugRelease.xcconfig: Added.
+        * WebKitTestRunner/Configurations/InjectedBundle.xcconfig: Added.
+        * WebKitTestRunner/Configurations/WebKitTestRunner.xcconfig: Added.
+        * WebKitTestRunner/InjectedBundle: Added.
+        * WebKitTestRunner/InjectedBundle-Info.plist: Added.
+        * WebKitTestRunner/InjectedBundle/InjectedBundleMain.cpp: Added.
+        (_didStartProvisionalLoadForFrame):
+        (_didReceiveServerRedirectForProvisionalLoadForFrame):
+        (_didFailProvisionalLoadWithErrorForFrame):
+        (_didCommitLoadForFrame):
+        (_didFinishLoadForFrame):
+        (_didFailLoadWithErrorForFrame):
+        (_didReceiveTitleForFrame):
+        (_didClearWindow):
+        (_didCreatePage):
+        (_willDestroyPage):
+        (_didRecieveMessage):
+        (WKBundleInitialize):
+        * WebKitTestRunner/Makefile: Added.
+        * WebKitTestRunner/PlatformWebView.h: Added.
+        (WTR::PlatformWebView::platformView):
+        * WebKitTestRunner/TestController.cpp: Added.
+        (WTR::TestController::shared):
+        (WTR::TestController::TestController):
+        (WTR::TestController::initialize):
+        (WTR::TestController::runTest):
+        (WTR::TestController::runTestingServerLoop):
+        (WTR::TestController::run):
+        * WebKitTestRunner/TestController.h: Added.
+        (WTR::TestController::verbose):
+        (WTR::TestController::injectedBundlePath):
+        * WebKitTestRunner/TestInvocation.cpp: Added.
+        (WTR::createWKURL):
+        (WTR::TestInvocation::TestInvocation):
+        (WTR::TestInvocation::~TestInvocation):
+        (WTR::TestInvocation::invoke):
+        (WTR::TestInvocation::dump):
+        (WTR::TestInvocation::initializeMainWebView):
+        (WTR::TestInvocation::didStartProvisionalLoadForFrame):
+        (WTR::TestInvocation::didReceiveServerRedirectForProvisionalLoadForFrame):
+        (WTR::TestInvocation::didFailProvisionalLoadWithErrorForFrame):
+        (WTR::TestInvocation::didCommitLoadForFrame):
+        (WTR::TestInvocation::didFinishLoadForFrame):
+        (WTR::TestInvocation::didFailLoadForFrame):
+        (WTR::TestInvocation::renderTreeExternalRepresentationFunction):
+        (WTR::TestInvocation::renderTreeExternalRepresentationDisposeFunction):
+        * WebKitTestRunner/TestInvocation.h: Added.
+        * WebKitTestRunner/WebKitTestRunner.xcodeproj: Added.
+        * WebKitTestRunner/WebKitTestRunner.xcodeproj/project.pbxproj: Added.
+        * WebKitTestRunner/WebKitTestRunnerPrefix.h: Added.
+        * WebKitTestRunner/mac: Added.
+        * WebKitTestRunner/mac/PlatformWebViewMac.mm: Added.
+        (WTR::PlatformWebView::PlatformWebView):
+        (WTR::PlatformWebView::~PlatformWebView):
+        (WTR::PlatformWebView::page):
+        * WebKitTestRunner/mac/TestInvocationMac.mm: Added.
+        (WTR::TestInvocation::runUntil):
+        * WebKitTestRunner/mac/main.mm: Added.
+        (main):
+
 2010-06-24  Luiz Agostini  <luiz.agostini@openbossa.org>
 
         Unreviewed. Adding myself to the committers list.
