@@ -1,3 +1,15 @@
+2010-06-24  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        <rdar://problem/8044645> and https://bugs.webkit.org/show_bug.cgi?id=41082
+
+        Webarchives will null main resource cause a repro crash.
+
+        * webarchive/loading/mainresource-null-mimetype-crash-expected.txt: Added.
+        * webarchive/loading/mainresource-null-mimetype-crash.html: Added.
+        * webarchive/loading/resources/mainresource-null-mimetype.webarchive: Added.
+
 2010-06-24  Mikhail Naganov  <mnaganov@chromium.org>
 
         Unreviewed test expectations update.
