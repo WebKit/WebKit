@@ -345,7 +345,6 @@ private:
     void navigateToDifferentDocument(HistoryItem*, FrameLoadType);
     
     void loadProvisionalItemFromCachedPage();
-    void pageHidden();
 
     void receivedFirstData();
 

@@ -1,3 +1,27 @@
+2010-06-24  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Brady Eidson.
+
+        https://bugs.webkit.org/show_bug.cgi?id=41178
+        Timed refresh in subframes isn't stopped when going into b/f cache
+
+        Test: fast/history/timed-refresh-in-cached-frame.html
+
+        * history/CachedFrame.cpp: (WebCore::CachedFrame::CachedFrame): Top frame's stopLoading()
+        won't help cached subframes; stop loading from here.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::stopLoading): Don't stop loading in child frames. This didn't work
+        for cached frames due to frame tree having been already desonstructed, and it's not necessary
+        in non-cached case because stopLoading() will be called for subframes via
+        FrameLoader::detachFromParent() and closeURL().
+        (WebCore::FrameLoader::pageHidden): This was a second code path that dispatched pagehide
+        event - it's no longer needed, because everything goes through FrameLoader::stopLoading().
+        (WebCore::FrameLoader::commitProvisionalLoad): Don't call pageHidden(), the code for adding
+        frame to b/f cache will do everything.
+
+        * loader/FrameLoader.h: Removed pageHidden().
+
 2010-06-24  Eric Seidel  <eric@webkit.org>
 
         Unreviewed. Fix the build.  I am a bad man.
