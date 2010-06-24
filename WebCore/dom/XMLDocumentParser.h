@@ -153,7 +153,6 @@ public:
         void doWrite(const String&);
         void doEnd();
 
-        Document* m_doc;
         FrameView* m_view;
 
         String m_originalSourceForTransform;

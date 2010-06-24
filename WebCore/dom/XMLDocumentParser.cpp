@@ -72,10 +72,7 @@ const int maxErrors = 25;
 #if ENABLE(WML)
 bool XMLDocumentParser::isWMLDocument() const
 {
-    if (m_doc)
-        return m_doc->isWMLDocument();
-
-    return false;
+    return document()->isWMLDocument();
 }
 #endif
 
@@ -83,7 +80,7 @@ void XMLDocumentParser::pushCurrentNode(Node* n)
 {
     ASSERT(n);
     ASSERT(m_currentNode);
-    if (n != m_doc)
+    if (n != document())
         n->ref();
     m_currentNodeStack.append(m_currentNode);
     m_currentNode = n;
@@ -97,7 +94,7 @@ void XMLDocumentParser::popCurrentNode()
         return;
     ASSERT(m_currentNodeStack.size());
 
-    if (m_currentNode != m_doc)
+    if (m_currentNode != document())
         m_currentNode->deref();
 
     m_currentNode = m_currentNodeStack.last();
@@ -106,14 +103,14 @@ void XMLDocumentParser::popCurrentNode()
 
 void XMLDocumentParser::clearCurrentNodeStack()
 {
-    if (m_currentNode && m_currentNode != m_doc)
+    if (m_currentNode && m_currentNode != document())
         m_currentNode->deref();
     m_currentNode = 0;
 
     if (m_currentNodeStack.size()) { // Aborted parsing.
         for (size_t i = m_currentNodeStack.size() - 1; i != 0; --i)
             m_currentNodeStack[i]->deref();
-        if (m_currentNodeStack[0] && m_currentNodeStack[0] != m_doc)
+        if (m_currentNodeStack[0] && m_currentNodeStack[0] != document())
             m_currentNodeStack[0]->deref();
         m_currentNodeStack.clear();
     }
@@ -169,7 +166,7 @@ bool XMLDocumentParser::enterText()
 #if !USE(QXMLSTREAM)
     ASSERT(m_bufferedText.size() == 0);
 #endif
-    RefPtr<Node> newNode = Text::create(m_doc, "");
+    RefPtr<Node> newNode = Text::create(document(), "");
     if (!m_currentNode->addChild(newNode.get()))
         return false;
     pushCurrentNode(newNode.get());
@@ -217,12 +214,12 @@ void XMLDocumentParser::end()
         insertErrorMessageBlock();
     else {
         exitText();
-        m_doc->updateStyleSelector();
+        document()->updateStyleSelector();
     }
 
     clearCurrentNodeStack();
     if (!m_parsingFragment)
-        m_doc->finishedParsing();
+        document()->finishedParsing();
 }
 
 void XMLDocumentParser::finish()
@@ -272,7 +269,7 @@ void XMLDocumentParser::insertErrorMessageBlock()
 
     // Create elements for display
     ExceptionCode ec = 0;
-    Document* doc = m_doc;
+    Document* doc = document();
     Node* documentElement = doc->documentElement();
     if (!documentElement) {
         RefPtr<Node> rootElement = doc->createElement(htmlTag, false);

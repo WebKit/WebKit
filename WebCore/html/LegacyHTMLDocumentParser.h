@@ -431,7 +431,6 @@ private:
     unsigned int m_cBufferPos;
 
     SegmentedString m_src;
-    Document* m_doc;
     OwnPtr<LegacyHTMLTreeBuilder> m_treeBuilder;
     bool m_inWrite;
     bool m_fragment;

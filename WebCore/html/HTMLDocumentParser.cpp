@@ -66,7 +66,7 @@ private:
 } // namespace
 
 HTMLDocumentParser::HTMLDocumentParser(HTMLDocument* document, bool reportErrors)
-    : m_document(document)
+    : DocumentParser(document)
     , m_tokenizer(new HTMLTokenizer)
     , m_scriptRunner(new HTMLScriptRunner(document, this))
     , m_treeBuilder(new HTMLTreeBuilder(m_tokenizer.get(), document, reportErrors))
@@ -80,7 +80,7 @@ HTMLDocumentParser::HTMLDocumentParser(HTMLDocument* document, bool reportErrors
 // FIXME: Member variables should be grouped into self-initializing structs to
 // minimize code duplication between these constructors.
 HTMLDocumentParser::HTMLDocumentParser(DocumentFragment* fragment, FragmentScriptingPermission scriptingPermission)
-    : m_document(fragment->document())
+    : DocumentParser(fragment->document())
     , m_tokenizer(new HTMLTokenizer)
     , m_treeBuilder(new HTMLTreeBuilder(m_tokenizer.get(), fragment, scriptingPermission))
     , m_endWasDelayed(false)

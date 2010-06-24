@@ -2,6 +2,94 @@
 
         Reviewed by Adam Barth.
 
+        Move Document* down onto DocumentParser, since every DocumentParser needs one.
+        https://bugs.webkit.org/show_bug.cgi?id=41117
+
+        This eliminated the need for document() on HTMLDocumentParser.
+        This paves the way for more code sharing between various
+        DocumentParser subclasses.
+
+        * dom/DocumentParser.h:
+        (WebCore::DocumentParser::inViewSourceMode):
+        (WebCore::DocumentParser::setInViewSourceMode):
+        (WebCore::DocumentParser::document):
+        (WebCore::DocumentParser::DocumentParser):
+        * dom/XMLDocumentParser.cpp:
+        (WebCore::XMLDocumentParser::isWMLDocument):
+        (WebCore::XMLDocumentParser::pushCurrentNode):
+        (WebCore::XMLDocumentParser::popCurrentNode):
+        (WebCore::XMLDocumentParser::clearCurrentNodeStack):
+        (WebCore::XMLDocumentParser::enterText):
+        (WebCore::XMLDocumentParser::end):
+        (WebCore::XMLDocumentParser::insertErrorMessageBlock):
+        * dom/XMLDocumentParser.h:
+        * dom/XMLDocumentParserLibxml2.cpp:
+        (WebCore::XMLDocumentParser::XMLDocumentParser):
+        (WebCore::XMLDocumentParser::~XMLDocumentParser):
+        (WebCore::XMLDocumentParser::doWrite):
+        (WebCore::XMLDocumentParser::startElementNs):
+        (WebCore::XMLDocumentParser::endElementNs):
+        (WebCore::XMLDocumentParser::processingInstruction):
+        (WebCore::XMLDocumentParser::cdataBlock):
+        (WebCore::XMLDocumentParser::comment):
+        (WebCore::XMLDocumentParser::startDocument):
+        (WebCore::XMLDocumentParser::internalSubset):
+        (WebCore::XMLDocumentParser::initializeParserContext):
+        (WebCore::XMLDocumentParser::doEnd):
+        * html/HTMLDocumentParser.cpp:
+        (WebCore::HTMLDocumentParser::HTMLDocumentParser):
+        * html/HTMLDocumentParser.h:
+        * html/LegacyHTMLDocumentParser.cpp:
+        (WebCore::LegacyHTMLDocumentParser::LegacyHTMLDocumentParser):
+        (WebCore::LegacyHTMLDocumentParser::begin):
+        (WebCore::LegacyHTMLDocumentParser::scriptHandler):
+        (WebCore::LegacyHTMLDocumentParser::scriptExecution):
+        (WebCore::LegacyHTMLDocumentParser::parseTag):
+        (WebCore::LegacyHTMLDocumentParser::continueProcessing):
+        (WebCore::LegacyHTMLDocumentParser::willWriteHTML):
+        (WebCore::LegacyHTMLDocumentParser::didWriteHTML):
+        (WebCore::LegacyHTMLDocumentParser::write):
+        (WebCore::LegacyHTMLDocumentParser::stopParsing):
+        (WebCore::LegacyHTMLDocumentParser::timerFired):
+        (WebCore::LegacyHTMLDocumentParser::end):
+        (WebCore::LegacyHTMLDocumentParser::processToken):
+        (WebCore::LegacyHTMLDocumentParser::processDoctypeToken):
+        (WebCore::LegacyHTMLDocumentParser::executeScriptsWaitingForStylesheets):
+        (WebCore::LegacyHTMLDocumentParser::executeExternalScriptsIfReady):
+        (WebCore::LegacyHTMLDocumentParser::executeExternalScriptsTimerFired):
+        * html/LegacyHTMLDocumentParser.h:
+        * loader/ImageDocument.cpp:
+        (WebCore::ImageDocumentParser::ImageDocumentParser):
+        (WebCore::ImageDocumentParser::imageDocument):
+        (WebCore::ImageDocumentParser::write):
+        (WebCore::ImageDocumentParser::writeRawData):
+        (WebCore::ImageDocumentParser::finish):
+        (WebCore::ImageDocumentParser::finishWasCalled):
+        (WebCore::ImageDocumentParser::isWaitingForScripts):
+        (WebCore::ImageDocument::createParser):
+        * loader/MediaDocument.cpp:
+        (WebCore::MediaDocumentParser::MediaDocumentParser):
+        (WebCore::MediaDocumentParser::createDocumentStructure):
+        (WebCore::MediaDocumentParser::finish):
+        (WebCore::MediaDocumentParser::finishWasCalled):
+        * loader/PluginDocument.cpp:
+        (WebCore::PluginDocumentParser::PluginDocumentParser):
+        (WebCore::PluginDocumentParser::createDocumentStructure):
+        (WebCore::PluginDocumentParser::writeRawData):
+        (WebCore::PluginDocumentParser::finish):
+        (WebCore::PluginDocumentParser::finishWasCalled):
+        * loader/SinkDocument.cpp:
+        (WebCore::SinkDocumentParser::SinkDocumentParser):
+        * loader/TextDocument.cpp:
+        (WebCore::TextDocumentParser::TextDocumentParser):
+        (WebCore::TextDocumentParser::write):
+        (WebCore::TextDocumentParser::finish):
+        (WebCore::TextDocumentParser::finishWasCalled):
+
+2010-06-23  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
         Start to clean up DocumentParser interface
         https://bugs.webkit.org/show_bug.cgi?id=41114
 

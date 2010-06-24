@@ -80,7 +80,6 @@ private:
     void appendEntry(const String& name, const String& size, const String& date, bool isDirectory);    
     PassRefPtr<Element> createTDForFilename(const String&);
     
-    Document* m_doc;
     RefPtr<HTMLTableElement> m_tableElement;
 
     bool m_skipLF;
@@ -94,9 +93,8 @@ private:
     ListState m_listState;
 };
 
-FTPDirectoryDocumentParser::FTPDirectoryDocumentParser(HTMLDocument* doc)
-    : LegacyHTMLDocumentParser(doc, false)
-    , m_doc(doc)
+FTPDirectoryDocumentParser::FTPDirectoryDocumentParser(HTMLDocument* document)
+    : LegacyHTMLDocumentParser(document, false)
     , m_skipLF(false)
     , m_parsedTemplate(false)
     , m_size(254)
@@ -112,8 +110,8 @@ void FTPDirectoryDocumentParser::appendEntry(const String& filename, const Strin
     RefPtr<Element> rowElement = m_tableElement->insertRow(-1, ec);
     rowElement->setAttribute("class", "ftpDirectoryEntryRow", ec);
    
-    RefPtr<Element> element = m_doc->createElement(tdTag, false);
-    element->appendChild(Text::create(m_doc, String(&noBreakSpace, 1)), ec);
+    RefPtr<Element> element = document()->createElement(tdTag, false);
+    element->appendChild(Text::create(document(), String(&noBreakSpace, 1)), ec);
     if (isDirectory)
         element->setAttribute("class", "ftpDirectoryIcon ftpDirectoryTypeDirectory", ec);
     else
@@ -124,13 +122,13 @@ void FTPDirectoryDocumentParser::appendEntry(const String& filename, const Strin
     element->setAttribute("class", "ftpDirectoryFileName", ec);
     rowElement->appendChild(element, ec);
     
-    element = m_doc->createElement(tdTag, false);
-    element->appendChild(Text::create(m_doc, date), ec);
+    element = document()->createElement(tdTag, false);
+    element->appendChild(Text::create(document(), date), ec);
     element->setAttribute("class", "ftpDirectoryFileDate", ec);
     rowElement->appendChild(element, ec);
     
-    element = m_doc->createElement(tdTag, false);
-    element->appendChild(Text::create(m_doc, size), ec);
+    element = document()->createElement(tdTag, false);
+    element->appendChild(Text::create(document(), size), ec);
     element->setAttribute("class", "ftpDirectoryFileSize", ec);
     rowElement->appendChild(element, ec);
 }
@@ -139,17 +137,17 @@ PassRefPtr<Element> FTPDirectoryDocumentParser::createTDForFilename(const String
 {
     ExceptionCode ec;
     
-    String fullURL = m_doc->baseURL().string();
+    String fullURL = document()->baseURL().string();
     if (fullURL[fullURL.length() - 1] == '/')
         fullURL.append(filename);
     else
         fullURL.append("/" + filename);
 
-    RefPtr<Element> anchorElement = m_doc->createElement(aTag, false);
+    RefPtr<Element> anchorElement = document()->createElement(aTag, false);
     anchorElement->setAttribute("href", fullURL, ec);
-    anchorElement->appendChild(Text::create(m_doc, filename), ec);
+    anchorElement->appendChild(Text::create(document(), filename), ec);
     
-    RefPtr<Element> tdElement = m_doc->createElement(tdTag, false);
+    RefPtr<Element> tdElement = document()->createElement(tdTag, false);
     tdElement->appendChild(anchorElement, ec);
     
     return tdElement.release();
@@ -294,7 +292,7 @@ static inline PassRefPtr<SharedBuffer> createTemplateDocumentData(Settings* sett
     
 bool FTPDirectoryDocumentParser::loadDocumentTemplate()
 {
-    DEFINE_STATIC_LOCAL(RefPtr<SharedBuffer>, templateDocumentData, (createTemplateDocumentData(m_doc->settings())));
+    DEFINE_STATIC_LOCAL(RefPtr<SharedBuffer>, templateDocumentData, (createTemplateDocumentData(document()->settings())));
     // FIXME: Instead of storing the data, we'd rather actually parse the template data into the template Document once,
     // store that document, then "copy" it whenever we get an FTP directory listing.  There are complexities with this 
     // approach that make it worth putting this off.
@@ -309,7 +307,7 @@ bool FTPDirectoryDocumentParser::loadDocumentTemplate()
     LegacyHTMLDocumentParser::write(String(templateDocumentData->data(), templateDocumentData->size()), true);
     setForceSynchronous(false);
     
-    RefPtr<Element> tableElement = m_doc->getElementById("ftpDirectoryTable");
+    RefPtr<Element> tableElement = document()->getElementById("ftpDirectoryTable");
     if (!tableElement)
         LOG_ERROR("Unable to find element by id \"ftpDirectoryTable\" in the template document.");
     else if (!tableElement->hasTagName(tableTag))
@@ -322,7 +320,7 @@ bool FTPDirectoryDocumentParser::loadDocumentTemplate()
         return true;
 
     // Otherwise create one manually
-    tableElement = m_doc->createElement(tableTag, false);
+    tableElement = document()->createElement(tableTag, false);
     m_tableElement = static_cast<HTMLTableElement*>(tableElement.get());
     ExceptionCode ec;        
     m_tableElement->setAttribute("id", "ftpDirectoryTable", ec);
@@ -330,10 +328,10 @@ bool FTPDirectoryDocumentParser::loadDocumentTemplate()
     // If we didn't find the table element, lets try to append our own to the body
     // If that fails for some reason, cram it on the end of the document as a last
     // ditch effort
-    if (Element* body = m_doc->body())
+    if (Element* body = document()->body())
         body->appendChild(m_tableElement, ec);
     else
-        m_doc->appendChild(m_tableElement, ec);
+        document()->appendChild(m_tableElement, ec);
         
     return true;
 }
@@ -344,13 +342,12 @@ void FTPDirectoryDocumentParser::createBasicDocument()
 
     // FIXME: Make this "basic document" more acceptable
 
-    
-    RefPtr<Element> bodyElement = m_doc->createElement(bodyTag, false);
+    RefPtr<Element> bodyElement = document()->createElement(bodyTag, false);
                             
     ExceptionCode ec;
-    m_doc->appendChild(bodyElement, ec);
+    document()->appendChild(bodyElement, ec);
     
-    RefPtr<Element> tableElement = m_doc->createElement(tableTag, false);
+    RefPtr<Element> tableElement = document()->createElement(tableTag, false);
     m_tableElement = static_cast<HTMLTableElement*>(tableElement.get());
     m_tableElement->setAttribute("id", "ftpDirectoryTable", ec);
 

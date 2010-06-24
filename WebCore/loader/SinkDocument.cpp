@@ -32,8 +32,11 @@ namespace WebCore {
 
 class SinkDocumentParser : public DocumentParser {
 public:
-    SinkDocumentParser(Document* document) : m_document(document) { }
-        
+    SinkDocumentParser(Document* document)
+        : DocumentParser(document)
+    {
+    }
+
 private:
     virtual void write(const SegmentedString&, bool) { ASSERT_NOT_REACHED(); }
     virtual void finish();
@@ -42,8 +45,6 @@ private:
         
     virtual bool wantsRawData() const { return true; }
     virtual bool writeRawData(const char*, int) { return false; }
-
-    Document* m_document;
 };
 
 void SinkDocumentParser::finish()

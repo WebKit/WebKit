@@ -522,12 +522,12 @@ PassRefPtr<XMLParserContext> XMLParserContext::createMemoryParser(xmlSAXHandlerP
 
 // --------------------------------
 
-XMLDocumentParser::XMLDocumentParser(Document* _doc, FrameView* _view)
-    : m_doc(_doc)
-    , m_view(_view)
+XMLDocumentParser::XMLDocumentParser(Document* document, FrameView* frameView)
+    : DocumentParser(document)
+    , m_view(frameView)
     , m_context(0)
     , m_pendingCallbacks(new PendingCallbacks)
-    , m_currentNode(_doc)
+    , m_currentNode(document)
     , m_sawError(false)
     , m_sawXSLTransform(false)
     , m_sawFirstElement(false)
@@ -550,7 +550,7 @@ XMLDocumentParser::XMLDocumentParser(Document* _doc, FrameView* _view)
 }
 
 XMLDocumentParser::XMLDocumentParser(DocumentFragment* fragment, Element* parentElement, FragmentScriptingPermission scriptingPermission)
-    : m_doc(fragment->document())
+    : DocumentParser(fragment->document())
     , m_view(0)
     , m_context(0)
     , m_pendingCallbacks(new PendingCallbacks)
@@ -575,8 +575,6 @@ XMLDocumentParser::XMLDocumentParser(DocumentFragment* fragment, Element* parent
     , m_scriptingPermission(scriptingPermission)
 {
     fragment->ref();
-    if (m_doc)
-        m_doc->ref();
 
     // Add namespaces based on the parent node
     Vector<Element*> elemStack;
@@ -619,8 +617,6 @@ XMLParserContext::~XMLParserContext()
 XMLDocumentParser::~XMLDocumentParser()
 {
     clearCurrentNodeStack();
-    if (m_parsingFragment && m_doc)
-        m_doc->deref();
     if (m_pendingScript)
         m_pendingScript->removeClient(this);
 }
@@ -643,11 +639,11 @@ void XMLDocumentParser::doWrite(const String& parseString)
         const unsigned char BOMHighByte = *reinterpret_cast<const unsigned char*>(&BOM);
         xmlSwitchEncoding(context->context(), BOMHighByte == 0xFF ? XML_CHAR_ENCODING_UTF16LE : XML_CHAR_ENCODING_UTF16BE);
 
-        XMLDocumentParserScope scope(m_doc->docLoader());
+        XMLDocumentParserScope scope(document()->docLoader());
         xmlParseChunk(context->context(), reinterpret_cast<const char*>(parseString.characters()), sizeof(UChar) * parseString.length(), 0);
     }
 
-    if (m_doc->decoder() && m_doc->decoder()->sawError()) {
+    if (document()->decoder() && document()->decoder()->sawError()) {
         // If the decoder saw an error, report it as fatal (stops parsing)
         handleError(fatal, "Encoding error", context->context()->input->line, context->context()->input->col);
     }
@@ -728,7 +724,7 @@ void XMLDocumentParser::startElementNs(const xmlChar* xmlLocalName, const xmlCha
 
 #if ENABLE(XHTMLMP)
     // check if the DOCTYPE Declaration of XHTMLMP document exists
-    if (!m_hasDocTypeDeclaration && m_doc->isXHTMLMPDocument()) {
+    if (!m_hasDocTypeDeclaration && document()->isXHTMLMPDocument()) {
         handleError(fatal, "DOCTYPE declaration lost.", lineNumber(), columnNumber());
         return;
     }
@@ -769,7 +765,7 @@ void XMLDocumentParser::startElementNs(const xmlChar* xmlLocalName, const xmlCha
     m_sawFirstElement = true;
 
     QualifiedName qName(prefix, localName, uri);
-    RefPtr<Element> newElement = m_doc->createElement(qName, true);
+    RefPtr<Element> newElement = document()->createElement(qName, true);
     if (!newElement) {
         stopParsing();
         return;
@@ -803,8 +799,8 @@ void XMLDocumentParser::startElementNs(const xmlChar* xmlLocalName, const xmlCha
     if (m_view && !newElement->attached())
         newElement->attach();
 
-    if (!m_parsingFragment && isFirstElement && m_doc->frame())
-        m_doc->frame()->loader()->dispatchDocumentElementAvailable();
+    if (!m_parsingFragment && isFirstElement && document()->frame())
+        document()->frame()->loader()->dispatchDocumentElementAvailable();
 }
 
 void XMLDocumentParser::endElementNs()
@@ -855,7 +851,7 @@ void XMLDocumentParser::endElementNs()
 
 #if ENABLE(XHTMLMP)
     if (!scriptElement->shouldExecuteAsJavaScript())
-        m_doc->setShouldProcessNoscriptElement(true);
+        document()->setShouldProcessNoscriptElement(true);
     else
 #endif
     {
@@ -864,7 +860,7 @@ void XMLDocumentParser::endElementNs()
             // we have a src attribute
             String scriptCharset = scriptElement->scriptCharset();
             if (element->dispatchBeforeLoadEvent(scriptHref) &&
-                (m_pendingScript = m_doc->docLoader()->requestScript(scriptHref, scriptCharset))) {
+                (m_pendingScript = document()->docLoader()->requestScript(scriptHref, scriptCharset))) {
                 m_scriptElement = element;
                 m_pendingScript->addClient(this);
 
@@ -874,7 +870,7 @@ void XMLDocumentParser::endElementNs()
             } else
                 m_scriptElement = 0;
         } else
-            m_view->frame()->script()->executeScript(ScriptSourceCode(scriptElement->scriptContent(), m_doc->url(), m_scriptStartLine));
+            m_view->frame()->script()->executeScript(ScriptSourceCode(scriptElement->scriptContent(), document()->url(), m_scriptStartLine));
     }
     m_requestingScript = false;
     popCurrentNode();
@@ -932,7 +928,7 @@ void XMLDocumentParser::processingInstruction(const xmlChar* target, const xmlCh
 
     // ### handle exceptions
     int exception = 0;
-    RefPtr<ProcessingInstruction> pi = m_doc->createProcessingInstruction(
+    RefPtr<ProcessingInstruction> pi = document()->createProcessingInstruction(
         toString(target), toString(data), exception);
     if (exception)
         return;
@@ -948,7 +944,7 @@ void XMLDocumentParser::processingInstruction(const xmlChar* target, const xmlCh
 
 #if ENABLE(XSLT)
     m_sawXSLTransform = !m_sawFirstElement && pi->isXSL();
-    if (m_sawXSLTransform && !m_doc->transformSourceDocument())
+    if (m_sawXSLTransform && !document()->transformSourceDocument())
         stopParsing();
 #endif
 }
@@ -965,7 +961,7 @@ void XMLDocumentParser::cdataBlock(const xmlChar* s, int len)
 
     exitText();
 
-    RefPtr<Node> newNode = CDATASection::create(m_doc, toString(s, len));
+    RefPtr<Node> newNode = CDATASection::create(document(), toString(s, len));
     if (!m_currentNode->addChild(newNode.get()))
         return;
     if (m_view && !newNode->attached())
@@ -984,7 +980,7 @@ void XMLDocumentParser::comment(const xmlChar* s)
 
     exitText();
 
-    RefPtr<Node> newNode = Comment::create(m_doc, toString(s));
+    RefPtr<Node> newNode = Comment::create(document(), toString(s));
     m_currentNode->addChild(newNode.get());
     if (m_view && !newNode->attached())
         newNode->attach();
@@ -995,10 +991,10 @@ void XMLDocumentParser::startDocument(const xmlChar* version, const xmlChar* enc
     ExceptionCode ec = 0;
 
     if (version)
-        m_doc->setXMLVersion(toString(version), ec);
-    m_doc->setXMLStandalone(standalone == 1, ec); // possible values are 0, 1, and -1
+        document()->setXMLVersion(toString(version), ec);
+    document()->setXMLStandalone(standalone == 1, ec); // possible values are 0, 1, and -1
     if (encoding)
-        m_doc->setXMLEncoding(toString(encoding));
+        document()->setXMLEncoding(toString(encoding));
 }
 
 void XMLDocumentParser::endDocument()
@@ -1019,7 +1015,7 @@ void XMLDocumentParser::internalSubset(const xmlChar* name, const xmlChar* exter
         return;
     }
 
-    if (m_doc) {
+    if (document()) {
 #if ENABLE(WML) || ENABLE(XHTMLMP)
         String extId = toString(externalID);
 #endif
@@ -1040,7 +1036,7 @@ void XMLDocumentParser::internalSubset(const xmlChar* name, const xmlChar* exter
                 return;
             }
 
-            if (m_doc->isXHTMLMPDocument())
+            if (document()->isXHTMLMPDocument())
                 setIsXHTMLMPDocument(true);
             else
                 setIsXHTMLDocument(true);
@@ -1049,7 +1045,7 @@ void XMLDocumentParser::internalSubset(const xmlChar* name, const xmlChar* exter
         }
 #endif
 
-        m_doc->addChild(DocumentType::create(m_doc, toString(name), toString(externalID), toString(systemID)));
+        document()->addChild(DocumentType::create(document(), toString(name), toString(externalID), toString(systemID)));
     }
 }
 
@@ -1275,7 +1271,7 @@ void XMLDocumentParser::initializeParserContext(const char* chunk)
     m_sawXSLTransform = false;
     m_sawFirstElement = false;
 
-    XMLDocumentParserScope scope(m_doc->docLoader());
+    XMLDocumentParserScope scope(document()->docLoader());
     if (m_parsingFragment)
         m_context = XMLParserContext::createMemoryParser(&sax, this, chunk);
     else
@@ -1286,12 +1282,12 @@ void XMLDocumentParser::doEnd()
 {
 #if ENABLE(XSLT)
     if (m_sawXSLTransform) {
-        void* doc = xmlDocPtrForString(m_doc->docLoader(), m_originalSourceForTransform, m_doc->url().string());
-        m_doc->setTransformSource(new TransformSource(doc));
+        void* doc = xmlDocPtrForString(document()->docLoader(), m_originalSourceForTransform, document()->url().string());
+        document()->setTransformSource(new TransformSource(doc));
 
-        m_doc->setParsing(false); // Make the doc think it's done, so it will apply xsl sheets.
-        m_doc->updateStyleSelector();
-        m_doc->setParsing(true);
+        document()->setParsing(false); // Make the doc think it's done, so it will apply xsl sheets.
+        document()->updateStyleSelector();
+        document()->setParsing(true);
         m_parserStopped = true;
     }
 #endif
@@ -1302,7 +1298,7 @@ void XMLDocumentParser::doEnd()
     if (m_context) {
         // Tell libxml we're done.
         {
-            XMLDocumentParserScope scope(m_doc->docLoader());
+            XMLDocumentParserScope scope(document()->docLoader());
             xmlParseChunk(context(), 0, 0, 1);
         }
 
