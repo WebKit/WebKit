@@ -28,6 +28,31 @@
 # media/video-seek-past-end-playing.html
 # transitions/zero-duration-with-non-zero-delay-end.html
 
+# The group of tests below are timing out. As we go through them
+# and get more detailed information, we should attach bugs to them.
+dom/xhtml/level3/core/entitygetinputencoding03.xhtml
+dom/xhtml/level3/core/entitygetinputencoding04.xhtml
+dom/xhtml/level3/core/entitygetxmlencoding02.xhtml
+dom/xhtml/level3/core/entitygetxmlencoding03.xhtml
+dom/xhtml/level3/core/entitygetxmlencoding04.xhtml
+dom/xhtml/level3/core/entitygetxmlversion03.xhtml
+dom/xhtml/level3/core/entitygetxmlversion04.xhtml
+dom/xhtml/level3/core/nodegetbaseuri16.xhtml
+dom/xhtml/level3/core/nodegetbaseuri19.xhtml
+dom/xhtml/level3/core/nodegetbaseuri20.xhtml
+http/tests/xmlhttprequest/XMLHttpRequestException.html
+http/tests/xmlhttprequest/connection-error-sync.html
+fast/xmlhttprequest/null-document-xmlhttprequest-open.html
+http/tests/misc/favicon-as-image.html
+media/invalid-media-url-crash.html
+media/unsupported-rtsp.html
+security/autocomplete-cleared-on-back.html
+http/tests/security/frameNavigation/cross-origin-opener.html
+
+# Intermittently timing out on Gtk Debug Bot:
+# https://bugs.webkit.org/show_bug.cgi?id=33445
+http/tests/incremental/split-hex-entities.pl
+
 # Tests in accessibility/ directory
 # An implementation of accessibilityController is required.
 #   Tests failing
@@ -97,12 +122,6 @@ accessibility/iframe-bastardization.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=36146 - GTK: AX: implement press in DRT 
 accessibility/label-element-press.html
-
-# Tests in animations/
-# Tests expecting new results
-animations/3d/change-transform-in-end-event.html
-animations/3d/state-at-end-event-transform.html
-animations/state-at-end-event.html
 
 # Tests in css2.1/ directory
 #   Tests generating new results
@@ -593,19 +612,6 @@ css2.1/t170602-bdr-conflct-w-96-d.html
 css2.1/t170602-bdr-conflct-w-97-d.html
 css2.1/t170602-bdr-conflct-w-98-d.html
 css2.1/t170602-bdr-conflct-w-99-d.html
-
-# Tests in dom/ directory
-#   Tests timing out
-dom/xhtml/level3/core/entitygetinputencoding03.xhtml
-dom/xhtml/level3/core/entitygetinputencoding04.xhtml
-dom/xhtml/level3/core/entitygetxmlencoding02.xhtml
-dom/xhtml/level3/core/entitygetxmlencoding03.xhtml
-dom/xhtml/level3/core/entitygetxmlencoding04.xhtml
-dom/xhtml/level3/core/entitygetxmlversion03.xhtml
-dom/xhtml/level3/core/entitygetxmlversion04.xhtml
-dom/xhtml/level3/core/nodegetbaseuri16.xhtml
-dom/xhtml/level3/core/nodegetbaseuri19.xhtml
-dom/xhtml/level3/core/nodegetbaseuri20.xhtml
 
 # Tests in editing/ directory
 #   Tests failing
@@ -1132,11 +1138,6 @@ editing/unsupported-content/table-type-after.html
 editing/unsupported-content/table-type-before.html
 
 # Tests in fast/ directory
-#   Tests generating new results
-fast/repaint/stacked-diacritics.html
-fast/text/international/plane2.html
-
-# Tests in fast/ directory
 #   Tests failing
 fast/canvas/canvas-bg-zoom.html
 fast/canvas/canvas-empty-image-pattern.html
@@ -1289,7 +1290,7 @@ fast/text/international/danda-space.html
 fast/text/international/thai-baht-space.html
 fast/text/international/thai-offsetForPosition-inside-character.html
 fast/text/offsetForPosition-cluster-at-zero.html
-fast/text/reset-drag-on-mouse-down.html
+fast/backgrounds/background-clip-text.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=30562
 fast/text/zero-width-characters.html
@@ -1348,56 +1349,7 @@ fast/events/drag-parent-node.html
 fast/dom/Window/window-postmessage-clone.html
 http/tests/misc/bubble-drag-events.html
 
-fast/xmlhttprequest/null-document-xmlhttprequest-open.html
-#   Tests timing out
-fast/loader/null-request-after-willSendRequest.html
-fast/text/large-text-composed-char-dos.html
 #   Tests generating new results
-fast/backgrounds/001.html
-fast/backgrounds/animated-gif-as-background.html
-fast/backgrounds/animated-svg-as-background.html
-fast/backgrounds/animated-svg-as-mask.html
-fast/backgrounds/background-clip-text.html
-fast/backgrounds/background-inherit-color-bug.html
-fast/backgrounds/background-origin-root-element.html
-fast/backgrounds/background-position-1.html
-fast/backgrounds/background-position-rounding.html
-fast/backgrounds/bgCompositeCopy.html
-fast/backgrounds/body-generated-image-propagated-to-root.html
-fast/backgrounds/mask-composite.html
-fast/backgrounds/opacity-on-document-element.html
-fast/backgrounds/solid-color-context-restore.html
-fast/backgrounds/svg-as-background-1.html
-fast/backgrounds/svg-as-background-2.html
-fast/backgrounds/svg-as-background-3.html
-fast/backgrounds/svg-as-background-4.html
-fast/backgrounds/svg-as-background-5.html
-fast/backgrounds/svg-as-background-6.html
-fast/backgrounds/svg-as-mask.html
-fast/backgrounds/repeat/mask-negative-offset-repeat.html
-fast/backgrounds/repeat/negative-offset-repeat-transformed.html
-fast/backgrounds/repeat/negative-offset-repeat.html
-fast/backgrounds/repeat/noRepeatCorrectClip.html
-fast/backgrounds/size/backgroundSize01.html
-fast/backgrounds/size/backgroundSize02.html
-fast/backgrounds/size/backgroundSize03.html
-fast/backgrounds/size/backgroundSize04.html
-fast/backgrounds/size/backgroundSize05.html
-fast/backgrounds/size/backgroundSize06.html
-fast/backgrounds/size/backgroundSize07.html
-fast/backgrounds/size/backgroundSize08.html
-fast/backgrounds/size/backgroundSize09.html
-fast/backgrounds/size/backgroundSize10.html
-fast/backgrounds/size/backgroundSize11.html
-fast/backgrounds/size/backgroundSize12.html
-fast/backgrounds/size/backgroundSize13.html
-fast/backgrounds/size/backgroundSize14.html
-fast/backgrounds/size/backgroundSize15.html
-fast/backgrounds/size/backgroundSize16.html
-fast/backgrounds/size/backgroundSize17.html
-fast/backgrounds/size/backgroundSize18.html
-fast/backgrounds/size/backgroundSize19.html
-fast/backgrounds/size/zero.html
 fast/block/basic/001.html
 fast/block/basic/002.html
 fast/block/basic/003.html
@@ -3362,10 +3314,7 @@ http/tests/xmlhttprequest/xml-encoding.html
 http/tests/xmlhttprequest/xmlhttprequest-contenttype-empty.html
 http/tests/xmlhttprequest/workers/methods-async.html
 http/tests/xmlhttprequest/workers/methods.html
-#   Tests timing out
-http/tests/xmlhttprequest/XMLHttpRequestException.html
-http/tests/xmlhttprequest/connection-error-sync.html
-http/tests/misc/favicon-as-image.html
+
 #   Tests crashing
 http/tests/security/cross-origin-xsl-BLOCKED.html
 http/tests/xmlhttprequest/redirect-cross-origin-tripmine.html
@@ -3411,9 +3360,6 @@ media/video-seek-past-end-playing.html
 # https://bugs.webkit.org/show_bug.cgi?id=30198
 media/video-source-error.html
 
-#   Tests timing out
-media/invalid-media-url-crash.html
-media/unsupported-rtsp.html
 #   Tests generating new results
 media/audio-controls-rendering.html
 media/video-aspect-ratio.html
@@ -3466,26 +3412,10 @@ plugins/private-browsing-mode.html
 plugins/embed-attributes-style.html
 plugins/netscape-dom-access.html
 
-# Tests in printing/ directory
-#   Tests generating new results
-printing/compositing-layer-printing.html
-printing/media-queries-print.html
-printing/return-from-printing-mode.html
-
-# Tests in scrollbars/ directory
-#   Tests generating new results
-scrollbars/basic-scrollbar.html
-scrollbars/disabled-scrollbar.html
-scrollbars/listbox-scrollbar-combinations.html
-scrollbars/overflow-scrollbar-combinations.html
-scrollbars/scrollbar-buttons.html
-scrollbars/scrollbar-orientation.html
-
 # Tests in security/ directory
 #   Tests failing
 security/set-form-autocomplete-attribute.html
-#   Tests timing out
-security/autocomplete-cleared-on-back.html
+
 #   Tests generating new results
 security/block-test-no-port.html
 security/block-test.html
@@ -5164,14 +5094,11 @@ tables/mozilla_expected_failures/marvin/x_table_rules_rows.xml
 tables/mozilla_expected_failures/other/empty_cells.html
 tables/mozilla_expected_failures/other/test4.html
 
-# Tests in transforms/ directory
-#   Tests generating new results
-transforms/2d/zoom-menulist.html
-transforms/2d/transform-fixed-container.html
-
 # Tests in webarchive/ directory
-#   Tests failing
+#  Tests failing because of missing resource load delegate callbacks.
 webarchive/loading/test-loading-archive.html
+webarchive/loading/mainresource-null-mimetype-crash.html
+
 #   Tests generating new results
 webarchive/adopt-attribute-styled-body-webarchive.html
 webarchive/adopt-attribute-styled-node-webarchive.html
@@ -5276,15 +5203,6 @@ svg/filters/filteredImage.svg
 svg/filters/sourceAlpha.svg
 svg/filters/subRegion-in-userSpace.svg
 
-# Requires expected results - related changeset: http://trac.webkit.org/changeset/47678
-fast/block/margin-collapse/block-inside-inline
-
-# Requires gtk specific expected results
-fast/css/getComputedStyle/marginComputedStyle.html
-
-# Seems to simply timeout in our boxes
-http/tests/security/frameNavigation/cross-origin-opener.html
-
 # ------------------
 # Tests with bugs attached : Enable these tests again once these bugs are fixed.
 # ------------------
@@ -5302,10 +5220,6 @@ fast/forms/textarea-metrics.html
 # These two tests seem to fail on and off, skip them for now
 transitions/change-values-during-transition.html
 transitions/zero-duration-with-non-zero-delay-end.html
-
-# Missing new results
-transitions/move-after-transition.html
-transitions/transition-end-event-rendering.html
 
 # See Bug #27905 - http://bugs.webkit.org/show_bug.cgi?id=27905
 # Missing resource load callback ability in DRT
@@ -5404,22 +5318,6 @@ http/tests/loading/basic-credentials-sent-automatically.html
 # This port doesn't support detecting slow unload handlers.
 fast/dom/Window/slow-unload-handler.html
 fast/dom/Window/slow-unload-handler-only-frame-is-stopped.html
-
-# Tests generating new results
-fast/table/fixed-table-with-percent-inside-percent-table.html
-fast/table/fixed-table-with-percent-width-inside-auto-table.html
-fast/table/fixed-table-with-percent-width-inside-div.html
-fast/table/fixed-table-with-percent-width-inside-extra-large-div.html
-fast/table/fixed-table-with-percent-width-inside-fixed-width-table.html
-fast/table/fixed-table-with-small-percent-width.html
-transforms/2d/hindi-rotated.html
-editing/selection/select-text-overflow-ellipsis.html
-fast/forms/basic-selects.html
-fast/forms/basic-textareas-quirks.html
-fast/text/fake-italic.html
-svg/custom/empty-mask.svg
-svg/custom/mask-on-multiple-objects.svg
-svg/filters/filter-clip.svg
 
 # This port doesn't have a global history delegate yet
 http/tests/globalhistory
@@ -5556,10 +5454,6 @@ fast/dom/Window/window-postmessage-clone-frames.html
 
 # Relies on WebKit API [WebView _loadBackForwardListFromOtherView:]
 fast/loader/crash-copying-backforwardlist.html
-
-# Intermittently timing out on Gtk Debug Bot:
-# https://bugs.webkit.org/show_bug.cgi?id=33445
-http/tests/incremental/split-hex-entities.pl
 
 # Skip frame flattening tests until it can be tested by this DRT (bug 32717)
 # https://bugs.webkit.org/show_bug.cgi?id=38650
@@ -5835,6 +5729,7 @@ svg/overflow/overflow-on-inner-svg-element.svg
 # New test needs enhanced frameloader delegate logging in DRT
 # Discussed in https://bugs.webkit.org/show_bug.cgi?id=38928
 fast/loader/recursive-before-unload-crash.html 
+fast/loader/null-request-after-willSendRequest.html
 
 # New canvas test suite from http://philip.html5.org/tests/canvas/suite/tests/
 canvas/philip
@@ -5893,6 +5788,8 @@ svg/custom/marker-strokeWidth-changes.svg
 svg/zoom/text/zoom-hixie-mixed-009.xml
 svg/custom/mask-on-multiple-objects.svg
 svg/filters/filter-clip.svg
+fast/backgrounds/animated-svg-as-mask.html
+fast/backgrounds/svg-as-mask.html
 
 # Setting CSS properties such as padding and margin does not work properly
 # on form elements: https://bugs.webkit.org/show_bug.cgi?id=40855

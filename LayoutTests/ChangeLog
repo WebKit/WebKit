@@ -1,3 +1,89 @@
+2010-06-24  Martin Robinson  <mrobinson@igalia.com>
+
+        Unreviewed.
+
+        Skip a failing test. Clean up skipped list stragglers. Conglomerate all tests which
+        are timing out and don't have attached bugs. Add expected results for some tests and
+        unskip them.
+
+        * platform/gtk/Skipped: Clean up skipped list stragglers.
+        * platform/gtk/animations/3d/change-transform-in-end-event-expected.txt: Added.
+        * platform/gtk/animations/3d/state-at-end-event-transform-expected.txt: Added.
+        * platform/gtk/animations/state-at-end-event-expected.txt: Added.
+        * platform/gtk/fast/backgrounds/001-expected.txt: Added.
+        * platform/gtk/fast/backgrounds/animated-gif-as-background-expected.txt: Added.
+        * platform/gtk/fast/backgrounds/animated-svg-as-background-expected.txt: Copied from LayoutTests/platform/qt/fast/backgrounds/animated-svg-as-background-expected.txt.
+        * platform/gtk/fast/backgrounds/background-inherit-color-bug-expected.txt: Added.
+        * platform/gtk/fast/backgrounds/background-origin-root-element-expected.txt: Added.
+        * platform/gtk/fast/backgrounds/background-position-1-expected.txt: Added.
+        * platform/gtk/fast/backgrounds/background-position-rounding-expected.txt: Added.
+        * platform/gtk/fast/backgrounds/bgCompositeCopy-expected.txt: Copied from LayoutTests/platform/chromium-win/fast/backgrounds/bgCompositeCopy-expected.txt.
+        * platform/gtk/fast/backgrounds/body-generated-image-propagated-to-root-expected.txt: Added.
+        * platform/gtk/fast/backgrounds/mask-composite-expected.txt: Added.
+        * platform/gtk/fast/backgrounds/opacity-on-document-element-expected.txt: Added.
+        * platform/gtk/fast/backgrounds/repeat/mask-negative-offset-repeat-expected.txt: Added.
+        * platform/gtk/fast/backgrounds/repeat/negative-offset-repeat-expected.txt: Added.
+        * platform/gtk/fast/backgrounds/repeat/negative-offset-repeat-transformed-expected.txt: Added.
+        * platform/gtk/fast/backgrounds/repeat/noRepeatCorrectClip-expected.txt: Copied from LayoutTests/platform/qt/fast/backgrounds/repeat/noRepeatCorrectClip-expected.txt.
+        * platform/gtk/fast/backgrounds/size/backgroundSize01-expected.txt: Copied from LayoutTests/platform/mac/fast/backgrounds/size/backgroundSize01-expected.txt.
+        * platform/gtk/fast/backgrounds/size/backgroundSize02-expected.txt: Copied from LayoutTests/platform/chromium-win/fast/backgrounds/size/backgroundSize02-expected.txt.
+        * platform/gtk/fast/backgrounds/size/backgroundSize03-expected.txt: Copied from LayoutTests/platform/mac/fast/backgrounds/size/backgroundSize03-expected.txt.
+        * platform/gtk/fast/backgrounds/size/backgroundSize04-expected.txt: Copied from LayoutTests/platform/mac/fast/backgrounds/size/backgroundSize04-expected.txt.
+        * platform/gtk/fast/backgrounds/size/backgroundSize05-expected.txt: Copied from LayoutTests/platform/mac/fast/backgrounds/size/backgroundSize05-expected.txt.
+        * platform/gtk/fast/backgrounds/size/backgroundSize06-expected.txt: Copied from LayoutTests/platform/mac/fast/backgrounds/size/backgroundSize06-expected.txt.
+        * platform/gtk/fast/backgrounds/size/backgroundSize07-expected.txt: Copied from LayoutTests/platform/mac/fast/backgrounds/size/backgroundSize07-expected.txt.
+        * platform/gtk/fast/backgrounds/size/backgroundSize08-expected.txt: Copied from LayoutTests/platform/mac/fast/backgrounds/size/backgroundSize08-expected.txt.
+        * platform/gtk/fast/backgrounds/size/backgroundSize09-expected.txt: Copied from LayoutTests/platform/mac/fast/backgrounds/size/backgroundSize09-expected.txt.
+        * platform/gtk/fast/backgrounds/size/backgroundSize10-expected.txt: Copied from LayoutTests/platform/chromium-win/fast/backgrounds/size/backgroundSize10-expected.txt.
+        * platform/gtk/fast/backgrounds/size/backgroundSize11-expected.txt: Copied from LayoutTests/platform/chromium-win/fast/backgrounds/size/backgroundSize11-expected.txt.
+        * platform/gtk/fast/backgrounds/size/backgroundSize12-expected.txt: Copied from LayoutTests/platform/mac/fast/backgrounds/size/backgroundSize12-expected.txt.
+        * platform/gtk/fast/backgrounds/size/backgroundSize13-expected.txt: Copied from LayoutTests/platform/chromium-win/fast/backgrounds/size/backgroundSize13-expected.txt.
+        * platform/gtk/fast/backgrounds/size/backgroundSize14-expected.txt: Copied from LayoutTests/platform/chromium-win/fast/backgrounds/size/backgroundSize14-expected.txt.
+        * platform/gtk/fast/backgrounds/size/backgroundSize15-expected.txt: Added.
+        * platform/gtk/fast/backgrounds/size/backgroundSize16-expected.txt: Added.
+        * platform/gtk/fast/backgrounds/size/backgroundSize17-expected.txt: Copied from LayoutTests/platform/chromium-win/fast/backgrounds/size/backgroundSize17-expected.txt.
+        * platform/gtk/fast/backgrounds/size/backgroundSize18-expected.txt: Copied from LayoutTests/platform/chromium-win/fast/backgrounds/size/backgroundSize18-expected.txt.
+        * platform/gtk/fast/backgrounds/size/backgroundSize19-expected.txt: Copied from LayoutTests/platform/chromium-win/fast/backgrounds/size/backgroundSize19-expected.txt.
+        * platform/gtk/fast/backgrounds/size/zero-expected.txt: Added.
+        * platform/gtk/fast/backgrounds/solid-color-context-restore-expected.txt: Added.
+        * platform/gtk/fast/backgrounds/svg-as-background-1-expected.txt: Copied from LayoutTests/platform/qt/fast/backgrounds/svg-as-background-1-expected.txt.
+        * platform/gtk/fast/backgrounds/svg-as-background-2-expected.txt: Copied from LayoutTests/platform/qt/fast/backgrounds/svg-as-background-2-expected.txt.
+        * platform/gtk/fast/backgrounds/svg-as-background-3-expected.txt: Copied from LayoutTests/platform/qt/fast/backgrounds/svg-as-background-3-expected.txt.
+        * platform/gtk/fast/backgrounds/svg-as-background-4-expected.txt: Copied from LayoutTests/platform/qt/fast/backgrounds/svg-as-background-4-expected.txt.
+        * platform/gtk/fast/backgrounds/svg-as-background-5-expected.txt: Copied from LayoutTests/platform/qt/fast/backgrounds/svg-as-background-5-expected.txt.
+        * platform/gtk/fast/backgrounds/svg-as-background-6-expected.txt: Copied from LayoutTests/platform/qt/fast/backgrounds/svg-as-background-6-expected.txt.
+        * platform/gtk/fast/block/margin-collapse/block-inside-inline/001-expected.txt: Added.
+        * platform/gtk/fast/block/margin-collapse/block-inside-inline/002-expected.txt: Added.
+        * platform/gtk/fast/block/margin-collapse/block-inside-inline/003-expected.txt: Added.
+        * platform/gtk/fast/block/margin-collapse/block-inside-inline/004-expected.txt: Added.
+        * platform/gtk/fast/block/margin-collapse/block-inside-inline/005-expected.txt: Added.
+        * platform/gtk/fast/block/margin-collapse/block-inside-inline/006-expected.txt: Added.
+        * platform/gtk/fast/block/margin-collapse/block-inside-inline/010-expected.txt: Added.
+        * platform/gtk/fast/block/margin-collapse/block-inside-inline/011-expected.txt: Added.
+        * platform/gtk/fast/block/margin-collapse/block-inside-inline/012-expected.txt: Added.
+        * platform/gtk/fast/block/margin-collapse/block-inside-inline/015-expected.txt: Added.
+        * platform/gtk/fast/block/margin-collapse/block-inside-inline/016-expected.txt: Added.
+        * platform/gtk/fast/block/margin-collapse/block-inside-inline/017-expected.txt: Added.
+        * platform/gtk/fast/block/margin-collapse/block-inside-inline/018-expected.txt: Added.
+        * platform/gtk/fast/block/margin-collapse/block-inside-inline/019-expected.txt: Added.
+        * platform/gtk/fast/block/margin-collapse/block-inside-inline/020-expected.txt: Added.
+        * platform/gtk/fast/block/margin-collapse/block-inside-inline/021-expected.txt: Added.
+        * platform/gtk/fast/block/margin-collapse/block-inside-inline/022-expected.txt: Added.
+        * platform/gtk/fast/block/margin-collapse/block-inside-inline/025-expected.txt: Added.
+        * platform/gtk/fast/css/getComputedStyle/marginComputedStyle-expected.txt: Added.
+        * platform/gtk/printing/compositing-layer-printing-expected.txt: Added.
+        * platform/gtk/printing/media-queries-print-expected.txt: Added.
+        * platform/gtk/printing/return-from-printing-mode-expected.txt: Added.
+        * platform/gtk/scrollbars/disabled-scrollbar-expected.txt: Added.
+        * platform/gtk/scrollbars/listbox-scrollbar-combinations-expected.txt: Added.
+        * platform/gtk/scrollbars/overflow-scrollbar-combinations-expected.txt: Added.
+        * platform/gtk/scrollbars/scrollbar-buttons-expected.txt: Added.
+        * platform/gtk/scrollbars/scrollbar-orientation-expected.txt: Added.
+        * platform/gtk/transforms/2d/transform-fixed-container-expected.txt: Added.
+        * platform/gtk/transforms/2d/zoom-menulist-expected.txt: Added.
+        * platform/gtk/transitions/move-after-transition-expected.txt: Added.
+        * platform/gtk/transitions/transition-end-event-rendering-expected.txt: Copied from LayoutTests/platform/mac/transitions/transition-end-event-rendering-expected.txt.
+
 2010-06-24  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Sam Weinig.
