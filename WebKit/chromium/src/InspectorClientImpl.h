@@ -38,6 +38,7 @@
 namespace WebKit {
 
 class WebDevToolsAgentClient;
+class WebDevToolsAgentImpl;
 class WebViewImpl;
 
 class InspectorClientImpl : public WebCore::InspectorClient {
@@ -56,7 +57,13 @@ public:
     virtual void storeSetting(const WebCore::String& key, const WebCore::String& value);
 
     virtual bool sendMessageToFrontend(const WebCore::String&);
+
+    virtual void resourceTrackingWasEnabled();
+    virtual void resourceTrackingWasDisabled();
+    virtual void timelineProfilerWasStarted();
+    virtual void timelineProfilerWasStopped();
 private:
+    WebDevToolsAgentImpl* devToolsAgent();
 
     // The WebViewImpl of the page being inspected; gets passed to the constructor
     WebViewImpl* m_inspectedWebView;

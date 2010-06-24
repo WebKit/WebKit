@@ -61,7 +61,6 @@ devtools$$dispatch = function(remoteName, methodName, param1, param2, param3)
 devtools.ToolsAgent = function()
 {
     RemoteToolsAgent.didDispatchOn = WebInspector.Callback.processCallback;
-    RemoteToolsAgent.frameNavigate = this.frameNavigate_.bind(this);
     RemoteToolsAgent.dispatchOnClient = this.dispatchOnClient_.bind(this);
     this.debuggerAgent_ = new devtools.DebuggerAgent();
     this.profilerAgent_ = new devtools.ProfilerAgent();
@@ -107,24 +106,14 @@ devtools.ToolsAgent.prototype.getProfilerAgent = function()
 };
 
 
-/**
- * @param {string} url Url frame navigated to.
- * @see tools_agent.h
- * @private
- */
-devtools.ToolsAgent.prototype.frameNavigate_ = function(url)
+(function () {
+var orig = WebInspector.reset;
+WebInspector.reset = function()
 {
-    this.reset();
-    // Do not reset Profiles panel.
-    var profiles = null;
-    if ("profiles" in WebInspector.panels) {
-        profiles = WebInspector.panels["profiles"];
-        delete WebInspector.panels["profiles"];
-    }
-    WebInspector.reset();
-    if (profiles !== null)
-        WebInspector.panels["profiles"] = profiles;
+    devtools.tools.reset();
+    orig.call(this);
 };
+})();
 
 
 /**
@@ -302,31 +291,6 @@ WebInspector.UIString = function(string)
     return String.vsprintf(string, Array.prototype.slice.call(arguments, 1));
 };
 
-// Activate window upon node search complete. This will go away once InspectorFrontendClient is landed.
-(function() {
-    var original = WebInspector.searchingForNodeWasDisabled;
-    WebInspector.searchingForNodeWasDisabled = function()
-    {
-        if (this.panels.elements._nodeSearchButton.toggled)
-            InspectorFrontendHost.bringToFront();
-        original.apply(this, arguments);
-    }
-})();
-
-
-// There is no clear way of setting frame title yet. So sniffing main resource
-// load.
-(function OverrideUpdateResource() {
-    var originalUpdateResource = WebInspector.updateResource;
-    WebInspector.updateResource = function(identifier, payload)
-    {
-        originalUpdateResource.call(this, identifier, payload);
-        var resource = this.resources[identifier];
-        if (resource && resource.mainResource && resource.finished)
-            document.title = WebInspector.UIString("Developer Tools - %s", resource.url);
-    };
-})();
-
 
 /** Pending WebKit upstream by apavlov). Fixes iframe vs drag problem. */
 (function()
@@ -356,9 +320,10 @@ WebInspector.UIString = function(string)
 })();
 
 
-// We need to have a place for postponed tasks
-// which should be executed when all the messages between agent and frontend
-// are processed.
+
+///////////////////////////////////////////
+// Chromium layout test harness support. //
+///////////////////////////////////////////
 
 WebInspector.runAfterPendingDispatchesQueue = [];
 
@@ -375,19 +340,11 @@ WebInspector.queuesAreEmpty = function()
         copy[i].call(this);
 };
 
-(function()
-{
-var originalAddToFrame = InspectorFrontendHost.addResourceSourceToFrame;
-InspectorFrontendHost.addResourceSourceToFrame = function(identifier, element)
-{
-    var resource = WebInspector.resources[identifier];
-    if (!resource)
-        return;
-    originalAddToFrame.call(this, identifier, resource.mimeType, element);
-};
-})();
 
-// Chromium theme support.
+/////////////////////////////
+// Chromium theme support. //
+/////////////////////////////
+
 WebInspector.setToolbarColors = function(backgroundColor, color)
 {
     if (!WebInspector._themeStyleElement) {

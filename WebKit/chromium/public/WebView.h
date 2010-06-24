@@ -38,6 +38,7 @@ namespace WebKit {
 
 class WebAccessibilityObject;
 class WebDevToolsAgent;
+class WebDevToolsAgentClient;
 class WebDragData;
 class WebFrame;
 class WebFrameClient;
@@ -55,8 +56,8 @@ public:
 
     // Creates a WebView that is NOT yet initialized.  You will need to
     // call initializeMainFrame to finish the initialization.  It is valid
-    // to pass a null WebViewClient pointer.
-    WEBKIT_API static WebView* create(WebViewClient*);
+    // to pass null WebViewClient and WebDevToolsAgentClient pointers.
+    WEBKIT_API static WebView* create(WebViewClient*, WebDevToolsAgentClient* = 0);
 
     // After creating a WebView, you should immediately call this method.
     // You can optionally modify the settings before calling this method.

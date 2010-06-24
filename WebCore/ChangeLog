@@ -1,3 +1,32 @@
+2010-06-24  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+ 
+        Web Inspector: Inspector cleanup + better DevTools alignment with Inspector.
+
+        https://bugs.webkit.org/show_bug.cgi?id=41094
+
+        - Removed a bunch of unused methods from all over the place
+        - Added client callbacks for states surviving navigation
+        - Implemented more user-friendly stub for InspectorFrontendHost.platform
+
+        * inspector/InspectorClient.h:
+        (WebCore::InspectorClient::resourceTrackingWasEnabled):
+        (WebCore::InspectorClient::resourceTrackingWasDisabled):
+        (WebCore::InspectorClient::timelineProfilerWasStarted):
+        (WebCore::InspectorClient::timelineProfilerWasStopped):
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::enableResourceTracking):
+        (WebCore::InspectorController::disableResourceTracking):
+        (WebCore::InspectorController::ensureSettingsLoaded):
+        (WebCore::InspectorController::startTimelineProfiler):
+        (WebCore::InspectorController::stopTimelineProfiler):
+        * inspector/InspectorFrontend.cpp:
+        * inspector/InspectorFrontend.h:
+        * inspector/front-end/InspectorBackendStub.js:
+        * inspector/front-end/InspectorFrontendHostStub.js:
+        (.WebInspector.InspectorFrontendHostStub.prototype.platform):
+
 2010-06-23  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Darin Adler.

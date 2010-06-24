@@ -31,6 +31,8 @@
 #ifndef WebDevToolsAgentImpl_h
 #define WebDevToolsAgentImpl_h
 
+#include "InspectorClient.h"
+
 #include "APUAgentDelegate.h"
 #include "DevToolsRPC.h"
 #include "ToolsAgent.h"
@@ -41,6 +43,7 @@
 
 namespace WebCore {
 class Document;
+class InspectorClient;
 class InspectorController;
 class Node;
 class String;
@@ -62,7 +65,8 @@ struct WebDevToolsMessageData;
 
 class WebDevToolsAgentImpl : public WebDevToolsAgentPrivate,
                              public ToolsAgent,
-                             public DevToolsRPC::Delegate {
+                             public DevToolsRPC::Delegate,
+                             public WebCore::InspectorClient {
 public:
     WebDevToolsAgentImpl(WebViewImpl* webViewImpl, WebDevToolsAgentClient* client);
     virtual ~WebDevToolsAgentImpl();
@@ -73,7 +77,6 @@ public:
 
     // WebDevToolsAgentPrivate implementation.
     virtual void didClearWindowObject(WebFrameImpl* frame);
-    virtual void didCommitProvisionalLoad(WebFrameImpl* frame, bool isNewNavigation);
 
     // WebDevToolsAgent implementation.
     virtual void attach();
@@ -92,6 +95,19 @@ public:
     virtual void didFinishLoading(unsigned long);
     virtual void didFailLoading(unsigned long, const WebURLError&);
 
+    // InspectorClient implementation.
+    virtual void inspectorDestroyed();
+    virtual void openInspectorFrontend(WebCore::InspectorController*);
+    virtual void highlight(WebCore::Node*);
+    virtual void hideHighlight();
+    virtual void populateSetting(const WebCore::String& key, WebCore::String* value);
+    virtual void storeSetting(const WebCore::String& key, const WebCore::String& value);
+    virtual void resourceTrackingWasEnabled();
+    virtual void resourceTrackingWasDisabled();
+    virtual void timelineProfilerWasStarted();
+    virtual void timelineProfilerWasStopped();
+    virtual bool sendMessageToFrontend(const WebCore::String&);
+
     // DevToolsRPC::Delegate implementation.
     virtual void sendRpcMessage(const WebDevToolsMessageData& data);
 
@@ -101,9 +117,6 @@ public:
 
 private:
     static v8::Handle<v8::Value> jsDispatchOnClient(const v8::Arguments& args);
-    static v8::Handle<v8::Value> jsDispatchToApu(const v8::Arguments& args);
-    static v8::Handle<v8::Value> jsEvaluateOnSelf(const v8::Arguments& args);
-    static v8::Handle<v8::Value> jsOnRuntimeFeatureStateChanged(const v8::Arguments& args);
 
     void disposeUtilityContext();
 

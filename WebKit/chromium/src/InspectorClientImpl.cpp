@@ -60,64 +60,74 @@ InspectorClientImpl::~InspectorClientImpl()
 
 void InspectorClientImpl::inspectorDestroyed()
 {
-    // Our lifetime is bound to the WebViewImpl.
+    if (WebDevToolsAgentImpl* agent = devToolsAgent())
+        agent->inspectorDestroyed();
 }
 
-void InspectorClientImpl::openInspectorFrontend(InspectorController*)
+void InspectorClientImpl::openInspectorFrontend(InspectorController* controller)
 {
-}
-
-static void invalidateNodeBoundingRect(WebViewImpl* webView)
-{
-    // FIXME: Is it important to just invalidate the rect of the node region
-    // given that this is not on a critical codepath?  In order to do so, we'd
-    // have to take scrolling into account.
-    const WebSize& size = webView->size();
-    WebRect damagedRect(0, 0, size.width, size.height);
-    if (webView->client())
-        webView->client()->didInvalidateRect(damagedRect);
+    if (WebDevToolsAgentImpl* agent = devToolsAgent())
+        agent->openInspectorFrontend(controller);
 }
 
 void InspectorClientImpl::highlight(Node* node)
 {
-    // InspectorController does the actually tracking of the highlighted node
-    // and the drawing of the highlight. Here we just make sure to invalidate
-    // the rects of the old and new nodes.
-    hideHighlight();
+    if (WebDevToolsAgentImpl* agent = devToolsAgent())
+        agent->highlight(node);
 }
 
 void InspectorClientImpl::hideHighlight()
 {
-    // FIXME: able to invalidate a smaller rect.
-    invalidateNodeBoundingRect(m_inspectedWebView);
+    if (WebDevToolsAgentImpl* agent = devToolsAgent())
+        agent->hideHighlight();
 }
 
 void InspectorClientImpl::populateSetting(const String& key, String* value)
 {
-    WebString string;
-    m_inspectedWebView->inspectorSetting(key, &string);
-    *value = string;
+    if (WebDevToolsAgentImpl* agent = devToolsAgent())
+        agent->populateSetting(key, value);
 }
 
 void InspectorClientImpl::storeSetting(const String& key, const String& value)
 {
-    m_inspectedWebView->setInspectorSetting(key, value);
+    if (WebDevToolsAgentImpl* agent = devToolsAgent())
+        agent->storeSetting(key, value);
 }
 
 bool InspectorClientImpl::sendMessageToFrontend(const WebCore::String& message)
 {
-    WebDevToolsAgentImpl* devToolsAgent = static_cast<WebDevToolsAgentImpl*>(m_inspectedWebView->devToolsAgent());
-    if (!devToolsAgent)
-        return false;
+    if (WebDevToolsAgentImpl* agent = devToolsAgent())
+        return agent->sendMessageToFrontend(message);
+    return false;
+}
 
-    WebVector<WebString> arguments(size_t(1));
-    arguments[0] = message;
-    WebDevToolsMessageData data;
-    data.className = "ToolsAgentDelegate";
-    data.methodName = "dispatchOnClient";
-    data.arguments.swap(arguments);
-    devToolsAgent->sendRpcMessage(data);
-    return true;
+void InspectorClientImpl::resourceTrackingWasEnabled()
+{
+    if (WebDevToolsAgentImpl* agent = devToolsAgent())
+        agent->resourceTrackingWasEnabled();
+}
+
+void InspectorClientImpl::resourceTrackingWasDisabled()
+{
+    if (WebDevToolsAgentImpl* agent = devToolsAgent())
+        agent->resourceTrackingWasDisabled();
+}
+
+void InspectorClientImpl::timelineProfilerWasStarted()
+{
+    if (WebDevToolsAgentImpl* agent = devToolsAgent())
+        agent->timelineProfilerWasStarted();
+}
+
+void InspectorClientImpl::timelineProfilerWasStopped()
+{
+    if (WebDevToolsAgentImpl* agent = devToolsAgent())
+        agent->timelineProfilerWasStopped();
+}
+
+WebDevToolsAgentImpl* InspectorClientImpl::devToolsAgent()
+{
+    return static_cast<WebDevToolsAgentImpl*>(m_inspectedWebView->devToolsAgent());
 }
 
 } // namespace WebKit
