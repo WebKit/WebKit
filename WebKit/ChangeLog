@@ -1,3 +1,15 @@
+2010-06-24  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Eric Carlson.
+
+        Full-screened content doesn't keep the display on: Safari not grabbing a power assertion?
+        https://bugs.webkit.org/show_bug.cgi?id=40939
+        rdar://problem/7996172
+        
+        Add IOKit.framework to the list of linked frameworks.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
 2010-06-23  Leandro Pereira  <leandro@profusion.mobi>
 
         Reviewed by Gustavo Noronha Silva.

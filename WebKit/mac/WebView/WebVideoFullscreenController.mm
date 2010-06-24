@@ -30,6 +30,7 @@
 #import "WebTypesInternal.h"
 #import "WebVideoFullscreenHUDWindowController.h"
 #import "WebWindowAnimation.h"
+#import <IOKit/pwr_mgt/IOPMLib.h>
 #import <QTKit/QTKit.h>
 #import <WebCore/HTMLMediaElement.h>
 #import <WebCore/SoftLinking.h>
@@ -55,6 +56,13 @@ SOFT_LINK_POINTER(QTKit, QTMovieRateDidChangeNotification, NSString *)
 @end
 
 @interface WebVideoFullscreenController(HUDWindowControllerDelegate) <WebVideoFullscreenHUDWindowControllerDelegate>
+- (void)requestExitFullscreenWithAnimation:(BOOL)animation;
+- (void)updateMenuAndDockForFullscreen;
+- (void)updatePowerAssertions;
+@end
+
+@interface NSWindow(IsOnActiveSpaceAdditionForTigerAndLeopard)
+- (BOOL)isOnActiveSpace;
 @end
 
 @implementation WebVideoFullscreenController
@@ -98,6 +106,9 @@ SOFT_LINK_POINTER(QTKit, QTMovieRateDidChangeNotification, NSString *)
     [window setHasShadow:YES]; // This is nicer with a shadow.
     [window setLevel:NSPopUpMenuWindowLevel-1];
     [layer release];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationDidResignActive:) name:NSApplicationDidResignActiveNotification object:NSApp];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationDidChangeScreenParameters:) name:NSApplicationDidChangeScreenParametersNotification object:NSApp];
 #endif
 }
 
@@ -153,7 +164,8 @@ SOFT_LINK_POINTER(QTKit, QTMovieRateDidChangeNotification, NSString *)
     [self clearFadeAnimation];
     [[self window] close];
     [self setWindow:nil];
-    SetSystemUIMode(_savedUIMode, _savedUIOptions);
+    [self updateMenuAndDockForFullscreen];   
+    [self updatePowerAssertions];
     [_hudController setDelegate:nil];
     [_hudController release];
     _hudController = nil;
@@ -173,8 +185,8 @@ SOFT_LINK_POINTER(QTKit, QTMovieRateDidChangeNotification, NSString *)
     _hudController = [[WebVideoFullscreenHUDWindowController alloc] init];
     [_hudController setDelegate:self];
 
-    GetSystemUIMode(&_savedUIMode, &_savedUIOptions);
-    SetSystemUIMode(kUIModeAllSuppressed , 0);
+    [self updateMenuAndDockForFullscreen];
+    [self updatePowerAssertions];
     [NSCursor setHiddenUntilMouseMoves:YES];
     
     // Give the HUD keyboard focus initially
@@ -186,6 +198,22 @@ SOFT_LINK_POINTER(QTKit, QTMovieRateDidChangeNotification, NSString *)
     return _mediaElement->screenRect();
 }
 
+- (void)applicationDidResignActive:(NSNotification*)notification
+{   
+    // Check to see if the fullscreenWindow is on the active space; this function is available
+    // on 10.6 and later, so default to YES if the function is not available:
+    NSWindow* fullscreenWindow = [self fullscreenWindow];
+    BOOL isOnActiveSpace = ([fullscreenWindow respondsToSelector:@selector(isOnActiveSpace)] ? [fullscreenWindow isOnActiveSpace] : YES);
+
+    // Replicate the QuickTime Player (X) behavior when losing active application status:
+    // Is the fullscreen screen the main screen? (Note: this covers the case where only a 
+    // single screen is available.)  Is the fullscreen screen on the current space? IFF so, 
+    // then exit fullscreen mode.    
+    if ([fullscreenWindow screen] == [[NSScreen screens] objectAtIndex:0] && isOnActiveSpace)
+         [self requestExitFullscreenWithAnimation:NO];
+}
+         
+         
 #pragma mark -
 #pragma mark Exposed Interface
 
@@ -277,6 +305,98 @@ static NSWindow *createBackgroundFullscreenWindow(NSRect frame, int level)
     [[self fullscreenWindow] animateFromRect:[[self window] frame] toRect:endFrame withSubAnimation:_fadeAnimation controllerAction:@selector(windowDidExitFullscreen)];
 }
 
+- (void)applicationDidChangeScreenParameters:(NSNotification*)notification
+{
+    // The user may have changed the main screen by moving the menu bar, or they may have changed
+    // the Dock's size or location, or they may have changed the fullscreen screen's dimensions.  
+    // Update our presentation parameters, and ensure that the full screen window occupies the 
+    // entire screen:
+    [self updateMenuAndDockForFullscreen];
+    [[self window] setFrame:[[[self window] screen] frame] display:YES];
+}
+
+- (void)updateMenuAndDockForFullscreen
+{
+    // NSApplicationPresentationOptions is available on > 10.6 only:
+#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+    NSApplicationPresentationOptions options = NSApplicationPresentationDefault;
+    NSScreen* fullscreenScreen = [[self window] screen];
+
+    if (!_isEndingFullscreen) {
+        // Auto-hide the menu bar if the fullscreenScreen contains the menu bar:
+        // NOTE: if the fullscreenScreen contains the menu bar but not the dock, we must still 
+        // auto-hide the dock, or an exception will be thrown.
+        if ([[NSScreen screens] objectAtIndex:0] == fullscreenScreen)
+            options |= (NSApplicationPresentationAutoHideMenuBar | NSApplicationPresentationAutoHideDock);
+        // Check if the current screen contains the dock by comparing the screen's frame to its
+        // visibleFrame; if a dock is present, the visibleFrame will differ.  If the current screen
+        // contains the dock, hide it.
+        else if (!NSEqualRects([fullscreenScreen frame], [fullscreenScreen visibleFrame]))
+            options |= NSApplicationPresentationAutoHideDock;
+    }
+
+    if ([NSApp respondsToSelector:@selector(setPresentationOptions:)])
+        [NSApp setPresentationOptions:options];
+    else
+#endif
+        SetSystemUIMode(_isEndingFullscreen ? kUIModeNormal : kUIModeAllHidden, 0);
+}
+
+#if !defined(BUILDING_ON_TIGER) // IOPMAssertionCreateWithName not defined on < 10.5
+- (void)_disableIdleDisplaySleep
+{
+    if (_idleDisplaySleepAssertion == kIOPMNullAssertionID) 
+#if defined(BUILDING_ON_LEOPARD) // IOPMAssertionCreateWithName is not defined in the 10.5 SDK
+        IOPMAssertionCreate(kIOPMAssertionTypeNoDisplaySleep, kIOPMAssertionLevelOn, &_idleDisplaySleepAssertion);
+#else // IOPMAssertionCreate is depreciated in > 10.5
+        IOPMAssertionCreateWithName(kIOPMAssertionTypeNoDisplaySleep, kIOPMAssertionLevelOn, CFSTR("WebKit playing a video fullscreen."), &_idleDisplaySleepAssertion);
+#endif
+}
+
+- (void)_enableIdleDisplaySleep
+{
+    if (_idleDisplaySleepAssertion != kIOPMNullAssertionID) {
+        IOPMAssertionRelease(_idleDisplaySleepAssertion);
+        _idleDisplaySleepAssertion = kIOPMNullAssertionID;
+    }
+}
+
+- (void)_disableIdleSystemSleep
+{
+    if (_idleSystemSleepAssertion == kIOPMNullAssertionID) 
+#if defined(BUILDING_ON_LEOPARD) // IOPMAssertionCreateWithName is not defined in the 10.5 SDK
+        IOPMAssertionCreate(kIOPMAssertionTypeNoIdleSleep, kIOPMAssertionLevelOn, &_idleSystemSleepAssertion);
+#else // IOPMAssertionCreate is depreciated in > 10.5
+    IOPMAssertionCreateWithName(kIOPMAssertionTypeNoIdleSleep, kIOPMAssertionLevelOn, CFSTR("WebKit playing a video fullscreen."), &_idleSystemSleepAssertion);
+#endif
+}
+
+- (void)_enableIdleSystemSleep
+{
+    if (_idleSystemSleepAssertion != kIOPMNullAssertionID) {
+        IOPMAssertionRelease(_idleSystemSleepAssertion);
+        _idleSystemSleepAssertion = kIOPMNullAssertionID;
+    }
+}
+#endif
+
+- (void)updatePowerAssertions
+{
+#if !defined(BUILDING_ON_TIGER) 
+    float rate = 0;
+    if (_mediaElement && _mediaElement->platformMedia().type == WebCore::PlatformMedia::QTMovieType)
+        rate = [_mediaElement->platformMedia().media.qtMovie rate];
+    
+    if (rate && !_isEndingFullscreen) {
+        [self _disableIdleSystemSleep];
+        [self _disableIdleDisplaySleep];
+    } else {
+        [self _enableIdleSystemSleep];
+        [self _enableIdleDisplaySleep];
+    }
+#endif
+}
+
 #pragma mark -
 #pragma mark Window callback
 
@@ -314,6 +434,7 @@ static NSWindow *createBackgroundFullscreenWindow(NSRect frame, int level)
 {
     UNUSED_PARAM(unusedNotification);
     [_hudController updateRate];
+    [self updatePowerAssertions];
 }
 
 @end
@@ -451,12 +572,6 @@ static NSWindow *createBackgroundFullscreenWindow(NSRect frame, int level)
 - (void)mouseMoved:(NSEvent *)theEvent
 {
     [[self windowController] fadeHUDIn];
-}
-
-- (void)resignKeyWindow
-{
-    [super resignKeyWindow];
-    [[self windowController] requestExitFullscreenWithAnimation:NO];
 }
 
 @end

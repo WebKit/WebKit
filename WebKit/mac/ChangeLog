@@ -1,3 +1,64 @@
+2010-06-24  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Eric Carlson.
+
+        Full-screened content doesn't keep the display on: Safari not grabbing a power assertion?
+        https://bugs.webkit.org/show_bug.cgi?id=40939
+        rdar://problem/7996172
+        
+        Take a IOKit power assertion when playing video in fullscreen mode.  Release the
+        assertion when paused in fullscreen mode, and when exiting fullscreen mode.
+
+        * WebView/WebVideoFullscreenController.h:
+        * WebView/WebVideoFullscreenController.mm:
+        (-[WebVideoFullscreenController windowDidExitFullscreen]): Call updatePowerAssertions.
+        (-[WebVideoFullscreenController windowDidEnterFullscreen]): Call updatePowerAssertions.
+        (-[WebVideoFullscreenController _disableIdleDisplaySleep]):
+        (-[WebVideoFullscreenController _enableIdleDisplaySleep]):
+        (-[WebVideoFullscreenController _disableIdleSystemSleep]):
+        (-[WebVideoFullscreenController _enableIdleSystemSleep]):
+        (-[WebVideoFullscreenController updatePowerAssertions]): Call _(enable|disable)Idle(System|Display)sleep depending on current playback rate and fullscreen status.
+        (-[WebVideoFullscreenController rateChanged:]): Call updatePowerAssertions.
+
+2010-06-24  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Playing movie full screen on second monitor hides menu bar and title bar on main monitor
+        https://bugs.webkit.org/show_bug.cgi?id=40933
+        rdar://problem/7858452
+        
+        Remove all references to GetSystemUIMode and SetSystemUIMode.  Replace these calls with 
+        [NSApplication setPresentationOptions:].  Do not auto-hide the menu bar if the fullscreen
+        screen is does not contain the menu-bar.  Do not auto-hide the dock if the fullscreen screen
+        is both not the menu-bar screen and not the dock screen.
+
+        * WebView/WebVideoFullscreenController.mm:
+        (-[WebVideoFullscreenController windowDidLoad]): Register the applicationDidChangeScreenParameters: listener.
+        (-[WebVideoFullscreenController windowDidExitFullscreen]): Calls updateMenuAndDockForFullscreen.
+        (-[WebVideoFullscreenController windowDidEnterFullscreen]): Calls updateMenuAndDockForFullscreen.
+        (-[WebVideoFullscreenController applicationDidChangeScreenParameters:]):  New notification handler; catches NSApplicationDidChangeScreenParameters.
+        (-[WebVideoFullscreenController updateMenuAndDockForFullscreen]): Hide/show the menu-bar and dock according to the fullscreen window's screen.
+
+2010-06-24  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Eric Carlson.
+
+        Full screen video in Safari exits full-screen if you switch to another app
+        https://bugs.webkit.org/show_bug.cgi?id=40635
+        rdar://problem/7885101
+
+        Implement the following rules for exiting full screen when switching apps:
+        1. If the system has a single screen, switching apps will cause Safari to exit full-screen.
+        2. Otherwise, if the full-screen screen is the "main screen" (the one with the title bar), 
+           switching apps will cause Safari to exit full-screen.
+        3. Overriding rules 1 & 2, if the full-screen screen is not on the "current space", 
+           switching apps will NOT cause Safari to exit full-screen.
+
+        * WebView/WebVideoFullscreenController.mm:
+        (-[WebVideoFullscreenController windowDidLoad]):
+        (-[WebVideoFullscreenController applicationDidResignActive:]):
+
 2010-06-24  Adele Peterson  <adele@apple.com>
 
         Reviewed by Sam Weinig.
