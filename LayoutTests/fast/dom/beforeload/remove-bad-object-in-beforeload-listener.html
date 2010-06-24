@@ -12,14 +12,15 @@
         var timeout = 100;
 
         document.addEventListener("beforeload", function(event) {
-            event.target.parentElement.removeChild(event.target);
+            if (event.target && event.target.parentElement)
+                event.target.parentElement.removeChild(event.target);
         }, true);
     </script>
 </head>
 <body>
     <p>This page tests that you can correctly remove an object element with an invalid data URL in its beforeload listener without causing a crash.</p>
-    <object data="invalid.png">FAIL</object>
-    <object data="invalid">FAIL</object>
+    <object data="does-not-exist.png">FAIL</object>
+    <object data="does-not-exist">FAIL</object>
     <div id="console"></div>
     <script>
         function checkObjectRemoval()

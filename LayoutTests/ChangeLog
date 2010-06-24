@@ -1,3 +1,17 @@
+2010-06-23  Andy Estes  <aestes@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        <rdar://problem/8107855> Test that removing an object element with an
+        invalid data URL in a listener to its beforeload event does not crash
+        WebCore.
+        https://bugs.webkit.org/show_bug.cgi?id=41054
+
+        * fast/dom/beforeload/remove-bad-object-in-beforeload-listener-expected.txt: Added.
+        * fast/dom/beforeload/remove-bad-object-in-beforeload-listener.html: Added.
+        * fast/dom/beforeload/resources/print.js: Added.
+        (print):
+
 2010-06-23  Kenneth Russell  <kbr@google.com>
 
         Reviewed by Dimitri Glazkov.
