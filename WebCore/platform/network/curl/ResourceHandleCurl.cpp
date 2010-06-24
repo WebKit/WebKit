@@ -153,34 +153,24 @@ void ResourceHandle::setClientCertificate(const String& host, CFDataRef cert)
 }
 #endif
 
-void ResourceHandle::setDefersLoading(bool defers)
+void ResourceHandle::platformSetDefersLoading(bool defers)
 {
-    if (d->m_defersLoading == defers)
-        return;
-
 #if LIBCURL_VERSION_NUM > 0x071200
     if (!d->m_handle)
-        d->m_defersLoading = defers;
-    else if (defers) {
+        return;
+
+    if (defers) {
         CURLcode error = curl_easy_pause(d->m_handle, CURLPAUSE_ALL);
         // If we could not defer the handle, so don't do it.
         if (error != CURLE_OK)
             return;
-
-        d->m_defersLoading = defers;
     } else {
-        // We need to set defersLoading before restarting a connection
-        // or libcURL will call the callbacks in curl_easy_pause and
-        // we would ASSERT.
-        d->m_defersLoading = defers;
-
         CURLcode error = curl_easy_pause(d->m_handle, CURLPAUSE_CONT);
         if (error != CURLE_OK)
             // Restarting the handle has failed so just cancel it.
             cancel();
     }
 #else
-    d->m_defersLoading = defers;
     LOG_ERROR("Deferred loading is implemented if libcURL version is above 7.18.0");
 #endif
 }

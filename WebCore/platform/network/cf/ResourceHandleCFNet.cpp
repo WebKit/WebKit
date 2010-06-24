@@ -626,7 +626,7 @@ void ResourceHandle::setClientCertificate(const String& host, CFDataRef cert)
     clientCerts().set(host.lower(), cert);
 }
 
-void ResourceHandle::setDefersLoading(bool defers)
+void ResourceHandle::platformSetDefersLoading(bool defers)
 {
     if (!d->m_connection)
         return;

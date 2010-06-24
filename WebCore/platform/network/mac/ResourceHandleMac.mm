@@ -325,11 +325,8 @@ void ResourceHandle::cancel()
     [d->m_connection.get() cancel];
 }
 
-void ResourceHandle::setDefersLoading(bool defers)
+void ResourceHandle::platformSetDefersLoading(bool defers)
 {
-    LOG(Network, "Handle %p setDefersLoading(%s)", this, defers ? "true" : "false");
-
-    d->m_defersLoading = defers;
     if (d->m_connection)
         wkSetNSURLConnectionDefersCallbacks(d->m_connection.get(), defers);
 }

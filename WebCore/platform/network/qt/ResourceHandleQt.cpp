@@ -210,10 +210,8 @@ void ResourceHandle::loadResourceSynchronously(const ResourceRequest& request, S
 }
 
  
-void ResourceHandle::setDefersLoading(bool defers)
+void ResourceHandle::platformSetDefersLoading(bool defers)
 {
-    d->m_defersLoading = defers;
-
     if (d->m_job)
         d->m_job->setLoadMode(QNetworkReplyHandler::LoadMode(defers));
 }

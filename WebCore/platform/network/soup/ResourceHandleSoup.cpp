@@ -637,9 +637,8 @@ bool ResourceHandle::supportsBufferedData()
     return false;
 }
 
-void ResourceHandle::setDefersLoading(bool defers)
+void ResourceHandle::platformSetDefersLoading(bool)
 {
-    d->m_defersLoading = defers;
     notImplemented();
 }
 

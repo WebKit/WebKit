@@ -1,3 +1,42 @@
+2010-06-23  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=41099
+        Assertion failure: !m_suspended when XMLHttpRequest fails
+
+        This was a general problem with load failure timer not being deferred.
+
+        Test: manual-tests/xhr-failure-behind-alert.html
+
+        * manual-tests/xhr-failure-behind-alert.html: Added.
+
+        * platform/network/ResourceHandle.cpp:
+        (WebCore::ResourceHandle::fireFailure): Added an empty case for NoFailure. Reset
+        m_scheduledFailureType to NoFailure when firing.
+        (WebCore::ResourceHandle::setDefersLoading): Stop failure timer when deferring, restart when
+        un-deferring loads.
+
+        * platform/network/ResourceHandle.h: Renamed m_failureType to m_scheduledFailureType to
+        make it clear that it is only set when a timer is scheduled.
+
+        * platform/network/ResourceHandleInternal.h:
+        (WebCore::ResourceHandleInternal::ResourceHandleInternal): Initialize m_scheduledFailureType
+        to NoFailure, so that we can look at it when un-deferring loads.
+
+        * platform/network/android/ResourceHandleAndroid.cpp:
+        (WebCore::ResourceHandle::platformSetDefersLoading):
+        * platform/network/cf/ResourceHandleCFNet.cpp:
+        (WebCore::ResourceHandle::platformSetDefersLoading):
+        * platform/network/curl/ResourceHandleCurl.cpp:
+        (WebCore::ResourceHandle::platformSetDefersLoading):
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::ResourceHandle::platformSetDefersLoading):
+        * platform/network/qt/ResourceHandleQt.cpp:
+        (WebCore::ResourceHandle::platformSetDefersLoading):
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        Platform specific parts of setDefersLoading() are now in a separate function.
+
 2010-06-24  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed: revert 61766.
