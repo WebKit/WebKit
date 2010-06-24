@@ -42,12 +42,13 @@ namespace WebCore {
         virtual void finish() = 0;
         virtual bool finishWasCalled() = 0;
         virtual bool isWaitingForScripts() const = 0;
+        virtual bool isExecutingScript() const { return false; }
+
         virtual void stopParsing() { m_parserStopped = true; }
         // FIXME: processingData() is only used by DocumentLoader::isLoadingInAPISense
         // and is very unclear as to what it actually means.  Only LegacyHTMLDocumentParser
         // actually implements it.
         virtual bool processingData() const { return false; }
-        virtual int executingScript() const { return 0; }
 
         virtual bool wantsRawData() const { return false; }
         virtual bool writeRawData(const char* /*data*/, int /*length*/) { return false; }

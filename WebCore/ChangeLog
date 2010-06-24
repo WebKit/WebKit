@@ -1,3 +1,32 @@
+2010-06-23  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Start to clean up DocumentParser interface
+        https://bugs.webkit.org/show_bug.cgi?id=41114
+
+        The first of many cleanups needed to the DocumentParser
+        interface.  Rename executingScript() to isExecutingScript()
+        and make it return a bool instead of an int.  Also added a
+        FIXME to XMLDocumentParser about implementing it and did
+        some minor other cleanup to the XMLDocumentParser header.
+
+        No functional change, thus no tests.
+
+        * dom/Document.cpp:
+        (WebCore::Document::open):
+        * dom/DocumentParser.h:
+        (WebCore::DocumentParser::isExecutingScript):
+        * dom/XMLDocumentParser.h:
+        (WebCore::XMLDocumentParser::wellFormed):
+        * html/HTMLDocumentParser.cpp:
+        (WebCore::HTMLDocumentParser::attemptToEnd):
+        (WebCore::HTMLDocumentParser::endIfDelayed):
+        (WebCore::HTMLDocumentParser::isExecutingScript):
+        * html/HTMLDocumentParser.h:
+        * html/LegacyHTMLDocumentParser.h:
+        (WebCore::LegacyHTMLDocumentParser::isExecutingScript):
+
 2010-06-22  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Simon Fraser.

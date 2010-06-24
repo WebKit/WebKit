@@ -63,10 +63,10 @@ public:
     virtual void end();
     virtual void finish();
     virtual bool finishWasCalled();
-    virtual int executingScript() const;
     virtual bool processingData() const;
     virtual void stopParsing();
     virtual bool isWaitingForScripts() const;
+    virtual bool isExecutingScript() const;
     virtual void executeScriptsWaitingForStylesheets();
     virtual int lineNumber() const;
     virtual int columnNumber() const;

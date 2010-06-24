@@ -78,12 +78,15 @@ namespace WebCore {
 
         enum ErrorType { warning, nonFatal, fatal };
 
-        // from DocumentParser
+        // From DocumentParser
         virtual void write(const SegmentedString&, bool appendData);
         virtual void finish();
         virtual bool finishWasCalled();
         virtual bool isWaitingForScripts() const;
         virtual void stopParsing();
+        virtual bool wellFormed() const { return !m_sawError; }
+        virtual int lineNumber() const;
+        virtual int columnNumber() const;
 
         void end();
 
@@ -103,13 +106,7 @@ namespace WebCore {
         // from CachedResourceClient
         virtual void notifyFinished(CachedResource* finishedObj);
 
-
-        void handleError(ErrorType type, const char* m, int lineNumber, int columnNumber);
-
-        virtual bool wellFormed() const { return !m_sawError; }
-
-        int lineNumber() const;
-        int columnNumber() const;
+        void handleError(ErrorType, const char* message, int lineNumber, int columnNumber);
 
 #if USE(QXMLSTREAM)
 private:

@@ -155,7 +155,7 @@ public:
     virtual bool isWaitingForScripts() const;
     virtual void stopParsing();
     virtual bool processingData() const;
-    virtual int executingScript() const { return m_executingScript; }
+    virtual bool isExecutingScript() const { return !!m_executingScript; }
 
     virtual int lineNumber() const { return m_lineNumber; }
     virtual int columnNumber() const { return 1; }

@@ -254,7 +254,7 @@ void HTMLDocumentParser::attemptToEnd()
     // finish() indicates we will not receive any more data. If we are waiting on
     // an external script to load, we can't finish parsing quite yet.
 
-    if (inWrite() || isWaitingForScripts() || executingScript() || isScheduledForResume()) {
+    if (inWrite() || isWaitingForScripts() || inScriptExecution() || isScheduledForResume()) {
         m_endWasDelayed = true;
         return;
     }
@@ -265,7 +265,7 @@ void HTMLDocumentParser::endIfDelayed()
 {
     // We don't check inWrite() here since inWrite() will be true if this was
     // called from write().
-    if (!m_endWasDelayed || isWaitingForScripts() || executingScript() || isScheduledForResume())
+    if (!m_endWasDelayed || isWaitingForScripts() || inScriptExecution() || isScheduledForResume())
         return;
 
     m_endWasDelayed = false;
@@ -286,7 +286,7 @@ bool HTMLDocumentParser::finishWasCalled()
 }
 
 // This function is virtual and just for the DocumentParser interface.
-int HTMLDocumentParser::executingScript() const
+bool HTMLDocumentParser::isExecutingScript() const
 {
     return inScriptExecution();
 }
