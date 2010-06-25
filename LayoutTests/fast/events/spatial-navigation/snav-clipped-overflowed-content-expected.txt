@@ -14,11 +14,11 @@ It has a visible link_2.
 
 And this is another normal link_4.
 
-PASS document.activeElement.getAttribute("id") is "1"
-PASS document.activeElement.getAttribute("id") is "1"
-PASS document.activeElement.getAttribute("id") is "2"
-PASS document.activeElement.getAttribute("id") is "3"
-PASS document.activeElement.getAttribute("id") is "2"
-PASS document.activeElement.getAttribute("id") is "1"
-PASS document.activeElement.getAttribute("id") is "start"
+PASS gFocusedDocument.activeElement.getAttribute("id") is "1"
+PASS gFocusedDocument.activeElement.getAttribute("id") is "1"
+PASS gFocusedDocument.activeElement.getAttribute("id") is "2"
+PASS gFocusedDocument.activeElement.getAttribute("id") is "3"
+PASS gFocusedDocument.activeElement.getAttribute("id") is "2"
+PASS gFocusedDocument.activeElement.getAttribute("id") is "1"
+PASS gFocusedDocument.activeElement.getAttribute("id") is "start"
 

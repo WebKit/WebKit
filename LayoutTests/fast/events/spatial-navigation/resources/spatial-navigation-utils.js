@@ -5,15 +5,17 @@
  *     * Antonio Gomes <tonikitoo@webkit.org>
  **/
 
-var gExpectedResults;
+var gExpectedResults = 0;
 var gIndex = 0;
 var gClosureCallback = null;
+var gFocusedDocument = 0;
 
 function initTest(table, completedCb) {
 
   gExpectedResults = table;
   gIndex = 0;
   gClosureCallback = completedCb;
+  gFocusedDocument = 0;
 
   prepareMove();
 }
@@ -48,21 +50,36 @@ function verifyAndAdvance()
   var direction = gExpectedResults[gIndex][0];
   var expectedID = gExpectedResults[gIndex][1];
 
+  gFocusedDocument = document;
+  findFocusedDocument(document);
+
   var i = 0;
   var mainFrameHasFocus = true;
-  for(; i < window.frames.length; i++)
+  for ( ; i < window.frames.length; i++) {
     if (window.frames[i].document.hasFocus()) {
       mainFrameHasFocus = false;
       break;
     }
+  }
 
-  // This support frames nested in one level deep only.
-  if (mainFrameHasFocus)
-    shouldBeEqualToString("document.activeElement.getAttribute(\"id\")", expectedID);
-  else
-    shouldBeEqualToString("document.defaultView.frames[" + i + "].document.activeElement.getAttribute(\"id\")", expectedID);
+  shouldBeEqualToString("gFocusedDocument.activeElement.getAttribute(\"id\")", expectedID);
 
   gIndex++;
   prepareMove();
+}
+
+function findFocusedDocument(currentDocument)
+{
+  var i = 0;
+  for ( ; i < currentDocument.defaultView.frames.length; i++) {
+    findFocusedDocument(currentDocument.defaultView.frames[i].document);
+    if (gFocusedDocument != document)
+      return;
+  }
+
+  if (currentDocument.hasFocus()) {
+    gFocusedDocument = currentDocument;
+    return;
+  }
 }
 

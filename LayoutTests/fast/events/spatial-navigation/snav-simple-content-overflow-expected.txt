@@ -20,5 +20,5 @@ It has a visible link_1.
 
 This link should NOT get focused.
 
-PASS document.activeElement.getAttribute("id") is "start"
+PASS gFocusedDocument.activeElement.getAttribute("id") is "start"
 

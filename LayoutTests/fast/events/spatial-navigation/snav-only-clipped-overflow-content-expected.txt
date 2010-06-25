@@ -14,6 +14,6 @@ This is a scrollable Div created with the CSS property overflow.
 
 And this is another normal link_2.
 
-PASS document.activeElement.getAttribute("id") is "start"
+PASS gFocusedDocument.activeElement.getAttribute("id") is "start"
 PASS true is true
 

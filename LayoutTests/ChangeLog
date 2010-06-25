@@ -1,3 +1,37 @@
+2010-06-24  Antonio Gomes  <tonikitoo@webkit.org>
+
+        Reviewed by Kenneth Christiansen.
+
+        Spatial Navigation: refactor spatial-navigation-utils.js to support testing nested frames deeper than one level
+        https://bugs.webkit.org/show_bug.cgi?id=41157
+
+        As is today, we can not test focused nodes in inner frames nested more than one level
+        deep, due to spatial-navigation-utils.js limitations. Patch addresses this problem:
+        any time before any focus check, it retrieves the proper focused frame in any level deep.
+
+        All spatial navigation test results changed output because the parameter passed in to
+        shouldBeEqualToString (from js-pre-test.js) changed in spatial-navigation-utils.js.
+
+        * fast/events/spatial-navigation/resources/spatial-navigation-utils.js:
+        (initTest):
+        (verifyAndAdvance):
+        (findFocusedDocument):
+        * fast/events/spatial-navigation/snav-clipped-overflowed-content-expected.txt:
+        * fast/events/spatial-navigation/snav-div-scrollable-but-without-focusable-content-expected.txt:
+        * fast/events/spatial-navigation/snav-fully-aligned-horizontally-expected.txt:
+        * fast/events/spatial-navigation/snav-fully-aligned-vertically-expected.txt:
+        * fast/events/spatial-navigation/snav-iframe-flattening-simple-expected.txt:
+        * fast/events/spatial-navigation/snav-iframe-no-focusable-content-expected.txt:
+        * fast/events/spatial-navigation/snav-iframe-no-scrollable-content-expected.txt:
+        * fast/events/spatial-navigation/snav-iframe-recursive-offset-parent-expected.txt:
+        * fast/events/spatial-navigation/snav-iframe-with-offscreen-focusable-element-expected.txt:
+        * fast/events/spatial-navigation/snav-offscreen-content-expected.txt:
+        * fast/events/spatial-navigation/snav-only-clipped-overflow-content-expected.txt:
+        * fast/events/spatial-navigation/snav-simple-content-overflow-expected.txt:
+        * fast/events/spatial-navigation/snav-table-traversal-expected.txt:
+        * fast/events/spatial-navigation/snav-tiny-table-traversal-expected.txt:
+        * fast/events/spatial-navigation/snav-unit-overflow-and-scroll-in-direction-expected.txt:
+
 2010-06-24  Cris Neckar  <cdn@chromium.org>
 
         Reviewed by Darin Fisher.

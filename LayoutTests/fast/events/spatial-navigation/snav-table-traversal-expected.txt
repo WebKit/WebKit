@@ -2,14 +2,14 @@ a	a	a
 a	a	a
 a	a	a
 End of table traversal test
-PASS document.activeElement.getAttribute("id") is "4"
-PASS document.activeElement.getAttribute("id") is "7"
-PASS document.activeElement.getAttribute("id") is "end"
-PASS document.activeElement.getAttribute("id") is "7"
-PASS document.activeElement.getAttribute("id") is "8"
-PASS document.activeElement.getAttribute("id") is "9"
-PASS document.activeElement.getAttribute("id") is "6"
-PASS document.activeElement.getAttribute("id") is "3"
-PASS document.activeElement.getAttribute("id") is "2"
-FAIL document.activeElement.getAttribute("id") should be 1. Was start.
+PASS gFocusedDocument.activeElement.getAttribute("id") is "4"
+PASS gFocusedDocument.activeElement.getAttribute("id") is "7"
+PASS gFocusedDocument.activeElement.getAttribute("id") is "end"
+PASS gFocusedDocument.activeElement.getAttribute("id") is "7"
+PASS gFocusedDocument.activeElement.getAttribute("id") is "8"
+PASS gFocusedDocument.activeElement.getAttribute("id") is "9"
+PASS gFocusedDocument.activeElement.getAttribute("id") is "6"
+PASS gFocusedDocument.activeElement.getAttribute("id") is "3"
+PASS gFocusedDocument.activeElement.getAttribute("id") is "2"
+FAIL gFocusedDocument.activeElement.getAttribute("id") should be 1. Was start.
 
