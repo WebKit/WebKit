@@ -7,7 +7,7 @@
 
 2010-06-25  Anders Carlsson  <andersca@apple.com>
 
-        Reviewed by Dan Bernstein.
+        Rubber-stamped by Dan Bernstein.
 
         Add a LOG macro that expands to a no-op by default.
 
