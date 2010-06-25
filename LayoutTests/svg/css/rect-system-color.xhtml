@@ -25,7 +25,7 @@ function checkSystemColor(id1, id2, systemColor)
     systemColorGreen = color2.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER);
     systemColorBlue = color2.blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER);
 
-    debug('Testing system color' + systemColor + "(" + systemColorRed + ", " + systemColorGreen + ", " + systemColorBlue + ")");
+    debug('Testing system color' + systemColor);
 
     shouldBe("color1.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER)", "systemColorRed");
     shouldBe("color1.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER)", "systemColorGreen");

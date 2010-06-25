@@ -4,196 +4,196 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 
-Testing system colorActiveBorder(75, 137, 208)
+Testing system colorActiveBorder
 PASS color1.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorRed
 PASS color1.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorGreen
 PASS color1.blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorBlue
 PASS color1.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorRed
 PASS color1.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorGreen
 PASS color1.blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorBlue
-Testing system colorActiveCaption(0, 0, 0)
+Testing system colorActiveCaption
 PASS color1.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorRed
 PASS color1.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorGreen
 PASS color1.blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorBlue
 PASS color1.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorRed
 PASS color1.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorGreen
 PASS color1.blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorBlue
-Testing system colorAppWorkspace(170, 170, 170)
+Testing system colorAppWorkspace
 PASS color1.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorRed
 PASS color1.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorGreen
 PASS color1.blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorBlue
 PASS color1.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorRed
 PASS color1.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorGreen
 PASS color1.blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorBlue
-Testing system colorBackground(99, 99, 206)
+Testing system colorBackground
 PASS color1.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorRed
 PASS color1.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorGreen
 PASS color1.blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorBlue
 PASS color1.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorRed
 PASS color1.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorGreen
 PASS color1.blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorBlue
-Testing system colorButtonFace(192, 192, 192)
+Testing system colorButtonFace
 PASS color1.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorRed
 PASS color1.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorGreen
 PASS color1.blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorBlue
 PASS color1.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorRed
 PASS color1.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorGreen
 PASS color1.blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorBlue
-Testing system colorButtonHighlight(233, 233, 233)
+Testing system colorButtonHighlight
 PASS color1.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorRed
 PASS color1.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorGreen
 PASS color1.blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorBlue
 PASS color1.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorRed
 PASS color1.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorGreen
 PASS color1.blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorBlue
-Testing system colorButtonShadow(147, 147, 147)
+Testing system colorButtonShadow
 PASS color1.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorRed
 PASS color1.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorGreen
 PASS color1.blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorBlue
 PASS color1.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorRed
 PASS color1.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorGreen
 PASS color1.blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorBlue
-Testing system colorButtonText(0, 0, 0)
+Testing system colorButtonText
 PASS color1.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorRed
 PASS color1.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorGreen
 PASS color1.blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorBlue
 PASS color1.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorRed
 PASS color1.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorGreen
 PASS color1.blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorBlue
-Testing system colorCaptionText(0, 0, 0)
+Testing system colorCaptionText
 PASS color1.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorRed
 PASS color1.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorGreen
 PASS color1.blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorBlue
 PASS color1.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorRed
 PASS color1.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorGreen
 PASS color1.blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorBlue
-Testing system colorGrayText(128, 128, 128)
+Testing system colorGrayText
 PASS color1.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorRed
 PASS color1.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorGreen
 PASS color1.blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorBlue
 PASS color1.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorRed
 PASS color1.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorGreen
 PASS color1.blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorBlue
-Testing system colorHighlight(181, 213, 255)
+Testing system colorHighlight
 PASS color1.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorRed
 PASS color1.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorGreen
 PASS color1.blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorBlue
 PASS color1.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorRed
 PASS color1.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorGreen
 PASS color1.blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorBlue
-Testing system colorHighlightText(0, 0, 0)
+Testing system colorHighlightText
 PASS color1.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorRed
 PASS color1.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorGreen
 PASS color1.blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorBlue
 PASS color1.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorRed
 PASS color1.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorGreen
 PASS color1.blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorBlue
-Testing system colorInactiveBorder(255, 255, 255)
+Testing system colorInactiveBorder
 PASS color1.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorRed
 PASS color1.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorGreen
 PASS color1.blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorBlue
 PASS color1.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorRed
 PASS color1.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorGreen
 PASS color1.blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorBlue
-Testing system colorInactiveCaption(255, 255, 255)
+Testing system colorInactiveCaption
 PASS color1.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorRed
 PASS color1.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorGreen
 PASS color1.blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorBlue
 PASS color1.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorRed
 PASS color1.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorGreen
 PASS color1.blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorBlue
-Testing system colorInactiveCaptionText(0, 0, 0)
+Testing system colorInactiveCaptionText
 PASS color1.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorRed
 PASS color1.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorGreen
 PASS color1.blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorBlue
 PASS color1.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorRed
 PASS color1.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorGreen
 PASS color1.blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorBlue
-Testing system colorInfoBackground(251, 252, 197)
+Testing system colorInfoBackground
 PASS color1.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorRed
 PASS color1.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorGreen
 PASS color1.blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorBlue
 PASS color1.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorRed
 PASS color1.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorGreen
 PASS color1.blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorBlue
-Testing system colorInfoText(0, 0, 0)
+Testing system colorInfoText
 PASS color1.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorRed
 PASS color1.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorGreen
 PASS color1.blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorBlue
 PASS color1.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorRed
 PASS color1.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorGreen
 PASS color1.blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorBlue
-Testing system colorMenu(219, 219, 219)
+Testing system colorMenu
 PASS color1.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorRed
 PASS color1.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorGreen
 PASS color1.blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorBlue
 PASS color1.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorRed
 PASS color1.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorGreen
 PASS color1.blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorBlue
-Testing system colorMenuText(255, 255, 255)
+Testing system colorMenuText
 PASS color1.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorRed
 PASS color1.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorGreen
 PASS color1.blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorBlue
 PASS color1.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorRed
 PASS color1.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorGreen
 PASS color1.blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorBlue
-Testing system colorScrollbar(170, 170, 170)
+Testing system colorScrollbar
 PASS color1.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorRed
 PASS color1.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorGreen
 PASS color1.blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorBlue
 PASS color1.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorRed
 PASS color1.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorGreen
 PASS color1.blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorBlue
-Testing system colorThreeDDarkShadow(0, 0, 0)
+Testing system colorThreeDDarkShadow
 PASS color1.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorRed
 PASS color1.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorGreen
 PASS color1.blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorBlue
 PASS color1.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorRed
 PASS color1.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorGreen
 PASS color1.blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorBlue
-Testing system colorThreeDFace(192, 192, 192)
+Testing system colorThreeDFace
 PASS color1.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorRed
 PASS color1.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorGreen
 PASS color1.blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorBlue
 PASS color1.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorRed
 PASS color1.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorGreen
 PASS color1.blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorBlue
-Testing system colorThreeDHighlight(255, 255, 255)
+Testing system colorThreeDHighlight
 PASS color1.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorRed
 PASS color1.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorGreen
 PASS color1.blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorBlue
 PASS color1.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorRed
 PASS color1.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorGreen
 PASS color1.blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorBlue
-Testing system colorThreeDLightShadow(255, 255, 255)
+Testing system colorThreeDLightShadow
 PASS color1.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorRed
 PASS color1.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorGreen
 PASS color1.blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorBlue
 PASS color1.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorRed
 PASS color1.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorGreen
 PASS color1.blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorBlue
-Testing system colorThreeDShadow(0, 0, 0)
+Testing system colorThreeDShadow
 PASS color1.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorRed
 PASS color1.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorGreen
 PASS color1.blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorBlue
 PASS color1.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorRed
 PASS color1.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorGreen
 PASS color1.blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorBlue
-Testing system colorWindow(232, 232, 232)
+Testing system colorWindow
 PASS color1.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorRed
 PASS color1.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorGreen
 PASS color1.blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorBlue
 PASS color1.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorRed
 PASS color1.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorGreen
 PASS color1.blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorBlue
-Testing system colorWindowFrame(170, 170, 170)
+Testing system colorWindowFrame
 PASS color1.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorRed
 PASS color1.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorGreen
 PASS color1.blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorBlue
 PASS color1.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorRed
 PASS color1.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorGreen
 PASS color1.blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorBlue
-Testing system colorWindowText(0, 0, 0)
+Testing system colorWindowText
 PASS color1.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorRed
 PASS color1.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorGreen
 PASS color1.blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is systemColorBlue

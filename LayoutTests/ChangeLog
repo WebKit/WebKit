@@ -2,6 +2,16 @@
 
         Reviewed by Nikolas Zimmermann.
 
+        Remove rgb part of test and update expected result.
+
+        * platform/mac/svg/css/rect-system-color-expected.txt: Removed.
+        * svg/css/rect-system-color-expected.txt: Added.
+        * svg/css/rect-system-color.xhtml:
+
+2010-06-25  Rob Buis  <rwlbuis@gmail.com>
+
+        Reviewed by Nikolas Zimmermann.
+
         Make test result mac specific.
 
         * platform/mac/svg/css/rect-system-color-expected.txt: Renamed from LayoutTests/svg/css/rect-system-color-expected.txt.
