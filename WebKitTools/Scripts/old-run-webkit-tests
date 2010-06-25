@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-# Copyright (C) 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
+# Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
 # Copyright (C) 2006 Alexey Proskuryakov (ap@nypop.com)
 # Copyright (C) 2007 Matt Lilek (pewtermoose@gmail.com)
 # Copyright (C) 2007 Eric Seidel <eric@webkit.org>
@@ -165,6 +165,7 @@ my $useRemoteLinksToTests = 0;
 my $useValgrind = 0;
 my $verbose = 0;
 my $shouldWaitForHTTPD = 0;
+my $useWebKitTestRunner = 0;
 
 my @leaksFilenames;
 
@@ -279,6 +280,7 @@ Usage: $programName [options] [testdir|testpath ...]
   -v|--verbose                    More verbose output (overrides --quiet)
   -m|--merge-leak-depth arg       Merges leak callStacks and prints the number of unique leaks beneath a callstack depth of arg.  Defaults to 5.
   --use-remote-links-to-tests     Link to test files within the SVN repository in the results.
+  --webkit-test-runner            Use WebKitTestRunner rather than DumpRenderTree.
 EOF
 
 setConfiguration();
@@ -321,6 +323,7 @@ my $getOptionsResult = GetOptions(
     'use-remote-links-to-tests' => \$useRemoteLinksToTests,
     'valgrind' => \$useValgrind,
     'verbose|v' => \$verbose,
+    'webkit-test-runner' => \$useWebKitTestRunner,
 );
 
 if (!$getOptionsResult || $showHelp) {
@@ -354,8 +357,11 @@ $productDir .= "/Programs" if isGtk();
 
 chdirWebKit();
 
+my $dumpToolName = $useWebKitTestRunner ? "WebKitTestRunner" : "DumpRenderTree";
+
 if (!defined($root)) {
-    print STDERR "Running build-dumprendertree\n";
+    my $dumpToolBuildScript =  "build-" . lc($dumpToolName);
+    print STDERR "Running $dumpToolBuildScript\n";
 
     local *DEVNULL;
     my ($childIn, $childOut, $childErr);
@@ -370,7 +376,7 @@ if (!defined($root)) {
     }
 
     my @args = argumentsForConfiguration();
-    my $buildProcess = open3($childIn, $childOut, $childErr, "WebKitTools/Scripts/build-dumprendertree", @args) or die "Failed to run build-dumprendertree";
+    my $buildProcess = open3($childIn, $childOut, $childErr, "WebKitTools/Scripts/$dumpToolBuildScript", @args) or die "Failed to run build-dumprendertree";
     close($childIn);
     waitpid $buildProcess, 0;
     my $buildResult = $?;
@@ -380,12 +386,11 @@ if (!defined($root)) {
     close DEVNULL if ($quiet);
 
     if ($buildResult) {
-        print STDERR "Compiling DumpRenderTree failed!\n";
+        print STDERR "Compiling $dumpToolName failed!\n";
         exit exitStatus($buildResult);
     }
 }
 
-my $dumpToolName = "DumpRenderTree";
 $dumpToolName .= "_debug" if isCygwin() && configurationForVisualStudio() !~ /^Release|Debug_Internal$/;
 my $dumpTool = "$productDir/$dumpToolName";
 die "can't find executable $dumpToolName (looked in $productDir)\n" unless -x $dumpTool;

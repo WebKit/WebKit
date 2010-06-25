@@ -1,3 +1,14 @@
+2010-06-25  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Mark Rowe.
+
+        Add support for WebKitTestRunner to old-run-webkit-tests
+
+        - Also adds a script to build WebKitTestRunner for old-run-webkit-tests to use.
+
+        * Scripts/build-webkittestrunner: Added.
+        * Scripts/old-run-webkit-tests:
+
 2010-06-25  Adam Barth  <abarth@webkit.org>
 
         Reviewed by David Levin.
