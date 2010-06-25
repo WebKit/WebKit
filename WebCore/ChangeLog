@@ -1,3 +1,24 @@
+2010-06-25  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        getParameter(COLOR_WRITEMASK) needs to return Array
+        https://bugs.webkit.org/show_bug.cgi?id=40437
+
+        * bindings/js/JSWebGLRenderingContextCustom.cpp: Handling bool array.
+        (WebCore::toJS):
+        * bindings/v8/custom/V8WebGLRenderingContextCustom.cpp: Handling bool array.
+        (WebCore::toV8Object):
+        * html/canvas/WebGLGetInfo.cpp: Handling bool array.
+        (WebCore::WebGLGetInfo::WebGLGetInfo):
+        (WebCore::WebGLGetInfo::getBoolArray):
+        * html/canvas/WebGLGetInfo.h: Handling bool array.
+        (WebCore::WebGLGetInfo::):
+        * html/canvas/WebGLRenderingContext.cpp: Handling bool array.
+        (WebCore::WebGLRenderingContext::getParameter):
+        (WebCore::WebGLRenderingContext::getBooleanArrayParameter):
+        * html/canvas/WebGLRenderingContext.h: Handling bool array.
+
 2010-06-25  Evan Stade  <estade@chromium.org>
 
         Reviewed by Darin Fisher.

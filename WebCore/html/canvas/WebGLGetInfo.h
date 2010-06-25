@@ -53,6 +53,7 @@ class WebGLGetInfo {
 public:
     enum Type {
         kTypeBool,
+        kTypeBoolArray,
         kTypeFloat,
         kTypeLong,
         kTypeNull,
@@ -70,6 +71,7 @@ public:
     };
 
     WebGLGetInfo(bool value);
+    WebGLGetInfo(const bool* value, int size);
     WebGLGetInfo(float value);
     WebGLGetInfo(long value);
     // Represents the NULL value and type
@@ -92,6 +94,7 @@ public:
     Type getType() const;
 
     bool getBool() const;
+    const Vector<bool>& getBoolArray() const;
     float getFloat() const;
     long getLong() const;
     const String& getString() const;
@@ -110,6 +113,7 @@ public:
 private:
     Type m_type;
     bool m_bool;
+    Vector<bool> m_boolArray;
     float m_float;
     long m_long;
     String m_string;

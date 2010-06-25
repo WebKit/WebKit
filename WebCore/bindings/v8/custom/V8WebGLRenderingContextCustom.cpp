@@ -110,6 +110,13 @@ static v8::Handle<v8::Value> toV8Object(const WebGLGetInfo& info)
     switch (info.getType()) {
     case WebGLGetInfo::kTypeBool:
         return v8::Boolean::New(info.getBool());
+    case WebGLGetInfo::kTypeBoolArray: {
+        const Vector<bool>& value = info.getBoolArray();
+        v8::Local<v8::Array> array = v8::Array::New(value.size());
+        for (size_t ii = 0; ii < value.size(); ++ii)
+            array->Set(v8::Integer::New(ii), v8::Boolean::New(value[ii]));
+        return array;
+    }
     case WebGLGetInfo::kTypeFloat:
         return v8::Number::New(info.getFloat());
     case WebGLGetInfo::kTypeLong:

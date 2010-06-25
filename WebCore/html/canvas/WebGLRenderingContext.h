@@ -389,13 +389,13 @@ class WebKitCSSMatrix;
 
         // Helpers for getParameter and others
         WebGLGetInfo getBooleanParameter(unsigned long pname);
+        WebGLGetInfo getBooleanArrayParameter(unsigned long pname);
         WebGLGetInfo getFloatParameter(unsigned long pname);
         WebGLGetInfo getIntParameter(unsigned long pname);
         WebGLGetInfo getLongParameter(unsigned long pname);
         WebGLGetInfo getUnsignedLongParameter(unsigned long pname);
         WebGLGetInfo getWebGLFloatArrayParameter(unsigned long pname);
         WebGLGetInfo getWebGLIntArrayParameter(unsigned long pname);
-        WebGLGetInfo getWebGLUnsignedByteArrayParameter(unsigned long pname);
 
         void texImage2DBase(unsigned target, unsigned level, unsigned internalformat,
                             unsigned width, unsigned height, unsigned border,

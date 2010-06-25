@@ -55,6 +55,7 @@
 #include "WebGLProgram.h"
 #include "WebGLRenderingContext.h"
 #include <runtime/Error.h>
+#include <runtime/JSArray.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/OwnFastMallocPtr.h>
 
@@ -72,6 +73,13 @@ static JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, const WebG
     switch (info.getType()) {
     case WebGLGetInfo::kTypeBool:
         return jsBoolean(info.getBool());
+    case WebGLGetInfo::kTypeBoolArray: {
+        MarkedArgumentBuffer list;
+        const Vector<bool>& value = info.getBoolArray();
+        for (size_t ii = 0; ii < value.size(); ++ii)
+            list.append(jsBoolean(value[ii]));
+        return constructArray(exec, list);
+    }
     case WebGLGetInfo::kTypeFloat:
         return jsNumber(exec, info.getFloat());
     case WebGLGetInfo::kTypeLong:

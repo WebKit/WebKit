@@ -51,7 +51,7 @@ else {
     shouldBe('context.getParameter(context.BLEND_SRC_ALPHA)', '1');
     shouldBe('context.getParameter(context.BLEND_SRC_RGB)', '1');
     shouldBe('context.getParameter(context.COLOR_CLEAR_VALUE)', '[0, 0, 0, 0]');
-    shouldBe('context.getParameter(context.COLOR_WRITEMASK)', '[1, 1, 1, 1]');
+    shouldBe('context.getParameter(context.COLOR_WRITEMASK)', '[true, true, true, true]');
     shouldBe('context.getParameter(context.CULL_FACE)', 'false');
     shouldBe('context.getParameter(context.CULL_FACE_MODE)', 'context.BACK');
     shouldBe('context.getParameter(context.CURRENT_PROGRAM)', 'null');

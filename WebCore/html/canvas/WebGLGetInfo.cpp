@@ -46,6 +46,16 @@ WebGLGetInfo::WebGLGetInfo(bool value)
 {
 }
 
+WebGLGetInfo::WebGLGetInfo(const bool* value, int size)
+    : m_type(kTypeBoolArray)
+{
+    if (!value || size <=0)
+        return;
+    m_boolArray.resize(size);
+    for (int ii = 0; ii < size; ++ii)
+        m_boolArray[ii] = value[ii];
+}
+
 WebGLGetInfo::WebGLGetInfo(float value)
     : m_type(kTypeFloat)
     , m_float(value)
@@ -136,6 +146,12 @@ bool WebGLGetInfo::getBool() const
 {
     ASSERT(getType() == kTypeBool);
     return m_bool;
+}
+
+const Vector<bool>& WebGLGetInfo::getBoolArray() const
+{
+    ASSERT(getType() == kTypeBoolArray);
+    return m_boolArray;
 }
 
 float WebGLGetInfo::getFloat() const

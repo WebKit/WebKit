@@ -26,7 +26,7 @@ PASS context.getParameter(context.BLEND_EQUATION_RGB) is context.FUNC_ADD
 PASS context.getParameter(context.BLEND_SRC_ALPHA) is 1
 PASS context.getParameter(context.BLEND_SRC_RGB) is 1
 PASS context.getParameter(context.COLOR_CLEAR_VALUE) is [0, 0, 0, 0]
-PASS context.getParameter(context.COLOR_WRITEMASK) is [1, 1, 1, 1]
+PASS context.getParameter(context.COLOR_WRITEMASK) is [true, true, true, true]
 PASS context.getParameter(context.CULL_FACE) is false
 PASS context.getParameter(context.CULL_FACE_MODE) is context.BACK
 PASS context.getParameter(context.CURRENT_PROGRAM) is null

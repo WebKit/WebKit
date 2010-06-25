@@ -1162,7 +1162,7 @@ WebGLGetInfo WebGLRenderingContext::getParameter(unsigned long pname, ExceptionC
     case GraphicsContext3D::COLOR_CLEAR_VALUE:
         return getWebGLFloatArrayParameter(pname);
     case GraphicsContext3D::COLOR_WRITEMASK:
-        return getWebGLUnsignedByteArrayParameter(pname);
+        return getBooleanArrayParameter(pname);
     case GraphicsContext3D::COMPRESSED_TEXTURE_FORMATS:
         // Defined as null in the spec
         return WebGLGetInfo();
@@ -3148,6 +3148,20 @@ WebGLGetInfo WebGLRenderingContext::getBooleanParameter(unsigned long pname)
     return WebGLGetInfo(static_cast<bool>(value));
 }
 
+WebGLGetInfo WebGLRenderingContext::getBooleanArrayParameter(unsigned long pname)
+{
+    if (pname != GraphicsContext3D::COLOR_WRITEMASK) {
+        notImplemented();
+        return WebGLGetInfo(0, 0);
+    }
+    unsigned char value[4] = {0};
+    m_context->getBooleanv(pname, value);
+    bool boolValue[4];
+    for (int ii = 0; ii < 4; ++ii)
+        boolValue[ii] = static_cast<bool>(value[ii]);
+    return WebGLGetInfo(boolValue, 4);
+}
+
 WebGLGetInfo WebGLRenderingContext::getFloatParameter(unsigned long pname)
 {
     float value;
@@ -3212,21 +3226,6 @@ WebGLGetInfo WebGLRenderingContext::getWebGLIntArrayParameter(unsigned long pnam
         notImplemented();
     }
     return WebGLGetInfo(Int32Array::create(value, length));
-}
-
-WebGLGetInfo WebGLRenderingContext::getWebGLUnsignedByteArrayParameter(unsigned long pname)
-{
-    unsigned char value[4] = {0};
-    m_context->getBooleanv(pname, value);
-    unsigned length = 0;
-    switch (pname) {
-    case GraphicsContext3D::COLOR_WRITEMASK:
-        length = 4;
-        break;
-    default:
-        notImplemented();
-    }
-    return WebGLGetInfo(Uint8Array::create(value, length));
 }
 
 bool WebGLRenderingContext::isGLES2Compliant()
