@@ -1,3 +1,24 @@
+2010-06-25  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] Pasteboard code does not take into account the nil character when getting and setting markup/netscape-url data
+        https://bugs.webkit.org/show_bug.cgi?id=41221
+
+        Add a test for this issue which simulates a paste keyboard event into an editable
+        body. The pasteboard should contain a markup portion containing a null terminator.
+
+        * tests/testcopyandpaste.c:
+        (test_info_new):
+        (test_info_destroy):
+        (load_status_cb):
+        (runPasteTestCallback):
+        (window_object_cleared_callback):
+        (pasting_test_get_data_callback):
+        (pasting_test_clear_data_callback):
+        (test_pasting_markup):
+        (main):
+
 2010-06-24  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Xan Lopez.

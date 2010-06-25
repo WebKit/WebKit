@@ -30,7 +30,7 @@
 
 typedef struct {
     char* page;
-    char* expectedPlainText;
+    char* expectedContent;
 } TestInfo;
 
 typedef struct {
@@ -41,13 +41,13 @@ typedef struct {
 } CopyAndPasteFixture;
 
 TestInfo*
-test_info_new(const char* page, const char* expectedPlainText)
+test_info_new(const char* page, const char* expectedContent)
 {
     TestInfo* info;
     info = g_slice_new0(TestInfo);
     info->page = g_strdup(page);
-    if (expectedPlainText)
-        info->expectedPlainText = g_strdup(expectedPlainText);
+    if (expectedContent)
+        info->expectedContent = g_strdup(expectedContent);
     return info;
 }
 
@@ -55,7 +55,7 @@ void
 test_info_destroy(TestInfo* info)
 {
     g_free(info->page);
-    g_free(info->expectedPlainText);
+    g_free(info->expectedContent);
     g_slice_free(TestInfo, info);
 }
 
@@ -89,8 +89,8 @@ static void load_status_cb(WebKitWebView* webView, GParamSpec* spec, gpointer da
     webkit_web_view_copy_clipboard(webView);
 
     gchar* text = gtk_clipboard_wait_for_text(clipboard);
-    g_assert(text || !fixture->info->expectedPlainText);
-    g_assert(!text || !strcmp(text, fixture->info->expectedPlainText));
+    g_assert(text || !fixture->info->expectedContent);
+    g_assert(!text || !strcmp(text, fixture->info->expectedContent));
     g_free(text);
 
     g_assert(!gtk_clipboard_wait_is_uris_available(clipboard));
@@ -124,6 +124,92 @@ static void test_copy_and_paste(CopyAndPasteFixture* fixture, gconstpointer data
     g_main_loop_run(fixture->loop);
 }
 
+static CopyAndPasteFixture* currentFixture;
+static JSValueRef runPasteTestCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    // Simulate a paste keyboard sequence.
+    GdkEvent event;
+    memset(&event, 0, sizeof(event));
+    event.key.keyval = gdk_unicode_to_keyval('v');
+    event.key.state = GDK_CONTROL_MASK;
+    event.key.window = GTK_WIDGET(currentFixture->webView)->window;
+    GdkKeymapKey* keys;
+    gint n_keys;
+    if (gdk_keymap_get_entries_for_keyval(gdk_keymap_get_default(), event.key.keyval, &keys, &n_keys)) {
+        event.key.hardware_keycode = keys[0].keycode;
+        g_free(keys);
+    }
+    event.key.type = GDK_KEY_PRESS;
+    gtk_main_do_event(&event);
+    event.key.type = GDK_KEY_RELEASE;
+    gtk_main_do_event(&event);
+
+    JSStringRef scriptString = JSStringCreateWithUTF8CString("document.body.innerHTML;");
+    JSValueRef value = JSEvaluateScript(context, scriptString, 0, 0, 0, 0);
+    JSStringRelease(scriptString);
+
+    g_assert(JSValueIsString(context, value));
+    JSStringRef actual = JSValueToStringCopy(context, value, exception);
+    g_assert(!exception || !*exception);
+    g_assert(currentFixture->info->expectedContent);
+    JSStringRef expected = JSStringCreateWithUTF8CString(currentFixture->info->expectedContent);
+    g_assert(JSStringIsEqual(expected, actual));
+
+    JSStringRelease(expected);
+    JSStringRelease(actual);
+    g_main_loop_quit(currentFixture->loop);
+    return JSValueMakeUndefined(context);
+}
+
+static void window_object_cleared_callback(WebKitWebView* web_view, WebKitWebFrame* web_frame, JSGlobalContextRef context, JSObjectRef window_object, gpointer data)
+{
+    JSStringRef name = JSStringCreateWithUTF8CString("runTest");
+    JSObjectRef testComplete = JSObjectMakeFunctionWithCallback(context, name, runPasteTestCallback);
+    JSObjectSetProperty(context, window_object, name, testComplete, kJSPropertyAttributeNone, 0);
+    JSStringRelease(name);
+}
+
+static void pasting_test_get_data_callback(GtkClipboard* clipboard, GtkSelectionData* selection_data, guint info, gpointer data)
+{
+    gtk_selection_data_set(selection_data, gdk_atom_intern("text/html", FALSE), 8, (const guchar*) data, strlen((char*)data) + 1);
+}
+
+static void pasting_test_clear_data_callback(GtkClipboard* clipboard, gpointer data)
+{
+    g_free(data);
+}
+
+static void test_pasting_markup(CopyAndPasteFixture* fixture, gconstpointer data)
+{
+    fixture->info = (TestInfo*)data;
+    currentFixture = fixture;
+
+    GtkTargetList* targetList = gtk_target_list_new(0, 0);
+    gtk_target_list_add(targetList, gdk_atom_intern("text/html", FALSE), 0, 0);
+
+    int numberOfTargets = 1;
+    GtkTargetEntry* targetTable = gtk_target_table_new_from_list(targetList, &numberOfTargets);
+    gtk_clipboard_set_with_data(gtk_clipboard_get(GDK_SELECTION_CLIPBOARD),
+                                targetTable, numberOfTargets,
+                                pasting_test_get_data_callback,
+                                pasting_test_clear_data_callback,
+                                g_strdup(fixture->info->expectedContent));
+    gtk_target_list_unref(targetList);
+    gtk_target_table_free(targetTable, numberOfTargets);
+
+    g_signal_connect(fixture->window, "map-event",
+                     G_CALLBACK(map_event_cb), fixture);
+    g_signal_connect(fixture->webView, "window-object-cleared",
+                     G_CALLBACK(window_object_cleared_callback), fixture);
+
+    gtk_widget_show(fixture->window);
+    gtk_widget_show(GTK_WIDGET(fixture->webView));
+    gtk_window_present(GTK_WINDOW(fixture->window));
+
+    g_main_loop_run(fixture->loop);
+}
+
+
 int main(int argc, char** argv)
 {
     g_thread_init(NULL);
@@ -149,6 +235,15 @@ int main(int argc, char** argv)
                test_info_new(no_selection_html, 0),
                copy_and_paste_fixture_setup,
                test_copy_and_paste,
+               copy_and_paste_fixture_teardown);
+
+    const char* paste_test_html = "<html>"
+        "<body onLoad=\"document.body.focus(); runTest();\" contentEditable=\"true\">"
+        "</body></html>";
+    g_test_add("/webkit/copyandpaste/paste-markup", CopyAndPasteFixture,
+               test_info_new(paste_test_html, "bobby"),
+               copy_and_paste_fixture_setup,
+               test_pasting_markup,
                copy_and_paste_fixture_teardown);
 
     return g_test_run();

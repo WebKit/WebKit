@@ -1,3 +1,25 @@
+2010-06-25  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] Pasteboard code does not take into account the nil character when getting and setting markup/netscape-url data
+        https://bugs.webkit.org/show_bug.cgi?id=41221
+
+        Take into account null-terminator when getting and setting markup and
+        Netscape URL pasteboard types. This means that if the selection data
+        contains the null terminator, it won't be included in the final String.
+        When setting the pasteboard data the null terminator is now included to
+        match the behavior of other applications.
+
+        * platform/gtk/PasteboardHelper.cpp:
+        (WebCore::PasteboardHelper::getClipboardContents):
+        Create the markup string after using g_strndup to protect against non-null-terminated
+        strings. Use String::fromUTF8 here to ensure that the string is not longer than the
+        first null-terminator. Also fix a small indentation issue.
+        (WebCore::PasteboardHelper::fillSelectionData):
+        Always include the null-terminator when setting pasteboard data manually. This matches
+        the behavior of other browser applications.
+
 2010-06-25  Sam Magnuson  <smagnuson@netflix.com>
 
         Reviewed by Kenneth Rohde Christiansen.

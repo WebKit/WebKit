@@ -114,13 +114,12 @@ void PasteboardHelper::getClipboardContents(GtkClipboard* clipboard)
     }
 
     if (gtk_clipboard_wait_is_target_available(clipboard, gdkMarkupAtom)) {
-       if (GtkSelectionData* data = gtk_clipboard_wait_for_contents(clipboard, gdkMarkupAtom)) {
-          RefPtr<TextResourceDecoder> decoder(TextResourceDecoder::create("text/plain", "UTF-8", true));
-          String markup(decoder->decode(reinterpret_cast<const char*>(gtk_selection_data_get_data(data)), gtk_selection_data_get_length(data)));
-          markup += decoder->flush();
-          dataObject->setMarkup(markup);
-          gtk_selection_data_free(data);
-       }
+        if (GtkSelectionData* data = gtk_clipboard_wait_for_contents(clipboard, gdkMarkupAtom)) {
+            // g_strndup guards against selection data that is not null-terminated.
+            GOwnPtr<gchar> markupString(g_strndup(reinterpret_cast<const char*>(gtk_selection_data_get_data(data)), gtk_selection_data_get_length(data)));
+            dataObject->setMarkup(String::fromUTF8(markupString.get()));
+            gtk_selection_data_free(data);
+        }
     }
 
     if (gtk_clipboard_wait_is_target_available(clipboard, uriListAtom)) {
@@ -143,7 +142,7 @@ void PasteboardHelper::fillSelectionData(GtkSelectionData* selectionData, guint 
     else if (info == getIdForTargetType(TargetTypeMarkup)) {
         GOwnPtr<gchar> markup(g_strdup(dataObject->markup().utf8().data()));
         gtk_selection_data_set(selectionData, gdkMarkupAtom, 8,
-            reinterpret_cast<const guchar*>(markup.get()), strlen(markup.get()));
+            reinterpret_cast<const guchar*>(markup.get()), strlen(markup.get()) + 1);
 
     } else if (info == getIdForTargetType(TargetTypeURIList)) {
         Vector<KURL> uriList(dataObject->uriList());
@@ -166,7 +165,7 @@ void PasteboardHelper::fillSelectionData(GtkSelectionData* selectionData, guint 
 
         GOwnPtr<gchar> resultData(g_strdup(result.utf8().data()));
         gtk_selection_data_set(selectionData, netscapeURLAtom, 8,
-            reinterpret_cast<const guchar*>(resultData.get()), strlen(resultData.get()));
+            reinterpret_cast<const guchar*>(resultData.get()), strlen(resultData.get()) + 1);
 
     } else if (info == getIdForTargetType(TargetTypeImage))
         gtk_selection_data_set_pixbuf(selectionData, dataObject->image());
