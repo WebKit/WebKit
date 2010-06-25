@@ -30185,6 +30185,13 @@
 				>
 			</File>
 			<File
+				RelativePath="..\dom\StaticHashSetNodeList.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\dom\StaticHashSetNodeList.h"
+				>
+			<File
 				RelativePath="..\dom\StaticNodeList.cpp"
 				>
 			</File>

@@ -1,3 +1,19 @@
+2010-06-22 Antonio Gomes <tonikitoo@webkit.org>
+
+        Reviewed by David Hyatt.
+
+        Add a NodeList-derivated wrapper class for a ListHashSet.
+        https://bugs.webkit.org/show_bug.cgi?id=41081
+
+        StaticHashSetList will work as a wrapper to ListHashSet objects that are
+        aimed to be exposed to the DOM.
+
+        As a use case, the rect based HitTest (bug 40197) will store the retrieved nodes
+        in a ListHashSet. It is going to be exposed to the DOM through are nodesFromRect
+        of Document returning a NodeList (i.e. StatisHashSetList) wrapping a ListHashSet.
+
+        No new tests.
+
 2010-06-24  Cris Neckar  <cdn@chromium.org>
 
         Reviewed by Darin Fisher.

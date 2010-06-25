@@ -818,6 +818,7 @@ SET(WebCore_SOURCES
     dom/SelectElement.cpp
     dom/SelectorNodeList.cpp
     dom/SpaceSplitString.cpp
+    dom/StaticHashSetNodeList.cpp
     dom/StaticNodeList.cpp
     dom/StyleElement.cpp
     dom/StyledElement.cpp

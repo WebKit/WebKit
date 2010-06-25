@@ -162,6 +162,7 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	dom/SelectElement.cpp \
 	dom/SelectorNodeList.cpp \
 	dom/SpaceSplitString.cpp \
+	dom/StaticHashSetNodeList.cpp \
 	dom/StaticNodeList.cpp \
 	dom/StyleElement.cpp \
 	dom/StyledElement.cpp \

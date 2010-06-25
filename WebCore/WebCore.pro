@@ -507,6 +507,7 @@ SOURCES += \
     dom/Notation.cpp \
     dom/OptionGroupElement.cpp \
     dom/OptionElement.cpp \
+    dom/StaticHashSetNodeList.cpp \
     dom/OverflowEvent.cpp \
     dom/PageTransitionEvent.cpp \
     dom/PopStateEvent.cpp \
@@ -1251,6 +1252,7 @@ HEADERS += \
     dom/Notation.h \
     dom/OptionElement.h \
     dom/OptionGroupElement.h \
+    dom/StaticHashSetNodeList.h \
     dom/OverflowEvent.h \
     dom/PageTransitionEvent.h \
     dom/Position.h \

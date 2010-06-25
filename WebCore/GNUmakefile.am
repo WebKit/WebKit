@@ -885,6 +885,8 @@ webcore_sources += \
 	WebCore/dom/SelectorNodeList.h \
 	WebCore/dom/SpaceSplitString.cpp \
 	WebCore/dom/SpaceSplitString.h \
+	WebCore/dom/StaticHashSetNodeList.cpp \
+	WebCore/dom/StaticHashSetNodeList.h \
 	WebCore/dom/StaticNodeList.cpp \
 	WebCore/dom/StaticNodeList.h \
 	WebCore/dom/StyleElement.cpp \
