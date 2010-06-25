@@ -32,9 +32,9 @@
 
 namespace WebCore {
 
-unsigned RenderThemeChromiumLinux::m_thumbInactiveColor = 0xf0ebe5;
-unsigned RenderThemeChromiumLinux::m_thumbActiveColor = 0xfaf8f5;
-unsigned RenderThemeChromiumLinux::m_trackColor = 0xe3ddd8;
+unsigned RenderThemeChromiumLinux::m_thumbInactiveColor = 0xeaeaea;
+unsigned RenderThemeChromiumLinux::m_thumbActiveColor = 0xf4f4f4;
+unsigned RenderThemeChromiumLinux::m_trackColor = 0xd3d3d3;
 unsigned RenderThemeChromiumLinux::m_activeSelectionBackgroundColor =
     0xff1e90ff;
 unsigned RenderThemeChromiumLinux::m_activeSelectionForegroundColor =

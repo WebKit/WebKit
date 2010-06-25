@@ -130,6 +130,7 @@ private:
 protected:
     Scrollbar(ScrollbarClient*, ScrollbarOrientation, ScrollbarControlSize, ScrollbarTheme* = 0);
 
+    void updateThumb();
     virtual void updateThumbPosition();
     virtual void updateThumbProportion();
 

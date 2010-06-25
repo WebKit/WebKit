@@ -40,6 +40,9 @@
 
 namespace WebCore {
 
+static const int scrollbarThicknessValue = 15;
+static const int buttonLength = 14;
+
 ScrollbarTheme* ScrollbarTheme::nativeTheme()
 {
     static ScrollbarThemeChromiumLinux theme;
@@ -48,7 +51,7 @@ ScrollbarTheme* ScrollbarTheme::nativeTheme()
 
 int ScrollbarThemeChromiumLinux::scrollbarThickness(ScrollbarControlSize controlSize)
 {
-    return 15;
+    return scrollbarThicknessValue;
 }
 
 static void drawVertLine(SkCanvas* canvas, int x, int y1, int y2, const SkPaint& paint)
@@ -120,22 +123,13 @@ static SkColor outlineColor(SkScalar* hsv1, SkScalar* hsv2)
     //
     // The following code has been tested to look OK with all of the
     // default GTK themes.
-    SkScalar minDiff = clamp((hsv1[1] + hsv2[1]) * 1.2, 0.2, 0.5);
+    SkScalar minDiff = clamp((hsv1[1] + hsv2[1]) * 1.2, 0.28, 0.5);
     SkScalar diff = clamp(fabs(hsv1[2] - hsv2[2]) / 2, minDiff, 0.5);
 
     if (hsv1[2] + hsv2[2] > 1.0)
         diff = -diff;
 
     return saturateAndBrighten(hsv2, -0.2, diff);
-}
-
-IntRect ScrollbarThemeChromium::trackRect(Scrollbar* scrollbar, bool)
-{
-    IntSize bs = buttonSize(scrollbar);
-    int thickness = scrollbarThickness(scrollbar->controlSize());
-    if (scrollbar->orientation() == HorizontalScrollbar)
-        return IntRect(scrollbar->x() + bs.width(), scrollbar->y(), scrollbar->width(), thickness);
-    return IntRect(scrollbar->x(), scrollbar->y() + bs.height(), thickness, scrollbar->height());
 }
 
 void ScrollbarThemeChromiumLinux::paintTrackPiece(GraphicsContext* gc, Scrollbar* scrollbar, const IntRect& rect, ScrollbarPart partType)
@@ -145,22 +139,155 @@ void ScrollbarThemeChromiumLinux::paintTrackPiece(GraphicsContext* gc, Scrollbar
     SkIRect skrect;
 
     skrect.set(rect.x(), rect.y(), rect.x() + rect.width(), rect.y() + rect.height());
-    SkScalar track_hsv[3];
-    SkColorToHSV(RenderThemeChromiumLinux::trackColor(), track_hsv);
-    paint.setColor(saturateAndBrighten(track_hsv, 0, 0));
+    SkScalar trackHSV[3];
+    SkColorToHSV(RenderThemeChromiumLinux::trackColor(), trackHSV);
+    paint.setColor(saturateAndBrighten(trackHSV, 0, 0));
     canvas->drawIRect(skrect, paint);
 
-    SkScalar thumb_hsv[3];
+    SkScalar thumbHSV[3];
     SkColorToHSV(RenderThemeChromiumLinux::thumbInactiveColor(),
-                 thumb_hsv);
+                 thumbHSV);
 
-    paint.setColor(outlineColor(track_hsv, thumb_hsv));
+    paint.setColor(outlineColor(trackHSV, thumbHSV));
     drawBox(canvas, rect, paint);
 }
 
 void ScrollbarThemeChromiumLinux::paintButton(GraphicsContext* gc, Scrollbar* scrollbar, const IntRect& rect, ScrollbarPart part)
 {
-    // We don't use buttons
+    SkCanvas* const canvas = gc->platformContext()->canvas();
+    static const int widthMiddle = scrollbarThicknessValue / 2 + 1;
+    static const int lengthMiddle = buttonLength / 2 + 1;
+    SkPaint paint;
+    enum {
+        North,
+        East,
+        South,
+        West,
+    } direction;
+
+    if (scrollbar->orientation() == HorizontalScrollbar) {
+        if (part == BackButtonStartPart)
+            direction = West;
+        else
+            direction = East;
+    } else {
+        if (part == BackButtonStartPart)
+            direction = North;
+        else
+            direction = South;
+    }
+
+    // Determine if the button can be pressed.
+    bool enabled = false;
+    if (((direction == West || direction == North) && scrollbar->currentPos())
+        || (direction == East || direction == South) && scrollbar->currentPos() != scrollbar->maximum())
+        enabled = true;
+
+    // Calculate button color.
+    SkScalar trackHSV[3];
+    SkColorToHSV(RenderThemeChromiumLinux::trackColor(), trackHSV);
+    SkColor buttonColor = saturateAndBrighten(trackHSV, 0, 0.2);
+    SkColor backgroundColor = buttonColor;
+    if (part == scrollbar->pressedPart()) {
+        SkScalar buttonHSV[3];
+        SkColorToHSV(buttonColor, buttonHSV);
+        buttonColor = saturateAndBrighten(buttonHSV, 0, -0.1);
+    } else if (part == scrollbar->hoveredPart() && enabled) {
+        SkScalar buttonHSV[3];
+        SkColorToHSV(buttonColor, buttonHSV);
+        buttonColor = saturateAndBrighten(buttonHSV, 0, 0.05);
+    }
+
+    SkIRect skrect;
+    skrect.set(rect.x(), rect.y(), rect.x() + rect.width(), rect.y() + rect.height());
+    // Paint the background (the area visible behind the rounded corners).
+    paint.setColor(backgroundColor);
+    canvas->drawIRect(skrect, paint);
+
+    // Paint the button's outline and fill the middle
+    SkPath outline;
+    switch (direction) {
+    case North:
+        outline.moveTo(rect.x() + 0.5, rect.y() + rect.height() + 0.5);
+        outline.rLineTo(0, -(rect.height() - 2));
+        outline.rLineTo(2, -2);
+        outline.rLineTo(rect.width() - 5, 0);
+        outline.rLineTo(2, 2);
+        outline.rLineTo(0, rect.height() - 2);
+        break;
+    case South:
+        outline.moveTo(rect.x() + 0.5, rect.y() - 0.5);
+        outline.rLineTo(0, rect.height() - 2);
+        outline.rLineTo(2, 2);
+        outline.rLineTo(rect.width() - 5, 0);
+        outline.rLineTo(2, -2);
+        outline.rLineTo(0, -(rect.height() - 2));
+        break;
+    case East:
+        outline.moveTo(rect.x() - 0.5, rect.y() + 0.5);
+        outline.rLineTo(rect.width() - 2, 0);
+        outline.rLineTo(2, 2);
+        outline.rLineTo(0, rect.height() - 5);
+        outline.rLineTo(-2, 2);
+        outline.rLineTo(-(rect.width() - 2), 0);
+        break;
+    case West:
+        outline.moveTo(rect.x() + rect.width() + 0.5, rect.y() + 0.5);
+        outline.rLineTo(-(rect.width() - 2), 0);
+        outline.rLineTo(-2, 2);
+        outline.rLineTo(0, rect.height() - 5);
+        outline.rLineTo(2, 2);
+        outline.rLineTo(rect.width() - 2, 0);
+        break;
+    }
+    outline.close();
+
+    paint.setStyle(SkPaint::kFill_Style);
+    paint.setColor(buttonColor);
+    canvas->drawPath(outline, paint);
+
+    paint.setAntiAlias(true);
+    paint.setStyle(SkPaint::kStroke_Style);
+    SkScalar thumbHSV[3];
+    SkColorToHSV(RenderThemeChromiumLinux::thumbInactiveColor(), thumbHSV);
+    paint.setColor(outlineColor(trackHSV, thumbHSV));
+    canvas->drawPath(outline, paint);
+
+    // If the button is disabled, the arrow is drawn with the outline color.
+    if (enabled)
+        paint.setColor(SK_ColorBLACK);
+
+    paint.setAntiAlias(false);
+    paint.setStyle(SkPaint::kFill_Style);
+
+    SkPath path;
+    // The constants in this block of code are hand-tailored to produce good
+    // looking arrows without anti-aliasing.
+    switch (direction) {
+    case North:
+        path.moveTo(rect.x() + widthMiddle - 4, rect.y() + lengthMiddle + 2);
+        path.rLineTo(7, 0);
+        path.rLineTo(-4, -4);
+        break;
+    case South:
+        path.moveTo(rect.x() + widthMiddle - 4, rect.y() + lengthMiddle - 3);
+        path.rLineTo(7, 0);
+        path.rLineTo(-4, 4);
+        break;
+    case East:
+        path.moveTo(rect.x() + lengthMiddle - 3, rect.y() + widthMiddle - 4);
+        path.rLineTo(0, 7);
+        path.rLineTo(4, -4);
+        break;
+    case West:
+        path.moveTo(rect.x() + lengthMiddle + 1, rect.y() + widthMiddle - 5);
+        path.rLineTo(0, 9);
+        path.rLineTo(-4, -4);
+        break;
+    }
+    path.close();
+
+    canvas->drawPath(path, paint);
 }
 
 void ScrollbarThemeChromiumLinux::paintThumb(GraphicsContext* gc, Scrollbar* scrollbar, const IntRect& rect)
@@ -224,8 +351,11 @@ bool ScrollbarThemeChromiumLinux::shouldCenterOnThumb(Scrollbar*, const Platform
 
 IntSize ScrollbarThemeChromiumLinux::buttonSize(Scrollbar* scrollbar)
 {
-    // On Linux, we don't use buttons
-    return IntSize(0, 0);
+    if (scrollbar->orientation() == VerticalScrollbar)
+        return IntSize(scrollbarThicknessValue, buttonLength);
+
+    // HorizontalScrollbar
+    return IntSize(buttonLength, scrollbarThicknessValue);
 }
 
 int ScrollbarThemeChromiumLinux::minimumThumbLength(Scrollbar* scrollbar)

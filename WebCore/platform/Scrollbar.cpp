@@ -40,6 +40,12 @@
 
 using namespace std;
 
+#if PLATFORM(CHROMIUM) && OS(LINUX)
+// The position of the scrollbar thumb affects the appearance of the steppers, so
+// when the thumb moves, we have to invalidate them for painting.
+#define THUMB_POSITION_AFFECTS_BUTTONS
+#endif
+
 namespace WebCore {
 
 #if !PLATFORM(GTK) && !PLATFORM(EFL)
@@ -139,9 +145,9 @@ bool Scrollbar::scroll(ScrollDirection direction, ScrollGranularity granularity,
     float step = 0;
     if ((direction == ScrollUp && m_orientation == VerticalScrollbar) || (direction == ScrollLeft && m_orientation == HorizontalScrollbar))
         step = -1;
-    else if ((direction == ScrollDown && m_orientation == VerticalScrollbar) || (direction == ScrollRight && m_orientation == HorizontalScrollbar)) 
+    else if ((direction == ScrollDown && m_orientation == VerticalScrollbar) || (direction == ScrollRight && m_orientation == HorizontalScrollbar))
         step = 1;
-    
+
     if (granularity == ScrollByLine)
         step *= m_lineStep;
     else if (granularity == ScrollByPage)
@@ -150,20 +156,29 @@ bool Scrollbar::scroll(ScrollDirection direction, ScrollGranularity granularity,
         step *= m_totalSize;
     else if (granularity == ScrollByPixel)
         step *= m_pixelStep;
-        
+
     float newPos = m_currentPos + step * multiplier;
     float maxPos = m_totalSize - m_visibleSize;
     return setCurrentPos(max(min(newPos, maxPos), 0.0f));
 }
 
+void Scrollbar::updateThumb()
+{
+#ifdef THUMB_POSITION_AFFECTS_BUTTONS
+    invalidate();
+#else
+    theme()->invalidateParts(this, ForwardTrackPart | BackTrackPart | ThumbPart);
+#endif
+}
+
 void Scrollbar::updateThumbPosition()
 {
-    theme()->invalidateParts(this, ForwardTrackPart | BackTrackPart | ThumbPart);
+    updateThumb();
 }
 
 void Scrollbar::updateThumbProportion()
 {
-    theme()->invalidateParts(this, ForwardTrackPart | BackTrackPart | ThumbPart);
+    updateThumb();
 }
 
 void Scrollbar::paint(GraphicsContext* context, const IntRect& damageRect)
@@ -172,7 +187,7 @@ void Scrollbar::paint(GraphicsContext* context, const IntRect& damageRect)
         invalidate();
         return;
     }
-        
+
     if (context->paintingDisabled() || !frameRect().intersects(damageRect))
         return;
 

@@ -1,3 +1,31 @@
+2010-06-25  Evan Stade  <estade@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [chromium linux] Improve look of scrollbars
+        https://bugs.webkit.org/show_bug.cgi?id=35775
+
+        This will affect layout pixel tests, which will need to be rebaselined.
+
+        * platform/Scrollbar.cpp: need the buttons to be invalidated when the
+        thumb moves as they paint differently if the thumb is at the top or
+        bottom
+        (WebCore::Scrollbar::updateThumbPosition):
+        (WebCore::Scrollbar::updateThumbProportion):
+        * platform/chromium/ScrollbarThemeChromium.cpp:
+        (WebCore::ScrollbarThemeChromium::trackRect): share code between
+        linux/windows
+        * platform/chromium/ScrollbarThemeChromiumLinux.cpp:
+        (WebCore::ScrollbarThemeChromiumLinux::scrollbarThickness):
+        (WebCore::outlineColor): up the contrast
+        (WebCore::ScrollbarThemeChromiumLinux::paintButton): add custom button
+        drawing implementation
+        (WebCore::ScrollbarThemeChromiumLinux::buttonSize): add buttons
+        * platform/chromium/ScrollbarThemeChromiumWin.cpp: share code between
+        linux/windows
+        * rendering/RenderThemeChromiumLinux.cpp: improve stock colors to get
+        better contrast and integration with stock chrome theme
+
 2010-06-25  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.
