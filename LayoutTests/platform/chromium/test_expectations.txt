@@ -2895,4 +2895,4 @@ BUGWK37538 : printing/page-format-data.html = TEXT
 BUG_HCLAM : fast/dom/beforeload/remove-bad-object-in-beforeload-listener.html = FAIL
 
 // This failure is related to 61859.
-BUG_HCLAM : inspector/debugger-pause-in-eval-script.html = TIMEOUT
+BUG_HCLAM : inspector/debugger-pause-in-eval-script.html = TIMEOUT CRASH FAIL PASS
