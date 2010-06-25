@@ -1,3 +1,18 @@
+2010-06-24  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] Clean up the use of gdk_window_get_root_coords in EventSender
+        https://bugs.webkit.org/show_bug.cgi?id=40843
+
+        Define the version for old GTK+s in a way that is forward-compatible
+        and clean up the logic a bit.
+
+        * DumpRenderTree/gtk/EventSender.cpp:
+        (gdk_window_get_root_coords): Renamed and cleaned up.
+        (prepareMouseButtonEvent): Remove #ifdefs.
+        (mouseMoveToCallback): Remove #ifdefs.
+
 2010-06-24  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Eric Seidel.
