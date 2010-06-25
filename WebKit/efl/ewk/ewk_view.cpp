@@ -708,6 +708,7 @@ static void _ewk_view_smart_del(Evas_Object* o)
     EWK_VIEW_SD_GET(o, sd);
     Ewk_View_Private_Data* priv = sd ? sd->_priv : 0;
 
+    ewk_view_stop(o);
     _parent_sc.del(o);
     _ewk_view_priv_del(priv);
 }

@@ -2,6 +2,18 @@
 
         Reviewed by Kenneth Rohde Christiansen.
 
+        [EFL] Stop frame loaders when deleting view.
+        Frame loaders were still alive after view is deleted, causing
+        segmentation fault when libsoup had something to deliver yet.
+        https://bugs.webkit.org/show_bug.cgi?id=41007
+
+        * efl/ewk/ewk_view.cpp:
+        (_ewk_view_smart_del): stop loaders.
+
+2010-06-25  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
         [EFL] Fix warnings about printf format
         When printing uint64_t the macro PRIu64 is needed in order to be
         portable across 32 and 64 bits. It was previously showing warning
