@@ -221,7 +221,7 @@ static void test_webkit_atk_get_text_at_offset_forms(void)
     webkit_web_view_load_string(webView, contents, NULL, NULL, NULL);
     loop = g_main_loop_new(NULL, TRUE);
 
-    g_timeout_add(100, (GSourceFunc)bail_out, loop);
+    g_idle_add((GSourceFunc)bail_out, loop);
     g_main_loop_run(loop);
 
     /* Get to the inner AtkText object */
@@ -252,7 +252,7 @@ static void test_webkit_atk_get_text_at_offset(void)
     webkit_web_view_load_string(webView, contents, NULL, NULL, NULL);
     loop = g_main_loop_new(NULL, TRUE);
 
-    g_timeout_add(100, (GSourceFunc)bail_out, loop);
+    g_idle_add((GSourceFunc)bail_out, loop);
     g_main_loop_run(loop);
 
     /* Get to the inner AtkText object */
@@ -283,7 +283,7 @@ static void test_webkit_atk_get_text_at_offset_newlines(void)
     webkit_web_view_load_string(webView, contentsWithNewlines, NULL, NULL, NULL);
     loop = g_main_loop_new(NULL, TRUE);
 
-    g_timeout_add(100, (GSourceFunc)bail_out, loop);
+    g_idle_add((GSourceFunc)bail_out, loop);
     g_main_loop_run(loop);
 
     /* Get to the inner AtkText object */
@@ -314,7 +314,7 @@ static void test_webkit_atk_get_text_at_offset_textarea(void)
     webkit_web_view_load_string(webView, contentsInTextarea, NULL, NULL, NULL);
     loop = g_main_loop_new(NULL, TRUE);
 
-    g_timeout_add(100, (GSourceFunc)bail_out, loop);
+    g_idle_add((GSourceFunc)bail_out, loop);
     g_main_loop_run(loop);
 
     /* Get to the inner AtkText object */
@@ -347,7 +347,7 @@ static void test_webkit_atk_get_text_at_offset_text_input(void)
     webkit_web_view_load_string(webView, contentsInTextInput, NULL, NULL, NULL);
     loop = g_main_loop_new(NULL, TRUE);
 
-    g_timeout_add(100, (GSourceFunc)bail_out, loop);
+    g_idle_add((GSourceFunc)bail_out, loop);
     g_main_loop_run(loop);
 
     /* Get to the inner AtkText object */
@@ -383,7 +383,7 @@ static void testWebkitAtkGetTextInParagraphAndBodySimple(void)
     webkit_web_view_load_string(webView, contentsInParagraphAndBodySimple, NULL, NULL, NULL);
     loop = g_main_loop_new(NULL, TRUE);
 
-    g_timeout_add(100, (GSourceFunc)bail_out, loop);
+    g_idle_add((GSourceFunc)bail_out, loop);
     g_main_loop_run(loop);
 
     /* Get to the inner AtkText object */
@@ -427,7 +427,7 @@ static void testWebkitAtkGetTextInParagraphAndBodyModerate(void)
     webkit_web_view_load_string(webView, contentsInParagraphAndBodyModerate, NULL, NULL, NULL);
     loop = g_main_loop_new(NULL, TRUE);
 
-    g_timeout_add(100, (GSourceFunc)bail_out, loop);
+    g_idle_add((GSourceFunc)bail_out, loop);
     g_main_loop_run(loop);
 
     /* Get to the inner AtkText object */
@@ -467,7 +467,7 @@ static void testWebkitAtkGetTextInTable(void)
     webkit_web_view_load_string(webView, contentsInTable, NULL, NULL, NULL);
     loop = g_main_loop_new(NULL, TRUE);
 
-    g_timeout_add(100, (GSourceFunc)bail_out, loop);
+    g_idle_add((GSourceFunc)bail_out, loop);
     g_main_loop_run(loop);
 
     obj = gtk_widget_get_accessible(GTK_WIDGET(webView));
@@ -498,7 +498,7 @@ static void testWebkitAtkGetHeadersInTable(void)
     webkit_web_view_load_string(webView, contentsInTableWithHeaders, NULL, NULL, NULL);
     loop = g_main_loop_new(NULL, TRUE);
 
-    g_timeout_add(100, (GSourceFunc)bail_out, loop);
+    g_idle_add((GSourceFunc)bail_out, loop);
     g_main_loop_run(loop);
 
     axWebView = gtk_widget_get_accessible(GTK_WIDGET(webView));

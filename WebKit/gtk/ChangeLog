@@ -5,6 +5,26 @@
         [Gtk] Implement atk_table_get_column_header
         https://bugs.webkit.org/show_bug.cgi?id=30896
 
+        Replace g_timeout_add() with g_idle_add().
+
+        * tests/testatk.c:
+        (test_webkit_atk_get_text_at_offset_forms):
+        (test_webkit_atk_get_text_at_offset):
+        (test_webkit_atk_get_text_at_offset_newlines):
+        (test_webkit_atk_get_text_at_offset_textarea):
+        (test_webkit_atk_get_text_at_offset_text_input):
+        (testWebkitAtkGetTextInParagraphAndBodySimple):
+        (testWebkitAtkGetTextInParagraphAndBodyModerate):
+        (testWebkitAtkGetTextInTable):
+        (testWebkitAtkGetHeadersInTable):
+
+2010-06-25  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [Gtk] Implement atk_table_get_column_header
+        https://bugs.webkit.org/show_bug.cgi?id=30896
+
         Added new test to check whether the implementation of
         get_column_headers() and get_row_headers() works ok.
 
