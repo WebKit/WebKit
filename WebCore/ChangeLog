@@ -1,3 +1,9 @@
+2010-06-24  Steve Falkenburg  <sfalken@apple.com>
+
+        Windows build fix.
+
+        * platform/network/cf/AuthenticationCF.h:
+
 2010-06-24  Martin Robinson  <mrobinson@igalia.com>
 
         Unreviewed. Build fix.

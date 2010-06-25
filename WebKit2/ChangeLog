@@ -1,3 +1,9 @@
+2010-06-24  Steve Falkenburg  <sfalken@apple.com>
+
+        Windows build fix.
+
+        * win/WebKit2WebProcess.vcproj:
+
 2010-06-24  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Brady Eidson.
