@@ -33,7 +33,7 @@
 extern "C" {
 #endif
 
-WK_EXPORT WKStringRef WKBundlePageRenderTreeExternalRepresentation(WKBundlePageRef page);
+WK_EXPORT WKStringRef WKBundlePageCopyRenderTreeExternalRepresentation(WKBundlePageRef page);
 
 #ifdef __cplusplus
 }

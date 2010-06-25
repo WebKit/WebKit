@@ -1,3 +1,16 @@
+2010-06-25  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        WKBundlePageRenderTreeExternalRepresentation really needs to be 
+        WKBundlePageCopyRenderTreeExternalRepresentation so we don't have dangling
+        pointers and adhere to naming conventions.
+
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        (WKBundlePageCopyRenderTreeExternalRepresentation):
+        * WebProcess/InjectedBundle/API/c/WKBundlePagePrivate.h:
+        * mac/WebKit2.exp:
+
 2010-06-24  Steve Falkenburg  <sfalken@apple.com>
 
         Windows build fix.
