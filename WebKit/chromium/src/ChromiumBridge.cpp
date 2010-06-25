@@ -40,6 +40,7 @@
 #include "WebCookieJar.h"
 #include "WebCursorInfo.h"
 #include "WebData.h"
+#include "WebDragData.h"
 #include "WebFileSystem.h"
 #include "WebFrameClient.h"
 #include "WebFrameImpl.h"
@@ -195,6 +196,48 @@ void ChromiumBridge::clipboardWriteImage(NativeImagePtr image,
     WebImage webImage(image);
 #endif
     webKitClient()->clipboard()->writeImage(webImage, sourceURL, title);
+}
+
+void ChromiumBridge::clipboardWriteData(ClipboardData* data)
+{
+    notImplemented();
+    WebDragData dragData; // FIXME: Define the conversion from ClipboardData to WebDragData.
+    webKitClient()->clipboard()->writeData(dragData);
+}
+
+HashSet<String> ChromiumBridge::clipboardReadAvailableTypes(
+    PasteboardPrivate::ClipboardBuffer buffer, bool* containsFilenames)
+{
+    WebVector<WebString> result = webKitClient()->clipboard()->readAvailableTypes(
+        static_cast<WebClipboard::Buffer>(buffer), containsFilenames);
+    HashSet<String> types;
+    for (size_t i = 0; i < result.size(); ++i)
+        types.add(result[i]);
+    return types;
+}
+
+bool ChromiumBridge::clipboardReadData(PasteboardPrivate::ClipboardBuffer buffer,
+                                       const String& type, String& data, String& metadata)
+{
+    WebString resultData;
+    WebString resultMetadata;
+    bool succeeded = webKitClient()->clipboard()->readData(
+        static_cast<WebClipboard::Buffer>(buffer), type, &resultData, &resultMetadata);
+    if (succeeded) {
+        data = resultData;
+        metadata = resultMetadata;
+    }
+    return succeeded;
+}
+
+Vector<String> ChromiumBridge::clipboardReadFilenames(PasteboardPrivate::ClipboardBuffer buffer)
+{
+    WebVector<WebString> result = webKitClient()->clipboard()->readFilenames(
+        static_cast<WebClipboard::Buffer>(buffer));
+    Vector<String> convertedResult;
+    for (size_t i = 0; i < result.size(); ++i)
+        convertedResult.append(result[i]);
+    return convertedResult;
 }
 
 // Cookies --------------------------------------------------------------------

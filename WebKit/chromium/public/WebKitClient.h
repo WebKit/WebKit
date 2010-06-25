@@ -83,7 +83,6 @@ public:
     // May return null.
     virtual WebCookieJar* cookieJar() { return 0; }
 
-
     // DOM Storage --------------------------------------------------
 
     // Return a LocalStorage namespace that corresponds to the following path.

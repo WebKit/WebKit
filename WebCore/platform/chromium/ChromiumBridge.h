@@ -1,10 +1,10 @@
 /*
  * Copyright (c) 2010, Google Inc. All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
  * met:
- * 
+ *
  *     * Redistributions of source code must retain the above copyright
  * notice, this list of conditions and the following disclaimer.
  *     * Redistributions in binary form must reproduce the above
@@ -14,7 +14,7 @@
  *     * Neither the name of Google Inc. nor the names of its
  * contributors may be used to endorse or promote products derived from
  * this software without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -38,6 +38,7 @@
 #include "PasteboardPrivate.h"
 #include "PluginData.h"
 
+#include <wtf/HashSet.h>
 #include <wtf/Vector.h>
 
 typedef struct NPObject NPObject;
@@ -60,6 +61,7 @@ typedef struct HFONT__* HFONT;
 
 namespace WebCore {
 
+    class ClipboardData;
     class Color;
     class Cursor;
     class Document;
@@ -91,13 +93,19 @@ namespace WebCore {
         static String clipboardReadPlainText(PasteboardPrivate::ClipboardBuffer);
         static void clipboardReadHTML(PasteboardPrivate::ClipboardBuffer, String*, KURL*);
 
-        // Only the clipboardRead functions take a buffer argument because 
+        // Only the clipboardRead functions take a buffer argument because
         // Chromium currently uses a different technique to write to alternate
         // clipboard buffers.
         static void clipboardWriteSelection(const String&, const KURL&, const String&, bool);
         static void clipboardWritePlainText(const String&);
         static void clipboardWriteURL(const KURL&, const String&);
         static void clipboardWriteImage(NativeImagePtr, const KURL&, const String&);
+        static void clipboardWriteData(ClipboardData*);
+
+        // Interface for handling copy and paste, drag and drop, and selection copy.
+        static HashSet<String> clipboardReadAvailableTypes(PasteboardPrivate::ClipboardBuffer, bool* containsFilenames);
+        static bool clipboardReadData(PasteboardPrivate::ClipboardBuffer, const String& type, String& data, String& metadata);
+        static Vector<String> clipboardReadFilenames(PasteboardPrivate::ClipboardBuffer);
 
         // Cookies ------------------------------------------------------------
         static void setCookies(const Document*, const KURL&, const String& value);

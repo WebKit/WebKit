@@ -1,3 +1,38 @@
+2010-06-25  Daniel Cheng  <dcheng@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [chromium] Add new stubs for querying platform drag-and-drop and copy-and-paste data.
+
+        This change adds new stubs for querying for data in a clipboard or drag operation. This is
+        so adding support for more data types in clipboard/drag operations doesn't become
+        increasingly expensive, since we currently copy all the drag data we need every time a new
+        web drop target is entered. It also adds a new mechanism to write back to the system
+        clipboard that isn't tied to one data type.
+
+        https://bugs.webkit.org/show_bug.cgi?id=40540
+
+        * public/WebClipboard.h:
+        (WebKit::WebClipboard::):
+        (WebKit::WebClipboard::isFormatAvailable):
+        (WebKit::WebClipboard::readPlainText):
+        (WebKit::WebClipboard::readHTML):
+        (WebKit::WebClipboard::writePlainText):
+        (WebKit::WebClipboard::writeHTML):
+        (WebKit::WebClipboard::writeURL):
+        (WebKit::WebClipboard::writeImage):
+        (WebKit::WebClipboard::writeData):
+        (WebKit::WebClipboard::readAvailableTypes):
+        (WebKit::WebClipboard::readData):
+        (WebKit::WebClipboard::readFilenames):
+        * public/WebKitClient.h:
+        * src/AssertMatchingEnums.cpp:
+        * src/ChromiumBridge.cpp:
+        (WebCore::ChromiumBridge::clipboardWriteData):
+        (WebCore::ChromiumBridge::clipboardReadAvailableTypes):
+        (WebCore::ChromiumBridge::clipboardReadData):
+        (WebCore::ChromiumBridge::clipboardReadFilenames):
+
 2010-06-25  Lei Zheng  <lzheng@chromium.org>
 
         Reviewed by Dimitri Glazkov.

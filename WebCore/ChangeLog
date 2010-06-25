@@ -1,3 +1,24 @@
+2010-06-25  Daniel Cheng  <dcheng@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [chromium] Add new stubs for querying platform drag-and-drop and copy-and-paste data.
+
+        This change adds new stubs for querying for data in a clipboard or drag operation. This is
+        so adding support for more data types in clipboard/drag operations doesn't become
+        increasingly expensive, since we currently copy all the drag data we need every time a new
+        web drop target is entered. It also adds a new mechanism to write back to the system
+        clipboard that isn't tied to one data type.
+
+        https://bugs.webkit.org/show_bug.cgi?id=40540
+
+        No new tests since we're just adding new ChromiumBridge APIs. When we switch to it, it will
+        be covered by the existing tests.
+
+        * platform/chromium/ChromiumBridge.h:
+        * platform/chromium/PasteboardPrivate.h:
+        (WebCore::PasteboardPrivate::):
+
 2010-06-25  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Reviewed by Xan Lopez.

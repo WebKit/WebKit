@@ -32,11 +32,13 @@
 #define WebClipboard_h
 
 #include "WebCommon.h"
+#include "WebString.h"
+#include "WebVector.h"
 
 namespace WebKit {
 
+class WebDragData;
 class WebImage;
-class WebString;
 class WebURL;
 
 class WebClipboard {
@@ -51,22 +53,35 @@ public:
         BufferStandard,
         // Used on platforms like the X Window System that treat selection
         // as a type of clipboard.
-        BufferSelection
+        BufferSelection,
+        // Read-only buffer corresponding to the current drag operation, if any.
+        BufferDrag,
     };
 
-    virtual bool isFormatAvailable(Format, Buffer) = 0;
+    virtual bool isFormatAvailable(Format, Buffer) { return false; }
 
-    virtual WebString readPlainText(Buffer) = 0;
-    virtual WebString readHTML(Buffer, WebURL*) = 0;
+    virtual WebString readPlainText(Buffer) { return WebString(); }
+    virtual WebString readHTML(Buffer, WebURL*) { return WebString(); }
 
-    virtual void writePlainText(const WebString&) = 0;
+    virtual void writePlainText(const WebString&) { }
     virtual void writeHTML(
         const WebString& htmlText, const WebURL&,
-        const WebString& plainText, bool writeSmartPaste) = 0;
+        const WebString& plainText, bool writeSmartPaste) { }
     virtual void writeURL(
-        const WebURL&, const WebString& title) = 0;
+        const WebURL&, const WebString& title) { }
     virtual void writeImage(
-        const WebImage&, const WebURL&, const WebString& title) = 0;
+        const WebImage&, const WebURL&, const WebString& title) { }
+    virtual void writeData(const WebDragData&) { }
+
+    // The following functions are used for reading platform data for copy and
+    // paste, drag and drop, and selection copy (on X).
+    virtual WebVector<WebString> readAvailableTypes(
+        Buffer, bool* containsFilenames) { return WebVector<WebString>(); }
+    // Returns true if the requested type was successfully read from the buffer. 
+    virtual bool readData(
+        Buffer, const WebString& type, WebString* data,
+        WebString* metadata) { return false; }
+    virtual WebVector<WebString> readFilenames(Buffer) { return WebVector<WebString>(); }
 
 protected:
     ~WebClipboard() {}
