@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc. All rights reserved.
- * Copyright (C) 2009 Torch Mobile, Inc.
+ * Copyright (C) 2009 Torch Mobile, Inc. All rights reserved.
  * Copyright (C) 2010 Company 100 Inc.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -25,24 +24,27 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef WTF_OwnPtrCommon_h
-#define WTF_OwnPtrCommon_h
+#ifndef OwnPtrWin_h
+#define OwnPtrWin_h
+
+typedef struct HBITMAP__* HBITMAP;
+typedef struct HBRUSH__* HBRUSH;
+typedef struct HDC__* HDC;
+typedef struct HFONT__* HFONT;
+typedef struct HPALETTE__* HPALETTE;
+typedef struct HPEN__* HPEN;
+typedef struct HRGN__* HRGN;
 
 namespace WTF {
 
-    template <typename T> inline void deleteOwnedPtr(T* ptr)
-    {
-        typedef char known[sizeof(T) ? 1 : -1];
-        if (sizeof(known))
-            delete ptr;
-    }
+void deleteOwnedPtr(HBITMAP);
+void deleteOwnedPtr(HBRUSH);
+void deleteOwnedPtr(HDC);
+void deleteOwnedPtr(HFONT);
+void deleteOwnedPtr(HPALETTE);
+void deleteOwnedPtr(HPEN);
+void deleteOwnedPtr(HRGN);
 
 } // namespace WTF
 
-#if PLATFORM(BREWMP)
-#include <wtf/brew/OwnPtrBrew.h>
-#elif PLATFORM(WIN)
-#include <wtf/win/OwnPtrWin.h>
-#endif
-
-#endif // WTF_OwnPtrCommon_h
+#endif // OwnPtrWin_h
