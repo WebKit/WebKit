@@ -34,6 +34,7 @@
 #include "GraphicsTypes.h"
 #include "Path.h"
 #include "PlatformString.h"
+#include <wtf/text/StringHash.h>
 #include <wtf/Vector.h>
 
 #if PLATFORM(CG)
@@ -264,6 +265,9 @@ namespace WebCore {
 #endif
         
         void prepareGradientForDashboard(CanvasGradient* gradient) const;
+
+        HashSet<String> m_cleanOrigins;
+
         void checkOrigin(const KURL&);
         void checkOrigin(const String&);
 

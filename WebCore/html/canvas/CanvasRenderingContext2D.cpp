@@ -958,12 +958,20 @@ static inline FloatRect normalizeRect(const FloatRect& rect)
 
 void CanvasRenderingContext2D::checkOrigin(const KURL& url)
 {
+    if (m_cleanOrigins.contains(url.string()))
+        return;
+
     if (canvas()->securityOrigin().taintsCanvas(url))
         canvas()->setOriginTainted();
+    else
+        m_cleanOrigins.add(url.string());
 }
 
 void CanvasRenderingContext2D::checkOrigin(const String& url)
 {
+    if (m_cleanOrigins.contains(url))
+        return;
+
     checkOrigin(KURL(KURL(), url));
 }
 

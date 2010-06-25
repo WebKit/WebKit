@@ -1,3 +1,17 @@
+2010-06-25  Andreas Kling  <andreas.kling@nokia.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=41019
+        Canvas: Remember verified clean origins for drawImage()
+
+        Made CanvasRenderingContext2D cache the KURLs of clean origins
+        for fast repeated lookup.
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::checkOrigin):
+        * html/canvas/CanvasRenderingContext2D.h:
+
 2010-06-25  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.
