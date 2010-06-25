@@ -1,3 +1,19 @@
+2010-06-24  Rob Buis  <rwlbuis@gmail.com>
+
+        Reviewed by Dirk Schulze.
+
+        Bug 40880 - SVG properties fill and stroke do not accept system colors
+        https://bugs.webkit.org/show_bug.cgi?id=40880
+
+        Handle css system colors in fill and stroke properties.
+
+        Test: svg/css/rect-system-color.xhtml
+
+        * css/CSSParser.cpp: Remove comment and unneeded if condition
+        (WebCore::CSSParser::parseValue):
+        * css/SVGCSSParser.cpp: Allow css system colors
+        (WebCore::CSSParser::parseSVGValue):
+
 2010-06-24  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

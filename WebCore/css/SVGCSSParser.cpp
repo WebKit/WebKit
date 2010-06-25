@@ -1,7 +1,7 @@
 /*
     Copyright (C) 2008 Eric Seidel <eric@webkit.org>
     Copyright (C) 2004, 2005, 2007 Nikolas Zimmermann <zimmermann@kde.org>
-                  2004, 2005, 2007 Rob Buis <buis@kde.org>
+                  2004, 2005, 2007, 2010 Rob Buis <buis@kde.org>
     Copyright (C) 2005, 2006 Apple Computer, Inc.
 
     This library is free software; you can redistribute it and/or
@@ -31,6 +31,7 @@
 #include "CSSQuirkPrimitiveValue.h"
 #include "CSSValueKeywords.h"
 #include "CSSValueList.h"
+#include "RenderTheme.h"
 #include "SVGPaint.h"
 
 using namespace std;
@@ -181,6 +182,8 @@ bool CSSParser::parseSVGValue(int propId, bool important)
                 parsedValue = SVGPaint::create(SVGPaint::SVG_PAINTTYPE_NONE);
             else if (id == CSSValueCurrentcolor)
                 parsedValue = SVGPaint::create(SVGPaint::SVG_PAINTTYPE_CURRENTCOLOR);
+            else if ((id >= CSSValueActiveborder && id <= CSSValueWindowtext) || id == CSSValueMenu)
+                parsedValue = SVGPaint::create(RenderTheme::defaultTheme()->systemColor(id));
             else if (value->unit == CSSPrimitiveValue::CSS_URI) {
                 RGBA32 c = Color::transparent;
                 if (m_valueList->next() && parseColorFromValue(m_valueList->current(), c)) {

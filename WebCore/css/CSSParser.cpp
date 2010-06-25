@@ -793,7 +793,7 @@ bool CSSParser::parseValue(int propId, bool important)
     case CSSPropertyOutlineColor:        // <color> | invert | inherit
         // Outline color has "invert" as additional keyword.
         // Also, we want to allow the special focus color even in strict parsing mode.
-        if (propId == CSSPropertyOutlineColor && (id == CSSValueInvert || id == CSSValueWebkitFocusRingColor)) {
+        if (id == CSSValueInvert || id == CSSValueWebkitFocusRingColor) {
             validPrimitive = true;
             break;
         }
@@ -830,7 +830,7 @@ bool CSSParser::parseValue(int propId, bool important)
         // nw-resize | n-resize | se-resize | sw-resize | s-resize | w-resize | ew-resize |
         // ns-resize | nesw-resize | nwse-resize | col-resize | row-resize | text | wait | help |
         // vertical-text | cell | context-menu | alias | copy | no-drop | not-allowed | -webkit-zoom-in
-        // -webkit-zoom-in | -webkit-zoom-out | all-scroll | -webkit-grab | -webkit-grabbing ] ] | inherit
+        // -webkit-zoom-out | all-scroll | -webkit-grab | -webkit-grabbing ] ] | inherit
         RefPtr<CSSValueList> list;
         while (value && value->unit == CSSPrimitiveValue::CSS_URI) {
             if (!list)

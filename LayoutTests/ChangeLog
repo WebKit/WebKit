@@ -1,3 +1,14 @@
+2010-06-24  Rob Buis  <rwlbuis@gmail.com>
+
+        Reviewed by Dirk Schulze.
+
+        Test for
+        Bug 40880 - SVG properties fill and stroke do not accept system colors
+        https://bugs.webkit.org/show_bug.cgi?id=40880
+
+        * svg/css/rect-system-color-expected.txt: Added.
+        * svg/css/rect-system-color.xhtml: Added.
+
 2010-06-25  Kent Tamura  <tkent@chromium.org>
 
         Unreviewed, test expectation update.
