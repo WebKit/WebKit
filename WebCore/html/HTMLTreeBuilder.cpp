@@ -45,6 +45,15 @@ using namespace HTMLNames;
 
 static const int uninitializedLineNumberValue = -1;
 
+namespace {
+
+inline bool isTreeBuilderWhiteSpace(UChar cc)
+{
+    return cc == '\t' || cc == '\x0A' || cc == '\x0C' || cc == '\x0D' || cc == ' ';
+}
+
+} // namespace
+
 HTMLTreeBuilder::HTMLTreeBuilder(HTMLTokenizer* tokenizer, HTMLDocument* document, bool reportErrors)
     : m_document(document)
     , m_reportErrors(reportErrors)
@@ -242,7 +251,7 @@ reprocessToken:
         case HTMLToken::Comment:
             return insertComment(token);
         case HTMLToken::Character:
-            if (cc == '\t' || cc == '\x0A' || cc == '\x0C' || cc == '\x0D' || cc == ' ')
+            if (isTreeBuilderWhiteSpace(cc))
                 return 0;
             break;
         case HTMLToken::StartTag:
@@ -266,7 +275,7 @@ reprocessToken:
         case HTMLToken::Comment:
             return insertComment(token);
         case HTMLToken::Character:
-            if (cc == '\t' || cc == '\x0A' || cc == '\x0C' || cc == '\x0D' || cc == ' ')
+            if (isTreeBuilderWhiteSpace(cc))
                 return 0;
             break;
         case HTMLToken::StartTag:
@@ -288,7 +297,46 @@ reprocessToken:
         setInsertionMode(BeforeHeadMode);
         goto reprocessToken;
     }
-    case BeforeHeadMode:
+    case BeforeHeadMode: {
+        switch (token.type()) {
+        case HTMLToken::Uninitialized:
+            ASSERT_NOT_REACHED();
+            break;
+        case HTMLToken::Character:
+            if (isTreeBuilderWhiteSpace(cc))
+                return 0;
+            break;
+        case HTMLToken::Comment:
+            return insertComment(token);
+        case HTMLToken::DOCTYPE:
+            parseError(token);
+            return 0;
+        case HTMLToken::StartTag:
+            if (token.name() == htmlTag) {
+                notImplemented();
+                return 0;
+            }
+            if (token.name() == headTag) {
+                m_headElement = insertElement(token);
+                setInsertionMode(InHeadMode);
+                return m_headElement;
+            }
+            break;
+        case HTMLToken::EndTag:
+            if (token.name() == headTag || token.name() == bodyTag || token.name() == brTag) {
+                AtomicHTMLToken fakeHead(HTMLToken::StartTag, headTag.localName());
+                processToken(fakeHead);
+                goto reprocessToken;
+            }
+            parseError(token);
+            return 0;
+        case HTMLToken::EndOfFile:
+            break;
+        }
+        AtomicHTMLToken fakeHead(HTMLToken::StartTag, headTag.localName());
+        processToken(fakeHead);
+        goto reprocessToken;
+    }
     case InHeadMode:
     case InHeadNoscriptMode:
     case AfterHeadMode:
@@ -325,6 +373,12 @@ PassRefPtr<Node> HTMLTreeBuilder::insertDoctype(AtomicHTMLToken& token)
 PassRefPtr<Node> HTMLTreeBuilder::insertComment(AtomicHTMLToken& token)
 {
     ASSERT_UNUSED(token, token.type() == HTMLToken::Comment);
+    return 0;
+}
+
+PassRefPtr<Node> HTMLTreeBuilder::insertElement(AtomicHTMLToken& token)
+{
+    ASSERT_UNUSED(token, token.type() == HTMLToken::StartTag);
     return 0;
 }
 

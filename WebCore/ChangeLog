@@ -1,3 +1,20 @@
+2010-06-24  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Sketch out BeforeHeadMode tree builder state
+        https://bugs.webkit.org/show_bug.cgi?id=41183
+
+        This makes procesToken recursive, which might not be the best idea.
+        Also, we can now make fake AtomicHTMLTokens for use by the algorithm.
+
+        * html/HTMLToken.h:
+        (WebCore::AtomicHTMLToken::AtomicHTMLToken):
+        * html/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::processToken):
+        (WebCore::HTMLTreeBuilder::insertElement):
+        * html/HTMLTreeBuilder.h:
+
 2010-06-22 Antonio Gomes <tonikitoo@webkit.org>
 
         Reviewed by David Hyatt.
