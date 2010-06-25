@@ -1161,7 +1161,7 @@ static inline bool shouldCollapseWhiteSpace(const RenderStyle* style, bool isLin
 static inline bool shouldPreserveNewline(RenderObject* object)
 {
 #if ENABLE(SVG)
-    if (object->isSVGText())
+    if (object->isSVGInlineText())
         return false;
 #endif
 
@@ -1413,7 +1413,7 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool
         autoWrapWasEverTrueOnLine = autoWrapWasEverTrueOnLine || autoWrap;
 
 #if ENABLE(SVG)
-        bool preserveNewline = o->isSVGText() ? false : RenderStyle::preserveNewline(currWS);
+        bool preserveNewline = o->isSVGInlineText() ? false : RenderStyle::preserveNewline(currWS);
 #else
         bool preserveNewline = RenderStyle::preserveNewline(currWS);
 #endif

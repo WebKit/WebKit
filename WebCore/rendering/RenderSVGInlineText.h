@@ -44,7 +44,7 @@ private:
     virtual FloatRect objectBoundingBox() const { return FloatRect(); }
 
     virtual bool requiresLayer() const { return false; }
-    virtual bool isSVGText() const { return true; }
+    virtual bool isSVGInlineText() const { return true; }
 
     virtual IntRect localCaretRect(InlineBox*, int caretOffset, int* extraWidthToEndOfLine = 0);
 

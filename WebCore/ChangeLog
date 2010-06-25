@@ -1,3 +1,25 @@
+2010-06-25  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Rob Buis.
+
+        Split up isSVGText() in isSVGText() / isSVGInlineText()
+        https://bugs.webkit.org/show_bug.cgi?id=41204
+
+        Introduce isSVGInlineText(), to provide a safe mechanism to differentiate between RenderSVGText / RenderSVGInlineText.
+        No change in functionality, thus no new tests.
+
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::shouldPreserveNewline): s/isSVGText/isSVGInlineText/
+        (WebCore::RenderBlock::findNextLineBreak): Ditto.
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::isSVGInlineText): Return false, by default.
+        * rendering/RenderSVGInlineText.h:
+        (WebCore::RenderSVGInlineText::isSVGInlineText): Return true here, don't return true anymore for isSVGText().
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::setTextInternal): s/isSVGText/isSVGInlineText/
+        * rendering/RenderTreeAsText.cpp: Remove hack, now that we can properly differentiate between RenderSVGText / RenderSVGInlineText.
+        (WebCore::write):
+
 2010-06-25  Kwang Yul Seo  <skyul@company100.net>
 
         Reviewed by Adam Barth.
