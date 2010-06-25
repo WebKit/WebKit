@@ -1493,6 +1493,9 @@ sub buildChromium($@)
 {
     my ($clean, @options) = @_;
 
+    # We might need to update DEPS or re-run GYP if things have changed.
+    system("perl", "WebKitTools/Scripts/update-webkit-chromium") == 0 or die $!;
+
     my $result = 1;
     if (isDarwin()) {
         # Mac build - builds the root xcode project.

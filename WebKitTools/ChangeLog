@@ -1,3 +1,21 @@
+2010-06-25  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by David Levin.
+
+        Incremental build failed on Chromium ews
+        https://bugs.webkit.org/show_bug.cgi?id=41011
+
+        The division of responsibility between update-webkit --chromium and
+        build-webkit --chromium is slightly unclear.  In this patch, we make
+        build-webkit --chromium also update DEPS and re-run GYP in case the
+        developer has changed either since they updated.
+
+        This change is also helpful for the EWS, which wants to update DEPS and
+        re-run GYP after applying patches, but the EWS doesn't want to run
+        update-webkit --chromium because it has a dirty working copy.
+
+        * Scripts/webkitdirs.pm:
+
 2010-06-25  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Simon Hausmann.
