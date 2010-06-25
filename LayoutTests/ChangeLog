@@ -1,5 +1,15 @@
 2010-06-24  Martin Robinson  <mrobinson@igalia.com>
 
+        Unreviewed.
+
+        Adding GTK+-specific results for these tests.
+
+        * platform/gtk/Skipped: Unskipping tests that now have baselines.
+        * platform/gtk/fast/block/positioning/relative-positioned-inline-container-expected.txt: Added.
+        * platform/gtk/fast/repaint/inline-relative-positioned-expected.txt: Added.
+
+2010-06-24  Martin Robinson  <mrobinson@igalia.com>
+
         Reviewed by Xan Lopez.
 
         [GTK] Cannot change the selection via the keyboard

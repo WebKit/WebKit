@@ -5359,10 +5359,6 @@ fast/overflow/scrollbar-restored.html
 fast/css/color-correction-on-box-shadow.html
 fast/css/color-correction-on-text-shadow.html
 
-# Tests that seem to need a rebaseline
-fast/block/positioning/relative-positioned-inline-container.html
-fast/repaint/inline-relative-positioned.html
-
 # Test crashing on release bot
 # See https://bugs.webkit.org/show_bug.cgi?id=31433
 plugins/document-open.html
