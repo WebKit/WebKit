@@ -1,3 +1,22 @@
+2010-06-25  Sam Magnuson  <smagnuson@netflix.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] When any geometry change happens to a node it will resize the
+        backing cache
+        https://bugs.webkit.org/show_bug.cgi?id=40378
+
+        Continue to grow the cache, but never toss it. When the pixmap
+        cache gets too big it will be lost and created at the right size
+        next time.
+
+        No new tests: this is an optimization.
+
+        * platform/graphics/qt/GraphicsLayerQt.cpp:
+        (WebCore::GraphicsLayerQtImpl::recache):
+        (WebCore::GraphicsLayerQtImpl::paint):
+        (WebCore::GraphicsLayerQtImpl::flushChanges):
+
 2010-06-25  Andreas Kling  <andreas.kling@nokia.com>
 
         Reviewed by Darin Adler.

@@ -41,6 +41,10 @@
 #include <QtGui/qpixmapcache.h>
 #include <QtGui/qstyleoption.h>
 
+
+#define QT_DEBUG_RECACHE 0
+#define QT_DEBUG_CACHEDUMP 0
+
 namespace WebCore {
 
 #ifndef QT_NO_GRAPHICSEFFECT
@@ -225,7 +229,10 @@ public:
     int m_changeMask;
 
     QSizeF m_size;
-    QPixmapCache::Key m_backingStoreKey;
+    struct {
+        QPixmapCache::Key key;
+        QSizeF size;
+    } m_backingStore;
 #ifndef QT_NO_ANIMATION
     QList<QWeakPointer<QAbstractAnimation> > m_animations;
 #endif
@@ -339,36 +346,109 @@ const GraphicsLayerQtImpl* GraphicsLayerQtImpl::rootLayer() const
 
 QPixmap GraphicsLayerQtImpl::recache(const QRegion& regionToUpdate)
 {
-    if (!m_layer->drawsContent() || m_size.isEmpty() ||!m_size.isValid())
+    if (!m_layer->drawsContent() || m_size.isEmpty() || !m_size.isValid())
         return QPixmap();
 
-    QRegion region = regionToUpdate;
     QPixmap pixmap;
-
-    // We might be drawing into an existing cache.
-    if (!QPixmapCache::find(m_backingStoreKey, &pixmap))
-        region = QRegion(QRect(0, 0, m_size.width(), m_size.height()));
-
-    if (m_size != pixmap.size()) {
-        pixmap = QPixmap(m_size.toSize());
-        if (!m_layer->contentsOpaque())
-            pixmap.fill(Qt::transparent);
-        m_pendingContent.regionToUpdate = QRegion(QRect(QPoint(0, 0), m_size.toSize()));
+    QRegion region = regionToUpdate;
+    if (QPixmapCache::find(m_backingStore.key, &pixmap)) {
+        if (region.isEmpty())
+            return pixmap;
+        QPixmapCache::remove(m_backingStore.key); // Remove the reference to the pixmap in the cache to avoid a detach.
     }
 
-    QPainter painter(&pixmap);
-    GraphicsContext gc(&painter);
+    {
+        bool erased = false;
 
-    // Clear the area in cache that we're drawing into
-    painter.setCompositionMode(QPainter::CompositionMode_Clear);
-    painter.fillRect(region.boundingRect(), Qt::transparent);
+        // If the pixmap is not in the cache or the view has grown since last cached.
+        if (pixmap.isNull() || m_size != m_backingStore.size) {
+#if QT_DEBUG_RECACHE
+            if (pixmap.isNull())
+                qDebug() << "CacheMiss" << this << m_size;
+#endif
+            bool fill = true;
+            QRegion newRegion;
+            QPixmap oldPixmap = pixmap;
 
-    // Render the actual contents into the cache
-    painter.setCompositionMode(QPainter::CompositionMode_SourceOver);
-    m_layer->paintGraphicsLayerContents(gc, region.boundingRect());
-    painter.end();
+            // If the pixmap is two small to hold the view contents we enlarge, otherwise just use the old (large) pixmap.
+            if (pixmap.width() < m_size.width() || pixmap.height() < m_size.height()) {
+#if QT_DEBUG_RECACHE
+                qDebug() << "CacheGrow" << this << m_size;
+#endif
+                pixmap = QPixmap(m_size.toSize());
+                pixmap.fill(Qt::transparent);
+                newRegion = QRegion(0, 0, m_size.width(), m_size.height());
+            }
 
-    m_backingStoreKey = QPixmapCache::insert(pixmap);
+#if 1
+            // Blit the contents of oldPixmap back into the cached pixmap as we are just adding new pixels.
+            if (!oldPixmap.isNull()) {
+                const QRegion cleanRegion = (QRegion(0, 0, m_size.width(), m_size.height())
+                                             & QRegion(0, 0, m_backingStore.size.width(), m_backingStore.size.height())) - regionToUpdate;
+                if (!cleanRegion.isEmpty()) {
+#if QT_DEBUG_RECACHE
+                    qDebug() << "CacheBlit" << this << cleanRegion;
+#endif
+                    const QRect cleanBounds(cleanRegion.boundingRect());
+                    QPainter painter(&pixmap);
+                    painter.setCompositionMode(QPainter::CompositionMode_Source);
+                    painter.drawPixmap(cleanBounds.topLeft(), oldPixmap, cleanBounds);
+                    newRegion -= cleanRegion;
+                    fill = false; // We cannot just fill the pixmap.
+                }
+                oldPixmap = QPixmap();
+            }
+#endif
+            region += newRegion;
+            if (fill && !region.isEmpty()) { // Clear the entire pixmap with the background.
+#if QT_DEBUG_RECACHE
+                qDebug() << "CacheErase" << this << m_size << background;
+#endif
+                erased = true;
+                pixmap.fill(Qt::transparent);
+            }
+        }
+        region &= QRegion(0, 0, m_size.width(), m_size.height());
+
+        // If we have something to draw its time to erase it and render the contents.
+        if (!region.isEmpty()) {
+#if QT_DEBUG_CACHEDUMP
+            static int recacheCount = 0;
+            ++recacheCount;
+            qDebug() << "**** CACHEDUMP" << recacheCount << this << m_layer << region << m_size;
+            pixmap.save(QString().sprintf("/tmp/%05d_A.png", recacheCount), "PNG");
+#endif
+
+            QPainter painter(&pixmap);
+            GraphicsContext gc(&painter);
+
+            painter.setClipRegion(region);
+
+            if (!erased) { // Erase the area in cache that we're drawing into.
+                painter.setCompositionMode(QPainter::CompositionMode_Clear);
+                painter.fillRect(region.boundingRect(), Qt::transparent);
+
+#if QT_DEBUG_CACHEDUMP
+                qDebug() << "**** CACHEDUMP" << recacheCount << this << m_layer << region << m_size;
+                pixmap.save(QString().sprintf("/tmp/%05d_B.png", recacheCount), "PNG");
+#endif
+            }
+
+            // Render the actual contents into the cache.
+            painter.setCompositionMode(QPainter::CompositionMode_SourceOver);
+            m_layer->paintGraphicsLayerContents(gc, region.boundingRect());
+            painter.end();
+
+#if QT_DEBUG_CACHEDUMP
+            qDebug() << "**** CACHEDUMP" << recacheCount << this << m_layer << region << m_size;
+            pixmap.save(QString().sprintf("/tmp/%05d_C.png", recacheCount), "PNG");
+#endif
+        }
+        m_backingStore.size = m_size; // Store the used size of the pixmap.
+    }
+
+    // Finally insert into the cache and allow a reference there.
+    m_backingStore.key = QPixmapCache::insert(pixmap);
     return pixmap;
 }
 
@@ -487,8 +567,9 @@ void GraphicsLayerQtImpl::paint(QPainter* painter, const QStyleOptionGraphicsIte
         if (m_state.drawsContent) {
             QPixmap backingStore;
             // We might need to recache, in case we try to paint and the cache was purged (e.g. if it was full).
-            if (!QPixmapCache::find(m_backingStoreKey, &backingStore) || backingStore.size() != m_size.toSize())
+            if (!QPixmapCache::find(m_backingStore.key, &backingStore) || backingStore.size() != m_size.toSize())
                 backingStore = recache(QRegion(m_state.contentsRect));
+            const QRectF bounds(0, 0, m_backingStore.size.width(), m_backingStore.size.height());
             painter->drawPixmap(0, 0, backingStore);
         }
         break;
@@ -674,11 +755,13 @@ void GraphicsLayerQtImpl::flushChanges(bool recursive, bool forceUpdateTransform
     else
 #endif
     if (m_changeMask & DisplayChange) {
+#ifndef QT_GRAPHICS_LAYER_NO_RECACHE_ON_DISPLAY_CHANGE
         // Recache now: all the content is ready and we don't want to wait until the paint event.
         // We only need to do this for HTML content, there's no point in caching directly composited
         // content like images or solid rectangles.
         if (m_pendingContent.contentType == HTMLContentType)
             recache(m_pendingContent.regionToUpdate);
+#endif
         update(m_pendingContent.regionToUpdate.boundingRect());
         m_pendingContent.regionToUpdate = QRegion();
     }
