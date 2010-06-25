@@ -756,6 +756,10 @@
 							RelativePath="..\WebProcess\InjectedBundle\API\c\WKBundlePage.h"
 							>
 						</File>
+						<File
+							RelativePath="..\WebProcess\InjectedBundle\API\c\WKBundlePagePrivate.h"
+							>
+						</File>
 					</Filter>
 				</Filter>
 				<Filter

@@ -95,6 +95,7 @@ public:
     InjectedBundlePageClient& injectedBundleClient() { return m_client; }
 
     WebCore::String mainFrameURL() const;
+    WebCore::String renderTreeExternalRepresentation() const;
 
 private:
     WebPage(uint64_t pageID, const WebCore::IntSize& viewSize, const WebPreferencesStore&, DrawingArea::Type);

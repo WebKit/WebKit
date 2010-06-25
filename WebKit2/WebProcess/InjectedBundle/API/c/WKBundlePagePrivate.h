@@ -23,28 +23,20 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "WKBundlePage.h"
-#include "WKBundlePagePrivate.h"
+#ifndef WKBundlePagePrivate_h
+#define WKBundlePagePrivate_h
 
-#include "WKAPICast.h"
-#include "WKBundleAPICast.h"
-#include "WebPage.h"
-#include <WebCore/PlatformString.h>
+#include <WebKit2/WKBase.h>
+#include <WebKit2/WKBundleBase.h>
 
-using namespace WebKit;
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-void WKBundlePageSetClient(WKBundlePageRef pageRef, WKBundlePageClient * wkClient)
-{
-    if (wkClient && !wkClient->version)
-        toWK(pageRef)->initializeInjectedBundleClient(wkClient);
+WK_EXPORT WKStringRef WKBundlePageRenderTreeExternalRepresentation(WKBundlePageRef page);
+
+#ifdef __cplusplus
 }
+#endif
 
-WKURLRef WKBundlePageGetMainFrameURL(WKBundlePageRef pageRef)
-{
-    return toURLRef(toWK(pageRef)->mainFrameURL().impl());
-}
-
-WKStringRef WKBundlePageRenderTreeExternalRepresentation(WKBundlePageRef pageRef)
-{
-    return toRef(toWK(pageRef)->renderTreeExternalRepresentation().impl());
-}
+#endif /* WKBundlePagePrivate_h */

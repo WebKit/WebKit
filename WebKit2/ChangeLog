@@ -1,3 +1,20 @@
+2010-06-24  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Brady Eidson.
+
+        Add WKBundlePageRenderTreeExternalRepresentation for WebKitTestRunner.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        (WKBundlePageRenderTreeExternalRepresentation):
+        * WebProcess/InjectedBundle/API/c/WKBundlePagePrivate.h: Added.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::renderTreeExternalRepresentation):
+        (WebKit::WebPage::getRenderTreeExternalRepresentation):
+        * WebProcess/WebPage/WebPage.h:
+        * mac/WebKit2.exp:
+        * win/WebKit2.vcproj:
+
 2010-06-24  John Sullivan  <sullivan@apple.com>
 
         Rubber-stamped by Ada Chan.
