@@ -395,4 +395,12 @@ ScriptController* HTMLDocumentParser::script() const
     return m_document->frame() ? m_document->frame()->script() : 0;
 }
 
+void HTMLDocumentParser::parseDocumentFragment(const String& source, DocumentFragment* fragment, FragmentScriptingPermission scriptingPermission)
+{
+    HTMLDocumentParser parser(fragment, scriptingPermission);
+    parser.write(source, false);
+    parser.finish();
+    ASSERT(!parser.processingData()); // Make sure we're done. <rdar://problem/3963151>
+}
+
 }

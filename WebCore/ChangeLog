@@ -1,3 +1,37 @@
+2010-06-24  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Make DocumentParser API private on subclasses to catch misuse bugs
+        https://bugs.webkit.org/show_bug.cgi?id=41186
+
+        This already found one bug:
+        https://bugs.webkit.org/show_bug.cgi?id=41187
+
+        Added a new HTMLDocumentParaser::parseDocumentFragment so that
+        DocumentFragment.cpp does not need to use private methods.
+
+        * dom/DocumentFragment.cpp:
+        (WebCore::DocumentFragment::parseHTML):
+        * dom/XMLDocumentParser.h:
+        (WebCore::XMLDocumentParser::setIsXHTMLDocument):
+        (WebCore::XMLDocumentParser::isXHTMLDocument):
+        (WebCore::XMLDocumentParser::setIsXHTMLMPDocument):
+        (WebCore::XMLDocumentParser::isXHTMLMPDocument):
+        * html/HTMLDocumentParser.cpp:
+        (WebCore::HTMLDocumentParser::parseDocumentFragment):
+        * html/HTMLDocumentParser.h:
+        * html/LegacyHTMLDocumentParser.cpp:
+        (WebCore::LegacyHTMLDocumentParser::parseDocumentFragment):
+        * html/LegacyHTMLDocumentParser.h:
+        (WebCore::LegacyHTMLDocumentParser::forceSynchronous):
+        (WebCore::LegacyHTMLDocumentParser::processingContentWrittenByScript):
+        * html/LegacyHTMLTreeBuilder.cpp:
+        (WebCore::LegacyHTMLTreeBuilder::reportErrorToConsole):
+        * loader/DocumentWriter.cpp:
+        (WebCore::DocumentWriter::replaceDocument):
+        * loader/TextDocument.cpp:
+
 2010-05-28  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Gustavo Noronha.

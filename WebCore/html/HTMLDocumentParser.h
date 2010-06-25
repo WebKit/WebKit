@@ -57,10 +57,15 @@ public:
     HTMLDocumentParser(DocumentFragment*, FragmentScriptingPermission);
     virtual ~HTMLDocumentParser();
 
+    // Exposed for HTMLParserScheduler
+    void resumeParsingAfterYield();
+
+    static void parseDocumentFragment(const String&, DocumentFragment*, FragmentScriptingPermission = FragmentScriptingAllowed);
+
+private:
     // DocumentParser
     virtual void begin();
     virtual void write(const SegmentedString&, bool isFromNetwork);
-    virtual void end();
     virtual void finish();
     virtual bool finishWasCalled();
     virtual bool processingData() const;
@@ -83,10 +88,6 @@ public:
     // CachedResourceClient
     virtual void notifyFinished(CachedResource*);
 
-    // Exposed for HTMLParserScheduler
-    void resumeParsingAfterYield();
-
-private:
     void willPumpLexer();
     void didPumpLexer();
 
@@ -102,6 +103,7 @@ private:
 
     void attemptToEnd();
     void endIfDelayed();
+    void end();
 
     bool isScheduledForResume() const;
     bool inScriptExecution() const;

@@ -76,22 +76,9 @@ namespace WebCore {
         XMLDocumentParser(DocumentFragment*, Element*, FragmentScriptingPermission);
         ~XMLDocumentParser();
 
+        // Exposed for callbacks:
         enum ErrorType { warning, nonFatal, fatal };
-
-        // From DocumentParser
-        virtual void write(const SegmentedString&, bool appendData);
-        virtual void finish();
-        virtual bool finishWasCalled();
-        virtual bool isWaitingForScripts() const;
-        virtual void stopParsing();
-        virtual bool wellFormed() const { return !m_sawError; }
-        virtual int lineNumber() const;
-        virtual int columnNumber() const;
-
-        void end();
-
-        void pauseParsing();
-        void resumeParsing();
+        void handleError(ErrorType, const char* message, int lineNumber, int columnNumber);
 
         void setIsXHTMLDocument(bool isXHTML) { m_isXHTMLDocument = isXHTML; }
         bool isXHTMLDocument() const { return m_isXHTMLDocument; }
@@ -103,10 +90,24 @@ namespace WebCore {
         bool isWMLDocument() const;
 #endif
 
-        // from CachedResourceClient
-        virtual void notifyFinished(CachedResource* finishedObj);
+    private:
+        // From DocumentParser
+        virtual void write(const SegmentedString&, bool appendData);
+        virtual void finish();
+        virtual bool finishWasCalled();
+        virtual bool isWaitingForScripts() const;
+        virtual void stopParsing();
+        virtual bool wellFormed() const { return !m_sawError; }
+        virtual int lineNumber() const;
+        virtual int columnNumber() const;
 
-        void handleError(ErrorType, const char* message, int lineNumber, int columnNumber);
+        // from CachedResourceClient
+        virtual void notifyFinished(CachedResource*);
+
+        void end();
+
+        void pauseParsing();
+        void resumeParsing();
 
 #if USE(QXMLSTREAM)
 private:

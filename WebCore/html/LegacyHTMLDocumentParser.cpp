@@ -2088,13 +2088,13 @@ void LegacyHTMLDocumentParser::setSrc(const SegmentedString& source)
     m_src = source;
 }
 
-void parseLegacyHTMLDocumentFragment(const String& source, DocumentFragment* fragment, FragmentScriptingPermission scriptingPermission)
+void LegacyHTMLDocumentParser::parseDocumentFragment(const String& source, DocumentFragment* fragment, FragmentScriptingPermission scriptingPermission)
 {
     LegacyHTMLDocumentParser parser(fragment, scriptingPermission);
     parser.setForceSynchronous(true);
     parser.write(source, true);
     parser.finish();
-    ASSERT(!parser.processingData());      // make sure we're done (see 3963151)
+    ASSERT(!parser.processingData()); // make sure we're done (see 3963151)
 }
 
 UChar decodeNamedEntity(const char* name)

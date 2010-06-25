@@ -44,6 +44,7 @@ public:
     virtual ~TextDocumentParser();
     TextDocumentParser(HTMLViewSourceDocument*);
 
+private:
     virtual void write(const SegmentedString&, bool appendData);
     virtual void finish();
     virtual bool finishWasCalled();
@@ -60,8 +61,7 @@ public:
             m_size = newSize;
         }
     }
-        
-private:
+
     Element* m_preElement;
 
     bool m_skipLF;

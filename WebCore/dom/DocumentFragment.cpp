@@ -85,12 +85,8 @@ bool DocumentFragment::shouldUseLegacyHTMLParser() const
 void DocumentFragment::parseHTML(const String& source, FragmentScriptingPermission scriptingPermission)
 {
     if (shouldUseLegacyHTMLParser())
-        return parseLegacyHTMLDocumentFragment(source, this, scriptingPermission);
-
-    HTMLDocumentParser parser(this, scriptingPermission);
-    parser.write(source, false);
-    parser.finish();
-    ASSERT(!parser.processingData()); // Make sure we're done. <rdar://problem/3963151>
+        return LegacyHTMLDocumentParser::parseDocumentFragment(source, this, scriptingPermission);
+    HTMLDocumentParser::parseDocumentFragment(source, this, scriptingPermission);
 }
 
 bool DocumentFragment::parseXML(const String& source, Element* parent, FragmentScriptingPermission scriptingPermission)

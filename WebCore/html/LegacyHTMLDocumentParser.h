@@ -147,11 +147,22 @@ public:
     LegacyHTMLDocumentParser(DocumentFragment*, FragmentScriptingPermission = FragmentScriptingAllowed);
     virtual ~LegacyHTMLDocumentParser();
 
+    bool forceSynchronous() const { return m_state.forceSynchronous(); }
+    void setForceSynchronous(bool force);
+
+    // Exposed for LegacyHTMLTreeBuilder::reportErrorToConsole
+    bool processingContentWrittenByScript() const { return m_src.excludeLineNumbers(); }
+
+    static void parseDocumentFragment(const String&, DocumentFragment*, FragmentScriptingPermission = FragmentScriptingAllowed);
+
+protected:
+    // Exposed for FTPDirectoryDocumentParser
     virtual void write(const SegmentedString&, bool appendData);
     virtual void finish();
+
+private:
+    // DocumentParser
     virtual bool finishWasCalled();
-    virtual bool forceSynchronous() const { return m_state.forceSynchronous(); }
-    virtual void setForceSynchronous(bool force);
     virtual bool isWaitingForScripts() const;
     virtual void stopParsing();
     virtual bool processingData() const;
@@ -160,20 +171,15 @@ public:
     virtual int lineNumber() const { return m_lineNumber; }
     virtual int columnNumber() const { return 1; }
 
-    bool processingContentWrittenByScript() const { return m_src.excludeLineNumbers(); }
-
     virtual void executeScriptsWaitingForStylesheets();
 
     virtual LegacyHTMLTreeBuilder* htmlTreeBuilder() const { return m_treeBuilder.get(); }
     virtual LegacyHTMLDocumentParser* asHTMLDocumentParser() { return this; }
 
-private:
     class State;
 
-    // Where we are in parsing a tag
     void begin();
     void end();
-
     void reset();
 
     void willWriteHTML(const SegmentedString&);
@@ -438,8 +444,6 @@ private:
 
     OwnPtr<LegacyPreloadScanner> m_preloadScanner;
 };
-
-void parseLegacyHTMLDocumentFragment(const String&, DocumentFragment*, FragmentScriptingPermission = FragmentScriptingAllowed);
 
 UChar decodeNamedEntity(const char*);
 
