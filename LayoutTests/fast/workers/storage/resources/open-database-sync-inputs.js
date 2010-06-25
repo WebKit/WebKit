@@ -46,19 +46,21 @@ try {
     postMessage("PASS: " + err.message);
 }
 
-// FIXME: Uncomment these tests when the sync DB API is implemented.
-//try {
-//    db = openDatabaseSync("DBName", "DBVersion", "DBDescription", 1024);
-//    postMessage("PASS: openDatabaseSync() succeeded.");
-//} catch (err) {
-//    postMessage("FAIL: " + err.message);
-//}
-//
-//try {
-//    db = openDatabaseSync("DBName", "DBVersion", "DBDescription", 1024, function(db) { });
-//    postMessage("PASS: calling openDatabaseSync() with a creation callback succeeded.");
-//} catch (err) {
-//    postMessage("FAIL: " + err.message);
-//}
+try {
+    db = openDatabaseSync("DBName", "DBVersion", "DBDescription", 1024);
+    postMessage("PASS: openDatabaseSync() succeeded.");
+} catch (err) {
+    postMessage("FAIL: " + err.message);
+}
+
+try {
+    // Need to create a new database, otherwise the creation callback won't be invoked.
+    db = openDatabaseSync("DBNameCreationCallback" + (new Date()).getTime(), "DBVersion", "DBDescription", 1024,
+                          function(db) {
+                              postMessage("PASS: calling openDatabaseSync() with a creation callback succeeded.");
+                          });
+} catch (err) {
+    postMessage("FAIL: " + err.message);
+}
 
 postMessage("done");

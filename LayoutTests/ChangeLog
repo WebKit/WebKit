@@ -1,3 +1,14 @@
+2010-06-23  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Uncomment all test cases in open-database-sync-inputs.
+        https://bugs.webkit.org/show_bug.cgi?id=40607
+
+        * fast/workers/storage/open-database-sync-inputs-expected.txt:
+        * fast/workers/storage/resources/open-database-sync-inputs.js:
+        (catch):
+
 2010-06-24  Martin Robinson  <mrobinson@igalia.com>
 
         Unreviewed.

@@ -5,4 +5,6 @@ PASS: undefined
 PASS: undefined
 PASS: undefined
 PASS: TYPE_MISMATCH_ERR: DOM Exception 17
+PASS: openDatabaseSync() succeeded.
+PASS: calling openDatabaseSync() with a creation callback succeeded.
 
