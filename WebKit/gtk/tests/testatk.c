@@ -40,6 +40,8 @@ static const char* contentsInParagraphAndBodyModerate = "<html><body><p>This is 
 
 static const char* contentsInTable = "<html><body><table><tr><td>foo</td><td>bar</td></tr></table></body></html>";
 
+static const char* contentsInTableWithHeaders = "<html><body><table><tr><th>foo</th><th>bar</th><th colspan='2'>baz</th></tr><tr><th>qux</th><td>1</td><td>2</td><td>3</td></tr><tr><th rowspan='2'>quux</th><td>4</td><td>5</td><td>6</td></tr><tr><td>6</td><td>7</td><td>8</td></tr><tr><th>corge</th><td>9</td><td>10</td><td>11</td></tr></table><table><tr><td>1</td><td>2</td></tr><tr><td>3</td><td>4</td></tr></table></body></html>";
+
 static gboolean bail_out(GMainLoop* loop)
 {
     if (g_main_loop_is_running(loop))
@@ -480,6 +482,96 @@ static void testWebkitAtkGetTextInTable(void)
     g_object_unref(webView);
 }
 
+static void testWebkitAtkGetHeadersInTable(void)
+{
+    WebKitWebView* webView;
+    AtkObject* axWebView;
+    AtkObject* table;
+    AtkObject* colHeader;
+    AtkObject* rowHeader;
+    GMainLoop* loop;
+
+    webView = WEBKIT_WEB_VIEW(webkit_web_view_new());
+    g_object_ref_sink(webView);
+    GtkAllocation alloc = { 0, 0, 800, 600 };
+    gtk_widget_size_allocate(GTK_WIDGET(webView), &alloc);
+    webkit_web_view_load_string(webView, contentsInTableWithHeaders, NULL, NULL, NULL);
+    loop = g_main_loop_new(NULL, TRUE);
+
+    g_timeout_add(100, (GSourceFunc)bail_out, loop);
+    g_main_loop_run(loop);
+
+    axWebView = gtk_widget_get_accessible(GTK_WIDGET(webView));
+    g_assert(axWebView);
+
+    // Check table with both column and row headers
+    table = atk_object_ref_accessible_child(axWebView, 0);
+    g_assert(table);
+    g_assert(atk_object_get_role(table) == ATK_ROLE_TABLE);
+
+    colHeader = atk_table_get_column_header(ATK_TABLE(table), 0);
+    g_assert(colHeader);
+    g_assert(atk_object_get_role(colHeader) == ATK_ROLE_TABLE_CELL);
+    g_assert(atk_object_get_index_in_parent(colHeader) == 0);
+
+    colHeader = atk_table_get_column_header(ATK_TABLE(table), 1);
+    g_assert(colHeader);
+    g_assert(atk_object_get_role(colHeader) == ATK_ROLE_TABLE_CELL);
+    g_assert(atk_object_get_index_in_parent(colHeader) == 1);
+
+    colHeader = atk_table_get_column_header(ATK_TABLE(table), 2);
+    g_assert(colHeader);
+    g_assert(atk_object_get_role(colHeader) == ATK_ROLE_TABLE_CELL);
+    g_assert(atk_object_get_index_in_parent(colHeader) == 2);
+
+    colHeader = atk_table_get_column_header(ATK_TABLE(table), 3);
+    g_assert(colHeader);
+    g_assert(atk_object_get_role(colHeader) == ATK_ROLE_TABLE_CELL);
+    g_assert(atk_object_get_index_in_parent(colHeader) == 2);
+
+    rowHeader = atk_table_get_row_header(ATK_TABLE(table), 0);
+    g_assert(rowHeader);
+    g_assert(atk_object_get_role(rowHeader) == ATK_ROLE_TABLE_CELL);
+    g_assert(atk_object_get_index_in_parent(rowHeader) == 0);
+
+    rowHeader = atk_table_get_row_header(ATK_TABLE(table), 1);
+    g_assert(rowHeader);
+    g_assert(atk_object_get_role(rowHeader) == ATK_ROLE_TABLE_CELL);
+    g_assert(atk_object_get_index_in_parent(rowHeader) == 3);
+
+    rowHeader = atk_table_get_row_header(ATK_TABLE(table), 2);
+    g_assert(rowHeader);
+    g_assert(atk_object_get_role(rowHeader) == ATK_ROLE_TABLE_CELL);
+    g_assert(atk_object_get_index_in_parent(rowHeader) == 7);
+
+    rowHeader = atk_table_get_row_header(ATK_TABLE(table), 3);
+    g_assert(rowHeader);
+    g_assert(atk_object_get_role(rowHeader) == ATK_ROLE_TABLE_CELL);
+    g_assert(atk_object_get_index_in_parent(rowHeader) == 7);
+
+    g_object_unref(table);
+
+    // Check table with no headers at all
+    table = atk_object_ref_accessible_child(axWebView, 1);
+    g_assert(table);
+    g_assert(atk_object_get_role(table) == ATK_ROLE_TABLE);
+
+    colHeader = atk_table_get_column_header(ATK_TABLE(table), 0);
+    g_assert(colHeader == 0);
+
+    colHeader = atk_table_get_column_header(ATK_TABLE(table), 1);
+    g_assert(colHeader == 0);
+
+    rowHeader = atk_table_get_row_header(ATK_TABLE(table), 0);
+    g_assert(rowHeader == 0);
+
+    rowHeader = atk_table_get_row_header(ATK_TABLE(table), 1);
+    g_assert(rowHeader == 0);
+
+    g_object_unref(table);
+    g_object_unref(webView);
+}
+
 int main(int argc, char** argv)
 {
     g_thread_init(NULL);
@@ -494,6 +586,7 @@ int main(int argc, char** argv)
     g_test_add_func("/webkit/atk/getTextInParagraphAndBodySimple", testWebkitAtkGetTextInParagraphAndBodySimple);
     g_test_add_func("/webkit/atk/getTextInParagraphAndBodyModerate", testWebkitAtkGetTextInParagraphAndBodyModerate);
     g_test_add_func("/webkit/atk/getTextInTable", testWebkitAtkGetTextInTable);
+    g_test_add_func("/webkit/atk/getHeadersInTable", testWebkitAtkGetHeadersInTable);
     return g_test_run ();
 }
 

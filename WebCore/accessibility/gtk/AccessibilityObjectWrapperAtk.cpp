@@ -1448,8 +1448,19 @@ static gint webkit_accessible_table_get_row_extent_at(AtkTable* table, gint row,
 
 static AtkObject* webkit_accessible_table_get_column_header(AtkTable* table, gint column)
 {
-    // FIXME: This needs to be implemented.
-    notImplemented();
+    AccessibilityObject* accTable = core(table);
+    if (accTable->isAccessibilityRenderObject()) {
+        AccessibilityObject::AccessibilityChildrenVector allColumnHeaders;
+        static_cast<AccessibilityTable*>(accTable)->columnHeaders(allColumnHeaders);
+        unsigned columnCount = allColumnHeaders.size();
+        for (unsigned k = 0; k < columnCount; ++k) {
+            pair<int, int> columnRange;
+            AccessibilityTableCell* cell = static_cast<AccessibilityTableCell*>(allColumnHeaders.at(k).get());
+            cell->columnIndexRange(columnRange);
+            if (columnRange.first <= column && column < columnRange.first + columnRange.second)
+                return allColumnHeaders[k]->wrapper();
+        }
+    }
     return 0;
 }
 
@@ -1459,11 +1470,12 @@ static AtkObject* webkit_accessible_table_get_row_header(AtkTable* table, gint r
     if (accTable->isAccessibilityRenderObject()) {
         AccessibilityObject::AccessibilityChildrenVector allRowHeaders;
         static_cast<AccessibilityTable*>(accTable)->rowHeaders(allRowHeaders);
-
         unsigned rowCount = allRowHeaders.size();
         for (unsigned k = 0; k < rowCount; ++k) {
-            AccessibilityObject* rowObject = allRowHeaders[k]->parentObject();
-            if (static_cast<AccessibilityTableRow*>(rowObject)->rowIndex() == row)
+            pair<int, int> rowRange;
+            AccessibilityTableCell* cell = static_cast<AccessibilityTableCell*>(allRowHeaders.at(k).get());
+            cell->rowIndexRange(rowRange);
+            if (rowRange.first <= row && row < rowRange.first + rowRange.second)
                 return allRowHeaders[k]->wrapper();
         }
     }
