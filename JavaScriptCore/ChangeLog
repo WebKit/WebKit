@@ -1,3 +1,14 @@
+2010-06-25  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        [CMake] Remove unused variable in EFL build system. It was previously
+        being used to set the flags of each port but it was superseded by
+        other flags.
+        https://bugs.webkit.org/show_bug.cgi?id=40931
+
+        * jsc/CMakeLists.txt:
+
 2010-06-25  Nathan Lawrence  <nlawrence@apple.com>
 
         Reviewed by Geoffrey Garen.
