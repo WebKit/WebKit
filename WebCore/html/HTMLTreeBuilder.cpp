@@ -55,7 +55,8 @@ inline bool isTreeBuilderWhiteSpace(UChar cc)
 } // namespace
 
 HTMLTreeBuilder::HTMLTreeBuilder(HTMLTokenizer* tokenizer, HTMLDocument* document, bool reportErrors)
-    : m_document(document)
+    : m_framesetOk(true)
+    , m_document(document)
     , m_reportErrors(reportErrors)
     , m_isPaused(false)
     , m_insertionMode(InitialMode)
@@ -70,7 +71,8 @@ HTMLTreeBuilder::HTMLTreeBuilder(HTMLTokenizer* tokenizer, HTMLDocument* documen
 // FIXME: Member variables should be grouped into self-initializing structs to
 // minimize code duplication between these constructors.
 HTMLTreeBuilder::HTMLTreeBuilder(HTMLTokenizer* tokenizer, DocumentFragment* fragment, FragmentScriptingPermission scriptingPermission)
-    : m_document(fragment->document())
+    : m_framesetOk(true)
+    , m_document(fragment->document())
     , m_reportErrors(false) // FIXME: Why not report errors in fragments?
     , m_isPaused(false)
     , m_insertionMode(InitialMode)
@@ -439,7 +441,6 @@ reprocessToken:
                 break;
             parseError(token);
             return 0;
-            break;
         case HTMLToken::Character:
             notImplemented();
             break;
@@ -453,7 +454,61 @@ reprocessToken:
         processToken(fakeNoscript);
         goto reprocessToken;
     }
-    case AfterHeadMode:
+    case AfterHeadMode: {
+        switch (token.type()) {
+        case HTMLToken::Uninitialized:
+            ASSERT_NOT_REACHED();
+            break;
+        case HTMLToken::Character:
+            if (isTreeBuilderWhiteSpace(cc)) {
+                insertCharacter(cc);
+                return 0;
+            }
+            break;
+        case HTMLToken::Comment:
+            return insertComment(token);
+        case HTMLToken::DOCTYPE:
+            parseError(token);
+            return 0;
+        case HTMLToken::StartTag:
+            if (token.name() == htmlTag) {
+                notImplemented();
+                return 0;
+            }
+            if (token.name() == bodyTag) {
+                m_framesetOk = false;
+                return insertElement(token);
+            }
+            if (token.name() == framesetTag) {
+                PassRefPtr<Node> node = insertElement(token);
+                setInsertionMode(InFramesetMode);
+                return node;
+            }
+            if (token.name() == baseTag || token.name() == linkTag || token.name() == metaTag || token.name() == noframesTag || token.name() == scriptTag || token.name() == styleTag || token.name() == titleTag) {
+                parseError(token);
+                ASSERT(m_headElement);
+                m_openElements.push(m_headElement.get());
+                notImplemented();
+                m_openElements.remove(m_headElement.get());
+            }
+            if (token.name() == headTag) {
+                parseError(token);
+                return 0;
+            }
+            break;
+        case HTMLToken::EndTag:
+            if (token.name() == bodyTag || token.name() == htmlTag || token.name() == brTag)    
+                break;
+            parseError(token);
+            return 0;
+        case HTMLToken::EndOfFile:
+            break;
+        }
+        AtomicHTMLToken fakeBody(HTMLToken::StartTag, bodyTag.localName());
+        processToken(fakeBody);
+        m_framesetOk = true;
+        goto reprocessToken;
+    }
     case InBodyMode:
     case TextMode:
     case InTableMode:
@@ -490,7 +545,7 @@ PassRefPtr<Node> HTMLTreeBuilder::insertComment(AtomicHTMLToken& token)
     return 0;
 }
 
-PassRefPtr<Node> HTMLTreeBuilder::insertElement(AtomicHTMLToken& token)
+PassRefPtr<Element> HTMLTreeBuilder::insertElement(AtomicHTMLToken& token)
 {
     ASSERT_UNUSED(token, token.type() == HTMLToken::StartTag);
     return 0;

@@ -2,6 +2,24 @@
 
         Reviewed by Eric Seidel.
 
+        Sketch out AfterHeadMode for tree builder
+        https://bugs.webkit.org/show_bug.cgi?id=41191
+
+        This mode is fairly similar to the others.  I needed to change some of
+        the types around w.r.t. Nodes/Elements.
+
+        * html/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::HTMLTreeBuilder):
+        (WebCore::HTMLTreeBuilder::processToken):
+        (WebCore::HTMLTreeBuilder::insertElement):
+        * html/HTMLTreeBuilder.h:
+        (WebCore::HTMLTreeBuilder::ElementStack::push):
+        (WebCore::HTMLTreeBuilder::ElementStack::remove):
+
+2010-06-24  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         Sketch out InHeadNoscriptMode for tree builder
         https://bugs.webkit.org/show_bug.cgi?id=41189
 

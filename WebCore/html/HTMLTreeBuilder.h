@@ -102,6 +102,8 @@ private:
     class ElementStack : public Noncopyable {
     public:
         void pop() { }
+        void push(Element*) { }
+        void remove(Element*) { }
         Element* top() const { return 0; }
     };
 
@@ -110,14 +112,15 @@ private:
 
     PassRefPtr<Node> insertDoctype(AtomicHTMLToken&);
     PassRefPtr<Node> insertComment(AtomicHTMLToken&);
-    PassRefPtr<Node> insertElement(AtomicHTMLToken&);
+    PassRefPtr<Element> insertElement(AtomicHTMLToken&);
     void insertCharacter(UChar cc);
     PassRefPtr<Node> insertGenericRCDATAElement(AtomicHTMLToken&);
     PassRefPtr<Node> insertGenericRawTextElement(AtomicHTMLToken&);
     PassRefPtr<Node> insertScriptElement(AtomicHTMLToken&);
 
-    RefPtr<Node> m_headElement;
+    RefPtr<Element> m_headElement;
     ElementStack m_openElements;
+    bool m_framesetOk;
 
     // FIXME: Implement error reporting.
     void parseError(AtomicHTMLToken&) { }
