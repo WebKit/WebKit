@@ -3,7 +3,7 @@
  *  Copyright (C) 2008 Nuanti Ltd.
  *  Copyright (C) 2009 Diego Escalante Urrelo <diegoe@gnome.org>
  *  Copyright (C) 2006, 2007 Apple Inc.  All rights reserved.
- *  Copyright (C) 2009, Igalia S.L.
+ *  Copyright (C) 2009, 2010 Igalia S.L.
  *  Copyright (C) 2010, Martin Robinson <mrobinson@webkit.org>
  *
  *  This library is free software; you can redistribute it and/or
@@ -604,11 +604,6 @@ void EditorClient::handleKeyboardEvent(KeyboardEvent* event)
     if (!platformEvent)
         return;
 
-    // Don't allow editor commands or text insertion for nodes that
-    // cannot edit, unless we are in caret mode.
-    if (!frame->editor()->canEdit() && !(frame->settings() && frame->settings()->caretBrowsingEnabled()))
-        return;
-
     generateEditorCommands(event);
     if (m_pendingEditorCommands.size() > 0) {
 
@@ -622,11 +617,16 @@ void EditorClient::handleKeyboardEvent(KeyboardEvent* event)
             return;
         }
 
-        if (executePendingEditorCommands(frame, true)) {
+        // Only allow text insertion commands if the current node is editable.
+        if (executePendingEditorCommands(frame, frame->editor()->canEdit())) {
             event->setDefaultHandled();
             return;
         }
     }
+
+    // Don't allow text insertion for nodes that cannot edit.
+    if (!frame->editor()->canEdit())
+        return;
 
     // This is just a normal text insertion, so wait to execute the insertion
     // until a keypress event happens. This will ensure that the insertion will not

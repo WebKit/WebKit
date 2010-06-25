@@ -1,3 +1,19 @@
+2010-06-24  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] Cannot change the selection via the keyboard
+        https://bugs.webkit.org/show_bug.cgi?id=41162
+
+        Fix issue where the selection could not be extended via the keyboard by
+        adjusting the logic guarding against inserting text in non-editable nodes.
+
+        * WebCoreSupport/EditorClientGtk.cpp:
+        (WebKit::EditorClient::handleKeyboardEvent):
+        Allow editor commands that do not insert text in non-editable nodes. This
+        fixes keyboard selection extension in non-editable nodes. Move the existing
+        check to after the execution of any editor commands.
+
 2010-06-15  Dumitru Daniliuc  <dumi@chromium.org>
 
         Reviewed by Adam Barth.
