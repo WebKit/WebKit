@@ -2,6 +2,19 @@
 
         Reviewed by Eric Seidel.
 
+        Sketch out InHeadNoscriptMode for tree builder
+        https://bugs.webkit.org/show_bug.cgi?id=41189
+
+        Lots of notImplemented() calls in this state.  I need to figure how to
+        delegate handling of a token from one state to another.
+
+        * html/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::processToken):
+
+2010-06-24  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         Sketch out InHeadMode for tree builder
         https://bugs.webkit.org/show_bug.cgi?id=41184
 

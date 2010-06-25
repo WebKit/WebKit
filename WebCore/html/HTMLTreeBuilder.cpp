@@ -405,7 +405,54 @@ reprocessToken:
         processToken(fakeHead);
         goto reprocessToken;
     }
-    case InHeadNoscriptMode:
+    case InHeadNoscriptMode: {
+        switch (token.type()) {
+        case HTMLToken::Uninitialized:
+            ASSERT_NOT_REACHED();
+            break;
+        case HTMLToken::DOCTYPE:
+            parseError(token);
+            return 0;
+        case HTMLToken::StartTag:
+            if (token.name() == htmlTag) {
+                notImplemented();
+                return 0;
+            }
+            if (token.name() == linkTag || token.name() == metaTag || token.name() == noframesTag || token.name() == styleTag) {
+                notImplemented();
+                return 0;
+            }
+            if (token.name() == htmlTag || token.name() == noscriptTag) {
+                parseError(token);
+                return 0;
+            }
+            break;
+        case HTMLToken::EndTag:
+            if (token.name() == noscriptTag) {
+                ASSERT(m_openElements.top()->tagQName() == noscriptTag);
+                m_openElements.pop();
+                ASSERT(m_openElements.top()->tagQName() == headTag);
+                setInsertionMode(InHeadMode);
+                return 0;
+            }
+            if (token.name() == brTag)
+                break;
+            parseError(token);
+            return 0;
+            break;
+        case HTMLToken::Character:
+            notImplemented();
+            break;
+        case HTMLToken::Comment:
+            notImplemented();
+            return 0;
+        case HTMLToken::EndOfFile:
+            break;
+        }
+        AtomicHTMLToken fakeNoscript(HTMLToken::EndTag, noscriptTag.localName());
+        processToken(fakeNoscript);
+        goto reprocessToken;
+    }
     case AfterHeadMode:
     case InBodyMode:
     case TextMode:
