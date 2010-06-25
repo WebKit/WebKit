@@ -37,6 +37,7 @@ namespace JSC {
 
     class RegExp : public RefCounted<RegExp> {
     public:
+        static PassRefPtr<RegExp> create(JSGlobalData* globalData, const UString& pattern);
         static PassRefPtr<RegExp> create(JSGlobalData* globalData, const UString& pattern, const UString& flags);
 #if !ENABLE(YARR)
         ~RegExp();
@@ -55,6 +56,7 @@ namespace JSC {
         unsigned numSubpatterns() const { return m_numSubpatterns; }
 
     private:
+        RegExp(JSGlobalData* globalData, const UString& pattern);
         RegExp(JSGlobalData* globalData, const UString& pattern, const UString& flags);
 
         void compile(JSGlobalData*);
