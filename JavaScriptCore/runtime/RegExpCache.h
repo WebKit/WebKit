@@ -35,16 +35,18 @@
 namespace JSC {
 
 class RegExpCache {
+
+typedef HashMap<RegExpKey, RefPtr<RegExp> > RegExpCacheMap;
+
 public:
     PassRefPtr<RegExp> lookupOrCreate(const UString& patternString, const UString& flags);
-    PassRefPtr<RegExp> create(const UString& patternString, const UString& flags);
+    PassRefPtr<RegExp> create(const UString& patternString, const UString& flags, RegExpCacheMap::iterator iterator);
     RegExpCache(JSGlobalData* globalData);
 
 private:
     static const unsigned maxCacheablePatternLength = 256;
     static const int maxCacheableEntries = 256;
 
-    typedef HashMap<RegExpKey, RefPtr<RegExp> > RegExpCacheMap;
     RegExpKey patternKeyArray[maxCacheableEntries];
     RegExpCacheMap m_cacheMap;
     JSGlobalData* m_globalData;

@@ -46,15 +46,6 @@
 
 namespace JSC {
 
-inline RegExp::RegExp(JSGlobalData* globalData, const UString& pattern)
-    : m_pattern(pattern)
-    , m_flagBits(0)
-    , m_constructionError(0)
-    , m_numSubpatterns(0)
-{
-    compile(globalData);
-}
-
 inline RegExp::RegExp(JSGlobalData* globalData, const UString& pattern, const UString& flags)
     : m_pattern(pattern)
     , m_flagBits(0)
@@ -63,13 +54,14 @@ inline RegExp::RegExp(JSGlobalData* globalData, const UString& pattern, const US
 {
     // NOTE: The global flag is handled on a case-by-case basis by functions like
     // String::match and RegExpObject::match.
-    if (flags.find('g') != UString::NotFound)
-        m_flagBits |= Global;
-    if (flags.find('i') != UString::NotFound)
-        m_flagBits |= IgnoreCase;
-    if (flags.find('m') != UString::NotFound)
-        m_flagBits |= Multiline;
-
+    if (!flags.isNull()) {
+        if (flags.find('g') != UString::NotFound)
+            m_flagBits |= Global;
+        if (flags.find('i') != UString::NotFound)
+            m_flagBits |= IgnoreCase;
+        if (flags.find('m') != UString::NotFound)
+            m_flagBits |= Multiline;
+    }
     compile(globalData);
 }
 
@@ -79,11 +71,6 @@ RegExp::~RegExp()
     jsRegExpFree(m_regExp);
 }
 #endif
-
-PassRefPtr<RegExp> RegExp::create(JSGlobalData* globalData, const UString& pattern)
-{
-    return adoptRef(new RegExp(globalData, pattern));
-}
 
 PassRefPtr<RegExp> RegExp::create(JSGlobalData* globalData, const UString& pattern, const UString& flags)
 {
