@@ -1,3 +1,12 @@
+2010-06-24  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed.
+
+        Update GTK expectations for fast/images/icon-decoding.html because
+        Peter is lazy.  :)
+
+        * platform/gtk/fast/images/icon-decoding-expected.txt:
+
 2010-06-24  Antonio Gomes  <tonikitoo@webkit.org>
 
         Reviewed by Kenneth Christiansen.
