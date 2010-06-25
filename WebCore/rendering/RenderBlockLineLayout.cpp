@@ -514,12 +514,6 @@ void RenderBlock::computeVerticalPositionsForLine(RootInlineBox* lineBox, BidiRu
     lineBox->markDirty(false);
 }
 
-// collects one line of the paragraph and transforms it to visual order
-void RenderBlock::bidiReorderLine(InlineBidiResolver& resolver, const InlineIterator& end, bool previousLineBrokeCleanly)
-{
-    resolver.createBidiRunsForLine(end, style()->visuallyOrdered(), previousLineBrokeCleanly);
-}
-
 static inline bool isCollapsibleSpace(UChar character, RenderText* renderer)
 {
     if (character == ' ' || character == '\t' || character == softHyphen)
@@ -686,7 +680,7 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintTop, i
             ASSERT(end != resolver.position());
 
             if (!isLineEmpty) {
-                bidiReorderLine(resolver, end, previousLineBrokeCleanly);
+                resolver.createBidiRunsForLine(end, style()->visuallyOrdered(), previousLineBrokeCleanly);
                 ASSERT(resolver.position() == end);
 
                 BidiRun* trailingSpaceRun = 0;

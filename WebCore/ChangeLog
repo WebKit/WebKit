@@ -1,3 +1,14 @@
+2010-06-25  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Removed a one-line method that only had one internal caller.
+
+        * rendering/RenderBlock.h: Removed bidiReorderLine()
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::layoutInlineChildren): Moved the implementation of
+        bidiReorderLine() inline here.
+
 2010-06-25  Nate Chapin  <japhet@chromium.org>
 
         Reviewed by Adam Barth.

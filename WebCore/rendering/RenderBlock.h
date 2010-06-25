@@ -295,7 +295,6 @@ private:
     };
 
     // The following functions' implementations are in RenderBlockLineLayout.cpp.
-    void bidiReorderLine(InlineBidiResolver&, const InlineIterator& end, bool previousLineBrokeCleanly);
     RootInlineBox* determineStartPosition(bool& firstLine, bool& fullLayout, bool& previousLineBrokeCleanly,
                                           InlineBidiResolver&, Vector<FloatWithRect>& floats, unsigned& numCleanFloats);
     RootInlineBox* determineEndPosition(RootInlineBox* startBox, InlineIterator& cleanLineStart,
