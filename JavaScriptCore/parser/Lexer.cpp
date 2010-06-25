@@ -38,13 +38,7 @@
 using namespace WTF;
 using namespace Unicode;
 
-#if ENABLE(RECURSIVE_PARSE)
 #include "JSParser.h"
-#else
-using namespace JSC;
-#include "Grammar.h"
-#endif
-
 #include "Lookup.h"
 #include "Lexer.lut.h"
 

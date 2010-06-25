@@ -235,8 +235,6 @@ SOURCES += \
     yarr/RegexJIT.cpp
 
 # Generated files, simply list them for JavaScriptCore
-SOURCES += \
-    $${JSC_GENERATED_SOURCES_DIR}/Grammar.cpp
 
 !contains(DEFINES, USE_SYSTEM_MALLOC) {
     SOURCES += wtf/TCSystemAlloc.cpp

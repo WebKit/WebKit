@@ -203,17 +203,6 @@ ENDFOREACH ()
 GENERATE_HASH_LUT(${JAVASCRIPTCORE_DIR}/parser/Keywords.table ${DERIVED_SOURCES_DIR}/Lexer.lut.h MAIN_DEPENDENCY)
 LIST(APPEND JavaScriptCore_HEADERS ${DERIVED_SOURCES_DIR}/Lexer.lut.h)
 
-# GENERATOR 2: bison grammar
-ADD_CUSTOM_COMMAND(
-    OUTPUT ${DERIVED_SOURCES_DIR}/Grammar.cpp ${DERIVED_SOURCES_DIR}/Grammar.h
-    MAIN_DEPENDENCY ${JAVASCRIPTCORE_DIR}/parser/Grammar.y
-    COMMAND ${BISON_EXECUTABLE} -d -p jscyy ${JAVASCRIPTCORE_DIR}/parser/Grammar.y -o ${DERIVED_SOURCES_DIR}/Grammar.cpp --defines=${DERIVED_SOURCES_DIR}/Grammar.h
-    COMMENT "[BISON][JSCYY] Building parser with bison"
-    VERBATIM)
-LIST(APPEND JavaScriptCore_HEADERS ${DERIVED_SOURCES_DIR}/Grammar.h)
-LIST(APPEND JavaScriptCore_SOURCES ${DERIVED_SOURCES_DIR}/Grammar.cpp)
-
-
 # GENERATOR: "chartables.c": compile and execute the chartables generator (and add it to sources)
 IF (MSVC)
     SET(JSC_DFTABLES_PREPROCESSOR --preprocessor=cl.exe)

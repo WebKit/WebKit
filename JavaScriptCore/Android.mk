@@ -187,14 +187,6 @@ LOCAL_SRC_FILES := \
 	yarr/RegexInterpreter.cpp \
 	yarr/RegexJIT.cpp
 
-# Rule to build grammar.y with our custom bison.
-GEN := $(intermediates)/parser/Grammar.cpp
-$(GEN) : PRIVATE_YACCFLAGS := -p jscyy
-$(GEN) : $(LOCAL_PATH)/parser/Grammar.y
-	$(call local-transform-y-to-cpp,.cpp)
-$(GEN) : $(LOCAL_BISON)
-LOCAL_GENERATED_SOURCES += $(GEN)
-
 # generated headers
 JSC_OBJECTS := $(addprefix $(intermediates)/runtime/, \
 				ArrayPrototype.lut.h \

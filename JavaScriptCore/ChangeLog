@@ -1,3 +1,32 @@
+2010-06-25  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        Remove old js parser
+        https://bugs.webkit.org/show_bug.cgi?id=41222
+
+        Remove the old yacc parser, this also solves the tiger problem.  Which
+        was a conflict between yacc generated token values and those in the
+        custom parser
+
+        * Android.mk:
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * DerivedSources.pro:
+        * GNUmakefile.am:
+        * JavaScriptCore.pro:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * parser/Grammar.y: Removed.
+        * parser/JSParser.cpp:
+        * parser/JSParser.h:
+        * parser/Lexer.cpp:
+        * parser/NodeConstructors.h:
+        (JSC::Node::Node):
+        * parser/Parser.cpp:
+        (JSC::Parser::parse):
+        * wtf/Platform.h:
+
 2010-06-25  Jedrzej Nowacki  <jedrzej.nowacki@nokia.com>
 
         Reviewed by Simon Hausmann.

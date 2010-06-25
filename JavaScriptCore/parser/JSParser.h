@@ -25,7 +25,6 @@
 
 #ifndef JSParser_h
 #define JSParser_h
-#if ENABLE(RECURSIVE_PARSE)
 
 namespace JSC {
 
@@ -121,5 +120,4 @@ struct JSToken {
 
 int jsParse(JSGlobalData*);
 }
-#endif
 #endif // JSParser_h

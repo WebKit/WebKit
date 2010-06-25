@@ -43,11 +43,7 @@ namespace JSC {
     }
 
     inline Node::Node(JSGlobalData* globalData)
-#if ENABLE(RECURSIVE_PARSE)
         : m_line(globalData->lexer->lastLineNumber())
-#else
-        : m_line(globalData->lexer->lineNumber())
-#endif
     {
     }
 

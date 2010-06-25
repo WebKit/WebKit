@@ -52,12 +52,8 @@ void Parser::parse(JSGlobalData* globalData, int* errLine, UString* errMsg)
 
     Lexer& lexer = *globalData->lexer;
     lexer.setCode(*m_source, m_arena);
-    
-#if ENABLE(RECURSIVE_PARSE)
+
     int parseError = jsParse(globalData);
-#else
-    int parseError = jscyyparse(globalData);
-#endif
     int lineNumber = lexer.lineNumber();
     bool lexError = lexer.sawError();
     lexer.clear();

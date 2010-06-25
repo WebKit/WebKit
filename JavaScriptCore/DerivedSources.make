@@ -39,7 +39,6 @@ all : \
     ArrayPrototype.lut.h \
     chartables.c \
     DatePrototype.lut.h \
-    Grammar.cpp \
     JSONObject.lut.h \
     Lexer.lut.h \
     MathObject.lut.h \
@@ -60,16 +59,6 @@ all : \
 	$^ -i > $@
 Lexer.lut.h: create_hash_table Keywords.table
 	$^ > $@
-
-# JavaScript language grammar
-
-Grammar.cpp: Grammar.y
-	bison -d -p jscyy $< -o $@ > bison_out.txt 2>&1
-	perl -p -e 'END { if ($$conflict) { unlink "Grammar.cpp"; die; } } $$conflict ||= /conflict/' < bison_out.txt
-	touch Grammar.cpp.h
-	touch Grammar.hpp
-	cat Grammar.cpp.h Grammar.hpp > Grammar.h
-	rm -f Grammar.cpp.h Grammar.hpp bison_out.txt
 
 # character tables for PCRE
 

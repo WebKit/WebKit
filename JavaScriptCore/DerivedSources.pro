@@ -26,9 +26,6 @@ LUT_FILES += \
 KEYWORDLUT_FILES += \
     parser/Keywords.table
 
-JSCBISON += \
-    parser/Grammar.y
-
 RVCT_STUB_FILES += \
     jit/JITStubs.cpp
 
@@ -67,13 +64,6 @@ keywordlut.wkScript = $$PWD/create_hash_table
 keywordlut.commands = perl $$keywordlut.wkScript ${QMAKE_FILE_NAME} -i > ${QMAKE_FILE_OUT}
 keywordlut.depends = ${QMAKE_FILE_NAME}
 addExtraCompiler(keywordlut)
-
-# GENERATOR 2: bison grammar
-jscbison.output = $${JSC_GENERATED_SOURCES_DIR}$${QMAKE_DIR_SEP}${QMAKE_FILE_BASE}.cpp
-jscbison.input = JSCBISON
-jscbison.commands = bison -d -p jscyy ${QMAKE_FILE_NAME} -o $${JSC_GENERATED_SOURCES_DIR}$${QMAKE_DIR_SEP}${QMAKE_FILE_BASE}.tab.c && $(MOVE) $${JSC_GENERATED_SOURCES_DIR}$${QMAKE_DIR_SEP}${QMAKE_FILE_BASE}.tab.c ${QMAKE_FILE_OUT} && $(MOVE) $${JSC_GENERATED_SOURCES_DIR}$${QMAKE_DIR_SEP}${QMAKE_FILE_BASE}.tab.h $${JSC_GENERATED_SOURCES_DIR}$${QMAKE_DIR_SEP}${QMAKE_FILE_BASE}.h
-jscbison.depends = ${QMAKE_FILE_NAME}
-addExtraCompiler(jscbison)
 
 # GENERATOR 3: JIT Stub functions for RVCT
 rvctstubs.output = $${JSC_GENERATED_SOURCES_DIR}$${QMAKE_DIR_SEP}Generated${QMAKE_FILE_BASE}_RVCT.h

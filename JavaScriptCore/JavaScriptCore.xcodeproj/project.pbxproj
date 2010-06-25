@@ -145,7 +145,6 @@
 		1482B74E0A43032800517CFC /* JSStringRef.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1482B74C0A43032800517CFC /* JSStringRef.cpp */; };
 		1482B7E40A43076000517CFC /* JSObjectRef.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1482B7E20A43076000517CFC /* JSObjectRef.cpp */; };
 		148CD1D8108CF902008163C6 /* JSContextRefPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 148CD1D7108CF902008163C6 /* JSContextRefPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		148F21A3107EC5310042EC2C /* Grammar.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65FB3F4809D11B2400F49DEB /* Grammar.cpp */; };
 		148F21AA107EC53A0042EC2C /* BytecodeGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 969A07200ED1CE3300F1F681 /* BytecodeGenerator.cpp */; };
 		148F21B0107EC5410042EC2C /* Lexer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F692A8650255597D01FF60F7 /* Lexer.cpp */; };
 		148F21B7107EC5470042EC2C /* Nodes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F692A86D0255597D01FF60F7 /* Nodes.cpp */; };
@@ -476,7 +475,6 @@
 		BC18C52A0E16FCC200B34460 /* MathObject.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = BC18C5290E16FCC200B34460 /* MathObject.lut.h */; };
 		BC18C52C0E16FCD200B34460 /* RegExpObject.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = BC18C52B0E16FCD200B34460 /* RegExpObject.lut.h */; };
 		BC18C52E0E16FCE100B34460 /* Lexer.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = BC18C52D0E16FCE100B34460 /* Lexer.lut.h */; };
-		BC18C5300E16FCEB00B34460 /* Grammar.h in Headers */ = {isa = PBXBuildFile; fileRef = BC18C52F0E16FCEB00B34460 /* Grammar.h */; };
 		BC257DE80E1F51C50016B6C9 /* Arguments.h in Headers */ = {isa = PBXBuildFile; fileRef = BC257DE60E1F51C50016B6C9 /* Arguments.h */; };
 		BC257DF00E1F52ED0016B6C9 /* GlobalEvalFunction.h in Headers */ = {isa = PBXBuildFile; fileRef = BC257DEE0E1F52ED0016B6C9 /* GlobalEvalFunction.h */; };
 		BC257DF40E1F53740016B6C9 /* PrototypeFunction.h in Headers */ = {isa = PBXBuildFile; fileRef = BC257DF20E1F53740016B6C9 /* PrototypeFunction.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -758,7 +756,6 @@
 		65EA4C9A092AF9E20093D800 /* JSLock.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = JSLock.h; sourceTree = "<group>"; tabWidth = 8; };
 		65EA73620BAE35D1001BB560 /* CommonIdentifiers.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CommonIdentifiers.cpp; sourceTree = "<group>"; };
 		65EA73630BAE35D1001BB560 /* CommonIdentifiers.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CommonIdentifiers.h; sourceTree = "<group>"; };
-		65FB3F4809D11B2400F49DEB /* Grammar.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Grammar.cpp; sourceTree = "<group>"; };
 		704FD35305697E6D003DBED9 /* BooleanObject.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = BooleanObject.h; sourceTree = "<group>"; tabWidth = 8; };
 		7E2C6C980D31C6B6002D44E2 /* ScopeChainMark.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScopeChainMark.h; sourceTree = "<group>"; };
 		7E4EE7080EBB7963005934AA /* StructureChain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StructureChain.h; sourceTree = "<group>"; };
@@ -843,7 +840,6 @@
 		932F5BE10822A1C700736975 /* jsc */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = jsc; sourceTree = BUILT_PRODUCTS_DIR; };
 		93303FE80E6A72B500786E6A /* SmallStrings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SmallStrings.cpp; sourceTree = "<group>"; };
 		93303FEA0E6A72C000786E6A /* SmallStrings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SmallStrings.h; sourceTree = "<group>"; };
-		933A3499038AE7C6008635CE /* Grammar.y */ = {isa = PBXFileReference; explicitFileType = sourcecode.yacc; fileEncoding = 4; indentWidth = 4; path = Grammar.y; sourceTree = "<group>"; tabWidth = 8; };
 		933A349A038AE7C6008635CE /* Identifier.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = Identifier.h; sourceTree = "<group>"; tabWidth = 8; };
 		933A349D038AE80F008635CE /* Identifier.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Identifier.cpp; sourceTree = "<group>"; tabWidth = 8; };
 		935AF46909E9D9DB00ACD1D8 /* Forward.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Forward.h; sourceTree = "<group>"; };
@@ -979,7 +975,6 @@
 		BC18C5290E16FCC200B34460 /* MathObject.lut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MathObject.lut.h; sourceTree = "<group>"; };
 		BC18C52B0E16FCD200B34460 /* RegExpObject.lut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegExpObject.lut.h; sourceTree = "<group>"; };
 		BC18C52D0E16FCE100B34460 /* Lexer.lut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Lexer.lut.h; sourceTree = "<group>"; };
-		BC18C52F0E16FCEB00B34460 /* Grammar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Grammar.h; sourceTree = "<group>"; };
 		BC22A3980E16E14800AF21C8 /* JSObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSObject.cpp; sourceTree = "<group>"; };
 		BC22A3990E16E14800AF21C8 /* JSObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSObject.h; sourceTree = "<group>"; };
 		BC22A39A0E16E14800AF21C8 /* JSVariableObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSVariableObject.cpp; sourceTree = "<group>"; };
@@ -1381,8 +1376,6 @@
 				BC18C5230E16FC8A00B34460 /* ArrayPrototype.lut.h */,
 				65B174BE09D1000200820339 /* chartables.c */,
 				BCD203E70E1718F4002C7E82 /* DatePrototype.lut.h */,
-				65FB3F4809D11B2400F49DEB /* Grammar.cpp */,
-				BC18C52F0E16FCEB00B34460 /* Grammar.h */,
 				BC87CDB810712ACA000614CF /* JSONObject.lut.h */,
 				BC18C52D0E16FCE100B34460 /* Lexer.lut.h */,
 				BC18C5290E16FCC200B34460 /* MathObject.lut.h */,
@@ -1531,7 +1524,6 @@
 			isa = PBXGroup;
 			children = (
 				A7A7EE7411B98B8D0065A14F /* ASTBuilder.h */,
-				933A3499038AE7C6008635CE /* Grammar.y */,
 				A7A7EE7511B98B8D0065A14F /* JSParser.cpp */,
 				A7A7EE7611B98B8D0065A14F /* JSParser.h */,
 				93F1981A08245AAE001E9ABC /* Keywords.table */,
@@ -1967,7 +1959,6 @@
 				BC18C4050E16F5CD00B34460 /* FunctionPrototype.h in Headers */,
 				BC18C4060E16F5CD00B34460 /* GetPtr.h in Headers */,
 				BC257DF00E1F52ED0016B6C9 /* GlobalEvalFunction.h in Headers */,
-				BC18C5300E16FCEB00B34460 /* Grammar.h in Headers */,
 				BC18C4080E16F5CD00B34460 /* HashCountedSet.h in Headers */,
 				BC18C4090E16F5CD00B34460 /* HashFunctions.h in Headers */,
 				BC18C40A0E16F5CD00B34460 /* HashIterators.h in Headers */,
@@ -2505,7 +2496,6 @@
 				147F39CC107EC37600427A48 /* FunctionPrototype.cpp in Sources */,
 				14280855107EC0E70013E7B2 /* GetterSetter.cpp in Sources */,
 				147F39CD107EC37600427A48 /* GlobalEvalFunction.cpp in Sources */,
-				148F21A3107EC5310042EC2C /* Grammar.cpp in Sources */,
 				65DFC93308EA173A00F7300B /* HashTable.cpp in Sources */,
 				147F39CE107EC37600427A48 /* Identifier.cpp in Sources */,
 				E178636D0D9BEEC300D74E75 /* InitializeThreading.cpp in Sources */,

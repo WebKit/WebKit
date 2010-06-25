@@ -1089,10 +1089,6 @@ on MinGW. See https://bugs.webkit.org/show_bug.cgi?id=29268 */
 
 #define ENABLE_JSC_ZOMBIES 0
 
-#if !defined(BUILDING_ON_TIGER)
-#define ENABLE_RECURSIVE_PARSE 1
-#endif
-
 /* FIXME: Eventually we should enable this for all platforms and get rid of the define. */
 #if PLATFORM(MAC)
 #define WTF_USE_PLATFORM_STRATEGIES 1

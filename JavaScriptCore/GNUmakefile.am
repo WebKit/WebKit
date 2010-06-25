@@ -556,18 +556,6 @@ javascriptcore_sources += \
 	JavaScriptCore/wtf/dtoa.cpp \
 	JavaScriptCore/wtf/dtoa.h
 
-javascriptcore_built_sources += \
-	DerivedSources/Grammar.cpp \
-	DerivedSources/Grammar.h
-
-DerivedSources/Grammar.h: DerivedSources/Grammar.cpp;
-
-DerivedSources/Grammar.cpp: $(srcdir)/JavaScriptCore/parser/Grammar.y
-	$(BISON) -d -p jscyy $(srcdir)/JavaScriptCore/parser/Grammar.y -o $@ > bison_out.txt 2>&1
-	$(PERL) -p -e 'END { if ($$conflict) { unlink "Grammar.cpp"; die; } } $$conflict ||= /conflict/' < bison_out.txt
-	cat $(GENSOURCES)/Grammar.hpp > $(GENSOURCES)/Grammar.h
-	rm -f $(GENSOURCES)/Grammar.hpp bison_out.txt
-
 DerivedSources/Lexer.lut.h: $(CREATE_HASH_TABLE) $(srcdir)/JavaScriptCore/parser/Keywords.table
 	$(PERL) $^ > $@
 
@@ -648,7 +636,6 @@ javascriptcore_dist += \
 	JavaScriptCore/pcre/AUTHORS \
 	JavaScriptCore/pcre/dftables \
 	JavaScriptCore/pcre/ucptable.cpp \
-	JavaScriptCore/parser/Grammar.y \
 	JavaScriptCore/parser/Keywords.table
 
 # Clean rules for JavaScriptCore
