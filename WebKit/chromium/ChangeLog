@@ -1,3 +1,14 @@
+2010-06-25  John Gregg  <johnnyg@google.com>
+
+        Reviewed by Darin Fisher.
+
+        Notification should expose ltr/rtl as TextDirection, not String
+        https://bugs.webkit.org/show_bug.cgi?id=40871
+
+        * public/WebNotification.h:
+        * src/WebNotification.cpp:
+        (WebKit::WebNotification::direction):
+
 2010-06-24  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.
