@@ -1,3 +1,22 @@
+2010-05-28  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        [GStreamer] multiple video sink support
+        https://bugs.webkit.org/show_bug.cgi?id=39472
+
+        Playbin2 video-sink is now a bin containing a tee element capable
+        of dispatching the buffers to multiple video sinks. By default
+        only our webkit video sink is used. This will allow
+        GStreamerGWorld to add support for autovideosink in the future.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::MediaPlayerPrivateGStreamer):
+        (WebCore::MediaPlayerPrivateGStreamer::~MediaPlayerPrivateGStreamer):
+        (WebCore::MediaPlayerPrivateGStreamer::naturalSize):
+        (WebCore::MediaPlayerPrivateGStreamer::createGSTPlayBin):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h:
+
 2010-06-24  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

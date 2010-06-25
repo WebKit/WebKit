@@ -146,7 +146,8 @@ class MediaPlayerPrivateGStreamer : public MediaPlayerPrivateInterface {
         private:
             MediaPlayer* m_player;
             GstElement* m_playBin;
-            GstElement* m_videoSink;
+            GstElement* m_webkitVideoSink;
+            GstElement* m_videoSinkBin;
             GstElement* m_fpsSink;
             GstElement* m_source;
             GstClockTime m_seekTime;

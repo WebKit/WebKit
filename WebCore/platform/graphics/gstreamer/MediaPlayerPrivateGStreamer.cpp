@@ -276,7 +276,7 @@ bool MediaPlayerPrivateGStreamer::isAvailable()
 MediaPlayerPrivateGStreamer::MediaPlayerPrivateGStreamer(MediaPlayer* player)
     : m_player(player)
     , m_playBin(0)
-    , m_videoSink(0)
+    , m_webkitVideoSink(0)
     , m_fpsSink(0)
     , m_source(0)
     , m_seekTime(0)
@@ -327,20 +327,16 @@ MediaPlayerPrivateGStreamer::~MediaPlayerPrivateGStreamer()
         m_source = 0;
     }
 
+    if (m_videoSinkBin) {
+        gst_object_unref(m_videoSinkBin);
+        m_videoSinkBin = 0;
+    }
+
     if (m_playBin) {
         gst_element_set_state(m_playBin, GST_STATE_NULL);
         gst_object_unref(GST_OBJECT(m_playBin));
     }
 
-    if (m_videoSink) {
-        g_object_unref(m_videoSink);
-        m_videoSink = 0;
-    }
-
-    if (m_fpsSink) {
-        g_object_unref(m_fpsSink);
-        m_fpsSink = 0;
-    }
 }
 
 void MediaPlayerPrivateGStreamer::load(const String& url)
@@ -515,7 +511,7 @@ IntSize MediaPlayerPrivateGStreamer::naturalSize() const
     if (!hasVideo())
         return IntSize();
 
-    GstPad* pad = gst_element_get_static_pad(m_videoSink, "sink");
+    GstPad* pad = gst_element_get_static_pad(m_webkitVideoSink, "sink");
     if (!pad)
         return IntSize();
 
@@ -1349,7 +1345,6 @@ bool MediaPlayerPrivateGStreamer::supportsFullscreen() const
     return true;
 }
 
-
 PlatformMedia MediaPlayerPrivateGStreamer::platformMedia() const
 {
     PlatformMedia p;
@@ -1393,26 +1388,56 @@ void MediaPlayerPrivateGStreamer::createGSTPlayBin()
     g_signal_connect(m_playBin, "notify::source", G_CALLBACK(mediaPlayerPrivateSourceChangedCallback), this);
     g_signal_connect(m_playBin, "notify::mute", G_CALLBACK(mediaPlayerPrivateMuteChangedCallback), this);
 
-    m_videoSink = webkit_video_sink_new();
+    m_webkitVideoSink = webkit_video_sink_new();
 
-    g_object_ref_sink(m_videoSink);
+    g_signal_connect(m_webkitVideoSink, "repaint-requested", G_CALLBACK(mediaPlayerPrivateRepaintCallback), this);
+
+    m_videoSinkBin = gst_bin_new("sink");
+    GstElement* videoTee = gst_element_factory_make("tee", "videoTee");
+    GstElement* queue = gst_element_factory_make("queue", 0);
+
+    // Take ownership.
+    g_object_ref_sink(m_videoSinkBin);
+
+    // Build a new video sink consisting of a bin containing a tee
+    // (meant to distribute data to multiple video sinks) and our
+    // internal video sink. For fullscreen we create an autovideosink
+    // and initially block the data flow towards it and configure it
+
+    gst_bin_add_many(GST_BIN(m_videoSinkBin), videoTee, queue, NULL);
+
+    // Link a new src pad from tee to queue1.
+    GstPad* srcPad = gst_element_get_request_pad(videoTee, "src%d");
+    GstPad* sinkPad = gst_element_get_static_pad(queue, "sink");
+    gst_pad_link(srcPad, sinkPad);
+    gst_object_unref(GST_OBJECT(srcPad));
+    gst_object_unref(GST_OBJECT(sinkPad));
 
     WTFLogChannel* channel = getChannelFromName("Media");
     if (channel->state == WTFLogChannelOn) {
         m_fpsSink = gst_element_factory_make("fpsdisplaysink", "sink");
         if (g_object_class_find_property(G_OBJECT_GET_CLASS(m_fpsSink), "video-sink")) {
-            g_object_set(m_fpsSink, "video-sink", m_videoSink, NULL);
-            g_object_ref_sink(m_fpsSink);
-            g_object_set(m_playBin, "video-sink", m_fpsSink, NULL);
+            g_object_set(m_fpsSink, "video-sink", m_webkitVideoSink, NULL);
+            gst_bin_add(GST_BIN(m_videoSinkBin), m_fpsSink);
+            gst_element_link(queue, m_fpsSink);
         } else {
             m_fpsSink = 0;
-            g_object_set(m_playBin, "video-sink", m_videoSink, NULL);
+            gst_bin_add(GST_BIN(m_videoSinkBin), m_webkitVideoSink);
+            gst_element_link(queue, m_webkitVideoSink);
             LOG_VERBOSE(Media, "Can't display FPS statistics, you need gst-plugins-bad >= 0.10.18");
         }
-    } else
-        g_object_set(m_playBin, "video-sink", m_videoSink, NULL);
+    } else {
+        gst_bin_add(GST_BIN(m_videoSinkBin), m_webkitVideoSink);
+        gst_element_link(queue, m_webkitVideoSink);
+    }
 
-    g_signal_connect(m_videoSink, "repaint-requested", G_CALLBACK(mediaPlayerPrivateRepaintCallback), this);
+    // Add a ghostpad to the bin so it can proxy to tee.
+    GstPad* pad = gst_element_get_static_pad(videoTee, "sink");
+    gst_element_add_pad(m_videoSinkBin, gst_ghost_pad_new("sink", pad));
+    gst_object_unref(GST_OBJECT(pad));
+
+    // Set the bin as video sink of playbin.
+    g_object_set(m_playBin, "video-sink", m_videoSinkBin, NULL);
 }
 
 }
