@@ -29773,6 +29773,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\dom\DocumentParser.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\dom\DocumentParser.h"
 				>
 			</File>

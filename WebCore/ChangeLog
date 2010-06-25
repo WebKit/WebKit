@@ -1,3 +1,14 @@
+2010-06-25  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Move decoding into DocumentParser to further simplify RawDataDocumentParser and DocumentWriter
+        https://bugs.webkit.org/show_bug.cgi?id=41202
+
+        Hit the Windoze with the compile bat.
+
+        * WebCore.vcproj/WebCore.vcproj:
+
 2010-06-25  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
