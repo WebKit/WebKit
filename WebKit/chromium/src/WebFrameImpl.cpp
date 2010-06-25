@@ -2150,14 +2150,8 @@ void WebFrameImpl::loadJavaScriptURL(const KURL& url)
     if (!result.getString(scriptResult))
         return;
 
-    SecurityOrigin* securityOrigin = m_frame->document()->securityOrigin();
-
-    if (!m_frame->redirectScheduler()->locationChangePending()) {
-        m_frame->loader()->stopAllLoaders();
-        m_frame->loader()->writer()->begin(m_frame->loader()->url(), true, securityOrigin);
-        m_frame->loader()->writer()->addData(scriptResult);
-        m_frame->loader()->writer()->end();
-    }
+    if (!m_frame->redirectScheduler()->locationChangePending())
+        m_frame->loader()->writer()->replaceDocument(scriptResult);
 }
 
 } // namespace WebKit

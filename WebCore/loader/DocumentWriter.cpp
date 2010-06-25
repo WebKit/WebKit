@@ -72,9 +72,6 @@ void DocumentWriter::replaceDocument(const String& source)
             m_receivedData = true;
             m_frame->document()->setParseMode(Document::Strict);
         }
-
-        // FIXME: If we wanted to support the <img src='javascript:'imagedata'>
-        // case then we would need to call addData(char*, int) instead.
         if (DocumentParser* parser = m_frame->document()->parser())
             parser->write(source, true);
     }

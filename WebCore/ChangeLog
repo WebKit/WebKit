@@ -1,3 +1,16 @@
+2010-06-24  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Clean up and document DocumentWriter::replaceDocument code path
+        https://bugs.webkit.org/show_bug.cgi?id=41182
+
+        No functional changes, thus no tests.
+
+        * loader/DocumentWriter.cpp:
+        (WebCore::DocumentWriter::replaceDocument):
+         - Remove comment which could be misleading.
+
 2010-06-23  Dumitru Daniliuc  <dumi@chromium.org>
 
         Reviewed by Adam Barth.
