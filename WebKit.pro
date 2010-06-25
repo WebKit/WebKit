@@ -24,7 +24,8 @@ exists($$PWD/WebKitTools/DumpRenderTree/qt/ImageDiff.pro): SUBDIRS += WebKitTool
 build-qtscript {
     SUBDIRS += \
         JavaScriptCore/qt/api/QtScript.pro \
-        JavaScriptCore/qt/tests
+        JavaScriptCore/qt/tests \
+        JavaScriptCore/qt/benchmarks
 }
 
 symbian {

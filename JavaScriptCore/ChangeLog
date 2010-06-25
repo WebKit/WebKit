@@ -1,3 +1,84 @@
+2010-06-25  Jedrzej Nowacki  <jedrzej.nowacki@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        Introduce QtScript benchmarks.
+
+        The QtScript performance should be tested regularly. The patch introduces
+        micro benchmarks for existing API.
+
+        [Qt] Performance of the QtScript API is not tested.
+        https://bugs.webkit.org/show_bug.cgi?id=40911
+
+        * qt/benchmarks/benchmarks.pri: Copied from JavaScriptCore/qt/tests/tests.pri.
+        * qt/benchmarks/benchmarks.pro: Added.
+        * qt/benchmarks/qscriptengine/qscriptengine.pro: Added.
+        * qt/benchmarks/qscriptengine/tst_qscriptengine.cpp: Added.
+        (tst_QScriptEngine::checkSyntax_data):
+        (tst_QScriptEngine::checkSyntax):
+        (tst_QScriptEngine::constructor):
+        (tst_QScriptEngine::evaluateString_data):
+        (tst_QScriptEngine::evaluateString):
+        (tst_QScriptEngine::evaluateProgram_data):
+        (tst_QScriptEngine::evaluateProgram):
+        (tst_QScriptEngine::newObject):
+        (tst_QScriptEngine::nullValue):
+        (tst_QScriptEngine::undefinedValue):
+        (tst_QScriptEngine::globalObject):
+        (tst_QScriptEngine::toStringHandle):
+        * qt/benchmarks/qscriptvalue/qscriptvalue.pro: Added.
+        * qt/benchmarks/qscriptvalue/tst_qscriptvalue.cpp: Added.
+        (tst_QScriptValue::tst_QScriptValue):
+        (tst_QScriptValue::~tst_QScriptValue):
+        (tst_QScriptValue::values_data):
+        (tst_QScriptValue::ctorBool):
+        (tst_QScriptValue::ctorReal):
+        (tst_QScriptValue::ctorNumber):
+        (tst_QScriptValue::ctorQString):
+        (tst_QScriptValue::ctorCString):
+        (tst_QScriptValue::ctorSpecial):
+        (tst_QScriptValue::ctorQScriptValue):
+        (tst_QScriptValue::isValid_data):
+        (tst_QScriptValue::isValid):
+        (tst_QScriptValue::isBool_data):
+        (tst_QScriptValue::isBool):
+        (tst_QScriptValue::isNumber_data):
+        (tst_QScriptValue::isNumber):
+        (tst_QScriptValue::isFunction_data):
+        (tst_QScriptValue::isFunction):
+        (tst_QScriptValue::isNull_data):
+        (tst_QScriptValue::isNull):
+        (tst_QScriptValue::isString_data):
+        (tst_QScriptValue::isString):
+        (tst_QScriptValue::isUndefined_data):
+        (tst_QScriptValue::isUndefined):
+        (tst_QScriptValue::isObject_data):
+        (tst_QScriptValue::isObject):
+        (tst_QScriptValue::isError_data):
+        (tst_QScriptValue::isError):
+        (tst_QScriptValue::toString_data):
+        (tst_QScriptValue::toString):
+        (tst_QScriptValue::toNumber_data):
+        (tst_QScriptValue::toNumber):
+        (tst_QScriptValue::toBool_data):
+        (tst_QScriptValue::toBool):
+        (tst_QScriptValue::toInteger_data):
+        (tst_QScriptValue::toInteger):
+        (tst_QScriptValue::toInt32_data):
+        (tst_QScriptValue::toInt32):
+        (tst_QScriptValue::toUInt32_data):
+        (tst_QScriptValue::toUInt32):
+        (tst_QScriptValue::toUInt16_data):
+        (tst_QScriptValue::toUInt16):
+        (tst_QScriptValue::toObject_data):
+        (tst_QScriptValue::toObject):
+        (tst_QScriptValue::equals_data):
+        (tst_QScriptValue::equals):
+        (tst_QScriptValue::strictlyEquals_data):
+        (tst_QScriptValue::strictlyEquals):
+        (tst_QScriptValue::instanceOf_data):
+        (tst_QScriptValue::instanceOf):
+
 2010-06-25  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Geoffrey Garen.
