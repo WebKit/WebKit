@@ -25,6 +25,7 @@
 #include "qscriptvalue.h"
 #include <JavaScriptCore/JavaScript.h>
 #include <JavaScriptCore/JSRetainPtr.h>
+#include <JSObjectRefPrivate.h>
 #include <QtCore/qmath.h>
 #include <QtCore/qnumeric.h>
 #include <QtCore/qshareddata.h>
@@ -108,8 +109,11 @@ public:
     inline qint32 toInt32() const;
     inline quint32 toUInt32() const;
     inline quint16 toUInt16() const;
+
     inline QScriptValuePrivate* toObject(QScriptEnginePrivate* engine);
     inline QScriptValuePrivate* toObject();
+    inline QScriptValuePrivate* prototype();
+    inline void setPrototype(QScriptValuePrivate* prototype);
 
     inline bool equals(QScriptValuePrivate* other);
     inline bool strictlyEquals(QScriptValuePrivate* other);
@@ -607,6 +611,35 @@ QScriptValuePrivate* QScriptValuePrivate::toObject()
 
     // Without an engine there is not much we can do.
     return new QScriptValuePrivate;
+}
+
+inline QScriptValuePrivate* QScriptValuePrivate::prototype()
+{
+    if (isObject()) {
+        JSValueRef prototype = JSObjectGetPrototype(*m_engine, *this);
+        if (JSValueIsNull(*m_engine, prototype))
+            return new QScriptValuePrivate(engine(), prototype);
+        // The prototype could be either a null or a JSObject, so it is safe to cast the prototype
+        // to the JSObjectRef here.
+        return new QScriptValuePrivate(engine(), prototype, const_cast<JSObjectRef>(prototype));
+    }
+    return new QScriptValuePrivate;
+}
+
+inline void QScriptValuePrivate::setPrototype(QScriptValuePrivate* prototype)
+{
+    if (isObject() && prototype->isValid() && (prototype->isObject() || prototype->isNull())) {
+        if (engine() != prototype->engine()) {
+            qWarning("QScriptValue::setPrototype() failed: cannot set a prototype created in a different engine");
+            return;
+        }
+        // FIXME: This could be replaced by a new, faster API
+        // look at https://bugs.webkit.org/show_bug.cgi?id=40060
+        JSObjectSetPrototype(*m_engine, *this, *prototype);
+        JSValueRef proto = JSObjectGetPrototype(*m_engine, *this);
+        if (!JSValueIsStrictEqual(*m_engine, proto, *prototype))
+            qWarning("QScriptValue::setPrototype() failed: cyclic prototype value");
+    }
 }
 
 bool QScriptValuePrivate::equals(QScriptValuePrivate* other)

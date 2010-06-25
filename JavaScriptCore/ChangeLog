@@ -1,3 +1,25 @@
+2010-06-25  Jedrzej Nowacki  <jedrzej.nowacki@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        New QtScript API; setPrototype() and prototype().
+
+        This patch implements QScriptValue's prototype accessors.
+
+        [Qt] QScriptValue should have accessors to a prototype.
+        https://bugs.webkit.org/show_bug.cgi?id=39356
+
+        * qt/api/qscriptvalue.cpp:
+        (QScriptValue::prototype):
+        (QScriptValue::setPrototype):
+        * qt/api/qscriptvalue.h:
+        * qt/api/qscriptvalue_p.h:
+        (QScriptValuePrivate::prototype):
+        (QScriptValuePrivate::setPrototype):
+        * qt/tests/qscriptvalue/tst_qscriptvalue.cpp:
+        (tst_QScriptValue::getSetPrototype):
+        * qt/tests/qscriptvalue/tst_qscriptvalue.h:
+
 2010-06-25  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
 
         Reviewed by Kenneth Rohde Christiansen.

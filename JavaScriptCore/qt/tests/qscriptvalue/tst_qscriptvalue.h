@@ -47,6 +47,7 @@ private slots:
     void dataSharing();
     void constructors_data();
     void constructors();
+    void getSetPrototype();
     void call();
     void ctor();
     void toObjectSimple();

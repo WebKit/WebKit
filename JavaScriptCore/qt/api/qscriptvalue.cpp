@@ -518,6 +518,34 @@ QScriptEngine* QScriptValue::engine() const
 }
 
 /*!
+  If this QScriptValue is an object, returns the internal prototype
+  (\c{__proto__} property) of this object; otherwise returns an
+  invalid QScriptValue.
+
+  \sa setPrototype(), isObject()
+*/
+QScriptValue QScriptValue::prototype() const
+{
+    return QScriptValuePrivate::get(d_ptr->prototype());
+}
+
+/*!
+  If this QScriptValue is an object, sets the internal prototype
+  (\c{__proto__} property) of this object to be \a prototype;
+  otherwise does nothing.
+
+  The internal prototype should not be confused with the public
+  property with name "prototype"; the public prototype is usually
+  only set on functions that act as constructors.
+
+  \sa prototype(), isObject()
+*/
+void QScriptValue::setPrototype(const QScriptValue& prototype)
+{
+    d_ptr->setPrototype(QScriptValuePrivate::get(prototype));
+}
+
+/*!
   Assigns the \a other value to this QScriptValue.
 
   Note that if \a other is an object (isObject() returns true),
