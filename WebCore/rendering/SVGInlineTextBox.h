@@ -81,10 +81,13 @@ private:
     bool prepareGraphicsContextForTextPainting(GraphicsContext*&, TextRun&, RenderStyle*);
     void restoreGraphicsContextAfterTextPainting(GraphicsContext*&, TextRun&);
 
+    void computeTextMatchMarkerRect(RenderStyle*);
     void paintDecoration(GraphicsContext*, const FloatPoint& textOrigin, ETextDecoration, bool hasSelection);
     void paintDecorationWithStyle(GraphicsContext*, const FloatPoint& textOrigin, RenderStyle*, ETextDecoration);
     void paintSelection(GraphicsContext*, const FloatPoint& textOrigin, RenderStyle*);
-    void paintText(GraphicsContext*, const FloatPoint& textOrigin, RenderStyle*, RenderStyle* selectionStyle, bool hasSelection);
+    void paintText(GraphicsContext*, const FloatPoint& textOrigin, RenderStyle*, RenderStyle* selectionStyle, bool hasSelection, bool paintSelectedTextOnly);
+
+    FloatRect selectionRectForTextChunkPart(const SVGTextChunkPart&, int partStartPos, int partEndPos, RenderStyle*);
 
 private:
     int m_height;

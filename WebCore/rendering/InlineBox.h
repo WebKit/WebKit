@@ -147,14 +147,14 @@ public:
         ASSERT_NOT_REACHED();
         return 0;
     }
+#endif
 
     virtual IntRect calculateBoundaries() const
     {
         ASSERT_NOT_REACHED();
         return IntRect();
     }
-#endif
-    
+
     bool isConstructed() { return m_constructed; }
     virtual void setConstructed()
     {

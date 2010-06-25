@@ -137,6 +137,27 @@ int SVGInlineTextBox::positionForOffset(int) const
     return 0;
 }
 
+FloatRect SVGInlineTextBox::selectionRectForTextChunkPart(const SVGTextChunkPart& part, int partStartPos, int partEndPos, RenderStyle* style)
+{
+    // Map startPos/endPos positions into chunk part
+    mapStartEndPositionsIntoChunkPartCoordinates(partStartPos, partEndPos, part);
+
+    if (partStartPos >= partEndPos)
+        return FloatRect();
+
+    // Set current chunk part, so constructTextRun() works properly.
+    m_currentChunkPart = part;
+
+    const Font& font = style->font();
+    Vector<SVGChar>::const_iterator character = part.firstCharacter;
+    FloatPoint textOrigin(character->x, character->y - font.ascent());
+
+    FloatRect partRect(font.selectionRectForText(constructTextRun(style), textOrigin, part.height, partStartPos, partEndPos));
+    m_currentChunkPart = SVGTextChunkPart();
+
+    return character->characterTransform().mapRect(partRect);
+}
+
 IntRect SVGInlineTextBox::selectionRect(int, int, int startPos, int endPos)
 {
     ASSERT(!m_currentChunkPart.isValid());
@@ -154,32 +175,12 @@ IntRect SVGInlineTextBox::selectionRect(int, int, int startPos, int endPos)
     RenderStyle* style = text->style();
     ASSERT(style);
 
-    const Font& font = style->font();
-    int baseline = font.ascent();
     FloatRect selectionRect;
 
     // Figure out which text chunk part is hit
-    int partStartPos = 0;
-    int partEndPos = 0;
-
     const Vector<SVGTextChunkPart>::const_iterator end = m_svgTextChunkParts.end();
-    for (Vector<SVGTextChunkPart>::const_iterator it = m_svgTextChunkParts.begin(); it != end; ++it) {
-        partStartPos = startPos;
-        partEndPos = endPos;
-
-        // Select current chunk part, map startPos/endPos positions into chunk part
-        m_currentChunkPart = *it;
-        mapStartEndPositionsIntoChunkPartCoordinates(partStartPos, partEndPos, m_currentChunkPart);
-
-        if (partStartPos < partEndPos) {
-            Vector<SVGChar>::const_iterator character = m_currentChunkPart.firstCharacter;
-            FloatPoint textOrigin(character->x, character->y - baseline);
-            FloatRect partRect(font.selectionRectForText(constructTextRun(style), textOrigin, m_currentChunkPart.height, partStartPos, partEndPos));
-            selectionRect.unite(character->characterTransform().mapRect(partRect));
-        }
-
-        m_currentChunkPart = SVGTextChunkPart();
-    }
+    for (Vector<SVGTextChunkPart>::const_iterator it = m_svgTextChunkParts.begin(); it != end; ++it)
+        selectionRect.unite(selectionRectForTextChunkPart(*it, startPos, endPos, style));
 
     // Resepect possible chunk transformation
     if (m_chunkTransformation.isIdentity())
@@ -191,7 +192,7 @@ IntRect SVGInlineTextBox::selectionRect(int, int, int startPos, int endPos)
 void SVGInlineTextBox::paint(RenderObject::PaintInfo& paintInfo, int, int)
 {
     ASSERT(renderer()->shouldPaintWithinRoot(paintInfo));
-    ASSERT(paintInfo.phase == PaintPhaseForeground);
+    ASSERT(paintInfo.phase == PaintPhaseForeground || paintInfo.phase == PaintPhaseSelection);
     ASSERT(truncation() == cNoTruncation);
 
     if (renderer()->style()->visibility() != VISIBLE)
@@ -211,10 +212,13 @@ void SVGInlineTextBox::paint(RenderObject::PaintInfo& paintInfo, int, int)
 
     bool hasFill = svgStyle->hasFill();
     bool hasStroke = svgStyle->hasStroke();
+    bool paintSelectedTextOnly = paintInfo.phase == PaintPhaseSelection;
 
     // Determine whether or not we're selected.
     bool isPrinting = parentRenderer->document()->printing();
     bool hasSelection = !isPrinting && selectionState() != RenderObject::SelectionNone;
+    if (!hasSelection && paintSelectedTextOnly)
+        return;
 
     RenderStyle* selectionStyle = style;
     if (hasSelection) {
@@ -231,6 +235,9 @@ void SVGInlineTextBox::paint(RenderObject::PaintInfo& paintInfo, int, int)
             selectionStyle = style;
     }
 
+    // Compute text match marker rects. It needs to traverse all text chunk parts to figure
+    // out the union selection rect of all text chunk parts that contribute to the selection.
+    computeTextMatchMarkerRect(style);
     ASSERT(!m_currentChunkPart.isValid());
 
     const Vector<SVGTextChunkPart>::const_iterator end = m_svgTextChunkParts.end();
@@ -253,12 +260,8 @@ void SVGInlineTextBox::paint(RenderObject::PaintInfo& paintInfo, int, int)
         FloatPoint textOrigin(firstCharacter->x, firstCharacter->y);
 
         // Draw background once (not in both fill/stroke phases)
-        if (!isPrinting) {
-            // FIXME: paintDocumentMarkers(paintInfo.context, xOrigin, yOrigin, style, font, true);
-
-            if (hasSelection)
-                paintSelection(paintInfo.context, textOrigin, style);
-        }
+        if (!isPrinting && !paintSelectedTextOnly && hasSelection)
+            paintSelection(paintInfo.context, textOrigin, style);
 
         // Spec: All text decorations except line-through should be drawn before the text is filled and stroked; thus, the text is rendered on top of these decorations.
         int decorations = style->textDecorationsInEffect();
@@ -270,21 +273,18 @@ void SVGInlineTextBox::paint(RenderObject::PaintInfo& paintInfo, int, int)
         // Fill text
         if (hasFill) {
             m_paintingResourceMode = ApplyToFillMode | ApplyToTextMode;
-            paintText(paintInfo.context, textOrigin, style, selectionStyle, hasSelection);
+            paintText(paintInfo.context, textOrigin, style, selectionStyle, hasSelection, paintSelectedTextOnly);
         }
 
         // Stroke text
         if (hasStroke) {
             m_paintingResourceMode = ApplyToStrokeMode | ApplyToTextMode;
-            paintText(paintInfo.context, textOrigin, style, selectionStyle, hasSelection);
+            paintText(paintInfo.context, textOrigin, style, selectionStyle, hasSelection, paintSelectedTextOnly);
         }
 
         // Spec: Line-through should be drawn after the text is filled and stroked; thus, the line-through is rendered on top of the text.
         if (decorations & LINE_THROUGH)
             paintDecoration(paintInfo.context, textOrigin, LINE_THROUGH, hasSelection);
-
-        // Paint document markers
-        // FIXME: paintDocumentMarkers(paintInfo.context, xOrigin, yOrigin, style, font, false);
 
         m_paintingResourceMode = ApplyToDefaultMode;
         paintInfo.context->restore();
@@ -398,6 +398,40 @@ void SVGInlineTextBox::selectionStartEnd(int& startPos, int& endPos)
         return;
 
     mapStartEndPositionsIntoChunkPartCoordinates(startPos, endPos, m_currentChunkPart);
+}
+
+void SVGInlineTextBox::computeTextMatchMarkerRect(RenderStyle* style)
+{
+    ASSERT(!m_currentChunkPart.isValid());
+    Node* node = renderer()->node();
+    if (!node || !node->inDocument())
+        return;
+
+    Document* document = renderer()->document();
+    Vector<DocumentMarker> markers = document->markersForNode(renderer()->node());
+
+    Vector<DocumentMarker>::iterator markerEnd = markers.end();
+    for (Vector<DocumentMarker>::iterator markerIt = markers.begin(); markerIt != markerEnd; ++markerIt) {
+        const DocumentMarker& marker = *markerIt;
+
+        // SVG is only interessted in the TextMatch marker, for now.
+        if (marker.type != DocumentMarker::TextMatch)
+            continue;
+
+        FloatRect markerRect;
+        int partStartPos = max(marker.startOffset - start(), static_cast<unsigned>(0));
+        int partEndPos = min(marker.endOffset - start(), static_cast<unsigned>(len()));
+
+        // Iterate over all text chunk parts, to see which ones have to be highlighted
+        const Vector<SVGTextChunkPart>::const_iterator end = m_svgTextChunkParts.end();
+        for (Vector<SVGTextChunkPart>::const_iterator it = m_svgTextChunkParts.begin(); it != end; ++it)
+            markerRect.unite(selectionRectForTextChunkPart(*it, partStartPos, partEndPos, style));
+
+        if (!m_chunkTransformation.isIdentity())
+            markerRect = m_chunkTransformation.mapRect(markerRect);
+
+        document->setRenderedRectForMarker(node, marker, renderer()->localToAbsoluteQuad(markerRect).enclosingBoundingBox());
+    }
 }
 
 static inline float positionOffsetForDecoration(ETextDecoration decoration, const Font& font, float thickness)
@@ -528,7 +562,7 @@ void SVGInlineTextBox::paintSelection(GraphicsContext* context, const FloatPoint
     context->restore();
 }
 
-void SVGInlineTextBox::paintText(GraphicsContext* context, const FloatPoint& textOrigin, RenderStyle* style, RenderStyle* selectionStyle, bool hasSelection)
+void SVGInlineTextBox::paintText(GraphicsContext* context, const FloatPoint& textOrigin, RenderStyle* style, RenderStyle* selectionStyle, bool hasSelection, bool paintSelectedTextOnly)
 {
     ASSERT(style);
     ASSERT(selectionStyle);
@@ -552,7 +586,7 @@ void SVGInlineTextBox::paintText(GraphicsContext* context, const FloatPoint& tex
     }
 
     // Eventually draw text using regular style until the start position of the selection
-    if (startPos > 0) {
+    if (startPos > 0 && !paintSelectedTextOnly) {
         if (prepareGraphicsContextForTextPainting(context, textRun, style)) {
             font.drawText(context, textRun, textOrigin, 0, startPos);
             restoreGraphicsContextAfterTextPainting(context, textRun);
@@ -567,14 +601,13 @@ void SVGInlineTextBox::paintText(GraphicsContext* context, const FloatPoint& tex
     }
 
     // Eventually draw text using regular style from the end position of the selection to the end of the current chunk part
-    if (endPos < m_currentChunkPart.length) {
+    if (endPos < m_currentChunkPart.length && !paintSelectedTextOnly) {
         if (prepareGraphicsContextForTextPainting(context, textRun, style)) {
             font.drawText(context, textRun, textOrigin, endPos, m_currentChunkPart.length);
             restoreGraphicsContextAfterTextPainting(context, textRun);
         }
     }
 }
-
 
 void SVGInlineTextBox::buildLayoutInformation(SVGCharacterLayoutInfo& info, SVGLastGlyphInfo& lastGlyph)
 {
@@ -817,6 +850,9 @@ IntRect SVGInlineTextBox::calculateBoundaries() const
     const Vector<SVGTextChunkPart>::const_iterator end = m_svgTextChunkParts.end();
     for (Vector<SVGTextChunkPart>::const_iterator it = m_svgTextChunkParts.begin(); it != end; ++it)
         textRect.unite(it->firstCharacter->characterTransform().mapRect(FloatRect(it->firstCharacter->x, it->firstCharacter->y - baseline, it->width, it->height)));
+
+    if (m_chunkTransformation.isIdentity())
+        return enclosingIntRect(textRect);
 
     return enclosingIntRect(m_chunkTransformation.mapRect(textRect));
 }

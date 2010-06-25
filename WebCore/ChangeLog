@@ -1,3 +1,43 @@
+2010-06-25  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Dirk Schulze.
+
+        SVG Text Highlighting not yet supported (in Safari)
+        https://bugs.webkit.org/show_bug.cgi?id=41200
+
+        Add text match marker highlighting support for SVG text - searching for SVG text in Safari now paints the nice yellow highlighting rect, and the
+        white rectangles for all text matches. Behaves exactly like HTML text, but respecting SVGs per-character/per-chunk transformations,
+        allowing to highlight textPaths, tspans with absolute per-character positions etc..
+
+        Only manually testable, thus no new tests.
+
+        * rendering/InlineBox.h: Expose calculateBoundaries() in non-SVG builds as well, now used by InlineTextBox too.
+        * rendering/InlineTextBox.h: Add calculateBoundaries(), which will be used to refactor some code in RenderText, see below.
+        (WebCore::InlineTextBox::calculateBoundaries): Just return a IntRect(x(), y(), width(), height()) here.
+        (WebCore::RenderObject::isSVGInlineText):
+        * rendering/RenderSVGInlineText.h:
+        (WebCore::RenderSVGInlineText::isSVGInlineText): Return true for isSVGInlineText(), return false for isSVGText() (default in RenderObject.h)
+        * rendering/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::paint): Only paint box decorations in PaintPhase(Child)BlockBackground, exit afterwards just like RenderBlock does.
+                                         Otherwise the white text match marker rectangle gets drawn over the yellow highlight that Safari draws. 
+        * rendering/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::paint): Accept a new painting phase: PaintPhaseSelection, used by Safari when drawing the yellow highlight rect.
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::absoluteQuads): Use calculateBoundaries() instead of IntRect(x(), y(), width(), height()). SVG provides different boundaries here.
+        (WebCore::RenderText::absoluteQuadsForRange): Ditto. This is the main change, leading to correct text highlight placement.
+        * rendering/SVGInlineFlowBox.cpp: Add assertion that painting is not disabled, for consistency. Change paint phase assertion to include PaintPhaseSelection.
+        (WebCore::SVGInlineFlowBox::paint):
+        * rendering/SVGInlineTextBox.cpp:
+        (WebCore::SVGInlineTextBox::selectionRectForTextChunkPart): Refactored from selectionRect(), to share code between selectionRect/computeTextMatchMarkerRect.
+        (WebCore::SVGInlineTextBox::selectionRect): Use new helper function selectionRectForTextChunkPart().
+        (WebCore::SVGInlineTextBox::paint): Ditto. Call new computeTextMatchMarkerRect() function.
+        (WebCore::SVGInlineTextBox::computeTextMatchMarkerRect): Implemented similar to HTML, but respecting SVGs concept of text chunk parts.
+        (WebCore::SVGInlineTextBox::paintText): In PaintPhaseSelection, only paint selected text, not anything before/after the selection start/end.
+        (WebCore::SVGInlineTextBox::calculateBoundaries): Early exit, if m_chunkTransformation is identity.
+        * rendering/SVGInlineTextBox.h: Added "bool paintSelectedTextOnly" to paintText() and add new computeTextMatchMarkerRect(RenderStyle*) function.
+        * rendering/SVGRootInlineBox.cpp:
+        (WebCore::SVGRootInlineBox::paint): Change paint phase assertion to include PaintPhaseSelection.
+
 2010-06-25  John Gregg  <johnnyg@google.com>
 
         Reviewed by Darin Fisher.

@@ -73,6 +73,8 @@ private:
     virtual int selectionHeight();
 
 public:
+    virtual IntRect calculateBoundaries() const { return IntRect(x(), y(), width(), height()); }
+
     virtual IntRect selectionRect(int absx, int absy, int startPos, int endPos);
     bool isSelected(int startPos, int endPos) const;
     virtual void selectionStartEnd(int& sPos, int& ePos);

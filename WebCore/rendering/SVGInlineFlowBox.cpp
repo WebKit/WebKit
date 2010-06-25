@@ -32,7 +32,8 @@ namespace WebCore {
 
 void SVGInlineFlowBox::paint(RenderObject::PaintInfo& paintInfo, int, int)
 {
-    ASSERT(paintInfo.phase == PaintPhaseForeground);
+    ASSERT(paintInfo.phase == PaintPhaseForeground || paintInfo.phase == PaintPhaseSelection);
+    ASSERT(!paintInfo.context->paintingDisabled());
 
     RenderObject* boxRenderer = renderer();
     ASSERT(boxRenderer);
