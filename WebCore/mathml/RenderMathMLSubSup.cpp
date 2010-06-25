@@ -72,7 +72,7 @@ void RenderMathMLSubSup::addChild(RenderObject* child, RenderObject* beforeChild
                 RefPtr<RenderStyle> scriptsStyle = RenderStyle::create();
                 scriptsStyle->inheritFrom(style());
                 scriptsStyle->setDisplay(INLINE_BLOCK);
-                scriptsStyle->setVerticalAlign(MIDDLE);
+                scriptsStyle->setVerticalAlign(TOP);
                 scriptsStyle->setMarginLeft(Length(gSubsupScriptMargin, Fixed));
                 scriptsStyle->setTextAlign(LEFT);
                 m_scripts->setStyle(scriptsStyle.release());
@@ -95,7 +95,7 @@ void RenderMathMLSubSup::addChild(RenderObject* child, RenderObject* beforeChild
         RefPtr<RenderStyle> wrapperStyle = RenderStyle::create();
         wrapperStyle->inheritFrom(style());
         wrapperStyle->setDisplay(INLINE_BLOCK);
-        wrapperStyle->setVerticalAlign(MIDDLE);
+        wrapperStyle->setVerticalAlign(TOP);
         wrapper->setStyle(wrapperStyle.release());
         RenderMathMLBlock::addChild(wrapper, beforeChild);
         wrapper->addChild(child);
@@ -141,21 +141,32 @@ int RenderMathMLSubSup::nonOperatorHeight() const
 
 void RenderMathMLSubSup::layout() 
 {
+    if (firstChild()) {
+        firstChild()->setNeedsLayoutAndPrefWidthsRecalc();
+        firstChild()->markContainingBlocksForLayout();
+    }
+    if (m_scripts) {
+        m_scripts->setNeedsLayoutAndPrefWidthsRecalc();
+        m_scripts->markContainingBlocksForLayout();
+    }
     RenderBlock::layout();
     
     if (m_kind == SubSup) {
-        int width = 0;
-        RenderObject* current = firstChild();
-        while (current) {
-            width += getBoxModelObjectWidth(current);
-            current = current->nextSibling();
+        RenderObject* base = firstChild();
+        if (base) {
+            int maxHeight = 0;
+            RenderObject* current = base->firstChild();
+            while (current) {
+                int height = getBoxModelObjectHeight(current);
+                if (height > maxHeight)
+                    maxHeight = height;
+                current = current->nextSibling();
+            }
+            int heightDiff = (m_scripts->offsetHeight() - maxHeight) / 2;
+            if (heightDiff < 0) 
+                heightDiff = 0;
+            base->style()->setMarginTop(Length(heightDiff, Fixed));
         }
-        width++;
-        // 1 + margin of scripts
-        if (m_scripts) 
-            width += gSubsupScriptMargin;
-        style()->setWidth(Length(width, Fixed));
-
         setNeedsLayoutAndPrefWidthsRecalc();
         markContainingBlocksForLayout();
         RenderBlock::layout();
@@ -181,7 +192,10 @@ int RenderMathMLSubSup::baselinePosition(bool firstLine, bool isRootLineBox) con
                 RenderBoxModelObject* box = toRenderBoxModelObject(base);
                 topAdjust = (m_scripts->offsetHeight() - box->offsetHeight()) / 2;
             }
-            return topAdjust + (base ? base->baselinePosition(firstLine, isRootLineBox) : 0) + 4;
+            // FIXME: The last bit of this calculation should be more exact.  Why is the 2-3px scaled for zoom necessary?
+            // The baseline is top spacing of the base + the baseline of the base + adjusted space for zoom
+            float zoomFactor = style()->effectiveZoom();
+            return topAdjust + base->baselinePosition(firstLine, isRootLineBox) + static_cast<int>((zoomFactor > 1.25 ? 2 : 3) * zoomFactor);
         }
         break;
     case Sup:

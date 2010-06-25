@@ -1,8 +1,8 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x124
-  RenderBlock {math:math} at (0,0) size 800x82
-    RenderBlock {math:mfrac} at (0,42) size 17x40
+layer at (0,0) size 800x147
+  RenderBlock {math:math} at (0,0) size 800x147
+    RenderBlock {math:mfrac} at (1,45) size 17x40
       RenderBlock {math:mfrac} at (0,0) size 17x19
         RenderInline {math:mi} at (0,0) size 10x16
           RenderText {#text} at (3,3) size 10x16
@@ -11,21 +11,21 @@ layer at (0,0) size 800x124
         RenderInline {math:mi} at (0,0) size 11x16
           RenderText {#text} at (3,5) size 11x16
             text run at (3,5) width 11: "C"
-    RenderBlock {math:mo} at (17,54) size 9x16
-      RenderBlock {math:mo} at (0,0) size 9x16
-        RenderText {math:mo} at (0,0) size 9x16
-          text run at (0,0) width 9: "+"
-    RenderBlock {math:mfrac} at (26,21) size 43x61
-      RenderBlock {math:mfrac} at (0,0) size 43x40
-        RenderBlock {math:mrow} at (3,0) size 37x40
+    RenderBlock {math:mo} at (18,5) size 9x69
+      RenderBlock {math:mo} at (0,0) size 9x69
+        RenderText {math:mo} at (0,53) size 9x16
+          text run at (0,53) width 9: "+"
+    RenderBlock {math:mfrac} at (27,21) size 45x64
+      RenderBlock {math:mfrac} at (0,0) size 45x43
+        RenderBlock {math:mrow} at (3,0) size 39x43
           RenderInline {math:mi} at (0,0) size 10x16
-            RenderText {#text} at (0,12) size 10x16
-              text run at (0,12) width 10: "B"
-          RenderBlock {math:mo} at (10,12) size 9x16
-            RenderBlock {math:mo} at (0,0) size 9x16
-              RenderText {math:mo} at (0,0) size 9x16
-                text run at (0,0) width 9: "+"
-          RenderBlock {math:mfrac} at (19,0) size 18x40
+            RenderText {#text} at (1,16) size 10x16
+              text run at (1,16) width 10: "B"
+          RenderBlock {math:mo} at (11,0) size 9x32
+            RenderBlock {math:mo} at (0,0) size 9x32
+              RenderText {math:mo} at (0,16) size 9x16
+                text run at (0,16) width 9: "+"
+          RenderBlock {math:mfrac} at (20,3) size 18x40
             RenderBlock {math:mfrac} at (0,0) size 18x19
               RenderInline {math:mi} at (0,0) size 12x16
                 RenderText {#text} at (3,3) size 12x16
@@ -34,35 +34,35 @@ layer at (0,0) size 800x124
               RenderInline {math:mi} at (0,0) size 10x16
                 RenderText {#text} at (4,5) size 10x16
                   text run at (4,5) width 10: "E"
-      RenderBlock {math:mfrac} at (0,40) size 43x21
+      RenderBlock {math:mfrac} at (0,43) size 45x21
         RenderInline {math:mi} at (0,0) size 11x16
-          RenderText {#text} at (16,5) size 11x16
-            text run at (16,5) width 11: "C"
-    RenderBlock {math:mo} at (69,54) size 9x16
-      RenderBlock {math:mo} at (0,0) size 9x16
-        RenderText {math:mo} at (0,0) size 9x16
-          text run at (0,0) width 9: "+"
-    RenderBlock {math:mfrac} at (78,0) size 70x82
-      RenderBlock {math:mfrac} at (0,0) size 70x61
-        RenderBlock {math:mrow} at (3,0) size 64x61
+          RenderText {#text} at (17,5) size 11x16
+            text run at (17,5) width 11: "C"
+    RenderBlock {math:mo} at (72,5) size 9x69
+      RenderBlock {math:mo} at (0,0) size 9x69
+        RenderText {math:mo} at (0,53) size 9x16
+          text run at (0,53) width 9: "+"
+    RenderBlock {math:mfrac} at (81,0) size 74x85
+      RenderBlock {math:mfrac} at (0,0) size 74x64
+        RenderBlock {math:mrow} at (3,0) size 68x64
           RenderInline {math:mi} at (0,0) size 10x16
-            RenderText {#text} at (0,33) size 10x16
-              text run at (0,33) width 10: "B"
-          RenderBlock {math:mo} at (10,33) size 9x16
-            RenderBlock {math:mo} at (0,0) size 9x16
-              RenderText {math:mo} at (0,0) size 9x16
-                text run at (0,0) width 9: "+"
-          RenderBlock {math:mfrac} at (19,0) size 45x61
-            RenderBlock {math:mfrac} at (0,0) size 45x40
-              RenderBlock {math:mrow} at (3,0) size 39x40
+            RenderText {#text} at (1,37) size 10x16
+              text run at (1,37) width 10: "B"
+          RenderBlock {math:mo} at (11,7) size 9x46
+            RenderBlock {math:mo} at (0,0) size 9x46
+              RenderText {math:mo} at (0,30) size 9x16
+                text run at (0,30) width 9: "+"
+          RenderBlock {math:mfrac} at (20,0) size 47x64
+            RenderBlock {math:mfrac} at (0,0) size 47x43
+              RenderBlock {math:mrow} at (3,0) size 41x43
                 RenderInline {math:mi} at (0,0) size 12x16
-                  RenderText {#text} at (0,12) size 12x16
-                    text run at (0,12) width 12: "D"
-                RenderBlock {math:mo} at (12,12) size 9x16
-                  RenderBlock {math:mo} at (0,0) size 9x16
-                    RenderText {math:mo} at (0,0) size 9x16
-                      text run at (0,0) width 9: "+"
-                RenderBlock {math:mfrac} at (21,0) size 18x40
+                  RenderText {#text} at (1,16) size 12x16
+                    text run at (1,16) width 12: "D"
+                RenderBlock {math:mo} at (13,0) size 9x32
+                  RenderBlock {math:mo} at (0,0) size 9x32
+                    RenderText {math:mo} at (0,16) size 9x16
+                      text run at (0,16) width 9: "+"
+                RenderBlock {math:mfrac} at (22,3) size 18x40
                   RenderBlock {math:mfrac} at (0,0) size 18x19
                     RenderInline {math:mi} at (0,0) size 10x16
                       RenderText {#text} at (4,3) size 10x16
@@ -71,47 +71,47 @@ layer at (0,0) size 800x124
                     RenderInline {math:mi} at (0,0) size 12x16
                       RenderText {#text} at (3,5) size 12x16
                         text run at (3,5) width 12: "G"
-            RenderBlock {math:mfrac} at (0,40) size 45x21
+            RenderBlock {math:mfrac} at (0,43) size 47x21
               RenderInline {math:mi} at (0,0) size 10x16
-                RenderText {#text} at (17,5) size 10x16
-                  text run at (17,5) width 10: "E"
-      RenderBlock {math:mfrac} at (0,61) size 70x21
+                RenderText {#text} at (18,5) size 10x16
+                  text run at (18,5) width 10: "E"
+      RenderBlock {math:mfrac} at (0,64) size 74x21
         RenderInline {math:mi} at (0,0) size 11x16
-          RenderText {#text} at (29,5) size 11x16
-            text run at (29,5) width 11: "C"
-    RenderBlock {math:mo} at (148,54) size 9x16
-      RenderBlock {math:mo} at (0,0) size 9x16
-        RenderText {math:mo} at (0,0) size 9x16
-          text run at (0,0) width 9: "+"
-    RenderBlock {math:mfrac} at (157,42) size 69x82
-      RenderBlock {math:mfrac} at (0,0) size 69x19
+          RenderText {#text} at (31,5) size 11x16
+            text run at (31,5) width 11: "C"
+    RenderBlock {math:mo} at (155,5) size 9x69
+      RenderBlock {math:mo} at (0,0) size 9x69
+        RenderText {math:mo} at (0,53) size 9x16
+          text run at (0,53) width 9: "+"
+    RenderBlock {math:mfrac} at (164,45) size 73x102
+      RenderBlock {math:mfrac} at (0,0) size 73x19
         RenderInline {math:mi} at (0,0) size 10x16
-          RenderText {#text} at (29,3) size 10x16
-            text run at (29,3) width 10: "B"
-      RenderBlock {math:mfrac} at (0,19) size 69x63
-        RenderBlock {math:mrow} at (3,2) size 63x61
+          RenderText {#text} at (31,3) size 10x16
+            text run at (31,3) width 10: "B"
+      RenderBlock {math:mfrac} at (0,19) size 73x83
+        RenderBlock {math:mrow} at (3,2) size 67x81
           RenderInline {math:mi} at (0,0) size 11x16
-            RenderText {#text} at (0,12) size 11x16
-              text run at (0,12) width 11: "C"
-          RenderBlock {math:mo} at (11,12) size 9x16
-            RenderBlock {math:mo} at (0,0) size 9x16
-              RenderText {math:mo} at (0,0) size 9x16
-                text run at (0,0) width 9: "+"
-          RenderBlock {math:mfrac} at (20,0) size 43x61
-            RenderBlock {math:mfrac} at (0,0) size 43x19
+            RenderText {#text} at (1,30) size 11x16
+              text run at (1,30) width 11: "C"
+          RenderBlock {math:mo} at (12,0) size 9x46
+            RenderBlock {math:mo} at (0,0) size 9x46
+              RenderText {math:mo} at (0,30) size 9x16
+                text run at (0,30) width 9: "+"
+          RenderBlock {math:mfrac} at (21,17) size 45x64
+            RenderBlock {math:mfrac} at (0,0) size 45x19
               RenderInline {math:mi} at (0,0) size 12x16
-                RenderText {#text} at (15,3) size 12x16
-                  text run at (15,3) width 12: "D"
-            RenderBlock {math:mfrac} at (0,19) size 43x42
-              RenderBlock {math:mrow} at (3,2) size 37x40
+                RenderText {#text} at (16,3) size 12x16
+                  text run at (16,3) width 12: "D"
+            RenderBlock {math:mfrac} at (0,19) size 45x45
+              RenderBlock {math:mrow} at (3,2) size 39x43
                 RenderInline {math:mi} at (0,0) size 10x16
-                  RenderText {#text} at (0,12) size 10x16
-                    text run at (0,12) width 10: "E"
-                RenderBlock {math:mo} at (10,12) size 9x16
-                  RenderBlock {math:mo} at (0,0) size 9x16
-                    RenderText {math:mo} at (0,0) size 9x16
-                      text run at (0,0) width 9: "+"
-                RenderBlock {math:mfrac} at (19,0) size 18x40
+                  RenderText {#text} at (1,16) size 10x16
+                    text run at (1,16) width 10: "E"
+                RenderBlock {math:mo} at (11,0) size 9x32
+                  RenderBlock {math:mo} at (0,0) size 9x32
+                    RenderText {math:mo} at (0,16) size 9x16
+                      text run at (0,16) width 9: "+"
+                RenderBlock {math:mfrac} at (20,3) size 18x40
                   RenderBlock {math:mfrac} at (0,0) size 18x19
                     RenderInline {math:mi} at (0,0) size 10x16
                       RenderText {#text} at (4,3) size 10x16

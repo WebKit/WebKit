@@ -1,3 +1,29 @@
+2010-06-25  Alex Milowski  <alex@milowski.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        This patch changes the vertical alignment to rely upon baseline
+        alignment for all MathML rendering.  This fixes a number of layout
+        issues and the implementation is much more clean.
+
+        Also, this patch adds a horizontal green line in the debug layout
+        so you can see the top padding of any RenderMathMLBlock instance.
+
+        Test: mathml/presentation/row-alignment.xhtml
+
+        * css/mathml.css:
+        * mathml/RenderMathMLBlock.cpp:
+        * mathml/RenderMathMLFraction.cpp:
+        * mathml/RenderMathMLFraction.h:
+        * mathml/RenderMathMLOperator.cpp:
+        * mathml/RenderMathMLOperator.h:
+        * mathml/RenderMathMLRoot.cpp:
+        * mathml/RenderMathMLRow.cpp:
+        * mathml/RenderMathMLRow.h:
+        * mathml/RenderMathMLSquareRoot.cpp:
+        * mathml/RenderMathMLSubSup.cpp:
+        * mathml/RenderMathMLUnderOver.cpp:
+
 2010-06-25  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.

@@ -127,14 +127,6 @@ void RenderMathMLFraction::layout()
     if (lastChild() && lastChild()->isRenderBlock())
         m_lineThickness = m_lineThickness * ceil(gFractionBarWidth * style()->fontSize());
     
-    if (previousSibling() && previousSibling()->isRenderBlock()) {
-        RenderBlock* sibling = toRenderBlock(previousSibling());
-        verticalAlignCompute(sibling);
-    } else if (nextSibling() && nextSibling()->isRenderBlock()) {
-        RenderBlock* sibling = toRenderBlock(nextSibling());
-        verticalAlignCompute(sibling);
-    }
-
     RenderBlock::layout();
     
     // The row layout can affect the numerator/denominator width.
@@ -183,21 +175,15 @@ void RenderMathMLFraction::paint(PaintInfo& info, int tx, int ty)
     info.context->restore();
 }
 
-void RenderMathMLFraction::verticalAlignCompute(RenderBlock* sibling)
-{
-    if (sibling->isRenderMathMLBlock()) {
-        RenderMathMLBlock* op = toRenderMathMLBlock(sibling);
-        style()->setVerticalAlign(LENGTH);
-        int verticalShift = static_cast<int>(ceil(gFractionAlignment * op->offsetHeight() + 0.5 * lastChild()->style()->borderTopWidth()));
-        style()->setVerticalAlignLength(Length(verticalShift, Fixed));
-    }
-}
-
 int RenderMathMLFraction::baselinePosition(bool firstLine, bool isRootLineBox) const
 {
     if (firstChild()->isRenderMathMLBlock()) {
         RenderMathMLBlock* numerator = toRenderMathMLBlock(firstChild());
-        return numerator->offsetHeight();
+        // FIXME: the baseline should adjust so the fraction line aligns
+        // relative certain operators (e.g. aligns with the horizontal
+        // stroke of the plus).  1/3 of the current font size is just
+        // a good guess.
+        return numerator->offsetHeight() + style()->fontSize() / 3;
     }
     return RenderBlock::baselinePosition(firstLine, isRootLineBox);
 }

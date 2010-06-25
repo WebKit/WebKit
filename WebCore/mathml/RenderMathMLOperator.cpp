@@ -56,11 +56,14 @@ bool RenderMathMLOperator::isChildAllowed(RenderObject*, RenderStyle*) const
     return false;
 }
 
+static const float gOperatorSpacer = 0.1;
+static const float gOperatorExpansion = 1.2;
+
 void  RenderMathMLOperator::stretchToHeight(int height)
 {
     if (height == m_stretchHeight)
         return;
-    m_stretchHeight = height;
+    m_stretchHeight = static_cast<int>(height * gOperatorExpansion);
     
     updateBoxModelInfoFromStyle();
     setNeedsLayoutAndPrefWidthsRecalc();
@@ -110,6 +113,7 @@ static const int gMinimumStretchHeight = 24;
 static const int gGlyphHeight = 10;
 static const int gMiddleGlyphTopAdjust = -2;
 static const int gBottomGlyphTopAdjust = -4;
+static const float gMinimumRatioForStretch = 0.10;
 
 void RenderMathMLOperator::updateFromElement()
 {
@@ -161,15 +165,16 @@ void RenderMathMLOperator::updateFromElement()
     
     // We only stretch character if the stretch height is larger than a minimum size (e.g. 24px).
     bool shouldStretch = isStretchy && m_stretchHeight>gMinimumStretchHeight;
+    m_isCentered = true;
     
     // Either stretch is disabled or we don't have a stretchable character over the minimum height
     if (stretchDisabled || !shouldStretch) {
         m_isStacked = false;
-        RenderBlock* container = new (renderArena()) RenderBlock(node());
+        RenderBlock* container = new (renderArena()) RenderMathMLBlock(node());
         
         RefPtr<RenderStyle> newStyle = RenderStyle::create();
         newStyle->inheritFrom(style());
-        newStyle->setDisplay(BLOCK);
+        newStyle->setDisplay(INLINE_BLOCK);
 
         // Check for a stretchable character that is under the minimum height and use the
         // font size to adjust the glyph size.
@@ -181,9 +186,20 @@ void RenderMathMLOperator::updateFromElement()
             desc->setComputedSize(m_stretchHeight);
             newStyle->setFontDescription(*desc);
             newStyle->font().update(newStyle->font().fontSelector());
+            newStyle->setVerticalAlign(BASELINE);
+            m_isCentered = false;
+        } else {
+            int topPad = (m_stretchHeight - currentFontSize) / 2;
+            
+            if (topPad / static_cast<float>(m_stretchHeight) > gMinimumRatioForStretch) {
+                newStyle->setVerticalAlign(TOP);
+                newStyle->setPaddingTop(Length(topPad, Fixed));
+            } else {
+                m_isCentered = false;
+                newStyle->setVerticalAlign(BASELINE);
+            }
         }
         
-        newStyle->setVerticalAlign(BASELINE);
         container->setStyle(newStyle.release());
         addChild(container);
      
@@ -196,7 +212,9 @@ void RenderMathMLOperator::updateFromElement()
                 text = new (renderArena()) RenderText(node(), StringImpl::create(mo->textContent().characters(), mo->textContent().length()));
         // If we can't figure out the text, leave it blank.
         if (text) {
-            text->setStyle(container->style());
+            RefPtr<RenderStyle> textStyle = RenderStyle::create();
+            textStyle->inheritFrom(container->style());
+            text->setStyle(textStyle.release());
             container->addChild(text);
         }
     } else {
@@ -296,7 +314,7 @@ RefPtr<RenderStyle> RenderMathMLOperator::createStackableStyle(int size, int top
 
 RenderBlock* RenderMathMLOperator::createGlyph(UChar glyph, int size, int charRelative, int topRelative)
 {
-    RenderBlock* container = new (renderArena()) RenderBlock(node());
+    RenderBlock* container = new (renderArena()) RenderMathMLBlock(node());
     container->setStyle(createStackableStyle(size, topRelative).release());
     addChild(container);
     RenderBlock* parent = container;
@@ -320,7 +338,11 @@ RenderBlock* RenderMathMLOperator::createGlyph(UChar glyph, int size, int charRe
 
 int RenderMathMLOperator::baselinePosition(bool firstLine, bool isRootLineBox) const
 {
-    return !m_isStacked && firstChild() ? firstChild()->baselinePosition(firstLine, isRootLineBox) : offsetHeight();
+    if (m_isStacked)
+        return m_stretchHeight * 2 / 3 - (m_stretchHeight - static_cast<int>(m_stretchHeight / gOperatorExpansion)) / 2;
+    if (m_isCentered && firstChild()) 
+        return firstChild()->baselinePosition(firstLine, isRootLineBox);
+    return RenderBlock::baselinePosition(firstLine, isRootLineBox);
 }
 
 }

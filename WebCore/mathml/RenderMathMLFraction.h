@@ -43,7 +43,6 @@ public:
 protected:
     virtual void layout();
 private:
-    void verticalAlignCompute(RenderBlock*);
     int m_lineThickness;
 };
 

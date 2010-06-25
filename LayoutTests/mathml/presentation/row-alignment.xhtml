@@ -1,0 +1,75 @@
+<html xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+<title>Rows Alignment</title>
+</head>
+<body>
+<div>
+<h2>Normal flow</h2>
+<p>
+I am a paragraph of text <math xmlns='http://www.w3.org/1998/Math/MathML'><mi>x</mi><mo>+</mo><mn>1</mn></math> with math inline.
+</p>
+</div>
+<div>
+<h2>Fraction Alignment</h2>
+<p>
+text 
+<math xmlns='http://www.w3.org/1998/Math/MathML'><mfrac><mrow><mi>x</mi><mo>+</mo><mn>1</mn></mrow><mn>2</mn></mfrac></math>
+</p>
+<p>
+text
+<math xmlns='http://www.w3.org/1998/Math/MathML'><mi>x</mi><mo>+</mo><mfrac><mrow><mi>x</mi><mo>+</mo><mn>1</mn></mrow><mn>2</mn></mfrac></math>
+</p>
+</div>
+<div>
+<h2>Operator Stretching</h2>
+<p>
+text
+<math xmlns='http://www.w3.org/1998/Math/MathML'><mo>(</mo><mi>x</mi><mo>+</mo><mfrac><mrow><mi>x</mi><mo>+</mo><mn>1</mn></mrow><mn>2</mn></mfrac><mo>)</mo></math>
+</p>
+<p>
+text
+<math xmlns='http://www.w3.org/1998/Math/MathML'>
+<mi>y</mi>
+<mo>(</mo>
+<munder>
+<mi>&#x220f;</mi>
+<mi>x</mi>
+</munder>
+<mfrac>
+<mrow><mi>x</mi><mo>+</mo>
+      <mfrac><mrow><mi>x</mi><mo>+</mo><mn>1</mn></mrow><mn>2</mn></mfrac>
+</mrow>
+<mrow><mi>x</mi><mo>+</mo>
+      <mfrac><mrow><mi>x</mi><mo>+</mo><mn>1</mn></mrow><mn>2</mn></mfrac>
+</mrow>
+</mfrac>
+<mo>)</mo>
+</math>
+</p>
+<p>
+text
+<math xmlns='http://www.w3.org/1998/Math/MathML'>
+<mo>[</mo>
+<mtable>
+<mtr>
+<mtd><msub><mi>a</mi><mn>11</mn></msub></mtd>
+<mtd><msub><mi>a</mi><mn>12</mn></msub></mtd>
+<mtd><msub><mi>a</mi><mn>13</mn></msub></mtd>
+</mtr>
+<mtr>
+<mtd><msub><mi>b</mi><mn>21</mn></msub></mtd>
+<mtd><msub><mi>b</mi><mn>22</mn></msub></mtd>
+<mtd><msub><mi>b</mi><mn>23</mn></msub></mtd>
+</mtr>
+<mtr>
+<mtd><msub><mi>c</mi><mn>31</mn></msub></mtd>
+<mtd><msub><mi>c</mi><mn>32</mn></msub></mtd>
+<mtd><msub><mi>c</mi><mn>33</mn></msub></mtd>
+</mtr>
+</mtable>
+<mo>]</mo>
+</math>
+</p>
+</div>
+</body>
+</html>

@@ -7,13 +7,18 @@ math {
     margin: 0px;
     vertical-align: baseline;
     line-height: 1.0;
+    padding-left: 1px;
+    padding-right: 1px;
 }
 
 math[display="block"] {
     display: block;
-    text-align: center;
     page-break-inside: avoid;
     margin-bottom: 1em;
+}
+
+math * {
+   text-align: left;
 }
 
 math > * {
@@ -23,12 +28,8 @@ math > * {
 mrow, mfenced {
     display: inline-block;
     white-space: nowrap;
-    vertical-align: middle;
-}
-
-mrow > mo, mfenced > mo, math > mo
-{
-    vertical-align: middle;
+    padding-left: 1px;
+    padding-right: 1px;
 }
 
 mi, mtext {
@@ -42,7 +43,6 @@ mi + mrow {
 
 mfrac {
     display: inline-block;
-    vertical-align: middle;
 }
 
 msub, msup {
@@ -83,10 +83,6 @@ munderover > * + *, mover > * + *, munder > * + * {
     font-size: 0.75em;
 }
 
-mover > mi {
-    text-align: center;
-}
-
 mo, mn, mi, mtext {
     padding: 0px;
     margin: 0px;
@@ -96,7 +92,7 @@ mo {
     display: inline-block;
 }
 
-mo {
+math > mo, mrow > mo, mfenced > mo {
     padding-left: 0.05em;
     padding-right: 0.05em;
 }
@@ -154,7 +150,7 @@ mroot > * + mrow, mroot > * + mfenced {
 mtable {
     display: inline-table;
     text-align: center;
-    vertical-align: middle;
+    vertical-align: -40%;
 }
 mtr {
     display: table-row;

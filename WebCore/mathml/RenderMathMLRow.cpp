@@ -69,9 +69,6 @@ void RenderMathMLRow::layout()
     // Calculate the maximum height of the row without the operators.
     int maxHeight = nonOperatorHeight();
     
-    // Set the maximum height of the row for intermediate layouts.
-    style()->setHeight(Length(maxHeight, Fixed));
-
     // Notify contained operators they may need to re-layout their stretched operators.
     // We need to keep track of the number of children and operators because a row of
     // operators needs some special handling.
@@ -141,16 +138,24 @@ void RenderMathMLRow::layout()
                 maxHeight = box->offsetHeight();
         }
     }
-
-    // Set the maximum height of the row based on the calculations.
-    style()->setHeight(Length(maxHeight, Fixed));
     
-    // Do the final layout by calling our parent's layout again.
+    // Mark outself as needing layout and do the final layout of the row.
     setNeedsLayoutAndPrefWidthsRecalc();
     markContainingBlocksForLayout();
     RenderBlock::layout();
-}
+}    
 
+int RenderMathMLRow::baselinePosition(bool firstLine, bool isRootLineBox) const
+{
+    if (firstChild() && firstChild()->isRenderMathMLBlock()) {
+        RenderMathMLBlock* block = toRenderMathMLBlock(firstChild());
+        if (block->isRenderMathMLOperator())
+            return block->baselinePosition(firstLine, isRootLineBox);
+    }
+    
+    return RenderBlock::baselinePosition(firstLine, isRootLineBox);
+}
+    
 }
 
 #endif // ENABLE(MATHML)

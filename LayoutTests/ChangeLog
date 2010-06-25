@@ -1,3 +1,55 @@
+2010-06-25  Alex Milowski  <alex@milowski.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Added a test for row alignment, adjusted tests to better demonstrate their 
+        respective area of MathML, and updated the output for all the tests due to 
+        the change in vertical alignment of all MathML constructs.
+
+        * mathml/presentation/mo.xhtml:
+        * mathml/presentation/row-alignment.xhtml: Added.
+        * mathml/presentation/row.xhtml:
+        * mathml/presentation/sub.xhtml:
+        * platform/mac/mathml/presentation/fractions-expected.checksum:
+        * platform/mac/mathml/presentation/fractions-expected.png:
+        * platform/mac/mathml/presentation/fractions-expected.txt:
+        * platform/mac/mathml/presentation/fractions-vertical-alignment-expected.checksum:
+        * platform/mac/mathml/presentation/fractions-vertical-alignment-expected.png:
+        * platform/mac/mathml/presentation/fractions-vertical-alignment-expected.txt:
+        * platform/mac/mathml/presentation/mo-expected.checksum:
+        * platform/mac/mathml/presentation/mo-expected.png:
+        * platform/mac/mathml/presentation/mo-expected.txt:
+        * platform/mac/mathml/presentation/over-expected.checksum:
+        * platform/mac/mathml/presentation/over-expected.png:
+        * platform/mac/mathml/presentation/over-expected.txt:
+        * platform/mac/mathml/presentation/roots-expected.checksum:
+        * platform/mac/mathml/presentation/roots-expected.png:
+        * platform/mac/mathml/presentation/roots-expected.txt:
+        * platform/mac/mathml/presentation/row-alignment-expected.checksum: Added.
+        * platform/mac/mathml/presentation/row-alignment-expected.png: Added.
+        * platform/mac/mathml/presentation/row-alignment-expected.txt: Added.
+        * platform/mac/mathml/presentation/row-expected.checksum:
+        * platform/mac/mathml/presentation/row-expected.png:
+        * platform/mac/mathml/presentation/row-expected.txt:
+        * platform/mac/mathml/presentation/sub-expected.checksum:
+        * platform/mac/mathml/presentation/sub-expected.png:
+        * platform/mac/mathml/presentation/sub-expected.txt:
+        * platform/mac/mathml/presentation/subsup-expected.checksum:
+        * platform/mac/mathml/presentation/subsup-expected.png:
+        * platform/mac/mathml/presentation/subsup-expected.txt:
+        * platform/mac/mathml/presentation/sup-expected.checksum:
+        * platform/mac/mathml/presentation/sup-expected.png:
+        * platform/mac/mathml/presentation/sup-expected.txt:
+        * platform/mac/mathml/presentation/tables-expected.checksum:
+        * platform/mac/mathml/presentation/tables-expected.png:
+        * platform/mac/mathml/presentation/tables-expected.txt:
+        * platform/mac/mathml/presentation/under-expected.checksum:
+        * platform/mac/mathml/presentation/under-expected.png:
+        * platform/mac/mathml/presentation/under-expected.txt:
+        * platform/mac/mathml/presentation/underover-expected.checksum:
+        * platform/mac/mathml/presentation/underover-expected.png:
+        * platform/mac/mathml/presentation/underover-expected.txt:
+
 2010-06-25  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.
