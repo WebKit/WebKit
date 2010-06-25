@@ -87,9 +87,8 @@ void DatabaseTask::performTask()
 // *** DatabaseOpenTask ***
 // Opens the database file and verifies the version matches the expected version.
 
-DatabaseOpenTask::DatabaseOpenTask(Database* database, bool setVersionInNewDatabase, DatabaseTaskSynchronizer* synchronizer, ExceptionCode& code, bool& success)
+DatabaseOpenTask::DatabaseOpenTask(Database* database, DatabaseTaskSynchronizer* synchronizer, ExceptionCode& code, bool& success)
     : DatabaseTask(database, synchronizer)
-    , m_setVersionInNewDatabase(setVersionInNewDatabase)
     , m_code(code)
     , m_success(success)
 {
@@ -98,7 +97,7 @@ DatabaseOpenTask::DatabaseOpenTask(Database* database, bool setVersionInNewDatab
 
 void DatabaseOpenTask::doPerformTask()
 {
-    m_success = database()->performOpenAndVerify(m_setVersionInNewDatabase, m_code);
+    m_success = database()->performOpenAndVerify(m_code);
 }
 
 #ifndef NDEBUG

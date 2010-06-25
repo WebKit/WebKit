@@ -1,3 +1,77 @@
+2010-06-25  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r61812.
+        http://trac.webkit.org/changeset/61812
+        https://bugs.webkit.org/show_bug.cgi?id=41216
+
+        breaks Chromium workers tests (Requested by mnaganov on
+        #webkit).
+
+        * storage/AbstractDatabase.cpp:
+        * storage/AbstractDatabase.h:
+        * storage/Database.cpp:
+        (WebCore::Database::databaseInfoTableName):
+        (WebCore::guidMutex):
+        (WebCore::guidToVersionMap):
+        (WebCore::updateGuidVersionMap):
+        (WebCore::guidToDatabaseMap):
+        (WebCore::databaseVersionKey):
+        (WebCore::DatabaseCreationCallbackTask::create):
+        (WebCore::DatabaseCreationCallbackTask::performTask):
+        (WebCore::DatabaseCreationCallbackTask::DatabaseCreationCallbackTask):
+        (WebCore::Database::openDatabase):
+        (WebCore::Database::Database):
+        (WebCore::Database::openAndVerifyVersion):
+        (WebCore::retrieveTextResultFromDatabase):
+        (WebCore::Database::getVersionFromDatabase):
+        (WebCore::setTextValueInDatabase):
+        (WebCore::Database::setVersionInDatabase):
+        (WebCore::Database::versionMatchesExpected):
+        (WebCore::Database::close):
+        (WebCore::Database::disableAuthorizer):
+        (WebCore::Database::enableAuthorizer):
+        (WebCore::Database::setAuthorizerReadOnly):
+        (WebCore::Database::lastActionChangedDatabase):
+        (WebCore::Database::lastActionWasInsert):
+        (WebCore::Database::resetDeletes):
+        (WebCore::Database::hadDeletes):
+        (WebCore::guidForOriginAndName):
+        (WebCore::Database::resetAuthorizer):
+        (WebCore::Database::performOpenAndVerify):
+        (WebCore::Database::performCreationCallback):
+        (WebCore::Database::version):
+        (WebCore::Database::setExpectedVersion):
+        (WebCore::Database::stringIdentifier):
+        (WebCore::Database::displayName):
+        (WebCore::Database::estimatedSize):
+        (WebCore::Database::fileName):
+        * storage/Database.h:
+        (WebCore::Database::scriptExecutionContext):
+        (WebCore::Database::opened):
+        (WebCore::Database::isNew):
+        (WebCore::Database::databaseDebugName):
+        * storage/DatabaseAuthorizer.cpp:
+        (WebCore::DatabaseAuthorizer::DatabaseAuthorizer):
+        (WebCore::DatabaseAuthorizer::denyBasedOnTableName):
+        * storage/DatabaseAuthorizer.h:
+        (WebCore::DatabaseAuthorizer::create):
+        * storage/DatabaseSync.cpp:
+        (WebCore::DatabaseSync::databaseInfoTableName):
+        (WebCore::DatabaseSync::openDatabaseSync):
+        (WebCore::DatabaseSync::DatabaseSync):
+        (WebCore::DatabaseSync::~DatabaseSync):
+        (WebCore::DatabaseSync::version):
+        (WebCore::DatabaseSync::changeVersion):
+        (WebCore::DatabaseSync::transaction):
+        (WebCore::DatabaseSync::scriptExecutionContext):
+        * storage/DatabaseSync.h:
+        (WebCore::DatabaseSync::databaseDebugName):
+        * storage/DatabaseTask.cpp:
+        (WebCore::DatabaseOpenTask::DatabaseOpenTask):
+        (WebCore::DatabaseOpenTask::doPerformTask):
+        * storage/DatabaseTask.h:
+        (WebCore::DatabaseOpenTask::create):
+
 2010-06-25  Lei Zheng  <lzheng@chromium.org>
 
         Reviewed by Dimitri Glazkov.
