@@ -355,7 +355,9 @@ void PNGImageDecoder::rowAvailable(unsigned char* rowBuffer, unsigned rowIndex, 
     // Copy the data into our buffer.
     int width = scaledSize().width();
     int destY = scaledY(rowIndex);
-    if (destY < 0)
+
+    // Check that the row is within the image bounds. LibPNG may supply an extra row.
+    if (destY < 0 || destY >= scaledSize().height())
         return;
     bool sawAlpha = buffer.hasAlpha();
     for (int x = 0; x < width; ++x) {
