@@ -37,13 +37,14 @@
 namespace JSC {
 
     class AssemblerBuffer {
-        static const int inlineCapacity = 256;
+        static const int inlineCapacity = 128 - sizeof(char*) - 2 * sizeof(int);
     public:
         AssemblerBuffer()
             : m_buffer(m_inlineBuffer)
             , m_capacity(inlineCapacity)
             , m_size(0)
         {
+            COMPILE_ASSERT(sizeof(AssemblerBuffer) == 128, AssemblerBuffer_should_be_128_bytes);
         }
 
         ~AssemblerBuffer()

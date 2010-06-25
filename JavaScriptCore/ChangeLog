@@ -1,3 +1,13 @@
+2010-06-25  Nathan Lawrence  <nlawrence@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        Aligning AssemblerBuffer to 128 bytes gives a 0.4% speedup on
+        sunspider.
+
+        * assembler/AssemblerBuffer.h:
+        (JSC::AssemblerBuffer::AssemblerBuffer):
+
 2010-06-25  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r61842.
