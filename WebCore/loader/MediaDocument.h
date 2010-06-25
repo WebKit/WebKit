@@ -34,16 +34,16 @@ namespace WebCore {
 
 class MediaDocument : public HTMLDocument {
 public:
-    static PassRefPtr<MediaDocument> create(Frame* frame)
+    static PassRefPtr<MediaDocument> create(Frame* frame, const KURL& url)
     {
-        return adoptRef(new MediaDocument(frame));
+        return adoptRef(new MediaDocument(frame, url));
     }
     virtual ~MediaDocument();
 
     void mediaElementSawUnsupportedTracks();
 
 private:
-    MediaDocument(Frame*);
+    MediaDocument(Frame*, const KURL&);
 
     virtual bool isMediaDocument() const { return true; }        
     virtual DocumentParser* createParser();

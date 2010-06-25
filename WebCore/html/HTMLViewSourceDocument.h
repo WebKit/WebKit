@@ -37,9 +37,9 @@ struct Token;
 
 class HTMLViewSourceDocument : public HTMLDocument {
 public:
-    static PassRefPtr<HTMLViewSourceDocument> create(Frame* frame, const String& mimeType)
+    static PassRefPtr<HTMLViewSourceDocument> create(Frame* frame, const KURL& url, const String& mimeType)
     {
-        return adoptRef(new HTMLViewSourceDocument(frame, mimeType));
+        return adoptRef(new HTMLViewSourceDocument(frame, url, mimeType));
     }
 
     void addViewSourceToken(Token*); // Used by the LegacyHTMLDocumentParser.
@@ -47,7 +47,7 @@ public:
     void addViewSourceDoctypeToken(DoctypeToken*);
 
 private:
-    HTMLViewSourceDocument(Frame*, const String& mimeType);
+    HTMLViewSourceDocument(Frame*, const KURL&, const String& mimeType);
 
     // Returns LegacyHTMLDocumentParser or TextDocumentParser based on m_type.
     virtual DocumentParser* createParser();

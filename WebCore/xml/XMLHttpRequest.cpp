@@ -240,9 +240,8 @@ Document* XMLHttpRequest::responseXML() const
             // The W3C spec requires this.
             m_responseXML = 0;
         } else {
-            m_responseXML = Document::create(0);
+            m_responseXML = Document::create(0, m_url);
             m_responseXML->open();
-            m_responseXML->setURL(m_url);
             // FIXME: Set Last-Modified.
             m_responseXML->write(String(m_responseText));
             m_responseXML->finishParsing();

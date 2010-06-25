@@ -102,8 +102,8 @@ bool MediaDocumentParser::writeRawData(const char*, int)
     return false;
 }
     
-MediaDocument::MediaDocument(Frame* frame)
-    : HTMLDocument(frame)
+MediaDocument::MediaDocument(Frame* frame, const KURL& url)
+    : HTMLDocument(frame, url)
     , m_replaceMediaElementTimer(this, &MediaDocument::replaceMediaElementTimerFired)
 {
     setParseMode(Compat);

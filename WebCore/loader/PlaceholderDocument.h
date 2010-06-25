@@ -32,15 +32,15 @@ namespace WebCore {
 
 class PlaceholderDocument : public Document {
 public:
-    static PassRefPtr<PlaceholderDocument> create(Frame* frame)
+    static PassRefPtr<PlaceholderDocument> create(Frame* frame, const KURL& url)
     {
-        return adoptRef(new PlaceholderDocument(frame));
+        return adoptRef(new PlaceholderDocument(frame, url));
     }
 
     virtual void attach();
 
 private:
-    PlaceholderDocument(Frame* frame) : Document(frame, false, false) { }
+    PlaceholderDocument(Frame* frame, const KURL& url) : Document(frame, url, false, false) { }
 };
 
 } // namespace WebCore

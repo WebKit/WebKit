@@ -227,18 +227,18 @@ PassRefPtr<Document> DOMImplementation::createDocument(const String& namespaceUR
     RefPtr<Document> doc;
 #if ENABLE(SVG)
     if (namespaceURI == SVGNames::svgNamespaceURI)
-        doc = SVGDocument::create(0);
+        doc = SVGDocument::create(0, KURL());
     else
 #endif
 #if ENABLE(WML)
     if (namespaceURI == WMLNames::wmlNamespaceURI)
-        doc = WMLDocument::create(0);
+        doc = WMLDocument::create(0, KURL());
     else
 #endif
     if (namespaceURI == HTMLNames::xhtmlNamespaceURI)
-        doc = Document::createXHTML(0);
+        doc = Document::createXHTML(0, KURL());
     else
-        doc = Document::create(0);
+        doc = Document::create(0, KURL());
 
     RefPtr<Node> documentElement;
     if (!qualifiedName.isEmpty()) {
@@ -295,37 +295,37 @@ bool DOMImplementation::isTextMIMEType(const String& mimeType)
 
 PassRefPtr<HTMLDocument> DOMImplementation::createHTMLDocument(const String& title)
 {
-    RefPtr<HTMLDocument> d = HTMLDocument::create(0);
+    RefPtr<HTMLDocument> d = HTMLDocument::create(0, KURL());
     d->open();
     d->write("<!doctype html><html><body></body></html>");
     d->setTitle(title);
     return d.release();
 }
 
-PassRefPtr<Document> DOMImplementation::createDocument(const String& type, Frame* frame, bool inViewSourceMode)
+PassRefPtr<Document> DOMImplementation::createDocument(const String& type, Frame* frame, const KURL& url, bool inViewSourceMode)
 {
     if (inViewSourceMode)
-        return HTMLViewSourceDocument::create(frame, type);
+        return HTMLViewSourceDocument::create(frame, url, type);
 
     // Plugins cannot take HTML and XHTML from us, and we don't even need to initialize the plugin database for those.
     if (type == "text/html")
-        return HTMLDocument::create(frame);
+        return HTMLDocument::create(frame, url);
     if (type == "application/xhtml+xml"
 #if ENABLE(XHTMLMP)
         || type == "application/vnd.wap.xhtml+xml"
 #endif
         )
-        return Document::createXHTML(frame);
+        return Document::createXHTML(frame, url);
 
 #if ENABLE(WML)
     if (type == "text/vnd.wap.wml" || type == "application/vnd.wap.wmlc")
-        return WMLDocument::create(frame);
+        return WMLDocument::create(frame, url);
 #endif
 
 #if ENABLE(FTPDIR)
     // Plugins cannot take FTP from us either
     if (type == "application/x-ftp-directory")
-        return FTPDirectoryDocument::create(frame);
+        return FTPDirectoryDocument::create(frame, url);
 #endif
 
     PluginData* pluginData = 0;
@@ -335,23 +335,23 @@ PassRefPtr<Document> DOMImplementation::createDocument(const String& type, Frame
     // PDF is one image type for which a plugin can override built-in support.
     // We do not want QuickTime to take over all image types, obviously.
     if ((type == "application/pdf" || type == "text/pdf") && pluginData && pluginData->supportsMimeType(type))
-        return PluginDocument::create(frame);
+        return PluginDocument::create(frame, url);
     if (Image::supportsType(type))
-        return ImageDocument::create(frame);
+        return ImageDocument::create(frame, url);
 
 #if ENABLE(VIDEO)
      // Check to see if the type can be played by our MediaPlayer, if so create a MediaDocument
      if (MediaPlayer::supportsType(ContentType(type)))
-         return MediaDocument::create(frame);
+         return MediaDocument::create(frame, url);
 #endif
 
     // Everything else except text/plain can be overridden by plugins. In particular, Adobe SVG Viewer should be used for SVG, if installed.
     // Disallowing plug-ins to use text/plain prevents plug-ins from hijacking a fundamental type that the browser is expected to handle,
     // and also serves as an optimization to prevent loading the plug-in database in the common case.
     if (type != "text/plain" && pluginData && pluginData->supportsMimeType(type)) 
-        return PluginDocument::create(frame);
+        return PluginDocument::create(frame, url);
     if (isTextMIMEType(type))
-        return TextDocument::create(frame);
+        return TextDocument::create(frame, url);
 
 #if ENABLE(SVG)
     if (type == "image/svg+xml") {
@@ -359,13 +359,13 @@ PassRefPtr<Document> DOMImplementation::createDocument(const String& type, Frame
         Settings* settings = frame ? frame->settings() : 0;
         if (!settings || !settings->usesDashboardBackwardCompatibilityMode())
 #endif
-            return SVGDocument::create(frame);
+            return SVGDocument::create(frame, url);
     }
 #endif
     if (isXMLMIMEType(type))
-        return Document::create(frame);
+        return Document::create(frame, url);
 
-    return HTMLDocument::create(frame);
+    return HTMLDocument::create(frame, url);
 }
 
 }
