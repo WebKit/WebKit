@@ -1,3 +1,18 @@
+2010-06-24  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        commit-queue is taking too long to land patches because of red trees
+        https://bugs.webkit.org/show_bug.cgi?id=41194
+
+        Instead of checking for the tree to be green, we'll just spin hot
+        trying to land patches.  This is probably too extreme in ignoring the
+        tree, but I think we should try it for a while to see if we have
+        trouble.  That will help us find the right balance.
+
+        * Scripts/webkitpy/tool/commands/queues.py:
+        * Scripts/webkitpy/tool/commands/queues_unittest.py:
+
 2010-06-24  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Xan Lopez.

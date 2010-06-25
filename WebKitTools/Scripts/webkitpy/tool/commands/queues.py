@@ -184,12 +184,8 @@ class CommitQueue(AbstractPatchQueue, StepSequenceErrorHandler):
         patches = self._validate_patches_in_commit_queue()
         patches = sorted(patches, self._patch_cmp)
         self._update_work_items([patch.id() for patch in patches])
-        builders_are_green = self._builders_are_green()
-        if not builders_are_green:
-            patches = filter(lambda patch: patch.is_rollout(), patches)
         if not patches:
-            queue_text = "queue" if builders_are_green else "rollout queue"
-            self._update_status("Empty %s" % queue_text)
+            self._update_status("Empty queue")
             return None
         # Only bother logging if we have patches in the queue.
         self.log_progress([patch.id() for patch in patches])
@@ -211,37 +207,18 @@ class CommitQueue(AbstractPatchQueue, StepSequenceErrorHandler):
             return False
         return True
 
-    def _builders_are_green(self):
-        red_builders_names = self.tool.buildbot.red_core_builders_names()
-        if red_builders_names:
-            red_builders_names = map(lambda name: "\"%s\"" % name, red_builders_names) # Add quotes around the names.
-            self._update_status("Builders [%s] are red. See http://build.webkit.org" % ", ".join(red_builders_names), None)
-            return False
-        return True
-
     def should_proceed_with_work_item(self, patch):
-        if not patch.is_rollout():
-            if not self._builders_are_green():
-                return False
         patch_text = "rollout patch" if patch.is_rollout() else "patch"
         self._update_status("Landing %s" % patch_text, patch)
         return True
 
     def _land(self, patch, first_run=False):
         try:
-            # We need to check the builders, unless we're trying to land a
-            # rollout (in which case the builders are probably red.)
-            if not patch.is_rollout() and not self._builders_are_green():
-                # We return true here because we want to return to the main
-                # QueueEngine loop as quickly as possible.
-                return True
             args = [
                 "land-attachment",
                 "--force-clean",
                 "--build",
                 "--non-interactive",
-                # The master process is responsible for checking the status
-                # of the builders (see above call to _builders_are_green).
                 "--ignore-builders",
                 "--build-style=both",
                 "--quiet",
