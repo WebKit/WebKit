@@ -194,6 +194,9 @@ public slots:
     bool isGeolocationPermissionSet() const { return m_isGeolocationPermissionSet; }
     bool geolocationPermission() const { return m_geolocationPermission; }
 
+    // Empty stub method to keep parity with object model exposed by global LayoutTestController.
+    void abortModal() {}
+
     /*
         Policy values: 'on', 'auto' or 'off'.
         Orientation values: 'vertical' or 'horizontal'.

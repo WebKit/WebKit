@@ -286,6 +286,9 @@ public:
     void setMockGeolocationPosition(const CppArgumentList&, CppVariant*);
     void setMockGeolocationError(const CppArgumentList&, CppVariant*);
 
+    // Empty stub method to keep parity with object model exposed by global LayoutTestController.
+    void abortModal(const CppArgumentList&, CppVariant*);
+
 public:
     // The following methods are not exposed to JavaScript.
     void setWorkQueueFrozen(bool frozen) { m_workQueue.setFrozen(frozen); }

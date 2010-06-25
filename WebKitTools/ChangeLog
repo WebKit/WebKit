@@ -1,3 +1,31 @@
+2010-06-25  Prasad Tammana  <prasadt@chromium.org>
+
+        Reviewed by Dmitry Titov.
+
+        Add empty abortModal() method to all platforms.
+        https://bugs.webkit.org/show_bug.cgi?id=40864
+
+        Add an empty abortModal() stub to LayoutTestController on all platforms to get rid of platform specific #ifs in
+        platform independent LayoutTestController code.  Without this change, layout tests using LayoutTestController tests
+        that use abortModal will become mac specific which is not desirable.
+
+        * DumpRenderTree/LayoutTestController.cpp:
+        (abortModalCallback):
+        (LayoutTestController::staticFunctions):
+        * DumpRenderTree/LayoutTestController.h:
+        * DumpRenderTree/chromium/LayoutTestController.cpp:
+        (LayoutTestController::LayoutTestController):
+        (LayoutTestController::abortModal):
+        * DumpRenderTree/chromium/LayoutTestController.h:
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
+        (LayoutTestController::abortModal):
+        * DumpRenderTree/qt/LayoutTestControllerQt.h:
+        (LayoutTestController::abortModal):
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp:
+        (LayoutTestController::abortModal):
+        * DumpRenderTree/wx/LayoutTestControllerWx.cpp:
+        (LayoutTestController::abortModal):
+
 2010-06-25  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.
