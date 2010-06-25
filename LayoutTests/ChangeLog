@@ -1,3 +1,13 @@
+2010-06-24  Alpha Lam  <hclam@chromium.org>
+
+        Unreviewed. Build fix.
+
+        Update test expectations for chromium.
+
+        * platform/chromium-mac/fast/history/timed-refresh-in-cached-frame-expected.txt: Added.
+        * platform/chromium-win/fast/history/timed-refresh-in-cached-frame-expected.txt: Added.
+        * platform/chromium-win/fast/images/icon-decoding-expected.txt:
+
 2010-06-24  Adam Barth  <abarth@webkit.org>
 
         Unreviewed.
