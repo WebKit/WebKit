@@ -30,6 +30,18 @@
 
 namespace WebCore {
 
+class SinkDocumentParser : public RawDataDocumentParser {
+public:
+    SinkDocumentParser(SinkDocument* document)
+        : RawDataDocumentParser(document)
+    {
+    }
+
+private:
+    // Ignore all data.
+    virtual void appendBytes(DocumentWriter*, const char*, int, bool) { }
+};
+
 SinkDocument::SinkDocument(Frame* frame, const KURL& url)
     : HTMLDocument(frame, url)
 {
@@ -38,9 +50,7 @@ SinkDocument::SinkDocument(Frame* frame, const KURL& url)
 
 DocumentParser* SinkDocument::createParser()
 {
-    // The basic RawDataDocumentParser does nothing with the data
-    // which is sufficient for our purposes here.
-    return new RawDataDocumentParser(this);
+    return new SinkDocumentParser(this);
 }
 
 } // namespace WebCore

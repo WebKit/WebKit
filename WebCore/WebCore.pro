@@ -475,6 +475,7 @@ SOURCES += \
     dom/DeviceOrientationEvent.cpp \
     dom/Document.cpp \
     dom/DocumentFragment.cpp \
+    dom/DocumentParser.cpp \
     dom/DocumentType.cpp \
     dom/DOMImplementation.cpp \
     dom/DOMStringList.cpp \

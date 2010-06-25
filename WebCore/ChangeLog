@@ -51,6 +51,47 @@
 
         Reviewed by Adam Barth.
 
+        Move decoding into DocumentParser to further simplify RawDataDocumentParser and DocumentWriter
+        https://bugs.webkit.org/show_bug.cgi?id=41202
+
+        The silly thing about this patch is that none of the
+        RawDataDocumentParser subclasses actually use any of the
+        data passed to them via appendBytes.
+
+        This makes the relationship between DocumentWriter and
+        DocumentParser slightly more confusing, however I think this
+        DocumentParser API is slightly nicer.
+
+        Next step is to split DecodedDataDocumentParser out from
+        DocumentParser, and then the base DocumentParser won't know
+        anything about decoding or SegmentedString.
+
+        No functional change, thus no tests.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/DocumentParser.h:
+        * dom/RawDataDocumentParser.h:
+        * loader/DocumentWriter.cpp:
+        (WebCore::DocumentWriter::replaceDocument):
+        (WebCore::DocumentWriter::createDecoderIfNeeded):
+        (WebCore::DocumentWriter::reportDataRecieved):
+        (WebCore::DocumentWriter::addData):
+        * loader/DocumentWriter.h:
+        * loader/ImageDocument.cpp:
+        (WebCore::ImageDocumentParser::appendBytes):
+        * loader/MediaDocument.cpp:
+        (WebCore::MediaDocumentParser::appendBytes):
+        * loader/PluginDocument.cpp:
+        (WebCore::PluginDocumentParser::appendBytes):
+        * loader/SinkDocument.cpp:
+        (WebCore::SinkDocumentParser::SinkDocumentParser):
+        (WebCore::SinkDocumentParser::appendBytes):
+        (WebCore::SinkDocument::createParser):
+
+2010-06-25  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
         Split DocumentParser::write into separate append and insert calls
         https://bugs.webkit.org/show_bug.cgi?id=41197
 

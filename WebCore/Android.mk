@@ -113,9 +113,10 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	dom/Comment.cpp \
 	dom/ContainerNode.cpp \
 	dom/DOMImplementation.cpp \
-        dom/DOMStringList.cpp \
+	dom/DOMStringList.cpp \
 	dom/Document.cpp \
 	dom/DocumentFragment.cpp \
+	dom/DocumentParser.cpp \
 	dom/DocumentType.cpp \
 	dom/DynamicNodeList.cpp \
 	dom/EditingText.cpp \

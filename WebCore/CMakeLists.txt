@@ -773,6 +773,7 @@ SET(WebCore_SOURCES
     dom/DeviceOrientationEvent.cpp
     dom/Document.cpp
     dom/DocumentFragment.cpp
+    dom/DocumentParser.cpp
     dom/DocumentType.cpp
     dom/DynamicNodeList.cpp
     dom/EditingText.cpp

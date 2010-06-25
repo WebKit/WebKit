@@ -84,7 +84,7 @@ public:
     }
 
 private:
-    virtual bool writeRawData(const char* data, int len);
+    virtual void appendBytes(DocumentWriter*, const char*, int, bool);
     virtual void finish();
 };
 
@@ -118,19 +118,17 @@ static float pageZoomFactor(Document* document)
     return view ? view->pageZoomFactor() : 1;
 }
 
-bool ImageDocumentParser::writeRawData(const char*, int)
+void ImageDocumentParser::appendBytes(DocumentWriter*, const char*, int, bool)
 {
     Frame* frame = document()->frame();
     Settings* settings = frame->settings();
     if (!frame->loader()->client()->allowImages(!settings || settings->areImagesEnabled()))
-        return false;
+        return;
 
     CachedImage* cachedImage = document()->cachedImage();
     cachedImage->data(frame->loader()->documentLoader()->mainResourceData(), false);
 
     document()->imageChanged();
-    
-    return false;
 }
 
 void ImageDocumentParser::finish()

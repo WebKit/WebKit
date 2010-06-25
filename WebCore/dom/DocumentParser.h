@@ -24,11 +24,12 @@
 #ifndef DocumentParser_h
 #define DocumentParser_h
 
-#include <wtf/Assertions.h>
+#include <wtf/Noncopyable.h>
 
 namespace WebCore {
 
 class Document;
+class DocumentWriter;
 class LegacyHTMLTreeBuilder;
 class LegacyHTMLDocumentParser;
 class SegmentedString;
@@ -38,13 +39,18 @@ class DocumentParser : public Noncopyable {
 public:
     virtual ~DocumentParser() { }
 
-    // insert is use by document.write
+    // insert is used by document.write
     virtual void insert(const SegmentedString&) = 0;
-    // apend is used by DocumentWriter (the loader)
+    // appendBytes is used by DocumentWriter (the loader)
+    virtual void appendBytes(DocumentWriter*, const char* bytes, int length, bool flush);
+
+    // FIXME: append() should be private, but DocumentWriter::replaceDocument
+    // uses it for now.
     virtual void append(const SegmentedString&) = 0;
 
     virtual void finish() = 0;
     virtual bool finishWasCalled() = 0;
+
     virtual bool isWaitingForScripts() const = 0;
     virtual bool isExecutingScript() const { return false; }
 
@@ -53,13 +59,6 @@ public:
     // and is very unclear as to what it actually means.  Only LegacyHTMLDocumentParser
     // actually implements it.
     virtual bool processingData() const { return false; }
-
-    virtual bool wantsRawData() const { return false; }
-    virtual bool writeRawData(const char* /*data*/, int /*length*/)
-    {
-        ASSERT_NOT_REACHED();
-        return false;
-    }
 
     virtual bool wellFormed() const { return true; }
 
@@ -82,14 +81,7 @@ public:
     void setXSSAuditor(XSSAuditor* auditor) { m_XSSAuditor = auditor; }
 
 protected:
-    DocumentParser(Document* document, bool viewSourceMode = false)
-        : m_parserStopped(false)
-        , m_inViewSourceMode(viewSourceMode)
-        , m_document(document)
-        , m_XSSAuditor(0)
-    {
-        ASSERT(document);
-    }
+    DocumentParser(Document*, bool viewSourceMode = false);
 
     // The parser has buffers, so parsing may continue even after
     // it stops receiving data. We use m_parserStopped to stop the parser

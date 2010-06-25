@@ -52,7 +52,7 @@ public:
     static Widget* pluginWidgetFromDocument(Document*);
 
 private:
-    virtual bool writeRawData(const char* data, int len);
+    virtual void appendBytes(DocumentWriter*, const char*, int, bool);
 
     void createDocumentStructure();
 
@@ -98,30 +98,30 @@ void PluginDocumentParser::createDocumentStructure()
     
     body->appendChild(embedElement, ec);    
 }
-    
-bool PluginDocumentParser::writeRawData(const char*, int)
+
+void PluginDocumentParser::appendBytes(DocumentWriter*, const char*, int, bool)
 {
     ASSERT(!m_embedElement);
     if (m_embedElement)
-        return false;
-    
+        return;
+
     createDocumentStructure();
 
-    if (Frame* frame = document()->frame()) {
-        Settings* settings = frame->settings();
-        if (settings && frame->loader()->subframeLoader()->allowPlugins(NotAboutToInstantiatePlugin)) {
-            document()->updateLayout();
+    Frame* frame = document()->frame();
+    if (!frame)
+        return;
+    Settings* settings = frame->settings();
+    if (!settings || !frame->loader()->subframeLoader()->allowPlugins(NotAboutToInstantiatePlugin))
+        return;
 
-            if (RenderWidget* renderer = toRenderWidget(m_embedElement->renderer())) {
-                frame->loader()->client()->redirectDataToPlugin(renderer->widget());
-                frame->loader()->activeDocumentLoader()->mainResourceLoader()->setShouldBufferData(false);
-            }
+    document()->updateLayout();
 
-            finish();
-        }
+    if (RenderWidget* renderer = toRenderWidget(m_embedElement->renderer())) {
+        frame->loader()->client()->redirectDataToPlugin(renderer->widget());
+        frame->loader()->activeDocumentLoader()->mainResourceLoader()->setShouldBufferData(false);
     }
 
-    return false;
+    finish();
 }
 
 PluginDocument::PluginDocument(Frame* frame, const KURL& url)
