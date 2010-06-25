@@ -1,5 +1,37 @@
 2010-06-25  Adam Barth  <abarth@webkit.org>
 
+        Reviewed by Eric Seidel.
+
+        HTMLTreeBuilder should branch first on token type and then on insertion mode
+        https://bugs.webkit.org/show_bug.cgi?id=41232
+
+        This is different than how the spec is written, but it lets us remove a
+        lot of redudancy in the algorithm.  We might even want to pull some of
+        the branches on token name outside the insertion mode branch, but I'll
+        leave that for a future patch.
+
+        Although this looks like a big patch, it's mostly just a mechanical
+        switch permutation.
+
+        * html/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::constructTreeFromToken):
+        (WebCore::HTMLTreeBuilder::processToken):
+        (WebCore::HTMLTreeBuilder::processDoctypeToken):
+        (WebCore::HTMLTreeBuilder::processStartTag):
+        (WebCore::HTMLTreeBuilder::processEndTag):
+        (WebCore::HTMLTreeBuilder::processComment):
+        (WebCore::HTMLTreeBuilder::processCharacter):
+        (WebCore::HTMLTreeBuilder::processEndOfFile):
+        (WebCore::HTMLTreeBuilder::processDefaultForInitialMode):
+        (WebCore::HTMLTreeBuilder::processDefaultForBeforeHTMLMode):
+        (WebCore::HTMLTreeBuilder::processDefaultForBeforeHeadMode):
+        (WebCore::HTMLTreeBuilder::processDefaultForInHeadMode):
+        (WebCore::HTMLTreeBuilder::processDefaultForInHeadNoscriptMode):
+        (WebCore::HTMLTreeBuilder::processDefaultForAfterHeadMode):
+        * html/HTMLTreeBuilder.h:
+
+2010-06-25  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Darin Adler.
 
         Tree builder doesn't need to return a Node

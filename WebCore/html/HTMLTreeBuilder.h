@@ -108,7 +108,23 @@ private:
     };
 
     void passTokenToLegacyParser(HTMLToken&);
-    void processToken(AtomicHTMLToken&, UChar cc = 0);
+
+    // Specialized functions for processing the different types of tokens.
+    void processToken(AtomicHTMLToken&);
+    void processDoctypeToken(AtomicHTMLToken&);
+    void processStartTag(AtomicHTMLToken&);
+    void processEndTag(AtomicHTMLToken&);
+    void processComment(AtomicHTMLToken&);
+    void processCharacter(AtomicHTMLToken&);
+    void processEndOfFile(AtomicHTMLToken&);
+
+    // Default processing for the different insertion modes.
+    void processDefaultForInitialMode(AtomicHTMLToken&);
+    void processDefaultForBeforeHTMLMode(AtomicHTMLToken&);
+    void processDefaultForBeforeHeadMode(AtomicHTMLToken&);
+    void processDefaultForInHeadMode(AtomicHTMLToken&);
+    void processDefaultForInHeadNoscriptMode(AtomicHTMLToken&);
+    void processDefaultForAfterHeadMode(AtomicHTMLToken&);
 
     void insertDoctype(AtomicHTMLToken&);
     void insertComment(AtomicHTMLToken&);

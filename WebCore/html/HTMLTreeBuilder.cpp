@@ -225,325 +225,331 @@ void HTMLTreeBuilder::constructTreeFromToken(HTMLToken& rawToken)
     }
 
     AtomicHTMLToken token(rawToken);
-
-    // HTML5 expects the tokenizer to call the parser every time a character is
-    // emitted.  We instead collect characters and call the parser with a batch.
-    // In order to make our first-pass parser code simple, processToken matches
-    // the spec in only handling one character at a time.
-    if (token.type() == HTMLToken::Character) {
-        StringImpl* characters = token.characters().impl();
-        // FIXME: Calling processToken for each character is probably slow.
-        for (unsigned i = 0; i < characters->length(); ++i)
-            processToken(token, (*characters)[i]);
-        return;
-    }
     return processToken(token);
 }
 
-void HTMLTreeBuilder::processToken(AtomicHTMLToken& token, UChar cc)
+void HTMLTreeBuilder::processToken(AtomicHTMLToken& token)
 {
-reprocessToken:
+    switch (token.type()) {
+    case HTMLToken::Uninitialized:
+        ASSERT_NOT_REACHED();
+        break;
+    case HTMLToken::DOCTYPE:
+        processDoctypeToken(token);
+        break;
+    case HTMLToken::StartTag:
+        processStartTag(token);
+        break;
+    case HTMLToken::EndTag:
+        processEndTag(token);
+        break;
+    case HTMLToken::Comment:
+        processComment(token);
+        return;
+    case HTMLToken::Character:
+        processCharacter(token);
+        break;
+    case HTMLToken::EndOfFile:
+        processEndOfFile(token);
+        break;
+    }
+}
+
+void HTMLTreeBuilder::processDoctypeToken(AtomicHTMLToken& token)
+{
+    if (insertionMode() == InitialMode) {
+        insertDoctype(token);
+        return;
+    }
+    parseError(token);
+}
+
+void HTMLTreeBuilder::processStartTag(AtomicHTMLToken& token)
+{
     switch (insertionMode()) {
-    case InitialMode: {
-        switch (token.type()) {
-        case HTMLToken::Uninitialized:
-            ASSERT_NOT_REACHED();
-            break;
-        case HTMLToken::DOCTYPE:
-            insertDoctype(token);
+    case InitialMode:
+        ASSERT(insertionMode() == InitialMode);
+        processDefaultForInitialMode(token);
+        // Fall through.
+    case BeforeHTMLMode:
+        ASSERT(insertionMode() == BeforeHTMLMode);
+        if (token.name() == htmlTag) {
+            notImplemented();
+            setInsertionMode(BeforeHeadMode);
             return;
-        case HTMLToken::Comment:
-            insertComment(token);
-            return;
-        case HTMLToken::Character:
-            if (isTreeBuilderWhiteSpace(cc))
-                return;
-            break;
-        case HTMLToken::StartTag:
-        case HTMLToken::EndTag:
-        case HTMLToken::EndOfFile:
-            break;
         }
-        notImplemented();
-        parseError(token);
-        setInsertionMode(BeforeHTMLMode);
-        goto reprocessToken;
-    }
-    case BeforeHTMLMode: {
-        switch (token.type()) {
-        case HTMLToken::Uninitialized:
-            ASSERT_NOT_REACHED();
-            break;
-        case HTMLToken::DOCTYPE:
-            parseError(token);
+        processDefaultForBeforeHTMLMode(token);
+        // Fall through.
+    case BeforeHeadMode:
+        ASSERT(insertionMode() == BeforeHeadMode);
+        if (token.name() == htmlTag) {
+            notImplemented();
             return;
-        case HTMLToken::Comment:
-            insertComment(token);
-            return;
-        case HTMLToken::Character:
-            if (isTreeBuilderWhiteSpace(cc))
-                return;
-            break;
-        case HTMLToken::StartTag:
-            if (token.name() == htmlTag) {
-                notImplemented();
-                setInsertionMode(BeforeHeadMode);
-                return;
-            }
-            break;
-        case HTMLToken::EndTag:
-            if (token.name() == headTag || token.name() == bodyTag || token.name() == htmlTag || token.name() == brTag)
-                break;
-            parseError(token);
-            return;
-        case HTMLToken::EndOfFile:
-            break;
         }
-        notImplemented();
-        setInsertionMode(BeforeHeadMode);
-        goto reprocessToken;
-    }
-    case BeforeHeadMode: {
-        switch (token.type()) {
-        case HTMLToken::Uninitialized:
-            ASSERT_NOT_REACHED();
-            break;
-        case HTMLToken::Character:
-            if (isTreeBuilderWhiteSpace(cc))
-                return;
-            break;
-        case HTMLToken::Comment:
-            insertComment(token);
+        if (token.name() == headTag) {
+            m_headElement = insertElement(token);
+            setInsertionMode(InHeadMode);
             return;
-        case HTMLToken::DOCTYPE:
-            parseError(token);
-            return;
-        case HTMLToken::StartTag:
-            if (token.name() == htmlTag) {
-                notImplemented();
-                return;
-            }
-            if (token.name() == headTag) {
-                m_headElement = insertElement(token);
-                setInsertionMode(InHeadMode);
-                return;
-            }
-            break;
-        case HTMLToken::EndTag:
-            if (token.name() == headTag || token.name() == bodyTag || token.name() == brTag) {
-                AtomicHTMLToken fakeHead(HTMLToken::StartTag, headTag.localName());
-                processToken(fakeHead);
-                goto reprocessToken;
-            }
-            parseError(token);
-            return;
-        case HTMLToken::EndOfFile:
-            break;
         }
-        AtomicHTMLToken fakeHead(HTMLToken::StartTag, headTag.localName());
-        processToken(fakeHead);
-        goto reprocessToken;
-    }
-    case InHeadMode: {
-        switch (token.type()) {
-        case HTMLToken::Uninitialized:
-            ASSERT_NOT_REACHED();
-            break;
-        case HTMLToken::Character:
-            insertCharacter(cc);
+        processDefaultForBeforeHeadMode(token);
+        // Fall through.
+    case InHeadMode:
+        ASSERT(insertionMode() == InHeadMode);
+        if (token.name() == htmlTag) {
+            notImplemented();
             return;
-        case HTMLToken::Comment:
-            insertComment(token);
+        }
+        // FIXME: Atomize "command".
+        if (token.name() == baseTag || token.name() == "command" || token.name() == linkTag) {
+            insertElement(token);
+            m_openElements.pop();
+            notImplemented();
             return;
-        case HTMLToken::DOCTYPE:
-            parseError(token);
+        }
+        if (token.name() == metaTag) {
+            insertElement(token);
+            m_openElements.pop();
+            notImplemented();
             return;
-        case HTMLToken::StartTag:
-            if (token.name() == htmlTag) {
-                notImplemented();
-                return;
-            }
-            // FIXME: Atomize "command".
-            if (token.name() == baseTag || token.name() == "command" || token.name() == linkTag) {
-                insertElement(token);
-                m_openElements.pop();
-                notImplemented();
-            }
-            if (token.name() == metaTag) {
-                insertElement(token);
-                m_openElements.pop();
-                notImplemented();
-            }
-            if (token.name() == titleTag) {
-                insertGenericRCDATAElement(token);
-                return;
-            }
-            if (token.name() == noscriptTag) {
-                if (isScriptingFlagEnabled(m_document->frame())) {
-                    insertGenericRawTextElement(token);
-                    return;
-                }
-                insertElement(token);
-                setInsertionMode(InHeadNoscriptMode);
-            }
-            if (token.name() == noframesTag || token.name() == styleTag) {
+        }
+        if (token.name() == titleTag) {
+            insertGenericRCDATAElement(token);
+            return;
+        }
+        if (token.name() == noscriptTag) {
+            if (isScriptingFlagEnabled(m_document->frame())) {
                 insertGenericRawTextElement(token);
                 return;
             }
-            if (token.name() == scriptTag) {
-                insertScriptElement(token);
-                return;
-            }
-            if (token.name() == headTag) {
-                notImplemented();
-                return;
-            }
-            break;
-        case HTMLToken::EndTag:
-            if (token.name() == headTag) {
-                ASSERT(m_openElements.top()->tagQName() == headTag);
-                m_openElements.pop();
-                setInsertionMode(AfterHeadMode);
-                return;
-            }
-            if (token.name() == bodyTag || token.name() == htmlTag || token.name() == brTag)
-                break;
-            parseError(token);
+            insertElement(token);
+            setInsertionMode(InHeadNoscriptMode);
             return;
-            break;
-        case HTMLToken::EndOfFile:
-            break;
         }
-        AtomicHTMLToken fakeHead(HTMLToken::EndTag, headTag.localName());
-        processToken(fakeHead);
-        goto reprocessToken;
-    }
-    case InHeadNoscriptMode: {
-        switch (token.type()) {
-        case HTMLToken::Uninitialized:
-            ASSERT_NOT_REACHED();
-            break;
-        case HTMLToken::DOCTYPE:
-            parseError(token);
+        if (token.name() == noframesTag || token.name() == styleTag) {
+            insertGenericRawTextElement(token);
             return;
-        case HTMLToken::StartTag:
-            if (token.name() == htmlTag) {
-                notImplemented();
-                return;
-            }
-            if (token.name() == linkTag || token.name() == metaTag || token.name() == noframesTag || token.name() == styleTag) {
-                notImplemented();
-                return;
-            }
-            if (token.name() == htmlTag || token.name() == noscriptTag) {
-                parseError(token);
-                return;
-            }
-            break;
-        case HTMLToken::EndTag:
-            if (token.name() == noscriptTag) {
-                ASSERT(m_openElements.top()->tagQName() == noscriptTag);
-                m_openElements.pop();
-                ASSERT(m_openElements.top()->tagQName() == headTag);
-                setInsertionMode(InHeadMode);
-                return;
-            }
-            if (token.name() == brTag)
-                break;
-            parseError(token);
+        }
+        if (token.name() == scriptTag) {
+            insertScriptElement(token);
             return;
-        case HTMLToken::Character:
-            notImplemented();
-            break;
-        case HTMLToken::Comment:
+        }
+        if (token.name() == headTag) {
             notImplemented();
             return;
-        case HTMLToken::EndOfFile:
-            break;
         }
-        AtomicHTMLToken fakeNoscript(HTMLToken::EndTag, noscriptTag.localName());
-        processToken(fakeNoscript);
-        goto reprocessToken;
-    }
-    case AfterHeadMode: {
-        switch (token.type()) {
-        case HTMLToken::Uninitialized:
-            ASSERT_NOT_REACHED();
-            break;
-        case HTMLToken::Character:
-            if (isTreeBuilderWhiteSpace(cc)) {
-                insertCharacter(cc);
-                return;
-            }
-            break;
-        case HTMLToken::Comment:
-            insertComment(token);
+        processDefaultForInHeadMode(token);
+        // Fall through.
+    case AfterHeadMode:
+        ASSERT(insertionMode() == AfterHeadMode);
+        if (token.name() == htmlTag) {
+            notImplemented();
             return;
-        case HTMLToken::DOCTYPE:
+        }
+        if (token.name() == bodyTag) {
+            m_framesetOk = false;
+            insertElement(token);
+            return;
+        }
+        if (token.name() == framesetTag) {
+            insertElement(token);
+            setInsertionMode(InFramesetMode);
+            return;
+        }
+        if (token.name() == baseTag || token.name() == linkTag || token.name() == metaTag || token.name() == noframesTag || token.name() == scriptTag || token.name() == styleTag || token.name() == titleTag) {
+            parseError(token);
+            ASSERT(m_headElement);
+            m_openElements.push(m_headElement.get());
+            notImplemented();
+            m_openElements.remove(m_headElement.get());
+            return;
+        }
+        if (token.name() == headTag) {
             parseError(token);
             return;
-        case HTMLToken::StartTag:
-            if (token.name() == htmlTag) {
-                notImplemented();
-                return;
-            }
-            if (token.name() == bodyTag) {
-                m_framesetOk = false;
-                insertElement(token);
-                return;
-            }
-            if (token.name() == framesetTag) {
-                insertElement(token);
-                setInsertionMode(InFramesetMode);
-                return;
-            }
-            if (token.name() == baseTag || token.name() == linkTag || token.name() == metaTag || token.name() == noframesTag || token.name() == scriptTag || token.name() == styleTag || token.name() == titleTag) {
-                parseError(token);
-                ASSERT(m_headElement);
-                m_openElements.push(m_headElement.get());
-                notImplemented();
-                m_openElements.remove(m_headElement.get());
-                return;
-            }
-            if (token.name() == headTag) {
-                parseError(token);
-                return;
-            }
-            break;
-        case HTMLToken::EndTag:
-            if (token.name() == bodyTag || token.name() == htmlTag || token.name() == brTag)    
-                break;
-            parseError(token);
-            return;
-        case HTMLToken::EndOfFile:
-            break;
         }
-        AtomicHTMLToken fakeBody(HTMLToken::StartTag, bodyTag.localName());
-        processToken(fakeBody);
-        m_framesetOk = true;
-        goto reprocessToken;
-    }
+        processDefaultForAfterHeadMode(token);
+        // Fall through
     case InBodyMode:
-    case TextMode:
-    case InTableMode:
-    case InTableTextMode:
-    case InCaptionMode:
-    case InColumnGroupMode:
-    case InTableBodyMode:
-    case InRowMode:
-    case InCellMode:
-    case InSelectMode:
-    case InSelectInTableMode:
-    case InForeignContentMode:
-    case AfterBodyMode:
-    case InFramesetMode:
-    case AfterFramesetMode:
-    case AfterAfterBodyMode:
-    case AfterAfterFramesetMode:
+        ASSERT(insertionMode() == InBodyMode);
         notImplemented();
-        ASSERT_NOT_REACHED();
+        break;
+    case InHeadNoscriptMode:
+        ASSERT(insertionMode() == InHeadNoscriptMode);
+        if (token.name() == htmlTag) {
+            notImplemented();
+            return;
+        }
+        if (token.name() == linkTag || token.name() == metaTag || token.name() == noframesTag || token.name() == styleTag) {
+            notImplemented();
+            return;
+        }
+        if (token.name() == htmlTag || token.name() == noscriptTag) {
+            parseError(token);
+            return;
+        }
+        processDefaultForInHeadNoscriptMode(token);
+        processToken(token);
+    default:
+        notImplemented();
     }
-    ASSERT_NOT_REACHED();
+}
+
+void HTMLTreeBuilder::processEndTag(AtomicHTMLToken& token)
+{
+    switch (insertionMode()) {
+    case InitialMode:
+        ASSERT(insertionMode() == InitialMode);
+        processDefaultForInitialMode(token);
+        // Fall through.
+    case BeforeHTMLMode:
+        ASSERT(insertionMode() == BeforeHTMLMode);
+        if (token.name() != headTag && token.name() != bodyTag && token.name() != htmlTag && token.name() != brTag) {
+            parseError(token);
+            return;
+        }
+        processDefaultForBeforeHTMLMode(token);
+        // Fall through.
+    case BeforeHeadMode:
+        ASSERT(insertionMode() == BeforeHeadMode);
+        if (token.name() != headTag && token.name() != bodyTag && token.name() != brTag) {
+            parseError(token);
+            return;
+        }
+        processDefaultForBeforeHeadMode(token);
+        // Fall through.
+    case InHeadMode:
+        ASSERT(insertionMode() == InHeadMode);
+        if (token.name() == headTag) {
+            ASSERT(m_openElements.top()->tagQName() == headTag);
+            m_openElements.pop();
+            setInsertionMode(AfterHeadMode);
+            return;
+        }
+        if (token.name() != bodyTag && token.name() != htmlTag && token.name() != brTag) {
+            parseError(token);
+            return;
+        }
+        processDefaultForInHeadMode(token);
+        // Fall through.
+    case AfterHeadMode:
+        ASSERT(insertionMode() == AfterHeadMode);
+        if (token.name() != bodyTag && token.name() != htmlTag && token.name() != brTag) {
+            parseError(token);
+            return;
+        }
+        processDefaultForAfterHeadMode(token);
+        // Fall through
+    case InBodyMode:
+        ASSERT(insertionMode() == InBodyMode);
+        notImplemented();
+        break;
+    case InHeadNoscriptMode:
+        ASSERT(insertionMode() == InHeadNoscriptMode);
+        if (token.name() == noscriptTag) {
+            ASSERT(m_openElements.top()->tagQName() == noscriptTag);
+            m_openElements.pop();
+            ASSERT(m_openElements.top()->tagQName() == headTag);
+            setInsertionMode(InHeadMode);
+            return;
+        }
+        if (token.name() != brTag) {
+            parseError(token);
+            return;
+        }
+        processDefaultForInHeadNoscriptMode(token);
+        processToken(token);
+    default:
+        notImplemented();
+    }
+}
+
+void HTMLTreeBuilder::processComment(AtomicHTMLToken& token)
+{
+    if (insertionMode() == InHeadNoscriptMode) {
+        notImplemented();
+        return;
+    }
+    insertComment(token);
+}
+
+void HTMLTreeBuilder::processCharacter(AtomicHTMLToken&)
+{
+    // FIXME: We need to figure out how to handle each character individually.
+    notImplemented();
+}
+
+void HTMLTreeBuilder::processEndOfFile(AtomicHTMLToken& token)
+{
+    switch (insertionMode()) {
+    case InitialMode:
+        ASSERT(insertionMode() == InitialMode);
+        processDefaultForInitialMode(token);
+        // Fall through.
+    case BeforeHTMLMode:
+        ASSERT(insertionMode() == BeforeHTMLMode);
+        processDefaultForBeforeHTMLMode(token);
+        // Fall through.
+    case BeforeHeadMode:
+        ASSERT(insertionMode() == BeforeHeadMode);
+        processDefaultForBeforeHeadMode(token);
+        // Fall through.
+    case InHeadMode:
+        ASSERT(insertionMode() == InHeadMode);
+        processDefaultForInHeadMode(token);
+        // Fall through.
+    case AfterHeadMode:
+        ASSERT(insertionMode() == AfterHeadMode);
+        processDefaultForAfterHeadMode(token);
+        // Fall through
+    case InBodyMode:
+        ASSERT(insertionMode() == InBodyMode);
+        notImplemented();
+        break;
+    case InHeadNoscriptMode:
+        ASSERT(insertionMode() == InHeadNoscriptMode);
+        processDefaultForInHeadNoscriptMode(token);
+        processToken(token);
+    default:
+        notImplemented();
+    }
+}
+
+void HTMLTreeBuilder::processDefaultForInitialMode(AtomicHTMLToken& token)
+{
+    notImplemented();
+    parseError(token);
+    setInsertionMode(BeforeHTMLMode);
+}
+
+void HTMLTreeBuilder::processDefaultForBeforeHTMLMode(AtomicHTMLToken&)
+{
+    notImplemented();
+    setInsertionMode(BeforeHeadMode);
+}
+
+void HTMLTreeBuilder::processDefaultForBeforeHeadMode(AtomicHTMLToken&)
+{
+    AtomicHTMLToken startHead(HTMLToken::StartTag, headTag.localName());
+    processStartTag(startHead);
+}
+
+void HTMLTreeBuilder::processDefaultForInHeadMode(AtomicHTMLToken&)
+{
+    AtomicHTMLToken endHead(HTMLToken::EndTag, headTag.localName());
+    processEndTag(endHead);
+}
+
+void HTMLTreeBuilder::processDefaultForInHeadNoscriptMode(AtomicHTMLToken&)
+{
+    AtomicHTMLToken endNoscript(HTMLToken::EndTag, noscriptTag.localName());
+    processEndTag(endNoscript);
+}
+
+void HTMLTreeBuilder::processDefaultForAfterHeadMode(AtomicHTMLToken&)
+{
+    AtomicHTMLToken startBody(HTMLToken::StartTag, bodyTag.localName());
+    processStartTag(startBody);
+    m_framesetOk = true;
 }
 
 void HTMLTreeBuilder::insertDoctype(AtomicHTMLToken& token)
