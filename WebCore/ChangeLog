@@ -2,6 +2,28 @@
 
         Reviewed by Eric Seidel.
 
+        Sketch out InHeadMode for tree builder
+        https://bugs.webkit.org/show_bug.cgi?id=41184
+
+        This state is relatively straightforward.  We introduce the stack of
+        open elements to track that notion in the spec.  The old tree builder
+        has a nice data structure for that, which we'll probably steal, but I'd
+        like to see what the full API is first.
+
+        * html/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::processToken):
+        (WebCore::HTMLTreeBuilder::insertCharacter):
+        (WebCore::HTMLTreeBuilder::insertGenericRCDATAElement):
+        (WebCore::HTMLTreeBuilder::insertGenericRawTextElement):
+        (WebCore::HTMLTreeBuilder::insertScriptElement):
+        * html/HTMLTreeBuilder.h:
+        (WebCore::HTMLTreeBuilder::ElementStack::pop):
+        (WebCore::HTMLTreeBuilder::ElementStack::top):
+
+2010-06-24  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         Sketch out BeforeHeadMode tree builder state
         https://bugs.webkit.org/show_bug.cgi?id=41183
 

@@ -99,14 +99,25 @@ private:
         AfterAfterFramesetMode,
     };
 
+    class ElementStack : public Noncopyable {
+    public:
+        void pop() { }
+        Element* top() const { return 0; }
+    };
+
     PassRefPtr<Node> passTokenToLegacyParser(HTMLToken&);
     PassRefPtr<Node> processToken(AtomicHTMLToken&, UChar cc = 0);
 
     PassRefPtr<Node> insertDoctype(AtomicHTMLToken&);
     PassRefPtr<Node> insertComment(AtomicHTMLToken&);
     PassRefPtr<Node> insertElement(AtomicHTMLToken&);
+    void insertCharacter(UChar cc);
+    PassRefPtr<Node> insertGenericRCDATAElement(AtomicHTMLToken&);
+    PassRefPtr<Node> insertGenericRawTextElement(AtomicHTMLToken&);
+    PassRefPtr<Node> insertScriptElement(AtomicHTMLToken&);
 
     RefPtr<Node> m_headElement;
+    ElementStack m_openElements;
 
     // FIXME: Implement error reporting.
     void parseError(AtomicHTMLToken&) { }
