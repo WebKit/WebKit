@@ -1,3 +1,23 @@
+2010-06-25  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Support evaluateScriptInIsolatedWorld()
+
+        https://bugs.webkit.org/show_bug.cgi?id=40079
+
+        Remove evaluateScriptInIsolatedWorld() from QtWebKit API.
+        Remove QWebScriptWorld from exported headers.
+        Confine support to DumpRenderTreeSupportQt so that the tests can pass.
+
+        * Api/headers.pri:
+        * Api/qwebframe.cpp:
+        * Api/qwebframe.h:
+        * WebCoreSupport/DumpRenderTreeSupportQt.cpp:
+        (DumpRenderTreeSupportQt::clearScriptWorlds):
+        (DumpRenderTreeSupportQt::evaluateScriptInIsolatedWorld):
+        * WebCoreSupport/DumpRenderTreeSupportQt.h:
+
 2010-06-24  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Unreviewed Symbian build fix.

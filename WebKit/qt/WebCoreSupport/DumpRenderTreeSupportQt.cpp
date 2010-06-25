@@ -49,6 +49,7 @@
 #include "PrintContext.h"
 #include "RenderListItem.h"
 #include "RenderTreeAsText.h"
+#include "ScriptController.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
 #if ENABLE(SVG)
@@ -65,11 +66,13 @@
 #include "qwebhistory_p.h"
 #include "qwebpage.h"
 #include "qwebpage_p.h"
+#include "qwebscriptworld.h"
 
 using namespace WebCore;
 
 CheckPermissionFunctionType* checkPermissionFunction = 0;
 RequestPermissionFunctionType* requestPermissionFunction = 0;
+QMap<int, QWebScriptWorld*> m_worldMap;
 
 DumpRenderTreeSupportQt::DumpRenderTreeSupportQt()
 {
@@ -615,6 +618,30 @@ bool DumpRenderTreeSupportQt::shouldClose(QWebFrame* frame)
 {
     WebCore::Frame* coreFrame = QWebFramePrivate::core(frame);
     return coreFrame->loader()->shouldClose();
+}
+
+void DumpRenderTreeSupportQt::clearScriptWorlds()
+{
+    m_worldMap.clear();
+}
+
+void DumpRenderTreeSupportQt::evaluateScriptInIsolatedWorld(QWebFrame* frame, int worldID, const QString& script)
+{
+    QWebScriptWorld* scriptWorld;
+    if (!worldID) {
+        scriptWorld = new QWebScriptWorld();
+    } else if (!m_worldMap.contains(worldID)) {
+        scriptWorld = new QWebScriptWorld();
+        m_worldMap.insert(worldID, scriptWorld);
+    } else
+        scriptWorld = m_worldMap.value(worldID);
+
+    WebCore::Frame* coreFrame = QWebFramePrivate::core(frame);
+
+    ScriptController* proxy = coreFrame->script();
+
+    if (proxy)
+        proxy->executeScriptInWorld(scriptWorld->world(), script, true);
 }
 
 // Provide a backward compatibility with previously exported private symbols as of QtWebKit 4.6 release

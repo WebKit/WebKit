@@ -73,6 +73,7 @@ void LayoutTestController::reset()
     DumpRenderTreeSupportQt::setWillSendRequestReturnsNullOnRedirect(false);
     DumpRenderTreeSupportQt::setWillSendRequestReturnsNull(false);
     DumpRenderTreeSupportQt::setWillSendRequestClearHeaders(QStringList());
+    DumpRenderTreeSupportQt::clearScriptWorlds();
     setIconDatabaseEnabled(false);
 
     emit hidePage();
@@ -665,16 +666,7 @@ void LayoutTestController::setMockGeolocationPosition(double latitude, double lo
 
 void LayoutTestController::evaluateScriptInIsolatedWorld(int worldID, const QString& script)
 {
-    QWebScriptWorld* scriptWorld;
-    if (!worldID) {
-        scriptWorld = new QWebScriptWorld();
-    } else if (!m_worldMap.contains(worldID)) {
-        scriptWorld = new QWebScriptWorld();
-        m_worldMap.insert(worldID, scriptWorld);
-    } else
-        scriptWorld = m_worldMap.value(worldID);
-
-    m_drt->webPage()->mainFrame()->evaluateScriptInIsolatedWorld(scriptWorld, script);
+    DumpRenderTreeSupportQt::evaluateScriptInIsolatedWorld(m_drt->webPage()->mainFrame(), worldID, script);
 }
 
 const unsigned LayoutTestController::maxViewWidth = 800;

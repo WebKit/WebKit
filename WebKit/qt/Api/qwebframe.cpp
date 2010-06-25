@@ -1378,22 +1378,6 @@ QVariant QWebFrame::evaluateJavaScript(const QString& scriptSource)
     return rc;
 }
 
-QVariant QWebFrame::evaluateScriptInIsolatedWorld(QWebScriptWorld* scriptWorld, const QString& scriptSource)
-{
-    ScriptController *proxy = d->frame->script();
-    QVariant rc;
-
-    if (proxy) {
-        JSC::JSValue v = proxy->executeScriptInWorld(scriptWorld->world(), scriptSource, true).jsValue();
-        if (!d->frame) // In case the script removed our frame from the page.
-          return QString();
-        int distance = 0;
-        rc = JSC::Bindings::convertValueToQVariant(proxy->globalObject(mainThreadNormalWorld())->globalExec(), v, QMetaType::Void, &distance);
-    }
-    return rc;
-}
-
-
 /*!
     \since 4.5
 
