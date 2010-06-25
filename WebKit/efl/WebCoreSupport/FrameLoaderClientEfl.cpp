@@ -707,8 +707,11 @@ void FrameLoaderClientEfl::dispatchDidFinishLoading(DocumentLoader*, unsigned lo
     notImplemented();
 }
 
-void FrameLoaderClientEfl::dispatchDidFailLoading(DocumentLoader* loader, unsigned long identifier, const ResourceError&)
+void FrameLoaderClientEfl::dispatchDidFailLoading(DocumentLoader* loader, unsigned long identifier, const ResourceError& err)
 {
+    if (!shouldFallBack(err))
+        return;
+
     if (m_firstData) {
         FrameLoader* fl = loader->frameLoader();
         fl->writer()->setEncoding(m_response.textEncodingName(), false);
@@ -735,6 +738,9 @@ void FrameLoaderClientEfl::dispatchDidFailProvisionalLoad(const ResourceError& e
 
 void FrameLoaderClientEfl::dispatchDidFailLoad(const ResourceError& err)
 {
+    if (!shouldFallBack(err))
+        return;
+
     m_loadError = err;
     ewk_frame_load_error(m_frame,
                          m_loadError.domain().utf8().data(),
@@ -782,7 +788,7 @@ ResourceError FrameLoaderClientEfl::cannotShowURLError(const ResourceRequest& re
 ResourceError FrameLoaderClientEfl::interruptForPolicyChangeError(const ResourceRequest& request)
 {
     return ResourceError("Error", WebKitErrorFrameLoadInterruptedByPolicyChange,
-                         request.url().string(), "Frame load interruped by policy change");
+                         request.url().string(), "Frame load interrupted by policy change");
 }
 
 ResourceError FrameLoaderClientEfl::cannotShowMIMETypeError(const ResourceResponse& response)
@@ -803,10 +809,9 @@ ResourceError FrameLoaderClientEfl::pluginWillHandleLoadError(const ResourceResp
     return ResourceError("Error", 0, "", "");
 }
 
-bool FrameLoaderClientEfl::shouldFallBack(const ResourceError&)
+bool FrameLoaderClientEfl::shouldFallBack(const ResourceError& error)
 {
-    notImplemented();
-    return false;
+    return !(error.isCancellation() || (error.errorCode() == WebKitErrorFrameLoadInterruptedByPolicyChange));
 }
 
 bool FrameLoaderClientEfl::canCachePage() const
