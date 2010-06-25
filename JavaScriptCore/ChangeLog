@@ -1,5 +1,26 @@
 2010-06-24  Oliver Hunt  <oliver@apple.com>
 
+        Reviewed by Maciej Stachowiak.
+
+        Incorrect use of '+ 4' and 0 instead of tag and payload offsets in JSValue32_64
+        https://bugs.webkit.org/show_bug.cgi?id=41193
+
+        I noticed a use of '+ 4' in some of the 32_64 code paths and realised there
+        were a few places where endianness was being hardcoded.  This patch fixes
+        the errors i could find through code inspection.
+
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_resolve_global):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emit_op_get_by_val):
+        (JSC::JIT::emit_op_put_by_val):
+        (JSC::JIT::compileGetDirectOffset):
+        (JSC::JIT::privateCompilePutByIdTransition):
+        (JSC::JIT::patchGetByIdSelf):
+        (JSC::JIT::patchPutByIdReplace):
+
+2010-06-24  Oliver Hunt  <oliver@apple.com>
+
         Build fix
 
         Temporarily get the tiger bot working again by disabling the

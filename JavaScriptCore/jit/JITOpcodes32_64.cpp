@@ -681,8 +681,8 @@ void JIT::emit_op_resolve_global(Instruction* currentInstruction, bool dynamic)
     // Load property.
     loadPtr(Address(regT0, OBJECT_OFFSETOF(JSGlobalObject, m_externalStorage)), regT2);
     load32(offsetAddr, regT3);
-    load32(BaseIndex(regT2, regT3, TimesEight), regT0); // payload
-    load32(BaseIndex(regT2, regT3, TimesEight, 4), regT1); // tag
+    load32(BaseIndex(regT2, regT3, TimesEight, OBJECT_OFFSETOF(JSValue, u.asBits.payload)), regT0); // payload
+    load32(BaseIndex(regT2, regT3, TimesEight, OBJECT_OFFSETOF(JSValue, u.asBits.tag)), regT1); // tag
     emitStore(dst, regT1, regT0);
     map(m_bytecodeOffset + dynamic ? OPCODE_LENGTH(op_resolve_global_dynamic) : OPCODE_LENGTH(op_resolve_global), dst, regT1, regT0);
 }
