@@ -57,7 +57,7 @@ public:
     bool isPaused() const { return m_isPaused; }
 
     // The token really should be passed as a const& since it's never modified.
-    PassRefPtr<Node> constructTreeFromToken(HTMLToken&);
+    void constructTreeFromToken(HTMLToken&);
     // Must be called when parser is paused before calling the parser again.
     PassRefPtr<Element> takeScriptToProcess(int& scriptStartLine);
 
@@ -107,16 +107,16 @@ private:
         Element* top() const { return 0; }
     };
 
-    PassRefPtr<Node> passTokenToLegacyParser(HTMLToken&);
-    PassRefPtr<Node> processToken(AtomicHTMLToken&, UChar cc = 0);
+    void passTokenToLegacyParser(HTMLToken&);
+    void processToken(AtomicHTMLToken&, UChar cc = 0);
 
-    PassRefPtr<Node> insertDoctype(AtomicHTMLToken&);
-    PassRefPtr<Node> insertComment(AtomicHTMLToken&);
+    void insertDoctype(AtomicHTMLToken&);
+    void insertComment(AtomicHTMLToken&);
     PassRefPtr<Element> insertElement(AtomicHTMLToken&);
     void insertCharacter(UChar cc);
-    PassRefPtr<Node> insertGenericRCDATAElement(AtomicHTMLToken&);
-    PassRefPtr<Node> insertGenericRawTextElement(AtomicHTMLToken&);
-    PassRefPtr<Node> insertScriptElement(AtomicHTMLToken&);
+    void insertGenericRCDATAElement(AtomicHTMLToken&);
+    void insertGenericRawTextElement(AtomicHTMLToken&);
+    void insertScriptElement(AtomicHTMLToken&);
 
     RefPtr<Element> m_headElement;
     ElementStack m_openElements;
