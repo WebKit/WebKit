@@ -1,3 +1,13 @@
+2010-06-24  Oliver Hunt  <oliver@apple.com>
+
+        Build fix
+
+        Temporarily get the tiger bot working again by disabling the
+        new JS parser.  GCC on tiger is miscompiling the parser and
+        I don't have access to a tiger machine right now.
+
+        * wtf/Platform.h:
+
  2010-06-21  Nathan Lawrence  <nlawrence@apple.com>
 
          Reviewed by Geoff Garen.
