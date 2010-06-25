@@ -5454,3 +5454,4 @@ editing/execCommand/copy-without-selection.html
 # [Qt] Regression(r61749): inspector/debugger-pause-on-debugger-statement.html fails
 # https://bugs.webkit.org/show_bug.cgi?id=41147
 inspector/debugger-pause-on-debugger-statement.html
+inspector/debugger-pause-in-eval-script.html

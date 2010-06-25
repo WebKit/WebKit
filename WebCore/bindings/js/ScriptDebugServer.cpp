@@ -323,7 +323,7 @@ void ScriptDebugServer::sourceParsed(ExecState* exec, const SourceCode& source, 
     if (m_callingListeners)
         return;
 
-    Page* page = toPage(exec->dynamicGlobalObject());
+    Page* page = toPage(exec->lexicalGlobalObject());
     if (!page)
         return;
 

@@ -1,0 +1,9 @@
+Tests that debugger will stop on "debugger" statement in a function that was added to the inspected page via evaluation in Web Inspector console.Bug 41058
+
+Debugger was enabled.
+Evaluated script in console.
+Script execution paused.
+Execution line number: 3
+Execution line text:     debugger;
+Resumed script execution.
+

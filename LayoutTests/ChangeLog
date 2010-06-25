@@ -1,3 +1,16 @@
+2010-06-25  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Can't see source when hitting debugger statement in evaled source
+        https://bugs.webkit.org/show_bug.cgi?id=41058
+
+        Test that debugger will stop at a debugger statement in code evaluated
+        in Web Inspector console.
+
+        * inspector/debugger-pause-in-eval-script-expected.txt: Added.
+        * inspector/debugger-pause-in-eval-script.html: Added.
+
 2010-06-25  Mikhail Naganov  <mnaganov@chromium.org>
 
         Unreviewed, test expectation update.

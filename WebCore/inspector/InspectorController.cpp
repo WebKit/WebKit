@@ -1772,6 +1772,8 @@ void InspectorController::didParseSource(const String& sourceID, const String& u
     // Don't send script content to the front end until it's really needed.
     m_frontend->parsedScriptSource(sourceID, url, "", firstLine, worldType);
 
+    m_scriptIDToContent.set(sourceID, data);
+
     if (url.isEmpty())
         return;
 
@@ -1785,9 +1787,7 @@ void InspectorController::didParseSource(const String& sourceID, const String& u
             }
         }
     }
-
     m_sourceIDToURL.set(sourceID, url);
-    m_scriptIDToContent.set(sourceID, data);
 }
 
 void InspectorController::failedToParseSource(const String& url, const String& data, int firstLine, int errorLine, const String& errorMessage)
