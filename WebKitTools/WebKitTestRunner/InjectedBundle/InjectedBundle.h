@@ -23,10 +23,46 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "InjectedBundle.h"
-#include <WebKit2/WKBundleInitialize.h>
+#ifndef InjectedBundle_h
+#define InjectedBundle_h
 
-extern "C" void WKBundleInitialize(WKBundleRef bundle)
-{
-    WTR::InjectedBundle::shared().initialize(bundle);
-}
+#include "LayoutTestController.h"
+#include <WebKit2/WKBase.h>
+#include <WebKit2/WKBundleBase.h>
+#include <wtf/HashMap.h>
+#include <wtf/RefPtr.h>
+
+namespace WTR {
+
+class InjectedBundlePage;
+
+class InjectedBundle {
+public:
+    static InjectedBundle& shared();
+
+    // Initialize the InjectedBundle.
+    void initialize(WKBundleRef);
+
+    LayoutTestController* layoutTestController() { return m_layoutTestController.get(); }
+
+private:
+    InjectedBundle();
+    ~InjectedBundle();
+
+    static void _didCreatePage(WKBundleRef bundle, WKBundlePageRef page, const void* clientInfo);
+    static void _willDestroyPage(WKBundleRef bundle, WKBundlePageRef page, const void* clientInfo);
+    static void _didRecieveMessage(WKBundleRef bundle, WKStringRef message, const void *clientInfo);
+
+    void didCreatePage(WKBundlePageRef page);
+    void willDestroyPage(WKBundlePageRef page);
+    void didRecieveMessage(WKStringRef message);
+
+    WKBundleRef m_bundle;
+    HashMap<WKBundlePageRef, InjectedBundlePage*> m_pages;
+
+    RefPtr<LayoutTestController> m_layoutTestController;
+};
+
+} // namespace WTR
+
+#endif // InjectedBundle_h

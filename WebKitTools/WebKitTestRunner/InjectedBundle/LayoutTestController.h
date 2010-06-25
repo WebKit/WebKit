@@ -23,10 +23,38 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "InjectedBundle.h"
-#include <WebKit2/WKBundleInitialize.h>
+#ifndef LayoutTestController_h
+#define LayoutTestController_h
 
-extern "C" void WKBundleInitialize(WKBundleRef bundle)
-{
-    WTR::InjectedBundle::shared().initialize(bundle);
-}
+#include <JavaScriptCore/JavaScriptCore.h>
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefCounted.h>
+#include <string>
+
+namespace WTR {
+
+class LayoutTestController : public RefCounted<LayoutTestController> {
+public:
+    static PassRefPtr<LayoutTestController> create(const std::string& testPathOrURL);
+    ~LayoutTestController();
+
+    void makeWindowObject(JSContextRef context, JSObjectRef windowObject, JSValueRef* exception);
+
+    bool dumpAsText() const { return m_dumpAsText; }
+    void setDumpAsText(bool dumpAsText) { m_dumpAsText = dumpAsText; }
+
+private:
+    LayoutTestController(const std::string& testPathOrURL);
+
+    bool m_dumpAsText;
+
+    std::string m_testPathOrURL;
+    
+    static JSClassRef getJSClass();
+    static JSStaticValue* staticValues();
+    static JSStaticFunction* staticFunctions();
+};
+
+} // namespace WTR
+
+#endif // LayoutTestController_h

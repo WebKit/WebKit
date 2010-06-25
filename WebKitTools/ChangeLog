@@ -2,6 +2,62 @@
 
         Reviewed by Anders Carlsson.
 
+        Patch for https://bugs.webkit.org/show_bug.cgi?id=41226
+        Flesh out injected bundle code for WebKitTestRunner and add basic LayoutTestController.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp: Added.
+        (WTR::InjectedBundle::shared):
+        (WTR::InjectedBundle::InjectedBundle):
+        (WTR::InjectedBundle::_didCreatePage):
+        (WTR::InjectedBundle::_willDestroyPage):
+        (WTR::InjectedBundle::_didRecieveMessage):
+        (WTR::InjectedBundle::initialize):
+        (WTR::InjectedBundle::didCreatePage):
+        (WTR::InjectedBundle::willDestroyPage):
+        (WTR::InjectedBundle::didRecieveMessage):
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.h: Added.
+        (WTR::InjectedBundle::layoutTestController):
+        * WebKitTestRunner/InjectedBundle/InjectedBundleMain.cpp:
+        (WKBundleInitialize):
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp: Added.
+        (WTR::InjectedBundlePage::InjectedBundlePage):
+        (WTR::InjectedBundlePage::~InjectedBundlePage):
+        (WTR::InjectedBundlePage::_didStartProvisionalLoadForFrame):
+        (WTR::InjectedBundlePage::_didReceiveServerRedirectForProvisionalLoadForFrame):
+        (WTR::InjectedBundlePage::_didFailProvisionalLoadWithErrorForFrame):
+        (WTR::InjectedBundlePage::_didCommitLoadForFrame):
+        (WTR::InjectedBundlePage::_didFinishLoadForFrame):
+        (WTR::InjectedBundlePage::_didFailLoadWithErrorForFrame):
+        (WTR::InjectedBundlePage::_didReceiveTitleForFrame):
+        (WTR::InjectedBundlePage::_didClearWindowForFrame):
+        (WTR::InjectedBundlePage::didStartProvisionalLoadForFrame):
+        (WTR::InjectedBundlePage::didReceiveServerRedirectForProvisionalLoadForFrame):
+        (WTR::InjectedBundlePage::didFailProvisionalLoadWithErrorForFrame):
+        (WTR::InjectedBundlePage::didCommitLoadForFrame):
+        (WTR::InjectedBundlePage::didFinishLoadForFrame):
+        (WTR::InjectedBundlePage::didFailLoadWithErrorForFrame):
+        (WTR::InjectedBundlePage::didReceiveTitleForFrame):
+        (WTR::InjectedBundlePage::didClearWindowForFrame):
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.h: Added.
+        (WTR::InjectedBundlePage::page):
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.cpp: Added.
+        (WTR::LayoutTestController::create):
+        (WTR::LayoutTestController::LayoutTestController):
+        (WTR::LayoutTestController::~LayoutTestController):
+        (WTR::dumpAsTextCallback):
+        (WTR::layoutTestControllerObjectFinalize):
+        (WTR::LayoutTestController::makeWindowObject):
+        (WTR::LayoutTestController::getJSClass):
+        (WTR::LayoutTestController::staticFunctions):
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.h: Added.
+        (WTR::LayoutTestController::dumpAsText):
+        (WTR::LayoutTestController::setDumpAsText):
+        * WebKitTestRunner/WebKitTestRunner.xcodeproj/project.pbxproj:
+
+2010-06-25  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
         Make WebKitTestRunner really work with run-webkit-tests. 
 
         - Add Forwarding headers to allow some cleanup.
