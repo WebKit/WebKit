@@ -132,10 +132,6 @@ http/tests/history/redirect-307.pl
 # subresources. See https://bugs.webkit.org/show_bug.cgi?id=33242.
 http/tests/misc/image-checks-for-accept.html
 
-# Needs to make sure the redirect-chain scenario in https://bugs.webkit.org/show_bug.cgi?id=31410 works
-# See https://bugs.webkit.org/show_bug.cgi?id=35301
-http/tests/loading/307-after-303-after-post.html
-
 # https://bugs.webkit.org/show_bug.cgi?id=35824 - Doesn't apply to platforms that don't enforce the CFNetwork-style 3rd party cookie policy
 http/tests/cookies/third-party-cookie-relaxing.html
 
