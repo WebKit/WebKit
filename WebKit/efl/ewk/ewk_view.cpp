@@ -18,6 +18,7 @@
     Boston, MA 02110-1301, USA.
 */
 
+#define __STDC_FORMAT_MACROS
 #include "config.h"
 #include "ewk_view.h"
 
@@ -43,6 +44,7 @@
 #include <Eina.h>
 #include <Evas.h>
 #include <eina_safety_checks.h>
+#include <inttypes.h>
 #include <sys/time.h>
 
 #define ZOOM_MIN (0.05)
@@ -3464,7 +3466,7 @@ uint64_t ewk_view_exceeded_database_quota(Evas_Object* o, Evas_Object* frame, co
     if (!sd->api->exceeded_database_quota)
         return 0;
 
-    ERR("##### %lu %lu", current_size, expected_size);
+    INF("current_size=%"PRIu64" expected_size="PRIu64, current_size, expected_size);
     return sd->api->exceeded_database_quota(sd, frame, databaseName, current_size, expected_size);
 }
 

@@ -2,6 +2,19 @@
 
         Reviewed by Kenneth Rohde Christiansen.
 
+        [EFL] Fix warnings about printf format
+        When printing uint64_t the macro PRIu64 is needed in order to be
+        portable across 32 and 64 bits. It was previously showing warning
+        messages on 32-bits systems.
+        https://bugs.webkit.org/show_bug.cgi?id=40965
+
+        * efl/ewk/ewk_view.cpp:
+        (ewk_view_exceeded_database_quota):
+
+2010-06-25  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
         [EFL] Do not load error message for download and cancellation.
         When a download is made or a request is cancelled an error page should
         not be shown.
