@@ -39,6 +39,7 @@
 #include "WebFrameImpl.h"
 #include "WebKit.h"
 #include "WebKitClient.h"
+#include "WebURL.h"
 
 namespace WebCore {
 
@@ -55,6 +56,17 @@ public:
     virtual void notifyEventListener(WebKit::WebApplicationCacheHost::EventID eventID)
     {
         m_innerHost->notifyDOMApplicationCache(static_cast<ApplicationCacheHost::EventID>(eventID));
+    }
+
+    virtual void notifyProgressEventListener(const WebKit::WebURL&, int num_total, int num_complete) 
+    {
+        // FIXME: Modify webcore's progress event handling to carry the extra info and alter the
+        // layout tests to not fail when the more recently specified 'final' event is raised.
+        // For now, we're eating the extra info and that last event.
+        // See https://bugs.webkit.org/show_bug.cgi?id=37602
+        if (num_complete == num_total)
+            return;
+        notifyEventListener(WebKit::WebApplicationCacheHost::ProgressEvent);
     }
 
     static WebKit::WebApplicationCacheHost* toWebApplicationCacheHost(ApplicationCacheHost* innerHost)

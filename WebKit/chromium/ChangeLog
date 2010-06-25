@@ -1,3 +1,17 @@
+2010-06-25  Michael Nordman  <michaeln@google.com>
+
+        Reviewed by Dumitru Daniliuc.
+
+        Additional API to pass additional info needed for AppCache progress events.
+        https://bugs.webkit.org/show_bug.cgi?id=37602
+
+        Also, delete an obsolete method from the worker API.
+
+        * public/WebApplicationCacheHostClient.h: define a new method
+        * public/WebSharedWorker.h: remove an obsolte method
+        * src/ApplicationCacheHostInternal.h: implement the new method
+        (WebCore::ApplicationCacheHostInternal::notifyProgressEventListener):
+
 2010-06-25  John Gregg  <johnnyg@google.com>
 
         Reviewed by Darin Fisher.
