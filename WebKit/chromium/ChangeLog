@@ -1,3 +1,17 @@
+2010-06-25  Lei Zheng  <lzheng@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [Chromium] Add a flag to the ResourceResponse for tracking if a request was fetched
+        when Alternate-Protocol is available.
+
+        https://bugs.webkit.org/show_bug.cgi?id=41001
+
+        * public/WebURLResponse.h:
+        * src/WebURLResponse.cpp:
+        (WebKit::WebURLResponse::wasAlternateProtocolAvailable):
+        (WebKit::WebURLResponse::setWasAlternateProtocolAvailable):
+
 2010-06-25  Michael Nordman  <michaeln@google.com>
 
         Reviewed by Dumitru Daniliuc.

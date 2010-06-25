@@ -287,6 +287,16 @@ void WebURLResponse::setWasNpnNegotiated(bool value)
     m_private->m_resourceResponse->setWasNpnNegotiated(value);
 }
 
+bool WebURLResponse::wasAlternateProtocolAvailable() const
+{
+    return m_private->m_resourceResponse->wasAlternateProtocolAvailable();
+}
+
+void WebURLResponse::setWasAlternateProtocolAvailable(bool value)
+{
+    m_private->m_resourceResponse->setWasAlternateProtocolAvailable(value);
+}
+
 bool WebURLResponse::wasFetchedViaProxy() const
 {
     return m_private->m_resourceResponse->wasFetchedViaProxy();
