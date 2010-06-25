@@ -26,11 +26,12 @@
 #ifndef TestInvocation_h
 #define TestInvocation_h
 
-#include "PlatformWebView.h"
 #include <WebKit2/WKRetainPtr.h>
-#include <JavaScriptCore/Noncopyable.h>
+#include <wtf/Noncopyable.h>
 
 namespace WTR {
+
+class PlatformWebView;
 
 class TestInvocation : Noncopyable {
 public:

@@ -25,13 +25,14 @@
 
 #include "TestInvocation.h"
 
+#include "PlatformWebView.h"
 #include "TestController.h"
-#include <JavaScriptCore/RetainPtr.h>
 #include <WebKit2/WKContextPrivate.h>
 #include <WebKit2/WKPagePrivate.h>
 #include <WebKit2/WKRetainPtr.h>
 #include <WebKit2/WKStringCF.h>
 #include <WebKit2/WKURLCF.h>
+#include <wtf/RetainPtr.h>
 
 using namespace WebKit;
 
@@ -81,7 +82,13 @@ void TestInvocation::dump(const char* stringToDump)
 {
     printf("Content-Type: text/plain\n");
     printf("%s", stringToDump);
-    printf("#EOF\n");
+
+    fputs("#EOF\n", stdout);
+    fputs("#EOF\n", stdout);
+    fputs("#EOF\n", stderr);
+
+    fflush(stdout);
+    fflush(stderr);
 }
 
 void TestInvocation::initializeMainWebView()

@@ -1,5 +1,43 @@
 2010-06-25  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Anders Carlsson.
+
+        Make WebKitTestRunner really work with run-webkit-tests. 
+
+        - Add Forwarding headers to allow some cleanup.
+
+        * WebKitTestRunner/ForwardingHeaders: Added.
+        * WebKitTestRunner/ForwardingHeaders/wtf: Added.
+        * WebKitTestRunner/ForwardingHeaders/wtf/ASCIICType.h: Added.
+        * WebKitTestRunner/ForwardingHeaders/wtf/Assertions.h: Added.
+        * WebKitTestRunner/ForwardingHeaders/wtf/Atomics.h: Added.
+        * WebKitTestRunner/ForwardingHeaders/wtf/FastMalloc.h: Added.
+        * WebKitTestRunner/ForwardingHeaders/wtf/HashMap.h: Added.
+        * WebKitTestRunner/ForwardingHeaders/wtf/HashSet.h: Added.
+        * WebKitTestRunner/ForwardingHeaders/wtf/HashTraits.h: Added.
+        * WebKitTestRunner/ForwardingHeaders/wtf/Locker.h: Added.
+        * WebKitTestRunner/ForwardingHeaders/wtf/MainThread.h: Added.
+        * WebKitTestRunner/ForwardingHeaders/wtf/MathExtras.h: Added.
+        * WebKitTestRunner/ForwardingHeaders/wtf/Noncopyable.h: Added.
+        * WebKitTestRunner/ForwardingHeaders/wtf/OwnPtr.h: Added.
+        * WebKitTestRunner/ForwardingHeaders/wtf/OwnPtrCommon.h: Added.
+        * WebKitTestRunner/ForwardingHeaders/wtf/PassOwnPtr.h: Added.
+        * WebKitTestRunner/ForwardingHeaders/wtf/PassRefPtr.h: Added.
+        * WebKitTestRunner/ForwardingHeaders/wtf/Platform.h: Added.
+        * WebKitTestRunner/ForwardingHeaders/wtf/RefCounted.h: Added.
+        * WebKitTestRunner/ForwardingHeaders/wtf/RefPtr.h: Added.
+        * WebKitTestRunner/ForwardingHeaders/wtf/RetainPtr.h: Added.
+        * WebKitTestRunner/ForwardingHeaders/wtf/StringExtras.h: Added.
+        * WebKitTestRunner/ForwardingHeaders/wtf/ThreadSafeShared.h: Added.
+        * WebKitTestRunner/ForwardingHeaders/wtf/Threading.h: Added.
+        * WebKitTestRunner/ForwardingHeaders/wtf/ThreadingPrimitives.h: Added.
+        * WebKitTestRunner/ForwardingHeaders/wtf/Vector.h: Added.
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::dump): Dump the right number of #EOFs.
+        * WebKitTestRunner/TestInvocation.h:
+
+2010-06-25  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Mark Rowe.
 
         Add support for WebKitTestRunner to old-run-webkit-tests
