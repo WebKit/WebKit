@@ -1,3 +1,11 @@
+2010-06-25  Alpha Lam  <hclam@chromium.org>
+
+        Unreviewed.
+
+        Fix up test expectation for Chromium as one test is passing.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-06-25  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.

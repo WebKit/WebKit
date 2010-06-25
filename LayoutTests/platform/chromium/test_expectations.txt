@@ -2891,8 +2891,5 @@ BUG47259 WIN : http/tests/local/blob/send-data-blob.html = TEXT
 // LayoutTestController::isPageBoxVisible, pageAreaRectInPixels, and preferredPageSizeInPixels are not implemented yet for Chromium.
 BUGWK37538 : printing/page-format-data.html = TEXT
 
-// r61607 Introduced a new test but with no results.
-BUG_HCLAM : fast/dom/beforeload/remove-bad-object-in-beforeload-listener.html = FAIL
-
 // This failure is related to 61859.
 BUG_HCLAM : inspector/debugger-pause-in-eval-script.html = TIMEOUT CRASH FAIL PASS
