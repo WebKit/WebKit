@@ -1,3 +1,15 @@
+2010-06-25  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [EFL] Implement runOpenPanel method. The interface with browser was
+        already implemented. Now we are actually calling it.
+        https://bugs.webkit.org/show_bug.cgi?id=40923
+
+        * efl/WebCoreSupport/ChromeClientEfl.cpp:
+        (WebCore::ChromeClientEfl::runOpenPanel): implement method.
+        * efl/ewk/ewk_private.h: export to WebCoreSupport the needed method
+
 2010-06-24  Jer Noble  <jer.noble@apple.com>
 
         Reviewed by Eric Carlson.

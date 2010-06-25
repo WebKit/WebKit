@@ -38,6 +38,7 @@
 #include "DatabaseTracker.h"
 #endif
 #include "EWebKit.h"
+#include "FileChooser.h"
 #include "FloatRect.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClientEfl.h"
@@ -384,7 +385,35 @@ void ChromeClientEfl::exceededDatabaseQuota(Frame* frame, const String& database
 
 void ChromeClientEfl::runOpenPanel(Frame* frame, PassRefPtr<FileChooser> prpFileChooser)
 {
-    notImplemented();
+    RefPtr<FileChooser> chooser = prpFileChooser;
+    bool confirm;
+    Eina_List* selectedFilenames = 0;
+    Eina_List* suggestedFilenames = 0;
+    void* filename;
+    Vector<String> filenames;
+
+    for (unsigned i = 0; i < chooser->filenames().size(); i++) {
+        CString str = chooser->filenames()[i].utf8();
+        filename = strdup(str.data());
+        suggestedFilenames = eina_list_append(suggestedFilenames, filename);
+    }
+
+    confirm = ewk_view_run_open_panel(m_view, kit(frame), chooser->allowsMultipleFiles(), suggestedFilenames, &selectedFilenames);
+    EINA_LIST_FREE(suggestedFilenames, filename)
+        free(filename);
+
+    if (!confirm)
+        return;
+
+    EINA_LIST_FREE(selectedFilenames, filename) {
+        filenames.append((char *)filename);
+        free(filename);
+    }
+
+    if (chooser->allowsMultipleFiles())
+        chooser->chooseFiles(filenames);
+    else
+        chooser->chooseFile(filenames[0]);
 }
 
 void ChromeClientEfl::formStateDidChange(const Node*)
