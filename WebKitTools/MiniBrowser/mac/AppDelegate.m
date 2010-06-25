@@ -31,7 +31,7 @@
 #import <WebKit2/WKStringCF.h>
 #import <WebKit2/WKContextPrivate.h>
 
-static NSString *defaultURL = @"file:///Users/andersca/Desktop/t.html";
+static NSString *defaultURL = @"http://www.webkit.org/";
 
 @implementation BrowserAppDelegate
 

@@ -1,5 +1,12 @@
 2010-06-25  Anders Carlsson  <andersca@apple.com>
 
+        Revert accidental part and add a newline.
+
+        * MiniBrowser/mac/AppDelegate.m:
+        * MiniBrowser/mac/MiniBrowser_Prefix.pch:
+
+2010-06-25  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Dan Bernstein.
 
         Add a LOG macro that expands to a no-op by default.
