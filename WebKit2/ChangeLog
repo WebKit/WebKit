@@ -2,6 +2,13 @@
 
         Windows build fix.
 
+        * win/WebKit2.make: Added.
+        * win/WebKit2.submit.sln: Added.
+
+2010-06-24  Steve Falkenburg  <sfalken@apple.com>
+
+        Windows build fix.
+
         * win/WebKit2WebProcess.vcproj:
 
 2010-06-24  Sam Weinig  <sam@webkit.org>
