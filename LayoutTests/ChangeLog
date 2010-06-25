@@ -1,3 +1,11 @@
+2010-06-25  Rob Buis  <rwlbuis@gmail.com>
+
+        Reviewed by Nikolas Zimmermann.
+
+        Make test result mac specific.
+
+        * platform/mac/svg/css/rect-system-color-expected.txt: Renamed from LayoutTests/svg/css/rect-system-color-expected.txt.
+
 2010-06-24  Rob Buis  <rwlbuis@gmail.com>
 
         Reviewed by Dirk Schulze.
