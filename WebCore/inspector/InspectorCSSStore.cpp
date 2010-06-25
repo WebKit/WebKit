@@ -29,6 +29,8 @@
 #include "config.h"
 #include "InspectorCSSStore.h"
 
+#if ENABLE(INSPECTOR)
+
 #include "CSSMutableStyleDeclaration.h"
 #include "CSSParser.h"
 #include "CSSRuleList.h"
@@ -220,3 +222,5 @@ long InspectorCSSStore::bindRule(CSSStyleRule* rule)
 }
 
 } // namespace WebCore
+
+#endif // ENABLE(INSPECTOR)

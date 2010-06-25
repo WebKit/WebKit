@@ -1,3 +1,15 @@
+2010-06-25  Lyon Chen  <liachen@rim.com>
+
+        Reviewed by Darin Adler.
+
+        InspectorCSSStore.cpp is not surrounded with ENABLE(INSPECTOR)
+        https://bugs.webkit.org/show_bug.cgi?id=41004
+
+        Surround InspectorCSSStore.cpp code with ENABLE(INSPECTOR) so it will not
+        break the build when INSPECTOR is disabled.
+
+        * inspector/InspectorCSSStore.cpp:
+
 2010-06-25  No'am Rosenthal  <noam.rosenthal@nokia.com>
 
         Reviewed by Simon Hausmann.
