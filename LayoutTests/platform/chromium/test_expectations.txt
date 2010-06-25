@@ -814,7 +814,7 @@ BUG10279 : fast/js/var-declarations-shadowing.html = FAIL
 
 // Implement full JSON support in V8
 BUG14885 SLOW : fast/js/JSON-parse.html = FAIL
-BUG14885 SLOW : fast/js/JSON-stringify.html = FAIL
+BUG14885 SLOW : fast/js/JSON-stringify.html = FAIL CRASH
 BUG14885 : fast/js/JSON-parse-reviver.html = FAIL
 BUG14885 : fast/js/JSON-stringify-replacer.html = FAIL
 
@@ -2893,3 +2893,6 @@ BUGWK37538 : printing/page-format-data.html = TEXT
 
 // r61607 Introduced a new test but with no results.
 BUG_HCLAM : fast/dom/beforeload/remove-bad-object-in-beforeload-listener.html = FAIL
+
+// This failure is related to 61859.
+BUG_HCLAM : inspector/debugger-pause-in-eval-script.html = TIMEOUT
