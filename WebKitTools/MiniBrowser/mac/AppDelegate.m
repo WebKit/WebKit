@@ -31,14 +31,14 @@
 #import <WebKit2/WKStringCF.h>
 #import <WebKit2/WKContextPrivate.h>
 
-static NSString *defaultURL = @"http://webkit.org/";
+static NSString *defaultURL = @"file:///Users/andersca/Desktop/t.html";
 
 @implementation BrowserAppDelegate
 
 void _didRecieveMessageFromInjectedBundle(WKContextRef context, WKStringRef message, const void *clientInfo)
 {
     CFStringRef cfMessage = WKStringCopyCFString(0, message);
-    NSLog(@"ContextInjectedBundleClient - didRecieveMessage - message: %@", cfMessage);
+    LOG(@"ContextInjectedBundleClient - didRecieveMessage - message: %@", cfMessage);
     CFRelease(cfMessage);
 
     WKStringRef newMessage = WKStringCreateWithCFString(CFSTR("Roger that!"));

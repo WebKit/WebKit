@@ -100,7 +100,7 @@
 
 - (BOOL)windowShouldClose:(id)sender
 {
-    NSLog(@"windowShouldClose");
+    LOG(@"windowShouldClose");
     BOOL canCloseImmediately = WKPageTryClose(_webView.pageRef);
     return canCloseImmediately;
 }
@@ -121,49 +121,49 @@
 
 static void _didStartProvisionalLoadForFrame(WKPageRef page, WKFrameRef frame, const void *clientInfo)
 {
-    NSLog(@"didStartProvisionalLoadForFrame");
+    LOG(@"didStartProvisionalLoadForFrame");
 }
 
 static void _didReceiveServerRedirectForProvisionalLoadForFrame(WKPageRef page, WKFrameRef frame, const void *clientInfo)
 {
-    NSLog(@"didReceiveServerRedirectForProvisionalLoadForFrame");
+    LOG(@"didReceiveServerRedirectForProvisionalLoadForFrame");
 }
 
 static void _didFailProvisionalLoadWithErrorForFrame(WKPageRef page, WKFrameRef frame, const void *clientInfo)
 {
-    NSLog(@"didFailProvisionalLoadWithErrorForFrame");
+    LOG(@"didFailProvisionalLoadWithErrorForFrame");
 }
 
 static void _didCommitLoadForFrame(WKPageRef page, WKFrameRef frame, const void *clientInfo)
 {
-    NSLog(@"didCommitLoadForFrame");
+    LOG(@"didCommitLoadForFrame");
 }
 
 static void _didFinishLoadForFrame(WKPageRef page, WKFrameRef frame, const void *clientInfo)
 {
-    NSLog(@"didFinishLoadForFrame");
+    LOG(@"didFinishLoadForFrame");
 }
 
 static void _didFailLoadWithErrorForFrame(WKPageRef page, WKFrameRef frame, const void *clientInfo)
 {
-    NSLog(@"didFailLoadWithErrorForFrame");
+    LOG(@"didFailLoadWithErrorForFrame");
 }
 
 static void _didReceiveTitleForFrame(WKPageRef page, WKStringRef title, WKFrameRef frame, const void *clientInfo)
 {
     CFStringRef cfTitle = WKStringCopyCFString(0, title);
-    NSLog(@"didReceiveTitleForFrame \"%@\"", (NSString *)cfTitle);
+    LOG(@"didReceiveTitleForFrame \"%@\"", (NSString *)cfTitle);
     CFRelease(cfTitle);
 }
 
 static void _didFirstLayoutForFrame(WKPageRef page, WKFrameRef frame, const void *clientInfo)
 {
-    NSLog(@"didFirstLayoutForFrame");
+    LOG(@"didFirstLayoutForFrame");
 }
 
 static void _didFirstVisuallyNonEmptyLayoutForFrame(WKPageRef page, WKFrameRef frame, const void *clientInfo)
 {
-    NSLog(@"didFirstVisuallyNonEmptyLayoutForFrame");
+    LOG(@"didFirstVisuallyNonEmptyLayoutForFrame");
 }
 
 static void _didStartProgress(WKPageRef page, const void *clientInfo)
@@ -183,25 +183,25 @@ static void _didFinishProgress(WKPageRef page, const void *clientInfo)
 
 static void _didBecomeUnresponsive(WKPageRef page, const void *clientInfo)
 {
-    NSLog(@"didBecomeUnresponsive");
+    LOG(@"didBecomeUnresponsive");
 }
 
 static void _didBecomeResponsive(WKPageRef page, const void *clientInfo)
 {
-    NSLog(@"didBecomeResponsive");
+    LOG(@"didBecomeResponsive");
 }
 
 #pragma mark Policy Client Callbacks
 
 static void _decidePolicyForNavigationAction(WKPageRef page, uint32_t navigationType, WKURLRef url, WKFrameRef frame, WKFramePolicyListenerRef listener, const void *clientInfo)
 {
-    NSLog(@"decidePolicyForNavigationAction");
+    LOG(@"decidePolicyForNavigationAction");
     WKFramePolicyListenerUse(listener);
 }
 
 static void _decidePolicyForNewWindowAction(WKPageRef page, uint32_t navigationType, WKURLRef url, WKFrameRef frame, WKFramePolicyListenerRef listener, const void *clientInfo)
 {
-    NSLog(@"decidePolicyForNewWindowAction");
+    LOG(@"decidePolicyForNewWindowAction");
     WKFramePolicyListenerUse(listener);
 }
 
@@ -214,7 +214,7 @@ static void _decidePolicyForMIMEType(WKPageRef page, WKStringRef MIMEType, WKURL
 
 static WKPageRef _createNewPage(WKPageRef page, const void* clientInfo)
 {
-    NSLog(@"createNewPage");
+    LOG(@"createNewPage");
     BrowserWindowController *controller = [[BrowserWindowController alloc] initWithPageNamespace:WKPageGetPageNamespace(page)];
     [controller loadWindow];
 
@@ -223,13 +223,13 @@ static WKPageRef _createNewPage(WKPageRef page, const void* clientInfo)
 
 static void _showPage(WKPageRef page, const void *clientInfo)
 {
-    NSLog(@"showPage");
+    LOG(@"showPage");
     [[(BrowserWindowController *)clientInfo window] orderFront:nil];
 }
 
 static void _closePage(WKPageRef page, const void *clientInfo)
 {
-    NSLog(@"closePage");
+    LOG(@"closePage");
     WKPageClose(page);
     [[(BrowserWindowController *)clientInfo window] close];
     WKPageRelease(page);
@@ -260,7 +260,7 @@ static void _didNavigateWithNavigationData(WKPageRef page, WKNavigationDataRef n
 {
     CFStringRef title = WKStringCopyCFString(0, WKNavigationDataGetTitle(navigationData));
     CFURLRef url = WKURLCopyCFURL(0, WKNavigationDataGetURL(navigationData));
-    NSLog(@"HistoryClient - didNavigateWithNavigationData - title: %@ - url: %@", title, url);
+    LOG(@"HistoryClient - didNavigateWithNavigationData - title: %@ - url: %@", title, url);
     CFRelease(title);
     CFRelease(url);
 }
@@ -269,7 +269,7 @@ static void _didPerformClientRedirect(WKPageRef page, WKURLRef sourceURL, WKURLR
 {
     CFURLRef cfSourceURL = WKURLCopyCFURL(0, sourceURL);
     CFURLRef cfDestinationURL = WKURLCopyCFURL(0, destinationURL);
-    NSLog(@"HistoryClient - didPerformClientRedirect - sourceURL: %@ - destinationURL: %@", cfSourceURL, cfDestinationURL);
+    LOG(@"HistoryClient - didPerformClientRedirect - sourceURL: %@ - destinationURL: %@", cfSourceURL, cfDestinationURL);
     CFRelease(cfSourceURL);
     CFRelease(cfDestinationURL);
 }
@@ -278,7 +278,7 @@ static void _didPerformServerRedirect(WKPageRef page, WKURLRef sourceURL, WKURLR
 {
     CFURLRef cfSourceURL = WKURLCopyCFURL(0, sourceURL);
     CFURLRef cfDestinationURL = WKURLCopyCFURL(0, destinationURL);
-    NSLog(@"HistoryClient - didPerformServerRedirect - sourceURL: %@ - destinationURL: %@", cfSourceURL, cfDestinationURL);
+    LOG(@"HistoryClient - didPerformServerRedirect - sourceURL: %@ - destinationURL: %@", cfSourceURL, cfDestinationURL);
     CFRelease(cfSourceURL);
     CFRelease(cfDestinationURL);
 }
@@ -287,7 +287,7 @@ static void _didUpdateHistoryTitle(WKPageRef page, WKStringRef title, WKURLRef U
 {
     CFStringRef cfTitle = WKStringCopyCFString(0, title);
     CFURLRef cfURL = WKURLCopyCFURL(0, URL);
-    NSLog(@"HistoryClient - didUpdateHistoryTitle - title: %@ - URL: %@", cfTitle, cfURL);
+    LOG(@"HistoryClient - didUpdateHistoryTitle - title: %@ - URL: %@", cfTitle, cfURL);
     CFRelease(cfTitle);
     CFRelease(cfURL);
 }

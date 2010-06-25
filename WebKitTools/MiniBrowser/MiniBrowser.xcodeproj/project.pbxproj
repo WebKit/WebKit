@@ -360,6 +360,8 @@
 				COPY_PHASE_STRIP = NO;
 				GCC_ENABLE_OBJC_GC = supported;
 				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = mac/MiniBrowser_Prefix.pch;
 				INFOPLIST_FILE = "WebBundle-Info.plist";
 				PRODUCT_NAME = WebBundle;
 				WRAPPER_EXTENSION = bundle;
@@ -373,6 +375,8 @@
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_ENABLE_OBJC_GC = supported;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = mac/MiniBrowser_Prefix.pch;
 				INFOPLIST_FILE = "WebBundle-Info.plist";
 				PRODUCT_NAME = WebBundle;
 				WRAPPER_EXTENSION = bundle;

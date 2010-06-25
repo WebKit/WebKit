@@ -1,3 +1,41 @@
+2010-06-25  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Add a LOG macro that expands to a no-op by default.
+
+        * MiniBrowser/MiniBrowser.xcodeproj/project.pbxproj:
+        * MiniBrowser/mac/AppDelegate.m:
+        (_didRecieveMessageFromInjectedBundle):
+        * MiniBrowser/mac/BrowserWindowController.m:
+        (-[BrowserWindowController windowShouldClose:]):
+        (_didStartProvisionalLoadForFrame):
+        (_didReceiveServerRedirectForProvisionalLoadForFrame):
+        (_didFailProvisionalLoadWithErrorForFrame):
+        (_didCommitLoadForFrame):
+        (_didFinishLoadForFrame):
+        (_didFailLoadWithErrorForFrame):
+        (_didReceiveTitleForFrame):
+        (_didFirstLayoutForFrame):
+        (_didFirstVisuallyNonEmptyLayoutForFrame):
+        (_didBecomeUnresponsive):
+        (_didBecomeResponsive):
+        (_decidePolicyForNavigationAction):
+        (_decidePolicyForNewWindowAction):
+        (_createNewPage):
+        (_showPage):
+        (_closePage):
+        (_didNavigateWithNavigationData):
+        (_didPerformClientRedirect):
+        (_didPerformServerRedirect):
+        (_didUpdateHistoryTitle):
+        * MiniBrowser/mac/MiniBrowser_Prefix.pch:
+        * MiniBrowser/mac/WebBundle/WebBundleMain.m:
+        (_didClearWindowForFrame):
+        (_didCreatePage):
+        (_willDestroyPage):
+        (_didRecieveMessage):
+
 2010-06-24  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

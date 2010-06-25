@@ -67,7 +67,7 @@ void _didReceiveTitleForFrame(WKBundlePageRef page, WKStringRef title, WKBundleF
 void _didClearWindowForFrame(WKBundlePageRef page, WKBundleFrameRef frame, JSContextRef ctx, JSObjectRef window, const void *clientInfo)
 {
     CFURLRef cfURL = WKURLCopyCFURL(0, WKBundlePageGetMainFrameURL(page));
-    NSLog(@"WKBundlePageClient - _didClearWindowForFrame %@", [(NSURL *)cfURL absoluteString]);
+    LOG(@"WKBundlePageClient - _didClearWindowForFrame %@", [(NSURL *)cfURL absoluteString]);
     CFRelease(cfURL);
 
     WKStringRef message = WKStringCreateWithCFString(CFSTR("Window was cleared"));
@@ -80,7 +80,7 @@ void _didClearWindowForFrame(WKBundlePageRef page, WKBundleFrameRef frame, JSCon
 
 void _didCreatePage(WKBundleRef bundle, WKBundlePageRef page, const void* clientInfo)
 {
-    NSLog(@"WKBundleClient - didCreatePage\n");
+    LOG(@"WKBundleClient - didCreatePage\n");
 
     WKBundlePageClient client = {
         0,
@@ -99,13 +99,13 @@ void _didCreatePage(WKBundleRef bundle, WKBundlePageRef page, const void* client
 
 void _willDestroyPage(WKBundleRef bundle, WKBundlePageRef page, const void* clientInfo)
 {
-    NSLog(@"WKBundleClient - willDestroyPage\n");
+    LOG(@"WKBundleClient - willDestroyPage\n");
 }
 
 void _didRecieveMessage(WKBundleRef bundle, WKStringRef message, const void *clientInfo)
 {
     CFStringRef cfMessage = WKStringCopyCFString(0, message);
-    NSLog(@"WKBundleClient - didRecieveMessage %@\n", cfMessage);
+    LOG(@"WKBundleClient - didRecieveMessage %@\n", cfMessage);
     CFRelease(cfMessage);
 }
 
