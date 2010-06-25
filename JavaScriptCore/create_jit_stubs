@@ -42,6 +42,7 @@ $file = $ARGV[0];
 die "$usage\n" unless ($prefix and $file);
 
 my $stub_template = "";
+my $output_end = "";
 my $stub = "";
 
 my $rtype = "";
@@ -51,8 +52,16 @@ print STDERR "Creating JIT stubs for $file \n";
 open(IN, $file) or die "No such file $file";
 
 while ( $_ = <IN> ) {
+    if ( /^$prefix\_BEGIN\((.*)\)/ ) {
+        $stub = $1;
+        $stub =~ s/$offset_template/$offset/g;
+        print $stub . "\n";
+    }
     if ( /^$prefix\((.*)\)/ ) {
         $stub_template .= $1 . "\n";
+    }
+    if ( /^$prefix\_END\((.*)\)/ ) {
+        $output_end .= $1 . "\n";
     }
     if ( /^DEFINE_STUB_FUNCTION\((.*), (.*)\)/ ) {
         $stub = $stub_template;
@@ -65,5 +74,7 @@ while ( $_ = <IN> ) {
         print $stub;
     }
 }
+
+print $output_end;
 
 close(IN);
