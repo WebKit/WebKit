@@ -213,28 +213,36 @@ void HTMLDocumentParser::didPumpLexer()
 #endif
 }
 
-void HTMLDocumentParser::write(const SegmentedString& source, bool isFromNetwork)
+void HTMLDocumentParser::insert(const SegmentedString& source)
+{
+    if (m_parserStopped)
+        return;
+
+    NestingLevelIncrementer nestingLevelIncrementer(m_writeNestingLevel);
+    m_input.insertAtCurrentInsertionPoint(source);
+    pumpTokenizerIfPossible(ForceSynchronous);
+    endIfDelayed();
+}
+
+void HTMLDocumentParser::append(const SegmentedString& source)
 {
     if (m_parserStopped)
         return;
 
     NestingLevelIncrementer nestingLevelIncrementer(m_writeNestingLevel);
 
-    if (isFromNetwork) {
-        m_input.appendToEnd(source);
-        if (m_preloadScanner)
-            m_preloadScanner->appendToEnd(source);
+    m_input.appendToEnd(source);
+    if (m_preloadScanner)
+        m_preloadScanner->appendToEnd(source);
 
-        if (m_writeNestingLevel > 1) {
-            // We've gotten data off the network in a nested call to write().
-            // We don't want to consume any more of the input stream now.  Do
-            // not worry.  We'll consume this data in a less-nested write().
-            return;
-        }
-    } else
-        m_input.insertAtCurrentInsertionPoint(source);
+    if (m_writeNestingLevel > 1) {
+        // We've gotten data off the network in a nested write.
+        // We don't want to consume any more of the input stream now.  Do
+        // not worry.  We'll consume this data in a less-nested write().
+        return;
+    }
 
-    pumpTokenizerIfPossible(isFromNetwork ? AllowYield : ForceSynchronous);
+    pumpTokenizerIfPossible(AllowYield);
     endIfDelayed();
 }
 
@@ -398,7 +406,7 @@ ScriptController* HTMLDocumentParser::script() const
 void HTMLDocumentParser::parseDocumentFragment(const String& source, DocumentFragment* fragment, FragmentScriptingPermission scriptingPermission)
 {
     HTMLDocumentParser parser(fragment, scriptingPermission);
-    parser.write(source, false);
+    parser.insert(source); // Use insert() so that the parser will not yield.
     parser.finish();
     ASSERT(!parser.processingData()); // Make sure we're done. <rdar://problem/3963151>
 }

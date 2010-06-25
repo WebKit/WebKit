@@ -1,3 +1,56 @@
+2010-06-25  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Split DocumentParser::write into separate append and insert calls
+        https://bugs.webkit.org/show_bug.cgi?id=41197
+
+        Unfortunately this is still somewhat confusing as
+        "insert" means "insert this data at the current
+        insertion point and run the parser synchronously
+        unless we're in a nested write call" and "append"
+        means "append this data to the end and run the
+        parser if not in a nested call or until possibly yielding".
+
+        This at least makes clearer which document parsers implement
+        which behavior, and paves the way for moving the decoding
+        logic into DocumentParser from DocumentWriter.
+
+        No functional changes, thus no tests.
+
+        * dom/Document.cpp:
+        (WebCore::Document::write):
+        * dom/DocumentParser.h:
+        * dom/RawDataDocumentParser.h:
+        (WebCore::RawDataDocumentParser::insert):
+        (WebCore::RawDataDocumentParser::append):
+        * dom/XMLDocumentParser.cpp:
+        (WebCore::XMLDocumentParser::insert):
+        (WebCore::XMLDocumentParser::append):
+        * dom/XMLDocumentParser.h:
+        * dom/XMLDocumentParserLibxml2.cpp:
+        (WebCore::XMLDocumentParser::resumeParsing):
+        * html/HTMLDocumentParser.cpp:
+        (WebCore::HTMLDocumentParser::insert):
+        (WebCore::HTMLDocumentParser::append):
+        (WebCore::HTMLDocumentParser::parseDocumentFragment):
+        * html/HTMLDocumentParser.h:
+        * html/LegacyHTMLDocumentParser.cpp:
+        (WebCore::LegacyHTMLDocumentParser::insert):
+        (WebCore::LegacyHTMLDocumentParser::append):
+        * html/LegacyHTMLDocumentParser.h:
+        * loader/DocumentWriter.cpp:
+        (WebCore::DocumentWriter::replaceDocument):
+        (WebCore::DocumentWriter::addData):
+        * loader/FTPDirectoryDocument.cpp:
+        (WebCore::FTPDirectoryDocumentParser::FTPDirectoryDocumentParser):
+        (WebCore::FTPDirectoryDocumentParser::loadDocumentTemplate):
+        (WebCore::FTPDirectoryDocumentParser::append):
+        * loader/TextDocument.cpp:
+        (WebCore::TextDocumentParser::insert):
+        (WebCore::TextDocumentParser::append):
+        (WebCore::TextDocumentParser::finish):
+
 2010-06-25  Daniel Cheng  <dcheng@chromium.org>
 
         Reviewed by Darin Fisher.

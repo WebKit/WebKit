@@ -91,7 +91,7 @@ void DocumentFragment::parseHTML(const String& source, FragmentScriptingPermissi
 
 bool DocumentFragment::parseXML(const String& source, Element* parent, FragmentScriptingPermission scriptingPermission)
 {
-    return parseXMLDocumentFragment(source, this, parent, scriptingPermission);
+    return XMLDocumentParser::parseDocumentFragment(source, this, parent, scriptingPermission);
 }
 
 }

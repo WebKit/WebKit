@@ -38,11 +38,11 @@ class DocumentParser : public Noncopyable {
 public:
     virtual ~DocumentParser() { }
 
-    // Script output must be prepended, while new data
-    // received during executing a script must be appended, hence the
-    // extra bool to be able to distinguish between both cases.
-    // document.write() always uses false, while the loader uses true.
-    virtual void write(const SegmentedString&, bool isFromNetwork) = 0;
+    // insert is use by document.write
+    virtual void insert(const SegmentedString&) = 0;
+    // apend is used by DocumentWriter (the loader)
+    virtual void append(const SegmentedString&) = 0;
+
     virtual void finish() = 0;
     virtual bool finishWasCalled() = 0;
     virtual bool isWaitingForScripts() const = 0;

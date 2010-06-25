@@ -76,7 +76,7 @@ void DocumentWriter::replaceDocument(const String& source)
         // FIXME: If we wanted to support the <img src='javascript:'imagedata'>
         // case then we would need to call addData(char*, int) instead.
         if (DocumentParser* parser = m_frame->document()->parser())
-            parser->write(source, true);
+            parser->append(source);
     }
 
     end();
@@ -203,7 +203,7 @@ void DocumentWriter::addData(const char* str, int len, bool flush)
 
     if (parser) {
         ASSERT(!parser->wantsRawData());
-        parser->write(decoded, true);
+        parser->append(decoded);
     }
 }
 

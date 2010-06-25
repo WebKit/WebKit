@@ -52,7 +52,7 @@ class FTPDirectoryDocumentParser : public LegacyHTMLDocumentParser {
 public:
     FTPDirectoryDocumentParser(HTMLDocument*);
 
-    virtual void write(const SegmentedString&, bool appendData);
+    virtual void append(const SegmentedString&);
     virtual void finish();
     
     virtual bool isWaitingForScripts() const { return false; }
@@ -100,7 +100,7 @@ FTPDirectoryDocumentParser::FTPDirectoryDocumentParser(HTMLDocument* document)
     , m_size(254)
     , m_buffer(static_cast<UChar*>(fastMalloc(sizeof(UChar) * m_size)))
     , m_dest(m_buffer)
-{    
+{
 }    
 
 void FTPDirectoryDocumentParser::appendEntry(const String& filename, const String& size, const String& date, bool isDirectory)
@@ -301,11 +301,8 @@ bool FTPDirectoryDocumentParser::loadDocumentTemplate()
         LOG_ERROR("Could not load templateData");
         return false;
     }
-    
-    // Tokenize the template as an HTML document synchronously
-    setForceSynchronous(true);
-    LegacyHTMLDocumentParser::write(String(templateDocumentData->data(), templateDocumentData->size()), true);
-    setForceSynchronous(false);
+
+    LegacyHTMLDocumentParser::insert(String(templateDocumentData->data(), templateDocumentData->size()));
     
     RefPtr<Element> tableElement = document()->getElementById("ftpDirectoryTable");
     if (!tableElement)
@@ -354,8 +351,8 @@ void FTPDirectoryDocumentParser::createBasicDocument()
     bodyElement->appendChild(m_tableElement, ec);
 }
 
-void FTPDirectoryDocumentParser::write(const SegmentedString& s, bool /*appendData*/)
-{    
+void FTPDirectoryDocumentParser::append(const SegmentedString& source)
+{
     // Make sure we have the table element to append to by loading the template set in the pref, or
     // creating a very basic document with the appropriate table
     if (!m_tableElement) {
@@ -367,7 +364,7 @@ void FTPDirectoryDocumentParser::write(const SegmentedString& s, bool /*appendDa
     bool foundNewLine = false;
     
     m_dest = m_buffer;
-    SegmentedString str = s;
+    SegmentedString str = source;
     while (!str.isEmpty()) {
         UChar c = *str;
         

@@ -116,7 +116,16 @@ void XMLDocumentParser::clearCurrentNodeStack()
     }
 }
 
-void XMLDocumentParser::write(const SegmentedString& s, bool /*appendData*/)
+void XMLDocumentParser::insert(const SegmentedString& source)
+{
+    // FIXME: This is a hack to work around the fact that XMLHttpRequest
+    // responseXML() calls Document::write() which in turn calls insert(). In
+    // HTML, that's correct, as insert() implies a synchronous parse.  For XML,
+    // all parsing is synchronous but document.write shouldn't be supported.
+    append(source);
+}
+
+void XMLDocumentParser::append(const SegmentedString& s)
 {
     String parseString = s.toString();
 

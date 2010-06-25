@@ -1363,7 +1363,7 @@ void XMLDocumentParser::resumeParsing()
     // Then, write any pending data
     SegmentedString rest = m_pendingSrc;
     m_pendingSrc.clear();
-    write(rest, false);
+    append(rest);
 
     // Finally, if finish() has been called and write() didn't result
     // in any further callbacks being queued, call end()
@@ -1373,7 +1373,7 @@ void XMLDocumentParser::resumeParsing()
 
 // FIXME: This method should be possible to implement using the DocumentParser
 // API, instead of needing to grab at libxml2 state directly.
-bool parseXMLDocumentFragment(const String& chunk, DocumentFragment* fragment, Element* parent, FragmentScriptingPermission scriptingPermission)
+bool XMLDocumentParser::parseDocumentFragment(const String& chunk, DocumentFragment* fragment, Element* parent, FragmentScriptingPermission scriptingPermission)
 {
     if (!chunk.length())
         return true;

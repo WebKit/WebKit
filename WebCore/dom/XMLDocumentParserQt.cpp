@@ -245,24 +245,24 @@ void XMLDocumentParser::resumeParsing()
     // Then, write any pending data
     SegmentedString rest = m_pendingSrc;
     m_pendingSrc.clear();
-    write(rest, false);
+    append(rest);
 
-    // Finally, if finish() has been called and write() didn't result
+    // Finally, if finish() has been called and append() didn't result
     // in any further callbacks being queued, call end()
     if (m_finishCalled && !m_parserPaused && !m_pendingScript)
         end();
 }
 
-bool parseXMLDocumentFragment(const String& chunk, DocumentFragment* fragment, Element* parent, FragmentScriptingPermission scriptingPermission)
+bool XMLDocumentParser::parseDocumentFragment(const String& chunk, DocumentFragment* fragment, Element* parent, FragmentScriptingPermission scriptingPermission)
 {
     if (!chunk.length())
         return true;
 
     XMLDocumentParser parser(fragment, parent, scriptingPermission);
 
-    parser.write(String("<qxmlstreamdummyelement>"), false);
-    parser.write(chunk, false);
-    parser.write(String("</qxmlstreamdummyelement>"), false);
+    parser.append(String("<qxmlstreamdummyelement>"));
+    parser.append(chunk);
+    parser.append(String("</qxmlstreamdummyelement>"));
     parser.finish();
     return !parser.hasError();
 }

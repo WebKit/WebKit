@@ -157,11 +157,12 @@ public:
 
 protected:
     // Exposed for FTPDirectoryDocumentParser
-    virtual void write(const SegmentedString&, bool appendData);
+    virtual void insert(const SegmentedString&);
     virtual void finish();
 
 private:
     // DocumentParser
+    virtual void append(const SegmentedString&);
     virtual bool finishWasCalled();
     virtual bool isWaitingForScripts() const;
     virtual void stopParsing();
@@ -183,6 +184,7 @@ private:
     void reset();
 
     void willWriteHTML(const SegmentedString&);
+    void write(const SegmentedString&, bool appendData);
     ALWAYS_INLINE void advance(State&);
     void didWriteHTML();
 

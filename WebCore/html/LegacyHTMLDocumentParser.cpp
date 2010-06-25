@@ -1791,6 +1791,23 @@ void LegacyHTMLDocumentParser::write(const SegmentedString& str, bool appendData
     ImageLoader::dispatchPendingBeforeLoadEvents();
 }
 
+void LegacyHTMLDocumentParser::insert(const SegmentedString& source)
+{
+    // FIXME: forceSynchronous should always be the same as the bool passed to
+    // write().  However LegacyHTMLDocumentParser uses write("", false) to pump
+    // the parser (after running external scripts, etc.) thus necessitating a
+    // separate state for forceSynchronous.
+    bool wasForcedSynchronous = forceSynchronous();
+    setForceSynchronous(true);
+    write(source, false);
+    setForceSynchronous(wasForcedSynchronous);
+}
+
+void LegacyHTMLDocumentParser::append(const SegmentedString& source)
+{
+    write(source, true);
+}
+
 void LegacyHTMLDocumentParser::stopParsing()
 {
     DocumentParser::stopParsing();
