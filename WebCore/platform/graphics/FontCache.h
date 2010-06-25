@@ -72,6 +72,7 @@ public:
 #endif
     static void comInitialize();
     static void comUninitialize();
+    static IMultiLanguage* getMultiLanguageInterface();
 #elif PLATFORM(WIN)
     IMLangFontLink2* getFontLinkInterface();
 #endif

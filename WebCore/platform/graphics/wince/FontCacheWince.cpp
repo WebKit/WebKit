@@ -51,7 +51,7 @@ static IMLangFontLink2* langFontLink = 0;
 static IMLangFontLink* langFontLink = 0;
 #endif
 
-IMultiLanguage* getMultiLanguageInterface()
+IMultiLanguage* FontCache::getMultiLanguageInterface()
 {
     if (!multiLanguage)
         CoCreateInstance(CLSID_CMultiLanguage, 0, CLSCTX_INPROC_SERVER, IID_IMultiLanguage, (void**)&multiLanguage);
