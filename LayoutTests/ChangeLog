@@ -1,3 +1,11 @@
+2010-06-24  James Robinson  <jamesr@chromium.org>
+
+        Unreviewed. Add mac pixel baselines for fast/images/icon-decoding and fix EOLs for text baseline.
+
+        * platform/mac/fast/images/icon-decoding-expected.checksum:
+        * platform/mac/fast/images/icon-decoding-expected.png:
+        * platform/mac/fast/images/icon-decoding-expected.txt:
+
 2010-06-24  Peter Kasting  <pkasting@google.com>
 
         Not reviewed, updating test baseline for changed test.
