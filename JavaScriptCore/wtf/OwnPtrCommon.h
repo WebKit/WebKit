@@ -28,6 +28,26 @@
 #ifndef WTF_OwnPtrCommon_h
 #define WTF_OwnPtrCommon_h
 
+#if PLATFORM(WIN)
+typedef struct HBITMAP__* HBITMAP;
+typedef struct HBRUSH__* HBRUSH;
+typedef struct HDC__* HDC;
+typedef struct HFONT__* HFONT;
+typedef struct HPALETTE__* HPALETTE;
+typedef struct HPEN__* HPEN;
+typedef struct HRGN__* HRGN;
+#endif
+
+#if PLATFORM(BREWMP)
+// Forward delcarations at this point avoid the need to include BREW includes
+// in WTF headers.
+typedef struct _ISocket ISocket;
+typedef struct _IFileMgr IFileMgr;
+typedef struct _IFile IFile;
+typedef struct IBitmap IBitmap;
+typedef struct ISSL ISSL;
+#endif
+
 namespace WTF {
 
     template <typename T> inline void deleteOwnedPtr(T* ptr)
@@ -37,12 +57,24 @@ namespace WTF {
             delete ptr;
     }
 
-} // namespace WTF
+#if PLATFORM(WIN)
+    void deleteOwnedPtr(HBITMAP);
+    void deleteOwnedPtr(HBRUSH);
+    void deleteOwnedPtr(HDC);
+    void deleteOwnedPtr(HFONT);
+    void deleteOwnedPtr(HPALETTE);
+    void deleteOwnedPtr(HPEN);
+    void deleteOwnedPtr(HRGN);
+#endif
 
 #if PLATFORM(BREWMP)
-#include <wtf/brew/OwnPtrBrew.h>
-#elif PLATFORM(WIN)
-#include <wtf/win/OwnPtrWin.h>
+    void deleteOwnedPtr(IFileMgr*);
+    void deleteOwnedPtr(IFile*);
+    void deleteOwnedPtr(IBitmap*);
+    void deleteOwnedPtr(ISSL*);
+    void deleteOwnedPtr(ISocket*);
 #endif
+
+} // namespace WTF
 
 #endif // WTF_OwnPtrCommon_h
