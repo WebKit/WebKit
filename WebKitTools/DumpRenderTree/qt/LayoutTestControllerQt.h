@@ -171,7 +171,9 @@ public slots:
     void clearAllDatabases();
     void setIconDatabaseEnabled(bool enable);
 
+    void setCustomPolicyDelegate(bool enabled, bool permissive = true);
     void waitForPolicyDelegate();
+
     void overridePreference(const QString& name, const QVariant& value);
     void setUserStyleSheetLocation(const QString& url);
     void setUserStyleSheetEnabled(bool enabled);

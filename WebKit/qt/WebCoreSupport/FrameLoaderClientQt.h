@@ -218,6 +218,8 @@ public:
     static bool sendRequestReturnsNullOnRedirect;
     static bool sendRequestReturnsNull;
     static QStringList sendRequestClearHeaders;
+    static bool policyDelegateEnabled;
+    static bool policyDelegatePermissive;
 
 private:
     Frame *m_frame;

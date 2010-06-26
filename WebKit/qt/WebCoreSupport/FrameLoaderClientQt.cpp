@@ -38,7 +38,9 @@
 #include "FrameTree.h"
 #include "FrameView.h"
 #include "DocumentLoader.h"
+#include "HitTestResult.h"
 #include "MIMETypeRegistry.h"
+#include "MouseEvent.h"
 #include "ResourceResponse.h"
 #include "Page.h"
 #include "PluginData.h"
@@ -127,6 +129,25 @@ static QString drtDescriptionSuitableForTestResult(const WebCore::ResourceRespon
     return QString::fromLatin1("<NSURLResponse %1, http status code %2>").arg(url).arg(httpStatusCode);
 }
 
+static QString drtDescriptionSuitableForTestResult(const RefPtr<WebCore::Node> node, int exception)
+{
+    QString result;
+    if (exception) {
+        result.append("ERROR");
+        return result;
+    }
+    if (!node) {
+        result.append("NULL");
+        return result;
+    }
+    result.append(node->nodeName());
+    RefPtr<WebCore::Node> parent = node->parentNode();
+    if (parent) {
+        result.append(" > ");
+        result.append(drtDescriptionSuitableForTestResult(parent, 0));
+    }
+    return result;
+}
 
 namespace WebCore
 {
@@ -137,6 +158,28 @@ bool FrameLoaderClientQt::sendRequestReturnsNullOnRedirect = false;
 bool FrameLoaderClientQt::sendRequestReturnsNull = false;
 QStringList FrameLoaderClientQt::sendRequestClearHeaders;
 QString FrameLoaderClientQt::dumpResourceLoadCallbacksPath;
+bool FrameLoaderClientQt::policyDelegateEnabled = false;
+bool FrameLoaderClientQt::policyDelegatePermissive = false;
+
+// Taken from DumpRenderTree/chromium/WebViewHost.cpp
+static const char* navigationTypeToString(NavigationType type)
+{
+    switch (type) {
+    case NavigationTypeLinkClicked:
+        return "link clicked";
+    case NavigationTypeFormSubmitted:
+        return "form submitted";
+    case NavigationTypeBackForward:
+        return "back/forward";
+    case NavigationTypeReload:
+        return "reload";
+    case NavigationTypeFormResubmitted:
+        return "form resubmitted";
+    case NavigationTypeOther:
+        return "other";
+    }
+    return "illegal value";
+}
 
 FrameLoaderClientQt::FrameLoaderClientQt()
     : m_frame(0)
@@ -1046,6 +1089,32 @@ void FrameLoaderClientQt::dispatchDecidePolicyForNavigationAction(FramePolicyFun
     Q_ASSERT(m_webFrame);
     QNetworkRequest r(request.toNetworkRequest(m_webFrame));
     QWebPage*page = m_webFrame->page();
+    PolicyAction result;
+
+    // Currently, this is only enabled by DRT
+    if (policyDelegateEnabled) {
+        RefPtr<Node> node;
+        for (const Event* event = action.event(); event; event = event->underlyingEvent()) {
+            if (event->isMouseEvent()) {
+                const MouseEvent* mouseEvent =  static_cast<const MouseEvent*>(event);
+                node = QWebFramePrivate::core(m_webFrame)->eventHandler()->hitTestResultAtPoint(
+                    mouseEvent->absoluteLocation(), false).innerNonSharedNode();
+                break;
+            }
+        }
+
+        printf("Policy delegate: attempt to load %s with navigation type '%s'%s\n",
+               qPrintable(drtDescriptionSuitableForTestResult(request.url())), navigationTypeToString(action.type()),
+               (node) ? qPrintable(" originating from " + drtDescriptionSuitableForTestResult(node, 0)) : "");
+
+        if (policyDelegatePermissive)
+            result = PolicyUse;
+        else
+            result = PolicyIgnore;
+
+        callPolicyFunction(function, result);
+        return;
+    }
 
     if (!page->d->acceptNavigationRequest(m_webFrame, r, QWebPage::NavigationType(action.type()))) {
         if (action.type() == NavigationTypeFormSubmitted || action.type() == NavigationTypeFormResubmitted)

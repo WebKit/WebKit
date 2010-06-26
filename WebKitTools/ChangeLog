@@ -1,3 +1,15 @@
+2010-06-21  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] DRT Support for setCustomPolicyDelegate
+
+        https://bugs.webkit.org/show_bug.cgi?id=39564
+
+        * DumpRenderTree/qt/LayoutTestControllerQt.cpp:
+        (LayoutTestController::setCustomPolicyDelegate):
+        * DumpRenderTree/qt/LayoutTestControllerQt.h:
+
 2010-06-26  Robert Hogan  <robert@webkit.org>
 
         Unreviewed, Qt build fix following http://trac.webkit.org/changeset/61879

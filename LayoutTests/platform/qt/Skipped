@@ -777,10 +777,7 @@ http/tests/xmlhttprequest/access-control-basic-allow-preflight-cache-timeout.htm
 http/tests/xmlhttprequest/default-content-type-dashboard.html
 http/tests/xmlhttprequest/svg-created-by-xhr-disallowed-in-dashboard.html
 
-# Missing layoutTestController.setCustomPolicyDelegate()
-# https://bugs.webkit.org/show_bug.cgi?id=39564
-fast/loader/onload-policy-ignore-for-frame.html
-http/tests/misc/policy-delegate-called-twice.html
+# timeout
 http/tests/misc/redirect-to-external-url.html
 http/tests/security/feed-urls-from-remote.html
 
@@ -2618,9 +2615,6 @@ fast/forms/search-abs-pos-cancel-button.html
 fast/forms/text-control-intrinsic-widths.html
 fast/forms/textarea-metrics.html
 fast/history/window-open.html
-fast/loader/javascript-url-hierarchical-execution.html
-fast/loader/policy-delegate-action-hit-test-zoomed.html
-fast/loader/reload-policy-delegate.html
 fast/dom/HTMLDocument/hasFocus.html
 fast/dom/Document/CaretRangeFromPoint/caretRangeFromPoint-in-zoom-and-scroll.html
 fast/dom/Range/range-expand.html
