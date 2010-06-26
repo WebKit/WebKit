@@ -927,7 +927,8 @@ int main(int argc, char* argv[])
     JSStringRelease(EmptyObjectIString);
     
     JSStringRef lengthStr = JSStringCreateWithUTF8CString("length");
-    aHeapRef = JSObjectMakeArray(context, 0, 0, 0);
+    JSObjectRef aStackRef = JSObjectMakeArray(context, 0, 0, 0);
+    aHeapRef = aStackRef;
     JSObjectSetProperty(context, aHeapRef, lengthStr, JSValueMakeNumber(context, 10), 0, 0);
     JSStringRef privatePropertyName = JSStringCreateWithUTF8CString("privateProperty");
     if (!JSObjectSetPrivateProperty(context, myObject, privatePropertyName, aHeapRef)) {
@@ -936,6 +937,7 @@ int main(int argc, char* argv[])
     } else {
         printf("PASS: Set private property.\n");
     }
+    aStackRef = 0;
     if (JSObjectSetPrivateProperty(context, aHeapRef, privatePropertyName, aHeapRef)) {
         printf("FAIL: JSObjectSetPrivateProperty should fail on non-API objects.\n");
         failed = 1;        
@@ -964,6 +966,7 @@ int main(int argc, char* argv[])
     for (int i = 0; i < 10000; i++)
         JSObjectMake(context, 0, 0);
 
+    aHeapRef = JSValueToObject(context, JSObjectGetPrivateProperty(context, myObject, privatePropertyName), 0);
     if (JSValueToNumber(context, JSObjectGetProperty(context, aHeapRef, lengthStr, 0), 0) != 10) {
         printf("FAIL: Private property has been collected.\n");
         failed = 1;

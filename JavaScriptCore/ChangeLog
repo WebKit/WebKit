@@ -1,3 +1,13 @@
+2010-06-25  Nathan Lawrence  <nlawrence@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        We assume in testapi.c that the value aHeapRef refers to will not be
+        moved.  When we have movable objects, this will not be the case.
+
+        * API/tests/testapi.c:
+        (main):
+
 2010-06-25  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r61924.
