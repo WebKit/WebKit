@@ -75,6 +75,7 @@
         'ENABLE_TOUCH_EVENTS=1',
         'ENABLE_VIDEO=1',
         'ENABLE_WEB_SOCKETS=1',
+        'ENABLE_WEB_TIMING=0',
         'ENABLE_WORKERS=1',
         'ENABLE_XHTMLMP=0',
         'ENABLE_XPATH=1',

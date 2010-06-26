@@ -59,7 +59,7 @@ my ($threeDCanvasSupport, $threeDRenderingSupport, $channelMessagingSupport, $cl
     $domStorageSupport, $eventsourceSupport, $filtersSupport, $geolocationSupport, $iconDatabaseSupport, $imageResizerSupport, $indexedDatabaseSupport, $inputSpeechSupport,
     $javaScriptDebuggerSupport, $mathmlSupport, $offlineWebApplicationSupport, $rubySupport, $systemMallocSupport, $sandboxSupport, $sharedWorkersSupport,
     $svgSupport, $svgAnimationSupport, $svgAsImageSupport, $svgDOMObjCBindingsSupport, $svgFontsSupport,
-    $svgForeignObjectSupport, $svgUseSupport, $videoSupport, $webSocketsSupport, $wmlSupport, $wcssSupport, $xhtmlmpSupport, $workersSupport,
+    $svgForeignObjectSupport, $svgUseSupport, $videoSupport, $webSocketsSupport, $webTimingSupport, $wmlSupport, $wcssSupport, $xhtmlmpSupport, $workersSupport,
     $xpathSupport, $xsltSupport, $coverageSupport, $notificationsSupport, $blobSliceSupport, $tiledBackingStoreSupport,
     $fileReaderSupport, $fileWriterSupport);
 
@@ -168,6 +168,9 @@ my @features = (
 
     { option => "web-sockets", desc => "Toggle Web Sockets support",
       define => "ENABLE_WEB_SOCKETS", default => 1, value=> \$webSocketsSupport },
+
+    { option => "web-timing", desc => "Toggle Web Timing support",
+      define => "ENABLE_WEB_TIMING", default => 0, value=> \$webTimingSupport },
 
     { option => "wml", desc => "Toggle WML support",
       define => "ENABLE_WML", default => 0, value => \$wmlSupport },

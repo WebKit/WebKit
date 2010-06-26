@@ -241,6 +241,7 @@ DOM_CLASSES = \
     MouseEvent \
     MutationEvent \
     NamedNodeMap \
+    NavigationTiming \
     Navigator \
     Node \
     NodeFilter \
@@ -251,6 +252,7 @@ DOM_CLASSES = \
     NotificationCenter \
     OverflowEvent \
     PageTransitionEvent \
+    Performance \
     Plugin \
     PluginArray \
     PopStateEvent \

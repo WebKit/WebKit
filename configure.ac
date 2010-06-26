@@ -569,6 +569,14 @@ AC_ARG_ENABLE(web_sockets,
               [],[enable_web_sockets="no"])
 AC_MSG_RESULT([$enable_web_sockets])
 
+# check whether to enable Web Timing support
+AC_MSG_CHECKING([whether to enable Web Timing support])
+AC_ARG_ENABLE(web_timing,
+              AC_HELP_STRING([--enable-web-timing],
+                             [enable support for Web Timing [default=no]]),
+              [],[enable_web_timing="no"])
+AC_MSG_RESULT([$enable_web_timing])
+
 # check whether to enable Blob.slice support
 AC_MSG_CHECKING([whether to enable Blob.slice support])
 AC_ARG_ENABLE(blob_slice,
@@ -859,6 +867,7 @@ AM_CONDITIONAL([ENABLE_SHARED_WORKERS],[test "$enable_shared_workers" = "yes"])
 AM_CONDITIONAL([SVG_FLAGS],[test "$svg_flags" = "yes"])
 AM_CONDITIONAL([HTML_FLAGS],[test "$html_flags" = "yes"])
 AM_CONDITIONAL([ENABLE_WEB_SOCKETS],[test "$enable_web_sockets" = "yes"])
+AM_CONDITIONAL([ENABLE_WEB_TIMING],[test "$enable_web_timing" = "yes"])
 
 # Gtk conditionals
 AM_CONDITIONAL([ENABLE_INTROSPECTION],[test "$enable_introspection" = "yes"])
@@ -916,6 +925,7 @@ Features:
  SVG use element support                                  : $enable_svg_use
  WML support                                              : $enable_wml
  Web Sockets support                                      : $enable_web_sockets
+ Web Timing support                                       : $enable_web_timing
  Web Workers support                                      : $enable_workers
  XHTML-MP support                                         : $enable_xhtmlmp
  XPATH support                                            : $enable_xpath

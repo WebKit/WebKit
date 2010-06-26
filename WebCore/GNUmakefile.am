@@ -298,7 +298,9 @@ IDL_BINDINGS += \
 	WebCore/page/History.idl \
 	WebCore/page/Location.idl \
 	WebCore/page/MemoryInfo.idl \
+	WebCore/page/NavigationTiming.idl \
 	WebCore/page/Navigator.idl \
+	WebCore/page/Performance.idl \
 	WebCore/page/PositionError.idl \
 	WebCore/page/Screen.idl \
 	WebCore/page/WebKitPoint.idl \
@@ -1524,6 +1526,8 @@ webcore_sources += \
 	WebCore/page/MemoryInfo.h \
 	WebCore/page/MouseEventWithHitTestResults.cpp \
 	WebCore/page/MouseEventWithHitTestResults.h \
+	WebCore/page/NavigationTiming.cpp \
+	WebCore/page/NavigationTiming.h \
 	WebCore/page/Navigator.cpp \
 	WebCore/page/Navigator.h \
 	WebCore/page/NavigatorBase.cpp \
@@ -1536,6 +1540,8 @@ webcore_sources += \
 	WebCore/page/PageGroup.h \
   WebCore/page/PageGroupLoadDeferrer.cpp \
   WebCore/page/PageGroupLoadDeferrer.h \
+	WebCore/page/Performance.cpp \
+	WebCore/page/Performance.h \
 	WebCore/page/PluginHalter.cpp \
 	WebCore/page/PluginHalter.h \
 	WebCore/page/PluginHalterClient.h \

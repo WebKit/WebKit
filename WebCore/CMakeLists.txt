@@ -309,7 +309,9 @@ SET(WebCore_IDL_FILES
     page/History.idl
     page/Location.idl
     page/MemoryInfo.idl
+    page/NavigationTiming.idl
     page/Navigator.idl
+    page/Performance.idl
     page/PositionError.idl
     page/Screen.idl
     page/WebKitPoint.idl
@@ -1113,12 +1115,14 @@ SET(WebCore_SOURCES
     page/Location.cpp
     page/MemoryInfo.cpp
     page/MouseEventWithHitTestResults.cpp
+    page/NavigationTiming.cpp
     page/Navigator.cpp
     page/NavigatorBase.cpp
     page/OriginAccessEntry.cpp
     page/Page.cpp
     page/PageGroup.cpp
     page/PageGroupLoadDeferrer.cpp
+    page/Performance.cpp
     page/PluginHalter.cpp
     page/PrintContext.cpp
     page/Screen.cpp

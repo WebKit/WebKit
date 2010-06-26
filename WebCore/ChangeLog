@@ -1,3 +1,52 @@
+2010-06-26  Tony Gentilcore  <tonyg@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Add a guarded window.performance.timing binding which is disabled by default.
+        https://bugs.webkit.org/show_bug.cgi?id=38924
+
+        This is where Web Timing support will be implemented. Web Timing is a
+        draft spec for exposing load times to web pages. It will be enabled
+        once the spec and implementaiton are solidified. See:
+        http://dev.w3.org/2006/webapi/WebTiming/
+
+        No new tests because guarded behind a #DEFINE. Will add tests as
+        functionality is landed.
+
+        * Android.mk:
+        * CMakeLists.txt:
+        * Configurations/FeatureDefines.xcconfig:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pri:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::clear):
+        (WebCore::DOMWindow::performance):
+        * page/DOMWindow.h:
+        (WebCore::DOMWindow::optionalPerformance):
+        * page/DOMWindow.idl:
+        * page/NavigationTiming.cpp: Added.
+        (WebCore::NavigationTiming::NavigationTiming):
+        (WebCore::NavigationTiming::frame):
+        (WebCore::NavigationTiming::disconnectFrame):
+        (WebCore::NavigationTiming::navigationStart):
+        * page/NavigationTiming.h: Added.
+        (WebCore::NavigationTiming::create):
+        * page/NavigationTiming.idl: Added.
+        * page/Performance.cpp: Added.
+        (WebCore::Performance::Performance):
+        (WebCore::Performance::frame):
+        (WebCore::Performance::disconnectFrame):
+        (WebCore::Performance::timing):
+        * page/Performance.h: Added.
+        (WebCore::Performance::create):
+        * page/Performance.idl: Added.
+
 2010-06-25  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Dimitri Glazkov.

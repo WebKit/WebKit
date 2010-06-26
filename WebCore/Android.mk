@@ -361,12 +361,14 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	page/History.cpp \
 	page/Location.cpp \
 	page/MouseEventWithHitTestResults.cpp \
+	page/NavigationTiming.cpp \
 	page/Navigator.cpp \
 	page/NavigatorBase.cpp \
 	page/OriginAccessEntry.cpp \
 	page/Page.cpp \
 	page/PageGroup.cpp \
 	page/PageGroupLoadDeferrer.cpp \
+	page/Performance.cpp \
 	page/PluginHalter.cpp \
 	page/PrintContext.cpp \
 	page/Screen.cpp \

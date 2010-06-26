@@ -2281,6 +2281,10 @@
 		89BED5EC11BE11CE00448492 /* BlobBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = 89BED5EA11BE11CE00448492 /* BlobBuilder.h */; };
 		89CD029311C85B870070B791 /* JSBlobBuilder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 89CD029111C85B870070B791 /* JSBlobBuilder.cpp */; };
 		89CD029411C85B870070B791 /* JSBlobBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = 89CD029211C85B870070B791 /* JSBlobBuilder.h */; };
+		8A844CFE11D3C17C0014065C /* NavigationTiming.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8A844CFB11D3C17C0014065C /* NavigationTiming.cpp */; };
+		8A844CFF11D3C17C0014065C /* NavigationTiming.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A844CFC11D3C17C0014065C /* NavigationTiming.h */; };
+		8A844D0411D3C18E0014065C /* Performance.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8A844D0111D3C18E0014065C /* Performance.cpp */; };
+		8A844D0511D3C18E0014065C /* Performance.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A844D0211D3C18E0014065C /* Performance.h */; };
 		8FAC774D119872CB0015AE94 /* JSMainThreadExecState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F934D841189F1EE00508D5D /* JSMainThreadExecState.cpp */; };
 		9302B0BD0D79F82900C7EE83 /* PageGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9302B0BC0D79F82900C7EE83 /* PageGroup.cpp */; };
 		9302B0BF0D79F82C00C7EE83 /* PageGroup.h in Headers */ = {isa = PBXBuildFile; fileRef = 9302B0BE0D79F82C00C7EE83 /* PageGroup.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -7914,6 +7918,12 @@
 		89CD027911C859A80070B791 /* BlobBuilder.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = BlobBuilder.idl; sourceTree = "<group>"; };
 		89CD029111C85B870070B791 /* JSBlobBuilder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSBlobBuilder.cpp; sourceTree = "<group>"; };
 		89CD029211C85B870070B791 /* JSBlobBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSBlobBuilder.h; sourceTree = "<group>"; };
+		8A844CFB11D3C17C0014065C /* NavigationTiming.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NavigationTiming.cpp; sourceTree = "<group>"; };
+		8A844CFC11D3C17C0014065C /* NavigationTiming.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NavigationTiming.h; sourceTree = "<group>"; };
+		8A844CFD11D3C17C0014065C /* NavigationTiming.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = NavigationTiming.idl; sourceTree = "<group>"; };
+		8A844D0111D3C18E0014065C /* Performance.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Performance.cpp; sourceTree = "<group>"; };
+		8A844D0211D3C18E0014065C /* Performance.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Performance.h; sourceTree = "<group>"; };
+		8A844D0311D3C18E0014065C /* Performance.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Performance.idl; sourceTree = "<group>"; };
 		8F934D831189F1EE00508D5D /* JSMainThreadExecState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMainThreadExecState.h; sourceTree = "<group>"; };
 		8F934D841189F1EE00508D5D /* JSMainThreadExecState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMainThreadExecState.cpp; sourceTree = "<group>"; };
 		9302B0BC0D79F82900C7EE83 /* PageGroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PageGroup.cpp; sourceTree = "<group>"; };
@@ -12146,6 +12156,9 @@
 				9FFE3E7C11B59C6E0037874E /* MemoryInfo.idl */,
 				93EB355E09E37FD600F43799 /* MouseEventWithHitTestResults.cpp */,
 				935C476209AC4CE600A6AAB4 /* MouseEventWithHitTestResults.h */,
+				8A844CFB11D3C17C0014065C /* NavigationTiming.cpp */,
+				8A844CFC11D3C17C0014065C /* NavigationTiming.h */,
+				8A844CFD11D3C17C0014065C /* NavigationTiming.idl */,
 				A9C6E5A30D746458006442E9 /* Navigator.cpp */,
 				A9C6E5A40D746458006442E9 /* Navigator.h */,
 				A9C6E65D0D746694006442E9 /* Navigator.idl */,
@@ -12159,6 +12172,9 @@
 				9302B0BE0D79F82C00C7EE83 /* PageGroup.h */,
 				7A674BD90F9EBF4E006CF099 /* PageGroupLoadDeferrer.cpp */,
 				7A674BDA0F9EBF4E006CF099 /* PageGroupLoadDeferrer.h */,
+				8A844D0111D3C18E0014065C /* Performance.cpp */,
+				8A844D0211D3C18E0014065C /* Performance.h */,
+				8A844D0311D3C18E0014065C /* Performance.idl */,
 				7693BACF106C2DCA007B0823 /* PluginHalter.cpp */,
 				7693BAD0106C2DCA007B0823 /* PluginHalter.h */,
 				7693BAD1106C2DCA007B0823 /* PluginHalterClient.h */,
@@ -19540,6 +19556,8 @@
 				A8E6A78111D1661B00311F4A /* HTMLParserScheduler.h in Headers */,
 				A84D827C11D333ED00972990 /* RawDataDocumentParser.h in Headers */,
 				CEA3949D11D45CDA003094CF /* StaticHashSetNodeList.h in Headers */,
+				8A844CFF11D3C17C0014065C /* NavigationTiming.h in Headers */,
+				8A844D0511D3C18E0014065C /* Performance.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -21861,6 +21879,8 @@
 				A8E6A78211D1661B00311F4A /* HTMLParserScheduler.cpp in Sources */,
 				CEA3949C11D45CDA003094CF /* StaticHashSetNodeList.cpp in Sources */,
 				A8C2280E11D4A59700D5A7D3 /* DocumentParser.cpp in Sources */,
+				8A844CFE11D3C17C0014065C /* NavigationTiming.cpp in Sources */,
+				8A844D0411D3C18E0014065C /* Performance.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

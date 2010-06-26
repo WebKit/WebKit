@@ -796,6 +796,7 @@ SOURCES += \
     page/DOMSelection.cpp \
     page/DOMTimer.cpp \
     page/DOMWindow.cpp \
+    page/NavigationTiming.cpp \
     page/Navigator.cpp \
     page/NavigatorBase.cpp \
     page/DragController.cpp \
@@ -816,6 +817,7 @@ SOURCES += \
     page/Page.cpp \
     page/PageGroup.cpp \
     page/PageGroupLoadDeferrer.cpp \
+    page/Performance.cpp \
     page/PluginHalter.cpp \
     page/PrintContext.cpp \
     page/SecurityOrigin.cpp \

@@ -195,6 +195,10 @@ module window {
             raises(DOMException);
 #endif
 
+#if defined(ENABLE_WEB_TIMING) && ENABLE_WEB_TIMING
+        readonly attribute Performance performance;
+#endif
+
         // Timers
         [Custom] long setTimeout(in TimeoutHandler handler, in long timeout);
         // [Custom] long setTimeout(in TimeoutHandler handler, in long timeout, arguments...);

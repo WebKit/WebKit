@@ -60,6 +60,11 @@ namespace WebCore {
     class Navigator;
     class Node;
     class NotificationCenter;
+
+#if ENABLE(WEB_TIMING)
+    class Performance;
+#endif
+
     class PostMessageTimer;
     class ScheduledAction;
     class SerializedScriptValue;
@@ -125,6 +130,9 @@ namespace WebCore {
         BarInfo* toolbar() const;
         Navigator* navigator() const;
         Navigator* clientInformation() const { return navigator(); }
+#if ENABLE(WEB_TIMING)
+        Performance* performance() const;
+#endif
         Location* location() const;
 
         DOMSelection* getSelection();
@@ -356,6 +364,9 @@ namespace WebCore {
         BarInfo* optionalToolbar() const { return m_toolbar.get(); }
         Console* optionalConsole() const { return m_console.get(); }
         Navigator* optionalNavigator() const { return m_navigator.get(); }
+#if ENABLE(WEB_TIMING)
+        Performance* optionalPerformance() const { return m_performance.get(); }
+#endif
         Location* optionalLocation() const { return m_location.get(); }
         StyleMedia* optionalMedia() const { return m_media.get(); }
 #if ENABLE(DOM_STORAGE)
@@ -393,6 +404,9 @@ namespace WebCore {
         mutable RefPtr<BarInfo> m_toolbar;
         mutable RefPtr<Console> m_console;
         mutable RefPtr<Navigator> m_navigator;
+#if ENABLE(WEB_TIMING)
+        mutable RefPtr<Performance> m_performance;
+#endif
         mutable RefPtr<Location> m_location;
         mutable RefPtr<StyleMedia> m_media;
 #if ENABLE(DOM_STORAGE)

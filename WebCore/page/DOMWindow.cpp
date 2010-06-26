@@ -65,6 +65,7 @@
 #include "NotificationCenter.h"
 #include "Page.h"
 #include "PageGroup.h"
+#include "Performance.h"
 #include "PlatformScreen.h"
 #include "PlatformString.h"
 #include "Screen.h"
@@ -442,6 +443,12 @@ void DOMWindow::clear()
         m_navigator->disconnectFrame();
     m_navigator = 0;
 
+#if ENABLE(WEB_TIMING)
+    if (m_performance)
+        m_performance->disconnectFrame();
+    m_performance = 0;
+#endif
+
     if (m_location)
         m_location->disconnectFrame();
     m_location = 0;
@@ -565,6 +572,15 @@ Navigator* DOMWindow::navigator() const
         m_navigator = Navigator::create(m_frame);
     return m_navigator.get();
 }
+
+#if ENABLE(WEB_TIMING)
+Performance* DOMWindow::performance() const
+{
+    if (!m_performance)
+        m_performance = Performance::create(m_frame);
+    return m_performance.get();
+}
+#endif
 
 Location* DOMWindow::location() const
 {

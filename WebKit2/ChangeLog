@@ -1,3 +1,12 @@
+2010-06-26  Tony Gentilcore  <tonyg@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Add an ENABLE_WEB_TIMING option for enabling Web Timing support.
+        https://bugs.webkit.org/show_bug.cgi?id=38924
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2010-06-25  Steve Falkenburg  <sfalken@apple.com>
 
         Windows build fix.
