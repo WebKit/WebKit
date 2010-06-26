@@ -51,9 +51,12 @@ void MainWindow::buildUI()
 #if defined(Q_WS_S60)
     bar->setIconSize(QSize(16, 16));
 #endif
+    QAction* reloadAction = page()->action(QWebPage::Reload);
+    connect(reloadAction, SIGNAL(triggered()), this, SLOT(changeLocation()));
+
     bar->addAction(page()->action(QWebPage::Back));
     bar->addAction(page()->action(QWebPage::Forward));
-    bar->addAction(page()->action(QWebPage::Reload));
+    bar->addAction(reloadAction);
     bar->addAction(page()->action(QWebPage::Stop));
 
     urlEdit = new LocationEdit(this);
@@ -141,6 +144,11 @@ void MainWindow::load(const QUrl& url)
 
 void MainWindow::changeLocation()
 {
+    if (page()->mainFrame()->url().isValid()) {
+        page()->triggerAction(QWebPage::Reload);
+        return;
+    }
+
     QString string = urlEdit->text();
     load(string);
 }
