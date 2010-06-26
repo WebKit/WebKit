@@ -1,3 +1,13 @@
+2010-06-25  Alpha Lam  <hclam@chromium.org>
+
+        Unreviewed. Build fix.
+
+        More test expectations cleanup for r61908.
+
+        * platform/chromium-linux/printing/return-from-printing-mode-expected.checksum:
+        * platform/chromium-linux/printing/return-from-printing-mode-expected.png: Added.
+        * platform/chromium/test_expectations.txt:
+
 2010-06-25  Adam Barth  <abarth@webkit.org>
 
         Unreviewed.

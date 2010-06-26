@@ -861,7 +861,7 @@ BUG8763 LINUX WIN MAC : svg/custom/use-on-g-containing-foreignObject-and-image.s
 // We show reduced version of the entire SVN image rather than an image
 BUG23463 MAC : svg/W3C-SVG-1.1/struct-symbol-01-b.svg = IMAGE
 BUG23463 MAC : svg/W3C-SVG-1.1/struct-use-01-t.svg = IMAGE
-BUG23463 WIN LINUX : svg/W3C-SVG-1.1/struct-symbol-01-b.svg = IMAGE+TEXT
+BUG23463 WIN LINUX : svg/W3C-SVG-1.1/struct-symbol-01-b.svg = IMAGE+TEXT TEXT
 BUG23463 WIN LINUX : svg/W3C-SVG-1.1/struct-use-01-t.svg = IMAGE+TEXT
 BUG23463 WIN LINUX : svg/W3C-SVG-1.1/struct-image-02-b.svg = IMAGE+TEXT
 
@@ -1006,7 +1006,7 @@ BUG10322 DEFER SKIP : platform/win/accessibility = PASS FAIL
 // These fail the pixel tests in debug mode because they have
 // unpainted space (filled red in Debug but not in Release).
 // https://bugs.webkit.org/show_bug.cgi?id=8423
-BUG24204 WIN LINUX : tables/mozilla_expected_failures/bugs/bug178855.xml = IMAGE+TEXT
+BUG24204 WIN LINUX : tables/mozilla_expected_failures/bugs/bug178855.xml = IMAGE+TEXT TEXT
 
 // Fails on webkit windows as well.
 BUG24207 : fast/events/attempt-scroll-with-no-scrollbars.html = FAIL
@@ -1913,7 +1913,7 @@ BUG10473 LINUX : fast/replaced/width100percent-searchfield.html = FAIL
 // r37311:r37313 started making the test fail with a text diff.
 BUG27569 BUG33316 LINUX MAC WIN : http/tests/xmlhttprequest/redirect-cross-origin-tripmine.html = TIMEOUT FAIL PASS
 
-BUG9613 WIN LINUX : fast/dom/clientWidthAfterDocumentIsRemoved.html = IMAGE+TEXT
+BUG9613 WIN LINUX : fast/dom/clientWidthAfterDocumentIsRemoved.html = IMAGE+TEXT TEXT
 BUG9613 MAC : fast/dom/clientWidthAfterDocumentIsRemoved.html = TEXT
 
 // Merge WebKit 42133:42199 regressions
@@ -2595,7 +2595,7 @@ BUG37540 MAC SKIP : inspector/console-dir.html = CRASH TEXT PASS
 BUG37896 : fast/events/remove-child-onscroll.html = TIMEOUT
 // This one may be an actual regression! Started being flaky after
 // http://trac.webkit.org/log/?verbose=on&rev=55742&stop_rev=55710
-BUG37896 LINUX WIN : fast/events/standalone-image-drag-to-editable.html = IMAGE+TEXT
+BUG37896 LINUX WIN : fast/events/standalone-image-drag-to-editable.html = IMAGE+TEXT PASS TEXT
 BUG37896 MAC DEBUG : fast/events/standalone-image-drag-to-editable.html = IMAGE+TEXT PASS
 // New test, added http://trac.webkit.org/changeset/55546
 BUG37896 WIN LINUX : fast/multicol/hit-test-above-or-below.html = TEXT
@@ -2654,7 +2654,7 @@ BUG40680 SKIP : fast/media/media-feature-wgt-view-mode.html = FAIL
 BUG38706 : svg/custom/deep-dynamic-updates.svg = IMAGE+TEXT IMAGE PASS
 
 // Caused by http://trac.webkit.org/changeset/56288/
-BUG_JSCHUH WIN LINUX : svg/filters/filterRes.svg = IMAGE+TEXT
+BUG_JSCHUH WIN LINUX : svg/filters/filterRes.svg = IMAGE+TEXT TEXT
 BUG_JSCHUH MAC : svg/filters/filterRes.svg = IMAGE
 
 // Caused by http://trac.webkit.org/changeset/56394.
@@ -2767,7 +2767,7 @@ BUG43084 MAC DEBUG : media/video-empty-source.html = IMAGE
 
 // WebKit roll 58626:58719
 BUG43963 WIN : fast/forms/searchfield-heights.html = IMAGE
-BUG43963 LINUX : fast/forms/searchfield-heights.html = IMAGE+TEXT
+BUG43963 LINUX : fast/forms/searchfield-heights.html = IMAGE+TEXT TEXT
 BUG43960 WIN LINUX : fast/css/input-search-padding.html = IMAGE+TEXT
 BUG43960 MAC : fast/css/input-search-padding.html = IMAGE
 
