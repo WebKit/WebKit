@@ -1,3 +1,12 @@
+2010-06-25  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed.
+
+        Skip fast/events/popup-when-select-change.html because GTK doesn't have
+        an eventSender implementation.
+
+        * platform/gtk/Skipped:
+
 2010-06-25  Johnny Ding  <jnd@chromium.org>
 
         Reviewed by Adam Barth.
