@@ -1,0 +1,74 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+  "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>WebGL gl enums Conformance Tests</title>
+<link rel="stylesheet" href="../../js/resources/js-test-style.css"/>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script src="resources/webgl-test.js"></script>
+<script src="resources/desktop-gl-constants.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<canvas id="canvas" width="2" height="2"> </canvas>
+<script>
+description("This test ensures various WebGL functions fail when passed non OpenGL ES 2.0 enums.");
+
+debug("");
+debug("Canvas.getContext");
+
+var gl = create3DContext(document.getElementById("canvas"));
+if (!gl) {
+  testFailed("context does not exist");
+} else {
+  testPassed("context exists");
+
+  debug("");
+  debug("Checking gl enums.");
+
+  var buffer = new ArrayBuffer(1);
+  var buf = new Uint16Array(buffer);
+  var tex = gl.createTexture();
+  var tests = [
+    "gl.bindTexture(desktopGL['TEXTURE_3D'], tex)",
+    "gl.blendEquation(desktopGL['MIN'])",
+    "gl.blendEquation(desktopGL['MAX'])",
+    "gl.blendEquationSeparate(desktopGL['MIN'], gl.FUNC_ADD)",
+    "gl.blendEquationSeparate(desktopGL['MAX'], gl.FUNC_ADD)",
+    "gl.blendEquationSeparate(gl.FUNC_ADD, desktopGL['MIN'])",
+    "gl.blendEquationSeparate(gl.FUNC_ADD, desktopGL['MAX'])",
+    "gl.bufferData(gl.ARRAY_BUFFER, 3, desktopGL['STATIC_READ'])",
+    "gl.disable(desktopGL['CLIP_PLANE0'])",
+    "gl.disable(desktopGL['POINT_SPRITE'])",
+    "gl.getBufferParameter(gl.ARRAY_BUFFER, desktopGL['PIXEL_PACK_BUFFER'])",
+    "gl.getTexParameter(gl.TEXTURE_2D, desktopGL['GENERATE_MIPMAP'])",
+    "gl.getTexParameter(gl.TEXTURE_2D, desktopGL['GENERATE_MIPMAP'])",
+    "gl.hint(desktopGL['PERSPECTIVE_CORRECTION_HINT'], gl.FASTEST)",
+    "gl.isEnabled(desktopGL['CLIP_PLANE0'])",
+    "gl.isEnabled(desktopGL['POINT_SPRITE'])",
+    "gl.pixelStorei(desktopGL['PACK_SWAP_BYTES'], 1)",
+    "gl.readPixels(0, 0, 1, 1, gl.ALPHA, gl.SHORT, buf)",
+    "gl.texParameteri(desktopGL['TEXTURE_3D'], gl.TEXTURE_MAG_FILTER, gl.NEAREST)",
+    "gl.texParameteri(gl.TEXTURE_2D, desktopGL['GENERATE_MIPMAP'], 1)"
+   ];
+   for (var ii = 0; ii < tests.length; ++ii) {
+     eval(tests[ii]);
+     assertMsg(gl.getError() == gl.INVALID_ENUM,
+               tests[ii] + " should return INVALID_ENUM.");
+   }
+}
+
+debug("");
+successfullyParsed = true;
+
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+
+<script>
+</script>
+
+</body>
+</html>
+

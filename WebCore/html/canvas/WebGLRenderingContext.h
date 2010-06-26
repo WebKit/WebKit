@@ -448,6 +448,12 @@ class WebKitCSSMatrix;
         // Generate GL error if parameters are illegal.
         bool validateFramebufferFuncParameters(unsigned long target, unsigned long attachment);
 
+        // Helper function to validate blend equation mode.
+        bool validateBlendEquation(unsigned long);
+
+        // Helper function to validate a GL capability.
+        bool validateCapability(unsigned long);
+
         friend class WebGLStateRestorer;
     };
 

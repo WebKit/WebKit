@@ -313,12 +313,20 @@ void WebGLRenderingContext::blendColor(double red, double green, double blue, do
 
 void WebGLRenderingContext::blendEquation( unsigned long mode )
 {
+    if (!isGLES2Compliant()) {
+        if (!validateBlendEquation(mode))
+            return;
+    }
     m_context->blendEquation(mode);
     cleanupAfterGraphicsCall(false);
 }
 
 void WebGLRenderingContext::blendEquationSeparate(unsigned long modeRGB, unsigned long modeAlpha)
 {
+    if (!isGLES2Compliant()) {
+        if (!validateBlendEquation(modeRGB) || !validateBlendEquation(modeAlpha))
+            return;
+    }
     m_context->blendEquationSeparate(modeRGB, modeAlpha);
     cleanupAfterGraphicsCall(false);
 }
@@ -644,6 +652,10 @@ void WebGLRenderingContext::detachShader(WebGLProgram* program, WebGLShader* sha
 
 void WebGLRenderingContext::disable(unsigned long cap)
 {
+    if (!isGLES2Compliant()) {
+        if (!validateCapability(cap))
+            return;
+    }
     m_context->disable(cap);
     cleanupAfterGraphicsCall(false);
 }
@@ -884,6 +896,10 @@ void WebGLRenderingContext::drawElements(unsigned long mode, long count, unsigne
 
 void WebGLRenderingContext::enable(unsigned long cap)
 {
+    if (!isGLES2Compliant()) {
+        if (!validateCapability(cap))
+            return;
+    }
     m_context->enable(cap);
     cleanupAfterGraphicsCall(false);
 }
@@ -1647,6 +1663,12 @@ long WebGLRenderingContext::getVertexAttribOffset(unsigned long index, unsigned 
 
 void WebGLRenderingContext::hint(unsigned long target, unsigned long mode)
 {
+    if (!isGLES2Compliant()) {
+        if (target != GraphicsContext3D::GENERATE_MIPMAP_HINT) {
+            m_context->synthesizeGLError(GraphicsContext3D::INVALID_ENUM);
+            return;
+        }
+    }
     m_context->hint(target, mode);
     cleanupAfterGraphicsCall(false);
 }
@@ -1661,6 +1683,10 @@ bool WebGLRenderingContext::isBuffer(WebGLBuffer* buffer)
 
 bool WebGLRenderingContext::isEnabled(unsigned long cap)
 {
+    if (!isGLES2Compliant()) {
+        if (!validateCapability(cap))
+            return false;
+    }
     return m_context->isEnabled(cap);
 }
 
@@ -1722,22 +1748,26 @@ void WebGLRenderingContext::linkProgram(WebGLProgram* program, ExceptionCode& ec
 
 void WebGLRenderingContext::pixelStorei(unsigned long pname, long param)
 {
-    if (pname == GraphicsContext3D::UNPACK_FLIP_Y_WEBGL) {
+    switch (pname) {
+    case GraphicsContext3D::UNPACK_FLIP_Y_WEBGL:
         m_unpackFlipY = param;
-    } else if (pname == GraphicsContext3D::UNPACK_PREMULTIPLY_ALPHA_WEBGL) {
+        break;
+    case GraphicsContext3D::UNPACK_PREMULTIPLY_ALPHA_WEBGL:
         m_unpackPremultiplyAlpha = param;
-    } else {
+        break;
+    case GraphicsContext3D::PACK_ALIGNMENT:
+    case GraphicsContext3D::UNPACK_ALIGNMENT:
         m_context->pixelStorei(pname, param);
         if (param == 1 || param == 2 || param == 4 || param == 8) {
-            switch (pname) {
-            case GraphicsContext3D::PACK_ALIGNMENT:
+            if (pname == GraphicsContext3D::PACK_ALIGNMENT)
                 m_packAlignment = static_cast<int>(param);
-                break;
-            case GraphicsContext3D::UNPACK_ALIGNMENT:
+            else // GraphicsContext3D::UNPACK_ALIGNMENT:
                 m_unpackAlignment = static_cast<int>(param);
-                break;
-            }
         }
+        break;
+    default:
+        m_context->synthesizeGLError(GraphicsContext3D::INVALID_ENUM);
+        return;
     }
     cleanupAfterGraphicsCall(false);
 }
@@ -3490,6 +3520,38 @@ bool WebGLRenderingContext::validateFramebufferFuncParameters(unsigned long targ
         return false;
     }
     return true;
+}
+
+bool WebGLRenderingContext::validateBlendEquation(unsigned long mode)
+{
+    switch (mode) {
+    case GraphicsContext3D::FUNC_ADD:
+    case GraphicsContext3D::FUNC_SUBTRACT:
+    case GraphicsContext3D::FUNC_REVERSE_SUBTRACT:
+        return true;
+    default:
+        m_context->synthesizeGLError(GraphicsContext3D::INVALID_ENUM);
+        return false;
+    }
+}
+
+bool WebGLRenderingContext::validateCapability(unsigned long cap)
+{
+    switch (cap) {
+    case GraphicsContext3D::BLEND:
+    case GraphicsContext3D::CULL_FACE:
+    case GraphicsContext3D::DEPTH_TEST:
+    case GraphicsContext3D::DITHER:
+    case GraphicsContext3D::POLYGON_OFFSET_FILL:
+    case GraphicsContext3D::SAMPLE_ALPHA_TO_COVERAGE:
+    case GraphicsContext3D::SAMPLE_COVERAGE:
+    case GraphicsContext3D::SCISSOR_TEST:
+    case GraphicsContext3D::STENCIL_TEST:
+        return true;
+    default:
+        m_context->synthesizeGLError(GraphicsContext3D::INVALID_ENUM);
+        return false;
+    }
 }
 
 } // namespace WebCore

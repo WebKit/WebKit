@@ -1,3 +1,25 @@
+2010-06-25  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        Bring set/get state functions to GLES2 conformance
+        https://bugs.webkit.org/show_bug.cgi?id=41095
+
+        Tests: fast/canvas/webgl/gl-enable-enum-test.html
+               fast/canvas/webgl/gl-enum-tests.html
+
+        * html/canvas/WebGLRenderingContext.cpp: Check input parameters according to GLES2 spec.
+        (WebCore::WebGLRenderingContext::blendEquation):
+        (WebCore::WebGLRenderingContext::blendEquationSeparate):
+        (WebCore::WebGLRenderingContext::disable):
+        (WebCore::WebGLRenderingContext::enable):
+        (WebCore::WebGLRenderingContext::hint):
+        (WebCore::WebGLRenderingContext::isEnabled):
+        (WebCore::WebGLRenderingContext::pixelStorei):
+        (WebCore::WebGLRenderingContext::validateBlendEquation):
+        (WebCore::WebGLRenderingContext::validateCapability):
+        * html/canvas/WebGLRenderingContext.h: Add helper function declaration.
+
 2010-06-25  Sterling Swigart  <sswigart@google.com>
 
         Reviewed by David Levin.
