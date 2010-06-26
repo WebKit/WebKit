@@ -167,6 +167,11 @@ void WebPluginContainerImpl::handleEvent(Event* event)
         handleWheelEvent(static_cast<WheelEvent*>(event));
     else if (event->isKeyboardEvent())
         handleKeyboardEvent(static_cast<KeyboardEvent*>(event));
+
+    // FIXME: it would be cleaner if Widget::handleEvent returned true/false and
+    // HTMLPluginElement called setDefaultHandled or defaultEventHandler.
+    if (!event->defaultHandled())
+        m_element->Node::defaultEventHandler(event);
 }
 
 void WebPluginContainerImpl::frameRectsChanged()
