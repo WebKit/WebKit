@@ -1,5 +1,13 @@
 2010-06-26  Darin Adler  <darin@apple.com>
 
+        Try to fix Windows build by adding back function used only by Windows WebKit.
+
+        * html/HTMLOptionElement.cpp:
+        (WebCore::HTMLOptionElement::label): Added back.
+        * html/HTMLOptionElement.h: Added label function.
+
+2010-06-26  Darin Adler  <darin@apple.com>
+
         Try to fix Qt build by adding back function used only by Qt WebKit.
 
         * html/HTMLMetaElement.cpp:

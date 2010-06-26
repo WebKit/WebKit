@@ -213,6 +213,11 @@ void HTMLOptionElement::setDefaultSelected(bool b)
     setAttribute(selectedAttr, b ? "" : 0);
 }
 
+String HTMLOptionElement::label() const
+{
+    return m_data.label();
+}
+
 void HTMLOptionElement::setRenderStyle(PassRefPtr<RenderStyle> newStyle)
 {
     m_style = newStyle;

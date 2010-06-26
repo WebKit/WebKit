@@ -56,6 +56,8 @@ public:
 
     void setDefaultSelected(bool);
 
+    String label() const;
+
     bool ownElementDisabled() const { return HTMLFormControlElement::disabled(); }
 
     virtual bool disabled() const;
