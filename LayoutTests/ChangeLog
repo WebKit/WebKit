@@ -2,6 +2,47 @@
 
         Unreviewed.
 
+        [Qt] Add platform specific expected results for new passing svg/* tests.
+        Compared to Mac png files and Mac expected files.
+
+        * platform/qt/svg/W3C-SVG-1.1/fonts-glyph-02-t-expected.checksum: Added.
+        * platform/qt/svg/W3C-SVG-1.1/fonts-glyph-02-t-expected.png: Added.
+        * platform/qt/svg/W3C-SVG-1.1/fonts-glyph-02-t-expected.txt: Added.
+        * platform/qt/svg/batik/text/textDecoration-expected.checksum: Added.
+        * platform/qt/svg/batik/text/textDecoration-expected.png: Added.
+        * platform/qt/svg/batik/text/textDecoration-expected.txt: Added.
+        * platform/qt/svg/custom/non-scaling-stroke-expected.checksum: Added.
+        * platform/qt/svg/custom/non-scaling-stroke-expected.png: Added.
+        * platform/qt/svg/custom/non-scaling-stroke-expected.txt: Added.
+        * platform/qt/svg/custom/repaint-stroke-width-changes-expected.checksum: Added.
+        * platform/qt/svg/custom/repaint-stroke-width-changes-expected.png: Added.
+        * platform/qt/svg/custom/repaint-stroke-width-changes-expected.txt: Added.
+        * platform/qt/svg/custom/svg-fonts-with-no-element-reference-expected.checksum: Added.
+        * platform/qt/svg/custom/svg-fonts-with-no-element-reference-expected.png: Added.
+        * platform/qt/svg/custom/svg-fonts-with-no-element-reference-expected.txt: Copied from LayoutTests/platform/gtk/svg/custom/svg-fonts-with-no-element-reference-expected.txt.
+        * platform/qt/svg/filters/filter-on-filter-for-text-expected.checksum: Added.
+        * platform/qt/svg/filters/filter-on-filter-for-text-expected.png: Added.
+        * platform/qt/svg/filters/filter-on-filter-for-text-expected.txt: Added.
+        * platform/qt/svg/foreignObject/disallowed-svg-nodes-as-direct-children-expected.checksum: Copied from LayoutTests/platform/mac/svg/foreignObject/disallowed-svg-nodes-as-direct-children-expected.checksum.
+        * platform/qt/svg/foreignObject/disallowed-svg-nodes-as-direct-children-expected.png: Added.
+        * platform/qt/svg/foreignObject/disallowed-svg-nodes-as-direct-children-expected.txt: Copied from LayoutTests/platform/mac/svg/foreignObject/disallowed-svg-nodes-as-direct-children-expected.txt.
+        * platform/qt/svg/foreignObject/no-crash-with-svg-content-in-html-document-expected.checksum: Added.
+        * platform/qt/svg/foreignObject/no-crash-with-svg-content-in-html-document-expected.png: Added.
+        * platform/qt/svg/foreignObject/no-crash-with-svg-content-in-html-document-expected.txt: Added.
+        * platform/qt/svg/foreignObject/svg-document-as-direct-child-expected.checksum: Added.
+        * platform/qt/svg/foreignObject/svg-document-as-direct-child-expected.png: Added.
+        * platform/qt/svg/foreignObject/svg-document-as-direct-child-expected.txt: Added.
+        * platform/qt/svg/foreignObject/svg-document-in-html-document-expected.checksum: Added.
+        * platform/qt/svg/foreignObject/svg-document-in-html-document-expected.png: Added.
+        * platform/qt/svg/foreignObject/svg-document-in-html-document-expected.txt: Added.
+        * platform/qt/svg/foreignObject/text-tref-02-b-expected.checksum: Added.
+        * platform/qt/svg/foreignObject/text-tref-02-b-expected.png: Added.
+        * platform/qt/svg/foreignObject/text-tref-02-b-expected.txt: Added.
+
+2010-06-25  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed.
+
         [Qt] Add platform specific expected results for new passing svg/text/* tests.
         Compared to Mac png files and Mac expected files.
 
