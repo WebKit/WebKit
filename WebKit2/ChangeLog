@@ -1,3 +1,11 @@
+2010-06-25  Ada Chan  <adachan@apple.com>
+
+        Rubber-stamped by Mark Rowe.
+
+        Add additional include search paths relative to $(WebKitLibrariesDir) to fix a build.
+
+        * win/WebKit2.vcproj:
+
 2010-06-25  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.
