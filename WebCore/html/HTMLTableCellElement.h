@@ -47,44 +47,11 @@ public:
     void setCellIndex(int);
 
     String abbr() const;
-    void setAbbr(const String&);
-
-    String align() const;
-    void setAlign(const String&);
-
     String axis() const;
-    void setAxis(const String&);
-
-    String bgColor() const;
-    void setBgColor(const String&);
-
-    String ch() const;
-    void setCh(const String&);
-
-    String chOff() const;
-    void setChOff(const String&);
-
     void setColSpan(int);
-
     String headers() const;
-    void setHeaders(const String&);
-
-    String height() const;
-    void setHeight(const String&);
-
-    bool noWrap() const;
-    void setNoWrap(bool);
-
     void setRowSpan(int);
-
     String scope() const;
-    void setScope(const String&);
-
-    String vAlign() const;
-    void setVAlign(const String&);
-
-    String width() const;
-    void setWidth(const String&);
 
 private:
     HTMLTableCellElement(const QualifiedName&, Document*);

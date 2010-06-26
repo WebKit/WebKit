@@ -116,24 +116,4 @@ void HTMLLIElement::attach()
     }
 }
 
-String HTMLLIElement::type() const
-{
-    return getAttribute(typeAttr);
-}
-
-void HTMLLIElement::setType(const String& value)
-{
-    setAttribute(typeAttr, value);
-}
-
-int HTMLLIElement::value() const
-{
-    return getAttribute(valueAttr).toInt();
-}
-
-void HTMLLIElement::setValue(int value)
-{
-    setAttribute(valueAttr, String::number(value));
-}
-
 }

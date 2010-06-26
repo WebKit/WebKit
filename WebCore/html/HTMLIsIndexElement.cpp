@@ -61,14 +61,4 @@ void HTMLIsIndexElement::parseMappedAttribute(Attribute* attr)
         HTMLFormControlElement::parseMappedAttribute(attr);
 }
 
-String HTMLIsIndexElement::prompt() const
-{
-    return getAttribute(promptAttr);
-}
-
-void HTMLIsIndexElement::setPrompt(const String &value)
-{
-    setAttribute(promptAttr, value);
-}
-
 } // namespace

@@ -32,12 +32,6 @@ public:
     static PassRefPtr<HTMLLIElement> create(Document*);
     static PassRefPtr<HTMLLIElement> create(const QualifiedName&, Document*);
 
-    String type() const;
-    void setType(const String&);
-
-    int value() const;
-    void setValue(int);
-
 private:
     HTMLLIElement(const QualifiedName&, Document*);
 

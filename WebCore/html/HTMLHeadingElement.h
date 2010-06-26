@@ -31,9 +31,6 @@ class HTMLHeadingElement : public HTMLElement {
 public:
     static PassRefPtr<HTMLHeadingElement> create(const QualifiedName&, Document*);
 
-    String align() const;
-    void setAlign(const String&);
-
 private:
     HTMLHeadingElement(const QualifiedName&, Document*);
 

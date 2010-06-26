@@ -54,26 +54,6 @@ const AtomicString& HTMLLegendElement::formControlType() const
     return legend;
 }
 
-String HTMLLegendElement::accessKey() const
-{
-    return getAttribute(accesskeyAttr);
-}
-
-void HTMLLegendElement::setAccessKey(const String &value)
-{
-    setAttribute(accesskeyAttr, value);
-}
-
-String HTMLLegendElement::align() const
-{
-    return getAttribute(alignAttr);
-}
-
-void HTMLLegendElement::setAlign(const String &value)
-{
-    setAttribute(alignAttr, value);
-}
-
 HTMLFormControlElement* HTMLLegendElement::associatedControl()
 {
     // Check if there's a fieldset belonging to this legend.

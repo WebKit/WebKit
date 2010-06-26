@@ -106,44 +106,4 @@ void HTMLHRElement::parseMappedAttribute(Attribute* attr)
         HTMLElement::parseMappedAttribute(attr);
 }
 
-String HTMLHRElement::align() const
-{
-    return getAttribute(alignAttr);
-}
-
-void HTMLHRElement::setAlign(const String &value)
-{
-    setAttribute(alignAttr, value);
-}
-
-bool HTMLHRElement::noShade() const
-{
-    return !getAttribute(noshadeAttr).isNull();
-}
-
-void HTMLHRElement::setNoShade(bool noShade)
-{
-    setAttribute(noshadeAttr, noShade ? "" : 0);
-}
-
-String HTMLHRElement::size() const
-{
-    return getAttribute(sizeAttr);
-}
-
-void HTMLHRElement::setSize(const String &value)
-{
-    setAttribute(sizeAttr, value);
-}
-
-String HTMLHRElement::width() const
-{
-    return getAttribute(widthAttr);
-}
-
-void HTMLHRElement::setWidth(const String &value)
-{
-    setAttribute(widthAttr, value);
-}
-
 }

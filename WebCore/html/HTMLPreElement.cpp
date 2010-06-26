@@ -65,24 +65,4 @@ void HTMLPreElement::parseMappedAttribute(Attribute* attr)
         return HTMLElement::parseMappedAttribute(attr);
 }
 
-int HTMLPreElement::width() const
-{
-    return getAttribute(widthAttr).toInt();
-}
-
-void HTMLPreElement::setWidth(int width)
-{
-    setAttribute(widthAttr, String::number(width));
-}
-
-bool HTMLPreElement::wrap() const
-{
-    return !getAttribute(wrapAttr).isNull();
-}
-
-void HTMLPreElement::setWrap(bool wrap)
-{
-    setAttribute(wrapAttr, wrap ? "" : 0);
-}
-
 }

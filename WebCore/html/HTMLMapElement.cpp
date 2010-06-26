@@ -137,16 +137,6 @@ PassRefPtr<HTMLCollection> HTMLMapElement::areas()
     return HTMLCollection::create(this, MapAreas);
 }
 
-String HTMLMapElement::name() const
-{
-    return getAttribute(nameAttr);
-}
-
-void HTMLMapElement::setName(const String& value)
-{
-    setAttribute(nameAttr, value);
-}
-
 void HTMLMapElement::insertedIntoDocument()
 {
     document()->addImageMap(this);

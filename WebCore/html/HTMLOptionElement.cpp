@@ -208,24 +208,9 @@ HTMLSelectElement* HTMLOptionElement::ownerSelectElement() const
     return static_cast<HTMLSelectElement*>(select);
 }
 
-bool HTMLOptionElement::defaultSelected() const
-{
-    return !getAttribute(selectedAttr).isNull();
-}
-
 void HTMLOptionElement::setDefaultSelected(bool b)
 {
     setAttribute(selectedAttr, b ? "" : 0);
-}
-
-String HTMLOptionElement::label() const
-{
-    return m_data.label();
-}
-
-void HTMLOptionElement::setLabel(const String& value)
-{
-    setAttribute(labelAttr, value);
 }
 
 void HTMLOptionElement::setRenderStyle(PassRefPtr<RenderStyle> newStyle)

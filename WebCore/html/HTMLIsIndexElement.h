@@ -33,9 +33,6 @@ public:
     static PassRefPtr<HTMLIsIndexElement> create(Document*, HTMLFormElement*);
     static PassRefPtr<HTMLIsIndexElement> create(const QualifiedName&, Document*, HTMLFormElement*);
 
-    String prompt() const;
-    void setPrompt(const String&);
-
 private:
     HTMLIsIndexElement(const QualifiedName&, Document*, HTMLFormElement*);
 

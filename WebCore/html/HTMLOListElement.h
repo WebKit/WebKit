@@ -32,14 +32,8 @@ public:
     static PassRefPtr<HTMLOListElement> create(Document*);
     static PassRefPtr<HTMLOListElement> create(const QualifiedName&, Document*);
 
-    bool compact() const;
-    void setCompact(bool);
-
     int start() const { return m_start; }
     void setStart(int);
-
-    String type() const;
-    void setType(const String&);
 
 private:
     HTMLOListElement(const QualifiedName&, Document*);

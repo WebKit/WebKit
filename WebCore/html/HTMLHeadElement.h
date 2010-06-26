@@ -33,9 +33,6 @@ public:
     static PassRefPtr<HTMLHeadElement> create(Document*);
     static PassRefPtr<HTMLHeadElement> create(const QualifiedName&, Document*);
 
-    String profile() const;
-    void setProfile(const String&);
-
     virtual int tagPriority() const { return 10; }
 
 private:

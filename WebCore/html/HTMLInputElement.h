@@ -161,36 +161,19 @@ public:
     String defaultValue() const;
     void setDefaultValue(const String&);
     
-    bool defaultChecked() const;
-    void setDefaultChecked(bool);
-
     void setDefaultName(const AtomicString&);
 
     String accept() const;
-    void setAccept(const String&);
-
-    String accessKey() const;
-    void setAccessKey(const String&);
-
-    String align() const;
-    void setAlign(const String&);
-
     String alt() const;
-    void setAlt(const String&);
 
     void setSize(unsigned);
 
     KURL src() const;
-    void setSrc(const String&);
 
     int maxLength() const;
     void setMaxLength(int, ExceptionCode&);
 
     bool multiple() const;
-    void setMultiple(bool);
-
-    String useMap() const;
-    void setUseMap(const String&);
 
     virtual bool isAutofilled() const { return m_autofilled; }
     void setAutofilled(bool value = true);

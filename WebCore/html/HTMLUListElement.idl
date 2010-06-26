@@ -20,7 +20,7 @@
 module html {
 
     interface HTMLUListElement : HTMLElement {
-        attribute boolean compact;
+        attribute [Reflect] boolean compact;
         attribute [Reflect] DOMString type;
     };
 

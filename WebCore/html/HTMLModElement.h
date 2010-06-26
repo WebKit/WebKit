@@ -32,12 +32,6 @@ class HTMLModElement : public HTMLElement {
 public:
     static PassRefPtr<HTMLModElement> create(const QualifiedName&, Document*);
 
-    String cite() const;
-    void setCite(const String&);
-
-    String dateTime() const;
-    void setDateTime(const String&);
-
 private:
     HTMLModElement(const QualifiedName&, Document*);
 

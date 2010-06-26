@@ -32,12 +32,6 @@ class HTMLLegendElement : public HTMLFormControlElement {
 public:
     static PassRefPtr<HTMLLegendElement> create(const QualifiedName&, Document*, HTMLFormElement*);
 
-    String accessKey() const;
-    void setAccessKey(const String&);
-
-    String align() const;
-    void setAlign(const String&);
-    
 private:
     HTMLLegendElement(const QualifiedName&, Document*, HTMLFormElement*);
 

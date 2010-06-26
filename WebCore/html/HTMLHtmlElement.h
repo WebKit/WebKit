@@ -33,9 +33,6 @@ public:
     static PassRefPtr<HTMLHtmlElement> create(Document*);
     static PassRefPtr<HTMLHtmlElement> create(const QualifiedName&, Document*);
 
-    String version() const;
-    void setVersion(const String&);
-
 private:
     HTMLHtmlElement(const QualifiedName&, Document*);
 

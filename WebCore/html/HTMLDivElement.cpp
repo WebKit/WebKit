@@ -73,14 +73,4 @@ void HTMLDivElement::parseMappedAttribute(Attribute* attr)
         HTMLElement::parseMappedAttribute(attr);
 }
 
-String HTMLDivElement::align() const
-{
-    return getAttribute(alignAttr);
-}
-
-void HTMLDivElement::setAlign(const String &value)
-{
-    setAttribute(alignAttr, value);
-}
-
 }

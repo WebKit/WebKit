@@ -54,11 +54,7 @@ public:
 
     HTMLSelectElement* ownerSelectElement() const;
 
-    bool defaultSelected() const;
     void setDefaultSelected(bool);
-
-    String label() const;
-    void setLabel(const String&);
 
     bool ownElementDisabled() const { return HTMLFormControlElement::disabled(); }
 

@@ -26,13 +26,13 @@ module html {
         readonly attribute ValidityState validity;
         attribute [Reflect] DOMString accessKey;
         attribute long cols;
-        attribute boolean disabled;
-        attribute boolean autofocus;
+        attribute [Reflect] boolean disabled;
+        attribute [Reflect] boolean autofocus;
         attribute long maxLength setter raises(DOMException);
         attribute [ConvertNullToNullString] DOMString name;
         attribute [Reflect] DOMString placeholder;
-        attribute boolean readOnly;
-        attribute boolean required;
+        attribute [Reflect] boolean readOnly;
+        attribute [Reflect] boolean required;
         attribute long rows;
         readonly attribute DOMString type;
         attribute [ConvertNullToNullString] DOMString value;

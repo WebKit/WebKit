@@ -49,21 +49,6 @@ public:
     PassRefPtr<HTMLCollection> cells();
     void setCells(HTMLCollection *, ExceptionCode&);
 
-    String align() const;
-    void setAlign(const String&);
-
-    String bgColor() const;
-    void setBgColor(const String&);
-
-    String ch() const;
-    void setCh(const String&);
-
-    String chOff() const;
-    void setChOff(const String&);
-
-    String vAlign() const;
-    void setVAlign(const String&);
-
 private:
     HTMLTableRowElement(const QualifiedName&, Document*);
 

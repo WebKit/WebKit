@@ -31,18 +31,6 @@ class HTMLHRElement : public HTMLElement {
 public:
     static PassRefPtr<HTMLHRElement> create(Document*);
     static PassRefPtr<HTMLHRElement> create(const QualifiedName&, Document*);
-    
-    String align() const;
-    void setAlign(const String&);
-
-    bool noShade() const;
-    void setNoShade(bool);
-
-    String size() const;
-    void setSize(const String&);
-
-    String width() const;
-    void setWidth(const String&);
 
 private:
     HTMLHRElement(const QualifiedName&, Document*);

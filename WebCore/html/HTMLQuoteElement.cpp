@@ -48,14 +48,4 @@ void HTMLQuoteElement::insertedIntoDocument()
     HTMLElement::insertedIntoDocument();
 }
 
-String HTMLQuoteElement::cite() const
-{
-    return getAttribute(citeAttr);
-}
-
-void HTMLQuoteElement::setCite(const String &value)
-{
-    setAttribute(citeAttr, value);
-}
-
 }

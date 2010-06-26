@@ -154,26 +154,6 @@ void HTMLLabelElement::accessKeyAction(bool sendToAnyElement)
         HTMLElement::accessKeyAction(sendToAnyElement);
 }
 
-String HTMLLabelElement::accessKey() const
-{
-    return getAttribute(accesskeyAttr);
-}
-
-void HTMLLabelElement::setAccessKey(const String &value)
-{
-    setAttribute(accesskeyAttr, value);
-}
-
-String HTMLLabelElement::htmlFor() const
-{
-    return getAttribute(forAttr);
-}
-
-void HTMLLabelElement::setHtmlFor(const String &value)
-{
-    setAttribute(forAttr, value);
-}
-
 void HTMLLabelElement::parseMappedAttribute(Attribute* attribute)
 {
     if (attribute->name() == forAttr) {

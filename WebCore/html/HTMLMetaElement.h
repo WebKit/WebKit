@@ -31,17 +31,7 @@ class HTMLMetaElement : public HTMLElement {
 public:
     static PassRefPtr<HTMLMetaElement> create(const QualifiedName&, Document*);
 
-    String content() const;
-    void setContent(const String&);
-
-    String httpEquiv() const;
-    void setHttpEquiv(const String&);
-
     String name() const;
-    void setName(const String&);
-
-    String scheme() const;
-    void setScheme(const String&);
 
 private:
     HTMLMetaElement(const QualifiedName&, Document*);

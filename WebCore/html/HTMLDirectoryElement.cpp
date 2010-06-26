@@ -1,6 +1,7 @@
-/**
+/*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
+ * Copyright (C) 2010 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -18,6 +19,7 @@
  * Boston, MA 02110-1301, USA.
  *
  */
+
 #include "config.h"
 #include "HTMLDirectoryElement.h"
 
@@ -27,20 +29,15 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-HTMLDirectoryElement::HTMLDirectoryElement(const QualifiedName& tagName, Document* doc)
-    : HTMLElement(tagName, doc)
+inline HTMLDirectoryElement::HTMLDirectoryElement(const QualifiedName& tagName, Document* document)
+    : HTMLElement(tagName, document)
 {
     ASSERT(hasTagName(dirTag));
 }
 
-bool HTMLDirectoryElement::compact() const
+PassRefPtr<HTMLDirectoryElement> HTMLDirectoryElement::create(const QualifiedName& tagName, Document* document)
 {
-    return !getAttribute(compactAttr).isNull();
-}
-
-void HTMLDirectoryElement::setCompact(bool b)
-{
-    setAttribute(compactAttr, b ? "" : 0);
+    return adoptRef(new HTMLDirectoryElement(tagName, document));
 }
 
 }

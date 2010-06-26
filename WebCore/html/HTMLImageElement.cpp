@@ -342,47 +342,6 @@ void HTMLImageElement::setHeight(int value)
     setAttribute(heightAttr, String::number(value));
 }
 
-int HTMLImageElement::hspace() const
-{
-    // ### return actual value
-    return getAttribute(hspaceAttr).toInt();
-}
-
-void HTMLImageElement::setHspace(int value)
-{
-    setAttribute(hspaceAttr, String::number(value));
-}
-
-bool HTMLImageElement::isMap() const
-{
-    return !getAttribute(ismapAttr).isNull();
-}
-
-void HTMLImageElement::setIsMap(bool isMap)
-{
-    setAttribute(ismapAttr, isMap ? "" : 0);
-}
-
-KURL HTMLImageElement::longDesc() const
-{
-    return document()->completeURL(getAttribute(longdescAttr));
-}
-
-void HTMLImageElement::setLongDesc(const String& value)
-{
-    setAttribute(longdescAttr, value);
-}
-
-KURL HTMLImageElement::lowsrc() const
-{
-    return document()->completeURL(getAttribute(lowsrcAttr));
-}
-
-void HTMLImageElement::setLowsrc(const String& value)
-{
-    setAttribute(lowsrcAttr, value);
-}
-
 KURL HTMLImageElement::src() const
 {
     return document()->completeURL(getAttribute(srcAttr));
@@ -391,17 +350,6 @@ KURL HTMLImageElement::src() const
 void HTMLImageElement::setSrc(const String& value)
 {
     setAttribute(srcAttr, value);
-}
-
-int HTMLImageElement::vspace() const
-{
-    // ### return actual vspace
-    return getAttribute(vspaceAttr).toInt();
-}
-
-void HTMLImageElement::setVspace(int value)
-{
-    setAttribute(vspaceAttr, String::number(value));
 }
 
 void HTMLImageElement::setWidth(int value)

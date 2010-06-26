@@ -40,14 +40,4 @@ PassRefPtr<HTMLMenuElement> HTMLMenuElement::create(const QualifiedName& tagName
     return adoptRef(new HTMLMenuElement(tagName, document));
 }
 
-bool HTMLMenuElement::compact() const
-{
-    return !getAttribute(compactAttr).isNull();
-}
-
-void HTMLMenuElement::setCompact(bool b)
-{
-    setAttribute(compactAttr, b ? "" : 0);
-}
-
 }

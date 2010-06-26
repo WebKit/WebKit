@@ -50,16 +50,6 @@ PassRefPtr<HTMLHtmlElement> HTMLHtmlElement::create(const QualifiedName& tagName
     return adoptRef(new HTMLHtmlElement(tagName, document));
 }
 
-String HTMLHtmlElement::version() const
-{
-    return getAttribute(versionAttr);
-}
-
-void HTMLHtmlElement::setVersion(const String &value)
-{
-    setAttribute(versionAttr, value);
-}
-
 bool HTMLHtmlElement::checkDTD(const Node* newChild)
 {
     return newChild->hasTagName(headTag) || newChild->hasTagName(bodyTag) ||

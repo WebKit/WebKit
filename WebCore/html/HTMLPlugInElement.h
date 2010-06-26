@@ -38,12 +38,6 @@ class HTMLPlugInElement : public HTMLFrameOwnerElement {
 public:
     virtual ~HTMLPlugInElement();
 
-    String height() const;
-    void setHeight(const String&);
-    
-    String width() const;
-    void setWidth(const String&);
-
     PassScriptInstance getInstance() const;
 
 #if ENABLE(NETSCAPE_PLUGIN_API)

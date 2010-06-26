@@ -35,15 +35,6 @@ public:
 
     void renderFallbackContent();
 
-    bool declare() const;
-    void setDeclare(bool);
-
-    int hspace() const;
-    void setHspace(int);
-
-    int vspace() const;
-    void setVspace(int);
-
     bool isDocNamedItem() const { return m_docNamedItem; }
 
     const String& classId() const { return m_classId; }

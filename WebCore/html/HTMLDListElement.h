@@ -31,9 +31,6 @@ class HTMLDListElement : public HTMLElement {
 public:
     static PassRefPtr<HTMLDListElement> create(const QualifiedName&, Document*);
 
-    bool compact() const;
-    void setCompact(bool);
-
 private:
     HTMLDListElement(const QualifiedName&, Document*);
 

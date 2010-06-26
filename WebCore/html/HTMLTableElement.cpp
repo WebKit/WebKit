@@ -669,94 +669,14 @@ PassRefPtr<HTMLCollection> HTMLTableElement::tBodies()
     return HTMLCollection::create(this, TableTBodies);
 }
 
-String HTMLTableElement::align() const
-{
-    return getAttribute(alignAttr);
-}
-
-void HTMLTableElement::setAlign(const String &value)
-{
-    setAttribute(alignAttr, value);
-}
-
-String HTMLTableElement::bgColor() const
-{
-    return getAttribute(bgcolorAttr);
-}
-
-void HTMLTableElement::setBgColor(const String &value)
-{
-    setAttribute(bgcolorAttr, value);
-}
-
-String HTMLTableElement::border() const
-{
-    return getAttribute(borderAttr);
-}
-
-void HTMLTableElement::setBorder(const String &value)
-{
-    setAttribute(borderAttr, value);
-}
-
-String HTMLTableElement::cellPadding() const
-{
-    return getAttribute(cellpaddingAttr);
-}
-
-void HTMLTableElement::setCellPadding(const String &value)
-{
-    setAttribute(cellpaddingAttr, value);
-}
-
-String HTMLTableElement::cellSpacing() const
-{
-    return getAttribute(cellspacingAttr);
-}
-
-void HTMLTableElement::setCellSpacing(const String &value)
-{
-    setAttribute(cellspacingAttr, value);
-}
-
-String HTMLTableElement::frame() const
-{
-    return getAttribute(frameAttr);
-}
-
-void HTMLTableElement::setFrame(const String &value)
-{
-    setAttribute(frameAttr, value);
-}
-
 String HTMLTableElement::rules() const
 {
     return getAttribute(rulesAttr);
 }
 
-void HTMLTableElement::setRules(const String &value)
-{
-    setAttribute(rulesAttr, value);
-}
-
 String HTMLTableElement::summary() const
 {
     return getAttribute(summaryAttr);
-}
-
-void HTMLTableElement::setSummary(const String &value)
-{
-    setAttribute(summaryAttr, value);
-}
-
-String HTMLTableElement::width() const
-{
-    return getAttribute(widthAttr);
-}
-
-void HTMLTableElement::setWidth(const String &value)
-{
-    setAttribute(widthAttr, value);
 }
 
 void HTMLTableElement::addSubresourceAttributeURLs(ListHashSet<KURL>& urls) const

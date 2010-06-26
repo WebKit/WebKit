@@ -21,7 +21,7 @@
 module html {
 
     interface HTMLStyleElement : HTMLElement {
-        attribute boolean disabled;
+        attribute [Reflect] boolean disabled;
         attribute [Reflect] DOMString media;
         attribute [Reflect] DOMString type;
 

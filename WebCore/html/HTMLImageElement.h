@@ -62,23 +62,8 @@ public:
 
     void setHeight(int);
 
-    int hspace() const;
-    void setHspace(int);
-
-    bool isMap() const;
-    void setIsMap(bool);
-
-    KURL longDesc() const;
-    void setLongDesc(const String&);
-
-    KURL lowsrc() const;
-    void setLowsrc(const String&);
-
     KURL src() const;
     void setSrc(const String&);
-
-    int vspace() const;
-    void setVspace(int);
 
     void setWidth(int);
 

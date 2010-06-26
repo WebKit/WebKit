@@ -1,4 +1,4 @@
-/*
+r/*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Dirk Mueller (mueller@kde.org)
@@ -85,13 +85,10 @@ public:
     bool formWouldHaveSecureSubmission(const String& url);
 
     String name() const;
-    void setName(const String&);
 
     bool noValidate() const;
-    void setNoValidate(bool);
 
     String acceptCharset() const { return m_formDataBuilder.acceptCharset(); }
-    void setAcceptCharset(const String&);
 
     String action() const;
     void setAction(const String&);
@@ -100,7 +97,6 @@ public:
     void setMethod(const String&);
 
     virtual String target() const;
-    void setTarget(const String&);
 
     HTMLFormControlElement* defaultButton() const;
 

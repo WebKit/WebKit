@@ -213,24 +213,4 @@ void HTMLFrameSetElement::recalcStyle(StyleChange ch)
     HTMLElement::recalcStyle(ch);
 }
 
-String HTMLFrameSetElement::cols() const
-{
-    return getAttribute(colsAttr);
-}
-
-void HTMLFrameSetElement::setCols(const String &value)
-{
-    setAttribute(colsAttr, value);
-}
-
-String HTMLFrameSetElement::rows() const
-{
-    return getAttribute(rowsAttr);
-}
-
-void HTMLFrameSetElement::setRows(const String &value)
-{
-    setAttribute(rowsAttr, value);
-}
-
 } // namespace WebCore

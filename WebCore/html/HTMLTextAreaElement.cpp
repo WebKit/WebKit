@@ -399,16 +399,6 @@ void HTMLTextAreaElement::accessKeyAction(bool)
     focus();
 }
 
-const AtomicString& HTMLTextAreaElement::accessKey() const
-{
-    return getAttribute(accesskeyAttr);
-}
-
-void HTMLTextAreaElement::setAccessKey(const String& value)
-{
-    setAttribute(accesskeyAttr, value);
-}
-
 void HTMLTextAreaElement::setCols(int cols)
 {
     setAttribute(colsAttr, String::number(cols));

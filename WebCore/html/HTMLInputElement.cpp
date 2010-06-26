@@ -2410,16 +2410,6 @@ void HTMLInputElement::setDefaultValue(const String &value)
     setAttribute(valueAttr, value);
 }
 
-bool HTMLInputElement::defaultChecked() const
-{
-    return !getAttribute(checkedAttr).isNull();
-}
-
-void HTMLInputElement::setDefaultChecked(bool defaultChecked)
-{
-    setAttribute(checkedAttr, defaultChecked ? "" : 0);
-}
-
 void HTMLInputElement::setDefaultName(const AtomicString& name)
 {
     m_data.setName(name);
@@ -2430,39 +2420,9 @@ String HTMLInputElement::accept() const
     return getAttribute(acceptAttr);
 }
 
-void HTMLInputElement::setAccept(const String &value)
-{
-    setAttribute(acceptAttr, value);
-}
-
-String HTMLInputElement::accessKey() const
-{
-    return getAttribute(accesskeyAttr);
-}
-
-void HTMLInputElement::setAccessKey(const String &value)
-{
-    setAttribute(accesskeyAttr, value);
-}
-
-String HTMLInputElement::align() const
-{
-    return getAttribute(alignAttr);
-}
-
-void HTMLInputElement::setAlign(const String &value)
-{
-    setAttribute(alignAttr, value);
-}
-
 String HTMLInputElement::alt() const
 {
     return getAttribute(altAttr);
-}
-
-void HTMLInputElement::setAlt(const String &value)
-{
-    setAttribute(altAttr, value);
 }
 
 int HTMLInputElement::maxLength() const
@@ -2483,11 +2443,6 @@ bool HTMLInputElement::multiple() const
     return !getAttribute(multipleAttr).isNull();
 }
 
-void HTMLInputElement::setMultiple(bool multiple)
-{
-    setAttribute(multipleAttr, multiple ? "" : 0);
-}
-    
 void HTMLInputElement::setSize(unsigned size)
 {
     setAttribute(sizeAttr, String::number(size));
@@ -2496,21 +2451,6 @@ void HTMLInputElement::setSize(unsigned size)
 KURL HTMLInputElement::src() const
 {
     return document()->completeURL(getAttribute(srcAttr));
-}
-
-void HTMLInputElement::setSrc(const String &value)
-{
-    setAttribute(srcAttr, value);
-}
-
-String HTMLInputElement::useMap() const
-{
-    return getAttribute(usemapAttr);
-}
-
-void HTMLInputElement::setUseMap(const String &value)
-{
-    setAttribute(usemapAttr, value);
 }
 
 void HTMLInputElement::setAutofilled(bool b)
@@ -2718,6 +2658,7 @@ bool HTMLInputElement::parseToDateComponents(InputType type, const String& formS
 }
 
 #if ENABLE(DATALIST)
+
 HTMLElement* HTMLInputElement::list() const
 {
     return dataList();
@@ -2782,6 +2723,7 @@ HTMLOptionElement* HTMLInputElement::selectedOption() const
     }
     return 0;
 }
+
 #endif // ENABLE(DATALIST)
 
 void HTMLInputElement::stepUpFromRenderer(int n)

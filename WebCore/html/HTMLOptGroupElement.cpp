@@ -86,16 +86,6 @@ void HTMLOptGroupElement::recalcSelectOptions()
         static_cast<HTMLSelectElement*>(select)->setRecalcListItems();
 }
 
-String HTMLOptGroupElement::label() const
-{
-    return getAttribute(labelAttr);
-}
-
-void HTMLOptGroupElement::setLabel(const String &value)
-{
-    setAttribute(labelAttr, value);
-}
-
 bool HTMLOptGroupElement::checkDTD(const Node* newChild)
 {
     // Make sure to keep this in sync with <select> (other than not allowing an optgroup).

@@ -31,7 +31,7 @@ module html {
         attribute long colSpan;
         attribute [Reflect] DOMString headers;
         attribute [Reflect] DOMString height;
-        attribute boolean noWrap;
+        attribute [Reflect] boolean noWrap;
         attribute long rowSpan;
         attribute [Reflect] DOMString scope;
         attribute [Reflect] DOMString vAlign;

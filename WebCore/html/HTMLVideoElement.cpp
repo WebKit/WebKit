@@ -154,11 +154,6 @@ unsigned HTMLVideoElement::width() const
     unsigned w = getAttribute(widthAttr).string().toUInt(&ok);
     return ok ? w : 0;
 }
-
-void HTMLVideoElement::setWidth(unsigned value)
-{
-    setAttribute(widthAttr, String::number(value));
-}
     
 unsigned HTMLVideoElement::height() const
 {
@@ -167,16 +162,6 @@ unsigned HTMLVideoElement::height() const
     return ok ? h : 0;
 }
     
-void HTMLVideoElement::setHeight(unsigned value)
-{
-    setAttribute(heightAttr, String::number(value));
-}
-
-void HTMLVideoElement::setPoster(const String& value)
-{
-    setAttribute(posterAttr, value);
-}
-
 bool HTMLVideoElement::isURLAttribute(Attribute* attribute) const
 {
     return HTMLMediaElement::isURLAttribute(attribute)

@@ -149,34 +149,4 @@ void HTMLFontElement::parseMappedAttribute(Attribute* attr)
         HTMLElement::parseMappedAttribute(attr);
 }
 
-String HTMLFontElement::color() const
-{
-    return getAttribute(colorAttr);
-}
-
-void HTMLFontElement::setColor(const String& value)
-{
-    setAttribute(colorAttr, value);
-}
-
-String HTMLFontElement::face() const
-{
-    return getAttribute(faceAttr);
-}
-
-void HTMLFontElement::setFace(const String& value)
-{
-    setAttribute(faceAttr, value);
-}
-
-String HTMLFontElement::size() const
-{
-    return getAttribute(sizeAttr);
-}
-
-void HTMLFontElement::setSize(const String& value)
-{
-    setAttribute(sizeAttr, value);
-}
-
 }

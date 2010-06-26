@@ -39,15 +39,12 @@ public:
     static PassRefPtr<HTMLVideoElement> create(const QualifiedName&, Document*);
 
     unsigned width() const;
-    void setWidth(unsigned);
     unsigned height() const;
-    void setHeight(unsigned);
     
     unsigned videoWidth() const;
     unsigned videoHeight() const;
     
     virtual const KURL poster() const { return m_posterURL; }
-    void setPoster(const String&);
 
     // Fullscreen
     void webkitEnterFullscreen(bool isUserGesture, ExceptionCode&);

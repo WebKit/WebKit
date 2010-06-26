@@ -91,15 +91,8 @@ void HTMLFrameElement::parseMappedAttribute(Attribute* attr)
         // FIXME: If we are already attached, this has no effect.
         // FIXME: Since this does not check attr->isNull(), it can
         // never reset m_noResize to false if the attribute is removed.
-        // FIXME: There seems to be no code that looks at this
-        // value and prevents resizing.
     } else
         HTMLFrameElementBase::parseMappedAttribute(attr);
-}
-
-void HTMLFrameElement::setNoResize(bool noResize)
-{
-    setAttribute(noresizeAttr, noResize ? "" : 0);
 }
 
 } // namespace WebCore

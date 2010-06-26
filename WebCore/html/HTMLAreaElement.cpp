@@ -163,21 +163,6 @@ Path HTMLAreaElement::getRegion(const IntSize& size) const
     return path;
 }
 
-KURL HTMLAreaElement::href() const
-{
-    return document()->completeURL(getAttribute(hrefAttr));
-}
-
-bool HTMLAreaElement::noHref() const
-{
-    return !getAttribute(nohrefAttr).isNull();
-}
-
-void HTMLAreaElement::setNoHref(bool noHref)
-{
-    setAttribute(nohrefAttr, noHref ? "" : 0);
-}
-    
 HTMLImageElement* HTMLAreaElement::imageElement() const
 {
     Node* mapElement = parent();

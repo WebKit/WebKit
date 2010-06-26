@@ -362,54 +362,9 @@ bool HTMLLinkElement::isURLAttribute(Attribute *attr) const
     return attr->name() == hrefAttr;
 }
 
-bool HTMLLinkElement::disabled() const
-{
-    return !getAttribute(disabledAttr).isNull();
-}
-
-void HTMLLinkElement::setDisabled(bool disabled)
-{
-    setAttribute(disabledAttr, disabled ? "" : 0);
-}
-
-String HTMLLinkElement::charset() const
-{
-    return getAttribute(charsetAttr);
-}
-
-void HTMLLinkElement::setCharset(const String& value)
-{
-    setAttribute(charsetAttr, value);
-}
-
 KURL HTMLLinkElement::href() const
 {
     return document()->completeURL(getAttribute(hrefAttr));
-}
-
-void HTMLLinkElement::setHref(const String& value)
-{
-    setAttribute(hrefAttr, value);
-}
-
-String HTMLLinkElement::hreflang() const
-{
-    return getAttribute(hreflangAttr);
-}
-
-void HTMLLinkElement::setHreflang(const String& value)
-{
-    setAttribute(hreflangAttr, value);
-}
-
-String HTMLLinkElement::media() const
-{
-    return getAttribute(mediaAttr);
-}
-
-void HTMLLinkElement::setMedia(const String& value)
-{
-    setAttribute(mediaAttr, value);
 }
 
 String HTMLLinkElement::rel() const
@@ -417,39 +372,14 @@ String HTMLLinkElement::rel() const
     return getAttribute(relAttr);
 }
 
-void HTMLLinkElement::setRel(const String& value)
-{
-    setAttribute(relAttr, value);
-}
-
-String HTMLLinkElement::rev() const
-{
-    return getAttribute(revAttr);
-}
-
-void HTMLLinkElement::setRev(const String& value)
-{
-    setAttribute(revAttr, value);
-}
-
 String HTMLLinkElement::target() const
 {
     return getAttribute(targetAttr);
 }
 
-void HTMLLinkElement::setTarget(const String& value)
-{
-    setAttribute(targetAttr, value);
-}
-
 String HTMLLinkElement::type() const
 {
     return getAttribute(typeAttr);
-}
-
-void HTMLLinkElement::setType(const String& value)
-{
-    setAttribute(typeAttr, value);
 }
 
 void HTMLLinkElement::addSubresourceAttributeURLs(ListHashSet<KURL>& urls) const

@@ -71,36 +71,6 @@ bool HTMLParamElement::isURLAttribute(Attribute* attr) const
     return false;
 }
 
-void HTMLParamElement::setName(const String& value)
-{
-    setAttribute(nameAttr, value);
-}
-
-String HTMLParamElement::type() const
-{
-    return getAttribute(typeAttr);
-}
-
-void HTMLParamElement::setType(const String& value)
-{
-    setAttribute(typeAttr, value);
-}
-
-void HTMLParamElement::setValue(const String& value)
-{
-    setAttribute(valueAttr, value);
-}
-
-String HTMLParamElement::valueType() const
-{
-    return getAttribute(valuetypeAttr);
-}
-
-void HTMLParamElement::setValueType(const String& value)
-{
-    setAttribute(valuetypeAttr, value);
-}
-
 void HTMLParamElement::addSubresourceAttributeURLs(ListHashSet<KURL>& urls) const
 {
     HTMLElement::addSubresourceAttributeURLs(urls);

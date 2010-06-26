@@ -65,24 +65,4 @@ void HTMLUListElement::parseMappedAttribute(Attribute* attr)
         HTMLElement::parseMappedAttribute(attr);
 }
 
-bool HTMLUListElement::compact() const
-{
-    return !getAttribute(compactAttr).isNull();
-}
-
-void HTMLUListElement::setCompact(bool b)
-{
-    setAttribute(compactAttr, b ? "" : 0);
-}
-
-String HTMLUListElement::type() const
-{
-    return getAttribute(typeAttr);
-}
-
-void HTMLUListElement::setType(const String &value)
-{
-    setAttribute(typeAttr, value);
-}
-
 }

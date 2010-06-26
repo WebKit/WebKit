@@ -89,29 +89,9 @@ void HTMLOListElement::parseMappedAttribute(Attribute* attr)
         HTMLElement::parseMappedAttribute(attr);
 }
 
-bool HTMLOListElement::compact() const
-{
-    return !getAttribute(compactAttr).isNull();
-}
-
-void HTMLOListElement::setCompact(bool b)
-{
-    setAttribute(compactAttr, b ? "" : 0);
-}
-
 void HTMLOListElement::setStart(int start)
 {
     setAttribute(startAttr, String::number(start));
-}
-
-String HTMLOListElement::type() const
-{
-    return getAttribute(typeAttr);
-}
-
-void HTMLOListElement::setType(const String& value)
-{
-    setAttribute(typeAttr, value);
 }
 
 }

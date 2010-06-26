@@ -31,12 +31,6 @@ class HTMLPreElement : public HTMLElement {
 public:
     static PassRefPtr<HTMLPreElement> create(const QualifiedName&, Document*);
 
-    int width() const;
-    void setWidth(int);
-
-    bool wrap() const;
-    void setWrap(bool);
-
 private:
     HTMLPreElement(const QualifiedName&, Document*);
 

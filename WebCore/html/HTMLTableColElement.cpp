@@ -110,59 +110,14 @@ void HTMLTableColElement::additionalAttributeStyleDecls(Vector<CSSMutableStyleDe
     static_cast<HTMLTableElement*>(p)->addSharedGroupDecls(false, results);
 }
 
-String HTMLTableColElement::align() const
-{
-    return getAttribute(alignAttr);
-}
-
-void HTMLTableColElement::setAlign(const String &value)
-{
-    setAttribute(alignAttr, value);
-}
-
-String HTMLTableColElement::ch() const
-{
-    return getAttribute(charAttr);
-}
-
-void HTMLTableColElement::setCh(const String &value)
-{
-    setAttribute(charAttr, value);
-}
-
-String HTMLTableColElement::chOff() const
-{
-    return getAttribute(charoffAttr);
-}
-
-void HTMLTableColElement::setChOff(const String &value)
-{
-    setAttribute(charoffAttr, value);
-}
-
 void HTMLTableColElement::setSpan(int n)
 {
     setAttribute(spanAttr, String::number(n));
 }
 
-String HTMLTableColElement::vAlign() const
-{
-    return getAttribute(valignAttr);
-}
-
-void HTMLTableColElement::setVAlign(const String &value)
-{
-    setAttribute(valignAttr, value);
-}
-
 String HTMLTableColElement::width() const
 {
     return getAttribute(widthAttr);
-}
-
-void HTMLTableColElement::setWidth(const String &value)
-{
-    setAttribute(widthAttr, value);
 }
 
 }

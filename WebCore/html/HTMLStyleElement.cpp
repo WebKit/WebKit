@@ -45,14 +45,11 @@ PassRefPtr<HTMLStyleElement> HTMLStyleElement::create(const QualifiedName& tagNa
     return adoptRef(new HTMLStyleElement(tagName, document, createdByParser));
 }
 
-// other stuff...
 void HTMLStyleElement::parseMappedAttribute(Attribute* attr)
 {
-    if (attr->name() == mediaAttr)
-        m_media = attr->value().string().lower();
-    else if (attr->name() == titleAttr && m_sheet)
+    if (attr->name() == titleAttr && m_sheet)
         m_sheet->setTitle(attr->value());
-     else
+    else
         HTMLElement::parseMappedAttribute(attr);
 }
 
@@ -110,34 +107,14 @@ bool HTMLStyleElement::sheetLoaded()
     return false;
 }
 
-bool HTMLStyleElement::disabled() const
-{
-    return !getAttribute(disabledAttr).isNull();
-}
-
-void HTMLStyleElement::setDisabled(bool disabled)
-{
-    setAttribute(disabledAttr, disabled ? "" : 0);
-}
-
 const AtomicString& HTMLStyleElement::media() const
 {
     return getAttribute(mediaAttr);
 }
 
-void HTMLStyleElement::setMedia(const AtomicString &value)
-{
-    setAttribute(mediaAttr, value);
-}
-
 const AtomicString& HTMLStyleElement::type() const
 {
     return getAttribute(typeAttr);
-}
-
-void HTMLStyleElement::setType(const AtomicString &value)
-{
-    setAttribute(typeAttr, value);
 }
 
 void HTMLStyleElement::addSubresourceAttributeURLs(ListHashSet<KURL>& urls) const

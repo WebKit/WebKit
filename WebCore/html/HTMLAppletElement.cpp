@@ -168,24 +168,4 @@ void HTMLAppletElement::finishParsingChildren()
         renderer()->setNeedsLayout(true); // This will cause it to create its widget & the Java applet
 }
 
-String HTMLAppletElement::hspace() const
-{
-    return getAttribute(hspaceAttr);
-}
-
-void HTMLAppletElement::setHspace(const String &value)
-{
-    setAttribute(hspaceAttr, value);
-}
-
-String HTMLAppletElement::vspace() const
-{
-    return getAttribute(vspaceAttr);
-}
-
-void HTMLAppletElement::setVspace(const String &value)
-{
-    setAttribute(vspaceAttr, value);
-}
-
 }

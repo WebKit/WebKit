@@ -32,15 +32,6 @@ class HTMLFontElement : public HTMLElement {
 public:
     static PassRefPtr<HTMLFontElement> create(const QualifiedName&, Document*);
     
-    String color() const;
-    void setColor(const String&);
-
-    String face() const;
-    void setFace(const String&);
-
-    String size() const;
-    void setSize(const String&);
-    
     static bool cssValueFromFontSizeNumber(const String&, int&);
 
 private:

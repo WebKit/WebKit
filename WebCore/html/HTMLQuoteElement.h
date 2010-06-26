@@ -34,9 +34,6 @@ class HTMLQuoteElement : public HTMLElement {
 public:
     static PassRefPtr<HTMLQuoteElement> create(const QualifiedName&, Document*);
 
-    String cite() const;
-    void setCite(const String&);
-
 private:
     HTMLQuoteElement(const QualifiedName&, Document*);
     

@@ -60,32 +60,8 @@ public:
     PassRefPtr<HTMLCollection> rows();
     PassRefPtr<HTMLCollection> tBodies();
 
-    String align() const;
-    void setAlign(const String&);
-
-    String bgColor() const;
-    void setBgColor(const String&);
-
-    String border() const;
-    void setBorder(const String&);
-
-    String cellPadding() const;
-    void setCellPadding(const String&);
-
-    String cellSpacing() const;
-    void setCellSpacing(const String&);
-
-    String frame() const;
-    void setFrame(const String&);
-
     String rules() const;
-    void setRules(const String&);
-
     String summary() const;
-    void setSummary(const String&);
-
-    String width() const;
-    void setWidth(const String&);
 
     virtual ContainerNode* addChild(PassRefPtr<Node>);
 

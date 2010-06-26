@@ -133,59 +133,9 @@ String HTMLTableCellElement::abbr() const
     return getAttribute(abbrAttr);
 }
 
-void HTMLTableCellElement::setAbbr(const String &value)
-{
-    setAttribute(abbrAttr, value);
-}
-
-String HTMLTableCellElement::align() const
-{
-    return getAttribute(alignAttr);
-}
-
-void HTMLTableCellElement::setAlign(const String &value)
-{
-    setAttribute(alignAttr, value);
-}
-
 String HTMLTableCellElement::axis() const
 {
     return getAttribute(axisAttr);
-}
-
-void HTMLTableCellElement::setAxis(const String &value)
-{
-    setAttribute(axisAttr, value);
-}
-
-String HTMLTableCellElement::bgColor() const
-{
-    return getAttribute(bgcolorAttr);
-}
-
-void HTMLTableCellElement::setBgColor(const String &value)
-{
-    setAttribute(bgcolorAttr, value);
-}
-
-String HTMLTableCellElement::ch() const
-{
-    return getAttribute(charAttr);
-}
-
-void HTMLTableCellElement::setCh(const String &value)
-{
-    setAttribute(charAttr, value);
-}
-
-String HTMLTableCellElement::chOff() const
-{
-    return getAttribute(charoffAttr);
-}
-
-void HTMLTableCellElement::setChOff(const String &value)
-{
-    setAttribute(charoffAttr, value);
 }
 
 void HTMLTableCellElement::setColSpan(int n)
@@ -198,31 +148,6 @@ String HTMLTableCellElement::headers() const
     return getAttribute(headersAttr);
 }
 
-void HTMLTableCellElement::setHeaders(const String &value)
-{
-    setAttribute(headersAttr, value);
-}
-
-String HTMLTableCellElement::height() const
-{
-    return getAttribute(heightAttr);
-}
-
-void HTMLTableCellElement::setHeight(const String &value)
-{
-    setAttribute(heightAttr, value);
-}
-
-bool HTMLTableCellElement::noWrap() const
-{
-    return !getAttribute(nowrapAttr).isNull();
-}
-
-void HTMLTableCellElement::setNoWrap(bool b)
-{
-    setAttribute(nowrapAttr, b ? "" : 0);
-}
-
 void HTMLTableCellElement::setRowSpan(int n)
 {
     setAttribute(rowspanAttr, String::number(n));
@@ -231,31 +156,6 @@ void HTMLTableCellElement::setRowSpan(int n)
 String HTMLTableCellElement::scope() const
 {
     return getAttribute(scopeAttr);
-}
-
-void HTMLTableCellElement::setScope(const String &value)
-{
-    setAttribute(scopeAttr, value);
-}
-
-String HTMLTableCellElement::vAlign() const
-{
-    return getAttribute(valignAttr);
-}
-
-void HTMLTableCellElement::setVAlign(const String &value)
-{
-    setAttribute(valignAttr, value);
-}
-
-String HTMLTableCellElement::width() const
-{
-    return getAttribute(widthAttr);
-}
-
-void HTMLTableCellElement::setWidth(const String &value)
-{
-    setAttribute(widthAttr, value);
 }
 
 void HTMLTableCellElement::addSubresourceAttributeURLs(ListHashSet<KURL>& urls) const

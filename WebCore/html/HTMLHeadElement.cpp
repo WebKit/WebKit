@@ -47,16 +47,6 @@ PassRefPtr<HTMLHeadElement> HTMLHeadElement::create(const QualifiedName& tagName
     return adoptRef(new HTMLHeadElement(tagName, document));
 }
 
-String HTMLHeadElement::profile() const
-{
-    return getAttribute(profileAttr);
-}
-
-void HTMLHeadElement::setProfile(const String &value)
-{
-    setAttribute(profileAttr, value);
-}
-
 bool HTMLHeadElement::childAllowed(Node* newChild)
 {
     // Do not allow non-whitespace text nodes in the head

@@ -1,3 +1,132 @@
+2010-06-26  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Add more use of reflection, remove unused functions
+        https://bugs.webkit.org/show_bug.cgi?id=41255
+
+        Also noticed that HTMLDirectoryElement was missing its create function
+        and added that so the element will get the correct class.
+
+        * html/HTMLBaseFontElement.idl: Use reflection for the size attribute
+        in the Objective-C code path too.
+
+        * html/HTMLSelectElement.idl: Use reflection for disabled and autofocus
+        attributes. Also removed spaces and indenting to match other IDL files.
+
+        * html/HTMLStyleElement.idl: Use reflection for disabled attribute.
+
+        * html/HTMLTableCellElement.idl: Use reflection for noWrap attribute.
+
+        * html/HTMLTextAreaElement.idl: Use reflection for disabled, autofocus,
+        readOnly, and required attributes.
+
+        * html/HTMLUListElement.idl: Use reflection for compact attribute.
+
+        * html/HTMLDirectoryElement.cpp:
+        (WebCore::HTMLDirectoryElement::HTMLDirectoryElement): Made inline.
+        (WebCore::HTMLDirectoryElement::create): Added.
+        * html/HTMLDirectoryElement.h:
+        Added create, made constructor private, removed unused functions.
+
+        * html/HTMLStyleElement.cpp:
+        (WebCore::HTMLStyleElement::parseMappedAttribute): Removed code to
+        set unused m_media data member.
+        * html/HTMLStyleElement.h:
+        Removed unused functions and m_media data member. Also made some
+        functions private.
+
+        * html/HTMLAppletElement.cpp:
+        * html/HTMLAppletElement.h:
+        * html/HTMLAreaElement.cpp:
+        * html/HTMLAreaElement.h:
+        * html/HTMLBaseFontElement.cpp:
+        * html/HTMLBaseFontElement.h:
+        * html/HTMLButtonElement.cpp:
+        * html/HTMLButtonElement.h:
+        * html/HTMLDListElement.cpp:
+        * html/HTMLDListElement.h:
+        * html/HTMLDivElement.cpp:
+        * html/HTMLDivElement.h:
+        * html/HTMLFontElement.cpp:
+        * html/HTMLFontElement.h:
+        * html/HTMLFormControlElement.cpp:
+        * html/HTMLFormControlElement.h:
+        * html/HTMLFormElement.cpp:
+        * html/HTMLFormElement.h:
+        * html/HTMLFrameElement.cpp: Also removed an incorrect FIXME comment
+        here after I did a little research to disprove it.
+        * html/HTMLFrameElement.h:
+        * html/HTMLFrameSetElement.cpp:
+        * html/HTMLFrameSetElement.h:
+        * html/HTMLHRElement.cpp:
+        * html/HTMLHRElement.h:
+        * html/HTMLHeadElement.cpp:
+        * html/HTMLHeadElement.h:
+        * html/HTMLHeadingElement.cpp:
+        * html/HTMLHeadingElement.h:
+        * html/HTMLHtmlElement.cpp:
+        * html/HTMLHtmlElement.h:
+        * html/HTMLImageElement.cpp:
+        * html/HTMLImageElement.h:
+        * html/HTMLInputElement.cpp:
+        * html/HTMLInputElement.h:
+        * html/HTMLIsIndexElement.cpp:
+        * html/HTMLIsIndexElement.h:
+        * html/HTMLLIElement.cpp:
+        * html/HTMLLIElement.h:
+        * html/HTMLLabelElement.cpp:
+        * html/HTMLLabelElement.h:
+        * html/HTMLLegendElement.cpp:
+        * html/HTMLLegendElement.h:
+        * html/HTMLLinkElement.cpp:
+        * html/HTMLLinkElement.h:
+        * html/HTMLMapElement.cpp:
+        * html/HTMLMapElement.h:
+        * html/HTMLMenuElement.cpp:
+        * html/HTMLMenuElement.h:
+        * html/HTMLMetaElement.cpp:
+        * html/HTMLMetaElement.h:
+        * html/HTMLModElement.cpp:
+        * html/HTMLModElement.h:
+        * html/HTMLOListElement.cpp:
+        * html/HTMLOListElement.h:
+        * html/HTMLObjectElement.cpp:
+        * html/HTMLObjectElement.h:
+        * html/HTMLOptGroupElement.cpp:
+        * html/HTMLOptGroupElement.h:
+        * html/HTMLOptionElement.cpp:
+        * html/HTMLOptionElement.h:
+        * html/HTMLParagraphElement.cpp:
+        * html/HTMLParagraphElement.h:
+        * html/HTMLParamElement.cpp:
+        * html/HTMLParamElement.h:
+        * html/HTMLPlugInElement.cpp:
+        * html/HTMLPlugInElement.h:
+        * html/HTMLPreElement.cpp:
+        * html/HTMLPreElement.h:
+        * html/HTMLQuoteElement.cpp:
+        * html/HTMLQuoteElement.h:
+        * html/HTMLScriptElement.cpp:
+        * html/HTMLScriptElement.h:
+        * html/HTMLTableCaptionElement.cpp:
+        * html/HTMLTableCaptionElement.h:
+        * html/HTMLTableCellElement.cpp:
+        * html/HTMLTableCellElement.h:
+        * html/HTMLTableColElement.cpp:
+        * html/HTMLTableColElement.h:
+        * html/HTMLTableElement.cpp:
+        * html/HTMLTableElement.h:
+        * html/HTMLTableRowElement.cpp:
+        * html/HTMLTableRowElement.h:
+        * html/HTMLTextAreaElement.cpp:
+        * html/HTMLTextAreaElement.h:
+        * html/HTMLUListElement.cpp:
+        * html/HTMLUListElement.h:
+        * html/HTMLVideoElement.cpp:
+        * html/HTMLVideoElement.h:
+        Removed unused functions.
+
 2010-06-26  Tony Gentilcore  <tonyg@chromium.org>
 
         Reviewed by Adam Barth.

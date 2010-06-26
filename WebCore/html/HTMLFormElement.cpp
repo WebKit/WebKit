@@ -524,24 +524,9 @@ String HTMLFormElement::name() const
     return getAttribute(nameAttr);
 }
 
-void HTMLFormElement::setName(const String &value)
-{
-    setAttribute(nameAttr, value);
-}
-
 bool HTMLFormElement::noValidate() const
 {
     return !getAttribute(novalidateAttr).isNull();
-}
-
-void HTMLFormElement::setNoValidate(bool novalidate)
-{
-    setAttribute(novalidateAttr, novalidate ? "" : 0);
-}
-
-void HTMLFormElement::setAcceptCharset(const String &value)
-{
-    setAttribute(accept_charsetAttr, value);
 }
 
 String HTMLFormElement::action() const
@@ -572,11 +557,6 @@ void HTMLFormElement::setMethod(const String &value)
 String HTMLFormElement::target() const
 {
     return getAttribute(targetAttr);
-}
-
-void HTMLFormElement::setTarget(const String &value)
-{
-    setAttribute(targetAttr, value);
 }
 
 HTMLFormControlElement* HTMLFormElement::defaultButton() const

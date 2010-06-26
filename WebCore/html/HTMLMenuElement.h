@@ -31,9 +31,6 @@ class HTMLMenuElement : public HTMLElement {
 public:
     static PassRefPtr<HTMLMenuElement> create(const QualifiedName&, Document*);
     
-    bool compact() const;
-    void setCompact(bool);
-
 private:
     HTMLMenuElement(const QualifiedName&, Document*);
     

@@ -301,36 +301,6 @@ void HTMLObjectElement::updateDocNamedItem()
     m_docNamedItem = isNamedItem;
 }
 
-bool HTMLObjectElement::declare() const
-{
-    return !getAttribute(declareAttr).isNull();
-}
-
-void HTMLObjectElement::setDeclare(bool declare)
-{
-    setAttribute(declareAttr, declare ? "" : 0);
-}
-
-int HTMLObjectElement::hspace() const
-{
-    return getAttribute(hspaceAttr).toInt();
-}
-
-void HTMLObjectElement::setHspace(int value)
-{
-    setAttribute(hspaceAttr, String::number(value));
-}
-
-int HTMLObjectElement::vspace() const
-{
-    return getAttribute(vspaceAttr).toInt();
-}
-
-void HTMLObjectElement::setVspace(int value)
-{
-    setAttribute(vspaceAttr, String::number(value));
-}
-
 bool HTMLObjectElement::containsJavaApplet() const
 {
     if (MIMETypeRegistry::isJavaAppletMIMEType(getAttribute(typeAttr)))

@@ -63,14 +63,4 @@ void HTMLTableCaptionElement::parseMappedAttribute(Attribute* attr)
         HTMLElement::parseMappedAttribute(attr);
 }
 
-String HTMLTableCaptionElement::align() const
-{
-    return getAttribute(alignAttr);
-}
-
-void HTMLTableCaptionElement::setAlign(const String &value)
-{
-    setAttribute(alignAttr, value);
-}
-
 }

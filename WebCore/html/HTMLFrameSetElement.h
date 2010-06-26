@@ -42,12 +42,6 @@ public:
 
     bool hasBorderColor() const { return m_borderColorSet; }
 
-    String cols() const;
-    void setCols(const String&);
-
-    String rows() const;
-    void setRows(const String&);
-
     const Length* rowLengths() const { return m_rowLengths.get(); }
     const Length* colLengths() const { return m_colLengths.get(); }
 

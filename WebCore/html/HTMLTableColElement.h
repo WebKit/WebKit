@@ -35,23 +35,9 @@ public:
     static PassRefPtr<HTMLTableColElement> create(const QualifiedName& tagName, Document*);
 
     int span() const { return m_span; }
-
-    String align() const;
-    void setAlign(const String&);
-
-    String ch() const;
-    void setCh(const String&);
-
-    String chOff() const;
-    void setChOff(const String&);
-
     void setSpan(int);
 
-    String vAlign() const;
-    void setVAlign(const String&);
-
     String width() const;
-    void setWidth(const String&);
 
 private:
     HTMLTableColElement(const QualifiedName& tagName, Document*);

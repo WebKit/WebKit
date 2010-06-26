@@ -88,26 +88,6 @@ PassScriptInstance HTMLPlugInElement::getInstance() const
     return m_instance;
 }
 
-String HTMLPlugInElement::height() const
-{
-    return getAttribute(heightAttr);
-}
-
-void HTMLPlugInElement::setHeight(const String& value)
-{
-    setAttribute(heightAttr, value);
-}
-
-String HTMLPlugInElement::width() const
-{
-    return getAttribute(widthAttr);
-}
-
-void HTMLPlugInElement::setWidth(const String& value)
-{
-    setAttribute(widthAttr, value);
-}
-
 bool HTMLPlugInElement::mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const
 {
     if (attrName == widthAttr ||

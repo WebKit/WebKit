@@ -44,9 +44,6 @@ public:
     HTMLImageElement* imageElement() const;
     PassRefPtr<HTMLCollection> areas();
 
-    String name() const;
-    void setName(const String&);
-
 private:
     HTMLMapElement(const QualifiedName&, Document*);
 

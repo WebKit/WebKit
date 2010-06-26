@@ -19,6 +19,7 @@
  * Boston, MA 02110-1301, USA.
  *
  */
+
 #ifndef HTMLStyleElement_h
 #define HTMLStyleElement_h
 
@@ -29,17 +30,10 @@ namespace WebCore {
 
 class StyleSheet;
 
-class HTMLStyleElement : public HTMLElement, public StyleElement {
+class HTMLStyleElement : public HTMLElement, private StyleElement {
 public:
     static PassRefPtr<HTMLStyleElement> create(const QualifiedName&, Document*, bool createdByParser);
 
-    bool disabled() const;
-    void setDisabled(bool);
-
-    virtual const AtomicString& media() const;
-    void setMedia(const AtomicString&);
-
-    virtual const AtomicString& type() const;
     void setType(const AtomicString&);
 
     StyleSheet* sheet();
@@ -66,7 +60,9 @@ private:
 
     virtual void addSubresourceAttributeURLs(ListHashSet<KURL>&) const;
 
-    String m_media;
+    virtual const AtomicString& media() const;
+    virtual const AtomicString& type() const;
+
     bool m_loading;
     bool m_createdByParser;
 };
