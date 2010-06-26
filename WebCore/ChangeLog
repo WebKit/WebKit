@@ -1,3 +1,13 @@
+2010-06-26  Tony Gentilcore  <tonyg@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Exclude line numbers for sources which are not from the network.
+        https://bugs.webkit.org/show_bug.cgi?id=41060
+
+        * html/HTMLDocumentParser.cpp:
+        (WebCore::HTMLDocumentParser::write):
+
 2010-06-25  Antonio Gomes  <tonikitoo@webkit.org>
 
         Unreviewed complementary fix for r61818. It added StaticHashSetListNode.cpp|h to the system,

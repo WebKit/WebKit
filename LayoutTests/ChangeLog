@@ -1,3 +1,13 @@
+2010-06-26  Tony Gentilcore  <tonyg@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Add a document.write to script-line-number test to ensure its new lines are excluded.
+        https://bugs.webkit.org/show_bug.cgi?id=41060
+
+        * fast/js/script-line-number-expected.txt:
+        * fast/js/script-line-number.html:
+
 2010-06-26  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.

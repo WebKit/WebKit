@@ -219,7 +219,10 @@ void HTMLDocumentParser::insert(const SegmentedString& source)
         return;
 
     NestingLevelIncrementer nestingLevelIncrementer(m_writeNestingLevel);
-    m_input.insertAtCurrentInsertionPoint(source);
+
+    SegmentedString excludedLineNumberSource(source);
+    excludedLineNumberSource.setExcludeLineNumbers();
+    m_input.insertAtCurrentInsertionPoint(excludedLineNumberSource);
     pumpTokenizerIfPossible(ForceSynchronous);
     endIfDelayed();
 }
