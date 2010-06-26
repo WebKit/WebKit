@@ -340,6 +340,10 @@ void HTMLDocumentParser::resumeParsingAfterScriptExecution()
 
 void HTMLDocumentParser::watchForLoad(CachedResource* cachedScript)
 {
+    ASSERT(!cachedScript->isLoaded());
+    // addClient would call notifyFinished if the load were complete.
+    // Callers do not expect to be re-entered from this call, so they should
+    // not an already-loaded CachedResource.
     cachedScript->addClient(this);
 }
 
@@ -358,14 +362,6 @@ bool HTMLDocumentParser::shouldLoadExternalScriptFromSrc(const AtomicString& src
 void HTMLDocumentParser::notifyFinished(CachedResource* cachedResource)
 {
     ASSERT(m_scriptRunner);
-    // Ignore calls unless we have a script blocking the parser waiting
-    // for its own load.  Otherwise this may be a load callback from
-    // CachedResource::addClient because the script was already in the cache.
-    // HTMLScriptRunner may not be ready to handle running that script yet.
-    if (!m_scriptRunner->hasScriptsWaitingForLoad()) {
-        ASSERT(m_scriptRunner->inScriptExecution());
-        return;
-    }
     ASSERT(!inScriptExecution());
     ASSERT(m_treeBuilder->isPaused());
     // Note: We only ever wait on one script at a time, so we always know this

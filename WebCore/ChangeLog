@@ -1,3 +1,42 @@
+2010-06-25  Tony Gentilcore  <tonyg@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Make PendingScript hold a CachedResourceClient open for its lifetime
+        https://bugs.webkit.org/show_bug.cgi?id=40968
+
+        This replaces the mechanism introduced in r61374 with a simpler
+        appraoch for preventing unexpected purges: always keep a client open.
+        This approach will allow deferred scripts to add a client after
+        the resource may have already been loaded without having to worry about
+        the buffer being purged in the meantime.
+
+        No new tests because making a CachedResource purse itself is not
+        testable from a LayoutTest.
+
+        * html/HTMLDocumentParser.cpp:
+        (WebCore::HTMLDocumentParser::watchForLoad):
+        (WebCore::HTMLDocumentParser::notifyFinished):
+        * html/HTMLScriptRunner.cpp:
+        (WebCore::HTMLScriptRunner::~HTMLScriptRunner):
+        (WebCore::HTMLScriptRunner::sourceFromPendingScript):
+        (WebCore::HTMLScriptRunner::isPendingScriptReady):
+        (WebCore::HTMLScriptRunner::executePendingScript):
+        (WebCore::HTMLScriptRunner::watchForLoad):
+        (WebCore::HTMLScriptRunner::stopWatchingForLoad):
+        (WebCore::HTMLScriptRunner::executeScriptsWaitingForLoad):
+        (WebCore::HTMLScriptRunner::requestScript):
+        (WebCore::HTMLScriptRunner::PendingScript::~PendingScript):
+        (WebCore::HTMLScriptRunner::PendingScript::releaseElementAndClear):
+        (WebCore::HTMLScriptRunner::PendingScript::setCachedScript):
+        (WebCore::HTMLScriptRunner::PendingScript::cachedScript):
+        * html/HTMLScriptRunner.h:
+        (WebCore::HTMLScriptRunner::PendingScript::PendingScript):
+        (WebCore::HTMLScriptRunner::PendingScript::watchingForLoad):
+        (WebCore::HTMLScriptRunner::PendingScript::setWatchingForLoad):
+        (WebCore::HTMLScriptRunner::PendingScript::notifyFinished):
+        * html/HTMLScriptRunnerHost.h:
+
 2010-06-25  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Dimitri Glazkov.

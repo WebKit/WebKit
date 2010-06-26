@@ -38,7 +38,7 @@ class HTMLScriptRunnerHost {
 public:
     virtual ~HTMLScriptRunnerHost() { }
 
-    // Implementors must call cachedResource->addClient() immediately.
+    // Implementors should call cachedResource->addClient() here or soon after.
     virtual void watchForLoad(CachedResource*) = 0;
     // Implementors must call cachedResource->removeClient() immediately.
     virtual void stopWatchingForLoad(CachedResource*) = 0;
