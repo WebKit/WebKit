@@ -1,3 +1,13 @@
+2010-06-25  Johnny Ding  <jnd@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        https://bugs.webkit.org/show_bug.cgi?id=41061
+        Make sure the window can be opened in a user initiated event instead of blocking by popup blocker.
+
+        * fast/events/popup-when-select-change-expected.txt: Added.
+        * fast/events/popup-when-select-change.html: Added.
+
 2010-06-25  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Dimitri Glazkov.

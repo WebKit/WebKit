@@ -1,3 +1,22 @@
+2010-06-25  Johnny Ding  <jnd@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        https://bugs.webkit.org/show_bug.cgi?id=41061
+        Make sure Chromium's ScriptController::processingUserGesture follows the JSC's behavior.
+        Set right value in UserGestureIndicator when handling events in PopupMenuList in chromium.
+
+        Test: fast/events/popup-when-select-change.html
+
+        * bindings/v8/ScriptController.cpp:
+        (WebCore::ScriptController::processingUserGesture):
+        * platform/chromium/PopupMenuChromium.cpp:
+        (WebCore::PopupContainer::handleMouseDownEvent):
+        (WebCore::PopupContainer::handleMouseMoveEvent):
+        (WebCore::PopupContainer::handleMouseReleaseEvent):
+        (WebCore::PopupContainer::handleWheelEvent):
+        (WebCore::PopupContainer::handleKeyEvent):
+
 2010-06-25  Tony Gentilcore  <tonyg@chromium.org>
 
         Reviewed by Eric Seidel.

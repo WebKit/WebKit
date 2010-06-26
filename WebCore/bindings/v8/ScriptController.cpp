@@ -182,30 +182,20 @@ bool ScriptController::processingUserGesture(DOMWrapperWorld*) const
     v8::Handle<v8::Value> jsEvent = global->Get(v8::String::NewSymbol("event"));
     Event* event = V8DOMWrapper::isValidDOMObject(jsEvent) ? V8Event::toNative(v8::Handle<v8::Object>::Cast(jsEvent)) : 0;
 
-    // Based on code from kjs_bindings.cpp.
+    // Based on code from JSC's ScriptController::processingUserGesture.
     // Note: This is more liberal than Firefox's implementation.
     if (event) {
-        if (!UserGestureIndicator::processingUserGesture())
-            return false;
-
-        const AtomicString& type = event->type();
-        bool eventOk =
-            // mouse events
-            type == eventNames().clickEvent || type == eventNames().mousedownEvent || type == eventNames().mouseupEvent || type == eventNames().dblclickEvent
-            // keyboard events
-            || type == eventNames().keydownEvent || type == eventNames().keypressEvent || type == eventNames().keyupEvent
-            // other accepted events
-            || type == eventNames().selectEvent || type == eventNames().changeEvent || type == eventNames().focusEvent || type == eventNames().blurEvent || type == eventNames().submitEvent;
-
-        if (eventOk)
-            return true;
-    } else if (m_sourceURL && m_sourceURL->isNull() && !activeProxy->timerCallback()) {
+        // Event::fromUserGesture will return false when UserGestureIndicator::processingUserGesture() returns false.
+        return event->fromUserGesture();
+    }
+    if (m_sourceURL && m_sourceURL->isNull() && !activeProxy->timerCallback()) {
         // This is the <a href="javascript:window.open('...')> case -> we let it through.
         return true;
     }
 
     // This is the <script>window.open(...)</script> case or a timer callback -> block it.
-    return false;
+    // Based on JSC version, use returned value of UserGestureIndicator::processingUserGesture for all other situations. 
+    return UserGestureIndicator::processingUserGesture();
 }
 
 bool ScriptController::anyPageIsProcessingUserGesture() const

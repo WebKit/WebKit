@@ -53,6 +53,7 @@
 #include "ScrollbarTheme.h"
 #include "StringTruncator.h"
 #include "SystemTime.h"
+#include "UserGestureIndicator.h"
 
 #include <wtf/CurrentTime.h>
 
@@ -451,30 +452,35 @@ void PopupContainer::layout()
 
 bool PopupContainer::handleMouseDownEvent(const PlatformMouseEvent& event)
 {
+    UserGestureIndicator gestureIndicator(DefinitelyProcessingUserGesture);
     return m_listBox->handleMouseDownEvent(
         constructRelativeMouseEvent(event, this, m_listBox.get()));
 }
 
 bool PopupContainer::handleMouseMoveEvent(const PlatformMouseEvent& event)
 {
+    UserGestureIndicator gestureIndicator(DefinitelyProcessingUserGesture);
     return m_listBox->handleMouseMoveEvent(
         constructRelativeMouseEvent(event, this, m_listBox.get()));
 }
 
 bool PopupContainer::handleMouseReleaseEvent(const PlatformMouseEvent& event)
 {
+    UserGestureIndicator gestureIndicator(DefinitelyProcessingUserGesture);
     return m_listBox->handleMouseReleaseEvent(
         constructRelativeMouseEvent(event, this, m_listBox.get()));
 }
 
 bool PopupContainer::handleWheelEvent(const PlatformWheelEvent& event)
 {
+    UserGestureIndicator gestureIndicator(DefinitelyProcessingUserGesture);
     return m_listBox->handleWheelEvent(
         constructRelativeWheelEvent(event, this, m_listBox.get()));
 }
 
 bool PopupContainer::handleKeyEvent(const PlatformKeyboardEvent& event)
 {
+    UserGestureIndicator gestureIndicator(DefinitelyProcessingUserGesture);
     return m_listBox->handleKeyEvent(event);
 }
 
