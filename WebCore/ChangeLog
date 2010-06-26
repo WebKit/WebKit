@@ -1,3 +1,27 @@
+2010-06-25  Dean Jackson  <dino@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        https://bugs.webkit.org/show_bug.cgi?id=41188
+        Animations should not require 0% and 100% keyframes
+
+        When we are generating the animation lists in CSSStyleSelector,
+        rather than bail if we notice that "from" or "to" are missing, we
+        now generate synthetic keyframes for those cases.
+
+        Tests: animations/missing-from-to-transforms.html
+               animations/missing-from-to.html
+               WebCore/manual-tests/animation-with-transition.html
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::styleForKeyframe):
+                Moved individual keyframe generation into a new function.
+        (WebCore::CSSStyleSelector::keyframeStylesForAnimation):
+                Call the new function above for regular keyframes, and
+                also check for missing keyframes and generate them if
+                necessary.
+        * css/CSSStyleSelector.h:
+
 2010-06-25  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

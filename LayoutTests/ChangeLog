@@ -1,3 +1,19 @@
+2010-06-25  Dean Jackson  <dino@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        https://bugs.webkit.org/show_bug.cgi?id=41188
+        Animations should not require 0% and 100% keyframes
+
+        * animations/keyframes-from-missing-expected.txt: Removed.
+        * animations/keyframes-from-missing.html: Removed.
+        * animations/keyframes-to-missing-expected.txt: Removed.
+        * animations/keyframes-to-missing.html: Removed.
+        * animations/missing-from-to-transforms-expected.txt: Added.
+        * animations/missing-from-to-transforms.html: Added.
+        * animations/missing-from-to-expected.txt: Added.
+        * animations/missing-from-to.html: Added.
+
 2010-06-25  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed.

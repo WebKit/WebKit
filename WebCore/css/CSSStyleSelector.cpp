@@ -1373,6 +1373,55 @@ PassRefPtr<RenderStyle> CSSStyleSelector::styleForElement(Element* e, RenderStyl
     return m_style.release();
 }
 
+PassRefPtr<RenderStyle> CSSStyleSelector::styleForKeyframe(const RenderStyle* elementStyle, const WebKitCSSKeyframeRule* keyframeRule, KeyframeList& list)
+{
+    if (keyframeRule->style())
+        addMatchedDeclaration(keyframeRule->style());
+
+    ASSERT(!m_style);
+
+    // Create the style
+    m_style = RenderStyle::clone(elementStyle);
+
+    m_lineHeightValue = 0;
+
+    // We don't need to bother with !important. Since there is only ever one
+    // decl, there's nothing to override. So just add the first properties.
+    if (keyframeRule->style())
+        applyDeclarations<true>(false, 0, m_matchedDecls.size() - 1);
+
+    // If our font got dirtied, go ahead and update it now.
+    if (m_fontDirty)
+        updateFont();
+
+    // Line-height is set when we are sure we decided on the font-size
+    if (m_lineHeightValue)
+        applyProperty(CSSPropertyLineHeight, m_lineHeightValue);
+
+    // Now do rest of the properties.
+    if (keyframeRule->style())
+        applyDeclarations<false>(false, 0, m_matchedDecls.size() - 1);
+
+    // If our font got dirtied by one of the non-essential font props,
+    // go ahead and update it a second time.
+    if (m_fontDirty)
+        updateFont();
+
+    // Add all the animating properties to the list
+    if (keyframeRule->style()) {
+        CSSMutableStyleDeclaration::const_iterator end = keyframeRule->style()->end();
+        for (CSSMutableStyleDeclaration::const_iterator it = keyframeRule->style()->begin(); it != end; ++it) {
+            int property = (*it).id();
+            // Timing-function within keyframes is special, because it is not animated; it just
+            // describes the timing function between this keyframe and the next.
+            if (property != CSSPropertyWebkitAnimationTimingFunction)
+                list.addProperty(property);
+        }
+    }
+
+    return m_style.release();
+}
+
 void CSSStyleSelector::keyframeStylesForAnimation(Element* e, const RenderStyle* elementStyle, KeyframeList& list)
 {
     list.clear();
@@ -1387,6 +1436,7 @@ void CSSStyleSelector::keyframeStylesForAnimation(Element* e, const RenderStyle*
         return;
         
     const WebKitCSSKeyframesRule* rule = m_keyframesRuleMap.find(list.animationName().impl()).get()->second.get();
+    RefPtr<RenderStyle> keyframeStyle;
     
     // Construct and populate the style for each keyframe
     for (unsigned i = 0; i < rule->length(); ++i) {
@@ -1394,65 +1444,36 @@ void CSSStyleSelector::keyframeStylesForAnimation(Element* e, const RenderStyle*
         initElement(e);
         initForStyleResolve(e);
         
-        const WebKitCSSKeyframeRule* kf = rule->item(i);
-        addMatchedDeclaration(kf->style());
+        const WebKitCSSKeyframeRule* keyframeRule = rule->item(i);
+        
+        keyframeStyle = styleForKeyframe(elementStyle, keyframeRule, list);
 
-        ASSERT(!m_style);
-
-        // Create the style
-        m_style = RenderStyle::clone(elementStyle);
-        
-        m_lineHeightValue = 0;
-        
-        // We don't need to bother with !important. Since there is only ever one
-        // decl, there's nothing to override. So just add the first properties.
-        applyDeclarations<true>(false, 0, m_matchedDecls.size() - 1);
-        
-        // If our font got dirtied, go ahead and update it now.
-        if (m_fontDirty)
-            updateFont();
-
-        // Line-height is set when we are sure we decided on the font-size
-        if (m_lineHeightValue)
-            applyProperty(CSSPropertyLineHeight, m_lineHeightValue);
-        
-        // Now do rest of the properties.
-        applyDeclarations<false>(false, 0, m_matchedDecls.size() - 1);
-        
-        // If our font got dirtied by one of the non-essential font props, 
-        // go ahead and update it a second time.
-        if (m_fontDirty)
-            updateFont();
-
-        // Add all the animating properties to the list
-        CSSMutableStyleDeclaration::const_iterator end = kf->style()->end();
-        for (CSSMutableStyleDeclaration::const_iterator it = kf->style()->begin(); it != end; ++it) {
-            int property = (*it).id();
-            // Timing-function within keyframes is special, because it is not animated; it just
-            // describes the timing function between this keyframe and the next.
-            if (property != CSSPropertyWebkitAnimationTimingFunction)
-                list.addProperty(property);
-        }
-        
         // Add this keyframe style to all the indicated key times
         Vector<float> keys;
-        kf->getKeys(keys);
+        keyframeRule->getKeys(keys);
         for (size_t keyIndex = 0; keyIndex < keys.size(); ++keyIndex) {
             float key = keys[keyIndex];
-            list.insert(key, m_style);
+            list.insert(key, keyframeStyle.get());
         }
-        m_style = 0;
+        keyframeStyle.release();
     }
     
-    // Make sure there is a 0% and a 100% keyframe
-    float first = -1;
-    float last = -1;
-    if (list.size() >= 2) {
-        first = list.beginKeyframes()->key();
-        last = (list.endKeyframes()-1)->key();
+    // If the 0% keyframe is missing, create it (but only if there is at least one other keyframe)
+    int initialListSize = list.size();
+    if (initialListSize > 0 && list.beginKeyframes()->key() != 0) {
+        RefPtr<WebKitCSSKeyframeRule> keyframe = WebKitCSSKeyframeRule::create();
+        keyframe->setKeyText("0%");
+        keyframeStyle = styleForKeyframe(elementStyle, keyframe.get(), list);
+        list.insert(0, keyframeStyle.release());
     }
-    if (first != 0 || last != 1)
-        list.clear();
+
+    // If the 100% keyframe is missing, create it (but only if there is at least one other keyframe)
+    if (initialListSize > 0 && (list.endKeyframes() - 1)->key() != 1) {
+        RefPtr<WebKitCSSKeyframeRule> keyframe = WebKitCSSKeyframeRule::create();
+        keyframe->setKeyText("100%");
+        keyframeStyle = styleForKeyframe(elementStyle, keyframe.get(), list);
+        list.insert(1, keyframeStyle.release());
+    }
 }
 
 PassRefPtr<RenderStyle> CSSStyleSelector::pseudoStyleForElement(PseudoId pseudo, Element* e, RenderStyle* parentStyle, bool matchVisitedPseudoClass)
