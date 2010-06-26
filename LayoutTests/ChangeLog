@@ -1,3 +1,11 @@
+2010-06-26  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Unreviewed text expectations update after r61956.
+
+        * platform/chromium-mac/html5lib/runner-expected.txt:
+        * platform/chromium-win/html5lib/runner-expected.txt:
+        * platform/chromium/html5lib/runner-expected.txt:
+
 2010-06-26  Tony Gentilcore  <tonyg@chromium.org>
 
         Reviewed by Adam Barth.
