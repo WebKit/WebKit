@@ -84,6 +84,10 @@ public:
     virtual WebString executeScriptURL(const WebURL&, bool popupsAllowed);
     virtual void loadFrameRequest(const WebURLRequest&, const WebString& target, bool notifyNeeded, void* notifyData);
 
+    // This cannot be null.
+    WebPlugin* plugin() { return m_webPlugin; }
+    void setPlugin(WebPlugin* plugin) { m_webPlugin = plugin; }
+
     // Printing interface. The plugin can support custom printing
     // (which means it controls the layout, number of pages etc).
     // Whether the plugin supports its own paginated print. The other print
@@ -105,9 +109,6 @@ public:
     void didFailLoading(const WebCore::ResourceError&);
 
     NPObject* scriptableObject();
-
-    // This cannot be null.
-    WebPlugin* plugin() { return m_webPlugin; }
 
     void willDestroyPluginLoadObserver(WebPluginLoadObserver*);
 

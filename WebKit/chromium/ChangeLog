@@ -1,3 +1,14 @@
+2010-06-25  Bernhard Bauer  <bauerb@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Add plugin accessors to WebPluginContainer.
+        https://bugs.webkit.org/show_bug.cgi?id=41145
+
+        * public/WebPluginContainer.h:
+        * src/WebPluginContainerImpl.h:
+        (WebKit::WebPluginContainerImpl::setPlugin):
+
 2010-06-25  Sterling Swigart  <sswigart@google.com>
 
         Reviewed by David Levin.
