@@ -2,6 +2,113 @@
 
         Unreviewed.
 
+        [Qt] Add platform specific expected results for new passing tests.
+        Compared to Mac png files and Mac expected files.
+
+        * platform/qt/editing/selection/range-between-block-and-inline-expected.checksum: Added.
+        * platform/qt/editing/selection/range-between-block-and-inline-expected.png: Added.
+        * platform/qt/editing/selection/range-between-block-and-inline-expected.txt: Added.
+        * platform/qt/fast/css-generated-content/after-duplicated-after-split-expected.checksum: Added.
+        * platform/qt/fast/css-generated-content/after-duplicated-after-split-expected.png: Added.
+        * platform/qt/fast/css-generated-content/after-duplicated-after-split-expected.txt: Added.
+        * platform/qt/fast/dom/HTMLMeterElement/meter-optimums-expected.checksum: Added.
+        * platform/qt/fast/dom/HTMLMeterElement/meter-optimums-expected.png: Added.
+        * platform/qt/fast/dom/HTMLMeterElement/meter-optimums-expected.txt: Added.
+        * platform/qt/fast/dom/HTMLMeterElement/meter-styles-changing-pseudo-expected.checksum: Added.
+        * platform/qt/fast/dom/HTMLMeterElement/meter-styles-changing-pseudo-expected.png: Added.
+        * platform/qt/fast/dom/HTMLMeterElement/meter-styles-changing-pseudo-expected.txt: Added.
+        * platform/qt/fast/dom/HTMLMeterElement/meter-styles-expected.checksum: Added.
+        * platform/qt/fast/dom/HTMLMeterElement/meter-styles-expected.png: Added.
+        * platform/qt/fast/dom/HTMLMeterElement/meter-styles-expected.txt: Added.
+        * platform/qt/fast/frames/take-focus-from-iframe-expected.checksum: Added.
+        * platform/qt/fast/frames/take-focus-from-iframe-expected.png: Added.
+        * platform/qt/fast/frames/take-focus-from-iframe-expected.txt: Added.
+        * platform/qt/fast/images/svg-background-partial-redraw-expected.checksum: Added.
+        * platform/qt/fast/images/svg-background-partial-redraw-expected.png: Added.
+        * platform/qt/fast/images/svg-background-partial-redraw-expected.txt: Added.
+        * platform/qt/fast/lists/alpha-boundary-values-expected.checksum: Added.
+        * platform/qt/fast/lists/alpha-boundary-values-expected.png: Added.
+        * platform/qt/fast/lists/alpha-boundary-values-expected.txt: Added.
+        * platform/qt/fast/multicol/column-count-with-rules-expected.checksum: Added.
+        * platform/qt/fast/multicol/column-count-with-rules-expected.png: Added.
+        * platform/qt/fast/multicol/column-count-with-rules-expected.txt: Added.
+        * platform/qt/fast/multicol/layers-in-multicol-expected.checksum: Added.
+        * platform/qt/fast/multicol/layers-in-multicol-expected.png: Added.
+        * platform/qt/fast/multicol/layers-in-multicol-expected.txt: Added.
+        * platform/qt/fast/multicol/layers-split-across-columns-expected.checksum: Added.
+        * platform/qt/fast/multicol/layers-split-across-columns-expected.png: Added.
+        * platform/qt/fast/multicol/layers-split-across-columns-expected.txt: Added.
+        * platform/qt/fast/multicol/nested-columns-expected.checksum: Added.
+        * platform/qt/fast/multicol/nested-columns-expected.png: Added.
+        * platform/qt/fast/multicol/nested-columns-expected.txt: Added.
+        * platform/qt/fast/multicol/span/anonymous-style-inheritance-expected.checksum: Added.
+        * platform/qt/fast/multicol/span/anonymous-style-inheritance-expected.png: Added.
+        * platform/qt/fast/multicol/span/anonymous-style-inheritance-expected.txt: Added.
+        * platform/qt/fast/multicol/span/span-as-immediate-child-complex-splitting-expected.checksum: Added.
+        * platform/qt/fast/multicol/span/span-as-immediate-child-complex-splitting-expected.png: Added.
+        * platform/qt/fast/multicol/span/span-as-immediate-child-complex-splitting-expected.txt: Added.
+        * platform/qt/fast/multicol/span/span-as-immediate-child-generated-content-expected.checksum: Added.
+        * platform/qt/fast/multicol/span/span-as-immediate-child-generated-content-expected.png: Added.
+        * platform/qt/fast/multicol/span/span-as-immediate-child-generated-content-expected.txt: Added.
+        * platform/qt/fast/multicol/span/span-as-immediate-child-property-removal-expected.checksum: Added.
+        * platform/qt/fast/multicol/span/span-as-immediate-child-property-removal-expected.png: Added.
+        * platform/qt/fast/multicol/span/span-as-immediate-child-property-removal-expected.txt: Added.
+        * platform/qt/fast/multicol/span/span-as-immediate-columns-child-dynamic-expected.checksum: Added.
+        * platform/qt/fast/multicol/span/span-as-immediate-columns-child-dynamic-expected.png: Added.
+        * platform/qt/fast/multicol/span/span-as-immediate-columns-child-dynamic-expected.txt: Added.
+        * platform/qt/fast/multicol/span/span-as-immediate-columns-child-expected.checksum: Added.
+        * platform/qt/fast/multicol/span/span-as-immediate-columns-child-expected.png: Added.
+        * platform/qt/fast/multicol/span/span-as-immediate-columns-child-expected.txt: Added.
+        * platform/qt/fast/multicol/span/span-as-immediate-columns-child-removal-expected.checksum: Added.
+        * platform/qt/fast/multicol/span/span-as-immediate-columns-child-removal-expected.png: Added.
+        * platform/qt/fast/multicol/span/span-as-immediate-columns-child-removal-expected.txt: Added.
+        * platform/qt/fast/multicol/span/span-as-nested-columns-child-dynamic-expected.checksum: Added.
+        * platform/qt/fast/multicol/span/span-as-nested-columns-child-dynamic-expected.png: Added.
+        * platform/qt/fast/multicol/span/span-as-nested-columns-child-dynamic-expected.txt: Added.
+        * platform/qt/fast/multicol/span/span-as-nested-columns-child-expected.checksum: Added.
+        * platform/qt/fast/multicol/span/span-as-nested-columns-child-expected.png: Added.
+        * platform/qt/fast/multicol/span/span-as-nested-columns-child-expected.txt: Added.
+        * platform/qt/fast/multicol/span/span-margin-collapsing-expected.checksum: Added.
+        * platform/qt/fast/multicol/span/span-margin-collapsing-expected.png: Added.
+        * platform/qt/fast/multicol/span/span-margin-collapsing-expected.txt: Added.
+        * platform/qt/fast/repaint/fixed-child-move-after-scroll-expected.checksum: Added.
+        * platform/qt/fast/repaint/fixed-child-move-after-scroll-expected.png: Added.
+        * platform/qt/fast/repaint/fixed-child-move-after-scroll-expected.txt: Added.
+        * platform/qt/fast/repaint/fixed-child-of-fixed-move-after-scroll-expected.checksum: Added.
+        * platform/qt/fast/repaint/fixed-child-of-fixed-move-after-scroll-expected.png: Added.
+        * platform/qt/fast/repaint/fixed-child-of-fixed-move-after-scroll-expected.txt: Added.
+        * platform/qt/fast/repaint/fixed-child-of-transformed-move-after-scroll-expected.checksum: Added.
+        * platform/qt/fast/repaint/fixed-child-of-transformed-move-after-scroll-expected.png: Added.
+        * platform/qt/fast/repaint/fixed-child-of-transformed-move-after-scroll-expected.txt: Added.
+        * platform/qt/fast/repaint/fixed-move-after-keyboard-scroll-expected.checksum: Added.
+        * platform/qt/fast/repaint/fixed-move-after-keyboard-scroll-expected.png: Added.
+        * platform/qt/fast/repaint/fixed-move-after-keyboard-scroll-expected.txt: Added.
+        * platform/qt/fast/repaint/fixed-move-after-scroll-expected.checksum: Added.
+        * platform/qt/fast/repaint/fixed-move-after-scroll-expected.png: Added.
+        * platform/qt/fast/repaint/fixed-move-after-scroll-expected.txt: Added.
+        * platform/qt/fast/repaint/layout-state-scrolloffset-expected.checksum: Added.
+        * platform/qt/fast/repaint/layout-state-scrolloffset-expected.png: Added.
+        * platform/qt/fast/repaint/layout-state-scrolloffset-expected.txt: Added.
+        * platform/qt/fast/repaint/layout-state-scrolloffset2-expected.checksum: Added.
+        * platform/qt/fast/repaint/layout-state-scrolloffset2-expected.png: Added.
+        * platform/qt/fast/repaint/layout-state-scrolloffset2-expected.txt: Added.
+        * platform/qt/fast/repaint/layout-state-scrolloffset3-expected.checksum: Added.
+        * platform/qt/fast/repaint/layout-state-scrolloffset3-expected.png: Added.
+        * platform/qt/fast/repaint/layout-state-scrolloffset3-expected.txt: Added.
+        * platform/qt/fast/repaint/positioned-document-element-expected.checksum: Added.
+        * platform/qt/fast/repaint/positioned-document-element-expected.png: Added.
+        * platform/qt/fast/repaint/positioned-document-element-expected.txt: Added.
+        * platform/qt/fast/text/format-control-expected.checksum: Added.
+        * platform/qt/fast/text/format-control-expected.png: Added.
+        * platform/qt/fast/text/format-control-expected.txt: Added.
+        * platform/qt/printing/page-rule-in-media-query-expected.checksum: Added.
+        * platform/qt/printing/page-rule-in-media-query-expected.png: Added.
+        * platform/qt/printing/page-rule-in-media-query-expected.txt: Added.
+
+2010-06-25  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed.
+
         [Qt] Add platform specific expected results for new passing svg/* tests.
         Compared to Mac png files and Mac expected files.
 
