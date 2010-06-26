@@ -192,7 +192,7 @@ int WebGLRenderingContext::sizeInBytes(int type, ExceptionCode& ec)
 void WebGLRenderingContext::activeTexture(unsigned long texture, ExceptionCode& ec)
 {
     UNUSED_PARAM(ec);
-    if ((texture - GraphicsContext3D::TEXTURE0) > sizeof(m_textureUnits) / sizeof(TextureUnitState)) {
+    if (texture - GraphicsContext3D::TEXTURE0 >= m_textureUnits.size()) {
         m_context->synthesizeGLError(GraphicsContext3D::INVALID_ENUM);
         return;
     }

@@ -1,3 +1,13 @@
+2010-06-25  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        activeTexture wrongly generates error with legal input.
+        https://bugs.webkit.org/show_bug.cgi?id=41227
+
+        * fast/canvas/webgl/texture-active-bind-expected.txt: Added.
+        * fast/canvas/webgl/texture-active-bind.html: Added.
+
 2010-06-25  Alpha Lam  <hclam@chromium.org>
 
         Unreviewed. Build fix.
