@@ -2893,3 +2893,6 @@ BUGWK37538 : printing/page-format-data.html = TEXT
 
 // This failure is related to 61859.
 BUG_HCLAM : inspector/debugger-pause-in-eval-script.html = TIMEOUT CRASH FAIL PASS
+
+// Added in WebKit r61941
+BUG47611 LINUX : fast/events/popup-when-select-change.html = TIMEOUT

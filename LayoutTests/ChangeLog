@@ -1,3 +1,10 @@
+2010-06-26  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Unreviewed text expectations update.
+
+        * platform/chromium-linux/svg/W3C-SVG-1.1/struct-use-01-t-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
 2010-06-25  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Dimitri Glazkov.
