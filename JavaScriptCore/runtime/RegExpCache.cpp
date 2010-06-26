@@ -37,15 +37,18 @@ PassRefPtr<RegExp> RegExpCache::lookupOrCreate(const UString& patternString, con
         pair<HashMap<RegExpKey, RefPtr<RegExp> >::iterator, bool> result = m_cacheMap.add(RegExpKey(flags, patternString), 0);
         if (!result.second)
             return result.first->second;
-        else
-            return create(patternString, flags, result.first);
     }
-    return create(patternString, flags, m_cacheMap.end());
+    return create(patternString, flags);
 }
 
-PassRefPtr<RegExp> RegExpCache::create(const UString& patternString, const UString& flags, RegExpCacheMap::iterator iterator) 
+PassRefPtr<RegExp> RegExpCache::create(const UString& patternString, const UString& flags) 
 {
-    RefPtr<RegExp> regExp = RegExp::create(m_globalData, patternString, flags);
+    RefPtr<RegExp> regExp;
+
+    if (!flags.isNull())
+        regExp = RegExp::create(m_globalData, patternString, flags);
+    else
+        regExp = RegExp::create(m_globalData, patternString);
 
     if (patternString.size() >= maxCacheablePatternLength)
         return regExp;
@@ -59,8 +62,7 @@ PassRefPtr<RegExp> RegExpCache::create(const UString& patternString, const UStri
         m_cacheMap.remove(RegExpKey(patternKeyArray[m_nextKeyToEvict].flagsValue, patternKeyArray[m_nextKeyToEvict].pattern));
 
     RegExpKey key = RegExpKey(flags, patternString);
-    iterator->first = key;
-    iterator->second = regExp;
+    m_cacheMap.set(key, regExp);
     patternKeyArray[m_nextKeyToEvict].flagsValue = key.flagsValue;
     patternKeyArray[m_nextKeyToEvict].pattern = patternString.rep();
     return regExp;
