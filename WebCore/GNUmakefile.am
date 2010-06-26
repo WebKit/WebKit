@@ -129,6 +129,7 @@ IDL_BINDINGS += \
 	WebCore/css/WebKitCSSTransformValue.idl \
 	WebCore/dom/Attr.idl \
 	WebCore/dom/BeforeLoadEvent.idl \
+	WebCore/dom/BeforeProcessEvent.idl \
 	WebCore/dom/CDATASection.idl \
 	WebCore/dom/CharacterData.idl \
 	WebCore/dom/ClientRect.idl \
@@ -733,6 +734,8 @@ webcore_sources += \
 	WebCore/dom/Attribute.cpp \
 	WebCore/dom/Attribute.h \
 	WebCore/dom/BeforeLoadEvent.h \
+	WebCore/dom/BeforeProcessEvent.cpp \
+	WebCore/dom/BeforeProcessEvent.h \
 	WebCore/dom/BeforeTextInsertedEvent.cpp \
 	WebCore/dom/BeforeTextInsertedEvent.h \
 	WebCore/dom/BeforeUnloadEvent.cpp \

@@ -1,3 +1,48 @@
+2010-06-26  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin Adler.
+
+        beforeProcess event needs to fire before inline scripts/stylesheets take effect
+        <rdar://problem/8084335> and https://bugs.webkit.org/show_bug.cgi?id=40484
+
+        This patch adds the Event, the onBeforeProcess attribute, and hooks the attribute up in a few places.
+        Besides that, no change in behavior.
+
+        Layout tests will come with the actual implementations as a followup to this patch.
+
+        Project file nonsense:
+        * DerivedSources.make:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pri:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+
+        Scaffolding for the event itself:
+        * dom/BeforeProcessEvent.cpp: Added.
+        (WebCore::BeforeProcessEvent::text):
+        (WebCore::BeforeProcessEvent::setText):
+        * dom/BeforeProcessEvent.h: Added.
+        (WebCore::BeforeProcessEvent::create):
+        (WebCore::BeforeProcessEvent::initBeforeProcessEvent):
+        (WebCore::BeforeProcessEvent::BeforeProcessEvent):
+        * dom/BeforeProcessEvent.idl: Added.
+
+        * dom/EventNames.h:
+
+        Respect the onBeforeProcess attribute:
+        * dom/Document.cpp:
+        (WebCore::Document::addListenerTypeIfNeeded):
+        * dom/Document.h:
+        (WebCore::Document::):
+
+        * html/HTMLAttributeNames.in:
+        * html/HTMLScriptElement.cpp:
+        (WebCore::HTMLScriptElement::parseMappedAttribute):
+        * html/HTMLStyleElement.cpp:
+        (WebCore::HTMLStyleElement::parseMappedAttribute):
+
 2010-06-26  Darin Adler  <darin@apple.com>
 
         Try to fix Chromium build by adding back function used only by Chromium WebKit.

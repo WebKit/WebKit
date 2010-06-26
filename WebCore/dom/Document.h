@@ -663,7 +663,8 @@ public:
         ANIMATIONITERATION_LISTENER          = 0x400,
         TRANSITIONEND_LISTENER               = 0x800,
         BEFORELOAD_LISTENER                  = 0x1000,
-        TOUCH_LISTENER                       = 0x2000
+        TOUCH_LISTENER                       = 0x2000,
+        BEFOREPROCESS_LISTENER               = 0x4000
     };
 
     bool hasListenerType(ListenerType listenerType) const { return (m_listenerTypes & listenerType); }

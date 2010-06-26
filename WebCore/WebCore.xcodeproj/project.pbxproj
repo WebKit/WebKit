@@ -1085,6 +1085,10 @@
 		5160306C0CC4362300C8AC25 /* FileSystemCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5160306B0CC4362300C8AC25 /* FileSystemCF.cpp */; };
 		5160F4980B0AA75F00C1D2AF /* HistoryItemMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5160F4970B0AA75F00C1D2AF /* HistoryItemMac.mm */; };
 		516BB7940CE91E6800512F79 /* JSTreeWalkerCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 516BB7920CE91E6800512F79 /* JSTreeWalkerCustom.cpp */; };
+		51721FBB11D2790700638B42 /* BeforeProcessEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 51721FB911D2790700638B42 /* BeforeProcessEvent.h */; };
+		51721FD211D27EF200638B42 /* JSBeforeProcessEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51721FD011D27EF200638B42 /* JSBeforeProcessEvent.cpp */; };
+		51721FD311D27EF200638B42 /* JSBeforeProcessEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 51721FD111D27EF200638B42 /* JSBeforeProcessEvent.h */; };
+		5172204B11D2960500638B42 /* BeforeProcessEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5172204A11D2960500638B42 /* BeforeProcessEvent.cpp */; };
 		51741D0F0B07259A00ED442C /* BackForwardList.h in Headers */ = {isa = PBXBuildFile; fileRef = 51741D0B0B07259A00ED442C /* BackForwardList.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51741D100B07259A00ED442C /* BackForwardList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51741D0C0B07259A00ED442C /* BackForwardList.cpp */; };
 		51741D110B07259A00ED442C /* HistoryItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 51741D0D0B07259A00ED442C /* HistoryItem.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -6744,6 +6748,11 @@
 		5160306B0CC4362300C8AC25 /* FileSystemCF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FileSystemCF.cpp; sourceTree = "<group>"; };
 		5160F4970B0AA75F00C1D2AF /* HistoryItemMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = HistoryItemMac.mm; path = mac/HistoryItemMac.mm; sourceTree = "<group>"; };
 		516BB7920CE91E6800512F79 /* JSTreeWalkerCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSTreeWalkerCustom.cpp; sourceTree = "<group>"; };
+		51721FB911D2790700638B42 /* BeforeProcessEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BeforeProcessEvent.h; sourceTree = "<group>"; };
+		51721FBA11D2790700638B42 /* BeforeProcessEvent.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = BeforeProcessEvent.idl; sourceTree = "<group>"; };
+		51721FD011D27EF200638B42 /* JSBeforeProcessEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSBeforeProcessEvent.cpp; sourceTree = "<group>"; };
+		51721FD111D27EF200638B42 /* JSBeforeProcessEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSBeforeProcessEvent.h; sourceTree = "<group>"; };
+		5172204A11D2960500638B42 /* BeforeProcessEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BeforeProcessEvent.cpp; sourceTree = "<group>"; };
 		51741D0B0B07259A00ED442C /* BackForwardList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BackForwardList.h; sourceTree = "<group>"; };
 		51741D0C0B07259A00ED442C /* BackForwardList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BackForwardList.cpp; sourceTree = "<group>"; };
 		51741D0D0B07259A00ED442C /* HistoryItem.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HistoryItem.h; sourceTree = "<group>"; };
@@ -14490,6 +14499,8 @@
 			children = (
 				BC946345107A934B00857193 /* JSBeforeLoadEvent.cpp */,
 				BC946347107A936600857193 /* JSBeforeLoadEvent.h */,
+				51721FD011D27EF200638B42 /* JSBeforeProcessEvent.cpp */,
+				51721FD111D27EF200638B42 /* JSBeforeProcessEvent.h */,
 				79AC9216109945C80021266E /* JSCompositionEvent.cpp */,
 				79AC9217109945C80021266E /* JSCompositionEvent.h */,
 				E4778B7D115A581A00B5D372 /* JSCustomEvent.cpp */,
@@ -16650,6 +16661,9 @@
 				A8C4A7F909D563270003AC8D /* Attribute.h */,
 				BC9462D7107A7B4C00857193 /* BeforeLoadEvent.h */,
 				BC9462CB107A7A3900857193 /* BeforeLoadEvent.idl */,
+				5172204A11D2960500638B42 /* BeforeProcessEvent.cpp */,
+				51721FB911D2790700638B42 /* BeforeProcessEvent.h */,
+				51721FBA11D2790700638B42 /* BeforeProcessEvent.idl */,
 				AB23A32509BBA7D00067CC53 /* BeforeTextInsertedEvent.cpp */,
 				AB23A32609BBA7D00067CC53 /* BeforeTextInsertedEvent.h */,
 				85031B260A44EFC700F992E0 /* BeforeUnloadEvent.cpp */,
@@ -19554,6 +19568,8 @@
 				9719AF0011D09F2C00D45831 /* HTMLInputStream.h in Headers */,
 				A853123D11D0471B00D4D077 /* FragmentScriptingPermission.h in Headers */,
 				A8E6A78111D1661B00311F4A /* HTMLParserScheduler.h in Headers */,
+				51721FBB11D2790700638B42 /* BeforeProcessEvent.h in Headers */,
+				51721FD311D27EF200638B42 /* JSBeforeProcessEvent.h in Headers */,
 				A84D827C11D333ED00972990 /* RawDataDocumentParser.h in Headers */,
 				CEA3949D11D45CDA003094CF /* StaticHashSetNodeList.h in Headers */,
 				8A844CFF11D3C17C0014065C /* NavigationTiming.h in Headers */,
@@ -21877,6 +21893,8 @@
 				1AD8F81C11CAB9E900E93E54 /* PlatformStrategies.cpp in Sources */,
 				B525A96611CA2340003A23A8 /* JSSQLException.cpp in Sources */,
 				A8E6A78211D1661B00311F4A /* HTMLParserScheduler.cpp in Sources */,
+				51721FD211D27EF200638B42 /* JSBeforeProcessEvent.cpp in Sources */,
+				5172204B11D2960500638B42 /* BeforeProcessEvent.cpp in Sources */,
 				CEA3949C11D45CDA003094CF /* StaticHashSetNodeList.cpp in Sources */,
 				A8C2280E11D4A59700D5A7D3 /* DocumentParser.cpp in Sources */,
 				8A844CFE11D3C17C0014065C /* NavigationTiming.cpp in Sources */,

@@ -145,6 +145,7 @@ onbeforecopy
 onbeforecut
 onbeforeload
 onbeforepaste
+onbeforeprocess
 onbeforeunload
 onblur
 oncanplay

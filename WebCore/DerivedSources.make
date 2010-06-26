@@ -53,6 +53,7 @@ DOM_CLASSES = \
     Attr \
     BarInfo \
     BeforeLoadEvent \
+    BeforeProcessEvent \
     Blob \
     BlobBuilder \
     CDATASection \
