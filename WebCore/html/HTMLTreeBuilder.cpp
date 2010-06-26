@@ -32,6 +32,7 @@
 #include "HTMLTokenizer.h"
 #include "HTMLToken.h"
 #include "HTMLDocument.h"
+#include "HTMLHtmlElement.h"
 #include "LegacyHTMLDocumentParser.h"
 #include "HTMLNames.h"
 #include "LegacyHTMLTreeBuilder.h"
@@ -225,7 +226,7 @@ void HTMLTreeBuilder::constructTreeFromToken(HTMLToken& rawToken)
     }
 
     AtomicHTMLToken token(rawToken);
-    return processToken(token);
+    processToken(token);
 }
 
 void HTMLTreeBuilder::processToken(AtomicHTMLToken& token)
@@ -264,6 +265,19 @@ void HTMLTreeBuilder::processDoctypeToken(AtomicHTMLToken& token)
     parseError(token);
 }
 
+void HTMLTreeBuilder::insertHTMLStartTagBeforeHTML(AtomicHTMLToken&)
+{
+    RefPtr<Element> element = HTMLHtmlElement::create(m_document);
+    // FIXME: Add attributes to |element|.
+    m_document->addChild(element);
+    m_openElements.push(element.release());
+}
+
+void HTMLTreeBuilder::insertHTMLStartTagInBody(AtomicHTMLToken&)
+{
+    notImplemented();
+}
+
 void HTMLTreeBuilder::processStartTag(AtomicHTMLToken& token)
 {
     switch (insertionMode()) {
@@ -274,7 +288,7 @@ void HTMLTreeBuilder::processStartTag(AtomicHTMLToken& token)
     case BeforeHTMLMode:
         ASSERT(insertionMode() == BeforeHTMLMode);
         if (token.name() == htmlTag) {
-            notImplemented();
+            insertHTMLStartTagBeforeHTML(token);
             setInsertionMode(BeforeHeadMode);
             return;
         }
@@ -283,7 +297,7 @@ void HTMLTreeBuilder::processStartTag(AtomicHTMLToken& token)
     case BeforeHeadMode:
         ASSERT(insertionMode() == BeforeHeadMode);
         if (token.name() == htmlTag) {
-            notImplemented();
+            insertHTMLStartTagInBody(token);
             return;
         }
         if (token.name() == headTag) {
@@ -296,7 +310,7 @@ void HTMLTreeBuilder::processStartTag(AtomicHTMLToken& token)
     case InHeadMode:
         ASSERT(insertionMode() == InHeadMode);
         if (token.name() == htmlTag) {
-            notImplemented();
+            insertHTMLStartTagInBody(token);
             return;
         }
         // FIXME: Atomize "command".
@@ -342,7 +356,7 @@ void HTMLTreeBuilder::processStartTag(AtomicHTMLToken& token)
     case AfterHeadMode:
         ASSERT(insertionMode() == AfterHeadMode);
         if (token.name() == htmlTag) {
-            notImplemented();
+            insertHTMLStartTagInBody(token);
             return;
         }
         if (token.name() == bodyTag) {
@@ -358,7 +372,7 @@ void HTMLTreeBuilder::processStartTag(AtomicHTMLToken& token)
         if (token.name() == baseTag || token.name() == linkTag || token.name() == metaTag || token.name() == noframesTag || token.name() == scriptTag || token.name() == styleTag || token.name() == titleTag) {
             parseError(token);
             ASSERT(m_headElement);
-            m_openElements.push(m_headElement.get());
+            m_openElements.push(m_headElement);
             notImplemented();
             m_openElements.remove(m_headElement.get());
             return;
@@ -376,7 +390,7 @@ void HTMLTreeBuilder::processStartTag(AtomicHTMLToken& token)
     case InHeadNoscriptMode:
         ASSERT(insertionMode() == InHeadNoscriptMode);
         if (token.name() == htmlTag) {
-            notImplemented();
+            insertHTMLStartTagInBody(token);
             return;
         }
         if (token.name() == linkTag || token.name() == metaTag || token.name() == noframesTag || token.name() == styleTag) {
@@ -523,7 +537,8 @@ void HTMLTreeBuilder::processDefaultForInitialMode(AtomicHTMLToken& token)
 
 void HTMLTreeBuilder::processDefaultForBeforeHTMLMode(AtomicHTMLToken&)
 {
-    notImplemented();
+    AtomicHTMLToken startHTML(HTMLToken::StartTag, htmlTag.localName());
+    insertHTMLStartTagBeforeHTML(startHTML);
     setInsertionMode(BeforeHeadMode);
 }
 

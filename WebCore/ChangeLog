@@ -1,3 +1,22 @@
+2010-06-25  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        We should parse <html>
+        https://bugs.webkit.org/show_bug.cgi?id=41239
+
+        This patch is hard to test, but I think this patch lets us parse a
+        document consisting of only an <html> start tag.
+
+        * html/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::constructTreeFromToken):
+        (WebCore::HTMLTreeBuilder::insertHTMLStartTagBeforeHTML):
+        (WebCore::HTMLTreeBuilder::insertHTMLStartTagInBody):
+        (WebCore::HTMLTreeBuilder::processStartTag):
+        (WebCore::HTMLTreeBuilder::processDefaultForBeforeHTMLMode):
+        * html/HTMLTreeBuilder.h:
+        (WebCore::HTMLTreeBuilder::ElementStack::push):
+
 2010-06-25  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Sam Weinig.
