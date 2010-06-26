@@ -1,3 +1,14 @@
+2010-06-25  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        <rdar://problem/8000667> Certain text is repeated before and after a line break
+
+        * fast/text/bidi-explicit-embedding-past-end-expected.checksum: Added.
+        * fast/text/bidi-explicit-embedding-past-end-expected.png: Added.
+        * fast/text/bidi-explicit-embedding-past-end-expected.txt: Added.
+        * fast/text/bidi-explicit-embedding-past-end.html: Added.
+
 2010-06-25  Alpha Lam  <hclam@chromium.org>
 
         Unreviewed. Build fix.

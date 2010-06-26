@@ -1,3 +1,15 @@
+2010-06-25  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        <rdar://problem/8000667> Certain text is repeated before and after a line break
+
+        Test: fast/text/bidi-explicit-embedding-past-end.html
+
+        * platform/text/BidiResolver.h:
+        (WebCore::::createBidiRunsForLine): Committing explicit embedding past the end of the range
+        creates BidiRuns up to the end of the range, so at that point, we can stop iterating.
+
 2010-06-25  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.
