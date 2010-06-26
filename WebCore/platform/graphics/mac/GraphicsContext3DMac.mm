@@ -1103,10 +1103,8 @@ void GraphicsContext3D::uniformMatrix4fv(long location, bool transpose, float* a
 
 void GraphicsContext3D::useProgram(WebGLProgram* program)
 {
-    ASSERT(program);
-    
     ensureContext(m_contextObj);
-    ::glUseProgram((GLuint) program->object());
+    ::glUseProgram(program ? ((GLuint) program->object()) : 0);
 }
 
 void GraphicsContext3D::validateProgram(WebGLProgram* program)

@@ -2,6 +2,18 @@
 
         Reviewed by Dimitri Glazkov.
 
+        getUniform will not work for fetching uniform array elements
+        https://bugs.webkit.org/show_bug.cgi?id=34508
+
+        * fast/canvas/webgl/gl-uniform-arrays-expected.txt: Added.
+        * fast/canvas/webgl/gl-uniform-arrays.html: Added.
+        * fast/canvas/webgl/incorrect-context-object-behaviour-expected.txt: Change the test so we test the return error explicitly.
+        * fast/canvas/webgl/script-tests/incorrect-context-object-behaviour.js: Ditto.
+
+2010-06-25  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
         Bring set/get state functions to GLES2 conformance
         https://bugs.webkit.org/show_bug.cgi?id=41095
 
