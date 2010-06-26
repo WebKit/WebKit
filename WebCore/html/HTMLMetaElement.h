@@ -32,6 +32,7 @@ public:
     static PassRefPtr<HTMLMetaElement> create(const QualifiedName&, Document*);
 
     String content() const;
+    String httpEquiv() const;
     String name() const;
 
 private:

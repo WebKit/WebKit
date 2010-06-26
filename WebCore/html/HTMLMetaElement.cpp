@@ -81,6 +81,11 @@ String HTMLMetaElement::content() const
     return getAttribute(contentAttr);
 }
 
+String HTMLMetaElement::httpEquiv() const
+{
+    return getAttribute(http_equivAttr);
+}
+
 String HTMLMetaElement::name() const
 {
     return getAttribute(nameAttr);

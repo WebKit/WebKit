@@ -161,6 +161,8 @@ public:
     String defaultValue() const;
     void setDefaultValue(const String&);
     
+    bool defaultChecked() const;
+
     void setDefaultName(const AtomicString&);
 
     String accept() const;

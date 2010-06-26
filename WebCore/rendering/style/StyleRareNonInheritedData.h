@@ -40,7 +40,6 @@ namespace WebCore {
 
 class AnimationList;
 class CSSStyleSelector;
-class LengthSize;
 class ShadowData;
 class StyleFlexibleBoxData;
 class StyleMarqueeData;
@@ -49,6 +48,7 @@ class StyleReflection;
 class StyleTransformData;
 
 struct ContentData;
+struct LengthSize;
 
 #if ENABLE(DASHBOARD_SUPPORT)
 struct StyleDashboardRegion;

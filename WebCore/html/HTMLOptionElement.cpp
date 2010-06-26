@@ -208,6 +208,11 @@ HTMLSelectElement* HTMLOptionElement::ownerSelectElement() const
     return static_cast<HTMLSelectElement*>(select);
 }
 
+bool HTMLOptionElement::defaultSelected() const
+{
+    return !getAttribute(selectedAttr).isNull();
+}
+
 void HTMLOptionElement::setDefaultSelected(bool b)
 {
     setAttribute(selectedAttr, b ? "" : 0);

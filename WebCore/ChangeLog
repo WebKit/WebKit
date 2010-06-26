@@ -1,5 +1,24 @@
 2010-06-26  Darin Adler  <darin@apple.com>
 
+        Try to fix Chromium build by adding back function used only by Chromium WebKit.
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::defaultChecked): Added back.
+        * html/HTMLInputElement.h: Added defaultChecked function.
+
+        * html/HTMLMetaElement.cpp:
+        (WebCore::HTMLMetaElement::httpEquiv): Added back.
+        * html/HTMLMetaElement.h: Added httpEquiv function.
+
+        * html/HTMLOptionElement.cpp:
+        (WebCore::HTMLOptionElement::defaultSelected): Added back.
+        * html/HTMLOptionElement.h: Added defaultSelected function.
+
+        * rendering/style/StyleRareNonInheritedData.h: Fixed incorrect struct vs. class
+        here as seen in warnings on Chromium Windows bot.
+
+2010-06-26  Darin Adler  <darin@apple.com>
+
         Try to fix Windows build by adding back function used only by Windows WebKit.
 
         * html/HTMLOptionElement.cpp:

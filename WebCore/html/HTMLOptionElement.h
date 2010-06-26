@@ -54,6 +54,7 @@ public:
 
     HTMLSelectElement* ownerSelectElement() const;
 
+    bool defaultSelected() const;
     void setDefaultSelected(bool);
 
     String label() const;
