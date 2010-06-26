@@ -1,3 +1,13 @@
+2010-06-25  Sterling Swigart  <sswigart@google.com>
+
+        Reviewed by David Levin.
+
+        Resetting ENABLE_IMAGE_RESIZER to 0. Image.webkitGetImage needs to be developed under
+        a 0 value, at least until both the JSC and V8 bindings are in place.
+        https://bugs.webkit.org/show_bug.cgi?id=41116
+
+        * features.gypi: ENABLE_IMAGE_RESIZER=0
+
 2010-06-25  Victor Wang  <victorw@chromium.org>
 
         Reviewed by Darin Fisher.
