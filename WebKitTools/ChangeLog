@@ -1,3 +1,12 @@
+2010-06-26  Robert Hogan  <robert@webkit.org>
+
+        Unreviewed, Qt build fix following http://trac.webkit.org/changeset/61879
+        
+        Remove qwebscriptworld.h from LayoutTestControllerQt.cpp - it is no longer
+        exported.
+
+        * DumpRenderTree/qt/LayoutTestControllerQt.cpp:
+
 2010-06-26  Tony Gentilcore  <tonyg@chromium.org>
 
         Reviewed by Dimitri Glazkov.

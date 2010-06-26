@@ -35,7 +35,6 @@
 #include "WorkQueueItemQt.h"
 #include <QDir>
 #include <QLocale>
-#include <qwebscriptworld.h>
 #include <qwebsettings.h>
 
 LayoutTestController::LayoutTestController(WebCore::DumpRenderTree* drt)
