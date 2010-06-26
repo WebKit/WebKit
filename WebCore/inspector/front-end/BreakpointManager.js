@@ -66,6 +66,8 @@ WebInspector.BreakpointManager.prototype = {
     {
         if (!(breakpoint.id in this._breakpoints))
             return;
+        breakpoint.removeAllListeners();
+        delete breakpoint._breakpointManager;
         delete this._breakpoints[breakpoint.id];
         this._removeBreakpointFromBackend(breakpoint);
         this.dispatchEventToListeners("breakpoint-removed", breakpoint);
