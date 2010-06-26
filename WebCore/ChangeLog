@@ -1,3 +1,15 @@
+2010-06-25  Sterling Swigart  <sswigart@google.com>
+
+        Reviewed by David Levin.
+
+        Callback code generation fixed so that now string parameters are converted to JSString
+        using the jsString method instead of the toJS method which would not compile.
+        https://bugs.webkit.org/show_bug.cgi?id=41119
+        
+        * bindings/scripts/CodeGeneratorJS.pm: Now generates jsString for String parameters in callbacks.
+        * bindings/scripts/test/JS/JSTestCallback.cpp: Fixed test for above.
+        (WebCore::JSTestCallback::callbackWithClass2Param): Ditto.
+
 2010-06-25  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Dimitri Glazkov.

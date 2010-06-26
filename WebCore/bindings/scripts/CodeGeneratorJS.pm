@@ -2179,7 +2179,11 @@ sub GenerateCallbackImplementation
 
             foreach my $param (@params) {
                 my $paramName = $param->name;
-                push(@implContent, "    args.append(toJS(exec, ${paramName}));\n");
+                if ($param->type eq "DOMString") {
+                    push(@implContent, "    args.append(jsString(exec, ${paramName}));\n");
+                } else {
+                    push(@implContent, "    args.append(toJS(exec, ${paramName}));\n");
+                }
             }
 
             push(@implContent, "\n    bool raisedException = false;\n");
