@@ -1,3 +1,10 @@
+2010-06-25  Antonio Gomes  <tonikitoo@webkit.org>
+
+        Unreviewed complementary fix for r61818. It added StaticHashSetListNode.cpp|h to the system,
+        but did not added it to chromium build system.
+
+        * WebCore.gypi:
+
 2010-06-26  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Yury Semikhatsky.

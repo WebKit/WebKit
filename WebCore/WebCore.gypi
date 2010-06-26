@@ -1216,6 +1216,8 @@
             'dom/SelectorNodeList.h',
             'dom/SpaceSplitString.cpp',
             'dom/SpaceSplitString.h',
+            'dom/StaticHashSetNodeList.cpp',
+            'dom/StaticHashSetNodeList.h',
             'dom/StaticNodeList.cpp',
             'dom/StaticNodeList.h',
             'dom/StaticStringList.cpp',
