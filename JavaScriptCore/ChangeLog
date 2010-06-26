@@ -1,3 +1,22 @@
+2010-06-25  Renata Hodovan  <reni@inf.u-szeged.hu>
+
+        Reviewed by Geoffrey Garen.
+
+        Merge RegExp constructor and RegExp::create methods into one.
+        Both of function are called with tree parameters and check whether 
+        flags (the third param) is given or not.
+        Simplify hash lookups in RegExpCache::create with giving them an extra 
+        iterator parameter.
+        https://bugs.webkit.org/show_bug.cgi?id=41055
+
+        * runtime/RegExp.cpp:
+        (JSC::RegExp::RegExp):
+        * runtime/RegExp.h:
+        * runtime/RegExpCache.cpp:
+        (JSC::RegExpCache::lookupOrCreate):
+        (JSC::RegExpCache::create):
+        * runtime/RegExpCache.h:
+
 2010-06-25  Jedrzej Nowacki  <jedrzej.nowacki@nokia.com>
 
         Reviewed by Simon Hausmann.
