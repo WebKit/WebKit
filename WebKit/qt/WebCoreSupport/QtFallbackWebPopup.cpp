@@ -97,8 +97,8 @@ QtFallbackWebPopup::~QtFallbackWebPopup()
 {
     // If we create a proxy, then the deletion of the proxy and the
     // combo will be done by the proxy's parent (QGraphicsWebView)
-    if (!m_proxy)
-        delete m_combo;
+    if (!m_proxy && m_combo)
+        m_combo->deleteLater();
 }
 
 void QtFallbackWebPopup::show()
