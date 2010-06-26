@@ -1,3 +1,12 @@
+2010-06-25  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed.
+
+        [Qt] fast/text/bidi-explicit-embedding-past-end.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=41241
+
+        * platform/qt/Skipped: fast/text/bidi-explicit-embedding-past-end.html skipped until fix.
+
 2010-06-25  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Sam Weinig.

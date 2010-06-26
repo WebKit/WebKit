@@ -5451,3 +5451,7 @@ editing/execCommand/copy-without-selection.html
 # https://bugs.webkit.org/show_bug.cgi?id=41147
 inspector/debugger-pause-on-debugger-statement.html
 inspector/debugger-pause-in-eval-script.html
+
+# [Qt] fast/text/bidi-explicit-embedding-past-end.html fails
+# https://bugs.webkit.org/show_bug.cgi?id=41241
+fast/text/bidi-explicit-embedding-past-end.html
