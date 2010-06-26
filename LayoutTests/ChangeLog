@@ -1,3 +1,13 @@
+2010-06-25  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        A buffer should be bound to one target in its lifetime
+        https://bugs.webkit.org/show_bug.cgi?id=41108
+
+        * fast/canvas/webgl/buffer-bind-test-expected.txt: Added.
+        * fast/canvas/webgl/buffer-bind-test.html: Added.
+
 2010-06-25  Dean Jackson  <dino@apple.com>
 
         Reviewed by Simon Fraser.

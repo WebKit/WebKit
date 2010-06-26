@@ -40,11 +40,11 @@ namespace WebCore {
         
         static PassRefPtr<WebGLBuffer> create(WebGLRenderingContext*);
 
-        bool associateBufferData(unsigned long target, int size);
-        bool associateBufferData(unsigned long target, ArrayBufferView* array);
-        bool associateBufferSubData(unsigned long target, long offset, ArrayBufferView* array);
+        bool associateBufferData(int size);
+        bool associateBufferData(ArrayBufferView* array);
+        bool associateBufferSubData(long offset, ArrayBufferView* array);
         
-        unsigned byteLength(unsigned long target) const;
+        unsigned byteLength() const;
         const ArrayBuffer* elementArrayBuffer() const { return m_elementArrayBuffer.get(); }
                         
         // Gets the cached max index for the given type. Returns -1 if
@@ -52,6 +52,9 @@ namespace WebCore {
         long getCachedMaxIndex(unsigned long type);
         // Sets the cached max index for the given type.
         void setCachedMaxIndex(unsigned long type, long value);
+
+        unsigned long getTarget() const { return m_target; }
+        void setTarget(unsigned long);
 
     protected:
         WebGLBuffer(WebGLRenderingContext*);
@@ -61,9 +64,10 @@ namespace WebCore {
     private:
         virtual bool isBuffer() const { return true; }
 
+        unsigned long m_target;
+
         RefPtr<ArrayBuffer> m_elementArrayBuffer;
-        unsigned m_elementArrayBufferByteLength;
-        unsigned m_arrayBufferByteLength;
+        unsigned m_byteLength;
 
         // Optimization for index validation. For each type of index
         // (i.e., UNSIGNED_SHORT), cache the maximum index in the

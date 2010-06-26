@@ -1,3 +1,28 @@
+2010-06-25  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        A buffer should be bound to one target in its lifetime
+        https://bugs.webkit.org/show_bug.cgi?id=41108
+
+        Test: fast/canvas/webgl/buffer-bind-test.html
+
+        * html/canvas/WebGLBuffer.cpp:
+        (WebCore::WebGLBuffer::WebGLBuffer): Init target to 0. 
+        (WebCore::WebGLBuffer::associateBufferData): Remove target parameter, use one byteLength member.
+        (WebCore::WebGLBuffer::associateBufferSubData): Ditto.
+        (WebCore::WebGLBuffer::byteLength): Ditto.
+        (WebCore::WebGLBuffer::setTarget): Set target.
+        * html/canvas/WebGLBuffer.h: Cache target in the WebGLBuffer object, use one byteLength member.
+        (WebCore::WebGLBuffer::getTarget):
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::bindBuffer): Check if a buffer is bound to another target; set buffer object internal target.
+        (WebCore::WebGLRenderingContext::bufferData): Remove target parameter and use the WebGLBuffer cached target instead.
+        (WebCore::WebGLRenderingContext::bufferSubData): Ditto.
+        (WebCore::WebGLRenderingContext::validateElementArraySize): Ditto.
+        (WebCore::WebGLRenderingContext::validateIndexArrayConservative): Ditto.
+        (WebCore::WebGLRenderingContext::vertexAttribPointer): Ditto.
+
 2010-06-25  Dean Jackson  <dino@apple.com>
 
         Reviewed by Simon Fraser.

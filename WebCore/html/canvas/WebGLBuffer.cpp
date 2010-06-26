@@ -39,8 +39,8 @@ PassRefPtr<WebGLBuffer> WebGLBuffer::create(WebGLRenderingContext* ctx)
 
 WebGLBuffer::WebGLBuffer(WebGLRenderingContext* ctx)
     : CanvasObject(ctx)
-    , m_elementArrayBufferByteLength(0)
-    , m_arrayBufferByteLength(0)
+    , m_target(0)
+    , m_byteLength(0)
     , m_nextAvailableCacheEntry(0)
 {
     setObject(context()->graphicsContext3D()->createBuffer());
@@ -52,50 +52,51 @@ void WebGLBuffer::_deleteObject(Platform3DObject object)
     context()->graphicsContext3D()->deleteBuffer(object);
 }
 
-bool WebGLBuffer::associateBufferData(unsigned long target, int size)
+bool WebGLBuffer::associateBufferData(int size)
 {
-    if (target == GraphicsContext3D::ELEMENT_ARRAY_BUFFER) {
-        m_elementArrayBufferByteLength = size;
+    switch (m_target) {
+    case GraphicsContext3D::ELEMENT_ARRAY_BUFFER:
+    case GraphicsContext3D::ARRAY_BUFFER:
+        m_byteLength = size;
         return true;
+    default:
+        return false;
     }
-    
-    if (target == GraphicsContext3D::ARRAY_BUFFER) {
-        m_arrayBufferByteLength = size;
-        return true;
-    }
-
-    return false;
 }
 
-bool WebGLBuffer::associateBufferData(unsigned long target, ArrayBufferView* array)
+bool WebGLBuffer::associateBufferData(ArrayBufferView* array)
 {
+    if (!m_target)
+        return false;
     if (!array)
         return false;
-        
-    if (target == GraphicsContext3D::ELEMENT_ARRAY_BUFFER) {
+
+    if (m_target == GraphicsContext3D::ELEMENT_ARRAY_BUFFER) {
         clearCachedMaxIndices();
-        m_elementArrayBufferByteLength = array->byteLength();
+        m_byteLength = array->byteLength();
         // We must always clone the incoming data because client-side
         // modifications without calling bufferData or bufferSubData
         // must never be able to change the validation results.
         m_elementArrayBuffer = ArrayBuffer::create(array->buffer().get());
         return true;
     }
-    
-    if (target == GraphicsContext3D::ARRAY_BUFFER) {
-        m_arrayBufferByteLength = array->byteLength();
+
+    if (m_target == GraphicsContext3D::ARRAY_BUFFER) {
+        m_byteLength = array->byteLength();
         return true;
     }
     
     return false;
 }
 
-bool WebGLBuffer::associateBufferSubData(unsigned long target, long offset, ArrayBufferView* array)
+bool WebGLBuffer::associateBufferSubData(long offset, ArrayBufferView* array)
 {
+    if (!m_target)
+        return false;
     if (!array)
         return false;
-        
-    if (target == GraphicsContext3D::ELEMENT_ARRAY_BUFFER) {
+
+    if (m_target == GraphicsContext3D::ELEMENT_ARRAY_BUFFER) {
         clearCachedMaxIndices();
 
         // We need to protect against integer overflow with these tests
@@ -103,22 +104,22 @@ bool WebGLBuffer::associateBufferSubData(unsigned long target, long offset, Arra
             return false;
             
         unsigned long uoffset = static_cast<unsigned long>(offset);
-        if (uoffset > m_elementArrayBufferByteLength || array->byteLength() > m_elementArrayBufferByteLength - uoffset)
+        if (uoffset > m_byteLength || array->byteLength() > m_byteLength - uoffset)
             return false;
             
         memcpy(static_cast<unsigned char*>(m_elementArrayBuffer->data()) + offset, array->baseAddress(), array->byteLength());
         return true;
     }
-    
-    if (target == GraphicsContext3D::ARRAY_BUFFER)
-        return array->byteLength() + offset <= m_arrayBufferByteLength;
+
+    if (m_target == GraphicsContext3D::ARRAY_BUFFER)
+        return array->byteLength() + offset <= m_byteLength;
 
     return false;
 }
 
-unsigned WebGLBuffer::byteLength(unsigned long target) const
+unsigned WebGLBuffer::byteLength() const
 {
-    return (target == GraphicsContext3D::ARRAY_BUFFER) ? m_arrayBufferByteLength : m_elementArrayBufferByteLength;
+    return m_byteLength;
 }
 
 long WebGLBuffer::getCachedMaxIndex(unsigned long type)
@@ -141,6 +142,15 @@ void WebGLBuffer::setCachedMaxIndex(unsigned long type, long value)
     m_maxIndexCache[m_nextAvailableCacheEntry].type = type;
     m_maxIndexCache[m_nextAvailableCacheEntry].maxIndex = value;
     m_nextAvailableCacheEntry = (m_nextAvailableCacheEntry + 1) % numEntries;
+}
+
+void WebGLBuffer::setTarget(unsigned long target)
+{
+    // In WebGL, a buffer is bound to one target in its lifetime
+    if (m_target)
+        return;
+    if (target == GraphicsContext3D::ARRAY_BUFFER || target == GraphicsContext3D::ELEMENT_ARRAY_BUFFER)
+        m_target = target;
 }
 
 void WebGLBuffer::clearCachedMaxIndices()

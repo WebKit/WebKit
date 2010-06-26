@@ -228,6 +228,10 @@ void WebGLRenderingContext::bindBuffer(unsigned long target, WebGLBuffer* buffer
         m_context->synthesizeGLError(GraphicsContext3D::INVALID_OPERATION);
         return;
     }
+    if (buffer && buffer->getTarget() && buffer->getTarget() != target) {
+        m_context->synthesizeGLError(GraphicsContext3D::INVALID_OPERATION);
+        return;
+    }
 
     if (target == GraphicsContext3D::ARRAY_BUFFER)
         m_boundArrayBuffer = buffer;
@@ -239,6 +243,8 @@ void WebGLRenderingContext::bindBuffer(unsigned long target, WebGLBuffer* buffer
     }
 
     m_context->bindBuffer(target, buffer);
+    if (buffer)
+        buffer->setTarget(target);
     cleanupAfterGraphicsCall(false);
 }
 
@@ -334,12 +340,12 @@ void WebGLRenderingContext::bufferData(unsigned long target, int size, unsigned 
 {
     UNUSED_PARAM(ec);
     if (target == GraphicsContext3D::ELEMENT_ARRAY_BUFFER && m_boundElementArrayBuffer) {
-        if (!m_boundElementArrayBuffer->associateBufferData(target, size)) {
+        if (!m_boundElementArrayBuffer->associateBufferData(size)) {
             m_context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE);
             return;
         }
     } else if (target == GraphicsContext3D::ARRAY_BUFFER && m_boundArrayBuffer) {
-        if (!m_boundArrayBuffer->associateBufferData(target, size)) {
+        if (!m_boundArrayBuffer->associateBufferData(size)) {
             m_context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE);
             return;
         }
@@ -356,12 +362,12 @@ void WebGLRenderingContext::bufferData(unsigned long target, ArrayBufferView* da
 {
     UNUSED_PARAM(ec);
     if (target == GraphicsContext3D::ELEMENT_ARRAY_BUFFER && m_boundElementArrayBuffer) {
-        if (!m_boundElementArrayBuffer->associateBufferData(target, data)) {
+        if (!m_boundElementArrayBuffer->associateBufferData(data)) {
             m_context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE);
             return;
         }
     } else if (target == GraphicsContext3D::ARRAY_BUFFER && m_boundArrayBuffer) {
-        if (!m_boundArrayBuffer->associateBufferData(target, data)) {
+        if (!m_boundArrayBuffer->associateBufferData(data)) {
             m_context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE);
             return;
         }
@@ -378,12 +384,12 @@ void WebGLRenderingContext::bufferSubData(unsigned long target, long offset, Arr
 {
     UNUSED_PARAM(ec);
     if (target == GraphicsContext3D::ELEMENT_ARRAY_BUFFER && m_boundElementArrayBuffer) {
-        if (!m_boundElementArrayBuffer->associateBufferSubData(target, offset, data)) {
+        if (!m_boundElementArrayBuffer->associateBufferSubData(offset, data)) {
             m_context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE);
             return;
         }
     } else if (target == GraphicsContext3D::ARRAY_BUFFER && m_boundArrayBuffer) {
-        if (!m_boundArrayBuffer->associateBufferSubData(target, offset, data)) {
+        if (!m_boundArrayBuffer->associateBufferSubData(offset, data)) {
             m_context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE);
             return;
         }
@@ -675,11 +681,11 @@ bool WebGLRenderingContext::validateElementArraySize(unsigned long count, unsign
         // Make uoffset an element offset.
         uoffset /= 2;
 
-        unsigned long n = m_boundElementArrayBuffer->byteLength(GraphicsContext3D::ELEMENT_ARRAY_BUFFER) / 2;
+        unsigned long n = m_boundElementArrayBuffer->byteLength() / 2;
         if (uoffset > n || count > n - uoffset)
             return false;
     } else if (type == GraphicsContext3D::UNSIGNED_BYTE) {
-        unsigned long n = m_boundElementArrayBuffer->byteLength(GraphicsContext3D::ELEMENT_ARRAY_BUFFER);
+        unsigned long n = m_boundElementArrayBuffer->byteLength();
         if (uoffset > n || count > n - uoffset)
             return false;
     }
@@ -699,14 +705,14 @@ bool WebGLRenderingContext::validateIndexArrayConservative(unsigned long type, l
         // Compute the maximum index in the entire buffer for the given type of index.
         switch (type) {
         case GraphicsContext3D::UNSIGNED_BYTE: {
-            unsigned numElements = m_boundElementArrayBuffer->byteLength(GraphicsContext3D::ELEMENT_ARRAY_BUFFER);
+            unsigned numElements = m_boundElementArrayBuffer->byteLength();
             const unsigned char* p = static_cast<const unsigned char*>(m_boundElementArrayBuffer->elementArrayBuffer()->data());
             for (unsigned i = 0; i < numElements; i++)
                 maxIndex = max(maxIndex, static_cast<long>(p[i]));
             break;
         }
         case GraphicsContext3D::UNSIGNED_SHORT: {
-            unsigned numElements = m_boundElementArrayBuffer->byteLength(GraphicsContext3D::ELEMENT_ARRAY_BUFFER) / sizeof(unsigned short);
+            unsigned numElements = m_boundElementArrayBuffer->byteLength() / sizeof(unsigned short);
             const unsigned short* p = static_cast<const unsigned short*>(m_boundElementArrayBuffer->elementArrayBuffer()->data());
             for (unsigned i = 0; i < numElements; i++)
                 maxIndex = max(maxIndex, static_cast<long>(p[i]));
@@ -3061,7 +3067,7 @@ void WebGLRenderingContext::vertexAttribPointer(unsigned long indx, long size, u
     // Avoid off-by-one errors in numElements computation.
     // For the last element, we will only touch the data for the
     // element and nothing beyond it.
-    long bytesRemaining = m_boundArrayBuffer->byteLength(GraphicsContext3D::ARRAY_BUFFER) - offset;
+    long bytesRemaining = m_boundArrayBuffer->byteLength() - offset;
     if (bytesRemaining < bytesPerElement)
         m_vertexAttribState[indx].numElements = 0;
     else
