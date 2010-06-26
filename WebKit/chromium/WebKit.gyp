@@ -52,7 +52,6 @@
     'targets': [
         {
             'target_name': 'webkit',
-            'type': '<(webkit_target_type)',
             'msvs_guid': '5ECEC9E5-8F23-47B6-93E0-C3B328B3BE65',
             'dependencies': [
                 '../../WebCore/WebCore.gyp/WebCore.gyp:webcore',
@@ -447,6 +446,34 @@
                 'src/win/WebScreenInfoFactory.cpp',
             ],
             'conditions': [
+                ['inside_chromium_build==1 and OS=="win"', {
+                    'type': '<(component)',
+
+                    'conditions': [
+                        ['component=="shared_library"', {
+                            'defines': [
+                                'WEBKIT_DLL',
+                                'USING_V8_SHARED',
+                            ],
+                            'dependencies': [
+                                '../../WebCore/WebCore.gyp/WebCore.gyp:webcore_bindings',
+                                '<(chromium_src_dir)/gpu/gpu.gyp:gles2_c_lib',
+                                '<(chromium_src_dir)/third_party/icu/icu.gyp:*',
+                                '<(chromium_src_dir)/third_party/libjpeg/libjpeg.gyp:libjpeg',
+                                '<(chromium_src_dir)/third_party/libpng/libpng.gyp:libpng',
+                                '<(chromium_src_dir)/third_party/libxml/libxml.gyp:libxml',
+                                '<(chromium_src_dir)/third_party/libxslt/libxslt.gyp:libxslt',
+                                '<(chromium_src_dir)/third_party/modp_b64/modp_b64.gyp:modp_b64',
+                                '<(chromium_src_dir)/third_party/nss/nss.gyp:*',
+                                '<(chromium_src_dir)/third_party/ots/ots.gyp:ots',
+                                '<(chromium_src_dir)/third_party/zlib/zlib.gyp:zlib',
+                                '<(chromium_src_dir)/v8/tools/gyp/v8.gyp:v8',
+                            ],
+                        }],
+                    ],
+                }, {
+                    'type': '<(webkit_target_type)'
+                }],
                 ['OS=="linux" or OS=="freebsd"', {
                     'dependencies': [
                         '<(chromium_src_dir)/build/linux/system.gyp:fontconfig',
