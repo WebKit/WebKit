@@ -559,6 +559,7 @@
                 '<(chromium_src_dir)/testing/gtest.gyp:gtest',
                 '<(chromium_src_dir)/base/base.gyp:base',
                 '<(chromium_src_dir)/base/base.gyp:base_i18n',
+                '<(chromium_src_dir)/webkit/support/webkit_support.gyp:webkit_support',
                 '<(chromium_src_dir)/gpu/gpu.gyp:gles2_c_lib',
             ],
             'include_dirs': [
@@ -570,6 +571,7 @@
                 'tests/KeyboardTest.cpp',
                 'tests/KURLTest.cpp',
                 'tests/RunAllTests.cpp',
+                'tests/WebFrameTest.cpp',
             ],
             'conditions': [
                 ['OS=="win"', {

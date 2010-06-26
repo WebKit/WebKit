@@ -1,3 +1,25 @@
+2010-06-25  Jay Civelli  <jcivelli@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [chromium] Made WebFrame not report the text from hidden frames.
+        (some pages contain hidden frames with garbage text that
+        should not be indexed or used to detect the page's language).
+        https://bugs.webkit.org/show_bug.cgi?id=39456
+
+        * DEPS:
+        * WebKit.gyp:
+        * src/WebFrameImpl.cpp:
+        (WebKit::frameContentAsPlainText):
+        * tests/RunAllTests.cpp:
+        (main):
+        * tests/WebFrameTest.cpp: Added.
+        * tests/data: Added.
+        * tests/data/iframes_test.html: Added.
+        * tests/data/invisible_iframe.html: Added.
+        * tests/data/visible_iframe.html: Added.
+        * tests/data/zero_sized_iframe.html: Added.
+
 2010-06-25  Bernhard Bauer  <bauerb@chromium.org>
 
         Reviewed by Darin Fisher.
