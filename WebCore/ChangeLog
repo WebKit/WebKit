@@ -1,5 +1,13 @@
 2010-06-26  Darin Adler  <darin@apple.com>
 
+        Try to fix Qt build by adding back function used only by Qt WebKit.
+
+        * html/HTMLMetaElement.cpp:
+        (WebCore::HTMLMetaElement::content): Added back.
+        * html/HTMLMetaElement.h: Added content function.
+
+2010-06-26  Darin Adler  <darin@apple.com>
+
         * html/HTMLFormElement.h: Removed stray character that got in here before landing.
 
 2010-06-26  Darin Adler  <darin@apple.com>

@@ -31,6 +31,7 @@ class HTMLMetaElement : public HTMLElement {
 public:
     static PassRefPtr<HTMLMetaElement> create(const QualifiedName&, Document*);
 
+    String content() const;
     String name() const;
 
 private:

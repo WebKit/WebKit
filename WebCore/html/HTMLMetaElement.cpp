@@ -76,6 +76,11 @@ void HTMLMetaElement::process()
         document()->processHttpEquiv(m_equiv, m_content);
 }
 
+String HTMLMetaElement::content() const
+{
+    return getAttribute(contentAttr);
+}
+
 String HTMLMetaElement::name() const
 {
     return getAttribute(nameAttr);
