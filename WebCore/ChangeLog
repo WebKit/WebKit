@@ -1,5 +1,9 @@
 2010-06-26  Darin Adler  <darin@apple.com>
 
+        * html/HTMLFormElement.h: Removed stray character that got in here before landing.
+
+2010-06-26  Darin Adler  <darin@apple.com>
+
         Reviewed by Sam Weinig.
 
         Add more use of reflection, remove unused functions
