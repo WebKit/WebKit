@@ -35,6 +35,17 @@ QWebScriptWorld::QWebScriptWorld()
     d = new QWebScriptWorldPrivate(ScriptController::createWorld());
 }
 
+QWebScriptWorld::QWebScriptWorld(const QWebScriptWorld& other)
+    : d(other.d)
+{
+}
+
+QWebScriptWorld &QWebScriptWorld::operator=(const QWebScriptWorld& other)
+{
+    d = other.d;
+    return *this;
+}
+
 DOMWrapperWorld* QWebScriptWorld::world() const
 {
     return d->world.get();

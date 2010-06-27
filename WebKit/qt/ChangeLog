@@ -1,3 +1,18 @@
+2010-06-26  Simon Hausmann  <hausmann@webkit.org>
+
+        [Qt] Prospective build fix for MSVC
+
+        In order for the forward declaration of QWebScriptWorldPrivate
+        to work with QExplicitlySharedDataPointer, then copy constructor
+        and assignment operators must not be compiler generated, to
+        avoid them ending up in places where the private class is not
+        declared.
+
+        * Api/qwebscriptworld.cpp:
+        (QWebScriptWorld::QWebScriptWorld):
+        (QWebScriptWorld::operator=):
+        * Api/qwebscriptworld.h:
+
 2010-06-26  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.

@@ -35,6 +35,8 @@ class QWebFrame;
 class QWEBKIT_EXPORT QWebScriptWorld {
 public:
     QWebScriptWorld();
+    QWebScriptWorld(const QWebScriptWorld&);
+    QWebScriptWorld &operator=(const QWebScriptWorld&);
     ~QWebScriptWorld();
 
     WebCore::DOMWrapperWorld* world() const;
