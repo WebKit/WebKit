@@ -317,48 +317,8 @@ void HTMLTreeBuilder::processStartTag(AtomicHTMLToken& token)
         // Fall through.
     case InHeadMode:
         ASSERT(insertionMode() == InHeadMode);
-        if (token.name() == htmlTag) {
-            insertHTMLStartTagInBody(token);
+        if (processStartTagForInHead(token))
             return;
-        }
-        // FIXME: Atomize "command".
-        if (token.name() == baseTag || token.name() == "command" || token.name() == linkTag) {
-            insertElement(token);
-            m_openElements.pop();
-            notImplemented();
-            return;
-        }
-        if (token.name() == metaTag) {
-            insertElement(token);
-            m_openElements.pop();
-            notImplemented();
-            return;
-        }
-        if (token.name() == titleTag) {
-            insertGenericRCDATAElement(token);
-            return;
-        }
-        if (token.name() == noscriptTag) {
-            if (isScriptingFlagEnabled(m_document->frame())) {
-                insertGenericRawTextElement(token);
-                return;
-            }
-            insertElement(token);
-            setInsertionMode(InHeadNoscriptMode);
-            return;
-        }
-        if (token.name() == noframesTag || token.name() == styleTag) {
-            insertGenericRawTextElement(token);
-            return;
-        }
-        if (token.name() == scriptTag) {
-            insertScriptElement(token);
-            return;
-        }
-        if (token.name() == headTag) {
-            notImplemented();
-            return;
-        }
         processDefaultForInHeadMode(token);
         // Fall through.
     case AfterHeadMode:
@@ -402,7 +362,8 @@ void HTMLTreeBuilder::processStartTag(AtomicHTMLToken& token)
             return;
         }
         if (token.name() == linkTag || token.name() == metaTag || token.name() == noframesTag || token.name() == styleTag) {
-            notImplemented();
+            bool didProcess = processStartTagForInHead(token);
+            ASSERT_UNUSED(didProcess, didProcess);
             return;
         }
         if (token.name() == htmlTag || token.name() == noscriptTag) {
@@ -593,6 +554,46 @@ void HTMLTreeBuilder::processDefaultForAfterHeadMode(AtomicHTMLToken&)
     m_framesetOk = true;
 }
 
+bool HTMLTreeBuilder::processStartTagForInHead(AtomicHTMLToken& token)
+{
+    if (token.name() == htmlTag) {
+        insertHTMLStartTagInBody(token);
+        return true;
+    }
+    // FIXME: Atomize "command".
+    if (token.name() == baseTag || token.name() == "command" || token.name() == linkTag || token.name() == metaTag) {
+        insertSelfClosingElement(token);
+        // Note: The custom processing for the <meta> tag is done in HTMLMetaElement::process().
+        return true;
+    }
+    if (token.name() == titleTag) {
+        insertGenericRCDATAElement(token);
+        return true;
+    }
+    if (token.name() == noscriptTag) {
+        if (isScriptingFlagEnabled(m_document->frame())) {
+            insertGenericRawTextElement(token);
+            return true;
+        }
+        insertElement(token);
+        setInsertionMode(InHeadNoscriptMode);
+        return true;
+    }
+    if (token.name() == noframesTag || token.name() == styleTag) {
+        insertGenericRawTextElement(token);
+        return true;
+    }
+    if (token.name() == scriptTag) {
+        insertScriptElement(token);
+        return true;
+    }
+    if (token.name() == headTag) {
+        parseError(token);
+        return true;
+    }
+    return false;
+}
+
 void HTMLTreeBuilder::insertDoctype(AtomicHTMLToken& token)
 {
     ASSERT(token.type() == HTMLToken::DOCTYPE);
@@ -616,6 +617,15 @@ void HTMLTreeBuilder::insertElement(AtomicHTMLToken& token)
     RefPtr<Element> element = HTMLElementFactory::createHTMLElement(QualifiedName(nullAtom, token.name(), xhtmlNamespaceURI), m_document, 0);
     currentElement()->addChild(element);
     m_openElements.push(element.release());
+}
+
+void HTMLTreeBuilder::insertSelfClosingElement(AtomicHTMLToken& token)
+{
+    ASSERT(token.type() == HTMLToken::StartTag);
+    insertElement(token);
+    m_openElements.pop();
+    // FIXME: Do we want to acknowledge the token's self-closing flag?
+    // http://www.whatwg.org/specs/web-apps/current-work/multipage/tokenization.html#acknowledge-self-closing-flag
 }
 
 void HTMLTreeBuilder::insertCharacter(UChar cc)

@@ -173,9 +173,12 @@ private:
     void processDefaultForInHeadNoscriptMode(AtomicHTMLToken&);
     void processDefaultForAfterHeadMode(AtomicHTMLToken&);
 
+    bool processStartTagForInHead(AtomicHTMLToken&);
+
     void insertDoctype(AtomicHTMLToken&);
     void insertComment(AtomicHTMLToken&);
     void insertElement(AtomicHTMLToken&);
+    void insertSelfClosingElement(AtomicHTMLToken&);
     void insertCharacter(UChar cc);
     void insertGenericRCDATAElement(AtomicHTMLToken&);
     void insertGenericRawTextElement(AtomicHTMLToken&);

@@ -2,6 +2,26 @@
 
         Reviewed by Eric Seidel.
 
+        Implement remaining StartTag processing for InHeadNoscriptMode
+        https://bugs.webkit.org/show_bug.cgi?id=41264
+
+        The InHeadNoscriptMode processes some start tags "as if" the tree
+        builder were in the InHeadMode.  This is an idiom we'll see more of
+        later.  My approach is this patch is to factor all the logic for
+        processing start tags in the InHeadMode into a separate function that
+        can be called from both locations.  This seems cleaner than just
+        splitting out the parts that are actually used by both modes.
+
+        * html/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::processStartTag):
+        (WebCore::HTMLTreeBuilder::processStartTagForInHead):
+        (WebCore::HTMLTreeBuilder::insertSelfClosingElement):
+        * html/HTMLTreeBuilder.h:
+
+2010-06-27  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         Add support for <title> and <style> elements
         https://bugs.webkit.org/show_bug.cgi?id=41263
 
