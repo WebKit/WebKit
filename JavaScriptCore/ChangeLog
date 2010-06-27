@@ -1,3 +1,15 @@
+2010-06-27  Kwang Yul Seo  <skyul@company100.net>
+
+        Reviewed by Kent Tamura.
+
+        [BREWMP] Turn ENABLE(SINGLE_THREADED) on.
+        https://bugs.webkit.org/show_bug.cgi?id=41135
+
+        Brew MP does not support preemptive multi-threading.
+        Disable threading for Brew MP.
+
+        * wtf/Platform.h:
+
 2010-06-26  Tony Gentilcore  <tonyg@chromium.org>
 
         Reviewed by Dimitri Glazkov.

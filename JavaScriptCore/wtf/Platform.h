@@ -615,6 +615,10 @@
 #define WTF_USE_CARBON_SECURE_INPUT_MODE 1
 #endif
 
+#if PLATFORM(BREWMP)
+#define ENABLE_SINGLE_THREADED 1
+#endif
+
 #if PLATFORM(QT) && OS(DARWIN)
 #define WTF_PLATFORM_CF 1
 #endif
