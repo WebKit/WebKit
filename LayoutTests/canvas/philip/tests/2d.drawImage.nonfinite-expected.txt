@@ -5,5 +5,5 @@ References: 2d.nonfinite
 Actual output:
 Expected output:
 
-Aborted with exception: INDEX_SIZE_ERR: DOM Exception 1
+Passed
 

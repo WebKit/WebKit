@@ -1017,6 +1017,10 @@ void CanvasRenderingContext2D::drawImage(HTMLImageElement* image, const FloatRec
 
     ec = 0;
 
+    if (!isfinite(dstRect.x()) || !isfinite(dstRect.y()) || !isfinite(dstRect.width()) || !isfinite(dstRect.height())
+        || !isfinite(srcRect.x()) || !isfinite(srcRect.y()) || !isfinite(srcRect.width()) || !isfinite(srcRect.height()))
+        return;
+
     FloatRect imageRect = FloatRect(FloatPoint(), size(image));
     if (!imageRect.contains(normalizeRect(srcRect)) || srcRect.width() == 0 || srcRect.height() == 0) {
         ec = INDEX_SIZE_ERR;
