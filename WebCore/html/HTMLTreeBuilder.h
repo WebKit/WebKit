@@ -30,6 +30,7 @@
 #include "HTMLTokenizer.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/OwnPtr.h>
+#include <wtf/PassOwnPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/unicode/Unicode.h>
@@ -99,12 +100,58 @@ private:
         AfterAfterFramesetMode,
     };
 
+    class ElementRecord : public Noncopyable {
+    public:
+        ElementRecord(PassRefPtr<Element> element, PassOwnPtr<ElementRecord> next)
+            : m_element(element)
+            , m_next(next)
+        {
+        }
+
+        Element* element() const { return m_element.get(); }
+        ElementRecord* next() const { return m_next.get(); }
+        PassOwnPtr<ElementRecord> releaseNext() { return m_next.release(); }
+        void setNext(PassOwnPtr<ElementRecord> next) { m_next = next; }
+
+    private:
+        RefPtr<Element> m_element;
+        OwnPtr<ElementRecord> m_next;
+    };
+
     class ElementStack : public Noncopyable {
     public:
-        void pop() { }
-        void push(PassRefPtr<Element>) { }
-        void remove(Element*) { }
-        Element* top() const { return 0; }
+        void pop()
+        {
+            m_top = m_top->releaseNext();
+        }
+
+        void push(PassRefPtr<Element> element)
+        {
+            m_top.set(new ElementRecord(element, m_top.release()));
+        }
+
+        Element* top() const
+        {
+            return m_top->element();
+        }
+
+        void remove(Element* element)
+        {
+            if (m_top->element() == element) {
+                pop();
+                return;
+            }
+            ElementRecord* pos = m_top.get();
+            while (pos->next()) {
+                if (pos->next()->element() == element) {
+                    pos->setNext(pos->next()->releaseNext());
+                    return;
+                }
+            }
+        }
+
+    private:
+        OwnPtr<ElementRecord> m_top;
     };
 
     void passTokenToLegacyParser(HTMLToken&);
@@ -128,7 +175,7 @@ private:
 
     void insertDoctype(AtomicHTMLToken&);
     void insertComment(AtomicHTMLToken&);
-    PassRefPtr<Element> insertElement(AtomicHTMLToken&);
+    void insertElement(AtomicHTMLToken&);
     void insertCharacter(UChar cc);
     void insertGenericRCDATAElement(AtomicHTMLToken&);
     void insertGenericRawTextElement(AtomicHTMLToken&);
@@ -136,6 +183,8 @@ private:
 
     void insertHTMLStartTagBeforeHTML(AtomicHTMLToken&);
     void insertHTMLStartTagInBody(AtomicHTMLToken&);
+
+    Element* currentElement() { return m_openElements.top(); }
 
     RefPtr<Element> m_headElement;
     ElementStack m_openElements;
@@ -157,6 +206,7 @@ private:
     bool m_isPaused;
 
     InsertionMode m_insertionMode;
+    InsertionMode m_originalInsertionMode;
 
     // HTML5 spec requires that we be able to change the state of the tokenizer
     // from within parser actions.

@@ -26,9 +26,12 @@
 #include "config.h"
 #include "HTMLTreeBuilder.h"
 
+#include "Comment.h"
 #include "DocumentFragment.h"
 #include "Element.h"
 #include "Frame.h"
+#include "HTMLElementFactory.h"
+#include "HTMLScriptElement.h"
 #include "HTMLTokenizer.h"
 #include "HTMLToken.h"
 #include "HTMLDocument.h"
@@ -38,6 +41,7 @@
 #include "LegacyHTMLTreeBuilder.h"
 #include "NotImplemented.h"
 #include "ScriptController.h"
+#include "Text.h"
 #include <wtf/UnusedParam.h>
 
 namespace WebCore {
@@ -61,6 +65,7 @@ HTMLTreeBuilder::HTMLTreeBuilder(HTMLTokenizer* tokenizer, HTMLDocument* documen
     , m_reportErrors(reportErrors)
     , m_isPaused(false)
     , m_insertionMode(InitialMode)
+    , m_originalInsertionMode(InitialMode)
     , m_tokenizer(tokenizer)
     , m_legacyTreeBuilder(new LegacyHTMLTreeBuilder(document, reportErrors))
     , m_lastScriptElementStartLine(uninitializedLineNumberValue)
@@ -77,6 +82,7 @@ HTMLTreeBuilder::HTMLTreeBuilder(HTMLTokenizer* tokenizer, DocumentFragment* fra
     , m_reportErrors(false) // FIXME: Why not report errors in fragments?
     , m_isPaused(false)
     , m_insertionMode(InitialMode)
+    , m_originalInsertionMode(InitialMode)
     , m_tokenizer(tokenizer)
     , m_legacyTreeBuilder(new LegacyHTMLTreeBuilder(fragment, scriptingPermission))
     , m_lastScriptElementStartLine(uninitializedLineNumberValue)
@@ -301,7 +307,8 @@ void HTMLTreeBuilder::processStartTag(AtomicHTMLToken& token)
             return;
         }
         if (token.name() == headTag) {
-            m_headElement = insertElement(token);
+            insertElement(token);
+            m_headElement = currentElement();
             setInsertionMode(InHeadMode);
             return;
         }
@@ -460,9 +467,9 @@ void HTMLTreeBuilder::processEndTag(AtomicHTMLToken& token)
     case InHeadNoscriptMode:
         ASSERT(insertionMode() == InHeadNoscriptMode);
         if (token.name() == noscriptTag) {
-            ASSERT(m_openElements.top()->tagQName() == noscriptTag);
+            ASSERT(currentElement()->tagQName() == noscriptTag);
             m_openElements.pop();
-            ASSERT(m_openElements.top()->tagQName() == headTag);
+            ASSERT(currentElement()->tagQName() == headTag);
             setInsertionMode(InHeadMode);
             return;
         }
@@ -472,6 +479,18 @@ void HTMLTreeBuilder::processEndTag(AtomicHTMLToken& token)
         }
         processDefaultForInHeadNoscriptMode(token);
         processToken(token);
+    case TextMode:
+        if (token.name() == scriptTag) {
+            // Pause ourselves so that parsing stops until the script can be processed by the caller.
+            m_isPaused = true;
+            ASSERT(currentElement()->tagQName() == scriptTag);
+            m_scriptToProcess = currentElement();
+            m_openElements.pop();
+            m_insertionMode = m_originalInsertionMode;
+            return;
+        }
+        notImplemented();
+        break;
     default:
         notImplemented();
     }
@@ -486,8 +505,12 @@ void HTMLTreeBuilder::processComment(AtomicHTMLToken& token)
     insertComment(token);
 }
 
-void HTMLTreeBuilder::processCharacter(AtomicHTMLToken&)
+void HTMLTreeBuilder::processCharacter(AtomicHTMLToken& token)
 {
+    if (insertionMode() == TextMode) {
+        currentElement()->addChild(Text::create(m_document, token.characters()));
+        return;
+    }
     // FIXME: We need to figure out how to handle each character individually.
     notImplemented();
 }
@@ -574,13 +597,17 @@ void HTMLTreeBuilder::insertDoctype(AtomicHTMLToken& token)
 
 void HTMLTreeBuilder::insertComment(AtomicHTMLToken& token)
 {
-    ASSERT_UNUSED(token, token.type() == HTMLToken::Comment);
+    ASSERT(token.type() == HTMLToken::Comment);
+    RefPtr<Node> element = Comment::create(m_document, token.comment());
+    currentElement()->addChild(element);
 }
 
-PassRefPtr<Element> HTMLTreeBuilder::insertElement(AtomicHTMLToken& token)
+void HTMLTreeBuilder::insertElement(AtomicHTMLToken& token)
 {
-    ASSERT_UNUSED(token, token.type() == HTMLToken::StartTag);
-    return 0;
+    ASSERT(token.type() == HTMLToken::StartTag);
+    RefPtr<Element> element = HTMLElementFactory::createHTMLElement(QualifiedName(nullAtom, token.name(), xhtmlNamespaceURI), m_document, 0);
+    currentElement()->addChild(element);
+    m_openElements.push(element.release());
 }
 
 void HTMLTreeBuilder::insertCharacter(UChar cc)
@@ -601,6 +628,12 @@ void HTMLTreeBuilder::insertGenericRawTextElement(AtomicHTMLToken& token)
 void HTMLTreeBuilder::insertScriptElement(AtomicHTMLToken& token)
 {
     ASSERT_UNUSED(token, token.type() == HTMLToken::StartTag);
+    RefPtr<HTMLScriptElement> element = HTMLScriptElement::create(scriptTag, m_document, true);
+    currentElement()->addChild(element);
+    m_openElements.push(element.release());
+    m_tokenizer->setState(HTMLTokenizer::ScriptDataState);
+    m_originalInsertionMode = m_insertionMode;
+    m_insertionMode = TextMode;
 }
 
 void HTMLTreeBuilder::finished()
