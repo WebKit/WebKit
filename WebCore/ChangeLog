@@ -1,3 +1,27 @@
+2010-06-27  Andreas Kling  <andreas.kling@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        editing/execCommand/copy-without-selection.html fails on Qt after r61637
+        https://bugs.webkit.org/show_bug.cgi?id=41025
+
+        The problem was that when getting data back via Clipboard::getData(),
+        the String::String(const char*, int) constructor was called
+        with UTF-16 data.
+
+        The solution is to use QMimeData's text() and setText() for "text/plain".
+
+        setText() which makes sure Qt passes the string in proper format to the
+        system clipboard. (The previous implementation would convert it to UTF-8)
+
+        text() makes sure that the correct encoding is used (UTF-16) and that
+        we get back whatever we originally put in there.
+
+        * platform/qt/ClipboardQt.cpp:
+        (WebCore::isTextMimeType):
+        (WebCore::ClipboardQt::getData):
+        (WebCore::ClipboardQt::setData):
+
 2010-06-27  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

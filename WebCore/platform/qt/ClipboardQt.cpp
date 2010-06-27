@@ -57,6 +57,11 @@
 
 namespace WebCore {
 
+static bool isTextMimeType(const String& type)
+{
+    return type == "text/plain" || type.startsWith("text/plain;");
+}
+
 ClipboardQt::ClipboardQt(ClipboardAccessPolicy policy, const QMimeData* readableClipboard)
     : Clipboard(policy, true)
     , m_readableData(readableClipboard)
@@ -130,10 +135,15 @@ String ClipboardQt::getData(const String& type, bool& success) const
         return String();
     }
 
+    if (isTextMimeType(type) && m_readableData->hasText()) {
+        success = true;
+        return m_readableData->text();
+    }
+
     ASSERT(m_readableData);
     QByteArray data = m_readableData->data(QString(type));
     success = !data.isEmpty();
-    return String(data.data(), data.size());
+    return String(data.constData(), data.size());
 }
 
 bool ClipboardQt::setData(const String& type, const String& data)
@@ -143,9 +153,14 @@ bool ClipboardQt::setData(const String& type, const String& data)
 
     if (!m_writableData)
         m_writableData = new QMimeData;
-    QByteArray array(reinterpret_cast<const char*>(data.characters()),
-                     data.length()*2);
-    m_writableData->setData(QString(type), array);
+
+    if (isTextMimeType(type))
+        m_writableData->setText(QString(data));
+    else {
+        QByteArray array(reinterpret_cast<const char*>(data.characters()), data.length() * 2);
+        m_writableData->setData(QString(type), array);
+    }
+
 #ifndef QT_NO_CLIPBOARD
     if (!isForDragging())
         QApplication::clipboard()->setMimeData(m_writableData);
