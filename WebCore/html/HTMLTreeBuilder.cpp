@@ -28,6 +28,7 @@
 
 #include "Comment.h"
 #include "DocumentFragment.h"
+#include "DocumentType.h"
 #include "Element.h"
 #include "Frame.h"
 #include "HTMLElementFactory.h"
@@ -592,7 +593,12 @@ void HTMLTreeBuilder::processDefaultForAfterHeadMode(AtomicHTMLToken&)
 
 void HTMLTreeBuilder::insertDoctype(AtomicHTMLToken& token)
 {
-    ASSERT_UNUSED(token, token.type() == HTMLToken::DOCTYPE);
+    ASSERT(token.type() == HTMLToken::DOCTYPE);
+    m_document->addChild(DocumentType::create(m_document, token.name(), String::adopt(token.publicIdentifier()), String::adopt(token.systemIdentifier())));
+    // FIXME: Move quirks mode detection from DocumentType element to here.
+    notImplemented();
+    if (token.forceQuirks())
+        m_document->setParseMode(Document::Compat);
 }
 
 void HTMLTreeBuilder::insertComment(AtomicHTMLToken& token)

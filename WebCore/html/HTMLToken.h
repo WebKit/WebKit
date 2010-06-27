@@ -361,14 +361,14 @@ public:
     }
 
     // FIXME: Distinguish between a missing public identifer and an empty one.
-    const WTF::Vector<UChar>& publicIdentifier() const
+    WTF::Vector<UChar>& publicIdentifier() const
     {
         ASSERT(m_type == HTMLToken::DOCTYPE);
         return m_doctypeData->m_publicIdentifier;
     }
 
     // FIXME: Distinguish between a missing system identifer and an empty one.
-    const WTF::Vector<UChar>& systemIdentifier() const
+    WTF::Vector<UChar>& systemIdentifier() const
     {
         ASSERT(m_type == HTMLToken::DOCTYPE);
         return m_doctypeData->m_systemIdentifier;
