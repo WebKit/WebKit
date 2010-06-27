@@ -2134,7 +2134,7 @@ BUG25616 WIN : fast/overflow/overflow-float-stacking.html = FAIL
 BUG21958 MAC : svg/hixie/error/012.xml = FAIL
 
 // WebKit merge 48500:48585, newly implemented Object.defineProperty.
-BUG22526 : fast/js/Object-create.html = FAIL
+BUG22526 WIN MAC: fast/js/Object-create.html = FAIL
 BUG22526 : fast/js/Object-defineProperties.html = FAIL
 BUG22526 : fast/js/Object-defineProperty.html = FAIL
 BUG22526 : http/tests/security/xss-DENIED-defineProperty.html = FAIL
@@ -2896,3 +2896,6 @@ BUG_HCLAM : inspector/debugger-pause-in-eval-script.html = TIMEOUT CRASH FAIL PA
 
 // Added in WebKit r61941
 BUG47611 LINUX : fast/events/popup-when-select-change.html = TIMEOUT
+
+// First noticed on trybots after r61836, now in the tree.
+BUG_MNAGANOV LINUX : fast/js/Object-create.html = CRASH FAIL
