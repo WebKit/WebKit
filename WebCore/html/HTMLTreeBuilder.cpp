@@ -480,6 +480,7 @@ void HTMLTreeBuilder::processEndTag(AtomicHTMLToken& token)
         }
         processDefaultForInHeadNoscriptMode(token);
         processToken(token);
+        break;
     case TextMode:
         if (token.name() == scriptTag) {
             // Pause ourselves so that parsing stops until the script can be processed by the caller.
@@ -490,7 +491,8 @@ void HTMLTreeBuilder::processEndTag(AtomicHTMLToken& token)
             m_insertionMode = m_originalInsertionMode;
             return;
         }
-        notImplemented();
+        m_openElements.pop();
+        m_insertionMode = m_originalInsertionMode;
         break;
     default:
         notImplemented();
@@ -623,12 +625,20 @@ void HTMLTreeBuilder::insertCharacter(UChar cc)
 
 void HTMLTreeBuilder::insertGenericRCDATAElement(AtomicHTMLToken& token)
 {
-    ASSERT_UNUSED(token, token.type() == HTMLToken::StartTag);
+    ASSERT(token.type() == HTMLToken::StartTag);
+    insertElement(token);
+    m_tokenizer->setState(HTMLTokenizer::RCDATAState);
+    m_originalInsertionMode = m_insertionMode;
+    m_insertionMode = TextMode;
 }
 
 void HTMLTreeBuilder::insertGenericRawTextElement(AtomicHTMLToken& token)
 {
-    ASSERT_UNUSED(token, token.type() == HTMLToken::StartTag);
+    ASSERT(token.type() == HTMLToken::StartTag);
+    insertElement(token);
+    m_tokenizer->setState(HTMLTokenizer::RAWTEXTState);
+    m_originalInsertionMode = m_insertionMode;
+    m_insertionMode = TextMode;
 }
 
 void HTMLTreeBuilder::insertScriptElement(AtomicHTMLToken& token)
