@@ -2,6 +2,38 @@
 
         Reviewed by Eric Seidel.
 
+        Clean up some loose ends in HTML5 tree builder
+        https://bugs.webkit.org/show_bug.cgi?id=41265
+
+        This patch cleans up a few loose ends in HTML5 tree builder.
+        Technically, we could do each of these as individual patches, but that
+        didn't seem worth while.
+
+        * html/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::processStartTag):
+            - Add missing break before default case statement.  I don't think
+              this change is observable.
+        (WebCore::HTMLTreeBuilder::processComment):
+            - Originally I thought that comments had special processing in the
+              InHeadNoscriptMode, but it turns out that when you unwind the
+              definitions, it amounts to exactly the same thing.
+        (WebCore::HTMLTreeBuilder::processEndOfFile):
+            - Add missing break before default case statement.  I don't think
+              this change is observable.
+        (WebCore::HTMLTreeBuilder::insertComment):
+            - Eliminate one unnecessary ref/deref pair.
+        (WebCore::HTMLTreeBuilder::insertSelfClosingElement):
+            - When we insert self-closing elements, there's no reason to push
+              them onto the stack of open elements just to pop them off again.
+              This change saves a malloc/free pair as well as a ref/deref pair.
+              Go team.
+        * html/HTMLTreeBuilder.h:
+            - Remove unused function.
+
+2010-06-27  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         Implement remaining StartTag processing for InHeadNoscriptMode
         https://bugs.webkit.org/show_bug.cgi?id=41264
 

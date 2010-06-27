@@ -179,13 +179,14 @@ private:
     void insertComment(AtomicHTMLToken&);
     void insertElement(AtomicHTMLToken&);
     void insertSelfClosingElement(AtomicHTMLToken&);
-    void insertCharacter(UChar cc);
     void insertGenericRCDATAElement(AtomicHTMLToken&);
     void insertGenericRawTextElement(AtomicHTMLToken&);
     void insertScriptElement(AtomicHTMLToken&);
 
     void insertHTMLStartTagBeforeHTML(AtomicHTMLToken&);
     void insertHTMLStartTagInBody(AtomicHTMLToken&);
+
+    PassRefPtr<Element> createElement(AtomicHTMLToken&);
 
     Element* currentElement() { return m_openElements.top(); }
 

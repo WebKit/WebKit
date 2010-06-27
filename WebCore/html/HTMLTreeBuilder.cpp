@@ -372,6 +372,7 @@ void HTMLTreeBuilder::processStartTag(AtomicHTMLToken& token)
         }
         processDefaultForInHeadNoscriptMode(token);
         processToken(token);
+        break;
     default:
         notImplemented();
     }
@@ -462,10 +463,6 @@ void HTMLTreeBuilder::processEndTag(AtomicHTMLToken& token)
 
 void HTMLTreeBuilder::processComment(AtomicHTMLToken& token)
 {
-    if (insertionMode() == InHeadNoscriptMode) {
-        notImplemented();
-        return;
-    }
     insertComment(token);
 }
 
@@ -510,6 +507,7 @@ void HTMLTreeBuilder::processEndOfFile(AtomicHTMLToken& token)
         ASSERT(insertionMode() == InHeadNoscriptMode);
         processDefaultForInHeadNoscriptMode(token);
         processToken(token);
+        break;
     default:
         notImplemented();
     }
@@ -607,14 +605,13 @@ void HTMLTreeBuilder::insertDoctype(AtomicHTMLToken& token)
 void HTMLTreeBuilder::insertComment(AtomicHTMLToken& token)
 {
     ASSERT(token.type() == HTMLToken::Comment);
-    RefPtr<Node> element = Comment::create(m_document, token.comment());
-    currentElement()->addChild(element);
+    currentElement()->addChild(Comment::create(m_document, token.comment()));
 }
 
 void HTMLTreeBuilder::insertElement(AtomicHTMLToken& token)
 {
     ASSERT(token.type() == HTMLToken::StartTag);
-    RefPtr<Element> element = HTMLElementFactory::createHTMLElement(QualifiedName(nullAtom, token.name(), xhtmlNamespaceURI), m_document, 0);
+    RefPtr<Element> element = createElement(token);
     currentElement()->addChild(element);
     m_openElements.push(element.release());
 }
@@ -622,15 +619,9 @@ void HTMLTreeBuilder::insertElement(AtomicHTMLToken& token)
 void HTMLTreeBuilder::insertSelfClosingElement(AtomicHTMLToken& token)
 {
     ASSERT(token.type() == HTMLToken::StartTag);
-    insertElement(token);
-    m_openElements.pop();
+    currentElement()->addChild(createElement(token));
     // FIXME: Do we want to acknowledge the token's self-closing flag?
     // http://www.whatwg.org/specs/web-apps/current-work/multipage/tokenization.html#acknowledge-self-closing-flag
-}
-
-void HTMLTreeBuilder::insertCharacter(UChar cc)
-{
-    ASSERT_UNUSED(cc, cc);
 }
 
 void HTMLTreeBuilder::insertGenericRCDATAElement(AtomicHTMLToken& token)
@@ -660,6 +651,11 @@ void HTMLTreeBuilder::insertScriptElement(AtomicHTMLToken& token)
     m_tokenizer->setState(HTMLTokenizer::ScriptDataState);
     m_originalInsertionMode = m_insertionMode;
     m_insertionMode = TextMode;
+}
+
+PassRefPtr<Element> HTMLTreeBuilder::createElement(AtomicHTMLToken& token)
+{
+    return HTMLElementFactory::createHTMLElement(QualifiedName(nullAtom, token.name(), xhtmlNamespaceURI), m_document, 0);
 }
 
 void HTMLTreeBuilder::finished()
