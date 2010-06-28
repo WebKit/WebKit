@@ -504,7 +504,7 @@ EOF
     my ${listenerName} = $domSignalName . "Listener";
 
     my $txtInstallEventListener = << "EOF";
-    RefPtr<WebCore::GObjectEventListener> ${listenerName} = WebCore::GObjectEventListener::create(reinterpret_cast<GObject*>(wrapper), "${gobjectSignalName}");
+    RefPtr<WebCore::GObjectEventListener> ${listenerName} = WebCore::GObjectEventListener::create(reinterpret_cast<GObject*>(object), "${gobjectSignalName}");
     coreObject->addEventListener("${domSignalName}", ${listenerName}, false);
 EOF
     push(@txtInstallEventListeners, $txtInstallEventListener);
@@ -625,12 +625,31 @@ static void ${lowerCaseIfaceName}_finalize(GObject* object)
 
 @txtGetProps
 
+static void ${lowerCaseIfaceName}_constructed(GObject* object)
+{
+EOF
+    push(@cBodyPriv, $implContent);
+
+    if (scalar @txtInstallEventListeners > 0) {
+        $implContent = << "EOF";
+    WebCore::${interfaceName}* coreObject = static_cast<WebCore::${interfaceName}*>(WEBKIT_DOM_OBJECT(object)->coreObject);
+EOF
+    push(@cBodyPriv, $implContent);
+    }
+
+    $implContent = << "EOF";
+@txtInstallEventListeners
+    if (G_OBJECT_CLASS(${lowerCaseIfaceName}_parent_class)->constructed)
+        G_OBJECT_CLASS(${lowerCaseIfaceName}_parent_class)->constructed(object);
+}
+
 static void ${lowerCaseIfaceName}_class_init(${className}Class* requestClass)
 {
     GObjectClass *gobjectClass = G_OBJECT_CLASS(requestClass);
     gobjectClass->finalize = ${lowerCaseIfaceName}_finalize;
     gobjectClass->set_property = ${lowerCaseIfaceName}_set_property;
     gobjectClass->get_property = ${lowerCaseIfaceName}_get_property;
+    gobjectClass->constructed = ${lowerCaseIfaceName}_constructed;
 
 @txtInstallProps
 @txtInstallSignals
@@ -1101,20 +1120,15 @@ namespace WebKit {
 ${className}* wrap${interfaceName}(WebCore::${interfaceName}* coreObject)
 {
     g_return_val_if_fail(coreObject, 0);
-    
-    ${className}* wrapper = WEBKIT_DOM_${clsCaps}(g_object_new(WEBKIT_TYPE_DOM_${clsCaps}, NULL));
-    g_return_val_if_fail(wrapper, 0);
 
     /* We call ref() rather than using a C++ smart pointer because we can't store a C++ object
      * in a C-allocated GObject structure.  See the finalize() code for the
      * matching deref().
      */
-
     coreObject->ref();
-    WEBKIT_DOM_OBJECT(wrapper)->coreObject = coreObject;
-@txtInstallEventListeners
 
-    return wrapper;
+    return  WEBKIT_DOM_${clsCaps}(g_object_new(WEBKIT_TYPE_DOM_${clsCaps},
+                                               "core-object", coreObject, NULL));
 }
 } // namespace WebKit
 EOF

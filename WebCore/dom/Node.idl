@@ -134,7 +134,6 @@ module core {
 
 #if !defined(LANGUAGE_CPP) || !LANGUAGE_CPP
 #if !defined(LANGUAGE_OBJECTIVE_C) || !LANGUAGE_OBJECTIVE_C
-#if !defined(LANGUAGE_GOBJECT) || !LANGUAGE_GOBJECT
         void addEventListener(in DOMString type, 
                               in EventListener listener, 
                               in boolean useCapture);
@@ -143,7 +142,6 @@ module core {
                                  in boolean useCapture);
         boolean dispatchEvent(in Event event)
             raises(EventException);
-#endif
 #endif
 #endif
 

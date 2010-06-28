@@ -1,5 +1,30 @@
 2010-06-28  Xan Lopez  <xlopez@igalia.com>
 
+        Reviewed by Gustavo Noronha.
+
+        Until now we were adding the event listeners for a given object in
+        the wrap method, since that's the first moment we have accoss to
+        the core WebCore object. The problem is that we only install the
+        listeners that the topmost class in the class hierarchy needs (eg,
+        HTMLParagrahElement for a P element), when most of the actual
+        event attributes are defined in the base classes (Node, Element,
+        ...).
+
+        To fix this set the core object as a construct/write-only property
+        on the wrapper GObject, and set the eventlisteners in the cGObject
+        'construct' method, chaining up through all the class hierarchy
+        until the end. This way we'll get all the eventlisteners defined
+        in all the superclasses of our object, which is what we want.
+
+        * bindings/gobject/WebKitDOMObject.cpp:
+        (webkit_dom_object_get_property):
+        (webkit_dom_object_set_property):
+        (webkit_dom_object_class_init):
+        * bindings/scripts/CodeGeneratorGObject.pm:
+        * dom/Node.idl:
+
+2010-06-28  Xan Lopez  <xlopez@igalia.com>
+
         Fix GTK+ build.
 
         * platform/gtk/RenderThemeGtk.cpp:
