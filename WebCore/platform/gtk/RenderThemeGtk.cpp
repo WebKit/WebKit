@@ -29,6 +29,7 @@
 #include "GOwnPtr.h"
 #include "Gradient.h"
 #include "GraphicsContext.h"
+#include "GtkVersioning.h"
 #include "HTMLMediaElement.h"
 #include "HTMLNames.h"
 #include "MediaControlElements.h"

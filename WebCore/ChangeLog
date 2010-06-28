@@ -1,5 +1,11 @@
 2010-06-28  Xan Lopez  <xlopez@igalia.com>
 
+        Fix GTK+ build.
+
+        * platform/gtk/RenderThemeGtk.cpp:
+
+2010-06-28  Xan Lopez  <xlopez@igalia.com>
+
         Reviewed by Gustavo Noronha.
 
         [GTK] Does not compile with -DGSEAL_ENABLE
