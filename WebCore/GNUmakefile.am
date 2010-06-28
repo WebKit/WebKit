@@ -4238,7 +4238,8 @@ webcore_dist += \
 	WebCore/html/HTMLAttributeNames.in \
 	WebCore/xml/xmlattrs.in \
 	WebCore/xml/xmlnsattrs.in \
-	WebCore/xml/XPathGrammar.y
+	WebCore/xml/XPathGrammar.y \
+	WebCore/make-hash-tools.pl
 
 # Installing web inspector files
 webinspectordir = ${datadir}/webkit-@WEBKITGTK_API_VERSION@/webinspector

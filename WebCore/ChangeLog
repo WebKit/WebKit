@@ -1,3 +1,9 @@
+2010-06-28  Xan Lopez  <xlopez@igalia.com>
+
+        Fix distcheck.
+
+        * GNUmakefile.am:
+
 2010-06-28  Kenneth Russell  <kbr@google.com>
 
         Reviewed by Dimitri Glazkov.
