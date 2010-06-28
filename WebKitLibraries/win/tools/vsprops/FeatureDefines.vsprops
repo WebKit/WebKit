@@ -188,7 +188,7 @@
 	/>
   <UserMacro
 		Name="ENABLE_WEB_TIMING"
-		Value="ENABLE_WEB_TIMING"
+		Value=""
 		PerformEnvironmentSet="true"
 	/>
   <UserMacro
