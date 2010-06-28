@@ -28,10 +28,10 @@
 #include "PlatformWebView.h"
 #include "TestController.h"
 #include <WebKit2/WKContextPrivate.h>
-#include <WebKit2/WKPagePrivate.h>
 #include <WebKit2/WKRetainPtr.h>
 #include <WebKit2/WKStringCF.h>
 #include <WebKit2/WKURLCF.h>
+#include <wtf/Vector.h>
 #include <wtf/RetainPtr.h>
 
 using namespace WebKit;
@@ -49,12 +49,24 @@ static WKURLRef createWKURL(const char* pathOrURL)
     return WKURLCreateWithCFURL(cfURL.get());
 }
 
+static std::auto_ptr<Vector<char> > WKStringToUTF8(WKStringRef wkStringRef)
+{
+    RetainPtr<CFStringRef> cfString(AdoptCF, WKStringCopyCFString(0, wkStringRef));
+    CFIndex bufferLength = CFStringGetMaximumSizeForEncoding(CFStringGetLength(cfString.get()), kCFStringEncodingUTF8) + 1;
+    std::auto_ptr<Vector<char> > buffer(new Vector<char>(bufferLength));
+    if (!CFStringGetCString(cfString.get(), buffer->data(), bufferLength, kCFStringEncodingUTF8)) {
+        buffer->shrink(1);
+        (*buffer)[0] = 0;
+    } else
+        buffer->shrink(strlen(buffer->data()) + 1);
+    return buffer;
+}
+
 TestInvocation::TestInvocation(const char* pathOrURL)
     : m_url(AdoptWK, createWKURL(pathOrURL))
     , m_mainWebView(0)
-    , m_loadDone(false)
-    , m_renderTreeFetchDone(false)
-    , m_failed(false)
+    , m_gotInitialResponse(false)
+    , m_gotFinalMessage(false)
 {
 }
 
@@ -68,14 +80,14 @@ void TestInvocation::invoke()
 {
     initializeMainWebView();
 
+    WKRetainPtr<WKStringRef> message(AdoptWK, WKStringCreateWithCFString(CFSTR("InitialPageCreated")));
+    WKContextPostMessageToInjectedBundle(m_context.get(), message.get());
+
+    runUntil(m_gotInitialResponse);
+ 
     WKPageLoadURL(m_mainWebView->page(), m_url.get());
-    runUntil(m_loadDone);
 
-    if (m_failed)
-        return;
-
-    WKPageRenderTreeExternalRepresentation(m_mainWebView->page(), this, renderTreeExternalRepresentationFunction, renderTreeExternalRepresentationDisposeFunction);
-    runUntil(m_renderTreeFetchDone);
+    runUntil(m_gotFinalMessage);
 }
 
 void TestInvocation::dump(const char* stringToDump)
@@ -93,85 +105,38 @@ void TestInvocation::dump(const char* stringToDump)
 
 void TestInvocation::initializeMainWebView()
 {
-    WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreateWithInjectedBundlePath(TestController::shared().injectedBundlePath()));
-    WKRetainPtr<WKPageNamespaceRef> pageNamespace(AdoptWK, WKPageNamespaceCreate(context.get()));
-    m_mainWebView = new PlatformWebView(pageNamespace.get());
+    m_context.adopt(WKContextCreateWithInjectedBundlePath(TestController::shared().injectedBundlePath()));
 
-    WKPageLoaderClient loaderClient = { 
+    WKContextInjectedBundleClient injectedBundlePathClient = {
         0,
         this,
-        didStartProvisionalLoadForFrame,
-        didReceiveServerRedirectForProvisionalLoadForFrame,
-        didFailProvisionalLoadWithErrorForFrame,
-        didCommitLoadForFrame,
-        didFinishLoadForFrame,
-        didFailLoadForFrame,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0
+        _didRecieveMessageFromInjectedBundle
     };
-    WKPageSetPageLoaderClient(m_mainWebView->page(), &loaderClient);
+    WKContextSetInjectedBundleClient(m_context.get(), &injectedBundlePathClient);
+
+    m_pageNamespace.adopt(WKPageNamespaceCreate(m_context.get()));
+    m_mainWebView = new PlatformWebView(m_pageNamespace.get());
 }
 
-void TestInvocation::didStartProvisionalLoadForFrame(WKPageRef page, WKFrameRef frame, const void* clientInfo)
+// WKContextInjectedBundleClient functions
+
+void TestInvocation::_didRecieveMessageFromInjectedBundle(WKContextRef context, WKStringRef message, const void *clientInfo)
 {
+    static_cast<TestInvocation*>(const_cast<void*>(clientInfo))->didRecieveMessageFromInjectedBundle(message);
 }
 
-void TestInvocation::didReceiveServerRedirectForProvisionalLoadForFrame(WKPageRef page, WKFrameRef frame, const void* clientInfo)
+void TestInvocation::didRecieveMessageFromInjectedBundle(WKStringRef message)
 {
-}
+    RetainPtr<CFStringRef> cfMessage(AdoptCF, WKStringCopyCFString(0, message));
+    if (CFEqual(cfMessage.get(), CFSTR("InitialPageCreatedAck"))) {
+        m_gotInitialResponse = true;
+        return;
+    }
 
-void TestInvocation::didFailProvisionalLoadWithErrorForFrame(WKPageRef page, WKFrameRef frame, const void* clientInfo)
-{
-    TestInvocation* self = reinterpret_cast<TestInvocation*>(const_cast<void*>(clientInfo));
-    self->m_loadDone = true;
-    self->m_failed = true;
-}
+    std::auto_ptr<Vector<char> > utf8Message = WKStringToUTF8(message);
 
-void TestInvocation::didCommitLoadForFrame(WKPageRef page, WKFrameRef frame, const void* clientInfo)
-{
-}
-
-void TestInvocation::didFinishLoadForFrame(WKPageRef page, WKFrameRef frame, const void* clientInfo)
-{
-    TestInvocation* self = reinterpret_cast<TestInvocation*>(const_cast<void*>(clientInfo));
-    self->m_loadDone = true;
-}
-
-void TestInvocation::didFailLoadForFrame(WKPageRef page, WKFrameRef frame, const void* clientInfo)
-{
-    TestInvocation* self = reinterpret_cast<TestInvocation*>(const_cast<void*>(clientInfo));
-
-    self->m_loadDone = true;
-    self->m_failed = true;
-}
-
-void TestInvocation::renderTreeExternalRepresentationFunction(WKStringRef wkResult, void* context)
-{
-    TestInvocation* self = reinterpret_cast<TestInvocation*>(context);
-
-    RetainPtr<CFStringRef> result(AdoptCF, WKStringCopyCFString(0, wkResult));
-    CFIndex bufferLength = CFStringGetMaximumSizeForEncoding(CFStringGetLength(result.get()), kCFStringEncodingUTF8) + 1;
-    char* buffer = (char*)malloc(bufferLength);
-    CFStringGetCString(result.get(), buffer, bufferLength, kCFStringEncodingUTF8);
-
-    self->dump(buffer);
-    free(buffer);
-
-    self->m_renderTreeFetchDone = true;
-}
-
-void TestInvocation::renderTreeExternalRepresentationDisposeFunction(void* context)
-{
-    TestInvocation* self = reinterpret_cast<TestInvocation*>(context);
-
-    self->m_renderTreeFetchDone = true;
-    self->m_failed = true;
+    dump(utf8Message->data());
+    m_gotFinalMessage = true;
 }
 
 } // namespace WTR

@@ -1,3 +1,32 @@
+2010-06-28  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Patch for https://bugs.webkit.org/show_bug.cgi?id=41299
+        Build up WebKitTestRunner output in the InjectedBundle
+
+        Simplify WebKitTestRunner by building up the output in the InjectedBundle
+        and sending it over postMessage when done, instead of using the async
+        WKPageRenderTreeExternalRepresentation.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::done):
+        (WTR::InjectedBundle::didRecieveMessage):
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.h:
+        (WTR::InjectedBundle::os):
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::WKStringToUTF8):
+        (WTR::InjectedBundlePage::didFinishLoadForFrame):
+        (WTR::InjectedBundlePage::didFailLoadWithErrorForFrame):
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::WKStringToUTF8):
+        (WTR::TestInvocation::TestInvocation):
+        (WTR::TestInvocation::invoke):
+        (WTR::TestInvocation::initializeMainWebView):
+        (WTR::TestInvocation::_didRecieveMessageFromInjectedBundle):
+        (WTR::TestInvocation::didRecieveMessageFromInjectedBundle):
+        * WebKitTestRunner/TestInvocation.h:
+
 2010-06-28  Robert Hogan  <robert@webkit.org>
 
         Unreviewed, rolling out r62021.

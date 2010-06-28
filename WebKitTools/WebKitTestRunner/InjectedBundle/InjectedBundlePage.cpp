@@ -26,6 +26,13 @@
 #include "InjectedBundlePage.h"
 
 #include "InjectedBundle.h"
+#include <WebKit2/WKBundleFrame.h>
+#include <WebKit2/WKBundlePagePrivate.h>
+#include <WebKit2/WKRetainPtr.h>
+#include <WebKit2/WKString.h>
+#include <WebKit2/WKStringCF.h>
+#include <wtf/RetainPtr.h>
+#include <wtf/Vector.h>
 
 namespace WTR {
 
@@ -107,12 +114,37 @@ void InjectedBundlePage::didCommitLoadForFrame(WKBundleFrameRef frame)
 {
 }
 
+static std::auto_ptr<Vector<char> > WKStringToUTF8(WKStringRef wkStringRef)
+{
+    RetainPtr<CFStringRef> cfString(AdoptCF, WKStringCopyCFString(0, wkStringRef));
+    CFIndex bufferLength = CFStringGetMaximumSizeForEncoding(CFStringGetLength(cfString.get()), kCFStringEncodingUTF8) + 1;
+    std::auto_ptr<Vector<char> > buffer(new Vector<char>(bufferLength));
+    if (!CFStringGetCString(cfString.get(), buffer->data(), bufferLength, kCFStringEncodingUTF8)) {
+        buffer->shrink(1);
+        (*buffer)[0] = 0;
+    } else
+        buffer->shrink(strlen(buffer->data()) + 1);
+    return buffer;
+}
+
 void InjectedBundlePage::didFinishLoadForFrame(WKBundleFrameRef frame)
 {
+    if (!WKBundleFrameIsMainFrame(frame))
+        return;
+
+    WKRetainPtr<WKStringRef> externalRepresentation(AdoptWK, WKBundlePageCopyRenderTreeExternalRepresentation(m_page));
+    std::auto_ptr<Vector<char> > utf8String = WKStringToUTF8(externalRepresentation.get());
+
+    InjectedBundle::shared().os() << utf8String->data();
+    InjectedBundle::shared().done();
 }
 
 void InjectedBundlePage::didFailLoadWithErrorForFrame(WKBundleFrameRef frame)
 {
+    if (!WKBundleFrameIsMainFrame(frame))
+        return;
+
+    InjectedBundle::shared().done();
 }
 
 void InjectedBundlePage::didReceiveTitleForFrame(WKStringRef title, WKBundleFrameRef frame)

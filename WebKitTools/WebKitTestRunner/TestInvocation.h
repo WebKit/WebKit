@@ -47,27 +47,20 @@ private:
     // Helper
     static void runUntil(bool& done);
 
-    // PageLoaderClient
-    static void didStartProvisionalLoadForFrame(WKPageRef page, WKFrameRef, const void*);
-    static void didReceiveServerRedirectForProvisionalLoadForFrame(WKPageRef, WKFrameRef, const void*);
-    static void didFailProvisionalLoadWithErrorForFrame(WKPageRef, WKFrameRef, const void*);
-    static void didCommitLoadForFrame(WKPageRef, WKFrameRef, const void*);
-    static void didFinishLoadForFrame(WKPageRef, WKFrameRef, const void*);
-    static void didFailLoadForFrame(WKPageRef, WKFrameRef, const void*);
-
-    // RenderTreeExternalRepresentation callbacks
-    static void renderTreeExternalRepresentationFunction(WKStringRef, void*);
-    static void renderTreeExternalRepresentationDisposeFunction(void*);
+    // WKContextInjectedBundleClient
+    static void _didRecieveMessageFromInjectedBundle(WKContextRef context, WKStringRef message, const void*);
+    void didRecieveMessageFromInjectedBundle(WKStringRef message);
 
     WKStringRef injectedBundlePath();
 
     WKRetainPtr<WKURLRef> m_url;
+    WKRetainPtr<WKContextRef> m_context;
+    WKRetainPtr<WKPageNamespaceRef> m_pageNamespace;
     PlatformWebView* m_mainWebView;
 
     // Invocation state
-    bool m_loadDone;
-    bool m_renderTreeFetchDone;
-    bool m_failed;
+    bool m_gotInitialResponse;
+    bool m_gotFinalMessage;
 };
 
 } // namespace WTR

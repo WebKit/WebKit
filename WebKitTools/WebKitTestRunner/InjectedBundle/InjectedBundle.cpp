@@ -28,6 +28,10 @@
 #include "InjectedBundlePage.h"
 #include <WebKit2/WKBundle.h>
 #include <WebKit2/WKBundlePage.h>
+#include <WebKit2/WKRetainPtr.h>
+#include <WebKit2/WKStringCF.h>
+#include <WebKit2/WebKit2.h>
+#include <wtf/RetainPtr.h>
 
 namespace WTR {
 
@@ -72,6 +76,14 @@ void InjectedBundle::initialize(WKBundleRef bundle)
     WKBundleSetClient(m_bundle, &client);
 }
 
+void InjectedBundle::done()
+{
+    std::string output = m_outputStream.str();
+    RetainPtr<CFStringRef> outputCFString(AdoptCF, CFStringCreateWithCString(0, output.c_str(), kCFStringEncodingUTF8));
+    WKRetainPtr<WKStringRef> doneMessage(AdoptWK, WKStringCreateWithCFString(outputCFString.get()));
+    WKBundlePostMessage(m_bundle, doneMessage.get());
+}
+
 void InjectedBundle::didCreatePage(WKBundlePageRef page)
 {
     m_pages.add(page, new InjectedBundlePage(page));
@@ -84,6 +96,17 @@ void InjectedBundle::willDestroyPage(WKBundlePageRef page)
 
 void InjectedBundle::didRecieveMessage(WKStringRef message)
 {
+    CFStringRef cfMessage = WKStringCopyCFString(0, message);
+    if (CFEqual(cfMessage, CFSTR("InitialPageCreated"))) {
+        if (m_pages.size() == 1) {
+            WKRetainPtr<WKStringRef> ackMessage(AdoptWK, WKStringCreateWithCFString(CFSTR("InitialPageCreatedAck")));
+            WKBundlePostMessage(m_bundle, ackMessage.get());
+            return;
+        }
+    }
+
+    WKRetainPtr<WKStringRef> errorMessage(AdoptWK, WKStringCreateWithCFString(CFSTR("Error")));
+    WKBundlePostMessage(m_bundle, errorMessage.get());
 }
 
 } // namespace WTR

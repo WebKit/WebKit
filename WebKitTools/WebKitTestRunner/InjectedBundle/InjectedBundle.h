@@ -32,6 +32,8 @@
 #include <wtf/HashMap.h>
 #include <wtf/RefPtr.h>
 
+#include <sstream>
+
 namespace WTR {
 
 class InjectedBundlePage;
@@ -43,7 +45,11 @@ public:
     // Initialize the InjectedBundle.
     void initialize(WKBundleRef);
 
+    void done();
+
     LayoutTestController* layoutTestController() { return m_layoutTestController.get(); }
+
+    std::ostringstream& os() { return m_outputStream; }
 
 private:
     InjectedBundle();
@@ -61,6 +67,8 @@ private:
     HashMap<WKBundlePageRef, InjectedBundlePage*> m_pages;
 
     RefPtr<LayoutTestController> m_layoutTestController;
+
+    std::ostringstream m_outputStream;
 };
 
 } // namespace WTR
