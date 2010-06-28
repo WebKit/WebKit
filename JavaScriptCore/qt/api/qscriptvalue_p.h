@@ -120,6 +120,9 @@ public:
     inline bool instanceOf(QScriptValuePrivate* other);
     inline bool assignEngine(QScriptEnginePrivate* engine);
 
+    inline QScriptValuePrivate* property(const QString& name, const QScriptValue::ResolveFlags& mode);
+    inline QScriptValuePrivate* property(quint32 arrayIndex, const QScriptValue::ResolveFlags& mode);
+
     inline QScriptValuePrivate* call(const QScriptValuePrivate* , const QScriptValueList& args);
 
     inline operator JSValueRef() const;
@@ -754,6 +757,35 @@ bool QScriptValuePrivate::assignEngine(QScriptEnginePrivate* engine)
     u.m_value = value;
     JSValueProtect(*m_engine, value);
     return true;
+}
+
+inline QScriptValuePrivate* QScriptValuePrivate::property(const QString& name, const QScriptValue::ResolveFlags& mode)
+{
+    if (!isObject())
+        return new QScriptValuePrivate;
+
+    if (mode & QScriptValue::ResolveLocal) {
+        qWarning("QScriptValue::property(): ResolveLocal not supported yet.");
+        return new QScriptValuePrivate;
+    }
+
+    JSRetainPtr<JSStringRef> nameRef(Adopt, QScriptConverter::toString(name));
+    QScriptValuePrivate* result = new QScriptValuePrivate(m_engine.constData(), JSObjectGetProperty(*m_engine, *this, nameRef.get(), /* exception */ 0));
+
+    return result;
+}
+
+inline QScriptValuePrivate* QScriptValuePrivate::property(quint32 arrayIndex, const QScriptValue::ResolveFlags& mode)
+{
+    if (!isObject())
+        return new QScriptValuePrivate;
+
+    if (mode & QScriptValue::ResolveLocal) {
+        qWarning("QScriptValue::property(): ResolveLocal not supported yet.");
+        return new QScriptValuePrivate;
+    }
+
+    return new QScriptValuePrivate(m_engine.constData(), JSObjectGetPropertyAtIndex(*m_engine, *this, arrayIndex, /* exception */ 0));
 }
 
 QScriptValuePrivate* QScriptValuePrivate::call(const QScriptValuePrivate*, const QScriptValueList& args)

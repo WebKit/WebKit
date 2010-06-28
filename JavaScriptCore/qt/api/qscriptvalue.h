@@ -32,7 +32,14 @@ typedef QList<QScriptValue> QScriptValueList;
 typedef double qsreal;
 
 class QScriptValue {
-public:    
+public:
+    enum ResolveFlag {
+        ResolveLocal     = 0x00,
+        ResolvePrototype = 0x01
+    };
+
+    Q_DECLARE_FLAGS(ResolveFlags, ResolveFlag)
+
     enum SpecialValue {
         NullValue,
         UndefinedValue
@@ -66,6 +73,9 @@ public:
     bool equals(const QScriptValue& other) const;
     bool strictlyEquals(const QScriptValue& other) const;
     bool instanceOf(const QScriptValue& other) const;
+
+    QScriptValue property(const QString& name, const ResolveFlags& mode = ResolvePrototype) const;
+    QScriptValue property(quint32 arrayIndex, const ResolveFlags& mode = ResolvePrototype) const;
 
     QScriptEngine* engine() const;
 

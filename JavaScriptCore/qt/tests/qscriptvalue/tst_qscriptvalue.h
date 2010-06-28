@@ -51,6 +51,7 @@ private slots:
     void call();
     void ctor();
     void toObjectSimple();
+    void propertySimple();
 
     // Generated test functions.
     void isBool_data();

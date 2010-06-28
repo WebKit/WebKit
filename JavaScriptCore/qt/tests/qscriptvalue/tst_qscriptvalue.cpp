@@ -580,4 +580,17 @@ void tst_QScriptValue::toObjectSimple()
     }
 }
 
+void tst_QScriptValue::propertySimple()
+{
+    QScriptEngine eng;
+
+    QScriptValue simpleObject(eng.evaluate("new Object({ test: 1, other: 2 })"));
+    QCOMPARE(simpleObject.property("test").toUInt32(), quint32(1));
+    QCOMPARE(simpleObject.property("other").toUInt32(), quint32(2));
+
+    QScriptValue simpleArray(eng.evaluate("new Array(7, 8, 9)"));
+    QCOMPARE(simpleArray.property("length").toUInt32(), quint32(3));
+    QCOMPARE(simpleArray.property(2).toUInt32(), quint32(9));
+}
+
 QTEST_MAIN(tst_QScriptValue)

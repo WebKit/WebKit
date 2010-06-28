@@ -627,3 +627,41 @@ bool QScriptValue::instanceOf(const QScriptValue& other) const
 {
     return d_ptr->instanceOf(QScriptValuePrivate::get(other));
 }
+
+/*!
+  Returns the value of this QScriptValue's property with the given \a name,
+  using the given \a mode to resolve the property.
+
+  If no such property exists, an invalid QScriptValue is returned.
+
+  If the property is implemented using a getter function (i.e. has the
+  PropertyGetter flag set), calling property() has side-effects on the
+  script engine, since the getter function will be called (possibly
+  resulting in an uncaught script exception). If an exception
+  occurred, property() returns the value that was thrown (typically
+  an \c{Error} object).
+
+  \sa setProperty(), propertyFlags(), QScriptValueIterator
+*/
+QScriptValue QScriptValue::property(const QString& name, const ResolveFlags& mode) const
+{
+    return QScriptValuePrivate::get(d_ptr->property(name, mode));
+}
+
+/*!
+  \overload
+
+  Returns the property at the given \a arrayIndex, using the given \a
+  mode to resolve the property.
+
+  This function is provided for convenience and performance when
+  working with array objects.
+
+  If this QScriptValue is not an Array object, this function behaves
+  as if property() was called with the string representation of \a
+  arrayIndex.
+*/
+QScriptValue QScriptValue::property(quint32 arrayIndex, const ResolveFlags& mode) const
+{
+    return QScriptValuePrivate::get(d_ptr->property(arrayIndex, mode));
+}
