@@ -1,5 +1,12 @@
 2010-06-28  Xan Lopez  <xlopez@igalia.com>
 
+        Fix build with GTK+ older than 2.18
+
+        * platform/gtk/ScrollViewGtk.cpp:
+        (WebCore::ScrollView::visibleContentRect):
+
+2010-06-28  Xan Lopez  <xlopez@igalia.com>
+
         Reviewed by Adam Barth.
 
         [GTK] Push NULL context on every DOM bindings entry point

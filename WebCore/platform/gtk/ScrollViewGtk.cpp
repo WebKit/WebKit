@@ -195,7 +195,7 @@ IntRect ScrollView::visibleContentRect(bool includeScrollbars) const
 #if GTK_CHECK_VERSION(2, 18, 0)
     gtk_widget_get_allocation(measuredWidget, &allocation);
 #else
-    allocation = widget->allocation;
+    allocation = measuredWidget->allocation;
 #endif
     return IntRect(IntPoint(m_scrollOffset.width(), m_scrollOffset.height()),
                    IntSize(allocation.width, allocation.height));
