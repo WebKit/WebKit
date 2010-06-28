@@ -664,12 +664,50 @@ void HTMLTreeBuilder::processComment(AtomicHTMLToken& token)
 
 void HTMLTreeBuilder::processCharacter(AtomicHTMLToken& token)
 {
-    if (insertionMode() == TextMode) {
-        attach(currentElement(), Text::create(m_document, token.characters()));
-        return;
-    }
     // FIXME: We need to figure out how to handle each character individually.
-    notImplemented();
+    switch (insertionMode()) {
+    case InitialMode:
+        ASSERT(insertionMode() == InitialMode);
+        notImplemented();
+        processDefaultForInitialMode(token);
+        // Fall through.
+    case BeforeHTMLMode:
+        ASSERT(insertionMode() == BeforeHTMLMode);
+        notImplemented();
+        processDefaultForBeforeHTMLMode(token);
+        // Fall through.
+    case BeforeHeadMode:
+        ASSERT(insertionMode() == BeforeHeadMode);
+        notImplemented();
+        processDefaultForBeforeHeadMode(token);
+        // Fall through.
+    case InHeadMode:
+        ASSERT(insertionMode() == InHeadMode);
+        notImplemented();
+        processDefaultForInHeadMode(token);
+        // Fall through.
+    case AfterHeadMode:
+        ASSERT(insertionMode() == AfterHeadMode);
+        notImplemented();
+        processDefaultForAfterHeadMode(token);
+        // Fall through
+    case InBodyMode:
+        ASSERT(insertionMode() == InBodyMode);
+        notImplemented();
+        insertTextNode(token);
+        break;
+    case TextMode:
+        notImplemented();
+        insertTextNode(token);
+        break;
+    case InHeadNoscriptMode:
+        ASSERT(insertionMode() == InHeadNoscriptMode);
+        processDefaultForInHeadNoscriptMode(token);
+        processToken(token);
+        break;
+    default:
+        notImplemented();
+    }
 }
 
 void HTMLTreeBuilder::processEndOfFile(AtomicHTMLToken& token)
@@ -859,6 +897,11 @@ void HTMLTreeBuilder::insertScriptElement(AtomicHTMLToken& token)
     m_insertionMode = TextMode;
 }
 
+void HTMLTreeBuilder::insertTextNode(AtomicHTMLToken& token)
+{
+    attach(currentElement(), Text::create(m_document, token.characters()));
+}
+    
 PassRefPtr<Element> HTMLTreeBuilder::createElement(AtomicHTMLToken& token)
 {
     RefPtr<Element> element = HTMLElementFactory::createHTMLElement(QualifiedName(nullAtom, token.name(), xhtmlNamespaceURI), m_document, 0);
