@@ -120,3 +120,21 @@ function assertMsg(assertion, msg) {
         testFailed(msg);
      }
 }
+
+/**
+ * Tests that the first error GL returns is the specified error.
+ * @param {!WebGLContext} gl The WebGLContext to use.
+ * @param {number} glError The expected gl error.
+ * @param {string} opt_msg
+ */
+function glErrorShouldBe(gl, glError, opt_msg) {
+  opt_msg = opt_msg || "";
+  var err = gl.getError();
+  if (err != glError) {
+    testFailed("getError expected: " + getGLErrorAsString(gl, glError) +
+               ". Was " + getGLErrorAsString(gl, err) + " : " + opt_msg);
+  } else {
+    testPassed("getError was expected value: " +
+                getGLErrorAsString(gl, glError) + " : " + opt_msg);
+  }
+};

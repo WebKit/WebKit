@@ -1,3 +1,16 @@
+2010-06-28  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        Index validation caches buffer size information too aggressively
+        https://bugs.webkit.org/show_bug.cgi?id=41092
+
+        * fast/canvas/webgl/index-validation-with-resized-buffer-expected.txt: Added.
+        * fast/canvas/webgl/index-validation-with-resized-buffer.html: Added.
+        * fast/canvas/webgl/resources/webgl-test.js:
+        (assertMsg):
+        (glErrorShouldBe):
+
 2010-06-28  Sam Magnuson  <smagnuson@netflix.com>
 
         Reviewed by Kenneth Rohde Christiansen.

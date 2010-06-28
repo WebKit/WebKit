@@ -1,3 +1,22 @@
+2010-06-28  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        Index validation caches buffer size information too aggressively
+        https://bugs.webkit.org/show_bug.cgi?id=41092
+
+        Test: fast/canvas/webgl/index-validation-with-resized-buffer.html
+
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::validateRenderingState):
+         - Compute the number of valid elements each time based on the latched buffer.
+        (WebCore::WebGLRenderingContext::vertexAttribPointer):
+         - Do not cache the buffer size, only the attributes used to
+           compute the number of required elements.
+        * html/canvas/WebGLRenderingContext.h:
+        (WebCore::WebGLRenderingContext::VertexAttribState::VertexAttribState):
+         - Ditto.
+
 2010-06-28  Andreas Kling  <andreas.kling@nokia.com>
 
         Reviewed by Simon Hausmann.

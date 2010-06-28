@@ -354,10 +354,12 @@ class WebKitCSSMatrix;
         // Cached values for vertex attrib range checks
         class VertexAttribState {
         public:
-            VertexAttribState() : enabled(false), numElements(0) { }
+            VertexAttribState() : enabled(false), bytesPerElement(0), stride(0), offset(0) { }
             bool enabled;
-            long numElements;
             RefPtr<WebGLBuffer> bufferBinding;
+            long bytesPerElement;
+            unsigned long stride;
+            unsigned long offset;
         };
         
         Vector<VertexAttribState> m_vertexAttribState;

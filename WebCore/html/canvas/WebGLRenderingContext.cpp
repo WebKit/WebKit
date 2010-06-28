@@ -782,8 +782,10 @@ bool WebGLRenderingContext::validateRenderingState(long numElementsRequired)
     if (!m_currentProgram)
         return false;
 
+    int numAttribStates = static_cast<int>(m_vertexAttribState.size());
+
     // Look in each enabled vertex attrib and check if they've been bound to a buffer.
-    for (size_t i = 0; i < m_vertexAttribState.size(); ++i) {
+    for (int i = 0; i < numAttribStates; ++i) {
         if (m_vertexAttribState[i].enabled
             && (!m_vertexAttribState[i].bufferBinding || !m_vertexAttribState[i].bufferBinding->object()))
             return false;
@@ -792,13 +794,21 @@ bool WebGLRenderingContext::validateRenderingState(long numElementsRequired)
     // Look in each consumed vertex attrib (by the current program) and find the smallest buffer size
     long smallestNumElements = LONG_MAX;
     int numActiveAttribLocations = m_currentProgram->numActiveAttribLocations();
-    int numAttribStates = static_cast<int>(m_vertexAttribState.size());
     for (int i = 0; i < numActiveAttribLocations; ++i) {
         int loc = m_currentProgram->getActiveAttribLocation(i);
         if (loc >=0 && loc < numAttribStates) {
             const VertexAttribState& state = m_vertexAttribState[loc];
-            if (state.enabled && state.numElements < smallestNumElements)
-                smallestNumElements = state.numElements;
+            if (state.enabled) {
+                // Avoid off-by-one errors in numElements computation.
+                // For the last element, we will only touch the data for the
+                // element and nothing beyond it.
+                long bytesRemaining = state.bufferBinding->byteLength() - state.offset;
+                long numElements = 0;
+                if (bytesRemaining >= state.bytesPerElement)
+                    numElements = 1 + (bytesRemaining - state.bytesPerElement) / state.stride;
+                if (numElements < smallestNumElements)
+                    smallestNumElements = numElements;
+            }
         }
     }
     
@@ -3095,17 +3105,10 @@ void WebGLRenderingContext::vertexAttribPointer(unsigned long indx, long size, u
         
         validatedStride = stride;
     }
-
     m_vertexAttribState[indx].bufferBinding = m_boundArrayBuffer;
-    // Avoid off-by-one errors in numElements computation.
-    // For the last element, we will only touch the data for the
-    // element and nothing beyond it.
-    long bytesRemaining = m_boundArrayBuffer->byteLength() - offset;
-    if (bytesRemaining < bytesPerElement)
-        m_vertexAttribState[indx].numElements = 0;
-    else
-        m_vertexAttribState[indx].numElements = 1 + (bytesRemaining - bytesPerElement) / validatedStride;
-
+    m_vertexAttribState[indx].bytesPerElement = bytesPerElement;
+    m_vertexAttribState[indx].stride = validatedStride;
+    m_vertexAttribState[indx].offset = offset;
     m_context->vertexAttribPointer(indx, size, type, normalized, stride, offset);
     cleanupAfterGraphicsCall(false);
 }
