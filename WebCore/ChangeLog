@@ -1,3 +1,9 @@
+2010-06-28  MORITA Hajime  <morrita@google.com>
+
+        Unreviewed attempt to fix windows build.
+
+        * page/DOMWindow.idl:
+
 2010-06-22  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Kent Tamura.
