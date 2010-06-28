@@ -1611,4 +1611,43 @@ sub debugMiniBrowser
     return 1;
 }
 
+sub runWebKitTestRunner
+{
+    if (isAppleMacWebKit()) {
+        my $productDir = productDir();
+        print "Starting MiniBrowser with DYLD_FRAMEWORK_PATH set to point to $productDir.\n";
+        $ENV{DYLD_FRAMEWORK_PATH} = $productDir;
+        $ENV{WEBKIT_UNSET_DYLD_FRAMEWORK_PATH} = "YES";
+        my $webKitTestRunnerPath = "$productDir/WebKitTestRunner";
+        if (!isTiger() && architecture()) {
+            return system "arch", "-" . architecture(), $webKitTestRunnerPath, @ARGV;
+        } else {
+            return system $webKitTestRunnerPath, @ARGV;
+        }
+    }
+
+    return 1;
+}
+
+sub debugWebKitTestRunner
+{
+    if (isAppleMacWebKit()) {
+        my $gdbPath = "/usr/bin/gdb";
+        die "Can't find gdb executable. Is gdb installed?\n" unless -x $gdbPath;
+
+        my $productDir = productDir();
+        $ENV{DYLD_FRAMEWORK_PATH} = $productDir;
+        $ENV{WEBKIT_UNSET_DYLD_FRAMEWORK_PATH} = 'YES';
+
+        my $webKitTestRunnerPath = "$productDir/WebKitTestRunner";
+
+        print "Starting WebKitTestRunner under gdb with DYLD_FRAMEWORK_PATH set to point to built WebKit2 in $productDir.\n";
+        my @architectureFlags = ("-arch", architecture()) if !isTiger();
+        exec $gdbPath, @architectureFlags, $webKitTestRunnerPath or die;
+        return;
+    }
+
+    return 1;
+}
+
 1;

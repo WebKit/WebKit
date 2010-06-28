@@ -1,3 +1,13 @@
+2010-06-28  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Add run-webkittestrunner to run WebKitTestRunner with the appropriate
+        environment.
+
+        * Scripts/run-webkittestrunner: Added.
+        * Scripts/webkitdirs.pm:
+
 2010-06-28  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.
