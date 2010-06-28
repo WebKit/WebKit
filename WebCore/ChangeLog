@@ -1,3 +1,19 @@
+2010-06-28  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Make the html5lib runner.html not assert
+        https://bugs.webkit.org/show_bug.cgi?id=41273
+
+        This patch gets us closer to being able to run the parser tests.  We
+        still don't get parsing correct, but at least we don't assert.  :)
+
+        * html/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::processStartTag):
+        (WebCore::HTMLTreeBuilder::processComment):
+        (WebCore::HTMLTreeBuilder::insertCommentOnDocument):
+        * html/HTMLTreeBuilder.h:
+
 2010-06-28  Eric Seidel  <eric@webkit.org>
 
         Unreviewed.  Attempt to fix Chromium and Qt builders.

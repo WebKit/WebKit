@@ -330,6 +330,7 @@ void HTMLTreeBuilder::processStartTag(AtomicHTMLToken& token)
         if (token.name() == bodyTag) {
             m_framesetOk = false;
             insertElement(token);
+            m_insertionMode = InBodyMode;
             return;
         }
         if (token.name() == framesetTag) {
@@ -650,6 +651,10 @@ void HTMLTreeBuilder::processEndTag(AtomicHTMLToken& token)
 
 void HTMLTreeBuilder::processComment(AtomicHTMLToken& token)
 {
+    if (m_insertionMode == InitialMode || m_insertionMode == BeforeHTMLMode) {
+        insertCommentOnDocument(token);
+        return;
+    }
     insertComment(token);
 }
 
@@ -793,6 +798,12 @@ void HTMLTreeBuilder::insertComment(AtomicHTMLToken& token)
 {
     ASSERT(token.type() == HTMLToken::Comment);
     currentElement()->addChild(Comment::create(m_document, token.comment()));
+}
+
+void HTMLTreeBuilder::insertCommentOnDocument(AtomicHTMLToken& token)
+{
+    ASSERT(token.type() == HTMLToken::Comment);
+    m_document->addChild(Comment::create(m_document, token.comment()));
 }
 
 void HTMLTreeBuilder::insertElement(AtomicHTMLToken& token)
