@@ -1,3 +1,17 @@
+2010-06-28  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        MediaPlayerPrivate::getSupportedTypes does not return "modern" MIME types
+        https://bugs.webkit.org/show_bug.cgi?id=41287
+        <rdar://problem/8137402>
+
+        No new test because getSupportedTypes is used privately by MediaPlayer.
+
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivate::getSupportedTypes): Build hash set with both common and
+        modern types.
+
 2010-06-28  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Darin Adler.

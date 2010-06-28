@@ -1299,11 +1299,17 @@ static HashSet<String> mimeModernTypesCache()
     return cache;
 } 
 
-void MediaPlayerPrivate::getSupportedTypes(HashSet<String>& types)
+void MediaPlayerPrivate::getSupportedTypes(HashSet<String>& supportedTypes)
 {
+    supportedTypes = mimeModernTypesCache();
+    
     // Note: this method starts QTKitServer if it isn't already running when in 64-bit because it has to return the list 
     // of every MIME type supported by QTKit.
-    types = mimeCommonTypesCache();
+    HashSet<String> commonTypes = mimeCommonTypesCache();
+    HashSet<String>::const_iterator it = commonTypes.begin();
+    HashSet<String>::const_iterator end = commonTypes.end();
+    for (; it != end; ++it)
+        supportedTypes.add(*it);
 } 
 
 MediaPlayer::SupportsType MediaPlayerPrivate::supportsType(const String& type, const String& codecs)
