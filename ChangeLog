@@ -1,3 +1,12 @@
+2010-06-28  Xan Lopez  <xlopez@igalia.com>
+
+        Rubber-stamped by Gustavo Noronha.
+
+        Bump gobject-introspection required version to 0.6.15, since we
+        are now shipping version 1.1 gir files.
+
+        * configure.ac:
+
 2010-06-28  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
 
         Unreviewed build fix.
