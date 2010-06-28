@@ -42,7 +42,7 @@ void initializeMainThreadPlatform()
 {
 }
 
-static int timeoutFired(void*)
+static Eina_Bool timeoutFired(void*)
 {
     dispatchFunctionsFromMainThread();
     return ECORE_CALLBACK_CANCEL;

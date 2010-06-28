@@ -880,7 +880,7 @@ static float _ewk_view_zoom_animated_current(Ewk_View_Private_Data* priv)
             + priv->animated_zoom.zoom.start);
 }
 
-static int _ewk_view_zoom_animator_cb(void* data)
+static Eina_Bool _ewk_view_zoom_animator_cb(void* data)
 {
     Ewk_View_Smart_Data* sd = (Ewk_View_Smart_Data*)data;
     Evas_Coord cx, cy;
@@ -900,12 +900,12 @@ static int _ewk_view_zoom_animator_cb(void* data)
         || (now < priv->animated_zoom.time.start)) {
         _ewk_view_zoom_animated_finish(sd);
         ewk_view_zoom_set(sd->self, priv->animated_zoom.zoom.end, cx, cy);
-        return 0;
+        return EINA_FALSE;
     }
 
     sd->animated_zoom.zoom.current = _ewk_view_zoom_animated_current(priv);
     sd->api->zoom_weak_set(sd, sd->animated_zoom.zoom.current, cx, cy);
-    return 1;
+    return EINA_TRUE;
 }
 
 static void _ewk_view_zoom_animation_start(Ewk_View_Smart_Data* sd)

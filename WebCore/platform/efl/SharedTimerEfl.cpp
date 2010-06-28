@@ -45,7 +45,7 @@ void setSharedTimerFiredFunction(void (*func)())
     g_timerFunction = func;
 }
 
-static int timerEvent(void*)
+static Eina_Bool timerEvent(void*)
 {
     if (g_timerFunction)
         g_timerFunction();

@@ -638,7 +638,7 @@ closeWindow(Ecore_Evas *ee)
     free(app);
 }
 
-static int
+static Eina_Bool
 main_signal_exit(void *data, int ev_type, void *ev)
 {
     ELauncher *app;
@@ -649,7 +649,7 @@ main_signal_exit(void *data, int ev_type, void *ev)
     }
     if (!eina_list_count(windows))
         ecore_main_loop_quit();
-    return 1;
+    return EINA_TRUE;
 }
 
 static char *

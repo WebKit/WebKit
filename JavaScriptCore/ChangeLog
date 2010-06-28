@@ -1,3 +1,13 @@
+2010-06-28  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
+
+        Unreviewed build fix.
+
+        [EFL] Build fix for latest version of Ecore library.
+        Ecore recently changed return type of callbacks from int to Eina_Bool.
+
+        * wtf/efl/MainThreadEfl.cpp:
+        (WTF::timeoutFired): Return Eina_Bool instead of int.
+
 2010-06-28  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         Reviewed by Kenneth Rohde Christiansen.
