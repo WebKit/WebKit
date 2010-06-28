@@ -1,3 +1,16 @@
+2010-06-28  Andreas Kling  <andreas.kling@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Replace single treat-as-space characters with normal space
+        https://bugs.webkit.org/show_bug.cgi?id=41278
+
+        This keeps Qt from attempting glyph substitution and loading a bunch
+        of extra fonts when encountering &nbsp; entities.
+
+        * platform/graphics/qt/FontQt.cpp:
+        (WebCore::Font::floatWidthForComplexText):
+
 2010-06-28  Robin Cao  <robin.cao@torchmobile.com.cn>
 
         Reviewed by Dan Bernstein.
