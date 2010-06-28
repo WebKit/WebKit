@@ -397,9 +397,6 @@ OcmYex&reD$;sO8*F9L)B
 class SVNTest(SCMTest):
 
     @staticmethod
-    def changelog_today():
-        
-    @staticmethod
     def _set_date_and_reviewer(changelog_entry):
         # Joe Cool matches the reviewer set in SCMTest._create_patch
         changelog_entry = changelog_entry.replace('REVIEWER_HERE', 'Joe Cool')

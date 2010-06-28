@@ -166,85 +166,89 @@ class SCM:
         return match.group('svn_revision')
 
     @staticmethod
+    def _subclass_must_implement():
+        raise NotImplementedError("subclasses must implement")
+
+    @staticmethod
     def in_working_directory(path):
-        raise NotImplementedError, "subclasses must implement"
+        self._subclass_must_implement()
 
     @staticmethod
     def find_checkout_root(path):
-        raise NotImplementedError, "subclasses must implement"
+        self._subclass_must_implement()
 
     @staticmethod
     def commit_success_regexp():
-        raise NotImplementedError, "subclasses must implement"
+        self._subclass_must_implement()
 
     def working_directory_is_clean(self):
-        raise NotImplementedError, "subclasses must implement"
+        self._subclass_must_implement()
 
     def clean_working_directory(self):
-        raise NotImplementedError, "subclasses must implement"
+        self._subclass_must_implement()
 
     def status_command(self):
-        raise NotImplementedError, "subclasses must implement"
+        self._subclass_must_implement()
 
     def add(self, path, return_exit_code=False):
-        raise NotImplementedError, "subclasses must implement"
+        self._subclass_must_implement()
 
     def delete(self, path):
-        raise NotImplementedError, "subclasses must implement"
+        self._subclass_must_implement()
 
     def changed_files(self, git_commit=None, squash=None):
-        raise NotImplementedError, "subclasses must implement"
+        self._subclass_must_implement()
 
     def changed_files_for_revision(self):
-        raise NotImplementedError, "subclasses must implement"
+        self._subclass_must_implement()
 
     def added_files(self):
-        raise NotImplementedError, "subclasses must implement"
+        self._subclass_must_implement()
 
     def conflicted_files(self):
-        raise NotImplementedError, "subclasses must implement"
+        self._subclass_must_implement()
 
     def display_name(self):
-        raise NotImplementedError, "subclasses must implement"
+        self._subclass_must_implement()
 
     def create_patch(self, git_commit=None, squash=None):
-        raise NotImplementedError, "subclasses must implement"
+        self._subclass_must_implement()
 
     def committer_email_for_revision(self, revision):
-        raise NotImplementedError, "subclasses must implement"
+        self._subclass_must_implement()
 
     def contents_at_revision(self, path, revision):
-        raise NotImplementedError, "subclasses must implement"
+        self._subclass_must_implement()
 
     def diff_for_revision(self, revision):
-        raise NotImplementedError, "subclasses must implement"
+        self._subclass_must_implement()
 
     def apply_reverse_diff(self, revision):
-        raise NotImplementedError, "subclasses must implement"
+        self._subclass_must_implement()
 
     def revert_files(self, file_paths):
-        raise NotImplementedError, "subclasses must implement"
+        self._subclass_must_implement()
 
     def should_squash(self, squash):
-        raise NotImplementedError, "subclasses must implement"
+        self._subclass_must_implement()
 
     def commit_with_message(self, message, username=None, git_commit=None, squash=None):
-        raise NotImplementedError, "subclasses must implement"
+        self._subclass_must_implement()
 
     def svn_commit_log(self, svn_revision):
-        raise NotImplementedError, "subclasses must implement"
+        self._subclass_must_implement()
 
     def last_svn_commit_log(self):
-        raise NotImplementedError, "subclasses must implement"
+        self._subclass_must_implement()
 
     # Subclasses must indicate if they support local commits,
     # but the SCM baseclass will only call local_commits methods when this is true.
     @staticmethod
     def supports_local_commits():
-        raise NotImplementedError, "subclasses must implement"
+        self._subclass_must_implement()
 
     def remote_merge_base():
-        raise NotImplementedError, "subclasses must implement"
+        self._subclass_must_implement()
 
     def commit_locally_with_message(self, message):
         error("Your source control manager does not support local commits.")

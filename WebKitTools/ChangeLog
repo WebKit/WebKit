@@ -1,3 +1,14 @@
+2010-06-27  MORITA Hajime  <morrita@google.com>
+
+        Unreviewed.
+        
+        Fixed exception raising syntax that is pointed out at
+        https://bugs.webkit.org/show_bug.cgi?id=41153
+
+        * Scripts/webkitpy/common/checkout/scm.py:
+        * Scripts/webkitpy/common/checkout/scm_unittest.py: 
+          Removed a bad line that I accidentally checked-in at last revision.
+
 2010-06-24  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Eric Seidel.
