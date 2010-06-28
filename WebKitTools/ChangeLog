@@ -1,5 +1,14 @@
 2010-06-27  MORITA Hajime  <morrita@google.com>
 
+        Unreviewed. 
+        
+        Some never-called @staticmethods touched self. 
+        Fixed it to replace these self with a class.
+
+        * Scripts/webkitpy/common/checkout/scm.py:
+
+2010-06-27  MORITA Hajime  <morrita@google.com>
+
         Unreviewed.
         
         Fixed exception raising syntax that is pointed out at

@@ -171,15 +171,15 @@ class SCM:
 
     @staticmethod
     def in_working_directory(path):
-        self._subclass_must_implement()
+        SCM._subclass_must_implement()
 
     @staticmethod
     def find_checkout_root(path):
-        self._subclass_must_implement()
+        SCM._subclass_must_implement()
 
     @staticmethod
     def commit_success_regexp():
-        self._subclass_must_implement()
+        SCM._subclass_must_implement()
 
     def working_directory_is_clean(self):
         self._subclass_must_implement()
@@ -245,10 +245,10 @@ class SCM:
     # but the SCM baseclass will only call local_commits methods when this is true.
     @staticmethod
     def supports_local_commits():
-        self._subclass_must_implement()
+        SCM._subclass_must_implement()
 
     def remote_merge_base():
-        self._subclass_must_implement()
+        SCM._subclass_must_implement()
 
     def commit_locally_with_message(self, message):
         error("Your source control manager does not support local commits.")
