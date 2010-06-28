@@ -1,3 +1,15 @@
+2010-06-10  Mahesh Kulkarni  <mahesh.kulkarni@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [QT][S60] build-webkit scripts picks wrong make spec for windows build
+        https://bugs.webkit.org/show_bug.cgi?id=41198
+
+        Instead of checking for existence of %EPOCROOT% on windows, mandatory use of --symbian flag for symbian builds. 
+
+        * Scripts/webkitdirs.pm:
+        (determineIsSymbian): remove check for %EPOCROOT% as one can build for windows port of QT as well
+
 2010-06-28  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

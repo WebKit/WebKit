@@ -687,8 +687,6 @@ sub determineIsSymbian()
         $isSymbian = 1;
         return;
     }
-
-    $isSymbian = defined($ENV{'EPOCROOT'});
 }
 
 sub determineIsEfl()
