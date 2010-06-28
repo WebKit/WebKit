@@ -2790,7 +2790,6 @@ BUG43497 MAC WIN : svg/custom/repaint-stroke-width-changes.svg = IMAGE PASS
 // WebKit roll 58855:58878
 BUG43419: fast/wcss/wap-input-format.xhtml = TEXT
 BUG43419: fast/wcss/wap-input-required.xhtml = TEXT
-BUG43420: fast/events/popup-allowed-from-gesture-initiated-form-submit.html = TIMEOUT
 
 // WebKit r59064 changes the behavior of javascript regexp literals
 BUGJOHNNYG : fast/js/regexp-literals-arent-constants.html = TEXT

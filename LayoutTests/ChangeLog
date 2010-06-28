@@ -1,3 +1,9 @@
+2010-06-28  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Unreviewed test expectations update. Remove now passing fast/events/popup-allowed-from-gesture-initiated-form-submit.html
+
+        * platform/chromium/test_expectations.txt:
+
 2010-06-28  MORITA Hajime  <morrita@google.com>
 
         Unreviewd. Skipped a test for qt at this time due to outdated expectation.
