@@ -1,3 +1,29 @@
+2010-06-28  Zoltan Herczeg  <zherczeg@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
+        Only one character lookahead should be enough for the lexer
+        https://bugs.webkit.org/show_bug.cgi?id=41213
+
+        The lexer had 4 character lookahead before, which required
+        a complex shifting mechanism. This can be improved by using
+        only one character lookahead for most decisions, and a
+        peek() function as a fallback when it is absolutely necessary.
+
+        * parser/Lexer.cpp:
+        (JSC::Lexer::currentCharacter):
+        (JSC::Lexer::currentOffset):
+        (JSC::Lexer::setCode):
+        (JSC::Lexer::shift):
+        (JSC::Lexer::peek):
+        (JSC::Lexer::getUnicodeCharacter):
+        (JSC::Lexer::shiftLineTerminator):
+        (JSC::Lexer::lastTokenWasRestrKeyword):
+        (JSC::Lexer::lex):
+        (JSC::Lexer::scanRegExp):
+        (JSC::Lexer::skipRegExp):
+        * parser/Lexer.h:
+
 2010-06-28  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
 
         Unreviewed build fix.
