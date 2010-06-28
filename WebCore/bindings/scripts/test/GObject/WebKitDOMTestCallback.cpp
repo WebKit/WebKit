@@ -26,6 +26,7 @@
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
 #include "ExceptionCode.h"
+#include "JSMainThreadExecState.h"
 #include "TestCallback.h"
 #include "WebKitDOMBinding.h"
 #include "gobject/ConvertToUTF8String.h"
@@ -57,6 +58,7 @@ gpointer kit(WebCore::TestCallback* obj)
 gboolean
 webkit_dom_test_callback_callback_with_class1param(WebKitDOMTestCallback* self, WebKitDOMClass1*  class1param)
 {
+    WebCore::JSMainThreadNullState state;
     g_return_val_if_fail(self, 0);
     WebCore::TestCallback * item = WebKit::core(self);
     g_return_val_if_fail(class1param, 0);
@@ -69,6 +71,7 @@ webkit_dom_test_callback_callback_with_class1param(WebKitDOMTestCallback* self, 
 gboolean
 webkit_dom_test_callback_callback_with_class2param(WebKitDOMTestCallback* self, WebKitDOMClass2*  class2param, gchar*  str_arg)
 {
+    WebCore::JSMainThreadNullState state;
     g_return_val_if_fail(self, 0);
     WebCore::TestCallback * item = WebKit::core(self);
     g_return_val_if_fail(class2param, 0);
@@ -83,6 +86,7 @@ webkit_dom_test_callback_callback_with_class2param(WebKitDOMTestCallback* self, 
 glong
 webkit_dom_test_callback_callback_with_non_bool_return_type(WebKitDOMTestCallback* self, WebKitDOMClass3*  class3param)
 {
+    WebCore::JSMainThreadNullState state;
     g_return_val_if_fail(self, 0);
     WebCore::TestCallback * item = WebKit::core(self);
     g_return_val_if_fail(class3param, 0);
@@ -131,6 +135,7 @@ static void webkit_dom_test_callback_finalize(GObject* object)
 
 static void webkit_dom_test_callback_set_property(GObject* object, guint prop_id, const GValue* value, GParamSpec* pspec)
 {
+    WebCore::JSMainThreadNullState state;
     switch (prop_id) {
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -141,6 +146,7 @@ static void webkit_dom_test_callback_set_property(GObject* object, guint prop_id
 
 static void webkit_dom_test_callback_get_property(GObject* object, guint prop_id, GValue* value, GParamSpec* pspec)
 {
+    WebCore::JSMainThreadNullState state;
     switch (prop_id) {
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -149,12 +155,20 @@ static void webkit_dom_test_callback_get_property(GObject* object, guint prop_id
 }
 
 
+static void webkit_dom_test_callback_constructed(GObject* object)
+{
+
+    if (G_OBJECT_CLASS(webkit_dom_test_callback_parent_class)->constructed)
+        G_OBJECT_CLASS(webkit_dom_test_callback_parent_class)->constructed(object);
+}
+
 static void webkit_dom_test_callback_class_init(WebKitDOMTestCallbackClass* requestClass)
 {
     GObjectClass *gobjectClass = G_OBJECT_CLASS(requestClass);
     gobjectClass->finalize = webkit_dom_test_callback_finalize;
     gobjectClass->set_property = webkit_dom_test_callback_set_property;
     gobjectClass->get_property = webkit_dom_test_callback_get_property;
+    gobjectClass->constructed = webkit_dom_test_callback_constructed;
 
 
 
@@ -168,20 +182,15 @@ namespace WebKit {
 WebKitDOMTestCallback* wrapTestCallback(WebCore::TestCallback* coreObject)
 {
     g_return_val_if_fail(coreObject, 0);
-    
-    WebKitDOMTestCallback* wrapper = WEBKIT_DOM_TEST_CALLBACK(g_object_new(WEBKIT_TYPE_DOM_TEST_CALLBACK, NULL));
-    g_return_val_if_fail(wrapper, 0);
 
     /* We call ref() rather than using a C++ smart pointer because we can't store a C++ object
      * in a C-allocated GObject structure.  See the finalize() code for the
      * matching deref().
      */
-
     coreObject->ref();
-    WEBKIT_DOM_OBJECT(wrapper)->coreObject = coreObject;
 
-
-    return wrapper;
+    return  WEBKIT_DOM_TEST_CALLBACK(g_object_new(WEBKIT_TYPE_DOM_TEST_CALLBACK,
+                                               "core-object", coreObject, NULL));
 }
 } // namespace WebKit
 #endif /* ENABLE(DATABASE) */

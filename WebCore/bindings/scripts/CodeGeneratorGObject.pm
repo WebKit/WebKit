@@ -536,6 +536,7 @@ EOF
     my $txtGetProp = << "EOF";
 static void ${lowerCaseIfaceName}_get_property(GObject* object, guint prop_id, GValue* value, GParamSpec* pspec)
 {
+    WebCore::JSMainThreadNullState state;
 EOF
     push(@txtGetProps, $txtGetProp);
     if (scalar @readableProperties > 0) {
@@ -556,6 +557,7 @@ EOF
     my $txtSetProps = << "EOF";
 static void ${lowerCaseIfaceName}_set_property(GObject* object, guint prop_id, const GValue* value, GParamSpec* pspec)
 {
+    WebCore::JSMainThreadNullState state;
 EOF
     push(@txtSetProps, $txtSetProps);
 
@@ -842,6 +844,7 @@ sub GenerateFunction {
 
     push(@cBody, "#if ${conditionalString}\n") if $conditionalString;
     push(@cBody, "$returnType\n$functionName($functionSig)\n{\n");
+    push(@cBody, "    WebCore::JSMainThreadNullState state;\n");
 
     if ($conditionalMethods{$functionName}) {
         push(@cBody, "#if ENABLE($conditionalMethods{$functionName})\n");
@@ -1278,6 +1281,7 @@ sub Generate {
     $implIncludes{"webkit/$className.h"} = 1;
     $implIncludes{"webkit/${className}Private.h"} = 1;
     $implIncludes{"${interfaceName}.h"} = 1;
+    $implIncludes{"JSMainThreadExecState.h"} = 1;
     $implIncludes{"ExceptionCode.h"} = 1;
 
     $hdrIncludes{"webkit/${parentClassName}.h"} = 1;

@@ -1,3 +1,18 @@
+2010-06-28  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Adam Barth.
+
+        [GTK] Push NULL context on every DOM bindings entry point
+        https://bugs.webkit.org/show_bug.cgi?id=39967
+
+        Update GObject DOM bindings to push the NULL context on every API
+        entry point, and update bindings test results.
+
+        * bindings/scripts/CodeGeneratorGObject.pm:
+        * bindings/scripts/test/GObject/WebKitDOMTestCallback.cpp:
+        * bindings/scripts/test/GObject/WebKitDOMTestInterface.cpp:
+        * bindings/scripts/test/GObject/WebKitDOMTestObj.cpp:
+
 2010-06-28  Martin Robinson  <martin.james.robinson@gmail.com>
 
         Reviewed by Adam Roben.
