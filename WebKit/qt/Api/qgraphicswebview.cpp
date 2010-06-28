@@ -151,6 +151,8 @@ void QGraphicsWebViewPrivate::_q_contentsSizeChanged(const QSize& size)
 void QGraphicsWebViewPrivate::_q_scaleChanged()
 {
 #if ENABLE(TILED_BACKING_STORE)
+    if (!page)
+        return;
     static_cast<PageClientQGraphicsWidget*>(page->d->client)->updateTiledBackingStoreScale();
 #endif
 }

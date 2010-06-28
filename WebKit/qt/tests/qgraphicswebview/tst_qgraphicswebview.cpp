@@ -34,6 +34,7 @@ private slots:
     void crashOnViewlessWebPages();
     void microFocusCoordinates();
     void focusInputTypes();
+    void crashOnSetScaleBeforeSetUrl();
 };
 
 void tst_QGraphicsWebView::qgraphicswebview()
@@ -130,6 +131,13 @@ void tst_QGraphicsWebView::crashOnViewlessWebPages()
 
     QVERIFY(waitForSignal(page, SIGNAL(loadFinished(bool))));
     delete page;
+}
+
+void tst_QGraphicsWebView::crashOnSetScaleBeforeSetUrl()
+{
+    QGraphicsWebView* webView = new QGraphicsWebView;
+    webView->setScale(2.0);
+    delete webView;
 }
 
 void tst_QGraphicsWebView::microFocusCoordinates()

@@ -1,3 +1,18 @@
+2010-06-28  Andreas Kling  <andreas.kling@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] QGraphicsWebView crash when calling setScale() before setUrl()
+        https://bugs.webkit.org/show_bug.cgi?id=40000
+
+        Check 'page' before dereference in _q_scaleChanged()
+        Autotest included.
+
+        * Api/qgraphicswebview.cpp:
+        (QGraphicsWebViewPrivate::_q_scaleChanged):
+        * tests/qgraphicswebview/tst_qgraphicswebview.cpp:
+        (tst_QGraphicsWebView::crashOnSetScaleBeforeSetUrl):
+
 2010-06-26  Simon Hausmann  <hausmann@webkit.org>
 
         [Qt] Prospective build fix for MSVC
