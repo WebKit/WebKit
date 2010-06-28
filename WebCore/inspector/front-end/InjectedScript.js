@@ -174,7 +174,7 @@ InjectedScript.getProperties = function(objectProxy, ignoreHasOwnProperty, abbre
 InjectedScript._isScopeProxy = function(objectProxy)
 {
     var objectId = objectProxy.objectId;
-    return typeof objectId === "object" && !objectId.thisObject;
+    return typeof objectId === "object" && !objectId.thisObject && !objectProxy.path;
 } 
 
 InjectedScript.setPropertyValue = function(objectProxy, propertyName, expression)

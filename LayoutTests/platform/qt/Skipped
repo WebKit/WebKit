@@ -5442,6 +5442,7 @@ fast/js/sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Con
 # https://bugs.webkit.org/show_bug.cgi?id=41147
 inspector/debugger-pause-on-debugger-statement.html
 inspector/debugger-pause-in-eval-script.html
+inspector/debugger-proto-property.html
 
 # [Qt] fast/text/bidi-explicit-embedding-past-end.html fails
 # https://bugs.webkit.org/show_bug.cgi?id=41241

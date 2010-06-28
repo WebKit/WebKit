@@ -1,3 +1,14 @@
+2010-06-28  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        [v8] Web Inspector: properties of scope variables are flattened while on a breakpoint.
+        https://bugs.webkit.org/show_bug.cgi?id=41214
+
+        * inspector/debugger-proto-property-expected.txt: Added.
+        * inspector/debugger-proto-property.html: Added.
+        * platform/qt/Skipped:
+
 2010-06-28  MORITA Hajime  <morrita@google.com>
 
         Unreviewed text expectations update after r61993.

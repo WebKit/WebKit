@@ -1,3 +1,15 @@
+2010-06-28  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        [v8] Web Inspector: properties of scope variables are flattened while on a breakpoint.
+        https://bugs.webkit.org/show_bug.cgi?id=41214
+
+        Test: inspector/debugger-proto-property.html
+
+        * inspector/front-end/InjectedScript.js:
+        (injectedScriptConstructor): object proxy with non-empty path cannot be scope proxy.
+
 2010-06-28  MORITA Hajime  <morrita@google.com>
 
         Unreviewed attempt to fix windows build.
