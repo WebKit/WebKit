@@ -1,3 +1,20 @@
+2010-06-27  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        WebKit2 build exceeds address space on 32-bit Windows builders
+        https://bugs.webkit.org/show_bug.cgi?id=41270
+
+        Add all-in-one file for render-related SVG files.
+        Clean up other all-in-one files by adding missing files, excluding matching files from the vcproj.
+        Reduces release WebCore.lib size by 10% (160MB).
+
+        * DerivedSources.cpp:
+        * WebCore.vcproj/WebCore.vcproj:
+        * bindings/js/JSBindingsAllInOne.cpp:
+        * html/HTMLElementsAllInOne.cpp:
+        * rendering/RenderSVGAllInOne.cpp: Added.
+
 2010-06-27  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

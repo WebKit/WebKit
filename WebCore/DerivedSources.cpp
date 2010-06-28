@@ -25,6 +25,7 @@
 
 // This all-in-one cpp file cuts down on template bloat to allow us to build our Windows release build.
 
+#include "HTMLElementFactory.cpp"
 #include "JSAbstractWorker.cpp"
 #include "JSAttr.cpp"
 #include "JSBarInfo.cpp"
@@ -182,6 +183,9 @@
 #include "JSIDBSuccessEvent.cpp"
 #include "JSImageData.cpp"
 #include "JSIndexedDatabaseRequest.cpp"
+#include "JSInjectedScriptHost.cpp"
+#include "JSInspectorBackend.cpp"
+#include "JSInspectorFrontendHost.cpp"
 #include "JSJavaScriptCallFrame.cpp"
 #include "JSKeyboardEvent.cpp"
 #include "JSLocation.cpp"
@@ -407,6 +411,8 @@
 #include "JSXPathNSResolver.cpp"
 #include "JSXPathResult.cpp"
 #include "JSXSLTProcessor.cpp"
+#include "WMLElementFactory.cpp"
+#include "WMLNames.cpp"
 #include "UserAgentStyleSheetsData.cpp"
 
 // On MSVC, including StaticConstructors.h causes all global objects not to be
