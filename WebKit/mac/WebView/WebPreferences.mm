@@ -361,6 +361,7 @@ static WebCacheModel cacheModelForMainBundle(void)
         [NSNumber numberWithUnsignedInt:4], WebKitPluginAllowedRunTimePreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitFrameFlatteningEnabledPreferenceKey,
         [NSNumber numberWithBool:YES],   WebKitHTML5ParserEnabledPreferenceKey,
+        [NSNumber numberWithBool:NO],   WebKitHTML5TreeBuilderEnabledPreferenceKey,
         nil];
 
     // This value shouldn't ever change, which is assumed in the initialization of WebKitPDFDisplayModePreferenceKey above
@@ -1247,6 +1248,16 @@ static NSString *classIBCreatorID = nil;
 - (void)setHTML5ParserEnabled:(BOOL)flag
 {
     [self _setBoolValue:flag forKey:WebKitHTML5ParserEnabledPreferenceKey];
+}
+
+- (BOOL)html5TreeBuilderEnabled
+{
+    return [self _boolValueForKey:WebKitHTML5TreeBuilderEnabledPreferenceKey];
+}
+
+- (void)setHTML5TreeBuilderEnabled:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey:WebKitHTML5TreeBuilderEnabledPreferenceKey];
 }
 
 - (BOOL)paginateDuringLayoutEnabled

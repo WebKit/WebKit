@@ -41,6 +41,7 @@
 #include "HTMLNames.h"
 #include "LegacyHTMLTreeBuilder.h"
 #include "NotImplemented.h"
+#include "Settings.h"
 #include "ScriptController.h"
 #include "Text.h"
 #include <wtf/UnusedParam.h>
@@ -58,6 +59,11 @@ inline bool isTreeBuilderWhiteSpace(UChar cc)
     return cc == '\t' || cc == '\x0A' || cc == '\x0C' || cc == '\x0D' || cc == ' ';
 }
 
+bool shouldUseLegacyTreeBuilder(Document* document)
+{
+    return !document->settings() || !document->settings()->html5TreeBuilderEnabled();
+}
+
 } // namespace
 
 HTMLTreeBuilder::HTMLTreeBuilder(HTMLTokenizer* tokenizer, HTMLDocument* document, bool reportErrors)
@@ -68,7 +74,7 @@ HTMLTreeBuilder::HTMLTreeBuilder(HTMLTokenizer* tokenizer, HTMLDocument* documen
     , m_insertionMode(InitialMode)
     , m_originalInsertionMode(InitialMode)
     , m_tokenizer(tokenizer)
-    , m_legacyTreeBuilder(new LegacyHTMLTreeBuilder(document, reportErrors))
+    , m_legacyTreeBuilder(shouldUseLegacyTreeBuilder(document) ? new LegacyHTMLTreeBuilder(document, reportErrors) : 0)
     , m_lastScriptElementStartLine(uninitializedLineNumberValue)
     , m_scriptToProcessStartLine(uninitializedLineNumberValue)
     , m_fragmentScriptingPermission(FragmentScriptingAllowed)
@@ -85,7 +91,7 @@ HTMLTreeBuilder::HTMLTreeBuilder(HTMLTokenizer* tokenizer, DocumentFragment* fra
     , m_insertionMode(InitialMode)
     , m_originalInsertionMode(InitialMode)
     , m_tokenizer(tokenizer)
-    , m_legacyTreeBuilder(new LegacyHTMLTreeBuilder(fragment, scriptingPermission))
+    , m_legacyTreeBuilder(shouldUseLegacyTreeBuilder(m_document) ? new LegacyHTMLTreeBuilder(fragment, scriptingPermission) : 0)
     , m_lastScriptElementStartLine(uninitializedLineNumberValue)
     , m_scriptToProcessStartLine(uninitializedLineNumberValue)
     , m_fragmentScriptingPermission(scriptingPermission)
@@ -226,8 +232,7 @@ void HTMLTreeBuilder::passTokenToLegacyParser(HTMLToken& token)
 
 void HTMLTreeBuilder::constructTreeFromToken(HTMLToken& rawToken)
 {
-    // Make MSVC ignore our unreachable code for now.
-    if (true) {
+    if (m_legacyTreeBuilder) {
         passTokenToLegacyParser(rawToken);
         return;
     }
@@ -874,7 +879,8 @@ void HTMLTreeBuilder::finished()
 {
     // We should call m_document->finishedParsing() here, except
     // m_legacyTreeBuilder->finished() does it for us.
-    m_legacyTreeBuilder->finished();
+    if (m_legacyTreeBuilder)
+        m_legacyTreeBuilder->finished();
 }
 
 bool HTMLTreeBuilder::isScriptingFlagEnabled(Frame* frame)

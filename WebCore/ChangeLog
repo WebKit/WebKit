@@ -1,3 +1,26 @@
+2010-06-28  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Make it possible to test the new HTML5 TreeBuilder
+        https://bugs.webkit.org/show_bug.cgi?id=41276
+
+        Adam was concerned that someone might make their port
+        depend on this setting (I guess we had some trouble with that
+        with the HTML5Parser setting), so I littered the code with warnings.
+
+        test-html5-parser now tests this code path.
+
+        * html/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::HTMLTreeBuilder):
+        (WebCore::HTMLTreeBuilder::constructTreeFromToken):
+        (WebCore::HTMLTreeBuilder::finished):
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):
+        * page/Settings.h:
+        (WebCore::Settings::setHTML5TreeBuilderEnabled_DO_NOT_USE):
+        (WebCore::Settings::html5TreeBuilderEnabled):
+
 2010-06-28  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

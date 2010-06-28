@@ -69,7 +69,7 @@ foreach my $test (@tests) {
     my $testPath = "LayoutTests/$test.html";
     my $expectedPath = "LayoutTests/$test-expected-html5.txt";
     my $actualPath = "LayoutTests/$test-actual-html5.txt";
-    my $command = "DYLD_FRAMEWORK_PATH=$productDir $dumpTool --html5-parser $testPath";
+    my $command = "DYLD_FRAMEWORK_PATH=$productDir $dumpTool --html5-treebuilder $testPath";
     print $command, "\n";
     my $output = `$command`;
     writeToFile($actualPath, $output);

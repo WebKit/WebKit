@@ -1,3 +1,25 @@
+2010-06-28  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Make it possible to test the new HTML5 TreeBuilder
+        https://bugs.webkit.org/show_bug.cgi?id=41276
+
+        Adam was concerned that someone might make their port
+        depend on this setting (I guess we had some trouble with that
+        with the HTML5Parser setting), so I littered the code with warnings.
+
+        test-html5-parser now tests this code path.
+
+        * WebView/WebPreferenceKeysPrivate.h:
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]):
+        (-[WebPreferences html5TreeBuilderEnabled]):
+        (-[WebPreferences setHTML5TreeBuilderEnabled:]):
+        * WebView/WebPreferencesPrivate.h:
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChangedNotification:]):
+
 2010-06-25  Yuzo Fujishima  <yuzo@google.com>
 
         Reviewed by Shinichiro Hamaji.
