@@ -1,3 +1,20 @@
+2010-06-28  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Add support for parsing attributes
+        https://bugs.webkit.org/show_bug.cgi?id=41272
+
+        This patch lets use parse the following document:
+
+        <script src="data:text/javascript,alert('PASS')"></script>
+
+        * html/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::constructTreeFromToken):
+        (WebCore::HTMLTreeBuilder::insertHTMLStartTagBeforeHTML):
+        (WebCore::HTMLTreeBuilder::insertScriptElement):
+        (WebCore::HTMLTreeBuilder::createElement):
+
 2010-06-28  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Darin Adler.
