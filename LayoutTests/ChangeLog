@@ -1,3 +1,29 @@
+2010-06-23  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Tests with new results after 
+        https://bugs.webkit.org/show_bug.cgi?id=9197 CSS3: Borders 
+        with border-radius and double, groove, or ridge styles should look 
+        better
+
+        * platform/mac/fast/borders/borderRadiusAllStylesAllCorners-expected.checksum:
+        * platform/mac/fast/borders/borderRadiusAllStylesAllCorners-expected.png:
+        * platform/mac/fast/borders/borderRadiusDashed01-expected.checksum:
+        * platform/mac/fast/borders/borderRadiusDashed01-expected.png:
+        * platform/mac/fast/borders/borderRadiusDashed02-expected.checksum:
+        * platform/mac/fast/borders/borderRadiusDashed02-expected.png:
+        * platform/mac/fast/borders/borderRadiusDashed03-expected.checksum:
+        * platform/mac/fast/borders/borderRadiusDashed03-expected.png:
+        * platform/mac/fast/borders/borderRadiusDotted01-expected.checksum:
+        * platform/mac/fast/borders/borderRadiusDotted01-expected.png:
+        * platform/mac/fast/borders/borderRadiusDotted02-expected.checksum:
+        * platform/mac/fast/borders/borderRadiusDotted02-expected.png:
+        * platform/mac/fast/borders/borderRadiusDotted03-expected.checksum:
+        * platform/mac/fast/borders/borderRadiusDotted03-expected.png:
+        * platform/mac/fast/borders/borderRadiusDouble01-expected.checksum:
+        * platform/mac/fast/borders/borderRadiusDouble01-expected.png:
+
 2010-06-28  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Xan Lopez.

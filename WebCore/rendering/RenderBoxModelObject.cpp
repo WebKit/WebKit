@@ -30,6 +30,7 @@
 #include "HTMLElement.h"
 #include "HTMLNames.h"
 #include "ImageBuffer.h"
+#include "Path.h"
 #include "RenderBlock.h"
 #include "RenderInline.h"
 #include "RenderLayer.h"
@@ -931,9 +932,182 @@ bool RenderBoxModelObject::paintNinePieceImage(GraphicsContext* graphicsContext,
     return true;
 }
 
+static bool borderWillArcInnerEdge(const IntSize& firstRadius, const IntSize& secondRadius, int firstBorderWidth, int secondBorderWidth, int middleBorderWidth)
+{
+    // FIXME: This test is insufficient. We need to take border style into account.
+    return (!firstRadius.width() || firstRadius.width() >= firstBorderWidth)
+            && (!firstRadius.height() || firstRadius.height() >= middleBorderWidth)
+            && (!secondRadius.width() || secondRadius.width() >= secondBorderWidth)
+            && (!secondRadius.height() || secondRadius.height() >= middleBorderWidth);
+}
+
+#if HAVE(PATH_BASED_BORDER_RADIUS_DRAWING)
 void RenderBoxModelObject::paintBorder(GraphicsContext* graphicsContext, int tx, int ty, int w, int h,
                                        const RenderStyle* style, bool begin, bool end)
 {
+    if (paintNinePieceImage(graphicsContext, tx, ty, w, h, style, style->borderImage()))
+        return;
+
+    if (graphicsContext->paintingDisabled())
+        return;
+
+    const Color& topColor = style->visitedDependentColor(CSSPropertyBorderTopColor);
+    const Color& bottomColor = style->visitedDependentColor(CSSPropertyBorderBottomColor);
+    const Color& leftColor = style->visitedDependentColor(CSSPropertyBorderLeftColor);
+    const Color& rightColor = style->visitedDependentColor(CSSPropertyBorderRightColor);
+
+    bool topTransparent = style->borderTopIsTransparent();
+    bool bottomTransparent = style->borderBottomIsTransparent();
+    bool rightTransparent = style->borderRightIsTransparent();
+    bool leftTransparent = style->borderLeftIsTransparent();
+
+    EBorderStyle topStyle = style->borderTopStyle();
+    EBorderStyle bottomStyle = style->borderBottomStyle();
+    EBorderStyle leftStyle = style->borderLeftStyle();
+    EBorderStyle rightStyle = style->borderRightStyle();
+
+    bool renderTop = topStyle > BHIDDEN && !topTransparent;
+    bool renderLeft = leftStyle > BHIDDEN && begin && !leftTransparent;
+    bool renderRight = rightStyle > BHIDDEN && end && !rightTransparent;
+    bool renderBottom = bottomStyle > BHIDDEN && !bottomTransparent;
+
+    bool renderRadii = false;
+    Path roundedPath;
+    IntSize topLeft, topRight, bottomLeft, bottomRight;
+    IntRect borderRect(tx, ty, w, h);
+
+    if (style->hasBorderRadius()) {
+        IntSize topLeftRadius, topRightRadius, bottomLeftRadius, bottomRightRadius;
+        style->getBorderRadiiForRect(borderRect, topLeftRadius, topRightRadius, bottomLeftRadius, bottomRightRadius);
+
+        IntRect innerBorderRect = borderInnerRect(borderRect, style->borderTopWidth(), style->borderBottomWidth(), 
+            style->borderLeftWidth(), style->borderRightWidth());
+
+        IntSize innerTopLeftRadius, innerTopRightRadius, innerBottomLeftRadius, innerBottomRightRadius;
+        style->getInnerBorderRadiiForRectWithBorderWidths(innerBorderRect, style->borderTopWidth(), style->borderBottomWidth(), 
+            style->borderLeftWidth(), style->borderRightWidth(), innerTopLeftRadius, innerTopRightRadius, 
+            innerBottomLeftRadius, innerBottomRightRadius);
+
+        if (begin) {
+            topLeft = topLeftRadius;
+            bottomLeft = bottomLeftRadius;
+        }
+        if (end) {
+            topRight = topRightRadius;
+            bottomRight = bottomRightRadius;
+        }
+
+        renderRadii = true;
+
+        // Clip to the inner and outer radii rects.
+        graphicsContext->save();
+        graphicsContext->addRoundedRectClip(borderRect, topLeft, topRight, bottomLeft, bottomRight);
+        graphicsContext->clipOutRoundedRect(innerBorderRect, innerTopLeftRadius, innerTopRightRadius, innerBottomLeftRadius, innerBottomRightRadius);
+
+        roundedPath = Path::createRoundedRectangle(borderRect, topLeft, topRight, bottomLeft, bottomRight);
+        graphicsContext->addPath(roundedPath);
+    }
+
+    if (renderTop) {
+        int x = tx;
+        int x2 = tx + w;
+
+        if (renderRadii && borderWillArcInnerEdge(topLeft, topRight, style->borderLeftWidth(), style->borderRightWidth(), style->borderTopWidth())) {
+            graphicsContext->save();
+            clipBorderSidePolygon(graphicsContext, borderRect, topLeft, topRight, bottomLeft, bottomRight, BSTop, style);
+            float thickness = max(max(style->borderTopWidth(), style->borderLeftWidth()), style->borderRightWidth());
+            drawBoxSideFromPath(graphicsContext, borderRect, roundedPath, style->borderTopWidth(), thickness, BSTop, style, topColor, topStyle);
+            graphicsContext->restore();
+        } else {
+            bool ignoreLeft = (topColor == leftColor && topTransparent == leftTransparent && topStyle >= OUTSET
+                && (leftStyle == DOTTED || leftStyle == DASHED || leftStyle == SOLID || leftStyle == OUTSET));
+            bool ignoreRight = (topColor == rightColor && topTransparent == rightTransparent && topStyle >= OUTSET
+                && (rightStyle == DOTTED || rightStyle == DASHED || rightStyle == SOLID || rightStyle == INSET));
+
+            drawLineForBoxSide(graphicsContext, x, ty, x2, ty + style->borderTopWidth(), BSTop, topColor, topStyle,
+                    ignoreLeft ? 0 : style->borderLeftWidth(), ignoreRight ? 0 : style->borderRightWidth());               
+        }
+    }
+
+    if (renderBottom) {
+        int x = tx;
+        int x2 = tx + w;
+
+        if (renderRadii && borderWillArcInnerEdge(bottomLeft, bottomRight, style->borderLeftWidth(), style->borderRightWidth(), style->borderBottomWidth())) {
+            graphicsContext->save();
+            clipBorderSidePolygon(graphicsContext, borderRect, topLeft, topRight, bottomLeft, bottomRight, BSBottom, style);
+            float thickness = max(max(style->borderBottomWidth(), style->borderLeftWidth()), style->borderRightWidth());
+            drawBoxSideFromPath(graphicsContext, borderRect, roundedPath, style->borderBottomWidth(), thickness, BSBottom, style, bottomColor, bottomStyle);
+            graphicsContext->restore();
+        } else {
+            bool ignoreLeft = (bottomColor == leftColor && bottomTransparent == leftTransparent && bottomStyle >= OUTSET
+                && (leftStyle == DOTTED || leftStyle == DASHED || leftStyle == SOLID || leftStyle == OUTSET));
+
+            bool ignoreRight = (bottomColor == rightColor && bottomTransparent == rightTransparent && bottomStyle >= OUTSET
+                && (rightStyle == DOTTED || rightStyle == DASHED || rightStyle == SOLID || rightStyle == INSET));
+
+            drawLineForBoxSide(graphicsContext, x, ty + h - style->borderBottomWidth(), x2, ty + h, BSBottom, bottomColor, 
+                        bottomStyle, ignoreLeft ? 0 : style->borderLeftWidth(), 
+                        ignoreRight ? 0 : style->borderRightWidth());
+        }
+    }
+
+    if (renderLeft) {
+        int y = ty;
+        int y2 = ty + h;
+
+        if (renderRadii && borderWillArcInnerEdge(bottomLeft, topLeft, style->borderBottomWidth(), style->borderTopWidth(), style->borderLeftWidth())) {
+            graphicsContext->save();
+            clipBorderSidePolygon(graphicsContext, borderRect, topLeft, topRight, bottomLeft, bottomRight, BSLeft, style);
+            float thickness = max(max(style->borderLeftWidth(), style->borderTopWidth()), style->borderBottomWidth());
+            drawBoxSideFromPath(graphicsContext, borderRect, roundedPath, style->borderLeftWidth(), thickness, BSLeft, style, leftColor, leftStyle);
+            graphicsContext->restore();
+        } else {
+            bool ignoreTop = (topColor == leftColor && topTransparent == leftTransparent && leftStyle >= OUTSET
+                && (topStyle == DOTTED || topStyle == DASHED || topStyle == SOLID || topStyle == OUTSET));
+
+            bool ignoreBottom = (bottomColor == leftColor && bottomTransparent == leftTransparent && leftStyle >= OUTSET
+                && (bottomStyle == DOTTED || bottomStyle == DASHED || bottomStyle == SOLID || bottomStyle == INSET));
+
+            drawLineForBoxSide(graphicsContext, tx, y, tx + style->borderLeftWidth(), y2, BSLeft, leftColor,
+                        leftStyle, ignoreTop ? 0 : style->borderTopWidth(), ignoreBottom ? 0 : style->borderBottomWidth());
+        }
+    }
+
+    if (renderRight) {
+        if (renderRadii && borderWillArcInnerEdge(bottomRight, topRight, style->borderBottomWidth(), style->borderTopWidth(), style->borderRightWidth())) {
+            graphicsContext->save();
+            clipBorderSidePolygon(graphicsContext, borderRect, topLeft, topRight, bottomLeft, bottomRight, BSRight, style);
+            float thickness = max(max(style->borderRightWidth(), style->borderTopWidth()), style->borderBottomWidth());
+            drawBoxSideFromPath(graphicsContext, borderRect, roundedPath, style->borderRightWidth(), thickness, BSRight, style, rightColor, rightStyle);
+            graphicsContext->restore();
+        } else {
+            bool ignoreTop = ((topColor == rightColor) && (topTransparent == rightTransparent)
+                && (rightStyle >= DOTTED || rightStyle == INSET)
+                && (topStyle == DOTTED || topStyle == DASHED || topStyle == SOLID || topStyle == OUTSET));
+
+            bool ignoreBottom = ((bottomColor == rightColor) && (bottomTransparent == rightTransparent)
+                && (rightStyle >= DOTTED || rightStyle == INSET)
+                && (bottomStyle == DOTTED || bottomStyle == DASHED || bottomStyle == SOLID || bottomStyle == INSET));
+
+            int y = ty;
+            int y2 = ty + h;
+
+            drawLineForBoxSide(graphicsContext, tx + w - style->borderRightWidth(), y, tx + w, y2, BSRight, rightColor, 
+                rightStyle, ignoreTop ? 0 : style->borderTopWidth(), 
+                ignoreBottom ? 0 : style->borderBottomWidth());
+        }
+    }
+
+    if (renderRadii)
+        graphicsContext->restore();
+}
+#else
+void RenderBoxModelObject::paintBorder(GraphicsContext* graphicsContext, int tx, int ty, int w, int h,
+                                       const RenderStyle* style, bool begin, bool end)
+{
+    // FIXME: This old version of paintBorder should be removed when all ports implement 
+    // GraphicsContext::clipConvexPolygon()!! This should happen soon.
     if (paintNinePieceImage(graphicsContext, tx, ty, w, h, style, style->borderImage()))
         return;
 
@@ -1278,6 +1452,65 @@ void RenderBoxModelObject::paintBorder(GraphicsContext* graphicsContext, int tx,
 
     if (renderRadii)
         graphicsContext->restore();
+}
+#endif
+
+void RenderBoxModelObject::clipBorderSidePolygon(GraphicsContext* graphicsContext, const IntRect& box, const IntSize& topLeft, const IntSize& topRight, const IntSize& bottomLeft, const IntSize& bottomRight, const BoxSide side, const RenderStyle* style)
+{
+    FloatPoint quad[4];
+    int tx = box.x();
+    int ty = box.y();
+    int w = box.width();
+    int h = box.height();
+
+    // For each side, create an array of FloatPoints where each point is based on whichever value in each corner
+    // is larger -- the radius width/height or the border width/height -- as appropriate.
+    switch (side) {
+    case BSTop:
+        quad[0] = FloatPoint(tx, ty);
+        quad[1] = FloatPoint(
+            tx + max(topLeft.width(), (int) style->borderLeftWidth()), 
+            ty + max(topLeft.height(), (int) style->borderTopWidth()));
+        quad[2] = FloatPoint(
+            tx + w - max(topRight.width(), (int) style->borderRightWidth()), 
+            ty + max(topRight.height(), (int)style->borderTopWidth()));
+        quad[3] = FloatPoint(tx + w, ty);
+        break;
+    case BSLeft:
+        quad[0] = FloatPoint(tx, ty);
+        quad[1] = FloatPoint(
+            tx + max(topLeft.width(), (int) style->borderLeftWidth()), 
+            ty + max(topLeft.height(), (int) style->borderTopWidth()));
+        quad[2] = FloatPoint(
+            tx + max(bottomLeft.width(), (int) style->borderLeftWidth()), 
+            ty + h - max(bottomLeft.height(), (int)style->borderBottomWidth()));
+        quad[3] = FloatPoint(tx, ty + h);
+        break;
+    case BSBottom:
+        quad[0] = FloatPoint(tx, ty + h);
+        quad[1] = FloatPoint(
+            tx + max(bottomLeft.width(), (int) style->borderLeftWidth()), 
+            ty + h - max(bottomLeft.height(), (int)style->borderBottomWidth()));
+        quad[2] = FloatPoint(
+            tx + w - max(bottomRight.width(), (int) style->borderRightWidth()), 
+            ty + h - max(bottomRight.height(), (int)style->borderBottomWidth()));
+        quad[3] = FloatPoint(tx + w, ty + h);
+        break;
+    case BSRight:
+        quad[0] = FloatPoint(tx + w, ty);
+        quad[1] = FloatPoint(
+            tx + w - max(topRight.width(), (int) style->borderRightWidth()), 
+            ty + max(topRight.height(), (int) style->borderTopWidth()));
+        quad[2] = FloatPoint(
+            tx + w - max(bottomRight.width(), (int) style->borderRightWidth()), 
+            ty + h - max(bottomRight.height(), (int)style->borderBottomWidth()));
+        quad[3] = FloatPoint(tx + w, ty + h);
+        break;
+    default:
+        break;
+    }
+
+    graphicsContext->clipConvexPolygon(4, quad);
 }
 
 void RenderBoxModelObject::paintBoxShadow(GraphicsContext* context, int tx, int ty, int w, int h, const RenderStyle* s, ShadowStyle shadowStyle, bool begin, bool end)

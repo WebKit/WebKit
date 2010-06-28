@@ -239,6 +239,7 @@ namespace WebCore {
         void clipOutRoundedRect(const IntRect&, const IntSize& topLeft, const IntSize& topRight, const IntSize& bottomLeft, const IntSize& bottomRight);
         void clipPath(WindRule);
         void clipToImageBuffer(const FloatRect&, const ImageBuffer*);
+        void clipConvexPolygon(size_t numPoints, const FloatPoint*);
 
         int textDrawingMode();
         void setTextDrawingMode(int);

@@ -478,6 +478,17 @@ void GraphicsContext::drawConvexPolygon(size_t numPoints,
     }
 }
 
+void GraphicsContext::clipConvexPolygon(size_t numPoints, const FloatPoint* points)
+{
+    if (paintingDisabled())
+        return;
+
+    if (numPoints <= 1)
+        return;
+    
+    // FIXME: IMPLEMENT!!
+}
+
 // This method is only used to draw the little circles used in lists.
 void GraphicsContext::drawEllipse(const IntRect& elipseRect)
 {

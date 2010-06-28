@@ -739,14 +739,8 @@ void RenderStyle::setBoxShadow(ShadowData* shadowData, bool add)
     rareData->m_boxShadow.set(shadowData);
 }
 
-void RenderStyle::getBorderRadiiForRect(const IntRect& r, IntSize& topLeft, IntSize& topRight, IntSize& bottomLeft, IntSize& bottomRight) const
+static void constrainCornerRadiiForRect(const IntRect& r, IntSize& topLeft, IntSize& topRight, IntSize& bottomLeft, IntSize& bottomRight)
 {
-    topLeft = surround->border.topLeft();
-    topRight = surround->border.topRight();
-    
-    bottomLeft = surround->border.bottomLeft();
-    bottomRight = surround->border.bottomRight();
-
     // Constrain corner radii using CSS3 rules:
     // http://www.w3.org/TR/css3-background/#the-border-radius
     
@@ -789,6 +783,39 @@ void RenderStyle::getBorderRadiiForRect(const IntRect& r, IntSize& topLeft, IntS
         if (!bottomRight.width() || !bottomRight.height())
             bottomRight = IntSize();
     }
+}
+
+void RenderStyle::getBorderRadiiForRect(const IntRect& r, IntSize& topLeft, IntSize& topRight, IntSize& bottomLeft, IntSize& bottomRight) const
+{
+    topLeft = surround->border.topLeft();
+    topRight = surround->border.topRight();
+    
+    bottomLeft = surround->border.bottomLeft();
+    bottomRight = surround->border.bottomRight();
+
+    constrainCornerRadiiForRect(r, topLeft, topRight, bottomLeft, bottomRight);
+}
+
+void RenderStyle::getInnerBorderRadiiForRectWithBorderWidths(const IntRect& innerRect, unsigned short topWidth, unsigned short bottomWidth, unsigned short leftWidth, unsigned short rightWidth, IntSize& innerTopLeft, IntSize& innerTopRight, IntSize& innerBottomLeft, IntSize& innerBottomRight) const
+{
+    innerTopLeft = surround->border.topLeft();
+    innerTopRight = surround->border.topRight();
+    innerBottomLeft = surround->border.bottomLeft();
+    innerBottomRight = surround->border.bottomRight();
+
+    innerTopLeft.setWidth(max(0, innerTopLeft.width() - leftWidth));
+    innerTopLeft.setHeight(max(0, innerTopLeft.height() - topWidth));
+
+    innerTopRight.setWidth(max(0, innerTopRight.width() - rightWidth));
+    innerTopRight.setHeight(max(0, innerTopRight.height() - topWidth));
+
+    innerBottomLeft.setWidth(max(0, innerBottomLeft.width() - leftWidth));
+    innerBottomLeft.setHeight(max(0, innerBottomLeft.height() - bottomWidth));
+
+    innerBottomRight.setWidth(max(0, innerBottomRight.width() - rightWidth));
+    innerBottomRight.setHeight(max(0, innerBottomRight.height() - bottomWidth));
+
+    constrainCornerRadiiForRect(innerRect, innerTopLeft, innerTopRight, innerBottomLeft, innerBottomRight);
 }
 
 const CounterDirectiveMap* RenderStyle::counterDirectives() const

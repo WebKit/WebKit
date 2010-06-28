@@ -37,6 +37,10 @@
 #include "TransformationMatrix.h"
 #include <wtf/UnusedParam.h>
 
+#if PLATFORM(CG)
+#define HAVE_PATH_BASED_BORDER_RADIUS_DRAWING 1
+#endif
+
 namespace WebCore {
 
 class AnimationController;
@@ -436,8 +440,19 @@ public:
 
     void drawLineForBoxSide(GraphicsContext*, int x1, int y1, int x2, int y2, BoxSide,
                             Color, EBorderStyle, int adjbw1, int adjbw2);
+#if HAVE(PATH_BASED_BORDER_RADIUS_DRAWING)
+    void drawBoxSideFromPath(GraphicsContext*, IntRect, Path, 
+                            float thickness, float drawThickness, BoxSide, const RenderStyle*, 
+                            Color, EBorderStyle);
+#else
+    // FIXME: This function should be removed when all ports implement GraphicsContext::clipConvexPolygon()!!
+    // At that time, everyone can use RenderObject::drawBoxSideFromPath() instead. This should happen soon.
     void drawArcForBoxSide(GraphicsContext*, int x, int y, float thickness, IntSize radius, int angleStart,
                            int angleSpan, BoxSide, Color, EBorderStyle, bool firstCorner);
+#endif
+
+    IntRect borderInnerRect(const IntRect&, unsigned short topWidth, unsigned short bottomWidth,
+                            unsigned short leftWidth, unsigned short rightWidth) const;
 
     // The pseudo element style can be cached or uncached.  Use the cached method if the pseudo element doesn't respect
     // any pseudo classes (and therefore has no concept of changing state).

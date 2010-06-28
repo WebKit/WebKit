@@ -1,3 +1,88 @@
+2010-06-28  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=9197 CSS3: Borders 
+        with border-radius and double, groove, or ridge styles should look 
+        better
+
+        This patch re-works border radius painting to stroke paths instead 
+        of arcs. 
+
+        Added new function clipConvexPolygon(). Added static 
+        addConvexPolygonToContext so that code can be shared between 
+        drawConvexPolygon() and clipConvexPolygon().
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::addConvexPolygonToContext):
+        (WebCore::GraphicsContext::drawConvexPolygon):
+        (WebCore::GraphicsContext::clipConvexPolygon):
+
+        Shells of implementations on non-CG platforms.
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::clipConvexPolygon):
+        * platform/graphics/haiku/GraphicsContextHaiku.cpp:
+        (WebCore::GraphicsContext::clipConvexPolygon):
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::GraphicsContext::clipConvexPolygon):
+        * platform/graphics/skia/GraphicsContextSkia.cpp:
+        (WebCore::GraphicsContext::clipConvexPolygon):
+        * platform/graphics/wince/GraphicsContextWince.cpp:
+        (WebCore::GraphicsContext::clipConvexPolygon):
+        * platform/graphics/wx/GraphicsContextWx.cpp:
+        (WebCore::GraphicsContext::clipConvexPolygon):
+
+        This new helper function determines if the inner corners of the 
+        border will arch in or meet at a right angle. 
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::borderWillArcInnerEdge):
+
+        This function is re-written so that, for each side of the border, 
+        if borderWillArcInnerEdge() is true, we go down a brand new code 
+        path of clipping to a convex polygon for the border side and then 
+        we paint the side using the new function drawBoxSideFromPath(). If 
+        borderWillArcInnerEdge() is false, then we call into the old 
+        familiar drawLineForBoxSide() which relies on the rounder clip 
+        rects we have set up to arch the outer edge of the border.
+        (WebCore::RenderBoxModelObject::paintBorder):
+
+        This new function does the math to figure out the convex polygon 
+        to clip to in the case where we need to arch the inner edge of the 
+        border. This calls into a new GraphicsContext function that is only 
+        implemented on CG at this time. This is the reason we are keeping 
+        around an old version of paintBorder() for now.
+        (WebCore::RenderBoxModelObject::clipBorderSidePolygon):
+        * rendering/RenderBoxModelObject.h:
+
+        borderInnerRect() is a new convenience function called from 
+        RenderObject and RenderBoxModelObject to determine the rect of the 
+        inside edge of the border.
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::borderInnerRect):
+
+        This new function re-works drawArcForBoxSide to draw from Paths 
+        when appropriate instead of stroking arcs. 
+        (WebCore::RenderObject::drawBoxSideFromPath):
+
+        Keep this around for that do not HAVE(PATH_BASED_BORDER_RADIUS_DRAWING) until 
+        GraphicsContext::clipConvexPolygon() is implemented.
+        (WebCore::RenderObject::drawArcForBoxSide):
+        * rendering/RenderObject.h:
+
+        New function 
+        RenderStyle::getInnerBorderRadiiForRectWithBorderWidths() gets the 
+        inner radius values for a rect. It takes border widths a parameters 
+        rather than using the style's border widths so that it can be used 
+        in inner radius calculations for double and groove/ridge 
+        calculations. The W3C corner constraining rules were moved to a 
+        static function that can be called from both getBorderRadiiForRect
+        () and getInnerBorderRadiiForRectWithBorderWidths().
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::constrainCornerRadiiForRect):
+        (WebCore::RenderStyle::getBorderRadiiForRect):
+        (WebCore::RenderStyle::getInnerBorderRadiiForRectWithBorderWidths):
+        * rendering/style/RenderStyle.h:
+
 2010-06-28  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Xan Lopez.

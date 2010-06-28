@@ -528,6 +528,17 @@ void GraphicsContext::drawConvexPolygon(size_t npoints, const FloatPoint* points
     p->restore();
 }
 
+void GraphicsContext::clipConvexPolygon(size_t numPoints, const FloatPoint* points)
+{
+    if (paintingDisabled())
+        return;
+
+    if (numPoints <= 1)
+        return;
+    
+    // FIXME: IMPLEMENT!!
+}
+
 QPen GraphicsContext::pen()
 {
     if (paintingDisabled())

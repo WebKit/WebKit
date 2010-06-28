@@ -440,6 +440,15 @@ void GraphicsContext::strokeArc(const IntRect& rect, int startAngle, int angleSp
     CGContextRestoreGState(context);
 }
 
+static void addConvexPolygonToContext(CGContextRef context, size_t numPoints, const FloatPoint* points)
+{
+    CGContextBeginPath(context);
+    CGContextMoveToPoint(context, points[0].x(), points[0].y());
+    for (size_t i = 1; i < numPoints; i++)
+        CGContextAddLineToPoint(context, points[i].x(), points[i].y());
+    CGContextClosePath(context);
+}
+
 void GraphicsContext::drawConvexPolygon(size_t npoints, const FloatPoint* points, bool antialiased)
 {
     if (paintingDisabled())
@@ -453,16 +462,23 @@ void GraphicsContext::drawConvexPolygon(size_t npoints, const FloatPoint* points
     if (antialiased != shouldAntialias())
         CGContextSetShouldAntialias(context, antialiased);
 
-    CGContextBeginPath(context);
-    CGContextMoveToPoint(context, points[0].x(), points[0].y());
-    for (size_t i = 1; i < npoints; i++)
-        CGContextAddLineToPoint(context, points[i].x(), points[i].y());
-    CGContextClosePath(context);
-
+    addConvexPolygonToContext(context, npoints, points);
     drawPath();
 
     if (antialiased != shouldAntialias())
         CGContextSetShouldAntialias(context, shouldAntialias());
+}
+
+void GraphicsContext::clipConvexPolygon(size_t numPoints, const FloatPoint* points)
+{
+    if (paintingDisabled())
+        return;
+
+    if (numPoints <= 1)
+        return;
+    
+    addConvexPolygonToContext(platformContext(), numPoints, points);
+    clipPath(RULE_NONZERO);
 }
 
 void GraphicsContext::applyStrokePattern()

@@ -504,6 +504,17 @@ void GraphicsContext::drawConvexPolygon(size_t npoints, const FloatPoint* points
     cairo_restore(cr);
 }
 
+void GraphicsContext::clipConvexPolygon(size_t numPoints, const FloatPoint* points)
+{
+    if (paintingDisabled())
+        return;
+
+    if (numPoints <= 1)
+        return;
+    
+    // FIXME: IMPLEMENT!
+}
+
 void GraphicsContext::fillPath()
 {
     if (paintingDisabled())

@@ -30,6 +30,7 @@
 #include "AXObjectCache.h"
 #include "Chrome.h"
 #include "CSSStyleSelector.h"
+#include "DashArray.h"
 #include "FloatQuad.h"
 #include "Frame.h"
 #include "FrameView.h"
@@ -877,10 +878,186 @@ void RenderObject::drawLineForBoxSide(GraphicsContext* graphicsContext, int x1, 
     }
 }
 
+IntRect RenderObject::borderInnerRect(const IntRect& borderRect, unsigned short topWidth, unsigned short bottomWidth, unsigned short leftWidth, unsigned short rightWidth) const
+{
+    return IntRect(
+            borderRect.x() + leftWidth, 
+            borderRect.y() + topWidth, 
+            borderRect.width() - leftWidth - rightWidth, 
+            borderRect.height() - topWidth - bottomWidth);
+}
+
+#if HAVE(PATH_BASED_BORDER_RADIUS_DRAWING)
+void RenderObject::drawBoxSideFromPath(GraphicsContext* graphicsContext, IntRect borderRect, Path borderPath, 
+                                    float thickness, float drawThickness, BoxSide s, const RenderStyle* style, 
+                                    Color c, EBorderStyle borderStyle)
+{
+    if (thickness <= 0)
+        return;
+
+    if (borderStyle == DOUBLE && thickness < 3)
+        borderStyle = SOLID;
+
+    switch (borderStyle) {
+    case BNONE:
+    case BHIDDEN:
+        return;
+    case DOTTED:
+    case DASHED: {
+        graphicsContext->setStrokeColor(c, style->colorSpace());
+
+        // The stroke is doubled here because the provided path is the 
+        // outside edge of the border so half the stroke is clipped off. 
+        // The extra multiplier is so that the clipping mask can antialias
+        // the edges to prevent jaggies.
+        graphicsContext->setStrokeThickness(drawThickness * 2 * 1.1f);
+        graphicsContext->setStrokeStyle(borderStyle == DASHED ? DashedStroke : DottedStroke);
+
+        // If the number of dashes that fit in the path is odd and non-integral then we
+        // will have an awkwardly-sized dash at the end of the path. To try to avoid that
+        // here, we simply make the whitespace dashes ever so slightly bigger.
+        // FIXME: This could be even better if we tried to manipulate the dash offset
+        // and possibly the whiteSpaceWidth to get the corners dash-symmetrical.
+        float patWidth = thickness * ((borderStyle == DASHED) ? 3.0f : 1.0f);
+        float whiteSpaceWidth = patWidth;
+        float numberOfDashes = borderPath.length() / patWidth;
+        bool evenNumberOfFullDashes = !((int)numberOfDashes % 2);
+        bool integralNumberOfDashes = !(numberOfDashes - (int)numberOfDashes);
+        if (!evenNumberOfFullDashes && !integralNumberOfDashes) {
+            float numberOfWhitespaceDashes = numberOfDashes / 2;
+            whiteSpaceWidth += (patWidth  / numberOfWhitespaceDashes);
+        }
+
+        DashArray* lineDash = new DashArray();
+        lineDash->append(patWidth);
+        lineDash->append(whiteSpaceWidth);
+        graphicsContext->setLineDash(*lineDash, patWidth);
+        graphicsContext->addPath(borderPath);
+        graphicsContext->strokePath();
+        return;
+    }
+    case DOUBLE: {
+        int outerBorderTopWidth = style->borderTopWidth() / 3;
+        int outerBorderRightWidth = style->borderRightWidth() / 3;
+        int outerBorderBottomWidth = style->borderBottomWidth() / 3;
+        int outerBorderLeftWidth = style->borderLeftWidth() / 3;
+
+        int innerBorderTopWidth = style->borderTopWidth() * 2 / 3;
+        int innerBorderRightWidth = style->borderRightWidth() * 2 / 3;
+        int innerBorderBottomWidth = style->borderBottomWidth() * 2 / 3;
+        int innerBorderLeftWidth = style->borderLeftWidth() * 2 / 3;
+
+        // We need certain integer rounding results
+        if (style->borderTopWidth() % 3 == 2)
+            outerBorderTopWidth += 1;
+        if (style->borderRightWidth() % 3 == 2)
+            outerBorderRightWidth += 1;
+        if (style->borderBottomWidth() % 3 == 2)
+            outerBorderBottomWidth += 1;
+        if (style->borderLeftWidth() % 3 == 2)
+            outerBorderLeftWidth += 1;
+
+        if (style->borderTopWidth() % 3 == 1)
+            innerBorderTopWidth += 1;
+        if (style->borderRightWidth() % 3 == 1)
+            innerBorderRightWidth += 1;
+        if (style->borderBottomWidth() % 3 == 1)
+            innerBorderBottomWidth += 1;
+        if (style->borderLeftWidth() % 3 == 1)
+            innerBorderLeftWidth += 1;
+
+        // Get the inner border rects for both the outer border line and the inner border line
+        IntRect outerBorderInnerRect = borderInnerRect(borderRect, outerBorderTopWidth, outerBorderBottomWidth, 
+            outerBorderLeftWidth, outerBorderRightWidth);
+        IntRect innerBorderInnerRect = borderInnerRect(borderRect, innerBorderTopWidth, innerBorderBottomWidth, 
+            innerBorderLeftWidth, innerBorderRightWidth);
+
+        // Get the inner radii for the outer border line
+        IntSize outerBorderTopLeftInnerRadius, outerBorderTopRightInnerRadius, outerBorderBottomLeftInnerRadius, 
+            outerBorderBottomRightInnerRadius;
+        style->getInnerBorderRadiiForRectWithBorderWidths(outerBorderInnerRect, outerBorderTopWidth, outerBorderBottomWidth, 
+            outerBorderLeftWidth, outerBorderRightWidth, outerBorderTopLeftInnerRadius, outerBorderTopRightInnerRadius, 
+            outerBorderBottomLeftInnerRadius, outerBorderBottomRightInnerRadius);
+
+        // Get the inner radii for the inner border line
+        IntSize innerBorderTopLeftInnerRadius, innerBorderTopRightInnerRadius, innerBorderBottomLeftInnerRadius, 
+            innerBorderBottomRightInnerRadius;
+        style->getInnerBorderRadiiForRectWithBorderWidths(innerBorderInnerRect, innerBorderTopWidth, innerBorderBottomWidth, 
+            innerBorderLeftWidth, innerBorderRightWidth, innerBorderTopLeftInnerRadius, innerBorderTopRightInnerRadius, 
+            innerBorderBottomLeftInnerRadius, innerBorderBottomRightInnerRadius);
+
+        // Draw inner border line
+        graphicsContext->save();
+        graphicsContext->addRoundedRectClip(innerBorderInnerRect, innerBorderTopLeftInnerRadius, 
+            innerBorderTopRightInnerRadius, innerBorderBottomLeftInnerRadius, innerBorderBottomRightInnerRadius);
+        drawBoxSideFromPath(graphicsContext, borderRect, borderPath, thickness, drawThickness, s, style, c, SOLID);
+        graphicsContext->restore();
+
+        // Draw outer border line
+        graphicsContext->save();
+        graphicsContext->clipOutRoundedRect(outerBorderInnerRect, outerBorderTopLeftInnerRadius, 
+            outerBorderTopRightInnerRadius, outerBorderBottomLeftInnerRadius, outerBorderBottomRightInnerRadius);
+        drawBoxSideFromPath(graphicsContext, borderRect, borderPath, thickness, drawThickness, s, style, c, SOLID);
+        graphicsContext->restore();
+
+        return;
+    }
+    case RIDGE:
+    case GROOVE:
+    {
+        EBorderStyle s1;
+        EBorderStyle s2;
+        if (borderStyle == GROOVE) {
+            s1 = INSET;
+            s2 = OUTSET;
+        } else {
+            s1 = OUTSET;
+            s2 = INSET;
+        }
+
+        IntRect halfBorderRect = borderInnerRect(borderRect, style->borderLeftWidth() / 2, style->borderBottomWidth() / 2, 
+            style->borderLeftWidth() / 2, style->borderRightWidth() / 2);
+
+        IntSize topLeftHalfRadius, topRightHalfRadius, bottomLeftHalfRadius, bottomRightHalfRadius;
+        style->getInnerBorderRadiiForRectWithBorderWidths(halfBorderRect, style->borderLeftWidth() / 2, 
+            style->borderBottomWidth() / 2, style->borderLeftWidth() / 2, style->borderRightWidth() / 2, 
+            topLeftHalfRadius, topRightHalfRadius, bottomLeftHalfRadius, bottomRightHalfRadius);
+
+        // Paint full border
+        drawBoxSideFromPath(graphicsContext, borderRect, borderPath, thickness, drawThickness, s, style, c, s1);
+
+        // Paint inner only
+        graphicsContext->save();
+        graphicsContext->addRoundedRectClip(halfBorderRect, topLeftHalfRadius, topRightHalfRadius,
+            bottomLeftHalfRadius, bottomRightHalfRadius);
+        drawBoxSideFromPath(graphicsContext, borderRect, borderPath, thickness, drawThickness, s, style, c, s2);
+        graphicsContext->restore();
+
+        return;
+    }
+    case INSET:
+        if (s == BSTop || s == BSLeft)
+            c = c.dark();
+        break;
+    case OUTSET:
+        if (s == BSBottom || s == BSRight)
+            c = c.dark();
+        break;
+    default:
+        break;
+    }
+
+    graphicsContext->setStrokeStyle(NoStroke);
+    graphicsContext->setFillColor(c, style->colorSpace());
+    graphicsContext->drawRect(borderRect);
+}
+#else
 void RenderObject::drawArcForBoxSide(GraphicsContext* graphicsContext, int x, int y, float thickness, IntSize radius,
                                      int angleStart, int angleSpan, BoxSide s, Color c,
                                      EBorderStyle style, bool firstCorner)
 {
+    // FIXME: This function should be removed when all ports implement GraphicsContext::clipConvexPolygon()!!
+    // At that time, everyone can use RenderObject::drawBoxSideFromPath() instead. This should happen soon.
     if ((style == DOUBLE && thickness / 2 < 3) || ((style == RIDGE || style == GROOVE) && thickness / 2 < 2))
         style = SOLID;
 
@@ -957,6 +1134,7 @@ void RenderObject::drawArcForBoxSide(GraphicsContext* graphicsContext, int x, in
             break;
     }
 }
+#endif
 
 void RenderObject::addPDFURLRect(GraphicsContext* context, const IntRect& rect)
 {
