@@ -92,7 +92,6 @@
                 'public/WebColorName.h',
                 'public/WebCommon.h',
                 'public/WebCommonWorkerClient.h',
-                'public/WebCompositionCommand.h',
                 'public/WebCompositionUnderline.h',
                 'public/WebConsoleMessage.h',
                 'public/WebContextMenuData.h',

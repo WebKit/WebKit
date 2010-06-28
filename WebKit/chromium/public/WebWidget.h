@@ -33,7 +33,6 @@
 
 #include "WebCanvas.h"
 #include "WebCommon.h"
-#include "WebCompositionCommand.h"
 #include "WebCompositionUnderline.h"
 #include "WebTextInputType.h"
 #include "WebTextDirection.h"
@@ -79,13 +78,6 @@ public:
     // Called to inform the WebWidget that it has gained or lost keyboard focus.
     virtual void setFocus(bool) = 0;
 
-    // DEPRECATED. It's replaced by setComposition() and confirmComposition().
-    virtual bool handleCompositionEvent(WebCompositionCommand command,
-                                        int cursorPosition,
-                                        int targetStart,
-                                        int targetEnd,
-                                        const WebString& text) = 0;
-
     // Called to inform the WebWidget of a new composition text.
     // If selectionStart and selectionEnd has the same value, then it indicates
     // the input caret position. If the text is empty, then the existing
@@ -100,10 +92,6 @@ public:
     // Called to inform the WebWidget to confirm an ongoing composition.
     // Returns true if there is an ongoing composition.
     virtual bool confirmComposition() = 0;
-
-    // DEPRECATED. It's replaced by textInputType() and
-    // caretOrSelectionBounds().
-    virtual bool queryCompositionStatus(bool* enabled, WebRect* caretBounds) = 0;
 
     // Returns the current text input type of this WebWidget.
     virtual WebTextInputType textInputType() = 0;

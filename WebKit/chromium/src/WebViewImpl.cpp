@@ -1164,48 +1164,6 @@ void WebViewImpl::setFocus(bool enable)
     }
 }
 
-// DEPRECATED, will be removed later.
-bool WebViewImpl::handleCompositionEvent(WebCompositionCommand command,
-                                         int cursorPosition,
-                                         int targetStart,
-                                         int targetEnd,
-                                         const WebString& imeString)
-{
-    if (command == WebKit::WebCompositionCommandSet) {
-        if (targetStart < 0)
-            targetStart = 0;
-        if (targetEnd < 0)
-            targetEnd = static_cast<int>(imeString.length());
-
-        // Create custom underlines.
-        // To emphasize the selection, the selected region uses a solid black
-        // for its underline while other regions uses a pale gray for theirs.
-        WebVector<WebCompositionUnderline> underlines(static_cast<size_t>(3));
-        underlines[0].startOffset = 0;
-        underlines[0].endOffset = targetStart;
-        underlines[0].thick = true;
-        underlines[0].color = 0xffd3d3d3;
-        underlines[1].startOffset = targetStart;
-        underlines[1].endOffset = targetEnd;
-        underlines[1].thick = true;
-        underlines[1].color = 0xff000000;
-        underlines[2].startOffset = targetEnd;
-        underlines[2].endOffset = static_cast<unsigned>(imeString.length());
-        underlines[2].thick = true;
-        underlines[2].color = 0xffd3d3d3;
-        return setComposition(imeString, underlines, cursorPosition, cursorPosition);
-    }
-
-    if (command == WebKit::WebCompositionCommandDiscard)
-        setComposition(WebString(), WebVector<WebCompositionUnderline>(), 0, 0);
-    else if (command == WebKit::WebCompositionCommandConfirm) {
-        setComposition(imeString, WebVector<WebCompositionUnderline>(), 0, 0);
-        confirmComposition();
-    }
-
-    return true;
-}
-
 bool WebViewImpl::setComposition(
     const WebString& text,
     const WebVector<WebCompositionUnderline>& underlines,
@@ -1281,41 +1239,6 @@ bool WebViewImpl::confirmComposition()
     }
 
     editor->confirmComposition();
-    return true;
-}
-
-// DEPRECATED, will be removed later.
-bool WebViewImpl::queryCompositionStatus(bool* enableIME, WebRect* caretRect)
-{
-    // Store whether the selected node needs IME and the caret rectangle.
-    // This process consists of the following four steps:
-    //  1. Retrieve the selection controller of the focused frame;
-    //  2. Retrieve the caret rectangle from the controller;
-    //  3. Convert the rectangle, which is relative to the parent view, to the
-    //     one relative to the client window, and;
-    //  4. Store the converted rectangle.
-    const Frame* focused = focusedWebCoreFrame();
-    if (!focused)
-        return false;
-
-    const Editor* editor = focused->editor();
-    if (!editor || !editor->canEdit())
-        return false;
-
-    SelectionController* controller = focused->selection();
-    if (!controller)
-        return false;
-
-    const Node* node = controller->start().node();
-    if (!node)
-        return false;
-
-    *enableIME = node->shouldUseInputMethod() && !controller->isInPasswordField();
-    const FrameView* view = node->document()->view();
-    if (!view)
-        return false;
-
-    *caretRect = view->contentsToWindow(controller->absoluteCaretBounds());
     return true;
 }
 

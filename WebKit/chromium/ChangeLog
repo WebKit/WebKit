@@ -1,3 +1,28 @@
+2010-06-28  Zhe Su  <suzhe@chromium.org>
+
+        Reviewed by Jian Li.
+
+        [chromium]Remove deprecated code related to input method.
+        https://bugs.webkit.org/show_bug.cgi?id=41244
+
+        Also update TestWebWidget in tests/PopupMenuTest.cpp to add missing implementations.
+
+        * WebKit.gyp:
+        * public/WebCompositionCommand.h: Removed.
+        * public/WebViewClient.h:
+        * public/WebWidget.h:
+        * src/EditorClientImpl.cpp:
+        (WebKit::EditorClientImpl::setInputMethodState):
+        * src/WebPopupMenuImpl.cpp:
+        * src/WebPopupMenuImpl.h:
+        * src/WebViewImpl.cpp:
+        * src/WebViewImpl.h:
+        * tests/PopupMenuTest.cpp:
+        (WebKit::TestWebWidget::setComposition):
+        (WebKit::TestWebWidget::confirmComposition):
+        (WebKit::TestWebWidget::textInputType):
+        (WebKit::TestWebWidget::caretOrSelectionBounds):
+
 2010-06-27  John Abd-El-Malek  <jam@chromium.org>
 
         Reviewed by Darin Fisher.
