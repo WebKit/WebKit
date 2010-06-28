@@ -195,6 +195,8 @@ PASS inner.HTMLParamElement.isInner is true
 PASS inner.HTMLParamElement.constructor.isInner is true
 PASS inner.HTMLPreElement.isInner is true
 PASS inner.HTMLPreElement.constructor.isInner is true
+PASS inner.HTMLProgressElement.isInner is true
+PASS inner.HTMLProgressElement.constructor.isInner is true
 PASS inner.HTMLQuoteElement.isInner is true
 PASS inner.HTMLQuoteElement.constructor.isInner is true
 PASS inner.HTMLScriptElement.isInner is true

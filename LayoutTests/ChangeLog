@@ -1,3 +1,15 @@
+2010-06-28  Martin Robinson  <mrobinson@igalia.com>
+
+        Unreviewed.
+
+        Update baselines after r62034.
+
+        * platform/gtk/fast/dom/HTMLProgressElement/progress-bar-value-pseudo-element-expected.txt:
+        * platform/gtk/fast/dom/HTMLProgressElement/progress-element-expected.txt:
+        * platform/gtk/fast/dom/Window/window-property-descriptors-expected.txt:
+        * platform/gtk/fast/dom/prototype-inheritance-expected.txt:
+        * platform/gtk/fast/js/global-constructors-expected.txt:
+
 2010-06-28  Andreas Kling  <andreas.kling@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
