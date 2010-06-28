@@ -5253,7 +5253,6 @@ canvas/philip/tests/2d.fillStyle.parse.rgb-clamp-3.html
 canvas/philip/tests/2d.fillStyle.parse.rgb-clamp-4.html
 canvas/philip/tests/2d.fillStyle.parse.rgb-clamp-5.html
 canvas/philip/tests/2d.fillStyle.parse.system.html
-canvas/philip/tests/2d.gradient.interpolate.colouralpha.html
 canvas/philip/tests/2d.gradient.radial.cone.behind.html
 canvas/philip/tests/2d.gradient.radial.cone.beside.html
 canvas/philip/tests/2d.gradient.radial.cone.bottom.html

@@ -51,6 +51,8 @@ QGradient* Gradient::platformGradient()
     else
         m_gradient = new QLinearGradient(m_p0.x(), m_p0.y(), m_p1.x(), m_p1.y());
 
+    m_gradient->setInterpolationMode(QGradient::ComponentInterpolation);
+
     sortStopsIfNecessary();
 
     QColor stopColor;

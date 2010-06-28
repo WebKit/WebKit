@@ -1,3 +1,18 @@
+2010-06-28  Andreas Kling  <andreas.kling@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] Use HTML5-conformant gradient interpolation mode
+        https://bugs.webkit.org/show_bug.cgi?id=41298
+
+        Change the Qt Gradient implementation to use ComponentInterpolation mode.
+
+        Spec link:
+        http://www.whatwg.org/specs/web-apps/current-work/#colors-and-styles
+
+        * platform/graphics/qt/GradientQt.cpp:
+        (WebCore::Gradient::platformGradient):
+
 2010-06-28  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Sam Weinig.
