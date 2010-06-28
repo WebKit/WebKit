@@ -109,6 +109,7 @@ private:
     bool isScheduledForResume() const;
     bool inScriptExecution() const;
     bool inWrite() const { return m_writeNestingLevel > 0; }
+    bool shouldDelayEnd() const { return inWrite() || isWaitingForScripts() || inScriptExecution() || isScheduledForResume(); }
 
     ScriptController* script() const;
 

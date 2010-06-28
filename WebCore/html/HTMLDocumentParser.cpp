@@ -218,12 +218,15 @@ void HTMLDocumentParser::insert(const SegmentedString& source)
     if (m_parserStopped)
         return;
 
-    NestingLevelIncrementer nestingLevelIncrementer(m_writeNestingLevel);
+    {
+        NestingLevelIncrementer nestingLevelIncrementer(m_writeNestingLevel);
 
-    SegmentedString excludedLineNumberSource(source);
-    excludedLineNumberSource.setExcludeLineNumbers();
-    m_input.insertAtCurrentInsertionPoint(excludedLineNumberSource);
-    pumpTokenizerIfPossible(ForceSynchronous);
+        SegmentedString excludedLineNumberSource(source);
+        excludedLineNumberSource.setExcludeLineNumbers();
+        m_input.insertAtCurrentInsertionPoint(excludedLineNumberSource);
+        pumpTokenizerIfPossible(ForceSynchronous);
+    }
+
     endIfDelayed();
 }
 
@@ -232,20 +235,23 @@ void HTMLDocumentParser::append(const SegmentedString& source)
     if (m_parserStopped)
         return;
 
-    NestingLevelIncrementer nestingLevelIncrementer(m_writeNestingLevel);
+    {
+        NestingLevelIncrementer nestingLevelIncrementer(m_writeNestingLevel);
 
-    m_input.appendToEnd(source);
-    if (m_preloadScanner)
-        m_preloadScanner->appendToEnd(source);
+        m_input.appendToEnd(source);
+        if (m_preloadScanner)
+            m_preloadScanner->appendToEnd(source);
 
-    if (m_writeNestingLevel > 1) {
-        // We've gotten data off the network in a nested write.
-        // We don't want to consume any more of the input stream now.  Do
-        // not worry.  We'll consume this data in a less-nested write().
-        return;
+        if (m_writeNestingLevel > 1) {
+            // We've gotten data off the network in a nested write.
+            // We don't want to consume any more of the input stream now.  Do
+            // not worry.  We'll consume this data in a less-nested write().
+            return;
+        }
+
+        pumpTokenizerIfPossible(AllowYield);
     }
 
-    pumpTokenizerIfPossible(AllowYield);
     endIfDelayed();
 }
 
@@ -265,7 +271,7 @@ void HTMLDocumentParser::attemptToEnd()
     // finish() indicates we will not receive any more data. If we are waiting on
     // an external script to load, we can't finish parsing quite yet.
 
-    if (inWrite() || isWaitingForScripts() || inScriptExecution() || isScheduledForResume()) {
+    if (shouldDelayEnd()) {
         m_endWasDelayed = true;
         return;
     }
@@ -274,9 +280,7 @@ void HTMLDocumentParser::attemptToEnd()
 
 void HTMLDocumentParser::endIfDelayed()
 {
-    // We don't check inWrite() here since inWrite() will be true if this was
-    // called from write().
-    if (!m_endWasDelayed || isWaitingForScripts() || inScriptExecution() || isScheduledForResume())
+    if (!m_endWasDelayed || shouldDelayEnd())
         return;
 
     m_endWasDelayed = false;
@@ -336,8 +340,6 @@ void HTMLDocumentParser::resumeParsingAfterScriptExecution()
     ASSERT(!m_treeBuilder->isPaused());
 
     pumpTokenizerIfPossible(AllowYield);
-
-    // The document already finished parsing we were just waiting on scripts when finished() was called.
     endIfDelayed();
 }
 

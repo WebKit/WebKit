@@ -1,3 +1,37 @@
+2010-06-28  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        HTML5 Regression: Crash in insert()
+        https://bugs.webkit.org/show_bug.cgi?id=41281
+
+        We need to call endIfDelayed() outside of the script nesting block
+        because endIfDelayed() might call end(), which deletes the
+        HTMLDocumentParser.  If we try to exit the script nesting block after
+        the HTMLDocumentParser has been deleted, we'll decrement unallocated
+        memory, which is bad times.
+
+        Moving endIfDelayed outside of the script nesting block also lets us
+        avoid ending if inWrite() is true.  If we're inWrite(), then there's
+        folks above us on the stack who will crash of the HTMLDocumentParser is
+        deallocated.  Adding this check matches the LegacyHTMLDocumentParser
+        and the logic in attemptToEnd, facilitating a small refactoring of the
+        common logic for improved readability.
+
+        I don't know of any test case that changes in behavior because of this
+        patch, but this bug exists on the same line of code that the reliablity
+        tests crashed.  I'm not sure whether this patch will fix that crash,
+        but removing bugs (even theoretical ones) seems like a good idea.
+
+        * html/HTMLDocumentParser.cpp:
+        (WebCore::HTMLDocumentParser::insert):
+        (WebCore::HTMLDocumentParser::append):
+        (WebCore::HTMLDocumentParser::attemptToEnd):
+        (WebCore::HTMLDocumentParser::endIfDelayed):
+        (WebCore::HTMLDocumentParser::resumeParsingAfterScriptExecution):
+        * html/HTMLDocumentParser.h:
+        (WebCore::HTMLDocumentParser::shouldDelayEnd):
+
 2010-06-28  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Sam Weinig.
