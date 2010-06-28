@@ -1,3 +1,19 @@
+2010-06-28  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Don't dump contents of <script> elements in LayoutTests
+        https://bugs.webkit.org/show_bug.cgi?id=41277
+
+        Apparently we need to tell each element when we start and stop parsing
+        its children.  If we don't do this, we see the contents of every script
+        and style element in dumpAsText LayoutTests.  (This patch is *well*
+        covered by LayoutTests.)
+
+        * html/HTMLTreeBuilder.h:
+        (WebCore::HTMLTreeBuilder::ElementStack::pop):
+        (WebCore::HTMLTreeBuilder::ElementStack::push):
+
 2010-06-28  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.
