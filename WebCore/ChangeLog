@@ -1,3 +1,19 @@
+2010-06-28  Eric Seidel  <eric@webkit.org>
+
+        Unreviewed.  Attempt to fix Chromium and Qt builders.
+
+        Add a new baseclass for XML, HTML and Text DocumentParsers to clean up DocumentParser call sites
+        https://bugs.webkit.org/show_bug.cgi?id=41141
+
+        No functional changes, thus no tests.
+
+        * bindings/v8/ScriptController.cpp:
+        (WebCore::ScriptController::eventHandlerLineNumber):
+        (WebCore::ScriptController::eventHandlerColumnNumber):
+        * dom/XMLDocumentParserQt.cpp:
+        (WebCore::XMLDocumentParser::XMLDocumentParser):
+        (WebCore::XMLDocumentParser::stopParsing):
+
 2010-06-28  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

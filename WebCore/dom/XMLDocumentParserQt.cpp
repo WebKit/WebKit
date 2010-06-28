@@ -44,6 +44,7 @@
 #include "ResourceHandle.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
+#include "ScriptableDocumentParser.h"
 #include "ScriptController.h"
 #include "ScriptElement.h"
 #include "ScriptSourceCode.h"
@@ -78,7 +79,7 @@ QString EntityResolver::resolveUndeclaredEntity(const QString &name)
 // --------------------------------
 
 XMLDocumentParser::XMLDocumentParser(Document* document, FrameView* frameView)
-    : DocumentParser(document)
+    : ScriptableDocumentParser(document)
     , m_view(frameView)
     , m_wroteText(false)
     , m_currentNode(document)
@@ -105,7 +106,7 @@ XMLDocumentParser::XMLDocumentParser(Document* document, FrameView* frameView)
 }
 
 XMLDocumentParser::XMLDocumentParser(DocumentFragment* fragment, Element* parentElement, FragmentScriptingPermission permission)
-    : DocumentParser(fragment->document())
+    : ScriptableDocumentParser(fragment->document())
     , m_view(0)
     , m_wroteText(false)
     , m_currentNode(fragment)
@@ -228,7 +229,7 @@ int XMLDocumentParser::columnNumber() const
 
 void XMLDocumentParser::stopParsing()
 {
-    DocumentParser::stopParsing();
+    ScriptableDocumentParser::stopParsing();
 }
 
 void XMLDocumentParser::resumeParsing()
