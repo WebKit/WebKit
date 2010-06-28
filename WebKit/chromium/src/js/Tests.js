@@ -1610,7 +1610,21 @@ TestSuite.prototype.testDebugIntrinsicProperties = function()
       if (window.v8ScriptDebugServerEnabled) {
       var scopeExpectations = [
           "a", "Child", [
-            "constructor", "function Child(n) {", null,
+            "__proto__", "Child", [
+                  "__proto__", "Parent", [
+                      "__proto__", "Object", null,
+                    "constructor", "function Parent(n) {", [
+                        "name", '"Parent"', null,
+                        "prototype", 'Parent', [
+                            "parentProtoField", "11", null,
+                        ]
+                    ],
+                    "parentProtoField", "11", null,
+                ],
+                "constructor", "function Child(n) {", null,
+                "childProtoField", "21", null,
+            ],
+
             "parentField", "10", null,
             "childField", "20", null,
           ]
@@ -1655,7 +1669,7 @@ TestSuite.prototype.testDebugIntrinsicProperties = function()
 
     var propQueue = [];
     var index = 0;
-    var expectedFinalIndex = (window.v8ScriptDebugServerEnabled ? 1 : 8);
+    var expectedFinalIndex = (window.v8ScriptDebugServerEnabled ? 5 : 8);
 
     function expandAndCheckNextProperty() {
         if (index === propQueue.length) {
