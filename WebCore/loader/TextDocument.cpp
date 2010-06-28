@@ -25,7 +25,7 @@
 #include "config.h"
 #include "TextDocument.h"
 
-#include "DocumentParser.h"
+#include "DecodedDataDocumentParser.h"
 #include "Element.h"
 #include "HTMLNames.h"
 #include "HTMLViewSourceDocument.h"
@@ -38,7 +38,9 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-class TextDocumentParser : public DocumentParser {
+// FIXME: TextDocumentParser could just be an HTMLDocumentParser
+// which started the Tokenizer in the PlainText state.
+class TextDocumentParser : public DecodedDataDocumentParser {
 public:
     TextDocumentParser(Document*);
     virtual ~TextDocumentParser();
@@ -49,8 +51,7 @@ private:
     virtual void append(const SegmentedString&);
     virtual void finish();
     virtual bool finishWasCalled();
-    virtual bool isWaitingForScripts() const;
-    
+
     inline void checkBuffer(int len = 10)
     {
         if ((m_dest - m_buffer) > m_size - len) {
@@ -63,6 +64,7 @@ private:
         }
     }
 
+private:
     Element* m_preElement;
 
     bool m_skipLF;
@@ -73,7 +75,7 @@ private:
 };
 
 TextDocumentParser::TextDocumentParser(Document* document)
-    : DocumentParser(document)
+    : DecodedDataDocumentParser(document)
     , m_preElement(0)
     , m_skipLF(false)
 {    
@@ -84,7 +86,7 @@ TextDocumentParser::TextDocumentParser(Document* document)
 }    
 
 TextDocumentParser::TextDocumentParser(HTMLViewSourceDocument* document)
-    : DocumentParser(document, true)
+    : DecodedDataDocumentParser(document, true)
     , m_preElement(0)
     , m_skipLF(false)
 {    
@@ -174,6 +176,8 @@ void TextDocumentParser::finish()
     m_buffer = 0;
     m_dest = 0;
 
+    // FIXME: Should this call finishParsing even if m_parserStopped is true?
+    // See equivalent implementation in RawDataDocumentParser.
     document()->finishedParsing();
 }
 
@@ -181,12 +185,6 @@ bool TextDocumentParser::finishWasCalled()
 {
     // finish() always calls document()->finishedParsing() so we'll be deleted
     // after finish().
-    return false;
-}
-
-bool TextDocumentParser::isWaitingForScripts() const
-{
-    // A text document is never waiting for scripts
     return false;
 }
 

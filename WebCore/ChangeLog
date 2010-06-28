@@ -1,3 +1,78 @@
+2010-06-28  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Add a new baseclass for XML, HTML and Text DocumentParsers to clean up DocumentParser call sites
+        https://bugs.webkit.org/show_bug.cgi?id=41141
+
+        By splitting ScriptableDocumentParser and DecodedDataDocumentParser
+        out from DocumentParser we've made the DocumentParser and
+        RawDataDocumentParser classes simpler.
+
+        No functional change, thus no tests.
+
+        * Android.mk:
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::eventHandlerLineNumber):
+        * css/CSSStyleSheet.cpp:
+        (WebCore::CSSStyleSheet::checkLoaded):
+        * dom/Document.cpp:
+        (WebCore::Document::scriptableDocumentParser):
+        (WebCore::Document::open):
+        (WebCore::Document::implicitOpen):
+        (WebCore::Document::implicitClose):
+        (WebCore::Document::removePendingSheet):
+        * dom/Document.h:
+        (WebCore::Document::parser):
+        * dom/DocumentParser.cpp:
+        (WebCore::DocumentParser::DocumentParser):
+        * dom/DocumentParser.h:
+        (WebCore::DocumentParser::asScriptableDocumentParser):
+        * dom/RawDataDocumentParser.h:
+        (WebCore::RawDataDocumentParser::finishWasCalled):
+        * dom/ScriptableDocumentParser.cpp: Copied from WebCore/html/HTMLEntityParser.h.
+        (WebCore::ScriptableDocumentParser::ScriptableDocumentParser):
+        * dom/ScriptableDocumentParser.h: Added.
+        (WebCore::ScriptableDocumentParser::isExecutingScript):
+        (WebCore::ScriptableDocumentParser::executeScriptsWaitingForStylesheets):
+        (WebCore::ScriptableDocumentParser::xssAuditor):
+        (WebCore::ScriptableDocumentParser::setXSSAuditor):
+        (WebCore::ScriptableDocumentParser::processingContentWrittenByScript):
+        (WebCore::ScriptableDocumentParser::asScriptableDocumentParser):
+        * dom/ViewportArguments.cpp:
+        (WebCore::parserLineNumber):
+        (WebCore::reportViewportWarning):
+        * dom/XMLDocumentParser.h:
+        * dom/XMLDocumentParserLibxml2.cpp:
+        (WebCore::XMLDocumentParser::XMLDocumentParser):
+        * html/HTMLDocumentParser.cpp:
+        (WebCore::HTMLDocumentParser::HTMLDocumentParser):
+        (WebCore::HTMLDocumentParser::shouldLoadExternalScriptFromSrc):
+        * html/HTMLDocumentParser.h:
+        * html/LegacyHTMLDocumentParser.cpp:
+        (WebCore::LegacyHTMLDocumentParser::LegacyHTMLDocumentParser):
+        (WebCore::LegacyHTMLDocumentParser::parseTag):
+        * html/LegacyHTMLDocumentParser.h:
+        (WebCore::LegacyHTMLDocumentParser::processingContentWrittenByScript):
+        * html/LegacyHTMLTreeBuilder.cpp:
+        (WebCore::LegacyHTMLTreeBuilder::reportErrorToConsole):
+        * loader/DocumentLoader.cpp:
+        * loader/DocumentWriter.cpp:
+        * loader/TextDocument.cpp:
+        (WebCore::TextDocumentParser::TextDocumentParser):
+        (WebCore::TextDocumentParser::finish):
+        * svg/SVGDocumentExtensions.cpp:
+        (WebCore::parserLineNumber):
+        (WebCore::reportMessage):
+        (WebCore::SVGDocumentExtensions::reportWarning):
+        (WebCore::SVGDocumentExtensions::reportError):
+
 2010-06-27  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Mark Rowe.

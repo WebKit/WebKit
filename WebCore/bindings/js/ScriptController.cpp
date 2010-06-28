@@ -21,7 +21,7 @@
 #include "config.h"
 #include "ScriptController.h"
 
-#include "DocumentParser.h"
+#include "ScriptableDocumentParser.h"
 #include "Event.h"
 #include "EventNames.h"
 #include "Frame.h"
@@ -238,11 +238,12 @@ JSDOMWindowShell* ScriptController::initScript(DOMWrapperWorld* world)
 int ScriptController::eventHandlerLineNumber() const
 {
     // JSC expects 1-based line numbers, so we must add one here to get it right.
-    if (DocumentParser* parser = m_frame->document()->parser())
+    ScriptableDocumentParser* parser = m_frame->document()->scriptableDocumentParser();
+    if (parser)
         return parser->lineNumber() + 1;
     return 0;
 }
-    
+
 bool ScriptController::processingUserGesture(DOMWrapperWorld* world) const
 {
     if (m_allowPopupsFromPlugin || isJavaScriptAnchorNavigation())

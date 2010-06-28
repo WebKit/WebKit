@@ -32137,6 +32137,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\dom\DecodedDataDocumentParser.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\dom\DecodedDataDocumentParser.h"
+				>
+			</File>
+			<File
 				RelativePath="..\dom\DeviceOrientation.cpp"
 				>
 			</File>
@@ -32550,6 +32558,14 @@
 			</File>
 			<File
 				RelativePath="..\dom\RegisteredEventListener.h"
+				>
+			</File>
+			<File
+				RelativePath="..\dom\ScriptableDocumentParser.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\dom\ScriptableDocumentParser.h"
 				>
 			</File>
 			<File

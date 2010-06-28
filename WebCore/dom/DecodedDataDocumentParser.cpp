@@ -23,47 +23,37 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RawDataDocumentParser_h
-#define RawDataDocumentParser_h
+#include "config.h"
+#include "DecodedDataDocumentParser.h"
 
-#include "DocumentParser.h"
+#include "DocumentWriter.h"
+#include "SegmentedString.h"
+#include "TextResourceDecoder.h"
 
 namespace WebCore {
 
-class RawDataDocumentParser : public DocumentParser {
-public:
-    RawDataDocumentParser(Document* document)
-        : DocumentParser(document)
-    {
-    }
+DecodedDataDocumentParser::DecodedDataDocumentParser(Document* document, bool viewSourceMode)
+    : DocumentParser(document)
+    , m_inViewSourceMode(viewSourceMode)
+{
+}
 
-protected:
-    virtual void finish()
-    {
-        if (!m_parserStopped)
-            m_document->finishedParsing();
-    }
+void DecodedDataDocumentParser::appendBytes(DocumentWriter* writer , const char* data, int length, bool shouldFlush)
+{
+    if (!length && !shouldFlush)
+        return;
 
-private:
-    virtual void insert(const SegmentedString&)
-    {
-        // <https://bugs.webkit.org/show_bug.cgi?id=25397>: JS code can always call document.write, we need to handle it.
-        ASSERT_NOT_REACHED();
-    }
+    TextResourceDecoder* decoder = writer->createDecoderIfNeeded();
+    String decoded = decoder->decode(data, length);
+    if (shouldFlush)
+        decoded += decoder->flush();
+    if (decoded.isEmpty())
+        return;
 
-    virtual void append(const SegmentedString&)
-    {
-        ASSERT_NOT_REACHED();
-    }
+    writer->reportDataRecieved();
 
-    virtual bool finishWasCalled()
-    {
-        // finish() always calls document()->finishedParsing() so we will be
-        // deleted after finish().
-        return false;
-    }
-};
+    append(decoded);
+}
 
 };
 
-#endif // RawDataDocumentParser_h

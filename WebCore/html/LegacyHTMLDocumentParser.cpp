@@ -147,7 +147,7 @@ inline void Token::addAttribute(AtomicString& attrName, const AtomicString& attr
 // ----------------------------------------------------------------------------
 
 LegacyHTMLDocumentParser::LegacyHTMLDocumentParser(HTMLDocument* document, bool reportErrors)
-    : DocumentParser(document)
+    : ScriptableDocumentParser(document)
     , m_buffer(0)
     , m_scriptCode(0)
     , m_scriptCodeSize(0)
@@ -167,7 +167,7 @@ LegacyHTMLDocumentParser::LegacyHTMLDocumentParser(HTMLDocument* document, bool 
 }
 
 LegacyHTMLDocumentParser::LegacyHTMLDocumentParser(HTMLViewSourceDocument* document)
-    : DocumentParser(document, true)
+    : ScriptableDocumentParser(document, true)
     , m_buffer(0)
     , m_scriptCode(0)
     , m_scriptCodeSize(0)
@@ -186,7 +186,7 @@ LegacyHTMLDocumentParser::LegacyHTMLDocumentParser(HTMLViewSourceDocument* docum
 }
 
 LegacyHTMLDocumentParser::LegacyHTMLDocumentParser(DocumentFragment* frag, FragmentScriptingPermission scriptingPermission)
-    : DocumentParser(frag->document())
+    : ScriptableDocumentParser(frag->document())
     , m_buffer(0)
     , m_scriptCode(0)
     , m_scriptCodeSize(0)
@@ -1391,7 +1391,7 @@ LegacyHTMLDocumentParser::State LegacyHTMLDocumentParser::parseTag(SegmentedStri
 
                         if (m_currentToken.beginTag && m_currentToken.tagName == scriptTag && !inViewSourceMode() && !m_treeBuilder->skipMode() && m_attrName == srcAttr) {
                             String context(m_rawAttributeBeforeValue.data(), m_rawAttributeBeforeValue.size());
-                            if (m_XSSAuditor && !m_XSSAuditor->canLoadExternalScriptFromSrc(attributeValue))
+                            if (xssAuditor() && !xssAuditor()->canLoadExternalScriptFromSrc(attributeValue))
                                 attributeValue = blankURL().string();
                         }
 
@@ -1428,7 +1428,7 @@ LegacyHTMLDocumentParser::State LegacyHTMLDocumentParser::parseTag(SegmentedStri
 
                         if (m_currentToken.beginTag && m_currentToken.tagName == scriptTag && !inViewSourceMode() && !m_treeBuilder->skipMode() && m_attrName == srcAttr) {
                             String context(m_rawAttributeBeforeValue.data(), m_rawAttributeBeforeValue.size());
-                            if (m_XSSAuditor && !m_XSSAuditor->canLoadExternalScriptFromSrc(attributeValue))
+                            if (xssAuditor() && !xssAuditor()->canLoadExternalScriptFromSrc(attributeValue))
                                 attributeValue = blankURL().string();
                         }
 

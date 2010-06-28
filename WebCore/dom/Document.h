@@ -100,6 +100,7 @@ namespace WebCore {
     class RegisteredEventListener;
     class RenderArena;
     class RenderView;
+    class ScriptableDocumentParser;
     class ScriptElementData;
     class SecurityOrigin;
     class SerializedScriptValue;
@@ -548,7 +549,8 @@ public:
     CSSStyleSheet* mappedElementSheet();
     
     virtual DocumentParser* createParser();
-    DocumentParser* parser() { return m_parser.get(); }
+    DocumentParser* parser() const { return m_parser.get(); }
+    ScriptableDocumentParser* scriptableDocumentParser() const;
     
     bool printing() const { return m_printing; }
     void setPrinting(bool p) { m_printing = p; }

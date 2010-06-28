@@ -28,11 +28,11 @@
 
 #include "CachedResourceClient.h"
 #include "FragmentScriptingPermission.h"
+#include "HTMLInputStream.h"
 #include "HTMLScriptRunnerHost.h"
 #include "HTMLToken.h"
-#include "HTMLInputStream.h"
+#include "ScriptableDocumentParser.h"
 #include "SegmentedString.h"
-#include "DocumentParser.h"
 #include "Timer.h"
 #include <wtf/OwnPtr.h>
 
@@ -50,7 +50,7 @@ class LegacyHTMLTreeBuilder;
 class ScriptController;
 class ScriptSourceCode;
 
-class HTMLDocumentParser :  public DocumentParser, HTMLScriptRunnerHost, CachedResourceClient {
+class HTMLDocumentParser :  public ScriptableDocumentParser, HTMLScriptRunnerHost, CachedResourceClient {
 public:
     // FIXME: These constructors should be made private and replaced by create() methods.
     HTMLDocumentParser(HTMLDocument*, bool reportErrors);

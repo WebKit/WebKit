@@ -778,6 +778,8 @@ webcore_sources += \
 	WebCore/dom/DOMImplementation.h \
 	WebCore/dom/DOMStringList.cpp \
 	WebCore/dom/DOMStringList.h \
+	WebCore/dom/DecodedDataDocumentParser.cpp \
+	WebCore/dom/DecodedDataDocumentParser.h \
 	WebCore/dom/DeviceOrientation.cpp \
 	WebCore/dom/DeviceOrientation.h \
 	WebCore/dom/DeviceOrientationClient.h \
@@ -881,6 +883,8 @@ webcore_sources += \
 	WebCore/dom/RawDataDocumentParser.h \
 	WebCore/dom/RegisteredEventListener.cpp \
 	WebCore/dom/RegisteredEventListener.h \
+	WebCore/dom/ScriptableDocumentParser.cpp \
+	WebCore/dom/ScriptableDocumentParser.h \
 	WebCore/dom/ScriptElement.cpp \
 	WebCore/dom/ScriptElement.h \
 	WebCore/dom/ScriptExecutionContext.cpp \

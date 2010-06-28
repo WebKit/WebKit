@@ -26,38 +26,15 @@
 #include "config.h"
 #include "DocumentParser.h"
 
-#include "DocumentWriter.h"
-#include "SegmentedString.h"
-#include "TextResourceDecoder.h"
-
 #include <wtf/Assertions.h>
 
 namespace WebCore {
 
-DocumentParser::DocumentParser(Document* document, bool viewSourceMode)
+DocumentParser::DocumentParser(Document* document)
     : m_parserStopped(false)
-    , m_inViewSourceMode(viewSourceMode)
     , m_document(document)
-    , m_XSSAuditor(0)
 {
     ASSERT(document);
-}
-
-void DocumentParser::appendBytes(DocumentWriter* writer , const char* data, int length, bool shouldFlush)
-{
-    if (!length && !shouldFlush)
-        return;
-
-    TextResourceDecoder* decoder = writer->createDecoderIfNeeded();
-    String decoded = decoder->decode(data, length);
-    if (shouldFlush)
-        decoded += decoder->flush();
-    if (decoded.isEmpty())
-        return;
-
-    writer->reportDataRecieved();
-
-    append(decoded);
 }
 
 };

@@ -114,6 +114,7 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	dom/ContainerNode.cpp \
 	dom/DOMImplementation.cpp \
 	dom/DOMStringList.cpp \
+	dom/DecodedDataDocumentParser.cpp \
 	dom/Document.cpp \
 	dom/DocumentFragment.cpp \
 	dom/DocumentParser.cpp \
@@ -158,6 +159,7 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	dom/QualifiedName.cpp \
 	dom/Range.cpp \
 	dom/RegisteredEventListener.cpp \
+	dom/ScriptableDocumentParser.cpp \
 	dom/ScriptElement.cpp \
 	dom/ScriptExecutionContext.cpp \
 	dom/SelectElement.cpp \

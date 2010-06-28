@@ -2975,6 +2975,8 @@
 		A83B79570CCB0125000B0825 /* DOMSVGFontFaceElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A83B79480CCB0125000B0825 /* DOMSVGFontFaceElement.h */; };
 		A83E1C740E49042C00140B9C /* ScriptControllerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = A83E1C720E49042B00140B9C /* ScriptControllerMac.mm */; };
 		A84D827C11D333ED00972990 /* RawDataDocumentParser.h in Headers */ = {isa = PBXBuildFile; fileRef = A84D827B11D333ED00972990 /* RawDataDocumentParser.h */; };
+		A84D82C111D3474800972990 /* ScriptableDocumentParser.h in Headers */ = {isa = PBXBuildFile; fileRef = A84D82BF11D3474800972990 /* ScriptableDocumentParser.h */; };
+		A84D82C211D3474800972990 /* ScriptableDocumentParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A84D82C011D3474800972990 /* ScriptableDocumentParser.cpp */; };
 		A84EBD780CB8C89200079609 /* JSStyleSheetListCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A84EBD770CB8C89200079609 /* JSStyleSheetListCustom.cpp */; };
 		A84EBD830CB8C97700079609 /* JSStyleSheetList.h in Headers */ = {isa = PBXBuildFile; fileRef = A84EBD810CB8C97700079609 /* JSStyleSheetList.h */; };
 		A84EBD840CB8C97700079609 /* JSStyleSheetList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A84EBD820CB8C97700079609 /* JSStyleSheetList.cpp */; };
@@ -3061,6 +3063,8 @@
 		A8A909AC0CBCD6B50029B807 /* RenderSVGTransformableContainer.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A909AA0CBCD6B50029B807 /* RenderSVGTransformableContainer.h */; };
 		A8A909AD0CBCD6B50029B807 /* RenderSVGTransformableContainer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8A909AB0CBCD6B50029B807 /* RenderSVGTransformableContainer.cpp */; };
 		A8C2280E11D4A59700D5A7D3 /* DocumentParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8C2280D11D4A59700D5A7D3 /* DocumentParser.cpp */; };
+		A8C228A111D5722E00D5A7D3 /* DecodedDataDocumentParser.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C2289F11D5722E00D5A7D3 /* DecodedDataDocumentParser.h */; };
+		A8C228A211D5722E00D5A7D3 /* DecodedDataDocumentParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8C228A011D5722E00D5A7D3 /* DecodedDataDocumentParser.cpp */; };
 		A8C4A7FD09D563270003AC8D /* StyledElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C4A7EB09D563270003AC8D /* StyledElement.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A8C4A7FE09D563270003AC8D /* StyledElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8C4A7EC09D563270003AC8D /* StyledElement.cpp */; };
 		A8C4A80009D563270003AC8D /* Node.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8C4A7EE09D563270003AC8D /* Node.cpp */; };
@@ -8469,6 +8473,8 @@
 		A83B79480CCB0125000B0825 /* DOMSVGFontFaceElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMSVGFontFaceElement.h; sourceTree = "<group>"; };
 		A83E1C720E49042B00140B9C /* ScriptControllerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ScriptControllerMac.mm; sourceTree = "<group>"; };
 		A84D827B11D333ED00972990 /* RawDataDocumentParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RawDataDocumentParser.h; sourceTree = "<group>"; };
+		A84D82BF11D3474800972990 /* ScriptableDocumentParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptableDocumentParser.h; sourceTree = "<group>"; };
+		A84D82C011D3474800972990 /* ScriptableDocumentParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptableDocumentParser.cpp; sourceTree = "<group>"; };
 		A84EBD770CB8C89200079609 /* JSStyleSheetListCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSStyleSheetListCustom.cpp; sourceTree = "<group>"; };
 		A84EBD810CB8C97700079609 /* JSStyleSheetList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSStyleSheetList.h; sourceTree = "<group>"; };
 		A84EBD820CB8C97700079609 /* JSStyleSheetList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSStyleSheetList.cpp; sourceTree = "<group>"; };
@@ -8555,6 +8561,8 @@
 		A8A909AA0CBCD6B50029B807 /* RenderSVGTransformableContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderSVGTransformableContainer.h; sourceTree = "<group>"; };
 		A8A909AB0CBCD6B50029B807 /* RenderSVGTransformableContainer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSVGTransformableContainer.cpp; sourceTree = "<group>"; };
 		A8C2280D11D4A59700D5A7D3 /* DocumentParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DocumentParser.cpp; sourceTree = "<group>"; };
+		A8C2289F11D5722E00D5A7D3 /* DecodedDataDocumentParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DecodedDataDocumentParser.h; sourceTree = "<group>"; };
+		A8C228A011D5722E00D5A7D3 /* DecodedDataDocumentParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DecodedDataDocumentParser.cpp; sourceTree = "<group>"; };
 		A8C4A7EB09D563270003AC8D /* StyledElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = StyledElement.h; sourceTree = "<group>"; };
 		A8C4A7EC09D563270003AC8D /* StyledElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = StyledElement.cpp; sourceTree = "<group>"; };
 		A8C4A7EE09D563270003AC8D /* Node.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Node.cpp; sourceTree = "<group>"; };
@@ -16911,6 +16919,10 @@
 				54C50F7A0E801DF3009832A0 /* XMLDocumentParserLibxml2.cpp */,
 				5D15E3A90F9E6AC1009E0E3F /* XMLDocumentParserScope.cpp */,
 				5D15E3AA0F9E6AC1009E0E3F /* XMLDocumentParserScope.h */,
+				A84D82BF11D3474800972990 /* ScriptableDocumentParser.h */,
+				A84D82C011D3474800972990 /* ScriptableDocumentParser.cpp */,
+				A8C2289F11D5722E00D5A7D3 /* DecodedDataDocumentParser.h */,
+				A8C228A011D5722E00D5A7D3 /* DecodedDataDocumentParser.cpp */,
 			);
 			path = dom;
 			sourceTree = "<group>";
@@ -19574,6 +19586,8 @@
 				CEA3949D11D45CDA003094CF /* StaticHashSetNodeList.h in Headers */,
 				8A844CFF11D3C17C0014065C /* NavigationTiming.h in Headers */,
 				8A844D0511D3C18E0014065C /* Performance.h in Headers */,
+				A84D82C111D3474800972990 /* ScriptableDocumentParser.h in Headers */,
+				A8C228A111D5722E00D5A7D3 /* DecodedDataDocumentParser.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -21899,6 +21913,8 @@
 				A8C2280E11D4A59700D5A7D3 /* DocumentParser.cpp in Sources */,
 				8A844CFE11D3C17C0014065C /* NavigationTiming.cpp in Sources */,
 				8A844D0411D3C18E0014065C /* Performance.cpp in Sources */,
+				A84D82C211D3474800972990 /* ScriptableDocumentParser.cpp in Sources */,
+				A8C228A211D5722E00D5A7D3 /* DecodedDataDocumentParser.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

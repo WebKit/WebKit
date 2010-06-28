@@ -771,6 +771,7 @@ SET(WebCore_SOURCES
     dom/CustomEvent.cpp
     dom/DOMImplementation.cpp
     dom/DOMStringList.cpp
+    dom/DecodedDataDocumentParser.cpp
     dom/DeviceOrientation.cpp
     dom/DeviceOrientationEvent.cpp
     dom/Document.cpp
@@ -816,6 +817,7 @@ SET(WebCore_SOURCES
     dom/QualifiedName.cpp
     dom/Range.cpp
     dom/RegisteredEventListener.cpp
+    dom/ScriptableDocumentParser.cpp
     dom/ScriptElement.cpp
     dom/ScriptExecutionContext.cpp
     dom/SelectElement.cpp

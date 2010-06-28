@@ -33,7 +33,7 @@
 #include "Frame.h"
 #include "Page.h"
 #include "PlatformString.h"
-#include "DocumentParser.h"
+#include "ScriptableDocumentParser.h"
 
 namespace WebCore {
 
@@ -103,10 +103,20 @@ static MessageLevel viewportErrorMessageLevel(ViewportErrorCode errorCode)
     return errorCode == UnrecognizedViewportArgumentError || errorCode == MaximumScaleTooLargeError ? ErrorMessageLevel : TipMessageLevel;
 }
 
+// FIXME: Why is this different from SVGDocumentExtensions parserLineNumber?
+// FIXME: Callers should probably use ScriptController::eventHandlerLineNumber()
+static int parserLineNumber(Document* document)
+{
+    if (!document)
+        return 0;
+    ScriptableDocumentParser* parser = document->scriptableDocumentParser();
+    if (!parser)
+        return 0;
+    return parser->lineNumber() + 1;
+}
+
 void reportViewportWarning(Document* document, ViewportErrorCode errorCode, const String& replacement)
 {
-    DocumentParser* parser = document->parser();
-
     Frame* frame = document->frame();
     if (!frame)
         return;
@@ -114,7 +124,7 @@ void reportViewportWarning(Document* document, ViewportErrorCode errorCode, cons
     String message = viewportErrorMessageTemplate(errorCode);
     message.replace("%replacement", replacement);
 
-    frame->domWindow()->console()->addMessage(HTMLMessageSource, LogMessageType, viewportErrorMessageLevel(errorCode), message, parser ? parser->lineNumber() + 1 : 0, document->url().string());
+    frame->domWindow()->console()->addMessage(HTMLMessageSource, LogMessageType, viewportErrorMessageLevel(errorCode), message, parserLineNumber(document), document->url().string());
 }
 
 } // namespace WebCore

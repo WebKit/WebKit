@@ -22,48 +22,36 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
-#ifndef RawDataDocumentParser_h
-#define RawDataDocumentParser_h
+ 
+#ifndef DecodedDataDocumentParser_h
+#define DecodedDataDocumentParser_h
 
 #include "DocumentParser.h"
 
 namespace WebCore {
 
-class RawDataDocumentParser : public DocumentParser {
+class DecodedDataDocumentParser : public DocumentParser {
 public:
-    RawDataDocumentParser(Document* document)
-        : DocumentParser(document)
-    {
-    }
+    // Only used by the XMLDocumentParser to communicate back to
+    // XMLHttpRequest if the responseXML was well formed.
+    virtual bool wellFormed() const { return true; }
+
+    bool inViewSourceMode() const { return m_inViewSourceMode; }
+    void setInViewSourceMode(bool mode) { m_inViewSourceMode = mode; }
 
 protected:
-    virtual void finish()
-    {
-        if (!m_parserStopped)
-            m_document->finishedParsing();
-    }
+    DecodedDataDocumentParser(Document*, bool viewSourceMode = false);
 
 private:
-    virtual void insert(const SegmentedString&)
-    {
-        // <https://bugs.webkit.org/show_bug.cgi?id=25397>: JS code can always call document.write, we need to handle it.
-        ASSERT_NOT_REACHED();
-    }
+    // append is used by DocumentWriter::replaceDocument
+    virtual void append(const SegmentedString&) = 0;
 
-    virtual void append(const SegmentedString&)
-    {
-        ASSERT_NOT_REACHED();
-    }
+    // appendBytes is used by DocumentWriter (the loader)
+    virtual void appendBytes(DocumentWriter*, const char* bytes, int length, bool flush);
 
-    virtual bool finishWasCalled()
-    {
-        // finish() always calls document()->finishedParsing() so we will be
-        // deleted after finish().
-        return false;
-    }
+    bool m_inViewSourceMode;
 };
 
-};
+}
 
-#endif // RawDataDocumentParser_h
+#endif // DecodedDataDocumentParser_h

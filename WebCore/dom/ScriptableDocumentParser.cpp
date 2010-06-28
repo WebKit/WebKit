@@ -23,47 +23,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RawDataDocumentParser_h
-#define RawDataDocumentParser_h
-
-#include "DocumentParser.h"
+#include "config.h"
+#include "ScriptableDocumentParser.h"
 
 namespace WebCore {
 
-class RawDataDocumentParser : public DocumentParser {
-public:
-    RawDataDocumentParser(Document* document)
-        : DocumentParser(document)
-    {
-    }
-
-protected:
-    virtual void finish()
-    {
-        if (!m_parserStopped)
-            m_document->finishedParsing();
-    }
-
-private:
-    virtual void insert(const SegmentedString&)
-    {
-        // <https://bugs.webkit.org/show_bug.cgi?id=25397>: JS code can always call document.write, we need to handle it.
-        ASSERT_NOT_REACHED();
-    }
-
-    virtual void append(const SegmentedString&)
-    {
-        ASSERT_NOT_REACHED();
-    }
-
-    virtual bool finishWasCalled()
-    {
-        // finish() always calls document()->finishedParsing() so we will be
-        // deleted after finish().
-        return false;
-    }
-};
+ScriptableDocumentParser::ScriptableDocumentParser(Document* document, bool viewSourceMode)
+    : DecodedDataDocumentParser(document, viewSourceMode)
+    , m_xssAuditor(0)
+{
+}
 
 };
-
-#endif // RawDataDocumentParser_h

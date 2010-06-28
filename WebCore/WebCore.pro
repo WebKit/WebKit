@@ -472,6 +472,7 @@ SOURCES += \
     dom/ContainerNode.cpp \
     dom/CSSMappedAttributeDeclaration.cpp \
     dom/CustomEvent.cpp \
+    dom/DecodedDataDocumentParser.cpp \
     dom/DeviceOrientation.cpp \
     dom/DeviceOrientationEvent.cpp \
     dom/Document.cpp \
@@ -521,6 +522,7 @@ SOURCES += \
     dom/Range.cpp \
     dom/RawDataDocumentParser.h \
     dom/RegisteredEventListener.cpp \
+    dom/ScriptableDocumentParser.cpp \
     dom/ScriptElement.cpp \
     dom/ScriptExecutionContext.cpp \
     dom/SelectElement.cpp \

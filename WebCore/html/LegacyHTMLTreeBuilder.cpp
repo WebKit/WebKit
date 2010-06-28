@@ -1647,8 +1647,9 @@ void LegacyHTMLTreeBuilder::reportErrorToConsole(HTMLParserErrorCode errorCode, 
     Frame* frame = m_document->frame();
     if (!frame)
         return;
-    
-    int lineNumber = m_document->parser()->lineNumber() + 1;
+
+    ScriptableDocumentParser* parser = m_document->scriptableDocumentParser();
+    int lineNumber = parser->lineNumber() + 1;
 
     AtomicString tag1;
     AtomicString tag2;
@@ -1674,9 +1675,7 @@ void LegacyHTMLTreeBuilder::reportErrorToConsole(HTMLParserErrorCode errorCode, 
         return;
 
     String message;
-    // FIXME: This doesn't work for the new HTMLDocumentParser and should.
-    LegacyHTMLDocumentParser* htmlParser = m_document->parser()->asHTMLDocumentParser();
-    if (htmlParser && htmlParser->processingContentWrittenByScript())
+    if (parser->processingContentWrittenByScript())
         message += htmlParserDocumentWriteMessage();
     message += errorMsg;
     message.replace("%tag1", tag1);
