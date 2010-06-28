@@ -3251,8 +3251,10 @@ fast/dom/HTMLInputElement/input-image-alt-text.html
 fast/dom/HTMLLinkElement/pending-stylesheet-count.html
 # meter-element.html is temporally disabled.We need to rebaseline.
 fast/dom/HTMLMeterElement/meter-element.html
-# progress-bar-value-pseudo-element.html is temporally disabled.We need to rebaseline.
+# progress-bar-value-pseudo-element.html and progress-element.html is temporally disabled. 
+# We need to rebaseline.
 fast/dom/HTMLProgressElement/progress-bar-value-pseudo-element.html
+fast/dom/HTMLProgressElement/progress-element.html
 fast/dom/HTMLObjectElement/vspace-hspace-as-number.html
 fast/dom/HTMLStyleElement/insert-parser-generated.html
 fast/dom/HTMLTableElement/colSpan.html
