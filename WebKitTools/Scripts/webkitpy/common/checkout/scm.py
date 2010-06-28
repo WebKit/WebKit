@@ -186,7 +186,10 @@ class SCM:
     def status_command(self):
         raise NotImplementedError, "subclasses must implement"
 
-    def add(self, path):
+    def add(self, path, return_exit_code=False):
+        raise NotImplementedError, "subclasses must implement"
+
+    def delete(self, path):
         raise NotImplementedError, "subclasses must implement"
 
     def changed_files(self, git_commit=None, squash=None):
@@ -343,9 +346,23 @@ class SVN(SCM):
         field_count = 6 if self.svn_version() > "1.6" else 5
         return "^(?P<status>[%s]).{%s} (?P<filename>.+)$" % (expected_types, field_count)
 
-    def add(self, path):
-        # path is assumed to be cwd relative?
-        self.run(["svn", "add", path])
+    def _add_parent_directories(self, path):
+        """Does 'svn add' to the path and its parents."""
+        if self.in_working_directory(path):
+            return
+        dirname = os.path.dirname(path)
+        # We have dirname directry - ensure it added.
+        if dirname != path:
+            self._add_parent_directories(dirname)
+        self.add(path)
+
+    def add(self, path, return_exit_code=False):
+        self._add_parent_directories(os.path.dirname(os.path.abspath(path)))
+        return self.run(["svn", "add", path], return_exit_code=return_exit_code)
+
+    def delete(self, path):
+        parent, base = os.path.split(os.path.abspath(path))
+        return self.run(["svn", "delete", "--force", base], cwd=parent)
 
     def changed_files(self, git_commit=None, squash=None):
         return self.run_status_and_extract_filenames(self.status_command(), self._status_regexp("ACDMR"))
@@ -361,6 +378,9 @@ class SVN(SCM):
 
     def added_files(self):
         return self.run_status_and_extract_filenames(self.status_command(), self._status_regexp("A"))
+
+    def deleted_files(self):
+        return self.run_status_and_extract_filenames(self.status_command(), self._status_regexp("D"))
 
     @staticmethod
     def supports_local_commits():
@@ -435,6 +455,14 @@ class SVN(SCM):
         # http://svnbook.red-bean.com/en/1.0/ch03s03.html
         return self.svn_commit_log('BASE')
 
+    def propset(self, pname, pvalue, path):
+        dir, base = os.path.split(path)
+        return self.run(['svn', 'pset', pname, pvalue, base], cwd=dir)
+
+    def propget(self, pname, path):
+        dir, base = os.path.split(path)
+        return self.run(['svn', 'pget', pname, base], cwd=dir).encode('utf-8').rstrip("\n")
+
 # All git-specific logic should go here.
 class Git(SCM):
     def __init__(self, cwd):
@@ -494,9 +522,11 @@ class Git(SCM):
     def _status_regexp(self, expected_types):
         return '^(?P<status>[%s])\t(?P<filename>.+)$' % expected_types
 
-    def add(self, path):
-        # path is assumed to be cwd relative?
-        self.run(["git", "add", path])
+    def add(self, path, return_exit_code=False):
+        return self.run(["git", "add", path], return_exit_code=return_exit_code)
+
+    def delete(self, path):
+        return self.run(["git", "rm", "-f", path])
 
     def _merge_base(self, git_commit, squash):
         if git_commit:
@@ -536,6 +566,9 @@ class Git(SCM):
 
     def added_files(self):
         return self.run_status_and_extract_filenames(self.status_command(), self._status_regexp("A"))
+
+    def deleted_files(self):
+        return self.run_status_and_extract_filenames(self.status_command(), self._status_regexp("D"))
 
     @staticmethod
     def supports_local_commits():

@@ -1,3 +1,20 @@
+2010-06-24  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Eric Seidel.
+
+        rebaseline-chromium-webkit-tests should add or remove files to local git repository
+        https://bugs.webkit.org/show_bug.cgi?id=41153
+
+        - Added SCM.add() and SCM.remove()
+        - Replaced "svn add" and "svn remove"
+          rebaseline_chromium_webkit_tests.py: in with SCM method equivalents.
+        - add "-U" and "-q" options to rebaseline_chromium_webkit_tests.py
+          for debugging purpose.
+
+        * Scripts/webkitpy/common/checkout/scm.py:
+        * Scripts/webkitpy/common/checkout/scm_unittest.py:
+        * Scripts/webkitpy/layout_tests/rebaseline_chromium_webkit_tests.py:
+
 2010-06-25  Yuzo Fujishima  <yuzo@google.com>
 
         Reviewed by Shinichiro Hamaji.
