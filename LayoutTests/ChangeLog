@@ -1,3 +1,9 @@
+2010-06-28  MORITA Hajime  <morrita@google.com>
+
+        Unreviewed text expectations update after r61993.
+
+        * platform/chromium-mac/fast/dom/HTMLProgressElement/progress-element-expected.txt:
+
 2010-06-28  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.
