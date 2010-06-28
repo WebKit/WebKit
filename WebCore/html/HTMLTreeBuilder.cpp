@@ -281,8 +281,7 @@ void HTMLTreeBuilder::insertHTMLStartTagBeforeHTML(AtomicHTMLToken& token)
 {
     RefPtr<Element> element = HTMLHtmlElement::create(m_document);
     element->setAttributeMap(token.attributes(), m_fragmentScriptingPermission);
-    m_document->addChild(element);
-    m_openElements.push(element.release());
+    m_openElements.push(attach(m_document, element.release()));
 }
 
 void HTMLTreeBuilder::insertHTMLStartTagInBody(AtomicHTMLToken&)
@@ -666,7 +665,7 @@ void HTMLTreeBuilder::processComment(AtomicHTMLToken& token)
 void HTMLTreeBuilder::processCharacter(AtomicHTMLToken& token)
 {
     if (insertionMode() == TextMode) {
-        currentElement()->addChild(Text::create(m_document, token.characters()));
+        attach(currentElement(), Text::create(m_document, token.characters()));
         return;
     }
     // FIXME: We need to figure out how to handle each character individually.
@@ -792,7 +791,7 @@ bool HTMLTreeBuilder::processStartTagForInHead(AtomicHTMLToken& token)
 void HTMLTreeBuilder::insertDoctype(AtomicHTMLToken& token)
 {
     ASSERT(token.type() == HTMLToken::DOCTYPE);
-    m_document->addChild(DocumentType::create(m_document, token.name(), String::adopt(token.publicIdentifier()), String::adopt(token.systemIdentifier())));
+    attach(m_document, DocumentType::create(m_document, token.name(), String::adopt(token.publicIdentifier()), String::adopt(token.systemIdentifier())));
     // FIXME: Move quirks mode detection from DocumentType element to here.
     notImplemented();
     if (token.forceQuirks())
@@ -802,27 +801,25 @@ void HTMLTreeBuilder::insertDoctype(AtomicHTMLToken& token)
 void HTMLTreeBuilder::insertComment(AtomicHTMLToken& token)
 {
     ASSERT(token.type() == HTMLToken::Comment);
-    currentElement()->addChild(Comment::create(m_document, token.comment()));
+    attach(currentElement(), Comment::create(m_document, token.comment()));
 }
 
 void HTMLTreeBuilder::insertCommentOnDocument(AtomicHTMLToken& token)
 {
     ASSERT(token.type() == HTMLToken::Comment);
-    m_document->addChild(Comment::create(m_document, token.comment()));
+    attach(m_document, Comment::create(m_document, token.comment()));
 }
 
 void HTMLTreeBuilder::insertElement(AtomicHTMLToken& token)
 {
     ASSERT(token.type() == HTMLToken::StartTag);
-    RefPtr<Element> element = createElement(token);
-    currentElement()->addChild(element);
-    m_openElements.push(element.release());
+    m_openElements.push(attach(currentElement(), createElement(token)));
 }
 
 void HTMLTreeBuilder::insertSelfClosingElement(AtomicHTMLToken& token)
 {
     ASSERT(token.type() == HTMLToken::StartTag);
-    currentElement()->addChild(createElement(token));
+    attach(currentElement(), createElement(token));
     // FIXME: Do we want to acknowledge the token's self-closing flag?
     // http://www.whatwg.org/specs/web-apps/current-work/multipage/tokenization.html#acknowledge-self-closing-flag
 }
@@ -856,8 +853,7 @@ void HTMLTreeBuilder::insertScriptElement(AtomicHTMLToken& token)
     ASSERT_UNUSED(token, token.type() == HTMLToken::StartTag);
     RefPtr<HTMLScriptElement> element = HTMLScriptElement::create(scriptTag, m_document, true);
     element->setAttributeMap(token.attributes(), m_fragmentScriptingPermission);
-    currentElement()->addChild(element);
-    m_openElements.push(element.release());
+    m_openElements.push(attach(currentElement(), element.release()));
     m_tokenizer->setState(HTMLTokenizer::ScriptDataState);
     m_originalInsertionMode = m_insertionMode;
     m_insertionMode = TextMode;

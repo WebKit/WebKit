@@ -1,3 +1,28 @@
+2010-06-28  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        The new tree builder needs to call attach() on elements it attaches to
+        the DOM
+        https://bugs.webkit.org/show_bug.cgi?id=41293
+
+        Apparently Nodes expect to have their attach() method called when they
+        are attached to the DOM.  The new tree builder is happy to oblige.
+        Making this call requires some fancy footwork with RefPtr/PassRefPtr to
+        avoid extra ref churn while keeping each function small.
+
+        * html/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::insertHTMLStartTagBeforeHTML):
+        (WebCore::HTMLTreeBuilder::processCharacter):
+        (WebCore::HTMLTreeBuilder::insertDoctype):
+        (WebCore::HTMLTreeBuilder::insertComment):
+        (WebCore::HTMLTreeBuilder::insertCommentOnDocument):
+        (WebCore::HTMLTreeBuilder::insertElement):
+        (WebCore::HTMLTreeBuilder::insertSelfClosingElement):
+        (WebCore::HTMLTreeBuilder::insertScriptElement):
+        * html/HTMLTreeBuilder.h:
+        (WebCore::HTMLTreeBuilder::attach):
+
 2010-06-28  Xan Lopez  <xlopez@igalia.com>
 
         Fix distcheck.

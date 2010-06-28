@@ -1,3 +1,18 @@
+2010-06-28  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        The new tree builder needs to call attach() on elements it attaches to
+        the DOM
+        https://bugs.webkit.org/show_bug.cgi?id=41293
+
+        Update expected results to show that the contents of the iframe
+        actually get created.  This only gets us a few lines down the test
+        harness before erroring out again, but I'll take it.
+
+        * html5lib/runner-expected-html5.txt:
+        * html5lib/webkit-resumer-expected-html5.txt:
+
 2010-06-28  Robert Hogan  <robert@webkit.org>
 
         Unreviewed, rolling out r62021.
