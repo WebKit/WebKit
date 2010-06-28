@@ -1,3 +1,13 @@
+2010-06-28  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Patch for https://bugs.webkit.org/show_bug.cgi?id=41288
+        WebKit2: Add frame API for InjectedBundle code
+
+        * MiniBrowser/mac/WebBundle/WebBundleMain.m:
+        (_didClearWindowForFrame):
+
 2010-06-28  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
 
         Reviewed by Kenneth Rohde Christiansen.

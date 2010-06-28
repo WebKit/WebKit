@@ -60,7 +60,7 @@ typedef struct WKBundlePageClient WKBundlePageClient;
 
 WK_EXPORT void WKBundlePageSetClient(WKBundlePageRef page, WKBundlePageClient * client);
 
-WK_EXPORT WKURLRef WKBundlePageGetMainFrameURL(WKBundlePageRef page);
+WK_EXPORT WKBundleFrameRef WKBundlePageGetMainFrame(WKBundlePageRef page);
 
 #ifdef __cplusplus
 }

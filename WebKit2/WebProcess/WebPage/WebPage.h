@@ -94,7 +94,7 @@ public:
     void initializeInjectedBundleClient(WKBundlePageClient*);
     InjectedBundlePageClient& injectedBundleClient() { return m_client; }
 
-    WebCore::String mainFrameURL() const;
+    WebFrame* mainFrame() const { return m_mainFrame.get(); }
     WebCore::String renderTreeExternalRepresentation() const;
 
 private:

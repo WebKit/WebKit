@@ -23,30 +23,21 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "WKBundlePage.h"
-#include "WKBundlePagePrivate.h"
+#include "WKBundleFrame.h"
 
 #include "WKAPICast.h"
 #include "WKBundleAPICast.h"
-#include "WebPage.h"
+#include "WebFrame.h"
 #include <WebCore/PlatformString.h>
 
 using namespace WebKit;
 
-void WKBundlePageSetClient(WKBundlePageRef pageRef, WKBundlePageClient * wkClient)
+bool WKBundleFrameIsMainFrame(WKBundleFrameRef frameRef)
 {
-    if (wkClient && !wkClient->version)
-        toWK(pageRef)->initializeInjectedBundleClient(wkClient);
+    return toWK(frameRef)->isMainFrame();
 }
 
-WKBundleFrameRef WKBundlePageGetMainFrame(WKBundlePageRef pageRef)
+WKURLRef WKBundleFrameGetURL(WKBundleFrameRef frameRef)
 {
-    return toRef(toWK(pageRef)->mainFrame());
-}
-
-WKStringRef WKBundlePageCopyRenderTreeExternalRepresentation(WKBundlePageRef pageRef)
-{
-    WebCore::StringImpl* string = toWK(pageRef)->renderTreeExternalRepresentation().impl();
-    string->ref();
-    return toRef(string);
+    return toURLRef(toWK(frameRef)->url().impl());
 }

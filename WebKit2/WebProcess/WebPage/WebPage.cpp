@@ -125,11 +125,6 @@ void WebPage::initializeInjectedBundleClient(WKBundlePageClient* client)
     m_client.initialize(client);
 }
 
-String WebPage::mainFrameURL() const
-{
-    return m_mainFrame->coreFrame()->loader()->url().string();
-}
-
 String WebPage::renderTreeExternalRepresentation() const
 {
     return externalRepresentation(m_mainFrame->coreFrame(), RenderAsTextBehaviorNormal);

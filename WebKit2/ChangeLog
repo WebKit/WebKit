@@ -1,3 +1,28 @@
+2010-06-28  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Patch for https://bugs.webkit.org/show_bug.cgi?id=41288
+        WebKit2: Add frame API for InjectedBundle code
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/InjectedBundle/API/c/WKBundleFrame.cpp: Added.
+        (WKBundleFrameIsMainFrame):
+        (WKBundleFrameGetURL):
+        * WebProcess/InjectedBundle/API/c/WKBundleFrame.h: Added.
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        (WKBundlePageGetMainFrame):
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.h:
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::isMainFrame):
+        (WebKit::WebFrame::url):
+        * WebProcess/WebPage/WebFrame.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::mainFrame):
+        * mac/WebKit2.exp:
+        * win/WebKit2.vcproj:
+
 2010-06-27  Mark Rowe  <mrowe@apple.com>
 
         Rubber-stamped by Maciej Stachowiak.

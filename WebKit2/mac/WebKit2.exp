@@ -1,6 +1,7 @@
 .objc_class_name_WKView
+_WKBundleFrameGetURL
 _WKBundlePageCopyRenderTreeExternalRepresentation
-_WKBundlePageGetMainFrameURL
+_WKBundlePageGetMainFrame
 _WKBundlePageSetClient
 _WKBundlePostMessage
 _WKBundleSetClient

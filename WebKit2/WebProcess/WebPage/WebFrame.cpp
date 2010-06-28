@@ -149,4 +149,17 @@ void WebFrame::didReceivePolicyDecision(uint64_t listenerID, PolicyAction action
     (m_coreFrame->loader()->policyChecker()->*function)(action);
 }
 
+bool WebFrame::isMainFrame() const
+{
+    return m_page->mainFrame() == this;
+}
+
+String WebFrame::url() const
+{
+    if (!m_coreFrame)
+        return String();
+
+    return m_coreFrame->loader()->url().string();
+}
+
 } // namespace WebKit

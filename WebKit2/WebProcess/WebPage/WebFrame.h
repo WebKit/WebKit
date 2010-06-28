@@ -62,6 +62,10 @@ public:
     void invalidatePolicyListener();
     void didReceivePolicyDecision(uint64_t listenerID, WebCore::PolicyAction);
 
+    // WKBundleFrame API functions
+    bool isMainFrame() const;
+    WebCore::String url() const;
+
 private:
     WebFrame(WebPage*, const WebCore::String& frameName, WebCore::HTMLFrameOwnerElement*);
 

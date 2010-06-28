@@ -25,6 +25,7 @@
 
 #include <Cocoa/Cocoa.h>
 #include <WebKit2/WKBundle.h>
+#include <WebKit2/WKBundleFrame.h>
 #include <WebKit2/WKBundleInitialize.h>
 #include <WebKit2/WKBundlePage.h>
 #include <WebKit2/WKString.h>
@@ -66,7 +67,7 @@ void _didReceiveTitleForFrame(WKBundlePageRef page, WKStringRef title, WKBundleF
 
 void _didClearWindowForFrame(WKBundlePageRef page, WKBundleFrameRef frame, JSContextRef ctx, JSObjectRef window, const void *clientInfo)
 {
-    CFURLRef cfURL = WKURLCopyCFURL(0, WKBundlePageGetMainFrameURL(page));
+    CFURLRef cfURL = WKURLCopyCFURL(0, WKBundleFrameGetURL(WKBundlePageGetMainFrame(page)));
     LOG(@"WKBundlePageClient - _didClearWindowForFrame %@", [(NSURL *)cfURL absoluteString]);
     CFRelease(cfURL);
 

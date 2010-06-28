@@ -23,30 +23,26 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "WKBundlePage.h"
-#include "WKBundlePagePrivate.h"
+#ifndef WKBundleFrame_h
+#define WKBundleFrame_h
 
-#include "WKAPICast.h"
-#include "WKBundleAPICast.h"
-#include "WebPage.h"
-#include <WebCore/PlatformString.h>
+#include <WebKit2/WKBase.h>
+#include <WebKit2/WKBundleBase.h>
 
-using namespace WebKit;
+#ifndef __cplusplus
+#include <stdbool.h>
+#endif
 
-void WKBundlePageSetClient(WKBundlePageRef pageRef, WKBundlePageClient * wkClient)
-{
-    if (wkClient && !wkClient->version)
-        toWK(pageRef)->initializeInjectedBundleClient(wkClient);
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+WK_EXPORT bool WKBundleFrameIsMainFrame(WKBundleFrameRef frame);
+
+WK_EXPORT WKURLRef WKBundleFrameGetURL(WKBundleFrameRef frame);
+
+#ifdef __cplusplus
 }
+#endif
 
-WKBundleFrameRef WKBundlePageGetMainFrame(WKBundlePageRef pageRef)
-{
-    return toRef(toWK(pageRef)->mainFrame());
-}
-
-WKStringRef WKBundlePageCopyRenderTreeExternalRepresentation(WKBundlePageRef pageRef)
-{
-    WebCore::StringImpl* string = toWK(pageRef)->renderTreeExternalRepresentation().impl();
-    string->ref();
-    return toRef(string);
-}
+#endif /* WKBundleFrame_h */
