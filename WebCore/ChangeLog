@@ -1,3 +1,22 @@
+2010-06-28  Robin Cao  <robin.cao@torchmobile.com.cn>
+
+        Reviewed by Dan Bernstein.
+
+        canvas fillText with @font-face crashes
+        https://bugs.webkit.org/show_bug.cgi?id=35486
+
+        The font object in CanvasRenderingContext2D may become invalid at some point.
+        Override recalcStyle() in HTMLCanvasElement, and update the font object from there if needed.
+
+        A test already exists: canvas/philip/tests/2d.text.draw.fontface.repeat.html
+
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::recalcStyle):
+        * html/HTMLCanvasElement.h:
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::updateFont):
+        * html/canvas/CanvasRenderingContext2D.h:
+
 2010-06-28  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
 
         Unreviewed build fix.
