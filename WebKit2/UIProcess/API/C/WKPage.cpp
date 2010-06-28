@@ -29,7 +29,7 @@
 #include "WKAPICast.h"
 #include "WebPageProxy.h"
 
-#if __BLOCKS__
+#ifdef __BLOCKS__
 #include <Block.h>
 #endif
 
@@ -144,7 +144,7 @@ void WKPageRunJavaScriptInMainFrame(WKPageRef pageRef, WKStringRef scriptRef, vo
     toWK(pageRef)->runJavaScriptInMainFrame(toWK(scriptRef), ScriptReturnValueCallback::create(context, callback, disposeFunction));
 }
 
-#if __BLOCKS__
+#ifdef __BLOCKS__
 static void callRunJavaScriptBlockAndRelease(WKStringRef resultValue, void* context)
 {
     WKPageRunJavaScriptBlock block = (WKPageRunJavaScriptBlock)context;
@@ -169,7 +169,7 @@ void WKPageRenderTreeExternalRepresentation(WKPageRef pageRef, void *context, WK
     toWK(pageRef)->getRenderTreeExternalRepresentation(RenderTreeExternalRepresentationCallback::create(context, callback, disposeFunction));
 }
 
-#if __BLOCKS__
+#ifdef __BLOCKS__
 static void callRenderTreeExternalRepresentationBlockAndDispose(WKStringRef resultValue, void* context)
 {
     WKPageRenderTreeExternalRepresentationBlock block = (WKPageRenderTreeExternalRepresentationBlock)context;

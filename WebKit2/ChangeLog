@@ -1,3 +1,15 @@
+2010-06-27  Mark Rowe  <mrowe@apple.com>
+
+        Rubber-stamped by Maciej Stachowiak.
+
+        Update guards related to blocks to check whether __BLOCKS__ is defined, rather than checking its value.
+        This matches how similar checks are performed in system headers, and avoids a compile error when __BLOCKS__
+        is not defined.
+
+        * UIProcess/API/C/WKPage.cpp:
+        * UIProcess/API/C/WKPage.h:
+        * UIProcess/API/C/WKPagePrivate.h:
+
 2010-06-26  Tony Gentilcore  <tonyg@chromium.org>
 
         Reviewed by Dimitri Glazkov.

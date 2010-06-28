@@ -159,7 +159,7 @@ WK_EXPORT void WKPageSetPageHistoryClient(WKPageRef page, WKPageHistoryClient * 
 typedef void (*WKPageRunJavaScriptFunction)(WKStringRef, void*);
 typedef void (*WKPageRunJavaScriptDisposeFunction)(void*);
 WK_EXPORT void WKPageRunJavaScriptInMainFrame(WKPageRef page, WKStringRef script, void *context, WKPageRunJavaScriptFunction function, WKPageRunJavaScriptDisposeFunction disposeFunction);
-#if __BLOCKS__
+#ifdef __BLOCKS__
 typedef void (^WKPageRunJavaScriptBlock)(WKStringRef);
 WK_EXPORT void WKPageRunJavaScriptInMainFrame_b(WKPageRef page, WKStringRef script, WKPageRunJavaScriptBlock block);
 #endif

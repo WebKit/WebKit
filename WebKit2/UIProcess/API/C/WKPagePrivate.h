@@ -37,7 +37,7 @@ typedef void (*WKPageRenderTreeExternalRepresentationFunction)(WKStringRef, void
 typedef void (*WKPageRenderTreeExternalRepresentationDisposeFunction)(void*);
 WK_EXPORT void WKPageRenderTreeExternalRepresentation(WKPageRef page, void *context, WKPageRenderTreeExternalRepresentationFunction function, WKPageRenderTreeExternalRepresentationDisposeFunction disposeFunction);
 
-#if __BLOCKS__
+#ifdef __BLOCKS__
 typedef void (^WKPageRenderTreeExternalRepresentationBlock)(WKStringRef);
 WK_EXPORT void WKPageRenderTreeExternalRepresentation_b(WKPageRef page, WKPageRenderTreeExternalRepresentationBlock block);
 #endif
