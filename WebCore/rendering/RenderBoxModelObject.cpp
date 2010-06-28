@@ -932,6 +932,7 @@ bool RenderBoxModelObject::paintNinePieceImage(GraphicsContext* graphicsContext,
     return true;
 }
 
+#if HAVE(PATH_BASED_BORDER_RADIUS_DRAWING)
 static bool borderWillArcInnerEdge(const IntSize& firstRadius, const IntSize& secondRadius, int firstBorderWidth, int secondBorderWidth, int middleBorderWidth)
 {
     // FIXME: This test is insufficient. We need to take border style into account.
@@ -941,7 +942,6 @@ static bool borderWillArcInnerEdge(const IntSize& firstRadius, const IntSize& se
             && (!secondRadius.height() || secondRadius.height() >= middleBorderWidth);
 }
 
-#if HAVE(PATH_BASED_BORDER_RADIUS_DRAWING)
 void RenderBoxModelObject::paintBorder(GraphicsContext* graphicsContext, int tx, int ty, int w, int h,
                                        const RenderStyle* style, bool begin, bool end)
 {

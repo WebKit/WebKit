@@ -1,3 +1,9 @@
+2010-06-28  Beth Dakin  <bdakin@apple.com>
+
+        Build fix for non-PATH_BASED_BORDER_RADIUS_DRAWING platforms.
+
+        * rendering/RenderBoxModelObject.cpp:
+
 2010-06-28  Andreas Kling  <andreas.kling@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
