@@ -1,3 +1,20 @@
+2010-06-28  Martin Robinson  <martin.james.robinson@gmail.com>
+
+        Reviewed by Adam Roben.
+
+        [WinCairo] Rendering of themed elements on a layer with opacity produces nothing
+        https://bugs.webkit.org/show_bug.cgi?id=41111
+
+        Tests:
+         manual-tests/partially-opaque-form-elements.html
+
+        * platform/graphics/win/GraphicsContextCairoWin.cpp:
+        (WebCore::GraphicsContext::releaseWindowsContext):
+        Preform a cairo_save() and a cairo_restore() around code modifying the transformation
+        matrix of the Cairo surface. Also set the destination coordinates before adjusting
+        the transformation matrix scale, so that the destination coordinates are not scaled
+        as well.
+
 2010-06-28  Sam Magnuson  <smagnuson@netflix.com>
 
         Reviewed by Kenneth Rohde Christiansen.

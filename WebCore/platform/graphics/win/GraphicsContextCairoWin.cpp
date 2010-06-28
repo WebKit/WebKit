@@ -111,9 +111,10 @@ void GraphicsContext::releaseWindowsContext(HDC hdc, const IntRect& dstRect, boo
     // Scale the target surface to the new image size, and flip it
     // so that when we set the srcImage as the surface it will draw
     // right-side-up.
-    cairo_translate(m_data->cr, 0, dstRect.height());
-    cairo_scale(m_data->cr, dstRect.width(), -dstRect.height());
-    cairo_set_source_surface (m_data->cr, image, dstRect.x(), dstRect.y());
+    cairo_save(m_data->cr);
+    cairo_translate(m_data->cr, dstRect.x(), dstRect.height() + dstRect.y());
+    cairo_scale(m_data->cr, 1.0, -1.0);
+    cairo_set_source_surface(m_data->cr, image, 0, 0);
 
     if (m_data->layers.size())
         cairo_paint_with_alpha(m_data->cr, m_data->layers.last());
@@ -124,6 +125,7 @@ void GraphicsContext::releaseWindowsContext(HDC hdc, const IntRect& dstRect, boo
     cairo_surface_destroy(image);
     ::DeleteDC(hdc);
     ::DeleteObject(bitmap);
+    cairo_restore(m_data->cr);
 }
 
 void GraphicsContextPlatformPrivate::syncContext(PlatformGraphicsContext* cr)
