@@ -1,5 +1,12 @@
 2010-06-27  Steve Falkenburg  <sfalken@apple.com>
 
+        Windows (Cairo) build fix.
+        Add missing ENABLE_WEB_TIMING feature define.
+
+        * win/tools/vsprops/FeatureDefinesCairo.vsprops:
+
+2010-06-27  Steve Falkenburg  <sfalken@apple.com>
+
         Windows build fix.
         Disable ENABLE_WEB_TIMING on Windows.
 
