@@ -1,3 +1,16 @@
+2010-06-28  MORITA Hajime  <morrita@google.com>
+
+        Unreviewed text expectations update after r61993.
+
+        * platform/chromium-linux/fast/dom/HTMLProgressElement/progress-bar-value-pseudo-element-expected.checksum: Added.
+        * platform/chromium-linux/fast/dom/HTMLProgressElement/progress-bar-value-pseudo-element-expected.png: Added.
+        * platform/chromium-win/fast/dom/HTMLProgressElement/progress-bar-value-pseudo-element-expected.checksum:
+        * platform/chromium-win/fast/dom/HTMLProgressElement/progress-bar-value-pseudo-element-expected.png:
+        * platform/chromium-win/fast/dom/HTMLProgressElement/progress-bar-value-pseudo-element-expected.txt: Added.
+        * platform/chromium-win/fast/dom/HTMLProgressElement/progress-element-expected.checksum:
+        * platform/chromium-win/fast/dom/HTMLProgressElement/progress-element-expected.png:
+        * platform/chromium-win/fast/dom/HTMLProgressElement/progress-element-expected.txt:
+
 2010-06-22  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Kent Tamura.
