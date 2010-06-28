@@ -20,12 +20,12 @@
     if (window.layoutTestController) {
         layoutTestController.dumpAsText();
 
-        debug("Default margin is 1in = 96px.");
-        shouldBeEqualToString("layoutTestController.pageProperty('margin-left', 0)", "96");
-        shouldBeEqualToString("layoutTestController.pageProperty('margin-left', 1)", "96");
-        shouldBeEqualToString("layoutTestController.pageProperty('margin-left', 2)", "96");
-        shouldBeEqualToString("layoutTestController.pageProperty('margin-left', 3)", "96");
-        shouldBeEqualToString("layoutTestController.pageProperty('margin-left', 4)", "96");
+        debug("Default margin is auto.");
+        shouldBeEqualToString("layoutTestController.pageProperty('margin-left', 0)", "auto");
+        shouldBeEqualToString("layoutTestController.pageProperty('margin-left', 1)", "auto");
+        shouldBeEqualToString("layoutTestController.pageProperty('margin-left', 2)", "auto");
+        shouldBeEqualToString("layoutTestController.pageProperty('margin-left', 3)", "auto");
+        shouldBeEqualToString("layoutTestController.pageProperty('margin-left', 4)", "auto");
 
         debug("Set margin to 200px via user style sheet.");
         layoutTestController.addUserStyleSheet("@page { margin:200px; }");

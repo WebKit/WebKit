@@ -1511,29 +1511,42 @@ bool Document::isPageBoxVisible(int pageIndex)
     return style->visibility() != HIDDEN; // display property doesn't apply to @page.
 }
 
-IntRect Document::pageAreaRectInPixels(int pageIndex)
+void Document::pageSizeAndMarginsInPixels(int pageIndex, IntSize& pageSize, int& marginTop, int& marginRight, int& marginBottom, int& marginLeft)
 {
     RefPtr<RenderStyle> style = styleForPage(pageIndex);
-    IntSize pageSize = preferredPageSizeInPixels(pageIndex);
-    // 100% value for margin-{left,right,top,bottom}. This is used also for top and bottom. http://www.w3.org/TR/CSS2/box.html#value-def-margin-width
-    int maxValue = pageSize.width();
-    int surroundLeft = style->marginLeft().calcValue(maxValue) + style->borderLeft().width() + style->paddingLeft().calcValue(maxValue);
-    int surroundRight = style->marginRight().calcValue(maxValue) + style->borderRight().width() + style->paddingRight().calcValue(maxValue);
-    int surroundTop = style->marginTop().calcValue(maxValue) + style->borderTop().width() + style->paddingTop().calcValue(maxValue);
-    int surroundBottom = style->marginBottom().calcValue(maxValue) + style->borderBottom().width() + style->paddingBottom().calcValue(maxValue);
-    int width = pageSize.width() - surroundLeft - surroundRight;
-    int height = pageSize.height() - surroundTop - surroundBottom;
 
-    return IntRect(surroundLeft, surroundTop, width, height);
-}
+    int width = pageSize.width();
+    int height = pageSize.height();
+    switch (style->pageSizeType()) {
+    case PAGE_SIZE_AUTO:
+        break;
+    case PAGE_SIZE_AUTO_LANDSCAPE:
+        if (width < height)
+            std::swap(width, height);
+        break;
+    case PAGE_SIZE_AUTO_PORTRAIT:
+        if (width > height)
+            std::swap(width, height);
+        break;
+    case PAGE_SIZE_RESOLVED: {
+        LengthSize size = style->pageSize();
+        ASSERT(size.width().isFixed());
+        ASSERT(size.height().isFixed());
+        width = size.width().calcValue(0);
+        height = size.height().calcValue(0);
+        break;
+    }
+    default:
+        ASSERT_NOT_REACHED();
+    }
+    pageSize = IntSize(width, height);
 
-IntSize Document::preferredPageSizeInPixels(int pageIndex)
-{
-    RefPtr<RenderStyle> style = styleForPage(pageIndex);
-    LengthSize size = style->pageSize();
-    ASSERT(size.width().isFixed());
-    ASSERT(size.height().isFixed());
-    return IntSize(size.width().calcValue(0), size.height().calcValue(0));
+    // The percentage is calculated with respect to the width even for margin top and bottom.
+    // http://www.w3.org/TR/CSS2/box.html#margin-properties
+    marginTop = style->marginTop().isAuto() ? marginTop : style->marginTop().calcValue(width);
+    marginRight = style->marginRight().isAuto() ? marginRight : style->marginRight().calcValue(width);
+    marginBottom = style->marginBottom().isAuto() ? marginBottom : style->marginBottom().calcValue(width);
+    marginLeft = style->marginLeft().isAuto() ? marginLeft : style->marginLeft().calcValue(width);
 }
 
 void Document::createStyleSelector()

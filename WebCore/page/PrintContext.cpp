@@ -206,8 +206,11 @@ String PrintContext::pageProperty(Frame* frame, const char* propertyName, int pa
     RefPtr<RenderStyle> style = document->styleForPage(pageNumber);
 
     // Implement formatters for properties we care about.
-    if (!strcmp(propertyName, "margin-left"))
+    if (!strcmp(propertyName, "margin-left")) {
+        if (style->marginLeft().isAuto())
+            return String("auto");
         return String::format("%d", style->marginLeft().rawValue());
+    }
     if (!strcmp(propertyName, "line-height"))
         return String::format("%d", style->lineHeight().rawValue());
     if (!strcmp(propertyName, "font-size"))
@@ -223,16 +226,11 @@ bool PrintContext::isPageBoxVisible(Frame* frame, int pageNumber)
     return frame->document()->isPageBoxVisible(pageNumber);
 }
 
-String PrintContext::pageAreaRectInPixels(Frame* frame, int pageNumber)
+String PrintContext::pageSizeAndMarginsInPixels(Frame* frame, int pageNumber, int width, int height, int marginTop, int marginRight, int marginBottom, int marginLeft)
 {
-    IntRect pageArea = frame->document()->pageAreaRectInPixels(pageNumber);
-    return String::format("(%d,%d,%d,%d)", pageArea.x(), pageArea.y(), pageArea.width(), pageArea.height());
-}
-
-String PrintContext::preferredPageSizeInPixels(Frame* frame, int pageNumber)
-{
-    IntSize pageSize = frame->document()->preferredPageSizeInPixels(pageNumber);
-    return String::format("(%d,%d)", pageSize.width(), pageSize.height());
+    IntSize pageSize(width, height);
+    frame->document()->pageSizeAndMarginsInPixels(pageNumber, pageSize, marginTop, marginRight, marginBottom, marginLeft);
+    return String::format("(%d, %d) %d %d %d %d", pageSize.width(), pageSize.height(), marginTop, marginRight, marginBottom, marginLeft);
 }
 
 int PrintContext::numberOfPages(Frame* frame, const FloatSize& pageSizeInPixels)

@@ -1284,14 +1284,21 @@ bool WebFrameImpl::isPageBoxVisible(int pageIndex)
     return frame()->document()->isPageBoxVisible(pageIndex);
 }
 
-WebRect WebFrameImpl::pageAreaRectInPixels(int pageIndex)
+void WebFrameImpl::pageSizeAndMarginsInPixels(int pageIndex,
+                                              WebSize& pageSize,
+                                              int& marginTop,
+                                              int& marginRight,
+                                              int& marginBottom,
+                                              int& marginLeft)
 {
-    return frame()->document()->pageAreaRectInPixels(pageIndex);
-}
-
-WebSize WebFrameImpl::preferredPageSizeInPixels(int pageIndex)
-{
-    return frame()->document()->preferredPageSizeInPixels(pageIndex);
+    IntSize size(pageSize.width, pageSize.height);
+    frame()->document()->pageSizeAndMarginsInPixels(pageIndex,
+                                                    size,
+                                                    marginTop,
+                                                    marginRight,
+                                                    marginBottom,
+                                                    marginLeft);
+    pageSize = size;
 }
 
 bool WebFrameImpl::find(int identifier,

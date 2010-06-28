@@ -1,3 +1,15 @@
+2010-06-25  Yuzo Fujishima  <yuzo@google.com>
+
+        Reviewed by Shinichiro Hamaji.
+
+        Improve default value handling for page format properties.
+        https://bugs.webkit.org/show_bug.cgi?id=41150
+
+        * printing/page-format-data-expected.txt:
+        * printing/page-format-data.html:
+        * printing/page-rule-selection-expected.txt:
+        * printing/page-rule-selection.html:
+
 2010-06-27  Andreas Kling  <andreas.kling@nokia.com>
 
         Reviewed by Darin Adler.

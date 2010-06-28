@@ -150,8 +150,12 @@ public:
     virtual float getPrintPageShrink(int page);
     virtual void printEnd();
     virtual bool isPageBoxVisible(int pageIndex);
-    virtual WebRect pageAreaRectInPixels(int pageIndex);
-    virtual WebSize preferredPageSizeInPixels(int pageIndex);
+    virtual void pageSizeAndMarginsInPixels(int pageIndex,
+                                            WebSize& pageSize,
+                                            int& marginTop,
+                                            int& marginRight,
+                                            int& marginBottom,
+                                            int& marginLeft);
     virtual bool find(
         int identifier, const WebString& searchText, const WebFindOptions&,
         bool wrapWithinFrame, WebRect* selectionRect);

@@ -3,12 +3,12 @@ This tests page style selection.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-Default margin is 1in = 96px.
-PASS layoutTestController.pageProperty('margin-left', 0) is "96"
-PASS layoutTestController.pageProperty('margin-left', 1) is "96"
-PASS layoutTestController.pageProperty('margin-left', 2) is "96"
-PASS layoutTestController.pageProperty('margin-left', 3) is "96"
-PASS layoutTestController.pageProperty('margin-left', 4) is "96"
+Default margin is auto.
+PASS layoutTestController.pageProperty('margin-left', 0) is "auto"
+PASS layoutTestController.pageProperty('margin-left', 1) is "auto"
+PASS layoutTestController.pageProperty('margin-left', 2) is "auto"
+PASS layoutTestController.pageProperty('margin-left', 3) is "auto"
+PASS layoutTestController.pageProperty('margin-left', 4) is "auto"
 Set margin to 200px via user style sheet.
 PASS layoutTestController.pageProperty('margin-left', 0) is "200"
 PASS layoutTestController.pageProperty('margin-left', 1) is "200"

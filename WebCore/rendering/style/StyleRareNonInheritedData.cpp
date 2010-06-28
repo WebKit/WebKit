@@ -59,6 +59,8 @@ StyleRareNonInheritedData::StyleRareNonInheritedData()
 #if ENABLE(XBL)
     , bindingURI(0)
 #endif
+    , m_pageSize()
+    , m_pageSizeType(PAGE_SIZE_AUTO)
 {
 }
 
@@ -98,6 +100,8 @@ StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonInherited
 #if ENABLE(XBL)
     , bindingURI(o.bindingURI ? o.bindingURI->copy() : 0)
 #endif
+    , m_pageSize(o.m_pageSize)
+    , m_pageSizeType(o.m_pageSizeType)
 {
 }
 
@@ -156,6 +160,8 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
         && (m_perspective == o.m_perspective)
         && (m_perspectiveOriginX == o.m_perspectiveOriginX)
         && (m_perspectiveOriginY == o.m_perspectiveOriginY)
+        && (m_pageSize == o.m_pageSize)
+        && (m_pageSizeType == o.m_pageSizeType)
         ;
 }
 

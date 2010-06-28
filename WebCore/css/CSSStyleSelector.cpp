@@ -30,7 +30,6 @@
 #include "CSSBorderImageValue.h"
 #include "CSSCursorImageValue.h"
 #include "CSSFontFaceRule.h"
-#include "CSSHelper.h"
 #include "CSSImportRule.h"
 #include "CSSMediaRule.h"
 #include "CSSPageRule.h"
@@ -5536,14 +5535,17 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
 
 void CSSStyleSelector::applyPageSizeProperty(CSSValue* value)
 {
+    m_style->resetPageSizeType();
     if (!value->isValueList())
         return;
     CSSValueList* valueList = static_cast<CSSValueList*>(value);
     Length width;
     Length height;
+    PageSizeType pageSizeType = PAGE_SIZE_AUTO;
     switch (valueList->length()) {
     case 2: {
         // <length>{2} | <page-size> <orientation>
+        pageSizeType = PAGE_SIZE_RESOLVED;
         if (!valueList->item(0)->isPrimitiveValue() || !valueList->item(1)->isPrimitiveValue())
             return;
         CSSPrimitiveValue* primitiveValue0 = static_cast<CSSPrimitiveValue*>(valueList->item(0));
@@ -5572,24 +5574,24 @@ void CSSStyleSelector::applyPageSizeProperty(CSSValue* value)
         int type = primitiveValue->primitiveType();
         if (CSSPrimitiveValue::isUnitTypeLength(type)) {
             // <length>
+            pageSizeType = PAGE_SIZE_RESOLVED;
             width = height = Length(primitiveValue->computeLengthIntForLength(style(), m_rootElementStyle), Fixed);
         } else {
             if (type != CSSPrimitiveValue::CSS_IDENT)
                 return;
             switch (primitiveValue->getIdent()) {
             case CSSValueAuto:
-                // auto
-                if (!pageSizeFromName(0, 0, width, height))
-                    return;
+                pageSizeType = PAGE_SIZE_AUTO;
                 break;
             case CSSValuePortrait:
+                pageSizeType = PAGE_SIZE_AUTO_PORTRAIT;
+                break;
             case CSSValueLandscape:
-                // <page-size>
-                if (!pageSizeFromName(0, primitiveValue, width, height))
-                    return;
+                pageSizeType = PAGE_SIZE_AUTO_LANDSCAPE;
                 break;
             default:
-                // [ portrait | landscape]
+                // <page-size>
+                pageSizeType = PAGE_SIZE_RESOLVED;
                 if (!pageSizeFromName(primitiveValue, 0, width, height))
                     return;
             }
@@ -5599,6 +5601,7 @@ void CSSStyleSelector::applyPageSizeProperty(CSSValue* value)
     default:
         return;
     }
+    m_style->setPageSizeType(pageSizeType);
     m_style->setPageSize(LengthSize(width, height));
     return;
 }
@@ -5614,31 +5617,10 @@ bool CSSStyleSelector::pageSizeFromName(CSSPrimitiveValue* pageSizeName, CSSPrim
     static const Length legalWidth = inchLength(8.5), legalHeight = inchLength(14);
     static const Length ledgerWidth = inchLength(11), ledgerHeight = inchLength(17);
 
-    // FIXME: Define UA default page size. Assume letter for now.
-    int ident = CSSValueLetter;
-    if (pageSizeName) {
-        if (pageSizeName->primitiveType() != CSSPrimitiveValue::CSS_IDENT)
-            return false;
-        ident = pageSizeName->getIdent();
-    }
+    if (!pageSizeName || pageSizeName->primitiveType() != CSSPrimitiveValue::CSS_IDENT)
+        return false;
 
-    // FIXME: Define UA default page orientation. Assume portrait for now.
-    bool portrait = true;
-    if (pageOrientation) {
-        if (pageOrientation->primitiveType() != CSSPrimitiveValue::CSS_IDENT)
-            return false;
-        switch (pageOrientation->getIdent()) {
-        case CSSValueLandscape:
-            portrait = false;
-            break;
-        case CSSValuePortrait:
-            portrait = true;
-            break;
-        default:
-            return false;
-        }
-    }
-    switch (ident) {
+    switch (pageSizeName->getIdent()) {
     case CSSValueA5:
         width = a5Width;
         height = a5Height;
@@ -5674,8 +5656,21 @@ bool CSSStyleSelector::pageSizeFromName(CSSPrimitiveValue* pageSizeName, CSSPrim
     default:
         return false;
     }
-    if (!portrait)
-        swap(width, height);
+
+    if (pageOrientation) {
+        if (pageOrientation->primitiveType() != CSSPrimitiveValue::CSS_IDENT)
+            return false;
+        switch (pageOrientation->getIdent()) {
+        case CSSValueLandscape:
+            std::swap(width, height);
+            break;
+        case CSSValuePortrait:
+            // Nothing to do.
+            break;
+        default:
+            return false;
+        }
+    }
     return true;
 }
 

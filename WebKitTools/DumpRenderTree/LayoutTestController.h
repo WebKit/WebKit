@@ -64,9 +64,8 @@ public:
     void overridePreference(JSStringRef key, JSStringRef value);
     int pageNumberForElementById(JSStringRef id, float pageWidthInPixels, float pageHeightInPixels);
     JSRetainPtr<JSStringRef> pageProperty(const char* propertyName, int pageNumber) const;
+    JSRetainPtr<JSStringRef> pageSizeAndMarginsInPixels(int pageNumber, int width, int height, int marginTop, int marginRight, int marginBottom, int marginLeft) const;
     bool isPageBoxVisible(int pageNumber) const;
-    JSRetainPtr<JSStringRef> pageAreaRectInPixels(int pageNumber) const;
-    JSRetainPtr<JSStringRef> preferredPageSizeInPixels(int pageNumber) const;
     JSStringRef pathToLocalResource(JSContextRef, JSStringRef url);
     void queueBackNavigation(int howFarBackward);
     void queueForwardNavigation(int howFarForward);

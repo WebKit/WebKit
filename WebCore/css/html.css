@@ -733,7 +733,9 @@ iframe {
 @page {
     /* FIXME: Define the right default values for page properties. */
     size: auto;
-    margin: 1in;
+    margin: auto;
+    padding: 0px;
+    border-width: 0px;
 }
 
 /* noscript is handled internally, as it depends on settings */

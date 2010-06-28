@@ -1,3 +1,40 @@
+2010-06-25  Yuzo Fujishima  <yuzo@google.com>
+
+        Reviewed by Shinichiro Hamaji.
+
+        Improve default value handling for page format properties.
+
+        Default page size and orientation have been hard-coded.
+        Instead, pass default page size and margins to
+        WebCore::Document::pageSizeAndMarginsInPixels to handle auto page size
+        and margins specified as percentages.
+        Return margins instead of page rect.
+
+        https://bugs.webkit.org/show_bug.cgi?id=41150
+
+        * WebCore.base.exp:
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyPageSizeProperty):
+        (WebCore::CSSStyleSelector::pageSizeFromName):
+        * css/html.css:
+        (@page):
+        * dom/Document.cpp:
+        (WebCore::Document::pageSizeAndMarginsInPixels):
+        * dom/Document.h:
+        * page/PrintContext.cpp:
+        (WebCore::PrintContext::pageProperty):
+        (WebCore::PrintContext::pageSizeAndMarginsInPixels):
+        * page/PrintContext.h:
+        * rendering/style/RenderStyle.h:
+        (WebCore::InheritedFlags::pageSizeType):
+        (WebCore::InheritedFlags::setPageSizeType):
+        (WebCore::InheritedFlags::resetPageSizeType):
+        * rendering/style/StyleRareNonInheritedData.cpp:
+        (WebCore::StyleRareNonInheritedData::StyleRareNonInheritedData):
+        (WebCore::StyleRareNonInheritedData::operator==):
+        * rendering/style/StyleRareNonInheritedData.h:
+        (WebCore::):
+
 2010-06-27  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

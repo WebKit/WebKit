@@ -89,6 +89,5 @@
 - (int)numberOfPages:(float)pageWidthInPixels:(float)pageHeightInPixels;
 - (NSString *)pageProperty:(const char*)propertyName:(int)pageNumber;
 - (bool)isPageBoxVisible:(int)pageNumber;
-- (NSString *)pageAreaRectInPixels:(int)pageNumber;
-- (NSString *)preferredPageSizeInPixels:(int)pageNumber;
+- (NSString *)pageSizeAndMarginsInPixels:(int)pageNumber:(int)width:(int)height:(int)marginTop:(int)marginRight:(int)marginBottom:(int)marginLeft;
 @end
