@@ -678,9 +678,17 @@ QString DumpRenderTree::dumpFramesAsText(QWebFrame* frame)
     result.append(QLatin1String("\n"));
 
     if (m_controller->shouldDumpChildrenAsText()) {
+        QMap<QString, QWebFrame *> map;
         QList<QWebFrame *> children = frame->childFrames();
         for (int i = 0; i < children.size(); ++i)
-            result += dumpFramesAsText(children.at(i));
+            map.insert(children.at(i)->title(), children.at(i));
+
+        // dump the frames in ascending order of title, as per other DRTs
+        QMapIterator<QString, QWebFrame *> i(map);
+        while (i.hasNext()) {
+            i.next();
+            result += dumpFramesAsText(i.value());
+        }
     }
 
     return result;
