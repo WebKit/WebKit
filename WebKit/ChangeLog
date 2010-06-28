@@ -2,6 +2,20 @@
 
         Reviewed by Kenneth Rohde Christiansen.
 
+        [EFL] Simplify zoom setting by narrowing with WebCore API.
+        Instead of creating a zoom_text_only field, use the already defined enum
+        by WebCore.
+        https://bugs.webkit.org/show_bug.cgi?id=40993
+
+        * efl/ewk/ewk_frame.cpp: sd->zoom_text_only => sd->zoom_mode
+        (ewk_frame_zoom_set):
+        (ewk_frame_zoom_text_only_get):
+        (ewk_frame_zoom_text_only_set):
+
+2010-06-28  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
         [EFL] Implement download requests
         When a download request arrives through FrameLoaderClient, forward it to
         browser in order to be possible to download files.

@@ -43,6 +43,7 @@
 #include "ScriptValue.h"
 #include "SharedBuffer.h"
 #include "SubstituteData.h"
+#include "ZoomMode.h"
 #include "WindowsKeyboardCodes.h"
 #include "ewk_private.h"
 #include <wtf/text/CString.h>
@@ -68,7 +69,7 @@ struct Ewk_Frame_Smart_Data {
     struct {
         Evas_Coord w, h;
     } contents_size;
-    Eina_Bool zoom_text_only:1;
+    WebCore::ZoomMode zoom_mode;
     Eina_Bool editable:1;
 };
 
@@ -989,15 +990,10 @@ Eina_Bool ewk_frame_zoom_set(Evas_Object* o, float zoom)
 {
     EWK_FRAME_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
     EINA_SAFETY_ON_NULL_RETURN_VAL(sd->frame, EINA_FALSE);
-    WebCore::ZoomMode zoomMode;
-    if (sd->zoom_text_only)
-        zoomMode = WebCore::ZoomTextOnly;
-    else
-        zoomMode = WebCore::ZoomPage;
     WebCore::FrameView* view = sd->frame->view();
     if (!view)
         return EINA_FALSE;
-    view->setZoomFactor(zoom, zoomMode);
+    view->setZoomFactor(zoom, sd->zoom_mode);
     return EINA_TRUE;
 }
 
@@ -1011,7 +1007,7 @@ Eina_Bool ewk_frame_zoom_set(Evas_Object* o, float zoom)
 Eina_Bool ewk_frame_zoom_text_only_get(const Evas_Object* o)
 {
     EWK_FRAME_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
-    return sd->zoom_text_only;
+    return sd->zoom_mode == WebCore::ZoomTextOnly;
 }
 
 /**
@@ -1026,20 +1022,15 @@ Eina_Bool ewk_frame_zoom_text_only_set(Evas_Object* o, Eina_Bool setting)
 {
     EWK_FRAME_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
     EINA_SAFETY_ON_NULL_RETURN_VAL(sd->frame, EINA_FALSE);
-    setting = !!setting;
-    if (sd->zoom_text_only == setting)
+    WebCore::ZoomMode zm = setting ? WebCore::ZoomTextOnly : WebCore::ZoomPage;
+    if (sd->zoom_mode == zm)
         return EINA_TRUE;
 
-    sd->zoom_text_only = setting;
-    WebCore::ZoomMode zoomMode;
-    if (sd->zoom_text_only)
-        zoomMode = WebCore::ZoomTextOnly;
-    else
-        zoomMode = WebCore::ZoomPage;
+    sd->zoom_mode = zm;
     WebCore::FrameView* view = sd->frame->view();
     if (!view)
         return EINA_FALSE;
-    view->setZoomFactor(view->zoomFactor(), zoomMode);
+    view->setZoomFactor(view->zoomFactor(), sd->zoom_mode);
     return EINA_TRUE;
 }
 
