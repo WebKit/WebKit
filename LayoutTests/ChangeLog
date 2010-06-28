@@ -1,3 +1,13 @@
+2010-06-28  Eric Seidel  <eric@webkit.org>
+
+        Unreviewed.  Update test-html5-parser results to
+        match the results from the new treebuilder.
+        These results were otherwise useless now that we
+        have he HTML5 Tokenizer on by default.
+
+        * html5lib/runner-expected-html5.txt:
+        * html5lib/webkit-resumer-expected-html5.txt:
+
 2010-06-25  Yuzo Fujishima  <yuzo@google.com>
 
         Reviewed by Shinichiro Hamaji.
