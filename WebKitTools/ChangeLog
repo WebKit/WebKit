@@ -1,3 +1,14 @@
+2010-06-28  Robert Hogan  <robert@webkit.org>
+
+        Unreviewed, rolling out r62021.
+        http://trac.webkit.org/changeset/62021
+        https://bugs.webkit.org/show_bug.cgi?id=41261
+
+        Broke http/navigation tests among other
+
+        * DumpRenderTree/qt/DumpRenderTreeQt.cpp:
+        (WebCore::DumpRenderTree::dumpFramesAsText):
+
 2010-06-28  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.
