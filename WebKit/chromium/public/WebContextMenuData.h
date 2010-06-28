@@ -124,6 +124,7 @@ struct WebContextMenuData {
         CanPaste = 0x10,
         CanDelete = 0x20,
         CanSelectAll = 0x40,
+        CanTranslate = 0x80,
     };
 
     // Which edit operations are available in the context.

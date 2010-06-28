@@ -46,6 +46,7 @@
 #include "KURL.h"
 #include "MediaError.h"
 #include "PlatformString.h"
+#include "RenderWidget.h"
 #include "TextBreakIterator.h"
 #include "Widget.h"
 
@@ -53,6 +54,7 @@
 #include "WebDataSourceImpl.h"
 #include "WebFrameImpl.h"
 #include "WebMenuItemInfo.h"
+#include "WebPluginContainerImpl.h"
 #include "WebPoint.h"
 #include "WebString.h"
 #include "WebURL.h"
@@ -147,6 +149,24 @@ PlatformMenuDescription ContextMenuClientImpl::getCustomMenuFromDefaultItems(
     WebContextMenuData data;
     data.mousePosition = selectedFrame->view()->contentsToWindow(r.point());
 
+    // Compute edit flags.
+    data.editFlags = WebContextMenuData::CanDoNone;
+    if (m_webView->focusedWebCoreFrame()->editor()->canUndo())
+        data.editFlags |= WebContextMenuData::CanUndo;
+    if (m_webView->focusedWebCoreFrame()->editor()->canRedo())
+        data.editFlags |= WebContextMenuData::CanRedo;
+    if (m_webView->focusedWebCoreFrame()->editor()->canCut())
+        data.editFlags |= WebContextMenuData::CanCut;
+    if (m_webView->focusedWebCoreFrame()->editor()->canCopy())
+        data.editFlags |= WebContextMenuData::CanCopy;
+    if (m_webView->focusedWebCoreFrame()->editor()->canPaste())
+        data.editFlags |= WebContextMenuData::CanPaste;
+    if (m_webView->focusedWebCoreFrame()->editor()->canDelete())
+        data.editFlags |= WebContextMenuData::CanDelete;
+    // We can always select all...
+    data.editFlags |= WebContextMenuData::CanSelectAll;
+    data.editFlags |= WebContextMenuData::CanTranslate;
+
     // Links, Images, Media tags, and Image/Media-Links take preference over
     // all else.
     data.linkURL = r.absoluteLinkURL();
@@ -182,6 +202,21 @@ PlatformMenuDescription ContextMenuClientImpl::getCustomMenuFromDefaultItems(
             data.mediaFlags |= WebContextMenuData::MediaHasVideo;
         if (mediaElement->controls())
             data.mediaFlags |= WebContextMenuData::MediaControls;
+    } else if (r.innerNonSharedNode()->hasTagName(HTMLNames::objectTag)
+               || r.innerNonSharedNode()->hasTagName(HTMLNames::embedTag)) {
+        RenderObject* object = r.innerNonSharedNode()->renderer();
+        if (object && object->isWidget()) {
+            Widget* widget = toRenderWidget(object)->widget();
+            if (widget) {
+                WebPluginContainerImpl* plugin = static_cast<WebPluginContainerImpl*>(widget);
+                WebString text = plugin->selectedText();
+                if (!text.isEmpty()) {
+                    data.selectedText = text;
+                    data.editFlags |= WebContextMenuData::CanCopy;
+                }
+                data.editFlags &= ~WebContextMenuData::CanTranslate;
+            }
+        }
     }
 
     data.isImageBlocked =
@@ -225,23 +260,6 @@ PlatformMenuDescription ContextMenuClientImpl::getCustomMenuFromDefaultItems(
     WebDataSource* ds = WebDataSourceImpl::fromDocumentLoader(dl);
     if (ds)
         data.securityInfo = ds->response().securityInfo();
-
-    // Compute edit flags.
-    data.editFlags = WebContextMenuData::CanDoNone;
-    if (m_webView->focusedWebCoreFrame()->editor()->canUndo())
-        data.editFlags |= WebContextMenuData::CanUndo;
-    if (m_webView->focusedWebCoreFrame()->editor()->canRedo())
-        data.editFlags |= WebContextMenuData::CanRedo;
-    if (m_webView->focusedWebCoreFrame()->editor()->canCut())
-        data.editFlags |= WebContextMenuData::CanCut;
-    if (m_webView->focusedWebCoreFrame()->editor()->canCopy())
-        data.editFlags |= WebContextMenuData::CanCopy;
-    if (m_webView->focusedWebCoreFrame()->editor()->canPaste())
-        data.editFlags |= WebContextMenuData::CanPaste;
-    if (m_webView->focusedWebCoreFrame()->editor()->canDelete())
-        data.editFlags |= WebContextMenuData::CanDelete;
-    // We can always select all...
-    data.editFlags |= WebContextMenuData::CanSelectAll;
 
     // Filter out custom menu elements and add them into the data.
     populateCustomMenuItems(defaultMenu, &data);

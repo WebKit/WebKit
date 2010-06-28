@@ -246,6 +246,11 @@ void WebPluginContainerImpl::printEnd()
     return m_webPlugin->printEnd();
 }
 
+WebString WebPluginContainerImpl::selectedText()
+{
+    return m_webPlugin->selectedText();
+}
+
 WebElement WebPluginContainerImpl::element()
 {
     return WebElement(m_element);
