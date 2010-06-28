@@ -1,3 +1,13 @@
+2010-06-28  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Reviewed by Kent Tamura.
+
+        GCC suggest parentheses around && within ||
+        https://bugs.webkit.org/show_bug.cgi?id=41245
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::paintChildren):
+
 2010-06-28  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
