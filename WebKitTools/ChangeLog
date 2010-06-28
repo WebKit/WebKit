@@ -1,3 +1,11 @@
+2010-06-28  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Rubber-stamped by Xan Lopez.
+
+        Update webkitdirs's knowledge of our library's name.
+
+        * Scripts/webkitdirs.pm:
+
 2010-06-28  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

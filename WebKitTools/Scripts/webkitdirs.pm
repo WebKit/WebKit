@@ -566,7 +566,7 @@ sub builtDylibPathForName
         return "$configurationProductDir/libwxwebkit.dylib";
     }
     if (isGtk()) {
-        return "$configurationProductDir/$libraryName/../.libs/libwebkit-1.0.so";
+        return "$configurationProductDir/$libraryName/../.libs/libwebkitgtk-1.0.so";
     }
     if (isEfl()) {
         return "$configurationProductDir/$libraryName/../.libs/libewebkit.so";
