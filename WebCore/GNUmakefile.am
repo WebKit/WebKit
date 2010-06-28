@@ -2592,6 +2592,19 @@ webcore_sources += \
 endif # END ENABLE_INDEXED_DATABASE
 
 # ----
+# Support for <input type="file" directory>
+# ----
+if ENABLE_DIRECTORY_UPLOAD
+FEATURE_DEFINES += ENABLE_DIRECTORY_UPLOAD=1
+webcore_cppflags += -DENABLE_DIRECTORY_UPLOAD=1
+
+else
+
+webcore_cppflags += -DENABLE_DIRECTORY_UPLOAD=0
+
+endif # END ENABLE_DIRECTORY_UPLOAD
+
+# ----
 # HTML5 client-side session and persistent storage
 # ----
 if ENABLE_DOM_STORAGE

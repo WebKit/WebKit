@@ -528,6 +528,14 @@ AC_ARG_ENABLE(workers,
               [],[enable_workers="yes"])
 AC_MSG_RESULT([$enable_workers])
 
+# check whether to enable directory upload support
+AC_MSG_CHECKING([whether to enable directory upload support])
+AC_ARG_ENABLE(directory_upload,
+              AC_HELP_STRING([--enable-directory-upload],
+                             [enable support for directory upload [default=no]]),
+              [], [enable_directory_upload="no"])
+AC_MSG_RESULT([$enable_directory_upload])
+
 # turn off svg features if --disable-svg is requested
 if test "$enable_svg" = "no"; then
    enable_svg_animation=no
@@ -868,6 +876,7 @@ AM_CONDITIONAL([ENABLE_BLOB_SLICE],[test "$enable_blob_slice" = "yes"])
 AM_CONDITIONAL([ENABLE_CHANNEL_MESSAGING],[test "$enable_channel_messaging" = "yes"])
 AM_CONDITIONAL([ENABLE_JAVASCRIPT_DEBUGGER],[test "$enable_javascript_debugger" = "yes"])
 AM_CONDITIONAL([ENABLE_OFFLINE_WEB_APPLICATIONS],[test "$enable_offline_web_applications" = "yes"])
+AM_CONDITIONAL([ENABLE_DIRECTORY_UPLOAD],[test "$enable_directory_upload" = "yes"])
 AM_CONDITIONAL([ENABLE_DOM_STORAGE],[test "$enable_dom_storage" = "yes"])
 AM_CONDITIONAL([ENABLE_DATABASE],[test "$enable_database" = "yes"])
 AM_CONDITIONAL([ENABLE_DATALIST],[test "$enable_datalist" = "yes"])
@@ -939,6 +948,7 @@ Build configuration:
 Features:
  3D Transforms                                            : $enable_3D_transforms
  Blob.slice support                                       : $enable_blob_slice
+ Directory upload                                         : $enable_directory_upload
  Fast Mobile Scrolling                                    : $enable_fast_mobile_scrolling
  JIT compilation                                          : $enable_jit
  Filters support                                          : $enable_filters
