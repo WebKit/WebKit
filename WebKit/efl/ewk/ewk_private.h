@@ -96,6 +96,8 @@ WTF::PassRefPtr<WebCore::Widget> ewk_view_plugin_create(Evas_Object* o, Evas_Obj
 
 void             ewk_view_popup_new(Evas_Object *o, WebCore::PopupMenuClient* client, int selected, const WebCore::IntRect& rect);
 
+void             ewk_view_download_request(Evas_Object *o, Ewk_Download *download);
+
 Ewk_History      *ewk_history_new(WebCore::BackForwardList *history);
 void              ewk_history_free(Ewk_History *history);
 

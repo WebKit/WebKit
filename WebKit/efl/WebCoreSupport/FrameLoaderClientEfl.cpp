@@ -749,9 +749,16 @@ void FrameLoaderClientEfl::dispatchDidFailLoad(const ResourceError& err)
                          m_loadError.failingURL().utf8().data());
 }
 
-void FrameLoaderClientEfl::download(ResourceHandle*, const ResourceRequest&, const ResourceRequest&, const ResourceResponse&)
+void FrameLoaderClientEfl::download(ResourceHandle*, const ResourceRequest& request, const ResourceRequest&, const ResourceResponse&)
 {
-    notImplemented();
+    if (!m_view)
+        return;
+
+    CString url = request.url().prettyURL().utf8();
+    Ewk_Download download;
+
+    download.url = url.data();
+    ewk_view_download_request(m_view, &download);
 }
 
 // copied from WebKit/Misc/WebKitErrors[Private].h
