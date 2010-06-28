@@ -144,12 +144,14 @@ void MainWindow::load(const QUrl& url)
 
 void MainWindow::changeLocation()
 {
-    if (page()->mainFrame()->url().isValid()) {
+    QString string = urlEdit->text();
+    QUrl mainFrameURL = page()->mainFrame()->url();
+
+    if (mainFrameURL.isValid() && string == mainFrameURL.toString()) {
         page()->triggerAction(QWebPage::Reload);
         return;
     }
 
-    QString string = urlEdit->text();
     load(string);
 }
 
