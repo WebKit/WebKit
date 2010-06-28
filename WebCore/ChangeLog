@@ -1,3 +1,18 @@
+2010-06-28  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        The new tree builder should actually finish building the tree
+        https://bugs.webkit.org/show_bug.cgi?id=41314
+
+        Again, this patch makes progress on runner.html, but I haven't removed
+        the ASSERT yet.
+
+        * html/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::HTMLTreeBuilder):
+        (WebCore::HTMLTreeBuilder::finished):
+        * html/HTMLTreeBuilder.h:
+
 2010-06-28  Dumitru Daniliuc  <dumi@chromium.org>
 
         Reviewed by Eric Seidel.
