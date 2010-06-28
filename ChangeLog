@@ -1,5 +1,13 @@
 2010-06-28  Xan Lopez  <xlopez@igalia.com>
 
+        Reviewed by Gustavo Noronha.
+
+        Bump version to 1.3.2.
+
+        * configure.ac:
+
+2010-06-28  Xan Lopez  <xlopez@igalia.com>
+
         Rubber-stamped by Gustavo Noronha.
 
         Bump gobject-introspection required version to 0.6.15, since we

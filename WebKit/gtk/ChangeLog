@@ -2,6 +2,14 @@
 
         Reviewed by Gustavo Noronha.
 
+        Update for 1.3.2.
+
+        * NEWS:
+
+2010-06-28  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
         [GTK] Does not compile with -DGSEAL_ENABLE
         https://bugs.webkit.org/show_bug.cgi?id=37851
 

@@ -1,4 +1,31 @@
 ================
+WebKitGTK+ 1.3.2
+================
+
+What's new in WebKitGTK+ 1.3.2?
+
+*** This release is an ABI break ***
+
+The library has been renamed to libwebkitgtk, so you'll need to
+recompile your applications when upgrading to 1.3.2.
+
+  - Add support for GTK+ 3.x. A new configure flag, --with-gtk, has
+    been added, which allows to control which GTK+ version you want to
+    build against. The default value is '2.0', for GTK+ 2.x
+    support. With '3.0' the library will be compiled against GTK+ 3.x
+    (2.90.4 or newer required). In the 3.x mode the .pc file has been
+    renamed from webkit-X.X.pc to webkitgtk-X.X.pc, so you'll need to
+    update your autotools setup accordingly.
+  - Many fixes for the DOM bindings, including support to dispatch
+    events to any Node through webkit_event_target_dispatch_event.
+  - Added a 'inner-node' property to WebKitHitTestResult, carrying the
+    DOM node where the hit test happened.
+  - Many DnD fixes, including a fix for the infamous hang-of-death
+    while dragging the mouse.
+  - Support for <input type="range">.
+  - Many other bugfixes.
+
+================
 WebKitGTK+ 1.3.1
 ================
 
