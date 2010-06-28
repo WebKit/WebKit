@@ -53,7 +53,7 @@ bin_PROGRAMS :=
 noinst_PROGRAMS :=
 noinst_HEADERS :=
 noinst_LTLIBRARIES :=
-lib_LIBRARIES :=
+lib_LTLIBRARIES :=
 IDL_BINDINGS :=
 TEST_PROGS :=
 POFILES :=
@@ -167,8 +167,8 @@ version_script = -Wl,--version-script,$(srcdir)/autotools/symbols.filter
 endif
 
 # Shared libraries
-lib_LTLIBRARIES = \
-	libwebkit-1.0.la
+lib_LTLIBRARIES += \
+	libwebkitgtk-@WEBKITGTK_API_MAJOR_VERSION@.@WEBKITGTK_API_MINOR_VERSION@.la
 
 # Convenience libraries
 noinst_LTLIBRARIES += \
@@ -189,7 +189,7 @@ nodist_EXTRA_libJavaScriptCore_la_SOURCES = \
 nodist_libJavaScriptCore_la_SOURCES = \
 	$(javascriptcore_built_sources)
 
-libJavaScriptCore_ladir = $(prefix)/include/webkit-1.0/JavaScriptCore
+libJavaScriptCore_ladir = $(prefix)/include/webkit-@WEBKITGTK_API_VERSION@/JavaScriptCore
 libJavaScriptCore_la_HEADERS = $(javascriptcore_h_api)
 
 libJavaScriptCore_la_SOURCES = \
@@ -216,42 +216,42 @@ libJavaScriptCore_la_CPPFLAGS = \
 	$(javascriptcore_cppflags)
 
 # WebKit
-nodist_EXTRA_libwebkit_1_0_la_SOURCES = \
+nodist_EXTRA_libwebkitgtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_SOURCES = \
 	$(webcore_built_nosources)
 
-nodist_libwebkit_1_0_la_SOURCES = \
+nodist_libwebkitgtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_SOURCES = \
 	$(webcore_built_sources) \
 	$(webkitgtk_built_sources)
 
-libwebkit_1_0_ladir = $(prefix)/include/webkit-1.0/webkit
-libwebkit_1_0_la_HEADERS = \
+libwebkitgtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_ladir = $(prefix)/include/webkit-@WEBKITGTK_API_VERSION@/webkit
+libwebkitgtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_HEADERS = \
 	$(webkitgtk_h_api) \
 	WebKit/gtk/webkit/webkitenumtypes.h
 
-libwebkit_1_0_la_SOURCES = \
+libwebkitgtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_SOURCES = \
 	$(webcore_sources) \
 	$(webcoregtk_sources) \
 	$(webkitgtk_sources)
 
-libwebkit_1_0_la_CXXFLAGS = \
+libwebkitgtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_CXXFLAGS = \
 	$(global_cxxflags) \
 	$(corekit_cflags)
 
-libwebkit_1_0_la_CFLAGS = \
+libwebkitgtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_CFLAGS = \
 	$(global_cflags) \
 	$(corekit_cflags)
 
-libwebkit_1_0_la_CPPFLAGS = \
+libwebkitgtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_CPPFLAGS = \
 	$(corekit_cppflags) \
 	$(webkitgtk_cppflags) \
 	$(HILDON_CPPFLAGS)
 
-libwebkit_1_0_la_LDFLAGS = \
+libwebkitgtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_LDFLAGS = \
 	-version-info @LIBWEBKITGTK_VERSION@ \
 	$(version_script) \
 	$(no_undefined)
 
-libwebkit_1_0_la_LIBADD = \
+libwebkitgtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_LIBADD = \
 	-lpthread \
 	libJavaScriptCore.la \
 	libWebCoreJS.la \
@@ -277,7 +277,7 @@ libwebkit_1_0_la_LIBADD = \
 	$(UNICODE_LIBS) \
 	$(XT_LIBS)
 
-libgdom_ladir = $(prefix)/include/webkit-1.0/webkit
+libgdom_ladir = $(prefix)/include/webkit-@WEBKITGTK_API_VERSION@/webkit
 nodist_libgdom_la_HEADERS = \
 	$(libgdom_h_api)
 
@@ -424,35 +424,35 @@ webkitgtk_cleanfiles += \
 	$(top_builddir)/Programs/GtkLauncher \
 	$(top_builddir)/WebKit/gtk/docs/version.xml \
 	$(top_builddir)/WebKit/gtk/docs/GNUmakefile \
-	$(top_builddir)/WebKit/gtk/webkit-1.0.pc \
+	$(top_builddir)/WebKit/gtk/@WEBKITGTK_PC_NAME@-@WEBKITGTK_API_VERSION@.pc \
 	$(top_builddir)/WebKit/gtk/webkit/webkitenumtypes.h \
 	$(top_builddir)/WebKit/gtk/webkit/webkitversion.h
 
 pkgconfigdir = $(libdir)/pkgconfig
-pkgconfig_DATA = WebKit/gtk/webkit-1.0.pc
+pkgconfig_DATA = WebKit/gtk/@WEBKITGTK_PC_NAME@-@WEBKITGTK_API_VERSION@.pc
 
 if ENABLE_INTROSPECTION
-JSCORE_GIRSOURCES += JSCore-1.0.gir
-WEBKIT_GIRSOURCES += WebKit-1.0.gir
 
-# JSCore-1.0.gir is handwritten - this is a hack to make the typelib
-# generation work during make dist
-JSCore-1.0.gir: $(srcdir)/WebKit/gtk/JSCore-1.0.gir
-	cp $(srcdir)/WebKit/gtk/JSCore-1.0.gir $(builddir)/
+JSCore-@WEBKITGTK_API_VERSION@.gir: $(builddir)/WebKit/gtk/JSCore-@WEBKITGTK_API_VERSION@.gir
+	cp $(builddir)/WebKit/gtk/JSCore-@WEBKITGTK_API_VERSION@.gir $(builddir)/
 
-$(WEBKIT_GIRSOURCES): $(JSCORE_GIRSOURCES) $(G_IR_SCANNER) libwebkit-1.0.la
-	$(AM_V_GEN)$(G_IR_SCANNER) -v --namespace WebKit --nsversion=1.0 \
+JSCORE_GIRSOURCES += JSCore-@WEBKITGTK_API_VERSION@.gir
+WEBKIT_GIRSOURCES += WebKit-@WEBKITGTK_API_VERSION@.gir
+
+$(WEBKIT_GIRSOURCES): $(G_IR_SCANNER) $(JSCORE_GIRSOURCES) libwebkitgtk-@WEBKITGTK_API_MAJOR_VERSION@.@WEBKITGTK_API_MINOR_VERSION@.la
+	$(AM_V_GEN)$(G_IR_SCANNER) -v --namespace WebKit --nsversion=@WEBKITGTK_API_VERSION@ \
 	     --include=GObject-2.0 \
-	     --include=Gtk-2.0 \
-	     --include=JSCore-1.0 \
+	     --include=Gtk-@GTK_API_VERSION@ \
+	     --include=JSCore-@WEBKITGTK_API_VERSION@ \
 	     --include=Soup-2.4 \
-	     --library=webkit-1.0 \
+	     --library=webkitgtk-@WEBKITGTK_API_VERSION@ \
 	     --libtool="$(LIBTOOL)" \
 	     --pkg gobject-2.0 \
-	     --pkg gtk+-2.0 \
+	     --pkg gtk+-@GTK_API_VERSION@ \
 	     --pkg libsoup-2.4 \
 	     --output $@ \
 	     --add-include-path $(top_srcdir)/WebKit/gtk \
+	     --add-include-path $(builddir) \
 	     -I$(top_srcdir)/WebKit/gtk \
 	     -I$(top_builddir)/WebKit/gtk \
 	     -I$(top_builddir)/DerivedSources \
@@ -468,13 +468,13 @@ typelibsdir += $(libdir)/girepository-1.0
 typelibs_DATA += $(JSCORE_GIRSOURCES:.gir=.typelib) $(WEBKIT_GIRSOURCES:.gir=.typelib)
 
 %.typelib: %.gir $(G_IR_COMPILER)
-	$(AM_V_GEN)$(G_IR_COMPILER) --includedir $(top_srcdir)/WebKit/gtk $< -o $@
+	$(AM_V_GEN)$(G_IR_COMPILER) --includedir $(top_srcdir)/WebKit/gtk --includedir $(builddir) $< -o $@
 
 CLEANFILES += $(JSCORE_GIRSOURCES) $(WEBKIT_GIRSOURCES) $(typelibs_DATA)
 
 endif
 
-EXTRA_DIST += WebKit/gtk/JSCore-1.0.gir
+EXTRA_DIST += $(builddir)/WebKit/gtk/JSCore-@WEBKITGTK_API_VERSION@.gir
 
 WEBKIT_MARSHAL = $(GENSOURCES)/webkitmarshal
 WEBKIT_MARSHAL_LIST = $(top_srcdir)/WebKit/gtk/webkitmarshal.list
@@ -602,7 +602,7 @@ EXTRA_DIST += \
 	$(srcdir)/WebKit/gtk/tests/test_utils.h
 
 # extra resource files
-resourcesdir = ${datadir}/webkit-1.0/resources
+resourcesdir = ${datadir}/webkit-@WEBKITGTK_API_VERSION@/resources
 dist_resources_DATA = \
 	$(shell ls $(srcdir)/WebKit/gtk/resources/*.html)
 
@@ -631,7 +631,7 @@ webkit_tests_cflags = \
 	$(LIBSOUP_CFLAGS)
 
 webkit_tests_ldadd = \
-	libwebkit-1.0.la \
+	libwebkitgtk-@WEBKITGTK_API_MAJOR_VERSION@.@WEBKITGTK_API_MINOR_VERSION@.la \
 	$(GTK_LIBS)	\
 	$(GLIB_LIBS) \
 	$(LIBSOUP_LIBS)

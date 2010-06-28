@@ -569,7 +569,7 @@ JavaScriptCore/pcre/chartables.c: $(srcdir)/JavaScriptCore/pcre/dftables
 	$(PERL) $^ $@
 
 bin_PROGRAMS += \
-	Programs/jsc
+	Programs/jsc-@WEBKITGTK_API_MAJOR_VERSION@
 
 noinst_PROGRAMS += \
 	Programs/minidom
@@ -606,21 +606,21 @@ Programs_minidom_LDFLAGS = \
 	-no-fast-install
 
 # jsc
-Programs_jsc_SOURCES = \
+Programs_jsc_@WEBKITGTK_API_MAJOR_VERSION@_SOURCES = \
 	JavaScriptCore/jsc.cpp
 
-Programs_jsc_CPPFLAGS = \
+Programs_jsc_@WEBKITGTK_API_MAJOR_VERSION@_CPPFLAGS = \
 	$(global_cppflags) \
 	$(javascriptcore_cppflags)
 
-Programs_jsc_CXXFLAGS = \
+Programs_jsc_@WEBKITGTK_API_MAJOR_VERSION@_CXXFLAGS = \
 	-fno-strict-aliasing \
 	$(global_cxxflags) \
 	$(global_cflags) \
 	$(GLOBALDEPS_CFLAGS) \
 	$(UNICODE_CFLAGS)
 
-Programs_jsc_LDADD = \
+Programs_jsc_@WEBKITGTK_API_MAJOR_VERSION@_LDADD = \
 	libJavaScriptCore.la
 
 javascriptcore_dist += \
@@ -649,5 +649,5 @@ CLEANFILES += \
 	JavaScriptCore/runtime/RegExpObject.lut.h \
 	JavaScriptCore/runtime/StringPrototype.lut.h \
 	JavaScriptCore/pcre/chartables.c \
-	Programs/jsc \
+	Programs/jsc-@WEBKITGTK_API_MAJOR_VERSION@ \
 	Programs/minidom

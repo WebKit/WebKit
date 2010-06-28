@@ -35,7 +35,7 @@ AC_CONFIG_SRCDIR([WebCore/config.h])
 
 dnl # Libtool library version, not to confuse with API version
 dnl # see http://www.gnu.org/software/libtool/manual/html_node/Libtool-versioning.html#Libtool-versioning
-LIBWEBKITGTK_VERSION=20:0:18
+LIBWEBKITGTK_VERSION=0:0:0
 AC_SUBST([LIBWEBKITGTK_VERSION])
 
 AM_INIT_AUTOMAKE([foreign subdir-objects tar-ustar])
@@ -167,6 +167,44 @@ if test "$png_ok" != yes; then
 fi
 AC_SUBST([PNG_LIBS])
 
+# determine the GTK+ version to use
+AC_MSG_CHECKING([the GTK+ version to use])
+AC_ARG_WITH([gtk],
+        [AS_HELP_STRING([--with-gtk=2.0|3.0], [the GTK+ version to use (default: 2.0)])],
+        [case "$with_gtk" in
+        2.0|3.0) ;;
+        *) AC_MSG_ERROR([invalid GTK+ version specified]) ;;
+        esac],
+        [with_gtk=2.0])
+AC_MSG_RESULT([$with_gtk])
+
+case "$with_gtk" in
+     2.0) GTK_REQUIRED_VERSION=2.10
+          GTK_API_VERSION=2.0
+          WEBKITGTK_API_MAJOR_VERSION=1
+          WEBKITGTK_API_MINOR_VERSION=0
+          WEBKITGTK_API_VERSION=1.0
+          WEBKITGTK_PC_NAME=webkit
+          GAIL_PC_NAME=gail
+          GAIL_REQUIRED_VERSION=1.8
+          ;;
+     3.0) GTK_REQUIRED_VERSION=2.90
+          GTK_API_VERSION=3.0
+          WEBKITGTK_API_MAJOR_VERSION=3
+          WEBKITGTK_API_MINOR_VERSION=0
+          WEBKITGTK_API_VERSION=3.0
+          WEBKITGTK_PC_NAME=webkitgtk
+          GAIL_PC_NAME=gail-3.0
+          GAIL_REQUIRED_VERSION=2.90.4
+          ;;
+esac
+
+AC_SUBST([WEBKITGTK_API_MAJOR_VERSION])
+AC_SUBST([WEBKITGTK_API_MINOR_VERSION])
+AC_SUBST([WEBKITGTK_API_VERSION])
+AC_SUBST([WEBKITGTK_PC_NAME])
+AC_SUBST([GTK_API_VERSION])
+
 # determine the GDK/GTK+ target
 AC_MSG_CHECKING([the target windowing system])
 AC_ARG_WITH(target,
@@ -205,7 +243,6 @@ LIBXML_REQUIRED_VERSION=2.6
 
 # minimum GTK+ base dependencies
 PANGO_REQUIRED_VERSION=1.12
-GTK_REQUIRED_VERSION=2.10
 
 # optional modules
 LIBXSLT_REQUIRED_VERSION=1.1.7
@@ -213,7 +250,6 @@ SQLITE_REQUIRED_VERSION=3.0
 GSTREAMER_REQUIRED_VERSION=0.10
 GSTREAMER_PLUGINS_BASE_REQUIRED_VERSION=0.10.25
 ENCHANT_REQUIRED_VERSION=0.22
-GAIL_REQUIRED_VERSION=1.8
 
 # Available modules
 #
@@ -242,7 +278,7 @@ PKG_CHECK_MODULES(ENCHANT, enchant >= $ENCHANT_REQUIRED_VERSION)
 AC_SUBST(ENCHANT_CFLAGS)
 AC_SUBST(ENCHANT_LIBS)
 
-PKG_CHECK_MODULES(GAIL, gail >= $GAIL_REQUIRED_VERSION)
+PKG_CHECK_MODULES(GAIL, $GAIL_PC_NAME >= $GAIL_REQUIRED_VERSION)
 AC_SUBST(GAIL_CFLAGS)
 AC_SUBST(GAIL_LIBS)
 
@@ -253,7 +289,7 @@ if test "$with_target" = "directfb"; then
    AC_DEFINE([WTF_PLATFORM_DIRECTFB],[1],[Define if target is DirectFB])
 else
    PKG_CHECK_MODULES(CAIRO, cairo >= $CAIRO_REQUIRED_VERSION)
-   PKG_CHECK_MODULES(GTK, gtk+-2.0 >= $GTK_REQUIRED_VERSION)
+   PKG_CHECK_MODULES(GTK, gtk+-$GTK_API_VERSION >= $GTK_REQUIRED_VERSION)
 
    if test "$with_target" = "x11" && test "$os_win32" = "no"; then
       # check for XT
@@ -875,11 +911,16 @@ AM_CONDITIONAL([ENABLE_INTROSPECTION],[test "$enable_introspection" = "yes"])
 
 AC_CONFIG_FILES([
 GNUmakefile
-WebKit/gtk/webkit-1.0.pc:WebKit/gtk/webkit.pc.in
 WebKit/gtk/webkit/webkitversion.h
 WebKit/gtk/docs/GNUmakefile
 WebKit/gtk/docs/version.xml
 ]
+)
+
+AC_CONFIG_FILES([
+WebKit/gtk/${WEBKITGTK_PC_NAME}-${WEBKITGTK_API_VERSION}.pc:WebKit/gtk/webkit.pc.in
+WebKit/gtk/JSCore-${WEBKITGTK_API_VERSION}.gir:WebKit/gtk/JSCore.gir.in]
+,[WEBKITGTK_API_VERSION=$WEBKITGTK_API_VERSION,WEBKITGTK_PC_NAME=$WEBKITGTK_PC_NAME]
 )
 
 AC_OUTPUT
@@ -931,6 +972,7 @@ Features:
  XPATH support                                            : $enable_xpath
  XSLT support                                             : $enable_xslt
 GTK+ configuration:
+ GTK+ version                                             : $with_gtk
  GDK target                                               : $with_target
  Hildon UI extensions                                     : $with_hildon
  Introspection support                                    : $enable_introspection

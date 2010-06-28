@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
-<repository version="1.0"
+<repository version="1.1"
             xmlns="http://www.gtk.org/introspection/core/1.0"
             xmlns:c="http://www.gtk.org/introspection/c/1.0">
-  <namespace name="JSCore" version="1.0" shared-library="webkit-1.0">
+  <namespace name="JSCore" version="@WEBKITGTK_API_VERSION@" shared-library="webkitgtk-@WEBKITGTK_API_VERSION@">
     <alias name="GlobalContextRef"
            target="none"
            c:type="JSGlobalContextRef"/>

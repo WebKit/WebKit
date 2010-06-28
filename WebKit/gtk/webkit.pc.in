@@ -6,6 +6,6 @@ includedir=@includedir@
 Name: WebKit
 Description: Web content engine for GTK+
 Version: @VERSION@
-Requires: glib-2.0 gtk+-2.0 libsoup-2.4
-Libs: -L${libdir} -lwebkit-1.0
-Cflags: -I${includedir}/webkit-1.0
+Requires: glib-2.0 gtk+-@GTK_API_VERSION@ libsoup-2.4
+Libs: -L${libdir} -lwebkitgtk-@WEBKITGTK_API_VERSION@
+Cflags: -I${includedir}/webkit-@WEBKITGTK_API_VERSION@

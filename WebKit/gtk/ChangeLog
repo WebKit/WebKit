@@ -1,3 +1,19 @@
+2010-06-28  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        [GTK] Add support for GTK+3
+        https://bugs.webkit.org/show_bug.cgi?id=41253
+
+        Adapt build system to 3.x support, allow the JSCore gir and webkit
+        pc files to be configurable at build time for different API
+        versions.
+
+        * JSCore-1.0.gir: Removed.
+        * JSCore.gir.in: Added.
+        * docs/GNUmakefile.am:
+        * webkit.pc.in:
+
 2010-06-25  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Reviewed by Xan Lopez.

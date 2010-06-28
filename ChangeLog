@@ -1,3 +1,15 @@
+2010-06-28  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        [GTK] Add support for GTK+3
+        https://bugs.webkit.org/show_bug.cgi?id=41253
+
+        Add --with-gtk configure flag, defaulting to support for GTK+ 2.x.
+
+        * GNUmakefile.am:
+        * configure.ac:
+
 2010-06-26  Tony Gentilcore  <tonyg@chromium.org>
 
         Reviewed by Dimitri Glazkov.

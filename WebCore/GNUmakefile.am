@@ -3976,7 +3976,7 @@ webcore_built_objects = := $(patsubst %.cpp,%.lo,$(webcore_built_nosources))
 
 $(webcore_built_objects): AM_CPPFLAGS+=$(corekit_cppflags)
 
-$(webcore_built_objects): AM_CXXFLAGS+=$(libwebkit_1_0_la_CXXFLAGS)
+$(webcore_built_objects): AM_CXXFLAGS+=$(libwebkitgtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_CXXFLAGS)
 
 libWebCoreJS_objects := $(patsubst %.idl,DerivedSources/JS%.lo,$(notdir $(IDL_BINDINGS_JS)))
 
@@ -3989,14 +3989,14 @@ libWebCoreJS_depfiles += $(patsubst %.lo,$(DEPDIR)/%.Plo,$(libWebCoreJS_objects)
 
 $(libWebCoreJS_objects): AM_CPPFLAGS+=$(corekit_cppflags)
 
-$(libWebCoreJS_objects): AM_CXXFLAGS+=$(libwebkit_1_0_la_CXXFLAGS)
+$(libWebCoreJS_objects): AM_CXXFLAGS+=$(libwebkitgtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_CXXFLAGS)
 
 libWebCoreJS.la: $(libWebCoreJS_objects)
 	$(CXXLINK) $(libWebCoreJS_objects) $(LIBS)
 
 
 DerivedSources/webkit/webkitdomdummy.c:
-	echo > $@
+	mkdir -p DerivedSources/webkit || echo > $@
 
 # Because WebCore/bindings/gobject/WebKitDOMObject.h is static source but is also a distributed header
 # required by other distributed headers (both static and auto-generated), need to move this to the
@@ -4174,8 +4174,8 @@ libgdom_depfiles += $(patsubst %.h,$(WebCore)/bindings/gobject/$(DEPDIR)/%.Plo,$
 
 -include $(libgdom_depfiles)
 
-$(libgdom_objects): AM_CPPFLAGS+=$(libwebkit_1_0_la_CPPFLAGS)
-$(libgdom_objects): AM_CXXFLAGS+=$(libwebkit_1_0_la_CXXFLAGS)
+$(libgdom_objects): AM_CPPFLAGS+=$(libwebkitgtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_CPPFLAGS)
+$(libgdom_objects): AM_CXXFLAGS+=$(libwebkitgtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_CXXFLAGS)
 
 libgdom.la: $(libgdom_objects)
 	$(CXXLINK) $(libgdom_objects) $(LIBS)
@@ -4232,19 +4232,19 @@ webcore_dist += \
 	WebCore/xml/XPathGrammar.y
 
 # Installing web inspector files
-webinspectordir = ${datadir}/webkit-1.0/webinspector
+webinspectordir = ${datadir}/webkit-@WEBKITGTK_API_VERSION@/webinspector
 dist_webinspector_DATA = \
 	$(WebCore)/English.lproj/localizedStrings.js \
 	$(shell ls $(WebCore)/inspector/front-end/*.js) \
 	$(shell ls $(WebCore)/inspector/front-end/*.html) \
 	$(shell ls $(WebCore)/inspector/front-end/*.css)
 
-webinspectorimagesdir = ${datadir}/webkit-1.0/webinspector/Images
+webinspectorimagesdir = ${datadir}/webkit-@WEBKITGTK_API_VERSION@/webinspector/Images
 dist_webinspectorimages_DATA = \
 	$(shell ls $(WebCore)/inspector/front-end/Images/*.gif) \
 	$(shell ls $(WebCore)/inspector/front-end/Images/*.png)
 
-webresourcesdir = ${datadir}/webkit-1.0/images
+webresourcesdir = ${datadir}/webkit-@WEBKITGTK_API_VERSION@/images
 dist_webresources_DATA = \
 	$(WebCore)/Resources/textAreaResizeCorner.png \
 	$(WebCore)/Resources/nullPlugin.png \
