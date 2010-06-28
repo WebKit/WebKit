@@ -1,3 +1,19 @@
+2010-06-22  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Kent Tamura.
+
+        <progress> should be styled with -webkit-progress-bar-value
+        https://bugs.webkit.org/show_bug.cgi?id=40823
+
+        Added cases for various style combinations, and explanations for
+        that cases.
+
+        * fast/dom/HTMLProgressElement/progress-bar-value-pseudo-element.html:
+        * platform/mac/fast/dom/HTMLProgressElement/progress-bar-value-pseudo-element-expected.checksum:
+        * platform/mac/fast/dom/HTMLProgressElement/progress-bar-value-pseudo-element-expected.png:
+        * platform/mac/fast/dom/HTMLProgressElement/progress-bar-value-pseudo-element-expected.txt:
+        * platform/qt/Skipped:
+
 2010-06-28  Eric Seidel  <eric@webkit.org>
 
         Unreviewed.  Update test-html5-parser results to

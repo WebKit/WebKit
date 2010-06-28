@@ -584,10 +584,12 @@ progress {
     height: 1em;
     width: 10em;
     vertical-align: -0.2em;
+    background-color: gray;
 }
 
-progress::-webkit-progress-bar {
+progress::-webkit-progress-bar-value {
     -webkit-appearance: progress-bar;
+    background-color: green;
 }
 
 /* datagrid */

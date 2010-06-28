@@ -1,13 +1,38 @@
 <html>
 <head><script>
 window.onload = function() {
-    document.getElementById("p").setAttribute("style", "-webkit-appearance:none; border:3px red dotted; background-color:cyan;")
+    document.getElementById("toChangeStyle").setAttribute("style", "border:3px red dotted; background-color:cyan;");
+    document.getElementById("toAddStyle").setAttribute("style", "border:3px red dotted; background-color:cyan;");
 }
 </script>
 <style>
-::-webkit-progress-bar-value {background-color:gray;}
-#p::-webkit-progress-bar-value {background-color:darkblue;}
+.styled::-webkit-progress-bar-value {background-color: lightgray;}
+#toAddStyle::-webkit-progress-bar-value {background-color:darkblue;}
+.no-appearance {-webkit-appearance: none;}
 </style>
 </head>
-<body><progress max=100 value=70 dir="rtl" id="p"></progress><progress max=100 value=70 style="-webkit-appearance:none; width:300px; height:50px; background-color:blue; " ></progress><progress style="border:3px solid red;" value=0.5></progress></body>
+<body>
+  <ul>
+    <li>
+      Giving style statically : background-color: 
+      <progress class="styled" max=100 value=70 style="width:300px; height:50px; background-color:blue; " >
+    </li>
+    <li>
+      Giving style statically : border:
+      <progress class="styled" style="border:3px solid red;" value=0.5>
+    </li>
+    <li>
+      Giving style statically, only for -webkit-progress-bar-value:
+      <progress class="styled" value=0.5></progress>
+    </li>
+    <li>
+      Adding style dynamically:
+      <progress value=0.5 id="toAddStyle"></progress>
+    </li>
+    <li>
+      Changing style dynamically:
+      <progress class="styled" max=100 value=70 dir="rtl" id="toChangeStyle"></progress>
+    </li>
+  </ul>
+</body>
 </html>

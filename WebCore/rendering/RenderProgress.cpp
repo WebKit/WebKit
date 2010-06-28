@@ -98,12 +98,17 @@ void RenderProgress::layoutParts()
 
 bool RenderProgress::shouldHaveParts() const
 {
-    return !style()->hasAppearance();
+    if (!style()->hasAppearance())
+        return true;
+    if (ShadowBlockElement::partShouldHaveStyle(this, PROGRESS_BAR_VALUE))
+        return true;
+    return false;
 }
 
 void RenderProgress::updatePartsState()
 {
     if (shouldHaveParts() && !m_valuePart) {
+        style()->setAppearance(NoControlPart);
         m_valuePart = ShadowBlockElement::createForPart(this->node(), PROGRESS_BAR_VALUE);
         addChild(m_valuePart->renderer());
     } else if (!shouldHaveParts() && m_valuePart) {

@@ -2,12 +2,38 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
-    RenderBody {BODY} at (8,8) size 784x584
-      RenderProgress {PROGRESS} at (0,28) size 166x22 [bgcolor=#00FFFF] [border: (3px dotted #FF0000)]
-        RenderBlock {DIV} at (51,3) size 112x16 [bgcolor=#00008B]
-      RenderProgress {PROGRESS} at (166,0) size 300x50 [bgcolor=#0000FF]
-        RenderBlock {DIV} at (0,0) size 210x50 [bgcolor=#808080]
-      RenderProgress {PROGRESS} at (466,28) size 166x22 [border: (3px solid #FF0000)]
-        RenderBlock {DIV} at (3,3) size 80x16 [bgcolor=#808080]
-      RenderText {#text} at (0,0) size 0x0
-      RenderText {#text} at (0,0) size 0x0
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock {UL} at (0,0) size 784x138
+        RenderListItem {LI} at (40,0) size 744x51
+          RenderListMarker at (-17,33) size 7x18: bullet
+          RenderText {#text} at (0,33) size 268x18
+            text run at (0,33) width 268: "Giving style statically : background-color: "
+          RenderProgress {PROGRESS} at (268,0) size 300x50 [bgcolor=#0000FF]
+            RenderBlock {DIV} at (0,0) size 210x50 [bgcolor=#D3D3D3]
+        RenderListItem {LI} at (40,51) size 744x23
+          RenderListMarker at (-17,5) size 7x18: bullet
+          RenderText {#text} at (0,5) size 197x18
+            text run at (0,5) width 197: "Giving style statically : border: "
+          RenderProgress {PROGRESS} at (197,0) size 166x22 [bgcolor=#808080] [border: (3px solid #FF0000)]
+            RenderBlock {DIV} at (3,3) size 80x16 [bgcolor=#D3D3D3]
+        RenderListItem {LI} at (40,74) size 744x18
+          RenderListMarker at (-17,0) size 7x18: bullet
+          RenderText {#text} at (0,0) size 376x18
+            text run at (0,0) width 376: "Giving style statically, only for -webkit-progress-bar-value: "
+          RenderProgress {PROGRESS} at (376,1) size 160x16 [bgcolor=#808080]
+            RenderBlock {DIV} at (0,0) size 80x16 [bgcolor=#D3D3D3]
+          RenderText {#text} at (0,0) size 0x0
+        RenderListItem {LI} at (40,92) size 744x23
+          RenderListMarker at (-17,5) size 7x18: bullet
+          RenderText {#text} at (0,5) size 170x18
+            text run at (0,5) width 170: "Adding style dynamically: "
+          RenderProgress {PROGRESS} at (170,0) size 166x22 [bgcolor=#00FFFF] [border: (3px dotted #FF0000)]
+            RenderBlock {DIV} at (3,3) size 80x16 [bgcolor=#00008B]
+          RenderText {#text} at (0,0) size 0x0
+        RenderListItem {LI} at (40,115) size 744x23
+          RenderListMarker at (-17,5) size 7x18: bullet
+          RenderText {#text} at (0,5) size 184x18
+            text run at (0,5) width 184: "Changing style dynamically: "
+          RenderProgress {PROGRESS} at (184,0) size 166x22 [bgcolor=#00FFFF] [border: (3px dotted #FF0000)]
+            RenderBlock {DIV} at (51,3) size 112x16 [bgcolor=#D3D3D3]
+          RenderText {#text} at (0,0) size 0x0
