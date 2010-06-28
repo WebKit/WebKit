@@ -2,6 +2,19 @@
 
         Reviewed by Eric Seidel.
 
+        Don't use the new tree builder for fragments
+        https://bugs.webkit.org/show_bug.cgi?id=41316
+
+        We need to walk before we can run.  After this change, we can run the
+        runner.html tests (with the ASSERT caveat).
+
+        * html/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::HTMLTreeBuilder):
+
+2010-06-28  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         The new tree builder should actually finish building the tree
         https://bugs.webkit.org/show_bug.cgi?id=41314
 

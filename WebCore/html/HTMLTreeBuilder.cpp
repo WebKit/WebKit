@@ -92,7 +92,7 @@ HTMLTreeBuilder::HTMLTreeBuilder(HTMLTokenizer* tokenizer, DocumentFragment* fra
     , m_insertionMode(InitialMode)
     , m_originalInsertionMode(InitialMode)
     , m_tokenizer(tokenizer)
-    , m_legacyTreeBuilder(shouldUseLegacyTreeBuilder(m_document) ? new LegacyHTMLTreeBuilder(fragment, scriptingPermission) : 0)
+    , m_legacyTreeBuilder(new LegacyHTMLTreeBuilder(fragment, scriptingPermission))
     , m_lastScriptElementStartLine(uninitializedLineNumberValue)
     , m_scriptToProcessStartLine(uninitializedLineNumberValue)
     , m_fragmentScriptingPermission(scriptingPermission)
