@@ -1,3 +1,9 @@
+2010-06-28  Xan Lopez  <xlopez@igalia.com>
+
+        Revert to build jsc, since the tests expect this.
+
+        * GNUmakefile.am:
+
 2010-06-28  Zoltan Herczeg  <zherczeg@webkit.org>
 
         Reviewed by Oliver Hunt.
