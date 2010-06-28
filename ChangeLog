@@ -2,6 +2,18 @@
 
         Reviewed by Gustavo Noronha.
 
+        [GTK] Does not compile with -DGSEAL_ENABLE
+        https://bugs.webkit.org/show_bug.cgi?id=37851
+
+        Add automake flag to signal whether we are building with GTK+ 2.x
+        or 3.x.
+
+        * configure.ac:
+
+2010-06-28  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
         [GTK] Add support for GTK+3
         https://bugs.webkit.org/show_bug.cgi?id=41253
 

@@ -169,9 +169,9 @@ void ScrollView::platformRemoveChild(Widget* child)
     if (hostWindow())
         parent = GTK_WIDGET(hostWindow()->platformPageClient());
     else
-        parent = GTK_WIDGET(child->platformWidget()->parent);
+        parent = GTK_WIDGET(gtk_widget_get_parent(child->platformWidget()));
 
-    if (GTK_IS_CONTAINER(parent) && parent == child->platformWidget()->parent)
+    if (GTK_IS_CONTAINER(parent) && parent == gtk_widget_get_parent(child->platformWidget()))
         gtk_container_remove(GTK_CONTAINER(parent), child->platformWidget());
 }
 
@@ -191,9 +191,14 @@ IntRect ScrollView::visibleContentRect(bool includeScrollbars) const
     if (parent && includeScrollbars)
         measuredWidget = parent;
 
+    GtkAllocation allocation;
+#if GTK_CHECK_VERSION(2, 18, 0)
+    gtk_widget_get_allocation(measuredWidget, &allocation);
+#else
+    allocation = widget->allocation;
+#endif
     return IntRect(IntPoint(m_scrollOffset.width(), m_scrollOffset.height()),
-                   IntSize(measuredWidget->allocation.width,
-                           measuredWidget->allocation.height));
+                   IntSize(allocation.width, allocation.height));
 }
 
 void ScrollView::setScrollbarModes(ScrollbarMode horizontalMode, ScrollbarMode verticalMode, bool, bool)

@@ -31,6 +31,7 @@
 
 #if !GTK_CHECK_VERSION(2, 20, 0)
 #define gtk_widget_set_realized(widget, TRUE) GTK_WIDGET_SET_FLAGS((widget), GTK_REALIZED)
+#define gtk_range_get_min_slider_size(range) (range)->min_slider_size
 #endif // GTK_CHECK_VERSION(2, 20, 0)
 
 #if !GTK_CHECK_VERSION(2, 19, 0)
@@ -51,8 +52,10 @@
 #define gtk_widget_get_window(widget) (widget)->window
 #define gtk_adjustment_get_value(adj) (adj)->value
 #define gtk_dialog_get_content_area(dialog) (dialog)->vbox
+#define gtk_dialog_get_action_area(dialog) (dialog)->action_area
 #define gtk_selection_data_get_length(data) (data)->length
 #define gtk_selection_data_get_data(data) (data)->data
+#define gtk_adjustment_set_page_size(adj, value) (adj)->page_size = value
 #endif // GTK_CHECK_VERSION(2, 14, 0)
 
 #endif // GtkVersioning_h

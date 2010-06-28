@@ -2,6 +2,77 @@
 
         Reviewed by Gustavo Noronha.
 
+        [GTK] Does not compile with -DGSEAL_ENABLE
+        https://bugs.webkit.org/show_bug.cgi?id=37851
+
+        Fix build with GSEAL enabled.
+
+        * GNUmakefile.am:
+        * platform/gtk/GtkVersioning.h:
+        * platform/gtk/RenderThemeGtk.cpp:
+        (WebCore::paintMozillaGtkWidget):
+        (WebCore::RenderThemeGtk::platformActiveSelectionBackgroundColor):
+        (WebCore::RenderThemeGtk::platformInactiveSelectionBackgroundColor):
+        (WebCore::RenderThemeGtk::platformActiveSelectionForegroundColor):
+        (WebCore::RenderThemeGtk::platformInactiveSelectionForegroundColor):
+        (WebCore::RenderThemeGtk::activeListBoxSelectionBackgroundColor):
+        (WebCore::RenderThemeGtk::inactiveListBoxSelectionBackgroundColor):
+        (WebCore::RenderThemeGtk::activeListBoxSelectionForegroundColor):
+        (WebCore::RenderThemeGtk::inactiveListBoxSelectionForegroundColor):
+        (WebCore::RenderThemeGtk::systemColor):
+        * platform/gtk/ScrollViewGtk.cpp:
+        (WebCore::ScrollView::platformRemoveChild):
+        (WebCore::ScrollView::visibleContentRect):
+        * platform/gtk/gtk2drawing.c:
+        (ensure_toggle_button_widget):
+        (ensure_combo_box_widgets):
+        (ensure_combo_box_entry_widgets):
+        (ensure_tree_header_cell_widget):
+        (moz_gtk_button_paint):
+        (moz_gtk_toggle_paint):
+        (calculate_button_inner_rect):
+        (calculate_arrow_rect):
+        (moz_gtk_scrollbar_button_paint):
+        (moz_gtk_scrollbar_trough_paint):
+        (moz_gtk_scrollbar_thumb_paint):
+        (moz_gtk_spin_paint):
+        (moz_gtk_spin_updown_paint):
+        (moz_gtk_scale_paint):
+        (moz_gtk_scale_thumb_paint):
+        (moz_gtk_gripper_paint):
+        (moz_gtk_hpaned_paint):
+        (moz_gtk_vpaned_paint):
+        (moz_gtk_entry_paint):
+        (moz_gtk_treeview_paint):
+        (moz_gtk_tree_header_sort_arrow_paint):
+        (moz_gtk_treeview_expander_paint):
+        (moz_gtk_expander_paint):
+        (moz_gtk_combo_box_paint):
+        (moz_gtk_downarrow_paint):
+        (moz_gtk_combo_box_entry_button_paint):
+        (moz_gtk_container_paint):
+        (moz_gtk_toggle_label_paint):
+        (moz_gtk_toolbar_paint):
+        (moz_gtk_toolbar_separator_paint):
+        (moz_gtk_tooltip_paint):
+        (moz_gtk_resizer_paint):
+        (moz_gtk_frame_paint):
+        (moz_gtk_progressbar_paint):
+        (moz_gtk_progress_chunk_paint):
+        (moz_gtk_get_tab_thickness):
+        (moz_gtk_tab_paint):
+        (moz_gtk_tabpanels_paint):
+        (moz_gtk_tab_scroll_arrow_paint):
+        (moz_gtk_menu_bar_paint):
+        (moz_gtk_menu_popup_paint):
+        (moz_gtk_menu_separator_paint):
+        (moz_gtk_menu_item_paint):
+        (moz_gtk_menu_arrow_paint):
+
+2010-06-28  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
         [GTK] Add support for GTK+3
         https://bugs.webkit.org/show_bug.cgi?id=41253
 
