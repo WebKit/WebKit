@@ -1,3 +1,19 @@
+2010-06-28  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION(53790): Neopets page with mismatched elements misrenders
+        https://bugs.webkit.org/show_bug.cgi?id=41181
+
+        Misnested formatting tags require fixup in order to create a valid DOM.  Because this takes
+        O(N^2) time in some cases, http://trac.webkit.org/changeset/53790 added an iteration limit
+        of 5 to this algorithm to avoid hangs.  This limit is too low for neopets, but a limit of
+        7 is sufficient.  This raises the limit to 10 to have a bit of breathing room.  HTML5
+        defines the fixup algorithm http://www.whatwg.org/specs/web-apps/current-work/#adoptionAgency
+        but doesn't specify any particular iteration limit.
+
+        * html/LegacyHTMLTreeBuilder.cpp:
+
 2010-06-28  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

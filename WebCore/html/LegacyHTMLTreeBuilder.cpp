@@ -67,7 +67,7 @@ using namespace HTMLNames;
 
 static const unsigned cMaxRedundantTagDepth = 20;
 static const unsigned cResidualStyleMaxDepth = 200;
-static const unsigned cResidualStyleIterationLimit = 5;
+static const unsigned cResidualStyleIterationLimit = 10;
 
 
 static const int minBlockLevelTagPriority = 3;
