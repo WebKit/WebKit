@@ -231,7 +231,6 @@ http/tests/navigation/lockedhistory-iframe.html
 http/tests/navigation/metaredirect-frames.html
 http/tests/navigation/metaredirect-goback.html
 http/tests/navigation/metaredirect-subframeload.html
-http/tests/navigation/new-window-redirect-history.html
 http/tests/navigation/no-referrer-reset.html
 http/tests/navigation/no-referrer-target-blank.html
 http/tests/navigation/onload-navigation-iframe-2.html

@@ -728,9 +728,9 @@ static QString dumpHistoryItem(const QWebHistoryItem& item, int indent, bool cur
     return result;
 }
 
-QString DumpRenderTree::dumpBackForwardList()
+QString DumpRenderTree::dumpBackForwardList(QWebPage* page)
 {
-    QWebHistory* history = webPage()->history();
+    QWebHistory* history = page->history();
 
     QString result;
     result.append(QLatin1String("\n============== Back Forward List ==============\n"));
@@ -801,8 +801,13 @@ void DumpRenderTree::dump()
         fprintf(stdout, "Content-Type: text/plain\n");
         fprintf(stdout, "%s", resultString.toUtf8().constData());
 
-        if (m_controller->shouldDumpBackForwardList())
-            fprintf(stdout, "%s", dumpBackForwardList().toUtf8().constData());
+        if (m_controller->shouldDumpBackForwardList()) {
+            fprintf(stdout, "%s", dumpBackForwardList(webPage()).toUtf8().constData());
+            foreach (QObject* widget, windows) {
+                QWebPage* page = qobject_cast<QWebPage*>(widget->findChild<QWebPage*>());
+                fprintf(stdout, "%s", dumpBackForwardList(page).toUtf8().constData());
+            }
+        }
 
     } else
         printf("ERROR: nil result from %s", methodNameStringForFailedTest(m_controller));
