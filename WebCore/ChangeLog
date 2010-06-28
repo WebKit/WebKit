@@ -1,3 +1,14 @@
+2010-06-28  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Fix a race condition that can happen when using DBs in workers.
+        https://bugs.webkit.org/show_bug.cgi?id=41105
+
+        * storage/DatabaseTracker.cpp:
+        (WebCore::DatabaseTracker::addOpenDatabase):
+        * storage/DatabaseTracker.h:
+
 2010-06-28  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

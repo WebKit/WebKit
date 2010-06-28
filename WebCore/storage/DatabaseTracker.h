@@ -63,7 +63,8 @@ public:
     // This singleton will potentially be used from multiple worker threads and the page's context thread simultaneously.  To keep this safe, it's
     // currently using 4 locks.  In order to avoid deadlock when taking multiple locks, you must take them in the correct order:
     // m_databaseGuard before quotaManager if both locks are needed.
-    // no other lock is taken in the code locked on m_openDatabaseMapGuard.
+    // m_openDatabaseMapGuard before quotaManager if both locks are needed.
+    // m_databaseGuard and m_openDatabaseMapGuard currently don't overlap.
     // notificationMutex() is currently independent of the other locks.
 
     bool canEstablishDatabase(ScriptExecutionContext*, const String& name, const String& displayName, unsigned long estimatedSize);
