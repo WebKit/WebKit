@@ -1,3 +1,25 @@
+2010-06-28  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] Add support for the progress bar tag
+        https://bugs.webkit.org/show_bug.cgi?id=41014
+
+        Add support for rendering the progress tag for WebKit GTK+.
+
+        * GNUmakefile.am:
+        * platform/gtk/RenderThemeGtk.cpp:
+        (WebCore::RenderThemeGtk::animationRepeatIntervalForProgressBar):
+        Added. Currently progress bar animations are disabled. As it looks like
+        there may not be a good way to support this with Mozilla's theme drawing code.
+        (WebCore::RenderThemeGtk::animationDurationForProgressBar): Ditto.
+        (WebCore::RenderThemeGtk::adjustProgressBarStyle): Added.
+        (WebCore::RenderThemeGtk::paintProgressBar): Added.
+        * platform/gtk/RenderThemeGtk.h: Add declarations for new methods.
+        * platform/gtk/gtk2drawing.c: 
+        (moz_gtk_get_progress_widget): Expose the progress widget so that the chunk can be positioned properly.
+        * platform/gtk/gtkdrawing.h: Added declaration for moz_gtk_get_progress_widget.
+
 2010-06-28  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

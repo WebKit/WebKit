@@ -485,6 +485,12 @@ gint moz_gtk_get_tab_thickness(void);
  */
 gboolean moz_gtk_images_in_menus(void);
 
+/**
+ * Retrieve an actual GTK progress bar widget for style analysis. It will not
+ * be modified.
+ */
+GtkWidget* moz_gtk_get_progress_widget(void);
+
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */

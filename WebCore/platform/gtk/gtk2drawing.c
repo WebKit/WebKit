@@ -3306,3 +3306,11 @@ void moz_gtk_destroy_theme_parts_widgets(GtkThemeParts* parts)
         parts->protoWindow = NULL;
     }
 }
+
+GtkWidget* moz_gtk_get_progress_widget()
+{
+    if (!is_initialized)
+        return NULL;
+    ensure_progress_widget();
+    return gParts->progresWidget;
+}

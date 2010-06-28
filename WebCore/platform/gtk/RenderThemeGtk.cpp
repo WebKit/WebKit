@@ -38,10 +38,13 @@
 #include "RenderObject.h"
 #include "UserAgentStyleSheets.h"
 #include "gtkdrawing.h"
-#include <wtf/text/CString.h>
-
 #include <gdk/gdk.h>
 #include <gtk/gtk.h>
+#include <wtf/text/CString.h>
+
+#if ENABLE(PROGRESS_TAG)
+#include "RenderProgress.h"
+#endif
 
 namespace WebCore {
 
@@ -826,6 +829,54 @@ bool RenderThemeGtk::paintMediaSliderThumb(RenderObject* o, const RenderObject::
     // Make the thumb nicer with rounded corners.
     paintInfo.context->fillRoundedRect(r, IntSize(3, 3), IntSize(3, 3), IntSize(3, 3), IntSize(3, 3), m_sliderThumbColor, DeviceColorSpace);
     return false;
+}
+#endif
+
+#if ENABLE(PROGRESS_TAG)
+double RenderThemeGtk::animationRepeatIntervalForProgressBar(RenderProgress*) const
+{
+    // FIXME: It doesn't look like there is a good way yet to support animated
+    // progress bars with the Mozilla theme drawing code.
+    return 0;
+}
+
+double RenderThemeGtk::animationDurationForProgressBar(RenderProgress*) const
+{
+    // FIXME: It doesn't look like there is a good way yet to support animated
+    // progress bars with the Mozilla theme drawing code.
+    return 0;
+}
+
+void RenderThemeGtk::adjustProgressBarStyle(CSSStyleSelector*, RenderStyle* style, Element*) const
+{
+    style->setBoxShadow(0);
+}
+
+bool RenderThemeGtk::paintProgressBar(RenderObject* renderObject, const RenderObject::PaintInfo& paintInfo, const IntRect& rect)
+{
+    if (!renderObject->isProgress())
+        return true;
+
+    GtkWidget* progressBarWidget = moz_gtk_get_progress_widget();
+    if (!progressBarWidget)
+        return true;
+
+    if (paintMozillaGtkWidget(this, MOZ_GTK_PROGRESSBAR, renderObject, paintInfo, rect))
+        return true;
+
+    IntRect chunkRect(rect);
+    RenderProgress* renderProgress = toRenderProgress(renderObject);
+
+    GtkStyle* style = gtk_widget_get_style(progressBarWidget);
+    chunkRect.setHeight(chunkRect.height() - (2 * style->ythickness));
+    chunkRect.setY(chunkRect.y() + style->ythickness);
+    chunkRect.setWidth((chunkRect.width() - (2 * style->xthickness)) * renderProgress->position());
+    if (renderObject->style()->direction() == RTL)
+        chunkRect.setX(rect.x() + rect.width() - chunkRect.width() - style->xthickness);
+    else
+        chunkRect.setX(chunkRect.x() + style->xthickness);
+
+    return paintMozillaGtkWidget(this, MOZ_GTK_PROGRESS_CHUNK, renderObject, paintInfo, chunkRect);
 }
 #endif
 

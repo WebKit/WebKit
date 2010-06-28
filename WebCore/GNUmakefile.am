@@ -2358,12 +2358,12 @@ webcore_cppflags += \
     -DENABLE_METER_TAG=0
 
 # ----
-# HTML Progress Element - disable for now, since painting code is missing.
+# HTML Progress Element
 # ----
-FEATURE_DEFINES += ENABLE_PROGRESS_TAG=0
+FEATURE_DEFINES += ENABLE_PROGRESS_TAG=1
 
 webcore_cppflags += \
-	-DENABLE_PROGRESS_TAG=0
+	-DENABLE_PROGRESS_TAG=1
 
 # ----
 # JavaScript Debugger/Profiler
