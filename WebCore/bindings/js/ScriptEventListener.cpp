@@ -33,11 +33,14 @@
 
 #include "Attribute.h"
 #include "Document.h"
+#include "Element.h"
 #include "EventListener.h"
 #include "Frame.h"
 #include "HTMLNames.h"
 #include "JSNode.h"
+#if ENABLE(SVG)
 #include "SVGNames.h"
+#endif
 #include "XSSAuditor.h"
 #include <runtime/JSLock.h>
 
@@ -82,8 +85,11 @@ PassRefPtr<JSLazyEventListener> createAttributeEventListener(Node* node, Attribu
 
 PassRefPtr<JSLazyEventListener> createWindowAttributeEventListener(Element* windowEquivalentElement, Attribute* attr)
 {
+#if ENABLE(SVG)
     ASSERT(windowEquivalentElement->hasTagName(HTMLNames::bodyTag) || windowEquivalentElement->hasTagName(HTMLNames::framesetTag) || windowEquivalentElement->hasTagName(SVGNames::svgTag));
-    
+#else
+    ASSERT(windowEquivalentElement->hasTagName(HTMLNames::bodyTag) || windowEquivalentElement->hasTagName(HTMLNames::framesetTag));
+#endif
     Frame* frame = windowEquivalentElement->document()->frame();
     if (!frame)
         return 0;
