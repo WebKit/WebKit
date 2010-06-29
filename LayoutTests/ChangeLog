@@ -1,5 +1,23 @@
 2010-06-28  Mark Rowe  <mrowe@apple.com>
 
+        Merge r61750.
+
+    2010-06-24  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Single character string replacement may replace too many characters
+        https://bugs.webkit.org/show_bug.cgi?id=41138
+        <rdar://problem/8097496>
+
+        Add a few more string replace tests to check for behaviour when
+        dealing with Ropes
+
+        * fast/js/script-tests/string-replace-3.js:
+        * fast/js/string-replace-3-expected.txt:
+
+2010-06-28  Mark Rowe  <mrowe@apple.com>
+
         Merge r61450.
 
     2010-06-18  Oliver Hunt  <oliver@apple.com>

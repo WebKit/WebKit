@@ -29,4 +29,12 @@ shouldBe("testString.replace('end', '$$ $0 $00 $1 $01 $2 $12 $9 $99 $1a $11a')",
 shouldBe("testString.replace(/(e)(n)(d) (o)(f) (t)(h)(e) (w)(o)(r)(l)(d)/, '$$ $0 $00 $1 $01 $2 $12 $9 $99 $1a $11a')",
          "\"It's the $ $0 $00 e e n l w w9 ea ra as we know it, and I feel fine.\"");
 
+singleChar = "a";
+twoChar = "aa";
+shouldBe("('' + singleChar + singleChar + singleChar).replace('a', 'b')", "'baa'");
+shouldBe("('' + twoChar + twoChar + twoChar).replace('a', 'b')", "'baaaaa'");
+shouldBe("('' + twoChar + twoChar + twoChar).replace('aa', 'b')", "'baaaa'");
+shouldBe("('' + twoChar + twoChar + twoChar).replace('aa', 'bb')", "'bbaaaa'");
+shouldBe("('' + twoChar + twoChar + twoChar).replace('a', 'bb')", "'bbaaaaa'");
+
 var successfullyParsed = true;
