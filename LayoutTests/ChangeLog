@@ -1,3 +1,10 @@
+2010-06-29  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Not reviewed. Update mac-lepard specific result for a SVG test using border-radii, after the painting changes.
+
+        * platform/mac-leopard/svg/custom/svg-fonts-in-html-expected.checksum:
+        * platform/mac-leopard/svg/custom/svg-fonts-in-html-expected.png:
+
 2010-06-29  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed trivial fix. Update platform specific expectded files after r62092.
