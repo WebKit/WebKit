@@ -1,3 +1,16 @@
+2010-06-29  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        platform/gtk/accessibility/name-from-label test needs updating
+        https://bugs.webkit.org/show_bug.cgi?id=41355
+
+        Updated test and expected results to match changes introduced
+        with patch for bug 40009 (make it more coherent with other ports)
+
+        * platform/gtk/accessibility/name-from-label-expected.txt:
+        * platform/gtk/accessibility/name-from-label.html:
+
 2010-06-29  Mikhail Naganov  <mnaganov@chromium.org>
 
         Unreviewed text expectations update after r62121.
