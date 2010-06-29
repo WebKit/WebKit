@@ -1,5 +1,16 @@
 2010-06-28  Mark Rowe  <mrowe@apple.com>
 
+        Merge r59140.
+
+    2010-05-10  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix warning on Windows about unreachable code.
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::shouldPropagateCompositingToEnclosingIFrame):
+
+2010-06-28  Mark Rowe  <mrowe@apple.com>
+
         Merge r59137.
 
     2010-05-10  Simon Fraser  <simon.fraser@apple.com>

@@ -1014,8 +1014,7 @@ bool RenderLayerCompositor::shouldPropagateCompositingToEnclosingIFrame() const
 #if !PLATFORM(MAC)
     // On non-Mac platforms, let compositing propagate for all iframes.
     return true;
-#endif
-
+#else
     // On Mac, only propagate compositing if the iframe is overlapped in the parent
     // document, or the parent is already compositing.
     RenderIFrame* iframeRenderer = toRenderIFrame(renderer);
@@ -1032,6 +1031,7 @@ bool RenderLayerCompositor::shouldPropagateCompositingToEnclosingIFrame() const
     }
 
     return false;
+#endif
 }
 
 Element* RenderLayerCompositor::enclosingIFrameElement() const
