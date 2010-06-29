@@ -39,7 +39,9 @@ public:
         , m_len(len)
         , m_xpos(xpos)
         , m_padding(padding)
-        , m_glyphScale(1.0f)
+#if ENABLE(SVG)
+        , m_horizontalGlyphStretch(1)
+#endif
         , m_allowTabs(allowTabs)
         , m_rtl(rtl)
         , m_directionalOverride(directionalOverride)
@@ -59,7 +61,9 @@ public:
         , m_len(s.length())
         , m_xpos(xpos)
         , m_padding(padding)
-        , m_glyphScale(1.0f)
+#if ENABLE(SVG)
+        , m_horizontalGlyphStretch(1)
+#endif
         , m_allowTabs(allowTabs)
         , m_rtl(rtl)
         , m_directionalOverride(directionalOverride)
@@ -81,8 +85,10 @@ public:
 
     void setText(const UChar* c, int len) { m_characters = c; m_len = len; }
 
-    float glyphScale() const { return m_glyphScale; }
-    void setGlyphScale(float scale) { m_glyphScale = scale; }
+#if ENABLE(SVG)
+    float horizontalGlyphStretch() const { return m_horizontalGlyphStretch; }
+    void setHorizontalGlyphStretch(float scale) { m_horizontalGlyphStretch = scale; }
+#endif
 
     bool allowTabs() const { return m_allowTabs; }
     int xPos() const { return m_xpos; }
@@ -93,7 +99,6 @@ public:
     bool applyRunRounding() const { return m_applyRunRounding; }
     bool applyWordRounding() const { return m_applyWordRounding; }
     bool spacingDisabled() const { return m_disableSpacing; }
-    bool applyGlyphScaling() const { return m_glyphScale != 1.0f; }
 
     void disableSpacing() { m_disableSpacing = true; }
     void disableRoundingHacks() { m_applyRunRounding = m_applyWordRounding = false; }
@@ -114,7 +119,9 @@ private:
 
     int m_xpos;
     int m_padding;
-    float m_glyphScale;
+#if ENABLE(SVG)
+    float m_horizontalGlyphStretch;
+#endif
     bool m_allowTabs;
     bool m_rtl;
     bool m_directionalOverride;

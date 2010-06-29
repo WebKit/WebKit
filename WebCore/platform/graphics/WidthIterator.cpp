@@ -135,9 +135,10 @@ void WidthIterator::advance(int offset, GlyphBuffer* glyphBuffer)
         } else {
             width = fontData->widthForGlyph(glyph);
 
-            // SVG uses glyphScale(), when textLength is used to stretch/squeeze text.
-            if (m_run.applyGlyphScaling())
-                width *= m_run.glyphScale();
+#if ENABLE(SVG)
+            // SVG uses horizontalGlyphStretch(), when textLength is used to stretch/squeeze text.
+            width *= m_run.horizontalGlyphStretch();
+#endif
 
             // We special case spaces in two ways when applying word rounding.
             // First, we round spaces to an adjusted width in all fonts.

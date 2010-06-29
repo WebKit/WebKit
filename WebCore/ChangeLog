@@ -2,6 +2,28 @@
 
         Reviewed by Dirk Schulze.
 
+        Provide floating-point support for text selection framework
+        https://bugs.webkit.org/show_bug.cgi?id=40665
+
+        Rename 'glyphScale' to 'horizontalGlyphStretch' upon Dans' request.
+        Also guard the variables in ENABLE(SVG) blocks. Initialize variable to 1 instead of 1.0f, as that's the new style rule.
+
+        No functional changes, thus no new tests.
+
+        * platform/graphics/TextRun.h:
+        (WebCore::TextRun::TextRun):
+        (WebCore::TextRun::horizontalGlyphStretch):
+        (WebCore::TextRun::setHorizontalGlyphStretch):
+        (WebCore::TextRun::spacingDisabled):
+        * platform/graphics/WidthIterator.cpp:
+        (WebCore::WidthIterator::advance):
+        * rendering/SVGInlineTextBox.cpp:
+        (WebCore::SVGInlineTextBox::offsetForPosition):
+
+2010-06-29  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Dirk Schulze.
+
         REGRESSION: text-shadow CSS applied to SVG no longer works
         https://bugs.webkit.org/show_bug.cgi?id=40960
 

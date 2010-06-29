@@ -124,8 +124,9 @@ int SVGInlineTextBox::offsetForPosition(int xCoordinate, bool includePartialGlyp
     m_currentChunkPart = SVGTextChunkPart();
 
     // Eventually handle lengthAdjust="spacingAndGlyphs".
+    // FIXME: Need to revisit the whole offsetForPosition concept for vertical text selection.
     if (!m_chunkTransformation.isIdentity())
-        textRun.setGlyphScale(narrowPrecisionToFloat(isVerticalWritingMode(style->svgStyle()) ? m_chunkTransformation.d() : m_chunkTransformation.a()));
+        textRun.setHorizontalGlyphStretch(narrowPrecisionToFloat(m_chunkTransformation.a()));
 
     return hitPart.offset + style->font().offsetForPosition(textRun, x, includePartialGlyphs);
 }
