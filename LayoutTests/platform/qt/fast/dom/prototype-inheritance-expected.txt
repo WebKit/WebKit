@@ -351,6 +351,8 @@ PASS inner.SVGFEComponentTransferElement.isInner is true
 PASS inner.SVGFEComponentTransferElement.constructor.isInner is true
 PASS inner.SVGFECompositeElement.isInner is true
 PASS inner.SVGFECompositeElement.constructor.isInner is true
+PASS inner.SVGFEConvolveMatrixElement.isInner is true
+PASS inner.SVGFEConvolveMatrixElement.constructor.isInner is true
 PASS inner.SVGFEDiffuseLightingElement.isInner is true
 PASS inner.SVGFEDiffuseLightingElement.constructor.isInner is true
 PASS inner.SVGFEDisplacementMapElement.isInner is true

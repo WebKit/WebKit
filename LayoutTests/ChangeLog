@@ -1,5 +1,17 @@
 2010-06-29  Csaba Osztrogonác  <ossy@webkit.org>
 
+        Unreviewed trivial fix. Update platform specific expectded files after r62092.
+
+        * platform/gtk/fast/dom/Window/window-property-descriptors-expected.txt:
+        * platform/gtk/fast/dom/prototype-inheritance-expected.txt:
+        * platform/gtk/fast/js/global-constructors-expected.txt:
+        * platform/qt/fast/dom/Window/window-properties-expected.txt:
+        * platform/qt/fast/dom/Window/window-property-descriptors-expected.txt:
+        * platform/qt/fast/dom/prototype-inheritance-expected.txt:
+        * platform/qt/fast/js/global-constructors-expected.txt:
+
+2010-06-29  Csaba Osztrogonác  <ossy@webkit.org>
+
         Unreviewed trivial fix. Update expectded files after r62092.
 
         * fast/dom/Window/window-properties-expected.txt:
