@@ -43,7 +43,7 @@ class WebSearchableFormData {
 public:
     // If the provided form is suitable for automated searching, isValid()
     // will return false.
-    WebSearchableFormData(const WebFormElement&);
+    WEBKIT_API WebSearchableFormData(const WebFormElement&);
 
     bool isValid() { return m_url.isValid(); }
 

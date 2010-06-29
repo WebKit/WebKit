@@ -1,3 +1,32 @@
+2010-06-29  Victor Wang  <victorw@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [chromium]: Update webkit for chromium multi dll build.
+
+        1. Export more webkit APIs for chromium multi dll build.
+        2. Update DumpRenderTree sources so it can build with webkit.dll
+        3. Temp disable webkit unit tests for chromium multi dll build.
+
+        https://bugs.webkit.org/show_bug.cgi?id=41231
+
+        * WebKit.gyp:
+        * public/WebAccessibilityCache.h:
+        * public/WebAccessibilityObject.h:
+        * public/WebEventListener.h:
+        * public/WebGeolocationServiceMock.h:
+        * public/WebGraphicsContext3D.h:
+        * public/WebIDBDatabaseError.h:
+        (WebKit::WebIDBDatabaseError::WebIDBDatabaseError):
+        (WebKit::WebIDBDatabaseError::operator=):
+        * public/WebNotification.h:
+        * public/WebPasswordFormData.h:
+        * public/WebSearchableFormData.h:
+        * public/WebStorageEventDispatcher.h:
+        * public/WebString.h:
+        (WebKit::WebString::WebString):
+        (WebKit::WebString::operator=):
+
 2010-06-29  Vangelis Kokkevis  <vangelis@chromium.org>
 
         Reviewed by Darin Fisher.

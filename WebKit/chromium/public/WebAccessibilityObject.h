@@ -64,44 +64,44 @@ public:
 
     bool isNull() const { return !m_private; }
 
-    WebString accessibilityDescription() const;
-    WebString actionVerb() const;
-    bool canSetFocusAttribute() const;
-    bool canSetValueAttribute() const;
+    WEBKIT_API WebString accessibilityDescription() const;
+    WEBKIT_API WebString actionVerb() const;
+    WEBKIT_API bool canSetFocusAttribute() const;
+    WEBKIT_API bool canSetValueAttribute() const;
 
-    unsigned childCount() const;
+    WEBKIT_API unsigned childCount() const;
 
-    WebAccessibilityObject childAt(unsigned) const;
-    WebAccessibilityObject firstChild() const;
-    WebAccessibilityObject focusedChild() const;
-    WebAccessibilityObject lastChild() const;
-    WebAccessibilityObject nextSibling() const;
-    WebAccessibilityObject parentObject() const;
-    WebAccessibilityObject previousSibling() const;
+    WEBKIT_API WebAccessibilityObject childAt(unsigned) const;
+    WEBKIT_API WebAccessibilityObject firstChild() const;
+    WEBKIT_API WebAccessibilityObject focusedChild() const;
+    WEBKIT_API WebAccessibilityObject lastChild() const;
+    WEBKIT_API WebAccessibilityObject nextSibling() const;
+    WEBKIT_API WebAccessibilityObject parentObject() const;
+    WEBKIT_API WebAccessibilityObject previousSibling() const;
 
-    bool isAnchor() const;
-    bool isChecked() const;
-    bool isFocused() const;
-    bool isEnabled() const;
-    bool isHovered() const;
-    bool isIndeterminate() const;
-    bool isMultiSelectable() const;
-    bool isOffScreen() const;
-    bool isPasswordField() const;
-    bool isPressed() const;
-    bool isReadOnly() const;
-    bool isVisited() const;
+    WEBKIT_API bool isAnchor() const;
+    WEBKIT_API bool isChecked() const;
+    WEBKIT_API bool isFocused() const;
+    WEBKIT_API bool isEnabled() const;
+    WEBKIT_API bool isHovered() const;
+    WEBKIT_API bool isIndeterminate() const;
+    WEBKIT_API bool isMultiSelectable() const;
+    WEBKIT_API bool isOffScreen() const;
+    WEBKIT_API bool isPasswordField() const;
+    WEBKIT_API bool isPressed() const;
+    WEBKIT_API bool isReadOnly() const;
+    WEBKIT_API bool isVisited() const;
 
-    WebRect boundingBoxRect() const;
-    WebString helpText() const;
-    int headingLevel() const;
-    WebAccessibilityObject hitTest(const WebPoint&) const;
-    WebString keyboardShortcut() const;
-    bool performDefaultAction() const;
-    WebAccessibilityRole roleValue() const;
-    void setFocused(bool) const;
-    WebString stringValue() const;
-    WebString title() const;
+    WEBKIT_API WebRect boundingBoxRect() const;
+    WEBKIT_API WebString helpText() const;
+    WEBKIT_API int headingLevel() const;
+    WEBKIT_API WebAccessibilityObject hitTest(const WebPoint&) const;
+    WEBKIT_API WebString keyboardShortcut() const;
+    WEBKIT_API bool performDefaultAction() const;
+    WEBKIT_API WebAccessibilityRole roleValue() const;
+    WEBKIT_API void setFocused(bool) const;
+    WEBKIT_API WebString stringValue() const;
+    WEBKIT_API WebString title() const;
 
 #if WEBKIT_IMPLEMENTATION
     WebAccessibilityObject(const WTF::PassRefPtr<WebCore::AccessibilityObject>&);

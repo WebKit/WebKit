@@ -40,11 +40,11 @@ namespace WebKit {
 // See comment in WebIndexedDatabase for a high level overview these classes.
 class WebIDBDatabaseError {
 public:
-    ~WebIDBDatabaseError();
+    WEBKIT_API ~WebIDBDatabaseError();
 
-    WebIDBDatabaseError(unsigned short code, const WebString& message) { assign(code, message); }
-    WebIDBDatabaseError(const WebIDBDatabaseError& e) { assign(e); }
-    WebIDBDatabaseError& operator=(const WebIDBDatabaseError& e)
+    WEBKIT_API WebIDBDatabaseError(unsigned short code, const WebString& message) { assign(code, message); }
+    WEBKIT_API WebIDBDatabaseError(const WebIDBDatabaseError& e) { assign(e); }
+    WEBKIT_API WebIDBDatabaseError& operator=(const WebIDBDatabaseError& e)
     {
         assign(e);
         return *this;

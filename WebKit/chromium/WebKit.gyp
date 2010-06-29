@@ -550,39 +550,46 @@
         },
         {
             'target_name': 'webkit_unit_tests',
-            'type': 'executable',
-            'msvs_guid': '7CEFE800-8403-418A-AD6A-2D52C6FC3EAD',
-            'dependencies': [
-                'webkit',
-                '../../WebCore/WebCore.gyp/WebCore.gyp:webcore',
-                '<(chromium_src_dir)/testing/gtest.gyp:gtest',
-                '<(chromium_src_dir)/base/base.gyp:base',
-                '<(chromium_src_dir)/base/base.gyp:base_i18n',
-                '<(chromium_src_dir)/gpu/gpu.gyp:gles2_c_lib',
-            ],
-            'include_dirs': [
-                'public',
-                'src',
-            ],
-            'sources': [
-                'tests/DragImageTest.cpp',
-                'tests/KeyboardTest.cpp',
-                'tests/KURLTest.cpp',
-                'tests/RunAllTests.cpp',
-            ],
             'conditions': [
-                ['OS=="win"', {
-                    'sources': [
-                        # FIXME: Port PopupMenuTest to Linux and Mac.
-                        'tests/PopupMenuTest.cpp',
-                        'tests/TransparencyWinTest.cpp',
-                        'tests/UniscribeHelperTest.cpp',
+                # FIXME: make webkit unit tests working for multi dll build.
+                ['inside_chromium_build==1 and OS=="win" and component=="shared_library"', {
+                    'type': 'none',
+                }, {
+                    'type': 'executable',
+                    'msvs_guid': '7CEFE800-8403-418A-AD6A-2D52C6FC3EAD',
+                    'dependencies': [
+                        'webkit',
+                        '../../WebCore/WebCore.gyp/WebCore.gyp:webcore',
+                        '<(chromium_src_dir)/testing/gtest.gyp:gtest',
+                        '<(chromium_src_dir)/base/base.gyp:base',
+                        '<(chromium_src_dir)/base/base.gyp:base_i18n',
+                        '<(chromium_src_dir)/gpu/gpu.gyp:gles2_c_lib',
                     ],
-                }],
-                ['OS=="mac"', {
-                    'sources!': [
-                        # FIXME: Port DragImageTest to Mac.
+                    'include_dirs': [
+                        'public',
+                        'src',
+                    ],
+                    'sources': [
                         'tests/DragImageTest.cpp',
+                        'tests/KeyboardTest.cpp',
+                        'tests/KURLTest.cpp',
+                        'tests/RunAllTests.cpp',
+                    ],
+                    'conditions': [
+                        ['OS=="win"', {
+                            'sources': [
+                                # FIXME: Port PopupMenuTest to Linux and Mac.
+                                'tests/PopupMenuTest.cpp',
+                                'tests/TransparencyWinTest.cpp',
+                                'tests/UniscribeHelperTest.cpp',
+                            ],
+                        }],
+                        ['OS=="mac"', {
+                            'sources!': [
+                                # FIXME: Port DragImageTest to Mac.
+                                'tests/DragImageTest.cpp',
+                            ],
+                        }],
                     ],
                 }],
             ],
@@ -639,6 +646,20 @@
                         '<(SHARED_INTERMEDIATE_DIR)/webkit/webkit_chromium_resources.rc',
                         '<(SHARED_INTERMEDIATE_DIR)/webkit/webkit_resources.rc',
                         '<(SHARED_INTERMEDIATE_DIR)/webkit/webkit_strings_en-US.rc',
+                    ],
+                    'conditions': [
+                        ['inside_chromium_build==1 and component=="shared_library"', {
+                            'sources': [
+                                'src/ChromiumCurrentTime.cpp',
+                                'src/ChromiumThreading.cpp',
+                            ],
+                            'include_dirs': [
+                                'public',
+                            ],
+                            'dependencies': [
+                                '../../JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.gyp:wtf',
+                            ],
+                        }],
                     ],
                     'copies': [{
                         'destination': '<(PRODUCT_DIR)',

@@ -41,7 +41,7 @@ class WebURL;
 // FIXME: Make this (or something) work for SessionStorage!
 class WebStorageEventDispatcher {
 public:
-    static WebStorageEventDispatcher* create();
+    WEBKIT_API static WebStorageEventDispatcher* create();
 
     virtual ~WebStorageEventDispatcher() { }
 

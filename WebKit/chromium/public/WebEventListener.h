@@ -31,6 +31,8 @@
 #ifndef WebEventListener_h
 #define WebEventListener_h
 
+#include "WebCommon.h"
+
 #if WEBKIT_IMPLEMENTATION
 namespace WebCore { class Node; }
 #endif
@@ -45,8 +47,8 @@ class WebString;
 
 class WebEventListener {
 public:
-    WebEventListener();
-    virtual ~WebEventListener();
+    WEBKIT_API WebEventListener();
+    WEBKIT_API virtual ~WebEventListener();
 
     // Called when an event is received.
     virtual void handleEvent(const WebEvent&) = 0;

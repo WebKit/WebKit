@@ -43,8 +43,8 @@ public:
     WebAccessibilityCache() {}
     virtual ~WebAccessibilityCache() {}
 
-    static WebAccessibilityCache* create();
-    static void enableAccessibility();
+    WEBKIT_API static WebAccessibilityCache* create();
+    WEBKIT_API static void enableAccessibility();
 
     virtual void initialize(WebView* view) = 0;
     virtual bool isInitialized() const = 0;

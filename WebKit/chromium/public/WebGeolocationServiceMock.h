@@ -31,6 +31,7 @@
 #ifndef WebGeolocationServiceMock_h
 #define WebGeolocationServiceMock_h
 
+#include "WebCommon.h"
 #include "WebGeolocationService.h"
 
 namespace WebKit {
@@ -39,10 +40,10 @@ class WebString;
 
 class WebGeolocationServiceMock : public WebGeolocationService {
 public:
-    static WebGeolocationServiceMock* createWebGeolocationServiceMock();
-    static void setMockGeolocationPermission(bool allowed);
-    static void setMockGeolocationPosition(double latitude, double longitude, double accuracy);
-    static void setMockGeolocationError(int errorCode, const WebString& message);
+    WEBKIT_API static WebGeolocationServiceMock* createWebGeolocationServiceMock();
+    WEBKIT_API static void setMockGeolocationPermission(bool allowed);
+    WEBKIT_API static void setMockGeolocationPosition(double latitude, double longitude, double accuracy);
+    WEBKIT_API static void setMockGeolocationError(int errorCode, const WebString& message);
 
 protected:
     static bool s_mockGeolocationPermission;
