@@ -562,6 +562,35 @@ void SVGInlineTextBox::paintSelection(GraphicsContext* context, const FloatPoint
     context->restore();
 }
 
+void SVGInlineTextBox::paintTextWithShadows(GraphicsContext* context, const FloatPoint& textOrigin, RenderStyle* style, TextRun& textRun, int startPos, int endPos)
+{
+    const Font& font = style->font();
+    const ShadowData* shadow = style->textShadow();
+
+    FloatRect shadowRect(FloatPoint(textOrigin.x(), textOrigin.y() - font.ascent()), FloatSize(m_currentChunkPart.width, m_currentChunkPart.height));
+    do {
+        if (!prepareGraphicsContextForTextPainting(context, textRun, style))
+            break;
+
+        FloatSize extraOffset;
+        if (shadow)
+            extraOffset = applyShadowToGraphicsContext(context, shadow, shadowRect, false /* stroked */, true /* opaque */);
+
+        font.drawText(context, textRun, textOrigin + extraOffset, startPos, endPos);
+        restoreGraphicsContextAfterTextPainting(context, textRun);
+
+        if (!shadow)
+            break;
+
+        if (shadow->next())
+            context->restore();
+        else
+            context->clearShadow();
+
+        shadow = shadow->next();
+    } while (shadow);
+}
+
 void SVGInlineTextBox::paintText(GraphicsContext* context, const FloatPoint& textOrigin, RenderStyle* style, RenderStyle* selectionStyle, bool hasSelection, bool paintSelectedTextOnly)
 {
     ASSERT(style);
@@ -572,41 +601,24 @@ void SVGInlineTextBox::paintText(GraphicsContext* context, const FloatPoint& tex
     int endPos = 0;
     selectionStartEnd(startPos, endPos);
 
-    const Font& font = style->font();
-    TextRun textRun(constructTextRun(style));
-
     // Fast path if there is no selection, just draw the whole chunk part using the regular style
+    TextRun textRun(constructTextRun(style));
     if (!hasSelection || startPos >= endPos) {
-        if (prepareGraphicsContextForTextPainting(context, textRun, style)) {
-            font.drawText(context, textRun, textOrigin, 0, m_currentChunkPart.length);
-            restoreGraphicsContextAfterTextPainting(context, textRun);
-        }
-
+        paintTextWithShadows(context, textOrigin, style, textRun, 0, m_currentChunkPart.length);
         return;
     }
 
     // Eventually draw text using regular style until the start position of the selection
-    if (startPos > 0 && !paintSelectedTextOnly) {
-        if (prepareGraphicsContextForTextPainting(context, textRun, style)) {
-            font.drawText(context, textRun, textOrigin, 0, startPos);
-            restoreGraphicsContextAfterTextPainting(context, textRun);
-        }
-    }
+    if (startPos > 0 && !paintSelectedTextOnly)
+        paintTextWithShadows(context, textOrigin, style, textRun, 0, startPos);
 
     // Draw text using selection style from the start to the end position of the selection
     TextRun selectionTextRun(constructTextRun(selectionStyle));
-    if (prepareGraphicsContextForTextPainting(context, selectionTextRun, selectionStyle)) {
-        selectionStyle->font().drawText(context, selectionTextRun, textOrigin, startPos, endPos);
-        restoreGraphicsContextAfterTextPainting(context, selectionTextRun);
-    }
+    paintTextWithShadows(context, textOrigin, selectionStyle, textRun, startPos, endPos);
 
     // Eventually draw text using regular style from the end position of the selection to the end of the current chunk part
-    if (endPos < m_currentChunkPart.length && !paintSelectedTextOnly) {
-        if (prepareGraphicsContextForTextPainting(context, textRun, style)) {
-            font.drawText(context, textRun, textOrigin, endPos, m_currentChunkPart.length);
-            restoreGraphicsContextAfterTextPainting(context, textRun);
-        }
-    }
+    if (endPos < m_currentChunkPart.length && !paintSelectedTextOnly)
+        paintTextWithShadows(context, textOrigin, style, textRun, endPos, m_currentChunkPart.length);
 }
 
 void SVGInlineTextBox::buildLayoutInformation(SVGCharacterLayoutInfo& info, SVGLastGlyphInfo& lastGlyph)

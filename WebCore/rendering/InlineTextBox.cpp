@@ -294,6 +294,31 @@ bool InlineTextBox::nodeAtPoint(const HitTestRequest&, HitTestResult& result, in
     return false;
 }
 
+FloatSize InlineTextBox::applyShadowToGraphicsContext(GraphicsContext* context, const ShadowData* shadow, const FloatRect& textRect, bool stroked, bool opaque)
+{
+    if (!shadow)
+        return FloatSize();
+
+    FloatSize extraOffset;
+    FloatSize shadowOffset(shadow->x(), shadow->y());
+    int shadowBlur = shadow->blur();
+    const Color& shadowColor = shadow->color();
+
+    if (shadow->next() || stroked || !opaque) {
+        FloatRect shadowRect(textRect);
+        shadowRect.inflate(shadowBlur);
+        shadowRect.move(shadowOffset);
+        context->save();
+        context->clip(shadowRect);
+
+        extraOffset = FloatSize(0, 2 * textRect.height() + max(0.0f, shadowOffset.height()) + shadowBlur);
+        shadowOffset -= extraOffset;
+    }
+
+    context->setShadow(shadowOffset, shadowBlur, shadowColor, context->fillColorSpace());
+    return extraOffset;
+}
+
 static void paintTextWithShadows(GraphicsContext* context, const Font& font, const TextRun& textRun, int startOffset, int endOffset, int truncationPoint, const IntPoint& textOrigin, int x, int y, int w, int h, const ShadowData* shadow, bool stroked)
 {
     Color fillColor = context->fillColor();
@@ -304,24 +329,9 @@ static void paintTextWithShadows(GraphicsContext* context, const Font& font, con
 
     do {
         IntSize extraOffset;
-
-        if (shadow) {
-            IntSize shadowOffset(shadow->x(), shadow->y());
-            int shadowBlur = shadow->blur();
-            const Color& shadowColor = shadow->color();
-
-            if (shadow->next() || stroked || !opaque) {
-                IntRect shadowRect(x, y, w, h);
-                shadowRect.inflate(shadowBlur);
-                shadowRect.move(shadowOffset);
-                context->save();
-                context->clip(shadowRect);
-
-                extraOffset = IntSize(0, 2 * h + max(0, shadowOffset.height()) + shadowBlur);
-                shadowOffset -= extraOffset;
-            }
-            context->setShadow(shadowOffset, shadowBlur, shadowColor, fillColorSpace);
-        } else if (!opaque)
+        if (shadow)
+            extraOffset = roundedIntSize(InlineTextBox::applyShadowToGraphicsContext(context, shadow, FloatRect(x, y, w, h), stroked, opaque));
+        else if (!opaque)
             context->setFillColor(fillColor, fillColorSpace);
 
         if (startOffset <= endOffset)

@@ -1,3 +1,24 @@
+2010-06-29  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Dirk Schulze.
+
+        REGRESSION: text-shadow CSS applied to SVG no longer works
+        https://bugs.webkit.org/show_bug.cgi?id=40960
+
+        Readd text-shadow support, this time supporting multiple shadows.
+        It's not exactly like HTML, because SVG draws fill/stroke phases seperated - the png shows the difference.
+
+        Tests: svg/css/text-shadow-multiple.xhtml
+
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::applyShadowToGraphicsContext): Refactored from paintTextWithShadows(), so SVG can reuse.
+        (WebCore::paintTextWithShadows): Use refactored applyShadowToGraphicsContext() function.
+        * rendering/InlineTextBox.h: 
+        * rendering/SVGInlineTextBox.cpp:
+        (WebCore::SVGInlineTextBox::paintTextWithShadows): Added.
+        (WebCore::SVGInlineTextBox::paintText): Call paintTextWithShadows() instead of directly drawing the text.
+        * rendering/SVGInlineTextBox.h:
+
 2010-06-29  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Yury Semikhatsky.

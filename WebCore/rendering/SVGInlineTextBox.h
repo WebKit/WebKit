@@ -86,6 +86,7 @@ private:
     void paintDecorationWithStyle(GraphicsContext*, const FloatPoint& textOrigin, RenderStyle*, ETextDecoration);
     void paintSelection(GraphicsContext*, const FloatPoint& textOrigin, RenderStyle*);
     void paintText(GraphicsContext*, const FloatPoint& textOrigin, RenderStyle*, RenderStyle* selectionStyle, bool hasSelection, bool paintSelectedTextOnly);
+    void paintTextWithShadows(GraphicsContext*, const FloatPoint& textOrigin, RenderStyle*, TextRun&, int startPos, int endPos);
 
     FloatRect selectionRectForTextChunkPart(const SVGTextChunkPart&, int partStartPos, int partEndPos, RenderStyle*);
 
