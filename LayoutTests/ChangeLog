@@ -1,3 +1,13 @@
+2010-06-29  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed trivial fix. Update expectded files after r62092.
+
+        * fast/dom/Window/window-properties-expected.txt:
+        * fast/dom/Window/window-property-descriptors-expected.txt:
+        * fast/dom/prototype-inheritance-2-expected.txt:
+        * fast/dom/prototype-inheritance-expected.txt:
+        * fast/js/global-constructors-expected.txt:
+
 2010-06-28  Dumitru Daniliuc  <dumi@chromium.org>
 
         Reviewed by Adam Barth.

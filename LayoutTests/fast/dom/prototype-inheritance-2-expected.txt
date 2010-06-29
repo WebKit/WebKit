@@ -317,6 +317,7 @@ Never found SVGFEBlendElement
 Never found SVGFEColorMatrixElement
 Never found SVGFEComponentTransferElement
 Never found SVGFECompositeElement
+Never found SVGFEConvolveMatrixElement
 Never found SVGFEDiffuseLightingElement
 Never found SVGFEDisplacementMapElement
 Never found SVGFEDistantLightElement
