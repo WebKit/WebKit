@@ -1,3 +1,11 @@
+2010-06-29  Martin Robinson  <mrobinson@igalia.com>
+
+        Unreviewed.
+
+        Update baseline r62111.
+
+        * platform/gtk/accessibility/name-from-label-expected.txt:
+
 2010-06-29  Adam Langley  <agl@chromium.org>
 
         Reviewed by Kent Tamura.
