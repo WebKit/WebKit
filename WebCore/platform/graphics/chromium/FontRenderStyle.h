@@ -39,6 +39,24 @@ struct FontRenderStyle {
         NoPreference = 2,
     };
 
+    FontRenderStyle()
+        : useBitmaps(0),
+          useAutoHint(0),
+          useHinting(0),
+          hintStyle(0),
+          useAntiAlias(0),
+          useSubpixel(0) { }
+
+    bool operator==(const FontRenderStyle& a) const
+    {
+        return useBitmaps == a.useBitmaps
+            && useAutoHint == a.useAutoHint
+            && useHinting == a.useHinting
+            && hintStyle == a.hintStyle
+            && useAntiAlias == a.useAntiAlias
+            && useSubpixel == a.useSubpixel;
+    }
+
     // Each of the use* members below can take one of three values:
     //   0: off
     //   1: on

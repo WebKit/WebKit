@@ -1,3 +1,24 @@
+2010-06-29  Adam Langley  <agl@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        [chromium] Support forced autohinting.
+
+        https://bugs.webkit.org/show_bug.cgi?id=40493
+
+        Freetype (the typical font rendering on Linux) includes an 'autohinter':
+        an algorithm for hinting glyph shapes without using the embedded hinting
+        bytecode in a font.
+
+        This amends the existing tests for fontconfig settings to test that
+        setting autohinting works, and that it works in the face of also
+        setting 'hintfull'.
+
+        * platform/chromium-linux/platform/chromium/fast/text/chromium-linux-fontconfig-renderstyle-expected.checksum:
+        * platform/chromium-linux/platform/chromium/fast/text/chromium-linux-fontconfig-renderstyle-expected.png:
+        * platform/chromium-linux/platform/chromium/fast/text/chromium-linux-fontconfig-renderstyle-expected.txt:
+        * platform/chromium/fast/text/chromium-linux-fontconfig-renderstyle.html:
+
 2010-06-29  Mikhail Naganov  <mnaganov@chromium.org>
 
         Unreviewed test expectations update for stable passing tests.

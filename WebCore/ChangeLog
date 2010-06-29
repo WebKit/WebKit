@@ -1,3 +1,32 @@
+2010-06-29  Adam Langley  <agl@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        [chromium] Support forced autohinting.
+
+        https://bugs.webkit.org/show_bug.cgi?id=40493
+
+        Freetype (the typical font rendering on Linux) includes an 'autohinter':
+        an algorithm for hinting glyph shapes without using the embedded hinting
+        bytecode in a font.
+
+        Some people prefer the autohinter's results, so we support forcing its
+        use.
+
+        This change also fixes a bug where two FontPlatformData structures would
+        compare equal, even if their rendering styles were different.
+
+        * platform/graphics/chromium/FontPlatformDataLinux.cpp:
+        (WebCore::FontPlatformData::setupPaint):
+          In order to compare FontPlatformData structures we need to make sure
+          that they are initialised.
+        (WebCore::FontPlatformData::operator==):
+        * platform/graphics/chromium/FontRenderStyle.h:
+        (WebCore::FontRenderStyle::FontRenderStyle):
+        (WebCore::FontRenderStyle::operator==):
+          This fixes the case where two FontPlatformData structures, differing
+          only by rendering style, would compare equal.
+
 2010-06-29  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Unreviewed, Symbian build fix.
