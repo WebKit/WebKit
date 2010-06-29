@@ -1,3 +1,18 @@
+2010-06-29  Nathan Lawrence  <nlawrence@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        WTF::HashSet iterators are quasi-mutable.  Changing the value through
+        dereferencing an iterator will not change the behavior of methods like
+        contains or find, but will change the behavior of iterating.
+
+        * wtf/HashSet.h:
+        (WTF::::begin):
+        (WTF::::end):
+        (WTF::::find):
+        (WTF::::remove):
+        * wtf/HashTable.h:
+
 2010-06-29  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Xan Lopez.
