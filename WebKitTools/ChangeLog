@@ -1,3 +1,14 @@
+2010-06-28  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Restore webkit-runner.html for use with new tree builder
+        https://bugs.webkit.org/show_bug.cgi?id=41317
+
+        For now, we just want to run webkit-runner when we test-html5-parser.
+
+        * Scripts/test-html5-parser:
+
 2010-06-23  John Gregg  <johnnyg@google.com>
 
         Reviewed by Kent Tamura.

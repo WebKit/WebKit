@@ -59,8 +59,7 @@ my @args = argumentsForConfiguration();
 system("WebKitTools/Scripts/build-dumprendertree", @args) == 0 or die "Failed to build DumpRenderTree";
 
 my @tests = (
-    "html5lib/runner",
-    "html5lib/webkit-resumer",
+    "html5lib/webkit-runner",
 );
 
 foreach my $test (@tests) {

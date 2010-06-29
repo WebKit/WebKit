@@ -1,3 +1,18 @@
+2010-06-28  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Restore webkit-runner.html for use with new tree builder
+        https://bugs.webkit.org/show_bug.cgi?id=41317
+
+        webkit-runner.html is very similar to runner.html, but it avoids some
+        tricky cases that are causing asserts.  Using this simplified harness
+        will help us bring up the tree builder.  We can remove it once we're up
+        to speed.
+
+        * html5lib/webkit-runner-expected-html5.txt: Added.
+        * html5lib/webkit-runner.html: Added.
+
 2010-06-28  Martin Robinson  <mrobinson@igalia.com>
 
         Unreviewed.
