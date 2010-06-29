@@ -1,3 +1,15 @@
+2010-06-29  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        Ensure DRT loads GAIL (Gtk+ module), for a11y tests
+        https://bugs.webkit.org/show_bug.cgi?id=38648
+
+        Add the GTK_MODULES envvar (set to "gail") to the clean
+        environment when running DRT for the Gtk+ port
+
+        * Scripts/old-run-webkit-tests:
+
 2010-06-28  Adam Barth  <abarth@webkit.org>
 
         Unreviewed.
