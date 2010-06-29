@@ -1,3 +1,12 @@
+2010-06-29  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Not reviewed. Add missing pixel test results.
+
+        * platform/mac/fast/css/nested-rounded-corners-expected.checksum: Added.
+        * platform/mac/fast/css/nested-rounded-corners-expected.png: Added.
+        * platform/mac/fast/js/missing-title-end-tag-js-expected.checksum: Added.
+        * platform/mac/fast/js/missing-title-end-tag-js-expected.png: Added.
+
 2010-06-29  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Reviewed by Xan Lopez.
