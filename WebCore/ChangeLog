@@ -1,3 +1,24 @@
+2010-06-29  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Speculative fix for <rdar://problem/8071558> CrashTracer: [USER] 
+        2300+ crashes in Safari at com.apple.WebCore: 
+        WebCore::FrameView::scheduleRelayout + 352
+
+        Unfortunately, we don't have a reproducible case for this bug, and 
+        therefore, we do not have a layout test either. It is pretty clear 
+        from the logs that m_frame->settings() is null in 
+        FrameView::scheduleRelayout() in the crashing case. 
+        m_frame->settings() is null whenever page is null. Everywhere else 
+        in FrameView.cpp we null-check either page or settings before using 
+        settings. It seems plausible to me that scheduleRelayout could be 
+        called when page is null, so the fix is just to add null-checks. 
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::layout):
+        (WebCore::FrameView::scheduleRelayout):
+
 2010-06-29  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.
