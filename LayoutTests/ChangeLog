@@ -1,3 +1,18 @@
+2010-06-29  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/7975842> Certain text is repeated after using splitText()
+
+        * fast/text/setData-dirty-lines-expected.checksum: Added.
+        * fast/text/setData-dirty-lines-expected.png: Added.
+        * fast/text/setData-dirty-lines-expected.txt: Added.
+        * fast/text/setData-dirty-lines.html: Added.
+        * fast/text/splitText-dirty-lines-expected.checksum: Added.
+        * fast/text/splitText-dirty-lines-expected.png: Added.
+        * fast/text/splitText-dirty-lines-expected.txt: Added.
+        * fast/text/splitText-dirty-lines.html: Added.
+
 2010-06-29  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Reviewed by Gustavo Noronha Silva.
