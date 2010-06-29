@@ -1,3 +1,10 @@
+2010-06-28  David Levin  <levin@chromium.org>
+
+        Reviewed by NOBODY (chromium build fix).
+
+        * bindings/v8/ScriptEventListener.h: Changed forward declaration
+          to correspond to the code change doing in r62052.
+
 2010-06-28  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Alexey Proskuryakov.
