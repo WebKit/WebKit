@@ -161,6 +161,22 @@ private:
             return false;
         }
 
+        bool inScope(const AtomicString& name) const
+        {
+            // FIXME: This algorithm is wrong.
+            for (ElementRecord* pos = m_top.get(); pos; pos = pos->next()) {
+                if (pos->element()->tagQName() == name)
+                    return true;
+            }
+            return false;
+        }
+
+        bool inScope(Element* element) const
+        {
+            // FIXME: This algorithm is wrong.
+            return contains(element);
+        }
+
     private:
         OwnPtr<ElementRecord> m_top;
     };
@@ -218,6 +234,9 @@ private:
 
     bool indexOfFirstUnopenFormattingElement(unsigned& firstUnopenElementIndex) const;
     void reconstructTheActiveFormattingElements();
+    void clearActiveFormatingElementsUpToLastMarker() { }
+
+    void generateImpliedEndTags() { }
 
     Element* currentElement() { return m_openElements.top(); }
 

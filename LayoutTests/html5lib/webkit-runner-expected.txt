@@ -1,6 +1,41 @@
 CONSOLE MESSAGE: line 1: SyntaxError: Parse error
+CONSOLE MESSAGE: line 1: SyntaxError: Parse error
 CONSOLE MESSAGE: line 2: PASS
 CONSOLE MESSAGE: line 2: FOO<span>BAR</span>BAZ
+resources/tests1.dat:
+25
+29
+30
+32
+33
+34
+35
+37
+41
+50
+51
+52
+53
+54
+57
+59
+78
+79
+80
+81
+82
+87
+90
+91
+92
+96
+98
+101
+104
+106
+109
+113
+
 resources/tests2.dat:
 6
 7
@@ -37,6 +72,14 @@ resources/tests4.dat:
 5
 6
 7
+
+resources/tests5.dat:
+2
+6
+7
+8
+9
+16
 
 resources/tests6.dat:
 1
@@ -89,6 +132,56 @@ resources/tests8.dat:
 8
 9
 
+resources/tests9.dat:
+1
+2
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+
+resources/tests10.dat:
+1
+2
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+
 resources/tests11.dat:
 1
 2
@@ -105,6 +198,16 @@ resources/tests12.dat:
 2
 
 resources/tests14.dat: PASS
+
+resources/tests15.dat:
+3
+4
+5
+6
+7
+11
+12
+13
 
 resources/tests16.dat:
 3

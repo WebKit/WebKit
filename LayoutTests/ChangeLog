@@ -1,3 +1,16 @@
+2010-06-28  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        HTML5 tree builder shouldn't ASSERT on HTML5lib test suite
+        https://bugs.webkit.org/show_bug.cgi?id=41335
+
+        Enable the remainder of the test suite and update expectations.
+
+        * html5lib/webkit-runner-expected-html5.txt:
+        * html5lib/webkit-runner-expected.txt:
+        * html5lib/webkit-runner.html:
+
 2010-06-28  Johnny Ding  <jnd@chromium.org>
 
         Reviewed by Adam Barth.

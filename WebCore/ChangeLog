@@ -1,3 +1,19 @@
+2010-06-28  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        HTML5 tree builder shouldn't ASSERT on HTML5lib test suite
+        https://bugs.webkit.org/show_bug.cgi?id=41335
+
+        Sketch out the EndTag handling for InBodyMode.
+
+        * html/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::processEndTag):
+        * html/HTMLTreeBuilder.h:
+        (WebCore::HTMLTreeBuilder::ElementStack::inScope):
+        (WebCore::HTMLTreeBuilder::clearActiveFormatingElementsUpToLastMarker):
+        (WebCore::HTMLTreeBuilder::generateImpliedEndTags):
+
 2010-06-28  David Levin  <levin@chromium.org>
 
         Reviewed by NOBODY (chromium build fix).

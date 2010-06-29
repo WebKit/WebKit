@@ -617,8 +617,94 @@ void HTMLTreeBuilder::processEndTag(AtomicHTMLToken& token)
         // Fall through
     case InBodyMode:
         ASSERT(insertionMode() == InBodyMode);
+        if (token.name() == bodyTag) {
+            notImplemented();
+            m_insertionMode = AfterBodyMode;
+            return;
+        }
+        if (token.name() == htmlTag) {
+            notImplemented();
+            return;
+        }
+        if (token.name() == addressTag || token.name() == articleTag || token.name() == asideTag || token.name() == blockquoteTag || token.name() == buttonTag || token.name() == centerTag || token.name() == "details" || token.name() == dirTag || token.name() == divTag || token.name() == dlTag || token.name() == fieldsetTag || token.name() == "figure" || token.name() == footerTag || token.name() == headerTag || token.name() == hgroupTag || token.name() == listingTag || token.name() == menuTag || token.name() == navTag || token.name() == olTag || token.name() == preTag || token.name() == sectionTag || token.name() == ulTag) {
+            if (!m_openElements.inScope(token.name())) {
+                parseError(token);
+                return;
+            }
+            generateImpliedEndTags();
+            if (currentElement()->tagQName() != token.name())
+                parseError(token);
+            while (currentElement()->tagQName() != token.name())
+                m_openElements.pop();
+            m_openElements.pop();
+        }
+        if (token.name() == formTag) {
+            RefPtr<Element> node = m_formElement.release();
+            if (!node || !m_openElements.inScope(node.get())) {
+                parseError(token);
+                return;
+            }
+            generateImpliedEndTags();
+            if (currentElement() != node.get())
+                parseError(token);
+            m_openElements.remove(node.get());
+        }
+        if (token.name() == pTag) {
+            notImplemented();
+            return;
+        }
+        if (token.name() == liTag) {
+            notImplemented();
+            return;
+        }
+        if (token.name() == ddTag || token.name() == dtTag) {
+            notImplemented();
+            return;
+        }
+        if (token.name() == h1Tag || token.name() == h2Tag || token.name() == h3Tag || token.name() == h4Tag || token.name() == h5Tag || token.name() == h6Tag) {
+            notImplemented();
+            return;
+        }
+        if (token.name() == "sarcasm") {
+            notImplemented(); // Take a deep breath.
+            return;
+        }
+        if (token.name() == aTag || token.name() == bTag || token.name() == bigTag || token.name() == codeTag || token.name() == emTag || token.name() == fontTag || token.name() == iTag || token.name() == nobrTag || token.name() == sTag || token.name() == smallTag || token.name() == strikeTag || token.name() == strongTag || token.name() == ttTag || token.name() == uTag) {
+            notImplemented();
+            // FIXME: There's a complicated algorithm that goes here.
+            return;
+        }
+        if (token.name() == appletTag || token.name() == marqueeTag || token.name() == objectTag) {
+            if (!m_openElements.inScope(token.name())) {
+                parseError(token);
+                return;
+            }
+            generateImpliedEndTags();
+            if (currentElement()->tagQName() != token.name())
+                parseError(token);
+            while (currentElement()->tagQName() != token.name())
+                m_openElements.pop();
+            m_openElements.pop();
+            // FIXME: m_activeFormattingElements should be more interesting
+            // object than a vector so we can call this method on it instead
+            // of on the tree builder.
+            clearActiveFormatingElementsUpToLastMarker();
+            return;
+        }
+        if (token.name() == brTag) {
+            parseError(token);
+            reconstructTheActiveFormattingElements();
+            insertSelfClosingElement(token);
+            m_framesetOk = false;
+            return;
+        }
+        // FIXME: We need an iterator over m_openElements to implement this
+        // correctly.
         notImplemented();
-        // FIXME: This implementation is a completely wrong but useful for testing.
+        if (!m_openElements.inScope(token.name()))
+            return;
+        while (currentElement()->tagQName() != token.name())
+            m_openElements.pop();
         m_openElements.pop();
         break;
     case InHeadNoscriptMode:
