@@ -1,5 +1,13 @@
 2010-06-28  Adam Barth  <abarth@webkit.org>
 
+        Unreviewed.
+
+        Switch test-html5-parser back to using runner.html.
+
+        * Scripts/test-html5-parser:
+
+2010-06-28  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Eric Seidel.
 
         Restore webkit-runner.html for use with new tree builder

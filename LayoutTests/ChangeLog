@@ -1,5 +1,17 @@
 2010-06-28  Adam Barth  <abarth@webkit.org>
 
+        Unreviewed.
+
+        Removed webkit-runner.html now that the HTML5 tree builder can handle
+        the real version of the test suite.  Good times.
+
+        * html5lib/runner-expected-html5.txt:
+        * html5lib/webkit-runner-expected-html5.txt: Removed.
+        * html5lib/webkit-runner-expected.txt: Removed.
+        * html5lib/webkit-runner.html: Removed.
+
+2010-06-28  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Eric Seidel.
 
         HTML5 tree builder shouldn't ASSERT on HTML5lib test suite
