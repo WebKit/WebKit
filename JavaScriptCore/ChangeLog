@@ -5,7 +5,7 @@
         [GTK] Clean up the source lists in the GNUMakefile.am files
         https://bugs.webkit.org/show_bug.cgi?id=41229
 
-        Clean up the GNUMakefile.ac a little bit. Alphabetize and conglomerate
+        Clean up the GNUMakefile.am a little bit. Alphabetize and conglomerate
         the source lists.
 
         * GNUmakefile.am:
