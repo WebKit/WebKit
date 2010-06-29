@@ -39,8 +39,8 @@
 namespace WebCore {
 
     class Attribute;
-    class Element;
     class EventListener;
+    class Frame;
     class Node;
     class ScriptState;
 
