@@ -2891,3 +2891,14 @@ BUG47611 LINUX : fast/events/popup-when-select-change.html = TIMEOUT
 
 // First noticed on trybots after r61836, now in the tree.
 BUG_MNAGANOV LINUX : fast/js/Object-create.html = CRASH FAIL
+
+// Produces different results on Mac dbg.
+BUG47826 MAC SKIP : fast/dom/HTMLMeterElement/meter-appearances-capacity.html = FAIL
+BUG47826 MAC SKIP : fast/dom/HTMLMeterElement/meter-element.html = FAIL
+BUG47826 MAC SKIP : fast/dom/HTMLMeterElement/meter-optimums.html = FAIL
+BUG47826 MAC SKIP : fast/dom/HTMLMeterElement/meter-styles.html = FAIL
+BUG47826 MAC SKIP : fast/dom/HTMLMeterElement/meter-styles-changing-pseudo.html = FAIL
+
+// Need to produce a baseline after bot runs it. 
+BUG47829 WIN : svg/css/text-shadow-multiple.xhtml = PASS FAIL
+
