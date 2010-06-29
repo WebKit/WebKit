@@ -2,6 +2,20 @@
 
         Unreviewed.
 
+        I accidently gave up my ref and tried to dereference a null pointer.
+        This code is keeping an extra ref that it doesn't need, but that fact
+        was somewhat hidden before.
+
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::addChildCommon):
+        (WebCore::ContainerNode::parserAddChild):
+        (WebCore::ContainerNode::legacyParserAddChild):
+        * dom/ContainerNode.h:
+
+2010-06-28  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed.
+
         Refactor common code into addChildCommon
         https://bugs.webkit.org/show_bug.cgi?id=41326
 
