@@ -90,6 +90,7 @@ private:
     QGraphicsSceneMouseEvent* createGraphicsSceneMouseEvent(QEvent::Type, const QPoint& pos, const QPoint& screenPos, Qt::MouseButton, Qt::MouseButtons, Qt::KeyboardModifiers);
     QGraphicsSceneWheelEvent* createGraphicsSceneWheelEvent(QEvent::Type, const QPoint& pos, const QPoint& screenPos, int delta, Qt::KeyboardModifiers, Qt::Orientation);
     void sendEvent(QObject* receiver, QEvent* event);
+    void postEvent(QObject* receiver, QEvent* event);
 
 private:
     void sendTouchEvent(QEvent::Type);

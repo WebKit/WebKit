@@ -368,9 +368,9 @@ void EventSender::contextClick()
 void EventSender::scheduleAsynchronousClick()
 {
     QMouseEvent* event = new QMouseEvent(QEvent::MouseButtonPress, m_mousePos, Qt::LeftButton, Qt::RightButton, Qt::NoModifier);
-    QApplication::postEvent(m_page, event);
+    postEvent(m_page, event);
     QMouseEvent* event2 = new QMouseEvent(QEvent::MouseButtonRelease, m_mousePos, Qt::LeftButton, Qt::RightButton, Qt::NoModifier);
-    QApplication::postEvent(m_page, event2);
+    postEvent(m_page, event2);
 }
 
 void EventSender::addTouchPoint(int x, int y)
@@ -552,7 +552,7 @@ void EventSender::replaySavedEvents(bool flush)
         // First send all the events that are ready to be sent
         while (!eventQueue[startOfQueue].m_delay && startOfQueue < endOfQueue) {
             QEvent* ev = eventQueue[startOfQueue++].m_event;
-            QApplication::postEvent(m_page->view(), ev); // ev deleted by the system
+            postEvent(m_page->view(), ev);
         }
         if (startOfQueue == endOfQueue) {
             // Reset the queue
@@ -642,4 +642,15 @@ void EventSender::sendEvent(QObject* receiver, QEvent* event)
         view->scene()->sendEvent(view->graphicsView(), event);
     else
         QApplication::sendEvent(receiver, event);
+}
+
+void EventSender::postEvent(QObject* receiver, QEvent* event)
+{
+    // QGraphicsScene does not have a postEvent method, so send the event in this case
+    // and delete it after that.
+    if (WebCore::WebViewGraphicsBased* view = qobject_cast<WebCore::WebViewGraphicsBased*>(receiver)) {
+        view->scene()->sendEvent(view->graphicsView(), event);
+        delete event;
+    } else
+        QApplication::postEvent(receiver, event); // event deleted by the system
 }
