@@ -214,6 +214,7 @@ public:
 
     static bool dumpFrameLoaderCallbacks;
     static bool dumpResourceLoadCallbacks;
+    static bool dumpResourceResponseMIMETypes;
     static QString dumpResourceLoadCallbacksPath;
     static bool sendRequestReturnsNullOnRedirect;
     static bool sendRequestReturnsNull;

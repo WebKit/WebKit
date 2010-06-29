@@ -110,6 +110,7 @@ public:
 
     static void dumpFrameLoader(bool b);
     static void dumpResourceLoadCallbacks(bool b);
+    static void dumpResourceResponseMIMETypes(bool b);
     static void dumpResourceLoadCallbacksPath(const QString& path);
     static void setWillSendRequestReturnsNullOnRedirect(bool b);
     static void setWillSendRequestReturnsNull(bool b);

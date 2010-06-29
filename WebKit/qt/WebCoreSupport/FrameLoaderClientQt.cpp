@@ -156,6 +156,8 @@ bool FrameLoaderClientQt::dumpFrameLoaderCallbacks = false;
 bool FrameLoaderClientQt::dumpResourceLoadCallbacks = false;
 bool FrameLoaderClientQt::sendRequestReturnsNullOnRedirect = false;
 bool FrameLoaderClientQt::sendRequestReturnsNull = false;
+bool FrameLoaderClientQt::dumpResourceResponseMIMETypes = false;
+
 QStringList FrameLoaderClientQt::sendRequestClearHeaders;
 QString FrameLoaderClientQt::dumpResourceLoadCallbacksPath;
 bool FrameLoaderClientQt::policyDelegateEnabled = false;
@@ -953,7 +955,12 @@ void FrameLoaderClientQt::dispatchDidReceiveResponse(WebCore::DocumentLoader*, u
         printf("%s - didReceiveResponse %s\n",
                qPrintable(dumpAssignedUrls[identifier]),
                qPrintable(drtDescriptionSuitableForTestResult(response)));
-    //qDebug() << "    got response from" << response.url().string();
+
+    if (dumpResourceResponseMIMETypes) {
+        printf("%s has MIME type %s\n",
+               qPrintable(QFileInfo(drtDescriptionSuitableForTestResult(response.url())).fileName()),
+               qPrintable(QString(response.mimeType())));
+    }
 }
 
 void FrameLoaderClientQt::dispatchDidReceiveContentLength(WebCore::DocumentLoader*, unsigned long, int)

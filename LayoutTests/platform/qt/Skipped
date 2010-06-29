@@ -5408,10 +5408,6 @@ fast/dom/Geolocation/callback-to-remote-context2.html
 # https://bugs.webkit.org/show_bug.cgi?id=40661
 fast/encoding/japanese-encoding-mix.html
 
-# Qt doesn't implement dumpResourceResponseMIMETypes which is required for the
-# preloader tests.
-fast/preloader
-
 # https://bugs.webkit.org/show_bug.cgi?id=35350
 fast/events/show-modal-dialog-onblur-onfocus.html
 fast/harness/show-modal-dialog.html

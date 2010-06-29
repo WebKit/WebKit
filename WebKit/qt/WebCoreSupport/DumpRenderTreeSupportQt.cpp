@@ -513,6 +513,11 @@ void DumpRenderTreeSupportQt::dumpResourceLoadCallbacksPath(const QString& path)
     FrameLoaderClientQt::dumpResourceLoadCallbacksPath = path;
 }
 
+void DumpRenderTreeSupportQt::dumpResourceResponseMIMETypes(bool b)
+{
+    FrameLoaderClientQt::dumpResourceResponseMIMETypes = b;
+}
+
 void DumpRenderTreeSupportQt::setWillSendRequestReturnsNullOnRedirect(bool b)
 {
     FrameLoaderClientQt::sendRequestReturnsNullOnRedirect = b;
