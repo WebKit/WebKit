@@ -45,6 +45,7 @@
 #include "KeyframeList.h"
 #include "PluginWidget.h"
 #include "RenderBox.h"
+#include "RenderIFrame.h"
 #include "RenderImage.h"
 #include "RenderLayerCompositor.h"
 #include "RenderEmbeddedObject.h"
@@ -387,22 +388,10 @@ void RenderLayerBacking::updateGraphicsLayerGeometry()
     m_graphicsLayer->setDrawsContent(containsPaintedContent());
 
     // If this is an iframe parent, update the iframe content's box
-    RenderLayerCompositor* innerCompositor = innerRenderLayerCompositor();
-    if (innerCompositor)
-        innerCompositor->setRootPlatformLayerClippingBox(contentsBox());
-}
-
-RenderLayerCompositor* RenderLayerBacking::innerRenderLayerCompositor() const
-{
     if (renderer()->isRenderIFrame()) {
-        HTMLIFrameElement* element = static_cast<HTMLIFrameElement*>(renderer()->node());
-        if (Document* contentDocument = element->contentDocument()) {
-            if (RenderView* view = contentDocument->renderView())
-                return view->compositor();
-        }
+        if (RenderLayerCompositor* innerCompositor = RenderLayerCompositor::iframeContentsCompositor(toRenderIFrame(renderer())))
+            innerCompositor->setRootPlatformLayerClippingBox(contentsBox());
     }
-
-    return 0;
 }
 
 void RenderLayerBacking::updateInternalHierarchy()
