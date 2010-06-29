@@ -1,3 +1,19 @@
+2010-06-21  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [PNG decoder] direct access to jmpbuf is deprecated in libpng >= 1.4.0beta103
+        https://bugs.webkit.org/show_bug.cgi?id=40907
+
+        Define a JMPBUF macro to cope with deprecation of the jmpbuf
+        attribute in libpng >= 1.4.
+
+        * platform/image-decoders/png/PNGImageDecoder.cpp:
+        (WebCore::decodingFailed):
+        (WebCore::PNGImageReader::decode):
+        (WebCore::PNGImageDecoder::headerAvailable):
+        (WebCore::PNGImageDecoder::rowAvailable):
+
 2010-06-29  Kristian Amlie  <kristian.amlie@nokia.com>
 
         Reviewed by Simon Hausmann.

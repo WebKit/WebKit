@@ -41,6 +41,12 @@
 #include "PNGImageDecoder.h"
 #include "png.h"
 
+#if defined(PNG_LIBPNG_VER_MAJOR) && defined(PNG_LIBPNG_VER_MINOR) && (PNG_LIBPNG_VER_MAJOR > 1 || (PNG_LIBPNG_VER_MAJOR == 1 && PNG_LIBPNG_VER_MINOR >= 4))
+#define JMPBUF(png_ptr) png_jmpbuf(png_ptr)
+#else
+#define JMPBUF(png_ptr) png_ptr->jmpbuf
+#endif
+
 namespace WebCore {
 
 // Gamma constants.
@@ -54,7 +60,7 @@ const unsigned long cMaxPNGSize = 1000000UL;
 // Called if the decoding of the image fails.
 static void PNGAPI decodingFailed(png_structp png, png_const_charp)
 {
-    longjmp(png->jmpbuf, 1);
+    longjmp(JMPBUF(png), 1);
 }
 
 // Callbacks given to the read struct.  The first is for warnings (we want to
@@ -125,7 +131,7 @@ public:
         PNGImageDecoder* decoder = static_cast<PNGImageDecoder*>(png_get_progressive_ptr(m_png));
 
         // We need to do the setjmp here. Otherwise bad things will happen.
-        if (setjmp(m_png->jmpbuf))
+        if (setjmp(JMPBUF(m_png)))
             return decoder->setFailed();
 
         const char* segment;
@@ -220,7 +226,7 @@ void PNGImageDecoder::headerAvailable()
     
     // Protect against large images.
     if (png->width > cMaxPNGSize || png->height > cMaxPNGSize) {
-        longjmp(png->jmpbuf, 1);
+        longjmp(JMPBUF(png), 1);
         return;
     }
     
@@ -233,7 +239,7 @@ void PNGImageDecoder::headerAvailable()
     bool result = setSize(width, height);
     m_doNothingOnFailure = false;
     if (!result) {
-        longjmp(png->jmpbuf, 1);
+        longjmp(JMPBUF(png), 1);
         return;
     }
 
@@ -297,7 +303,7 @@ void PNGImageDecoder::rowAvailable(unsigned char* rowBuffer, unsigned rowIndex, 
     RGBA32Buffer& buffer = m_frameBufferCache[0];
     if (buffer.status() == RGBA32Buffer::FrameEmpty) {
         if (!buffer.setSize(scaledSize().width(), scaledSize().height())) {
-            longjmp(m_reader->pngPtr()->jmpbuf, 1);
+            longjmp(JMPBUF(m_reader->pngPtr()), 1);
             return;
         }
         buffer.setStatus(RGBA32Buffer::FramePartial);
