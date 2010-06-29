@@ -152,6 +152,15 @@ private:
             }
         }
 
+        bool contains(Element* element) const
+        {
+            for (ElementRecord* pos = m_top.get(); pos; pos = pos->next()) {
+                if (pos->element() == element)
+                    return true;
+            }
+            return false;
+        }
+
     private:
         OwnPtr<ElementRecord> m_top;
     };
@@ -196,7 +205,7 @@ private:
     void insertCommentOnDocument(AtomicHTMLToken&);
     void insertElement(AtomicHTMLToken&);
     void insertSelfClosingElement(AtomicHTMLToken&);
-    void insertFormatingElement(AtomicHTMLToken&);
+    void insertFormattingElement(AtomicHTMLToken&);
     void insertGenericRCDATAElement(AtomicHTMLToken&);
     void insertGenericRawTextElement(AtomicHTMLToken&);
     void insertScriptElement(AtomicHTMLToken&);
@@ -206,6 +215,8 @@ private:
     void insertHTMLStartTagInBody(AtomicHTMLToken&);
 
     PassRefPtr<Element> createElement(AtomicHTMLToken&);
+    unsigned indexOfLastOpenFormattingElementOrMarker() const;
+    void reopenFormattingElementsAfterIndex(unsigned lastOpenElementIndex);
     void reconstructTheActiveFormattingElements();
 
     Element* currentElement() { return m_openElements.top(); }
@@ -213,7 +224,41 @@ private:
     RefPtr<Element> m_headElement;
     RefPtr<Element> m_formElement;
     ElementStack m_openElements;
-    Vector<Element*> m_activeFormattingElements;
+
+    class FormattingElementEntry {
+    public:
+        FormattingElementEntry(Element* element)
+            : m_element(element)
+        {
+            ASSERT(element);
+        }
+
+        enum MarkerEntryType { MarkerEntry };
+        FormattingElementEntry(MarkerEntryType)
+        {
+        }
+
+        bool isMarker() const { return !m_element; }
+
+        Element* element() const
+        {
+            // The fact that !m_element == isMarker is an implementation detail
+            // callers should check isMarker() before calling element().
+            ASSERT(m_element);
+            return m_element.get();
+        }
+
+        void replaceElement(PassRefPtr<Element> element)
+        {
+            ASSERT(m_element); // Once a marker, always a marker.
+            m_element = element;
+        }
+
+    private:
+        RefPtr<Element> m_element;
+    };
+
+    Vector<FormattingElementEntry> m_activeFormattingElements;
     bool m_framesetOk;
 
     // FIXME: Implement error reporting.
