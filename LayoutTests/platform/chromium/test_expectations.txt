@@ -2633,7 +2633,7 @@ BUG38534 LINUX : tables/mozilla/bugs/bug20804.html = IMAGE PASS
 
 // This runs correctly on the builder, using the builder's working directory.
 // I can only assume that the Gods are Making Merriment at my expense. --agl
-BUG_AGL LINUX : platform/chromium/fast/text/chromium-linux-fontconfig-renderstyle.html = IMAGE
+BUG_AGL LINUX : platform/chromium/fast/text/chromium-linux-fontconfig-renderstyle.html = IMAGE+TEXT
 
 // WebKit roll 56165:56197.
 // New test (http://trac.webkit.org/changeset/56198), requires changes to PluginObject

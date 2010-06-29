@@ -1,3 +1,16 @@
+2010-06-29  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Unreviewed text expectations update after r62121.
+
+        * platform/chromium-linux/fast/css/font-face-opentype-expected.checksum:
+        * platform/chromium-linux/fast/css/font-face-opentype-expected.png:
+        * platform/chromium-linux/fast/css/font-face-woff-expected.checksum:
+        * platform/chromium-linux/fast/css/font-face-woff-expected.png:
+        * platform/chromium-linux/platform/chromium/fast/text/chromium-linux-fontconfig-renderstyle-expected.checksum:
+        * platform/chromium-linux/platform/chromium/fast/text/chromium-linux-fontconfig-renderstyle-expected.png:
+        * platform/chromium-linux/platform/chromium/fast/text/chromium-linux-fontconfig-renderstyle-expected.txt:
+        * platform/chromium/test_expectations.txt:
+
 2010-06-29  Martin Robinson  <mrobinson@igalia.com>
 
         Unreviewed.

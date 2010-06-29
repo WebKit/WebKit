@@ -25,8 +25,8 @@ layer at (0,0) size 800x600
             RenderText {#text} at (0,0) size 318x19
               text run at (0,0) width 318: "The following text should render without anti-aliasing:"
           RenderBlock {P} at (0,36) size 744x19
-            RenderText {#text} at (0,0) size 158x18
-              text run at (0,0) width 158: "Non anti-aliased sans."
+            RenderText {#text} at (0,0) size 154x18
+              text run at (0,0) width 154: "Non anti-aliased sans."
         RenderListItem {LI} at (40,71) size 744x74
           RenderBlock {P} at (0,0) size 744x40
             RenderListMarker at (-21,0) size 16x19: "2"
