@@ -35,8 +35,10 @@ symbian: {
     DEPLOYMENT += webkitlibs webkitbackup
 
     # Need to guarantee that these come before system includes of /epoc32/include
-    MMP_RULES += "USERINCLUDE rendering"
+    MMP_RULES += "USERINCLUDE bridge"
+    MMP_RULES += "USERINCLUDE platform/animation"
     MMP_RULES += "USERINCLUDE platform/text"
+    MMP_RULES += "USERINCLUDE rendering"
     symbian-abld|symbian-sbsv2 {
         # RO text (code) section in qtwebkit.dll exceeds allocated space for gcce udeb target.
         # Move RW-section base address to start from 0xE00000 instead of the toolchain default 0x400000.
