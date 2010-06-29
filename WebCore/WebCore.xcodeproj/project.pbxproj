@@ -296,6 +296,15 @@
 		188604B30F2E654A000B6443 /* DOMTimer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 188604B10F2E654A000B6443 /* DOMTimer.cpp */; };
 		188604B40F2E654A000B6443 /* DOMTimer.h in Headers */ = {isa = PBXBuildFile; fileRef = 188604B20F2E654A000B6443 /* DOMTimer.h */; };
 		18F831B80FD48C7800D8C56B /* WorkerLoaderProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 18F831B70FD48C7800D8C56B /* WorkerLoaderProxy.h */; };
+		1921327411C0E6BB00456238 /* SVGFEConvolveMatrixElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1921327111C0E6BB00456238 /* SVGFEConvolveMatrixElement.cpp */; };
+		1921327511C0E6BB00456238 /* SVGFEConvolveMatrixElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 1921327211C0E6BB00456238 /* SVGFEConvolveMatrixElement.h */; };
+		19BFF64B11C0F2AC00B8C04D /* DOMSVGFEConvolveMatrixElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 19BFF64611C0F2AC00B8C04D /* DOMSVGFEConvolveMatrixElement.h */; };
+		19BFF64C11C0F2AC00B8C04D /* DOMSVGFEConvolveMatrixElement.mm in Sources */ = {isa = PBXBuildFile; fileRef = 19BFF64711C0F2AC00B8C04D /* DOMSVGFEConvolveMatrixElement.mm */; };
+		19BFF64D11C0F2AC00B8C04D /* DOMSVGFEConvolveMatrixElementInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 19BFF64811C0F2AC00B8C04D /* DOMSVGFEConvolveMatrixElementInternal.h */; };
+		19BFF64E11C0F2AC00B8C04D /* JSSVGFEConvolveMatrixElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 19BFF64911C0F2AC00B8C04D /* JSSVGFEConvolveMatrixElement.cpp */; };
+		19BFF64F11C0F2AC00B8C04D /* JSSVGFEConvolveMatrixElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 19BFF64A11C0F2AC00B8C04D /* JSSVGFEConvolveMatrixElement.h */; };
+		19BFF6A311C10FDF00B8C04D /* DOMSVGFEConvolveMatrixElement.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 19BFF64611C0F2AC00B8C04D /* DOMSVGFEConvolveMatrixElement.h */; };
+		19BFF6A411C1102D00B8C04D /* DOMSVGFEConvolveMatrixElementInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 19BFF64811C0F2AC00B8C04D /* DOMSVGFEConvolveMatrixElementInternal.h */; };
 		1A0D57360A5C77FE007EDD4C /* OverflowEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A0D57340A5C77FE007EDD4C /* OverflowEvent.cpp */; };
 		1A0D57370A5C77FE007EDD4C /* OverflowEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A0D57350A5C77FE007EDD4C /* OverflowEvent.h */; };
 		1A0D57400A5C7867007EDD4C /* JSOverflowEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A0D573E0A5C7867007EDD4C /* JSOverflowEvent.cpp */; };
@@ -5372,6 +5381,8 @@
 				A80F3B680CCDCE24002DD990 /* DOMSVGFEComponentTransferElementInternal.h in Copy Generated Headers */,
 				A8F46AC30CB20A9D003A9670 /* DOMSVGFECompositeElement.h in Copy Generated Headers */,
 				A80F3B310CCDCE24002DD990 /* DOMSVGFECompositeElementInternal.h in Copy Generated Headers */,
+				19BFF6A311C10FDF00B8C04D /* DOMSVGFEConvolveMatrixElement.h in Copy Generated Headers */,
+				19BFF6A411C1102D00B8C04D /* DOMSVGFEConvolveMatrixElementInternal.h in Copy Generated Headers */,
 				A80F3B430CCDCE24002DD990 /* DOMSVGFEDiffuseLightingElement.h in Copy Generated Headers */,
 				A80F3B440CCDCE24002DD990 /* DOMSVGFEDiffuseLightingElementInternal.h in Copy Generated Headers */,
 				A8F46AAA0CB20A9D003A9670 /* DOMSVGFEDisplacementMapElement.h in Copy Generated Headers */,
@@ -5861,6 +5872,14 @@
 		188604B10F2E654A000B6443 /* DOMTimer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMTimer.cpp; sourceTree = "<group>"; };
 		188604B20F2E654A000B6443 /* DOMTimer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMTimer.h; sourceTree = "<group>"; };
 		18F831B70FD48C7800D8C56B /* WorkerLoaderProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WorkerLoaderProxy.h; path = workers/WorkerLoaderProxy.h; sourceTree = "<group>"; };
+		1921327111C0E6BB00456238 /* SVGFEConvolveMatrixElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGFEConvolveMatrixElement.cpp; sourceTree = "<group>"; };
+		1921327211C0E6BB00456238 /* SVGFEConvolveMatrixElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGFEConvolveMatrixElement.h; sourceTree = "<group>"; };
+		1921327311C0E6BB00456238 /* SVGFEConvolveMatrixElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SVGFEConvolveMatrixElement.idl; sourceTree = "<group>"; };
+		19BFF64611C0F2AC00B8C04D /* DOMSVGFEConvolveMatrixElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file; path = DOMSVGFEConvolveMatrixElement.h; sourceTree = "<group>"; };
+		19BFF64711C0F2AC00B8C04D /* DOMSVGFEConvolveMatrixElement.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMSVGFEConvolveMatrixElement.mm; sourceTree = "<group>"; };
+		19BFF64811C0F2AC00B8C04D /* DOMSVGFEConvolveMatrixElementInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file; path = DOMSVGFEConvolveMatrixElementInternal.h; sourceTree = "<group>"; };
+		19BFF64911C0F2AC00B8C04D /* JSSVGFEConvolveMatrixElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGFEConvolveMatrixElement.cpp; sourceTree = "<group>"; };
+		19BFF64A11C0F2AC00B8C04D /* JSSVGFEConvolveMatrixElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSSVGFEConvolveMatrixElement.h; sourceTree = "<group>"; };
 		1A0D57340A5C77FE007EDD4C /* OverflowEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = OverflowEvent.cpp; sourceTree = "<group>"; };
 		1A0D57350A5C77FE007EDD4C /* OverflowEvent.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = OverflowEvent.h; sourceTree = "<group>"; };
 		1A0D57380A5C7812007EDD4C /* OverflowEvent.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = OverflowEvent.idl; sourceTree = "<group>"; };
@@ -12526,6 +12545,9 @@
 				8502AB1A0AD438C000378540 /* DOMSVGFECompositeElement.h */,
 				8502AB1B0AD438C000378540 /* DOMSVGFECompositeElement.mm */,
 				A8E5447F0CA9D1C20097D09B /* DOMSVGFECompositeElementInternal.h */,
+				19BFF64611C0F2AC00B8C04D /* DOMSVGFEConvolveMatrixElement.h */,
+				19BFF64711C0F2AC00B8C04D /* DOMSVGFEConvolveMatrixElement.mm */,
+				19BFF64811C0F2AC00B8C04D /* DOMSVGFEConvolveMatrixElementInternal.h */,
 				8502AB1C0AD438C000378540 /* DOMSVGFEDiffuseLightingElement.h */,
 				8502AB1D0AD438C000378540 /* DOMSVGFEDiffuseLightingElement.mm */,
 				A8E5447D0CA9D1C20097D09B /* DOMSVGFEDiffuseLightingElementInternal.h */,
@@ -13218,6 +13240,7 @@
 				8502AB790AD4394E00378540 /* DOMSVGFEColorMatrixElementInternal.h */,
 				8502AB7A0AD4394E00378540 /* DOMSVGFEComponentTransferElementInternal.h */,
 				8502AB7B0AD4394E00378540 /* DOMSVGFECompositeElementInternal.h */,
+				19BFF64811C0F2AC00B8C04D /* DOMSVGFEConvolveMatrixElementInternal.h */,
 				8502AB7C0AD4394E00378540 /* DOMSVGFEDiffuseLightingElementInternal.h */,
 				8502AB7D0AD4394E00378540 /* DOMSVGFEDisplacementMapElementInternal.h */,
 				8502AB7E0AD4394E00378540 /* DOMSVGFEDistantLightElementInternal.h */,
@@ -14163,6 +14186,8 @@
 				B2FA3C870AB75A6E000E5AC4 /* JSSVGFEComponentTransferElement.h */,
 				B2FA3C880AB75A6E000E5AC4 /* JSSVGFECompositeElement.cpp */,
 				B2FA3C890AB75A6E000E5AC4 /* JSSVGFECompositeElement.h */,
+				19BFF64911C0F2AC00B8C04D /* JSSVGFEConvolveMatrixElement.cpp */,
+				19BFF64A11C0F2AC00B8C04D /* JSSVGFEConvolveMatrixElement.h */,
 				B2FA3C8A0AB75A6E000E5AC4 /* JSSVGFEDiffuseLightingElement.cpp */,
 				B2FA3C8B0AB75A6E000E5AC4 /* JSSVGFEDiffuseLightingElement.h */,
 				B2FA3C8C0AB75A6E000E5AC4 /* JSSVGFEDisplacementMapElement.cpp */,
@@ -14765,6 +14790,9 @@
 				B222783A0D00BF1F0071B782 /* SVGFECompositeElement.cpp */,
 				B222783B0D00BF1F0071B782 /* SVGFECompositeElement.h */,
 				B222783C0D00BF1F0071B782 /* SVGFECompositeElement.idl */,
+				1921327111C0E6BB00456238 /* SVGFEConvolveMatrixElement.cpp */,
+				1921327211C0E6BB00456238 /* SVGFEConvolveMatrixElement.h */,
+				1921327311C0E6BB00456238 /* SVGFEConvolveMatrixElement.idl */,
 				B222783D0D00BF1F0071B782 /* SVGFEDiffuseLightingElement.cpp */,
 				B222783E0D00BF1F0071B782 /* SVGFEDiffuseLightingElement.h */,
 				B222783F0D00BF1F0071B782 /* SVGFEDiffuseLightingElement.idl */,
@@ -17613,6 +17641,8 @@
 				8502AB460AD438C000378540 /* DOMSVGFECompositeElement.h in Headers */,
 				8502AB910AD4394E00378540 /* DOMSVGFECompositeElementInternal.h in Headers */,
 				A8E5457D0CA9D1C20097D09B /* DOMSVGFECompositeElementInternal.h in Headers */,
+				19BFF64B11C0F2AC00B8C04D /* DOMSVGFEConvolveMatrixElement.h in Headers */,
+				19BFF64D11C0F2AC00B8C04D /* DOMSVGFEConvolveMatrixElementInternal.h in Headers */,
 				8502AB480AD438C000378540 /* DOMSVGFEDiffuseLightingElement.h in Headers */,
 				A8D0C5E10CCB459800B2CDD4 /* DOMSVGFEDiffuseLightingElement.h in Headers */,
 				8502AB920AD4394E00378540 /* DOMSVGFEDiffuseLightingElementInternal.h in Headers */,
@@ -18582,6 +18612,7 @@
 				B2FA3D6D0AB75A6F000E5AC4 /* JSSVGFEColorMatrixElement.h in Headers */,
 				B2FA3D6F0AB75A6F000E5AC4 /* JSSVGFEComponentTransferElement.h in Headers */,
 				B2FA3D710AB75A6F000E5AC4 /* JSSVGFECompositeElement.h in Headers */,
+				19BFF64F11C0F2AC00B8C04D /* JSSVGFEConvolveMatrixElement.h in Headers */,
 				B2FA3D730AB75A6F000E5AC4 /* JSSVGFEDiffuseLightingElement.h in Headers */,
 				B2FA3D750AB75A6F000E5AC4 /* JSSVGFEDisplacementMapElement.h in Headers */,
 				B2FA3D770AB75A6F000E5AC4 /* JSSVGFEDistantLightElement.h in Headers */,
@@ -19217,6 +19248,7 @@
 				B22279CE0D00BF220071B782 /* SVGFEComponentTransferElement.h in Headers */,
 				B22279D10D00BF220071B782 /* SVGFECompositeElement.h in Headers */,
 				B255997B0D00D8BA00BB825C /* SVGFEConvolveMatrix.h in Headers */,
+				1921327511C0E6BB00456238 /* SVGFEConvolveMatrixElement.h in Headers */,
 				B255997D0D00D8BA00BB825C /* SVGFEDiffuseLighting.h in Headers */,
 				B22279D40D00BF220071B782 /* SVGFEDiffuseLightingElement.h in Headers */,
 				B255997F0D00D8BA00BB825C /* SVGFEDisplacementMap.h in Headers */,
@@ -20225,6 +20257,7 @@
 				8502AB430AD438C000378540 /* DOMSVGFEColorMatrixElement.mm in Sources */,
 				8502AB450AD438C000378540 /* DOMSVGFEComponentTransferElement.mm in Sources */,
 				8502AB470AD438C000378540 /* DOMSVGFECompositeElement.mm in Sources */,
+				19BFF64C11C0F2AC00B8C04D /* DOMSVGFEConvolveMatrixElement.mm in Sources */,
 				8502AB490AD438C000378540 /* DOMSVGFEDiffuseLightingElement.mm in Sources */,
 				8502AB4B0AD438C000378540 /* DOMSVGFEDisplacementMapElement.mm in Sources */,
 				8502AB4D0AD438C000378540 /* DOMSVGFEDistantLightElement.mm in Sources */,
@@ -20994,6 +21027,7 @@
 				B2FA3D6C0AB75A6F000E5AC4 /* JSSVGFEColorMatrixElement.cpp in Sources */,
 				B2FA3D6E0AB75A6F000E5AC4 /* JSSVGFEComponentTransferElement.cpp in Sources */,
 				B2FA3D700AB75A6F000E5AC4 /* JSSVGFECompositeElement.cpp in Sources */,
+				19BFF64E11C0F2AC00B8C04D /* JSSVGFEConvolveMatrixElement.cpp in Sources */,
 				B2FA3D720AB75A6F000E5AC4 /* JSSVGFEDiffuseLightingElement.cpp in Sources */,
 				B2FA3D740AB75A6F000E5AC4 /* JSSVGFEDisplacementMapElement.cpp in Sources */,
 				B2FA3D760AB75A6F000E5AC4 /* JSSVGFEDistantLightElement.cpp in Sources */,
@@ -21590,6 +21624,7 @@
 				B22279CD0D00BF220071B782 /* SVGFEComponentTransferElement.cpp in Sources */,
 				B22279D00D00BF220071B782 /* SVGFECompositeElement.cpp in Sources */,
 				B255997A0D00D8BA00BB825C /* SVGFEConvolveMatrix.cpp in Sources */,
+				1921327411C0E6BB00456238 /* SVGFEConvolveMatrixElement.cpp in Sources */,
 				B255997C0D00D8BA00BB825C /* SVGFEDiffuseLighting.cpp in Sources */,
 				B22279D30D00BF220071B782 /* SVGFEDiffuseLightingElement.cpp in Sources */,
 				B255997E0D00D8BA00BB825C /* SVGFEDisplacementMap.cpp in Sources */,

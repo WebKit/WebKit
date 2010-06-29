@@ -1922,6 +1922,7 @@ HEADERS += \
     svg/SVGFEColorMatrixElement.h \
     svg/SVGFEComponentTransferElement.h \
     svg/SVGFECompositeElement.h \
+    svg/SVGFEConvolveMatrixElement.h \
     svg/SVGFEDiffuseLightingElement.h \
     svg/SVGFEDisplacementMapElement.h \
     svg/SVGFEDistantLightElement.h \
@@ -2720,6 +2721,7 @@ contains(DEFINES, ENABLE_SVG=1) {
         svg/SVGFEColorMatrixElement.cpp \
         svg/SVGFEComponentTransferElement.cpp \
         svg/SVGFECompositeElement.cpp \
+        svg/SVGFEConvolveMatrixElement.cpp \
         svg/SVGFEDiffuseLightingElement.cpp \
         svg/SVGFEDisplacementMapElement.cpp \
         svg/SVGFEDistantLightElement.cpp \

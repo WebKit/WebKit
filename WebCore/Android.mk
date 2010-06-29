@@ -795,6 +795,7 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	svg/SVGFEColorMatrixElement.cpp \
 	svg/SVGFEComponentTransferElement.cpp \
 	svg/SVGFECompositeElement.cpp \
+	svg/SVGFEConvolveMatrixElement.cpp \
 	svg/SVGFEDiffuseLightingElement.cpp \
 	svg/SVGFEDisplacementMapElement.cpp \
 	svg/SVGFEDistantLightElement.cpp \

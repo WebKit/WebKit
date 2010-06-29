@@ -165,6 +165,7 @@ static void createElementClassMap()
     addElementClass(SVGNames::feColorMatrixTag, [DOMSVGFEColorMatrixElement class]);
     addElementClass(SVGNames::feComponentTransferTag, [DOMSVGFEComponentTransferElement class]);
     addElementClass(SVGNames::feCompositeTag, [DOMSVGFECompositeElement class]);
+    addElementClass(SVGNames::feConvolveMatrixTag, [DOMSVGFEConvolveMatrixElement class]);
     addElementClass(SVGNames::feDiffuseLightingTag, [DOMSVGFEDiffuseLightingElement class]);
     addElementClass(SVGNames::feDisplacementMapTag, [DOMSVGFEDisplacementMapElement class]);
     addElementClass(SVGNames::feDistantLightTag, [DOMSVGFEDistantLightElement class]);

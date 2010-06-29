@@ -118,7 +118,7 @@ PASS SVGFEFuncGElement.toString() is '[object SVGFEFuncGElementConstructor]'
 PASS SVGFEFuncBElement.toString() is '[object SVGFEFuncBElementConstructor]'
 PASS SVGFEFuncAElement.toString() is '[object SVGFEFuncAElementConstructor]'
 PASS SVGFECompositeElement.toString() is '[object SVGFECompositeElementConstructor]'
-FAIL SVGFEConvolveMatrixElement.toString() should be [object SVGFEConvolveMatrixElementConstructor]. Threw exception ReferenceError: Can't find variable: SVGFEConvolveMatrixElement
+PASS SVGFEConvolveMatrixElement.toString() is '[object SVGFEConvolveMatrixElementConstructor]'
 PASS SVGFEDiffuseLightingElement.toString() is '[object SVGFEDiffuseLightingElementConstructor]'
 PASS SVGFEDistantLightElement.toString() is '[object SVGFEDistantLightElementConstructor]'
 PASS SVGFEPointLightElement.toString() is '[object SVGFEPointLightElementConstructor]'

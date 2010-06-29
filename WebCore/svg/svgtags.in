@@ -31,9 +31,7 @@ feBlend createWithNew
 feColorMatrix createWithNew
 feComponentTransfer createWithNew
 feComposite createWithNew
-#if 0
 feConvolveMatrix createWithNew
-#endif
 feDiffuseLighting createWithNew
 feDisplacementMap createWithNew
 feDistantLight createWithNew

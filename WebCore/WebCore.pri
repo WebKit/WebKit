@@ -531,6 +531,7 @@ IDL_BINDINGS += \
     svg/SVGFEColorMatrixElement.idl \
     svg/SVGFEComponentTransferElement.idl \
     svg/SVGFECompositeElement.idl \
+    svg/SVGFEConvolveMatrixElement.idl \
     svg/SVGFEDiffuseLightingElement.idl \
     svg/SVGFEDisplacementMapElement.idl \
     svg/SVGFEDistantLightElement.idl \

@@ -268,6 +268,8 @@ all : \
     $(INTERNAL_HEADERS_DIR)/DOMSVGFEComponentTransferElementInternal.h \
     $(PRIVATE_HEADERS_DIR)/DOMSVGFECompositeElement.h \
     $(INTERNAL_HEADERS_DIR)/DOMSVGFECompositeElementInternal.h \
+    $(PRIVATE_HEADERS_DIR)/DOMSVGFEConvolveMatrixElement.h \
+    $(INTERNAL_HEADERS_DIR)/DOMSVGFEConvolveMatrixElementInternal.h \
     $(PRIVATE_HEADERS_DIR)/DOMSVGFEDiffuseLightingElement.h \
     $(INTERNAL_HEADERS_DIR)/DOMSVGFEDiffuseLightingElementInternal.h \
     $(PRIVATE_HEADERS_DIR)/DOMSVGFEDisplacementMapElement.h \

@@ -54,6 +54,7 @@
 #include "SVGFEColorMatrixElement.cpp"
 #include "SVGFEComponentTransferElement.cpp"
 #include "SVGFECompositeElement.cpp"
+#include "SVGFEConvolveMatrixElement.cpp"
 #include "SVGFEDiffuseLightingElement.cpp"
 #include "SVGFEDisplacementMapElement.cpp"
 #include "SVGFEDistantLightElement.cpp"

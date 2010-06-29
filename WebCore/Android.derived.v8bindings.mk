@@ -392,6 +392,7 @@ GEN += \
     $(intermediates)/bindings/V8SVGFEColorMatrixElement.h \
     $(intermediates)/bindings/V8SVGFEComponentTransferElement.h \
     $(intermediates)/bindings/V8SVGFECompositeElement.h \
+    $(intermediates)/bindings/V8SVGFEConvolveMatrixElement.h \
     $(intermediates)/bindings/V8SVGFEDiffuseLightingElement.h \
     $(intermediates)/bindings/V8SVGFEDisplacementMapElement.h \
     $(intermediates)/bindings/V8SVGFEDistantLightElement.h \

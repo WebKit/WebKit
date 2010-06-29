@@ -413,6 +413,7 @@ IF (ENABLE_SVG)
         svg/SVGFEColorMatrixElement.idl
         svg/SVGFEComponentTransferElement.idl
         svg/SVGFECompositeElement.idl
+        svg/SVGFEConvolveMatrixElement.idl
         svg/SVGFEDiffuseLightingElement.idl
         svg/SVGFEDisplacementMapElement.idl
         svg/SVGFEDistantLightElement.idl
@@ -1560,6 +1561,7 @@ IF (ENABLE_SVG)
         svg/SVGFEColorMatrixElement.cpp
         svg/SVGFEComponentTransferElement.cpp
         svg/SVGFECompositeElement.cpp
+        svg/SVGFEConvolveMatrixElement.cpp
         svg/SVGFEDiffuseLightingElement.cpp
         svg/SVGFEDisplacementMapElement.cpp
         svg/SVGFEDistantLightElement.cpp

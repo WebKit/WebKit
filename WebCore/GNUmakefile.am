@@ -3205,6 +3205,7 @@ IDL_BINDINGS += \
 	WebCore/svg/SVGFEColorMatrixElement.idl \
 	WebCore/svg/SVGFEComponentTransferElement.idl \
 	WebCore/svg/SVGFECompositeElement.idl \
+	WebCore/svg/SVGFEConvolveMatrixElement.idl \
 	WebCore/svg/SVGFEDiffuseLightingElement.idl \
 	WebCore/svg/SVGFEDisplacementMapElement.idl \
 	WebCore/svg/SVGFEDistantLightElement.idl \
@@ -3483,6 +3484,8 @@ webcore_sources += \
 	WebCore/svg/SVGFEComponentTransferElement.h \
 	WebCore/svg/SVGFECompositeElement.cpp \
 	WebCore/svg/SVGFECompositeElement.h \
+	WebCore/svg/SVGFEConvolveMatrixElement.cpp \
+	WebCore/svg/SVGFEConvolveMatrixElement.h \
 	WebCore/svg/SVGFEDiffuseLightingElement.cpp \
 	WebCore/svg/SVGFEDiffuseLightingElement.h \
 	WebCore/svg/SVGFEDisplacementMapElement.cpp \

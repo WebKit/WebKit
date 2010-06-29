@@ -78,10 +78,10 @@
       }
 
       if (window.SVGFEConvolveMatrixElement) {
-          expect_failure("SVGFEConvolveMatrixElement.SVG_EDGEMODE_UNKNOWN", 0);
-          expect_failure("SVGFEConvolveMatrixElement.SVG_EDGEMODE_DUPLICATE", 1);
-          expect_failure("SVGFEConvolveMatrixElement.SVG_EDGEMODE_WRAP", 2);
-          expect_failure("SVGFEConvolveMatrixElement.SVG_EDGEMODE_NONE", 3);
+          expect("SVGFEConvolveMatrixElement.SVG_EDGEMODE_UNKNOWN", 0);
+          expect("SVGFEConvolveMatrixElement.SVG_EDGEMODE_DUPLICATE", 1);
+          expect("SVGFEConvolveMatrixElement.SVG_EDGEMODE_WRAP", 2);
+          expect("SVGFEConvolveMatrixElement.SVG_EDGEMODE_NONE", 3);
       }
 
       if (window.SVGFEDisplacementMapElement) {

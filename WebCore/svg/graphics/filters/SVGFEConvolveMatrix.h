@@ -2,6 +2,7 @@
     Copyright (C) 2004, 2005, 2006, 2007 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005 Rob Buis <buis@kde.org>
                   2005 Eric Seidel <eric@webkit.org>
+                  2010 Zoltan Herczeg <zherczeg@webkit.org>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -27,67 +28,68 @@
 #include "FloatPoint.h"
 #include "FloatSize.h"
 #include "Filter.h"
+#include <wtf/AlwaysInline.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
-    enum EdgeModeType {
-        EDGEMODE_UNKNOWN   = 0,
-        EDGEMODE_DUPLICATE = 1,
-        EDGEMODE_WRAP      = 2,
-        EDGEMODE_NONE      = 3
-    };
+enum EdgeModeType {
+    EDGEMODE_UNKNOWN   = 0,
+    EDGEMODE_DUPLICATE = 1,
+    EDGEMODE_WRAP      = 2,
+    EDGEMODE_NONE      = 3
+};
 
-    class FEConvolveMatrix : public FilterEffect {
-    public:
-        static PassRefPtr<FEConvolveMatrix> create(FilterEffect*, FilterEffect*, const FloatSize&, 
-                const float&, const float&, const FloatSize&, EdgeModeType, const FloatPoint&,
-                bool, const Vector<float>&);
+class CanvasPixelArray;
 
-        FloatSize kernelSize() const;
-        void setKernelSize(FloatSize);
+class FEConvolveMatrix : public FilterEffect {
+public:
+    static PassRefPtr<FEConvolveMatrix> create(FilterEffect*, const IntSize&,
+            float, float, const IntPoint&, EdgeModeType, const FloatPoint&,
+            bool, const Vector<float>&);
 
-        const Vector<float>& kernel() const;
-        void setKernel(const Vector<float>&);
+    IntSize kernelSize() const;
+    void setKernelSize(IntSize);
 
-        float divisor() const;
-        void setDivisor(float);
+    const Vector<float>& kernel() const;
+    void setKernel(const Vector<float>&);
 
-        float bias() const;
-        void setBias(float);
+    float divisor() const;
+    void setDivisor(float);
 
-        FloatSize targetOffset() const;
-        void setTargetOffset(FloatSize);
+    float bias() const;
+    void setBias(float);
 
-        EdgeModeType edgeMode() const;
-        void setEdgeMode(EdgeModeType);
+    IntPoint targetOffset() const;
+    void setTargetOffset(IntPoint);
 
-        FloatPoint kernelUnitLength() const;
-        void setKernelUnitLength(FloatPoint);
+    EdgeModeType edgeMode() const;
+    void setEdgeMode(EdgeModeType);
 
-        bool preserveAlpha() const;
-        void setPreserveAlpha(bool);
+    FloatPoint kernelUnitLength() const;
+    void setKernelUnitLength(FloatPoint);
 
-        virtual FloatRect uniteChildEffectSubregions(Filter* filter) { return calculateUnionOfChildEffectSubregions(filter, m_in.get(), m_in2.get()); }
-        void apply(Filter*);
-        void dump();
-        TextStream& externalRepresentation(TextStream&, int indent) const;
+    bool preserveAlpha() const;
+    void setPreserveAlpha(bool);
 
-    private:
-        FEConvolveMatrix(FilterEffect*, FilterEffect*, const FloatSize&, const float&, const float&,
-                const FloatSize&, EdgeModeType, const FloatPoint&, bool, const Vector<float>&);
+    void apply(Filter*);
+    void dump();
+    TextStream& externalRepresentation(TextStream&, int indent) const;
 
-        RefPtr<FilterEffect> m_in;
-        RefPtr<FilterEffect> m_in2;
-        FloatSize m_kernelSize;
-        float m_divisor;
-        float m_bias;
-        FloatSize m_targetOffset;
-        EdgeModeType m_edgeMode;
-        FloatPoint m_kernelUnitLength;
-        bool m_preserveAlpha;
-        Vector<float> m_kernelMatrix;
-    };
+private:
+    FEConvolveMatrix(FilterEffect*, const IntSize&, float, float,
+            const IntPoint&, EdgeModeType, const FloatPoint&, bool, const Vector<float>&);
+
+    RefPtr<FilterEffect> m_in;
+    IntSize m_kernelSize;
+    float m_divisor;
+    float m_bias;
+    IntPoint m_targetOffset;
+    EdgeModeType m_edgeMode;
+    FloatPoint m_kernelUnitLength;
+    bool m_preserveAlpha;
+    Vector<float> m_kernelMatrix;
+};
 
 } // namespace WebCore
 

@@ -1,3 +1,15 @@
+2010-06-29  Zoltan Herczeg  <zherczeg@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        Updating expected values for convolve matrix filter
+        https://bugs.webkit.org/show_bug.cgi?id=5861
+
+        * platform/mac/svg/W3C-SVG-1.1/filters-conv-01-f-expected.txt:
+        * svg/custom/global-constructors-expected.txt:
+        * svg/custom/js-svg-constructors-expected.txt:
+        * svg/custom/js-svg-constructors.svg:
+
 2010-06-28  Adam Barth  <abarth@webkit.org>
 
         Unreviewed.

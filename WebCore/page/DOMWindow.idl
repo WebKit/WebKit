@@ -709,7 +709,7 @@ module window {
         attribute SVGFEColorMatrixElementConstructor SVGFEColorMatrixElement;
         attribute SVGFEComponentTransferElementConstructor SVGFEComponentTransferElement;
         attribute SVGFECompositeElementConstructor SVGFECompositeElement;
-//      attribute SVGFEConvolveMatrixElementConstructor SVGFEConvolveMatrixElement;
+        attribute SVGFEConvolveMatrixElementConstructor SVGFEConvolveMatrixElement;
         attribute SVGFEDiffuseLightingElementConstructor SVGFEDiffuseLightingElement;
         attribute SVGFEDisplacementMapElementConstructor SVGFEDisplacementMapElement;
         attribute SVGFEDistantLightElementConstructor SVGFEDistantLightElement;

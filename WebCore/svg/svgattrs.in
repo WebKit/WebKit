@@ -141,6 +141,8 @@ onzoom
 opacity
 operator
 order
+orderX
+orderY
 orient
 orientation
 origin

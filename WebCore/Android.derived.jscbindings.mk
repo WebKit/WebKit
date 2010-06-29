@@ -421,6 +421,7 @@ GEN := \
     $(intermediates)/svg/JSSVGFEColorMatrixElement.h \
     $(intermediates)/svg/JSSVGFEComponentTransferElement.h \
     $(intermediates)/svg/JSSVGFECompositeElement.h \
+    $(intermediates)/svg/JSSVGFEConvolveMatrixElement.h \
     $(intermediates)/svg/JSSVGFEDiffuseLightingElement.h \
     $(intermediates)/svg/JSSVGFEDisplacementMapElement.h \
     $(intermediates)/svg/JSSVGFEDistantLightElement.h \

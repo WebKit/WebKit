@@ -320,6 +320,7 @@ DOM_CLASSES = \
     SVGFEColorMatrixElement \
     SVGFEComponentTransferElement \
     SVGFECompositeElement \
+    SVGFEConvolveMatrixElement \
     SVGFEDiffuseLightingElement \
     SVGFEDisplacementMapElement \
     SVGFEDistantLightElement \

@@ -63,6 +63,7 @@
 #import <WebCore/DOMSVGFEColorMatrixElement.h>
 #import <WebCore/DOMSVGFEComponentTransferElement.h>
 #import <WebCore/DOMSVGFECompositeElement.h>
+#import <WebCore/DOMSVGFEConvolveMatrixElement.h>
 #import <WebCore/DOMSVGFEDiffuseLightingElement.h>
 #import <WebCore/DOMSVGFEDisplacementMapElement.h>
 #import <WebCore/DOMSVGFEDistantLightElement.h>

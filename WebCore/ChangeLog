@@ -1,3 +1,57 @@
+2010-06-29  Zoltan Herczeg  <zherczeg@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        Add ConvolveMatrix SVG filter effect
+        https://bugs.webkit.org/show_bug.cgi?id=5861
+
+        The patch was originally started by Dirk Schulze,
+        and the .cpp and .h files are mostly his work.
+        I updated the build systems and do some minor updates
+        to the source files as well. The patch does not contain
+        the implementation of the filter: this is intended,
+        and will be landed in a follow-up patch.
+
+        * Android.derived.jscbindings.mk:
+        * Android.derived.v8bindings.mk:
+        * Android.mk:
+        * CMakeLists.txt:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pri:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/objc/DOM.mm:
+        (WebCore::createElementClassMap):
+        * bindings/objc/DOMSVG.h:
+        * page/DOMWindow.idl:
+        * svg/SVGAllInOne.cpp:
+        * svg/SVGFEConvolveMatrixElement.cpp: Added.
+        (WebCore::SVGFEConvolveMatrixElement::SVGFEConvolveMatrixElement):
+        (WebCore::SVGFEConvolveMatrixElement::~SVGFEConvolveMatrixElement):
+        (WebCore::SVGFEConvolveMatrixElement::parseMappedAttribute):
+        (WebCore::SVGFEConvolveMatrixElement::setOrder):
+        (WebCore::SVGFEConvolveMatrixElement::setKernelUnitLength):
+        (WebCore::SVGFEConvolveMatrixElement::build):
+        * svg/SVGFEConvolveMatrixElement.h: Added.
+        * svg/SVGFEConvolveMatrixElement.idl: Added.
+        * svg/graphics/filters/SVGFEConvolveMatrix.cpp:
+        (WebCore::FEConvolveMatrix::FEConvolveMatrix):
+        (WebCore::FEConvolveMatrix::create):
+        (WebCore::FEConvolveMatrix::kernelSize):
+        (WebCore::FEConvolveMatrix::setKernelSize):
+        (WebCore::FEConvolveMatrix::targetOffset):
+        (WebCore::FEConvolveMatrix::setTargetOffset):
+        (WebCore::operator<<):
+        (WebCore::FEConvolveMatrix::externalRepresentation):
+        * svg/graphics/filters/SVGFEConvolveMatrix.h:
+        (WebCore::):
+        * svg/svgattrs.in:
+        * svg/svgtags.in:
+
 2010-06-28  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
