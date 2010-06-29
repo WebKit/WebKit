@@ -1,4 +1,40 @@
-2010-06-23  John Gregg  <johnnyg@google.com>
+2010-06-28  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Support for https://bugs.webkit.org/show_bug.cgi?id=40484
+
+        In working on adding beforeProcess, it becomes necessary for JSLazyEventListeners to always know what their
+        original Node* was, even if it was a window event listener.
+
+        For HTMLFrameSet, HTMLBody, and SVGSVG elements, a second form of createAttributeEventListener was used that
+        took a Frame* argument and didn't set the original Node* on the JSLazyEventListener.
+
+        This patch changes that form of the function to createWindowAttributeEventListener, and passes the Node* along
+        for later use by the beforeProcess mechanism.
+
+        No new tests. (No change in behavior)
+
+        * bindings/js/ScriptEventListener.cpp:
+        (WebCore::createWindowAttributeEventListener): Renamed from createAttributeEventListener, takes a Node* instead
+          of a Frame*, and figures out the Frame* itself internally.
+        * bindings/js/ScriptEventListener.h:
+
+        * bindings/v8/ScriptEventListener.cpp:
+        (WebCore::createWindowAttributeEventListener): Renamed from createAttributeEventListener, takes a Node* instead
+          of a Frame*, and figures out the Frame* itself internally. Note that V8LazyEventListener doesn't allow us to
+          pass the Element* argument in so this beforeprocess feature won't fully work on V8 builds until this is changed.
+        * bindings/v8/ScriptEventListener.h:
+
+        * html/HTMLBodyElement.cpp:
+        (WebCore::HTMLBodyElement::parseMappedAttribute): Use createWindowAttributeEventListener instead.
+        * html/HTMLFrameSetElement.cpp:
+        (WebCore::HTMLFrameSetElement::parseMappedAttribute): Ditto.
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::parseMappedAttribute): Ditto. Also add some missing copyright dates that `svn log` proves
+          should be there.
+
+2010-06-28  John Gregg  <johnnyg@google.com>
 
         Reviewed by Kent Tamura.
 

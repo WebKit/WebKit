@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2010 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -44,7 +45,7 @@ namespace WebCore {
     class ScriptState;
 
     PassRefPtr<V8LazyEventListener> createAttributeEventListener(Node*, Attribute*);
-    PassRefPtr<V8LazyEventListener> createAttributeEventListener(Frame*, Attribute*);
+    PassRefPtr<V8LazyEventListener> createWindowAttributeEventListener(Element* windowEquivalentElement, Attribute*);
     String eventListenerHandlerBody(ScriptExecutionContext*, ScriptState*, EventListener*);
     bool eventListenerHandlerLocation(ScriptExecutionContext*, ScriptState*, EventListener*, String& sourceName, int& lineNumber);
 

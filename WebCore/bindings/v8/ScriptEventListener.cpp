@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2010 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -72,8 +73,9 @@ PassRefPtr<V8LazyEventListener> createAttributeEventListener(Node* node, Attribu
     return V8LazyEventListener::create(attr->localName().string(), node->isSVGElement(), attr->value(), sourceURL, lineNumber, columnNumber, WorldContextHandle(UseMainWorld));
 }
 
-PassRefPtr<V8LazyEventListener> createAttributeEventListener(Frame* frame, Attribute* attr)
+PassRefPtr<V8LazyEventListener> createWindowAttributeEventListener(Element* windowEquivalentElement, Attribute* attr)
 {
+    Frame* frame = windowEquivalentElement->document()->frame();
     if (!frame)
         return 0;
 
