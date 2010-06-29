@@ -353,6 +353,14 @@ bool WebPage::allowGeolocationRequest(QWebFrame *)
     return m_drt->layoutTestController()->geolocationPermission();
 }
 
+void WebPage::setViewGeometry(const QRect& rect)
+{
+    if (WebViewGraphicsBased* v = qobject_cast<WebViewGraphicsBased*>(view()))
+        v->scene()->setSceneRect(QRectF(rect));
+    else if (QWidget *v = view())
+        v->setGeometry(rect);
+}
+
 WebViewGraphicsBased::WebViewGraphicsBased(QWidget* parent)
     : m_item(new QGraphicsWebView)
 {

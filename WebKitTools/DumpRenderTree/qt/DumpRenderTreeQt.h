@@ -198,12 +198,8 @@ protected:
     bool isTextOutputEnabled() { return m_drt->isTextOutputEnabled(); }
 
 private slots:
-    void setViewGeometry(const QRect &r)
-    {
-        QWidget *v = view();
-        if (v)
-            v->setGeometry(r);
-    }
+    void setViewGeometry(const QRect&);
+
 private:
     QWebInspector* m_webInspector;
     DumpRenderTree *m_drt;
