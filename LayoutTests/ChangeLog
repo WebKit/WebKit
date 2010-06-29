@@ -1,3 +1,9 @@
+2010-06-29  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Unreviewed test expectations update for stable passing tests.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-06-29  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Not reviewed. Add missing pixel test results.

@@ -862,7 +862,7 @@ BUG8763 LINUX WIN MAC : svg/custom/use-on-g-containing-foreignObject-and-image.s
 BUG23463 MAC : svg/W3C-SVG-1.1/struct-symbol-01-b.svg = IMAGE
 BUG23463 MAC : svg/W3C-SVG-1.1/struct-use-01-t.svg = IMAGE
 BUG23463 WIN LINUX : svg/W3C-SVG-1.1/struct-symbol-01-b.svg = IMAGE+TEXT TEXT
-BUG23463 WIN LINUX : svg/W3C-SVG-1.1/struct-use-01-t.svg = IMAGE+TEXT
+BUG23463 WIN LINUX : svg/W3C-SVG-1.1/struct-use-01-t.svg = IMAGE+TEXT PASS
 BUG23463 WIN LINUX : svg/W3C-SVG-1.1/struct-image-02-b.svg = IMAGE+TEXT
 
 // Merge 39744:39829 - regression
@@ -1625,7 +1625,7 @@ BUG23496 MAC : fast/forms/indeterminate.html = IMAGE
 BUG23496 MAC : fast/forms/input-appearance-height.html = IMAGE+TEXT
 BUG23496 MAC : fast/forms/input-value.html = IMAGE+TEXT
 // BUG23496 MAC : fast/forms/menulist-narrow-width.html = IMAGE
-BUG23496 MAC : fast/forms/menulist-no-overflow.html = IMAGE
+BUG23496 MAC : fast/forms/menulist-no-overflow.html = IMAGE PASS
 BUG23496 MAC : fast/forms/radio-attr-order.html = IMAGE
 BUG23496 MAC : fast/forms/radio-nested-labels.html = IMAGE
 BUG23496 MAC : fast/forms/radio_checked.html = IMAGE
@@ -1634,8 +1634,8 @@ BUG23496 MAC : fast/forms/radio_checked_dynamic.html = IMAGE
 BUG23496 MAC : fast/inline/positionedLifetime.html = IMAGE
 BUG23496 MAC : fast/parser/bad-xml-slash.html = IMAGE
 BUG23496 MAC : fast/replaced/replaced-breaking.html = IMAGE
-BUG23496 MAC : fast/replaced/width100percent-checkbox.html = IMAGE
-BUG23496 MAC : fast/replaced/width100percent-radio.html = IMAGE
+BUG23496 MAC : fast/replaced/width100percent-checkbox.html = IMAGE PASS
+BUG23496 MAC : fast/replaced/width100percent-radio.html = IMAGE PASS
 BUG23496 MAC DEBUG : fast/text/textIteratorNilRenderer.html = IMAGE
 BUG23496 SLOW MAC RELEASE : fast/text/textIteratorNilRenderer.html = IMAGE
 BUG23496 MAC : fast/text/whitespace/normal-after-nowrap-breaking.html = IMAGE
@@ -1648,7 +1648,7 @@ BUG23496 MAC : tables/mozilla_expected_failures/core/captions2.html = IMAGE
 // Big button widgets are broken
 BUG23495 MAC : fast/forms/basic-buttons.html = IMAGE
 BUG23495 MAC : fast/forms/box-shadow-override.html = IMAGE+TEXT
-BUG23495 MAC : fast/forms/button-sizes.html = IMAGE
+BUG23495 MAC : fast/forms/button-sizes.html = IMAGE PASS
 
 // Text declared as "monospace" with no size is bigger in Chromium
 BUG23494 MAC : css1/font_properties/font_family.html = IMAGE
@@ -1759,9 +1759,6 @@ BUG23473 MAC : fast/repaint/text-shadow-horizontal.html = PASS
 
 // Thicker shadow than expected
 BUG23471 MAC : fast/text/stroking.html = IMAGE
-
-// SVG foreign object skew off by a lot
-BUG23466 MAC : svg/custom/foreign-object-skew.svg = IMAGE
 
 // Missing baselines
 // BUG23557 MAC : fast/text/text-letter-spacing.html = IMAGE
@@ -2885,9 +2882,6 @@ BUGWK37538 : printing/page-format-data.html = TEXT
 
 // This failure is related to 61859.
 BUG_HCLAM : inspector/debugger-pause-in-eval-script.html = TIMEOUT CRASH FAIL PASS
-
-// Added in WebKit r61941
-BUG47611 LINUX : fast/events/popup-when-select-change.html = TIMEOUT
 
 // First noticed on trybots after r61836, now in the tree.
 BUG_MNAGANOV LINUX : fast/js/Object-create.html = CRASH FAIL
