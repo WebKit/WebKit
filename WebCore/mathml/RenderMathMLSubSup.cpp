@@ -102,31 +102,31 @@ void RenderMathMLSubSup::addChild(RenderObject* child, RenderObject* beforeChild
     }
 }
 
-void  RenderMathMLSubSup::stretchToHeight(int height)
+void RenderMathMLSubSup::stretchToHeight(int height)
 {
     RenderObject* base = firstChild();
     if (!base)
         return;
     
-    if (base->isRenderMathMLBlock()) {
-        RenderMathMLBlock* block = toRenderMathMLBlock(base);
+    if (base->firstChild()->isRenderMathMLBlock()) {
+        RenderMathMLBlock* block = toRenderMathMLBlock(base->firstChild());
         block->stretchToHeight(static_cast<int>(gSubSupStretch * height));
-    }
-    if (height > 0 && m_kind == SubSup && m_scripts) {
-        RenderObject* script = m_scripts->firstChild();
-        if (script) {
-            // Calculate the script height without the container margins.
-            RenderObject* top = script;
-            int topHeight = getBoxModelObjectHeight(top->firstChild());
-            int topAdjust = topHeight / gTopAdjustDivisor;
-            top->style()->setMarginTop(Length(-topAdjust, Fixed));
-            top->style()->setMarginBottom(Length(height - topHeight + topAdjust, Fixed));
-            if (top->isBoxModelObject()) {
-                RenderBoxModelObject* topBox = toRenderBoxModelObject(top);
-                topBox->updateBoxModelInfoFromStyle();
+        if (height > 0 && m_kind == SubSup && m_scripts) {
+            RenderObject* script = m_scripts->firstChild();
+            if (script) {
+                // Calculate the script height without the container margins.
+                RenderObject* top = script;
+                int topHeight = getBoxModelObjectHeight(top->firstChild());
+                int topAdjust = topHeight / gTopAdjustDivisor;
+                top->style()->setMarginTop(Length(-topAdjust, Fixed));
+                top->style()->setMarginBottom(Length(height - topHeight + topAdjust, Fixed));
+                if (top->isBoxModelObject()) {
+                    RenderBoxModelObject* topBox = toRenderBoxModelObject(top);
+                    topBox->updateBoxModelInfoFromStyle();
+                }
+                m_scripts->setNeedsLayoutAndPrefWidthsRecalc();
+                m_scripts->markContainingBlocksForLayout();
             }
-            m_scripts->setNeedsLayoutAndPrefWidthsRecalc();
-            m_scripts->markContainingBlocksForLayout();
         }
     }
     updateBoxModelInfoFromStyle();

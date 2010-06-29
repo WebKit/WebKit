@@ -1,3 +1,15 @@
+2010-06-29  François Sausset  <sausset@gmail.com>
+
+        Reviewed by Darin Adler.
+
+        Add a test when a msubsup element is wrapped in a mrow element
+        https://bugs.webkit.org/show_bug.cgi?id=36525
+
+        * mathml/presentation/subsup.xhtml:
+        * platform/mac/mathml/presentation/subsup-expected.checksum:
+        * platform/mac/mathml/presentation/subsup-expected.png:
+        * platform/mac/mathml/presentation/subsup-expected.txt:
+
 2010-06-29  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Dimitri Glazkov.
@@ -15852,3 +15864,4 @@
         * html5lib/webkit-runner.html:
 
 == Rolled over to ChangeLog-2010-05-24 ==
+>>>>>>> .r55032

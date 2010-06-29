@@ -1,3 +1,15 @@
+2010-06-29  François Sausset  <sausset@gmail.com>
+
+        Reviewed by Darin Adler.
+
+        Fix a bug when a msubsup element is inside a mrow element
+        https://bugs.webkit.org/show_bug.cgi?id=36525
+
+        Test: mathml/presentation/subsup.xhtml
+
+        * mathml/RenderMathMLSubSup.cpp:
+        (WebCore::RenderMathMLSubSup::stretchToHeight):
+
 2010-06-29  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Dimitri Glazkov.
