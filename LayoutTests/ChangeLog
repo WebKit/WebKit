@@ -1,5 +1,14 @@
 2010-06-29  Robert Hogan  <robert@webkit.org>
 
+        Rubber-stamped by Kenneth Rohde Christiansen.
+
+        [Qt] Update test expectations for tests added in r62134.
+
+        * platform/qt/fast/text/setData-dirty-lines-expected.txt: Added.
+        * platform/qt/fast/text/splitText-dirty-lines-expected.txt: Added.
+
+2010-06-29  Robert Hogan  <robert@webkit.org>
+
         Reviewed by Kenneth Rohde Christiansen.
 
         Results for editing/pasteboard/5761530-1.html are wrong
