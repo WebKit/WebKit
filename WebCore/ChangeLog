@@ -1,5 +1,11 @@
 2010-06-29  Nikolas Zimmermann  <nzimmermann@rim.com>
 
+        Not reviewed. Sort Xcode project file.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
+2010-06-29  Nikolas Zimmermann  <nzimmermann@rim.com>
+
         Reviewed by Dirk Schulze.
 
         Provide floating-point support for text selection framework
