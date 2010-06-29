@@ -57,6 +57,7 @@ public:
     inline JSValueRef makeJSValue(QScriptValue::SpecialValue value) const;
 
     QScriptValuePrivate* newObject() const;
+    QScriptValuePrivate* newArray(uint length) const;
     QScriptValuePrivate* globalObject() const;
 
     inline QScriptStringPrivate* toStringHandle(const QString& str) const;

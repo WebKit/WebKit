@@ -206,6 +206,16 @@ QScriptValue QScriptEngine::newObject()
 }
 
 /*!
+  Creates a QtScript object of class Array with the given \a length.
+
+  \sa newObject()
+*/
+QScriptValue QScriptEngine::newArray(uint length)
+{
+    return QScriptValuePrivate::get(d_ptr->newArray(length));
+}
+
+/*!
   Returns this engine's Global Object.
 
   By default, the Global Object contains the built-in objects that are

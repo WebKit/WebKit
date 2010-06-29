@@ -82,6 +82,18 @@ QScriptValuePrivate* QScriptEnginePrivate::newObject() const
     return new QScriptValuePrivate(this, JSObjectMake(m_context, /* jsClass */ 0, /* userData */ 0));
 }
 
+QScriptValuePrivate* QScriptEnginePrivate::newArray(uint length) const
+{
+    JSObjectRef array = JSObjectMakeArray(m_context, /* argumentCount */ 0, /* arguments */ 0, /* exception */ 0);
+
+    if (length > 0) {
+        JSRetainPtr<JSStringRef> lengthRef(Adopt, JSStringCreateWithUTF8CString("length"));
+        JSObjectSetProperty(m_context, array, lengthRef.get(), JSValueMakeNumber(m_context, length), kJSPropertyAttributeNone, /* exception */ 0);
+    }
+
+    return new QScriptValuePrivate(this, array);
+}
+
 QScriptValuePrivate* QScriptEnginePrivate::globalObject() const
 {
     JSObjectRef globalObject = JSContextGetGlobalObject(m_context);

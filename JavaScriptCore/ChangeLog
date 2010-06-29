@@ -1,3 +1,19 @@
+2010-06-28  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] QScriptEngine API should contain a newArray function
+        https://bugs.webkit.org/show_bug.cgi?id=39115
+
+        * qt/api/qscriptengine.cpp:
+        (QScriptEngine::newArray):
+        * qt/api/qscriptengine.h:
+        * qt/api/qscriptengine_p.cpp:
+        (QScriptEnginePrivate::newArray):
+        * qt/api/qscriptengine_p.h:
+        * qt/tests/qscriptengine/tst_qscriptengine.cpp:
+        (tst_QScriptEngine::newArray):
+
 2010-06-28  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Gustavo Noronha.

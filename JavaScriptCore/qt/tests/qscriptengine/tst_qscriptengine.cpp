@@ -47,6 +47,7 @@ private slots:
     void checkSyntax();
     void toObject();
     void toObjectTwoEngines();
+    void newArray();
 };
 
 /* Evaluating a script that throw an unhandled exception should return an invalid value. */
@@ -407,6 +408,28 @@ void tst_QScriptEngine::toObjectTwoEngines()
         QVERIFY(engine2.toObject(object).engine() != &engine2);
         QVERIFY(object.isObject());
     }
+}
+
+void tst_QScriptEngine::newArray()
+{
+    QScriptEngine eng;
+    QScriptValue array = eng.newArray();
+    QCOMPARE(array.isValid(), true);
+    // QCOMPARE(array.isArray(), true);
+    QCOMPARE(array.isObject(), true);
+    QVERIFY(!array.isFunction());
+    // QCOMPARE(array.scriptClass(), (QScriptClass*)0);
+
+    // Prototype should be Array.prototype.
+    QCOMPARE(array.prototype().isValid(), true);
+    // QCOMPARE(array.prototype().isArray(), true);
+    QCOMPARE(array.prototype().strictlyEquals(eng.evaluate("Array.prototype")), true);
+
+    QScriptValue arrayWithSize = eng.newArray(42);
+    QCOMPARE(arrayWithSize.isValid(), true);
+    // QCOMPARE(arrayWithSize.isArray(), true);
+    QCOMPARE(arrayWithSize.isObject(), true);
+    QCOMPARE(arrayWithSize.property("length").toInt32(), 42);
 }
 
 QTEST_MAIN(tst_QScriptEngine)
