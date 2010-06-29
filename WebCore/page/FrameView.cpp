@@ -478,6 +478,15 @@ void FrameView::setNeedsOneShotDrawingSynchronization()
 
 #endif // USE(ACCELERATED_COMPOSITING)
 
+bool FrameView::hasCompositedContent() const
+{
+#if USE(ACCELERATED_COMPOSITING)
+    if (RenderView* view = m_frame->contentRenderer())
+        return view->compositor()->inCompositingMode();
+#endif
+    return false;
+}
+
 bool FrameView::isEnclosedInCompositingLayer() const
 {
 #if USE(ACCELERATED_COMPOSITING)
@@ -897,6 +906,15 @@ void FrameView::setIsOverlapped(bool isOverlapped)
 
     m_isOverlapped = isOverlapped;
     setCanBlitOnScroll(!useSlowRepaints());
+    
+#if USE(ACCELERATED_COMPOSITING)
+    // Overlap can affect compositing tests, so if it changes, we need to trigger
+    // a recalcStyle in the parent document.
+    if (hasCompositedContent()) {
+        if (Element* ownerElement = m_frame->document()->ownerElement())
+            ownerElement->setNeedsStyleRecalc(SyntheticStyleChange);
+    }
+#endif    
 }
 
 void FrameView::setContentIsOpaque(bool contentIsOpaque)

@@ -31,10 +31,13 @@
     // Called from subframe.
     function testDone()
     {
-      if (window.layoutTestController) {
-        document.getElementById('layers').innerText = layoutTestController.layerTreeAsText();
-        layoutTestController.notifyDone();
-      }
+      // Wait for a layer update.
+      window.setTimeout(function() {
+        if (window.layoutTestController) {
+          document.getElementById('layers').innerText = layoutTestController.layerTreeAsText();
+          layoutTestController.notifyDone();
+        }
+      }, 0);
     }
   </script>
 </head>

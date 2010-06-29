@@ -24,7 +24,7 @@
       (backgroundColor none)
       (transform identity)
       (childrenTransform identity)
-      (children 2
+      (children 1
         (GraphicsLayer
           (position 8.00 8.00)
           (anchor 0.50 0.50)
@@ -97,19 +97,6 @@
               )
             )
           )
-        )
-        (GraphicsLayer
-          (position 5.00 5.00)
-          (anchor 0.50 0.50)
-          (bounds 50.00 50.00)
-          (opacity 1.00)
-          (usingTiledLayer 0)
-          (preserves3D 0)
-          (drawsContent 1)
-          (backfaceVisibility visible)
-          (backgroundColor none)
-          (transform identity)
-          (childrenTransform identity)
         )
       )
     )

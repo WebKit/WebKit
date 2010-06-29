@@ -233,6 +233,9 @@ bool RenderLayerBacking::updateGraphicsLayerConfiguration()
     }
 #endif
 
+    if (renderer()->isRenderIFrame())
+        layerConfigChanged = RenderLayerCompositor::parentIFrameContentLayers(toRenderIFrame(renderer()));
+
     return layerConfigChanged;
 }
 
@@ -385,7 +388,7 @@ void RenderLayerBacking::updateGraphicsLayerGeometry()
     }
 
     m_graphicsLayer->setContentsRect(contentsBox());
-    m_graphicsLayer->setDrawsContent(containsPaintedContent());
+    updateDrawsContent();
 
     // If this is an iframe parent, update the iframe content's box
     if (renderer()->isRenderIFrame()) {
@@ -408,6 +411,11 @@ void RenderLayerBacking::updateInternalHierarchy()
         m_clippingLayer->removeFromParent();
         m_graphicsLayer->addChild(m_clippingLayer.get());
     }
+}
+
+void RenderLayerBacking::updateDrawsContent()
+{
+    m_graphicsLayer->setDrawsContent(containsPaintedContent());
 }
 
 // Return true if the layers changed.

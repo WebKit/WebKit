@@ -10,6 +10,7 @@
         height: 150px;
         width: 300px;
         -webkit-box-shadow: 0 0 20px black;
+        -webkit-transform: translateZ(0);
     }
     
     .overlay {
@@ -43,8 +44,8 @@
 </head>
 <body>
 
-    <!-- The parent document may into compositing mode by the iframe. -->
-    <iframe id="parent-iframe" src="resources/leave-compositing-subframe.html"></iframe>
+    <!-- Test with already-composited iframe, and iframe contents becoming composited. -->
+    <iframe id="parent-iframe" src="resources/enter-compositing-subframe.html"></iframe>
     
     <div class="overlay">
     </div>
