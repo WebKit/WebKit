@@ -1,3 +1,31 @@
+2010-06-29  Michael Saboff  <msaboff@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Bug 41238 - RegExp performance slow on Dromaeo benchmark
+
+        Other javascript engines appear to cache prior results of regular 
+        expression operations.
+
+        Suggest adding some sort of caching mechanism to regular expression 
+        processing.
+
+        Added a single entry cache of match() results to RegExp class.
+
+        Also added performance improvements to UString == operator.
+        First check the impls for equality.  Then get the length of
+        each of the non-null impls.  Next check the sizes for equality.
+        Then check the data for the case of different impls that point 
+        to the same data (most likely due to substrings from the beginning of
+        another string).  Lastly we check the underlying data for equality.
+
+        * runtime/RegExp.cpp:
+        (JSC::RegExp::RegExp):
+        (JSC::RegExp::match):
+        * runtime/RegExp.h:
+        * runtime/UString.h:
+        (JSC::operator==):
+
 2010-06-29  Nathan Lawrence  <nlawrence@apple.com>
 
         Reviewed by Geoffrey Garen.
