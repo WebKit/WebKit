@@ -914,21 +914,30 @@ PassRefPtr<Element> HTMLTreeBuilder::createElement(AtomicHTMLToken& token)
     return element.release();
 }
 
-int HTMLTreeBuilder::indexOfLastOpenFormattingElementOrMarker() const
+bool HTMLTreeBuilder::indexOfFirstUnopenFormattingElement(unsigned& firstUnopenElementIndex) const
 {
-    ASSERT(!m_activeFormattingElements.isEmpty());
-    for (int index = m_activeFormattingElements.size() - 1; index >= 0; --index) {
+    if (m_activeFormattingElements.isEmpty())
+        return false;
+    unsigned index = m_activeFormattingElements.size();
+    do {
+        --index;
         const FormattingElementEntry& entry = m_activeFormattingElements[index];
-        if (entry.isMarker() || m_openElements.contains(entry.element()))
-            return index;
-    }
-    return -1; // No elements are open!
+        if (entry.isMarker() || m_openElements.contains(entry.element())) {
+            firstUnopenElementIndex = index;
+            return true;
+        }
+    } while (index);
+    return false;
 }
 
-void HTMLTreeBuilder::reopenFormattingElementsAfterIndex(unsigned lastOpenElementIndex)
+void HTMLTreeBuilder::reconstructTheActiveFormattingElements()
 {
+    unsigned firstUnopenElementIndex;
+    if (!indexOfFirstUnopenFormattingElement(firstUnopenElementIndex))
+        return;
+
     Vector<FormattingElementEntry>& stack = m_activeFormattingElements;
-    unsigned unopenEntryIndex = lastOpenElementIndex + 1;
+    unsigned unopenEntryIndex = firstUnopenElementIndex;
     ASSERT(unopenEntryIndex < stack.size());
     for (; unopenEntryIndex < stack.size(); ++unopenEntryIndex) {
         FormattingElementEntry& unopenedEntry = stack[unopenEntryIndex];
@@ -937,16 +946,6 @@ void HTMLTreeBuilder::reopenFormattingElementsAfterIndex(unsigned lastOpenElemen
         insertElement(fakeToken);
         unopenedEntry.replaceElement(currentElement());
     }
-}
-
-void HTMLTreeBuilder::reconstructTheActiveFormattingElements()
-{
-    if (m_activeFormattingElements.isEmpty())
-        return;
-
-    int lastOpenElementIndex = indexOfLastOpenFormattingElementOrMarker();
-    if (lastOpenElementIndex < m_activeFormattingElements.size() - 1)
-        reopenFormattingElementsAfterIndex(lastOpenElementIndex);
 }
 
 void HTMLTreeBuilder::finished()
