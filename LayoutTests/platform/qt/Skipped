@@ -357,9 +357,6 @@ editing/pasteboard/smart-paste-008.html
 #------ safe to skip. Qt results same as chromium's. Mac drops the 'b' in the final bar,
 #------ that looks like a bug.
 editing/pasteboard/interchange-newline-2.html
-# ----- Whitespace instead of tab?
-# ----- https://bugs.webkit.org/show_bug.cgi?id=38437
-editing/pasteboard/5761530-1.html
 # ----- Results appear correct but have suspicious rendertree differences.
 editing/pasteboard/pasting-tabs.html
 editing/pasteboard/nested-blocks-with-text-area.html

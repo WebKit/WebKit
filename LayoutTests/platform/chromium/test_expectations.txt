@@ -2892,3 +2892,6 @@ BUG47826 MAC SKIP : fast/dom/HTMLMeterElement/meter-element.html = FAIL
 BUG47826 MAC SKIP : fast/dom/HTMLMeterElement/meter-optimums.html = FAIL
 BUG47826 MAC SKIP : fast/dom/HTMLMeterElement/meter-styles.html = FAIL
 BUG47826 MAC SKIP : fast/dom/HTMLMeterElement/meter-styles-changing-pseudo.html = FAIL
+
+// pastes a space instead of a tab
+BUG38437 RELEASE : editing/pasteboard/5761530-1.html = FAIL

@@ -1,3 +1,20 @@
+2010-06-29  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Results for editing/pasteboard/5761530-1.html are wrong
+
+        https://bugs.webkit.org/show_bug.cgi?id=38437
+
+        Qt seems to have the correct result here. So unskip on Qt and
+        skip on other platforms so can be fixed.
+
+        * editing/pasteboard/5761530-1-expected.txt:
+        * platform/chromium/test_expectations.txt:
+        * platform/gtk/Skipped:
+        * platform/mac/Skipped:
+        * platform/qt/Skipped:
+
 2010-06-29  Kenneth Russell  <kbr@google.com>
 
         Reviewed by Dimitri Glazkov.
