@@ -1,3 +1,10 @@
+2010-06-29  Yury Semikhatsky  <yurys@chromium.org>
+
+        Unreviewed: Chromium Win and Mac build fix.
+
+        * bindings/v8/ScriptDebugServer.cpp:
+        (WebCore::ScriptDebugServer::setBreakpoint):
+
 2010-06-29  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Dirk Schulze.
