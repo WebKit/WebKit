@@ -1,3 +1,20 @@
+2010-06-28  Kent Tamura  <tkent@chromium.org>
+
+        Unreviewed, test expectation update.
+
+        A meter flip issue was resolved by Chromium r51096.
+
+        * platform/chromium-mac/fast/dom/HTMLMeterElement/meter-appearances-capacity-expected.checksum:
+        * platform/chromium-mac/fast/dom/HTMLMeterElement/meter-appearances-capacity-expected.png: Removed.
+        * platform/chromium-mac/fast/dom/HTMLMeterElement/meter-appearances-rating-relevancy-expected.checksum: Removed.
+        * platform/chromium-mac/fast/dom/HTMLMeterElement/meter-appearances-rating-relevancy-expected.png: Removed.
+        * platform/chromium-mac/fast/dom/HTMLMeterElement/meter-element-expected.checksum:
+        * platform/chromium-mac/fast/dom/HTMLMeterElement/meter-optimums-expected.checksum:
+        * platform/chromium-mac/fast/dom/HTMLMeterElement/meter-optimums-expected.png: Removed.
+        * platform/chromium-mac/fast/dom/HTMLMeterElement/meter-styles-changing-pseudo-expected.checksum:
+        * platform/chromium-mac/fast/dom/HTMLMeterElement/meter-styles-expected.checksum:
+        * platform/chromium/test_expectations.txt:
+
 2010-06-28  David Levin  <levin@chromium.org>
 
         Reviewed by NOBODY (test expectations update for chromium).
