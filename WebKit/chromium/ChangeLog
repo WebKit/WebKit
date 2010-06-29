@@ -1,3 +1,13 @@
+2010-06-29  Zhe Su  <suzhe@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        A crash caused by the patch of bug 40608.
+        https://bugs.webkit.org/show_bug.cgi?id=41334
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::caretOrSelectionBounds):
+
 2010-06-29  Victor Wang  <victorw@chromium.org>
 
         Reviewed by Darin Fisher.

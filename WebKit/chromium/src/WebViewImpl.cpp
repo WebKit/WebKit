@@ -1286,6 +1286,10 @@ WebRect WebViewImpl::caretOrSelectionBounds()
     if (!view)
         return rect;
 
+    const Node* node = controller->start().node();
+    if (!node || !node->renderer())
+        return rect;
+
     if (controller->isCaret())
         rect = view->contentsToWindow(controller->absoluteCaretBounds());
     else if (controller->isRange()) {
