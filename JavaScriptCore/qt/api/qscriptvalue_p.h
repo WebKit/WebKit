@@ -624,7 +624,7 @@ inline QScriptValuePrivate* QScriptValuePrivate::prototype()
             return new QScriptValuePrivate(engine(), prototype);
         // The prototype could be either a null or a JSObject, so it is safe to cast the prototype
         // to the JSObjectRef here.
-        return new QScriptValuePrivate(engine(), prototype, const_cast<JSObjectRef>(prototype));
+        return new QScriptValuePrivate(engine(), const_cast<JSObjectRef>(prototype));
     }
     return new QScriptValuePrivate;
 }
