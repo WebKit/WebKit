@@ -1,5 +1,18 @@
 2010-06-28  Mark Rowe  <mrowe@apple.com>
 
+        Merge r59139.
+
+    2010-05-10  Simon Fraser  <simon.fraser@apple.com>
+
+        No review.
+
+        Reduce timeouts from 500 to 50ms to make the tests run more quickly.
+
+        * compositing/iframes/resources/enter-compositing-subframe.html:
+        * compositing/iframes/resources/leave-compositing-subframe.html:
+
+2010-06-28  Mark Rowe  <mrowe@apple.com>
+
         Merge r59136.
 
     2010-05-10  Simon Fraser  <simon.fraser@apple.com>
