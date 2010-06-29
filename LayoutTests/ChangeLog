@@ -1,3 +1,21 @@
+2010-06-29  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [Gtk] Make DRT more coherent with other ports to allow reusing more tests
+        https://bugs.webkit.org/show_bug.cgi?id=40009
+
+        Update GTK a11y tests to follow new prefixes coming from DRT
+
+        * platform/gtk/accessibility/object-attributes-expected.txt:
+        * platform/gtk/accessibility/object-attributes.html:
+        * platform/gtk/accessibility/object-with-title-expected.txt:
+        * platform/gtk/accessibility/object-with-title.html:
+        * platform/gtk/accessibility/table-hierarchy-expected.txt:
+        * platform/gtk/accessibility/table-hierarchy.html:
+        * platform/gtk/accessibility/title-and-alt-expected.txt:
+        * platform/gtk/accessibility/title-and-alt.html:
+
 2010-06-29  Mikhail Naganov  <mnaganov@chromium.org>
 
         Unreviewed test expectations update.

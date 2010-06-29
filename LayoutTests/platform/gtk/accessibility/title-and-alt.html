@@ -22,20 +22,20 @@ var successfullyParsed = false;
         var webArea = accessibilityController.focusedElement;
 
         var image = webArea.childAtIndex(0);
-        shouldBe("image.title", "'Image alt attr'");
-        shouldBe("image.description", "'Image title attr'");
+        shouldBe("image.title", "'AXTitle: Image alt attr'");
+        shouldBe("image.description", "'AXDescription: Image title attr'");
 
         var link = webArea.childAtIndex(1);
-        shouldBe("link.title", "''");
-        shouldBe("link.description", "'Link title attr'");
+        shouldBe("link.title", "'AXTitle: '");
+        shouldBe("link.description", "'AXDescription: Link title attr'");
 
         var entry = webArea.childAtIndex(2);
-        shouldBe("entry.title", "''");
-        shouldBe("entry.description", "'Entry title attr'");
+        shouldBe("entry.title", "'AXTitle: '");
+        shouldBe("entry.description", "'AXDescription: Entry title attr'");
 
         var button = webArea.childAtIndex(4);
-        shouldBe("button.title", "'Submit'");
-        shouldBe("button.description", "'Submit button title attr'");
+        shouldBe("button.title", "'AXTitle: Submit'");
+        shouldBe("button.description", "'AXDescription: Submit button title attr'");
         }
     successfullyParsed = true;
 </script>

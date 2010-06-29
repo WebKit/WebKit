@@ -26,6 +26,7 @@
 
 #include "config.h"
 #include "AccessibilityUIElement.h"
+#include "GOwnPtr.h"
 #include "GRefPtr.h"
 
 #include <JavaScriptCore/JSStringRef.h>
@@ -198,7 +199,10 @@ JSStringRef AccessibilityUIElement::role()
     if (!role)
         return JSStringCreateWithCharacters(0, 0);
 
-    return JSStringCreateWithUTF8CString(atk_role_get_name(role));
+    const gchar* roleName = atk_role_get_name(role);
+    GOwnPtr<gchar> axRole(g_strdup_printf("AXRole: %s", roleName));
+
+    return JSStringCreateWithUTF8CString(axRole.get());
 }
 
 JSStringRef AccessibilityUIElement::subrole()
@@ -218,7 +222,9 @@ JSStringRef AccessibilityUIElement::title()
     if (!name)
         return JSStringCreateWithCharacters(0, 0);
 
-    return JSStringCreateWithUTF8CString(name);
+    GOwnPtr<gchar> axTitle(g_strdup_printf("AXTitle: %s", name));
+
+    return JSStringCreateWithUTF8CString(axTitle.get());
 }
 
 JSStringRef AccessibilityUIElement::description()
@@ -228,7 +234,9 @@ JSStringRef AccessibilityUIElement::description()
     if (!description)
         return JSStringCreateWithCharacters(0, 0);
 
-    return JSStringCreateWithUTF8CString(description);
+    GOwnPtr<gchar> axDesc(g_strdup_printf("AXDescription: %s", description));
+
+    return JSStringCreateWithUTF8CString(axDesc.get());
 }
 
 JSStringRef AccessibilityUIElement::stringValue()

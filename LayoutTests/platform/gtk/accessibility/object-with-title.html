@@ -24,13 +24,13 @@ var successfullyParsed = false;
         var webArea = accessibilityController.focusedElement;
 
         var child = webArea.childAtIndex(0);
-        shouldBe("child.role", "'list'");
+        shouldBe("child.role", "'AXRole: list'");
 
         child = webArea.childAtIndex(1);
-        shouldBe("child.role", "'section'");
+        shouldBe("child.role", "'AXRole: section'");
 
         child = child.childAtIndex(0);
-        shouldBe("child.role", "'list'");
+        shouldBe("child.role", "'AXRole: list'");
     }
     successfullyParsed = true;
 </script>
