@@ -34,10 +34,8 @@
 #include "Attribute.h"
 #include "Document.h"
 #include "EventListener.h"
-#include "Frame.h"
-#include "HTMLNames.h"
 #include "JSNode.h"
-#include "SVGNames.h"
+#include "Frame.h"
 #include "XSSAuditor.h"
 #include <runtime/JSLock.h>
 
@@ -80,11 +78,8 @@ PassRefPtr<JSLazyEventListener> createAttributeEventListener(Node* node, Attribu
     return JSLazyEventListener::create(attr->localName().string(), eventParameterName(node->isSVGElement()), attr->value(), node, sourceURL, lineNumber, 0, mainThreadNormalWorld());
 }
 
-PassRefPtr<JSLazyEventListener> createWindowAttributeEventListener(Element* windowEquivalentElement, Attribute* attr)
+PassRefPtr<JSLazyEventListener> createAttributeEventListener(Frame* frame, Attribute* attr)
 {
-    ASSERT(windowEquivalentElement->hasTagName(HTMLNames::bodyTag) || windowEquivalentElement->hasTagName(HTMLNames::framesetTag) || windowEquivalentElement->hasTagName(SVGNames::svgTag));
-    
-    Frame* frame = windowEquivalentElement->document()->frame();
     if (!frame)
         return 0;
 
@@ -107,7 +102,7 @@ PassRefPtr<JSLazyEventListener> createWindowAttributeEventListener(Element* wind
     lineNumber = scriptController->eventHandlerLineNumber();
     sourceURL = frame->document()->url().string();
     JSObject* wrapper = toJSDOMWindow(frame, mainThreadNormalWorld());
-    return JSLazyEventListener::create(attr->localName().string(), eventParameterName(frame->document()->isSVGDocument()), attr->value(), windowEquivalentElement, sourceURL, lineNumber, wrapper, mainThreadNormalWorld());
+    return JSLazyEventListener::create(attr->localName().string(), eventParameterName(frame->document()->isSVGDocument()), attr->value(), 0, sourceURL, lineNumber, wrapper, mainThreadNormalWorld());
 }
 
 String eventListenerHandlerBody(ScriptExecutionContext* context, ScriptState* scriptState, EventListener* eventListener)

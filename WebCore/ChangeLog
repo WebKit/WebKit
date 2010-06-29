@@ -1,5 +1,27 @@
 2010-06-29  Sheriff Bot  <webkit.review.bot@gmail.com>
 
+        Unreviewed, rolling out r62052.
+        http://trac.webkit.org/changeset/62052
+        https://bugs.webkit.org/show_bug.cgi?id=41357
+
+        Causes crashes in JSLazyEventListener::initializeFunction (see
+        bug 41352) (Requested by aroben on #webkit).
+
+        * bindings/js/ScriptEventListener.cpp:
+        (WebCore::createAttributeEventListener):
+        * bindings/js/ScriptEventListener.h:
+        * bindings/v8/ScriptEventListener.cpp:
+        (WebCore::createAttributeEventListener):
+        * bindings/v8/ScriptEventListener.h:
+        * html/HTMLBodyElement.cpp:
+        (WebCore::HTMLBodyElement::parseMappedAttribute):
+        * html/HTMLFrameSetElement.cpp:
+        (WebCore::HTMLFrameSetElement::parseMappedAttribute):
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::parseMappedAttribute):
+
+2010-06-29  Sheriff Bot  <webkit.review.bot@gmail.com>
+
         Unreviewed, rolling out r62129.
         http://trac.webkit.org/changeset/62129
         https://bugs.webkit.org/show_bug.cgi?id=41362
