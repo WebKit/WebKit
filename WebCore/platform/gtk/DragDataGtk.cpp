@@ -18,8 +18,10 @@
 #include "DragData.h"
 
 #include "Clipboard.h"
+#include "ClipboardGtk.h"
 #include "Document.h"
 #include "DocumentFragment.h"
+#include "markup.h"
 
 namespace WebCore {
 
@@ -35,21 +37,24 @@ bool DragData::containsColor() const
 
 bool DragData::containsFiles() const
 {
-    return false;
+    return !m_platformDragData->files().isEmpty();
 }
 
 void DragData::asFilenames(Vector<String>& result) const
 {
+    Vector<String> files(m_platformDragData->files());
+    for (size_t i = 0; i < files.size(); i++)
+        result.append(files[i]);
 }
 
 bool DragData::containsPlainText() const
 {
-    return false;
+    return m_platformDragData->hasText();
 }
 
 String DragData::asPlainText() const
 {
-    return String();
+    return m_platformDragData->text();
 }
 
 Color DragData::asColor() const
@@ -57,30 +62,36 @@ Color DragData::asColor() const
     return Color();
 }
 
-PassRefPtr<Clipboard> DragData::createClipboard(ClipboardAccessPolicy) const
+PassRefPtr<Clipboard> DragData::createClipboard(ClipboardAccessPolicy policy) const
 {
-    return 0;
+    return ClipboardGtk::create(policy, m_platformDragData, true);
 }
 
 bool DragData::containsCompatibleContent() const
 {
-    return false;
+    return containsPlainText() || containsURL() || m_platformDragData->hasMarkup() || containsColor() || containsFiles();
 }
 
 bool DragData::containsURL(FilenameConversionPolicy filenamePolicy) const
 {
-    return false;
+    return m_platformDragData->hasURL();
 }
 
 String DragData::asURL(FilenameConversionPolicy filenamePolicy, String* title) const
 {
-    return String();
+    String url(m_platformDragData->url());
+    if (title)
+        *title = m_platformDragData->urlLabel();
+    return url;
 }
 
 
-PassRefPtr<DocumentFragment> DragData::asFragment(Document*) const
+PassRefPtr<DocumentFragment> DragData::asFragment(Document* document) const
 {
-    return 0;
+    if (!m_platformDragData->hasMarkup())
+        return 0;
+
+    return createFragmentFromMarkup(document, m_platformDragData->markup(), "");
 }
 
 }

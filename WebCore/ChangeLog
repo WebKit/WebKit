@@ -1,3 +1,25 @@
+2010-06-29  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] DragDataGtk should use DataObjectGtk as the platformDragData
+        https://bugs.webkit.org/show_bug.cgi?id=40307
+
+        Use DataObjectGtk as the platformDragData for DragDataGtk. DataObjectGtk
+        contains all the information necessary to keep track of drops in progress.
+
+        * platform/DragData.h: Use a DataObjectGtk* as the platform drag data.
+        * platform/gtk/DragDataGtk.cpp:
+        (WebCore::DragData::containsFiles): Retrieve information via platformDragData.
+        (WebCore::DragData::asFilenames): Ditto.
+        (WebCore::DragData::containsPlainText): Ditto.
+        (WebCore::DragData::asPlainText): Ditto.
+        (WebCore::DragData::createClipboard): Create the Clipboard with the platformDragData.
+        (WebCore::DragData::containsCompatibleContent): Retrieve information via platformDragData.
+        (WebCore::DragData::containsURL): Ditto.
+        (WebCore::DragData::asURL): Ditto.
+        (WebCore::DragData::asFragment): Ditto.
+
 2010-06-29  Adam Langley  <agl@chromium.org>
 
         Build fix. Not reviewd.
