@@ -26,7 +26,7 @@ symbian: {
     webkitbackup.path = /private/10202D56/import/packages/$$replace(TARGET.UID3, 0x,)
 
     contains(QT_CONFIG, declarative) {
-         declarativeImport.sources = qmlwebkitplugin$${QT_LIBINFIX}.dll
+         declarativeImport.sources = $$QT_BUILD_TREE/imports/QtWebKit/qmlwebkitplugin$${QT_LIBINFIX}.dll
          declarativeImport.sources += ../WebKit/qt/declarative/qmldir
          declarativeImport.path = c:$$QT_IMPORTS_BASE_DIR/QtWebKit
          DEPLOYMENT += declarativeImport
