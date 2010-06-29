@@ -132,11 +132,11 @@ PassRefPtr<FilterEffect> SVGFEConvolveMatrixElement::build(SVGFilterBuilder* fil
     if (hasAttribute(SVGNames::targetXAttr) && (targetXValue < 0 || targetXValue >= orderXValue))
         return 0;
     if (!hasAttribute(SVGNames::targetXAttr))
-        targetXValue = static_cast<int>(floor(orderXValue / 2));
+        targetXValue = static_cast<int>(floorf(orderXValue / 2));
     if (hasAttribute(SVGNames::targetYAttr) && (targetYValue < 0 || targetYValue >= orderYValue))
         return 0;
     if (!hasAttribute(SVGNames::targetYAttr))
-        targetYValue = static_cast<int>(floor(orderYValue / 2));
+        targetYValue = static_cast<int>(floorf(orderYValue / 2));
 
     float divisorValue = divisor();
     if (hasAttribute(SVGNames::divisorAttr) && !divisorValue)
