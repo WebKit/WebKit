@@ -569,9 +569,10 @@ JavaScriptCore/pcre/chartables.c: $(srcdir)/JavaScriptCore/pcre/dftables
 	$(PERL) $^ $@
 
 bin_PROGRAMS += \
-	Programs/jsc
+	Programs/jsc-@WEBKITGTK_API_MAJOR_VERSION@
 
 noinst_PROGRAMS += \
+	Programs/jsc \
 	Programs/minidom
 
 # minidom
@@ -606,6 +607,11 @@ Programs_minidom_LDFLAGS = \
 	-no-fast-install
 
 # jsc
+Programs/jsc-@WEBKITGTK_API_MAJOR_VERSION@: Programs/jsc
+	$(AM_V_GEN)cp -f Programs/jsc Programs/jsc-@WEBKITGTK_API_MAJOR_VERSION@
+Programs_jsc_@WEBKITGTK_API_MAJOR_VERSION@_LDADD =
+Programs_jsc_@WEBKITGTK_API_MAJOR_VERSION@_SOURCES =
+
 Programs_jsc_SOURCES = \
 	JavaScriptCore/jsc.cpp
 
@@ -650,4 +656,5 @@ CLEANFILES += \
 	JavaScriptCore/runtime/StringPrototype.lut.h \
 	JavaScriptCore/pcre/chartables.c \
 	Programs/jsc \
+	Programs/jsc-@WEBKITGTK_API_MAJOR_VERSION@ \
 	Programs/minidom

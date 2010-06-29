@@ -1,3 +1,12 @@
+2010-06-28  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        Install jsc as jsc-X where X is the major API version to allow
+        parallel installation of both GTK+ 2.x and 3.x versions.
+
+        * GNUmakefile.am:
+
 2010-06-28  John Gregg  <johnnyg@google.com>
 
         Reviewed by Kent Tamura.
