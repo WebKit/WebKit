@@ -951,7 +951,13 @@ int DumpRenderTree::windowCount() const
 void DumpRenderTree::switchFocus(bool focused)
 {
     QFocusEvent event((focused) ? QEvent::FocusIn : QEvent::FocusOut, Qt::ActiveWindowFocusReason);
-    QApplication::sendEvent(m_mainView, &event);
+    if (!isGraphicsBased())
+        QApplication::sendEvent(m_mainView, &event);
+    else {
+        if (WebViewGraphicsBased* view = qobject_cast<WebViewGraphicsBased*>(m_mainView))
+            view->scene()->sendEvent(view->graphicsView(), &event);
+    }
+
 }
 
 void DumpRenderTree::checkPermission(const QUrl& url, NotificationPermission& permission)
