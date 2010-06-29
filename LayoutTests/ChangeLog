@@ -1,5 +1,18 @@
 2010-06-28  Mark Rowe  <mrowe@apple.com>
 
+        Merge r59141.
+
+    2010-05-10  Simon Fraser  <simon.fraser@apple.com>
+
+        No review; attempt to fix failing tests.
+
+        Increase the timeout to give compositing updates a chance to happen.
+
+        * compositing/iframes/iframe-resize.html:
+        * compositing/iframes/overlapped-iframe.html:
+
+2010-06-28  Mark Rowe  <mrowe@apple.com>
+
         Merge r59139.
 
     2010-05-10  Simon Fraser  <simon.fraser@apple.com>
