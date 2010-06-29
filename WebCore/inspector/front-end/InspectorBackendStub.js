@@ -165,8 +165,9 @@ WebInspector.InspectorBackendStub.prototype = {
         WebInspector.debuggerWasDisabled();
     },
 
-    setBreakpoint: function(sourceID, line, enabled, condition)
+    setBreakpoint: function(callId, sourceID, line, enabled, condition)
     {
+        WebInspector.didSetBreakpoint(callId, true, line);
     },
 
     removeBreakpoint: function(sourceID, line)

@@ -24,7 +24,7 @@
  * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
  * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
- * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "config.h"
@@ -161,6 +161,11 @@ String md5Base16(const String& string)
         result.append(digits[digest[i] & 0xf]);
     }
     return String(result.data(), result.size());
+}
+
+String formatBreakpointId(const String& sourceID, unsigned lineNumber)
+{
+    return String::format("%s:%d", sourceID.utf8().data(), lineNumber);
 }
 
 }
@@ -712,6 +717,7 @@ void InspectorController::didCommitLoad(DocumentLoader* loader)
         m_sourceIDToURL.clear();
         m_scriptIDToContent.clear();
         m_stickyBreakpoints.clear();
+        m_breakpointsMapping.clear();
         m_breakpointsLoaded = false;
 #endif
 #if ENABLE(JAVASCRIPT_DEBUGGER) && USE(JSC)
@@ -1735,19 +1741,27 @@ PassRefPtr<SerializedScriptValue> InspectorController::currentCallFrames()
     return injectedScript.callFrames();
 }
 
-void InspectorController::setBreakpoint(const String& sourceID, unsigned lineNumber, bool enabled, const String& condition)
+void InspectorController::setBreakpoint(long callId, const String& sourceID, unsigned lineNumber, bool enabled, const String& condition)
 {
     ScriptBreakpoint breakpoint(enabled, condition);
-    ScriptDebugServer::shared().setBreakpoint(sourceID, lineNumber, breakpoint);
+    unsigned actualLineNumber = 0;
+    bool success = ScriptDebugServer::shared().setBreakpoint(sourceID, breakpoint, lineNumber, &actualLineNumber);
+    m_frontend->didSetBreakpoint(callId, success, actualLineNumber);
+    if (!success)
+        return;
+
     String url = m_sourceIDToURL.get(sourceID);
     if (url.isEmpty())
         return;
+
+    String breakpointId = formatBreakpointId(sourceID, actualLineNumber);
+    m_breakpointsMapping.set(breakpointId, actualLineNumber);
 
     String key = md5Base16(url);
     HashMap<String, SourceBreakpoints>::iterator it = m_stickyBreakpoints.find(key);
     if (it == m_stickyBreakpoints.end())
         it = m_stickyBreakpoints.set(key, SourceBreakpoints()).first;
-    it->second.set(lineNumber, breakpoint);
+    it->second.set(actualLineNumber, breakpoint);
     saveBreakpoints();
 }
 
@@ -1759,9 +1773,18 @@ void InspectorController::removeBreakpoint(const String& sourceID, unsigned line
     if (url.isEmpty())
         return;
 
+    String breakpointId = formatBreakpointId(sourceID, lineNumber);
+    HashMap<String, unsigned>::iterator mappingIt = m_breakpointsMapping.find(breakpointId);
+    if (mappingIt == m_breakpointsMapping.end())
+        return;
+    unsigned stickyLine = mappingIt->second;
+    m_breakpointsMapping.remove(mappingIt);
+
     HashMap<String, SourceBreakpoints>::iterator it = m_stickyBreakpoints.find(md5Base16(url));
-    if (it != m_stickyBreakpoints.end())
-        it->second.remove(lineNumber);
+    if (it == m_stickyBreakpoints.end())
+        return;
+
+    it->second.remove(stickyLine);
     saveBreakpoints();
 }
 
@@ -1781,10 +1804,16 @@ void InspectorController::didParseSource(const String& sourceID, const String& u
     HashMap<String, SourceBreakpoints>::iterator it = m_stickyBreakpoints.find(md5Base16(url));
     if (it != m_stickyBreakpoints.end()) {
         for (SourceBreakpoints::iterator breakpointIt = it->second.begin(); breakpointIt != it->second.end(); ++breakpointIt) {
-            if (firstLine <= breakpointIt->first) {
-                ScriptDebugServer::shared().setBreakpoint(sourceID, breakpointIt->first, breakpointIt->second);
-                m_frontend->restoredBreakpoint(sourceID, url, breakpointIt->first, breakpointIt->second.enabled, breakpointIt->second.condition);
-            }
+            int lineNumber = breakpointIt->first;
+            if (firstLine > lineNumber)
+                continue;
+            unsigned actualLineNumber = 0;
+            bool success = ScriptDebugServer::shared().setBreakpoint(sourceID, breakpointIt->second, lineNumber, &actualLineNumber);
+            if (!success)
+                continue;
+            m_frontend->restoredBreakpoint(sourceID, url, actualLineNumber, breakpointIt->second.enabled, breakpointIt->second.condition);
+            String breakpointId = formatBreakpointId(sourceID, actualLineNumber);
+            m_breakpointsMapping.set(breakpointId, lineNumber);
         }
     }
     m_sourceIDToURL.set(sourceID, url);

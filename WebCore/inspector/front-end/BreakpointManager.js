@@ -36,41 +36,36 @@ WebInspector.BreakpointManager.prototype = {
         if (this._breakpoints[breakpoint.id])
             return;
         if (this._oneTimeBreakpoint)
-            this._removeBreakpointFromBackend(this._oneTimeBreakpoint);
+            InspectorBackend.removeBreakpoint(this._oneTimeBreakpoint.sourceID, this._oneTimeBreakpoint.line);
         this._oneTimeBreakpoint = breakpoint;
         // FIXME(40669): one time breakpoint will be persisted in inspector settings if not hit.
-        this._saveBreakpointOnBackend(breakpoint);
+        this._setBreakpointOnBackend(breakpoint, true);
     },
 
     removeOneTimeBreakpoint: function()
     {
         if (this._oneTimeBreakpoint) {
-            this._removeBreakpointFromBackend(this._oneTimeBreakpoint);
+            InspectorBackend.removeBreakpoint(this._oneTimeBreakpoint.sourceID, this._oneTimeBreakpoint.line);
             delete this._oneTimeBreakpoint;
         }
     },
 
-    addBreakpoint: function(sourceID, sourceURL, line, enabled, condition)
+    setBreakpoint: function(sourceID, sourceURL, line, enabled, condition)
     {
-        var breakpoint = this._addBreakpoint(sourceID, sourceURL, line, enabled, condition);
+        var breakpoint = this._setBreakpoint(sourceID, sourceURL, line, enabled, condition);
         if (breakpoint)
-            this._saveBreakpointOnBackend(breakpoint);
+            this._setBreakpointOnBackend(breakpoint);
     },
 
     restoredBreakpoint: function(sourceID, sourceURL, line, enabled, condition)
     {
-        this._addBreakpoint(sourceID, sourceURL, line, enabled, condition);
+        this._setBreakpoint(sourceID, sourceURL, line, enabled, condition);
     },
 
     removeBreakpoint: function(breakpoint)
     {
-        if (!(breakpoint.id in this._breakpoints))
-            return;
-        breakpoint.removeAllListeners();
-        delete breakpoint._breakpointManager;
-        delete this._breakpoints[breakpoint.id];
-        this._removeBreakpointFromBackend(breakpoint);
-        this.dispatchEventToListeners("breakpoint-removed", breakpoint);
+        if (this._removeBreakpoint(breakpoint))
+            InspectorBackend.removeBreakpoint(breakpoint.sourceID, breakpoint.line);
     },
 
     breakpointsForSourceID: function(sourceID)
@@ -99,7 +94,7 @@ WebInspector.BreakpointManager.prototype = {
         delete this._oneTimeBreakpoint;
     },
 
-    _addBreakpoint: function(sourceID, sourceURL, line, enabled, condition)
+    _setBreakpoint: function(sourceID, sourceURL, line, enabled, condition)
     {
         var breakpoint = new WebInspector.Breakpoint(this, sourceID, sourceURL, line, enabled, condition);
         if (this._breakpoints[breakpoint.id])
@@ -111,14 +106,36 @@ WebInspector.BreakpointManager.prototype = {
         return breakpoint;
     },
 
-    _saveBreakpointOnBackend: function(breakpoint)
+    _removeBreakpoint: function(breakpoint)
     {
-        InspectorBackend.setBreakpoint(breakpoint.sourceID, breakpoint.line, breakpoint.enabled, breakpoint.condition);
+        if (!(breakpoint.id in this._breakpoints))
+            return false;
+        breakpoint.removeAllListeners();
+        delete breakpoint._breakpointManager;
+        delete this._breakpoints[breakpoint.id];
+        this.dispatchEventToListeners("breakpoint-removed", breakpoint);
+        return true;
     },
 
-    _removeBreakpointFromBackend: function(breakpoint)
+    _setBreakpointOnBackend: function(breakpoint, isOneTime)
     {
-        InspectorBackend.removeBreakpoint(breakpoint.sourceID, breakpoint.line);
+        function didSetBreakpoint(success, line)
+        {
+            if (success && line == breakpoint.line)
+                return;
+            if (isOneTime) {
+                if (success)
+                    this._oneTimeBreakpoint.line = line;
+                else
+                    delete this._oneTimeBreakpoint;
+            } else {
+                this._removeBreakpoint(breakpoint);
+                if (success)
+                    this._setBreakpoint(breakpoint.sourceID, breakpoint.sourceURL, line, breakpoint.enabled, breakpoint.condition);
+            }
+        }
+        var callbackId = WebInspector.Callback.wrap(didSetBreakpoint.bind(this));
+        InspectorBackend.setBreakpoint(callbackId, breakpoint.sourceID, breakpoint.line, breakpoint.enabled, breakpoint.condition);
     }
 }
 
@@ -147,7 +164,7 @@ WebInspector.Breakpoint.prototype = {
             return;
 
         this._enabled = x;
-        this._breakpointManager._saveBreakpointOnBackend(this);
+        this._breakpointManager._setBreakpointOnBackend(this);
         if (this._enabled)
             this.dispatchEventToListeners("enabled");
         else
@@ -189,9 +206,11 @@ WebInspector.Breakpoint.prototype = {
 
         this._condition = c;
         if (this.enabled)
-            this._breakpointManager._saveBreakpointOnBackend(this);
+            this._breakpointManager._setBreakpointOnBackend(this);
         this.dispatchEventToListeners("condition-changed");
     }
 }
 
 WebInspector.Breakpoint.prototype.__proto__ = WebInspector.Object.prototype;
+
+WebInspector.didSetBreakpoint = WebInspector.Callback.processCallback;

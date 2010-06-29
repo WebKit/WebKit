@@ -289,7 +289,7 @@ private:
     void deleteCookie(const String& cookieName, const String& domain);
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
-    void setBreakpoint(const String& sourceID, unsigned lineNumber, bool enabled, const String& condition);
+    void setBreakpoint(long callId, const String& sourceID, unsigned lineNumber, bool enabled, const String& condition);
     void removeBreakpoint(const String& sourceID, unsigned lineNumber);
 
     typedef HashMap<unsigned int, RefPtr<ScriptProfile> > ProfilesMap;
@@ -384,6 +384,7 @@ private:
     HashMap<String, String> m_sourceIDToURL;
     HashMap<String, String> m_scriptIDToContent;
     HashMap<String, SourceBreakpoints> m_stickyBreakpoints;
+    HashMap<String, unsigned> m_breakpointsMapping;
     bool m_breakpointsLoaded;
 
     bool m_profilerEnabled;

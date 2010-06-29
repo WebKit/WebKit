@@ -126,7 +126,7 @@ void ScriptDebugServer::removeListener(ScriptDebugListener* listener, Page* page
     // FIXME: Remove all breakpoints set by the agent.
 }
 
-void ScriptDebugServer::setBreakpoint(const String& sourceID, unsigned lineNumber, ScriptBreakpoint breakpoint)
+bool ScriptDebugServer::setBreakpoint(const String& sourceID, ScriptBreakpoint breakpoint, unsigned lineNumber, unsigned* actualLineNumber)
 {
 #if ENABLE(V8_SCRIPT_DEBUG_SERVER)
     v8::HandleScope scope;
@@ -140,7 +140,12 @@ void ScriptDebugServer::setBreakpoint(const String& sourceID, unsigned lineNumbe
     args->Set(v8::String::New("enabled"), v8::Boolean::New(breakpoint.enabled));
 
     v8::Handle<v8::Function> setBreakpointFunction = v8::Local<v8::Function>::Cast(m_debuggerScript.get()->Get(v8::String::New("setBreakpoint")));
-    v8::Debug::Call(setBreakpointFunction, args);
+    v8::Handle<v8::Value> result = v8::Debug::Call(setBreakpointFunction, args);
+    if (!result->IsNumber())
+        return false;
+    ASSERT(result->Int32Value() >= 0);
+    *actualLineNumber = result->Int32Value();
+    return true;
 #endif
 }
 
@@ -299,7 +304,7 @@ PassRefPtr<JavaScriptCallFrame> ScriptDebugServer::currentCallFrame()
         v8::Handle<v8::Function> currentCallFrameFunction = v8::Local<v8::Function>::Cast(m_debuggerScript.get()->Get(v8::String::New("currentCallFrame")));
         v8::Handle<v8::Value> argv[] = { m_executionState.get() };
         v8::Handle<v8::Value> currentCallFrameV8 = currentCallFrameFunction->Call(m_debuggerScript.get(), 1, argv);
-        m_currentCallFrame = JavaScriptCallFrame::create(v8::Debug::GetDebugContext(), v8::Handle<v8::Object>::Cast(currentCallFrameV8)); 
+        m_currentCallFrame = JavaScriptCallFrame::create(v8::Debug::GetDebugContext(), v8::Handle<v8::Object>::Cast(currentCallFrameV8));
     }
     return m_currentCallFrame;
 }

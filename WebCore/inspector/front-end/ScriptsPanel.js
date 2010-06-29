@@ -367,7 +367,7 @@ WebInspector.ScriptsPanel.prototype = {
                 var newLine = breakpoint.line;
                 if (success && breakpoint.line >= line)
                     newLine += linesCountToShift;
-                WebInspector.breakpointManager.addBreakpoint(sourceID, breakpoint.url, newLine, breakpoint.enabled, breakpoint.condition);
+                WebInspector.breakpointManager.setBreakpoint(sourceID, breakpoint.url, newLine, breakpoint.enabled, breakpoint.condition);
             }
         };
         var callbackId = WebInspector.Callback.wrap(mycallback.bind(this))

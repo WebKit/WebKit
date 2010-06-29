@@ -93,22 +93,19 @@ DebuggerScript._formatScript = function(script)
 DebuggerScript.setBreakpoint = function(execState, args)
 {
     args.lineNumber = DebuggerScript._webkitToV8LineNumber(args.lineNumber);
-    var key = args.scriptId + ":" + args.lineNumber;
-    var breakId = DebuggerScript._breakpoints[key];
-    if (breakId) {
-        if (args.enabled)
-            Debug.enableScriptBreakPoint(breakId);
-        else
-            Debug.disableScriptBreakPoint(breakId);
-        Debug.changeScriptBreakPointCondition(breakId, args.condition);
-        return breakId;
-    }
-
-    breakId = Debug.setScriptBreakPointById(args.scriptId, args.lineNumber, 0 /* column */, args.condition);
-    DebuggerScript._breakpoints[key] = breakId;
+    var breakId = Debug.setScriptBreakPointById(args.scriptId, args.lineNumber, 0 /* column */, args.condition);
     if (!args.enabled)
         Debug.disableScriptBreakPoint(breakId);
-    return breakId;
+
+    var actualLineNumber = args.lineNumber; // TODO: replace with real stuff after v8 roll.
+
+    var key = args.scriptId + ":" + actualLineNumber;
+    if (key in DebuggerScript._breakpoints) {
+        // Remove old breakpoint.
+        Debug.findBreakPoint(DebuggerScript._breakpoints[key], true);
+    }
+    DebuggerScript._breakpoints[key] = breakId;
+    return DebuggerScript._v8ToWebkitLineNumber(actualLineNumber);
 }
 
 DebuggerScript.removeBreakpoint = function(execState, args)

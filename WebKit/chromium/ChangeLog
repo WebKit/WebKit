@@ -1,3 +1,13 @@
+2010-06-29  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: return line number where breakpoint was actually set by v8 from setBreakpoint function.
+        https://bugs.webkit.org/show_bug.cgi?id=40781
+
+        * src/js/DebuggerScript.js:
+        ():
+
 2010-06-23  John Gregg  <johnnyg@google.com>
 
         Reviewed by Kent Tamura.

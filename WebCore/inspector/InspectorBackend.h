@@ -80,7 +80,7 @@ public:
     void enableDebugger(bool always);
     void disableDebugger(bool always);
 
-    void setBreakpoint(const String& sourceID, unsigned lineNumber, bool enabled, const String& condition);
+    void setBreakpoint(long callId, const String& sourceID, unsigned lineNumber, bool enabled, const String& condition);
     void removeBreakpoint(const String& sourceID, unsigned lineNumber);
     void activateBreakpoints();
     void deactivateBreakpoints();

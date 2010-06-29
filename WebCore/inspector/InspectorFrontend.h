@@ -101,6 +101,8 @@ namespace WebCore {
         void debuggerWasEnabled();
         void debuggerWasDisabled();
 
+        void didSetBreakpoint(long callId, bool success, unsigned line);
+
         void parsedScriptSource(const String& sourceID, const String& url, const String& data, int firstLine, int scriptWorldType);
         void restoredBreakpoint(const String& sourceID, const String& url, int line, bool enabled, const String& condition);
         void failedToParseScriptSource(const String& url, const String& data, int firstLine, int errorLine, const String& errorMessage);

@@ -1,3 +1,53 @@
+2010-06-29  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: show actual breakpoint position in UI.
+        When user sets breakpoint from UI, javascript engine may actually set
+        it on a different line. If so, move breakpoint to the correct position
+        in frontend.
+        https://bugs.webkit.org/show_bug.cgi?id=40781
+
+        * bindings/js/ScriptDebugServer.cpp:
+        (WebCore::ScriptDebugServer::setBreakpoint):
+        (WebCore::ScriptDebugServer::dispatchDidPause):
+        * bindings/js/ScriptDebugServer.h:
+        * bindings/v8/ScriptDebugServer.cpp:
+        (WebCore::ScriptDebugServer::setBreakpoint):
+        (WebCore::ScriptDebugServer::currentCallFrame):
+        * bindings/v8/ScriptDebugServer.h:
+        * inspector/InspectorBackend.cpp:
+        (WebCore::InspectorBackend::setBreakpoint):
+        * inspector/InspectorBackend.h:
+        * inspector/InspectorBackend.idl:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::didCommitLoad):
+        (WebCore::InspectorController::setBreakpoint):
+        (WebCore::InspectorController::removeBreakpoint):
+        (WebCore::InspectorController::didParseSource):
+        * inspector/InspectorController.h:
+        * inspector/InspectorFrontend.cpp:
+        (WebCore::InspectorFrontend::didSetBreakpoint):
+        * inspector/InspectorFrontend.h:
+        * inspector/front-end/BreakpointManager.js:
+        (WebInspector.BreakpointManager.prototype.setOneTimeBreakpoint):
+        (WebInspector.BreakpointManager.prototype.removeOneTimeBreakpoint):
+        (WebInspector.BreakpointManager.prototype.setBreakpoint):
+        (WebInspector.BreakpointManager.prototype.restoredBreakpoint):
+        (WebInspector.BreakpointManager.prototype.removeBreakpoint):
+        (WebInspector.BreakpointManager.prototype._setBreakpoint):
+        (WebInspector.BreakpointManager.prototype._removeBreakpoint):
+        (WebInspector.BreakpointManager.prototype._setBreakpointOnBackend.didSetBreakpoint):
+        (WebInspector.BreakpointManager.prototype._setBreakpointOnBackend):
+        (WebInspector.Breakpoint.prototype.set enabled):
+        (WebInspector.Breakpoint.prototype.set condition):
+        * inspector/front-end/InspectorBackendStub.js:
+        (.WebInspector.InspectorBackendStub.prototype.setBreakpoint):
+        * inspector/front-end/ScriptView.js:
+        (WebInspector.ScriptView.prototype._addBreakpoint):
+        * inspector/front-end/SourceView.js:
+        (WebInspector.SourceView.prototype._addBreakpoint):
+
 2010-06-29  Dumitru Daniliuc  <dumi@chromium.org>
 
         Reviewed by Adam Barth.

@@ -63,7 +63,7 @@ public:
     void addListener(ScriptDebugListener*, Page*);
     void removeListener(ScriptDebugListener*, Page*);
 
-    void setBreakpoint(const String& sourceID, unsigned lineNumber, ScriptBreakpoint breakpoint);
+    bool setBreakpoint(const String& sourceID, ScriptBreakpoint breakpoint, unsigned lineNumber, unsigned* actualLineNumber);
     void removeBreakpoint(const String& sourceID, unsigned lineNumber);
     void clearBreakpoints();
     void setBreakpointsActivated(bool activated);
