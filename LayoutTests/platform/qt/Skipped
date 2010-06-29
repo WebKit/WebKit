@@ -183,16 +183,6 @@ http/tests/incremental
 http/tests/media
 http/tests/wml
 
-# Evaluate expected results for frame loader callbacks
-# https://bugs.webkit.org/show_bug.cgi?id=34839
-http/tests/security/mixedContent/about-blank-iframe-in-main-frame.html
-http/tests/security/mixedContent/data-url-iframe-in-main-frame.html
-http/tests/security/mixedContent/insecure-css-in-main-frame.html
-http/tests/security/mixedContent/insecure-iframe-in-main-frame.html
-http/tests/security/mixedContent/insecure-image-in-main-frame.html
-http/tests/security/mixedContent/redirect-http-to-https-iframe-in-main-frame.html
-http/tests/security/mixedContent/redirect-https-to-http-iframe-in-main-frame.html
-
 # Skip failed appcache test cases
 http/tests/appcache/auth.html
 
