@@ -1,3 +1,11 @@
+2010-06-29  Kristian Amlie  <kristian.amlie@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt/Symbian] Fixed deployment paths for WebKit declarative plugin.
+
+        * WebCore.pro:
+
 2010-06-29  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed: Chromium Win and Mac build fix.
