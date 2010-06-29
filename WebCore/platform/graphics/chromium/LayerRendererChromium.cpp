@@ -623,11 +623,6 @@ void LayerRendererChromium::drawLayer(LayerChromium* layer)
             layer->updateTextureContents(textureId);
         }
 
-        // FIXME: This is temporary until WebGL layers stop changing the current
-        // context.
-        if (layer->ownsTexture())
-            makeContextCurrent();
-
         if (layer->doubleSided())
             glDisable(GL_CULL_FACE);
         else

@@ -172,6 +172,8 @@ public:
     static void setShaderProgramId(unsigned shaderProgramId) { m_shaderProgramId = shaderProgramId; }
     virtual unsigned shaderProgramId() { return m_shaderProgramId; }
 
+    void setOwner(GraphicsLayerChromium* owner) { m_owner = owner; }
+
 protected:
     GraphicsLayerChromium* m_owner;
     LayerChromium(GraphicsLayerChromium* owner);

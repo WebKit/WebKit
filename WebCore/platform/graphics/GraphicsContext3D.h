@@ -436,9 +436,7 @@ namespace WebCore {
         PlatformGraphicsContext3D platformGraphicsContext3D() const;
         Platform3DObject platformTexture() const;
 #if USE(ACCELERATED_COMPOSITING)
-        // FIXME: Stubbed out for now. Must be implemented to get WebGL working with
-        // accelerated compositing.
-        PlatformLayer* platformLayer() const { return 0; }
+        PlatformLayer* platformLayer() const;
 #endif
 #elif PLATFORM(QT)
         PlatformGraphicsContext3D platformGraphicsContext3D();
@@ -455,7 +453,7 @@ namespace WebCore {
 #endif
         void makeContextCurrent();
 
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) || PLATFORM(CHROMIUM)
         // With multisampling on, blit from multisampleFBO to regular FBO.
         void prepareTexture();
 #endif

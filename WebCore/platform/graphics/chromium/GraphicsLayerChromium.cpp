@@ -53,6 +53,7 @@
 #include "PlatformString.h"
 #include "SystemTime.h"
 #include "TransformLayerChromium.h"
+#include "WebGLLayerChromium.h"
 #include <wtf/CurrentTime.h>
 #include <wtf/StringExtras.h>
 #include <wtf/text/CString.h>
@@ -332,6 +333,35 @@ void GraphicsLayerChromium::setContentsToImage(Image* image)
     if (childrenChanged)
         updateSublayerList();
 }
+
+#if ENABLE(3D_CANVAS)
+void GraphicsLayerChromium::setContentsToWebGL(PlatformLayer* platformLayer)
+{
+    bool childrenChanged = false;
+    if (platformLayer) {
+        if (!m_contentsLayer.get() || m_contentsLayerPurpose != ContentsLayerForWebGL) {
+            WebGLLayerChromium* webGLLayer = static_cast<WebGLLayerChromium*>(platformLayer);
+            setupContentsLayer(webGLLayer);
+            m_contentsLayer = webGLLayer;
+            m_contentsLayerPurpose = ContentsLayerForWebGL;
+            childrenChanged = true;
+        }
+        platformLayer->setOwner(this);
+        platformLayer->setNeedsDisplay();
+        updateContentsRect();
+    } else {
+        if (m_contentsLayer) {
+            childrenChanged = true;
+
+            // The old contents layer will be removed via updateSublayerList.
+            m_contentsLayer = 0;
+        }
+    }
+
+    if (childrenChanged)
+        updateSublayerList();
+}
+#endif
 
 void GraphicsLayerChromium::setContentsToVideo(PlatformLayer* videoLayer)
 {

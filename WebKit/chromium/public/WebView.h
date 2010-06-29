@@ -42,6 +42,7 @@ class WebDevToolsAgentClient;
 class WebDragData;
 class WebFrame;
 class WebFrameClient;
+class WebGLES2Context;
 class WebNode;
 class WebSettings;
 class WebString;
@@ -292,6 +293,12 @@ public:
     // to suspend script callbacks and resource loads.
     WEBKIT_API static void willEnterModalLoop();
     WEBKIT_API static void didExitModalLoop();
+
+    // GPU acceleration support --------------------------------------------
+
+    // Returns the GLES2Context associated with this WebView. One will be
+    // created if it doesn't already exist.
+    virtual WebGLES2Context* gles2Context() = 0;
 
 protected:
     ~WebView() {}

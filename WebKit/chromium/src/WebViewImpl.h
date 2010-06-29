@@ -188,6 +188,7 @@ public:
                                bool runAtStart);
     virtual void addUserStyleSheet(const WebString& sourceCode);
     virtual void removeAllUserContent();
+    virtual WebGLES2Context* gles2Context();
 
     // WebViewImpl
 
@@ -325,10 +326,6 @@ public:
     static bool mapKeyCodeForScroll(int keyCode,
                                    WebCore::ScrollDirection* scrollDirection,
                                    WebCore::ScrollGranularity* scrollGranularity);
-
-    // Returns the GLES2Context associated with this WebView. One will be created
-    // if it doesn't already exist.
-    WebGLES2Context* gles2Context();
 
 private:
     friend class WebView;  // So WebView::Create can call our constructor

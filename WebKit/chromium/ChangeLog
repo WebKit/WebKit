@@ -1,3 +1,37 @@
+2010-06-29  Vangelis Kokkevis  <vangelis@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [Chromium] Hooking up GraphicsContext3D to the gpu compositor.
+        GraphicsContext3DInternal is now initialized with a pointer to the HostWindow
+        that corresponds to the WebView containing the context. The initializer
+        forces a WebGLES2Context to be created for the WebView (if one doesn't already
+        exist) and uses the view's GL context as a parent to the GL context created
+        for WebGL. This allows the compositor to read the texture associated with 
+        WebGL's frame buffer. We also plumb though GraphicsContext3D's prepareTexture
+        and platformLayer methods which are required by the compositor code.
+        https://bugs.webkit.org/show_bug.cgi?id=41243
+
+        * public/WebGraphicsContext3D.h:
+        * public/WebView.h:
+            Made gles2Context() a virtual method on WebView instead of WebViewImpl
+            to allow access to it from GraphicsContext3DInternal::initialize().
+        * src/GraphicsContext3D.cpp:
+        (WebCore::GraphicsContext3DInternal::initialize):
+        (WebCore::GraphicsContext3DInternal::platformGraphicsContext3D):
+        (WebCore::GraphicsContext3DInternal::platformTexture):
+        (WebCore::GraphicsContext3DInternal::prepareTexture):
+        (WebCore::GraphicsContext3DInternal::platformLayer):
+        (WebCore::GraphicsContext3D::create):
+        (WebCore::GraphicsContext3D::prepareTexture):
+        (WebCore::GraphicsContext3D::platformLayer):
+        * src/WebGraphicsContext3DDefaultImpl.cpp:
+        (WebKit::WebGraphicsContext3DDefaultImpl::initialize):
+        (WebKit::WebGraphicsContext3DDefaultImpl::getPlatformTextureId):
+        (WebKit::WebGraphicsContext3DDefaultImpl::prepareTexture):
+        * src/WebGraphicsContext3DDefaultImpl.h:
+        * src/WebViewImpl.h:
+
 2010-06-29  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Yury Semikhatsky.

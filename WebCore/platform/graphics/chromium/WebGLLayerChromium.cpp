@@ -34,9 +34,17 @@
 
 #include "WebGLLayerChromium.h"
 
+#include "GraphicsContext3D.h"
+#include <GLES2/gl2.h>
+
 namespace WebCore {
 
 unsigned WebGLLayerChromium::m_shaderProgramId = 0;
+
+PassRefPtr<WebGLLayerChromium> WebGLLayerChromium::create(GraphicsLayerChromium* owner)
+{
+    return adoptRef(new WebGLLayerChromium(owner));
+}
 
 WebGLLayerChromium::WebGLLayerChromium(GraphicsLayerChromium* owner)
     : LayerChromium(owner)
@@ -53,12 +61,33 @@ unsigned WebGLLayerChromium::textureId()
 
 void WebGLLayerChromium::updateTextureContents(unsigned textureId)
 {
-    // FIXME: Implement
+    ASSERT(textureId == m_textureId);
+    ASSERT(m_context);
+    if (m_textureChanged) {
+        glBindTexture(GL_TEXTURE_2D, m_textureId);
+        // Set the min-mag filters to linear and wrap modes to GL_CLAMP_TO_EDGE
+        // to get around NPOT texture limitations of GLES.
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        m_textureChanged = false;
+    }
+    // Update the contents of the texture used by the compositor.
+    if (m_contentsDirty) {
+        m_context->prepareTexture();
+        m_contentsDirty = false;
+    }
 }
 
 void WebGLLayerChromium::setContext(const GraphicsContext3D* context)
 {
-    // FIXME: Implement
+    m_context = const_cast<GraphicsContext3D*>(context);
+
+    unsigned int textureId = m_context->platformTexture();
+    if (textureId != m_textureId)
+        m_textureChanged = true;
+    m_textureId = textureId;
 }
 
 }

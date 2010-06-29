@@ -40,6 +40,8 @@ namespace WebKit {
 // Typedef for server-side objects like OpenGL textures and program objects.
 typedef unsigned int WebGLId;
 
+class WebView;
+
 // This interface abstracts the operations performed by the
 // GraphicsContext3D in order to implement WebGL. Nearly all of the
 // methods exposed on this interface map directly to entry points in
@@ -81,7 +83,7 @@ public:
 
     // Initializes the graphics context; should be the first operation performed
     // on newly-constructed instances. Returns true on success.
-    virtual bool initialize(Attributes) = 0;
+    virtual bool initialize(Attributes, WebView*) = 0;
 
     // Makes the OpenGL context current on the current thread. Returns true on
     // success.
@@ -107,6 +109,15 @@ public:
     // expected that the storage for "pixels" covers (4 * width * height) bytes.
     // Returns true on success.
     virtual bool readBackFramebuffer(unsigned char* pixels, size_t bufferSize) = 0;
+
+    // Returns the id of the texture which is used for storing the contents of
+    // the framebuffer associated with this context. This texture is accessible
+    // by the gpu-based page compositor.
+    virtual unsigned getPlatformTextureId() = 0;
+
+    // Copies the contents of the off-screen render target used by the WebGL
+    // context to the corresponding texture used by the compositor.
+    virtual void prepareTexture() = 0;
 
     // Synthesizes an OpenGL error which will be returned from a
     // later call to getError. This is used to emulate OpenGL ES

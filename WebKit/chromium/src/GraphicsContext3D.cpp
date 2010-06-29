@@ -35,6 +35,8 @@
 #include "GraphicsContext3D.h"
 
 #include "CachedImage.h"
+#include "Chrome.h"
+#include "ChromeClientImpl.h"
 #include "HTMLCanvasElement.h"
 #include "HTMLImageElement.h"
 #include "ImageBuffer.h"
@@ -50,10 +52,12 @@
 #include "WebGLShader.h"
 #include "WebGLTexture.h"
 #include "Uint8Array.h"
+#include "WebGLLayerChromium.h"
 #include "WebGraphicsContext3D.h"
 #include "WebGraphicsContext3DDefaultImpl.h"
 #include "WebKit.h"
 #include "WebKitClient.h"
+#include "WebViewImpl.h"
 
 #include <stdio.h>
 #include <wtf/FastMalloc.h>
@@ -97,7 +101,7 @@ public:
     GraphicsContext3DInternal();
     ~GraphicsContext3DInternal();
 
-    bool initialize(GraphicsContext3D::Attributes attrs);
+    bool initialize(GraphicsContext3D::Attributes attrs, HostWindow* hostWindow);
 
     PlatformGraphicsContext3D platformGraphicsContext3D() const;
     Platform3DObject platformTexture() const;
@@ -111,6 +115,11 @@ public:
     void beginPaint(WebGLRenderingContext* context);
     void endPaint();
 
+    void prepareTexture();
+
+#if USE(ACCELERATED_COMPOSITING)
+    WebGLLayerChromium* platformLayer() const;
+#endif
     bool isGLES2Compliant() const;
 
     //----------------------------------------------------------------------
@@ -297,6 +306,9 @@ public:
 
 private:
     OwnPtr<WebKit::WebGraphicsContext3D> m_impl;
+#if USE(ACCELERATED_COMPOSITING)
+    RefPtr<WebGLLayerChromium> m_compositingLayer;
+#endif
 #if PLATFORM(SKIA)
     // If the width and height of the Canvas's backing store don't
     // match those that we were given in the most recent call to
@@ -329,7 +341,8 @@ GraphicsContext3DInternal::~GraphicsContext3DInternal()
 #endif
 }
 
-bool GraphicsContext3DInternal::initialize(GraphicsContext3D::Attributes attrs)
+bool GraphicsContext3DInternal::initialize(GraphicsContext3D::Attributes attrs,
+                                           HostWindow* hostWindow)
 {
     WebKit::WebGraphicsContext3D::Attributes webAttributes;
     webAttributes.alpha = attrs.alpha;
@@ -340,23 +353,47 @@ bool GraphicsContext3DInternal::initialize(GraphicsContext3D::Attributes attrs)
     WebKit::WebGraphicsContext3D* webContext = WebKit::webKitClient()->createGraphicsContext3D();
     if (!webContext)
         return false;
-    if (!webContext->initialize(webAttributes)) {
+
+    Chrome* chrome = static_cast<Chrome*>(hostWindow);
+    WebKit::ChromeClientImpl* chromeClientImpl = static_cast<WebKit::ChromeClientImpl*>(chrome->client());
+
+    WebKit::WebViewImpl* webView = chromeClientImpl->webView();
+
+    if (!webView)
+        return false;
+    if (!webContext->initialize(webAttributes, webView)) {
         delete webContext;
         return false;
     }
     m_impl.set(webContext);
+
+#if USE(ACCELERATED_COMPOSITING)
+    m_compositingLayer = WebGLLayerChromium::create(0);
+#endif
     return true;
 }
 
 PlatformGraphicsContext3D GraphicsContext3DInternal::platformGraphicsContext3D() const
 {
-    return 0;
+    return m_impl.get();
 }
 
 Platform3DObject GraphicsContext3DInternal::platformTexture() const
 {
-    return 0;
+    return m_impl->getPlatformTextureId();
 }
+
+void GraphicsContext3DInternal::prepareTexture()
+{
+    m_impl->prepareTexture();
+}
+
+#if USE(ACCELERATED_COMPOSITING)
+WebGLLayerChromium* GraphicsContext3DInternal::platformLayer() const
+{
+    return m_compositingLayer.get();
+}
+#endif
 
 void GraphicsContext3DInternal::beginPaint(WebGLRenderingContext* context)
 {
@@ -1066,7 +1103,7 @@ GraphicsContext3D::~GraphicsContext3D()
 PassOwnPtr<GraphicsContext3D> GraphicsContext3D::create(GraphicsContext3D::Attributes attrs, HostWindow* hostWindow)
 {
     GraphicsContext3DInternal* internal = new GraphicsContext3DInternal();
-    if (!internal->initialize(attrs)) {
+    if (!internal->initialize(attrs, hostWindow)) {
         delete internal;
         return 0;
     }
@@ -1084,6 +1121,20 @@ Platform3DObject GraphicsContext3D::platformTexture() const
 {
     return m_internal->platformTexture();
 }
+
+void GraphicsContext3D::prepareTexture()
+{
+    return m_internal->prepareTexture();
+}
+
+#if USE(ACCELERATED_COMPOSITING)
+PlatformLayer* GraphicsContext3D::platformLayer() const
+{
+    WebGLLayerChromium* webGLLayer = m_internal->platformLayer();
+    webGLLayer->setContext(this);
+    return webGLLayer;
+}
+#endif
 
 DELEGATE_TO_INTERNAL(makeContextCurrent)
 DELEGATE_TO_INTERNAL_1R(sizeInBytes, int, int)
