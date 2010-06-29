@@ -1,3 +1,19 @@
+2010-06-29  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        uniformmatrix* should generate INVALID_VALUE with transpose = true
+        https://bugs.webkit.org/show_bug.cgi?id=41235
+
+        Test: fast/canvas/webgl/gl-uniformmatrix4fv.html
+
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::uniformMatrix2fv): Call validateUniformMatrixParameters instead.
+        (WebCore::WebGLRenderingContext::uniformMatrix3fv): Ditto.
+        (WebCore::WebGLRenderingContext::uniformMatrix4fv): Ditto.
+        (WebCore::WebGLRenderingContext::validateUniformMatrixParameters): Validate input parameters for uniformMatrix*().
+        * html/canvas/WebGLRenderingContext.h: Declare validateUniformMatrixParameters().
+
 2010-06-29  Kenneth Russell  <kbr@google.com>
 
         Reviewed by Dimitri Glazkov.

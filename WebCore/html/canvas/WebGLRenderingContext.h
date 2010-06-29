@@ -463,6 +463,9 @@ class WebKitCSSMatrix;
         // Helper function to validate a GL capability.
         bool validateCapability(unsigned long);
 
+        // Helper function to validate input parameters for uniformMatrix functions.
+        bool validateUniformMatrixParameters(const WebGLUniformLocation* location, bool transpose, void* v);
+
         friend class WebGLStateRestorer;
     };
 

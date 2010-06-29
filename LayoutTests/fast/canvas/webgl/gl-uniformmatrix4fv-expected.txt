@@ -1,0 +1,17 @@
+This test ensures WebGL implementations handle uniformMatrix in a OpenGL ES 2.0 spec compliant way
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Checking gl.uniformMatrix.
+PASS can call uniformMatrix2fvwith transpose = false
+PASS uniformMatrix2fv should return INVALID_VALUE with transpose = true
+PASS can call uniformMatrix3fvwith transpose = false
+PASS uniformMatrix3fv should return INVALID_VALUE with transpose = true
+PASS can call uniformMatrix4fvwith transpose = false
+PASS uniformMatrix4fv should return INVALID_VALUE with transpose = true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
