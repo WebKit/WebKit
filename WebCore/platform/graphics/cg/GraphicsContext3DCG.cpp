@@ -100,7 +100,7 @@ bool GraphicsContext3D::getImageData(Image* image,
     if (!premultiplyAlpha && hasAlphaChannel)
         // FIXME: must fetch the image data before the premultiplication step.
         neededAlphaOp = kAlphaDoUnmultiply;
-    return packPixels(tempVector.data(), kSourceFormatRGBA8, width, height,
+    return packPixels(tempVector.data(), kSourceFormatRGBA8, width, height, 0,
                       format, type, neededAlphaOp, outputVector.data());
 }
 

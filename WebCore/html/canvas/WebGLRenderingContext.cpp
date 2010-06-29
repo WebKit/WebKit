@@ -1993,9 +1993,27 @@ void WebGLRenderingContext::texImage2D(unsigned target, unsigned level, unsigned
                                        unsigned width, unsigned height, unsigned border,
                                        unsigned format, unsigned type, ArrayBufferView* pixels, ExceptionCode& ec)
 {
-    // FIXME: Need to make sure passed buffer has enough bytes to define the texture
+    if (!validateTexFuncData(width, height, format, type, pixels))
+        return;
+    void* data = pixels ? pixels->baseAddress() : 0;
+    Vector<uint8_t> tempData;
+    bool changeUnpackAlignment = false;
+    if (pixels && (m_unpackFlipY || m_unpackPremultiplyAlpha)) {
+        if (!m_context->extractTextureData(width, height, format, type,
+                                           m_unpackAlignment,
+                                           m_unpackFlipY, m_unpackPremultiplyAlpha,
+                                           pixels,
+                                           tempData))
+            return;
+        data = tempData.data();
+        changeUnpackAlignment = true;
+    }
+    if (changeUnpackAlignment)
+        m_context->pixelStorei(GraphicsContext3D::UNPACK_ALIGNMENT, 1);
     texImage2DBase(target, level, internalformat, width, height, border,
-                   format, type, pixels ? pixels->baseAddress() : 0, ec);
+                   format, type, data, ec);
+    if (changeUnpackAlignment)
+        m_context->pixelStorei(GraphicsContext3D::UNPACK_ALIGNMENT, m_unpackAlignment);
 }
 
 void WebGLRenderingContext::texImage2D(unsigned target, unsigned level, unsigned internalformat,
@@ -2249,8 +2267,26 @@ void WebGLRenderingContext::texSubImage2D(unsigned target, unsigned level, unsig
                                           unsigned width, unsigned height,
                                           unsigned format, unsigned type, ArrayBufferView* pixels, ExceptionCode& ec)
 {
-    // FIXME: Need to make sure passed buffer has enough bytes to define the texture
-    texSubImage2DBase(target, level, xoffset, yoffset, width, height, format, type, pixels ? pixels->baseAddress() : 0, ec);
+    if (!validateTexFuncData(width, height, format, type, pixels))
+        return;
+    void* data = pixels ? pixels->baseAddress() : 0;
+    Vector<uint8_t> tempData;
+    bool changeUnpackAlignment = false;
+    if (pixels && (m_unpackFlipY || m_unpackPremultiplyAlpha)) {
+        if (!m_context->extractTextureData(width, height, format, type,
+                                           m_unpackAlignment,
+                                           m_unpackFlipY, m_unpackPremultiplyAlpha,
+                                           pixels,
+                                           tempData))
+            return;
+        data = tempData.data();
+        changeUnpackAlignment = true;
+    }
+    if (changeUnpackAlignment)
+        m_context->pixelStorei(GraphicsContext3D::UNPACK_ALIGNMENT, 1);
+    texSubImage2DBase(target, level, xoffset, yoffset, width, height, format, type, data, ec);
+    if (changeUnpackAlignment)
+        m_context->pixelStorei(GraphicsContext3D::UNPACK_ALIGNMENT, m_unpackAlignment);
 }
 
 void WebGLRenderingContext::texSubImage2D(unsigned target, unsigned level, unsigned xoffset, unsigned yoffset,
@@ -3483,6 +3519,56 @@ bool WebGLRenderingContext::validateTexFuncParameters(unsigned long target, long
         return false;
     }
 
+    return true;
+}
+
+bool WebGLRenderingContext::validateTexFuncData(long width, long height,
+                                                unsigned long format, unsigned long type,
+                                                ArrayBufferView* pixels)
+{
+    if (!pixels)
+        return true;
+
+    if (!validateTexFuncFormatAndType(format, type))
+        return false;
+
+    switch (type) {
+    case GraphicsContext3D::UNSIGNED_BYTE:
+        if (!pixels->isUnsignedByteArray()) {
+            m_context->synthesizeGLError(GraphicsContext3D::INVALID_OPERATION);
+            return false;
+        }
+        break;
+    case GraphicsContext3D::UNSIGNED_SHORT_5_6_5:
+    case GraphicsContext3D::UNSIGNED_SHORT_4_4_4_4:
+    case GraphicsContext3D::UNSIGNED_SHORT_5_5_5_1:
+        if (!pixels->isUnsignedShortArray()) {
+            m_context->synthesizeGLError(GraphicsContext3D::INVALID_OPERATION);
+            return false;
+        }
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+    }
+
+    unsigned long componentsPerPixel, bytesPerComponent;
+    if (!m_context->computeFormatAndTypeParameters(format, type, &componentsPerPixel, &bytesPerComponent)) {
+        m_context->synthesizeGLError(GraphicsContext3D::INVALID_ENUM);
+        return false;
+    }
+
+    if (!width || !height)
+        return true;
+    unsigned int validRowBytes = width * componentsPerPixel * bytesPerComponent;
+    unsigned int totalRowBytes = validRowBytes;
+    unsigned int remainder = validRowBytes % m_unpackAlignment;
+    if (remainder)
+        totalRowBytes += (m_unpackAlignment - remainder);
+    unsigned int totalBytesRequired = (height - 1) * totalRowBytes + validRowBytes;
+    if (pixels->byteLength() < totalBytesRequired) {
+        m_context->synthesizeGLError(GraphicsContext3D::INVALID_OPERATION);
+        return false;
+    }
     return true;
 }
 

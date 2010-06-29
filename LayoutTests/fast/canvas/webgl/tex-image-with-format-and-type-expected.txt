@@ -1,8 +1,10 @@
-Verify texImage2D and texSubImage2D code paths taking HTML data with all format/type combinations
+Verify texImage2D and texSubImage2D code paths taking both HTML and user-specified data with all format/type combinations
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
-Regression test for https://bugs.webkit.org/show_bug.cgi?id=40319 : Implement format conversions in texImage2D and texSubImage2D taking HTML data
+Regression test for:
+https://bugs.webkit.org/show_bug.cgi?id=40319 : Implement format conversions in texImage2D and texSubImage2D taking HTML data
+https://bugs.webkit.org/show_bug.cgi?id=40398 : Support UNPACK_FLIP_Y_WEBGL and UNPACK_PREMULTIPLY_ALPHA_WEBGL for texImage2D taking ArrayBufferView
 Testing texImage2D with Image at 256x1
 PASS RGBA/UNSIGNED_BYTE should maintain full precision of data
 Testing texImage2D with Image at 256x1
@@ -130,6 +132,22 @@ PASS UNPACK_PREMULTIPLY_ALPHA_WEBGL with ALPHA/UNSIGNED_BYTE
 Testing texSubImage2D with ImageData at 256x1
 PASS UNPACK_PREMULTIPLY_ALPHA_WEBGL with LUMINANCE/UNSIGNED_BYTE
 Testing texSubImage2D with ImageData at 256x1
+PASS UNPACK_PREMULTIPLY_ALPHA_WEBGL with LUMINANCE_ALPHA/UNSIGNED_BYTE
+Testing texImage2D with raw data at 256x1
+PASS UNPACK_PREMULTIPLY_ALPHA_WEBGL with RGBA/UNSIGNED_BYTE
+Testing texImage2D with raw data at 256x1
+PASS UNPACK_PREMULTIPLY_ALPHA_WEBGL with RGBA/UNSIGNED_SHORT_4_4_4_4
+Testing texImage2D with raw data at 256x1
+PASS UNPACK_PREMULTIPLY_ALPHA_WEBGL with RGBA/UNSIGNED_SHORT_5_5_5_1
+Testing texImage2D with raw data at 256x1
+PASS UNPACK_PREMULTIPLY_ALPHA_WEBGL with LUMINANCE_ALPHA/UNSIGNED_BYTE
+Testing texSubImage2D with raw data at 256x1
+PASS UNPACK_PREMULTIPLY_ALPHA_WEBGL with RGBA/UNSIGNED_BYTE
+Testing texSubImage2D with raw data at 256x1
+PASS UNPACK_PREMULTIPLY_ALPHA_WEBGL with RGBA/UNSIGNED_SHORT_4_4_4_4
+Testing texSubImage2D with raw data at 256x1
+PASS UNPACK_PREMULTIPLY_ALPHA_WEBGL with RGBA/UNSIGNED_SHORT_5_5_5_1
+Testing texSubImage2D with raw data at 256x1
 PASS UNPACK_PREMULTIPLY_ALPHA_WEBGL with LUMINANCE_ALPHA/UNSIGNED_BYTE
 PASS successfullyParsed is true
 

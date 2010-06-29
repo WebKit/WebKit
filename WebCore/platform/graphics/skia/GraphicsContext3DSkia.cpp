@@ -63,7 +63,7 @@ bool GraphicsContext3D::getImageData(Image* image,
     if (!premultiplyAlpha)
         // FIXME: must fetch the image data before the premultiplication step
         neededAlphaOp = kAlphaDoUnmultiply;
-    return packPixels(pixels, kSourceFormatBGRA8, skiaImage->width(), height,
+    return packPixels(pixels, kSourceFormatBGRA8, skiaImage->width(), height, 0,
                       format, type, neededAlphaOp, outputVector.data());
 }
 

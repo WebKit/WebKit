@@ -1637,7 +1637,7 @@ bool GraphicsContext3D::getImageData(Image* image,
         neededAlphaOp = kAlphaDoUnmultiply;
     QImage nativeImage = nativePixmap->toImage().convertToFormat(QImage::Format_ARGB32);
     outputVector.resize(nativeImage.byteCount());
-    return packPixels(nativeImage.rgbSwapped().bits(), kSourceFormatRGBA8, image->width(), image->height(),
+    return packPixels(nativeImage.rgbSwapped().bits(), kSourceFormatRGBA8, image->width(), image->height(), 0,
                       format, type, neededAlphaOp, outputVector.data());
 }
 

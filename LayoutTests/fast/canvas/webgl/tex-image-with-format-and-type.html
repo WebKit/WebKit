@@ -38,6 +38,18 @@ var successfullyParsed = false;
 
 var testCases = [];
 
+var DataMode = {
+    IMAGE: 0,
+    IMAGE_DATA: 1,
+
+    NUM_HTML_MODES: 2,
+
+    RAW_DATA: 2,
+
+    // This must remain the last mode.
+    NUM_MODES: 3
+};
+
 function init()
 {
     if (window.layoutTestController) {
@@ -46,9 +58,11 @@ function init()
         layoutTestController.waitUntilDone();
     }
 
-    description('Verify texImage2D and texSubImage2D code paths taking HTML data with all format/type combinations');
+    description('Verify texImage2D and texSubImage2D code paths taking both HTML and user-specified data with all format/type combinations');
 
-    debug('Regression test for <a href="https://bugs.webkit.org/show_bug.cgi?id=40319">https://bugs.webkit.org/show_bug.cgi?id=40319</a> : <code>Implement format conversions in texImage2D and texSubImage2D taking HTML data</code>');
+    debug('Regression test for:');
+    debug('<a href="https://bugs.webkit.org/show_bug.cgi?id=40319">https://bugs.webkit.org/show_bug.cgi?id=40319</a> : <code>Implement format conversions in texImage2D and texSubImage2D taking HTML data</code>');
+    debug('<a href="https://bugs.webkit.org/show_bug.cgi?id=40398">https://bugs.webkit.org/show_bug.cgi?id=40398</a> : <code>Support UNPACK_FLIP_Y_WEBGL and UNPACK_PREMULTIPLY_ALPHA_WEBGL for texImage2D taking ArrayBufferView</code>');
 
     gl = initWebGL("example", "vshader", "fshader", [ "g_Position", "g_TexCoord0" ], [ 0, 0, 0, 1 ], 1);
     gl.disable(gl.BLEND);
@@ -91,10 +105,10 @@ function initializeTests()
 {
     // Verify that uploading to packed pixel formats performs the
     // required conversion and associated loss of precision.
-    for (var useImageData = 0; useImageData < 2; ++useImageData) {
+    for (var dataMode = 0; dataMode < DataMode.NUM_HTML_MODES; ++dataMode) {
         for (var useTexSubImage2D = 0; useTexSubImage2D < 2; ++useTexSubImage2D) {
             testCases.push({
-                useImageData: !!useImageData,
+                dataMode: dataMode,
                 useTexSubImage2D: !!useTexSubImage2D,
                 width: 256,
                 height: 1,
@@ -108,7 +122,7 @@ function initializeTests()
                 description: "RGBA/UNSIGNED_BYTE should maintain full precision of data"
             });
             testCases.push({
-                useImageData: !!useImageData,
+                dataMode: dataMode,
                 useTexSubImage2D: !!useTexSubImage2D,
                 width: 256,
                 height: 1,
@@ -122,7 +136,7 @@ function initializeTests()
                 description: "RGBA/UNSIGNED_SHORT_4_4_4_4 must drop low four bits of precision"
             });
             testCases.push({
-                useImageData: !!useImageData,
+                dataMode: dataMode,
                 useTexSubImage2D: !!useTexSubImage2D,
                 width: 256,
                 height: 1,
@@ -136,7 +150,7 @@ function initializeTests()
                 description: "RGBA/UNSIGNED_SHORT_5_5_5_1 must drop low three bits of precision"
             });
             testCases.push({
-                useImageData: !!useImageData,
+                dataMode: dataMode,
                 useTexSubImage2D: !!useTexSubImage2D,
                 width: 256,
                 height: 1,
@@ -150,7 +164,7 @@ function initializeTests()
                 description: "RGB/UNSIGNED_BYTE should maintain full precision of data"
             });
             testCases.push({
-                useImageData: !!useImageData,
+                dataMode: dataMode,
                 useTexSubImage2D: !!useTexSubImage2D,
                 width: 256,
                 height: 1,
@@ -164,7 +178,7 @@ function initializeTests()
                 description: "RGB/UNSIGNED_SHORT_5_6_5 must drop low two or three bits of precision"
             });
             testCases.push({
-                useImageData: !!useImageData,
+                dataMode: dataMode,
                 useTexSubImage2D: !!useTexSubImage2D,
                 width: 256,
                 height: 1,
@@ -178,7 +192,7 @@ function initializeTests()
                 description: "ALPHA/UNSIGNED_BYTE should maintain full precision of data"
             });
             testCases.push({
-                useImageData: !!useImageData,
+                dataMode: dataMode,
                 useTexSubImage2D: !!useTexSubImage2D,
                 width: 256,
                 height: 1,
@@ -192,7 +206,7 @@ function initializeTests()
                 description: "LUMINANCE/UNSIGNED_BYTE should maintain full precision of data"
             });
             testCases.push({
-                useImageData: !!useImageData,
+                dataMode: dataMode,
                 useTexSubImage2D: !!useTexSubImage2D,
                 width: 256,
                 height: 1,
@@ -211,10 +225,10 @@ function initializeTests()
     // Verify that setting the UNPACK_PREMULTIPLY_ALPHA_WEBGL pixel
     // store parameter and sending down a zero alpha causes the color
     // channels to go to zero.
-    for (var useImageData = 0; useImageData < 2; ++useImageData) {
+    for (var dataMode = 0; dataMode < DataMode.NUM_MODES; ++dataMode) {
         for (var useTexSubImage2D = 0; useTexSubImage2D < 2; ++useTexSubImage2D) {
             testCases.push({
-                useImageData: !!useImageData,
+                dataMode: dataMode,
                 useTexSubImage2D: !!useTexSubImage2D,
                 width: 256,
                 height: 1,
@@ -226,7 +240,7 @@ function initializeTests()
                 description: "UNPACK_PREMULTIPLY_ALPHA_WEBGL with RGBA/UNSIGNED_BYTE"
             });
             testCases.push({
-                useImageData: !!useImageData,
+                dataMode: dataMode,
                 useTexSubImage2D: !!useTexSubImage2D,
                 width: 256,
                 height: 1,
@@ -238,7 +252,7 @@ function initializeTests()
                 description: "UNPACK_PREMULTIPLY_ALPHA_WEBGL with RGBA/UNSIGNED_SHORT_4_4_4_4"
             });
             testCases.push({
-                useImageData: !!useImageData,
+                dataMode: dataMode,
                 useTexSubImage2D: !!useTexSubImage2D,
                 width: 256,
                 height: 1,
@@ -249,56 +263,61 @@ function initializeTests()
                 verifier: colorChannelsAreZero,
                 description: "UNPACK_PREMULTIPLY_ALPHA_WEBGL with RGBA/UNSIGNED_SHORT_5_5_5_1"
             });
+            // The following few tests are invalid for the raw data
+            // mode because there is either no alpha channel or no
+            // separate alpha channel.
+            if (dataMode != DataMode.RAW_DATA) {
+                testCases.push({
+                    dataMode: dataMode,
+                    useTexSubImage2D: !!useTexSubImage2D,
+                    width: 256,
+                    height: 1,
+                    generator: generateTransparentGrayscaleRamp,
+                    premultiplyAlpha: true,
+                    format: gl.RGB,
+                    type: gl.UNSIGNED_BYTE,
+                    verifier: colorChannelsAreZero,
+                    description: "UNPACK_PREMULTIPLY_ALPHA_WEBGL with RGB/UNSIGNED_BYTE"
+                });
+                testCases.push({
+                    dataMode: dataMode,
+                    useTexSubImage2D: !!useTexSubImage2D,
+                    width: 256,
+                    height: 1,
+                    generator: generateTransparentGrayscaleRamp,
+                    premultiplyAlpha: true,
+                    format: gl.RGB,
+                    type: gl.UNSIGNED_SHORT_5_6_5,
+                    verifier: colorChannelsAreZero,
+                    description: "UNPACK_PREMULTIPLY_ALPHA_WEBGL with RGB/UNSIGNED_SHORT_5_6_5"
+                });
+                testCases.push({
+                    dataMode: dataMode,
+                    useTexSubImage2D: !!useTexSubImage2D,
+                    width: 256,
+                    height: 1,
+                    generator: generateTransparentGrayscaleRamp,
+                    premultiplyAlpha: true,
+                    format: gl.ALPHA,
+                    type: gl.UNSIGNED_BYTE,
+                    verifier: colorChannelsAreZero,
+                    description: "UNPACK_PREMULTIPLY_ALPHA_WEBGL with ALPHA/UNSIGNED_BYTE"
+                });
+                testCases.push({
+                    dataMode: dataMode,
+                    useTexSubImage2D: !!useTexSubImage2D,
+                    width: 256,
+                    height: 1,
+                    generator: generateTransparentGrayscaleRamp,
+                    premultiplyAlpha: true,
+                    format: gl.LUMINANCE,
+                    type: gl.UNSIGNED_BYTE,
+                    verifier: colorChannelsAreZero,
+                    description: "UNPACK_PREMULTIPLY_ALPHA_WEBGL with LUMINANCE/UNSIGNED_BYTE"
+                });
+            }
             testCases.push({
-                useImageData: !!useImageData,
-                useTexSubImage2D: !!useTexSubImage2D,
-                width: 256,
-                height: 1,
-                generator: generateTransparentGrayscaleRamp,
-                premultiplyAlpha: true,
-                format: gl.RGB,
-                type: gl.UNSIGNED_BYTE,
-                verifier: colorChannelsAreZero,
-                description: "UNPACK_PREMULTIPLY_ALPHA_WEBGL with RGB/UNSIGNED_BYTE"
-            });
-            testCases.push({
-                useImageData: !!useImageData,
-                useTexSubImage2D: !!useTexSubImage2D,
-                width: 256,
-                height: 1,
-                generator: generateTransparentGrayscaleRamp,
-                premultiplyAlpha: true,
-                format: gl.RGB,
-                type: gl.UNSIGNED_SHORT_5_6_5,
-                verifier: colorChannelsAreZero,
-                description: "UNPACK_PREMULTIPLY_ALPHA_WEBGL with RGB/UNSIGNED_SHORT_5_6_5"
-            });
-            testCases.push({
-                useImageData: !!useImageData,
-                useTexSubImage2D: !!useTexSubImage2D,
-                width: 256,
-                height: 1,
-                generator: generateTransparentGrayscaleRamp,
-                premultiplyAlpha: true,
-                format: gl.ALPHA,
-                type: gl.UNSIGNED_BYTE,
-                verifier: colorChannelsAreZero,
-                description: "UNPACK_PREMULTIPLY_ALPHA_WEBGL with ALPHA/UNSIGNED_BYTE"
-            });
-            testCases.push({
-                useImageData: !!useImageData,
-                useTexSubImage2D: !!useTexSubImage2D,
-                width: 256,
-                height: 1,
-                generator: generateTransparentGrayscaleRamp,
-                premultiplyAlpha: true,
-                format: gl.LUMINANCE,
-                type: gl.UNSIGNED_BYTE,
-                verifier: colorChannelsAreZero,
-                description: "UNPACK_PREMULTIPLY_ALPHA_WEBGL with LUMINANCE/UNSIGNED_BYTE"
-            });
-            testCases.push({
-                useImageData: !!useImageData,
+                dataMode: dataMode,
                 useTexSubImage2D: !!useTexSubImage2D,
                 width: 256,
                 height: 1,
@@ -322,10 +341,45 @@ function generateTestData()
     for (var i = 0; i < testCases.length; i++) {
         var testCase = testCases[i];
         var wrapper = null;
-        if (testCase.useImageData)
-            wrapper = new ImageDataWrapper(testCase.width, testCase.height);
-        else
+        switch (testCase.dataMode) {
+        case DataMode.IMAGE:
             wrapper = new ImageWrapper(testCase.width, testCase.height);
+            break;
+        case DataMode.IMAGE_DATA:
+            wrapper = new ImageDataWrapper(testCase.width, testCase.height);
+            break;
+        case DataMode.RAW_DATA:
+            switch (testCase.type) {
+            case gl.UNSIGNED_BYTE:
+                switch (testCase.format) {
+                case gl.RGBA:
+                    wrapper = new RGBA8DataWrapper(testCase.width, testCase.height);
+                    break;
+                case gl.RGB:
+                    wrapper = new RGB8DataWrapper(testCase.width, testCase.height);
+                    break;
+                case gl.ALPHA:
+                    wrapper = new A8DataWrapper(testCase.width, testCase.height);
+                    break;
+                case gl.LUMINANCE:
+                    wrapper = new L8DataWrapper(testCase.width, testCase.height);
+                    break;
+                case gl.LUMINANCE_ALPHA:
+                    wrapper = new LA8DataWrapper(testCase.width, testCase.height);
+                    break;
+                }
+                break;
+            case gl.UNSIGNED_SHORT_4_4_4_4:
+                wrapper = new RGBA4444DataWrapper(testCase.width, testCase.height);
+                break;
+            case gl.UNSIGNED_SHORT_5_5_5_1:
+                wrapper = new RGBA5551DataWrapper(testCase.width, testCase.height);
+                break;
+            case gl.UNSIGNED_SHORT_5_6_5:
+                wrapper = new RGB565DataWrapper(testCase.width, testCase.height);
+                break;
+            }
+        }
         testCase.wrapper = wrapper;
         testCase.generator(wrapper);
         testCase.wrapper.generateData();
@@ -359,9 +413,20 @@ function maybeRunTests()
 
 function testCaseToString(testCase)
 {
+    var mode;
+    switch (testCase.dataMode) {
+    case DataMode.IMAGE:
+        mode = "Image";
+        break;
+    case DataMode.IMAGE_DATA:
+        mode = "ImageData";
+        break;
+    case DataMode.RAW_DATA:
+        mode = "raw data";
+        break;
+    }
     return (testCase.useTexSubImage2D ? "texSubImage2D" : "texImage2D") +
-            " with " + (testCase.useImageData ? "ImageData" : "Image") +
-            " at " + testCase.width + "x" + testCase.height;
+            " with " + mode +  " at " + testCase.width + "x" + testCase.height;
 }
 
 function runOneTest(testCase)
@@ -382,11 +447,22 @@ function runOneTest(testCase)
         // Initialize the texture to black first.
         gl.texImage2D(gl.TEXTURE_2D, 0, testCase.format, testCase.width, testCase.height, 0,
                       testCase.format, testCase.type, null);
-        gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, testCase.format, testCase.type, data);
-    } else {
-        gl.texImage2D(gl.TEXTURE_2D, 0, testCase.format, testCase.format, testCase.type, data);
     }
-
+    switch (testCase.dataMode) {
+    case DataMode.IMAGE:
+    case DataMode.IMAGE_DATA:
+        if (testCase.useTexSubImage2D)
+            gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, testCase.format, testCase.type, data);
+        else
+            gl.texImage2D(gl.TEXTURE_2D, 0, testCase.format, testCase.format, testCase.type, data);
+        break;
+    case DataMode.RAW_DATA:
+        if (testCase.useTexSubImage2D)
+            gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, testCase.width, testCase.height, testCase.format, testCase.type, data);
+        else
+            gl.texImage2D(gl.TEXTURE_2D, 0, testCase.format, testCase.width, testCase.height, 0, testCase.format, testCase.type, data);
+        break;
+    }
     // Point the uniform sampler to texture unit 0.
     gl.uniform1i(textureLoc, 0);
     // Draw the triangles.
@@ -411,7 +487,7 @@ function finish() {
 }
 
 //----------------------------------------------------------------------
-// Wrappers for programmatic construction of Image and ImageData
+// Wrappers for programmatic construction of Image, ImageData and raw texture data
 //
 
 function ImageWrapper(width, height)
@@ -471,6 +547,141 @@ ImageDataWrapper.prototype.setPixel = function(x, y, r, g, b, a) {
 ImageDataWrapper.prototype.generateData = function() {
     this.data = this.imageData_;
     maybeRunTests();
+};
+
+function TextureDataWrapper(width, height)
+{
+    this.width_ = width;
+    this.height_ = height;
+}
+
+TextureDataWrapper.prototype.getWidth = function() {
+    return this.width_;
+};
+
+TextureDataWrapper.prototype.getHeight = function() {
+    return this.height_;
+};
+
+TextureDataWrapper.prototype.generateData = function() {
+    this.data = this.data_;
+    maybeRunTests();
+};
+
+function RGBA8DataWrapper(width, height)
+{
+    TextureDataWrapper.call(this, width, height);
+    this.data_ = new Uint8Array(4 * width * height);
+}
+
+RGBA8DataWrapper.prototype = new TextureDataWrapper;
+
+RGBA8DataWrapper.prototype.setPixel = function(x, y, r, g, b, a) {
+    var index = 4 * (this.width_ * y + x);
+    this.data_[index] = r;
+    this.data_[index + 1] = g;
+    this.data_[index + 2] = b;
+    this.data_[index + 3] = a;
+};
+
+function RGBA5551DataWrapper(width, height)
+{
+    TextureDataWrapper.call(this, width, height);
+    this.data_ = new Uint16Array(width * height);
+}
+
+RGBA5551DataWrapper.prototype = new TextureDataWrapper;
+
+RGBA5551DataWrapper.prototype.setPixel = function(x, y, r, g, b, a) {
+    var value = (((r & 0xF8) << 8)
+                 | ((g & 0xF8) << 3)
+                 | ((b & 0xF8) >> 2)
+                 | (a >> 7));
+    this.data_[this.width_ * y + x] = value;
+};
+
+function RGBA4444DataWrapper(width, height)
+{
+    TextureDataWrapper.call(this, width, height);
+    this.data_ = new Uint16Array(width * height);
+}
+
+RGBA4444DataWrapper.prototype = new TextureDataWrapper;
+
+RGBA4444DataWrapper.prototype.setPixel = function(x, y, r, g, b, a) {
+    var value = (((r & 0xF0) << 8)
+                 | ((g & 0xF0) << 4)
+                 | (b & 0xF0)
+                 | (a >> 4));
+    this.data_[this.width_ * y + x] = value;
+};
+
+function RGB8DataWrapper(width, height)
+{
+    TextureDataWrapper.call(this, width, height);
+    this.data_ = new Uint8Array(3 * width * height);
+}
+
+RGB8DataWrapper.prototype = new TextureDataWrapper;
+
+RGB8DataWrapper.prototype.setPixel = function(x, y, r, g, b, a) {
+    var index = 3 * (this.width_ * y + x);
+    this.data_[index] = r;
+    this.data_[index + 1] = g;
+    this.data_[index + 2] = b;
+};
+
+function RGB565DataWrapper(width, height)
+{
+    TextureDataWrapper.call(this, width, height);
+    this.data_ = new Uint16Array(width * height);
+}
+
+RGB565DataWrapper.prototype = new TextureDataWrapper;
+
+RGB565DataWrapper.prototype.setPixel = function(x, y, r, g, b, a) {
+    var value = (((r & 0xF8) << 8)
+                 | ((g & 0xFC) << 3)
+                 | ((b & 0xF8) >> 3));
+    this.data_[this.width_ * y + x] = value;
+};
+
+function A8DataWrapper(width, height)
+{
+    TextureDataWrapper.call(this, width, height);
+    this.data_ = new Uint8Array(width * height);
+}
+
+A8DataWrapper.prototype = new TextureDataWrapper;
+
+A8DataWrapper.prototype.setPixel = function(x, y, r, g, b, a) {
+    this.data_[this.width_ * y + x] = a;
+};
+
+function L8DataWrapper(width, height)
+{
+    TextureDataWrapper.call(this, width, height);
+    this.data_ = new Uint8Array(width * height);
+}
+
+L8DataWrapper.prototype = new TextureDataWrapper;
+
+L8DataWrapper.prototype.setPixel = function(x, y, r, g, b, a) {
+    this.data_[this.width_ * y + x] = r;
+};
+
+function LA8DataWrapper(width, height)
+{
+    TextureDataWrapper.call(this, width, height);
+    this.data_ = new Uint8Array(2 * width * height);
+}
+
+LA8DataWrapper.prototype = new TextureDataWrapper;
+
+LA8DataWrapper.prototype.setPixel = function(x, y, r, g, b, a) {
+    var index = 2 * (this.width_ * y + x);
+    this.data_[index] = r;
+    this.data_[index + 1] = a;
 };
 
 //----------------------------------------------------------------------
@@ -551,8 +762,8 @@ function colorChannelsAreZero(array, threshold, numOccurrences) {
         for (var j = 0; j < 3; ++j)
             if (array[i + j] != 0) {
                 passed = false;
-                if (++numFailures < 5)
-                    debug("  array[" + i + "] should have been 0, was " + array[i]);
+                if (++numFailures <= 5)
+                    debug("  array[" + (i + j) + "] should have been 0, was " + array[i + j]);
             }
 
     return passed;
