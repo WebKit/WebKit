@@ -251,18 +251,18 @@ void HTMLTableElement::deleteRow(int index, ExceptionCode& ec)
     row->remove(ec);
 }
 
-ContainerNode* HTMLTableElement::addChild(PassRefPtr<Node> child)
+ContainerNode* HTMLTableElement::legacyParserAddChild(PassRefPtr<Node> child)
 {
     if (child->hasTagName(formTag)) {
         // First add the child.
-        HTMLElement::addChild(child);
+        HTMLElement::legacyParserAddChild(child);
 
         // Now simply return ourselves as the container to insert into.
         // This has the effect of demoting the form to a leaf and moving it safely out of the way.
         return this;
     }
 
-    return HTMLElement::addChild(child.get());
+    return HTMLElement::legacyParserAddChild(child.get());
 }
 
 bool HTMLTableElement::mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const

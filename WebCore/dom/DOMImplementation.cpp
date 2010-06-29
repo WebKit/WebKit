@@ -256,10 +256,11 @@ PassRefPtr<Document> DOMImplementation::createDocument(const String& namespaceUR
         return 0;
     }
 
+    // FIXME: Shouldn't this call appendChild instead?
     if (doctype)
-        doc->addChild(doctype);
+        doc->legacyParserAddChild(doctype);
     if (documentElement)
-        doc->addChild(documentElement.release());
+        doc->legacyParserAddChild(documentElement.release());
 
     return doc.release();
 }

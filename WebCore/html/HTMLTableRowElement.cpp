@@ -62,18 +62,18 @@ bool HTMLTableRowElement::checkDTD(const Node* newChild)
            newChild->hasTagName(formTag) || newChild->hasTagName(scriptTag);
 }
 
-ContainerNode* HTMLTableRowElement::addChild(PassRefPtr<Node> child)
+ContainerNode* HTMLTableRowElement::legacyParserAddChild(PassRefPtr<Node> child)
 {
     if (child->hasTagName(formTag)) {
         // First add the child.
-        HTMLTablePartElement::addChild(child);
+        HTMLTablePartElement::legacyParserAddChild(child);
 
         // Now simply return ourselves as the container to insert into.
         // This has the effect of demoting the form to a leaf and moving it safely out of the way.
         return this;
     }
 
-    return HTMLTablePartElement::addChild(child);
+    return HTMLTablePartElement::legacyParserAddChild(child);
 }
 
 int HTMLTableRowElement::rowIndex() const

@@ -111,7 +111,7 @@ void TextControlInnerElement::attachInnerElement(Node* parent, PassRefPtr<Render
     
     // For elements without a shadow parent, add the node to the DOM normally.
     if (!m_shadowParent)
-        parent->addChild(this);
+        parent->legacyParserAddChild(this);
     
     // Add the renderer to the render tree
     if (renderer)

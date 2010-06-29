@@ -176,7 +176,7 @@ bool XMLDocumentParser::enterText()
     ASSERT(m_bufferedText.size() == 0);
 #endif
     RefPtr<Node> newNode = Text::create(document(), "");
-    if (!m_currentNode->addChild(newNode.get()))
+    if (!m_currentNode->legacyParserAddChild(newNode.get()))
         return false;
     pushCurrentNode(newNode.get());
     return true;

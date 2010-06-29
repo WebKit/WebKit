@@ -50,8 +50,8 @@ inline HTMLKeygenElement::HTMLKeygenElement(const QualifiedName& tagName, Docume
     getSupportedKeySizes(keys);
     for (size_t i = 0; i < keys.size(); ++i) {
         RefPtr<HTMLOptionElement> option = HTMLOptionElement::create(document, this->form());
-        addChild(option);
-        option->addChild(Text::create(document, keys[i]));
+        legacyParserAddChild(option);
+        option->legacyParserAddChild(Text::create(document, keys[i]));
     }
 }
 

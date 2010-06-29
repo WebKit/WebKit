@@ -2,6 +2,45 @@
 
         Reviewed by Adam Barth.
 
+        Rename ContainerNode::addChild to legacyParserAddChild to indicate its parser-only intended use
+        https://bugs.webkit.org/show_bug.cgi?id=41324
+
+        A bunch of places in the code were calling ContainerNode::addChild.
+        I don't think they actually want to be doing that, as it has special
+        form-related handling which is part of LegacyHTMLTreeBuilder.
+
+        No functional changes, thus no tests.
+
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::legacyParserAddChild):
+        * dom/ContainerNode.h:
+        * dom/DOMImplementation.cpp:
+        (WebCore::DOMImplementation::createDocument):
+        * dom/Node.cpp:
+        (WebCore::Node::legacyParserAddChild):
+        * dom/Node.h:
+        * html/HTMLKeygenElement.cpp:
+        (WebCore::HTMLKeygenElement::HTMLKeygenElement):
+        * html/HTMLTableElement.cpp:
+        (WebCore::HTMLTableElement::legacyParserAddChild):
+        * html/HTMLTableElement.h:
+        * html/HTMLTableRowElement.cpp:
+        (WebCore::HTMLTableRowElement::legacyParserAddChild):
+        * html/HTMLTableRowElement.h:
+        * html/HTMLTableSectionElement.cpp:
+        (WebCore::HTMLTableSectionElement::legacyParserAddChild):
+        * html/HTMLTableSectionElement.h:
+        * html/HTMLViewSourceDocument.cpp:
+        (WebCore::HTMLViewSourceDocument::createContainingTable):
+        (WebCore::HTMLViewSourceDocument::addSpanWithClassName):
+        (WebCore::HTMLViewSourceDocument::addLine):
+        (WebCore::HTMLViewSourceDocument::addText):
+        (WebCore::HTMLViewSourceDocument::addLink):
+
+2010-06-28  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
         Implement HTMLTreeBuilder::reconstructTheActiveFormattingElements
         https://bugs.webkit.org/show_bug.cgi?id=41319
 

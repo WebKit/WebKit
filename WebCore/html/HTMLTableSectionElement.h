@@ -34,7 +34,7 @@ class HTMLTableSectionElement : public HTMLTablePartElement {
 public:
     static PassRefPtr<HTMLTableSectionElement> create(const QualifiedName&, Document*);
 
-    virtual ContainerNode* addChild(PassRefPtr<Node>);
+    virtual ContainerNode* legacyParserAddChild(PassRefPtr<Node>);
 
     PassRefPtr<HTMLElement> insertRow(int index, ExceptionCode&);
     void deleteRow(int index, ExceptionCode&);

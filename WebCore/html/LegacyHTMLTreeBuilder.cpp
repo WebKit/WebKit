@@ -344,7 +344,7 @@ void LegacyHTMLTreeBuilder::parseDoctypeToken(DoctypeToken* t)
         return;
 
     // Make a new doctype node and set it as our doctype.
-    m_document->addChild(DocumentType::create(m_document, String::adopt(t->m_name), String::adopt(t->m_publicID), String::adopt(t->m_systemID)));
+    m_document->legacyParserAddChild(DocumentType::create(m_document, String::adopt(t->m_name), String::adopt(t->m_publicID), String::adopt(t->m_systemID)));
     if (t->m_forceQuirks)
         m_document->setParseMode(Document::Compat);
 }
@@ -390,7 +390,7 @@ bool LegacyHTMLTreeBuilder::insertNode(Node* n, bool flat)
 
     // let's be stupid and just try to insert it.
     // this should work if the document is well-formed
-    Node* newNode = m_current->addChild(n);
+    Node* newNode = m_current->legacyParserAddChild(n);
     if (!newNode)
         return handleError(n, flat, localName, tagPriority); // Try to handle the error.
 
@@ -459,12 +459,12 @@ bool LegacyHTMLTreeBuilder::handleError(Node* n, bool flat, const AtomicString& 
             if (m_head) {
                 if (!createdHead)
                     reportError(MisplacedHeadContentError, &localName, &m_current->localName());
-                if (m_head->addChild(n)) {
+                if (m_head->legacyParserAddChild(n)) {
                     if (!n->attached() && !m_isParsingFragment)
                         n->attach();
                     return true;
-                } else
-                    return false;
+                }
+                return false;
             }
         } else if (h->hasLocalName(htmlTag)) {
             if (!m_current->isDocumentNode() ) {
@@ -490,7 +490,7 @@ bool LegacyHTMLTreeBuilder::handleError(Node* n, bool flat, const AtomicString& 
                 createdHead = true;
             }
             if (m_head) {
-                Node* newNode = m_head->addChild(n);
+                Node* newNode = m_head->legacyParserAddChild(n);
                 if (!newNode) {
                     setSkipMode(h->tagQName());
                     return false;
@@ -530,7 +530,7 @@ bool LegacyHTMLTreeBuilder::handleError(Node* n, bool flat, const AtomicString& 
         } else if (h->hasLocalName(areaTag)) {
             if (m_currentMapElement) {
                 reportError(MisplacedAreaError, &m_current->localName());
-                m_currentMapElement->addChild(n);
+                m_currentMapElement->legacyParserAddChild(n);
                 if (!n->attached() && !m_isParsingFragment)
                     n->attach();
                 handled = true;
@@ -1606,10 +1606,10 @@ PassRefPtr<Node> LegacyHTMLTreeBuilder::handleIsindex(Token* t)
         t->attrs = 0;
     }
 
-    n->addChild(HTMLHRElement::create(m_document));
-    n->addChild(Text::create(m_document, text));
-    n->addChild(isIndex.release());
-    n->addChild(HTMLHRElement::create(m_document));
+    n->legacyParserAddChild(HTMLHRElement::create(m_document));
+    n->legacyParserAddChild(Text::create(m_document, text));
+    n->legacyParserAddChild(isIndex.release());
+    n->legacyParserAddChild(HTMLHRElement::create(m_document));
 
     return n.release();
 }

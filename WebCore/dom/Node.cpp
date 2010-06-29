@@ -639,7 +639,7 @@ const AtomicString& Node::virtualNamespaceURI() const
     return nullAtom;
 }
 
-ContainerNode* Node::addChild(PassRefPtr<Node>)
+ContainerNode* Node::legacyParserAddChild(PassRefPtr<Node>)
 {
     return 0;
 }
