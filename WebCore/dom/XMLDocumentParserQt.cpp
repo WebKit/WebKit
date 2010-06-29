@@ -517,7 +517,7 @@ void XMLDocumentParser::parseStartElement()
     if (scriptElement)
         m_scriptStartLine = lineNumber();
 
-    if (!m_currentNode->addChild(newElement.get())) {
+    if (!m_currentNode->legacyParserAddChild(newElement.get())) {
         stopParsing();
         return;
     }
@@ -618,7 +618,7 @@ void XMLDocumentParser::parseProcessingInstruction()
 
     pi->setCreatedByParser(true);
 
-    if (!m_currentNode->addChild(pi.get()))
+    if (!m_currentNode->legacyParserAddChild(pi.get()))
         return;
     if (m_view && !pi->attached())
         pi->attach();
@@ -637,7 +637,7 @@ void XMLDocumentParser::parseCdata()
     exitText();
 
     RefPtr<Node> newNode = CDATASection::create(document(), m_stream.text());
-    if (!m_currentNode->addChild(newNode.get()))
+    if (!m_currentNode->legacyParserAddChild(newNode.get()))
         return;
     if (m_view && !newNode->attached())
         newNode->attach();
@@ -648,7 +648,7 @@ void XMLDocumentParser::parseComment()
     exitText();
 
     RefPtr<Node> newNode = Comment::create(document(), m_stream.text());
-    m_currentNode->addChild(newNode.get());
+    m_currentNode->legacyParserAddChild(newNode.get());
     if (m_view && !newNode->attached())
         newNode->attach();
 }
@@ -707,7 +707,7 @@ void XMLDocumentParser::parseDtd()
         handleError(fatal, "Invalid DTD Public ID", lineNumber(), columnNumber());
 #endif
     if (!m_parsingFragment)
-        document()->addChild(DocumentType::create(document(), name, publicId, systemId));
+        document()->legacyParserAddChild(DocumentType::create(document(), name, publicId, systemId));
 
 }
 }
