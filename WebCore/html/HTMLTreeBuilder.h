@@ -215,7 +215,7 @@ private:
     void insertHTMLStartTagInBody(AtomicHTMLToken&);
 
     PassRefPtr<Element> createElement(AtomicHTMLToken&);
-    unsigned indexOfLastOpenFormattingElementOrMarker() const;
+    int indexOfLastOpenFormattingElementOrMarker() const;
     void reopenFormattingElementsAfterIndex(unsigned lastOpenElementIndex);
     void reconstructTheActiveFormattingElements();
 

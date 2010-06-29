@@ -914,7 +914,7 @@ PassRefPtr<Element> HTMLTreeBuilder::createElement(AtomicHTMLToken& token)
     return element.release();
 }
 
-unsigned HTMLTreeBuilder::indexOfLastOpenFormattingElementOrMarker() const
+int HTMLTreeBuilder::indexOfLastOpenFormattingElementOrMarker() const
 {
     ASSERT(!m_activeFormattingElements.isEmpty());
     for (int index = m_activeFormattingElements.size() - 1; index >= 0; --index) {
@@ -944,7 +944,7 @@ void HTMLTreeBuilder::reconstructTheActiveFormattingElements()
     if (m_activeFormattingElements.isEmpty())
         return;
 
-    unsigned lastOpenElementIndex = indexOfLastOpenFormattingElementOrMarker();
+    int lastOpenElementIndex = indexOfLastOpenFormattingElementOrMarker();
     if (lastOpenElementIndex < m_activeFormattingElements.size() - 1)
         reopenFormattingElementsAfterIndex(lastOpenElementIndex);
 }
