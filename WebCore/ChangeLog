@@ -2,6 +2,18 @@
 
         Reviewed by Xan Lopez.
 
+        [GTK] Clean up the source lists in the GNUMakefile.am files
+        https://bugs.webkit.org/show_bug.cgi?id=41229
+
+        Clean up the GNUMakefile.ac a little bit. Alphabetize and conglomerate
+        the source lists.
+
+        * GNUmakefile.am:
+
+2010-06-29  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
         [GTK] DragDataGtk should use DataObjectGtk as the platformDragData
         https://bugs.webkit.org/show_bug.cgi?id=40307
 
@@ -2800,7 +2812,7 @@
         (webkit_accessible_table_get_column_header):
         (webkit_accessible_table_get_row_header):
 
-2010-06-25  Martin Robinson  <mrobinson@igalia.com>
+2010-06-29  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Xan Lopez.
 

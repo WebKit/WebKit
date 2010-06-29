@@ -343,7 +343,7 @@ webcoregtk_sources += $(webcoregtk_dom_sources)
 
 webcore_sources += \
 	WebCore/WebCorePrefix.h \
-        WebCore/accessibility/AXObjectCache.cpp \
+	WebCore/accessibility/AXObjectCache.cpp \
 	WebCore/accessibility/AXObjectCache.h \
 	WebCore/accessibility/AccessibilityARIAGrid.cpp \
 	WebCore/accessibility/AccessibilityARIAGrid.h \
@@ -1545,8 +1545,8 @@ webcore_sources += \
 	WebCore/page/Page.h \
 	WebCore/page/PageGroup.cpp \
 	WebCore/page/PageGroup.h \
-  WebCore/page/PageGroupLoadDeferrer.cpp \
-  WebCore/page/PageGroupLoadDeferrer.h \
+	WebCore/page/PageGroupLoadDeferrer.cpp \
+	WebCore/page/PageGroupLoadDeferrer.h \
 	WebCore/page/Performance.cpp \
 	WebCore/page/Performance.h \
 	WebCore/page/PluginHalter.cpp \
@@ -2132,49 +2132,30 @@ webcore_sources += \
 	WebCore/xml/XMLSerializer.h
 
 webcoregtk_sources += \
-	WebCore/bindings/js/ScriptControllerGtk.cpp \
-	WebCore/plugins/gtk/PluginDataGtk.cpp \
-	WebCore/plugins/gtk/PluginPackageGtk.cpp \
-	WebCore/plugins/gtk/PluginViewGtk.cpp
-
-if TARGET_X11
-webcoregtk_sources += \
-	WebCore/plugins/gtk/gtk2xtbin.c \
-	WebCore/plugins/gtk/gtk2xtbin.h \
-	WebCore/plugins/gtk/xembed.h
-endif
-
-if TARGET_WIN32
-webcore_sources += \
-	WebCore/plugins/win/PluginDatabaseWin.cpp \
-	WebCore/plugins/win/PluginMessageThrottlerWin.cpp \
-	WebCore/plugins/win/PluginMessageThrottlerWin.h
-endif
-
-webcoregtk_sources += \
-	WebCore/accessibility/gtk/AXObjectCacheAtk.cpp \
 	WebCore/accessibility/gtk/AccessibilityObjectAtk.cpp \
 	WebCore/accessibility/gtk/AccessibilityObjectWrapperAtk.cpp \
 	WebCore/accessibility/gtk/AccessibilityObjectWrapperAtk.h \
+	WebCore/accessibility/gtk/AXObjectCacheAtk.cpp \
+	WebCore/bindings/js/ScriptControllerGtk.cpp \
 	WebCore/page/gtk/DragControllerGtk.cpp \
 	WebCore/page/gtk/EventHandlerGtk.cpp \
 	WebCore/page/gtk/FrameGtk.cpp \
 	WebCore/platform/graphics/cairo/CairoPath.h \
+	WebCore/platform/graphics/cairo/FontCacheCairo.cpp \
 	WebCore/platform/graphics/cairo/FontCairo.cpp \
+	WebCore/platform/graphics/cairo/FontCustomPlatformData.h \
+	WebCore/platform/graphics/cairo/FontPlatformData.h \
+	WebCore/platform/graphics/cairo/GOwnPtrCairo.cpp \
+	WebCore/platform/graphics/cairo/GOwnPtrCairo.h \
 	WebCore/platform/graphics/cairo/GradientCairo.cpp \
 	WebCore/platform/graphics/cairo/GraphicsContextCairo.cpp \
 	WebCore/platform/graphics/cairo/GraphicsContextPlatformPrivateCairo.h \
-	WebCore/platform/graphics/cairo/GOwnPtrCairo.cpp \
-	WebCore/platform/graphics/cairo/GOwnPtrCairo.h \
 	WebCore/platform/graphics/cairo/ImageBufferCairo.cpp \
 	WebCore/platform/graphics/cairo/ImageBufferData.h \
 	WebCore/platform/graphics/cairo/ImageCairo.cpp \
 	WebCore/platform/graphics/cairo/PathCairo.cpp \
 	WebCore/platform/graphics/cairo/PatternCairo.cpp \
 	WebCore/platform/graphics/cairo/TransformationMatrixCairo.cpp \
-	WebCore/platform/graphics/cairo/FontCacheCairo.cpp \
-	WebCore/platform/graphics/cairo/FontCustomPlatformData.h \
-	WebCore/platform/graphics/cairo/FontPlatformData.h \
 	WebCore/platform/graphics/gtk/ColorGtk.cpp \
 	WebCore/platform/graphics/gtk/FontGtk.cpp \
 	WebCore/platform/graphics/gtk/IconGtk.cpp \
@@ -2200,11 +2181,13 @@ webcoregtk_sources += \
 	WebCore/platform/gtk/GOwnPtrGtk.h \
 	WebCore/platform/gtk/GRefPtrGtk.cpp \
 	WebCore/platform/gtk/GRefPtrGtk.h \
+	WebCore/platform/gtk/gtk2drawing.c \
+	WebCore/platform/gtk/gtkdrawing.h \
 	WebCore/platform/gtk/GtkPluginWidget.cpp \
 	WebCore/platform/gtk/GtkPluginWidget.h \
 	WebCore/platform/gtk/GtkVersioning.h \
-	WebCore/platform/gtk/KURLGtk.cpp \
 	WebCore/platform/gtk/KeyEventGtk.cpp \
+	WebCore/platform/gtk/KURLGtk.cpp \
 	WebCore/platform/gtk/Language.cpp \
 	WebCore/platform/gtk/LocalizedStringsGtk.cpp \
 	WebCore/platform/gtk/LoggingGtk.cpp \
@@ -2217,11 +2200,11 @@ webcoregtk_sources += \
 	WebCore/platform/gtk/PopupMenuGtk.cpp \
 	WebCore/platform/gtk/RenderThemeGtk.cpp \
 	WebCore/platform/gtk/RenderThemeGtk.h \
-	WebCore/platform/gtk/ScrollViewGtk.cpp \
 	WebCore/platform/gtk/ScrollbarGtk.cpp \
 	WebCore/platform/gtk/ScrollbarGtk.h \
 	WebCore/platform/gtk/ScrollbarThemeGtk.cpp \
 	WebCore/platform/gtk/ScrollbarThemeGtk.h \
+	WebCore/platform/gtk/ScrollViewGtk.cpp \
 	WebCore/platform/gtk/SearchPopupMenuGtk.cpp \
 	WebCore/platform/gtk/SharedBufferGtk.cpp \
 	WebCore/platform/gtk/SharedTimerGtk.cpp \
@@ -2229,10 +2212,6 @@ webcoregtk_sources += \
 	WebCore/platform/gtk/TemporaryLinkStubs.cpp \
 	WebCore/platform/gtk/WheelEventGtk.cpp \
 	WebCore/platform/gtk/WidgetGtk.cpp \
-	WebCore/platform/gtk/gtk2drawing.c \
-	WebCore/platform/gtk/gtkdrawing.h \
-	WebCore/platform/image-decoders/ImageDecoder.h \
-	WebCore/platform/image-decoders/ImageDecoder.cpp \
 	WebCore/platform/image-decoders/bmp/BMPImageDecoder.cpp \
 	WebCore/platform/image-decoders/bmp/BMPImageDecoder.h \
 	WebCore/platform/image-decoders/bmp/BMPImageReader.cpp \
@@ -2244,6 +2223,8 @@ webcoregtk_sources += \
 	WebCore/platform/image-decoders/gif/GIFImageReader.h \
 	WebCore/platform/image-decoders/ico/ICOImageDecoder.cpp \
 	WebCore/platform/image-decoders/ico/ICOImageDecoder.h \
+	WebCore/platform/image-decoders/ImageDecoder.cpp \
+	WebCore/platform/image-decoders/ImageDecoder.h \
 	WebCore/platform/image-decoders/jpeg/JPEGImageDecoder.cpp \
 	WebCore/platform/image-decoders/jpeg/JPEGImageDecoder.h \
 	WebCore/platform/image-decoders/png/PNGImageDecoder.cpp \
@@ -2251,15 +2232,32 @@ webcoregtk_sources += \
 	WebCore/platform/network/soup/AuthenticationChallenge.h \
 	WebCore/platform/network/soup/CookieJarSoup.cpp \
 	WebCore/platform/network/soup/CookieJarSoup.h \
+	WebCore/platform/network/soup/GOwnPtrSoup.cpp \
+	WebCore/platform/network/soup/GOwnPtrSoup.h \
 	WebCore/platform/network/soup/ResourceError.h \
 	WebCore/platform/network/soup/ResourceHandleSoup.cpp \
-	WebCore/platform/network/soup/ResourceRequestSoup.cpp \
-	WebCore/platform/network/soup/ResourceResponseSoup.cpp \
 	WebCore/platform/network/soup/ResourceRequest.h \
+	WebCore/platform/network/soup/ResourceRequestSoup.cpp \
 	WebCore/platform/network/soup/ResourceResponse.h \
-	WebCore/platform/network/soup/GOwnPtrSoup.h \
-	WebCore/platform/network/soup/GOwnPtrSoup.cpp \
+	WebCore/platform/network/soup/ResourceResponseSoup.cpp \
+	WebCore/plugins/gtk/PluginDataGtk.cpp \
+	WebCore/plugins/gtk/PluginPackageGtk.cpp \
+	WebCore/plugins/gtk/PluginViewGtk.cpp \
 	WebCore/workers/SharedWorkerRepository.h
+
+if TARGET_X11
+webcoregtk_sources += \
+	WebCore/plugins/gtk/gtk2xtbin.c \
+	WebCore/plugins/gtk/gtk2xtbin.h \
+	WebCore/plugins/gtk/xembed.h
+endif
+
+if TARGET_WIN32
+webcore_sources += \
+	WebCore/plugins/win/PluginDatabaseWin.cpp \
+	WebCore/plugins/win/PluginMessageThrottlerWin.cpp \
+	WebCore/plugins/win/PluginMessageThrottlerWin.h
+endif
 
 # ----
 # GTK+ 2.x/3.x support

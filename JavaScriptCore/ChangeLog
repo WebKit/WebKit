@@ -1,3 +1,15 @@
+2010-06-29  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] Clean up the source lists in the GNUMakefile.am files
+        https://bugs.webkit.org/show_bug.cgi?id=41229
+
+        Clean up the GNUMakefile.ac a little bit. Alphabetize and conglomerate
+        the source lists.
+
+        * GNUmakefile.am:
+
 2010-06-29  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         Reviewed by Kenneth Rohde Christiansen.
