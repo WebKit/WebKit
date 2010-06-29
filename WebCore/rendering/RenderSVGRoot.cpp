@@ -27,6 +27,7 @@
 
 #include "GraphicsContext.h"
 #include "RenderSVGContainer.h"
+#include "RenderSVGResource.h"
 #include "RenderView.h"
 #include "SVGLength.h"
 #include "SVGRenderSupport.h"
