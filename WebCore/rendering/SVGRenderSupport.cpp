@@ -82,7 +82,7 @@ void SVGRenderBase::mapLocalToContainer(const RenderObject* object, RenderBoxMod
     object->parent()->mapLocalToContainer(repaintContainer, fixed, useTransforms, transformState);
 }
 
-bool SVGRenderBase::prepareToRenderSVGContent(RenderObject* object, RenderObject::PaintInfo& paintInfo, const FloatRect& repaintRect, RenderSVGResourceFilter*& filter)
+bool SVGRenderBase::prepareToRenderSVGContent(RenderObject* object, PaintInfo& paintInfo, const FloatRect& repaintRect, RenderSVGResourceFilter*& filter)
 {
 #if !ENABLE(FILTERS)
     UNUSED_PARAM(filter);
@@ -146,7 +146,7 @@ bool SVGRenderBase::prepareToRenderSVGContent(RenderObject* object, RenderObject
     return true;
 }
 
-void SVGRenderBase::finishRenderSVGContent(RenderObject* object, RenderObject::PaintInfo& paintInfo, RenderSVGResourceFilter*& filter, GraphicsContext* savedContext)
+void SVGRenderBase::finishRenderSVGContent(RenderObject* object, PaintInfo& paintInfo, RenderSVGResourceFilter*& filter, GraphicsContext* savedContext)
 {
 #if !ENABLE(FILTERS)
     UNUSED_PARAM(filter);
@@ -187,7 +187,7 @@ void renderSubtreeToImage(ImageBuffer* image, RenderObject* item)
     FrameView* frameView = item->document()->view();
     if (frameView)
         rect = IntRect(0, 0, frameView->visibleWidth(), frameView->visibleHeight());
-    RenderObject::PaintInfo info(image->context(), rect, PaintPhaseForeground, 0, 0, 0);
+    PaintInfo info(image->context(), rect, PaintPhaseForeground, 0, 0, 0);
 
     // FIXME: isSVGContainer returns true for RenderSVGViewportContainer, so if this is ever
     // called with one of those, we will read from the wrong offset in an object due to a bad cast.
@@ -373,15 +373,6 @@ void deregisterFromResources(RenderObject* object)
         invalidatePaintingResource(svgStyle->fillPaint(), object);
     if (svgStyle->hasStroke())
         invalidatePaintingResource(svgStyle->strokePaint(), object);
-}
-
-void applyTransformToPaintInfo(RenderObject::PaintInfo& paintInfo, const AffineTransform& localToAncestorTransform)
-{
-    if (localToAncestorTransform.isIdentity())
-        return;
-
-    paintInfo.context->concatCTM(localToAncestorTransform);
-    paintInfo.rect = localToAncestorTransform.inverse().mapRect(paintInfo.rect);
 }
 
 DashArray dashArrayFromRenderingStyle(const RenderStyle* style, RenderStyle* rootStyle)

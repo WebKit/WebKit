@@ -479,19 +479,19 @@ private:
     typedef unsigned PaintLayerFlags;
 
     void paintLayer(RenderLayer* rootLayer, GraphicsContext*, const IntRect& paintDirtyRect,
-                    PaintBehavior, RenderObject* paintingRoot, RenderObject::OverlapTestRequestMap* = 0,
+                    PaintBehavior, RenderObject* paintingRoot, OverlapTestRequestMap* = 0,
                     PaintLayerFlags = 0);
     void paintList(Vector<RenderLayer*>*, RenderLayer* rootLayer, GraphicsContext* p,
                    const IntRect& paintDirtyRect, PaintBehavior,
-                   RenderObject* paintingRoot, RenderObject::OverlapTestRequestMap*,
+                   RenderObject* paintingRoot, OverlapTestRequestMap*,
                    PaintLayerFlags);
     void paintPaginatedChildLayer(RenderLayer* childLayer, RenderLayer* rootLayer, GraphicsContext*,
                                   const IntRect& paintDirtyRect, PaintBehavior,
-                                  RenderObject* paintingRoot, RenderObject::OverlapTestRequestMap*,
+                                  RenderObject* paintingRoot, OverlapTestRequestMap*,
                                   PaintLayerFlags);
     void paintChildLayerIntoColumns(RenderLayer* childLayer, RenderLayer* rootLayer, GraphicsContext*,
                                     const IntRect& paintDirtyRect, PaintBehavior,
-                                    RenderObject* paintingRoot, RenderObject::OverlapTestRequestMap*,
+                                    RenderObject* paintingRoot, OverlapTestRequestMap*,
                                     PaintLayerFlags, const Vector<RenderLayer*>& columnLayers, size_t columnIndex);
 
     RenderLayer* hitTestLayer(RenderLayer* rootLayer, RenderLayer* containerLayer, const HitTestRequest& request, HitTestResult& result,

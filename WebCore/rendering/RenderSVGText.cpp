@@ -156,7 +156,7 @@ void RenderSVGText::paint(PaintInfo& paintInfo, int, int)
 
     PaintInfo blockInfo(paintInfo);
     blockInfo.context->save();
-    applyTransformToPaintInfo(blockInfo, localToParentTransform());
+    blockInfo.applyTransform(localToParentTransform());
     RenderBlock::paint(blockInfo, 0, 0);
     blockInfo.context->restore();
 }

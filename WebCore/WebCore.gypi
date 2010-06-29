@@ -3148,6 +3148,8 @@
             'rendering/LayoutState.h',
             'rendering/MediaControlElements.cpp',
             'rendering/MediaControlElements.h',
+            'rendering/PaintInfo.h',
+            'rendering/PaintPhase.h',
             'rendering/PointerEventsHitRules.cpp',
             'rendering/PointerEventsHitRules.h',
             'rendering/RenderApplet.cpp',

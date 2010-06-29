@@ -87,17 +87,17 @@ public:
 
     EllipsisBox* ellipsisBox() const;
 
-    void paintEllipsisBox(RenderObject::PaintInfo&, int tx, int ty) const;
+    void paintEllipsisBox(PaintInfo&, int tx, int ty) const;
     bool hitTestEllipsisBox(HitTestResult&, int x, int y, int tx, int ty, HitTestAction, bool);
 
     virtual void clearTruncation();
 
 #if PLATFORM(MAC)
     void addHighlightOverflow();
-    void paintCustomHighlight(RenderObject::PaintInfo&, int tx, int ty, const AtomicString& highlightType);
+    void paintCustomHighlight(PaintInfo&, int tx, int ty, const AtomicString& highlightType);
 #endif
 
-    virtual void paint(RenderObject::PaintInfo&, int tx, int ty);
+    virtual void paint(PaintInfo&, int tx, int ty);
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, int, int, int, int);
 
     bool hasSelectedChildren() const { return m_hasSelectedChildren; }
@@ -108,7 +108,7 @@ public:
     InlineBox* lastSelectedBox();
 
     GapRects fillLineSelectionGap(int selTop, int selHeight, RenderBlock* rootBlock, int blockX, int blockY,
-                                  int tx, int ty, const RenderObject::PaintInfo*);
+                                  int tx, int ty, const PaintInfo*);
 
     RenderBlock* block() const;
 

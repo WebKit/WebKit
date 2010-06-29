@@ -39,7 +39,7 @@
 
 namespace WebCore {
 
-void SVGRootInlineBox::paint(RenderObject::PaintInfo& paintInfo, int, int)
+void SVGRootInlineBox::paint(PaintInfo& paintInfo, int, int)
 {
     ASSERT(paintInfo.phase == PaintPhaseForeground || paintInfo.phase == PaintPhaseSelection);
     ASSERT(!paintInfo.context->paintingDisabled());
@@ -47,7 +47,7 @@ void SVGRootInlineBox::paint(RenderObject::PaintInfo& paintInfo, int, int)
     RenderObject* boxRenderer = renderer();
     ASSERT(boxRenderer);
 
-    RenderObject::PaintInfo childPaintInfo(paintInfo);
+    PaintInfo childPaintInfo(paintInfo);
     childPaintInfo.context->save();
 
     FloatRect repaintRect = boxRenderer->repaintRectInLocalCoordinates();

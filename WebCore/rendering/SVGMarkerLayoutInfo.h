@@ -48,7 +48,7 @@ public:
     ~SVGMarkerLayoutInfo();
 
     FloatRect calculateBoundaries(RenderSVGResourceMarker* startMarker, RenderSVGResourceMarker* midMarker, RenderSVGResourceMarker* endMarker, float strokeWidth, const Path&);
-    void drawMarkers(RenderObject::PaintInfo&);
+    void drawMarkers(PaintInfo&);
 
     // Used by static inline helper functions in SVGMarkerLayoutInfo.cpp
     SVGMarkerData& markerData() { return m_markerData; }

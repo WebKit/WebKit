@@ -64,12 +64,12 @@ namespace WebCore {
         virtual void adjustSliderThumbSize(RenderObject*) const;
 
         // Various paint functions.
-        virtual bool paintCheckbox(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
-        virtual bool paintRadio(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
-        virtual bool paintButton(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
-        virtual bool paintTextField(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
-        virtual bool paintSliderTrack(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
-        virtual bool paintSliderThumb(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
+        virtual bool paintCheckbox(RenderObject*, const PaintInfo&, const IntRect&);
+        virtual bool paintRadio(RenderObject*, const PaintInfo&, const IntRect&);
+        virtual bool paintButton(RenderObject*, const PaintInfo&, const IntRect&);
+        virtual bool paintTextField(RenderObject*, const PaintInfo&, const IntRect&);
+        virtual bool paintSliderTrack(RenderObject*, const PaintInfo&, const IntRect&);
+        virtual bool paintSliderThumb(RenderObject*, const PaintInfo&, const IntRect&);
 
         // MenuList refers to an unstyled menulist (meaning a menulist without
         // background-color or border set) and MenuListButton refers to a styled
@@ -80,7 +80,7 @@ namespace WebCore {
         // In short, we either go down the MenuList code path or the MenuListButton
         // codepath. We never go down both. And in both cases, they render the
         // entire menulist.
-        virtual bool paintMenuList(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
+        virtual bool paintMenuList(RenderObject*, const PaintInfo&, const IntRect&);
 
         // Override RenderThemeChromiumSkia's setDefaultFontSize method to also reset the local font property caches.
         // See comment in RenderThemeChromiumSkia::setDefaultFontSize() regarding ugliness of this hack.
@@ -91,7 +91,7 @@ namespace WebCore {
         virtual double animationRepeatIntervalForProgressBar(RenderProgress*) const;
         virtual double animationDurationForProgressBar(RenderProgress*) const;
         virtual void adjustProgressBarStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
-        virtual bool paintProgressBar(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
+        virtual bool paintProgressBar(RenderObject*, const PaintInfo&, const IntRect&);
 #endif
 
     protected:
@@ -107,7 +107,7 @@ namespace WebCore {
 
         ThemeData getThemeData(RenderObject*);
 
-        bool paintTextFieldInternal(RenderObject*, const RenderObject::PaintInfo&, const IntRect&, bool);
+        bool paintTextFieldInternal(RenderObject*, const PaintInfo&, const IntRect&, bool);
     };
 
 } // namespace WebCore

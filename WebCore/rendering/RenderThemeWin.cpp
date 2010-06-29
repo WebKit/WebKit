@@ -611,7 +611,7 @@ static void drawControl(GraphicsContext* context, RenderObject* o, HANDLE theme,
     context->releaseWindowsContext(hdc, r, alphaBlend);
 }
 
-bool RenderThemeWin::paintButton(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r)
+bool RenderThemeWin::paintButton(RenderObject* o, const PaintInfo& i, const IntRect& r)
 {  
     drawControl(i.context,  o, buttonTheme(), getThemeData(o), r);
     return false;
@@ -633,13 +633,13 @@ void RenderThemeWin::setCheckboxSize(RenderStyle* style) const
         style->setHeight(Length(13, Fixed));
 }
 
-bool RenderThemeWin::paintTextField(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r)
+bool RenderThemeWin::paintTextField(RenderObject* o, const PaintInfo& i, const IntRect& r)
 {
     drawControl(i.context,  o, textFieldTheme(), getThemeData(o), r);
     return false;
 }
 
-bool RenderThemeWin::paintMenuList(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r)
+bool RenderThemeWin::paintMenuList(RenderObject* o, const PaintInfo& i, const IntRect& r)
 {
     HANDLE theme;
     int part;
@@ -694,7 +694,7 @@ void RenderThemeWin::adjustMenuListButtonStyle(CSSStyleSelector* selector, Rende
     style->setWhiteSpace(PRE);
 }
 
-bool RenderThemeWin::paintMenuListButton(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r)
+bool RenderThemeWin::paintMenuListButton(RenderObject* o, const PaintInfo& i, const IntRect& r)
 {
     // FIXME: Don't make hardcoded assumptions about the thickness of the textfield border.
     int borderThickness = haveTheme ? 1 : 2;
@@ -721,7 +721,7 @@ bool RenderThemeWin::paintMenuListButton(RenderObject* o, const RenderObject::Pa
 
 const int trackWidth = 4;
 
-bool RenderThemeWin::paintSliderTrack(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r)
+bool RenderThemeWin::paintSliderTrack(RenderObject* o, const PaintInfo& i, const IntRect& r)
 {
     IntRect bounds = r;
     
@@ -737,7 +737,7 @@ bool RenderThemeWin::paintSliderTrack(RenderObject* o, const RenderObject::Paint
     return false;
 }
 
-bool RenderThemeWin::paintSliderThumb(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r)
+bool RenderThemeWin::paintSliderThumb(RenderObject* o, const PaintInfo& i, const IntRect& r)
 {   
     drawControl(i.context,  o, sliderTheme(), getThemeData(o), r);
     return false;
@@ -781,7 +781,7 @@ int RenderThemeWin::buttonInternalPaddingBottom() const
     return 1;
 }
 
-bool RenderThemeWin::paintSearchField(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r)
+bool RenderThemeWin::paintSearchField(RenderObject* o, const PaintInfo& i, const IntRect& r)
 {
     return paintTextField(o, i, r);
 }
@@ -798,7 +798,7 @@ void RenderThemeWin::adjustSearchFieldStyle(CSSStyleSelector* selector, RenderSt
         style->setOutlineOffset(-2);
 }
 
-bool RenderThemeWin::paintSearchFieldCancelButton(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
+bool RenderThemeWin::paintSearchFieldCancelButton(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
 {
     IntRect bounds = r;
     ASSERT(o->parent());
@@ -849,7 +849,7 @@ void RenderThemeWin::adjustSearchFieldResultsDecorationStyle(CSSStyleSelector* s
     style->setHeight(Length(magnifierSize, Fixed));
 }
 
-bool RenderThemeWin::paintSearchFieldResultsDecoration(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
+bool RenderThemeWin::paintSearchFieldResultsDecoration(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
 {
     IntRect bounds = r;
     ASSERT(o->parent());
@@ -883,7 +883,7 @@ void RenderThemeWin::adjustSearchFieldResultsButtonStyle(CSSStyleSelector* selec
     style->setHeight(Length(magnifierHeight, Fixed));
 }
 
-bool RenderThemeWin::paintSearchFieldResultsButton(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
+bool RenderThemeWin::paintSearchFieldResultsButton(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
 {
     IntRect bounds = r;
     ASSERT(o->parent());
@@ -972,42 +972,42 @@ bool RenderThemeWin::shouldRenderMediaControlPart(ControlPart part, Element* ele
 }
 
 
-bool RenderThemeWin::paintMediaFullscreenButton(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
+bool RenderThemeWin::paintMediaFullscreenButton(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
 {
     return RenderMediaControls::paintMediaControlsPart(MediaFullscreenButton, o, paintInfo, r);
 }
 
-bool RenderThemeWin::paintMediaMuteButton(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
+bool RenderThemeWin::paintMediaMuteButton(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
 {
     return RenderMediaControls::paintMediaControlsPart(MediaMuteButton, o, paintInfo, r);
 }
 
-bool RenderThemeWin::paintMediaPlayButton(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
+bool RenderThemeWin::paintMediaPlayButton(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
 {
     return RenderMediaControls::paintMediaControlsPart(MediaPlayButton, o, paintInfo, r);
 }
 
-bool RenderThemeWin::paintMediaSeekBackButton(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
+bool RenderThemeWin::paintMediaSeekBackButton(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
 {
     return RenderMediaControls::paintMediaControlsPart(MediaSeekBackButton, o, paintInfo, r);
 }
 
-bool RenderThemeWin::paintMediaSeekForwardButton(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
+bool RenderThemeWin::paintMediaSeekForwardButton(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
 {
     return RenderMediaControls::paintMediaControlsPart(MediaSeekForwardButton, o, paintInfo, r);
 }
 
-bool RenderThemeWin::paintMediaSliderTrack(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
+bool RenderThemeWin::paintMediaSliderTrack(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
 {
     return RenderMediaControls::paintMediaControlsPart(MediaSlider, o, paintInfo, r);
 }
 
-bool RenderThemeWin::paintMediaSliderThumb(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
+bool RenderThemeWin::paintMediaSliderThumb(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
 {
     return RenderMediaControls::paintMediaControlsPart(MediaSliderThumb, o, paintInfo, r);
 }
 
-bool RenderThemeWin::paintMediaToggleClosedCaptionsButton(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
+bool RenderThemeWin::paintMediaToggleClosedCaptionsButton(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
 {
     return RenderMediaControls::paintMediaControlsPart(MediaShowClosedCaptionsButton, o, paintInfo, r);
 }

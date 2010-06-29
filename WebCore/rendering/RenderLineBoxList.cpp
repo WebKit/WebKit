@@ -145,7 +145,7 @@ void RenderLineBoxList::dirtyLineBoxes()
         curr->dirtyLineBoxes();
 }
 
-void RenderLineBoxList::paint(RenderBoxModelObject* renderer, RenderObject::PaintInfo& paintInfo, int tx, int ty) const
+void RenderLineBoxList::paint(RenderBoxModelObject* renderer, PaintInfo& paintInfo, int tx, int ty) const
 {
     // Only paint during the foreground/selection phases.
     if (paintInfo.phase != PaintPhaseForeground && paintInfo.phase != PaintPhaseSelection && paintInfo.phase != PaintPhaseOutline 
@@ -178,7 +178,7 @@ void RenderLineBoxList::paint(RenderBoxModelObject* renderer, RenderObject::Pain
     if (yPos >= paintInfo.rect.bottom() || yPos + h <= paintInfo.rect.y())
         return;
 
-    RenderObject::PaintInfo info(paintInfo);
+    PaintInfo info(paintInfo);
     ListHashSet<RenderInline*> outlineObjects;
     info.outlineObjects = &outlineObjects;
 

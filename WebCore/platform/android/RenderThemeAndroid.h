@@ -74,32 +74,32 @@ public:
     virtual int minimumMenuListSize(RenderStyle*) const { return 0; }
 
 protected:
-    virtual bool paintCheckbox(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
+    virtual bool paintCheckbox(RenderObject*, const PaintInfo&, const IntRect&);
     virtual void setCheckboxSize(RenderStyle*) const;
 
-    virtual bool paintRadio(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
+    virtual bool paintRadio(RenderObject*, const PaintInfo&, const IntRect&);
     virtual void setRadioSize(RenderStyle*) const;
 
     virtual void adjustButtonStyle(CSSStyleSelector*, RenderStyle*, WebCore::Element*) const;
-    virtual bool paintButton(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
+    virtual bool paintButton(RenderObject*, const PaintInfo&, const IntRect&);
 
     virtual void adjustTextFieldStyle(CSSStyleSelector*, RenderStyle*, WebCore::Element*) const;
-    virtual bool paintTextField(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
+    virtual bool paintTextField(RenderObject*, const PaintInfo&, const IntRect&);
 
     virtual void adjustTextAreaStyle(CSSStyleSelector*, RenderStyle*, WebCore::Element*) const;
-    virtual bool paintTextArea(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
+    virtual bool paintTextArea(RenderObject*, const PaintInfo&, const IntRect&);
     
-    bool paintCombo(RenderObject*, const RenderObject::PaintInfo&,  const IntRect&);
+    bool paintCombo(RenderObject*, const PaintInfo&,  const IntRect&);
 
     virtual void adjustListboxStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
     virtual void adjustMenuListStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
-    virtual bool paintMenuList(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
+    virtual bool paintMenuList(RenderObject*, const PaintInfo&, const IntRect&);
 
     virtual void adjustMenuListButtonStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
-    virtual bool paintMenuListButton(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
+    virtual bool paintMenuListButton(RenderObject*, const PaintInfo&, const IntRect&);
     
     virtual void adjustSearchFieldStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
-    virtual bool paintSearchField(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
+    virtual bool paintSearchField(RenderObject*, const PaintInfo&, const IntRect&);
 
 private:
     RenderThemeAndroid();

@@ -706,7 +706,7 @@ NSControlSize RenderThemeMac::controlSizeForSystemFont(RenderStyle* style) const
     return NSMiniControlSize;
 }
 
-bool RenderThemeMac::paintTextField(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
+bool RenderThemeMac::paintTextField(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
 {
     LocalCurrentGraphicsContext localContext(paintInfo.context);
     wkDrawBezeledTextFieldCell(r, isEnabled(o) && !isReadOnlyControl(o));
@@ -717,7 +717,7 @@ void RenderThemeMac::adjustTextFieldStyle(CSSStyleSelector*, RenderStyle*, Eleme
 {
 }
 
-bool RenderThemeMac::paintCapsLockIndicator(RenderObject*, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
+bool RenderThemeMac::paintCapsLockIndicator(RenderObject*, const PaintInfo& paintInfo, const IntRect& r)
 {
     if (paintInfo.context->paintingDisabled())
         return true;
@@ -728,7 +728,7 @@ bool RenderThemeMac::paintCapsLockIndicator(RenderObject*, const RenderObject::P
     return false;
 }
 
-bool RenderThemeMac::paintTextArea(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
+bool RenderThemeMac::paintTextArea(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
 {
     LocalCurrentGraphicsContext localContext(paintInfo.context);
     wkDrawBezeledTextArea(r, isEnabled(o) && !isReadOnlyControl(o));
@@ -767,7 +767,7 @@ const int* RenderThemeMac::popupButtonPadding(NSControlSize size) const
     return padding[size];
 }
 
-bool RenderThemeMac::paintMenuList(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
+bool RenderThemeMac::paintMenuList(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
 {
     LocalCurrentGraphicsContext localContext(paintInfo.context);
     setPopupButtonCellState(o, r);
@@ -821,7 +821,7 @@ IntSize RenderThemeMac::meterSizeForBounds(const RenderMeter* renderMeter, const
                    bounds.height() < cellSize.height ? cellSize.height : bounds.height());
 }
 
-bool RenderThemeMac::paintMeter(RenderObject* renderObject, const RenderObject::PaintInfo& paintInfo, const IntRect& rect)
+bool RenderThemeMac::paintMeter(RenderObject* renderObject, const PaintInfo& paintInfo, const IntRect& rect)
 {
     if (!renderObject->isMeter())
         return true;
@@ -930,7 +930,7 @@ void RenderThemeMac::adjustProgressBarStyle(CSSStyleSelector*, RenderStyle*, Ele
 {
 }
 
-bool RenderThemeMac::paintProgressBar(RenderObject* renderObject, const RenderObject::PaintInfo& paintInfo, const IntRect& rect)
+bool RenderThemeMac::paintProgressBar(RenderObject* renderObject, const PaintInfo& paintInfo, const IntRect& rect)
 {
     if (!renderObject->isProgress())
         return true;
@@ -1020,7 +1020,7 @@ static void TrackGradientInterpolate(void*, const CGFloat* inData, CGFloat* outD
         outData[i] = (1.0f - a) * dark[i] + a * light[i];
 }
 
-void RenderThemeMac::paintMenuListButtonGradients(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
+void RenderThemeMac::paintMenuListButtonGradients(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
 {
     if (r.isEmpty())
         return;
@@ -1087,7 +1087,7 @@ void RenderThemeMac::paintMenuListButtonGradients(RenderObject* o, const RenderO
     paintInfo.context->restore();
 }
 
-bool RenderThemeMac::paintMenuListButton(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
+bool RenderThemeMac::paintMenuListButton(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
 {
     IntRect bounds = IntRect(r.x() + o->style()->borderLeftWidth(),
                              r.y() + o->style()->borderTopWidth(),
@@ -1270,7 +1270,7 @@ void RenderThemeMac::adjustSliderTrackStyle(CSSStyleSelector*, RenderStyle* styl
     style->setBoxShadow(0);
 }
 
-bool RenderThemeMac::paintSliderTrack(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
+bool RenderThemeMac::paintSliderTrack(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
 {
     IntRect bounds = r;
     float zoomLevel = o->style()->effectiveZoom();
@@ -1316,7 +1316,7 @@ void RenderThemeMac::adjustSliderThumbStyle(CSSStyleSelector*, RenderStyle* styl
 
 const float verticalSliderHeightPadding = 0.1f;
 
-bool RenderThemeMac::paintSliderThumb(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
+bool RenderThemeMac::paintSliderThumb(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
 {
     ASSERT(o->parent()->isSlider());
 
@@ -1377,7 +1377,7 @@ bool RenderThemeMac::paintSliderThumb(RenderObject* o, const RenderObject::Paint
     return false;
 }
 
-bool RenderThemeMac::paintSearchField(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
+bool RenderThemeMac::paintSearchField(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
 {
     NSSearchFieldCell* search = this->search();
     LocalCurrentGraphicsContext localContext(paintInfo.context);
@@ -1474,7 +1474,7 @@ void RenderThemeMac::adjustSearchFieldStyle(CSSStyleSelector* selector, RenderSt
     style->setBoxShadow(0);
 }
 
-bool RenderThemeMac::paintSearchFieldCancelButton(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
+bool RenderThemeMac::paintSearchFieldCancelButton(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
 {
     Node* input = o->node()->shadowAncestorNode();
     if (!input->renderer()->isBox())
@@ -1539,7 +1539,7 @@ void RenderThemeMac::adjustSearchFieldDecorationStyle(CSSStyleSelector*, RenderS
     style->setBoxShadow(0);
 }
 
-bool RenderThemeMac::paintSearchFieldDecoration(RenderObject*, const RenderObject::PaintInfo&, const IntRect&)
+bool RenderThemeMac::paintSearchFieldDecoration(RenderObject*, const PaintInfo&, const IntRect&)
 {
     return false;
 }
@@ -1552,7 +1552,7 @@ void RenderThemeMac::adjustSearchFieldResultsDecorationStyle(CSSStyleSelector*, 
     style->setBoxShadow(0);
 }
 
-bool RenderThemeMac::paintSearchFieldResultsDecoration(RenderObject* o, const RenderObject::PaintInfo&, const IntRect& r)
+bool RenderThemeMac::paintSearchFieldResultsDecoration(RenderObject* o, const PaintInfo&, const IntRect& r)
 {
     Node* input = o->node()->shadowAncestorNode();
     if (!input->renderer()->isBox())
@@ -1584,7 +1584,7 @@ void RenderThemeMac::adjustSearchFieldResultsButtonStyle(CSSStyleSelector*, Rend
     style->setBoxShadow(0);
 }
 
-bool RenderThemeMac::paintSearchFieldResultsButton(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
+bool RenderThemeMac::paintSearchFieldResultsButton(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
 {
     Node* input = o->node()->shadowAncestorNode();
     if (!input->renderer()->isBox())
@@ -1712,7 +1712,7 @@ static unsigned getMediaUIPartStateFlags(Node* node)
 }
 
 // Utility to scale when the UI part are not scaled by wkDrawMediaUIPart
-static FloatRect getUnzoomedRectAndAdjustCurrentContext(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect &originalRect)
+static FloatRect getUnzoomedRectAndAdjustCurrentContext(RenderObject* o, const PaintInfo& paintInfo, const IntRect &originalRect)
 {
     float zoomLevel = o->style()->effectiveZoom();
     FloatRect unzoomedRect(originalRect);
@@ -1727,7 +1727,7 @@ static FloatRect getUnzoomedRectAndAdjustCurrentContext(RenderObject* o, const R
 }
 
 
-bool RenderThemeMac::paintMediaFullscreenButton(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
+bool RenderThemeMac::paintMediaFullscreenButton(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
 {
     Node* node = o->node();
     if (!node)
@@ -1738,7 +1738,7 @@ bool RenderThemeMac::paintMediaFullscreenButton(RenderObject* o, const RenderObj
     return false;
 }
 
-bool RenderThemeMac::paintMediaMuteButton(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
+bool RenderThemeMac::paintMediaMuteButton(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
 {
     Node* node = o->node();
     Node* mediaNode = node ? node->shadowAncestorNode() : 0;
@@ -1753,7 +1753,7 @@ bool RenderThemeMac::paintMediaMuteButton(RenderObject* o, const RenderObject::P
     return false;
 }
 
-bool RenderThemeMac::paintMediaPlayButton(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
+bool RenderThemeMac::paintMediaPlayButton(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
 {
     Node* node = o->node();
     Node* mediaNode = node ? node->shadowAncestorNode() : 0;
@@ -1767,7 +1767,7 @@ bool RenderThemeMac::paintMediaPlayButton(RenderObject* o, const RenderObject::P
     return false;
 }
 
-bool RenderThemeMac::paintMediaSeekBackButton(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
+bool RenderThemeMac::paintMediaSeekBackButton(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
 {
     Node* node = o->node();
     if (!node)
@@ -1778,7 +1778,7 @@ bool RenderThemeMac::paintMediaSeekBackButton(RenderObject* o, const RenderObjec
     return false;
 }
 
-bool RenderThemeMac::paintMediaSeekForwardButton(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
+bool RenderThemeMac::paintMediaSeekForwardButton(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
 {
     Node* node = o->node();
     if (!node)
@@ -1789,7 +1789,7 @@ bool RenderThemeMac::paintMediaSeekForwardButton(RenderObject* o, const RenderOb
     return false;
 }
 
-bool RenderThemeMac::paintMediaSliderTrack(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
+bool RenderThemeMac::paintMediaSliderTrack(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
 {
     Node* node = o->node();
     Node* mediaNode = node ? node->shadowAncestorNode() : 0;
@@ -1817,7 +1817,7 @@ bool RenderThemeMac::paintMediaSliderTrack(RenderObject* o, const RenderObject::
     return false;
 }
 
-bool RenderThemeMac::paintMediaSliderThumb(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
+bool RenderThemeMac::paintMediaSliderThumb(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
 {
     Node* node = o->node();
     if (!node)
@@ -1828,7 +1828,7 @@ bool RenderThemeMac::paintMediaSliderThumb(RenderObject* o, const RenderObject::
     return false;
 }
     
-bool RenderThemeMac::paintMediaRewindButton(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
+bool RenderThemeMac::paintMediaRewindButton(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
 {
     Node* node = o->node();
     if (!node)
@@ -1839,7 +1839,7 @@ bool RenderThemeMac::paintMediaRewindButton(RenderObject* o, const RenderObject:
     return false;
 }
 
-bool RenderThemeMac::paintMediaReturnToRealtimeButton(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
+bool RenderThemeMac::paintMediaReturnToRealtimeButton(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
 {
     Node* node = o->node();
     if (!node)
@@ -1850,7 +1850,7 @@ bool RenderThemeMac::paintMediaReturnToRealtimeButton(RenderObject* o, const Ren
     return false;
 }
 
-bool RenderThemeMac::paintMediaToggleClosedCaptionsButton(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
+bool RenderThemeMac::paintMediaToggleClosedCaptionsButton(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
 {
     HTMLInputElement* node = static_cast<HTMLInputElement*>(o->node());
     if (!node)
@@ -1866,7 +1866,7 @@ bool RenderThemeMac::paintMediaToggleClosedCaptionsButton(RenderObject* o, const
     return false;
 }
  
-bool RenderThemeMac::paintMediaControlsBackground(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
+bool RenderThemeMac::paintMediaControlsBackground(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
 {
     Node* node = o->node();
     if (!node)
@@ -1877,7 +1877,7 @@ bool RenderThemeMac::paintMediaControlsBackground(RenderObject* o, const RenderO
     return false;
 }
 
-bool RenderThemeMac::paintMediaCurrentTime(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
+bool RenderThemeMac::paintMediaCurrentTime(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
 {
     Node* node = o->node();
     if (!node)
@@ -1890,7 +1890,7 @@ bool RenderThemeMac::paintMediaCurrentTime(RenderObject* o, const RenderObject::
     return false;
 }
 
-bool RenderThemeMac::paintMediaTimeRemaining(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
+bool RenderThemeMac::paintMediaTimeRemaining(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
 {
     Node* node = o->node();
     if (!node)

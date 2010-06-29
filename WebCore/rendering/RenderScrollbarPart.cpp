@@ -164,7 +164,7 @@ void RenderScrollbarPart::paintIntoRect(GraphicsContext* graphicsContext, int tx
         return;
 
     // Now do the paint.
-    RenderObject::PaintInfo paintInfo(graphicsContext, rect, PaintPhaseBlockBackground, false, 0, 0);
+    PaintInfo paintInfo(graphicsContext, rect, PaintPhaseBlockBackground, false, 0, 0);
     paint(paintInfo, tx, ty);
     paintInfo.phase = PaintPhaseChildBlockBackgrounds;
     paint(paintInfo, tx, ty);

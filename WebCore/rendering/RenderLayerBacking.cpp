@@ -955,7 +955,7 @@ void RenderLayerBacking::paintIntoLayer(RenderLayer* rootLayer, GraphicsContext*
         // Establish the clip used to paint our background.
         setClip(context, paintDirtyRect, damageRect);
         
-        RenderObject::PaintInfo info(context, paintBox, PaintPhaseBlockBackground, false, paintingRootForRenderer, 0);
+        PaintInfo info(context, paintBox, PaintPhaseBlockBackground, false, paintingRootForRenderer, 0);
         renderer()->paint(info, tx, ty);
 
         // Our scrollbar widgets paint exactly when we tell them to, so that they work properly with
@@ -981,7 +981,7 @@ void RenderLayerBacking::paintIntoLayer(RenderLayer* rootLayer, GraphicsContext*
 
         // Set up the clip used when painting our children.
         setClip(context, paintDirtyRect, clipRectToApply);
-        RenderObject::PaintInfo paintInfo(context, clipRectToApply, 
+        PaintInfo paintInfo(context, clipRectToApply, 
                                           selectionOnly ? PaintPhaseSelection : PaintPhaseChildBlockBackgrounds,
                                           forceBlackText, paintingRootForRenderer, 0);
         renderer()->paint(paintInfo, tx, ty);
@@ -1002,7 +1002,7 @@ void RenderLayerBacking::paintIntoLayer(RenderLayer* rootLayer, GraphicsContext*
 
         if (!outlineRect.isEmpty()) {
             // Paint our own outline
-            RenderObject::PaintInfo paintInfo(context, outlineRect, PaintPhaseSelfOutline, false, paintingRootForRenderer, 0);
+            PaintInfo paintInfo(context, outlineRect, PaintPhaseSelfOutline, false, paintingRootForRenderer, 0);
             setClip(context, paintDirtyRect, outlineRect);
             renderer()->paint(paintInfo, tx, ty);
             restoreClip(context, paintDirtyRect, outlineRect);
@@ -1028,7 +1028,7 @@ void RenderLayerBacking::paintIntoLayer(RenderLayer* rootLayer, GraphicsContext*
             setClip(context, paintDirtyRect, damageRect);
 
             // Paint the mask.
-            RenderObject::PaintInfo paintInfo(context, damageRect, PaintPhaseMask, false, paintingRootForRenderer, 0);
+            PaintInfo paintInfo(context, damageRect, PaintPhaseMask, false, paintingRootForRenderer, 0);
             renderer()->paint(paintInfo, tx, ty);
             
             // Restore the clip.

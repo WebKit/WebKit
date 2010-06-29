@@ -355,9 +355,9 @@ static void paintTextWithShadows(GraphicsContext* context, const Font& font, con
     } while (shadow || stroked || !opaque);
 }
 
-void InlineTextBox::paint(RenderObject::PaintInfo& paintInfo, int tx, int ty)
+void InlineTextBox::paint(PaintInfo& paintInfo, int tx, int ty)
 {
-    if (isLineBreak() || !renderer()->shouldPaintWithinRoot(paintInfo) || renderer()->style()->visibility() != VISIBLE ||
+    if (isLineBreak() || !paintInfo.shouldPaintWithinRoot(renderer()) || renderer()->style()->visibility() != VISIBLE ||
         m_truncation == cFullTruncation || paintInfo.phase == PaintPhaseOutline)
         return;
 

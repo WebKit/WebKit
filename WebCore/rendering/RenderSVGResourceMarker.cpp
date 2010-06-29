@@ -146,7 +146,7 @@ AffineTransform RenderSVGResourceMarker::markerTransformation(const FloatPoint& 
     return transform;
 }
 
-void RenderSVGResourceMarker::draw(RenderObject::PaintInfo& paintInfo, const AffineTransform& transform)
+void RenderSVGResourceMarker::draw(PaintInfo& paintInfo, const AffineTransform& transform)
 {
     DEFINE_STATIC_LOCAL(HashSet<RenderSVGResourceMarker*>, currentlyDrawingMarkers, ());
 
@@ -155,9 +155,9 @@ void RenderSVGResourceMarker::draw(RenderObject::PaintInfo& paintInfo, const Aff
         return;
 
     currentlyDrawingMarkers.add(this);
-    RenderObject::PaintInfo info(paintInfo);
+    PaintInfo info(paintInfo);
     info.context->save();
-    applyTransformToPaintInfo(info, transform);
+    info.applyTransform(transform);
     RenderSVGContainer::paint(info, 0, 0);
     info.context->restore();
 

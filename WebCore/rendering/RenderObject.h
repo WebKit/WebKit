@@ -31,6 +31,7 @@
 #include "Document.h"
 #include "Element.h"
 #include "FloatQuad.h"
+#include "PaintInfo.h"
 #include "RenderObjectChildList.h"
 #include "RenderStyle.h"
 #include "TextAffinity.h"
@@ -61,39 +62,6 @@ class VisiblePosition;
 #if ENABLE(SVG)
 class RenderSVGResourceContainer;
 #endif
-
-/*
- *  The painting of a layer occurs in three distinct phases.  Each phase involves
- *  a recursive descent into the layer's render objects. The first phase is the background phase.
- *  The backgrounds and borders of all blocks are painted.  Inlines are not painted at all.
- *  Floats must paint above block backgrounds but entirely below inline content that can overlap them.
- *  In the foreground phase, all inlines are fully painted.  Inline replaced elements will get all
- *  three phases invoked on them during this phase.
- */
-
-// FIXME: These enums should move to their own header since they're used by other headers.
-enum PaintPhase {
-    PaintPhaseBlockBackground,
-    PaintPhaseChildBlockBackground,
-    PaintPhaseChildBlockBackgrounds,
-    PaintPhaseFloat,
-    PaintPhaseForeground,
-    PaintPhaseOutline,
-    PaintPhaseChildOutlines,
-    PaintPhaseSelfOutline,
-    PaintPhaseSelection,
-    PaintPhaseCollapsedTableBorders,
-    PaintPhaseTextClip,
-    PaintPhaseMask
-};
-
-enum PaintBehaviorFlags {
-    PaintBehaviorNormal = 0,
-    PaintBehaviorSelectionOnly = 1 << 0,
-    PaintBehaviorForceBlackText = 1 << 1,
-    PaintBehaviorFlattenCompositingLayers = 1 << 2
-};
-typedef unsigned PaintBehavior;
 
 enum HitTestFilter {
     HitTestAll,
@@ -522,36 +490,6 @@ public:
     // for the vertical-align property of inline elements
     // the offset of baseline from the top of the object.
     virtual int baselinePosition(bool firstLine, bool isRootLineBox = false) const;
-
-    typedef HashMap<OverlapTestRequestClient*, IntRect> OverlapTestRequestMap;
-
-    /*
-     * Paint the object and its children, clipped by (x|y|w|h).
-     * (tx|ty) is the calculated position of the parent
-     */
-    struct PaintInfo {
-        PaintInfo(GraphicsContext* newContext, const IntRect& newRect, PaintPhase newPhase, bool newForceBlackText,
-                  RenderObject* newPaintingRoot, ListHashSet<RenderInline*>* newOutlineObjects,
-                  OverlapTestRequestMap* overlapTestRequests = 0)
-            : context(newContext)
-            , rect(newRect)
-            , phase(newPhase)
-            , forceBlackText(newForceBlackText)
-            , paintingRoot(newPaintingRoot)
-            , outlineObjects(newOutlineObjects)
-            , overlapTestRequests(overlapTestRequests)
-        {
-        }
-
-        GraphicsContext* context;
-        IntRect rect;
-        PaintPhase phase;
-        bool forceBlackText;
-        RenderObject* paintingRoot; // used to draw just one element and its visual kids
-        ListHashSet<RenderInline*>* outlineObjects; // used to list outlines that should be painted by a block with inline children
-        OverlapTestRequestMap* overlapTestRequests;
-    };
-
     virtual void paint(PaintInfo&, int tx, int ty);
 
     // Recursive function that computes the size and position of this object and all its descendants.
@@ -783,17 +721,6 @@ public:
     virtual bool willRenderImage(CachedImage*);
 
     void selectionStartEnd(int& spos, int& epos) const;
-
-    RenderObject* paintingRootForChildren(PaintInfo& paintInfo) const
-    {
-        // if we're the painting root, kids draw normally, and see root of 0
-        return (!paintInfo.paintingRoot || paintInfo.paintingRoot == this) ? 0 : paintInfo.paintingRoot;
-    }
-
-    bool shouldPaintWithinRoot(PaintInfo& paintInfo) const
-    {
-        return !paintInfo.paintingRoot || paintInfo.paintingRoot == this;
-    }
 
     bool hasOverrideSize() const { return m_hasOverrideSize; }
     void setHasOverrideSize(bool b) { m_hasOverrideSize = b; }

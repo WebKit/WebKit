@@ -1923,6 +1923,8 @@ webcore_sources += \
 	WebCore/rendering/LayoutState.h \
 	WebCore/rendering/MediaControlElements.h \
 	WebCore/rendering/OverlapTestRequestClient.h \
+	WebCore/rendering/PaintInfo.h \
+	WebCore/rendering/PaintPhase.h \
 	WebCore/rendering/RenderApplet.cpp \
 	WebCore/rendering/RenderApplet.h \
 	WebCore/rendering/RenderArena.cpp \

@@ -454,7 +454,7 @@ void RenderTable::paintObject(PaintInfo& paintInfo, int tx, int ty)
 
     PaintInfo info(paintInfo);
     info.phase = paintPhase;
-    info.paintingRoot = paintingRootForChildren(paintInfo);
+    info.updatePaintingRootForChildren(this);
 
     for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
         if (child->isBox() && !toRenderBox(child)->hasSelfPaintingLayer() && (child->isTableSection() || child == m_caption))
@@ -485,7 +485,7 @@ void RenderTable::paintObject(PaintInfo& paintInfo, int tx, int ty)
 
 void RenderTable::paintBoxDecorations(PaintInfo& paintInfo, int tx, int ty)
 {
-    if (!shouldPaintWithinRoot(paintInfo))
+    if (!paintInfo.shouldPaintWithinRoot(this))
         return;
 
     int w = width();

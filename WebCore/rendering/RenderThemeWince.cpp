@@ -188,7 +188,7 @@ ThemeData RenderThemeWince::getThemeData(RenderObject* o)
     return result;
 }
 
-bool RenderThemeWince::paintButton(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r)
+bool RenderThemeWince::paintButton(RenderObject* o, const PaintInfo& i, const IntRect& r)
 {
     // Get the correct theme data for a button
     ThemeData themeData = getThemeData(o);
@@ -223,7 +223,7 @@ void RenderThemeWince::setCheckboxSize(RenderStyle* style) const
         style->setHeight(Length(13, Fixed));
 }
 
-bool RenderThemeWince::paintTextField(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r)
+bool RenderThemeWince::paintTextField(RenderObject* o, const PaintInfo& i, const IntRect& r)
 {
     // Get the correct theme data for a textfield
     ThemeData themeData = getThemeData(o);
@@ -240,14 +240,14 @@ void RenderThemeWince::adjustMenuListStyle(CSSStyleSelector* selector, RenderSty
     adjustMenuListButtonStyle(selector, style, e);
 }
 
-bool RenderThemeWince::paintMenuList(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r)
+bool RenderThemeWince::paintMenuList(RenderObject* o, const PaintInfo& i, const IntRect& r)
 {
     paintTextField(o, i, r);
     paintMenuListButton(o, i, r);
     return true;
 }
 
-bool RenderThemeWince::paintMenuListButton(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r)
+bool RenderThemeWince::paintMenuListButton(RenderObject* o, const PaintInfo& i, const IntRect& r)
 {
     IntRect buttonRect(r.right() - dropDownButtonWidth - 1, r.y(), dropDownButtonWidth, r.height());
     buttonRect.inflateY(-1);
@@ -362,12 +362,12 @@ void RenderThemeWince::adjustSearchFieldStyle(CSSStyleSelector* selector, Render
 }
 #endif
 
-bool RenderThemeWince::paintSearchField(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r)
+bool RenderThemeWince::paintSearchField(RenderObject* o, const PaintInfo& i, const IntRect& r)
 {
     return paintTextField(o, i, r);
 }
 
-bool RenderThemeWince::paintSearchFieldCancelButton(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
+bool RenderThemeWince::paintSearchFieldCancelButton(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
 {
     Color buttonColor = (o->node() && o->node()->active()) ? Color(138, 138, 138) : Color(186, 186, 186);
 
@@ -412,7 +412,7 @@ void RenderThemeWince::adjustSearchFieldResultsDecorationStyle(CSSStyleSelector*
     style->setHeight(Length(magnifierSize.height(), Fixed));
 }
 
-bool RenderThemeWince::paintSearchFieldResultsDecoration(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
+bool RenderThemeWince::paintSearchFieldResultsDecoration(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
 {
     notImplemented();
     return false;
@@ -425,7 +425,7 @@ void RenderThemeWince::adjustSearchFieldResultsButtonStyle(CSSStyleSelector* sel
     style->setHeight(Length(magnifierSize.height(), Fixed));
 }
 
-bool RenderThemeWince::paintSearchFieldResultsButton(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
+bool RenderThemeWince::paintSearchFieldResultsButton(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
 {
     paintSearchFieldResultsDecoration(o, paintInfo, r);
     return false;
@@ -485,7 +485,7 @@ static HTMLMediaElement* mediaElementParent(Node* node)
 }
 #endif
 
-bool RenderThemeWince::paintSliderTrack(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r)
+bool RenderThemeWince::paintSliderTrack(RenderObject* o, const PaintInfo& i, const IntRect& r)
 {
     bool rc = RenderTheme::paintSliderTrack(o, i, r);
     IntPoint left = IntPoint(r.x() + 2, (r.y() + r.bottom()) / 2);
@@ -508,7 +508,7 @@ bool RenderThemeWince::paintSliderTrack(RenderObject* o, const RenderObject::Pai
     return rc;
 }
 
-bool RenderThemeWince::paintSliderThumb(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r)
+bool RenderThemeWince::paintSliderThumb(RenderObject* o, const PaintInfo& i, const IntRect& r)
 {
     bool rc = RenderTheme::paintSliderThumb(o, i, r);
     i.context->save();
@@ -559,7 +559,7 @@ void RenderThemeWince::adjustSearchFieldStyle(CSSStyleSelector* selector, Render
 
 #if ENABLE(VIDEO)
 
-bool RenderThemeWince::paintMediaFullscreenButton(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
+bool RenderThemeWince::paintMediaFullscreenButton(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
 {
     bool rc = paintButton(o, paintInfo, r);
     FloatRect imRect = r;
@@ -572,7 +572,7 @@ bool RenderThemeWince::paintMediaFullscreenButton(RenderObject* o, const RenderO
     return rc;
 }
 
-bool RenderThemeWince::paintMediaMuteButton(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
+bool RenderThemeWince::paintMediaMuteButton(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
 {
     bool rc = paintButton(o, paintInfo, r);
     HTMLMediaElement* mediaElement = mediaElementParent(o->node());
@@ -597,7 +597,7 @@ bool RenderThemeWince::paintMediaMuteButton(RenderObject* o, const RenderObject:
     return rc;
 }
 
-bool RenderThemeWince::paintMediaPlayButton(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
+bool RenderThemeWince::paintMediaPlayButton(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
 {
     bool rc = paintButton(o, paintInfo, r);
     FloatRect imRect = r;
@@ -621,7 +621,7 @@ bool RenderThemeWince::paintMediaPlayButton(RenderObject* o, const RenderObject:
     return rc;
 }
 
-bool RenderThemeWince::paintMediaSeekBackButton(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
+bool RenderThemeWince::paintMediaSeekBackButton(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
 {
     bool rc = paintButton(o, paintInfo, r);
     FloatRect imRect = r;
@@ -637,7 +637,7 @@ bool RenderThemeWince::paintMediaSeekBackButton(RenderObject* o, const RenderObj
     return rc;
 }
 
-bool RenderThemeWince::paintMediaSeekForwardButton(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
+bool RenderThemeWince::paintMediaSeekForwardButton(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
 {
     bool rc = paintButton(o, paintInfo, r);
     FloatRect imRect = r;
@@ -653,12 +653,12 @@ bool RenderThemeWince::paintMediaSeekForwardButton(RenderObject* o, const Render
     return rc;
 }
 
-bool RenderThemeWince::paintMediaSliderTrack(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
+bool RenderThemeWince::paintMediaSliderTrack(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
 {
     return paintSliderTrack(o, paintInfo, r);
 }
 
-bool RenderThemeWince::paintMediaSliderThumb(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
+bool RenderThemeWince::paintMediaSliderThumb(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
 {
     return paintSliderThumb(o, paintInfo, r);
 }

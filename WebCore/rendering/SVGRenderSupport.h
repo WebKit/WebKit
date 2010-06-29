@@ -46,8 +46,8 @@ public:
     // FIXME: These are only public for SVGRootInlineBox.
     // It's unclear if these should be exposed or not.  SVGRootInlineBox may
     // pass the wrong RenderObject* and boundingBox to these functions.
-    static bool prepareToRenderSVGContent(RenderObject*, RenderObject::PaintInfo&, const FloatRect& boundingBox, RenderSVGResourceFilter*&);
-    static void finishRenderSVGContent(RenderObject*, RenderObject::PaintInfo&, RenderSVGResourceFilter*&, GraphicsContext* savedContext);
+    static bool prepareToRenderSVGContent(RenderObject*, PaintInfo&, const FloatRect& boundingBox, RenderSVGResourceFilter*&);
+    static void finishRenderSVGContent(RenderObject*, PaintInfo&, RenderSVGResourceFilter*&, GraphicsContext* savedContext);
 
     // Layout all children of the passed render object
     static void layoutChildren(RenderObject*, bool selfNeedsLayout);
@@ -68,10 +68,6 @@ protected:
     // and repaintRectInLocalCoordinates in RenderSVGRoot and RenderSVGContainer
     static FloatRect computeContainerBoundingBox(const RenderObject* container, bool includeAllPaintedContent);
 };
-
-// FIXME: This should move to RenderObject or PaintInfo
-// Used for transforming the GraphicsContext and damage rect before passing PaintInfo to child renderers.
-void applyTransformToPaintInfo(RenderObject::PaintInfo&, const AffineTransform& localToChildTransform);
 
 // This offers a way to render parts of a WebKit rendering tree into a ImageBuffer.
 void renderSubtreeToImage(ImageBuffer*, RenderObject*);

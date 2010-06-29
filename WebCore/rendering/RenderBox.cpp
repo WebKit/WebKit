@@ -569,7 +569,7 @@ void RenderBox::paint(PaintInfo& paintInfo, int tx, int ty)
 
     // default implementation. Just pass paint through to the children
     PaintInfo childInfo(paintInfo);
-    childInfo.paintingRoot = paintingRootForChildren(paintInfo);
+    childInfo.updatePaintingRootForChildren(this);
     for (RenderObject* child = firstChild(); child; child = child->nextSibling())
         child->paint(childInfo, tx, ty);
 }
@@ -621,7 +621,7 @@ void RenderBox::paintRootBoxDecorations(PaintInfo& paintInfo, int tx, int ty)
 
 void RenderBox::paintBoxDecorations(PaintInfo& paintInfo, int tx, int ty)
 {
-    if (!shouldPaintWithinRoot(paintInfo))
+    if (!paintInfo.shouldPaintWithinRoot(this))
         return;
 
     if (isRoot()) {
@@ -663,7 +663,7 @@ void RenderBox::paintBoxDecorationsWithSize(PaintInfo& paintInfo, int tx, int ty
 
 void RenderBox::paintMask(PaintInfo& paintInfo, int tx, int ty)
 {
-    if (!shouldPaintWithinRoot(paintInfo) || style()->visibility() != VISIBLE || paintInfo.phase != PaintPhaseMask)
+    if (!paintInfo.shouldPaintWithinRoot(this) || style()->visibility() != VISIBLE || paintInfo.phase != PaintPhaseMask)
         return;
 
     int w = width();

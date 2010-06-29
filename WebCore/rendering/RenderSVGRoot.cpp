@@ -159,8 +159,8 @@ void RenderSVGRoot::paint(PaintInfo& paintInfo, int parentX, int parentY)
     if (!firstChild() && !selfWillPaint())
         return;
 
-    // Make a copy of the PaintInfo because applyTransformToPaintInfo will modify the damage rect.
-    RenderObject::PaintInfo childPaintInfo(paintInfo);
+    // Make a copy of the PaintInfo because applyTransform will modify the damage rect.
+    PaintInfo childPaintInfo(paintInfo);
     childPaintInfo.context->save();
 
     // Apply initial viewport clip - not affected by overflow handling
@@ -168,7 +168,7 @@ void RenderSVGRoot::paint(PaintInfo& paintInfo, int parentX, int parentY)
 
     // Convert from container offsets (html renderers) to a relative transform (svg renderers).
     // Transform from our paint container's coordinate system to our local coords.
-    applyTransformToPaintInfo(childPaintInfo, localToRepaintContainerTransform(parentOriginInContainer));
+    childPaintInfo.applyTransform(localToRepaintContainerTransform(parentOriginInContainer));
 
     RenderSVGResourceFilter* filter = 0;
     FloatRect boundingBox = repaintRectInLocalCoordinates();

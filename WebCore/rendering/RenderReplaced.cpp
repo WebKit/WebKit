@@ -114,7 +114,7 @@ void RenderReplaced::paint(PaintInfo& paintInfo, int tx, int ty)
     if (paintInfo.phase != PaintPhaseForeground && paintInfo.phase != PaintPhaseSelection)
         return;
     
-    if (!shouldPaintWithinRoot(paintInfo))
+    if (!paintInfo.shouldPaintWithinRoot(this))
         return;
     
     bool drawSelectionTint = selectionState() != SelectionNone && !document()->printing();
@@ -163,7 +163,7 @@ bool RenderReplaced::shouldPaint(PaintInfo& paintInfo, int& tx, int& ty)
             && paintInfo.phase != PaintPhaseSelection && paintInfo.phase != PaintPhaseMask)
         return false;
 
-    if (!shouldPaintWithinRoot(paintInfo))
+    if (!paintInfo.shouldPaintWithinRoot(this))
         return false;
         
     // if we're invisible or haven't received a layout yet, then just bail.

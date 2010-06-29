@@ -632,7 +632,7 @@ bool InlineFlowBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& re
     return false;
 }
 
-void InlineFlowBox::paint(RenderObject::PaintInfo& paintInfo, int tx, int ty)
+void InlineFlowBox::paint(PaintInfo& paintInfo, int tx, int ty)
 {
     IntRect overflowRect(visibleOverflowRect());
     overflowRect.inflate(renderer()->maximalOutlineSize(paintInfo.phase));
@@ -671,9 +671,9 @@ void InlineFlowBox::paint(RenderObject::PaintInfo& paintInfo, int tx, int ty)
         return;
 
     PaintPhase paintPhase = paintInfo.phase == PaintPhaseChildOutlines ? PaintPhaseOutline : paintInfo.phase;
-    RenderObject::PaintInfo childInfo(paintInfo);
+    PaintInfo childInfo(paintInfo);
     childInfo.phase = paintPhase;
-    childInfo.paintingRoot = renderer()->paintingRootForChildren(paintInfo);
+    childInfo.updatePaintingRootForChildren(renderer());
     
     // 3. Paint our children.
     if (paintPhase != PaintPhaseSelfOutline) {
@@ -688,7 +688,7 @@ void InlineFlowBox::paint(RenderObject::PaintInfo& paintInfo, int tx, int ty)
         paintTextDecorations(paintInfo, tx, ty, true);
 }
 
-void InlineFlowBox::paintFillLayers(const RenderObject::PaintInfo& paintInfo, const Color& c, const FillLayer* fillLayer, int _tx, int _ty, int w, int h, CompositeOperator op)
+void InlineFlowBox::paintFillLayers(const PaintInfo& paintInfo, const Color& c, const FillLayer* fillLayer, int _tx, int _ty, int w, int h, CompositeOperator op)
 {
     if (!fillLayer)
         return;
@@ -696,7 +696,7 @@ void InlineFlowBox::paintFillLayers(const RenderObject::PaintInfo& paintInfo, co
     paintFillLayer(paintInfo, c, fillLayer, _tx, _ty, w, h, op);
 }
 
-void InlineFlowBox::paintFillLayer(const RenderObject::PaintInfo& paintInfo, const Color& c, const FillLayer* fillLayer, int tx, int ty, int w, int h, CompositeOperator op)
+void InlineFlowBox::paintFillLayer(const PaintInfo& paintInfo, const Color& c, const FillLayer* fillLayer, int tx, int ty, int w, int h, CompositeOperator op)
 {
     StyleImage* img = fillLayer->image();
     bool hasFillImage = img && img->canRender(renderer()->style()->effectiveZoom());
@@ -736,9 +736,9 @@ void InlineFlowBox::paintBoxShadow(GraphicsContext* context, RenderStyle* s, Sha
     }
 }
 
-void InlineFlowBox::paintBoxDecorations(RenderObject::PaintInfo& paintInfo, int tx, int ty)
+void InlineFlowBox::paintBoxDecorations(PaintInfo& paintInfo, int tx, int ty)
 {
-    if (!renderer()->shouldPaintWithinRoot(paintInfo) || renderer()->style()->visibility() != VISIBLE || paintInfo.phase != PaintPhaseForeground)
+    if (!paintInfo.shouldPaintWithinRoot(renderer()) || renderer()->style()->visibility() != VISIBLE || paintInfo.phase != PaintPhaseForeground)
         return;
 
     int x = m_x;
@@ -812,9 +812,9 @@ void InlineFlowBox::paintBoxDecorations(RenderObject::PaintInfo& paintInfo, int 
     }
 }
 
-void InlineFlowBox::paintMask(RenderObject::PaintInfo& paintInfo, int tx, int ty)
+void InlineFlowBox::paintMask(PaintInfo& paintInfo, int tx, int ty)
 {
-    if (!renderer()->shouldPaintWithinRoot(paintInfo) || renderer()->style()->visibility() != VISIBLE || paintInfo.phase != PaintPhaseMask)
+    if (!paintInfo.shouldPaintWithinRoot(renderer()) || renderer()->style()->visibility() != VISIBLE || paintInfo.phase != PaintPhaseMask)
         return;
 
     int x = m_x;
@@ -904,11 +904,11 @@ static bool shouldDrawTextDecoration(RenderObject* obj)
     return false;
 }
 
-void InlineFlowBox::paintTextDecorations(RenderObject::PaintInfo& paintInfo, int tx, int ty, bool paintedChildren)
+void InlineFlowBox::paintTextDecorations(PaintInfo& paintInfo, int tx, int ty, bool paintedChildren)
 {
     // Paint text decorations like underlines/overlines. We only do this if we aren't in quirks mode (i.e., in
     // almost-strict mode or strict mode).
-    if (renderer()->style()->htmlHacks() || !renderer()->shouldPaintWithinRoot(paintInfo) ||
+    if (renderer()->style()->htmlHacks() || !paintInfo.shouldPaintWithinRoot(renderer()) ||
         renderer()->style()->visibility() != VISIBLE)
         return;
     

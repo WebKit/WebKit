@@ -47,8 +47,7 @@ void RenderForeignObject::paint(PaintInfo& paintInfo, int, int)
 
     PaintInfo childPaintInfo(paintInfo);
     childPaintInfo.context->save();
-
-    applyTransformToPaintInfo(childPaintInfo, localTransform());
+    childPaintInfo.applyTransform(localTransform());
 
     if (SVGRenderBase::isOverflowHidden(this))
         childPaintInfo.context->clip(m_viewport);

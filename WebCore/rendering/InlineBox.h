@@ -112,7 +112,7 @@ public:
 
     virtual void adjustPosition(int dx, int dy);
 
-    virtual void paint(RenderObject::PaintInfo&, int tx, int ty);
+    virtual void paint(PaintInfo&, int tx, int ty);
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, int x, int y, int tx, int ty);
 
     // Overloaded new operator.

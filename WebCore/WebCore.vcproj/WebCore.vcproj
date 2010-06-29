@@ -28697,6 +28697,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\rendering\PaintInfo.h"
+				>
+			</File>
+			<File
+				RelativePath="..\rendering\PaintPhase.h"
+				>
+			</File>
+			<File
 				RelativePath="..\rendering\PointerEventsHitRules.cpp"
 				>
 			</File>

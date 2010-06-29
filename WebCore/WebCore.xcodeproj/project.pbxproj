@@ -128,6 +128,8 @@
 		08820BDF0EF5D381009099A8 /* WMLTableElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 08820BDD0EF5D381009099A8 /* WMLTableElement.h */; };
 		088451150F267B63007F139E /* WMLInputElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 088451130F267B62007F139E /* WMLInputElement.cpp */; };
 		088451160F267B63007F139E /* WMLInputElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 088451140F267B63007F139E /* WMLInputElement.h */; };
+		0885067F11DA045B00182B98 /* PaintInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 0885067D11DA045B00182B98 /* PaintInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0885068011DA045B00182B98 /* PaintPhase.h in Headers */ = {isa = PBXBuildFile; fileRef = 0885067E11DA045B00182B98 /* PaintPhase.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		088C97120ECB6D92000534BA /* WMLNames.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CA3AB490E556F2400E9C0C0 /* WMLNames.cpp */; };
 		088C97130ECB6D9D000534BA /* WMLNames.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CA3AB480E556F2400E9C0C0 /* WMLNames.h */; };
 		088C97510ECB6E28000534BA /* WMLAElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C6B99180E52E37300487BB7 /* WMLAElement.cpp */; };
@@ -5700,6 +5702,8 @@
 		08820BDD0EF5D381009099A8 /* WMLTableElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WMLTableElement.h; sourceTree = "<group>"; };
 		088451130F267B62007F139E /* WMLInputElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WMLInputElement.cpp; sourceTree = "<group>"; };
 		088451140F267B63007F139E /* WMLInputElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WMLInputElement.h; sourceTree = "<group>"; };
+		0885067D11DA045B00182B98 /* PaintInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PaintInfo.h; sourceTree = "<group>"; };
+		0885067E11DA045B00182B98 /* PaintPhase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PaintPhase.h; sourceTree = "<group>"; };
 		0893E4650ECB68F400A28563 /* WMLPageState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WMLPageState.cpp; sourceTree = "<group>"; };
 		0893E4660ECB68F400A28563 /* WMLPageState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WMLPageState.h; sourceTree = "<group>"; };
 		089582530E857A7E00F82C83 /* ImageLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ImageLoader.cpp; sourceTree = "<group>"; };
@@ -5875,9 +5879,9 @@
 		1921327111C0E6BB00456238 /* SVGFEConvolveMatrixElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGFEConvolveMatrixElement.cpp; sourceTree = "<group>"; };
 		1921327211C0E6BB00456238 /* SVGFEConvolveMatrixElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGFEConvolveMatrixElement.h; sourceTree = "<group>"; };
 		1921327311C0E6BB00456238 /* SVGFEConvolveMatrixElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SVGFEConvolveMatrixElement.idl; sourceTree = "<group>"; };
-		19BFF64611C0F2AC00B8C04D /* DOMSVGFEConvolveMatrixElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file; path = DOMSVGFEConvolveMatrixElement.h; sourceTree = "<group>"; };
+		19BFF64611C0F2AC00B8C04D /* DOMSVGFEConvolveMatrixElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMSVGFEConvolveMatrixElement.h; sourceTree = "<group>"; };
 		19BFF64711C0F2AC00B8C04D /* DOMSVGFEConvolveMatrixElement.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMSVGFEConvolveMatrixElement.mm; sourceTree = "<group>"; };
-		19BFF64811C0F2AC00B8C04D /* DOMSVGFEConvolveMatrixElementInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file; path = DOMSVGFEConvolveMatrixElementInternal.h; sourceTree = "<group>"; };
+		19BFF64811C0F2AC00B8C04D /* DOMSVGFEConvolveMatrixElementInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMSVGFEConvolveMatrixElementInternal.h; sourceTree = "<group>"; };
 		19BFF64911C0F2AC00B8C04D /* JSSVGFEConvolveMatrixElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGFEConvolveMatrixElement.cpp; sourceTree = "<group>"; };
 		19BFF64A11C0F2AC00B8C04D /* JSSVGFEConvolveMatrixElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSSVGFEConvolveMatrixElement.h; sourceTree = "<group>"; };
 		1A0D57340A5C77FE007EDD4C /* OverflowEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = OverflowEvent.cpp; sourceTree = "<group>"; };
@@ -16454,6 +16458,8 @@
 				ABFE7E100D32FAF50066F4D2 /* MediaControlElements.cpp */,
 				ABFE7E110D32FAF50066F4D2 /* MediaControlElements.h */,
 				3774ABA30FA21EB400AD7DE9 /* OverlapTestRequestClient.h */,
+				0885067D11DA045B00182B98 /* PaintInfo.h */,
+				0885067E11DA045B00182B98 /* PaintPhase.h */,
 				B2B1F7140D00CAA8004AEA64 /* PointerEventsHitRules.cpp */,
 				B2B1F7150D00CAA8004AEA64 /* PointerEventsHitRules.h */,
 				BCEA481C097D93020094C9E4 /* RenderApplet.cpp */,
@@ -18885,6 +18891,8 @@
 				7A674BDC0F9EBF4E006CF099 /* PageGroupLoadDeferrer.h in Headers */,
 				E1284AE110447D4500EAEB52 /* PageTransitionEvent.h in Headers */,
 				51E1ECC30C91C90400DC255B /* PageURLRecord.h in Headers */,
+				0885067F11DA045B00182B98 /* PaintInfo.h in Headers */,
+				0885068011DA045B00182B98 /* PaintPhase.h in Headers */,
 				A80E6CFB0A1989CA007FB8C5 /* Pair.h in Headers */,
 				BC76AC130DD7AD5C00415F34 /* ParserUtilities.h in Headers */,
 				4B2708C70AF19EE40065127F /* Pasteboard.h in Headers */,

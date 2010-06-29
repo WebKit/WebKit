@@ -45,7 +45,7 @@ public:
     virtual void invalidateClients();
     virtual void invalidateClient(RenderObject*);
 
-    void draw(RenderObject::PaintInfo&, const AffineTransform&);
+    void draw(PaintInfo&, const AffineTransform&);
 
     // Calculates marker boundaries, mapped to the target element's coordinate space
     FloatRect markerBoundaries(const AffineTransform& markerTransformation) const;

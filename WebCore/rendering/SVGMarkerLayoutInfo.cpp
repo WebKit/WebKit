@@ -98,7 +98,7 @@ FloatRect SVGMarkerLayoutInfo::calculateBoundaries(RenderSVGResourceMarker* star
     return bounds;
 }
 
-void SVGMarkerLayoutInfo::drawMarkers(RenderObject::PaintInfo& paintInfo)
+void SVGMarkerLayoutInfo::drawMarkers(PaintInfo& paintInfo)
 {
     if (m_layout.isEmpty())
         return;

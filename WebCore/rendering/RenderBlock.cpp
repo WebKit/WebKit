@@ -1984,7 +1984,7 @@ void RenderBlock::paint(PaintInfo& paintInfo, int tx, int ty)
     // Our scrollbar widgets paint exactly when we tell them to, so that they work properly with
     // z-index.  We paint after we painted the background/border, so that the scrollbars will
     // sit above the background/border.
-    if (hasOverflowClip() && style()->visibility() == VISIBLE && (phase == PaintPhaseBlockBackground || phase == PaintPhaseChildBlockBackground) && shouldPaintWithinRoot(paintInfo))
+    if (hasOverflowClip() && style()->visibility() == VISIBLE && (phase == PaintPhaseBlockBackground || phase == PaintPhaseChildBlockBackground) && paintInfo.shouldPaintWithinRoot(this))
         layer()->paintOverflowControls(paintInfo.context, tx, ty, paintInfo.rect);
 }
 
@@ -2099,7 +2099,7 @@ void RenderBlock::paintChildren(PaintInfo& paintInfo, int tx, int ty)
     // We don't paint our own background, but we do let the kids paint their backgrounds.
     PaintInfo info(paintInfo);
     info.phase = newPhase;
-    info.paintingRoot = paintingRootForChildren(paintInfo);
+    info.updatePaintingRootForChildren(this);
     bool checkPageBreaks = document()->printing() && !document()->settings()->paginateDuringLayoutEnabled();
     bool checkColumnBreaks = !checkPageBreaks && !view()->printRect().isEmpty() && !document()->settings()->paginateDuringLayoutEnabled();
 
@@ -2266,7 +2266,7 @@ void RenderBlock::paintFloats(PaintInfo& paintInfo, int tx, int ty, bool preserv
 
 void RenderBlock::paintEllipsisBoxes(PaintInfo& paintInfo, int tx, int ty)
 {
-    if (!shouldPaintWithinRoot(paintInfo) || !firstLineBox())
+    if (!paintInfo.shouldPaintWithinRoot(this) || !firstLineBox())
         return;
 
     if (style()->visibility() == VISIBLE && paintInfo.phase == PaintPhaseForeground) {
@@ -2429,7 +2429,7 @@ void RenderBlock::paintSelection(PaintInfo& paintInfo, int tx, int ty)
 }
 
 #ifndef BUILDING_ON_TIGER
-static void clipOutPositionedObjects(const RenderObject::PaintInfo* paintInfo, int tx, int ty, RenderBlock::PositionedObjectsListHashSet* positionedObjects)
+static void clipOutPositionedObjects(const PaintInfo* paintInfo, int tx, int ty, RenderBlock::PositionedObjectsListHashSet* positionedObjects)
 {
     if (!positionedObjects)
         return;
@@ -4223,7 +4223,7 @@ int RenderBlock::layoutColumns(int endOfContent, int requestedColumnHeight)
         v->setPrintRect(pageRect);
         v->setTruncatedAt(truncationPoint);
         GraphicsContext context((PlatformGraphicsContext*)0);
-        RenderObject::PaintInfo paintInfo(&context, pageRect, PaintPhaseForeground, false, 0, 0);
+        PaintInfo paintInfo(&context, pageRect, PaintPhaseForeground, false, 0, 0);
         
         setHasColumns(false);
         paintObject(paintInfo, 0, 0);

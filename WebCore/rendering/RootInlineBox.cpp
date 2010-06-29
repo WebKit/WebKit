@@ -115,9 +115,9 @@ int RootInlineBox::placeEllipsisBox(bool ltr, int blockLeftEdge, int blockRightE
     return result;
 }
 
-void RootInlineBox::paintEllipsisBox(RenderObject::PaintInfo& paintInfo, int tx, int ty) const
+void RootInlineBox::paintEllipsisBox(PaintInfo& paintInfo, int tx, int ty) const
 {
-    if (hasEllipsisBox() && renderer()->shouldPaintWithinRoot(paintInfo) && renderer()->style()->visibility() == VISIBLE
+    if (hasEllipsisBox() && paintInfo.shouldPaintWithinRoot(renderer()) && renderer()->style()->visibility() == VISIBLE
             && paintInfo.phase == PaintPhaseForeground)
         ellipsisBox()->paint(paintInfo, tx, ty);
 }
@@ -140,9 +140,9 @@ void RootInlineBox::addHighlightOverflow()
     setVerticalOverflowPositions(topLayoutOverflow(), bottomLayoutOverflow(), min(topVisualOverflow(), inflatedRect.y()), max(bottomVisualOverflow(), inflatedRect.bottom()), height());
 }
 
-void RootInlineBox::paintCustomHighlight(RenderObject::PaintInfo& paintInfo, int tx, int ty, const AtomicString& highlightType)
+void RootInlineBox::paintCustomHighlight(PaintInfo& paintInfo, int tx, int ty, const AtomicString& highlightType)
 {
-    if (!renderer()->shouldPaintWithinRoot(paintInfo) || renderer()->style()->visibility() != VISIBLE || paintInfo.phase != PaintPhaseForeground)
+    if (!paintInfo.shouldPaintWithinRoot(renderer()) || renderer()->style()->visibility() != VISIBLE || paintInfo.phase != PaintPhaseForeground)
         return;
 
     Frame* frame = renderer()->frame();
@@ -161,7 +161,7 @@ void RootInlineBox::paintCustomHighlight(RenderObject::PaintInfo& paintInfo, int
 
 #endif
 
-void RootInlineBox::paint(RenderObject::PaintInfo& paintInfo, int tx, int ty)
+void RootInlineBox::paint(PaintInfo& paintInfo, int tx, int ty)
 {
     InlineFlowBox::paint(paintInfo, tx, ty);
     paintEllipsisBox(paintInfo, tx, ty);
@@ -240,7 +240,7 @@ int RootInlineBox::verticallyAlignBoxes(int heightOfBlock, GlyphOverflowAndFallb
 }
 
 GapRects RootInlineBox::fillLineSelectionGap(int selTop, int selHeight, RenderBlock* rootBlock, int blockX, int blockY, int tx, int ty,
-                                             const RenderObject::PaintInfo* paintInfo)
+                                             const PaintInfo* paintInfo)
 {
     RenderObject::SelectionState lineState = selectionState();
 

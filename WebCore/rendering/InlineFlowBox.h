@@ -91,13 +91,13 @@ public:
 
     virtual void clearTruncation();
 
-    virtual void paintBoxDecorations(RenderObject::PaintInfo&, int tx, int ty);
-    virtual void paintMask(RenderObject::PaintInfo&, int tx, int ty);
-    void paintFillLayers(const RenderObject::PaintInfo&, const Color&, const FillLayer*, int tx, int ty, int w, int h, CompositeOperator = CompositeSourceOver);
-    void paintFillLayer(const RenderObject::PaintInfo&, const Color&, const FillLayer*, int tx, int ty, int w, int h, CompositeOperator = CompositeSourceOver);
+    virtual void paintBoxDecorations(PaintInfo&, int tx, int ty);
+    virtual void paintMask(PaintInfo&, int tx, int ty);
+    void paintFillLayers(const PaintInfo&, const Color&, const FillLayer*, int tx, int ty, int w, int h, CompositeOperator = CompositeSourceOver);
+    void paintFillLayer(const PaintInfo&, const Color&, const FillLayer*, int tx, int ty, int w, int h, CompositeOperator = CompositeSourceOver);
     void paintBoxShadow(GraphicsContext*, RenderStyle*, ShadowStyle, int tx, int ty, int w, int h);
-    virtual void paintTextDecorations(RenderObject::PaintInfo&, int tx, int ty, bool paintedChildren = false);
-    virtual void paint(RenderObject::PaintInfo&, int tx, int ty);
+    virtual void paintTextDecorations(PaintInfo&, int tx, int ty, bool paintedChildren = false);
+    virtual void paint(PaintInfo&, int tx, int ty);
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, int x, int y, int tx, int ty);
 
     virtual RenderLineBoxList* rendererLineBoxes() const;

@@ -172,7 +172,7 @@ void RenderPath::paint(PaintInfo& paintInfo, int, int)
     bool drawsOutline = style()->outlineWidth() && (childPaintInfo.phase == PaintPhaseOutline || childPaintInfo.phase == PaintPhaseSelfOutline);
     if (drawsOutline || childPaintInfo.phase == PaintPhaseForeground) {
         childPaintInfo.context->save();
-        applyTransformToPaintInfo(childPaintInfo, m_localTransform);
+        childPaintInfo.applyTransform(m_localTransform);
         RenderSVGResourceFilter* filter = 0;
 
         if (childPaintInfo.phase == PaintPhaseForeground) {

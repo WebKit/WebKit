@@ -237,7 +237,7 @@ void RenderTheme::adjustStyle(CSSStyleSelector* selector, RenderStyle* style, El
     }
 }
 
-bool RenderTheme::paint(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
+bool RenderTheme::paint(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
 {
     // If painting is disabled, but we aren't updating control tints, then just bail.
     // If we are updating control tints, just schedule a repaint if the theme supports tinting
@@ -373,7 +373,7 @@ bool RenderTheme::paint(RenderObject* o, const RenderObject::PaintInfo& paintInf
     return true; // We don't support the appearance, so let the normal background/border paint.
 }
 
-bool RenderTheme::paintBorderOnly(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
+bool RenderTheme::paintBorderOnly(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
 {
     if (paintInfo.context->paintingDisabled())
         return false;
@@ -424,7 +424,7 @@ bool RenderTheme::paintBorderOnly(RenderObject* o, const RenderObject::PaintInfo
     return false;
 }
 
-bool RenderTheme::paintDecorations(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
+bool RenderTheme::paintDecorations(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
 {
     if (paintInfo.context->paintingDisabled())
         return false;
@@ -938,7 +938,7 @@ bool RenderTheme::supportsMeter(ControlPart, bool) const
     return false;
 }
 
-bool RenderTheme::paintMeter(RenderObject*, const RenderObject::PaintInfo&, const IntRect&)
+bool RenderTheme::paintMeter(RenderObject*, const PaintInfo&, const IntRect&)
 {
     return true;
 }

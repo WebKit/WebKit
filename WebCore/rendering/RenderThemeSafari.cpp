@@ -409,7 +409,7 @@ NSControlSize RenderThemeSafari::controlSizeForSystemFont(RenderStyle* style) co
     return NSMiniControlSize;
 }
 
-bool RenderThemeSafari::paintCheckbox(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
+bool RenderThemeSafari::paintCheckbox(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
 {
     ASSERT(SafariThemeLibrary());
 
@@ -448,7 +448,7 @@ void RenderThemeSafari::setCheckboxSize(RenderStyle* style) const
     setSizeFromFont(style, checkboxSizes());
 }
 
-bool RenderThemeSafari::paintRadio(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
+bool RenderThemeSafari::paintRadio(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
 {
     ASSERT(SafariThemeLibrary());
 
@@ -572,7 +572,7 @@ void RenderThemeSafari::setButtonSize(RenderStyle* style) const
     setSizeFromFont(style, buttonSizes());
 }
 
-bool RenderThemeSafari::paintButton(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
+bool RenderThemeSafari::paintButton(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
 {
     ASSERT(SafariThemeLibrary());
 
@@ -605,7 +605,7 @@ bool RenderThemeSafari::paintButton(RenderObject* o, const RenderObject::PaintIn
     return false;
 }
 
-bool RenderThemeSafari::paintTextField(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
+bool RenderThemeSafari::paintTextField(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
 {
     ASSERT(SafariThemeLibrary());
 
@@ -617,7 +617,7 @@ void RenderThemeSafari::adjustTextFieldStyle(CSSStyleSelector*, RenderStyle*, El
 {
 }
 
-bool RenderThemeSafari::paintCapsLockIndicator(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
+bool RenderThemeSafari::paintCapsLockIndicator(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
 {    
 #if defined(SAFARI_THEME_VERSION) && SAFARI_THEME_VERSION >= 1
     ASSERT(SafariThemeLibrary());
@@ -633,7 +633,7 @@ bool RenderThemeSafari::paintCapsLockIndicator(RenderObject* o, const RenderObje
 #endif
 }
 
-bool RenderThemeSafari::paintTextArea(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
+bool RenderThemeSafari::paintTextArea(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
 {
     ASSERT(SafariThemeLibrary());
 
@@ -673,7 +673,7 @@ const int* RenderThemeSafari::popupButtonPadding(NSControlSize size) const
     return padding[size];
 }
 
-bool RenderThemeSafari::paintMenuList(RenderObject* o, const RenderObject::PaintInfo& info, const IntRect& r)
+bool RenderThemeSafari::paintMenuList(RenderObject* o, const PaintInfo& info, const IntRect& r)
 {
     ASSERT(SafariThemeLibrary());
 
@@ -742,7 +742,7 @@ static void TrackGradientInterpolate(void* info, const CGFloat* inData, CGFloat*
         outData[i] = (1.0f - a) * dark[i] + a * light[i];
 }
 
-void RenderThemeSafari::paintMenuListButtonGradients(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
+void RenderThemeSafari::paintMenuListButtonGradients(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
 {
     if (r.isEmpty())
         return;
@@ -809,7 +809,7 @@ void RenderThemeSafari::paintMenuListButtonGradients(RenderObject* o, const Rend
     paintInfo.context->restore();
 }
 
-bool RenderThemeSafari::paintMenuListButton(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
+bool RenderThemeSafari::paintMenuListButton(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
 {
     IntRect bounds = IntRect(r.x() + o->style()->borderLeftWidth(),
                              r.y() + o->style()->borderTopWidth(),
@@ -955,7 +955,7 @@ int RenderThemeSafari::minimumMenuListSize(RenderStyle* style) const
 const int trackWidth = 5;
 const int trackRadius = 2;
 
-bool RenderThemeSafari::paintSliderTrack(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
+bool RenderThemeSafari::paintSliderTrack(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
 {
     IntRect bounds = r;
 
@@ -998,7 +998,7 @@ void RenderThemeSafari::adjustSliderThumbStyle(CSSStyleSelector* selector, Rende
 
 const float verticalSliderHeightPadding = 0.1f;
 
-bool RenderThemeSafari::paintSliderThumb(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
+bool RenderThemeSafari::paintSliderThumb(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
 {
     ASSERT(SafariThemeLibrary());
 
@@ -1029,7 +1029,7 @@ void RenderThemeSafari::adjustSliderThumbSize(RenderObject* o) const
 #endif
 }
 
-bool RenderThemeSafari::paintSearchField(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
+bool RenderThemeSafari::paintSearchField(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
 {
     ASSERT(SafariThemeLibrary());
 
@@ -1082,7 +1082,7 @@ void RenderThemeSafari::adjustSearchFieldStyle(CSSStyleSelector* selector, Rende
     setFontFromControlSize(selector, style, controlSize);
 }
 
-bool RenderThemeSafari::paintSearchFieldCancelButton(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect&)
+bool RenderThemeSafari::paintSearchFieldCancelButton(RenderObject* o, const PaintInfo& paintInfo, const IntRect&)
 {
     ASSERT(SafariThemeLibrary());
 
@@ -1124,7 +1124,7 @@ void RenderThemeSafari::adjustSearchFieldDecorationStyle(CSSStyleSelector* selec
     style->setHeight(Length(size.height(), Fixed));
 }
 
-bool RenderThemeSafari::paintSearchFieldDecoration(RenderObject*, const RenderObject::PaintInfo&, const IntRect&)
+bool RenderThemeSafari::paintSearchFieldDecoration(RenderObject*, const PaintInfo&, const IntRect&)
 {
     return false;
 }
@@ -1136,7 +1136,7 @@ void RenderThemeSafari::adjustSearchFieldResultsDecorationStyle(CSSStyleSelector
     style->setHeight(Length(size.height(), Fixed));
 }
 
-bool RenderThemeSafari::paintSearchFieldResultsDecoration(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect&)
+bool RenderThemeSafari::paintSearchFieldResultsDecoration(RenderObject* o, const PaintInfo& paintInfo, const IntRect&)
 {
     ASSERT(SafariThemeLibrary());
 
@@ -1159,7 +1159,7 @@ void RenderThemeSafari::adjustSearchFieldResultsButtonStyle(CSSStyleSelector* se
     style->setHeight(Length(size.height(), Fixed));
 }
 
-bool RenderThemeSafari::paintSearchFieldResultsButton(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect&)
+bool RenderThemeSafari::paintSearchFieldResultsButton(RenderObject* o, const PaintInfo& paintInfo, const IntRect&)
 {
     ASSERT(SafariThemeLibrary());
 
@@ -1174,37 +1174,37 @@ bool RenderThemeSafari::paintSearchFieldResultsButton(RenderObject* o, const Ren
     return false;
 }
 #if ENABLE(VIDEO)
-bool RenderThemeSafari::paintMediaFullscreenButton(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
+bool RenderThemeSafari::paintMediaFullscreenButton(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
 {
     return RenderMediaControls::paintMediaControlsPart(MediaFullscreenButton, o, paintInfo, r);
 }
 
-bool RenderThemeSafari::paintMediaMuteButton(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
+bool RenderThemeSafari::paintMediaMuteButton(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
 {
     return RenderMediaControls::paintMediaControlsPart(MediaMuteButton, o, paintInfo, r);
 }
 
-bool RenderThemeSafari::paintMediaPlayButton(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
+bool RenderThemeSafari::paintMediaPlayButton(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
 {
     return RenderMediaControls::paintMediaControlsPart(MediaPlayButton, o, paintInfo, r);
 }
 
-bool RenderThemeSafari::paintMediaSeekBackButton(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
+bool RenderThemeSafari::paintMediaSeekBackButton(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
 {
     return RenderMediaControls::paintMediaControlsPart(MediaSeekBackButton, o, paintInfo, r);
 }
 
-bool RenderThemeSafari::paintMediaSeekForwardButton(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
+bool RenderThemeSafari::paintMediaSeekForwardButton(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
 {
     return RenderMediaControls::paintMediaControlsPart(MediaSeekForwardButton, o, paintInfo, r);
 }
 
-bool RenderThemeSafari::paintMediaSliderTrack(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
+bool RenderThemeSafari::paintMediaSliderTrack(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
 {
     return RenderMediaControls::paintMediaControlsPart(MediaSlider, o, paintInfo, r);
 }
 
-bool RenderThemeSafari::paintMediaSliderThumb(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
+bool RenderThemeSafari::paintMediaSliderThumb(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
 {
     return RenderMediaControls::paintMediaControlsPart(MediaSliderThumb, o, paintInfo, r);
 }

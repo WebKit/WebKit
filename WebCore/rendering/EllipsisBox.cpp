@@ -27,7 +27,7 @@
 
 namespace WebCore {
 
-void EllipsisBox::paint(RenderObject::PaintInfo& paintInfo, int tx, int ty)
+void EllipsisBox::paint(PaintInfo& paintInfo, int tx, int ty)
 {
     GraphicsContext* context = paintInfo.context;
     RenderStyle* style = m_renderer->style(m_firstLine);

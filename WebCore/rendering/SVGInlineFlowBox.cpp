@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-void SVGInlineFlowBox::paint(RenderObject::PaintInfo& paintInfo, int, int)
+void SVGInlineFlowBox::paint(PaintInfo& paintInfo, int, int)
 {
     ASSERT(paintInfo.phase == PaintPhaseForeground || paintInfo.phase == PaintPhaseSelection);
     ASSERT(!paintInfo.context->paintingDisabled());
@@ -38,7 +38,7 @@ void SVGInlineFlowBox::paint(RenderObject::PaintInfo& paintInfo, int, int)
     RenderObject* boxRenderer = renderer();
     ASSERT(boxRenderer);
 
-    RenderObject::PaintInfo childPaintInfo(paintInfo);
+    PaintInfo childPaintInfo(paintInfo);
     childPaintInfo.context->save();
 
     RenderSVGResourceFilter* filter = 0;

@@ -374,16 +374,16 @@ void RenderThemeChromiumWin::adjustSliderThumbSize(RenderObject* o) const
         RenderThemeChromiumSkia::adjustSliderThumbSize(o);
 }
 
-bool RenderThemeChromiumWin::paintCheckbox(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r)
+bool RenderThemeChromiumWin::paintCheckbox(RenderObject* o, const PaintInfo& i, const IntRect& r)
 {
     return paintButton(o, i, r);
 }
-bool RenderThemeChromiumWin::paintRadio(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r)
+bool RenderThemeChromiumWin::paintRadio(RenderObject* o, const PaintInfo& i, const IntRect& r)
 {
     return paintButton(o, i, r);
 }
 
-bool RenderThemeChromiumWin::paintButton(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r)
+bool RenderThemeChromiumWin::paintButton(RenderObject* o, const PaintInfo& i, const IntRect& r)
 {
     const ThemeData& themeData = getThemeData(o);
 
@@ -396,12 +396,12 @@ bool RenderThemeChromiumWin::paintButton(RenderObject* o, const RenderObject::Pa
     return false;
 }
 
-bool RenderThemeChromiumWin::paintTextField(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r)
+bool RenderThemeChromiumWin::paintTextField(RenderObject* o, const PaintInfo& i, const IntRect& r)
 {
     return paintTextFieldInternal(o, i, r, true);
 }
 
-bool RenderThemeChromiumWin::paintSliderTrack(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r)
+bool RenderThemeChromiumWin::paintSliderTrack(RenderObject* o, const PaintInfo& i, const IntRect& r)
 {
     const ThemeData& themeData = getThemeData(o);
 
@@ -414,13 +414,13 @@ bool RenderThemeChromiumWin::paintSliderTrack(RenderObject* o, const RenderObjec
     return false;
 }
 
-bool RenderThemeChromiumWin::paintSliderThumb(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r)
+bool RenderThemeChromiumWin::paintSliderThumb(RenderObject* o, const PaintInfo& i, const IntRect& r)
 {
     return paintSliderTrack(o, i, r);
 }
 
 // Used to paint unstyled menulists (i.e. with the default border)
-bool RenderThemeChromiumWin::paintMenuList(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r)
+bool RenderThemeChromiumWin::paintMenuList(RenderObject* o, const PaintInfo& i, const IntRect& r)
 {
     if (!o->isBox())
         return false;
@@ -609,7 +609,7 @@ ThemeData RenderThemeChromiumWin::getThemeData(RenderObject* o)
 }
 
 bool RenderThemeChromiumWin::paintTextFieldInternal(RenderObject* o,
-                                                    const RenderObject::PaintInfo& i,
+                                                    const PaintInfo& i,
                                                     const IntRect& r,
                                                     bool drawEdges)
 {
@@ -677,7 +677,7 @@ void RenderThemeChromiumWin::adjustProgressBarStyle(CSSStyleSelector*, RenderSty
 {
 }
 
-bool RenderThemeChromiumWin::paintProgressBar(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r)
+bool RenderThemeChromiumWin::paintProgressBar(RenderObject* o, const PaintInfo& i, const IntRect& r)
 {
     if (!o->isProgress())
         return true;

@@ -103,37 +103,37 @@ public:
     virtual void systemFont(int propId, FontDescription&) const;
 
     virtual void adjustCheckboxStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
-    virtual bool paintCheckbox(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
+    virtual bool paintCheckbox(RenderObject*, const PaintInfo&, const IntRect&);
 
     virtual void adjustRadioStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
-    virtual bool paintRadio(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
+    virtual bool paintRadio(RenderObject*, const PaintInfo&, const IntRect&);
 
     virtual void adjustButtonStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
-    virtual bool paintButton(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
+    virtual bool paintButton(RenderObject*, const PaintInfo&, const IntRect&);
 
     virtual void adjustTextFieldStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
-    virtual bool paintTextField(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
+    virtual bool paintTextField(RenderObject*, const PaintInfo&, const IntRect&);
 
     virtual void adjustTextAreaStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
-    virtual bool paintTextArea(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
+    virtual bool paintTextArea(RenderObject*, const PaintInfo&, const IntRect&);
 
     virtual void adjustMenuListStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
-    virtual bool paintMenuList(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
+    virtual bool paintMenuList(RenderObject*, const PaintInfo&, const IntRect&);
 
     virtual void adjustSearchFieldResultsDecorationStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
-    virtual bool paintSearchFieldResultsDecoration(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
+    virtual bool paintSearchFieldResultsDecoration(RenderObject*, const PaintInfo&, const IntRect&);
 
     virtual void adjustSearchFieldDecorationStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
-    virtual bool paintSearchFieldDecoration(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
+    virtual bool paintSearchFieldDecoration(RenderObject*, const PaintInfo&, const IntRect&);
 
     virtual void adjustSearchFieldStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
-    virtual bool paintSearchField(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
+    virtual bool paintSearchField(RenderObject*, const PaintInfo&, const IntRect&);
 
     virtual void adjustSearchFieldResultsButtonStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
-    virtual bool paintSearchFieldResultsButton(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
+    virtual bool paintSearchFieldResultsButton(RenderObject*, const PaintInfo&, const IntRect&);
 
     virtual void adjustSearchFieldCancelButtonStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
-    virtual bool paintSearchFieldCancelButton(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
+    virtual bool paintSearchFieldCancelButton(RenderObject*, const PaintInfo&, const IntRect&);
 
 private:
     void createCanvas();
@@ -142,7 +142,7 @@ private:
     void applyPartDescriptions();
     const char* edjeGroupFromFormType(FormType type) const;
     void applyEdjeStateFromForm(Evas_Object* o, ControlStates states);
-    bool paintThemePart(RenderObject* o, FormType type, const RenderObject::PaintInfo& i, const IntRect& rect);
+    bool paintThemePart(RenderObject* o, FormType type, const PaintInfo& i, const IntRect& rect);
 
     Page* m_page;
     Color m_activeSelectionBackgroundColor;

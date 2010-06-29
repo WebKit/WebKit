@@ -1736,6 +1736,8 @@ HEADERS += \
     rendering/InlineTextBox.h \
     rendering/LayoutState.h \
     rendering/MediaControlElements.h \
+    rendering/PaintInfo.h \
+    rendering/PaintPhase.h \
     rendering/PointerEventsHitRules.h \
     rendering/RenderApplet.h \
     rendering/RenderArena.h \

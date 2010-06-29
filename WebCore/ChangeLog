@@ -1,5 +1,432 @@
 2010-06-29  Nikolas Zimmermann  <nzimmermann@rim.com>
 
+        Reviewed by Dirk Schulze.
+
+        Move PaintInfo/PaintPhase into their own headers, out of RenderObject
+        https://bugs.webkit.org/show_bug.cgi?id=41342
+
+        1) Move enums PaintPhase/PaintBehaviorFlags and the PaintBehaviour typedef from RenderObject into PaintPhase.h.
+           Move PaintInfo from RenderObject into PaintInfo.h. Replace s/RenderObject::PaintInfo/PaintInfo/ throughout WebCore/.
+           Also move the OverlapTestRequestMap typedef into PaintInfo.h, and replace s/RenderObject::OverlapTestRequestMap/OverlapTestRequestMap/ everywhere.
+
+        2) Move "RenderObject* paintingRootForChildren(PaintInfo& paintInfo) const" from RenderObject to PaintInfo
+           and modify it to take a renderer: "void updatePaintingRootForChildren(const RenderObject* renderer)".
+
+        This changes a common idiom:
+        -    info.paintingRoot = paintingRootForChildren(paintInfo);
+        +    info.updatePaintingRootForChildren(this);
+
+        We save resetting the paintingRoot to 0 if it was 0 already and thus do less work.
+
+        3) Move "bool shouldPaintWithinRoot(PaintInfo& paintInfo) const" from RenderObject to PaintInfo
+           and modify it to take a renderer: "bool shouldPaintWithinRoot(const RenderObject* renderer) const".
+
+        This changes a common idiom:
+        -    if (!shouldPaintWithinRoot(paintInfo))
+        +    if (!paintInfo.shouldPaintWithinRoot(this))
+
+        4) Move "void applyTransformToPaintInfo(RenderObject::PaintInfo&, const AffineTransform& localToChildTransform)"
+           from SVGRenderSupport to PaintInfo and rename it to "applyTransform", guarded with ENABLE(SVG) blocks.
+
+        This changes a common idiom:
+        -    applyTransformToPaintInfo(childPaintInfo, localToParentTransform());
+        +    childPaintInfo.applyTransform(localToParentTransform());
+
+        Add PaintInfo.h / PaintPhase.h to all build systems that list headers.
+
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/android/RenderThemeAndroid.cpp:
+        (WebCore::getCanvasFromInfo):
+        (WebCore::RenderThemeAndroid::paintCheckbox):
+        (WebCore::RenderThemeAndroid::paintButton):
+        (WebCore::RenderThemeAndroid::paintRadio):
+        (WebCore::RenderThemeAndroid::paintTextField):
+        (WebCore::RenderThemeAndroid::paintTextArea):
+        (WebCore::RenderThemeAndroid::paintSearchField):
+        (WebCore::RenderThemeAndroid::paintCombo):
+        (WebCore::RenderThemeAndroid::paintMenuList):
+        (WebCore::RenderThemeAndroid::paintMenuListButton):
+        * platform/android/RenderThemeAndroid.h:
+        * platform/efl/RenderThemeEfl.cpp:
+        (WebCore::RenderThemeEfl::paintThemePart):
+        (WebCore::RenderThemeEfl::paintCheckbox):
+        (WebCore::RenderThemeEfl::paintRadio):
+        (WebCore::RenderThemeEfl::paintButton):
+        (WebCore::RenderThemeEfl::paintMenuList):
+        (WebCore::RenderThemeEfl::paintTextField):
+        (WebCore::RenderThemeEfl::paintTextArea):
+        (WebCore::RenderThemeEfl::paintSearchFieldDecoration):
+        (WebCore::RenderThemeEfl::paintSearchFieldResultsButton):
+        (WebCore::RenderThemeEfl::paintSearchFieldResultsDecoration):
+        (WebCore::RenderThemeEfl::paintSearchFieldCancelButton):
+        (WebCore::RenderThemeEfl::paintSearchField):
+        * platform/efl/RenderThemeEfl.h:
+        * platform/gtk/RenderThemeGtk.cpp:
+        (WebCore::paintMozillaGtkWidget):
+        (WebCore::RenderThemeGtk::paintCheckbox):
+        (WebCore::RenderThemeGtk::paintRadio):
+        (WebCore::RenderThemeGtk::paintButton):
+        (WebCore::RenderThemeGtk::paintMenuList):
+        (WebCore::RenderThemeGtk::paintTextField):
+        (WebCore::RenderThemeGtk::paintTextArea):
+        (WebCore::RenderThemeGtk::paintSearchFieldResultsButton):
+        (WebCore::RenderThemeGtk::paintSearchFieldResultsDecoration):
+        (WebCore::RenderThemeGtk::paintSearchFieldCancelButton):
+        (WebCore::RenderThemeGtk::paintSearchField):
+        (WebCore::RenderThemeGtk::paintSliderTrack):
+        (WebCore::RenderThemeGtk::paintSliderThumb):
+        (WebCore::RenderThemeGtk::paintMediaFullscreenButton):
+        (WebCore::RenderThemeGtk::paintMediaMuteButton):
+        (WebCore::RenderThemeGtk::paintMediaPlayButton):
+        (WebCore::RenderThemeGtk::paintMediaSeekBackButton):
+        (WebCore::RenderThemeGtk::paintMediaSeekForwardButton):
+        (WebCore::RenderThemeGtk::paintMediaSliderTrack):
+        (WebCore::RenderThemeGtk::paintMediaSliderThumb):
+        (WebCore::RenderThemeGtk::paintProgressBar):
+        * platform/gtk/RenderThemeGtk.h:
+        * platform/haiku/RenderThemeHaiku.cpp:
+        (WebCore::RenderThemeHaiku::paintCheckbox):
+        (WebCore::RenderThemeHaiku::paintRadio):
+        (WebCore::RenderThemeHaiku::paintMenuList):
+        * platform/haiku/RenderThemeHaiku.h:
+        * platform/qt/RenderThemeQt.cpp:
+        (WebCore::StylePainter::StylePainter):
+        (WebCore::RenderThemeQt::paintCheckbox):
+        (WebCore::RenderThemeQt::paintRadio):
+        (WebCore::RenderThemeQt::paintButton):
+        (WebCore::RenderThemeQt::paintTextField):
+        (WebCore::RenderThemeQt::paintTextArea):
+        (WebCore::RenderThemeQt::paintMenuList):
+        (WebCore::RenderThemeQt::paintMenuListButton):
+        (WebCore::RenderThemeQt::paintProgressBar):
+        (WebCore::RenderThemeQt::paintSliderTrack):
+        (WebCore::RenderThemeQt::paintSliderThumb):
+        (WebCore::RenderThemeQt::paintSearchField):
+        (WebCore::RenderThemeQt::paintSearchFieldCancelButton):
+        (WebCore::RenderThemeQt::paintSearchFieldDecoration):
+        (WebCore::RenderThemeQt::paintSearchFieldResultsDecoration):
+        (WebCore::RenderThemeQt::paintMediaFullscreenButton):
+        (WebCore::RenderThemeQt::paintMediaMuteButton):
+        (WebCore::RenderThemeQt::paintMediaPlayButton):
+        (WebCore::RenderThemeQt::paintMediaSeekBackButton):
+        (WebCore::RenderThemeQt::paintMediaSeekForwardButton):
+        (WebCore::RenderThemeQt::paintMediaCurrentTime):
+        (WebCore::RenderThemeQt::paintMediaVolumeSliderTrack):
+        (WebCore::RenderThemeQt::paintMediaVolumeSliderThumb):
+        (WebCore::RenderThemeQt::paintMediaSliderTrack):
+        (WebCore::RenderThemeQt::paintMediaSliderThumb):
+        * platform/qt/RenderThemeQt.h:
+        * platform/wx/RenderThemeWx.cpp:
+        (WebCore::RenderThemeWx::paintCheckbox):
+        (WebCore::RenderThemeWx::paintRadio):
+        (WebCore::RenderThemeWx::paintButton):
+        (WebCore::RenderThemeWx::paintTextField):
+        (WebCore::RenderThemeWx::paintMenuList):
+        (WebCore::RenderThemeWx::paintMenuListButton):
+        * rendering/EllipsisBox.cpp:
+        (WebCore::EllipsisBox::paint):
+        * rendering/EllipsisBox.h:
+        * rendering/InlineBox.cpp:
+        (WebCore::InlineBox::paint):
+        * rendering/InlineBox.h:
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::paint):
+        (WebCore::InlineFlowBox::paintFillLayers):
+        (WebCore::InlineFlowBox::paintFillLayer):
+        (WebCore::InlineFlowBox::paintBoxDecorations):
+        (WebCore::InlineFlowBox::paintMask):
+        (WebCore::InlineFlowBox::paintTextDecorations):
+        * rendering/InlineFlowBox.h:
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paint):
+        * rendering/InlineTextBox.h:
+        * rendering/PaintInfo.h: Added.
+        (WebCore::PaintInfo::PaintInfo):
+        (WebCore::PaintInfo::updatePaintingRootForChildren):
+        (WebCore::PaintInfo::shouldPaintWithinRoot):
+        (WebCore::PaintInfo::applyTransform):
+        * rendering/PaintPhase.h: Added.
+        (WebCore::):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::paint):
+        (WebCore::RenderBlock::paintChildren):
+        (WebCore::RenderBlock::paintEllipsisBoxes):
+        (WebCore::clipOutPositionedObjects):
+        (WebCore::RenderBlock::layoutColumns):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::paint):
+        (WebCore::RenderBox::paintBoxDecorations):
+        (WebCore::RenderBox::paintMask):
+        * rendering/RenderFieldset.cpp:
+        (WebCore::RenderFieldset::paintBoxDecorations):
+        * rendering/RenderForeignObject.cpp:
+        (WebCore::RenderForeignObject::paint):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paint):
+        (WebCore::performOverlapTests):
+        (WebCore::RenderLayer::paintLayer):
+        (WebCore::RenderLayer::paintList):
+        (WebCore::RenderLayer::paintPaginatedChildLayer):
+        (WebCore::RenderLayer::paintChildLayerIntoColumns):
+        * rendering/RenderLayer.h:
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::paintIntoLayer):
+        * rendering/RenderLineBoxList.cpp:
+        (WebCore::RenderLineBoxList::paint):
+        * rendering/RenderLineBoxList.h:
+        * rendering/RenderMediaControls.cpp:
+        (WebCore::RenderMediaControls::paintMediaControlsPart):
+        * rendering/RenderMediaControls.h:
+        * rendering/RenderMediaControlsChromium.cpp:
+        (WebCore::paintMediaMuteButton):
+        (WebCore::paintMediaPlayButton):
+        (WebCore::paintMediaSlider):
+        (WebCore::paintMediaSliderThumb):
+        (WebCore::paintMediaVolumeSlider):
+        (WebCore::paintMediaVolumeSliderThumb):
+        (WebCore::paintMediaTimelineContainer):
+        (WebCore::RenderMediaControlsChromium::paintMediaControlsPart):
+        * rendering/RenderMediaControlsChromium.h:
+        * rendering/RenderObject.h:
+        * rendering/RenderPath.cpp:
+        (WebCore::RenderPath::paint):
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::paint):
+        (WebCore::RenderReplaced::shouldPaint):
+        * rendering/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::paint):
+        * rendering/RenderSVGResourceMarker.cpp:
+        (WebCore::RenderSVGResourceMarker::draw):
+        * rendering/RenderSVGResourceMarker.h:
+        * rendering/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::paint):
+        * rendering/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::paint):
+        * rendering/RenderScrollbarPart.cpp:
+        (WebCore::RenderScrollbarPart::paintIntoRect):
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::paintObject):
+        (WebCore::RenderTable::paintBoxDecorations):
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::paint):
+        (WebCore::RenderTableCell::paintBackgroundsBehindCell):
+        (WebCore::RenderTableCell::paintBoxDecorations):
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::paint):
+        (WebCore::RenderTheme::paintBorderOnly):
+        (WebCore::RenderTheme::paintDecorations):
+        (WebCore::RenderTheme::paintMeter):
+        * rendering/RenderTheme.h:
+        (WebCore::RenderTheme::paintCapsLockIndicator):
+        (WebCore::RenderTheme::paintCheckbox):
+        (WebCore::RenderTheme::paintRadio):
+        (WebCore::RenderTheme::paintButton):
+        (WebCore::RenderTheme::paintInnerSpinButton):
+        (WebCore::RenderTheme::paintOuterSpinButton):
+        (WebCore::RenderTheme::paintTextField):
+        (WebCore::RenderTheme::paintTextArea):
+        (WebCore::RenderTheme::paintMenuList):
+        (WebCore::RenderTheme::paintMenuListButton):
+        (WebCore::RenderTheme::paintProgressBar):
+        (WebCore::RenderTheme::paintSliderTrack):
+        (WebCore::RenderTheme::paintSliderThumb):
+        (WebCore::RenderTheme::paintSearchField):
+        (WebCore::RenderTheme::paintSearchFieldCancelButton):
+        (WebCore::RenderTheme::paintSearchFieldDecoration):
+        (WebCore::RenderTheme::paintSearchFieldResultsDecoration):
+        (WebCore::RenderTheme::paintSearchFieldResultsButton):
+        (WebCore::RenderTheme::paintMediaFullscreenButton):
+        (WebCore::RenderTheme::paintMediaPlayButton):
+        (WebCore::RenderTheme::paintMediaMuteButton):
+        (WebCore::RenderTheme::paintMediaSeekBackButton):
+        (WebCore::RenderTheme::paintMediaSeekForwardButton):
+        (WebCore::RenderTheme::paintMediaSliderTrack):
+        (WebCore::RenderTheme::paintMediaSliderThumb):
+        (WebCore::RenderTheme::paintMediaVolumeSliderContainer):
+        (WebCore::RenderTheme::paintMediaVolumeSliderTrack):
+        (WebCore::RenderTheme::paintMediaVolumeSliderThumb):
+        (WebCore::RenderTheme::paintMediaRewindButton):
+        (WebCore::RenderTheme::paintMediaReturnToRealtimeButton):
+        (WebCore::RenderTheme::paintMediaToggleClosedCaptionsButton):
+        (WebCore::RenderTheme::paintMediaControlsBackground):
+        (WebCore::RenderTheme::paintMediaCurrentTime):
+        (WebCore::RenderTheme::paintMediaTimeRemaining):
+        * rendering/RenderThemeChromiumMac.h:
+        * rendering/RenderThemeChromiumMac.mm:
+        (WebCore::RenderThemeChromiumMac::paintMediaPlayButton):
+        (WebCore::RenderThemeChromiumMac::paintMediaMuteButton):
+        (WebCore::RenderThemeChromiumMac::paintMediaSliderTrack):
+        (WebCore::RenderThemeChromiumMac::paintMediaControlsBackground):
+        (WebCore::RenderThemeChromiumMac::paintMediaVolumeSliderTrack):
+        (WebCore::RenderThemeChromiumMac::paintMediaVolumeSliderThumb):
+        * rendering/RenderThemeChromiumSkia.cpp:
+        (WebCore::RenderThemeChromiumSkia::paintCheckbox):
+        (WebCore::RenderThemeChromiumSkia::paintRadio):
+        (WebCore::paintButtonLike):
+        (WebCore::RenderThemeChromiumSkia::paintButton):
+        (WebCore::RenderThemeChromiumSkia::paintTextField):
+        (WebCore::RenderThemeChromiumSkia::paintTextArea):
+        (WebCore::RenderThemeChromiumSkia::paintSearchField):
+        (WebCore::RenderThemeChromiumSkia::paintSearchFieldCancelButton):
+        (WebCore::RenderThemeChromiumSkia::paintSearchFieldResultsDecoration):
+        (WebCore::RenderThemeChromiumSkia::paintSearchFieldResultsButton):
+        (WebCore::RenderThemeChromiumSkia::paintMediaControlsBackground):
+        (WebCore::RenderThemeChromiumSkia::paintMediaSliderTrack):
+        (WebCore::RenderThemeChromiumSkia::paintMediaVolumeSliderTrack):
+        (WebCore::RenderThemeChromiumSkia::paintMediaSliderThumb):
+        (WebCore::RenderThemeChromiumSkia::paintMediaVolumeSliderThumb):
+        (WebCore::RenderThemeChromiumSkia::paintMediaPlayButton):
+        (WebCore::RenderThemeChromiumSkia::paintMediaMuteButton):
+        (WebCore::RenderThemeChromiumSkia::paintMenuList):
+        (WebCore::RenderThemeChromiumSkia::paintMenuListButton):
+        (WebCore::RenderThemeChromiumSkia::paintSliderTrack):
+        (WebCore::RenderThemeChromiumSkia::paintSliderThumb):
+        (WebCore::RenderThemeChromiumSkia::paintProgressBar):
+        * rendering/RenderThemeChromiumSkia.h:
+        * rendering/RenderThemeChromiumWin.cpp:
+        (WebCore::RenderThemeChromiumWin::paintCheckbox):
+        (WebCore::RenderThemeChromiumWin::paintRadio):
+        (WebCore::RenderThemeChromiumWin::paintButton):
+        (WebCore::RenderThemeChromiumWin::paintTextField):
+        (WebCore::RenderThemeChromiumWin::paintSliderTrack):
+        (WebCore::RenderThemeChromiumWin::paintSliderThumb):
+        (WebCore::RenderThemeChromiumWin::paintMenuList):
+        (WebCore::RenderThemeChromiumWin::paintTextFieldInternal):
+        (WebCore::RenderThemeChromiumWin::paintProgressBar):
+        * rendering/RenderThemeChromiumWin.h:
+        * rendering/RenderThemeMac.h:
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::paintTextField):
+        (WebCore::RenderThemeMac::paintCapsLockIndicator):
+        (WebCore::RenderThemeMac::paintTextArea):
+        (WebCore::RenderThemeMac::paintMenuList):
+        (WebCore::RenderThemeMac::paintMeter):
+        (WebCore::RenderThemeMac::paintProgressBar):
+        (WebCore::RenderThemeMac::paintMenuListButtonGradients):
+        (WebCore::RenderThemeMac::paintMenuListButton):
+        (WebCore::RenderThemeMac::paintSliderTrack):
+        (WebCore::RenderThemeMac::paintSliderThumb):
+        (WebCore::RenderThemeMac::paintSearchField):
+        (WebCore::RenderThemeMac::paintSearchFieldCancelButton):
+        (WebCore::RenderThemeMac::paintSearchFieldDecoration):
+        (WebCore::RenderThemeMac::paintSearchFieldResultsDecoration):
+        (WebCore::RenderThemeMac::paintSearchFieldResultsButton):
+        (WebCore::getUnzoomedRectAndAdjustCurrentContext):
+        (WebCore::RenderThemeMac::paintMediaFullscreenButton):
+        (WebCore::RenderThemeMac::paintMediaMuteButton):
+        (WebCore::RenderThemeMac::paintMediaPlayButton):
+        (WebCore::RenderThemeMac::paintMediaSeekBackButton):
+        (WebCore::RenderThemeMac::paintMediaSeekForwardButton):
+        (WebCore::RenderThemeMac::paintMediaSliderTrack):
+        (WebCore::RenderThemeMac::paintMediaSliderThumb):
+        (WebCore::RenderThemeMac::paintMediaRewindButton):
+        (WebCore::RenderThemeMac::paintMediaReturnToRealtimeButton):
+        (WebCore::RenderThemeMac::paintMediaToggleClosedCaptionsButton):
+        (WebCore::RenderThemeMac::paintMediaControlsBackground):
+        (WebCore::RenderThemeMac::paintMediaCurrentTime):
+        (WebCore::RenderThemeMac::paintMediaTimeRemaining):
+        * rendering/RenderThemeSafari.cpp:
+        (WebCore::RenderThemeSafari::paintCheckbox):
+        (WebCore::RenderThemeSafari::paintRadio):
+        (WebCore::RenderThemeSafari::paintButton):
+        (WebCore::RenderThemeSafari::paintTextField):
+        (WebCore::RenderThemeSafari::paintCapsLockIndicator):
+        (WebCore::RenderThemeSafari::paintTextArea):
+        (WebCore::RenderThemeSafari::paintMenuList):
+        (WebCore::RenderThemeSafari::paintMenuListButtonGradients):
+        (WebCore::RenderThemeSafari::paintMenuListButton):
+        (WebCore::RenderThemeSafari::paintSliderTrack):
+        (WebCore::RenderThemeSafari::paintSliderThumb):
+        (WebCore::RenderThemeSafari::paintSearchField):
+        (WebCore::RenderThemeSafari::paintSearchFieldCancelButton):
+        (WebCore::RenderThemeSafari::paintSearchFieldDecoration):
+        (WebCore::RenderThemeSafari::paintSearchFieldResultsDecoration):
+        (WebCore::RenderThemeSafari::paintSearchFieldResultsButton):
+        (WebCore::RenderThemeSafari::paintMediaFullscreenButton):
+        (WebCore::RenderThemeSafari::paintMediaMuteButton):
+        (WebCore::RenderThemeSafari::paintMediaPlayButton):
+        (WebCore::RenderThemeSafari::paintMediaSeekBackButton):
+        (WebCore::RenderThemeSafari::paintMediaSeekForwardButton):
+        (WebCore::RenderThemeSafari::paintMediaSliderTrack):
+        (WebCore::RenderThemeSafari::paintMediaSliderThumb):
+        * rendering/RenderThemeSafari.h:
+        * rendering/RenderThemeWin.cpp:
+        (WebCore::RenderThemeWin::paintButton):
+        (WebCore::RenderThemeWin::paintTextField):
+        (WebCore::RenderThemeWin::paintMenuList):
+        (WebCore::RenderThemeWin::paintMenuListButton):
+        (WebCore::RenderThemeWin::paintSliderTrack):
+        (WebCore::RenderThemeWin::paintSliderThumb):
+        (WebCore::RenderThemeWin::paintSearchField):
+        (WebCore::RenderThemeWin::paintSearchFieldCancelButton):
+        (WebCore::RenderThemeWin::paintSearchFieldResultsDecoration):
+        (WebCore::RenderThemeWin::paintSearchFieldResultsButton):
+        (WebCore::RenderThemeWin::paintMediaFullscreenButton):
+        (WebCore::RenderThemeWin::paintMediaMuteButton):
+        (WebCore::RenderThemeWin::paintMediaPlayButton):
+        (WebCore::RenderThemeWin::paintMediaSeekBackButton):
+        (WebCore::RenderThemeWin::paintMediaSeekForwardButton):
+        (WebCore::RenderThemeWin::paintMediaSliderTrack):
+        (WebCore::RenderThemeWin::paintMediaSliderThumb):
+        (WebCore::RenderThemeWin::paintMediaToggleClosedCaptionsButton):
+        * rendering/RenderThemeWin.h:
+        (WebCore::RenderThemeWin::paintCheckbox):
+        (WebCore::RenderThemeWin::paintRadio):
+        (WebCore::RenderThemeWin::paintTextArea):
+        (WebCore::RenderThemeWin::paintSearchFieldDecoration):
+        * rendering/RenderThemeWince.cpp:
+        (WebCore::RenderThemeWince::paintButton):
+        (WebCore::RenderThemeWince::paintTextField):
+        (WebCore::RenderThemeWince::paintMenuList):
+        (WebCore::RenderThemeWince::paintMenuListButton):
+        (WebCore::RenderThemeWince::paintSearchField):
+        (WebCore::RenderThemeWince::paintSearchFieldCancelButton):
+        (WebCore::RenderThemeWince::paintSearchFieldResultsDecoration):
+        (WebCore::RenderThemeWince::paintSearchFieldResultsButton):
+        (WebCore::RenderThemeWince::paintSliderTrack):
+        (WebCore::RenderThemeWince::paintSliderThumb):
+        (WebCore::RenderThemeWince::paintMediaFullscreenButton):
+        (WebCore::RenderThemeWince::paintMediaMuteButton):
+        (WebCore::RenderThemeWince::paintMediaPlayButton):
+        (WebCore::RenderThemeWince::paintMediaSeekBackButton):
+        (WebCore::RenderThemeWince::paintMediaSeekForwardButton):
+        (WebCore::RenderThemeWince::paintMediaSliderTrack):
+        (WebCore::RenderThemeWince::paintMediaSliderThumb):
+        * rendering/RenderThemeWince.h:
+        (WebCore::RenderThemeWince::paintCheckbox):
+        (WebCore::RenderThemeWince::paintRadio):
+        (WebCore::RenderThemeWince::paintTextArea):
+        (WebCore::RenderThemeWince::paintSearchFieldDecoration):
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::paintEllipsisBox):
+        (WebCore::RootInlineBox::paintCustomHighlight):
+        (WebCore::RootInlineBox::paint):
+        (WebCore::RootInlineBox::fillLineSelectionGap):
+        * rendering/RootInlineBox.h:
+        * rendering/SVGInlineFlowBox.cpp:
+        (WebCore::SVGInlineFlowBox::paint):
+        * rendering/SVGInlineFlowBox.h:
+        * rendering/SVGInlineTextBox.cpp:
+        (WebCore::SVGInlineTextBox::paint):
+        * rendering/SVGInlineTextBox.h:
+        * rendering/SVGMarkerLayoutInfo.cpp:
+        (WebCore::SVGMarkerLayoutInfo::drawMarkers):
+        * rendering/SVGMarkerLayoutInfo.h:
+        * rendering/SVGRenderSupport.cpp:
+        (WebCore::SVGRenderBase::prepareToRenderSVGContent):
+        (WebCore::SVGRenderBase::finishRenderSVGContent):
+        (WebCore::renderSubtreeToImage):
+        * rendering/SVGRenderSupport.h:
+        * rendering/SVGRootInlineBox.cpp:
+        (WebCore::SVGRootInlineBox::paint):
+        * rendering/SVGRootInlineBox.h:
+
+2010-06-29  Nikolas Zimmermann  <nzimmermann@rim.com>
+
         Not reviewed. Sort Xcode project file.
 
         * WebCore.xcodeproj/project.pbxproj:

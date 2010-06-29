@@ -55,14 +55,14 @@ public:
     // A method asking if the theme's controls actually care about redrawing when hovered.
     virtual bool supportsHover(const RenderStyle*) const { return true; }
 
-    virtual bool paintCheckbox(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r)
+    virtual bool paintCheckbox(RenderObject* o, const PaintInfo& i, const IntRect& r)
     {
         return paintButton(o, i, r);
     }
  
     virtual void setCheckboxSize(RenderStyle*) const;
 
-    virtual bool paintRadio(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r)
+    virtual bool paintRadio(RenderObject* o, const PaintInfo& i, const IntRect& r)
     {
         return paintButton(o, i, r);
     }
@@ -72,18 +72,18 @@ public:
     virtual void adjustRepaintRect(const RenderObject*, IntRect&);
 
     virtual void adjustButtonStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
-    virtual bool paintButton(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
+    virtual bool paintButton(RenderObject*, const PaintInfo&, const IntRect&);
 
     virtual void adjustTextFieldStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
-    virtual bool paintTextField(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
+    virtual bool paintTextField(RenderObject*, const PaintInfo&, const IntRect&);
 
     virtual int minimumMenuListSize(RenderStyle*) const;
 
     virtual void adjustMenuListStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
-    virtual bool paintMenuList(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
+    virtual bool paintMenuList(RenderObject*, const PaintInfo&, const IntRect&);
 
     virtual void adjustMenuListButtonStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
-    virtual bool paintMenuListButton(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
+    virtual bool paintMenuListButton(RenderObject*, const PaintInfo&, const IntRect&);
 
     virtual bool isControlStyled(const RenderStyle*, const BorderData&,
                                  const FillLayer&, const Color&) const;
@@ -259,7 +259,7 @@ void RenderThemeWx::adjustButtonStyle(CSSStyleSelector* selector, RenderStyle* s
     addIntrinsicMargins(style);
 }
 
-bool RenderThemeWx::paintButton(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r)
+bool RenderThemeWx::paintButton(RenderObject* o, const PaintInfo& i, const IntRect& r)
 {
     wxWindow* window = nativeWindowForRenderObject(o);
     wxDC* dc = static_cast<wxDC*>(i.context->platformContext());
@@ -318,7 +318,7 @@ void RenderThemeWx::adjustTextFieldStyle(CSSStyleSelector*, RenderStyle* style, 
     
 }
 
-bool RenderThemeWx::paintTextField(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r)
+bool RenderThemeWx::paintTextField(RenderObject* o, const PaintInfo& i, const IntRect& r)
 {
     wxWindow* window = nativeWindowForRenderObject(o);
     wxDC* dc = static_cast<wxDC*>(i.context->platformContext());
@@ -340,7 +340,7 @@ void RenderThemeWx::adjustMenuListStyle(CSSStyleSelector*, RenderStyle* style, E
 {
 }
     
-bool RenderThemeWx::paintMenuList(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r)
+bool RenderThemeWx::paintMenuList(RenderObject* o, const PaintInfo& i, const IntRect& r)
 {
     wxWindow* window = nativeWindowForRenderObject(o);
     wxDC* dc = static_cast<wxDC*>(i.context->platformContext());
@@ -369,7 +369,7 @@ void RenderThemeWx::adjustMenuListButtonStyle(CSSStyleSelector*, RenderStyle*, E
     notImplemented();
 }
     
-bool RenderThemeWx::paintMenuListButton(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r)
+bool RenderThemeWx::paintMenuListButton(RenderObject* o, const PaintInfo& i, const IntRect& r)
 {
     wxWindow* window = nativeWindowForRenderObject(o);
     wxDC* dc = static_cast<wxDC*>(i.context->platformContext());
