@@ -1,5 +1,16 @@
 2010-06-28  David Levin  <levin@chromium.org>
 
+        Reviewed by NOBODY (test expectations update for chromium).
+
+        These baselines were added for other platforms in http://trac.webkit.org/changeset/62076
+        Most unfortunately, v8 reports errors on different line numbers than jsc, so chromium
+        needs a different baseline.
+
+        * platform/chromium-mac/html5lib/webkit-runner-expected.txt: Added.
+        * platform/chromium-win/html5lib/webkit-runner-expected.txt: Added.
+
+2010-06-28  David Levin  <levin@chromium.org>
+
         Reviewed by NOBODY (test expectations update for WebKit change).
 
         Updated expectations due to tests whose results changed after http://trac.webkit.org/changeset/62035.
