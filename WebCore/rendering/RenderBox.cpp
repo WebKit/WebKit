@@ -2904,13 +2904,4 @@ void RenderBox::clearLayoutOverflow()
     m_overflow->resetLayoutOverflow(borderBoxRect());
 }
 
-#if ENABLE(SVG)
-
-AffineTransform RenderBox::localTransform() const
-{
-    return AffineTransform(1, 0, 0, 1, x(), y());
-}
-
-#endif
-
 } // namespace WebCore

@@ -87,7 +87,7 @@ void RenderSVGImage::paint(PaintInfo& paintInfo, int, int)
 
         PaintInfo savedInfo(paintInfo);
 
-        if (prepareToRenderSVGContent(this, paintInfo, m_localBounds, filter)) {
+        if (SVGRenderSupport::prepareToRenderSVGContent(this, paintInfo, m_localBounds, filter)) {
             FloatRect destRect = m_localBounds;
             FloatRect srcRect(0, 0, image()->width(), image()->height());
 
@@ -97,7 +97,7 @@ void RenderSVGImage::paint(PaintInfo& paintInfo, int, int)
 
             paintInfo.context->drawImage(image(), DeviceColorSpace, destRect, srcRect);
         }
-        finishRenderSVGContent(this, paintInfo, filter, savedInfo.context);
+        SVGRenderSupport::finishRenderSVGContent(this, paintInfo, filter, savedInfo.context);
     }
 
     if ((paintInfo.phase == PaintPhaseOutline || paintInfo.phase == PaintPhaseSelfOutline) && style()->outlineWidth())
@@ -108,7 +108,7 @@ void RenderSVGImage::paint(PaintInfo& paintInfo, int, int)
 
 void RenderSVGImage::destroy()
 {
-    deregisterFromResources(this);
+    RenderSVGResource::invalidateAllResourcesOfRenderer(this);
     RenderImage::destroy();
 }
 
@@ -123,7 +123,7 @@ bool RenderSVGImage::nodeAtFloatPoint(const HitTestRequest& request, HitTestResu
     if (isVisible || !hitRules.requireVisible) {
         FloatPoint localPoint = localToParentTransform().inverse().mapPoint(pointInParent);
             
-        if (!pointInClippingArea(this, localPoint))
+        if (!SVGRenderSupport::pointInClippingArea(this, localPoint))
             return false;
 
         if (hitRules.canHitFill) {
@@ -150,7 +150,7 @@ FloatRect RenderSVGImage::repaintRectInLocalCoordinates() const
         return m_cachedLocalRepaintRect;
 
     m_cachedLocalRepaintRect = m_localBounds;
-    intersectRepaintRectWithResources(this, m_cachedLocalRepaintRect);
+    SVGRenderSupport::intersectRepaintRectWithResources(this, m_cachedLocalRepaintRect);
 
     return m_cachedLocalRepaintRect;
 }
@@ -169,17 +169,17 @@ void RenderSVGImage::imageChanged(WrappedImagePtr image, const IntRect* rect)
 
 IntRect RenderSVGImage::clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer)
 {
-    return SVGRenderBase::clippedOverflowRectForRepaint(this, repaintContainer);
+    return SVGRenderSupport::clippedOverflowRectForRepaint(this, repaintContainer);
 }
 
 void RenderSVGImage::computeRectForRepaint(RenderBoxModelObject* repaintContainer, IntRect& repaintRect, bool fixed)
 {
-    SVGRenderBase::computeRectForRepaint(this, repaintContainer, repaintRect, fixed);
+    SVGRenderSupport::computeRectForRepaint(this, repaintContainer, repaintRect, fixed);
 }
 
 void RenderSVGImage::mapLocalToContainer(RenderBoxModelObject* repaintContainer, bool fixed , bool useTransforms, TransformState& transformState) const
 {
-    SVGRenderBase::mapLocalToContainer(this, repaintContainer, fixed, useTransforms, transformState);
+    SVGRenderSupport::mapLocalToContainer(this, repaintContainer, fixed, useTransforms, transformState);
 }
 
 void RenderSVGImage::addFocusRingRects(Vector<IntRect>& rects, int, int)

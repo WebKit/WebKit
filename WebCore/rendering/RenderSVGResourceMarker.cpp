@@ -88,7 +88,7 @@ void RenderSVGResourceMarker::invalidateClient(RenderObject* object)
 
 void RenderSVGResourceMarker::applyViewportClip(PaintInfo& paintInfo)
 {
-    if (SVGRenderBase::isOverflowHidden(this))
+    if (SVGRenderSupport::isOverflowHidden(this))
         paintInfo.context->clip(m_viewport);
 }
 

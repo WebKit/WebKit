@@ -24,6 +24,7 @@
 #include "RenderSVGResourceSolidColor.h"
 
 #include "GraphicsContext.h"
+#include "RenderStyle.h"
 #include "SVGRenderSupport.h"
 
 #if PLATFORM(SKIA)
@@ -65,7 +66,7 @@ bool RenderSVGResourceSolidColor::applyResource(RenderObject* object, RenderStyl
         context->setStrokeColor(m_color, colorSpace);
 
         if (style)
-            applyStrokeStyleToContext(context, style, object);
+            SVGRenderSupport::applyStrokeStyleToContext(context, style, object);
 
         if (resourceMode & ApplyToTextMode)
             context->setTextDrawingMode(cTextStroke);

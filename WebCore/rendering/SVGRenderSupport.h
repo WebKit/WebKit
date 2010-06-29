@@ -3,6 +3,7 @@
  *           (C) 2007 Nikolas Zimmermann <zimmermann@kde.org>
  *           (C) 2007 Eric Seidel <eric@webkit.org>
  * Copyright (C) 2009 Google, Inc.  All rights reserved.
+ * Copyright (C) Research In Motion Limited 2010. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -26,64 +27,64 @@
 
 #if ENABLE(SVG)
 #include "DashArray.h"
-#include "RenderObject.h"
-#include "SVGElement.h"
-#include "SVGStyledElement.h"
+#include "PaintInfo.h"
 
 namespace WebCore {
 
-class RenderSVGResourceFilter;
+class FloatPoint;
+class FloatRect;
 class ImageBuffer;
+class RenderBoxModelObject;
+class RenderObject;
+class RenderStyle;
+class RenderSVGResourceFilter;
+class TransformState;
 
-// SVGRendererBase is an abstract base class which all SVG renderers inherit
-// from in order to share SVG renderer code.
-// FIXME: This code can all move into RenderSVGModelObject once
-// all SVG renderers inherit from RenderSVGModelObject.
-class SVGRenderBase {
+// SVGRendererSupport is a helper class sharing code between all SVG renderers.
+class SVGRenderSupport {
 public:
-    virtual ~SVGRenderBase();
-
-    // FIXME: These are only public for SVGRootInlineBox.
-    // It's unclear if these should be exposed or not.  SVGRootInlineBox may
-    // pass the wrong RenderObject* and boundingBox to these functions.
+    // Used by all SVG renderers who apply clip/filter/etc. resources to the renderer content
     static bool prepareToRenderSVGContent(RenderObject*, PaintInfo&, const FloatRect& boundingBox, RenderSVGResourceFilter*&);
     static void finishRenderSVGContent(RenderObject*, PaintInfo&, RenderSVGResourceFilter*&, GraphicsContext* savedContext);
 
-    // Layout all children of the passed render object
+    // Shares child layouting code between RenderSVGRoot/RenderSVG(Hidden)Container
     static void layoutChildren(RenderObject*, bool selfNeedsLayout);
 
     // Helper function determining wheter overflow is hidden
     static bool isOverflowHidden(const RenderObject*);
 
     // Calculates the repaintRect in combination with filter, clipper and masker in local coordinates.
-    void intersectRepaintRectWithResources(const RenderObject*, FloatRect&) const;
+    static void intersectRepaintRectWithResources(const RenderObject*, FloatRect&);
 
-protected:
-    static IntRect clippedOverflowRectForRepaint(RenderObject*, RenderBoxModelObject* repaintContainer);
-    static void computeRectForRepaint(RenderObject*, RenderBoxModelObject* repaintContainer, IntRect&, bool fixed);
-
-    static void mapLocalToContainer(const RenderObject*, RenderBoxModelObject* repaintContainer, bool useTransforms, bool fixed, TransformState&);
+    // Determines whether the passed point lies in a clipping area
+    static bool pointInClippingArea(const RenderObject*, const FloatPoint&);
 
     // Used to share the "walk all the children" logic between objectBoundingBox
     // and repaintRectInLocalCoordinates in RenderSVGRoot and RenderSVGContainer
     static FloatRect computeContainerBoundingBox(const RenderObject* container, bool includeAllPaintedContent);
+
+    // Important functions used by nearly all SVG renderers centralizing coordinate transformations / repaint rect calculations
+    static IntRect clippedOverflowRectForRepaint(RenderObject*, RenderBoxModelObject* repaintContainer);
+    static void computeRectForRepaint(RenderObject*, RenderBoxModelObject* repaintContainer, IntRect&, bool fixed);
+    static void mapLocalToContainer(const RenderObject*, RenderBoxModelObject* repaintContainer, bool useTransforms, bool fixed, TransformState&);
+
+    // This offers a way to render parts of a WebKit rendering tree into a ImageBuffer.
+    static void renderSubtreeToImage(ImageBuffer*, RenderObject*);
+
+    // Shared between SVG renderers and resources.
+    static void applyStrokeStyleToContext(GraphicsContext*, const RenderStyle*, const RenderObject*);
+
+    // FIXME: These methods do not belong here.
+    static const RenderObject* findTextRootObject(const RenderObject* start);
+    static DashArray dashArrayFromRenderingStyle(const RenderStyle* style, RenderStyle* rootStyle);
+
+private:
+    // This class is not constructable.
+    SVGRenderSupport();
+    ~SVGRenderSupport();
 };
-
-// This offers a way to render parts of a WebKit rendering tree into a ImageBuffer.
-void renderSubtreeToImage(ImageBuffer*, RenderObject*);
-
-bool pointInClippingArea(const RenderObject*, const FloatPoint&);
-
-void deregisterFromResources(RenderObject*);
-void clampImageBufferSizeToViewport(FrameView*, IntSize& imageBufferSize);
-
-void applyStrokeStyleToContext(GraphicsContext*, const RenderStyle*, const RenderObject*);
-DashArray dashArrayFromRenderingStyle(const RenderStyle* style, RenderStyle* rootStyle);
-
-const RenderObject* findTextRootObject(const RenderObject* start);
 
 } // namespace WebCore
 
 #endif // ENABLE(SVG)
-
 #endif // SVGRenderSupport_h

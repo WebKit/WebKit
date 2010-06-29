@@ -44,12 +44,12 @@ void SVGInlineFlowBox::paint(PaintInfo& paintInfo, int, int)
     RenderSVGResourceFilter* filter = 0;
     FloatRect repaintRect = boxRenderer->repaintRectInLocalCoordinates();
 
-    if (SVGRenderBase::prepareToRenderSVGContent(boxRenderer, childPaintInfo, repaintRect, filter)) {
+    if (SVGRenderSupport::prepareToRenderSVGContent(boxRenderer, childPaintInfo, repaintRect, filter)) {
         for (InlineBox* child = firstChild(); child; child = child->nextOnLine())
             child->paint(childPaintInfo, 0, 0);
     }
 
-    SVGRenderBase::finishRenderSVGContent(boxRenderer, childPaintInfo, filter, paintInfo.context);
+    SVGRenderSupport::finishRenderSVGContent(boxRenderer, childPaintInfo, filter, paintInfo.context);
     childPaintInfo.context->restore();
 }
 

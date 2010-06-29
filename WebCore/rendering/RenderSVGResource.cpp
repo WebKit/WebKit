@@ -26,7 +26,11 @@
 #if ENABLE(SVG)
 #include "RenderSVGResource.h"
 
+#include "RenderSVGResourceClipper.h"
 #include "RenderSVGResourceContainer.h"
+#include "RenderSVGResourceFilter.h"
+#include "RenderSVGResourceMarker.h"
+#include "RenderSVGResourceMasker.h"
 #include "RenderSVGResourceSolidColor.h"
 #include "SVGURIReference.h"
 
@@ -195,6 +199,59 @@ void RenderSVGResource::markForLayoutAndResourceInvalidation(RenderObject* objec
         return;
 
     static_cast<SVGStyledElement*>(element)->invalidateResourcesInAncestorChain();
+}
+
+static inline void invalidatePaintingResource(SVGPaint* paint, RenderObject* object)
+{
+    ASSERT(paint);
+
+    SVGPaint::SVGPaintType paintType = paint->paintType();
+    if (paintType != SVGPaint::SVG_PAINTTYPE_URI && paintType != SVGPaint::SVG_PAINTTYPE_URI_RGBCOLOR)
+        return;
+
+    AtomicString id(SVGURIReference::getTarget(paint->uri()));
+    if (RenderSVGResourceContainer* paintingResource = getRenderSVGResourceContainerById(object->document(), id))
+        paintingResource->invalidateClient(object);
+}
+
+void RenderSVGResource::invalidateAllResourcesOfRenderer(RenderObject* object)
+{
+    ASSERT(object);
+    ASSERT(object->style());
+
+    Document* document = object->document();
+    ASSERT(document);
+
+    const SVGRenderStyle* svgStyle = object->style()->svgStyle();
+    ASSERT(svgStyle);
+
+    // Masker
+    if (RenderSVGResourceMasker* masker = getRenderSVGResourceById<RenderSVGResourceMasker>(document, svgStyle->maskerResource()))
+        masker->invalidateClient(object);
+
+    // Clipper
+    if (RenderSVGResourceClipper* clipper = getRenderSVGResourceById<RenderSVGResourceClipper>(document, svgStyle->clipperResource()))
+        clipper->invalidateClient(object);
+
+    // Filter
+#if ENABLE(FILTERS)
+    if (RenderSVGResourceFilter* filter = getRenderSVGResourceById<RenderSVGResourceFilter>(document, svgStyle->filterResource()))
+        filter->invalidateClient(object);
+#endif
+
+    // Markers
+    if (RenderSVGResourceMarker* startMarker = getRenderSVGResourceById<RenderSVGResourceMarker>(document, svgStyle->markerStartResource()))
+        startMarker->invalidateClient(object);
+    if (RenderSVGResourceMarker* midMarker = getRenderSVGResourceById<RenderSVGResourceMarker>(document, svgStyle->markerMidResource()))
+        midMarker->invalidateClient(object);
+    if (RenderSVGResourceMarker* endMarker = getRenderSVGResourceById<RenderSVGResourceMarker>(document, svgStyle->markerEndResource()))
+        endMarker->invalidateClient(object);
+
+    // Gradients/Patterns
+    if (svgStyle->hasFill())
+        invalidatePaintingResource(svgStyle->fillPaint(), object);
+    if (svgStyle->hasStroke())
+        invalidatePaintingResource(svgStyle->strokePaint(), object);
 }
 
 }

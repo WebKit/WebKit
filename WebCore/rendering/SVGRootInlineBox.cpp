@@ -53,12 +53,12 @@ void SVGRootInlineBox::paint(PaintInfo& paintInfo, int, int)
     FloatRect repaintRect = boxRenderer->repaintRectInLocalCoordinates();
 
     RenderSVGResourceFilter* filter = 0;
-    if (SVGRenderBase::prepareToRenderSVGContent(boxRenderer, childPaintInfo, repaintRect, filter)) {
+    if (SVGRenderSupport::prepareToRenderSVGContent(boxRenderer, childPaintInfo, repaintRect, filter)) {
         for (InlineBox* child = firstChild(); child; child = child->nextOnLine())
             child->paint(childPaintInfo, 0, 0);
     }
 
-    SVGRenderBase::finishRenderSVGContent(boxRenderer, childPaintInfo, filter, paintInfo.context);
+    SVGRenderSupport::finishRenderSVGContent(boxRenderer, childPaintInfo, filter, paintInfo.context);
     childPaintInfo.context->restore();
 }
 

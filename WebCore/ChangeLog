@@ -1,3 +1,135 @@
+2010-06-29  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Dirk Schulze.
+
+        Cleanup SVGRenderSupport
+        https://bugs.webkit.org/show_bug.cgi?id=41347
+
+        Remove SVGRenderBase base class from all SVG renderers. It was meant as temporary solution until all SVG renderers inherit from RenderSVGModelObject,
+        though this is not going to happen. RenderSVGModelObject inherits from RenderObject, making it impossible to inherit eg. RenderSVGImage from it, as
+        it already indirectly inherits from RenderObject, through RenderImage. Other examples are RenderForeignObject (RenderBlock inheritance),
+        RenderSVGInlineText (RenderText inheritance) etc.
+
+        Rename SVGRenderBase to SVGRenderSupport, just like the file is named, remove all free functions, and make them all static functions in SVGRenderSupport.
+        We can still share code between all SVG renderers, but don't need a special base class for all renderers -> shrink size of all SVG renderers.
+
+        Doesn't affect any test.
+
+        * rendering/RenderBox.cpp: Remove localTransform() override, not needed at all.
+        * rendering/RenderBox.h: Ditto.
+        * rendering/RenderForeignObject.cpp: s/SVGRenderBase/SVGRenderSupport/
+        (WebCore::RenderForeignObject::paint):
+        (WebCore::RenderForeignObject::clippedOverflowRectForRepaint):
+        (WebCore::RenderForeignObject::computeRectForRepaint):
+        (WebCore::RenderForeignObject::nodeAtFloatPoint):
+        (WebCore::RenderForeignObject::mapLocalToContainer):
+        * rendering/RenderPath.cpp:
+        (WebCore::BoundingRectStrokeStyleApplier::strokeStyle): applyStrokeStyleToContext is a static function in SVGRenderSupport now.
+        (WebCore::RenderPath::paint): s/SVGRenderBase/SVGRenderSupport/
+        (WebCore::RenderPath::nodeAtFloatPoint): Ditto.
+        (WebCore::RenderPath::updateCachedBoundaries): Ditto.
+        * rendering/RenderSVGBlock.h: Remove SVGRenderBase inheritance.
+        * rendering/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::layout): layoutChildren is a static function in SVGRenderSupport now.
+        (WebCore::RenderSVGContainer::paint): prepareToRenderSVGContent/finishRenderSVGContent are now static functions in SVGRenderSupport.
+        (WebCore::RenderSVGContainer::objectBoundingBox): computeContainerBoundingBox is a static function in SVGRenderSupport now.
+        (WebCore::RenderSVGContainer::strokeBoundingBox): Ditto.
+        (WebCore::RenderSVGContainer::repaintRectInLocalCoordinates): Remove call to computeContainerBoundingBox, use strokeBoundingBox instead, for consistency.
+        (WebCore::RenderSVGContainer::nodeAtFloatPoint): pointInClippingArea is a static function in SVGRenderSupport now.
+        * rendering/RenderSVGHiddenContainer.cpp:
+        (WebCore::RenderSVGHiddenContainer::layout): layoutChildren is a static function in SVGRenderSupport now.
+        * rendering/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::paint): prepareToRenderSVGContent/finishRenderSVGContent are static functions in SVGRenderSupport now.
+        (WebCore::RenderSVGImage::destroy): deregisterResource was renamed to invalidateAllResourcesOfRenderer and is a static function in SVGRenderSupport. 
+        (WebCore::RenderSVGImage::nodeAtFloatPoint): pointInClippingArea is a static function in SVGRenderSupport now.
+        (WebCore::RenderSVGImage::repaintRectInLocalCoordinates): intersectRepaintRectWithResources is a static function in SVGRenderSupport now.
+        (WebCore::RenderSVGImage::clippedOverflowRectForRepaint): s/SVGRenderBase/SVGRenderSupport/
+        (WebCore::RenderSVGImage::computeRectForRepaint): Ditto.
+        (WebCore::RenderSVGImage::mapLocalToContainer): Ditto.
+        * rendering/RenderSVGImage.h: Remove SVGRenderBase inheritance.
+        * rendering/RenderSVGInline.cpp:
+        (WebCore::RenderSVGInline::objectBoundingBox): findTextRootObject is a static function in SVGRenderSupport now.
+        (WebCore::RenderSVGInline::strokeBoundingBox): Ditto.
+        (WebCore::RenderSVGInline::repaintRectInLocalCoordinates): Ditto.
+        (WebCore::RenderSVGInline::clippedOverflowRectForRepaint): s/SVGRenderBase/SVGRenderSupport/
+        (WebCore::RenderSVGInline::computeRectForRepaint): Ditto,.
+        (WebCore::RenderSVGInline::mapLocalToContainer): Ditto.
+        (WebCore::RenderSVGInline::absoluteQuads): findTextRootObject is a static function in SVGRenderSupport now.
+        * rendering/RenderSVGInline.h: Remove SVGRenderBase inheritance.
+        * rendering/RenderSVGModelObject.cpp:
+        (WebCore::RenderSVGModelObject::clippedOverflowRectForRepaint): s/SVGRenderBase/SVGRenderSupport/
+        (WebCore::RenderSVGModelObject::computeRectForRepaint): Ditto.
+        (WebCore::RenderSVGModelObject::mapLocalToContainer): Ditto.
+        (WebCore::RenderSVGModelObject::destroy): deregisterResource was renamed to invalidateAllResourcesOfRenderer and is a static function in SVGRenderSupport.
+        * rendering/RenderSVGModelObject.h: Remove SVGRenderBase inheritance.
+        * rendering/RenderSVGResource.cpp:
+        (WebCore::invalidatePaintingResource): Moved here from SVGRenderSupport (static inline helper function).
+        (WebCore::RenderSVGResource::invalidateAllResourcesOfRenderer): Moved here from SVGRenderSupport and renamed from deregisterFromResources.
+        * rendering/RenderSVGResource.h: Expose invalidateAllResourcesOfRenderer function.
+        * rendering/RenderSVGResourceClipper.cpp:
+        (WebCore::RenderSVGResourceClipper::createClipData): renderSubtreeToImage is a static function in SVGRenderSupport now.
+        (WebCore::RenderSVGResourceClipper::hitTestClipContent): Ditto.
+        * rendering/RenderSVGResourceGradient.cpp:
+        (WebCore::createMaskAndSwapContextForTextGradient): findTextRootObject is a static function in SVGRenderSupport now.
+        (WebCore::clipToTextMask): Ditto.
+        (WebCore::RenderSVGResourceGradient::applyResource): applyStrokeStyleToContext is a static function in SVGRenderSupport now.
+        (WebCore::RenderSVGResourceGradient::postApplyResource): findTextRootObject is a static function in SVGRenderSupport now.
+        * rendering/RenderSVGResourceMarker.cpp:
+        (WebCore::RenderSVGResourceMarker::applyViewportClip): s/SVGRenderBase/SVGRenderSupport/
+        * rendering/RenderSVGResourceMasker.cpp:
+        (WebCore::RenderSVGResourceMasker::createMaskImage): renderSubtreeToImage is a static function in SVGRenderSupport now.
+        * rendering/RenderSVGResourcePattern.cpp:
+        (WebCore::RenderSVGResourcePattern::applyResource): applyStrokeStyleToContext is a static function in SVGRenderSupport now.
+        (WebCore::clampImageBufferSizeToViewport): Moved here from SVGRenderSupport.
+        (WebCore::RenderSVGResourcePattern::createTileImage): renderSubtreeToImage is a static function in SVGRenderSupport now.
+        * rendering/RenderSVGResourceSolidColor.cpp:
+        (WebCore::RenderSVGResourceSolidColor::applyResource): applyStrokeStyleToContext is a static function in SVGRenderSupport now
+        * rendering/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::layout): layoutChildren is a static function in SVGRenderSupport now.
+        (WebCore::RenderSVGRoot::paint): prepareToRenderSVGContent/finishRenderSVGContent are now static functions in SVGRenderSupport.
+        (WebCore::RenderSVGRoot::destroy): deregisterResource was renamed to invalidateAllResourcesOfRenderer and is a static function in SVGRenderSupport.
+        (WebCore::RenderSVGRoot::repaintRectInLocalCoordinates): Remove call to computeContainerBoundingBox, use strokeBoundingBox instead, for consistency.
+        * rendering/RenderSVGRoot.h: Remove localTransform() override, no longer needed. Remove SVGRenderBase inheritance.
+        (WebCore::RenderSVGRoot::objectBoundingBox): Inlined for speeed. 
+        (WebCore::RenderSVGRoot::strokeBoundingBox): computeContainerBoundingBox is a static function in SVGRenderSupport now.
+        * rendering/RenderSVGText.cpp: 
+        (WebCore::RenderSVGText::clippedOverflowRectForRepaint): s/SVGRenderBase/SVGRenderSupport/
+        (WebCore::RenderSVGText::computeRectForRepaint): Ditto.
+        (WebCore::RenderSVGText::mapLocalToContainer): Ditto.
+        (WebCore::RenderSVGText::nodeAtFloatPoint): pointInClippingArea is a static function in SVGRenderSupport now.
+        (WebCore::RenderSVGText::destroy): deregisterResource was renamed to invalidateAllResourcesOfRenderer and is a static function in SVGRenderSupport.
+        (WebCore::RenderSVGText::repaintRectInLocalCoordinates): intersectRepaintRectWithResources is a static function in SVGRenderSupport now.
+        * rendering/RenderSVGViewportContainer.cpp:
+        (WebCore::RenderSVGViewportContainer::applyViewportClip): s/SVGRenderBase/SVGRenderSupport/
+        (WebCore::RenderSVGViewportContainer::pointIsInsideViewportClip): pointInClippingArea is a static function in SVGRenderSupport now.
+        * rendering/SVGInlineFlowBox.cpp:
+        (WebCore::SVGInlineFlowBox::paint): prepareToRenderSVGContent/finishRenderSVGContent are now static functions in SVGRenderSupport.
+        * rendering/SVGRenderSupport.cpp: Make it impossible to construct the class. Remove virtual destructor, made all methods static.
+        (WebCore::SVGRenderSupport::clippedOverflowRectForRepaint): s/SVGRenderBase/SVGRenderSupport/
+        (WebCore::SVGRenderSupport::computeRectForRepaint): Ditto.
+        (WebCore::SVGRenderSupport::mapLocalToContainer): Ditto.
+        (WebCore::SVGRenderSupport::prepareToRenderSVGContent): Ditto.
+        (WebCore::SVGRenderSupport::finishRenderSVGContent): Ditto.
+        (WebCore::SVGRenderSupport::renderSubtreeToImage): Made static.
+        (WebCore::SVGRenderSupport::computeContainerBoundingBox): Ditto.
+        (WebCore::SVGRenderSupport::layoutChildren): Ditto.
+        (WebCore::SVGRenderSupport::isOverflowHidden): s/SVGRenderBase/SVGRenderSupport/
+        (WebCore::SVGRenderSupport::intersectRepaintRectWithResources): Ditto.
+        (WebCore::SVGRenderSupport::pointInClippingArea): Made static.
+        (WebCore::SVGRenderSupport::dashArrayFromRenderingStyle): Ditto.
+        (WebCore::SVGRenderSupport::applyStrokeStyleToContext): Ditto.
+        (WebCore::SVGRenderSupport::findTextRootObject): Ditto.
+        * rendering/SVGRenderSupport.h:
+        * rendering/SVGRenderTreeAsText.cpp:
+        (WebCore::writeStyle): dashArrayFromRenderingStyle is a static function in SVGRenderSupport now.
+        * rendering/SVGRootInlineBox.cpp:
+        (WebCore::SVGRootInlineBox::paint): s/SVGRenderBase/SVGRenderSupport/
+        * rendering/SVGRootInlineBox.h: Remove SVGRenderBase inheritance.
+        * svg/SVGFEImageElement.cpp: Add RenderObject.h include, otherwhise it won't build anymore.
+        (WebCore::SVGFEImageElement::build): renderSubtreeToImage is a static function in SVGRenderSupport now.
+        * svg/SVGStyledElement.cpp: 
+        (WebCore::SVGStyledElement::svgAttributeChanged): deregisterResource was renamed to invalidateAllResourcesOfRenderer and is a static function in SVGRenderSupport.
+
 2010-06-21  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Xan Lopez.

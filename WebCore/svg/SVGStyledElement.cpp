@@ -251,7 +251,7 @@ void SVGStyledElement::svgAttributeChanged(const QualifiedName& attrName)
         invalidateResourcesInAncestorChain();
 
         // If we're referencing resources, tell them we've changed.
-        deregisterFromResources(object);
+        RenderSVGResource::invalidateAllResourcesOfRenderer(object);
     }
 
     // Invalidate all SVGElementInstances associated with us

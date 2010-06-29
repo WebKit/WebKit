@@ -34,8 +34,7 @@ namespace WebCore {
 
 class SVGImageElement;
 
-class RenderSVGImage : public RenderImage
-                     , protected SVGRenderBase {
+class RenderSVGImage : public RenderImage {
 public:
     RenderSVGImage(SVGImageElement*);
 

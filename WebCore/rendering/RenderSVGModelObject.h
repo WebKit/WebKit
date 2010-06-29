@@ -41,11 +41,11 @@ namespace WebCore {
 // Most renderers in the SVG rendering tree will inherit from this class
 // but not all. (e.g. RenderSVGForeignObject, RenderSVGBlock, RenderSVGImage) thus methods
 // required by SVG renders need to be declared on RenderObject, but shared
-// logic can go in this class or in SVGRenderBase.
+// logic can go in this class or in SVGRenderSupport.
 
 class SVGStyledElement;
 
-class RenderSVGModelObject : public RenderObject, protected SVGRenderBase {
+class RenderSVGModelObject : public RenderObject {
 public:
     RenderSVGModelObject(SVGStyledElement*);
 

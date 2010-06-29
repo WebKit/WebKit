@@ -118,7 +118,7 @@ void RenderSVGRoot::layout()
     // RenderSVGRoot needs to take special care to propagate window size changes to the children,
     // if the outermost <svg> is using relative x/y/width/height values. Hence the additonal parameters.
     SVGSVGElement* svg = static_cast<SVGSVGElement*>(node());
-    layoutChildren(this, needsLayout || (svg->hasRelativeValues() && oldSize != size()));
+    SVGRenderSupport::layoutChildren(this, needsLayout || (svg->hasRelativeValues() && oldSize != size()));
     repainter.repaintAfterLayout();
 
     view()->enableLayoutState();
@@ -175,13 +175,13 @@ void RenderSVGRoot::paint(PaintInfo& paintInfo, int parentX, int parentY)
 
     bool continueRendering = true;
     if (childPaintInfo.phase == PaintPhaseForeground)
-        continueRendering = prepareToRenderSVGContent(this, childPaintInfo, boundingBox, filter);
+        continueRendering = SVGRenderSupport::prepareToRenderSVGContent(this, childPaintInfo, boundingBox, filter);
 
     if (continueRendering)
         RenderBox::paint(childPaintInfo, 0, 0);
 
     if (childPaintInfo.phase == PaintPhaseForeground)
-        finishRenderSVGContent(this, childPaintInfo, filter, paintInfo.context);
+        SVGRenderSupport::finishRenderSVGContent(this, childPaintInfo, filter, paintInfo.context);
 
     childPaintInfo.context->restore();
 
@@ -191,7 +191,7 @@ void RenderSVGRoot::paint(PaintInfo& paintInfo, int parentX, int parentY)
 
 void RenderSVGRoot::destroy()
 {
-    deregisterFromResources(this);
+    RenderSVGResource::invalidateAllResourcesOfRenderer(this);
     RenderBox::destroy();
 }
 
@@ -257,22 +257,12 @@ const AffineTransform& RenderSVGRoot::localToParentTransform() const
     return m_localToParentTransform;
 }
 
-FloatRect RenderSVGRoot::objectBoundingBox() const
-{
-    return computeContainerBoundingBox(this, false);
-}
-
 FloatRect RenderSVGRoot::repaintRectInLocalCoordinates() const
 {
     // FIXME: This does not include the border but it should!
-    FloatRect repaintRect = computeContainerBoundingBox(this, true);
+    FloatRect repaintRect = strokeBoundingBox();
     style()->svgStyle()->inflateForShadow(repaintRect);
     return repaintRect;
-}
-
-AffineTransform RenderSVGRoot::localTransform() const
-{
-    return AffineTransform();
 }
 
 void RenderSVGRoot::computeRectForRepaint(RenderBoxModelObject* repaintContainer, IntRect& repaintRect, bool fixed)

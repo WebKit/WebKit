@@ -29,8 +29,7 @@ namespace WebCore {
 
 class SVGElement;
 
-class RenderSVGBlock : public RenderBlock
-                     , protected SVGRenderBase {
+class RenderSVGBlock : public RenderBlock {
 public:
     RenderSVGBlock(SVGElement*);
 

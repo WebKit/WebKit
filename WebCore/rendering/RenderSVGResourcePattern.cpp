@@ -24,6 +24,7 @@
 #if ENABLE(SVG)
 #include "RenderSVGResourcePattern.h"
 
+#include "FrameView.h"
 #include "GraphicsContext.h"
 #include "PatternAttributes.h"
 #include "SVGRenderSupport.h"
@@ -120,7 +121,7 @@ bool RenderSVGResourcePattern::applyResource(RenderObject* object, RenderStyle* 
             patternData->pattern->setPatternSpaceTransform(transformOnNonScalingStroke(object, patternData->transform));
         context->setAlpha(svgStyle->strokeOpacity());
         context->setStrokePattern(patternData->pattern);
-        applyStrokeStyleToContext(context, style, object);
+        SVGRenderSupport::applyStrokeStyleToContext(context, style, object);
     }
 
     if (resourceMode & ApplyToTextMode) {
@@ -208,6 +209,22 @@ FloatRect RenderSVGResourcePattern::calculatePatternBoundariesIncludingOverflow(
     return patternBoundariesIncludingOverflow;
 }
 
+// FIXME: This method should be removed. RenderSVGResourcePatterns usage of it is just wrong.
+static inline void clampImageBufferSizeToViewport(FrameView* frameView, IntSize& size)
+{
+    if (!frameView)
+        return;
+
+    int viewWidth = frameView->visibleWidth();
+    int viewHeight = frameView->visibleHeight();
+
+    if (size.width() > viewWidth)
+        size.setWidth(viewWidth);
+
+    if (size.height() > viewHeight)
+        size.setHeight(viewHeight);
+}
+
 PassOwnPtr<ImageBuffer> RenderSVGResourcePattern::createTileImage(PatternData* patternData,
                                                                   const SVGPatternElement* patternElement,
                                                                   RenderObject* object) const
@@ -268,7 +285,7 @@ PassOwnPtr<ImageBuffer> RenderSVGResourcePattern::createTileImage(PatternData* p
     for (Node* node = attributes.patternContentElement()->firstChild(); node; node = node->nextSibling()) {
         if (!node->isSVGElement() || !static_cast<SVGElement*>(node)->isStyled() || !node->renderer())
             continue;
-        renderSubtreeToImage(tileImage.get(), node->renderer());
+        SVGRenderSupport::renderSubtreeToImage(tileImage.get(), node->renderer());
     }
 
     patternData->boundaries = patternBoundaries;
