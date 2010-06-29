@@ -28,8 +28,11 @@
 
 #include "IntRect.h"
 #include "WebCoreInstanceHandle.h"
-#include <CoreGraphics/CGColor.h>
 #include <windows.h>
+
+#if PLATFORM(CG)
+#include <CoreGraphics/CGColor.h>
+#endif
 
 namespace WebCore {
 

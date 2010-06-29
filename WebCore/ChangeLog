@@ -1,3 +1,13 @@
+2010-06-29  Brent Fulgham  <bfulgham@webkit.org>
+
+        Build fix. Not reviewd.
+
+        CGColor is only used for PLATFORM(CG).  Conditionalize include
+        to correct build failure for WinCairo.
+
+        * platform/graphics/win/MediaPlayerPrivateFullscreenWindow.cpp:
+        Conditionalize use of CGColor.
+
 2010-06-29  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Xan Lopez.
