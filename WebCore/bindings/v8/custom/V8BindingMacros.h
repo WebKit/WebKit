@@ -28,11 +28,21 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#define EXCEPTION_BLOCK(type, var, value)         \
-    type var;                                     \
-    {                                             \
-        v8::TryCatch block;                       \
-        var = value;                              \
-        if (block.HasCaught())                    \
-            return throwError(block.Exception()); \
+#define EXCEPTION_BLOCK(type, var, value) \
+    type var;                             \
+    {                                     \
+        v8::TryCatch block;               \
+        var = (value);                    \
+        if (block.HasCaught())            \
+            return block.ReThrow();       \
+    }
+
+#define TO_WEBCORE_STRING_EXCEPTION_BLOCK(var, value)                      \
+    String var;                                                            \
+    {                                                                      \
+        v8::TryCatch block;                                                \
+        v8::Handle<v8::String> v8String = (value)->ToString();             \
+        if (block.HasCaught())                                             \
+            return block.ReThrow();                                        \
+        var = v8StringToWebCoreString<String>(v8String, DoNotExternalize); \
     }

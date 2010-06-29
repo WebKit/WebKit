@@ -53,7 +53,7 @@ v8::Handle<v8::Value> V8SQLTransactionSync::executeSqlCallback(const v8::Argumen
     if (!args.Length())
         return throwError(SYNTAX_ERR);
 
-    EXCEPTION_BLOCK(String, statement, toWebCoreString(args[0]));
+    TO_WEBCORE_STRING_EXCEPTION_BLOCK(statement, args[0]);
 
     Vector<SQLValue> sqlValues;
 
@@ -80,7 +80,7 @@ v8::Handle<v8::Value> V8SQLTransactionSync::executeSqlCallback(const v8::Argumen
                 EXCEPTION_BLOCK(double, sqlValue, value->NumberValue());
                 sqlValues.append(SQLValue(sqlValue));
             } else {
-                EXCEPTION_BLOCK(String, sqlValue, toWebCoreString(value));
+                TO_WEBCORE_STRING_EXCEPTION_BLOCK(sqlValue, value);
                 sqlValues.append(SQLValue(sqlValue));
             }
         }

@@ -795,9 +795,9 @@ v8::Handle<v8::Value> V8DOMWindow::openDatabaseCallback(const v8::Arguments& arg
     if (args.Length() < 4)
         return throwError(SYNTAX_ERR);
 
-    EXCEPTION_BLOCK(String, name, toWebCoreString(args[0]));
-    EXCEPTION_BLOCK(String, version, toWebCoreString(args[1]));
-    EXCEPTION_BLOCK(String, displayName, toWebCoreString(args[2]));
+    TO_WEBCORE_STRING_EXCEPTION_BLOCK(name, args[0]);
+    TO_WEBCORE_STRING_EXCEPTION_BLOCK(version, args[1]);
+    TO_WEBCORE_STRING_EXCEPTION_BLOCK(displayName, args[2]);
     EXCEPTION_BLOCK(unsigned long, estimatedSize, args[3]->Uint32Value());
 
     DOMWindow* imp = V8DOMWindow::toNative(args.Holder());

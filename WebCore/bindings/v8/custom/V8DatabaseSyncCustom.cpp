@@ -48,8 +48,8 @@ v8::Handle<v8::Value> V8DatabaseSync::changeVersionCallback(const v8::Arguments&
     if (args.Length() < 2)
         return throwError(SYNTAX_ERR);
 
-    EXCEPTION_BLOCK(String, oldVersion, toWebCoreString(args[0]));
-    EXCEPTION_BLOCK(String, newVersion, toWebCoreString(args[1]));
+    TO_WEBCORE_STRING_EXCEPTION_BLOCK(oldVersion, args[0]);
+    TO_WEBCORE_STRING_EXCEPTION_BLOCK(newVersion, args[1]);
 
     DatabaseSync* database = V8DatabaseSync::toNative(args.Holder());
 

@@ -64,17 +64,10 @@ function testBindParameterOfWrongType(db)
     var badString = { };
     badString.toString = function() { throw "Cannot call toString() on this object." };
 
-    // JSC will throw an exception when calling badString.toString(). V8 will catch it.
-    // So we run this transaction using a custom success callback.
-    db.transaction(function(tx) {
+    testTransaction(db, function(tx) {
         tx.executeSql("CREATE TABLE IF NOT EXISTS BadBindTypeTest (Foo TEXT)");
         tx.executeSql("INSERT INTO BadBindTypeTest VALUES (?)", [badString]);
-    }, function(error) {
-        transactionErrorCallback(error, "UNKNOWN_ERR");
-    }, function() {
-        log("The transaction in testBindParameterOfWrongType() was successful.");
-        testsRun++;
-    });
+    }, "UNKNOWN_ERR");
 }
 
 function testQuotaExceeded(db)

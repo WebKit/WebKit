@@ -1,3 +1,25 @@
+2010-06-29  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Catch toString() exceptions in all DB-related code.
+        https://bugs.webkit.org/show_bug.cgi?id=41297
+
+        * bindings/v8/custom/V8BindingMacros.h:
+        * bindings/v8/custom/V8DOMWindowCustom.cpp:
+        (WebCore::V8DOMWindow::openDatabaseCallback):
+        * bindings/v8/custom/V8DatabaseCustom.cpp:
+        (WebCore::V8Database::changeVersionCallback):
+        * bindings/v8/custom/V8DatabaseSyncCustom.cpp:
+        (WebCore::V8DatabaseSync::changeVersionCallback):
+        * bindings/v8/custom/V8SQLTransactionCustom.cpp:
+        (WebCore::V8SQLTransaction::executeSqlCallback):
+        * bindings/v8/custom/V8SQLTransactionSyncCustom.cpp:
+        (WebCore::V8SQLTransactionSync::executeSqlCallback):
+        * bindings/v8/custom/V8WorkerContextCustom.cpp:
+        (WebCore::V8WorkerContext::openDatabaseCallback):
+        (WebCore::V8WorkerContext::openDatabaseSyncCallback):
+
 2010-06-29  Herczeg Zoltan  <zherczeg@webkit.org>
 
         Rubber-stamped by Nikolas Zimmermann.

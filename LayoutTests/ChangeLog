@@ -1,3 +1,14 @@
+2010-06-28  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Remove a Chromium-specific expectations file.
+        https://bugs.webkit.org/show_bug.cgi?id=41297
+
+        * platform/chromium/storage/sql-error-codes-expected.txt:
+        * storage/sql-error-codes.js:
+        (testBindParameterOfWrongType):
+
 2010-06-29  Zoltan Herczeg  <zherczeg@webkit.org>
 
         Reviewed by Nikolas Zimmermann.
