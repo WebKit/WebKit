@@ -1,5 +1,14 @@
 2010-06-29  Adam Langley  <agl@chromium.org>
 
+        Build fix. Not reviewd.
+
+        * platform/graphics/chromium/FontPlatformDataLinux.cpp:
+        (WebCore::FontPlatformData::setupPaint):
+          The name of the Skia function changed between writing this patch and
+          commiting it.
+
+2010-06-29  Adam Langley  <agl@chromium.org>
+
         Reviewed by Kent Tamura.
 
         [chromium] Support forced autohinting.
