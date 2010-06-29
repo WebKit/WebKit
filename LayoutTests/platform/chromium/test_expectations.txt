@@ -2898,7 +2898,3 @@ BUG47826 MAC SKIP : fast/dom/HTMLMeterElement/meter-element.html = FAIL
 BUG47826 MAC SKIP : fast/dom/HTMLMeterElement/meter-optimums.html = FAIL
 BUG47826 MAC SKIP : fast/dom/HTMLMeterElement/meter-styles.html = FAIL
 BUG47826 MAC SKIP : fast/dom/HTMLMeterElement/meter-styles-changing-pseudo.html = FAIL
-
-// Need to produce a baseline after bot runs it. 
-BUG47829 WIN : svg/css/text-shadow-multiple.xhtml = PASS FAIL
-

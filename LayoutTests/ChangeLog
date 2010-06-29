@@ -2,6 +2,15 @@
 
         Unreviewed test expectations update.
 
+        * platform/chromium-win/svg/css/text-shadow-multiple-expected.checksum: Added.
+        * platform/chromium-win/svg/css/text-shadow-multiple-expected.png: Added.
+        * platform/chromium-win/svg/css/text-shadow-multiple-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
+2010-06-29  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Unreviewed test expectations update.
+
         * platform/chromium-linux/svg/css/text-shadow-multiple-expected.checksum: Added.
         * platform/chromium-linux/svg/css/text-shadow-multiple-expected.png: Added.
         * platform/chromium-linux/svg/css/text-shadow-multiple-expected.txt: Added.
