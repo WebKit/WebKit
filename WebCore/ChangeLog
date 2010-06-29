@@ -1,3 +1,18 @@
+2010-06-28  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed.
+
+        Refactor common code into addChildCommon
+        https://bugs.webkit.org/show_bug.cgi?id=41326
+
+        Eric asked that we share the common code between these codepaths.
+
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::addChildCommon):
+        (WebCore::ContainerNode::parserAddChild):
+        (WebCore::ContainerNode::addChild):
+        * dom/ContainerNode.h:
+
 2010-06-28  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

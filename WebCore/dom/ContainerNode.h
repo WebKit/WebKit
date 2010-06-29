@@ -91,10 +91,12 @@ protected:
 
     void setFirstChild(Node* child) { m_firstChild = child; }
     void setLastChild(Node* child) { m_lastChild = child; }
-    
+
 private:
+    void addChildCommon(PassRefPtr<Node>);
+
     static void dispatchPostAttachCallbacks();
-    
+
     bool getUpperLeftCorner(FloatPoint&) const;
     bool getLowerRightCorner(FloatPoint&) const;
 
