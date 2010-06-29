@@ -108,17 +108,16 @@ private:
     WorkQueue m_connectionQueue;
     RunLoop* m_clientRunLoop;
 
-    // Incoming messages.
-    class IncomingMessage {
+    template<typename T> class Message {
     public:
-        IncomingMessage(MessageID messageID, std::auto_ptr<ArgumentDecoder> arguments)
+        Message(MessageID messageID, std::auto_ptr<T> arguments)
             : m_messageID(messageID)
             , m_arguments(arguments.release())
         {
         }
-
+        
         MessageID messageID() const { return m_messageID; }
-        ArgumentDecoder* arguments() const { return m_arguments; }
+        T* arguments() const { return m_arguments; }
         
         void destroy() 
         {
@@ -127,34 +126,18 @@ private:
         
     private:
         MessageID m_messageID;
-        ArgumentDecoder* m_arguments;
+        T* m_arguments;
     };
+
+    // Incoming messages.
+    typedef Message<ArgumentDecoder> IncomingMessage;
 
     Mutex m_incomingMessagesLock;
     Vector<IncomingMessage> m_incomingMessages;
 
     // Outgoing messages.
-    class OutgoingMessage {
-    public:
-        OutgoingMessage(MessageID messageID, std::auto_ptr<ArgumentEncoder> arguments)
-            : m_messageID(messageID)
-            , m_arguments(arguments.release())
-        {
-        }
-        
-        MessageID messageID() const { return m_messageID; }
-        ArgumentEncoder* arguments() const { return m_arguments; }
-        
-        void destroy()
-        {
-            delete m_arguments;
-        }
-        
-    private:
-        MessageID m_messageID;
-        ArgumentEncoder* m_arguments;
-    };
-    
+    typedef Message<ArgumentEncoder> OutgoingMessage;
+
     Mutex m_outgoingMessagesLock;
     Vector<OutgoingMessage> m_outgoingMessages;
     

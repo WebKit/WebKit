@@ -1,3 +1,14 @@
+2010-06-29  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Add a private Message class template
+        https://bugs.webkit.org/show_bug.cgi?id=41370
+
+        * Platform/CoreIPC/Connection.h:
+        (CoreIPC::Connection::Message::Message):
+        (CoreIPC::Connection::Message::arguments):
+
 2010-06-28  John Gregg  <johnnyg@google.com>
 
         Unreviewed, build fix (removing merge conflict from previous).
