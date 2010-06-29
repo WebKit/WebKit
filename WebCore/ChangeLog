@@ -1,3 +1,24 @@
+2010-06-28  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Fix ASSERT so we can run more HTML5lib tests
+        https://bugs.webkit.org/show_bug.cgi?id=41325
+
+        We can't call Node::addChild because that function contains a bunch of
+        logic from the old parser.  Instead, this patch creates a new version
+        of addChild that's does less validating (that's the tree builder's
+        job).
+
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::parserAddChild):
+        * dom/ContainerNode.h:
+        * dom/Node.cpp:
+        (WebCore::Node::parserAddChild):
+        * dom/Node.h:
+        * html/HTMLTreeBuilder.h:
+        (WebCore::HTMLTreeBuilder::attach):
+
 2010-06-28  David Levin  <levin@chromium.org>
 
         Reviewed by NOBODY (chromium build fix).

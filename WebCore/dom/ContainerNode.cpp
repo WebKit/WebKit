@@ -537,6 +537,23 @@ bool ContainerNode::appendChild(PassRefPtr<Node> newChild, ExceptionCode& ec, bo
     return true;
 }
 
+void ContainerNode::parserAddChild(PassRefPtr<Node> newChild)
+{
+    ASSERT(newChild);
+    // This function is only used during parsing.
+    // It does not send any DOM mutation events.
+
+    forbidEventDispatch();
+    Node* last = m_lastChild;
+    appendChildToContainer<Node, ContainerNode>(newChild.get(), this);
+    allowEventDispatch();
+
+    document()->incDOMTreeVersion();
+    if (inDocument())
+        newChild->insertedIntoDocument();
+    childrenChanged(true, last, 0, 1);
+}
+
 ContainerNode* ContainerNode::addChild(PassRefPtr<Node> newChild)
 {
     ASSERT(newChild);

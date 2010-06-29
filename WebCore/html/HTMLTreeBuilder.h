@@ -181,7 +181,7 @@ private:
     PassRefPtr<ChildType> attach(Node* parent, PassRefPtr<ChildType> prpChild)
     {
         RefPtr<ChildType> child = prpChild;
-        parent->addChild(child);
+        parent->parserAddChild(child);
         // It's slightly unfortunate that we need to hold a reference to child
         // here to call attach().  We should investigate whether we can rely on
         // |parent| to hold a ref at this point.  In the common case (at least

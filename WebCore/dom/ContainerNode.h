@@ -49,6 +49,8 @@ public:
     virtual bool appendChild(PassRefPtr<Node> newChild, ExceptionCode&, bool shouldLazyAttach = false);
 
     virtual ContainerNode* addChild(PassRefPtr<Node>);
+    virtual void parserAddChild(PassRefPtr<Node>);
+
     bool hasChildNodes() const { return m_firstChild; }
     virtual void attach();
     virtual void detach();

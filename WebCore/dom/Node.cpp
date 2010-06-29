@@ -644,6 +644,11 @@ ContainerNode* Node::addChild(PassRefPtr<Node>)
     return 0;
 }
 
+void Node::parserAddChild(PassRefPtr<Node>)
+{
+    ASSERT_NOT_REACHED();
+}
+
 bool Node::isContentEditable() const
 {
     return parent() && parent()->isContentEditable();
