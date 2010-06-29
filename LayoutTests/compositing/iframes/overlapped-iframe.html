@@ -5,11 +5,22 @@
   <style type="text/css" media="screen">
     iframe {
         border: 10px solid black;
-        padding: 10px;
-        height: 60%;
-        width: 80%;
+        padding: 5px;
+        margin: 20px;
+        height: 150px;
+        width: 300px;
         -webkit-box-shadow: 0 0 20px black;
     }
+    
+    .overlay {
+      position: absolute;
+      width: 50px;
+      height: 50px;
+      top: 5px;
+      left: 5px;
+      background-color: rgba(0, 0, 0, 0.2);
+    }
+    
   </style>
   <script type="text/javascript" charset="utf-8">
     if (window.layoutTestController) {
@@ -33,8 +44,11 @@
 </head>
 <body>
 
-    <!-- The parent document should be thrown into compositing mode by the iframe. -->
+    <!-- The parent document may into compositing mode by the iframe. -->
     <iframe id="parent-iframe" src="resources/composited-subframe.html"></iframe>
+    
+    <div class="overlay">
+    </div>
 
     <pre id="layers">Layer tree appears here in DRT.</pre>
 </body>
