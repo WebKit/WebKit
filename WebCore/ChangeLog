@@ -1,5 +1,11 @@
 2010-06-30  Sam Weinig  <sam@webkit.org>
 
+        Fix Chromium build.
+
+        * WebCore.gyp/WebCore.gyp:
+
+2010-06-30  Sam Weinig  <sam@webkit.org>
+
         Fix Windows build.
 
         * bindings/js/JSBindingsAllInOne.cpp:

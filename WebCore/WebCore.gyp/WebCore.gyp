@@ -202,6 +202,8 @@
       # FIXME: I don't know why these are excluded, either.
       # Someone (me?) should figure it out and add appropriate comments.
       '../css/CSSUnknownRule.idl',
+
+      '../dom/DOMStringMap.idl',
     ],
 
     'conditions': [
