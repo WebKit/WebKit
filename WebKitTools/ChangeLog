@@ -1,3 +1,21 @@
+2010-06-30  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Allow MiniBrowser to open local files
+        https://bugs.webkit.org/show_bug.cgi?id=41104
+
+        Wire up the openDocument: message with an NSOpenPanel, so we can open
+        local files.
+        
+        Also change the xib so that the window remembers its size.
+        
+        * MiniBrowser/mac/AppDelegate.m:
+        (-[BrowserAppDelegate frontmostBrowserWindowController]):
+        (-[BrowserAppDelegate openDocument:]):
+        (-[BrowserAppDelegate openPanelDidEnd:returnCode:contextInfo:]):
+        * MiniBrowser/mac/English.lproj/BrowserWindow.xib:
+
 2010-06-30  Sam Weinig  <sam@webkit.org>
 
         Rubber-stamped by Anders Carlsson.
