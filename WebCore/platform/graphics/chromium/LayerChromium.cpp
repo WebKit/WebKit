@@ -136,11 +136,14 @@ void LayerChromium::updateTextureContents(unsigned textureId)
     canvas.set(new skia::PlatformCanvas(dirtyRect.width(), dirtyRect.height(), false));
     skiaContext.set(new PlatformContextSkia(canvas.get()));
 
+#if OS(WINDOWS)
     // This is needed to get text to show up correctly. Without it,
     // GDI renders with zero alpha and the text becomes invisible.
     // Unfortunately, setting this to true disables cleartype.
     // FIXME: Does this take us down a very slow text rendering path?
+    // FIXME: why is this is a windows-only call ?
     skiaContext->setDrawingToImageBuffer(true);
+#endif
 
     graphicsContext.set(new GraphicsContext(reinterpret_cast<PlatformGraphicsContext*>(skiaContext.get())));
 

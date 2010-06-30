@@ -1,3 +1,12 @@
+2010-06-29  Antoine Labour  <piman@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Only call Windows-specific PlatformSkiaContext functions on Windows.
+
+        * WebCore/platform/graphics/chromium/LayerChromium.cpp:
+        * WebCore/platform/graphics/chromium/LayerRendererChromium.cpp:
+
 2010-06-28  John Gregg  <johnnyg@google.com>
 
         Reviewed by Kent Tamura.
