@@ -62,6 +62,7 @@ public:
     QtFallbackWebPopupCombo(QtFallbackWebPopup& ownerPopup);
     virtual void showPopup();
     virtual void hidePopup();
+    virtual bool eventFilter(QObject* watched, QEvent* event);
 
 private:
     QtFallbackWebPopup& m_ownerPopup;

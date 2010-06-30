@@ -47,6 +47,10 @@ namespace WebCore {
 QtFallbackWebPopupCombo::QtFallbackWebPopupCombo(QtFallbackWebPopup& ownerPopup)
     : m_ownerPopup(ownerPopup)
 {
+    // Install an event filter on the view inside the combo box popup to make sure we know
+    // when the popup got closed. E.g. QComboBox::hidePopup() won't be called when the popup
+    // is closed by a mouse wheel event outside its window.
+    view()->installEventFilter(this);
 }
 
 void QtFallbackWebPopupCombo::showPopup()
@@ -79,6 +83,18 @@ void QtFallbackWebPopupCombo::hidePopup()
 
     m_ownerPopup.m_popupVisible = false;
     m_ownerPopup.popupDidHide();
+}
+
+bool QtFallbackWebPopupCombo::eventFilter(QObject* watched, QEvent* event)
+{
+    Q_ASSERT(watched == view());
+
+    if (event->type() == QEvent::Show && !m_ownerPopup.m_popupVisible)
+        showPopup();
+    else if (event->type() == QEvent::Hide && m_ownerPopup.m_popupVisible)
+        hidePopup();
+
+    return false;
 }
 
 // QtFallbackWebPopup
