@@ -1,3 +1,20 @@
+2010-06-30  Andreas Kling  <andreas.kling@nokia.com>
+
+        Reviewed by Antti Koivisto.
+
+        [Qt, Gtk, Symbian] Mind the semantics of NPRect for windowed plugin clip rects
+        https://bugs.webkit.org/show_bug.cgi?id=41406
+
+        NPRect has right/bottom instead of width/height.
+        This was fixed in PluginViewMac with http://trac.webkit.org/changeset/45815
+
+        * plugins/gtk/PluginViewGtk.cpp:
+        (WebCore::PluginView::setNPWindowIfNeeded):
+        * plugins/qt/PluginViewQt.cpp:
+        (WebCore::PluginView::setNPWindowIfNeeded):
+        * plugins/symbian/PluginViewSymbian.cpp:
+        (WebCore::PluginView::setNPWindowIfNeeded):
+
 2010-06-30  Antonio Gomes  <tonikitoo@webkit.org>
 
         Reviewed by Simon Fraser.

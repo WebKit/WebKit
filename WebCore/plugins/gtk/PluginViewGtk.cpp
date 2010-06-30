@@ -506,10 +506,10 @@ void PluginView::setNPWindowIfNeeded()
         m_npWindow.width = m_windowRect.width();
         m_npWindow.height = m_windowRect.height();
 
-        m_npWindow.clipRect.left = m_clipRect.x();
-        m_npWindow.clipRect.top = m_clipRect.y();
-        m_npWindow.clipRect.right = m_clipRect.width();
-        m_npWindow.clipRect.bottom = m_clipRect.height();
+        m_npWindow.clipRect.left = max(0, m_clipRect.x());
+        m_npWindow.clipRect.top = max(0, m_clipRect.y());
+        m_npWindow.clipRect.right = m_clipRect.x() + m_clipRect.width();
+        m_npWindow.clipRect.bottom = m_clipRect.y() + m_clipRect.height();
 
         GtkAllocation allocation = { m_windowRect.x(), m_windowRect.y(), m_windowRect.width(), m_windowRect.height() };
         gtk_widget_size_allocate(platformPluginWidget(), &allocation);
