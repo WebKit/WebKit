@@ -23,7 +23,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 # THE POSSIBILITY OF SUCH DAMAGE.
 
-# Simplified "run" script for launching the WebKit2 WebKitTestRunner.
+# Simplified "debug" script for debugging the WebKitTestRunner.
 
 use strict;
 use FindBin;
@@ -32,4 +32,4 @@ use webkitdirs;
 
 setConfiguration();
 
-exit exitStatus(runWebKitTestRunner());
+exit exitStatus(debugWebKitTestRunner());

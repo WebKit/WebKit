@@ -1,4 +1,4 @@
-# Copyright (C) 2005, 2006, 2007 Apple Inc. All rights reserved.
+# Copyright (C) 2005, 2006, 2007, 2010 Apple Inc. All rights reserved.
 # Copyright (C) 2009 Google Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -1615,7 +1615,7 @@ sub runWebKitTestRunner
 {
     if (isAppleMacWebKit()) {
         my $productDir = productDir();
-        print "Starting MiniBrowser with DYLD_FRAMEWORK_PATH set to point to $productDir.\n";
+        print "Starting WebKitTestRunner with DYLD_FRAMEWORK_PATH set to point to $productDir.\n";
         $ENV{DYLD_FRAMEWORK_PATH} = $productDir;
         $ENV{WEBKIT_UNSET_DYLD_FRAMEWORK_PATH} = "YES";
         my $webKitTestRunnerPath = "$productDir/WebKitTestRunner";
@@ -1641,7 +1641,7 @@ sub debugWebKitTestRunner
 
         my $webKitTestRunnerPath = "$productDir/WebKitTestRunner";
 
-        print "Starting WebKitTestRunner under gdb with DYLD_FRAMEWORK_PATH set to point to built WebKit2 in $productDir.\n";
+        print "Starting WebKitTestRunner under gdb with DYLD_FRAMEWORK_PATH set to point to $productDir.\n";
         my @architectureFlags = ("-arch", architecture()) if !isTiger();
         exec $gdbPath, @architectureFlags, $webKitTestRunnerPath or die;
         return;

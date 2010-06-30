@@ -1,3 +1,13 @@
+2010-06-30  Sam Weinig  <sam@webkit.org>
+
+        Rubber-stamped by Anders Carlsson.
+
+        Add debug-webkittestrunner and cleanup related scripts.
+
+        * Scripts/debug-webkittestrunner: Added.
+        * Scripts/run-webkittestrunner:
+        * Scripts/webkitdirs.pm:
+
 2010-06-30  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Build fix after recent changes to LayoutTestController.
