@@ -192,20 +192,27 @@ private:
         bool m_skipNextNewLine;
     };
 
-    inline void emitCharacter(UChar);
-    inline void emitParseError();
-    inline void emitCurrentToken();
-    inline void emitCodePoint(unsigned);
-    inline void emitEndOfFile();
+    inline bool processEntity(SegmentedString&);
 
-    inline bool processEntity(SegmentedString& source);
+    inline void parseError();
+    inline void bufferCharacter(UChar);
+    inline void bufferCodePoint(unsigned);
 
+    inline bool emitAndResumeIn(SegmentedString&, State);
+    inline bool emitAndReconsumeIn(SegmentedString&, State);
+    inline bool emitEndOfFile(SegmentedString&);
+    inline bool flushEmitAndResumeIn(SegmentedString&, State);
+
+    // Return whether we need to emit a character token before dealing with
+    // the buffered end tag.
+    inline bool flushBufferedEndTag(SegmentedString&);
     inline bool temporaryBufferIs(const String&);
 
     // Sometimes we speculatively consume input characters and we don't
     // know whether they represent end tags or RCDATA, etc.  These
     // functions help manage these state.
     inline void addToPossibleEndTag(UChar cc);
+    inline void saveEndTagNameIfNeeded();
     inline bool isAppropriateEndTag();
 
     inline bool shouldEmitBufferedCharacterToken(const SegmentedString&);
