@@ -168,7 +168,10 @@ inline bool isScopeMarker(const Element* element)
         || element->hasTagName(buttonTag)
         || element->hasTagName(marqueeTag)
         || element->hasTagName(objectTag)
-        || element->hasTagName(SVGNames::foreignObjectTag);
+#if ENABLE(SVG_FOREIGN_OBJECT)
+        || element->hasTagName(SVGNames::foreignObjectTag)
+#endif
+        ;
 }
 
 inline bool isListItemScopeMarker(const Element* element)
