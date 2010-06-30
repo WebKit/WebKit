@@ -1,3 +1,16 @@
+2010-06-30  Eric Seidel  <eric@webkit.org>
+
+        Unreviewed.  Just updating test expectations.
+
+        HTMLTokenizer needs EndOfFile support
+        https://bugs.webkit.org/show_bug.cgi?id=41344
+
+        Update results after EndOfFile support.
+        The final pump will always have one character,
+        which is the EOF character.
+
+        * inspector/timeline-parse-html-expected.txt:
+
 2010-06-29  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

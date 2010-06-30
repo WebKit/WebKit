@@ -20,7 +20,7 @@ ParseHTML Properties:
     startTime : <number>
     stackTrace : <object>
     data : {
-        length : 0
+        length : 1
         startLine : 0
         endLine : 0
     }

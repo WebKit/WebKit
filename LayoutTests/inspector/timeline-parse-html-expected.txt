@@ -18,7 +18,7 @@ ParseHTML Properties:
 {
     startTime : <number>
     data : {
-        length : 0
+        length : 1
         startLine : 0
         endLine : 0
     }
