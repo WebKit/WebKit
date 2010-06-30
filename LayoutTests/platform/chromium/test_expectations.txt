@@ -111,6 +111,8 @@ BUG34759 WIN DEBUG SLOW : inspector/console-log-before-inspector-open.html = PAS
 
 BUG36539 SLOW : http/tests/misc/uncacheable-script-repeated.html = PASS
 
+BUG47937 WIN DEBUG SLOW : fast/parser/residual-style-hang.html = PASS
+
 // -----------------------------------------------------------------
 // SKIPPED TESTS
 // -----------------------------------------------------------------

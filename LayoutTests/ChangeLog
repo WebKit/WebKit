@@ -1,3 +1,11 @@
+2010-06-29  James Robinson  <jamesr@chromium.org>
+
+        Unreviewed chromium expectations update.
+
+        Mark fast/parser/residual-style-hang.html as slow on windows debug because it is.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-06-29  Dumitru Daniliuc  <dumi@chromium.org>
 
         Reviewed by Darin Fisher.
