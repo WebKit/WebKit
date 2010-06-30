@@ -1,3 +1,23 @@
+2010-06-30  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adam Barth.
+
+        Add assertion, off by default, for when you forget to do adoptRef
+        https://bugs.webkit.org/show_bug.cgi?id=41422
+
+        * wtf/PassRefPtr.h: Tweaked formatting. Added a new adopted
+        function, called on the pointer by adoptRef, with an empty inline
+        default version, meant to be overloaded. Unified the inlining
+        with a macro named REF_DEREF_INLINE to make it clearer what's
+        going on in the refIfNotNull/derefIfNotNull functions. Renamed
+        releaseRef to leakRef, but left the old name in for compatibility
+        for now.
+
+        * wtf/RefCounted.h: Added code to require adoption and assert if
+        you don't call adoptRef. For now, it is turned off because of the
+        LOOSE_REF_COUNTED define in this header. Later we can turn it on
+        once we get everything working without asserting.
+
 2010-06-29  Michael Saboff  <msaboff@apple.com>
 
         Reviewed by Darin Adler.

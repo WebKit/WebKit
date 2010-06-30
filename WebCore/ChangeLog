@@ -1,3 +1,16 @@
+2010-06-30  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adam Barth.
+
+        Add assertion, off by default, for when you forget to do adoptRef
+        https://bugs.webkit.org/show_bug.cgi?id=41422
+
+        * platform/TreeShared.h: Added code to require adoption and assert if
+        you don't call adoptRef. For now, it is turned off because of the
+        LOOSE_TREE_SHARED define in this header. Later we can turn it on
+        once we get everything working without asserting. Note also that it
+        only works for objects with an initial reference count of 1.
+
 2010-06-30  Patrick Gansterer  <paroga@paroga.com>
 
         Reviewed by Darin Adler.
