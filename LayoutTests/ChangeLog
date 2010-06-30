@@ -1,3 +1,13 @@
+2010-06-30  David Levin  <levin@chromium.org>
+
+        Reviewed by NOBODY (baseline updates corresponding to newly added tests).
+
+        Added chromium-mac specific results due to new tests added in r62200.
+
+        * platform/chromium-mac/fast/borders/borderRadiusDashed04-expected.checksum: Added.
+        * platform/chromium-mac/fast/borders/borderRadiusDotted06-expected.checksum: Added.
+        * platform/chromium/test_expectations.txt: Added failures due to bug 41311.
+
 2010-06-29  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Dan Bernstein.
