@@ -1,3 +1,11 @@
+2010-06-30  Yury Semikhatsky  <yurys@chromium.org>
+
+        Unreviewed: provide custom expectations and reenable the test for Chromium.
+
+        https://bugs.webkit.org/show_bug.cgi?id=41394
+
+        * platform/chromium/editing/pasteboard/5761530-1-expected.txt: Added.
+
 2010-06-30  Yuzo Fujishima  <yuzo@google.com>
 
         Reviewed by Dan Bernstein.
