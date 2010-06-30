@@ -1,3 +1,16 @@
+2010-06-30  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        webkit-patch land allow the user to continue even if the builders are red
+        https://bugs.webkit.org/show_bug.cgi?id=41395
+
+        I don't think it's good that we've been teaching people
+        to always pass --ignore-builders.  At least land is now
+        useable w/o --ignore-builders.
+
+        * Scripts/webkitpy/tool/steps/ensurebuildersaregreen.py:
+
 2010-06-29  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.

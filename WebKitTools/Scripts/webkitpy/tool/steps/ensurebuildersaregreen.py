@@ -28,7 +28,7 @@
 
 from webkitpy.tool.steps.abstractstep import AbstractStep
 from webkitpy.tool.steps.options import Options
-from webkitpy.common.system.deprecated_logging import error
+from webkitpy.common.system.deprecated_logging import log, error
 
 
 class EnsureBuildersAreGreen(AbstractStep):
@@ -45,4 +45,6 @@ class EnsureBuildersAreGreen(AbstractStep):
         if not red_builders_names:
             return
         red_builders_names = map(lambda name: "\"%s\"" % name, red_builders_names) # Add quotes around the names.
-        error("Builders [%s] are red, please do not commit.\nSee http://%s.\nPass --ignore-builders to bypass this check." % (", ".join(red_builders_names), self._tool.buildbot.buildbot_host))
+        log("\nBuilders [%s] are red, please do not commit.\nSee http://%s/console?category=core\n" % (", ".join(red_builders_names), self._tool.buildbot.buildbot_host))
+        if not self._tool.user.confirm("Are you sure you want to continue?"):
+            error("User aborted.")
