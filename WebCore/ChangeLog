@@ -1,3 +1,13 @@
+2010-06-29  Abhinav Mithal <abhinav.mithal@nokia.com>
+
+        Reviewed by Laszlo Gombos.
+
+        [Qt] [Symbian] Fix doube-deallocation while destroying PluginContainerSymbian
+        https://bugs.webkit.org/show_bug.cgi?id=37303
+
+        * plugins/symbian/PluginViewSymbian.cpp:
+        (WebCore::PluginView::platformDestroy):
+
 2010-06-29  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Dimitri Glazkov.

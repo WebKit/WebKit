@@ -418,8 +418,10 @@ void PluginView::platformDestroy()
 {
     if (platformPluginWidget()) {
         PluginContainerSymbian* container = static_cast<PluginContainerSymbian*>(platformPluginWidget());
-        delete container->proxy();
-        delete container;
+        if (container && container->proxy())
+            delete container->proxy();
+        else
+            delete container;
     }
 }
 
