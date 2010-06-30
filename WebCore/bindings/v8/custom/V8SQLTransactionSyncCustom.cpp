@@ -35,6 +35,7 @@
 #include "V8SQLTransactionSync.h"
 
 #include "DatabaseSync.h"
+#include "ExceptionCode.h"
 #include "SQLResultSet.h"
 #include "SQLValue.h"
 #include "V8Binding.h"

@@ -34,6 +34,7 @@
 #include "Blob.h"
 #include "ByteArray.h"
 #include "CanvasPixelArray.h"
+#include "ExceptionCode.h"
 #include "File.h"
 #include "FileList.h"
 #include "ImageData.h"

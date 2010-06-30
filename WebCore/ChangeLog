@@ -1,3 +1,21 @@
+2010-06-30  Justin Schuh  <jschuh@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Remove dead binding code
+        https://bugs.webkit.org/show_bug.cgi?id=41388
+
+        Removed BindingElement because it was obsoleted by r59866.
+
+        * WebCore.gypi:
+        * bindings/generic/BindingElement.h: Removed.
+        * bindings/v8/SerializedScriptValue.cpp:
+        * bindings/v8/V8Binding.h:
+        * bindings/v8/custom/V8DatabaseCustom.cpp:
+        * bindings/v8/custom/V8DatabaseSyncCustom.cpp:
+        * bindings/v8/custom/V8SQLTransactionCustom.cpp:
+        * bindings/v8/custom/V8SQLTransactionSyncCustom.cpp:
+
 2010-06-30  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

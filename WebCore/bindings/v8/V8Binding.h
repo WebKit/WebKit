@@ -32,7 +32,6 @@
 #define V8Binding_h
 
 #include "AtomicString.h"
-#include "BindingElement.h"
 #include "BindingSecurity.h"
 #include "MathExtras.h"
 #include "PlatformString.h"
@@ -53,7 +52,6 @@ namespace WebCore {
         typedef V8BindingDOMWindow DOMWindow;
     };
     typedef BindingSecurity<V8Binding> V8BindingSecurity;
-    typedef BindingElement<V8Binding> V8BindingElement;
     
     enum ExternalMode {
         Externalize,

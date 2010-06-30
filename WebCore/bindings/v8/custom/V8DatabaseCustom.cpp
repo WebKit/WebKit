@@ -34,6 +34,7 @@
 #include "V8Database.h"
 
 #include "Database.h"
+#include "ExceptionCode.h"
 #include "V8Binding.h"
 #include "V8BindingMacros.h"
 #include "V8SQLTransactionCallback.h"

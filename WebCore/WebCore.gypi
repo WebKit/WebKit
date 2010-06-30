@@ -489,7 +489,6 @@
             'accessibility/win/AccessibilityObjectWrapperWin.h',
             'accessibility/wx/AccessibilityObjectWx.cpp',
             'bindings/generic/BindingDOMWindow.h',
-            'bindings/generic/BindingElement.h',
             'bindings/generic/BindingSecurity.h',
             'bindings/generic/BindingSecurityBase.cpp',
             'bindings/generic/BindingSecurityBase.h',

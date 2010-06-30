@@ -34,6 +34,7 @@
 #include "V8DatabaseSync.h"
 
 #include "DatabaseSync.h"
+#include "ExceptionCode.h"
 #include "V8Binding.h"
 #include "V8BindingMacros.h"
 #include "V8Proxy.h"
