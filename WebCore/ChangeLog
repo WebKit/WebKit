@@ -1,3 +1,13 @@
+2010-06-30  Victor Wang  <victorw@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [chromium] update webcore gyp to use v8 dll for chromium multi dll build.
+
+        https://bugs.webkit.org/show_bug.cgi?id=41376
+
+        * WebCore.gyp/WebCore.gyp:
+
 2010-06-30  Jeremy Moskovich  <jeremy@chromium.org>
 
         Reviewed by Dimitri Glazkov.
