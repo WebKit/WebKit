@@ -782,3 +782,20 @@ EXPORTS
 	_ZN23DumpRenderTreeSupportQt20getChildHistoryItemsERK15QWebHistoryItem @ 781 NONAME
 	_ZN23DumpRenderTreeSupportQt23setMockGeolocationErrorEiRK7QString @ 782 NONAME
 	_ZN23DumpRenderTreeSupportQt26setMockGeolocationPositionEddd @ 783 NONAME
+	_ZN23DumpRenderTreeSupportQt17clearScriptWorldsEv @ 784 NONAME
+	_ZN23DumpRenderTreeSupportQt23setCustomPolicyDelegateEbb @ 785 NONAME
+	_ZN15QWebScriptWorldC1ERKS_ @ 786 NONAME
+	_ZN15QWebScriptWorldC1Ev @ 787 NONAME
+	_ZN15QWebScriptWorldC2ERKS_ @ 788 NONAME
+	_ZN15QWebScriptWorldC2Ev @ 789 NONAME
+	_ZN15QWebScriptWorldD1Ev @ 790 NONAME
+	_ZN15QWebScriptWorldD2Ev @ 791 NONAME
+	_ZN15QWebScriptWorldaSERKS_ @ 792 NONAME
+	_ZN23DumpRenderTreeSupportQt29dumpResourceResponseMIMETypesEb @ 793 NONAME
+	_ZN23DumpRenderTreeSupportQtC1Ev @ 794 NONAME
+	_ZN23DumpRenderTreeSupportQtC2Ev @ 795 NONAME
+	_ZN23DumpRenderTreeSupportQtD1Ev @ 796 NONAME
+	_ZN23DumpRenderTreeSupportQtD2Ev @ 797 NONAME
+	_ZN8QWebPage23allowGeolocationRequestEP9QWebFrame @ 798 NONAME
+	_ZN8QWebPage23viewportChangeRequestedERKNS_13ViewportHintsE @ 799 NONAME
+	_ZNK15QWebScriptWorld5worldEv @ 800 NONAME

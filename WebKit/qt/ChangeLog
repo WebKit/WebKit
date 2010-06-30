@@ -1,3 +1,11 @@
+2010-06-30  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Unreviewed Symbian build fix.
+
+        [Qt] Update the def files to link DumpRenderTree.
+
+        * symbian/eabi/QtWebKitu.def:
+
 2010-06-30  Samuel Nevala  <samuel.nevala@digia.com>
 
         Reviewed by Simon Hausmann.
