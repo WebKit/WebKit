@@ -1,3 +1,11 @@
+2010-06-29  MORITA Hajime  <morrita@google.com>
+
+        Unreviewed. Updated test expectations for change at r62156
+        
+        * platform/chromium-win/fast/dom/HTMLProgressElement/progress-element-expected.checksum:
+        * platform/chromium-win/fast/dom/HTMLProgressElement/progress-element-expected.png:
+        * platform/chromium/test_expectations.txt:
+
 2010-06-29  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Dimitri Glazkov.

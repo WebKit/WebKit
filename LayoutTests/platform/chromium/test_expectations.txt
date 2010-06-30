@@ -491,8 +491,6 @@ WONTFIX BUG37684 SKIP : http/tests/cookies/third-party-cookie-relaxing.html = FA
 
 // <progress> on Mac is always animated.
 WONTFIX MAC : fast/dom/HTMLProgressElement/progress-element.html = IMAGE PASS
-// An expection is outdated. need to rebaseline.
-BUGWK41343 WIN : fast/dom/HTMLProgressElement/progress-element.html = IMAGE PASS
 
 // -----------------------------------------------------------------
 // CHROME REWRITTEN TESTS
