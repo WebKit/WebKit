@@ -28,8 +28,11 @@
 
 #include "Element.h"
 #include "HTMLNames.h"
-#include "SVGNames.h"
 #include <wtf/PassOwnPtr.h>
+
+#if ENABLE(SVG_FOREIGN_OBJECT)
+#include "SVGNames.h"
+#endif
 
 namespace WebCore {
 

@@ -1,5 +1,12 @@
 2010-06-30  Darin Adler  <darin@apple.com>
 
+        More Qt build fix.
+
+        * html/HTMLElementStack.cpp: Put !ENABLE(SVG_FOREIGN_OBJECT) around
+        include of SVGNames.h too.
+
+2010-06-30  Darin Adler  <darin@apple.com>
+
         Reviewed by Adam Barth.
 
         Add assertion, off by default, for when you forget to do adoptRef
