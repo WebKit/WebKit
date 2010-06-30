@@ -191,6 +191,7 @@ PASS typeof Object.getOwnPropertyDescriptor(window, 'SVGFEBlendElement') is 'obj
 PASS typeof Object.getOwnPropertyDescriptor(window, 'SVGFEColorMatrixElement') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'SVGFEComponentTransferElement') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'SVGFECompositeElement') is 'object'
+PASS typeof Object.getOwnPropertyDescriptor(window, 'SVGFEConvolveMatrixElement') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'SVGFEDiffuseLightingElement') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'SVGFEDisplacementMapElement') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'SVGFEDistantLightElement') is 'object'
