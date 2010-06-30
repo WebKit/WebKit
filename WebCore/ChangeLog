@@ -1,3 +1,23 @@
+2010-06-29  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        Implement getAttachedShaders
+        https://bugs.webkit.org/show_bug.cgi?id=31172
+
+        * bindings/js/JSWebGLRenderingContextCustom.cpp: JS binding for getAttachedShaders().
+        (WebCore::JSWebGLRenderingContext::getAttachedShaders):
+        * bindings/v8/custom/V8WebGLRenderingContextCustom.cpp: V8 binding for getAttachedShaders().
+        (WebCore::V8WebGLRenderingContext::getAttachedShadersCallback):
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::getAttachedShaders): Implementation of getAttachedShaders().
+        (WebCore::WebGLRenderingContext::findShader): Helper function to find a shader object from its name.
+        * html/canvas/WebGLRenderingContext.h: Declaration of getAttachedShaders().
+        * html/canvas/WebGLRenderingContext.idl: Ditto.
+        * platform/graphics/GraphicsContext3D.h: Ditto.
+        * platform/graphics/mac/GraphicsContext3DMac.mm:
+        (WebCore::GraphicsContext3D::getAttachedShaders): Implementation of getAttachedShaders().
+
 2010-06-29  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Kent Tamura.

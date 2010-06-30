@@ -736,6 +736,16 @@ bool GraphicsContext3D::getActiveUniform(WebGLProgram* program, unsigned long in
     return true;
 }
 
+void GraphicsContext3D::getAttachedShaders(WebGLProgram* program, int maxCount, int* count, unsigned int* shaders)
+{
+    if (!program || !program->object()) {
+        synthesizeGLError(INVALID_VALUE);
+        return;
+    }
+    ensureContext(m_contextObj);
+    ::glGetAttachedShaders(static_cast<GLuint>(program->object()), maxCount, count, shaders);
+}
+
 int GraphicsContext3D::getAttribLocation(WebGLProgram* program, const String& name)
 {
     if (!program)

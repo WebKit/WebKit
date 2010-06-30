@@ -216,6 +216,32 @@ enum WhichProgramCall {
     kProgramParameter, kUniform
 };
 
+v8::Handle<v8::Value> V8WebGLRenderingContext::getAttachedShadersCallback(const v8::Arguments& args)
+{
+    INC_STATS("DOM.WebGLRenderingContext.getAttachedShaders()");
+
+    if (args.Length() < 1) {
+        V8Proxy::setDOMException(SYNTAX_ERR);
+        return notHandledByInterceptor();
+    }
+
+    ExceptionCode ec = 0;
+    WebGLRenderingContext* context = V8WebGLRenderingContext::toNative(args.Holder());
+    WebGLProgram* program = V8WebGLProgram::HasInstance(args[0]) ? V8WebGLProgram::toNative(v8::Handle<v8::Object>::Cast(args[0])) : 0;
+    Vector<WebGLShader*> shaders;
+    bool succeed = context->getAttachedShaders(program, shaders, ec);
+    if (ec) {
+        V8Proxy::setDOMException(ec);
+        return v8::Undefined();
+    }
+    if (!succeed)
+        return v8::Undefined();
+    v8::Local<v8::Array> array = v8::Array::New(shaders.size());
+    for (size_t ii = 0; ii < shaders.size(); ++ii)
+        array->Set(v8::Integer::New(ii), toV8(shaders[ii]));
+    return array;
+}
+
 v8::Handle<v8::Value> V8WebGLRenderingContext::getBufferParameterCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.WebGLRenderingContext.getBufferParameter()");

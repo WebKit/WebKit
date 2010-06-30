@@ -131,6 +131,8 @@ class WebKitCSSMatrix;
         PassRefPtr<WebGLActiveInfo> getActiveAttrib(WebGLProgram*, unsigned long index, ExceptionCode&);
         PassRefPtr<WebGLActiveInfo> getActiveUniform(WebGLProgram*, unsigned long index, ExceptionCode&);
 
+        bool getAttachedShaders(WebGLProgram*, Vector<WebGLShader*>&, ExceptionCode&);
+
         int  getAttribLocation(WebGLProgram*, const String& name);
 
         WebGLGetInfo getBufferParameter(unsigned long target, unsigned long pname, ExceptionCode&);
@@ -318,6 +320,7 @@ class WebKitCSSMatrix;
         WebGLTexture* findTexture(Platform3DObject);
         WebGLRenderbuffer* findRenderbuffer(Platform3DObject);
         WebGLBuffer* findBuffer(Platform3DObject);
+        WebGLShader* findShader(Platform3DObject);
 
         void markContextChanged();
         void cleanupAfterGraphicsCall(bool changed)

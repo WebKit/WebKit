@@ -1070,6 +1070,8 @@ bool WebGraphicsContext3DDefaultImpl::getActiveUniform(WebGLId program, unsigned
     return true;
 }
 
+DELEGATE_TO_GL_4(getAttachedShaders, GetAttachedShaders, WebGLId, int, int*, unsigned int*)
+
 DELEGATE_TO_GL_2R(getAttribLocation, GetAttribLocation, WebGLId, const char*, int)
 
 DELEGATE_TO_GL_2(getBooleanv, GetBooleanv, unsigned long, unsigned char*)

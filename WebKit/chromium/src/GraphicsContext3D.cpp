@@ -174,6 +174,8 @@ public:
     bool getActiveAttrib(WebGLProgram* program, unsigned long index, ActiveInfo&);
     bool getActiveUniform(WebGLProgram* program, unsigned long index, ActiveInfo&);
 
+    void getAttachedShaders(WebGLProgram* program, int maxCount, int* count, unsigned int* shaders);
+
     int  getAttribLocation(WebGLProgram*, const String& name);
 
     void getBooleanv(unsigned long pname, unsigned char* value);
@@ -593,6 +595,12 @@ void GraphicsContext3DInternal::name(t1 a1, t2 a2, t3 a3, t4 a4)  \
     m_impl->name(a1, a2, a3, a4);              \
 }
 
+#define DELEGATE_TO_IMPL_4_X1(name, t1, t2, t3, t4)    \
+void GraphicsContext3DInternal::name(t1 a1, t2 a2, t3 a3, t4 a4)  \
+{ \
+    m_impl->name(EXTRACT(a1), a2, a3, a4);     \
+}
+
 #define DELEGATE_TO_IMPL_4_X4(name, t1, t2, t3, t4)    \
 void GraphicsContext3DInternal::name(t1 a1, t2 a2, t3 a3, t4 a4)  \
 { \
@@ -770,6 +778,8 @@ bool GraphicsContext3DInternal::getActiveUniform(WebGLProgram* program, unsigned
     info.size = webInfo.size;
     return true;
 }
+
+DELEGATE_TO_IMPL_4_X1(getAttachedShaders, WebGLProgram*, int, int*, unsigned int*)
 
 int GraphicsContext3DInternal::getAttribLocation(WebGLProgram* program, const String& name)
 {
@@ -1189,6 +1199,8 @@ DELEGATE_TO_INTERNAL_1(generateMipmap, unsigned long)
 
 DELEGATE_TO_INTERNAL_3R(getActiveAttrib, WebGLProgram*, unsigned long, ActiveInfo&, bool)
 DELEGATE_TO_INTERNAL_3R(getActiveUniform, WebGLProgram*, unsigned long, ActiveInfo&, bool)
+
+DELEGATE_TO_INTERNAL_4(getAttachedShaders, WebGLProgram*, int, int*, unsigned int*)
 
 DELEGATE_TO_INTERNAL_2R(getAttribLocation, WebGLProgram*, const String&, int)
 

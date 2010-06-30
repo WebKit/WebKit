@@ -161,6 +161,29 @@ enum WhichProgramCall {
     kProgramParameter, kUniform
 };
 
+JSValue JSWebGLRenderingContext::getAttachedShaders(ExecState* exec)
+{
+    if (exec->argumentCount() < 1)
+        return throwSyntaxError(exec);
+    ExceptionCode ec = 0;
+    WebGLRenderingContext* context = static_cast<WebGLRenderingContext*>(impl());
+    WebGLProgram* program = toWebGLProgram(exec->argument(0));
+    if (exec->hadException())
+        return jsUndefined();
+    Vector<WebGLShader*> shaders;
+    bool succeed = context->getAttachedShaders(program, shaders, ec);
+    if (ec) {
+        setDOMException(exec, ec);
+        return jsUndefined();
+    }
+    if (!succeed)
+        return jsUndefined();
+    MarkedArgumentBuffer list;
+    for (size_t ii = 0; ii < shaders.size(); ++ii)
+        list.append(toJS(exec, globalObject(), shaders[ii]));
+    return constructArray(exec, list);
+}
+
 JSValue JSWebGLRenderingContext::getBufferParameter(ExecState* exec)
 {
     return getObjectParameter(this, exec, kBuffer);

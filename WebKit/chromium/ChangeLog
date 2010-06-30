@@ -1,3 +1,15 @@
+2010-06-29  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        Implement getAttachedShaders
+        https://bugs.webkit.org/show_bug.cgi?id=31172
+
+        * public/WebGraphicsContext3D.h: Declaration of getAttachedShaders().
+        * src/GraphicsContext3D.cpp: Implementation of getAttachedShaders().
+        * src/WebGraphicsContext3DDefaultImpl.cpp: Ditto.
+        * src/WebGraphicsContext3DDefaultImpl.h: Declaration of getAttachedShaders().
+
 2010-06-29  Dumitru Daniliuc  <dumi@chromium.org>
 
         Reviewed by Darin Fisher.

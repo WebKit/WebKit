@@ -134,6 +134,8 @@ public:
     virtual bool getActiveAttrib(WebGLId program, unsigned long index, ActiveInfo&);
     virtual bool getActiveUniform(WebGLId program, unsigned long index, ActiveInfo&);
 
+    virtual void getAttachedShaders(WebGLId program, int maxCount, int* count, unsigned int* shaders);
+
     virtual int  getAttribLocation(WebGLId program, const char* name);
 
     virtual void getBooleanv(unsigned long pname, unsigned char* value);

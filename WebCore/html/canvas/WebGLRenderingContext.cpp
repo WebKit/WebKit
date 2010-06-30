@@ -52,6 +52,7 @@
 #include "WebGLUniformLocation.h"
 
 #include <wtf/ByteArray.h>
+#include <wtf/OwnArrayPtr.h>
 
 namespace WebCore {
 
@@ -1068,6 +1069,33 @@ PassRefPtr<WebGLActiveInfo> WebGLRenderingContext::getActiveUniform(WebGLProgram
             info.name.append("[0]");
     }
     return WebGLActiveInfo::create(info.name, info.type, info.size);
+}
+
+bool WebGLRenderingContext::getAttachedShaders(WebGLProgram* program, Vector<WebGLShader*>& shaderObjects, ExceptionCode& ec)
+{
+    UNUSED_PARAM(ec);
+    shaderObjects.clear();
+    if (!validateWebGLObject(program))
+        return false;
+    int numShaders = 0;
+    m_context->getProgramiv(program, GraphicsContext3D::ATTACHED_SHADERS, &numShaders);
+    if (numShaders) {
+        OwnArrayPtr<unsigned int> shaders(new unsigned int[numShaders]);
+        int count;
+        m_context->getAttachedShaders(program, numShaders, &count, shaders.get());
+        if (count != numShaders)
+            return false;
+        shaderObjects.resize(numShaders);
+        for (int ii = 0; ii < numShaders; ++ii) {
+            WebGLShader* shader = findShader(shaders[ii]);
+            if (!shader) {
+                shaderObjects.clear();
+                return false;
+            }
+            shaderObjects[ii] = shader;
+        }
+    }
+    return true;
 }
 
 int WebGLRenderingContext::getAttribLocation(WebGLProgram* program, const String& name)
@@ -3155,6 +3183,18 @@ WebGLBuffer* WebGLRenderingContext::findBuffer(Platform3DObject obj)
     for (HashSet<RefPtr<CanvasObject> >::iterator it = m_canvasObjects.begin(); it != pend; ++it) {
         if ((*it)->isBuffer() && (*it)->object() == obj)
             return reinterpret_cast<WebGLBuffer*>((*it).get());
+    }
+    return 0;
+}
+
+WebGLShader* WebGLRenderingContext::findShader(Platform3DObject obj)
+{
+    if (!obj)
+        return 0;
+    HashSet<RefPtr<CanvasObject> >::iterator pend = m_canvasObjects.end();
+    for (HashSet<RefPtr<CanvasObject> >::iterator it = m_canvasObjects.begin(); it != pend; ++it) {
+        if ((*it)->isShader() && (*it)->object() == obj)
+            return reinterpret_cast<WebGLShader*>((*it).get());
     }
     return 0;
 }

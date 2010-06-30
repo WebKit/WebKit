@@ -26,6 +26,14 @@ shouldBe('gl.getShaderInfoLog(errorVert)', 'parseError');
 shouldBe('gl.getShaderInfoLog(errorFrag)', 'parseError');
 shouldBe('gl.getShaderSource(errorVert)', 'errorVertString');
 shouldBe('gl.getShaderSource(errorFrag)', 'errorFragString');
+var shaders = gl.getAttachedShaders(standardProgram);
+shouldBe('shaders.length', '2');
+shouldBeTrue('shaders[0] == standardVert && shaders[1] == standardFrag || shaders[1] == standardVert && shaders[0] == standardFrag');
+shouldBe('gl.getError()', 'gl.NO_ERROR');
+shouldBeUndefined('gl.getAttachedShaders(null)');
+shouldBe('gl.getError()', 'gl.INVALID_VALUE');
+shouldBeUndefined('gl.getAttachedShaders(standardVert)');
+shouldBe('gl.getError()', 'gl.INVALID_VALUE');
 
 // Test getBufferParameter
 var buffer = gl.createBuffer();
