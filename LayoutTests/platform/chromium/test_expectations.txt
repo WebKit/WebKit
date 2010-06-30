@@ -2134,7 +2134,7 @@ BUG21958 MAC : svg/hixie/error/012.xml = FAIL
 
 // WebKit merge 48500:48585, newly implemented Object.defineProperty.
 BUG22526 WIN MAC: fast/js/Object-create.html = FAIL
-BUG22526 : fast/js/Object-defineProperties.html = FAIL
+BUG22526 : fast/js/Object-defineProperties.html = FAIL CRASH
 BUG22526 : fast/js/Object-defineProperty.html = FAIL
 BUG22526 : http/tests/security/xss-DENIED-defineProperty.html = FAIL
 

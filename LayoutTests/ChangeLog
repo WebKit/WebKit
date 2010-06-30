@@ -1,5 +1,11 @@
 2010-06-30  Yury Semikhatsky  <yurys@chromium.org>
 
+        Unreviewed: update Chromium test expectations with a crashing test.
+
+        * platform/chromium/test_expectations.txt:
+
+2010-06-30  Yury Semikhatsky  <yurys@chromium.org>
+
         Unreviewed: provide custom expectations and reenable the test for Chromium.
 
         https://bugs.webkit.org/show_bug.cgi?id=41394
