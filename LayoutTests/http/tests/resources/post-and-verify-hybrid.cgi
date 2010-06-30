@@ -1,5 +1,7 @@
 #!/usr/bin/perl -w
 
+use Config;
+
 print "Content-type: text/plain\n\n";
 
 if ($ENV{'REQUEST_METHOD'} eq "POST") {
@@ -70,7 +72,7 @@ if ($ENV{'REQUEST_METHOD'} eq "POST") {
     }
 
     if ($values{'convert_newlines'}) {
-        $nativeEnding = ($^O =~ /MSWin/) ? "\r\n" : "\n";
+        $nativeEnding = ($Config{osname} =~ /(MSWin|cygwin)/) ? "\r\n" : "\n";
         $postData =~ s/$nativeEnding/[NL]/g;
     }
 

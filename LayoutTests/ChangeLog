@@ -1,3 +1,17 @@
+2010-06-29  Kinuko Yasuda  <kinuko@chromium.org>
+
+        Reviewed by Jian Li.
+
+        Fix http/tests/local/blob/send-data-blob.html on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=41228
+
+        Fix the cgi code to make it work with cygwin perl.
+        Also fix test expectations for Windows.
+
+        * http/tests/resources/post-and-verify-hybrid.cgi:
+        * platform/chromium/test_expectations.txt:
+        * platform/win/fast/js/global-constructors-expected.txt:
+
 2010-06-29  James Robinson  <jamesr@chromium.org>
 
         Unreviewed chromium expectations update.

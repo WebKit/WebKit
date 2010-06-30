@@ -33,6 +33,7 @@
 
 #include "FileSystem.h"
 #include "UUID.h"
+#include <wtf/Assertions.h>
 
 namespace WebCore {
 
@@ -124,13 +125,98 @@ StringBlobItem::StringBlobItem(const CString& text)
 {
 }
 
+// Normalize all line-endings to CRLF.
+static CString convertToCRLF(const CString& from)
+{
+    unsigned newLen = 0;
+    const char* p = from.data();
+    while (char c = *p++) {
+        if (c == '\r') {
+            // Safe to look ahead because of trailing '\0'.
+            if (*p != '\n') {
+                // Turn CR into CRLF.
+                newLen += 2;
+            }
+        } else if (c == '\n') {
+            // Turn LF into CRLF.
+            newLen += 2;
+        } else {
+            // Leave other characters alone.
+            newLen += 1;
+        }
+    }
+    if (newLen == from.length())
+        return from;
+
+    // Make a copy of the string.
+    p = from.data();
+    char* q;
+    CString result = CString::newUninitialized(newLen, q);
+    while (char c = *p++) {
+        if (c == '\r') {
+            // Safe to look ahead because of trailing '\0'.
+            if (*p != '\n') {
+                // Turn CR into CRLF.
+                *q++ = '\r';
+                *q++ = '\n';
+            }
+        } else if (c == '\n') {
+            // Turn LF into CRLF.
+            *q++ = '\r';
+            *q++ = '\n';
+        } else {
+            // Leave other characters alone.
+            *q++ = c;
+        }
+    }
+    return result;
+}
+
+// Normalize all line-endings to CR or LF.
+static CString convertToCROrLF(const CString& from, bool toCR)
+{
+    unsigned newLen = 0;
+    bool needFix = false;
+    const char* p = from.data();
+    char fromEndingChar = toCR ? '\n' : '\r';
+    char toEndingChar = toCR ? '\r' : '\n';
+    while (char c = *p++) {
+        if (c == '\r' && *p == '\n') {
+            // Turn CRLF into CR or LF.
+            p++;
+            needFix = true;
+        } else if (c == fromEndingChar) {
+            // Turn CR/LF into LF/CR.
+            needFix = true;
+        }
+        newLen += 1;
+    }
+    if (!needFix)
+        return from;
+
+    // Make a copy of the string.
+    p = from.data();
+    char* q;
+    CString result = CString::newUninitialized(newLen, q);
+    while (char c = *p++) {
+        if (c == '\r' && *p == '\n') {
+            // Turn CRLF or CR into CR or LF.
+            p++;
+            *q++ = toEndingChar;
+        } else if (c == fromEndingChar) {
+            // Turn CR/LF into LF/CR.
+            *q++ = toEndingChar;
+        } else {
+            // Leave other characters alone.
+            *q++ = c;
+        }
+    }
+    return result;
+}
+
 CString StringBlobItem::convertToCString(const String& text, LineEnding ending, TextEncoding encoding)
 {
     CString from = encoding.encode(text.characters(), text.length(), EntitiesForUnencodables);
-    CString result = from;
-
-    if (ending == EndingTransparent)
-        return result;
 
     if (ending == EndingNative) {
 #if OS(WINDOWS)
@@ -140,57 +226,21 @@ CString StringBlobItem::convertToCString(const String& text, LineEnding ending, 
 #endif
     }
 
-    const char* endingChars = (ending == EndingCRLF) ? "\r\n" : ((ending == EndingCR) ? "\r" : "\n");
-
-    int endingLength = (ending == EndingCRLF) ? 2 : 1;
-    int needFix = 0;
-
-    // Calculate the final length.
-    int calculatedLength = from.length();
-    const char* p = from.data();
-    while (char c = *p++) {
-        if (c == '\r') {
-            // Safe to look ahead because of trailing '\0'.
-            if (*p == '\n' && ending != EndingCRLF) {
-                p++;
-                calculatedLength += (endingLength - 2);
-                ++needFix;
-            } else if (ending != EndingCR) {
-                calculatedLength += (endingLength - 1);
-                ++needFix;
-            }
-        } else if (c == '\n' && ending != EndingLF) {
-            calculatedLength += (endingLength - 1);
-            ++needFix;
-        }
+    switch (ending) {
+    case EndingTransparent:
+        return from;
+    case EndingCRLF:
+        return convertToCRLF(from);
+    case EndingCR:
+        return convertToCROrLF(from, true);
+    case EndingLF:
+        return convertToCROrLF(from, false);
+    default:
+        ASSERT_NOT_REACHED();
     }
 
-    if (!needFix)
-        return result;
-
-    // Convert the endings and create a data buffer.
-    p = from.data();
-    char* q;
-    result = CString::newUninitialized(calculatedLength, q);
-    while (char c = *p++) {
-        if (c == '\r') {
-            if (*p == '\n' && ending != EndingCRLF) {
-                p++;
-                memcpy(q, endingChars, endingLength);
-                q += endingLength;
-            } else if (*p != '\n' && ending != EndingCR) {
-                memcpy(q, endingChars, endingLength);
-                q += endingLength;
-            }
-        } else if (c == '\n' && ending != EndingLF) {
-            memcpy(q, endingChars, endingLength);
-            q += endingLength;
-        } else {
-            // Leave other characters alone.
-            *q++ = c;
-        }
-    }
-    return result;
+    ASSERT_NOT_REACHED();
+    return from;
 }
 
 // ByteArrayBlobItem ----------------------------------------------------------

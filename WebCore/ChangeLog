@@ -1,3 +1,19 @@
+2010-06-29  Kinuko Yasuda  <kinuko@chromium.org>
+
+        Reviewed by Jian Li.
+
+        Fix http/tests/local/blob/send-data-blob.html on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=41228
+
+        Fix a regression bug in the line-conversion code.
+        Rewrite the line-conversion function with simpler functions to
+        make it less error prone.
+
+        No new tests as this is for bug fixes.
+
+        * platform/BlobItem.cpp:
+        (WebCore::StringBlobItem::convertToCString):
+
 2010-06-29  Dumitru Daniliuc  <dumi@chromium.org>
 
         Reviewed by Darin Fisher.
