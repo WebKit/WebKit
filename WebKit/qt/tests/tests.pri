@@ -3,7 +3,8 @@ CONFIG -= app_bundle
 
 VPATH += $$_PRO_FILE_PWD_
 # Add the tst_ prefix, In QTDIR_build it's done by qttest_p4.prf
-!CONFIG(QTDIR_build):TARGET = tst_$$TARGET
+CONFIG(QTDIR_build) { load(qttest_p4) }
+ELSE { TARGET = tst_$$TARGET }
 SOURCES += $${TARGET}.cpp
 INCLUDEPATH += \
     $$PWD \

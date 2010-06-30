@@ -1,3 +1,14 @@
+2010-06-30  Samuel Nevala  <samuel.nevala@digia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Auto test wont compile from \3rdparty\webkit\WebKit\qt\tests
+        https://bugs.webkit.org/show_bug.cgi?id=38720
+        
+        Load qttest_p4.prf under QTDIR_build.
+
+        * tests/tests.pri:
+
 2010-06-29  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.
