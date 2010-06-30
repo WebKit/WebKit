@@ -1,3 +1,28 @@
+2010-06-30  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Add new popUntil(tagName) function and deploy
+        https://bugs.webkit.org/show_bug.cgi?id=41405
+
+        Add a new popUntil function to share some common code
+        between states.  There is more code to share here, but this
+        is a start.
+
+        I also filled in a couple similar states to these with the
+        hope of sharing more code, but decided to wait for a later
+        patch.
+
+        No test changes, since this code doesn't do enough yet to
+        pass any more subtests.  Lack of generateImpliedEndTags is the main
+        blocking issue.
+
+        * html/HTMLElementStack.cpp:
+        (WebCore::HTMLElementStack::popUntil):
+        * html/HTMLElementStack.h:
+        * html/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::processEndTag):
+
 2010-06-30  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Gustavo Noronha.

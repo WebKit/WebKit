@@ -77,6 +77,15 @@ void HTMLElementStack::pop()
     popCommon();
 }
 
+void HTMLElementStack::popUntil(const AtomicString& tagName)
+{
+    while (!top()->hasLocalName(tagName)) {
+        // pop() will ASSERT at <body> if callers fail to check that there is an
+        // element with localName |tagName| on the stack of open elements.
+        pop();
+    }
+}
+
 void HTMLElementStack::pushHTMLHtmlElement(PassRefPtr<Element> element)
 {
     ASSERT(element->hasTagName(HTMLNames::htmlTag));

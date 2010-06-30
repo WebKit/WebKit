@@ -48,6 +48,7 @@ public:
     void pushHTMLBodyElement(PassRefPtr<Element>);
 
     void pop();
+    void popUntil(const AtomicString& tagName);
     void popHTMLHeadElement();
 
     void remove(Element*);

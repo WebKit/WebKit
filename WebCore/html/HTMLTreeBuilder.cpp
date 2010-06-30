@@ -661,8 +661,7 @@ void HTMLTreeBuilder::processEndTag(AtomicHTMLToken& token)
             generateImpliedEndTags();
             if (currentElement()->tagQName() != token.name())
                 parseError(token);
-            while (currentElement()->tagQName() != token.name())
-                m_openElements.pop();
+            m_openElements.popUntil(token.name());
             m_openElements.pop();
         }
         if (token.name() == formTag) {
@@ -681,15 +680,31 @@ void HTMLTreeBuilder::processEndTag(AtomicHTMLToken& token)
             return;
         }
         if (token.name() == liTag) {
+            if (!m_openElements.inListItemScope(token.name())) {
+                parseError(token);
+                return;
+            }
             notImplemented();
             return;
         }
         if (token.name() == ddTag || token.name() == dtTag) {
+            if (!m_openElements.inScope(token.name())) {
+                parseError(token);
+                return;
+            }
             notImplemented();
             return;
         }
         if (token.name() == h1Tag || token.name() == h2Tag || token.name() == h3Tag || token.name() == h4Tag || token.name() == h5Tag || token.name() == h6Tag) {
-            notImplemented();
+            if (!m_openElements.inScope(token.name())) {
+                parseError(token);
+                return;
+            }
+            generateImpliedEndTags();
+            if (!currentElement()->hasLocalName(token.name()))
+                parseError(token);
+            m_openElements.popUntil(token.name());
+            m_openElements.pop();
             return;
         }
         if (token.name() == "sarcasm") {
@@ -709,8 +724,7 @@ void HTMLTreeBuilder::processEndTag(AtomicHTMLToken& token)
             generateImpliedEndTags();
             if (currentElement()->tagQName() != token.name())
                 parseError(token);
-            while (currentElement()->tagQName() != token.name())
-                m_openElements.pop();
+            m_openElements.popUntil(token.name());
             m_openElements.pop();
             // FIXME: m_activeFormattingElements should be more interesting
             // object than a vector so we can call this method on it instead
@@ -730,8 +744,7 @@ void HTMLTreeBuilder::processEndTag(AtomicHTMLToken& token)
         notImplemented();
         if (!m_openElements.inScope(token.name()))
             return;
-        while (currentElement()->tagQName() != token.name())
-            m_openElements.pop();
+        m_openElements.popUntil(token.name());
         m_openElements.pop();
         break;
     case InHeadNoscriptMode:
