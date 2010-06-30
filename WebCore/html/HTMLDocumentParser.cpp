@@ -290,8 +290,10 @@ void HTMLDocumentParser::endIfDelayed()
 void HTMLDocumentParser::finish()
 {
     // We're not going to get any more data off the network, so we tell the
-    // input stream we've reached the end of file.
-    m_input.markEndOfFile();
+    // input stream we've reached the end of file.  finish() can be called more
+    // than once, if the first time does not call end().
+    if (!m_input.haveSeenEndOfFile())
+        m_input.markEndOfFile();
     attemptToEnd();
 }
 

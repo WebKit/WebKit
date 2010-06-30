@@ -1,3 +1,23 @@
+2010-06-30  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        HTMLTokenizer needs EndOfFile support
+        https://bugs.webkit.org/show_bug.cgi?id=41344
+
+        EndOfFile support uncovered a bug in our implementation of finish().
+        finish() may be called more than once if the first call does not
+        result in end() being called (and parsing thus actually stopping).
+
+        SegmentedString::close() should have ASSERTed that it was not already
+        closed when close() is called.  I've added such an assert now.
+
+        * html/HTMLDocumentParser.cpp:
+        (WebCore::HTMLDocumentParser::finish):
+        * platform/text/SegmentedString.cpp:
+        (WebCore::SegmentedString::close):
+        * platform/text/SegmentedString.h:
+
 2010-06-29  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.
