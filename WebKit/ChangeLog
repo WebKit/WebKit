@@ -1,3 +1,16 @@
+2010-06-30  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [EFL] Implement windowRect() and setWindowRect() in ChromeClientEfl.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=40876
+
+        * efl/WebCoreSupport/ChromeClientEfl.cpp: Implements two methods
+        to change window size.
+
+        (WebCore::ChromeClientEfl::windowRect):
+        (WebCore::ChromeClientEfl::setWindowRect):
+
 2010-06-28  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
 
         Unreviewed build fix.

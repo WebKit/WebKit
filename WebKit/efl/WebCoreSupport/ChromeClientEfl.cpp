@@ -49,9 +49,9 @@
 #include "PlatformString.h"
 #include "WindowFeatures.h"
 #include "ewk_private.h"
-#include <wtf/text/CString.h>
-
+#include <Ecore_Evas.h>
 #include <Evas.h>
+#include <wtf/text/CString.h>
 
 using namespace WebCore;
 
@@ -87,13 +87,28 @@ void ChromeClientEfl::focusedNodeChanged(Node*)
 
 FloatRect ChromeClientEfl::windowRect()
 {
-    notImplemented();
-    return FloatRect();
+    Ecore_Evas* ee = 0;
+    int x, y, w, h;
+
+    if (!m_view)
+        return FloatRect();
+
+    ee = ecore_evas_ecore_evas_get(evas_object_evas_get(m_view));
+    ecore_evas_geometry_get(ee, &x, &y, &w, &h);
+    return FloatRect(x, y, w, h);
 }
 
 void ChromeClientEfl::setWindowRect(const FloatRect& rect)
 {
-    notImplemented();
+    Ecore_Evas* ee = 0;
+    IntRect intrect = IntRect(rect);
+
+    if (!m_view)
+        return;
+
+    ee = ecore_evas_ecore_evas_get(evas_object_evas_get(m_view));
+    ecore_evas_move(ee, intrect.x(), intrect.y());
+    ecore_evas_resize(ee, intrect.width(), intrect.height());
 }
 
 FloatRect ChromeClientEfl::pageRect()
