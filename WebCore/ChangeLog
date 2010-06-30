@@ -1,3 +1,23 @@
+2010-06-30  José Millán Soto  <jmillan@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [Gtk] Text attributes not exposed
+        https://bugs.webkit.org/show_bug.cgi?id=25528
+
+        Implemented the get_run_attributes and get_default_attributes
+        functions for the ATK_TEXT role.
+
+        * accessibility/gtk/AccessibilityObjectWrapperAtk.cpp:
+        (getAttributeSetForAccessibilityObject):
+        (compareAttribute):
+        (attributeSetDifference):
+        (accessibilityObjectLength):
+        (getAccessibilityObjectForOffset):
+        (getRunAttributesFromAccesibilityObject):
+        (webkit_accessible_text_get_run_attributes):
+        (webkit_accessible_text_get_default_attributes):
+
 2010-06-30  Yuta Kitamura  <yutak@chromium.org>
 
         Reviewed by Alexey Proskuryakov.

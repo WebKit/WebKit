@@ -47,6 +47,7 @@
 #include "Editor.h"
 #include "Frame.h"
 #include "FrameView.h"
+#include "GOwnPtr.h"
 #include "HostWindow.h"
 #include "HTMLNames.h"
 #include "HTMLTableCaptionElement.h"
@@ -1005,16 +1006,257 @@ static gint webkit_accessible_text_get_caret_offset(AtkText* text)
     return offset;
 }
 
-static AtkAttributeSet* webkit_accessible_text_get_run_attributes(AtkText* text, gint offset, gint* start_offset, gint* end_offset)
+static AtkAttributeSet* getAttributeSetForAccessibilityObject(const AccessibilityObject* object)
 {
-    notImplemented();
-    return 0;
+    if (!object->isAccessibilityRenderObject())
+        return 0;
+
+    RenderObject* renderer = static_cast<const AccessibilityRenderObject*>(object)->renderer();
+    RenderStyle* style = renderer->style();
+
+    AtkAttributeSet* result = 0;
+    GOwnPtr<gchar> buffer(g_strdup_printf("%i", style->fontSize()));
+    result = addAttributeToSet(result, atk_text_attribute_get_name(ATK_TEXT_ATTR_SIZE), buffer.get());
+
+    Color bgColor = style->visitedDependentColor(CSSPropertyBackgroundColor);
+    if (bgColor.isValid()) {
+        buffer.set(g_strdup_printf("%i,%i,%i",
+                                   bgColor.red(), bgColor.green(), bgColor.blue()));
+        result = addAttributeToSet(result, atk_text_attribute_get_name(ATK_TEXT_ATTR_BG_COLOR), buffer.get());
+    }
+
+    Color fgColor = style->visitedDependentColor(CSSPropertyColor);
+    if (fgColor.isValid()) {
+        buffer.set(g_strdup_printf("%i,%i,%i",
+                                   fgColor.red(), fgColor.green(), fgColor.blue()));
+        result = addAttributeToSet(result, atk_text_attribute_get_name(ATK_TEXT_ATTR_FG_COLOR), buffer.get());
+    }
+
+    int baselinePosition;
+    bool includeRise = true;
+    switch (style->verticalAlign()) {
+    case SUB:
+        baselinePosition = -1 * renderer->baselinePosition(true);
+        break;
+    case SUPER:
+        baselinePosition = renderer->baselinePosition(true);
+        break;
+    case BASELINE:
+        baselinePosition = 0;
+        break;
+    default:
+        includeRise = false;
+        break;
+    }
+
+    if (includeRise) {
+        buffer.set(g_strdup_printf("%i", baselinePosition));
+        result = addAttributeToSet(result, atk_text_attribute_get_name(ATK_TEXT_ATTR_RISE), buffer.get());
+    }
+
+    int indentation = style->textIndent().calcValue(object->size().width());
+    if (indentation != undefinedLength) {
+        buffer.set(g_strdup_printf("%i", indentation));
+        result = addAttributeToSet(result, atk_text_attribute_get_name(ATK_TEXT_ATTR_INDENT), buffer.get());
+    }
+
+    String fontFamilyName = style->font().family().family().string();
+    if (fontFamilyName.left(8) == "-webkit-")
+        fontFamilyName = fontFamilyName.substring(8);
+
+    result = addAttributeToSet(result, atk_text_attribute_get_name(ATK_TEXT_ATTR_FAMILY_NAME), fontFamilyName.utf8().data());
+
+    int fontWeight = -1;
+    switch (style->font().weight()) {
+    case FontWeight100:
+        fontWeight = 100;
+        break;
+    case FontWeight200:
+        fontWeight = 200;
+        break;
+    case FontWeight300:
+        fontWeight = 300;
+        break;
+    case FontWeight400:
+        fontWeight = 400;
+        break;
+    case FontWeight500:
+        fontWeight = 500;
+        break;
+    case FontWeight600:
+        fontWeight = 600;
+        break;
+    case FontWeight700:
+        fontWeight = 700;
+        break;
+    case FontWeight800:
+        fontWeight = 800;
+        break;
+    case FontWeight900:
+        fontWeight = 900;
+    }
+    if (fontWeight > 0) {
+        buffer.set(g_strdup_printf("%i", fontWeight));
+        result = addAttributeToSet(result, atk_text_attribute_get_name(ATK_TEXT_ATTR_WEIGHT), buffer.get());
+    }
+
+    switch (style->textAlign()) {
+    case TAAUTO:
+        break;
+    case LEFT:
+    case WEBKIT_LEFT:
+        result = addAttributeToSet(result, atk_text_attribute_get_name(ATK_TEXT_ATTR_JUSTIFICATION), "left");
+        break;
+    case RIGHT:
+    case WEBKIT_RIGHT:
+        result = addAttributeToSet(result, atk_text_attribute_get_name(ATK_TEXT_ATTR_JUSTIFICATION), "right");
+        break;
+    case CENTER:
+    case WEBKIT_CENTER:
+        result = addAttributeToSet(result, atk_text_attribute_get_name(ATK_TEXT_ATTR_JUSTIFICATION), "center");
+        break;
+    case JUSTIFY:
+        result = addAttributeToSet(result, atk_text_attribute_get_name(ATK_TEXT_ATTR_JUSTIFICATION), "fill");
+    }
+
+    result = addAttributeToSet(result, atk_text_attribute_get_name(ATK_TEXT_ATTR_UNDERLINE), (style->textDecoration() & UNDERLINE) ? "single" : "none");
+
+    result = addAttributeToSet(result, atk_text_attribute_get_name(ATK_TEXT_ATTR_STYLE), style->font().italic() ? "italic" : "normal");
+
+    result = addAttributeToSet(result, atk_text_attribute_get_name(ATK_TEXT_ATTR_STRIKETHROUGH), (style->textDecoration() & LINE_THROUGH) ? "true" : "false");
+
+    result = addAttributeToSet(result, atk_text_attribute_get_name(ATK_TEXT_ATTR_INVISIBLE), (style->visibility() == HIDDEN) ? "true" : "false");
+
+    result = addAttributeToSet(result, atk_text_attribute_get_name(ATK_TEXT_ATTR_EDITABLE), object->isReadOnly() ? "false" : "true");
+
+    return result;
+}
+
+static gint compareAttribute(const AtkAttribute* a, const AtkAttribute* b)
+{
+    return g_strcmp0(a->name, b->name) || g_strcmp0(a->value, b->value);
+}
+
+// Returns an AtkAttributeSet with the elements of a1 which are either
+// not present or different in a2.  Neither a1 nor a2 should be used
+// after calling this function.
+static AtkAttributeSet* attributeSetDifference(AtkAttributeSet* a1, AtkAttributeSet* a2)
+{
+    if (!a2)
+        return a1;
+
+    AtkAttributeSet* i = a1;
+    AtkAttributeSet* found;
+    AtkAttributeSet* toDelete = 0;
+
+    while (i) {
+        found = g_slist_find_custom(a2, i->data, (GCompareFunc)compareAttribute);
+        if (found) {
+            AtkAttributeSet* t = i->next;
+            toDelete = g_slist_prepend(toDelete, i->data);
+            a1 = g_slist_delete_link(a1, i);
+            i = t;
+        } else
+            i = i->next;
+    }
+
+    atk_attribute_set_free(a2);
+    atk_attribute_set_free(toDelete);
+    return a1;
+}
+
+static guint accessibilityObjectLength(const AccessibilityObject* object)
+{
+    GOwnPtr<gchar> text(webkit_accessible_text_get_text(ATK_TEXT(object->wrapper()), 0, -1));
+    return g_utf8_strlen(text.get(), -1);
+}
+
+static const AccessibilityObject* getAccessibilityObjectForOffset(const AccessibilityObject* object, guint offset, gint* startOffset, gint* endOffset)
+{
+    const AccessibilityObject* result;
+    guint length = accessibilityObjectLength(object);
+    if (length > offset) {
+        *startOffset = 0;
+        *endOffset = length;
+        result = object;
+    } else {
+        *startOffset = -1;
+        *endOffset = -1;
+        result = 0;
+    }
+
+    if (!object->firstChild())
+        return result;
+
+    AccessibilityObject* child = object->firstChild();
+    guint currentOffset = 0;
+    guint childPosition = 0;
+    while (child && currentOffset <= offset) {
+        guint childLength = accessibilityObjectLength(child);
+        currentOffset = childLength + childPosition;
+        if (currentOffset > offset) {
+            gint childStartOffset;
+            gint childEndOffset;
+            const AccessibilityObject* grandChild = getAccessibilityObjectForOffset(child, offset-childPosition,  &childStartOffset, &childEndOffset);
+            if (childStartOffset >= 0) {
+                *startOffset = childStartOffset + childPosition;
+                *endOffset = childEndOffset + childPosition;
+                result = grandChild;
+            }
+        } else {
+            childPosition += childLength;
+            child = child->nextSibling();
+        }
+    }
+    return result;
+}
+
+static AtkAttributeSet* getRunAttributesFromAccesibilityObject(const AccessibilityObject* element, gint offset, gint* startOffset, gint* endOffset)
+{
+    const AccessibilityObject *child = getAccessibilityObjectForOffset(element, offset, startOffset, endOffset);
+    if (!child) {
+        *startOffset = -1;
+        *endOffset = -1;
+        return 0;
+    }
+
+    AtkAttributeSet* defaultAttributes = getAttributeSetForAccessibilityObject(element);
+    AtkAttributeSet* childAttributes = getAttributeSetForAccessibilityObject(child);
+
+    return attributeSetDifference(childAttributes, defaultAttributes);
+}
+
+static AtkAttributeSet* webkit_accessible_text_get_run_attributes(AtkText* text, gint offset, gint* startOffset, gint* endOffset)
+{
+    AccessibilityObject* coreObject = core(text);
+    AtkAttributeSet* result;
+
+    if (!coreObject) {
+        *startOffset = 0;
+        *endOffset = atk_text_get_character_count(text);
+        return 0;
+    }
+
+    if (offset == -1)
+        offset = atk_text_get_caret_offset(text);
+
+    result = getRunAttributesFromAccesibilityObject(coreObject, offset, startOffset, endOffset);
+
+    if (*startOffset < 0) {
+        *startOffset = offset;
+        *endOffset = offset;
+    }
+
+    return result;
 }
 
 static AtkAttributeSet* webkit_accessible_text_get_default_attributes(AtkText* text)
 {
-    notImplemented();
-    return 0;
+    AccessibilityObject* coreObject = core(text);
+    if (!coreObject || !coreObject->isAccessibilityRenderObject())
+        return 0;
+
+    return getAttributeSetForAccessibilityObject(coreObject);
 }
 
 static void webkit_accessible_text_get_character_extents(AtkText* text, gint offset, gint* x, gint* y, gint* width, gint* height, AtkCoordType coords)

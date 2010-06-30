@@ -42,6 +42,8 @@ static const char* contentsInTable = "<html><body><table><tr><td>foo</td><td>bar
 
 static const char* contentsInTableWithHeaders = "<html><body><table><tr><th>foo</th><th>bar</th><th colspan='2'>baz</th></tr><tr><th>qux</th><td>1</td><td>2</td><td>3</td></tr><tr><th rowspan='2'>quux</th><td>4</td><td>5</td><td>6</td></tr><tr><td>6</td><td>7</td><td>8</td></tr><tr><th>corge</th><td>9</td><td>10</td><td>11</td></tr></table><table><tr><td>1</td><td>2</td></tr><tr><td>3</td><td>4</td></tr></table></body></html>";
 
+static const char* textWithAttributes = "<html><head><style>.st1 {font-family: monospace; color:rgb(120,121,122);} .st2 {text-decoration:underline; background-color:rgb(80,81,82);}</style></head><body><p style=\"font-size:14; text-align:right;\">This is the <i>first</i><b> sentence of this text.</b></p><p class=\"st1\">This sentence should have an style applied <span class=\"st2\">and this part should have another one</span>.</p><p>x<sub>1</sub><sup>2</sup>=x<sub>2</sub><sup>3</sup></p><p style=\"text-align:center;\">This sentence is the <strike>last</strike> one.</p></body></html>";
+
 static gboolean bail_out(GMainLoop* loop)
 {
     if (g_main_loop_is_running(loop))
@@ -572,6 +574,170 @@ static void testWebkitAtkGetHeadersInTable(void)
     g_object_unref(webView);
 }
 
+static gint compAtkAttribute(AtkAttribute* a1, AtkAttribute* a2)
+{
+    gint strcmpVal;
+    strcmpVal = g_strcmp0(a1->name, a2->name);
+    if (strcmpVal)
+        return strcmpVal;
+    return g_strcmp0(a1->value, a2->value);
+}
+
+static gint compAtkAttributeName(AtkAttribute* a1, AtkAttribute* a2)
+{
+    return g_strcmp0(a1->name, a2->name);
+}
+
+static gboolean atkAttributeSetAttributeHasValue(AtkAttributeSet* set, AtkTextAttribute attribute, const gchar* value)
+{
+    GSList *element;
+    AtkAttribute at;
+    gboolean result;
+    at.name = (gchar *)atk_text_attribute_get_name(attribute);
+    element = g_slist_find_custom(set, &at, (GCompareFunc)compAtkAttributeName);
+    result = element && !g_strcmp0(((AtkAttribute*)(element->data))->value, value);
+    return result;
+}
+
+static gboolean atkAttributeSetAreEqual(AtkAttributeSet* set1, AtkAttributeSet* set2)
+{
+    if (!set1)
+        return !set2;
+
+    set1 = g_slist_sort(set1, (GCompareFunc)compAtkAttribute);
+    set2 = g_slist_sort(set2, (GCompareFunc)compAtkAttribute);
+
+    while (set1) {
+        if (!set2 || compAtkAttribute(set1->data, set2->data))
+            return FALSE;
+
+        set1 = set1->next;
+        set2 = set2->next;
+    }
+
+    return (!set2);
+}
+
+static void testWebkitAtkTextAttributes(void)
+{
+    WebKitWebView* webView;
+    AtkObject* obj;
+    AtkObject* child;
+    GMainLoop* loop;
+    AtkText* childText;
+    AtkAttributeSet* set1;
+    AtkAttributeSet* set2;
+    AtkAttributeSet* set3;
+    AtkAttributeSet* set4;
+    gint startOffset, endOffset;
+
+    webView = WEBKIT_WEB_VIEW(webkit_web_view_new());
+    g_object_ref_sink(webView);
+    GtkAllocation alloc = { 0, 0, 800, 600 };
+    gtk_widget_size_allocate(GTK_WIDGET(webView), &alloc);
+
+    webkit_web_view_load_string(webView, textWithAttributes, NULL, NULL, NULL);
+    loop = g_main_loop_new(NULL, TRUE);
+
+    g_idle_add((GSourceFunc)bail_out, loop);
+    g_main_loop_run(loop);
+
+    obj = gtk_widget_get_accessible(GTK_WIDGET(webView));
+    g_assert(obj);
+
+    child = atk_object_ref_accessible_child(obj, 0);
+    g_assert(child && ATK_IS_TEXT(child));
+    childText = ATK_TEXT(child);
+    set1 = atk_text_get_run_attributes(childText, 0, &startOffset, &endOffset);
+    g_assert_cmpint(startOffset, ==, 0);
+    g_assert_cmpint(endOffset, ==, 12);
+    g_assert(atkAttributeSetAreEqual(set1, NULL));
+
+    set2 = atk_text_get_run_attributes(childText, 15, &startOffset, &endOffset);
+    g_assert_cmpint(startOffset, ==, 12);
+    g_assert_cmpint(endOffset, ==, 17);
+    g_assert(atkAttributeSetAttributeHasValue(set2, ATK_TEXT_ATTR_STYLE, "italic"));
+
+    set3 = atk_text_get_run_attributes(childText, 17, &startOffset, &endOffset);
+    g_assert_cmpint(startOffset, ==, 17);
+    g_assert_cmpint(endOffset, ==, 40);
+    g_assert(atkAttributeSetAttributeHasValue(set3, ATK_TEXT_ATTR_WEIGHT, "700"));
+
+    set4 = atk_text_get_default_attributes(childText);
+    g_assert(atkAttributeSetAttributeHasValue(set4, ATK_TEXT_ATTR_STYLE, "normal"));
+    g_assert(atkAttributeSetAttributeHasValue(set4, ATK_TEXT_ATTR_JUSTIFICATION, "right"));
+    g_assert(atkAttributeSetAttributeHasValue(set4, ATK_TEXT_ATTR_SIZE, "14"));
+    atk_attribute_set_free(set1);
+    atk_attribute_set_free(set2);
+    atk_attribute_set_free(set3);
+    atk_attribute_set_free(set4);
+
+    child = atk_object_ref_accessible_child(obj, 1);
+    g_assert(child && ATK_IS_TEXT(child));
+    childText = ATK_TEXT(child);
+
+    set1 = atk_text_get_default_attributes(childText);
+    g_assert(atkAttributeSetAttributeHasValue(set1, ATK_TEXT_ATTR_FAMILY_NAME, "monospace"));
+    g_assert(atkAttributeSetAttributeHasValue(set1, ATK_TEXT_ATTR_STYLE, "normal"));
+    g_assert(atkAttributeSetAttributeHasValue(set1, ATK_TEXT_ATTR_STRIKETHROUGH, "false"));
+    g_assert(atkAttributeSetAttributeHasValue(set1, ATK_TEXT_ATTR_WEIGHT, "400"));
+    g_assert(atkAttributeSetAttributeHasValue(set1, ATK_TEXT_ATTR_FG_COLOR, "120,121,122"));
+
+    set2 = atk_text_get_run_attributes(childText, 43, &startOffset, &endOffset);
+    g_assert_cmpint(startOffset, ==, 43);
+    g_assert_cmpint(endOffset, ==, 80);
+    // Checks that default attributes of text are not returned when called to atk_text_get_run_attributes
+    g_assert(!atkAttributeSetAttributeHasValue(set2, ATK_TEXT_ATTR_FG_COLOR, "120,121,122"));
+    g_assert(atkAttributeSetAttributeHasValue(set2, ATK_TEXT_ATTR_UNDERLINE, "single"));
+    g_assert(atkAttributeSetAttributeHasValue(set2, ATK_TEXT_ATTR_BG_COLOR, "80,81,82"));
+    atk_attribute_set_free(set1);
+    atk_attribute_set_free(set2);
+
+    child = atk_object_ref_accessible_child(obj, 2);
+    g_assert(child && ATK_IS_TEXT(child));
+    childText = ATK_TEXT(child);
+
+    set1 = atk_text_get_run_attributes(childText, 0, &startOffset, &endOffset);
+    set2 = atk_text_get_run_attributes(childText, 3, &startOffset, &endOffset);
+    g_assert(atkAttributeSetAreEqual(set1, set2));
+    atk_attribute_set_free(set2);
+
+    set2 = atk_text_get_run_attributes(childText, 1, &startOffset, &endOffset);
+    set3 = atk_text_get_run_attributes(childText, 5, &startOffset, &endOffset);
+    g_assert(atkAttributeSetAreEqual(set2, set3));
+    g_assert(!atkAttributeSetAreEqual(set1, set2));
+    atk_attribute_set_free(set3);
+
+    set3 = atk_text_get_run_attributes(childText, 2, &startOffset, &endOffset);
+    set4 = atk_text_get_run_attributes(childText, 6, &startOffset, &endOffset);
+    g_assert(atkAttributeSetAreEqual(set3, set4));
+    g_assert(!atkAttributeSetAreEqual(set1, set3));
+    g_assert(!atkAttributeSetAreEqual(set2, set3));
+    atk_attribute_set_free(set1);
+    atk_attribute_set_free(set2);
+    atk_attribute_set_free(set3);
+    atk_attribute_set_free(set4);
+
+    child = atk_object_ref_accessible_child(obj, 3);
+    g_assert(child && ATK_IS_TEXT(child));
+    childText = ATK_TEXT(child);
+    set1 = atk_text_get_run_attributes(childText, 24, &startOffset, &endOffset);
+    g_assert_cmpint(startOffset, ==, 21);
+    g_assert_cmpint(endOffset, ==, 25);
+    g_assert(atkAttributeSetAttributeHasValue(set1, ATK_TEXT_ATTR_STRIKETHROUGH, "true"));
+
+    set2 = atk_text_get_run_attributes(childText, 25, &startOffset, &endOffset);
+    g_assert_cmpint(startOffset, ==, 25);
+    g_assert_cmpint(endOffset, ==, 30);
+    g_assert(atkAttributeSetAreEqual(set2, NULL));
+
+    set3 = atk_text_get_default_attributes(childText);
+    g_assert(atkAttributeSetAttributeHasValue(set3, ATK_TEXT_ATTR_JUSTIFICATION, "center"));
+    atk_attribute_set_free(set1);
+    atk_attribute_set_free(set2);
+    atk_attribute_set_free(set3);
+}
+
 int main(int argc, char** argv)
 {
     g_thread_init(NULL);
@@ -587,6 +753,7 @@ int main(int argc, char** argv)
     g_test_add_func("/webkit/atk/getTextInParagraphAndBodyModerate", testWebkitAtkGetTextInParagraphAndBodyModerate);
     g_test_add_func("/webkit/atk/getTextInTable", testWebkitAtkGetTextInTable);
     g_test_add_func("/webkit/atk/getHeadersInTable", testWebkitAtkGetHeadersInTable);
+    g_test_add_func("/webkit/atk/textAttributes", testWebkitAtkTextAttributes);
     return g_test_run ();
 }
 
