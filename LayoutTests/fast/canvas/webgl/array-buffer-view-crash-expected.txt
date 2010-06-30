@@ -1,0 +1,9 @@
+Verify that constructing a typed array view with no arguments and fetching its length does not crash
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS new Uint32Array().length did not crash
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

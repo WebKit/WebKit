@@ -50,12 +50,20 @@ v8::Handle<v8::Value> constructWebGLArray(const v8::Arguments& args, WrapperType
     int argLen = args.Length();
     if (argLen == 0) {
         // This happens when we return a previously constructed
-        // ArrayBufferView, e.g. from the call to WebGL<T>Array.slice().
+        // ArrayBufferView, e.g. from the call to <Type>Array.slice().
         // The V8DOMWrapper will set the internal pointer in the
         // created object. Unfortunately it doesn't look like it's
         // possible to distinguish between this case and that where
-        // the user calls "new WebGL<T>Array()" from JavaScript.
-        return args.Holder();
+        // the user calls "new <Type>Array()" from JavaScript. We must
+        // construct an empty view to avoid crashes when fetching the
+        // length.
+        RefPtr<ArrayClass> array = ArrayClass::create(0);
+        // Transform the holder into a wrapper object for the array.
+        V8DOMWrapper::setDOMWrapper(args.Holder(), type, array.get());
+        // Do not call SetIndexedPropertiesToExternalArrayData on this
+        // object. Not only is there no point from a performance
+        // perspective, but doing so causes errors in the slice() case.
+        return toV8(array.release(), args.Holder());
     }
 
     // Supported constructors:

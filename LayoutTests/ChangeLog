@@ -1,3 +1,18 @@
+2010-06-30  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Oliver Hunt.
+
+        WebCore::WebGLArrayInternal::lengthAttrGetter ReadAV@NULL (b1a3e1a3e9d01f17fd493d68eeb2742f)
+        https://bugs.webkit.org/show_bug.cgi?id=38040
+
+        Changed custom ArrayBufferView constructors to create a
+        fully-initialized, zero-length array when called with zero
+        arguments. This is the simplest fix which works identically in
+        both the JSC and V8 bindings.
+
+        * fast/canvas/webgl/array-buffer-view-crash-expected.txt: Added.
+        * fast/canvas/webgl/array-buffer-view-crash.html: Added.
+
 2010-06-30  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r62182.

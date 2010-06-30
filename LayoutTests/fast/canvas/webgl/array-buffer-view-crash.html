@@ -1,0 +1,28 @@
+<html>
+<head>
+<link rel="stylesheet" href="../../js/resources/js-test-style.css"/>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script src="resources/webgl-test.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+
+<script>
+
+description('Verify that constructing a typed array view with no arguments and fetching its length does not crash');
+
+<!-- The following used to cause a crash in both Safari and Chrome -->
+new Uint32Array().length;
+
+testPassed("new Uint32Array().length did not crash");
+successfullyParsed = true;
+
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+
+<script>
+</script>
+
+</body>
+</html>

@@ -96,9 +96,14 @@ PassRefPtr<ArrayBufferView> constructArrayBufferView(JSC::ExecState* exec)
     //
     RefPtr<C> arrayObject;
     
-    // For the 0 args case, just create an object without a buffer 
+    // For the 0 args case, just create a zero-length view. We could
+    // consider raising a SyntaxError for this case, but not all
+    // JavaScript DOM bindings can distinguish between "new
+    // <Type>Array()" and what occurs when a previously-constructed
+    // ArrayBufferView is returned to JavaScript; e.g., from
+    // "array.slice()".
     if (exec->argumentCount() < 1)
-        return C::create(0, 0, 0);
+        return C::create(0);
     
     if (exec->argument(0).isNull()) {
         // Invalid first argument
