@@ -1,5 +1,11 @@
 2010-06-30  Sam Weinig  <sam@webkit.org>
 
+        Fix Windows build.
+
+        * bindings/js/JSBindingsAllInOne.cpp:
+
+2010-06-30  Sam Weinig  <sam@webkit.org>
+
         Fix Gtk build.
 
         * GNUmakefile.am:
