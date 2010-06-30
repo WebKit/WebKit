@@ -467,14 +467,9 @@ bool LayoutTestController::isPageBoxVisible(int pageNumber) const
     return true;
 }
 
-JSRetainPtr<JSStringRef> LayoutTestController::pageAreaRectInPixels(int pageNumber) const
+JSRetainPtr<JSStringRef> LayoutTestController::pageSizeAndMarginsInPixels(int pageNumber, int width, int height, int marginTop, int marginRight, int marginBottom, int marginLeft) const
 {
     // FIXME: Implement
     return 0;
 }
 
-JSRetainPtr<JSStringRef> LayoutTestController::preferredPageSizeInPixels(int pageNumber) const
-{
-    // FIXME: Implement
-    return 0;
-}
