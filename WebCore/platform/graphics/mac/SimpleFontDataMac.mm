@@ -280,7 +280,7 @@ void SimpleFontData::platformInit()
     }
 }
     
-static CFDataRef copyFontTableForTag(FontPlatformData platformData, FourCharCode tableName)
+static CFDataRef copyFontTableForTag(FontPlatformData& platformData, FourCharCode tableName)
 {
 #ifdef BUILDING_ON_TIGER
     ATSFontRef atsFont = FMGetATSFontRefFromFont(platformData.m_atsuFontID);

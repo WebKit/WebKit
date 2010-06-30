@@ -123,7 +123,7 @@ bool FontPlatformData::allowsLigatures() const
 String FontPlatformData::description() const
 {
     RetainPtr<CFStringRef> cgFontDescription(AdoptCF, CFCopyDescription(cgFont()));
-    return String(cgFontDescription.get()) + " " + String::number(m_size) + (m_syntheticBold ? " synthetic bold" : "") + (m_syntheticOblique ? " syntheitic oblique" : "");
+    return String(cgFontDescription.get()) + " " + String::number(m_size) + (m_syntheticBold ? " synthetic bold" : "") + (m_syntheticOblique ? " synthetic oblique" : "");
 }
 #endif
 
