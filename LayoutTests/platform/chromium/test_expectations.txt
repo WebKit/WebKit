@@ -2594,7 +2594,8 @@ BUG37540 MAC SKIP : inspector/console-dir.html = CRASH TEXT PASS
 BUG37896 : fast/events/remove-child-onscroll.html = TIMEOUT
 // This one may be an actual regression! Started being flaky after
 // http://trac.webkit.org/log/?verbose=on&rev=55742&stop_rev=55710
-BUG37896 LINUX WIN : fast/events/standalone-image-drag-to-editable.html = IMAGE+TEXT PASS TEXT
+BUG37896 LINUX : fast/events/standalone-image-drag-to-editable.html = IMAGE IMAGE+TEXT PASS TEXT
+BUG37896 WIN : fast/events/standalone-image-drag-to-editable.html = IMAGE+TEXT PASS TEXT
 BUG37896 MAC DEBUG : fast/events/standalone-image-drag-to-editable.html = IMAGE+TEXT PASS
 // New test, added http://trac.webkit.org/changeset/55546
 BUG37896 WIN LINUX : fast/multicol/hit-test-above-or-below.html = TEXT

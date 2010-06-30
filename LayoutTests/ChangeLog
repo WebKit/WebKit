@@ -1,3 +1,12 @@
+2010-06-30  Albert J. Wong  <ajwong@chromium.org>
+
+        Not reviewed. Chromium: Disable flaky test.
+
+        Add an IMAGE failure to linux standalone-image-drag-to-editable.html.
+        Test has been flaky on build.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-06-30  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Dan Bernstein.
