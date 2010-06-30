@@ -1,3 +1,10 @@
+2010-06-30  Yury Semikhatsky  <yurys@chromium.org>
+
+        Unreviewed. Update Chromium test expectations.
+
+        * platform/chromium-mac/html5lib/runner-expected.txt:
+        * platform/chromium-win/html5lib/runner-expected.txt:
+
 2010-06-30  Eric Seidel  <eric@webkit.org>
 
         Unreviewed.  Just updating test expectations.
