@@ -1,3 +1,17 @@
+2010-06-30  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Reviewed by Laszlo Gombos.
+
+        [Qt][Symbian] Only 10 websites can be loaded consecutively when using QtWebkit 2.0
+        https://bugs.webkit.org/show_bug.cgi?id=40446
+
+        We quickly run out of memory on Symbian when loading web pages. This is
+        caused by the default heap size, which is not suited for a web browser.
+
+        This change bumps the max heap size to 32MB.
+
+        * QtTestBrowser/QtTestBrowser.pro:
+
 2010-06-30  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.
