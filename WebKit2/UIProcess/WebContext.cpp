@@ -159,7 +159,7 @@ void WebContext::postMessageToInjectedBundle(WebCore::StringImpl* message)
     if (!m_process || !m_process->isValid())
         return;
 
-    m_process->connection()->send(WebProcessMessage::PostMessage, 0, CoreIPC::In(String(message)));
+    m_process->send(WebProcessMessage::PostMessage, 0, CoreIPC::In(String(message)));
 }
 
 void WebContext::getStatistics(WKContextStatistics* statistics)

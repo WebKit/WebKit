@@ -59,7 +59,7 @@ WebProcessProxy::WebProcessProxy(WebContext* context)
     // FIXME: We could instead send the bundle path as part of the arguments to process creation?
     // Would that be better than sending a connection?
     if (!context->injectedBundlePath().isEmpty())
-        connection()->send(WebProcessMessage::LoadInjectedBundle, 0, CoreIPC::In(context->injectedBundlePath()));
+        send(WebProcessMessage::LoadInjectedBundle, 0, CoreIPC::In(context->injectedBundlePath()));
 }
 
 WebProcessProxy::~WebProcessProxy()
@@ -78,6 +78,11 @@ void WebProcessProxy::connect()
 
     m_connection = info.connection;
     m_platformProcessIdentifier = info.processIdentifier;
+}
+
+bool WebProcessProxy::sendMessage(CoreIPC::MessageID messageID, std::auto_ptr<CoreIPC::ArgumentEncoder> arguments)
+{
+    return m_connection->sendMessage(messageID, arguments);
 }
 
 void WebProcessProxy::terminate()

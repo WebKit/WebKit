@@ -139,7 +139,7 @@ void WebPageProxy::initializeWebPage(const IntSize& size, PassOwnPtr<DrawingArea
     }
 
     m_drawingArea = drawingArea;
-    process()->connection()->send(WebProcessMessage::Create, m_pageID, CoreIPC::In(size, pageNamespace()->context()->preferences()->store(), *(m_drawingArea.get())));
+    process()->send(WebProcessMessage::Create, m_pageID, CoreIPC::In(size, pageNamespace()->context()->preferences()->store(), *(m_drawingArea.get())));
 }
 
 void WebPageProxy::reinitializeWebPage(const WebCore::IntSize& size)
@@ -148,7 +148,7 @@ void WebPageProxy::reinitializeWebPage(const WebCore::IntSize& size)
         return;
 
     ASSERT(m_drawingArea);
-    process()->connection()->send(WebProcessMessage::Create, m_pageID, CoreIPC::In(size, pageNamespace()->context()->preferences()->store(), *(m_drawingArea.get())));
+    process()->send(WebProcessMessage::Create, m_pageID, CoreIPC::In(size, pageNamespace()->context()->preferences()->store(), *(m_drawingArea.get())));
 }
 
 void WebPageProxy::close()
@@ -191,7 +191,7 @@ void WebPageProxy::close()
 
     m_drawingArea.clear();
 
-    process()->connection()->send(WebPageMessage::Close, m_pageID, CoreIPC::In());
+    process()->send(WebPageMessage::Close, m_pageID, CoreIPC::In());
     process()->removeWebPage(m_pageID);
 }
 
@@ -200,7 +200,7 @@ bool WebPageProxy::tryClose()
     if (!isValid())
         return true;
 
-    process()->connection()->send(WebPageMessage::TryClose, m_pageID, CoreIPC::In());
+    process()->send(WebPageMessage::TryClose, m_pageID, CoreIPC::In());
     return false;
 }
 
@@ -210,49 +210,49 @@ void WebPageProxy::loadURL(const String& url)
         puts("loadURL called with a dead WebProcess");
         revive();
     }
-    process()->connection()->send(WebPageMessage::LoadURL, m_pageID, CoreIPC::In(url));
+    process()->send(WebPageMessage::LoadURL, m_pageID, CoreIPC::In(url));
 }
 
 void WebPageProxy::stopLoading()
 {
     if (!isValid())
         return;
-    process()->connection()->send(WebPageMessage::StopLoading, m_pageID, CoreIPC::In());
+    process()->send(WebPageMessage::StopLoading, m_pageID, CoreIPC::In());
 }
 
 void WebPageProxy::reload(bool reloadFromOrigin)
 {
     if (!isValid())
         return;
-    process()->connection()->send(WebPageMessage::Reload, m_pageID, CoreIPC::In(reloadFromOrigin));
+    process()->send(WebPageMessage::Reload, m_pageID, CoreIPC::In(reloadFromOrigin));
 }
 
 void WebPageProxy::goForward()
 {
     if (!isValid())
         return;
-    process()->connection()->send(WebPageMessage::GoForward, m_pageID, CoreIPC::In());
+    process()->send(WebPageMessage::GoForward, m_pageID, CoreIPC::In());
 }
 
 void WebPageProxy::goBack()
 {
     if (!isValid())
         return;
-    process()->connection()->send(WebPageMessage::GoBack, m_pageID, CoreIPC::In());
+    process()->send(WebPageMessage::GoBack, m_pageID, CoreIPC::In());
 }
 
 void WebPageProxy::setFocused(bool isFocused)
 {
     if (!isValid())
         return;
-    process()->connection()->send(WebPageMessage::SetFocused, m_pageID, CoreIPC::In(isFocused));
+    process()->send(WebPageMessage::SetFocused, m_pageID, CoreIPC::In(isFocused));
 }
 
 void WebPageProxy::setActive(bool active)
 {
     if (!isValid())
         return;
-    process()->connection()->send(WebPageMessage::SetActive, m_pageID, CoreIPC::In(active));
+    process()->send(WebPageMessage::SetActive, m_pageID, CoreIPC::In(active));
 }
 
 void WebPageProxy::mouseEvent(const WebMouseEvent& event)
@@ -263,7 +263,7 @@ void WebPageProxy::mouseEvent(const WebMouseEvent& event)
     // NOTE: This does not start the responsiveness timer because mouse move should not indicate interaction.
     if (event.type() != WebEvent::MouseMove)
         process()->responsivenessTimer()->start();
-    process()->connection()->send(WebPageMessage::MouseEvent, m_pageID, CoreIPC::In(event));
+    process()->send(WebPageMessage::MouseEvent, m_pageID, CoreIPC::In(event));
 }
 
 void WebPageProxy::wheelEvent(const WebWheelEvent& event)
@@ -272,7 +272,7 @@ void WebPageProxy::wheelEvent(const WebWheelEvent& event)
         return;
 
     process()->responsivenessTimer()->start();
-    process()->connection()->send(WebPageMessage::WheelEvent, m_pageID, CoreIPC::In(event));
+    process()->send(WebPageMessage::WheelEvent, m_pageID, CoreIPC::In(event));
 }
 
 void WebPageProxy::keyEvent(const WebKeyboardEvent& event)
@@ -281,7 +281,7 @@ void WebPageProxy::keyEvent(const WebKeyboardEvent& event)
         return;
 
     process()->responsivenessTimer()->start();
-    process()->connection()->send(WebPageMessage::KeyEvent, m_pageID, CoreIPC::In(event));
+    process()->send(WebPageMessage::KeyEvent, m_pageID, CoreIPC::In(event));
 }
 
 void WebPageProxy::receivedPolicyDecision(WebCore::PolicyAction action, WebFrameProxy* frame, uint64_t listenerID)
@@ -289,7 +289,7 @@ void WebPageProxy::receivedPolicyDecision(WebCore::PolicyAction action, WebFrame
     if (!isValid())
         return;
 
-    process()->connection()->send(WebPageMessage::DidReceivePolicyDecision, m_pageID, CoreIPC::In(frame->frameID(), listenerID, (uint32_t)action));
+    process()->send(WebPageMessage::DidReceivePolicyDecision, m_pageID, CoreIPC::In(frame->frameID(), listenerID, (uint32_t)action));
 }
 
 void WebPageProxy::terminateProcess()
@@ -305,7 +305,7 @@ void WebPageProxy::runJavaScriptInMainFrame(const String& script, PassRefPtr<Scr
     RefPtr<ScriptReturnValueCallback> callback = prpCallback;
     uint64_t callbackID = callback->callbackID();
     m_scriptReturnValueCallbacks.set(callbackID, callback.get());
-    process()->connection()->send(WebPageMessage::RunJavaScriptInMainFrame, m_pageID, CoreIPC::In(script, callbackID));
+    process()->send(WebPageMessage::RunJavaScriptInMainFrame, m_pageID, CoreIPC::In(script, callbackID));
 }
 
 void WebPageProxy::getRenderTreeExternalRepresentation(PassRefPtr<RenderTreeExternalRepresentationCallback> prpCallback)
@@ -313,7 +313,7 @@ void WebPageProxy::getRenderTreeExternalRepresentation(PassRefPtr<RenderTreeExte
     RefPtr<RenderTreeExternalRepresentationCallback> callback = prpCallback;
     uint64_t callbackID = callback->callbackID();
     m_renderTreeExternalRepresentationCallbacks.set(callbackID, callback.get());
-    process()->connection()->send(WebPageMessage::GetRenderTreeExternalRepresentation, m_pageID, callbackID);
+    process()->send(WebPageMessage::GetRenderTreeExternalRepresentation, m_pageID, callbackID);
 }
 
 void WebPageProxy::preferencesDidChange()
@@ -322,7 +322,7 @@ void WebPageProxy::preferencesDidChange()
         return;
 
     // FIXME: It probably makes more sense to send individual preference changes.
-    process()->connection()->send(WebPageMessage::PreferencesDidChange, m_pageID, CoreIPC::In(pageNamespace()->context()->preferences()->store()));
+    process()->send(WebPageMessage::PreferencesDidChange, m_pageID, CoreIPC::In(pageNamespace()->context()->preferences()->store()));
 }
 
 void WebPageProxy::getStatistics(WKContextStatistics* statistics)

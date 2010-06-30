@@ -81,7 +81,7 @@ void ChunkedUpdateDrawingAreaProxy::setSize(const IntSize& viewSize)
     m_isWaitingForDidSetFrameNotification = true;
 
     page->process()->responsivenessTimer()->start();
-    page->process()->connection()->send(DrawingAreaMessage::SetSize, page->pageID(), CoreIPC::In(viewSize));
+    page->process()->send(DrawingAreaMessage::SetSize, page->pageID(), CoreIPC::In(viewSize));
 }
 
 void ChunkedUpdateDrawingAreaProxy::setPageIsVisible(bool isVisible)
@@ -97,12 +97,12 @@ void ChunkedUpdateDrawingAreaProxy::setPageIsVisible(bool isVisible)
 
     if (!m_isVisible) {
         // Tell the web process that it doesn't need to paint anything for now.
-        page->process()->connection()->send(DrawingAreaMessage::SuspendPainting, page->pageID(), CoreIPC::In());
+        page->process()->send(DrawingAreaMessage::SuspendPainting, page->pageID(), CoreIPC::In());
         return;
     }
     
     // The page is now visible.
-    page->process()->connection()->send(DrawingAreaMessage::ResumePainting, page->pageID(), CoreIPC::In());
+    page->process()->send(DrawingAreaMessage::ResumePainting, page->pageID(), CoreIPC::In());
     
     // FIXME: We should request a full repaint here if needed.
 }
@@ -129,7 +129,7 @@ void ChunkedUpdateDrawingAreaProxy::update(UpdateChunk* updateChunk)
     drawUpdateChunkIntoBackingStore(updateChunk);
 
     WebPageProxy* page = this->page();
-    page->process()->connection()->send(DrawingAreaMessage::DidUpdate, page->pageID(), CoreIPC::In());
+    page->process()->send(DrawingAreaMessage::DidUpdate, page->pageID(), CoreIPC::In());
 }
 
 void ChunkedUpdateDrawingAreaProxy::didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder& arguments)

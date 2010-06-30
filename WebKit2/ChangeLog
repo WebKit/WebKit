@@ -1,3 +1,43 @@
+2010-06-30  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Add WebProcessProxy::send
+        https://bugs.webkit.org/show_bug.cgi?id=41416
+
+        * Platform/CoreIPC/Connection.h:
+        * UIProcess/ChunkedUpdateDrawingAreaProxy.cpp:
+        (WebKit::ChunkedUpdateDrawingAreaProxy::setSize):
+        (WebKit::ChunkedUpdateDrawingAreaProxy::setPageIsVisible):
+        (WebKit::ChunkedUpdateDrawingAreaProxy::update):
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::postMessageToInjectedBundle):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::initializeWebPage):
+        (WebKit::WebPageProxy::reinitializeWebPage):
+        (WebKit::WebPageProxy::close):
+        (WebKit::WebPageProxy::tryClose):
+        (WebKit::WebPageProxy::loadURL):
+        (WebKit::WebPageProxy::stopLoading):
+        (WebKit::WebPageProxy::reload):
+        (WebKit::WebPageProxy::goForward):
+        (WebKit::WebPageProxy::goBack):
+        (WebKit::WebPageProxy::setFocused):
+        (WebKit::WebPageProxy::setActive):
+        (WebKit::WebPageProxy::mouseEvent):
+        (WebKit::WebPageProxy::wheelEvent):
+        (WebKit::WebPageProxy::keyEvent):
+        (WebKit::WebPageProxy::receivedPolicyDecision):
+        (WebKit::WebPageProxy::runJavaScriptInMainFrame):
+        (WebKit::WebPageProxy::getRenderTreeExternalRepresentation):
+        (WebKit::WebPageProxy::preferencesDidChange):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::WebProcessProxy):
+        (WebKit::WebProcessProxy::sendMessage):
+        * UIProcess/WebProcessProxy.h:
+        (WebKit::WebProcessProxy::connection):
+        (WebKit::WebProcessProxy::send):
+
 2010-06-29  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

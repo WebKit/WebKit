@@ -79,6 +79,8 @@ public:
 
     template<typename E> std::auto_ptr<ArgumentDecoder> waitFor(E messageID, uint64_t destinationID, double timeout);
 
+    bool sendMessage(MessageID, std::auto_ptr<ArgumentEncoder>);
+
 private:
     Connection(Identifier, bool isServer, Client*, RunLoop* clientRunLoop);
     void platformInitialize(Identifier);
@@ -86,7 +88,6 @@ private:
     
     bool isValid() const { return m_client; }
     
-    bool sendMessage(MessageID, std::auto_ptr<ArgumentEncoder>);
     std::auto_ptr<ArgumentDecoder> sendSyncMessage(MessageID, uint64_t syncRequestID, std::auto_ptr<ArgumentEncoder>, double timeout);
     std::auto_ptr<ArgumentDecoder> waitForMessage(MessageID, uint64_t destinationID, double timeout);
     
