@@ -32,11 +32,7 @@
 #include "WebDatabase.h"
 
 #include "AbstractDatabase.h"
-#include "DatabaseTask.h"
-#include "DatabaseThread.h"
 #include "DatabaseTracker.h"
-#include "Document.h"
-#include "KURL.h"
 #include "QuotaTracker.h"
 #include "SecurityOrigin.h"
 #include "WebDatabaseObserver.h"
@@ -50,44 +46,28 @@ namespace WebKit {
 
 static WebDatabaseObserver* databaseObserver = 0;
 
-class WebDatabasePrivate : public AbstractDatabase {
-};
-
-void WebDatabase::reset()
-{
-    assign(0);
-}
-
-void WebDatabase::assign(const WebDatabase& other)
-{
-    WebDatabasePrivate* d = const_cast<WebDatabasePrivate*>(other.m_private);
-    if (d)
-        d->ref();
-    assign(d);
-}
-
 WebString WebDatabase::name() const
 {
-    ASSERT(m_private);
-    return m_private->stringIdentifier();
+    ASSERT(m_database);
+    return m_database->stringIdentifier();
 }
 
 WebString WebDatabase::displayName() const
 {
-    ASSERT(m_private);
-    return m_private->displayName();
+    ASSERT(m_database);
+    return m_database->displayName();
 }
 
 unsigned long WebDatabase::estimatedSize() const
 {
-    ASSERT(m_private);
-    return m_private->estimatedSize();
+    ASSERT(m_database);
+    return m_database->estimatedSize();
 }
 
 WebSecurityOrigin WebDatabase::securityOrigin() const
 {
-    ASSERT(m_private);
-    return WebSecurityOrigin(m_private->securityOrigin());
+    ASSERT(m_database);
+    return WebSecurityOrigin(m_database->securityOrigin());
 }
 
 void WebDatabase::setObserver(WebDatabaseObserver* observer)
@@ -117,28 +97,9 @@ void WebDatabase::closeDatabaseImmediately(const WebString& originIdentifier, co
         it->get()->closeImmediately();
 }
 
-WebDatabase::WebDatabase(const WTF::PassRefPtr<AbstractDatabase>& database)
-    : m_private(static_cast<WebDatabasePrivate*>(database.releaseRef()))
+WebDatabase::WebDatabase(const AbstractDatabase* database)
+    : m_database(database)
 {
-}
-
-WebDatabase& WebDatabase::operator=(const WTF::PassRefPtr<AbstractDatabase>& database)
-{
-    assign(static_cast<WebDatabasePrivate*>(database.releaseRef()));
-    return *this;
-}
-
-WebDatabase::operator WTF::PassRefPtr<AbstractDatabase>() const
-{
-    return PassRefPtr<AbstractDatabase>(const_cast<WebDatabasePrivate*>(m_private));
-}
-
-void WebDatabase::assign(WebDatabasePrivate* d)
-{
-    // d is already ref'd for us by the caller
-    if (m_private)
-        m_private->deref();
-    m_private = d;
 }
 
 } // namespace WebKit

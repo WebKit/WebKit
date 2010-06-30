@@ -85,19 +85,20 @@ private:
 
 class DatabaseOpenTask : public DatabaseTask {
 public:
-    static PassOwnPtr<DatabaseOpenTask> create(Database* db, DatabaseTaskSynchronizer* synchronizer, ExceptionCode& code, bool& success)
+    static PassOwnPtr<DatabaseOpenTask> create(Database* db, bool setVersionInNewDatabase, DatabaseTaskSynchronizer* synchronizer, ExceptionCode& code, bool& success)
     {
-        return new DatabaseOpenTask(db, synchronizer, code, success);
+        return new DatabaseOpenTask(db, setVersionInNewDatabase, synchronizer, code, success);
     }
 
 private:
-    DatabaseOpenTask(Database*, DatabaseTaskSynchronizer*, ExceptionCode&, bool& success);
+    DatabaseOpenTask(Database*, bool setVersionInNewDatabase, DatabaseTaskSynchronizer*, ExceptionCode&, bool& success);
 
     virtual void doPerformTask();
 #ifndef NDEBUG
     virtual const char* debugTaskName() const;
 #endif
 
+    bool m_setVersionInNewDatabase;
     ExceptionCode& m_code;
     bool& m_success;
 };

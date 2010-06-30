@@ -1,3 +1,23 @@
+2010-06-29  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Simplify the WebDatabase interface.
+        https://bugs.webkit.org/show_bug.cgi?id=40607
+
+        Do not ref()/deref() the private AbstractDatabase member. This
+        allows us to use WebDatabase in the destructors of the DB
+        classes.
+
+        * public/WebDatabase.h:
+        (WebKit::WebDatabase::WebDatabase):
+        * src/WebDatabase.cpp:
+        (WebKit::WebDatabase::name):
+        (WebKit::WebDatabase::displayName):
+        (WebKit::WebDatabase::estimatedSize):
+        (WebKit::WebDatabase::securityOrigin):
+        (WebKit::WebDatabase::WebDatabase):
+
 2010-06-29  Zhe Su  <suzhe@chromium.org>
 
         Reviewed by Darin Fisher.

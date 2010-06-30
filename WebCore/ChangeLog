@@ -1,3 +1,86 @@
+2010-06-29  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Implementing DatabaseSync::openDatabaseSync().
+        https://bugs.webkit.org/show_bug.cgi?id=40607
+
+        1. Moved some common code from Database to AbstractDatabase.
+        2. Made performOpenAndVerify() virtual, since DatabaseSync doesn't
+           need to interact with DatabaseThread.
+        3. Removed the m_creationCallback field, since it's only needed in
+           the openDatabase{Sync} methods.
+
+        * storage/AbstractDatabase.cpp:
+        (WebCore::retrieveTextResultFromDatabase):
+        (WebCore::setTextValueInDatabase):
+        (WebCore::guidMutex):
+        (WebCore::guidToVersionMap):
+        (WebCore::updateGuidVersionMap):
+        (WebCore::guidToDatabaseMap):
+        (WebCore::guidForOriginAndName):
+        (WebCore::AbstractDatabase::databaseInfoTableName):
+        (WebCore::AbstractDatabase::AbstractDatabase):
+        (WebCore::AbstractDatabase::closeDatabase):
+        (WebCore::AbstractDatabase::version):
+        (WebCore::AbstractDatabase::performOpenAndVerify):
+        (WebCore::AbstractDatabase::scriptExecutionContext):
+        (WebCore::AbstractDatabase::securityOrigin):
+        (WebCore::AbstractDatabase::stringIdentifier):
+        (WebCore::AbstractDatabase::displayName):
+        (WebCore::AbstractDatabase::estimatedSize):
+        (WebCore::AbstractDatabase::fileName):
+        (WebCore::AbstractDatabase::databaseVersionKey):
+        (WebCore::AbstractDatabase::getVersionFromDatabase):
+        (WebCore::AbstractDatabase::setVersionInDatabase):
+        (WebCore::AbstractDatabase::versionMatchesExpected):
+        (WebCore::AbstractDatabase::setExpectedVersion):
+        (WebCore::AbstractDatabase::disableAuthorizer):
+        (WebCore::AbstractDatabase::enableAuthorizer):
+        (WebCore::AbstractDatabase::setAuthorizerReadOnly):
+        (WebCore::AbstractDatabase::lastActionChangedDatabase):
+        (WebCore::AbstractDatabase::lastActionWasInsert):
+        (WebCore::AbstractDatabase::resetDeletes):
+        (WebCore::AbstractDatabase::hadDeletes):
+        (WebCore::AbstractDatabase::resetAuthorizer):
+        * storage/AbstractDatabase.h:
+        (WebCore::AbstractDatabase::opened):
+        (WebCore::AbstractDatabase::isNew):
+        (WebCore::AbstractDatabase::databaseDebugName):
+        * storage/Database.cpp:
+        (WebCore::DatabaseCreationCallbackTask::create):
+        (WebCore::DatabaseCreationCallbackTask::performTask):
+        (WebCore::DatabaseCreationCallbackTask::DatabaseCreationCallbackTask):
+        (WebCore::Database::openDatabase):
+        (WebCore::Database::Database):
+        (WebCore::Database::version):
+        (WebCore::Database::openAndVerifyVersion):
+        (WebCore::Database::close):
+        (WebCore::Database::stop):
+        (WebCore::Database::performOpenAndVerify):
+        * storage/Database.h:
+        (WebCore::Database::sqliteDatabase):
+        * storage/DatabaseAuthorizer.cpp:
+        (WebCore::DatabaseAuthorizer::create):
+        (WebCore::DatabaseAuthorizer::DatabaseAuthorizer):
+        (WebCore::DatabaseAuthorizer::denyBasedOnTableName):
+        * storage/DatabaseAuthorizer.h:
+        * storage/DatabaseSync.cpp:
+        (WebCore::DatabaseSync::openDatabaseSync):
+        (WebCore::DatabaseSync::DatabaseSync):
+        (WebCore::DatabaseSync::~DatabaseSync):
+        (WebCore::DatabaseSync::markAsDeletedAndClose):
+        (WebCore::CloseSyncDatabaseOnContextThreadTask::create):
+        (WebCore::CloseSyncDatabaseOnContextThreadTask::performTask):
+        (WebCore::CloseSyncDatabaseOnContextThreadTask::CloseSyncDatabaseOnContextThreadTask):
+        (WebCore::DatabaseSync::closeImmediately):
+        * storage/DatabaseSync.h:
+        * storage/DatabaseTask.cpp:
+        (WebCore::DatabaseOpenTask::DatabaseOpenTask):
+        (WebCore::DatabaseOpenTask::doPerformTask):
+        * storage/DatabaseTask.h:
+        (WebCore::DatabaseOpenTask::create):
+
 2010-06-29  François Sausset  <sausset@gmail.com>
 
         Reviewed by Darin Adler.

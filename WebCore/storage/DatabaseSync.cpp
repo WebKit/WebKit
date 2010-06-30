@@ -31,52 +31,60 @@
 
 #if ENABLE(DATABASE)
 #include "DatabaseCallback.h"
+#include "DatabaseTracker.h"
 #include "ExceptionCode.h"
+#include "Logging.h"
 #include "SQLTransactionSyncCallback.h"
 #include "ScriptExecutionContext.h"
+#include "SecurityOrigin.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
-#include <wtf/StdLibExtras.h>
 
 namespace WebCore {
 
-const String& DatabaseSync::databaseInfoTableName()
+PassRefPtr<DatabaseSync> DatabaseSync::openDatabaseSync(ScriptExecutionContext* context, const String& name, const String& expectedVersion, const String& displayName,
+                                                        unsigned long estimatedSize, PassRefPtr<DatabaseCallback> creationCallback, ExceptionCode& ec)
 {
-    DEFINE_STATIC_LOCAL(String, name, ("__WebKitDatabaseInfoTable__"));
-    return name;
-}
+    ASSERT(context->isContextThread());
 
-PassRefPtr<DatabaseSync> DatabaseSync::openDatabaseSync(ScriptExecutionContext*, const String&, const String&, const String&,
-                                                        unsigned long, PassRefPtr<DatabaseCallback>, ExceptionCode& ec)
-{
-    // FIXME: uncomment the assert once we use the ScriptExecutionContext* parameter
-    //ASSERT(context->isContextThread());
+    if (!DatabaseTracker::tracker().canEstablishDatabase(context, name, displayName, estimatedSize)) {
+        LOG(StorageAPI, "Database %s for origin %s not allowed to be established", name.ascii().data(), context->securityOrigin()->toString().ascii().data());
+        return 0;
+    }
 
-    ec = SECURITY_ERR;
-    return 0;
+    RefPtr<DatabaseSync> database = adoptRef(new DatabaseSync(context, name, expectedVersion, displayName, estimatedSize));
+
+    if (!database->performOpenAndVerify(!creationCallback, ec)) {
+        LOG(StorageAPI, "Failed to open and verify version (expected %s) of database %s", expectedVersion.ascii().data(), database->databaseDebugName().ascii().data());
+        DatabaseTracker::tracker().removeOpenDatabase(database.get());
+        return 0;
+    }
+
+    DatabaseTracker::tracker().setDatabaseDetails(context->securityOrigin(), name, displayName, estimatedSize);
+
+    if (database->isNew() && creationCallback.get()) {
+        database->m_expectedVersion = "";
+        LOG(StorageAPI, "Invoking the creation callback for database %p\n", database.get());
+        creationCallback->handleEvent(context, database.get());
+    }
+
+    return database;
 }
 
 DatabaseSync::DatabaseSync(ScriptExecutionContext* context, const String& name, const String& expectedVersion,
-                           const String& displayName, unsigned long estimatedSize, PassRefPtr<DatabaseCallback> creationCallback)
-    : m_scriptExecutionContext(context)
-    , m_name(name.crossThreadString())
-    , m_expectedVersion(expectedVersion.crossThreadString())
-    , m_displayName(displayName.crossThreadString())
-    , m_estimatedSize(estimatedSize)
-    , m_creationCallback(creationCallback)
+                           const String& displayName, unsigned long estimatedSize)
+    : AbstractDatabase(context, name, expectedVersion, displayName, estimatedSize)
 {
-    ASSERT(context->isContextThread());
 }
 
 DatabaseSync::~DatabaseSync()
 {
     ASSERT(m_scriptExecutionContext->isContextThread());
-}
 
-String DatabaseSync::version() const
-{
-    ASSERT(m_scriptExecutionContext->isContextThread());
-    return String();
+    if (opened()) {
+        DatabaseTracker::tracker().removeOpenDatabase(this);
+        closeDatabase();
+    }
 }
 
 void DatabaseSync::changeVersion(const String&, const String&, PassRefPtr<SQLTransactionSyncCallback>, ExceptionCode&)
@@ -89,10 +97,45 @@ void DatabaseSync::transaction(PassRefPtr<SQLTransactionSyncCallback>, bool, Exc
     ASSERT(m_scriptExecutionContext->isContextThread());
 }
 
-ScriptExecutionContext* DatabaseSync::scriptExecutionContext() const
+void DatabaseSync::markAsDeletedAndClose()
 {
-    ASSERT(m_scriptExecutionContext->isContextThread());
-    return m_scriptExecutionContext.get();
+    // FIXME: need to do something similar to closeImmediately(), but in a sync way
+}
+
+class CloseSyncDatabaseOnContextThreadTask : public ScriptExecutionContext::Task {
+public:
+    static PassOwnPtr<CloseSyncDatabaseOnContextThreadTask> create(PassRefPtr<DatabaseSync> database)
+    {
+        return new CloseSyncDatabaseOnContextThreadTask(database);
+    }
+
+    virtual void performTask(ScriptExecutionContext*)
+    {
+        m_database->closeImmediately();
+    }
+
+private:
+    CloseSyncDatabaseOnContextThreadTask(PassRefPtr<DatabaseSync> database)
+        : m_database(database)
+    {
+    }
+
+    RefPtr<DatabaseSync> m_database;
+};
+
+void DatabaseSync::closeImmediately()
+{
+    if (!m_scriptExecutionContext->isContextThread()) {
+        m_scriptExecutionContext->postTask(CloseSyncDatabaseOnContextThreadTask::create(this));
+        return;
+    }
+
+    if (!opened())
+        return;
+
+    DatabaseTracker::tracker().removeOpenDatabase(this);
+
+    closeDatabase();
 }
 
 } // namespace WebCore

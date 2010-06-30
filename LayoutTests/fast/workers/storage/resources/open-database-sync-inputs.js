@@ -34,7 +34,7 @@ try {
 
 try {
     db = openDatabaseSync("DBName", "DBVersion", notAString, 1024);
-    postMessage("FAIL: the fourth argument to openDatabaseSync() must be an integer.");
+    postMessage("FAIL: the third argument to openDatabaseSync() must be a string.");
 } catch (err) {
     postMessage("PASS: " + err.message);
 }
@@ -46,19 +46,29 @@ try {
     postMessage("PASS: " + err.message);
 }
 
-// FIXME: Uncomment these tests when the sync DB API is implemented.
-//try {
-//    db = openDatabaseSync("DBName", "DBVersion", "DBDescription", 1024);
-//    postMessage("PASS: openDatabaseSync() succeeded.");
-//} catch (err) {
-//    postMessage("FAIL: " + err.message);
-//}
-//
-//try {
-//    db = openDatabaseSync("DBName", "DBVersion", "DBDescription", 1024, function(db) { });
-//    postMessage("PASS: calling openDatabaseSync() with a creation callback succeeded.");
-//} catch (err) {
-//    postMessage("FAIL: " + err.message);
-//}
+try {
+    db = openDatabaseSync("DBName", "DBVersion", "DBDescription", 1024);
+    postMessage("PASS: openDatabaseSync() succeeded.");
+} catch (err) {
+    postMessage("FAIL: " + err.message);
+}
+
+// Run this test case one more time, to test the code with an existing database.
+try {
+    db = openDatabaseSync("DBName", "DBVersion", "DBDescription", 1024);
+    postMessage("PASS: openDatabaseSync() succeeded.");
+} catch (err) {
+    postMessage("FAIL: " + err.message);
+}
+
+try {
+    // Need to create a new database, otherwise the creation callback won't be invoked.
+    db = openDatabaseSync("DBNameCreationCallback" + (new Date()).getTime(), "DBVersion", "DBDescription", 1024,
+                          function(db) {
+                              postMessage("PASS: calling openDatabaseSync() with a creation callback succeeded.");
+                          });
+} catch (err) {
+    postMessage("FAIL: " + err.message);
+}
 
 postMessage("done");

@@ -32,12 +32,20 @@
 #if ENABLE(DATABASE)
 
 #include "PlatformString.h"
+#include "SQLiteDatabase.h"
+#include <wtf/Forward.h>
 #include <wtf/ThreadSafeShared.h>
+#ifndef NDEBUG
+#include "SecurityOrigin.h"
+#endif
 
 namespace WebCore {
 
+class DatabaseAuthorizer;
 class ScriptExecutionContext;
 class SecurityOrigin;
+
+typedef int ExceptionCode;
 
 class AbstractDatabase : public ThreadSafeShared<AbstractDatabase> {
 public:
@@ -46,15 +54,69 @@ public:
 
     virtual ~AbstractDatabase();
 
-    virtual ScriptExecutionContext* scriptExecutionContext() const = 0;
-    virtual SecurityOrigin* securityOrigin() const = 0;
-    virtual String stringIdentifier() const = 0;
-    virtual String displayName() const = 0;
-    virtual unsigned long estimatedSize() const = 0;
-    virtual String fileName() const = 0;
+    virtual String version() const;
+
+    bool opened() const { return m_opened; }
+    bool isNew() const { return m_new; }
+
+    virtual ScriptExecutionContext* scriptExecutionContext() const;
+    virtual SecurityOrigin* securityOrigin() const;
+    virtual String stringIdentifier() const;
+    virtual String displayName() const;
+    virtual unsigned long estimatedSize() const;
+    virtual String fileName() const;
+
+    // FIXME: move all version-related methods to a DatabaseVersionTracker class
+    bool versionMatchesExpected() const;
+    void setExpectedVersion(const String& version);
+    bool getVersionFromDatabase(String& version);
+    bool setVersionInDatabase(const String& version);
+
+    void disableAuthorizer();
+    void enableAuthorizer();
+    void setAuthorizerReadOnly();
+    bool lastActionChangedDatabase();
+    bool lastActionWasInsert();
+    void resetDeletes();
+    bool hadDeletes();
+    void resetAuthorizer();
 
     virtual void markAsDeletedAndClose() = 0;
     virtual void closeImmediately() = 0;
+
+protected:
+    AbstractDatabase(ScriptExecutionContext*, const String& name, const String& expectedVersion,
+                     const String& displayName, unsigned long estimatedSize);
+
+    void closeDatabase();
+
+    virtual bool performOpenAndVerify(bool shouldSetVersionInNewDatabase, ExceptionCode& ec);
+
+    static const String& databaseInfoTableName();
+
+    RefPtr<ScriptExecutionContext> m_scriptExecutionContext;
+    RefPtr<SecurityOrigin> m_contextThreadSecurityOrigin;
+
+    String m_name;
+    String m_expectedVersion;
+    String m_displayName;
+    unsigned long m_estimatedSize;
+    String m_filename;
+
+    SQLiteDatabase m_sqliteDatabase;
+
+#ifndef NDEBUG
+    String databaseDebugName() const { return m_contextThreadSecurityOrigin->toString() + "::" + m_name; }
+#endif
+
+private:
+    static const String& databaseVersionKey();
+
+    int m_guid;
+    bool m_opened;
+    bool m_new;
+
+    RefPtr<DatabaseAuthorizer> m_databaseAuthorizer;
 };
 
 } // namespace WebCore
