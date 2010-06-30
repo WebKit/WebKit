@@ -546,4 +546,24 @@ bool isScrollableContainerNode(Node* node)
     return false;
 }
 
+bool isNodeDeepDescendantOfDocument(Node* node, Document* baseDocument)
+{
+    if (!node || !baseDocument)
+        return false;
+
+    bool descendant = baseDocument == node->document();
+
+    Element* currentElement = static_cast<Element*>(node);
+    while (!descendant) {
+        Element* documentOwner = currentElement->document()->ownerElement();
+        if (!documentOwner)
+            break;
+
+        descendant = documentOwner->document() == baseDocument;
+        currentElement = documentOwner;
+    }
+
+    return descendant;
+}
+
 } // namespace WebCore

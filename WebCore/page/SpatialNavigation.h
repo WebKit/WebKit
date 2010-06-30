@@ -133,6 +133,7 @@ void scrollIntoView(Element*);
 bool hasOffscreenRect(Node*);
 bool isInRootDocument(Node*);
 bool isScrollableContainerNode(Node*);
+bool isNodeDeepDescendantOfDocument(Node*, Document*);
 
 } // namspace WebCore
 

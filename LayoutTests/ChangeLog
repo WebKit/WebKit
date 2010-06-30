@@ -1,3 +1,14 @@
+2010-06-30  Antonio Gomes  <tonikitoo@webkit.org>
+
+        Reviewed by Simon Fraser.
+
+        Spatial Navigation: make elements in inner frames nested more than 1 level deep focusable
+        https://bugs.webkit.org/show_bug.cgi?id=41160
+
+        * fast/events/spatial-navigation/resources/iframe.html: Added.
+        * fast/events/spatial-navigation/snav-iframe-nested-expected.txt: Added.
+        * fast/events/spatial-navigation/snav-iframe-nested.html: Added.
+
 2010-06-30  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed. Update Chromium test expectations.
