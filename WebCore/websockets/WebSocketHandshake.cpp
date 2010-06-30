@@ -107,9 +107,11 @@ static void generateSecWebSocketKey(uint32_t& number, String& key)
     }
     DEFINE_STATIC_LOCAL(String, spaceChar, (" "));
     for (uint32_t i = 0; i < space; i++) {
-        int pos = static_cast<int>(randomNumber() * s.length() - 1) + 1;
+        int pos = static_cast<int>(randomNumber() * (s.length() - 1)) + 1;
         s.insert(spaceChar, pos);
     }
+    ASSERT(s[0] != ' ');
+    ASSERT(s[s.length() - 1] != ' ');
     key = s;
 }
 
