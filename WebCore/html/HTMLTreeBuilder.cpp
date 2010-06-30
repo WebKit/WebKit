@@ -587,6 +587,17 @@ void HTMLTreeBuilder::processStartTag(AtomicHTMLToken& token)
     }
 }
 
+bool HTMLTreeBuilder::processBodyEndTagForInBody(AtomicHTMLToken& token)
+{
+    if (!m_openElements.inScope(bodyTag.localName())) {
+        parseError(token);
+        return false;
+    }
+    notImplemented();
+    m_insertionMode = AfterBodyMode;
+    return true;
+}
+
 void HTMLTreeBuilder::processEndTag(AtomicHTMLToken& token)
 {
     switch (insertionMode()) {
@@ -634,12 +645,12 @@ void HTMLTreeBuilder::processEndTag(AtomicHTMLToken& token)
     case InBodyMode:
         ASSERT(insertionMode() == InBodyMode);
         if (token.name() == bodyTag) {
-            notImplemented();
-            m_insertionMode = AfterBodyMode;
+            processBodyEndTagForInBody(token);
             return;
         }
         if (token.name() == htmlTag) {
-            notImplemented();
+            if (processBodyEndTagForInBody(token))
+                notImplemented(); // Re-process the curent token.
             return;
         }
         if (token.name() == addressTag || token.name() == articleTag || token.name() == asideTag || token.name() == blockquoteTag || token.name() == buttonTag || token.name() == centerTag || token.name() == "details" || token.name() == dirTag || token.name() == divTag || token.name() == dlTag || token.name() == fieldsetTag || token.name() == "figure" || token.name() == footerTag || token.name() == headerTag || token.name() == hgroupTag || token.name() == listingTag || token.name() == menuTag || token.name() == navTag || token.name() == olTag || token.name() == preTag || token.name() == sectionTag || token.name() == ulTag) {

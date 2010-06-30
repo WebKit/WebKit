@@ -1,3 +1,17 @@
+2010-06-30  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Implement HTML5 "in scope" algorithm and attempt to use it
+        https://bugs.webkit.org/show_bug.cgi?id=41402
+
+        Adds two new (expected) failures, since we're now
+        switching out of InBody to AfterBody when seeing
+        </html>.  We don't implement AfterBody yet, so
+        the rest of the content after </html> is ignored.
+
+        * html5lib/runner-expected-html5.txt:
+
 2010-06-30  Kenneth Russell  <kbr@google.com>
 
         Reviewed by Oliver Hunt.

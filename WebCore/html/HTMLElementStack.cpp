@@ -27,9 +27,13 @@
 #include "HTMLElementStack.h"
 
 #include "Element.h"
+#include "HTMLNames.h"
+#include "SVGNames.h"
 #include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
+
+using namespace HTMLNames;
 
 class HTMLElementStack::ElementRecord : public Noncopyable {
 public:
@@ -141,20 +145,77 @@ bool HTMLElementStack::contains(Element* element) const
     return false;
 }
 
-bool HTMLElementStack::inScope(const AtomicString& name) const
+namespace {
+
+inline bool isScopeMarker(const Element* element)
 {
-    // FIXME: This algorithm is wrong.
-    for (ElementRecord* pos = m_top.get(); pos; pos = pos->next()) {
-        if (pos->element()->tagQName() == name)
+    return element->hasTagName(appletTag)
+        || element->hasTagName(captionTag)
+        || element->hasTagName(appletTag)
+        || element->hasTagName(htmlTag)
+        || element->hasTagName(tableTag)
+        || element->hasTagName(tdTag)
+        || element->hasTagName(thTag)
+        || element->hasTagName(buttonTag)
+        || element->hasTagName(marqueeTag)
+        || element->hasTagName(objectTag)
+        || element->hasTagName(SVGNames::foreignObjectTag);
+}
+
+inline bool isListItemScopeMarker(const Element* element)
+{
+    return isScopeMarker(element)
+        || element->hasTagName(olTag)
+        || element->hasTagName(ulTag);
+}
+inline bool isTableScopeMarker(const Element* element)
+{
+    return element->hasTagName(htmlTag)
+        || element->hasTagName(tableTag);
+}
+
+}
+
+template <bool isMarker(const Element*)>
+bool inScopeCommon(HTMLElementStack::ElementRecord* top, const AtomicString& targetTag)
+{
+    for (HTMLElementStack::ElementRecord* pos = top; pos; pos = pos->next()) {
+        Element* element = pos->element();
+        if (element->hasLocalName(targetTag))
             return true;
+        if (isMarker(element))
+            return false;
     }
+    ASSERT_NOT_REACHED(); // <html> is always on the stack and is a scope marker.
     return false;
 }
 
-bool HTMLElementStack::inScope(Element* element) const
+bool HTMLElementStack::inScope(Element* targetElement) const
 {
-    // FIXME: This algorithm is wrong.
-    return contains(element);
+    for (ElementRecord* pos = m_top.get(); pos; pos = pos->next()) {
+        Element* element = pos->element();
+        if (element == targetElement)
+            return true;
+        if (isScopeMarker(element))
+            return false;
+    }
+    ASSERT_NOT_REACHED(); // <html> is always on the stack and is a scope marker.
+    return false;
+}
+
+bool HTMLElementStack::inScope(const AtomicString& targetTag) const
+{
+    return inScopeCommon<isScopeMarker>(m_top.get(), targetTag);
+}
+
+bool HTMLElementStack::inListItemScope(const AtomicString& targetTag) const
+{
+    return inScopeCommon<isListItemScopeMarker>(m_top.get(), targetTag);
+}
+
+bool HTMLElementStack::inTableScope(const AtomicString& targetTag) const
+{
+    return inScopeCommon<isTableScopeMarker>(m_top.get(), targetTag);
 }
 
 Element* HTMLElementStack::htmlElement()

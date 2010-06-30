@@ -26,11 +26,13 @@
 #ifndef HTMLElementStack_h
 #define HTMLElementStack_h
 
-#include "HTMLNames.h"
+#include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/OwnPtr.h>
 
 namespace WebCore {
 
+class AtomicString;
 class Element;
 
 class HTMLElementStack : public Noncopyable {
@@ -53,19 +55,22 @@ public:
 
     bool contains(Element*) const;
 
-    bool inScope(const AtomicString& name) const;
     bool inScope(Element*) const;
+    bool inScope(const AtomicString& tagName) const;
+    bool inListItemScope(const AtomicString& tagName) const;
+    bool inTableScope(const AtomicString& tagName) const;
 
     Element* htmlElement();
     Element* headElement();
     Element* bodyElement();
 
+    // Public so free functions can use it, but defined privately.
+    class ElementRecord;
 private:
     void pushCommon(PassRefPtr<Element>);
     void popCommon();
     void removeNonFirstCommon(Element*);
 
-    class ElementRecord;
     OwnPtr<ElementRecord> m_top;
 
     // We remember <html>, <head> and <body> as they are pushed.  Their

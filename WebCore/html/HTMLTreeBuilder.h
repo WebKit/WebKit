@@ -122,6 +122,8 @@ private:
 
     bool processStartTagForInHead(AtomicHTMLToken&);
 
+    bool processBodyEndTagForInBody(AtomicHTMLToken&);
+
     template<typename ChildType>
     PassRefPtr<ChildType> attach(Node* parent, PassRefPtr<ChildType> prpChild)
     {

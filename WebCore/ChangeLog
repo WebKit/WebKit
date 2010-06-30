@@ -2,6 +2,35 @@
 
         Reviewed by Adam Barth.
 
+        Implement HTML5 "in scope" algorithm and attempt to use it
+        https://bugs.webkit.org/show_bug.cgi?id=41402
+
+        Implemented the 4 needed "in scope" functions for HTML5.
+        3 for the different sets of scope markers, and one for
+        doing exact element comparisons instead of tag name searches.
+
+        I deployed inScope("body") for </body> and </html> in InBody.
+
+        Adds two new (expected) failures, since we're now
+        switching out of InBody to AfterBody when seeing
+        </html>.  We don't implement AfterBody yet, so
+        the rest of the content after </html> is ignored.
+
+        * html/HTMLElementStack.cpp:
+        (WebCore::inScopeCommon):
+        (WebCore::HTMLElementStack::inScope):
+        (WebCore::HTMLElementStack::inListItemScope):
+        (WebCore::HTMLElementStack::inTableScope):
+        * html/HTMLElementStack.h:
+        * html/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::processBodyEndTagForInBody):
+        (WebCore::HTMLTreeBuilder::processEndTag):
+        * html/HTMLTreeBuilder.h:
+
+2010-06-30  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
         Split HTMLElementStack out into its own file
         https://bugs.webkit.org/show_bug.cgi?id=41399
 
