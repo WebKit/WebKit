@@ -5,6 +5,18 @@
         [GTK] Unit test for DOM insertion methods
         https://bugs.webkit.org/show_bug.cgi?id=40495
 
+        Add unit test for webkit_dom_node_remove_child.
+
+        * tests/testdomnode.c:
+        (test_dom_node_insertion):
+
+2010-06-30  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        [GTK] Unit test for DOM insertion methods
+        https://bugs.webkit.org/show_bug.cgi?id=40495
+
         Add unit tests for node insertion and replacement methods.
 
         * tests/testdomnode.c:

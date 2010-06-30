@@ -192,7 +192,7 @@ sub SkipFunction {
     if ($isCustomFunction &&
         $functionName ne "webkit_dom_node_replace_child" &&
         $functionName ne "webkit_dom_node_insert_before" &&
-        $functionName ne "webkit_dom_node_replace_child" &&
+        $functionName ne "webkit_dom_node_remove_child" &&
         $functionName ne "webkit_dom_node_append_child" &&
         $functionName ne "webkit_dom_html_collection_item" &&
         $functionName ne "webkit_dom_html_collection_named_item") {

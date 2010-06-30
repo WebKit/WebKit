@@ -1,3 +1,14 @@
+2010-06-30  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        [GTK] Unit test for DOM insertion methods
+        https://bugs.webkit.org/show_bug.cgi?id=40495
+
+        Fix typo in custom function detection method.
+
+        * bindings/scripts/CodeGeneratorGObject.pm:
+
 2010-06-30  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

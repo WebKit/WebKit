@@ -159,7 +159,10 @@ static void test_dom_node_insertion(DomNodeFixture* fixture, gconstpointer data)
     g_assert(node);
     g_assert(webkit_dom_node_is_same_node(WEBKIT_DOM_NODE(div), node));
 
-    /* TODO: remove_child, which is missing because of a typo in the generator script */
+    /* Now remove the tag */
+    webkit_dom_node_remove_child(WEBKIT_DOM_NODE(body), node, NULL);
+    list = webkit_dom_node_get_child_nodes(WEBKIT_DOM_NODE(body));
+    g_assert_cmpint(webkit_dom_node_list_get_length(list), ==, 0);
 
     /* TODO: insert_before, which does not seem to be working correctly */
 }
