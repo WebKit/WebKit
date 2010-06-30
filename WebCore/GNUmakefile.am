@@ -141,6 +141,7 @@ IDL_BINDINGS += \
 	WebCore/dom/DOMCoreException.idl \
 	WebCore/dom/DOMImplementation.idl \
 	WebCore/dom/DOMStringList.idl \
+	WebCore/dom/DOMStringMap.idl \
 	WebCore/dom/DeviceOrientationEvent.idl \
 	WebCore/dom/Document.idl \
 	WebCore/dom/DocumentFragment.idl \
