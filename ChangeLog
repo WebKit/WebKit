@@ -1,3 +1,12 @@
+2010-06-30  Leandro Pereira  <leandro@profusion.mobi>
+
+        Unreviewed.
+
+        Generate CSSValueKeywords.cpp instead of CSSValueKeywords.c to avoid
+        recompilation and relinking of WebCore when no files were changed.
+
+        * cmake/WebKitGenerators.cmake:
+
 2010-06-29  Antoine Labour  <piman@chromium.org>
 
         Reviewed by Dimitri Glazkov.
