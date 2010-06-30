@@ -689,7 +689,7 @@ bool RenderThemeChromiumWin::paintProgressBar(RenderObject* o, const PaintInfo& 
     double animatedSeconds = renderProgress->animationStartTime() ?  WTF::currentTime() - renderProgress->animationStartTime() : 0;
     ThemePainter painter(i.context, r);
     ChromiumBridge::paintProgressBar(painter.context(), r, valueRect, renderProgress->isDeterminate(), animatedSeconds);
-    return true;
+    return false;
 }
 
 #endif

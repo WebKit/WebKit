@@ -1,3 +1,14 @@
+2010-06-29  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Kent Tamura.
+
+        REGRESSION: [Chromium] <progress> appearance on windows looks not good
+        https://bugs.webkit.org/show_bug.cgi?id=41343
+
+        Skipped a test with outdated expectation. We need to rebaseline it.
+        
+        * platform/chromium/test_expectations.txt:
+
 2010-06-29  Kinuko Yasuda  <kinuko@chromium.org>
 
         Reviewed by Jian Li.
