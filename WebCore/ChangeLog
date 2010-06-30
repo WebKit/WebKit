@@ -1,5 +1,27 @@
 2010-06-30  Andreas Kling  <andreas.kling@nokia.com>
 
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] Make "disallow multiple calls to SetWindow" on windowed plugins a quirk
+        https://bugs.webkit.org/show_bug.cgi?id=41407
+
+        Only disallow calling SetWindow more than once if we're using Flash 9 or older.
+        This fixes resizing of YouTube videos via the player's own button.
+
+        Removed copy-pasted logic in PluginViewGtk since the issue only exists
+        when running Flash with a non-Gtk toolkit.
+
+        * plugins/PluginPackage.cpp:
+        (WebCore::PluginPackage::determineQuirks):
+        * plugins/PluginQuirkSet.h:
+        (WebCore::):
+        * plugins/gtk/PluginViewGtk.cpp:
+        (WebCore::PluginView::setNPWindowIfNeeded): Remove unnecessary logic copy-pasted from PluginViewQt.
+        * plugins/qt/PluginViewQt.cpp:
+        (WebCore::PluginView::setNPWindowIfNeeded):
+
+2010-06-30  Andreas Kling  <andreas.kling@nokia.com>
+
         Reviewed by Antti Koivisto.
 
         [Qt, Gtk, Symbian] Mind the semantics of NPRect for windowed plugin clip rects

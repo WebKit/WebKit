@@ -189,6 +189,10 @@ void PluginPackage::determineQuirks(const String& mimeType)
         } else {
             // Flash 9 and older requests windowless plugins if we return a mozilla user agent
             m_quirks.add(PluginQuirkWantsMozillaUserAgent);
+#if PLATFORM(QT)
+            // Flash 9 and older would crash on repeated calls to SetWindow in windowed mode
+            m_quirks.add(PluginQuirkDontCallSetWindowMoreThanOnce);
+#endif
         }
 
         m_quirks.add(PluginQuirkThrottleInvalidate);

@@ -507,9 +507,14 @@ void PluginView::setNPWindowIfNeeded()
         m_npWindow.clipRect.bottom = 0;
     }
 
-    // FLASH WORKAROUND: Only set initially. Multiple calls to
-    // setNPWindow() cause the plugin to crash in windowed mode.
-    if (!m_isWindowed || m_npWindow.width == -1 || m_npWindow.height == -1) {
+    if (m_plugin->quirks().contains(PluginQuirkDontCallSetWindowMoreThanOnce)) {
+        // FLASH WORKAROUND: Only set initially. Multiple calls to
+        // setNPWindow() cause the plugin to crash in windowed mode.
+        if (!m_isWindowed || m_npWindow.width == -1 || m_npWindow.height == -1) {
+            m_npWindow.width = m_windowRect.width();
+            m_npWindow.height = m_windowRect.height();
+        }
+    } else {
         m_npWindow.width = m_windowRect.width();
         m_npWindow.height = m_windowRect.height();
     }
