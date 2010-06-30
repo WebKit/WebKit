@@ -1,3 +1,16 @@
+2010-06-30  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        [GTK] Unit test for DOM insertion methods
+        https://bugs.webkit.org/show_bug.cgi?id=40495
+
+        Add unit tests for node insertion and replacement methods.
+
+        * tests/testdomnode.c:
+        (test_dom_node_insertion):
+        (main):
+
 2010-06-30  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Reviewed by Xan Lopez.

@@ -27,6 +27,7 @@
 #if GLIB_CHECK_VERSION(2, 16, 0) && GTK_CHECK_VERSION(2, 14, 0)
 
 #define HTML_DOCUMENT_HIERARCHY_NAVIGATION "<html><head><title>This is the title</title></head><body><p>1</p><p>2</p><p>3</p></body></html>"
+#define HTML_DOCUMENT_NODE_INSERTION "<html><body></body></html>"
 
 typedef struct {
     GtkWidget* webView;
@@ -119,6 +120,50 @@ static void test_dom_node_hierarchy_navigation(DomNodeFixture* fixture, gconstpo
     g_assert_cmpint(i, ==, 3);
 }
 
+static void test_dom_node_insertion(DomNodeFixture* fixture, gconstpointer data)
+{
+    WebKitDOMDocument* document;
+    WebKitDOMHTMLElement* body;
+    WebKitDOMElement* p, *div;
+    WebKitDOMNodeList* list;
+    WebKitDOMNode* node;
+
+    document = webkit_web_view_get_dom_document(WEBKIT_WEB_VIEW(fixture->webView));
+    g_assert(document);
+    body = webkit_dom_document_get_body(document);
+    g_assert(body);
+    g_assert(WEBKIT_DOM_IS_HTML_ELEMENT(body));
+
+    /* Body shouldn't have any children at this point */
+    g_assert(webkit_dom_node_has_child_nodes(WEBKIT_DOM_NODE(body)) == FALSE);
+
+    /* Insert one P element */
+    p = webkit_dom_document_create_element(document, (char*)"P", NULL);
+    webkit_dom_node_append_child(WEBKIT_DOM_NODE(body), WEBKIT_DOM_NODE(p), NULL);
+
+    /* Now it should have one, the same that we inserted */
+    g_assert(webkit_dom_node_has_child_nodes(WEBKIT_DOM_NODE(body)));
+    list = webkit_dom_node_get_child_nodes(WEBKIT_DOM_NODE(body));
+    g_assert_cmpint(webkit_dom_node_list_get_length(list), ==, 1);
+    node = webkit_dom_node_list_item(list, 0);
+    g_assert(node);
+    g_assert(webkit_dom_node_is_same_node(WEBKIT_DOM_NODE(p), node));
+
+    /* Replace the P tag with a DIV tag */
+    div = webkit_dom_document_create_element(document, (char*)"DIV", NULL);
+    webkit_dom_node_replace_child(WEBKIT_DOM_NODE(body), WEBKIT_DOM_NODE(div), WEBKIT_DOM_NODE(p), NULL);
+    g_assert(webkit_dom_node_has_child_nodes(WEBKIT_DOM_NODE(body)));
+    list = webkit_dom_node_get_child_nodes(WEBKIT_DOM_NODE(body));
+    g_assert_cmpint(webkit_dom_node_list_get_length(list), ==, 1);
+    node = webkit_dom_node_list_item(list, 0);
+    g_assert(node);
+    g_assert(webkit_dom_node_is_same_node(WEBKIT_DOM_NODE(div), node));
+
+    /* TODO: remove_child, which is missing because of a typo in the generator script */
+
+    /* TODO: insert_before, which does not seem to be working correctly */
+}
+
 int main(int argc, char** argv)
 {
     if (!g_thread_supported())
@@ -132,6 +177,12 @@ int main(int argc, char** argv)
                DomNodeFixture, HTML_DOCUMENT_HIERARCHY_NAVIGATION,
                dom_node_fixture_setup,
                test_dom_node_hierarchy_navigation,
+               dom_node_fixture_teardown);
+
+    g_test_add("/webkit/domnode/test_insertion",
+               DomNodeFixture, HTML_DOCUMENT_NODE_INSERTION,
+               dom_node_fixture_setup,
+               test_dom_node_insertion,
                dom_node_fixture_teardown);
 
     return g_test_run();
