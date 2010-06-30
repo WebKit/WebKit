@@ -23,42 +23,30 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WKBase_h
-#define WKBase_h
+#include "WKArray.h"
 
-#if defined(WIN32) || defined(_WIN32)
-#include <WebKit2/WKBaseWin.h>
-#endif
+#include "ImmutableArray.h"
+#include "WKAPICast.h"
 
-typedef struct OpaqueWKContext* WKContextRef;
-typedef struct OpaqueWKFrame* WKFrameRef;
-typedef struct OpaqueWKFramePolicyListener* WKFramePolicyListenerRef;
-typedef struct OpaqueWKNavigationDataRef* WKNavigationDataRef;
-typedef struct OpaqueWKPage* WKPageRef;
-typedef struct OpaqueWKPageNamespace* WKPageNamespaceRef;
-typedef struct OpaqueWKPreferencesRef* WKPreferencesRef;
-typedef struct OpaqueWKStringRef* WKStringRef;
-typedef struct OpaqueWKURLRef* WKURLRef;
-typedef struct OpaqueWKArrayRef* WKArrayRef;
+using namespace WebKit;
 
-#if defined(WIN32) || defined(_WIN32)
-#if BUILDING_WEBKIT2
-#define WK_EXPORT __declspec(dllexport)
-#else
-#define WK_EXPORT __declspec(dllimport)
-#endif
-#else
-#define WK_EXPORT
-#endif
+const void* WKArrayGetItemAtIndex(WKArrayRef arrayRef, size_t index)
+{
+    return toWK(arrayRef)->at(index);
+}
 
-#ifdef __cplusplus
-#define WK_DECLARE_RETAIN_RELEASE_OVERLOADS(WKType) \
-    inline void WKRetain(WKType##Ref p) { WKType##Retain(p); } \
-    inline void WKRelease(WKType##Ref p) { WKType##Release(p); } \
-    // end of macro
-#else
-#define WK_DECLARE_RETAIN_RELEASE_OVERLOADS(WKType)
-#endif
+size_t WKArrayGetSize(WKArrayRef arrayRef)
+{
+    return toWK(arrayRef)->size();
+}
 
+WKArrayRef WKArrayRetain(WKArrayRef arrayRef)
+{
+    toWK(arrayRef)->ref();
+    return arrayRef;
+}
 
-#endif /* WKBase_h */
+void WKArrayRelease(WKArrayRef arrayRef)
+{
+    toWK(arrayRef)->deref();
+}

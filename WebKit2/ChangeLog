@@ -1,3 +1,23 @@
+2010-06-30  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Patch for https://bugs.webkit.org/show_bug.cgi?id=41426
+        Add ImmutableArray class and WKArrayRef API to go with it. This will be used
+        in a few follow up patches.
+
+        * Shared/ImmutableArray.cpp: Added.
+        (WebKit::ImmutableArray::ImmutableArray):
+        (WebKit::ImmutableArray::~ImmutableArray):
+        * Shared/ImmutableArray.h: Added.
+        * UIProcess/API/C/WKAPICast.h:
+        * UIProcess/API/C/WKArray.cpp: Added.
+        * UIProcess/API/C/WKArray.h: Added.
+        * UIProcess/API/C/WKBase.h:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * mac/WebKit2.exp:
+        * win/WebKit2.vcproj:
+
 2010-06-30  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adam Roben.

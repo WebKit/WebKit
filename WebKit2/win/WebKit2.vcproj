@@ -480,6 +480,14 @@
 			Name="Shared"
 			>
 			<File
+				RelativePath="..\Shared\ImmutableArray.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\Shared\ImmutableArray.h"
+				>
+			</File>
+			<File
 				RelativePath="..\Shared\NotImplemented.h"
 				>
 			</File>
@@ -947,6 +955,14 @@
 					</File>
 					<File
 						RelativePath="..\UIProcess\API\C\WKBase.h"
+						>
+					</File>
+					<File
+						RelativePath="..\UIProcess\API\C\WKArray.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\UIProcess\API\C\WKArray.h"
 						>
 					</File>
 					<File

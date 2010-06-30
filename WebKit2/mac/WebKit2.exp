@@ -1,4 +1,8 @@
 .objc_class_name_WKView
+_WKArrayGetItemAtIndex
+_WKArrayGetSize
+_WKArrayRelease
+_WKArrayRetain
 _WKBundleFrameGetURL
 _WKBundleFrameIsMainFrame
 _WKBundlePageCopyRenderTreeExternalRepresentation

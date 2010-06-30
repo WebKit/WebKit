@@ -38,6 +38,7 @@ namespace WebCore {
 
 namespace WebKit {
 
+class ImmutableArray;
 class WebContext;
 class WebFramePolicyListenerProxy;
 class WebFrameProxy;
@@ -56,6 +57,7 @@ template<> struct APITypeInfo<WKPreferencesRef>                 { typedef WebPre
 template<> struct APITypeInfo<WKStringRef>                      { typedef WebCore::StringImpl* ImplType; };
 template<> struct APITypeInfo<WKURLRef>                         { typedef WebCore::StringImpl* ImplType; };
 template<> struct APITypeInfo<WKNavigationDataRef>              { typedef WebNavigationData* ImplType; };
+template<> struct APITypeInfo<WKArrayRef>                       { typedef ImmutableArray* ImplType; };
 
 template<typename ImplType> struct ImplTypeInfo { };
 template<> struct ImplTypeInfo<WebFrameProxy*>                  { typedef WKFrameRef APIType; };
@@ -66,6 +68,7 @@ template<> struct ImplTypeInfo<WebFramePolicyListenerProxy*>    { typedef WKFram
 template<> struct ImplTypeInfo<WebPreferences*>                 { typedef WKPreferencesRef APIType; };
 template<> struct ImplTypeInfo<WebCore::StringImpl*>            { typedef WKStringRef APIType; };
 template<> struct ImplTypeInfo<WebNavigationData*>              { typedef WKNavigationDataRef APIType; };
+template<> struct ImplTypeInfo<ImmutableArray*>                 { typedef WKArrayRef APIType; };
 
 } // namespace WebKit
 

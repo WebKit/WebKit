@@ -23,42 +23,42 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WKBase_h
-#define WKBase_h
+#include "ImmutableArray.h"
 
-#if defined(WIN32) || defined(_WIN32)
-#include <WebKit2/WKBaseWin.h>
-#endif
+namespace WebKit {
 
-typedef struct OpaqueWKContext* WKContextRef;
-typedef struct OpaqueWKFrame* WKFrameRef;
-typedef struct OpaqueWKFramePolicyListener* WKFramePolicyListenerRef;
-typedef struct OpaqueWKNavigationDataRef* WKNavigationDataRef;
-typedef struct OpaqueWKPage* WKPageRef;
-typedef struct OpaqueWKPageNamespace* WKPageNamespaceRef;
-typedef struct OpaqueWKPreferencesRef* WKPreferencesRef;
-typedef struct OpaqueWKStringRef* WKStringRef;
-typedef struct OpaqueWKURLRef* WKURLRef;
-typedef struct OpaqueWKArrayRef* WKArrayRef;
+ImmutableArray::ImmutableArray()
+    : m_entries(0)
+    , m_size(0)
+{
+    memset(&m_callbacks, 0, sizeof(m_callbacks));
+}
 
-#if defined(WIN32) || defined(_WIN32)
-#if BUILDING_WEBKIT2
-#define WK_EXPORT __declspec(dllexport)
-#else
-#define WK_EXPORT __declspec(dllimport)
-#endif
-#else
-#define WK_EXPORT
-#endif
+ImmutableArray::ImmutableArray(const void** entries, size_t size, const ImmutableArrayCallbacks* callbacks)
+    : m_entries(new void*[size])
+    , m_size(size)
+    , m_callbacks(*callbacks)
+{
+    memcpy(m_entries, entries, m_size);
+    for (size_t i = 0; i < m_size; ++i)
+        m_callbacks.ref(m_entries[i]);
+}
 
-#ifdef __cplusplus
-#define WK_DECLARE_RETAIN_RELEASE_OVERLOADS(WKType) \
-    inline void WKRetain(WKType##Ref p) { WKType##Retain(p); } \
-    inline void WKRelease(WKType##Ref p) { WKType##Release(p); } \
-    // end of macro
-#else
-#define WK_DECLARE_RETAIN_RELEASE_OVERLOADS(WKType)
-#endif
+ImmutableArray::ImmutableArray(void** entries, size_t size, const ImmutableArrayCallbacks* callbacks, AdoptTag)
+    : m_entries(entries)
+    , m_size(size)
+    , m_callbacks(*callbacks)
+{
+}
 
+ImmutableArray::~ImmutableArray()
+{
+    if (!m_entries)
+        return;
 
-#endif /* WKBase_h */
+    for (size_t i = 0; i < m_size; ++i)
+        m_callbacks.deref(m_entries[i]);
+    delete [] m_entries;
+}
+
+} // namespace WebKit

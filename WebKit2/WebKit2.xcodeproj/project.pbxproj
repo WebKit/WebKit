@@ -137,6 +137,10 @@
 		BC5F7BB51182376C0052C02C /* ChunkedUpdateDrawingArea.h in Headers */ = {isa = PBXBuildFile; fileRef = BC5F7BB31182376C0052C02C /* ChunkedUpdateDrawingArea.h */; };
 		BC5F7BB9118237990052C02C /* ChunkedUpdateDrawingAreaMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC5F7BB8118237990052C02C /* ChunkedUpdateDrawingAreaMac.cpp */; };
 		BC617EE8104CB34700FB3FE1 /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AA1C7DE100E846E0078DEBC /* JavaScriptCore.framework */; };
+		BC64680311DBBA73006455B0 /* WKArray.h in Headers */ = {isa = PBXBuildFile; fileRef = BC64680211DBBA73006455B0 /* WKArray.h */; };
+		BC64680B11DBBD69006455B0 /* WKArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC64680A11DBBD69006455B0 /* WKArray.cpp */; };
+		BC64696F11DBE603006455B0 /* ImmutableArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC64696D11DBE603006455B0 /* ImmutableArray.cpp */; };
+		BC64697011DBE603006455B0 /* ImmutableArray.h in Headers */ = {isa = PBXBuildFile; fileRef = BC64696E11DBE603006455B0 /* ImmutableArray.h */; };
 		BC6EDAA6111271C600E7678B /* PageClient.h in Headers */ = {isa = PBXBuildFile; fileRef = BC6EDAA5111271C600E7678B /* PageClient.h */; };
 		BC8452A71162C80900CAB9B5 /* DrawingArea.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC8452A51162C80900CAB9B5 /* DrawingArea.cpp */; };
 		BC8452A81162C80900CAB9B5 /* DrawingArea.h in Headers */ = {isa = PBXBuildFile; fileRef = BC8452A61162C80900CAB9B5 /* DrawingArea.h */; };
@@ -362,6 +366,10 @@
 		BC5F7BB21182376C0052C02C /* ChunkedUpdateDrawingArea.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ChunkedUpdateDrawingArea.cpp; sourceTree = "<group>"; };
 		BC5F7BB31182376C0052C02C /* ChunkedUpdateDrawingArea.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChunkedUpdateDrawingArea.h; sourceTree = "<group>"; };
 		BC5F7BB8118237990052C02C /* ChunkedUpdateDrawingAreaMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ChunkedUpdateDrawingAreaMac.cpp; sourceTree = "<group>"; };
+		BC64680211DBBA73006455B0 /* WKArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKArray.h; sourceTree = "<group>"; };
+		BC64680A11DBBD69006455B0 /* WKArray.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKArray.cpp; sourceTree = "<group>"; };
+		BC64696D11DBE603006455B0 /* ImmutableArray.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ImmutableArray.cpp; sourceTree = "<group>"; };
+		BC64696E11DBE603006455B0 /* ImmutableArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImmutableArray.h; sourceTree = "<group>"; };
 		BC6EDAA5111271C600E7678B /* PageClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PageClient.h; sourceTree = "<group>"; };
 		BC8452A51162C80900CAB9B5 /* DrawingArea.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DrawingArea.cpp; sourceTree = "<group>"; };
 		BC8452A61162C80900CAB9B5 /* DrawingArea.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DrawingArea.h; sourceTree = "<group>"; };
@@ -556,6 +564,8 @@
 			children = (
 				BC111B5F112F635E00337BAB /* CoreIPCSupport */,
 				BC111B5A112F628200337BAB /* mac */,
+				BC64696D11DBE603006455B0 /* ImmutableArray.cpp */,
+				BC64696E11DBE603006455B0 /* ImmutableArray.h */,
 				BCC57161115ADB42001CCAF9 /* NotImplemented.h */,
 				BC1DD7B1114DC396005ADAF3 /* WebCoreArgumentCoders.h */,
 				BC032DAF10F4380F0058C15A /* WebEvent.h */,
@@ -731,6 +741,8 @@
 				BC20EBD0116EF66700094A50 /* cf */,
 				BCB63477116BF10600603215 /* WebKit2.h */,
 				BC0C376D10F808460076D7CB /* WKAPICast.h */,
+				BC64680A11DBBD69006455B0 /* WKArray.cpp */,
+				BC64680211DBBA73006455B0 /* WKArray.h */,
 				BC0C376710F807B20076D7CB /* WKBase.h */,
 				BCB9E24A1120E15C00A137E0 /* WKContext.cpp */,
 				BCB9E2491120E15C00A137E0 /* WKContext.h */,
@@ -743,9 +755,9 @@
 				BCF69FA71176D1CB00471A52 /* WKNavigationData.h */,
 				BCD597D4112B56DC00EC8C23 /* WKPage.cpp */,
 				BCD597D5112B56DC00EC8C23 /* WKPage.h */,
-				BC177464118B9FF4007D9E9A /* WKPagePrivate.h */,
 				BCEE98CA1133174C006BCC24 /* WKPageNamespace.cpp */,
 				BCEE98CB1133174C006BCC24 /* WKPageNamespace.h */,
+				BC177464118B9FF4007D9E9A /* WKPagePrivate.h */,
 				BCD597CF112B56AC00EC8C23 /* WKPreferences.cpp */,
 				BCD597CE112B56AC00EC8C23 /* WKPreferences.h */,
 				BC20EBAF116EEB0800094A50 /* WKString.cpp */,
@@ -1057,6 +1069,8 @@
 				1AEFD2F711D1807B008219D3 /* ArgumentCoders.h in Headers */,
 				BC1B419811D41D570011E8DD /* WKBundlePagePrivate.h in Headers */,
 				BCD25F1711D6BDE100169B0E /* WKBundleFrame.h in Headers */,
+				BC64680311DBBA73006455B0 /* WKArray.h in Headers */,
+				BC64697011DBE603006455B0 /* ImmutableArray.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1220,6 +1234,8 @@
 				BCDE059C11CDA8AE00E41AF1 /* WebContextInjectedBundleClient.cpp in Sources */,
 				1AEFCCBD11D02C5E008219D3 /* PluginInfoStoreMac.mm in Sources */,
 				BCD25F1811D6BDE100169B0E /* WKBundleFrame.cpp in Sources */,
+				BC64680B11DBBD69006455B0 /* WKArray.cpp in Sources */,
+				BC64696F11DBE603006455B0 /* ImmutableArray.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
