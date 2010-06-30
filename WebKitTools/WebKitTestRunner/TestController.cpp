@@ -25,6 +25,7 @@
 
 #include "TestController.h"
 
+#include "PlatformWebView.h"
 #include "TestInvocation.h"
 #include <getopt.h>
 
@@ -93,12 +94,25 @@ void TestController::initialize(int argc, const char *argv[])
     }
 
     initializeInjectedBundlePath();
+
+    m_context.adopt(WKContextCreateWithInjectedBundlePath(injectedBundlePath()));
+
+    WKContextInjectedBundleClient injectedBundlePathClient = {
+        0,
+        this,
+        _didRecieveMessageFromInjectedBundle
+    };
+    WKContextSetInjectedBundleClient(m_context.get(), &injectedBundlePathClient);
+
+    m_pageNamespace.adopt(WKPageNamespaceCreate(m_context.get()));
+    m_mainWebView = new PlatformWebView(m_pageNamespace.get());
 }
 
 void TestController::runTest(const char* test)
 {
-    TestInvocation invocation(test);
-    invocation.invoke();
+    m_currentInvocation.set(new TestInvocation(test));
+    m_currentInvocation->invoke();
+    m_currentInvocation.clear();
 }
 
 void TestController::runTestingServerLoop()
@@ -128,5 +142,14 @@ bool TestController::run()
     return true;
 }
 
-} // namespace WTR
+void TestController::_didRecieveMessageFromInjectedBundle(WKContextRef context, WKStringRef message, const void *clientInfo)
+{
+    static_cast<TestController*>(const_cast<void*>(clientInfo))->didRecieveMessageFromInjectedBundle(message);
+}
 
+void TestController::didRecieveMessageFromInjectedBundle(WKStringRef message)
+{
+    m_currentInvocation->didRecieveMessageFromInjectedBundle(message);
+}
+
+} // namespace WTR

@@ -63,6 +63,8 @@ private:
     void willDestroyPage(WKBundlePageRef page);
     void didRecieveMessage(WKStringRef message);
 
+    void reset();
+
     WKBundleRef m_bundle;
     HashMap<WKBundlePageRef, InjectedBundlePage*> m_pages;
 

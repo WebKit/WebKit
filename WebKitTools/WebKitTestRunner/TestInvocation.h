@@ -31,36 +31,26 @@
 
 namespace WTR {
 
-class PlatformWebView;
-
-class TestInvocation : Noncopyable {
+class TestInvocation : public Noncopyable {
 public:
     TestInvocation(const char*);
     ~TestInvocation();
 
     void invoke();
+    void didRecieveMessageFromInjectedBundle(WKStringRef message);
 
 private:
-    void initializeMainWebView();
     void dump(const char*);
 
     // Helper
     static void runUntil(bool& done);
 
-    // WKContextInjectedBundleClient
-    static void _didRecieveMessageFromInjectedBundle(WKContextRef context, WKStringRef message, const void*);
-    void didRecieveMessageFromInjectedBundle(WKStringRef message);
-
-    WKStringRef injectedBundlePath();
-
     WKRetainPtr<WKURLRef> m_url;
-    WKRetainPtr<WKContextRef> m_context;
-    WKRetainPtr<WKPageNamespaceRef> m_pageNamespace;
-    PlatformWebView* m_mainWebView;
 
     // Invocation state
     bool m_gotInitialResponse;
     bool m_gotFinalMessage;
+    bool m_error;
 };
 
 } // namespace WTR

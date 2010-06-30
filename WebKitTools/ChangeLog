@@ -1,3 +1,34 @@
+2010-06-29  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Patch for https://bugs.webkit.org/show_bug.cgi?id=41389
+        Make WebKitTestRunner work with more than one test at a time.
+
+        This converts WebKitTestRunner to a similar model as DumpRenderTree,
+        where there is a single WKView and each test is run it, rather than
+        the design I was using where each test got its own WKView.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::didRecieveMessage):
+        (WTR::InjectedBundle::reset):
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.h:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::initialize):
+        (WTR::TestController::runTest):
+        (WTR::TestController::_didRecieveMessageFromInjectedBundle):
+        (WTR::TestController::didRecieveMessageFromInjectedBundle):
+        * WebKitTestRunner/TestController.h:
+        (WTR::TestController::mainWebView):
+        (WTR::TestController::pageNamespace):
+        (WTR::TestController::context):
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::TestInvocation):
+        (WTR::TestInvocation::~TestInvocation):
+        (WTR::TestInvocation::invoke):
+        (WTR::TestInvocation::didRecieveMessageFromInjectedBundle):
+        * WebKitTestRunner/TestInvocation.h:
+
 2010-06-30  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Reviewed by Laszlo Gombos.

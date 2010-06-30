@@ -97,16 +97,21 @@ void InjectedBundle::willDestroyPage(WKBundlePageRef page)
 void InjectedBundle::didRecieveMessage(WKStringRef message)
 {
     CFStringRef cfMessage = WKStringCopyCFString(0, message);
-    if (CFEqual(cfMessage, CFSTR("InitialPageCreated"))) {
-        if (m_pages.size() == 1) {
-            WKRetainPtr<WKStringRef> ackMessage(AdoptWK, WKStringCreateWithCFString(CFSTR("InitialPageCreatedAck")));
-            WKBundlePostMessage(m_bundle, ackMessage.get());
-            return;
-        }
+    if (CFEqual(cfMessage, CFSTR("BeginTest"))) {
+        WKRetainPtr<WKStringRef> ackMessage(AdoptWK, WKStringCreateWithCFString(CFSTR("BeginTestAck")));
+        WKBundlePostMessage(m_bundle, ackMessage.get());
+
+        reset();
+        return;
     }
 
-    WKRetainPtr<WKStringRef> errorMessage(AdoptWK, WKStringCreateWithCFString(CFSTR("Error")));
+    WKRetainPtr<WKStringRef> errorMessage(AdoptWK, WKStringCreateWithCFString(CFSTR("Error: Unknown.")));
     WKBundlePostMessage(m_bundle, errorMessage.get());
+}
+
+void InjectedBundle::reset()
+{
+    m_outputStream.str("");
 }
 
 } // namespace WTR

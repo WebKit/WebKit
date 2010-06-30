@@ -64,30 +64,34 @@ static std::auto_ptr<Vector<char> > WKStringToUTF8(WKStringRef wkStringRef)
 
 TestInvocation::TestInvocation(const char* pathOrURL)
     : m_url(AdoptWK, createWKURL(pathOrURL))
-    , m_mainWebView(0)
     , m_gotInitialResponse(false)
     , m_gotFinalMessage(false)
+    , m_error(false)
 {
 }
 
 TestInvocation::~TestInvocation()
 {
-    delete m_mainWebView;
-    m_mainWebView = 0;
 }
 
 void TestInvocation::invoke()
 {
-    initializeMainWebView();
-
-    WKRetainPtr<WKStringRef> message(AdoptWK, WKStringCreateWithCFString(CFSTR("InitialPageCreated")));
-    WKContextPostMessageToInjectedBundle(m_context.get(), message.get());
+    WKRetainPtr<WKStringRef> message(AdoptWK, WKStringCreateWithCFString(CFSTR("BeginTest")));
+    WKContextPostMessageToInjectedBundle(TestController::shared().context(), message.get());
 
     runUntil(m_gotInitialResponse);
- 
-    WKPageLoadURL(m_mainWebView->page(), m_url.get());
+    if (m_error) {
+        dump("FAIL\n");
+        return;
+    }
+
+    WKPageLoadURL(TestController::shared().mainWebView()->page(), m_url.get());
 
     runUntil(m_gotFinalMessage);
+    if (m_error) {
+        dump("FAIL\n");
+        return;
+    }
 }
 
 void TestInvocation::dump(const char* stringToDump)
@@ -103,32 +107,19 @@ void TestInvocation::dump(const char* stringToDump)
     fflush(stderr);
 }
 
-void TestInvocation::initializeMainWebView()
-{
-    m_context.adopt(WKContextCreateWithInjectedBundlePath(TestController::shared().injectedBundlePath()));
-
-    WKContextInjectedBundleClient injectedBundlePathClient = {
-        0,
-        this,
-        _didRecieveMessageFromInjectedBundle
-    };
-    WKContextSetInjectedBundleClient(m_context.get(), &injectedBundlePathClient);
-
-    m_pageNamespace.adopt(WKPageNamespaceCreate(m_context.get()));
-    m_mainWebView = new PlatformWebView(m_pageNamespace.get());
-}
-
-// WKContextInjectedBundleClient functions
-
-void TestInvocation::_didRecieveMessageFromInjectedBundle(WKContextRef context, WKStringRef message, const void *clientInfo)
-{
-    static_cast<TestInvocation*>(const_cast<void*>(clientInfo))->didRecieveMessageFromInjectedBundle(message);
-}
-
 void TestInvocation::didRecieveMessageFromInjectedBundle(WKStringRef message)
 {
     RetainPtr<CFStringRef> cfMessage(AdoptCF, WKStringCopyCFString(0, message));
-    if (CFEqual(cfMessage.get(), CFSTR("InitialPageCreatedAck"))) {
+    
+    if (CFEqual(cfMessage.get(), CFSTR("Error"))) {
+        // Set all states to true to stop spinning the runloop.
+        m_gotInitialResponse = true;
+        m_gotFinalMessage = true;
+        m_error = true;
+        return;
+    }
+
+    if (CFEqual(cfMessage.get(), CFSTR("BeginTestAck"))) {
         m_gotInitialResponse = true;
         return;
     }

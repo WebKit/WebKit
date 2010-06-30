@@ -29,8 +29,12 @@
 #include <WebKit2/WKRetainPtr.h>
 #include <string>
 #include <vector>
+#include <wtf/OwnPtr.h>
 
 namespace WTR {
+
+class TestInvocation;
+class PlatformWebView;
 
 class TestController {
 public:
@@ -46,6 +50,10 @@ public:
 
     WKStringRef injectedBundlePath() { return m_injectedBundlePath.get(); }
 
+    PlatformWebView* mainWebView() { return m_mainWebView; }
+    WKPageNamespaceRef pageNamespace() { return m_pageNamespace.get(); }
+    WKContextRef context() { return m_context.get(); }
+
 private:
     TestController();
     ~TestController();
@@ -55,15 +63,25 @@ private:
     
     void initializeInjectedBundlePath();
 
+    // WKContextInjectedBundleClient
+    static void _didRecieveMessageFromInjectedBundle(WKContextRef context, WKStringRef message, const void*);
+    void didRecieveMessageFromInjectedBundle(WKStringRef message);
+
+    OwnPtr<TestInvocation> m_currentInvocation;
+
     bool m_dumpTree;
     bool m_dumpPixels;
     bool m_threaded;
-    bool m_forceComplexText;    
+    bool m_forceComplexText;
     bool m_verbose;
     bool m_printSeparators;
     bool m_usingServerMode;
     std::vector<std::string> m_paths;
     WKRetainPtr<WKStringRef> m_injectedBundlePath;
+
+    PlatformWebView* m_mainWebView;
+    WKRetainPtr<WKContextRef> m_context;
+    WKRetainPtr<WKPageNamespaceRef> m_pageNamespace;
 };
 
 } // namespace WTR
