@@ -64,8 +64,19 @@ public:
         m_first.append(string);
     }
 
-    void close() { m_last->close(); }
-    bool isClosed() { return m_last->isClosed(); }
+    void markEndOfFile()
+    {
+        // FIXME: This should use InputStreamPreprocessor::endOfFileMarker
+        // once InputStreamPreprocessor is split off into its own header.
+        static const UChar endOfFileMarker = 0;
+        m_last->append(SegmentedString(String(&endOfFileMarker, 1)));
+        m_last->close();
+    }
+
+    bool haveSeenEndOfFile()
+    {
+        return m_last->isClosed();
+    }
 
     SegmentedString& current() { return m_first; }
 

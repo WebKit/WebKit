@@ -289,15 +289,15 @@ void HTMLDocumentParser::endIfDelayed()
 
 void HTMLDocumentParser::finish()
 {
-    // We're not going to get any more data off the network, so we close the
-    // input stream to indicate EOF.
-    m_input.close();
+    // We're not going to get any more data off the network, so we tell the
+    // input stream we've reached the end of file.
+    m_input.markEndOfFile();
     attemptToEnd();
 }
 
 bool HTMLDocumentParser::finishWasCalled()
 {
-    return m_input.isClosed();
+    return m_input.haveSeenEndOfFile();
 }
 
 // This function is virtual and just for the DocumentParser interface.

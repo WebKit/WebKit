@@ -1,3 +1,37 @@
+2010-06-29  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        HTMLTokenizer needs EndOfFile support
+        https://bugs.webkit.org/show_bug.cgi?id=41344
+
+        We're using \0 as the EndOfFile marker as HTML5 replaces
+        all other \0 with \0xFFFD.  Added some special case logic
+        to InputStreamPreprocessor::peek not to replace \0 when
+        its being used at the end of a stream.
+
+        This fixed 60 subtests in html5lib/runner.html.
+
+        There are still at least two states (BogusCommentState and
+        CDATASectionState) which do not have proper EOF support.
+
+        * html/HTMLDocumentParser.cpp:
+        (WebCore::HTMLDocumentParser::finish):
+        (WebCore::HTMLDocumentParser::finishWasCalled):
+        * html/HTMLInputStream.h:
+        (WebCore::HTMLInputStream::markEndOfFile):
+        (WebCore::HTMLInputStream::haveSeenEndOfFile):
+        * html/HTMLToken.h:
+        (WebCore::HTMLToken::makeEndOfFile):
+        * html/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::nextToken):
+        (WebCore::HTMLTokenizer::emitEndOfFile):
+        * html/HTMLTokenizer.h:
+        (WebCore::HTMLTokenizer::InputStreamPreprocessor::peek):
+        (WebCore::HTMLTokenizer::InputStreamPreprocessor::shouldTreatNullAsEndOfFileMarker):
+        * html/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::passTokenToLegacyParser):
+
 2010-06-28  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

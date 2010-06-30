@@ -1,3 +1,15 @@
+2010-06-29  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        HTMLTokenizer needs EndOfFile support
+        https://bugs.webkit.org/show_bug.cgi?id=41344
+
+        We now pass an additional 60 subtests for the
+        html5lib test suite.  Boo-ya.
+
+        * html5lib/runner-expected.txt:
+
 2010-06-28  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.
