@@ -37025,6 +37025,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\html\HTMLElementStack.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\html\HTMLElementStack.h"
+				>
+			</File>
+			<File
 				RelativePath="..\html\HTMLElementsAllInOne.cpp"
 				>
 			</File>

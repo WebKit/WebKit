@@ -264,6 +264,7 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	html/HTMLDataListElement.cpp \
 	html/HTMLDocument.cpp \
 	html/HTMLElementsAllInOne.cpp \
+	html/HTMLElementStack.cpp \
 	html/HTMLFormCollection.cpp \
 	html/HTMLImageLoader.cpp \
 	html/HTMLNameCollection.cpp \

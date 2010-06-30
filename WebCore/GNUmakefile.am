@@ -1157,6 +1157,8 @@ webcore_sources += \
 	WebCore/html/HTMLDocument.h \
 	WebCore/html/HTMLElement.cpp \
 	WebCore/html/HTMLElement.h \
+	WebCore/html/HTMLElementStack.cpp \
+	WebCore/html/HTMLElementStack.h \
 	WebCore/html/HTMLEmbedElement.cpp \
 	WebCore/html/HTMLEmbedElement.h \
 	WebCore/html/HTMLFieldSetElement.cpp \

@@ -1,3 +1,47 @@
+2010-06-30  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Split HTMLElementStack out into its own file
+        https://bugs.webkit.org/show_bug.cgi?id=41399
+
+        No functional change, thus no tests.
+
+        * Android.mk:
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/HTMLElementStack.cpp: Added.
+        (WebCore::HTMLElementStack::ElementRecord::ElementRecord):
+        (WebCore::HTMLElementStack::ElementRecord::element):
+        (WebCore::HTMLElementStack::ElementRecord::next):
+        (WebCore::HTMLElementStack::ElementRecord::releaseNext):
+        (WebCore::HTMLElementStack::ElementRecord::setNext):
+        (WebCore::HTMLElementStack::HTMLElementStack):
+        (WebCore::HTMLElementStack::~HTMLElementStack):
+        (WebCore::HTMLElementStack::popHTMLHeadElement):
+        (WebCore::HTMLElementStack::pop):
+        (WebCore::HTMLElementStack::pushHTMLHtmlElement):
+        (WebCore::HTMLElementStack::pushHTMLHeadElement):
+        (WebCore::HTMLElementStack::pushHTMLBodyElement):
+        (WebCore::HTMLElementStack::push):
+        (WebCore::HTMLElementStack::top):
+        (WebCore::HTMLElementStack::removeHTMLHeadElement):
+        (WebCore::HTMLElementStack::remove):
+        (WebCore::HTMLElementStack::contains):
+        (WebCore::HTMLElementStack::inScope):
+        (WebCore::HTMLElementStack::htmlElement):
+        (WebCore::HTMLElementStack::headElement):
+        (WebCore::HTMLElementStack::bodyElement):
+        (WebCore::HTMLElementStack::pushCommon):
+        (WebCore::HTMLElementStack::popCommon):
+        (WebCore::HTMLElementStack::removeNonFirstCommon):
+        * html/HTMLElementStack.h: Added.
+        * html/HTMLTreeBuilder.h:
+
 2010-06-30  Kenneth Russell  <kbr@google.com>
 
         Reviewed by Oliver Hunt.

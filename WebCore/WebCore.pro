@@ -654,6 +654,7 @@ SOURCES += \
     html/HTMLDListElement.cpp \
     html/HTMLDocument.cpp \
     html/HTMLElement.cpp \
+    html/HTMLElementStack.cpp \
     html/HTMLEmbedElement.cpp \
     html/HTMLFieldSetElement.cpp \
     html/HTMLFontElement.cpp \
