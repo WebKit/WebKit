@@ -426,6 +426,8 @@ webcore_sources += \
 	WebCore/bindings/js/JSDOMFormDataCustom.cpp \
 	WebCore/bindings/js/JSDOMGlobalObject.cpp \
 	WebCore/bindings/js/JSDOMGlobalObject.h \
+	WebCore/bindings/js/JSDOMStringMapCustom.cpp \
+	WebCore/bindings/js/JSDOMStringMapCustom.h \
 	WebCore/bindings/js/JSDOMWindowBase.cpp \
 	WebCore/bindings/js/JSDOMWindowBase.h \
 	WebCore/bindings/js/JSDOMWindowCustom.cpp \
@@ -778,6 +780,10 @@ webcore_sources += \
 	WebCore/dom/DOMImplementation.h \
 	WebCore/dom/DOMStringList.cpp \
 	WebCore/dom/DOMStringList.h \
+	WebCore/dom/DOMStringMap.cpp \
+	WebCore/dom/DOMStringMap.h \
+	WebCore/dom/DatasetDOMStringMap.cpp \
+	WebCore/dom/DatasetDOMStringMap.h \
 	WebCore/dom/DecodedDataDocumentParser.cpp \
 	WebCore/dom/DecodedDataDocumentParser.h \
 	WebCore/dom/DeviceOrientation.cpp \
@@ -4056,6 +4062,7 @@ IDL_BINDINGS_GDOM += \
 	WebCore/dom/DocumentType.idl \
 	WebCore/dom/DOMImplementation.idl \
 	WebCore/dom/DOMStringList.idl \
+	WebCore/dom/DOMStringMap.idl \
 	WebCore/dom/Element.idl \
 	WebCore/dom/EntityReference.idl \
 	WebCore/dom/Event.idl \

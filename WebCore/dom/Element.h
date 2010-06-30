@@ -35,6 +35,7 @@ namespace WebCore {
 class Attribute;
 class ClientRect;
 class ClientRectList;
+class DOMStringMap;
 class ElementRareData;
 class IntSize;
 
@@ -261,6 +262,8 @@ public:
     unsigned childElementCount() const;
 
     bool webkitMatchesSelector(const String& selectors, ExceptionCode&);
+
+    DOMStringMap* dataset();
 
     virtual bool isFormControlElement() const { return false; }
     virtual bool isEnabledFormControl() const { return true; }

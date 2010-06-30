@@ -301,6 +301,7 @@ SOURCES += \
     bindings/js/JSDocumentCustom.cpp \
     bindings/js/JSDOMFormDataCustom.cpp \
     bindings/js/JSDOMGlobalObject.cpp \
+    bindings/js/JSDOMStringMapCustom.cpp \
     bindings/js/JSDOMWindowBase.cpp \
     bindings/js/JSDOMWindowCustom.cpp \
     bindings/js/JSDOMWindowShell.cpp \
@@ -483,6 +484,8 @@ SOURCES += \
     dom/DocumentType.cpp \
     dom/DOMImplementation.cpp \
     dom/DOMStringList.cpp \
+    dom/DOMStringMap.cpp \
+    dom/DatasetDOMStringMap.cpp \
     dom/DynamicNodeList.cpp \
     dom/EditingText.cpp \
     dom/Element.cpp \
@@ -1080,7 +1083,7 @@ HEADERS += \
     bindings/js/JSDebugWrapperSet.h \
     bindings/js/JSDOMBinding.h \
     bindings/js/JSDOMGlobalObject.h \
-    bindings/js/JSDOMWindowBase.h \
+    bindings/js/JSDOMStringMapCustom.h \
     bindings/js/JSDOMWindowBase.h \
     bindings/js/JSDOMWindowCustom.h \
     bindings/js/JSDOMWindowShell.h \
@@ -1232,6 +1235,8 @@ HEADERS += \
     dom/DocumentType.h \
     dom/DOMImplementation.h \
     dom/DOMStringList.h \
+    dom/DOMStringMap.h \
+    dom/DatasetDOMStringMap.h \
     dom/DynamicNodeList.h \
     dom/EditingText.h \
     dom/Element.h \

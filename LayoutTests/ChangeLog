@@ -1,3 +1,25 @@
+2010-06-29  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        Test changes for https://bugs.webkit.org/show_bug.cgi?id=41146
+        <rdar://problem/8126069>
+        Implement the .dataset DOM property
+
+        * fast/dom/Window/window-properties-expected.txt:
+        * fast/dom/Window/window-property-descriptors-expected.txt:
+        * fast/dom/dataset-expected.txt: Added.
+        * fast/dom/dataset-xhtml-expected.txt: Added.
+        * fast/dom/dataset-xhtml.xhtml: Added.
+        * fast/dom/dataset.html: Added.
+        * fast/dom/domListEnumeration-expected.txt:
+        * fast/dom/prototype-inheritance-2-expected.txt:
+        * fast/dom/prototype-inheritance-expected.txt:
+        * fast/dom/script-tests/dataset-xhtml.js: Added.
+        * fast/dom/script-tests/dataset.js: Added.
+        * fast/dom/script-tests/domListEnumeration.js:
+        * fast/js/global-constructors-expected.txt:
+
 2010-06-30  Albert J. Wong  <ajwong@chromium.org>
 
         Not reviewed. Chromium: Disable flaky test.

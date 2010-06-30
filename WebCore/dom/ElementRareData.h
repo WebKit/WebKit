@@ -22,8 +22,10 @@
 #ifndef ElementRareData_h
 #define ElementRareData_h
 
+#include "DatasetDOMStringMap.h"
 #include "Element.h"
 #include "NodeRareData.h"
+#include <wtf/OwnPtr.h>
 
 namespace WebCore {
 
@@ -38,6 +40,8 @@ public:
 
     IntSize m_minimumSizeForResizing;
     RefPtr<RenderStyle> m_computedStyle;
+
+    OwnPtr<DatasetDOMStringMap> m_datasetDOMStringMap;
 };
 
 inline IntSize defaultMinimumSizeForResizing()

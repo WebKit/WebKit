@@ -288,6 +288,7 @@ IDL_BINDINGS += \
     dom/DOMCoreException.idl \
     dom/DOMImplementation.idl \
     dom/DOMStringList.idl \
+    dom/DOMStringMap.idl \
     dom/Element.idl \
     dom/Entity.idl \
     dom/EntityReference.idl \

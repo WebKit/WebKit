@@ -1,3 +1,56 @@
+2010-06-29  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        Patch for https://bugs.webkit.org/show_bug.cgi?id=41146
+        <rdar://problem/8126069>
+        Implement the .dataset DOM property
+
+        Tests: fast/dom/dataset-xhtml.xhtml
+               fast/dom/dataset.html
+
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSDOMStringMapCustom.cpp: Added.
+        (WebCore::JSDOMStringMap::canGetItemsForName):
+        (WebCore::JSDOMStringMap::nameGetter):
+        (WebCore::JSDOMStringMap::getOwnPropertyNames):
+        (WebCore::JSDOMStringMap::deleteProperty):
+        (WebCore::JSDOMStringMap::putDelegate):
+        * bindings/js/JSDOMStringMapCustom.h: Added.
+        * dom/DOMStringMap.cpp: Added.
+        (WebCore::DOMStringMap::~DOMStringMap):
+        * dom/DOMStringMap.h: Added.
+        (WebCore::DOMStringMap::DOMStringMap):
+        * dom/DOMStringMap.idl: Added.
+        * dom/DatasetDOMStringMap.cpp: Added.
+        (WebCore::isValidAttributeName):
+        (WebCore::convertAttributeNameToPropertyName):
+        (WebCore::propertyNameMatchesAttributeName):
+        (WebCore::isValidPropertyName):
+        (WebCore::convertPropertyNameToAttributeName):
+        (WebCore::DatasetDOMStringMap::ref):
+        (WebCore::DatasetDOMStringMap::deref):
+        (WebCore::DatasetDOMStringMap::getNames):
+        (WebCore::DatasetDOMStringMap::item):
+        (WebCore::DatasetDOMStringMap::contains):
+        (WebCore::DatasetDOMStringMap::setItem):
+        (WebCore::DatasetDOMStringMap::deleteItem):
+        * dom/DatasetDOMStringMap.h: Added.
+        (WebCore::DatasetDOMStringMap::create):
+        (WebCore::DatasetDOMStringMap::DatasetDOMStringMap):
+        * dom/Element.cpp:
+        (WebCore::Element::dataset):
+        * dom/Element.h:
+        * dom/Element.idl:
+        * dom/ElementRareData.h:
+        * page/DOMWindow.idl:
+
 2010-06-30  Darin Adler  <darin@apple.com>
 
         More Qt build fix.

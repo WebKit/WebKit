@@ -116,6 +116,7 @@ DOM_CLASSES = \
     DOMParser \
     DOMSelection \
     DOMStringList \
+    DOMStringMap \
     DOMWindow \
     Database \
     DatabaseCallback \

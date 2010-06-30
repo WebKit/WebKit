@@ -74,6 +74,9 @@ PASS DOMApplicationCachePrototype from inner.document.forms.testForm.0.ownerDocu
 PASS DOMImplementation from inner.document.forms.testForm.0.ownerDocument.implementation
 PASS DOMImplementationConstructor from inner.document.forms.testForm.0.ownerDocument.implementation.constructor
 PASS DOMImplementationPrototype from inner.document.forms.testForm.0.ownerDocument.implementation.__proto__
+PASS DOMStringMap from inner.document.forms.testForm.0.dataset
+PASS DOMStringMapConstructor from inner.document.forms.testForm.0.dataset.constructor
+PASS DOMStringMapPrototype from inner.document.forms.testForm.0.dataset.__proto__
 PASS DOMWindow from inner
 PASS DOMWindowPrototype from inner.document.forms.testForm.0.ownerDocument.defaultView.__proto__
 PASS DocumentPrototype from inner.document.forms.testForm.0.ownerDocument.__proto__.__proto__
