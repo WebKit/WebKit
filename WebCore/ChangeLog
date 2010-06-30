@@ -1,3 +1,17 @@
+2010-06-30  Yuzo Fujishima  <yuzo@google.com>
+
+        Reviewed by Dan Bernstein.
+
+        Fix for Bug 41339 - unicode-range property only with a descending range
+        causes a crash
+
+        https://bugs.webkit.org/show_bug.cgi?id=41339
+
+        Test: fast/css/font-face-descending-unicode-range.html
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseFontFaceUnicodeRange):
+
 2010-06-29  Abhinav Mithal <abhinav.mithal@nokia.com>
 
         Reviewed by Laszlo Gombos.
