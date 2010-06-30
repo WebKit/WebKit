@@ -77,7 +77,6 @@ resources/tests2.dat:
 10
 11
 13
-14
 17
 18
 19
@@ -103,9 +102,7 @@ resources/tests2.dat:
 47
 48
 49
-50
 51
-52
 53
 54
 57
@@ -275,9 +272,7 @@ resources/tests12.dat:
 1
 2
 
-resources/tests14.dat:
-3
-6
+resources/tests14.dat: PASS
 
 resources/tests15.dat:
 1

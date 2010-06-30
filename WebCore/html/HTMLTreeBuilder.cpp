@@ -283,12 +283,26 @@ void HTMLTreeBuilder::insertHTMLStartTagBeforeHTML(AtomicHTMLToken& token)
 {
     RefPtr<Element> element = HTMLHtmlElement::create(m_document);
     element->setAttributeMap(token.attributes(), m_fragmentScriptingPermission);
-    m_openElements.push(attach(m_document, element.release()));
+    m_openElements.pushHTMLHtmlElement(attach(m_document, element.release()));
 }
 
-void HTMLTreeBuilder::insertHTMLStartTagInBody(AtomicHTMLToken&)
+void HTMLTreeBuilder::mergeAttributesFromTokenIntoElement(AtomicHTMLToken& token, Element* element)
 {
-    notImplemented();
+    if (!token.attributes())
+        return;
+
+    NamedNodeMap* attributes = element->attributes(false);
+    for (unsigned i = 0; i < token.attributes()->length(); ++i) {
+        Attribute* attribute = token.attributes()->attributeItem(i);
+        if (!attributes->getAttributeItem(attribute->name()))
+            element->setAttribute(attribute->name(), attribute->value());
+    }
+}
+
+void HTMLTreeBuilder::insertHTMLStartTagInBody(AtomicHTMLToken& token)
+{
+    parseError(token);
+    mergeAttributesFromTokenIntoElement(token, m_openElements.htmlElement());
 }
 
 void HTMLTreeBuilder::processStartTag(AtomicHTMLToken& token)
@@ -314,8 +328,7 @@ void HTMLTreeBuilder::processStartTag(AtomicHTMLToken& token)
             return;
         }
         if (token.name() == headTag) {
-            insertElement(token);
-            m_headElement = currentElement();
+            insertHTMLHeadElement(token);
             setInsertionMode(InHeadMode);
             return;
         }
@@ -335,7 +348,7 @@ void HTMLTreeBuilder::processStartTag(AtomicHTMLToken& token)
         }
         if (token.name() == bodyTag) {
             m_framesetOk = false;
-            insertElement(token);
+            insertHTMLBodyElement(token);
             m_insertionMode = InBodyMode;
             return;
         }
@@ -347,9 +360,9 @@ void HTMLTreeBuilder::processStartTag(AtomicHTMLToken& token)
         if (token.name() == baseTag || token.name() == linkTag || token.name() == metaTag || token.name() == noframesTag || token.name() == scriptTag || token.name() == styleTag || token.name() == titleTag) {
             parseError(token);
             ASSERT(m_headElement);
-            m_openElements.push(m_headElement);
+            m_openElements.pushHTMLHeadElement(m_headElement);
             notImplemented();
-            m_openElements.remove(m_headElement.get());
+            m_openElements.removeHTMLHeadElement(m_headElement.get());
             return;
         }
         if (token.name() == headTag) {
@@ -371,7 +384,8 @@ void HTMLTreeBuilder::processStartTag(AtomicHTMLToken& token)
         }
         if (token.name() == bodyTag) {
             parseError(token);
-            notImplemented();
+            notImplemented(); // fragment case
+            mergeAttributesFromTokenIntoElement(token, m_openElements.bodyElement());
             return;
         }
         if (token.name() == framesetTag) {
@@ -596,8 +610,7 @@ void HTMLTreeBuilder::processEndTag(AtomicHTMLToken& token)
     case InHeadMode:
         ASSERT(insertionMode() == InHeadMode);
         if (token.name() == headTag) {
-            ASSERT(m_openElements.top()->tagQName() == headTag);
-            m_openElements.pop();
+            m_openElements.popHTMLHeadElement();
             setInsertionMode(AfterHeadMode);
             return;
         }
@@ -936,10 +949,31 @@ void HTMLTreeBuilder::insertCommentOnDocument(AtomicHTMLToken& token)
     attach(m_document, Comment::create(m_document, token.comment()));
 }
 
-void HTMLTreeBuilder::insertElement(AtomicHTMLToken& token)
+PassRefPtr<Element> HTMLTreeBuilder::createElementAndAttachToCurrent(AtomicHTMLToken& token)
 {
     ASSERT(token.type() == HTMLToken::StartTag);
-    m_openElements.push(attach(currentElement(), createElement(token)));
+    return attach(currentElement(), createElement(token));
+}
+
+void HTMLTreeBuilder::insertHTMLHtmlElement(AtomicHTMLToken& token)
+{
+    m_openElements.pushHTMLHtmlElement(createElementAndAttachToCurrent(token));
+}
+
+void HTMLTreeBuilder::insertHTMLHeadElement(AtomicHTMLToken& token)
+{
+    m_headElement = createElementAndAttachToCurrent(token);
+    m_openElements.pushHTMLHeadElement(m_headElement);
+}
+
+void HTMLTreeBuilder::insertHTMLBodyElement(AtomicHTMLToken& token)
+{
+    m_openElements.pushHTMLBodyElement(createElementAndAttachToCurrent(token));
+}
+
+void HTMLTreeBuilder::insertElement(AtomicHTMLToken& token)
+{
+    m_openElements.push(createElementAndAttachToCurrent(token));
 }
 
 void HTMLTreeBuilder::insertSelfClosingElement(AtomicHTMLToken& token)
@@ -961,7 +995,6 @@ void HTMLTreeBuilder::insertFormattingElement(AtomicHTMLToken& token)
 
 void HTMLTreeBuilder::insertGenericRCDATAElement(AtomicHTMLToken& token)
 {
-    ASSERT(token.type() == HTMLToken::StartTag);
     insertElement(token);
     m_tokenizer->setState(HTMLTokenizer::RCDATAState);
     m_originalInsertionMode = m_insertionMode;
@@ -970,7 +1003,6 @@ void HTMLTreeBuilder::insertGenericRCDATAElement(AtomicHTMLToken& token)
 
 void HTMLTreeBuilder::insertGenericRawTextElement(AtomicHTMLToken& token)
 {
-    ASSERT(token.type() == HTMLToken::StartTag);
     insertElement(token);
     m_tokenizer->setState(HTMLTokenizer::RAWTEXTState);
     m_originalInsertionMode = m_insertionMode;

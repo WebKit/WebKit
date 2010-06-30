@@ -1,3 +1,45 @@
+2010-06-28  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Teach HTML5TreeBuilder how to merge attributes from extra html/body elements
+        https://bugs.webkit.org/show_bug.cgi?id=41337
+
+        Had to teach ElementStack to store pointers to html, head, and body
+        elements.
+
+        This fixed a few tests in LayoutTests/html5lib.
+
+        * html/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::insertHTMLStartTagBeforeHTML):
+        (WebCore::HTMLTreeBuilder::mergeAttributesFromTokenIntoElement):
+        (WebCore::HTMLTreeBuilder::insertHTMLStartTagInBody):
+        (WebCore::HTMLTreeBuilder::processStartTag):
+        (WebCore::HTMLTreeBuilder::processEndTag):
+        (WebCore::HTMLTreeBuilder::createElementAndAttachToCurrent):
+        (WebCore::HTMLTreeBuilder::insertHTMLHtmlElement):
+        (WebCore::HTMLTreeBuilder::insertHTMLHeadElement):
+        (WebCore::HTMLTreeBuilder::insertHTMLBodyElement):
+        (WebCore::HTMLTreeBuilder::insertElement):
+        (WebCore::HTMLTreeBuilder::insertGenericRCDATAElement):
+        (WebCore::HTMLTreeBuilder::insertGenericRawTextElement):
+        * html/HTMLTreeBuilder.h:
+        (WebCore::HTMLTreeBuilder::ElementStack::ElementStack):
+        (WebCore::HTMLTreeBuilder::ElementStack::popHTMLHeadElement):
+        (WebCore::HTMLTreeBuilder::ElementStack::pop):
+        (WebCore::HTMLTreeBuilder::ElementStack::pushHTMLHtmlElement):
+        (WebCore::HTMLTreeBuilder::ElementStack::pushHTMLHeadElement):
+        (WebCore::HTMLTreeBuilder::ElementStack::pushHTMLBodyElement):
+        (WebCore::HTMLTreeBuilder::ElementStack::push):
+        (WebCore::HTMLTreeBuilder::ElementStack::removeHTMLHeadElement):
+        (WebCore::HTMLTreeBuilder::ElementStack::remove):
+        (WebCore::HTMLTreeBuilder::ElementStack::htmlElement):
+        (WebCore::HTMLTreeBuilder::ElementStack::headElement):
+        (WebCore::HTMLTreeBuilder::ElementStack::bodyElement):
+        (WebCore::HTMLTreeBuilder::ElementStack::pushCommon):
+        (WebCore::HTMLTreeBuilder::ElementStack::popCommon):
+        (WebCore::HTMLTreeBuilder::ElementStack::removeNonFirstCommon):
+
 2010-06-30  José Millán Soto  <jmillan@igalia.com>
 
         Reviewed by Xan Lopez.

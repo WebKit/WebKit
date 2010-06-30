@@ -218,3 +218,13 @@ console.log("FOO<span>BAR</span>BAZ");
 |   <head>
 |   <body>
 |     "<"
+
+#data
+<body foo='bar'><body foo='baz' yo='mama'>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     foo="bar"
+|     yo="mama"

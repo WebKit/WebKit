@@ -28,6 +28,7 @@
 
 #include "Element.h"
 #include "FragmentScriptingPermission.h"
+#include "HTMLNames.h"
 #include "HTMLTokenizer.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/OwnPtr.h>
@@ -120,16 +121,57 @@ private:
 
     class ElementStack : public Noncopyable {
     public:
+        ElementStack()
+            : m_htmlElement(0)
+            , m_headElement(0)
+            , m_bodyElement(0)
+        {
+        }
+
+        void popHTMLHeadElement()
+        {
+            ASSERT(top() == m_headElement);
+            m_headElement = 0;
+            popCommon();
+        }
+
         void pop()
         {
-            top()->finishParsingChildren();
-            m_top = m_top->releaseNext();
+            ASSERT(!top()->hasTagName(HTMLNames::headTag));
+            popCommon();
+        }
+
+        void pushHTMLHtmlElement(PassRefPtr<Element> element)
+        {
+            ASSERT(element->hasTagName(HTMLNames::htmlTag));
+            ASSERT(!m_htmlElement);
+            m_htmlElement = element.get();
+            pushCommon(element);
+        }
+
+        void pushHTMLHeadElement(PassRefPtr<Element> element)
+        {
+            ASSERT(element->hasTagName(HTMLNames::headTag));
+            ASSERT(!m_headElement);
+            m_headElement = element.get();
+            pushCommon(element);
+        }
+
+        void pushHTMLBodyElement(PassRefPtr<Element> element)
+        {
+            ASSERT(element->hasTagName(HTMLNames::bodyTag));
+            ASSERT(!m_bodyElement);
+            m_bodyElement = element.get();
+            pushCommon(element);
         }
 
         void push(PassRefPtr<Element> element)
         {
-            m_top.set(new ElementRecord(element, m_top.release()));
-            top()->beginParsingChildren();
+            ASSERT(!element->hasTagName(HTMLNames::htmlTag));
+            ASSERT(!element->hasTagName(HTMLNames::headTag));
+            ASSERT(!element->hasTagName(HTMLNames::bodyTag));
+            ASSERT(m_htmlElement);
+            pushCommon(element);
         }
 
         Element* top() const
@@ -137,19 +179,25 @@ private:
             return m_top->element();
         }
 
+        void removeHTMLHeadElement(Element* element)
+        {
+            ASSERT(m_headElement == element);
+            if (m_top->element() == element) {
+                popHTMLHeadElement();
+                return;
+            }
+            m_headElement = 0;
+            removeNonFirstCommon(element);
+        }
+
         void remove(Element* element)
         {
+            ASSERT(!element->hasTagName(HTMLNames::headTag));
             if (m_top->element() == element) {
                 pop();
                 return;
             }
-            ElementRecord* pos = m_top.get();
-            while (pos->next()) {
-                if (pos->next()->element() == element) {
-                    pos->setNext(pos->next()->releaseNext());
-                    return;
-                }
-            }
+            removeNonFirstCommon(element);
         }
 
         bool contains(Element* element) const
@@ -177,8 +225,67 @@ private:
             return contains(element);
         }
 
+        Element* htmlElement()
+        {
+            ASSERT(m_htmlElement);
+            return m_htmlElement;
+        }
+
+        Element* headElement()
+        {
+            ASSERT(m_headElement);
+            return m_headElement;
+        }
+
+        Element* bodyElement()
+        {
+            ASSERT(m_bodyElement);
+            return m_bodyElement;
+        }
+
     private:
+        void pushCommon(PassRefPtr<Element> element)
+        {
+            m_top.set(new ElementRecord(element, m_top.release()));
+            top()->beginParsingChildren();
+        }
+
+        void popCommon()
+        {
+            ASSERT(!top()->hasTagName(HTMLNames::htmlTag));
+            ASSERT(!top()->hasTagName(HTMLNames::bodyTag));
+            top()->finishParsingChildren();
+            m_top = m_top->releaseNext();
+        }
+
+        void removeNonFirstCommon(Element* element)
+        {
+            ASSERT(!element->hasTagName(HTMLNames::htmlTag));
+            ASSERT(!element->hasTagName(HTMLNames::bodyTag));
+            ElementRecord* pos = m_top.get();
+            ASSERT(pos->element() != element);
+            while (pos->next()) {
+                if (pos->next()->element() == element) {
+                    // FIXME: Is it OK to call finishParsingChildren()
+                    // when the children aren't actually finished?
+                    element->finishParsingChildren();
+                    pos->setNext(pos->next()->releaseNext());
+                    return;
+                }
+            }
+            ASSERT_NOT_REACHED();
+        }
+
         OwnPtr<ElementRecord> m_top;
+
+        // We remember <html>, <head> and <body> as they are pushed.  Their
+        // ElementRecords keep them alive.  <html> and <body> are never popped.
+        // FIXME: We don't currently require type-specific information about
+        // these elements so we haven't yet bothered to plumb the types all the
+        // way down through createElement, etc.
+        Element* m_htmlElement;
+        Element* m_headElement;
+        Element* m_bodyElement;
     };
 
     void passTokenToLegacyParser(HTMLToken&);
@@ -219,6 +326,9 @@ private:
     void insertDoctype(AtomicHTMLToken&);
     void insertComment(AtomicHTMLToken&);
     void insertCommentOnDocument(AtomicHTMLToken&);
+    void insertHTMLHtmlElement(AtomicHTMLToken&);
+    void insertHTMLHeadElement(AtomicHTMLToken&);
+    void insertHTMLBodyElement(AtomicHTMLToken&);
     void insertElement(AtomicHTMLToken&);
     void insertSelfClosingElement(AtomicHTMLToken&);
     void insertFormattingElement(AtomicHTMLToken&);
@@ -231,6 +341,9 @@ private:
     void insertHTMLStartTagInBody(AtomicHTMLToken&);
 
     PassRefPtr<Element> createElement(AtomicHTMLToken&);
+    PassRefPtr<Element> createElementAndAttachToCurrent(AtomicHTMLToken&);
+
+    void mergeAttributesFromTokenIntoElement(AtomicHTMLToken&, Element*);
 
     bool indexOfFirstUnopenFormattingElement(unsigned& firstUnopenElementIndex) const;
     void reconstructTheActiveFormattingElements();

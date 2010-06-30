@@ -1,3 +1,12 @@
+2010-06-28  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Teach HTML5TreeBuilder how to merge attributes from extra html/body elements
+        https://bugs.webkit.org/show_bug.cgi?id=41337
+
+        * html5lib/resources/webkit01.dat: Add a test for double body.
+
 2010-06-30  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed: update Chromium test expectations with a crashing test.
