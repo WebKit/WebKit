@@ -643,11 +643,6 @@ void WebDevToolsAgentImpl::setTimelineProfilingEnabled(bool enabled)
         ic->stopTimelineProfiler();
 }
 
-WebDevToolsAgent* WebDevToolsAgent::create(WebView* webview, WebDevToolsAgentClient* client)
-{
-    return new WebDevToolsAgentImpl(static_cast<WebViewImpl*>(webview), client);
-}
-
 void WebDevToolsAgent::executeDebuggerCommand(const WebString& command, int callerId)
 {
     DebuggerAgentManager::executeDebuggerCommand(command, callerId);

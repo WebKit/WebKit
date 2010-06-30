@@ -586,7 +586,7 @@ WebViewHost* TestShell::createWebView()
 WebViewHost* TestShell::createNewWindow(const WebURL& url)
 {
     WebViewHost* host = new WebViewHost(this);
-    WebView* view = WebView::create(host);
+    WebView* view = WebView::create(host, 0);
     host->setWebWidget(view);
     resetWebSettings(*view);
     view->initializeMainFrame(host);

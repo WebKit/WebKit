@@ -169,7 +169,7 @@ public:
 protected:
     virtual void SetUp()
     {
-        m_webView = static_cast<WebViewImpl*>(WebView::create(&m_webviewClient));
+        m_webView = static_cast<WebViewImpl*>(WebView::create(&m_webviewClient, 0));
         m_webView->initializeMainFrame(&m_webFrameClient);
         m_popupMenu = PopupMenu::create(&m_popupMenuClient);
     }

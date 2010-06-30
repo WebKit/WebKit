@@ -47,8 +47,6 @@ struct WebURLError;
 
 class WebDevToolsAgent {
 public:
-    WEBKIT_API static WebDevToolsAgent* create(WebView*, WebDevToolsAgentClient*);
-
     virtual ~WebDevToolsAgent() {}
 
     virtual void attach() = 0;
