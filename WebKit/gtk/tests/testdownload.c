@@ -84,40 +84,63 @@ notify_status_cb(GObject* object, GParamSpec* pspec, gpointer data)
 }
 
 static gboolean
-download_requested_cb(WebKitWebView* web_view,
-                      WebKitDownload* download,
-                      gboolean* beenThere)
+set_filename(gchar* filename)
+{
+    gchar *uri = g_filename_to_uri(filename, NULL, NULL);
+
+    webkit_download_set_destination_uri(theDownload, uri);
+    g_free(uri);
+
+    webkit_download_start(theDownload);
+    return FALSE;
+}
+
+static void
+handle_download_requested_cb(WebKitDownload* download,
+                             gboolean* beenThere,
+                             gboolean asynch)
 {
     theDownload = download;
     *beenThere = TRUE;
+
     if (temporaryFilename) {
-        gchar *uri = g_filename_to_uri(temporaryFilename, NULL, NULL);
-        if (uri)
-            webkit_download_set_destination_uri(download, uri);
-        g_free(uri);
+        if (asynch) {
+            g_idle_add((GSourceFunc)set_filename, temporaryFilename);
+        } else {
+            gchar *uri = g_filename_to_uri(temporaryFilename, NULL, NULL);
+            if (uri)
+                webkit_download_set_destination_uri(download, uri);
+            g_free(uri);
+        }
     }
 
     g_signal_connect(download, "notify::status",
                      G_CALLBACK(notify_status_cb), NULL);
+}
 
+static gboolean
+download_requested_cb(WebKitWebView* web_view,
+                      WebKitDownload* download,
+                      gboolean* beenThere)
+{
+    handle_download_requested_cb(download, beenThere, FALSE);
     return TRUE;
 }
 
 static gboolean
-set_filename(gchar* filename)
+download_requested_asynch_cb(WebKitWebView* web_view,
+                             WebKitDownload* download,
+                             gboolean* beenThere)
 {
-    gchar *uri = g_filename_to_uri(filename, NULL, NULL);
-    webkit_download_set_destination_uri(theDownload, uri);
-    g_free(uri);
-    temporaryFilename = filename;
-    webkit_download_start(theDownload);
-    return FALSE;
+    handle_download_requested_cb(download, beenThere, TRUE);
+    return TRUE;
 }
 
 static void
 test_webkit_download_perform(gboolean asynch)
 {
     WebKitWebView* webView = WEBKIT_WEB_VIEW(webkit_web_view_new());
+    GCallback downloadRequestCallback = NULL;
 
     g_object_ref_sink(G_OBJECT(webView));
 
@@ -125,10 +148,14 @@ test_webkit_download_perform(gboolean asynch)
                      G_CALLBACK(navigation_policy_decision_requested_cb),
                      NULL);
 
+    if (asynch)
+        downloadRequestCallback = G_CALLBACK(download_requested_asynch_cb);
+    else
+        downloadRequestCallback = G_CALLBACK(download_requested_cb);
+
     gboolean beenThere = FALSE;
     g_signal_connect(webView, "download-requested",
-                     G_CALLBACK(download_requested_cb),
-                     &beenThere);
+                     downloadRequestCallback, &beenThere);
 
     /* Preparation; FIXME: we should move this code to a test
      * utilities file, because we have a very similar one in
@@ -144,12 +171,8 @@ test_webkit_download_perform(gboolean asynch)
     if (g_unlink(filename) == -1)
         g_critical("Failed to delete the temporary file: %s.", g_strerror(errno));
 
-    if (asynch)
-        g_idle_add((GSourceFunc)set_filename, filename);
-    else
-        temporaryFilename = filename;
-
     theDownload = NULL;
+    temporaryFilename = filename;
 
     loop = g_main_loop_new(NULL, TRUE);
     webkit_web_view_load_uri(webView, "http://gnome.org/");
@@ -161,6 +184,8 @@ test_webkit_download_perform(gboolean asynch)
 
     g_unlink(temporaryFilename);
     g_free(temporaryFilename);
+    temporaryFilename = NULL;
+
     g_main_loop_unref(loop);
     g_object_unref(webView);
 }

@@ -1,3 +1,28 @@
+2010-06-30  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] Random failure on 'testdownload' unit test
+        https://bugs.webkit.org/show_bug.cgi?id=38256
+
+        Make sure the set_filename function is called after handling the
+        'download-requested' signal for the asynchronous test. This change
+        is needed because it could happen, with the current code, that the
+        set_filename () function got called too early in the mainloop,
+        therefore screwing the tests because the 'theDownload' global
+        variable wouldn't be properly set yet.
+
+        With this modification we ensure the set_filename() function gets
+        called always after handling the download-requested signal,
+        therefore avoiding potentialproblems.
+
+        * tests/testdownload.c:
+        (set_filename):
+        (handle_download_requested_cb):
+        (download_requested_cb):
+        (download_requested_asynch_cb):
+        (test_webkit_download_perform):
+
 2010-06-30  José Millán Soto  <jmillan@igalia.com>
 
         Reviewed by Xan Lopez.
