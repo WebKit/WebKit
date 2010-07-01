@@ -1,3 +1,18 @@
+2010-07-01  Darin Adler  <darin@apple.com>
+
+        Reviewed by Steve Falkenburg.
+
+        Turn on adoptRef assertion for TreeShared.
+
+        * platform/TreeShared.h: Remove LOOSE_TREE_SHARED and all the ifdefs.
+        Actually, I used LOOSE_REF_COUNTED by accident in a few places, but
+        removing them all now.
+
+        * rendering/ShadowElement.cpp:
+        (WebCore::ShadowBlockElement::create): Added adoptRef. This was a
+        storage leak before, probably recently introduced r61324.
+        (WebCore::ShadowInputElement::create): Ditto.
+
 2010-07-01  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Gustavo Noronha.
