@@ -42,6 +42,8 @@ public:
     virtual void show();
     virtual void hide();
 
+    void destroyPopup();
+
 private slots:
     void activeChanged(int);
 
@@ -49,7 +51,6 @@ private:
     friend class QtFallbackWebPopupCombo;
     bool m_popupVisible;
     QtFallbackWebPopupCombo* m_combo;
-    QGraphicsProxyWidget* m_proxy;
 
     void populate();
 #if ENABLE(SYMBIAN_DIALOG_PROVIDERS)

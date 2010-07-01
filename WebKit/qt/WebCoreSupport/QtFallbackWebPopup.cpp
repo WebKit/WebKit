@@ -75,14 +75,12 @@ void QtFallbackWebPopupCombo::hidePopup()
 
     QComboBox::hidePopup();
 
-    if (QGraphicsProxyWidget* proxy = graphicsProxyWidget())
-        proxy->setVisible(false);
-
     if (!m_ownerPopup.m_popupVisible)
         return;
 
     m_ownerPopup.m_popupVisible = false;
     m_ownerPopup.popupDidHide();
+    m_ownerPopup.destroyPopup();
 }
 
 bool QtFallbackWebPopupCombo::eventFilter(QObject* watched, QEvent* event)
@@ -102,19 +100,13 @@ bool QtFallbackWebPopupCombo::eventFilter(QObject* watched, QEvent* event)
 QtFallbackWebPopup::QtFallbackWebPopup()
     : QtAbstractWebPopup()
     , m_popupVisible(false)
-    , m_combo(new QtFallbackWebPopupCombo(*this))
-    , m_proxy(0)
+    , m_combo(0)
 {
-    connect(m_combo, SIGNAL(activated(int)),
-            SLOT(activeChanged(int)), Qt::QueuedConnection);
 }
 
 QtFallbackWebPopup::~QtFallbackWebPopup()
 {
-    // If we create a proxy, then the deletion of the proxy and the
-    // combo will be done by the proxy's parent (QGraphicsWebView)
-    if (!m_proxy && m_combo)
-        m_combo->deleteLater();
+    destroyPopup();
 }
 
 void QtFallbackWebPopup::show()
@@ -125,17 +117,20 @@ void QtFallbackWebPopup::show()
 #if ENABLE(SYMBIAN_DIALOG_PROVIDERS)
     TRAP_IGNORE(showS60BrowserDialog());
 #else
+
+    destroyPopup();
+    m_combo = new QtFallbackWebPopupCombo(*this);
+    connect(m_combo, SIGNAL(activated(int)),
+            SLOT(activeChanged(int)), Qt::QueuedConnection);
+
     populate();
     m_combo->setCurrentIndex(currentIndex());
 
     QRect rect = geometry();
     if (QGraphicsWebView *webView = qobject_cast<QGraphicsWebView*>(pageClient()->pluginParent())) {
-        if (!m_proxy) {
-            m_proxy = new QGraphicsProxyWidget(webView);
-            m_proxy->setWidget(m_combo);
-        } else
-            m_proxy->setVisible(true);
-        m_proxy->setGeometry(rect);
+        QGraphicsProxyWidget* proxy = new QGraphicsProxyWidget(webView);
+        proxy->setWidget(m_combo);
+        proxy->setGeometry(rect);
     } else {
         m_combo->setParent(pageClient()->ownerWidget());
         m_combo->setGeometry(QRect(rect.left(), rect.top(),
@@ -204,13 +199,21 @@ void QtFallbackWebPopup::showS60BrowserDialog()
 
 void QtFallbackWebPopup::hide()
 {
-    m_combo->hidePopup();
+    // Destroying the QComboBox here cause problems if the popup is in the
+    // middle of its show animation. Instead we rely on the fact that the
+    // Qt::Popup window will hide itself on mouse events outside its window.
+}
+
+void QtFallbackWebPopup::destroyPopup()
+{
+    if (m_combo) {
+        m_combo->deleteLater();
+        m_combo = 0;
+    }
 }
 
 void QtFallbackWebPopup::populate()
 {
-    m_combo->clear();
-
     QStandardItemModel* model = qobject_cast<QStandardItemModel*>(m_combo->model());
     Q_ASSERT(model);
 

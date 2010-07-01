@@ -1,3 +1,33 @@
+2010-07-01  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] Create QComboBoxes when clicked and destroy on hide.
+        https://bugs.webkit.org/show_bug.cgi?id=41451
+
+        Currently a QComboBox is created for each RenderMenuList and
+        it gets destroyed either when the RenderMenuList or the
+        QWebView (its Qt parent) is destroyed. This cause a crash
+        when the QWebView is destroyed before the render tree (which
+        is kept in cache).
+
+        This patch aim to destroy the QComboBox as soon as its popup
+        gets hidden, and likewise, create it only when the popup is
+        requested to be shown.
+        It also removes the unneeded reference to the QGraphicsProxyWidget,
+        destroying the QComboBox automatically destroys its bound
+        proxywidget.
+
+        * WebCoreSupport/QtFallbackWebPopup.cpp:
+        (WebCore::QtFallbackWebPopupCombo::hidePopup):
+        (WebCore::QtFallbackWebPopup::QtFallbackWebPopup):
+        (WebCore::QtFallbackWebPopup::~QtFallbackWebPopup):
+        (WebCore::QtFallbackWebPopup::show):
+        (WebCore::QtFallbackWebPopup::hide):
+        (WebCore::QtFallbackWebPopup::destroyPopup):
+        (WebCore::QtFallbackWebPopup::populate):
+        * WebCoreSupport/QtFallbackWebPopup.h:
+
 2010-07-01  Satish Sampath  <satish@chromium.org>
 
         Reviewed by Kent Tamura.
