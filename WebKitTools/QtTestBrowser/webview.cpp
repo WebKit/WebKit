@@ -192,14 +192,14 @@ void WebViewTraditional::mousePressEvent(QMouseEvent* event)
 void GraphicsWebView::contextMenuEvent(QGraphicsSceneContextMenuEvent* event)
 {
     QMenu* menu = createContextMenu(page(), event->pos().toPoint());
-    menu->exec(mapToScene(event->pos()).toPoint());
+    menu->exec(event->screenPos());
     delete menu;
 }
 
 void WebViewTraditional::contextMenuEvent(QContextMenuEvent* event)
 {
     QMenu* menu = createContextMenu(page(), event->pos());
-    menu->exec(mapToGlobal(event->pos()));
+    menu->exec(event->globalPos());
     delete menu;
 }
 

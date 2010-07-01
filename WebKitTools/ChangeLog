@@ -1,3 +1,15 @@
+2010-07-01  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] Make context menus show up in the right place in QTestBrowser
+
+        Context menus were shown at scene-relative coordinates for
+        QGraphicsWebView while QMenu expects them to be global. The
+        change to the QWidget case was to get rid of the mapToGlobal.
+
+        * QtTestBrowser/webview.cpp:
+
 2010-07-01  Robert Hogan <robert@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.
