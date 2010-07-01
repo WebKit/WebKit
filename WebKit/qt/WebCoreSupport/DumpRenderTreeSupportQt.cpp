@@ -610,17 +610,17 @@ QString DumpRenderTreeSupportQt::historyItemTarget(const QWebHistoryItem& histor
     return (QWebHistoryItemPrivate::core(&it)->target());
 }
 
-QList<QWebHistoryItem> DumpRenderTreeSupportQt::getChildHistoryItems(const QWebHistoryItem& historyItem)
+QMap<QString, QWebHistoryItem> DumpRenderTreeSupportQt::getChildHistoryItems(const QWebHistoryItem& historyItem)
 {
     QWebHistoryItem it = historyItem;
     HistoryItem* item = QWebHistoryItemPrivate::core(&it);
     const WebCore::HistoryItemVector& children = item->children();
 
     unsigned size = children.size();
-    QList<QWebHistoryItem> kids;
+    QMap<QString, QWebHistoryItem> kids;
     for (unsigned i = 0; i < size; ++i) {
         QWebHistoryItem kid(new QWebHistoryItemPrivate(children[i].get()));
-        kids.prepend(kid);
+        kids.insert(DumpRenderTreeSupportQt::historyItemTarget(kid), kid);
     }
     return kids;
 }
