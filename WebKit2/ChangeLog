@@ -1,3 +1,22 @@
+2010-07-01  Kenneth Rohde Christiansen  <kenneth.christiansen@openbossa.org>
+
+        Reviewed by Antti Koivisto.
+
+        [Qt] Initial WebKit2 implementation
+        https://bugs.webkit.org/show_bug.cgi?id=40233
+
+        Add our event factory for converting Qt events to something WebKit2
+        understands.
+
+        * Shared/qt/WebEventFactoryQt.cpp: Added.
+        (WebKit::mouseButtonForEvent):
+        (WebKit::webEventTypeForEvent):
+        (WebKit::modifiersForEvent):
+        (WebKit::WebEventFactory::createWebMouseEvent):
+        (WebKit::WebEventFactory::createWebWheelEvent):
+        (WebKit::WebEventFactory::createWebKeyboardEvent):
+        * Shared/qt/WebEventFactoryQt.h: Added.
+
 2010-07-01  Antti Koivisto  <koivisto@iki.fi>
 
         Reviewed by Kenneth Rohde Christiansen.
