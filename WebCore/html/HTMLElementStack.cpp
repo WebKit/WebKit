@@ -30,7 +30,7 @@
 #include "HTMLNames.h"
 #include <wtf/PassOwnPtr.h>
 
-#if ENABLE(SVG_FOREIGN_OBJECT)
+#if ENABLE(SVG)
 #include "SVGNames.h"
 #endif
 
