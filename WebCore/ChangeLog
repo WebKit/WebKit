@@ -1,3 +1,14 @@
+2010-07-01  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [Chromium] Support indeterminate checkbox for Windows
+        https://bugs.webkit.org/show_bug.cgi?id=41444
+
+        * rendering/RenderThemeChromiumWin.cpp:
+        (WebCore::RenderThemeChromiumWin::determineState):
+         Check isIndeterminate() and set an appropriate flag value.
+
 2010-07-01  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Dan Bernstein.

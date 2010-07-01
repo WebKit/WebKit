@@ -501,8 +501,14 @@ unsigned RenderThemeChromiumWin::determineState(RenderObject* o)
         result = ETS_FOCUSED;
     else if (isHovered(o))
         result = TS_HOT;
-    if (isChecked(o))
-        result += 4; // 4 unchecked states, 4 checked states.
+
+    // CBS_UNCHECKED*: 1-4
+    // CBS_CHECKED*: 5-8
+    // CBS_MIXED*: 9-12
+    if (isIndeterminate(o))
+        result += 8;
+    else if (isChecked(o))
+        result += 4;
     return result;
 }
 
