@@ -49,7 +49,6 @@
 #include "JSDOMApplicationCacheCustom.cpp"
 #include "JSDOMBinding.cpp"
 #include "JSDOMFormDataCustom.cpp"
-#include "JSDOMFormDataCustom.cpp"
 #include "JSDOMGlobalObject.cpp"
 #include "JSDOMStringMapCustom.cpp"
 #include "JSDOMWindowBase.cpp"

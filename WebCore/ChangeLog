@@ -1,5 +1,11 @@
 2010-06-30  Sam Weinig  <sam@webkit.org>
 
+        Really fix the windows build.
+
+        * bindings/js/JSBindingsAllInOne.cpp:
+
+2010-06-30  Sam Weinig  <sam@webkit.org>
+
         Another Chromium build fix.
 
         * page/DOMWindow.idl:
