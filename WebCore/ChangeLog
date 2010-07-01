@@ -1,3 +1,20 @@
+2010-07-01  Andreas Kling  <andreas.kling@nokia.com>
+
+        Reviewed by Darin Adler.
+
+        Canvas element cannot have negative width or height (HTML5 spec 4.8.11)
+        https://bugs.webkit.org/show_bug.cgi?id=39149
+
+        If assigned a negative value, it should default to 300 for width and 150 for height.
+
+        Spec link:
+        http://www.whatwg.org/specs/web-apps/current-work/#attr-canvas-width
+
+        Test: fast/canvas/canvas-negative-size.html
+
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::reset):
+
 2010-07-01  Darin Adler  <darin@apple.com>
 
         Reviewed by Steve Falkenburg.

@@ -1,3 +1,34 @@
+2010-07-01  Andreas Kling  <andreas.kling@nokia.com>
+
+        Reviewed by Darin Adler.
+
+        Add test for checking that canvas elements can't have a negative width or height.
+        https://bugs.webkit.org/show_bug.cgi?id=39149
+
+        Unskipped 2 canvas/philip/ tests that now pass.
+
+        Spec link:
+        http://www.whatwg.org/specs/web-apps/current-work/#attr-canvas-width
+
+        * canvas/philip/tests/size.attributes.parse.minus-expected.txt:
+        * canvas/philip/tests/size.attributes.setAttribute.minus-expected.txt:
+        * fast/canvas/canvas-negative-size-expected.txt: Added.
+        * fast/canvas/canvas-negative-size.html: Added.
+        * fast/canvas/script-tests/canvas-negative-size.js: Added.
+        (createFromMarkup):
+        (trySettingWidth):
+        (trySettingHeight):
+        (trySettingWidthAttribute):
+        (trySettingHeightAttribute):
+        (tryCreatingCanvasWithWidth):
+        (tryCreatingCanvasWithHeight):
+        (tryWidth):
+        (tryHeight):
+        (checkDefaultWidth):
+        (checkDefaultHeight):
+        * platform/mac/Skipped:
+        * platform/qt/Skipped:
+
 2010-07-01  Robert Hogan <robert@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.

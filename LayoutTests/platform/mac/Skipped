@@ -277,8 +277,6 @@ canvas/philip/tests/security.pattern.cross.html
 canvas/philip/tests/security.pattern.image.fillStyle.html
 canvas/philip/tests/security.pattern.image.strokeStyle.html
 canvas/philip/tests/security.reset.html
-canvas/philip/tests/size.attributes.parse.minus.html
-canvas/philip/tests/size.attributes.setAttribute.minus.html
 canvas/philip/tests/toDataURL.jpeg.alpha.html
 canvas/philip/tests/type.prototype.html
 

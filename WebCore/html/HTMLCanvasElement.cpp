@@ -210,10 +210,10 @@ void HTMLCanvasElement::reset()
 
     bool ok;
     int w = getAttribute(widthAttr).toInt(&ok);
-    if (!ok)
+    if (!ok || w < 0)
         w = DefaultWidth;
     int h = getAttribute(heightAttr).toInt(&ok);
-    if (!ok)
+    if (!ok || h < 0)
         h = DefaultHeight;
 
     IntSize oldSize = size();

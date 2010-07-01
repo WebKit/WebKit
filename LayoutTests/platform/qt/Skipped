@@ -5318,8 +5318,6 @@ canvas/philip/tests/2d.text.font.parse.system.html
 canvas/philip/tests/2d.text.measure.width.space.html
 canvas/philip/tests/2d.transformation.setTransform.skewed.html
 canvas/philip/tests/2d.transformation.transform.skewed.html
-canvas/philip/tests/size.attributes.parse.minus.html
-canvas/philip/tests/size.attributes.setAttribute.minus.html
 canvas/philip/tests/toDataURL.jpeg.quality.basic.html
 canvas/philip/tests/type.prototype.html
 canvas/philip/tests/security.drawImage.canvas.html
