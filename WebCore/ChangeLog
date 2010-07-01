@@ -2,6 +2,18 @@
 
         Reviewed by Eric Seidel.
 
+        Abstract 'a'-'z' checks into a function
+        https://bugs.webkit.org/show_bug.cgi?id=41438
+
+        Hopefully this version is more readable.
+
+        * html/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::nextToken):
+
+2010-07-01  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         Parameter names in frame src URLs parsed incorrectly if resembles HTML entity code followed by underscore
         https://bugs.webkit.org/show_bug.cgi?id=41345
 
