@@ -1,3 +1,12 @@
+2010-07-01  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        Only include the geolocation IDL in the GObject DOM bindings set
+        if geolocation is enabled.
+
+        * GNUmakefile.am:
+
 2010-07-01  Timothy Hatcher  <timothy@apple.com>
 
         Provide a WebView preference to disable DNS prefetching.
