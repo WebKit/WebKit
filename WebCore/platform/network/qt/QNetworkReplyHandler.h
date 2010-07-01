@@ -104,6 +104,7 @@ protected:
 
 private:
     void moveToNextElement();
+    void openFileForCurrentElement();
 
 private:
     Vector<FormDataElement> m_formElements;
