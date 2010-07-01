@@ -145,6 +145,7 @@ SET(WebCore_IDL_FILES
     dom/DOMCoreException.idl
     dom/DOMImplementation.idl
     dom/DOMStringList.idl
+    dom/DOMStringMap.idl
     dom/Element.idl
     dom/Entity.idl
     dom/EntityReference.idl
@@ -583,6 +584,7 @@ SET(WebCore_SOURCES
     bindings/js/JSDOMBinding.cpp
     bindings/js/JSDOMFormDataCustom.cpp
     bindings/js/JSDOMGlobalObject.cpp
+    bindings/js/JSDOMStringMapCustom.cpp
     bindings/js/JSDOMWindowBase.cpp
     bindings/js/JSDOMWindowCustom.cpp
     bindings/js/JSDOMWindowShell.cpp
@@ -755,9 +757,8 @@ SET(WebCore_SOURCES
     dom/Attribute.cpp
     dom/BeforeTextInsertedEvent.cpp
     dom/BeforeUnloadEvent.cpp
-    dom/CDATASection.cpp
-    dom/CSSMappedAttributeDeclaration.cpp
     dom/CanvasSurface.cpp
+    dom/CDATASection.cpp
     dom/CharacterData.cpp
     dom/CheckedRadioButtons.cpp
     dom/ChildNodeList.cpp
@@ -769,9 +770,9 @@ SET(WebCore_SOURCES
     dom/Comment.cpp
     dom/CompositionEvent.cpp
     dom/ContainerNode.cpp
+    dom/CSSMappedAttributeDeclaration.cpp
     dom/CustomEvent.cpp
-    dom/DOMImplementation.cpp
-    dom/DOMStringList.cpp
+    dom/DatasetDOMStringMap.cpp
     dom/DecodedDataDocumentParser.cpp
     dom/DeviceOrientation.cpp
     dom/DeviceOrientationEvent.cpp
@@ -779,6 +780,9 @@ SET(WebCore_SOURCES
     dom/DocumentFragment.cpp
     dom/DocumentParser.cpp
     dom/DocumentType.cpp
+    dom/DOMImplementation.cpp
+    dom/DOMStringList.cpp
+    dom/DOMStringMap.cpp
     dom/DynamicNodeList.cpp
     dom/EditingText.cpp
     dom/Element.cpp
@@ -794,16 +798,16 @@ SET(WebCore_SOURCES
     dom/KeyboardEvent.cpp
     dom/MessageChannel.cpp
     dom/MessageEvent.cpp
-    dom/MessagePort.cpp
     dom/MessagePortChannel.cpp
+    dom/MessagePort.cpp
     dom/MouseEvent.cpp
     dom/MouseRelatedEvent.cpp
     dom/MutationEvent.cpp
-    dom/NameNodeList.cpp
     dom/NamedNodeMap.cpp
+    dom/NameNodeList.cpp
     dom/Node.cpp
-    dom/NodeFilter.cpp
     dom/NodeFilterCondition.cpp
+    dom/NodeFilter.cpp
     dom/NodeIterator.cpp
     dom/Notation.cpp
     dom/OptionElement.cpp
@@ -826,8 +830,8 @@ SET(WebCore_SOURCES
     dom/SpaceSplitString.cpp
     dom/StaticHashSetNodeList.cpp
     dom/StaticNodeList.cpp
-    dom/StyleElement.cpp
     dom/StyledElement.cpp
+    dom/StyleElement.cpp
     dom/TagNodeList.cpp
     dom/Text.cpp
     dom/TextEvent.cpp
