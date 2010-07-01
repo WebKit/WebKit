@@ -1,3 +1,17 @@
+2010-07-01  Justin Schuh  <jschuh@chromium.org>
+
+        Reviewed by Dan Bernstein.
+
+        Prevent crash on counter destruction
+        https://bugs.webkit.org/show_bug.cgi?id=40032
+
+        Added counter destruction to RenderWidget::destroy()
+
+        Test: fast/css/counters/destroy-counter-crash.html
+
+        * rendering/RenderWidget.cpp:
+        (WebCore::RenderWidget::destroy):
+
 2010-07-01  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
 
         Unreviewed build fix after r62215.

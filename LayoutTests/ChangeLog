@@ -1,3 +1,13 @@
+2010-07-01  Justin Schuh  <jschuh@chromium.org>
+
+        Reviewed by Dan Bernstein.
+
+        Prevent crash on counter destruction
+        https://bugs.webkit.org/show_bug.cgi?id=40032
+
+        * fast/css/counters/destroy-counter-crash-expected.txt: Added.
+        * fast/css/counters/destroy-counter-crash.html: Added.
+
 2010-07-01  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed. Update Chromium test expectations.
