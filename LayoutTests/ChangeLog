@@ -1,3 +1,13 @@
+2010-07-01  Zoltan Herczeg  <zherczeg@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        Updating expected values for feConvolveMatrix
+        https://bugs.webkit.org/show_bug.cgi?id=5861
+
+        * platform/mac-leopard/svg/W3C-SVG-1.1/filters-conv-01-f-expected.checksum:
+        * platform/mac-leopard/svg/W3C-SVG-1.1/filters-conv-01-f-expected.png:
+
 2010-07-01  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

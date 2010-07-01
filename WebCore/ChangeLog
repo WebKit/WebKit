@@ -1,3 +1,28 @@
+2010-07-01  Zoltan Herczeg  <zherczeg@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        Implementing feConvolveMatrix svg filter
+        https://bugs.webkit.org/show_bug.cgi?id=5861
+
+        The implementation is optimized for speed, and uses
+        multiple algorithms for different parts of the image.
+        See SVGFEConvolveMatrixElement.cpp for a detailed
+        description.
+
+        * svg/SVGFEConvolveMatrixElement.cpp:
+        (WebCore::SVGFEConvolveMatrixElement::build):
+        * svg/graphics/filters/SVGFEConvolveMatrix.cpp:
+        (WebCore::clampRGBAValue):
+        (WebCore::FEConvolveMatrix::fastSetInteriorPixels):
+        (WebCore::FEConvolveMatrix::getPixelValue):
+        (WebCore::FEConvolveMatrix::fastSetOuterPixels):
+        (WebCore::FEConvolveMatrix::setInteriorPixels):
+        (WebCore::FEConvolveMatrix::setOuterPixels):
+        (WebCore::FEConvolveMatrix::apply):
+        * svg/graphics/filters/SVGFEConvolveMatrix.h:
+        (WebCore::FEConvolveMatrix::uniteChildEffectSubregions):
+
 2010-07-01  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
