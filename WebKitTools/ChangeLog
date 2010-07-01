@@ -1,3 +1,15 @@
+2010-07-01  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Promote webkit-patch land-safely to main help
+        https://bugs.webkit.org/show_bug.cgi?id=41446
+
+        I've been using this command a bunch and recommending it to folks.  We
+        should show it in main help as it's past the experimental phase.
+
+        * Scripts/webkitpy/tool/commands/upload.py:
+
 2010-06-28  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Shinichiro Hamaji.

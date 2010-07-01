@@ -178,8 +178,13 @@ class Post(AbstractPatchUploadingCommand):
 
 class LandSafely(AbstractPatchUploadingCommand):
     name = "land-safely"
-    help_text = "Land the current diff via the commit-queue (Experimental)"
+    help_text = "Land the current diff via the commit-queue"
     argument_names = "[BUGID]"
+    long_help = """land-safely updates the ChangeLog with the reviewer listed
+    in bugs.webkit.org for BUGID (or the bug ID detected from the ChangeLog).
+    The command then uploads the current diff to the bug and marks it for
+    commit by the commit-queue."""
+    show_in_main_help = True
     steps = [
         steps.UpdateChangeLogsWithReviewer,
         steps.ObsoletePatches,
