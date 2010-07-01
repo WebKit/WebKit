@@ -1287,6 +1287,12 @@ sub buildAutotoolsProject($@)
         }
     }
 
+    # Automatically determine the number of CPUs for make only
+    # if make arguments haven't already been specified.
+    if ($makeArgs eq "") {
+        $makeArgs = "-j" . numberOfCPUs();
+    }
+
     $prefix = $ENV{"WebKitInstallationPrefix"} if !defined($prefix);
     push @buildArgs, "--prefix=" . $prefix if defined($prefix);
 
@@ -1330,8 +1336,7 @@ sub buildAutotoolsProject($@)
         die "Failed to setup build environment using 'autotools'!\n";
     }
 
-    my $numCPUs = numberOfCPUs();
-    $result = system "$make -j$numCPUs $makeArgs";
+    $result = system "$make $makeArgs";
     if ($result ne 0) {
         die "\nFailed to build WebKit using '$make'!\n";
     }

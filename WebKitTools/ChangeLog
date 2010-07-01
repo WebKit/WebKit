@@ -1,5 +1,14 @@
 2010-07-01  Martin Robinson  <mrobinson@igalia.com>
 
+        Unreviewed. 
+
+        Fix the GTK+ build after r62278.
+
+        * Scripts/webkitdirs.pm: If the make arguments have already been specified,
+        let them override the automatic CPU detection for autotools builds.
+
+2010-07-01  Martin Robinson  <mrobinson@igalia.com>
+
         Unreviewed.
 
         Fix the Windows build after r62278.
