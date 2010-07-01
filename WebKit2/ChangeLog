@@ -2,6 +2,15 @@
 
         Reviewed by Antti Koivisto.
 
+        Export symbols on Linux with GCC
+
+        * UIProcess/API/C/WKBase.h:
+        * WebProcess/InjectedBundle/API/c/WKBundleBase.h:
+
+2010-07-01  Kenneth Rohde Christiansen  <kenneth.christiansen@openbossa.org>
+
+        Reviewed by Antti Koivisto.
+
         [Qt] Initial WebKit2 implementation
         https://bugs.webkit.org/show_bug.cgi?id=40233
 
