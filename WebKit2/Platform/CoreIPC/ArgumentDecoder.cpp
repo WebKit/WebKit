@@ -25,6 +25,8 @@
 
 #include "ArgumentDecoder.h"
 
+#include <stdio.h>
+
 namespace CoreIPC {
 
 ArgumentDecoder::ArgumentDecoder(const uint8_t* buffer, size_t bufferSize)

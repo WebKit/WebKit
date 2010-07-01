@@ -26,6 +26,7 @@
 #include "WebUIClient.h"
 
 #include "WKAPICast.h"
+#include <string.h>
 
 using namespace WebCore;
 

@@ -26,6 +26,7 @@
 #include "WebLoaderClient.h"
 
 #include "WKAPICast.h"
+#include <string.h>
 
 namespace WebKit {
 

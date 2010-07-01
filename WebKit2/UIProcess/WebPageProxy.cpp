@@ -41,6 +41,7 @@
 #include "WebProcessProxy.h"
 
 #include "WKContextPrivate.h"
+#include <stdio.h>
 
 #ifndef NDEBUG
 #include <wtf/RefCountedLeakCounter.h>

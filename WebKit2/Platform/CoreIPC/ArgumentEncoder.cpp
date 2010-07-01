@@ -26,6 +26,7 @@
 #include "ArgumentEncoder.h"
 
 #include <algorithm>
+#include <stdio.h>
 
 namespace CoreIPC {
 
