@@ -37,15 +37,14 @@ class ImageBuffer;
 class RenderBoxModelObject;
 class RenderObject;
 class RenderStyle;
-class RenderSVGResourceFilter;
 class TransformState;
 
 // SVGRendererSupport is a helper class sharing code between all SVG renderers.
 class SVGRenderSupport {
 public:
     // Used by all SVG renderers who apply clip/filter/etc. resources to the renderer content
-    static bool prepareToRenderSVGContent(RenderObject*, PaintInfo&, const FloatRect& boundingBox, RenderSVGResourceFilter*&);
-    static void finishRenderSVGContent(RenderObject*, PaintInfo&, RenderSVGResourceFilter*&, GraphicsContext* savedContext);
+    static bool prepareToRenderSVGContent(RenderObject*, PaintInfo&);
+    static void finishRenderSVGContent(RenderObject*, PaintInfo&, GraphicsContext* savedContext);
 
     // Shares child layouting code between RenderSVGRoot/RenderSVG(Hidden)Container
     static void layoutChildren(RenderObject*, bool selfNeedsLayout);

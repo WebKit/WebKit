@@ -1,3 +1,46 @@
+2010-07-01  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Eric Seidel & Dirk Schulze.
+
+        Performance regression for setting content of <text> in SVG
+        https://bugs.webkit.org/show_bug.cgi?id=36564
+
+        Dramatically reducing the number of repaintRectInLocalCoordinates() calls needed while painting.
+        Do not pass the repaintRect to prepareToRenderSVGContent, only calculate it if opacity < 1 or -webkit-svg-shadow is set.
+        Most noticeable is that RenderSVGRoot had to visit all children, before actually painting, just to calculate the repaint rect.
+        And as RenderSVGRoot never carries shadow or opacity it was completly useless.
+
+        RenderSVGContainer also called repaintRectInLocalCoordinates, but the result is only needed when painting outlines, which is a rare case.
+        These modifications fix the performance regression and the number of repaintRectInLocalCoordinate calls for the complex example in
+        the bug report with 500 runs shrinks from 1.7 million calls to less than 105.000.
+
+        50 runs without the patch: ~ 520.8ms
+        50 runs with the patch   : ~ 501.8ms
+
+        The test calls setTimeout(0) 50 times, that already accounts for the 500ms. So setting the content of a <text>
+        element withs clippers applied, is very cheap now.
+
+        Also remove the need to pass in a filter argument to prepareToRenderSVGContent/finishRenderSVGContent, it can easily be grabbed
+        of the cache - just like all other resources are handled, simplifying the code.
+
+        * rendering/RenderPath.cpp:
+        (WebCore::RenderPath::paint):
+        * rendering/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::paint):
+        (WebCore::RenderSVGContainer::repaintRectInLocalCoordinates):
+        * rendering/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::paint):
+        * rendering/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::paint):
+        * rendering/SVGInlineFlowBox.cpp:
+        (WebCore::SVGInlineFlowBox::paint):
+        * rendering/SVGRenderSupport.cpp:
+        (WebCore::SVGRenderSupport::prepareToRenderSVGContent):
+        (WebCore::SVGRenderSupport::finishRenderSVGContent):
+        * rendering/SVGRenderSupport.h:
+        * rendering/SVGRootInlineBox.cpp:
+        (WebCore::SVGRootInlineBox::paint):
+
 2010-07-01  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

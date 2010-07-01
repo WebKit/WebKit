@@ -83,11 +83,9 @@ void RenderSVGImage::paint(PaintInfo& paintInfo, int, int)
     paintInfo.context->concatCTM(localToParentTransform());
 
     if (paintInfo.phase == PaintPhaseForeground) {
-        RenderSVGResourceFilter* filter = 0;
-
         PaintInfo savedInfo(paintInfo);
 
-        if (SVGRenderSupport::prepareToRenderSVGContent(this, paintInfo, m_localBounds, filter)) {
+        if (SVGRenderSupport::prepareToRenderSVGContent(this, paintInfo)) {
             FloatRect destRect = m_localBounds;
             FloatRect srcRect(0, 0, image()->width(), image()->height());
 
@@ -97,7 +95,7 @@ void RenderSVGImage::paint(PaintInfo& paintInfo, int, int)
 
             paintInfo.context->drawImage(image(), DeviceColorSpace, destRect, srcRect);
         }
-        SVGRenderSupport::finishRenderSVGContent(this, paintInfo, filter, savedInfo.context);
+        SVGRenderSupport::finishRenderSVGContent(this, paintInfo, savedInfo.context);
     }
 
     if ((paintInfo.phase == PaintPhaseOutline || paintInfo.phase == PaintPhaseSelfOutline) && style()->outlineWidth())

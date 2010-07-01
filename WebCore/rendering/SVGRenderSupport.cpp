@@ -74,7 +74,7 @@ void SVGRenderSupport::mapLocalToContainer(const RenderObject* object, RenderBox
     object->parent()->mapLocalToContainer(repaintContainer, fixed, useTransforms, transformState);
 }
 
-bool SVGRenderSupport::prepareToRenderSVGContent(RenderObject* object, PaintInfo& paintInfo, const FloatRect& repaintRect, RenderSVGResourceFilter*& filter)
+bool SVGRenderSupport::prepareToRenderSVGContent(RenderObject* object, PaintInfo& paintInfo)
 {
 #if !ENABLE(FILTERS)
     UNUSED_PARAM(filter);
@@ -91,17 +91,24 @@ bool SVGRenderSupport::prepareToRenderSVGContent(RenderObject* object, PaintInfo
     const SVGRenderStyle* svgStyle = style->svgStyle();
     ASSERT(svgStyle);
 
+    FloatRect repaintRect;
+
     // Setup transparency layers before setting up SVG resources!
-    float opacity = style->opacity(); 
-    if (opacity < 1.0f) {
+    float opacity = style->opacity();
+    if (opacity < 1) {
+        repaintRect = object->repaintRectInLocalCoordinates();
         paintInfo.context->clip(repaintRect);
         paintInfo.context->beginTransparencyLayer(opacity);
     }
 
     if (const ShadowData* shadow = svgStyle->shadow()) {
+        // Eventually compute repaint rect, if not done so far.
+        if (opacity >= 1)
+            repaintRect = object->repaintRectInLocalCoordinates();
+
         paintInfo.context->clip(repaintRect);
         paintInfo.context->setShadow(IntSize(shadow->x(), shadow->y()), shadow->blur(), shadow->color(), style->colorSpace());
-        paintInfo.context->beginTransparencyLayer(1.0f);
+        paintInfo.context->beginTransparencyLayer(1);
     }
 
     Document* document = object->document();
@@ -112,7 +119,7 @@ bool SVGRenderSupport::prepareToRenderSVGContent(RenderObject* object, PaintInfo
             if (!masker->applyResource(object, style, paintInfo.context, ApplyToDefaultMode))
                 return false;
         } else
-            svgElement->document()->accessSVGExtensions()->addPendingResource(maskerId, styledElement);
+            document->accessSVGExtensions()->addPendingResource(maskerId, styledElement);
     }
 
     if (svgStyle->hasClipper()) {
@@ -120,25 +127,24 @@ bool SVGRenderSupport::prepareToRenderSVGContent(RenderObject* object, PaintInfo
         if (RenderSVGResourceClipper* clipper = getRenderSVGResourceById<RenderSVGResourceClipper>(document, clipperId))
             clipper->applyResource(object, style, paintInfo.context, ApplyToDefaultMode);
         else
-            svgElement->document()->accessSVGExtensions()->addPendingResource(clipperId, styledElement);
+            document->accessSVGExtensions()->addPendingResource(clipperId, styledElement);
     }
 
 #if ENABLE(FILTERS)
     if (svgStyle->hasFilter()) {
         AtomicString filterId(svgStyle->filterResource());
-        filter = getRenderSVGResourceById<RenderSVGResourceFilter>(document, filterId);
-        if (filter) {
+        if (RenderSVGResourceFilter* filter = getRenderSVGResourceById<RenderSVGResourceFilter>(document, filterId)) { 
             if (!filter->applyResource(object, style, paintInfo.context, ApplyToDefaultMode))
                 return false;
         } else
-            svgElement->document()->accessSVGExtensions()->addPendingResource(filterId, styledElement);
+            document->accessSVGExtensions()->addPendingResource(filterId, styledElement);
     }
 #endif
 
     return true;
 }
 
-void SVGRenderSupport::finishRenderSVGContent(RenderObject* object, PaintInfo& paintInfo, RenderSVGResourceFilter*& filter, GraphicsContext* savedContext)
+void SVGRenderSupport::finishRenderSVGContent(RenderObject* object, PaintInfo& paintInfo, GraphicsContext* savedContext)
 {
 #if !ENABLE(FILTERS)
     UNUSED_PARAM(filter);
@@ -150,20 +156,26 @@ void SVGRenderSupport::finishRenderSVGContent(RenderObject* object, PaintInfo& p
     const RenderStyle* style = object->style();
     ASSERT(style);
 
+    const SVGRenderStyle* svgStyle = style->svgStyle();
+    ASSERT(svgStyle);
+
 #if ENABLE(FILTERS)
-    if (filter) {
-        filter->postApplyResource(object, paintInfo.context, ApplyToDefaultMode);
-        paintInfo.context = savedContext;
+    if (svgStyle->hasFilter()) {
+        AtomicString filterId(svgStyle->filterResource());
+        if (RenderSVGResourceFilter* filter = getRenderSVGResourceById<RenderSVGResourceFilter>(object->document(), filterId)) { 
+            filter->postApplyResource(object, paintInfo.context, ApplyToDefaultMode);
+            paintInfo.context = savedContext;
+        }
     }
 #endif
 
     float opacity = style->opacity();    
-    if (opacity < 1.0f)
+    if (opacity < 1)
         paintInfo.context->endTransparencyLayer();
 
     // This needs to be done separately from opacity, because if both properties are set,
     // then the transparency layers are nested. 
-    if (style->svgStyle()->shadow())
+    if (svgStyle->shadow())
         paintInfo.context->endTransparencyLayer();
 }
 
