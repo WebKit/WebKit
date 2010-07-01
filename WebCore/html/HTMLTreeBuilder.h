@@ -29,6 +29,7 @@
 #include "Element.h"
 #include "FragmentScriptingPermission.h"
 #include "HTMLElementStack.h"
+#include "HTMLFormattingElementList.h"
 #include "HTMLTokenizer.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/OwnPtr.h>
@@ -172,41 +173,7 @@ private:
     RefPtr<Element> m_headElement;
     RefPtr<Element> m_formElement;
     HTMLElementStack m_openElements;
-
-    class FormattingElementEntry {
-    public:
-        FormattingElementEntry(Element* element)
-            : m_element(element)
-        {
-            ASSERT(element);
-        }
-
-        enum MarkerEntryType { MarkerEntry };
-        FormattingElementEntry(MarkerEntryType)
-        {
-        }
-
-        bool isMarker() const { return !m_element; }
-
-        Element* element() const
-        {
-            // The fact that !m_element == isMarker is an implementation detail
-            // callers should check isMarker() before calling element().
-            ASSERT(m_element);
-            return m_element.get();
-        }
-
-        void replaceElement(PassRefPtr<Element> element)
-        {
-            ASSERT(m_element); // Once a marker, always a marker.
-            m_element = element;
-        }
-
-    private:
-        RefPtr<Element> m_element;
-    };
-
-    Vector<FormattingElementEntry> m_activeFormattingElements;
+    HTMLFormattingElementList m_activeFormattingElements;
     bool m_framesetOk;
 
     // FIXME: Implement error reporting.

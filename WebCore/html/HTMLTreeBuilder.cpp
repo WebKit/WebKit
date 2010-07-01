@@ -743,10 +743,7 @@ void HTMLTreeBuilder::processEndTag(AtomicHTMLToken& token)
                 parseError(token);
             m_openElements.popUntil(token.name());
             m_openElements.pop();
-            // FIXME: m_activeFormattingElements should be more interesting
-            // object than a vector so we can call this method on it instead
-            // of on the tree builder.
-            clearActiveFormatingElementsUpToLastMarker();
+            m_activeFormattingElements.clearToLastMarker();
             return;
         }
         if (token.name() == brTag) {
@@ -1083,7 +1080,7 @@ bool HTMLTreeBuilder::indexOfFirstUnopenFormattingElement(unsigned& firstUnopenE
     unsigned index = m_activeFormattingElements.size();
     do {
         --index;
-        const FormattingElementEntry& entry = m_activeFormattingElements[index];
+        const HTMLFormattingElementList::Entry& entry = m_activeFormattingElements[index];
         if (entry.isMarker() || m_openElements.contains(entry.element())) {
             firstUnopenElementIndex = index;
             return true;
@@ -1098,11 +1095,10 @@ void HTMLTreeBuilder::reconstructTheActiveFormattingElements()
     if (!indexOfFirstUnopenFormattingElement(firstUnopenElementIndex))
         return;
 
-    Vector<FormattingElementEntry>& stack = m_activeFormattingElements;
     unsigned unopenEntryIndex = firstUnopenElementIndex;
-    ASSERT(unopenEntryIndex < stack.size());
-    for (; unopenEntryIndex < stack.size(); ++unopenEntryIndex) {
-        FormattingElementEntry& unopenedEntry = stack[unopenEntryIndex];
+    ASSERT(unopenEntryIndex < m_activeFormattingElements.size());
+    for (; unopenEntryIndex < m_activeFormattingElements.size(); ++unopenEntryIndex) {
+        HTMLFormattingElementList::Entry& unopenedEntry = m_activeFormattingElements[unopenEntryIndex];
         // FIXME: We're supposed to save the original token in the entry.
         AtomicHTMLToken fakeToken(HTMLToken::StartTag, unopenedEntry.element()->localName());
         insertElement(fakeToken);

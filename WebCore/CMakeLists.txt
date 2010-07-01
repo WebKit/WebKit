@@ -944,6 +944,7 @@ SET(WebCore_SOURCES
     html/HTMLElementStack.cpp
     html/HTMLEmbedElement.cpp
     html/HTMLFieldSetElement.cpp
+    html/HTMLFormattingElementList.cpp
     html/HTMLFontElement.cpp
     html/HTMLFormCollection.cpp
     html/HTMLFormControlElement.cpp

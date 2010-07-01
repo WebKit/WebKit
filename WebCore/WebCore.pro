@@ -661,6 +661,7 @@ SOURCES += \
     html/HTMLEmbedElement.cpp \
     html/HTMLFieldSetElement.cpp \
     html/HTMLFontElement.cpp \
+    html/HTMLFormattingElementList.cpp \
     html/HTMLFormCollection.cpp \
     html/HTMLFormElement.cpp \
     html/HTMLFrameElementBase.cpp \

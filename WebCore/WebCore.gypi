@@ -1557,6 +1557,8 @@
             'html/HTMLFieldSetElement.h',
             'html/HTMLFontElement.cpp',
             'html/HTMLFontElement.h',
+            'html/HTMLFormattingElementList.cpp',
+            'html/HTMLFormattingElementList.h',
             'html/HTMLFormCollection.cpp',
             'html/HTMLFormCollection.h',
             'html/HTMLFormControlElement.cpp',

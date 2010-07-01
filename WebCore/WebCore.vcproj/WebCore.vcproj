@@ -37285,6 +37285,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\html\HTMLFormattingElementList.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\html\HTMLFormattingElementList.h"
+				>
+			</File>
+			<File
 				RelativePath="..\html\HTMLFormCollection.cpp"
 				>
 			</File>

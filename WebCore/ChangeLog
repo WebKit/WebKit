@@ -1,3 +1,25 @@
+2010-07-01  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Split out HTMLFormattingElementList into its own file
+        https://bugs.webkit.org/show_bug.cgi?id=41440
+
+        No functional changes, thus no tests.
+
+        * Android.mk:
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::processEndTag):
+        (WebCore::HTMLTreeBuilder::indexOfFirstUnopenFormattingElement):
+        (WebCore::HTMLTreeBuilder::reconstructTheActiveFormattingElements):
+        * html/HTMLTreeBuilder.h:
+
 2010-07-01  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
