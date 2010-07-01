@@ -1,3 +1,16 @@
+2010-06-30  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        HTMLTokenizer's whitespace checks are very redundant
+        https://bugs.webkit.org/show_bug.cgi?id=41434
+
+        This patch adds isTokenizerWhitespace, which replaces a lot of
+        redundant logic in nextToken.
+
+        * html/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::nextToken):
+
 2010-06-30  Andreas Kling  <andreas.kling@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
