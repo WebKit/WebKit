@@ -30,7 +30,7 @@ building-libs {
                 LIBS += -lQtWebKit
                 symbian {
                     TARGET.EPOCSTACKSIZE = 0x14000 // 80 kB
-                    TARGET.EPOCHEAPSIZE = 0x20000 0x2000000 // Min 128kB, Max 32MB
+                    TARGET.EPOCHEAPSIZE = 0x20000 0x6000000 // Min 128kB, Max 32MB
                 }
             }
         }

@@ -1,3 +1,12 @@
+2010-07-01  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Rubber-stamped by Laszlo Gombos.
+
+        [Qt][Symbian] Bumped up the maximum heap size to 96MB
+
+        * QtTestBrowser/QtTestBrowser.pro: Removed explicit heap size declaration
+        and use the one from WebKit.pri instead.
+
 2010-07-01  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

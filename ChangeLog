@@ -1,3 +1,11 @@
+2010-07-01  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Rubber-stamped by Laszlo Gombos.
+
+        [Qt][Symbian] Bumped up the maximum heap size to 96MB
+
+        * WebKit.pri:
+
 2010-06-30  Leandro Pereira  <leandro@profusion.mobi>
 
         Unreviewed.

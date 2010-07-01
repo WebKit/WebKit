@@ -47,7 +47,6 @@ linux-* {
 symbian {
     TARGET.UID3 = 0xA000E543
     TARGET.CAPABILITY = ReadUserData WriteUserData NetworkServices
-    TARGET.EPOCHEAPSIZE = 0x20000 0x2000000
 }
 
 contains(QT_CONFIG, opengl) {
