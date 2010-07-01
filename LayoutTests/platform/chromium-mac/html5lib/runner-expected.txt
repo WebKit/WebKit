@@ -9,7 +9,6 @@ resources/tests1.dat:
 32
 33
 34
-41
 50
 51
 52
