@@ -27,42 +27,64 @@
 
 #include "ArgumentEncoder.h"
 #include "WorkItem.h"
+#include <wtf/RandomNumber.h>
+#include <wtf/text/WTFString.h>
 
 using namespace std;
-
+// We explicitly don't use the WebCore namespace here because CoreIPC should only use WTF types and
+// WebCore::String is really in WTF.
+using WebCore::String;
+ 
 namespace CoreIPC {
 
 // FIXME: Rename this or use a different constant on windows.
 static const size_t inlineMessageMaxSize = 4096;
+
+bool Connection::createServerAndClientIdentifiers(HANDLE& serverIdentifier, HANDLE& clientIdentifier)
+{
+    String pipeName;
+
+    while (true) {
+        unsigned uniqueID = randomNumber() * std::numeric_limits<unsigned>::max();
+        pipeName = String::format("\\\\.\\pipe\\com.apple.WebKit.%x", uniqueID);
+
+        serverIdentifier = ::CreateNamedPipe(pipeName.charactersWithNullTermination(),
+                                             PIPE_ACCESS_DUPLEX | FILE_FLAG_FIRST_PIPE_INSTANCE | FILE_FLAG_OVERLAPPED,
+                                             PIPE_TYPE_MESSAGE | PIPE_READMODE_MESSAGE, 1, inlineMessageMaxSize, inlineMessageMaxSize,
+                                             0, 0);
+        if (!serverIdentifier && ::GetLastError() == ERROR_PIPE_BUSY) {
+            // There was already a pipe with this name, try again.
+            continue;
+        }
+
+        break;
+    }
+
+    if (!serverIdentifier)
+        return false;
+
+    clientIdentifier = ::CreateFileW(pipeName.charactersWithNullTermination(), GENERIC_READ | GENERIC_WRITE, 0, 0, OPEN_EXISTING, FILE_FLAG_OVERLAPPED, 0);
+    if (!clientIdentifier) {
+        ::CloseHandle(serverIdentifier);
+        return false;
+    }
+
+    DWORD mode = PIPE_READMODE_MESSAGE;
+    if (!::SetNamedPipeHandleState(clientIdentifier, &mode, 0, 0)) {
+        ::CloseHandle(serverIdentifier);
+        ::CloseHandle(clientIdentifier);
+        return false;
+    }
+
+    return true;
+}
 
 void Connection::platformInitialize(Identifier identifier)
 {
     memset(&m_readState, 0, sizeof(m_readState));
     m_readState.hEvent = ::CreateEventW(0, false, false, 0);
 
-    std::wstring pipeName = L"\\\\.\\pipe\\WebKit-" + identifier;
-
-    if (m_isServer) {
-        // Create our named pipe.
-        // FIXME: Maybe we should do this in open?
-        m_connectionPipe = ::CreateNamedPipeW(pipeName.c_str(), 
-                                              PIPE_ACCESS_DUPLEX | FILE_FLAG_FIRST_PIPE_INSTANCE | FILE_FLAG_OVERLAPPED,
-                                              PIPE_TYPE_MESSAGE | PIPE_READMODE_MESSAGE, 1, inlineMessageMaxSize, inlineMessageMaxSize,
-                                              0, 0);
-    } else {
-        // Connect to our named pipe.
-        // FIXME: Check the security flags here.
-        m_connectionPipe = ::CreateFileW(pipeName.c_str(), GENERIC_READ | GENERIC_WRITE, 0, 0, OPEN_EXISTING, FILE_FLAG_OVERLAPPED, 0);
-        if (m_connectionPipe != INVALID_HANDLE_VALUE) {
-            // Set the read mode.
-            DWORD mode = PIPE_READMODE_MESSAGE;
-            // FIXME: Check return value.
-            ::SetNamedPipeHandleState(m_connectionPipe, &mode, 0, 0);
-        } else {
-            DWORD error = ::GetLastError();
-        }
-    }
-
+    m_connectionPipe = identifier;
 }
 
 void Connection::platformInvalidate()
@@ -96,6 +118,10 @@ void Connection::readEventHandler()
             case ERROR_BROKEN_PIPE:
                 connectionDidClose();
                 return;
+
+            // FIXME: We should figure out why we're getting this error.
+            case ERROR_IO_INCOMPLETE:
+                break;
             default:
                 ASSERT_NOT_REACHED();
             }
@@ -151,7 +177,6 @@ bool Connection::open()
             DWORD error = ::GetLastError();
             if (error == ERROR_PIPE_CONNECTED) {
                 // The client connected to the named pipe before we opened the connection.
-                // FIXME: This is weird - we should probably try to create the pipes in open().
                 m_isConnected = true;
             } else if (error != ERROR_IO_PENDING) {
                 // Something went wrong.

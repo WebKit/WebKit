@@ -1,3 +1,39 @@
+2010-07-01  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Change the CoreIPC connection identifier to be a HANDLE on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=41479
+
+        * Platform/CoreIPC/Connection.h:
+        * Platform/CoreIPC/win/ConnectionWin.cpp:
+        (CoreIPC::Connection::createServerAndClientIdentifiers):
+        New function that creates a server and client HANDLE.
+
+        (CoreIPC::Connection::platformInitialize):
+        Don't open the connections here.
+
+        (CoreIPC::Connection::readEventHandler):
+        (CoreIPC::Connection::open):
+        
+        * UIProcess/Launcher/win/WebProcessLauncher.cpp:
+        (WebKit::webThreadBody):
+        Get the handle from the thread.
+
+        (WebKit::launchWebProcess):
+        Mark the client identifier as inheritable and pass it along to the web process.
+
+        * WebProcess/win/WebProcessMain.cpp:
+        (WebKit::CommandLine::CommandLine):
+        (WebKit::CommandLine::parse):
+        (WebKit::CommandLine::operator[]):
+        Add simple command line parser.
+
+        (WebKit::WebProcessMain):
+        Get the handle identifier from the command line.
+
+        * WebProcess/win/WebProcessMain.h:
+
 2010-07-01  John Sullivan  <sullivan@apple.com>
 
         Rubber-stamped by Anders Carlsson.

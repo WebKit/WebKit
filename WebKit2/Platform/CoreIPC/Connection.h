@@ -68,7 +68,8 @@ public:
 #if PLATFORM(MAC)
     typedef mach_port_t Identifier;
 #elif PLATFORM(WIN)
-    typedef const std::wstring& Identifier;
+    typedef HANDLE Identifier;
+    static bool createServerAndClientIdentifiers(Identifier& serverIdentifier, Identifier& clientIdentifier);
 #elif PLATFORM(QT)
     typedef const QString Identifier;
 #endif

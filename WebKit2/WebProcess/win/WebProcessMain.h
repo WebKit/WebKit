@@ -37,7 +37,7 @@ namespace WebKit {
 #endif
 
 // This is called only from the _tWinMain function of the WebProcess.
-DLL_EXPORT int WebProcessMain(HINSTANCE hInstance, LPTSTR lpstrCmdLine);
+DLL_EXPORT int WebProcessMain(HINSTANCE hInstance, LPWSTR commandLineString);
 
 } // namespace WebKit
 
