@@ -41,8 +41,7 @@ namespace WebCore {
     V(attributeListener) \
     V(scriptState) \
     V(sleepFunction) \
-    V(toStringString) \
-    V(event)
+    V(toStringString)
 
     class V8HiddenPropertyName {
     public:

@@ -1,3 +1,21 @@
+2010-07-01  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r62246.
+        http://trac.webkit.org/changeset/62246
+        https://bugs.webkit.org/show_bug.cgi?id=41470
+
+        "Worker tests are broken in Chromium" (Requested by yurys on
+        #webkit).
+
+        * bindings/v8/ScriptController.cpp:
+        (WebCore::ScriptController::processingUserGesture):
+        * bindings/v8/V8AbstractEventListener.cpp:
+        (WebCore::V8AbstractEventListener::invokeEventHandler):
+        * bindings/v8/V8HiddenPropertyName.h:
+        * bindings/v8/custom/V8DOMWindowCustom.cpp:
+        (WebCore::V8DOMWindow::eventAccessorGetter):
+        (WebCore::V8DOMWindow::eventAccessorSetter):
+
 2010-07-01  Andreas Kling  <andreas.kling@nokia.com>
 
         Reviewed by Tor Arne Vestbø.

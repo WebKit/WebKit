@@ -58,7 +58,6 @@
 #include "V8Database.h"
 #include "V8DatabaseCallback.h"
 #include "V8GCForContextDispose.h"
-#include "V8HiddenPropertyName.h"
 #include "V8HTMLAudioElementConstructor.h"
 #include "V8HTMLCollection.h"
 #include "V8HTMLImageElementConstructor.h"
@@ -176,7 +175,7 @@ v8::Handle<v8::Value> V8DOMWindow::eventAccessorGetter(v8::Local<v8::String> nam
     if (context.IsEmpty())
         return v8::Undefined();
 
-    v8::Handle<v8::String> eventSymbol = V8HiddenPropertyName::event();
+    v8::Local<v8::String> eventSymbol = v8::String::NewSymbol("event");
     v8::Handle<v8::Value> jsEvent = context->Global()->GetHiddenValue(eventSymbol);
     if (jsEvent.IsEmpty())
         return v8::Undefined();
@@ -197,7 +196,7 @@ void V8DOMWindow::eventAccessorSetter(v8::Local<v8::String> name, v8::Local<v8::
     if (context.IsEmpty())
         return;
 
-    v8::Handle<v8::String> eventSymbol = V8HiddenPropertyName::event();
+    v8::Local<v8::String> eventSymbol = v8::String::NewSymbol("event");
     context->Global()->SetHiddenValue(eventSymbol, value);
 }
 

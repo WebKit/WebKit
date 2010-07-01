@@ -45,7 +45,6 @@
 #include "V8DOMWrapper.h"
 #include "V8Event.h"
 #include "V8Helpers.h"
-#include "V8HiddenPropertyName.h"
 #include "V8NPUtils.h"
 #include "V8Proxy.h"
 #include "V8Range.h"
@@ -209,7 +208,8 @@ void WebBindings::extractIdentifierData(const NPIdentifier& identifier, const NP
 
 static v8::Local<v8::Value> getEvent(const v8::Handle<v8::Context>& context)
 {
-    return context->Global()->GetHiddenValue(V8HiddenPropertyName::event());
+    static v8::Persistent<v8::String> eventSymbol(v8::Persistent<v8::String>::New(v8::String::NewSymbol("event")));
+    return context->Global()->GetHiddenValue(eventSymbol);
 }
 
 static bool getDragDataImpl(NPObject* npobj, int* eventId, WebDragData* data)
