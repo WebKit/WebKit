@@ -1,3 +1,61 @@
+2010-07-01  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Make process launching asynchronous
+        https://bugs.webkit.org/show_bug.cgi?id=41489
+
+        * Platform/CoreIPC/Connection.h:
+        Make OutgoingMessage public.
+
+        * UIProcess/ChunkedUpdateDrawingAreaProxy.cpp:
+        (WebKit::ChunkedUpdateDrawingAreaProxy::paint):
+        Don't wait for a paint reply when the process is starting up.
+
+        * UIProcess/Launcher/ProcessLauncher.cpp: Added.
+        Add new ProcessLauncher class.
+
+        (WebKit::processLauncherWorkQueue):
+        Returns the work queue where process launching will happen.
+
+        (WebKit::ProcessLauncher::ProcessLauncher):
+        Schedule launching the process.
+
+        (WebKit::ProcessLauncher::didFinishLaunchingProcess):
+        Call the client method.
+        
+        (WebKit::ProcessLauncher::invalidate):
+        Set the client to 0.
+
+        * UIProcess/Launcher/ProcessLauncher.h: Added.
+        * UIProcess/Launcher/WebProcessLauncher.h: Removed.
+        Rename WebProcessLauncher.h -> ProcessLauncher.h
+
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm: Added.
+        * UIProcess/Launcher/mac/WebProcessLauncher.mm: Removed.
+        Rename WebProcessLauncher.mm -> ProcessLauncherMac.mm, update for ProcessLauncher changes.
+
+        * UIProcess/Launcher/win/ProcessLauncherWin.cpp: Added.
+        * UIProcess/Launcher/win/WebProcessLauncher.cpp: Removed.
+        Rename WebProcessLauncher.cpp -> ProcessLauncherWin.cpp, update for ProcessLauncher changes.
+        
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::~WebProcessProxy):
+        Delete any unsent messages.
+
+        (WebKit::WebProcessProxy::connect):
+        Use the new ProcessLauncher.
+
+        (WebKit::WebProcessProxy::sendMessage):
+        If we're waiting for the process to launch, the messages need to be enqueued.
+
+        (WebKit::WebProcessProxy::didFinishLaunching):
+        Send the outgoing messages.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        * win/WebKit2.vcproj:
+        Update for renames.
+
 2010-07-01  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Anders Carlsson.

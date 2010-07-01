@@ -23,22 +23,44 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebProcessLauncher_h
-#define WebProcessLauncher_h
+#include "ProcessLauncher.h"
 
-#include "Connection.h"
-#include "PlatformProcessIdentifier.h"
-#include <wtf/RefPtr.h>
+#include "WorkQueue.h"
+#include <wtf/StdLibExtras.h>
 
 namespace WebKit {
 
-struct ProcessInfo {
-    RefPtr<CoreIPC::Connection> connection;
-    PlatformProcessIdentifier processIdentifier;
-};
+static WorkQueue& processLauncherWorkQueue()
+{
+    DEFINE_STATIC_LOCAL(WorkQueue, processLauncherWorkQueue, ("com.apple.WebKit.ProcessLauncher"));
+    return processLauncherWorkQueue;
+}
 
-ProcessInfo launchWebProcess(CoreIPC::Connection::Client*, bool useThread);
+ProcessLauncher::ProcessLauncher(Client* client)
+    : m_client(client)
+    , m_processIdentifier(0)
+{
+    // Launch the process.
+    m_isLaunching = true;
+    processLauncherWorkQueue().scheduleWork(WorkItem::create(this, &ProcessLauncher::launchProcess));
+}
+
+void ProcessLauncher::didFinishLaunchingProcess(PlatformProcessIdentifier processIdentifier, CoreIPC::Connection::Identifier identifier)
+{
+    m_processIdentifier = processIdentifier;
+    m_isLaunching = false;
+    
+    if (!m_client) {
+        // FIXME: Dispose of the connection identifier.
+        return;
+    }
+    
+    m_client->didFinishLaunching(this, identifier);
+}
+
+void ProcessLauncher::invalidate()
+{
+    m_client = 0;
+}
 
 } // namespace WebKit
-
-#endif // WebProcessLauncher_h

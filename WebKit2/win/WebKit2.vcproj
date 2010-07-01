@@ -954,15 +954,15 @@
 						>
 					</File>
 					<File
-						RelativePath="..\UIProcess\API\C\WKBase.h"
-						>
-					</File>
-					<File
 						RelativePath="..\UIProcess\API\C\WKArray.cpp"
 						>
 					</File>
 					<File
 						RelativePath="..\UIProcess\API\C\WKArray.h"
+						>
+					</File>
+					<File
+						RelativePath="..\UIProcess\API\C\WKBase.h"
 						>
 					</File>
 					<File
@@ -1098,15 +1098,19 @@
 			<Filter
 				Name="Launcher"
 				>
-				<File
-					RelativePath="..\UIProcess\Launcher\WebProcessLauncher.h"
-					>
-				</File>
 				<Filter
 					Name="win"
 					>
 					<File
-						RelativePath="..\UIProcess\Launcher\win\WebProcessLauncher.cpp"
+						RelativePath="..\UIProcess\Launcher\ProcessLauncher.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\UIProcess\Launcher\ProcessLauncher.h"
+						>
+					</File>
+					<File
+						RelativePath="..\UIProcess\Launcher\win\ProcessLauncherWin.cpp"
 						>
 					</File>
 				</Filter>

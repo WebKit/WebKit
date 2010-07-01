@@ -26,10 +26,10 @@
 #include "WebProcessProxy.h"
 
 #include "PluginInfoStore.h"
+#include "ProcessLauncher.h"
 #include "WebContext.h"
 #include "WebPageNamespace.h"
 #include "WebPageProxy.h"
-#include "WebProcessLauncher.h"
 #include "WebProcessManager.h"
 #include "WebProcessMessageKinds.h"
 #include "WebProcessProxyMessageKinds.h"
@@ -65,33 +65,44 @@ WebProcessProxy::WebProcessProxy(WebContext* context)
 WebProcessProxy::~WebProcessProxy()
 {
     ASSERT(!m_connection);
+    
+    for (size_t i = 0; i < m_pendingMessages.size(); ++i)
+        m_pendingMessages[i].destroy();
+
+    if (m_processLauncher) {
+        m_processLauncher->invalidate();
+        m_processLauncher = 0;
+    }
 }
 
 void WebProcessProxy::connect()
 {
-    ProcessInfo info = launchWebProcess(this, m_context->processModel() == ProcessModelSharedSecondaryThread);
-    if (!info.connection) {
-        // FIXME: Report an error.
-        ASSERT(false);
+    if (m_context->processModel() == ProcessModelSharedSecondaryThread) {
+        CoreIPC::Connection::Identifier connectionIdentifier = ProcessLauncher::createWebThread();
+        didFinishLaunching(0, connectionIdentifier);
         return;
     }
 
-    m_connection = info.connection;
-    m_platformProcessIdentifier = info.processIdentifier;
+    ASSERT(!m_processLauncher);
+    m_processLauncher = ProcessLauncher::create(this);
 }
 
 bool WebProcessProxy::sendMessage(CoreIPC::MessageID messageID, std::auto_ptr<CoreIPC::ArgumentEncoder> arguments)
 {
+    // If we're waiting for the web process to launch, we need to stash away the messages so we can send them once we have
+    // a CoreIPC connection.
+    if (isLaunching()) {
+        m_pendingMessages.append(CoreIPC::Connection::OutgoingMessage(messageID, arguments));
+        return true;
+    }
+    
     return m_connection->sendMessage(messageID, arguments);
 }
 
 void WebProcessProxy::terminate()
 {
-#if PLATFORM(MAC)
-    kill(m_platformProcessIdentifier, SIGKILL);
-#elif PLATFORM(WIN)
-    ::TerminateProcess(m_platformProcessIdentifier, 0);
-#endif
+    if (m_processLauncher)
+        m_processLauncher->terminateProcess();
 }
 
 WebPageProxy* WebProcessProxy::webPage(uint64_t pageID) const
@@ -241,6 +252,21 @@ void WebProcessProxy::didBecomeResponsive(ResponsivenessTimer*)
     copyValuesToVector(m_pageMap, pages);
     for (size_t i = 0, size = pages.size(); i < size; ++i)
         pages[i]->processDidBecomeResponsive();
+}
+
+void WebProcessProxy::didFinishLaunching(ProcessLauncher*, const CoreIPC::Connection::Identifier& connectionIdentifier)
+{
+    ASSERT(!m_connection);
+    
+    m_connection = CoreIPC::Connection::createServerConnection(connectionIdentifier, this, RunLoop::main());
+    m_connection->open();
+    
+    for (size_t i = 0; i < m_pendingMessages.size(); ++i) {
+        CoreIPC::Connection::OutgoingMessage& outgoingMessage = m_pendingMessages[i];
+        m_connection->sendMessage(outgoingMessage.messageID(), std::auto_ptr<CoreIPC::ArgumentEncoder>(outgoingMessage.arguments()));
+    }
+
+    m_pendingMessages.clear();    
 }
 
 } // namespace WebKit

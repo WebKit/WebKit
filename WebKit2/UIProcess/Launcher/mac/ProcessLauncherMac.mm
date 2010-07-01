@@ -23,11 +23,12 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "WebProcessLauncher.h"
+#include "ProcessLauncher.h"
 
 #include "RunLoop.h"
 #include "WebProcess.h"
 #include "WebSystemInterface.h"
+
 #include <crt_externs.h>
 #include <runtime/InitializeThreading.h>
 #include <servers/bootstrap.h>
@@ -39,6 +40,44 @@
 extern "C" kern_return_t bootstrap_register2(mach_port_t, name_t, mach_port_t, uint64_t);
 
 namespace WebKit {
+
+void ProcessLauncher::launchProcess()
+{
+    // Create the listening port.
+    mach_port_t listeningPort;
+    mach_port_allocate(mach_task_self(), MACH_PORT_RIGHT_RECEIVE, &listeningPort);
+    
+    // Insert a send right so we can send to it.
+    mach_port_insert_right(mach_task_self(), listeningPort, listeningPort, MACH_MSG_TYPE_MAKE_SEND);
+    
+    NSString *webProcessAppPath = [[NSBundle bundleWithIdentifier:@"com.apple.WebKit2"] pathForAuxiliaryExecutable:@"WebProcess.app"];
+    NSString *webProcessAppExecutablePath = [[NSBundle bundleWithPath:webProcessAppPath] executablePath];
+
+    const char* path = [webProcessAppExecutablePath fileSystemRepresentation];
+    const char* args[] = { path, 0 };
+
+    // Register ourselves.
+    kern_return_t kr = bootstrap_register2(bootstrap_port, (char*)"com.apple.WebKit.WebProcess", listeningPort, /* BOOTSTRAP_PER_PID_SERVICE */ 1);
+    if (kr)
+        NSLog(@"bootstrap_register2 result: %x", kr);
+    
+    pid_t processIdentifier;
+    int result = posix_spawn(&processIdentifier, path, 0, 0, (char *const*)args, *_NSGetEnviron());
+    if (result)
+        NSLog(@"posix_spawn result: %d", result);
+
+    // We've finished launching the process, message back to the main run loop.
+    RunLoop::main()->scheduleWork(WorkItem::create(this, &ProcessLauncher::didFinishLaunchingProcess, processIdentifier, listeningPort));
+}
+
+void ProcessLauncher::terminateProcess()
+{    
+    if (!m_processIdentifier)
+        return;
+    
+    kill(m_processIdentifier, SIGKILL);
+}
+
 
 static void* webThreadBody(void* context)
 {
@@ -59,44 +98,21 @@ static void* webThreadBody(void* context)
     return 0;
 }
 
-ProcessInfo launchWebProcess(CoreIPC::Connection::Client* client, bool useThread)
+CoreIPC::Connection::Identifier ProcessLauncher::createWebThread()
 {
-    ProcessInfo info = { 0, 0 };
+    // Create the service port.
+     mach_port_t listeningPort;
+     mach_port_allocate(mach_task_self(), MACH_PORT_RIGHT_RECEIVE, &listeningPort);
+     
+     // Insert a send right so we can send to it.
+     mach_port_insert_right(mach_task_self(), listeningPort, listeningPort, MACH_MSG_TYPE_MAKE_SEND);
 
-    // Create the listening port.
-    mach_port_t listeningPort;
-    mach_port_allocate(mach_task_self(), MACH_PORT_RIGHT_RECEIVE, &listeningPort);
-    
-    // Insert a send right so we can send to it.
-    mach_port_insert_right(mach_task_self(), listeningPort, listeningPort, MACH_MSG_TYPE_MAKE_SEND);
-
-    info.connection = CoreIPC::Connection::createServerConnection(listeningPort, client, RunLoop::main());
-    info.connection->open();
-
-    if (useThread) {
-        // Pass it to the thread.
-        if (!createThread(webThreadBody, reinterpret_cast<void*>(listeningPort), "WebKit2: WebThread")) {
-            // FIXME: Destroy ports.
-            return info;
-        }
-    } else {
-        NSString *webProcessAppPath = [[NSBundle bundleWithIdentifier:@"com.apple.WebKit2"] pathForAuxiliaryExecutable:@"WebProcess.app"];
-        NSString *webProcessAppExecutablePath = [[NSBundle bundleWithPath:webProcessAppPath] executablePath];
-
-        const char* path = [webProcessAppExecutablePath fileSystemRepresentation];
-        const char* args[] = { path, 0 };
-
-        // Register ourselves.
-        kern_return_t kr = bootstrap_register2(bootstrap_port, (char*)"com.apple.WebKit.WebProcess", listeningPort, /* BOOTSTRAP_PER_PID_SERVICE */ 1);
-        if (kr)
-            NSLog(@"bootstrap_register2 result: %x", kr);
-        
-        int result = posix_spawn(&info.processIdentifier, path, 0, 0, (char *const*)args, *_NSGetEnviron());
-        if (result)
-            NSLog(@"posix_spawn result: %d", result);
+    if (!createThread(webThreadBody, reinterpret_cast<void*>(listeningPort), "WebKit2: WebThread")) {
+        mach_port_destroy(mach_task_self(), listeningPort);
+        return MACH_PORT_NULL;
     }
 
-    return info;
+    return listeningPort;
 }
-
+    
 } // namespace WebKit

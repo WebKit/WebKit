@@ -43,6 +43,7 @@
 		1AA1CC5D100FA1A10078DEBC /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AA1CC5C100FA1A10078DEBC /* QuartzCore.framework */; };
 		1AA1CD07100FA1BA0078DEBC /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AA1CD06100FA1BA0078DEBC /* Carbon.framework */; };
 		1AADE6FF10D855FC00D3D63D /* ApplicationServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AADE6FE10D855FC00D3D63D /* ApplicationServices.framework */; };
+		1AE117F611DBB30900981615 /* ProcessLauncher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AE117F511DBB30900981615 /* ProcessLauncher.cpp */; };
 		1AEFCC1211D01F96008219D3 /* PluginInfoStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AEFCC1011D01F96008219D3 /* PluginInfoStore.h */; };
 		1AEFCC1311D01F96008219D3 /* PluginInfoStore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AEFCC1111D01F96008219D3 /* PluginInfoStore.cpp */; };
 		1AEFCCBD11D02C5E008219D3 /* PluginInfoStoreMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AEFCCBC11D02C5E008219D3 /* PluginInfoStoreMac.mm */; };
@@ -93,7 +94,7 @@
 		BC111B0F112F5E4F00337BAB /* WebPageProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC111B0B112F5E4F00337BAB /* WebPageProxy.cpp */; };
 		BC111B10112F5E4F00337BAB /* WebProcessManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC111B0C112F5E4F00337BAB /* WebProcessManager.cpp */; };
 		BC111B11112F5E4F00337BAB /* WebProcessProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC111B0D112F5E4F00337BAB /* WebProcessProxy.cpp */; };
-		BC111B1D112F5FE600337BAB /* WebProcessLauncher.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC111B1B112F5FE600337BAB /* WebProcessLauncher.mm */; };
+		BC111B1D112F5FE600337BAB /* ProcessLauncherMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC111B1B112F5FE600337BAB /* ProcessLauncherMac.mm */; };
 		BC111B50112F619200337BAB /* PageClientImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = BC111B4B112F619200337BAB /* PageClientImpl.h */; };
 		BC111B51112F619200337BAB /* PageClientImpl.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC111B4C112F619200337BAB /* PageClientImpl.mm */; };
 		BC111B5D112F629800337BAB /* WebEventFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = BC111B5B112F629800337BAB /* WebEventFactory.h */; };
@@ -104,7 +105,7 @@
 		BC131BC911726C2800B69727 /* CoreIPCMessageKinds.h in Headers */ = {isa = PBXBuildFile; fileRef = BC131BC811726C2800B69727 /* CoreIPCMessageKinds.h */; };
 		BC177465118B9FF4007D9E9A /* WKPagePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = BC177464118B9FF4007D9E9A /* WKPagePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC17753F118BABF0007D9E9A /* GenericCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = BC17753E118BABF0007D9E9A /* GenericCallback.h */; };
-		BC1A7C581136E19C00FB7167 /* WebProcessLauncher.h in Headers */ = {isa = PBXBuildFile; fileRef = BC1A7C571136E19C00FB7167 /* WebProcessLauncher.h */; };
+		BC1A7C581136E19C00FB7167 /* ProcessLauncher.h in Headers */ = {isa = PBXBuildFile; fileRef = BC1A7C571136E19C00FB7167 /* ProcessLauncher.h */; };
 		BC1B419811D41D570011E8DD /* WKBundlePagePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = BC1B419711D41D570011E8DD /* WKBundlePagePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC1DD7B2114DC396005ADAF3 /* WebCoreArgumentCoders.h in Headers */ = {isa = PBXBuildFile; fileRef = BC1DD7B1114DC396005ADAF3 /* WebCoreArgumentCoders.h */; };
 		BC204EE211C83E98008F3375 /* InjectedBundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC204EE011C83E98008F3375 /* InjectedBundle.cpp */; };
@@ -277,6 +278,7 @@
 		1AA1CC5C100FA1A10078DEBC /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = /System/Library/Frameworks/QuartzCore.framework; sourceTree = "<absolute>"; };
 		1AA1CD06100FA1BA0078DEBC /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = /System/Library/Frameworks/Carbon.framework; sourceTree = "<absolute>"; };
 		1AADE6FE10D855FC00D3D63D /* ApplicationServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ApplicationServices.framework; path = System/Library/Frameworks/ApplicationServices.framework; sourceTree = SDKROOT; };
+		1AE117F511DBB30900981615 /* ProcessLauncher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProcessLauncher.cpp; sourceTree = "<group>"; };
 		1AEFCC1011D01F96008219D3 /* PluginInfoStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginInfoStore.h; sourceTree = "<group>"; };
 		1AEFCC1111D01F96008219D3 /* PluginInfoStore.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PluginInfoStore.cpp; sourceTree = "<group>"; };
 		1AEFCCBC11D02C5E008219D3 /* PluginInfoStoreMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PluginInfoStoreMac.mm; sourceTree = "<group>"; };
@@ -329,7 +331,7 @@
 		BC111B0B112F5E4F00337BAB /* WebPageProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebPageProxy.cpp; sourceTree = "<group>"; };
 		BC111B0C112F5E4F00337BAB /* WebProcessManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebProcessManager.cpp; sourceTree = "<group>"; };
 		BC111B0D112F5E4F00337BAB /* WebProcessProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebProcessProxy.cpp; sourceTree = "<group>"; };
-		BC111B1B112F5FE600337BAB /* WebProcessLauncher.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebProcessLauncher.mm; sourceTree = "<group>"; };
+		BC111B1B112F5FE600337BAB /* ProcessLauncherMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ProcessLauncherMac.mm; sourceTree = "<group>"; };
 		BC111B4B112F619200337BAB /* PageClientImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PageClientImpl.h; sourceTree = "<group>"; };
 		BC111B4C112F619200337BAB /* PageClientImpl.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PageClientImpl.mm; sourceTree = "<group>"; };
 		BC111B5B112F629800337BAB /* WebEventFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebEventFactory.h; sourceTree = "<group>"; };
@@ -340,7 +342,7 @@
 		BC131BC811726C2800B69727 /* CoreIPCMessageKinds.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoreIPCMessageKinds.h; sourceTree = "<group>"; };
 		BC177464118B9FF4007D9E9A /* WKPagePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKPagePrivate.h; sourceTree = "<group>"; };
 		BC17753E118BABF0007D9E9A /* GenericCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GenericCallback.h; sourceTree = "<group>"; };
-		BC1A7C571136E19C00FB7167 /* WebProcessLauncher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebProcessLauncher.h; sourceTree = "<group>"; };
+		BC1A7C571136E19C00FB7167 /* ProcessLauncher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProcessLauncher.h; sourceTree = "<group>"; };
 		BC1B419711D41D570011E8DD /* WKBundlePagePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKBundlePagePrivate.h; sourceTree = "<group>"; };
 		BC1DD7B1114DC396005ADAF3 /* WebCoreArgumentCoders.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreArgumentCoders.h; sourceTree = "<group>"; };
 		BC204EE011C83E98008F3375 /* InjectedBundle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedBundle.cpp; sourceTree = "<group>"; };
@@ -814,7 +816,8 @@
 			isa = PBXGroup;
 			children = (
 				BC111B19112F5FC500337BAB /* mac */,
-				BC1A7C571136E19C00FB7167 /* WebProcessLauncher.h */,
+				1AE117F511DBB30900981615 /* ProcessLauncher.cpp */,
+				BC1A7C571136E19C00FB7167 /* ProcessLauncher.h */,
 			);
 			path = Launcher;
 			sourceTree = "<group>";
@@ -822,7 +825,7 @@
 		BC111B19112F5FC500337BAB /* mac */ = {
 			isa = PBXGroup;
 			children = (
-				BC111B1B112F5FE600337BAB /* WebProcessLauncher.mm */,
+				BC111B1B112F5FE600337BAB /* ProcessLauncherMac.mm */,
 			);
 			path = mac;
 			sourceTree = "<group>";
@@ -1039,7 +1042,7 @@
 				1A433F0D113C53DD00FACDE9 /* WebErrors.h in Headers */,
 				BCEE98C7113314D7006BCC24 /* WebPageNamespace.h in Headers */,
 				BCEE98CD1133174C006BCC24 /* WKPageNamespace.h in Headers */,
-				BC1A7C581136E19C00FB7167 /* WebProcessLauncher.h in Headers */,
+				BC1A7C581136E19C00FB7167 /* ProcessLauncher.h in Headers */,
 				BC2E6E881141971500A63B1E /* RunLoop.h in Headers */,
 				BC2E6E8C1141971500A63B1E /* WorkItem.h in Headers */,
 				BC2E6E8E1141971500A63B1E /* WorkQueue.h in Headers */,
@@ -1215,7 +1218,7 @@
 				BC111B0F112F5E4F00337BAB /* WebPageProxy.cpp in Sources */,
 				BC111B10112F5E4F00337BAB /* WebProcessManager.cpp in Sources */,
 				BC111B11112F5E4F00337BAB /* WebProcessProxy.cpp in Sources */,
-				BC111B1D112F5FE600337BAB /* WebProcessLauncher.mm in Sources */,
+				BC111B1D112F5FE600337BAB /* ProcessLauncherMac.mm in Sources */,
 				BC111B51112F619200337BAB /* PageClientImpl.mm in Sources */,
 				BC111B5E112F629800337BAB /* WebEventFactory.mm in Sources */,
 				BCEE966C112FAF57006BCC24 /* Attachment.cpp in Sources */,
@@ -1260,6 +1263,7 @@
 				0F5265B611DD37700006D33C /* LayerBackedDrawingAreaMac.mm in Sources */,
 				0F5265B911DD377F0006D33C /* LayerBackedDrawingAreaProxy.cpp in Sources */,
 				0F5265BC11DD37860006D33C /* LayerBackedDrawingAreaProxyMac.mm in Sources */,
+				1AE117F611DBB30900981615 /* ProcessLauncher.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
