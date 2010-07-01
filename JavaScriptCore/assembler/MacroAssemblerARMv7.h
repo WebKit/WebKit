@@ -38,10 +38,13 @@ class MacroAssemblerARMv7 : public AbstractMacroAssembler<ARMv7Assembler> {
     // FIXME: switch dataTempRegister & addressTempRegister, or possibly use r7?
     //        - dTR is likely used more than aTR, and we'll get better instruction
     //        encoding if it's in the low 8 registers.
-    static const ARMRegisters::RegisterID dataTempRegister = ARMRegisters::ip;
+    static const RegisterID dataTempRegister = ARMRegisters::ip;
     static const RegisterID addressTempRegister = ARMRegisters::r3;
-    static const FPRegisterID fpTempRegister = ARMRegisters::d7;
 
+    static const ARMRegisters::FPDoubleRegisterID fpTempRegister = ARMRegisters::d7;
+    inline ARMRegisters::FPSingleRegisterID fpTempRegisterAsSingle() { return ARMRegisters::asSingle(fpTempRegister); }
+
+public:
     struct ArmAddress {
         enum AddressType {
             HasOffset,
@@ -73,6 +76,7 @@ class MacroAssemblerARMv7 : public AbstractMacroAssembler<ARMv7Assembler> {
     };
     
 public:
+    typedef ARMRegisters::FPDoubleRegisterID FPRegisterID;
 
     static const Scale ScalePtr = TimesFour;
 
@@ -220,6 +224,11 @@ public:
     {
         move(imm, dataTempRegister);
         m_assembler.smull(dest, dataTempRegister, src, dataTempRegister);
+    }
+
+    void neg32(RegisterID srcDest)
+    {
+        m_assembler.neg(srcDest, srcDest);
     }
 
     void not32(RegisterID srcDest)
@@ -540,6 +549,12 @@ public:
         m_assembler.vldr(dest, base, offset);
     }
 
+    void loadDouble(const void* address, FPRegisterID dest)
+    {
+        move(ImmPtr(address), addressTempRegister);
+        m_assembler.vldr(dest, addressTempRegister, 0);
+    }
+
     void storeDouble(FPRegisterID src, ImplicitAddress address)
     {
         RegisterID base = address.base;
@@ -564,6 +579,11 @@ public:
     {
         loadDouble(src, fpTempRegister);
         addDouble(fpTempRegister, dest);
+    }
+
+    void divDouble(FPRegisterID src, FPRegisterID dest)
+    {
+        m_assembler.vdiv_F64(dest, dest, src);
     }
 
     void subDouble(FPRegisterID src, FPRegisterID dest)
@@ -595,8 +615,24 @@ public:
 
     void convertInt32ToDouble(RegisterID src, FPRegisterID dest)
     {
-        m_assembler.vmov(fpTempRegister, src);
-        m_assembler.vcvt_F64_S32(dest, fpTempRegister);
+        m_assembler.vmov(fpTempRegisterAsSingle(), src);
+        m_assembler.vcvt_F64_S32(dest, fpTempRegisterAsSingle());
+    }
+
+    void convertInt32ToDouble(Address address, FPRegisterID dest)
+    {
+        // Fixme: load directly into the fpr!
+        load32(address, dataTempRegister);
+        m_assembler.vmov(fpTempRegisterAsSingle(), dataTempRegister);
+        m_assembler.vcvt_F64_S32(dest, fpTempRegisterAsSingle());
+    }
+
+    void convertInt32ToDouble(AbsoluteAddress address, FPRegisterID dest)
+    {
+        // Fixme: load directly into the fpr!
+        load32(address.m_ptr, dataTempRegister);
+        m_assembler.vmov(fpTempRegisterAsSingle(), dataTempRegister);
+        m_assembler.vcvt_F64_S32(dest, fpTempRegisterAsSingle());
     }
 
     Jump branchDouble(DoubleCondition cond, FPRegisterID left, FPRegisterID right)
@@ -629,6 +665,27 @@ public:
         return jump();
     }
 
+    // Convert 'src' to an integer, and places the resulting 'dest'.
+    // If the result is not representable as a 32 bit value, branch.
+    // May also branch for some values that are representable in 32 bits
+    // (specifically, in this case, 0).
+    void branchConvertDoubleToInt32(FPRegisterID src, RegisterID dest, JumpList& failureCases, FPRegisterID)
+    {
+        m_assembler.vcvtr_S32_F64(fpTempRegisterAsSingle(), src);
+        m_assembler.vmov(dest, fpTempRegisterAsSingle());
+
+        // Convert the integer result back to float & compare to the original value - if not equal or unordered (NaN) then jump.
+        m_assembler.vcvt_F64_S32(fpTempRegister, fpTempRegisterAsSingle());
+        failureCases.append(branchDouble(DoubleNotEqualOrUnordered, src, fpTempRegister));
+
+        // If the result is zero, it might have been -0.0, and the double comparison won't catch this!
+        failureCases.append(branchTest32(Zero, dest));
+    }
+
+    void zeroDouble(FPRegisterID dest)
+    {
+        m_assembler.vmov_F64_0(dest);
+    }
 
     // Stack manipulation operations:
     //
@@ -970,6 +1027,13 @@ public:
         return branch32(NotEqual, addressTempRegister, dataTempRegister);
     }
 
+    Jump branchOr32(Condition cond, RegisterID src, RegisterID dest)
+    {
+        ASSERT((cond == Signed) || (cond == Zero) || (cond == NonZero));
+        m_assembler.orr_S(dest, dest, src);
+        return Jump(makeBranch(cond));
+    }
+
     Jump branchSub32(Condition cond, RegisterID src, RegisterID dest)
     {
         ASSERT((cond == Overflow) || (cond == Signed) || (cond == Zero) || (cond == NonZero));
@@ -1034,12 +1098,33 @@ public:
         m_assembler.mov(dest, ARMThumbImmediate::makeUInt16(0));
     }
 
+    void set32(Condition cond, Address left, RegisterID right, RegisterID dest)
+    {
+        load32(left, dataTempRegister);
+        set32(cond, dataTempRegister, right, dest);
+    }
+
     void set32(Condition cond, RegisterID left, Imm32 right, RegisterID dest)
     {
         compare32(left, right);
         m_assembler.it(armV7Condition(cond), false);
         m_assembler.mov(dest, ARMThumbImmediate::makeUInt16(1));
         m_assembler.mov(dest, ARMThumbImmediate::makeUInt16(0));
+    }
+
+    void set8(Condition cond, RegisterID left, RegisterID right, RegisterID dest)
+    {
+        set32(cond, left, right, dest);
+    }
+
+    void set8(Condition cond, Address left, RegisterID right, RegisterID dest)
+    {
+        set32(cond, left, right, dest);
+    }
+
+    void set8(Condition cond, RegisterID left, Imm32 right, RegisterID dest)
+    {
+        set32(cond, left, right, dest);
     }
 
     // FIXME:

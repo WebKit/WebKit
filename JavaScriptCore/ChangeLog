@@ -1,3 +1,54 @@
+2010-07-01  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Bug 41490 - Add missing operations to MacroAssemblerARMv7
+        Also, make single, double, quad register numbers in ARMv7Assembler distinct & strongly typed.
+
+        * assembler/ARMv7Assembler.h:
+        (JSC::ARMRegisters::):
+        (JSC::ARMRegisters::asSingle):
+        (JSC::ARMRegisters::asDouble):
+        (JSC::VFPImmediate::VFPImmediate):
+        (JSC::VFPImmediate::isValid):
+        (JSC::VFPImmediate::value):
+        (JSC::ARMv7Assembler::singleRegisterMask):
+        (JSC::ARMv7Assembler::doubleRegisterMask):
+        (JSC::ARMv7Assembler::):
+        (JSC::ARMv7Assembler::add_S):
+        (JSC::ARMv7Assembler::neg):
+        (JSC::ARMv7Assembler::orr_S):
+        (JSC::ARMv7Assembler::sub):
+        (JSC::ARMv7Assembler::sub_S):
+        (JSC::ARMv7Assembler::vadd_F64):
+        (JSC::ARMv7Assembler::vcmp_F64):
+        (JSC::ARMv7Assembler::vcvt_F64_S32):
+        (JSC::ARMv7Assembler::vcvtr_S32_F64):
+        (JSC::ARMv7Assembler::vdiv_F64):
+        (JSC::ARMv7Assembler::vldr):
+        (JSC::ARMv7Assembler::vmov_F64_0):
+        (JSC::ARMv7Assembler::vmov):
+        (JSC::ARMv7Assembler::vmul_F64):
+        (JSC::ARMv7Assembler::vstr):
+        (JSC::ARMv7Assembler::vsub_F64):
+        (JSC::ARMv7Assembler::vcvt):
+        (JSC::ARMv7Assembler::vmem):
+        * assembler/AbstractMacroAssembler.h:
+        * assembler/MacroAssemblerARM.h:
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::fpTempRegisterAsSingle):
+        (JSC::MacroAssemblerARMv7::neg32):
+        (JSC::MacroAssemblerARMv7::loadDouble):
+        (JSC::MacroAssemblerARMv7::divDouble):
+        (JSC::MacroAssemblerARMv7::convertInt32ToDouble):
+        (JSC::MacroAssemblerARMv7::branchConvertDoubleToInt32):
+        (JSC::MacroAssemblerARMv7::zeroDouble):
+        (JSC::MacroAssemblerARMv7::branchOr32):
+        (JSC::MacroAssemblerARMv7::set32):
+        (JSC::MacroAssemblerARMv7::set8):
+        * assembler/MacroAssemblerMIPS.h:
+        * assembler/MacroAssemblerX86Common.h:
+
 2010-07-01  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Geoff Garen.

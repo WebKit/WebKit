@@ -40,6 +40,8 @@ class MacroAssemblerARM : public AbstractMacroAssembler<ARMAssembler> {
     static const int DoubleConditionBitSpecial = 0x10;
     COMPILE_ASSERT(!(DoubleConditionBitSpecial & DoubleConditionMask), DoubleConditionBitSpecial_should_not_interfere_with_ARMAssembler_Condition_codes);
 public:
+    typedef ARMRegisters::FPRegisterID FPRegisterID;
+
     enum Condition {
         Equal = ARMAssembler::EQ,
         NotEqual = ARMAssembler::NE,

@@ -56,107 +56,122 @@ namespace ARMRegisters {
         r15, pc = r15,
     } RegisterID;
 
-    // s0 == d0 == q0
-    // s4 == d2 == q1
-    // etc
     typedef enum {
-        s0 = 0,
-        s1 = 1,
-        s2 = 2,
-        s3 = 3,
-        s4 = 4,
-        s5 = 5,
-        s6 = 6,
-        s7 = 7,
-        s8 = 8,
-        s9 = 9,
-        s10 = 10,
-        s11 = 11,
-        s12 = 12,
-        s13 = 13,
-        s14 = 14,
-        s15 = 15,
-        s16 = 16,
-        s17 = 17,
-        s18 = 18,
-        s19 = 19,
-        s20 = 20,
-        s21 = 21,
-        s22 = 22,
-        s23 = 23,
-        s24 = 24,
-        s25 = 25,
-        s26 = 26,
-        s27 = 27,
-        s28 = 28,
-        s29 = 29,
-        s30 = 30,
-        s31 = 31,
-        d0 = 0 << 1,
-        d1 = 1 << 1,
-        d2 = 2 << 1,
-        d3 = 3 << 1,
-        d4 = 4 << 1,
-        d5 = 5 << 1,
-        d6 = 6 << 1,
-        d7 = 7 << 1,
-        d8 = 8 << 1,
-        d9 = 9 << 1,
-        d10 = 10 << 1,
-        d11 = 11 << 1,
-        d12 = 12 << 1,
-        d13 = 13 << 1,
-        d14 = 14 << 1,
-        d15 = 15 << 1,
-        d16 = 16 << 1,
-        d17 = 17 << 1,
-        d18 = 18 << 1,
-        d19 = 19 << 1,
-        d20 = 20 << 1,
-        d21 = 21 << 1,
-        d22 = 22 << 1,
-        d23 = 23 << 1,
-        d24 = 24 << 1,
-        d25 = 25 << 1,
-        d26 = 26 << 1,
-        d27 = 27 << 1,
-        d28 = 28 << 1,
-        d29 = 29 << 1,
-        d30 = 30 << 1,
-        d31 = 31 << 1,
-        q0 = 0 << 2,
-        q1 = 1 << 2,
-        q2 = 2 << 2,
-        q3 = 3 << 2,
-        q4 = 4 << 2,
-        q5 = 5 << 2,
-        q6 = 6 << 2,
-        q7 = 7 << 2,
-        q8 = 8 << 2,
-        q9 = 9 << 2,
-        q10 = 10 << 2,
-        q11 = 11 << 2,
-        q12 = 12 << 2,
-        q13 = 13 << 2,
-        q14 = 14 << 2,
-        q15 = 15 << 2,
-        q16 = 16 << 2,
-        q17 = 17 << 2,
-        q18 = 18 << 2,
-        q19 = 19 << 2,
-        q20 = 20 << 2,
-        q21 = 21 << 2,
-        q22 = 22 << 2,
-        q23 = 23 << 2,
-        q24 = 24 << 2,
-        q25 = 25 << 2,
-        q26 = 26 << 2,
-        q27 = 27 << 2,
-        q28 = 28 << 2,
-        q29 = 29 << 2,
-        q30 = 30 << 2,
-        q31 = 31 << 2,
-    } FPRegisterID;
+        s0,
+        s1,
+        s2,
+        s3,
+        s4,
+        s5,
+        s6,
+        s7,
+        s8,
+        s9,
+        s10,
+        s11,
+        s12,
+        s13,
+        s14,
+        s15,
+        s16,
+        s17,
+        s18,
+        s19,
+        s20,
+        s21,
+        s22,
+        s23,
+        s24,
+        s25,
+        s26,
+        s27,
+        s28,
+        s29,
+        s30,
+        s31,
+    } FPSingleRegisterID;
+
+    typedef enum {
+        d0,
+        d1,
+        d2,
+        d3,
+        d4,
+        d5,
+        d6,
+        d7,
+        d8,
+        d9,
+        d10,
+        d11,
+        d12,
+        d13,
+        d14,
+        d15,
+        d16,
+        d17,
+        d18,
+        d19,
+        d20,
+        d21,
+        d22,
+        d23,
+        d24,
+        d25,
+        d26,
+        d27,
+        d28,
+        d29,
+        d30,
+        d31,
+    } FPDoubleRegisterID;
+
+    typedef enum {
+        q0,
+        q1,
+        q2,
+        q3,
+        q4,
+        q5,
+        q6,
+        q7,
+        q8,
+        q9,
+        q10,
+        q11,
+        q12,
+        q13,
+        q14,
+        q15,
+        q16,
+        q17,
+        q18,
+        q19,
+        q20,
+        q21,
+        q22,
+        q23,
+        q24,
+        q25,
+        q26,
+        q27,
+        q28,
+        q29,
+        q30,
+        q31,
+    } FPQuadRegisterID;
+
+    inline FPSingleRegisterID asSingle(FPDoubleRegisterID reg)
+    {
+        ASSERT(reg < d16);
+        return (FPSingleRegisterID)(reg << 1);
+    }
+
+    inline FPDoubleRegisterID asDouble(FPSingleRegisterID reg)
+    {
+        ASSERT(!(reg & 1));
+        return (FPDoubleRegisterID)(reg >> 1);
+    }
 }
 
 class ARMv7Assembler;
@@ -354,6 +369,39 @@ private:
     ThumbImmediateValue m_value;
 };
 
+class VFPImmediate {
+public:
+    VFPImmediate(double d)
+        : m_value(-1)
+    {
+        union {
+            uint64_t i;
+            double d;
+        } u;
+
+        u.d = d;
+
+        int sign = (u.i >> 63);
+        int exponent = (u.i >> 52) & 0x7ff;
+        uint64_t mantissa = u.i & 0x000fffffffffffffull;
+
+        if ((exponent >= 0x3fc) && (exponent <= 0x403) && !(mantissa & 0x0000ffffffffffffull))
+            m_value = (sign << 7) | ((exponent & 7) << 4) | (int)(mantissa >> 48);
+    }
+
+    bool isValid()
+    {
+        return m_value != -1;
+    }
+    
+    uint8_t value()
+    {
+        return (uint8_t)m_value;
+    }
+
+private:
+    int m_value;
+};
 
 typedef enum {
     SRType_LSL,
@@ -417,7 +465,9 @@ public:
     }
 
     typedef ARMRegisters::RegisterID RegisterID;
-    typedef ARMRegisters::FPRegisterID FPRegisterID;
+    typedef ARMRegisters::FPSingleRegisterID FPSingleRegisterID;
+    typedef ARMRegisters::FPDoubleRegisterID FPDoubleRegisterID;
+    typedef ARMRegisters::FPQuadRegisterID FPQuadRegisterID;
 
     // (HS, LO, HI, LS) -> (AE, B, A, BE)
     // (VS, VC) -> (O, NO)
@@ -503,53 +553,16 @@ private:
         return (reg == ARMRegisters::sp) || (reg == ARMRegisters::pc);
     }
 
-    bool isSingleRegister(FPRegisterID reg)
+    uint32_t singleRegisterMask(FPSingleRegisterID rdNum, int highBitsShift, int lowBitShift)
     {
-        // Check that the high bit isn't set (q16+), and that the low bit isn't (s1, s3, etc).
-        return !(reg & ~31);
-    }
-
-    bool isDoubleRegister(FPRegisterID reg)
-    {
-        // Check that the high bit isn't set (q16+), and that the low bit isn't (s1, s3, etc).
-        return !(reg & ~(31 << 1));
-    }
-
-    bool isQuadRegister(FPRegisterID reg)
-    {
-        return !(reg & ~(31 << 2));
-    }
-
-    uint32_t singleRegisterNum(FPRegisterID reg)
-    {
-        ASSERT(isSingleRegister(reg));
-        return reg;
-    }
-
-    uint32_t doubleRegisterNum(FPRegisterID reg)
-    {
-        ASSERT(isDoubleRegister(reg));
-        return reg >> 1;
-    }
-
-    uint32_t quadRegisterNum(FPRegisterID reg)
-    {
-        ASSERT(isQuadRegister(reg));
-        return reg >> 2;
-    }
-
-    uint32_t singleRegisterMask(FPRegisterID rd, int highBitsShift, int lowBitShift)
-    {
-        uint32_t rdNum = singleRegisterNum(rd);
         uint32_t rdMask = (rdNum >> 1) << highBitsShift;
         if (rdNum & 1)
             rdMask |= 1 << lowBitShift;
         return rdMask;
     }
 
-    uint32_t doubleRegisterMask(FPRegisterID rd, int highBitShift, int lowBitsShift)
+    uint32_t doubleRegisterMask(FPDoubleRegisterID rdNum, int highBitShift, int lowBitsShift)
     {
-        uint32_t rdNum = doubleRegisterNum(rd);
         uint32_t rdMask = (rdNum & 0xf) << lowBitsShift;
         if (rdNum & 16)
             rdMask |= 1 << highBitShift;
@@ -558,22 +571,17 @@ private:
 
     typedef enum {
         OP_ADD_reg_T1       = 0x1800,
-        OP_ADD_S_reg_T1     = 0x1800,
         OP_SUB_reg_T1       = 0x1A00,
-        OP_SUB_S_reg_T1     = 0x1A00,
         OP_ADD_imm_T1       = 0x1C00,
-        OP_ADD_S_imm_T1     = 0x1C00,
         OP_SUB_imm_T1       = 0x1E00,
-        OP_SUB_S_imm_T1     = 0x1E00,
         OP_MOV_imm_T1       = 0x2000,
         OP_CMP_imm_T1       = 0x2800,
         OP_ADD_imm_T2       = 0x3000,
-        OP_ADD_S_imm_T2     = 0x3000,
         OP_SUB_imm_T2       = 0x3800,
-        OP_SUB_S_imm_T2     = 0x3800,
         OP_AND_reg_T1       = 0x4000,
         OP_EOR_reg_T1       = 0x4040,
         OP_TST_reg_T1       = 0x4200,
+        OP_RSB_imm_T1       = 0x4240,
         OP_CMP_reg_T1       = 0x4280,
         OP_ORR_reg_T1       = 0x4300,
         OP_MVN_reg_T1       = 0x43C0,
@@ -603,6 +611,7 @@ private:
         OP_AND_reg_T2   = 0xEA00,
         OP_TST_reg_T2   = 0xEA10,
         OP_ORR_reg_T2   = 0xEA40,
+        OP_ORR_S_reg_T2 = 0xEA50,
         OP_ASR_imm_T1   = 0xEA4F,
         OP_LSL_imm_T1   = 0xEA4F,
         OP_LSR_imm_T1   = 0xEA4F,
@@ -627,6 +636,7 @@ private:
         OP_SUB_imm_T3   = 0xF1A0,
         OP_SUB_S_imm_T3 = 0xF1B0,
         OP_CMP_imm_T2   = 0xF1B0,
+        OP_RSB_imm_T2   = 0xF1C0,
         OP_ADD_imm_T4   = 0xF200,
         OP_MOV_imm_T3   = 0xF240,
         OP_SUB_imm_T4   = 0xF2A0,
@@ -784,10 +794,10 @@ public:
 
         if (!((rd | rn) & 8)) {
             if (imm.isUInt3()) {
-                m_formatter.oneWordOp7Reg3Reg3Reg3(OP_ADD_S_imm_T1, (RegisterID)imm.getUInt3(), rn, rd);
+                m_formatter.oneWordOp7Reg3Reg3Reg3(OP_ADD_imm_T1, (RegisterID)imm.getUInt3(), rn, rd);
                 return;
             } else if ((rd == rn) && imm.isUInt8()) {
-                m_formatter.oneWordOp5Reg3Imm8(OP_ADD_S_imm_T2, rd, imm.getUInt8());
+                m_formatter.oneWordOp5Reg3Imm8(OP_ADD_imm_T2, rd, imm.getUInt8());
                 return;
             }
         }
@@ -809,7 +819,7 @@ public:
     void add_S(RegisterID rd, RegisterID rn, RegisterID rm)
     {
         if (!((rd | rn | rm) & 8))
-            m_formatter.oneWordOp7Reg3Reg3Reg3(OP_ADD_S_reg_T1, rm, rn, rd);
+            m_formatter.oneWordOp7Reg3Reg3Reg3(OP_ADD_reg_T1, rm, rn, rd);
         else
             add_S(rd, rn, rm, ShiftTypeAndAmount());
     }
@@ -1219,6 +1229,12 @@ public:
             mvn(rd, rm, ShiftTypeAndAmount());
     }
 
+    void neg(RegisterID rd, RegisterID rm)
+    {
+        ARMThumbImmediate zero = ARMThumbImmediate::makeUInt12(0);
+        sub(rd, zero, rm);
+    }
+
     void orr(RegisterID rd, RegisterID rn, ARMThumbImmediate imm)
     {
         ASSERT(!BadReg(rd));
@@ -1243,6 +1259,24 @@ public:
             m_formatter.oneWordOp10Reg3Reg3(OP_ORR_reg_T1, rn, rd);
         else
             orr(rd, rn, rm, ShiftTypeAndAmount());
+    }
+
+    void orr_S(RegisterID rd, RegisterID rn, RegisterID rm, ShiftTypeAndAmount shift)
+    {
+        ASSERT(!BadReg(rd));
+        ASSERT(!BadReg(rn));
+        ASSERT(!BadReg(rm));
+        m_formatter.twoWordOp12Reg4FourFours(OP_ORR_S_reg_T2, rn, FourFours(shift.hi4(), rd, shift.lo4(), rm));
+    }
+
+    void orr_S(RegisterID rd, RegisterID rn, RegisterID rm)
+    {
+        if ((rd == rn) && !((rd | rm) & 8))
+            m_formatter.oneWordOp10Reg3Reg3(OP_ORR_reg_T1, rm, rd);
+        else if ((rd == rm) && !((rd | rn) & 8))
+            m_formatter.oneWordOp10Reg3Reg3(OP_ORR_reg_T1, rn, rd);
+        else
+            orr_S(rd, rn, rm, ShiftTypeAndAmount());
     }
 
     void ror(RegisterID rd, RegisterID rm, int32_t shiftAmount)
@@ -1361,6 +1395,19 @@ public:
         }
     }
 
+    void sub(RegisterID rd, ARMThumbImmediate imm, RegisterID rn)
+    {
+        ASSERT(rd != ARMRegisters::pc);
+        ASSERT(rn != ARMRegisters::pc);
+        ASSERT(imm.isValid());
+        ASSERT(imm.isUInt12());
+
+        if (!((rd | rn) & 8) && !imm.getUInt12())
+            m_formatter.oneWordOp10Reg3Reg3(OP_RSB_imm_T1, rn, rd);
+        else
+            m_formatter.twoWordOp5i6Imm4Reg4EncodedImm(OP_RSB_imm_T2, rn, rd, imm);
+    }
+
     void sub(RegisterID rd, RegisterID rn, RegisterID rm, ShiftTypeAndAmount shift)
     {
         ASSERT((rd != ARMRegisters::sp) || (rn == ARMRegisters::sp));
@@ -1393,10 +1440,10 @@ public:
             return;
         } else if (!((rd | rn) & 8)) {
             if (imm.isUInt3()) {
-                m_formatter.oneWordOp7Reg3Reg3Reg3(OP_SUB_S_imm_T1, (RegisterID)imm.getUInt3(), rn, rd);
+                m_formatter.oneWordOp7Reg3Reg3Reg3(OP_SUB_imm_T1, (RegisterID)imm.getUInt3(), rn, rd);
                 return;
             } else if ((rd == rn) && imm.isUInt8()) {
-                m_formatter.oneWordOp5Reg3Imm8(OP_SUB_S_imm_T2, rd, imm.getUInt8());
+                m_formatter.oneWordOp5Reg3Imm8(OP_SUB_imm_T2, rd, imm.getUInt8());
                 return;
             }
         }
@@ -1418,7 +1465,7 @@ public:
     void sub_S(RegisterID rd, RegisterID rn, RegisterID rm)
     {
         if (!((rd | rn | rm) & 8))
-            m_formatter.oneWordOp7Reg3Reg3Reg3(OP_SUB_S_reg_T1, rm, rn, rd);
+            m_formatter.oneWordOp7Reg3Reg3Reg3(OP_SUB_reg_T1, rm, rn, rd);
         else
             sub_S(rd, rn, rm, ShiftTypeAndAmount());
     }
@@ -1446,37 +1493,47 @@ public:
             m_formatter.oneWordOp10Reg3Reg3(OP_TST_reg_T1, rm, rn);
     }
 
-    void vadd_F64(FPRegisterID rd, FPRegisterID rn, FPRegisterID rm)
+    void vadd_F64(FPDoubleRegisterID rd, FPDoubleRegisterID rn, FPDoubleRegisterID rm)
     {
         m_formatter.vfpOp(0x0b00ee30 | doubleRegisterMask(rd, 6, 28) | doubleRegisterMask(rn, 23, 0) | doubleRegisterMask(rm, 21, 16));
     }
 
-    void vcmp_F64(FPRegisterID rd, FPRegisterID rm)
+    void vcmp_F64(FPDoubleRegisterID rd, FPDoubleRegisterID rm)
     {
         m_formatter.vfpOp(0x0bc0eeb4 | doubleRegisterMask(rd, 6, 28) | doubleRegisterMask(rm, 21, 16));
     }
 
-    void vcvt_F64_S32(FPRegisterID fd, FPRegisterID sm)
+    void vcvt_F64_S32(FPDoubleRegisterID rd, FPSingleRegisterID rm)
     {
-        m_formatter.vfpOp(0x0bc0eeb8 | doubleRegisterMask(fd, 6, 28) | singleRegisterMask(sm, 16, 21));
+        vcvt(doubleRegisterMask(rd, 6, 28), singleRegisterMask(rm, 16, 21), false, false, false, true);
     }
 
-    void vcvt_S32_F64(FPRegisterID sd, FPRegisterID fm)
+    void vcvtr_S32_F64(FPSingleRegisterID rd, FPDoubleRegisterID rm)
     {
-        m_formatter.vfpOp(0x0bc0eebd | singleRegisterMask(sd, 28, 6) | doubleRegisterMask(fm, 21, 16));
+        vcvt(singleRegisterMask(rd, 6, 28), doubleRegisterMask(rm, 16, 21), true, false, true, true);
     }
 
-    void vldr(FPRegisterID rd, RegisterID rn, int32_t imm)
+    void vdiv_F64(FPDoubleRegisterID rd, FPDoubleRegisterID rn, FPDoubleRegisterID rm)
+    {
+        m_formatter.vfpOp(0x0b00ee80 | doubleRegisterMask(rd, 6, 28) | doubleRegisterMask(rn, 23, 0) | doubleRegisterMask(rm, 21, 16));
+    }
+
+    void vldr(FPDoubleRegisterID rd, RegisterID rn, int32_t imm)
     {
         vmem(rd, rn, imm, true);
     }
 
-    void vmov(RegisterID rd, FPRegisterID sn)
+    void vmov_F64_0(FPDoubleRegisterID rd)
+    {
+        m_formatter.vfpOp(0x0b00eeb0 | doubleRegisterMask(rd, 28, 6));
+    }
+
+    void vmov(RegisterID rd, FPSingleRegisterID sn)
     {
         m_formatter.vfpOp(0x0a10ee10 | (rd << 28) | singleRegisterMask(sn, 0, 23));
     }
 
-    void vmov(FPRegisterID sn, RegisterID rd)
+    void vmov(FPSingleRegisterID sn, RegisterID rd)
     {
         m_formatter.vfpOp(0x0a10ee00 | (rd << 28) | singleRegisterMask(sn, 0, 23));
     }
@@ -1487,17 +1544,17 @@ public:
         m_formatter.vfpOp(0xfa10eef1);
     }
 
-    void vmul_F64(FPRegisterID rd, FPRegisterID rn, FPRegisterID rm)
+    void vmul_F64(FPDoubleRegisterID rd, FPDoubleRegisterID rn, FPDoubleRegisterID rm)
     {
         m_formatter.vfpOp(0x0b00ee20 | doubleRegisterMask(rd, 6, 28) | doubleRegisterMask(rn, 23, 0) | doubleRegisterMask(rm, 21, 16));
     }
 
-    void vstr(FPRegisterID rd, RegisterID rn, int32_t imm)
+    void vstr(FPDoubleRegisterID rd, RegisterID rn, int32_t imm)
     {
         vmem(rd, rn, imm, false);
     }
 
-    void vsub_F64(FPRegisterID rd, FPRegisterID rn, FPRegisterID rm)
+    void vsub_F64(FPDoubleRegisterID rd, FPDoubleRegisterID rn, FPDoubleRegisterID rm)
     {
         m_formatter.vfpOp(0x0b40ee30 | doubleRegisterMask(rd, 6, 28) | doubleRegisterMask(rn, 23, 0) | doubleRegisterMask(rm, 21, 16));
     }
@@ -1664,9 +1721,31 @@ public:
 
 private:
 
+    void vcvt(uint32_t rdMask, uint32_t rmMask, bool toInteger, bool isUnsigned, bool isRoundZero, bool isDouble)
+    {
+        // Cannot specify rounding when converting to float.
+        ASSERT(toInteger || !isRoundZero);
+
+        // 'sz' field
+        int op = isDouble ? 0x0b40eeb8 : 0x0a40eeb8;
+
+        if (toInteger) {
+            // opc2 indicates both toInteger & isUnsigned.
+            op |= isUnsigned ? 0x00000004 : 0x00000005;
+            // 'op' field in instruction is isRoundZero
+            if (isRoundZero)
+                op |= 0x00800000;
+        } else {
+            // 'op' field in instruction is isUnsigned
+            if (!isUnsigned)
+                op |= 0x00800000;
+        }
+        m_formatter.vfpOp(op | rdMask | rmMask);
+    }
+
     // Arm vfp addresses can be offset by a 9-bit ones-comp immediate, left shifted by 2.
     // (i.e. +/-(0..255) 32-bit words)
-    void vmem(FPRegisterID rd, RegisterID rn, int32_t imm, bool isLoad)
+    void vmem(FPDoubleRegisterID rd, RegisterID rn, int32_t imm, bool isLoad)
     {
         bool up;
         uint32_t offset;

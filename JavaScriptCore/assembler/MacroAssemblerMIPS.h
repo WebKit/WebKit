@@ -36,6 +36,7 @@ namespace JSC {
 
 class MacroAssemblerMIPS : public AbstractMacroAssembler<MIPSAssembler> {
 public:
+    typedef MIPSRegisters::FPRegisterID FPRegisterID;
 
     MacroAssemblerMIPS()
         : m_fixedWidth(false)

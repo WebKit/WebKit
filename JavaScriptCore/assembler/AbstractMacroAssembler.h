@@ -49,7 +49,6 @@ public:
     class Jump;
 
     typedef typename AssemblerType::RegisterID RegisterID;
-    typedef typename AssemblerType::FPRegisterID FPRegisterID;
     typedef typename AssemblerType::JmpSrc JmpSrc;
     typedef typename AssemblerType::JmpDst JmpDst;
 
