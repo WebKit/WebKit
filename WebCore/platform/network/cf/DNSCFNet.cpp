@@ -49,12 +49,18 @@ namespace WebCore {
 const int namesToResolveImmediately = 4;
 
 // Coalesce prefetch requests for this long before sending them out.
-const double coalesceDelay = 1.0;
+const double coalesceDelayInSeconds = 1.0;
+
+// Sending many DNS requests at once can overwhelm some gateways. CFHost doesn't currently throttle for us, see <rdar://8105550>.
+const int maxSimultaneousRequests = 8;
 
 // For a page has links to many outside sites, it is likely that the system DNS resolver won't be able to cache them all anyway, and we don't want
-// to negatively affect other appications' performance, by pushing their cached entries out, too.
+// to negatively affect other applications' performance by pushing their cached entries out.
 // If we end up with lots of names to prefetch, some will be dropped.
-const int maxRequestsToSend = 64;
+const int maxRequestsToQueue = 64;
+
+// If there were queued names that couldn't be sent simultaneously, check the state of resolvers after this delay.
+const double retryResolvingInSeconds = 0.1;
 
 class DNSResolveQueue : public TimerBase {
 public:
@@ -92,9 +98,14 @@ void DNSResolveQueue::add(const String& name)
         }
         atomicDecrement(&m_requestsInFlight);
     }
-    m_names.add(name);
-    if (!isActive())
-        startOneShot(coalesceDelay);
+
+    // It's better to not prefetch some names than to clog the queue.
+    // Dropping the newest names, because on a single page, these are likely to be below oldest ones.
+    if (m_names.size() < maxRequestsToQueue) {
+        m_names.add(name);
+        if (!isActive())
+            startOneShot(coalesceDelayInSeconds);
+    }
 }
 
 void DNSResolveQueue::decrementRequestCount()
@@ -104,15 +115,17 @@ void DNSResolveQueue::decrementRequestCount()
 
 void DNSResolveQueue::fired()
 {
-    int requestsAllowed = maxRequestsToSend - m_requestsInFlight;
+    int requestsAllowed = maxSimultaneousRequests - m_requestsInFlight;
 
-    for (HashSet<String>::iterator iter = m_names.begin(); iter != m_names.end() && requestsAllowed > 0; ++iter, --requestsAllowed) {
+    for (; !m_names.isEmpty() && requestsAllowed > 0; --requestsAllowed) {
         atomicIncrement(&m_requestsInFlight);
-        resolve(*iter);
+        HashSet<String>::iterator currentName = m_names.begin();
+        resolve(*currentName);
+        m_names.remove(currentName);
     }
 
-    // It's better to skip some names than to clog the queue.
-    m_names.clear();
+    if (!m_names.isEmpty())
+        startOneShot(retryResolvingInSeconds);
 }
 
 static void clientCallback(CFHostRef theHost, CFHostInfoType, const CFStreamError*, void*)
