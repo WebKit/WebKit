@@ -217,6 +217,14 @@ unsigned consumeHTMLEntity(SegmentedString& source, bool& notEnoughCharacters, U
                         // if the lookhead character is '='.
                         if (additionalAllowedCharacter && cc == '=')
                             break;
+                        // Some entities require a terminating semicolon, whereas other
+                        // entities do not.  The HTML5 spec has a giant list:
+                        //
+                        // http://www.whatwg.org/specs/web-apps/current-work/multipage/named-character-references.html#named-character-references
+                        //
+                        // However, the list seems to boil down to this branch:
+                        if (entity->code > 255)
+                            break;
                         return entity->code;
                     }
                     break;

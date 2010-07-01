@@ -1,3 +1,15 @@
+2010-07-01  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Parameter names in frame src URLs parsed incorrectly if resembles HTML entity code followed by underscore
+        https://bugs.webkit.org/show_bug.cgi?id=41345
+
+        Add some more HTML entity test coverage for when the trailing semicolon
+        character is required.
+
+        * html5lib/resources/entities02.dat:
+
 2010-07-01  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed. Update Chromium test expectations.
