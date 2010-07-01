@@ -21,7 +21,7 @@
 #include "qwkpage.h"
 #include "qwkpage_p.h"
 
-#include "DefaultPageLoaderClientCallbacksQt.h"
+#include "DefaultClientCallbacksQt.h"
 #include "LocalizedStrings.h"
 #include "WebEventFactory.h"
 #include "WKStringQt.h"

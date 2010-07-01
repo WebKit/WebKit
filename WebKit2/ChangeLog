@@ -1,3 +1,35 @@
+2010-07-01  Kenneth Rohde Christiansen  <kenneth.christiansen@openbossa.org>
+
+        Reviewed by Antti Koivisto.
+
+        [Qt] Initial WebKit2 implementation
+        https://bugs.webkit.org/show_bug.cgi?id=40233
+
+        Add implementation of the UI and loader client for Qt.
+
+        * UIProcess/API/qt/qwkpage.cpp:
+        * UIProcess/API/qt/ClientImpl.cpp: Added.
+        (toQWKPage):
+        (qt_wk_didStartProvisionalLoadForFrame):
+        (qt_wk_didReceiveServerRedirectForProvisionalLoadForFrame):
+        (qt_wk_didFailProvisionalLoadWithErrorForFrame):
+        (qt_wk_didCommitLoadForFrame):
+        (qt_wk_didFinishLoadForFrame):
+        (qt_wk_didFailLoadWithErrorForFrame):
+        (qt_wk_didReceiveTitleForFrame):
+        (qt_wk_didFirstLayoutForFrame):
+        (qt_wk_didFirstVisuallyNonEmptyLayoutForFrame):
+        (qt_wk_didStartProgress):
+        (qt_wk_didChangeProgress):
+        (qt_wk_didFinishProgress):
+        (qt_wk_didBecomeUnresponsive):
+        (qt_wk_didBecomeResponsive):
+        (qt_wk_createNewPage):
+        (qt_wk_showPage):
+        (qt_wk_close):
+        (qt_wk_runJavaScriptAlert):
+        * UIProcess/API/qt/ClientImpl.h: Added.
+
 2010-07-01  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Dan Bernstein.

@@ -1,0 +1,148 @@
+/*
+    Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
+
+    This library is free software; you can redistribute it and/or
+    modify it under the terms of the GNU Library General Public
+    License as published by the Free Software Foundation; either
+    version 2 of the License, or (at your option) any later version.
+
+    This library is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+    Library General Public License for more details.
+
+    You should have received a copy of the GNU Library General Public License
+    along with this library; see the file COPYING.LIB.  If not, write to
+    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+    Boston, MA 02110-1301, USA.
+*/
+
+#include "DefaultClientCallbacksQt.h"
+
+#include "WebFrameProxy.h"
+#include "WKAPICast.h"
+#include "WKStringQt.h"
+#include "WKURLQt.h"
+#include <qwkpage.h>
+#include <qwkpage_p.h>
+#include <WKFrame.h>
+
+using namespace WebKit;
+
+static QWKPage* toQWKPage(const void* clientInfo)
+{
+    if (clientInfo)
+        return reinterpret_cast<QWKPage*>(const_cast<void*>(clientInfo));
+    return 0;
+}
+
+void qt_wk_didStartProvisionalLoadForFrame(WKPageRef page, WKFrameRef frame, const void* clientInfo)
+{
+    if (!WKFrameIsMainFrame(frame))
+        return;
+    emit toQWKPage(clientInfo)->loadStarted();
+}
+
+void qt_wk_didReceiveServerRedirectForProvisionalLoadForFrame(WKPageRef page, WKFrameRef frame, const void* clientInfo)
+{
+}
+
+void qt_wk_didFailProvisionalLoadWithErrorForFrame(WKPageRef page, WKFrameRef frame, const void* clientInfo)
+{
+}
+
+void qt_wk_didCommitLoadForFrame(WKPageRef page, WKFrameRef frame, const void* clientInfo)
+{
+    if (!WKFrameIsMainFrame(frame))
+        return;
+    WebFrameProxy* wkframe = toWK(frame);
+    QString urlStr(wkframe->url());
+    QUrl qUrl = urlStr;
+    emit toQWKPage(clientInfo)->urlChanged(qUrl);
+}
+
+void qt_wk_didFinishLoadForFrame(WKPageRef page, WKFrameRef frame, const void* clientInfo)
+{
+    if (!WKFrameIsMainFrame(frame))
+        return;
+    emit toQWKPage(clientInfo)->loadFinished(true);
+}
+
+void qt_wk_didFailLoadWithErrorForFrame(WKPageRef page, WKFrameRef frame, const void* clientInfo)
+{
+    if (!WKFrameIsMainFrame(frame))
+        return;
+    emit toQWKPage(clientInfo)->loadFinished(false);
+}
+
+void qt_wk_didReceiveTitleForFrame(WKPageRef page, WKStringRef title, WKFrameRef frame, const void* clientInfo)
+{
+    if (!WKFrameIsMainFrame(frame))
+        return;
+    QString qTitle = WKStringCopyQString(title);
+    emit toQWKPage(clientInfo)->titleChanged(qTitle);
+}
+
+void qt_wk_didFirstLayoutForFrame(WKPageRef page, WKFrameRef frame, const void* clientInfo)
+{
+    if (!WKFrameIsMainFrame(frame))
+        return;
+    emit toQWKPage(clientInfo)->initialLayoutCompleted();
+}
+
+void qt_wk_didFirstVisuallyNonEmptyLayoutForFrame(WKPageRef page, WKFrameRef frame, const void* clientInfo)
+{
+    if (!WKFrameIsMainFrame(frame))
+        return;
+    // FIXME: emit toWKView(clientInfo)->initialLayoutCompleted();
+}
+
+void qt_wk_didStartProgress(WKPageRef page, const void* clientInfo)
+{
+    emit toQWKPage(clientInfo)->loadProgress(0);
+}
+
+void qt_wk_didChangeProgress(WKPageRef page, const void* clientInfo)
+{
+    emit toQWKPage(clientInfo)->loadProgress(WKPageGetEstimatedProgress(page) * 100);
+}
+
+void qt_wk_didFinishProgress(WKPageRef page, const void* clientInfo)
+{
+    emit toQWKPage(clientInfo)->loadProgress(100);
+}
+
+void qt_wk_didBecomeUnresponsive(WKPageRef page, const void* clientInfo)
+{
+}
+
+void qt_wk_didBecomeResponsive(WKPageRef page, const void* clientInfo)
+{
+}
+
+WKPageRef qt_wk_createNewPage(WKPageRef page, const void* clientInfo)
+{
+    QWKPage* wkPage = toQWKPage(clientInfo);
+    QWKPagePrivate* d = QWKPagePrivate::get(wkPage);
+    QWKPage::CreateNewPageFn createNewPageFn = d->createNewPageFn;
+
+    if (!createNewPageFn)
+        return 0;
+
+    if (QWKPage* newPage = createNewPageFn(wkPage))
+        return newPage->pageRef();
+
+    return 0;
+}
+
+void qt_wk_showPage(WKPageRef page, const void* clientInfo)
+{
+}
+
+void qt_wk_close(WKPageRef page, const void* clientInfo)
+{
+}
+
+void qt_wk_runJavaScriptAlert(WKPageRef page, WKStringRef alertText, WKFrameRef frame, const void* clientInfo)
+{
+}
