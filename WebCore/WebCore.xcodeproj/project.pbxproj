@@ -5781,6 +5781,7 @@
 		0F15DA890F3AAEE70000CE47 /* AnimationControllerPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AnimationControllerPrivate.h; path = animation/AnimationControllerPrivate.h; sourceTree = "<group>"; };
 		0F500AAE0F54DB1B00EEF928 /* TransformState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TransformState.h; sourceTree = "<group>"; };
 		0F500AB00F54DB3100EEF928 /* TransformState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TransformState.cpp; sourceTree = "<group>"; };
+		0F5263E511DC136E0006D33C /* WebCore.AcceleratedCompositing.exp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.exports; path = WebCore.AcceleratedCompositing.exp; sourceTree = "<group>"; };
 		0F56028D0E4B76580065B038 /* RenderMarquee.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderMarquee.h; sourceTree = "<group>"; };
 		0F56028E0E4B76580065B038 /* RenderMarquee.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderMarquee.cpp; sourceTree = "<group>"; };
 		0F580B030F12A2540051D689 /* GraphicsLayerCA.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GraphicsLayerCA.mm; sourceTree = "<group>"; };
@@ -11553,6 +11554,7 @@
 			isa = PBXGroup;
 			children = (
 				0F9C6F4B1073EF0400DED9BF /* WebCore.3DRendering.exp */,
+				0F5263E511DC136E0006D33C /* WebCore.AcceleratedCompositing.exp */,
 				F58EF58E02DFDFB7018635CA /* WebCore.base.exp */,
 				BC56CCDF10D72BD800A77C64 /* WebCore.ClientBasedGeolocation.exp */,
 				FEFD102C105C41470002855E /* WebCore.ContextMenus.exp */,

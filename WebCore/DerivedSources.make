@@ -878,6 +878,10 @@ ifeq ($(findstring ENABLE_3D_RENDERING,$(FEATURE_DEFINES)), ENABLE_3D_RENDERING)
     WEBCORE_EXPORT_DEPENDENCIES := $(WEBCORE_EXPORT_DEPENDENCIES) WebCore.3DRendering.exp
 endif
 
+ifeq ($(shell gcc -arch x86_64 -E -P -dM $(FRAMEWORK_FLAGS) WebCore/ForwardingHeaders/wtf/Platform.h | grep WTF_USE_ACCELERATED_COMPOSITING | cut -d' ' -f3), 1)
+    WEBCORE_EXPORT_DEPENDENCIES := $(WEBCORE_EXPORT_DEPENDENCIES) WebCore.AcceleratedCompositing.exp
+endif
+
 ifeq ($(shell gcc -E -P -dM $(FRAMEWORK_FLAGS) WebCore/ForwardingHeaders/wtf/Platform.h | grep ENABLE_CONTEXT_MENUS | cut -d' ' -f3), 1)
     WEBCORE_EXPORT_DEPENDENCIES := $(WEBCORE_EXPORT_DEPENDENCIES) WebCore.ContextMenus.exp
 endif
