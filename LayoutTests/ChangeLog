@@ -1,3 +1,25 @@
+2010-07-01  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Make html5lib/runner dump failure details by default
+        https://bugs.webkit.org/show_bug.cgi?id=41436
+
+        This makes it much easier to see our result changes
+        in patch reviews.  Especially when we change behavior
+        but don't necessarily fix entire subtests.
+
+        This patch was previously rolled out due to a bogus comment
+        in tests1.dat causing a EOF (null) to be emitted in the
+        results, causing diff to treat the file as binary (and thus
+        make it impossible to see differences).
+
+        The EOF/NULL bug was resolved by bug 41439, so relanding.
+
+        * html5lib/runner-expected-html5.txt:
+        * html5lib/runner-expected.txt:
+        * html5lib/runner.html:
+
 2010-07-01  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
