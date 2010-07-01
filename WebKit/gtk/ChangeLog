@@ -1,5 +1,22 @@
 2010-06-30  Martin Robinson  <mrobinson@igalia.com>
 
+        Unreviewed, rolling out r62226.
+        http://trac.webkit.org/changeset/62226
+        https://bugs.webkit.org/show_bug.cgi?id=40333
+
+        This change caused 13 new crashers.
+
+        * WebCoreSupport/DragClientGtk.cpp:
+        (WebKit::DragClient::startDrag):
+        * webkit/webkitprivate.h:
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_dispose):
+        (webkit_web_view_drag_end):
+        (webkit_web_view_drag_data_get):
+        (webkit_web_view_init):
+
+2010-06-30  Martin Robinson  <mrobinson@igalia.com>
+
         Reviewed by Xan Lopez.
 
         [GTK] Convert WebKitWebView's private draggingDataObjects member to a pointer

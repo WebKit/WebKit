@@ -1190,8 +1190,7 @@ static void webkit_web_view_dispose(GObject* object)
         priv->subResources = NULL;
     }
 
-    priv->draggingDataObjects->clear();
-    delete priv->draggingDataObjects;
+    priv->draggingDataObjects.clear();
 
     G_OBJECT_CLASS(webkit_web_view_parent_class)->dispose(object);
 }
@@ -1310,10 +1309,10 @@ static void webkit_web_view_drag_end(GtkWidget* widget, GdkDragContext* context)
 
     // This might happen if a drag is still in progress after a WebKitWebView
     // is disposed and before it is finalized.
-    if (!priv->draggingDataObjects->contains(context))
+    if (!priv->draggingDataObjects.contains(context))
         return;
 
-    priv->draggingDataObjects->remove(context);
+    priv->draggingDataObjects.remove(context);
 
     Frame* frame = core(webView)->focusController()->focusedOrMainFrame();
     if (!frame)
@@ -1348,10 +1347,10 @@ static void webkit_web_view_drag_data_get(GtkWidget* widget, GdkDragContext* con
 
     // This might happen if a drag is still in progress after a WebKitWebView
     // is diposed and before it is finalized.
-    if (!priv->draggingDataObjects->contains(context))
+    if (!priv->draggingDataObjects.contains(context))
         return;
 
-    pasteboardHelperInstance()->fillSelectionData(selectionData, info, priv->draggingDataObjects->get(context).get());
+    pasteboardHelperInstance()->fillSelectionData(selectionData, info, priv->draggingDataObjects.get(context).get());
 }
 
 #if GTK_CHECK_VERSION(2, 12, 0)
@@ -2929,8 +2928,6 @@ static void webkit_web_view_init(WebKitWebView* webView)
     priv->previousClickPoint = new IntPoint(0, 0);
     priv->previousClickButton = 0;
     priv->previousClickTime = 0;
-
-    priv->draggingDataObjects = new HashMap<GdkDragContext*, RefPtr<WebCore::DataObjectGtk> >();
 }
 
 GtkWidget* webkit_web_view_new(void)
