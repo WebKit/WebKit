@@ -152,6 +152,9 @@ namespace WebCore {
         void setUsesEncodingDetector(bool);
         bool usesEncodingDetector() const { return m_usesEncodingDetector; }
 
+        void setDNSPrefetchingEnabled(bool);
+        bool dnsPrefetchingEnabled() const { return m_dnsPrefetchingEnabled; }
+
         void setUserStyleSheetLocation(const KURL&);
         const KURL& userStyleSheetLocation() const { return m_userStyleSheetLocation; }
 
@@ -389,6 +392,7 @@ namespace WebCore {
         bool m_html5ParserEnabled: 1;
         bool m_html5TreeBuilderEnabled: 1; // Will be deleted soon, do not use.
         bool m_paginateDuringLayoutEnabled : 1;
+        bool m_dnsPrefetchingEnabled : 1;
     
 #if USE(SAFARI_THEME)
         static bool gShouldPaintNativeControls;

@@ -1,3 +1,21 @@
+2010-07-01  Timothy Hatcher  <timothy@apple.com>
+
+        Provide a WebView preference to disable DNS prefetching.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28825
+        rdar://problem/7181249
+
+        Reviewed by Darin Adler.
+
+        * WebCore.base.exp: Added Settings::setDNSPrefetchingEnabled.
+        * dom/Document.cpp:
+        (WebCore::Document::initDNSPrefetch): Check settings->dnsPrefetchingEnabled().
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings): Set m_dnsPrefetchingEnabled to true.
+        (WebCore::Settings::setDNSPrefetchingEnabled): Added. Set m_dnsPrefetchingEnabled.
+        * page/Settings.h:
+        (WebCore::Settings::dnsPrefetchingEnabled): Added. Return m_dnsPrefetchingEnabled.
+
 2010-07-01  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Sam Weinig.
