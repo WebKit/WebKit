@@ -1,5 +1,25 @@
 2010-07-01  Mark Rowe  <mrowe@apple.com>
 
+        Merge r60459.
+
+    2010-05-31  Tony Chang  <tony@chromium.org>
+
+        Reviewed by Dan Bernstein.
+
+        REGRESSION (r58665): Infinite recursion in Position::getInlineBoxAndOffset()
+        https://bugs.webkit.org/show_bug.cgi?id=39946
+        
+        r58665 added an infinite recursion check, but didn't take into consideration recursion between two
+        Positions.  This adds a check for when
+        downstreamIgnoringEditingBoundaries(p1) == p2 and upstreamIgnoringEditingBoundaries(p2) == p1
+
+        Test: editing/selection/mixed-editability-12.html
+
+        * dom/Position.cpp:
+        (WebCore::Position::getInlineBoxAndOffset):
+
+2010-07-01  Mark Rowe  <mrowe@apple.com>
+
         Merge r61068.
 
     2010-06-12  Dean Jackson  <dino@apple.com>
