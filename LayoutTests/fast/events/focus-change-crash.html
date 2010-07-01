@@ -1,0 +1,27 @@
+<div>Type something into the first input and press tab.  The browser should not crash.</div>
+<div id="parent">
+<input id="a" />
+<input id="b" />
+</div>
+<div id="results"></div>
+<script>
+document.getElementById("a").addEventListener("change", function(e) {
+    var parent = document.getElementById("parent");
+    parent.innerHTML = "<input id='c' />";
+    document.getElementById("c").select();
+}, false);
+
+function runTest()
+{
+    document.getElementById("a").focus();
+    if (!window.layoutTestController)
+        return;
+    layoutTestController.dumpAsText();
+    eventSender.keyDown("x")
+    eventSender.keyDown("\t");
+    document.getElementById("results").innerText = "PASSED";
+}
+
+runTest();
+
+</script>
