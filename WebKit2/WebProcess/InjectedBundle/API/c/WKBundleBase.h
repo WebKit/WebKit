@@ -36,8 +36,6 @@ typedef struct OpaqueWKBundle* WKBundleRef;
 #else
 #define WK_EXPORT __declspec(dllimport)
 #endif
-#elif defined(__GNUC__)
-#define WK_EXPORT __attribute__ ((visibility("default")))
 #else
 #define WK_EXPORT
 #endif

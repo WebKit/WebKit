@@ -1,3 +1,14 @@
+2010-07-01  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r62267.
+        http://trac.webkit.org/changeset/62267
+        https://bugs.webkit.org/show_bug.cgi?id=41468
+
+        broke stuff (Requested by weinig on #webkit).
+
+        * UIProcess/API/C/WKBase.h:
+        * WebProcess/InjectedBundle/API/c/WKBundleBase.h:
+
 2010-07-01  John Sullivan  <sullivan@apple.com>
 
         Rubber-stamped by Sam Weinig.
