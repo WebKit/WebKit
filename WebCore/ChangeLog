@@ -1,3 +1,12 @@
+2010-07-01  Eric Seidel  <eric@webkit.org>
+
+        Unreviewed.  Fix paste-o in Gtk build file.
+
+        Split out HTMLFormattingElementList into its own file
+        https://bugs.webkit.org/show_bug.cgi?id=41440
+
+        * GNUmakefile.am:
+
 2010-07-01  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Eric Seidel & Dirk Schulze.
