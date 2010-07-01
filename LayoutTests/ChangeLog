@@ -1,3 +1,9 @@
+2010-07-01  Kinuko Yasuda  <kinuko@chromium.org>
+
+        Unreviewed. Update chromium tests expectations for flaky tests.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-07-01  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Darin Adler.
