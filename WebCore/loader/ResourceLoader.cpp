@@ -499,8 +499,15 @@ void ResourceLoader::receivedCancellation(const AuthenticationChallenge&)
 
 void ResourceLoader::willCacheResponse(ResourceHandle*, CacheStoragePolicy& policy)
 {
+    // <rdar://problem/7249553> - There are reports of crashes with this method being called
+    // with a null m_frame->settings(), which can only happen if the frame doesn't have a page.
+    // Sadly we have no reproducible cases of this.
+    // We think that any frame without a page shouldn't have any loads happening in it, yet
+    // there is at least one code path where that is not true.
+    ASSERT(m_frame->settings());
+    
     // When in private browsing mode, prevent caching to disk
-    if (policy == StorageAllowed && m_frame->settings()->privateBrowsingEnabled())
+    if (policy == StorageAllowed && m_frame->settings() && m_frame->settings()->privateBrowsingEnabled())
         policy = StorageAllowedInMemoryOnly;    
 }
 
