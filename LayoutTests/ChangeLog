@@ -2,6 +2,21 @@
 
         Reviewed by Adam Barth.
 
+        Make html5lib/runner dump failure details by default
+        https://bugs.webkit.org/show_bug.cgi?id=41436
+
+        This makes it much easier to see our result changes
+        in patch reviews.  Especially when we change behavior
+        but don't necessarily fix entire subtests.
+
+        * html5lib/runner-expected-html5.txt:
+        * html5lib/runner-expected.txt:
+        * html5lib/runner.html:
+
+2010-06-30  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
         Implement generateImpliedEndTags and deploy to steps which were blocked on it
         https://bugs.webkit.org/show_bug.cgi?id=41432
 
