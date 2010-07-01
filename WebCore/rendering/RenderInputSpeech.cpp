@@ -53,7 +53,7 @@ void RenderInputSpeech::adjustInputFieldSpeechButtonStyle(CSSStyleSelector*, Ren
     style->setHeight(Length(speechButtonSize, Fixed));
 }
 
-bool RenderInputSpeech::paintInputFieldSpeechButton(RenderObject* object, const RenderObject::PaintInfo& paintInfo, const IntRect& rect)
+bool RenderInputSpeech::paintInputFieldSpeechButton(RenderObject* object, const PaintInfo& paintInfo, const IntRect& rect)
 {
     // Get the renderer of <input> element.
     Node* input = object->node()->shadowAncestorNode();

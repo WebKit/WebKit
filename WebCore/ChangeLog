@@ -1,3 +1,14 @@
+2010-07-01  MORITA Hajime  <morrita@google.com>
+
+        Unreviewed build fix.
+
+        * rendering/RenderInputSpeech.cpp:
+        (WebCore::RenderInputSpeech::paintInputFieldSpeechButton):
+        * rendering/RenderInputSpeech.h:
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::paintInputFieldSpeechButton):
+        * rendering/RenderTheme.h:
+
 2010-07-01  Satish Sampath  <satish@chromium.org>
 
         Reviewed by Kent Tamura.
