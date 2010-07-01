@@ -928,6 +928,10 @@ String AccessibilityRenderObject::helpText() const
     if (!m_renderer)
         return String();
     
+    const AtomicString& ariaHelp = getAttribute(aria_helpAttr);
+    if (!ariaHelp.isEmpty())
+        return ariaHelp;
+    
     for (RenderObject* curr = m_renderer; curr; curr = curr->parent()) {
         if (curr->node() && curr->node()->isHTMLElement()) {
             const AtomicString& summary = static_cast<Element*>(curr->node())->getAttribute(summaryAttr);

@@ -1,5 +1,22 @@
 2010-07-01  Mark Rowe  <mrowe@apple.com>
 
+        Merge r60727.
+
+    2010-06-04  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by David Kilzer.
+
+        AX: need an aria-help
+        https://bugs.webkit.org/show_bug.cgi?id=40010
+
+        Test: accessibility/aria-help.html
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::helpText):
+        * html/HTMLAttributeNames.in:
+
+2010-07-01  Mark Rowe  <mrowe@apple.com>
+
         Merge r61132.
 
     2010-06-14  Chris Fleizach  <cfleizach@apple.com>
