@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <style type="text/css" media="screen">
+    iframe {
+        border: 10px solid black;
+        padding: 5px;
+        margin: 20px;
+        height: 150px;
+        width: 300px;
+        -webkit-box-shadow: 0 0 20px black;
+    }
+    
+    .overlay {
+      position: absolute;
+      width: 50px;
+      height: 50px;
+      top: 5px;
+      left: 5px;
+      background-color: rgba(0, 0, 0, 0.2);
+    }
+    
+  </style>
+  <script type="text/javascript" charset="utf-8">
+    if (window.layoutTestController) {
+        layoutTestController.dumpAsText();
+        layoutTestController.waitUntilDone();
+    }
+
+    var loadedCount = 0;
+    
+    function frameLoaded()
+    {
+      if (++loadedCount == 2)
+        doTest();
+    }
+
+    function pageLoaded()
+    {
+      if (++loadedCount == 2)
+        doTest();
+    }
+    
+    function doTest()
+    {
+        // Need to wait for compositing layers to be updated.
+        window.setTimeout(function() {
+            document.getElementById('parent-iframe').contentWindow.scrollTo(80, 80);
+            if (window.layoutTestController) {
+                document.getElementById('layers').innerHTML = layoutTestController.layerTreeAsText();
+                layoutTestController.notifyDone();
+            }
+        }, 10);
+    }
+    
+    window.addEventListener('load', pageLoaded, false);
+  </script>
+</head>
+<body>
+
+    <!-- Test scrolling in the iframe -->
+    <iframe id="parent-iframe" src="resources/large-composited-subframe.html" onload="frameLoaded()"></iframe>
+    
+    <div class="overlay">
+    </div>
+
+    <pre id="layers">Layer tree appears here in DRT.</pre>
+</body>
+</html>

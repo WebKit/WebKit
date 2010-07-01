@@ -393,7 +393,7 @@ void RenderLayerBacking::updateGraphicsLayerGeometry()
     // If this is an iframe parent, update the iframe content's box
     if (renderer()->isRenderIFrame()) {
         if (RenderLayerCompositor* innerCompositor = RenderLayerCompositor::iframeContentsCompositor(toRenderIFrame(renderer())))
-            innerCompositor->setRootPlatformLayerClippingBox(contentsBox());
+            innerCompositor->updateContentLayerOffset(contentsBox().location());
     }
 }
 

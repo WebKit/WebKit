@@ -10,7 +10,6 @@
   (backfaceVisibility visible)
   (backgroundColor none)
   (transform identity)
-  (childrenTransform [1.00 0.00 0.00 0.00] [0.00 -1.00 0.00 0.00] [0.00 0.00 1.00 0.00] [0.00 0.00 0.00 1.00])
   (children 1
     (GraphicsLayer
       (position 0.00 0.00)
@@ -41,7 +40,7 @@
             (GraphicsLayer
               (position 35.00 35.00)
               (anchor 0.50 0.50)
-              (bounds 285.00 150.00)
+              (bounds 285.00 135.00)
               (opacity 1.00)
               (usingTiledLayer 0)
               (preserves3D 0)
@@ -52,7 +51,7 @@
               (childrenTransform identity)
               (children 1
                 (GraphicsLayer
-                  (position 0.00 0.00)
+                  (position -80.00 -80.00)
                   (anchor 0.50 0.50)
                   (bounds 0.00 0.00)
                   (opacity 1.00)
@@ -67,7 +66,7 @@
                     (GraphicsLayer
                       (position 0.00 0.00)
                       (anchor 0.50 0.50)
-                      (bounds 285.00 230.00)
+                      (bounds 508.00 608.00)
                       (opacity 1.00)
                       (usingTiledLayer 0)
                       (preserves3D 0)
@@ -80,7 +79,7 @@
                         (GraphicsLayer
                           (position 0.00 0.00)
                           (anchor 0.50 0.50)
-                          (bounds 285.00 230.00)
+                          (bounds 508.00 608.00)
                           (opacity 1.00)
                           (usingTiledLayer 0)
                           (preserves3D 0)
@@ -91,9 +90,9 @@
                           (childrenTransform identity)
                           (children 1
                             (GraphicsLayer
-                              (position 18.00 10.00)
+                              (position 108.00 100.00)
                               (anchor 0.50 0.50)
-                              (bounds 210.00 210.00)
+                              (bounds 200.00 200.00)
                               (opacity 1.00)
                               (usingTiledLayer 0)
                               (preserves3D 0)
