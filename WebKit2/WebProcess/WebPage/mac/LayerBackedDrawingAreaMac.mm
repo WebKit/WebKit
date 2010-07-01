@@ -72,7 +72,7 @@ void LayerBackedDrawingArea::attachCompositingContext(GraphicsLayer* layer)
         
     m_attached = true;
 
-    mach_port_t serverPort = 0; // FIXME: will use WebProcess::shared().compositingRenderServerPort();
+    mach_port_t serverPort = WebProcess::shared().compositingRenderServerPort();
     m_remoteLayerRef = WKCARemoteLayerClientMakeWithServerPort(serverPort);
     WKCARemoteLayerClientSetLayer(m_remoteLayerRef.get(), m_backingLayer->platformLayer());
     

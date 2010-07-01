@@ -88,6 +88,44 @@
         Get accelerated compositing working with webkit2
         https://bugs.webkit.org/show_bug.cgi?id=41084
         
+        Start up the CA render server in the UI process (currently, at launch time), and
+        pass the server port over to the web process for use by the layer-backed drawing area.
+        
+        Fix some style issues pointed out by Dan Bernstein.
+        
+        Implement the WebChromeClient methods that pass the attach/detach calls through
+        to the drawing area.
+
+        * Shared/CoreIPCSupport/WebProcessMessageKinds.h:
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _startAcceleratedCompositing:]):
+        * UIProcess/API/mac/WKViewInternal.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::WebProcessProxy):
+        (WebKit::WebProcessProxy::setUpAcceleratedCompositing):
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/mac/LayerBackedDrawingAreaProxyMac.mm:
+        * UIProcess/mac/WebProcessProxyMac.mm: Added.
+        (WebKit::WebProcessProxy::setUpAcceleratedCompositing):
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::attachRootGraphicsLayer):
+        (WebKit::WebChromeClient::scheduleCompositingLayerSync):
+        * WebProcess/WebPage/mac/LayerBackedDrawingAreaMac.mm:
+        (WebKit::LayerBackedDrawingArea::attachCompositingContext):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::WebProcess):
+        (WebKit::WebProcess::didReceiveMessage):
+        * WebProcess/WebProcess.h:
+        (WebKit::WebProcess::compositingRenderServerPort):
+
+2010-07-01  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Get accelerated compositing working with webkit2
+        https://bugs.webkit.org/show_bug.cgi?id=41084
+        
         Add a new kind of DrawingArea, which is a LayerBackedDrawingArea, which will be used
         when the page goes into accelerated compositing mode. It is not wired up yet.
 

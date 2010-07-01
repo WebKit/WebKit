@@ -439,9 +439,12 @@ PassOwnPtr<HTMLParserQuirks> WebChromeClient::createHTMLParserQuirks()
 }
 
 #if USE(ACCELERATED_COMPOSITING)
-void WebChromeClient::attachRootGraphicsLayer(Frame*, GraphicsLayer*)
+void WebChromeClient::attachRootGraphicsLayer(Frame*, GraphicsLayer* layer)
 {
-    notImplemented();
+    if (layer)
+        m_page->drawingArea()->attachCompositingContext(layer);
+    else
+        m_page->drawingArea()->detachCompositingContext();
 }
 
 void WebChromeClient::setNeedsOneShotDrawingSynchronization()
@@ -451,7 +454,7 @@ void WebChromeClient::setNeedsOneShotDrawingSynchronization()
 
 void WebChromeClient::scheduleCompositingLayerSync()
 {
-    notImplemented();
+    m_page->drawingArea()->scheduleCompositingLayerSync();
 }
 
 #endif

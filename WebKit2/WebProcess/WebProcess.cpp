@@ -26,6 +26,7 @@
 #include "WebProcess.h"
 
 #include "InjectedBundle.h"
+#include "MachPort.h"
 #include "RunLoop.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebFrame.h"
@@ -52,6 +53,9 @@ WebProcess& WebProcess::shared()
 
 WebProcess::WebProcess()
     : m_inDidClose(false)
+#if USE(ACCELERATED_COMPOSITING) && PLATFORM(MAC)
+    , m_compositingRenderServerPort(MACH_PORT_NULL)
+#endif
 {
 #if USE(PLATFORM_STRATEGIES)
     // Initialize our platform strategies.
@@ -172,6 +176,16 @@ void WebProcess::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::Mes
                 forwardMessageToInjectedBundle(message);
                 return;
             }
+#if USE(ACCELERATED_COMPOSITING) && PLATFORM(MAC)
+            case WebProcessMessage::SetupAcceleratedCompositingPort: {
+                CoreIPC::MachPort port;
+                if (!arguments->decode(port))
+                    return;
+
+                m_compositingRenderServerPort = port.port();
+                return;
+            }
+#endif
         }
     }
 

@@ -23,32 +23,23 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebProcessMessageKinds_h
-#define WebProcessMessageKinds_h
+#include "WebProcessProxy.h"
 
-// Messages sent from WebKit to the web process.
+#include "MachPort.h"
+#include "WebKitSystemInterface.h"
+#include "WebProcessMessageKinds.h"
 
-#include "MessageID.h"
+using namespace WebCore;
 
-namespace WebProcessMessage {
+namespace WebKit {
 
-enum Kind {
-    LoadInjectedBundle,
-    Create,
-    PostMessage,
-#if PLATFORM(MAC)
-    SetupAcceleratedCompositingPort
+#if USE(ACCELERATED_COMPOSITING)
+void WebProcessProxy::setUpAcceleratedCompositing()
+{
+    mach_port_t renderServerPort = WKInitializeRenderServer();
+    if (renderServerPort != MACH_PORT_NULL)
+        connection()->send(WebProcessMessage::SetupAcceleratedCompositingPort, 0, CoreIPC::In(CoreIPC::MachPort(renderServerPort, MACH_MSG_TYPE_COPY_SEND)));
+}
 #endif
-};
 
-}
-
-namespace CoreIPC {
-
-template<> struct MessageKindTraits<WebProcessMessage::Kind> { 
-    static const MessageClass messageClass = MessageClassWebProcess;
-};
-
-}
-
-#endif // WebProcessMessageKinds_h
+} // namespace WebKit

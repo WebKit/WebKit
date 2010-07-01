@@ -25,11 +25,9 @@
 
 #include "LayerBackedDrawingAreaProxy.h"
 
-#include <QuartzCore/QuartzCore.h>
-
 #include "DrawingAreaMessageKinds.h"
 #include "DrawingAreaProxyMessageKinds.h"
-#include "UpdateChunk.h"
+#include <QuartzCore/QuartzCore.h>
 #include "WKAPICast.h"
 #include "WKView.h"
 #include "WKViewInternal.h"

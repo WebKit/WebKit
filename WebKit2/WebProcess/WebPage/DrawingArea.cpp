@@ -40,7 +40,7 @@ DrawingArea* DrawingArea::create(Type type, WebPage* webPage)
         case ChunkedUpdateDrawingAreaType:
             drawingArea = new ChunkedUpdateDrawingArea(webPage);
             break;
-#if USE(ACCELERATED_COMPOSITING)
+#if USE(ACCELERATED_COMPOSITING) && PLATFORM(MAC)
         case LayerBackedDrawingAreaType:
             drawingArea = new LayerBackedDrawingArea(webPage);
             break;

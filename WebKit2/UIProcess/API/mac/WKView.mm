@@ -57,7 +57,7 @@ using namespace WebCore;
     void* _trackingRectUserData;
 
 #if USE(ACCELERATED_COMPOSITING)
-    NSView* _layerHostingView;
+    NSView *_layerHostingView;
 #endif
 }
 @end
@@ -433,22 +433,21 @@ static bool isViewVisible(NSView *view)
 }
 
 #if USE(ACCELERATED_COMPOSITING)
-- (void)_startAcceleratedCompositing:(CALayer*)rootLayer
+- (void)_startAcceleratedCompositing:(CALayer *)rootLayer
 {
     if (!_data->_layerHostingView) {
-        NSView* hostingView = [[NSView alloc] initWithFrame:[self bounds]];
+        NSView *hostingView = [[NSView alloc] initWithFrame:[self bounds]];
 #if !defined(BUILDING_ON_LEOPARD)
         [hostingView setAutoresizingMask:(NSViewWidthSizable | NSViewHeightSizable)];
 #endif
         
         [self addSubview:hostingView];
         [hostingView release];
-        // hostingView is owned by being a subview of self
         _data->_layerHostingView = hostingView;
     }
 
     // Make a container layer, which will get sized/positioned by AppKit and CA.
-    CALayer* viewLayer = [CALayer layer];
+    CALayer *viewLayer = [CALayer layer];
 
 #if defined(BUILDING_ON_LEOPARD)
     // Turn off default animations.

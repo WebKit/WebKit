@@ -60,6 +60,10 @@ WebProcessProxy::WebProcessProxy(WebContext* context)
     // Would that be better than sending a connection?
     if (!context->injectedBundlePath().isEmpty())
         send(WebProcessMessage::LoadInjectedBundle, 0, CoreIPC::In(context->injectedBundlePath()));
+
+#if USE(ACCELERATED_COMPOSITING)
+    setUpAcceleratedCompositing();
+#endif
 }
 
 WebProcessProxy::~WebProcessProxy()
@@ -104,6 +108,12 @@ void WebProcessProxy::terminate()
     if (m_processLauncher)
         m_processLauncher->terminateProcess();
 }
+
+#if USE(ACCELERATED_COMPOSITING) && !PLATFORM(MAC)
+void WebProcessProxy::setUpAcceleratedCompositing()
+{
+}
+#endif
 
 WebPageProxy* WebProcessProxy::webPage(uint64_t pageID) const
 {
