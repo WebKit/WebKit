@@ -76,10 +76,6 @@ void SVGRenderSupport::mapLocalToContainer(const RenderObject* object, RenderBox
 
 bool SVGRenderSupport::prepareToRenderSVGContent(RenderObject* object, PaintInfo& paintInfo)
 {
-#if !ENABLE(FILTERS)
-    UNUSED_PARAM(filter);
-#endif
-
     ASSERT(object);
     SVGElement* svgElement = static_cast<SVGElement*>(object->node());
     ASSERT(svgElement && svgElement->document() && svgElement->isStyled());
