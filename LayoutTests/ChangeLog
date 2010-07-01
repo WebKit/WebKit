@@ -1,5 +1,18 @@
 2010-07-01  Mark Rowe  <mrowe@apple.com>
 
+        Merge r61189.
+
+    2010-06-15  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by John Sullivan.
+
+        Test for <rdar://problem/8077032> REGRESSION (r50796): Black background on AppleScript generated email
+
+        * platform/mac/editing/input/NSBackgroundColor-transparent-expected.txt: Added.
+        * platform/mac/editing/input/NSBackgroundColor-transparent.html: Added.
+
+2010-07-01  Mark Rowe  <mrowe@apple.com>
+
         Merge r61060.
 
     2010-06-12  Kent Tamura  <tkent@chromium.org>
