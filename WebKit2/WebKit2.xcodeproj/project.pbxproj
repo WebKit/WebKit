@@ -144,10 +144,18 @@
 		BC5F7BB51182376C0052C02C /* ChunkedUpdateDrawingArea.h in Headers */ = {isa = PBXBuildFile; fileRef = BC5F7BB31182376C0052C02C /* ChunkedUpdateDrawingArea.h */; };
 		BC5F7BB9118237990052C02C /* ChunkedUpdateDrawingAreaMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC5F7BB8118237990052C02C /* ChunkedUpdateDrawingAreaMac.cpp */; };
 		BC617EE8104CB34700FB3FE1 /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AA1C7DE100E846E0078DEBC /* JavaScriptCore.framework */; };
-		BC64680311DBBA73006455B0 /* WKArray.h in Headers */ = {isa = PBXBuildFile; fileRef = BC64680211DBBA73006455B0 /* WKArray.h */; };
+		BC64680311DBBA73006455B0 /* WKArray.h in Headers */ = {isa = PBXBuildFile; fileRef = BC64680211DBBA73006455B0 /* WKArray.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BC64680B11DBBD69006455B0 /* WKArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC64680A11DBBD69006455B0 /* WKArray.cpp */; };
 		BC64696F11DBE603006455B0 /* ImmutableArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC64696D11DBE603006455B0 /* ImmutableArray.cpp */; };
 		BC64697011DBE603006455B0 /* ImmutableArray.h in Headers */ = {isa = PBXBuildFile; fileRef = BC64696E11DBE603006455B0 /* ImmutableArray.h */; };
+		BC646BF911DD377B006455B0 /* WebBackForwardListItem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC646BF511DD377B006455B0 /* WebBackForwardListItem.cpp */; };
+		BC646BFA11DD377B006455B0 /* WebBackForwardListItem.h in Headers */ = {isa = PBXBuildFile; fileRef = BC646BF611DD377B006455B0 /* WebBackForwardListItem.h */; };
+		BC646BFB11DD377B006455B0 /* WebBackForwardListProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC646BF711DD377B006455B0 /* WebBackForwardListProxy.cpp */; };
+		BC646BFC11DD377B006455B0 /* WebBackForwardListProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = BC646BF811DD377B006455B0 /* WebBackForwardListProxy.h */; };
+		BC646C1A11DD399F006455B0 /* WKBackForwardList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC646C1611DD399F006455B0 /* WKBackForwardList.cpp */; };
+		BC646C1B11DD399F006455B0 /* WKBackForwardList.h in Headers */ = {isa = PBXBuildFile; fileRef = BC646C1711DD399F006455B0 /* WKBackForwardList.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		BC646C1C11DD399F006455B0 /* WKBackForwardListItem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC646C1811DD399F006455B0 /* WKBackForwardListItem.cpp */; };
+		BC646C1D11DD399F006455B0 /* WKBackForwardListItem.h in Headers */ = {isa = PBXBuildFile; fileRef = BC646C1911DD399F006455B0 /* WKBackForwardListItem.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BC6EDAA6111271C600E7678B /* PageClient.h in Headers */ = {isa = PBXBuildFile; fileRef = BC6EDAA5111271C600E7678B /* PageClient.h */; };
 		BC8452A71162C80900CAB9B5 /* DrawingArea.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC8452A51162C80900CAB9B5 /* DrawingArea.cpp */; };
 		BC8452A81162C80900CAB9B5 /* DrawingArea.h in Headers */ = {isa = PBXBuildFile; fileRef = BC8452A61162C80900CAB9B5 /* DrawingArea.h */; };
@@ -384,6 +392,14 @@
 		BC64680A11DBBD69006455B0 /* WKArray.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKArray.cpp; sourceTree = "<group>"; };
 		BC64696D11DBE603006455B0 /* ImmutableArray.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ImmutableArray.cpp; sourceTree = "<group>"; };
 		BC64696E11DBE603006455B0 /* ImmutableArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImmutableArray.h; sourceTree = "<group>"; };
+		BC646BF511DD377B006455B0 /* WebBackForwardListItem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebBackForwardListItem.cpp; sourceTree = "<group>"; };
+		BC646BF611DD377B006455B0 /* WebBackForwardListItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebBackForwardListItem.h; sourceTree = "<group>"; };
+		BC646BF711DD377B006455B0 /* WebBackForwardListProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebBackForwardListProxy.cpp; sourceTree = "<group>"; };
+		BC646BF811DD377B006455B0 /* WebBackForwardListProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebBackForwardListProxy.h; sourceTree = "<group>"; };
+		BC646C1611DD399F006455B0 /* WKBackForwardList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKBackForwardList.cpp; sourceTree = "<group>"; };
+		BC646C1711DD399F006455B0 /* WKBackForwardList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKBackForwardList.h; sourceTree = "<group>"; };
+		BC646C1811DD399F006455B0 /* WKBackForwardListItem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKBackForwardListItem.cpp; sourceTree = "<group>"; };
+		BC646C1911DD399F006455B0 /* WKBackForwardListItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKBackForwardListItem.h; sourceTree = "<group>"; };
 		BC6EDAA5111271C600E7678B /* PageClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PageClient.h; sourceTree = "<group>"; };
 		BC8452A51162C80900CAB9B5 /* DrawingArea.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DrawingArea.cpp; sourceTree = "<group>"; };
 		BC8452A61162C80900CAB9B5 /* DrawingArea.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DrawingArea.h; sourceTree = "<group>"; };
@@ -711,6 +727,10 @@
 				BC597074116591D000551FCA /* ProcessModel.h */,
 				BC111B08112F5E3C00337BAB /* ResponsivenessTimer.cpp */,
 				1A30066C1110F4F70031937C /* ResponsivenessTimer.h */,
+				BC646BF511DD377B006455B0 /* WebBackForwardListItem.cpp */,
+				BC646BF611DD377B006455B0 /* WebBackForwardListItem.h */,
+				BC646BF711DD377B006455B0 /* WebBackForwardListProxy.cpp */,
+				BC646BF811DD377B006455B0 /* WebBackForwardListProxy.h */,
 				BCB9E2421120DACA00A137E0 /* WebContext.cpp */,
 				BCB9E2411120DACA00A137E0 /* WebContext.h */,
 				BCDE059A11CDA8AE00E41AF1 /* WebContextInjectedBundleClient.cpp */,
@@ -761,6 +781,10 @@
 				BC0C376D10F808460076D7CB /* WKAPICast.h */,
 				BC64680A11DBBD69006455B0 /* WKArray.cpp */,
 				BC64680211DBBA73006455B0 /* WKArray.h */,
+				BC646C1611DD399F006455B0 /* WKBackForwardList.cpp */,
+				BC646C1711DD399F006455B0 /* WKBackForwardList.h */,
+				BC646C1811DD399F006455B0 /* WKBackForwardListItem.cpp */,
+				BC646C1911DD399F006455B0 /* WKBackForwardListItem.h */,
 				BC0C376710F807B20076D7CB /* WKBase.h */,
 				BCB9E24A1120E15C00A137E0 /* WKContext.cpp */,
 				BCB9E2491120E15C00A137E0 /* WKContext.h */,
@@ -1092,6 +1116,10 @@
 				BCD25F1711D6BDE100169B0E /* WKBundleFrame.h in Headers */,
 				BC64680311DBBA73006455B0 /* WKArray.h in Headers */,
 				BC64697011DBE603006455B0 /* ImmutableArray.h in Headers */,
+				BC646BFA11DD377B006455B0 /* WebBackForwardListItem.h in Headers */,
+				BC646BFC11DD377B006455B0 /* WebBackForwardListProxy.h in Headers */,
+				BC646C1B11DD399F006455B0 /* WKBackForwardList.h in Headers */,
+				BC646C1D11DD399F006455B0 /* WKBackForwardListItem.h in Headers */,
 				0F5265B411DD37680006D33C /* LayerBackedDrawingArea.h in Headers */,
 				0F5265BA11DD377F0006D33C /* LayerBackedDrawingAreaProxy.h in Headers */,
 			);
@@ -1259,6 +1287,10 @@
 				BCD25F1811D6BDE100169B0E /* WKBundleFrame.cpp in Sources */,
 				BC64680B11DBBD69006455B0 /* WKArray.cpp in Sources */,
 				BC64696F11DBE603006455B0 /* ImmutableArray.cpp in Sources */,
+				BC646BF911DD377B006455B0 /* WebBackForwardListItem.cpp in Sources */,
+				BC646BFB11DD377B006455B0 /* WebBackForwardListProxy.cpp in Sources */,
+				BC646C1A11DD399F006455B0 /* WKBackForwardList.cpp in Sources */,
+				BC646C1C11DD399F006455B0 /* WKBackForwardListItem.cpp in Sources */,
 				0F5265B311DD37680006D33C /* LayerBackedDrawingArea.cpp in Sources */,
 				0F5265B611DD37700006D33C /* LayerBackedDrawingAreaMac.mm in Sources */,
 				0F5265B911DD377F0006D33C /* LayerBackedDrawingAreaProxy.cpp in Sources */,

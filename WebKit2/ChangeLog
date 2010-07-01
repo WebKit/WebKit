@@ -1,3 +1,28 @@
+2010-07-01  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        https://bugs.webkit.org/show_bug.cgi?id=41491
+        Add first stab at back/forward list API.
+
+        * UIProcess/API/C/WKAPICast.h:
+        * UIProcess/API/C/WKBackForwardList.cpp: Added.
+        * UIProcess/API/C/WKBackForwardList.h: Added.
+        * UIProcess/API/C/WKBackForwardListItem.cpp: Added.
+        * UIProcess/API/C/WKBackForwardListItem.h: Added.
+        * UIProcess/API/C/WKBase.h:
+        * UIProcess/API/C/WKPage.cpp:
+        * UIProcess/API/C/WKPage.h:
+        * UIProcess/API/C/WebKit2.h:
+        * UIProcess/WebBackForwardListItem.cpp: Added.
+        * UIProcess/WebBackForwardListItem.h: Added.
+        * UIProcess/WebBackForwardListProxy.cpp: Added.
+        * UIProcess/WebBackForwardListProxy.h: Added.
+        * UIProcess/WebPageProxy.cpp:
+        * UIProcess/WebPageProxy.h:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * win/WebKit2.vcproj:
+
 2010-07-01  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

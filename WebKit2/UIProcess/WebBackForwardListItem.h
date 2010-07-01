@@ -23,24 +23,37 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebKit2_h
-#define WebKit2_h
+#ifndef WebBackForwardListItem_h
+#define WebBackForwardListItem_h
 
-#include <WebKit2/WKBase.h>
-#include <WebKit2/WKBackForwardList.h>
-#include <WebKit2/WKBackForwardListItem.h>
-#include <WebKit2/WKContext.h>
-#include <WebKit2/WKFrame.h>
-#include <WebKit2/WKFramePolicyListener.h>
-#include <WebKit2/WKNavigationData.h>
-#include <WebKit2/WKPage.h>
-#include <WebKit2/WKPageNamespace.h>
-#include <WebKit2/WKPreferences.h>
-#include <WebKit2/WKString.h>
-#include <WebKit2/WKURL.h>
+#include <WebCore/PlatformString.h>
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefCounted.h>
 
-#if !__APPLE__ || __OBJC__
-#include <WebKit2/WKView.h>
-#endif
+namespace WebKit {
 
-#endif /* WebKit2_h */
+class WebPageProxy;
+
+class WebBackForwardListItem : public RefCounted<WebBackForwardListItem> {
+public:
+    static PassRefPtr<WebBackForwardListItem> create(const WebCore::String& originalURL, const WebCore::String& url, const WebCore::String& title)
+    {
+        return adoptRef(new WebBackForwardListItem(originalURL, url, title));
+    }
+    ~WebBackForwardListItem();
+
+    const WebCore::String& originalURL() const { return m_originalURL; }
+    const WebCore::String& url() const { return m_url; }
+    const WebCore::String& title() const { return m_title; }
+
+private:
+    WebBackForwardListItem(const WebCore::String& originalURL, const WebCore::String& url, const WebCore::String& title);
+
+    WebCore::String m_originalURL;
+    WebCore::String m_url;
+    WebCore::String m_title;
+};
+
+} // namespace WebKit
+
+#endif // WebBackForwardListItem_h

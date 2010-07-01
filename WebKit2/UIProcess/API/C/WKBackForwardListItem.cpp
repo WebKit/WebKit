@@ -23,24 +23,35 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebKit2_h
-#define WebKit2_h
+#include "WKBackForwardListItem.h"
 
-#include <WebKit2/WKBase.h>
-#include <WebKit2/WKBackForwardList.h>
-#include <WebKit2/WKBackForwardListItem.h>
-#include <WebKit2/WKContext.h>
-#include <WebKit2/WKFrame.h>
-#include <WebKit2/WKFramePolicyListener.h>
-#include <WebKit2/WKNavigationData.h>
-#include <WebKit2/WKPage.h>
-#include <WebKit2/WKPageNamespace.h>
-#include <WebKit2/WKPreferences.h>
-#include <WebKit2/WKString.h>
-#include <WebKit2/WKURL.h>
+#include "WKAPICast.h"
+#include "WebBackForwardListItem.h"
 
-#if !__APPLE__ || __OBJC__
-#include <WebKit2/WKView.h>
-#endif
+using namespace WebKit;
 
-#endif /* WebKit2_h */
+WKURLRef WKBackForwardListItemGetOriginalURL(WKBackForwardListItemRef itemRef)
+{
+    return toURLRef(toWK(itemRef)->originalURL().impl());
+}
+
+WKURLRef WKBackForwardListItemGetURL(WKBackForwardListItemRef itemRef)
+{
+    return toURLRef(toWK(itemRef)->url().impl());
+}
+
+WKStringRef WKBackForwardListItemGetTitle(WKBackForwardListItemRef itemRef)
+{
+    return toRef(toWK(itemRef)->title().impl());
+}
+
+WKBackForwardListItemRef WKBackForwardListItemRetain(WKBackForwardListItemRef itemRef)
+{
+    toWK(itemRef)->ref();
+    return itemRef;
+}
+
+void WKBackForwardListItemRelease(WKBackForwardListItemRef itemRef)
+{
+    toWK(itemRef)->deref();
+}

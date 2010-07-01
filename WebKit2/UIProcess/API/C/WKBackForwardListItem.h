@@ -23,49 +23,26 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WKBase_h
-#define WKBase_h
+#ifndef WKBackForwardListItem_h
+#define WKBackForwardListItem_h
 
-#if defined(WIN32) || defined(_WIN32)
-#include <WebKit2/WKBaseWin.h>
-#endif
-
-typedef struct OpaqueWKArrayRef* WKArrayRef;
-typedef struct OpaqueWKBackForwardListItemRef* WKBackForwardListItemRef;
-typedef struct OpaqueWKBackForwardListRef* WKBackForwardListRef;
-typedef struct OpaqueWKContext* WKContextRef;
-typedef struct OpaqueWKFrame* WKFrameRef;
-typedef struct OpaqueWKFramePolicyListener* WKFramePolicyListenerRef;
-typedef struct OpaqueWKNavigationDataRef* WKNavigationDataRef;
-typedef struct OpaqueWKPage* WKPageRef;
-typedef struct OpaqueWKPageNamespace* WKPageNamespaceRef;
-typedef struct OpaqueWKPreferencesRef* WKPreferencesRef;
-typedef struct OpaqueWKStringRef* WKStringRef;
-typedef struct OpaqueWKURLRef* WKURLRef;
-
-#undef WK_EXPORT
-#if defined(WK_NO_EXPORT)
-#define WK_EXPORT
-#elif defined(__GNUC__)
-#define WK_EXPORT __attribute__((visibility("default")))
-#elif defined(WIN32) || defined(_WIN32)
-#if BUILDING_WEBKIT2
-#define WK_EXPORT __declspec(dllexport)
-#else
-#define WK_EXPORT __declspec(dllimport)
-#endif
-#else
-#define WK_EXPORT
-#endif
+#include <WebKit2/WKBase.h>
 
 #ifdef __cplusplus
-#define WK_DECLARE_RETAIN_RELEASE_OVERLOADS(WKType) \
-    inline void WKRetain(WKType##Ref p) { WKType##Retain(p); } \
-    inline void WKRelease(WKType##Ref p) { WKType##Release(p); } \
-    // end of macro
-#else
-#define WK_DECLARE_RETAIN_RELEASE_OVERLOADS(WKType)
+extern "C" {
 #endif
 
+WK_EXPORT WKURLRef WKBackForwardListItemGetOriginalURL(WKBackForwardListItemRef item);
+WK_EXPORT WKURLRef WKBackForwardListItemGetURL(WKBackForwardListItemRef item);
+WK_EXPORT WKStringRef WKBackForwardListItemGetTitle(WKBackForwardListItemRef item);
 
-#endif /* WKBase_h */
+WK_EXPORT WKBackForwardListItemRef WKBackForwardListItemRetain(WKBackForwardListItemRef item);
+WK_EXPORT void WKBackForwardListItemRelease(WKBackForwardListItemRef item);
+
+#ifdef __cplusplus
+}
+#endif
+
+WK_DECLARE_RETAIN_RELEASE_OVERLOADS(WKBackForwardListItem)
+
+#endif /* WKBackForwardListItem_h */

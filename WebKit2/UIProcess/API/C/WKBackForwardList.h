@@ -23,49 +23,32 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WKBase_h
-#define WKBase_h
+#ifndef WKBackForwardList_h
+#define WKBackForwardList_h
 
-#if defined(WIN32) || defined(_WIN32)
-#include <WebKit2/WKBaseWin.h>
-#endif
-
-typedef struct OpaqueWKArrayRef* WKArrayRef;
-typedef struct OpaqueWKBackForwardListItemRef* WKBackForwardListItemRef;
-typedef struct OpaqueWKBackForwardListRef* WKBackForwardListRef;
-typedef struct OpaqueWKContext* WKContextRef;
-typedef struct OpaqueWKFrame* WKFrameRef;
-typedef struct OpaqueWKFramePolicyListener* WKFramePolicyListenerRef;
-typedef struct OpaqueWKNavigationDataRef* WKNavigationDataRef;
-typedef struct OpaqueWKPage* WKPageRef;
-typedef struct OpaqueWKPageNamespace* WKPageNamespaceRef;
-typedef struct OpaqueWKPreferencesRef* WKPreferencesRef;
-typedef struct OpaqueWKStringRef* WKStringRef;
-typedef struct OpaqueWKURLRef* WKURLRef;
-
-#undef WK_EXPORT
-#if defined(WK_NO_EXPORT)
-#define WK_EXPORT
-#elif defined(__GNUC__)
-#define WK_EXPORT __attribute__((visibility("default")))
-#elif defined(WIN32) || defined(_WIN32)
-#if BUILDING_WEBKIT2
-#define WK_EXPORT __declspec(dllexport)
-#else
-#define WK_EXPORT __declspec(dllimport)
-#endif
-#else
-#define WK_EXPORT
-#endif
+#include <WebKit2/WKBase.h>
 
 #ifdef __cplusplus
-#define WK_DECLARE_RETAIN_RELEASE_OVERLOADS(WKType) \
-    inline void WKRetain(WKType##Ref p) { WKType##Retain(p); } \
-    inline void WKRelease(WKType##Ref p) { WKType##Release(p); } \
-    // end of macro
-#else
-#define WK_DECLARE_RETAIN_RELEASE_OVERLOADS(WKType)
+extern "C" {
 #endif
 
+WK_EXPORT WKBackForwardListItemRef WKBackForwardListGetCurrentItem(WKBackForwardListRef list);
+WK_EXPORT WKBackForwardListItemRef WKBackForwardListGetBackItem(WKBackForwardListRef list);
+WK_EXPORT WKBackForwardListItemRef WKBackForwardListGetForwardItem(WKBackForwardListRef list);
 
-#endif /* WKBase_h */
+WK_EXPORT unsigned WKBackForwardListGetBackListCount(WKBackForwardListRef list);
+WK_EXPORT unsigned WKBackForwardListGetForwardListCount(WKBackForwardListRef list);
+
+WK_EXPORT WKArrayRef WKBackForwardListCopyBackListWithLimit(WKBackForwardListRef list, unsigned limit);
+WK_EXPORT WKArrayRef WKBackForwardListCopyForwardListWithLimit(WKBackForwardListRef list, unsigned limit);
+
+WK_EXPORT WKBackForwardListRef WKBackForwardListRetain(WKBackForwardListRef list);
+WK_EXPORT void WKBackForwardListRelease(WKBackForwardListRef list);
+
+#ifdef __cplusplus
+}
+#endif
+
+WK_DECLARE_RETAIN_RELEASE_OVERLOADS(WKBackForwardList)
+
+#endif // WKBackForwardList_h

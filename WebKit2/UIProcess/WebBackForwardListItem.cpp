@@ -23,24 +23,21 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebKit2_h
-#define WebKit2_h
+#include "WebBackForwardListItem.h"
 
-#include <WebKit2/WKBase.h>
-#include <WebKit2/WKBackForwardList.h>
-#include <WebKit2/WKBackForwardListItem.h>
-#include <WebKit2/WKContext.h>
-#include <WebKit2/WKFrame.h>
-#include <WebKit2/WKFramePolicyListener.h>
-#include <WebKit2/WKNavigationData.h>
-#include <WebKit2/WKPage.h>
-#include <WebKit2/WKPageNamespace.h>
-#include <WebKit2/WKPreferences.h>
-#include <WebKit2/WKString.h>
-#include <WebKit2/WKURL.h>
+using namespace WebCore;
 
-#if !__APPLE__ || __OBJC__
-#include <WebKit2/WKView.h>
-#endif
+namespace WebKit {
 
-#endif /* WebKit2_h */
+WebBackForwardListItem::WebBackForwardListItem(const String& originalURL, const String& url, const String& title)
+    : m_originalURL(originalURL)
+    , m_url(url)
+    , m_title(title)
+{
+}
+
+WebBackForwardListItem::~WebBackForwardListItem()
+{
+}
+
+} // namespace WebKit

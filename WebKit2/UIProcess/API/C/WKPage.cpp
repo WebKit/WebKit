@@ -27,6 +27,7 @@
 #include "WKPagePrivate.h"
 
 #include "WKAPICast.h"
+#include "WebBackForwardListProxy.h"
 #include "WebPageProxy.h"
 
 #ifdef __BLOCKS__
@@ -93,6 +94,11 @@ void WKPageGoBack(WKPageRef pageRef)
 bool WKPageCanGoBack(WKPageRef pageRef)
 {
     return toWK(pageRef)->canGoBack();
+}
+
+WKBackForwardListRef WKPageGetBackForwardList(WKPageRef pageRef)
+{
+    return toRef(toWK(pageRef)->backForwardList());
 }
 
 WKStringRef WKPageGetTitle(WKPageRef pageRef)

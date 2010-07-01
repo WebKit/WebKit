@@ -828,6 +828,22 @@
 				>
 			</File>
 			<File
+				RelativePath="..\UIProcess\WebBackForwardListItem.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\UIProcess\WebBackForwardListItem.h"
+				>
+			</File>
+			<File
+				RelativePath="..\UIProcess\WebBackForwardListProxy.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\UIProcess\WebBackForwardListProxy.h"
+				>
+			</File>
+			<File
 				RelativePath="..\UIProcess\WebContext.cpp"
 				>
 			</File>
@@ -963,6 +979,22 @@
 					</File>
 					<File
 						RelativePath="..\UIProcess\API\C\WKBase.h"
+						>
+					</File>
+					<File
+						RelativePath="..\UIProcess\API\C\WKBackForwardList.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\UIProcess\API\C\WKBackForwardList.h"
+						>
+					</File>
+					<File
+						RelativePath="..\UIProcess\API\C\WKBackForwardListItem.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\UIProcess\API\C\WKBackForwardListItem.h"
 						>
 					</File>
 					<File

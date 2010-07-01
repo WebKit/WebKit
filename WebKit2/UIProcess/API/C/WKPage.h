@@ -143,6 +143,7 @@ WK_EXPORT void WKPageGoForward(WKPageRef page);
 WK_EXPORT bool WKPageCanGoForward(WKPageRef page);
 WK_EXPORT void WKPageGoBack(WKPageRef page);
 WK_EXPORT bool WKPageCanGoBack(WKPageRef page);
+WK_EXPORT WKBackForwardListRef WKPageGetBackForwardList(WKPageRef page);
 
 WK_EXPORT WKStringRef WKPageGetTitle(WKPageRef page);
 
