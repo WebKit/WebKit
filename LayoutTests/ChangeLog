@@ -1,3 +1,14 @@
+2010-06-30  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed.
+
+        Fix Sam's brokeness.
+
+        AFAIK, this new expected result is ok (especially given that it still
+        says PASS).
+
+        * fast/dom/Window/window-postmessage-clone-expected.txt:
+
 2010-06-30  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed fix. Update Qt specific expected files after r62215.

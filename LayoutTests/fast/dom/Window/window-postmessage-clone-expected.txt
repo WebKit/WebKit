@@ -2,7 +2,7 @@ Tests that we clone object hierarchies
 PASS: 'postMessage(cyclicObject)' threw TypeError: Cannot post cyclic structures.
 PASS: 'postMessage(cyclicArray)' threw TypeError: Cannot post cyclic structures.
 PASS: 'postMessage(reallyDeepArray)' threw RangeError: Maximum call stack size exceeded.
-PASS: 'postMessage(window)' threw TypeError: Cannot post cyclic structures.
+PASS: 'postMessage(window)' threw TypeError: Type error
 PASS: eventData is null of type object
 PASS: eventData is undefined of type undefined
 PASS: eventData is 1 of type number
