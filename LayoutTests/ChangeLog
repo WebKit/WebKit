@@ -1,5 +1,20 @@
 2010-07-01  Mark Rowe  <mrowe@apple.com>
 
+        Merge r61921.
+
+    2010-06-25  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        <rdar://problem/8000667> Certain text is repeated before and after a line break
+
+        * fast/text/bidi-explicit-embedding-past-end-expected.checksum: Added.
+        * fast/text/bidi-explicit-embedding-past-end-expected.png: Added.
+        * fast/text/bidi-explicit-embedding-past-end-expected.txt: Added.
+        * fast/text/bidi-explicit-embedding-past-end.html: Added.
+
+2010-07-01  Mark Rowe  <mrowe@apple.com>
+
         Merge r59396.
 
     2010-05-13  Simon Fraser  <simon.fraser@apple.com>
