@@ -1,3 +1,49 @@
+2010-07-01  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Get accelerated compositing working with webkit2
+        https://bugs.webkit.org/show_bug.cgi?id=41084
+        
+        Add a new kind of DrawingArea, which is a LayerBackedDrawingArea, which will be used
+        when the page goes into accelerated compositing mode. It is not wired up yet.
+
+        * Shared/CoreIPCSupport/DrawingAreaProxyMessageKinds.h: New 'attach' and 'detach' messages
+        related to accelerated compositing.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _startAcceleratedCompositing:]):
+        (-[WKView _stopAcceleratedCompositing]):
+        * UIProcess/API/mac/WKViewInternal.h:
+        Add a subview of the WKView which has layer-backing enabled, and put the drawing area's
+        layer inside of that.
+        
+        * UIProcess/ChunkedUpdateDrawingAreaProxy.h:
+        (WebKit::ChunkedUpdateDrawingAreaProxy::attachCompositingContext):
+        (WebKit::ChunkedUpdateDrawingAreaProxy::detachCompositingContext): These methods will never be called
+        on the ChunkedUpdateDrawingArea. Stub them out.
+
+        * UIProcess/DrawingAreaProxy.h:
+        Add attachCompositingContext() and detachCompositingContext() methods, and a new drawing area
+        type to the enum.
+
+        * UIProcess/LayerBackedDrawingAreaProxy.cpp: Added.
+        * UIProcess/LayerBackedDrawingAreaProxy.h: Added.
+        * UIProcess/mac/LayerBackedDrawingAreaProxyMac.mm: Added.
+
+        * WebKit2.xcodeproj/project.pbxproj: Add LayerBackedDrawingArea files.
+
+        * WebProcess/WebPage/ChunkedUpdateDrawingArea.h: Add virtual methods stubs.
+
+        * WebProcess/WebPage/DrawingArea.cpp:
+        (WebKit::DrawingArea::create): Create a LayerBackedDrawingArea if asked.
+        * WebProcess/WebPage/DrawingArea.h: New LayerBackedDrawingAreaType type, and new virtual
+        methods related to accelerated compositing.
+
+        * WebProcess/WebPage/LayerBackedDrawingArea.cpp: Added.
+        * WebProcess/WebPage/LayerBackedDrawingArea.h: Added.
+        * WebProcess/WebPage/mac/LayerBackedDrawingAreaMac.mm: Added.
+
 2010-07-01  Kenneth Rohde Christiansen  <kenneth.christiansen@openbossa.org>
 
        Rubberstamped by Sam Weinig.

@@ -30,6 +30,7 @@
 
 // Implementation
 #import "ChunkedUpdateDrawingAreaProxy.h"
+#import "LayerBackedDrawingAreaProxy.h"
 #import "PageClientImpl.h"
 #import "RunLoop.h"
 #import "WebContext.h"
@@ -54,6 +55,10 @@ using namespace WebCore;
     NSToolTipTag _lastToolTipTag;
     id _trackingRectOwner;
     void* _trackingRectUserData;
+
+#if USE(ACCELERATED_COMPOSITING)
+    NSView* _layerHostingView;
+#endif
 }
 @end
 
@@ -426,5 +431,65 @@ static bool isViewVisible(NSView *view)
         [self _sendToolTipMouseEntered];
     }
 }
+
+#if USE(ACCELERATED_COMPOSITING)
+- (void)_startAcceleratedCompositing:(CALayer*)rootLayer
+{
+    if (!_data->_layerHostingView) {
+        NSView* hostingView = [[NSView alloc] initWithFrame:[self bounds]];
+#if !defined(BUILDING_ON_LEOPARD)
+        [hostingView setAutoresizingMask:(NSViewWidthSizable | NSViewHeightSizable)];
+#endif
+        
+        [self addSubview:hostingView];
+        [hostingView release];
+        // hostingView is owned by being a subview of self
+        _data->_layerHostingView = hostingView;
+    }
+
+    // Make a container layer, which will get sized/positioned by AppKit and CA.
+    CALayer* viewLayer = [CALayer layer];
+
+#if defined(BUILDING_ON_LEOPARD)
+    // Turn off default animations.
+    NSNull *nullValue = [NSNull null];
+    NSDictionary *actions = [NSDictionary dictionaryWithObjectsAndKeys:
+                             nullValue, @"anchorPoint",
+                             nullValue, @"bounds",
+                             nullValue, @"contents",
+                             nullValue, @"contentsRect",
+                             nullValue, @"opacity",
+                             nullValue, @"position",
+                             nullValue, @"sublayerTransform",
+                             nullValue, @"sublayers",
+                             nullValue, @"transform",
+                             nil];
+    [viewLayer setStyle:[NSDictionary dictionaryWithObject:actions forKey:@"actions"]];
+#endif
+
+#if !defined(BUILDING_ON_LEOPARD)
+    // If we aren't in the window yet, we'll use the screen's scale factor now, and reset the scale 
+    // via -viewDidMoveToWindow.
+    CGFloat scaleFactor = [self window] ? [[self window] userSpaceScaleFactor] : [[NSScreen mainScreen] userSpaceScaleFactor];
+    [viewLayer setTransform:CATransform3DMakeScale(scaleFactor, scaleFactor, 1)];
+#endif
+
+    [_data->_layerHostingView setLayer:viewLayer];
+    [_data->_layerHostingView setWantsLayer:YES];
+    
+    // Parent our root layer in the container layer
+    [viewLayer addSublayer:rootLayer];
+}
+
+- (void)_stopAcceleratedCompositing
+{
+    if (_data->_layerHostingView) {
+        [_data->_layerHostingView setLayer:nil];
+        [_data->_layerHostingView setWantsLayer:NO];
+        [_data->_layerHostingView removeFromSuperview];
+        _data->_layerHostingView = nil;
+    }
+}
+#endif // USE(ACCELERATED_COMPOSITING)
 
 @end

@@ -27,6 +27,9 @@
 
 // Subclasses
 #include "ChunkedUpdateDrawingArea.h"
+#if USE(ACCELERATED_COMPOSITING)
+#include "LayerBackedDrawingArea.h"
+#endif
 
 namespace WebKit {
 
@@ -37,6 +40,11 @@ DrawingArea* DrawingArea::create(Type type, WebPage* webPage)
         case ChunkedUpdateDrawingAreaType:
             drawingArea = new ChunkedUpdateDrawingArea(webPage);
             break;
+#if USE(ACCELERATED_COMPOSITING)
+        case LayerBackedDrawingAreaType:
+            drawingArea = new LayerBackedDrawingArea(webPage);
+            break;
+#endif
     }
 
     return drawingArea;

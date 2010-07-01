@@ -23,21 +23,38 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ChunkedUpdateDrawingArea_h
-#define ChunkedUpdateDrawingArea_h
+#ifndef LayerBackedDrawingArea_h
+#define LayerBackedDrawingArea_h
+
+#if USE(ACCELERATED_COMPOSITING)
 
 #include "DrawingArea.h"
 #include "RunLoop.h"
 #include <WebCore/IntPoint.h>
+#include <WebCore/GraphicsLayerClient.h>
+
+#if PLATFORM(MAC)
+#include <wtf/RetainPtr.h>
+#ifdef __OBJC__
+@class CALayer;
+#else
+class CALayer;
+#endif
+typedef struct __WKCARemoteLayerClientRef *WKCARemoteLayerClientRef;
+#endif
+
+namespace WebCore {
+    class GraphicsContext;
+    class GraphicsLayer;
+    class IntRect;
+}
 
 namespace WebKit {
 
-class UpdateChunk;
-
-class ChunkedUpdateDrawingArea : public DrawingArea {
+class LayerBackedDrawingArea : public DrawingArea, private WebCore::GraphicsLayerClient {
 public:
-    ChunkedUpdateDrawingArea(WebPage*);
-    virtual ~ChunkedUpdateDrawingArea();
+    LayerBackedDrawingArea(WebPage*);
+    virtual ~LayerBackedDrawingArea();
 
     virtual void invalidateWindow(const WebCore::IntRect& rect, bool immediate);
     virtual void invalidateContentsAndWindow(const WebCore::IntRect& rect, bool immediate);
@@ -46,16 +63,24 @@ public:
     virtual void setNeedsDisplay(const WebCore::IntRect&);
     virtual void display();
 
-#if USE(ACCELERATED_COMPOSITING)
-    virtual void attachCompositingContext(WebCore::GraphicsLayer*) { }
-    virtual void detachCompositingContext() { }
-    virtual void scheduleCompositingLayerSync() { }
-    virtual void syncCompositingLayers() { }
-#endif
+    virtual void attachCompositingContext(WebCore::GraphicsLayer*);
+    virtual void detachCompositingContext();
+    virtual void scheduleCompositingLayerSync();
+    virtual void syncCompositingLayers();
 
     virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder&);
 
 private:
+
+    // GraphicsLayerClient
+    virtual void notifyAnimationStarted(const WebCore::GraphicsLayer*, double /*time*/) { }
+    virtual void notifySyncRequired(const WebCore::GraphicsLayer*) { }
+public:
+    virtual void paintContents(const WebCore::GraphicsLayer*, WebCore::GraphicsContext&, WebCore::GraphicsLayerPaintingPhase, const WebCore::IntRect& inClip);
+private:
+    virtual bool showDebugBorders() const;
+    virtual bool showRepaintCounter() const;
+
     void scheduleDisplay();
     
     // CoreIPC message handlers.
@@ -63,16 +88,33 @@ private:
     void suspendPainting();
     void resumePainting();
     void didUpdate();
+    
+    void platformInit();
+    void platformClear();
 
-    // Platform overrides
-    void paintIntoUpdateChunk(UpdateChunk*);
+#if PLATFORM(MAC)
+    void setUpUpdateLayoutRunLoopObserver();
+    void scheduleUpdateLayoutRunLoopObserver();
+    void removeUpdateLayoutRunLoopObserver();
 
-    WebCore::IntRect m_dirtyRect;
-    bool m_isWaitingForUpdate;
+    static void updateLayoutRunLoopObserverCallback(CFRunLoopObserverRef, CFRunLoopActivity, void*);
+    void updateLayoutRunLoopObserverFired();
+#endif
+
+    RunLoop::Timer<LayerBackedDrawingArea> m_syncTimer;
+
+    OwnPtr<WebCore::GraphicsLayer> m_backingLayer;
+#if PLATFORM(MAC)
+    RetainPtr<WKCARemoteLayerClientRef> m_remoteLayerRef;
+    RetainPtr<CFRunLoopObserverRef> m_updateLayoutRunLoopObserver;
+#endif
+
+    bool m_attached;
     bool m_shouldPaint;
-    RunLoop::Timer<ChunkedUpdateDrawingArea> m_displayTimer;
 };
 
 } // namespace WebKit
 
-#endif // ChunkedUpdateDrawingArea_h
+#endif // USE(ACCELERATED_COMPOSITING)
+
+#endif // LayerBackedDrawingArea_h

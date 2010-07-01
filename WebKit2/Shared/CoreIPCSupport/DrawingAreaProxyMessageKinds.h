@@ -34,7 +34,11 @@ namespace DrawingAreaProxyMessage {
 
 enum Kind {
     Update,
-    DidSetSize
+    DidSetSize,
+#if USE(ACCELERATED_COMPOSITING)
+    AttachCompositingContext,
+    DetachCompositingContext,
+#endif
 };
 
 }

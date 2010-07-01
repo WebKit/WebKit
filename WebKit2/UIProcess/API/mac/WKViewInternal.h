@@ -30,4 +30,9 @@
 - (void)_processDidRevive;
 - (void)_takeFocus:(BOOL)direction;
 - (void)_toolTipChangedFrom:(NSString *)oldToolTip to:(NSString *)newToolTip;
+
+#if USE(ACCELERATED_COMPOSITING)
+- (void)_startAcceleratedCompositing:(CALayer*)rootLayer;
+- (void)_stopAcceleratedCompositing;
+#endif
 @end

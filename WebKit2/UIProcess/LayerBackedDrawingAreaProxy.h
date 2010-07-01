@@ -23,8 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DrawingAreaProxyUpdateChunk_h
-#define DrawingAreaProxyUpdateChunk_h
+#ifndef LayerBackedDrawingAreaProxy_h
+#define LayerBackedDrawingAreaProxy_h
+
+#if USE(ACCELERATED_COMPOSITING)
 
 #include "DrawingAreaProxy.h"
 #include <WebCore/IntSize.h>
@@ -32,15 +34,16 @@
 #if PLATFORM(MAC)
 #include <wtf/RetainPtr.h>
 #ifdef __OBJC__
+@class CALayer;
 @class WKView;
 #else
+class CALayer;
 class WKView;
 #endif
 #endif
 
 namespace WebKit {
 
-class UpdateChunk;
 class WebPageProxy;
 
 #if PLATFORM(MAC)
@@ -50,10 +53,10 @@ class WebView;
 typedef WebView PlatformWebView;
 #endif
 
-class ChunkedUpdateDrawingAreaProxy : public DrawingAreaProxy {
+class LayerBackedDrawingAreaProxy : public DrawingAreaProxy {
 public:
-    ChunkedUpdateDrawingAreaProxy(PlatformWebView*);
-    virtual ~ChunkedUpdateDrawingAreaProxy();
+    LayerBackedDrawingAreaProxy(PlatformWebView*);
+    virtual ~LayerBackedDrawingAreaProxy();
 
     // The DrawingAreaProxy should never be decoded itself. Instead, the DrawingArea should be decoded.
     virtual void encode(CoreIPC::ArgumentEncoder& encoder) const
@@ -69,18 +72,14 @@ private:
     virtual void paint(const WebCore::IntRect&, PlatformDrawingContext);
     virtual void setSize(const WebCore::IntSize&);
     virtual void setPageIsVisible(bool isVisible);
-    
-    void ensureBackingStore();
-    void invalidateBackingStore();
-    void platformPaint(const WebCore::IntRect&, PlatformDrawingContext);
-    void drawUpdateChunkIntoBackingStore(UpdateChunk*);
-    void didSetSize(UpdateChunk*);
-    void update(UpdateChunk*);
 
-#if USE(ACCELERATED_COMPOSITING)
-    virtual void attachCompositingContext(uint32_t) { }
-    virtual void detachCompositingContext() { }
-#endif
+    virtual void attachCompositingContext(uint32_t contextID);
+    virtual void detachCompositingContext();
+    
+    void didSetSize();
+    void update();
+    
+    void platformSetSize();
 
     bool m_isWaitingForDidSetFrameNotification;
     bool m_isVisible;
@@ -89,12 +88,7 @@ private:
     WebCore::IntSize m_lastSetViewSize;
 
 #if PLATFORM(MAC)
-    // BackingStore
-    RetainPtr<CGContextRef> m_bitmapContext;
-#elif PLATFORM(WIN)
-    // BackingStore
-    OwnPtr<HDC> m_backingStoreDC;
-    OwnPtr<HBITMAP> m_backingStoreBitmap;
+    RetainPtr<CALayer> m_compositingRootLayer;
 #endif
 
     PlatformWebView* m_webView;
@@ -102,4 +96,6 @@ private:
     
 } // namespace WebKit
 
-#endif // DrawingAreaProxyUpdateChunk_h
+#endif // USE(ACCELERATED_COMPOSITING)
+
+#endif // LayerBackedDrawingAreaProxy_h

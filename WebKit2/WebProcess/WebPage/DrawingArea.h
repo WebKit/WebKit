@@ -31,6 +31,9 @@
 namespace WebCore {
     class IntRect;
     class IntSize;
+#if USE(ACCELERATED_COMPOSITING)
+    class GraphicsLayer;
+#endif
 }
 
 namespace CoreIPC {
@@ -46,7 +49,10 @@ class WebPage;
 class DrawingArea {
 public:
     enum Type {
-        ChunkedUpdateDrawingAreaType
+        ChunkedUpdateDrawingAreaType,
+#if USE(ACCELERATED_COMPOSITING)
+        LayerBackedDrawingAreaType,
+#endif
     };
 
     // FIXME: It might make sense to move this create function into a factory style class. 
@@ -60,6 +66,13 @@ public:
 
     virtual void setNeedsDisplay(const WebCore::IntRect&) = 0;
     virtual void display() = 0;
+
+#if USE(ACCELERATED_COMPOSITING)
+    virtual void attachCompositingContext(WebCore::GraphicsLayer*) = 0;
+    virtual void detachCompositingContext() = 0;
+    virtual void scheduleCompositingLayerSync() = 0;
+    virtual void syncCompositingLayers() = 0;
+#endif
 
     virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder&) = 0;
 
