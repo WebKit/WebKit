@@ -1,3 +1,20 @@
+2010-07-01  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        [GTK] build-webkit does not detect the number of CPUs
+        https://bugs.webkit.org/show_bug.cgi?id=41469
+
+        Pass the appropriate -j<#> flag to make when building autotools builds.
+        This causes make to spawn that many number of child processes for doing
+        parallel builds.
+
+        * Scripts/num-cpus: Use the newly abstracted numberOfCPUs to return the number
+        of CPUs. This makes the script work across more platforms.
+        * Scripts/webkitdirs.pm: Create a numberOfCPUs/determineNumberOfCPUs to determine the
+        number of CPUs across several platforms. Use this new function to determine the appropriate
+        arguments to pass to make for doing parallel builds with autotools build files.
+
 2010-07-01  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Rubber-stamped by Laszlo Gombos.

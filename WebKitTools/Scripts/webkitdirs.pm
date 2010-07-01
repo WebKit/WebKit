@@ -50,6 +50,7 @@ BEGIN {
 our @EXPORT_OK;
 
 my $architecture;
+my $numberOfCPUs;
 my $baseProductDir;
 my @baseProductDirOption;
 my $configuration;
@@ -226,6 +227,28 @@ sub determineArchitecture
             $architecture = $supports64Bit ? 'x86_64' : `arch`;
         }
         chomp $architecture;
+    }
+}
+
+sub determineNumberOfCPUs
+{
+    return if defined $numberOfCPUs;
+    if (isLinux()) {
+        # First try the nproc utility, if it exists. If we get no
+        # results fall back to just interpretting /proc directly.
+        $numberOfCPUs = `nproc 2> /dev/null`;
+        if ($numberOfCPUs eq "") {
+            $numberOfCPUs = (grep /processor/, `cat /proc/cpuinfo`);
+        }
+    } elsif (isWindows() || isCygwin()) {
+        if (defined($ENV{NUMBER_OF_PROCESSORS})) {
+            $numberOfCPUs = $ENV{NUMBER_OF_PROCESSORS};
+        } else {
+            # Assumes cygwin
+            $numberOfCPUs = `ls /proc/registry/HKEY_LOCAL_MACHINE/HARDWARE/DESCRIPTION/System/CentralProcessor | wc -w`;
+        }
+    } elsif (isDarwin()) {
+        $numberOfCPUs = `sysctl -n hw.ncpu`;
     }
 }
 
@@ -466,6 +489,12 @@ sub architecture()
 {
     determineArchitecture();
     return $architecture;
+}
+
+sub numberOfCPUs()
+{
+    determineNumberOfCPUs();
+    return $numberOfCPUs;
 }
 
 sub setArchitecture
@@ -1301,7 +1330,8 @@ sub buildAutotoolsProject($@)
         die "Failed to setup build environment using 'autotools'!\n";
     }
 
-    $result = system "$make $makeArgs";
+    my $numCPUs = numberOfCPUs();
+    $result = system "$make -j$numCPUs $makeArgs";
     if ($result ne 0) {
         die "\nFailed to build WebKit using '$make'!\n";
     }
@@ -1441,7 +1471,7 @@ sub buildChromiumMakefile($$)
         return system qw(rm -rf out);
     }
     my $config = configuration();
-    my $numCpus = (grep /processor/, `cat /proc/cpuinfo`) || 1;
+    my $numCpus = numberOfCPUs();
     my @command = ("make", "-fMakefile.chromium", "-j$numCpus", "BUILDTYPE=$config", $target);
     print join(" ", @command) . "\n";
     return system @command;

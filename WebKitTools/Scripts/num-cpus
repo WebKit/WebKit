@@ -1,3 +1,4 @@
-#!/bin/bash
-# Assumes cygwin.
-ls /proc/registry/HKEY_LOCAL_MACHINE/HARDWARE/DESCRIPTION/System/CentralProcessor | wc -w
+#!/usr/bin/perl -w
+use strict;
+use webkitdirs;
+print numberOfCPUs() . "\n";
