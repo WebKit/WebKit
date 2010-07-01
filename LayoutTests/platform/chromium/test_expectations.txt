@@ -2511,7 +2511,7 @@ BUG32675 LINUX : fast/repaint/trailing-floats-root-line-box-overflow.html = IMAG
 
 // Flaky tests found during the roll.
 BUG32679 LINUX DEBUG : http/tests/navigation/lockedhistory-iframe.html = TEXT PASS
-BUG32682 LINUX : svg/W3C-SVG-1.1/filters-conv-01-f.svg = IMAGE+TEXT TEXT PASS
+BUG32682 LINUX : svg/W3C-SVG-1.1/filters-conv-01-f.svg = IMAGE+TEXT TEXT PASS CRASH
 BUG32684 WIN : inspector/timeline-layout.html = TEXT PASS
 BUG35519 WIN SKIP : http/tests/inspector/inspect-iframe-from-different-domain.html = PASS
 BUG32688 MAC DEBUG : fast/lists/inlineBoxWrapperNullCheck.html = TEXT PASS
@@ -2550,7 +2550,7 @@ BUG33538 : fast/dom/Window/anonymous-slot-with-changes.html = TEXT
 BUG35064 WIN DEBUG : fast/forms/restore-selection-after-layout.html = TEXT PASS
 
 // WebKit roll 54482 to 54493.
-BUG35242 WIN : svg/W3C-SVG-1.1/filters-conv-01-f.svg = IMAGE+TEXT TEXT
+BUG35242 WIN : svg/W3C-SVG-1.1/filters-conv-01-f.svg = IMAGE+TEXT TEXT CRASH
 BUG35242 WIN : svg/W3C-SVG-1.1/text-intro-05-t.svg = IMAGE+TEXT TEXT
 
 // WebKit roll 54493 to 54530: new tests.
