@@ -62,8 +62,8 @@ private:
     bool fillContains(const FloatPoint&) const;
     bool strokeContains(const FloatPoint&) const;
 
-    virtual FloatRect objectBoundingBox() const { return SVGRenderSupport::computeContainerBoundingBox(this, false); }
-    virtual FloatRect strokeBoundingBox() const { return SVGRenderSupport::computeContainerBoundingBox(this, true); }
+    virtual FloatRect objectBoundingBox() const;
+    virtual FloatRect strokeBoundingBox() const;
     virtual FloatRect repaintRectInLocalCoordinates() const;
 
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, int x, int y, int tx, int ty, HitTestAction);

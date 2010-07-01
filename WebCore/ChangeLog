@@ -1,3 +1,29 @@
+2010-07-01  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Dirk Schulze.
+
+        RenderSVGContainer/RenderSVGRoot report wrong strokeBoundingBox()
+        https://bugs.webkit.org/show_bug.cgi?id=41450
+
+        strokeBoundingBox() was reporting the repaintRectInLocalCoordinates() for children of a container,
+        instead of the actual strokeBoundingBox(). Only visible in WebInspector when looking at a container
+        which has a resource applied and contains a children which also has a resource applied.
+
+        Doesn't affect any test results.
+
+        * rendering/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::objectBoundingBox):
+        (WebCore::RenderSVGContainer::strokeBoundingBox):
+        (WebCore::RenderSVGContainer::repaintRectInLocalCoordinates):
+        * rendering/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::objectBoundingBox): Deinlined this functions, it's virtual so there's no gain.
+        (WebCore::RenderSVGRoot::strokeBoundingBox): Ditto.
+        (WebCore::RenderSVGRoot::repaintRectInLocalCoordinates):
+        * rendering/RenderSVGRoot.h:
+        * rendering/SVGRenderSupport.cpp:
+        (WebCore::SVGRenderSupport::computeContainerBoundingBox):
+        * rendering/SVGRenderSupport.h: Add enum controlling the mode of container bounding box mode calculation.
+
 2010-07-01  Zoltan Herczeg  <zherczeg@webkit.org>
 
         Reviewed by Nikolas Zimmermann.

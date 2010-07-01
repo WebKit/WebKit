@@ -58,9 +58,15 @@ public:
     // Determines whether the passed point lies in a clipping area
     static bool pointInClippingArea(const RenderObject*, const FloatPoint&);
 
+    enum ContainerBoundingBoxMode {
+        ObjectBoundingBox,
+        StrokeBoundingBox,
+        RepaintBoundingBox
+    };
+
     // Used to share the "walk all the children" logic between objectBoundingBox
     // and repaintRectInLocalCoordinates in RenderSVGRoot and RenderSVGContainer
-    static FloatRect computeContainerBoundingBox(const RenderObject* container, bool includeAllPaintedContent);
+    static FloatRect computeContainerBoundingBox(const RenderObject* container, ContainerBoundingBoxMode);
 
     // Important functions used by nearly all SVG renderers centralizing coordinate transformations / repaint rect calculations
     static IntRect clippedOverflowRectForRepaint(RenderObject*, RenderBoxModelObject* repaintContainer);

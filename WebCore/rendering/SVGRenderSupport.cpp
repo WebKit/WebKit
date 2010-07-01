@@ -210,15 +210,26 @@ void SVGRenderSupport::renderSubtreeToImage(ImageBuffer* image, RenderObject* it
         svgContainer->setDrawsContents(false);
 }
 
-FloatRect SVGRenderSupport::computeContainerBoundingBox(const RenderObject* container, bool includeAllPaintedContent)
+FloatRect SVGRenderSupport::computeContainerBoundingBox(const RenderObject* container, ContainerBoundingBoxMode mode)
 {
     FloatRect boundingBox;
 
-    RenderObject* current = container->firstChild();
-    for (; current != 0; current = current->nextSibling()) {
-        FloatRect childBBox = includeAllPaintedContent ? current->repaintRectInLocalCoordinates() : current->objectBoundingBox();
-        FloatRect childBBoxInLocalCoords = current->localToParentTransform().mapRect(childBBox);
-        boundingBox.unite(childBBoxInLocalCoords);
+    for (RenderObject* current = container->firstChild(); current; current = current->nextSibling()) {
+        FloatRect childBoundingBox;
+
+        switch (mode) {
+        case ObjectBoundingBox:
+            childBoundingBox = current->objectBoundingBox();
+            break;
+        case StrokeBoundingBox:
+            childBoundingBox = current->strokeBoundingBox();
+            break;
+        case RepaintBoundingBox:
+            childBoundingBox = current->repaintRectInLocalCoordinates();
+            break;
+        }
+
+        boundingBox.unite(current->localToParentTransform().mapRect(childBoundingBox));
     }
 
     return boundingBox;

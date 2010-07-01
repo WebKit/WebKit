@@ -255,10 +255,20 @@ const AffineTransform& RenderSVGRoot::localToParentTransform() const
     return m_localToParentTransform;
 }
 
+FloatRect RenderSVGRoot::objectBoundingBox() const
+{
+    return SVGRenderSupport::computeContainerBoundingBox(this, SVGRenderSupport::ObjectBoundingBox);
+}
+
+FloatRect RenderSVGRoot::strokeBoundingBox() const
+{
+    return SVGRenderSupport::computeContainerBoundingBox(this, SVGRenderSupport::StrokeBoundingBox);
+}
+
 FloatRect RenderSVGRoot::repaintRectInLocalCoordinates() const
 {
     // FIXME: This does not include the border but it should!
-    FloatRect repaintRect = strokeBoundingBox();
+    FloatRect repaintRect = SVGRenderSupport::computeContainerBoundingBox(this, SVGRenderSupport::RepaintBoundingBox);
     style()->svgStyle()->inflateForShadow(repaintRect);
     return repaintRect;
 }
