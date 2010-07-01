@@ -1,3 +1,63 @@
+2010-06-30  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        DB clean up.
+        https://bugs.webkit.org/show_bug.cgi?id=41404
+
+        1. Made all DatabaseTasks internal classes of Database and made
+           the Database methods called by those tasks private.
+        2. Removed the Database::stop{ed}() methods.
+        3. Removed the code that kept track of open databases from
+           ScriptExecutionContext (no longer needed).
+        4. Made minor changes to Database::closeImmediately() to make it
+           possible for DatabaseThread to call that method instead of
+           close().
+        5. Minor fix to DatabaseTracker: addOpenDatabase() should call
+           OriginQuotaManager::addDatabase() if the origin quota manager
+           is not tracking this origin.
+        6. Removed Database::performPolicyChecks(). We already update the
+           DB size after each transaction, and we enforce a max size for
+           the DB at the beginning of each transaction.
+
+        * dom/ScriptExecutionContext.cpp:
+        (WebCore::ScriptExecutionContext::stopDatabases):
+        * dom/ScriptExecutionContext.h:
+        (WebCore::ScriptExecutionContext::hasOpenDatabases):
+        * storage/Database.cpp:
+        (WebCore::Database::openDatabase):
+        (WebCore::Database::Database):
+        (WebCore::Database::markAsDeletedAndClose):
+        (WebCore::Database::close):
+        (WebCore::Database::closeImmediately):
+        * storage/Database.h:
+        * storage/DatabaseTask.cpp:
+        (WebCore::DatabaseTask::performTask):
+        (WebCore::Database::DatabaseOpenTask::DatabaseOpenTask):
+        (WebCore::Database::DatabaseOpenTask::doPerformTask):
+        (WebCore::Database::DatabaseOpenTask::debugTaskName):
+        (WebCore::Database::DatabaseCloseTask::DatabaseCloseTask):
+        (WebCore::Database::DatabaseCloseTask::doPerformTask):
+        (WebCore::Database::DatabaseCloseTask::debugTaskName):
+        (WebCore::Database::DatabaseTransactionTask::DatabaseTransactionTask):
+        (WebCore::Database::DatabaseTransactionTask::doPerformTask):
+        (WebCore::Database::DatabaseTransactionTask::debugTaskName):
+        (WebCore::Database::DatabaseTableNamesTask::DatabaseTableNamesTask):
+        (WebCore::Database::DatabaseTableNamesTask::doPerformTask):
+        (WebCore::Database::DatabaseTableNamesTask::debugTaskName):
+        * storage/DatabaseTask.h:
+        (WebCore::Database::DatabaseOpenTask::create):
+        (WebCore::Database::DatabaseCloseTask::create):
+        (WebCore::Database::DatabaseTransactionTask::create):
+        (WebCore::Database::DatabaseTableNamesTask::create):
+        * storage/DatabaseThread.cpp:
+        (WebCore::DatabaseThread::databaseThread):
+        * storage/DatabaseTracker.cpp:
+        (WebCore::DatabaseTracker::addOpenDatabase):
+        * storage/SQLTransaction.cpp:
+        (WebCore::SQLTransaction::executeSQL):
+        (WebCore::SQLTransaction::checkAndHandleClosedDatabase):
+
 2010-07-01  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Darin Fisher.

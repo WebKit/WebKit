@@ -60,7 +60,6 @@ private:
 };
 
 class DatabaseTask : public Noncopyable {
-    friend class Database;
 public:
     virtual ~DatabaseTask();
 
@@ -83,15 +82,15 @@ private:
 #endif
 };
 
-class DatabaseOpenTask : public DatabaseTask {
+class Database::DatabaseOpenTask : public DatabaseTask {
 public:
-    static PassOwnPtr<DatabaseOpenTask> create(Database* db, bool setVersionInNewDatabase, DatabaseTaskSynchronizer* synchronizer, ExceptionCode& code, bool& success)
+    static PassOwnPtr<Database::DatabaseOpenTask> create(Database* db, bool setVersionInNewDatabase, DatabaseTaskSynchronizer* synchronizer, ExceptionCode& code, bool& success)
     {
-        return new DatabaseOpenTask(db, setVersionInNewDatabase, synchronizer, code, success);
+        return new Database::DatabaseOpenTask(db, setVersionInNewDatabase, synchronizer, code, success);
     }
 
 private:
-    DatabaseOpenTask(Database*, bool setVersionInNewDatabase, DatabaseTaskSynchronizer*, ExceptionCode&, bool& success);
+    Database::DatabaseOpenTask(Database*, bool setVersionInNewDatabase, DatabaseTaskSynchronizer*, ExceptionCode&, bool& success);
 
     virtual void doPerformTask();
 #ifndef NDEBUG
@@ -103,37 +102,34 @@ private:
     bool& m_success;
 };
 
-class DatabaseCloseTask : public DatabaseTask {
+class Database::DatabaseCloseTask : public DatabaseTask {
 public:
-    static PassOwnPtr<DatabaseCloseTask> create(Database* db, Database::ClosePolicy closePolicy, DatabaseTaskSynchronizer* synchronizer)
-    { 
-        return new DatabaseCloseTask(db, closePolicy, synchronizer);
+    static PassOwnPtr<Database::DatabaseCloseTask> create(Database* db, DatabaseTaskSynchronizer* synchronizer)
+    {
+        return new Database::DatabaseCloseTask(db, synchronizer);
     }
 
 private:
-    DatabaseCloseTask(Database*, Database::ClosePolicy, DatabaseTaskSynchronizer*);
+    Database::DatabaseCloseTask(Database*, DatabaseTaskSynchronizer*);
 
     virtual void doPerformTask();
 #ifndef NDEBUG
     virtual const char* debugTaskName() const;
 #endif
-
-    Database::ClosePolicy m_closePolicy;
 };
 
-class DatabaseTransactionTask : public DatabaseTask {
+class Database::DatabaseTransactionTask : public DatabaseTask {
 public:
     // Transaction task is never synchronous, so no 'synchronizer' parameter.
-    static PassOwnPtr<DatabaseTransactionTask> create(PassRefPtr<SQLTransaction> transaction)
+    static PassOwnPtr<Database::DatabaseTransactionTask> create(PassRefPtr<SQLTransaction> transaction)
     {
-        return new DatabaseTransactionTask(transaction);
+        return new Database::DatabaseTransactionTask(transaction);
     }
 
     SQLTransaction* transaction() const { return m_transaction.get(); }
 
-    virtual ~DatabaseTransactionTask();
 private:
-    DatabaseTransactionTask(PassRefPtr<SQLTransaction>);
+    Database::DatabaseTransactionTask(PassRefPtr<SQLTransaction>);
 
     virtual void doPerformTask();
 #ifndef NDEBUG
@@ -143,15 +139,15 @@ private:
     RefPtr<SQLTransaction> m_transaction;
 };
 
-class DatabaseTableNamesTask : public DatabaseTask {
+class Database::DatabaseTableNamesTask : public DatabaseTask {
 public:
-    static PassOwnPtr<DatabaseTableNamesTask> create(Database* db, DatabaseTaskSynchronizer* synchronizer, Vector<String>& names)
+    static PassOwnPtr<Database::DatabaseTableNamesTask> create(Database* db, DatabaseTaskSynchronizer* synchronizer, Vector<String>& names)
     {
-        return new DatabaseTableNamesTask(db, synchronizer, names);
+        return new Database::DatabaseTableNamesTask(db, synchronizer, names);
     }
 
 private:
-    DatabaseTableNamesTask(Database*, DatabaseTaskSynchronizer*, Vector<String>& names);
+    Database::DatabaseTableNamesTask(Database*, DatabaseTaskSynchronizer*, Vector<String>& names);
 
     virtual void doPerformTask();
 #ifndef NDEBUG

@@ -89,7 +89,7 @@ SQLTransaction::~SQLTransaction()
 
 void SQLTransaction::executeSQL(const String& sqlStatement, const Vector<SQLValue>& arguments, PassRefPtr<SQLStatementCallback> callback, PassRefPtr<SQLStatementErrorCallback> callbackError, ExceptionCode& e)
 {
-    if (!m_executeSqlAllowed || m_database->stopped()) {
+    if (!m_executeSqlAllowed || !m_database->opened()) {
         e = INVALID_STATE_ERR;
         return;
     }
@@ -149,7 +149,7 @@ const char* SQLTransaction::debugStepName(SQLTransaction::TransactionStepMethod 
 
 void SQLTransaction::checkAndHandleClosedDatabase()
 {
-    if (!m_database->stopped())
+    if (m_database->opened())
         return;
 
     // If the database was stopped, don't do anything and cancel queued work
