@@ -1,3 +1,11 @@
+2010-07-01  Bea Lam  <bea.lam@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Doc improvements for QDeclarativeWebView
+
+        * declarative/qdeclarativewebview.cpp:
+
 2010-07-01  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
