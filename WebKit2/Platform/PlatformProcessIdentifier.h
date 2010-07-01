@@ -33,6 +33,8 @@ namespace WebKit {
 typedef pid_t PlatformProcessIdentifier;
 #elif PLATFORM(WIN)
 typedef HANDLE PlatformProcessIdentifier;
+#elif PLATFORM(QT)
+typedef pid_t PlatformProcessIdentifier;
 #endif
 
 } // namespace WebKit 

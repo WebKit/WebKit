@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,12 +35,17 @@
 #include <memory>
 #include <wtf/HashMap.h>
 #include <wtf/PassRefPtr.h>
+#include <wtf/OwnPtr.h>
 #include <wtf/Threading.h>
 
 #if PLATFORM(MAC)
 #include <mach/mach_port.h>
 #elif PLATFORM(WIN)
 #include <string>
+#elif PLATFORM(QT)
+#include <QString>
+class QLocalServer;
+class QLocalSocket;
 #endif
 
 class RunLoop;
@@ -63,6 +69,8 @@ public:
     typedef mach_port_t Identifier;
 #elif PLATFORM(WIN)
     typedef const std::wstring& Identifier;
+#elif PLATFORM(QT)
+    typedef const QString Identifier;
 #endif
 
     static PassRefPtr<Connection> createServerConnection(Identifier, Client*, RunLoop* clientRunLoop);
@@ -160,8 +168,18 @@ private:
     Vector<uint8_t> m_readBuffer;
     OVERLAPPED m_readState;
     HANDLE m_connectionPipe;
+#elif PLATFORM(QT)
+    // Called on the connection queue.
+    void openConnection();
+    void newConnectionHandler();
+    void readyReadHandler();
+
+    Vector<uint8_t> m_readBuffer;
+    size_t m_currentMessageSize;
+    QLocalSocket* m_socket;
+    QLocalServer* m_server;
+    QString m_serverName;
 #endif
-    
 };
 
 template<typename E, typename T>
