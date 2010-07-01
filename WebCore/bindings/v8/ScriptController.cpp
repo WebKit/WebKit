@@ -53,6 +53,7 @@
 #include "V8BindingState.h"
 #include "V8DOMWindow.h"
 #include "V8Event.h"
+#include "V8HiddenPropertyName.h"
 #include "V8HTMLEmbedElement.h"
 #include "V8IsolatedContext.h"
 #include "V8NPObject.h"
@@ -160,16 +161,8 @@ void ScriptController::updatePlatformScriptObjects()
 
 bool ScriptController::processingUserGesture(DOMWrapperWorld*) const
 {
-    Frame* activeFrame = V8Proxy::retrieveFrameForEnteredContext();
-    // No script is running, so it is user-initiated unless the gesture stack
-    // explicitly says it is not.
-    if (!activeFrame)
-        return UserGestureIndicator::getUserGestureState() != DefinitelyNotProcessingUserGesture;
-
-    V8Proxy* activeProxy = activeFrame->script()->proxy();
-
     v8::HandleScope handleScope;
-    v8::Handle<v8::Context> v8Context = V8Proxy::mainWorldContext(activeFrame);
+    v8::Handle<v8::Context> v8Context = m_proxy->mainWorldContext();
     // FIXME: find all cases context can be empty:
     //  1) JS is disabled;
     //  2) page is NULL;
@@ -179,7 +172,8 @@ bool ScriptController::processingUserGesture(DOMWrapperWorld*) const
     v8::Context::Scope scope(v8Context);
 
     v8::Handle<v8::Object> global = v8Context->Global();
-    v8::Handle<v8::Value> jsEvent = global->Get(v8::String::NewSymbol("event"));
+    v8::Handle<v8::String> eventSymbol = V8HiddenPropertyName::event();
+    v8::Handle<v8::Value> jsEvent = global->GetHiddenValue(eventSymbol);
     Event* event = V8DOMWrapper::isValidDOMObject(jsEvent) ? V8Event::toNative(v8::Handle<v8::Object>::Cast(jsEvent)) : 0;
 
     // Based on code from JSC's ScriptController::processingUserGesture.
@@ -188,7 +182,7 @@ bool ScriptController::processingUserGesture(DOMWrapperWorld*) const
         // Event::fromUserGesture will return false when UserGestureIndicator::processingUserGesture() returns false.
         return event->fromUserGesture();
     }
-    if (m_sourceURL && m_sourceURL->isNull() && !activeProxy->timerCallback()) {
+    if (m_sourceURL && m_sourceURL->isNull() && !m_proxy->timerCallback()) {
         // This is the <a href="javascript:window.open('...')> case -> we let it through.
         return true;
     }

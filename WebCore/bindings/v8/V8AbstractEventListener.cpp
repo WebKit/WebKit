@@ -38,6 +38,7 @@
 #include "V8Binding.h"
 #include "V8Event.h"
 #include "V8EventListenerList.h"
+#include "V8HiddenPropertyName.h"
 #include "V8Proxy.h"
 #include "V8Utilities.h"
 #include "WorkerContext.h"
@@ -126,7 +127,7 @@ void V8AbstractEventListener::invokeEventHandler(ScriptExecutionContext* context
         return;
 
     // We push the event being processed into the global object, so that it can be exposed by DOMWindow's bindings.
-    v8::Local<v8::String> eventSymbol = v8::String::NewSymbol("event");
+    v8::Handle<v8::String> eventSymbol = V8HiddenPropertyName::event();
     v8::Local<v8::Value> returnValue;
 
     // In beforeunload/unload handlers, we want to avoid sleeps which do tight loops of calling Date.getTime().

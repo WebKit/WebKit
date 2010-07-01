@@ -1,3 +1,13 @@
+2010-07-01  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        [v8] Web Inspector: inspected page crashes on attempt to change iframe's src attribute
+        https://bugs.webkit.org/show_bug.cgi?id=41350
+
+        * src/WebBindings.cpp:
+        (WebKit::getEvent):
+
 2010-07-01  Aaron Boodman  <aa@chromium.org>
 
         Reviewed by Darin Fisher.
