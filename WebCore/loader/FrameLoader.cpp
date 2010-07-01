@@ -3352,7 +3352,7 @@ KURL FrameLoader::originalRequestURL() const
 
 String FrameLoader::referrer() const
 {
-    return documentLoader()->request().httpReferrer();
+    return m_documentLoader ? m_documentLoader->request().httpReferrer() : "";
 }
 
 void FrameLoader::dispatchDocumentElementAvailable()

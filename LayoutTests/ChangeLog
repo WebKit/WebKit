@@ -1,3 +1,16 @@
+2010-07-01  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/8148656> <https://bugs.webkit.org/show_bug.cgi?id=41431>
+        REGRESSION (r49411): Various crashes due to JavaScript execution during plug-in destruction
+
+        Added a test for two specific reproducible cases.
+
+        * plugins/resources/write-xssauditor-from-destroy-frame.html: Added.
+        * plugins/write-xssauditor-from-destroy-expected.txt: Added.
+        * plugins/write-xssauditor-from-destroy.html: Added.
+
 2010-07-01  Andreas Kling  <andreas.kling@nokia.com>
 
         Reviewed by Darin Adler.

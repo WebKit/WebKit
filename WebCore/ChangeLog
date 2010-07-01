@@ -1,3 +1,20 @@
+2010-07-01  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/8148656> <https://bugs.webkit.org/show_bug.cgi?id=41431>
+        REGRESSION (r49411): Various crashes due to JavaScript execution during plug-in destruction
+
+        Test: plugins/write-xssauditor-from-destroy.html
+
+        Fix specific known cases that also crash in same process case. I don't know if there is
+        any rule for when documentLoader should be checked for being null, it looks like a mess.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::referrer):
+        * page/XSSAuditor.cpp:
+        (WebCore::XSSAuditor::findInRequest):
+
 2010-07-01  Andreas Kling  <andreas.kling@nokia.com>
 
         Reviewed by Darin Adler.
