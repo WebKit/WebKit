@@ -1,3 +1,16 @@
+2010-07-01  Andreas Kling  <andreas.kling@nokia.com>
+
+        Reviewed by Darin Adler.
+
+        The HTML5 canvas 2d.drawImage.zerocanvas test does not pass
+        https://bugs.webkit.org/show_bug.cgi?id=40271
+
+        Unskipped canvas/philip/tests/2d.drawImage.zerocanvas.html
+
+        * canvas/philip/tests/2d.drawImage.zerocanvas-expected.txt:
+        * platform/mac/Skipped:
+        * platform/qt/Skipped:
+
 2010-07-01  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed. Update Chromium test expectations for svg/W3C-SVG-1.1/filters-conv-01-f.svg

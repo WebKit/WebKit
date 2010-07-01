@@ -5232,7 +5232,6 @@ canvas/philip/tests/2d.drawImage.negativedir.html
 canvas/philip/tests/2d.drawImage.negativesource.html
 canvas/philip/tests/2d.drawImage.null.html
 canvas/philip/tests/2d.drawImage.wrongtype.html
-canvas/philip/tests/2d.drawImage.zerocanvas.html
 canvas/philip/tests/2d.fillStyle.parse.current.basic.html
 canvas/philip/tests/2d.fillStyle.parse.current.changed.html
 canvas/philip/tests/2d.fillStyle.parse.current.removed.html
