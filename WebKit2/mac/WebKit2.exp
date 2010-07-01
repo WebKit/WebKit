@@ -24,6 +24,8 @@ _WKFrameGetPage
 _WKFrameGetProvisionalURL
 _WKFrameGetURL
 _WKFrameIsMainFrame
+_WKFramePolicyListenerDownload
+_WKFramePolicyListenerIgnore
 _WKFramePolicyListenerRelease
 _WKFramePolicyListenerRetain
 _WKFramePolicyListenerUse
