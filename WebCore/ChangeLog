@@ -1,3 +1,10 @@
+2010-07-01  Antti Koivisto  <koivisto@iki.fi>
+
+        Revert accidental commit.
+
+        * platform/network/qt/ResourceRequestQt.cpp:
+        (WebCore::ResourceRequest::toNetworkRequest):
+
 2010-07-01  Patrick Gansterer  <paroga@paroga.com>
 
         Reviewed by Dirk Schulze.

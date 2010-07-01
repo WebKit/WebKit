@@ -192,7 +192,7 @@ void Heap::destroy()
 NEVER_INLINE CollectorBlock* Heap::allocateBlock()
 {
 #if OS(DARWIN)
-/*    vm_address_t address = 0;
+    vm_address_t address = 0;
     vm_map(current_task(), &address, BLOCK_SIZE, BLOCK_OFFSET_MASK, VM_FLAGS_ANYWHERE | VM_TAG_FOR_COLLECTOR_MEMORY, MEMORY_OBJECT_NULL, 0, FALSE, VM_PROT_DEFAULT, VM_PROT_DEFAULT, VM_INHERIT_DEFAULT);
 #elif OS(SYMBIAN)
     void* address = m_blockallocator.alloc();  
@@ -214,7 +214,7 @@ NEVER_INLINE CollectorBlock* Heap::allocateBlock()
 
 #if ENABLE(JSC_MULTIPLE_THREADS)
 #error Need to initialize pagesize safely.
-#endif*/
+#endif
     static size_t pagesize = getpagesize();
 
     size_t extra = 0;

@@ -1,3 +1,10 @@
+2010-07-01  Antti Koivisto  <koivisto@iki.fi>
+
+        Revert accidental commit.
+
+        * runtime/Collector.cpp:
+        (JSC::Heap::allocateBlock):
+
 2010-06-30  Darin Adler  <darin@apple.com>
 
         Reviewed by Adam Barth.
