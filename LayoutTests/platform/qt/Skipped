@@ -5269,8 +5269,6 @@ canvas/philip/tests/2d.missingargs.html
 canvas/philip/tests/2d.path.arc.twopie.3.html
 canvas/philip/tests/2d.path.arcTo.collinear.2.html
 canvas/philip/tests/2d.path.arcTo.collinear.3.html
-canvas/philip/tests/2d.path.bezierCurveTo.ensuresubpath.2.html
-canvas/philip/tests/2d.path.quadraticCurveTo.ensuresubpath.2.html
 canvas/philip/tests/2d.path.quadraticCurveTo.scaled.html
 canvas/philip/tests/2d.path.quadraticCurveTo.shape.html
 canvas/philip/tests/2d.path.rect.winding.html
