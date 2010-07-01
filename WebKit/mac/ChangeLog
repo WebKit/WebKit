@@ -1,5 +1,19 @@
 2010-07-01  Mark Rowe  <mrowe@apple.com>
 
+        Merge r60882.
+
+    2010-06-08  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        <rdar://problem/8072136> REGRESSION (r56051): Inspect Element context menu does nothing in applications linked against 10.4 SDK
+
+        * WebCoreSupport/WebContextMenuClient.mm:
+        (fixMenusReceivedFromOldClients): Fix up the tag on the Inspect Element menu item. This ensures that even if the
+        context menu layout doesn't match our expectations that the menu item will continue to trigger the web inspector.
+
+2010-07-01  Mark Rowe  <mrowe@apple.com>
+
         Merge r61189.
 
     2010-06-15  Dan Bernstein  <mitz@apple.com>
