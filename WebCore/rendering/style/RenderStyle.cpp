@@ -299,11 +299,8 @@ StyleDifference RenderStyle::diff(const RenderStyle* other, unsigned& changedCon
     changedContextSensitiveProperties = ContextSensitivePropertyNone;
 
 #if ENABLE(SVG)
-    // This is horribly inefficient.  Eventually we'll have to integrate
-    // this more directly by calling: Diff svgDiff = svgStyle->diff(other)
-    // and then checking svgDiff and returning from the appropriate places below.
     if (m_svgStyle != other->m_svgStyle)
-        return StyleDifferenceLayout;
+        return m_svgStyle->diff(other->m_svgStyle.get());
 #endif
 
     if (m_box->width() != other->m_box->width() ||

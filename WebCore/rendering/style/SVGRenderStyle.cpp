@@ -126,6 +126,90 @@ void SVGRenderStyle::inheritFrom(const SVGRenderStyle* svgInheritParent)
     svg_inherited_flags = svgInheritParent->svg_inherited_flags;
 }
 
+StyleDifference SVGRenderStyle::diff(const SVGRenderStyle* other) const
+{
+    // NOTE: All comparisions that may return StyleDifferenceLayout have to go before those who return StyleDifferenceRepaint
+
+    // If kerning changes, we need a relayout, to force SVGCharacterData to be recalculated in the SVGRootInlineBox.
+    if (text != other->text)
+        return StyleDifferenceLayout;
+
+    // If resources change, we need a relayout, as the presence of resources influences the repaint rect.
+    if (resources != other->resources)
+        return StyleDifferenceLayout;
+
+    // If markers change, we need a relayout, as marker boundaries are cached in RenderPath.
+    if (inheritedResources != other->inheritedResources)
+        return StyleDifferenceLayout;
+
+    // All text related properties influence layout.
+    if (svg_inherited_flags._textAnchor != other->svg_inherited_flags._textAnchor
+        || svg_inherited_flags._writingMode != other->svg_inherited_flags._writingMode
+        || svg_inherited_flags._glyphOrientationHorizontal != other->svg_inherited_flags._glyphOrientationHorizontal
+        || svg_inherited_flags._glyphOrientationVertical != other->svg_inherited_flags._glyphOrientationVertical
+        || svg_noninherited_flags.f._alignmentBaseline != other->svg_noninherited_flags.f._alignmentBaseline
+        || svg_noninherited_flags.f._dominantBaseline != other->svg_noninherited_flags.f._dominantBaseline
+        || svg_noninherited_flags.f._baselineShift != other->svg_noninherited_flags.f._baselineShift)
+        return StyleDifferenceLayout;
+
+    // Text related properties influence layout.
+    bool miscNotEqual = misc != other->misc;
+    if (miscNotEqual && misc->baselineShiftValue != other->misc->baselineShiftValue)
+        return StyleDifferenceLayout;
+
+    // These properties affect the cached stroke bounding box rects.
+    if (svg_inherited_flags._capStyle != other->svg_inherited_flags._capStyle
+        || svg_inherited_flags._joinStyle != other->svg_inherited_flags._joinStyle)
+        return StyleDifferenceLayout;
+
+    // Some stroke properties, requires relayouts, as the cached stroke boundaries need to be recalculated.
+    if (stroke != other->stroke) {
+        if (stroke->width != other->stroke->width
+            || stroke->miterLimit != other->stroke->miterLimit
+            || stroke->dashArray != other->stroke->dashArray
+            || stroke->dashOffset != other->stroke->dashOffset)
+            return StyleDifferenceLayout;
+
+        // Only these two cases remain, where we only need a repaint.
+        ASSERT(stroke->paint != other->stroke->paint || stroke->opacity != other->stroke->opacity);
+        return StyleDifferenceRepaint;
+    }
+
+    // NOTE: All comparisions below may only return StyleDifferenceRepaint
+
+    // Painting related properties only need repaints. 
+    if (miscNotEqual) {
+        if (misc->floodColor != other->misc->floodColor
+            || misc->floodOpacity != other->misc->floodOpacity
+            || misc->lightingColor != other->misc->lightingColor)
+            return StyleDifferenceRepaint;
+    }
+
+    // If fill changes, we just need to repaint. Fill boundaries are not influenced by this, only by the Path, that RenderPath contains.
+    if (fill != other->fill)
+        return StyleDifferenceRepaint;
+
+    // If gradient stops change, we just need to repaint. Style updates are already handled through RenderSVGGradientSTop.
+    if (stops != other->stops)
+        return StyleDifferenceRepaint;
+
+    // Changes of these flags only cause repaints.
+    if (svg_inherited_flags._colorRendering != other->svg_inherited_flags._colorRendering
+        || svg_inherited_flags._imageRendering != other->svg_inherited_flags._imageRendering
+        || svg_inherited_flags._shapeRendering != other->svg_inherited_flags._shapeRendering
+        || svg_inherited_flags._clipRule != other->svg_inherited_flags._clipRule
+        || svg_inherited_flags._fillRule != other->svg_inherited_flags._fillRule
+        || svg_inherited_flags._colorInterpolation != other->svg_inherited_flags._colorInterpolation
+        || svg_inherited_flags._colorInterpolationFilters != other->svg_inherited_flags._colorInterpolationFilters)
+        return StyleDifferenceRepaint;
+
+    // FIXME: vector-effect is not taken into account in the layout-phase. Once this is fixed, we should relayout here.
+    if (svg_noninherited_flags.f._vectorEffect != other->svg_noninherited_flags.f._vectorEffect)
+        return StyleDifferenceRepaint;
+
+    return StyleDifferenceEqual;
+}
+
 float SVGRenderStyle::cssPrimitiveToLength(const RenderObject* item, CSSValue* value, float defaultValue)
 {
     CSSPrimitiveValue* primitive = static_cast<CSSPrimitiveValue*>(value);

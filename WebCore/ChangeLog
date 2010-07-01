@@ -1,3 +1,21 @@
+2010-07-01  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Dirk Schulze.
+
+        SVGRenderStyle::diff() is missing
+        https://bugs.webkit.org/show_bug.cgi?id=41455
+
+        Don't just return StyleDifferenceLayout when two SVGRenderStyle objects differ.
+        Figure out when to repaint, and as last resort do a relayout.
+
+        Lively Kernel doesn't do any relayouts anymore, same for lots of demos in the IE9 testcenter.
+
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::diff):
+        * rendering/style/SVGRenderStyle.cpp:
+        (WebCore::SVGRenderStyle::diff):
+        * rendering/style/SVGRenderStyle.h:
+
 2010-07-01  Antti Koivisto  <koivisto@iki.fi>
 
         Revert accidental commit.

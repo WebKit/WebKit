@@ -28,6 +28,7 @@
 #include "DataRef.h"
 #include "GraphicsTypes.h"
 #include "Path.h"
+#include "RenderStyleConstants.h"
 #include "SVGPaint.h"
 #include "SVGRenderStyleDefs.h"
 
@@ -36,7 +37,6 @@ namespace WebCore {
 class FloatRect;
 class IntRect;
 class RenderObject;
-class RenderStyle;
 
 class SVGRenderStyle : public RefCounted<SVGRenderStyle> {    
 public:
@@ -50,7 +50,9 @@ public:
     // FIXME: These functions should move to ShadowData.
     void inflateForShadow(IntRect&) const;
     void inflateForShadow(FloatRect&) const;
-    
+
+    StyleDifference diff(const SVGRenderStyle*) const;
+
     bool operator==(const SVGRenderStyle&) const;
     bool operator!=(const SVGRenderStyle& o) const { return !(*this == o); }
 
