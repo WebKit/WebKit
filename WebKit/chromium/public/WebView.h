@@ -32,6 +32,8 @@
 #define WebView_h
 
 #include "WebDragOperation.h"
+#include "WebString.h"
+#include "WebVector.h"
 #include "WebWidget.h"
 
 namespace WebKit {
@@ -49,7 +51,6 @@ class WebString;
 class WebViewClient;
 struct WebMediaPlayerAction;
 struct WebPoint;
-template <typename T> class WebVector;
 
 class WebView : public WebWidget {
 public:
@@ -281,10 +282,22 @@ public:
                                     unsigned inactiveForegroundColor) = 0;
 
     // User scripts --------------------------------------------------------
-    virtual void addUserScript(const WebString& sourceCode,
-                               bool runAtStart) = 0;
-    virtual void addUserStyleSheet(const WebString& sourceCode) = 0;
-    virtual void removeAllUserContent() = 0;
+    // FIXME: These two methods are DEPRECATED. Remove once Chromium has been rolled.
+    virtual void addUserScript(const WebString& sourceCode, bool runAtStart)
+    {
+        addUserScript(sourceCode, WebVector<WebString>(), runAtStart);
+    }
+    virtual void addUserStyleSheet(const WebString& sourceCode)
+    {
+        addUserStyleSheet(sourceCode, WebVector<WebString>());
+    }
+
+    WEBKIT_API static void addUserScript(const WebString& sourceCode,
+                                         const WebVector<WebString>& patterns,
+                                         bool runAtStart);
+    WEBKIT_API static void addUserStyleSheet(const WebString& sourceCode,
+                                             const WebVector<WebString>& patterns);
+    WEBKIT_API static void removeAllUserContent();
 
     // Modal dialog support ------------------------------------------------
 

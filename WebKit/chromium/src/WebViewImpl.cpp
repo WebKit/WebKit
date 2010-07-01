@@ -104,6 +104,7 @@
 #include "WebString.h"
 #include "WebVector.h"
 #include "WebViewClient.h"
+#include "wtf/OwnPtr.h"
 
 #if OS(WINDOWS)
 #include "RenderThemeChromiumWin.h"
@@ -1965,22 +1966,30 @@ void WebViewImpl::setSelectionColors(unsigned activeBackgroundColor,
 #endif
 }
 
-void WebViewImpl::addUserScript(const WebString& sourceCode, bool runAtStart)
+void WebView::addUserScript(const WebString& sourceCode, const WebVector<WebString>& patternsIn, bool runAtStart)
 {
+    OwnPtr<Vector<String> > patterns(new Vector<String>);
+    for (size_t i = 0; i < patternsIn.size(); ++i)
+        patterns->append(patternsIn[i]);
+
     PageGroup* pageGroup = PageGroup::pageGroup(pageGroupName);
     RefPtr<DOMWrapperWorld> world(DOMWrapperWorld::create());
-    pageGroup->addUserScriptToWorld(world.get(), sourceCode, WebURL(), 0, 0,
+    pageGroup->addUserScriptToWorld(world.get(), sourceCode, WebURL(), patterns.release(), 0,
                                     runAtStart ? InjectAtDocumentStart : InjectAtDocumentEnd);
 }
 
-void WebViewImpl::addUserStyleSheet(const WebString& sourceCode)
+void WebView::addUserStyleSheet(const WebString& sourceCode, const WebVector<WebString>& patternsIn)
 {
+    OwnPtr<Vector<String> > patterns(new Vector<String>);
+    for (size_t i = 0; i < patternsIn.size(); ++i)
+        patterns->append(patternsIn[i]);
+
     PageGroup* pageGroup = PageGroup::pageGroup(pageGroupName);
     RefPtr<DOMWrapperWorld> world(DOMWrapperWorld::create());
-    pageGroup->addUserStyleSheetToWorld(world.get(), sourceCode, WebURL(), 0, 0);
+    pageGroup->addUserStyleSheetToWorld(world.get(), sourceCode, WebURL(), patterns.release(), 0);
 }
 
-void WebViewImpl::removeAllUserContent()
+void WebView::removeAllUserContent()
 {
     PageGroup* pageGroup = PageGroup::pageGroup(pageGroupName);
     pageGroup->removeAllUserContent();

@@ -1,3 +1,27 @@
+2010-07-01  Aaron Boodman  <aa@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Make the user script API static. This makes it more convenient to use
+        if you don't have a WebView instance yet.
+
+        Added static versions of the three methods and re-route current ones
+        temporarily through the static versions. Will remove the non-static
+        versions once Chromium has been updated.
+
+        Also, expose the URLPattern configuration for user stylesheets, since
+        they were not before.
+
+        https://bugs.webkit.org/show_bug.cgi?id=41385
+
+        * public/WebView.h:
+        (WebKit::WebView::addUserScript):
+        (WebKit::WebView::addUserStyleSheet):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebView::addUserScript):
+        (WebKit::WebView::addUserStyleSheet):
+        (WebKit::WebView::removeAllUserContent):
+
 2010-06-30  Kenneth Russell  <kbr@google.com>
 
         Reviewed by Dimitri Glazkov.
