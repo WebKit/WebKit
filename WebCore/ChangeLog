@@ -1,3 +1,22 @@
+2010-06-30  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Implement generateImpliedEndTags and deploy to steps which were blocked on it
+        https://bugs.webkit.org/show_bug.cgi?id=41432
+
+        This fixes one subtest in html5lib/runner.html and positively
+        effects a couple others.
+
+        More code sharing will be needed here.  For the moment
+        we're using copy/paste code, but that will soon be shared.
+
+        * html/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::processEndTag):
+        (WebCore::HTMLTreeBuilder::generateImpliedEndTagsWithExclusion):
+        (WebCore::HTMLTreeBuilder::generateImpliedEndTags):
+        * html/HTMLTreeBuilder.h:
+
 2010-06-30  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed buildfix after r62196 and r62214.

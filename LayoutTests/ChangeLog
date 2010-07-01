@@ -1,3 +1,13 @@
+2010-06-30  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Implement generateImpliedEndTags and deploy to steps which were blocked on it
+        https://bugs.webkit.org/show_bug.cgi?id=41432
+
+        * html5lib/runner-expected-html5.txt:
+         - Test 2.28 is now fixed.
+
 2010-06-30  Martin Robinson  <mrobinson@igalia.com>
 
         Unreviewed.

@@ -676,7 +676,16 @@ void HTMLTreeBuilder::processEndTag(AtomicHTMLToken& token)
             m_openElements.remove(node.get());
         }
         if (token.name() == pTag) {
-            notImplemented();
+            if (!m_openElements.inScope(token.name())) {
+                parseError(token);
+                notImplemented();
+                return;
+            }
+            generateImpliedEndTagsWithExclusion(token.name());
+            if (!currentElement()->hasLocalName(token.name()))
+                parseError(token);
+            m_openElements.popUntil(token.name());
+            m_openElements.pop();
             return;
         }
         if (token.name() == liTag) {
@@ -684,7 +693,11 @@ void HTMLTreeBuilder::processEndTag(AtomicHTMLToken& token)
                 parseError(token);
                 return;
             }
-            notImplemented();
+            generateImpliedEndTagsWithExclusion(token.name());
+            if (!currentElement()->hasLocalName(token.name()))
+                parseError(token);
+            m_openElements.popUntil(token.name());
+            m_openElements.pop();
             return;
         }
         if (token.name() == ddTag || token.name() == dtTag) {
@@ -692,7 +705,11 @@ void HTMLTreeBuilder::processEndTag(AtomicHTMLToken& token)
                 parseError(token);
                 return;
             }
-            notImplemented();
+            generateImpliedEndTagsWithExclusion(token.name());
+            if (!currentElement()->hasLocalName(token.name()))
+                parseError(token);
+            m_openElements.popUntil(token.name());
+            m_openElements.pop();
             return;
         }
         if (token.name() == h1Tag || token.name() == h2Tag || token.name() == h3Tag || token.name() == h4Tag || token.name() == h5Tag || token.name() == h6Tag) {
@@ -1091,6 +1108,34 @@ void HTMLTreeBuilder::reconstructTheActiveFormattingElements()
         insertElement(fakeToken);
         unopenedEntry.replaceElement(currentElement());
     }
+}
+
+namespace {
+
+bool hasImpliedEndTag(Element* element)
+{
+    return element->hasTagName(ddTag)
+        || element->hasTagName(dtTag)
+        || element->hasTagName(liTag)
+        || element->hasTagName(optionTag)
+        || element->hasTagName(optgroupTag)
+        || element->hasTagName(pTag)
+        || element->hasTagName(rpTag)
+        || element->hasTagName(rtTag);
+}
+
+}
+
+void HTMLTreeBuilder::generateImpliedEndTagsWithExclusion(const AtomicString& tagName)
+{
+    while (hasImpliedEndTag(currentElement()) && !currentElement()->hasLocalName(tagName))
+        m_openElements.pop();
+}
+
+void HTMLTreeBuilder::generateImpliedEndTags()
+{
+    while (hasImpliedEndTag(currentElement()))
+        m_openElements.pop();
 }
 
 void HTMLTreeBuilder::finished()

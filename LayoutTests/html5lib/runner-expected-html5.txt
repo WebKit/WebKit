@@ -79,7 +79,6 @@ resources/tests2.dat:
 25
 26
 27
-28
 32
 34
 35

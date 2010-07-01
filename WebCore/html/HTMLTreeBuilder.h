@@ -164,7 +164,8 @@ private:
     void reconstructTheActiveFormattingElements();
     void clearActiveFormatingElementsUpToLastMarker() { }
 
-    void generateImpliedEndTags() { }
+    void generateImpliedEndTags();
+    void generateImpliedEndTagsWithExclusion(const AtomicString& tagName);
 
     Element* currentElement() { return m_openElements.top(); }
 
