@@ -868,6 +868,12 @@ void GraphicsLayerCA::syncCompositingState()
     recursiveCommitChanges();
 }
 
+void GraphicsLayerCA::syncCompositingStateForThisLayerOnly()
+{
+    commitLayerChangesBeforeSublayers();
+    commitLayerChangesAfterSublayers();
+}
+
 void GraphicsLayerCA::recursiveCommitChanges()
 {
     commitLayerChangesBeforeSublayers();

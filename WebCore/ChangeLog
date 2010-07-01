@@ -27,6 +27,24 @@
 
 2010-07-01  Simon Fraser  <simon.fraser@apple.com>
 
+        Reviewed by Darin Adler.
+
+        Get accelerated compositing working with webkit2
+        https://bugs.webkit.org/show_bug.cgi?id=41084
+
+        Step 2: add a  method, syncCompositingStateForThisLayerOnly(), to GraphicsLayer to commit
+        batched changes non-recursively. This allows us to use GraphicsLayer in places where we
+        don't want to kick off a recursive commit of the entire tree.
+
+        * platform/graphics/GraphicsLayer.h:
+        (WebCore::GraphicsLayer::syncCompositingStateForThisLayerOnly):
+        * platform/graphics/mac/GraphicsLayerCA.h:
+        * platform/graphics/mac/GraphicsLayerCA.mm:
+        (WebCore::GraphicsLayerCA::syncCompositingStateForThisLayerOnly):
+        * WebCore.AcceleratedCompositing.exp: Export the new method for use in WebKit2.
+
+2010-07-01  Simon Fraser  <simon.fraser@apple.com>
+
         Reviewed by Sam Weinig.
 
         Get accelerated compositing working with webkit2

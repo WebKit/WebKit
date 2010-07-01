@@ -343,8 +343,10 @@ public:
     virtual float accumulatedOpacity() const;
 
     // Some compositing systems may do internal batching to synchronize compositing updates
-    // with updates drawn into the window. This is a signal to flush any internal batched state.
+    // with updates drawn into the window. These methods flush internal batched state on this layer
+    // and descendant layers, and this layer only.
     virtual void syncCompositingState() { }
+    virtual void syncCompositingStateForThisLayerOnly() { }
     
     // Return a string with a human readable form of the layer tree, If debug is true 
     // pointers for the layers and timing data will be included in the returned string.
