@@ -1,3 +1,17 @@
+2010-07-01  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] Remove an unneeded assert.
+
+        This assert is triggered for example while showing the falling leaves demo.
+        GraphicsLayerQtImpl::toGraphicsLayerQtImpl asserts that its input
+        pointer is null. Looking at the uses of this method it seems like
+        it is expected to return null if a null pointer is given to it.
+
+        * platform/graphics/qt/GraphicsLayerQt.cpp:
+        (WebCore::toGraphicsLayerQtImpl):
+
 2010-06-16  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         Reviewed by Simon Hausmann.
