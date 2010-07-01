@@ -1,3 +1,18 @@
+2010-07-01  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Improve reentrancy logic in polymorphic cache stubs
+        <https://bugs.webkit.org/show_bug.cgi?id=41482>
+        <rdar://problem/8094380>
+
+        Make the polymorphic cache stubs handle reentrancy
+        better.
+
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        (JSC::getPolymorphicAccessStructureListSlot):
+
 2010-07-01  Antti Koivisto  <koivisto@iki.fi>
 
         Revert accidental commit.
