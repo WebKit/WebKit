@@ -34,6 +34,25 @@
 
         * WebProcess/win/WebProcessMain.h:
 
+2010-07-01  Kenneth Rohde Christiansen  <kenneth.christiansen@openbossa.org>
+
+        Reviewed by Antti Koivisto.
+
+        [Qt] Initial WebKit2 implementation
+        https://bugs.webkit.org/show_bug.cgi?id=40233
+
+        Add our event factory for converting Qt events to something WebKit2
+        understands.
+
+        * Shared/qt/WebEventFactoryQt.cpp: Added.
+        (WebKit::mouseButtonForEvent):
+        (WebKit::webEventTypeForEvent):
+        (WebKit::modifiersForEvent):
+        (WebKit::WebEventFactory::createWebMouseEvent):
+        (WebKit::WebEventFactory::createWebWheelEvent):
+        (WebKit::WebEventFactory::createWebKeyboardEvent):
+        * Shared/qt/WebEventFactoryQt.h: Added.
+
 2010-07-01  John Sullivan  <sullivan@apple.com>
 
         Rubber-stamped by Anders Carlsson.
@@ -58,110 +77,6 @@
 
         * mac/WebKit2.exp:
         Added _WKFramePolicyListenerRelease and _WKFramePolicyListenerRetain.
-
-2010-07-01  Kenneth Rohde Christiansen  <kenneth.christiansen@openbossa.org>
-
-        Reviewed by Antti Koivisto.
-
-        Export symbols on Linux with GCC
-
-        * UIProcess/API/C/WKBase.h:
-        * WebProcess/InjectedBundle/API/c/WKBundleBase.h:
-
-2010-07-01  Kenneth Rohde Christiansen  <kenneth.christiansen@openbossa.org>
-
-        Reviewed by Antti Koivisto.
-
-        [Qt] Initial WebKit2 implementation
-        https://bugs.webkit.org/show_bug.cgi?id=40233
-
-        Add initial Qt API for WebKit2
-
-        * UIProcess/API/qt/WKView.h: Added.
-        * UIProcess/API/qt/qgraphicswkview.cpp: Added.
-        (QGraphicsWKViewPrivate::pageRef):
-        (QGraphicsWKView::QGraphicsWKView):
-        (QGraphicsWKView::~QGraphicsWKView):
-        (QGraphicsWKView::page):
-        (QGraphicsWKView::paint):
-        (QGraphicsWKView::setGeometry):
-        (QGraphicsWKView::load):
-        (QGraphicsWKView::setUrl):
-        (QGraphicsWKView::url):
-        (QGraphicsWKView::title):
-        (QGraphicsWKView::triggerPageAction):
-        (QGraphicsWKView::back):
-        (QGraphicsWKView::forward):
-        (QGraphicsWKView::reload):
-        (QGraphicsWKView::stop):
-        (QGraphicsWKView::itemChange):
-        (QGraphicsWKView::event):
-        (QGraphicsWKView::sizeHint):
-        (QGraphicsWKView::inputMethodQuery):
-        (QGraphicsWKView::keyPressEvent):
-        (QGraphicsWKView::keyReleaseEvent):
-        (QGraphicsWKView::hoverMoveEvent):
-        (QGraphicsWKView::mouseMoveEvent):
-        (QGraphicsWKView::mousePressEvent):
-        (QGraphicsWKView::mouseReleaseEvent):
-        (QGraphicsWKView::mouseDoubleClickEvent):
-        (QGraphicsWKView::wheelEvent):
-        (QGraphicsWKViewPrivate::QGraphicsWKViewPrivate):
-        (QGraphicsWKView::visibleRect):
-        * UIProcess/API/qt/qgraphicswkview.h: Added.
-        * UIProcess/API/qt/qwkpage.cpp: Added.
-        (QWKPagePrivate::QWKPagePrivate):
-        (QWKPagePrivate::~QWKPagePrivate):
-        (QWKPagePrivate::init):
-        (QWKPagePrivate::toolTipChanged):
-        (QWKPagePrivate::paint):
-        (QWKPagePrivate::keyPressEvent):
-        (QWKPagePrivate::keyReleaseEvent):
-        (QWKPagePrivate::mouseMoveEvent):
-        (QWKPagePrivate::mousePressEvent):
-        (QWKPagePrivate::mouseReleaseEvent):
-        (QWKPagePrivate::mouseDoubleClickEvent):
-        (QWKPagePrivate::wheelEvent):
-        (QWKPagePrivate::updateAction):
-        (QWKPagePrivate::updateNavigationActions):
-        (QWKPagePrivate::_q_webActionTriggered):
-        (QWKPage::QWKPage):
-        (QWKPage::~QWKPage):
-        (QWKPage::pageRef):
-        (QWKPage::setCreateNewPageFunction):
-        (QWKPage::load):
-        (QWKPage::setUrl):
-        (QWKPage::url):
-        (QWKPage::title):
-        (QWKPage::setViewportSize):
-        (QWKPage::requestZoomRect):
-        (QWKPage::triggerAction):
-        (QWKPage::action):
-        * UIProcess/API/qt/qwkpage.h: Added.
-        * UIProcess/API/qt/qwkpage_p.h: Added.
-        (QWKPagePrivate::get):
-        (QWKPagePrivate::processDidExit):
-        (QWKPagePrivate::processDidRevive):
-        (QWKPagePrivate::takeFocus):
-
-2010-07-01  Kenneth Rohde Christiansen  <kenneth.christiansen@openbossa.org>
-
-        Reviewed by Antti Koivisto.
-
-        [Qt] Initial WebKit2 implementation
-        https://bugs.webkit.org/show_bug.cgi?id=40233
-
-        Add our event factory for converting Qt events to something WebKit2
-        understands.
-
-        * Shared/qt/WebEventFactoryQt.cpp: Added.
-        (WebKit::mouseButtonForEvent):
-        (WebKit::webEventTypeForEvent):
-        (WebKit::modifiersForEvent):
-        (WebKit::WebEventFactory::createWebMouseEvent):
-        (WebKit::WebEventFactory::createWebWheelEvent):
-        (WebKit::WebEventFactory::createWebKeyboardEvent):
-        * Shared/qt/WebEventFactoryQt.h: Added.
 
 2010-07-01  Antti Koivisto  <koivisto@iki.fi>
 
