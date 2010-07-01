@@ -2919,8 +2919,13 @@ BUG44844: fast/forms/input-appearance-numberandspeech.html = IMAGE+TEXT
 BUG44844: fast/forms/input-appearance-searchandspeech.html = IMAGE+TEXT
 BUG44844: fast/forms/input-appearance-speechbutton.html = IMAGE+TEXT
 
+// v8 bindings for dataset need to be implemented.
+BUG48133 :  fast/dom/dataset-xhtml.xhtml = TEXT
+BUG48133 :  fast/dom/dataset.html = TEXT
+
 // Flaky tests.
 BUG44345 LINUX : svg/zoom/text/zoom-hixie-mixed-009.xml = IMAGE PASS
 BUG44346 LINUX : svg/zoom/page/zoom-hixie-mixed-009.xml = IMAGE PASS
 BUG44347 LINUX : svg/hixie/mixed/009.xml = IMAGE PASS
 BUG48110 WIN LINUX : fast/dom/HTMLDocument/activeElement.html = PASS TEXT
+
