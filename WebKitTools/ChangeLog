@@ -1,5 +1,13 @@
 2010-07-01  Martin Robinson  <mrobinson@igalia.com>
 
+        Unreviewed.
+
+        Fix the Windows build after r62278.
+
+        * Scripts/num-cpus: Use FindBin to add the Scripts directory to the list of library directories.
+
+2010-07-01  Martin Robinson  <mrobinson@igalia.com>
+
         Reviewed by Gustavo Noronha Silva.
 
         [GTK] build-webkit does not detect the number of CPUs
