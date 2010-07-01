@@ -1,3 +1,13 @@
+2010-06-30  Martin Robinson  <mrobinson@igalia.com>
+
+        Unreviewed.
+
+        Update GTK+ expected results after r62215.
+
+        * platform/gtk/fast/dom/Window/window-property-descriptors-expected.txt:
+        * platform/gtk/fast/dom/prototype-inheritance-expected.txt:
+        * platform/gtk/fast/js/global-constructors-expected.txt:
+
 2010-06-30  Adam Barth  <abarth@webkit.org>
 
         Unreviewed.
