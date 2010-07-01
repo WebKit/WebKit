@@ -1,3 +1,20 @@
+2010-07-01  Andreas Kling  <andreas.kling@nokia.com>
+
+        Reviewed by Tor Arne Vestbø.
+
+        Canvas: Exception erroneously thrown for drawImage() when image.complete=false
+        https://bugs.webkit.org/show_bug.cgi?id=33968
+
+        Added a test to verify that CRC2D does nothing when calling drawImage()
+        with an incomplete image or video.
+
+        Spec link:
+        http://www.whatwg.org/specs/web-apps/current-work/#dom-context-2d-drawimage
+
+        * fast/canvas/canvas-drawImage-incomplete-expected.txt: Added.
+        * fast/canvas/canvas-drawImage-incomplete.html: Added.
+        * fast/canvas/script-tests/canvas-drawImage-incomplete.js: Added.
+
 2010-07-01  Justin Schuh  <jschuh@chromium.org>
 
         Reviewed by Dan Bernstein.

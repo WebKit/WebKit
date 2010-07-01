@@ -45,6 +45,7 @@
 #include "GraphicsContext.h"
 #include "HTMLCanvasElement.h"
 #include "HTMLImageElement.h"
+#include "HTMLMediaElement.h"
 #include "HTMLNames.h"
 #include "ImageBuffer.h"
 #include "ImageData.h"
@@ -1022,6 +1023,9 @@ void CanvasRenderingContext2D::drawImage(HTMLImageElement* image, const FloatRec
         || !isfinite(srcRect.x()) || !isfinite(srcRect.y()) || !isfinite(srcRect.width()) || !isfinite(srcRect.height()))
         return;
 
+    if (!image->complete())
+        return;
+
     FloatRect imageRect = FloatRect(FloatPoint(), size(image));
     if (!imageRect.contains(normalizeRect(srcRect)) || srcRect.width() == 0 || srcRect.height() == 0) {
         ec = INDEX_SIZE_ERR;
@@ -1158,6 +1162,10 @@ void CanvasRenderingContext2D::drawImage(HTMLVideoElement* video, const FloatRec
     }
     
     ec = 0;
+
+    if (video->readyState() == HTMLMediaElement::HAVE_NOTHING || video->readyState() == HTMLMediaElement::HAVE_METADATA)
+        return;
+
     FloatRect videoRect = FloatRect(FloatPoint(), size(video));
     if (!videoRect.contains(normalizeRect(srcRect)) || srcRect.width() == 0 || srcRect.height() == 0) {
         ec = INDEX_SIZE_ERR;
