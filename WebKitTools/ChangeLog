@@ -1,3 +1,17 @@
+2010-06-28  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Shinichiro Hamaji.
+
+        rebaseline-chromium-webkit-tests doesn't do diffs right with a Git checkout of WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=38775
+
+        - Introduced SCM.show_head() and SCM.diff_for_file().
+        - Replaced direct svn invocations with newly implement SCM methods.
+
+        * Scripts/webkitpy/common/checkout/scm.py:
+        * Scripts/webkitpy/common/checkout/scm_unittest.py:
+        * Scripts/webkitpy/layout_tests/rebaseline_chromium_webkit_tests.py:
+
 2010-06-30  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Sam Weinig.

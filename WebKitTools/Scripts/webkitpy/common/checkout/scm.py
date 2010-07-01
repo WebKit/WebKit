@@ -31,6 +31,8 @@
 
 import os
 import re
+import sys
+import shutil
 
 from webkitpy.common.system.executive import Executive, run_command, ScriptError
 from webkitpy.common.system.user import User
@@ -223,6 +225,12 @@ class SCM:
     def diff_for_revision(self, revision):
         self._subclass_must_implement()
 
+    def diff_for_file(self, path, log=None):
+        self._subclass_must_implement()
+
+    def show_head(self, path):
+        self._subclass_must_implement()
+
     def apply_reverse_diff(self, revision):
         self._subclass_must_implement()
 
@@ -268,7 +276,8 @@ class SVN(SCM):
     def __init__(self, cwd):
         SCM.__init__(self, cwd)
         self.cached_version = None
-    
+        self._bogus_dir = None
+
     @staticmethod
     def in_working_directory(path):
         return os.path.isdir(os.path.join(path, '.svn'))
@@ -415,6 +424,44 @@ class SVN(SCM):
         # FIXME: This should probably use cwd=self.checkout_root
         return self.run(['svn', 'diff', '-c', revision])
 
+    def _bogus_dir_name(self):
+        if sys.platform.startswith("win"):
+            parent_dir = tempfile.gettempdir()
+        else:
+            parent_dir = sys.path[0]  # tempdir is not secure.
+        return os.path.join(parent_dir, "temp_svn_config")
+
+    def _setup_bogus_dir(self, log):
+        self._bogus_dir = self._bogus_dir_name()
+        if not os.path.exists(self._bogus_dir):
+            os.mkdir(self._bogus_dir)
+            self._delete_bogus_dir = True
+        else:
+            self._delete_bogus_dir = False
+        if log:
+            log.debug('  Html: temp config dir: "%s".', self._bogus_dir)
+
+    def _teardown_bogus_dir(self, log):
+        if self._delete_bogus_dir:
+            shutil.rmtree(self._bogus_dir, True)
+            if log:
+                log.debug('  Html: removed temp config dir: "%s".', self._bogus_dir)
+        self._bogus_dir = None
+
+    def diff_for_file(self, path, log=None):
+        self._setup_bogus_dir(log)
+        try:
+            args = ['svn', 'diff']
+            if self._bogus_dir:
+                args += ['--config-dir', self._bogus_dir]
+            args.append(path)
+            return self.run(args)
+        finally:
+            self._teardown_bogus_dir(log)
+
+    def show_head(self, path):
+        return self.run(['svn', 'cat', '-r', 'BASE', path])
+
     def _repository_url(self):
         return self.value_from_svn_info(self.checkout_root, 'URL')
 
@@ -484,6 +531,11 @@ class Git(SCM):
         if not os.path.isabs(checkout_root): # Sometimes git returns relative paths
             checkout_root = os.path.join(path, checkout_root)
         return checkout_root
+
+    @classmethod
+    def to_object_name(cls, filepath):
+        root_end_with_slash = os.path.join(cls.find_checkout_root(os.path.dirname(filepath)), '')
+        return filepath.replace(root_end_with_slash, '')
 
     @classmethod
     def read_git_config(cls, key):
@@ -605,6 +657,12 @@ class Git(SCM):
     def diff_for_revision(self, revision):
         git_commit = self.git_commit_from_svn_revision(revision)
         return self.create_patch(git_commit)
+
+    def diff_for_file(self, path, log=None):
+        return self.run(['git', 'diff', 'HEAD', '--', path])
+
+    def show_head(self, path):
+        return self.run(['git', 'show', 'HEAD:' + self.to_object_name(path)])
 
     def committer_email_for_revision(self, revision):
         git_commit = self.git_commit_from_svn_revision(revision)

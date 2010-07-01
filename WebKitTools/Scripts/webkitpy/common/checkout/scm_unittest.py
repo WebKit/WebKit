@@ -40,6 +40,7 @@ import subprocess
 import tempfile
 import unittest
 import urllib
+import shutil
 
 from datetime import date
 from webkitpy.common.checkout.api import Checkout
@@ -651,6 +652,40 @@ Q1dTBx0AAAB42itg4GlgYJjGwMDDyODMxMDw34GBgQEAJPQDJA==
         self.scm.propset("svn:mime-type", expected_mime_type, filepath)
         self.assertEqual(expected_mime_type, self.scm.propget("svn:mime-type", filepath))
 
+    def test_show_head(self):
+        write_into_file_at_path("test_file", u"Hello!", "utf-8")
+        SVNTestRepository._svn_commit("fourth commit")
+        self.assertEqual("Hello!", self.scm.show_head('test_file'))
+
+    def do_test_diff_for_file(self):
+        write_into_file_at_path('test_file', 'some content')
+        self.scm.commit_with_message("a test commit")
+        diff = self.scm.diff_for_file('test_file')
+        self.assertEqual(diff, "")
+
+        write_into_file_at_path("test_file", "changed content")
+        diff = self.scm.diff_for_file('test_file')
+        self.assertTrue("-some content" in diff)
+        self.assertTrue("+changed content" in diff)
+
+    def clean_bogus_dir(self):
+        self.bogus_dir = self.scm._bogus_dir_name()
+        if os.path.exists(self.bogus_dir):
+            shutil.rmtree(self.bogus_dir)
+
+    def test_diff_for_file_with_existing_bogus_dir(self):
+        self.clean_bogus_dir()
+        os.mkdir(self.bogus_dir)
+        self.do_test_diff_for_file()
+        self.assertTrue(os.path.exists(self.bogus_dir))
+        shutil.rmtree(self.bogus_dir)
+
+    def test_diff_for_file_with_missing_bogus_dir(self):
+        self.clean_bogus_dir()
+        self.do_test_diff_for_file()
+        self.assertFalse(os.path.exists(self.bogus_dir))
+
+
 class GitTest(SCMTest):
 
     def setUp(self):
@@ -1124,6 +1159,30 @@ class GitSVNTest(SCMTest):
         self.scm.delete('test_file_commit1')
         self.assertTrue("test_file_commit1" in self.scm.deleted_files())
 
+    def test_to_object_name(self):
+        relpath = 'test_file_commit1'
+        fullpath = os.path.join(self.git_checkout_path, relpath)
+        self._two_local_commits()
+        self.assertEqual(relpath, self.scm.to_object_name(fullpath))
+
+    def test_show_head(self):
+        self._two_local_commits()
+        self.assertEqual("more test content", self.scm.show_head('test_file_commit1'))
+
+    def test_diff_for_file(self):
+        self._two_local_commits()
+        write_into_file_at_path('test_file_commit1', "Updated", encoding=None)
+
+        diff = self.scm.diff_for_file('test_file_commit1')
+        cached_diff = self.scm.diff_for_file('test_file_commit1')
+        self.assertTrue("+Updated" in diff)
+        self.assertTrue("-more test content" in diff)
+
+        self.scm.add('test_file_commit1')
+
+        cached_diff = self.scm.diff_for_file('test_file_commit1')
+        self.assertTrue("+Updated" in cached_diff)
+        self.assertTrue("-more test content" in cached_diff)
 
 if __name__ == '__main__':
     unittest.main()

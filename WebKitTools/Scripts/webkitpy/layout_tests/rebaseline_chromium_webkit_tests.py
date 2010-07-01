@@ -58,7 +58,7 @@ import urllib
 import webbrowser
 import zipfile
 
-from webkitpy.common.system.executive import run_command
+from webkitpy.common.system.executive import run_command, ScriptError
 from webkitpy.common.checkout.scm import detect_scm_system
 import webkitpy.common.checkout.scm as scm
 
@@ -619,8 +619,13 @@ class Rebaseliner(object):
         _log.info('  Html: copied new baseline file from "%s" to "%s".',
                   baseline_fullpath, new_file)
 
-        # Get the old baseline from SVN and save to the html directory.
-        output = run_shell(['svn', 'cat', '-r', 'BASE', baseline_fullpath])
+        # Get the old baseline from the repository and save to the html directory.
+        try:
+            output = self._scm.show_head(baseline_fullpath)
+        except ScriptError, e:
+            _log.info(e)
+            output = ""
+
         if (not output) or (output.upper().rstrip().endswith(
             'NO SUCH FILE OR DIRECTORY')):
             _log.info('  No base file: "%s"', baseline_fullpath)
@@ -637,27 +642,7 @@ class Rebaseliner(object):
 
         # Get the diff between old and new baselines and save to the html dir.
         if baseline_filename.upper().endswith('.TXT'):
-            # If the user specified a custom diff command in their svn config
-            # file, then it'll be used when we do svn diff, which we don't want
-            # to happen since we want the unified diff.  Using --diff-cmd=diff
-            # doesn't always work, since they can have another diff executable
-            # in their path that gives different line endings.  So we use a
-            # bogus temp directory as the config directory, which gets
-            # around these problems.
-            if sys.platform.startswith("win"):
-                parent_dir = tempfile.gettempdir()
-            else:
-                parent_dir = sys.path[0]  # tempdir is not secure.
-            bogus_dir = os.path.join(parent_dir, "temp_svn_config")
-            _log.debug('  Html: temp config dir: "%s".', bogus_dir)
-            if not os.path.exists(bogus_dir):
-                os.mkdir(bogus_dir)
-                delete_bogus_dir = True
-            else:
-                delete_bogus_dir = False
-
-            output = run_shell(["svn", "diff", "--config-dir", bogus_dir,
-                               baseline_fullpath])
+            output = self._scm.diff_for_file(baseline_fullpath, log=_log)
             if output:
                 diff_file = get_result_file_fullpath(
                     self._options.html_directory, baseline_filename,
@@ -667,11 +652,6 @@ class Rebaseliner(object):
                     file.write(output)
                 _log.info('  Html: created baseline diff file: "%s".',
                           diff_file)
-
-            if delete_bogus_dir:
-                shutil.rmtree(bogus_dir, True)
-                _log.debug('  Html: removed temp config dir: "%s".',
-                           bogus_dir)
 
 class HtmlGenerator(object):
     """Class to generate rebaselining result comparison html."""
