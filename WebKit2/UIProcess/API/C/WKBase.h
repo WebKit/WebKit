@@ -41,7 +41,12 @@ typedef struct OpaqueWKStringRef* WKStringRef;
 typedef struct OpaqueWKURLRef* WKURLRef;
 typedef struct OpaqueWKArrayRef* WKArrayRef;
 
-#if defined(WIN32) || defined(_WIN32)
+#undef WK_EXPORT
+#if defined(WK_NO_EXPORT)
+#define WK_EXPORT
+#elif defined(__GNUC__)
+#define WK_EXPORT __attribute__((visibility("default")))
+#elif defined(WIN32) || defined(_WIN32)
 #if BUILDING_WEBKIT2
 #define WK_EXPORT __declspec(dllexport)
 #else
