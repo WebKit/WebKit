@@ -265,7 +265,8 @@ void RenderTextControlSingleLine::layout()
         // remaining one pixel. It's good for Mac NSStepper because it has
         // shadow at the bottom.
         int y = (diff / 2) + (diff % 2);
-        spinBox->setLocation(spinBox->x() + paddingRight() + borderRight(), y);
+        int x = width() - borderRight() - paddingRight() - spinBox->width();
+        spinBox->setLocation(x, y);
     }
 }
 
@@ -357,20 +358,18 @@ void RenderTextControlSingleLine::forwardEvent(Event* event)
 
     FloatPoint localPoint = innerTextRenderer->absoluteToLocal(static_cast<MouseEvent*>(event)->absoluteLocation(), false, true);
     int textRight = innerTextRenderer->borderBoxRect().right();
+
 #if ENABLE(INPUT_SPEECH)
-    int cancelRight = textRight;
-    if (m_cancelButton && m_cancelButton->renderBox()) {
-        RenderBox* cancelRenderer = m_cancelButton->renderBox();
-        cancelRight += cancelRenderer->width() + cancelRenderer->marginLeft() + cancelRenderer->marginRight();
+    if (RenderBox* speechBox = m_speechButton ? m_speechButton->renderBox() : 0) {
+        if (localPoint.x() >= speechBox->x() && localPoint.x() < speechBox->x() + speechBox->width()) {
+            m_speechButton->defaultEventHandler(event);
+            return;
+        }
     }
 #endif
 
     if (m_resultsButton && localPoint.x() < innerTextRenderer->borderBoxRect().x())
         m_resultsButton->defaultEventHandler(event);
-#if ENABLE(INPUT_SPEECH)
-    else if (m_speechButton && localPoint.x() > cancelRight)
-        m_speechButton->defaultEventHandler(event);
-#endif
     else if (m_cancelButton && localPoint.x() > textRight)
         m_cancelButton->defaultEventHandler(event);
     else if (m_outerSpinButton && localPoint.x() > textRight)
@@ -607,6 +606,10 @@ void RenderTextControlSingleLine::createSubtreeIfNeeded()
         m_innerBlock = TextControlInnerElement::create(node());
         m_innerBlock->attachInnerElement(node(), createInnerBlockStyle(style()), renderArena());
     }
+    if (inputElement()->hasSpinButton() && !m_outerSpinButton) {
+        m_outerSpinButton = SpinButtonElement::create(node());
+        m_outerSpinButton->attachInnerElement(node(), createOuterSpinButtonStyle(), renderArena());
+    }
 
     if (inputElement()->isSearchField()) {
         if (!m_resultsButton) {
@@ -711,7 +714,7 @@ PassRefPtr<RenderStyle> RenderTextControlSingleLine::createInnerBlockStyle(const
     RefPtr<RenderStyle> innerBlockStyle = RenderStyle::create();
     innerBlockStyle->inheritFrom(startStyle);
 
-    innerBlockStyle->setDisplay(BLOCK);
+    innerBlockStyle->setDisplay(inputElement()->hasSpinButton() ? INLINE_BLOCK : BLOCK);
     innerBlockStyle->setDirection(LTR);
 
     // We don't want the shadow dom to be editable, so we set this block to read-only in case the input itself is editable.

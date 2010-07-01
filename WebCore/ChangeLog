@@ -1,3 +1,47 @@
+2010-07-01  Satish Sampath  <satish@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        Rendering the speech button in input elements.
+        https://bugs.webkit.org/show_bug.cgi?id=40984
+
+        The button currently has only one state and rendered as an image on all platforms. Subsequent
+        patches will add user input handling and more states + rendering code to the button. The
+        button's appearance can be customized by individual ports in their RenderTheme implementation
+        if required.
+
+        Tests: platform/mac/fast/forms/input-appearance-numberandspeech.html
+               platform/mac/fast/forms/input-appearance-searchandspeech.html
+               platform/mac/fast/forms/input-appearance-speechbutton.html
+
+        * GNUmakefile.am:
+        * Resources/inputSpeech.png: Added.
+        * Resources/inputSpeech.tiff: Added. Used by the Mac implementation.
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.qrc:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/qt/ImageQt.cpp:
+        (loadResourcePixmap): Load the speech button images for Qt port.
+        * rendering/RenderInputSpeech.cpp: Added.
+        (WebCore::RenderInputSpeech::adjustInputFieldSpeechButtonStyle): Sets the button's dimensions.
+        (WebCore::RenderInputSpeech::paintInputFieldSpeechButton):
+        * rendering/RenderInputSpeech.h: Added.
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::layout):
+        (WebCore::RenderTextControlSingleLine::forwardEvent):
+        (WebCore::RenderTextControlSingleLine::createSubtreeIfNeeded): Create the speech button.
+        (WebCore::RenderTextControlSingleLine::createInnerBlockStyle):
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::adjustStyle):
+        (WebCore::RenderTheme::paint):
+        (WebCore::RenderTheme::adjustInputFieldSpeechButtonStyle):
+        (WebCore::RenderTheme::paintInputFieldSpeechButton):
+        * rendering/RenderTheme.h:
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::paintSearchFieldCancelButton): Get cancel button to render to the left of
+        speech button when enabled.
+
 2010-07-01  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Reviewed by Xan Lopez.

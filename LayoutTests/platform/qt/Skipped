@@ -5430,3 +5430,8 @@ inspector/debugger-proto-property.html
 # [Qt] fast/text/bidi-explicit-embedding-past-end.html fails
 # https://bugs.webkit.org/show_bug.cgi?id=41241
 fast/text/bidi-explicit-embedding-past-end.html
+
+# Speech input is not yet enabled.
+fast/forms/input-appearance-numberandspeech.html
+fast/forms/input-appearance-searchandspeech.html
+fast/forms/input-appearance-speechbutton.html

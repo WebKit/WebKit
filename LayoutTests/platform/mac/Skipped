@@ -302,3 +302,9 @@ http/tests/multipart/policy-ignore-crash.php
 # pastes a space instead of a tab
 # https://bugs.webkit.org/show_bug.cgi?id=38437
 editing/pasteboard/5761530-1.html
+
+# Speech input is not yet enabled.
+fast/forms/input-appearance-numberandspeech.html
+fast/forms/input-appearance-searchandspeech.html
+fast/forms/input-appearance-speechbutton.html
+

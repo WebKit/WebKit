@@ -13,5 +13,6 @@
     <file alias="progressCursor.png">Resources/progressCursor.png</file>
     <file alias="aliasCursor.png">Resources/aliasCursor.png</file>
     <file alias="deleteButton.png">Resources/deleteButton.png</file>
+    <file alias="inputSpeech.png">Resources/inputSpeech.png</file>
 </qresource>
 </RCC>

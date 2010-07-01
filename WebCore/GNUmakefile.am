@@ -4289,7 +4289,8 @@ dist_webresources_DATA = \
 	$(WebCore)/Resources/urlIcon.png \
 	$(WebCore)/Resources/missingImage.png \
 	$(WebCore)/Resources/panIcon.png \
-	$(WebCore)/Resources/deleteButton.png
+	$(WebCore)/Resources/deleteButton.png \
+	$(WebCore)/Resources/inputSpeech.png
 
 # Clean rules for WebCore
 

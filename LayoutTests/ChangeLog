@@ -1,3 +1,32 @@
+2010-07-01  Satish Sampath  <satish@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        Rendering the speech button in input elements.
+        https://bugs.webkit.org/show_bug.cgi?id=40984
+
+        input-appearance-speechbutton.html checks the appearances of various sizes of speech buttons.
+        input-appearance-searchandspeech.html checks input type='search' field with speech button.
+        input-appearance-numberandspeech.html checks input type='number' field with speech button.
+
+        * fast/forms/input-appearance-numberandspeech-expected.txt: Added.
+        * fast/forms/input-appearance-numberandspeech.html: Added.
+        * fast/forms/input-appearance-searchandspeech-expected.txt: Added.
+        * fast/forms/input-appearance-searchandspeech.html: Added.
+        * fast/forms/input-appearance-speechbutton-expected.txt: Added.
+        * fast/forms/input-appearance-speechbutton.html: Added.
+        * platform/chromium/test_expectations.txt: Skipped all these new tests as the speech input feature is disabled by default.
+        * platform/gtk/Skipped:
+        * platform/mac/fast/forms/input-appearance-numberandspeech-expected.checksum: Added.
+        * platform/mac/fast/forms/input-appearance-numberandspeech-expected.png: Added.
+        * platform/mac/fast/forms/input-appearance-searchandspeech-expected.checksum: Added.
+        * platform/mac/fast/forms/input-appearance-searchandspeech-expected.png: Added.
+        * platform/mac/fast/forms/input-appearance-speechbutton-expected.checksum: Added.
+        * platform/mac/fast/forms/input-appearance-speechbutton-expected.png: Added.
+        * platform/mac/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+
 2010-07-01  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Adam Barth.

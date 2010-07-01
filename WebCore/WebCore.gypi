@@ -3209,6 +3209,8 @@
             'rendering/RenderIndicator.h',
             'rendering/RenderInline.cpp',
             'rendering/RenderInline.h',
+            'rendering/RenderInputSpeech.cpp',
+            'rendering/RenderInputSpeech.h',
             'rendering/RenderLayer.cpp',
             'rendering/RenderLayer.h',
             'rendering/RenderLayerBacking.cpp',

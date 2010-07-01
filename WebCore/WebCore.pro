@@ -1771,6 +1771,7 @@ HEADERS += \
     rendering/RenderImage.h \
     rendering/RenderIndicator.h \
     rendering/RenderInline.h \
+    rendering/RenderInputSpeech.h \
     rendering/RenderLayer.h \
     rendering/RenderLineBoxList.h \
     rendering/RenderListBox.h \
@@ -2513,6 +2514,11 @@ contains(DEFINES, ENABLE_SHARED_WORKERS=1) {
         workers/SharedWorker.cpp \
         workers/SharedWorkerContext.cpp \
         workers/SharedWorkerThread.cpp
+}
+
+contains(DEFINES, ENABLE_INPUT_SPEECH=1) {
+    SOURCES += \
+        rendering/RenderInputSpeech.cpp
 }
 
 contains(DEFINES, ENABLE_VIDEO=1) {
