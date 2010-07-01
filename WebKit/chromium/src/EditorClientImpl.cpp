@@ -658,7 +658,7 @@ void EditorClientImpl::textFieldDidEndEditing(Element* element)
     m_autofillTimer.stop();
 
     // Hide any showing popup.
-    m_webView->hideSuggestionsPopup();
+    m_webView->hideAutoFillPopup();
 
     if (!m_webView->client())
         return; // The page is getting closed, don't fill the password.
@@ -754,7 +754,7 @@ void EditorClientImpl::doAutofill(Timer<EditorClientImpl>* timer)
                        && inputElement->selectionEnd() == static_cast<int>(value.length());
 
     if ((!args->autofillOnEmptyValue && value.isEmpty()) || !isCaretAtEnd) {
-        m_webView->hideSuggestionsPopup();
+        m_webView->hideAutoFillPopup();
         return;
     }
 
@@ -796,11 +796,7 @@ void EditorClientImpl::onAutocompleteSuggestionAccepted(HTMLInputElement* textFi
     if (!webframe)
         return;
 
-    WebPasswordAutocompleteListener* listener = webframe->getPasswordListener(textField);
-    // Password listeners need to autocomplete other fields that depend on the
-    // input element with autofill suggestions.
-    if (listener)
-        listener->performInlineAutocomplete(textField->value(), false, false);
+    webframe->notifiyPasswordListenerOfAutocomplete(WebInputElement(textField));
 }
 
 bool EditorClientImpl::doTextFieldCommandFromEvent(Element* element,

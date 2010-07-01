@@ -70,7 +70,6 @@ class AutocompletePopupMenuClient;
 class AutoFillPopupMenuClient;
 class ContextMenuClientImpl;
 class DragScrollTimer;
-class SuggestionsPopupMenuClient;
 class WebAccessibilityObject;
 class WebDevToolsAgentClient;
 class WebDevToolsAgentPrivate;
@@ -137,8 +136,8 @@ public:
         const WebPoint& screenPoint,
         WebDragOperation operation);
     virtual void dragSourceMovedTo(
-        const WebPoint& clientPoint, 
-        const WebPoint& screenPoint, 
+        const WebPoint& clientPoint,
+        const WebPoint& screenPoint,
         WebDragOperation operation);
     virtual void dragSourceSystemDragEnded();
     virtual WebDragOperation dragTargetDragEnter(
@@ -170,6 +169,7 @@ public:
         const WebVector<WebString>& names,
         const WebVector<WebString>& labels,
         int separatorIndex);
+    // DEPRECATED: replacing with applyAutoFillSuggestions.
     virtual void applyAutocompleteSuggestions(
         const WebNode&,
         const WebVector<WebString>& suggestions,
@@ -282,9 +282,9 @@ public:
         const WebImage& dragImage,
         const WebPoint& dragImageOffset);
 
-    void suggestionsPopupDidHide()
+    void autoFillPopupDidHide()
     {
-        m_suggestionsPopupShowing = false;
+        m_autoFillPopupShowing = false;
     }
 
 #if ENABLE(NOTIFICATIONS)
@@ -300,7 +300,7 @@ public:
     void popupOpened(WebCore::PopupContainer* popupContainer);
     void popupClosed(WebCore::PopupContainer* popupContainer);
 
-    void hideSuggestionsPopup();
+    void hideAutoFillPopup();
 
     // HACK: currentInputEvent() is for ChromeClientImpl::show(), until we can
     // fix WebKit to pass enough information up into ChromeClient::show() so we
@@ -343,10 +343,10 @@ private:
     // Returns true if the autocomple has consumed the event.
     bool autocompleteHandleKeyEvent(const WebKeyboardEvent&);
 
-    // Repaints the suggestions popup. Should be called when the suggestions
-    // have changed. Note that this should only be called when the suggestions
+    // Repaints the AutoFill popup. Should be called when the suggestions
+    // have changed. Note that this should only be called when the AutoFill
     // popup is showing.
-    void refreshSuggestionsPopup();
+    void refreshAutoFillPopup();
 
     // Returns true if the view was scrolled.
     bool scrollViewWithKeyboard(int keyCode, int modifiers);
@@ -455,31 +455,17 @@ private:
     // current drop target in this WebView (the drop target can accept the drop).
     WebDragOperation m_dragOperation;
 
-    // Whether a suggestions popup is currently showing.
-    bool m_suggestionsPopupShowing;
-
-    // A pointer to the current suggestions popup menu client. This can be
-    // either an AutoFillPopupMenuClient or an AutocompletePopupMenuClient. We
-    // do not own this pointer.
-    SuggestionsPopupMenuClient* m_suggestionsPopupClient;
+    // Whether an AutoFill popup is currently showing.
+    bool m_autoFillPopupShowing;
 
     // The AutoFill popup client.
     OwnPtr<AutoFillPopupMenuClient> m_autoFillPopupClient;
 
-    // The Autocomplete popup client.
-    OwnPtr<AutocompletePopupMenuClient> m_autocompletePopupClient;
-
-    // A pointer to the current suggestions popup. We do not own this pointer.
-    WebCore::PopupContainer* m_suggestionsPopup;
+    // The AutoFill popup.
+    RefPtr<WebCore::PopupContainer> m_autoFillPopup;
 
     // The popup associated with a select element.
     RefPtr<WebCore::PopupContainer> m_selectPopup;
-
-    // The AutoFill suggestions popup.
-    RefPtr<WebCore::PopupContainer> m_autoFillPopup;
-
-    // The AutoComplete suggestions popup.
-    RefPtr<WebCore::PopupContainer> m_autocompletePopup;
 
     OwnPtr<WebDevToolsAgentPrivate> m_devToolsAgent;
 

@@ -31,7 +31,12 @@
 #include "config.h"
 #include "AutoFillPopupMenuClient.h"
 
+#include "CSSStyleSelector.h"
+#include "CSSValueKeywords.h"
+#include "Chrome.h"
+#include "FrameView.h"
 #include "HTMLInputElement.h"
+#include "RenderTheme.h"
 #include "WebNode.h"
 #include "WebString.h"
 #include "WebVector.h"
@@ -41,6 +46,18 @@
 using namespace WebCore;
 
 namespace WebKit {
+
+AutoFillPopupMenuClient::AutoFillPopupMenuClient()
+    : m_separatorIndex(-1)
+    , m_selectedIndex(-1)
+    , m_textField(0)
+    , m_AutocompleteModeEnabled(false)
+{
+}
+
+AutoFillPopupMenuClient::~AutoFillPopupMenuClient()
+{
+}
 
 unsigned AutoFillPopupMenuClient::getSuggestionsCount() const
 {
@@ -75,19 +92,35 @@ void AutoFillPopupMenuClient::removeSuggestionAtIndex(unsigned listIndex)
 
 void AutoFillPopupMenuClient::valueChanged(unsigned listIndex, bool fireEvents)
 {
-    WebViewImpl* webView = getWebView();
-    if (!webView)
-        return;
+    // DEPRECATED: Will be removed once AutoFill and Autocomplete merge is
+    // completed.
+    if (m_AutocompleteModeEnabled) {
+        m_textField->setValue(getSuggestion(listIndex));
 
-    if (m_separatorIndex != -1 && listIndex > static_cast<unsigned>(m_separatorIndex))
-        --listIndex;
+        WebViewImpl* webView = getWebView();
+        if (!webView)
+            return;
 
-    ASSERT(listIndex < m_names.size());
+        EditorClientImpl* editor =
+            static_cast<EditorClientImpl*>(webView->page()->editorClient());
+        ASSERT(editor);
+        editor->onAutocompleteSuggestionAccepted(
+            static_cast<HTMLInputElement*>(m_textField.get()));
+    } else {
+      WebViewImpl* webView = getWebView();
+      if (!webView)
+          return;
 
-    webView->client()->didAcceptAutoFillSuggestion(WebNode(getTextField()),
-                                                   m_names[listIndex],
-                                                   m_labels[listIndex],
-                                                   listIndex);
+      if (m_separatorIndex != -1 && listIndex > static_cast<unsigned>(m_separatorIndex))
+          --listIndex;
+
+      ASSERT(listIndex < m_names.size());
+
+      webView->client()->didAcceptAutoFillSuggestion(WebNode(getTextField()),
+                                                     m_names[listIndex],
+                                                     m_labels[listIndex],
+                                                     listIndex);
+    }
 }
 
 void AutoFillPopupMenuClient::selectionChanged(unsigned listIndex, bool fireEvents)
@@ -108,28 +141,81 @@ void AutoFillPopupMenuClient::selectionChanged(unsigned listIndex, bool fireEven
 
 void AutoFillPopupMenuClient::selectionCleared()
 {
-    WebViewImpl* webView = getWebView();
-    if (!webView)
-        return;
+    // Same effect desired as popupDidHide, so call through.
+    popupDidHide();
+}
 
-    webView->suggestionsPopupDidHide();
-    webView->client()->didClearAutoFillSelection(WebNode(getTextField()));
+String AutoFillPopupMenuClient::itemText(unsigned listIndex) const
+{
+    return getSuggestion(listIndex);
+}
+
+PopupMenuStyle AutoFillPopupMenuClient::itemStyle(unsigned listIndex) const
+{
+    return *m_style;
+}
+
+PopupMenuStyle AutoFillPopupMenuClient::menuStyle() const
+{
+    return *m_style;
+}
+
+int AutoFillPopupMenuClient::clientPaddingLeft() const
+{
+    // Bug http://crbug.com/7708 seems to indicate the style can be 0.
+    RenderStyle* style = textFieldStyle();
+    if (!style)
+       return 0;
+
+    return RenderTheme::defaultTheme()->popupInternalPaddingLeft(style);
+}
+
+int AutoFillPopupMenuClient::clientPaddingRight() const
+{
+    // Bug http://crbug.com/7708 seems to indicate the style can be 0.
+    RenderStyle* style = textFieldStyle();
+    if (!style)
+        return 0;
+
+    return RenderTheme::defaultTheme()->popupInternalPaddingRight(style);
 }
 
 void AutoFillPopupMenuClient::popupDidHide()
 {
-    // FIXME: Refactor this method, as selectionCleared() and popupDidHide()
-    // share the exact same functionality.
     WebViewImpl* webView = getWebView();
     if (!webView)
         return;
 
+    webView->autoFillPopupDidHide();
     webView->client()->didClearAutoFillSelection(WebNode(getTextField()));
 }
 
 bool AutoFillPopupMenuClient::itemIsSeparator(unsigned listIndex) const
 {
     return (m_separatorIndex != -1 && static_cast<unsigned>(m_separatorIndex) == listIndex);
+}
+
+void AutoFillPopupMenuClient::setTextFromItem(unsigned listIndex)
+{
+    m_textField->setValue(getSuggestion(listIndex));
+}
+
+FontSelector* AutoFillPopupMenuClient::fontSelector() const
+{
+    return m_textField->document()->styleSelector()->fontSelector();
+}
+
+HostWindow* AutoFillPopupMenuClient::hostWindow() const
+{
+    return m_textField->document()->view()->hostWindow();
+}
+
+PassRefPtr<Scrollbar> AutoFillPopupMenuClient::createScrollbar(
+    ScrollbarClient* client,
+    ScrollbarOrientation orientation,
+    ScrollbarControlSize size)
+{
+    return Scrollbar::createNativeScrollbar(client, orientation, size);
 }
 
 void AutoFillPopupMenuClient::initialize(
@@ -141,11 +227,26 @@ void AutoFillPopupMenuClient::initialize(
     ASSERT(names.size() == labels.size());
     ASSERT(separatorIndex < static_cast<int>(names.size()));
 
+    m_selectedIndex = -1;
+    m_textField = textField;
+
     // The suggestions must be set before initializing the
-    // SuggestionsPopupMenuClient.
+    // AutoFillPopupMenuClient.
     setSuggestions(names, labels, separatorIndex);
 
-    SuggestionsPopupMenuClient::initialize(textField, -1);
+    FontDescription fontDescription;
+    RenderTheme::defaultTheme()->systemFont(CSSValueWebkitControl,
+                                            fontDescription);
+    RenderStyle* style = m_textField->computedStyle();
+    fontDescription.setComputedSize(style->fontDescription().computedSize());
+
+    Font font(fontDescription, 0, 0);
+    font.update(textField->document()->styleSelector()->fontSelector());
+    // The direction of text in popup menu is set the same as the direction of
+    // the input element: textField.
+    m_style.set(new PopupMenuStyle(Color::black, Color::white, font, true,
+                                   Length(WebCore::Fixed),
+                                   textField->renderer()->style()->direction()));
 }
 
 void AutoFillPopupMenuClient::setSuggestions(const WebVector<WebString>& names,
@@ -167,6 +268,32 @@ void AutoFillPopupMenuClient::setSuggestions(const WebVector<WebString>& names,
     // Try to preserve selection if possible.
     if (getSelectedIndex() >= static_cast<int>(names.size()))
         setSelectedIndex(-1);
+}
+
+WebViewImpl* AutoFillPopupMenuClient::getWebView() const
+{
+    Frame* frame = m_textField->document()->frame();
+    if (!frame)
+        return 0;
+
+    Page* page = frame->page();
+    if (!page)
+        return 0;
+
+    return static_cast<ChromeClientImpl*>(page->chrome()->client())->webView();
+}
+
+RenderStyle* AutoFillPopupMenuClient::textFieldStyle() const
+{
+    RenderStyle* style = m_textField->computedStyle();
+    if (!style) {
+        // It seems we can only have a 0 style in a TextField if the
+        // node is detached, in which case we the popup shoud not be
+        // showing.  Please report this in http://crbug.com/7708 and
+        // include the page you were visiting.
+        ASSERT_NOT_REACHED();
+    }
+    return style;
 }
 
 } // namespace WebKit

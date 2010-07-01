@@ -32,7 +32,6 @@
 #include "WebViewImpl.h"
 
 #include "AutoFillPopupMenuClient.h"
-#include "AutocompletePopupMenuClient.h"
 #include "AXObjectCache.h"
 #include "Chrome.h"
 #include "CompositionUnderlineVectorBuilder.h"
@@ -154,7 +153,7 @@ COMPILE_ASSERT_MATCHING_ENUM(DragOperationMove);
 COMPILE_ASSERT_MATCHING_ENUM(DragOperationDelete);
 COMPILE_ASSERT_MATCHING_ENUM(DragOperationEvery);
 
-static const PopupContainerSettings suggestionsPopupSettings = {
+static const PopupContainerSettings autoFillPopupSettings = {
     false,  // setTextOnIndexChange
     false,  // acceptOnAbandon
     true,   // loopSelectionNavigation
@@ -240,9 +239,9 @@ WebViewImpl::WebViewImpl(WebViewClient* client, WebDevToolsAgentClient* devTools
     , m_dropEffect(DropEffectDefault)
     , m_operationsAllowed(WebDragOperationNone)
     , m_dragOperation(WebDragOperationNone)
-    , m_suggestionsPopupShowing(false)
-    , m_suggestionsPopupClient(0)
-    , m_suggestionsPopup(0)
+    , m_autoFillPopupShowing(false)
+    , m_autoFillPopupClient(0)
+    , m_autoFillPopup(0)
     , m_isTransparent(false)
     , m_tabsToLinks(false)
     , m_dragScrollTimer(new DragScrollTimer())
@@ -357,7 +356,7 @@ void WebViewImpl::mouseDown(const WebMouseEvent& event)
             m_mouseCaptureNode = hitNode;
 
         // If a text field that has focus is clicked again, we should display the
-        // suggestions popup.
+        // AutoFill popup.
         RefPtr<Node> focusedNode = focusedWebCoreNode();
         if (focusedNode.get() && toHTMLInputElement(focusedNode.get())) {
             if (hitNode == focusedNode) {
@@ -375,7 +374,7 @@ void WebViewImpl::mouseDown(const WebMouseEvent& event)
         PlatformMouseEventBuilder(mainFrameImpl()->frameView(), event));
 
     if (clickedNode.get() && clickedNode == focusedWebCoreNode()) {
-        // Focus has not changed, show the suggestions popup.
+        // Focus has not changed, show the AutoFill popup.
         static_cast<EditorClientImpl*>(m_page->editorClient())->
             showFormAutofillForNode(clickedNode.get());
     }
@@ -457,7 +456,7 @@ void WebViewImpl::mouseUp(const WebMouseEvent& event)
         IntPoint contentPoint = view->windowToContents(clickPoint);
         HitTestResult hitTestResult = focused->eventHandler()->hitTestResultAtPoint(contentPoint, false, false, ShouldHitTestScrollbars);
         // We don't want to send a paste when middle clicking a scroll bar or a
-        // link (which will navigate later in the code).  The main scrollbars 
+        // link (which will navigate later in the code).  The main scrollbars
         // have to be handled separately.
         if (!hitTestResult.scrollbar() && !hitTestResult.isLiveLink() && focused && !view->scrollbarAtPoint(clickPoint)) {
             Editor* editor = focused->editor();
@@ -558,13 +557,13 @@ bool WebViewImpl::selectPopupHandleKeyEvent(const WebKeyboardEvent& event)
 {
     if (!m_selectPopup)
         return false;
-    
+
     return m_selectPopup->handleKeyEvent(PlatformKeyboardEventBuilder(event));
 }
 
 bool WebViewImpl::autocompleteHandleKeyEvent(const WebKeyboardEvent& event)
 {
-    if (!m_suggestionsPopupShowing
+    if (!m_autoFillPopupShowing
         // Home and End should be left to the text field to process.
         || event.windowsKeyCode == VKEY_HOME
         || event.windowsKeyCode == VKEY_END)
@@ -572,7 +571,7 @@ bool WebViewImpl::autocompleteHandleKeyEvent(const WebKeyboardEvent& event)
 
     // Pressing delete triggers the removal of the selected suggestion from the DB.
     if (event.windowsKeyCode == VKEY_DELETE
-        && m_suggestionsPopup->selectedIndex() != -1) {
+        && m_autoFillPopup->selectedIndex() != -1) {
         Node* node = focusedWebCoreNode();
         if (!node || (node->nodeType() != Node::ELEMENT_NODE)) {
             ASSERT_NOT_REACHED();
@@ -584,22 +583,22 @@ bool WebViewImpl::autocompleteHandleKeyEvent(const WebKeyboardEvent& event)
             return false;
         }
 
-        int selectedIndex = m_suggestionsPopup->selectedIndex();
+        int selectedIndex = m_autoFillPopup->selectedIndex();
         HTMLInputElement* inputElement = static_cast<HTMLInputElement*>(element);
         WebString name = inputElement->name();
-        WebString value = m_suggestionsPopupClient->itemText(selectedIndex);
+        WebString value = m_autoFillPopupClient->itemText(selectedIndex);
         m_client->removeAutofillSuggestions(name, value);
         // Update the entries in the currently showing popup to reflect the
         // deletion.
-        m_suggestionsPopupClient->removeSuggestionAtIndex(selectedIndex);
-        refreshSuggestionsPopup();
+        m_autoFillPopupClient->removeSuggestionAtIndex(selectedIndex);
+        refreshAutoFillPopup();
         return false;
     }
 
-    if (!m_suggestionsPopup->isInterestedInEventForKey(event.windowsKeyCode))
+    if (!m_autoFillPopup->isInterestedInEventForKey(event.windowsKeyCode))
         return false;
 
-    if (m_suggestionsPopup->handleKeyEvent(PlatformKeyboardEventBuilder(event))) {
+    if (m_autoFillPopup->handleKeyEvent(PlatformKeyboardEventBuilder(event))) {
         // We need to ignore the next Char event after this otherwise pressing
         // enter when selecting an item in the menu will go to the page.
         if (WebInputEvent::RawKeyDown == event.type)
@@ -881,11 +880,11 @@ void  WebViewImpl::popupClosed(WebCore::PopupContainer* popupContainer)
     }
 }
 
-void WebViewImpl::hideSuggestionsPopup()
+void WebViewImpl::hideAutoFillPopup()
 {
-    if (m_suggestionsPopupShowing) {
-        m_suggestionsPopup->hidePopup();
-        m_suggestionsPopupShowing = false;
+    if (m_autoFillPopupShowing) {
+        m_autoFillPopup->hidePopup();
+        m_autoFillPopupShowing = false;
     }
 }
 
@@ -1143,7 +1142,7 @@ void WebViewImpl::setFocus(bool enable)
         }
         m_imeAcceptEvents = true;
     } else {
-        hideSuggestionsPopup();
+        hideAutoFillPopup();
         hideSelectPopup();
 
         // Clear focus on the currently focused frame if any.
@@ -1780,7 +1779,7 @@ void WebViewImpl::applyAutoFillSuggestions(
     ASSERT(separatorIndex < static_cast<int>(names.size()));
 
     if (names.isEmpty()) {
-        hideSuggestionsPopup();
+        hideAutoFillPopup();
         return;
     }
 
@@ -1789,7 +1788,7 @@ void WebViewImpl::applyAutoFillSuggestions(
     // focused node, then we have nothing to do.  FIXME: also check the
     // caret is at the end and that the text has not changed.
     if (!focusedNode || focusedNode != PassRefPtr<Node>(node)) {
-        hideSuggestionsPopup();
+        hideAutoFillPopup();
         return;
     }
 
@@ -1801,93 +1800,52 @@ void WebViewImpl::applyAutoFillSuggestions(
     if (!m_autoFillPopupClient.get())
         m_autoFillPopupClient.set(new AutoFillPopupMenuClient);
 
-    m_autoFillPopupClient->initialize(inputElem, names, labels,
-                                      separatorIndex);
-
-    if (m_suggestionsPopupClient != m_autoFillPopupClient.get()) {
-        hideSuggestionsPopup();
-        m_suggestionsPopupClient = m_autoFillPopupClient.get();
-    }
+    m_autoFillPopupClient->initialize(inputElem, names, labels, separatorIndex);
 
     if (!m_autoFillPopup.get()) {
-        m_autoFillPopup = PopupContainer::create(m_suggestionsPopupClient,
+        m_autoFillPopup = PopupContainer::create(m_autoFillPopupClient.get(),
                                                  PopupContainer::Suggestion,
-                                                 suggestionsPopupSettings);
+                                                 autoFillPopupSettings);
     }
 
-    if (m_suggestionsPopup != m_autoFillPopup.get())
-        m_suggestionsPopup = m_autoFillPopup.get();
-
-    if (m_suggestionsPopupShowing) {
+    if (m_autoFillPopupShowing) {
         m_autoFillPopupClient->setSuggestions(names, labels, separatorIndex);
-        refreshSuggestionsPopup();
+        refreshAutoFillPopup();
     } else {
-        m_suggestionsPopup->show(focusedNode->getRect(),
+        m_autoFillPopup->show(focusedNode->getRect(),
                                  focusedNode->ownerDocument()->view(), 0);
-        m_suggestionsPopupShowing = true;
+        m_autoFillPopupShowing = true;
     }
+
+    // DEPRECATED: This special mode will go away once AutoFill and Autocomplete
+    // merge is complete.
+    if (m_autoFillPopupClient)
+        m_autoFillPopupClient->setAutocompleteMode(false);
 }
 
+// DEPRECATED: replacing with applyAutoFillSuggestions.
 void WebViewImpl::applyAutocompleteSuggestions(
     const WebNode& node,
     const WebVector<WebString>& suggestions,
     int defaultSuggestionIndex)
 {
-    ASSERT(defaultSuggestionIndex < static_cast<int>(suggestions.size()));
+    WebVector<WebString> names(suggestions.size());
+    WebVector<WebString> labels(suggestions.size());
 
-    if (!m_page.get() || suggestions.isEmpty()) {
-        hideSuggestionsPopup();
-        return;
+    for (size_t i = 0; i < suggestions.size(); ++i) {
+        names[i] = suggestions[i];
+        labels[i] = WebString();
     }
 
-    RefPtr<Node> focusedNode = focusedWebCoreNode();
-    // If the node for which we queried the Autocomplete suggestions is not the
-    // focused node, then we have nothing to do.  FIXME: also check the
-    // caret is at the end and that the text has not changed.
-    if (!focusedNode || focusedNode != PassRefPtr<Node>(node)) {
-        hideSuggestionsPopup();
-        return;
-    }
-
-    HTMLInputElement* inputElem =
-        static_cast<HTMLInputElement*>(focusedNode.get());
-
-    // The first time the Autocomplete is shown we'll create the client and the
-    // popup.
-    if (!m_autocompletePopupClient.get())
-        m_autocompletePopupClient.set(new AutocompletePopupMenuClient);
-
-    m_autocompletePopupClient->initialize(inputElem, suggestions,
-                                          defaultSuggestionIndex);
-
-    if (m_suggestionsPopupClient != m_autocompletePopupClient.get()) {
-        hideSuggestionsPopup();
-        m_suggestionsPopupClient = m_autocompletePopupClient.get();
-    }
-
-    if (!m_autocompletePopup.get()) {
-        m_autocompletePopup = PopupContainer::create(m_suggestionsPopupClient,
-                                                     PopupContainer::Suggestion,
-                                                     suggestionsPopupSettings);
-    }
-
-    if (m_suggestionsPopup != m_autocompletePopup.get())
-        m_suggestionsPopup = m_autocompletePopup.get();
-
-    if (m_suggestionsPopupShowing) {
-        m_autocompletePopupClient->setSuggestions(suggestions);
-        refreshSuggestionsPopup();
-    } else {
-        m_suggestionsPopup->show(focusedNode->getRect(),
-                                 focusedNode->ownerDocument()->view(), 0);
-        m_suggestionsPopupShowing = true;
-    }
+    applyAutoFillSuggestions(node, names, labels, -1);
+    if (m_autoFillPopupClient)
+        m_autoFillPopupClient->setAutocompleteMode(true);
 }
 
 void WebViewImpl::hidePopups()
 {
     hideSelectPopup();
-    hideSuggestionsPopup();
+    hideAutoFillPopup();
 }
 
 void WebViewImpl::performCustomContextMenuAction(unsigned action)
@@ -2081,24 +2039,25 @@ NotificationPresenterImpl* WebViewImpl::notificationPresenterImpl()
 }
 #endif
 
-void WebViewImpl::refreshSuggestionsPopup()
+void WebViewImpl::refreshAutoFillPopup()
 {
-    ASSERT(m_suggestionsPopupShowing);
+    ASSERT(m_autoFillPopupShowing);
 
     // Hide the popup if it has become empty.
-    if (!m_suggestionsPopupClient->listSize()) {
-        hideSuggestionsPopup();
+    if (!m_autoFillPopupClient->listSize()) {
+        hideAutoFillPopup();
         return;
     }
 
-    IntRect oldBounds = m_suggestionsPopup->boundsRect();
-    m_suggestionsPopup->refresh();
-    IntRect newBounds = m_suggestionsPopup->boundsRect();
+    IntRect oldBounds = m_autoFillPopup->boundsRect();
+    m_autoFillPopup->refresh();
+    IntRect newBounds = m_autoFillPopup->boundsRect();
     // Let's resize the backing window if necessary.
     if (oldBounds != newBounds) {
         WebPopupMenuImpl* popupMenu =
-            static_cast<WebPopupMenuImpl*>(m_suggestionsPopup->client());
-        popupMenu->client()->setWindowRect(newBounds);
+            static_cast<WebPopupMenuImpl*>(m_autoFillPopup->client());
+        if (popupMenu)
+            popupMenu->client()->setWindowRect(newBounds);
     }
 }
 

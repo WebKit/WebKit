@@ -234,17 +234,18 @@ public:
     virtual WebAccessibilityObject accessibilityObject() = 0;
 
 
-    // AutoFill / Autocomplete ---------------------------------------------
+    // AutoFill  -----------------------------------------------------------
 
     // Notifies the WebView that AutoFill suggestions are available for a node.
     virtual void applyAutoFillSuggestions(
         const WebNode&,
         const WebVector<WebString>& names,
         const WebVector<WebString>& labels,
-        int defaultSuggestionIndex) = 0;
+        int separatorIndex) = 0;
 
     // Notifies the WebView that Autocomplete suggestions are available for a
     // node.
+    // DEPRECATED: merging with applyAutoFillSuggestions.
     virtual void applyAutocompleteSuggestions(
         const WebNode&,
         const WebVector<WebString>& suggestions,

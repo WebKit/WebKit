@@ -1,3 +1,83 @@
+2010-07-01  David Holloway  <dhollowa@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [chromium] Consolidates AutoFill and Autocomplete popup menus into a single popup menu.
+
+        This change combines SuggestionsPopupMenuClient, AutoFillPopupMenuClient, and 
+        AutocompletePopupMenuClient classes into a single consolidated AutoFillPopupMenuClient class.
+        Prior to this change the contents of the AutoFill popup menu only included AutoFill
+        suggestions and similarly the Autocomplete popup menu only included Autocomplete
+        suggestions.  With this consolidation, both AutoFill and Autocomplete suggestions can
+        now be displayed in a single menu.
+
+        https://bugs.webkit.org/show_bug.cgi?id=41236
+
+        * WebKit.gyp:
+        * public/WebFrame.h:
+        * public/WebView.h:
+        * src/AutoFillPopupMenuClient.cpp:
+        (WebKit::AutoFillPopupMenuClient::AutoFillPopupMenuClient):
+        (WebKit::AutoFillPopupMenuClient::~AutoFillPopupMenuClient):
+        (WebKit::AutoFillPopupMenuClient::valueChanged):
+        (WebKit::AutoFillPopupMenuClient::selectionCleared):
+        (WebKit::AutoFillPopupMenuClient::itemText):
+        (WebKit::AutoFillPopupMenuClient::itemStyle):
+        (WebKit::AutoFillPopupMenuClient::menuStyle):
+        (WebKit::AutoFillPopupMenuClient::clientPaddingLeft):
+        (WebKit::AutoFillPopupMenuClient::clientPaddingRight):
+        (WebKit::AutoFillPopupMenuClient::popupDidHide):
+        (WebKit::AutoFillPopupMenuClient::setTextFromItem):
+        (WebKit::AutoFillPopupMenuClient::fontSelector):
+        (WebKit::AutoFillPopupMenuClient::hostWindow):
+        (WebKit::AutoFillPopupMenuClient::createScrollbar):
+        (WebKit::AutoFillPopupMenuClient::initialize):
+        (WebKit::AutoFillPopupMenuClient::getWebView):
+        (WebKit::AutoFillPopupMenuClient::textFieldStyle):
+        * src/AutoFillPopupMenuClient.h:
+        (WebKit::AutoFillPopupMenuClient::itemToolTip):
+        (WebKit::AutoFillPopupMenuClient::itemAccessibilityText):
+        (WebKit::AutoFillPopupMenuClient::itemIsEnabled):
+        (WebKit::AutoFillPopupMenuClient::clientInsetLeft):
+        (WebKit::AutoFillPopupMenuClient::clientInsetRight):
+        (WebKit::AutoFillPopupMenuClient::listSize):
+        (WebKit::AutoFillPopupMenuClient::selectedIndex):
+        (WebKit::AutoFillPopupMenuClient::itemIsLabel):
+        (WebKit::AutoFillPopupMenuClient::itemIsSelected):
+        (WebKit::AutoFillPopupMenuClient::shouldPopOver):
+        (WebKit::AutoFillPopupMenuClient::valueShouldChangeOnHotTrack):
+        (WebKit::AutoFillPopupMenuClient::setAutocompleteMode):
+        (WebKit::AutoFillPopupMenuClient::getTextField):
+        (WebKit::AutoFillPopupMenuClient::getSelectedIndex):
+        (WebKit::AutoFillPopupMenuClient::setSelectedIndex):
+        * src/AutocompletePopupMenuClient.cpp: Removed.
+        * src/AutocompletePopupMenuClient.h: Removed.
+        * src/EditorClientImpl.cpp:
+        (WebKit::EditorClientImpl::textFieldDidEndEditing):
+        (WebKit::EditorClientImpl::doAutofill):
+        (WebKit::EditorClientImpl::onAutocompleteSuggestionAccepted):
+        * src/SuggestionsPopupMenuClient.cpp: Removed.
+        * src/SuggestionsPopupMenuClient.h: Removed.
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::currentHistoryItem):
+        (WebKit::WebFrameImpl::notifiyPasswordListenerOfAutocomplete):
+        * src/WebFrameImpl.h:
+        * src/WebViewImpl.cpp:
+        (WebKit::):
+        (WebKit::WebViewImpl::WebViewImpl):
+        (WebKit::WebViewImpl::mouseDown):
+        (WebKit::WebViewImpl::mouseUp):
+        (WebKit::WebViewImpl::selectPopupHandleKeyEvent):
+        (WebKit::WebViewImpl::autocompleteHandleKeyEvent):
+        (WebKit::WebViewImpl::hideAutoFillPopup):
+        (WebKit::WebViewImpl::setFocus):
+        (WebKit::WebViewImpl::applyAutoFillSuggestions):
+        (WebKit::WebViewImpl::applyAutocompleteSuggestions):
+        (WebKit::WebViewImpl::hidePopups):
+        (WebKit::WebViewImpl::refreshAutoFillPopup):
+        * src/WebViewImpl.h:
+        (WebKit::WebViewImpl::autoFillPopupDidHide):
+
 2010-07-01  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Adam Barth.
