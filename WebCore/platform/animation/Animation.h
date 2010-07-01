@@ -39,7 +39,8 @@ class Animation : public RefCounted<Animation> {
 public:
     ~Animation();
 
-    static PassRefPtr<Animation> create() { return adoptRef(new Animation); };
+    static PassRefPtr<Animation> create() { return adoptRef(new Animation); }
+    static PassRefPtr<Animation> create(const Animation* o) { return adoptRef(new Animation(*o)); }
     
     bool isDelaySet() const { return m_delaySet; }
     bool isDirectionSet() const { return m_directionSet; }
