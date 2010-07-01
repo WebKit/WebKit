@@ -42,6 +42,9 @@
 #endif
 
 #include "GL/glew.h"
+#if OS(WINDOWS)
+#include "GL/wglew.h"
+#endif
 
 #if PLATFORM(CG)
 #include <OpenGL/OpenGL.h>

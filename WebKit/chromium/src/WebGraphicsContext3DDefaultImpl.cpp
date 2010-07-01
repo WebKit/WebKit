@@ -173,8 +173,8 @@ WebGraphicsContext3DDefaultImpl::~WebGraphicsContext3DDefaultImpl()
         glDeleteFramebuffersEXT(1, &m_fbo);
 #endif // !RENDER_TO_DEBUGGING_WINDOW
 #if OS(WINDOWS)
-        wglMakeCurrent(0, 0);
-        wglDeleteContext(m_contextObj);
+        wglewMakeCurrent(0, 0);
+        wglewDeleteContext(m_contextObj);
         ReleaseDC(m_canvasWindow, m_canvasDC);
         DestroyWindow(m_canvasWindow);
 #elif PLATFORM(CG)
@@ -197,6 +197,14 @@ WebGraphicsContext3DDefaultImpl::~WebGraphicsContext3DDefaultImpl()
 bool WebGraphicsContext3DDefaultImpl::initialize(WebGraphicsContext3D::Attributes attributes, WebView* webView)
 {
 #if OS(WINDOWS)
+    if (!s_initializedGLEW) {
+        // Do this only the first time through.
+        if (!wglewInit()) {
+            printf("WebGraphicsContext3DDefaultImpl: wglewInit failed\n");
+            return false;
+        }
+    }
+
     WNDCLASS wc;
     if (!GetClassInfo(GetModuleHandle(0), L"CANVASGL", &wc)) {
         ZeroMemory(&wc, sizeof(WNDCLASS));
@@ -246,13 +254,13 @@ bool WebGraphicsContext3DDefaultImpl::initialize(WebGraphicsContext3D::Attribute
     }
 
     // create rendering context
-    m_contextObj = wglCreateContext(m_canvasDC);
+    m_contextObj = wglewCreateContext(m_canvasDC);
     if (!m_contextObj) {
         printf("WebGraphicsContext3DDefaultImpl: wglCreateContext failed\n");
         return false;
     }
 
-    if (!wglMakeCurrent(m_canvasDC, m_contextObj)) {
+    if (!wglewMakeCurrent(m_canvasDC, m_contextObj)) {
         printf("WebGraphicsContext3DDefaultImpl: wglMakeCurrent failed\n");
         return false;
     }
@@ -260,7 +268,7 @@ bool WebGraphicsContext3DDefaultImpl::initialize(WebGraphicsContext3D::Attribute
 #ifdef RENDER_TO_DEBUGGING_WINDOW
     typedef BOOL (WINAPI * PFNWGLSWAPINTERVALEXTPROC) (int interval);
     PFNWGLSWAPINTERVALEXTPROC setSwapInterval = 0;
-    setSwapInterval = (PFNWGLSWAPINTERVALEXTPROC) wglGetProcAddress("wglSwapIntervalEXT");
+    setSwapInterval = (PFNWGLSWAPINTERVALEXTPROC) wglewGetProcAddress("wglSwapIntervalEXT");
     if (setSwapInterval)
         setSwapInterval(1);
 #endif // RENDER_TO_DEBUGGING_WINDOW
@@ -416,8 +424,8 @@ void WebGraphicsContext3DDefaultImpl::validateAttributes()
 bool WebGraphicsContext3DDefaultImpl::makeContextCurrent()
 {
 #if OS(WINDOWS)
-    if (wglGetCurrentContext() != m_contextObj)
-        if (wglMakeCurrent(m_canvasDC, m_contextObj))
+    if (wglewGetCurrentContext() != m_contextObj)
+        if (wglewMakeCurrent(m_canvasDC, m_contextObj))
             return true;
 #elif PLATFORM(CG)
     if (CGLGetCurrentContext() != m_contextObj)

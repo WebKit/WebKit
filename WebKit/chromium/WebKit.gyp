@@ -526,13 +526,6 @@
                         'GLEW_NO_GLU=1',
                     ],
                     'conditions': [
-                        ['OS=="win"', {
-                            'link_settings': {
-                                'libraries': [
-                                    '-lopengl32.lib',
-                                ],
-                            },
-                        }],
                         ['OS=="mac"', {
                             'link_settings': {
                                 'libraries': [
