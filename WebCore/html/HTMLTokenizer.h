@@ -83,6 +83,10 @@ public:
         AfterAttributeValueQuotedState,
         SelfClosingStartTagState,
         BogusCommentState,
+        // The ContinueBogusCommentState is not in the HTML5 spec, but we use
+        // it internally to keep track of whether we've started the bogus
+        // comment token yet.
+        ContinueBogusCommentState,
         MarkupDeclarationOpenState,
         CommentStartState,
         CommentStartDashState,

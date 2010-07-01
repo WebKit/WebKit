@@ -1057,21 +1057,20 @@ bool HTMLTokenizer::nextToken(SegmentedString& source, HTMLToken& token)
     END_STATE()
 
     BEGIN_STATE(BogusCommentState) {
-        // FIXME: This state isn't correct because we'll terminate the
-        // comment early if we don't have the whole input stream available.
         m_token->beginComment();
-        while (!source.isEmpty()) {
-            cc = m_inputStreamPreprocessor.nextInputCharacter();
-            if (cc == '>')
-                return emitAndResumeIn(source, DataState);
+        RECONSUME_IN(ContinueBogusCommentState);
+    }
+    END_STATE()
+
+    BEGIN_STATE(ContinueBogusCommentState) {
+        if (cc == '>')
+            return emitAndResumeIn(source, DataState);
+        else if (cc == InputStreamPreprocessor::endOfFileMarker)
+            return emitAndReconsumeIn(source, DataState);
+        else {
             m_token->appendToComment(cc);
-            m_inputStreamPreprocessor.advance(source, m_lineNumber);
-            // We ignore the return value (which indicates that |source| is
-            // empty) because it's checked by the loop condition above.
+            ADVANCE_TO(ContinueBogusCommentState);
         }
-        m_state = DataState;
-        return true;
-        // FIXME: Handle EOF properly.
     }
     END_STATE()
 

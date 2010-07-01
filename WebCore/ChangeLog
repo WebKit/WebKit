@@ -1,3 +1,25 @@
+2010-07-01  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        BogusCommentState should come in from the cold
+        https://bugs.webkit.org/show_bug.cgi?id=41439
+
+        The BogusCommentState has always been wrong.  The proximate issue is
+        that it didn't handle resuming correctly when parsing a partial input
+        stream.  Now that we have EOF working properly, we can actually
+        implement this state correctly.
+
+        We need to distinguish when we enter this state from when we continue
+        in this state.  We could do that with a branch for each character, but
+        it seemed easier to split the state in two, even though that leaves us
+        with one more state in our tokenizer than we have in the HTML5 spec.
+
+        * html/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::nextToken):
+        * html/HTMLTokenizer.h:
+        (WebCore::HTMLTokenizer::):
+
 2010-06-30  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

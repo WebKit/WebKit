@@ -1,3 +1,15 @@
+2010-07-01  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        BogusCommentState should come in from the cold
+        https://bugs.webkit.org/show_bug.cgi?id=41439
+
+        Test progression => :)
+
+        * html5lib/runner-expected.txt:
+        * html5lib/webkit-resumer-expected.txt:
+
 2010-07-01  Eric Seidel  <eric@webkit.org>
 
         Unreviewed, rolling out r62231.
