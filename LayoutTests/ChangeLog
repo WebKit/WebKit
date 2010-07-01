@@ -1,3 +1,14 @@
+2010-07-01  Andy Estes  <aestes@apple.com>
+
+        Reviewed by Darin Adler.
+ 
+        <rdar://problem/8113003> Test that beforeload fires correctly on images
+        inserted into the DOM using .innerHTML.
+        https://bugs.webkit.org/show_bug.cgi?id=40919
+
+        * fast/dom/beforeload/image-before-load-innerHTML-expected.txt: Added.
+        * fast/dom/beforeload/image-before-load-innerHTML.html: Added.
+
 2010-07-01  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Geoff Garen.
