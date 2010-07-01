@@ -1,5 +1,19 @@
 2010-07-01  Mark Rowe  <mrowe@apple.com>
 
+        Merge r61171.
+
+    2010-06-14  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Brady Eidson.
+
+        <rdar://problem/8071866> REGRESSION: Crash on launch on Tiger and Leopard with network home folder
+
+        * platform/sql/SQLiteStatement.cpp:
+        (WebCore::SQLiteStatement::prepare): Don't assume that tail is always non-null, since that may
+        not be the case with some versions of SQLite. Instead we must null-check before dereferencing.
+
+2010-07-01  Mark Rowe  <mrowe@apple.com>
+
         Merge r61365.
 
     2010-06-17  Abhishek Arya  <inferno@chromium.org>
