@@ -38,15 +38,15 @@ void CharacterData::setData(const String& data, ExceptionCode&)
     int oldLength = length();
     RefPtr<StringImpl> oldStr = m_data;
     m_data = dataImpl;
-    
+
     if ((!renderer() || !rendererIsNeeded(renderer()->style())) && attached()) {
         detach();
         attach();
     } else if (renderer())
-        toRenderText(renderer())->setText(m_data);
-    
+        toRenderText(renderer())->setTextWithOffset(m_data, 0, oldLength);
+
     dispatchModifiedEvent(oldStr.get());
-    
+
     document()->textRemoved(this, 0, oldLength);
 }
 
