@@ -4,7 +4,12 @@
 function pluginDestroyed()
 {
     try {
+        var req = new XMLHttpRequest;
+        req.open("GET", "/", true);
+        req.send();
+
         document.referrer;
+
         document.getElementById("playground").innerHTML = "<div onclick='alert(0)'></div>"
     } catch (ex) {
         alert("Unexpected exception: " + ex);

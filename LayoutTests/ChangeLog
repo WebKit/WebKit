@@ -1,3 +1,20 @@
+2010-07-01  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=41488
+        <rdar://problem/7487420> Crash in SubresourceLoader::create when load is initiated from plug-in destructor
+
+        Renamed write-xssauditor-from-destroy.html test, as it covers multiple issues that can happen
+        in this situation.
+
+        * plugins/js-from-destroy-expected.txt: Copied from LayoutTests/plugins/write-xssauditor-from-destroy-expected.txt.
+        * plugins/js-from-destroy.html: Copied from LayoutTests/plugins/write-xssauditor-from-destroy.html.
+        * plugins/resources/js-from-destroy-frame.html: Copied from LayoutTests/plugins/resources/write-xssauditor-from-destroy-frame.html.
+        * plugins/resources/write-xssauditor-from-destroy-frame.html: Removed.
+        * plugins/write-xssauditor-from-destroy-expected.txt: Removed.
+        * plugins/write-xssauditor-from-destroy.html: Removed.
+
 2010-07-01  Andy Estes  <aestes@apple.com>
 
         Reviewed by Darin Adler.
