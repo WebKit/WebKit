@@ -643,13 +643,27 @@ void GraphicsContext::drawFocusRing(const Vector<IntRect>& rects, int width, int
     cairo_new_path(cr);
 
 #if PLATFORM(GTK)
+#ifdef GTK_API_VERSION_2
     GdkRegion* reg = gdk_region_new();
+#else
+    cairo_region_t* reg = cairo_region_create();
+#endif
+
     for (unsigned i = 0; i < rectCount; i++) {
+#ifdef GTK_API_VERSION_2
         GdkRectangle rect = rects[i];
         gdk_region_union_with_rect(reg, &rect);
+#else
+        cairo_rectangle_int_t rect = rects[i];
+        cairo_region_union_rectangle(reg, &rect);
+#endif
     }
     gdk_cairo_region(cr, reg);
+#ifdef GTK_API_VERSION_2
     gdk_region_destroy(reg);
+#else
+    cairo_region_destroy(reg);
+#endif
 
     setColor(cr, color);
     cairo_set_line_width(cr, 2.0f);

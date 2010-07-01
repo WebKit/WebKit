@@ -48,7 +48,12 @@ QT_BEGIN_NAMESPACE
 class QRect;
 QT_END_NAMESPACE
 #elif PLATFORM(GTK)
+#ifdef GTK_API_VERSION_2
 typedef struct _GdkRectangle GdkRectangle;
+#else
+typedef struct _cairo_rectangle_int cairo_rectangle_int_t;
+typedef cairo_rectangle_int_t GdkRectangle;
+#endif
 #elif PLATFORM(HAIKU)
 class BRect;
 #endif

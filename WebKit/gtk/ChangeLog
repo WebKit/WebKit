@@ -1,3 +1,18 @@
+2010-07-01  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        [GTK] Stop using GdkRegion in 3.x mode
+        https://bugs.webkit.org/show_bug.cgi?id=41463
+
+        Make us compile without using GdkRegion, since it's gone from GTK+
+        3.x.
+
+        * WebCoreSupport/ChromeClientGtk.cpp:
+        (WebKit::ChromeClient::scroll):
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_expose_event):
+
 2010-07-01  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Xan Lopez.

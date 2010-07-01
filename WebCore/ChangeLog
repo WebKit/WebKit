@@ -1,3 +1,25 @@
+2010-07-01  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        [GTK] Stop using GdkRegion in 3.x mode
+        https://bugs.webkit.org/show_bug.cgi?id=41463
+
+        Make us compile without using GdkRegion, since it's gone from GTK+
+        3.x.
+
+        * platform/graphics/IntRect.h:
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::drawFocusRing):
+        * platform/graphics/gtk/FontGtk.cpp:
+        (WebCore::cairo_region_shrink):
+        (WebCore::Font::drawComplexText):
+        * platform/gtk/GtkPluginWidget.cpp:
+        (WebCore::GtkPluginWidget::paint):
+        * platform/gtk/RenderThemeGtk.h:
+        * platform/gtk/ScrollbarGtk.cpp:
+        (ScrollbarGtk::paint):
+
 2010-06-30  Dumitru Daniliuc  <dumi@chromium.org>
 
         Reviewed by Darin Fisher.

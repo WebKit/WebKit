@@ -517,10 +517,16 @@ static gboolean webkit_web_view_expose_event(GtkWidget* widget, GdkEventExpose* 
         cairo_destroy(cr);
         ctx.setGdkExposeEvent(event);
 
-        GOwnPtr<GdkRectangle> rects;
         int rectCount;
+#ifdef GTK_API_VERSION_2
+        GOwnPtr<GdkRectangle> rects;
         gdk_region_get_rectangles(event->region, &rects.outPtr(), &rectCount);
-
+#else
+        rectCount = cairo_region_num_rectangles(event->region);
+        GOwnPtr<GdkRectangle> rects(g_new(GdkRectangle, rectCount));
+        for (int i = 0; i < rectCount; i++)
+            cairo_region_get_rectangle(event->region, i, rects.get()+i);
+#endif
         // Avoid recursing into the render tree excessively
         bool coalesce = shouldCoalesce(event->area, rects.get(), rectCount);
 

@@ -372,6 +372,7 @@ void ChromeClient::scroll(const IntSize& delta, const IntRect& rectToScroll, con
     sourceRect.x -= delta.width();
     sourceRect.y -= delta.height();
 
+#ifdef GTK_API_VERSION_2
     GdkRegion* invalidRegion = gdk_region_rectangle(&area);
 
     if (gdk_rectangle_intersect(&area, &sourceRect, &moveRect)) {
@@ -384,6 +385,21 @@ void ChromeClient::scroll(const IntSize& delta, const IntRect& rectToScroll, con
 
     gdk_window_invalidate_region(window, invalidRegion, FALSE);
     gdk_region_destroy(invalidRegion);
+#else
+    cairo_region_t* invalidRegion = cairo_region_create_rectangle(&area);
+
+    if (gdk_rectangle_intersect(&area, &sourceRect, &moveRect)) {
+        cairo_region_t* moveRegion = cairo_region_create_rectangle(&moveRect);
+        gdk_window_move_region(window, moveRegion, delta.width(), delta.height());
+        cairo_region_translate(moveRegion, delta.width(), delta.height());
+        cairo_region_subtract(invalidRegion, moveRegion);
+        cairo_region_destroy(moveRegion);
+    }
+
+    gdk_window_invalidate_region(window, invalidRegion, FALSE);
+    cairo_region_destroy(invalidRegion);
+#endif
+
 }
 
 // FIXME: this does not take into account the WM decorations
