@@ -21,7 +21,7 @@ building-libs {
             LIBS += -framework $$QTWEBKITLIBNAME
             QMAKE_FRAMEWORKPATH = $$OUTPUT_DIR/lib $$QMAKE_FRAMEWORKPATH
         } else {
-            win32-*|wince* {
+            build_pass: win32-*|wince* {
                 !CONFIG(release, debug|release): QTWEBKITLIBNAME = $${QTWEBKITLIBNAME}d
                 QTWEBKITLIBNAME = $${QTWEBKITLIBNAME}$${QT_MAJOR_VERSION}
                 win32-g++*: LIBS += -l$$QTWEBKITLIBNAME

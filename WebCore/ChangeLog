@@ -1,3 +1,22 @@
+2010-06-16  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Fix qmake vcproj generation for QtWebKit.
+
+        qmake use TARGET=/LIBS+= -lTARGET to create dependencies
+        between projects in a subdir template.
+
+        Since when compiling outside of Qt we hijack the target name of
+        QtWebKit to add the configuration and version suffix to the binary
+        filename, qmake can't establish the WebCore project as a dependency
+        to QtTestBrowser.
+
+        This patch makes sure that the target is not hijacked on the
+        first of the three passes where the dependencies are determined.
+
+        * WebCore.pro:
+
 2010-07-01  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Dirk Schulze.

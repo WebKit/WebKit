@@ -3068,7 +3068,7 @@ HEADERS += $$WEBKIT_API_HEADERS
 
     win32-*|wince* {
         DLLDESTDIR = $$OUTPUT_DIR/bin
-        TARGET = $$qtLibraryTarget($$TARGET)
+        build_pass: TARGET = $$qtLibraryTarget($$TARGET)
 
         dlltarget.commands = $(COPY_FILE) $(DESTDIR_TARGET) $$[QT_INSTALL_BINS]
         dlltarget.CONFIG = no_path
