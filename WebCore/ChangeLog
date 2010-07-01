@@ -1,5 +1,11 @@
 2010-06-30  Sam Weinig  <sam@webkit.org>
 
+        Another Chromium build fix.
+
+        * page/DOMWindow.idl:
+
+2010-06-30  Sam Weinig  <sam@webkit.org>
+
         Fix Chromium build.
 
         * WebCore.gyp/WebCore.gyp:
