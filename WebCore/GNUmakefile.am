@@ -1831,6 +1831,7 @@ webcore_sources += \
 	WebCore/platform/network/ResourceHandle.h \
 	WebCore/platform/network/ResourceHandleClient.h \
 	WebCore/platform/network/ResourceHandleInternal.h \
+	WebCore/platform/network/ResourceLoadTiming.h \
 	WebCore/platform/network/ResourceRequestBase.cpp \
 	WebCore/platform/network/ResourceRequestBase.h \
 	WebCore/platform/network/ResourceResponseBase.cpp \

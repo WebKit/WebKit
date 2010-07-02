@@ -1,3 +1,37 @@
+2010-07-01  Tony Gentilcore  <tonyg@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Add interface for network platform to pass up timing information
+        https://bugs.webkit.org/show_bug.cgi?id=41437
+
+        The Web Timing feature requires the network platform to expose detailed
+        timing information for the main resource. This patch adds that data to
+        the ResourceResponseBase. Since the 82 bytes of information is only
+        needed for the main resource, it is a RefPtr to avoid using the memory
+        for other resource types.
+
+        No new tests because no new functionality.
+
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/network/ResourceLoadTiming.h: Added.
+        (WebCore::ResourceLoadTiming::create):
+        (WebCore::ResourceLoadTiming::deepCopy):
+        (WebCore::ResourceLoadTiming::operator==):
+        (WebCore::ResourceLoadTiming::operator!=):
+        (WebCore::ResourceLoadTiming::ResourceLoadTiming):
+        * platform/network/ResourceResponseBase.cpp:
+        (WebCore::ResourceResponseBase::adopt):
+        (WebCore::ResourceResponseBase::copyData):
+        (WebCore::ResourceResponseBase::resourceLoadTiming):
+        (WebCore::ResourceResponseBase::setResourceLoadTiming):
+        (WebCore::ResourceResponseBase::compare):
+        * platform/network/ResourceResponseBase.h:
+
 2010-07-01  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r62321.

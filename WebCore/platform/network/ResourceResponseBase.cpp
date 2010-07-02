@@ -100,6 +100,7 @@ PassOwnPtr<ResourceResponse> ResourceResponseBase::adopt(PassOwnPtr<CrossThreadR
     response->lazyInit();
     response->m_httpHeaderFields.adopt(data->m_httpHeaders.release());
     response->setLastModifiedDate(data->m_lastModifiedDate);
+    response->setResourceLoadTiming(data->m_resourceLoadTiming.release());
 
     return response.release();
 }
@@ -116,6 +117,8 @@ PassOwnPtr<CrossThreadResourceResponseData> ResourceResponseBase::copyData() con
     data->m_httpStatusText = httpStatusText().crossThreadString();
     data->m_httpHeaders = httpHeaderFields().copyData();
     data->m_lastModifiedDate = lastModifiedDate();
+    if (m_resourceLoadTiming)
+        data->m_resourceLoadTiming = m_resourceLoadTiming->deepCopy();
     return data.release();
 }
 
@@ -452,6 +455,20 @@ time_t ResourceResponseBase::lastModifiedDate() const
     return m_lastModifiedDate;
 }
 
+ResourceLoadTiming* ResourceResponseBase::resourceLoadTiming() const
+{
+    lazyInit();
+
+    return m_resourceLoadTiming.get();
+}
+
+void ResourceResponseBase::setResourceLoadTiming(PassRefPtr<ResourceLoadTiming> resourceLoadTiming)
+{
+    lazyInit();
+
+    m_resourceLoadTiming = resourceLoadTiming;
+}
+
 void ResourceResponseBase::lazyInit() const
 {
     const_cast<ResourceResponse*>(static_cast<const ResourceResponse*>(this))->platformLazyInit();
@@ -476,6 +493,10 @@ bool ResourceResponseBase::compare(const ResourceResponse& a, const ResourceResp
     if (a.httpStatusText() != b.httpStatusText())
         return false;
     if (a.httpHeaderFields() != b.httpHeaderFields())
+        return false;
+    if (a.resourceLoadTiming() && b.resourceLoadTiming() && *a.resourceLoadTiming() == *b.resourceLoadTiming())
+        return ResourceResponse::platformCompare(a, b);
+    if (a.resourceLoadTiming() != b.resourceLoadTiming())
         return false;
     return ResourceResponse::platformCompare(a, b);
 }

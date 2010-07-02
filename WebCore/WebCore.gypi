@@ -2707,6 +2707,7 @@
             'platform/network/ResourceErrorBase.h',
             'platform/network/ResourceHandleClient.h',
             'platform/network/ResourceHandleInternal.h',
+            'platform/network/ResourceLoadTiming.h',
             'platform/network/ResourceRequestBase.cpp',
             'platform/network/ResourceRequestBase.h',
             'platform/network/ResourceResponseBase.cpp',

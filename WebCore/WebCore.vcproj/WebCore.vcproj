@@ -25992,6 +25992,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\platform\network\ResourceLoadTiming.h"
+					>
+				</File>
+				<File
 					RelativePath="..\platform\network\ResourceRequestBase.cpp"
 					>
 				</File>
