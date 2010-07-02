@@ -1,3 +1,14 @@
+2010-07-02  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Rename new scripts so that they don't make autocompleting run-webkit-tests annoying.
+
+        * Scripts/debug-test-runner: Copied from Scripts/debug-webkittestrunner.
+        * Scripts/debug-webkittestrunner: Removed.
+        * Scripts/run-test-runner: Copied from Scripts/run-webkittestrunner.
+        * Scripts/run-webkittestrunner: Removed.
+
 2010-07-02  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Steve Falkenburg.
