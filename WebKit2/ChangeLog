@@ -1,3 +1,13 @@
+2010-07-02  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Use send instead of connection()->send(), now that connections() are created
+        asynchronously it can be null at this point and the message needs to be queued.
+
+        * UIProcess/mac/WebProcessProxyMac.mm:
+        (WebKit::WebProcessProxy::setUpAcceleratedCompositing):
+
 2010-07-01  Steve Falkenburg  <sfalken@apple.com>
 
         Even more Windows build fixing.
