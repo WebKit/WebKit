@@ -1178,7 +1178,6 @@ bool HTMLTokenizer::nextToken(SegmentedString& source, HTMLToken& token)
         } else if (cc == '-') {
             parseError();
             m_token->appendToComment('-');
-            m_token->appendToComment(cc);
             ADVANCE_TO(CommentEndState);
         } else if (cc == InputStreamPreprocessor::endOfFileMarker) {
             parseError();

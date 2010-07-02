@@ -2,6 +2,19 @@
 
         Reviewed by Eric Seidel.
 
+        Fix tokenization of <!----->
+        https://bugs.webkit.org/show_bug.cgi?id=41505
+
+        Test progression plus reduced test case.
+
+        * html5lib/resources/comments01.dat:
+        * html5lib/runner-expected-html5.txt:
+        * html5lib/runner-expected.txt:
+
+2010-07-02  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         Implement processFakePEndTagIfPInScope
         https://bugs.webkit.org/show_bug.cgi?id=41503
 

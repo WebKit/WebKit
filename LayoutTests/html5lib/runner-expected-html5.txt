@@ -276,7 +276,7 @@ Expected:
 Test 32 of 113 in resources/tests1.dat failed. Input:
 <!-----><font><div>hello<table>excite!<b>me!<th><i>please!</tr><!--X-->
 Got:
-| <!-- -- -->
+| <!-- - -->
 | <html>
 |   <head>
 |   <body>

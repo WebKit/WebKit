@@ -2,6 +2,20 @@
 
         Reviewed by Eric Seidel.
 
+        Fix tokenization of <!----->
+        https://bugs.webkit.org/show_bug.cgi?id=41505
+
+        I noticed this error when browsing through the HTML5lib failures.
+        We're adding an extra character to the comment token, contrary to what
+        the spec says to do.
+
+        * html/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::nextToken):
+
+2010-07-02  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         Implement processFakePEndTagIfPInScope
         https://bugs.webkit.org/show_bug.cgi?id=41503
 
