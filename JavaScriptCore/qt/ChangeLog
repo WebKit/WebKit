@@ -1,3 +1,19 @@
+2010-07-02  Jedrzej Nowacki  <jedrzej.nowacki@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        Compilation fix.
+
+        QScriptEnginePrivate::newArray can't be const because it can
+        throw an exception.
+
+        [Qt] QScriptEnginePrivate compilation fix
+        https://bugs.webkit.org/show_bug.cgi?id=41520
+
+        * api/qscriptengine_p.cpp:
+        (QScriptEnginePrivate::newArray):
+        * api/qscriptengine_p.h:
+
 2010-06-28  Jedrzej Nowacki  <jedrzej.nowacki@nokia.com>
 
         Reviewed by Simon Hausmann.

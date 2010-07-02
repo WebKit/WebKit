@@ -90,7 +90,7 @@ QScriptValuePrivate* QScriptEnginePrivate::newObject() const
     return new QScriptValuePrivate(this, JSObjectMake(m_context, /* jsClass */ 0, /* userData */ 0));
 }
 
-QScriptValuePrivate* QScriptEnginePrivate::newArray(uint length) const
+QScriptValuePrivate* QScriptEnginePrivate::newArray(uint length)
 {
     JSValueRef exception = 0;
     JSObjectRef array = JSObjectMakeArray(m_context, /* argumentCount */ 0, /* arguments */ 0, &exception);
