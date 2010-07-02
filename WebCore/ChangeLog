@@ -1,3 +1,16 @@
+2010-07-02  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r62371.
+        http://trac.webkit.org/changeset/62371
+        https://bugs.webkit.org/show_bug.cgi?id=41515
+
+        "Breaks media/controls-drag-timebar.html on 32-Bit Release"
+        (Requested by philn-tp on #webkit).
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::maxTimeSeekable):
+        (WebCore::MediaPlayerPrivateGStreamer::updateStates):
+
 2010-06-28  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Xan Lopez.
