@@ -300,11 +300,12 @@ IDL_BINDINGS += \
 	WebCore/page/History.idl \
 	WebCore/page/Location.idl \
 	WebCore/page/MemoryInfo.idl \
-	WebCore/page/NavigationTiming.idl \
+	WebCore/page/Navigation.idl \
 	WebCore/page/Navigator.idl \
 	WebCore/page/Performance.idl \
 	WebCore/page/PositionError.idl \
 	WebCore/page/Screen.idl \
+	WebCore/page/Timing.idl \
 	WebCore/page/WebKitPoint.idl \
 	WebCore/page/WorkerNavigator.idl \
 	WebCore/plugins/MimeType.idl \
@@ -1544,8 +1545,8 @@ webcore_sources += \
 	WebCore/page/MemoryInfo.h \
 	WebCore/page/MouseEventWithHitTestResults.cpp \
 	WebCore/page/MouseEventWithHitTestResults.h \
-	WebCore/page/NavigationTiming.cpp \
-	WebCore/page/NavigationTiming.h \
+	WebCore/page/Navigation.cpp \
+	WebCore/page/Navigation.h \
 	WebCore/page/Navigator.cpp \
 	WebCore/page/Navigator.h \
 	WebCore/page/NavigatorBase.cpp \
@@ -1580,6 +1581,8 @@ webcore_sources += \
 	WebCore/page/SpatialNavigation.h \
 	WebCore/page/SuspendableTimer.cpp \
 	WebCore/page/SuspendableTimer.h \
+	WebCore/page/Timing.cpp \
+	WebCore/page/Timing.h \
 	WebCore/page/UserContentURLPattern.cpp \
 	WebCore/page/UserContentURLPattern.h \
 	WebCore/page/UserScript.h \

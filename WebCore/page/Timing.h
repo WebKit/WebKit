@@ -28,49 +28,34 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "Performance.h"
-
-#include "Navigation.h"
-#include "Timing.h"
+#ifndef Timing_h
+#define Timing_h
 
 #if ENABLE(WEB_TIMING)
 
-#include "Frame.h"
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-Performance::Performance(Frame* frame)
-    : m_frame(frame)
-{
+class Frame;
+
+class Timing : public RefCounted<Timing> {
+public:
+    static PassRefPtr<Timing> create(Frame* frame) { return adoptRef(new Timing(frame)); }
+
+    Frame* frame() const;
+    void disconnectFrame();
+
+    unsigned long navigationStart() const;
+
+private:
+    Timing(Frame*);
+
+    Frame* m_frame;
+};
+
 }
 
-Frame* Performance::frame() const
-{
-    return m_frame;
-}
-
-void Performance::disconnectFrame()
-{
-    m_frame = 0;
-}
-
-Navigation* Performance::navigation() const
-{
-    if (!m_navigation)
-        m_navigation = Navigation::create(m_frame);
-
-    return m_navigation.get();
-}
-
-Timing* Performance::timing() const
-{
-    if (!m_timing)
-        m_timing = Timing::create(m_frame);
-
-    return m_timing.get();
-}
-
-} // namespace WebCore
-
-#endif // ENABLE(WEB_TIMING)
+#endif // !ENABLE(WEB_TIMING)
+#endif // !defined(Timing_h)

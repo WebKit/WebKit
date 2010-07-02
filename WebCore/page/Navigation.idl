@@ -28,34 +28,20 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef NavigationTiming_h
-#define NavigationTiming_h
+module window {
 
-#if ENABLE(WEB_TIMING)
+    // See: http://dev.w3.org/2006/webapi/WebTiming/
+    interface [Conditional=WEB_TIMING, OmitConstructor] Navigation {
+        const unsigned short NAVIGATION_OTHER = 0;
+        const unsigned short NAVIGATION_LINK = 1;
+        const unsigned short NAVIGATION_FORWARD_BACK = 2;
+        const unsigned short NAVIGATION_BROWSER = 3;
+        const unsigned short NAVIGATION_NEW_WINDOW = 4;
+        const unsigned short NAVIGATION_RELOAD = 5;
+        const unsigned short NAVIGATION_FRAME = 6;
+        readonly attribute unsigned short type;
 
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
-
-namespace WebCore {
-
-class Frame;
-
-class NavigationTiming : public RefCounted<NavigationTiming> {
-public:
-    static PassRefPtr<NavigationTiming> create(Frame* frame) { return adoptRef(new NavigationTiming(frame)); }
-
-    Frame* frame() const;
-    void disconnectFrame();
-
-    unsigned long navigationStart() const;
-
-private:
-    NavigationTiming(Frame*);
-
-    Frame* m_frame;
-};
+        readonly attribute unsigned short redirectCount;
+    };
 
 }
-
-#endif // !ENABLE(WEB_TIMING)
-#endif // !defined(NavigationTiming_h)

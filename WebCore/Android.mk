@@ -365,7 +365,7 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	page/History.cpp \
 	page/Location.cpp \
 	page/MouseEventWithHitTestResults.cpp \
-	page/NavigationTiming.cpp \
+	page/Navigation.cpp \
 	page/Navigator.cpp \
 	page/NavigatorBase.cpp \
 	page/OriginAccessEntry.cpp \
@@ -380,6 +380,7 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	page/Settings.cpp \
 	page/SpatialNavigation.cpp \
 	page/SuspendableTimer.cpp \
+	page/Timing.cpp \
 	page/UserContentURLPattern.cpp \
 	page/WindowFeatures.cpp \
 	page/WorkerNavigator.cpp \

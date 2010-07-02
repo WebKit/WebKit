@@ -243,7 +243,7 @@ DOM_CLASSES = \
     MouseEvent \
     MutationEvent \
     NamedNodeMap \
-    NavigationTiming \
+    Navigation \
     Navigator \
     Node \
     NodeFilter \
@@ -437,6 +437,7 @@ DOM_CLASSES = \
     TextEvent \
     TextMetrics \
     TimeRanges \
+    Timing \
     Touch \
     TouchEvent \
     TouchList \

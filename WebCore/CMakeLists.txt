@@ -310,11 +310,12 @@ SET(WebCore_IDL_FILES
     page/History.idl
     page/Location.idl
     page/MemoryInfo.idl
-    page/NavigationTiming.idl
+    page/Navigation.idl
     page/Navigator.idl
     page/Performance.idl
     page/PositionError.idl
     page/Screen.idl
+    page/Timing.idl
     page/WebKitPoint.idl
     page/WorkerNavigator.idl
 
@@ -1124,7 +1125,7 @@ SET(WebCore_SOURCES
     page/Location.cpp
     page/MemoryInfo.cpp
     page/MouseEventWithHitTestResults.cpp
-    page/NavigationTiming.cpp
+    page/Navigation.cpp
     page/Navigator.cpp
     page/NavigatorBase.cpp
     page/OriginAccessEntry.cpp
@@ -1139,6 +1140,7 @@ SET(WebCore_SOURCES
     page/Settings.cpp
     page/SpatialNavigation.cpp
     page/SuspendableTimer.cpp
+    page/Timing.cpp
     page/UserContentURLPattern.cpp
     page/WindowFeatures.cpp
     page/WorkerNavigator.cpp

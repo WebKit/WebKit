@@ -29,9 +29,6 @@
  */
 
 #include "config.h"
-#include "Performance.h"
-
-#include "Navigation.h"
 #include "Timing.h"
 
 #if ENABLE(WEB_TIMING)
@@ -40,35 +37,27 @@
 
 namespace WebCore {
 
-Performance::Performance(Frame* frame)
+Timing::Timing(Frame* frame)
     : m_frame(frame)
 {
 }
 
-Frame* Performance::frame() const
+Frame* Timing::frame() const
 {
     return m_frame;
 }
 
-void Performance::disconnectFrame()
+void Timing::disconnectFrame()
 {
     m_frame = 0;
 }
 
-Navigation* Performance::navigation() const
+unsigned long Timing::navigationStart() const
 {
-    if (!m_navigation)
-        m_navigation = Navigation::create(m_frame);
+    if (!m_frame)
+        return 0;
 
-    return m_navigation.get();
-}
-
-Timing* Performance::timing() const
-{
-    if (!m_timing)
-        m_timing = Timing::create(m_frame);
-
-    return m_timing.get();
+    return 0; // FIXME
 }
 
 } // namespace WebCore

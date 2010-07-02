@@ -456,11 +456,12 @@ IDL_BINDINGS += \
     page/History.idl \
     page/Location.idl \
     page/MemoryInfo.idl \
-    page/NavigationTiming.idl \
+    page/Navigation.idl \
     page/Navigator.idl \
     page/Performance.idl \
     page/PositionError.idl \
     page/Screen.idl \
+    page/Timing.idl \
     page/WebKitPoint.idl \
     page/WorkerNavigator.idl \
     plugins/Plugin.idl \

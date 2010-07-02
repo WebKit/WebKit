@@ -1,3 +1,53 @@
+2010-07-01  Tony Gentilcore  <tonyg@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Add window.performance.navigation namespace
+        https://bugs.webkit.org/show_bug.cgi?id=41442
+
+        Adds window.performance.navigation namespace consisting of ".type"
+        and ".redirectCount". As part of this change, I renmaed "NavigationTiming"
+        to just "Timing" to avoid confusion.
+
+        No new tests because tests will be added in a subsequent patch when
+        functionality is added.
+
+        * Android.mk:
+        * CMakeLists.txt:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pri:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/Navigation.cpp: Added.
+        (WebCore::Navigation::Navigation):
+        (WebCore::Navigation::frame):
+        (WebCore::Navigation::disconnectFrame):
+        (WebCore::Navigation::type):
+        (WebCore::Navigation::redirectCount):
+        * page/Navigation.h: Added.
+        (WebCore::Navigation::create):
+        * page/Navigation.idl: Added.
+        * page/NavigationTiming.cpp: Removed.
+        * page/NavigationTiming.h: Removed.
+        * page/NavigationTiming.idl: Removed.
+        * page/Performance.cpp:
+        (WebCore::Performance::navigation):
+        (WebCore::Performance::timing):
+        * page/Performance.h:
+        * page/Performance.idl:
+        * page/Timing.cpp: Added.
+        (WebCore::Timing::Timing):
+        (WebCore::Timing::frame):
+        (WebCore::Timing::disconnectFrame):
+        (WebCore::Timing::navigationStart):
+        * page/Timing.h: Added.
+        (WebCore::Timing::create):
+        * page/Timing.idl: Added.
+
 2010-07-01  Daniel Cheng  <dcheng@chromium.org>
 
         Reviewed by Jian Li.
