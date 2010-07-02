@@ -50,6 +50,7 @@ void LayerBackedDrawingAreaProxy::platformSetSize()
 
 void LayerBackedDrawingAreaProxy::attachCompositingContext(uint32_t contextID)
 {
+#if HAVE(HOSTED_CORE_ANIMATION)
     m_compositingRootLayer = WKMakeRenderLayer(contextID);
 
     // Turn off default animations.
@@ -74,6 +75,7 @@ void LayerBackedDrawingAreaProxy::attachCompositingContext(uint32_t contextID)
     [m_compositingRootLayer.get() setGeometryFlipped:YES];
 
     [m_webView _startAcceleratedCompositing:m_compositingRootLayer.get()];
+#endif
 }
 
 void LayerBackedDrawingAreaProxy::detachCompositingContext()

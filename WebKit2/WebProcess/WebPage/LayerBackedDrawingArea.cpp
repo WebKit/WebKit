@@ -42,7 +42,7 @@ namespace WebKit {
 LayerBackedDrawingArea::LayerBackedDrawingArea(WebPage* webPage)
     : DrawingArea(LayerBackedDrawingAreaType, webPage)
     , m_syncTimer(WebProcess::shared().runLoop(), this, &LayerBackedDrawingArea::syncCompositingLayers)
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) && HAVE(HOSTED_CORE_ANIMATION)
     , m_remoteLayerRef(0)
 #endif
     , m_attached(false)
@@ -86,8 +86,10 @@ void LayerBackedDrawingArea::scroll(const IntSize& scrollDelta, const IntRect& r
 
 void LayerBackedDrawingArea::setNeedsDisplay(const IntRect& rect)
 {
+#if PLATFORM(MAC) && HAVE(HOSTED_CORE_ANIMATION)
     if (!m_remoteLayerRef)
         attachCompositingContext(0);
+#endif
 
     m_backingLayer->setNeedsDisplayInRect(rect);
     m_backingLayer->syncCompositingStateForThisLayerOnly();

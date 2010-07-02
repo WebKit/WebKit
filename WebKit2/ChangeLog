@@ -1,5 +1,31 @@
 2010-07-01  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Jon Honeycutt.
+
+        Make WebKit2 compile (though not work) on Leopard.
+
+        * Platform/WorkQueue.h:
+        * Platform/mac/WorkQueueMac.cpp:
+        (WorkQueue::EventSource::EventSource):
+        (WorkQueue::scheduleWork):
+        (WorkQueue::registerMachPortEventHandler):
+        (WorkQueue::unregisterMachPortEventHandler):
+        (WorkQueue::platformInitialize):
+        (WorkQueue::platformInvalidate):
+        * UIProcess/mac/LayerBackedDrawingAreaProxyMac.mm:
+        (WebKit::LayerBackedDrawingAreaProxy::attachCompositingContext):
+        * UIProcess/mac/WebProcessProxyMac.mm:
+        (WebKit::WebProcessProxy::setUpAcceleratedCompositing):
+        * WebProcess/WebPage/LayerBackedDrawingArea.cpp:
+        (WebKit::LayerBackedDrawingArea::LayerBackedDrawingArea):
+        (WebKit::LayerBackedDrawingArea::setNeedsDisplay):
+        * WebProcess/WebPage/LayerBackedDrawingArea.h:
+        * WebProcess/WebPage/mac/LayerBackedDrawingAreaMac.mm:
+        (WebKit::LayerBackedDrawingArea::platformClear):
+        (WebKit::LayerBackedDrawingArea::attachCompositingContext):
+
+2010-07-01  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Anders Carlsson.
 
         https://bugs.webkit.org/show_bug.cgi?id=41491

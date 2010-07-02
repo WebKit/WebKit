@@ -27,7 +27,9 @@
 #define WorkQueue_h
 
 #if PLATFORM(MAC)
+#if HAVE(DISPATCH_H)
 #include <dispatch/dispatch.h>
+#endif
 #endif
 
 #include "WorkItem.h"
@@ -78,12 +80,13 @@ private:
     void platformInvalidate();
 
 #if PLATFORM(MAC)
+#if HAVE(DISPATCH_H)
     static void executeWorkItem(void*);
-    
     Mutex m_eventSourcesMutex;
     class EventSource;
     HashMap<mach_port_t, EventSource*> m_eventSources;
     dispatch_queue_t m_dispatchQueue;
+#endif
 #elif PLATFORM(WIN)
     static void* workQueueThreadBody(void*);
     void workQueueThreadBody();

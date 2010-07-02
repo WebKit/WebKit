@@ -36,9 +36,11 @@ namespace WebKit {
 #if USE(ACCELERATED_COMPOSITING)
 void WebProcessProxy::setUpAcceleratedCompositing()
 {
+#if HAVE(HOSTED_CORE_ANIMATION)
     mach_port_t renderServerPort = WKInitializeRenderServer();
     if (renderServerPort != MACH_PORT_NULL)
         connection()->send(WebProcessMessage::SetupAcceleratedCompositingPort, 0, CoreIPC::In(CoreIPC::MachPort(renderServerPort, MACH_MSG_TYPE_COPY_SEND)));
+#endif
 }
 #endif
 

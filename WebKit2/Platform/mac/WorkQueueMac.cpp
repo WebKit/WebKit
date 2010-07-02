@@ -27,6 +27,8 @@
 
 #include <mach/mach_port.h>
 
+#if HAVE(DISPATCH_H)
+
 void WorkQueue::executeWorkItem(void* item)
 {
     WorkQueue* queue = static_cast<WorkQueue*>(dispatch_get_context(dispatch_get_current_queue()));
@@ -49,9 +51,9 @@ void WorkQueue::scheduleWork(std::auto_ptr<WorkItem> item)
 class WorkQueue::EventSource {
 public:
     EventSource(MachPortEventType eventType, dispatch_source_t dispatchSource, std::auto_ptr<WorkItem> workItem)
-    : m_eventType(eventType)
-    , m_dispatchSource(dispatchSource)
-    , m_workItem(workItem)
+        : m_eventType(eventType)
+        , m_dispatchSource(dispatchSource)
+        , m_workItem(workItem)
     {
     }
     
@@ -164,3 +166,27 @@ void WorkQueue::platformInvalidate()
     ASSERT(m_eventSources.isEmpty());
 #endif
 }
+
+#else /* !HAVE(DISPATCH_H) */
+
+void WorkQueue::scheduleWork(std::auto_ptr<WorkItem> item)
+{
+}
+
+void WorkQueue::registerMachPortEventHandler(mach_port_t, MachPortEventType, std::auto_ptr<WorkItem>)
+{
+}
+
+void WorkQueue::unregisterMachPortEventHandler(mach_port_t)
+{
+}
+
+void WorkQueue::platformInitialize(const char*)
+{
+}
+
+void WorkQueue::platformInvalidate()
+{
+}
+
+#endif

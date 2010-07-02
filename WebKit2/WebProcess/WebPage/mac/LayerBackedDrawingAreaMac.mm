@@ -52,16 +52,17 @@ void LayerBackedDrawingArea::platformClear()
         m_updateLayoutRunLoopObserver = 0;
     }
 
+#if HAVE(HOSTED_CORE_ANIMATION)
     WKCARemoteLayerClientInvalidate(m_remoteLayerRef.get());
     m_remoteLayerRef = 0;
+#endif
 }
 
 void LayerBackedDrawingArea::attachCompositingContext(GraphicsLayer* layer)
 {
     m_backingLayer->removeAllChildren();
-    if (layer) {
+    if (layer)
         m_backingLayer->addChild(layer);
-    }
 
     m_backingLayer->syncCompositingState();     // FIXME: hack
     
@@ -72,12 +73,14 @@ void LayerBackedDrawingArea::attachCompositingContext(GraphicsLayer* layer)
         
     m_attached = true;
 
+#if HAVE(HOSTED_CORE_ANIMATION)
     mach_port_t serverPort = WebProcess::shared().compositingRenderServerPort();
     m_remoteLayerRef = WKCARemoteLayerClientMakeWithServerPort(serverPort);
     WKCARemoteLayerClientSetLayer(m_remoteLayerRef.get(), m_backingLayer->platformLayer());
     
     uint32_t contextID = WKCARemoteLayerClientGetClientId(m_remoteLayerRef.get());
     WebProcess::shared().connection()->send(DrawingAreaProxyMessage::AttachCompositingContext, m_webPage->pageID(), CoreIPC::In(contextID));
+#endif
 }
 
 void LayerBackedDrawingArea::detachCompositingContext()
