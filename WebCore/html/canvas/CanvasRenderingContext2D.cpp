@@ -755,8 +755,9 @@ void CanvasRenderingContext2D::fillRect(float x, float y, float width, float hei
 
     // from the HTML5 Canvas spec:
     // If x0 = x1 and y0 = y1, then the linear gradient must paint nothing
+    // If x0 = x1 and y0 = y1 and r0 = r1, then the radial gradient must paint nothing
     Gradient* gradient = c->fillGradient();
-    if (gradient && gradient->isZeroSize() && !gradient->isRadial())
+    if (gradient && gradient->isZeroSize())
         return;
 
     FloatRect rect(x, y, width, height);

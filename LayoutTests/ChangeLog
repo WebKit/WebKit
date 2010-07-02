@@ -1,3 +1,14 @@
+2010-07-01  Andreas Kling  <andreas.kling@nokia.com>
+
+        Reviewed by Tor Arne Vestbø.
+
+        Canvas: Don't paint with empty radial gradients
+        https://bugs.webkit.org/show_bug.cgi?id=41190
+
+        Unskip canvas/philip/tests/2d.gradient.radial.equal.html for Qt.
+
+        * platform/qt/Skipped:
+
 2010-07-01  David Levin  <levin@chromium.org>
 
         Reviewed by NOBODY (trivial test_expectations change).
