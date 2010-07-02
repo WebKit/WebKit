@@ -2634,10 +2634,6 @@ BUG38392 : plugins/resize-from-plugin.html = TEXT
 // One pixel changes from gray 0x83 to gray 0x81. Valgrind is clean.
 BUG38534 LINUX : tables/mozilla/bugs/bug20804.html = IMAGE PASS
 
-// This runs correctly on the builder, using the builder's working directory.
-// I can only assume that the Gods are Making Merriment at my expense. --agl
-BUG_AGL LINUX : platform/chromium/fast/text/chromium-linux-fontconfig-renderstyle.html = IMAGE+TEXT
-
 // WebKit roll 56165:56197.
 // New test (http://trac.webkit.org/changeset/56198), requires changes to PluginObject
 BUG38578 : plugins/override-node-method.html = TEXT
@@ -2931,3 +2927,4 @@ BUG48110 WIN LINUX : fast/dom/HTMLDocument/activeElement.html = PASS TEXT
 BUG48139 LINUX : fast/js/comparison-operators-less.html = CRASH PASS
 BUG48144 LINUX : fast/js/activation-object-function-lifetime.html = CRASH PASS
 
+BUG48154 WIN : fast/forms/indeterminate.html = IMAGE

@@ -1,5 +1,12 @@
 2010-07-01  David Levin  <levin@chromium.org>
 
+        Reviewed by NOBODY (trivial test_expectations change).
+
+        * platform/chromium/test_expectations.txt: Removed a test
+          that is passing and added a test that is now failing.
+
+2010-07-01  David Levin  <levin@chromium.org>
+
         Reviewed by NOBODY (trivial test expectation changes).
 
         * platform/chromium/test_expectations.txt: Upstreamed two
