@@ -44,10 +44,15 @@ for (var ii = 2; ii <= 4; ++ii) {
   var mat = [];
   for (var jj = 0; jj < ii; ++jj) {
     for (var ll = 0; ll < ii; ++ll) {
+      if (jj == ii -1 && ll == ii - 1)
+        continue;
       mat[jj * ii + ll] = (jj == ll) ? 1 : 0;
     }
   }
   name = "uniformMatrix" + ii + "fv";
+  gl[name](loc, false, mat);
+  assertMsg(gl.getError() == gl.INVALID_VALUE, "should fail with insufficient array size for " + name);
+  mat[ii * ii - 1] = 1;
   gl[name](loc, false, mat);
   assertMsg(gl.getError() == gl.NO_ERROR, "can call " + name + "with transpose = false");
   gl[name](loc, true, mat);

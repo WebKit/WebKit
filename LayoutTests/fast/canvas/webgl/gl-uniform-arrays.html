@@ -105,7 +105,8 @@ var typeInfos = [
     checkValue: function(typeInfo, index, value) {
       return typeInfo.srcValues[index] == value;
     },
-    srcValues: [16, 15, 14]
+    srcValues: [16, 15, 14],
+    srcValuesBad: [],
   },
   { type: 'vec2',
     jsTypeOf: 'Float32Array',
@@ -132,6 +133,7 @@ var typeInfos = [
              typeInfo.srcValues[index * 2 + 1] == value[1];
     },
     srcValues: [16, 15, 14, 13, 12, 11],
+    srcValuesBad: [16],
   },
   { type: 'vec3',
     jsTypeOf: 'Float32Array',
@@ -160,7 +162,8 @@ var typeInfos = [
              typeInfo.srcValues[index * 3 + 1] == value[1] &&
              typeInfo.srcValues[index * 3 + 2] == value[2];
     },
-    srcValues: [16, 15, 14, 13, 12, 11, 10, 11, 9],
+    srcValues: [16, 15, 14, 13, 12, 11, 10, 9, 8],
+    srcValuesBad: [16, 15],
   },
   { type: 'vec4',
     jsTypeOf: 'Float32Array',
@@ -192,7 +195,8 @@ var typeInfos = [
              typeInfo.srcValues[index * 4 + 2] == value[2] &&
              typeInfo.srcValues[index * 4 + 3] == value[3];
     },
-    srcValues: [16, 15, 14, 13, 12, 11, 10, 11, 9, 8, 7, 6, 5],
+    srcValues: [16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5],
+    srcValuesBad: [16, 15, 14],
   }
 ];
 
@@ -212,6 +216,7 @@ for (var tt = 0; tt < typeInfos.length; ++tt) {
             "uniform name is 'color[0]' not 'color' as per OpenGL ES 2.0.24 section 2.10");
   var loc = gl.getUniformLocation(program, "color");
   var srcValues = typeInfo.srcValues;
+  var srcValuesBad = typeInfo.srcValuesBad;
 
   // Try setting the value before using the program
   gl[typeInfo.setter](loc, srcValues);
@@ -219,6 +224,9 @@ for (var tt = 0; tt < typeInfos.length; ++tt) {
             "should fail if there is no current program");
 
   gl.useProgram(program);
+  gl[typeInfo.setter](loc, srcValuesBad);
+  assertMsg(gl.getError() == gl.INVALID_VALUE,
+            "should fail with insufficient array size with gl." + typeInfo.setter);
   gl[typeInfo.setter](loc, srcValues);
   assertMsg(gl.getError() == gl.NO_ERROR,
             "can set an array of uniforms with gl." + typeInfo.setter);

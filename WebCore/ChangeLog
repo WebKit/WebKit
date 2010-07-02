@@ -1,3 +1,26 @@
+2010-07-02  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        Need to validate the size of the incoming arrays for uniform* functions
+        https://bugs.webkit.org/show_bug.cgi?id=41383
+
+        * html/canvas/WebGLRenderingContext.cpp: Validate input array size.
+        (WebCore::WebGLRenderingContext::uniform1fv):
+        (WebCore::WebGLRenderingContext::uniform1iv):
+        (WebCore::WebGLRenderingContext::uniform2fv):
+        (WebCore::WebGLRenderingContext::uniform2iv):
+        (WebCore::WebGLRenderingContext::uniform3fv):
+        (WebCore::WebGLRenderingContext::uniform3iv):
+        (WebCore::WebGLRenderingContext::uniform4fv):
+        (WebCore::WebGLRenderingContext::uniform4iv):
+        (WebCore::WebGLRenderingContext::uniformMatrix2fv):
+        (WebCore::WebGLRenderingContext::uniformMatrix3fv):
+        (WebCore::WebGLRenderingContext::uniformMatrix4fv):
+        (WebCore::WebGLRenderingContext::validateUniformParameters):
+        (WebCore::WebGLRenderingContext::validateUniformMatrixParameters):
+        * html/canvas/WebGLRenderingContext.h: Add helper functions.
+
 2010-07-02  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         Reviewed by Simon Hausmann.
