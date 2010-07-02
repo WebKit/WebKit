@@ -206,6 +206,8 @@ bool NetscapePluginInstanceProxy::LocalObjectMap::forget(uint32_t objectID)
 
 static uint32_t pluginIDCounter;
 
+bool NetscapePluginInstanceProxy::m_inDestroy;
+
 #ifndef NDEBUG
 static WTF::RefCountedLeakCounter netscapePluginInstanceProxyCounter("NetscapePluginInstanceProxy");
 #endif
@@ -222,7 +224,6 @@ NetscapePluginInstanceProxy::NetscapePluginInstanceProxy(NetscapePluginHostProxy
     , m_pluginFunctionCallDepth(0)
     , m_shouldStopSoon(false)
     , m_currentRequestID(0)
-    , m_inDestroy(false)
     , m_pluginIsWaitingForDraw(false)
 {
     ASSERT(m_pluginView);
@@ -316,7 +317,8 @@ void NetscapePluginInstanceProxy::invalidate()
 void NetscapePluginInstanceProxy::destroy()
 {
     uint32_t requestID = nextRequestID();
-    
+
+    ASSERT(!m_inDestroy);
     m_inDestroy = true;
     
     FrameLoadMap::iterator end = m_pendingFrameLoads.end();
@@ -842,6 +844,9 @@ bool NetscapePluginInstanceProxy::evaluate(uint32_t objectID, const String& scri
 {
     resultData = 0;
     resultLength = 0;
+
+    if (m_inDestroy)
+        return false;
 
     if (!m_localObjects.contains(objectID)) {
         LOG_ERROR("NetscapePluginInstanceProxy::evaluate: local object %u doesn't exist.", objectID);

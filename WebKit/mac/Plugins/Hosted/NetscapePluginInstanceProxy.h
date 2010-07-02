@@ -344,7 +344,19 @@ private:
     unsigned m_pluginFunctionCallDepth;
     bool m_shouldStopSoon;
     uint32_t m_currentRequestID;
-    bool m_inDestroy;
+
+    // All NPRuntime functions will return false when destroying a plug-in. This is necessary because there may be unhandled messages waiting,
+    // and spinning in processRequests() will unexpectedly execute them from inside destroy(). That's not a good time to execute arbitrary JavaScript,
+    // since both loading and rendering data structures may be in inconsistent state.
+    // This suppresses calls from all plug-ins, even those in different pages, since JS might affect the frame with plug-in that's being stopped.
+    //
+    // FIXME: Plug-ins can execute arbitrary JS from destroy() in same process case, and other browsers also support that.
+    // A better fix may be to make sure that unrelated messages are postponed until after destroy() returns.
+    // Another possible fix may be to send destroy message at a time when internal structures are consistent.
+    //
+    // FIXME: We lack similar message suppression in other cases - resize() is also triggered by layout, so executing arbitrary JS is also problematic.
+    static bool m_inDestroy;
+
     bool m_pluginIsWaitingForDraw;
     
     RefPtr<HostedNetscapePluginStream> m_manualStream;

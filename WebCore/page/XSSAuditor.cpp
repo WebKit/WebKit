@@ -362,7 +362,11 @@ bool XSSAuditor::findInRequest(Frame* frame, const FindTask& task) const
     if (task.string.isEmpty())
         return false;
 
-    FormData* formDataObj = frame->loader()->documentLoader()->originalRequest().httpBody();
+    DocumentLoader *documentLoader = frame->loader()->documentLoader();
+    if (!documentLoader)
+        return false;
+
+    FormData* formDataObj = documentLoader->originalRequest().httpBody();
     const bool hasFormData = formDataObj && !formDataObj->isEmpty();
     String pageURL = frame->document()->url().string();
 
