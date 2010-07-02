@@ -1,3 +1,10 @@
+2010-07-01  David Levin  <levin@chromium.org>
+
+        Reviewed by NOBODY (trivial test expectation changes).
+
+        * platform/chromium/test_expectations.txt: Upstreamed two
+          test expectation issues for flaky tests.
+
 2010-07-01  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r62321.
