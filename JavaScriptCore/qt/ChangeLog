@@ -1,0 +1,43 @@
+2010-06-28  Jedrzej Nowacki  <jedrzej.nowacki@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        Implement exception reporting in the QtScript API.
+
+        The exception should be accessible through the API by the uncaughtException
+        function. Functions; hasUncaughtException, clearExceptions, uncaughtExceptionLineNumber,
+        uncaughtExceptionBacktrace were added to facilitate error checking and debugging.
+
+        [Qt] QtScript API should be exceptions aware.
+        https://bugs.webkit.org/show_bug.cgi?id=41199
+
+        * api/qscriptengine.cpp:
+        (QScriptEngine::hasUncaughtException):
+        (QScriptEngine::uncaughtException):
+        (QScriptEngine::clearExceptions):
+        (QScriptEngine::uncaughtExceptionLineNumber):
+        (QScriptEngine::uncaughtExceptionBacktrace):
+        * api/qscriptengine.h:
+        * api/qscriptengine_p.cpp:
+        (QScriptEnginePrivate::QScriptEnginePrivate):
+        (QScriptEnginePrivate::~QScriptEnginePrivate):
+        (QScriptEnginePrivate::uncaughtException):
+        * api/qscriptengine_p.h:
+        (QScriptEnginePrivate::):
+        (QScriptEnginePrivate::evaluate):
+        (QScriptEnginePrivate::hasUncaughtException):
+        (QScriptEnginePrivate::clearExceptions):
+        (QScriptEnginePrivate::setException):
+        (QScriptEnginePrivate::uncaughtExceptionLineNumber):
+        (QScriptEnginePrivate::uncaughtExceptionBacktrace):
+        * api/qscriptvalue_p.h:
+        (QScriptValuePrivate::toString):
+        (QScriptValuePrivate::toNumber):
+        (QScriptValuePrivate::toObject):
+        (QScriptValuePrivate::equals):
+        (QScriptValuePrivate::instanceOf):
+        (QScriptValuePrivate::call):
+        (QScriptValuePrivate::inherits):
+        * tests/qscriptengine/tst_qscriptengine.cpp:
+        (tst_QScriptEngine::uncaughtException):
+

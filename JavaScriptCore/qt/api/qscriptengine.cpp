@@ -96,6 +96,71 @@ QScriptValue QScriptEngine::evaluate(const QScriptProgram& program)
 }
 
 /*!
+    Returns true if the last script evaluation resulted in an uncaught
+    exception; otherwise returns false.
+
+    The exception state is cleared when evaluate() is called.
+
+    \sa uncaughtException(), uncaughtExceptionLineNumber(),
+      uncaughtExceptionBacktrace()
+*/
+bool QScriptEngine::hasUncaughtException() const
+{
+    return d_ptr->hasUncaughtException();
+}
+
+/*!
+    Returns the current uncaught exception, or an invalid QScriptValue
+    if there is no uncaught exception.
+
+    The exception value is typically an \c{Error} object; in that case,
+    you can call toString() on the return value to obtain an error
+    message.
+
+    \sa hasUncaughtException(), uncaughtExceptionLineNumber(),
+      uncaughtExceptionBacktrace()
+*/
+QScriptValue QScriptEngine::uncaughtException() const
+{
+    return QScriptValuePrivate::get(d_ptr->uncaughtException());
+}
+
+/*!
+    Clears any uncaught exceptions in this engine.
+
+    \sa hasUncaughtException()
+*/
+void QScriptEngine::clearExceptions()
+{
+    d_ptr->clearExceptions();
+}
+
+/*!
+    Returns the line number where the last uncaught exception occurred.
+
+    Line numbers are 1-based, unless a different base was specified as
+    the second argument to evaluate().
+
+    \sa hasUncaughtException(), uncaughtExceptionBacktrace()
+*/
+int QScriptEngine::uncaughtExceptionLineNumber() const
+{
+    return d_ptr->uncaughtExceptionLineNumber();
+}
+
+/*!
+    Returns a human-readable backtrace of the last uncaught exception.
+
+    Each line is of the form \c{<function-name>(<arguments>)@<file-name>:<line-number>}.
+
+    \sa uncaughtException()
+*/
+QStringList QScriptEngine::uncaughtExceptionBacktrace() const
+{
+    return d_ptr->uncaughtExceptionBacktrace();
+}
+
+/*!
     Runs the garbage collector.
 
     The garbage collector will attempt to reclaim memory by locating and disposing of objects that are

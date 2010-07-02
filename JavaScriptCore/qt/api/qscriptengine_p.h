@@ -26,9 +26,11 @@
 #include "qscriptsyntaxcheckresult_p.h"
 #include "qscriptvalue.h"
 #include <JavaScriptCore/JavaScript.h>
+#include <JavaScriptCore/JSRetainPtr.h>
 #include <JSBasePrivate.h>
 #include <QtCore/qshareddata.h>
 #include <QtCore/qstring.h>
+#include <QtCore/qstringlist.h>
 
 class QScriptEngine;
 class QScriptSyntaxCheckResultPrivate;
@@ -41,10 +43,22 @@ public:
     QScriptEnginePrivate(const QScriptEngine*);
     ~QScriptEnginePrivate();
 
+    enum SetExceptionFlag {
+        IgnoreNullException = 0x01,
+        NotNullException = 0x02,
+    };
+
     QScriptSyntaxCheckResultPrivate* checkSyntax(const QString& program);
     QScriptValuePrivate* evaluate(const QString& program, const QString& fileName, int lineNumber);
     QScriptValuePrivate* evaluate(const QScriptProgramPrivate* program);
     inline JSValueRef evaluate(JSStringRef program, JSStringRef fileName, int lineNumber);
+
+    inline bool hasUncaughtException() const;
+    QScriptValuePrivate* uncaughtException() const;
+    inline void clearExceptions();
+    inline void setException(JSValueRef exception, const /* SetExceptionFlags */ unsigned flags = IgnoreNullException);
+    inline int uncaughtExceptionLineNumber() const;
+    inline QStringList uncaughtExceptionBacktrace() const;
 
     inline void collectGarbage();
     inline void reportAdditionalMemoryCost(int cost);
@@ -66,6 +80,7 @@ public:
 private:
     QScriptEngine* q_ptr;
     JSGlobalContextRef m_context;
+    JSValueRef m_exception;
 };
 
 
@@ -78,9 +93,65 @@ JSValueRef QScriptEnginePrivate::evaluate(JSStringRef program, JSStringRef fileN
 {
     JSValueRef exception;
     JSValueRef result = JSEvaluateScript(m_context, program, /* Global Object */ 0, fileName, lineNumber, &exception);
-    if (!result)
+    if (!result) {
+        setException(exception, NotNullException);
         return exception; // returns an exception
+    }
+    clearExceptions();
     return result;
+}
+
+bool QScriptEnginePrivate::hasUncaughtException() const
+{
+    return m_exception;
+}
+
+void QScriptEnginePrivate::clearExceptions()
+{
+    if (m_exception)
+        JSValueUnprotect(m_context, m_exception);
+    m_exception = 0;
+}
+
+void QScriptEnginePrivate::setException(JSValueRef exception, const /* SetExceptionFlags */ unsigned flags)
+{
+    if (!((flags & NotNullException) || exception))
+        return;
+    Q_ASSERT(exception);
+
+    if (m_exception)
+        JSValueUnprotect(m_context, m_exception);
+    JSValueProtect(m_context, exception);
+    m_exception = exception;
+}
+
+int QScriptEnginePrivate::uncaughtExceptionLineNumber() const
+{
+    if (!hasUncaughtException() || !JSValueIsObject(m_context, m_exception))
+        return -1;
+
+    JSValueRef exception = 0;
+    JSRetainPtr<JSStringRef> lineNumberPropertyName(Adopt, QScriptConverter::toString("line"));
+    JSValueRef lineNumber = JSObjectGetProperty(m_context, const_cast<JSObjectRef>(m_exception), lineNumberPropertyName.get(), &exception);
+    int result = JSValueToNumber(m_context, lineNumber, &exception);
+    return exception ? -1 : result;
+}
+
+QStringList QScriptEnginePrivate::uncaughtExceptionBacktrace() const
+{
+    if (!hasUncaughtException() || !JSValueIsObject(m_context, m_exception))
+        return QStringList();
+
+    JSValueRef exception = 0;
+    JSRetainPtr<JSStringRef> fileNamePropertyName(Adopt, QScriptConverter::toString("sourceURL"));
+    JSRetainPtr<JSStringRef> lineNumberPropertyName(Adopt, QScriptConverter::toString("line"));
+    JSValueRef jsFileName = JSObjectGetProperty(m_context, const_cast<JSObjectRef>(m_exception), fileNamePropertyName.get(), &exception);
+    JSValueRef jsLineNumber = JSObjectGetProperty(m_context, const_cast<JSObjectRef>(m_exception), lineNumberPropertyName.get(), &exception);
+    JSRetainPtr<JSStringRef> fileName(Adopt, JSValueToStringCopy(m_context, jsFileName, &exception));
+    int lineNumber = JSValueToNumber(m_context, jsLineNumber, &exception);
+    return QStringList(QString::fromLatin1("<anonymous>()@%0:%1")
+            .arg(QScriptConverter::toString(fileName.get()))
+            .arg(QScriptConverter::toString(exception ? -1 : lineNumber)));
 }
 
 void QScriptEnginePrivate::collectGarbage()

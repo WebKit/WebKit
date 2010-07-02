@@ -31,11 +31,14 @@
 QScriptEnginePrivate::QScriptEnginePrivate(const QScriptEngine* engine)
     : q_ptr(const_cast<QScriptEngine*>(engine))
     , m_context(JSGlobalContextCreate(0))
+    , m_exception(0)
 {
 }
 
 QScriptEnginePrivate::~QScriptEnginePrivate()
 {
+    if (m_exception)
+        JSValueUnprotect(m_context, m_exception);
     JSGlobalContextRelease(m_context);
 }
 
@@ -77,6 +80,11 @@ QScriptValuePrivate* QScriptEnginePrivate::evaluate(const QScriptProgramPrivate*
     return new QScriptValuePrivate(this, evaluate(*program, program->file(), program->line()));
 }
 
+QScriptValuePrivate* QScriptEnginePrivate::uncaughtException() const
+{
+    return m_exception ? new QScriptValuePrivate(this, m_exception) : new QScriptValuePrivate();
+}
+
 QScriptValuePrivate* QScriptEnginePrivate::newObject() const
 {
     return new QScriptValuePrivate(this, JSObjectMake(m_context, /* jsClass */ 0, /* userData */ 0));
@@ -84,11 +92,18 @@ QScriptValuePrivate* QScriptEnginePrivate::newObject() const
 
 QScriptValuePrivate* QScriptEnginePrivate::newArray(uint length) const
 {
-    JSObjectRef array = JSObjectMakeArray(m_context, /* argumentCount */ 0, /* arguments */ 0, /* exception */ 0);
+    JSValueRef exception = 0;
+    JSObjectRef array = JSObjectMakeArray(m_context, /* argumentCount */ 0, /* arguments */ 0, &exception);
 
-    if (length > 0) {
-        JSRetainPtr<JSStringRef> lengthRef(Adopt, JSStringCreateWithUTF8CString("length"));
-        JSObjectSetProperty(m_context, array, lengthRef.get(), JSValueMakeNumber(m_context, length), kJSPropertyAttributeNone, /* exception */ 0);
+    if (!exception) {
+        if (length > 0) {
+            JSRetainPtr<JSStringRef> lengthRef(Adopt, JSStringCreateWithUTF8CString("length"));
+            // array is an Array instance, so an exception should not occure here.
+            JSObjectSetProperty(m_context, array, lengthRef.get(), JSValueMakeNumber(m_context, length), kJSPropertyAttributeNone, /* exception */ 0);
+        }
+    } else {
+        setException(exception, NotNullException);
+        return new QScriptValuePrivate();
     }
 
     return new QScriptValuePrivate(this, array);
