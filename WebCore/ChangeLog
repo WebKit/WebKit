@@ -1,4 +1,25 @@
-2010-06-23  Martin Robinson  <mrobinson@igalia.com>
+2010-07-02  Brent Fulgham  <bfulgham@webkit.org>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Fixes https://bugs.webkit.org/show_bug.cgi?id=41323.
+        Provides an implementation of the 'squiggle' used for
+        bad grammar or spelling, based on the Pango logic used
+        by the GTK builds.
+
+        No new tests. Covered by LayoutTests/editing/spelling
+
+        * WebCore.vcproj/WebCore.vcproj: Add new file holding underline
+        implementation, set to build only for WinCairo port.
+        * platform/graphics/cairo/DrawErrorUnderline.cpp: Added.
+        (drawErrorUnderline): New file containing the squiggle drawing
+        logic based on the Pango implementation.  Placed in its own file
+        to isolate licenses.
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::drawLineForMisspellingOrBadGrammar):
+        Have WinCairo build call new 'drawErrorUnderline' implementation.
+
+2010-07-02  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Gustavo Noronha Silva.
 

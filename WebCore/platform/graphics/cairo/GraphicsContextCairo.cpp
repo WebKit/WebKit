@@ -708,6 +708,10 @@ void GraphicsContext::drawLineForText(const IntPoint& origin, int width, bool pr
     setStrokeStyle(savedStrokeStyle);
 }
 
+#if !PLATFORM(GTK)
+#include "DrawErrorUnderline.h"
+#endif
+
 void GraphicsContext::drawLineForMisspellingOrBadGrammar(const IntPoint& origin, int width, bool grammar)
 {
     if (paintingDisabled())
@@ -727,7 +731,7 @@ void GraphicsContext::drawLineForMisspellingOrBadGrammar(const IntPoint& origin,
     // We ignore most of the provided constants in favour of the platform style
     pango_cairo_show_error_underline(cr, origin.x(), origin.y(), width, cMisspellingLineThickness);
 #else
-    notImplemented();
+    drawErrorUnderline(cr, origin.x(), origin.y(), width, cMisspellingLineThickness);
 #endif
 
     cairo_restore(cr);
