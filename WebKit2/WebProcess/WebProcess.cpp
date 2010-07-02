@@ -26,7 +26,9 @@
 #include "WebProcess.h"
 
 #include "InjectedBundle.h"
+#if PLATFORM(MAC)
 #include "MachPort.h"
+#endif
 #include "RunLoop.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebFrame.h"
