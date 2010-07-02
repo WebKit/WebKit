@@ -1,3 +1,11 @@
+2010-07-01  Sam Weinig  <sam@webkit.org>
+
+        Rubber-stamped by Ander Carlsson.
+
+        Define HAVE_HOSTED_CORE_ANIMATION on Snow Leopard.
+
+        * wtf/Platform.h:
+
 2010-07-01  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Oliver Hunt.
