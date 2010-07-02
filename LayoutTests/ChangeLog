@@ -1,3 +1,11 @@
+2010-07-02  Yury Semikhatsky  <yurys@chromium.org>
+
+        Unreviewed. Update Chromium test expectations.
+
+        * platform/chromium-linux/html5lib/runner-expected.txt: Added.
+        * platform/chromium-win/html5lib/runner-expected.txt:
+        * platform/chromium/test_expectations.txt:
+
 2010-07-02  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

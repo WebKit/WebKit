@@ -2770,7 +2770,7 @@ BUG43960 MAC : fast/css/input-search-padding.html = IMAGE
 BUGWK38705 : http/tests/security/sandbox-inherit-to-initial-document-2.html = TEXT
 
 // Needs new baselines
-BUGJAMESR WIN MAC : fast/css/nested-rounded-corners.html = IMAGE MISSING
+BUGJAMESR WIN : fast/css/nested-rounded-corners.html = IMAGE MISSING
 
 // WebKit roll 58791:58807
 BUG43319 MAC : transforms/2d/zoom-menulist.html = IMAGE PASS
