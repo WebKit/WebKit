@@ -59,6 +59,7 @@ namespace WebCore {
         void decodedDataDeletionTimerFired(Timer<CachedScript>*);
 
         String m_script;
+        enum { SourceHasNoBOMs, SourceCouldHaveBOMs, SourceHasBOMs } m_scriptHasBOMs;
         RefPtr<TextResourceDecoder> m_decoder;
         Timer<CachedScript> m_decodedDataDeletionTimer;
     };

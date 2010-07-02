@@ -1,3 +1,27 @@
+2010-07-02  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        Move BOM handling out of the lexer and parser
+        https://bugs.webkit.org/show_bug.cgi?id=41539
+
+        Doing the BOM stripping in the lexer meant that we could
+        end up having to strip the BOMs from a source multiple times.
+        To deal with this we now require all strings provided by
+        a SourceProvider to already have had the BOMs stripped.
+        This also simplifies some of the lexer logic.
+
+        * parser/Lexer.cpp:
+        (JSC::Lexer::setCode):
+        (JSC::Lexer::sourceCode):
+        * parser/SourceProvider.h:
+        (JSC::SourceProvider::SourceProvider):
+        (JSC::UStringSourceProvider::create):
+        (JSC::UStringSourceProvider::getRange):
+        (JSC::UStringSourceProvider::UStringSourceProvider):
+        * wtf/text/StringImpl.h:
+        (WebCore::StringImpl::copyStringWithoutBOMs):
+
 2010-07-02  Renata Hodovan  <reni@inf.u-szeged.hu>
 
         Reviewed by Oliver Hunt.

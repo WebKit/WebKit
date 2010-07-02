@@ -49,6 +49,10 @@ namespace WebCore {
             : ScriptSourceProvider(stringToUString(url))
             , m_source(source)
         {
+            if (m_source.length()) {
+                bool scratch = false;
+                m_source = String(source.impl()->copyStringWithoutBOMs(false, scratch));
+            }
         }
         
         String m_source;
