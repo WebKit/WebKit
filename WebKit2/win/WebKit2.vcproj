@@ -59,10 +59,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="delayimp.lib kernel32.lib user32.lib gdi32.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib usp10.lib comctl32.lib version.lib shlwapi.lib libxml2$(LibraryConfigSuffix).lib libxslt$(LibraryConfigSuffix).lib icuin$(LibraryConfigSuffix).lib icuuc$(LibraryConfigSuffix).lib SQLite3$(LibraryConfigSuffix).lib pthreadVC2$(LibraryConfigSuffix).lib CoreFoundation$(LibraryConfigSuffix).lib JavaScriptCore$(WebKitDLLConfigSuffix).lib CFNetwork$(LibraryConfigSuffix).lib CoreGraphics$(LibraryConfigSuffix).lib WebCore$(WebKitConfigSuffix).lib WebKitSystemInterface$(WebKitConfigSuffix).lib msimg32.lib QTMovieWin$(WebKitConfigSuffix).lib crypt32.lib iphlpapi.lib winmm.lib rpcrt4.lib comsuppw.lib"
+				AdditionalDependencies="delayimp.lib kernel32.lib user32.lib gdi32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib usp10.lib comctl32.lib version.lib shlwapi.lib libxml2$(LibraryConfigSuffix).lib libxslt$(LibraryConfigSuffix).lib icuin$(LibraryConfigSuffix).lib icuuc$(LibraryConfigSuffix).lib SQLite3$(LibraryConfigSuffix).lib pthreadVC2$(LibraryConfigSuffix).lib CoreFoundation$(LibraryConfigSuffix).lib JavaScriptCore$(WebKitDLLConfigSuffix).lib CFNetwork$(LibraryConfigSuffix).lib CoreGraphics$(LibraryConfigSuffix).lib WebCore$(WebKitConfigSuffix).lib WebKitSystemInterface$(WebKitConfigSuffix).lib msimg32.lib QTMovieWin$(WebKitConfigSuffix).lib crypt32.lib iphlpapi.lib winmm.lib comsuppw.lib"
 				OutputFile="$(OutDir)\$(ProjectName)$(WebKitDLLConfigSuffix).dll"
 				AdditionalLibraryDirectories="$(DXSDK_DIR)\Lib\x86"
-				DelayLoadDLLs="comdlg32.dll;usp10.dll;comctl32.dll;version.dll;libxslt$(LibraryConfigSuffix).dll;SQLite3$(LibraryConfigSuffix).dll;msimg32.dll;QTMovieWin$(WebKitConfigSuffix).dll;iphlpapi.dll;rpcrt4.dll"
+				DelayLoadDLLs="usp10.dll;comctl32.dll;version.dll;libxslt$(LibraryConfigSuffix).dll;SQLite3$(LibraryConfigSuffix).dll;msimg32.dll;QTMovieWin$(WebKitConfigSuffix).dll;iphlpapi.dll"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -87,7 +87,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\include\WebKit2&quot;&#x0D;&#x0A;&#x0D;&#x0A;REM xcopy /y /d &quot;$(WebKitOutputDir)\include\WebCore\npfunctions.h&quot; &quot;$(WebKitOutputDir)\include\WebKit2&quot;&#x0D;&#x0A;REM xcopy /y /d &quot;$(WebKitOutputDir)\include\WebCore\npapi.h&quot; &quot;$(WebKitOutputDir)\include\WebKit2&quot;&#x0D;&#x0A;REM xcopy /y /d &quot;$(WebKitOutputDir)\include\WebCore\npruntime.h&quot; &quot;$(WebKitOutputDir)\include\WebKit2&quot;&#x0D;&#x0A;REM xcopy /y /d &quot;$(WebKitOutputDir)\include\WebCore\npruntime_internal.h&quot; &quot;$(WebKitOutputDir)\include\WebKit2&quot;&#x0D;&#x0A;&#x0D;&#x0A;REM mkdir 2&gt;NUL &quot;$(OutDir)\WebKit.resources&quot;&#x0D;&#x0A;REM xcopy /y /d &quot;$(ProjectDir)..\$(ProjectName).resources\*&quot; &quot;$(OutDir)\$(ProjectName).resources&quot;&#x0D;&#x0A;REM mkdir 2&gt;NUL &quot;$(OutDir)\WebKit.resources\en.lproj&quot;&#x0D;&#x0A;REM xcopy /y /d &quot;$(ProjectDir)..\..\English.lproj\Localizable.strings&quot; &quot;$(OutDir)\WebKit.resources\en.lproj\&quot;&#x0D;&#x0A;&#x0D;&#x0A;if exist &quot;$(WebKitOutputDir)\buildfailed&quot; del &quot;$(WebKitOutputDir)\buildfailed&quot;&#x0D;&#x0A;"
+				CommandLine="if exist &quot;$(WebKitOutputDir)\buildfailed&quot; del &quot;$(WebKitOutputDir)\buildfailed&quot;&#x0D;&#x0A;"
 			/>
 		</Configuration>
 		<Configuration
@@ -135,10 +135,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="delayimp.lib kernel32.lib user32.lib gdi32.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib usp10.lib comctl32.lib version.lib shlwapi.lib libxml2$(LibraryConfigSuffix).lib libxslt$(LibraryConfigSuffix).lib icuin$(LibraryConfigSuffix).lib icuuc$(LibraryConfigSuffix).lib SQLite3$(LibraryConfigSuffix).lib pthreadVC2$(LibraryConfigSuffix).lib CoreFoundation$(LibraryConfigSuffix).lib JavaScriptCore$(WebKitDLLConfigSuffix).lib CFNetwork$(LibraryConfigSuffix).lib CoreGraphics$(LibraryConfigSuffix).lib WebCore$(WebKitConfigSuffix).lib WebKitSystemInterface$(WebKitConfigSuffix).lib msimg32.lib QTMovieWin$(WebKitConfigSuffix).lib crypt32.lib iphlpapi.lib winmm.lib rpcrt4.lib comsuppw.lib"
+				AdditionalDependencies="delayimp.lib kernel32.lib user32.lib gdi32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib usp10.lib comctl32.lib version.lib shlwapi.lib libxml2$(LibraryConfigSuffix).lib libxslt$(LibraryConfigSuffix).lib icuin$(LibraryConfigSuffix).lib icuuc$(LibraryConfigSuffix).lib SQLite3$(LibraryConfigSuffix).lib pthreadVC2$(LibraryConfigSuffix).lib CoreFoundation$(LibraryConfigSuffix).lib JavaScriptCore$(WebKitDLLConfigSuffix).lib CFNetwork$(LibraryConfigSuffix).lib CoreGraphics$(LibraryConfigSuffix).lib WebCore$(WebKitConfigSuffix).lib WebKitSystemInterface$(WebKitConfigSuffix).lib msimg32.lib QTMovieWin$(WebKitConfigSuffix).lib crypt32.lib iphlpapi.lib winmm.lib comsuppw.lib"
 				OutputFile="$(OutDir)\$(ProjectName)$(WebKitDLLConfigSuffix).dll"
 				AdditionalLibraryDirectories="$(DXSDK_DIR)\Lib\x86"
-				DelayLoadDLLs="comdlg32.dll;usp10.dll;comctl32.dll;version.dll;libxslt$(LibraryConfigSuffix).dll;SQLite3$(LibraryConfigSuffix).dll;msimg32.dll;QTMovieWin$(WebKitConfigSuffix).dll;iphlpapi.dll;rpcrt4.dll"
+				DelayLoadDLLs="usp10.dll;comctl32.dll;version.dll;libxslt$(LibraryConfigSuffix).dll;SQLite3$(LibraryConfigSuffix).dll;msimg32.dll;QTMovieWin$(WebKitConfigSuffix).dll;iphlpapi.dll"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -163,7 +163,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\include\WebKit2&quot;&#x0D;&#x0A;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\WebLocalizableStrings.h&quot; &quot;$(WebKitOutputDir)\include\WebKit&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\WebKitGraphics.h&quot; &quot;$(WebKitOutputDir)\include\WebKit&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\WebKitCOMAPI.h&quot; &quot;$(WebKitOutputDir)\include\WebKit&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\WebPreferenceKeysPrivate.h&quot; &quot;$(WebKitOutputDir)\include\WebKit&quot;&#x0D;&#x0A;&#x0D;&#x0A;xcopy /y /d &quot;$(WebKitOutputDir)\include\WebCore\npfunctions.h&quot; &quot;$(WebKitOutputDir)\include\WebKit&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(WebKitOutputDir)\include\WebCore\npapi.h&quot; &quot;$(WebKitOutputDir)\include\WebKit&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(WebKitOutputDir)\include\WebCore\npruntime.h&quot; &quot;$(WebKitOutputDir)\include\WebKit&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(WebKitOutputDir)\include\WebCore\npruntime_internal.h&quot; &quot;$(WebKitOutputDir)\include\WebKit&quot;&#x0D;&#x0A;&#x0D;&#x0A;mkdir 2&gt;NUL &quot;$(OutDir)\WebKit.resources&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)..\$(ProjectName).resources\*&quot; &quot;$(OutDir)\$(ProjectName).resources&quot;&#x0D;&#x0A;mkdir 2&gt;NUL &quot;$(OutDir)\WebKit.resources\en.lproj&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)..\..\English.lproj\Localizable.strings&quot; &quot;$(OutDir)\WebKit.resources\en.lproj\&quot;&#x0D;&#x0A;&#x0D;&#x0A;if exist &quot;$(WebKitOutputDir)\buildfailed&quot; del &quot;$(WebKitOutputDir)\buildfailed&quot;&#x0D;&#x0A;"
+				CommandLine="if exist &quot;$(WebKitOutputDir)\buildfailed&quot; del &quot;$(WebKitOutputDir)\buildfailed&quot;&#x0D;&#x0A;"
 			/>
 		</Configuration>
 		<Configuration
@@ -211,10 +211,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="delayimp.lib kernel32.lib user32.lib gdi32.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib usp10.lib comctl32.lib version.lib shlwapi.lib libxml2$(LibraryConfigSuffix).lib libxslt$(LibraryConfigSuffix).lib icuin$(LibraryConfigSuffix).lib icuuc$(LibraryConfigSuffix).lib SQLite3$(LibraryConfigSuffix).lib pthreadVC2$(LibraryConfigSuffix).lib CoreFoundation$(LibraryConfigSuffix).lib JavaScriptCore$(WebKitDLLConfigSuffix).lib CFNetwork$(LibraryConfigSuffix).lib CoreGraphics$(LibraryConfigSuffix).lib WebCore$(WebKitConfigSuffix).lib WebKitSystemInterface$(WebKitConfigSuffix).lib msimg32.lib QTMovieWin$(WebKitConfigSuffix).lib crypt32.lib iphlpapi.lib winmm.lib rpcrt4.lib comsuppw.lib"
+				AdditionalDependencies="delayimp.lib kernel32.lib user32.lib gdi32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib usp10.lib comctl32.lib version.lib shlwapi.lib libxml2$(LibraryConfigSuffix).lib libxslt$(LibraryConfigSuffix).lib icuin$(LibraryConfigSuffix).lib icuuc$(LibraryConfigSuffix).lib SQLite3$(LibraryConfigSuffix).lib pthreadVC2$(LibraryConfigSuffix).lib CoreFoundation$(LibraryConfigSuffix).lib JavaScriptCore$(WebKitDLLConfigSuffix).lib CFNetwork$(LibraryConfigSuffix).lib CoreGraphics$(LibraryConfigSuffix).lib WebCore$(WebKitConfigSuffix).lib WebKitSystemInterface$(WebKitConfigSuffix).lib msimg32.lib QTMovieWin$(WebKitConfigSuffix).lib crypt32.lib iphlpapi.lib winmm.lib comsuppw.lib"
 				OutputFile="$(OutDir)\$(ProjectName)$(WebKitDLLConfigSuffix).dll"
 				AdditionalLibraryDirectories="$(DXSDK_DIR)\Lib\x86"
-				DelayLoadDLLs="comdlg32.dll;usp10.dll;comctl32.dll;version.dll;libxslt$(LibraryConfigSuffix).dll;SQLite3$(LibraryConfigSuffix).dll;msimg32.dll;QTMovieWin$(WebKitConfigSuffix).dll;iphlpapi.dll;rpcrt4.dll"
+				DelayLoadDLLs="usp10.dll;comctl32.dll;version.dll;libxslt$(LibraryConfigSuffix).dll;SQLite3$(LibraryConfigSuffix).dll;msimg32.dll;QTMovieWin$(WebKitConfigSuffix).dll;iphlpapi.dll"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -239,7 +239,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\include\WebKit&quot;&#x0D;&#x0A;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\WebLocalizableStrings.h&quot; &quot;$(WebKitOutputDir)\include\WebKit&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\WebKitGraphics.h&quot; &quot;$(WebKitOutputDir)\include\WebKit&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\WebKitCOMAPI.h&quot; &quot;$(WebKitOutputDir)\include\WebKit&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\WebPreferenceKeysPrivate.h&quot; &quot;$(WebKitOutputDir)\include\WebKit&quot;&#x0D;&#x0A;&#x0D;&#x0A;xcopy /y /d &quot;$(WebKitOutputDir)\include\WebCore\npfunctions.h&quot; &quot;$(WebKitOutputDir)\include\WebKit&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(WebKitOutputDir)\include\WebCore\npapi.h&quot; &quot;$(WebKitOutputDir)\include\WebKit&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(WebKitOutputDir)\include\WebCore\npruntime.h&quot; &quot;$(WebKitOutputDir)\include\WebKit&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(WebKitOutputDir)\include\WebCore\npruntime_internal.h&quot; &quot;$(WebKitOutputDir)\include\WebKit&quot;&#x0D;&#x0A;&#x0D;&#x0A;mkdir 2&gt;NUL &quot;$(OutDir)\WebKit.resources&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)..\$(ProjectName).resources\*&quot; &quot;$(OutDir)\$(ProjectName).resources&quot;&#x0D;&#x0A;mkdir 2&gt;NUL &quot;$(OutDir)\WebKit.resources\en.lproj&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)..\..\English.lproj\Localizable.strings&quot; &quot;$(OutDir)\WebKit.resources\en.lproj\&quot;&#x0D;&#x0A;&#x0D;&#x0A;if exist &quot;$(WebKitOutputDir)\buildfailed&quot; del &quot;$(WebKitOutputDir)\buildfailed&quot;&#x0D;&#x0A;"
+				CommandLine="if exist &quot;$(WebKitOutputDir)\buildfailed&quot; del &quot;$(WebKitOutputDir)\buildfailed&quot;&#x0D;&#x0A;"
 			/>
 		</Configuration>
 		<Configuration
@@ -286,10 +286,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="delayimp.lib kernel32.lib user32.lib gdi32.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib usp10.lib comctl32.lib version.lib shlwapi.lib libxml2$(LibraryConfigSuffix).lib libxslt$(LibraryConfigSuffix).lib icuin$(LibraryConfigSuffix).lib icuuc$(LibraryConfigSuffix).lib SQLite3$(LibraryConfigSuffix).lib pthreadVC2$(LibraryConfigSuffix).lib CFLite_Debug.lib JavaScriptCore$(WebKitConfigSuffix).lib WebCore$(WebKitConfigSuffix).lib msimg32.lib crypt32.lib iphlpapi.lib winmm.lib rpcrt4.lib comsuppw.lib"
+				AdditionalDependencies="delayimp.lib kernel32.lib user32.lib gdi32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib usp10.lib comctl32.lib version.lib shlwapi.lib libxml2$(LibraryConfigSuffix).lib libxslt$(LibraryConfigSuffix).lib icuin$(LibraryConfigSuffix).lib icuuc$(LibraryConfigSuffix).lib SQLite3$(LibraryConfigSuffix).lib pthreadVC2$(LibraryConfigSuffix).lib CFLite_Debug.lib JavaScriptCore$(WebKitConfigSuffix).lib WebCore$(WebKitConfigSuffix).lib msimg32.lib crypt32.lib iphlpapi.lib winmm.lib comsuppw.lib"
 				OutputFile="$(OutDir)\$(ProjectName)$(WebKitDLLConfigSuffix).dll"
 				AdditionalLibraryDirectories=""
-				DelayLoadDLLs="comdlg32.dll;usp10.dll;comctl32.dll;version.dll;libxslt$(LibraryConfigSuffix).dll;SQLite3$(LibraryConfigSuffix).dll;msimg32.dll;iphlpapi.dll;rpcrt4.dll"
+				DelayLoadDLLs="usp10.dll;comctl32.dll;version.dll;libxslt$(LibraryConfigSuffix).dll;SQLite3$(LibraryConfigSuffix).dll;msimg32.dll;iphlpapi.dll"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -315,7 +315,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\include\WebKit&quot;&#x0D;&#x0A;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\WebLocalizableStrings.h&quot; &quot;$(WebKitOutputDir)\include\WebKit&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\WebKitGraphics.h&quot; &quot;$(WebKitOutputDir)\include\WebKit&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\WebKitCOMAPI.h&quot; &quot;$(WebKitOutputDir)\include\WebKit&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\WebPreferenceKeysPrivate.h&quot; &quot;$(WebKitOutputDir)\include\WebKit&quot;&#x0D;&#x0A;&#x0D;&#x0A;xcopy /y /d &quot;$(WebKitOutputDir)\include\WebCore\npfunctions.h&quot; &quot;$(WebKitOutputDir)\include\WebKit&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(WebKitOutputDir)\include\WebCore\npapi.h&quot; &quot;$(WebKitOutputDir)\include\WebKit&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(WebKitOutputDir)\include\WebCore\npruntime.h&quot; &quot;$(WebKitOutputDir)\include\WebKit&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(WebKitOutputDir)\include\WebCore\npruntime_internal.h&quot; &quot;$(WebKitOutputDir)\include\WebKit&quot;&#x0D;&#x0A;&#x0D;&#x0A;mkdir 2&gt;NUL &quot;$(OutDir)\WebKit.resources&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)..\$(ProjectName).resources\*&quot; &quot;$(OutDir)\$(ProjectName).resources&quot;&#x0D;&#x0A;mkdir 2&gt;NUL &quot;$(OutDir)\WebKit.resources\en.lproj&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)..\..\English.lproj\Localizable.strings&quot; &quot;$(OutDir)\WebKit.resources\en.lproj\&quot;&#x0D;&#x0A;&#x0D;&#x0A;if exist &quot;$(WebKitOutputDir)\buildfailed&quot; del &quot;$(WebKitOutputDir)\buildfailed&quot;&#x0D;&#x0A;"
+				CommandLine="if exist &quot;$(WebKitOutputDir)\buildfailed&quot; del &quot;$(WebKitOutputDir)\buildfailed&quot;&#x0D;&#x0A;"
 			/>
 		</Configuration>
 		<Configuration
@@ -365,10 +365,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="delayimp.lib kernel32.lib user32.lib gdi32.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib usp10.lib comctl32.lib version.lib shlwapi.lib libxml2$(LibraryConfigSuffix).lib libxslt$(LibraryConfigSuffix).lib icuin$(LibraryConfigSuffix).lib icuuc$(LibraryConfigSuffix).lib SQLite3$(LibraryConfigSuffix).lib pthreadVC2$(LibraryConfigSuffix).lib CFLite.lib JavaScriptCore$(WebKitDLLConfigSuffix).lib WebCore$(WebKitConfigSuffix).lib msimg32.lib crypt32.lib iphlpapi.lib winmm.lib rpcrt4.lib comsuppw.lib"
+				AdditionalDependencies="delayimp.lib kernel32.lib user32.lib gdi32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib usp10.lib comctl32.lib version.lib shlwapi.lib libxml2$(LibraryConfigSuffix).lib libxslt$(LibraryConfigSuffix).lib icuin$(LibraryConfigSuffix).lib icuuc$(LibraryConfigSuffix).lib SQLite3$(LibraryConfigSuffix).lib pthreadVC2$(LibraryConfigSuffix).lib CFLite.lib JavaScriptCore$(WebKitDLLConfigSuffix).lib WebCore$(WebKitConfigSuffix).lib msimg32.lib crypt32.lib iphlpapi.lib winmm.lib comsuppw.lib"
 				OutputFile="$(OutDir)\$(ProjectName)$(WebKitDLLConfigSuffix).dll"
 				AdditionalLibraryDirectories=""
-				DelayLoadDLLs="comdlg32.dll;usp10.dll;comctl32.dll;version.dll;libxslt$(LibraryConfigSuffix).dll;SQLite3$(LibraryConfigSuffix).dll;msimg32.dll;iphlpapi.dll;rpcrt4.dll"
+				DelayLoadDLLs="usp10.dll;comctl32.dll;version.dll;libxslt$(LibraryConfigSuffix).dll;SQLite3$(LibraryConfigSuffix).dll;msimg32.dll;iphlpapi.dll"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -393,7 +393,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\include\WebKit&quot;&#x0D;&#x0A;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\WebLocalizableStrings.h&quot; &quot;$(WebKitOutputDir)\include\WebKit&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\WebKitGraphics.h&quot; &quot;$(WebKitOutputDir)\include\WebKit&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\WebKitCOMAPI.h&quot; &quot;$(WebKitOutputDir)\include\WebKit&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\WebPreferenceKeysPrivate.h&quot; &quot;$(WebKitOutputDir)\include\WebKit&quot;&#x0D;&#x0A;&#x0D;&#x0A;xcopy /y /d &quot;$(WebKitOutputDir)\include\WebCore\npfunctions.h&quot; &quot;$(WebKitOutputDir)\include\WebKit&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(WebKitOutputDir)\include\WebCore\npapi.h&quot; &quot;$(WebKitOutputDir)\include\WebKit&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(WebKitOutputDir)\include\WebCore\npruntime.h&quot; &quot;$(WebKitOutputDir)\include\WebKit&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(WebKitOutputDir)\include\WebCore\npruntime_internal.h&quot; &quot;$(WebKitOutputDir)\include\WebKit&quot;&#x0D;&#x0A;&#x0D;&#x0A;mkdir 2&gt;NUL &quot;$(OutDir)\WebKit.resources&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)..\$(ProjectName).resources\*&quot; &quot;$(OutDir)\$(ProjectName).resources&quot;&#x0D;&#x0A;mkdir 2&gt;NUL &quot;$(OutDir)\WebKit.resources\en.lproj&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)..\..\English.lproj\Localizable.strings&quot; &quot;$(OutDir)\WebKit.resources\en.lproj\&quot;&#x0D;&#x0A;&#x0D;&#x0A;if exist &quot;$(WebKitOutputDir)\buildfailed&quot; del &quot;$(WebKitOutputDir)\buildfailed&quot;&#x0D;&#x0A;"
+				CommandLine="if exist &quot;$(WebKitOutputDir)\buildfailed&quot; del &quot;$(WebKitOutputDir)\buildfailed&quot;&#x0D;&#x0A;"
 			/>
 		</Configuration>
 		<Configuration
@@ -441,10 +441,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="delayimp.lib kernel32.lib user32.lib gdi32.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib usp10.lib comctl32.lib version.lib shlwapi.lib libxml2$(LibraryConfigSuffix).lib libxslt$(LibraryConfigSuffix).lib icuin$(LibraryConfigSuffix).lib icuuc$(LibraryConfigSuffix).lib SQLite3$(LibraryConfigSuffix).lib pthreadVC2$(LibraryConfigSuffix).lib CoreFoundation$(LibraryConfigSuffix).lib JavaScriptCore$(WebKitDLLConfigSuffix).lib CFNetwork$(LibraryConfigSuffix).lib CoreGraphics$(LibraryConfigSuffix).lib WebCore$(WebKitConfigSuffix).lib WebKitSystemInterface$(WebKitConfigSuffix).lib msimg32.lib QTMovieWin$(WebKitConfigSuffix).lib crypt32.lib iphlpapi.lib winmm.lib rpcrt4.lib comsuppw.lib"
+				AdditionalDependencies="delayimp.lib kernel32.lib user32.lib gdi32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib usp10.lib comctl32.lib version.lib shlwapi.lib libxml2$(LibraryConfigSuffix).lib libxslt$(LibraryConfigSuffix).lib icuin$(LibraryConfigSuffix).lib icuuc$(LibraryConfigSuffix).lib SQLite3$(LibraryConfigSuffix).lib pthreadVC2$(LibraryConfigSuffix).lib CoreFoundation$(LibraryConfigSuffix).lib JavaScriptCore$(WebKitDLLConfigSuffix).lib CFNetwork$(LibraryConfigSuffix).lib CoreGraphics$(LibraryConfigSuffix).lib WebCore$(WebKitConfigSuffix).lib WebKitSystemInterface$(WebKitConfigSuffix).lib msimg32.lib QTMovieWin$(WebKitConfigSuffix).lib crypt32.lib iphlpapi.lib winmm.lib comsuppw.lib"
 				OutputFile="$(OutDir)\$(ProjectName)$(WebKitDLLConfigSuffix).dll"
 				AdditionalLibraryDirectories="$(DXSDK_DIR)\Lib\x86"
-				DelayLoadDLLs="comdlg32.dll;usp10.dll;comctl32.dll;version.dll;libxslt$(LibraryConfigSuffix).dll;SQLite3$(LibraryConfigSuffix).dll;msimg32.dll;QTMovieWin$(WebKitConfigSuffix).dll;iphlpapi.dll;rpcrt4.dll"
+				DelayLoadDLLs="usp10.dll;comctl32.dll;version.dll;libxslt$(LibraryConfigSuffix).dll;SQLite3$(LibraryConfigSuffix).dll;msimg32.dll;QTMovieWin$(WebKitConfigSuffix).dll;iphlpapi.dll"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -469,7 +469,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\include\WebKit&quot;&#x0D;&#x0A;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\WebLocalizableStrings.h&quot; &quot;$(WebKitOutputDir)\include\WebKit&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\WebKitGraphics.h&quot; &quot;$(WebKitOutputDir)\include\WebKit&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\WebKitCOMAPI.h&quot; &quot;$(WebKitOutputDir)\include\WebKit&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\WebPreferenceKeysPrivate.h&quot; &quot;$(WebKitOutputDir)\include\WebKit&quot;&#x0D;&#x0A;&#x0D;&#x0A;xcopy /y /d &quot;$(WebKitOutputDir)\include\WebCore\npfunctions.h&quot; &quot;$(WebKitOutputDir)\include\WebKit&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(WebKitOutputDir)\include\WebCore\npapi.h&quot; &quot;$(WebKitOutputDir)\include\WebKit&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(WebKitOutputDir)\include\WebCore\npruntime.h&quot; &quot;$(WebKitOutputDir)\include\WebKit&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(WebKitOutputDir)\include\WebCore\npruntime_internal.h&quot; &quot;$(WebKitOutputDir)\include\WebKit&quot;&#x0D;&#x0A;&#x0D;&#x0A;mkdir 2&gt;NUL &quot;$(OutDir)\WebKit.resources&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)..\$(ProjectName).resources\*&quot; &quot;$(OutDir)\$(ProjectName).resources&quot;&#x0D;&#x0A;mkdir 2&gt;NUL &quot;$(OutDir)\WebKit.resources\en.lproj&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)..\..\English.lproj\Localizable.strings&quot; &quot;$(OutDir)\WebKit.resources\en.lproj\&quot;&#x0D;&#x0A;&#x0D;&#x0A;if exist &quot;$(WebKitOutputDir)\buildfailed&quot; del &quot;$(WebKitOutputDir)\buildfailed&quot;&#x0D;&#x0A;"
+				CommandLine="if exist &quot;$(WebKitOutputDir)\buildfailed&quot; del &quot;$(WebKitOutputDir)\buildfailed&quot;&#x0D;&#x0A;"
 			/>
 		</Configuration>
 	</Configurations>
@@ -978,10 +978,6 @@
 						>
 					</File>
 					<File
-						RelativePath="..\UIProcess\API\C\WKBase.h"
-						>
-					</File>
-					<File
 						RelativePath="..\UIProcess\API\C\WKBackForwardList.cpp"
 						>
 					</File>
@@ -995,6 +991,10 @@
 					</File>
 					<File
 						RelativePath="..\UIProcess\API\C\WKBackForwardListItem.h"
+						>
+					</File>
+					<File
+						RelativePath="..\UIProcess\API\C\WKBase.h"
 						>
 					</File>
 					<File

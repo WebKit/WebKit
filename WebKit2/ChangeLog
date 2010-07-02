@@ -1,5 +1,13 @@
 2010-07-01  Steve Falkenburg  <sfalken@apple.com>
 
+        Even more Windows build fixing.
+        Removed bogus post-build event commands.
+        Removed unnecessary link libraries.
+
+        * win/WebKit2.vcproj:
+
+2010-07-01  Steve Falkenburg  <sfalken@apple.com>
+
         Fix Windows while not breaking Qt (didn't realize this was building for Qt).
 
         * WebProcess/WebProcess.cpp:
