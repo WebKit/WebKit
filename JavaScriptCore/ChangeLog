@@ -1,3 +1,24 @@
+2010-07-02  Renata Hodovan  <reni@inf.u-szeged.hu>
+
+        Reviewed by Oliver Hunt.
+        
+        [ Updated after rollout. ]
+
+        Merged RegExp constructor and RegExp::create methods.
+        Both functions are called with three parameters and check whether 
+        flags (the third param) is given or not.
+        Avoid extra hash lookups in RegExpCache::create by passing a pre-computed
+        iterator parameter.
+        https://bugs.webkit.org/show_bug.cgi?id=41055
+
+        * runtime/RegExp.cpp:
+        (JSC::RegExp::RegExp):
+        * runtime/RegExp.h:
+        * runtime/RegExpCache.cpp:
+        (JSC::RegExpCache::lookupOrCreate):
+        (JSC::RegExpCache::create):
+        * runtime/RegExpCache.h:
+
 2010-07-02  Martin Robinson  <mrobinson@igalia.com>
 
         Unreviewed. Build fix for GTK+.
