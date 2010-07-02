@@ -495,8 +495,11 @@ void ClipboardChromium::writeURL(const KURL& url, const String& title, Frame*)
 {
     if (!m_dataObject)
         return;
+    ASSERT(!url.isEmpty());
     m_dataObject->url = url;
     m_dataObject->urlTitle = title;
+    m_dataObject->uriList.clear();
+    m_dataObject->uriList.append(url);
 
     // The URL can also be used as plain text.
     m_dataObject->plainText = url.string();
