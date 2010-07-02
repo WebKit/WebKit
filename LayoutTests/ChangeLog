@@ -1,3 +1,13 @@
+2010-06-24  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        REGRESSION: Enter does not trigger submit of forms when focus is on select.
+        https://bugs.webkit.org/show_bug.cgi?id=39532
+
+        * fast/forms/implicit-submission-expected.txt: Updated.
+        * fast/forms/implicit-submission.html: Added more test coverage for selects.
+
 2010-07-02  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Darin Fisher.

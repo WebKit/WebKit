@@ -1,3 +1,23 @@
+2010-06-24  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        REGRESSION: Enter does not trigger submit of forms when focus is on select.
+        https://bugs.webkit.org/show_bug.cgi?id=39532
+
+        Restore behavior where hitting "Enter" on a select element attempts to submit
+        form implicitly.
+
+        * dom/SelectElement.cpp:
+        (WebCore::SelectElement::menuListDefaultEventHandler): Added htmlForm argument,
+            and attempting to submit implicitly.
+        (WebCore::SelectElement::listBoxDefaultEventHandler): Ditto.
+        (WebCore::SelectElement::defaultEventHandler): Plumbed through htmlForm argument.
+        * dom/SelectElement.h: Added htmlForm argument to method declaration.
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::defaultEventHandler): Changed to provide submitting form
+            as the argument.
+
 2010-07-02  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Darin Fisher.

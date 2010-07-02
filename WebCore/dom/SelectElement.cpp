@@ -534,7 +534,7 @@ static int nextValidIndex(const Vector<Element*>& listItems, int listIndex, Skip
 }
 #endif
 
-void SelectElement::menuListDefaultEventHandler(SelectElementData& data, Element* element, Event* event)
+void SelectElement::menuListDefaultEventHandler(SelectElementData& data, Element* element, Event* event, HTMLFormElement* htmlForm)
 {
     if (event->type() == eventNames().keydownEvent) {
         if (!element->renderer() || !event->isKeyboardEvent())
@@ -613,6 +613,8 @@ void SelectElement::menuListDefaultEventHandler(SelectElementData& data, Element
                 menuList->showPopup();
             handled = true;
         } else if (keyCode == '\r') {
+            if (htmlForm)
+                htmlForm->submitImplicitly(event, false);
             menuListOnChange(data, element);
             handled = true;
         }
@@ -692,7 +694,7 @@ void SelectElement::updateSelectedState(SelectElementData& data, Element* elemen
     updateListBoxSelection(data, element, !multiSelect);
 }
 
-void SelectElement::listBoxDefaultEventHandler(SelectElementData& data, Element* element, Event* event)
+void SelectElement::listBoxDefaultEventHandler(SelectElementData& data, Element* element, Event* event, HTMLFormElement* htmlForm)
 {
     const Vector<Element*>& listItems = data.listItems(element);
 
@@ -758,18 +760,29 @@ void SelectElement::listBoxDefaultEventHandler(SelectElementData& data, Element*
             listBoxOnChange(data, element);
             event->setDefaultHandled();
         }
+    } else if (event->type() == eventNames().keypressEvent) {
+        if (!event->isKeyboardEvent())
+            return;
+        int keyCode = static_cast<KeyboardEvent*>(event)->keyCode();
+
+        if (keyCode == '\r') {
+            if (htmlForm)
+                htmlForm->submitImplicitly(event, false);
+            event->setDefaultHandled();
+            return;
+        }
     }
 }
 
-void SelectElement::defaultEventHandler(SelectElementData& data, Element* element, Event* event)
+void SelectElement::defaultEventHandler(SelectElementData& data, Element* element, Event* event, HTMLFormElement* htmlForm)
 {
     if (!element->renderer())
         return;
 
     if (data.usesMenuList())
-        menuListDefaultEventHandler(data, element, event);
+        menuListDefaultEventHandler(data, element, event, htmlForm);
     else 
-        listBoxDefaultEventHandler(data, element, event);
+        listBoxDefaultEventHandler(data, element, event, htmlForm);
 
     if (event->defaultHandled())
         return;
