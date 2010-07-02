@@ -5828,6 +5828,3 @@ editing/pasteboard/5761530-1.html
 fast/forms/input-appearance-numberandspeech.html
 fast/forms/input-appearance-searchandspeech.html
 fast/forms/input-appearance-speechbutton.html
-
-# GTK's select has a platform-specific behavior (open on Enter)
-fast/forms/implicit-submission.html

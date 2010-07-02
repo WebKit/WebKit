@@ -5420,6 +5420,3 @@ fast/text/bidi-explicit-embedding-past-end.html
 fast/forms/input-appearance-numberandspeech.html
 fast/forms/input-appearance-searchandspeech.html
 fast/forms/input-appearance-speechbutton.html
-
-# Qt's select has a platform-specific behavior, which prevents it from passing this test.
-fast/forms/implicit-submission.html
