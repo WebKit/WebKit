@@ -26,6 +26,7 @@
 #import "RunLoop.h"
 #import "WebProcess.h"
 #import "WebSystemInterface.h"
+#import <objc/objc-auto.h>
 #import <runtime/InitializeThreading.h>
 #import <servers/bootstrap.h>
 #import <signal.h>
@@ -41,6 +42,8 @@ using namespace WebKit;
 
 int main(int argc, char** argv)
 {
+    ASSERT(!objc_collectingEnabled());
+
     mach_port_t serverPort;
     kern_return_t kr = bootstrap_look_up2(bootstrap_port, "com.apple.WebKit.WebProcess", &serverPort, getppid(), /* BOOTSTRAP_PER_PID_SERVICE */ 1);
     if (kr) {

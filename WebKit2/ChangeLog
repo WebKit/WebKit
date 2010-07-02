@@ -2,6 +2,16 @@
 
         Reviewed by Anders Carlsson.
 
+        Turn off the Objective-C garbage collection for the WebProcess.
+
+        * Configurations/WebProcess.xcconfig:
+        * WebProcess/Launching/mac/WebProcessMain.mm:
+        (main): Assert that GC is off.
+
+2010-07-02  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
         There is no longer a reason to check that the process is valid when posting
         a message to the bundle, the process code will take care of that for us.
 
