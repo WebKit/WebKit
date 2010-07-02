@@ -364,7 +364,7 @@ void HTMLTreeBuilder::processStartTag(AtomicHTMLToken& token)
             parseError(token);
             ASSERT(m_headElement);
             m_openElements.pushHTMLHeadElement(m_headElement);
-            notImplemented();
+            processStartTagForInHead(token);
             m_openElements.removeHTMLHeadElement(m_headElement.get());
             return;
         }

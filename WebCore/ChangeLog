@@ -1,3 +1,15 @@
+2010-07-02  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Handle <base> and friends in AfterHeadMode
+        https://bugs.webkit.org/show_bug.cgi?id=41502
+
+        Implement notImplemented() per spec.
+
+        * html/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::processStartTag):
+
 2010-07-01  Oliver Hunt  <oliver@apple.com>
 
         Build fix

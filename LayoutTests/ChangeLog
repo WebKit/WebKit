@@ -1,3 +1,14 @@
+2010-07-02  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Handle <base> and friends in AfterHeadMode
+        https://bugs.webkit.org/show_bug.cgi?id=41502
+
+        See test progression.  Fun game.
+
+        * html5lib/runner-expected-html5.txt:
+
 2010-07-01  Andreas Kling  <andreas.kling@nokia.com>
 
         Reviewed by Tor Arne Vestbø.

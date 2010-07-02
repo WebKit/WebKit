@@ -43,7 +43,6 @@ resources/tests1.dat:
 80
 81
 82
-85
 86
 89
 90
@@ -1101,20 +1100,6 @@ Expected:
 |       <code>
 |         <strike>
 
-Test 85 of 113 in resources/tests1.dat failed. Input:
-<head><meta></head><link>
-Got:
-| <html>
-|   <head>
-|     <meta>
-|   <body>
-Expected:
-| <html>
-|   <head>
-|     <meta>
-|     <link>
-|   <body>
-
 Test 86 of 113 in resources/tests1.dat failed. Input:
 <table><tr><tr><td><td><span><th><span>X</table>
 Got:
@@ -2032,9 +2017,6 @@ Expected:
 |           <td>
 |             <p>
 resources/tests3.dat:
-1
-2
-3
 16
 17
 18
@@ -2042,47 +2024,6 @@ resources/tests3.dat:
 20
 21
 22
-
-Test 1 of 23 in resources/tests3.dat failed. Input:
-<head></head><style></style>
-Got:
-| <html>
-|   <head>
-|   <body>
-Expected:
-| <html>
-|   <head>
-|     <style>
-|   <body>
-
-Test 2 of 23 in resources/tests3.dat failed. Input:
-<head></head><script></script>
-Got:
-| <html>
-|   <head>
-|   <body>
-Expected:
-| <html>
-|   <head>
-|     <script>
-|   <body>
-
-Test 3 of 23 in resources/tests3.dat failed. Input:
-<head></head><!-- --><style></style><!-- --><script></script>
-Got:
-| <html>
-|   <head>
-|   <!--   -->
-|   <!--   -->
-|   <body>
-Expected:
-| <html>
-|   <head>
-|     <style>
-|     <script>
-|   <!--   -->
-|   <!--   -->
-|   <body>
 
 Test 16 of 23 in resources/tests3.dat failed. Input:
 <!DOCTYPE html><textarea>
@@ -2876,8 +2817,6 @@ Expected:
 |   <frameset>
 resources/tests7.dat:
 2
-3
-4
 5
 6
 7
@@ -2917,38 +2856,6 @@ Expected:
 |     <title>
 |       "X"
 |     <table>
-
-Test 3 of 30 in resources/tests7.dat failed. Input:
-<!doctype html><head></head><title>X</title>
-Got:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     "X"
-Expected:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|     <title>
-|       "X"
-|   <body>
-
-Test 4 of 30 in resources/tests7.dat failed. Input:
-<!doctype html></head><title>X</title>
-Got:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     "X"
-Expected:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|     <title>
-|       "X"
-|   <body>
 
 Test 5 of 30 in resources/tests7.dat failed. Input:
 <!doctype html><table><meta></table>
