@@ -26,7 +26,7 @@
 #include "WebProcess.h"
 
 #include "InjectedBundle.h"
-#if PLATFORM(MAC)
+#if !PLATFORM(WIN)
 #include "MachPort.h"
 #endif
 #include "RunLoop.h"

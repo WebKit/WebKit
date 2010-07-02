@@ -1,5 +1,11 @@
 2010-07-01  Steve Falkenburg  <sfalken@apple.com>
 
+        Fix Windows while not breaking Qt (didn't realize this was building for Qt).
+
+        * WebProcess/WebProcess.cpp:
+
+2010-07-01  Steve Falkenburg  <sfalken@apple.com>
+
         Windows build fix.
 
         * win/WebKit2Generated.make:
