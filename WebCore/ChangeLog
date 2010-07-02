@@ -2,6 +2,26 @@
 
         Reviewed by Eric Seidel.
 
+        Implement AfterBodyMode for HTML5 tree builder
+        https://bugs.webkit.org/show_bug.cgi?id=41500
+
+        In the coarse of implementing this state, I ran into an ASSERT in how
+        </br> tags where handled, which I fixed.  Technically, that could be a
+        separate patch, but it seemed harmless to include it here (with tests).
+
+        * html/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::processStartTag):
+        (WebCore::HTMLTreeBuilder::processEndTag):
+        (WebCore::HTMLTreeBuilder::processComment):
+        (WebCore::HTMLTreeBuilder::processCharacter):
+        (WebCore::HTMLTreeBuilder::processEndOfFile):
+        (WebCore::HTMLTreeBuilder::insertCommentOnHTMLHtmlElement):
+        * html/HTMLTreeBuilder.h:
+
+2010-07-02  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         Handle <base> and friends in AfterHeadMode
         https://bugs.webkit.org/show_bug.cgi?id=41502
 

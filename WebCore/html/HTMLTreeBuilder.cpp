@@ -564,6 +564,15 @@ void HTMLTreeBuilder::processStartTag(AtomicHTMLToken& token)
         reconstructTheActiveFormattingElements();
         insertElement(token);
         break;
+    case AfterBodyMode:
+        ASSERT(insertionMode() == AfterBodyMode);
+        if (token.name() == htmlTag) {
+            insertHTMLStartTagInBody(token);
+            return;
+        }
+        m_insertionMode = InBodyMode;
+        processStartTag(token);
+        break;
     case InHeadNoscriptMode:
         ASSERT(insertionMode() == InHeadNoscriptMode);
         if (token.name() == htmlTag) {
@@ -749,7 +758,9 @@ void HTMLTreeBuilder::processEndTag(AtomicHTMLToken& token)
         if (token.name() == brTag) {
             parseError(token);
             reconstructTheActiveFormattingElements();
-            insertSelfClosingElement(token);
+            // Notice that we lose the attributes.
+            AtomicHTMLToken startBr(HTMLToken::StartTag, token.name());
+            insertSelfClosingElement(startBr);
             m_framesetOk = false;
             return;
         }
@@ -760,6 +771,19 @@ void HTMLTreeBuilder::processEndTag(AtomicHTMLToken& token)
             return;
         m_openElements.popUntil(token.name());
         m_openElements.pop();
+        break;
+    case AfterBodyMode:
+        ASSERT(insertionMode() == AfterBodyMode);
+        if (token.name() == htmlTag) {
+            if (m_isParsingFragment) {
+                parseError(token);
+                return;
+            }
+            m_insertionMode = AfterAfterBodyMode;
+            return;
+        }
+        m_insertionMode = InBodyMode;
+        processEndTag(token);
         break;
     case InHeadNoscriptMode:
         ASSERT(insertionMode() == InHeadNoscriptMode);
@@ -801,6 +825,10 @@ void HTMLTreeBuilder::processComment(AtomicHTMLToken& token)
         insertCommentOnDocument(token);
         return;
     }
+    if (m_insertionMode == AfterBodyMode) {
+        insertCommentOnHTMLHtmlElement(token);
+        return;
+    }
     insertComment(token);
 }
 
@@ -838,6 +866,10 @@ void HTMLTreeBuilder::processCharacter(AtomicHTMLToken& token)
         notImplemented();
         insertTextNode(token);
         break;
+    case AfterBodyMode:
+        ASSERT(insertionMode() == AfterBodyMode);
+        m_insertionMode = InBodyMode;
+        processCharacter(token);
     case TextMode:
         notImplemented();
         insertTextNode(token);
@@ -877,6 +909,10 @@ void HTMLTreeBuilder::processEndOfFile(AtomicHTMLToken& token)
         // Fall through
     case InBodyMode:
         ASSERT(insertionMode() == InBodyMode);
+        notImplemented();
+        break;
+    case AfterBodyMode:
+        ASSERT(insertionMode() == AfterBodyMode);
         notImplemented();
         break;
     case InHeadNoscriptMode:
@@ -988,6 +1024,12 @@ void HTMLTreeBuilder::insertCommentOnDocument(AtomicHTMLToken& token)
 {
     ASSERT(token.type() == HTMLToken::Comment);
     attach(m_document, Comment::create(m_document, token.comment()));
+}
+
+void HTMLTreeBuilder::insertCommentOnHTMLHtmlElement(AtomicHTMLToken& token)
+{
+    ASSERT(token.type() == HTMLToken::Comment);
+    attach(m_openElements.htmlElement(), Comment::create(m_document, token.comment()));
 }
 
 PassRefPtr<Element> HTMLTreeBuilder::createElementAndAttachToCurrent(AtomicHTMLToken& token)

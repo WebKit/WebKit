@@ -142,6 +142,7 @@ private:
     void insertDoctype(AtomicHTMLToken&);
     void insertComment(AtomicHTMLToken&);
     void insertCommentOnDocument(AtomicHTMLToken&);
+    void insertCommentOnHTMLHtmlElement(AtomicHTMLToken&);
     void insertHTMLHtmlElement(AtomicHTMLToken&);
     void insertHTMLHeadElement(AtomicHTMLToken&);
     void insertHTMLBodyElement(AtomicHTMLToken&);

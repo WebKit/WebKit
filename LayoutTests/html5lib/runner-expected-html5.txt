@@ -46,7 +46,6 @@ resources/tests1.dat:
 86
 89
 90
-92
 93
 94
 95
@@ -367,7 +366,7 @@ Got:
 |           <li>
 |             "do"
 |         "you"
-|         <!-- do -->
+|   <!-- do -->
 Expected:
 | <!DOCTYPE html>
 | <html>
@@ -1156,19 +1155,6 @@ Expected:
 |     <div>
 |       <a>
 
-Test 92 of 113 in resources/tests1.dat failed. Input:
-<head></html><meta><p>
-Got:
-| <html>
-|   <head>
-|   <body>
-Expected:
-| <html>
-|   <head>
-|   <body>
-|     <meta>
-|     <p>
-
 Test 93 of 113 in resources/tests1.dat failed. Input:
 <b><table><td><i></table>
 Got:
@@ -1506,6 +1492,7 @@ Got:
 | <html>
 |   <head>
 |   <body>
+|     <br>
 Expected:
 | <html>
 |   <head>
@@ -1551,10 +1538,8 @@ resources/tests2.dat:
 47
 48
 49
-51
 53
 54
-55
 58
 
 Test 3 of 59 in resources/tests2.dat failed. Input:
@@ -1740,6 +1725,8 @@ Got:
 | <html>
 |   <head>
 |   <body>
+|     "X"
+|     "X"
 |     "X"
 Expected:
 | <!DOCTYPE html>
@@ -1935,22 +1922,6 @@ Expected:
 |     "  "
 |   <body>
 
-Test 51 of 59 in resources/tests2.dat failed. Input:
-<!DOCTYPE html>X</body><html id="x">
-Got:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     "X"
-Expected:
-| <!DOCTYPE html>
-| <html>
-|   id="x"
-|   <head>
-|   <body>
-|     "X"
-
 Test 53 of 59 in resources/tests2.dat failed. Input:
 <!DOCTYPE html>X</html>X
 Got:
@@ -1958,6 +1929,8 @@ Got:
 | <html>
 |   <head>
 |   <body>
+|     "X"
+|     "X"
 |     "X"
 Expected:
 | <!DOCTYPE html>
@@ -1974,29 +1947,14 @@ Got:
 |   <head>
 |   <body>
 |     "X"
+|     " "
+|     " "
 Expected:
 | <!DOCTYPE html>
 | <html>
 |   <head>
 |   <body>
 |     "X "
-
-Test 55 of 59 in resources/tests2.dat failed. Input:
-<!DOCTYPE html>X</html><p>X
-Got:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     "X"
-Expected:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     "X"
-|     <p>
-|       "X"
 
 Test 58 of 59 in resources/tests2.dat failed. Input:
 <!DOCTYPE html><table><tr><td></p></table>
@@ -3802,6 +3760,13 @@ Got:
 | <html>
 |   <head>
 |   <body>
+|     <math>
+|       <mi>
+|         "foo"
+|       <mi>
+|         "bar"
+|       <p>
+|         "baz"
 Expected:
 | <!DOCTYPE html>
 | <html>
@@ -4290,6 +4255,13 @@ Got:
 | <html>
 |   <head>
 |   <body>
+|     <svg>
+|       <g>
+|         "foo"
+|       <g>
+|         "bar"
+|       <p>
+|         "baz"
 Expected:
 | <!DOCTYPE html>
 | <html>
@@ -5439,9 +5411,7 @@ resources/tests14.dat: PASS
 resources/tests15.dat:
 1
 2
-4
 5
-6
 7
 8
 9
@@ -5515,20 +5485,6 @@ Expected:
 |           <p>
 |             "X"
 
-Test 4 of 14 in resources/tests15.dat failed. Input:
-<!doctype html></body><meta>
-Got:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-Expected:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <meta>
-
 Test 5 of 14 in resources/tests15.dat failed. Input:
 <html></html><!-- foo -->
 Got:
@@ -5541,21 +5497,6 @@ Expected:
 |   <head>
 |   <body>
 | <!--  foo  -->
-
-Test 6 of 14 in resources/tests15.dat failed. Input:
-<!doctype html></body><title>X</title>
-Got:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-Expected:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <title>
-|       "X"
 
 Test 7 of 14 in resources/tests15.dat failed. Input:
 <!doctype html><table> X<meta></table>
@@ -5750,7 +5691,7 @@ Expected:
 resources/webkit01.dat:
 17
 
-Test 17 of 19 in resources/webkit01.dat failed. Input:
+Test 17 of 23 in resources/webkit01.dat failed. Input:
 <A>test< /A>
 Got:
 | <html>

@@ -2,6 +2,21 @@
 
         Reviewed by Eric Seidel.
 
+        Implement AfterBodyMode for HTML5 tree builder
+        https://bugs.webkit.org/show_bug.cgi?id=41500
+
+        Update expected results to show test progression.  Also, add some test
+        cases to cover how attributes on </br> tags are handled.
+
+        * html5lib/resources/webkit01.dat:
+        * html5lib/runner-expected-html5.txt:
+        * html5lib/runner-expected.txt:
+        * html5lib/webkit-resumer-expected.txt:
+
+2010-07-02  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         Handle <base> and friends in AfterHeadMode
         https://bugs.webkit.org/show_bug.cgi?id=41502
 

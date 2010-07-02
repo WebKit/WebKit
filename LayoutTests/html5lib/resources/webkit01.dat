@@ -228,3 +228,43 @@ console.log("FOO<span>BAR</span>BAZ");
 |   <body>
 |     foo="bar"
 |     yo="mama"
+
+#data
+<body></br foo="bar"></body>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <br>
+
+#data
+<bdy><br foo="bar"></body>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <bdy>
+|       <br>
+|         foo="bar"
+
+#data
+<body></body></br foo="bar">
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <br>
+
+#data
+<bdy></body><br foo="bar">
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <bdy>
+|       <br>
+|         foo="bar"
