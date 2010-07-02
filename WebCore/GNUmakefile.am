@@ -96,11 +96,14 @@ webcore_built_sources += \
 	DerivedSources/WebCore/HTMLElementFactory.cpp \
 	DerivedSources/WebCore/HTMLEntityNames.cpp \
 	DerivedSources/WebCore/HTMLNames.cpp \
+	DerivedSources/WebCore/HTMLNames.h \
 	DerivedSources/WebCore/JSHTMLElementWrapperFactory.cpp \
 	DerivedSources/WebCore/UserAgentStyleSheets.h \
 	DerivedSources/WebCore/UserAgentStyleSheetsData.cpp \
 	DerivedSources/WebCore/XMLNSNames.cpp \
+	DerivedSources/WebCore/XMLNSNames.h \
 	DerivedSources/WebCore/XMLNames.cpp
+	DerivedSources/WebCore/XMLNames.h
 
 IDL_BINDINGS += \
 	WebCore/css/CSSCharsetRule.idl \
@@ -3952,19 +3955,19 @@ DerivedSources/WebCore/UserAgentStyleSheets.h: $(WebCore)/css/make-css-file-arra
 
 # HTML tag and attribute names
 if HTML_FLAGS
-DerivedSources/WebCore/HTMLElementFactory.cpp DerivedSources/WebCore/HTMLNames.cpp: $(WebCore)/dom/make_names.pl $(WebCore)/html/HTMLTagNames.in $(WebCore)/html/HTMLAttributeNames.in
+DerivedSources/WebCore/HTMLElementFactory.cpp DerivedSources/WebCore/HTMLNames.cpp DerivedSources/WebCore/HTMLNames.h: $(WebCore)/dom/make_names.pl $(WebCore)/html/HTMLTagNames.in $(WebCore)/html/HTMLAttributeNames.in
 	$(AM_V_GEN)$(PERL) -I$(WebCore)/bindings/scripts $< --tags $(WebCore)/html/HTMLTagNames.in --attrs $(WebCore)/html/HTMLAttributeNames.in --extraDefines "$(HTML_FEATURES)" --factory --wrapperFactory --outputDir "$(GENSOURCES_WEBCORE)"
 else
-DerivedSources/WebCore/HTMLElementFactory.cpp DerivedSources/WebCore/HTMLNames.cpp: $(WebCore)/dom/make_names.pl $(WebCore)/html/HTMLTagNames.in $(WebCore)/html/HTMLAttributeNames.in
+DerivedSources/WebCore/HTMLElementFactory.cpp DerivedSources/WebCore/HTMLNames.cpp DerivedSources/WebCore/HTMLNames.h: $(WebCore)/dom/make_names.pl $(WebCore)/html/HTMLTagNames.in $(WebCore)/html/HTMLAttributeNames.in
 	$(AM_V_GEN)$(PERL) -I$(WebCore)/bindings/scripts $< --tags $(WebCore)/html/HTMLTagNames.in --attrs $(WebCore)/html/HTMLAttributeNames.in --factory --wrapperFactory --outputDir "$(GENSOURCES_WEBCORE)"
 endif # HTML_FLAGS
 
 DerivedSources/WebCore/JSHTMLElementWrapperFactory.cpp: DerivedSources/WebCore/HTMLNames.cpp;
 
-DerivedSources/WebCore/XMLNSNames.cpp: $(WebCore)/dom/make_names.pl $(WebCore)/xml/xmlnsattrs.in
+DerivedSources/WebCore/XMLNSNames.cpp DerivedSources/WebCore/XMLNSNames.h: $(WebCore)/dom/make_names.pl $(WebCore)/xml/xmlnsattrs.in
 	$(AM_V_GEN)$(PERL) -I$(WebCore)/bindings/scripts $< --attrs $(WebCore)/xml/xmlnsattrs.in --outputDir "$(GENSOURCES_WEBCORE)"
 
-DerivedSources/WebCore/XMLNames.cpp: $(WebCore)/dom/make_names.pl $(WebCore)/xml/xmlattrs.in
+DerivedSources/WebCore/XMLNames.cpp DerivedSources/WebCore/XMLNames.h: $(WebCore)/dom/make_names.pl $(WebCore)/xml/xmlattrs.in
 	$(AM_V_GEN)$(PERL) -I$(WebCore)/bindings/scripts $< --attrs $(WebCore)/xml/xmlattrs.in --outputDir "$(GENSOURCES_WEBCORE)"
 
 IDL_PATH := \
