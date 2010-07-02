@@ -1,3 +1,16 @@
+2010-07-02  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Remove the extra setFailed() call in JPEG decoder to prevent
+        re-using an already freed object.
+        https://bugs.webkit.org/show_bug.cgi?id=41487
+
+        Test: fast/images/large-size-image-crash.html
+
+        * platform/image-decoders/jpeg/JPEGImageDecoder.cpp:
+        (WebCore::JPEGImageReader::decode):
+
 2010-07-02  Peter Beverloo  <peter@lvp-media.com>
 
         Reviewed by Maciej Stachowiak.

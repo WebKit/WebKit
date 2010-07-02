@@ -210,7 +210,7 @@ public:
 
             // We can fill in the size now that the header is available.
             if (!m_decoder->setSize(m_info.image_width, m_info.image_height))
-                return m_decoder->setFailed();
+                return false;
 
             if (m_decodingSizeOnly) {
                 // We can stop here.  Reduce our buffer length and available

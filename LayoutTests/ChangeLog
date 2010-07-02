@@ -1,3 +1,17 @@
+2010-07-02  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Tests that images with large width and height values do not result in crash.
+        Skip layout test for mac and win since it needs to be fixed at image decoder layer for Safari.
+        https://bugs.webkit.org/show_bug.cgi?id=41487
+
+        * fast/images/large-size-image-crash-expected.txt: Added.
+        * fast/images/large-size-image-crash.html: Added.
+        * fast/images/resources/large-size-image-crash.jpeg: Added.
+        * platform/mac/Skipped:
+        * platform/win/Skipped:
+
 2010-07-02  Peter Beverloo  <peter@lvp-media.com>
 
         Reviewed by Maciej Stachowiak.
