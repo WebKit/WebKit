@@ -96,7 +96,7 @@ UString UString::from(int i)
         *--p = '0';
     else if (i == INT_MIN) {
         char minBuf[1 + sizeof(i) * 3];
-        sprintf(minBuf, "%d", INT_MIN);
+        snprintf(minBuf, sizeof(minBuf), "%d", INT_MIN);
         return UString(minBuf);
     } else {
         bool negative = false;
@@ -176,7 +176,7 @@ UString UString::from(long l)
         *--p = '0';
     else if (l == LONG_MIN) {
         char minBuf[1 + sizeof(l) * 3];
-        sprintf(minBuf, "%ld", LONG_MIN);
+        snprintf(minBuf, sizeof(minBuf), "%ld", LONG_MIN);
         return UString(minBuf);
     } else {
         bool negative = false;

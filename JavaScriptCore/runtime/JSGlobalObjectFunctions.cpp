@@ -66,7 +66,7 @@ static JSValue encode(ExecState* exec, const char* doNotEscape)
             builder.append(c);
         else {
             char tmp[4];
-            snprintf(tmp, 4, "%%%02X", static_cast<unsigned char>(c));
+            snprintf(tmp, sizeof(tmp), "%%%02X", static_cast<unsigned char>(c));
             builder.append(tmp);
         }
     }
@@ -386,13 +386,13 @@ EncodedJSValue JSC_HOST_CALL globalFuncEscape(ExecState* exec)
         int u = c[0];
         if (u > 255) {
             char tmp[7];
-            sprintf(tmp, "%%u%04X", u);
+            snprintf(tmp, sizeof(tmp), "%%u%04X", u);
             builder.append(tmp);
         } else if (u != 0 && strchr(do_not_escape, static_cast<char>(u)))
             builder.append(c, 1);
         else {
             char tmp[4];
-            sprintf(tmp, "%%%02X", u);
+            snprintf(tmp, sizeof(tmp), "%%%02X", u);
             builder.append(tmp);
         }
     }

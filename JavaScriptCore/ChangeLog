@@ -1,3 +1,16 @@
+2010-07-02  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoffrey Garen.
+
+        Patch for https://bugs.webkit.org/show_bug.cgi?id=41548
+        Use snprintf instead of sprintf everywhere in JavaScriptCore
+
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::encode):
+        (JSC::globalFuncEscape):
+        * runtime/UString.cpp:
+        (JSC::UString::from):
+
 2010-07-02  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Geoffrey Garen.
