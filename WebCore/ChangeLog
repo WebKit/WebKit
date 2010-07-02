@@ -1,3 +1,25 @@
+2010-07-01  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        HTMLTokenizer should ASSERT that it never emits a null character
+        https://bugs.webkit.org/show_bug.cgi?id=41448
+
+        No functional change, thus no tests.  These ASSERTs would have
+        caught the coding error which caused the trouble in bug 41436
+        (which was fixed by bug 41439).
+
+        * html/HTMLToken.h:
+        (WebCore::HTMLToken::beginStartTag):
+        (WebCore::HTMLToken::beginCharacter):
+        (WebCore::HTMLToken::beginDOCTYPE):
+        (WebCore::HTMLToken::appendToName):
+        (WebCore::HTMLToken::appendToComment):
+        (WebCore::HTMLToken::appendToAttributeName):
+        (WebCore::HTMLToken::appendToAttributeValue):
+        (WebCore::HTMLToken::appendToPublicIdentifier):
+        (WebCore::HTMLToken::appendToSystemIdentifier):
+
 2010-07-01  Andreas Kling  <andreas.kling@nokia.com>
 
         Reviewed by Tor Arne Vestbø.

@@ -68,6 +68,7 @@ public:
 
     void beginStartTag(UChar character)
     {
+        ASSERT(character);
         ASSERT(m_type == Uninitialized);
         m_type = StartTag;
         m_data.clear();
@@ -93,6 +94,7 @@ public:
 
     void beginCharacter(UChar character)
     {
+        ASSERT(character);
         ASSERT(m_type == Uninitialized);
         m_type = Character;
         m_data.clear();
@@ -116,12 +118,14 @@ public:
 
     void beginDOCTYPE(UChar character)
     {
+        ASSERT(character);
         beginDOCTYPE();
         m_data.append(character);
     }
 
     void appendToName(UChar character)
     {
+        ASSERT(character);
         ASSERT(m_type == StartTag || m_type == EndTag || m_type == DOCTYPE);
         m_data.append(character);
     }
@@ -135,6 +139,7 @@ public:
 
     void appendToComment(UChar character)
     {
+        ASSERT(character);
         ASSERT(m_type == Comment);
         m_data.append(character);
     }
@@ -148,12 +153,14 @@ public:
 
     void appendToAttributeName(UChar character)
     {
+        ASSERT(character);
         ASSERT(m_type == StartTag || m_type == EndTag);
         m_currentAttribute->m_name.append(character);
     }
 
     void appendToAttributeValue(UChar character)
     {
+        ASSERT(character);
         ASSERT(m_type == StartTag || m_type == EndTag);
         m_currentAttribute->m_value.append(character);
     }
@@ -232,6 +239,7 @@ public:
 
     void appendToPublicIdentifier(UChar character)
     {
+        ASSERT(character);
         ASSERT(m_type == DOCTYPE);
         ASSERT(m_doctypeData->m_hasPublicIdentifier);
         m_doctypeData->m_publicIdentifier.append(character);
@@ -239,6 +247,7 @@ public:
 
     void appendToSystemIdentifier(UChar character)
     {
+        ASSERT(character);
         ASSERT(m_type == DOCTYPE);
         ASSERT(m_doctypeData->m_hasSystemIdentifier);
         m_doctypeData->m_systemIdentifier.append(character);
