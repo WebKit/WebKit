@@ -256,7 +256,7 @@ typedef enum {
     
 NSControl *WKCreateMediaUIControl(int controlType);
 
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && defined(__x86_64__)
+#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
 mach_port_t WKInitializeRenderServer(void);
     
 @class CALayer;
@@ -277,6 +277,7 @@ uint32_t WKCARemoteLayerClientGetClientId(WKCARemoteLayerClientRef);
 void WKCARemoteLayerClientSetLayer(WKCARemoteLayerClientRef, CALayer *);
 CALayer *WKCARemoteLayerClientGetLayer(WKCARemoteLayerClientRef);
 
+#if defined(__x86_64__)
 #import <mach/mig.h>
 
 CFRunLoopSourceRef WKCreateMIGServerSource(mig_subsystem_t subsystem, mach_port_t serverPort);
@@ -284,8 +285,8 @@ CFRunLoopSourceRef WKCreateMIGServerSource(mig_subsystem_t subsystem, mach_port_
 NSUInteger WKGetInputPanelWindowStyle(void);
  
 UInt8 WKGetNSEventKeyChar(NSEvent *);
-    
-#endif
+#endif // defined(__x86_64__)
+#endif // !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
 
 @class CAPropertyAnimation;
 void WKSetCAAnimationValueFunction(CAPropertyAnimation*, NSString* function);

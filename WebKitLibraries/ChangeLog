@@ -1,3 +1,17 @@
+2010-07-01  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        <rdar://problem/8154047>
+        
+        Update WebKitSystemInterface, making some functions used by
+        WebKit2 available in 32-bit.
+
+        * WebKitSystemInterface.h:
+        * libWebKitSystemInterfaceLeopard.a:
+        * libWebKitSystemInterfaceSnowLeopard.a:
+        * libWebKitSystemInterfaceTiger.a:
+
 2010-06-23  John Gregg  <johnnyg@google.com>
 
         Reviewed by Kent Tamura.
