@@ -37,6 +37,7 @@
 #include "QualifiedName.h"
 #include "ScriptExecutionContext.h"
 #include "Timer.h"
+#include <wtf/FixedArray.h>
 #include <wtf/HashCountedSet.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>

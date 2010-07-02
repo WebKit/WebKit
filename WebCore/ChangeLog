@@ -1,5 +1,11 @@
 2010-07-01  Oliver Hunt  <oliver@apple.com>
 
+        Build fix
+
+        * dom/Document.h:
+
+2010-07-01  Oliver Hunt  <oliver@apple.com>
+
         Reviewed by Maciej Stachowiak.
 
         Add a FixedArray template to encapsulate fixed length arrays
