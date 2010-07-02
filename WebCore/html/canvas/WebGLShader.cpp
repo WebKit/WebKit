@@ -39,6 +39,7 @@ PassRefPtr<WebGLShader> WebGLShader::create(WebGLRenderingContext* ctx, Graphics
 
 WebGLShader::WebGLShader(WebGLRenderingContext* ctx, GraphicsContext3D::WebGLEnumType type)
     : CanvasObject(ctx)
+    , m_type(type)
 {
     setObject(context()->graphicsContext3D()->createShader(type));
 }

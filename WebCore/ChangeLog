@@ -1,3 +1,25 @@
+2010-07-02  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        linkProgram should fail when vertex/fragment shaders are not both present
+        https://bugs.webkit.org/show_bug.cgi?id=41380
+
+        Test: fast/canvas/webgl/program-test.html
+
+        * html/canvas/WebGLProgram.cpp: Add flag for link failure due to missing shaders.
+        (WebCore::WebGLProgram::WebGLProgram):
+        * html/canvas/WebGLProgram.h: Add interface for linkFailure flag.
+        (WebCore::WebGLProgram::isLinkFailureFlagSet):
+        (WebCore::WebGLProgram::setLinkFailureFlag):
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::getProgramParameter): Intercept when linkFailureFlag is set.
+        (WebCore::WebGLRenderingContext::linkProgram): Check if there are missing shaders and don't link if yes.
+        * html/canvas/WebGLShader.cpp: Cache shader type.
+        (WebCore::WebGLShader::WebGLShader):
+        * html/canvas/WebGLShader.h: Ditto.
+        (WebCore::WebGLShader::getType):
+
 2010-07-02  Qi Zhang  <qi.2.zhang@nokia.com>
 
         Reviewed by Laszlo Gombos.

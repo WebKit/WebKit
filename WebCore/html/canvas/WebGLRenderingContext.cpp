@@ -1410,8 +1410,12 @@ WebGLGetInfo WebGLRenderingContext::getProgramParameter(WebGLProgram* program, u
     int value = 0;
     switch (pname) {
     case GraphicsContext3D::DELETE_STATUS:
-    case GraphicsContext3D::LINK_STATUS:
     case GraphicsContext3D::VALIDATE_STATUS:
+        m_context->getProgramiv(program, pname, &value);
+        return WebGLGetInfo(static_cast<bool>(value));
+    case GraphicsContext3D::LINK_STATUS:
+        if (program->isLinkFailureFlagSet())
+            return WebGLGetInfo(false);
         m_context->getProgramiv(program, pname, &value);
         return WebGLGetInfo(static_cast<bool>(value));
     case GraphicsContext3D::INFO_LOG_LENGTH:
@@ -1829,6 +1833,28 @@ void WebGLRenderingContext::linkProgram(WebGLProgram* program, ExceptionCode& ec
     UNUSED_PARAM(ec);
     if (!validateWebGLObject(program))
         return;
+    if (!isGLES2Compliant()) {
+        Vector<WebGLShader*> shaders;
+        bool succeed = getAttachedShaders(program, shaders, ec);
+        if (succeed) {
+            bool vShader = false;
+            bool fShader = false;
+            for (size_t ii = 0; ii < shaders.size() && (!vShader || !fShader); ++ii) {
+                if (shaders[ii]->getType() == GraphicsContext3D::VERTEX_SHADER)
+                    vShader = true;
+                else if (shaders[ii]->getType() == GraphicsContext3D::FRAGMENT_SHADER)
+                    fShader = true;
+            }
+            if (!vShader || !fShader)
+                succeed = false;
+        }
+        if (!succeed) {
+            program->setLinkFailureFlag(true);
+            return;
+        }
+        program->setLinkFailureFlag(false);
+    }
+
     m_context->linkProgram(program);
     program->cacheActiveAttribLocations();
     cleanupAfterGraphicsCall(false);

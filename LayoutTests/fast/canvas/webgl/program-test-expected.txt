@@ -1,0 +1,58 @@
+Tests that program compiling/linking/using works correctly.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+Canvas.getContext
+PASS context exists
+PASS good vertex shader should compile
+PASS good vertex shader #2 should compile
+PASS bad vertex shader should fail to compile
+PASS good fragment shader should compile
+PASS good fragment shader #2 should compile
+PASS bad fragment shader should fail to compile
+PASS should be no errors at this point
+PASS attaching a vertex shader should succeed
+PASS attaching an already attached vertex shader should generate INVALID_OPERATION
+PASS attaching a fragment shader should succeed
+PASS attaching an already attached fragment shader should generate INVALID_OPERATION
+PASS detaching a vertex shader should succeed
+PASS detaching a not already attached vertex shader should generate INVALID_OPERATION
+PASS detaching a fragment shader should succeed
+PASS detaching a not already attached fragment shader should generate INVALID_OPERATION
+PASS getAttachedShaders should return an empty list by default
+PASS attaching a single shader should give the expected list
+PASS attaching some shaders should give the expected list
+PASS attaching a shader and detaching it shoud leave an empty list
+PASS attaching some shaders and detaching them in same order shoud leave an empty list
+PASS attaching some shaders and detaching them in random order shoud leave an empty list
+PASS attaching and detaching some shaders should leave the difference list
+PASS attaching and detaching some shaders should leave the difference list
+PASS attaching a shader that failed to compile should still show it in the list
+PASS attaching shaders, including one that failed to compile, should still show the it in the list
+PASS valid program should link
+PASS using a valid program should succeed
+PASS valid program #2 should link
+PASS using a valid program should succeed
+PASS program with no fragment shader should fail to link
+PASS using an invalid program should generate INVALID_OPERATION
+PASS program with no vertex shader should fail to link
+PASS using an invalid program should generate INVALID_OPERATION
+PASS program with bad vertex shader should fail to link
+PASS using an invalid program should generate INVALID_OPERATION
+PASS program with bad fragment shader should fail to link
+PASS using an invalid program should generate INVALID_OPERATION
+PASS program with bad shaders should fail to link
+PASS using an invalid program should generate INVALID_OPERATION
+PASS using a valid program shouldn't generate a GL error
+PASS should be no errors at this point #2
+PASS drawing with a valid program shouldn't generate a GL error
+PASS using an invalid program should generate INVALID_OPERATION
+PASS drawing with an invalid program should generate some GL error XXX
+PASS linking should fail with in-use formerly good program, with new bad shader attached
+PASS drawing with a valid when last used program shouldn't generate a GL error
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
