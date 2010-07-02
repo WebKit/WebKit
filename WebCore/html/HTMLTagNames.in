@@ -74,6 +74,7 @@ li interfaceName=HTMLLIElement
 link constructorNeedsCreatedByParser
 listing interfaceName=HTMLPreElement
 map
+mark interfaceName=HTMLElement
 marquee
 menu
 meta

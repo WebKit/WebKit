@@ -944,7 +944,7 @@ PassRefPtr<Node> LegacyHTMLTreeBuilder::getNode(Token* t)
         QualifiedName nestedCreateErrorTags[] = { aTag, buttonTag, nobrTag, trTag };
         mapTagsToFunc(gFunctionMap, nestedCreateErrorTags, &LegacyHTMLTreeBuilder::nestedCreateErrorCheck);
 
-        QualifiedName nestedStyleCreateErrorTags[] = { bTag, bigTag, iTag, sTag, smallTag, strikeTag, ttTag, uTag };
+        QualifiedName nestedStyleCreateErrorTags[] = { bTag, bigTag, iTag, markTag, sTag, smallTag, strikeTag, ttTag, uTag };
         mapTagsToFunc(gFunctionMap, nestedStyleCreateErrorTags, &LegacyHTMLTreeBuilder::nestedStyleCreateErrorCheck);
 
         QualifiedName pCloserCreateErrorTags[] = { addressTag, articleTag,
@@ -1057,7 +1057,7 @@ bool LegacyHTMLTreeBuilder::isInline(Node* node) const
             e->hasLocalName(abbrTag) || e->hasLocalName(acronymTag) || e->hasLocalName(subTag) ||
             e->hasLocalName(supTag) || e->hasLocalName(spanTag) || e->hasLocalName(nobrTag) ||
             e->hasLocalName(noframesTag) || e->hasLocalName(nolayerTag) ||
-            e->hasLocalName(noembedTag))
+            e->hasLocalName(noembedTag) || e->hasLocalName(markTag))
             return true;
 #if !ENABLE(XHTMLMP)
         if (e->hasLocalName(noscriptTag) && !m_isParsingFragment) {
@@ -1077,7 +1077,7 @@ bool LegacyHTMLTreeBuilder::isResidualStyleTag(const AtomicString& tagName)
     if (residualStyleTags.isEmpty()) {
         QualifiedName tagNames[] = { aTag, fontTag, ttTag, uTag, bTag, iTag,
             sTag, strikeTag, bigTag, smallTag, emTag, strongTag, dfnTag,
-            codeTag, sampTag, kbdTag, varTag, nobrTag };
+            codeTag, sampTag, kbdTag, varTag, nobrTag, markTag };
         addTags(residualStyleTags, tagNames);
     }
     return residualStyleTags.contains(tagName.impl());

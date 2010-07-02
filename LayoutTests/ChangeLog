@@ -1,3 +1,16 @@
+2010-07-02  Peter Beverloo  <peter@lvp-media.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Add the HTML5 <mark> element. Text content of the element will have
+        a yellow background color and black text.
+
+        Tests for <p> closing, phrasing child content and residual style.
+
+        * fast/html/mark-element-expected.txt: Added.
+        * fast/html/mark-element.html: Added.
+        * fast/html/script-tests/mark-element.js: Added.
+
 2010-07-02  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Dimitri Glazkov.

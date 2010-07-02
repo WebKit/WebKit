@@ -858,6 +858,7 @@ static HashSet<AtomicStringImpl*>* inlineTagList()
         tagList.add(rubyTag.localName().impl());
         tagList.add(progressTag.localName().impl());
         tagList.add(meterTag.localName().impl());
+        tagList.add(markTag.localName().impl());
     }
     return &tagList;
 }
