@@ -4687,8 +4687,10 @@ Expected:
 |     "-->"
 resources/webkit01.dat:
 17
+20
+22
 
-Test 17 of 19 in resources/webkit01.dat failed. Input:
+Test 17 of 23 in resources/webkit01.dat failed. Input:
 <A>test< /A>
 Got:
 | <html>
@@ -4703,6 +4705,34 @@ Expected:
 |   <body>
 |     <a>
 |       "test< /A>"
+
+Test 20 of 23 in resources/webkit01.dat failed. Input:
+<body></br foo="bar"></body>
+Got:
+| <html>
+|   <head>
+|   <body>
+|     <br>
+|       foo="bar"
+Expected:
+| <html>
+|   <head>
+|   <body>
+|     <br>
+
+Test 22 of 23 in resources/webkit01.dat failed. Input:
+<body></body></br foo="bar">
+Got:
+| <html>
+|   <head>
+|   <body>
+|     <br>
+|       foo="bar"
+Expected:
+| <html>
+|   <head>
+|   <body>
+|     <br>
 resources/doctype01.dat: PASS
 
 resources/scriptdata01.dat: PASS
