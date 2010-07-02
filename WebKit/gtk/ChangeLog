@@ -1,3 +1,15 @@
+2010-06-23  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        [GTK] Separate DerivedSources per-project
+        https://bugs.webkit.org/show_bug.cgi?id=41109
+
+        Separate WebKitGTK+ DerivedSources into per-project subdirectories to prepare
+        for properly building WebKit2.
+
+        * webkitmarshal.list: Touch this file to force a rebuild of the marshaling code.
+
 2010-07-01  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Gustavo Noronha.

@@ -1,3 +1,16 @@
+2010-06-23  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        [GTK] Separate DerivedSources per-project
+        https://bugs.webkit.org/show_bug.cgi?id=41109
+
+        The JavaScriptCore cppflags used to include the top-level DerivedSources directory
+        allowing the tools to build as a side-effect. Now that the top-level directory
+        is no longer in the list of JavaScriptCore includes, include it explicitly.
+
+        * GNUmakefile.am:
+
 2010-07-01  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

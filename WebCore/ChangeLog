@@ -1,3 +1,14 @@
+2010-06-23  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        [GTK] Separate DerivedSources per-project
+        https://bugs.webkit.org/show_bug.cgi?id=41109
+
+        Generate WebCore derived sources in <builddir>/DerivedSources/WebCore.
+
+        * GNUmakefile.am:
+
 2010-07-02  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Dimitri Glazkov.

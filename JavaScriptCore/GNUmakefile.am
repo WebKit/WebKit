@@ -34,7 +34,7 @@ javascriptcore_h_api += \
 	JavaScriptCore/API/WebKitAvailability.h
 
 javascriptcore_built_nosources += \
-	DerivedSources/Lexer.lut.h \
+	DerivedSources/JavaScriptCore/Lexer.lut.h \
 	JavaScriptCore/RegExpJitTables.h \
 	JavaScriptCore/runtime/ArrayPrototype.lut.h \
 	JavaScriptCore/runtime/DatePrototype.lut.h \
@@ -552,7 +552,7 @@ javascriptcore_sources += \
 	JavaScriptCore/wtf/unicode/glib/UnicodeMacrosFromICU.h
 endif
 
-DerivedSources/Lexer.lut.h: $(CREATE_HASH_TABLE) $(srcdir)/JavaScriptCore/parser/Keywords.table
+DerivedSources/JavaScriptCore/Lexer.lut.h: $(CREATE_HASH_TABLE) $(srcdir)/JavaScriptCore/parser/Keywords.table
 	$(PERL) $^ > $@
 
 JavaScriptCore/%.lut.h: $(CREATE_HASH_TABLE) $(srcdir)/JavaScriptCore/%.cpp

@@ -1,3 +1,14 @@
+2010-06-23  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        [GTK] Separate DerivedSources per-project
+        https://bugs.webkit.org/show_bug.cgi?id=41109
+
+        Generate JavaScriptCore derived sources in <builddir>/DerivedSources/JavaScriptCore.
+
+        * GNUmakefile.am:
+
 2010-07-02  Peter Varga  <pvarga@inf.u-szeged.hu>
 
         Reviewed by Oliver Hunt.
