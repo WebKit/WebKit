@@ -1,3 +1,9 @@
+2010-07-02  Sam Weinig  <sam@webkit.org>
+
+        Add missing symbol to exports file.
+
+        * WebCore.base.exp:
+
 2010-07-02  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by Darin Fisher.
