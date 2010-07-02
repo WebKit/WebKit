@@ -157,21 +157,43 @@ namespace JSC {
 
     ALWAYS_INLINE bool operator==(const UString& s1, const UString& s2)
     {
-        unsigned size = s1.size();
-        switch (size) {
-        case 0:
-            return !s2.size();
+        UString::Rep* rep1 = s1.rep();
+        UString::Rep* rep2 = s2.rep();
+        unsigned size1 = 0;
+        unsigned size2 = 0;
+
+        if (rep1 == rep2) // If they're the same rep, they're equal.
+            return true;
+        
+        if (rep1)
+            size1 = rep1->length();
+            
+        if (rep2)
+            size2 = rep2->length();
+            
+        if (size1 != size2) // If the lengths are not the same, we're done.
+            return false;
+        
+        if (!size1)
+            return true;
+        
+        // At this point we know 
+        //   (a) that the strings are the same length and
+        //   (b) that they are greater than zero length.
+        const UChar* d1 = rep1->characters();
+        const UChar* d2 = rep2->characters();
+        
+        if (d1 == d2) // Check to see if the data pointers are the same.
+            return true;
+        
+        // Do quick checks for sizes 1 and 2.
+        switch (size1) {
         case 1:
-            return s2.size() == 1 && s1.data()[0] == s2.data()[0];
-        case 2: {
-            if (s2.size() != 2)
-                return false;
-            const UChar* d1 = s1.data();
-            const UChar* d2 = s2.data();
+            return d1[0] == d2[0];
+        case 2:
             return (d1[0] == d2[0]) & (d1[1] == d2[1]);
-        }
         default:
-            return s2.size() == size && memcmp(s1.data(), s2.data(), size * sizeof(UChar)) == 0;
+            return memcmp(d1, d2, size1 * sizeof(UChar)) == 0;
         }
     }
 

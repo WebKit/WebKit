@@ -67,6 +67,9 @@ namespace JSC {
         int m_flagBits;
         const char* m_constructionError;
         unsigned m_numSubpatterns;
+        UString m_lastMatchString;
+        int m_lastMatchStart;
+        Vector<int, 32> m_lastOVector;
 
 #if ENABLE(YARR_JIT)
         Yarr::RegexCodeBlock m_regExpJITCode;
