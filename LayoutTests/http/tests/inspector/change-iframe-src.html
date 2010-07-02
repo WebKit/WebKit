@@ -1,0 +1,103 @@
+<html>
+<head>
+<title>Change inspected iframe's "src" attribute.</title>
+<script src="inspector-test.js"></script>
+<script>
+
+function doit()
+{
+    evaluateInWebInspector("frontend_changeIFrameSrc", output);
+}
+
+function onIFrameLoad()
+{
+  onload();
+  onIFrameLoad = function()
+  {
+      evaluateInWebInspector("frontend_iframeReloaded", function callback(result)
+      {
+          output(result);
+          notifyDone();
+      });
+      var loadedTimes = 2;
+      onIFrameLoad = function() {
+          loadedTimes++;
+          output("loaded: " + loadedTimes);
+      }
+  }
+}
+
+// Frontend functions.
+
+function frontend_expandElementsTreeNode(elementsTreeNode, testController, callback)
+{
+    if (elementsTreeNode.expanded) {
+        callback();
+        return;
+    }
+    elementsTreeNode.expand();
+    testController.runAfterPendingDispatches(function() {
+        callback();
+    });
+}
+
+function frontend_expandDOMElementsTreePath(elementsTreeRoot, path, testController, callback)
+{
+    if (!path.length) {
+        callback(elementsTreeRoot);
+        return;
+    }
+    frontend_expandElementsTreeNode(elementsTreeRoot, testController, function() {
+        var children = elementsTreeRoot.children;
+        var child = elementsTreeRoot.children[path[0]];
+        if (!child) {
+            testController.notifyDone("Failed to expand node. Path = " + path);
+            return;
+        }
+        if (!child.representedObject) {
+            testController.notifyDone("Represented object is null. Path = " + path);
+            return;
+        }
+        var childNodeName = child.representedObject.nodeName;
+        if (childNodeName !== path[1]) {
+            testController.notifyDone("Unexpected child node name: " + childNodeName + ". Path = " + path);
+            return;
+        }
+        frontend_expandDOMElementsTreePath(child, path.slice(2), testController, callback);
+    });
+}
+
+function frontend_changeIFrameSrc(testController)
+{
+    testController.waitUntilDone();
+    // Expand the iframe body and examine it.
+    var path = [0, "HTML", 1, "BODY", 0, "IFRAME"];
+    frontend_expandDOMElementsTreePath(WebInspector.panels.elements.treeOutline, path, testController, function(domElementsTreeNode) {
+        var domNode = domElementsTreeNode.representedObject;
+        testController.results.push("Expanded DOM node: " + path);
+        // Set focus to the iframe node and then change its src.
+        WebInspector.panels.elements.focusedDOMNode = domNode;
+        testController.runAfterPendingDispatches(function() {
+            domNode.setAttribute("src", "http://localhost:8000/inspector/resources/iframe-from-different-domain-data.html");
+            testController.notifyDone();
+        });
+    });
+}
+
+function frontend_iframeReloaded(testController)
+{
+    testController.results.push("Iframe reloaded.");
+    testController.notifyDone();
+}
+
+</script>
+</head>
+<body>
+    <iframe src="resources/iframe-from-different-domain-data.html" id="receiver" onload="onIFrameLoad();"></iframe>
+    <p>
+    Tests that Elements panel allows to change src attribute on iframes
+    inside inspected page.
+    See <a href="https://bugs.webkit.org/show_bug.cgi?id=41350">bug 41350</a>.
+    </p>
+</body>
+</html>

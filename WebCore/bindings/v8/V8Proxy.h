@@ -210,6 +210,9 @@ namespace WebCore {
         // constructors.
         void evaluateInIsolatedWorld(int worldId, const Vector<ScriptSourceCode>& sources, int extensionGroup);
 
+        // Returns true if the proxy is currently executing a script in V8.
+        bool executingScript() const;
+
         // Evaluate a script file in the current execution environment.
         // The caller must hold an execution context.
         // If cannot evalute the script, it returns an error.

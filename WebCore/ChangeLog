@@ -1,3 +1,23 @@
+2010-07-02  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        [v8] Web Inspector: inspected page crashes on attempt to change iframe's src attribute
+        https://bugs.webkit.org/show_bug.cgi?id=41511
+
+        Tests: fast/events/popup-blocked-from-fake-user-gesture.html
+               http/tests/inspector/change-iframe-src.html
+
+        * bindings/v8/ScriptController.cpp:
+        (WebCore::ScriptController::processingUserGesture): use V8Proxy from the ScriptController instead of one
+        from the call stack. Get event directly from hidden property to avoid unnecessary checks.
+        * bindings/v8/V8AbstractEventListener.cpp:
+        (WebCore::V8AbstractEventListener::invokeEventHandler):
+        * bindings/v8/V8HiddenPropertyName.h:
+        * bindings/v8/custom/V8DOMWindowCustom.cpp:
+        (WebCore::V8DOMWindow::eventAccessorGetter):
+        (WebCore::V8DOMWindow::eventAccessorSetter):
+
 2010-07-02  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
