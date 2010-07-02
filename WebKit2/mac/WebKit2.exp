@@ -3,6 +3,7 @@ _WKArrayGetItemAtIndex
 _WKArrayGetSize
 _WKArrayRelease
 _WKArrayRetain
+_WKBundleFrameCopyChildFrames
 _WKBundleFrameGetURL
 _WKBundleFrameIsMainFrame
 _WKBundlePageCopyRenderTreeExternalRepresentation

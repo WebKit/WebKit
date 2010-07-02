@@ -1,5 +1,22 @@
 2010-07-02  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Oliver Hunt.
+
+        Patch for https://bugs.webkit.org/show_bug.cgi?id=41540
+        WebKit2: Add InjectedCode API to get a list of subframes
+
+        * WebProcess/InjectedBundle/API/c/WKBundleFrame.cpp:
+        (WKBundleFrameCopyChildFrames):
+        * WebProcess/InjectedBundle/API/c/WKBundleFrame.h:
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::childFrameRef):
+        (WebKit::childFrameDeref):
+        (WebKit::WebFrame::childFrames):
+        * WebProcess/WebPage/WebFrame.h:
+        * mac/WebKit2.exp:
+
+2010-07-02  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Anders Carlsson.
 
         Turn off the Objective-C garbage collection for the WebProcess.

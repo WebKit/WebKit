@@ -41,6 +41,8 @@ WK_EXPORT bool WKBundleFrameIsMainFrame(WKBundleFrameRef frame);
 
 WK_EXPORT WKURLRef WKBundleFrameGetURL(WKBundleFrameRef frame);
 
+WK_EXPORT WKArrayRef WKBundleFrameCopyChildFrames(WKBundleFrameRef frame);
+
 #ifdef __cplusplus
 }
 #endif
