@@ -47,6 +47,172 @@ namespace JSC {
 
 static const UChar byteOrderMark = 0xFEFF;
 
+enum CharacterTypes {
+    // Types for the main switch
+    CharacterInvalid,
+
+    CharacterAlpha,
+    CharacterZero,
+    CharacterNumber,
+
+    CharacterLineTerminator,
+    CharacterExclamationMark,
+    CharacterSimple,
+    CharacterQuote,
+    CharacterDot,
+    CharacterSlash,
+    CharacterBackSlash,
+    CharacterSemicolon,
+    CharacterOpenBrace,
+    CharacterCloseBrace,
+
+    CharacterAdd,
+    CharacterSub,
+    CharacterMultiply,
+    CharacterModulo,
+    CharacterAnd,
+    CharacterXor,
+    CharacterOr,
+    CharacterLess,
+    CharacterGreater,
+    CharacterEqual,
+
+    // Other types (only one so far)
+    CharacterWhiteSpace,
+};
+
+// 128 ascii codes
+static unsigned char AsciiCharacters[128] = {
+/*   0 - Null               */ CharacterInvalid,
+/*   1 - Start of Heading   */ CharacterInvalid,
+/*   2 - Start of Text      */ CharacterInvalid,
+/*   3 - End of Text        */ CharacterInvalid,
+/*   4 - End of Transm.     */ CharacterInvalid,
+/*   5 - Enquiry            */ CharacterInvalid,
+/*   6 - Acknowledgment     */ CharacterInvalid,
+/*   7 - Bell               */ CharacterInvalid,
+/*   8 - Back Space         */ CharacterInvalid,
+/*   9 - Horizontal Tab     */ CharacterWhiteSpace,
+/*  10 - Line Feed          */ CharacterLineTerminator,
+/*  11 - Vertical Tab       */ CharacterWhiteSpace,
+/*  12 - Form Feed          */ CharacterWhiteSpace,
+/*  13 - Carriage Return    */ CharacterLineTerminator,
+/*  14 - Shift Out          */ CharacterInvalid,
+/*  15 - Shift In           */ CharacterInvalid,
+/*  16 - Data Line Escape   */ CharacterInvalid,
+/*  17 - Device Control 1   */ CharacterInvalid,
+/*  18 - Device Control 2   */ CharacterInvalid,
+/*  19 - Device Control 3   */ CharacterInvalid,
+/*  20 - Device Control 4   */ CharacterInvalid,
+/*  21 - Negative Ack.      */ CharacterInvalid,
+/*  22 - Synchronous Idle   */ CharacterInvalid,
+/*  23 - End of Transmit    */ CharacterInvalid,
+/*  24 - Cancel             */ CharacterInvalid,
+/*  25 - End of Medium      */ CharacterInvalid,
+/*  26 - Substitute         */ CharacterInvalid,
+/*  27 - Escape             */ CharacterInvalid,
+/*  28 - File Separator     */ CharacterInvalid,
+/*  29 - Group Separator    */ CharacterInvalid,
+/*  30 - Record Separator   */ CharacterInvalid,
+/*  31 - Unit Separator     */ CharacterInvalid,
+/*  32 - Space              */ CharacterWhiteSpace,
+/*  33 - !                  */ CharacterExclamationMark,
+/*  34 - "                  */ CharacterQuote,
+/*  35 - #                  */ CharacterInvalid,
+/*  36 - $                  */ CharacterAlpha,
+/*  37 - %                  */ CharacterModulo,
+/*  38 - &                  */ CharacterAnd,
+/*  39 - '                  */ CharacterQuote,
+/*  40 - (                  */ CharacterSimple,
+/*  41 - )                  */ CharacterSimple,
+/*  42 - *                  */ CharacterMultiply,
+/*  43 - +                  */ CharacterAdd,
+/*  44 - ,                  */ CharacterSimple,
+/*  45 - -                  */ CharacterSub,
+/*  46 - .                  */ CharacterDot,
+/*  47 - /                  */ CharacterSlash,
+/*  48 - 0                  */ CharacterZero,
+/*  49 - 1                  */ CharacterNumber,
+/*  50 - 2                  */ CharacterNumber,
+/*  51 - 3                  */ CharacterNumber,
+/*  52 - 4                  */ CharacterNumber,
+/*  53 - 5                  */ CharacterNumber,
+/*  54 - 6                  */ CharacterNumber,
+/*  55 - 7                  */ CharacterNumber,
+/*  56 - 8                  */ CharacterNumber,
+/*  57 - 9                  */ CharacterNumber,
+/*  58 - :                  */ CharacterSimple,
+/*  59 - ;                  */ CharacterSemicolon,
+/*  60 - <                  */ CharacterLess,
+/*  61 - =                  */ CharacterEqual,
+/*  62 - >                  */ CharacterGreater,
+/*  63 - ?                  */ CharacterSimple,
+/*  64 - @                  */ CharacterInvalid,
+/*  65 - A                  */ CharacterAlpha,
+/*  66 - B                  */ CharacterAlpha,
+/*  67 - C                  */ CharacterAlpha,
+/*  68 - D                  */ CharacterAlpha,
+/*  69 - E                  */ CharacterAlpha,
+/*  70 - F                  */ CharacterAlpha,
+/*  71 - G                  */ CharacterAlpha,
+/*  72 - H                  */ CharacterAlpha,
+/*  73 - I                  */ CharacterAlpha,
+/*  74 - J                  */ CharacterAlpha,
+/*  75 - K                  */ CharacterAlpha,
+/*  76 - L                  */ CharacterAlpha,
+/*  77 - M                  */ CharacterAlpha,
+/*  78 - N                  */ CharacterAlpha,
+/*  79 - O                  */ CharacterAlpha,
+/*  80 - P                  */ CharacterAlpha,
+/*  81 - Q                  */ CharacterAlpha,
+/*  82 - R                  */ CharacterAlpha,
+/*  83 - S                  */ CharacterAlpha,
+/*  84 - T                  */ CharacterAlpha,
+/*  85 - U                  */ CharacterAlpha,
+/*  86 - V                  */ CharacterAlpha,
+/*  87 - W                  */ CharacterAlpha,
+/*  88 - X                  */ CharacterAlpha,
+/*  89 - Y                  */ CharacterAlpha,
+/*  90 - Z                  */ CharacterAlpha,
+/*  91 - [                  */ CharacterSimple,
+/*  92 - \                  */ CharacterBackSlash,
+/*  93 - ]                  */ CharacterSimple,
+/*  94 - ^                  */ CharacterXor,
+/*  95 - _                  */ CharacterAlpha,
+/*  96 - `                  */ CharacterInvalid,
+/*  97 - a                  */ CharacterAlpha,
+/*  98 - b                  */ CharacterAlpha,
+/*  99 - c                  */ CharacterAlpha,
+/* 100 - d                  */ CharacterAlpha,
+/* 101 - e                  */ CharacterAlpha,
+/* 102 - f                  */ CharacterAlpha,
+/* 103 - g                  */ CharacterAlpha,
+/* 104 - h                  */ CharacterAlpha,
+/* 105 - i                  */ CharacterAlpha,
+/* 106 - j                  */ CharacterAlpha,
+/* 107 - k                  */ CharacterAlpha,
+/* 108 - l                  */ CharacterAlpha,
+/* 109 - m                  */ CharacterAlpha,
+/* 110 - n                  */ CharacterAlpha,
+/* 111 - o                  */ CharacterAlpha,
+/* 112 - p                  */ CharacterAlpha,
+/* 113 - q                  */ CharacterAlpha,
+/* 114 - r                  */ CharacterAlpha,
+/* 115 - s                  */ CharacterAlpha,
+/* 116 - t                  */ CharacterAlpha,
+/* 117 - u                  */ CharacterAlpha,
+/* 118 - v                  */ CharacterAlpha,
+/* 119 - w                  */ CharacterAlpha,
+/* 120 - x                  */ CharacterAlpha,
+/* 121 - y                  */ CharacterAlpha,
+/* 122 - z                  */ CharacterAlpha,
+/* 123 - {                  */ CharacterOpenBrace,
+/* 124 - |                  */ CharacterOr,
+/* 125 - }                  */ CharacterCloseBrace,
+/* 126 - ~                  */ CharacterSimple,
+/* 127 - Delete             */ CharacterInvalid,
+};
+
 Lexer::Lexer(JSGlobalData* globalData)
     : m_isReparsing(false)
     , m_globalData(globalData)
@@ -263,7 +429,7 @@ start:
 
     int startOffset = currentOffset();
 
-    if (m_current == -1) {
+    if (UNLIKELY(m_current == -1)) {
         if (!m_terminator && !m_delimited && !m_isReparsing) {
             // automatic semicolon insertion if program incomplete
             token = ';';
@@ -273,245 +439,256 @@ start:
     }
 
     m_delimited = false;
-    switch (m_current) {
-    case '>':
-        shift();
-        if (m_current == '>') {
+    ASSERT(m_current >= 0);
+
+    if (m_current < 128) {
+        ASSERT(isASCII(m_current));
+
+        switch (AsciiCharacters[m_current]) {
+        case CharacterGreater:
             shift();
             if (m_current == '>') {
                 shift();
-                if (m_current == '=') {
+                if (m_current == '>') {
                     shift();
-                    token = URSHIFTEQUAL;
+                    if (m_current == '=') {
+                        shift();
+                        token = URSHIFTEQUAL;
+                        break;
+                    }
+                    token = URSHIFT;
                     break;
                 }
-                token = URSHIFT;
+                if (m_current == '=') {
+                    shift();
+                    token = RSHIFTEQUAL;
+                    break;
+                }
+                token = RSHIFT;
                 break;
             }
             if (m_current == '=') {
                 shift();
-                token = RSHIFTEQUAL;
+                token = GE;
                 break;
             }
-            token = RSHIFT;
+            token = '>';
             break;
-        }
-        if (m_current == '=') {
-            shift();
-            token = GE;
-            break;
-        }
-        token = '>';
-        break;
-    case '=':
-        shift();
-        if (m_current == '=') {
+        case CharacterEqual:
             shift();
             if (m_current == '=') {
                 shift();
-                token = STREQ;
+                if (m_current == '=') {
+                    shift();
+                    token = STREQ;
+                    break;
+                }
+                token = EQEQ;
                 break;
             }
-            token = EQEQ;
+            token = '=';
             break;
-        }
-        token = '=';
-        break;
-    case '!':
-        shift();
-        if (m_current == '=') {
+        case CharacterLess:
+            shift();
+            if (m_current == '!' && peek(1) == '-' && peek(2) == '-') {
+                // <!-- marks the beginning of a line comment (for www usage)
+                goto inSingleLineComment;
+            }
+            if (m_current == '<') {
+                shift();
+                if (m_current == '=') {
+                    shift();
+                    token = LSHIFTEQUAL;
+                    break;
+                }
+                token = LSHIFT;
+                break;
+            }
+            if (m_current == '=') {
+                shift();
+                token = LE;
+                break;
+            }
+            token = '<';
+            break;
+        case CharacterExclamationMark:
             shift();
             if (m_current == '=') {
                 shift();
-                token = STRNEQ;
+                if (m_current == '=') {
+                    shift();
+                    token = STRNEQ;
+                    break;
+                }
+                token = NE;
                 break;
             }
-            token = NE;
+            token = '!';
             break;
-        }
-        token = '!';
-        break;
-    case '<':
-        shift();
-        if (m_current == '!' && peek(1) == '-' && peek(2) == '-') {
-            // <!-- marks the beginning of a line comment (for www usage)
-            goto inSingleLineComment;
-        }
-        if (m_current == '<') {
+        case CharacterAdd:
+            shift();
+            if (m_current == '+') {
+                shift();
+                token = (!m_terminator) ? PLUSPLUS : AUTOPLUSPLUS;
+                break;
+            }
+            if (m_current == '=') {
+                shift();
+                token = PLUSEQUAL;
+                break;
+            }
+            token = '+';
+            break;
+        case CharacterSub:
+            shift();
+            if (m_current == '-') {
+                shift();
+                if (m_atLineStart && m_current == '>') {
+                    shift();
+                    goto inSingleLineComment;
+                }
+                token = (!m_terminator) ? MINUSMINUS : AUTOMINUSMINUS;
+                break;
+            }
+            if (m_current == '=') {
+                shift();
+                token = MINUSEQUAL;
+                break;
+            }
+            token = '-';
+            break;
+        case CharacterMultiply:
             shift();
             if (m_current == '=') {
                 shift();
-                token = LSHIFTEQUAL;
+                token = MULTEQUAL;
                 break;
             }
-            token = LSHIFT;
+            token = '*';
             break;
-        }
-        if (m_current == '=') {
+        case CharacterSlash:
             shift();
-            token = LE;
-            break;
-        }
-        token = '<';
-        break;
-    case '+':
-        shift();
-        if (m_current == '+') {
-            shift();
-            token = (!m_terminator) ? PLUSPLUS : AUTOPLUSPLUS;
-            break;
-        }
-        if (m_current == '=') {
-            shift();
-            token = PLUSEQUAL;
-            break;
-        }
-        token = '+';
-        break;
-    case '-':
-        shift();
-        if (m_current == '-') {
-            shift();
-            if (m_atLineStart && m_current == '>') {
+            if (m_current == '/') {
                 shift();
                 goto inSingleLineComment;
             }
-            token = (!m_terminator) ? MINUSMINUS : AUTOMINUSMINUS;
+            if (m_current == '*') {
+                shift();
+                goto inMultiLineComment;
+            }
+            if (m_current == '=') {
+                shift();
+                token = DIVEQUAL;
+                break;
+            }
+            token = '/';
             break;
-        }
-        if (m_current == '=') {
+        case CharacterAnd:
             shift();
-            token = MINUSEQUAL;
+            if (m_current == '&') {
+                shift();
+                token = AND;
+                break;
+            }
+            if (m_current == '=') {
+                shift();
+                token = ANDEQUAL;
+                break;
+            }
+            token = '&';
             break;
-        }
-        token = '-';
-        break;
-    case '*':
-        shift();
-        if (m_current == '=') {
+        case CharacterXor:
             shift();
-            token = MULTEQUAL;
+            if (m_current == '=') {
+                shift();
+                token = XOREQUAL;
+                break;
+            }
+            token = '^';
             break;
-        }
-        token = '*';
-        break;
-    case '/':
-        shift();
-        if (m_current == '/') {
+        case CharacterModulo:
             shift();
-            goto inSingleLineComment;
-        }
-        if (m_current == '*') {
-            shift();
-            goto inMultiLineComment;
-        }
-        if (m_current == '=') {
-            shift();
-            token = DIVEQUAL;
+            if (m_current == '=') {
+                shift();
+                token = MODEQUAL;
+                break;
+            }
+            token = '%';
             break;
-        }
-        token = '/';
-        break;
-    case '&':
-        shift();
-        if (m_current == '&') {
+        case CharacterOr:
             shift();
-            token = AND;
+            if (m_current == '=') {
+                shift();
+                token = OREQUAL;
+                break;
+            }
+            if (m_current == '|') {
+                shift();
+                token = OR;
+                break;
+            }
+            token = '|';
             break;
-        }
-        if (m_current == '=') {
+        case CharacterDot:
             shift();
-            token = ANDEQUAL;
+            if (isASCIIDigit(m_current)) {
+                record8('.');
+                goto inNumberAfterDecimalPoint;
+            }
+            token = '.';
             break;
-        }
-        token = '&';
-        break;
-    case '^':
-        shift();
-        if (m_current == '=') {
+        case CharacterSimple:
+            token = m_current;
             shift();
-            token = XOREQUAL;
             break;
-        }
-        token = '^';
-        break;
-    case '%':
-        shift();
-        if (m_current == '=') {
+        case CharacterSemicolon:
+            m_delimited = true;
             shift();
-            token = MODEQUAL;
+            token = ';';
             break;
-        }
-        token = '%';
-        break;
-    case '|':
-        shift();
-        if (m_current == '=') {
+        case CharacterOpenBrace:
+            lvalp->intValue = currentOffset();
             shift();
-            token = OREQUAL;
+            token = OPENBRACE;
             break;
-        }
-        if (m_current == '|') {
+        case CharacterCloseBrace:
+            lvalp->intValue = currentOffset();
+            m_delimited = true;
             shift();
-            token = OR;
+            token = CLOSEBRACE;
             break;
+        case CharacterBackSlash:
+            goto startIdentifierWithBackslash;
+        case CharacterZero:
+            goto startNumberWithZeroDigit;
+        case CharacterNumber:
+            goto startNumber;
+        case CharacterQuote:
+            goto startString;
+        case CharacterAlpha:
+            ASSERT(isIdentStart(m_current));
+            goto startIdentifierOrKeyword;
+        case CharacterLineTerminator:
+            ASSERT(isLineTerminator(m_current));
+            shiftLineTerminator();
+            m_atLineStart = true;
+            m_terminator = true;
+            if (lastTokenWasRestrKeyword()) {
+                token = ';';
+                goto doneSemicolon;
+            }
+            goto start;
+        case CharacterInvalid:
+            goto returnError;
+        default:
+            ASSERT_NOT_REACHED();
+            goto returnError;
         }
-        token = '|';
-        break;
-    case '.':
-        shift();
-        if (isASCIIDigit(m_current)) {
-            record8('.');
-            goto inNumberAfterDecimalPoint;
-        }
-        token = '.';
-        break;
-    case ',':
-    case '~':
-    case '?':
-    case ':':
-    case '(':
-    case ')':
-    case '[':
-    case ']':
-        token = m_current;
-        shift();
-        break;
-    case ';':
-        m_delimited = true;
-        shift();
-        token = ';';
-        break;
-    case '{':
-        lvalp->intValue = currentOffset();
-        shift();
-        token = OPENBRACE;
-        break;
-    case '}':
-        lvalp->intValue = currentOffset();
-        m_delimited = true;
-        shift();
-        token = CLOSEBRACE;
-        break;
-    case '\\':
-        goto startIdentifierWithBackslash;
-    case '0':
-        goto startNumberWithZeroDigit;
-    case '1':
-    case '2':
-    case '3':
-    case '4':
-    case '5':
-    case '6':
-    case '7':
-    case '8':
-    case '9':
-        goto startNumber;
-    case '"':
-    case '\'':
-        goto startString;
-    default:
-        if (isIdentStart(m_current))
+    } else {
+        // Rare characters
+        ASSERT(!isASCII(m_current));
+
+        if (isNonASCIIIdentStart(m_current))
             goto startIdentifierOrKeyword;
         if (isLineTerminator(m_current)) {
             shiftLineTerminator();
