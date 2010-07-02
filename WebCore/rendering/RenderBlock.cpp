@@ -2981,6 +2981,12 @@ void RenderBlock::clearFloats()
             m_floatingObjects->clear();
     }
 
+    // We should not process floats if the parent node is not a RenderBlock. Otherwise, we will add 
+    // floats in an invalid context. This will cause a crash arising from a bad cast on the parent.
+    // See <rdar://problem/8049753>, where float property is applied on a text node in a SVG.
+    if (!parent() || !parent()->isRenderBlock())
+        return;
+
     // Attempt to locate a previous sibling with overhanging floats.  We skip any elements that are
     // out of flow (like floating/positioned elements), and we also skip over any objects that may have shifted
     // to avoid floats.
