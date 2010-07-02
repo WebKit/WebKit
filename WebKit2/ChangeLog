@@ -2,6 +2,16 @@
 
         Reviewed by Anders Carlsson.
 
+        There is no longer a reason to check that the process is valid when posting
+        a message to the bundle, the process code will take care of that for us.
+
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::postMessageToInjectedBundle):
+
+2010-07-02  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
         Use send instead of connection()->send(), now that connections() are created
         asynchronously it can be null at this point and the message needs to be queued.
 
