@@ -4689,8 +4689,11 @@ resources/webkit01.dat:
 17
 20
 22
+24
+26
+27
 
-Test 17 of 23 in resources/webkit01.dat failed. Input:
+Test 17 of 27 in resources/webkit01.dat failed. Input:
 <A>test< /A>
 Got:
 | <html>
@@ -4706,7 +4709,7 @@ Expected:
 |     <a>
 |       "test< /A>"
 
-Test 20 of 23 in resources/webkit01.dat failed. Input:
+Test 20 of 27 in resources/webkit01.dat failed. Input:
 <body></br foo="bar"></body>
 Got:
 | <html>
@@ -4720,7 +4723,7 @@ Expected:
 |   <body>
 |     <br>
 
-Test 22 of 23 in resources/webkit01.dat failed. Input:
+Test 22 of 27 in resources/webkit01.dat failed. Input:
 <body></body></br foo="bar">
 Got:
 | <html>
@@ -4733,6 +4736,53 @@ Expected:
 |   <head>
 |   <body>
 |     <br>
+
+Test 24 of 27 in resources/webkit01.dat failed. Input:
+<html><body></body></html><!-- Hi there -->
+Got:
+| <html>
+|   <head>
+|   <body>
+|     <!--  Hi there  -->
+Expected:
+| <html>
+|   <head>
+|   <body>
+| <!--  Hi there  -->
+
+Test 26 of 27 in resources/webkit01.dat failed. Input:
+<html><body></body></html>x<!-- Hi there --></html><!-- Again -->
+Got:
+| <html>
+|   <head>
+|   <body>
+|     "x"
+|     <!--  Hi there  -->
+|     <!--  Again  -->
+Expected:
+| <html>
+|   <head>
+|   <body>
+|     "x"
+|     <!--  Hi there  -->
+| <!--  Again  -->
+
+Test 27 of 27 in resources/webkit01.dat failed. Input:
+<html><body></body></html>x<!-- Hi there --></body></html><!-- Again -->
+Got:
+| <html>
+|   <head>
+|   <body>
+|     "x"
+|     <!--  Hi there  -->
+|     <!--  Again  -->
+Expected:
+| <html>
+|   <head>
+|   <body>
+|     "x"
+|     <!--  Hi there  -->
+| <!--  Again  -->
 resources/doctype01.dat: PASS
 
 resources/scriptdata01.dat: PASS

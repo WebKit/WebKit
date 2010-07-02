@@ -268,3 +268,44 @@ console.log("FOO<span>BAR</span>BAZ");
 |     <bdy>
 |       <br>
 |         foo="bar"
+
+#data
+<html><body></body></html><!-- Hi there -->
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+| <!--  Hi there  -->
+
+#data
+<html><body></body></html>x<!-- Hi there -->
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     "x"
+|     <!--  Hi there  -->
+
+#data
+<html><body></body></html>x<!-- Hi there --></html><!-- Again -->
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     "x"
+|     <!--  Hi there  -->
+| <!--  Again  -->
+
+#data
+<html><body></body></html>x<!-- Hi there --></body></html><!-- Again -->
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     "x"
+|     <!--  Hi there  -->
+| <!--  Again  -->

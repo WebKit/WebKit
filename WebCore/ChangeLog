@@ -1,3 +1,22 @@
+2010-07-02  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Implement AfterAfterBodyMode
+        https://bugs.webkit.org/show_bug.cgi?id=41501
+
+        In implementing this mode, I noticed a bug in the character processing
+        of the AfterBodyMode, which I fixed by adding a break statement.  Also,
+        to get one of the new tests to pass, I needed to implement one
+        notImplemented() in the InBody insertion mode.  Yay for testing.
+
+        * html/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::processStartTag):
+        (WebCore::HTMLTreeBuilder::processEndTag):
+        (WebCore::HTMLTreeBuilder::processComment):
+        (WebCore::HTMLTreeBuilder::processCharacter):
+        (WebCore::HTMLTreeBuilder::processEndOfFile):
+
 2010-07-02  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r62371.

@@ -1,3 +1,20 @@
+2010-07-02  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Implement AfterAfterBodyMode
+        https://bugs.webkit.org/show_bug.cgi?id=41501
+
+        The AfterAfterBodyMode doesn't seem to be well-covered by the existing
+        HTML5lib tests, so I added a few more tests to cover it.  It's somewhat
+        hard to observe.  The only way I can figure out to observe it is where
+        the comment elements get attached to the DOM.
+
+        * html5lib/resources/webkit01.dat:
+        * html5lib/runner-expected-html5.txt:
+        * html5lib/runner-expected.txt:
+        * html5lib/webkit-resumer-expected.txt:
+
 2010-07-02  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed. Remove accidentally added expectations on Chromium Linux - they should be derived from Windows ones.

@@ -1727,7 +1727,6 @@ Got:
 |   <body>
 |     "X"
 |     "X"
-|     "X"
 Expected:
 | <!DOCTYPE html>
 | <html>
@@ -1931,7 +1930,6 @@ Got:
 |   <body>
 |     "X"
 |     "X"
-|     "X"
 Expected:
 | <!DOCTYPE html>
 | <html>
@@ -1947,7 +1945,6 @@ Got:
 |   <head>
 |   <body>
 |     "X"
-|     " "
 |     " "
 Expected:
 | <!DOCTYPE html>
@@ -3740,6 +3737,13 @@ Got:
 | <html>
 |   <head>
 |   <body>
+|     <math>
+|       <mi>
+|         "foo"
+|       <mi>
+|         "bar"
+|       <p>
+|         "baz"
 Expected:
 | <!DOCTYPE html>
 | <html>
@@ -4235,6 +4239,13 @@ Got:
 | <html>
 |   <head>
 |   <body>
+|     <svg>
+|       <g>
+|         "foo"
+|       <g>
+|         "bar"
+|       <p>
+|         "baz"
 Expected:
 | <!DOCTYPE html>
 | <html>
@@ -5691,7 +5702,7 @@ Expected:
 resources/webkit01.dat:
 17
 
-Test 17 of 23 in resources/webkit01.dat failed. Input:
+Test 17 of 27 in resources/webkit01.dat failed. Input:
 <A>test< /A>
 Got:
 | <html>
