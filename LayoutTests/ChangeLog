@@ -2,6 +2,18 @@
 
         Reviewed by Dimitri Glazkov.
 
+        Implement OpenGL ES 2.0 semantics for vertex attribute 0
+        https://bugs.webkit.org/show_bug.cgi?id=41300
+
+        * fast/canvas/webgl/gl-bind-attrib-location-test-expected.txt: Added.
+        * fast/canvas/webgl/gl-bind-attrib-location-test.html: Added.
+        * fast/canvas/webgl/gl-vertex-attrib-expected.txt: Added.
+        * fast/canvas/webgl/gl-vertex-attrib.html: Added.
+
+2010-07-02  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
         Need to validate the size of the incoming arrays for uniform* functions
         https://bugs.webkit.org/show_bug.cgi?id=41383
 

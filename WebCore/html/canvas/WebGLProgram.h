@@ -43,8 +43,10 @@ namespace WebCore {
         // cacheActiveAttribLocation() is only called once after linkProgram()
         // succeeds.
         bool cacheActiveAttribLocations();
-        int numActiveAttribLocations();
-        int getActiveAttribLocation(int index);
+        int numActiveAttribLocations() const;
+        int getActiveAttribLocation(int index) const;
+
+        bool isUsingVertexAttrib0() const;
 
     protected:
         WebGLProgram(WebGLRenderingContext*);

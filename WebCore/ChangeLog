@@ -2,6 +2,45 @@
 
         Reviewed by Dimitri Glazkov.
 
+        Implement OpenGL ES 2.0 semantics for vertex attribute 0
+        https://bugs.webkit.org/show_bug.cgi?id=41300
+
+        Test: fast/canvas/webgl/gl-bind-attrib-location-test.html
+              fast/canvas/webgl/gl-vertex-attrib.html
+
+        * html/canvas/WebGLProgram.cpp:
+        (WebCore::WebGLProgram::numActiveAttribLocations): const.
+        (WebCore::WebGLProgram::getActiveAttribLocation): const.
+        (WebCore::WebGLProgram::isUsingVertexAttrib0): Determine whether vertex attrib 0 is used by the program.
+        * html/canvas/WebGLProgram.h: Declare isUsingVertexAttrib0.
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::WebGLRenderingContext): Deal with vertex attrib 0.
+        (WebCore::WebGLRenderingContext::disableVertexAttribArray): Ditto.
+        (WebCore::WebGLRenderingContext::drawArrays): Ditto.
+        (WebCore::WebGLRenderingContext::drawElements): Ditto.
+        (WebCore::WebGLRenderingContext::getVertexAttrib): Use cached value instead of calling glGetVertexAtrtrib.
+        (WebCore::WebGLRenderingContext::vertexAttrib1f): Validate input, deal with vertex attrib 0.
+        (WebCore::WebGLRenderingContext::vertexAttrib1fv): Ditto.
+        (WebCore::WebGLRenderingContext::vertexAttrib2f): Ditto.
+        (WebCore::WebGLRenderingContext::vertexAttrib2fv): Ditto.
+        (WebCore::WebGLRenderingContext::vertexAttrib3f): Ditto.
+        (WebCore::WebGLRenderingContext::vertexAttrib3fv): Ditto.
+        (WebCore::WebGLRenderingContext::vertexAttrib4f): Ditto.
+        (WebCore::WebGLRenderingContext::vertexAttrib4fv): Ditto.
+        (WebCore::WebGLRenderingContext::vertexAttribPointer): Ditto.
+        (WebCore::WebGLRenderingContext::handleNPOTTextures): Move isGLES2Compliant() to caller.
+        (WebCore::WebGLRenderingContext::vertexAttribImpl): Helper for vertexAttribNfv.
+        (WebCore::WebGLRenderingContext::initVertexAttrib0): Initialize vertex attrib 0.
+        (WebCore::WebGLRenderingContext::simulateVertexAttrib0): Simulate vertex attrib 0.
+        (WebCore::WebGLRenderingContext::restoreStatesAfterVertexAttrib0Simulation): Restore states after simulating vertex attrib 0.
+        * html/canvas/WebGLRenderingContext.h:
+        (WebCore::WebGLRenderingContext::VertexAttribState::VertexAttribState): Tracking full vertex attrib states.
+        (WebCore::WebGLRenderingContext::VertexAttribState::initValue): Init value to [0,0,0,1].
+
+2010-07-02  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
         Need to validate the size of the incoming arrays for uniform* functions
         https://bugs.webkit.org/show_bug.cgi?id=41383
 

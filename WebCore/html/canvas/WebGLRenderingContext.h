@@ -283,20 +283,20 @@ class WebKitCSSMatrix;
         void useProgram(WebGLProgram*, ExceptionCode&);
         void validateProgram(WebGLProgram*, ExceptionCode&);
 
-        void vertexAttrib1f(unsigned long indx, float x);
-        void vertexAttrib1fv(unsigned long indx, Float32Array* values);
-        void vertexAttrib1fv(unsigned long indx, float* values, int size);
-        void vertexAttrib2f(unsigned long indx, float x, float y);
-        void vertexAttrib2fv(unsigned long indx, Float32Array* values);
-        void vertexAttrib2fv(unsigned long indx, float* values, int size);
-        void vertexAttrib3f(unsigned long indx, float x, float y, float z);
-        void vertexAttrib3fv(unsigned long indx, Float32Array* values);
-        void vertexAttrib3fv(unsigned long indx, float* values, int size);
-        void vertexAttrib4f(unsigned long indx, float x, float y, float z, float w);
-        void vertexAttrib4fv(unsigned long indx, Float32Array* values);
-        void vertexAttrib4fv(unsigned long indx, float* values, int size);
-        void vertexAttribPointer(unsigned long indx, long size, unsigned long type, bool normalized,
-                                 unsigned long stride, unsigned long offset, ExceptionCode&);
+        void vertexAttrib1f(unsigned long index, float x);
+        void vertexAttrib1fv(unsigned long index, Float32Array* values);
+        void vertexAttrib1fv(unsigned long index, float* values, int size);
+        void vertexAttrib2f(unsigned long index, float x, float y);
+        void vertexAttrib2fv(unsigned long index, Float32Array* values);
+        void vertexAttrib2fv(unsigned long index, float* values, int size);
+        void vertexAttrib3f(unsigned long index, float x, float y, float z);
+        void vertexAttrib3fv(unsigned long index, Float32Array* values);
+        void vertexAttrib3fv(unsigned long index, float* values, int size);
+        void vertexAttrib4f(unsigned long index, float x, float y, float z, float w);
+        void vertexAttrib4fv(unsigned long index, Float32Array* values);
+        void vertexAttrib4fv(unsigned long index, float* values, int size);
+        void vertexAttribPointer(unsigned long index, long size, unsigned long type, bool normalized,
+                                 long stride, long offset, ExceptionCode&);
 
         void viewport(long x, long y, unsigned long width, unsigned long height);
 
@@ -357,16 +357,44 @@ class WebKitCSSMatrix;
         // Cached values for vertex attrib range checks
         class VertexAttribState {
         public:
-            VertexAttribState() : enabled(false), bytesPerElement(0), stride(0), offset(0) { }
+            VertexAttribState()
+                : enabled(false)
+                , bytesPerElement(0)
+                , size(4)
+                , type(GraphicsContext3D::FLOAT)
+                , normalized(false)
+                , stride(16)
+                , originalStride(0)
+                , offset(0)
+            {
+                initValue();
+            }
+
+            void initValue()
+            {
+                value[0] = 0.0f;
+                value[1] = 0.0f;
+                value[2] = 0.0f;
+                value[3] = 1.0f;
+            }
+
             bool enabled;
             RefPtr<WebGLBuffer> bufferBinding;
             long bytesPerElement;
-            unsigned long stride;
-            unsigned long offset;
+            long size;
+            unsigned long type;
+            bool normalized;
+            long stride;
+            long originalStride;
+            long offset;
+            float value[4];
         };
         
         Vector<VertexAttribState> m_vertexAttribState;
         unsigned m_maxVertexAttribs;
+        RefPtr<WebGLBuffer> m_vertexAttrib0Buffer;
+        long m_vertexAttrib0BufferSize;
+        float m_vertexAttrib0BufferValue[4];
 
         RefPtr<WebGLProgram> m_currentProgram;
         RefPtr<WebGLFramebuffer> m_framebufferBinding;
@@ -472,6 +500,15 @@ class WebKitCSSMatrix;
         bool validateUniformParameters(const WebGLUniformLocation* location, void* v, int size, int mod);
         bool validateUniformMatrixParameters(const WebGLUniformLocation* location, bool transpose, Float32Array* v, int mod);
         bool validateUniformMatrixParameters(const WebGLUniformLocation* location, bool transpose, void* v, int size, int mod);
+
+        // Helper functions for vertexAttribNfv.
+        void vertexAttribImpl(unsigned long index, Float32Array* v, int expectedSize);
+        void vertexAttribImpl(unsigned long index, float* v, int size, int expectedSize);
+
+        // Helpers for simulating vertexAttrib0
+        void initVertexAttrib0();
+        bool simulateVertexAttrib0(long numVertex);
+        void restoreStatesAfterVertexAttrib0Simulation();
 
         friend class WebGLStateRestorer;
     };

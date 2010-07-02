@@ -121,8 +121,10 @@ WebGLRenderingContext::WebGLRenderingContext(HTMLCanvasElement* passedCanvas, Pa
     m_context->getIntegerv(GraphicsContext3D::MAX_CUBE_MAP_TEXTURE_SIZE, &maxCubeMapTextureSize);
     m_maxCubeMapTextureSize = maxCubeMapTextureSize;
 
-    if (!isGLES2Compliant())
+    if (!isGLES2Compliant()) {
         createFallbackBlackTextures1x1();
+        initVertexAttrib0();
+    }
     m_context->reshape(canvas()->width(), canvas()->height());
     m_context->viewport(0, 0, canvas()->width(), canvas()->height());
 }
@@ -575,6 +577,20 @@ void WebGLRenderingContext::deleteBuffer(WebGLBuffer* buffer)
         return;
     
     buffer->deleteObject();
+
+    if (!isGLES2Compliant()) {
+        VertexAttribState& state = m_vertexAttribState[0];
+        if (buffer == state.bufferBinding) {
+            state.bufferBinding = m_vertexAttrib0Buffer;
+            state.bytesPerElement = 0;
+            state.size = 4;
+            state.type = GraphicsContext3D::FLOAT;
+            state.normalized = false;
+            state.stride = 16;
+            state.originalStride = 0;
+            state.offset = 0;
+        }
+    }
 }
 
 void WebGLRenderingContext::deleteFramebuffer(WebGLFramebuffer* framebuffer)
@@ -669,9 +685,11 @@ void WebGLRenderingContext::disableVertexAttribArray(unsigned long index, Except
     
     if (index < m_vertexAttribState.size())
         m_vertexAttribState[index].enabled = false;
-    
-    m_context->disableVertexAttribArray(index);
-    cleanupAfterGraphicsCall(false);
+
+    if (index > 0 || isGLES2Compliant()) {
+        m_context->disableVertexAttribArray(index);
+        cleanupAfterGraphicsCall(false);
+    }
 }
 
 bool WebGLRenderingContext::validateElementArraySize(unsigned long count, unsigned long type, long offset)
@@ -853,9 +871,17 @@ void WebGLRenderingContext::drawArrays(unsigned long mode, long first, long coun
         return;
     }
 
-    handleNPOTTextures(true);
+    bool vertexAttrib0Simulated = false;
+    if (!isGLES2Compliant()) {
+        vertexAttrib0Simulated = simulateVertexAttrib0(first + count - 1);
+        handleNPOTTextures(true);
+    }
     m_context->drawArrays(mode, first, count);
-    handleNPOTTextures(false);
+    if (!isGLES2Compliant()) {
+        handleNPOTTextures(false);
+        if (vertexAttrib0Simulated)
+            restoreStatesAfterVertexAttrib0Simulation();
+    }
     cleanupAfterGraphicsCall(true);
 }
 
@@ -897,9 +923,17 @@ void WebGLRenderingContext::drawElements(unsigned long mode, long count, unsigne
             return;
         }
 
-    handleNPOTTextures(true);
+    bool vertexAttrib0Simulated = false;
+    if (!isGLES2Compliant()) {
+        vertexAttrib0Simulated = simulateVertexAttrib0(numElements);
+        handleNPOTTextures(true);
+    }
     m_context->drawElements(mode, count, type, offset);
-    handleNPOTTextures(false);
+    if (!isGLES2Compliant()) {
+        handleNPOTTextures(false);
+        if (vertexAttrib0Simulated)
+            restoreStatesAfterVertexAttrib0Simulation();
+    }
     cleanupAfterGraphicsCall(true);
 }
 
@@ -1664,38 +1698,47 @@ WebGLGetInfo WebGLRenderingContext::getVertexAttrib(unsigned long index, unsigne
 {
     UNUSED_PARAM(ec);
     WebGLStateRestorer(this, false);
-    switch (pname) {
-    case GraphicsContext3D::VERTEX_ATTRIB_ARRAY_BUFFER_BINDING: {
-        int name = 0;
-        m_context->getVertexAttribiv(index, pname, &name);
-        return WebGLGetInfo(PassRefPtr<WebGLBuffer>(findBuffer(static_cast<Platform3DObject>(name))));
-    }
-    case GraphicsContext3D::VERTEX_ATTRIB_ARRAY_ENABLED:
-    case GraphicsContext3D::VERTEX_ATTRIB_ARRAY_NORMALIZED: {
-        int value = 0;
-        m_context->getVertexAttribiv(index, pname, &value);
-        return WebGLGetInfo(static_cast<bool>(value));
-    }
-    case GraphicsContext3D::VERTEX_ATTRIB_ARRAY_SIZE:
-    case GraphicsContext3D::VERTEX_ATTRIB_ARRAY_STRIDE: {
-        int value = 0;
-        m_context->getVertexAttribiv(index, pname, &value);
-        return WebGLGetInfo(static_cast<long>(value));
-    }
-    case GraphicsContext3D::VERTEX_ATTRIB_ARRAY_TYPE: {
-        int value = 0;
-        m_context->getVertexAttribiv(index, pname, &value);
-        return WebGLGetInfo(static_cast<unsigned long>(value));
-    }
-    case GraphicsContext3D::CURRENT_VERTEX_ATTRIB: {
-        float value[4] = {0};
-        m_context->getVertexAttribfv(index, pname, value);
-        return WebGLGetInfo(Float32Array::create(value, 4));
-    }
-    default: {
-        m_context->synthesizeGLError(GraphicsContext3D::INVALID_ENUM);
+    if (index >= m_maxVertexAttribs) {
+        m_context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE);
         return WebGLGetInfo();
     }
+    switch (pname) {
+    case GraphicsContext3D::VERTEX_ATTRIB_ARRAY_BUFFER_BINDING:
+        if (!isGLES2Compliant() && !index && m_vertexAttribState[0].bufferBinding == m_vertexAttrib0Buffer
+            || index >= m_vertexAttribState.size()
+            || !m_vertexAttribState[index].bufferBinding
+            || !m_vertexAttribState[index].bufferBinding->object())
+            return WebGLGetInfo();
+        return WebGLGetInfo(PassRefPtr<WebGLBuffer>(m_vertexAttribState[index].bufferBinding));
+    case GraphicsContext3D::VERTEX_ATTRIB_ARRAY_ENABLED:
+        if (index >= m_vertexAttribState.size())
+            return WebGLGetInfo(false);
+        return WebGLGetInfo(m_vertexAttribState[index].enabled);
+    case GraphicsContext3D::VERTEX_ATTRIB_ARRAY_NORMALIZED:
+        if (index >= m_vertexAttribState.size())
+            return WebGLGetInfo(false);
+        return WebGLGetInfo(m_vertexAttribState[index].normalized);
+    case GraphicsContext3D::VERTEX_ATTRIB_ARRAY_SIZE:
+        if (index >= m_vertexAttribState.size())
+            return WebGLGetInfo(static_cast<long>(4));
+        return WebGLGetInfo(m_vertexAttribState[index].size);
+    case GraphicsContext3D::VERTEX_ATTRIB_ARRAY_STRIDE:
+        if (index >= m_vertexAttribState.size())
+            return WebGLGetInfo(static_cast<long>(0));
+        return WebGLGetInfo(m_vertexAttribState[index].originalStride);
+    case GraphicsContext3D::VERTEX_ATTRIB_ARRAY_TYPE:
+        if (index >= m_vertexAttribState.size())
+            return WebGLGetInfo(static_cast<unsigned long>(GraphicsContext3D::FLOAT));
+        return WebGLGetInfo(m_vertexAttribState[index].type);
+    case GraphicsContext3D::CURRENT_VERTEX_ATTRIB:
+        if (index >= m_vertexAttribState.size()) {
+            float value[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
+            return WebGLGetInfo(Float32Array::create(value, 4));
+        }
+        return WebGLGetInfo(Float32Array::create(m_vertexAttribState[index].value, 4));
+    default:
+        m_context->synthesizeGLError(GraphicsContext3D::INVALID_ENUM);
+        return WebGLGetInfo();
     }
 }
 
@@ -2835,123 +2878,137 @@ void WebGLRenderingContext::validateProgram(WebGLProgram* program, ExceptionCode
     cleanupAfterGraphicsCall(false);
 }
 
-void WebGLRenderingContext::vertexAttrib1f(unsigned long indx, float v0)
+void WebGLRenderingContext::vertexAttrib1f(unsigned long index, float v0)
 {
-    m_context->vertexAttrib1f(indx, v0);
-    cleanupAfterGraphicsCall(false);
+    // In GL, we skip setting vertexAttrib0 values.
+    if (index || isGLES2Compliant()) {
+        m_context->vertexAttrib1f(index, v0);
+        cleanupAfterGraphicsCall(false);
+    }
+    m_vertexAttribState[index].value[0] = v0;
+    m_vertexAttribState[index].value[1] = 0.0f;
+    m_vertexAttribState[index].value[2] = 0.0f;
+    m_vertexAttribState[index].value[3] = 1.0f;
 }
 
-void WebGLRenderingContext::vertexAttrib1fv(unsigned long indx, Float32Array* v)
+void WebGLRenderingContext::vertexAttrib1fv(unsigned long index, Float32Array* v)
 {
-    // FIXME: Need to make sure array is big enough for attribute being set
-    m_context->vertexAttrib1fv(indx, v->data());
-    cleanupAfterGraphicsCall(false);
+    vertexAttribImpl(index, v, 1);
 }
 
-void WebGLRenderingContext::vertexAttrib1fv(unsigned long indx, float* v, int size)
+void WebGLRenderingContext::vertexAttrib1fv(unsigned long index, float* v, int size)
 {
-    // FIXME: Need to make sure array is big enough for attribute being set
-    UNUSED_PARAM(size);
-    
-    m_context->vertexAttrib1fv(indx, v);
-    cleanupAfterGraphicsCall(false);
+    vertexAttribImpl(index, v, size, 1);
 }
 
-void WebGLRenderingContext::vertexAttrib2f(unsigned long indx, float v0, float v1)
+void WebGLRenderingContext::vertexAttrib2f(unsigned long index, float v0, float v1)
 {
-    m_context->vertexAttrib2f(indx, v0, v1);
-    cleanupAfterGraphicsCall(false);
+    // In GL, we skip setting vertexAttrib0 values.
+    if (index || isGLES2Compliant()) {
+        m_context->vertexAttrib2f(index, v0, v1);
+        cleanupAfterGraphicsCall(false);
+    }
+    m_vertexAttribState[index].value[0] = v0;
+    m_vertexAttribState[index].value[1] = v1;
+    m_vertexAttribState[index].value[2] = 0.0f;
+    m_vertexAttribState[index].value[3] = 1.0f;
 }
 
-void WebGLRenderingContext::vertexAttrib2fv(unsigned long indx, Float32Array* v)
+void WebGLRenderingContext::vertexAttrib2fv(unsigned long index, Float32Array* v)
 {
-    // FIXME: Need to make sure array is big enough for attribute being set
-    m_context->vertexAttrib2fv(indx, v->data());
-    cleanupAfterGraphicsCall(false);
+    vertexAttribImpl(index, v, 2);
 }
 
-void WebGLRenderingContext::vertexAttrib2fv(unsigned long indx, float* v, int size)
+void WebGLRenderingContext::vertexAttrib2fv(unsigned long index, float* v, int size)
 {
-    // FIXME: Need to make sure array is big enough for attribute being set
-    UNUSED_PARAM(size);
-    
-    m_context->vertexAttrib2fv(indx, v);
-    cleanupAfterGraphicsCall(false);
+    vertexAttribImpl(index, v, size, 2);
 }
 
-void WebGLRenderingContext::vertexAttrib3f(unsigned long indx, float v0, float v1, float v2)
+void WebGLRenderingContext::vertexAttrib3f(unsigned long index, float v0, float v1, float v2)
 {
-    m_context->vertexAttrib3f(indx, v0, v1, v2);
-    cleanupAfterGraphicsCall(false);
+    // In GL, we skip setting vertexAttrib0 values.
+    if (index || isGLES2Compliant()) {
+        m_context->vertexAttrib3f(index, v0, v1, v2);
+        cleanupAfterGraphicsCall(false);
+    }
+    m_vertexAttribState[index].value[0] = v0;
+    m_vertexAttribState[index].value[1] = v1;
+    m_vertexAttribState[index].value[2] = v2;
+    m_vertexAttribState[index].value[3] = 1.0f;
 }
 
-void WebGLRenderingContext::vertexAttrib3fv(unsigned long indx, Float32Array* v)
+void WebGLRenderingContext::vertexAttrib3fv(unsigned long index, Float32Array* v)
 {
-    // FIXME: Need to make sure array is big enough for attribute being set
-    m_context->vertexAttrib3fv(indx, v->data());
-    cleanupAfterGraphicsCall(false);
+    vertexAttribImpl(index, v, 3);
 }
 
-void WebGLRenderingContext::vertexAttrib3fv(unsigned long indx, float* v, int size)
+void WebGLRenderingContext::vertexAttrib3fv(unsigned long index, float* v, int size)
 {
-    // FIXME: Need to make sure array is big enough for attribute being set
-    UNUSED_PARAM(size);
-    
-    m_context->vertexAttrib3fv(indx, v);
-    cleanupAfterGraphicsCall(false);
+    vertexAttribImpl(index, v, size, 3);
 }
 
-void WebGLRenderingContext::vertexAttrib4f(unsigned long indx, float v0, float v1, float v2, float v3)
+void WebGLRenderingContext::vertexAttrib4f(unsigned long index, float v0, float v1, float v2, float v3)
 {
-    m_context->vertexAttrib4f(indx, v0, v1, v2, v3);
-    cleanupAfterGraphicsCall(false);
+    // In GL, we skip setting vertexAttrib0 values.
+    if (index || isGLES2Compliant()) {
+        m_context->vertexAttrib4f(index, v0, v1, v2, v3);
+        cleanupAfterGraphicsCall(false);
+    }
+    m_vertexAttribState[index].value[0] = v0;
+    m_vertexAttribState[index].value[1] = v1;
+    m_vertexAttribState[index].value[2] = v2;
+    m_vertexAttribState[index].value[3] = v3;
 }
 
-void WebGLRenderingContext::vertexAttrib4fv(unsigned long indx, Float32Array* v)
+void WebGLRenderingContext::vertexAttrib4fv(unsigned long index, Float32Array* v)
 {
-    // FIXME: Need to make sure array is big enough for attribute being set
-    m_context->vertexAttrib4fv(indx, v->data());
-    cleanupAfterGraphicsCall(false);
+    vertexAttribImpl(index, v, 4);
 }
 
-void WebGLRenderingContext::vertexAttrib4fv(unsigned long indx, float* v, int size)
+void WebGLRenderingContext::vertexAttrib4fv(unsigned long index, float* v, int size)
 {
-    // FIXME: Need to make sure array is big enough for attribute being set
-    UNUSED_PARAM(size);
-    
-    m_context->vertexAttrib4fv(indx, v);
-    cleanupAfterGraphicsCall(false);
+    vertexAttribImpl(index, v, size, 4);
 }
 
-void WebGLRenderingContext::vertexAttribPointer(unsigned long indx, long size, unsigned long type, bool normalized, unsigned long stride, unsigned long offset, ExceptionCode& ec)
+void WebGLRenderingContext::vertexAttribPointer(unsigned long index, long size, unsigned long type, bool normalized, long stride, long offset, ExceptionCode& ec)
 {
-    UNUSED_PARAM(ec);
-    if (!m_boundArrayBuffer || indx >= m_maxVertexAttribs) {
+    if (index >= m_maxVertexAttribs) {
         m_context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE);
         return;
     }
-    
-    if (indx >= m_vertexAttribState.size())
-        m_vertexAttribState.resize(indx + 1);
-
+    if (size < 1 || size > 4 || stride < 0 || offset < 0) {
+        m_context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE);
+        return;
+    }
+    if (!m_boundArrayBuffer) {
+        m_context->synthesizeGLError(GraphicsContext3D::INVALID_OPERATION);
+        return;
+    }
     // Determine the number of elements the bound buffer can hold, given the offset, size, type and stride
     long bytesPerElement = size * sizeInBytes(type, ec);
     if (bytesPerElement <= 0)
         return;
+
+    if (index >= m_vertexAttribState.size())
+        m_vertexAttribState.resize(index + 1);
+
     long validatedStride = bytesPerElement;
     if (stride != 0) {
         if ((long) stride < bytesPerElement) {
             m_context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE);
             return;
         }
-        
         validatedStride = stride;
     }
-    m_vertexAttribState[indx].bufferBinding = m_boundArrayBuffer;
-    m_vertexAttribState[indx].bytesPerElement = bytesPerElement;
-    m_vertexAttribState[indx].stride = validatedStride;
-    m_vertexAttribState[indx].offset = offset;
-    m_context->vertexAttribPointer(indx, size, type, normalized, stride, offset);
+    m_vertexAttribState[index].bufferBinding = m_boundArrayBuffer;
+    m_vertexAttribState[index].bytesPerElement = bytesPerElement;
+    m_vertexAttribState[index].size = size;
+    m_vertexAttribState[index].type = type;
+    m_vertexAttribState[index].normalized = normalized;
+    m_vertexAttribState[index].stride = validatedStride;
+    m_vertexAttribState[index].originalStride = stride;
+    m_vertexAttribState[index].offset = offset;
+    m_context->vertexAttribPointer(index, size, type, normalized, stride, offset);
     cleanupAfterGraphicsCall(false);
 }
 
@@ -3131,8 +3188,6 @@ bool WebGLRenderingContext::isGLES2Compliant()
 
 void WebGLRenderingContext::handleNPOTTextures(bool prepareToDraw)
 {
-    if (isGLES2Compliant())
-        return;
     bool resetActiveUnit = false;
     for (unsigned ii = 0; ii < m_textureUnits.size(); ++ii) {
         if (m_textureUnits[ii].m_texture2DBinding && m_textureUnits[ii].m_texture2DBinding->needToUseBlackTexture()
@@ -3517,6 +3572,106 @@ bool WebGLRenderingContext::validateUniformMatrixParameters(const WebGLUniformLo
         return false;
     }
     return true;
+}
+
+void WebGLRenderingContext::vertexAttribImpl(unsigned long index, Float32Array* v, int expectedSize)
+{
+    if (!v) {
+        m_context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE);
+        return;
+    }
+    vertexAttribImpl(index, v->data(), v->length(), expectedSize);
+}
+
+void WebGLRenderingContext::vertexAttribImpl(unsigned long index, float* v, int size, int expectedSize)
+{
+    if (!v) {
+        m_context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE);
+        return;
+    }
+    if (size < expectedSize) {
+        m_context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE);
+        return;
+    }
+    // In GL, we skip setting vertexAttrib0 values.
+    if (index || isGLES2Compliant()) {
+        switch (expectedSize) {
+        case 1:
+            m_context->vertexAttrib1fv(index, v);
+            break;
+        case 2:
+            m_context->vertexAttrib2fv(index, v);
+            break;
+        case 3:
+            m_context->vertexAttrib3fv(index, v);
+            break;
+        case 4:
+            m_context->vertexAttrib4fv(index, v);
+            break;
+        }
+        cleanupAfterGraphicsCall(false);
+    }
+    m_vertexAttribState[index].initValue();
+    for (int ii = 0; ii < expectedSize; ++ii)
+        m_vertexAttribState[index].value[ii] = v[ii];
+}
+
+void WebGLRenderingContext::initVertexAttrib0()
+{
+    m_vertexAttribState.resize(1);
+    m_vertexAttrib0Buffer = createBuffer();
+    m_context->bindBuffer(GraphicsContext3D::ARRAY_BUFFER, m_vertexAttrib0Buffer.get());
+    m_context->bufferData(GraphicsContext3D::ARRAY_BUFFER, 0, GraphicsContext3D::DYNAMIC_DRAW);
+    m_context->vertexAttribPointer(0, 4, GraphicsContext3D::FLOAT, false, 0, 0);
+    m_vertexAttribState[0].bufferBinding = m_vertexAttrib0Buffer;
+    m_context->bindBuffer(GraphicsContext3D::ARRAY_BUFFER, 0);
+    m_context->enableVertexAttribArray(0);
+    m_vertexAttrib0BufferSize = 0;
+    m_vertexAttrib0BufferValue[0] = 0.0f;
+    m_vertexAttrib0BufferValue[1] = 0.0f;
+    m_vertexAttrib0BufferValue[2] = 0.0f;
+    m_vertexAttrib0BufferValue[3] = 1.0f;
+}
+
+bool WebGLRenderingContext::simulateVertexAttrib0(long numVertex)
+{
+    const VertexAttribState& state = m_vertexAttribState[0];
+    if (state.enabled || !m_currentProgram || !m_currentProgram->object()
+        || !m_currentProgram->isUsingVertexAttrib0())
+        return false;
+    m_context->bindBuffer(GraphicsContext3D::ARRAY_BUFFER, m_vertexAttrib0Buffer.get());
+    long bufferDataSize = (numVertex + 1) * 4 * sizeof(float);
+    if (bufferDataSize > m_vertexAttrib0BufferSize
+        || state.value[0] != m_vertexAttrib0BufferValue[0]
+        || state.value[1] != m_vertexAttrib0BufferValue[1]
+        || state.value[2] != m_vertexAttrib0BufferValue[2]
+        || state.value[3] != m_vertexAttrib0BufferValue[3]) {
+        RefPtr<Float32Array> bufferData = Float32Array::create((numVertex + 1) * 4);
+        for (long ii = 0; ii < numVertex + 1; ++ii) {
+            bufferData->set(ii * 4, state.value[0]);
+            bufferData->set(ii * 4 + 1, state.value[1]);
+            bufferData->set(ii * 4 + 2, state.value[2]);
+            bufferData->set(ii * 4 + 3, state.value[3]);
+        }
+        m_context->bufferData(GraphicsContext3D::ARRAY_BUFFER, bufferData.get(), GraphicsContext3D::DYNAMIC_DRAW);
+        m_vertexAttrib0BufferSize = bufferDataSize;
+        m_vertexAttrib0BufferValue[0] = state.value[0];
+        m_vertexAttrib0BufferValue[1] = state.value[1];
+        m_vertexAttrib0BufferValue[2] = state.value[2];
+        m_vertexAttrib0BufferValue[3] = state.value[3];
+    }
+    m_context->vertexAttribPointer(0, 4, GraphicsContext3D::FLOAT, false, 0, 0);
+    return true;
+}
+
+void WebGLRenderingContext::restoreStatesAfterVertexAttrib0Simulation()
+{
+    const VertexAttribState& state = m_vertexAttribState[0];
+    if (state.bufferBinding != m_vertexAttrib0Buffer) {
+        m_context->bindBuffer(GraphicsContext3D::ARRAY_BUFFER, state.bufferBinding.get());
+        m_context->vertexAttribPointer(0, state.size, state.type, state.normalized, state.originalStride, state.offset);
+    }
+    m_context->bindBuffer(GraphicsContext3D::ARRAY_BUFFER, m_boundArrayBuffer.get());
 }
 
 } // namespace WebCore
