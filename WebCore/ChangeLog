@@ -1,3 +1,11 @@
+2010-07-01  Simon Fraser  <simon.fraser@apple.com>
+
+        No review.
+
+        Fix a link warning in 32-bit by not explicitly exporting WebCore::GraphicsLayer::syncCompositingStateForThisLayerOnly().
+
+        * WebCore.AcceleratedCompositing.exp:
+
 2010-07-01  Tony Gentilcore  <tonyg@chromium.org>
 
         Reviewed by Dimitri Glazkov.
