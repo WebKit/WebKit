@@ -1,5 +1,11 @@
 2010-07-02  Yury Semikhatsky  <yurys@chromium.org>
 
+        Unreviewed. Rebaseline html5lib/runner.html on Chromium Mac.
+
+        * platform/chromium-mac/html5lib/runner-expected.txt:
+
+2010-07-02  Yury Semikhatsky  <yurys@chromium.org>
+
         Reviewed by Pavel Feldman.
 
         [v8] Web Inspector: inspected page crashes on attempt to change iframe's src attribute
