@@ -5223,9 +5223,6 @@ canvas/philip/tests/2d.composite.uncovered.pattern.source-in.html
 canvas/philip/tests/2d.composite.uncovered.pattern.source-out.html
 canvas/philip/tests/2d.drawImage.broken.html
 canvas/philip/tests/2d.drawImage.incomplete.html
-canvas/philip/tests/2d.drawImage.negativedest.html
-canvas/philip/tests/2d.drawImage.negativedir.html
-canvas/philip/tests/2d.drawImage.negativesource.html
 canvas/philip/tests/2d.drawImage.null.html
 canvas/philip/tests/2d.drawImage.wrongtype.html
 canvas/philip/tests/2d.fillStyle.parse.current.basic.html

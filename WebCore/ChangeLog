@@ -1,3 +1,17 @@
+2010-07-02  Qi Zhang  <qi.2.zhang@nokia.com>
+
+        Reviewed by Laszlo Gombos.
+
+        [Qt]  Failed on http://philip.html5.org/tests/canvas/suite/tests/2d.drawImage.negativesource.html
+
+        Support negative width and height in canvas image draw
+
+        * platform/graphics/FloatRect.h:
+        * platform/graphics/qt/FloatRectQt.cpp:
+        (WebCore::FloatRect::normalized):
+        * platform/graphics/qt/ImageQt.cpp:
+        (WebCore::BitmapImage::draw):
+
 2010-06-24  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Alexey Proskuryakov.

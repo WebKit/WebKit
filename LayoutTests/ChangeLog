@@ -1,3 +1,16 @@
+2010-07-02  Qi Zhang  <qi.2.zhang@nokia.com>
+
+        Reviewed by Laszlo Gombos.
+
+        [Qt]  Failed on http://philip.html5.org/tests/canvas/suite/tests/2d.drawImage.negativesource.html
+        
+        Remove the following test case from Skipped:
+        canvas/philip/tests/2d.drawImage.negativedest.html
+        canvas/philip/tests/2d.drawImage.negativedir.html
+        canvas/philip/tests/2d.drawImage.negativesource.html
+
+        * platform/qt/Skipped:
+
 2010-06-24  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Alexey Proskuryakov.

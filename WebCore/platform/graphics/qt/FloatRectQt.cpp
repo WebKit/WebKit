@@ -44,6 +44,21 @@ FloatRect::operator QRectF() const
     return QRectF(x(), y(), width(), height());
 }
 
+FloatRect FloatRect::normalized() const
+{
+    FloatRect normalizedRect = *this;
+
+    if (width() < 0) {
+        normalizedRect.setX(x() + width());
+        normalizedRect.setWidth(-width());
+    }
+    if (height() < 0) {
+        normalizedRect.setY(y() + height());
+        normalizedRect.setHeight(-height());
+    }
+    return normalizedRect;
+}
+
 }
 
 // vim: ts=4 sw=4 et

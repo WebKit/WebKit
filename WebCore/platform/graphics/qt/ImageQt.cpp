@@ -166,6 +166,9 @@ void BitmapImage::invalidatePlatformData()
 void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& dst,
                        const FloatRect& src, ColorSpace styleColorSpace, CompositeOperator op)
 {
+    FloatRect normalizedDst = dst.normalized();
+    FloatRect normalizedSrc = src.normalized();
+
     startAnimation();
 
     QPixmap* image = nativeImageForCurrentFrame();
@@ -173,7 +176,7 @@ void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& dst,
         return;
 
     if (mayFillWithSolidColor()) {
-        fillWithSolidColor(ctxt, dst, solidColor(), styleColorSpace, op);
+        fillWithSolidColor(ctxt, normalizedDst, solidColor(), styleColorSpace, op);
         return;
     }
 
@@ -193,22 +196,22 @@ void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& dst,
     float shadowBlur;
     Color shadowColor;
     if (ctxt->getShadow(shadowSize, shadowBlur, shadowColor)) {
-        FloatRect shadowImageRect(dst);
+        FloatRect shadowImageRect(normalizedDst);
         shadowImageRect.move(shadowSize.width(), shadowSize.height());
 
-        QImage shadowImage(QSize(static_cast<int>(src.width()), static_cast<int>(src.height())), QImage::Format_ARGB32_Premultiplied);
+        QImage shadowImage(QSize(static_cast<int>(normalizedSrc.width()), static_cast<int>(normalizedSrc.height())), QImage::Format_ARGB32_Premultiplied);
         QPainter p(&shadowImage);
         p.setCompositionMode(QPainter::CompositionMode_Source);
         p.fillRect(shadowImage.rect(), shadowColor);
         p.setCompositionMode(QPainter::CompositionMode_DestinationIn);
-        p.drawPixmap(dst, *image, src);
+        p.drawPixmap(normalizedDst, *image, normalizedSrc);
         p.end();
-        painter->drawImage(shadowImageRect, shadowImage, src);
+        painter->drawImage(shadowImageRect, shadowImage, normalizedSrc);
     }
 
     // Test using example site at
     // http://www.meyerweb.com/eric/css/edge/complexspiral/demo.html
-    painter->drawPixmap(dst, *image, src);
+    painter->drawPixmap(normalizedDst, *image, normalizedSrc);
 
     painter->setCompositionMode(lastCompositionMode);
 
