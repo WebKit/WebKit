@@ -171,7 +171,7 @@ void HTMLInputElement::updateCheckedRadioButtons()
         checkedRadioButtons(this).addButton(this);
 
     if (form()) {
-        const Vector<HTMLFormControlElement*>& controls = form()->associatedElements();
+        const Vector<HTMLFormControlElement*>& controls = form()->formElements;
         for (unsigned i = 0; i < controls.size(); ++i) {
             HTMLFormControlElement* control = controls[i];
             if (control->name() != name())
