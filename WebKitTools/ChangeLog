@@ -1,3 +1,18 @@
+2010-07-02  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Steve Falkenburg.
+
+        Some http tests fail on Windows with Cygwin 1.7
+        https://bugs.webkit.org/show_bug.cgi?id=41537
+        
+        With Cygwin 1.7, the registry key at SOFTWARE\\Cygnus Solutions\\Cygwin\\mounts v2\\/
+        doesn't exist anymore, because the mount points are stored in /etc/fstab. However, we
+        just need root mount point, which is defined in SOFTWARE\\Cygwin\\setup.
+
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp:
+        (resolveCygwinPath): Fall back to SOFTWARE\\Cygwin\\setup if 
+            SOFTWARE\\Cygnus Solutions\\Cygwin\\mounts v2\\/ doesn't work.
+
 2010-06-23  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Gustavo Noronha Silva.
