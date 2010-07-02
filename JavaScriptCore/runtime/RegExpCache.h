@@ -45,7 +45,7 @@ private:
     static const int maxCacheableEntries = 256;
 
     typedef HashMap<RegExpKey, RefPtr<RegExp> > RegExpCacheMap;
-    RegExpKey patternKeyArray[maxCacheableEntries];
+    FixedArray<RegExpKey, maxCacheableEntries> patternKeyArray;
     RegExpCacheMap m_cacheMap;
     JSGlobalData* m_globalData;
     int m_nextKeyToEvict;

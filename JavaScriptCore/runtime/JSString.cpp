@@ -120,7 +120,7 @@ JSValue JSString::replaceCharacter(ExecState* exec, UChar character, const UStri
     size_t fiberCount = 0;
     UStringImpl* matchString = 0;
     int matchPosition = -1;
-    for (RopeIterator it(m_other.m_fibers, m_fiberCount); it != end; ++it) {
+    for (RopeIterator it(m_other.m_fibers.data(), m_fiberCount); it != end; ++it) {
         ++fiberCount;
         if (matchString)
             continue;
@@ -139,7 +139,7 @@ JSValue JSString::replaceCharacter(ExecState* exec, UChar character, const UStri
     if (UNLIKELY(builder.isOutOfMemory()))
         return throwOutOfMemoryError(exec);
 
-    for (RopeIterator it(m_other.m_fibers, m_fiberCount); it != end; ++it) {
+    for (RopeIterator it(m_other.m_fibers.data(), m_fiberCount); it != end; ++it) {
         UStringImpl* string = *it;
         if (string != matchString) {
             builder.append(UString(string));

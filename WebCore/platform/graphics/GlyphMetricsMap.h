@@ -29,6 +29,7 @@
 #ifndef GlyphMetricsMap_h
 #define GlyphMetricsMap_h
 
+#include <wtf/FixedArray.h>
 #include <wtf/HashMap.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/unicode/Unicode.h>
@@ -61,7 +62,7 @@ public:
 private:
     struct GlyphMetricsPage {
         static const size_t size = 256; // Usually covers Latin-1 in a single page.
-        T m_metrics[size];
+        FixedArray<T, size> m_metrics;
 
         T metricsForGlyph(Glyph glyph) const { return m_metrics[glyph % size]; }
         void setMetricsForGlyph(Glyph glyph, const T& metrics)

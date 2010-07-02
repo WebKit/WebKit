@@ -101,7 +101,7 @@ OpcodeStats::~OpcodeStats()
         for (int j = 0; j < numOpcodeIDs; ++j)
             totalInstructionPairs += opcodePairCounts[i][j];
 
-    int sortedIndices[numOpcodeIDs];    
+    FixedArray<int, numOpcodeIDs> sortedIndices;
     for (int i = 0; i < numOpcodeIDs; ++i)
         sortedIndices[i] = i;
     qsort(sortedIndices, numOpcodeIDs, sizeof(int), compareOpcodeIndices);

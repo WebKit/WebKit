@@ -27,6 +27,7 @@
 #define NumericStrings_h
 
 #include "UString.h"
+#include <wtf/FixedArray.h>
 #include <wtf/HashFunctions.h>
 
 namespace JSC {
@@ -86,10 +87,10 @@ namespace JSC {
             return smallIntCache[i];
         }
 
-        CacheEntry<double> doubleCache[cacheSize];
-        CacheEntry<int> intCache[cacheSize];
-        CacheEntry<unsigned> unsignedCache[cacheSize];
-        UString smallIntCache[cacheSize];
+        FixedArray<CacheEntry<double>, cacheSize> doubleCache;
+        FixedArray<CacheEntry<int>, cacheSize> intCache;
+        FixedArray<CacheEntry<unsigned>, cacheSize> unsignedCache;
+        FixedArray<UString, cacheSize> smallIntCache;
     };
 
 } // namespace JSC

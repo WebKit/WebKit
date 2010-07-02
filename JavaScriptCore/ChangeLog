@@ -1,3 +1,40 @@
+2010-07-01  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Add a FixedArray template to encapsulate fixed length arrays
+        https://bugs.webkit.org/show_bug.cgi?id=41506
+
+        This new type is used in place of fixed length C arrays so
+        that debug builds can guard against attempts to go beyond
+        the end of the array.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/Opcode.cpp:
+        (JSC::OpcodeStats::~OpcodeStats):
+        * pcre/pcre_compile.cpp:
+        (calculateCompiledPatternLength):
+        * runtime/Collector.cpp:
+        (JSC::Heap::allocateBlock):
+        (JSC::Heap::allocate):
+        * runtime/Collector.h:
+        (JSC::CollectorBitmap::clearAll):
+        * runtime/CollectorHeapIterator.h:
+        (JSC::CollectorHeapIterator::operator*):
+        * runtime/DateInstanceCache.h:
+        * runtime/JSString.cpp:
+        (JSC::JSString::replaceCharacter):
+        * runtime/JSString.h:
+        (JSC::RopeBuilder::JSStringFinalizerStruct::):
+        * runtime/NumericStrings.h:
+        * runtime/RegExpCache.h:
+        * runtime/SmallStrings.h:
+        (JSC::SmallStrings::singleCharacterStrings):
+        * wtf/AVLTree.h:
+        * wtf/FixedArray.h: Added.
+        (WTF::FixedArray::operator[]):
+        (WTF::FixedArray::data):
+
 2010-07-01  Zoltan Herczeg  <zherczeg@webkit.org>
 
         Reviewed by Oliver Hunt.

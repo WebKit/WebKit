@@ -48,6 +48,7 @@ supporting internal functions that are not used by other modules. */
 #include <string.h>
 #include <wtf/ASCIICType.h>
 #include <wtf/FastMalloc.h>
+#include <wtf/FixedArray.h>
 
 using namespace WTF;
 
@@ -2035,8 +2036,8 @@ static int calculateCompiledPatternLength(const UChar* pattern, int patternLengt
     int branch_extra = 0;
     int lastitemlength = 0;
     unsigned brastackptr = 0;
-    int brastack[BRASTACK_SIZE];
-    unsigned char bralenstack[BRASTACK_SIZE];
+    FixedArray<int, BRASTACK_SIZE> brastack;
+    FixedArray<unsigned char, BRASTACK_SIZE> bralenstack;
     int bracount = 0;
     
     const UChar* ptr = (const UChar*)(pattern - 1);

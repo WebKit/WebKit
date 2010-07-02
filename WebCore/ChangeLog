@@ -1,3 +1,17 @@
+2010-07-01  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Add a FixedArray template to encapsulate fixed length arrays
+        https://bugs.webkit.org/show_bug.cgi?id=41506
+
+        Add forwarding header, and replace a few fixed length arrays
+        with the new FixedArray type.
+
+        * ForwardingHeaders/wtf/FixedArray.h: Added.
+        * dom/Document.h:
+        * platform/graphics/GlyphMetricsMap.h:
+
 2010-07-01  Simon Fraser  <simon.fraser@apple.com>
 
         No review.

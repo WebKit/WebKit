@@ -1225,8 +1225,8 @@ private:
     CheckedRadioButtons m_checkedRadioButtons;
 
     typedef HashMap<AtomicStringImpl*, CollectionCache*> NamedCollectionMap;
-    CollectionCache m_collectionInfo[NumUnnamedDocumentCachedTypes];
-    NamedCollectionMap m_nameCollectionInfo[NumNamedDocumentCachedTypes];
+    FixedArray<CollectionCache, NumUnnamedDocumentCachedTypes> m_collectionInfo;
+    FixedArray<NamedCollectionMap, NumNamedDocumentCachedTypes> m_nameCollectionInfo;
 
 #if ENABLE(XPATH)
     RefPtr<XPathEvaluator> m_xpathEvaluator;

@@ -86,7 +86,7 @@ namespace JSC {
 
         CacheEntry& lookup(double d) { return m_cache[WTF::FloatHash<double>::hash(d) & (cacheSize - 1)]; }
 
-        CacheEntry m_cache[cacheSize];
+        FixedArray<CacheEntry, cacheSize> m_cache;
     };
 
 } // namespace JSC

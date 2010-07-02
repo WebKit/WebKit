@@ -245,7 +245,7 @@ NEVER_INLINE CollectorBlock* Heap::allocateBlock()
 
     Structure* dummyMarkableCellStructure = m_globalData->dummyMarkableCellStructure.get();
     for (size_t i = 0; i < HeapConstants::cellsPerBlock; ++i)
-        new (block->cells + i) JSCell(dummyMarkableCellStructure);
+        new (&block->cells[i]) JSCell(dummyMarkableCellStructure);
     
     // Add block to blocks vector.
 
@@ -384,7 +384,7 @@ allocate:
         do {
             ASSERT(m_heap.nextCell < HeapConstants::cellsPerBlock);
             if (!block->marked.get(m_heap.nextCell)) { // Always false for the last cell in the block
-                Cell* cell = block->cells + m_heap.nextCell;
+                Cell* cell = &block->cells[m_heap.nextCell];
 
                 m_heap.operationInProgress = Allocation;
                 JSCell* imp = reinterpret_cast<JSCell*>(cell);

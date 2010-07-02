@@ -24,6 +24,7 @@
 
 #include <stddef.h>
 #include <string.h>
+#include <wtf/FixedArray.h>
 #include <wtf/HashCountedSet.h>
 #include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
@@ -215,11 +216,11 @@ namespace JSC {
     const size_t BITMAP_WORDS = (BITMAP_SIZE + 3) / sizeof(uint32_t);
 
     struct CollectorBitmap {
-        uint32_t bits[BITMAP_WORDS];
+        FixedArray<uint32_t, BITMAP_WORDS> bits;
         bool get(size_t n) const { return !!(bits[n >> 5] & (1 << (n & 0x1F))); } 
         void set(size_t n) { bits[n >> 5] |= (1 << (n & 0x1F)); } 
         void clear(size_t n) { bits[n >> 5] &= ~(1 << (n & 0x1F)); } 
-        void clearAll() { memset(bits, 0, sizeof(bits)); }
+        void clearAll() { memset(bits.data(), 0, sizeof(bits)); }
         ALWAYS_INLINE void advanceToNextPossibleFreeCell(size_t& startCell)
         {
             if (!~bits[startCell >> 5])
@@ -248,12 +249,12 @@ namespace JSC {
     };
   
     struct CollectorCell {
-        double memory[CELL_ARRAY_LENGTH];
+        FixedArray<double, CELL_ARRAY_LENGTH> memory;
     };
 
     class CollectorBlock {
     public:
-        CollectorCell cells[CELLS_PER_BLOCK];
+        FixedArray<CollectorCell, CELLS_PER_BLOCK> cells;
         CollectorBitmap marked;
         Heap* heap;
     };
