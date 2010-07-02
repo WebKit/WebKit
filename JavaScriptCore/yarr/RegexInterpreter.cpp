@@ -1554,7 +1554,7 @@ public:
                 }
 
                 case PatternTerm::TypeParentheticalAssertion: {
-                    unsigned alternativeFrameLocation = term.inputPosition + RegexStackSpaceForBackTrackInfoParentheticalAssertion;
+                    unsigned alternativeFrameLocation = term.frameLocation + RegexStackSpaceForBackTrackInfoParentheticalAssertion;
 
                     atomParentheticalAssertionBegin(term.parentheses.subpatternId, term.invertOrCapture, term.frameLocation, alternativeFrameLocation);
                     emitDisjunction(term.parentheses.disjunction, currentCountAlreadyChecked, 0);
