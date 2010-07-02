@@ -280,6 +280,10 @@ public:
 
     virtual void dispatchFormControlChangeEvent() { }
 
+#if ENABLE(SVG)
+    virtual bool childShouldCreateRenderer(Node*) const; 
+#endif
+
 protected:
     Element(const QualifiedName& tagName, Document* document, ConstructionType type)
         : ContainerNode(document, type)
