@@ -1960,7 +1960,7 @@ bool WebFrameImpl::registerPasswordListener(
     WebInputElement inputElement,
     WebPasswordAutocompleteListener* listener)
 {
-    RefPtr<HTMLInputElement> element(inputElement.unwrap<HTMLInputElement>());
+    RefPtr<HTMLInputElement> element = inputElement.operator PassRefPtr<HTMLInputElement>();
     if (!m_passwordListeners.add(element, listener).second) {
         delete listener;
         return false;
@@ -1971,7 +1971,7 @@ bool WebFrameImpl::registerPasswordListener(
 void WebFrameImpl::notifiyPasswordListenerOfAutocomplete(
     const WebInputElement& inputElement)
 {
-    RefPtr<HTMLInputElement> element(inputElement.unwrap<HTMLInputElement>());
+    RefPtr<HTMLInputElement> element = inputElement.operator PassRefPtr<HTMLInputElement>();
     WebPasswordAutocompleteListener* listener = getPasswordListener(element.get());
     // Password listeners need to autocomplete other fields that depend on the
     // input element with autofill suggestions.
