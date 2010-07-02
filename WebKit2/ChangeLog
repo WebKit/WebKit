@@ -2,6 +2,12 @@
 
         Windows build fix.
 
+        * win/WebKit2Generated.make:
+
+2010-07-01  Steve Falkenburg  <sfalken@apple.com>
+
+        Windows build fix.
+
         * WebProcess/WebProcess.cpp:
 
 2010-07-01  Sam Weinig  <sam@webkit.org>
