@@ -1,3 +1,24 @@
+2010-07-02  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Canvas arcTo() should draw straight line to p1 if p0, p1 and p2 are collinear
+
+        The implementation of PathQt's addArcTo() was not float-safe and also had
+        a case where it drew an 'infinite' line, which is not part of the spec.
+
+        http://www.whatwg.org/specs/web-apps/current-work/#dom-context-2d-arcto
+
+        We now use qFuzzyCompare() in both cases. The method isPointOnPathBorder()
+        also had the same problem, and was refactored a bit in the process of fixing
+        the bug.
+
+        Initial patch by Andreas Kling.
+
+        https://bugs.webkit.org/show_bug.cgi?id=41412
+
+        * platform/qt/Skipped:
+
 2010-07-02  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed. Rebaseline html5lib/runner.html on Chromium Mac.

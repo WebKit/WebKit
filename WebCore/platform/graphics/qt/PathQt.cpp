@@ -69,8 +69,19 @@ Path& Path::operator=(const Path& other)
     return *this;
 }
 
+static inline bool areCollinear(const QPointF& a, const QPointF& b, const QPointF& c)
+{
+    // Solved from comparing the slopes of a to b and b to c: (ay-by)/(ax-bx) == (cy-by)/(cx-bx)
+    return qFuzzyCompare((c.y() - b.y()) * (a.x() - b.x()), (a.y() - b.y()) * (c.x() - b.x()));
+}
+
+static inline bool withinRange(qreal p, qreal a, qreal b)
+{
+    return (p >= a && p <= b) || (p >= b && p <= a);
+}
+
 // Check whether a point is on the border
-bool isPointOnPathBorder(const QPolygonF& border, const QPointF& p)
+static bool isPointOnPathBorder(const QPolygonF& border, const QPointF& p)
 {
     // null border doesn't contain points
     if (border.isEmpty())
@@ -81,15 +92,12 @@ bool isPointOnPathBorder(const QPolygonF& border, const QPointF& p)
 
     for (int i = 1; i < border.size(); ++i) {
         p2 = border.at(i);
-        //  (x1<=x<=x2||x1=>x>=x2) && (y1<=y<=y2||y1=>y>=y2)  && (y2-y1)(x-x1) == (y-y1)(x2-x1)
-        //  In which, (y2-y1)(x-x1) == (y-y1)(x2-x1) is from (y2-y1)/(x2-x1) == (y-y1)/(x-x1)
-        //  it want to check the slope between p1 and p2 is same with slope between p and p1,
-        //  if so then the three points lie on the same line.
-        //  In which, (x1<=x<=x2||x1=>x>=x2) && (y1<=y<=y2||y1=>y>=y2) want to make sure p is
-        //  between p1 and p2, not outside.
-        if (((p.x() <= p1.x() && p.x() >= p2.x()) || (p.x() >= p1.x() && p.x() <= p2.x()))
-            && ((p.y() <= p1.y() && p.y() >= p2.y()) || (p.y() >= p1.y() && p.y() <= p2.y()))
-            && (p2.y() - p1.y()) * (p.x() - p1.x()) == (p.y() - p1.y()) * (p2.x() - p1.x())) {
+        if (areCollinear(p, p1, p2)
+                // Once we know that the points are collinear we
+                // only need to check one of the coordinates
+                && (qAbs(p2.x() - p1.x()) > qAbs(p2.y() - p1.y()) ?
+                        withinRange(p.x(), p1.x(), p2.x()) :
+                        withinRange(p.y(), p1.y(), p2.y()))) {
             return true;
         }
         p1 = p2;
@@ -212,17 +220,12 @@ void Path::addArcTo(const FloatPoint& p1, const FloatPoint& p2, float radius)
     float p1p2_length = sqrtf(p1p2.x() * p1p2.x() + p1p2.y() * p1p2.y());
 
     double cos_phi = (p1p0.x() * p1p2.x() + p1p0.y() * p1p2.y()) / (p1p0_length * p1p2_length);
-    // all points on a line logic
-    if (cos_phi == -1) {
+
+    // The points p0, p1, and p2 are on the same straight line (HTML5, 4.8.11.1.8)
+    // We could have used areCollinear() here, but since we're reusing
+    // the variables computed above later on we keep this logic.
+    if (qFuzzyCompare(qAbs(cos_phi), 1.0)) {
         m_path.lineTo(p1);
-        return;
-    }
-    if (cos_phi == 1) {
-        // add infinite far away point
-        unsigned int max_length = 65535;
-        double factor_max = max_length / p1p0_length;
-        FloatPoint ep((p0.x() + factor_max * p1p0.x()), (p0.y() + factor_max * p1p0.y()));
-        m_path.lineTo(ep);
         return;
     }
 
