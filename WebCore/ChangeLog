@@ -2,6 +2,15 @@
 
         Unreviewed.
 
+        Further Build fix for GTK+. Also include HTMLElementFactory.h in
+        the list of dependencies.
+
+        * GNUmakefile.am:
+
+2010-07-02  Martin Robinson  <mrobinson@igalia.com>
+
+        Unreviewed.
+
         Build fix for GTK+. *Names.{cpp,h} targets should now include the
         header files. Also adds the header files to the generated sources list.
 
