@@ -26,7 +26,8 @@ function runTest()
 
     // Open a new database with a creation callback, and make sure the creation callback is queued
     var creationCallbackCalled1 = false;
-    var db1 = openDatabase("OpenDatabaseCreationCallback1", "1.0", "", 1,
+    var db1Name = "OpenDatabaseCreationCallback1" + (new Date()).getTime();
+    var db1 = openDatabase(db1Name, "1.0", "", 1,
                            function(db) {
                                creationCallbackCalled1 = true;
                                if (db.version != "") {
@@ -52,7 +53,7 @@ function runTest()
     // a null handle and throw a INVALID_STATE_ERR exception.
     var db1Fail = null;
     try {
-        db1Fail = openDatabase("OpenDatabaseCreationCallback1", "1.0", "", 1);
+        db1Fail = openDatabase(db1Name, "1.0", "", 1);
         log("This statement should not have been executed; an INVALID_STATE_ERR exception should've been thrown.");
         finishTest();
     } catch(err) {

@@ -60,7 +60,6 @@ private:
 };
 
 class DatabaseTask : public Noncopyable {
-    friend class Database;
 public:
     virtual ~DatabaseTask();
 
@@ -83,7 +82,7 @@ private:
 #endif
 };
 
-class DatabaseOpenTask : public DatabaseTask {
+class Database::DatabaseOpenTask : public DatabaseTask {
 public:
     static PassOwnPtr<DatabaseOpenTask> create(Database* db, bool setVersionInNewDatabase, DatabaseTaskSynchronizer* synchronizer, ExceptionCode& code, bool& success)
     {
@@ -103,25 +102,23 @@ private:
     bool& m_success;
 };
 
-class DatabaseCloseTask : public DatabaseTask {
+class Database::DatabaseCloseTask : public DatabaseTask {
 public:
-    static PassOwnPtr<DatabaseCloseTask> create(Database* db, Database::ClosePolicy closePolicy, DatabaseTaskSynchronizer* synchronizer)
-    { 
-        return new DatabaseCloseTask(db, closePolicy, synchronizer);
+    static PassOwnPtr<DatabaseCloseTask> create(Database* db, DatabaseTaskSynchronizer* synchronizer)
+    {
+        return new DatabaseCloseTask(db, synchronizer);
     }
 
 private:
-    DatabaseCloseTask(Database*, Database::ClosePolicy, DatabaseTaskSynchronizer*);
+    DatabaseCloseTask(Database*, DatabaseTaskSynchronizer*);
 
     virtual void doPerformTask();
 #ifndef NDEBUG
     virtual const char* debugTaskName() const;
 #endif
-
-    Database::ClosePolicy m_closePolicy;
 };
 
-class DatabaseTransactionTask : public DatabaseTask {
+class Database::DatabaseTransactionTask : public DatabaseTask {
 public:
     // Transaction task is never synchronous, so no 'synchronizer' parameter.
     static PassOwnPtr<DatabaseTransactionTask> create(PassRefPtr<SQLTransaction> transaction)
@@ -131,7 +128,6 @@ public:
 
     SQLTransaction* transaction() const { return m_transaction.get(); }
 
-    virtual ~DatabaseTransactionTask();
 private:
     DatabaseTransactionTask(PassRefPtr<SQLTransaction>);
 
@@ -143,7 +139,7 @@ private:
     RefPtr<SQLTransaction> m_transaction;
 };
 
-class DatabaseTableNamesTask : public DatabaseTask {
+class Database::DatabaseTableNamesTask : public DatabaseTask {
 public:
     static PassOwnPtr<DatabaseTableNamesTask> create(Database* db, DatabaseTaskSynchronizer* synchronizer, Vector<String>& names)
     {

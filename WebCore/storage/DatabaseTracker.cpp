@@ -508,8 +508,10 @@ void DatabaseTracker::addOpenDatabase(AbstractDatabase* database)
         LOG(StorageAPI, "Added open Database %s (%p)\n", database->stringIdentifier().ascii().data(), database);
 
         Locker<OriginQuotaManager> quotaManagerLocker(originQuotaManager());
-        if (!originQuotaManager().tracksOrigin(database->securityOrigin()))
+        if (!originQuotaManager().tracksOrigin(database->securityOrigin())) {
             originQuotaManager().trackOrigin(database->securityOrigin());
+            originQuotaManager().addDatabase(database->securityOrigin(), database->stringIdentifier(), database->fileName());
+        }
     }
 
     MutexLocker lockDatabase(m_databaseGuard);

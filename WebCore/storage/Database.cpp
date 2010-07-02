@@ -99,7 +99,6 @@ PassRefPtr<Database> Database::openDatabase(ScriptExecutionContext* context, con
 
     if (!database->openAndVerifyVersion(!creationCallback, e)) {
         LOG(StorageAPI, "Failed to open and verify version (expected %s) of database %s", expectedVersion.ascii().data(), database->databaseDebugName().ascii().data());
-        context->removeOpenDatabase(database.get());
         DatabaseTracker::tracker().removeOpenDatabase(database.get());
         return 0;
     }
@@ -133,14 +132,11 @@ Database::Database(ScriptExecutionContext* context, const String& name, const St
     , m_transactionInProgress(false)
     , m_isTransactionQueueEnabled(true)
     , m_deleted(false)
-    , m_stopped(false)
 {
     m_databaseThreadSecurityOrigin = m_contextThreadSecurityOrigin->threadsafeCopy();
 
     ScriptController::initializeThreading();
     ASSERT(m_scriptExecutionContext->databaseThread());
-
-    m_scriptExecutionContext->addOpenDatabase(this);
 }
 
 class DerefContextTask : public ScriptExecutionContext::Task {
@@ -202,77 +198,17 @@ void Database::markAsDeletedAndClose()
         return;
     }
 
-    m_scriptExecutionContext->databaseThread()->unscheduleDatabaseTasks(this);
-
     DatabaseTaskSynchronizer synchronizer;
-    OwnPtr<DatabaseCloseTask> task = DatabaseCloseTask::create(this, DoNotRemoveDatabaseFromContext, &synchronizer);
+    OwnPtr<DatabaseCloseTask> task = DatabaseCloseTask::create(this, &synchronizer);
 
     m_scriptExecutionContext->databaseThread()->scheduleImmediateTask(task.release());
     synchronizer.waitForTaskCompletion();
-
-    // DatabaseCloseTask tells Database::close not to do these two removals so that we can do them here synchronously.
-    m_scriptExecutionContext->removeOpenDatabase(this);
-    DatabaseTracker::tracker().removeOpenDatabase(this);
 }
 
-class ContextRemoveOpenDatabaseTask : public ScriptExecutionContext::Task {
-public:
-    static PassOwnPtr<ContextRemoveOpenDatabaseTask> create(PassRefPtr<Database> database)
-    {
-        return new ContextRemoveOpenDatabaseTask(database);
-    }
-
-    virtual void performTask(ScriptExecutionContext* context)
-    {
-        context->removeOpenDatabase(m_database.get());
-        DatabaseTracker::tracker().removeOpenDatabase(m_database.get());
-    }
-
-    virtual bool isCleanupTask() const { return true; }
-
-private:
-    ContextRemoveOpenDatabaseTask(PassRefPtr<Database> database)
-        : m_database(database)
-    {
-    }
-
-    RefPtr<Database> m_database;
-};
-
-void Database::close(ClosePolicy policy)
+void Database::close()
 {
-    RefPtr<Database> protect = this;
-
     ASSERT(m_scriptExecutionContext->databaseThread());
     ASSERT(currentThread() == m_scriptExecutionContext->databaseThread()->getThreadID());
-
-    closeDatabase();
-
-    // Must ref() before calling databaseThread()->recordDatabaseClosed().
-    m_scriptExecutionContext->databaseThread()->recordDatabaseClosed(this);
-    m_scriptExecutionContext->databaseThread()->unscheduleDatabaseTasks(this);
-    if (policy == RemoveDatabaseFromContext)
-        m_scriptExecutionContext->postTask(ContextRemoveOpenDatabaseTask::create(this));
-}
-
-void Database::closeImmediately()
-{
-    DatabaseThread* databaseThread = scriptExecutionContext()->databaseThread();
-    if (databaseThread && !databaseThread->terminationRequested()) {
-        stop();
-        databaseThread->scheduleTask(DatabaseCloseTask::create(this, Database::RemoveDatabaseFromContext, 0));
-    }
-}
-
-void Database::stop()
-{
-    // FIXME: The net effect of the following code is to remove all pending transactions and statements, but allow the current statement
-    // to run to completion.  In the future we can use the sqlite3_progress_handler or sqlite3_interrupt interfaces to cancel the current
-    // statement in response to close(), as well.
-
-    // This method is meant to be used as an analog to cancelling a loader, and is used when a document is shut down as the result of
-    // a page load or closing the page
-    m_stopped = true;
 
     {
         MutexLocker locker(m_transactionInProgressMutex);
@@ -280,27 +216,25 @@ void Database::stop()
         m_transactionInProgress = false;
     }
 
-    if (m_scriptExecutionContext->databaseThread())
-        m_scriptExecutionContext->databaseThread()->unscheduleDatabaseTasks(this);
+    closeDatabase();
+
+    // Must ref() before calling databaseThread()->recordDatabaseClosed().
+    RefPtr<Database> protect = this;
+    m_scriptExecutionContext->databaseThread()->recordDatabaseClosed(this);
+    m_scriptExecutionContext->databaseThread()->unscheduleDatabaseTasks(this);
+    DatabaseTracker::tracker().removeOpenDatabase(this);
+}
+
+void Database::closeImmediately()
+{
+    DatabaseThread* databaseThread = scriptExecutionContext()->databaseThread();
+    if (databaseThread && !databaseThread->terminationRequested() && opened())
+        databaseThread->scheduleImmediateTask(DatabaseCloseTask::create(this, 0));
 }
 
 unsigned long long Database::maximumSize() const
 {
     return DatabaseTracker::tracker().getMaxSizeForDatabase(this);
-}
-
-void Database::performPolicyChecks()
-{
-    // FIXME: Code similar to the following will need to be run to enforce the per-origin size limit the spec mandates.
-    // Additionally, we might need a way to pause the database thread while the UA prompts the user for permission to
-    // increase the size limit
-
-    /*
-    if (m_databaseAuthorizer->lastActionIncreasedSize())
-        DatabaseTracker::scheduleFileSizeCheckOnMainThread(this);
-    */
-
-    notImplemented();
 }
 
 bool Database::performOpenAndVerify(bool setVersionInNewDatabase, ExceptionCode& e)
