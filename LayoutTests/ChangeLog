@@ -2,6 +2,17 @@
 
         Reviewed by Eric Seidel.
 
+        Implement processFakePEndTagIfPInScope
+        https://bugs.webkit.org/show_bug.cgi?id=41503
+
+        See test progression.
+
+        * html5lib/runner-expected-html5.txt:
+
+2010-07-02  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         Implement AfterAfterBodyMode
         https://bugs.webkit.org/show_bug.cgi?id=41501
 

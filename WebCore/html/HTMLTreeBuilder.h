@@ -122,8 +122,8 @@ private:
     void processDefaultForAfterHeadMode(AtomicHTMLToken&);
 
     bool processStartTagForInHead(AtomicHTMLToken&);
-
     bool processBodyEndTagForInBody(AtomicHTMLToken&);
+    void processFakePEndTagIfPInScope();
 
     template<typename ChildType>
     PassRefPtr<ChildType> attach(Node* parent, PassRefPtr<ChildType> prpChild)

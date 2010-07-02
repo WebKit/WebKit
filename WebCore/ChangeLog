@@ -2,6 +2,20 @@
 
         Reviewed by Eric Seidel.
 
+        Implement processFakePEndTagIfPInScope
+        https://bugs.webkit.org/show_bug.cgi?id=41503
+
+        This is a common idiom because <p> likes to close itself.
+
+        * html/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::processFakePEndTagIfPInScope):
+        (WebCore::HTMLTreeBuilder::processStartTag):
+        * html/HTMLTreeBuilder.h:
+
+2010-07-02  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         Implement AfterAfterBodyMode
         https://bugs.webkit.org/show_bug.cgi?id=41501
 
