@@ -556,7 +556,8 @@ unsigned RenderThemeChromiumWin::determineClassicState(RenderObject* o)
             result = 0;
         else if (isHovered(o))
             result = DFCS_HOT;
-        if (isChecked(o))
+        // Classic theme can't represent indeterminate states. Use unchecked appearance.
+        if (isChecked(o) && !isIndeterminate(o))
             result |= DFCS_CHECKED;
     }
     return result;

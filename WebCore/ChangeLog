@@ -1,3 +1,18 @@
+2010-07-02  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [Chromium] Support indeterminate checkbox for Linux, and a small fix for Windows
+        https://bugs.webkit.org/show_bug.cgi?id=41508
+
+        * rendering/RenderThemeChromiumSkia.cpp:
+        (WebCore::RenderThemeChromiumSkia::paintCheckbox):
+          Use dedicated images for indeterminate states.
+        * rendering/RenderThemeChromiumWin.cpp:
+        (WebCore::RenderThemeChromiumWin::determineClassicState):
+          Do not use DFCS_CHECKED in a case of indeterminate state in
+          order to have consistent appearance of indeterminate checkbox.
+
 2010-07-02  Brent Fulgham  <bfulgham@webkit.org>
 
         Reviewed by Gustavo Noronha Silva.

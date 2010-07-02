@@ -2927,4 +2927,5 @@ BUG48110 WIN LINUX : fast/dom/HTMLDocument/activeElement.html = PASS TEXT
 BUG48139 LINUX : fast/js/comparison-operators-less.html = CRASH PASS
 BUG48144 LINUX : fast/js/activation-object-function-lifetime.html = CRASH PASS
 
-BUG48154 WIN : fast/forms/indeterminate.html = IMAGE
+// Need rebaseline
+BUG48154 WIN LINUX: fast/forms/indeterminate.html = IMAGE

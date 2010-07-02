@@ -1,3 +1,13 @@
+2010-07-02  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [Chromium] Support indeterminate checkbox for Linux, and a small fix for Windows
+        https://bugs.webkit.org/show_bug.cgi?id=41508
+
+        * platform/chromium/test_expectations.txt:
+          fast/forms/indeterminate.html fails temporarily.
+
 2010-07-02  Peter Varga  <pvarga@inf.u-szeged.hu>
 
         Reviewed by Oliver Hunt.

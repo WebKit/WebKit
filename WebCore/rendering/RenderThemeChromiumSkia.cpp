@@ -239,15 +239,19 @@ bool RenderThemeChromiumSkia::paintCheckbox(RenderObject* o, const PaintInfo& i,
 {
     static Image* const checkedImage = Image::loadPlatformResource("linuxCheckboxOn").releaseRef();
     static Image* const uncheckedImage = Image::loadPlatformResource("linuxCheckboxOff").releaseRef();
+    static Image* const indeterminateImage = Image::loadPlatformResource("linuxCheckboxIndeterminate").releaseRef();
     static Image* const disabledCheckedImage = Image::loadPlatformResource("linuxCheckboxDisabledOn").releaseRef();
     static Image* const disabledUncheckedImage = Image::loadPlatformResource("linuxCheckboxDisabledOff").releaseRef();
+    static Image* const disabledIndeterminateImage = Image::loadPlatformResource("linuxCheckboxDisabledIndeterminate").releaseRef();
 
     Image* image;
 
-    if (this->isEnabled(o))
-        image = this->isChecked(o) ? checkedImage : uncheckedImage;
+    if (isIndeterminate(o))
+        image = isEnabled(o) ? indeterminateImage : disabledIndeterminateImage;
+    else if (isChecked(o))
+        image = isEnabled(o) ? checkedImage : disabledCheckedImage;
     else
-        image = this->isChecked(o) ? disabledCheckedImage : disabledUncheckedImage;
+        image = isEnabled(o) ? uncheckedImage : disabledUncheckedImage;
 
     i.context->drawImage(image, o->style()->colorSpace(), center(rect, widgetStandardHeight, widgetStandardWidth));
     return false;
