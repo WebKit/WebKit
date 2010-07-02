@@ -1,3 +1,59 @@
+2010-07-01  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r62321.
+        http://trac.webkit.org/changeset/62321
+        https://bugs.webkit.org/show_bug.cgi?id=41494
+
+        Broke the non-win builds. (Requested by dumi on #webkit).
+
+        * dom/ScriptExecutionContext.cpp:
+        (WebCore::ScriptExecutionContext::addOpenDatabase):
+        (WebCore::ScriptExecutionContext::removeOpenDatabase):
+        (WebCore::ScriptExecutionContext::stopDatabases):
+        * dom/ScriptExecutionContext.h:
+        * storage/Database.cpp:
+        (WebCore::Database::openDatabase):
+        (WebCore::Database::Database):
+        (WebCore::Database::markAsDeletedAndClose):
+        (WebCore::ContextRemoveOpenDatabaseTask::create):
+        (WebCore::ContextRemoveOpenDatabaseTask::performTask):
+        (WebCore::ContextRemoveOpenDatabaseTask::isCleanupTask):
+        (WebCore::ContextRemoveOpenDatabaseTask::ContextRemoveOpenDatabaseTask):
+        (WebCore::Database::close):
+        (WebCore::Database::closeImmediately):
+        (WebCore::Database::stop):
+        (WebCore::Database::performPolicyChecks):
+        * storage/Database.h:
+        (WebCore::Database::):
+        (WebCore::Database::stopped):
+        * storage/DatabaseTask.cpp:
+        (WebCore::DatabaseTask::performTask):
+        (WebCore::DatabaseOpenTask::DatabaseOpenTask):
+        (WebCore::DatabaseOpenTask::doPerformTask):
+        (WebCore::DatabaseOpenTask::debugTaskName):
+        (WebCore::DatabaseCloseTask::DatabaseCloseTask):
+        (WebCore::DatabaseCloseTask::doPerformTask):
+        (WebCore::DatabaseCloseTask::debugTaskName):
+        (WebCore::DatabaseTransactionTask::DatabaseTransactionTask):
+        (WebCore::DatabaseTransactionTask::~DatabaseTransactionTask):
+        (WebCore::DatabaseTransactionTask::doPerformTask):
+        (WebCore::DatabaseTransactionTask::debugTaskName):
+        (WebCore::DatabaseTableNamesTask::DatabaseTableNamesTask):
+        (WebCore::DatabaseTableNamesTask::doPerformTask):
+        (WebCore::DatabaseTableNamesTask::debugTaskName):
+        * storage/DatabaseTask.h:
+        (WebCore::DatabaseOpenTask::create):
+        (WebCore::DatabaseCloseTask::create):
+        (WebCore::DatabaseTransactionTask::create):
+        (WebCore::DatabaseTableNamesTask::create):
+        * storage/DatabaseThread.cpp:
+        (WebCore::DatabaseThread::databaseThread):
+        * storage/DatabaseTracker.cpp:
+        (WebCore::DatabaseTracker::addOpenDatabase):
+        * storage/SQLTransaction.cpp:
+        (WebCore::SQLTransaction::executeSQL):
+        (WebCore::SQLTransaction::checkAndHandleClosedDatabase):
+
 2010-07-01  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Gustavo Noronha.

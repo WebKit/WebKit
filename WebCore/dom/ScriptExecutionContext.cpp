@@ -109,9 +109,38 @@ DatabaseThread* ScriptExecutionContext::databaseThread()
     return m_databaseThread.get();
 }
 
+void ScriptExecutionContext::addOpenDatabase(Database* database)
+{
+    ASSERT(isContextThread());
+    if (!m_openDatabaseSet)
+        m_openDatabaseSet.set(new DatabaseSet());
+
+    ASSERT(!m_openDatabaseSet->contains(database));
+    m_openDatabaseSet->add(database);
+}
+
+void ScriptExecutionContext::removeOpenDatabase(Database* database)
+{
+    ASSERT(isContextThread());
+    ASSERT(m_openDatabaseSet && m_openDatabaseSet->contains(database));
+    if (!m_openDatabaseSet)
+        return;
+    m_openDatabaseSet->remove(database);
+}
+
 void ScriptExecutionContext::stopDatabases(DatabaseTaskSynchronizer* cleanupSync)
 {
     ASSERT(isContextThread());
+    if (m_openDatabaseSet) {
+        DatabaseSet::iterator i = m_openDatabaseSet->begin();
+        DatabaseSet::iterator end = m_openDatabaseSet->end();
+        for (; i != end; ++i) {
+            (*i)->stop();
+            if (m_databaseThread)
+                m_databaseThread->unscheduleDatabaseTasks(*i);
+        }
+    }
+    
     if (m_databaseThread)
         m_databaseThread->requestTermination(cleanupSync);
     else if (cleanupSync)

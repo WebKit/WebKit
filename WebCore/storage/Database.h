@@ -71,14 +71,26 @@ public:
     virtual void markAsDeletedAndClose();
     bool deleted() const { return m_deleted; }
 
-    void close();
+    enum ClosePolicy { DoNotRemoveDatabaseFromContext, RemoveDatabaseFromContext };
+    void close(ClosePolicy);
     virtual void closeImmediately();
+
+    void stop();
+    bool stopped() const { return m_stopped; }
 
     unsigned long long databaseSize() const;
     unsigned long long maximumSize() const;
 
+    // Called from DatabaseThread, must be prepared to work on the background thread
+    void performPolicyChecks();
+
+    virtual bool performOpenAndVerify(bool setVersionInNewDatabase, ExceptionCode&);
+
+    void inProgressTransactionCompleted();
     void scheduleTransactionCallback(SQLTransaction*);
     void scheduleTransactionStep(SQLTransaction*, bool immediately = false);
+
+    Vector<String> performGetTableNames();
 
     SQLTransactionClient* transactionClient() const;
     SQLTransactionCoordinator* transactionCoordinator() const;
@@ -86,21 +98,12 @@ public:
     void incrementalVacuumIfNeeded();
 
 private:
-    class DatabaseOpenTask;
-    class DatabaseCloseTask;
-    class DatabaseTransactionTask;
-    class DatabaseTableNamesTask;
-
     Database(ScriptExecutionContext*, const String& name, const String& expectedVersion,
              const String& displayName, unsigned long estimatedSize);
 
     bool openAndVerifyVersion(bool setVersionInNewDatabase, ExceptionCode&);
-    virtual bool performOpenAndVerify(bool setVersionInNewDatabase, ExceptionCode&);
 
-    void inProgressTransactionCompleted();
     void scheduleTransaction();
-
-    Vector<String> performGetTableNames();
 
     static void deliverPendingCallback(void*);
 
@@ -112,6 +115,7 @@ private:
     RefPtr<SecurityOrigin> m_databaseThreadSecurityOrigin;
 
     bool m_deleted;
+    bool m_stopped;
 };
 
 } // namespace WebCore

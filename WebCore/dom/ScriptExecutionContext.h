@@ -70,6 +70,8 @@ namespace WebCore {
         DatabaseThread* databaseThread();
         void setHasOpenDatabases() { m_hasOpenDatabases = true; }
         bool hasOpenDatabases() const { return m_hasOpenDatabases; }
+        void addOpenDatabase(Database*);
+        void removeOpenDatabase(Database*);
         // When the database cleanup is done, cleanupSync will be signalled.
         void stopDatabases(DatabaseTaskSynchronizer*);
 #endif
@@ -158,6 +160,8 @@ namespace WebCore {
 #if ENABLE(DATABASE)
         RefPtr<DatabaseThread> m_databaseThread;
         bool m_hasOpenDatabases; // This never changes back to false, even after the database thread is closed.
+        typedef HashSet<Database* > DatabaseSet;
+        OwnPtr<DatabaseSet> m_openDatabaseSet;
 #endif
 
 #if ENABLE(FILE_READER) || ENABLE(FILE_WRITER)
