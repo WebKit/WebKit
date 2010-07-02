@@ -1081,11 +1081,23 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\runtime\RegExpCache.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\runtime\RegExpCache.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\runtime\RegExpConstructor.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\..\runtime\RegExpConstructor.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\runtime\RegExpKey.h"
 				>
 			</File>
 			<File

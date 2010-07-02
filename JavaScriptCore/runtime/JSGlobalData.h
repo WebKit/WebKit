@@ -58,6 +58,7 @@ namespace JSC {
     class JSObject;
     class Lexer;
     class Parser;
+    class RegExpCache;
     class Stringifier;
     class Structure;
     class UString;
@@ -209,6 +210,9 @@ namespace JSC {
         WeakRandom weakRandom;
 
         int maxReentryDepth;
+
+        RegExpCache* m_regExpCache;
+
 #ifndef NDEBUG
         ThreadIdentifier exclusiveThread;
 #endif
@@ -220,6 +224,7 @@ namespace JSC {
         void startSampling();
         void stopSampling();
         void dumpSampleData(ExecState* exec);
+        RegExpCache* regExpCache() { return m_regExpCache; }
     private:
         JSGlobalData(GlobalDataType, ThreadStackType);
         static JSGlobalData*& sharedInstanceInternal();

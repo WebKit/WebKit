@@ -33,6 +33,7 @@
 #include "ObjectPrototype.h"
 #include "Operations.h"
 #include "PropertyNameArray.h"
+#include "RegExpCache.h"
 #include "RegExpConstructor.h"
 #include "RegExpObject.h"
 #include <wtf/ASCIICType.h>
@@ -576,7 +577,7 @@ JSValue JSC_HOST_CALL stringProtoFuncMatch(ExecState* exec, JSObject*, JSValue t
          *  If regexp is not an object whose [[Class]] property is "RegExp", it is
          *  replaced with the result of the expression new RegExp(regexp).
          */
-        reg = RegExp::create(&exec->globalData(), a0.toString(exec));
+        reg = exec->globalData().regExpCache()->lookupOrCreate(a0.toString(exec), UString::null());
     }
     RegExpConstructor* regExpConstructor = exec->lexicalGlobalObject()->regExpConstructor();
     int pos;
@@ -626,7 +627,7 @@ JSValue JSC_HOST_CALL stringProtoFuncSearch(ExecState* exec, JSObject*, JSValue 
          *  If regexp is not an object whose [[Class]] property is "RegExp", it is
          *  replaced with the result of the expression new RegExp(regexp).
          */
-        reg = RegExp::create(&exec->globalData(), a0.toString(exec));
+        reg = exec->globalData().regExpCache()->lookupOrCreate(a0.toString(exec), UString::null());
     }
     RegExpConstructor* regExpConstructor = exec->lexicalGlobalObject()->regExpConstructor();
     int pos;

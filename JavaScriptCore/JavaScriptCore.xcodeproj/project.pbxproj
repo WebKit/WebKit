@@ -288,6 +288,9 @@
 		969A079B0ED1D3AE00F1F681 /* Opcode.h in Headers */ = {isa = PBXBuildFile; fileRef = 969A07950ED1D3AE00F1F681 /* Opcode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		96DD73790F9DA3100027FBCC /* VMTags.h in Headers */ = {isa = PBXBuildFile; fileRef = 96DD73780F9DA3100027FBCC /* VMTags.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		971EDEA61169E0D3005E4262 /* Terminator.h in Headers */ = {isa = PBXBuildFile; fileRef = 97F6903A1169DF7F00A6BB46 /* Terminator.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A1712B3B11C7B212007A5315 /* RegExpCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1712B3A11C7B212007A5315 /* RegExpCache.cpp */; };
+		A1712B3F11C7B228007A5315 /* RegExpCache.h in Headers */ = {isa = PBXBuildFile; fileRef = A1712B3E11C7B228007A5315 /* RegExpCache.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A1712B4111C7B235007A5315 /* RegExpKey.h in Headers */ = {isa = PBXBuildFile; fileRef = A1712B4011C7B235007A5315 /* RegExpKey.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A71236E51195F33C00BD2174 /* JITOpcodes32_64.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A71236E41195F33C00BD2174 /* JITOpcodes32_64.cpp */; };
 		A72700900DAC6BBC00E548D7 /* JSNotAnObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A72700780DAC605600E548D7 /* JSNotAnObject.cpp */; };
 		A72701B90DADE94900E548D7 /* ExceptionHelpers.h in Headers */ = {isa = PBXBuildFile; fileRef = A72701B30DADE94900E548D7 /* ExceptionHelpers.h */; };
@@ -872,6 +875,9 @@
 		969A09220ED1E09C00F1F681 /* Completion.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Completion.cpp; sourceTree = "<group>"; };
 		96DD73780F9DA3100027FBCC /* VMTags.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VMTags.h; sourceTree = "<group>"; };
 		97F6903A1169DF7F00A6BB46 /* Terminator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Terminator.h; sourceTree = "<group>"; };
+		A1712B3A11C7B212007A5315 /* RegExpCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RegExpCache.cpp; sourceTree = "<group>"; };
+		A1712B3E11C7B228007A5315 /* RegExpCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegExpCache.h; sourceTree = "<group>"; };
+		A1712B4011C7B235007A5315 /* RegExpKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegExpKey.h; sourceTree = "<group>"; };
 		A71236E41195F33C00BD2174 /* JITOpcodes32_64.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JITOpcodes32_64.cpp; sourceTree = "<group>"; };
 		A718F61A11754A21002465A7 /* RegExpJitTables.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegExpJitTables.h; sourceTree = "<group>"; };
 		A718F8211178EB4B002465A7 /* create_regex_tables */ = {isa = PBXFileReference; explicitFileType = text.script.python; fileEncoding = 4; path = create_regex_tables; sourceTree = "<group>"; };
@@ -1515,6 +1521,9 @@
 		7EF6E0BB0EB7A1EC0079AFAF /* runtime */ = {
 			isa = PBXGroup;
 			children = (
+				A1712B4011C7B235007A5315 /* RegExpKey.h */,
+				A1712B3E11C7B228007A5315 /* RegExpCache.h */,
+				A1712B3A11C7B212007A5315 /* RegExpCache.cpp */,
 				BCF605110E203EF800B9A64D /* ArgList.cpp */,
 				BCF605120E203EF800B9A64D /* ArgList.h */,
 				BC257DE50E1F51C50016B6C9 /* Arguments.cpp */,
@@ -2136,6 +2145,8 @@
 				A7386554118697B400540279 /* SpecializedThunkJIT.h in Headers */,
 				A7386556118697B400540279 /* ThunkGenerators.h in Headers */,
 				869D04AF1193B54D00803475 /* CachedTranscendentalFunction.h in Headers */,
+				A1712B3F11C7B228007A5315 /* RegExpCache.h in Headers */,
+				A1712B4111C7B235007A5315 /* RegExpKey.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2588,6 +2599,7 @@
 				A75706DE118A2BCF0057F88F /* JITArithmetic32_64.cpp in Sources */,
 				8626BECF11928E3900782FAB /* StringStatics.cpp in Sources */,
 				A71236E51195F33C00BD2174 /* JITOpcodes32_64.cpp in Sources */,
+				A1712B3B11C7B212007A5315 /* RegExpCache.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

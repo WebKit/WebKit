@@ -39,6 +39,7 @@
 #include "Operations.h"
 #include "Parser.h"
 #include "PropertyNameArray.h"
+#include "RegExpCache.h"
 #include "RegExpObject.h"
 #include "SamplingTool.h"
 #include <wtf/Assertions.h>
@@ -144,7 +145,7 @@ RegisterID* StringNode::emitBytecode(BytecodeGenerator& generator, RegisterID* d
 
 RegisterID* RegExpNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 {
-    RefPtr<RegExp> regExp = RegExp::create(generator.globalData(), m_pattern.ustring(), m_flags.ustring());
+    RefPtr<RegExp> regExp = generator.globalData()->regExpCache()->lookupOrCreate(m_pattern.ustring(), m_flags.ustring());
     if (!regExp->isValid())
         return emitThrowError(generator, SyntaxError, "Invalid regular expression: %s", regExp->errorMessage());
     if (dst == generator.ignoredResult())

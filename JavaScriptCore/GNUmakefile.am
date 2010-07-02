@@ -507,8 +507,11 @@ javascriptcore_sources += \
 	JavaScriptCore/runtime/PutPropertySlot.h \
 	JavaScriptCore/runtime/RegExp.cpp \
 	JavaScriptCore/runtime/RegExp.h \
+	JavaScriptCore/runtime/RegExpCache.cpp \
+	JavaScriptCore/runtime/RegExpCache.h \
 	JavaScriptCore/runtime/RegExpConstructor.cpp \
 	JavaScriptCore/runtime/RegExpConstructor.h \
+	JavaScriptCore/runtime/RegExpKey.h \
 	JavaScriptCore/runtime/RegExpMatchesArray.h \
 	JavaScriptCore/runtime/RegExpObject.cpp \
 	JavaScriptCore/runtime/RegExpObject.h \

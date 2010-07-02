@@ -189,6 +189,7 @@ SOURCES += \
     runtime/RegExp.cpp \
     runtime/RegExpObject.cpp \
     runtime/RegExpPrototype.cpp \
+    runtime/RegExpCache.cpp \
     runtime/RopeImpl.cpp \
     runtime/ScopeChain.cpp \
     runtime/SmallStrings.cpp \
