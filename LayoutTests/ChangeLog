@@ -2,6 +2,18 @@
 
         Reviewed by Dimitri Glazkov.
 
+        Fix issues in boundary situations for WebGLRenderingContext::drawArrays/drawElements
+        https://bugs.webkit.org/show_bug.cgi?id=41473
+
+        * fast/canvas/webgl/draw-arrays-out-of-bounds-expected.txt: Test against overflow, size-0 buffer, and count==0 situations.
+        * fast/canvas/webgl/draw-arrays-out-of-bounds.html: Ditto.
+        * fast/canvas/webgl/draw-elements-out-of-bounds-expected.txt: Ditto.
+        * fast/canvas/webgl/draw-elements-out-of-bounds.html: Ditto.
+
+2010-07-02  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
         linkProgram should fail when vertex/fragment shaders are not both present
         https://bugs.webkit.org/show_bug.cgi?id=41380
 

@@ -1460,6 +1460,7 @@
             'html/canvas/Uint32Array.h',
             'html/canvas/Uint16Array.cpp',
             'html/canvas/Uint16Array.h',
+            'html/canvas/CheckedInt.h',
             'html/CollectionCache.cpp',
             'html/CollectionCache.h',
             'html/CollectionType.h',

@@ -29,6 +29,7 @@
 
 #include "WebGLRenderingContext.h"
 
+#include "CheckedInt.h"
 #include "CanvasPixelArray.h"
 #include "Console.h"
 #include "DOMWindow.h"
@@ -735,16 +736,24 @@ bool WebGLRenderingContext::validateIndexArrayConservative(unsigned long type, l
         switch (type) {
         case GraphicsContext3D::UNSIGNED_BYTE: {
             unsigned numElements = m_boundElementArrayBuffer->byteLength();
-            const unsigned char* p = static_cast<const unsigned char*>(m_boundElementArrayBuffer->elementArrayBuffer()->data());
-            for (unsigned i = 0; i < numElements; i++)
-                maxIndex = max(maxIndex, static_cast<long>(p[i]));
+            if (!numElements)
+                maxIndex = 0;
+            else {
+                const unsigned char* p = static_cast<const unsigned char*>(m_boundElementArrayBuffer->elementArrayBuffer()->data());
+                for (unsigned i = 0; i < numElements; i++)
+                    maxIndex = max(maxIndex, static_cast<long>(p[i]));
+            }
             break;
         }
         case GraphicsContext3D::UNSIGNED_SHORT: {
             unsigned numElements = m_boundElementArrayBuffer->byteLength() / sizeof(unsigned short);
-            const unsigned short* p = static_cast<const unsigned short*>(m_boundElementArrayBuffer->elementArrayBuffer()->data());
-            for (unsigned i = 0; i < numElements; i++)
-                maxIndex = max(maxIndex, static_cast<long>(p[i]));
+            if (!numElements)
+                maxIndex = 0;
+            else {
+                const unsigned short* p = static_cast<const unsigned short*>(m_boundElementArrayBuffer->elementArrayBuffer()->data());
+                for (unsigned i = 0; i < numElements; i++)
+                    maxIndex = max(maxIndex, static_cast<long>(p[i]));
+            }
             break;
         }
         default:
@@ -862,11 +871,11 @@ void WebGLRenderingContext::drawArrays(unsigned long mode, long first, long coun
         return;
     }
 
-    if (!count)
-        return;
-
     // Ensure we have a valid rendering state
-    if (!validateRenderingState(first + count)) {
+    CheckedInt<int32_t> checkedFirst(first);
+    CheckedInt<int32_t> checkedCount(count);
+    CheckedInt<int32_t> checkedSum = checkedFirst + checkedCount;
+    if (!checkedSum.valid() || !validateRenderingState(checkedSum.value())) {
         m_context->synthesizeGLError(GraphicsContext3D::INVALID_OPERATION);
         return;
     }
@@ -905,9 +914,6 @@ void WebGLRenderingContext::drawElements(unsigned long mode, long count, unsigne
         m_context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE);
         return;
     }
-
-    if (!count)
-        return;
 
     // Ensure we have a valid rendering state
     long numElements;

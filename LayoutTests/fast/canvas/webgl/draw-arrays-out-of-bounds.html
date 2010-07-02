@@ -26,7 +26,7 @@ shouldGenerateGLError(context, context.INVALID_OPERATION, "context.drawArrays(co
 shouldGenerateGLError(context, context.INVALID_VALUE, "context.drawArrays(context.TRIANGLES, 0, -1)");
 shouldGenerateGLError(context, context.INVALID_VALUE, "context.drawArrays(context.TRIANGLES, -1, 0)");
 shouldGenerateGLError(context, context.NO_ERROR, "context.drawArrays(context.TRIANGLES, 0, 0)");
-shouldGenerateGLError(context, context.NO_ERROR, "context.drawArrays(context.TRIANGLES, 100, 0)");
+shouldGenerateGLError(context, context.INVALID_OPERATION, "context.drawArrays(context.TRIANGLES, 100, 0)");
 
 debug("")
 debug("Test buffer with 3 float vectors")
@@ -41,7 +41,16 @@ shouldGenerateGLError(context, context.INVALID_OPERATION, "context.drawArrays(co
 shouldGenerateGLError(context, context.INVALID_VALUE, "context.drawArrays(context.TRIANGLES, 0, -1)");
 shouldGenerateGLError(context, context.INVALID_VALUE, "context.drawArrays(context.TRIANGLES, -1, 0)");
 shouldGenerateGLError(context, context.NO_ERROR, "context.drawArrays(context.TRIANGLES, 0, 0)");
-shouldGenerateGLError(context, context.NO_ERROR, "context.drawArrays(context.TRIANGLES, 100, 0)");
+shouldGenerateGLError(context, context.INVALID_OPERATION, "context.drawArrays(context.TRIANGLES, 100, 0)");
+
+// 0xffffffff needs to convert to a 'long' IDL argument as -1, as per
+// WebIDL 4.1.7.  JS ToInt32(0xffffffff) == -1, which is the first step
+// of the conversion.  Thus INVALID_VALUE.
+shouldGenerateGLError(context, context.INVALID_VALUE, "context.drawArrays(context.TRIANGLES, 0, 0xffffffff)");
+shouldGenerateGLError(context, context.INVALID_VALUE, "context.drawArrays(context.TRIANGLES, 0xffffffff, 1)");
+shouldGenerateGLError(context, context.INVALID_VALUE, "context.drawArrays(context.TRIANGLES, 0xffffffff, 0xffffffff)");
+shouldGenerateGLError(context, context.INVALID_OPERATION, "context.drawArrays(context.TRIANGLES, 0x7fffffff, 1)");
+shouldGenerateGLError(context, context.INVALID_OPERATION, "context.drawArrays(context.TRIANGLES, 0x7fffffff, 0x7fffffff)");
 
 debug("")
 successfullyParsed = true;

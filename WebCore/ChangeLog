@@ -2,6 +2,45 @@
 
         Reviewed by Dimitri Glazkov.
 
+        Fix issues in boundary situations for WebGLRenderingContext::drawArrays/drawElements
+        https://bugs.webkit.org/show_bug.cgi?id=41473
+
+        * WebCore.gypi: Add CheckedInt.h.
+        * WebCore.xcodeproj/project.pbxproj: Add CheckedInt.h.
+        * html/canvas/CheckedInt.h: Added support of safe integer operations.
+        (mozilla::CheckedInt_internal::integer_type_manually_recorded_info::):
+        (mozilla::CheckedInt_internal::is_unsupported_type::):
+        (mozilla::CheckedInt_internal::):
+        (mozilla::CheckedInt_internal::integer_traits::):
+        (mozilla::CheckedInt_internal::integer_traits::min):
+        (mozilla::CheckedInt_internal::integer_traits::max):
+        (mozilla::CheckedInt_internal::has_sign_bit):
+        (mozilla::CheckedInt_internal::binary_complement):
+        (mozilla::CheckedInt_internal::is_in_range):
+        (mozilla::CheckedInt_internal::is_add_valid):
+        (mozilla::CheckedInt_internal::is_sub_valid):
+        (mozilla::CheckedInt_internal::is_mul_valid):
+        (mozilla::CheckedInt_internal::is_div_valid):
+        (mozilla::CheckedInt::CheckedInt):
+        (mozilla::CheckedInt::value):
+        (mozilla::CheckedInt::valid):
+        (mozilla::CheckedInt::operator -):
+        (mozilla::CheckedInt::operator ==):
+        (mozilla::CheckedInt::operator !=):
+        (mozilla::operator /):
+        (mozilla::cast_to_CheckedInt_impl::run):
+        (mozilla::):
+        (mozilla::cast_to_CheckedInt):
+        (mozilla::operator ==):
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::validateIndexArrayConservative): Fix a bug against 0-size buffer situation.
+        (WebCore::WebGLRenderingContext::drawArrays): Deal with overflows and count==0 situation.
+        (WebCore::WebGLRenderingContext::drawElements): Deal with count==0 situation.
+
+2010-07-02  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
         linkProgram should fail when vertex/fragment shaders are not both present
         https://bugs.webkit.org/show_bug.cgi?id=41380
 
