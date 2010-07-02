@@ -1,3 +1,12 @@
+2010-07-02  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by David Levin.
+
+        fast/canvas/webgl/program-test.html failed on leopard bot
+        https://bugs.webkit.org/show_bug.cgi?id=41542
+
+        * platform/mac-leopard/Skipped: Skip the failing test for now.
+
 2010-07-02  Brian Weinstein  <bweinstein@apple.com>
 
         Rubber-stamped by Anders Carlsson. 

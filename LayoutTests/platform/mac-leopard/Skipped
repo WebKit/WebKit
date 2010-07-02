@@ -73,6 +73,7 @@ http/tests/media/video-play-stall-seek.html
 # IndexedDB is not yet enabled.
 storage/indexeddb
 
-# Disable the test until the mesa renderer is integrated.
-# https://bugs.webkit.org/show_bug.cgi?id=39128
+# Disable the tests until the mesa renderer is integrated.
+# https://bugs.webkit.org/show_bug.cgi?id=41545
 fast/canvas/webgl/texture-npot.html
+fast/canvas/webgl/program-test.html
