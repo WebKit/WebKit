@@ -45,6 +45,7 @@ using namespace Unicode;
 
 namespace JSC {
 
+static const UChar byteOrderMark = 0xFEFF;
 
 enum CharacterTypes {
     // Types for the main switch
@@ -255,11 +256,41 @@ void Lexer::setCode(const SourceCode& source, ParserArena& arena)
     m_buffer8.reserveInitialCapacity(initialReadBufferCapacity);
     m_buffer16.reserveInitialCapacity((m_codeEnd - m_code) / 2);
 
+    // ECMA-262 calls for stripping all Cf characters, but we only strip BOM characters.
+    // See <https://bugs.webkit.org/show_bug.cgi?id=4931> for details.
+    if (source.provider()->hasBOMs()) {
+        for (const UChar* p = m_codeStart; p < m_codeEnd; ++p) {
+            if (UNLIKELY(*p == byteOrderMark)) {
+                copyCodeWithoutBOMs();
+                break;
+            }
+        }
+    }
+
     if (LIKELY(m_code < m_codeEnd))
         m_current = *m_code;
     else
         m_current = -1;
     ASSERT(currentOffset() == source.startOffset());
+}
+
+void Lexer::copyCodeWithoutBOMs()
+{
+    // Note: In this case, the character offset data for debugging will be incorrect.
+    // If it's important to correctly debug code with extraneous BOMs, then the caller
+    // should strip the BOMs when creating the SourceProvider object and do its own
+    // mapping of offsets within the stripped text to original text offset.
+
+    m_codeWithoutBOMs.reserveCapacity(m_codeEnd - m_code);
+    for (const UChar* p = m_code; p < m_codeEnd; ++p) {
+        UChar c = *p;
+        if (c != byteOrderMark)
+            m_codeWithoutBOMs.append(c);
+    }
+    ptrdiff_t startDelta = m_codeStart - m_code;
+    m_code = m_codeWithoutBOMs.data();
+    m_codeStart = m_code + startDelta;
+    m_codeEnd = m_codeWithoutBOMs.data() + m_codeWithoutBOMs.size();
 }
 
 ALWAYS_INLINE void Lexer::shift()
@@ -1149,6 +1180,26 @@ void Lexer::clear()
 
 SourceCode Lexer::sourceCode(int openBrace, int closeBrace, int firstLine)
 {
+    if (m_codeWithoutBOMs.isEmpty())
+        return SourceCode(m_source->provider(), openBrace, closeBrace + 1, firstLine);
+
+    const UChar* data = m_source->provider()->data();
+    
+    ASSERT(openBrace < closeBrace);
+    int i;
+    for (i = m_source->startOffset(); i < openBrace; ++i) {
+        if (data[i] == byteOrderMark) {
+            openBrace++;
+            closeBrace++;
+        }
+    }
+    for (; i < closeBrace; ++i) {
+        if (data[i] == byteOrderMark)
+            closeBrace++;
+    }
+
+    ASSERT(openBrace < closeBrace);
+
     return SourceCode(m_source->provider(), openBrace, closeBrace + 1, firstLine);
 }
 
