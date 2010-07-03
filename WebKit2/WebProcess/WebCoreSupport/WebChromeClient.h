@@ -167,6 +167,14 @@ private:
     virtual void setNeedsOneShotDrawingSynchronization();
     virtual void scheduleCompositingLayerSync();
 #endif
+
+#if ENABLE(NOTIFICATIONS)
+    virtual WebCore::NotificationPresenter* notificationPresenter() const;
+#endif
+
+#if ENABLE(TOUCH_EVENTS)
+    virtual void needTouchEvents(bool);
+#endif
     
     WebCore::String m_cachedToolTip;
     WebPage* m_page;

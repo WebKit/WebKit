@@ -459,4 +459,17 @@ void WebChromeClient::scheduleCompositingLayerSync()
 
 #endif
 
+#if ENABLE(NOTIFICATIONS)
+WebCore::NotificationPresenter* WebChromeClient::notificationPresenter() const
+{
+    return 0;
+}
+#endif
+
+#if ENABLE(TOUCH_EVENTS)
+void WebChromeClient::needTouchEvents(bool)
+{
+}
+#endif
+
 } // namespace WebKit
