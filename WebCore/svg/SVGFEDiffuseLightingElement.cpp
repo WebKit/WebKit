@@ -55,7 +55,7 @@ void SVGFEDiffuseLightingElement::parseMappedAttribute(Attribute* attr)
     else if (attr->name() == SVGNames::surfaceScaleAttr)
         setSurfaceScaleBaseValue(value.toFloat());
     else if (attr->name() == SVGNames::diffuseConstantAttr)
-        setDiffuseConstantBaseValue(value.toInt());
+        setDiffuseConstantBaseValue(value.toFloat());
     else if (attr->name() == SVGNames::kernelUnitLengthAttr) {
         float x, y;
         if (parseNumberOptionalNumber(value, x, y)) {

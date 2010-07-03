@@ -1,3 +1,13 @@
+2010-07-02  Zoltan Herczeg  <zherczeg@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
+        Minor fix: Diffuse constant is float (not integer)
+        https://bugs.webkit.org/show_bug.cgi?id=10412
+
+        * svg/SVGFEDiffuseLightingElement.cpp:
+        (WebCore::SVGFEDiffuseLightingElement::parseMappedAttribute):
+
 2010-07-02  Martin Robinson  <mrobinson@igalia.com>
 
         Unreviewed.
