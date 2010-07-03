@@ -65,6 +65,7 @@ void LayoutTestController::reset()
     m_handleErrorPages = false;
     m_webHistory = 0;
     m_globalFlag = false;
+    m_userStyleSheetEnabled = false;
     m_desktopNotificationAllowedOrigins.clear();
 
     DumpRenderTreeSupportQt::dumpEditingCallbacks(false);
@@ -537,6 +538,9 @@ void LayoutTestController::overridePreference(const QString& name, const QVarian
 void LayoutTestController::setUserStyleSheetLocation(const QString& url)
 {
     m_userStyleSheetLocation = QUrl(url);
+
+    if (m_userStyleSheetEnabled)
+        setUserStyleSheetEnabled(true);
 }
 
 void LayoutTestController::setCaretBrowsingEnabled(bool value)
@@ -546,6 +550,8 @@ void LayoutTestController::setCaretBrowsingEnabled(bool value)
 
 void LayoutTestController::setUserStyleSheetEnabled(bool enabled)
 {
+    m_userStyleSheetEnabled = enabled;
+
     if (enabled)
         m_drt->webPage()->settings()->setUserStyleSheetUrl(m_userStyleSheetLocation);
     else

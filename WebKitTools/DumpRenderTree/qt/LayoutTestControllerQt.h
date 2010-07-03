@@ -236,6 +236,7 @@ private:
     bool m_handleErrorPages;
     bool m_loadFinished;
     bool m_globalFlag;
+    bool m_userStyleSheetEnabled;
     bool m_isGeolocationPermissionSet;
     bool m_geolocationPermission;
 
