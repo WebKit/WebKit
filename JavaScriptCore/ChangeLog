@@ -1,3 +1,16 @@
+2010-07-02  Chao-ying Fu  <fu@mips.com>
+
+        Reviewed by Oliver Hunt.
+
+        Re-enable JIT_OPTIMIZE_NATIVE_CALL on MIPS
+        https://bugs.webkit.org/show_bug.cgi?id=40179
+
+        Add the MIPS part to re-enable JIT_OPTIMIZE_NATIVE_CALL.
+
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::privateCompileCTINativeCall):
+        * wtf/Platform.h:
+
 2010-07-02  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Oliver Hunt.
