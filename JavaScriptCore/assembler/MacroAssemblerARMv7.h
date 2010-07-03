@@ -638,7 +638,7 @@ public:
     Jump branchDouble(DoubleCondition cond, FPRegisterID left, FPRegisterID right)
     {
         m_assembler.vcmp_F64(left, right);
-        m_assembler.vmrs_APSR_nzcv_FPSCR();
+        m_assembler.vmrs();
 
         if (cond == DoubleNotEqual) {
             // ConditionNE jumps if NotEqual *or* unordered - force the unordered cases not to jump.

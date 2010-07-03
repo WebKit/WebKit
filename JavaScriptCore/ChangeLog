@@ -1,3 +1,37 @@
+2010-07-02  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Bug 41552 - Clean up ARMv7 vfp code generation
+        Emit separate opcode individually, remove magic numbers.
+
+        Also remove invalid assert from JSImmediate (number cells are not CELL_MASK aligned).
+
+        * assembler/ARMv7Assembler.h:
+        (JSC::ARMv7Assembler::):
+        (JSC::ARMv7Assembler::vadd_F64):
+        (JSC::ARMv7Assembler::vcmp_F64):
+        (JSC::ARMv7Assembler::vcvt_F64_S32):
+        (JSC::ARMv7Assembler::vcvtr_S32_F64):
+        (JSC::ARMv7Assembler::vdiv_F64):
+        (JSC::ARMv7Assembler::vldr):
+        (JSC::ARMv7Assembler::vmov_F64_0):
+        (JSC::ARMv7Assembler::vmov):
+        (JSC::ARMv7Assembler::vmrs):
+        (JSC::ARMv7Assembler::vmul_F64):
+        (JSC::ARMv7Assembler::vstr):
+        (JSC::ARMv7Assembler::vsub_F64):
+        (JSC::ARMv7Assembler::VFPOperand::VFPOperand):
+        (JSC::ARMv7Assembler::VFPOperand::bits1):
+        (JSC::ARMv7Assembler::VFPOperand::bits4):
+        (JSC::ARMv7Assembler::vcvtOp):
+        (JSC::ARMv7Assembler::ARMInstructionFormatter::vfpOp):
+        (JSC::ARMv7Assembler::ARMInstructionFormatter::vfpMemOp):
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::branchDouble):
+        * runtime/JSImmediate.h:
+        (JSC::JSValue::isCell):
+
 2010-07-02  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r62410.

@@ -446,17 +446,6 @@ private:
 };
 
 
-/*
-Some features of the Thumb instruction set are deprecated in ARMv7. Deprecated features affecting 
-instructions supported by ARMv7-M are as follows: 
-• use of the PC as <Rd> or <Rm> in a 16-bit ADD (SP plus register) instruction 
-• use of the SP as <Rm> in a 16-bit ADD (SP plus register) instruction 
-• use of the SP as <Rm> in a 16-bit CMP (register) instruction 
-• use of MOV (register) instructions in which <Rd> is the SP or PC and <Rm> is also the SP or PC. 
-• use of <Rn> as the lowest-numbered register in the register list of a 16-bit STM instruction with base 
-register writeback 
-*/
-
 class ARMv7Assembler {
 public:
     ~ARMv7Assembler()
@@ -623,6 +612,18 @@ private:
         OP_SUB_reg_T2   = 0xEBA0,
         OP_SUB_S_reg_T2 = 0xEBB0,
         OP_CMP_reg_T2   = 0xEBB0,
+        OP_VSTR         = 0xED00,
+        OP_VLDR         = 0xED10,
+        OP_VMOV_StoC    = 0xEE00,
+        OP_VMOV_CtoS    = 0xEE10,
+        OP_VMUL_T2      = 0xEE20,
+        OP_VADD_T2      = 0xEE30,
+        OP_VSUB_T2      = 0xEE30,
+        OP_VDIV         = 0xEE80,
+        OP_VCMP_T1      = 0xEEB0,
+        OP_VCVT_FPIVFP  = 0xEEB0,
+        OP_VMOV_IMM_T2  = 0xEEB0,
+        OP_VMRS         = 0xEEB0,
         OP_B_T4a        = 0xF000,
         OP_AND_imm_T1   = 0xF000,
         OP_TST_imm      = 0xF010,
@@ -662,8 +663,20 @@ private:
     } OpcodeID1;
 
     typedef enum {
-        OP_B_T4b        = 0x9000,
+        OP_VADD_T2b     = 0x0A00,
+        OP_VDIVb        = 0x0A00,
+        OP_VLDRb        = 0x0A00,
+        OP_VMOV_IMM_T2b = 0x0A00,
+        OP_VMUL_T2b     = 0x0A00,
+        OP_VSTRb        = 0x0A00,
+        OP_VMOV_CtoSb   = 0x0A10,
+        OP_VMOV_StoCb   = 0x0A10,
+        OP_VMRSb        = 0x0A10,
+        OP_VCMP_T1b     = 0x0A40,
+        OP_VCVT_FPIVFPb = 0x0A40,
+        OP_VSUB_T2b     = 0x0A40,
         OP_NOP_T2b      = 0x8000,
+        OP_B_T4b        = 0x9000,
     } OpcodeID2;
 
     struct FourFours {
@@ -1495,70 +1508,73 @@ public:
 
     void vadd_F64(FPDoubleRegisterID rd, FPDoubleRegisterID rn, FPDoubleRegisterID rm)
     {
-        m_formatter.vfpOp(0x0b00ee30 | doubleRegisterMask(rd, 6, 28) | doubleRegisterMask(rn, 23, 0) | doubleRegisterMask(rm, 21, 16));
+        m_formatter.vfpOp(OP_VADD_T2, OP_VADD_T2b, true, rn, rd, rm);
     }
 
     void vcmp_F64(FPDoubleRegisterID rd, FPDoubleRegisterID rm)
     {
-        m_formatter.vfpOp(0x0bc0eeb4 | doubleRegisterMask(rd, 6, 28) | doubleRegisterMask(rm, 21, 16));
+        m_formatter.vfpOp(OP_VCMP_T1, OP_VCMP_T1b, true, VFPOperand(4), rd, rm);
     }
 
     void vcvt_F64_S32(FPDoubleRegisterID rd, FPSingleRegisterID rm)
     {
-        vcvt(doubleRegisterMask(rd, 6, 28), singleRegisterMask(rm, 16, 21), false, false, false, true);
+        // boolean values are 64bit (toInt, unsigned, roundZero)
+        m_formatter.vfpOp(OP_VCVT_FPIVFP, OP_VCVT_FPIVFPb, true, vcvtOp(false, false, false), rd, rm);
     }
 
     void vcvtr_S32_F64(FPSingleRegisterID rd, FPDoubleRegisterID rm)
     {
-        vcvt(singleRegisterMask(rd, 6, 28), doubleRegisterMask(rm, 16, 21), true, false, true, true);
+        // boolean values are 64bit (toInt, unsigned, roundZero)
+        m_formatter.vfpOp(OP_VCVT_FPIVFP, OP_VCVT_FPIVFPb, true, vcvtOp(true, false, true), rd, rm);
     }
 
     void vdiv_F64(FPDoubleRegisterID rd, FPDoubleRegisterID rn, FPDoubleRegisterID rm)
     {
-        m_formatter.vfpOp(0x0b00ee80 | doubleRegisterMask(rd, 6, 28) | doubleRegisterMask(rn, 23, 0) | doubleRegisterMask(rm, 21, 16));
+        m_formatter.vfpOp(OP_VDIV, OP_VDIVb, true, rn, rd, rm);
     }
 
     void vldr(FPDoubleRegisterID rd, RegisterID rn, int32_t imm)
     {
-        vmem(rd, rn, imm, true);
+        m_formatter.vfpMemOp(OP_VLDR, OP_VLDRb, true, rn, rd, imm);
     }
 
     void vmov_F64_0(FPDoubleRegisterID rd)
     {
-        m_formatter.vfpOp(0x0b00eeb0 | doubleRegisterMask(rd, 28, 6));
+        m_formatter.vfpOp(OP_VMOV_IMM_T2, OP_VMOV_IMM_T2b, true, VFPOperand(0), rd, VFPOperand(0));
     }
 
-    void vmov(RegisterID rd, FPSingleRegisterID sn)
+    void vmov(RegisterID rd, FPSingleRegisterID rn)
     {
-        m_formatter.vfpOp(0x0a10ee10 | (rd << 28) | singleRegisterMask(sn, 0, 23));
+        ASSERT(!BadReg(rd));
+        m_formatter.vfpOp(OP_VMOV_CtoS, OP_VMOV_CtoSb, false, rn, rd, VFPOperand(0));
     }
 
-    void vmov(FPSingleRegisterID sn, RegisterID rd)
+    void vmov(FPSingleRegisterID rd, RegisterID rn)
     {
-        m_formatter.vfpOp(0x0a10ee00 | (rd << 28) | singleRegisterMask(sn, 0, 23));
+        ASSERT(!BadReg(rn));
+        m_formatter.vfpOp(OP_VMOV_StoC, OP_VMOV_StoCb, false, rd, rn, VFPOperand(0));
     }
 
-    // move FPSCR flags to APSR.
-    void vmrs_APSR_nzcv_FPSCR()
+    void vmrs(RegisterID reg = ARMRegisters::pc)
     {
-        m_formatter.vfpOp(0xfa10eef1);
+        ASSERT(reg != ARMRegisters::sp);
+        m_formatter.vfpOp(OP_VMRS, OP_VMRSb, false, VFPOperand(1), VFPOperand(0x10 | reg), VFPOperand(0));
     }
 
     void vmul_F64(FPDoubleRegisterID rd, FPDoubleRegisterID rn, FPDoubleRegisterID rm)
     {
-        m_formatter.vfpOp(0x0b00ee20 | doubleRegisterMask(rd, 6, 28) | doubleRegisterMask(rn, 23, 0) | doubleRegisterMask(rm, 21, 16));
+        m_formatter.vfpOp(OP_VMUL_T2, OP_VMUL_T2b, true, rn, rd, rm);
     }
 
     void vstr(FPDoubleRegisterID rd, RegisterID rn, int32_t imm)
     {
-        vmem(rd, rn, imm, false);
+        m_formatter.vfpMemOp(OP_VSTR, OP_VSTRb, true, rn, rd, imm);
     }
 
     void vsub_F64(FPDoubleRegisterID rd, FPDoubleRegisterID rn, FPDoubleRegisterID rm)
     {
-        m_formatter.vfpOp(0x0b40ee30 | doubleRegisterMask(rd, 6, 28) | doubleRegisterMask(rn, 23, 0) | doubleRegisterMask(rm, 21, 16));
+        m_formatter.vfpOp(OP_VSUB_T2, OP_VSUB_T2b, true, rn, rd, rm);
     }
-
 
     JmpDst label()
     {
@@ -1720,49 +1736,69 @@ public:
     }
 
 private:
+    // VFP operations commonly take one or more 5-bit operands, typically representing a
+    // floating point register number.  This will commonly be encoded in the instruction
+    // in two parts, with one single bit field, and one 4-bit field.  In the case of
+    // double precision operands the high bit of the register number will be encoded
+    // separately, and for single precision operands the high bit of the register number
+    // will be encoded individually.
+    // VFPOperand encapsulates a 5-bit VFP operand, with bits 0..3 containing the 4-bit
+    // field to be encoded together in the instruction (the low 4-bits of a double
+    // register number, or the high 4-bits of a single register number), and bit 4
+    // contains the bit value to be encoded individually.
+    struct VFPOperand {
+        explicit VFPOperand(uint32_t value)
+            : m_value(value)
+        {
+            ASSERT(!(m_value & ~0x1f));
+        }
 
-    void vcvt(uint32_t rdMask, uint32_t rmMask, bool toInteger, bool isUnsigned, bool isRoundZero, bool isDouble)
+        VFPOperand(FPDoubleRegisterID reg)
+            : m_value(reg)
+        {
+        }
+
+        VFPOperand(RegisterID reg)
+            : m_value(reg)
+        {
+        }
+
+        VFPOperand(FPSingleRegisterID reg)
+            : m_value(((reg & 1) << 4) | (reg >> 1)) // rotate the lowest bit of 'reg' to the top.
+        {
+        }
+
+        uint32_t bits1()
+        {
+            return m_value >> 4;
+        }
+
+        uint32_t bits4()
+        {
+            return m_value & 0xf;
+        }
+
+        uint32_t m_value;
+    };
+
+    VFPOperand vcvtOp(bool toInteger, bool isUnsigned, bool isRoundZero)
     {
         // Cannot specify rounding when converting to float.
         ASSERT(toInteger || !isRoundZero);
 
-        // 'sz' field
-        int op = isDouble ? 0x0b40eeb8 : 0x0a40eeb8;
-
+        uint32_t op = 0x8;
         if (toInteger) {
             // opc2 indicates both toInteger & isUnsigned.
-            op |= isUnsigned ? 0x00000004 : 0x00000005;
+            op |= isUnsigned ? 0x4 : 0x5;
             // 'op' field in instruction is isRoundZero
             if (isRoundZero)
-                op |= 0x00800000;
+                op |= 0x10;
         } else {
             // 'op' field in instruction is isUnsigned
             if (!isUnsigned)
-                op |= 0x00800000;
+                op |= 0x10;
         }
-        m_formatter.vfpOp(op | rdMask | rmMask);
-    }
-
-    // Arm vfp addresses can be offset by a 9-bit ones-comp immediate, left shifted by 2.
-    // (i.e. +/-(0..255) 32-bit words)
-    void vmem(FPDoubleRegisterID rd, RegisterID rn, int32_t imm, bool isLoad)
-    {
-        bool up;
-        uint32_t offset;
-        if (imm < 0) {
-            offset = -imm;
-            up = false;
-        } else {
-            offset = imm;
-            up = true;
-        }
-
-        // offset is effectively leftshifted by 2 already (the bottom two bits are zero, and not
-        // reperesented in the instruction.  Left shift by 14, to mov it into position 0x00AA0000.
-        ASSERT((offset & ~(0xff << 2)) == 0);
-        offset <<= 14;
-
-        m_formatter.vfpOp(0x0b00ed00 | offset | (up << 7) | (isLoad << 4) | doubleRegisterMask(rd, 6, 28) | rn);
+        return VFPOperand(op);
     }
 
     static void setInt32(void* code, uint32_t value)
@@ -1952,11 +1988,35 @@ private:
             m_buffer.putShort((reg2 << 12) | imm);
         }
 
-        void vfpOp(int32_t op)
+        // Formats up instructions of the pattern:
+        //    111111111B11aaaa:bbbb222SA2C2cccc
+        // Where 1s in the pattern come from op1, 2s in the pattern come from op2, S is the provided size bit.
+        // Operands provide 5 bit values of the form Aaaaa, Bbbbb, Ccccc.
+        void vfpOp(OpcodeID1 op1, OpcodeID2 op2, bool size, VFPOperand a, VFPOperand b, VFPOperand c)
         {
-            m_buffer.putInt(op);
+            ASSERT(!(op1 & 0x004f));
+            ASSERT(!(op2 & 0xf1af));
+            m_buffer.putShort(op1 | b.bits1() << 6 | a.bits4());
+            m_buffer.putShort(op2 | b.bits4() << 12 | size << 8 | a.bits1() << 7 | c.bits1() << 5 | c.bits4());
         }
 
+        // Arm vfp addresses can be offset by a 9-bit ones-comp immediate, left shifted by 2.
+        // (i.e. +/-(0..255) 32-bit words)
+        void vfpMemOp(OpcodeID1 op1, OpcodeID2 op2, bool size, RegisterID rn, VFPOperand rd, int32_t imm)
+        {
+            bool up = true;
+            if (imm < 0) {
+                imm = -imm;
+                up = false;
+            }
+            
+            uint32_t offset = imm;
+            ASSERT(!(offset & ~0x3fc));
+            offset >>= 2;
+
+            m_buffer.putShort(op1 | (up << 7) | rd.bits1() << 6 | rn);
+            m_buffer.putShort(op2 | rd.bits4() << 12 | size << 8 | offset);
+        }
 
         // Administrative methods:
 
