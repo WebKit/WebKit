@@ -1,3 +1,17 @@
+2010-07-02  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Handle <image> in new parser
+        https://bugs.webkit.org/show_bug.cgi?id=41555
+
+        This patch is kind of goofy but apparently how the world works.
+
+        * html/HTMLToken.h:
+        (WebCore::AtomicHTMLToken::setName):
+        * html/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::processStartTag):
+
 2010-07-02  Kwang Yul Seo  <skyul@company100.net>
 
         Reviewed by Alexey Proskuryakov.

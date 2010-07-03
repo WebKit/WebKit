@@ -484,6 +484,12 @@ void HTMLTreeBuilder::processStartTag(AtomicHTMLToken& token)
             m_insertionMode = InTableMode;
             return;
         }
+        if (token.name() == imageTag) {
+            parseError(token);
+            // Apparently we're not supposed to ask.
+            token.setName(imgTag.localName());
+            // Note the fall through to the imgTag handling below!
+        }
         if (token.name() == areaTag || token.name() == basefontTag || token.name() == "bgsound" || token.name() == brTag || token.name() == embedTag || token.name() == imgTag || token.name() == inputTag || token.name() == keygenTag || token.name() == wbrTag) {
             reconstructTheActiveFormattingElements();
             insertSelfClosingElement(token);
@@ -498,12 +504,6 @@ void HTMLTreeBuilder::processStartTag(AtomicHTMLToken& token)
             processFakePEndTagIfPInScope();
             insertSelfClosingElement(token);
             m_framesetOk = false;
-            return;
-        }
-        if (token.name() == imageTag) {
-            parseError(token);
-            notImplemented();
-            // Apparently we're not supposed to ask.
             return;
         }
         if (token.name() == isindexTag) {

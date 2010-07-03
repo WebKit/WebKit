@@ -41,7 +41,6 @@ resources/tests1.dat:
 81
 82
 86
-89
 90
 93
 94
@@ -1050,20 +1049,6 @@ Expected:
 |           <th>
 |             <span>
 |               "X"
-
-Test 89 of 113 in resources/tests1.dat failed. Input:
-<p><image></p>
-Got:
-| <html>
-|   <head>
-|   <body>
-|     <p>
-Expected:
-| <html>
-|   <head>
-|   <body>
-|     <p>
-|       <img>
 
 Test 90 of 113 in resources/tests1.dat failed. Input:
 <a><table><a></table><p><a><div><a>
