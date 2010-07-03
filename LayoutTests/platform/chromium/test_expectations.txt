@@ -2929,3 +2929,6 @@ BUG48144 LINUX : fast/js/activation-object-function-lifetime.html = CRASH PASS
 
 // Need rebaseline
 BUG48154 WIN LINUX: fast/forms/indeterminate.html = IMAGE
+
+// Newly added test fails assertion.
+BUG48220 MAC : fast/canvas/webgl/platform-test.html = CRASH

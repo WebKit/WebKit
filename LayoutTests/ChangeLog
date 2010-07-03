@@ -1,3 +1,11 @@
+2010-07-02  Peter Kasting  <pkasting@google.com>
+
+        Unreviewed, test expectation update.
+
+        Mark a newly added test as crashing.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-07-02  Andreas Kling  <andreas.kling@nokia.com>
 
         Reviewed by Oliver Hunt.
