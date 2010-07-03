@@ -1,3 +1,14 @@
+2010-07-03  Kwang Yul Seo  <skyul@company100.net>
+
+        Reviewed by Kent Tamura.
+
+        [BREWMP] Change the CRASH() macro to print "WebKit CRASH" log.
+        https://bugs.webkit.org/show_bug.cgi?id=41524
+
+        Print "WebKit CRASH" before crashing.
+
+        * wtf/Assertions.h:
+
 2010-07-02  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Oliver Hunt.
