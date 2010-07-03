@@ -196,7 +196,8 @@ module window {
 #endif
 
 #if defined(ENABLE_WEB_TIMING) && ENABLE_WEB_TIMING
-        readonly attribute Performance performance;
+        // FIXME: Remove vendor prefix.
+        readonly attribute Performance webkitPerformance;
 #endif
 
         // Timers

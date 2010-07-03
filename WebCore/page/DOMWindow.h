@@ -131,7 +131,7 @@ namespace WebCore {
         Navigator* navigator() const;
         Navigator* clientInformation() const { return navigator(); }
 #if ENABLE(WEB_TIMING)
-        Performance* performance() const;
+        Performance* webkitPerformance() const;
 #endif
         Location* location() const;
 
@@ -365,7 +365,7 @@ namespace WebCore {
         Console* optionalConsole() const { return m_console.get(); }
         Navigator* optionalNavigator() const { return m_navigator.get(); }
 #if ENABLE(WEB_TIMING)
-        Performance* optionalPerformance() const { return m_performance.get(); }
+        Performance* optionalWebkitPerformance() const { return m_performance.get(); }
 #endif
         Location* optionalLocation() const { return m_location.get(); }
         StyleMedia* optionalMedia() const { return m_media.get(); }

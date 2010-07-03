@@ -1,3 +1,18 @@
+2010-07-02  Tony Gentilcore  <tonyg@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Add vendor prefix to window.performance
+        https://bugs.webkit.org/show_bug.cgi?id=41525
+
+        No new tests because window.performance tests not landed yet.
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::webkitPerformance):
+        * page/DOMWindow.h:
+        (WebCore::DOMWindow::optionalWebkitPerformance):
+        * page/DOMWindow.idl:
+
 2010-07-02  Zoltan Herczeg  <zherczeg@webkit.org>
 
         Reviewed by Oliver Hunt.
