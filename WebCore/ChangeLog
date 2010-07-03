@@ -1,3 +1,16 @@
+2010-07-03  Xan Lopez  <xlopez@igalia.com>
+
+        Include DerivedSources/WebCore before DerivedSources/
+
+        Recently DerivedSources generation was changed, with some files no
+        longer being generated in the toplevel DerivedSources
+        directory. Since that directory is first in the -I flags the build
+        can be broken in some cases by including old files unless a 'make
+        clean' is done. Change the -I order to fix the build in the 32 bit
+        Release bot.
+
+        * GNUmakefile.am:
+
 2010-07-03  Erik Arvidsson  <arv@chromium.org>
 
         Reviewed by Ojan Vafai.

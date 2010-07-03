@@ -65,9 +65,9 @@ webcore_cppflags += \
 	-I$(srcdir)/WebCore/workers \
 	-I$(srcdir)/WebCore/xml \
 	-I$(top_builddir)/WebCore/bindings/js \
+	-I$(top_builddir)/DerivedSources/WebCore \
 	-I$(top_builddir)/DerivedSources \
 	-I$(top_builddir)/DerivedSources/JavaScriptCore \
-	-I$(top_builddir)/DerivedSources/WebCore \
 	-DDATA_DIR=\"${datadir}\"
 
 webcoregtk_cppflags += \
