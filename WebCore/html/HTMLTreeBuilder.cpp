@@ -624,6 +624,26 @@ void HTMLTreeBuilder::processStartTag(AtomicHTMLToken& token)
         processDefaultForInHeadNoscriptMode(token);
         processToken(token);
         break;
+    case InFramesetMode:
+        ASSERT(insertionMode() == InFramesetMode);
+        if (token.name() == htmlTag) {
+            insertHTMLStartTagInBody(token);
+            return;
+        }
+        if (token.name() == framesetTag) {
+            insertElement(token);
+            return;
+        }
+        if (token.name() == frameTag) {
+            insertSelfClosingElement(token);
+            return;
+        }
+        if (token.name() == noframesTag) {
+            processStartTagForInHead(token);
+            return;
+        }
+        parseError(token);
+        break;
     default:
         notImplemented();
     }
@@ -851,6 +871,19 @@ void HTMLTreeBuilder::processEndTag(AtomicHTMLToken& token)
         m_openElements.pop();
         m_insertionMode = m_originalInsertionMode;
         break;
+    case InFramesetMode:
+        ASSERT(insertionMode() == InFramesetMode);
+        if (token.name() == framesetTag) {
+            if (currentElement() == m_openElements.htmlElement()) {
+                parseError(token);
+                return;
+            }
+            m_openElements.pop();
+            if (!m_isParsingFragment && !currentElement()->hasTagName(framesetTag))
+                m_insertionMode = AfterFramesetMode;
+            return;
+        }
+        break;
     default:
         notImplemented();
     }
@@ -919,6 +952,10 @@ void HTMLTreeBuilder::processCharacter(AtomicHTMLToken& token)
         processDefaultForInHeadNoscriptMode(token);
         processToken(token);
         break;
+    case InFramesetMode:
+        ASSERT(insertionMode() == InFramesetMode);
+        parseError(token);
+        break;
     default:
         notImplemented();
     }
@@ -960,6 +997,11 @@ void HTMLTreeBuilder::processEndOfFile(AtomicHTMLToken& token)
         ASSERT(insertionMode() == InHeadNoscriptMode);
         processDefaultForInHeadNoscriptMode(token);
         processToken(token);
+        break;
+    case InFramesetMode:
+        ASSERT(insertionMode() == InFramesetMode);
+        if (currentElement() != m_openElements.htmlElement())
+            parseError(token);
         break;
     default:
         notImplemented();

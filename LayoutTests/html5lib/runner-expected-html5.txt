@@ -52,7 +52,6 @@ resources/tests1.dat:
 101
 103
 104
-106
 107
 108
 109
@@ -1270,21 +1269,6 @@ Expected:
 |         <b>
 |           <em>
 |       <li>
-
-Test 106 of 113 in resources/tests1.dat failed. Input:
-<frameset><frame><frameset><frame></frameset><noframes></noframes></frameset>
-Got:
-| <html>
-|   <head>
-|   <frameset>
-Expected:
-| <html>
-|   <head>
-|   <frameset>
-|     <frame>
-|     <frameset>
-|       <frame>
-|     <noframes>
 
 Test 107 of 113 in resources/tests1.dat failed. Input:
 <h1><table><td><h3></table><h3></h1>
@@ -5198,7 +5182,6 @@ resources/tests15.dat:
 10
 11
 12
-13
 
 Test 1 of 14 in resources/tests15.dat failed. Input:
 <!DOCTYPE html><p><b><i><u></p> <p>X
@@ -5388,22 +5371,6 @@ Expected:
 |             <td>
 |               "bar"
 |             " "
-
-Test 13 of 14 in resources/tests15.dat failed. Input:
-<frame></frame></frame><frameset><frame><frameset><frame></frameset><noframes></frameset><noframes>
-Got:
-| <html>
-|   <head>
-|   <frameset>
-Expected:
-| <html>
-|   <head>
-|   <frameset>
-|     <frame>
-|     <frameset>
-|       <frame>
-|     <noframes>
-|       "</frameset><noframes>"
 resources/tests16.dat:
 187
 188
