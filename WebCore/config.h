@@ -202,7 +202,9 @@
 #endif /* !defined(WTF_USE_V8) */
 
 /* Using V8 implies not using JSC and vice versa */
+#if !defined(WTF_USE_JSC)
 #define WTF_USE_JSC !WTF_USE_V8
+#endif
 
 #if PLATFORM(CG)
 #ifndef CGFLOAT_DEFINED
