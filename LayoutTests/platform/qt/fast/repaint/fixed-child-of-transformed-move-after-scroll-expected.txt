@@ -11,3 +11,4 @@ layer at (8,234) size 590x20
       text run at (0,0) width 590: "You should see a yellow rect on the left, and a green one on the right. No red pixels."
 layer at (158,278) size 100x100
   RenderBlock (positioned) {DIV} at (150,270) size 100x100 [bgcolor=#008000]
+scrolled to 0,200

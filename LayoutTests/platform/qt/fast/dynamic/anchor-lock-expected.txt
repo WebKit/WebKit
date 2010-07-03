@@ -38,3 +38,4 @@ layer at (0,0) size 784x2134
           text run at (0,0) width 67: "#anchor1"
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
+scrolled to 0,990

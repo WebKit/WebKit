@@ -15,3 +15,4 @@ layer at (0,25) size 404x54 clip at (2,27) size 400x50
   RenderBlock (positioned) {DIV} at (0,0) size 404x54 [border: (2px solid #000000)]
 layer at (2,27) size 400x50
   RenderBlock {DIV} at (2,2) size 400x50 [bgcolor=#008000]
+scrolled to 0,25
