@@ -1,3 +1,24 @@
+2010-07-02  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Clamp the number of arguments supported by function.apply
+        https://bugs.webkit.org/show_bug.cgi?id=41351
+        <rdar://problem/8142141>
+
+        Add clamping logic to function.apply similar to that
+        enforced by firefox.  We have a smaller clamp than
+        firefox as our calling convention means that stack
+        usage is proportional to argument count -- the firefox
+        limit is larger than you could actually call.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::privateExecute):
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        * runtime/Arguments.h:
+        (JSC::Arguments::):
+
 2010-07-02  Chao-ying Fu  <fu@mips.com>
 
         Reviewed by Oliver Hunt.
