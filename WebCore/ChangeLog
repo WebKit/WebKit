@@ -1,3 +1,25 @@
+2010-07-02  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        Move BOM handling out of the lexer and parser
+        https://bugs.webkit.org/show_bug.cgi?id=41539
+
+        Update WebCore to ensure that SourceProviders don't
+        produce strings with BOMs in them.
+
+        * bindings/js/ScriptSourceProvider.h:
+        (WebCore::ScriptSourceProvider::ScriptSourceProvider):
+        * bindings/js/StringSourceProvider.h:
+        (WebCore::StringSourceProvider::StringSourceProvider):
+        * loader/CachedScript.cpp:
+        (WebCore::CachedScript::CachedScript):
+        (WebCore::CachedScript::script):
+        * loader/CachedScript.h:
+        (WebCore::CachedScript::):
+          CachedScript now stores decoded data with the BOMs stripped,
+          and caches the presence of BOMs across memory purges.
+
 2010-07-03  Xan Lopez  <xlopez@igalia.com>
 
         Include DerivedSources/WebCore before DerivedSources/

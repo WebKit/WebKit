@@ -257,6 +257,37 @@ public:
             memcpy(destination, source, numCharacters * sizeof(UChar));
     }
 
+    PassRefPtr<StringImpl> copyStringWithoutBOMs(bool definitelyHasBOMs, bool& hasBOMs)
+    {
+        static const UChar byteOrderMark = 0xFEFF;
+        size_t i = 0;
+        if (!definitelyHasBOMs) {
+            hasBOMs = false;
+            // ECMA-262 calls for stripping all Cf characters, but we only strip BOM characters.
+            // See <https://bugs.webkit.org/show_bug.cgi?id=4931> for details.
+            for (; i < m_length; i++) {
+                if (UNLIKELY(m_data[i] == byteOrderMark)) {
+                    hasBOMs = true;
+                    break;
+                }
+            }
+            if (!hasBOMs)
+                return this;
+        }
+        Vector<UChar> result;
+        result.reserveInitialCapacity(m_length);
+        size_t firstBOM = i;
+        i = 0;
+        for (; i < firstBOM; i++)
+            result.append(m_data[i]);
+        for (; i < m_length; i++) {
+            UChar c = m_data[i];
+            if (c != byteOrderMark)
+                result.append(c);
+        }
+        return StringImpl::adopt(result);
+    }
+
     // Returns a StringImpl suitable for use on another thread.
     PassRefPtr<StringImpl> crossThreadString();
     // Makes a deep copy. Helpful only if you need to use a String on another thread

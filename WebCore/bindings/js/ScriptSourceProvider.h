@@ -35,8 +35,8 @@ namespace WebCore {
 
     class ScriptSourceProvider : public JSC::SourceProvider {
     public:
-        ScriptSourceProvider(const JSC::UString& url, JSC::SourceBOMPresence hasBOMs = JSC::SourceCouldHaveBOMs)
-            : SourceProvider(url, hasBOMs)
+        ScriptSourceProvider(const JSC::UString& url)
+            : SourceProvider(url)
         {
         }
 
