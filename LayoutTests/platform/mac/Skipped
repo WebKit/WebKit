@@ -208,9 +208,6 @@ canvas/philip/tests/2d.drawImage.wrongtype.html
 canvas/philip/tests/2d.fillStyle.parse.current.basic.html
 canvas/philip/tests/2d.fillStyle.parse.current.changed.html
 canvas/philip/tests/2d.fillStyle.parse.current.removed.html
-canvas/philip/tests/2d.fillStyle.parse.rgb-clamp-3.html
-canvas/philip/tests/2d.fillStyle.parse.rgb-clamp-4.html
-canvas/philip/tests/2d.fillStyle.parse.rgb-clamp-5.html
 canvas/philip/tests/2d.fillStyle.parse.system.html
 canvas/philip/tests/2d.gradient.radial.cone.front.html
 canvas/philip/tests/2d.gradient.radial.cone.top.html
