@@ -1,3 +1,15 @@
+2010-07-02  Tony Gentilcore  <tonyg@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Performance::disconnectFrame() needs to disconnect its children
+        https://bugs.webkit.org/show_bug.cgi?id=41533
+
+        No new tests because no new functionality.
+
+        * page/Performance.cpp:
+        (WebCore::Performance::disconnectFrame):
+
 2010-07-02  Luiz Agostini  <luiz.agostini@openbossa.org>
 
         Reviewed by Sam Weinig.

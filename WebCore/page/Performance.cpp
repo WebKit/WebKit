@@ -52,6 +52,14 @@ Frame* Performance::frame() const
 
 void Performance::disconnectFrame()
 {
+    if (m_navigation) {
+        m_navigation->disconnectFrame();
+        m_navigation = 0;
+    }
+    if (m_timing) {
+        m_timing->disconnectFrame();
+        m_timing = 0;
+    }
     m_frame = 0;
 }
 
