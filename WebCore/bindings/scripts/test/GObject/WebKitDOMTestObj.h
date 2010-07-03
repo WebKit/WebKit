@@ -74,6 +74,9 @@ WEBKIT_API void
 webkit_dom_test_obj_serialized_value(WebKitDOMTestObj* self, WebKitDOMSerializedScriptValue*  serialized_arg);
 
 WEBKIT_API void
+webkit_dom_test_obj_idb_key(WebKitDOMTestObj* self, WebKitDOMIDBKey*  key);
+
+WEBKIT_API void
 webkit_dom_test_obj_method_with_exception(WebKitDOMTestObj* self, GError **error);
 
 

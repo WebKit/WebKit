@@ -23,9 +23,11 @@
 
 #include "AtomicString.h"
 #include "HTMLNames.h"
+#include "IDBKey.h"
 #include "KURL.h"
 #include "SerializedScriptValue.h"
 #include "TestObj.h"
+#include "WebDOMIDBKey.h"
 #include "WebDOMString.h"
 #include "WebExceptionHandler.h"
 #include "WebNativeEventListener.h"
@@ -547,6 +549,14 @@ void WebDOMTestObj::serializedValue(const WebDOMString& serializedArg)
         return;
 
     impl()->serializedValue(WebCore::SerializedScriptValue::create(WebCore::String(serializedArg)));
+}
+
+void WebDOMTestObj::idbKey(const WebDOMIDBKey& key)
+{
+    if (!impl())
+        return;
+
+    impl()->idbKey(toWebCore(key));
 }
 
 void WebDOMTestObj::methodWithException()

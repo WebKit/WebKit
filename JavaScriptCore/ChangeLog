@@ -1,3 +1,14 @@
+2010-06-26  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Dumitru Daniliuc.
+
+        Support for keys and in-memory storage for IndexedDB
+        https://bugs.webkit.org/show_bug.cgi?id=41252
+
+        Set the role to Private.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
 2010-07-02  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Geoffrey Garen.

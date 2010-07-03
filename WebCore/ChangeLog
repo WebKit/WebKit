@@ -1,3 +1,86 @@
+2010-06-26  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Dumitru Daniliuc.
+
+        Support for keys and in-memory storage for IndexedDB
+        https://bugs.webkit.org/show_bug.cgi?id=41252
+
+        It'll take some time to get data persistence working for IndexedDB,
+        so until then, we'll just store everything in an in memory tree.
+        The tree uses WTF::AVLTree and is a template so that it can be used by
+        object stores (IDBKey -> SerializedScriptValue) and indexes (IDBKey ->
+        IDBKey).  This class will be used in a subsequent patch.
+
+        Also add an IDBKey type that represents one of these keys.  We use a
+        custom toJS function in a way similar to IDBAny to convert from WebCore
+        to a JS value.  For converting the other way, we have to teach the code
+        generators what to do (unfortunately).  This is done in a way similar
+        to serialized script value.  Unlike serialized script value, IDBKey is
+        in WebCore and only a helper function is JS engine specific.
+
+        This code is not accessable from layout tests.  (Will fix in
+        https://bugs.webkit.org/show_bug.cgi?id=41250)  The bindings tests
+        show us that the generated bindings are what we expect.
+
+        * ForwardingHeaders/wtf/AVLTree.h: Added.
+        * bindings/js/IDBBindingUtilities.cpp: Added.
+        (WebCore::createIDBKeyFromValue):
+        * bindings/js/IDBBindingUtilities.h: Added.
+        * bindings/js/JSIDBKeyCustom.cpp: Added.
+        (WebCore::toJS):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * bindings/scripts/CodeGeneratorV8.pm:
+        * bindings/scripts/test/CPP/WebDOMTestObj.cpp:
+        (WebDOMTestObj::idbKey):
+        * bindings/scripts/test/CPP/WebDOMTestObj.h:
+        * bindings/scripts/test/GObject/WebKitDOMTestObj.cpp:
+        (webkit_dom_test_obj_idb_key):
+        * bindings/scripts/test/GObject/WebKitDOMTestObj.h:
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::):
+        (WebCore::jsTestObjPrototypeFunctionIdbKey):
+        * bindings/scripts/test/JS/JSTestObj.h:
+        * bindings/scripts/test/ObjC/DOMTestObj.h:
+        * bindings/scripts/test/ObjC/DOMTestObj.mm:
+        (-[DOMTestObj idbKey:]):
+        * bindings/scripts/test/TestObj.idl:
+        * bindings/scripts/test/V8/V8TestObj.cpp:
+        (WebCore::TestObjInternal::idbKeyCallback):
+        (WebCore::):
+        * bindings/v8/IDBBindingUtilities.cpp: Added.
+        (WebCore::createIDBKeyFromValue):
+        * bindings/v8/IDBBindingUtilities.h: Added.
+        * bindings/v8/custom/V8IDBKeyCustom.cpp: Added.
+        (WebCore::toV8):
+        * storage/IDBCallbacks.h:
+        * storage/IDBKey.cpp: Added.
+        (WebCore::IDBKey::IDBKey):
+        (WebCore::IDBKey::~IDBKey):
+        * storage/IDBKey.h: Added.
+        (WebCore::IDBKey::create):
+        (WebCore::IDBKey::):
+        (WebCore::IDBKey::type):
+        (WebCore::IDBKey::string):
+        (WebCore::IDBKey::number):
+        * storage/IDBKey.idl: Added.
+        * storage/IDBKeyTree.h: Added.
+        (WebCore::IDBKeyTree::create):
+        (WebCore::IDBKeyTree::AVLTreeAbstractor::get_less):
+        (WebCore::IDBKeyTree::AVLTreeAbstractor::set_less):
+        (WebCore::IDBKeyTree::AVLTreeAbstractor::get_greater):
+        (WebCore::IDBKeyTree::AVLTreeAbstractor::set_greater):
+        (WebCore::IDBKeyTree::AVLTreeAbstractor::get_balance_factor):
+        (WebCore::IDBKeyTree::AVLTreeAbstractor::set_balance_factor):
+        (WebCore::IDBKeyTree::AVLTreeAbstractor::null):
+        (WebCore::IDBKeyTree::AVLTreeAbstractor::compare_key_node):
+        (WebCore::IDBKeyTree::AVLTreeAbstractor::compare_node_node):
+        (WebCore::::IDBKeyTree):
+        (WebCore::::~IDBKeyTree):
+        (WebCore::::AVLTreeAbstractor::compare_key_key):
+        (WebCore::::get):
+        (WebCore::::insert):
+        (WebCore::::remove):
+
 2010-07-03  Jon Honeycutt  <jhoneycutt@apple.com>
 
         The missing plug-in indicator should be clickable

@@ -63,6 +63,7 @@ module test {
             raises(DOMException);
 
         void serializedValue(in SerializedScriptValue serializedArg);
+        void idbKey(in IDBKey key);
 
         // Exceptions
         void methodWithException() raises(DOMException);

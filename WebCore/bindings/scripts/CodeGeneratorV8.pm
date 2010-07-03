@@ -2748,6 +2748,8 @@ sub GetNativeType
 
     return "RefPtr<SerializedScriptValue>" if $type eq "SerializedScriptValue";
 
+    return "RefPtr<IDBKey>" if $type eq "IDBKey";
+
     # necessary as resolvers could be constructed on fly.
     return "RefPtr<XPathNSResolver>" if $type eq "XPathNSResolver";
 
@@ -2828,6 +2830,12 @@ sub JSValueToNative
     }
 
     die "Unexpected SerializedScriptValue" if $type eq "SerializedScriptValue";
+
+    if ($type eq "IDBKey") {
+        $implIncludes{"IDBBindingUtilities.h"} = 1;
+        $implIncludes{"IDBKey.h"} = 1;
+        return "createIDBKeyFromValue($value)";
+    }
 
     if ($type eq "DOMObject") {
         $implIncludes{"ScriptValue.h"} = 1;
@@ -2985,7 +2993,8 @@ my %non_wrapper_types = (
     'DOMObject' => 1,
     'EventTarget' => 1,
     'NodeFilter' => 1,
-    'EventListener' => 1
+    'EventListener' => 1,
+    'IDBKey' => 1
 );
 
 

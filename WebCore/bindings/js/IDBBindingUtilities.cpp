@@ -10,9 +10,6 @@
  * 2.  Redistributions in binary form must reproduce the above copyright
  *     notice, this list of conditions and the following disclaimer in the
  *     documentation and/or other materials provided with the distribution.
- * 3.  Neither the name of Apple Computer, Inc. ("Apple") nor the names of
- *     its contributors may be used to endorse or promote products derived
- *     from this software without specific prior written permission.
  *
  * THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -26,36 +23,27 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef IDBCallbacks_h
-#define IDBCallbacks_h
+#include "config.h"
+#include "IDBBindingUtilities.h"
 
-#include "IDBDatabase.h"
-#include "IDBDatabaseError.h"
-#include "IDBIndex.h"
 #include "IDBKey.h"
-#include "IDBObjectStore.h"
-#include "SerializedScriptValue.h"
-#include <wtf/RefCounted.h>
 
 #if ENABLE(INDEXED_DATABASE)
 
 namespace WebCore {
 
-class IDBCallbacks : public RefCounted<IDBCallbacks> {
-public:
-    virtual ~IDBCallbacks() { }
-
-    virtual void onError(PassRefPtr<IDBDatabaseError>) = 0;
-    virtual void onSuccess() = 0; // For "null".
-    virtual void onSuccess(PassRefPtr<IDBDatabase>) = 0;
-    virtual void onSuccess(PassRefPtr<IDBIndex>) = 0;
-    virtual void onSuccess(PassRefPtr<IDBKey>) = 0;
-    virtual void onSuccess(PassRefPtr<IDBObjectStore>) = 0;
-    virtual void onSuccess(PassRefPtr<SerializedScriptValue>) = 0;
-};
+PassRefPtr<IDBKey> createIDBKeyFromValue(JSC::ExecState* exec, JSC::JSValue value)
+{
+    if (value.isNull())
+        return IDBKey::create();
+    if (value.isInt32())
+        return IDBKey::create(value.toInt32(exec));
+    if (value.isString())
+        return IDBKey::create(ustringToString(value.toString(exec)));
+    // FIXME: Implement dates.
+    return 0;
+}
 
 } // namespace WebCore
 
 #endif
-
-#endif // IDBCallbacks_h

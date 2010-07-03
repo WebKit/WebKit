@@ -350,7 +350,7 @@
 		BC18C3E70E16F5CD00B34460 /* ArrayPrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = F692A84E0255597D01FF60F7 /* ArrayPrototype.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC18C3E90E16F5CD00B34460 /* ASCIICType.h in Headers */ = {isa = PBXBuildFile; fileRef = 938C4F690CA06BC700D9310A /* ASCIICType.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC18C3EA0E16F5CD00B34460 /* Assertions.h in Headers */ = {isa = PBXBuildFile; fileRef = 65E217B708E7EECC0023E5F6 /* Assertions.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		BC18C3EB0E16F5CD00B34460 /* AVLTree.h in Headers */ = {isa = PBXBuildFile; fileRef = E1A596370DE3E1C300C17E37 /* AVLTree.h */; };
+		BC18C3EB0E16F5CD00B34460 /* AVLTree.h in Headers */ = {isa = PBXBuildFile; fileRef = E1A596370DE3E1C300C17E37 /* AVLTree.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC18C3EC0E16F5CD00B34460 /* BooleanObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 704FD35305697E6D003DBED9 /* BooleanObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC18C3ED0E16F5CD00B34460 /* CallData.h in Headers */ = {isa = PBXBuildFile; fileRef = 145C507F0D9DF63B0088F6B9 /* CallData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC18C3F00E16F5CD00B34460 /* Collator.h in Headers */ = {isa = PBXBuildFile; fileRef = E1A862AA0D7EBB7D001EC6AA /* Collator.h */; settings = {ATTRIBUTES = (Private, ); }; };

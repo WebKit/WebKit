@@ -80,6 +80,11 @@ void IDBCallbacksProxy::onSuccess(PassRefPtr<IDBIndex> idbIndex)
     m_callbacks.clear();
 }
 
+void IDBCallbacksProxy::onSuccess(PassRefPtr<IDBKey> idbKey)
+{
+    ASSERT_NOT_REACHED();
+}
+
 void IDBCallbacksProxy::onSuccess(PassRefPtr<IDBObjectStore> idbObjectStore)
 {
     m_callbacks->onSuccess(new WebKit::WebIDBObjectStoreImpl(idbObjectStore));

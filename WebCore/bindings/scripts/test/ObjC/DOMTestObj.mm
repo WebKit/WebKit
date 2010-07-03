@@ -33,6 +33,7 @@
 #import "DOMCSSRuleInternal.h"
 #import "DOMCSSValueInternal.h"
 #import "DOMEventInternal.h"
+#import "DOMIDBKeyInternal.h"
 #import "DOMNodeInternal.h"
 #import "DOMStyleSheetInternal.h"
 #import "DOMTestObjInternal.h"
@@ -40,6 +41,7 @@
 #import "EventListener.h"
 #import "ExceptionHandlers.h"
 #import "HTMLNames.h"
+#import "IDBKey.h"
 #import "JSMainThreadExecState.h"
 #import "KURL.h"
 #import "ObjCEventListener.h"
@@ -449,6 +451,12 @@
 {
     WebCore::JSMainThreadNullState state;
     IMPL->serializedValue(WebCore::SerializedScriptValue::create(WebCore::String(serializedArg)));
+}
+
+- (void)idbKey:(DOMIDBKey *)key
+{
+    WebCore::JSMainThreadNullState state;
+    IMPL->idbKey(core(key));
 }
 
 - (void)methodWithException

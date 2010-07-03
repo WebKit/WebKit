@@ -22,6 +22,8 @@
 #include "JSTestObj.h"
 
 #include "HTMLNames.h"
+#include "IDBBindingUtilities.h"
+#include "IDBKey.h"
 #include "JSEventListener.h"
 #include "JSTestObj.h"
 #include "JSlog.h"
@@ -144,7 +146,7 @@ bool JSTestObjConstructor::getOwnPropertyDescriptor(ExecState* exec, const Ident
 #define THUNK_GENERATOR(generator)
 #endif
 
-static const HashTableValue JSTestObjPrototypeTableValues[30] =
+static const HashTableValue JSTestObjPrototypeTableValues[31] =
 {
     { "voidMethod", DontDelete | Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionVoidMethod), (intptr_t)0 THUNK_GENERATOR(0) },
     { "voidMethodWithArgs", DontDelete | Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionVoidMethodWithArgs), (intptr_t)3 THUNK_GENERATOR(0) },
@@ -155,6 +157,7 @@ static const HashTableValue JSTestObjPrototypeTableValues[30] =
     { "methodThatRequiresAllArgs", DontDelete | Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionMethodThatRequiresAllArgs), (intptr_t)2 THUNK_GENERATOR(0) },
     { "methodThatRequiresAllArgsAndThrows", DontDelete | Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionMethodThatRequiresAllArgsAndThrows), (intptr_t)2 THUNK_GENERATOR(0) },
     { "serializedValue", DontDelete | Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionSerializedValue), (intptr_t)1 THUNK_GENERATOR(0) },
+    { "idbKey", DontDelete | Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionIdbKey), (intptr_t)1 THUNK_GENERATOR(0) },
     { "methodWithException", DontDelete | Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionMethodWithException), (intptr_t)0 THUNK_GENERATOR(0) },
     { "customMethod", DontDelete | Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionCustomMethod), (intptr_t)0 THUNK_GENERATOR(0) },
     { "customMethodWithArgs", DontDelete | Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionCustomMethodWithArgs), (intptr_t)3 THUNK_GENERATOR(0) },
@@ -179,7 +182,7 @@ static const HashTableValue JSTestObjPrototypeTableValues[30] =
 };
 
 #undef THUNK_GENERATOR
-static JSC_CONST_HASHTABLE HashTable JSTestObjPrototypeTable = { 69, 63, JSTestObjPrototypeTableValues, 0 };
+static JSC_CONST_HASHTABLE HashTable JSTestObjPrototypeTable = { 130, 127, JSTestObjPrototypeTableValues, 0 };
 const ClassInfo JSTestObjPrototype::s_info = { "TestObjPrototype", 0, &JSTestObjPrototypeTable, 0 };
 
 JSObject* JSTestObjPrototype::self(ExecState* exec, JSGlobalObject* globalObject)
@@ -794,6 +797,19 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionSerializedValue(ExecState
     RefPtr<SerializedScriptValue> serializedArg = SerializedScriptValue::create(exec, exec->argument(0));
 
     imp->serializedValue(serializedArg);
+    return JSValue::encode(jsUndefined());
+}
+
+EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionIdbKey(ExecState* exec)
+{
+    JSValue thisValue = exec->hostThisValue();
+    if (!thisValue.inherits(&JSTestObj::s_info))
+        return throwVMTypeError(exec);
+    JSTestObj* castedThis = static_cast<JSTestObj*>(asObject(thisValue));
+    TestObj* imp = static_cast<TestObj*>(castedThis->impl());
+    RefPtr<IDBKey> key = createIDBKeyFromValue(exec, exec->argument(0));
+
+    imp->idbKey(key);
     return JSValue::encode(jsUndefined());
 }
 

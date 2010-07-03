@@ -23,6 +23,8 @@
 
 #include "ExceptionCode.h"
 #include "HTMLNames.h"
+#include "IDBBindingUtilities.h"
+#include "IDBKey.h"
 #include "RuntimeEnabledFeatures.h"
 #include "ScriptCallStack.h"
 #include "SerializedScriptValue.h"
@@ -573,6 +575,15 @@ static v8::Handle<v8::Value> serializedValueCallback(const v8::Arguments& args)
     return v8::Handle<v8::Value>();
 }
 
+static v8::Handle<v8::Value> idbKeyCallback(const v8::Arguments& args)
+{
+    INC_STATS("DOM.TestObj.idbKey");
+    TestObj* imp = V8TestObj::toNative(args.Holder());
+    RefPtr<IDBKey> key = createIDBKeyFromValue(args[0]);
+    imp->idbKey(key);
+    return v8::Handle<v8::Value>();
+}
+
 static v8::Handle<v8::Value> methodWithExceptionCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.TestObj.methodWithException");
@@ -947,6 +958,7 @@ static const BatchedCallback TestObjCallbacks[] = {
     {"intMethod", TestObjInternal::intMethodCallback},
     {"objMethod", TestObjInternal::objMethodCallback},
     {"serializedValue", TestObjInternal::serializedValueCallback},
+    {"idbKey", TestObjInternal::idbKeyCallback},
     {"methodWithException", TestObjInternal::methodWithExceptionCallback},
     {"customMethod", V8TestObj::customMethodCallback},
     {"customMethodWithArgs", V8TestObj::customMethodWithArgsCallback},

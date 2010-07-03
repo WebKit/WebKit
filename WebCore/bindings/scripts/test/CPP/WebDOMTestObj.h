@@ -31,6 +31,7 @@ class TestObj;
 };
 
 class WebDOMEventListener;
+class WebDOMIDBKey;
 class WebDOMString;
 class WebDOMTestObj;
 
@@ -101,6 +102,7 @@ public:
     WebDOMTestObj methodThatRequiresAllArgs(const WebDOMString& strArg, const WebDOMTestObj& objArg);
     WebDOMTestObj methodThatRequiresAllArgsAndThrows(const WebDOMString& strArg, const WebDOMTestObj& objArg);
     void serializedValue(const WebDOMString& serializedArg);
+    void idbKey(const WebDOMIDBKey& key);
     void methodWithException();
     void customMethod();
     void customMethodWithArgs(int intArg, const WebDOMString& strArg, const WebDOMTestObj& objArg);
