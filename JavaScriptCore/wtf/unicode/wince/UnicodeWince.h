@@ -165,6 +165,7 @@ namespace WTF {
         bool isLower(wchar_t);
         bool isPunct(wchar_t);
         bool isDigit(wchar_t);
+        bool isAlphanumeric(wchar_t);
         inline bool isSeparatorSpace(wchar_t c) { return category(c) == Separator_Space; }
         inline bool isHighSurrogate(wchar_t c) { return (c & 0xfc00) == 0xd800; }
         inline bool isLowSurrogate(wchar_t c) { return (c & 0xfc00) == 0xdc00; }
@@ -183,9 +184,9 @@ namespace WTF {
         unsigned char combiningClass(UChar32);
         DecompositionType decompositionType(UChar32);
         Direction direction(UChar32);
-        inline bool isArabicChar(UChar32)
+        inline bool isArabicChar(UChar32 c)
         {
-            return false; // FIXME: implement!
+            return c >= 0x0600 && c <= 0x06FF;
         }
 
         inline bool hasLineBreakingPropertyComplexContext(UChar32)
