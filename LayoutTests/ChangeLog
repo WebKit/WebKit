@@ -2,6 +2,15 @@
 
         Reviewed by Eric Seidel.
 
+        Implement special optgroup processing
+        https://bugs.webkit.org/show_bug.cgi?id=41556
+
+        * html5lib/runner-expected-html5.txt:
+
+2010-07-02  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         Handle <image> in new parser
         https://bugs.webkit.org/show_bug.cgi?id=41555
 

@@ -551,7 +551,10 @@ void HTMLTreeBuilder::processStartTag(AtomicHTMLToken& token)
             return;
         }
         if (token.name() == optgroupTag || token.name() == optionTag) {
-            notImplemented();
+            if (m_openElements.inScope(optionTag.localName())) {
+                AtomicHTMLToken endOption(HTMLToken::EndTag, optionTag.localName());
+                processEndTag(endOption);
+            }
             reconstructTheActiveFormattingElements();
             insertElement(token);
             return;

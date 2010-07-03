@@ -345,9 +345,9 @@ Got:
 |     "A"
 |     <option>
 |       "B"
-|       <optgroup>
-|         "C"
-|         <select>
+|     <optgroup>
+|       "C"
+|       <select>
 Expected:
 | <!DOCTYPE html>
 | <html>
