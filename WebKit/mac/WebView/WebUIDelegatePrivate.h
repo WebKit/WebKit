@@ -115,6 +115,7 @@ enum {
 - (void)webView:(WebView *)sender contextMenuItemSelected:(NSMenuItem *)item forElement:(NSDictionary *)element;
 - (void)webView:(WebView *)sender saveFrameView:(WebFrameView *)frameView showingPanel:(BOOL)showingPanel;
 - (BOOL)webView:(WebView *)sender shouldHaltPlugin:(DOMNode *)pluginNode isWindowed:(BOOL)isWindowed pluginName:(NSString *)pluginName;
+- (BOOL)webView:(WebView *)sender didPressMissingPluginButton:(DOMElement *)element;
 /*!
     @method webView:frame:exceededDatabaseQuotaForSecurityOrigin:database:
     @param sender The WebView sending the delegate method.

@@ -99,3 +99,14 @@ interface IWebUIDelegatePrivate2 : IWebUIDelegatePrivate
 
     HRESULT decidePolicyForGeolocationRequest([in] IWebView* sender, [in] IWebFrame* frame, [in] IWebSecurityOrigin* origin, [in] IWebGeolocationPolicyListener* listener);
 }
+
+[
+    object,
+    oleautomation,
+    uuid(e9834891-233b-48a0-984b-8f8a19abdd0f),
+    pointer_default(unique)
+]
+interface IWebUIDelegatePrivate3 : IWebUIDelegatePrivate2
+{
+    HRESULT didPressMissingPluginButton([in] IDOMElement*);
+}

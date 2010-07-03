@@ -1,3 +1,38 @@
+2010-07-03  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        The missing plug-in indicator should be clickable
+
+        https://bugs.webkit.org/show_bug.cgi?id=41550
+        <rdar://problem/8132162>
+
+        From an original patch by Kevin Decker.
+
+        Reviewed by Darin Adler.
+
+        * html/HTMLPlugInElement.cpp:
+        (WebCore::HTMLPlugInElement::defaultEventHandler):
+        If the renderer is a RenderEmbeddedWidget showing the missing plug-in
+        indicator, and the event is a click even, call the ChromeClient's
+        missingPluginButtonClicked() function.
+
+        * page/ChromeClient.h:
+        (WebCore::ChromeClient::missingPluginButtonClicked):
+        Declare missingPluginButtonClicked(), and stub the default
+        implementation.
+
+        * rendering/RenderEmbeddedObject.cpp:
+        (WebCore::RenderEmbeddedObject::RenderEmbeddedObject):
+        Initialize m_showsMissingPluginIndicator.
+        (WebCore::RenderEmbeddedObject::setShowsMissingPluginIndicator):
+        Assert that we're not currently showing any replacement text. Set
+        m_showsMissingPluginIndicator after setting the replacement text.
+        (WebCore::RenderEmbeddedObject::setShowsCrashedPluginIndicator):
+        Add the same assert as above.
+
+        * rendering/RenderEmbeddedObject.h:
+        (WebCore::RenderEmbeddedObject::showsMissingPluginIndicator):
+        Getter for m_showsMissingPluginIndicator.
+
 2010-07-02  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Geoffrey Garen.

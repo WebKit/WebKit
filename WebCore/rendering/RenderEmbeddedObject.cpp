@@ -67,6 +67,7 @@ static const float replacementTextTextOpacity = 0.55f;
 RenderEmbeddedObject::RenderEmbeddedObject(Element* element)
     : RenderPart(element)
     , m_hasFallbackContent(false)
+    , m_showsMissingPluginIndicator(false)
 {
     view()->frameView()->setIsVisuallyNonEmpty();
 }
@@ -344,11 +345,14 @@ void RenderEmbeddedObject::updateWidget(bool onlyCreateNonNetscapePlugins)
 
 void RenderEmbeddedObject::setShowsMissingPluginIndicator()
 {
+    ASSERT(m_replacementText.isEmpty());
     m_replacementText = missingPluginText();
+    m_showsMissingPluginIndicator = true;
 }
 
 void RenderEmbeddedObject::setShowsCrashedPluginIndicator()
 {
+    ASSERT(m_replacementText.isEmpty());
     m_replacementText = crashedPluginText();
 }
 

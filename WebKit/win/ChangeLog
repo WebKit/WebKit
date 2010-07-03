@@ -1,3 +1,29 @@
+2010-07-03  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        The missing plug-in indicator should be clickable
+
+        https://bugs.webkit.org/show_bug.cgi?id=41550
+        <rdar://problem/8132162>
+
+        From an original patch by Kevin Decker.
+
+        Reviewed by Darin Adler.
+
+        * Interfaces/IWebUIDelegatePrivate.idl:
+        Added a new delegate interface, and declare a function
+        didPressMissingPluginButton().
+
+        * Interfaces/WebKit.idl:
+        Touch this file to force interfaces to be rebuilt.
+
+        * WebCoreSupport/WebChromeClient.cpp:
+        (WebChromeClient::missingPluginButtonClicked):
+        Get the UI delegate, and query it for IWebUIDelegatePrivate3. Call its
+        didPressMissingPluginButton() function.
+
+        * WebCoreSupport/WebChromeClient.h:
+        Declare an override of missingPluginButtonClicked().
+
 2010-07-03  Erik Arvidsson  <arv@chromium.org>
 
         Reviewed by Ojan Vafai.

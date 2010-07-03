@@ -1,3 +1,24 @@
+2010-07-03  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        The missing plug-in indicator should be clickable
+
+        https://bugs.webkit.org/show_bug.cgi?id=41550
+        <rdar://problem/8132162>
+
+        From an original patch by Kevin Decker.
+
+        Reviewed by Darin Adler.
+
+        * WebCoreSupport/WebChromeClient.h:
+        Declare an override of missingPluginButtonClicked().
+
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::missingPluginButtonClicked):
+        Call the UIDelegate's method.
+
+        * WebView/WebUIDelegatePrivate.h:
+        Declare didPressMissingPluginButton.
+
 2010-07-01  Timothy Hatcher  <timothy@apple.com>
 
         Provide a WebView preference to disable DNS prefetching.

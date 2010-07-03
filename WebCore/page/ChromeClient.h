@@ -43,6 +43,7 @@ class NSResponder;
 namespace WebCore {
 
     class AtomicString;
+    class Element;
     class FileChooser;
     class FloatRect;
     class Frame;
@@ -142,6 +143,7 @@ namespace WebCore {
         // End methods used by HostWindow.
 
         virtual void scrollbarsModeDidChange() const = 0;
+        virtual void missingPluginButtonClicked(Element*) const { }
         virtual void mouseDidMoveOverElement(const HitTestResult&, unsigned modifierFlags) = 0;
 
         virtual void setToolTip(const String&, TextDirection) = 0;
