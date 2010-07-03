@@ -560,7 +560,13 @@ void HTMLTreeBuilder::processStartTag(AtomicHTMLToken& token)
             return;
         }
         if (token.name() == rpTag || token.name() == rtTag) {
-            notImplemented();
+            if (m_openElements.inScope(rubyTag.localName())) {
+                generateImpliedEndTags();
+                if (!currentElement()->hasTagName(rubyTag)) {
+                    parseError(token);
+                    m_openElements.popUntil(rubyTag.localName());
+                }
+            }
             insertElement(token);
             return;
         }

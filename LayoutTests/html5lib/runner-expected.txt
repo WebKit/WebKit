@@ -4692,8 +4692,10 @@ resources/webkit01.dat:
 24
 26
 27
+28
+29
 
-Test 17 of 27 in resources/webkit01.dat failed. Input:
+Test 17 of 29 in resources/webkit01.dat failed. Input:
 <A>test< /A>
 Got:
 | <html>
@@ -4709,7 +4711,7 @@ Expected:
 |     <a>
 |       "test< /A>"
 
-Test 20 of 27 in resources/webkit01.dat failed. Input:
+Test 20 of 29 in resources/webkit01.dat failed. Input:
 <body></br foo="bar"></body>
 Got:
 | <html>
@@ -4723,7 +4725,7 @@ Expected:
 |   <body>
 |     <br>
 
-Test 22 of 27 in resources/webkit01.dat failed. Input:
+Test 22 of 29 in resources/webkit01.dat failed. Input:
 <body></body></br foo="bar">
 Got:
 | <html>
@@ -4737,7 +4739,7 @@ Expected:
 |   <body>
 |     <br>
 
-Test 24 of 27 in resources/webkit01.dat failed. Input:
+Test 24 of 29 in resources/webkit01.dat failed. Input:
 <html><body></body></html><!-- Hi there -->
 Got:
 | <html>
@@ -4750,7 +4752,7 @@ Expected:
 |   <body>
 | <!--  Hi there  -->
 
-Test 26 of 27 in resources/webkit01.dat failed. Input:
+Test 26 of 29 in resources/webkit01.dat failed. Input:
 <html><body></body></html>x<!-- Hi there --></html><!-- Again -->
 Got:
 | <html>
@@ -4767,7 +4769,7 @@ Expected:
 |     <!--  Hi there  -->
 | <!--  Again  -->
 
-Test 27 of 27 in resources/webkit01.dat failed. Input:
+Test 27 of 29 in resources/webkit01.dat failed. Input:
 <html><body></body></html>x<!-- Hi there --></body></html><!-- Again -->
 Got:
 | <html>
@@ -4783,6 +4785,44 @@ Expected:
 |     "x"
 |     <!--  Hi there  -->
 | <!--  Again  -->
+
+Test 28 of 29 in resources/webkit01.dat failed. Input:
+<html><body><ruby><div><rp>xx</rp></div></ruby></body></html>
+Got:
+| <html>
+|   <head>
+|   <body>
+|     <ruby>
+|       <div>
+|         <rp>
+|           "xx"
+Expected:
+| <html>
+|   <head>
+|   <body>
+|     <ruby>
+|       <div>
+|       <rp>
+|         "xx"
+
+Test 29 of 29 in resources/webkit01.dat failed. Input:
+<html><body><ruby><div><rt>xx</rt></div></ruby></body></html>
+Got:
+| <html>
+|   <head>
+|   <body>
+|     <ruby>
+|       <div>
+|         <rt>
+|           "xx"
+Expected:
+| <html>
+|   <head>
+|   <body>
+|     <ruby>
+|       <div>
+|       <rt>
+|         "xx"
 resources/doctype01.dat: PASS
 
 resources/scriptdata01.dat: PASS

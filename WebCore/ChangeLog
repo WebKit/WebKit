@@ -2,6 +2,18 @@
 
         Reviewed by Eric Seidel.
 
+        Special handling of <rp> and <rt> tags
+        https://bugs.webkit.org/show_bug.cgi?id=41557
+
+        So sayeth the spec.
+
+        * html/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::processStartTag):
+
+2010-07-02  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         Implement special optgroup processing
         https://bugs.webkit.org/show_bug.cgi?id=41556
 
