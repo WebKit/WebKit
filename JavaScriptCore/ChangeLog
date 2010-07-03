@@ -1,3 +1,16 @@
+2010-07-02  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Bug 41565 - Repatching in ARMv7Assembler::repatchLoadPtrToLEA is broken
+
+        This method tried to repatch a LDR (T2) into an ADD (T3) - but it only
+        repatches the first instruction word.  The layout of the fields in the
+        second word is different, and also needs repatching.
+
+        * assembler/ARMv7Assembler.h:
+        (JSC::ARMv7Assembler::repatchLoadPtrToLEA):
+
 2010-07-02  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.

@@ -1727,12 +1727,17 @@ public:
     static void repatchLoadPtrToLEA(void* where)
     {
         ASSERT(!(reinterpret_cast<intptr_t>(where) & 1));
-
         uint16_t* loadOp = reinterpret_cast<uint16_t*>(where) + 4;
-        ASSERT((*loadOp & 0xfff0) == OP_LDR_reg_T2);
 
-        *loadOp = OP_ADD_reg_T3 | (*loadOp & 0xf);
-        ExecutableAllocator::cacheFlush(loadOp, sizeof(uint16_t));
+        ASSERT((loadOp[0] & 0xfff0) == OP_LDR_reg_T2);
+        ASSERT((loadOp[1] & 0x0ff0) == 0);
+        int rn = loadOp[0] & 0xf;
+        int rt = loadOp[1] >> 12;
+        int rm = loadOp[1] & 0xf;
+
+        loadOp[0] = OP_ADD_reg_T3 | rn;
+        loadOp[1] = rt << 8 | rm;
+        ExecutableAllocator::cacheFlush(loadOp, sizeof(uint32_t));
     }
 
 private:
