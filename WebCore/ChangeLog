@@ -1,5 +1,12 @@
 2010-07-03  Jeremy Orlow  <jorlow@chromium.org>
 
+        Ugh.  Have to put the destructor in the .h file since the .ccp isn't compiled yet.
+
+        * storage/IDBKey.h:
+        (WebCore::IDBKey::~IDBKey):
+
+2010-07-03  Jeremy Orlow  <jorlow@chromium.org>
+
         Build fix.  Forgot destructor.
 
         * storage/IDBKey.cpp:
