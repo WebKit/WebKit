@@ -2398,9 +2398,6 @@ editing/unsupported-content/table-type-before.html
 # https://bugs.webkit.org/show_bug.cgi?id=40584
 fast/text/justify-padding-distribution.html
 
-# Possible bug in layoutTestController.computedStyleIncludingVisitedInfo()
-fast/history/self-is-visited.html
-
 # Failing tests introduced by changing the default font sizes to
 # conform other platforms. Probably caused by previously hidden bugs.
 fast/css/getComputedStyle/computed-style-without-renderer.html

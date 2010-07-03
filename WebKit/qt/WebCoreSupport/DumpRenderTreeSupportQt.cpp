@@ -395,6 +395,20 @@ QString DumpRenderTreeSupportQt::markerTextForListItem(const QWebElement& listIt
     return WebCore::markerTextForListItem(listItem.m_element);
 }
 
+static QString convertToPropertyName(const QString& name)
+{
+    QStringList parts = name.split('-');
+    QString camelCaseName;
+    for (int j = 0; j < parts.count(); ++j) {
+        QString part = parts.at(j);
+        if (j)
+            camelCaseName.append(part.replace(0, 1, part.left(1).toUpper()));
+        else
+            camelCaseName.append(part);
+    }
+    return camelCaseName;
+}
+
 QVariantMap DumpRenderTreeSupportQt::computedStyleIncludingVisitedInfo(const QWebElement& element)
 {
     QVariantMap res;
@@ -407,7 +421,7 @@ QVariantMap DumpRenderTreeSupportQt::computedStyleIncludingVisitedInfo(const QWe
     for (int i = 0; i < style->length(); i++) {
         QString name = style->item(i);
         QString value = (static_cast<WebCore::CSSStyleDeclaration*>(style.get()))->getPropertyValue(name);
-        res[name] = QVariant(value);
+        res[convertToPropertyName(name)] = QVariant(value);
     }
     return res;
 }
