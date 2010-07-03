@@ -1,3 +1,16 @@
+2010-07-03  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Implement AfterFramesetMode
+        https://bugs.webkit.org/show_bug.cgi?id=41560
+
+        * html/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::processStartTag):
+        (WebCore::HTMLTreeBuilder::processEndTag):
+        (WebCore::HTMLTreeBuilder::processCharacter):
+        (WebCore::HTMLTreeBuilder::processEndOfFile):
+
 2010-07-02  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

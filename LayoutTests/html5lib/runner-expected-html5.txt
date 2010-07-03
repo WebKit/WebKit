@@ -2138,6 +2138,7 @@ Got:
 | <html>
 |   <head>
 |   <frameset>
+|   <noframes>
 Expected:
 | <html>
 |   <head>

@@ -644,6 +644,18 @@ void HTMLTreeBuilder::processStartTag(AtomicHTMLToken& token)
         }
         parseError(token);
         break;
+    case AfterFramesetMode:
+        ASSERT(insertionMode() == AfterFramesetMode);
+        if (token.name() == htmlTag) {
+            insertHTMLStartTagInBody(token);
+            return;
+        }
+        if (token.name() == noframesTag) {
+            processStartTagForInHead(token);
+            return;
+        }
+        parseError(token);
+        break;
     default:
         notImplemented();
     }
@@ -884,6 +896,14 @@ void HTMLTreeBuilder::processEndTag(AtomicHTMLToken& token)
             return;
         }
         break;
+    case AfterFramesetMode:
+        ASSERT(insertionMode() == AfterFramesetMode);
+        if (token.name() == htmlTag) {
+            m_insertionMode = AfterAfterFramesetMode;
+            return;
+        }
+        parseError(token);
+        break;
     default:
         notImplemented();
     }
@@ -953,7 +973,8 @@ void HTMLTreeBuilder::processCharacter(AtomicHTMLToken& token)
         processToken(token);
         break;
     case InFramesetMode:
-        ASSERT(insertionMode() == InFramesetMode);
+    case AfterFramesetMode:
+        ASSERT(insertionMode() == InFramesetMode || insertionMode() == AfterFramesetMode);
         parseError(token);
         break;
     default:
@@ -1002,6 +1023,9 @@ void HTMLTreeBuilder::processEndOfFile(AtomicHTMLToken& token)
         ASSERT(insertionMode() == InFramesetMode);
         if (currentElement() != m_openElements.htmlElement())
             parseError(token);
+        break;
+    case AfterFramesetMode:
+        ASSERT(insertionMode() == AfterFramesetMode);
         break;
     default:
         notImplemented();
