@@ -2,6 +2,17 @@
 
         Reviewed by Eric Seidel.
 
+        Handle <frameset> InBody
+        https://bugs.webkit.org/show_bug.cgi?id=41558
+
+        Yay test progression.
+
+        * html5lib/runner-expected-html5.txt:
+
+2010-07-02  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         Special handling of <rp> and <rt> tags
         https://bugs.webkit.org/show_bug.cgi?id=41557
 

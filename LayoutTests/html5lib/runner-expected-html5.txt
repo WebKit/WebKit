@@ -2117,9 +2117,6 @@ resources/tests6.dat:
 45
 46
 47
-48
-49
-51
 
 Test 1 of 51 in resources/tests6.dat failed. Input:
 <!doctype html></head> <head>
@@ -2542,41 +2539,6 @@ Expected:
 | <html>
 |   <head>
 |   <body>
-
-Test 48 of 51 in resources/tests6.dat failed. Input:
-<param><frameset></frameset>
-Got:
-| <html>
-|   <head>
-|   <body>
-|     <param>
-Expected:
-| <html>
-|   <head>
-|   <frameset>
-
-Test 49 of 51 in resources/tests6.dat failed. Input:
-<source><frameset></frameset>
-Got:
-| <html>
-|   <head>
-|   <body>
-|     <source>
-Expected:
-| <html>
-|   <head>
-|   <frameset>
-
-Test 51 of 51 in resources/tests6.dat failed. Input:
-</body><frameset></frameset>
-Got:
-| <html>
-|   <head>
-|   <body>
-Expected:
-| <html>
-|   <head>
-|   <frameset>
 resources/tests7.dat:
 2
 5
@@ -5432,9 +5394,7 @@ Test 13 of 14 in resources/tests15.dat failed. Input:
 Got:
 | <html>
 |   <head>
-|   <body>
-|     <noframes>
-|       "</frameset><noframes>"
+|   <frameset>
 Expected:
 | <html>
 |   <head>

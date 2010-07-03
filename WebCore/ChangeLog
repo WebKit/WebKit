@@ -2,6 +2,23 @@
 
         Reviewed by Eric Seidel.
 
+        Handle <frameset> InBody
+        https://bugs.webkit.org/show_bug.cgi?id=41558
+
+        Handling the <frameset> tag in the InBody mode is somewhat delicate.
+
+        * html/HTMLElementStack.cpp:
+        (WebCore::HTMLElementStack::popHTMLBodyElement):
+        (WebCore::HTMLElementStack::popUntil):
+        (WebCore::HTMLElementStack::popCommon):
+        * html/HTMLElementStack.h:
+        * html/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::processStartTag):
+
+2010-07-02  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         Special handling of <rp> and <rt> tags
         https://bugs.webkit.org/show_bug.cgi?id=41557
 

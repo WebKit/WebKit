@@ -400,7 +400,18 @@ void HTMLTreeBuilder::processStartTag(AtomicHTMLToken& token)
             return;
         }
         if (token.name() == framesetTag) {
-            notImplemented();
+            parseError(token);
+            notImplemented(); // fragment case
+            if (!m_framesetOk)
+                return;
+            ExceptionCode ec = 0;
+            m_openElements.bodyElement()->remove(ec);
+            ASSERT(!ec);
+            m_openElements.popUntil(m_openElements.bodyElement());
+            m_openElements.popHTMLBodyElement();
+            ASSERT(m_openElements.top() == m_openElements.htmlElement());
+            insertElement(token);
+            m_insertionMode = InFramesetMode;
             return;
         }
         if (token.name() == addressTag || token.name() == articleTag || token.name() == asideTag || token.name() == blockquoteTag || token.name() == centerTag || token.name() == "details" || token.name() == dirTag || token.name() == divTag || token.name() == dlTag || token.name() == fieldsetTag || token.name() == "figure" || token.name() == footerTag || token.name() == headerTag || token.name() == hgroupTag || token.name() == menuTag || token.name() == navTag || token.name() == olTag || token.name() == pTag || token.name() == sectionTag || token.name() == ulTag) {

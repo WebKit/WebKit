@@ -74,6 +74,13 @@ void HTMLElementStack::popHTMLHeadElement()
     popCommon();
 }
 
+void HTMLElementStack::popHTMLBodyElement()
+{
+    ASSERT(top() == m_bodyElement);
+    m_bodyElement = 0;
+    popCommon();
+}
+
 void HTMLElementStack::pop()
 {
     ASSERT(!top()->hasTagName(HTMLNames::headTag));
@@ -87,6 +94,12 @@ void HTMLElementStack::popUntil(const AtomicString& tagName)
         // element with localName |tagName| on the stack of open elements.
         pop();
     }
+}
+
+void HTMLElementStack::popUntil(Element* element)
+{
+    while (top() != element)
+        pop();
 }
 
 void HTMLElementStack::pushHTMLHtmlElement(PassRefPtr<Element> element)
@@ -260,7 +273,8 @@ void HTMLElementStack::pushCommon(PassRefPtr<Element> element)
 void HTMLElementStack::popCommon()
 {
     ASSERT(!top()->hasTagName(HTMLNames::htmlTag));
-    ASSERT(!top()->hasTagName(HTMLNames::bodyTag));
+    ASSERT(!top()->hasTagName(HTMLNames::headTag) || !m_headElement);
+    ASSERT(!top()->hasTagName(HTMLNames::bodyTag) || !m_bodyElement);
     top()->finishParsingChildren();
     m_top = m_top->releaseNext();
 }

@@ -49,7 +49,9 @@ public:
 
     void pop();
     void popUntil(const AtomicString& tagName);
+    void popUntil(Element*);
     void popHTMLHeadElement();
+    void popHTMLBodyElement();
 
     void remove(Element*);
     void removeHTMLHeadElement(Element*);
@@ -75,7 +77,7 @@ private:
     OwnPtr<ElementRecord> m_top;
 
     // We remember <html>, <head> and <body> as they are pushed.  Their
-    // ElementRecords keep them alive.  <html> and <body> are never popped.
+    // ElementRecords keep them alive.  <html> is never popped.
     // FIXME: We don't currently require type-specific information about
     // these elements so we haven't yet bothered to plumb the types all the
     // way down through createElement, etc.
