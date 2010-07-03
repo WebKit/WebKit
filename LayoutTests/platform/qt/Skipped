@@ -206,41 +206,51 @@ http/tests/local/formdata/send-form-data.html
 http/tests/local/formdata/send-form-data-with-sliced-file.html
 http/tests/local/formdata/upload-events.html
 
-# Failing navigation tests
+# --- Failing navigation tests
+#CONSOLE MESSAGE: line 1: ReferenceError: Can't find variable: fillTestForm
+#CONSOLE MESSAGE: line 1: ReferenceError: Can't find variable: scrollDocDown
+http/tests/navigation/javascriptlink-goback.html
+http/tests/navigation/metaredirect-goback.html
+http/tests/navigation/timerredirect-goback.html
+
+#unknown
+http/tests/navigation/reload-subframe-object.html
+http/tests/navigation/target-frame-from-window.html
+
+#CONSOLE MESSAGE: line 11: TypeError: Result of expression 'consoleWindow.log' [undefined] is not a function.
+http/tests/navigation/no-referrer-reset.html
+http/tests/navigation/no-referrer-target-blank.html
+
+#timeout
+http/tests/navigation/post-goback2.html
+http/tests/navigation/postredirect-goback2.html
+
+#new - no expected results
 http/tests/navigation/anchor-frames.html
-http/tests/navigation/anchor-subframeload.html
-http/tests/navigation/back-to-slow-frame.html
 http/tests/navigation/error404-basic.html
 http/tests/navigation/error404-frames.html
 http/tests/navigation/error404-goback.html
 http/tests/navigation/error404-subframeload.html
 http/tests/navigation/javascriptlink-frames.html
-http/tests/navigation/javascriptlink-goback.html
-http/tests/navigation/javascriptlink-subframeload.html
-http/tests/navigation/lockedhistory-iframe.html
-http/tests/navigation/metaredirect-goback.html
-http/tests/navigation/metaredirect-subframeload.html
-http/tests/navigation/no-referrer-reset.html
-http/tests/navigation/no-referrer-target-blank.html
-http/tests/navigation/onload-navigation-iframe-2.html
-http/tests/navigation/onload-navigation-iframe-timeout.html
-http/tests/navigation/onload-navigation-iframe.html
 http/tests/navigation/post-basic.html
 http/tests/navigation/post-frames.html
 http/tests/navigation/post-goback1.html
-http/tests/navigation/post-goback2.html
 http/tests/navigation/postredirect-basic.html
 http/tests/navigation/postredirect-frames.html
 http/tests/navigation/postredirect-goback1.html
-http/tests/navigation/postredirect-goback2.html
-http/tests/navigation/relativeanchor-frames.html
-http/tests/navigation/reload-subframe-object.html
+
+# these pass on Qt 4.7. What about the bot?
+http/tests/navigation/metaredirect-subframeload.html
+http/tests/navigation/onload-navigation-iframe-2.html
+http/tests/navigation/onload-navigation-iframe-timeout.html
+http/tests/navigation/onload-navigation-iframe.html
 http/tests/navigation/success200-frames-loadsame.html
 http/tests/navigation/success200-frames.html
 http/tests/navigation/success200-subframeload.html
-http/tests/navigation/target-frame-from-window.html
-http/tests/navigation/timerredirect-goback.html
 http/tests/navigation/timerredirect-subframeload.html
+http/tests/navigation/back-to-slow-frame.html
+http/tests/navigation/javascriptlink-subframeload.html
+http/tests/navigation/lockedhistory-iframe.html
 
 # Failing http multipart test
 http/tests/multipart/invalid-image-data.html

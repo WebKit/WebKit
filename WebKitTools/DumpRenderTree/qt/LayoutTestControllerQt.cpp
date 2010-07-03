@@ -53,6 +53,7 @@ void LayoutTestController::reset()
     m_textDump = false;
     m_dumpBackForwardList = false;
     m_dumpChildrenAsText = false;
+    m_dumpChildFrameScrollPositions = false;
     m_canOpenWindows = false;
     m_waitForDone = false;
     m_dumpTitleChanges = false;

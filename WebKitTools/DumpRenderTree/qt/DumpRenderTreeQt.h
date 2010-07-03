@@ -134,6 +134,7 @@ private Q_SLOTS:
 private:
     QString dumpFramesAsText(QWebFrame* frame);
     QString dumpBackForwardList(QWebPage* page);
+    QString dumpFrameScrollPosition(QWebFrame* frame);
     LayoutTestController *m_controller;
 
     bool m_dumpPixels;

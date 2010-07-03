@@ -668,13 +668,35 @@ void DumpRenderTree::hidePage()
     m_mainView->hide();
 }
 
+QString DumpRenderTree::dumpFrameScrollPosition(QWebFrame* frame)
+{
+    if (!frame || !DumpRenderTreeSupportQt::hasDocumentElement(frame))
+        return QString();
+
+    QString result;
+    QPoint pos = frame->scrollPosition();
+    if (pos.x() > 0 || pos.y() > 0) {
+        QWebFrame* parent = qobject_cast<QWebFrame *>(frame->parent());
+        if (parent)
+            result.append(QString("frame '%1' ").arg(frame->title()));
+        result.append(QString("scrolled to %1,%2\n").arg(pos.x()).arg(pos.y()));
+    }
+
+    if (m_controller->shouldDumpChildFrameScrollPositions()) {
+        QList<QWebFrame*> children = frame->childFrames();
+        for (int i = 0; i < children.size(); ++i)
+            result += dumpFrameScrollPosition(children.at(i));
+    }
+    return result;
+}
+
 QString DumpRenderTree::dumpFramesAsText(QWebFrame* frame)
 {
     if (!frame || !DumpRenderTreeSupportQt::hasDocumentElement(frame))
         return QString();
 
     QString result;
-    QWebFrame *parent = qobject_cast<QWebFrame *>(frame->parent());
+    QWebFrame* parent = qobject_cast<QWebFrame*>(frame->parent());
     if (parent) {
         result.append(QLatin1String("\n--------\nFrame: '"));
         result.append(frame->frameName());
@@ -802,9 +824,10 @@ void DumpRenderTree::dump()
     QString resultString;
     if (m_controller->shouldDumpAsText())
         resultString = dumpFramesAsText(mainFrame);
-    else
+    else {
         resultString = mainFrame->renderTreeDump();
-
+        resultString += dumpFrameScrollPosition(mainFrame);
+    }
     if (!resultString.isEmpty()) {
         fprintf(stdout, "Content-Type: text/plain\n");
         fprintf(stdout, "%s", resultString.toUtf8().constData());
