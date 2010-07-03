@@ -1,3 +1,14 @@
+2010-07-03  Erik Arvidsson  <arv@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        Fix issue where a contextmenu event was reporting the wrong target
+        if the context menu was shown due to pressing the context menu key
+        (or Shift+F10).
+
+        * WebView.cpp:
+        (WebView::handleContextMenuEvent):
+
 2010-07-01  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Adele Peterson.

@@ -1,3 +1,27 @@
+2010-07-03  Erik Arvidsson  <arv@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        Fix issue where a contextmenu event was reporting the wrong target if
+        the context menu was shown due to pressing the context menu key
+        (or Shift+F10).
+        
+        Split sendContextMenuForEvent into one case for keyboard events and use
+        that when the contextmenu event should be dispatched due to a keypress.
+
+        For the keboard case we now use the focused node as the target for the
+        event and use the clipped rect to determine the position of the menu.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=38129
+
+        Use manual test since DRT does not handle context menu keys.
+
+        * manual-tests/win/contextmenu-key.html: Added.
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::sendContextMenuEvent):
+        (WebCore::EventHandler::sendContextMenuEventForKey):
+        * page/EventHandler.h:
+
 2010-07-03  Dirk Schulze  <krit@webkit.org>
 
         Unreviewed sort of XCode project file.

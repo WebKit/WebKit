@@ -2016,10 +2016,84 @@ bool EventHandler::sendContextMenuEvent(const PlatformMouseEvent& event)
     }
 #endif
 
-    swallowEvent = dispatchMouseEvent(eventNames().contextmenuEvent, mev.targetNode(), true, 0, event, true);
+    swallowEvent = dispatchMouseEvent(eventNames().contextmenuEvent, mev.targetNode(), true, 0, event, false);
     
     return swallowEvent;
 }
+
+bool EventHandler::sendContextMenuEventForKey()
+{
+    FrameView* view = m_frame->view();
+    if (!view)
+        return false;
+
+    Document* doc = m_frame->document();
+    if (!doc)
+        return false;
+
+    static const int kContextMenuMargin = 1;
+
+#if OS(WINDOWS)
+    int rightAligned = ::GetSystemMetrics(SM_MENUDROPALIGNMENT);
+#else
+    int rightAligned = 0;
+#endif
+    IntPoint location;
+
+    Node* focusedNode = doc->focusedNode();
+    SelectionController* selectionController = m_frame->selection();
+    Position start = selectionController->selection().start();
+
+    if (start.node() && (selectionController->rootEditableElement() || selectionController->isRange())) {
+        RenderObject* renderer = start.node()->renderer();
+        if (!renderer)
+            return false;
+
+        RefPtr<Range> selection = selectionController->toNormalizedRange();
+        IntRect firstRect = m_frame->firstRectForRange(selection.get());
+
+        int x = rightAligned ? firstRect.right() : firstRect.x();
+        location = IntPoint(x, firstRect.bottom());
+    } else if (focusedNode) {
+        RenderBoxModelObject* box = focusedNode->renderBoxModelObject();
+        IntRect clippedRect = box->absoluteClippedOverflowRect();
+        location = clippedRect.bottomLeft();
+    } else {
+        location = IntPoint(
+            rightAligned ? view->contentsWidth() - kContextMenuMargin : kContextMenuMargin,
+            kContextMenuMargin);
+    }
+
+    m_frame->view()->setCursor(pointerCursor());
+
+    IntPoint position = view->contentsToWindow(location);
+    IntPoint globalPosition = view->contentsToScreen(IntRect(location, IntSize())).location();
+
+    Node* targetNode = doc->focusedNode();
+    if (!targetNode)
+        targetNode = doc;
+
+    // Use the focused node as the target for hover and active.
+    HitTestResult result(position);
+    result.setInnerNode(targetNode);
+    HitTestRequest request(HitTestRequest::Active);
+    doc->renderView()->layer()->updateHoverActiveState(request, result);
+    doc->updateStyleIfNeeded();
+   
+    // The contextmenu event is a mouse event even when invoked using the keyboard.
+    // This is required for web compatibility.
+
+#if OS(WINDOWS)
+    MouseEventType eventType = MouseEventReleased;
+#else
+    MouseEventType eventType = MouseEventPressed;
+#endif
+
+    PlatformMouseEvent mouseEvent(position, globalPosition, RightButton, eventType, 1, false, false, false, false, WTF::currentTime());
+
+    return dispatchMouseEvent(eventNames().contextmenuEvent, targetNode, true, 0, mouseEvent, false);
+}
+
 #endif // ENABLE(CONTEXT_MENUS)
 
 void EventHandler::scheduleHoverStateUpdate()

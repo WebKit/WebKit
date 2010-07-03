@@ -1,3 +1,16 @@
+2010-07-03  Erik Arvidsson  <arv@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        Fix issue where a contextmenu event was reporting the wrong target
+        if the context menu was shown due to pressing the context menu key
+        (or Shift+F10).
+
+        https://bugs.webkit.org/show_bug.cgi?id=38129
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::sendContextMenuEvent):
+
 2010-07-02  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.

@@ -661,62 +661,10 @@ bool WebViewImpl::touchEvent(const WebTouchEvent& event)
 }
 #endif
 
-// The WebViewImpl::SendContextMenuEvent function is based on the Webkit
-// function
-// bool WebView::handleContextMenuEvent(WPARAM wParam, LPARAM lParam) in
-// webkit\webkit\win\WebView.cpp. The only significant change in this
-// function is the code to convert from a Keyboard event to the Right
-// Mouse button up event.
-//
-// This function is an ugly copy/paste and should be cleaned up when the
-// WebKitWin version is cleaned: https://bugs.webkit.org/show_bug.cgi?id=20438
 #if OS(WINDOWS) || OS(LINUX)
-// FIXME: implement on Mac
+// Mac has no way to open a context menu based on a keyboard event.
 bool WebViewImpl::sendContextMenuEvent(const WebKeyboardEvent& event)
 {
-    static const int kContextMenuMargin = 1;
-    Frame* mainFrameImpl = page()->mainFrame();
-    FrameView* view = mainFrameImpl->view();
-    if (!view)
-        return false;
-
-    IntPoint coords(-1, -1);
-#if OS(WINDOWS)
-    int rightAligned = ::GetSystemMetrics(SM_MENUDROPALIGNMENT);
-#else
-    int rightAligned = 0;
-#endif
-    IntPoint location;
-
-
-    Frame* focusedFrame = page()->focusController()->focusedOrMainFrame();
-    Node* focusedNode = focusedFrame->document()->focusedNode();
-    Position start = mainFrameImpl->selection()->selection().start();
-
-    if (start.node()) {
-        RenderObject* renderer = start.node()->renderer();
-        if (!renderer)
-            return false;
-
-        RefPtr<Range> selection = mainFrameImpl->selection()->toNormalizedRange();
-        IntRect firstRect = mainFrameImpl->firstRectForRange(selection.get());
-
-        int x = rightAligned ? firstRect.right() : firstRect.x();
-        location = IntPoint(x, firstRect.bottom());
-    } else if (focusedNode)
-        location = focusedNode->getRect().bottomLeft();
-    else {
-        location = IntPoint(
-            rightAligned ? view->contentsWidth() - kContextMenuMargin : kContextMenuMargin,
-            kContextMenuMargin);
-    }
-
-    location = view->contentsToWindow(location);
-    // FIXME: The IntSize(0, -1) is a hack to get the hit-testing to result in
-    // the selected element. Ideally we'd have the position of a context menu
-    // event be separate from its target node.
-    coords = location + IntSize(0, -1);
-
     // The contextMenuController() holds onto the last context menu that was
     // popped up on the page until a new one is created. We need to clear
     // this menu before propagating the event through the DOM so that we can
@@ -725,17 +673,9 @@ bool WebViewImpl::sendContextMenuEvent(const WebKeyboardEvent& event)
     // not run.
     page()->contextMenuController()->clearContextMenu();
 
-    focusedFrame->view()->setCursor(pointerCursor());
-    WebMouseEvent mouseEvent;
-    mouseEvent.button = WebMouseEvent::ButtonRight;
-    mouseEvent.x = coords.x();
-    mouseEvent.y = coords.y();
-    mouseEvent.type = WebInputEvent::MouseUp;
-
-    PlatformMouseEventBuilder platformEvent(view, mouseEvent);
-
     m_contextMenuAllowed = true;
-    bool handled = focusedFrame->eventHandler()->sendContextMenuEvent(platformEvent);
+    Frame* focusedFrame = page()->focusController()->focusedOrMainFrame();
+    bool handled = focusedFrame->eventHandler()->sendContextMenuEventForKey();
     m_contextMenuAllowed = false;
     return handled;
 }

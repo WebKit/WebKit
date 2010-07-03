@@ -1188,60 +1188,19 @@ Page* WebView::page()
 
 bool WebView::handleContextMenuEvent(WPARAM wParam, LPARAM lParam)
 {
-    static const int contextMenuMargin = 1;
-
     // Translate the screen coordinates into window coordinates
     POINT coords = { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) };
     if (coords.x == -1 || coords.y == -1) {
-        FrameView* view = m_page->mainFrame()->view();
-        if (!view)
-            return false;
+        // The contextMenuController() holds onto the last context menu that was popped up on the
+        // page until a new one is created. We need to clear this menu before propagating the event
+        // through the DOM so that we can detect if we create a new menu for this event, since we
+        // won't create a new menu if the DOM swallows the event and the defaultEventHandler does
+        // not run.
+        m_page->contextMenuController()->clearContextMenu();
 
-        int rightAligned = ::GetSystemMetrics(SM_MENUDROPALIGNMENT);
-        IntPoint location;
+        Frame* focusedFrame = m_page->focusController()->focusedOrMainFrame();
+        return focusedFrame->eventHandler()->sendContextMenuEventForKey();
 
-        // The context menu event was generated from the keyboard, so show the context menu by the current selection.
-        Position start = m_page->mainFrame()->selection()->selection().start();
-        Position end = m_page->mainFrame()->selection()->selection().end();
-
-        if (!start.node() || !end.node())
-            location = IntPoint(rightAligned ? view->contentsWidth() - contextMenuMargin : contextMenuMargin, contextMenuMargin);
-        else {
-            RenderObject* renderer = start.node()->renderer();
-            if (!renderer)
-                return false;
-
-            // Calculate the rect of the first line of the selection (cribbed from -[WebCoreFrameBridge firstRectForDOMRange:],
-            // now Frame::firstRectForRange(), which perhaps this should call).
-            int extraWidthToEndOfLine = 0;
-
-            InlineBox* startInlineBox;
-            int startCaretOffset;
-            start.getInlineBoxAndOffset(DOWNSTREAM, startInlineBox, startCaretOffset);
-            IntRect startCaretRect = renderer->localCaretRect(startInlineBox, startCaretOffset, &extraWidthToEndOfLine);
-            if (startCaretRect != IntRect())
-                startCaretRect = renderer->localToAbsoluteQuad(FloatRect(startCaretRect)).enclosingBoundingBox();
-
-            InlineBox* endInlineBox;
-            int endCaretOffset;
-            end.getInlineBoxAndOffset(UPSTREAM, endInlineBox, endCaretOffset);
-            IntRect endCaretRect = renderer->localCaretRect(endInlineBox, endCaretOffset);
-            if (endCaretRect != IntRect())
-                endCaretRect = renderer->localToAbsoluteQuad(FloatRect(endCaretRect)).enclosingBoundingBox();
-
-            IntRect firstRect;
-            if (startCaretRect.y() == endCaretRect.y())
-                firstRect = IntRect(min(startCaretRect.x(), endCaretRect.x()), startCaretRect.y(), abs(endCaretRect.x() - startCaretRect.x()), max(startCaretRect.height(), endCaretRect.height()));
-            else
-                firstRect = IntRect(startCaretRect.x(), startCaretRect.y(), startCaretRect.width() + extraWidthToEndOfLine, startCaretRect.height());
-
-            location = IntPoint(rightAligned ? firstRect.right() : firstRect.x(), firstRect.bottom());
-        }
-
-        location = view->contentsToWindow(location);
-        // FIXME: The IntSize(0, -1) is a hack to get the hit-testing to result in the selected element.
-        // Ideally we'd have the position of a context menu event be separate from its target node.
-        coords = location + IntSize(0, -1);
     } else {
         if (!::ScreenToClient(m_viewWindow, &coords))
             return false;
@@ -1249,11 +1208,6 @@ bool WebView::handleContextMenuEvent(WPARAM wParam, LPARAM lParam)
 
     lParam = MAKELPARAM(coords.x, coords.y);
 
-    // The contextMenuController() holds onto the last context menu that was popped up on the
-    // page until a new one is created. We need to clear this menu before propagating the event
-    // through the DOM so that we can detect if we create a new menu for this event, since we
-    // won't create a new menu if the DOM swallows the event and the defaultEventHandler does
-    // not run.
     m_page->contextMenuController()->clearContextMenu();
 
     IntPoint documentPoint(m_page->mainFrame()->view()->windowToContents(coords));
