@@ -26,7 +26,6 @@
 #ifndef WKFrame_h
 #define WKFrame_h
 
-#include <CoreFoundation/CoreFoundation.h>
 #include <WebKit2/WKBase.h>
 
 #ifndef __cplusplus
