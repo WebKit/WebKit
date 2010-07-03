@@ -1,5 +1,14 @@
 2010-07-02  Oliver Hunt  <oliver@apple.com>
 
+        Reviewed by NOBODY (test fix).
+
+        Fix test to account for the arg count clamping we do with function.apply
+
+        * fast/js/script-tests/function-apply-aliased.js:
+        (stackOverflowTest):
+
+2010-07-02  Oliver Hunt  <oliver@apple.com>
+
         Reviewed by Gavin Barraclough.
 
         Clamp the number of arguments supported by function.apply
