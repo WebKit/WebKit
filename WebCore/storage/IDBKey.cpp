@@ -37,6 +37,10 @@ IDBKey::IDBKey()
 {
 }
 
+IDBKey::~IDBKey()
+{
+}
+
 IDBKey::IDBKey(int32_t number)
     : m_type(NumberType)
     , m_number(number)

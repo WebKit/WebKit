@@ -1,3 +1,10 @@
+2010-07-03  Jeremy Orlow  <jorlow@chromium.org>
+
+        Build fix.  Forgot destructor.
+
+        * storage/IDBKey.cpp:
+        (WebCore::IDBKey::~IDBKey):
+
 2010-06-26  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Dumitru Daniliuc.
