@@ -1,3 +1,11 @@
+2010-07-03  Darin Adler  <darin@apple.com>
+
+        Added test cases for edge cases in apply function on arrays.
+        https://bugs.webkit.org/show_bug.cgi?id=41351
+
+        * fast/js/function-apply-expected.txt: Updated to expect success.
+        * fast/js/script-tests/function-apply.js: Added test cases.
+
 2010-07-03  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.
