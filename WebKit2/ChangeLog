@@ -1,3 +1,14 @@
+2010-07-04  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        WebProcess crashes in release for simple layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=41575
+
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        (WKBundlePageCopyRenderTreeExternalRepresentation): ref external representation StringImpl*
+        before taking it out of its parent String, to avoid returning freed memory.
+
 2010-07-03  Maciej Stachowiak  <mjs@apple.com>
 
         Rubber stamped by Anders Carlsson.
