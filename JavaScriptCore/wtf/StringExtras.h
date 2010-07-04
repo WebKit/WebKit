@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2010 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -44,17 +44,30 @@ inline int snprintf(char* buffer, size_t count, const char* format, ...)
     va_start(args, format);
     result = _vsnprintf(buffer, count, format, args);
     va_end(args);
+
+    // In the case where the string entirely filled the buffer, _vsnprintf will not
+    // null-terminate it, but snprintf must.
+    if (count > 0)
+        buffer[count - 1] = '\0';
+
     return result;
 }
 
-#if COMPILER(MSVC7_OR_LOWER) || OS(WINCE)
-
-inline int vsnprintf(char* buffer, size_t count, const char* format, va_list args)
+inline double wtf_vsnprintf(char* buffer, size_t count, const char* format, va_list args)
 {
-    return _vsnprintf(buffer, count, format, args);
+    int result = _vsnprintf(buffer, count, format, args);
+
+    // In the case where the string entirely filled the buffer, _vsnprintf will not
+    // null-terminate it, but vsnprintf must.
+    if (count > 0)
+        buffer[count - 1] = '\0';
+
+    return result;
 }
 
-#endif
+// Work around a bug in Microsoft's implementation of vsnprintf, where 
+// vsnprintf does not null terminate the buffer
+#define vsnprintf(buffer, count, format, args) wtf_vsnprintf(buffer, count, format, args)
 
 #if OS(WINCE)
 

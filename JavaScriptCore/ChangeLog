@@ -1,3 +1,19 @@
+2010-07-02  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Patch for https://bugs.webkit.org/show_bug.cgi?id=41553
+        Make StringExtras.h versions of snprintf and vsnprintf match the unix versions.
+
+        - MSVC does not ensure the buffers are null terminated as the unix versions do.
+
+        * runtime/JSGlobalObjectFunctions.cpp: Cleanup includes.
+        * runtime/UString.cpp: Clean up includes.
+        (JSC::UString::from): Don't pass sizeof(buf) - 1, that is wrong.
+        * wtf/StringExtras.h:
+        (snprintf): Ensure null termination of buffer.
+        (vsnprintf): Ditto.
+
 2010-07-03  Yong Li  <yoli@rim.com>
 
         Reviewed by Darin Adler.
