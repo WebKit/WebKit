@@ -1,3 +1,11 @@
+2010-07-03  Maciej Stachowiak  <mjs@apple.com>
+
+        Rubber stamped by Anders Carlsson.
+
+        Add stdint.h include to fix WebKitTestRunner build.
+
+        * UIProcess/API/C/WKPage.h:
+
 2010-07-02  Luiz Agostini  <luiz.agostini@openbossa.org>
 
         Reviewed by Kenneth Rohde Christiansen.
