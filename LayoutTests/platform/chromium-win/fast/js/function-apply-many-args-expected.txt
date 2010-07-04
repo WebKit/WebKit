@@ -1,0 +1,44 @@
+Tests that we truncate arguments beyond a certain threshold.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS f.apply(null) is 0
+PASS f.apply(null, []) is 0
+PASS f.apply(null, [1]) is 1
+PASS f.apply(null, new Array(10)) is 10
+PASS f.apply(null, new Array(1000)) is 1000
+PASS f.apply(null, new Array(65536)) is 65536
+FAIL f.apply(null, new Array(65537)) should be 65536. Was 65537.
+FAIL f.apply(null, new Array(65537)) should be 65536. Was 65537.
+FAIL f.apply(null, bigArray) should be 65536. Was 100000.
+PASS g.apply(null) is 0
+PASS g.apply(null, []) is 0
+PASS g.apply(null, [1]) is 1
+PASS g.apply(null, new Array(10)) is 10
+PASS g.apply(null, new Array(1000)) is 1000
+FAIL g.apply(null, new Array(65536)) should be 65536. Threw exception RangeError: Function.prototype.apply cannot support 65536 arguments
+FAIL g.apply(null, new Array(65537)) should be 65536. Threw exception RangeError: Function.prototype.apply cannot support 65537 arguments
+FAIL g.apply(null, new Array(65537)) should be 65536. Threw exception RangeError: Function.prototype.apply cannot support 65537 arguments
+FAIL g.apply(null, bigArray) should be 65536. Threw exception RangeError: Function.prototype.apply cannot support 100000 arguments
+PASS h.apply(null) is 0
+PASS h.apply(null, []) is 0
+PASS h.apply(null, [1]) is 1
+PASS h.apply(null, new Array(10)) is 10
+PASS h.apply(null, new Array(1000)) is 1000
+FAIL h.apply(null, new Array(65536)) should be 65536. Threw exception RangeError: Function.prototype.apply cannot support 65536 arguments
+FAIL h.apply(null, new Array(65537)) should be 65536. Threw exception RangeError: Function.prototype.apply cannot support 65537 arguments
+FAIL h.apply(null, new Array(65537)) should be 65536. Threw exception RangeError: Function.prototype.apply cannot support 65537 arguments
+FAIL h.apply(null, bigArray) should be 65536. Threw exception RangeError: Function.prototype.apply cannot support 100000 arguments
+PASS i.apply(null) is 0
+PASS i.apply(null, []) is 0
+PASS i.apply(null, [1]) is 1
+PASS i.apply(null, new Array(10)) is 10
+PASS i.apply(null, new Array(1000)) is 1000
+FAIL i.apply(null, new Array(65536)) should be 65536. Threw exception RangeError: Function.prototype.apply cannot support 65536 arguments
+FAIL i.apply(null, new Array(65537)) should be 65536. Threw exception RangeError: Function.prototype.apply cannot support 65537 arguments
+FAIL i.apply(null, new Array(65537)) should be 65536. Threw exception RangeError: Function.prototype.apply cannot support 65537 arguments
+FAIL i.apply(null, bigArray) should be 65536. Threw exception RangeError: Function.prototype.apply cannot support 100000 arguments
+PASS successfullyParsed is true
+
+TEST COMPLETE

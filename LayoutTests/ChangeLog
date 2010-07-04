@@ -1,3 +1,14 @@
+2010-07-04  Yury Semikhatsky  <yury@yurys-imac.local>
+
+        Unreviewed. Update Chromium test expectations.
+
+        * platform/chromium-mac/fast/js/function-apply-expected.txt: Added.
+        * platform/chromium-mac/fast/js/function-apply-many-args-expected.txt: Added.
+        * platform/chromium-mac/html5lib/runner-expected.txt:
+        * platform/chromium-win/fast/js/function-apply-expected.txt: Added.
+        * platform/chromium-win/fast/js/function-apply-many-args-expected.txt: Added.
+        * platform/chromium-win/html5lib/runner-expected.txt:
+
 2010-07-03  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Maciej Stachowiak.
