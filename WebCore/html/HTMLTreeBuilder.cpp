@@ -645,7 +645,8 @@ void HTMLTreeBuilder::processStartTag(AtomicHTMLToken& token)
         parseError(token);
         break;
     case AfterFramesetMode:
-        ASSERT(insertionMode() == AfterFramesetMode);
+    case AfterAfterFramesetMode:
+        ASSERT(insertionMode() == AfterFramesetMode || insertionMode() == AfterAfterFramesetMode);
         if (token.name() == htmlTag) {
             insertHTMLStartTagInBody(token);
             return;
@@ -902,6 +903,9 @@ void HTMLTreeBuilder::processEndTag(AtomicHTMLToken& token)
             m_insertionMode = AfterAfterFramesetMode;
             return;
         }
+        // Fall through.
+    case AfterAfterFramesetMode:
+        ASSERT(insertionMode() == AfterFramesetMode || insertionMode() == AfterAfterFramesetMode);
         parseError(token);
         break;
     default:
@@ -911,7 +915,7 @@ void HTMLTreeBuilder::processEndTag(AtomicHTMLToken& token)
 
 void HTMLTreeBuilder::processComment(AtomicHTMLToken& token)
 {
-    if (m_insertionMode == InitialMode || m_insertionMode == BeforeHTMLMode || m_insertionMode == AfterAfterBodyMode) {
+    if (m_insertionMode == InitialMode || m_insertionMode == BeforeHTMLMode || m_insertionMode == AfterAfterBodyMode || m_insertionMode == AfterAfterFramesetMode) {
         insertCommentOnDocument(token);
         return;
     }
@@ -974,7 +978,8 @@ void HTMLTreeBuilder::processCharacter(AtomicHTMLToken& token)
         break;
     case InFramesetMode:
     case AfterFramesetMode:
-        ASSERT(insertionMode() == InFramesetMode || insertionMode() == AfterFramesetMode);
+    case AfterAfterFramesetMode:
+        ASSERT(insertionMode() == InFramesetMode || insertionMode() == AfterFramesetMode || insertionMode() == AfterAfterFramesetMode);
         parseError(token);
         break;
     default:
@@ -1025,7 +1030,8 @@ void HTMLTreeBuilder::processEndOfFile(AtomicHTMLToken& token)
             parseError(token);
         break;
     case AfterFramesetMode:
-        ASSERT(insertionMode() == AfterFramesetMode);
+    case AfterAfterFramesetMode:
+        ASSERT(insertionMode() == AfterFramesetMode || insertionMode() == AfterAfterFramesetMode);
         break;
     default:
         notImplemented();

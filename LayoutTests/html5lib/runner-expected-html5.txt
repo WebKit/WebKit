@@ -5437,7 +5437,7 @@ Expected:
 resources/webkit01.dat:
 17
 
-Test 17 of 29 in resources/webkit01.dat failed. Input:
+Test 17 of 30 in resources/webkit01.dat failed. Input:
 <A>test< /A>
 Got:
 | <html>
