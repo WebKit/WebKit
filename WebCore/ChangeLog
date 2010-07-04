@@ -1,3 +1,28 @@
+2010-07-04  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Add a very basic InTable insertion mode
+        https://bugs.webkit.org/show_bug.cgi?id=41581
+
+        There is still a bunch of low-hanging fruit left for this
+        mode, but even this most-basic support lets us pass 6 more tests. :)
+
+        It's a progression, ship it! :)
+
+        * html/HTMLElementStack.cpp:
+        (WebCore::HTMLNames::isScopeMarker):
+        (WebCore::HTMLNames::isListItemScopeMarker):
+        (WebCore::HTMLNames::isTableScopeMarker):
+        (WebCore::HTMLElementStack::popUntilTableScopeMarker):
+        * html/HTMLElementStack.h:
+        * html/HTMLFormattingElementList.cpp:
+        (WebCore::HTMLFormattingElementList::appendMarker):
+        * html/HTMLFormattingElementList.h:
+        * html/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::processStartTag):
+        * html/HTMLTreeBuilder.h:
+
 2010-07-01  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

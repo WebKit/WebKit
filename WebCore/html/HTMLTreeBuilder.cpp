@@ -723,6 +723,57 @@ void HTMLTreeBuilder::processStartTag(AtomicHTMLToken& token)
         reconstructTheActiveFormattingElements();
         insertElement(token);
         break;
+    case InTableMode:
+        ASSERT(insertionMode() == InTableMode);
+        if (token.name() == captionTag) {
+            m_openElements.popUntilTableScopeMarker();
+            m_activeFormattingElements.appendMarker();
+            insertElement(token);
+            m_insertionMode = InCaptionMode;
+            return;
+        }
+        if (token.name() == colgroupTag) {
+            m_openElements.popUntilTableScopeMarker();
+            insertElement(token);
+            m_insertionMode = InColumnGroupMode;
+            return;
+        }
+        if (token.name() == colTag) {
+            notImplemented();
+            return;
+        }
+        if (token.name() == tbodyTag || token.name() == tfootTag || token.name() == theadTag) {
+            m_openElements.popUntilTableScopeMarker();
+            insertElement(token);
+            m_insertionMode = InTableBodyMode;
+            return;
+        }
+        if (token.name() == tdTag || token.name() == thTag || token.name() == trTag) {
+            notImplemented();
+            return;
+        }
+        if (token.name() == tableTag) {
+            notImplemented();
+            return;
+        }
+        if (token.name() == styleTag || token.name() == scriptTag) {
+            processStartTagForInHead(token);
+            return;
+        }
+        if (token.name() == inputTag) {
+            notImplemented();
+            return;
+        }
+        if (token.name() == formTag) {
+            parseError(token);
+            if (m_formElement)
+                return;
+            insertSelfClosingElement(token);
+            return;
+        }
+        parseError(token);
+        notImplemented();
+        break;
     case AfterBodyMode:
     case AfterAfterBodyMode:
         ASSERT(insertionMode() == AfterBodyMode || insertionMode() == AfterAfterBodyMode);

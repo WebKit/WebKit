@@ -82,6 +82,7 @@ public:
     void pop();
     void popUntil(const AtomicString& tagName);
     void popUntil(Element*);
+    void popUntilTableScopeMarker(); // "clear the stack back to a table context" in the spec.
     void popHTMLHeadElement();
     void popHTMLBodyElement();
 

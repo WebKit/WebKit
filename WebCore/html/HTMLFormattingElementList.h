@@ -73,6 +73,8 @@ public:
     bool contains(Element*);
     void append(Element*);
     void remove(Element*);
+
+    void appendMarker();
     void clearToLastMarker();
 
     const Entry& operator[](size_t i) const { return m_entries[i]; }

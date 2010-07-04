@@ -38,6 +38,38 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
+namespace {
+
+inline bool isScopeMarker(Element* element)
+{
+    return element->hasTagName(appletTag)
+        || element->hasTagName(buttonTag)
+        || element->hasTagName(captionTag)
+#if ENABLE(SVG_FOREIGN_OBJECT)
+        || element->hasTagName(SVGNames::foreignObjectTag)
+#endif
+        || element->hasTagName(htmlTag)
+        || element->hasTagName(marqueeTag)
+        || element->hasTagName(objectTag)
+        || element->hasTagName(tableTag)
+        || element->hasTagName(tdTag)
+        || element->hasTagName(thTag);
+}
+
+inline bool isListItemScopeMarker(Element* element)
+{
+    return isScopeMarker(element)
+        || element->hasTagName(olTag)
+        || element->hasTagName(ulTag);
+}
+inline bool isTableScopeMarker(Element* element)
+{
+    return element->hasTagName(htmlTag)
+        || element->hasTagName(tableTag);
+}
+
+}
+
 HTMLElementStack::ElementRecord::ElementRecord(PassRefPtr<Element> element, PassOwnPtr<ElementRecord> next)
     : m_element(element)
     , m_next(next)
@@ -108,6 +140,13 @@ void HTMLElementStack::popUntil(const AtomicString& tagName)
 void HTMLElementStack::popUntil(Element* element)
 {
     while (top() != element)
+        pop();
+}
+
+void HTMLElementStack::popUntilTableScopeMarker()
+{
+    // http://www.whatwg.org/specs/web-apps/current-work/multipage/tokenization.html#clear-the-stack-back-to-a-table-context
+    while (!isTableScopeMarker(top()))
         pop();
 }
 
@@ -227,39 +266,6 @@ HTMLElementStack::ElementRecord* HTMLElementStack::topmost(const AtomicString& t
 bool HTMLElementStack::contains(Element* element) const
 {
     return !!find(element);
-}
-
-namespace {
-
-inline bool isScopeMarker(Element* element)
-{
-    return element->hasTagName(appletTag)
-        || element->hasTagName(buttonTag)
-        || element->hasTagName(captionTag)
-        || element->hasTagName(htmlTag)
-        || element->hasTagName(marqueeTag)
-        || element->hasTagName(objectTag)
-        || element->hasTagName(tableTag)
-        || element->hasTagName(tdTag)
-        || element->hasTagName(thTag)
-#if ENABLE(SVG_FOREIGN_OBJECT)
-        || element->hasTagName(SVGNames::foreignObjectTag)
-#endif
-        ;
-}
-
-inline bool isListItemScopeMarker(Element* element)
-{
-    return isScopeMarker(element)
-        || element->hasTagName(olTag)
-        || element->hasTagName(ulTag);
-}
-inline bool isTableScopeMarker(Element* element)
-{
-    return element->hasTagName(htmlTag)
-        || element->hasTagName(tableTag);
-}
-
 }
 
 template <bool isMarker(Element*)>

@@ -1318,6 +1318,7 @@ Got:
 |   <head>
 |   <body>
 |     <table>
+|       <colgroup>
 Expected:
 | <html>
 |   <head>
@@ -1343,6 +1344,7 @@ Got:
 |   <head>
 |   <body>
 |     <table>
+|       <tbody>
 Expected:
 | <html>
 |   <head>
@@ -1370,6 +1372,7 @@ Got:
 |   <head>
 |   <body>
 |     <table>
+|       <colgroup>
 Expected:
 | <html>
 |   <head>
@@ -1570,6 +1573,7 @@ Got:
 |   <head>
 |   <body>
 |     <table>
+|       <caption>
 Expected:
 | <!DOCTYPE html>
 | <html>
@@ -2103,20 +2107,14 @@ resources/tests6.dat:
 16
 17
 19
-20
-22
 23
 24
 26
 27
-28
 30
 33
 36
 37
-38
-40
-41
 42
 44
 45
@@ -2262,6 +2260,7 @@ Got:
 |   <head>
 |   <body>
 |     <table>
+|       <caption>
 Expected:
 | <html>
 |   <head>
@@ -2279,6 +2278,7 @@ Got:
 |   <head>
 |   <body>
 |     <table>
+|       <caption>
 Expected:
 | <html>
 |   <head>
@@ -2294,6 +2294,7 @@ Got:
 |   <head>
 |   <body>
 |     <table>
+|       <caption>
 Expected:
 | <html>
 |   <head>
@@ -2302,34 +2303,6 @@ Expected:
 |       <caption>
 |         <div>
 
-Test 20 of 51 in resources/tests6.dat failed. Input:
-<table><caption></table>
-Got:
-| <html>
-|   <head>
-|   <body>
-|     <table>
-Expected:
-| <html>
-|   <head>
-|   <body>
-|     <table>
-|       <caption>
-
-Test 22 of 51 in resources/tests6.dat failed. Input:
-<table><caption></body></col></colgroup></html></tbody></td></tfoot></th></thead></tr>
-Got:
-| <html>
-|   <head>
-|   <body>
-|     <table>
-Expected:
-| <html>
-|   <head>
-|   <body>
-|     <table>
-|       <caption>
-
 Test 23 of 51 in resources/tests6.dat failed. Input:
 <table><caption><div></div>
 Got:
@@ -2337,6 +2310,7 @@ Got:
 |   <head>
 |   <body>
 |     <table>
+|       <caption>
 Expected:
 | <html>
 |   <head>
@@ -2368,6 +2342,7 @@ Got:
 |   <head>
 |   <body>
 |     <table>
+|       <colgroup>
 Expected:
 | <html>
 |   <head>
@@ -2382,20 +2357,6 @@ Got:
 | 
 Expected:
 | <col>
-
-Test 28 of 51 in resources/tests6.dat failed. Input:
-<table><colgroup></col>
-Got:
-| <html>
-|   <head>
-|   <body>
-|     <table>
-Expected:
-| <html>
-|   <head>
-|   <body>
-|     <table>
-|       <colgroup>
 
 Test 30 of 51 in resources/tests6.dat failed. Input:
 </frameset><frame>
@@ -2448,48 +2409,6 @@ Got:
 |   <tr>
 Expected:
 | <tr>
-
-Test 38 of 51 in resources/tests6.dat failed. Input:
-<table><tbody></thead>
-Got:
-| <html>
-|   <head>
-|   <body>
-|     <table>
-Expected:
-| <html>
-|   <head>
-|   <body>
-|     <table>
-|       <tbody>
-
-Test 40 of 51 in resources/tests6.dat failed. Input:
-<table><tbody></body></caption></col></colgroup></html></td></th></tr>
-Got:
-| <html>
-|   <head>
-|   <body>
-|     <table>
-Expected:
-| <html>
-|   <head>
-|   <body>
-|     <table>
-|       <tbody>
-
-Test 41 of 51 in resources/tests6.dat failed. Input:
-<table><tbody></div>
-Got:
-| <html>
-|   <head>
-|   <body>
-|     <table>
-Expected:
-| <html>
-|   <head>
-|   <body>
-|     <table>
-|       <tbody>
 
 Test 42 of 51 in resources/tests6.dat failed. Input:
 <table><table>
@@ -2661,6 +2580,8 @@ Got:
 |   <head>
 |   <body>
 |     <table>
+|       <style>
+|         " <tr>x "
 Expected:
 | <!DOCTYPE html>
 | <html>
@@ -2679,6 +2600,7 @@ Got:
 |   <head>
 |   <body>
 |     <table>
+|       <tbody>
 Expected:
 | <!DOCTYPE html>
 | <html>
@@ -3286,6 +3208,7 @@ Got:
 |   <head>
 |   <body>
 |     <table>
+|       <tbody>
 Expected:
 | <!DOCTYPE html>
 | <html>
@@ -3307,6 +3230,7 @@ Got:
 |   <head>
 |   <body>
 |     <table>
+|       <tbody>
 Expected:
 | <!DOCTYPE html>
 | <html>
@@ -3329,6 +3253,7 @@ Got:
 |   <head>
 |   <body>
 |     <table>
+|       <tbody>
 Expected:
 | <!DOCTYPE html>
 | <html>
@@ -3352,6 +3277,7 @@ Got:
 |   <head>
 |   <body>
 |     <table>
+|       <tbody>
 Expected:
 | <!DOCTYPE html>
 | <html>
@@ -3377,6 +3303,7 @@ Got:
 |   <head>
 |   <body>
 |     <table>
+|       <caption>
 Expected:
 | <!DOCTYPE html>
 | <html>
@@ -3400,6 +3327,7 @@ Got:
 |   <head>
 |   <body>
 |     <table>
+|       <caption>
 Expected:
 | <!DOCTYPE html>
 | <html>
@@ -3425,6 +3353,7 @@ Got:
 |   <head>
 |   <body>
 |     <table>
+|       <caption>
 Expected:
 | <!DOCTYPE html>
 | <html>
@@ -3449,6 +3378,7 @@ Got:
 |   <head>
 |   <body>
 |     <table>
+|       <colgroup>
 Expected:
 | <!DOCTYPE html>
 | <html>
@@ -3788,6 +3718,7 @@ Got:
 |   <head>
 |   <body>
 |     <table>
+|       <tbody>
 Expected:
 | <!DOCTYPE html>
 | <html>
@@ -3809,6 +3740,7 @@ Got:
 |   <head>
 |   <body>
 |     <table>
+|       <tbody>
 Expected:
 | <!DOCTYPE html>
 | <html>
@@ -3831,6 +3763,7 @@ Got:
 |   <head>
 |   <body>
 |     <table>
+|       <tbody>
 Expected:
 | <!DOCTYPE html>
 | <html>
@@ -3854,6 +3787,7 @@ Got:
 |   <head>
 |   <body>
 |     <table>
+|       <tbody>
 Expected:
 | <!DOCTYPE html>
 | <html>
@@ -3879,6 +3813,7 @@ Got:
 |   <head>
 |   <body>
 |     <table>
+|       <caption>
 Expected:
 | <!DOCTYPE html>
 | <html>
@@ -3902,6 +3837,7 @@ Got:
 |   <head>
 |   <body>
 |     <table>
+|       <caption>
 Expected:
 | <!DOCTYPE html>
 | <html>
@@ -3927,6 +3863,7 @@ Got:
 |   <head>
 |   <body>
 |     <table>
+|       <caption>
 Expected:
 | <!DOCTYPE html>
 | <html>
@@ -3951,6 +3888,7 @@ Got:
 |   <head>
 |   <body>
 |     <table>
+|       <colgroup>
 Expected:
 | <!DOCTYPE html>
 | <html>
@@ -5360,6 +5298,8 @@ Got:
 |   <head>
 |   <body>
 |     <table>
+|       <style>
+|         " <tr>x "
 Expected:
 | <!DOCTYPE html>
 | <html>
