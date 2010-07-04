@@ -1,3 +1,12 @@
+2010-07-03  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        WebGLRenderingContext::vertexAttrib* leads to possible out-of-range vector member visit
+        https://bugs.webkit.org/show_bug.cgi?id=41572
+
+        * platform/mac-leopard/Skipped: Adding back the program-test.html test since the failure cause is fixed in this patch.
+
 2010-07-03  Darin Adler  <darin@apple.com>
 
         Added test cases for edge cases in apply function on arrays.

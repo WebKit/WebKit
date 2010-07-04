@@ -501,9 +501,10 @@ class WebKitCSSMatrix;
         bool validateUniformMatrixParameters(const WebGLUniformLocation* location, bool transpose, Float32Array* v, int mod);
         bool validateUniformMatrixParameters(const WebGLUniformLocation* location, bool transpose, void* v, int size, int mod);
 
-        // Helper functions for vertexAttribNfv.
-        void vertexAttribImpl(unsigned long index, Float32Array* v, int expectedSize);
-        void vertexAttribImpl(unsigned long index, float* v, int size, int expectedSize);
+        // Helper functions for vertexAttribNf{v}.
+        void vertexAttribfImpl(unsigned long index, int expectedSize, float v0, float v1, float v2, float v3);
+        void vertexAttribfvImpl(unsigned long index, Float32Array* v, int expectedSize);
+        void vertexAttribfvImpl(unsigned long index, float* v, int size, int expectedSize);
 
         // Helpers for simulating vertexAttrib0
         void initVertexAttrib0();

@@ -2912,94 +2912,62 @@ void WebGLRenderingContext::validateProgram(WebGLProgram* program, ExceptionCode
 
 void WebGLRenderingContext::vertexAttrib1f(unsigned long index, float v0)
 {
-    // In GL, we skip setting vertexAttrib0 values.
-    if (index || isGLES2Compliant()) {
-        m_context->vertexAttrib1f(index, v0);
-        cleanupAfterGraphicsCall(false);
-    }
-    m_vertexAttribState[index].value[0] = v0;
-    m_vertexAttribState[index].value[1] = 0.0f;
-    m_vertexAttribState[index].value[2] = 0.0f;
-    m_vertexAttribState[index].value[3] = 1.0f;
+    vertexAttribfImpl(index, 1, v0, 0.0f, 0.0f, 1.0f);
 }
 
 void WebGLRenderingContext::vertexAttrib1fv(unsigned long index, Float32Array* v)
 {
-    vertexAttribImpl(index, v, 1);
+    vertexAttribfvImpl(index, v, 1);
 }
 
 void WebGLRenderingContext::vertexAttrib1fv(unsigned long index, float* v, int size)
 {
-    vertexAttribImpl(index, v, size, 1);
+    vertexAttribfvImpl(index, v, size, 1);
 }
 
 void WebGLRenderingContext::vertexAttrib2f(unsigned long index, float v0, float v1)
 {
-    // In GL, we skip setting vertexAttrib0 values.
-    if (index || isGLES2Compliant()) {
-        m_context->vertexAttrib2f(index, v0, v1);
-        cleanupAfterGraphicsCall(false);
-    }
-    m_vertexAttribState[index].value[0] = v0;
-    m_vertexAttribState[index].value[1] = v1;
-    m_vertexAttribState[index].value[2] = 0.0f;
-    m_vertexAttribState[index].value[3] = 1.0f;
+    vertexAttribfImpl(index, 2, v0, v1, 0.0f, 1.0f);
 }
 
 void WebGLRenderingContext::vertexAttrib2fv(unsigned long index, Float32Array* v)
 {
-    vertexAttribImpl(index, v, 2);
+    vertexAttribfvImpl(index, v, 2);
 }
 
 void WebGLRenderingContext::vertexAttrib2fv(unsigned long index, float* v, int size)
 {
-    vertexAttribImpl(index, v, size, 2);
+    vertexAttribfvImpl(index, v, size, 2);
 }
 
 void WebGLRenderingContext::vertexAttrib3f(unsigned long index, float v0, float v1, float v2)
 {
-    // In GL, we skip setting vertexAttrib0 values.
-    if (index || isGLES2Compliant()) {
-        m_context->vertexAttrib3f(index, v0, v1, v2);
-        cleanupAfterGraphicsCall(false);
-    }
-    m_vertexAttribState[index].value[0] = v0;
-    m_vertexAttribState[index].value[1] = v1;
-    m_vertexAttribState[index].value[2] = v2;
-    m_vertexAttribState[index].value[3] = 1.0f;
+    vertexAttribfImpl(index, 3, v0, v1, v2, 1.0f);
 }
 
 void WebGLRenderingContext::vertexAttrib3fv(unsigned long index, Float32Array* v)
 {
-    vertexAttribImpl(index, v, 3);
+    vertexAttribfvImpl(index, v, 3);
 }
 
 void WebGLRenderingContext::vertexAttrib3fv(unsigned long index, float* v, int size)
 {
-    vertexAttribImpl(index, v, size, 3);
+    vertexAttribfvImpl(index, v, size, 3);
 }
 
 void WebGLRenderingContext::vertexAttrib4f(unsigned long index, float v0, float v1, float v2, float v3)
 {
-    // In GL, we skip setting vertexAttrib0 values.
-    if (index || isGLES2Compliant()) {
-        m_context->vertexAttrib4f(index, v0, v1, v2, v3);
-        cleanupAfterGraphicsCall(false);
-    }
-    m_vertexAttribState[index].value[0] = v0;
-    m_vertexAttribState[index].value[1] = v1;
-    m_vertexAttribState[index].value[2] = v2;
-    m_vertexAttribState[index].value[3] = v3;
+    vertexAttribfImpl(index, 4, v0, v1, v2, v3);
 }
 
 void WebGLRenderingContext::vertexAttrib4fv(unsigned long index, Float32Array* v)
 {
-    vertexAttribImpl(index, v, 4);
+    vertexAttribfvImpl(index, v, 4);
 }
 
 void WebGLRenderingContext::vertexAttrib4fv(unsigned long index, float* v, int size)
 {
-    vertexAttribImpl(index, v, size, 4);
+    vertexAttribfvImpl(index, v, size, 4);
 }
 
 void WebGLRenderingContext::vertexAttribPointer(unsigned long index, long size, unsigned long type, bool normalized, long stride, long offset, ExceptionCode& ec)
@@ -3606,22 +3574,58 @@ bool WebGLRenderingContext::validateUniformMatrixParameters(const WebGLUniformLo
     return true;
 }
 
-void WebGLRenderingContext::vertexAttribImpl(unsigned long index, Float32Array* v, int expectedSize)
+void WebGLRenderingContext::vertexAttribfImpl(unsigned long index, int expectedSize, float v0, float v1, float v2, float v3)
+{
+    if (index >= m_maxVertexAttribs) {
+        m_context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE);
+        return;
+    }
+    // In GL, we skip setting vertexAttrib0 values.
+    if (index || isGLES2Compliant()) {
+        switch (expectedSize) {
+        case 1:
+            m_context->vertexAttrib1f(index, v0);
+            break;
+        case 2:
+            m_context->vertexAttrib2f(index, v0, v1);
+            break;
+        case 3:
+            m_context->vertexAttrib3f(index, v0, v1, v2);
+            break;
+        case 4:
+            m_context->vertexAttrib4f(index, v0, v1, v2, v3);
+            break;
+        }
+        cleanupAfterGraphicsCall(false);
+    }
+    if (index >= m_vertexAttribState.size())
+        m_vertexAttribState.resize(index + 1);
+    m_vertexAttribState[index].value[0] = v0;
+    m_vertexAttribState[index].value[1] = v1;
+    m_vertexAttribState[index].value[2] = v2;
+    m_vertexAttribState[index].value[3] = v3;
+}
+
+void WebGLRenderingContext::vertexAttribfvImpl(unsigned long index, Float32Array* v, int expectedSize)
 {
     if (!v) {
         m_context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE);
         return;
     }
-    vertexAttribImpl(index, v->data(), v->length(), expectedSize);
+    vertexAttribfvImpl(index, v->data(), v->length(), expectedSize);
 }
 
-void WebGLRenderingContext::vertexAttribImpl(unsigned long index, float* v, int size, int expectedSize)
+void WebGLRenderingContext::vertexAttribfvImpl(unsigned long index, float* v, int size, int expectedSize)
 {
     if (!v) {
         m_context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE);
         return;
     }
     if (size < expectedSize) {
+        m_context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE);
+        return;
+    }
+    if (index >= m_maxVertexAttribs) {
         m_context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE);
         return;
     }
@@ -3643,6 +3647,8 @@ void WebGLRenderingContext::vertexAttribImpl(unsigned long index, float* v, int 
         }
         cleanupAfterGraphicsCall(false);
     }
+    if (index >= m_vertexAttribState.size())
+        m_vertexAttribState.resize(index + 1);
     m_vertexAttribState[index].initValue();
     for (int ii = 0; ii < expectedSize; ++ii)
         m_vertexAttribState[index].value[ii] = v[ii];

@@ -1,3 +1,23 @@
+2010-07-03  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        WebGLRenderingContext::vertexAttrib* leads to possible out-of-range vector member visit
+        https://bugs.webkit.org/show_bug.cgi?id=41572
+
+        * html/canvas/WebGLRenderingContext.cpp: Fix the out-of-range vector member visit, also refactor the code.
+        (WebCore::WebGLRenderingContext::vertexAttrib1f):
+        (WebCore::WebGLRenderingContext::vertexAttrib1fv):
+        (WebCore::WebGLRenderingContext::vertexAttrib2f):
+        (WebCore::WebGLRenderingContext::vertexAttrib2fv):
+        (WebCore::WebGLRenderingContext::vertexAttrib3f):
+        (WebCore::WebGLRenderingContext::vertexAttrib3fv):
+        (WebCore::WebGLRenderingContext::vertexAttrib4f):
+        (WebCore::WebGLRenderingContext::vertexAttrib4fv):
+        (WebCore::WebGLRenderingContext::vertexAttribfImpl):
+        (WebCore::WebGLRenderingContext::vertexAttribfvImpl):
+        * html/canvas/WebGLRenderingContext.h: Helper function declaration.
+
 2010-07-03  Jeremy Orlow  <jorlow@chromium.org>
 
         Ugh.  Have to put the destructor in the .h file since the .ccp isn't compiled yet.
