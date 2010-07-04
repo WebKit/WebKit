@@ -2,6 +2,19 @@
 
         Reviewed by Adam Barth.
 
+        HTMLTreeBuilder needs an adoption agency
+        https://bugs.webkit.org/show_bug.cgi?id=41453
+
+        Fix Qt Minimal build.  SVGNames.h should always
+        be generated, even when SVG is off, however that's
+        not how things currently work.
+
+        * html/HTMLTreeBuilder.cpp:
+
+2010-07-04  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
         Add a very basic InTable insertion mode
         https://bugs.webkit.org/show_bug.cgi?id=41581
 

@@ -41,7 +41,9 @@
 #include "LegacyHTMLDocumentParser.h"
 #include "LegacyHTMLTreeBuilder.h"
 #include "NotImplemented.h"
+#if ENABLE(SVG)
 #include "SVGNames.h"
+#endif
 #include "ScriptController.h"
 #include "Settings.h"
 #include "Text.h"
