@@ -41,6 +41,8 @@
 		1A50DB66110A3D57000D3FE5 /* WebProcess.app in CopyFiles */ = {isa = PBXBuildFile; fileRef = 1A50DB1E110A3BDC000D3FE5 /* WebProcess.app */; };
 		1A594ABA112A1FB6009DE7C7 /* WebUIClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A594AB8112A1FB6009DE7C7 /* WebUIClient.cpp */; };
 		1A594ABB112A1FB6009DE7C7 /* WebUIClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A594AB9112A1FB6009DE7C7 /* WebUIClient.h */; };
+		1A6F9F9011E13EFC00DB1371 /* CommandLine.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A6F9F8E11E13EFC00DB1371 /* CommandLine.h */; };
+		1A6F9FB711E1408500DB1371 /* CommandLineMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A6F9FB611E1408500DB1371 /* CommandLineMac.cpp */; };
 		1AA1CC5D100FA1A10078DEBC /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AA1CC5C100FA1A10078DEBC /* QuartzCore.framework */; };
 		1AA1CD07100FA1BA0078DEBC /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AA1CD06100FA1BA0078DEBC /* Carbon.framework */; };
 		1AADE6FF10D855FC00D3D63D /* ApplicationServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AADE6FE10D855FC00D3D63D /* ApplicationServices.framework */; };
@@ -283,6 +285,8 @@
 		1A50DB1E110A3BDC000D3FE5 /* WebProcess.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WebProcess.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1A594AB8112A1FB6009DE7C7 /* WebUIClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebUIClient.cpp; sourceTree = "<group>"; };
 		1A594AB9112A1FB6009DE7C7 /* WebUIClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebUIClient.h; sourceTree = "<group>"; };
+		1A6F9F8E11E13EFC00DB1371 /* CommandLine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommandLine.h; sourceTree = "<group>"; };
+		1A6F9FB611E1408500DB1371 /* CommandLineMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CommandLineMac.cpp; sourceTree = "<group>"; };
 		1AA1C79A100E7FC50078DEBC /* WebCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = WebCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		1AA1C7DE100E846E0078DEBC /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = JavaScriptCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		1AA1CC5C100FA1A10078DEBC /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = /System/Library/Frameworks/QuartzCore.framework; sourceTree = "<absolute>"; };
@@ -596,6 +600,7 @@
 			children = (
 				BC111B5F112F635E00337BAB /* CoreIPCSupport */,
 				BC111B5A112F628200337BAB /* mac */,
+				1A6F9F8E11E13EFC00DB1371 /* CommandLine.h */,
 				BC64696D11DBE603006455B0 /* ImmutableArray.cpp */,
 				BC64696E11DBE603006455B0 /* ImmutableArray.h */,
 				BCC57161115ADB42001CCAF9 /* NotImplemented.h */,
@@ -871,6 +876,7 @@
 		BC111B5A112F628200337BAB /* mac */ = {
 			isa = PBXGroup;
 			children = (
+				1A6F9FB611E1408500DB1371 /* CommandLineMac.cpp */,
 				BC9E95D211449B0300870E71 /* UpdateChunk.cpp */,
 				BC9E95D111449B0300870E71 /* UpdateChunk.h */,
 				BC111B5B112F629800337BAB /* WebEventFactory.h */,
@@ -1125,6 +1131,7 @@
 				BC646C1D11DD399F006455B0 /* WKBackForwardListItem.h in Headers */,
 				0F5265B411DD37680006D33C /* LayerBackedDrawingArea.h in Headers */,
 				0F5265BA11DD377F0006D33C /* LayerBackedDrawingAreaProxy.h in Headers */,
+				1A6F9F9011E13EFC00DB1371 /* CommandLine.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1300,6 +1307,7 @@
 				0F5265BC11DD37860006D33C /* LayerBackedDrawingAreaProxyMac.mm in Sources */,
 				1AE117F611DBB30900981615 /* ProcessLauncher.cpp in Sources */,
 				0F52667411DD4A490006D33C /* WebProcessProxyMac.mm in Sources */,
+				1A6F9FB711E1408500DB1371 /* CommandLineMac.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

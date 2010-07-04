@@ -54,7 +54,7 @@ void ProcessLauncher::launchProcess()
     NSString *webProcessAppExecutablePath = [[NSBundle bundleWithPath:webProcessAppPath] executablePath];
 
     const char* path = [webProcessAppExecutablePath fileSystemRepresentation];
-    const char* args[] = { path, 0 };
+    const char* args[] = { path, "-mode", "legacywebprocess", 0 };
 
     // Register ourselves.
     kern_return_t kr = bootstrap_register2(bootstrap_port, (char*)"com.apple.WebKit.WebProcess", listeningPort, /* BOOTSTRAP_PER_PID_SERVICE */ 1);
@@ -77,7 +77,6 @@ void ProcessLauncher::terminateProcess()
     
     kill(m_processIdentifier, SIGKILL);
 }
-
 
 static void* webThreadBody(void* context)
 {

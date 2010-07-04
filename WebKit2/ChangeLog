@@ -1,3 +1,30 @@
+2010-07-04  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Add simple command line parser and pass mode argument to the web process
+        https://bugs.webkit.org/show_bug.cgi?id=41586
+
+        * Shared/CommandLine.h:
+        (WebKit::CommandLine::operator[]):
+        Add CommandLine class.
+
+        * Shared/mac/CommandLineMac.cpp:
+        (WebKit::CommandLine::parse):
+        Implement Mac version of CommandLine::parse.
+
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+        (WebKit::ProcessLauncher::launchProcess):
+        Add "legacywebprocess" mode to the posix_spawn call.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Add CommandLine to the xcode project.
+
+        * WebProcess/Launching/mac/WebProcessMain.mm:
+        (webProcessMain):
+        (main):
+        Parse the command line and check the mode.
+
 2010-07-04  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Mark Rowe.
