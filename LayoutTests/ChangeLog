@@ -1,5 +1,13 @@
 2010-07-04  Robert Hogan  <robert@webkit.org>
 
+        [Qt] Triage failing HTTP tests in Qt Skipped list
+
+        Unreviewed, sorting tests and adding comments to skipped list.
+
+        * platform/qt/Skipped:
+
+2010-07-04  Robert Hogan  <robert@webkit.org>
+
         [Qt] NPP_SetWindow seems to not be called when TestNetscapePlugin is moved
 
         Unreviewed, accidental omission from r61505

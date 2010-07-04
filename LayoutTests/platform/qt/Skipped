@@ -107,14 +107,53 @@ fast/text/hyphenate-character.html
 fast/text/hyphens.html
 
 # =========================================================================== #
-#       Failing HTTP tests.                                                   #
+#       Passing HTTP tests - require confirmation on bot.                     #
 # =========================================================================== #
-# This seems to pass now!
+
 http/tests/cache/subresource-failover-to-network.html
 
+http/tests/security/host-compare-case-insensitive.html
+http/tests/security/xss-DENIED-xsl-document-redirect.xml
+http/tests/security/cross-frame-access-put.html
+http/tests/security/aboutBlank/security-context-alias.html
+http/tests/security/aboutBlank/security-context-window-open.html
+http/tests/security/aboutBlank/xss-DENIED-navigate-opener-javascript-url.html
+http/tests/security/frameNavigation/xss-DENIED-plugin-navigation.html
+http/tests/security/frameNavigation/xss-DENIED-targeted-link-navigation.html
+
+http/tests/misc/isindex-with-no-form-base-href.html
+http/tests/misc/isindex-with-no-form.html
+http/tests/misc/timer-vs-loading.html
+
+http/tests/appcache/auth.html
+
+# Our expected results are out-of-date - need to be updated first.
+http/tests/loading/bad-scheme-subframe.html
+
+http/tests/navigation/metaredirect-subframeload.html
+http/tests/navigation/onload-navigation-iframe-2.html
+http/tests/navigation/onload-navigation-iframe-timeout.html
+http/tests/navigation/onload-navigation-iframe.html
+http/tests/navigation/success200-frames-loadsame.html
+http/tests/navigation/success200-frames.html
+http/tests/navigation/success200-subframeload.html
+http/tests/navigation/timerredirect-subframeload.html
+http/tests/navigation/back-to-slow-frame.html
+http/tests/navigation/javascriptlink-subframeload.html
+http/tests/navigation/lockedhistory-iframe.html
+
+http/tests/loading/gmail-assert-on-load.html
+
+# =========================================================================== #
+#       Failing HTTP tests.                                                   #
+# =========================================================================== #
+
+# no expected results
 http/tests/misc/acid2-pixel.html
 http/tests/misc/acid2.html
 http/tests/misc/favicon-as-image.html
+
+# drag n drop support on DRT has problems
 http/tests/misc/bubble-drag-events.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=34004
@@ -147,59 +186,59 @@ http/tests/loading/basic-auth-resend-wrong-credentials.html
 http/tests/globalhistory
 
 # Skip failing http/tests/misc tests
+# - pixel differences only?
 http/tests/misc/acid3.html
-http/tests/misc/isindex-with-no-form-base-href.html
-http/tests/misc/isindex-with-no-form.html
+
+# webkit.org/b/5499 - Page reload does not send any cache control headers.
 http/tests/misc/refresh-headers.php
-http/tests/misc/timer-vs-loading.html
 
 # Skip failing http/tests/security tests
-http/tests/security/cross-frame-access-callback-explicit-domain-ALLOW.html
-http/tests/security/cross-frame-access-put.html
+# - rendertext differences
 http/tests/security/dataTransfer-set-data-file-url.html
+# - drag n' drop in DRT doesn't work well
 http/tests/security/drag-over-remote-content-iframe.html
-http/tests/security/host-compare-case-insensitive.html
-http/tests/security/xss-DENIED-xsl-document-redirect.xml
+# - crashes
 http/tests/security/xss-DENIED-xsl-document.xml
-http/tests/security/aboutBlank/security-context-alias.html
-http/tests/security/aboutBlank/security-context-window-open.html
-http/tests/security/aboutBlank/xss-DENIED-navigate-opener-javascript-url.html
+# fails with an unrelated whitespace difference - should create qt-specific results
+http/tests/security/cross-frame-access-callback-explicit-domain-ALLOW.html
+# - FAIL: Subframe did not finish loading.
 http/tests/security/dataURL/xss-DENIED-to-data-url-sub-frame-uppercase.html
+# missing console message
 http/tests/security/frameNavigation/not-opener.html
-http/tests/security/frameNavigation/xss-DENIED-plugin-navigation.html
-http/tests/security/frameNavigation/xss-DENIED-targeted-link-navigation.html
+# missing origin header
 http/tests/security/originHeader/origin-header-for-empty.html
 
 # XSSAuditor test that times out. See https://bugs.webkit.org/show_bug.cgi?id=33460.
 http/tests/security/xssAuditor/malformed-HTML.html
 
 # Possibly related to https://bugs.webkit.org/show_bug.cgi?id=35263
+# are we utf-encoding a string twice over?
 http/tests/security/xssAuditor/embed-tag-null-char.html
 http/tests/security/xssAuditor/object-embed-tag-null-char.html
 
 # Disabled HTTP subdirs for now, needs investigation.
-http/tests/globalhistory
 http/tests/incremental
 http/tests/media
 http/tests/wml
 
-# Skip failed appcache test cases
-http/tests/appcache/auth.html
-
-# Failing URL test
+# not utf8-encoding urls as expected
 http/tests/uri/escaped-entity.html
 
-# Failing HTTP Loading tests
-http/tests/loading/bad-scheme-subframe.html
-http/tests/loading/gmail-assert-on-load.html
+# webkit.org/b/41571
 http/tests/loading/redirect-methods.html
+
+# expected results need updating
 http/tests/loading/simple-subframe.html
+
+# - content sniffing - Binary data not loaded as text.
 http/tests/loading/text-content-type-with-binary-extension.html
 
-# Failing Local tests
+# drag n drop support again
 http/tests/local/drag-over-remote-content.html
 http/tests/local/send-dragged-file.html
 http/tests/local/send-sliced-dragged-file.html
+
+# CONSOLE MESSAGE: line 72: TypeError: Result of expression 'eventSender.beginDragWithFiles' [undefined] is not a function.
 http/tests/local/blob/send-hybrid-blob.html
 http/tests/local/blob/send-sliced-data-blob.html
 http/tests/local/formdata/send-form-data.html
@@ -215,6 +254,8 @@ http/tests/navigation/timerredirect-goback.html
 
 #unknown
 http/tests/navigation/reload-subframe-object.html
+
+# new content not loaded from popup window
 http/tests/navigation/target-frame-from-window.html
 
 #CONSOLE MESSAGE: line 11: TypeError: Result of expression 'consoleWindow.log' [undefined] is not a function.
@@ -239,22 +280,11 @@ http/tests/navigation/postredirect-basic.html
 http/tests/navigation/postredirect-frames.html
 http/tests/navigation/postredirect-goback1.html
 
-# these pass on Qt 4.7. What about the bot?
-http/tests/navigation/metaredirect-subframeload.html
-http/tests/navigation/onload-navigation-iframe-2.html
-http/tests/navigation/onload-navigation-iframe-timeout.html
-http/tests/navigation/onload-navigation-iframe.html
-http/tests/navigation/success200-frames-loadsame.html
-http/tests/navigation/success200-frames.html
-http/tests/navigation/success200-subframeload.html
-http/tests/navigation/timerredirect-subframeload.html
-http/tests/navigation/back-to-slow-frame.html
-http/tests/navigation/javascriptlink-subframeload.html
-http/tests/navigation/lockedhistory-iframe.html
-
-# Failing http multipart test
+# time out
 http/tests/multipart/invalid-image-data.html
 http/tests/multipart/invalid-image-data-standalone.html
+
+# drt prints additional output - looks harmless
 http/tests/multipart/policy-ignore-crash.php
 
 # =========================================================================== #
