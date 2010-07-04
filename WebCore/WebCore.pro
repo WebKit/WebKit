@@ -324,7 +324,6 @@ SOURCES += \
     bindings/js/JSHTMLFormElementCustom.cpp \
     bindings/js/JSHTMLFrameElementCustom.cpp \
     bindings/js/JSHTMLFrameSetElementCustom.cpp \
-    bindings/js/JSHTMLIFrameElementCustom.cpp \
     bindings/js/JSHTMLInputElementCustom.cpp \
     bindings/js/JSHTMLObjectElementCustom.cpp \
     bindings/js/JSHTMLOptionsCollectionCustom.cpp \

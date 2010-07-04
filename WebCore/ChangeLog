@@ -1,3 +1,29 @@
+2010-07-04  Justin Schuh  <jschuh@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Remove custom src bindings for HTMLFrameElement and HTMLIFrameElement
+        https://bugs.webkit.org/show_bug.cgi?id=41578
+
+        Remove bindings obsoleted by: http://trac.webkit.org/changeset/59866
+        No new tests because behavior is not changed.
+
+        * Android.jscbindings.mk:
+        * Android.v8bindings.mk:
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSBindingsAllInOne.cpp:
+        * bindings/js/JSHTMLFrameElementCustom.cpp:
+        * bindings/js/JSHTMLIFrameElementCustom.cpp: Removed.
+        * bindings/v8/custom/V8HTMLFrameElementCustom.cpp:
+        * bindings/v8/custom/V8HTMLIFrameElementCustom.cpp: Removed.
+        * html/HTMLFrameElement.idl:
+        * html/HTMLIFrameElement.idl:
+
 2010-07-03  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Maciej Stachowiak.

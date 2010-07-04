@@ -43612,7 +43612,6 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\bindings\js\JSHTMLIFrameElementCustom.cpp"
 					>
 					<FileConfiguration
 						Name="Debug|Win32"

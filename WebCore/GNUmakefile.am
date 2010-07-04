@@ -468,7 +468,6 @@ webcore_sources += \
 	WebCore/bindings/js/JSHTMLFormElementCustom.cpp \
 	WebCore/bindings/js/JSHTMLFrameElementCustom.cpp \
 	WebCore/bindings/js/JSHTMLFrameSetElementCustom.cpp \
-	WebCore/bindings/js/JSHTMLIFrameElementCustom.cpp \
 	WebCore/bindings/js/JSHTMLInputElementCustom.cpp \
 	WebCore/bindings/js/JSHTMLInputElementCustom.h \
 	WebCore/bindings/js/JSHTMLObjectElementCustom.cpp \

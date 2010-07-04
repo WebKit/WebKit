@@ -30,7 +30,7 @@ module html {
         attribute [Reflect] DOMString name;
         attribute [Reflect] DOMString sandbox;
         attribute [Reflect] DOMString scrolling;
-        attribute [CustomSetter, Reflect] DOMString src;
+        attribute [Reflect] DOMString src;
         attribute [Reflect] DOMString width;
 
         // Introduced in DOM Level 2:
