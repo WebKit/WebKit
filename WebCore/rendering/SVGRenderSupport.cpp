@@ -143,7 +143,6 @@ bool SVGRenderSupport::prepareToRenderSVGContent(RenderObject* object, PaintInfo
 void SVGRenderSupport::finishRenderSVGContent(RenderObject* object, PaintInfo& paintInfo, GraphicsContext* savedContext)
 {
 #if !ENABLE(FILTERS)
-    UNUSED_PARAM(filter);
     UNUSED_PARAM(savedContext);
 #endif
 
