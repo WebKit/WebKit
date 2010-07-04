@@ -1,3 +1,16 @@
+2010-07-04  Robert Hogan  <robert@webkit.org>
+
+        [Qt] NPP_SetWindow seems to not be called when TestNetscapePlugin is moved
+
+        Unreviewed, accidental omission from r61505
+
+        https://bugs.webkit.org/show_bug.cgi?id=36702
+
+        Forgot to unskip plugins/reentrant-update-widget-positions.html
+        as part of http://trac.webkit.org/changeset/61505
+
+        * platform/qt/Skipped:
+
 2010-07-04  Yury Semikhatsky  <yury@yurys-imac.local>
 
         Unreviewed. Update Chromium test expectations.
