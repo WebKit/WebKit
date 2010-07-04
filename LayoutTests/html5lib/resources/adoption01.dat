@@ -1,0 +1,84 @@
+#data
+<a><p></a></p>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <a>
+|     <p>
+|       <a>
+
+#data
+<a>1<p>2</a>3</p>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <a>
+|       "1"
+|     <p>
+|       <a>
+|         "2"
+|       "3"
+
+#data
+<a>1<button>2</a>3</button>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <a>
+|       "1"
+|       <button>
+|         "2"
+|     "3"
+
+#data
+<a>1<b>2</a>3</b>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <a>
+|       "1"
+|       <b>
+|         "2"
+|     <b>
+|       "3"
+
+#data
+<a>1<div>2<div>3</a>4</div>5</div>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <a>
+|       "1"
+|     <div>
+|       <a>
+|         "2"
+|       <div>
+|         <a>
+|           "3"
+|         "4"
+|       "5"
+
+#data
+<table><a>1<p>2</a>3</p>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <a>
+|       "1"
+|     <p>
+|       <a>
+|         "2"
+|       "3"
+|     <table>

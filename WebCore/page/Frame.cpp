@@ -152,6 +152,7 @@ inline Frame::Frame(Page* page, HTMLFrameOwnerElement* ownerElement, FrameLoader
     , m_isDisconnected(false)
     , m_excludeFromTextSearch(false)
 {
+    ASSERT(page);
     AtomicString::init();
     HTMLNames::init();
     QualifiedName::init();

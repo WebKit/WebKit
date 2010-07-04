@@ -32,6 +32,7 @@
 
 namespace WebCore {
 
+class AtomicString;
 class Element;
 
 // This may end up merged into HTMLElementStack.
@@ -39,12 +40,6 @@ class HTMLFormattingElementList : public Noncopyable {
 public:
     HTMLFormattingElementList();
     ~HTMLFormattingElementList();
-
-    bool isEmpty() const { return !size(); }
-    size_t size() const { return m_entries.size(); }
-
-    void append(Element*);
-    void clearToLastMarker();
 
     // Ideally Entry would be private, but HTMLTreeBuilder has to coordinate
     // between the HTMLFormattingElementList and HTMLElementStack and needs
@@ -61,9 +56,24 @@ public:
         Element* element() const;
         void replaceElement(PassRefPtr<Element>);
 
+        // Needed for use with Vector.
+        bool operator==(const Entry&) const;
+        bool operator!=(const Entry&) const;
+
     private:
         RefPtr<Element> m_element;
     };
+
+    bool isEmpty() const { return !size(); }
+    size_t size() const { return m_entries.size(); }
+
+    Element* closestElementInScopeWithName(const AtomicString&);
+
+    Entry* find(Element*);
+    bool contains(Element*);
+    void append(Element*);
+    void remove(Element*);
+    void clearToLastMarker();
 
     const Entry& operator[](size_t i) const { return m_entries[i]; }
     Entry& operator[](size_t i) { return m_entries[i]; }

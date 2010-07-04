@@ -26,21 +26,53 @@
 #ifndef HTMLElementStack_h
 #define HTMLElementStack_h
 
-#include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/OwnPtr.h>
+#include <wtf/PassOwnPtr.h>
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
 class AtomicString;
 class Element;
 
+// NOTE: The HTML5 spec uses a backwards (grows downward) stack.  We're using
+// more standard (grows upwards) stack terminology here.
 class HTMLElementStack : public Noncopyable {
 public:
     HTMLElementStack();
     ~HTMLElementStack();
 
+    class ElementRecord : public Noncopyable {
+    public:
+        ~ElementRecord(); // Public for ~PassOwnPtr()
+    
+        Element* element() const { return m_element.get(); }
+        void replaceElement(PassRefPtr<Element>);
+
+        bool isAbove(ElementRecord*) const;
+
+        ElementRecord* next() const { return m_next.get(); }
+
+    private:
+        friend class HTMLElementStack;
+
+        ElementRecord(PassRefPtr<Element>, PassOwnPtr<ElementRecord>);
+
+        PassOwnPtr<ElementRecord> releaseNext() { return m_next.release(); }
+        void setNext(PassOwnPtr<ElementRecord> next) { m_next = next; }
+
+        RefPtr<Element> m_element;
+        OwnPtr<ElementRecord> m_next;
+    };
+    
     Element* top() const;
+    ElementRecord* topRecord() const;
+    Element* bottom() const;
+    ElementRecord* find(Element*) const;
+    ElementRecord* topmost(const AtomicString& tagName) const;
+
+    void insertAbove(PassRefPtr<Element>, ElementRecord*);
 
     void push(PassRefPtr<Element>);
     void pushHTMLHtmlElement(PassRefPtr<Element>);
@@ -63,16 +95,14 @@ public:
     bool inListItemScope(const AtomicString& tagName) const;
     bool inTableScope(const AtomicString& tagName) const;
 
-    Element* htmlElement();
-    Element* headElement();
-    Element* bodyElement();
+    Element* htmlElement() const;
+    Element* headElement() const;
+    Element* bodyElement() const;
 
-    // Public so free functions can use it, but defined privately.
-    class ElementRecord;
 private:
     void pushCommon(PassRefPtr<Element>);
     void popCommon();
-    void removeNonFirstCommon(Element*);
+    void removeNonTopCommon(Element*);
 
     OwnPtr<ElementRecord> m_top;
 

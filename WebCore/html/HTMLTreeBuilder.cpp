@@ -31,18 +31,19 @@
 #include "DocumentType.h"
 #include "Element.h"
 #include "Frame.h"
-#include "HTMLElementFactory.h"
-#include "HTMLScriptElement.h"
-#include "HTMLTokenizer.h"
-#include "HTMLToken.h"
 #include "HTMLDocument.h"
+#include "HTMLElementFactory.h"
 #include "HTMLHtmlElement.h"
-#include "LegacyHTMLDocumentParser.h"
 #include "HTMLNames.h"
+#include "HTMLScriptElement.h"
+#include "HTMLToken.h"
+#include "HTMLTokenizer.h"
+#include "LegacyHTMLDocumentParser.h"
 #include "LegacyHTMLTreeBuilder.h"
 #include "NotImplemented.h"
-#include "Settings.h"
+#include "SVGNames.h"
 #include "ScriptController.h"
+#include "Settings.h"
 #include "Text.h"
 #include <wtf/UnusedParam.h>
 
@@ -62,6 +63,132 @@ inline bool isTreeBuilderWhiteSpace(UChar cc)
 bool shouldUseLegacyTreeBuilder(Document* document)
 {
     return !document->settings() || !document->settings()->html5TreeBuilderEnabled();
+}
+
+bool isNumberedHeaderTag(const AtomicString& tagName)
+{
+    return tagName == h1Tag
+        || tagName == h2Tag
+        || tagName == h3Tag
+        || tagName == h4Tag
+        || tagName == h5Tag
+        || tagName == h6Tag;
+}
+
+// http://www.whatwg.org/specs/web-apps/current-work/multipage/parsing.html#special
+bool isSpecialTag(const AtomicString& tagName)
+{
+    return tagName == addressTag
+        || tagName == articleTag
+        || tagName == asideTag
+        || tagName == baseTag
+        || tagName == basefontTag
+        || tagName == "bgsound"
+        || tagName == blockquoteTag
+        || tagName == bodyTag
+        || tagName == brTag
+        || tagName == buttonTag
+        || tagName == centerTag
+        || tagName == colTag
+        || tagName == colgroupTag
+        || tagName == "command"
+        || tagName == ddTag
+        || tagName == "details"
+        || tagName == dirTag
+        || tagName == divTag
+        || tagName == dlTag
+        || tagName == dtTag
+        || tagName == embedTag
+        || tagName == fieldsetTag
+        || tagName == "figure"
+        || tagName == footerTag
+        || tagName == formTag
+        || tagName == frameTag
+        || tagName == framesetTag
+        || isNumberedHeaderTag(tagName)
+        || tagName == headTag
+        || tagName == headerTag
+        || tagName == hgroupTag
+        || tagName == hrTag
+        || tagName == iframeTag
+        || tagName == imgTag
+        || tagName == inputTag
+        || tagName == isindexTag
+        || tagName == liTag
+        || tagName == linkTag
+        || tagName == listingTag
+        || tagName == menuTag
+        || tagName == metaTag
+        || tagName == navTag
+        || tagName == noembedTag
+        || tagName == noframesTag
+        || tagName == noscriptTag
+        || tagName == olTag
+        || tagName == pTag
+        || tagName == paramTag
+        || tagName == plaintextTag
+        || tagName == preTag
+        || tagName == scriptTag
+        || tagName == sectionTag
+        || tagName == selectTag
+        || tagName == styleTag
+        || tagName == tbodyTag
+        || tagName == textareaTag
+        || tagName == tfootTag
+        || tagName == theadTag
+        || tagName == titleTag
+        || tagName == trTag
+        || tagName == ulTag
+        || tagName == wbrTag
+        || tagName == xmpTag;
+}
+
+// http://www.whatwg.org/specs/web-apps/current-work/multipage/parsing.html#scoping
+// Same as isScopingTag in LegacyHTMLTreeBuilder.cpp
+// and isScopeMarker in HTMLElementStack.cpp
+bool isScopingTag(const AtomicString& tagName)
+{
+    return tagName == appletTag
+        || tagName == buttonTag
+        || tagName == captionTag
+#if ENABLE(SVG_FOREIGN_OBJECT)
+        || tagName == SVGNames::foreignObjectTag
+#endif
+        || tagName == htmlTag
+        || tagName == marqueeTag
+        || tagName == objectTag
+        || tagName == tableTag
+        || tagName == tdTag
+        || tagName == thTag;
+}
+
+bool isNonAnchorFormattingTag(const AtomicString& tagName)
+{
+    return tagName == bTag
+        || tagName == bigTag
+        || tagName == codeTag
+        || tagName == emTag
+        || tagName == fontTag
+        || tagName == iTag
+        || tagName == nobrTag
+        || tagName == sTag
+        || tagName == smallTag
+        || tagName == strikeTag
+        || tagName == strongTag
+        || tagName == ttTag
+        || tagName == uTag;
+}
+
+// http://www.whatwg.org/specs/web-apps/current-work/multipage/parsing.html#formatting
+bool isFormattingTag(const AtomicString& tagName)
+{
+    return tagName == aTag || isNonAnchorFormattingTag(tagName);
+}
+
+// http://www.whatwg.org/specs/web-apps/current-work/multipage/parsing.html#phrasing
+bool isPhrasingTag(const AtomicString& tagName)
+{
+    return !isSpecialTag(tagName) && !isScopingTag(tagName) && !isFormattingTag(tagName);
 }
 
 } // namespace
@@ -419,7 +546,7 @@ void HTMLTreeBuilder::processStartTag(AtomicHTMLToken& token)
             insertElement(token);
             return;
         }
-        if (token.name() == h1Tag || token.name() == h2Tag || token.name() == h3Tag || token.name() == h4Tag || token.name() == h5Tag || token.name() == h6Tag) {
+        if (isNumberedHeaderTag(token.name())) {
             processFakePEndTagIfPInScope();
             notImplemented();
             insertElement(token);
@@ -470,7 +597,7 @@ void HTMLTreeBuilder::processStartTag(AtomicHTMLToken& token)
             insertFormattingElement(token);
             return;
         }
-        if (token.name() == bTag || token.name() == bigTag || token.name() == codeTag || token.name() == emTag || token.name() == fontTag || token.name() == iTag || token.name() == sTag || token.name() == smallTag || token.name() == strikeTag || token.name() == strongTag || token.name() == ttTag || token.name() == uTag) {
+        if (isNonAnchorFormattingTag(token.name())) {
             reconstructTheActiveFormattingElements();
             insertFormattingElement(token);
             return;
@@ -673,6 +800,160 @@ bool HTMLTreeBuilder::processBodyEndTagForInBody(AtomicHTMLToken& token)
     return true;
 }
 
+// FIXME: This probably belongs on HTMLElementStack.
+HTMLElementStack::ElementRecord* HTMLTreeBuilder::furthestBlockForFormattingElement(Element* formattingElement)
+{
+    HTMLElementStack::ElementRecord* furthestBlock = 0;
+    HTMLElementStack::ElementRecord* record = m_openElements.topRecord();
+    for (; record; record = record->next()) {
+        if (record->element() == formattingElement)
+            return furthestBlock;
+        const AtomicString& tagName = record->element()->localName();
+        // !phrasing && !formatting == scoping || special
+        if (isScopingTag(tagName) || isSpecialTag(tagName))
+            furthestBlock = record;
+    }
+    ASSERT_NOT_REACHED();
+    return 0;
+}
+
+void HTMLTreeBuilder::findFosterParentFor(Element* element)
+{
+    Element* fosterParentElement = 0;
+    HTMLElementStack::ElementRecord* lastTableElementRecord = m_openElements.topmost(tableTag.localName());
+    if (lastTableElementRecord) {
+        Element* lastTableElement = lastTableElementRecord->element();
+        if (lastTableElement->parent()) {
+            // FIXME: We need an insertElement which does not send mutation events.
+            ExceptionCode ec = 0;
+            lastTableElement->parent()->insertBefore(element, lastTableElement, ec);
+            ASSERT(!ec);
+            return;
+        }
+        fosterParentElement = lastTableElementRecord->next()->element();
+    } else {
+        ASSERT(m_isParsingFragment);
+        fosterParentElement = m_openElements.bottom(); // <html> element
+    }
+
+    fosterParentElement->parserAddChild(element);
+}
+
+// FIXME: This should have a whitty name.
+// FIXME: This must be implemented in many other places in WebCore.
+void HTMLTreeBuilder::reparentChildren(Element* oldParent, Element* newParent)
+{
+    Node* child = oldParent->firstChild();
+    while (child) {
+        Node* nextChild = child->nextSibling();
+        ExceptionCode ec;
+        newParent->appendChild(child, ec);
+        ASSERT(!ec);
+        child = nextChild;
+    }
+}
+
+// http://www.whatwg.org/specs/web-apps/current-work/multipage/tokenization.html#parsing-main-inbody
+void HTMLTreeBuilder::callTheAdoptionAgency(AtomicHTMLToken& token)
+{
+    while (1) {
+        // 1.
+        Element* formattingElement = m_activeFormattingElements.closestElementInScopeWithName(token.name());
+        if (!formattingElement || !m_openElements.inScope(formattingElement)) {
+            parseError(token);
+            notImplemented(); // Check the stack of open elements for a more specific parse error.
+            return;
+        }
+        HTMLElementStack::ElementRecord* formattingElementRecord = m_openElements.find(formattingElement);
+        if (!formattingElementRecord) {
+            parseError(token);
+            m_activeFormattingElements.remove(formattingElement);
+            return;
+        }
+        if (formattingElement != currentElement())
+            parseError(token);
+        // 2.
+        HTMLElementStack::ElementRecord* furthestBlock = furthestBlockForFormattingElement(formattingElement);
+        // 3.
+        if (!furthestBlock) {
+            m_openElements.popUntil(formattingElement);
+            m_openElements.pop();
+            m_activeFormattingElements.remove(formattingElement);
+            return;
+        }
+        // 4.
+        ASSERT(furthestBlock->isAbove(formattingElementRecord));
+        Element* commonAncestor = formattingElementRecord->next()->element();
+        // 5.
+        notImplemented(); // bookmark?
+        // 6.
+        HTMLElementStack::ElementRecord* node = furthestBlock;
+        HTMLElementStack::ElementRecord* nextNode = node->next();
+        HTMLElementStack::ElementRecord* lastNode = furthestBlock;
+        while (1) {
+            // 6.1
+            node = nextNode;
+            ASSERT(node);
+            nextNode = node->next(); // Save node->next() for the next iteration in case node is deleted in 6.2.
+            // 6.2
+            if (!m_activeFormattingElements.contains(node->element())) {
+                m_openElements.remove(node->element());
+                node = 0;
+                continue;
+            }
+            // 6.3
+            if (node == formattingElementRecord)
+                break;
+            // 6.4
+            if (lastNode == furthestBlock)
+                notImplemented(); // move bookmark.
+            // 6.5
+            // FIXME: We're supposed to save the original token in the entry.
+            AtomicHTMLToken fakeToken(HTMLToken::StartTag, node->element()->localName());
+            // Is createElement correct? (instead of insertElement)
+            // Does this code ever leave newElement unattached?
+            RefPtr<Element> newElement = createElement(fakeToken);
+            HTMLFormattingElementList::Entry* nodeEntry = m_activeFormattingElements.find(node->element());
+            nodeEntry->replaceElement(newElement.get());
+            node->replaceElement(newElement.release());
+            // 6.6
+            // Use appendChild instead of parserAddChild to handle possible reparenting.
+            ExceptionCode ec;
+            node->element()->appendChild(lastNode->element(), ec);
+            ASSERT(!ec);
+            // 6.7
+            lastNode = node;
+        }
+        // 7
+        const AtomicString& commonAncestorTag = commonAncestor->localName();
+        if (commonAncestorTag == tableTag
+            || commonAncestorTag == tbodyTag
+            || commonAncestorTag == tfootTag
+            || commonAncestorTag == theadTag
+            || commonAncestorTag == trTag)
+            findFosterParentFor(lastNode->element());
+        else {
+            ExceptionCode ec;
+            commonAncestor->appendChild(lastNode->element(), ec);
+            ASSERT(!ec);
+        }
+        // 8
+        // FIXME: We're supposed to save the original token in the entry.
+        AtomicHTMLToken fakeToken(HTMLToken::StartTag, formattingElement->localName());
+        RefPtr<Element> newElement = createElement(fakeToken);
+        // 9
+        reparentChildren(furthestBlock->element(), newElement.get());
+        // 10
+        furthestBlock->element()->parserAddChild(newElement);
+        // 11
+        m_activeFormattingElements.remove(formattingElement);
+        notImplemented(); // insert new element at bookmark
+        // 12
+        m_openElements.remove(formattingElement);
+        m_openElements.insertAbove(newElement, furthestBlock);
+    }
+}
+
 void HTMLTreeBuilder::processEndTag(AtomicHTMLToken& token)
 {
     switch (insertionMode()) {
@@ -787,7 +1068,7 @@ void HTMLTreeBuilder::processEndTag(AtomicHTMLToken& token)
             m_openElements.pop();
             return;
         }
-        if (token.name() == h1Tag || token.name() == h2Tag || token.name() == h3Tag || token.name() == h4Tag || token.name() == h5Tag || token.name() == h6Tag) {
+        if (isNumberedHeaderTag(token.name())) {
             if (!m_openElements.inScope(token.name())) {
                 parseError(token);
                 return;
@@ -803,9 +1084,8 @@ void HTMLTreeBuilder::processEndTag(AtomicHTMLToken& token)
             notImplemented(); // Take a deep breath.
             return;
         }
-        if (token.name() == aTag || token.name() == bTag || token.name() == bigTag || token.name() == codeTag || token.name() == emTag || token.name() == fontTag || token.name() == iTag || token.name() == nobrTag || token.name() == sTag || token.name() == smallTag || token.name() == strikeTag || token.name() == strongTag || token.name() == ttTag || token.name() == uTag) {
-            notImplemented();
-            // FIXME: There's a complicated algorithm that goes here.
+        if (isFormattingTag(token.name())) {
+            callTheAdoptionAgency(token);
             return;
         }
         if (token.name() == appletTag || token.name() == marqueeTag || token.name() == objectTag) {

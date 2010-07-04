@@ -64,6 +64,16 @@ void HTMLFormattingElementList::Entry::replaceElement(PassRefPtr<Element> elemen
     m_element = element;
 }
 
+bool HTMLFormattingElementList::Entry::operator==(const Entry& other) const
+{
+    return element() == other.element();
+}
+
+bool HTMLFormattingElementList::Entry::operator!=(const Entry& other) const
+{
+    return element() != other.element();
+}
+
 HTMLFormattingElementList::HTMLFormattingElementList()
 {
 }
@@ -72,9 +82,43 @@ HTMLFormattingElementList::~HTMLFormattingElementList()
 {
 }
 
+Element* HTMLFormattingElementList::closestElementInScopeWithName(const AtomicString& targetName)
+{
+    for (unsigned i = 1; i <= m_entries.size(); ++i) {
+        const Entry& entry = m_entries[m_entries.size() - i];
+        if (entry.isMarker())
+            return 0;
+        if (entry.element()->hasLocalName(targetName))
+            return entry.element();
+    }
+    return 0;
+}
+
+bool HTMLFormattingElementList::contains(Element* element)
+{
+    return !!find(element);
+}
+
+HTMLFormattingElementList::Entry* HTMLFormattingElementList::find(Element* element)
+{
+    size_t index = m_entries.find(element);
+    if (index != notFound) {
+        // This is somewhat of a hack, and is why this method can't be const.
+        return &m_entries[index];
+    }
+    return 0;
+}
+
 void HTMLFormattingElementList::append(Element* element)
 {
     m_entries.append(element);
+}
+
+void HTMLFormattingElementList::remove(Element* element)
+{
+    size_t index = m_entries.find(element);
+    if (index != notFound)
+        m_entries.remove(index);
 }
 
 void HTMLFormattingElementList::clearToLastMarker()

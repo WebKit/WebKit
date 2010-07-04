@@ -1,3 +1,19 @@
+2010-07-02  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        HTMLTreeBuilder needs an adoption agency
+        https://bugs.webkit.org/show_bug.cgi?id=41453
+
+        Added new adoption01 suite for testing adoption agency
+        bugs.  Right now only the simplest adoption test passes.
+        I'll be adding more in future commits.
+
+        * html5lib/resources/adoption01.dat: Added.
+        * html5lib/runner-expected-html5.txt:
+        * html5lib/runner-expected.txt:
+        * html5lib/runner.html:
+
 2010-07-04  Robert Hogan  <robert@webkit.org>
 
         [Qt] Triage failing HTTP tests in Qt Skipped list

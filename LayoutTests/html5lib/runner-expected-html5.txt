@@ -129,7 +129,7 @@ Got:
 |         <a>
 |           <a>
 |             "Y"
-|             "Z"
+|           "Z"
 Expected:
 | <html>
 |   <head>
@@ -388,7 +388,8 @@ Got:
 |   <head>
 |   <body>
 |     <b>
-|       <p>
+|     <p>
+|       <b>
 |         "TEST"
 Expected:
 | <html>
@@ -435,7 +436,7 @@ Got:
 |         <font>
 |           <b>
 |             "cruel"
-|             "world"
+|         "world"
 Expected:
 | <html>
 |   <head>
@@ -525,9 +526,10 @@ Got:
 |       <b>
 |         <cite>
 |           "B"
-|           <div>
-|             "C"
-|             "D"
+|       <div>
+|         <b>
+|           "C"
+|           "D"
 Expected:
 | <html>
 |   <head>
@@ -561,9 +563,13 @@ Got:
 |                           <cite>
 |                             <i>
 |                               <i>
-|                                 <div>
-|                                   "X"
-|                                   "TEST"
+|             <i>
+|               <i>
+|                 <i>
+|                   <div>
+|                     <b>
+|                       "X"
+|                       "TEST"
 Expected:
 | <html>
 |   <head>
@@ -697,7 +703,9 @@ Got:
 |         <b>
 |           <i>
 |             " ghi "
-|             <p>
+|         <i>
+|           <p>
+|             <b>
 |               " jkl "
 Expected:
 | <html>
@@ -727,7 +735,9 @@ Got:
 |         <b>
 |           <i>
 |             " ghi "
-|             <p>
+|         <i>
+|           <p>
+|             <b>
 |               " jkl "
 |               " mno"
 Expected:
@@ -759,7 +769,10 @@ Got:
 |         <b>
 |           <i>
 |             " ghi "
-|             <p>
+|         <i>
+|         <p>
+|           <i>
+|             <b>
 |               " jkl "
 |               " mno "
 Expected:
@@ -792,7 +805,10 @@ Got:
 |         <b>
 |           <i>
 |             " ghi "
-|             <p>
+|         <i>
+|         <p>
+|           <i>
+|             <b>
 |               " jkl "
 |               " mno "
 |               " pqr"
@@ -827,7 +843,10 @@ Got:
 |         <b>
 |           <i>
 |             " ghi "
-|             <p>
+|         <i>
+|         <p>
+|           <i>
+|             <b>
 |               " jkl "
 |               " mno "
 |               " pqr "
@@ -862,11 +881,14 @@ Got:
 |         <b>
 |           <i>
 |             " ghi "
-|             <p>
+|         <i>
+|         <p>
+|           <i>
+|             <b>
 |               " jkl "
 |               " mno "
 |               " pqr "
-|             " stu"
+|         " stu"
 Expected:
 | <html>
 |   <head>
@@ -1012,10 +1034,9 @@ Got:
 |     <strike>
 |       <strike>
 |         <code>
-|           <code>
-|             <code>
-|               <code>
-|                 <strike>
+|       <code>
+|         <code>
+|           <strike>
 Expected:
 | <html>
 |   <head>
@@ -1251,7 +1272,7 @@ Got:
 |                   <b>
 |                     <b>
 |                       <em>
-|                         <li>
+|                     <li>
 Expected:
 | <html>
 |   <head>
@@ -1900,8 +1921,8 @@ Got:
 |     <nobr>
 |       <nobr>
 |         <nobr>
+|         <nobr>
 |           <nobr>
-|             <nobr>
 Expected:
 | <!DOCTYPE html>
 | <html>
@@ -3100,7 +3121,8 @@ Got:
 |     <b>
 |       "a"
 |       <div>
-|       <div>
+|     <div>
+|       <b>
 |         "y"
 Expected:
 | <html>
@@ -3120,7 +3142,8 @@ Got:
 |   <head>
 |   <body>
 |     <a>
-|       <div>
+|     <div>
+|       <a>
 |         <p>
 Expected:
 | <html>
@@ -5488,4 +5511,128 @@ Expected:
 resources/entities02.dat: PASS
 
 resources/comments01.dat: PASS
+
+resources/adoption01.dat:
+2
+3
+4
+5
+6
+
+Test 2 of 6 in resources/adoption01.dat failed. Input:
+<a>1<p>2</a>3</p>
+Got:
+| <html>
+|   <head>
+|   <body>
+|     <a>
+|       "1"
+|     <p>
+|       <a>
+|         "2"
+|         "3"
+Expected:
+| <html>
+|   <head>
+|   <body>
+|     <a>
+|       "1"
+|     <p>
+|       <a>
+|         "2"
+|       "3"
+
+Test 3 of 6 in resources/adoption01.dat failed. Input:
+<a>1<button>2</a>3</button>
+Got:
+| <html>
+|   <head>
+|   <body>
+|     <a>
+|       "1"
+|       <a>
+|         <button>
+|           "2"
+|           "3"
+Expected:
+| <html>
+|   <head>
+|   <body>
+|     <a>
+|       "1"
+|       <button>
+|         "2"
+|     "3"
+
+Test 4 of 6 in resources/adoption01.dat failed. Input:
+<a>1<b>2</a>3</b>
+Got:
+| <html>
+|   <head>
+|   <body>
+|     <a>
+|       "1"
+|       <a>
+|         <b>
+|           "2"
+|       "3"
+Expected:
+| <html>
+|   <head>
+|   <body>
+|     <a>
+|       "1"
+|       <b>
+|         "2"
+|     <b>
+|       "3"
+
+Test 5 of 6 in resources/adoption01.dat failed. Input:
+<a>1<div>2<div>3</a>4</div>5</div>
+Got:
+| <html>
+|   <head>
+|   <body>
+|     <a>
+|       "1"
+|     <div>
+|       <a>
+|         "2"
+|         <div>
+|           "3"
+|           "4"
+|     "5"
+Expected:
+| <html>
+|   <head>
+|   <body>
+|     <a>
+|       "1"
+|     <div>
+|       <a>
+|         "2"
+|       <div>
+|         <a>
+|           "3"
+|         "4"
+|       "5"
+
+Test 6 of 6 in resources/adoption01.dat failed. Input:
+<table><a>1<p>2</a>3</p>
+Got:
+| <html>
+|   <head>
+|   <body>
+|     <table>
+Expected:
+| <html>
+|   <head>
+|   <body>
+|     <a>
+|       "1"
+|     <p>
+|       <a>
+|         "2"
+|       "3"
+|     <table>
 #EOF

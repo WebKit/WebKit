@@ -4890,3 +4890,48 @@ Expected:
 resources/entities02.dat: PASS
 
 resources/comments01.dat: PASS
+
+resources/adoption01.dat:
+1
+6
+
+Test 1 of 6 in resources/adoption01.dat failed. Input:
+<a><p></a></p>
+Got:
+| <html>
+|   <head>
+|   <body>
+|     <a>
+|     <p>
+Expected:
+| <html>
+|   <head>
+|   <body>
+|     <a>
+|     <p>
+|       <a>
+
+Test 6 of 6 in resources/adoption01.dat failed. Input:
+<table><a>1<p>2</a>3</p>
+Got:
+| <html>
+|   <head>
+|   <body>
+|     <a>
+|       "1"
+|       <p>
+|         "2"
+|         "3"
+|     <table>
+|       <tbody>
+Expected:
+| <html>
+|   <head>
+|   <body>
+|     <a>
+|       "1"
+|     <p>
+|       <a>
+|         "2"
+|       "3"
+|     <table>

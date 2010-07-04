@@ -1,3 +1,69 @@
+2010-07-01  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        HTMLTreeBuilder needs an adoption agency
+        https://bugs.webkit.org/show_bug.cgi?id=41453
+
+        This changes some test results, but only makes the simplest
+        adoption agency cases pass.  I think the code is likely
+        very close, but further iteration to make this change larger
+        seems counter-productive.  I recommend we check in this
+        progression and work from here.
+
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::addChildCommon):
+         - Make sure callers don't assume this will reparent.
+        (WebCore::ContainerNode::parserAddChild):
+         - Update comment to document lack of reparenting behavior.
+        * html/HTMLElementStack.cpp:
+        (WebCore::HTMLElementStack::ElementRecord::ElementRecord):
+        (WebCore::HTMLElementStack::ElementRecord::~ElementRecord):
+        (WebCore::HTMLElementStack::ElementRecord::replaceElement):
+        (WebCore::HTMLElementStack::ElementRecord::isAbove):
+         - Added for debugging.
+        (WebCore::HTMLElementStack::pushHTMLHtmlElement):
+        (WebCore::HTMLElementStack::insertAbove):
+         - Needed for the adoption agency.
+        (WebCore::HTMLElementStack::topRecord):
+        (WebCore::HTMLElementStack::bottom):
+        (WebCore::HTMLElementStack::removeHTMLHeadElement):
+        (WebCore::HTMLElementStack::remove):
+        (WebCore::HTMLElementStack::find):
+        (WebCore::HTMLElementStack::topmost):
+        (WebCore::HTMLElementStack::contains):
+        (WebCore::HTMLElementStack::htmlElement):
+        (WebCore::HTMLElementStack::headElement):
+        (WebCore::HTMLElementStack::bodyElement):
+        (WebCore::HTMLElementStack::pushCommon):
+        (WebCore::HTMLElementStack::removeNonTopCommon):
+         - Fix the name to match top/bottom.
+        * html/HTMLElementStack.h:
+        (WebCore::HTMLElementStack::ElementRecord::element):
+        (WebCore::HTMLElementStack::ElementRecord::next):
+        (WebCore::HTMLElementStack::ElementRecord::releaseNext):
+        (WebCore::HTMLElementStack::ElementRecord::setNext):
+        * html/HTMLFormattingElementList.cpp:
+        (WebCore::HTMLFormattingElementList::closestElementInScopeWithName):
+        (WebCore::HTMLFormattingElementList::contains):
+        (WebCore::HTMLFormattingElementList::find):
+        (WebCore::HTMLFormattingElementList::remove):
+        * html/HTMLFormattingElementList.h:
+        (WebCore::HTMLFormattingElementList::isEmpty):
+        (WebCore::HTMLFormattingElementList::size):
+        * html/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::processStartTag):
+        (WebCore::HTMLTreeBuilder::furthestBlockForFormattingElement):
+         - Part of the Adoption Agency algorithm.
+        (WebCore::HTMLTreeBuilder::findFosterParentFor):
+         - Used to move mis-nested content out of tables.
+           This doesn't seem to work quite right yet.
+        (WebCore::HTMLTreeBuilder::reparentChildren):
+        (WebCore::HTMLTreeBuilder::callTheAdoptionAgency):
+         - The ridiculously long/complicated adoption agency algorithm from HTML5.
+        (WebCore::HTMLTreeBuilder::processEndTag):
+        * html/HTMLTreeBuilder.h:
+
 2010-07-04  Justin Schuh  <jschuh@chromium.org>
 
         Reviewed by Darin Adler.
