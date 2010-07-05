@@ -2932,3 +2932,4 @@ BUG48154 WIN LINUX: fast/forms/indeterminate.html = IMAGE
 
 // Flaky.  Not sure why.  Trying to contact V8 folks about what's up.
 BUGPKASTING WIN LINUX : fast/js/function-apply-aliased.html = TEXT PASS
+BUG48239 DEBUG : fast/js/function-apply-many-args.html = TEXT

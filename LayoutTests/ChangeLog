@@ -1,3 +1,10 @@
+2010-07-04  Yury Semikhatsky  <yurys@chromium.org>
+
+        Unreviewed. Mark fast/js/function-apply-many-args.html as
+        having wrong output in debug mode.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-07-04  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.
