@@ -756,7 +756,10 @@ void HTMLTreeBuilder::processStartTag(AtomicHTMLToken& token)
             return;
         }
         if (token.name() == tdTag || token.name() == thTag || token.name() == trTag) {
-            notImplemented();
+            AtomicHTMLToken fakeToken(HTMLToken::StartTag, tbodyTag.localName());
+            processStartTag(fakeToken);
+            ASSERT(insertionMode() == InTableBodyMode);
+            processStartTag(token);
             return;
         }
         if (token.name() == tableTag) {
@@ -798,11 +801,23 @@ void HTMLTreeBuilder::processStartTag(AtomicHTMLToken& token)
             return;
         }
         if (token.name() == captionTag || token.name() == colTag || token.name() == colgroupTag || isTableBodyContextTag(token.name())) {
-            // FIXME: The spec is unclear as to what is supposed to happen here.
             notImplemented();
             return;
         }
         notImplemented(); // process using "in table" rules
+        break;
+    case InRowMode:
+        if (token.name() == thTag || token.name() == tdTag) {
+            m_openElements.popUntilTableRowScopeMarker();
+            insertElement(token);
+            m_insertionMode = InCellMode;
+            m_activeFormattingElements.appendMarker();
+        }
+        if (token.name() == captionTag || token.name() == colTag || token.name() == colgroupTag || isTableBodyContextTag(token.name())) {
+            notImplemented();
+            return;
+        }
+        notImplemented();
         break;
     case AfterBodyMode:
     case AfterAfterBodyMode:

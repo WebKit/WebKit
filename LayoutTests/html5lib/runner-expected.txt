@@ -4936,3 +4936,5 @@ Expected:
 |       "3"
 |     <table>
 resources/inbody01.dat: PASS
+
+resources/tables01.dat: PASS

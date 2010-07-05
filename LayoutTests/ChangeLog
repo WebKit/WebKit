@@ -2,6 +2,22 @@
 
         Reviewed by Adam Barth.
 
+        Add basic "in row" mode to support <td> insertion
+        https://bugs.webkit.org/show_bug.cgi?id=41588
+
+        Added tables01.dat to test a previously untested
+        <table><th> case.  I expect we'll add many more table
+        tests there as we complete our implementation.
+
+        * html5lib/runner-expected-html5.txt:
+        * html5lib/runner-expected.txt:
+        * html5lib/runner.html:
+        * html5lib/resources/tables01.dat: Added.
+
+2010-07-05  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
         Finish implementing "any other end tag" for "in body" mode
         https://bugs.webkit.org/show_bug.cgi?id=41582
 
