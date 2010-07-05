@@ -1,3 +1,10 @@
+2010-07-05  Antti Koivisto  <koivisto@iki.fi>
+
+        Revert unplanned project file change.
+
+        * WebCore.pri:
+        * WebCore.pro:
+
 2010-07-05  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Darin Adler.

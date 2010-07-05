@@ -1,3 +1,9 @@
+2010-07-05  Antti Koivisto  <koivisto@iki.fi>
+
+        Revert unplanned project file change.
+
+        * WebKit.pro:
+
 2010-06-23  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Gustavo Noronha Silva.
