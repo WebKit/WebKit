@@ -301,6 +301,15 @@ void SVGElement::attributeChanged(Attribute* attr, bool preserveDecls)
         return;
 
     StyledElement::attributeChanged(attr, preserveDecls);
+
+    // When an animated SVG property changes through SVG DOM, svgAttributeChanged() is called, not attributeChanged().
+    // Next time someone tries to access the XML attributes, the synchronization code starts. During that synchronization
+    // SVGAnimatedPropertySynchronizer may call NamedNodeMap::removeAttribute(), which in turn calls attributeChanged().
+    // At this point we're not allowed to call svgAttributeChanged() again - it may lead to extra work being done, or crashes
+    // see bug https://bugs.webkit.org/show_bug.cgi?id=40994.
+    if (isSynchronizingSVGAttributes())
+        return;
+
     svgAttributeChanged(attr->name());
 }
 
