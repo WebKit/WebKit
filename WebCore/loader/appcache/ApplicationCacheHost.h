@@ -126,6 +126,7 @@ namespace WebCore {
 #if PLATFORM(CHROMIUM)
         friend class ApplicationCacheHostInternal;
         OwnPtr<ApplicationCacheHostInternal> m_internal;
+        ApplicationCache* applicationCache() const { return 0; } // FIXME: Implement for Chromium Web Inspector Support.
 #else
         friend class ApplicationCacheGroup;
         friend class ApplicationCacheStorage;

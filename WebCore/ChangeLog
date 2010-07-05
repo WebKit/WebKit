@@ -17,6 +17,15 @@
 
         Unreviewed build fix for r62503.
 
+        Chromium missing method. Filed bug 41632 to track.
+
+        * loader/appcache/ApplicationCacheHost.h:
+        (WebCore::ApplicationCacheHost::applicationCache):
+
+2010-07-05  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Unreviewed build fix for r62503.
+
         Missed GTK's build file.
 
         * GNUmakefile.am:
