@@ -1,3 +1,17 @@
+2010-07-04  Rob Buis  <rwlbuis@gmail.com>
+
+        Reviewed by Dirk Schulze.
+
+        SVG polygons should draw polygons up to the first parsing error
+        https://bugs.webkit.org/show_bug.cgi?id=41140
+
+        Render polygons up until the first parsing error.
+
+        Test: svg/custom/poly-parsing-error.html
+
+        * svg/SVGPolyElement.cpp:
+        (WebCore::SVGPolyElement::parseMappedAttribute):
+
 2010-07-04  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by Dan Bernstein.

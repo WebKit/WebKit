@@ -107,10 +107,10 @@ Test string: '10,,10'
 PASS '' is ''
 
 Test string: '10,10,'
-PASS '' is ''
+PASS '10 10' is '10 10'
 
 Test string: '10,10a'
-PASS '' is ''
+PASS '10 10' is '10 10'
 
 Test string: ',10'
 PASS '' is ''

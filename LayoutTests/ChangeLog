@@ -1,3 +1,21 @@
+2010-07-04  Rob Buis  <rwlbuis@gmail.com>
+
+        Reviewed by Dirk Schulze.
+
+        SVG polygons should draw polygons up to the first parsing error
+        https://bugs.webkit.org/show_bug.cgi?id=41140
+
+        Add a new test for the new behaviour on points parsing errors
+        and adjust old tests.
+
+        * platform/mac/svg/custom/polyline-invalid-points-expected.txt:
+        * svg/custom/poly-parsing-error-expected.txt: Added.
+        * svg/custom/poly-parsing-error.html: Added.
+        * svg/custom/polyline-invalid-points.svg:
+        * svg/custom/script-tests/poly-parsing-error.js: Added.
+        * svg/dom/points-parser-expected.txt:
+        * svg/dom/points-parser.html:
+
 2010-07-04  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed. Mark fast/js/function-apply-many-args.html as
