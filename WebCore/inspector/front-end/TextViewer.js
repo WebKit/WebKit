@@ -551,28 +551,24 @@ WebInspector.TextViewer.prototype = {
             return { line: lineNumber, column: this._textModel.lineLength(lineNumber) };
 
         var column = 0;
-        if (lineRow.chunk) {
-            // This is chunk.
-            var text = lineRow.lastChild.textContent;
-            for (var i = 0; i < offset; ++i) {
-                if (text.charAt(i) === "\n") {
-                    lineNumber++;
-                    column = 0;
-                } else
-                    column++; 
-            }
-            return { line: lineNumber, column: column };
-        }
-
-        // This is individul line.
-        var column = 0;
         var node = lineRow.lastChild.traverseNextTextNode(lineRow.lastChild);
         while (node && node !== container) {
             column += node.textContent.length;
             node = node.traverseNextTextNode(lineRow.lastChild);
         }
-        column += offset;
-        return { line: lineRow.lineNumber, column: column };
+
+        // This may be chunk and chunks may contain \n.
+        if (node === container && offset) {
+            var text = node.textContent;
+            for (var i = 0; i < offset; ++i) {
+                if (text.charAt(i) === "\n") {
+                    lineNumber++;
+                    column = 0;
+                } else
+                    column++;
+            }
+        }
+        return { line: lineNumber, column: column };
     },
 
     _appendSpan: function(element, content, className)
