@@ -1348,6 +1348,8 @@ webcore_sources += \
 	WebCore/inspector/InjectedScript.h \
 	WebCore/inspector/InjectedScriptHost.cpp \
 	WebCore/inspector/InjectedScriptHost.h \
+	WebCore/inspector/InspectorApplicationCacheAgent.cpp \
+	WebCore/inspector/InspectorApplicationCacheAgent.h \
 	WebCore/inspector/InspectorBackend.cpp \
 	WebCore/inspector/InspectorBackend.h \
 	WebCore/inspector/InspectorCSSStore.cpp \

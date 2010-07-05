@@ -2,6 +2,14 @@
 
         Unreviewed build fix for r62503.
 
+        Missed GTK's build file.
+
+        * GNUmakefile.am:
+
+2010-07-05  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Unreviewed build fix for r62503.
+
         Pass a blank ResourceResponse instead of passing 0.
 
         * loader/appcache/ApplicationCacheGroup.cpp:
