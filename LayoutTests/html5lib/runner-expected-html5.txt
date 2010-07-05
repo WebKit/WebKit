@@ -1345,6 +1345,7 @@ Got:
 |   <body>
 |     <table>
 |       <tbody>
+|         <tr>
 Expected:
 | <html>
 |   <head>
@@ -2601,6 +2602,7 @@ Got:
 |   <body>
 |     <table>
 |       <tbody>
+|         <tr>
 Expected:
 | <!DOCTYPE html>
 | <html>
@@ -3231,6 +3233,7 @@ Got:
 |   <body>
 |     <table>
 |       <tbody>
+|         <tr>
 Expected:
 | <!DOCTYPE html>
 | <html>
@@ -3254,6 +3257,7 @@ Got:
 |   <body>
 |     <table>
 |       <tbody>
+|         <tr>
 Expected:
 | <!DOCTYPE html>
 | <html>
@@ -3278,6 +3282,7 @@ Got:
 |   <body>
 |     <table>
 |       <tbody>
+|         <tr>
 Expected:
 | <!DOCTYPE html>
 | <html>
@@ -3741,6 +3746,7 @@ Got:
 |   <body>
 |     <table>
 |       <tbody>
+|         <tr>
 Expected:
 | <!DOCTYPE html>
 | <html>
@@ -3764,6 +3770,7 @@ Got:
 |   <body>
 |     <table>
 |       <tbody>
+|         <tr>
 Expected:
 | <!DOCTYPE html>
 | <html>
@@ -3788,6 +3795,7 @@ Got:
 |   <body>
 |     <table>
 |       <tbody>
+|         <tr>
 Expected:
 | <!DOCTYPE html>
 | <html>

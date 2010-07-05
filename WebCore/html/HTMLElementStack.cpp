@@ -64,8 +64,16 @@ inline bool isListItemScopeMarker(Element* element)
 }
 inline bool isTableScopeMarker(Element* element)
 {
-    return element->hasTagName(htmlTag)
-        || element->hasTagName(tableTag);
+    return element->hasTagName(tableTag)
+        || element->hasTagName(htmlTag);
+}
+
+inline bool isTableBodyScopeMarker(Element* element)
+{
+    return element->hasTagName(tbodyTag)
+        || element->hasTagName(tfootTag)
+        || element->hasTagName(theadTag)
+        || element->hasTagName(htmlTag);
 }
 
 }
@@ -147,6 +155,13 @@ void HTMLElementStack::popUntilTableScopeMarker()
 {
     // http://www.whatwg.org/specs/web-apps/current-work/multipage/tokenization.html#clear-the-stack-back-to-a-table-context
     while (!isTableScopeMarker(top()))
+        pop();
+}
+
+void HTMLElementStack::popUntilTableBodyScopeMarker()
+{
+    // http://www.whatwg.org/specs/web-apps/current-work/multipage/tokenization.html#clear-the-stack-back-to-a-table-body-context
+    while (!isTableBodyScopeMarker(top()))
         pop();
 }
 

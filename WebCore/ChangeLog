@@ -1,3 +1,25 @@
+2010-07-04  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Add basic "in table body" mode to support <tr> insertion
+        https://bugs.webkit.org/show_bug.cgi?id=41587
+
+        This also adds a (currently untestable?)
+        popUntilTableBodyScopeMarker code path.
+        Any tags which would be between a tbody a <tr> would end up
+        foster parented outside the <table>.  I think the spec was
+        just being over-cautious with popUntilTableBodyScopeMarker.
+
+        * html/HTMLElementStack.cpp:
+        (WebCore::HTMLNames::isTableScopeMarker):
+        (WebCore::HTMLNames::isTableBodyScopeMarker):
+        (WebCore::HTMLElementStack::popUntilTableBodyScopeMarker):
+        * html/HTMLElementStack.h:
+        * html/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::processStartTag):
+        (WebCore::HTMLTreeBuilder::callTheAdoptionAgency):
+
 2010-07-04  Anders Carlsson  <andersca@apple.com>
 
         Fix Windows build.
