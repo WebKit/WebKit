@@ -2,6 +2,16 @@
 
         Reviewed by Adam Barth.
 
+        Add basic <col> support to the treebuilder
+        https://bugs.webkit.org/show_bug.cgi?id=41590
+
+        * html/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::processStartTag):
+
+2010-07-05  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
         Add basic "in row" mode to support <td> and <th> insertion
         https://bugs.webkit.org/show_bug.cgi?id=41588
 

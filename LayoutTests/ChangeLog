@@ -2,6 +2,20 @@
 
         Reviewed by Adam Barth.
 
+        Add basic <col> support to the treebuilder
+        https://bugs.webkit.org/show_bug.cgi?id=41590
+
+        Test the new <col> support. Turns out the old treebuilder doesn't
+        handle <table><col> correctly.
+
+        * html5lib/resources/tables01.dat:
+        * html5lib/runner-expected-html5.txt:
+        * html5lib/runner-expected.txt:
+
+2010-07-05  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
         Add basic "in row" mode to support <td> insertion
         https://bugs.webkit.org/show_bug.cgi?id=41588
 

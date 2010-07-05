@@ -21,3 +21,26 @@
 |       <tbody>
 |         <tr>
 |           <td>
+
+#data
+<table><col foo='bar'>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <table>
+|       <colgroup>
+|         <col>
+|           foo="bar"
+
+#data
+<table><colgroup></html>foo
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     "foo"
+|     <table>
+|       <colgroup>

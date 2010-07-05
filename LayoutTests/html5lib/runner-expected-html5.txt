@@ -1355,6 +1355,12 @@ Got:
 |   <body>
 |     <table>
 |       <colgroup>
+|         <col>
+|         <col>
+|         <col>
+|         <col>
+|         <col>
+|         <col>
 Expected:
 | <html>
 |   <head>
@@ -1380,9 +1386,12 @@ Got:
 |   <head>
 |   <body>
 |     <table>
-|       <tbody>
-|         <tr>
-|           <td>
+|       <colgroup>
+|         <col>
+|         <col>
+|         <col>
+|         <col>
+|         <col>
 Expected:
 | <html>
 |   <head>
@@ -5628,5 +5637,22 @@ Expected:
 |     <table>
 resources/inbody01.dat: PASS
 
-resources/tables01.dat: PASS
+resources/tables01.dat:
+4
+
+Test 4 of 4 in resources/tables01.dat failed. Input:
+<table><colgroup></html>foo
+Got:
+| <html>
+|   <head>
+|   <body>
+|     <table>
+|       <colgroup>
+Expected:
+| <html>
+|   <head>
+|   <body>
+|     "foo"
+|     <table>
+|       <colgroup>
 #EOF

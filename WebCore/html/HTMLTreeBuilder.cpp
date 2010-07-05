@@ -746,7 +746,10 @@ void HTMLTreeBuilder::processStartTag(AtomicHTMLToken& token)
             return;
         }
         if (token.name() == colTag) {
-            notImplemented();
+            AtomicHTMLToken fakeToken(HTMLToken::StartTag, colgroupTag.localName());
+            processStartTag(fakeToken);
+            ASSERT(InColumnGroupMode);
+            processStartTag(token);
             return;
         }
         if (isTableBodyContextTag(token.name())) {
@@ -782,6 +785,17 @@ void HTMLTreeBuilder::processStartTag(AtomicHTMLToken& token)
             return;
         }
         parseError(token);
+        notImplemented();
+        break;
+    case InColumnGroupMode:
+        if (token.name() == htmlTag) {
+            insertHTMLStartTagInBody(token);
+            return;
+        }
+        if (token.name() == colTag) {
+            insertSelfClosingElement(token);
+            return;
+        }
         notImplemented();
         break;
     case InTableBodyMode:
