@@ -36,6 +36,9 @@
 #else
 class WKView;
 #endif
+#elif PLATFORM(QT)
+#include <QImage>
+class QGraphicsWKView;
 #endif
 
 namespace WebKit {
@@ -48,6 +51,8 @@ typedef WKView PlatformWebView;
 #elif PLATFORM(WIN)
 class WebView;
 typedef WebView PlatformWebView;
+#elif PLATFORM(QT)
+typedef QGraphicsWKView PlatformWebView;
 #endif
 
 class ChunkedUpdateDrawingAreaProxy : public DrawingAreaProxy {
@@ -95,6 +100,8 @@ private:
     // BackingStore
     OwnPtr<HDC> m_backingStoreDC;
     OwnPtr<HBITMAP> m_backingStoreBitmap;
+#elif PLATFORM(QT)
+    QImage m_backingStoreImage;
 #endif
 
     PlatformWebView* m_webView;
