@@ -64,8 +64,12 @@ def run_silent(args, cwd=None):
 
 
 def write_into_file_at_path(file_path, contents, encoding="utf-8"):
-    with codecs.open(file_path, "w", encoding) as file:
-        file.write(contents)
+    if encoding:
+        with codecs.open(file_path, "w", encoding) as file:
+            file.write(contents)
+    else:
+        with open(file_path, "w") as file:
+            file.write(contents)
 
 
 def read_from_path(file_path, encoding="utf-8"):
@@ -657,6 +661,13 @@ Q1dTBx0AAAB42itg4GlgYJjGwMDDyODMxMDw34GBgQEAJPQDJA==
         SVNTestRepository._svn_commit("fourth commit")
         self.assertEqual("Hello!", self.scm.show_head('test_file'))
 
+    def test_show_head_binary(self):
+        data = "\244"
+        write_into_file_at_path("binary_file", data, encoding=None)
+        self.scm.add("binary_file")
+        self.scm.commit_with_message("a test commit")
+        self.assertEqual(data, self.scm.show_head('binary_file'))
+
     def do_test_diff_for_file(self):
         write_into_file_at_path('test_file', 'some content')
         self.scm.commit_with_message("a test commit")
@@ -1168,6 +1179,14 @@ class GitSVNTest(SCMTest):
     def test_show_head(self):
         self._two_local_commits()
         self.assertEqual("more test content", self.scm.show_head('test_file_commit1'))
+
+    def test_show_head_binary(self):
+        self._two_local_commits()
+        data = "\244"
+        write_into_file_at_path("binary_file", data, encoding=None)
+        self.scm.add("binary_file")
+        self.scm.commit_locally_with_message("a test commit")
+        self.assertEqual(data, self.scm.show_head('binary_file'))
 
     def test_diff_for_file(self):
         self._two_local_commits()

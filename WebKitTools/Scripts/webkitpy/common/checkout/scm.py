@@ -460,7 +460,7 @@ class SVN(SCM):
             self._teardown_bogus_dir(log)
 
     def show_head(self, path):
-        return self.run(['svn', 'cat', '-r', 'BASE', path])
+        return self.run(['svn', 'cat', '-r', 'BASE', path], decode_output=False)
 
     def _repository_url(self):
         return self.value_from_svn_info(self.checkout_root, 'URL')
@@ -526,7 +526,7 @@ class Git(SCM):
     @classmethod
     def find_checkout_root(cls, path):
         # "git rev-parse --show-cdup" would be another way to get to the root
-        (checkout_root, dot_git) = os.path.split(run_command(['git', 'rev-parse', '--git-dir'], cwd=path))
+        (checkout_root, dot_git) = os.path.split(run_command(['git', 'rev-parse', '--git-dir'], cwd=(path or "./")))
         # If we were using 2.6 # checkout_root = os.path.relpath(checkout_root, path)
         if not os.path.isabs(checkout_root): # Sometimes git returns relative paths
             checkout_root = os.path.join(path, checkout_root)
@@ -662,7 +662,7 @@ class Git(SCM):
         return self.run(['git', 'diff', 'HEAD', '--', path])
 
     def show_head(self, path):
-        return self.run(['git', 'show', 'HEAD:' + self.to_object_name(path)])
+        return self.run(['git', 'show', 'HEAD:' + self.to_object_name(path)], decode_output=False)
 
     def committer_email_for_revision(self, revision):
         git_commit = self.git_commit_from_svn_revision(revision)
