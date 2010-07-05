@@ -40,6 +40,7 @@
 #include <wtf/Vector.h>
 
 namespace WebCore {
+    class ApplicationCache;
     class DOMApplicationCache;
     class DocumentLoader;
     class KURL;
@@ -51,7 +52,6 @@ namespace WebCore {
 #if PLATFORM(CHROMIUM)
     class ApplicationCacheHostInternal;
 #else
-    class ApplicationCache;
     class ApplicationCacheGroup;
     class ApplicationCacheResource;
     class ApplicationCacheStorage;

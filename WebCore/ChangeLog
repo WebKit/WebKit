@@ -1,5 +1,13 @@
 2010-07-05  Joseph Pecoraro  <joepeck@webkit.org>
 
+        Unreviewed build fix for r62503.
+
+        Forward declare ApplicationCache for Chromium.
+
+        * loader/appcache/ApplicationCacheHost.h:
+
+2010-07-05  Joseph Pecoraro  <joepeck@webkit.org>
+
         Reviewed by Pavel Feldman.
 
         WebInspector: HTML5 Offline Web Applications Support (ApplicationCache)
