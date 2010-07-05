@@ -56,10 +56,18 @@ WebInspector.SourceFrame.prototype = {
         this._visible = visible;
         this._createViewerIfNeeded();
         
-        if (!visible) {
+        if (visible) {
+            if (this._textViewer && this._scrollTop)
+                this._textViewer.element.scrollTop = this._scrollTop;
+            if (this._textViewer && this._scrollLeft)
+                this._textViewer.element.scrollLeft = this._scrollLeft;
+        } else {
             this._hidePopup();
-            if (this._textViewer)
+            if (this._textViewer) {
+                this._scrollTop = this._textViewer.element.scrollTop;
+                this._scrollLeft = this._textViewer.element.scrollLeft;
                 this._textViewer.freeCachedElements();
+            }
         }
     },
 

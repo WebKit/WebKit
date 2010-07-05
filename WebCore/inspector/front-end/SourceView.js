@@ -58,8 +58,8 @@ WebInspector.SourceView.prototype = {
 
     hide: function()
     {
-        WebInspector.View.prototype.hide.call(this);
         this.sourceFrame.visible = false;
+        WebInspector.View.prototype.hide.call(this);
         if (this.localSourceFrame)
             this.localSourceFrame.visible = false;
         this._currentSearchResultIndex = -1;

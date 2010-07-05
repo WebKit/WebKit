@@ -224,9 +224,9 @@ WebInspector.ScriptsPanel.prototype = {
     
     hide: function()
     {
-        WebInspector.Panel.prototype.hide.call(this);
         if (this.visibleView)
             this.visibleView.hide();
+        WebInspector.Panel.prototype.hide.call(this);
     },
 
     get searchableViews()
