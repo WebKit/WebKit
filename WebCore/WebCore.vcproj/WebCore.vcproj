@@ -50085,6 +50085,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\inspector\InspectorApplicationCacheAgent.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\inspector\InspectorApplicationCacheAgent.h"
+				>
+			</File>
+			<File
 				RelativePath="..\inspector\InspectorBackend.cpp"
 				>
 			</File>
@@ -50217,6 +50225,10 @@
 				>
 				<File
 					RelativePath="..\inspector\front-end\AbstractTimelinePanel.js"
+					>
+				</File>
+				<File
+					RelativePath="..\inspector\front-end\ApplicationCacheItemsView.js"
 					>
 				</File>
 				<File

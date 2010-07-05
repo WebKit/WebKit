@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008, 2009, 2010 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -44,6 +44,12 @@
 #include "Page.h"
 #include "Settings.h"
 #include <wtf/HashMap.h>
+
+#if ENABLE(INSPECTOR)
+#include "InspectorApplicationCacheAgent.h"
+#include "InspectorController.h"
+#include "ProgressTracker.h"
+#endif
 
 namespace WebCore {
 
@@ -368,12 +374,30 @@ void ApplicationCacheGroup::cacheDestroyed(ApplicationCache* cache)
     }
 }
 
+#if ENABLE(INSPECTOR)
+static void inspectorUpdateApplicationCacheStatus(Frame* frame)
+{
+    if (!frame)
+        return;
+
+    if (Page *page = frame->page()) {
+        if (InspectorApplicationCacheAgent* applicationCacheAgent = page->inspectorController()->applicationCacheAgent()) {
+            ApplicationCacheHost::Status status = frame->loader()->documentLoader()->applicationCacheHost()->status();
+            applicationCacheAgent->updateApplicationCacheStatus(status);
+        }
+    }
+}
+#endif
+
 void ApplicationCacheGroup::setNewestCache(PassRefPtr<ApplicationCache> newestCache)
 {
     m_newestCache = newestCache;
 
     m_caches.add(m_newestCache.get());
     m_newestCache->setGroup(this);
+#if ENABLE(INSPECTOR)
+    inspectorUpdateApplicationCacheStatus(m_frame);
+#endif
 }
 
 void ApplicationCacheGroup::makeObsolete()
@@ -384,6 +408,9 @@ void ApplicationCacheGroup::makeObsolete()
     m_isObsolete = true;
     cacheStorage().cacheGroupMadeObsolete(this);
     ASSERT(!m_storageID);
+#if ENABLE(INSPECTOR)
+    inspectorUpdateApplicationCacheStatus(m_frame);
+#endif
 }
 
 void ApplicationCacheGroup::update(Frame* frame, ApplicationCacheUpdateOption updateOption)
@@ -410,7 +437,7 @@ void ApplicationCacheGroup::update(Frame* frame, ApplicationCacheUpdateOption up
     ASSERT(!m_frame);
     m_frame = frame;
 
-    m_updateStatus = Checking;
+    setUpdateStatus(Checking);
 
     postListenerTask(ApplicationCacheHost::CHECKING_EVENT, m_associatedDocumentLoaders);
     if (!m_newestCache) {
@@ -442,12 +469,42 @@ PassRefPtr<ResourceHandle> ApplicationCacheGroup::createResourceHandle(const KUR
                 request.setHTTPHeaderField("If-None-Match", eTag);
         }
     }
-    
-    return ResourceHandle::create(request, this, m_frame, false, true);
+
+    RefPtr<ResourceHandle> handle = ResourceHandle::create(request, this, m_frame, false, true);
+#if ENABLE(INSPECTOR)
+    // Because willSendRequest only gets called during redirects, we initialize
+    // the identifier and the first willSendRequest here.
+    m_currentResourceIdentifier = m_frame->page()->progress()->createUniqueIdentifier();
+    if (Page* page = m_frame->page()) {
+        InspectorController* inspectorController = page->inspectorController();
+        inspectorController->identifierForInitialRequest(m_currentResourceIdentifier, m_frame->loader()->documentLoader(), handle->request());
+        inspectorController->willSendRequest(m_currentResourceIdentifier, handle->request(), 0);
+    }
+#endif
+    return handle;
 }
+
+#if ENABLE(INSPECTOR)
+void ApplicationCacheGroup::willSendRequest(ResourceHandle*, ResourceRequest& request, const ResourceResponse& redirectResponse)
+{
+    // This only gets called by ResourceHandleMac if there is a redirect.
+    if (Page* page = m_frame->page())
+        page->inspectorController()->willSendRequest(m_currentResourceIdentifier, request, redirectResponse);
+}
+#endif
 
 void ApplicationCacheGroup::didReceiveResponse(ResourceHandle* handle, const ResourceResponse& response)
 {
+#if ENABLE(INSPECTOR)
+    if (Page* page = m_frame->page()) {
+        if (handle == m_manifestHandle) {
+            if (InspectorApplicationCacheAgent* applicationCacheAgent = page->inspectorController()->applicationCacheAgent())
+                applicationCacheAgent->didReceiveManifestResponse(m_currentResourceIdentifier, response);
+        } else
+            page->inspectorController()->didReceiveResponse(m_currentResourceIdentifier, response);
+    }
+#endif
+
     if (handle == m_manifestHandle) {
         didReceiveManifestResponse(response);
         return;
@@ -512,8 +569,15 @@ void ApplicationCacheGroup::didReceiveResponse(ResourceHandle* handle, const Res
     m_currentResource = ApplicationCacheResource::create(url, response, type);
 }
 
-void ApplicationCacheGroup::didReceiveData(ResourceHandle* handle, const char* data, int length, int)
+void ApplicationCacheGroup::didReceiveData(ResourceHandle* handle, const char* data, int length, int lengthReceived)
 {
+#if ENABLE(INSPECTOR)
+    if (Page* page = m_frame->page())
+        page->inspectorController()->didReceiveContentLength(m_currentResourceIdentifier, lengthReceived);
+#else
+    UNUSED_PARAM(lengthReceived);
+#endif
+
     if (handle == m_manifestHandle) {
         didReceiveManifestData(data, length);
         return;
@@ -527,6 +591,11 @@ void ApplicationCacheGroup::didReceiveData(ResourceHandle* handle, const char* d
 
 void ApplicationCacheGroup::didFinishLoading(ResourceHandle* handle)
 {
+#if ENABLE(INSPECTOR)
+    if (Page* page = m_frame->page())
+        page->inspectorController()->didFinishLoading(m_currentResourceIdentifier);
+#endif
+
     if (handle == m_manifestHandle) {
         didFinishLoadingManifest();
         return;
@@ -546,8 +615,15 @@ void ApplicationCacheGroup::didFinishLoading(ResourceHandle* handle)
     startLoadingEntry();
 }
 
-void ApplicationCacheGroup::didFail(ResourceHandle* handle, const ResourceError&)
+void ApplicationCacheGroup::didFail(ResourceHandle* handle, const ResourceError& error)
 {
+#if ENABLE(INSPECTOR)
+    if (Page* page = m_frame->page())
+        page->inspectorController()->didFailLoading(m_currentResourceIdentifier, error);
+#else
+    UNUSED_PARAM(error);
+#endif
+
     if (handle == m_manifestHandle) {
         cacheUpdateFailed();
         return;
@@ -648,7 +724,7 @@ void ApplicationCacheGroup::didFinishLoadingManifest()
         associateDocumentLoaderWithCache(*iter, m_cacheBeingUpdated.get());
 
     // We have the manifest, now download the resources.
-    m_updateStatus = Downloading;
+    setUpdateStatus(Downloading);
     
     postListenerTask(ApplicationCacheHost::DOWNLOADING_EVENT, m_associatedDocumentLoaders);
 
@@ -719,7 +795,7 @@ void ApplicationCacheGroup::manifestNotFound()
     }
 
     m_downloadingPendingMasterResourceLoadersCount = 0;
-    m_updateStatus = Idle;    
+    setUpdateStatus(Idle);    
     m_frame = 0;
     
     if (m_caches.isEmpty()) {
@@ -832,7 +908,7 @@ void ApplicationCacheGroup::checkIfLoadIsComplete()
     // Empty cache group's list of pending master entries.
     m_pendingMasterResourceLoaders.clear();
     m_completionType = None;
-    m_updateStatus = Idle;
+    setUpdateStatus(Idle);
     m_frame = 0;
     m_calledReachedMaxAppCacheSize = false;
 }
@@ -993,6 +1069,14 @@ void ApplicationCacheGroup::postListenerTask(ApplicationCacheHost::EventID event
     ASSERT(frame->loader()->documentLoader() == loader);
 
     frame->document()->postTask(CallCacheListenerTask::create(loader, eventID));
+}
+
+void ApplicationCacheGroup::setUpdateStatus(UpdateStatus status)
+{
+    m_updateStatus = status;
+#if ENABLE(INSPECTOR)
+    inspectorUpdateApplicationCacheStatus(m_frame);
+#endif
 }
 
 void ApplicationCacheGroup::clearStorageID()

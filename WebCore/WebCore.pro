@@ -729,6 +729,7 @@ SOURCES += \
     inspector/ConsoleMessage.cpp \
     inspector/InjectedScript.cpp \
     inspector/InjectedScriptHost.cpp \
+    inspector/InspectorApplicationCacheAgent.cpp \
     inspector/InspectorBackend.cpp \
     inspector/InspectorCSSStore.cpp \
     inspector/InspectorController.cpp \
@@ -1476,6 +1477,7 @@ HEADERS += \
     inspector/ConsoleMessage.h \
     inspector/InjectedScript.h \
     inspector/InjectedScriptHost.h \
+    inspector/InspectorApplicationCacheAgent.h \
     inspector/InspectorBackend.h \
     inspector/InspectorController.h \
     inspector/InspectorDatabaseResource.h \

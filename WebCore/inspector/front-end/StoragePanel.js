@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007, 2008, 2010 Apple Inc.  All rights reserved.
  * Copyright (C) 2009 Joseph Pecoraro
  *
  * Redistribution and use in source and binary forms, with or without
@@ -48,6 +48,10 @@ WebInspector.StoragePanel = function(database)
     this.cookieListTreeElement = new WebInspector.SidebarSectionTreeElement(WebInspector.UIString("COOKIES"), {}, true);
     this.sidebarTree.appendChild(this.cookieListTreeElement);
     this.cookieListTreeElement.expand();
+
+    this.applicationCacheListTreeElement = new WebInspector.SidebarSectionTreeElement(WebInspector.UIString("APPLICATION CACHE"), {}, true);
+    this.sidebarTree.appendChild(this.applicationCacheListTreeElement);
+    this.applicationCacheListTreeElement.expand();
 
     this.storageViews = document.createElement("div");
     this.storageViews.id = "storage-views";
@@ -99,12 +103,16 @@ WebInspector.StoragePanel.prototype = {
 
         this._cookieViews = {};
 
+        this._applicationCacheView = null;
+        delete this._cachedApplicationCacheViewStatus;
+
         this.databasesListTreeElement.removeChildren();
         this.localStorageListTreeElement.removeChildren();
         this.sessionStorageListTreeElement.removeChildren();
         this.cookieListTreeElement.removeChildren();
+        this.applicationCacheListTreeElement.removeChildren();
 
-        this.storageViews.removeChildren();        
+        this.storageViews.removeChildren();
 
         this.storageViewStatusBarItemsContainer.removeChildren();
         
@@ -136,6 +144,12 @@ WebInspector.StoragePanel.prototype = {
             this.localStorageListTreeElement.appendChild(domStorageTreeElement);
         else
             this.sessionStorageListTreeElement.appendChild(domStorageTreeElement);
+    },
+
+    addApplicationCache: function(domain)
+    {
+        var applicationCacheTreeElement = new WebInspector.ApplicationCacheSidebarTreeElement(domain);
+        this.applicationCacheListTreeElement.appendChild(applicationCacheTreeElement);
     },
 
     selectDatabase: function(databaseId)
@@ -185,14 +199,7 @@ WebInspector.StoragePanel.prototype = {
             }
         }
 
-        view.show(this.storageViews);
-
-        this.visibleView = view;
-
-        this.storageViewStatusBarItemsContainer.removeChildren();
-        var statusBarItems = view.statusBarItems || [];
-        for (var i = 0; i < statusBarItems.length; ++i)
-            this.storageViewStatusBarItemsContainer.appendChild(statusBarItems[i].element);
+        this._genericViewSetup(view);
     },
 
     showDOMStorage: function(domStorage)
@@ -210,14 +217,7 @@ WebInspector.StoragePanel.prototype = {
             domStorage._domStorageView = view;
         }
 
-        view.show(this.storageViews);
-
-        this.visibleView = view;
-
-        this.storageViewStatusBarItemsContainer.removeChildren();
-        var statusBarItems = view.statusBarItems;
-        for (var i = 0; i < statusBarItems.length; ++i)
-            this.storageViewStatusBarItemsContainer.appendChild(statusBarItems[i]);
+        this._genericViewSetup(view);
     },
 
     showCookies: function(treeElement, cookieDomain)
@@ -231,12 +231,33 @@ WebInspector.StoragePanel.prototype = {
             this._cookieViews[cookieDomain] = view;
         }
 
-        view.show(this.storageViews);
+        this._genericViewSetup(view);
+    },
 
+    showApplicationCache: function(treeElement, appcacheDomain)
+    {
+        if (this.visibleView)
+            this.visibleView.hide();
+
+        var view = this._applicationCacheView;
+        if (!view) {
+            view = new WebInspector.ApplicationCacheItemsView(treeElement, appcacheDomain);
+            this._applicationCacheView = view;
+        }
+
+        this._genericViewSetup(view);
+
+        if ("_cachedApplicationCacheViewStatus" in this)
+            this._applicationCacheView.updateStatus(this._cachedApplicationCacheViewStatus);
+    },
+
+    _genericViewSetup: function(view)
+    {
+        view.show(this.storageViews);
         this.visibleView = view;
 
         this.storageViewStatusBarItemsContainer.removeChildren();
-        var statusBarItems = view.statusBarItems;
+        var statusBarItems = view.statusBarItems || [];
         for (var i = 0; i < statusBarItems.length; ++i)
             this.storageViewStatusBarItemsContainer.appendChild(statusBarItems[i]);
     },
@@ -362,6 +383,19 @@ WebInspector.StoragePanel.prototype = {
         var view = domStorage._domStorageView;
         if (this.visibleView && view === this.visibleView)
             domStorage._domStorageView.update();
+    },
+
+    updateApplicationCacheStatus: function(status)
+    {
+        this._cachedApplicationCacheViewStatus = status;
+        if (this._applicationCacheView && this._applicationCacheView === this.visibleView)
+            this._applicationCacheView.updateStatus(status);
+    },
+
+    updateNetworkState: function(isNowOnline)
+    {
+        if (this._applicationCacheView && this._applicationCacheView === this.visibleView)
+            this._applicationCacheView.updateNetworkState(isNowOnline);
     },
 
     _domStorageForId: function(storageId)
@@ -540,3 +574,43 @@ WebInspector.CookieSidebarTreeElement.prototype = {
 }
 
 WebInspector.CookieSidebarTreeElement.prototype.__proto__ = WebInspector.SidebarTreeElement.prototype;
+
+WebInspector.ApplicationCacheSidebarTreeElement = function(appcacheDomain)
+{
+    WebInspector.SidebarTreeElement.call(this, "application-cache-sidebar-tree-item", appcacheDomain, "", null, false);
+    this._appcacheDomain = appcacheDomain;
+    this._subtitle = "";
+    this._mainTitle = this._appcacheDomain;
+    this.refreshTitles();
+}
+
+WebInspector.ApplicationCacheSidebarTreeElement.prototype = {
+    onselect: function()
+    {
+        WebInspector.panels.storage.showApplicationCache(this, this._appcacheDomain);
+    },
+
+    get mainTitle()
+    {
+        return this._mainTitle;
+    },
+
+    set mainTitle(x)
+    {
+        this._mainTitle = x;
+        this.refreshTitles();
+    },
+
+    get subtitle()
+    {
+        return this._subtitle;
+    },
+
+    set subtitle(x)
+    {
+        this._subtitle = x;
+        this.refreshTitles();
+    }
+}
+
+WebInspector.ApplicationCacheSidebarTreeElement.prototype.__proto__ = WebInspector.SidebarTreeElement.prototype;

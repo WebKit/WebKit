@@ -809,11 +809,29 @@ void InspectorFrontend::didRemoveDOMStorageItem(long callId, bool success)
 
 void InspectorFrontend::updateDOMStorage(long storageId)
 {
-    ScriptFunctionCall function(m_webInspector, "dispatch"); 
+    ScriptFunctionCall function(m_webInspector, "dispatch");
     function.appendArgument("updateDOMStorage");
     function.appendArgument(storageId);
     function.call();
 }
+#endif
+
+#if ENABLE(OFFLINE_WEB_APPLICATIONS)
+void InspectorFrontend::updateApplicationCacheStatus(int status)
+{
+    ScriptFunctionCall function(m_webInspector, "dispatch"); 
+    function.appendArgument("updateApplicationCacheStatus");
+    function.appendArgument(status);
+    function.call();
+}
+
+void InspectorFrontend::updateNetworkState(bool isNowOnline)
+{
+    ScriptFunctionCall function(m_webInspector, "dispatch"); 
+    function.appendArgument("updateNetworkState");
+    function.appendArgument(isNowOnline);
+    function.call();
+}    
 #endif
 
 void InspectorFrontend::addNodesToSearchResult(const ScriptArray& nodeIds)

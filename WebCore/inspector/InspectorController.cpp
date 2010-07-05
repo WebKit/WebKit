@@ -95,6 +95,10 @@
 #include "Database.h"
 #endif
 
+#if ENABLE(OFFLINE_WEB_APPLICATIONS)
+#include "InspectorApplicationCacheAgent.h"
+#endif
+
 #if ENABLE(DOM_STORAGE)
 #include "Storage.h"
 #include "StorageArea.h"
@@ -216,7 +220,7 @@ InspectorController::~InspectorController()
     ASSERT(s_inspectorControllerCount);
     --s_inspectorControllerCount;
 
-    releaseDOMAgent();
+    releaseFrontendLifetimeAgents();
 
     m_inspectorBackend->disconnectController();
     m_injectedScriptHost->disconnectController();
@@ -479,8 +483,8 @@ void InspectorController::setMonitoringXHR(bool enabled)
 void InspectorController::connectFrontend(const ScriptObject& webInspector)
 {
     m_openingFrontend = false;
+    releaseFrontendLifetimeAgents();
     m_frontend = new InspectorFrontend(webInspector, m_client);
-    releaseDOMAgent();
     m_domAgent = InspectorDOMAgent::create(m_cssStore.get(), m_frontend.get());
     if (m_timelineAgent)
         m_timelineAgent->resetFrontendProxyObject(m_frontend.get());
@@ -513,6 +517,10 @@ void InspectorController::connectFrontend(const ScriptObject& webInspector)
     if (m_nodeToFocus)
         focusNode();
     showPanel(m_showAfterVisible);
+
+#if ENABLE(OFFLINE_WEB_APPLICATIONS)
+    m_applicationCacheAgent = new InspectorApplicationCacheAgent(this, m_frontend.get());
+#endif
 }
 
 void InspectorController::show()
@@ -582,17 +590,21 @@ void InspectorController::disconnectFrontend()
     stopUserInitiatedProfiling();
 #endif
 
-    releaseDOMAgent();
+    releaseFrontendLifetimeAgents();
     m_timelineAgent.clear();
 }
 
-void InspectorController::releaseDOMAgent()
+void InspectorController::releaseFrontendLifetimeAgents()
 {
     // m_domAgent is RefPtr. Remove DOM listeners first to ensure that there are
     // no references to the DOM agent from the DOM tree.
     if (m_domAgent)
         m_domAgent->reset();
     m_domAgent.clear();
+
+#if ENABLE(OFFLINE_WEB_APPLICATIONS)
+    m_applicationCacheAgent.clear();
+#endif
 }
 
 void InspectorController::populateScriptObjects()

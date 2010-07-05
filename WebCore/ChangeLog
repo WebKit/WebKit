@@ -1,3 +1,139 @@
+2010-07-04  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by Pavel Feldman.
+
+        WebInspector: HTML5 Offline Web Applications Support (ApplicationCache)
+        https://bugs.webkit.org/show_bug.cgi?id=24529
+
+        Part 1: Backend -> Frontend Messages. ApplicationCache Status and Connectivity Status.
+
+        This patch adds an InspectorApplicationCacheAgent to monitor application
+        cache changes, starts a UI in the Storage panel, handles the boilerplate
+        of adding new files.
+
+          Added an agent to encapsulate and handle the application cache logic.
+          This is similar to the timeline agent.
+
+        * inspector/InspectorApplicationCacheAgent.cpp: Added.
+        (WebCore::InspectorApplicationCacheAgent::InspectorApplicationCacheAgent):
+        (WebCore::InspectorApplicationCacheAgent::~InspectorApplicationCacheAgent):
+        (WebCore::InspectorApplicationCacheAgent::didReceiveManifestResponse):
+        (WebCore::InspectorApplicationCacheAgent::updateApplicationCacheStatus):
+        (WebCore::InspectorApplicationCacheAgent::updateNetworkState):
+        * inspector/InspectorApplicationCacheAgent.h: Added.
+
+          InspectorController owns an InspectorApplicationCacheAgent. This
+          handles its lifetime management.
+
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::~InspectorController):
+        (WebCore::InspectorController::connectFrontend): create the agent with a frontend.
+        (WebCore::InspectorController::disconnectFrontend): remove the agent when closing.
+        (WebCore::InspectorController::releaseFrontendLifetimeAgents):
+        * inspector/InspectorController.h:
+
+          User Interface for ApplicationCache in the StoragePanel. This follows
+          very closely to Cookies, it will have a sortable table of items. The
+          status bar contains connectivity and application cache status
+          indicators which update when backend messages are received. There
+          are some stubs which the next part will implement.
+
+        * inspector/front-end/ApplicationCacheItemsView.js: Added.
+        (WebInspector.ApplicationCacheItemsView):
+        (WebInspector.ApplicationCacheItemsView.prototype.get statusBarItems): refresh, delete, connectivity, application cache status.
+        (WebInspector.ApplicationCacheItemsView.prototype.show):
+        (WebInspector.ApplicationCacheItemsView.prototype.hide):
+        (WebInspector.ApplicationCacheItemsView.prototype.updateStatus): this is the application cache status indicator.
+        (WebInspector.ApplicationCacheItemsView.prototype.updateNetworkState): this is the online/offline connectivity indicator.
+        (WebInspector.ApplicationCacheItemsView.prototype._update):
+        (WebInspector.ApplicationCacheItemsView.prototype._updateCallback):
+        (WebInspector.ApplicationCacheItemsView.prototype._createDataGrid):
+        (WebInspector.ApplicationCacheItemsView.prototype._populateDataGrid):
+        (WebInspector.ApplicationCacheItemsView.prototype.resize):
+        (WebInspector.ApplicationCacheItemsView.prototype._deleteButtonClicked):
+        (WebInspector.ApplicationCacheItemsView.prototype._deleteCallback):
+        (WebInspector.ApplicationCacheItemsView.prototype._refreshButtonClicked):
+
+          The usual dispatch flow from the backend, to the frontend, to the
+          panel, and then to the visible view. Some slight refactoring to
+          eliminate duplicated code.
+
+        * inspector/InspectorFrontend.cpp:
+        (WebCore::InspectorFrontend::updateDOMStorage):
+        (WebCore::InspectorFrontend::didGetApplicationCaches):
+        (WebCore::InspectorFrontend::updateApplicationCacheStatus):
+        * inspector/InspectorFrontend.h:
+        * inspector/front-end/StoragePanel.js:
+        (WebInspector.StoragePanel):
+        (WebInspector.StoragePanel.prototype.reset):
+        (WebInspector.StoragePanel.prototype.addApplicationCache):
+        (WebInspector.StoragePanel.prototype.showDatabase):
+        (WebInspector.StoragePanel.prototype.showDOMStorage):
+        (WebInspector.StoragePanel.prototype.showCookies):
+        (WebInspector.StoragePanel.prototype.showApplicationCache):
+        (WebInspector.StoragePanel.prototype._genericViewSetup):
+        (WebInspector.StoragePanel.prototype.updateApplicationCacheStatus):
+        (WebInspector.StoragePanel.prototype.updateNetworkState):
+        (WebInspector.CookieSidebarTreeElement.prototype.set subtitle):
+        (WebInspector.ApplicationCacheSidebarTreeElement):
+        (WebInspector.ApplicationCacheSidebarTreeElement.prototype.onselect):
+        (WebInspector.ApplicationCacheSidebarTreeElement.prototype.get mainTitle):
+        (WebInspector.ApplicationCacheSidebarTreeElement.prototype.set mainTitle):
+        (WebInspector.ApplicationCacheSidebarTreeElement.prototype.get subtitle):
+        (WebInspector.ApplicationCacheSidebarTreeElement.prototype.set subtitle):
+        * inspector/front-end/inspector.js:
+        (WebInspector.dispatch.delayDispatch):
+        (WebInspector.dispatch):
+        (WebInspector._addAppCacheDomain):
+        (WebInspector.addDOMStorage):
+        (WebInspector.updateDOMStorage):
+
+          Notify the InspectorApplicationCacheAgent on application cache changes
+          or specifics. Notify the InspectorController on generic resource events.
+          That is because ApplicationCacheController is a ResourceClient and needs
+          to trigger the resource events normally handled by ResourceLoader.
+
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        (WebCore::inspectorUpdateApplicationCacheStatus): helper method to prevent duplicated code.
+        (WebCore::ApplicationCacheGroup::setNewestCache): status change.
+        (WebCore::ApplicationCacheGroup::makeObsolete): status change.
+        (WebCore::ApplicationCacheGroup::update): status change.
+        (WebCore::ApplicationCacheGroup::createResourceHandle): resource event.
+        (WebCore::ApplicationCacheGroup::willSendRequest): resource event.
+        (WebCore::ApplicationCacheGroup::didReceiveResponse): resource event.
+        (WebCore::ApplicationCacheGroup::didReceiveData): resource event.
+        (WebCore::ApplicationCacheGroup::didFinishLoading): resource event.
+        (WebCore::ApplicationCacheGroup::didFail): resource event.
+        (WebCore::ApplicationCacheGroup::didFinishLoadingManifest): resource event.
+        (WebCore::ApplicationCacheGroup::manifestNotFound): status change.
+        (WebCore::ApplicationCacheGroup::checkIfLoadIsComplete): status change.
+        (WebCore::ApplicationCacheGroup::setUpdateStatus): single access point for status changes.
+        * loader/appcache/ApplicationCacheGroup.h:
+        * page/Page.cpp:
+        (WebCore::networkStateChanged): connectivity status change.
+
+          Final inspector details to add the new file, style new elements,
+          images, and localized strings.
+
+        * inspector/front-end/inspector.css:
+        (.application-cache-sidebar-tree-item .icon):
+        (.timeline-records-counter, .storage-application-cache-status, .storage-application-cache-connectivity):
+        (.storage-application-cache-status-icon, .storage-application-cache-connectivity-icon):
+        (.status-bar-divider):
+        (.storage-application-cache-status, .storage-application-cache-connectivity):
+        * inspector/front-end/inspector.html:
+        * inspector/front-end/Images/applicationCache.png: Added.
+        * English.lproj/localizedStrings.js: "APPLICATION CACHE", "No Application Cache information available.", "Online", "Offline"
+
+          Updated build files.
+
+        * CMakeLists.txt:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * inspector/front-end/WebKit.qrc:
+
 2010-07-05  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

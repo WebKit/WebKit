@@ -1025,6 +1025,7 @@ SET(WebCore_SOURCES
     inspector/ConsoleMessage.cpp
     inspector/InjectedScript.cpp
     inspector/InjectedScriptHost.cpp
+    inspector/InspectorApplicationCacheAgent.cpp
     inspector/InspectorBackend.cpp
     inspector/InspectorCSSStore.cpp
     inspector/InspectorController.cpp

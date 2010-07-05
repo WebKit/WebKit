@@ -41,7 +41,6 @@
 #include "ScriptValue.h"
 #include "StringHash.h"
 #include "Timer.h"
-
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/ListHashSet.h>
@@ -55,6 +54,7 @@
 namespace WebCore {
 
 class CachedResource;
+class ConsoleMessage;
 class Database;
 class Document;
 class DocumentLoader;
@@ -66,10 +66,14 @@ class InjectedScriptHost;
 class InspectorBackend;
 class InspectorClient;
 class InspectorCSSStore;
+class InspectorDOMStorageResource;
+class InspectorDatabaseResource;
 class InspectorFrontend;
 class InspectorFrontendClient;
+class InspectorResource;
 class InspectorTimelineAgent;
 class InspectorValue;
+class InspectorWorkerResource;
 class KURL;
 class Node;
 class Page;
@@ -82,11 +86,9 @@ class SharedBuffer;
 class Storage;
 class StorageArea;
 
-class ConsoleMessage;
-class InspectorDatabaseResource;
-class InspectorDOMStorageResource;
-class InspectorResource;
-class InspectorWorkerResource;
+#if ENABLE(OFFLINE_WEB_APPLICATIONS)
+class InspectorApplicationCacheAgent;
+#endif
 
 class InspectorController
 #if ENABLE(JAVASCRIPT_DEBUGGER)
@@ -161,7 +163,6 @@ public:
 
     void didCommitLoad(DocumentLoader*);
     void frameDetachedFromParent(Frame*);
-
     void didLoadResourceFromMemoryCache(DocumentLoader*, const CachedResource*);
 
     void identifierForInitialRequest(unsigned long identifier, DocumentLoader*, const ResourceRequest&);
@@ -183,11 +184,16 @@ public:
     void stopTimelineProfiler();
     InspectorTimelineAgent* timelineAgent() { return m_timelineAgent.get(); }
 
+#if ENABLE(OFFLINE_WEB_APPLICATIONS)
+    InspectorApplicationCacheAgent* applicationCacheAgent() { return m_applicationCacheAgent.get(); }
+#endif
+
     void mainResourceFiredLoadEvent(DocumentLoader*, const KURL&);
     void mainResourceFiredDOMContentEvent(DocumentLoader*, const KURL&);
 
     void didInsertDOMNode(Node*);
     void didRemoveDOMNode(Node*);
+    void getCookies(long callId);
     void didModifyDOMAttr(Element*);
 #if ENABLE(WORKERS)
     enum WorkerAction { WorkerCreated, WorkerDestroyed };
@@ -196,7 +202,6 @@ public:
     void didCreateWorker(intptr_t, const String& url, bool isSharedWorker);
     void didDestroyWorker(intptr_t);
 #endif
-    void getCookies(long callId);
 
 #if ENABLE(DATABASE)
     void didOpenDatabase(Database*, const String& domain, const String& name, const String& version);
@@ -284,7 +289,7 @@ private:
     void setMonitoringXHR(bool enabled);
     void storeLastActivePanel(const String& panelName);
     InspectorDOMAgent* domAgent() { return m_domAgent.get(); }
-    void releaseDOMAgent();
+    void releaseFrontendLifetimeAgents();
 
     void deleteCookie(const String& cookieName, const String& domain);
 
@@ -343,6 +348,11 @@ private:
     RefPtr<InspectorDOMAgent> m_domAgent;
     OwnPtr<InspectorCSSStore> m_cssStore;
     OwnPtr<InspectorTimelineAgent> m_timelineAgent;
+
+#if ENABLE(OFFLINE_WEB_APPLICATIONS)
+    OwnPtr<InspectorApplicationCacheAgent> m_applicationCacheAgent;
+#endif
+
     RefPtr<Node> m_nodeToFocus;
     RefPtr<InspectorResource> m_mainResource;
     ResourcesMap m_resources;

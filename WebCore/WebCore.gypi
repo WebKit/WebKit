@@ -1708,6 +1708,8 @@
             'inspector/InjectedScript.h',
             'inspector/InjectedScriptHost.cpp',
             'inspector/InjectedScriptHost.h',
+            'inspector/InspectorApplicationCacheAgent.cpp',
+            'inspector/InspectorApplicationCacheAgent.h',
             'inspector/InspectorBackend.cpp',
             'inspector/InspectorBackend.h',
             'inspector/InspectorController.cpp',
@@ -3945,6 +3947,7 @@
 
             'inspector/front-end/inspector.html',
             'inspector/front-end/AbstractTimelinePanel.js',
+            'inspector/front-end/ApplicationCacheItemsView.js',
             'inspector/front-end/AuditCategories.js',
             'inspector/front-end/AuditLauncherView.js',
             'inspector/front-end/AuditResultView.js',
@@ -4048,6 +4051,7 @@
             'inspector/front-end/textViewer.css',
         ],
         'webinspector_image_files': [
+            'inspector/front-end/Images/applicationCache.png',
             'inspector/front-end/Images/auditsIcon.png',
             'inspector/front-end/Images/back.png',
             'inspector/front-end/Images/breakpointBorder.png',

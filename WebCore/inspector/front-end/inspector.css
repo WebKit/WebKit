@@ -1826,6 +1826,10 @@ body.inactive .sidebar {
     content: url(Images/cookie.png);
 }
 
+.application-cache-sidebar-tree-item .icon {
+    content: url(Images/applicationCache.png);
+}
+
 #storage-views {
     position: absolute;
     top: 0;
@@ -3702,7 +3706,7 @@ body.inactive .sidebar-tree-item.selected .bubble.search-matches {
     background-color: rgb(66, 129, 235) !important;
 }
 
-.timeline-records-counter {
+.timeline-records-counter, .storage-application-cache-status, .storage-application-cache-connectivity {
     font-size: 11px;
     text-shadow: white 0 1px 0;
 }
@@ -3716,6 +3720,22 @@ body.inactive .sidebar-tree-item.selected .bubble.search-matches {
 #counters > .timeline-records-counter {
     float: left;
     margin-top: -2px;
+}
+
+.storage-application-cache-status-icon, .storage-application-cache-connectivity-icon {
+    margin-bottom: -3px;
+    margin-left: 5px;
+    vertical-align: middle;
+}
+
+.status-bar-divider {
+    margin-left: 7px;
+    border-right: 1px solid #CCC;
+}
+
+.storage-application-cache-status, .storage-application-cache-connectivity {
+    position: relative;
+    top: 4px;
 }
 
 /* Profiler Style */

@@ -2,6 +2,7 @@
 <qresource prefix="/webkit/inspector">
     <file>inspector.html</file>
     <file>AbstractTimelinePanel.js</file>
+    <file>ApplicationCacheItemsView.js</file>
     <file>AuditCategories.js</file>
     <file>AuditLauncherView.js</file>
     <file>AuditResultView.js</file>
@@ -103,6 +104,7 @@
     <file>inspectorSyntaxHighlight.css</file>
     <file>popover.css</file>
     <file>textViewer.css</file>
+    <file>Images/applicationCache.png</file>
     <file>Images/auditsIcon.png</file>
     <file>Images/back.png</file>
     <file>Images/breakpointBorder.png</file>

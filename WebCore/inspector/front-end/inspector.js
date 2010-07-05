@@ -566,6 +566,11 @@ WebInspector.dispatch = function() {
     // This is important to LayoutTests.
     function delayDispatch()
     {
+        if (!(methodName in WebInspector)) {
+            console.error("Attempted to dispatch unimplemented WebInspector method: %s", methodName);
+            return;
+        }
+
         WebInspector[methodName].apply(WebInspector, parameters);
         WebInspector.pendingDispatches--;
     }
@@ -1271,9 +1276,17 @@ WebInspector.addDOMStorage = function(payload)
 
 WebInspector.updateDOMStorage = function(storageId)
 {
-    if (!this.panels.storage)
-        return;
     this.panels.storage.updateDOMStorage(storageId);
+}
+
+WebInspector.updateApplicationCacheStatus = function(status)
+{
+    this.panels.storage.updateApplicationCacheStatus(status);
+}
+
+WebInspector.updateNetworkState = function(isNowOnline)
+{
+    this.panels.storage.updateNetworkState(isNowOnline);
 }
 
 WebInspector.resourceTrackingWasEnabled = function()
@@ -1285,7 +1298,6 @@ WebInspector.resourceTrackingWasDisabled = function()
 {
     this.panels.resources.resourceTrackingWasDisabled();
 }
-
 
 WebInspector.searchingForNodeWasEnabled = function()
 {
