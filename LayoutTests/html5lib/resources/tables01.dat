@@ -44,3 +44,26 @@
 |     "foo"
 |     <table>
 |       <colgroup>
+
+#data
+<table></table><p>foo
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <table>
+|     <p>
+|       "foo"
+
+#data
+<table></body></caption></col></colgroup></html></tbody></td></tfoot></th></thead></tr><td>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <table>
+|       <tbody>
+|         <tr>
+|           <td>

@@ -1102,6 +1102,11 @@ Got:
 |   <body>
 |     <a>
 |       <table>
+|       <p>
+|         <a>
+|           <a>
+|       <div>
+|         <a>
 Expected:
 | <html>
 |   <head>
@@ -3464,6 +3469,8 @@ Got:
 |   <head>
 |   <body>
 |     <table>
+|     <p>
+|       "quux"
 Expected:
 | <!DOCTYPE html>
 | <html>
@@ -3982,6 +3989,8 @@ Got:
 |   <head>
 |   <body>
 |     <table>
+|     <p>
+|       "quux"
 Expected:
 | <!DOCTYPE html>
 | <html>
@@ -5639,8 +5648,9 @@ resources/inbody01.dat: PASS
 
 resources/tables01.dat:
 4
+5
 
-Test 4 of 4 in resources/tables01.dat failed. Input:
+Test 4 of 6 in resources/tables01.dat failed. Input:
 <table><colgroup></html>foo
 Got:
 | <html>
@@ -5655,4 +5665,19 @@ Expected:
 |     "foo"
 |     <table>
 |       <colgroup>
+
+Test 5 of 6 in resources/tables01.dat failed. Input:
+<table></table><p>foo
+Got:
+| <html>
+|   <head>
+|   <body>
+|     <table>
+Expected:
+| <html>
+|   <head>
+|   <body>
+|     <table>
+|     <p>
+|       "foo"
 #EOF

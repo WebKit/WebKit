@@ -1,3 +1,18 @@
+2010-07-04  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Add </table> support for "in table" insertion mode
+        https://bugs.webkit.org/show_bug.cgi?id=41591
+
+        resetInsertionModeAppropriately isn't implemented yet, however
+        I've added a test for the usage I added.
+
+        * html/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::resetInsertionModeAppropriately):
+        (WebCore::HTMLTreeBuilder::processEndTag):
+        * html/HTMLTreeBuilder.h:
+
 2010-07-05  Joseph Pecoraro  <joepeck@webkit.org>
 
         Unreviewed build fix for r62503.

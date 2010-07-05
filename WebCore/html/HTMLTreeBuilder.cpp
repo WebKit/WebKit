@@ -1093,6 +1093,11 @@ void HTMLTreeBuilder::callTheAdoptionAgency(AtomicHTMLToken& token)
     }
 }
 
+void HTMLTreeBuilder::resetInsertionModeAppropriately()
+{
+    // http://www.whatwg.org/specs/web-apps/current-work/multipage/parsing.html#reset-the-insertion-mode-appropriately
+}
+
 void HTMLTreeBuilder::processEndTag(AtomicHTMLToken& token)
 {
     switch (insertionMode()) {
@@ -1250,6 +1255,25 @@ void HTMLTreeBuilder::processEndTag(AtomicHTMLToken& token)
             return;
         }
         processAnyOtherEndTagForInBody(token);
+        break;
+    case InTableMode:
+        ASSERT(insertionMode() == InTableMode);
+        if (token.name() == tableTag) {
+            if (!m_openElements.inTableScope(token.name())) {
+                ASSERT(m_isParsingFragment);
+                parseError(token);
+                return;
+            }
+            m_openElements.popUntil(tableTag.localName());
+            m_openElements.pop();
+            resetInsertionModeAppropriately();
+            return;
+        }
+        if (token.name() == bodyTag || token.name() == captionTag || token.name() == colTag || token.name() == colgroupTag || token.name() == htmlTag || token.name() == tbodyTag || token.name() == tdTag || token.name() == tfootTag || token.name() == thTag || token.name() == theadTag || token.name() == trTag) {
+            parseError(token);
+            return;
+        }
+        notImplemented();
         break;
     case AfterBodyMode:
         ASSERT(insertionMode() == AfterBodyMode);

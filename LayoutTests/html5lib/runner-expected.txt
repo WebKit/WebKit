@@ -4940,7 +4940,7 @@ resources/inbody01.dat: PASS
 resources/tables01.dat:
 3
 
-Test 3 of 4 in resources/tables01.dat failed. Input:
+Test 3 of 6 in resources/tables01.dat failed. Input:
 <table><col foo='bar'>
 Got:
 | <html>
