@@ -1,3 +1,25 @@
+2010-07-05  Yury Semikhatsky  <yury@yurys-imac.local>
+
+        Unreviewed. Provide Chromium specific expectations for new svg tests.
+
+        * platform/chromium-linux/svg/custom/clone-element-with-animated-svg-properties-expected.checksum: Added.
+        * platform/chromium-linux/svg/custom/relative-sized-inner-svg-expected.checksum: Added.
+        * platform/chromium-linux/svg/custom/relative-sized-use-without-attributes-on-symbol-expected.checksum: Added.
+        * platform/chromium-linux/svg/filters/filter-width-update-expected.checksum: Added.
+        * platform/chromium-mac/svg/filters/filter-width-update-expected.checksum: Added.
+        * platform/chromium-win/svg/custom/clone-element-with-animated-svg-properties-expected.checksum: Added.
+        * platform/chromium-win/svg/custom/clone-element-with-animated-svg-properties-expected.png: Added.
+        * platform/chromium-win/svg/custom/clone-element-with-animated-svg-properties-expected.txt: Added.
+        * platform/chromium-win/svg/custom/relative-sized-inner-svg-expected.checksum: Added.
+        * platform/chromium-win/svg/custom/relative-sized-inner-svg-expected.png: Added.
+        * platform/chromium-win/svg/custom/relative-sized-inner-svg-expected.txt: Added.
+        * platform/chromium-win/svg/custom/relative-sized-use-without-attributes-on-symbol-expected.checksum: Added.
+        * platform/chromium-win/svg/custom/relative-sized-use-without-attributes-on-symbol-expected.png: Added.
+        * platform/chromium-win/svg/custom/relative-sized-use-without-attributes-on-symbol-expected.txt: Added.
+        * platform/chromium-win/svg/filters/filter-width-update-expected.checksum: Added.
+        * platform/chromium-win/svg/filters/filter-width-update-expected.png: Added.
+        * platform/chromium-win/svg/filters/filter-width-update-expected.txt: Added.
+
 2010-07-05  Rob Buis  <rwlbuis@gmail.com>
 
         Reviewed by Dirk Schulze.
