@@ -1,3 +1,13 @@
+2010-07-05  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Oliver Hunt.
+
+        The style checker exempts gtk2drawing.h when it should exempt gtkdrawing.h
+        https://bugs.webkit.org/show_bug.cgi?id=41017
+
+        * Scripts/webkitpy/style/checker.py: Exempt gtkdrawing.h instead of gtk2drawing.h
+        * Scripts/webkitpy/style/checker_unittest.py: Update the unit test to reflect the change.
+
 2010-07-04  MORITA Hajime  <morrita@google.com>
 
         rebaseline-chromium-webkit-tests: UnicodeDecodeError

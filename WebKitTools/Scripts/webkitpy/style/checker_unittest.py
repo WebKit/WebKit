@@ -281,10 +281,10 @@ class CheckerDispatcherSkipTest(unittest.TestCase):
         # Check skipped files.
         paths_to_skip = [
            "gtk2drawing.c",
-           "gtk2drawing.h",
+           "gtkdrawing.h",
            "JavaScriptCore/qt/api/qscriptengine_p.h",
            "WebCore/platform/gtk/gtk2drawing.c",
-           "WebCore/platform/gtk/gtk2drawing.h",
+           "WebCore/platform/gtk/gtkdrawing.h",
            "WebKit/gtk/tests/testatk.c",
            "WebKit/qt/Api/qwebpage.h",
            "WebKit/qt/tests/qwebsecurityorigin/tst_qwebsecurityorigin.cpp",

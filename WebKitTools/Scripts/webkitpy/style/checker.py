@@ -205,7 +205,7 @@ _SKIPPED_FILES_WITH_WARNING = [
     # The Qt API and tests do not follow WebKit style.
     # They follow Qt style. :)
     "gtk2drawing.c", # WebCore/platform/gtk/gtk2drawing.c
-    "gtk2drawing.h", # WebCore/platform/gtk/gtk2drawing.h
+    "gtkdrawing.h", # WebCore/platform/gtk/gtkdrawing.h
     "JavaScriptCore/qt/api/",
     "WebKit/gtk/tests/",
     "WebKit/qt/Api/",
