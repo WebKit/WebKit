@@ -1,3 +1,23 @@
+2010-07-05  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Implement HTML5's "reset insertion mode appropriately"
+        https://bugs.webkit.org/show_bug.cgi?id=41628
+
+        This has some minimal testing.  One from my previous
+        </table> patch, and a few from the main suite.
+
+        Mostly resetInsertionModeAppropriately isn't used yet
+        but we're about to add a bunch of states which do use it
+        and our test coverage will expand further as we do.
+
+        * html/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::HTMLTreeBuilder):
+        (WebCore::HTMLTreeBuilder::setInsertionModeAndEnd):
+        (WebCore::HTMLTreeBuilder::resetInsertionModeAppropriately):
+        * html/HTMLTreeBuilder.h:
+
 2010-07-04  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

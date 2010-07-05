@@ -5648,7 +5648,6 @@ resources/inbody01.dat: PASS
 
 resources/tables01.dat:
 4
-5
 
 Test 4 of 6 in resources/tables01.dat failed. Input:
 <table><colgroup></html>foo
@@ -5665,19 +5664,4 @@ Expected:
 |     "foo"
 |     <table>
 |       <colgroup>
-
-Test 5 of 6 in resources/tables01.dat failed. Input:
-<table></table><p>foo
-Got:
-| <html>
-|   <head>
-|   <body>
-|     <table>
-Expected:
-| <html>
-|   <head>
-|   <body>
-|     <table>
-|     <p>
-|       "foo"
 #EOF

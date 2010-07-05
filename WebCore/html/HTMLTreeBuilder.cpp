@@ -40,6 +40,9 @@
 #include "HTMLTokenizer.h"
 #include "LegacyHTMLDocumentParser.h"
 #include "LegacyHTMLTreeBuilder.h"
+#if ENABLE(MATHML)
+#include "MathMLNames.h"
+#endif
 #include "NotImplemented.h"
 #if ENABLE(SVG)
 #include "SVGNames.h"
@@ -207,6 +210,7 @@ HTMLTreeBuilder::HTMLTreeBuilder(HTMLTokenizer* tokenizer, HTMLDocument* documen
     , m_isPaused(false)
     , m_insertionMode(InitialMode)
     , m_originalInsertionMode(InitialMode)
+    , m_secondaryInsertionMode(InitialMode)
     , m_tokenizer(tokenizer)
     , m_legacyTreeBuilder(shouldUseLegacyTreeBuilder(document) ? new LegacyHTMLTreeBuilder(document, reportErrors) : 0)
     , m_lastScriptElementStartLine(uninitializedLineNumberValue)
@@ -225,6 +229,7 @@ HTMLTreeBuilder::HTMLTreeBuilder(HTMLTokenizer* tokenizer, DocumentFragment* fra
     , m_isPaused(false)
     , m_insertionMode(InitialMode)
     , m_originalInsertionMode(InitialMode)
+    , m_secondaryInsertionMode(InitialMode)
     , m_tokenizer(tokenizer)
     , m_legacyTreeBuilder(new LegacyHTMLTreeBuilder(fragment, scriptingPermission))
     , m_lastScriptElementStartLine(uninitializedLineNumberValue)
@@ -1093,9 +1098,75 @@ void HTMLTreeBuilder::callTheAdoptionAgency(AtomicHTMLToken& token)
     }
 }
 
+void HTMLTreeBuilder::setInsertionModeAndEnd(InsertionMode newInsertionMode, bool foreign)
+{
+    m_insertionMode = newInsertionMode;
+    if (foreign) {
+        m_secondaryInsertionMode = m_insertionMode;
+        m_insertionMode = InForeignContentMode;
+    }
+}
+
 void HTMLTreeBuilder::resetInsertionModeAppropriately()
 {
     // http://www.whatwg.org/specs/web-apps/current-work/multipage/parsing.html#reset-the-insertion-mode-appropriately
+    bool last = false;
+    bool foreign = false;
+    HTMLElementStack::ElementRecord* nodeRecord = m_openElements.topRecord();
+    while (1) {
+        Element* node = nodeRecord->element();
+        if (node == m_openElements.bottom()) {
+            ASSERT(m_isParsingFragment);
+            last = true;
+            notImplemented(); // node = m_contextElement;
+        }
+        if (node->hasTagName(selectTag)) {
+            ASSERT(m_isParsingFragment);
+            return setInsertionModeAndEnd(InSelectMode, foreign);
+        }
+        if (node->hasTagName(tdTag) || node->hasTagName(thTag))
+            return setInsertionModeAndEnd(InCellMode, foreign);
+        if (node->hasTagName(trTag))
+            return setInsertionModeAndEnd(InRowMode, foreign);
+        if (node->hasTagName(tbodyTag) || node->hasTagName(theadTag) || node->hasTagName(tfootTag))
+            return setInsertionModeAndEnd(InTableBodyMode, foreign);
+        if (node->hasTagName(captionTag))
+            return setInsertionModeAndEnd(InCaptionMode, foreign);
+        if (node->hasTagName(colgroupTag)) {
+            ASSERT(m_isParsingFragment);
+            return setInsertionModeAndEnd(InColumnGroupMode, foreign);
+        }
+        if (node->hasTagName(tableTag))
+            return setInsertionModeAndEnd(InTableMode, foreign);
+        if (node->hasTagName(headTag)) {
+            ASSERT(m_isParsingFragment);
+            return setInsertionModeAndEnd(InBodyMode, foreign);
+        }
+        if (node->hasTagName(bodyTag))
+            return setInsertionModeAndEnd(InBodyMode, foreign);
+        if (node->hasTagName(framesetTag)) {
+            ASSERT(m_isParsingFragment);
+            return setInsertionModeAndEnd(InFramesetMode, foreign);
+        }
+        if (node->hasTagName(htmlTag)) {
+            ASSERT(m_isParsingFragment);
+            return setInsertionModeAndEnd(BeforeHeadMode, foreign);
+        }
+        if (false
+#if ENABLE(SVG)
+        || node->namespaceURI() == SVGNames::svgNamespaceURI
+#endif
+#if ENABLE(MATHML)
+        || node->namespaceURI() == MathMLNames::mathMLNamespaceURI
+#endif
+            )
+            foreign = true;
+        if (last) {
+            ASSERT(m_isParsingFragment);
+            return setInsertionModeAndEnd(InBodyMode, foreign);
+        }
+        nodeRecord = nodeRecord->next();
+    }
 }
 
 void HTMLTreeBuilder::processEndTag(AtomicHTMLToken& token)

@@ -2,6 +2,28 @@
 
         Reviewed by Adam Barth.
 
+        Implement HTML5's "reset insertion mode appropriately"
+        https://bugs.webkit.org/show_bug.cgi?id=41628
+
+        Fixes a bunch of subtests!
+
+        * html5lib/runner-expected-html5.txt:
+
+2010-07-05  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Implement HTML5's "reset insertion mode appropriately"
+        https://bugs.webkit.org/show_bug.cgi?id=41628
+
+        Fixes a bunch of subtests!
+
+        * html5lib/runner-expected-html5.txt:
+
+2010-07-05  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
         Add </table> support for "in table" insertion mode
         https://bugs.webkit.org/show_bug.cgi?id=41591
 
