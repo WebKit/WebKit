@@ -13,7 +13,7 @@ ellipseElement.setAttribute("fill", "url(#gradient)");
 
 var transform = rootSVGElement.createSVGTransform();
 
-shouldBe("transform.type", "SVGTransform.SVG_TRANSFORM_UNKNOWN");
+shouldBe("transform.type", "SVGTransform.SVG_TRANSFORM_MATRIX");
 shouldBe("transform.matrix.a", "1.0");
 shouldBe("transform.matrix.b", "0.0");
 shouldBe("transform.matrix.c", "0.0");

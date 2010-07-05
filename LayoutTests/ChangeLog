@@ -1,3 +1,20 @@
+2010-07-05  Rob Buis  <rwlbuis@gmail.com>
+
+        Reviewed by Dirk Schulze.
+
+        IE SVG test fails
+        https://bugs.webkit.org/show_bug.cgi?id=41619
+
+        One new test and two adapted to the change.
+
+        * svg/custom/script-tests/svg-createsvgtransform-type.js: Added.
+        * svg/custom/svg-createsvgtransform-type-expected.txt: Added.
+        * svg/custom/svg-createsvgtransform-type.html: Added.
+        * svg/dynamic-updates/SVGPatternElement-svgdom-patternTransform-prop-expected.txt:
+        * svg/dynamic-updates/SVGRadialGradientElement-svgdom-gradientTransform-prop-expected.txt:
+        * svg/dynamic-updates/script-tests/SVGPatternElement-svgdom-patternTransform-prop.js:
+        * svg/dynamic-updates/script-tests/SVGRadialGradientElement-svgdom-gradientTransform-prop.js:
+
 2010-07-05  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Dirk Schulze.
