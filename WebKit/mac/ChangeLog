@@ -1,3 +1,25 @@
+2010-06-23  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Eric Carlson.
+
+        [GStreamer] on Mac OS use a runloop observer to process the glib context iterations
+        https://bugs.webkit.org/show_bug.cgi?id=35747
+
+        If VIDEO and GSTREAMER are enabled, make the WebView start a
+        runloop observer that will trigger the glib main context
+        iterations. Those are needed by the GStreamer player only at the
+        moment but could later be used for other GLib-dependant components
+        if required.
+
+        * WebView/WebView.mm:
+        (-[WebView _commonInitializationWithFrameName:groupName:usesDocumentViews:]):
+        (-[WebView _close]):
+        (-[WebView _clearGlibLoopObserver]):
+        (glibContextIterationCallback):
+        (-[WebView _scheduleGlibContextIterations]):
+        * WebView/WebViewData.h:
+        * WebView/WebViewInternal.h:
+
 2010-07-03  Jon Honeycutt  <jhoneycutt@apple.com>
 
         The missing plug-in indicator should be clickable

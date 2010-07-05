@@ -178,6 +178,10 @@
 #import <WebCore/GeolocationError.h>
 #endif
 
+#if ENABLE(VIDEO) && USE(GSTREAMER)
+#import <glib.h>
+#endif
+
 @interface NSSpellChecker (WebNSSpellCheckerDetails)
 - (void)_preflightChosenSpellServer;
 @end
@@ -368,6 +372,9 @@ static const char webViewIsOpen[] = "At least one WebView is still open.";
 - (NSResponder *)_responderForResponderOperations;
 #if USE(ACCELERATED_COMPOSITING)
 - (void)_clearLayerSyncLoopObserver;
+#endif
+#if ENABLE(VIDEO) && USE(GSTREAMER)
+- (void)_clearGlibLoopObserver;
 #endif
 @end
 
@@ -722,6 +729,11 @@ static bool shouldEnableLoadDeferring()
 
     if (!WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITHOUT_CONTENT_SNIFFING_FOR_FILE_URLS))
         ResourceHandle::forceContentSniffing();
+
+#if ENABLE(VIDEO) && USE(GSTREAMER)
+    [self _scheduleGlibContextIterations];
+#endif
+
 }
 
 - (id)_initWithFrame:(NSRect)f frameName:(NSString *)frameName groupName:(NSString *)groupName usesDocumentViews:(BOOL)usesDocumentViews
@@ -1119,6 +1131,10 @@ static bool fastDocumentTeardownEnabled()
     [self _clearLayerSyncLoopObserver];
 #endif
     
+#if ENABLE(VIDEO) && USE(GSTREAMER)
+    [self _clearGlibLoopObserver];
+#endif
+
     [[NSDistributedNotificationCenter defaultCenter] removeObserver:self];
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 
@@ -5458,6 +5474,18 @@ static WebFrameView *containingFrameView(NSView *view)
     _private->layerSyncRunLoopObserver = 0;
 }
 #endif
+
+#if ENABLE(VIDEO) && USE(GSTREAMER)
+- (void)_clearGlibLoopObserver
+{
+    if (!_private->glibRunLoopObserver)
+        return;
+
+    CFRunLoopObserverInvalidate(_private->glibRunLoopObserver);
+    CFRelease(_private->glibRunLoopObserver);
+    _private->glibRunLoopObserver = 0;
+}
+#endif
 @end
 
 @implementation WebView (WebViewInternal)
@@ -5764,6 +5792,33 @@ static void layerSyncRunLoopObserverCallBack(CFRunLoopObserverRef, CFRunLoopActi
 }
 
 #endif
+
+#if ENABLE(VIDEO) && USE(GSTREAMER)
+
+static void glibContextIterationCallback(CFRunLoopObserverRef, CFRunLoopActivity, void*)
+{
+    g_main_context_iteration(0, FALSE);
+}
+
+- (void)_scheduleGlibContextIterations
+{
+    if (_private->glibRunLoopObserver)
+        return;
+
+    NSRunLoop* myRunLoop = [NSRunLoop currentRunLoop];
+
+    // Create a run loop observer and attach it to the run loop.
+    CFRunLoopObserverContext context = {0, self, 0, 0, 0};
+    _private->glibRunLoopObserver = CFRunLoopObserverCreate(kCFAllocatorDefault, kCFRunLoopBeforeWaiting, YES, 0, &glibContextIterationCallback, &context);
+
+    if (_private->glibRunLoopObserver) {
+        CFRunLoopRef cfLoop = [myRunLoop getCFRunLoop];
+        CFRunLoopAddObserver(cfLoop, _private->glibRunLoopObserver, kCFRunLoopDefaultMode);
+    }
+
+}
+#endif
+
 
 @end
 
