@@ -503,7 +503,7 @@ Got:
 |           "B"
 |           <div>
 |             "C"
-|         "D"
+|             "D"
 Expected:
 | <html>
 |   <head>
@@ -5583,4 +5583,5 @@ Expected:
 |         "2"
 |       "3"
 |     <table>
+resources/inbody01.dat: PASS
 #EOF

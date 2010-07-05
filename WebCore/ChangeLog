@@ -1,3 +1,18 @@
+2010-07-05  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Finish implementing "any other end tag" for "in body" mode
+        https://bugs.webkit.org/show_bug.cgi?id=41582
+
+        I believe I found a "bug" in the HTML5 spec when writing this:
+        http://www.w3.org/Bugs/Public/show_bug.cgi?id=10080
+
+        * html/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::processAnyOtherEndTagForInBody):
+        (WebCore::HTMLTreeBuilder::processEndTag):
+        * html/HTMLTreeBuilder.h:
+
 2010-07-05  Martin Robinson  <mrobinson@igalia.com>
 
         Unreviewed.

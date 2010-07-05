@@ -881,6 +881,37 @@ bool HTMLTreeBuilder::processBodyEndTagForInBody(AtomicHTMLToken& token)
     return true;
 }
 
+void HTMLTreeBuilder::processAnyOtherEndTagForInBody(AtomicHTMLToken& token)
+{
+    HTMLElementStack::ElementRecord* record = m_openElements.topRecord();
+    while (1) {
+        Element* node = record->element();
+        if (node->hasLocalName(token.name())) {
+            generateImpliedEndTags();
+            if (!currentElement()->hasLocalName(token.name())) {
+                parseError(token);
+                // FIXME: This is either a bug in the spec, or a bug in our
+                // implementation.  Filed a bug with HTML5:
+                // http://www.w3.org/Bugs/Public/show_bug.cgi?id=10080
+                // We might have already popped the node for the token in
+                // generateImpliedEndTags, just abort.
+                if (!m_openElements.contains(node))
+                    return;
+            }
+            m_openElements.popUntil(node);
+            m_openElements.pop();
+            return;
+        }
+        // !phrasing && !formatting == scoping || special
+        const AtomicString& tagName = node->localName();
+        if (isScopingTag(tagName) || isSpecialTag(tagName)) {
+            parseError(token);
+            return;
+        }
+        record = record->next();
+    }
+}
+
 // FIXME: This probably belongs on HTMLElementStack.
 HTMLElementStack::ElementRecord* HTMLTreeBuilder::furthestBlockForFormattingElement(Element* formattingElement)
 {
@@ -1189,13 +1220,7 @@ void HTMLTreeBuilder::processEndTag(AtomicHTMLToken& token)
             m_framesetOk = false;
             return;
         }
-        // FIXME: We need an iterator over m_openElements to implement this
-        // correctly.
-        notImplemented();
-        if (!m_openElements.inScope(token.name()))
-            return;
-        m_openElements.popUntil(token.name());
-        m_openElements.pop();
+        processAnyOtherEndTagForInBody(token);
         break;
     case AfterBodyMode:
         ASSERT(insertionMode() == AfterBodyMode);

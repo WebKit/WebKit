@@ -4935,3 +4935,4 @@ Expected:
 |         "2"
 |       "3"
 |     <table>
+resources/inbody01.dat: PASS
