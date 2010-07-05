@@ -1,3 +1,16 @@
+2010-07-04  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Crash reading past end of block in UniscribeController::shapeAndPlaceItem
+        https://bugs.webkit.org/show_bug.cgi?id=41554
+
+        Test: platform/win/fast/text/uniscribe-item-boundary-crash.html
+
+        * platform/graphics/win/UniscribeController.cpp:
+        (WebCore::UniscribeController::shapeAndPlaceItem):
+        Don't look one past the end of str. Instead look to the next item, if applicable.
+
 2010-07-04  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.
