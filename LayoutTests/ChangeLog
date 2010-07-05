@@ -1,3 +1,11 @@
+2010-07-04  Peter Kasting  <pkasting@google.com>
+
+        Unreviewed.  Update Chromium test expectations.
+
+        * platform/chromium-mac/html5lib/runner-expected.txt:
+        * platform/chromium-win/html5lib/runner-expected.txt:
+        * platform/chromium/test_expectations.txt:
+
 2010-07-04  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.
