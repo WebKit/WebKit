@@ -1,3 +1,20 @@
+2010-07-05  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Dirk Schulze / Darin Adler.
+
+        Node.cloneNode does not work on SVG nodes
+        https://bugs.webkit.org/show_bug.cgi?id=41421
+
+        Be sure to synchronize animated SVG properties before checking whether NamedNodeMap exists.
+        When creating a SVG element from JS, and setting all attributes via SVG DOM, and not using setAttribute
+        the NamedNodeMap does not exist. When cloning such an element, be sure to synchronize SVG <-> XML DOM
+        attributes before attempting to clone, otherwhise the SVG animated properties are lost while cloning.
+
+        Test: svg/custom/clone-element-with-animated-svg-properties.html
+
+        * dom/Element.cpp:
+        (WebCore::Element::cloneElementWithoutChildren):
+
 2010-07-05  Antti Koivisto  <koivisto@iki.fi>
 
         Revert unplanned project file change.
