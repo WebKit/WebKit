@@ -817,6 +817,15 @@ void InspectorFrontend::updateDOMStorage(long storageId)
 #endif
 
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
+void InspectorFrontend::didGetApplicationCaches(long callId, const ScriptValue& applicationCaches)
+{
+    ScriptFunctionCall function(m_webInspector, "dispatch");
+    function.appendArgument("didGetApplicationCaches");
+    function.appendArgument(callId);
+    function.appendArgument(applicationCaches);
+    function.call();
+}
+
 void InspectorFrontend::updateApplicationCacheStatus(int status)
 {
     ScriptFunctionCall function(m_webInspector, "dispatch"); 

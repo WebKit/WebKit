@@ -53,6 +53,7 @@ var WebInspector = {
     resources: {},
     resourceURLMap: {},
     cookieDomains: {},
+    applicationCacheDomains: {},
     missingLocalizedStrings: {},
     pendingDispatches: 0,
 
@@ -1168,6 +1169,7 @@ WebInspector.updateResource = function(identifier, payload)
         if (match) {
             var protocol = match[1].toLowerCase();
             this._addCookieDomain(match[2]);
+            this._addAppCacheDomain(match[2]);
         }
     }
 
@@ -1261,6 +1263,18 @@ WebInspector._addCookieDomain = function(domain)
     if (!this.panels.storage)
         return;
     this.panels.storage.addCookieDomain(domain);
+}
+
+WebInspector._addAppCacheDomain = function(domain)
+{
+    // Eliminate duplicate domains from the list.
+    if (domain in this.applicationCacheDomains)
+        return;
+    this.applicationCacheDomains[domain] = true;
+
+    if (!this.panels.storage)
+        return;
+    this.panels.storage.addApplicationCache(domain);
 }
 
 WebInspector.addDOMStorage = function(payload)
@@ -1400,6 +1414,7 @@ WebInspector.reset = function()
     this.resources = {};
     this.resourceURLMap = {};
     this.cookieDomains = {};
+    this.applicationCacheDomains = {};
     this.hoveredDOMNode = null;
 
     delete this.mainResource;

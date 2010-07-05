@@ -184,6 +184,9 @@ public:
     void stopTimelineProfiler();
     InspectorTimelineAgent* timelineAgent() { return m_timelineAgent.get(); }
 
+    void getCookies(long callId);
+    void deleteCookie(const String& cookieName, const String& domain);
+
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
     InspectorApplicationCacheAgent* applicationCacheAgent() { return m_applicationCacheAgent.get(); }
 #endif
@@ -193,7 +196,6 @@ public:
 
     void didInsertDOMNode(Node*);
     void didRemoveDOMNode(Node*);
-    void getCookies(long callId);
     void didModifyDOMAttr(Element*);
 #if ENABLE(WORKERS)
     enum WorkerAction { WorkerCreated, WorkerDestroyed };
@@ -248,9 +250,7 @@ public:
     bool profilerEnabled() const { return enabled() && m_profilerEnabled; }
 
     void takeHeapSnapshot();
-#endif
 
-#if ENABLE(JAVASCRIPT_DEBUGGER)
     void enableDebugger();
     void disableDebugger(bool always = false);
     bool debuggerEnabled() const { return m_debuggerEnabled; }
@@ -290,8 +290,6 @@ private:
     void storeLastActivePanel(const String& panelName);
     InspectorDOMAgent* domAgent() { return m_domAgent.get(); }
     void releaseFrontendLifetimeAgents();
-
-    void deleteCookie(const String& cookieName, const String& domain);
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     void setBreakpoint(long callId, const String& sourceID, unsigned lineNumber, bool enabled, const String& condition);

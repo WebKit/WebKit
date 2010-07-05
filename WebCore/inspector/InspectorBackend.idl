@@ -128,6 +128,10 @@ module core {
         void getCookies(in long callId);
         void deleteCookie(in DOMString cookieName, in DOMString domain);
 
+#if defined(ENABLE_OFFLINE_WEB_APPLICATIONS)
+        void getApplicationCaches(in long callId);
+#endif
+
         void releaseWrapperObjectGroup(in long injectedScriptId, in DOMString objectGroup);
         void didEvaluateForTestInFrontend(in long callId, in DOMString jsonResult);
 

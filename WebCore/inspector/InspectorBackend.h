@@ -39,6 +39,7 @@ namespace WebCore {
 
 class CachedResource;
 class Database;
+class InspectorApplicationCacheAgent;
 class InspectorDOMAgent;
 class InspectorFrontend;
 class Node;
@@ -153,6 +154,10 @@ public:
     void getCookies(long callId);
     void deleteCookie(const String& cookieName, const String& domain);
 
+#if ENABLE(OFFLINE_WEB_APPLICATIONS)
+    void getApplicationCaches(long callId);
+#endif
+
     // Generic code called from custom implementations.
     void releaseWrapperObjectGroup(long injectedScriptId, const String& objectGroup);
     void didEvaluateForTestInFrontend(long callId, const String& jsonResult);
@@ -170,6 +175,9 @@ public:
 private:
     InspectorBackend(InspectorController* inspectorController);
     InspectorDOMAgent* inspectorDOMAgent();
+#if ENABLE(OFFLINE_WEB_APPLICATIONS)
+    InspectorApplicationCacheAgent* inspectorApplicationCacheAgent();
+#endif
     InspectorFrontend* inspectorFrontend();
     Node* nodeForId(long nodeId);
 

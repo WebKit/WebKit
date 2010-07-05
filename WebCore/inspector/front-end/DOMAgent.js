@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2009, 2010 Google Inc. All rights reserved.
  * Copyright (C) 2009 Joseph Pecoraro
  *
  * Redistribution and use in source and binary forms, with or without
@@ -86,7 +86,8 @@ WebInspector.DOMNode.prototype = {
         return this.attributes.length > 0;
     },
 
-    hasChildNodes: function()  {
+    hasChildNodes: function()
+    {
         return this._childNodeCount > 0;
     },
 
@@ -350,7 +351,8 @@ WebInspector.DOMAgent.prototype = {
         this.document._fireDomEvent("DOMAttrModified", event);
     },
 
-    nodeForId: function(nodeId) {
+    nodeForId: function(nodeId)
+    {
         return this._idToDOMNode[nodeId];
     },
 
@@ -420,16 +422,33 @@ WebInspector.DOMAgent.prototype = {
     }
 }
 
+WebInspector.ApplicationCache = {}
+
+WebInspector.ApplicationCache.getApplicationCachesAsync = function(callback)
+{
+    function mycallback(applicationCaches)
+    {
+        // FIXME: Currently, this list only returns a single application cache.
+        if (applicationCaches)
+            callback(applicationCaches);
+    }
+
+    var callId = WebInspector.Callback.wrap(mycallback);
+    InspectorBackend.getApplicationCaches(callId);
+}
+
 WebInspector.Cookies = {}
 
 WebInspector.Cookies.getCookiesAsync = function(callback)
 {
-    function mycallback(cookies, cookiesString) {
+    function mycallback(cookies, cookiesString)
+    {
         if (cookiesString)
             callback(WebInspector.Cookies.buildCookiesFromString(cookiesString), false);
         else
             callback(cookies, true);
     }
+
     var callId = WebInspector.Callback.wrap(mycallback);
     InspectorBackend.getCookies(callId);
 }
@@ -661,6 +680,7 @@ WebInspector.childNodeRemoved = function()
     this.domAgent._childNodeRemoved.apply(this.domAgent, arguments);
 }
 
+WebInspector.didGetApplicationCaches = WebInspector.Callback.processCallback;
 WebInspector.didGetCookies = WebInspector.Callback.processCallback;
 WebInspector.didGetChildNodes = WebInspector.Callback.processCallback;
 WebInspector.didPerformSearch = WebInspector.Callback.processCallback;

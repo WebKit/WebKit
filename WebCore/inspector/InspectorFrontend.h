@@ -134,10 +134,13 @@ namespace WebCore {
         void didRemoveDOMStorageItem(long callId, bool success);
         void updateDOMStorage(long storageId);
 #endif
+
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
         void updateApplicationCacheStatus(int status);
         void updateNetworkState(bool isNowOnline);
+        void didGetApplicationCaches(long callId, const ScriptValue& applicationCaches);
 #endif
+
         void setDocument(const ScriptObject& root);
         void setDetachedRoot(const ScriptObject& root);
         void setChildNodes(long parentId, const ScriptArray& nodes);

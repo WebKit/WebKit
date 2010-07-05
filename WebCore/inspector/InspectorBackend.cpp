@@ -61,6 +61,10 @@
 #include "ScriptDebugServer.h"
 #endif
 
+#if ENABLE(OFFLINE_WEB_APPLICATIONS)
+#include "InspectorApplicationCacheAgent.h"
+#endif
+
 #include "markup.h"
 
 #include <wtf/RefPtr.h>
@@ -514,6 +518,14 @@ void InspectorBackend::hideDOMNodeHighlight()
         m_inspectorController->hideHighlight();
 }
 
+#if ENABLE(OFFLINE_WEB_APPLICATIONS)
+void InspectorBackend::getApplicationCaches(long callId)
+{
+    if (InspectorApplicationCacheAgent* agent = inspectorApplicationCacheAgent())
+        agent->getApplicationCaches(callId);
+}
+#endif
+
 void InspectorBackend::getCookies(long callId)
 {
     if (!m_inspectorController)
@@ -584,6 +596,15 @@ InspectorDOMAgent* InspectorBackend::inspectorDOMAgent()
         return 0;
     return m_inspectorController->domAgent();
 }
+
+#if ENABLE(OFFLINE_WEB_APPLICATIONS)
+InspectorApplicationCacheAgent* InspectorBackend::inspectorApplicationCacheAgent()
+{
+    if (!m_inspectorController)
+        return 0;
+    return m_inspectorController->applicationCacheAgent();
+}
+#endif
 
 InspectorFrontend* InspectorBackend::inspectorFrontend()
 {

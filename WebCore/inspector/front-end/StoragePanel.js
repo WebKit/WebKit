@@ -398,6 +398,12 @@ WebInspector.StoragePanel.prototype = {
             this._applicationCacheView.updateNetworkState(isNowOnline);
     },
 
+    updateManifest: function(manifest)
+    {
+        if (this._applicationCacheView && this._applicationCacheView === this.visibleView)
+            this._applicationCacheView.updateManifest(manifest);
+    },
+
     _domStorageForId: function(storageId)
     {
         if (!this._domStorage)

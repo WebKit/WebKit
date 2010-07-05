@@ -1,3 +1,72 @@
+2010-07-05  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by Pavel Feldman.
+
+        WebInspector: HTML5 Offline Web Applications Support (ApplicationCache)
+        https://bugs.webkit.org/show_bug.cgi?id=24529
+
+        Parts of this patch were written by Kavita Kanetkar <kkanetkar@chromium.org>.
+
+        Part 2: Pulling ApplicationCache Resources to Display in the Inspector.
+
+          The InspectorApplicationCacheAgent gathers the information it
+          needs and forwards it on to the inspector.
+
+        * inspector/InspectorApplicationCacheAgent.cpp:
+        (WebCore::InspectorApplicationCacheAgent::fillResourceList): get information about the resources.
+        (WebCore::InspectorApplicationCacheAgent::getApplicationCaches): gathers all the information from the ApplicationCacheHost.
+        (WebCore::InspectorApplicationCacheAgent::buildObjectForApplicationCache):
+        (WebCore::InspectorApplicationCacheAgent::buildArrayForApplicationCacheResources):
+        (WebCore::InspectorApplicationCacheAgent::buildObjectForApplicationCacheResource):
+        * inspector/InspectorApplicationCacheAgent.h: defines structures to hold information about caches and resources.
+        (WebCore::InspectorApplicationCacheAgent::ApplicationCacheInfo::ApplicationCacheInfo):
+        (WebCore::InspectorApplicationCacheAgent::ResourceInfo::ResourceInfo):
+        (WebCore::InspectorApplicationCacheAgent::~InspectorApplicationCacheAgent):
+        * loader/appcache/ApplicationCacheHost.h:
+        (WebCore::ApplicationCacheHost::applicationCacheForInspector): new convention, public cache accessor for the inspector.
+        (WebCore::ApplicationCacheHost::documentLoader): added const.
+
+          The User Interface uses a DataGrid, like Cookies.
+
+        * inspector/front-end/ApplicationCacheItemsView.js:
+        (WebInspector.ApplicationCacheItemsView.prototype._update):
+        (WebInspector.ApplicationCacheItemsView.prototype._updateCallback):
+        (WebInspector.ApplicationCacheItemsView.prototype._createDataGrid):
+        (WebInspector.ApplicationCacheItemsView.prototype._populateDataGrid.numberCompare):
+        (WebInspector.ApplicationCacheItemsView.prototype._populateDataGrid.localeCompare):
+        (WebInspector.ApplicationCacheItemsView.prototype._populateDataGrid):
+
+          The usual frontend pull workflow, except this goes through
+          InspectorApplicationCacheAgent instead of InspectorController.
+
+        * inspector/InspectorBackend.cpp:
+        (WebCore::InspectorBackend::getApplicationCaches):
+        (WebCore::InspectorBackend::inspectorApplicationCacheAgent):
+        * inspector/InspectorBackend.h:
+        * inspector/InspectorBackend.idl:
+        * inspector/InspectorFrontend.cpp:
+        (WebCore::InspectorFrontend::didGetApplicationCaches):
+        * inspector/InspectorFrontend.h:
+        * inspector/front-end/DOMAgent.js:
+        (WebInspector.DOMNode.prototype.hasChildNodes): style fix.
+        (WebInspector.DOMAgent.prototype.nodeForId): style fix.
+        (WebInspector.ApplicationCache.getApplicationCachesAsync): pull.
+        (WebInspector.Cookies.getCookiesAsync):
+        * inspector/front-end/StoragePanel.js:
+        (WebInspector.StoragePanel.prototype.updateManifest):
+        (WebInspector.ApplicationCacheSidebarTreeElement.prototype.onselect):
+        * inspector/front-end/inspector.js:
+        (WebInspector.updateResource):
+        (WebInspector._addAppCacheDomain):
+        (WebInspector.reset):
+
+          Miscellaneous. Localized Strings and fixes.
+
+        * English.lproj/localizedStrings.js: "Type", "%s (%s)"
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::deleteCookie):
+        * inspector/InspectorController.h:
+
 2010-07-04  Joseph Pecoraro  <joepeck@webkit.org>
 
         Reviewed by Pavel Feldman.

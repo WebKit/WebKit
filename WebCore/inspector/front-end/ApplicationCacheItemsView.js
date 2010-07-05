@@ -125,22 +125,106 @@ WebInspector.ApplicationCacheItemsView.prototype = {
 
     _update: function()
     {
-        // FIXME: Implement in next part
+        WebInspector.ApplicationCache.getApplicationCachesAsync(this._updateCallback.bind(this));
     },
 
-    _updateCallback: function(appcaches, creationTime, updateTime, size, resources)
+    _updateCallback: function(applicationCaches)
     {
-        // FIXME: Implement in next part
+        // FIXME: applicationCaches is just one cache.
+        // FIXME: are these variables needed anywhere else?
+        this._manifest = applicationCaches.manifest;
+        this._creationTime = applicationCaches.creationTime;
+        this._updateTime = applicationCaches.updateTime;
+        this._size = applicationCaches.size;
+        this._resources = applicationCaches.resources;
+        var lastPathComponent = applicationCaches.lastPathComponent;
+
+        if (!this._manifest) {
+            this._emptyMsgElement.removeStyleClass("hidden");
+            this.deleteButton.visible = false;
+            if (this._dataGrid)
+                this._dataGrid.element.addStyleClass("hidden");
+            return;
+        }
+
+        if (!this._dataGrid)
+            this._createDataGrid();
+
+        this._populateDataGrid();
+        this._dataGrid.autoSizeColumns(20, 80);
+        this._dataGrid.element.removeStyleClass("hidden");
+        this._emptyMsgElement.addStyleClass("hidden");
+        this.deleteButton.visible = true;
+
+        var totalSizeString = Number.bytesToString(this._size, WebInspector.UIString);
+        this._treeElement.subtitle = WebInspector.UIString("%s (%s)", lastPathComponent, totalSizeString);
+
+        // FIXME: For Chrome, put creationTime and updateTime somewhere.
+        // NOTE: localizedString has not yet been added.
+        // WebInspector.UIString("(%s) Created: %s Updated: %s", this._size, this._creationTime, this._updateTime);
     },
 
     _createDataGrid: function()
     {
-        // FIXME: Implement in next part
+        var columns = { 0: {}, 1: {}, 2: {} };
+        columns[0].title = WebInspector.UIString("Resource");
+        columns[0].sort = "ascending";
+        columns[0].sortable = true;
+        columns[1].title = WebInspector.UIString("Type");
+        columns[1].sortable = true;
+        columns[2].title = WebInspector.UIString("Size");
+        columns[2].aligned = "right";
+        columns[2].sortable = true;
+        this._dataGrid = new WebInspector.DataGrid(columns);
+        this.element.appendChild(this._dataGrid.element);
+        this._dataGrid.addEventListener("sorting changed", this._populateDataGrid, this);
+        this._dataGrid.updateWidths();
     },
 
     _populateDataGrid: function()
     {
-        // FIXME: Implement in next part
+        var selectedResource = this._dataGrid.selectedNode ? this._dataGrid.selectedNode.resource : null;
+        var sortDirection = this._dataGrid.sortOrder === "ascending" ? 1 : -1;
+
+        function numberCompare(field, resource1, resource2)
+        {
+            return sortDirection * (resource1[field] - resource2[field]);
+        }
+        function localeCompare(field, resource1, resource2)
+        {
+             return sortDirection * (resource1[field] + "").localeCompare(resource2[field] + "")
+        }
+
+        var comparator;
+        switch (parseInt(this._dataGrid.sortColumnIdentifier)) {
+            case 0: comparator = localeCompare.bind(this, "name"); break;
+            case 1: comparator = localeCompare.bind(this, "type"); break;
+            case 2: comparator = numberCompare.bind(this, "size"); break;
+            default: localeCompare.bind(this, "resource"); // FIXME: comparator = ?
+        }
+
+        this._resources.sort(comparator);
+        this._dataGrid.removeChildren();
+
+        var nodeToSelect;
+        for (var i = 0; i < this._resources.length; ++i) {
+            var data = {};
+            var resource = this._resources[i];
+            data[0] = resource.name;
+            data[1] = resource.type;
+            data[2] = Number.bytesToString(resource.size, WebInspector.UIString);
+            var node = new WebInspector.DataGridNode(data);
+            node.resource = resource;
+            node.selectable = true;
+            this._dataGrid.appendChild(node);
+            if (resource === selectedResource) {
+                nodeToSelect = node;
+                nodeToSelect.selected = true;
+            }
+        }
+
+        if (!nodeToSelect)
+            this._dataGrid.children[0].selected = true;
     },
 
     resize: function()
