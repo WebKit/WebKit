@@ -57,12 +57,15 @@ namespace WebCore {
         virtual void insertedIntoDocument();
 
         virtual void parseMappedAttribute(Attribute*);
+        virtual void svgAttributeChanged(const QualifiedName&);
         virtual void synchronizeProperty(const QualifiedName&);
         virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
 
         bool childShouldCreateRenderer(Node*) const;
 
     private:
+        virtual bool selfHasRelativeLengths() const;
+
         DECLARE_ANIMATED_PROPERTY(SVGTextPathElement, SVGNames::startOffsetAttr, SVGLength, StartOffset, startOffset)
         DECLARE_ANIMATED_PROPERTY(SVGTextPathElement, SVGNames::methodAttr, int, Method, method)
         DECLARE_ANIMATED_PROPERTY(SVGTextPathElement, SVGNames::spacingAttr, int, Spacing, spacing)

@@ -76,6 +76,14 @@ void SVGEllipseElement::svgAttributeChanged(const QualifiedName& attrName)
 {
     SVGStyledTransformableElement::svgAttributeChanged(attrName);
 
+    bool isLengthAttribute = attrName == SVGNames::cxAttr
+                          || attrName == SVGNames::cyAttr
+                          || attrName == SVGNames::rxAttr
+                          || attrName == SVGNames::ryAttr;
+
+    if (isLengthAttribute)
+        updateRelativeLengthsInformation();
+
     RenderPath* renderer = static_cast<RenderPath*>(this->renderer());
     if (!renderer)
         return;
@@ -86,10 +94,7 @@ void SVGEllipseElement::svgAttributeChanged(const QualifiedName& attrName)
         return;
     }
 
-    if (attrName == SVGNames::cxAttr
-        || attrName == SVGNames::cyAttr
-        || attrName == SVGNames::rxAttr
-        || attrName == SVGNames::ryAttr) {
+    if (isLengthAttribute) {
         renderer->setNeedsPathUpdate();
         renderer->setNeedsLayout(true);
         return;
@@ -132,10 +137,12 @@ Path SVGEllipseElement::toPathData() const
                                           rx().value(this), ry().value(this));
 }
  
-bool SVGEllipseElement::hasRelativeValues() const
+bool SVGEllipseElement::selfHasRelativeLengths() const
 {
-    return (cx().isRelative() || cy().isRelative() ||
-            rx().isRelative() || ry().isRelative());
+    return cx().isRelative()
+        || cy().isRelative()
+        || rx().isRelative()
+        || ry().isRelative();
 }
 
 }

@@ -85,6 +85,16 @@ void SVGRectElement::svgAttributeChanged(const QualifiedName& attrName)
 {
     SVGStyledTransformableElement::svgAttributeChanged(attrName);
 
+    bool isLengthAttribute = attrName == SVGNames::xAttr
+                          || attrName == SVGNames::yAttr
+                          || attrName == SVGNames::widthAttr
+                          || attrName == SVGNames::heightAttr
+                          || attrName == SVGNames::rxAttr
+                          || attrName == SVGNames::ryAttr;
+
+    if (isLengthAttribute)
+        updateRelativeLengthsInformation();
+
     RenderPath* renderer = static_cast<RenderPath*>(this->renderer());
     if (!renderer)
         return;
@@ -95,12 +105,7 @@ void SVGRectElement::svgAttributeChanged(const QualifiedName& attrName)
         return;
     }
 
-    if (attrName == SVGNames::xAttr
-        || attrName == SVGNames::yAttr
-        || attrName == SVGNames::widthAttr
-        || attrName == SVGNames::heightAttr
-        || attrName == SVGNames::rxAttr
-        || attrName == SVGNames::ryAttr) {
+    if (isLengthAttribute) {
         renderer->setNeedsPathUpdate();
         renderer->setNeedsLayout(true);
         return;
@@ -158,11 +163,14 @@ Path SVGRectElement::toPathData() const
     return Path::createRectangle(rect);
 }
 
-bool SVGRectElement::hasRelativeValues() const
+bool SVGRectElement::selfHasRelativeLengths() const
 {
-    return (x().isRelative() || width().isRelative() ||
-            y().isRelative() || height().isRelative() ||
-            rx().isRelative() || ry().isRelative());
+    return x().isRelative()
+        || y().isRelative()
+        || width().isRelative()
+        || height().isRelative()
+        || rx().isRelative()
+        || ry().isRelative();
 }
 
 }

@@ -105,6 +105,30 @@ void SVGFilterElement::parseMappedAttribute(Attribute* attr)
     }
 }
 
+void SVGFilterElement::svgAttributeChanged(const QualifiedName& attrName)
+{
+    SVGStyledElement::svgAttributeChanged(attrName);
+
+    bool invalidateClients = false;
+    if (attrName == SVGNames::xAttr
+        || attrName == SVGNames::yAttr
+        || attrName == SVGNames::widthAttr
+        || attrName == SVGNames::heightAttr) {
+        invalidateClients = true;
+        updateRelativeLengthsInformation();
+    }
+
+    if (invalidateClients
+        || attrName == SVGNames::filterUnitsAttr
+        || attrName == SVGNames::primitiveUnitsAttr
+        || attrName == SVGNames::filterResAttr
+        || SVGURIReference::isKnownAttribute(attrName)
+        || SVGLangSpace::isKnownAttribute(attrName)
+        || SVGExternalResourcesRequired::isKnownAttribute(attrName)
+        || SVGStyledElement::isKnownAttribute(attrName))
+        invalidateResourceClients();
+}
+
 void SVGFilterElement::synchronizeProperty(const QualifiedName& attrName)
 {
     SVGStyledElement::synchronizeProperty(attrName);
@@ -165,6 +189,15 @@ RenderObject* SVGFilterElement::createRenderer(RenderArena* arena, RenderStyle*)
 {
     return new (arena) RenderSVGResourceFilter(this);
 }
+
+bool SVGFilterElement::selfHasRelativeLengths() const
+{
+    return x().isRelative()
+        || y().isRelative()
+        || width().isRelative()
+        || height().isRelative();
+}
+
 }
 
 #endif

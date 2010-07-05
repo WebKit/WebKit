@@ -45,10 +45,9 @@ namespace WebCore {
 
         virtual Path toPathData() const;
 
-    protected:
-        virtual bool hasRelativeValues() const;
-
     private:
+        virtual bool selfHasRelativeLengths() const;
+
         DECLARE_ANIMATED_PROPERTY(SVGCircleElement, SVGNames::cxAttr, SVGLength, Cx, cx)
         DECLARE_ANIMATED_PROPERTY(SVGCircleElement, SVGNames::cyAttr, SVGLength, Cy, cy)
         DECLARE_ANIMATED_PROPERTY(SVGCircleElement, SVGNames::rAttr, SVGLength, R, r)

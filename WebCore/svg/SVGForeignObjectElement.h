@@ -48,6 +48,8 @@ namespace WebCore {
         virtual RenderObject* createRenderer(RenderArena* arena, RenderStyle* style);
 
     private:
+        virtual bool selfHasRelativeLengths() const;
+
         DECLARE_ANIMATED_PROPERTY(SVGForeignObjectElement, SVGNames::xAttr, SVGLength, X, x)
         DECLARE_ANIMATED_PROPERTY(SVGForeignObjectElement, SVGNames::yAttr, SVGLength, Y, y)
         DECLARE_ANIMATED_PROPERTY(SVGForeignObjectElement, SVGNames::widthAttr, SVGLength, Width, width)

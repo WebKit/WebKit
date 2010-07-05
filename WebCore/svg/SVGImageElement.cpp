@@ -91,6 +91,14 @@ void SVGImageElement::svgAttributeChanged(const QualifiedName& attrName)
     if (SVGURIReference::isKnownAttribute(attrName))
         m_imageLoader.updateFromElementIgnoringPreviousError();
 
+    bool isLengthAttribute = attrName == SVGNames::xAttr
+                          || attrName == SVGNames::yAttr
+                          || attrName == SVGNames::widthAttr
+                          || attrName == SVGNames::heightAttr;
+
+    if (isLengthAttribute)
+        updateRelativeLengthsInformation();
+
     RenderObject* renderer = this->renderer();
     if (!renderer)
         return;
@@ -101,10 +109,7 @@ void SVGImageElement::svgAttributeChanged(const QualifiedName& attrName)
         return;
     }
 
-    if (attrName == SVGNames::xAttr
-        || attrName == SVGNames::yAttr
-        || attrName == SVGNames::widthAttr
-        || attrName == SVGNames::heightAttr
+    if (isLengthAttribute
         || attrName == SVGNames::preserveAspectRatioAttr
         || SVGTests::isKnownAttribute(attrName)
         || SVGLangSpace::isKnownAttribute(attrName)
@@ -143,10 +148,12 @@ void SVGImageElement::synchronizeProperty(const QualifiedName& attrName)
         synchronizeHref();
 }
 
-bool SVGImageElement::hasRelativeValues() const
+bool SVGImageElement::selfHasRelativeLengths() const
 {
-    return (x().isRelative() || width().isRelative() ||
-            y().isRelative() || height().isRelative());
+    return x().isRelative()
+        || y().isRelative()
+        || width().isRelative()
+        || height().isRelative();
 }
 
 RenderObject* SVGImageElement::createRenderer(RenderArena* arena, RenderStyle*)

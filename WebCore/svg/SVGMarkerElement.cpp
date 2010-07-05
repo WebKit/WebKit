@@ -104,13 +104,22 @@ void SVGMarkerElement::svgAttributeChanged(const QualifiedName& attrName)
 {
     SVGStyledElement::svgAttributeChanged(attrName);
 
-    if (attrName == SVGNames::markerUnitsAttr || attrName == SVGNames::refXAttr ||
-        attrName == SVGNames::refYAttr || attrName == SVGNames::markerWidthAttr ||
-        attrName == SVGNames::markerHeightAttr || attrName == SVGNames::orientAttr ||
-        SVGLangSpace::isKnownAttribute(attrName) ||
-        SVGExternalResourcesRequired::isKnownAttribute(attrName) ||
-        SVGFitToViewBox::isKnownAttribute(attrName) ||
-        SVGStyledElement::isKnownAttribute(attrName))
+    bool invalidateClients = false;
+    if (attrName == SVGNames::refXAttr
+        || attrName == SVGNames::refYAttr
+        || attrName == SVGNames::markerWidthAttr
+        || attrName == SVGNames::markerHeightAttr) {
+        invalidateClients = true;
+        updateRelativeLengthsInformation();
+    }
+
+    if (invalidateClients
+        || attrName == SVGNames::markerUnitsAttr
+        || attrName == SVGNames::orientAttr
+        || SVGLangSpace::isKnownAttribute(attrName)
+        || SVGExternalResourcesRequired::isKnownAttribute(attrName)
+        || SVGFitToViewBox::isKnownAttribute(attrName)
+        || SVGStyledElement::isKnownAttribute(attrName))
         invalidateResourceClients();
 }
 
@@ -180,6 +189,14 @@ void SVGMarkerElement::setOrientToAngle(const SVGAngle& angle)
 RenderObject* SVGMarkerElement::createRenderer(RenderArena* arena, RenderStyle*)
 {
     return new (arena) RenderSVGResourceMarker(this);
+}
+
+bool SVGMarkerElement::selfHasRelativeLengths() const
+{
+    return refX().isRelative()
+        || refY().isRelative()
+        || markerWidth().isRelative()
+        || markerHeight().isRelative();
 }
 
 }

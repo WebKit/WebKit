@@ -51,6 +51,14 @@ void SVGSymbolElement::parseMappedAttribute(Attribute* attr)
     SVGStyledElement::parseMappedAttribute(attr);
 }
 
+void SVGSymbolElement::svgAttributeChanged(const QualifiedName& attrName)
+{
+    SVGStyledElement::svgAttributeChanged(attrName);
+
+    if (attrName == SVGNames::viewBoxAttr)
+        updateRelativeLengthsInformation();
+}
+
 void SVGSymbolElement::synchronizeProperty(const QualifiedName& attrName)
 {
     SVGStyledElement::synchronizeProperty(attrName);
@@ -74,6 +82,11 @@ void SVGSymbolElement::synchronizeProperty(const QualifiedName& attrName)
         synchronizeViewBox();
         synchronizePreserveAspectRatio();
     } 
+}
+
+bool SVGSymbolElement::selfHasRelativeLengths() const
+{
+    return hasAttribute(SVGNames::viewBoxAttr);
 }
 
 }

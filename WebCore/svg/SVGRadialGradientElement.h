@@ -44,6 +44,8 @@ namespace WebCore {
         void calculateFocalCenterPointsAndRadius(const RadialGradientAttributes&, FloatPoint& focalPoint, FloatPoint& centerPoint, float& radius);
 
     private:
+        virtual bool selfHasRelativeLengths() const;
+
         DECLARE_ANIMATED_PROPERTY(SVGRadialGradientElement, SVGNames::cxAttr, SVGLength, Cx, cx)
         DECLARE_ANIMATED_PROPERTY(SVGRadialGradientElement, SVGNames::cyAttr, SVGLength, Cy, cy)
         DECLARE_ANIMATED_PROPERTY(SVGRadialGradientElement, SVGNames::rAttr, SVGLength, R, r)

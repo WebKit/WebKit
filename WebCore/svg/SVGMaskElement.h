@@ -51,6 +51,8 @@ namespace WebCore {
         virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
 
     private:
+        virtual bool selfHasRelativeLengths() const;
+
         DECLARE_ANIMATED_PROPERTY(SVGMaskElement, SVGNames::maskUnitsAttr, int, MaskUnits, maskUnits)
         DECLARE_ANIMATED_PROPERTY(SVGMaskElement, SVGNames::maskContentUnitsAttr, int, MaskContentUnits, maskContentUnits)
         DECLARE_ANIMATED_PROPERTY(SVGMaskElement, SVGNames::xAttr, SVGLength, X, x)

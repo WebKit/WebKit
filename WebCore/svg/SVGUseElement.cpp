@@ -120,7 +120,7 @@ void SVGUseElement::parseMappedAttribute(Attribute* attr)
 void SVGUseElement::insertedIntoDocument()
 {
     // This functions exists to assure assumptions made in the code regarding SVGElementInstance creation/destruction are satisfied.
-    SVGElement::insertedIntoDocument();
+    SVGStyledTransformableElement::insertedIntoDocument();
     ASSERT(!m_targetElementInstance);
     ASSERT(!m_isPendingResource);
 }
@@ -128,12 +128,18 @@ void SVGUseElement::insertedIntoDocument()
 void SVGUseElement::removedFromDocument()
 {
     m_targetElementInstance = 0;
-    SVGElement::removedFromDocument();
+    SVGStyledTransformableElement::removedFromDocument();
 }
 
 void SVGUseElement::svgAttributeChanged(const QualifiedName& attrName)
 {
     SVGStyledTransformableElement::svgAttributeChanged(attrName);
+
+    bool isXYAttribute = attrName == SVGNames::xAttr || attrName == SVGNames::yAttr;
+    bool isWidthHeightAttribute = attrName == SVGNames::widthAttr || attrName == SVGNames::heightAttr;
+
+    if (isXYAttribute || isWidthHeightAttribute)
+        updateRelativeLengthsInformation();
 
     if (!renderer())
         return;
@@ -149,12 +155,12 @@ void SVGUseElement::svgAttributeChanged(const QualifiedName& attrName)
         return;
     }
 
-    if (attrName == SVGNames::xAttr || attrName == SVGNames::yAttr) {
+    if (isXYAttribute) {
         updateContainerOffsets();
         return;
     }
 
-    if (attrName == SVGNames::widthAttr || attrName == SVGNames::heightAttr) {
+    if (isWidthHeightAttribute) {
         updateContainerSizes();
         return;
     }
@@ -552,6 +558,9 @@ void SVGUseElement::buildShadowAndInstanceTree(SVGShadowTreeRootElement* shadowR
     // Update container offset/size
     updateContainerOffsets();
     updateContainerSizes();
+
+    // Update relative length information
+    updateRelativeLengthsInformation();
 }
 
 RenderObject* SVGUseElement::createRenderer(RenderArena* arena, RenderStyle*)
@@ -979,9 +988,22 @@ void SVGUseElement::transferUseAttributesToReplacedElement(SVGElement* from, SVG
     ASSERT(!ec);
 }
 
-bool SVGUseElement::hasRelativeValues() const
+bool SVGUseElement::selfHasRelativeLengths() const
 {
-    return x().isRelative() || y().isRelative() || width().isRelative() || height().isRelative();
+    if (x().isRelative()
+     || y().isRelative()
+     || width().isRelative()
+     || height().isRelative())
+        return true;
+
+    if (!m_targetElementInstance)
+        return false;
+
+    SVGElement* element = m_targetElementInstance->correspondingElement();
+    if (!element || !element->isStyled())
+        return false;
+
+    return static_cast<SVGStyledElement*>(element)->hasRelativeLengths();
 }
 
 }

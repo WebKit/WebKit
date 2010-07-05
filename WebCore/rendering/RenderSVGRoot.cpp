@@ -119,7 +119,7 @@ void RenderSVGRoot::layout()
     // RenderSVGRoot needs to take special care to propagate window size changes to the children,
     // if the outermost <svg> is using relative x/y/width/height values. Hence the additonal parameters.
     SVGSVGElement* svg = static_cast<SVGSVGElement*>(node());
-    SVGRenderSupport::layoutChildren(this, needsLayout || (svg->hasRelativeValues() && oldSize != size()));
+    SVGRenderSupport::layoutChildren(this, needsLayout || (svg->hasRelativeLengths() && oldSize != size()));
     repainter.repaintAfterLayout();
 
     view()->enableLayoutState();
@@ -197,7 +197,7 @@ void RenderSVGRoot::calcViewport()
 {
     SVGSVGElement* svg = static_cast<SVGSVGElement*>(node());
 
-    if (!selfNeedsLayout() && !svg->hasRelativeValues())
+    if (!selfNeedsLayout() && !svg->hasRelativeLengths())
         return;
 
     if (!svg->hasSetContainerSize()) {

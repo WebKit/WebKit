@@ -65,6 +65,12 @@ void SVGTextPositioningElement::svgAttributeChanged(const QualifiedName& attrNam
 {
     SVGTextContentElement::svgAttributeChanged(attrName);
 
+    if (attrName == SVGNames::xAttr
+        || attrName == SVGNames::yAttr
+        || attrName == SVGNames::dxAttr
+        || attrName == SVGNames::dyAttr)
+        updateRelativeLengthsInformation();
+
     if (!renderer())
         return;
 
@@ -105,6 +111,39 @@ bool SVGTextPositioningElement::isKnownAttribute(const QualifiedName& attrName)
             attrName.matches(SVGNames::dyAttr) ||
             attrName.matches(SVGNames::rotateAttr) ||
             SVGTextContentElement::isKnownAttribute(attrName));
+}
+
+static inline bool listContainsRelativeValue(SVGLengthList* list)
+{
+    if (!list)
+        return false;
+
+    ExceptionCode ec = 0;
+    int length = list->numberOfItems();
+    for (int i = 0; i < length; ++i) {
+        SVGLength length(list->getItem(i, ec));
+        ASSERT(!ec);
+
+        if (length.isRelative())
+            return true;
+    }
+
+    return false;
+}
+
+bool SVGTextPositioningElement::selfHasRelativeLengths() const
+{
+    if (SVGTextContentElement::selfHasRelativeLengths())
+        return true;
+    if (listContainsRelativeValue(x()))
+        return true;
+    if (listContainsRelativeValue(y()))
+        return true;
+    if (listContainsRelativeValue(dx()))
+        return true;
+    if (listContainsRelativeValue(dy()))
+        return true;
+    return false;
 }
 
 }

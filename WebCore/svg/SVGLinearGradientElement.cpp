@@ -74,8 +74,10 @@ void SVGLinearGradientElement::svgAttributeChanged(const QualifiedName& attrName
     if (attrName == SVGNames::x1Attr
         || attrName == SVGNames::y1Attr
         || attrName == SVGNames::x2Attr
-        || attrName == SVGNames::y2Attr)
+        || attrName == SVGNames::y2Attr) {
+        updateRelativeLengthsInformation();
         invalidateResourceClients();
+    }
 }
 
 void SVGLinearGradientElement::synchronizeProperty(const QualifiedName& attrName)
@@ -174,6 +176,14 @@ void SVGLinearGradientElement::calculateStartEndPoints(const LinearGradientAttri
         startPoint = FloatPoint(attributes.x1().value(this), attributes.y1().value(this));
         endPoint = FloatPoint(attributes.x2().value(this), attributes.y2().value(this));
     }
+}
+
+bool SVGLinearGradientElement::selfHasRelativeLengths() const
+{
+    return x1().isRelative()
+        || y1().isRelative()
+        || x2().isRelative()
+        || y2().isRelative();
 }
 
 }

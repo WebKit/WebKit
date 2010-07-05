@@ -96,14 +96,23 @@ void SVGMaskElement::svgAttributeChanged(const QualifiedName& attrName)
 {
     SVGStyledElement::svgAttributeChanged(attrName);
 
-    if (attrName == SVGNames::maskUnitsAttr || attrName == SVGNames::maskContentUnitsAttr ||
-        attrName == SVGNames::xAttr || attrName == SVGNames::yAttr ||
-        attrName == SVGNames::widthAttr || attrName == SVGNames::heightAttr ||
-        SVGURIReference::isKnownAttribute(attrName) ||
-        SVGTests::isKnownAttribute(attrName) ||
-        SVGLangSpace::isKnownAttribute(attrName) ||
-        SVGExternalResourcesRequired::isKnownAttribute(attrName) ||
-        SVGStyledElement::isKnownAttribute(attrName))
+    bool invalidateClients = false;
+    if (attrName == SVGNames::xAttr
+        || attrName == SVGNames::yAttr
+        || attrName == SVGNames::widthAttr
+        || attrName == SVGNames::heightAttr) {
+        invalidateClients = true;
+        updateRelativeLengthsInformation();
+    }
+
+    if (invalidateClients
+        || attrName == SVGNames::maskUnitsAttr
+        || attrName == SVGNames::maskContentUnitsAttr
+        || SVGURIReference::isKnownAttribute(attrName)
+        || SVGTests::isKnownAttribute(attrName)
+        || SVGLangSpace::isKnownAttribute(attrName)
+        || SVGExternalResourcesRequired::isKnownAttribute(attrName)
+        || SVGStyledElement::isKnownAttribute(attrName))
         invalidateResourceClients();
 }
 
@@ -163,6 +172,14 @@ FloatRect SVGMaskElement::maskBoundingBox(const FloatRect& objectBoundingBox) co
 RenderObject* SVGMaskElement::createRenderer(RenderArena* arena, RenderStyle*)
 {
     return new (arena) RenderSVGResourceMasker(this);
+}
+
+bool SVGMaskElement::selfHasRelativeLengths() const
+{
+    return x().isRelative()
+        || y().isRelative()
+        || width().isRelative()
+        || height().isRelative();
 }
 
 }

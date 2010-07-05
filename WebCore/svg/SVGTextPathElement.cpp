@@ -69,6 +69,22 @@ void SVGTextPathElement::parseMappedAttribute(Attribute* attr)
     }
 }
 
+void SVGTextPathElement::svgAttributeChanged(const QualifiedName& attrName)
+{
+    SVGTextContentElement::svgAttributeChanged(attrName);
+
+    if (attrName == SVGNames::startOffsetAttr)
+        updateRelativeLengthsInformation();
+
+    if (!renderer())
+        return;
+
+    if (attrName == SVGNames::startOffsetAttr
+        || SVGTextContentElement::isKnownAttribute(attrName)
+        || SVGURIReference::isKnownAttribute(attrName))
+        renderer()->setNeedsLayout(true);
+}
+
 void SVGTextPathElement::synchronizeProperty(const QualifiedName& attrName)
 {
     SVGTextContentElement::synchronizeProperty(attrName);
@@ -110,7 +126,7 @@ bool SVGTextPathElement::childShouldCreateRenderer(Node* child) const
 
 void SVGTextPathElement::insertedIntoDocument()
 {
-    SVGElement::insertedIntoDocument();
+    SVGTextContentElement::insertedIntoDocument();
 
     String id = SVGURIReference::getTarget(href());
     Element* targetElement = ownerDocument()->getElementById(id);
@@ -118,6 +134,12 @@ void SVGTextPathElement::insertedIntoDocument()
         document()->accessSVGExtensions()->addPendingResource(id, this);
         return;
     }
+}
+
+bool SVGTextPathElement::selfHasRelativeLengths() const
+{
+    return startOffset().isRelative()
+        || SVGTextContentElement::selfHasRelativeLengths();
 }
 
 }

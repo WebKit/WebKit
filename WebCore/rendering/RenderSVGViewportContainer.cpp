@@ -49,7 +49,7 @@ void RenderSVGViewportContainer::calcViewport()
     if (svgelem->hasTagName(SVGNames::svgTag)) {
         SVGSVGElement* svg = static_cast<SVGSVGElement*>(node());
 
-        if (!selfNeedsLayout() && !svg->hasRelativeValues())
+        if (!selfNeedsLayout() && !svg->hasRelativeLengths())
             return;
 
         float x = svg->x().value(svg);

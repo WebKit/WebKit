@@ -49,10 +49,9 @@ namespace WebCore {
 
         virtual bool supportsMarkers() const { return true; }
 
-    protected:
-        virtual bool hasRelativeValues() const;
-
     private:
+        virtual bool selfHasRelativeLengths() const;
+
         DECLARE_ANIMATED_PROPERTY(SVGLineElement, SVGNames::x1Attr, SVGLength, X1, x1)
         DECLARE_ANIMATED_PROPERTY(SVGLineElement, SVGNames::y1Attr, SVGLength, Y1, y1)
         DECLARE_ANIMATED_PROPERTY(SVGLineElement, SVGNames::x2Attr, SVGLength, X2, x2)

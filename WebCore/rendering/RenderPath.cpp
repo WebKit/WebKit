@@ -104,7 +104,7 @@ void RenderPath::layout()
     // as the viewport size may have changed. It would be nice to optimize this to detect these changes, and only
     // update when needed, even when using relative values.
     bool needsPathUpdate = m_needsPathUpdate;
-    if (!needsPathUpdate && element->hasRelativeValues())
+    if (!needsPathUpdate && element->hasRelativeLengths())
         needsPathUpdate = true;
 
     if (needsPathUpdate) {

@@ -63,6 +63,9 @@ namespace WebCore {
 
         bool isKnownAttribute(const QualifiedName&);
 
+    protected:
+        virtual bool selfHasRelativeLengths() const;
+
     private:
         DECLARE_ANIMATED_PROPERTY(SVGTextContentElement, SVGNames::textLengthAttr, SVGLength, TextLength, textLength)
         DECLARE_ANIMATED_PROPERTY(SVGTextContentElement, SVGNames::lengthAdjustAttr, int, LengthAdjust, lengthAdjust)

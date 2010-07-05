@@ -58,6 +58,8 @@ namespace WebCore {
         PatternAttributes collectPatternProperties() const;
 
     private:
+        virtual bool selfHasRelativeLengths() const;
+
         DECLARE_ANIMATED_PROPERTY(SVGPatternElement, SVGNames::xAttr, SVGLength, X, x)
         DECLARE_ANIMATED_PROPERTY(SVGPatternElement, SVGNames::yAttr, SVGLength, Y, y)
         DECLARE_ANIMATED_PROPERTY(SVGPatternElement, SVGNames::widthAttr, SVGLength, Width, width)

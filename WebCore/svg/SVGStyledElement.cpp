@@ -295,6 +295,18 @@ void SVGStyledElement::invalidateResourceClients()
         object->toRenderSVGResourceContainer()->invalidateClients();
 }
 
+void SVGStyledElement::insertedIntoDocument()
+{
+    SVGElement::insertedIntoDocument();
+    updateRelativeLengthsInformation();
+}
+
+void SVGStyledElement::removedFromDocument()
+{
+    updateRelativeLengthsInformation(false, this);
+    SVGElement::removedFromDocument();
+}
+
 void SVGStyledElement::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)
 {
     SVGElement::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
@@ -352,6 +364,12 @@ AffineTransform SVGStyledElement::localCoordinateSpaceTransform(SVGLocatable::CT
     // To be overriden by SVGStyledLocatableElement/SVGStyledTransformableElement (or as special case SVGTextElement)
     ASSERT_NOT_REACHED();
     return AffineTransform();
+}
+
+void SVGStyledElement::updateRelativeLengthsInformation(bool, SVGStyledElement*)
+{
+    // FIXME: The actual code will land in a follow-up patch.
+    // See https://bugs.webkit.org/show_bug.cgi?id=41566
 }
 
 }

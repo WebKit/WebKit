@@ -44,6 +44,8 @@ namespace WebCore {
         void calculateStartEndPoints(const LinearGradientAttributes&, FloatPoint& startPoint, FloatPoint& endPoint);
 
     private:
+        virtual bool selfHasRelativeLengths() const;
+
         DECLARE_ANIMATED_PROPERTY(SVGLinearGradientElement, SVGNames::x1Attr, SVGLength, X1, x1)
         DECLARE_ANIMATED_PROPERTY(SVGLinearGradientElement, SVGNames::y1Attr, SVGLength, Y1, y1)
         DECLARE_ANIMATED_PROPERTY(SVGLinearGradientElement, SVGNames::x2Attr, SVGLength, X2, x2)

@@ -1,3 +1,119 @@
+2010-07-05  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Dirk Schulze.
+
+        Logic to track whether elements are using relative lengths is incomplete
+        https://bugs.webkit.org/show_bug.cgi?id=41566
+
+        Add logic to all SVG elements which create renderes to expose a method
+        "bool selfHasRelativeLengths()", that returns whether the element uses relative
+        lengths (eg. <rect x="50%"...). This will be used soon to avoid relayouts of
+        container children, when the bounds have not changed.
+
+        A new method SVGStyledElement::updateRelativeLengthsInformation() is added,
+        which is called from the various svgAttributeChanged() methods and insertedIntoDocument/removedFromDocument.
+        It will be implemented in a follow-up patch. This patch does not affect any test behaviour related
+        to relayouting. As SVGFilterElement finally got a proper svgAttributeChanged() method, it now
+        properly invalidates clients on attribute changes - covered by a new test.
+
+        Tests: svg/custom/relative-sized-inner-svg.xhtml
+               svg/custom/relative-sized-use-without-attributes-on-symbol.xhtml
+               svg/filters/filter-width-update.svg
+ 
+        * rendering/RenderPath.cpp:
+        (WebCore::RenderPath::layout): Rename hasRelativeValues to hasRelativeLengths.
+        * rendering/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::layout): Ditto.
+        (WebCore::RenderSVGRoot::calcViewport): Ditto.
+        * rendering/RenderSVGViewportContainer.cpp:
+        (WebCore::RenderSVGViewportContainer::calcViewport): Ditto
+        * rendering/SVGRenderSupport.cpp:
+        (WebCore::SVGRenderSupport::layoutChildren): Ditto.
+        * svg/SVGCircleElement.cpp:
+        (WebCore::SVGCircleElement::svgAttributeChanged): Call updateRelativeLengthsInformation() if any attribute which may contain relative lengths changes.
+        (WebCore::SVGCircleElement::selfHasRelativeLengths): Ditto. Same for all other SVG*Elements below.
+        * svg/SVGCircleElement.h:
+        * svg/SVGEllipseElement.cpp:
+        (WebCore::SVGEllipseElement::svgAttributeChanged):
+        (WebCore::SVGEllipseElement::selfHasRelativeLengths):
+        * svg/SVGEllipseElement.h:
+        * svg/SVGFilterElement.cpp:
+        (WebCore::SVGFilterElement::svgAttributeChanged):
+        (WebCore::SVGFilterElement::selfHasRelativeLengths):
+        * svg/SVGFilterElement.h:
+        * svg/SVGForeignObjectElement.cpp:
+        (WebCore::SVGForeignObjectElement::svgAttributeChanged):
+        (WebCore::SVGForeignObjectElement::selfHasRelativeLengths):
+        * svg/SVGForeignObjectElement.h:
+        * svg/SVGImageElement.cpp:
+        (WebCore::SVGImageElement::svgAttributeChanged):
+        (WebCore::SVGImageElement::selfHasRelativeLengths):
+        * svg/SVGImageElement.h:
+        * svg/SVGLineElement.cpp:
+        (WebCore::SVGLineElement::svgAttributeChanged):
+        (WebCore::SVGLineElement::selfHasRelativeLengths):
+        * svg/SVGLineElement.h:
+        * svg/SVGLinearGradientElement.cpp:
+        (WebCore::SVGLinearGradientElement::svgAttributeChanged):
+        (WebCore::SVGLinearGradientElement::selfHasRelativeLengths):
+        * svg/SVGLinearGradientElement.h:
+        * svg/SVGMarkerElement.cpp:
+        (WebCore::SVGMarkerElement::svgAttributeChanged):
+        (WebCore::SVGMarkerElement::selfHasRelativeLengths):
+        * svg/SVGMarkerElement.h:
+        * svg/SVGMaskElement.cpp:
+        (WebCore::SVGMaskElement::svgAttributeChanged):
+        (WebCore::SVGMaskElement::selfHasRelativeLengths):
+        * svg/SVGMaskElement.h:
+        * svg/SVGPatternElement.cpp:
+        (WebCore::SVGPatternElement::svgAttributeChanged):
+        (WebCore::SVGPatternElement::selfHasRelativeLengths):
+        * svg/SVGPatternElement.h:
+        * svg/SVGRadialGradientElement.cpp:
+        (WebCore::SVGRadialGradientElement::svgAttributeChanged):
+        (WebCore::SVGRadialGradientElement::selfHasRelativeLengths):
+        * svg/SVGRadialGradientElement.h:
+        * svg/SVGRectElement.cpp:
+        (WebCore::SVGRectElement::svgAttributeChanged):
+        (WebCore::SVGRectElement::selfHasRelativeLengths):
+        * svg/SVGRectElement.h:
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::svgAttributeChanged):
+        (WebCore::SVGSVGElement::selfHasRelativeLengths):
+        * svg/SVGSVGElement.h:
+        * svg/SVGStyledElement.cpp:
+        (WebCore::SVGStyledElement::insertedIntoDocument): Call updateRelativeLengthsInformation().
+        (WebCore::SVGStyledElement::removedFromDocument): Ditto.
+        (WebCore::SVGStyledElement::updateRelativeLengthsInformation): Not implemented so far. Will land in a follow-up patch, together with the render tree changes.
+        * svg/SVGStyledElement.h:
+        (WebCore::SVGStyledElement::hasRelativeLengths): Devirtualized. For now, just call selfHasRelativeLengths() - this will change in a follow-up patch.
+        (WebCore::SVGStyledElement::updateRelativeLengthsInformation):
+        (WebCore::SVGStyledElement::selfHasRelativeLengths): Renamed from hasRelativeValues().
+        * svg/SVGSymbolElement.cpp:
+        (WebCore::SVGSymbolElement::svgAttributeChanged):
+        (WebCore::SVGSymbolElement::selfHasRelativeLengths):
+        * svg/SVGSymbolElement.h:
+        * svg/SVGTextContentElement.cpp:
+        (WebCore::SVGTextContentElement::selfHasRelativeLengths):
+        * svg/SVGTextContentElement.h:
+        * svg/SVGTextPathElement.cpp:
+        (WebCore::SVGTextPathElement::svgAttributeChanged):
+        (WebCore::SVGTextPathElement::insertedIntoDocument): Call right base class' method. Skipped one in the hierachy before.
+        (WebCore::SVGTextPathElement::selfHasRelativeLengths):
+        * svg/SVGTextPathElement.h:
+        * svg/SVGTextPositioningElement.cpp:
+        (WebCore::SVGTextPositioningElement::svgAttributeChanged):
+        (WebCore::listContainsRelativeValue): New helper funtion that checks wheter a SVGLengthList contains relative lengths.
+        (WebCore::SVGTextPositioningElement::selfHasRelativeLengths):
+        * svg/SVGTextPositioningElement.h:
+        * svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::insertedIntoDocument): Call right base class' method. Skipped on in the hierachy before.
+        (WebCore::SVGUseElement::removedFromDocument): Ditto.
+        (WebCore::SVGUseElement::svgAttributeChanged):
+        (WebCore::SVGUseElement::buildShadowAndInstanceTree): Call updateRelativeLengthsInformation() after building the shadow tree.
+        (WebCore::SVGUseElement::selfHasRelativeLengths): Same as all other methods, except that it includes the shadow tree root element.
+        * svg/SVGUseElement.h:
+
 2010-07-05  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Yury Semikhatsky.

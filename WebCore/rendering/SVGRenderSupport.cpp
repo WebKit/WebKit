@@ -241,7 +241,7 @@ void SVGRenderSupport::layoutChildren(RenderObject* start, bool selfNeedsLayout)
         if (!needsLayout) {
             if (SVGElement* element = child->node()->isSVGElement() ? static_cast<SVGElement*>(child->node()) : 0) {
                 if (element->isStyled())
-                    needsLayout = static_cast<SVGStyledElement*>(element)->hasRelativeValues();
+                    needsLayout = static_cast<SVGStyledElement*>(element)->hasRelativeLengths();
             }
         }
 

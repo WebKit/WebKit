@@ -71,6 +71,13 @@ void SVGCircleElement::svgAttributeChanged(const QualifiedName& attrName)
 {
     SVGStyledTransformableElement::svgAttributeChanged(attrName);
 
+    bool isLengthAttribute = attrName == SVGNames::cxAttr
+                          || attrName == SVGNames::cyAttr
+                          || attrName == SVGNames::rAttr;
+
+    if (isLengthAttribute)
+        updateRelativeLengthsInformation();
+
     RenderPath* renderer = static_cast<RenderPath*>(this->renderer());
     if (!renderer)
         return;
@@ -81,9 +88,7 @@ void SVGCircleElement::svgAttributeChanged(const QualifiedName& attrName)
         return;
     }
 
-    if (attrName == SVGNames::cxAttr
-        || attrName == SVGNames::cyAttr
-        || attrName == SVGNames::rAttr) {
+    if (isLengthAttribute) {
         renderer->setNeedsPathUpdate();
         renderer->setNeedsLayout(true);
         return;
@@ -122,9 +127,11 @@ Path SVGCircleElement::toPathData() const
     return Path::createCircle(FloatPoint(cx().value(this), cy().value(this)), r().value(this));
 }
 
-bool SVGCircleElement::hasRelativeValues() const
+bool SVGCircleElement::selfHasRelativeLengths() const
 {
-    return (cx().isRelative() || cy().isRelative() || r().isRelative());
+    return cx().isRelative()
+        || cy().isRelative()
+        || r().isRelative();
 }
  
 }
