@@ -26,6 +26,7 @@
 #include "qwkpage.h"
 #include "WebPageNamespace.h"
 #include "WebPageProxy.h"
+#include <QBasicTimer>
 #include <wtf/RefPtr.h>
 #include <QGraphicsView>
 #include <QKeyEvent>
@@ -66,6 +67,9 @@ public:
     RefPtr<WebKit::WebPageProxy> page;
 
     QWKPage::CreateNewPageFn createNewPageFn;
+
+    QPoint tripleClick;
+    QBasicTimer tripleClickTimer;
 };
 
 #endif /* qkpage_p_h */

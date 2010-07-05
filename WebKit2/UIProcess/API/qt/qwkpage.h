@@ -61,6 +61,9 @@ public:
     Q_SIGNAL void urlChanged(const QUrl&);
     Q_SIGNAL void contentsSizeChanged(const QSize&);
 
+protected:
+    void timerEvent(QTimerEvent*);
+
 private:
     friend class QWKGraphicsWidget;
     friend class QWKGraphicsWidgetPrivate;

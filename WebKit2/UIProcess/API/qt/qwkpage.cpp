@@ -104,6 +104,12 @@ void QWKPagePrivate::mouseMoveEvent(QGraphicsSceneMouseEvent* ev)
 
 void QWKPagePrivate::mousePressEvent(QGraphicsSceneMouseEvent* ev)
 {
+    if (tripleClickTimer.isActive() && (ev->pos() - tripleClick).manhattanLength() < QApplication::startDragDistance()) {
+        WebMouseEvent mouseEvent = WebEventFactory::createWebMouseEvent(ev, 3);
+        page->mouseEvent(mouseEvent);
+        return;
+    }
+
     WebMouseEvent mouseEvent = WebEventFactory::createWebMouseEvent(ev, 1);
     page->mouseEvent(mouseEvent);
 }
@@ -118,6 +124,9 @@ void QWKPagePrivate::mouseDoubleClickEvent(QGraphicsSceneMouseEvent* ev)
 {
     WebMouseEvent mouseEvent = WebEventFactory::createWebMouseEvent(ev, 2);
     page->mouseEvent(mouseEvent);
+
+    tripleClickTimer.start(QApplication::doubleClickInterval(), q);
+    tripleClick = ev->pos().toPoint();
 }
 
 void QWKPagePrivate::wheelEvent(QGraphicsSceneWheelEvent* ev)
@@ -219,6 +228,15 @@ QWKPage::QWKPage(WKPageNamespaceRef namespaceRef)
 QWKPage::~QWKPage()
 {
     delete d;
+}
+
+void QWKPage::timerEvent(QTimerEvent* ev)
+{
+    int timerId = ev->timerId();
+    if (timerId == d->tripleClickTimer.timerId())
+        d->tripleClickTimer.stop();
+    else
+        QObject::timerEvent(ev);
 }
 
 WKPageRef QWKPage::pageRef() const
