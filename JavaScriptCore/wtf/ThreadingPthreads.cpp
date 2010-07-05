@@ -48,7 +48,7 @@
 #endif
 
 #if OS(ANDROID)
-#include "jni_utility.h"
+#include "JNIUtility.h"
 #endif
 
 namespace WTF {
