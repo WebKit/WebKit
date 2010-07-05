@@ -121,27 +121,6 @@ InjectedScript.getProperties = function(objectProxy, ignoreHasOwnProperty, abbre
     if (!ignoreHasOwnProperty && object.__proto__)
         propertyNames.push("__proto__");
 
-    if (jsEngine === "v8") {
-        // Check if the object is a scope.
-        if (InjectedScript._isScopeProxy(objectProxy)) {
-            propertyNames = [];
-            for (var name in object)
-                propertyNames.push(name);
-        } else {
-            // FIXME(http://crbug.com/41243): Object.getOwnPropertyNames may return duplicated names.
-            var a = [];
-            propertyNames.sort();
-            var prev;
-            for (var i = 0; i < propertyNames.length; i++) {
-                var n = propertyNames[i];
-                if (n != prev)
-                    a.push(n);
-                prev = n;
-            }
-            propertyNames = a;
-        }
-    }
-    
     // Go over properties, prepare results.
     for (var i = 0; i < propertyNames.length; ++i) {
         var propertyName = propertyNames[i];
@@ -170,12 +149,6 @@ InjectedScript.getProperties = function(objectProxy, ignoreHasOwnProperty, abbre
     }
     return properties;
 }
-
-InjectedScript._isScopeProxy = function(objectProxy)
-{
-    var objectId = objectProxy.objectId;
-    return typeof objectId === "object" && !objectId.thisObject && !objectProxy.path;
-} 
 
 InjectedScript.setPropertyValue = function(objectProxy, propertyName, expression)
 {
@@ -217,7 +190,7 @@ InjectedScript._populatePropertyNames = function(object, resultSet)
         try {
             var names = Object.getOwnPropertyNames(o);
             for (var i = 0; i < names.length; ++i)
-                resultSet[names[i] + ""] = true;
+                resultSet[names[i]] = true;
         } catch (e) {
         }
     }

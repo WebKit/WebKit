@@ -1,3 +1,13 @@
+2010-07-05  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        [v8] Web Inspector: remove v8-specific code dealing with getOwnPropertyNames from InjectedScript.js
+        https://bugs.webkit.org/show_bug.cgi?id=41595
+
+        * inspector/front-end/InjectedScript.js:
+        (injectedScriptConstructor):
+
 2010-07-04  Rob Buis  <rwlbuis@gmail.com>
 
         Reviewed by Dirk Schulze.

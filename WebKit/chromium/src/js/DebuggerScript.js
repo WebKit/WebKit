@@ -237,6 +237,9 @@ DebuggerScript._frameMirrorToJSCallFrame = function(frameMirror, callerFrame)
         var scopeObject = {};
         for (var j = 0; j < properties.length; j++)
             scopeObject[properties[j].name()] = properties[j].value_;
+        // Reset scope object prototype to null so that the proto properties
+        // don't appear in th local scope section.
+        scopeObject.__proto__ = null;
         scopeType.push(scopeMirror.scopeType());
         scopeChain.push(scopeObject);
     }
