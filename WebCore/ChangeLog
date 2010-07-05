@@ -1,3 +1,12 @@
+2010-07-05  Martin Robinson  <mrobinson@igalia.com>
+
+        Unreviewed.
+
+        Add a missing slash to the list of generated sources. This
+        was missing from a previous build fix.
+
+        * GNUmakefile.am:
+
 2010-07-05  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Joseph Pecoraro.

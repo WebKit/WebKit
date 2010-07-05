@@ -103,7 +103,7 @@ webcore_built_sources += \
 	DerivedSources/WebCore/UserAgentStyleSheetsData.cpp \
 	DerivedSources/WebCore/XMLNSNames.cpp \
 	DerivedSources/WebCore/XMLNSNames.h \
-	DerivedSources/WebCore/XMLNames.cpp
+	DerivedSources/WebCore/XMLNames.cpp \
 	DerivedSources/WebCore/XMLNames.h
 
 IDL_BINDINGS += \
