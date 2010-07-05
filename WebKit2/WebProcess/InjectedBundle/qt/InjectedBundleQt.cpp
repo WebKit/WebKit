@@ -23,54 +23,20 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef InjectedBundle_h
-#define InjectedBundle_h
+#include "InjectedBundle.h"
 
-#include "WKBundle.h"
-#include <WebCore/PlatformString.h>
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
+#include "WKBundleAPICast.h"
+#include "WKBundleInitialize.h"
+
+using namespace WebCore;
 
 namespace WebKit {
 
-#if PLATFORM(MAC)
-typedef CFBundleRef PlatformBundle;
-#elif PLATFORM(WIN)
-typedef HMODULE PlatformBundle;
-#elif PLATFORM(QT)
-typedef void* PlatformBundle;
-#endif
+// FIXME: This should try and use <WebCore/FileSystem.h>.
 
-class WebPage;
-
-class InjectedBundle : public RefCounted<InjectedBundle> {
-public:
-    static PassRefPtr<InjectedBundle> create(const WebCore::String& path)
-    {
-        return adoptRef(new InjectedBundle(path));
-    }
-    ~InjectedBundle();
-
-    bool load();
-
-    // API
-    void initializeClient(WKBundleClient*);
-    void postMessage(WebCore::StringImpl*);
-
-    // Callback hooks
-    void didCreatePage(WebPage*);
-    void willDestroyPage(WebPage*);
-    void didRecieveMessage(const WebCore::String&);
-
-private:
-    InjectedBundle(const WebCore::String&);
-
-    WebCore::String m_path;
-    PlatformBundle m_platformBundle; // This is leaked right now, since we never unload the bundle/module.
-
-    WKBundleClient m_client;
-};
+bool InjectedBundle::load()
+{
+    return false;
+}
 
 } // namespace WebKit
-
-#endif // InjectedBundle_h

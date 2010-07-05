@@ -5,6 +5,24 @@
         [Qt] Initial WebKit2 implementation
         https://bugs.webkit.org/show_bug.cgi?id=40233
 
+        Add stubs
+
+        * UIProcess/Plugins/qt/PluginInfoStoreQt.cpp: Copied from WebKit2/UIProcess/Plugins/win/PluginInfoStoreWin.cpp.
+        (WebKit::PluginInfoStore::pluginDirectories):
+        (WebKit::PluginInfoStore::pluginPathsInDirectory):
+        (WebKit::PluginInfoStore::getPluginInfo):
+        (WebKit::PluginInfoStore::shouldUsePlugin):
+        * WebProcess/InjectedBundle/InjectedBundle.h:
+        * WebProcess/InjectedBundle/qt/InjectedBundleQt.cpp: Added.
+        (WebKit::InjectedBundle::load):
+
+2010-07-05  Kenneth Rohde Christiansen  <kenneth.christiansen@openbossa.org>
+
+        Reviewed by Antti Koivisto.
+
+        [Qt] Initial WebKit2 implementation
+        https://bugs.webkit.org/show_bug.cgi?id=40233
+
         Add WebErrorsQt
 
         * WebProcess/WebCoreSupport/qt/WebErrorsQt.cpp: Added.
