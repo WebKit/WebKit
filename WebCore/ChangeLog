@@ -1,3 +1,17 @@
+2010-07-06  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Implement more of InTableMode
+        https://bugs.webkit.org/show_bug.cgi?id=41652
+
+        By the time we got around to landing this patch, it turns out to be
+        just a bit of cleanup (the functional changes where landed already.)
+
+        * html/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::processCharacter):
+        (WebCore::HTMLTreeBuilder::processEndOfFile):
+
 2010-07-06  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r62529.
