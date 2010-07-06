@@ -1114,8 +1114,11 @@ void HTMLTreeBuilder::processStartTag(AtomicHTMLToken& token)
             return;
         }
         break;
-    default:
+    case TextMode:
+    case InTableTextMode:
+    case InForeignContentMode:
         notImplemented();
+        break;
     }
 }
 
@@ -1857,8 +1860,10 @@ void HTMLTreeBuilder::processEndTag(AtomicHTMLToken& token)
             return;
         }
         break;
-    default:
+    case InTableTextMode:
+    case InForeignContentMode:
         notImplemented();
+        break;
     }
 }
 
@@ -1951,8 +1956,10 @@ void HTMLTreeBuilder::processCharacter(AtomicHTMLToken& token)
         ASSERT(insertionMode() == InSelectMode || insertionMode() == InSelectInTableMode);
         insertTextNode(token);
         break;
-    default:
+    case InTableTextMode:
+    case InForeignContentMode:
         notImplemented();
+        break;
     }
 }
 
@@ -2019,8 +2026,13 @@ void HTMLTreeBuilder::processEndOfFile(AtomicHTMLToken& token)
         }
         processEndOfFile(token);
         break;
-    default:
+    case TextMode:
+    case InTableTextMode:
+    case InCaptionMode:
+    case InRowMode:
+    case InForeignContentMode:
         notImplemented();
+        break;
     }
 }
 

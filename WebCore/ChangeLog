@@ -1,3 +1,15 @@
+2010-07-06  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed.
+
+        Make the remaining insertion modes explicit.
+
+        * html/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::processStartTag):
+        (WebCore::HTMLTreeBuilder::processEndTag):
+        (WebCore::HTMLTreeBuilder::processCharacter):
+        (WebCore::HTMLTreeBuilder::processEndOfFile):
+
 2010-07-06  Alexey Proskuryakov  <ap@apple.com>
 
         Not reviewed, fixing a simple copy/paste mistake.
