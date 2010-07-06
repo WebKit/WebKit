@@ -108,13 +108,16 @@ void ScrollView::setGtkAdjustments(GtkAdjustment* hadj, GtkAdjustment* vadj, boo
 
     // Reset the adjustments to a sane default
     if (m_horizontalAdjustment) {
+        // We may be lacking scrollbars when returning to a cached
+        // page, this kicks the page to recreate the scrollbars.
+        setHasVerticalScrollbar(true);
+        setHasHorizontalScrollbar(true);
+
         ScrollbarGtk* hScrollbar = reinterpret_cast<ScrollbarGtk*>(horizontalScrollbar());
-        if (hScrollbar)
-            hScrollbar->attachAdjustment(m_horizontalAdjustment);
+        hScrollbar->attachAdjustment(m_horizontalAdjustment);
 
         ScrollbarGtk* vScrollbar = reinterpret_cast<ScrollbarGtk*>(verticalScrollbar());
-        if (vScrollbar)
-            vScrollbar->attachAdjustment(m_verticalAdjustment);
+        vScrollbar->attachAdjustment(m_verticalAdjustment);
 
         // We used to reset everything to 0 here, but when page cache
         // is enabled we reuse FrameViews that are cached. Since their
