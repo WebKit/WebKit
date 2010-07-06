@@ -863,7 +863,7 @@ void HTMLTreeBuilder::processStartTag(AtomicHTMLToken& token)
         parseError(token);
         if (currentElement()->hasTagName(tableTag) || currentElement()->hasTagName(tbodyTag) || currentElement()->hasTagName(tfootTag) || currentElement()->hasTagName(theadTag) || currentElement()->hasTagName(trTag))
             notImplemented(); // "whenever a node would be inserted into the current node, it must instead be foster parented."
-        // FIXME: processStartTagForInBody(token);
+        processStartTagForInBody(token);
         break;
     case InColumnGroupMode:
         if (token.name() == htmlTag) {
@@ -1300,6 +1300,123 @@ void HTMLTreeBuilder::resetInsertionModeAppropriately()
     }
 }
 
+void HTMLTreeBuilder::processEndTagForInBody(AtomicHTMLToken& token)
+{
+    ASSERT(token.type() == HTMLToken::EndTag);
+    if (token.name() == bodyTag) {
+        processBodyEndTagForInBody(token);
+        return;
+    }
+    if (token.name() == htmlTag) {
+        AtomicHTMLToken endBody(HTMLToken::EndTag, bodyTag.localName());
+        if (processBodyEndTagForInBody(endBody))
+            processEndTag(token);
+        return;
+    }
+    if (token.name() == addressTag || token.name() == articleTag || token.name() == asideTag || token.name() == blockquoteTag || token.name() == buttonTag || token.name() == centerTag || token.name() == "details" || token.name() == dirTag || token.name() == divTag || token.name() == dlTag || token.name() == fieldsetTag || token.name() == "figure" || token.name() == footerTag || token.name() == headerTag || token.name() == hgroupTag || token.name() == listingTag || token.name() == menuTag || token.name() == navTag || token.name() == olTag || token.name() == preTag || token.name() == sectionTag || token.name() == ulTag) {
+        if (!m_openElements.inScope(token.name())) {
+            parseError(token);
+            return;
+        }
+        generateImpliedEndTags();
+        if (currentElement()->tagQName() != token.name())
+            parseError(token);
+        m_openElements.popUntil(token.name());
+        m_openElements.pop();
+    }
+    if (token.name() == formTag) {
+        RefPtr<Element> node = m_formElement.release();
+        if (!node || !m_openElements.inScope(node.get())) {
+            parseError(token);
+            return;
+        }
+        generateImpliedEndTags();
+        if (currentElement() != node.get())
+            parseError(token);
+        m_openElements.remove(node.get());
+    }
+    if (token.name() == pTag) {
+        if (!m_openElements.inScope(token.name())) {
+            parseError(token);
+            notImplemented();
+            return;
+        }
+        generateImpliedEndTagsWithExclusion(token.name());
+        if (!currentElement()->hasLocalName(token.name()))
+            parseError(token);
+        m_openElements.popUntil(token.name());
+        m_openElements.pop();
+        return;
+    }
+    if (token.name() == liTag) {
+        if (!m_openElements.inListItemScope(token.name())) {
+            parseError(token);
+            return;
+        }
+        generateImpliedEndTagsWithExclusion(token.name());
+        if (!currentElement()->hasLocalName(token.name()))
+            parseError(token);
+        m_openElements.popUntil(token.name());
+        m_openElements.pop();
+        return;
+    }
+    if (token.name() == ddTag || token.name() == dtTag) {
+        if (!m_openElements.inScope(token.name())) {
+            parseError(token);
+            return;
+        }
+        generateImpliedEndTagsWithExclusion(token.name());
+        if (!currentElement()->hasLocalName(token.name()))
+            parseError(token);
+        m_openElements.popUntil(token.name());
+        m_openElements.pop();
+        return;
+    }
+    if (isNumberedHeaderTag(token.name())) {
+        if (!m_openElements.inScope(token.name())) {
+            parseError(token);
+            return;
+        }
+        generateImpliedEndTags();
+        if (!currentElement()->hasLocalName(token.name()))
+            parseError(token);
+        m_openElements.popUntil(token.name());
+        m_openElements.pop();
+        return;
+    }
+    if (token.name() == "sarcasm") {
+        notImplemented(); // Take a deep breath.
+        return;
+    }
+    if (isFormattingTag(token.name())) {
+        callTheAdoptionAgency(token);
+        return;
+    }
+    if (token.name() == appletTag || token.name() == marqueeTag || token.name() == objectTag) {
+        if (!m_openElements.inScope(token.name())) {
+            parseError(token);
+            return;
+        }
+        generateImpliedEndTags();
+        if (currentElement()->tagQName() != token.name())
+            parseError(token);
+        m_openElements.popUntil(token.name());
+        m_openElements.pop();
+        m_activeFormattingElements.clearToLastMarker();
+        return;
+    }
+    if (token.name() == brTag) {
+        parseError(token);
+        reconstructTheActiveFormattingElements();
+        // Notice that we lose the attributes.
+        AtomicHTMLToken startBr(HTMLToken::StartTag, token.name());
+        insertSelfClosingElement(startBr);
+        m_framesetOk = false;
+        return;
+    }
+    processAnyOtherEndTagForInBody(token);
+}
+
 void HTMLTreeBuilder::processEndTag(AtomicHTMLToken& token)
 {
     ASSERT(token.type() == HTMLToken::EndTag);
@@ -1347,118 +1464,7 @@ void HTMLTreeBuilder::processEndTag(AtomicHTMLToken& token)
         // Fall through
     case InBodyMode:
         ASSERT(insertionMode() == InBodyMode);
-        if (token.name() == bodyTag) {
-            processBodyEndTagForInBody(token);
-            return;
-        }
-        if (token.name() == htmlTag) {
-            AtomicHTMLToken endBody(HTMLToken::EndTag, bodyTag.localName());
-            if (processBodyEndTagForInBody(endBody))
-                processEndTag(token);
-            return;
-        }
-        if (token.name() == addressTag || token.name() == articleTag || token.name() == asideTag || token.name() == blockquoteTag || token.name() == buttonTag || token.name() == centerTag || token.name() == "details" || token.name() == dirTag || token.name() == divTag || token.name() == dlTag || token.name() == fieldsetTag || token.name() == "figure" || token.name() == footerTag || token.name() == headerTag || token.name() == hgroupTag || token.name() == listingTag || token.name() == menuTag || token.name() == navTag || token.name() == olTag || token.name() == preTag || token.name() == sectionTag || token.name() == ulTag) {
-            if (!m_openElements.inScope(token.name())) {
-                parseError(token);
-                return;
-            }
-            generateImpliedEndTags();
-            if (currentElement()->tagQName() != token.name())
-                parseError(token);
-            m_openElements.popUntil(token.name());
-            m_openElements.pop();
-        }
-        if (token.name() == formTag) {
-            RefPtr<Element> node = m_formElement.release();
-            if (!node || !m_openElements.inScope(node.get())) {
-                parseError(token);
-                return;
-            }
-            generateImpliedEndTags();
-            if (currentElement() != node.get())
-                parseError(token);
-            m_openElements.remove(node.get());
-        }
-        if (token.name() == pTag) {
-            if (!m_openElements.inScope(token.name())) {
-                parseError(token);
-                notImplemented();
-                return;
-            }
-            generateImpliedEndTagsWithExclusion(token.name());
-            if (!currentElement()->hasLocalName(token.name()))
-                parseError(token);
-            m_openElements.popUntil(token.name());
-            m_openElements.pop();
-            return;
-        }
-        if (token.name() == liTag) {
-            if (!m_openElements.inListItemScope(token.name())) {
-                parseError(token);
-                return;
-            }
-            generateImpliedEndTagsWithExclusion(token.name());
-            if (!currentElement()->hasLocalName(token.name()))
-                parseError(token);
-            m_openElements.popUntil(token.name());
-            m_openElements.pop();
-            return;
-        }
-        if (token.name() == ddTag || token.name() == dtTag) {
-            if (!m_openElements.inScope(token.name())) {
-                parseError(token);
-                return;
-            }
-            generateImpliedEndTagsWithExclusion(token.name());
-            if (!currentElement()->hasLocalName(token.name()))
-                parseError(token);
-            m_openElements.popUntil(token.name());
-            m_openElements.pop();
-            return;
-        }
-        if (isNumberedHeaderTag(token.name())) {
-            if (!m_openElements.inScope(token.name())) {
-                parseError(token);
-                return;
-            }
-            generateImpliedEndTags();
-            if (!currentElement()->hasLocalName(token.name()))
-                parseError(token);
-            m_openElements.popUntil(token.name());
-            m_openElements.pop();
-            return;
-        }
-        if (token.name() == "sarcasm") {
-            notImplemented(); // Take a deep breath.
-            return;
-        }
-        if (isFormattingTag(token.name())) {
-            callTheAdoptionAgency(token);
-            return;
-        }
-        if (token.name() == appletTag || token.name() == marqueeTag || token.name() == objectTag) {
-            if (!m_openElements.inScope(token.name())) {
-                parseError(token);
-                return;
-            }
-            generateImpliedEndTags();
-            if (currentElement()->tagQName() != token.name())
-                parseError(token);
-            m_openElements.popUntil(token.name());
-            m_openElements.pop();
-            m_activeFormattingElements.clearToLastMarker();
-            return;
-        }
-        if (token.name() == brTag) {
-            parseError(token);
-            reconstructTheActiveFormattingElements();
-            // Notice that we lose the attributes.
-            AtomicHTMLToken startBr(HTMLToken::StartTag, token.name());
-            insertSelfClosingElement(startBr);
-            m_framesetOk = false;
-            return;
-        }
-        processAnyOtherEndTagForInBody(token);
+        processEndTagForInBody(token);
         break;
     case InTableMode:
         ASSERT(insertionMode() == InTableMode);
@@ -1477,7 +1483,8 @@ void HTMLTreeBuilder::processEndTag(AtomicHTMLToken& token)
             parseError(token);
             return;
         }
-        notImplemented();
+        // FIXME: Do we need to worry about "whenever a node would be inserted into the current node, it must instead be foster parented"?
+        processEndTagForInBody(token);
         break;
     case AfterBodyMode:
         ASSERT(insertionMode() == AfterBodyMode);

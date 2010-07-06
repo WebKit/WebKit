@@ -123,6 +123,7 @@ private:
 
     bool processStartTagForInHead(AtomicHTMLToken&);
     void processStartTagForInBody(AtomicHTMLToken&);
+    void processEndTagForInBody(AtomicHTMLToken&);
     PassRefPtr<NamedNodeMap> attributesForIsindexInput(AtomicHTMLToken&);
     void processIsindexStartTagForBody(AtomicHTMLToken&);
     bool processBodyEndTagForInBody(AtomicHTMLToken&);

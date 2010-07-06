@@ -250,6 +250,8 @@ Got:
 |       <div>
 |         "hello"
 |         <table>
+|           <font>
+|             <b>
 |           <tbody>
 |             <tr>
 |               <th>
@@ -835,6 +837,9 @@ Got:
 |       href="blah"
 |       "aba"
 |       <table>
+|         <a>
+|           <a>
+|             href="foo"
 |         <tbody>
 |           <tr>
 |             <td>
@@ -895,6 +900,8 @@ Got:
 |   <head>
 |   <body>
 |     <table>
+|       <a>
+|         href="blah"
 |       <tbody>
 |         <tr>
 |           <td>
@@ -1007,9 +1014,10 @@ Got:
 |   <body>
 |     <a>
 |       <table>
-|       <p>
 |         <a>
 |           <a>
+|       <p>
+|         <a>
 |       <div>
 |         <a>
 Expected:
@@ -1431,9 +1439,7 @@ Got:
 |   <head>
 |   <body>
 |     <table>
-|       <tbody>
-|         <tr>
-|           <td>
+|       <plaintext>
 Expected:
 | <html>
 |   <head>
@@ -2223,6 +2229,8 @@ Got:
 |   <head>
 |   <body>
 |     <table>
+|       <title>
+|         "X"
 Expected:
 | <!DOCTYPE html>
 | <html>
@@ -2240,6 +2248,7 @@ Got:
 |   <head>
 |   <body>
 |     <table>
+|       <meta>
 Expected:
 | <!DOCTYPE html>
 | <html>
@@ -2440,6 +2449,8 @@ Got:
 |   <head>
 |   <body>
 |     <table>
+|       <select>
+|         "X"
 |       <tbody>
 |         <tr>
 Expected:
@@ -2490,6 +2501,7 @@ Got:
 |   <head>
 |   <body>
 |     <table>
+|       <b>
 |       <tbody>
 |         <tr>
 |           <td>
@@ -2670,6 +2682,8 @@ Got:
 |   <head>
 |   <body>
 |     <table>
+|       <div>
+|         <div>
 Expected:
 | <html>
 |   <head>
@@ -2815,6 +2829,7 @@ Got:
 |   <head>
 |   <body>
 |     <table>
+|       <math>
 Expected:
 | <!DOCTYPE html>
 | <html>
@@ -2831,6 +2846,8 @@ Got:
 |   <head>
 |   <body>
 |     <table>
+|       <math>
+|         <mi>
 Expected:
 | <!DOCTYPE html>
 | <html>
@@ -2849,6 +2866,9 @@ Got:
 |   <head>
 |   <body>
 |     <table>
+|       <math>
+|         <mi>
+|         <mi>
 Expected:
 | <!DOCTYPE html>
 | <html>
@@ -3095,6 +3115,8 @@ Got:
 |   <head>
 |   <body>
 |     <table>
+|       <select>
+|         "foobarbaz"
 |     <p>
 |       "quux"
 Expected:
@@ -3318,6 +3340,7 @@ Got:
 |   <head>
 |   <body>
 |     <table>
+|       <svg>
 Expected:
 | <!DOCTYPE html>
 | <html>
@@ -3334,6 +3357,8 @@ Got:
 |   <head>
 |   <body>
 |     <table>
+|       <svg>
+|         <g>
 Expected:
 | <!DOCTYPE html>
 | <html>
@@ -3352,6 +3377,9 @@ Got:
 |   <head>
 |   <body>
 |     <table>
+|       <svg>
+|         <g>
+|         <g>
 Expected:
 | <!DOCTYPE html>
 | <html>
@@ -3598,6 +3626,8 @@ Got:
 |   <head>
 |   <body>
 |     <table>
+|       <select>
+|         "foobarbaz"
 |     <p>
 |       "quux"
 Expected:
@@ -4901,6 +4931,7 @@ Got:
 |   <head>
 |   <body>
 |     <table>
+|       <meta>
 Expected:
 | <!DOCTYPE html>
 | <html>
@@ -4992,6 +5023,7 @@ Got:
 |   <body>
 |     <div>
 |       <table>
+|         <a>
 |         <tbody>
 |           <tr>
 |             <td>
@@ -5013,7 +5045,6 @@ Expected:
 resources/tests16.dat:
 187
 188
-189
 
 Test 187 of 189 in resources/tests16.dat failed. Input:
 <!doctype html><table>
@@ -5057,24 +5088,6 @@ Expected:
 |               <font>
 |             <font>
 |               <span>
-
-Test 189 of 189 in resources/tests16.dat failed. Input:
-<!doctype html><form><table></form><form></table></form>
-Got:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <form>
-|       <table>
-Expected:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <form>
-|       <table>
-|         <form>
 resources/webkit01.dat: PASS
 
 resources/doctype01.dat: PASS
@@ -5222,7 +5235,10 @@ Got:
 | <html>
 |   <head>
 |   <body>
+|     <p>
+|       <a>
 |     <table>
+|       <a>
 Expected:
 | <html>
 |   <head>
@@ -5268,6 +5284,9 @@ Got:
 |   <head>
 |   <body>
 |     <table>
+|       <select>
+|         <option>
+|           "3"
 Expected:
 | <html>
 |   <head>
@@ -5284,6 +5303,7 @@ Got:
 |   <head>
 |   <body>
 |     <table>
+|       <select>
 Expected:
 | <html>
 |   <head>
@@ -5299,6 +5319,7 @@ Got:
 |   <head>
 |   <body>
 |     <table>
+|       <select>
 Expected:
 | <html>
 |   <head>
@@ -5313,6 +5334,9 @@ Got:
 |   <head>
 |   <body>
 |     <table>
+|       <select>
+|         <option>
+|           "A"
 |       <tbody>
 |         <tr>
 |           <td>

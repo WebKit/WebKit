@@ -1,3 +1,16 @@
+2010-07-06  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Implement defaut cases for InTableMode
+        https://bugs.webkit.org/show_bug.cgi?id=41656
+
+        * html/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::processStartTag):
+        (WebCore::HTMLTreeBuilder::processEndTagForInBody):
+        (WebCore::HTMLTreeBuilder::processEndTag):
+        * html/HTMLTreeBuilder.h:
+
 2010-07-05  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Dirk Schulze.
