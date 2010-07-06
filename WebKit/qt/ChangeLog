@@ -1,3 +1,15 @@
+2010-07-06  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Rubber-stamped by Kenneth Rohde Christiansen.
+
+        Client errors should set "WebKitErrorDomain" domain instead of "WebKit" to match Mac.
+
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::blockedError):
+        (WebCore::FrameLoaderClientQt::cannotShowURLError):
+        (WebCore::FrameLoaderClientQt::interruptForPolicyChangeError):
+        (WebCore::FrameLoaderClientQt::cannotShowMIMETypeError):
+
 2010-07-06  Darin Adler  <darin@apple.com>
 
         Fix crash caused by my fix to the Qt build.

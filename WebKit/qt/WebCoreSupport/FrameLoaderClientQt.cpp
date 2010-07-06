@@ -834,26 +834,26 @@ enum {
 
 WebCore::ResourceError FrameLoaderClientQt::blockedError(const WebCore::ResourceRequest& request)
 {
-    return ResourceError("WebKit", WebKitErrorCannotUseRestrictedPort, request.url().prettyURL(),
+    return ResourceError("WebKitErrorDomain", WebKitErrorCannotUseRestrictedPort, request.url().prettyURL(),
             QCoreApplication::translate("QWebFrame", "Request blocked", 0, QCoreApplication::UnicodeUTF8));
 }
 
 
 WebCore::ResourceError FrameLoaderClientQt::cannotShowURLError(const WebCore::ResourceRequest& request)
 {
-    return ResourceError("WebKit", WebKitErrorCannotShowURL, request.url().string(),
+    return ResourceError("WebKitErrorDomain", WebKitErrorCannotShowURL, request.url().string(),
             QCoreApplication::translate("QWebFrame", "Cannot show URL", 0, QCoreApplication::UnicodeUTF8));
 }
 
 WebCore::ResourceError FrameLoaderClientQt::interruptForPolicyChangeError(const WebCore::ResourceRequest& request)
 {
-    return ResourceError("WebKit", WebKitErrorFrameLoadInterruptedByPolicyChange, request.url().string(),
+    return ResourceError("WebKitErrorDomain", WebKitErrorFrameLoadInterruptedByPolicyChange, request.url().string(),
             QCoreApplication::translate("QWebFrame", "Frame load interrupted by policy change", 0, QCoreApplication::UnicodeUTF8));
 }
 
 WebCore::ResourceError FrameLoaderClientQt::cannotShowMIMETypeError(const WebCore::ResourceResponse& response)
 {
-    return ResourceError("WebKit", WebKitErrorCannotShowMIMEType, response.url().string(),
+    return ResourceError("WebKitErrorDomain", WebKitErrorCannotShowMIMEType, response.url().string(),
             QCoreApplication::translate("QWebFrame", "Cannot show mimetype", 0, QCoreApplication::UnicodeUTF8));
 }
 
