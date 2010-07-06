@@ -2,6 +2,26 @@
 
         Reviewed by Eric Seidel.
 
+        Implement InCaptionMode
+        https://bugs.webkit.org/show_bug.cgi?id=41660
+
+        Implementing this mode also turned up a subtle bug in the adoption
+        agency code.
+
+        * html/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::processStartTag):
+        (WebCore::HTMLTreeBuilder::processCaptionEndTagForInCaption):
+        (WebCore::HTMLTreeBuilder::processEndTag):
+        (WebCore::HTMLTreeBuilder::processCharacter):
+        (WebCore::HTMLTreeBuilder::indexOfFirstUnopenFormattingElement):
+            - We're supposed to reutrn the first *unopened* formatting element.
+              The old code returned the first *opened* formatting element.
+        * html/HTMLTreeBuilder.h:
+
+2010-07-06  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         Implement defaut cases for InTableMode
         https://bugs.webkit.org/show_bug.cgi?id=41656
 

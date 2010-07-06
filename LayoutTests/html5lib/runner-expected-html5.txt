@@ -6,7 +6,6 @@ resources/tests1.dat:
 20
 21
 23
-24
 25
 28
 30
@@ -15,17 +14,9 @@ resources/tests1.dat:
 33
 50
 51
-53
 56
-58
-59
 60
 61
-67
-68
-69
-70
-71
 72
 73
 74
@@ -34,14 +25,12 @@ resources/tests1.dat:
 78
 79
 80
-81
 82
 86
 90
 93
 94
 96
-97
 98
 100
 103
@@ -108,9 +97,8 @@ Got:
 |       <p>
 |         "X"
 |         <a>
-|           <a>
-|             "Y"
-|           "Z"
+|           "Y"
+|         "Z"
 Expected:
 | <html>
 |   <head>
@@ -122,22 +110,6 @@ Expected:
 |       <a>
 |         "Y"
 |       "Z"
-
-Test 24 of 113 in resources/tests1.dat failed. Input:
-<b><button></b></button></b>
-Got:
-| <html>
-|   <head>
-|   <body>
-|     <b>
-|       <b>
-|         <button>
-Expected:
-| <html>
-|   <head>
-|   <body>
-|     <b>
-|       <button>
 
 Test 25 of 113 in resources/tests1.dat failed. Input:
 <p><b><div><marquee></p></b></div>X
@@ -218,13 +190,11 @@ Got:
 |     <a>
 |       x=""
 |       "0"
-|       <a>
-|         <b>
-|           "1"
-|           <b>
-|             <a>
-|               y=""
-|               "2"
+|       <b>
+|         "1"
+|         <a>
+|           y=""
+|           "2"
 Expected:
 | <html>
 |   <head>
@@ -250,8 +220,9 @@ Got:
 |       <div>
 |         "hello"
 |         <table>
-|           <font>
-|             <b>
+|           "excite!"
+|           <b>
+|             "me!"
 |           <tbody>
 |             <tr>
 |               <th>
@@ -346,30 +317,6 @@ Expected:
 |       <b>
 |       "TEST"
 
-Test 53 of 113 in resources/tests1.dat failed. Input:
-<b id=a><p><b id=b></p></b>TEST
-Got:
-| <html>
-|   <head>
-|   <body>
-|     <b>
-|       id="a"
-|       <p>
-|         <b>
-|           <b>
-|             id="b"
-|       "TEST"
-Expected:
-| <html>
-|   <head>
-|   <body>
-|     <b>
-|       id="a"
-|       <p>
-|         <b>
-|           id="b"
-|       "TEST"
-
 Test 56 of 113 in resources/tests1.dat failed. Input:
 <font><p>hello<b>cruel</font>world
 Got:
@@ -377,12 +324,11 @@ Got:
 |   <head>
 |   <body>
 |     <font>
-|       <p>
+|     <p>
+|       <font>
 |         "hello"
-|         <font>
-|           <b>
-|             "cruel"
-|         "world"
+|         <b>
+|           "cruelworld"
 Expected:
 | <html>
 |   <head>
@@ -396,54 +342,6 @@ Expected:
 |       <b>
 |         "world"
 
-Test 58 of 113 in resources/tests1.dat failed. Input:
-<b>A<cite>B<div>C
-Got:
-| <html>
-|   <head>
-|   <body>
-|     <b>
-|       "A"
-|       <b>
-|         <cite>
-|           "B"
-|           <div>
-|             "C"
-Expected:
-| <html>
-|   <head>
-|   <body>
-|     <b>
-|       "A"
-|       <cite>
-|         "B"
-|         <div>
-|           "C"
-
-Test 59 of 113 in resources/tests1.dat failed. Input:
-<b>A<cite>B<div>C</cite>D
-Got:
-| <html>
-|   <head>
-|   <body>
-|     <b>
-|       "A"
-|       <b>
-|         <cite>
-|           "B"
-|           <div>
-|             "CD"
-Expected:
-| <html>
-|   <head>
-|   <body>
-|     <b>
-|       "A"
-|       <cite>
-|         "B"
-|         <div>
-|           "CD"
-
 Test 60 of 113 in resources/tests1.dat failed. Input:
 <b>A<cite>B<div>C</b>D
 Got:
@@ -452,12 +350,11 @@ Got:
 |   <body>
 |     <b>
 |       "A"
+|       <cite>
+|         "B"
+|     <div>
 |       <b>
-|         <cite>
-|           "B"
-|       <div>
-|         <b>
-|           "CD"
+|         "CD"
 Expected:
 | <html>
 |   <head>
@@ -479,24 +376,18 @@ Got:
 |   <body>
 |     <cite>
 |       <b>
-|         <b>
-|           <cite>
-|             <b>
+|         <cite>
+|           <i>
+|             <cite>
 |               <i>
-|                 <i>
-|                   <cite>
-|                     <i>
-|                       <i>
-|                         <i>
-|                           <cite>
-|                             <i>
-|                               <i>
-|             <i>
-|               <i>
-|                 <i>
-|                   <div>
-|                     <b>
-|                       "XTEST"
+|                 <cite>
+|                   <i>
+|       <i>
+|         <i>
+|           <i>
+|             <div>
+|               <b>
+|                 "XTEST"
 Expected:
 | <html>
 |   <head>
@@ -517,124 +408,9 @@ Expected:
 |                 "X"
 |               "TEST"
 
-Test 67 of 113 in resources/tests1.dat failed. Input:
-<DIV> abc <B> def <I>
+Test 72 of 113 in resources/tests1.dat failed. Input:
+<DIV> abc <B> def <I> ghi <P> jkl </B> mno
 Got:
-| <html>
-|   <head>
-|   <body>
-|     <div>
-|       " abc "
-|       <b>
-|         " def "
-|         <b>
-|           <i>
-Expected:
-| <html>
-|   <head>
-|   <body>
-|     <div>
-|       " abc "
-|       <b>
-|         " def "
-|         <i>
-
-Test 68 of 113 in resources/tests1.dat failed. Input:
-<DIV> abc <B> def <I> ghi
-Got:
-| <html>
-|   <head>
-|   <body>
-|     <div>
-|       " abc "
-|       <b>
-|         " def "
-|         <b>
-|           <i>
-|             " ghi"
-Expected:
-| <html>
-|   <head>
-|   <body>
-|     <div>
-|       " abc "
-|       <b>
-|         " def "
-|         <i>
-|           " ghi"
-
-Test 69 of 113 in resources/tests1.dat failed. Input:
-<DIV> abc <B> def <I> ghi <P>
-Got:
-| <html>
-|   <head>
-|   <body>
-|     <div>
-|       " abc "
-|       <b>
-|         " def "
-|         <b>
-|           <i>
-|             " ghi "
-|             <p>
-Expected:
-| <html>
-|   <head>
-|   <body>
-|     <div>
-|       " abc "
-|       <b>
-|         " def "
-|         <i>
-|           " ghi "
-|           <p>
-
-Test 70 of 113 in resources/tests1.dat failed. Input:
-<DIV> abc <B> def <I> ghi <P> jkl
-Got:
-| <html>
-|   <head>
-|   <body>
-|     <div>
-|       " abc "
-|       <b>
-|         " def "
-|         <b>
-|           <i>
-|             " ghi "
-|             <p>
-|               " jkl"
-Expected:
-| <html>
-|   <head>
-|   <body>
-|     <div>
-|       " abc "
-|       <b>
-|         " def "
-|         <i>
-|           " ghi "
-|           <p>
-|             " jkl"
-
-Test 71 of 113 in resources/tests1.dat failed. Input:
-<DIV> abc <B> def <I> ghi <P> jkl </B>
-Got:
-| <html>
-|   <head>
-|   <body>
-|     <div>
-|       " abc "
-|       <b>
-|         " def "
-|         <b>
-|           <i>
-|             " ghi "
-|         <i>
-|           <p>
-|             <b>
-|               " jkl "
-Expected:
 | <html>
 |   <head>
 |   <body>
@@ -647,25 +423,7 @@ Expected:
 |       <i>
 |         <p>
 |           <b>
-|             " jkl "
-
-Test 72 of 113 in resources/tests1.dat failed. Input:
-<DIV> abc <B> def <I> ghi <P> jkl </B> mno
-Got:
-| <html>
-|   <head>
-|   <body>
-|     <div>
-|       " abc "
-|       <b>
-|         " def "
-|         <b>
-|           <i>
-|             " ghi "
-|         <i>
-|           <p>
-|             <b>
-|               " jkl  mno"
+|             " jkl  mno"
 Expected:
 | <html>
 |   <head>
@@ -692,14 +450,13 @@ Got:
 |       " abc "
 |       <b>
 |         " def "
-|         <b>
-|           <i>
-|             " ghi "
 |         <i>
-|         <p>
-|           <i>
-|             <b>
-|               " jkl  mno "
+|           " ghi "
+|       <i>
+|       <p>
+|         <i>
+|           <b>
+|             " jkl  mno "
 Expected:
 | <html>
 |   <head>
@@ -727,14 +484,13 @@ Got:
 |       " abc "
 |       <b>
 |         " def "
-|         <b>
-|           <i>
-|             " ghi "
 |         <i>
-|         <p>
-|           <i>
-|             <b>
-|               " jkl  mno  pqr"
+|           " ghi "
+|       <i>
+|       <p>
+|         <i>
+|           <b>
+|             " jkl  mno  pqr"
 Expected:
 | <html>
 |   <head>
@@ -763,14 +519,13 @@ Got:
 |       " abc "
 |       <b>
 |         " def "
-|         <b>
-|           <i>
-|             " ghi "
 |         <i>
-|         <p>
-|           <i>
-|             <b>
-|               " jkl  mno  pqr "
+|           " ghi "
+|       <i>
+|       <p>
+|         <i>
+|           <b>
+|             " jkl  mno  pqr "
 Expected:
 | <html>
 |   <head>
@@ -799,15 +554,14 @@ Got:
 |       " abc "
 |       <b>
 |         " def "
-|         <b>
-|           <i>
-|             " ghi "
 |         <i>
-|         <p>
-|           <i>
-|             <b>
-|               " jkl  mno  pqr "
-|         " stu"
+|           " ghi "
+|       <i>
+|       <p>
+|         <i>
+|           <b>
+|             " jkl  mno  pqr "
+|       " stu"
 Expected:
 | <html>
 |   <head>
@@ -838,8 +592,8 @@ Got:
 |       "aba"
 |       <table>
 |         <a>
-|           <a>
-|             href="foo"
+|           href="foo"
+|           "br"
 |         <tbody>
 |           <tr>
 |             <td>
@@ -902,6 +656,7 @@ Got:
 |     <table>
 |       <a>
 |         href="blah"
+|         "aba"
 |       <tbody>
 |         <tr>
 |           <td>
@@ -926,37 +681,6 @@ Expected:
 |       href="blah"
 |       "aoe"
 
-Test 81 of 113 in resources/tests1.dat failed. Input:
-<a href=a>aa<marquee>aa<a href=b>bb</marquee>aa
-Got:
-| <html>
-|   <head>
-|   <body>
-|     <a>
-|       href="a"
-|       "aa"
-|       <a>
-|         <marquee>
-|           "aa"
-|           <a>
-|             <a>
-|               href="b"
-|               "bb"
-|         "aa"
-Expected:
-| <html>
-|   <head>
-|   <body>
-|     <a>
-|       href="a"
-|       "aa"
-|       <marquee>
-|         "aa"
-|         <a>
-|           href="b"
-|           "bb"
-|       "aa"
-
 Test 82 of 113 in resources/tests1.dat failed. Input:
 <wbr><strike><code></strike><code><strike></code>
 Got:
@@ -965,11 +689,9 @@ Got:
 |   <body>
 |     <wbr>
 |     <strike>
-|       <strike>
-|         <code>
 |       <code>
-|         <code>
-|           <strike>
+|     <code>
+|       <strike>
 Expected:
 | <html>
 |   <head>
@@ -1015,11 +737,13 @@ Got:
 |     <a>
 |       <table>
 |         <a>
-|           <a>
 |       <p>
 |         <a>
+|           <a>
 |       <div>
 |         <a>
+|           <a>
+|             <a>
 Expected:
 | <html>
 |   <head>
@@ -1085,7 +809,6 @@ Got:
 |     <a>
 |       <p>
 |         <a>
-|           <a>
 Expected:
 | <html>
 |   <head>
@@ -1094,22 +817,6 @@ Expected:
 |     <p>
 |       <a>
 |       <a>
-
-Test 97 of 113 in resources/tests1.dat failed. Input:
-<b><button></b></button></b>
-Got:
-| <html>
-|   <head>
-|   <body>
-|     <b>
-|       <b>
-|         <button>
-Expected:
-| <html>
-|   <head>
-|   <body>
-|     <b>
-|       <button>
 
 Test 98 of 113 in resources/tests1.dat failed. Input:
 <p><b><div><marquee></p></b></div>
@@ -1191,9 +898,8 @@ Got:
 |               <address>
 |                 <li>
 |                   <b>
-|                     <b>
-|                       <em>
-|                     <li>
+|                     <em>
+|                   <li>
 Expected:
 | <html>
 |   <head>
@@ -1358,13 +1064,11 @@ Expected:
 |     <p>
 resources/tests2.dat:
 4
-8
 9
 11
 13
 34
 36
-38
 47
 48
 49
@@ -1389,29 +1093,6 @@ Expected:
 |         <tr>
 |           <td>
 |             "test"
-
-Test 8 of 59 in resources/tests2.dat failed. Input:
-<!DOCTYPE html><font><p><b>test</font>
-Got:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <font>
-|       <p>
-|         <font>
-|           <b>
-|             "test"
-Expected:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <font>
-|     <p>
-|       <font>
-|         <b>
-|           "test"
 
 Test 9 of 59 in resources/tests2.dat failed. Input:
 <!DOCTYPE html><dt><div><dd>
@@ -1440,6 +1121,7 @@ Got:
 |   <body>
 |     <table>
 |       <plaintext>
+|         "<td>"
 Expected:
 | <html>
 |   <head>
@@ -1477,6 +1159,10 @@ Got:
 |   <body>
 |     <table>
 |       <caption>
+|         "test TEST"
+|       <tbody>
+|         <tr>
+|           <td>
 Expected:
 | <!DOCTYPE html>
 | <html>
@@ -1512,27 +1198,6 @@ Expected:
 |         <option>
 |       <option>
 |     <option>
-
-Test 38 of 59 in resources/tests2.dat failed. Input:
-<!DOCTYPE html><font><input><input></font>
-Got:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <font>
-|       <font>
-|         <input>
-|         <font>
-|           <input>
-Expected:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <font>
-|       <input>
-|       <input>
 
 Test 47 of 59 in resources/tests2.dat failed. Input:
  
@@ -1712,8 +1377,6 @@ Got:
 |     <nobr>
 |       <nobr>
 |         <nobr>
-|           <nobr>
-|             <nobr>
 Expected:
 | <!DOCTYPE html>
 | <html>
@@ -1732,9 +1395,7 @@ Got:
 |   <body>
 |     <nobr>
 |       <nobr>
-|         <nobr>
-|         <nobr>
-|           <nobr>
+|       <nobr>
 Expected:
 | <!DOCTYPE html>
 | <html>
@@ -1868,10 +1529,6 @@ resources/tests6.dat:
 12
 13
 14
-16
-17
-19
-23
 26
 27
 30
@@ -1999,72 +1656,6 @@ Expected:
 |   <body>
 |     <button>
 |     <button>
-
-Test 16 of 51 in resources/tests6.dat failed. Input:
-<table><caption><td>
-Got:
-| <html>
-|   <head>
-|   <body>
-|     <table>
-|       <caption>
-Expected:
-| <html>
-|   <head>
-|   <body>
-|     <table>
-|       <caption>
-|       <tbody>
-|         <tr>
-|           <td>
-
-Test 17 of 51 in resources/tests6.dat failed. Input:
-<table><caption><div>
-Got:
-| <html>
-|   <head>
-|   <body>
-|     <table>
-|       <caption>
-Expected:
-| <html>
-|   <head>
-|   <body>
-|     <table>
-|       <caption>
-|         <div>
-
-Test 19 of 51 in resources/tests6.dat failed. Input:
-<table><caption><div></caption>
-Got:
-| <html>
-|   <head>
-|   <body>
-|     <table>
-|       <caption>
-Expected:
-| <html>
-|   <head>
-|   <body>
-|     <table>
-|       <caption>
-|         <div>
-
-Test 23 of 51 in resources/tests6.dat failed. Input:
-<table><caption><div></div>
-Got:
-| <html>
-|   <head>
-|   <body>
-|     <table>
-|       <caption>
-Expected:
-| <html>
-|   <head>
-|   <body>
-|     <table>
-|       <caption>
-|         <div>
 
 Test 26 of 51 in resources/tests6.dat failed. Input:
 <table><colgroup>foo
@@ -2206,7 +1797,6 @@ resources/tests7.dat:
 6
 7
 8
-9
 10
 15
 16
@@ -2265,6 +1855,7 @@ Got:
 |   <head>
 |   <body>
 |     <table>
+|       "X"
 |       <tbody>
 |         <tr>
 |           <td>
@@ -2309,26 +1900,6 @@ Expected:
 | <html>
 |   <head>
 |   <body>
-
-Test 9 of 30 in resources/tests7.dat failed. Input:
-<!doctype html><table><style> <tr>x </style> </table>
-Got:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <table>
-|       <style>
-|         " <tr>x "
-Expected:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <table>
-|       <style>
-|         " <tr>x "
-|       " "
 
 Test 10 of 30 in resources/tests7.dat failed. Input:
 <!doctype html><table><TBODY><script> <tr>x </script> </table>
@@ -2376,6 +1947,7 @@ Got:
 |   <head>
 |   <body>
 |     <table>
+|       "X"
 Expected:
 | <!DOCTYPE html>
 | <html>
@@ -2394,6 +1966,7 @@ Got:
 |   <head>
 |   <body>
 |     <table>
+|       "  "
 Expected:
 | <!DOCTYPE html>
 | <html>
@@ -2412,6 +1985,7 @@ Got:
 |   <head>
 |   <body>
 |     <table>
+|       "  "
 Expected:
 | <!DOCTYPE html>
 | <html>
@@ -2683,7 +2257,9 @@ Got:
 |   <body>
 |     <table>
 |       <div>
+|         "x"
 |         <div>
+|       "xx"
 Expected:
 | <html>
 |   <head>
@@ -2702,6 +2278,7 @@ Got:
 |   <body>
 |     "x"
 |     <table>
+|       "x"
 Expected:
 | <html>
 |   <head>
@@ -2717,6 +2294,7 @@ Got:
 |   <body>
 |     "x"
 |     <table>
+|       "x"
 Expected:
 | <html>
 |   <head>
@@ -2848,6 +2426,7 @@ Got:
 |     <table>
 |       <math>
 |         <mi>
+|           "foo"
 Expected:
 | <!DOCTYPE html>
 | <html>
@@ -2868,7 +2447,9 @@ Got:
 |     <table>
 |       <math>
 |         <mi>
+|           "foo"
 |         <mi>
+|           "bar"
 Expected:
 | <!DOCTYPE html>
 | <html>
@@ -2990,6 +2571,13 @@ Got:
 |   <body>
 |     <table>
 |       <caption>
+|         <math>
+|           <mi>
+|             "foo"
+|           <mi>
+|             "bar"
+|         <p>
+|           "baz"
 Expected:
 | <!DOCTYPE html>
 | <html>
@@ -3014,6 +2602,15 @@ Got:
 |   <body>
 |     <table>
 |       <caption>
+|         <math>
+|           <mi>
+|             "foo"
+|           <mi>
+|             "bar"
+|           <p>
+|             "baz"
+|     <p>
+|       "quux"
 Expected:
 | <!DOCTYPE html>
 | <html>
@@ -3040,6 +2637,14 @@ Got:
 |   <body>
 |     <table>
 |       <caption>
+|         <math>
+|           <mi>
+|             "foo"
+|           <mi>
+|             "bar"
+|           "baz"
+|     <p>
+|       "quux"
 Expected:
 | <!DOCTYPE html>
 | <html>
@@ -3359,6 +2964,7 @@ Got:
 |     <table>
 |       <svg>
 |         <g>
+|           "foo"
 Expected:
 | <!DOCTYPE html>
 | <html>
@@ -3379,7 +2985,9 @@ Got:
 |     <table>
 |       <svg>
 |         <g>
+|           "foo"
 |         <g>
+|           "bar"
 Expected:
 | <!DOCTYPE html>
 | <html>
@@ -3501,6 +3109,13 @@ Got:
 |   <body>
 |     <table>
 |       <caption>
+|         <svg>
+|           <g>
+|             "foo"
+|           <g>
+|             "bar"
+|         <p>
+|           "baz"
 Expected:
 | <!DOCTYPE html>
 | <html>
@@ -3525,6 +3140,15 @@ Got:
 |   <body>
 |     <table>
 |       <caption>
+|         <svg>
+|           <g>
+|             "foo"
+|           <g>
+|             "bar"
+|           <p>
+|             "baz"
+|     <p>
+|       "quux"
 Expected:
 | <!DOCTYPE html>
 | <html>
@@ -3551,6 +3175,14 @@ Got:
 |   <body>
 |     <table>
 |       <caption>
+|         <svg>
+|           <g>
+|             "foo"
+|           <g>
+|             "bar"
+|           "baz"
+|     <p>
+|       "quux"
 Expected:
 | <!DOCTYPE html>
 | <html>
@@ -4854,10 +4486,8 @@ Got:
 |   <body>
 |     <p>
 |       <b>
-|         <b>
-|           <i>
-|             <i>
-|               <u>
+|         <i>
+|           <u>
 |     " "
 |     <p>
 |       "X"
@@ -4886,10 +4516,8 @@ Got:
 |   <body>
 |     <p>
 |       <b>
-|         <b>
-|           <i>
-|             <i>
-|               <u>
+|         <i>
+|           <u>
 |     "
 "
 |     <p>
@@ -4931,6 +4559,7 @@ Got:
 |   <head>
 |   <body>
 |     <table>
+|       " X"
 |       <meta>
 Expected:
 | <!DOCTYPE html>
@@ -4949,6 +4578,7 @@ Got:
 |   <head>
 |   <body>
 |     <table>
+|       " x"
 Expected:
 | <!DOCTYPE html>
 | <html>
@@ -4965,6 +4595,7 @@ Got:
 |   <head>
 |   <body>
 |     <table>
+|       " x "
 Expected:
 | <!DOCTYPE html>
 | <html>
@@ -5001,8 +4632,10 @@ Got:
 |   <head>
 |   <body>
 |     <table>
+|       "X"
 |       <style>
 |         " <tr>x "
+|       " "
 Expected:
 | <!DOCTYPE html>
 | <html>
@@ -5024,6 +4657,8 @@ Got:
 |     <div>
 |       <table>
 |         <a>
+|           "foo"
+|         " "
 |         <tbody>
 |           <tr>
 |             <td>
@@ -5043,26 +4678,7 @@ Expected:
 |               "bar"
 |             " "
 resources/tests16.dat:
-187
 188
-
-Test 187 of 189 in resources/tests16.dat failed. Input:
-<!doctype html><table>
-
-Got:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <table>
-Expected:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <table>
-|       "
-"
 
 Test 188 of 189 in resources/tests16.dat failed. Input:
 <!doctype html><table><td><span><font></span><span>
@@ -5164,9 +4780,8 @@ Got:
 |   <body>
 |     <a>
 |       "1"
-|       <a>
-|         <button>
-|           "23"
+|       <button>
+|         "23"
 Expected:
 | <html>
 |   <head>
@@ -5185,10 +4800,9 @@ Got:
 |   <body>
 |     <a>
 |       "1"
-|       <a>
-|         <b>
-|           "2"
-|       "3"
+|       <b>
+|         "2"
+|     "3"
 Expected:
 | <html>
 |   <head>
@@ -5237,8 +4851,10 @@ Got:
 |   <body>
 |     <p>
 |       <a>
+|         "23"
 |     <table>
 |       <a>
+|         "1"
 Expected:
 | <html>
 |   <head>
