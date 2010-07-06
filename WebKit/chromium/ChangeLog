@@ -2,6 +2,17 @@
 
         Try to fix build.
 
+        Why do the Chromium bots stop after the first error they encounter?
+
+        * src/WebWorkerImpl.cpp:
+        (WebKit::WebWorkerImpl::postMessageToWorkerContextTask): Removed
+        unneeded release called on a PassOwnPtr to pass it as an argument of
+        type PassOwnPtr.
+
+2010-07-06  Darin Adler  <darin@apple.com>
+
+        Try to fix build.
+
         * src/WebWorkerBase.cpp:
         (WebKit::WebWorkerBase::dispatchTaskToMainThread): Use leakPtr instead
         of release.
