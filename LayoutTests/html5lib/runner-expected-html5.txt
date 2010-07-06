@@ -28,7 +28,6 @@ resources/tests1.dat:
 103
 104
 107
-108
 109
 110
 111
@@ -676,38 +675,6 @@ Expected:
 |               <h3>
 |     <h3>
 
-Test 108 of 113 in resources/tests1.dat failed. Input:
-<table><colgroup><col><colgroup><col><col><col><colgroup><col><col><thead><tr><td></table>
-Got:
-| <html>
-|   <head>
-|   <body>
-|     <table>
-|       <colgroup>
-|         <col>
-|         <col>
-|         <col>
-|         <col>
-|         <col>
-|         <col>
-Expected:
-| <html>
-|   <head>
-|   <body>
-|     <table>
-|       <colgroup>
-|         <col>
-|       <colgroup>
-|         <col>
-|         <col>
-|         <col>
-|       <colgroup>
-|         <col>
-|         <col>
-|       <thead>
-|         <tr>
-|           <td>
-
 Test 109 of 113 in resources/tests1.dat failed. Input:
 <table><col><tbody><col><tr><col><td><col></table><col>
 Got:
@@ -717,10 +684,9 @@ Got:
 |     <table>
 |       <colgroup>
 |         <col>
-|         <col>
-|         <col>
-|         <col>
-|         <col>
+|       <tbody>
+|         <tr>
+|           <td>
 Expected:
 | <html>
 |   <head>
@@ -749,6 +715,9 @@ Got:
 |   <body>
 |     <table>
 |       <colgroup>
+|       <tbody>
+|         <tr>
+|           <td>
 Expected:
 | <html>
 |   <head>
@@ -2360,6 +2329,15 @@ Got:
 |   <body>
 |     <table>
 |       <colgroup>
+|       <math>
+|         <mi>
+|           "foo"
+|         <mi>
+|           "bar"
+|         <p>
+|           "baz"
+|     <p>
+|       "quux"
 Expected:
 | <!DOCTYPE html>
 | <html>
@@ -2898,6 +2876,15 @@ Got:
 |   <body>
 |     <table>
 |       <colgroup>
+|       <svg>
+|         <g>
+|           "foo"
+|         <g>
+|           "bar"
+|         <p>
+|           "baz"
+|     <p>
+|       "quux"
 Expected:
 | <!DOCTYPE html>
 | <html>
@@ -4555,6 +4542,7 @@ Got:
 |   <body>
 |     <table>
 |       <colgroup>
+|       "foo"
 Expected:
 | <html>
 |   <head>

@@ -737,6 +737,18 @@ void HTMLTreeBuilder::processStartTagForInBody(AtomicHTMLToken& token)
     insertElement(token);
 }
 
+bool HTMLTreeBuilder::processColgroupEndTagForInColumnGroup()
+{
+    if (currentElement() == m_openElements.htmlElement()) {
+        ASSERT(m_isParsingFragment);
+        // FIXME: parse error
+        return false;
+    }
+    m_openElements.pop();
+    m_insertionMode = InTableMode;
+    return true;
+}
+
 void HTMLTreeBuilder::processStartTag(AtomicHTMLToken& token)
 {
     ASSERT(token.type() == HTMLToken::StartTag);
@@ -888,7 +900,11 @@ void HTMLTreeBuilder::processStartTag(AtomicHTMLToken& token)
             insertSelfClosingElement(token);
             return;
         }
-        notImplemented();
+        if (!processColgroupEndTagForInColumnGroup()) {
+            ASSERT(m_isParsingFragment);
+            return;
+        }
+        processStartTag(token);
         break;
     case InTableBodyMode:
         ASSERT(insertionMode() == InTableBodyMode);
@@ -1539,6 +1555,22 @@ void HTMLTreeBuilder::processEndTag(AtomicHTMLToken& token)
         }
         processEndTagForInBody(token);
         break;
+    case InColumnGroupMode:
+        ASSERT(insertionMode() == InColumnGroupMode);
+        if (token.name() == colgroupTag) {
+            processColgroupEndTagForInColumnGroup();
+            return;
+        }
+        if (token.name() == colTag) {
+            parseError(token);
+            return;
+        }
+        if (!processColgroupEndTagForInColumnGroup()) {
+            ASSERT(m_isParsingFragment);
+            return;
+        }
+        processEndTag(token);
+        break;
     case AfterBodyMode:
         ASSERT(insertionMode() == AfterBodyMode);
         if (token.name() == htmlTag) {
@@ -1709,6 +1741,10 @@ void HTMLTreeBuilder::processCharacter(AtomicHTMLToken& token)
         notImplemented(); // Crazy pending characters.
         insertTextNode(token);
         break;
+    case InColumnGroupMode:
+        ASSERT(insertionMode() == InColumnGroupMode);
+        notImplemented();
+        break;
     case AfterBodyMode:
     case AfterAfterBodyMode:
         ASSERT(insertionMode() == AfterBodyMode || insertionMode() == AfterAfterBodyMode);
@@ -1790,6 +1826,17 @@ void HTMLTreeBuilder::processEndOfFile(AtomicHTMLToken& token)
         ASSERT(insertionMode() == InSelectMode || insertionMode() == InSelectInTableMode || insertionMode() == InTableMode || insertionMode() == InFramesetMode);
         if (currentElement() != m_openElements.htmlElement())
             parseError(token);
+        break;
+    case InColumnGroupMode:
+        if (currentElement() == m_openElements.htmlElement()) {
+            ASSERT(m_isParsingFragment);
+            return;
+        }
+        if (!processColgroupEndTagForInColumnGroup()) {
+            ASSERT(m_isParsingFragment);
+            return;
+        }
+        processEndOfFile(token);
         break;
     default:
         notImplemented();
