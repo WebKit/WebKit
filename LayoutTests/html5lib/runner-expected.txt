@@ -4686,6 +4686,7 @@ Expected:
 |       "<!--<noembed>"
 |     "-->"
 resources/webkit01.dat:
+15
 17
 20
 22
@@ -4696,6 +4697,22 @@ resources/webkit01.dat:
 29
 30
 31
+
+Test 15 of 31 in resources/webkit01.dat failed. Input:
+<p>Test</p<p>Test2</p>
+Got:
+| <html>
+|   <head>
+|   <body>
+|     <p>
+|       "Test"
+|       "Test2"
+Expected:
+| <html>
+|   <head>
+|   <body>
+|     <p>
+|       "TestTest2"
 
 Test 17 of 31 in resources/webkit01.dat failed. Input:
 <A>test< /A>

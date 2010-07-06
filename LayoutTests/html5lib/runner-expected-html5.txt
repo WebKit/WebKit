@@ -14,12 +14,10 @@ resources/tests1.dat:
 31
 32
 33
-34
 50
 51
 53
 56
-57
 58
 59
 60
@@ -328,34 +326,6 @@ Expected:
 |       "you"
 |   <!-- do -->
 
-Test 34 of 113 in resources/tests1.dat failed. Input:
-<!DOCTYPE html>A<option>B<optgroup>C<select>D</option>E
-Got:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     "A"
-|     <option>
-|       "B"
-|     <optgroup>
-|       "C"
-|       <select>
-|         "D"
-|         "E"
-Expected:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     "A"
-|     <option>
-|       "B"
-|     <optgroup>
-|       "C"
-|       <select>
-|         "DE"
-
 Test 50 of 113 in resources/tests1.dat failed. Input:
 <!DOCTYPE html><script> <!-- </script> --> </script> EOF
 Got:
@@ -365,8 +335,7 @@ Got:
 |     <script>
 |       " <!-- "
 |   <body>
-|     " --> "
-|     " EOF"
+|     " -->  EOF"
 Expected:
 | <!DOCTYPE html>
 | <html>
@@ -446,22 +415,6 @@ Expected:
 |       <b>
 |         "world"
 
-Test 57 of 113 in resources/tests1.dat failed. Input:
-<b>Test</i>Test
-Got:
-| <html>
-|   <head>
-|   <body>
-|     <b>
-|       "Test"
-|       "Test"
-Expected:
-| <html>
-|   <head>
-|   <body>
-|     <b>
-|       "TestTest"
-
 Test 58 of 113 in resources/tests1.dat failed. Input:
 <b>A<cite>B<div>C
 Got:
@@ -498,8 +451,7 @@ Got:
 |         <cite>
 |           "B"
 |           <div>
-|             "C"
-|             "D"
+|             "CD"
 Expected:
 | <html>
 |   <head>
@@ -524,8 +476,7 @@ Got:
 |           "B"
 |       <div>
 |         <b>
-|           "C"
-|           "D"
+|           "CD"
 Expected:
 | <html>
 |   <head>
@@ -564,8 +515,7 @@ Got:
 |                 <i>
 |                   <div>
 |                     <b>
-|                       "X"
-|                       "TEST"
+|                       "XTEST"
 Expected:
 | <html>
 |   <head>
@@ -734,8 +684,7 @@ Got:
 |         <i>
 |           <p>
 |             <b>
-|               " jkl "
-|               " mno"
+|               " jkl  mno"
 Expected:
 | <html>
 |   <head>
@@ -769,8 +718,7 @@ Got:
 |         <p>
 |           <i>
 |             <b>
-|               " jkl "
-|               " mno "
+|               " jkl  mno "
 Expected:
 | <html>
 |   <head>
@@ -805,9 +753,7 @@ Got:
 |         <p>
 |           <i>
 |             <b>
-|               " jkl "
-|               " mno "
-|               " pqr"
+|               " jkl  mno  pqr"
 Expected:
 | <html>
 |   <head>
@@ -843,9 +789,7 @@ Got:
 |         <p>
 |           <i>
 |             <b>
-|               " jkl "
-|               " mno "
-|               " pqr "
+|               " jkl  mno  pqr "
 Expected:
 | <html>
 |   <head>
@@ -881,9 +825,7 @@ Got:
 |         <p>
 |           <i>
 |             <b>
-|               " jkl "
-|               " mno "
-|               " pqr "
+|               " jkl  mno  pqr "
 |         " stu"
 Expected:
 | <html>
@@ -1448,7 +1390,6 @@ resources/tests2.dat:
 9
 11
 13
-32
 34
 36
 38
@@ -1456,8 +1397,6 @@ resources/tests2.dat:
 47
 48
 49
-53
-54
 58
 
 Test 4 of 59 in resources/tests2.dat failed. Input:
@@ -1559,22 +1498,6 @@ Expected:
 |     <table>
 |       <tbody>
 |         <tr>
-
-Test 32 of 59 in resources/tests2.dat failed. Input:
-<!DOCTYPE html>X</body>X
-Got:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     "X"
-|     "X"
-Expected:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     "XX"
 
 Test 34 of 59 in resources/tests2.dat failed. Input:
 <!DOCTYPE html><table><caption>test TEST</caption><td>test
@@ -1716,38 +1639,6 @@ Expected:
 |       "x"
 |     "  "
 |   <body>
-
-Test 53 of 59 in resources/tests2.dat failed. Input:
-<!DOCTYPE html>X</html>X
-Got:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     "X"
-|     "X"
-Expected:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     "XX"
-
-Test 54 of 59 in resources/tests2.dat failed. Input:
-<!DOCTYPE html>X</html> 
-Got:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     "X"
-|     " "
-Expected:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     "X "
 
 Test 58 of 59 in resources/tests2.dat failed. Input:
 <!DOCTYPE html><table><tr><td></p></table>
@@ -1962,10 +1853,8 @@ Expected:
 |   "setting head's innerHTML"
 resources/tests5.dat:
 2
-6
 7
 8
-9
 
 Test 2 of 16 in resources/tests5.dat failed. Input:
 <style> <!-- </style> --> </style>x
@@ -1975,8 +1864,7 @@ Got:
 |     <style>
 |       " <!-- "
 |   <body>
-|     " --> "
-|     "x"
+|     " --> x"
 Expected:
 | <html>
 |   <head>
@@ -1986,25 +1874,6 @@ Expected:
 |   <body>
 |     "--> x"
 
-Test 6 of 16 in resources/tests5.dat failed. Input:
-<iframe> <!--- </iframe>->x</iframe> --> </iframe>x
-Got:
-| <html>
-|   <head>
-|   <body>
-|     <iframe>
-|       " <!--- "
-|     "->x"
-|     " --> "
-|     "x"
-Expected:
-| <html>
-|   <head>
-|   <body>
-|     <iframe>
-|       " <!--- "
-|     "->x --> x"
-
 Test 7 of 16 in resources/tests5.dat failed. Input:
 <script> <!-- </script> --> </script>x
 Got:
@@ -2013,8 +1882,7 @@ Got:
 |     <script>
 |       " <!-- "
 |   <body>
-|     " --> "
-|     "x"
+|     " --> x"
 Expected:
 | <html>
 |   <head>
@@ -2032,8 +1900,7 @@ Got:
 |     <title>
 |       " <!-- "
 |   <body>
-|     " --> "
-|     "x"
+|     " --> x"
 Expected:
 | <html>
 |   <head>
@@ -2042,25 +1909,6 @@ Expected:
 |     " "
 |   <body>
 |     "--> x"
-
-Test 9 of 16 in resources/tests5.dat failed. Input:
-<textarea> <!--- </textarea>->x</textarea> --> </textarea>x
-Got:
-| <html>
-|   <head>
-|   <body>
-|     <textarea>
-|       " <!--- "
-|     "->x"
-|     " --> "
-|     "x"
-Expected:
-| <html>
-|   <head>
-|   <body>
-|     <textarea>
-|       " <!--- "
-|     "->x --> x"
 resources/tests6.dat:
 1
 8
@@ -2417,7 +2265,6 @@ resources/tests7.dat:
 19
 20
 24
-25
 26
 27
 28
@@ -2671,24 +2518,6 @@ Expected:
 | <body>
 |   "X"
 
-Test 25 of 30 in resources/tests7.dat failed. Input:
-<div><p>a</x> b
-Got:
-| <html>
-|   <head>
-|   <body>
-|     <div>
-|       <p>
-|         "a"
-|         " b"
-Expected:
-| <html>
-|   <head>
-|   <body>
-|     <div>
-|       <p>
-|         "a b"
-
 Test 26 of 30 in resources/tests7.dat failed. Input:
 <table><tr><td><code></code> </table>
 Got:
@@ -2818,8 +2647,7 @@ Got:
 "
 |       <div>
 |     "
-"
-|     "x"
+x"
 Expected:
 | <html>
 |   <head>
@@ -2842,8 +2670,7 @@ Got:
 |       "x"
 |       <div>
 |     "
-"
-|     "x"
+x"
 Expected:
 | <html>
 |   <head>
@@ -2863,8 +2690,7 @@ Got:
 |     <div>
 |       "x"
 |       <div>
-|     "x"
-|     "x"
+|     "xx"
 Expected:
 | <html>
 |   <head>
@@ -2883,8 +2709,7 @@ Got:
 |     <div>
 |       "x"
 |       <div>
-|     "y"
-|     "z"
+|     "yz"
 Expected:
 | <html>
 |   <head>
@@ -5306,24 +5131,8 @@ Expected:
 |     <form>
 |       <table>
 |         <form>
-resources/webkit01.dat:
-17
+resources/webkit01.dat: PASS
 
-Test 17 of 31 in resources/webkit01.dat failed. Input:
-<A>test< /A>
-Got:
-| <html>
-|   <head>
-|   <body>
-|     <a>
-|       "test"
-|       "< /A>"
-Expected:
-| <html>
-|   <head>
-|   <body>
-|     <a>
-|       "test< /A>"
 resources/doctype01.dat: PASS
 
 resources/scriptdata01.dat: PASS
@@ -5378,8 +5187,7 @@ Got:
 |       "1"
 |     <p>
 |       <a>
-|         "2"
-|         "3"
+|         "23"
 Expected:
 | <html>
 |   <head>
@@ -5401,8 +5209,7 @@ Got:
 |       "1"
 |       <a>
 |         <button>
-|           "2"
-|           "3"
+|           "23"
 Expected:
 | <html>
 |   <head>
@@ -5448,8 +5255,7 @@ Got:
 |       <a>
 |         "2"
 |         <div>
-|           "3"
-|           "4"
+|           "34"
 |     "5"
 Expected:
 | <html>

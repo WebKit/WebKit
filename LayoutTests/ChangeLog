@@ -2,6 +2,25 @@
 
         Reviewed by Eric Seidel.
 
+        Implement basic text node coalescing
+        https://bugs.webkit.org/show_bug.cgi?id=41623
+
+        * html5lib/resources/webkit01.dat:
+            - This test had incorrect expected results according to the spec
+              and to Minefield.
+        * html5lib/runner-expected-html5.txt:
+            - Update expected results to show test progression.  In some cases,
+              we continue to fail tests, but in new (also wrong) ways.  I think
+              that's ok though.
+        * html5lib/runner-expected.txt:
+            - Update expected results w.r.t. new webkit01.dat baseline.
+        * html5lib/webkit-resumer-expected.txt:
+            - Update expected results w.r.t. new webkit01.dat baseline.
+
+2010-07-05  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         Implement InSelectMode
         https://bugs.webkit.org/show_bug.cgi?id=41627
 

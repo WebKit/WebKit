@@ -186,8 +186,7 @@ console.log("FOO<span>BAR</span>BAZ");
 |   <head>
 |   <body>
 |     <p>
-|       "Test"
-|       "Test2"
+|       "TestTest2"
 
 #data
 <rdar://problem/6869687>

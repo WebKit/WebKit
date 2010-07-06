@@ -1809,9 +1809,18 @@ void HTMLTreeBuilder::insertScriptElement(AtomicHTMLToken& token)
 
 void HTMLTreeBuilder::insertTextNode(AtomicHTMLToken& token)
 {
+    if (Node* lastChild = currentElement()->lastChild()) {
+        if (lastChild->isTextNode()) {
+            // FIXME: We're only supposed to append to this text node if it
+            // was the last text node inserted by the parser.
+            CharacterData* textNode = static_cast<CharacterData*>(lastChild);
+            textNode->parserAppendData(token.characters());
+            return;
+        }
+    }
     attach(currentElement(), Text::create(m_document, token.characters()));
 }
-    
+
 PassRefPtr<Element> HTMLTreeBuilder::createElement(AtomicHTMLToken& token)
 {
     RefPtr<Element> element = HTMLElementFactory::createHTMLElement(QualifiedName(nullAtom, token.name(), xhtmlNamespaceURI), m_document, 0);

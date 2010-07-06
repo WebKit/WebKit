@@ -42,6 +42,9 @@ public:
 
     StringImpl* dataImpl() { return m_data.get(); }
 
+    // Like appendData, but optimized for the parser (e.g., no mutation events).
+    PassRefPtr<StringImpl> parserAppendData(const String&);
+
 protected:
     CharacterData(Document* document, const String& text, ConstructionType type)
         : Node(document, type)
