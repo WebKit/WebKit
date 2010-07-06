@@ -748,7 +748,7 @@ void WebViewHost::didCancelClientRedirect(WebFrame* frame)
 
 void WebViewHost::didCreateDataSource(WebFrame*, WebDataSource* ds)
 {
-    ds->setExtraData(m_pendingExtraData.release());
+    ds->setExtraData(m_pendingExtraData.leakPtr());
 }
 
 void WebViewHost::didStartProvisionalLoad(WebFrame* frame)
@@ -863,7 +863,7 @@ void WebViewHost::didFinishLoad(WebFrame* frame)
 
 void WebViewHost::didNavigateWithinPage(WebFrame* frame, bool isNewNavigation)
 {
-    frame->dataSource()->setExtraData(m_pendingExtraData.release());
+    frame->dataSource()->setExtraData(m_pendingExtraData.leakPtr());
 
     updateForCommittedLoad(frame, isNewNavigation);
 }
@@ -1194,7 +1194,7 @@ void WebViewHost::updateURL(WebFrame* frame)
     if (!historyItem.isNull())
         entry->setContentState(historyItem);
 
-    navigationController()->didNavigateToEntry(entry.release());
+    navigationController()->didNavigateToEntry(entry.leakPtr());
     updateAddressBar(frame->view());
     m_lastPageIdUpdated = max(m_lastPageIdUpdated, m_pageId);
 }
