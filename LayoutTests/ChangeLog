@@ -1,3 +1,15 @@
+2010-07-05  Fady Samuel  <fsamuel@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Fixed a svg crash when setting class of an svg ellipse object.
+
+        Altering the CSS class of an attached SVG element causes WebKit to crash
+        https://bugs.webkit.org/show_bug.cgi?id=40857
+
+        * platform/chromium-linux/svg/css/svg-ellipse-render-crash-expected.txt: Added.
+        * svg/css/svg-ellipse-render-crash.html: Added.
+
 2010-07-05  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Sam Weinig.

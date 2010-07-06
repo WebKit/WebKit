@@ -215,12 +215,13 @@ void StyledElement::classAttributeChanged(const AtomicString& newClassString)
         if (!isClassWhitespace(characters[i]))
             break;
     }
-    setHasClass(i < length);
-    if (namedAttrMap) {
-        if (i < length)
-            mappedAttributes()->setClass(newClassString);
-        else
-            mappedAttributes()->clearClass();
+    bool hasClass = i < length;
+    setHasClass(hasClass);
+    if (hasClass)
+        attributes()->setClass(newClassString);
+    else {
+        if (namedAttrMap)    
+            namedAttrMap->clearClass();
     }
     setNeedsStyleRecalc();
     dispatchSubtreeModifiedEvent();
