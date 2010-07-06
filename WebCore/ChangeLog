@@ -1,3 +1,15 @@
+2010-07-06  Adam Barth  <abarth@webkit.org>
+
+        Address reviewer comments from https://bugs.webkit.org/show_bug.cgi?id=41671
+
+        Deploy isTableBodyContextTag where possible.  No behavior change.
+
+        * html/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::processStartTagForInBody):
+        (WebCore::HTMLTreeBuilder::processStartTag):
+        (WebCore::HTMLTreeBuilder::processEndTagForInTable):
+        (WebCore::HTMLTreeBuilder::processEndTag):
+
 2010-07-06  Anders Carlsson  <andersca@apple.com>
 
         Build fixes.
