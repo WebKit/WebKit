@@ -1,3 +1,11 @@
+2010-07-06  Darin Adler  <darin@apple.com>
+
+        Fix Qt build.
+
+        * WebCoreSupport/InspectorClientQt.cpp:
+        (WebCore::InspectorFrontendClientQt::closeWindow): Call clear instead of
+        calling delete on the result of leakPtr.
+
 2010-06-19  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Yury Semikhatsky.
