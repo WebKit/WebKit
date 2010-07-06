@@ -519,6 +519,224 @@ void HTMLTreeBuilder::processIsindexStartTagForBody(AtomicHTMLToken& token)
     processFakeEndTag(formTag);
 }
 
+void HTMLTreeBuilder::processStartTagForInBody(AtomicHTMLToken& token)
+{
+    ASSERT(token.type() == HTMLToken::StartTag);
+    if (token.name() == htmlTag) {
+        insertHTMLStartTagInBody(token);
+        return;
+    }
+    if (token.name() == baseTag || token.name() == "command" || token.name() == linkTag || token.name() == metaTag || token.name() == noframesTag || token.name() == scriptTag || token.name() == styleTag || token.name() == titleTag) {
+        bool didProcess = processStartTagForInHead(token);
+        ASSERT_UNUSED(didProcess, didProcess);
+        return;
+    }
+    if (token.name() == bodyTag) {
+        parseError(token);
+        notImplemented(); // fragment case
+        mergeAttributesFromTokenIntoElement(token, m_openElements.bodyElement());
+        return;
+    }
+    if (token.name() == framesetTag) {
+        parseError(token);
+        notImplemented(); // fragment case
+        if (!m_framesetOk)
+            return;
+        ExceptionCode ec = 0;
+        m_openElements.bodyElement()->remove(ec);
+        ASSERT(!ec);
+        m_openElements.popUntil(m_openElements.bodyElement());
+        m_openElements.popHTMLBodyElement();
+        ASSERT(m_openElements.top() == m_openElements.htmlElement());
+        insertElement(token);
+        m_insertionMode = InFramesetMode;
+        return;
+    }
+    if (token.name() == addressTag || token.name() == articleTag || token.name() == asideTag || token.name() == blockquoteTag || token.name() == centerTag || token.name() == "details" || token.name() == dirTag || token.name() == divTag || token.name() == dlTag || token.name() == fieldsetTag || token.name() == "figure" || token.name() == footerTag || token.name() == headerTag || token.name() == hgroupTag || token.name() == menuTag || token.name() == navTag || token.name() == olTag || token.name() == pTag || token.name() == sectionTag || token.name() == ulTag) {
+        processFakePEndTagIfPInScope();
+        insertElement(token);
+        return;
+    }
+    if (isNumberedHeaderTag(token.name())) {
+        processFakePEndTagIfPInScope();
+        if (isNumberedHeaderTag(currentElement()->localName())) { 
+            parseError(token); 
+            m_openElements.pop(); 
+        } 
+        insertElement(token);
+        return;
+    }
+    if (token.name() == preTag || token.name() == listingTag) {
+        processFakePEndTagIfPInScope();
+        insertElement(token);
+        m_tokenizer->skipLeadingNewLineForListing();
+        m_framesetOk = false;
+        return;
+    }
+    if (token.name() == formTag) {
+        notImplemented();
+        processFakePEndTagIfPInScope();
+        insertElement(token);
+        m_formElement = currentElement();
+        return;
+    }
+    if (token.name() == liTag) {
+        notImplemented();
+        processFakePEndTagIfPInScope();
+        insertElement(token);
+        return;
+    }
+    if (token.name() == ddTag || token.name() == dtTag) {
+        notImplemented();
+        processFakePEndTagIfPInScope();
+        insertElement(token);
+        return;
+    }
+    if (token.name() == plaintextTag) {
+        processFakePEndTagIfPInScope();
+        insertElement(token);
+        m_tokenizer->setState(HTMLTokenizer::PLAINTEXTState);
+        return;
+    }
+    if (token.name() == buttonTag) {
+        notImplemented();
+        reconstructTheActiveFormattingElements();
+        insertElement(token);
+        m_framesetOk = false;
+        return;
+    }
+    if (token.name() == aTag) {
+        notImplemented();
+        reconstructTheActiveFormattingElements();
+        insertFormattingElement(token);
+        return;
+    }
+    if (isNonAnchorFormattingTag(token.name())) {
+        reconstructTheActiveFormattingElements();
+        insertFormattingElement(token);
+        return;
+    }
+    if (token.name() == nobrTag) {
+        reconstructTheActiveFormattingElements();
+        notImplemented();
+        insertFormattingElement(token);
+        return;
+    }
+    if (token.name() == appletTag || token.name() == marqueeTag || token.name() == objectTag) {
+        reconstructTheActiveFormattingElements();
+        insertElement(token);
+        notImplemented();
+        m_framesetOk = false;
+        return;
+    }
+    if (token.name() == tableTag) {
+        notImplemented();
+        insertElement(token);
+        m_framesetOk = false;
+        m_insertionMode = InTableMode;
+        return;
+    }
+    if (token.name() == imageTag) {
+        parseError(token);
+        // Apparently we're not supposed to ask.
+        token.setName(imgTag.localName());
+        // Note the fall through to the imgTag handling below!
+    }
+    if (token.name() == areaTag || token.name() == basefontTag || token.name() == "bgsound" || token.name() == brTag || token.name() == embedTag || token.name() == imgTag || token.name() == inputTag || token.name() == keygenTag || token.name() == wbrTag) {
+        reconstructTheActiveFormattingElements();
+        insertSelfClosingElement(token);
+        m_framesetOk = false;
+        return;
+    }
+    if (token.name() == paramTag || token.name() == sourceTag || token.name() == "track") {
+        insertSelfClosingElement(token);
+        return;
+    }
+    if (token.name() == hrTag) {
+        processFakePEndTagIfPInScope();
+        insertSelfClosingElement(token);
+        m_framesetOk = false;
+        return;
+    }
+    if (token.name() == isindexTag) {
+        processIsindexStartTagForBody(token);
+        return;
+    }
+    if (token.name() == textareaTag) {
+        insertElement(token);
+        m_tokenizer->skipLeadingNewLineForListing();
+        m_tokenizer->setState(HTMLTokenizer::RCDATAState);
+        m_originalInsertionMode = m_insertionMode;
+        m_framesetOk = false;
+        m_insertionMode = TextMode;
+        return;
+    }
+    if (token.name() == xmpTag) {
+        processFakePEndTagIfPInScope();
+        reconstructTheActiveFormattingElements();
+        m_framesetOk = false;
+        insertGenericRawTextElement(token);
+        return;
+    }
+    if (token.name() == iframeTag) {
+        m_framesetOk = false;
+        insertGenericRawTextElement(token);
+        return;
+    }
+    if (token.name() == noembedTag) {
+        insertGenericRawTextElement(token);
+        return;
+    }
+    if (token.name() == noscriptTag && isScriptingFlagEnabled(m_document->frame())) {
+        insertGenericRawTextElement(token);
+        return;
+    }
+    if (token.name() == selectTag) {
+        reconstructTheActiveFormattingElements();
+        insertElement(token);
+        m_framesetOk = false;
+        if (m_insertionMode == InTableMode || m_insertionMode == InCaptionMode || m_insertionMode == InColumnGroupMode || m_insertionMode == InTableBodyMode || m_insertionMode == InRowMode || m_insertionMode == InCellMode)
+            m_insertionMode = InSelectInTableMode;
+        else
+            m_insertionMode = InSelectMode;
+        return;
+    }
+    if (token.name() == optgroupTag || token.name() == optionTag) {
+        if (m_openElements.inScope(optionTag.localName())) {
+            AtomicHTMLToken endOption(HTMLToken::EndTag, optionTag.localName());
+            processEndTag(endOption);
+        }
+        reconstructTheActiveFormattingElements();
+        insertElement(token);
+        return;
+    }
+    if (token.name() == rpTag || token.name() == rtTag) {
+        if (m_openElements.inScope(rubyTag.localName())) {
+            generateImpliedEndTags();
+            if (!currentElement()->hasTagName(rubyTag)) {
+                parseError(token);
+                m_openElements.popUntil(rubyTag.localName());
+            }
+        }
+        insertElement(token);
+        return;
+    }
+    if (token.name() == "math") {
+        // This is the MathML foreign content branch point.
+        notImplemented();
+    }
+    if (token.name() == "svg") {
+        // This is the SVG foreign content branch point.
+        notImplemented();
+    }
+    if (token.name() == captionTag || token.name() == colTag || token.name() == colgroupTag || token.name() == frameTag || token.name() == headTag || token.name() == tbodyTag || token.name() == tdTag || token.name() == tfootTag || token.name() == thTag || token.name() == theadTag || token.name() == trTag) {
+        parseError(token);
+        return;
+    }
+    reconstructTheActiveFormattingElements();
+    insertElement(token);
+}
+
 void HTMLTreeBuilder::processStartTag(AtomicHTMLToken& token)
 {
     ASSERT(token.type() == HTMLToken::StartTag);
@@ -588,219 +806,7 @@ void HTMLTreeBuilder::processStartTag(AtomicHTMLToken& token)
         // Fall through
     case InBodyMode:
         ASSERT(insertionMode() == InBodyMode);
-        if (token.name() == htmlTag) {
-            insertHTMLStartTagInBody(token);
-            return;
-        }
-        if (token.name() == baseTag || token.name() == "command" || token.name() == linkTag || token.name() == metaTag || token.name() == noframesTag || token.name() == scriptTag || token.name() == styleTag || token.name() == titleTag) {
-            bool didProcess = processStartTagForInHead(token);
-            ASSERT_UNUSED(didProcess, didProcess);
-            return;
-        }
-        if (token.name() == bodyTag) {
-            parseError(token);
-            notImplemented(); // fragment case
-            mergeAttributesFromTokenIntoElement(token, m_openElements.bodyElement());
-            return;
-        }
-        if (token.name() == framesetTag) {
-            parseError(token);
-            notImplemented(); // fragment case
-            if (!m_framesetOk)
-                return;
-            ExceptionCode ec = 0;
-            m_openElements.bodyElement()->remove(ec);
-            ASSERT(!ec);
-            m_openElements.popUntil(m_openElements.bodyElement());
-            m_openElements.popHTMLBodyElement();
-            ASSERT(m_openElements.top() == m_openElements.htmlElement());
-            insertElement(token);
-            m_insertionMode = InFramesetMode;
-            return;
-        }
-        if (token.name() == addressTag || token.name() == articleTag || token.name() == asideTag || token.name() == blockquoteTag || token.name() == centerTag || token.name() == "details" || token.name() == dirTag || token.name() == divTag || token.name() == dlTag || token.name() == fieldsetTag || token.name() == "figure" || token.name() == footerTag || token.name() == headerTag || token.name() == hgroupTag || token.name() == menuTag || token.name() == navTag || token.name() == olTag || token.name() == pTag || token.name() == sectionTag || token.name() == ulTag) {
-            processFakePEndTagIfPInScope();
-            insertElement(token);
-            return;
-        }
-        if (isNumberedHeaderTag(token.name())) {
-            processFakePEndTagIfPInScope();
-            if (isNumberedHeaderTag(currentElement()->localName())) {
-                parseError(token);
-                m_openElements.pop();
-            }
-            insertElement(token);
-            return;
-        }
-        if (token.name() == preTag || token.name() == listingTag) {
-            processFakePEndTagIfPInScope();
-            insertElement(token);
-            m_tokenizer->skipLeadingNewLineForListing();
-            m_framesetOk = false;
-            return;
-        }
-        if (token.name() == formTag) {
-            notImplemented();
-            processFakePEndTagIfPInScope();
-            insertElement(token);
-            m_formElement = currentElement();
-            return;
-        }
-        if (token.name() == liTag) {
-            notImplemented();
-            processFakePEndTagIfPInScope();
-            insertElement(token);
-            return;
-        }
-        if (token.name() == ddTag || token.name() == dtTag) {
-            notImplemented();
-            processFakePEndTagIfPInScope();
-            insertElement(token);
-            return;
-        }
-        if (token.name() == plaintextTag) {
-            processFakePEndTagIfPInScope();
-            insertElement(token);
-            m_tokenizer->setState(HTMLTokenizer::PLAINTEXTState);
-            return;
-        }
-        if (token.name() == buttonTag) {
-            notImplemented();
-            reconstructTheActiveFormattingElements();
-            insertElement(token);
-            m_framesetOk = false;
-            return;
-        }
-        if (token.name() == aTag) {
-            notImplemented();
-            reconstructTheActiveFormattingElements();
-            insertFormattingElement(token);
-            return;
-        }
-        if (isNonAnchorFormattingTag(token.name())) {
-            reconstructTheActiveFormattingElements();
-            insertFormattingElement(token);
-            return;
-        }
-        if (token.name() == nobrTag) {
-            reconstructTheActiveFormattingElements();
-            notImplemented();
-            insertFormattingElement(token);
-            return;
-        }
-        if (token.name() == appletTag || token.name() == marqueeTag || token.name() == objectTag) {
-            reconstructTheActiveFormattingElements();
-            insertElement(token);
-            notImplemented();
-            m_framesetOk = false;
-            return;
-        }
-        if (token.name() == tableTag) {
-            notImplemented();
-            insertElement(token);
-            m_framesetOk = false;
-            m_insertionMode = InTableMode;
-            return;
-        }
-        if (token.name() == imageTag) {
-            parseError(token);
-            // Apparently we're not supposed to ask.
-            token.setName(imgTag.localName());
-            // Note the fall through to the imgTag handling below!
-        }
-        if (token.name() == areaTag || token.name() == basefontTag || token.name() == "bgsound" || token.name() == brTag || token.name() == embedTag || token.name() == imgTag || token.name() == inputTag || token.name() == keygenTag || token.name() == wbrTag) {
-            reconstructTheActiveFormattingElements();
-            insertSelfClosingElement(token);
-            m_framesetOk = false;
-            return;
-        }
-        if (token.name() == paramTag || token.name() == sourceTag || token.name() == "track") {
-            insertSelfClosingElement(token);
-            return;
-        }
-        if (token.name() == hrTag) {
-            processFakePEndTagIfPInScope();
-            insertSelfClosingElement(token);
-            m_framesetOk = false;
-            return;
-        }
-        if (token.name() == isindexTag) {
-            processIsindexStartTagForBody(token);
-            return;
-        }
-        if (token.name() == textareaTag) {
-            insertElement(token);
-            m_tokenizer->skipLeadingNewLineForListing();
-            m_tokenizer->setState(HTMLTokenizer::RCDATAState);
-            m_originalInsertionMode = m_insertionMode;
-            m_framesetOk = false;
-            m_insertionMode = TextMode;
-            return;
-        }
-        if (token.name() == xmpTag) {
-            processFakePEndTagIfPInScope();
-            reconstructTheActiveFormattingElements();
-            m_framesetOk = false;
-            insertGenericRawTextElement(token);
-            return;
-        }
-        if (token.name() == iframeTag) {
-            m_framesetOk = false;
-            insertGenericRawTextElement(token);
-            return;
-        }
-        if (token.name() == noembedTag) {
-            insertGenericRawTextElement(token);
-            return;
-        }
-        if (token.name() == noscriptTag && isScriptingFlagEnabled(m_document->frame())) {
-            insertGenericRawTextElement(token);
-            return;
-        }
-        if (token.name() == selectTag) {
-            reconstructTheActiveFormattingElements();
-            insertElement(token);
-            m_framesetOk = false;
-            if (m_insertionMode == InTableMode || m_insertionMode == InCaptionMode || m_insertionMode == InColumnGroupMode || m_insertionMode == InTableBodyMode || m_insertionMode == InRowMode || m_insertionMode == InCellMode)
-                m_insertionMode = InSelectInTableMode;
-            else
-                m_insertionMode = InSelectMode;
-            return;
-        }
-        if (token.name() == optgroupTag || token.name() == optionTag) {
-            if (m_openElements.inScope(optionTag.localName())) {
-                AtomicHTMLToken endOption(HTMLToken::EndTag, optionTag.localName());
-                processEndTag(endOption);
-            }
-            reconstructTheActiveFormattingElements();
-            insertElement(token);
-            return;
-        }
-        if (token.name() == rpTag || token.name() == rtTag) {
-            if (m_openElements.inScope(rubyTag.localName())) {
-                generateImpliedEndTags();
-                if (!currentElement()->hasTagName(rubyTag)) {
-                    parseError(token);
-                    m_openElements.popUntil(rubyTag.localName());
-                }
-            }
-            insertElement(token);
-            return;
-        }
-        if (token.name() == "math") {
-            // This is the MathML foreign content branch point.
-            notImplemented();
-        }
-        if (token.name() == "svg") {
-            // This is the SVG foreign content branch point.
-            notImplemented();
-        }
-        if (token.name() == captionTag || token.name() == colTag || token.name() == colgroupTag || token.name() == frameTag || token.name() == headTag || token.name() == tbodyTag || token.name() == tdTag || token.name() == tfootTag || token.name() == thTag || token.name() == theadTag || token.name() == trTag) {
-            parseError(token);
-            return;
-        }
-        reconstructTheActiveFormattingElements();
-        insertElement(token);
+        processStartTagForInBody(token);
         break;
     case InTableMode:
         ASSERT(insertionMode() == InTableMode);
@@ -855,7 +861,9 @@ void HTMLTreeBuilder::processStartTag(AtomicHTMLToken& token)
             return;
         }
         parseError(token);
-        notImplemented();
+        if (currentElement()->hasTagName(tableTag) || currentElement()->hasTagName(tbodyTag) || currentElement()->hasTagName(tfootTag) || currentElement()->hasTagName(theadTag) || currentElement()->hasTagName(trTag))
+            notImplemented(); // "whenever a node would be inserted into the current node, it must instead be foster parented."
+        // FIXME: processStartTagForInBody(token);
         break;
     case InColumnGroupMode:
         if (token.name() == htmlTag) {
