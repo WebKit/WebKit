@@ -5,7 +5,7 @@ layer at (0,0) size 800x100
   RenderBlock {html} at (0,0) size 800x100
     RenderBody {body} at (8,8) size 784x76
       RenderBlock (anonymous) at (0,0) size 784x24
-        RenderSVGRoot {svg} at (8,8) size 769x20
+        RenderSVGRoot {svg} at (8,8) size 784x20
           RenderSVGText {text} at (10,20) size 125x13 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 125x13
               chunk 1 text run 1 at (10.00,30.00) startOffset 0 endOffset 30 width 125.00: "FAIL (This should not render.)"

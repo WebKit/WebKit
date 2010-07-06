@@ -366,10 +366,43 @@ AffineTransform SVGStyledElement::localCoordinateSpaceTransform(SVGLocatable::CT
     return AffineTransform();
 }
 
-void SVGStyledElement::updateRelativeLengthsInformation(bool, SVGStyledElement*)
+void SVGStyledElement::updateRelativeLengthsInformation(bool hasRelativeLengths, SVGStyledElement* element)
 {
-    // FIXME: The actual code will land in a follow-up patch.
-    // See https://bugs.webkit.org/show_bug.cgi?id=41566
+    // If we're not yet in a document, this function will be called again from insertedIntoDocument(). Do nothing now.
+    if (!inDocument())
+        return;
+
+    // An element wants to notify us that its own relative lengths state changed.
+    // Register it in the relative length map, and register us in the parent relative length map.
+    // Register the parent in the grandparents map, etc. Repeat procedure until the root of the SVG tree.
+
+    if (hasRelativeLengths)
+        m_elementsWithRelativeLengths.add(element);
+    else {
+        if (!m_elementsWithRelativeLengths.contains(element)) {
+            // We were never registered. Do nothing.
+            return;
+        }
+
+        m_elementsWithRelativeLengths.remove(element);
+    }
+
+    // Find first styled parent node, and notify it that we've changed our relative length state.
+    Node* node = parent();
+    while (node) {
+        if (!node->isSVGElement())
+            break;
+
+        SVGElement* element = static_cast<SVGElement*>(node);
+        if (!element->isStyled()) {
+            node = node->parent();
+            continue;
+        }
+
+        // Register us in the parent element map.
+        static_cast<SVGStyledElement*>(element)->updateRelativeLengthsInformation(hasRelativeLengths, this);
+        break;
+    }
 }
 
 }

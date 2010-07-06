@@ -40,8 +40,7 @@ namespace WebCore {
 
         virtual String title() const;
 
-        // FIXME: The actual code will land in a follow-up patch.
-        bool hasRelativeLengths() const { return selfHasRelativeLengths(); }
+        bool hasRelativeLengths() const { return !m_elementsWithRelativeLengths.isEmpty(); }
 
         virtual bool isStyled() const { return true; }
         virtual bool supportsMarkers() const { return false; }
@@ -81,6 +80,7 @@ namespace WebCore {
         virtual bool selfHasRelativeLengths() const { return false; }
 
     private:
+        HashSet<SVGStyledElement*> m_elementsWithRelativeLengths;
         DECLARE_ANIMATED_PROPERTY(SVGStyledElement, HTMLNames::classAttr, String, ClassName, className)
     };
 

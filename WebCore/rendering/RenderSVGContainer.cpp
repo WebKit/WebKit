@@ -40,29 +40,24 @@ RenderSVGContainer::RenderSVGContainer(SVGStyledElement* node)
 {
 }
 
-bool RenderSVGContainer::drawsContents() const
-{
-    return m_drawsContents;
-}
-
-void RenderSVGContainer::setDrawsContents(bool drawsContents)
-{
-    m_drawsContents = drawsContents;
-}
-
 void RenderSVGContainer::layout()
 {
     ASSERT(needsLayout());
-    ASSERT(!view()->layoutStateEnabled()); // RenderSVGRoot disables layoutState for the SVG rendering tree.
 
-    calcViewport(); // Allow RenderSVGViewportContainer to update its viewport
+    // RenderSVGRoot disables layoutState for the SVG rendering tree.
+    ASSERT(!view()->layoutStateEnabled());
+
+    // Allow RenderSVGViewportContainer to update its viewport.
+    calcViewport();
 
     LayoutRepainter repainter(*this, checkForRepaintDuringLayout() || selfWillPaint());
-    calculateLocalTransform(); // Allow RenderSVGTransformableContainer to update its transform
+
+    // Allow RenderSVGTransformableContainer to update its transform.
+    calculateLocalTransform();
 
     SVGRenderSupport::layoutChildren(this, selfNeedsLayout());
-    repainter.repaintAfterLayout();
 
+    repainter.repaintAfterLayout();
     setNeedsLayout(false);
 }
 

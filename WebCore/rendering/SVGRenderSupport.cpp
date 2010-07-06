@@ -32,12 +32,14 @@
 #include "ImageBuffer.h"
 #include "NodeRenderStyle.h"
 #include "RenderLayer.h"
+#include "RenderPath.h"
 #include "RenderSVGContainer.h"
 #include "RenderSVGResource.h"
 #include "RenderSVGResourceClipper.h"
 #include "RenderSVGResourceFilter.h"
 #include "RenderSVGResourceMarker.h"
 #include "RenderSVGResourceMasker.h"
+#include "RenderSVGRoot.h"
 #include "SVGStyledElement.h"
 #include "TransformState.h"
 #include <wtf/UnusedParam.h>
@@ -230,25 +232,42 @@ FloatRect SVGRenderSupport::computeContainerBoundingBox(const RenderObject* cont
     return boundingBox;
 }
 
+static inline RenderSVGRoot* svgRootTreeObject(RenderObject* start)
+{
+    while (start && !start->isSVGRoot())
+        start = start->parent();
+
+    ASSERT(start);
+    ASSERT(start->isSVGRoot());
+    return toRenderSVGRoot(start);
+}
+
 void SVGRenderSupport::layoutChildren(RenderObject* start, bool selfNeedsLayout)
 {
+    bool layoutSizeChanged = svgRootTreeObject(start)->isLayoutSizeChanged();
+
     for (RenderObject* child = start->firstChild(); child; child = child->nextSibling()) {
-        // Only force our kids to layout if we're being asked to relayout as a result of a parent changing
-        // FIXME: We should be able to skip relayout of non-relative kids when only bounds size has changed
-        // that's a possible future optimization using LayoutState
-        // http://bugs.webkit.org/show_bug.cgi?id=15391
         bool needsLayout = selfNeedsLayout;
-        if (!needsLayout) {
+
+        if (layoutSizeChanged) {
+            // When selfNeedsLayout is false and the layout size changed, we have to check whether this child uses relative lengths
             if (SVGElement* element = child->node()->isSVGElement() ? static_cast<SVGElement*>(child->node()) : 0) {
-                if (element->isStyled())
-                    needsLayout = static_cast<SVGStyledElement*>(element)->hasRelativeLengths();
+                if (element->isStyled() && static_cast<SVGStyledElement*>(element)->hasRelativeLengths()) {
+                    // When the layout size changed and when using relative values tell the RenderPath to update its Path object
+                    if (child->isRenderPath())
+                        toRenderPath(child)->setNeedsPathUpdate();
+
+                    needsLayout = true;
+                }
             }
         }
 
-        if (needsLayout)
+        if (needsLayout) {
             child->setNeedsLayout(true, false);
+            child->layout();
+        } else
+            child->layoutIfNeeded();
 
-        child->layoutIfNeeded();
         ASSERT(!child->needsLayout());
     }
 }

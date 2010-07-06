@@ -45,18 +45,13 @@ void RenderSVGViewportContainer::applyViewportClip(PaintInfo& paintInfo)
 
 void RenderSVGViewportContainer::calcViewport()
 {
-    SVGElement* svgelem = static_cast<SVGElement*>(node());
-    if (svgelem->hasTagName(SVGNames::svgTag)) {
-        SVGSVGElement* svg = static_cast<SVGSVGElement*>(node());
-
-        if (!selfNeedsLayout() && !svg->hasRelativeLengths())
-            return;
-
-        float x = svg->x().value(svg);
-        float y = svg->y().value(svg);
-        float w = svg->width().value(svg);
-        float h = svg->height().value(svg);
-        m_viewport = FloatRect(x, y, w, h);
+     SVGElement* element = static_cast<SVGElement*>(node());
+     if (element->hasTagName(SVGNames::svgTag)) {
+         SVGSVGElement* svg = static_cast<SVGSVGElement*>(element);
+         m_viewport = FloatRect(svg->x().value(svg)
+                                , svg->y().value(svg)
+                                , svg->width().value(svg)
+                                , svg->height().value(svg));
     }
 }
 

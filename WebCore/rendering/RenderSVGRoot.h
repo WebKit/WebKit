@@ -40,6 +40,8 @@ public:
     const RenderObjectChildList* children() const { return &m_children; }
     RenderObjectChildList* children() { return &m_children; }
 
+    bool isLayoutSizeChanged() const { return m_isLayoutSizeChanged; }
+
 private:
     virtual RenderObjectChildList* virtualChildren() { return children(); }
     virtual const RenderObjectChildList* virtualChildren() const { return children(); }
@@ -84,6 +86,7 @@ private:
     RenderObjectChildList m_children;
     FloatSize m_viewportSize;
     mutable AffineTransform m_localToParentTransform;
+    bool m_isLayoutSizeChanged : 1;
 };
 
 inline RenderSVGRoot* toRenderSVGRoot(RenderObject* object)

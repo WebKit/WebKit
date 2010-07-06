@@ -45,6 +45,7 @@ namespace WebCore {
 
 RenderSVGRoot::RenderSVGRoot(SVGStyledElement* node)
     : RenderBox(node)
+    , m_isLayoutSizeChanged(false)
 {
     setReplaced(true);
 }
@@ -113,13 +114,14 @@ void RenderSVGRoot::layout()
     IntSize oldSize(width(), height());
     calcWidth();
     calcHeight();
-
     calcViewport();
 
-    // RenderSVGRoot needs to take special care to propagate window size changes to the children,
-    // if the outermost <svg> is using relative x/y/width/height values. Hence the additonal parameters.
     SVGSVGElement* svg = static_cast<SVGSVGElement*>(node());
-    SVGRenderSupport::layoutChildren(this, needsLayout || (svg->hasRelativeLengths() && oldSize != size()));
+    m_isLayoutSizeChanged = svg->hasRelativeLengths() && oldSize != size();
+
+    SVGRenderSupport::layoutChildren(this, needsLayout);
+    m_isLayoutSizeChanged = false;
+
     repainter.repaintAfterLayout();
 
     view()->enableLayoutState();
@@ -196,9 +198,6 @@ void RenderSVGRoot::destroy()
 void RenderSVGRoot::calcViewport()
 {
     SVGSVGElement* svg = static_cast<SVGSVGElement*>(node());
-
-    if (!selfNeedsLayout() && !svg->hasRelativeLengths())
-        return;
 
     if (!svg->hasSetContainerSize()) {
         // In the normal case of <svg> being stand-alone or in a CSSBoxModel object we use

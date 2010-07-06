@@ -100,13 +100,7 @@ void RenderPath::layout()
     LayoutRepainter repainter(*this, checkForRepaintDuringLayout() && selfNeedsLayout());
     SVGStyledTransformableElement* element = static_cast<SVGStyledTransformableElement*>(node());
 
-    // We need to update the Path object whenever the underlying SVGStyledTransformableElement uses relative values
-    // as the viewport size may have changed. It would be nice to optimize this to detect these changes, and only
-    // update when needed, even when using relative values.
     bool needsPathUpdate = m_needsPathUpdate;
-    if (!needsPathUpdate && element->hasRelativeLengths())
-        needsPathUpdate = true;
-
     if (needsPathUpdate) {
         m_path = element->toPathData();
         m_needsPathUpdate = false;
