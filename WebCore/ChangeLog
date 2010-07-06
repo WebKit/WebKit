@@ -1,5 +1,11 @@
 2010-07-06  Anders Carlsson  <andersca@apple.com>
 
+        Fix Windows build.
+
+        * WebCore.vcproj/WebCore.vcproj:
+
+2010-07-06  Anders Carlsson  <andersca@apple.com>
+
         More build fixes.
 
         * WebCore.gypi:

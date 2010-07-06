@@ -9173,7 +9173,7 @@
 				>
 			</File>
 			<File
-				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSMimeType.cpp"
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSDOMMimeType.cpp"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -9225,11 +9225,11 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSMimeType.h"
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSDOMMimeType.h"
 				>
 			</File>
 			<File
-				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSMimeTypeArray.cpp"
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSDOMMimeTypeArray.cpp"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -9281,7 +9281,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSMimeTypeArray.h"
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSDOMMimeTypeArray.h"
 				>
 			</File>
 			<File
@@ -10125,7 +10125,7 @@
 				>
 			</File>
 			<File
-				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSPlugin.cpp"
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSDOMPlugin.cpp"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -45200,7 +45200,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\bindings\js\JSMimeTypeArrayCustom.cpp"
+					RelativePath="..\bindings\js\JSDOMMimeTypeArrayCustom.cpp"
 					>
 					<FileConfiguration
 						Name="Debug|Win32"
