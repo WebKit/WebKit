@@ -132,10 +132,16 @@ void InjectedBundlePage::didFinishLoadForFrame(WKBundleFrameRef frame)
     if (!WKBundleFrameIsMainFrame(frame))
         return;
 
-    WKRetainPtr<WKStringRef> externalRepresentation(AdoptWK, WKBundlePageCopyRenderTreeExternalRepresentation(m_page));
-    std::auto_ptr<Vector<char> > utf8String = WKStringToUTF8(externalRepresentation.get());
-
-    InjectedBundle::shared().os() << utf8String->data();
+    if (InjectedBundle::shared().layoutTestController()->dumpAsText()) {
+        // FIXME: Support dumping subframes when layoutTestController()->dumpChildFramesAsText() is true.
+        WKRetainPtr<WKStringRef> innerText(AdoptWK, WKBundleFrameCopyInnerText(frame));
+        std::auto_ptr<Vector<char> > utf8InnerText = WKStringToUTF8(innerText.get());
+        InjectedBundle::shared().os() << utf8InnerText->data() << "\n";
+    } else {
+        WKRetainPtr<WKStringRef> externalRepresentation(AdoptWK, WKBundlePageCopyRenderTreeExternalRepresentation(m_page));
+        std::auto_ptr<Vector<char> > utf8externalRepresentation = WKStringToUTF8(externalRepresentation.get());
+        InjectedBundle::shared().os() << utf8externalRepresentation->data();
+    }
     InjectedBundle::shared().done();
 }
 

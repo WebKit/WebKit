@@ -43,7 +43,6 @@ InjectedBundle& InjectedBundle::shared()
 
 InjectedBundle::InjectedBundle()
     : m_bundle(0)
-    , m_layoutTestController(LayoutTestController::create(std::string("")))
 {
 }
 
@@ -112,6 +111,7 @@ void InjectedBundle::didRecieveMessage(WKStringRef message)
 void InjectedBundle::reset()
 {
     m_outputStream.str("");
+    m_layoutTestController = LayoutTestController::create(std::string(""));
 }
 
 } // namespace WTR
