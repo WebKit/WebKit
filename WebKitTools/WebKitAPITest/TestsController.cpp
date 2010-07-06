@@ -71,7 +71,7 @@ bool TestsController::runAllTests()
 
 void TestsController::addTest(PassOwnPtr<Test> test)
 {
-    m_tests.append(test.release());
+    m_tests.append(test.leakPtr());
     runNextTestSoon();
 }
 
