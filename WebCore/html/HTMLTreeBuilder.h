@@ -129,8 +129,8 @@ private:
     bool processBodyEndTagForInBody(AtomicHTMLToken&);
     void processAnyOtherEndTagForInBody(AtomicHTMLToken&);
 
-    void proesssFakeStartTag(const QualifiedName&, PassRefPtr<NamedNodeMap> attributes = 0);
-    void proesssFakeEndTag(const QualifiedName&);
+    void processFakeStartTag(const QualifiedName&, PassRefPtr<NamedNodeMap> attributes = 0);
+    void processFakeEndTag(const QualifiedName&);
     void processFakeCharacters(const String&);
     void processFakePEndTagIfPInScope();
 

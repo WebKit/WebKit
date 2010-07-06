@@ -449,14 +449,14 @@ void HTMLTreeBuilder::insertHTMLStartTagInBody(AtomicHTMLToken& token)
     mergeAttributesFromTokenIntoElement(token, m_openElements.htmlElement());
 }
 
-void HTMLTreeBuilder::proesssFakeStartTag(const QualifiedName& tagName, PassRefPtr<NamedNodeMap> attributes)
+void HTMLTreeBuilder::processFakeStartTag(const QualifiedName& tagName, PassRefPtr<NamedNodeMap> attributes)
 {
     // FIXME: We'll need a fancier conversion than just "localName" for SVG/MathML tags.
     AtomicHTMLToken fakeToken(HTMLToken::StartTag, tagName.localName(), attributes);
     processStartTag(fakeToken);
 }
 
-void HTMLTreeBuilder::proesssFakeEndTag(const QualifiedName& tagName)
+void HTMLTreeBuilder::processFakeEndTag(const QualifiedName& tagName)
 {
     // FIXME: We'll need a fancier conversion than just "localName" for SVG/MathML tags.
     AtomicHTMLToken fakeToken(HTMLToken::EndTag, tagName.localName());
@@ -499,24 +499,24 @@ void HTMLTreeBuilder::processIsindexStartTagForBody(AtomicHTMLToken& token)
     if (m_formElement)
         return;
     notImplemented(); // Acknowledge self-closing flag
-    proesssFakeStartTag(formTag);
+    processFakeStartTag(formTag);
     Attribute* actionAttribute = token.getAttributeItem(actionAttr);
     if (actionAttribute) {
         ASSERT(currentElement()->hasTagName(formTag));
         currentElement()->setAttribute(actionAttr, actionAttribute->value());
     }
-    proesssFakeStartTag(hrTag);
-    proesssFakeStartTag(labelTag);
+    processFakeStartTag(hrTag);
+    processFakeStartTag(labelTag);
     Attribute* promptAttribute = token.getAttributeItem(promptAttr);
     if (promptAttribute)
         processFakeCharacters(promptAttribute->value());
     else
         processFakeCharacters(searchableIndexIntroduction());
-    proesssFakeStartTag(inputTag, attributesForIsindexInput(token));
+    processFakeStartTag(inputTag, attributesForIsindexInput(token));
     notImplemented(); // This second set of characters may be needed by non-english locales.
-    proesssFakeEndTag(labelTag);
-    proesssFakeStartTag(hrTag);
-    proesssFakeEndTag(formTag);
+    processFakeEndTag(labelTag);
+    processFakeStartTag(hrTag);
+    processFakeEndTag(formTag);
 }
 
 void HTMLTreeBuilder::processStartTag(AtomicHTMLToken& token)
@@ -815,7 +815,7 @@ void HTMLTreeBuilder::processStartTag(AtomicHTMLToken& token)
             return;
         }
         if (token.name() == colTag) {
-            proesssFakeStartTag(colgroupTag);
+            processFakeStartTag(colgroupTag);
             ASSERT(InColumnGroupMode);
             processStartTag(token);
             return;
@@ -827,7 +827,7 @@ void HTMLTreeBuilder::processStartTag(AtomicHTMLToken& token)
             return;
         }
         if (token.name() == tdTag || token.name() == thTag || token.name() == trTag) {
-            proesssFakeStartTag(tbodyTag);
+            processFakeStartTag(tbodyTag);
             ASSERT(insertionMode() == InTableBodyMode);
             processStartTag(token);
             return;
@@ -875,7 +875,7 @@ void HTMLTreeBuilder::processStartTag(AtomicHTMLToken& token)
         }
         if (token.name() == thTag || token.name() == tdTag) {
             parseError(token);
-            proesssFakeStartTag(trTag);
+            processFakeStartTag(trTag);
             ASSERT(insertionMode() == InRowMode);
             processStartTag(token);
             return;
