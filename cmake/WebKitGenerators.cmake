@@ -96,10 +96,12 @@ SET(SCRIPTS_BINDINGS
   ${WEBCORE_DIR}/bindings/scripts/IDLParser.pm
   ${WEBCORE_DIR}/bindings/scripts/IDLStructure.pm
   ${WEBCORE_DIR}/bindings/scripts/InFilesParser.pm)
-SET(JS_CODE_GENERATOR ${WEBCORE_DIR}/bindings/scripts/generate-bindings.pl)
+SET(BINDING_CODE_GENERATOR ${WEBCORE_DIR}/bindings/scripts/generate-bindings.pl)
 SET(JS_IDL_FILES "")
-# - Create JavaScript C++ code given an IDL input
-# GENERATE_JS_FROM_IDL(idl_source)
+SET(Inspector_IDL_FILES "")
+
+# - Create JS C++ code given an IDL input
+# GENERATE_FROM_IDL(generator idl_source)
 #
 # The generated files (.cpp, .h) lives in ${DERIVED_SOURCES_DIR}.
 #
@@ -113,21 +115,47 @@ MACRO(GENERATE_JS_FROM_IDL _source)
   GET_FILENAME_COMPONENT(_name ${_source} NAME_WE)
   ADD_CUSTOM_COMMAND(
     OUTPUT  ${DERIVED_SOURCES_DIR}/JS${_name}.cpp ${DERIVED_SOURCES_DIR}/JS${_name}.h
-    DEPENDS ${JS_CODE_GENERATOR} ${SCRIPTS_BINDINGS} ${WEBCORE_DIR}/${_source}
-    COMMAND ${PERL_EXECUTABLE} -I${WEBCORE_DIR}/bindings/scripts ${JS_CODE_GENERATOR} ${IDL_INCLUDES} --outputDir "${DERIVED_SOURCES_DIR}" --defines "LANGUAGE_JAVASCRIPT=1 ${FEATURE_DEFINES_STR}" --generator JS ${WEBCORE_DIR}/${_source}
+    DEPENDS ${BINDING_CODE_GENERATOR} ${SCRIPTS_BINDINGS} ${WEBCORE_DIR}/${_source}
+    COMMAND ${PERL_EXECUTABLE} -I${WEBCORE_DIR}/bindings/scripts ${BINDING_CODE_GENERATOR} ${IDL_INCLUDES} --outputDir "${DERIVED_SOURCES_DIR}" --defines "LANGUAGE_JAVASCRIPT=1 ${FEATURE_DEFINES_STR}" --generator JS ${WEBCORE_DIR}/${_source}
     VERBATIM)
   LIST(APPEND JS_IDL_FILES ${DERIVED_SOURCES_DIR}/JS${_name}.cpp)
   UNSET(_name)
   UNSET(_defines)
 ENDMACRO()
 
+
+# - Create Inspector C++ code given an IDL input
+# GENERATE_FROM_IDL(generator idl_source)
+#
+# The generated files (.cpp, .h) lives in ${DERIVED_SOURCES_DIR}.
+#
+# This function also appends the generated cpp file to Inspector_IDL_FILES list.
+MACRO(GENERATE_INSPECTOR_FROM_IDL _source)
+  SET(FEATURE_DEFINES_STR "")
+  FOREACH (f ${FEATURE_DEFINES})
+    SET(FEATURE_DEFINES_STR "${FEATURE_DEFINES_STR} ${f}")
+  ENDFOREACH ()
+
+  GET_FILENAME_COMPONENT(_name ${_source} NAME_WE)
+  ADD_CUSTOM_COMMAND(
+    OUTPUT  ${DERIVED_SOURCES_DIR}/Remote${_name}.cpp ${DERIVED_SOURCES_DIR}/Remote${_name}.h
+    DEPENDS ${BINDING_CODE_GENERATOR} ${SCRIPTS_BINDINGS} ${WEBCORE_DIR}/${_source}
+    COMMAND ${PERL_EXECUTABLE} -I${WEBCORE_DIR}/bindings/scripts -I${WEBCORE_DIR}/inspector ${BINDING_CODE_GENERATOR} ${IDL_INCLUDES} --outputDir "${DERIVED_SOURCES_DIR}" --defines "LANGUAGE_JAVASCRIPT=1 ${FEATURE_DEFINES_STR}" --generator Inspector ${WEBCORE_DIR}/${_source}
+    VERBATIM)
+  LIST(APPEND Inspector_IDL_FILES ${DERIVED_SOURCES_DIR}/Remote${_name}.cpp)
+  UNSET(_name)
+  UNSET(_defines)
+ENDMACRO()
+
+
+
 # - Create pure JavaScript functions (does nothing so far)
 MACRO(GENERATE_JS_FROM_IDL_PURE _source)
    GET_FILENAME_COMPONENT(_name ${_source} NAME_WE)
    ADD_CUSTOM_COMMAND(
      OUTPUT  ${DERIVED_SOURCES_DIR}/JS${_name}.cpp ${DERIVED_SOURCES_DIR}/JS${_name}.h
-     DEPENDS ${JS_CODE_GENERATOR} ${SCRIPTS_BINDINGS} ${WEBCORE_DIR}/${_source}
-     COMMAND ${PERL_EXECUTABLE} -I${WEBCORE_DIR}/bindings/scripts ${JS_CODE_GENERATOR} ${IDL_INCLUDES} --outputDir "${DERIVED_SOURCES_DIR}" --defines "LANGUAGE_JAVASCRIPT=1 ${FEATURE_DEFINES_STR}" --generator JS ${WEBCORE_DIR}/${_source}
+     DEPENDS ${BINDING_CODE_GENERATOR} ${SCRIPTS_BINDINGS} ${WEBCORE_DIR}/${_source}
+     COMMAND ${PERL_EXECUTABLE} -I${WEBCORE_DIR}/bindings/scripts ${BINDING_CODE_GENERATOR} ${IDL_INCLUDES} --outputDir "${DERIVED_SOURCES_DIR}" --defines "LANGUAGE_JAVASCRIPT=1 ${FEATURE_DEFINES_STR}" --generator JS ${WEBCORE_DIR}/${_source}
      VERBATIM)
    UNSET(_name)
 ENDMACRO()

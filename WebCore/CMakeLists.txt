@@ -289,7 +289,6 @@ SET(WebCore_IDL_FILES
 
     inspector/InjectedScriptHost.idl
     inspector/InspectorBackend.idl
-    inspector/InspectorFrontend2.idl
     inspector/InspectorFrontendHost.idl
     inspector/JavaScriptCallFrame.idl
     inspector/ScriptProfile.idl
@@ -1709,7 +1708,9 @@ FOREACH (_file ${WebCore_IDL_PURE_FILES})
     GENERATE_JS_FROM_IDL_PURE(${_file})
 ENDFOREACH ()
 
-LIST(APPEND WebCore_SOURCES ${JS_IDL_FILES})
+GENERATE_INSPECTOR_FROM_IDL(inspector/InspectorFrontend2.idl)
+
+LIST(APPEND WebCore_SOURCES ${JS_IDL_FILES} ${Inspector_IDL_FILES})
 
 GENERATE_GPERF(${WEBCORE_DIR}/html/HTMLEntityNames.gperf)
 GENERATE_GPERF(${WEBCORE_DIR}/platform/ColorData.gperf)

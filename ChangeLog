@@ -1,3 +1,11 @@
+2010-07-06  Leandro Pereira  <leandro@profusion.mobi>
+
+        Unreviewed build fix.
+
+        [EFL] Add macro to generate inspector code.
+
+        * cmake/WebKitGenerators.cmake:
+
 2010-07-06  Martin Robinson  <mrobinson@igalia.com>
 
         Unreviewed.

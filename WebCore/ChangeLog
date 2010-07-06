@@ -1,3 +1,11 @@
+2010-07-06  Leandro Pereira  <leandro@profusion.mobi>
+
+        Unreviewed build fix.
+
+        [EFL] Generate code for RemoteInspector.
+
+        * CMakeLists.txt:
+
 2010-07-06  Varun Jain  <varunjain@chromium.org>
 
         Reviewed by Oliver Hunt.
