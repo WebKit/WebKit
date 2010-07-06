@@ -128,7 +128,7 @@ bool CrossOriginPreflightResultCacheItem::allowsCrossOriginHeaders(const HTTPHea
     HTTPHeaderMap::const_iterator end = requestHeaders.end();
     for (HTTPHeaderMap::const_iterator it = requestHeaders.begin(); it != end; ++it) {
         if (!m_headers.contains(it->first) && !isOnAccessControlSimpleRequestHeaderWhitelist(it->first, it->second)) {
-            errorDescription = "Request header field " + it->first + " is not allowed by Access-Control-Allow-Methods response header field.";
+            errorDescription = "Request header field " + it->first + " is not allowed by Access-Control-Allow-Headers response header field.";
             return false;
         }
     }

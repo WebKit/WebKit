@@ -1,5 +1,14 @@
 2010-07-06  Alexey Proskuryakov  <ap@apple.com>
 
+        Not reviewed, fixing a simple copy/paste mistake.
+
+        https://bugs.webkit.org/show_bug.cgi?id=41156
+        Cross origin XMLHttpRequest should log the reason why connection failed
+
+        * http/tests/xmlhttprequest/access-control-basic-non-simple-deny-cached-expected.txt:
+
+2010-07-06  Alexey Proskuryakov  <ap@apple.com>
+
         https://bugs.webkit.org/show_bug.cgi?id=41156
         Cross origin XMLHttpRequest should log the reason why connection failed
 
