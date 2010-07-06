@@ -11,7 +11,7 @@
 @font-face {
     font-family: 'times' '-webkit-serif';
     src: local('WebKit Layout Tests');
-    unicode-range: U+25FE U+262F U+2798-279A;
+    unicode-range: U+25FE, U+262F, U+2798-279A;
 }
 
 @font-face {
@@ -26,6 +26,6 @@
 @font-face {
     font-family: 'times';
     src: local('Lucida Grande');
-    unicode-range: U+0590-05FF U+2010-2011 U+21E7 U+25A0 U+25E6 U+FFFD;
+    unicode-range: U+0590-05FF, U+2010-2011, U+21E7, U+25A0, U+25E6, U+FFFD;
 }
 

@@ -1,3 +1,24 @@
+2010-07-05  Yuzo Fujishima  <yuzo@google.com>
+
+        Reviewed by Dan Bernstein.
+
+        Fix for Bug 41509 - Ranges for @font-face unicode-range must be separated by commas
+        https://bugs.webkit.org/show_bug.cgi?id=41509
+
+        * fast/css/beforeSelectorOnCodeElement.html:
+          Fixed the space-separated ranges.
+        * fast/css/font-face-multiple-ranges-for-unicode-range-expected.txt: Added.
+        * fast/css/font-face-multiple-ranges-for-unicode-range.html: Added.
+        * fast/css/text-security.html:
+          Fixed the space-separated ranges.
+        * fast/events/updateLayoutForHitTest.html:
+          Fixed the space-separated ranges.
+        * fast/text/capitalize-boundaries.html:
+          Fixed the space-separated ranges.
+        * platform/win/css2.1/resources/Mac-compatible-font-fallback.css:
+        (@font-face):
+          Fixed the space-separated ranges.
+
 2010-07-05  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

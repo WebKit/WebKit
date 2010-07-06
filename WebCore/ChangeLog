@@ -1,3 +1,15 @@
+2010-07-05  Yuzo Fujishima  <yuzo@google.com>
+
+        Reviewed by Dan Bernstein.
+
+        Fix for Bug 41509 - Ranges for @font-face unicode-range must be separated by commas
+        https://bugs.webkit.org/show_bug.cgi?id=41509
+
+        Test: fast/css/font-face-multiple-ranges-for-unicode-range.html
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseFontFaceUnicodeRange):
+
 2010-07-05  Yuta Kitamura  <yutak@chromium.org>
 
         Reviewed by Pavel Feldman.

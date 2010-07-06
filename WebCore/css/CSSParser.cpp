@@ -3583,7 +3583,14 @@ bool CSSParser::parseFontFaceUnicodeRange()
 {
     RefPtr<CSSValueList> values = CSSValueList::createCommaSeparated();
     bool failed = false;
-    while (m_valueList->current()) {
+    bool operatorExpected = false;
+    for (; m_valueList->current(); m_valueList->next(), operatorExpected = !operatorExpected) {
+        if (operatorExpected) {
+            if (m_valueList->current()->unit == CSSParserValue::Operator && m_valueList->current()->iValue == ',')
+                continue;
+            failed = true;
+            break;
+        }
         if (m_valueList->current()->unit != CSSPrimitiveValue::CSS_UNICODE_RANGE) {
             failed = true;
             break;
@@ -3658,7 +3665,6 @@ bool CSSParser::parseFontFaceUnicodeRange()
         }
         if (from <= to)
             values->append(CSSUnicodeRangeValue::create(from, to));
-        m_valueList->next();
     }
     if (failed || !values->length())
         return false;
