@@ -1,3 +1,36 @@
+2010-07-06  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Make <a> auto-close any parent <a> tag
+        https://bugs.webkit.org/show_bug.cgi?id=41684
+
+        I first fixed <a> to auto-close surrounding <a> tags.
+        That caused about 3 more test passes and one new test failure.
+        The test failure was due to <marque> not adding a marker
+        to the active formatting elements.
+
+        So I made a one-line change to fix <marque>.  However that hit an
+        ASSERT due to a bug in indexOfFirstUnopenFormattingElement.
+        Fixing indexOfFirstUnopenFormattingElement fixed another bunch of
+        Adoption Agency related tests (clearly this was the second typo
+        which was causing all the adoption agency failures).
+        
+        However fixing <marque> and indexOfFirstUnopenFormattingElement,
+        added yet another failure due to missing support for </p>
+        automatically adding an implicit <p> tag.  Fixing </p> finally
+        got the tests to a stable (all improving) state.
+
+        In the end, these 4 minor (and very well tested) tweaks fixed a total
+        of 9 subtests in html5lib/runner.html.
+        Another subtest progressed, but did not fully pass due to missing
+        <table> foster-parenting support.
+
+        * html/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::processStartTagForInBody):
+        (WebCore::HTMLTreeBuilder::processEndTagForInBody):
+        (WebCore::HTMLTreeBuilder::indexOfFirstUnopenFormattingElement):
+
 2010-07-02  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Xan Lopez
