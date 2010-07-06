@@ -23,36 +23,39 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifndef InjectedBundlePageLoaderClient_h
+#define InjectedBundlePageLoaderClient_h
+
 #include "WKBundlePage.h"
-#include "WKBundlePagePrivate.h"
+#include <JavaScriptCore/JSBase.h>
 
-#include "WKAPICast.h"
-#include "WKBundleAPICast.h"
-#include "WebPage.h"
-#include <WebCore/PlatformString.h>
-
-using namespace WebKit;
-
-void WKBundlePageSetLoaderClient(WKBundlePageRef pageRef, WKBundlePageLoaderClient * wkClient)
-{
-    if (wkClient && !wkClient->version)
-        toWK(pageRef)->initializeInjectedBundleLoaderClient(wkClient);
+namespace WebCore {
+    class String;
 }
 
-void WKBundlePageSetUIClient(WKBundlePageRef pageRef, WKBundlePageUIClient * wkClient)
-{
-    if (wkClient && !wkClient->version)
-        toWK(pageRef)->initializeInjectedBundleUIClient(wkClient);
-}
+namespace WebKit {
 
-WKBundleFrameRef WKBundlePageGetMainFrame(WKBundlePageRef pageRef)
-{
-    return toRef(toWK(pageRef)->mainFrame());
-}
+class WebPage;
+class WebFrame;
 
-WKStringRef WKBundlePageCopyRenderTreeExternalRepresentation(WKBundlePageRef pageRef)
-{
-    WebCore::String string = toWK(pageRef)->renderTreeExternalRepresentation();
-    string.impl()->ref();
-    return toRef(string.impl());
-}
+class InjectedBundlePageLoaderClient {
+public:
+    InjectedBundlePageLoaderClient();
+    void initialize(WKBundlePageLoaderClient*);
+
+    void didStartProvisionalLoadForFrame(WebPage*, WebFrame*);
+    void didReceiveServerRedirectForProvisionalLoadForFrame(WebPage*, WebFrame*);
+    void didFailProvisionalLoadWithErrorForFrame(WebPage*, WebFrame*);
+    void didCommitLoadForFrame(WebPage*, WebFrame*);
+    void didFinishLoadForFrame(WebPage*, WebFrame*);
+    void didFailLoadWithErrorForFrame(WebPage*, WebFrame*);
+    void didReceiveTitleForFrame(WebPage*, const WebCore::String&, WebFrame*);
+    void didClearWindowObjectForFrame(WebPage*, WebFrame*, JSContextRef, JSObjectRef);
+
+private:
+    WKBundlePageLoaderClient m_client;
+};
+
+} // namespace WebKit
+
+#endif // InjectedBundlePageLoaderClient_h

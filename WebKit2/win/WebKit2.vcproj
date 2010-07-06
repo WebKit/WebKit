@@ -731,11 +731,19 @@
 					>
 				</File>
 				<File
-					RelativePath="..\WebProcess\InjectedBundle\InjectedBundlePageClient.cpp"
+					RelativePath="..\WebProcess\InjectedBundle\InjectedBundlePageLoaderClient.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\WebProcess\InjectedBundle\InjectedBundlePageClient.h"
+					RelativePath="..\WebProcess\InjectedBundle\InjectedBundlePageLoaderClient.h"
+					>
+				</File>
+				<File
+					RelativePath="..\WebProcess\InjectedBundle\InjectedBundlePageUIClient.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\WebProcess\InjectedBundle\InjectedBundlePageUIClient.h"
 					>
 				</File>
 				<Filter

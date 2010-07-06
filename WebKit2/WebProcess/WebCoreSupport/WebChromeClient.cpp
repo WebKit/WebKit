@@ -184,6 +184,9 @@ void WebChromeClient::setResizable(bool)
 
 void WebChromeClient::addMessageToConsole(MessageSource, MessageType, MessageLevel, const String& message, unsigned int lineNumber, const String& sourceID)
 {
+    // Notify the bundle client.
+    m_page->injectedBundleUIClient().addMessageToConsole(m_page, message, lineNumber);
+
     notImplemented();
 }
 

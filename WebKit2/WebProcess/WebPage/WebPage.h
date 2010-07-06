@@ -27,7 +27,8 @@
 #define WebPage_h
 
 #include "DrawingArea.h"
-#include "InjectedBundlePageClient.h"
+#include "InjectedBundlePageLoaderClient.h"
+#include "InjectedBundlePageUIClient.h"
 #include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/IntRect.h>
 #include <wtf/HashMap.h>
@@ -91,8 +92,11 @@ public:
     void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder&);
 
     // -- InjectedBundle methods
-    void initializeInjectedBundleClient(WKBundlePageClient*);
-    InjectedBundlePageClient& injectedBundleClient() { return m_client; }
+    void initializeInjectedBundleLoaderClient(WKBundlePageLoaderClient*);
+    void initializeInjectedBundleUIClient(WKBundlePageUIClient*);
+
+    InjectedBundlePageLoaderClient& injectedBundleLoaderClient() { return m_loaderClient; }
+    InjectedBundlePageUIClient& injectedBundleUIClient() { return m_uiClient; }
 
     WebFrame* mainFrame() const { return m_mainFrame.get(); }
     WebCore::String renderTreeExternalRepresentation() const;
@@ -131,7 +135,8 @@ private:
     bool m_canGoBack;
     bool m_canGoForward;
 
-    InjectedBundlePageClient m_client;
+    InjectedBundlePageLoaderClient m_loaderClient;
+    InjectedBundlePageUIClient m_uiClient;
 
     uint64_t m_pageID;
 };

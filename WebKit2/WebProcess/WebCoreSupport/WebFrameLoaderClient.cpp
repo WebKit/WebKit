@@ -181,7 +181,7 @@ void WebFrameLoaderClient::dispatchDidReceiveServerRedirectForProvisionalLoad()
         return;
 
     // Notify the bundle client.
-    webPage->injectedBundleClient().didReceiveServerRedirectForProvisionalLoadForFrame(webPage, m_frame);
+    webPage->injectedBundleLoaderClient().didReceiveServerRedirectForProvisionalLoadForFrame(webPage, m_frame);
 
     // Notify the UIProcess.
     WebProcess::shared().connection()->send(WebPageProxyMessage::DidReceiveServerRedirectForProvisionalLoadForFrame, webPage->pageID(), CoreIPC::In(m_frame->frameID()));
@@ -237,7 +237,7 @@ void WebFrameLoaderClient::dispatchDidStartProvisionalLoad()
     const String& url = provisionalLoader->url().string();
 
     // Notify the bundle client.
-    webPage->injectedBundleClient().didStartProvisionalLoadForFrame(webPage, m_frame);
+    webPage->injectedBundleLoaderClient().didStartProvisionalLoadForFrame(webPage, m_frame);
 
     // Notify the UIProcess.
     WebProcess::shared().connection()->send(WebPageProxyMessage::DidStartProvisionalLoadForFrame, webPage->pageID(), CoreIPC::In(m_frame->frameID(), url));
@@ -250,7 +250,7 @@ void WebFrameLoaderClient::dispatchDidReceiveTitle(const String& title)
         return;
 
     // Notify the bundle client.
-    webPage->injectedBundleClient().didReceiveTitleForFrame(webPage, title, m_frame);
+    webPage->injectedBundleLoaderClient().didReceiveTitleForFrame(webPage, title, m_frame);
 
     // Notify the UIProcess.
     WebProcess::shared().connection()->send(WebPageProxyMessage::DidReceiveTitleForFrame, webPage->pageID(), CoreIPC::In(m_frame->frameID(), title));
@@ -268,7 +268,7 @@ void WebFrameLoaderClient::dispatchDidCommitLoad()
         return;
 
     // Notify the bundle client.
-    webPage->injectedBundleClient().didCommitLoadForFrame(webPage, m_frame);
+    webPage->injectedBundleLoaderClient().didCommitLoadForFrame(webPage, m_frame);
 
     // Notify the UIProcess.
     WebProcess::shared().connection()->send(WebPageProxyMessage::DidCommitLoadForFrame, webPage->pageID(), CoreIPC::In(m_frame->frameID()));
@@ -281,7 +281,7 @@ void WebFrameLoaderClient::dispatchDidFailProvisionalLoad(const ResourceError&)
         return;
 
     // Notify the bundle client.
-    webPage->injectedBundleClient().didFailProvisionalLoadWithErrorForFrame(webPage, m_frame);
+    webPage->injectedBundleLoaderClient().didFailProvisionalLoadWithErrorForFrame(webPage, m_frame);
 
     // Notify the UIProcess.
     WebProcess::shared().connection()->send(WebPageProxyMessage::DidFailProvisionalLoadForFrame, webPage->pageID(), CoreIPC::In(m_frame->frameID()));
@@ -294,7 +294,7 @@ void WebFrameLoaderClient::dispatchDidFailLoad(const ResourceError&)
         return;
 
     // Notify the bundle client.
-    webPage->injectedBundleClient().didFailLoadWithErrorForFrame(webPage, m_frame);
+    webPage->injectedBundleLoaderClient().didFailLoadWithErrorForFrame(webPage, m_frame);
 
     // Notify the UIProcess.
     WebProcess::shared().connection()->send(WebPageProxyMessage::DidFailLoadForFrame, webPage->pageID(), CoreIPC::In(m_frame->frameID()));
@@ -312,7 +312,7 @@ void WebFrameLoaderClient::dispatchDidFinishLoad()
         return;
 
     // Notify the bundle client.
-    webPage->injectedBundleClient().didFinishLoadForFrame(webPage, m_frame);
+    webPage->injectedBundleLoaderClient().didFinishLoadForFrame(webPage, m_frame);
 
     // Notify the UIProcess.
     WebProcess::shared().connection()->send(WebPageProxyMessage::DidFinishLoadForFrame, webPage->pageID(), CoreIPC::In(m_frame->frameID()));
@@ -818,7 +818,7 @@ void WebFrameLoaderClient::dispatchDidClearWindowObjectInWorld(DOMWrapperWorld* 
     JSContextRef context = toRef(m_frame->coreFrame()->script()->globalObject(world)->globalExec());
     JSObjectRef windowObject = toRef(m_frame->coreFrame()->script()->globalObject(world));
 
-    webPage->injectedBundleClient().didClearWindowObjectForFrame(webPage, m_frame, context, windowObject);
+    webPage->injectedBundleLoaderClient().didClearWindowObjectForFrame(webPage, m_frame, context, windowObject);
 }
 
 void WebFrameLoaderClient::documentElementAvailable()

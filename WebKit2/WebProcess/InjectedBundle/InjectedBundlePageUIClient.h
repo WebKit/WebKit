@@ -23,36 +23,30 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifndef InjectedBundlePageUIClient_h
+#define InjectedBundlePageUIClient_h
+
 #include "WKBundlePage.h"
-#include "WKBundlePagePrivate.h"
 
-#include "WKAPICast.h"
-#include "WKBundleAPICast.h"
-#include "WebPage.h"
-#include <WebCore/PlatformString.h>
-
-using namespace WebKit;
-
-void WKBundlePageSetLoaderClient(WKBundlePageRef pageRef, WKBundlePageLoaderClient * wkClient)
-{
-    if (wkClient && !wkClient->version)
-        toWK(pageRef)->initializeInjectedBundleLoaderClient(wkClient);
+namespace WebCore {
+    class String;
 }
 
-void WKBundlePageSetUIClient(WKBundlePageRef pageRef, WKBundlePageUIClient * wkClient)
-{
-    if (wkClient && !wkClient->version)
-        toWK(pageRef)->initializeInjectedBundleUIClient(wkClient);
-}
+namespace WebKit {
 
-WKBundleFrameRef WKBundlePageGetMainFrame(WKBundlePageRef pageRef)
-{
-    return toRef(toWK(pageRef)->mainFrame());
-}
+class WebPage;
 
-WKStringRef WKBundlePageCopyRenderTreeExternalRepresentation(WKBundlePageRef pageRef)
-{
-    WebCore::String string = toWK(pageRef)->renderTreeExternalRepresentation();
-    string.impl()->ref();
-    return toRef(string.impl());
-}
+class InjectedBundlePageUIClient {
+public:
+    InjectedBundlePageUIClient();
+    void initialize(WKBundlePageUIClient*);
+
+    void addMessageToConsole(WebPage*, const WebCore::String& message, int32_t lineNumber);
+
+private:
+    WKBundlePageUIClient m_client;
+};
+
+} // namespace WebKit
+
+#endif // InjectedBundlePageUIClient_h

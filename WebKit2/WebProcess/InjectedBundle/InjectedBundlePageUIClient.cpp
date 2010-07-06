@@ -23,39 +23,33 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef InjectedBundlePageClient_h
-#define InjectedBundlePageClient_h
+#include "InjectedBundlePageUIClient.h"
 
-#include "WKBundlePage.h"
-#include <JavaScriptCore/JSBase.h>
+#include "WKAPICast.h"
+#include "WKBundleAPICast.h"
+#include <WebCore/PlatformString.h>
 
-namespace WebCore {
-    class String;
-}
+using namespace WebCore;
 
 namespace WebKit {
 
-class WebPage;
-class WebFrame;
+InjectedBundlePageUIClient::InjectedBundlePageUIClient()
+{
+    initialize(0);
+}
 
-class InjectedBundlePageClient {
-public:
-    InjectedBundlePageClient();
-    void initialize(WKBundlePageClient*);
+void InjectedBundlePageUIClient::initialize(WKBundlePageUIClient* client)
+{
+    if (client && !client->version)
+        m_client = *client;
+    else 
+        memset(&m_client, 0, sizeof(m_client));
+}
 
-    void didStartProvisionalLoadForFrame(WebPage*, WebFrame*);
-    void didReceiveServerRedirectForProvisionalLoadForFrame(WebPage*, WebFrame*);
-    void didFailProvisionalLoadWithErrorForFrame(WebPage*, WebFrame*);
-    void didCommitLoadForFrame(WebPage*, WebFrame*);
-    void didFinishLoadForFrame(WebPage*, WebFrame*);
-    void didFailLoadWithErrorForFrame(WebPage*, WebFrame*);
-    void didReceiveTitleForFrame(WebPage*, const WebCore::String&, WebFrame*);
-    void didClearWindowObjectForFrame(WebPage*, WebFrame*, JSContextRef, JSObjectRef);
-
-private:
-    WKBundlePageClient m_client;
-};
+void InjectedBundlePageUIClient::addMessageToConsole(WebPage* page, const String& message, int32_t lineNumber)
+{
+    if (m_client.addMessageToConsole)
+        m_client.addMessageToConsole(toRef(page), toRef(message.impl()), lineNumber, m_client.clientInfo);
+}
 
 } // namespace WebKit
-
-#endif // InjectedBundlePageClient_h

@@ -9,7 +9,8 @@ _WKBundleFrameGetURL
 _WKBundleFrameIsMainFrame
 _WKBundlePageCopyRenderTreeExternalRepresentation
 _WKBundlePageGetMainFrame
-_WKBundlePageSetClient
+_WKBundlePageSetLoaderClient
+_WKBundlePageSetUIClient
 _WKBundlePostMessage
 _WKBundleSetClient
 _WKContextCreate

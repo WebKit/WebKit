@@ -2,6 +2,59 @@
 
         Reviewed by Anders Carlsson.
 
+        Add injected bundle API for exposing console messages.
+
+        - Split WKBundlePageClient into multiple clients matching WKPage.
+          (For now we only have a loader client and a UI client)
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        (WKBundlePageSetLoaderClient):
+        (WKBundlePageSetUIClient):
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.h:
+        * WebProcess/InjectedBundle/InjectedBundlePageClient.cpp: Removed.
+        * WebProcess/InjectedBundle/InjectedBundlePageClient.h: Removed.
+        * WebProcess/InjectedBundle/InjectedBundlePageLoaderClient.cpp: Copied from WebProcess/InjectedBundle/InjectedBundlePageClient.cpp.
+        (WebKit::InjectedBundlePageLoaderClient::InjectedBundlePageLoaderClient):
+        (WebKit::InjectedBundlePageLoaderClient::initialize):
+        (WebKit::InjectedBundlePageLoaderClient::didStartProvisionalLoadForFrame):
+        (WebKit::InjectedBundlePageLoaderClient::didReceiveServerRedirectForProvisionalLoadForFrame):
+        (WebKit::InjectedBundlePageLoaderClient::didFailProvisionalLoadWithErrorForFrame):
+        (WebKit::InjectedBundlePageLoaderClient::didCommitLoadForFrame):
+        (WebKit::InjectedBundlePageLoaderClient::didFinishLoadForFrame):
+        (WebKit::InjectedBundlePageLoaderClient::didFailLoadWithErrorForFrame):
+        (WebKit::InjectedBundlePageLoaderClient::didReceiveTitleForFrame):
+        (WebKit::InjectedBundlePageLoaderClient::didClearWindowObjectForFrame):
+        * WebProcess/InjectedBundle/InjectedBundlePageLoaderClient.h: Copied from WebProcess/InjectedBundle/InjectedBundlePageClient.h.
+        * WebProcess/InjectedBundle/InjectedBundlePageUIClient.cpp: Added.
+        (WebKit::InjectedBundlePageUIClient::InjectedBundlePageUIClient):
+        (WebKit::InjectedBundlePageUIClient::initialize):
+        (WebKit::InjectedBundlePageUIClient::addMessageToConsole):
+        * WebProcess/InjectedBundle/InjectedBundlePageUIClient.h: Added.
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::addMessageToConsole):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDidReceiveServerRedirectForProvisionalLoad):
+        (WebKit::WebFrameLoaderClient::dispatchDidStartProvisionalLoad):
+        (WebKit::WebFrameLoaderClient::dispatchDidReceiveTitle):
+        (WebKit::WebFrameLoaderClient::dispatchDidCommitLoad):
+        (WebKit::WebFrameLoaderClient::dispatchDidFailProvisionalLoad):
+        (WebKit::WebFrameLoaderClient::dispatchDidFailLoad):
+        (WebKit::WebFrameLoaderClient::dispatchDidFinishLoad):
+        (WebKit::WebFrameLoaderClient::dispatchDidClearWindowObjectInWorld):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::initializeInjectedBundleLoaderClient):
+        (WebKit::WebPage::initializeInjectedBundleUIClient):
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::injectedBundleLoaderClient):
+        (WebKit::WebPage::injectedBundleUIClient):
+        * mac/WebKit2.exp:
+        * win/WebKit2.vcproj:
+
+2010-07-06  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
         Patch for https://bugs.webkit.org/show_bug.cgi?id=41707
         Add ability to dump frame inner text for the test runner
 
