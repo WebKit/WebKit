@@ -1,3 +1,11 @@
+2010-07-06  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Add a build rule that removes the old generated Obj-C bindings for PluginArray and MimeTypeArray.
+
+        * DerivedSources.make:
+
 2010-07-06  Adam Barth  <abarth@webkit.org>
 
         Unreviewed.

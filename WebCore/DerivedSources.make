@@ -477,6 +477,8 @@ INSPECTOR_CLASSES = InspectorFrontend2
 JS_DOM_HEADERS=$(filter-out JSEventListener.h JSEventTarget.h,$(DOM_CLASSES:%=JS%.h) $(INSPECTOR_CLASSES:%=Remote%.h))
 
 all : \
+    remove-stray-plugin-and-mime-type-files \
+    \
     $(JS_DOM_HEADERS) \
     \
     JSJavaScriptCallFrame.h \
@@ -541,6 +543,12 @@ ifeq ($(ENABLE_ORIENTATION_EVENTS), 1)
 endif
 
 # --------
+
+# Temporary build rule. Take out once some time has passed.
+
+.PHONY : remove-stray-plugin-and-mime-type-files
+remove-stray-plugin-and-mime-type-files :
+	(rm DOMMimeTypeArray.h DOMMimeTypeArray.mm DOMMimeTypeArrayInternal.h DOMPluginArray.h DOMPluginArray.mm DOMPluginArrayInternal.h 2> /dev/null) || echo -n
 
 # CSS property names and value keywords
 
