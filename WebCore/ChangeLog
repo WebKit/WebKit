@@ -1,3 +1,25 @@
+2010-07-06  Andreas Wictor  <andreas.wictor@xcerion.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Remove global variables from XSLTProcessorLibxslt.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=41348
+
+        Remove the globalProcessor and globalDocLoader global variables
+        by using the _private field that exists on most libxml structs.
+
+        No new tests, existing tests covers this.
+
+        * xml/XSLTProcessor.h:
+        (WebCore::XSLTProcessor::sourceNode):
+        (WebCore::XSLTProcessor::XSLTProcessor):
+        * xml/XSLTProcessorLibxslt.cpp:
+        (WebCore::registredXSLTProcessors):
+        (WebCore::registredXSLStyleSheets):
+        (WebCore::docLoaderFunc):
+        (WebCore::xsltStylesheetPointer):
+        (WebCore::XSLTProcessor::transformToString):
+
 2010-07-06  Darin Adler  <darin@apple.com>
 
         Fix Cairo build.
