@@ -1,3 +1,30 @@
+2010-07-05  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=41641
+
+        Update compile flags to allow use of ExecutableAllocatorFixedVMPool on platforms
+        other than x86-64 (this may be useful on 32-bit platforms, too).
+
+        Simplify ifdefs by dividing into thwo broad allocation strategies
+        (ENABLE_EXECUTABLE_ALLOCATOR_FIXED & ENABLE_EXECUTABLE_ALLOCATOR_DEMAND).
+
+        Rename constant used in the code to have names descriptive of their purpose,
+        rather than their specific value on a given platform.
+
+        * jit/ExecutableAllocator.cpp:
+        (JSC::ExecutableAllocator::reprotectRegion):
+        (JSC::ExecutableAllocator::cacheFlush):
+        * jit/ExecutableAllocatorFixedVMPool.cpp:
+        (JSC::FixedVMPoolAllocator::FixedVMPoolAllocator):
+        (JSC::FixedVMPoolAllocator::free):
+        (JSC::ExecutablePool::systemAlloc):
+        * jit/ExecutableAllocatorPosix.cpp:
+        * jit/ExecutableAllocatorSymbian.cpp:
+        * jit/ExecutableAllocatorWin.cpp:
+        * wtf/Platform.h:
+
 2010-07-05  Steve Block  <steveblock@google.com>
 
         Reviewed by Darin Adler.
