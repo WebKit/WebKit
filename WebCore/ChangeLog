@@ -1,3 +1,10 @@
+2010-07-06  Darin Adler  <darin@apple.com>
+
+        Fix Chromium build.
+
+        * platform/graphics/skia/SkiaUtils.cpp:
+        (WebCore::scratchContext): Use leakPtr instead of release.
+
 2010-07-06  Martin Robinson  <mrobinson@igalia.com>
 
         Unreviewed.
