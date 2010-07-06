@@ -28,6 +28,7 @@
 #include <WebCore/WebCoreNSStringExtras.h>
 #include <wtf/HashSet.h>
 #include <wtf/RetainPtr.h>
+#include "WebKitSystemInterface.h"
 
 using namespace WebCore;
 
@@ -365,6 +366,13 @@ bool PluginInfoStore::shouldUsePlugin(const Plugin& plugin, const Vector<Plugin>
     }
 
     return true;
+}
+
+String PluginInfoStore::mimeTypeFromExtension(const WebCore::String& extension)
+{
+    RetainPtr<CFStringRef> extensionCF(AdoptCF, safeCreateCFString(extension));
+    
+    return WKGetMIMETypeForExtension((NSString *)extensionCF.get());
 }
 
 } // namespace WebKit

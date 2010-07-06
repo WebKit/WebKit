@@ -25,8 +25,11 @@
 
 #include "PluginInfoStore.h"
 
+#include <algorithm>
+#include <WebCore/KURL.h>
 #include <wtf/StdLibExtras.h>
 
+using namespace std;
 using namespace WebCore;
 
 namespace WebKit {
@@ -82,12 +85,97 @@ void PluginInfoStore::loadPlugin(const String& pluginPath)
     m_plugins.append(plugin);
 }
 
-void PluginInfoStore::getPlugins(Vector<WebCore::PluginInfo>& plugins)
+void PluginInfoStore::getPlugins(Vector<PluginInfo>& plugins)
 {
     loadPluginsIfNecessary();
 
     for (size_t i = 0; i < m_plugins.size(); ++i)
         plugins.append(m_plugins[i].info);
+}
+
+PluginInfoStore::Plugin PluginInfoStore::findPluginForMIMEType(const String& mimeType)
+{
+    ASSERT(!mimeType.isNull());
+    
+    for (size_t i = 0; i < m_plugins.size(); ++i) {
+        const Plugin& plugin = m_plugins[i];
+        
+        for (size_t j = 0; j < plugin.info.mimes.size(); ++j) {
+            const MimeClassInfo& mimeClassInfo = plugin.info.mimes[j];
+            if (mimeClassInfo.type == mimeType)
+                return plugin;
+        }
+    }
+    
+    return Plugin();
+}
+
+PluginInfoStore::Plugin PluginInfoStore::findPluginForExtension(const String& extension, String& mimeType)
+{
+    ASSERT(!extension.isNull());
+    
+    for (size_t i = 0; i < m_plugins.size(); ++i) {
+        const Plugin& plugin = m_plugins[i];
+        
+        for (size_t j = 0; j < plugin.info.mimes.size(); ++j) {
+            const MimeClassInfo& mimeClassInfo = plugin.info.mimes[j];
+            
+            const Vector<String>& extensions = mimeClassInfo.extensions;
+            
+            if (find(extensions.begin(), extensions.end(), extension) != extensions.end()) {
+                // We found a supported extension, set the correct MIME type.
+                mimeType = mimeClassInfo.type;
+                return plugin;
+            }
+        }
+    }
+    
+    return Plugin();
+}
+
+static inline String pathExtension(const KURL& url)
+{
+    String extension;
+    String filename = url.lastPathComponent();
+    if (!filename.endsWith("/")) {
+        int extensionPos = filename.reverseFind('.');
+        if (extensionPos != -1)
+            extension = filename.substring(extensionPos + 1);
+    }
+    
+    return extension;
+}
+
+PluginInfoStore::Plugin PluginInfoStore::findPlugin(String& mimeType, const KURL& url)
+{
+    loadPluginsIfNecessary();
+    
+    // First, check if we can get the plug-in based on its MIME type.
+    if (!mimeType.isNull()) {
+        Plugin plugin = findPluginForMIMEType(mimeType);
+        if (!plugin.path.isNull())
+            return plugin;
+    }
+
+    // Next, check if any plug-ins claim to support the URL extension.
+    String extension = pathExtension(url).lower();
+    if (!extension.isNull()) {
+        Plugin plugin = findPluginForExtension(extension, mimeType);
+        if (!plugin.path.isNull())
+            return plugin;
+        
+        // Finally, try to get the MIME type from the extension in a platform specific manner and use that.
+        String extensionMimeType = mimeTypeFromExtension(extension);
+        if (!extensionMimeType.isNull()) {
+            Plugin plugin = findPluginForMIMEType(extensionMimeType);
+            if (!plugin.path.isNull()) {
+                mimeType = extensionMimeType;
+                return plugin;
+            }
+        }
+    }
+    
+    return Plugin();
 }
 
 } // namespace WebKit

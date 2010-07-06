@@ -28,6 +28,10 @@
 
 #include <WebCore/PluginData.h>
 
+namespace WebCore {
+    class KURL;
+}
+
 namespace WebKit {
 
 class PluginInfoStore {
@@ -37,9 +41,6 @@ public:
     void refresh();
     void getPlugins(Vector<WebCore::PluginInfo>& plugins);
     
-private:
-    PluginInfoStore();
-
     // Represents a single plug-in.
     struct Plugin {
         WebCore::String path;
@@ -51,6 +52,17 @@ private:
 #endif
     };
 
+    // Returns the info for a plug-in that can handle the given MIME type.
+    // If the MIME type is null, the file extension of the given url will be used to infer the
+    // plug-in type. In that case, mimeType will be filled in with the right MIME type.
+    Plugin findPlugin(WebCore::String& mimeType, const WebCore::KURL& url);
+    
+private:
+    PluginInfoStore();
+
+    Plugin findPluginForMIMEType(const WebCore::String& mimeType);
+    Plugin findPluginForExtension(const WebCore::String& extension, WebCore::String& mimeType);
+
     void loadPluginsIfNecessary();
     void loadPluginsInDirectory(const WebCore::String& directory);
     void loadPlugin(const WebCore::String& pluginPath);
@@ -60,6 +72,7 @@ private:
     static Vector<WebCore::String> pluginPathsInDirectory(const WebCore::String& directory);
     static bool getPluginInfo(const WebCore::String& pluginPath, Plugin& plugin);
     static bool shouldUsePlugin(const Plugin& plugin, const Vector<Plugin>& loadedPlugins);
+    static WebCore::String mimeTypeFromExtension(const WebCore::String& extension);
     
     Vector<Plugin> m_plugins;
     bool m_pluginListIsUpToDate;
