@@ -28,29 +28,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef config_h
-#define config_h
+#include "config.h"
+#include "DRTDevToolsCallArgs.h"
 
-// To avoid confict of LOG in wtf/Assertions.h and LOG in base/logging.h,
-// skip base/loggin.h by defining BASE_LOGGING_H_ and define some macros
-// provided by base/logging.h.
-// FIXME: Remove this hack!
-#include <iostream>
-#define BASE_LOGGING_H_
-#define CHECK(condition) while (false && (condition)) std::cerr
-#define DCHECK(condition) while (false && (condition)) std::cerr
-#define DCHECK_EQ(a, b) while (false && (a) == (b)) std::cerr
-#define DCHECK_NE(a, b) while (false && (a) != (b)) std::cerr
+// static
+int DRTDevToolsCallArgs::m_callsCount = 0;
 
-#include <wtf/Platform.h>
-
-#if OS(WINDOWS) && !COMPILER(GCC)
-// Allow 'this' to be used in base member initializer list.
-#pragma warning(disable : 4355)
-// JS_EXPORTDATA is needed to inlucde wtf/WTFString.h.
-#define JS_EXPORTDATA __declspec(dllimport)
-#else
-#define JS_EXPORTDATA
-#endif
-
-#endif // config_h

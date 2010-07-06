@@ -1,3 +1,72 @@
+2010-07-06  Roland Steiner  <rolandsteiner@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        Bug 40558 - [DRT/Chromium] Upstream TestShellDevTools for Chromium DRT
+        https://bugs.webkit.org/show_bug.cgi?id=40558
+
+        Upstream DevTools for Chromium DRT.
+        (original Chromium files rev. 51287)
+
+        * DumpRenderTree/DumpRenderTree.gypi:
+        * DumpRenderTree/chromium/DRTDevToolsAgent.cpp: Added.
+        (DRTDevToolsAgent::DRTDevToolsAgent):
+        (DRTDevToolsAgent::setWebView):
+        (DRTDevToolsAgent::sendMessageToFrontend):
+        (DRTDevToolsAgent::forceRepaint):
+        (DRTDevToolsAgent::runtimeFeatureStateChanged):
+        (DRTDevToolsAgent::injectedScriptSource):
+        (DRTDevToolsAgent::injectedScriptDispatcherSource):
+        (DRTDevToolsAgent::debuggerScriptSource):
+        (DRTDevToolsAgent::asyncCall):
+        (DRTDevToolsAgent::call):
+        (DRTDevToolsAgent::webDevToolsAgent):
+        (DRTDevToolsAgent::attach):
+        (DRTDevToolsAgent::detach):
+        (DRTDevToolsAgent::setTimelineProfilingEnabled):
+        (DRTDevToolsAgent::evaluateInWebInspector):
+        (DRTDevToolsAgent::dispatchMessageLoop):
+        * DumpRenderTree/chromium/DRTDevToolsAgent.h: Added.
+        (DRTDevToolsAgent::~DRTDevToolsAgent):
+        (DRTDevToolsAgent::hostIdentifier):
+        * DumpRenderTree/chromium/DRTDevToolsCallArgs.cpp:
+        * DumpRenderTree/chromium/DRTDevToolsCallArgs.h:
+        (DRTDevToolsCallArgs::DRTDevToolsCallArgs):
+        (DRTDevToolsCallArgs::~DRTDevToolsCallArgs):
+        (DRTDevToolsCallArgs::callsCount):
+        * DumpRenderTree/chromium/DRTDevToolsClient.cpp: Added.
+        (DRTDevToolsClient::DRTDevToolsClient):
+        (DRTDevToolsClient::~DRTDevToolsClient):
+        (DRTDevToolsClient::sendMessageToAgent):
+        (DRTDevToolsClient::sendDebuggerCommandToAgent):
+        (DRTDevToolsClient::activateWindow):
+        (DRTDevToolsClient::closeWindow):
+        (DRTDevToolsClient::dockWindow):
+        (DRTDevToolsClient::undockWindow):
+        (DRTDevToolsClient::asyncCall):
+        (DRTDevToolsClient::call):
+        (DRTDevToolsClient::allMessagesProcessed):
+        * DumpRenderTree/chromium/DRTDevToolsClient.h:
+        * DumpRenderTree/chromium/EventSender.cpp:
+        * DumpRenderTree/chromium/LayoutTestController.cpp:
+        (LayoutTestController::LayoutTestController):
+        (LayoutTestController::closeWebInspector):
+        (LayoutTestController::setTimelineProfilingEnabled):
+        (LayoutTestController::evaluateInWebInspector):
+        * DumpRenderTree/chromium/LayoutTestController.h:
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (TestShell::TestShell):
+        (TestShell::~TestShell):
+        (TestShell::createDRTDevToolsClient):
+        (TestShell::showDevTools):
+        (TestShell::closeDevTools):
+        (TestShell::runFileTest):
+        (TestShell::createNewWindow):
+        * DumpRenderTree/chromium/TestShell.h:
+        (TestShell::drtDevToolsAgent):
+        (TestShell::drtDevToolsClient):
+        * DumpRenderTree/chromium/config.h:
+
 2010-07-06  Gabor Rapcsanyi  <rgabor@inf.u-szeged.hu>
 
         Reviewed by Eric Seidel.

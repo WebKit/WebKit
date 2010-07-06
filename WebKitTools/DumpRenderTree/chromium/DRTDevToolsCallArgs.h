@@ -28,29 +28,45 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef config_h
-#define config_h
+#ifndef DRTDevToolsCallArgs_h
+#define DRTDevToolsCallArgs_h
 
-// To avoid confict of LOG in wtf/Assertions.h and LOG in base/logging.h,
-// skip base/loggin.h by defining BASE_LOGGING_H_ and define some macros
-// provided by base/logging.h.
-// FIXME: Remove this hack!
-#include <iostream>
-#define BASE_LOGGING_H_
-#define CHECK(condition) while (false && (condition)) std::cerr
-#define DCHECK(condition) while (false && (condition)) std::cerr
-#define DCHECK_EQ(a, b) while (false && (a) == (b)) std::cerr
-#define DCHECK_NE(a, b) while (false && (a) != (b)) std::cerr
+#include "public/WebDevToolsMessageData.h"
+#include "public/WebString.h"
+#include <wtf/Assertions.h>
 
-#include <wtf/Platform.h>
+class DRTDevToolsCallArgs {
+public:
+    DRTDevToolsCallArgs(const WebKit::WebDevToolsMessageData& data)
+        : m_data(data)
+    {
+        ++m_callsCount;
 
-#if OS(WINDOWS) && !COMPILER(GCC)
-// Allow 'this' to be used in base member initializer list.
-#pragma warning(disable : 4355)
-// JS_EXPORTDATA is needed to inlucde wtf/WTFString.h.
-#define JS_EXPORTDATA __declspec(dllimport)
-#else
-#define JS_EXPORTDATA
-#endif
+        // The same behaviour as we have in case of IPC.
+        for (size_t i = 0; i < m_data.arguments.size(); ++i) {
+            if (m_data.arguments[i].isNull())
+                m_data.arguments[i] = WebKit::WebString::fromUTF8("");
+        }
+    }
 
-#endif // config_h
+    DRTDevToolsCallArgs(const DRTDevToolsCallArgs& args)
+        : m_data(args.m_data)
+    {
+        ++m_callsCount;
+    }
+
+    ~DRTDevToolsCallArgs()
+    {
+        --m_callsCount;
+        ASSERT(m_callsCount >= 0);
+    }
+
+    static int callsCount() { return m_callsCount; }
+
+    WebKit::WebDevToolsMessageData m_data;
+
+private:
+    static int m_callsCount;
+};
+
+#endif // DRTDevToolsCallArgs_h

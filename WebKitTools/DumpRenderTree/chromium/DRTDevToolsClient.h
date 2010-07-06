@@ -28,29 +28,52 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef config_h
-#define config_h
+#ifndef DRTDevToolsClient_h
+#define DRTDevToolsClient_h
 
-// To avoid confict of LOG in wtf/Assertions.h and LOG in base/logging.h,
-// skip base/loggin.h by defining BASE_LOGGING_H_ and define some macros
-// provided by base/logging.h.
-// FIXME: Remove this hack!
-#include <iostream>
-#define BASE_LOGGING_H_
-#define CHECK(condition) while (false && (condition)) std::cerr
-#define DCHECK(condition) while (false && (condition)) std::cerr
-#define DCHECK_EQ(a, b) while (false && (a) == (b)) std::cerr
-#define DCHECK_NE(a, b) while (false && (a) != (b)) std::cerr
+#include "base/task.h" // FIXME: remove this
+#include "public/WebDevToolsFrontendClient.h"
+#include <wtf/Noncopyable.h>
+#include <wtf/OwnPtr.h>
 
-#include <wtf/Platform.h>
+namespace WebKit {
 
-#if OS(WINDOWS) && !COMPILER(GCC)
-// Allow 'this' to be used in base member initializer list.
-#pragma warning(disable : 4355)
-// JS_EXPORTDATA is needed to inlucde wtf/WTFString.h.
-#define JS_EXPORTDATA __declspec(dllimport)
-#else
-#define JS_EXPORTDATA
-#endif
+class WebDevToolsFrontend;
+struct WebDevToolsMessageData;
+class WebString;
+class WebView;
 
-#endif // config_h
+} // namespace WebKit
+
+class DRTDevToolsCallArgs;
+class DRTDevToolsAgent;
+
+class DRTDevToolsClient : public WebKit::WebDevToolsFrontendClient
+                        , public Noncopyable {
+public:
+    DRTDevToolsClient(DRTDevToolsAgent*, WebKit::WebView*);
+    virtual ~DRTDevToolsClient();
+
+    // WebDevToolsFrontendClient implementation
+    virtual void sendMessageToAgent(const WebKit::WebDevToolsMessageData&);
+    virtual void sendDebuggerCommandToAgent(const WebKit::WebString& command);
+
+    virtual void activateWindow();
+    virtual void closeWindow();
+    virtual void dockWindow();
+    virtual void undockWindow();
+
+    void asyncCall(const DRTDevToolsCallArgs&);
+
+    void allMessagesProcessed();
+
+ private:
+    void call(const DRTDevToolsCallArgs&);
+
+    ScopedRunnableMethodFactory<DRTDevToolsClient> m_callMethodFactory;
+    WebKit::WebView* m_webView;
+    DRTDevToolsAgent* m_drtDevToolsAgent;
+    WTF::OwnPtr<WebKit::WebDevToolsFrontend> m_webDevToolsFrontend;
+};
+
+#endif // DRTDevToolsClient_h

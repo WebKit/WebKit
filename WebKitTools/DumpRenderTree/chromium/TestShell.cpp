@@ -31,6 +31,8 @@
 #include "config.h"
 #include "TestShell.h"
 
+#include "DRTDevToolsAgent.h"
+#include "DRTDevToolsClient.h"
 #include "LayoutTestController.h"
 #include "WebViewHost.h"
 #include "base/md5.h" // FIXME: Wrap by webkit_support.
@@ -81,6 +83,7 @@ TestShell::TestShell(bool testShellMode)
     , m_focusedWidget(0)
     , m_testShellMode(testShellMode)
     , m_allowExternalPages(false)
+    , m_devTools(0)
 {
     WebRuntimeFeatures::enableGeolocation(true);
     m_accessibilityController.set(new AccessibilityController(this));
@@ -97,12 +100,17 @@ TestShell::TestShell(bool testShellMode)
     // timed-out DRT process was crashed.
     m_timeout = 30 * 1000;
 
+    m_drtDevToolsAgent.set(new DRTDevToolsAgent);
     m_webViewHost = createWebView();
     m_webView = m_webViewHost->webView();
+    m_drtDevToolsAgent->setWebView(m_webView);
 }
 
 TestShell::~TestShell()
 {
+    // Note: DevTools are closed together with all the other windows in the
+    // windows list.
+
     loadURL(GURL("about:blank"));
     // Call GC twice to clean up garbage.
     callJSGC();
@@ -110,6 +118,34 @@ TestShell::~TestShell()
 
     // Destroy the WebView before its WebViewHost.
     m_webView->close();
+}
+
+void TestShell::createDRTDevToolsClient(DRTDevToolsAgent* agent)
+{
+    m_drtDevToolsClient.set(new DRTDevToolsClient(agent, m_devTools->webView()));
+}
+
+void TestShell::showDevTools()
+{
+    if (!m_devTools) {
+        WebURL url = webkit_support::GetDevToolsPathAsURL();
+        if (!url.isValid()) {
+            ASSERT(false);
+            return;
+        }
+        m_devTools = createNewWindow(url);
+        ASSERT(m_devTools);
+        createDRTDevToolsClient(m_drtDevToolsAgent.get());
+    }
+    m_devTools->show(WebKit::WebNavigationPolicyNewWindow);
+}
+
+void TestShell::closeDevTools()
+{
+    if (m_devTools) {
+        closeWindow(m_devTools);
+        m_devTools = 0;
+    }
 }
 
 void TestShell::resetWebSettings(WebView& webView)
@@ -205,6 +241,9 @@ void TestShell::runFileTest(const TestParams& params)
     if (testUrl.find("loading/") != string::npos
         || testUrl.find("loading\\") != string::npos)
         m_layoutTestController->setShouldDumpFrameLoadCallbacks(true);
+
+    if (inspectorTestMode)
+        showDevTools();
 
     m_printer->handleTestHeader(testUrl.c_str());
     loadURL(m_params.testUrl);
@@ -586,7 +625,7 @@ WebViewHost* TestShell::createWebView()
 WebViewHost* TestShell::createNewWindow(const WebURL& url)
 {
     WebViewHost* host = new WebViewHost(this);
-    WebView* view = WebView::create(host, 0);
+    WebView* view = WebView::create(host, m_drtDevToolsAgent.get());
     host->setWebWidget(view);
     resetWebSettings(*view);
     view->initializeMainFrame(host);
