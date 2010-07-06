@@ -1,3 +1,21 @@
+2010-07-06  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed.
+
+        [Qt] png/checksums for tests need to be updated after r62444
+        https://bugs.webkit.org/show_bug.cgi?id=41568
+
+        * platform/qt/fast/dynamic/anchor-lock-expected.checksum: Added.
+        * platform/qt/fast/dynamic/anchor-lock-expected.png: Added.
+        * platform/qt/fast/overflow/position-fixed-transform-clipping-expected.checksum: Added.
+        * platform/qt/fast/overflow/position-fixed-transform-clipping-expected.png: Added.
+        * platform/qt/fast/repaint/fixed-tranformed-expected.checksum: Updated.
+        * platform/qt/fast/repaint/fixed-tranformed-expected.png: Updated.
+        * platform/qt/fast/repaint/repaint-during-scroll-expected.checksum: Updated.
+        * platform/qt/fast/repaint/repaint-during-scroll-expected.png: Updated.
+        * platform/qt/transforms/2d/transform-fixed-container-expected.checksum: Added.
+        * platform/qt/transforms/2d/transform-fixed-container-expected.png: Added.
+
 2010-07-06  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
