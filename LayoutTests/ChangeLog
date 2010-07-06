@@ -1,3 +1,14 @@
+2010-07-05  Yuzo Fujishima  <yuzo@google.com>
+
+        Unreviewed test expectation update.
+
+        Fix: On Leopard run-webkit-tests complains: Skipped list contained
+        'compositing/iframes/composited-iframe.html', but no file of that name
+        could be found
+
+        * platform/mac-leopard/Skipped:
+        Removed the above test.
+
 2010-07-05  Adam Barth  <abarth@webkit.org>
 
         Unreviewed.
