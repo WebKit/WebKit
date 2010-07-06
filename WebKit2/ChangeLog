@@ -1,3 +1,57 @@
+2010-07-06  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Only export a single WebKitMain function for the Web Process to call
+        https://bugs.webkit.org/show_bug.cgi?id=41702
+
+        * Shared/CommandLine.h:
+        Add windows CommandLine::parse overload.
+
+        * Shared/win/CommandLineWin.cpp: Added.
+        (WebKit::CommandLine::parse):
+        Move parse overload from WebProcess/win/WebProcessMain.cpp.
+
+        * UIProcess/Launcher/win/ProcessLauncherWin.cpp:
+        (WebKit::ProcessLauncher::launchProcess):
+        Pass the right mode to.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Update for moves.
+        
+        * WebProcess/Launching/mac/WebProcessMain.mm: Removed.
+        * WebProcess/Launching/win/WebProcessWinMain.cpp: Removed.
+        * WebProcess/WebKitMain.cpp: Added.
+        (WebKitMain):
+        (enableTerminationOnHeapCorruption):
+        Add WebKitMain functions for Mac and Windows.
+
+        * WebProcess/WebProcessMain.h: Added.
+        * WebProcess/mac/WebProcessMainMac.mm: Added.
+        (WebKit::WebProcessMain):
+        Add Mac version of WebProcessMain.
+
+        * WebProcess/win/WebProcessMain.cpp: Removed.
+        * WebProcess/win/WebProcessMain.h: Removed.
+        * WebProcess/win/WebProcessMainWin.cpp: Added.
+        (WebKit::WebProcessMain):
+        Add Windows version of WebProcessMain.
+
+        * mac/MainMac.cpp: Added.
+        (main):
+        Add Mac WebProcess main function.
+
+        * mac/WebKit2.exp:
+        Remove functions that we don't need to export.
+
+        * win/MainWin.cpp: Added.
+        (wWinMain):
+        Add Windows WebProcess main function.
+
+        * win/WebKit2.vcproj:
+        * win/WebKit2WebProcess.vcproj:
+        Update for moves.
+
 2010-07-05  Luiz Agostini  <luiz.agostini@openbossa.org>
 
         Reviewed by Kenneth Rohde Christiansen.

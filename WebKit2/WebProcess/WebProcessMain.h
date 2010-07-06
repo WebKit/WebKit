@@ -23,22 +23,12 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebProcessMain_h
-#define WebProcessMain_h
-
-#include <windows.h>
+#include "WKBase.h"
 
 namespace WebKit {
 
-#if BUILDING_WEBKIT2
-#define DLL_EXPORT __declspec(dllexport)
-#else
-#define DLL_EXPORT __declspec(dllimport)
-#endif
+class CommandLine;
 
-// This is called only from the _tWinMain function of the WebProcess.
-DLL_EXPORT int WebProcessMain(HINSTANCE hInstance, LPWSTR commandLineString);
+int WebProcessMain(CommandLine*);
 
 } // namespace WebKit
-
-#endif // WebProcessMain_h

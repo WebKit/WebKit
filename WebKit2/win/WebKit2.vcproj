@@ -543,6 +543,10 @@
 				Name="win"
 				>
 				<File
+					RelativePath="..\Shared\win\CommandLineWin.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\Shared\win\UpdateChunk.cpp"
 					>
 				</File>
@@ -564,11 +568,19 @@
 			Name="WebProcess"
 			>
 			<File
+				RelativePath="..\WebProcess\WebKitMain.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\WebProcess\WebProcess.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\WebProcess\WebProcess.h"
+				>
+			</File>
+			<File
+				RelativePath="..\WebProcess\WebProcessMain.h"
 				>
 			</File>
 			<Filter
@@ -703,11 +715,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\WebProcess\win\WebProcessMain.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\WebProcess\win\WebProcessMain.h"
+					RelativePath="..\WebProcess\win\WebProcessMainWin.cpp"
 					>
 				</File>
 			</Filter>
@@ -1130,17 +1138,17 @@
 			<Filter
 				Name="Launcher"
 				>
+				<File
+					RelativePath="..\UIProcess\Launcher\ProcessLauncher.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\UIProcess\Launcher\ProcessLauncher.h"
+					>
+				</File>
 				<Filter
 					Name="win"
 					>
-					<File
-						RelativePath="..\UIProcess\Launcher\ProcessLauncher.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\UIProcess\Launcher\ProcessLauncher.h"
-						>
-					</File>
 					<File
 						RelativePath="..\UIProcess\Launcher\win\ProcessLauncherWin.cpp"
 						>

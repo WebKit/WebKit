@@ -23,36 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CommandLine_h
-#define CommandLine_h
+// The framework entry point.
+extern "C" int WebKitMain(int argc, char **argv);
 
-#include <WebCore/PlatformString.h>
-#include <WebCore/StringHash.h>
-#include <wtf/HashMap.h>
-
-namespace WebKit {
-
-// Very specialized command line parser. Expects the command line arguments in
-// -key value and will store the parsed arguments in a map.
-
-class CommandLine {
-public:
-#if PLATFORM(MAC)
-    bool parse(int argc, char** argv);
-#elif PLATFORM(WIN)
-    bool parse(LPTSTR commandLineString);
-#endif
-    WebCore::String operator[](const WebCore::String& key) const
-    {
-        return m_args.get(key);
-    }
-
-private:
-    bool m_parsedSuccessfully;
-
-    HashMap<WebCore::String, WebCore::String> m_args;
-};
-
+int main(int argc, char** argv)
+{
+    return WebKitMain(argc, argv);
 }
-
-#endif // CommandLine_h

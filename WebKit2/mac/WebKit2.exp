@@ -65,10 +65,4 @@ _WKURLCopyCFURL
 _WKURLCreateWithCFURL
 _WKURLRelease
 _WKURLRetain
-__ZN6WebKit11CommandLine5parseEiPPc
-__Z26InitWebCoreSystemInterfacev
-__ZN6WebKit10WebProcess10initializeEjP7RunLoop
-__ZN6WebKit10WebProcess6sharedEv
-__ZN7RunLoop21initializeMainRunLoopEv
-__ZN7RunLoop3runEv
-__ZN7RunLoop4mainEv
+_WebKitMain

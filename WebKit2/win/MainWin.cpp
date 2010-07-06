@@ -23,8 +23,6 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "WebProcessMain.h"
-#include <tchar.h>
 #include <windows.h>
 
 #if defined _M_IX86
@@ -39,28 +37,9 @@
 
 #pragma comment(linker, "/manifestdependency:\"type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='" PROCESSORARCHITECTURE "' publicKeyToken='6595b64144ccf1df' language='*'\"")
 
-static void enableTerminationOnHeapCorruption()
+extern "C" __declspec(dllimport) int WebKitMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpstrCmdLine, int nCmdShow);
+
+int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpstrCmdLine, int nCmdShow)
 {
-    // Enable termination on heap corruption on OSes that support it (Vista and XPSP3).
-    // http://msdn.microsoft.com/en-us/library/aa366705(VS.85).aspx
-
-    const HEAP_INFORMATION_CLASS heapEnableTerminationOnCorruption = static_cast<HEAP_INFORMATION_CLASS>(1);
-
-    HMODULE hMod = ::GetModuleHandleW(L"kernel32.dll");
-    if (!hMod)
-        return;
-
-    typedef BOOL (WINAPI*HSI)(HANDLE, HEAP_INFORMATION_CLASS, PVOID, SIZE_T);
-    HSI heapSetInformation = reinterpret_cast<HSI>(::GetProcAddress(hMod, "HeapSetInformation"));
-    if (!heapSetInformation)
-        return;
-
-    heapSetInformation(0, heapEnableTerminationOnCorruption, 0, 0);
-}
-
-int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE /*hPrevInstance*/, LPTSTR lpstrCmdLine, int /*nCmdShow*/)
-{
-    enableTerminationOnHeapCorruption();
-
-    return WebKit::WebProcessMain(hInstance, lpstrCmdLine);
+    return WebKitMain(hInstance, hPrevInstance, lpstrCmdLine, nCmdShow);
 }

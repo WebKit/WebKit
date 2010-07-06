@@ -23,6 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import "WebProcessMain.h"
+
 #import "CommandLine.h"
 #import "RunLoop.h"
 #import "WebProcess.h"
@@ -40,9 +42,10 @@ extern "C" kern_return_t bootstrap_look_up2(mach_port_t, const name_t, mach_port
 #define SHOW_CRASH_REPORTER 1
 
 using namespace WebCore;
-using namespace WebKit;
 
-static int webProcessMain(CommandLine*)
+namespace WebKit {
+
+int WebProcessMain(CommandLine*)
 {
     mach_port_t serverPort;
     kern_return_t kr = bootstrap_look_up2(bootstrap_port, "com.apple.WebKit.WebProcess", &serverPort, getppid(), /* BOOTSTRAP_PER_PID_SERVICE */ 1);
@@ -81,17 +84,5 @@ static int webProcessMain(CommandLine*)
     return 0;
 }
 
-int main(int argc, char** argv)
-{
-    ASSERT(!objc_collectingEnabled());
+} // namespace WebKit
 
-    CommandLine commandLine;
-    if (!commandLine.parse(argc, argv))
-        return EXIT_FAILURE;
-
-    String mode = commandLine["mode"];
-    if (mode == "legacywebprocess")
-        return webProcessMain(&commandLine);
-
-    return EXIT_FAILURE;
-}

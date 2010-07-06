@@ -23,36 +23,43 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CommandLine_h
-#define CommandLine_h
+#include "CommandLine.h"
 
-#include <WebCore/PlatformString.h>
-#include <WebCore/StringHash.h>
-#include <wtf/HashMap.h>
+using namespace WebCore;
 
 namespace WebKit {
 
-// Very specialized command line parser. Expects the command line arguments in
-// -key value and will store the parsed arguments in a map.
+bool CommandLine::parse(LPTSTR commandLineString)
+{
+    m_args.clear();
 
-class CommandLine {
-public:
-#if PLATFORM(MAC)
-    bool parse(int argc, char** argv);
-#elif PLATFORM(WIN)
-    bool parse(LPTSTR commandLineString);
-#endif
-    WebCore::String operator[](const WebCore::String& key) const
-    {
-        return m_args.get(key);
+    // Check if this is an empty command line.
+    if (!commandLineString || !commandLineString[0])
+        return true;
+
+    int argumentCount;
+    LPWSTR* commandLineArgs = ::CommandLineToArgvW(commandLineString, &argumentCount);
+    if (!commandLineArgs)
+        return false;
+
+    if (argumentCount % 2) {
+        ::LocalFree(commandLineArgs);
+        return false;
     }
 
-private:
-    bool m_parsedSuccessfully;
+    for (int i = 0; i < argumentCount ; i += 2) {
+        LPWSTR key = commandLineArgs[i];
 
-    HashMap<WebCore::String, WebCore::String> m_args;
-};
+        if (key[0] != '-') {
+            ::LocalFree(commandLineArgs);
+            return false;
+        }
 
+        m_args.set(&key[1], commandLineArgs[i + 1]);
+    }
+
+    ::LocalFree(commandLineArgs);
+    return true;
 }
 
-#endif // CommandLine_h
+} // namespace WebKit

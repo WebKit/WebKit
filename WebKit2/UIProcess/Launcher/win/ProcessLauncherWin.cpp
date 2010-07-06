@@ -58,6 +58,7 @@ void ProcessLauncher::launchProcess()
 #endif
 
     append(commandLineVector, commandLine);
+    append(commandLineVector, " -mode webprocess");
     append(commandLineVector, " -clientIdentifier ");
     append(commandLineVector, String::number(reinterpret_cast<uintptr_t>(clientIdentifier)));
     commandLineVector.append('\0');
@@ -80,7 +81,7 @@ void ProcessLauncher::launchProcess()
     ::CloseHandle(processInformation.hThread);
 
     // We've finished launching the process, message back to the run loop.
-    RunLoop::main()->scheduleWork(WorkItem::create(this, &ProcessLauncher::didFinishLaunchingProcess, processIdentifier(), serverIdentifier));
+    RunLoop::main()->scheduleWork(WorkItem::create(this, &ProcessLauncher::didFinishLaunchingProcess, processInformation.hProcess, serverIdentifier));
 }
 
 void ProcessLauncher::terminateProcess()

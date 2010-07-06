@@ -25,6 +25,7 @@
 
 #include "WebProcessMain.h"
 
+#include "CommandLine.h"
 #include "RunLoop.h"
 #include "WebProcess.h"
 #include <runtime/InitializeThreading.h>
@@ -36,71 +37,15 @@ using namespace WebCore;
 
 namespace WebKit {
 
-// FIXME: If the Mac port is going to need this we should consider moving it to Platform or Shared.
-class CommandLine {
-public:
-    CommandLine() { }
-    bool parse(LPTSTR commandLineString);
-
-    String operator[](const String&) const;
-
-private:
-    HashMap<String, String> m_args;
-};
-
-bool CommandLine::parse(LPTSTR commandLineString)
+int WebProcessMain(CommandLine* commandLine)
 {
-    m_args.clear();
-
-    // Check if this is an empty command line.
-    if (!commandLineString || !commandLineString[0])
-        return true;
-
-    int argumentCount;
-    LPWSTR* commandLineArgs = ::CommandLineToArgvW(commandLineString, &argumentCount);
-    if (!commandLineArgs)
-        return false;
-
-    if (argumentCount % 2) {
-        ::LocalFree(commandLineArgs);
-        return false;
-    }
-
-    for (int i = 0; i < argumentCount ; i += 2) {
-        LPWSTR key = commandLineArgs[i];
-
-        if (key[0] != '-') {
-            ::LocalFree(commandLineArgs);
-            return false;
-        }
-
-        m_args.set(&key[1], commandLineArgs[i + 1]);
-    }
-
-    ::LocalFree(commandLineArgs);
-    return true;
-}
-
-String CommandLine::operator[](const String& key) const
-{
-    return m_args.get(key);
-}
-
-int WebProcessMain(HINSTANCE hInstance, LPWSTR commandLineString)
-{
-    CommandLine commandLine;
-
-    // FIXME: Should we return an error code here?
-    if (!commandLine.parse(commandLineString))
-        return 0;
-
-    OleInitialize(0);
+    ::OleInitialize(0);
 
     JSC::initializeThreading();
     WTF::initializeMainThread();
     RunLoop::initializeMainRunLoop();
 
-    const String& identifierString = commandLine["clientIdentifier"];
+    const String& identifierString = (*commandLine)["clientIdentifier"];
 
     // FIXME: Should we return an error code here?
     HANDLE clientIdentifier = reinterpret_cast<HANDLE>(identifierString.toUInt64Strict());
