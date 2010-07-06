@@ -1,5 +1,11 @@
 2010-07-06  Darin Adler  <darin@apple.com>
 
+        Try to fix Chromium build.
+
+        * DumpRenderTree/chromium/WebViewHost.cpp: Added include of PassOwnPtr.h.
+
+2010-07-06  Darin Adler  <darin@apple.com>
+
         Fix build.
 
         * WebKitAPITest/TestsController.cpp:

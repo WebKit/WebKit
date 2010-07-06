@@ -57,6 +57,7 @@
 #include "skia/ext/platform_canvas.h"
 #include "webkit/support/webkit_support.h"
 #include <wtf/Assertions.h>
+#include <wtf/PassOwnPtr.h>
 
 using namespace WebCore;
 using namespace WebKit;
