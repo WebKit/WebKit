@@ -1,3 +1,9 @@
+2010-07-06  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Not reviewed. Add missing layout test result.
+
+        * svg/css/svg-ellipse-render-crash-expected.txt: Added.
+
 2010-07-06  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
