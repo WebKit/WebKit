@@ -764,7 +764,7 @@ float MediaPlayerPrivateGStreamer::maxTimeSeekable() const
     if (isinf(duration()))
         return 0.0f;
 
-    return maxTimeLoaded();
+    return duration();
 }
 
 float MediaPlayerPrivateGStreamer::maxTimeLoaded() const
@@ -920,10 +920,13 @@ void MediaPlayerPrivateGStreamer::updateStates()
             gst_element_state_get_name(pending));
         // Change in progress
 
-        if (!m_isStreaming)
+        if (!m_isStreaming && !m_buffering)
             return;
 
-        // Resume playback if a seek was performed in a live pipeline.
+        // Resume playback if a seek was performed in a live pipeline
+        // or during progressive download. That second use-case
+        // happens when the seek is performed to a region of the media
+        // that hasn't been downloaded yet.
         if (m_seeking) {
             shouldUpdateAfterSeek = true;
             m_seeking = false;
