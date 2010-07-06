@@ -1,3 +1,18 @@
+2010-07-05  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        optimizeLegibility doesn't play nice with fonts that do not have a space glyph
+        https://bugs.webkit.org/show_bug.cgi?id=41599
+
+        No test because none of the fonts available to DumpRenderTree are missing a space glyph.
+
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::findNextLineBreak): When the font does not map the space character
+        to a glyph, a fallback font is used for space. Therefore, wordTrailingSpaceWidth must be
+        initialized with the width of a space as measured by the Font rather than with the cached
+        space width.
+
 2010-07-05  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.
