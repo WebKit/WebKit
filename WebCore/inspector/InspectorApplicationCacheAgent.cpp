@@ -65,7 +65,9 @@ void InspectorApplicationCacheAgent::updateNetworkState(bool isNowOnline)
 
 void InspectorApplicationCacheAgent::fillResourceList(ApplicationCache* cache, ResourceInfoList* resources)
 {
+#if !PLATFORM(CHROMIUM)
     ASSERT(cache && cache->isComplete());
+#endif
     ApplicationCache::ResourceMap::const_iterator end = cache->end();
     for (ApplicationCache::ResourceMap::const_iterator it = cache->begin(); it != end; ++it) {
         RefPtr<ApplicationCacheResource> resource = it->second;
@@ -75,7 +77,12 @@ void InspectorApplicationCacheAgent::fillResourceList(ApplicationCache* cache, R
         bool isExplicit = type & ApplicationCacheResource::Explicit;
         bool isForeign  = type & ApplicationCacheResource::Foreign;
         bool isFallback = type & ApplicationCacheResource::Fallback;
-        resources->append(InspectorApplicationCacheAgent::ResourceInfo(resource->url(), isMaster, isManifest, isFallback, isForeign, isExplicit, resource->estimatedSizeInStorage()));
+#if PLATFORM(CHROMIUM)
+        int64_t estimatedSizeInStorage = 0;
+#else
+        int64_t estimatedSizeInStorage = resource->estimatedSizeInStorage();
+#endif
+        resources->append(InspectorApplicationCacheAgent::ResourceInfo(resource->url(), isMaster, isManifest, isFallback, isForeign, isExplicit, estimatedSizeInStorage));
     }
 }
 
@@ -89,7 +96,11 @@ void InspectorApplicationCacheAgent::getApplicationCaches(long callId)
 
     ApplicationCacheHost* host = documentLoader->applicationCacheHost();
     ApplicationCache* cache = host->applicationCacheForInspector();
-    if (!cache || !cache->isComplete()) {
+    if (!cache
+#if !PLATFORM(CHROMIUM)
+        || !cache->isComplete()
+#endif
+        ) {
         m_frontend->didGetApplicationCaches(callId, ScriptValue::undefined());
         return;        
     }

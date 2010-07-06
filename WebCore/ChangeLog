@@ -1,3 +1,11 @@
+2010-07-05  Yury Semikhatsky  <yurys@chromium.org>
+
+        Unreviewed. Fix Chromium build.
+
+        * inspector/InspectorApplicationCacheAgent.cpp:
+        (WebCore::InspectorApplicationCacheAgent::fillResourceList):
+        (WebCore::InspectorApplicationCacheAgent::getApplicationCaches):
+
 2010-07-05  Adam Barth  <abarth@webkit.org>
 
         Unreviewed.
