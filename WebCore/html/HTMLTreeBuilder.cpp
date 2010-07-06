@@ -414,6 +414,7 @@ void HTMLTreeBuilder::processToken(AtomicHTMLToken& token)
 
 void HTMLTreeBuilder::processDoctypeToken(AtomicHTMLToken& token)
 {
+    ASSERT(token.type() == HTMLToken::DOCTYPE);
     if (insertionMode() == InitialMode) {
         insertDoctype(token);
         return;
@@ -457,6 +458,7 @@ void HTMLTreeBuilder::processFakePEndTagIfPInScope()
 
 void HTMLTreeBuilder::processStartTag(AtomicHTMLToken& token)
 {
+    ASSERT(token.type() == HTMLToken::StartTag);
     switch (insertionMode()) {
     case InitialMode:
         ASSERT(insertionMode() == InitialMode);
@@ -962,6 +964,8 @@ void HTMLTreeBuilder::processStartTag(AtomicHTMLToken& token)
 
 bool HTMLTreeBuilder::processBodyEndTagForInBody(AtomicHTMLToken& token)
 {
+    ASSERT(token.type() == HTMLToken::EndTag);
+    ASSERT(token.name() == bodyTag);
     if (!m_openElements.inScope(bodyTag.localName())) {
         parseError(token);
         return false;
@@ -973,6 +977,7 @@ bool HTMLTreeBuilder::processBodyEndTagForInBody(AtomicHTMLToken& token)
 
 void HTMLTreeBuilder::processAnyOtherEndTagForInBody(AtomicHTMLToken& token)
 {
+    ASSERT(token.type() == HTMLToken::EndTag);
     HTMLElementStack::ElementRecord* record = m_openElements.topRecord();
     while (1) {
         Element* node = record->element();
@@ -1227,6 +1232,7 @@ void HTMLTreeBuilder::resetInsertionModeAppropriately()
 
 void HTMLTreeBuilder::processEndTag(AtomicHTMLToken& token)
 {
+    ASSERT(token.type() == HTMLToken::EndTag);
     switch (insertionMode()) {
     case InitialMode:
         ASSERT(insertionMode() == InitialMode);
@@ -1276,7 +1282,8 @@ void HTMLTreeBuilder::processEndTag(AtomicHTMLToken& token)
             return;
         }
         if (token.name() == htmlTag) {
-            if (processBodyEndTagForInBody(token))
+            AtomicHTMLToken endBody(HTMLToken::EndTag, bodyTag.localName());
+            if (processBodyEndTagForInBody(endBody))
                 processEndTag(token);
             return;
         }
@@ -1519,6 +1526,7 @@ void HTMLTreeBuilder::processEndTag(AtomicHTMLToken& token)
 
 void HTMLTreeBuilder::processComment(AtomicHTMLToken& token)
 {
+    ASSERT(token.type() == HTMLToken::Comment);
     if (m_insertionMode == InitialMode || m_insertionMode == BeforeHTMLMode || m_insertionMode == AfterAfterBodyMode || m_insertionMode == AfterAfterFramesetMode) {
         insertCommentOnDocument(token);
         return;
@@ -1532,6 +1540,7 @@ void HTMLTreeBuilder::processComment(AtomicHTMLToken& token)
 
 void HTMLTreeBuilder::processCharacter(AtomicHTMLToken& token)
 {
+    ASSERT(token.type() == HTMLToken::Character);
     // FIXME: We need to figure out how to handle each character individually.
     switch (insertionMode()) {
     case InitialMode:
@@ -1598,6 +1607,7 @@ void HTMLTreeBuilder::processCharacter(AtomicHTMLToken& token)
 
 void HTMLTreeBuilder::processEndOfFile(AtomicHTMLToken& token)
 {
+    ASSERT(token.type() == HTMLToken::EndOfFile);
     switch (insertionMode()) {
     case InitialMode:
         ASSERT(insertionMode() == InitialMode);
@@ -1694,6 +1704,7 @@ void HTMLTreeBuilder::processDefaultForAfterHeadMode(AtomicHTMLToken&)
 
 bool HTMLTreeBuilder::processStartTagForInHead(AtomicHTMLToken& token)
 {
+    ASSERT(token.type() == HTMLToken::StartTag);
     if (token.name() == htmlTag) {
         insertHTMLStartTagInBody(token);
         return true;
