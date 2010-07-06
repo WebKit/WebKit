@@ -1,5 +1,6 @@
 /*
     Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
+    Copyright (C) 2008 Apple Inc. All rights reserved.
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -17,43 +18,39 @@
     Boston, MA 02110-1301, USA.
 */
 
-#ifndef Plugin_h
-#define Plugin_h
+#ifndef DOMMimeTypeArray_h
+#define DOMMimeTypeArray_h
 
-#include "MimeType.h"
-#include <wtf/RefPtr.h>
+#include "DOMMimeType.h"
+#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
-    class AtomicString;
-    class Plugin;
-    class PluginData;
-    class String;
+class AtomicString;
+class Frame;
+class PluginData;
 
-    class Plugin : public RefCounted<Plugin> {
-    public:
-        static PassRefPtr<Plugin> create(PluginData* pluginData, unsigned index) { return adoptRef(new Plugin(pluginData, index)); }
-        ~Plugin();
+class DOMMimeTypeArray : public RefCounted<DOMMimeTypeArray> {
+public:
+    static PassRefPtr<DOMMimeTypeArray> create(Frame* frame) { return adoptRef(new DOMMimeTypeArray(frame)); }
+    ~DOMMimeTypeArray();
 
-        String name() const;
-        String filename() const;
-        String description() const;
+    void disconnectFrame() { m_frame = 0; }
 
-        unsigned length() const;
+    unsigned length() const;
+    PassRefPtr<DOMMimeType> item(unsigned index);
+    bool canGetItemsForName(const AtomicString& propertyName);
+    PassRefPtr<DOMMimeType> namedItem(const AtomicString& propertyName);
 
-        PassRefPtr<MimeType> item(unsigned index);
-        bool canGetItemsForName(const AtomicString& propertyName);
-        PassRefPtr<MimeType> namedItem(const AtomicString& propertyName);
+private:
+    DOMMimeTypeArray(Frame*);
+    PluginData* getPluginData() const;
 
-    private:
-        const PluginInfo& pluginInfo() const { return m_pluginData->plugins()[m_index]; }
-
-        Plugin(PluginData*, unsigned index);
-        RefPtr<PluginData> m_pluginData;
-        unsigned m_index;
-    };
+    Frame* m_frame;
+};
 
 } // namespace WebCore
 
-#endif // Plugin_h
+#endif // MimeTypeArray_h

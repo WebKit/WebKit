@@ -27,11 +27,11 @@
 
 namespace WebCore {
 
+    class DOMMimeTypeArray;
+    class DOMPluginArray;
     class Frame;
     class Geolocation;
-    class MimeTypeArray;
     class PluginData;
-    class PluginArray;
     class String;
 
     typedef int ExceptionCode;
@@ -46,8 +46,8 @@ namespace WebCore {
 
         String appVersion() const;
         String language() const;
-        PluginArray* plugins() const;
-        MimeTypeArray* mimeTypes() const;
+        DOMPluginArray* plugins() const;
+        DOMMimeTypeArray* mimeTypes() const;
         bool cookieEnabled() const;
         bool javaEnabled() const;
 
@@ -68,8 +68,8 @@ namespace WebCore {
     private:
         Navigator(Frame*);
         Frame* m_frame;
-        mutable RefPtr<PluginArray> m_plugins;
-        mutable RefPtr<MimeTypeArray> m_mimeTypes;
+        mutable RefPtr<DOMPluginArray> m_plugins;
+        mutable RefPtr<DOMMimeTypeArray> m_mimeTypes;
         mutable RefPtr<Geolocation> m_geolocation;
     };
 

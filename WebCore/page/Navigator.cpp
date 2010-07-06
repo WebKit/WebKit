@@ -25,6 +25,8 @@
 
 #include "Chrome.h"
 #include "CookieJar.h"
+#include "DOMMimeTypeArray.h"
+#include "DOMPluginArray.h"
 #include "ExceptionCode.h"
 #include "Frame.h"
 #include "FrameLoader.h"
@@ -32,11 +34,9 @@
 #include "Geolocation.h"
 #include "KURL.h"
 #include "Language.h"
-#include "MimeTypeArray.h"
 #include "Page.h"
 #include "PageGroup.h"
 #include "PlatformString.h"
-#include "PluginArray.h"
 #include "PluginData.h"
 #include "ScriptController.h"
 #include "Settings.h"
@@ -116,17 +116,17 @@ String Navigator::userAgent() const
     return m_frame->loader()->userAgent(m_frame->document()->url());
 }
 
-PluginArray* Navigator::plugins() const
+DOMPluginArray* Navigator::plugins() const
 {
     if (!m_plugins)
-        m_plugins = PluginArray::create(m_frame);
+        m_plugins = DOMPluginArray::create(m_frame);
     return m_plugins.get();
 }
 
-MimeTypeArray* Navigator::mimeTypes() const
+DOMMimeTypeArray* Navigator::mimeTypes() const
 {
     if (!m_mimeTypes)
-        m_mimeTypes = MimeTypeArray::create(m_frame);
+        m_mimeTypes = DOMMimeTypeArray::create(m_frame);
     return m_mimeTypes.get();
 }
 

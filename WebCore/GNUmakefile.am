@@ -316,10 +316,10 @@ IDL_BINDINGS += \
 	WebCore/page/Timing.idl \
 	WebCore/page/WebKitPoint.idl \
 	WebCore/page/WorkerNavigator.idl \
-	WebCore/plugins/MimeType.idl \
-	WebCore/plugins/MimeTypeArray.idl \
-	WebCore/plugins/Plugin.idl \
-	WebCore/plugins/PluginArray.idl \
+	WebCore/plugins/DOMMimeType.idl \
+	WebCore/plugins/DOMMimeTypeArray.idl \
+	WebCore/plugins/DOMPlugin.idl \
+	WebCore/plugins/DPOMPluginArray.idl \
 	WebCore/workers/AbstractWorker.idl \
 	WebCore/workers/DedicatedWorkerContext.idl \
 	WebCore/workers/SharedWorker.idl \
@@ -495,7 +495,7 @@ webcore_sources += \
 	WebCore/bindings/js/JSMessageEventCustom.cpp \
 	WebCore/bindings/js/JSMessagePortCustom.cpp \
 	WebCore/bindings/js/JSMessagePortCustom.h \
-	WebCore/bindings/js/JSMimeTypeArrayCustom.cpp \
+	WebCore/bindings/js/JSDOMMimeTypeArrayCustom.cpp \
 	WebCore/bindings/js/JSNamedNodeMapCustom.cpp \
 	WebCore/bindings/js/JSNavigatorCustom.cpp \
 	WebCore/bindings/js/JSNodeCustom.cpp \
@@ -508,7 +508,7 @@ webcore_sources += \
 	WebCore/bindings/js/JSOptionConstructor.cpp \
 	WebCore/bindings/js/JSOptionConstructor.h \
 	WebCore/bindings/js/JSPluginArrayCustom.cpp \
-	WebCore/bindings/js/JSPluginCustom.cpp \
+	WebCore/bindings/js/JSDOMPluginCustom.cpp \
 	WebCore/bindings/js/JSPluginElementFunctions.cpp \
 	WebCore/bindings/js/JSPluginElementFunctions.h \
 	WebCore/bindings/js/JSPopStateEventCustom.cpp \
@@ -1896,14 +1896,14 @@ webcore_sources += \
 	WebCore/platform/text/UnicodeRange.h \
 	WebCore/platform/text/transcoder/FontTranscoder.cpp \
 	WebCore/platform/text/transcoder/FontTranscoder.h \
-	WebCore/plugins/MimeType.cpp \
-	WebCore/plugins/MimeType.h \
-	WebCore/plugins/MimeTypeArray.cpp \
-	WebCore/plugins/MimeTypeArray.h \
-	WebCore/plugins/Plugin.cpp \
-	WebCore/plugins/Plugin.h \
-	WebCore/plugins/PluginArray.cpp \
-	WebCore/plugins/PluginArray.h \
+	WebCore/plugins/DOMMimeType.cpp \
+	WebCore/plugins/DOMMimeType.h \
+	WebCore/plugins/DOMMimeTypeArray.cpp \
+	WebCore/plugins/DOMMimeTypeArray.h \
+	WebCore/plugins/DOMPlugin.cpp \
+	WebCore/plugins/DOMPlugin.h \
+	WebCore/plugins/DOMPluginArray.cpp \
+	WebCore/plugins/DOMPluginArray.h \
 	WebCore/plugins/PluginData.cpp \
 	WebCore/plugins/PluginData.h \
 	WebCore/plugins/PluginDatabase.cpp \
@@ -4171,10 +4171,10 @@ IDL_BINDINGS_GDOM += \
 	WebCore/page/Navigator.idl \
 	WebCore/page/Screen.idl \
 	WebCore/page/WebKitPoint.idl \
-	WebCore/plugins/MimeType.idl \
-	WebCore/plugins/MimeTypeArray.idl \
-	WebCore/plugins/Plugin.idl \
-	WebCore/plugins/PluginArray.idl \
+	WebCore/plugins/DOMMimeType.idl \
+	WebCore/plugins/DOMMimeTypeArray.idl \
+	WebCore/plugins/DOMPlugin.idl \
+	WebCore/plugins/DOMPluginArray.idl \
 	WebCore/storage/Database.idl \
 	WebCore/storage/Storage.idl \
 	WebCore/xml/XPathExpression.idl \

@@ -18,40 +18,40 @@
     Boston, MA 02110-1301, USA.
 */
 
-#ifndef PluginArray_h
-#define PluginArray_h
+#ifndef DOMPluginArray_h
+#define DOMPluginArray_h
 
-#include "Plugin.h"
+#include "DOMPlugin.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
-    class AtomicString;
-    class Frame;
-    class PluginData;
+class AtomicString;
+class Frame;
+class PluginData;
 
-    class PluginArray : public RefCounted<PluginArray> {
-    public:
-        static PassRefPtr<PluginArray> create(Frame* frame) { return adoptRef(new PluginArray(frame)); }
-        ~PluginArray();
+class DOMPluginArray : public RefCounted<DOMPluginArray> {
+public:
+    static PassRefPtr<DOMPluginArray> create(Frame* frame) { return adoptRef(new DOMPluginArray(frame)); }
+    ~DOMPluginArray();
 
-        void disconnectFrame() { m_frame = 0; }
+    void disconnectFrame() { m_frame = 0; }
 
-        unsigned length() const;
-        PassRefPtr<Plugin> item(unsigned index);
-        bool canGetItemsForName(const AtomicString& propertyName);
-        PassRefPtr<Plugin> namedItem(const AtomicString& propertyName);
+    unsigned length() const;
+    PassRefPtr<DOMPlugin> item(unsigned index);
+    bool canGetItemsForName(const AtomicString& propertyName);
+    PassRefPtr<DOMPlugin> namedItem(const AtomicString& propertyName);
 
-        void refresh(bool reload);
+    void refresh(bool reload);
 
-    private:
-        PluginArray(Frame*);
-        PluginData* pluginData() const;
+private:
+    DOMPluginArray(Frame*);
+    PluginData* pluginData() const;
 
-        Frame* m_frame;
-    };
+    Frame* m_frame;
+};
 
 } // namespace WebCore
 

@@ -464,10 +464,10 @@ IDL_BINDINGS += \
     page/Timing.idl \
     page/WebKitPoint.idl \
     page/WorkerNavigator.idl \
-    plugins/Plugin.idl \
-    plugins/MimeType.idl \
-    plugins/PluginArray.idl \
-    plugins/MimeTypeArray.idl \
+    plugins/DOMPlugin.idl \
+    plugins/DOMMimeType.idl \
+    plugins/DOMPluginArray.idl \
+    plugins/DOMMimeTypeArray.idl \
     storage/Database.idl \
     storage/DatabaseCallback.idl \
     storage/DatabaseSync.idl \

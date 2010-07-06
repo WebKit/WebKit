@@ -23,13 +23,10 @@ module window {
     interface [
         HasNameGetter,
         HasIndexGetter
-    ] Plugin {
-        readonly attribute DOMString name;
-        readonly attribute DOMString filename;
-        readonly attribute DOMString description;
+    ] DOMMimeTypeArray {
         readonly attribute unsigned long length;
-        MimeType item(in unsigned long index);
-        MimeType namedItem(in DOMString name);
+        DOMMimeType item(in unsigned long index);
+        DOMMimeType namedItem(in DOMString name);
     };
 
 }

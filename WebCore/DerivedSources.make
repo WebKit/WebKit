@@ -113,7 +113,11 @@ DOM_CLASSES = \
     DOMCoreException \
     DOMFormData \
     DOMImplementation \
+	DOMMimeType \
+    DOMMimeTypeArray \
     DOMParser \
+    DOMPlugin \
+    DOMPluginArray \
     DOMSelection \
     DOMStringList \
     DOMStringMap \
@@ -238,8 +242,6 @@ DOM_CLASSES = \
     MessageChannel \
     MessageEvent \
     MessagePort \
-    MimeType \
-    MimeTypeArray \
     MouseEvent \
     MutationEvent \
     NamedNodeMap \
@@ -255,8 +257,6 @@ DOM_CLASSES = \
     OverflowEvent \
     PageTransitionEvent \
     Performance \
-    Plugin \
-    PluginArray \
     PopStateEvent \
     PositionError \
     ProcessingInstruction \
@@ -857,7 +857,7 @@ Remote%.h : %.idl $(INSPECTOR_GENERATOR_SCRIPTS)
 
 ifeq ($(OS),MACOS)
 
-OBJC_DOM_HEADERS=$(filter-out DOMDOMWindow.h DOMMimeType.h DOMPlugin.h,$(DOM_CLASSES:%=DOM%.h))
+OBJC_DOM_HEADERS=$(filter-out DOMDOMWindow.h DOMDOMMimeType.h DOMDOMPlugin.h,$(DOM_CLASSES:%=DOM%.h))
 
 all : $(OBJC_DOM_HEADERS)
 

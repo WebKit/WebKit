@@ -10177,11 +10177,11 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSPlugin.h"
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSDOMPlugin.h"
 				>
 			</File>
 			<File
-				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSPluginArray.cpp"
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSDOMPluginArray.cpp"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -10233,7 +10233,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSPluginArray.h"
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSDOMPluginArray.h"
 				>
 			</File>
 			<File
@@ -22394,10 +22394,6 @@
 			</File>
 			<File
 				RelativePath="..\page\PageGroupLoadDeferrer.h"
-				>
-			</File>
-			<File
-				RelativePath="..\page\Plugin.h"
 				>
 			</File>
 			<File
@@ -45684,7 +45680,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\bindings\js\JSPluginArrayCustom.cpp"
+					RelativePath="..\bindings\js\JSDOMPluginArrayCustom.cpp"
 					>
 					<FileConfiguration
 						Name="Debug|Win32"
@@ -45736,7 +45732,7 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\bindings\js\JSPluginCustom.cpp"
+					RelativePath="..\bindings\js\JSDOMPluginCustom.cpp"
 					>
 					<FileConfiguration
 						Name="Debug|Win32"
@@ -47937,19 +47933,19 @@
 			Name="plugins"
 			>
 			<File
-				RelativePath="..\plugins\MimeType.cpp"
+				RelativePath="..\plugins\DOMMimeType.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\plugins\MimeType.h"
+				RelativePath="..\plugins\DOMMimeType.h"
 				>
 			</File>
 			<File
-				RelativePath="..\plugins\MimeTypeArray.cpp"
+				RelativePath="..\plugins\DOMMimeTypeArray.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\plugins\MimeTypeArray.h"
+				RelativePath="..\plugins\DOMMimeTypeArray.h"
 				>
 			</File>
 			<File
@@ -47961,19 +47957,19 @@
 				>
 			</File>
 			<File
-				RelativePath="..\plugins\Plugin.cpp"
+				RelativePath="..\plugins\DOMPlugin.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\plugins\Plugin.h"
+				RelativePath="..\plugins\DOMPlugin.h"
 				>
 			</File>
 			<File
-				RelativePath="..\plugins\PluginArray.cpp"
+				RelativePath="..\plugins\DOMPluginArray.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\plugins\PluginArray.h"
+				RelativePath="..\plugins\DOMPluginArray.h"
 				>
 			</File>
 			<File

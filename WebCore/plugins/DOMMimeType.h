@@ -17,8 +17,8 @@
     Boston, MA 02110-1301, USA.
 */
 
-#ifndef MimeType_h
-#define MimeType_h
+#ifndef DOMMimeType_h
+#define DOMMimeType_h
 
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
@@ -28,26 +28,26 @@
 
 namespace WebCore {
 
-    class Plugin;
-    class String;
+class DOMPlugin;
+class String;
 
-    class MimeType : public RefCounted<MimeType> {
-    public:
-        static PassRefPtr<MimeType> create(PassRefPtr<PluginData> pluginData, unsigned index) { return adoptRef(new MimeType(pluginData, index)); }
-        ~MimeType();
+class DOMMimeType : public RefCounted<DOMMimeType> {
+public:
+    static PassRefPtr<DOMMimeType> create(PassRefPtr<PluginData> pluginData, unsigned index) { return adoptRef(new DOMMimeType(pluginData, index)); }
+    ~DOMMimeType();
 
-        const String &type() const;
-        String suffixes() const;
-        const String &description() const;
-        PassRefPtr<Plugin> enabledPlugin() const;
+    const String &type() const;
+    String suffixes() const;
+    const String &description() const;
+    PassRefPtr<DOMPlugin> enabledPlugin() const;
 
-    private:
-        const MimeClassInfo& mimeClassInfo() const { return m_pluginData->mimes()[m_index]; }
-        
-        MimeType(PassRefPtr<PluginData>, unsigned index);
-        RefPtr<PluginData> m_pluginData;
-        unsigned m_index;
-    };
+private:
+    const MimeClassInfo& mimeClassInfo() const { return m_pluginData->mimes()[m_index]; }
+    
+    DOMMimeType(PassRefPtr<PluginData>, unsigned index);
+    RefPtr<PluginData> m_pluginData;
+    unsigned m_index;
+};
 
 }
 

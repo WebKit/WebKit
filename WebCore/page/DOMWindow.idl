@@ -551,11 +551,11 @@ module window {
         attribute [JSCCustomGetter,EnabledAtRuntime] WebSocketConstructor WebSocket; // Usable with the new operator
 #endif
 
-        attribute PluginConstructor Plugin;
-        attribute PluginArrayConstructor PluginArray;
+        attribute DOMPluginConstructor Plugin;
+        attribute DOMPluginArrayConstructor PluginArray;
 
-        attribute MimeTypeConstructor MimeType;
-        attribute MimeTypeArrayConstructor MimeTypeArray;
+        attribute DOMMimeTypeConstructor MimeType;
+        attribute DOMMimeTypeArrayConstructor MimeTypeArray;
 
         attribute ClientRectConstructor ClientRect;
         attribute ClientRectListConstructor ClientRectList;

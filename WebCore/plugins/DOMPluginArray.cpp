@@ -18,78 +18,83 @@
  */
 
 #include "config.h"
-#include "MimeTypeArray.h"
+#include "DOMPluginArray.h"
 
 #include "AtomicString.h"
+#include "DOMPlugin.h"
 #include "Frame.h"
 #include "Page.h"
-#include "Plugin.h"
 #include "PluginData.h"
 
 namespace WebCore {
 
-MimeTypeArray::MimeTypeArray(Frame* frame)
+DOMPluginArray::DOMPluginArray(Frame* frame)
     : m_frame(frame)
 {
 }
 
-MimeTypeArray::~MimeTypeArray()
+DOMPluginArray::~DOMPluginArray()
 {
 }
 
-unsigned MimeTypeArray::length() const
+unsigned DOMPluginArray::length() const
 {
-    PluginData* data = getPluginData();
+    PluginData* data = pluginData();
     if (!data)
         return 0;
-    return data->mimes().size();
+    return data->plugins().size();
 }
 
-PassRefPtr<MimeType> MimeTypeArray::item(unsigned index)
+PassRefPtr<DOMPlugin> DOMPluginArray::item(unsigned index)
 {
-    PluginData* data = getPluginData();
+    PluginData* data = pluginData();
     if (!data)
         return 0;
-    const Vector<MimeClassInfo>& mimes = data->mimes();
-    if (index >= mimes.size())
+    const Vector<PluginInfo>& plugins = data->plugins();
+    if (index >= plugins.size())
         return 0;
-    return MimeType::create(data, index).get();
+    return DOMPlugin::create(data, index).get();
 }
 
-bool MimeTypeArray::canGetItemsForName(const AtomicString& propertyName)
+bool DOMPluginArray::canGetItemsForName(const AtomicString& propertyName)
 {
-    PluginData *data = getPluginData();
+    PluginData* data = pluginData();
     if (!data)
         return 0;
-    const Vector<MimeClassInfo>& mimes = data->mimes();
-    for (unsigned i = 0; i < mimes.size(); ++i) {
-        if (mimes[i].type == propertyName)
+    const Vector<PluginInfo>& plugins = data->plugins();
+    for (unsigned i = 0; i < plugins.size(); ++i) {
+        if (plugins[i].name == propertyName)
             return true;
     }
     return false;
 }
 
-PassRefPtr<MimeType> MimeTypeArray::namedItem(const AtomicString& propertyName)
+PassRefPtr<DOMPlugin> DOMPluginArray::namedItem(const AtomicString& propertyName)
 {
-    PluginData *data = getPluginData();
+    PluginData* data = pluginData();
     if (!data)
         return 0;
-    const Vector<MimeClassInfo>& mimes = data->mimes();
-    for (unsigned i = 0; i < mimes.size(); ++i) {
-        if (mimes[i].type == propertyName)
-            return MimeType::create(data, i).get();
+    const Vector<PluginInfo>& plugins = data->plugins();
+    for (unsigned i = 0; i < plugins.size(); ++i) {
+        if (plugins[i].name == propertyName)
+            return DOMPlugin::create(data, i).get();
     }
     return 0;
 }
 
-PluginData* MimeTypeArray::getPluginData() const
+void DOMPluginArray::refresh(bool reload)
+{
+    Page::refreshPlugins(reload);
+}
+
+PluginData* DOMPluginArray::pluginData() const
 {
     if (!m_frame)
         return 0;
-    Page* p = m_frame->page();
-    if (!p)
+    Page* page = m_frame->page();
+    if (!page)
         return 0;
-    return p->pluginData();
+    return page->pluginData();
 }
 
 } // namespace WebCore

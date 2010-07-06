@@ -21,13 +21,15 @@
 module window {
 
     interface [
-        HasNameGetter, 
+        HasNameGetter,
         HasIndexGetter
-    ] PluginArray {
+    ] DOMPlugin {
+        readonly attribute DOMString name;
+        readonly attribute DOMString filename;
+        readonly attribute DOMString description;
         readonly attribute unsigned long length;
-        Plugin item(in unsigned long index);
-        Plugin namedItem(in DOMString name);
-        void refresh(in boolean reload);
+        DOMMimeType item(in unsigned long index);
+        DOMMimeType namedItem(in DOMString name);
     };
 
 }

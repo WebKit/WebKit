@@ -210,6 +210,11 @@ sub GetVisibleClassName
 
     return "DOMException" if $className eq "DOMCoreException";
     return "FormData" if $className eq "DOMFormData";
+    return "MimeType" if $className eq "DOMMimeType";
+    return "MimeTypeArray" if $className eq "DOMMimeTypeArray";
+    return "Plugin" if $className eq "DOMPlugin";
+    return "PluginArray" if $className eq "DOMPluginArray";
+    
     return $className;
 }
 

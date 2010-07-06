@@ -29,8 +29,8 @@ module window {
         readonly attribute DOMString language;
         readonly attribute DOMString userAgent;
         readonly attribute DOMString platform;
-        readonly attribute PluginArray plugins;
-        readonly attribute MimeTypeArray mimeTypes;
+        readonly attribute DOMPluginArray plugins;
+        readonly attribute DOMMimeTypeArray mimeTypes;
         readonly attribute DOMString product;
         readonly attribute DOMString productSub;
         readonly attribute DOMString vendor;

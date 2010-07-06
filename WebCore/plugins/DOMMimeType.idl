@@ -20,11 +20,11 @@
 
 module window {
 
-    interface MimeType {
+    interface DOMMimeType {
         readonly attribute DOMString type;
         readonly attribute DOMString suffixes;
         readonly attribute DOMString description;
-        readonly attribute Plugin enabledPlugin;
+        readonly attribute DOMPlugin enabledPlugin;
     };
 
 }

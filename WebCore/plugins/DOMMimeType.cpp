@@ -17,34 +17,34 @@
  */
 
 #include "config.h"
-#include "MimeType.h"
+#include "DOMMimeType.h"
 
+#include "DOMPlugin.h"
 #include "Frame.h"
 #include "FrameLoaderClient.h"
 #include "Page.h"
-#include "Plugin.h"
 #include "PluginData.h"
 #include "Settings.h"
 #include "StringBuilder.h"
 
 namespace WebCore {
 
-MimeType::MimeType(PassRefPtr<PluginData> pluginData, unsigned index)
+DOMMimeType::DOMMimeType(PassRefPtr<PluginData> pluginData, unsigned index)
     : m_pluginData(pluginData)
     , m_index(index)
 {
 }
 
-MimeType::~MimeType()
+DOMMimeType::~DOMMimeType()
 {
 }
 
-const String &MimeType::type() const
+const String &DOMMimeType::type() const
 {
     return mimeClassInfo().type;
 }
 
-String MimeType::suffixes() const
+String DOMMimeType::suffixes() const
 {
     const Vector<String>& extensions = mimeClassInfo().extensions;
 
@@ -57,18 +57,18 @@ String MimeType::suffixes() const
     return builder.toString();
 }
 
-const String &MimeType::description() const
+const String &DOMMimeType::description() const
 {
     return mimeClassInfo().desc;
 }
 
-PassRefPtr<Plugin> MimeType::enabledPlugin() const
+PassRefPtr<DOMPlugin> DOMMimeType::enabledPlugin() const
 {
     const Page* p = m_pluginData->page();
     if (!p || !p->mainFrame()->loader()->subframeLoader()->allowPlugins(NotAboutToInstantiatePlugin))
         return 0;
 
-    return Plugin::create(m_pluginData.get(), m_pluginData->mimePluginIndices()[m_index]);
+    return DOMPlugin::create(m_pluginData.get(), m_pluginData->mimePluginIndices()[m_index]);
 }
 
 } // namespace WebCore

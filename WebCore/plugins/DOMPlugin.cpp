@@ -17,7 +17,7 @@
  */
 
 #include "config.h"
-#include "Plugin.h"
+#include "DOMPlugin.h"
 
 #include "AtomicString.h"
 #include "PluginData.h"
@@ -25,37 +25,37 @@
 
 namespace WebCore {
 
-Plugin::Plugin(PluginData* pluginData, unsigned index)
+DOMPlugin::DOMPlugin(PluginData* pluginData, unsigned index)
     : m_pluginData(pluginData)
     , m_index(index)
 {
 }
 
-Plugin::~Plugin()
+DOMPlugin::~DOMPlugin()
 {
 }
 
-String Plugin::name() const
+String DOMPlugin::name() const
 {
     return pluginInfo().name;
 }
 
-String Plugin::filename() const
+String DOMPlugin::filename() const
 {
     return pluginInfo().file;
 }
 
-String Plugin::description() const
+String DOMPlugin::description() const
 {
     return pluginInfo().desc;
 }
 
-unsigned Plugin::length() const
+unsigned DOMPlugin::length() const
 {
     return pluginInfo().mimes.size();
 }
 
-PassRefPtr<MimeType> Plugin::item(unsigned index)
+PassRefPtr<DOMMimeType> DOMPlugin::item(unsigned index)
 {
     if (index >= pluginInfo().mimes.size())
         return 0;
@@ -65,12 +65,12 @@ PassRefPtr<MimeType> Plugin::item(unsigned index)
     const Vector<MimeClassInfo>& mimes = m_pluginData->mimes();
     for (unsigned i = 0; i < mimes.size(); ++i) {
         if (mimes[i] == mime && m_pluginData->mimePluginIndices()[i] == m_index)
-            return MimeType::create(m_pluginData.get(), i).get();
+            return DOMMimeType::create(m_pluginData.get(), i).get();
     }
     return 0;
 }
 
-bool Plugin::canGetItemsForName(const AtomicString& propertyName)
+bool DOMPlugin::canGetItemsForName(const AtomicString& propertyName)
 {
     const Vector<MimeClassInfo>& mimes = m_pluginData->mimes();
     for (unsigned i = 0; i < mimes.size(); ++i)
@@ -79,12 +79,12 @@ bool Plugin::canGetItemsForName(const AtomicString& propertyName)
     return false;
 }
 
-PassRefPtr<MimeType> Plugin::namedItem(const AtomicString& propertyName)
+PassRefPtr<DOMMimeType> DOMPlugin::namedItem(const AtomicString& propertyName)
 {
     const Vector<MimeClassInfo>& mimes = m_pluginData->mimes();
     for (unsigned i = 0; i < mimes.size(); ++i)
         if (mimes[i].type == propertyName)
-            return MimeType::create(m_pluginData.get(), i).get();
+            return DOMMimeType::create(m_pluginData.get(), i).get();
     return 0;
 }
 

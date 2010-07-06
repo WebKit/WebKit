@@ -319,10 +319,10 @@ SET(WebCore_IDL_FILES
     page/WebKitPoint.idl
     page/WorkerNavigator.idl
 
-    plugins/MimeType.idl
-    plugins/MimeTypeArray.idl
-    plugins/Plugin.idl
-    plugins/PluginArray.idl
+    plugins/DOMMimeType.idl
+    plugins/DOMMimeTypeArray.idl
+    plugins/DOMPlugin.idl
+    plugins/DOMPluginArray.idl
 
     storage/Database.idl
     storage/DatabaseCallback.idl
@@ -624,7 +624,7 @@ SET(WebCore_SOURCES
     bindings/js/JSMessageChannelCustom.cpp
     bindings/js/JSMessageEventCustom.cpp
     bindings/js/JSMessagePortCustom.cpp
-    bindings/js/JSMimeTypeArrayCustom.cpp
+    bindings/js/JSDOMMimeTypeArrayCustom.cpp
     bindings/js/JSNamedNodeMapCustom.cpp
     bindings/js/JSNavigatorCustom.cpp
     bindings/js/JSNodeCustom.cpp
@@ -633,8 +633,8 @@ SET(WebCore_SOURCES
     bindings/js/JSNodeIteratorCustom.cpp
     bindings/js/JSNodeListCustom.cpp
     bindings/js/JSOptionConstructor.cpp
-    bindings/js/JSPluginArrayCustom.cpp
-    bindings/js/JSPluginCustom.cpp
+    bindings/js/JSDOMPluginArrayCustom.cpp
+    bindings/js/JSDOMPluginCustom.cpp
     bindings/js/JSPluginElementFunctions.cpp
     bindings/js/JSPopStateEventCustom.cpp
     bindings/js/JSScriptProfileNodeCustom.cpp

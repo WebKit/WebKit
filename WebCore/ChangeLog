@@ -1,3 +1,105 @@
+2010-07-06  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        DOM plug-in related renames
+        https://bugs.webkit.org/show_bug.cgi?id=41709
+
+        This is in preparation for using "Plugin" for something other than a DOM object.
+
+        MimeType => DOMMimeType
+        MimeTypeArray => DOMMimeTypeArray
+        Plugin => DOMPlugin
+        PluginArray => DOMPluginArray
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * GNUmakefile.am:
+        * WebCore.pri:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSDOMMimeTypeArrayCustom.cpp: Added.
+        (WebCore::JSDOMMimeTypeArray::canGetItemsForName):
+        (WebCore::JSDOMMimeTypeArray::nameGetter):
+        * bindings/js/JSDOMPluginArrayCustom.cpp: Added.
+        (WebCore::JSDOMPluginArray::canGetItemsForName):
+        (WebCore::JSDOMPluginArray::nameGetter):
+        * bindings/js/JSDOMPluginCustom.cpp: Added.
+        (WebCore::JSDOMPlugin::canGetItemsForName):
+        (WebCore::JSDOMPlugin::nameGetter):
+        * bindings/js/JSMimeTypeArrayCustom.cpp: Removed.
+        * bindings/js/JSPluginArrayCustom.cpp: Removed.
+        * bindings/js/JSPluginCustom.cpp: Removed.
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * page/DOMWindow.idl:
+        * page/Navigator.cpp:
+        (WebCore::Navigator::plugins):
+        (WebCore::Navigator::mimeTypes):
+        * page/Navigator.h:
+        * page/Navigator.idl:
+        * plugins/DOMMimeType.cpp: Added.
+        (WebCore::DOMMimeType::DOMMimeType):
+        (WebCore::DOMMimeType::~DOMMimeType):
+        (WebCore::DOMMimeType::type):
+        (WebCore::DOMMimeType::suffixes):
+        (WebCore::DOMMimeType::description):
+        (WebCore::DOMMimeType::enabledPlugin):
+        * plugins/DOMMimeType.h: Added.
+        (WebCore::DOMMimeType::create):
+        (WebCore::DOMMimeType::mimeClassInfo):
+        * plugins/DOMMimeType.idl: Added.
+        * plugins/DOMMimeTypeArray.cpp: Added.
+        (WebCore::DOMMimeTypeArray::DOMMimeTypeArray):
+        (WebCore::DOMMimeTypeArray::~DOMMimeTypeArray):
+        (WebCore::DOMMimeTypeArray::length):
+        (WebCore::DOMMimeTypeArray::item):
+        (WebCore::DOMMimeTypeArray::canGetItemsForName):
+        (WebCore::DOMMimeTypeArray::namedItem):
+        (WebCore::DOMMimeTypeArray::getPluginData):
+        * plugins/DOMMimeTypeArray.h: Added.
+        (WebCore::DOMMimeTypeArray::create):
+        (WebCore::DOMMimeTypeArray::disconnectFrame):
+        * plugins/DOMMimeTypeArray.idl: Added.
+        * plugins/DOMPlugin.cpp: Added.
+        (WebCore::DOMPlugin::DOMPlugin):
+        (WebCore::DOMPlugin::~DOMPlugin):
+        (WebCore::DOMPlugin::name):
+        (WebCore::DOMPlugin::filename):
+        (WebCore::DOMPlugin::description):
+        (WebCore::DOMPlugin::length):
+        (WebCore::DOMPlugin::item):
+        (WebCore::DOMPlugin::canGetItemsForName):
+        (WebCore::DOMPlugin::namedItem):
+        * plugins/DOMPlugin.h: Added.
+        (WebCore::DOMPlugin::create):
+        (WebCore::DOMPlugin::pluginInfo):
+        * plugins/DOMPlugin.idl: Added.
+        * plugins/DOMPluginArray.cpp: Added.
+        (WebCore::DOMPluginArray::DOMPluginArray):
+        (WebCore::DOMPluginArray::~DOMPluginArray):
+        (WebCore::DOMPluginArray::length):
+        (WebCore::DOMPluginArray::item):
+        (WebCore::DOMPluginArray::canGetItemsForName):
+        (WebCore::DOMPluginArray::namedItem):
+        (WebCore::DOMPluginArray::refresh):
+        (WebCore::DOMPluginArray::pluginData):
+        * plugins/DOMPluginArray.h: Added.
+        (WebCore::DOMPluginArray::create):
+        (WebCore::DOMPluginArray::disconnectFrame):
+        * plugins/DOMPluginArray.idl: Added.
+        * plugins/MimeType.cpp: Removed.
+        * plugins/MimeType.h: Removed.
+        * plugins/MimeType.idl: Removed.
+        * plugins/MimeTypeArray.cpp: Removed.
+        * plugins/MimeTypeArray.h: Removed.
+        * plugins/MimeTypeArray.idl: Removed.
+        * plugins/Plugin.cpp: Removed.
+        * plugins/Plugin.h: Removed.
+        * plugins/Plugin.idl: Removed.
+        * plugins/PluginArray.cpp: Removed.
+        * plugins/PluginArray.h: Removed.
+        * plugins/PluginArray.idl: Removed.
+
 2010-07-06  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Darin Adler.
