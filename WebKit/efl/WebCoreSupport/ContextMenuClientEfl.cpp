@@ -30,11 +30,11 @@
 
 #include "ContextMenu.h"
 #include "EWebKit.h"
-#include "ewk_private.h"
 #include "HitTestResult.h"
 #include "KURL.h"
 #include "NotImplemented.h"
 #include "PlatformMenuDescription.h"
+#include "ewk_private.h"
 
 using namespace WebCore;
 
@@ -62,9 +62,16 @@ void ContextMenuClientEfl::contextMenuItemSelected(ContextMenuItem*, const Conte
     notImplemented();
 }
 
-void ContextMenuClientEfl::downloadURL(const KURL&)
+void ContextMenuClientEfl::downloadURL(const KURL& url)
 {
-    notImplemented();
+    if (!m_view)
+        return;
+
+    Ewk_Download download;
+
+    CString downloadUrl = url.prettyURL().utf8();
+    download.url = downloadUrl.data();
+    ewk_view_download_request(m_view, &download);
 }
 
 void ContextMenuClientEfl::searchWithGoogle(const Frame*)

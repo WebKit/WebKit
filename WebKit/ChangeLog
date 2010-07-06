@@ -1,3 +1,17 @@
+2010-07-05  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [EFL] Implement downloadURL in ContextMenuClientEfl
+        When user selects a download menu from context menu, send the download 
+        request to application.
+        https://bugs.webkit.org/show_bug.cgi?id=41149
+
+        * efl/WebCoreSupport/ContextMenuClientEfl.cpp:
+        (WebCore::ContextMenuClientEfl::downloadURL): Get url for downloading 
+        file and Send it to application.
+        * efl/WebCoreSupport/ContextMenuClientEfl.h:
+
 2010-06-30  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Reviewed by Kenneth Rohde Christiansen.
