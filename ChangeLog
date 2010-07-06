@@ -1,3 +1,11 @@
+2010-07-06  Martin Robinson  <mrobinson@igalia.com>
+
+        Unreviewed.
+
+        Build fix after r62549.
+
+        * GNUmakefile.am: Remove new variable that is no longer used.
+
 2010-07-06  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Yury Semikhatsky.

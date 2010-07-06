@@ -99,6 +99,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/HTMLNames.cpp \
 	DerivedSources/WebCore/HTMLNames.h \
 	DerivedSources/WebCore/JSHTMLElementWrapperFactory.cpp \
+	DerivedSources/WebCore/RemoteInspectorFrontend2.cpp \
+	DerivedSources/WebCore/RemoteInspectorFrontend2.h \
 	DerivedSources/WebCore/UserAgentStyleSheets.h \
 	DerivedSources/WebCore/UserAgentStyleSheetsData.cpp \
 	DerivedSources/WebCore/XMLNSNames.cpp \
@@ -332,8 +334,6 @@ IDL_BINDINGS += \
 	WebCore/xml/XMLHttpRequestUpload.idl \
 	WebCore/xml/XMLSerializer.idl \
 	WebCore/xml/XSLTProcessor.idl
-
-INSPECTOR_INTERFACES += WebCore/inspector/InspectorFrontend2.idl
 
 webcoregtk_dom_sources = \
 	WebCore/bindings/gobject/ConvertToUTF8String.cpp \
@@ -3974,6 +3974,10 @@ DerivedSources/WebCore/XMLNSNames.cpp DerivedSources/WebCore/XMLNSNames.h: $(Web
 DerivedSources/WebCore/XMLNames.cpp DerivedSources/WebCore/XMLNames.h: $(WebCore)/dom/make_names.pl $(WebCore)/xml/xmlattrs.in
 	$(AM_V_GEN)$(PERL) -I$(WebCore)/bindings/scripts $< --attrs $(WebCore)/xml/xmlattrs.in --outputDir "$(GENSOURCES_WEBCORE)"
 
+# Remote Inspector frontend
+DerivedSources/WebCore/RemoteInspectorFrontend2.cpp DerivedSources/WebCore/RemoteInspectorFrontend2.h: $(WebCore)/inspector/InspectorFrontend2.idl $(SCRIPTS_BINDINGS) $(WebCore)/inspector/CodeGeneratorInspector.pm
+	$(AM_V_GEN)$(PERL) -I$(WebCore)/bindings/scripts -I$(WebCore)/inspector $(WebCore)/bindings/scripts/generate-bindings.pl $(IDL_PATH:%=--include "%") --outputDir "$(GENSOURCES_WEBCORE)" --defines "LANGUAGE_JAVASCRIPT=1 $(FEATURE_DEFINES)" --generator Inspector $<
+
 IDL_PATH := \
     $(WebCore)/bindings/js \
     $(WebCore)/css \
@@ -3995,14 +3999,9 @@ vpath %.idl = $(IDL_PATH)
 
 DerivedSources/WebCore/JS%.h: DerivedSources/WebCore/JS%.cpp;
 
-DerivedSources/WebCore/Remote%.h: DerivedSources/WebCore/Remote%.cpp;
-
 .SECONDARY:
 DerivedSources/WebCore/JS%.cpp: %.idl $(SCRIPTS_BINDINGS) $(WebCore)/bindings/scripts/CodeGeneratorJS.pm
 	$(AM_V_GEN)$(PERL) -I$(WebCore)/bindings/scripts $(WebCore)/bindings/scripts/generate-bindings.pl $(IDL_PATH:%=--include "%") --outputDir "$(GENSOURCES_WEBCORE)" --defines "LANGUAGE_JAVASCRIPT=1 $(FEATURE_DEFINES)" --generator JS $<
-
-DerivedSources/WebCore/Remote%.cpp: %.idl $(SCRIPTS_BINDINGS) $(WebCore)/inspector/CodeGeneratorInspector.pm
-	$(AM_V_GEN)$(PERL) -I$(WebCore)/bindings/scripts -I$(WebCore)/inspector $(WebCore)/bindings/scripts/generate-bindings.pl $(IDL_PATH:%=--include "%") --outputDir "$(GENSOURCES)" --defines "LANGUAGE_JAVASCRIPT=1 $(FEATURE_DEFINES)" --generator Inspector $<
 
 IDL_BINDINGS_JS_PURE := \
 	WebCore/svg/ElementTimeControl.idl \
@@ -4023,11 +4022,8 @@ IDL_BINDINGS_JS_PURE := \
 IDL_BINDINGS_JS := $(filter-out $(IDL_BINDINGS_JS_PURE),$(IDL_BINDINGS))
 
 webcore_built_nosources += $(patsubst %.idl,DerivedSources/WebCore/JS%.h,$(notdir $(IDL_BINDINGS)))
-webcore_built_nosources += $(patsubst %.idl,DerivedSources/WebCore/Remote%.h,$(notdir $(INSPECTOR_INTERFACES)))
 
-webcore_built_cpp = $(patsubst %.idl,DerivedSources/WebCore/JS%.cpp,$(notdir $(IDL_BINDINGS_JS)))
-webcore_built_cpp += $(patsubst %.idl,DerivedSources/WebCore/Remote%.cpp,$(notdir $(INSPECTOR_INTERFACES)))
-webcore_built_nosources += $(webcore_built_cpp)
+webcore_built_nosources += $(patsubst %.idl,DerivedSources/WebCore/JS%.cpp,$(notdir $(IDL_BINDINGS_JS)))
 
 webcore_built_objects = := $(patsubst %.cpp,%.lo,$(webcore_built_nosources))
 
@@ -4035,9 +4031,9 @@ $(webcore_built_objects): AM_CPPFLAGS+=$(corekit_cppflags)
 
 $(webcore_built_objects): AM_CXXFLAGS+=$(libwebkitgtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_CXXFLAGS)
 
-libWebCoreJS_objects := $(patsubst %.cpp,%.lo,$(webcore_built_cpp))
+libWebCoreJS_objects := $(patsubst %.idl,DerivedSources/WebCore/JS%.lo,$(notdir $(IDL_BINDINGS_JS)))
 
-libWebCoreJS_depfiles := $(patsubst %.cpp,DerivedSources/WebCore/$(DEPDIR)/%.Plo,$(notdir $(webcore_built_cpp)))
+libWebCoreJS_depfiles := $(patsubst %.idl,DerivedSources/WebCore/$(DEPDIR)/JS%.Plo,$(notdir $(IDL_BINDINGS_JS)))
 
 # Older automake versions (1.7) place Plo files in a different place:
 libWebCoreJS_depfiles += $(patsubst %.lo,$(DEPDIR)/%.Plo,$(libWebCoreJS_objects))
