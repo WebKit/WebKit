@@ -1,5 +1,12 @@
 2010-07-06  Anders Carlsson  <andersca@apple.com>
 
+        Fix Windows WebKit2 build.
+
+        * UIProcess/Plugins/win/PluginInfoStoreWin.cpp:
+        (WebKit::PluginInfoStore::mimeTypeFromExtension):
+
+2010-07-06  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Sam Weinig.
 
         Add PluginInfoStore::findPlugin
