@@ -899,7 +899,7 @@ void GraphicsContext::createPlatformShadow(PassOwnPtr<ImageBuffer> buffer, const
 
     // create filter
     RefPtr<Filter> filter = ImageBufferFilter::create();
-    filter->setSourceImage(buffer.release());
+    filter->setSourceImage(buffer);
     RefPtr<FilterEffect> source = SourceGraphic::create();
     source->setScaledSubRegion(FloatRect(FloatPoint(), shadowRect.size()));
     source->setIsAlphaImage(true);

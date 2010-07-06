@@ -1,5 +1,13 @@
 2010-07-06  Darin Adler  <darin@apple.com>
 
+        Fix Cairo build.
+
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::createPlatformShadow): Removed unnneded release
+        in code that passes a PassOwnPtr to another PassOwnPtr.
+
+2010-07-06  Darin Adler  <darin@apple.com>
+
         Fix Chromium build.
 
         * platform/graphics/skia/SkiaUtils.cpp:
