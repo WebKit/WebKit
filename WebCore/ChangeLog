@@ -1,3 +1,16 @@
+2010-07-06  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Rubber-stamped by Xan Lopez.
+
+        Crash when hitting back on some pages
+        http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=575236
+
+        Also NULL-check document, in hopes of fixing this hard to
+        reproduce crash that we are getting reported quite a bit.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::windowClipRect):
+
 2010-07-05  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Yury Semikhatsky.

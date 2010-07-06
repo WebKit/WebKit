@@ -1670,7 +1670,7 @@ IntRect FrameView::windowClipRect(bool clipToContents) const
 
     // Set our clip rect to be our contents.
     IntRect clipRect = contentsToWindow(visibleContentRect(!clipToContents));
-    if (!m_frame || !m_frame->document()->ownerElement())
+    if (!m_frame || !m_frame->document() || !m_frame->document()->ownerElement())
         return clipRect;
 
     // Take our owner element and get the clip rect from the enclosing layer.
