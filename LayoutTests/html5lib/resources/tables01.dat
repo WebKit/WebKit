@@ -116,3 +116,55 @@
 |         <tr>
 |           <td>
 |             "B"
+
+#data
+<table><td></body></caption></col></colgroup></html>foo
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <table>
+|       <tbody>
+|         <tr>
+|           <td>
+|             "foo"
+
+#data
+<table><td>A</table>B
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <table>
+|       <tbody>
+|         <tr>
+|           <td>
+|             "A"
+|     "B"
+
+#data
+<table><tr><caption>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <table>
+|       <tbody>
+|         <tr>
+|       <caption>
+
+#data
+<table><tr></body></caption></col></colgroup></html></td></th><td>foo
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <table>
+|       <tbody>
+|         <tr>
+|           <td>
+|             "foo"

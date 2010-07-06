@@ -66,12 +66,12 @@ void HTMLFormattingElementList::Entry::replaceElement(PassRefPtr<Element> elemen
 
 bool HTMLFormattingElementList::Entry::operator==(const Entry& other) const
 {
-    return element() == other.element();
+    return m_element == other.m_element;
 }
 
 bool HTMLFormattingElementList::Entry::operator!=(const Entry& other) const
 {
-    return element() != other.element();
+    return m_element != other.m_element;
 }
 
 HTMLFormattingElementList::HTMLFormattingElementList()

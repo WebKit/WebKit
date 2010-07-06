@@ -2,6 +2,49 @@
 
         Reviewed by Adam Barth.
 
+        Add processing for "in cell" mode and end tag processing for "in row"
+        https://bugs.webkit.org/show_bug.cgi?id=41688
+
+        I added several new table tests, not all of which pass yet.
+        Remaining failures exist due to lack of full "in table body" mode
+        support, which Adam has an outstanding patch for.
+        I believe all of the various branches added by this change are
+        covered now by our tests.
+
+        * html/HTMLElementStack.cpp:
+         - Added QualifiedName versions of inScope functions.
+           Using tagName.localName() is wrong for non-HTML elements,
+           in preparation for supporting foreign content we should centralize
+           our handling of QualifiedName in these functions instead of
+           sprinkling more .localName() calls around the code.
+        (WebCore::HTMLElementStack::inScope):
+        (WebCore::HTMLElementStack::inListItemScope):
+        (WebCore::HTMLElementStack::inTableScope):
+        * html/HTMLElementStack.h:
+        * html/HTMLFormattingElementList.cpp:
+        (WebCore::HTMLFormattingElementList::Entry::operator==):
+        (WebCore::HTMLFormattingElementList::Entry::operator!=):
+         - Calling element() on markers will assert, so use m_element.
+        * html/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::closeTheCell):
+         - Implemented per the spec.
+        (WebCore::HTMLTreeBuilder::processStartTag):
+         - Use isTableBodyContextTag where possible.
+         - Add InCellMode.
+        (WebCore::HTMLTreeBuilder::resetInsertionModeAppropriately):
+         - Use isTableBodyContextTag where possible.
+        (WebCore::HTMLTreeBuilder::processTrEndTagForInRow):
+         - This code is needed from at least two callsites.
+        (WebCore::HTMLTreeBuilder::processEndTag):
+         - Add InCellMode and InRowMode
+        (WebCore::HTMLTreeBuilder::processCharacter):
+        (WebCore::HTMLTreeBuilder::processEndOfFile):
+        * html/HTMLTreeBuilder.h:
+
+2010-07-06  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
         Make <a> auto-close any parent <a> tag
         https://bugs.webkit.org/show_bug.cgi?id=41684
 

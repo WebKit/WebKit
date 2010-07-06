@@ -129,6 +129,7 @@ private:
     bool processBodyEndTagForInBody(AtomicHTMLToken&);
     bool processCaptionEndTagForInCaption();
     bool processColgroupEndTagForInColumnGroup();
+    bool processTrEndTagForInRow();
     void processAnyOtherEndTagForInBody(AtomicHTMLToken&);
 
     void processFakeStartTag(const QualifiedName&, PassRefPtr<NamedNodeMap> attributes = 0);
@@ -140,6 +141,8 @@ private:
     void findFosterParentFor(Element*);
     void reparentChildren(Element* oldParent, Element* newParent);
     void callTheAdoptionAgency(AtomicHTMLToken&);
+
+    void closeTheCell();
 
     template<typename ChildType>
     PassRefPtr<ChildType> attach(Node* parent, PassRefPtr<ChildType> prpChild)

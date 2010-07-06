@@ -328,14 +328,32 @@ bool HTMLElementStack::inScope(const AtomicString& targetTag) const
     return inScopeCommon<isScopeMarker>(m_top.get(), targetTag);
 }
 
+bool HTMLElementStack::inScope(const QualifiedName& tagName) const
+{
+    // FIXME: Is localName() right for non-html elements?
+    return inScope(tagName.localName());
+}
+
 bool HTMLElementStack::inListItemScope(const AtomicString& targetTag) const
 {
     return inScopeCommon<isListItemScopeMarker>(m_top.get(), targetTag);
 }
 
+bool HTMLElementStack::inListItemScope(const QualifiedName& tagName) const
+{
+    // FIXME: Is localName() right for non-html elements?
+    return inListItemScope(tagName.localName());
+}
+
 bool HTMLElementStack::inTableScope(const AtomicString& targetTag) const
 {
     return inScopeCommon<isTableScopeMarker>(m_top.get(), targetTag);
+}
+
+bool HTMLElementStack::inTableScope(const QualifiedName& tagName) const
+{
+    // FIXME: Is localName() right for non-html elements?
+    return inTableScope(tagName.localName());
 }
 
 Element* HTMLElementStack::htmlElement() const

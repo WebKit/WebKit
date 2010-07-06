@@ -35,6 +35,7 @@ namespace WebCore {
 
 class AtomicString;
 class Element;
+class QualifiedName;
 
 // NOTE: The HTML5 spec uses a backwards (grows downward) stack.  We're using
 // more standard (grows upwards) stack terminology here.
@@ -95,8 +96,11 @@ public:
 
     bool inScope(Element*) const;
     bool inScope(const AtomicString& tagName) const;
+    bool inScope(const QualifiedName&) const;
     bool inListItemScope(const AtomicString& tagName) const;
+    bool inListItemScope(const QualifiedName&) const;
     bool inTableScope(const AtomicString& tagName) const;
+    bool inTableScope(const QualifiedName&) const;
 
     Element* htmlElement() const;
     Element* headElement() const;
