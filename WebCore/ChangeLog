@@ -554,8 +554,8 @@
 
         Rubber-stamped by Xan Lopez.
 
-        Crash when hitting back on some pages
-        http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=575236
+        [GTK] Crashes when going back with page cache in unknown circunstances
+        https://bugs.webkit.org/show_bug.cgi?id=41710
 
         Also NULL-check document, in hopes of fixing this hard to
         reproduce crash that we are getting reported quite a bit.
