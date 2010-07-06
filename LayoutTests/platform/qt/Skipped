@@ -3153,6 +3153,7 @@ fast/css/font-face-implicit-local-font.html
 fast/css/font-face-in-media-rule.html
 fast/css/font-face-locally-installed.html
 fast/css/font-face-multiple-faces.html
+fast/css/font-face-multiple-ranges-for-unicode-range.html
 fast/css/font-face-multiple-remote-sources.html
 fast/css/font-face-remote.html
 fast/css/font-face-unicode-range.html
