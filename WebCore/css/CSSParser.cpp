@@ -387,9 +387,9 @@ void CSSParser::addProperty(int propId, PassRefPtr<CSSValue> value, bool importa
         if (m_maxParsedProperties > UINT_MAX / sizeof(CSSProperty*))
             return;
         m_parsedProperties = static_cast<CSSProperty**>(fastRealloc(m_parsedProperties,
-                                                       m_maxParsedProperties * sizeof(CSSProperty*)));
+            m_maxParsedProperties * sizeof(CSSProperty*)));
     }
-    m_parsedProperties[m_numParsedProperties++] = prop.release();
+    m_parsedProperties[m_numParsedProperties++] = prop.leakPtr();
 }
 
 void CSSParser::rollbackLastProperties(int num)

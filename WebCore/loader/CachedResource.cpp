@@ -467,9 +467,9 @@ bool CachedResource::makePurgeable(bool purgeable)
             return false;
         
         if (m_data->hasPurgeableBuffer()) {
-            m_purgeableData.set(m_data->releasePurgeableBuffer());
+            m_purgeableData = m_data->releasePurgeableBuffer();
         } else {
-            m_purgeableData.set(PurgeableBuffer::create(m_data->data(), m_data->size()));
+            m_purgeableData = PurgeableBuffer::create(m_data->data(), m_data->size());
             if (!m_purgeableData)
                 return false;
         }

@@ -812,7 +812,7 @@ String TextResourceDecoder::decode(const char* data, size_t len)
     ASSERT(m_encoding.isValid());
 
     if (!m_codec)
-        m_codec.set(newTextCodec(m_encoding).release());
+        m_codec = newTextCodec(m_encoding);
 
     if (m_buffer.isEmpty())
         return m_codec->decode(data + lengthOfBOM, len - lengthOfBOM, false, m_contentType == XML, m_sawError);
@@ -842,7 +842,7 @@ String TextResourceDecoder::flush()
     }
 
     if (!m_codec)
-        m_codec.set(newTextCodec(m_encoding).release());
+        m_codec = newTextCodec(m_encoding);
 
     String result = m_codec->decode(m_buffer.data(), m_buffer.size(), true, m_contentType == XML && !m_useLenientXMLDecoding, m_sawError);
     m_buffer.clear();

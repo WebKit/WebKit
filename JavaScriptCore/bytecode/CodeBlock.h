@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2009, 2010 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Cameron Zwarich <cwzwarich@uwaterloo.ca>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -39,6 +39,7 @@
 #include "RegExp.h"
 #include "UString.h"
 #include <wtf/FastAllocBase.h>
+#include <wtf/PassOwnPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
@@ -446,7 +447,7 @@ namespace JSC {
 
         bool hasExceptionInfo() const { return m_exceptionInfo; }
         void clearExceptionInfo() { m_exceptionInfo.clear(); }
-        ExceptionInfo* extractExceptionInfo() { ASSERT(m_exceptionInfo); return m_exceptionInfo.release(); }
+        PassOwnPtr<ExceptionInfo> extractExceptionInfo();
 
         void addExpressionInfo(const ExpressionRangeInfo& expressionInfo) { ASSERT(m_exceptionInfo); m_exceptionInfo->m_expressionInfo.append(expressionInfo); }
         void addGetByIdExceptionInfo(const GetByIdExceptionInfo& info) { ASSERT(m_exceptionInfo); m_exceptionInfo->m_getByIdExceptionInfo.append(info); }
@@ -664,6 +665,12 @@ namespace JSC {
             sharedSymbolTable()->deref();
         }
     };
+
+    inline PassOwnPtr<ExceptionInfo> CodeBlock::extractExceptionInfo()
+    {
+        ASSERT(m_exceptionInfo);
+        return m_exceptionInfo.release();
+    }
 
     inline Register& ExecState::r(int index)
     {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2009, 2010 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -229,11 +229,11 @@ void FunctionExecutable::markAggregate(MarkStack& markStack)
         m_codeBlockForConstruct->markAggregate(markStack);
 }
 
-ExceptionInfo* FunctionExecutable::reparseExceptionInfo(JSGlobalData* globalData, ScopeChainNode* scopeChainNode, CodeBlock* codeBlock)
+PassOwnPtr<ExceptionInfo> FunctionExecutable::reparseExceptionInfo(JSGlobalData* globalData, ScopeChainNode* scopeChainNode, CodeBlock* codeBlock)
 {
     RefPtr<FunctionBodyNode> newFunctionBody = globalData->parser->parse<FunctionBodyNode>(globalData, 0, 0, m_source);
     if (!newFunctionBody)
-        return 0;
+        return PassOwnPtr<ExceptionInfo>();
     if (m_forceUsesArguments)
         newFunctionBody->setUsesArguments();
     newFunctionBody->finishParsing(m_parameters, m_name);
@@ -260,11 +260,11 @@ ExceptionInfo* FunctionExecutable::reparseExceptionInfo(JSGlobalData* globalData
     return newCodeBlock->extractExceptionInfo();
 }
 
-ExceptionInfo* EvalExecutable::reparseExceptionInfo(JSGlobalData* globalData, ScopeChainNode* scopeChainNode, CodeBlock* codeBlock)
+PassOwnPtr<ExceptionInfo> EvalExecutable::reparseExceptionInfo(JSGlobalData* globalData, ScopeChainNode* scopeChainNode, CodeBlock* codeBlock)
 {
     RefPtr<EvalNode> newEvalBody = globalData->parser->parse<EvalNode>(globalData, 0, 0, m_source);
     if (!newEvalBody)
-        return 0;
+        return PassOwnPtr<ExceptionInfo>();
 
     ScopeChain scopeChain(scopeChainNode);
     JSGlobalObject* globalObject = scopeChain.globalObject();
@@ -334,6 +334,10 @@ UString FunctionExecutable::paramString() const
     return builder.build();
 }
 
-};
+PassOwnPtr<ExceptionInfo> ProgramExecutable::reparseExceptionInfo(JSGlobalData*, ScopeChainNode*, CodeBlock*)
+{
+    // CodeBlocks for program code are transient and therefore do not gain from from throwing out their exception information.
+    return PassOwnPtr<ExceptionInfo>();
+}
 
-
+}

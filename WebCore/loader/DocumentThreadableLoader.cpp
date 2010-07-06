@@ -88,7 +88,7 @@ DocumentThreadableLoader::DocumentThreadableLoader(Document* document, Threadabl
     if (!m_options.forcePreflight && isSimpleCrossOriginAccessRequest(crossOriginRequest->httpMethod(), crossOriginRequest->httpHeaderFields()))
         makeSimpleCrossOriginAccessRequest(*crossOriginRequest);
     else {
-        m_actualRequest.set(crossOriginRequest.release());
+        m_actualRequest = crossOriginRequest.release();
 
         if (CrossOriginPreflightResultCache::shared().canSkipPreflight(document->securityOrigin()->toString(), m_actualRequest->url(), m_options.allowCredentials, m_actualRequest->httpMethod(), m_actualRequest->httpHeaderFields()))
             preflightSuccess();

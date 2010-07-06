@@ -803,7 +803,7 @@ void FrameLoader::startIconLoader()
 
     // This is either a reload or the icon database said "yes, load the icon", so kick off the load!
     if (!m_iconLoader)
-        m_iconLoader.set(IconLoader::create(m_frame).release());
+        m_iconLoader = IconLoader::create(m_frame);
         
     m_iconLoader->startLoading();
 }

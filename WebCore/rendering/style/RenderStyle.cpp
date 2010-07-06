@@ -586,7 +586,7 @@ void RenderStyle::setContent(PassRefPtr<StyleImage> image, bool add)
     ContentData* newContentData;
     if (reuseContent && content) {
         content->clear();
-        newContentData = content.release();
+        newContentData = content.leakPtr();
     } else
         newContentData = new ContentData;
 
@@ -622,7 +622,7 @@ void RenderStyle::setContent(PassRefPtr<StringImpl> s, bool add)
     ContentData* newContentData = 0;
     if (reuseContent && content) {
         content->clear();
-        newContentData = content.release();
+        newContentData = content.leakPtr();
     } else
         newContentData = new ContentData;
 
@@ -648,7 +648,7 @@ void RenderStyle::setContent(CounterContent* c, bool add)
     ContentData* newContentData = 0;
     if (reuseContent && content) {
         content->clear();
-        newContentData = content.release();
+        newContentData = content.leakPtr();
     } else
         newContentData = new ContentData;
 
@@ -732,7 +732,7 @@ void RenderStyle::setBoxShadow(ShadowData* shadowData, bool add)
         return;
     }
 
-    shadowData->setNext(rareData->m_boxShadow.release());
+    shadowData->setNext(rareData->m_boxShadow.leakPtr());
     rareData->m_boxShadow.set(shadowData);
 }
 

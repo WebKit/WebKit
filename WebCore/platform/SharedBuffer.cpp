@@ -28,6 +28,7 @@
 #include "SharedBuffer.h"
 
 #include "PurgeableBuffer.h"
+#include <wtf/PassOwnPtr.h>
 
 using namespace std;
 
@@ -86,11 +87,11 @@ PassRefPtr<SharedBuffer> SharedBuffer::adoptVector(Vector<char>& vector)
     return buffer.release();
 }
 
-PassRefPtr<SharedBuffer> SharedBuffer::adoptPurgeableBuffer(PurgeableBuffer* purgeableBuffer) 
+PassRefPtr<SharedBuffer> SharedBuffer::adoptPurgeableBuffer(PassOwnPtr<PurgeableBuffer> purgeableBuffer) 
 { 
     ASSERT(!purgeableBuffer->isPurgeable());
     RefPtr<SharedBuffer> buffer = create();
-    buffer->m_purgeableBuffer.set(purgeableBuffer);
+    buffer->m_purgeableBuffer = purgeableBuffer;
     return buffer.release();
 }
 
@@ -184,7 +185,7 @@ PassRefPtr<SharedBuffer> SharedBuffer::copy() const
     return clone;
 }
 
-PurgeableBuffer* SharedBuffer::releasePurgeableBuffer()
+PassOwnPtr<PurgeableBuffer> SharedBuffer::releasePurgeableBuffer()
 { 
     ASSERT(hasOneRef()); 
     return m_purgeableBuffer.release(); 

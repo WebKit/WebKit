@@ -187,8 +187,10 @@ SimpleFontData* CSSFontFaceSource::getFontData(const FontDescription& fontDescri
         fontData.set(new SimpleFontData(tempData->platformData(), true, true));
     }
 
-    m_fontDataTable.set(hashKey, fontData.get());
-    return fontData.release();
+    SimpleFontData* fontDataRawPtr = fontData.leakPtr();
+    m_fontDataTable.set(hashKey, fontDataRawPtr);
+
+    return fontDataRawPtr;
 }
 
 }

@@ -78,7 +78,7 @@ static bool expressionCompare(const MediaQueryExp* a, const MediaQueryExp* b)
 MediaQuery::MediaQuery(Restrictor r, const String& mediaType, PassOwnPtr<Vector<MediaQueryExp*> > exprs)
     : m_restrictor(r)
     , m_mediaType(mediaType.lower())
-    , m_expressions(exprs.release())
+    , m_expressions(exprs)
     , m_ignored(false)
 {
     if (!m_expressions) {
@@ -108,7 +108,6 @@ MediaQuery::MediaQuery(Restrictor r, const String& mediaType, PassOwnPtr<Vector<
 MediaQuery::~MediaQuery()
 {
     deleteAllValues(*m_expressions);
-    delete m_expressions;
 }
 
 // http://dev.w3.org/csswg/cssom/#compare-media-queries

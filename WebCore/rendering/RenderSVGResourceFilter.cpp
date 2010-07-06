@@ -219,11 +219,13 @@ bool RenderSVGResourceFilter::applyResource(RenderObject* object, RenderStyle*, 
     sourceGraphicContext->translate(-clippedSourceRect.x(), -clippedSourceRect.y());
     sourceGraphicContext->scale(scale);
     sourceGraphicContext->clearRect(FloatRect(FloatPoint(), paintRect.size()));
-    filterData->sourceGraphicBuffer.set(sourceGraphic.release());
+    filterData->sourceGraphicBuffer = sourceGraphic.release();
     filterData->savedContext = context;
 
     context = sourceGraphicContext;
-    m_filter.set(object, filterData.release());
+
+    ASSERT(!m_filter.contains(object));
+    m_filter.set(object, filterData.leakPtr());
 
     return true;
 }

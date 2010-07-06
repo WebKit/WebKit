@@ -111,7 +111,7 @@ static inline bool createMaskAndSwapContextForTextGradient(GraphicsContext*& con
     maskImageContext->translate(-maskAbsoluteBoundingBox.x(), -maskAbsoluteBoundingBox.y());
     maskImageContext->concatCTM(transform);
 
-    imageBuffer.set(maskImage.release());
+    imageBuffer = maskImage.release();
     savedContext = context;
     context = maskImageContext;
 

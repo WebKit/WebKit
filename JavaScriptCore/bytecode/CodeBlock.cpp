@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2009, 2010 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Cameron Zwarich <cwzwarich@uwaterloo.ca>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -1538,7 +1538,7 @@ bool CodeBlock::reparseForExceptionInfoIfNecessary(CallFrame* callFrame)
             scopeChain = scopeChain->next;
     }
 
-    m_exceptionInfo.set(m_ownerExecutable->reparseExceptionInfo(m_globalData, scopeChain, this));
+    m_exceptionInfo = m_ownerExecutable->reparseExceptionInfo(m_globalData, scopeChain, this);
     return m_exceptionInfo;
 }
 

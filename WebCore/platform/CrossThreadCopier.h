@@ -81,9 +81,9 @@ namespace WebCore {
 
     template<typename T> struct CrossThreadCopierBase<false, false, PassOwnPtr<T> > {
         typedef PassOwnPtr<T> Type;
-        static Type copy(const PassOwnPtr<T>& ownPtr)
+        static Type copy(Type ownPtr)
         {
-            return PassOwnPtr<T>(static_cast<T*>(ownPtr.release()));
+            return ownPtr;
         }
     };
 

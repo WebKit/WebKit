@@ -1,3 +1,44 @@
+2010-07-06  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adam Barth.
+
+        Add adoptPtr and leakPtr functions for OwnPtr and PassOwnPtr
+        https://bugs.webkit.org/show_bug.cgi?id=41320
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::reparseForExceptionInfoIfNecessary): Use assignment
+        instead of set since the result of reparseExceptionInfo is now a
+        PassOwnPtr.
+
+        * bytecode/CodeBlock.h: Change extractExceptionInfo to return a
+        PassOwnPtr instead of a raw pointer.
+
+        * runtime/Executable.cpp:
+        (JSC::FunctionExecutable::reparseExceptionInfo): Return a PassOwnPtr.
+        (JSC::EvalExecutable::reparseExceptionInfo): Ditto.
+        (JSC::ProgramExecutable::reparseExceptionInfo): Added. This was
+        in the header before, but it's better to not have it there to reduce
+        header dependencies. Return a PassOwnPtr.
+
+        * runtime/Executable.h: Made reparseExceptionInfo return a PassOwnPtr,
+        and put it in the private sections of classes other than the base class.
+
+        * wtf/MessageQueue.h:
+        (WTF::MessageQueue::append): Use leakPtr instead of release.
+        (WTF::MessageQueue::appendAndCheckEmpty): Ditto.
+        (WTF::MessageQueue::prepend): Ditto.
+
+        * wtf/OwnPtr.h: Tweaked formatting. Changed the release function to return
+        a PassOwnPtr rather than a raw pointer. Added a leakPtr function that
+        returns a raw pointer. Put the constructor that takes a raw pointer and
+        the set function into a section guarded by LOOSE_OWN_PTR. Adapted to the
+        new adoptPtr function from PassOwnPtr.h.
+
+        * wtf/PassOwnPtr.h: Tweaked formatting. Renamed the release function
+        to leakPtr. Added an adoptPtr function that creates a new PassOwnPtr.
+        Put the constructor and assignment operators that take a raw pointer
+        into a section guarded by LOOSE_PASS_OWN_PTR.
+
 2010-07-06  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin Adler

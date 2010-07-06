@@ -136,17 +136,18 @@ void DOMTimer::fired()
     }
 
     // Delete timer before executing the action for one-shot timers.
-    ScheduledAction* action = m_action.release();
+    OwnPtr<ScheduledAction> action = m_action.release();
 
     // No access to member variables after this point.
     delete this;
 
     action->execute(context);
+
 #if ENABLE(INSPECTOR)
     if (InspectorTimelineAgent* timelineAgent = InspectorTimelineAgent::retrieve(context))
         timelineAgent->didFireTimer();
 #endif
-    delete action;
+
     timerNestingLevel = 0;
 }
 

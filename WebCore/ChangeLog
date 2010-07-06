@@ -1,3 +1,106 @@
+2010-07-06  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adam Barth.
+
+        Add adoptPtr and leakPtr functions for OwnPtr and PassOwnPtr
+        https://bugs.webkit.org/show_bug.cgi?id=41320
+
+        Made code changes required because of the change to the release function.
+        The equivalent to the old release function is now named leakPtr and
+        should be used sparingly. The new release function returns a PassOwnPtr.
+
+        * css/CSSFontFaceSource.cpp:
+        (WebCore::CSSFontFaceSource::getFontData): Changed code to call
+        leakPtr instead of release.
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::addProperty): Ditto.
+
+        * css/CSSSegmentedFontFace.cpp:
+        (WebCore::CSSSegmentedFontFace::getFontData): Removed unneeded type
+        casting. Not sure why this changed the type to FontData* and then
+        casted back to SimpleFontData*.
+
+        * css/MediaQuery.cpp:
+        (WebCore::MediaQuery::MediaQuery): Removed call to release on a
+        PassOwnPtr, since the data member is now an OwnPtr.
+        (WebCore::MediaQuery::~MediaQuery): Removed now-unneeded delete.
+        * css/MediaQuery.h: Changed m_expressions to be an OwnPtr.
+
+        * html/HTMLToken.h:
+        (WebCore::AtomicHTMLToken::AtomicHTMLToken): Use assignment instead
+        of the set function since there are no raw pointers involved.
+        * loader/CachedResource.cpp:
+        (WebCore::CachedResource::makePurgeable): Ditto.
+
+        * loader/CrossOriginPreflightResultCache.cpp:
+        (WebCore::CrossOriginPreflightResultCache::appendEntry): Use
+        leakPtr instead of release, and also add FIXME about deleting the
+        old value if the original and URL are already in the map. I
+        believe dealing with this FIXME may fix a storage leak.
+
+        * loader/CrossOriginPreflightResultCache.h: Change the argument
+        to be PassOwnPtr instead of a raw pointer, since this function
+        does take ownership.
+
+        * loader/DocumentThreadableLoader.cpp:
+        (WebCore::DocumentThreadableLoader::DocumentThreadableLoader):
+        Use assignment instead of the set function since there are no raw
+        pointers involved.
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::startIconLoader): Ditto.
+        * loader/TextResourceDecoder.cpp:
+        (WebCore::TextResourceDecoder::decode): Ditto.
+        (WebCore::TextResourceDecoder::flush): Ditto.
+
+        * page/DOMTimer.cpp:
+        (WebCore::DOMTimer::fired): Use OwnPtr instead of an explicit
+        delete.
+
+        * platform/CrossThreadCopier.h: Removed explicit code that tried
+        to copy PassOwnPtr in a complicated way. It did nothing different
+        from just returning the PassOwnPtr. This presumably was done because
+        PassRefPtr has issues when copied cross-thread, but there are no
+        similar issues for PassOwnPtr. Someone with more experience than I
+        might be able to remove the specialization altogether, because
+        CrossThreadCopierPassThrough does the right thing in this case.
+
+        * platform/SharedBuffer.cpp:
+        (WebCore::SharedBuffer::adoptPurgeableBuffer): Changed argument to
+        be a PassOwnPtr.
+        (WebCore::SharedBuffer::releasePurgeableBuffer): Changed result to
+        be a PassOwnPtr.
+        * platform/SharedBuffer.h: Updated for changes above.
+
+        * rendering/RenderSVGResourceFilter.cpp:
+        (WebCore::RenderSVGResourceFilter::applyResource): Changed one site
+        to use assignment instead of the set function since there are no raw
+        pointers involved. Changed another site to use leakPtr instead
+        of release.
+
+        * rendering/RenderSVGResourceGradient.cpp:
+        (WebCore::createMaskAndSwapContextForTextGradient): Use assignment
+        instead of the set function since there are no raw pointers involved.
+
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::setContent): Use leakPtr instead of release.
+        (WebCore::RenderStyle::setBoxShadow): Ditto.
+
+        * workers/DefaultSharedWorkerRepository.cpp:
+        (WebCore::DefaultSharedWorkerRepository::connectToWorker):
+        Removed unneeded call to release function in a code path that passes
+        a PassOwnPtr to a function that takes a PassOwnPtr.
+
+        * workers/WorkerContext.cpp:
+        (WebCore::WorkerContext::setTimeout): Changed argument type to PassOwnPtr.
+        (WebCore::WorkerContext::setInterval): Ditto.
+        * workers/WorkerContext.h: Updated for changes above.
+
+        * workers/WorkerMessagingProxy.cpp:
+        (WebCore::WorkerMessagingProxy::postMessageToWorkerObject):
+        (WebCore::WorkerMessagingProxy::postMessageToWorkerContext):
+        Removed unneeded call to release function in code paths that pass
+        a PassOwnPtr to a function that takes a PassOwnPtr.
+
 2010-07-06  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Yury Semikhatsky.

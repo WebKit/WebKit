@@ -35,6 +35,8 @@
 
 namespace WebCore {
 
+using namespace std;
+
 // These values are at the discretion of the user agent.
 static const unsigned defaultPreflightCacheTimeoutSeconds = 5;
 static const unsigned maxPreflightCacheTimeoutSeconds = 600; // Should be short enough to minimize the risk of using a poisoned cache after switching to a secure network.
@@ -143,10 +145,15 @@ CrossOriginPreflightResultCache& CrossOriginPreflightResultCache::shared()
     return cache;
 }
 
-void CrossOriginPreflightResultCache::appendEntry(const String& origin, const KURL& url, CrossOriginPreflightResultCacheItem* preflightResult)
+void CrossOriginPreflightResultCache::appendEntry(const String& origin, const KURL& url, PassOwnPtr<CrossOriginPreflightResultCacheItem> preflightResult)
 {
     ASSERT(isMainThread());
-    m_preflightHashMap.set(std::make_pair(origin, url), preflightResult);
+    CrossOriginPreflightResultCacheItem* resultPtr = preflightResult.leakPtr();
+    pair<CrossOriginPreflightResultHashMap::iterator, bool> addResult = m_preflightHashMap.add(make_pair(origin, url), resultPtr);
+    if (!addResult.second) {
+        // FIXME: We need to delete the old value before replacing with the new one.
+        addResult.first->second = resultPtr;
+    }
 }
 
 bool CrossOriginPreflightResultCache::canSkipPreflight(const String& origin, const KURL& url, bool includeCredentials, const String& method, const HTTPHeaderMap& requestHeaders)
