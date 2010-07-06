@@ -1393,7 +1393,6 @@ resources/tests2.dat:
 34
 36
 38
-42
 47
 48
 49
@@ -1564,25 +1563,6 @@ Expected:
 |     <font>
 |       <input>
 |       <input>
-
-Test 42 of 59 in resources/tests2.dat failed. Input:
-<isindex test=x name=x>
-Got:
-| <html>
-|   <head>
-|   <body>
-Expected:
-| <html>
-|   <head>
-|   <body>
-|     <form>
-|       <hr>
-|       <label>
-|         "This is a searchable index. Insert your search keywords here: "
-|         <input>
-|           name="isindex"
-|           test="x"
-|       <hr>
 
 Test 47 of 59 in resources/tests2.dat failed. Input:
  
@@ -5291,6 +5271,8 @@ Expected:
 |       "3"
 |     <table>
 resources/inbody01.dat: PASS
+
+resources/isindex.dat: PASS
 
 resources/tables01.dat:
 4

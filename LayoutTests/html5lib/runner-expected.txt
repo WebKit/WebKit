@@ -928,7 +928,7 @@ Expected:
 |     <form>
 |       <hr>
 |       <label>
-|         "This is a searchable index. Insert your search keywords here: "
+|         "This is a searchable index. Enter search keywords: "
 |         <input>
 |           name="isindex"
 |           test="x"
@@ -4999,6 +4999,67 @@ Expected:
 |     <table>
 resources/inbody01.dat: PASS
 
+resources/isindex.dat:
+1
+2
+3
+
+Test 1 of 3 in resources/isindex.dat failed. Input:
+<isindex>
+Got:
+| <html>
+|   <head>
+|   <body>
+Expected:
+| <html>
+|   <head>
+|   <body>
+|     <form>
+|       <hr>
+|       <label>
+|         "This is a searchable index. Enter search keywords: "
+|         <input>
+|           name="isindex"
+|       <hr>
+
+Test 2 of 3 in resources/isindex.dat failed. Input:
+<isindex name="A" action="B" prompt="C" foo="D">
+Got:
+| <html>
+|   <head>
+|   <body>
+Expected:
+| <html>
+|   <head>
+|   <body>
+|     <form>
+|       action="B"
+|       <hr>
+|       <label>
+|         "C"
+|         <input>
+|           foo="D"
+|           name="isindex"
+|       <hr>
+
+Test 3 of 3 in resources/isindex.dat failed. Input:
+<form><isindex>
+Got:
+| <html>
+|   <head>
+|   <body>
+|     <form>
+|       <div>
+|         <hr>
+|         "This is a searchable index. Enter search keywords: "
+|         <isindex>
+|           type="khtml_isindex"
+|         <hr>
+Expected:
+| <html>
+|   <head>
+|   <body>
+|     <form>
 resources/tables01.dat:
 3
 7

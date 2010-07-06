@@ -515,7 +515,7 @@ Line: 1 Col: 23 Unexpected start tag isindex. Don't use it!
 |     <form>
 |       <hr>
 |       <label>
-|         "This is a searchable index. Insert your search keywords here: "
+|         "This is a searchable index. Enter search keywords: "
 |         <input>
 |           name="isindex"
 |           test="x"

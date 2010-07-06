@@ -337,9 +337,17 @@ public:
         }
     }
 
-    AtomicHTMLToken(HTMLToken::Type type, AtomicString name)
+    AtomicHTMLToken(HTMLToken::Type type, AtomicString name, PassRefPtr<NamedNodeMap> attributes = 0)
         : m_type(type)
         , m_name(name)
+        , m_attributes(attributes)
+    {
+        ASSERT(usesName());
+    }
+
+    explicit AtomicHTMLToken(const String& characters)
+        : m_type(HTMLToken::Character)
+        , m_data(characters)
     {
     }
 
@@ -347,13 +355,13 @@ public:
 
     const AtomicString& name() const
     {
-        ASSERT(m_type == HTMLToken::StartTag || m_type == HTMLToken::EndTag || m_type == HTMLToken::DOCTYPE);
+        ASSERT(usesName());
         return m_name;
     }
 
     void setName(const AtomicString& name)
     {
-        ASSERT(m_type == HTMLToken::StartTag || m_type == HTMLToken::EndTag || m_type == HTMLToken::DOCTYPE);
+        ASSERT(usesName());
         m_name = name;
     }
 
@@ -363,10 +371,24 @@ public:
         return m_selfClosing;
     }
 
+    Attribute* getAttributeItem(const QualifiedName& attributeName)
+    {
+        ASSERT(usesAttributes());
+        if (!m_attributes)
+            return 0;
+        return m_attributes->getAttributeItem(attributeName);
+    }
+
     NamedNodeMap* attributes() const
     {
-        ASSERT(m_type == HTMLToken::StartTag || m_type == HTMLToken::EndTag);
+        ASSERT(usesAttributes());
         return m_attributes.get();
+    }
+
+    PassRefPtr<NamedNodeMap> takeAtributes()
+    {
+        ASSERT(usesAttributes());
+        return m_attributes.release();
     }
 
     const String& characters() const
@@ -403,6 +425,16 @@ public:
 
 private:
     HTMLToken::Type m_type;
+
+    bool usesName() const
+    {
+        return m_type == HTMLToken::StartTag || m_type == HTMLToken::EndTag || m_type == HTMLToken::DOCTYPE;
+    }
+
+    bool usesAttributes() const
+    {
+        return m_type == HTMLToken::StartTag || m_type == HTMLToken::EndTag;
+    }
 
     // "name" for DOCTYPE, StartTag, and EndTag
     AtomicString m_name;

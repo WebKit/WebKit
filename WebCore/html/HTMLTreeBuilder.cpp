@@ -40,6 +40,7 @@
 #include "HTMLTokenizer.h"
 #include "LegacyHTMLDocumentParser.h"
 #include "LegacyHTMLTreeBuilder.h"
+#include "LocalizedStrings.h"
 #if ENABLE(MATHML)
 #include "MathMLNames.h"
 #endif
@@ -243,7 +244,7 @@ HTMLTreeBuilder::~HTMLTreeBuilder()
 {
 }
 
-static void convertToOldStyle(const AtomicHTMLToken& token, Token& oldStyleToken)
+static void convertToOldStyle(AtomicHTMLToken& token, Token& oldStyleToken)
 {
     switch (token.type()) {
     case HTMLToken::Uninitialized:
@@ -259,7 +260,7 @@ static void convertToOldStyle(const AtomicHTMLToken& token, Token& oldStyleToken
         oldStyleToken.beginTag = (token.type() == HTMLToken::StartTag);
         oldStyleToken.selfClosingTag = token.selfClosing();
         oldStyleToken.tagName = token.name();
-        oldStyleToken.attrs = token.attributes();
+        oldStyleToken.attrs = token.takeAtributes();
         break;
     }
     case HTMLToken::Comment:
@@ -425,7 +426,7 @@ void HTMLTreeBuilder::processDoctypeToken(AtomicHTMLToken& token)
 void HTMLTreeBuilder::insertHTMLStartTagBeforeHTML(AtomicHTMLToken& token)
 {
     RefPtr<Element> element = HTMLHtmlElement::create(m_document);
-    element->setAttributeMap(token.attributes(), m_fragmentScriptingPermission);
+    element->setAttributeMap(token.takeAtributes(), m_fragmentScriptingPermission);
     m_openElements.pushHTMLHtmlElement(attach(m_document, element.release()));
 }
 
@@ -448,12 +449,74 @@ void HTMLTreeBuilder::insertHTMLStartTagInBody(AtomicHTMLToken& token)
     mergeAttributesFromTokenIntoElement(token, m_openElements.htmlElement());
 }
 
+void HTMLTreeBuilder::proesssFakeStartTag(const QualifiedName& tagName, PassRefPtr<NamedNodeMap> attributes)
+{
+    // FIXME: We'll need a fancier conversion than just "localName" for SVG/MathML tags.
+    AtomicHTMLToken fakeToken(HTMLToken::StartTag, tagName.localName(), attributes);
+    processStartTag(fakeToken);
+}
+
+void HTMLTreeBuilder::proesssFakeEndTag(const QualifiedName& tagName)
+{
+    // FIXME: We'll need a fancier conversion than just "localName" for SVG/MathML tags.
+    AtomicHTMLToken fakeToken(HTMLToken::EndTag, tagName.localName());
+    processEndTag(fakeToken);
+}
+
+void HTMLTreeBuilder::processFakeCharacters(const String& characters)
+{
+    AtomicHTMLToken fakeToken(characters);
+    processCharacter(fakeToken);
+}
+
 void HTMLTreeBuilder::processFakePEndTagIfPInScope()
 {
     if (!m_openElements.inScope(pTag.localName()))
         return;
     AtomicHTMLToken endP(HTMLToken::EndTag, pTag.localName());
     processEndTag(endP);
+}
+
+PassRefPtr<NamedNodeMap> HTMLTreeBuilder::attributesForIsindexInput(AtomicHTMLToken& token)
+{
+    RefPtr<NamedNodeMap> attributes = token.takeAtributes();
+    if (!attributes)
+        attributes = NamedNodeMap::create();
+    else {
+        attributes->removeAttribute(nameAttr);
+        attributes->removeAttribute(actionAttr);
+        attributes->removeAttribute(promptAttr);
+    }
+
+    RefPtr<Attribute> mappedAttribute = Attribute::createMapped(nameAttr, isindexTag.localName());
+    attributes->insertAttribute(mappedAttribute.release(), false);
+    return attributes.release();
+}
+
+void HTMLTreeBuilder::processIsindexStartTagForBody(AtomicHTMLToken& token)
+{
+    parseError(token);
+    if (m_formElement)
+        return;
+    notImplemented(); // Acknowledge self-closing flag
+    proesssFakeStartTag(formTag);
+    Attribute* actionAttribute = token.getAttributeItem(actionAttr);
+    if (actionAttribute) {
+        ASSERT(currentElement()->hasTagName(formTag));
+        currentElement()->setAttribute(actionAttr, actionAttribute->value());
+    }
+    proesssFakeStartTag(hrTag);
+    proesssFakeStartTag(labelTag);
+    Attribute* promptAttribute = token.getAttributeItem(promptAttr);
+    if (promptAttribute)
+        processFakeCharacters(promptAttribute->value());
+    else
+        processFakeCharacters(searchableIndexIntroduction());
+    proesssFakeStartTag(inputTag, attributesForIsindexInput(token));
+    notImplemented(); // This second set of characters may be needed by non-english locales.
+    proesssFakeEndTag(labelTag);
+    proesssFakeStartTag(hrTag);
+    proesssFakeEndTag(formTag);
 }
 
 void HTMLTreeBuilder::processStartTag(AtomicHTMLToken& token)
@@ -659,8 +722,7 @@ void HTMLTreeBuilder::processStartTag(AtomicHTMLToken& token)
             return;
         }
         if (token.name() == isindexTag) {
-            parseError(token);
-            notImplemented();
+            processIsindexStartTagForBody(token);
             return;
         }
         if (token.name() == textareaTag) {
@@ -753,8 +815,7 @@ void HTMLTreeBuilder::processStartTag(AtomicHTMLToken& token)
             return;
         }
         if (token.name() == colTag) {
-            AtomicHTMLToken fakeToken(HTMLToken::StartTag, colgroupTag.localName());
-            processStartTag(fakeToken);
+            proesssFakeStartTag(colgroupTag);
             ASSERT(InColumnGroupMode);
             processStartTag(token);
             return;
@@ -766,8 +827,7 @@ void HTMLTreeBuilder::processStartTag(AtomicHTMLToken& token)
             return;
         }
         if (token.name() == tdTag || token.name() == thTag || token.name() == trTag) {
-            AtomicHTMLToken fakeToken(HTMLToken::StartTag, tbodyTag.localName());
-            processStartTag(fakeToken);
+            proesssFakeStartTag(tbodyTag);
             ASSERT(insertionMode() == InTableBodyMode);
             processStartTag(token);
             return;
@@ -815,8 +875,7 @@ void HTMLTreeBuilder::processStartTag(AtomicHTMLToken& token)
         }
         if (token.name() == thTag || token.name() == tdTag) {
             parseError(token);
-            AtomicHTMLToken fakeToken(HTMLToken::StartTag, trTag.localName());
-            processStartTag(fakeToken);
+            proesssFakeStartTag(trTag);
             ASSERT(insertionMode() == InRowMode);
             processStartTag(token);
             return;
@@ -1835,7 +1894,7 @@ void HTMLTreeBuilder::insertScriptElement(AtomicHTMLToken& token)
 {
     ASSERT_UNUSED(token, token.type() == HTMLToken::StartTag);
     RefPtr<HTMLScriptElement> element = HTMLScriptElement::create(scriptTag, m_document, true);
-    element->setAttributeMap(token.attributes(), m_fragmentScriptingPermission);
+    element->setAttributeMap(token.takeAtributes(), m_fragmentScriptingPermission);
     m_openElements.push(attach(currentElement(), element.release()));
     m_tokenizer->setState(HTMLTokenizer::ScriptDataState);
     m_originalInsertionMode = m_insertionMode;
@@ -1859,7 +1918,7 @@ void HTMLTreeBuilder::insertTextNode(AtomicHTMLToken& token)
 PassRefPtr<Element> HTMLTreeBuilder::createElement(AtomicHTMLToken& token)
 {
     RefPtr<Element> element = HTMLElementFactory::createHTMLElement(QualifiedName(nullAtom, token.name(), xhtmlNamespaceURI), m_document, 0);
-    element->setAttributeMap(token.attributes(), m_fragmentScriptingPermission);
+    element->setAttributeMap(token.takeAtributes(), m_fragmentScriptingPermission);
     return element.release();
 }
 
@@ -1932,9 +1991,6 @@ void HTMLTreeBuilder::finished()
         m_legacyTreeBuilder->finished();
         return;
     }
-
-    AtomicHTMLToken eofToken(HTMLToken::EndOfFile, nullAtom);
-    processToken(eofToken);
 
     // Warning, this may delete the parser, so don't try to do anything else after this.
     if (!m_isParsingFragment)

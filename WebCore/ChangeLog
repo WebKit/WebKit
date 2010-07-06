@@ -1,3 +1,50 @@
+2010-07-05  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Add <isindex> support, per HTML5
+        https://bugs.webkit.org/show_bug.cgi?id=41650
+
+        Covered by html5lib/runner.html including a new
+        isindex.dat test suite.
+
+        * html/HTMLToken.h:
+        (WebCore::AtomicHTMLToken::AtomicHTMLToken):
+         - Support passing attributes to the constructor.
+        (WebCore::AtomicHTMLToken::name):
+        (WebCore::AtomicHTMLToken::setName):
+        (WebCore::AtomicHTMLToken::getAttributeItem):
+        (WebCore::AtomicHTMLToken::attributes):
+        (WebCore::AtomicHTMLToken::takeAtributes):
+         - Reduces ref-churn, and makes it possible for callers
+           to modify attributes w/o affecting future uses of the attributes.
+        (WebCore::AtomicHTMLToken::usesName):
+         - Used by ASSERTS.
+        (WebCore::AtomicHTMLToken::usesAttributes):
+         - Used by ASSERTS.
+        * html/HTMLTreeBuilder.cpp:
+        (WebCore::convertToOldStyle):
+         - Can't be const, now that we use takeAttributes()
+        (WebCore::HTMLTreeBuilder::insertHTMLStartTagBeforeHTML):
+        (WebCore::HTMLTreeBuilder::proesssFakeStartTag):
+         - New function.  I'm not sure this is the perfect design
+          (I'd kinda like AtomicHTMLToken to be copyable so we can
+           have create functions for it), but this makes the callsites
+           using fake tokens much more readable.
+        (WebCore::HTMLTreeBuilder::proesssFakeEndTag):
+        (WebCore::HTMLTreeBuilder::processFakeCharacters):
+        (WebCore::HTMLTreeBuilder::attributesForIsindexInput):
+        (WebCore::HTMLTreeBuilder::processIsindexStartTagForBody):
+        (WebCore::HTMLTreeBuilder::processStartTag):
+        (WebCore::HTMLTreeBuilder::insertScriptElement):
+         - Use takeAttributes() for less ref-churn.
+        (WebCore::HTMLTreeBuilder::createElement): ditto
+        (WebCore::HTMLTreeBuilder::finished):
+         - Remove bogus use of AtomicHTMLToken constructor which
+           wasn't even being used now that we support emitting EOF tokens
+           from the Tokenizer directly.
+        * html/HTMLTreeBuilder.h:
+
 2010-07-05  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

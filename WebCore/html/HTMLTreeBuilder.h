@@ -122,8 +122,16 @@ private:
     void processDefaultForAfterHeadMode(AtomicHTMLToken&);
 
     bool processStartTagForInHead(AtomicHTMLToken&);
+
+    PassRefPtr<NamedNodeMap> attributesForIsindexInput(AtomicHTMLToken&);
+    void processIsindexStartTagForBody(AtomicHTMLToken&);
+
     bool processBodyEndTagForInBody(AtomicHTMLToken&);
     void processAnyOtherEndTagForInBody(AtomicHTMLToken&);
+
+    void proesssFakeStartTag(const QualifiedName&, PassRefPtr<NamedNodeMap> attributes = 0);
+    void proesssFakeEndTag(const QualifiedName&);
+    void processFakeCharacters(const String&);
     void processFakePEndTagIfPInScope();
 
     HTMLElementStack::ElementRecord* furthestBlockForFormattingElement(Element*);

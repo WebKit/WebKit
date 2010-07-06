@@ -1,3 +1,17 @@
+2010-07-05  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Add <isindex> support, per HTML5
+        https://bugs.webkit.org/show_bug.cgi?id=41650
+
+        * html5lib/resources/tests2.dat:
+         - Make the expected wording match the HTML5 spec.
+           Not sure why the wording in this test diverged.
+        * html5lib/resources/isindex.dat:
+         - Cover more isindex cases.
+        * html5lib/runner.html:
+
 2010-07-05  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
