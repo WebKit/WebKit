@@ -36,6 +36,7 @@ class CreateBug(AbstractStep):
         return AbstractStep.options() + [
             Options.cc,
             Options.component,
+            Options.blocks,
         ]
 
     def run(self, state):
@@ -45,4 +46,7 @@ class CreateBug(AbstractStep):
         cc = self._options.cc
         if not cc:
             cc = state.get("bug_cc")
-        state["bug_id"] = self._tool.bugs.create_bug(state["bug_title"], state["bug_description"], blocked=state.get("bug_blocked"), component=self._options.component, cc=cc)
+        blocks = self._options.blocks
+        if not blocks:
+            blocks = state.get("bug_blocked")
+        state["bug_id"] = self._tool.bugs.create_bug(state["bug_title"], state["bug_description"], blocked=blocks, component=self._options.component, cc=cc)

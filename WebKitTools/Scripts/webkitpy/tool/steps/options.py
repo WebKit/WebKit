@@ -29,6 +29,7 @@
 from optparse import make_option
 
 class Options(object):
+    blocks = make_option("--blocks", action="store", dest="blocks", default=None, help="Bug number which the created bug blocks.")
     build = make_option("--build", action="store_true", dest="build", default=False, help="Build and run run-webkit-tests before committing.")
     build_style = make_option("--build-style", action="store", dest="build_style", default=None, help="Whether to build debug, release, or both.")
     cc = make_option("--cc", action="store", type="string", dest="cc", help="Comma-separated list of email addresses to carbon-copy.")
