@@ -39,7 +39,7 @@ namespace WTR {
 InjectedBundlePage::InjectedBundlePage(WKBundlePageRef page)
     : m_page(page)
 {
-    WKBundlePageClient client = {
+    WKBundlePageLoaderClient loaderClient = {
         0,
         this,
         _didStartProvisionalLoadForFrame,
@@ -51,12 +51,22 @@ InjectedBundlePage::InjectedBundlePage(WKBundlePageRef page)
         _didReceiveTitleForFrame,
         _didClearWindowForFrame
     };
-    WKBundlePageSetClient(m_page, &client);
+    WKBundlePageSetLoaderClient(m_page, &loaderClient);
+
+    WKBundlePageUIClient uiClient = {
+        0,
+        this,
+        _addMessageToConsole
+    };
+    WKBundlePageSetUIClient(m_page, &uiClient);
+
 }
 
 InjectedBundlePage::~InjectedBundlePage()
 {
 }
+
+// Loader Client Callbacks
 
 void InjectedBundlePage::_didStartProvisionalLoadForFrame(WKBundlePageRef page, WKBundleFrameRef frame, const void *clientInfo)
 {
@@ -161,6 +171,20 @@ void InjectedBundlePage::didClearWindowForFrame(WKBundleFrameRef frame, JSContex
 {
     JSValueRef exception = 0;
     InjectedBundle::shared().layoutTestController()->makeWindowObject(ctx, window, &exception);
+}
+
+// UI Client Callbacks
+
+void InjectedBundlePage::_addMessageToConsole(WKBundlePageRef page, WKStringRef message, uint32_t lineNumber, const void *clientInfo)
+{
+    static_cast<InjectedBundlePage*>(const_cast<void*>(clientInfo))->addMessageToConsole(message, lineNumber);
+}
+
+void InjectedBundlePage::addMessageToConsole(WKStringRef message, uint32_t lineNumber)
+{
+    // FIXME: Strip file: urls.
+    std::auto_ptr<Vector<char> > utf8Message = WKStringToUTF8(message);
+    InjectedBundle::shared().os() << "CONSOLE MESSAGE: line " << lineNumber << ": " << utf8Message->data() << "\n";
 }
 
 } // namespace WTR
