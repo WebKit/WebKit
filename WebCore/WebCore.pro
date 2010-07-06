@@ -840,11 +840,11 @@ SOURCES += \
     page/WindowFeatures.cpp \
     page/XSSAuditor.cpp \
     plugins/PluginData.cpp \
-    plugins/PluginArray.cpp \
-    plugins/Plugin.cpp \
+    plugins/DOMPluginArray.cpp \
+    plugins/DOMPlugin.cpp \
     plugins/PluginMainThreadScheduler.cpp \
-    plugins/MimeType.cpp \
-    plugins/MimeTypeArray.cpp \
+    plugins/DOMMimeType.cpp \
+    plugins/DOMMimeTypeArray.cpp \
     platform/animation/Animation.cpp \
     platform/animation/AnimationList.cpp \
     platform/Arena.cpp \
@@ -1725,13 +1725,13 @@ HEADERS += \
     platform/ThreadTimers.h \
     platform/Timer.h \
     platform/Widget.h \
-    plugins/MimeTypeArray.h \
-    plugins/MimeType.h \
-    plugins/PluginArray.h \
+    plugins/DOMMimeTypeArray.h \
+    plugins/DOMMimeType.h \
+    plugins/DOMPluginArray.h \
     plugins/PluginDatabase.h \
     plugins/PluginData.h \
     plugins/PluginDebug.h \
-    plugins/Plugin.h \
+    plugins/DOMPlugin.h \
     plugins/PluginMainThreadScheduler.h \
     plugins/PluginPackage.h \
     plugins/PluginStream.h \

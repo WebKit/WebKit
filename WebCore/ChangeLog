@@ -1,5 +1,12 @@
 2010-07-06  Anders Carlsson  <andersca@apple.com>
 
+        More build fixes.
+
+        * WebCore.gypi:
+        * WebCore.pro:
+
+2010-07-06  Anders Carlsson  <andersca@apple.com>
+
         Try to fix Qt build.
 
         * WebCore.pro:
