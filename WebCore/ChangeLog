@@ -1,3 +1,9 @@
+2010-07-06  Xan Lopez  <xlopez@igalia.com>
+
+        GTK+ fixes for the DOM plug-in renaming Apocalypse.
+
+        * GNUmakefile.am:
+
 2010-07-06  Anders Carlsson  <andersca@apple.com>
 
         Yet another Windows build fix.

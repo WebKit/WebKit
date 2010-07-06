@@ -507,7 +507,7 @@ webcore_sources += \
 	WebCore/bindings/js/JSNodeListCustom.cpp \
 	WebCore/bindings/js/JSOptionConstructor.cpp \
 	WebCore/bindings/js/JSOptionConstructor.h \
-	WebCore/bindings/js/JSPluginArrayCustom.cpp \
+	WebCore/bindings/js/JSDOMPluginArrayCustom.cpp \
 	WebCore/bindings/js/JSDOMPluginCustom.cpp \
 	WebCore/bindings/js/JSPluginElementFunctions.cpp \
 	WebCore/bindings/js/JSPluginElementFunctions.h \
