@@ -36,6 +36,6 @@ namespace WebCore {
     bool isOnAccessControlSimpleRequestHeaderWhitelist(const String& name, const String& value);
     bool isOnAccessControlResponseHeaderWhitelist(const String&);
 
-    bool passesAccessControlCheck(const ResourceResponse&, bool includeCredentials, SecurityOrigin*);
+    bool passesAccessControlCheck(const ResourceResponse&, bool includeCredentials, SecurityOrigin*, String& errorDescription);
 
 } // namespace WebCore

@@ -92,7 +92,7 @@ bool isOnAccessControlResponseHeaderWhitelist(const String& name)
     return allowedCrossOriginResponseHeaders->contains(name);
 }
 
-bool passesAccessControlCheck(const ResourceResponse& response, bool includeCredentials, SecurityOrigin* securityOrigin)
+bool passesAccessControlCheck(const ResourceResponse& response, bool includeCredentials, SecurityOrigin* securityOrigin, String& errorDescription)
 {
     // A wildcard Access-Control-Allow-Origin can not be used if credentials are to be sent,
     // even with Access-Control-Allow-Credentials set to true.
@@ -100,17 +100,25 @@ bool passesAccessControlCheck(const ResourceResponse& response, bool includeCred
     if (accessControlOriginString == "*" && !includeCredentials)
         return true;
 
-    if (securityOrigin->isUnique())
+    if (securityOrigin->isUnique()) {
+        errorDescription = "Cannot make any requests from " + securityOrigin->toString() + ".";
         return false;
+    }
 
+    // FIXME: Access-Control-Allow-Origin can contain a list of origins.
     RefPtr<SecurityOrigin> accessControlOrigin = SecurityOrigin::createFromString(accessControlOriginString);
-    if (!accessControlOrigin->isSameSchemeHostPort(securityOrigin))
+    if (!accessControlOrigin->isSameSchemeHostPort(securityOrigin)) {
+        errorDescription = (accessControlOriginString == "*") ? "Cannot use wildcard in Access-Control-Allow-Origin when credentials flag is true."
+            : "Origin " + securityOrigin->toString() + " is not allowed by Access-Control-Allow-Origin response header.";
         return false;
+    }
 
     if (includeCredentials) {
         const String& accessControlCredentialsString = response.httpHeaderField("Access-Control-Allow-Credentials");
-        if (accessControlCredentialsString != "true")
+        if (accessControlCredentialsString != "true") {
+            errorDescription = "Credentials flag is true, but Access-Control-Allow-Credentials response header is not \"true\".";
             return false;
+        }
     }
 
     return true;

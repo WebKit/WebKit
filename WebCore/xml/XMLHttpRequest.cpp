@@ -872,6 +872,10 @@ void XMLHttpRequest::didFail(const ResourceError& error)
         return;
     }
 
+    // Network failures are already reported to Web Inspector by ResourceLoader.
+    if (error.domain() == errorDomainWebKit)
+        reportUnsafeUsage(scriptExecutionContext(), "XMLHttpRequest cannot load " + error.failingURL() + ". " + error.localizedDescription());
+
     m_exceptionCode = XMLHttpRequestException::NETWORK_ERR;
     networkError();
 }

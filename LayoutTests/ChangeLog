@@ -1,3 +1,35 @@
+2010-07-06  Alexey Proskuryakov  <ap@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=41156
+        Cross origin XMLHttpRequest should log the reason why connection failed
+
+        Updated tests to include new console messages.
+
+        * http/tests/xmlhttprequest/access-control-basic-denied-expected.txt:
+        * http/tests/xmlhttprequest/access-control-basic-denied-preflight-cache-expected.txt:
+        * http/tests/xmlhttprequest/access-control-basic-get-fail-non-simple-expected.txt:
+        * http/tests/xmlhttprequest/access-control-basic-non-simple-deny-cached-expected.txt:
+        * http/tests/xmlhttprequest/access-control-basic-post-fail-non-simple-content-type-expected.txt:
+        * http/tests/xmlhttprequest/access-control-preflight-async-header-denied-expected.txt:
+        * http/tests/xmlhttprequest/access-control-preflight-async-method-denied-expected.txt:
+        * http/tests/xmlhttprequest/access-control-preflight-sync-header-denied-expected.txt:
+        * http/tests/xmlhttprequest/access-control-preflight-sync-method-denied-expected.txt:
+        * http/tests/xmlhttprequest/access-control-sandboxed-iframe-denied-expected.txt:
+        * http/tests/xmlhttprequest/access-control-sandboxed-iframe-denied-without-wildcard-expected.txt:
+        * http/tests/xmlhttprequest/cross-origin-no-authorization-expected.txt:
+        * http/tests/xmlhttprequest/cross-site-denied-response-expected.txt:
+        * http/tests/xmlhttprequest/cross-site-denied-response-sync-2-expected.txt:
+        * http/tests/xmlhttprequest/cross-site-denied-response-sync-expected.txt:
+        * http/tests/xmlhttprequest/onerror-event-expected.txt:
+        * http/tests/xmlhttprequest/origin-whitelisting-https-expected.txt:
+        * http/tests/xmlhttprequest/origin-whitelisting-ip-addresses-with-subdomains-expected.txt:
+        * http/tests/xmlhttprequest/origin-whitelisting-removal-expected.txt:
+        * http/tests/xmlhttprequest/simple-cross-origin-denied-events-expected.txt:
+        * http/tests/xmlhttprequest/simple-cross-origin-denied-events-post-expected.txt:
+        * http/tests/xmlhttprequest/simple-cross-origin-denied-events-post-sync-expected.txt:
+        * http/tests/xmlhttprequest/simple-cross-origin-denied-events-sync-expected.txt:
+        * http/tests/xmlhttprequest/simple-cross-origin-progress-events-expected.txt:
+
 2010-07-06  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

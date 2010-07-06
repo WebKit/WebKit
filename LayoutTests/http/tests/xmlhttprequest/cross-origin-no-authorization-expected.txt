@@ -1,3 +1,5 @@
+CONSOLE MESSAGE: line 1: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/cross-origin-no-authorization.php. Credentials flag is true, but Access-Control-Allow-Credentials response header is not "true".
+CONSOLE MESSAGE: line 1: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/cross-origin-no-authorization.php. Credentials flag is true, but Access-Control-Allow-Credentials response header is not "true".
 Start
 Trying different ways to access a password protected resource from another origin. The UA already has login and password for this protection space.
 

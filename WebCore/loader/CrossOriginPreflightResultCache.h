@@ -46,9 +46,9 @@ namespace WebCore {
         {
         }
 
-        bool parse(const ResourceResponse&);
-        bool allowsCrossOriginMethod(const String&) const;
-        bool allowsCrossOriginHeaders(const HTTPHeaderMap&) const;
+        bool parse(const ResourceResponse&, String& errorDescription);
+        bool allowsCrossOriginMethod(const String&, String& errorDescription) const;
+        bool allowsCrossOriginHeaders(const HTTPHeaderMap&, String& errorDescription) const;
         bool allowsRequest(bool includeCredentials, const String& method, const HTTPHeaderMap& requestHeaders) const;
 
     private:
