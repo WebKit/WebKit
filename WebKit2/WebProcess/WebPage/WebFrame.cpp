@@ -162,6 +162,14 @@ String WebFrame::url() const
     return m_coreFrame->loader()->url().string();
 }
 
+String WebFrame::innerText() const
+{
+    if (!m_coreFrame)
+        return String();
+
+    return m_coreFrame->document()->documentElement()->innerText();
+}
+
 static void childFrameRef(const void* frame)
 {
     static_cast<WebFrame*>(const_cast<void*>(frame))->ref();

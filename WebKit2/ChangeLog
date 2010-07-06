@@ -1,3 +1,18 @@
+2010-07-06  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Patch for https://bugs.webkit.org/show_bug.cgi?id=41707
+        Add ability to dump frame inner text for the test runner
+
+        * WebProcess/InjectedBundle/API/c/WKBundleFrame.cpp:
+        (WKBundleFrameCopyInnerText):
+        * WebProcess/InjectedBundle/API/c/WKBundleFrame.h:
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::innerText):
+        * WebProcess/WebPage/WebFrame.h:
+        * mac/WebKit2.exp:
+
 2010-07-06  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.
