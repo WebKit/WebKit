@@ -104,8 +104,8 @@ private:
 
     void passTokenToLegacyParser(HTMLToken&);
 
-    // Specialized functions for processing the different types of tokens.
     void processToken(AtomicHTMLToken&);
+
     void processDoctypeToken(AtomicHTMLToken&);
     void processStartTag(AtomicHTMLToken&);
     void processEndTag(AtomicHTMLToken&);
@@ -113,7 +113,28 @@ private:
     void processCharacter(AtomicHTMLToken&);
     void processEndOfFile(AtomicHTMLToken&);
 
+    bool processStartTagForInHead(AtomicHTMLToken&);
+    void processStartTagForInBody(AtomicHTMLToken&);
+    void processStartTagForInTable(AtomicHTMLToken&);
+    void processEndTagForInBody(AtomicHTMLToken&);
+    void processEndTagForInTable(AtomicHTMLToken&);
+
+    void processIsindexStartTagForInBody(AtomicHTMLToken&);
+    bool processBodyEndTagForInBody(AtomicHTMLToken&);
+    bool processCaptionEndTagForInCaption();
+    bool processColgroupEndTagForInColumnGroup();
+    bool processTrEndTagForInRow();
+    // FIXME: This function should be inlined into its one call site or it
+    // needs to assert which tokens it can be called with.
+    void processAnyOtherEndTagForInBody(AtomicHTMLToken&);
+
+    void processFakeStartTag(const QualifiedName&, PassRefPtr<NamedNodeMap> attributes = 0);
+    void processFakeEndTag(const QualifiedName&);
+    void processFakeCharacters(const String&);
+    void processFakePEndTagIfPInScope();
+
     // Default processing for the different insertion modes.
+    // FIXME: These functions need to be renamed to remove "process" from their names.
     void processDefaultForInitialMode(AtomicHTMLToken&);
     void processDefaultForBeforeHTMLMode(AtomicHTMLToken&);
     void processDefaultForBeforeHeadMode(AtomicHTMLToken&);
@@ -121,21 +142,7 @@ private:
     void processDefaultForInHeadNoscriptMode(AtomicHTMLToken&);
     void processDefaultForAfterHeadMode(AtomicHTMLToken&);
 
-    bool processStartTagForInHead(AtomicHTMLToken&);
-    void processStartTagForInBody(AtomicHTMLToken&);
-    void processEndTagForInBody(AtomicHTMLToken&);
     PassRefPtr<NamedNodeMap> attributesForIsindexInput(AtomicHTMLToken&);
-    void processIsindexStartTagForBody(AtomicHTMLToken&);
-    bool processBodyEndTagForInBody(AtomicHTMLToken&);
-    bool processCaptionEndTagForInCaption();
-    bool processColgroupEndTagForInColumnGroup();
-    bool processTrEndTagForInRow();
-    void processAnyOtherEndTagForInBody(AtomicHTMLToken&);
-
-    void processFakeStartTag(const QualifiedName&, PassRefPtr<NamedNodeMap> attributes = 0);
-    void processFakeEndTag(const QualifiedName&);
-    void processFakeCharacters(const String&);
-    void processFakePEndTagIfPInScope();
 
     HTMLElementStack::ElementRecord* furthestBlockForFormattingElement(Element*);
     void findFosterParentFor(Element*);

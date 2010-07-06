@@ -62,6 +62,7 @@ inline bool isListItemScopeMarker(Element* element)
         || element->hasTagName(olTag)
         || element->hasTagName(ulTag);
 }
+
 inline bool isTableScopeMarker(Element* element)
 {
     return element->hasTagName(tableTag)

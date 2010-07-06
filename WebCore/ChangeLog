@@ -1,3 +1,28 @@
+2010-07-06  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Implement InTableBodyMode
+        https://bugs.webkit.org/show_bug.cgi?id=41671
+
+        In the process of implementing this patch, Eric and I discussed some of
+        the high-level organization of the HTMLTreeBuilder class.  We'd like to
+        split it up into smaller pieces.  In the meantime, I've reordered some
+        of the declarations in the header to make the relations between the
+        different kinds of functions clearer.
+
+        * html/HTMLElementStack.cpp:
+        * html/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::processIsindexStartTagForInBody):
+        (WebCore::HTMLTreeBuilder::processStartTagForInBody):
+        (WebCore::HTMLTreeBuilder::processStartTagForInTable):
+        (WebCore::HTMLTreeBuilder::processStartTag):
+        (WebCore::HTMLTreeBuilder::processEndTagForInTable):
+        (WebCore::HTMLTreeBuilder::processEndTag):
+        (WebCore::HTMLTreeBuilder::processCharacter):
+        (WebCore::HTMLTreeBuilder::processEndOfFile):
+        * html/HTMLTreeBuilder.h:
+
 2010-07-06  Leandro Pereira  <leandro@profusion.mobi>
 
         Unreviewed build fix.
