@@ -90,11 +90,6 @@ class StorageArea;
 class InspectorApplicationCacheAgent;
 #endif
 
-#if ENABLE(WEB_SOCKETS)
-class WebSocketHandshakeRequest;
-class WebSocketHandshakeResponse;
-#endif
-
 class InspectorController
 #if ENABLE(JAVASCRIPT_DEBUGGER)
                           : ScriptDebugListener, public Noncopyable
@@ -219,12 +214,6 @@ public:
     void getDOMStorageEntries(long callId, long storageId);
     void setDOMStorageItem(long callId, long storageId, const String& key, const String& value);
     void removeDOMStorageItem(long callId, long storageId, const String& key);
-#endif
-#if ENABLE(WEB_SOCKETS)
-    void didCreateWebSocket(unsigned long identifier, const KURL& requestURL, const KURL& documentURL);
-    void willSendWebSocketHandshakeRequest(unsigned long identifier, const WebSocketHandshakeRequest&);
-    void didReceiveWebSocketHandshakeResponse(unsigned long identifier, const WebSocketHandshakeResponse&);
-    void didCloseWebSocket(unsigned long identifier);
 #endif
 
     const ResourcesMap& resources() const { return m_resources; }
