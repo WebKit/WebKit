@@ -325,11 +325,11 @@ PassRefPtr<RenderStyle> SVGStyledElement::resolveStyle(RenderStyle* parentStyle)
 
 PassRefPtr<CSSValue> SVGStyledElement::getPresentationAttribute(const String& name)
 {
-    if (!mappedAttributes())
+    if (!attributeMap())
         return 0;
 
     QualifiedName attributeName(nullAtom, name, nullAtom);
-    Attribute* attr = mappedAttributes()->getAttributeItem(attributeName);
+    Attribute* attr = attributeMap()->getAttributeItem(attributeName);
     if (!attr || !attr->isMappedAttribute() || !attr->style())
         return 0;
 

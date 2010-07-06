@@ -1,3 +1,47 @@
+2010-07-06  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        Simplify access to element attribute map, removing unneeded functions
+        https://bugs.webkit.org/show_bug.cgi?id=41703
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::canShareStyleWithElement): Use the
+        attributeMap function instead of the mappedAttributes function.
+        (WebCore::CSSStyleSelector::styleForElement): Ditto.
+
+        * dom/Element.cpp:
+        (WebCore::Element::~Element): Renamed namedAttrMap to m_attributeMap.
+        (WebCore::Element::removeAttribute): Ditto.
+        (WebCore::Element::getAttribute): Ditto.
+        (WebCore::Element::setAttribute): Ditto.
+        (WebCore::Element::setAttributeMap): Ditto.
+        (WebCore::Element::hasAttributes): Ditto.
+        (WebCore::Element::createAttributeMap): Ditto.
+        (WebCore::Element::insertedIntoDocument): Ditto.
+        (WebCore::Element::removedFromDocument): Ditto.
+        (WebCore::Element::getURLAttribute): Ditto.
+
+        * dom/Element.h: Removed unneeded virtual attributes function.
+        Made read-only argument to attributes function default to false.
+        (Later, we'll eliminate this.) Renamed namedAttrMap to m_attributeMap
+        and made it private instead of protected.
+
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::attributeChanged): Use attributeMap function
+        instead of namedAttrMap data member or mappedAttributes function.
+        (WebCore::StyledElement::classAttributeChanged): Ditto.
+        (WebCore::StyledElement::parseMappedAttribute): Ditto.
+
+        * dom/StyledElement.h: Removed mappedAttributes function and changed
+        callers to use attributeMap function instead.
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::setInputType): Use attributeMap instead of
+        mappedAttributes.
+        * svg/SVGStyledElement.cpp:
+        (WebCore::SVGStyledElement::getPresentationAttribute): Ditto.
+
 2010-07-06  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

@@ -148,8 +148,8 @@ void StyledElement::attributeChanged(Attribute* attr, bool preserveDecls)
     if (attr->decl() && !preserveDecls) {
         attr->setDecl(0);
         setNeedsStyleRecalc();
-        if (namedAttrMap)
-            mappedAttributes()->declRemoved();
+        if (attributeMap())
+            attributeMap()->declRemoved();
     }
 
     bool checkDecl = true;
@@ -158,8 +158,8 @@ void StyledElement::attributeChanged(Attribute* attr, bool preserveDecls)
     if (preserveDecls) {
         if (attr->decl()) {
             setNeedsStyleRecalc();
-            if (namedAttrMap)
-                mappedAttributes()->declAdded();
+            if (attributeMap())
+                attributeMap()->declAdded();
             checkDecl = false;
         }
     } else if (!attr->isNull() && entry != eNone) {
@@ -167,8 +167,8 @@ void StyledElement::attributeChanged(Attribute* attr, bool preserveDecls)
         if (decl) {
             attr->setDecl(decl);
             setNeedsStyleRecalc();
-            if (namedAttrMap)
-                mappedAttributes()->declAdded();
+            if (attributeMap())
+                attributeMap()->declAdded();
             checkDecl = false;
         } else
             needToParse = true;
@@ -191,8 +191,8 @@ void StyledElement::attributeChanged(Attribute* attr, bool preserveDecls)
         attr->decl()->setMappedState(entry, attr->name(), attr->value());
         attr->decl()->setParent(0);
         attr->decl()->setNode(0);
-        if (namedAttrMap)
-            mappedAttributes()->declAdded();
+        if (attributeMap())
+            attributeMap()->declAdded();
     }
 
     updateAfterAttributeChanged(attr);
@@ -220,8 +220,8 @@ void StyledElement::classAttributeChanged(const AtomicString& newClassString)
     if (hasClass)
         attributes()->setClass(newClassString);
     else {
-        if (namedAttrMap)    
-            namedAttrMap->clearClass();
+        if (attributeMap())    
+            attributeMap()->clearClass();
     }
     setNeedsStyleRecalc();
     dispatchSubtreeModifiedEvent();
@@ -231,13 +231,13 @@ void StyledElement::parseMappedAttribute(Attribute* attr)
 {
     if (isIdAttributeName(attr->name())) {
         setHasID(!attr->isNull());
-        if (namedAttrMap) {
+        if (attributeMap()) {
             if (attr->isNull())
-                namedAttrMap->setIdForStyleResolution(nullAtom);
+                attributeMap()->setIdForStyleResolution(nullAtom);
             else if (document()->inCompatMode())
-                namedAttrMap->setIdForStyleResolution(attr->value().lower());
+                attributeMap()->setIdForStyleResolution(attr->value().lower());
             else
-                namedAttrMap->setIdForStyleResolution(attr->value());
+                attributeMap()->setIdForStyleResolution(attr->value());
         }
         setNeedsStyleRecalc();
     } else if (attr->name() == classAttr)

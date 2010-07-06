@@ -70,8 +70,8 @@ PassRefPtr<Element> Element::create(const QualifiedName& tagName, Document* docu
 
 Element::~Element()
 {
-    if (namedAttrMap)
-        namedAttrMap->detachFromElement();
+    if (m_attributeMap)
+        m_attributeMap->detachFromElement();
 }
 
 inline ElementRareData* Element::rareData() const
@@ -165,9 +165,9 @@ PassRefPtr<Element> Element::cloneElementWithoutChildren()
 
 void Element::removeAttribute(const QualifiedName& name, ExceptionCode& ec)
 {
-    if (namedAttrMap) {
+    if (m_attributeMap) {
         ec = 0;
-        namedAttrMap->removeNamedItem(name, ec);
+        m_attributeMap->removeNamedItem(name, ec);
         if (ec == NOT_FOUND_ERR)
             ec = 0;
     }
@@ -193,12 +193,6 @@ void Element::setBooleanAttribute(const QualifiedName& name, bool b)
         ExceptionCode ex;
         removeAttribute(name, ex);
     }
-}
-
-// Virtual function, defined in base class.
-NamedNodeMap* Element::attributes() const
-{
-    return attributes(false);
 }
 
 Node::NodeType Element::nodeType() const
@@ -526,8 +520,8 @@ const AtomicString& Element::getAttribute(const String& name) const
     }
 #endif
 
-    if (namedAttrMap) {
-        if (Attribute* attribute = namedAttrMap->getAttributeItem(name, ignoreCase))
+    if (m_attributeMap) {
+        if (Attribute* attribute = m_attributeMap->getAttributeItem(name, ignoreCase))
             return attribute->value();
     }
 
@@ -560,9 +554,9 @@ void Element::setAttribute(const AtomicString& name, const AtomicString& value, 
         updateId(old ? old->value() : nullAtom, value);
 
     if (old && value.isNull())
-        namedAttrMap->removeAttribute(old->name());
+        m_attributeMap->removeAttribute(old->name());
     else if (!old && !value.isNull())
-        namedAttrMap->addAttribute(createAttribute(QualifiedName(nullAtom, localName, nullAtom), value));
+        m_attributeMap->addAttribute(createAttribute(QualifiedName(nullAtom, localName, nullAtom), value));
     else if (old && !value.isNull()) {
         old->setValue(value);
         attributeChanged(old);
@@ -589,9 +583,9 @@ void Element::setAttribute(const QualifiedName& name, const AtomicString& value,
         updateId(old ? old->value() : nullAtom, value);
 
     if (old && value.isNull())
-        namedAttrMap->removeAttribute(name);
+        m_attributeMap->removeAttribute(name);
     else if (!old && !value.isNull())
-        namedAttrMap->addAttribute(createAttribute(name, value));
+        m_attributeMap->addAttribute(createAttribute(name, value));
     else if (old) {
         old->setValue(value);
         attributeChanged(old);
@@ -670,38 +664,38 @@ void Element::setAttributeMap(PassRefPtr<NamedNodeMap> list, FragmentScriptingPe
     // If setting the whole map changes the id attribute, we need to call updateId.
 
     const QualifiedName& idName = document()->idAttributeName();
-    Attribute* oldId = namedAttrMap ? namedAttrMap->getAttributeItem(idName) : 0;
+    Attribute* oldId = m_attributeMap ? m_attributeMap->getAttributeItem(idName) : 0;
     Attribute* newId = list ? list->getAttributeItem(idName) : 0;
 
     if (oldId || newId)
         updateId(oldId ? oldId->value() : nullAtom, newId ? newId->value() : nullAtom);
 
-    if (namedAttrMap)
-        namedAttrMap->m_element = 0;
+    if (m_attributeMap)
+        m_attributeMap->m_element = 0;
 
-    namedAttrMap = list;
+    m_attributeMap = list;
 
-    if (namedAttrMap) {
-        namedAttrMap->m_element = this;
+    if (m_attributeMap) {
+        m_attributeMap->m_element = this;
         // If the element is created as result of a paste or drag-n-drop operation
         // we want to remove all the script and event handlers.
         if (scriptingPermission == FragmentScriptingNotAllowed) {
             unsigned i = 0;
-            while (i < namedAttrMap->length()) {
-                const QualifiedName& attributeName = namedAttrMap->m_attributes[i]->name();
+            while (i < m_attributeMap->length()) {
+                const QualifiedName& attributeName = m_attributeMap->m_attributes[i]->name();
                 if (isEventHandlerAttribute(attributeName)) {
-                    namedAttrMap->m_attributes.remove(i);
+                    m_attributeMap->m_attributes.remove(i);
                     continue;
                 }
 
-                if (isAttributeToRemove(attributeName, namedAttrMap->m_attributes[i]->value()))
-                    namedAttrMap->m_attributes[i]->setValue(nullAtom);
+                if (isAttributeToRemove(attributeName, m_attributeMap->m_attributes[i]->value()))
+                    m_attributeMap->m_attributes[i]->setValue(nullAtom);
                 i++;
             }
         }
-        unsigned len = namedAttrMap->length();
+        unsigned len = m_attributeMap->length();
         for (unsigned i = 0; i < len; i++)
-            attributeChanged(namedAttrMap->m_attributes[i].get());
+            attributeChanged(m_attributeMap->m_attributes[i].get());
         // FIXME: What about attributes that were in the old map that are not in the new map?
     }
 }
@@ -716,7 +710,7 @@ bool Element::hasAttributes() const
         updateAnimatedSVGAttribute(anyQName());
 #endif
 
-    return namedAttrMap && namedAttrMap->length() > 0;
+    return m_attributeMap && m_attributeMap->length();
 }
 
 String Element::nodeName() const
@@ -759,7 +753,7 @@ KURL Element::baseURI() const
 
 void Element::createAttributeMap() const
 {
-    namedAttrMap = NamedNodeMap::create(const_cast<Element*>(this));
+    m_attributeMap = NamedNodeMap::create(const_cast<Element*>(this));
 }
 
 bool Element::isURLAttribute(Attribute*) const
@@ -792,8 +786,8 @@ void Element::insertedIntoDocument()
     ContainerNode::insertedIntoDocument();
 
     if (hasID()) {
-        if (NamedNodeMap* attrs = namedAttrMap.get()) {
-            Attribute* idItem = attrs->getAttributeItem(document()->idAttributeName());
+        if (m_attributeMap) {
+            Attribute* idItem = m_attributeMap->getAttributeItem(document()->idAttributeName());
             if (idItem && !idItem->isNull())
                 updateId(nullAtom, idItem->value());
         }
@@ -803,8 +797,8 @@ void Element::insertedIntoDocument()
 void Element::removedFromDocument()
 {
     if (hasID()) {
-        if (NamedNodeMap* attrs = namedAttrMap.get()) {
-            Attribute* idItem = attrs->getAttributeItem(document()->idAttributeName());
+        if (m_attributeMap) {
+            Attribute* idItem = m_attributeMap->getAttributeItem(document()->idAttributeName());
             if (idItem && !idItem->isNull())
                 updateId(idItem->value(), nullAtom);
         }
@@ -1231,8 +1225,8 @@ void Element::removeAttribute(const String& name, ExceptionCode& ec)
 {
     String localName = shouldIgnoreAttributeCase(this) ? name.lower() : name;
 
-    if (namedAttrMap) {
-        namedAttrMap->removeNamedItem(localName, ec);
+    if (m_attributeMap) {
+        m_attributeMap->removeNamedItem(localName, ec);
         if (ec == NOT_FOUND_ERR)
             ec = 0;
     }
@@ -1532,8 +1526,8 @@ DOMStringMap* Element::dataset()
 KURL Element::getURLAttribute(const QualifiedName& name) const
 {
 #if !ASSERT_DISABLED
-    if (namedAttrMap) {
-        if (Attribute* attribute = namedAttrMap->getAttributeItem(name))
+    if (m_attributeMap) {
+        if (Attribute* attribute = m_attributeMap->getAttributeItem(name))
             ASSERT(isURLAttribute(attribute));
     }
 #endif
