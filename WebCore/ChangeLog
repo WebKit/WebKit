@@ -2,6 +2,22 @@
 
         Reviewed by Sam Weinig.
 
+        Reproducible crash with Optimize Legibility extension
+        https://bugs.webkit.org/show_bug.cgi?id=41585
+
+        Test: fast/css/text-rendering-priority.html
+
+        Moved the text-rendering CSS property to the “high priority” group, because applying it
+        during style selection invalidates the font.
+
+        * css/CSSPropertyNames.in: Moved text-rendering to the “high priority” section at the top.
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyDeclarations): Updated compile-time assertion.
+
+2010-07-05  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam Weinig.
+
         optimizeLegibility doesn't play nice with fonts that do not have a space glyph
         https://bugs.webkit.org/show_bug.cgi?id=41599
 

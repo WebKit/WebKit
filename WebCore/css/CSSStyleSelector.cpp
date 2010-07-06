@@ -2920,7 +2920,7 @@ void CSSStyleSelector::applyDeclarations(bool isImportant, int startIndex, int e
 
                 if (applyFirst) {
                     COMPILE_ASSERT(firstCSSProperty == CSSPropertyColor, CSS_color_is_first_property);
-                    COMPILE_ASSERT(CSSPropertyZoom == CSSPropertyColor + 10, CSS_zoom_is_end_of_first_prop_range);
+                    COMPILE_ASSERT(CSSPropertyZoom == CSSPropertyColor + 11, CSS_zoom_is_end_of_first_prop_range);
                     COMPILE_ASSERT(CSSPropertyLineHeight == CSSPropertyZoom + 1, CSS_line_height_is_after_zoom);
 
                     // give special priority to font-xxx, color properties, etc

@@ -1,3 +1,13 @@
+2010-07-05  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Reproducible crash with Optimize Legibility extension
+        https://bugs.webkit.org/show_bug.cgi?id=41585
+
+        * fast/css/text-rendering-priority-expected.txt: Added.
+        * fast/css/text-rendering-priority.html: Added.
+
 2010-07-05  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by Dan Bernstein.
