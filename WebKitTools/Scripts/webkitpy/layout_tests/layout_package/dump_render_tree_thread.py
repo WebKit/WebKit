@@ -429,7 +429,8 @@ class TestShellThread(threading.Thread):
         # previous run will be copied into the baseline.)
         image_hash = test_info.image_hash()
         if (image_hash and
-            (self._test_args.new_baseline or self._test_args.reset_results)):
+            (self._test_args.new_baseline or self._test_args.reset_results or
+            not self._options.pixel_tests)):
             image_hash = ""
         start = time.time()
         crash, timeout, actual_checksum, output, error = \
