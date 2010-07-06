@@ -1,5 +1,11 @@
 2010-07-06  Anders Carlsson  <andersca@apple.com>
 
+        Yet another Windows build fix.
+
+        * DerivedSources.cpp:
+
+2010-07-06  Anders Carlsson  <andersca@apple.com>
+
         Fix Windows build.
 
         * WebCore.vcproj/WebCore.vcproj:
