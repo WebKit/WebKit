@@ -1,3 +1,13 @@
+2010-07-05  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Crash reading past end of block in UniscribeController::shapeAndPlaceItem
+        https://bugs.webkit.org/show_bug.cgi?id=41554
+
+        * platform/win/fast/text/uniscribe-item-boundary-crash-expected.txt: Added.
+        * platform/win/fast/text/uniscribe-item-boundary-crash.html: Added.
+
 2010-07-05  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.
