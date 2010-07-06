@@ -1,3 +1,13 @@
+2010-07-06  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: convert script offset to webkit format in v8 ScriptDebugServer
+        https://bugs.webkit.org/show_bug.cgi?id=41696
+
+        * bindings/v8/ScriptDebugServer.cpp:
+        (WebCore::ScriptDebugServer::dispatchDidParseSource):
+
 2010-07-06  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
