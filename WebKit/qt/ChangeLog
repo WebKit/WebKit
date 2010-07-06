@@ -1,5 +1,15 @@
 2010-07-06  Darin Adler  <darin@apple.com>
 
+        Fix crash caused by my fix to the Qt build.
+
+        * WebCoreSupport/InspectorClientQt.cpp:
+        (WebCore::InspectorFrontendClientQt::closeWindow): Release pointer into
+        a local OwnPtr instead of calling clear. Another fix, probably better,
+        would be to change OwnPtr::clear to zero out the pointer before deleting,
+        but that affects many more call sites, so I will do that separately.
+
+2010-07-06  Darin Adler  <darin@apple.com>
+
         Fix Qt build.
 
         * WebCoreSupport/InspectorClientQt.cpp:
