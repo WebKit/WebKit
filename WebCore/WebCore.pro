@@ -350,13 +350,13 @@ SOURCES += \
     bindings/js/JSWebKitPointCustom.cpp \
     bindings/js/JSXMLHttpRequestCustom.cpp \
     bindings/js/JSXMLHttpRequestUploadCustom.cpp \
-    bindings/js/JSPluginCustom.cpp \
-    bindings/js/JSPluginArrayCustom.cpp \
+    bindings/js/JSDOMPluginCustom.cpp \
+    bindings/js/JSDOMPluginArrayCustom.cpp \
     bindings/js/JSMessageChannelCustom.cpp \
     bindings/js/JSMessageEventCustom.cpp \
     bindings/js/JSMessagePortCustom.cpp \
     bindings/js/JSMessagePortCustom.h \
-    bindings/js/JSMimeTypeArrayCustom.cpp \
+    bindings/js/JSDOMMimeTypeArrayCustom.cpp \
     bindings/js/JSDOMBinding.cpp \
     bindings/js/JSEventListener.cpp \
     bindings/js/JSLazyEventListener.cpp \

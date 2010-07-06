@@ -1,5 +1,11 @@
 2010-07-06  Anders Carlsson  <andersca@apple.com>
 
+        Try to fix Qt build.
+
+        * WebCore.pro:
+
+2010-07-06  Anders Carlsson  <andersca@apple.com>
+
         Attempt to fix GTK+ build.
 
         * GNUmakefile.am:
