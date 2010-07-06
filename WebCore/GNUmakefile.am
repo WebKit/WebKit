@@ -319,7 +319,7 @@ IDL_BINDINGS += \
 	WebCore/plugins/DOMMimeType.idl \
 	WebCore/plugins/DOMMimeTypeArray.idl \
 	WebCore/plugins/DOMPlugin.idl \
-	WebCore/plugins/DPOMPluginArray.idl \
+	WebCore/plugins/DOMPluginArray.idl \
 	WebCore/workers/AbstractWorker.idl \
 	WebCore/workers/DedicatedWorkerContext.idl \
 	WebCore/workers/SharedWorker.idl \
