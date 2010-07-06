@@ -5468,8 +5468,9 @@ Expected:
 |         <form>
 resources/webkit01.dat:
 17
+31
 
-Test 17 of 30 in resources/webkit01.dat failed. Input:
+Test 17 of 31 in resources/webkit01.dat failed. Input:
 <A>test< /A>
 Got:
 | <html>
@@ -5484,6 +5485,36 @@ Expected:
 |   <body>
 |     <a>
 |       "test< /A>"
+
+Test 31 of 31 in resources/webkit01.dat failed. Input:
+<select><option>A<select><option>B<select><option>C<select><option>D<select><option>E<select><option>F<select><option>G<select>
+Got:
+| <html>
+|   <head>
+|   <body>
+|     <select>
+Expected:
+| <html>
+|   <head>
+|   <body>
+|     <select>
+|       <option>
+|         "A"
+|     <option>
+|       "B"
+|       <select>
+|         <option>
+|           "C"
+|     <option>
+|       "D"
+|       <select>
+|         <option>
+|           "E"
+|     <option>
+|       "F"
+|       <select>
+|         <option>
+|           "G"
 resources/doctype01.dat: PASS
 
 resources/scriptdata01.dat: PASS

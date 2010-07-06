@@ -353,3 +353,29 @@ console.log("FOO<span>BAR</span>BAZ");
 |     "C"
 | <!-- 5 -->
 | <!-- 6 -->
+
+#data
+<select><option>A<select><option>B<select><option>C<select><option>D<select><option>E<select><option>F<select><option>G<select>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <select>
+|       <option>
+|         "A"
+|     <option>
+|       "B"
+|       <select>
+|         <option>
+|           "C"
+|     <option>
+|       "D"
+|       <select>
+|         <option>
+|           "E"
+|     <option>
+|       "F"
+|       <select>
+|         <option>
+|           "G"

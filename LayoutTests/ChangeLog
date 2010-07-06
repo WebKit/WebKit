@@ -1,3 +1,15 @@
+2010-07-05  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed.
+
+        We were discussing this test case, so I figured I might as well add it
+        to the suite.
+
+        * html5lib/resources/webkit01.dat:
+        * html5lib/runner-expected-html5.txt:
+        * html5lib/runner-expected.txt:
+        * html5lib/webkit-resumer-expected.txt:
+
 2010-07-05  Fady Samuel  <fsamuel@chromium.org>
 
         Reviewed by Darin Adler.
