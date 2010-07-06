@@ -899,8 +899,18 @@ void HTMLTreeBuilder::processStartTag(AtomicHTMLToken& token)
         }
         parseError(token);
         break;
+    case InSelectInTableMode:
+        ASSERT(insertionMode() == InSelectInTableMode);
+        if (token.name() == captionTag || token.name() == tableTag || token.name() == tbodyTag || token.name() == tfootTag || token.name() == theadTag || token.name() == trTag || token.name() == tdTag || token.name() == thTag) {
+            parseError(token);
+            AtomicHTMLToken endSelect(HTMLToken::EndTag, selectTag.localName());
+            processEndTag(endSelect);
+            processStartTag(token);
+            return;
+        }
+        // Fall through
     case InSelectMode:
-        ASSERT(insertionMode() == InSelectMode);
+        ASSERT(insertionMode() == InSelectMode || insertionMode() == InSelectInTableMode);
         if (token.name() == htmlTag) {
             insertHTMLStartTagInBody(token);
             return;
@@ -1462,8 +1472,20 @@ void HTMLTreeBuilder::processEndTag(AtomicHTMLToken& token)
         ASSERT(insertionMode() == AfterFramesetMode || insertionMode() == AfterAfterFramesetMode);
         parseError(token);
         break;
+    case InSelectInTableMode:
+        ASSERT(insertionMode() == InSelectInTableMode);
+        if (token.name() == captionTag || token.name() == tableTag || token.name() == tbodyTag || token.name() == tfootTag || token.name() == theadTag || token.name() == trTag || token.name() == tdTag || token.name() == thTag) {
+            parseError(token);
+            if (m_openElements.inTableScope(token.name())) {
+                AtomicHTMLToken endSelect(HTMLToken::EndTag, selectTag.localName());
+                processEndTag(endSelect);
+                processEndTag(token);
+            }
+            return;
+        }
+        // Fall through.
     case InSelectMode:
-        ASSERT(insertionMode() == InSelectMode);
+        ASSERT(insertionMode() == InSelectMode || insertionMode() == InSelectInTableMode);
         if (token.name() == optgroupTag) {
             if (currentElement()->hasTagName(optionTag))
                 notImplemented();
@@ -1564,8 +1586,9 @@ void HTMLTreeBuilder::processCharacter(AtomicHTMLToken& token)
         ASSERT(insertionMode() == InFramesetMode || insertionMode() == AfterFramesetMode || insertionMode() == AfterAfterFramesetMode);
         parseError(token);
         break;
+    case InSelectInTableMode:
     case InSelectMode:
-        ASSERT(insertionMode() == InSelectMode);
+        ASSERT(insertionMode() == InSelectMode || insertionMode() == InSelectInTableMode);
         insertTextNode(token);
         break;
     default:
@@ -1619,8 +1642,9 @@ void HTMLTreeBuilder::processEndOfFile(AtomicHTMLToken& token)
     case AfterAfterFramesetMode:
         ASSERT(insertionMode() == AfterFramesetMode || insertionMode() == AfterAfterFramesetMode);
         break;
+    case InSelectInTableMode:
     case InSelectMode:
-        ASSERT(insertionMode() == InSelectMode);
+        ASSERT(insertionMode() == InSelectMode || insertionMode() == InSelectInTableMode);
         if (currentElement() != m_openElements.htmlElement())
             parseError(token);
         break;

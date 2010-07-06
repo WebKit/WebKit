@@ -67,3 +67,52 @@
 |       <tbody>
 |         <tr>
 |           <td>
+
+#data
+<table><select><option>3</select></table>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <select>
+|       <option>
+|         "3"
+|     <table>
+
+#data
+<table><select><table></table></select></table>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <select>
+|     <table>
+|     <table>
+
+#data
+<table><select></table>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <select>
+|     <table>
+
+#data
+<table><select><option>A<tr><td>B</td></tr></table>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <select>
+|       <option>
+|         "A"
+|     <table>
+|       <tbody>
+|         <tr>
+|           <td>
+|             "B"

@@ -5294,8 +5294,12 @@ resources/inbody01.dat: PASS
 
 resources/tables01.dat:
 4
+7
+8
+9
+10
 
-Test 4 of 6 in resources/tables01.dat failed. Input:
+Test 4 of 10 in resources/tables01.dat failed. Input:
 <table><colgroup></html>foo
 Got:
 | <html>
@@ -5310,4 +5314,72 @@ Expected:
 |     "foo"
 |     <table>
 |       <colgroup>
+
+Test 7 of 10 in resources/tables01.dat failed. Input:
+<table><select><option>3</select></table>
+Got:
+| <html>
+|   <head>
+|   <body>
+|     <table>
+Expected:
+| <html>
+|   <head>
+|   <body>
+|     <select>
+|       <option>
+|         "3"
+|     <table>
+
+Test 8 of 10 in resources/tables01.dat failed. Input:
+<table><select><table></table></select></table>
+Got:
+| <html>
+|   <head>
+|   <body>
+|     <table>
+Expected:
+| <html>
+|   <head>
+|   <body>
+|     <select>
+|     <table>
+|     <table>
+
+Test 9 of 10 in resources/tables01.dat failed. Input:
+<table><select></table>
+Got:
+| <html>
+|   <head>
+|   <body>
+|     <table>
+Expected:
+| <html>
+|   <head>
+|   <body>
+|     <select>
+|     <table>
+
+Test 10 of 10 in resources/tables01.dat failed. Input:
+<table><select><option>A<tr><td>B</td></tr></table>
+Got:
+| <html>
+|   <head>
+|   <body>
+|     <table>
+|       <tbody>
+|         <tr>
+|           <td>
+Expected:
+| <html>
+|   <head>
+|   <body>
+|     <select>
+|       <option>
+|         "A"
+|     <table>
+|       <tbody>
+|         <tr>
+|           <td>
+|             "B"
 #EOF

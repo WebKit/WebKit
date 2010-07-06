@@ -5001,8 +5001,11 @@ resources/inbody01.dat: PASS
 
 resources/tables01.dat:
 3
+7
+8
+9
 
-Test 3 of 6 in resources/tables01.dat failed. Input:
+Test 3 of 10 in resources/tables01.dat failed. Input:
 <table><col foo='bar'>
 Got:
 | <html>
@@ -5019,3 +5022,57 @@ Expected:
 |       <colgroup>
 |         <col>
 |           foo="bar"
+
+Test 7 of 10 in resources/tables01.dat failed. Input:
+<table><select><option>3</select></table>
+Got:
+| <html>
+|   <head>
+|   <body>
+|     <select>
+|       <option>
+|         "3"
+|     <table>
+|       <tbody>
+Expected:
+| <html>
+|   <head>
+|   <body>
+|     <select>
+|       <option>
+|         "3"
+|     <table>
+
+Test 8 of 10 in resources/tables01.dat failed. Input:
+<table><select><table></table></select></table>
+Got:
+| <html>
+|   <head>
+|   <body>
+|     <select>
+|     <table>
+|       <tbody>
+|     <table>
+Expected:
+| <html>
+|   <head>
+|   <body>
+|     <select>
+|     <table>
+|     <table>
+
+Test 9 of 10 in resources/tables01.dat failed. Input:
+<table><select></table>
+Got:
+| <html>
+|   <head>
+|   <body>
+|     <select>
+|     <table>
+|       <tbody>
+Expected:
+| <html>
+|   <head>
+|   <body>
+|     <select>
+|     <table>
