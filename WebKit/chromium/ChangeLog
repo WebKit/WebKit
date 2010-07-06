@@ -1,3 +1,11 @@
+2010-07-06  Darin Adler  <darin@apple.com>
+
+        Fix build.
+
+        * src/SharedWorkerRepository.cpp:
+        (WebCore::SharedWorkerRepository::connect): Remove unneeded release
+        called on a PassOwnPtr to pass it as an argument of type PassOwnPtr.
+
 2010-07-05  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.

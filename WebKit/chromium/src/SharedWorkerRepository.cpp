@@ -220,7 +220,7 @@ void SharedWorkerRepository::connect(PassRefPtr<SharedWorker> worker, PassOwnPtr
 
     // The loader object manages its own lifecycle (and the lifecycles of the two worker objects).
     // It will free itself once loading is completed.
-    SharedWorkerScriptLoader* loader = new SharedWorkerScriptLoader(worker, url, name, port.release(), webWorker.release());
+    SharedWorkerScriptLoader* loader = new SharedWorkerScriptLoader(worker, url, name, port, webWorker.release());
     loader->load();
 }
 
