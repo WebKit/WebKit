@@ -35,151 +35,151 @@
 
 #include "Event.h"
 #include "InspectorFrontend.h"
+#include "InspectorValues.h"
 #include "IntRect.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
 #include "ScriptArray.h"
 #include "ScriptCallStack.h"
-#include "ScriptObject.h"
 
 namespace WebCore {
 
-ScriptObject TimelineRecordFactory::createGenericRecord(InspectorFrontend* frontend, double startTime)
+RefPtr<InspectorObject> TimelineRecordFactory::createGenericRecord(double startTime)
 {
-    ScriptObject record = frontend->newScriptObject();
-    record.set("startTime", startTime);
+    RefPtr<InspectorObject> record = InspectorObject::create();
+    record->setNumber("startTime", startTime);
 
-    ScriptArray stackTrace;
-    if (ScriptCallStack::stackTrace(5, frontend->scriptState(), stackTrace))
-        record.set("stackTrace", stackTrace);
+    RefPtr<InspectorArray> stackTrace = InspectorArray::create();
+    if (ScriptCallStack::stackTrace(5, stackTrace))
+        record->set("stackTrace", stackTrace);
     return record;
 }
 
-ScriptObject TimelineRecordFactory::createGCEventData(InspectorFrontend* frontend, const size_t usedHeapSizeDelta)
+RefPtr<InspectorObject> TimelineRecordFactory::createGCEventData(const size_t usedHeapSizeDelta)
 {
-    ScriptObject data = frontend->newScriptObject();
-    data.set("usedHeapSizeDelta", usedHeapSizeDelta);
+    RefPtr<InspectorObject> data = InspectorObject::create();
+    data->setNumber("usedHeapSizeDelta", usedHeapSizeDelta);
     return data;
 }
 
-ScriptObject TimelineRecordFactory::createFunctionCallData(InspectorFrontend* frontend, const String& scriptName, int scriptLine)
+RefPtr<InspectorObject> TimelineRecordFactory::createFunctionCallData(const String& scriptName, int scriptLine)
 {
-    ScriptObject data = frontend->newScriptObject();
-    data.set("scriptName", scriptName);
-    data.set("scriptLine", scriptLine);
+    RefPtr<InspectorObject> data = InspectorObject::create();
+    data->setString("scriptName", scriptName);
+    data->setNumber("scriptLine", scriptLine);
     return data;
 }
 
-ScriptObject TimelineRecordFactory::createEventDispatchData(InspectorFrontend* frontend, const Event& event)
+RefPtr<InspectorObject> TimelineRecordFactory::createEventDispatchData(const Event& event)
 {
-    ScriptObject data = frontend->newScriptObject();
-    data.set("type", event.type().string());
+    RefPtr<InspectorObject> data = InspectorObject::create();
+    data->setString("type", event.type().string());
     return data;
 }
 
-ScriptObject TimelineRecordFactory::createGenericTimerData(InspectorFrontend* frontend, int timerId)
+RefPtr<InspectorObject> TimelineRecordFactory::createGenericTimerData(int timerId)
 {
-    ScriptObject data = frontend->newScriptObject();
-    data.set("timerId", timerId);
+    RefPtr<InspectorObject> data = InspectorObject::create();
+    data->setNumber("timerId", timerId);
     return data;
 }
 
-ScriptObject TimelineRecordFactory::createTimerInstallData(InspectorFrontend* frontend, int timerId, int timeout, bool singleShot)
+RefPtr<InspectorObject> TimelineRecordFactory::createTimerInstallData(int timerId, int timeout, bool singleShot)
 {
-    ScriptObject data = frontend->newScriptObject();
-    data.set("timerId", timerId);
-    data.set("timeout", timeout);
-    data.set("singleShot", singleShot);
+    RefPtr<InspectorObject> data = InspectorObject::create();
+    data->setNumber("timerId", timerId);
+    data->setNumber("timeout", timeout);
+    data->setBool("singleShot", singleShot);
     return data;
 }
 
-ScriptObject TimelineRecordFactory::createXHRReadyStateChangeData(InspectorFrontend* frontend, const String& url, int readyState)
+RefPtr<InspectorObject> TimelineRecordFactory::createXHRReadyStateChangeData(const String& url, int readyState)
 {
-    ScriptObject data = frontend->newScriptObject();
-    data.set("url", url);
-    data.set("readyState", readyState);
+    RefPtr<InspectorObject> data = InspectorObject::create();
+    data->setString("url", url);
+    data->setNumber("readyState", readyState);
     return data;
 }
 
-ScriptObject TimelineRecordFactory::createXHRLoadData(InspectorFrontend* frontend, const String& url)
+RefPtr<InspectorObject> TimelineRecordFactory::createXHRLoadData(const String& url)
 {
-    ScriptObject data = frontend->newScriptObject();
-    data.set("url", url);
+    RefPtr<InspectorObject> data = InspectorObject::create();
+    data->setString("url", url);
     return data;
 }
 
-ScriptObject TimelineRecordFactory::createEvaluateScriptData(InspectorFrontend* frontend, const String& url, double lineNumber) 
+RefPtr<InspectorObject> TimelineRecordFactory::createEvaluateScriptData(const String& url, double lineNumber)
 {
-    ScriptObject data = frontend->newScriptObject();
-    data.set("url", url);
-    data.set("lineNumber", lineNumber);
+    RefPtr<InspectorObject> data = InspectorObject::create();
+    data->setString("url", url);
+    data->setNumber("lineNumber", lineNumber);
     return data;
 }
 
-ScriptObject TimelineRecordFactory::createMarkTimelineData(InspectorFrontend* frontend, const String& message) 
+RefPtr<InspectorObject> TimelineRecordFactory::createMarkTimelineData(const String& message)
 {
-    ScriptObject data = frontend->newScriptObject();
-    data.set("message", message);
+    RefPtr<InspectorObject> data = InspectorObject::create();
+    data->setString("message", message);
     return data;
 }
 
-ScriptObject TimelineRecordFactory::createScheduleResourceRequestData(InspectorFrontend* frontend, const String& url)
+RefPtr<InspectorObject> TimelineRecordFactory::createScheduleResourceRequestData(const String& url)
 {
-    ScriptObject data = frontend->newScriptObject();
-    data.set("url", url);
+    RefPtr<InspectorObject> data = InspectorObject::create();
+    data->setString("url", url);
     return data;
 }
 
-ScriptObject TimelineRecordFactory::createResourceSendRequestData(InspectorFrontend* frontend, unsigned long identifier, bool isMainResource, const ResourceRequest& request)
+RefPtr<InspectorObject> TimelineRecordFactory::createResourceSendRequestData(unsigned long identifier, bool isMainResource, const ResourceRequest& request)
 {
-    ScriptObject data = frontend->newScriptObject();
-    data.set("identifier", identifier);
-    data.set("url", request.url().string());
-    data.set("requestMethod", request.httpMethod());
-    data.set("isMainResource", isMainResource);
+    RefPtr<InspectorObject> data = InspectorObject::create();
+    data->setNumber("identifier", identifier);
+    data->setString("url", request.url().string());
+    data->setString("requestMethod", request.httpMethod());
+    data->setBool("isMainResource", isMainResource);
     return data;
 }
 
-ScriptObject TimelineRecordFactory::createResourceReceiveResponseData(InspectorFrontend* frontend, unsigned long identifier, const ResourceResponse& response)
+RefPtr<InspectorObject> TimelineRecordFactory::createResourceReceiveResponseData(unsigned long identifier, const ResourceResponse& response)
 {
-    ScriptObject data = frontend->newScriptObject();
-    data.set("identifier", identifier);
-    data.set("statusCode", response.httpStatusCode());
-    data.set("mimeType", response.mimeType());
-    data.set("expectedContentLength", response.expectedContentLength());
+    RefPtr<InspectorObject> data = InspectorObject::create();
+    data->setNumber("identifier", identifier);
+    data->setNumber("statusCode", response.httpStatusCode());
+    data->setString("mimeType", response.mimeType());
+    data->setNumber("expectedContentLength", response.expectedContentLength());
     return data;
 }
 
-ScriptObject TimelineRecordFactory::createResourceFinishData(InspectorFrontend* frontend, unsigned long identifier, bool didFail)
+RefPtr<InspectorObject> TimelineRecordFactory::createResourceFinishData(unsigned long identifier, bool didFail)
 {
-    ScriptObject data = frontend->newScriptObject();
-    data.set("identifier", identifier);
-    data.set("didFail", didFail);
+    RefPtr<InspectorObject> data = InspectorObject::create();
+    data->setNumber("identifier", identifier);
+    data->setBool("didFail", didFail);
     return data;
 }
 
-ScriptObject TimelineRecordFactory::createReceiveResourceData(InspectorFrontend* frontend, unsigned long identifier)
+RefPtr<InspectorObject> TimelineRecordFactory::createReceiveResourceData(unsigned long identifier)
 {
-    ScriptObject data = frontend->newScriptObject();
-    data.set("identifier", identifier);
+    RefPtr<InspectorObject> data = InspectorObject::create();
+    data->setNumber("identifier", identifier);
     return data;
 }
     
-ScriptObject TimelineRecordFactory::createPaintData(InspectorFrontend* frontend, const IntRect& rect)
+RefPtr<InspectorObject> TimelineRecordFactory::createPaintData(const IntRect& rect)
 {
-    ScriptObject data = frontend->newScriptObject();
-    data.set("x", rect.x());
-    data.set("y", rect.y());
-    data.set("width", rect.width());
-    data.set("height", rect.height());
+    RefPtr<InspectorObject> data = InspectorObject::create();
+    data->setNumber("x", rect.x());
+    data->setNumber("y", rect.y());
+    data->setNumber("width", rect.width());
+    data->setNumber("height", rect.height());
     return data;
 }
 
-ScriptObject TimelineRecordFactory::createParseHTMLData(InspectorFrontend* frontend, unsigned int length, unsigned int startLine)
+RefPtr<InspectorObject> TimelineRecordFactory::createParseHTMLData(unsigned int length, unsigned int startLine)
 {
-    ScriptObject data = frontend->newScriptObject();
-    data.set("length", length);
-    data.set("startLine", startLine);
+    RefPtr<InspectorObject> data = InspectorObject::create();
+    data->setNumber("length", length);
+    data->setNumber("startLine", startLine);
     return data;
 }
 

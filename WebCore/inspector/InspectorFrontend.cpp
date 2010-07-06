@@ -297,12 +297,12 @@ void InspectorFrontend::timelineProfilerWasStopped()
     callSimpleFunction("timelineProfilerWasStopped");
 }
 
-void InspectorFrontend::addRecordToTimeline(const ScriptObject& record)
+void InspectorFrontend::addRecordToTimeline(const RefPtr<InspectorObject>& record)
 {
-    ScriptFunctionCall function(m_webInspector, "dispatch"); 
-    function.appendArgument("addRecordToTimeline");
-    function.appendArgument(record);
-    function.call();
+    RefPtr<InspectorArray> arguments = InspectorArray::create();
+    arguments->pushString("addRecordToTimeline");
+    arguments->push(record);
+    m_inspectorClient->sendMessageToFrontend(arguments->toJSONString());
 }
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)

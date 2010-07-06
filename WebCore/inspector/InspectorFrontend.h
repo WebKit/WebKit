@@ -171,7 +171,7 @@ namespace WebCore {
 
         void timelineProfilerWasStarted();
         void timelineProfilerWasStopped();
-        void addRecordToTimeline(const ScriptObject&);
+        void addRecordToTimeline(const RefPtr<InspectorObject>& record);
 
 #if ENABLE(WORKERS)
         void didCreateWorker(const InspectorWorkerResource&);
@@ -189,6 +189,7 @@ namespace WebCore {
         ScriptState* scriptState() const { return m_webInspector.scriptState(); }
 
         void evaluateForTestInFrontend(long callId, const String& script);
+
     private:
         void callSimpleFunction(const String& functionName);
         ScriptObject m_webInspector;

@@ -1,3 +1,14 @@
+2010-06-19  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        WebInspector: js function name was fixed.
+        dispatchMessageToFrontend -> dispatchMessageFromBackend.
+        https://bugs.webkit.org/show_bug.cgi?id=40675
+
+        * WebCoreSupport/InspectorClientQt.cpp:
+        (WebCore::InspectorClientQt::sendMessageToFrontend):
+
 2010-07-03  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.

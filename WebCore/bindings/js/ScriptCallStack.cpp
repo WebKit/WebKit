@@ -100,7 +100,7 @@ void ScriptCallStack::initialize()
     m_initialized = true;
 }
 
-bool ScriptCallStack::stackTrace(int, ScriptState*, ScriptArray&)
+bool ScriptCallStack::stackTrace(int, const RefPtr<InspectorArray>&)
 {
     return false;
 }

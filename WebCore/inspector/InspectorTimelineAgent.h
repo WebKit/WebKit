@@ -34,11 +34,10 @@
 #if ENABLE(INSPECTOR)
 
 #include "Document.h"
+#include "InspectorValues.h"
 #include "ScriptExecutionContext.h"
 #include "ScriptGCEvent.h"
 #include "ScriptGCEventListener.h"
-#include "ScriptObject.h"
-#include "ScriptArray.h"
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -134,22 +133,22 @@ public:
 
 private:
     struct TimelineRecordEntry {
-        TimelineRecordEntry(ScriptObject record, ScriptObject data, ScriptArray children, TimelineRecordType type)
+        TimelineRecordEntry(const RefPtr<InspectorObject>& record, const RefPtr<InspectorObject>& data, const RefPtr<InspectorArray>& children, TimelineRecordType type)
             : record(record), data(data), children(children), type(type)
         {
         }
-        ScriptObject record;
-        ScriptObject data;
-        ScriptArray children;
+        RefPtr<InspectorObject> record;
+        RefPtr<InspectorObject> data;
+        RefPtr<InspectorArray> children;
         TimelineRecordType type;
     };
         
-    void pushCurrentRecord(ScriptObject, TimelineRecordType);
-    void setHeapSizeStatistic(ScriptObject record);
+    void pushCurrentRecord(const RefPtr<InspectorObject>&, TimelineRecordType);
+    void setHeapSizeStatistic(const RefPtr<InspectorObject>& record);
         
     void didCompleteCurrentRecord(TimelineRecordType);
 
-    void addRecordToTimeline(ScriptObject, TimelineRecordType);
+    void addRecordToTimeline(const RefPtr<InspectorObject>&, TimelineRecordType);
 
     void pushGCEventRecords();
 

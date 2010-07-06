@@ -37,47 +37,47 @@ namespace WebCore {
 
     class Event;
     class InspectorFrontend;
+    class InspectorObject;
     class IntRect;
     class ResourceRequest;
     class ResourceResponse;
-    class ScriptObject;
 
     class TimelineRecordFactory {
     public:
-        static ScriptObject createGenericRecord(InspectorFrontend*, double startTime);
+        static RefPtr<InspectorObject> createGenericRecord(double startTime);
 
-        static ScriptObject createGCEventData(InspectorFrontend* frontend, const size_t usedHeapSizeDelta);
+        static RefPtr<InspectorObject> createGCEventData(const size_t usedHeapSizeDelta);
 
-        static ScriptObject createFunctionCallData(InspectorFrontend*, const String& scriptName, int scriptLine);
+        static RefPtr<InspectorObject> createFunctionCallData(const String& scriptName, int scriptLine);
 
-        static ScriptObject createEventDispatchData(InspectorFrontend*, const Event&);
+        static RefPtr<InspectorObject> createEventDispatchData(const Event&);
 
-        static ScriptObject createGenericTimerData(InspectorFrontend*, int timerId);
+        static RefPtr<InspectorObject> createGenericTimerData(int timerId);
 
-        static ScriptObject createTimerInstallData(InspectorFrontend*, int timerId, int timeout, bool singleShot);
+        static RefPtr<InspectorObject> createTimerInstallData(int timerId, int timeout, bool singleShot);
 
-        static ScriptObject createXHRReadyStateChangeData(InspectorFrontend*, const String& url, int readyState);
+        static RefPtr<InspectorObject> createXHRReadyStateChangeData(const String& url, int readyState);
 
-        static ScriptObject createXHRLoadData(InspectorFrontend*, const String& url);
+        static RefPtr<InspectorObject> createXHRLoadData(const String& url);
 
-        static ScriptObject createEvaluateScriptData(InspectorFrontend*, const String&, double lineNumber);
+        static RefPtr<InspectorObject> createEvaluateScriptData(const String&, double lineNumber);
 
-        static ScriptObject createMarkTimelineData(InspectorFrontend*, const String&);
+        static RefPtr<InspectorObject> createMarkTimelineData(const String&);
 
-        static ScriptObject createResourceSendRequestData(InspectorFrontend*, unsigned long identifier,
+        static RefPtr<InspectorObject> createResourceSendRequestData(unsigned long identifier,
             bool isMainResource, const ResourceRequest&);
 
-        static ScriptObject createScheduleResourceRequestData(InspectorFrontend*, const String&);
+        static RefPtr<InspectorObject> createScheduleResourceRequestData(const String&);
 
-        static ScriptObject createResourceReceiveResponseData(InspectorFrontend*, unsigned long identifier, const ResourceResponse&);
+        static RefPtr<InspectorObject> createResourceReceiveResponseData(unsigned long identifier, const ResourceResponse&);
 
-        static ScriptObject createReceiveResourceData(InspectorFrontend*, unsigned long identifier);
+        static RefPtr<InspectorObject> createReceiveResourceData(unsigned long identifier);
 
-        static ScriptObject createResourceFinishData(InspectorFrontend*, unsigned long identifier, bool didFail);
+        static RefPtr<InspectorObject> createResourceFinishData(unsigned long identifier, bool didFail);
 
-        static ScriptObject createPaintData(InspectorFrontend*, const IntRect&);
+        static RefPtr<InspectorObject> createPaintData(const IntRect&);
 
-        static ScriptObject createParseHTMLData(InspectorFrontend*, unsigned int length, unsigned int startLine);
+        static RefPtr<InspectorObject> createParseHTMLData(unsigned int length, unsigned int startLine);
 
     private:
         TimelineRecordFactory() { }

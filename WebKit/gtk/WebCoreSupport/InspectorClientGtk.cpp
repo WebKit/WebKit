@@ -134,7 +134,7 @@ bool InspectorClient::sendMessageToFrontend(const String& message)
     if (!scriptController)
         return false;
 
-    String dispatchToFrontend("WebInspector.dispatchMessageToFrontend(");
+    String dispatchToFrontend("WebInspector.dispatchMessageFromBackend(");
     dispatchToFrontend += message;
     dispatchToFrontend += ");";
     scriptController->executeScript(dispatchToFrontend);
