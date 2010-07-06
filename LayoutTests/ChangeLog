@@ -1,3 +1,19 @@
+2010-07-06  Varun Jain  <varunjain@chromium.org>
+
+        Reviewed by Oliver Hunt.
+
+        Implementing CURVE_TO_CUBIC specification for SVG Path Segments. Currently,
+        curves specified in relative cordinates such as using createCurvetoCubicRel()
+        javascript function are not displayed.
+
+        SVG CurvetoCubic Path not implemented for relative cordinates
+        https://bugs.webkit.org/show_bug.cgi?id=41294
+
+        * platform/mac/svg/custom/svg-curve-with-relative-cordinates-expected.checksum: Added.
+        * platform/mac/svg/custom/svg-curve-with-relative-cordinates-expected.png: Added.
+        * platform/mac/svg/custom/svg-curve-with-relative-cordinates-expected.txt: Added.
+        * svg/custom/svg-curve-with-relative-cordinates.html: Added.
+
 2010-07-06  Xan Lopez  <xlopez@igalia.com>
 
         Skip flakey a11y test.

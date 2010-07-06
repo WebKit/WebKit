@@ -28,6 +28,7 @@
 
 #include "FloatConversion.h"
 #include "FloatPoint.h"
+#include "FloatSize.h"
 #include "Path.h"
 #include "PathTraversalState.h"
 #include "SVGPathSegArc.h"
@@ -111,6 +112,7 @@ Path SVGPathSegList::toPathData()
     Path pathData;
     int len = numberOfItems();
     ExceptionCode ec = 0;
+    FloatPoint previousEndPoint(0, 0);
     for (int i = 0; i < len; ++i) {
         SVGPathSeg* segment = getItem(i, ec).get();
         if (ec)
@@ -119,21 +121,37 @@ Path SVGPathSegList::toPathData()
             case SVGPathSeg::PATHSEG_MOVETO_ABS:
             {
                 SVGPathSegMovetoAbs* moveTo = static_cast<SVGPathSegMovetoAbs*>(segment);
-                pathData.moveTo(FloatPoint(moveTo->x(), moveTo->y()));
+                FloatPoint endPoint(moveTo->x(), moveTo->y());
+                pathData.moveTo(endPoint);
+                previousEndPoint = endPoint;
                 break;
             }
             case SVGPathSeg::PATHSEG_LINETO_ABS:
             {
                 SVGPathSegLinetoAbs* lineTo = static_cast<SVGPathSegLinetoAbs*>(segment);
-                pathData.addLineTo(FloatPoint(lineTo->x(), lineTo->y()));
+                FloatPoint endPoint(lineTo->x(), lineTo->y());
+                pathData.addLineTo(endPoint);
+                previousEndPoint = endPoint;
                 break;
             }
             case SVGPathSeg::PATHSEG_CURVETO_CUBIC_ABS:
             {
                 SVGPathSegCurvetoCubicAbs* curveTo = static_cast<SVGPathSegCurvetoCubicAbs*>(segment);
+                FloatPoint endPoint(curveTo->x(), curveTo->y());
                 pathData.addBezierCurveTo(FloatPoint(curveTo->x1(), curveTo->y1()),
                                           FloatPoint(curveTo->x2(), curveTo->y2()),
-                                          FloatPoint(curveTo->x(), curveTo->y()));
+                                          endPoint);
+                previousEndPoint = endPoint;
+                break;
+            }
+            case SVGPathSeg::PATHSEG_CURVETO_CUBIC_REL:
+            {
+                SVGPathSegCurvetoCubicRel* curveTo = static_cast<SVGPathSegCurvetoCubicRel*>(segment);
+                FloatSize endPoint(curveTo->x(), curveTo->y());
+                pathData.addBezierCurveTo(previousEndPoint + FloatSize(curveTo->x1(), curveTo->y1()),
+                                          previousEndPoint + FloatSize(curveTo->x2(), curveTo->y2()),
+                                          previousEndPoint + endPoint);
+                previousEndPoint += endPoint;
                 break;
             }
             case SVGPathSeg::PATHSEG_CLOSEPATH:
