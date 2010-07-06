@@ -185,7 +185,7 @@ void WebWorkerBase::initializeLoader(const WebURL& url)
 
 void WebWorkerBase::dispatchTaskToMainThread(PassOwnPtr<ScriptExecutionContext::Task> task)
 {
-    return callOnMainThread(invokeTaskMethod, task.release());
+    callOnMainThread(invokeTaskMethod, task.leakPtr());
 }
 
 void WebWorkerBase::invokeTaskMethod(void* param)

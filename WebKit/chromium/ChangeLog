@@ -1,6 +1,18 @@
 2010-07-06  Darin Adler  <darin@apple.com>
 
-        Fix build.
+        Try to fix build.
+
+        * src/WebWorkerBase.cpp:
+        (WebKit::WebWorkerBase::dispatchTaskToMainThread): Use leakPtr instead
+        of release.
+        * src/WebWorkerClientImpl.cpp:
+        (WebKit::WebWorkerClientImpl::postMessageToWorkerObjectTask): Removed
+        unneeded release called on a PassOwnPtr to pass it as an argument of
+        type PassOwnPtr.
+
+2010-07-06  Darin Adler  <darin@apple.com>
+
+        Try to fix build.
 
         * src/WebSharedWorkerImpl.cpp:
         (WebKit::WebSharedWorkerImpl::connectTask): Removed unneeded release
@@ -8,7 +20,7 @@
 
 2010-07-06  Darin Adler  <darin@apple.com>
 
-        Fix build.
+        Try to fix build.
 
         * src/WebDataSourceImpl.cpp:
         (WebKit::WebDataSourceImpl::setNextPluginLoadObserver): Call leakPtr
@@ -16,7 +28,7 @@
 
 2010-07-06  Darin Adler  <darin@apple.com>
 
-        Fix build.
+        Try to fix build.
 
         * src/SharedWorkerRepository.cpp:
         (WebCore::SharedWorkerRepository::connect): Removed unneeded release
