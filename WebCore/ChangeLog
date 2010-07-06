@@ -1,5 +1,12 @@
 2010-07-06  Anders Carlsson  <andersca@apple.com>
 
+        Build fixes.
+
+        * WebCore.gypi:
+        * bindings/js/JSBindingsAllInOne.cpp:
+
+2010-07-06  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Sam Weinig.
 
         DOM plug-in related renames
