@@ -41,30 +41,36 @@ my @idlDirectories;
 my $outputDirectory;
 my $generator;
 my $defines;
+my $prefix;
 my $preprocessor;
 my $writeDependencies;
+my $verbose;
 
 GetOptions('include=s@' => \@idlDirectories,
            'outputDir=s' => \$outputDirectory,
            'generator=s' => \$generator,
            'defines=s' => \$defines,
+           'prefix=s' => \$prefix,
            'preprocessor=s' => \$preprocessor,
+           'verbose' => \$verbose,
            'write-dependencies' => \$writeDependencies);
 
 my $idlFile = $ARGV[0];
 
 die('Must specify input file.') unless defined($idlFile);
-die('Must specify IDL search path.') unless @idlDirectories;
 die('Must specify generator') unless defined($generator);
 die('Must specify output directory.') unless defined($outputDirectory);
 die('Must specify defines') unless defined($defines);
 
+if ($verbose) {
+    print "$generator: $idlFile\n";
+}
 $defines =~ s/^\s+|\s+$//g; # trim whitespace
 
 # Parse the given IDL file.
-my $parser = IDLParser->new(1);
+my $parser = IDLParser->new(!$verbose);
 my $document = $parser->Parse($idlFile, $defines, $preprocessor);
 
 # Generate desired output for given IDL file.
-my $codeGen = CodeGenerator->new(\@idlDirectories, $generator, $outputDirectory, 0, $preprocessor, $writeDependencies);
+my $codeGen = CodeGenerator->new(\@idlDirectories, $generator, $outputDirectory, 0, $preprocessor, $writeDependencies, $verbose);
 $codeGen->ProcessDocument($document, $defines);

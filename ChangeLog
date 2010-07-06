@@ -1,3 +1,18 @@
+2010-07-06  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        WebInspector: generator part of the patch for bug 40675.
+        On the way to Remote Debugging we want to support JSON serialization
+        on both sides of WebInspector transport.
+        As far as InspectorFrontend class is a simple proxy to WebInspector
+        it would be better to generate it from an IDL file.
+        We have generator infrastructure for binding and will reuse it for
+        new generator.
+        https://bugs.webkit.org/show_bug.cgi?id=41692
+
+        * GNUmakefile.am:
+
 2010-07-05  Antti Koivisto  <koivisto@iki.fi>
 
         Revert unplanned project file change.

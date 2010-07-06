@@ -454,6 +454,40 @@
           ],
         },
         {
+          'action_name': 'InspectorFrontend2',
+          'inputs': [
+            '../bindings/scripts/generate-bindings.pl',
+            '../bindings/scripts/CodeGenerator.pm',
+            '../bindings/scripts/IDLParser.pm',
+            '../bindings/scripts/IDLStructure.pm',
+            '../inspector/CodeGeneratorInspector.pm',
+            '../inspector/InspectorFrontend2.idl',
+          ],
+          'outputs': [
+            '<(SHARED_INTERMEDIATE_DIR)/webcore/bindings/RemoteInspectorFrontend2.cpp',
+            '<(SHARED_INTERMEDIATE_DIR)/webkit/bindings/RemoteInspectorFrontend2.h',
+          ],
+          'variables': {
+            'generator_include_dirs': [
+            ],
+          },
+          'action': [
+            'python',
+            'scripts/rule_binding.py',
+            '../inspector/InspectorFrontend2.idl',
+            '<(SHARED_INTERMEDIATE_DIR)/webcore/bindings',
+            '<(SHARED_INTERMEDIATE_DIR)/webkit/bindings',
+            '--',
+            '<@(_inputs)',
+            '--',
+            '--defines', 'LANGUAGE_JAVASCRIPT',
+            '--prefix', 'Remote',
+            '--generator', 'Inspector',
+            '<@(generator_include_dirs)'
+          ],
+          'message': 'Generating InspectorFrontend2 class from InspectorFrontend2.idl',
+        },
+        {
           'action_name': 'XMLNames',
           'inputs': [
             '../dom/make_names.pl',
@@ -655,6 +689,9 @@
         # Additional .cpp files from the webcore_bindings_sources rules.
         '<(SHARED_INTERMEDIATE_DIR)/webkit/CSSGrammar.cpp',
         '<(SHARED_INTERMEDIATE_DIR)/webkit/XPathGrammar.cpp',
+
+        # Additional .cpp files from the webcore_inspector_sources list.
+        '<(SHARED_INTERMEDIATE_DIR)/webcore/bindings/RemoteInspectorFrontend2.cpp',
       ],
       'conditions': [
         ['javascript_engine=="v8"', {

@@ -1,3 +1,43 @@
+2010-07-06  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        WebInspector: generator part of the patch for bug 40675.
+        On the way to Remote Debugging we want to support JSON serialization
+        on both sides of WebInspector transport.
+        As far as InspectorFrontend class is a simple proxy to WebInspector
+        it would be better to generate it from an IDL file.
+        We have generator infrastructure for binding and will reuse it for
+        new generator.
+        https://bugs.webkit.org/show_bug.cgi?id=41692
+
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * GNUmakefile.am:
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.gyp/scripts/rule_binding.py:
+        * WebCore.gypi:
+        * WebCore.pri:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/scripts/CodeGenerator.pm:
+        * bindings/scripts/IDLParser.pm:
+        * bindings/scripts/generate-bindings.pl:
+        * inspector/CodeGeneratorInspector.pm: Added.
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::connectFrontend):
+        (WebCore::InspectorController::startTimelineProfiler):
+        * inspector/InspectorController.h:
+        * inspector/InspectorFrontend.cpp:
+        * inspector/InspectorFrontend.h:
+        * inspector/InspectorFrontend2.idl: Added.
+        * inspector/InspectorTimelineAgent.cpp:
+        (WebCore::InspectorTimelineAgent::InspectorTimelineAgent):
+        (WebCore::InspectorTimelineAgent::resetFrontendProxyObject):
+        (WebCore::InspectorTimelineAgent::addRecordToTimeline):
+        * inspector/InspectorTimelineAgent.h:
+
 2010-07-06  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Rubber-stamped by Xan Lopez.

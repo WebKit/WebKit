@@ -83,6 +83,7 @@ sub new
     $useLayerOnTop = shift;
     $preprocessor = shift;
     $writeDependencies = shift;
+    $verbose = shift;
 
     bless($reference, $object);
     return $reference;
@@ -103,10 +104,10 @@ sub ProcessDocument
     $defines = shift;
 
     my $ifaceName = "CodeGenerator" . $useGenerator;
+    require $ifaceName . ".pm";
 
     # Dynamically load external code generation perl module
-    require $ifaceName . ".pm";
-    $codeGenerator = $ifaceName->new($object, $useOutputDir, $useLayerOnTop, $preprocessor, $writeDependencies);
+    $codeGenerator = $ifaceName->new($object, $useOutputDir, $useLayerOnTop, $preprocessor, $writeDependencies, $verbose);
     unless (defined($codeGenerator)) {
         my $classes = $useDocument->classes;
         foreach my $class (@$classes) {

@@ -277,6 +277,9 @@
             'xml/XPathResult.idl',
             'xml/XSLTProcessor.idl',
         ],
+        'webcore_inspector_idl_files': [
+            'inspector/InspectorFrontend2.idl',
+        ],
         'webcore_svg_bindings_idl_files': [
             'svg/ElementTimeControl.idl',
             'svg/SVGAElement.idl',

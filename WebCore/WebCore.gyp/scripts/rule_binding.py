@@ -95,6 +95,14 @@ def main(args):
         if not includeDir in includeDirs:
             includeDirs.append(includeDir)
 
+    if '--prefix' in options:
+        prefixIndex = options.index('--prefix')
+    else:
+        prefixIndex = options.index('--generator')
+
+    if prefixIndex + 1 < len(options):
+        prefix = options[prefixIndex + 1]
+
     # The defines come in as one flat string. Split it up into distinct arguments.
     if '--defines' in options:
         definesIndex = options.index('--defines')
@@ -122,7 +130,7 @@ def main(args):
     if cppdir != hdir:
         inputBasename = os.path.basename(input)
         (root, ext) = os.path.splitext(inputBasename)
-        hname = 'V8%s.h' % root
+        hname = '%s%s.h' % (prefix, root)
         hsrc = os.path.join(cppdir, hname)
         hdst = os.path.join(hdir, hname)
         shutil.copyfile(hsrc, hdst)

@@ -259,7 +259,7 @@ sub ParseInterface
         my @interfaceMethods = split(/;/, $interfaceData);
 
         foreach my $line (@interfaceMethods) {
-            if ($line =~ /attribute/) {
+            if ($line =~ /\Wattribute\W/) {
                 $line =~ /$IDLStructure::interfaceAttributeSelector/;
 
                 my $attributeType = (defined($1) ? $1 : die("Parsing error!\nSource:\n$line\n)"));

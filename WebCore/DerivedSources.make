@@ -470,9 +470,11 @@ DOM_CLASSES = \
     XSLTProcessor \
 #
 
+INSPECTOR_CLASSES = InspectorFrontend2
+
 .PHONY : all
 
-JS_DOM_HEADERS=$(filter-out JSEventListener.h JSEventTarget.h,$(DOM_CLASSES:%=JS%.h))
+JS_DOM_HEADERS=$(filter-out JSEventListener.h JSEventTarget.h,$(DOM_CLASSES:%=JS%.h) $(INSPECTOR_CLASSES:%=Remote%.h))
 
 all : \
     $(JS_DOM_HEADERS) \
@@ -820,20 +822,32 @@ endif
 
 # --------
 
-# JavaScript bindings
+# Common generator things
 
-GENERATE_BINDINGS = perl -I $(WebCore)/bindings/scripts $(WebCore)/bindings/scripts/generate-bindings.pl \
-    --include dom --include html --include css --include page --include notifications --include xml --include svg --write-dependencies --outputDir .
-
-GENERATE_BINDINGS_SCRIPTS = \
+GENERATE_SCRIPTS = \
     bindings/scripts/CodeGenerator.pm \
     bindings/scripts/IDLParser.pm \
     bindings/scripts/IDLStructure.pm \
-    bindings/scripts/generate-bindings.pl \
-#
+    bindings/scripts/generate-bindings.pl
 
-JS%.h : %.idl $(GENERATE_BINDINGS_SCRIPTS) bindings/scripts/CodeGeneratorJS.pm
-	$(GENERATE_BINDINGS) --defines "$(FEATURE_DEFINES) $(ADDITIONAL_IDL_DEFINES) LANGUAGE_JAVASCRIPT" --generator JS $<
+generator_script = perl $(addprefix -I $(WebCore)/, $(sort $(dir $(1)))) $(WebCore)/bindings/scripts/generate-bindings.pl
+
+# JS bindings generator
+
+IDL_INCLUDES = dom html css page notifications xml svg
+IDL_COMMON_ARGS = $(IDL_INCLUDES:%=--include %) --write-dependencies --outputDir .
+
+JS_BINDINGS_SCRIPTS = $(GENERATE_SCRIPTS) bindings/scripts/CodeGeneratorJS.pm
+
+JS%.h : %.idl $(JS_BINDINGS_SCRIPTS)
+	$(call generator_script, $(JS_BINDINGS_SCRIPTS)) $(IDL_COMMON_ARGS) --defines "$(FEATURE_DEFINES) $(ADDITIONAL_IDL_DEFINES) LANGUAGE_JAVASCRIPT" --generator JS $<
+
+# Inspector interfaces generator
+
+INSPECTOR_GENERATOR_SCRIPTS = $(GENERATE_SCRIPTS) inspector/CodeGeneratorInspector.pm
+
+Remote%.h : %.idl $(INSPECTOR_GENERATOR_SCRIPTS)
+	$(call generator_script, $(INSPECTOR_GENERATOR_SCRIPTS)) --outputDir .  --defines "LANGUAGE_JAVASCRIPT" --generator Inspector $<
 
 -include $(JS_DOM_HEADERS:.h=.dep)
 
@@ -938,8 +952,9 @@ WebCore.LP64.exp : WebCore.exp
 
 # Objective-C bindings
 
-DOM%.h : %.idl $(GENERATE_BINDINGS_SCRIPTS) bindings/scripts/CodeGeneratorObjC.pm bindings/objc/PublicDOMInterfaces.h
-	$(GENERATE_BINDINGS) --defines "$(FEATURE_DEFINES) $(ADDITIONAL_IDL_DEFINES) LANGUAGE_OBJECTIVE_C" --generator ObjC $<
+DOM_BINDINGS_SCRIPTS = $(GENERATE_BINDING_SCRIPTS) bindings/scripts/CodeGeneratorObjC.pm
+DOM%.h : %.idl $(DOM_BINDINGS_SCRIPTS) bindings/objc/PublicDOMInterfaces.h
+	$(call generator_script, $(DOM_BINDINGS_SCRIPTS)) $(IDL_COMMON_ARGS) --defines "$(FEATURE_DEFINES) $(ADDITIONAL_IDL_DEFINES) LANGUAGE_OBJECTIVE_C" --generator ObjC $<
 
 -include $(OBJC_DOM_HEADERS:.h=.dep)
 

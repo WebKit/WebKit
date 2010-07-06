@@ -289,6 +289,7 @@ SET(WebCore_IDL_FILES
 
     inspector/InjectedScriptHost.idl
     inspector/InspectorBackend.idl
+    inspector/InspectorFrontend2.idl
     inspector/InspectorFrontendHost.idl
     inspector/JavaScriptCallFrame.idl
     inspector/ScriptProfile.idl

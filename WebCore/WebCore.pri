@@ -652,6 +652,8 @@ IDL_BINDINGS += \
     xml/XPathEvaluator.idl \
     xml/XSLTProcessor.idl
 
+INSPECTOR_INTERFACES = inspector/InspectorFrontend2.idl
+
 contains(DEFINES, ENABLE_MATHML=1) {
     mathmlnames.output = $${WC_GENERATED_SOURCES_DIR}/MathMLNames.cpp
     mathmlnames.input = MATHML_NAMES
@@ -716,6 +718,18 @@ idl.depends = $$PWD/bindings/scripts/CodeGenerator.pm \
               $$PWD/bindings/scripts/IDLStructure.pm \
               $$PWD/bindings/scripts/InFilesParser.pm
 addExtraCompiler(idl)
+
+# GENERATOR 2: inspector idl compiler
+inspectorIDL.output = $${WC_GENERATED_SOURCES_DIR}/Remote${QMAKE_FILE_BASE}.cpp
+inspectorIDL.input = INSPECTOR_INTERFACES
+inspectorIDL.wkScript = $$PWD/bindings/scripts/generate-bindings.pl
+inspectorIDL.commands = perl -I$$PWD/bindings/scripts -I$$PWD/inspector $$inspectorIDL.wkScript --defines \"$${FEATURE_DEFINES_JAVASCRIPT}\" --generator Inspector --outputDir $$WC_GENERATED_SOURCES_DIR --preprocessor \"$${QMAKE_MOC} -E\" ${QMAKE_FILE_NAME}
+inspectorIDL.depends = $$PWD/bindings/scripts/CodeGenerator.pm \
+              $$PWD/inspector/CodeGeneratorInspector.pm \
+              $$PWD/bindings/scripts/IDLParser.pm \
+              $$PWD/bindings/scripts/IDLStructure.pm \
+              $$PWD/bindings/scripts/InFilesParser.pm
+addExtraCompiler(inspectorIDL)
 
 # GENERATOR 3: tokenizer (flex)
 tokenizer.output = $${WC_GENERATED_SOURCES_DIR}/${QMAKE_FILE_BASE}.cpp
