@@ -1,3 +1,16 @@
+2010-07-05  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Implement InSelectMode
+        https://bugs.webkit.org/show_bug.cgi?id=41627
+
+        * html/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::processStartTag):
+        (WebCore::HTMLTreeBuilder::processEndTag):
+        (WebCore::HTMLTreeBuilder::processCharacter):
+        (WebCore::HTMLTreeBuilder::processEndOfFile):
+
 2010-07-05  Fady Samuel  <fsamuel@chromium.org>
 
         Reviewed by Darin Adler.
