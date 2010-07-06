@@ -5135,7 +5135,7 @@ resources/tables01.dat:
 8
 9
 
-Test 3 of 10 in resources/tables01.dat failed. Input:
+Test 3 of 14 in resources/tables01.dat failed. Input:
 <table><col foo='bar'>
 Got:
 | <html>
@@ -5153,7 +5153,7 @@ Expected:
 |         <col>
 |           foo="bar"
 
-Test 7 of 10 in resources/tables01.dat failed. Input:
+Test 7 of 14 in resources/tables01.dat failed. Input:
 <table><select><option>3</select></table>
 Got:
 | <html>
@@ -5173,7 +5173,7 @@ Expected:
 |         "3"
 |     <table>
 
-Test 8 of 10 in resources/tables01.dat failed. Input:
+Test 8 of 14 in resources/tables01.dat failed. Input:
 <table><select><table></table></select></table>
 Got:
 | <html>
@@ -5191,7 +5191,7 @@ Expected:
 |     <table>
 |     <table>
 
-Test 9 of 10 in resources/tables01.dat failed. Input:
+Test 9 of 14 in resources/tables01.dat failed. Input:
 <table><select></table>
 Got:
 | <html>

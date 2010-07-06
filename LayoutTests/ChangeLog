@@ -1,3 +1,23 @@
+2010-07-06  Vitaly Repeshko  <vitalyr@chromium.org>
+
+        Unreviewed.
+
+        [chromium] Update expectations.
+
+        * platform/chromium-linux/svg/custom/svg-curve-with-relative-cordinates-expected.checksum: Added.
+        * platform/chromium-linux/svg/custom/svg-curve-with-relative-cordinates-expected.png: Added.
+        * platform/chromium-mac/fast/xmlhttprequest/xmlhttprequest-no-file-access-expected.txt: Added.
+        * platform/chromium-mac/fast/xmlhttprequest/xmlhttprequest-nonexistent-file-expected.txt: Added.
+        * platform/chromium-mac/html5lib/runner-expected.txt:
+        * platform/chromium-mac/svg/custom/svg-curve-with-relative-cordinates-expected.checksum: Added.
+        * platform/chromium-mac/svg/custom/svg-curve-with-relative-cordinates-expected.png: Added.
+        * platform/chromium-win/fast/xmlhttprequest/xmlhttprequest-no-file-access-expected.txt: Added.
+        * platform/chromium-win/fast/xmlhttprequest/xmlhttprequest-nonexistent-file-expected.txt: Added.
+        * platform/chromium-win/html5lib/runner-expected.txt:
+        * platform/chromium-win/svg/custom/svg-curve-with-relative-cordinates-expected.checksum: Added.
+        * platform/chromium-win/svg/custom/svg-curve-with-relative-cordinates-expected.png: Added.
+        * platform/chromium-win/svg/custom/svg-curve-with-relative-cordinates-expected.txt: Added.
+
 2010-07-06  Alexey Proskuryakov  <ap@apple.com>
 
         Not reviewed, fixing a simple copy/paste mistake.
