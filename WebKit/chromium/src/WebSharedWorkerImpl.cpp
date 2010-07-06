@@ -85,7 +85,7 @@ void WebSharedWorkerImpl::connectTask(ScriptExecutionContext* context, WebShared
 {
     // Wrap the passed-in channel in a MessagePort, and send it off via a connect event.
     RefPtr<MessagePort> port = MessagePort::create(*context);
-    port->entangle(channel.release());
+    port->entangle(channel);
     ASSERT(context->isWorkerContext());
     WorkerContext* workerContext = static_cast<WorkerContext*>(context);
     ASSERT(workerContext->isSharedWorkerContext());

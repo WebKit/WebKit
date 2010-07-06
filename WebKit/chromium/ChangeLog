@@ -2,6 +2,14 @@
 
         Fix build.
 
+        * src/WebSharedWorkerImpl.cpp:
+        (WebKit::WebSharedWorkerImpl::connectTask): Removed unneeded release
+        called on a PassOwnPtr to pass it as an argument of type PassOwnPtr.
+
+2010-07-06  Darin Adler  <darin@apple.com>
+
+        Fix build.
+
         * src/WebDataSourceImpl.cpp:
         (WebKit::WebDataSourceImpl::setNextPluginLoadObserver): Call leakPtr
         here instead of release. Comment makes it really unclear why it's OK!
@@ -11,7 +19,7 @@
         Fix build.
 
         * src/SharedWorkerRepository.cpp:
-        (WebCore::SharedWorkerRepository::connect): Remove unneeded release
+        (WebCore::SharedWorkerRepository::connect): Removed unneeded release
         called on a PassOwnPtr to pass it as an argument of type PassOwnPtr.
 
 2010-07-05  Yury Semikhatsky  <yurys@chromium.org>
