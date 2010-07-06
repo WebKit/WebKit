@@ -1309,31 +1309,29 @@ sub buildAutotoolsProject($@)
     }
 
     if (! -d $dir) {
-        system "mkdir", "-p", "$dir";
-        if (! -d $dir) {
-            die "Failed to create build directory " . $dir;
-        }
+        File::Path::mkpath($dir) or die "Failed to create build directory " . $dir
     }
-
     chdir $dir or die "Failed to cd into " . $dir . "\n";
 
-    my $result;
     if ($clean) {
-        #$result = system $make, "distclean";
         return 0;
     }
 
-    print "Calling configure in " . $dir . "\n\n";
-    print "Installation prefix directory: $prefix\n" if(defined($prefix));
+    # If GNUmakefile exists, don't run autogen.sh. The makefile should be
+    # smart enough to track autotools dependencies and re-run autogen.sh
+    # when build files change.
+    my $result;
+    if (! -e "GNUmakefile") {
+        print "Calling configure in " . $dir . "\n\n";
+        print "Installation prefix directory: $prefix\n" if(defined($prefix));
 
-    # Make the path relative since it will appear in all -I compiler flags.
-    # Long argument lists cause bizarre slowdowns in libtool.
-    my $relSourceDir = File::Spec->abs2rel($sourceDir);
-    $relSourceDir = "." if !$relSourceDir;
-
-    $result = system "$relSourceDir/autogen.sh", @buildArgs;
-    if ($result ne 0) {
-        die "Failed to setup build environment using 'autotools'!\n";
+        # Make the path relative since it will appear in all -I compiler flags.
+        # Long argument lists cause bizarre slowdowns in libtool.
+        my $relSourceDir = File::Spec->abs2rel($sourceDir) || ".";
+        $result = system "$relSourceDir/autogen.sh", @buildArgs;
+        if ($result ne 0) {
+            die "Failed to setup build environment using 'autotools'!\n";
+        }
     }
 
     $result = system "$make $makeArgs";

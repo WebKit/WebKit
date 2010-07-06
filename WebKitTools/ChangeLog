@@ -1,3 +1,14 @@
+2010-07-06  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] build-webkit should not run autogen.sh unconditionally
+        https://bugs.webkit.org/show_bug.cgi?id=41704
+
+        * Scripts/webkitdirs.pm: Only run autogen.sh during a build if GNUmakefile
+        doesn't exist. Autotools should re-run autogen.sh when necessary. Also do
+        some very minor cleanup.
+
 2010-07-06  Darin Adler  <darin@apple.com>
 
         Try to fix Chromium build.
