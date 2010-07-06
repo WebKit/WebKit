@@ -1,5 +1,11 @@
 2010-07-06  Sam Weinig  <sam@webkit.org>
 
+        Fix MiniBrowser build.
+
+        * MiniBrowser/mac/WebBundle/WebBundleMain.m:
+
+2010-07-06  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Anders Carlsson.
 
         Add support for dumping the contents of messages to the console to WebKitTestRunner

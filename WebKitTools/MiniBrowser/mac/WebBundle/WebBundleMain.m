@@ -83,7 +83,7 @@ void _didCreatePage(WKBundleRef bundle, WKBundlePageRef page, const void* client
 {
     LOG(@"WKBundleClient - didCreatePage\n");
 
-    WKBundlePageClient client = {
+    WKBundlePageLoaderClient client = {
         0,
         0,
         _didStartProvisionalLoadForFrame,
@@ -95,7 +95,7 @@ void _didCreatePage(WKBundleRef bundle, WKBundlePageRef page, const void* client
         _didReceiveTitleForFrame,
         _didClearWindowForFrame
     };
-    WKBundlePageSetClient(page, &client);
+    WKBundlePageSetLoaderClient(page, &client);
 }
 
 void _willDestroyPage(WKBundleRef bundle, WKBundlePageRef page, const void* clientInfo)
