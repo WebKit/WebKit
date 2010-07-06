@@ -1,3 +1,13 @@
+2010-07-06  Vitaly Repeshko  <vitalyr@chromium.org>
+
+        Unreviewed.
+
+        [chromium] Update expectations.
+
+        * platform/chromium-mac/html5lib/runner-expected.txt:
+        * platform/chromium-win/html5lib/runner-expected.txt:
+        * platform/chromium-win/svg/hixie/error/013-expected.txt:
+
 2010-07-06  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed.

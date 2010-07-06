@@ -928,7 +928,7 @@ Expected:
 |     <form>
 |       <hr>
 |       <label>
-|         "This is a searchable index. Insert your search keywords here: "
+|         "This is a searchable index. Enter search keywords: "
 |         <input>
 |           name="isindex"
 |           test="x"
@@ -4686,6 +4686,7 @@ Expected:
 |       "<!--<noembed>"
 |     "-->"
 resources/webkit01.dat:
+15
 17
 20
 22
@@ -4695,8 +4696,25 @@ resources/webkit01.dat:
 28
 29
 30
+31
 
-Test 17 of 30 in resources/webkit01.dat failed. Input:
+Test 15 of 31 in resources/webkit01.dat failed. Input:
+<p>Test</p<p>Test2</p>
+Got:
+| <html>
+|   <head>
+|   <body>
+|     <p>
+|       "Test"
+|       "Test2"
+Expected:
+| <html>
+|   <head>
+|   <body>
+|     <p>
+|       "TestTest2"
+
+Test 17 of 31 in resources/webkit01.dat failed. Input:
 <A>test< /A>
 Got:
 | <html>
@@ -4712,7 +4730,7 @@ Expected:
 |     <a>
 |       "test< /A>"
 
-Test 20 of 30 in resources/webkit01.dat failed. Input:
+Test 20 of 31 in resources/webkit01.dat failed. Input:
 <body></br foo="bar"></body>
 Got:
 | <html>
@@ -4726,7 +4744,7 @@ Expected:
 |   <body>
 |     <br>
 
-Test 22 of 30 in resources/webkit01.dat failed. Input:
+Test 22 of 31 in resources/webkit01.dat failed. Input:
 <body></body></br foo="bar">
 Got:
 | <html>
@@ -4740,7 +4758,7 @@ Expected:
 |   <body>
 |     <br>
 
-Test 24 of 30 in resources/webkit01.dat failed. Input:
+Test 24 of 31 in resources/webkit01.dat failed. Input:
 <html><body></body></html><!-- Hi there -->
 Got:
 | <html>
@@ -4753,7 +4771,7 @@ Expected:
 |   <body>
 | <!--  Hi there  -->
 
-Test 26 of 30 in resources/webkit01.dat failed. Input:
+Test 26 of 31 in resources/webkit01.dat failed. Input:
 <html><body></body></html>x<!-- Hi there --></html><!-- Again -->
 Got:
 | <html>
@@ -4770,7 +4788,7 @@ Expected:
 |     <!--  Hi there  -->
 | <!--  Again  -->
 
-Test 27 of 30 in resources/webkit01.dat failed. Input:
+Test 27 of 31 in resources/webkit01.dat failed. Input:
 <html><body></body></html>x<!-- Hi there --></body></html><!-- Again -->
 Got:
 | <html>
@@ -4787,7 +4805,7 @@ Expected:
 |     <!--  Hi there  -->
 | <!--  Again  -->
 
-Test 28 of 30 in resources/webkit01.dat failed. Input:
+Test 28 of 31 in resources/webkit01.dat failed. Input:
 <html><body><ruby><div><rp>xx</rp></div></ruby></body></html>
 Got:
 | <html>
@@ -4806,7 +4824,7 @@ Expected:
 |       <rp>
 |         "xx"
 
-Test 29 of 30 in resources/webkit01.dat failed. Input:
+Test 29 of 31 in resources/webkit01.dat failed. Input:
 <html><body><ruby><div><rt>xx</rt></div></ruby></body></html>
 Got:
 | <html>
@@ -4825,7 +4843,7 @@ Expected:
 |       <rt>
 |         "xx"
 
-Test 30 of 30 in resources/webkit01.dat failed. Input:
+Test 30 of 31 in resources/webkit01.dat failed. Input:
 <html><frameset><!--1--><noframes>A</noframes><!--2--></frameset><!--3--><noframes>B</noframes><!--4--></html><!--5--><noframes>C</noframes><!--6-->
 Got:
 | <html>
@@ -4854,6 +4872,50 @@ Expected:
 |     "C"
 | <!-- 5 -->
 | <!-- 6 -->
+
+Test 31 of 31 in resources/webkit01.dat failed. Input:
+<select><option>A<select><option>B<select><option>C<select><option>D<select><option>E<select><option>F<select><option>G<select>
+Got:
+| <html>
+|   <head>
+|   <body>
+|     <select>
+|       <option>
+|         "A"
+|     "B"
+|     <select>
+|       <option>
+|         "C"
+|     "D"
+|     <select>
+|       <option>
+|         "E"
+|     "F"
+|     <select>
+|       <option>
+|         "G"
+Expected:
+| <html>
+|   <head>
+|   <body>
+|     <select>
+|       <option>
+|         "A"
+|     <option>
+|       "B"
+|       <select>
+|         <option>
+|           "C"
+|     <option>
+|       "D"
+|       <select>
+|         <option>
+|           "E"
+|     <option>
+|       "F"
+|       <select>
+|         <option>
+|           "G"
 resources/doctype01.dat: PASS
 
 resources/scriptdata01.dat: PASS
@@ -4894,8 +4956,11 @@ resources/comments01.dat: PASS
 resources/adoption01.dat:
 1
 6
+7
+8
+9
 
-Test 1 of 6 in resources/adoption01.dat failed. Input:
+Test 1 of 9 in resources/adoption01.dat failed. Input:
 <a><p></a></p>
 Got:
 | <html>
@@ -4911,7 +4976,7 @@ Expected:
 |     <p>
 |       <a>
 
-Test 6 of 6 in resources/adoption01.dat failed. Input:
+Test 6 of 9 in resources/adoption01.dat failed. Input:
 <table><a>1<p>2</a>3</p>
 Got:
 | <html>
@@ -4934,4 +4999,210 @@ Expected:
 |       <a>
 |         "2"
 |       "3"
+|     <table>
+
+Test 7 of 9 in resources/adoption01.dat failed. Input:
+<b><b><a><p></a>
+Got:
+| <html>
+|   <head>
+|   <body>
+|     <b>
+|       <b>
+|         <a>
+|         <p>
+Expected:
+| <html>
+|   <head>
+|   <body>
+|     <b>
+|       <b>
+|         <a>
+|         <p>
+|           <a>
+
+Test 8 of 9 in resources/adoption01.dat failed. Input:
+<b><a><b><p></a>
+Got:
+| <html>
+|   <head>
+|   <body>
+|     <b>
+|       <a>
+|         <b>
+|       <b>
+|         <p>
+Expected:
+| <html>
+|   <head>
+|   <body>
+|     <b>
+|       <a>
+|         <b>
+|       <b>
+|         <p>
+|           <a>
+
+Test 9 of 9 in resources/adoption01.dat failed. Input:
+<a><b><b><p></a>
+Got:
+| <html>
+|   <head>
+|   <body>
+|     <a>
+|       <b>
+|         <b>
+|     <b>
+|       <b>
+|         <p>
+Expected:
+| <html>
+|   <head>
+|   <body>
+|     <a>
+|       <b>
+|         <b>
+|     <b>
+|       <b>
+|         <p>
+|           <a>
+resources/inbody01.dat: PASS
+
+resources/isindex.dat:
+1
+2
+3
+
+Test 1 of 3 in resources/isindex.dat failed. Input:
+<isindex>
+Got:
+| <html>
+|   <head>
+|   <body>
+Expected:
+| <html>
+|   <head>
+|   <body>
+|     <form>
+|       <hr>
+|       <label>
+|         "This is a searchable index. Enter search keywords: "
+|         <input>
+|           name="isindex"
+|       <hr>
+
+Test 2 of 3 in resources/isindex.dat failed. Input:
+<isindex name="A" action="B" prompt="C" foo="D">
+Got:
+| <html>
+|   <head>
+|   <body>
+Expected:
+| <html>
+|   <head>
+|   <body>
+|     <form>
+|       action="B"
+|       <hr>
+|       <label>
+|         "C"
+|         <input>
+|           foo="D"
+|           name="isindex"
+|       <hr>
+
+Test 3 of 3 in resources/isindex.dat failed. Input:
+<form><isindex>
+Got:
+| <html>
+|   <head>
+|   <body>
+|     <form>
+|       <div>
+|         <hr>
+|         "This is a searchable index. Enter search keywords: "
+|         <isindex>
+|           type="khtml_isindex"
+|         <hr>
+Expected:
+| <html>
+|   <head>
+|   <body>
+|     <form>
+resources/tables01.dat:
+3
+7
+8
+9
+
+Test 3 of 10 in resources/tables01.dat failed. Input:
+<table><col foo='bar'>
+Got:
+| <html>
+|   <head>
+|   <body>
+|     <table>
+|       <col>
+|         foo="bar"
+Expected:
+| <html>
+|   <head>
+|   <body>
+|     <table>
+|       <colgroup>
+|         <col>
+|           foo="bar"
+
+Test 7 of 10 in resources/tables01.dat failed. Input:
+<table><select><option>3</select></table>
+Got:
+| <html>
+|   <head>
+|   <body>
+|     <select>
+|       <option>
+|         "3"
+|     <table>
+|       <tbody>
+Expected:
+| <html>
+|   <head>
+|   <body>
+|     <select>
+|       <option>
+|         "3"
+|     <table>
+
+Test 8 of 10 in resources/tables01.dat failed. Input:
+<table><select><table></table></select></table>
+Got:
+| <html>
+|   <head>
+|   <body>
+|     <select>
+|     <table>
+|       <tbody>
+|     <table>
+Expected:
+| <html>
+|   <head>
+|   <body>
+|     <select>
+|     <table>
+|     <table>
+
+Test 9 of 10 in resources/tables01.dat failed. Input:
+<table><select></table>
+Got:
+| <html>
+|   <head>
+|   <body>
+|     <select>
+|     <table>
+|       <tbody>
+Expected:
+| <html>
+|   <head>
+|   <body>
+|     <select>
 |     <table>
