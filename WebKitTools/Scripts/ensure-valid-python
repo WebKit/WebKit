@@ -42,7 +42,7 @@ my $macPythonMD5 = "84489bba813fdbb6041b69d4310a86da";
 my $macPythonInstallerName = "Python.mpkg";
 
 # We could use a consistent download location, like the source or build directory.
-my $tempDirectory = File::Temp->tempdir("WebKitPythonXXXX");
+my $tempDirectory = File::Temp::tempdir("WebKitPythonXXXX", TMPDIR => 1, CLEANUP => 1);
 my $downloadDirectory = $tempDirectory;
 my $mountPoint = File::Spec->join($tempDirectory, "mount");
 
