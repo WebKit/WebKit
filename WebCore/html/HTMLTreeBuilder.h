@@ -210,6 +210,9 @@ private:
 
     void closeTheCell();
 
+    template <bool shouldClose(const Element*)>
+    void processCloseWhenNestedTag(AtomicHTMLToken&);
+
     bool m_framesetOk;
 
     // FIXME: Implement error reporting.
