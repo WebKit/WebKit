@@ -1,5 +1,15 @@
 2010-07-05  Eric Seidel  <eric@webkit.org>
 
+        Reviewed by Adam Barth.
+
+        Fix one more notImplemented in h1-h6 start tag handling
+        https://bugs.webkit.org/show_bug.cgi?id=41654
+
+        * html/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::processStartTag):
+
+2010-07-05  Eric Seidel  <eric@webkit.org>
+
         Unreviewed.  Just fixing proess to process.
         Clearly Adam and I can't spell.  Thankfully MikeSmith can.
 

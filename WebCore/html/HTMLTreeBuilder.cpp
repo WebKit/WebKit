@@ -625,7 +625,10 @@ void HTMLTreeBuilder::processStartTag(AtomicHTMLToken& token)
         }
         if (isNumberedHeaderTag(token.name())) {
             processFakePEndTagIfPInScope();
-            notImplemented();
+            if (isNumberedHeaderTag(currentElement()->localName())) {
+                parseError(token);
+                m_openElements.pop();
+            }
             insertElement(token);
             return;
         }
