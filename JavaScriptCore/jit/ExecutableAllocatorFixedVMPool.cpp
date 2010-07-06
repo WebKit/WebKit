@@ -27,7 +27,7 @@
 
 #include "ExecutableAllocator.h"
 
-#if ENABLE(EXECUTABLE_ALLOCATOR_FIXED)
+#if ENABLE(ASSEMBLER) && OS(DARWIN) && CPU(X86_64)
 
 #include <errno.h>
 
@@ -39,21 +39,12 @@
 #include <wtf/AVLTree.h>
 #include <wtf/VMTags.h>
 
-#if CPU(X86_64)
-    // These limits suitable on 64-bit platforms (particularly x86-64, where we require all jumps to have a 2Gb max range).
-    #define VM_POOL_SIZE (2u * 1024u * 1024u * 1024u) // 2Gb
-    #define COALESCE_LIMIT (16u * 1024u * 1024u) // 16Mb
-    #define VM_POOL_ASLR 1
-#else
-    // These limits are hopefully sensible on embedded platforms.
-    #define VM_POOL_SIZE (32u * 1024u * 1024u) // 32Mb
-    #define COALESCE_LIMIT (4u * 1024u * 1024u) // 4Mb
-    #define VM_POOL_ASLR 0
-#endif
-
 using namespace WTF;
 
 namespace JSC {
+
+#define TWO_GB (2u * 1024u * 1024u * 1024u)
+#define SIXTEEN_MB (16u * 1024u * 1024u)
 
 // FreeListEntry describes a free chunk of memory, stored in the freeList.
 struct FreeListEntry {
@@ -300,12 +291,9 @@ public:
         // for now instead of 2^26 bits of ASLR lets stick with 25 bits of randomization plus
         // 2^24, which should put up somewhere in the middle of usespace (in the address range
         // 0x200000000000 .. 0x5fffffffffff).
-        intptr_t randomLocation = 0;
-#if VM_POOL_ASLR
-        randomLocation = arc4random() & ((1 << 25) - 1);
+        intptr_t randomLocation = arc4random() & ((1 << 25) - 1);
         randomLocation += (1 << 24);
         randomLocation <<= 21;
-#endif
         m_base = mmap(reinterpret_cast<void*>(randomLocation), m_totalHeapSize, INITIAL_PROTECTION_FLAGS, MAP_PRIVATE | MAP_ANON, VM_TAG_FOR_EXECUTABLEALLOCATOR_MEMORY, 0);
         if (!m_base)
             CRASH();
@@ -399,7 +387,7 @@ public:
         // 16MB of allocations have been freed, sweep m_freeList
         // coalescing any neighboring fragments.
         m_countFreedSinceLastCoalesce += size;
-        if (m_countFreedSinceLastCoalesce >= COALESCE_LIMIT) {
+        if (m_countFreedSinceLastCoalesce >= SIXTEEN_MB) {
             m_countFreedSinceLastCoalesce = 0;
             coalesceFreeSpace();
         }
@@ -441,7 +429,7 @@ ExecutablePool::Allocation ExecutablePool::systemAlloc(size_t size)
   SpinLockHolder lock_holder(&spinlock);
 
     if (!allocator)
-        allocator = new FixedVMPoolAllocator(JIT_ALLOCATOR_LARGE_ALLOC_SIZE, VM_POOL_SIZE);
+        allocator = new FixedVMPoolAllocator(JIT_ALLOCATOR_LARGE_ALLOC_SIZE, TWO_GB);
     ExecutablePool::Allocation alloc = {reinterpret_cast<char*>(allocator->alloc(size)), size};
     return alloc;
 }
