@@ -1176,7 +1176,7 @@ void HTMLTreeBuilder::callTheAdoptionAgency(AtomicHTMLToken& token)
         ASSERT(furthestBlock->isAbove(formattingElementRecord));
         Element* commonAncestor = formattingElementRecord->next()->element();
         // 5.
-        notImplemented(); // bookmark?
+        HTMLFormattingElementList::Bookmark bookmark = m_activeFormattingElements.bookmarkFor(formattingElement);
         // 6.
         HTMLElementStack::ElementRecord* node = furthestBlock;
         HTMLElementStack::ElementRecord* nextNode = node->next();
@@ -1195,9 +1195,6 @@ void HTMLTreeBuilder::callTheAdoptionAgency(AtomicHTMLToken& token)
             // 6.3
             if (node == formattingElementRecord)
                 break;
-            // 6.4
-            if (lastNode == furthestBlock)
-                notImplemented(); // move bookmark.
             // 6.5
             // FIXME: We're supposed to save the original token in the entry.
             AtomicHTMLToken fakeToken(HTMLToken::StartTag, node->element()->localName());
@@ -1207,6 +1204,11 @@ void HTMLTreeBuilder::callTheAdoptionAgency(AtomicHTMLToken& token)
             HTMLFormattingElementList::Entry* nodeEntry = m_activeFormattingElements.find(node->element());
             nodeEntry->replaceElement(newElement.get());
             node->replaceElement(newElement.release());
+            // 6.4 -- Intentionally out of order to handle the case where node
+            // was replaced in 6.5.
+            // http://www.w3.org/Bugs/Public/show_bug.cgi?id=10096
+            if (lastNode == furthestBlock)
+                bookmark.moveToAfter(node->element());
             // 6.6
             // Use appendChild instead of parserAddChild to handle possible reparenting.
             ExceptionCode ec;
@@ -1236,7 +1238,7 @@ void HTMLTreeBuilder::callTheAdoptionAgency(AtomicHTMLToken& token)
         furthestBlock->element()->parserAddChild(newElement);
         // 11
         m_activeFormattingElements.remove(formattingElement);
-        notImplemented(); // insert new element at bookmark
+        m_activeFormattingElements.insertAt(newElement.get(), bookmark);
         // 12
         m_openElements.remove(formattingElement);
         m_openElements.insertAbove(newElement, furthestBlock);

@@ -64,6 +64,28 @@ public:
         RefPtr<Element> m_element;
     };
 
+    class Bookmark {
+    public:
+        Bookmark(Element* before, Element* after)
+            : m_before(before)
+            , m_after(after)
+        {
+        }
+
+        void moveToAfter(Element* before)
+        {
+            m_before = before;
+            m_after = 0;
+        }
+
+        Element* elementBefore() const { return m_before; }
+        Element* elementAfter() const { return m_after; }
+
+    private:
+        Element* m_before;
+        Element* m_after;
+    };
+
     bool isEmpty() const { return !size(); }
     size_t size() const { return m_entries.size(); }
 
@@ -73,6 +95,9 @@ public:
     bool contains(Element*);
     void append(Element*);
     void remove(Element*);
+
+    Bookmark bookmarkFor(Element*);
+    void insertAt(Element*, const Bookmark&);
 
     void appendMarker();
     void clearToLastMarker();

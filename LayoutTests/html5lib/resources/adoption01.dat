@@ -82,3 +82,45 @@
 |         "2"
 |       "3"
 |     <table>
+
+#data
+<b><b><a><p></a>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <b>
+|       <b>
+|         <a>
+|         <p>
+|           <a>
+
+#data
+<b><a><b><p></a>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <b>
+|       <a>
+|         <b>
+|       <b>
+|         <p>
+|           <a>
+
+#data
+<a><b><b><p></a>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <a>
+|       <b>
+|         <b>
+|     <b>
+|       <b>
+|         <p>
+|           <a>
