@@ -1,3 +1,49 @@
+2010-07-06  Jedrzej Nowacki  <jedrzej.nowacki@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Implementation of QScriptValue properties accessors.
+
+        The patch contains implementation of the QScriptValue::property() and
+        the QScriptValue::setProperty(). It is not full functionality, as these
+        method are too complex for one patch, but it is enough to cover about
+        95% of use cases.
+
+        Missing functionality:
+         - Few of the PropertyFlags are ignored.
+         - Only a public part of the ResolveFlags can be used (ResolveLocal,
+         ResolvePrototype).
+
+        A lot of new test cases were added.
+
+        [Qt] QScriptValue should have API for accessing object properties
+        https://bugs.webkit.org/show_bug.cgi?id=40903
+
+        * api/qscriptconverter_p.h:
+        (QScriptConverter::toPropertyFlags):
+        * api/qscriptstring_p.h:
+        (QScriptStringPrivate::operator JSStringRef):
+        * api/qscriptvalue.cpp:
+        (QScriptValue::property):
+        (QScriptValue::setProperty):
+        * api/qscriptvalue.h:
+        (QScriptValue::):
+        * api/qscriptvalue_p.h:
+        (QScriptValuePrivate::assignEngine):
+        (QScriptValuePrivate::property):
+        (QScriptValuePrivate::hasOwnProperty):
+        (QScriptValuePrivate::setProperty):
+        (QScriptValuePrivate::deleteProperty):
+        * tests/qscriptvalue/tst_qscriptvalue.cpp:
+        (tst_QScriptValue::getPropertySimple_data):
+        (tst_QScriptValue::getPropertySimple):
+        (tst_QScriptValue::setPropertySimple):
+        (tst_QScriptValue::getPropertyResolveFlag):
+        (tst_QScriptValue::getSetProperty):
+        (tst_QScriptValue::setProperty_data):
+        (tst_QScriptValue::setProperty):
+        * tests/qscriptvalue/tst_qscriptvalue.h:
+
 2010-07-02  Jedrzej Nowacki  <jedrzej.nowacki@nokia.com>
 
         Reviewed by Simon Hausmann.

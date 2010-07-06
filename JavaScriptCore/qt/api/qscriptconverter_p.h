@@ -20,7 +20,9 @@
 #ifndef qscriptconverter_p_h
 #define qscriptconverter_p_h
 
+#include "qscriptvalue.h"
 #include <JavaScriptCore/JavaScript.h>
+#include <QtCore/qglobal.h>
 #include <QtCore/qnumeric.h>
 #include <QtCore/qstring.h>
 #include <QtCore/qvarlengtharray.h>
@@ -126,6 +128,18 @@ public:
         free(result);
         buf.append(0);
         return QString::fromLatin1(buf.constData());
+    }
+
+    static JSPropertyAttributes toPropertyFlags(const QFlags<QScriptValue::PropertyFlag>& flags)
+    {
+        JSPropertyAttributes attr = 0;
+        if (flags.testFlag(QScriptValue::ReadOnly))
+            attr |= kJSPropertyAttributeReadOnly;
+        if (flags.testFlag(QScriptValue::Undeletable))
+            attr |= kJSPropertyAttributeDontDelete;
+        if (flags.testFlag(QScriptValue::SkipInEnumeration))
+            attr |= kJSPropertyAttributeDontEnum;
+        return attr;
     }
 };
 

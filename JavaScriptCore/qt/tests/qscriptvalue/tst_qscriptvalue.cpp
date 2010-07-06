@@ -274,6 +274,392 @@ void tst_QScriptValue::ctor()
     QVERIFY(QScriptValue(0, QString("ciao")).isString());
 }
 
+void tst_QScriptValue::getPropertySimple_data()
+{
+    QTest::addColumn<QString>("code");
+    QTest::addColumn<QString>("propertyName");
+    QTest::addColumn<QString>("desc");
+    QTest::addColumn<bool>("isArrayIndex");
+
+    QTest::newRow("new Array()")
+            << QString::fromAscii("new Array()")
+            << QString::fromAscii("length")
+            << QString::fromAscii("0")
+            << false;
+    QTest::newRow("new Object().length")
+            << QString::fromAscii("new Object()")
+            << QString::fromAscii("length")
+            << QString::fromAscii("") // Undefined is an invalid property.
+            << false;
+    QTest::newRow("new Object().toString")
+            << QString::fromAscii("new Object()")
+            << QString::fromAscii("toString")
+            << QString::fromAscii("function toString() {\n    [native code]\n}")
+            << false;
+    QTest::newRow("[1,2,3,4]")
+            << QString::fromAscii("[1,2,3,'s',4]")
+            << QString::fromAscii("2")
+            << QString::fromAscii("3")
+            << true;
+    QTest::newRow("[1,3,'a','b']")
+            << QString::fromAscii("[1,3,'a','b']")
+            << QString::fromAscii("3")
+            << QString::fromAscii("b")
+            << true;
+    QTest::newRow("[4,5]")
+            << QString::fromAscii("[4,5]")
+            << QString::fromAscii("123")
+            << QString::fromAscii("") // Undefined is an invalid property.
+            << true;
+    QTest::newRow("[1,3,4]")
+            << QString::fromAscii("[1,3,4]")
+            << QString::fromAscii("abc")
+            << QString::fromAscii("") // Undefined is an invalid property.
+            << true;
+}
+
+void tst_QScriptValue::getPropertySimple()
+{
+    QFETCH(QString, code);
+    QFETCH(QString, propertyName);
+    QFETCH(QString, desc);
+
+    QScriptEngine engine;
+    QScriptValue object = engine.evaluate(code);
+    QVERIFY(object.isValid());
+    {
+        QScriptValue property = object.property(propertyName);
+        QCOMPARE(property.toString(), desc);
+    }
+    {
+        QScriptString name = engine.toStringHandle(propertyName);
+        QScriptValue property = object.property(name);
+        QCOMPARE(property.toString(), desc);
+    }
+    {
+        bool ok;
+        quint32 idx = engine.toStringHandle(propertyName).toArrayIndex(&ok);
+        if (ok) {
+            QScriptValue property = object.property(idx);
+            QCOMPARE(property.toString(), desc);
+        }
+    }
+}
+
+void tst_QScriptValue::setPropertySimple()
+{
+    QScriptEngine engine;
+    {
+        QScriptValue invalid;
+        QScriptValue property(1234);
+
+        invalid.setProperty("aaa", property);
+        invalid.setProperty(13, property);
+        invalid.setProperty(engine.toStringHandle("aaa"), property);
+
+        QVERIFY(!invalid.property("aaa").isValid());
+        QVERIFY(!invalid.property(13).isValid());
+        QVERIFY(!invalid.property(engine.toStringHandle("aaa")).isValid());
+    }
+    {
+        QScriptValue object = engine.newObject();
+        QScriptValue property;
+
+        object.setProperty(13, property);
+        object.setProperty("aaa", property);
+        object.setProperty(engine.toStringHandle("aaa"), property);
+
+        QVERIFY(!object.property(13).isValid());
+        QVERIFY(!object.property("aaa").isValid());
+        QVERIFY(!object.property(engine.toStringHandle("aaa")).isValid());
+    }
+    {
+        // Check if setting an invalid property works as deleteProperty.
+        QScriptValue object = engine.evaluate("o = {13: 0, 'aaa': 3, 'bbb': 1}");
+        QScriptValue property;
+
+        QVERIFY(object.property(13).isValid());
+        QVERIFY(object.property("aaa").isValid());
+        QVERIFY(object.property(engine.toStringHandle("aaa")).isValid());
+
+        object.setProperty(13, property);
+        object.setProperty("aaa", property);
+        object.setProperty(engine.toStringHandle("bbb"), property);
+
+        QVERIFY(!object.property(13).isValid());
+        QVERIFY(!object.property("aaa").isValid());
+        QVERIFY(!object.property(engine.toStringHandle("aaa")).isValid());
+    }
+    {
+        QScriptValue object = engine.evaluate("new Object");
+        QVERIFY(object.isObject());
+        QScriptValue property = object.property("foo");
+        QVERIFY(!property.isValid());
+        property = QScriptValue(2);
+        object.setProperty("foo", property);
+        QVERIFY(object.property("foo").isNumber());
+        QVERIFY(object.property("foo").toNumber() == 2);
+    }
+    {
+        QScriptValue o1 = engine.evaluate("o1 = new Object; o1");
+        QScriptValue o2 = engine.evaluate("o2 = new Object; o2");
+        QVERIFY(engine.evaluate("o1.__proto__ = o2; o1.__proto__ === o2").toBool());
+        QVERIFY(engine.evaluate("o2.foo = 22; o1.foo == 22").toBool());
+        QVERIFY(o1.property("foo").toString() == "22");
+        o2.setProperty("foo", QScriptValue(&engine, 456.0));
+        QVERIFY(engine.evaluate("o1.foo == 456").toBool());
+        QVERIFY(o1.property("foo").isNumber());
+    }
+}
+
+void tst_QScriptValue::getPropertyResolveFlag()
+{
+    QScriptEngine engine;
+    QScriptValue object1 = engine.evaluate("o1 = new Object();");
+    QScriptValue object2 = engine.evaluate("o2 = new Object(); o1.__proto__ = o2; o2");
+    QScriptValue number(&engine, 456.0);
+    QVERIFY(object1.isObject());
+    QVERIFY(object2.isObject());
+    QVERIFY(number.isNumber());
+
+    object2.setProperty("propertyInPrototype", number);
+    QVERIFY(object2.property("propertyInPrototype").isNumber());
+    // default is ResolvePrototype
+    QCOMPARE(object1.property("propertyInPrototype").strictlyEquals(number), true);
+    QCOMPARE(object1.property("propertyInPrototype", QScriptValue::ResolvePrototype)
+             .strictlyEquals(number), true);
+    QCOMPARE(object1.property("propertyInPrototype", QScriptValue::ResolveLocal).isValid(), false);
+}
+
+void tst_QScriptValue::getSetProperty()
+{
+    QScriptEngine eng;
+
+    QScriptValue object = eng.newObject();
+
+    QScriptValue str = QScriptValue(&eng, "bar");
+    object.setProperty("foo", str);
+    QCOMPARE(object.property("foo").toString(), str.toString());
+
+    QScriptValue num = QScriptValue(&eng, 123.0);
+    object.setProperty("baz", num);
+    QCOMPARE(object.property("baz").toNumber(), num.toNumber());
+
+    QScriptValue strstr = QScriptValue("bar");
+    QCOMPARE(strstr.engine(), (QScriptEngine *)0);
+    object.setProperty("foo", strstr);
+    QCOMPARE(object.property("foo").toString(), strstr.toString());
+    QCOMPARE(strstr.engine(), &eng); // the value has been bound to the engine
+
+    QScriptValue numnum = QScriptValue(123.0);
+    object.setProperty("baz", numnum);
+    QCOMPARE(object.property("baz").toNumber(), numnum.toNumber());
+
+    QScriptValue inv;
+    inv.setProperty("foo", num);
+    QCOMPARE(inv.property("foo").isValid(), false);
+
+    QScriptValue array = eng.newArray();
+    array.setProperty(0, num);
+    QCOMPARE(array.property(0).toNumber(), num.toNumber());
+    QCOMPARE(array.property("0").toNumber(), num.toNumber());
+    QCOMPARE(array.property("length").toUInt32(), quint32(1));
+    array.setProperty(1, str);
+    QCOMPARE(array.property(1).toString(), str.toString());
+    QCOMPARE(array.property("1").toString(), str.toString());
+    QCOMPARE(array.property("length").toUInt32(), quint32(2));
+    array.setProperty("length", QScriptValue(&eng, 1));
+    QCOMPARE(array.property("length").toUInt32(), quint32(1));
+    QCOMPARE(array.property(1).isValid(), false);
+
+    // task 162051 -- detecting whether the property is an array index or not
+    QVERIFY(eng.evaluate("a = []; a['00'] = 123; a['00']").strictlyEquals(QScriptValue(&eng, 123)));
+    QVERIFY(eng.evaluate("a.length").strictlyEquals(QScriptValue(&eng, 0)));
+    QVERIFY(eng.evaluate("a.hasOwnProperty('00')").strictlyEquals(QScriptValue(&eng, true)));
+    QVERIFY(eng.evaluate("a.hasOwnProperty('0')").strictlyEquals(QScriptValue(&eng, false)));
+    QVERIFY(eng.evaluate("a[0]").isUndefined());
+    QVERIFY(eng.evaluate("a[0.5] = 456; a[0.5]").strictlyEquals(QScriptValue(&eng, 456)));
+    QVERIFY(eng.evaluate("a.length").strictlyEquals(QScriptValue(&eng, 0)));
+    QVERIFY(eng.evaluate("a.hasOwnProperty('0.5')").strictlyEquals(QScriptValue(&eng, true)));
+    QVERIFY(eng.evaluate("a[0]").isUndefined());
+    QVERIFY(eng.evaluate("a[0] = 789; a[0]").strictlyEquals(QScriptValue(&eng, 789)));
+    QVERIFY(eng.evaluate("a.length").strictlyEquals(QScriptValue(&eng, 1)));
+
+    // task 183072 -- 0x800000000 is not an array index
+    eng.evaluate("a = []; a[0x800000000] = 123");
+    QVERIFY(eng.evaluate("a.length").strictlyEquals(QScriptValue(&eng, 0)));
+    QVERIFY(eng.evaluate("a[0]").isUndefined());
+    QVERIFY(eng.evaluate("a[0x800000000]").strictlyEquals(QScriptValue(&eng, 123)));
+
+    QScriptEngine otherEngine;
+    QScriptValue otherNum = QScriptValue(&otherEngine, 123);
+    QTest::ignoreMessage(QtWarningMsg, "QScriptValue::setProperty() failed: cannot set value created in a different engine");
+    object.setProperty("oof", otherNum);
+    QCOMPARE(object.property("oof").isValid(), false);
+
+    // test ResolveMode
+    QScriptValue object2 = eng.newObject();
+    object.setPrototype(object2);
+    QScriptValue num2 = QScriptValue(&eng, 456.0);
+    object2.setProperty("propertyInPrototype", num2);
+    // default is ResolvePrototype
+    QCOMPARE(object.property("propertyInPrototype")
+             .strictlyEquals(num2), true);
+    QCOMPARE(object.property("propertyInPrototype", QScriptValue::ResolvePrototype)
+             .strictlyEquals(num2), true);
+    QCOMPARE(object.property("propertyInPrototype", QScriptValue::ResolveLocal)
+             .isValid(), false);
+    QEXPECT_FAIL("", "QScriptValue::ResolveScope is not implemented", Continue);
+    QCOMPARE(object.property("propertyInPrototype", QScriptValue::ResolveScope)
+             .strictlyEquals(num2), false);
+    QCOMPARE(object.property("propertyInPrototype", QScriptValue::ResolveFull)
+             .strictlyEquals(num2), true);
+
+    // test property removal (setProperty(QScriptValue()))
+    QScriptValue object3 = eng.newObject();
+    object3.setProperty("foo", num);
+    QCOMPARE(object3.property("foo").strictlyEquals(num), true);
+    object3.setProperty("bar", str);
+    QCOMPARE(object3.property("bar").strictlyEquals(str), true);
+    object3.setProperty("foo", QScriptValue());
+    QCOMPARE(object3.property("foo").isValid(), false);
+    QCOMPARE(object3.property("bar").strictlyEquals(str), true);
+    object3.setProperty("foo", num);
+    QCOMPARE(object3.property("foo").strictlyEquals(num), true);
+    QCOMPARE(object3.property("bar").strictlyEquals(str), true);
+    object3.setProperty("bar", QScriptValue());
+    QCOMPARE(object3.property("bar").isValid(), false);
+    QCOMPARE(object3.property("foo").strictlyEquals(num), true);
+    object3.setProperty("foo", QScriptValue());
+    object3.setProperty("foo", QScriptValue());
+
+    eng.globalObject().setProperty("object3", object3);
+    QCOMPARE(eng.evaluate("object3.hasOwnProperty('foo')")
+             .strictlyEquals(QScriptValue(&eng, false)), true);
+    object3.setProperty("foo", num);
+    QCOMPARE(eng.evaluate("object3.hasOwnProperty('foo')")
+             .strictlyEquals(QScriptValue(&eng, true)), true);
+    eng.globalObject().setProperty("object3", QScriptValue());
+    QCOMPARE(eng.evaluate("this.hasOwnProperty('object3')")
+             .strictlyEquals(QScriptValue(&eng, false)), true);
+
+    eng.globalObject().setProperty("object", object);
+
+    // ReadOnly
+    object.setProperty("readOnlyProperty", num, QScriptValue::ReadOnly);
+    // QCOMPARE(object.propertyFlags("readOnlyProperty"), QScriptValue::ReadOnly);
+    QCOMPARE(object.property("readOnlyProperty").strictlyEquals(num), true);
+    eng.evaluate("object.readOnlyProperty = !object.readOnlyProperty");
+    QCOMPARE(object.property("readOnlyProperty").strictlyEquals(num), true);
+    // Should still be part of enumeration.
+    {
+        QScriptValue ret = eng.evaluate(
+            "found = false;"
+            "for (var p in object) {"
+            "  if (p == 'readOnlyProperty') {"
+            "    found = true; break;"
+            "  }"
+            "} found");
+        QCOMPARE(ret.strictlyEquals(QScriptValue(&eng, true)), true);
+    }
+    // should still be deletable
+    {
+        QScriptValue ret = eng.evaluate("delete object.readOnlyProperty");
+        QCOMPARE(ret.strictlyEquals(QScriptValue(&eng, true)), true);
+        QCOMPARE(object.property("readOnlyProperty").isValid(), false);
+    }
+
+    // Undeletable
+    object.setProperty("undeletableProperty", num, QScriptValue::Undeletable);
+    // QCOMPARE(object.propertyFlags("undeletableProperty"), QScriptValue::Undeletable);
+    QCOMPARE(object.property("undeletableProperty").strictlyEquals(num), true);
+    {
+        QScriptValue ret = eng.evaluate("delete object.undeletableProperty");
+        QCOMPARE(ret.strictlyEquals(QScriptValue(&eng, true)), false);
+        QCOMPARE(object.property("undeletableProperty").strictlyEquals(num), true);
+    }
+    // should still be writable
+    eng.evaluate("object.undeletableProperty = object.undeletableProperty + 1");
+    QCOMPARE(object.property("undeletableProperty").toNumber(), num.toNumber() + 1);
+    // should still be part of enumeration
+    {
+        QScriptValue ret = eng.evaluate(
+            "found = false;"
+            "for (var p in object) {"
+            "  if (p == 'undeletableProperty') {"
+            "    found = true; break;"
+            "  }"
+            "} found");
+        QCOMPARE(ret.strictlyEquals(QScriptValue(&eng, true)), true);
+    }
+    // should still be deletable from C++
+    object.setProperty("undeletableProperty", QScriptValue());
+    QEXPECT_FAIL("", "With JSC-based back-end, undeletable properties can't be deleted from C++", Continue);
+    QVERIFY(!object.property("undeletableProperty").isValid());
+    // QEXPECT_FAIL("", "With JSC-based back-end, undeletable properties can't be deleted from C++", Continue);
+    // QCOMPARE(object.propertyFlags("undeletableProperty"), 0);
+
+    // SkipInEnumeration
+    object.setProperty("dontEnumProperty", num, QScriptValue::SkipInEnumeration);
+    // QCOMPARE(object.propertyFlags("dontEnumProperty"), QScriptValue::SkipInEnumeration);
+    QCOMPARE(object.property("dontEnumProperty").strictlyEquals(num), true);
+    // should not be part of enumeration
+    {
+        QScriptValue ret = eng.evaluate(
+            "found = false;"
+            "for (var p in object) {"
+            "  if (p == 'dontEnumProperty') {"
+            "    found = true; break;"
+            "  }"
+            "} found");
+        QCOMPARE(ret.strictlyEquals(QScriptValue(&eng, false)), true);
+    }
+    // should still be writable
+    eng.evaluate("object.dontEnumProperty = object.dontEnumProperty + 1");
+    QCOMPARE(object.property("dontEnumProperty").toNumber(), num.toNumber() + 1);
+    // should still be deletable
+    {
+        QScriptValue ret = eng.evaluate("delete object.dontEnumProperty");
+        QCOMPARE(ret.strictlyEquals(QScriptValue(&eng, true)), true);
+        QCOMPARE(object.property("dontEnumProperty").isValid(), false);
+    }
+
+    // change flags
+    object.setProperty("flagProperty", str);
+    // QCOMPARE(object.propertyFlags("flagProperty"), static_cast<QScriptValue::PropertyFlags>(0));
+
+    object.setProperty("flagProperty", str, QScriptValue::ReadOnly);
+    // QCOMPARE(object.propertyFlags("flagProperty"), QScriptValue::ReadOnly);
+
+    // object.setProperty("flagProperty", str, object.propertyFlags("flagProperty") | QScriptValue::SkipInEnumeration);
+    // QCOMPARE(object.propertyFlags("flagProperty"), QScriptValue::ReadOnly | QScriptValue::SkipInEnumeration);
+
+    object.setProperty("flagProperty", str, QScriptValue::KeepExistingFlags);
+    // QCOMPARE(object.propertyFlags("flagProperty"), QScriptValue::ReadOnly | QScriptValue::SkipInEnumeration);
+
+    object.setProperty("flagProperty", str, QScriptValue::UserRange);
+    // QCOMPARE(object.propertyFlags("flagProperty"), QScriptValue::UserRange);
+
+    // flags of property in the prototype
+    {
+        QScriptValue object2 = eng.newObject();
+        object2.setPrototype(object);
+        // QCOMPARE(object2.propertyFlags("flagProperty", QScriptValue::ResolveLocal), 0);
+        // QCOMPARE(object2.propertyFlags("flagProperty"), QScriptValue::UserRange);
+    }
+
+    // using interned strings
+    QScriptString foo = eng.toStringHandle("foo");
+
+    object.setProperty(foo, QScriptValue());
+    QVERIFY(!object.property(foo).isValid());
+
+    object.setProperty(foo, num);
+    QVERIFY(object.property(foo).strictlyEquals(num));
+    QVERIFY(object.property("foo").strictlyEquals(num));
+    // QVERIFY(object.propertyFlags(foo) == 0);
+}
+
 void tst_QScriptValue::toStringSimple_data()
 {
     QTest::addColumn<QString>("code");
@@ -580,17 +966,257 @@ void tst_QScriptValue::toObjectSimple()
     }
 }
 
-void tst_QScriptValue::propertySimple()
+void tst_QScriptValue::setProperty_data()
 {
-    QScriptEngine eng;
+    QTest::addColumn<QScriptValue>("property");
+    QTest::addColumn<int>("flag");
 
-    QScriptValue simpleObject(eng.evaluate("new Object({ test: 1, other: 2 })"));
-    QCOMPARE(simpleObject.property("test").toUInt32(), quint32(1));
-    QCOMPARE(simpleObject.property("other").toUInt32(), quint32(2));
+    QTest::newRow("int + keepExistingFlags") << QScriptValue(123456) << static_cast<int>(QScriptValue::KeepExistingFlags);
+    QTest::newRow("int + undeletable") << QScriptValue(123456) << static_cast<int>(QScriptValue::Undeletable);
+    QTest::newRow("int + readOnly") << QScriptValue(123456) << static_cast<int>(QScriptValue::ReadOnly);
+    QTest::newRow("int + readOnly|undeletable") << QScriptValue(123456) << static_cast<int>(QScriptValue::ReadOnly | QScriptValue::Undeletable);
+    QTest::newRow("int + skipInEnumeration") << QScriptValue(123456) << static_cast<int>(QScriptValue::SkipInEnumeration);
+    QTest::newRow("int + skipInEnumeration|readOnly") << QScriptValue(123456) << static_cast<int>(QScriptValue::SkipInEnumeration | QScriptValue::ReadOnly);
+    QTest::newRow("int + skipInEnumeration|undeletable") << QScriptValue(123456) << static_cast<int>(QScriptValue::SkipInEnumeration | QScriptValue::Undeletable);
+    QTest::newRow("int + skipInEnumeration|readOnly|undeletable") << QScriptValue(123456) << static_cast<int>(QScriptValue::SkipInEnumeration | QScriptValue::ReadOnly | QScriptValue::Undeletable);
+}
 
-    QScriptValue simpleArray(eng.evaluate("new Array(7, 8, 9)"));
-    QCOMPARE(simpleArray.property("length").toUInt32(), quint32(3));
-    QCOMPARE(simpleArray.property(2).toUInt32(), quint32(9));
+void tst_QScriptValue::setProperty()
+{
+    QFETCH(QScriptValue, property);
+    QFETCH(int, flag);
+    QScriptValue::PropertyFlags flags = static_cast<QScriptValue::PropertyFlag>(flag);
+
+    QScriptEngine engine;
+    QScriptValue object = engine.evaluate("o = new Object; o");
+    QScriptValue proto = engine.evaluate("p = new Object; o.__proto__ = p; p");
+    engine.evaluate("o.defined1 = 1");
+    engine.evaluate("o.defined2 = 1");
+    engine.evaluate("o[5] = 1");
+    engine.evaluate("p.overloaded1 = 1");
+    engine.evaluate("o.overloaded1 = 2");
+    engine.evaluate("p[6] = 1");
+    engine.evaluate("o[6] = 2");
+    engine.evaluate("p.overloaded2 = 1");
+    engine.evaluate("o.overloaded2 = 2");
+    engine.evaluate("p.overloaded3 = 1");
+    engine.evaluate("o.overloaded3 = 2");
+    engine.evaluate("p[7] = 1");
+    engine.evaluate("o[7] = 2");
+    engine.evaluate("p.overloaded4 = 1");
+    engine.evaluate("o.overloaded4 = 2");
+
+    // tries to set undefined property directly on object.
+    object.setProperty(QString::fromAscii("undefined1"), property, flags);
+    QVERIFY(engine.evaluate("o.undefined1").strictlyEquals(property));
+    object.setProperty(engine.toStringHandle("undefined2"), property, flags);
+    QVERIFY(object.property("undefined2").strictlyEquals(property));
+    object.setProperty(4, property, flags);
+    QVERIFY(object.property(4).strictlyEquals(property));
+
+    // tries to set defined property directly on object
+    object.setProperty("defined1", property, flags);
+    QVERIFY(engine.evaluate("o.defined1").strictlyEquals(property));
+    object.setProperty(engine.toStringHandle("defined2"), property, flags);
+    QVERIFY(object.property("defined2").strictlyEquals(property));
+    object.setProperty(5, property, flags);
+    QVERIFY(object.property(5).strictlyEquals(property));
+
+    // tries to set overloaded property directly on object
+    object.setProperty("overloaded1", property, flags);
+    QVERIFY(engine.evaluate("o.overloaded1").strictlyEquals(property));
+    object.setProperty(engine.toStringHandle("overloaded2"), property, flags);
+    QVERIFY(object.property("overloaded2").strictlyEquals(property));
+    object.setProperty(6, property, flags);
+    QVERIFY(object.property(6).strictlyEquals(property));
+
+    // tries to set overloaded property directly on prototype
+    proto.setProperty("overloaded3", property, flags);
+    QVERIFY(!engine.evaluate("o.overloaded3").strictlyEquals(property));
+    proto.setProperty(engine.toStringHandle("overloaded4"), property, flags);
+    QVERIFY(!object.property("overloaded4").strictlyEquals(property));
+    proto.setProperty(7, property, flags);
+    QVERIFY(!object.property(7).strictlyEquals(property));
+
+    // tries to set undefined property directly on prototype
+    proto.setProperty("undefined3", property, flags);
+    QVERIFY(engine.evaluate("o.undefined3").strictlyEquals(property));
+    proto.setProperty(engine.toStringHandle("undefined4"), property, flags);
+    QVERIFY(object.property("undefined4").strictlyEquals(property));
+    proto.setProperty(8, property, flags);
+    QVERIFY(object.property(8).strictlyEquals(property));
+
+    bool readOnly = flags & QScriptValue::ReadOnly;
+    bool skipInEnumeration = flags & QScriptValue::SkipInEnumeration;
+    bool undeletable = flags & QScriptValue::Undeletable;
+
+    QVERIFY(readOnly == engine.evaluate("!Object.getOwnPropertyDescriptor(o, '4').writable").toBool());
+    QEXPECT_FAIL("int + readOnly", "WebKit bug: 40613 (The JSObjectSetProperty doesn't overwrite property flags)", Continue);
+    QEXPECT_FAIL("int + readOnly|undeletable", "WebKit bug: 40613 (The JSObjectSetProperty doesn't overwrite property flags)", Continue);
+    QEXPECT_FAIL("int + skipInEnumeration|readOnly", "WebKit bug: 40613 (The JSObjectSetProperty doesn't overwrite property flags)", Continue);
+    QEXPECT_FAIL("int + skipInEnumeration|readOnly|undeletable", "WebKit bug: 40613 (The JSObjectSetProperty doesn't overwrite property flags)", Continue);
+    QVERIFY(readOnly == engine.evaluate("!Object.getOwnPropertyDescriptor(o, '5').writable").toBool());
+    QEXPECT_FAIL("int + readOnly", "WebKit bug: 40613 (The JSObjectSetProperty doesn't overwrite property flags)", Continue);
+    QEXPECT_FAIL("int + readOnly|undeletable", "WebKit bug: 40613 (The JSObjectSetProperty doesn't overwrite property flags)", Continue);
+    QEXPECT_FAIL("int + skipInEnumeration|readOnly", "WebKit bug: 40613 (The JSObjectSetProperty doesn't overwrite property flags)", Continue);
+    QEXPECT_FAIL("int + skipInEnumeration|readOnly|undeletable", "WebKit bug: 40613 (The JSObjectSetProperty doesn't overwrite property flags)", Continue);
+    QVERIFY(readOnly == engine.evaluate("!Object.getOwnPropertyDescriptor(o, '6').writable").toBool());
+    QEXPECT_FAIL("int + readOnly", "WebKit bug: 40613 (The JSObjectSetProperty doesn't overwrite property flags)", Continue);
+    QEXPECT_FAIL("int + readOnly|undeletable", "WebKit bug: 40613 (The JSObjectSetProperty doesn't overwrite property flags)", Continue);
+    QEXPECT_FAIL("int + skipInEnumeration|readOnly", "WebKit bug: 40613 (The JSObjectSetProperty doesn't overwrite property flags)", Continue);
+    QEXPECT_FAIL("int + skipInEnumeration|readOnly|undeletable", "WebKit bug: 40613 (The JSObjectSetProperty doesn't overwrite property flags)", Continue);
+    QVERIFY(readOnly == engine.evaluate("!Object.getOwnPropertyDescriptor(p, '7').writable").toBool());
+    QVERIFY(readOnly == engine.evaluate("!Object.getOwnPropertyDescriptor(p, '8').writable").toBool());
+    QVERIFY(readOnly == engine.evaluate("!Object.getOwnPropertyDescriptor(o, 'undefined1').writable").toBool());
+    QVERIFY(readOnly == engine.evaluate("!Object.getOwnPropertyDescriptor(o, 'undefined2').writable").toBool());
+    QVERIFY(readOnly == engine.evaluate("!Object.getOwnPropertyDescriptor(p, 'undefined3').writable").toBool());
+    QVERIFY(readOnly == engine.evaluate("!Object.getOwnPropertyDescriptor(p, 'undefined4').writable").toBool());
+    QEXPECT_FAIL("int + readOnly", "WebKit bug: 40613 (The JSObjectSetProperty doesn't overwrite property flags)", Continue);
+    QEXPECT_FAIL("int + readOnly|undeletable", "WebKit bug: 40613 (The JSObjectSetProperty doesn't overwrite property flags)", Continue);
+    QEXPECT_FAIL("int + skipInEnumeration|readOnly", "WebKit bug: 40613 (The JSObjectSetProperty doesn't overwrite property flags)", Continue);
+    QEXPECT_FAIL("int + skipInEnumeration|readOnly|undeletable", "WebKit bug: 40613 (The JSObjectSetProperty doesn't overwrite property flags)", Continue);
+    QVERIFY(readOnly == engine.evaluate("!Object.getOwnPropertyDescriptor(o, 'defined1').writable").toBool());
+    QEXPECT_FAIL("int + readOnly", "WebKit bug: 40613 (The JSObjectSetProperty doesn't overwrite property flags)", Continue);
+    QEXPECT_FAIL("int + readOnly|undeletable", "WebKit bug: 40613 (The JSObjectSetProperty doesn't overwrite property flags)", Continue);
+    QEXPECT_FAIL("int + skipInEnumeration|readOnly", "WebKit bug: 40613 (The JSObjectSetProperty doesn't overwrite property flags)", Continue);
+    QEXPECT_FAIL("int + skipInEnumeration|readOnly|undeletable", "WebKit bug: 40613 (The JSObjectSetProperty doesn't overwrite property flags)", Continue);
+    QVERIFY(readOnly == engine.evaluate("!Object.getOwnPropertyDescriptor(o, 'defined2').writable").toBool());
+    QVERIFY(engine.evaluate("!Object.getOwnPropertyDescriptor(p, 'undefined1').writable").toBool());
+    QVERIFY(engine.evaluate("!Object.getOwnPropertyDescriptor(p, 'undefined1').writable").toBool());
+    QEXPECT_FAIL("int + readOnly", "WebKit bug: 40613 (The JSObjectSetProperty doesn't overwrite property flags)", Continue);
+    QEXPECT_FAIL("int + readOnly|undeletable", "WebKit bug: 40613 (The JSObjectSetProperty doesn't overwrite property flags)", Continue);
+    QEXPECT_FAIL("int + skipInEnumeration|readOnly", "WebKit bug: 40613 (The JSObjectSetProperty doesn't overwrite property flags)", Continue);
+    QEXPECT_FAIL("int + skipInEnumeration|readOnly|undeletable", "WebKit bug: 40613 (The JSObjectSetProperty doesn't overwrite property flags)", Continue);
+    QVERIFY(readOnly == engine.evaluate("!Object.getOwnPropertyDescriptor(p, 'overloaded3').writable").toBool());
+    QEXPECT_FAIL("int + readOnly", "WebKit bug: 40613 (The JSObjectSetProperty doesn't overwrite property flags)", Continue);
+    QEXPECT_FAIL("int + readOnly|undeletable", "WebKit bug: 40613 (The JSObjectSetProperty doesn't overwrite property flags)", Continue);
+    QEXPECT_FAIL("int + skipInEnumeration|readOnly", "WebKit bug: 40613 (The JSObjectSetProperty doesn't overwrite property flags)", Continue);
+    QEXPECT_FAIL("int + skipInEnumeration|readOnly|undeletable", "WebKit bug: 40613 (The JSObjectSetProperty doesn't overwrite property flags)", Continue);
+    QVERIFY(readOnly == engine.evaluate("!Object.getOwnPropertyDescriptor(p, 'overloaded4').writable").toBool());
+    QEXPECT_FAIL("int + readOnly", "WebKit bug: 40613 (The JSObjectSetProperty doesn't overwrite property flags)", Continue);
+    QEXPECT_FAIL("int + readOnly|undeletable", "WebKit bug: 40613 (The JSObjectSetProperty doesn't overwrite property flags)", Continue);
+    QEXPECT_FAIL("int + skipInEnumeration|readOnly", "WebKit bug: 40613 (The JSObjectSetProperty doesn't overwrite property flags)", Continue);
+    QEXPECT_FAIL("int + skipInEnumeration|readOnly|undeletable", "WebKit bug: 40613 (The JSObjectSetProperty doesn't overwrite property flags)", Continue);
+    QVERIFY(readOnly == engine.evaluate("!Object.getOwnPropertyDescriptor(o, 'overloaded1').writable").toBool());
+    QEXPECT_FAIL("int + readOnly", "WebKit bug: 40613 (The JSObjectSetProperty doesn't overwrite property flags)", Continue);
+    QEXPECT_FAIL("int + readOnly|undeletable", "WebKit bug: 40613 (The JSObjectSetProperty doesn't overwrite property flags)", Continue);
+    QEXPECT_FAIL("int + skipInEnumeration|readOnly", "WebKit bug: 40613 (The JSObjectSetProperty doesn't overwrite property flags)", Continue);
+    QEXPECT_FAIL("int + skipInEnumeration|readOnly|undeletable", "WebKit bug: 40613 (The JSObjectSetProperty doesn't overwrite property flags)", Continue);
+    QVERIFY(readOnly == engine.evaluate("!Object.getOwnPropertyDescriptor(o, 'overloaded2').writable").toBool());
+    QVERIFY(!engine.evaluate("!Object.getOwnPropertyDescriptor(o, 'overloaded3').writable").toBool());
+    QVERIFY(!engine.evaluate("!Object.getOwnPropertyDescriptor(o, 'overloaded4').writable").toBool());
+
+    QVERIFY(undeletable == engine.evaluate("!Object.getOwnPropertyDescriptor(o, '4').configurable").toBool());
+    QEXPECT_FAIL("int + undeletable", "WebKit bug: 40613 (The JSObjectSetProperty doesn't overwrite property flags)", Continue);
+    QEXPECT_FAIL("int + readOnly|undeletable", "WebKit bug: 40613 (The JSObjectSetProperty doesn't overwrite property flags)", Continue);
+    QEXPECT_FAIL("int + skipInEnumeration|undeletable", "WebKit bug: 40613 (The JSObjectSetProperty doesn't overwrite property flags)", Continue);
+    QEXPECT_FAIL("int + skipInEnumeration|readOnly|undeletable", "WebKit bug: 40613 (The JSObjectSetProperty doesn't overwrite property flags)", Continue);
+    QVERIFY(undeletable == engine.evaluate("!Object.getOwnPropertyDescriptor(o, '5').configurable").toBool());
+    QEXPECT_FAIL("int + undeletable", "WebKit bug: 40613 (The JSObjectSetProperty doesn't overwrite property flags)", Continue);
+    QEXPECT_FAIL("int + readOnly|undeletable", "WebKit bug: 40613 (The JSObjectSetProperty doesn't overwrite property flags)", Continue);
+    QEXPECT_FAIL("int + skipInEnumeration|undeletable", "WebKit bug: 40613 (The JSObjectSetProperty doesn't overwrite property flags)", Continue);
+    QEXPECT_FAIL("int + skipInEnumeration|readOnly|undeletable", "WebKit bug: 40613 (The JSObjectSetProperty doesn't overwrite property flags)", Continue);
+    QVERIFY(undeletable == engine.evaluate("!Object.getOwnPropertyDescriptor(o, '6').configurable").toBool());
+    QEXPECT_FAIL("int + undeletable", "WebKit bug: 40613 (The JSObjectSetProperty doesn't overwrite property flags)", Continue);
+    QEXPECT_FAIL("int + readOnly|undeletable", "WebKit bug: 40613 (The JSObjectSetProperty doesn't overwrite property flags)", Continue);
+    QEXPECT_FAIL("int + skipInEnumeration|undeletable", "WebKit bug: 40613 (The JSObjectSetProperty doesn't overwrite property flags)", Continue);
+    QEXPECT_FAIL("int + skipInEnumeration|readOnly|undeletable", "WebKit bug: 40613 (The JSObjectSetProperty doesn't overwrite property flags)", Continue);
+    QVERIFY(undeletable == engine.evaluate("!Object.getOwnPropertyDescriptor(p, '7').configurable").toBool());
+    QVERIFY(undeletable == engine.evaluate("!Object.getOwnPropertyDescriptor(p, '8').configurable").toBool());
+    QVERIFY(undeletable == engine.evaluate("!Object.getOwnPropertyDescriptor(o, 'undefined1').configurable").toBool());
+    QVERIFY(undeletable == engine.evaluate("!Object.getOwnPropertyDescriptor(o, 'undefined2').configurable").toBool());
+    QVERIFY(undeletable == engine.evaluate("!Object.getOwnPropertyDescriptor(p, 'undefined3').configurable").toBool());
+    QVERIFY(undeletable == engine.evaluate("!Object.getOwnPropertyDescriptor(p, 'undefined4').configurable").toBool());
+    QEXPECT_FAIL("int + undeletable", "WebKit bug: 40613 (The JSObjectSetProperty doesn't overwrite property flags)", Continue);
+    QEXPECT_FAIL("int + readOnly|undeletable", "WebKit bug: 40613 (The JSObjectSetProperty doesn't overwrite property flags)", Continue);
+    QEXPECT_FAIL("int + skipInEnumeration|undeletable", "WebKit bug: 40613 (The JSObjectSetProperty doesn't overwrite property flags)", Continue);
+    QEXPECT_FAIL("int + skipInEnumeration|readOnly|undeletable", "WebKit bug: 40613 (The JSObjectSetProperty doesn't overwrite property flags)", Continue);
+    QVERIFY(undeletable == engine.evaluate("!Object.getOwnPropertyDescriptor(o, 'defined1').configurable").toBool());
+    QEXPECT_FAIL("int + undeletable", "WebKit bug: 40613 (The JSObjectSetProperty doesn't overwrite property flags)", Continue);
+    QEXPECT_FAIL("int + readOnly|undeletable", "WebKit bug: 40613 (The JSObjectSetProperty doesn't overwrite property flags)", Continue);
+    QEXPECT_FAIL("int + skipInEnumeration|undeletable", "WebKit bug: 40613 (The JSObjectSetProperty doesn't overwrite property flags)", Continue);
+    QEXPECT_FAIL("int + skipInEnumeration|readOnly|undeletable", "WebKit bug: 40613 (The JSObjectSetProperty doesn't overwrite property flags)", Continue);
+    QVERIFY(undeletable == engine.evaluate("!Object.getOwnPropertyDescriptor(o, 'defined2').configurable").toBool());
+    QEXPECT_FAIL("int + undeletable", "WebKit bug: 40613 (The JSObjectSetProperty doesn't overwrite property flags)", Continue);
+    QEXPECT_FAIL("int + readOnly|undeletable", "WebKit bug: 40613 (The JSObjectSetProperty doesn't overwrite property flags)", Continue);
+    QEXPECT_FAIL("int + skipInEnumeration|undeletable", "WebKit bug: 40613 (The JSObjectSetProperty doesn't overwrite property flags)", Continue);
+    QEXPECT_FAIL("int + skipInEnumeration|readOnly|undeletable", "WebKit bug: 40613 (The JSObjectSetProperty doesn't overwrite property flags)", Continue);
+    QVERIFY(undeletable == engine.evaluate("!Object.getOwnPropertyDescriptor(o, 'overloaded1').configurable").toBool());
+    QEXPECT_FAIL("int + undeletable", "WebKit bug: 40613 (The JSObjectSetProperty doesn't overwrite property flags)", Continue);
+    QEXPECT_FAIL("int + readOnly|undeletable", "WebKit bug: 40613 (The JSObjectSetProperty doesn't overwrite property flags)", Continue);
+    QEXPECT_FAIL("int + skipInEnumeration|undeletable", "WebKit bug: 40613 (The JSObjectSetProperty doesn't overwrite property flags)", Continue);
+    QEXPECT_FAIL("int + skipInEnumeration|readOnly|undeletable", "WebKit bug: 40613 (The JSObjectSetProperty doesn't overwrite property flags)", Continue);
+    QVERIFY(undeletable == engine.evaluate("!Object.getOwnPropertyDescriptor(o, 'overloaded2').configurable").toBool());
+    QVERIFY(engine.evaluate("Object.getOwnPropertyDescriptor(p, 'overloaded1').configurable").toBool());
+    QVERIFY(engine.evaluate("Object.getOwnPropertyDescriptor(p, 'overloaded2').configurable").toBool());
+    QVERIFY(engine.evaluate("Object.getOwnPropertyDescriptor(o, 'overloaded3').configurable").toBool());
+    QVERIFY(engine.evaluate("Object.getOwnPropertyDescriptor(o, 'overloaded4').configurable").toBool());
+    QEXPECT_FAIL("int + undeletable", "WebKit bug: 40613 (The JSObjectSetProperty doesn't overwrite property flags)", Continue);
+    QEXPECT_FAIL("int + readOnly|undeletable", "WebKit bug: 40613 (The JSObjectSetProperty doesn't overwrite property flags)", Continue);
+    QEXPECT_FAIL("int + skipInEnumeration|undeletable", "WebKit bug: 40613 (The JSObjectSetProperty doesn't overwrite property flags)", Continue);
+    QEXPECT_FAIL("int + skipInEnumeration|readOnly|undeletable", "WebKit bug: 40613 (The JSObjectSetProperty doesn't overwrite property flags)", Continue);
+    QVERIFY(undeletable == engine.evaluate("!Object.getOwnPropertyDescriptor(p, 'overloaded3').configurable").toBool());
+    QEXPECT_FAIL("int + undeletable", "WebKit bug: 40613 (The JSObjectSetProperty doesn't overwrite property flags)", Continue);
+    QEXPECT_FAIL("int + readOnly|undeletable", "WebKit bug: 40613 (The JSObjectSetProperty doesn't overwrite property flags)", Continue);
+    QEXPECT_FAIL("int + skipInEnumeration|undeletable", "WebKit bug: 40613 (The JSObjectSetProperty doesn't overwrite property flags)", Continue);
+    QEXPECT_FAIL("int + skipInEnumeration|readOnly|undeletable", "WebKit bug: 40613 (The JSObjectSetProperty doesn't overwrite property flags)", Continue);
+    QVERIFY(undeletable == engine.evaluate("!Object.getOwnPropertyDescriptor(p, 'overloaded4').configurable").toBool());
+
+    QVERIFY(skipInEnumeration != engine.evaluate("Object.getOwnPropertyDescriptor(o, '4').enumerable").toBool());
+    QEXPECT_FAIL("int + skipInEnumeration", "WebKit bug: 40613 (The JSObjectSetProperty doesn't overwrite property flags)", Continue);
+    QEXPECT_FAIL("int + skipInEnumeration|undeletable", "WebKit bug: 40613 (The JSObjectSetProperty doesn't overwrite property flags)", Continue);
+    QEXPECT_FAIL("int + skipInEnumeration|readOnly", "WebKit bug: 40613 (The JSObjectSetProperty doesn't overwrite property flags)", Continue);
+    QEXPECT_FAIL("int + skipInEnumeration|readOnly|undeletable", "WebKit bug: 40613 (The JSObjectSetProperty doesn't overwrite property flags)", Continue);
+    QVERIFY(skipInEnumeration != engine.evaluate("Object.getOwnPropertyDescriptor(o, '5').enumerable").toBool());
+    QEXPECT_FAIL("int + skipInEnumeration", "WebKit bug: 40613 (The JSObjectSetProperty doesn't overwrite property flags)", Continue);
+    QEXPECT_FAIL("int + skipInEnumeration|undeletable", "WebKit bug: 40613 (The JSObjectSetProperty doesn't overwrite property flags)", Continue);
+    QEXPECT_FAIL("int + skipInEnumeration|readOnly", "WebKit bug: 40613 (The JSObjectSetProperty doesn't overwrite property flags)", Continue);
+    QEXPECT_FAIL("int + skipInEnumeration|readOnly|undeletable", "WebKit bug: 40613 (The JSObjectSetProperty doesn't overwrite property flags)", Continue);
+    QVERIFY(skipInEnumeration != engine.evaluate("Object.getOwnPropertyDescriptor(o, '6').enumerable").toBool());
+    QEXPECT_FAIL("int + skipInEnumeration", "WebKit bug: 40613 (The JSObjectSetProperty doesn't overwrite property flags)", Continue);
+    QEXPECT_FAIL("int + skipInEnumeration|undeletable", "WebKit bug: 40613 (The JSObjectSetProperty doesn't overwrite property flags)", Continue);
+    QEXPECT_FAIL("int + skipInEnumeration|readOnly", "WebKit bug: 40613 (The JSObjectSetProperty doesn't overwrite property flags)", Continue);
+    QEXPECT_FAIL("int + skipInEnumeration|readOnly|undeletable", "WebKit bug: 40613 (The JSObjectSetProperty doesn't overwrite property flags)", Continue);
+    QVERIFY(skipInEnumeration != engine.evaluate("Object.getOwnPropertyDescriptor(p, '7').enumerable").toBool());
+    QVERIFY(skipInEnumeration != engine.evaluate("Object.getOwnPropertyDescriptor(p, '8').enumerable").toBool());
+    QVERIFY(skipInEnumeration != engine.evaluate("Object.getOwnPropertyDescriptor(o, 'undefined1').enumerable").toBool());
+    QVERIFY(skipInEnumeration != engine.evaluate("Object.getOwnPropertyDescriptor(o, 'undefined2').enumerable").toBool());
+    QVERIFY(skipInEnumeration != engine.evaluate("Object.getOwnPropertyDescriptor(p, 'undefined3').enumerable").toBool());
+    QVERIFY(skipInEnumeration != engine.evaluate("Object.getOwnPropertyDescriptor(p, 'undefined4').enumerable").toBool());
+    QEXPECT_FAIL("int + skipInEnumeration", "WebKit bug: 40613 (The JSObjectSetProperty doesn't overwrite property flags)", Continue);
+    QEXPECT_FAIL("int + skipInEnumeration|undeletable", "WebKit bug: 40613 (The JSObjectSetProperty doesn't overwrite property flags)", Continue);
+    QEXPECT_FAIL("int + skipInEnumeration|readOnly", "WebKit bug: 40613 (The JSObjectSetProperty doesn't overwrite property flags)", Continue);
+    QEXPECT_FAIL("int + skipInEnumeration|readOnly|undeletable", "WebKit bug: 40613 (The JSObjectSetProperty doesn't overwrite property flags)", Continue);
+    QVERIFY(skipInEnumeration != engine.evaluate("Object.getOwnPropertyDescriptor(o, 'overloaded1').enumerable").toBool());
+    QEXPECT_FAIL("int + skipInEnumeration", "WebKit bug: 40613 (The JSObjectSetProperty doesn't overwrite property flags)", Continue);
+    QEXPECT_FAIL("int + skipInEnumeration|undeletable", "WebKit bug: 40613 (The JSObjectSetProperty doesn't overwrite property flags)", Continue);
+    QEXPECT_FAIL("int + skipInEnumeration|readOnly", "WebKit bug: 40613 (The JSObjectSetProperty doesn't overwrite property flags)", Continue);
+    QEXPECT_FAIL("int + skipInEnumeration|readOnly|undeletable", "WebKit bug: 40613 (The JSObjectSetProperty doesn't overwrite property flags)", Continue);
+    QVERIFY(skipInEnumeration != engine.evaluate("Object.getOwnPropertyDescriptor(o, 'overloaded2').enumerable").toBool());
+    QVERIFY(engine.evaluate("p.propertyIsEnumerable('overloaded1')").toBool());
+    QVERIFY(engine.evaluate("p.propertyIsEnumerable('overloaded2')").toBool());
+    QVERIFY(engine.evaluate("o.propertyIsEnumerable('overloaded3')").toBool());
+    QVERIFY(engine.evaluate("o.propertyIsEnumerable('overloaded4')").toBool());
+    QEXPECT_FAIL("int + skipInEnumeration", "WebKit bug: 40613 (The JSObjectSetProperty doesn't overwrite property flags)", Continue);
+    QEXPECT_FAIL("int + skipInEnumeration|undeletable", "WebKit bug: 40613 (The JSObjectSetProperty doesn't overwrite property flags)", Continue);
+    QEXPECT_FAIL("int + skipInEnumeration|readOnly", "WebKit bug: 40613 (The JSObjectSetProperty doesn't overwrite property flags)", Continue);
+    QEXPECT_FAIL("int + skipInEnumeration|readOnly|undeletable", "WebKit bug: 40613 (The JSObjectSetProperty doesn't overwrite property flags)", Continue);
+    QVERIFY(skipInEnumeration != engine.evaluate("p.propertyIsEnumerable('overloaded3')").toBool());
+    QEXPECT_FAIL("int + skipInEnumeration", "WebKit bug: 40613 (The JSObjectSetProperty doesn't overwrite property flags)", Continue);
+    QEXPECT_FAIL("int + skipInEnumeration|undeletable", "WebKit bug: 40613 (The JSObjectSetProperty doesn't overwrite property flags)", Continue);
+    QEXPECT_FAIL("int + skipInEnumeration|readOnly", "WebKit bug: 40613 (The JSObjectSetProperty doesn't overwrite property flags)", Continue);
+    QEXPECT_FAIL("int + skipInEnumeration|readOnly|undeletable", "WebKit bug: 40613 (The JSObjectSetProperty doesn't overwrite property flags)", Continue);
+    QVERIFY(skipInEnumeration != engine.evaluate("p.propertyIsEnumerable('overloaded4')").toBool());
+    QEXPECT_FAIL("int + skipInEnumeration", "WebKit bug: 40613 (The JSObjectSetProperty doesn't overwrite property flags)", Continue);
+    QEXPECT_FAIL("int + skipInEnumeration|undeletable", "WebKit bug: 40613 (The JSObjectSetProperty doesn't overwrite property flags)", Continue);
+    QEXPECT_FAIL("int + skipInEnumeration|readOnly", "WebKit bug: 40613 (The JSObjectSetProperty doesn't overwrite property flags)", Continue);
+    QEXPECT_FAIL("int + skipInEnumeration|readOnly|undeletable", "WebKit bug: 40613 (The JSObjectSetProperty doesn't overwrite property flags)", Continue);
+    QVERIFY(skipInEnumeration != engine.evaluate("o.propertyIsEnumerable('defined1')").toBool());
+    QEXPECT_FAIL("int + skipInEnumeration", "WebKit bug: 40613 (The JSObjectSetProperty doesn't overwrite property flags)", Continue);
+    QEXPECT_FAIL("int + skipInEnumeration|undeletable", "WebKit bug: 40613 (The JSObjectSetProperty doesn't overwrite property flags)", Continue);
+    QEXPECT_FAIL("int + skipInEnumeration|readOnly", "WebKit bug: 40613 (The JSObjectSetProperty doesn't overwrite property flags)", Continue);
+    QEXPECT_FAIL("int + skipInEnumeration|readOnly|undeletable", "WebKit bug: 40613 (The JSObjectSetProperty doesn't overwrite property flags)", Continue);
+    QVERIFY(skipInEnumeration != engine.evaluate("o.propertyIsEnumerable('defined2')").toBool());
 }
 
 QTEST_MAIN(tst_QScriptValue)

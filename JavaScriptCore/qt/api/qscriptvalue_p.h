@@ -121,7 +121,24 @@ public:
     inline bool assignEngine(QScriptEnginePrivate* engine);
 
     inline QScriptValuePrivate* property(const QString& name, const QScriptValue::ResolveFlags& mode);
+    inline QScriptValuePrivate* property(const QScriptStringPrivate* name, const QScriptValue::ResolveFlags& mode);
     inline QScriptValuePrivate* property(quint32 arrayIndex, const QScriptValue::ResolveFlags& mode);
+    inline JSValueRef property(quint32 property, JSValueRef* exception);
+    inline JSValueRef property(JSStringRef property, JSValueRef* exception);
+    inline bool hasOwnProperty(quint32 property);
+    inline bool hasOwnProperty(JSStringRef property);
+    template<typename T>
+    inline QScriptValuePrivate* property(T name, const QScriptValue::ResolveFlags& mode);
+
+    inline void setProperty(const QString& name, QScriptValuePrivate* value, const QScriptValue::PropertyFlags& flags);
+    inline void setProperty(const QScriptStringPrivate* name, QScriptValuePrivate* value, const QScriptValue::PropertyFlags& flags);
+    inline void setProperty(const quint32 indexArray, QScriptValuePrivate* value, const QScriptValue::PropertyFlags& flags);
+    inline void setProperty(quint32 property, JSValueRef value, JSPropertyAttributes flags, JSValueRef* exception);
+    inline void setProperty(JSStringRef property, JSValueRef value, JSPropertyAttributes flags, JSValueRef* exception);
+    inline void deleteProperty(quint32 property, JSValueRef* exception);
+    inline void deleteProperty(JSStringRef property, JSValueRef* exception);
+    template<typename T>
+    inline void setProperty(T name, QScriptValuePrivate* value, const QScriptValue::PropertyFlags& flags);
 
     inline QScriptValuePrivate* call(const QScriptValuePrivate* , const QScriptValueList& args);
 
@@ -744,6 +761,7 @@ inline bool QScriptValuePrivate::instanceOf(QScriptValuePrivate* other)
 */
 bool QScriptValuePrivate::assignEngine(QScriptEnginePrivate* engine)
 {
+    Q_ASSERT(engine);
     JSValueRef value;
     switch (m_state) {
     case CBool:
@@ -778,32 +796,184 @@ bool QScriptValuePrivate::assignEngine(QScriptEnginePrivate* engine)
 
 inline QScriptValuePrivate* QScriptValuePrivate::property(const QString& name, const QScriptValue::ResolveFlags& mode)
 {
-    if (!isObject())
-        return new QScriptValuePrivate;
+    JSRetainPtr<JSStringRef> propertyName(Adopt, QScriptConverter::toString(name));
+    return property<JSStringRef>(propertyName.get(), mode);
+}
 
-    if (mode & QScriptValue::ResolveLocal) {
-        qWarning("QScriptValue::property(): ResolveLocal not supported yet.");
-        return new QScriptValuePrivate;
-    }
-
-    JSRetainPtr<JSStringRef> nameRef(Adopt, QScriptConverter::toString(name));
-    QScriptValuePrivate* result = new QScriptValuePrivate(m_engine.constData(), JSObjectGetProperty(*m_engine, *this, nameRef.get(), /* exception */ 0));
-
-    return result;
+inline QScriptValuePrivate* QScriptValuePrivate::property(const QScriptStringPrivate* name, const QScriptValue::ResolveFlags& mode)
+{
+    return property<JSStringRef>(*name, mode);
 }
 
 inline QScriptValuePrivate* QScriptValuePrivate::property(quint32 arrayIndex, const QScriptValue::ResolveFlags& mode)
 {
-    if (!isObject())
-        return new QScriptValuePrivate;
+    return property<quint32>(arrayIndex, mode);
+}
 
-    if (mode & QScriptValue::ResolveLocal) {
-        qWarning("QScriptValue::property(): ResolveLocal not supported yet.");
+/*!
+    \internal
+    This method was created to unify access to the JSObjectGetPropertyAtIndex and the JSObjectGetProperty.
+*/
+inline JSValueRef QScriptValuePrivate::property(quint32 property, JSValueRef* exception)
+{
+    return JSObjectGetPropertyAtIndex(*m_engine, *this, property, exception);
+}
+
+/*!
+    \internal
+    This method was created to unify access to the JSObjectGetPropertyAtIndex and the JSObjectGetProperty.
+*/
+inline JSValueRef QScriptValuePrivate::property(JSStringRef property, JSValueRef* exception)
+{
+    return JSObjectGetProperty(*m_engine, *this, property, exception);
+}
+
+/*!
+    \internal
+    This method was created to unify acccess to hasOwnProperty, same function for an array index
+    and a property name access.
+*/
+inline bool QScriptValuePrivate::hasOwnProperty(quint32 property)
+{
+    Q_ASSERT(isObject());
+    // FIXME it could be faster, but JSC C API doesn't expose needed functionality.
+    JSRetainPtr<JSStringRef> propertyName(Adopt, QScriptConverter::toString(QString::number(property)));
+    return hasOwnProperty(propertyName.get());
+}
+
+/*!
+    \internal
+    This method was created to unify acccess to hasOwnProperty, same function for an array index
+    and a property name access.
+*/
+inline bool QScriptValuePrivate::hasOwnProperty(JSStringRef property)
+{
+    Q_ASSERT(isObject());
+    // FIXME it could be faster, but JSC C API doesn't expose needed functionality.
+    JSRetainPtr<JSStringRef> hasOwnPropertyName(Adopt, JSStringCreateWithUTF8CString("hasOwnProperty"));
+    JSValueRef exception = 0;
+    JSValueRef hasOwnProperty = JSObjectGetProperty(*m_engine, *this, hasOwnPropertyName.get(), &exception);
+    JSValueRef propertyName[] = { JSValueMakeString(*m_engine, property) };
+    JSValueRef result = JSObjectCallAsFunction(*m_engine, const_cast<JSObjectRef>(hasOwnProperty), *this, 1, propertyName, &exception);
+    return exception ? false : JSValueToBoolean(*m_engine, result);
+}
+
+/*!
+    \internal
+    This function gets property of an object.
+    \arg propertyName could be type of quint32 (an array index) or JSStringRef (a property name).
+*/
+template<typename T>
+inline QScriptValuePrivate* QScriptValuePrivate::property(T propertyName, const QScriptValue::ResolveFlags& mode)
+{
+    if (!isObject())
+        return new QScriptValuePrivate();
+
+    if ((mode == QScriptValue::ResolveLocal) && (!hasOwnProperty(propertyName)))
+        return new QScriptValuePrivate();
+
+    JSValueRef exception = 0;
+    JSValueRef value = property(propertyName, &exception);
+
+    if (exception) {
+        m_engine->setException(exception, QScriptEnginePrivate::NotNullException);
+        return new QScriptValuePrivate(engine(), exception);
+    }
+    if (JSValueIsUndefined(*m_engine, value))
         return new QScriptValuePrivate;
+    return new QScriptValuePrivate(engine(), value);
+}
+
+inline void QScriptValuePrivate::setProperty(const QString& name, QScriptValuePrivate* value, const QScriptValue::PropertyFlags& flags)
+{
+    JSRetainPtr<JSStringRef> propertyName(Adopt, QScriptConverter::toString(name));
+    setProperty<JSStringRef>(propertyName.get(), value, flags);
+}
+
+inline void QScriptValuePrivate::setProperty(quint32 arrayIndex, QScriptValuePrivate* value, const QScriptValue::PropertyFlags& flags)
+{
+    setProperty<quint32>(arrayIndex, value, flags);
+}
+
+inline void QScriptValuePrivate::setProperty(const QScriptStringPrivate* name, QScriptValuePrivate* value, const QScriptValue::PropertyFlags& flags)
+{
+    setProperty<JSStringRef>(*name, value, flags);
+}
+
+/*!
+    \internal
+    This method was created to unify access to the JSObjectSetPropertyAtIndex and the JSObjectSetProperty.
+*/
+inline void QScriptValuePrivate::setProperty(quint32 property, JSValueRef value, JSPropertyAttributes flags, JSValueRef* exception)
+{
+    Q_ASSERT(isObject());
+    if (flags) {
+        // FIXME This could be better, but JSC C API doesn't expose needed functionality. It is
+        // not possible to create / modify a property attribute via an array index.
+        JSRetainPtr<JSStringRef> propertyName(Adopt, QScriptConverter::toString(QString::number(property)));
+        JSObjectSetProperty(*m_engine, *this, propertyName.get(), value, flags, exception);
+        return;
+    }
+    JSObjectSetPropertyAtIndex(*m_engine, *this, property, value, exception);
+}
+
+/*!
+    \internal
+    This method was created to unify access to the JSObjectSetPropertyAtIndex and the JSObjectSetProperty.
+*/
+inline void QScriptValuePrivate::setProperty(JSStringRef property, JSValueRef value, JSPropertyAttributes flags, JSValueRef* exception)
+{
+    Q_ASSERT(isObject());
+    JSObjectSetProperty(*m_engine, *this, property, value, flags, exception);
+}
+
+/*!
+    \internal
+    This method was created to unify access to the JSObjectDeleteProperty and a teoretical JSObjectDeletePropertyAtIndex
+    which doesn't exist now.
+*/
+inline void QScriptValuePrivate::deleteProperty(quint32 property, JSValueRef* exception)
+{
+    // FIXME It could be faster, we need a JSC C API for deleting array index properties.
+    JSRetainPtr<JSStringRef> propertyName(Adopt, QScriptConverter::toString(QString::number(property)));
+    JSObjectDeleteProperty(*m_engine, *this, propertyName.get(), exception);
+}
+
+/*!
+    \internal
+    This method was created to unify access to the JSObjectDeleteProperty and a teoretical JSObjectDeletePropertyAtIndex.
+*/
+inline void QScriptValuePrivate::deleteProperty(JSStringRef property, JSValueRef* exception)
+{
+    Q_ASSERT(isObject());
+    JSObjectDeleteProperty(*m_engine, *this, property, exception);
+}
+
+template<typename T>
+inline void QScriptValuePrivate::setProperty(T name, QScriptValuePrivate* value, const QScriptValue::PropertyFlags& flags)
+{
+    if (!isObject())
+        return;
+
+    if (!value->isJSBased())
+        value->assignEngine(engine());
+
+    JSValueRef exception = 0;
+    if (!value->isValid()) {
+        // Remove the property.
+        deleteProperty(name, &exception);
+        m_engine->setException(exception);
+        return;
+    }
+    if (m_engine != value->m_engine) {
+        qWarning("QScriptValue::setProperty() failed: cannot set value created in a different engine");
+        return;
     }
 
-    return new QScriptValuePrivate(m_engine.constData(), JSObjectGetPropertyAtIndex(*m_engine, *this, arrayIndex, /* exception */ 0));
+    setProperty(name, *value, QScriptConverter::toPropertyFlags(flags), &exception);
+    m_engine->setException(exception);
 }
+
 
 QScriptValuePrivate* QScriptValuePrivate::call(const QScriptValuePrivate*, const QScriptValueList& args)
 {

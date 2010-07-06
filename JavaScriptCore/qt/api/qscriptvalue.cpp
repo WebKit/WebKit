@@ -651,6 +651,23 @@ QScriptValue QScriptValue::property(const QString& name, const ResolveFlags& mod
 /*!
   \overload
 
+  Returns the value of this QScriptValue's property with the given \a name,
+  using the given \a mode to resolve the property.
+
+  This overload of property() is useful when you need to look up the
+  same property repeatedly, since the lookup can be performed faster
+  when the name is represented as an interned string.
+
+  \sa QScriptEngine::toStringHandle(), setProperty()
+*/
+QScriptValue QScriptValue::property(const QScriptString& name, const ResolveFlags& mode) const
+{
+    return QScriptValuePrivate::get(d_ptr->property(QScriptStringPrivate::get(name).constData(), mode));
+}
+
+/*!
+  \overload
+
   Returns the property at the given \a arrayIndex, using the given \a
   mode to resolve the property.
 
@@ -664,4 +681,66 @@ QScriptValue QScriptValue::property(const QString& name, const ResolveFlags& mod
 QScriptValue QScriptValue::property(quint32 arrayIndex, const ResolveFlags& mode) const
 {
     return QScriptValuePrivate::get(d_ptr->property(arrayIndex, mode));
+}
+
+/*!
+  Sets the value of this QScriptValue's property with the given \a name to
+  the given \a value.
+
+  If this QScriptValue is not an object, this function does nothing.
+
+  If this QScriptValue does not already have a property with name \a name,
+  a new property is created; the given \a flags then specify how this
+  property may be accessed by script code.
+
+  If \a value is invalid, the property is removed.
+
+  If the property is implemented using a setter function (i.e. has the
+  PropertySetter flag set), calling setProperty() has side-effects on
+  the script engine, since the setter function will be called with the
+  given \a value as argument (possibly resulting in an uncaught script
+  exception).
+
+  Note that you cannot specify custom getter or setter functions for
+  built-in properties, such as the \c{length} property of Array objects
+  or meta properties of QObject objects.
+
+  \sa property()
+*/
+void QScriptValue::setProperty(const QString& name, const QScriptValue& value, const PropertyFlags& flags)
+{
+    d_ptr->setProperty(name, QScriptValuePrivate::get(value), flags);
+}
+
+/*!
+  \overload
+
+  Sets the property at the given \a arrayIndex to the given \a value.
+
+  This function is provided for convenience and performance when
+  working with array objects.
+
+  If this QScriptValue is not an Array object, this function behaves
+  as if setProperty() was called with the string representation of \a
+  arrayIndex.
+*/
+void QScriptValue::setProperty(quint32 arrayIndex, const QScriptValue& value, const PropertyFlags& flags)
+{
+    d_ptr->setProperty(arrayIndex, QScriptValuePrivate::get(value), flags);
+}
+
+/*!
+  Sets the value of this QScriptValue's property with the given \a
+  name to the given \a value. The given \a flags specify how this
+  property may be accessed by script code.
+
+  This overload of setProperty() is useful when you need to set the
+  same property repeatedly, since the operation can be performed
+  faster when the name is represented as an interned string.
+
+  \sa QScriptEngine::toStringHandle()
+*/
+void QScriptValue::setProperty(const QScriptString& name, const QScriptValue& value, const PropertyFlags& flags)
+{
+    d_ptr->setProperty(QScriptStringPrivate::get(name).constData(), QScriptValuePrivate::get(value), flags);
 }

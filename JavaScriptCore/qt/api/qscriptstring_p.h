@@ -46,6 +46,8 @@ public:
 
     inline quint64 id() const;
 
+    inline operator JSStringRef() const;
+
 private:
     JSStringRef m_string;
 };
@@ -107,6 +109,16 @@ QString QScriptStringPrivate::toString() const
 quint64 QScriptStringPrivate::id() const
 {
     return reinterpret_cast<quint32>(m_string);
+}
+
+/*!
+    \internal
+    This method should be used for invoking JSC functions.
+    \note This method keeps ownership of an internal JSStringRef.
+*/
+QScriptStringPrivate::operator JSStringRef() const
+{
+    return m_string;
 }
 
 #endif // qscriptstring_p_h
