@@ -49,6 +49,61 @@ class HTMLDocument;
 class LegacyHTMLTreeBuilder;
 class Node;
 
+class HTMLConstructionSite : public Noncopyable {
+public:
+    HTMLConstructionSite(Document*, FragmentScriptingPermission);
+
+    void insertDoctype(AtomicHTMLToken&);
+    void insertComment(AtomicHTMLToken&);
+    void insertCommentOnDocument(AtomicHTMLToken&);
+    void insertCommentOnHTMLHtmlElement(AtomicHTMLToken&);
+    void insertElement(AtomicHTMLToken&);
+    void insertSelfClosingElement(AtomicHTMLToken&);
+    void insertFormattingElement(AtomicHTMLToken&);
+    void insertHTMLHtmlElement(AtomicHTMLToken&);
+    void insertHTMLHeadElement(AtomicHTMLToken&);
+    void insertHTMLBodyElement(AtomicHTMLToken&);
+    void insertScriptElement(AtomicHTMLToken&);
+    void insertTextNode(AtomicHTMLToken&);
+
+    void insertHTMLHtmlStartTagBeforeHTML(AtomicHTMLToken&);
+    void insertHTMLHtmlStartTagInBody(AtomicHTMLToken&);
+    void insertHTMLBodyStartTagInBody(AtomicHTMLToken&);
+
+    PassRefPtr<Element> createElement(AtomicHTMLToken&);
+
+    bool indexOfFirstUnopenFormattingElement(unsigned& firstUnopenElementIndex) const;
+    void reconstructTheActiveFormattingElements();
+
+    void generateImpliedEndTags();
+    void generateImpliedEndTagsWithExclusion(const AtomicString& tagName);
+
+    Element* currentElement() const { return m_openElements.top(); }
+    HTMLElementStack* openElements() const { return &m_openElements; }
+    HTMLFormattingElementList* activeFormattingElements() const { return &m_activeFormattingElements; }
+
+    Element* head() const { return m_head.get(); }
+
+    Element* form() const { return m_form.get(); }
+    PassRefPtr<Element> takeForm() { return m_form.release(); }
+
+    void setForm(PassRefPtr<Element> form) { m_form = form; }
+
+private:
+    template<typename ChildType>
+    PassRefPtr<ChildType> attach(Node* parent, PassRefPtr<ChildType> prpChild);
+
+    PassRefPtr<Element> createElementAndAttachToCurrent(AtomicHTMLToken&);
+    void mergeAttributesFromTokenIntoElement(AtomicHTMLToken&, Element*);
+
+    Document* m_document;
+    RefPtr<Element> m_head;
+    RefPtr<Element> m_form;
+    mutable HTMLElementStack m_openElements;
+    mutable HTMLFormattingElementList m_activeFormattingElements;
+    FragmentScriptingPermission m_fragmentScriptingPermission;
+};
+
 class HTMLTreeBuilder : public Noncopyable {
 public:
     // FIXME: Replace constructors with create() functions returning PassOwnPtrs
@@ -133,6 +188,10 @@ private:
     void processFakeCharacters(const String&);
     void processFakePEndTagIfPInScope();
 
+    void processGenericRCDATAStartTag(AtomicHTMLToken&);
+    void processGenericRawTextStartTag(AtomicHTMLToken&);
+    void processScriptStartTag(AtomicHTMLToken&);
+
     // Default processing for the different insertion modes.
     // FIXME: These functions need to be renamed to remove "process" from their names.
     void processDefaultForInitialMode(AtomicHTMLToken&);
@@ -151,55 +210,6 @@ private:
 
     void closeTheCell();
 
-    template<typename ChildType>
-    PassRefPtr<ChildType> attach(Node* parent, PassRefPtr<ChildType> prpChild)
-    {
-        RefPtr<ChildType> child = prpChild;
-        parent->parserAddChild(child);
-        // It's slightly unfortunate that we need to hold a reference to child
-        // here to call attach().  We should investigate whether we can rely on
-        // |parent| to hold a ref at this point.  In the common case (at least
-        // for elements), however, we'll get to use this ref in the stack of
-        // open elements.
-        child->attach();
-        return child.release();
-    }
-
-    void insertDoctype(AtomicHTMLToken&);
-    void insertComment(AtomicHTMLToken&);
-    void insertCommentOnDocument(AtomicHTMLToken&);
-    void insertCommentOnHTMLHtmlElement(AtomicHTMLToken&);
-    void insertHTMLHtmlElement(AtomicHTMLToken&);
-    void insertHTMLHeadElement(AtomicHTMLToken&);
-    void insertHTMLBodyElement(AtomicHTMLToken&);
-    void insertElement(AtomicHTMLToken&);
-    void insertSelfClosingElement(AtomicHTMLToken&);
-    void insertFormattingElement(AtomicHTMLToken&);
-    void insertGenericRCDATAElement(AtomicHTMLToken&);
-    void insertGenericRawTextElement(AtomicHTMLToken&);
-    void insertScriptElement(AtomicHTMLToken&);
-    void insertTextNode(AtomicHTMLToken&);
-
-    void insertHTMLStartTagBeforeHTML(AtomicHTMLToken&);
-    void insertHTMLStartTagInBody(AtomicHTMLToken&);
-
-    PassRefPtr<Element> createElement(AtomicHTMLToken&);
-    PassRefPtr<Element> createElementAndAttachToCurrent(AtomicHTMLToken&);
-
-    void mergeAttributesFromTokenIntoElement(AtomicHTMLToken&, Element*);
-
-    bool indexOfFirstUnopenFormattingElement(unsigned& firstUnopenElementIndex) const;
-    void reconstructTheActiveFormattingElements();
-
-    void generateImpliedEndTags();
-    void generateImpliedEndTagsWithExclusion(const AtomicString& tagName);
-
-    Element* currentElement() { return m_openElements.top(); }
-
-    RefPtr<Element> m_headElement;
-    RefPtr<Element> m_formElement;
-    HTMLElementStack m_openElements;
-    HTMLFormattingElementList m_activeFormattingElements;
     bool m_framesetOk;
 
     // FIXME: Implement error reporting.
@@ -216,7 +226,9 @@ private:
 
     static bool isScriptingFlagEnabled(Frame* frame);
 
-    Document* m_document; // This is only used by the m_legacyParser for now.
+    Document* m_document;
+    HTMLConstructionSite m_tree;
+
     bool m_reportErrors;
     bool m_isPaused;
 

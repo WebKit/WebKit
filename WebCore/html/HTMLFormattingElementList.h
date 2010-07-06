@@ -102,8 +102,8 @@ public:
     void appendMarker();
     void clearToLastMarker();
 
-    const Entry& operator[](size_t i) const { return m_entries[i]; }
-    Entry& operator[](size_t i) { return m_entries[i]; }
+    const Entry& at(size_t i) const { return m_entries[i]; }
+    Entry& at(size_t i) { return m_entries[i]; }
 
 private:
     Vector<Entry> m_entries;
