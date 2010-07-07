@@ -86,8 +86,10 @@ namespace JSC {
 
         ALWAYS_INLINE bool lastTokenWasRestrKeyword() const;
 
+        ALWAYS_INLINE bool parseString(void* lvalp);
+
         static const size_t initialReadBufferCapacity = 32;
-        
+
         int m_lineNumber;
         int m_lastLineNumber;
 

@@ -1,3 +1,20 @@
+2010-07-07  Zoltan Herczeg  <zherczeg@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
+        Refactored string parsing inside the lexer
+        https://bugs.webkit.org/show_bug.cgi?id=41606
+
+        Does not use goto. Although the last sunspider
+        parse-only tests yields 1.044x speedup, I think the
+        patch can have a slight improvement at most.
+
+        * parser/Lexer.cpp:
+        (JSC::singleEscape):
+        (JSC::Lexer::parseString):
+        (JSC::Lexer::lex):
+        * parser/Lexer.h:
+
 2010-07-06  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Maciej Stachowiak.
