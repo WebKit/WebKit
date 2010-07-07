@@ -599,6 +599,7 @@ SOURCES += \
     editing/VisibleSelection.cpp \
     editing/visible_units.cpp \
     editing/WrapContentsInDummySpanCommand.cpp \
+    history/BackForwardController.cpp \
     history/BackForwardList.cpp \
     history/CachedFrame.cpp \
     history/CachedPage.cpp \
@@ -1350,6 +1351,8 @@ HEADERS += \
     editing/VisibleSelection.h \
     editing/visible_units.h \
     editing/WrapContentsInDummySpanCommand.h \
+    history/BackForwardController.h \
+    history/BackForwardControllerClient.h \
     history/BackForwardList.h \
     history/CachedFrame.h \
     history/CachedPage.h \

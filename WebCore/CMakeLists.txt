@@ -898,6 +898,7 @@ SET(WebCore_SOURCES
     editing/markup.cpp
     editing/visible_units.cpp
 
+    history/BackForwardController.cpp
     history/BackForwardList.cpp
     history/CachedFrame.cpp
     history/CachedPage.cpp

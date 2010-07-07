@@ -49445,6 +49445,18 @@
 			Name="history"
 			>
 			<File
+				RelativePath="..\history\BackForwardController.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\history\BackForwardController.h"
+				>
+			</File>
+			<File
+				RelativePath="..\history\BackForwardControllerClient.h"
+				>
+			</File>
+			<File
 				RelativePath="..\history\BackForwardList.cpp"
 				>
 			</File>

@@ -1,3 +1,40 @@
+2010-07-06  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Patch for https://bugs.webkit.org/show_bug.cgi?id=41723
+        Add BackForwardController class
+
+        - Add BackForwardController which currently only forwards to the existing
+          BackForwardList implementation. This is a first step toward allowing
+          for a proxying BackForwardList implementation.
+
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.base.exp:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * history/BackForwardController.cpp: Added.
+        (WebCore::BackForwardController::BackForwardController):
+        (WebCore::BackForwardController::~BackForwardController):
+        * history/BackForwardController.h: Added.
+        (WebCore::BackForwardController::client):
+        (WebCore::BackForwardController::list):
+        * history/BackForwardControllerClient.h: Added.
+        (WebCore::BackForwardControllerClient::~BackForwardControllerClient):
+        * page/Page.cpp:
+        (WebCore::Page::Page):
+        (WebCore::Page::~Page):
+        (WebCore::Page::backForwardList):
+        (WebCore::Page::goBack):
+        (WebCore::Page::goForward):
+        (WebCore::Page::canGoBackOrForward):
+        (WebCore::Page::goBackOrForward):
+        (WebCore::Page::getHistoryLength):
+        * page/Page.h:
+
 2010-07-06  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Unreviewed.
