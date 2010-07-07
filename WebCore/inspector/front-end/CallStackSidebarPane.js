@@ -61,7 +61,10 @@ WebInspector.CallStackSidebarPane.prototype = {
             }
 
             scriptOrResource = sourceIDMap[callFrame.sourceID];
-            subtitle = WebInspector.displayNameForURL(scriptOrResource.sourceURL || scriptOrResource.url);
+            if (scriptOrResource)
+                subtitle = WebInspector.displayNameForURL(scriptOrResource.sourceURL || scriptOrResource.url);
+            else
+                subtitle = WebInspector.UIString("(internal script)");
 
             if (callFrame.line > 0) {
                 if (subtitle)
