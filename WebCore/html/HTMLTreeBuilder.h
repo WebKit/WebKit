@@ -28,6 +28,7 @@
 
 #include "Element.h"
 #include "FragmentScriptingPermission.h"
+#include "HTMLConstructionSite.h"
 #include "HTMLElementStack.h"
 #include "HTMLFormattingElementList.h"
 #include "HTMLTokenizer.h"
@@ -48,61 +49,6 @@ class HTMLToken;
 class HTMLDocument;
 class LegacyHTMLTreeBuilder;
 class Node;
-
-class HTMLConstructionSite : public Noncopyable {
-public:
-    HTMLConstructionSite(Document*, FragmentScriptingPermission);
-
-    void insertDoctype(AtomicHTMLToken&);
-    void insertComment(AtomicHTMLToken&);
-    void insertCommentOnDocument(AtomicHTMLToken&);
-    void insertCommentOnHTMLHtmlElement(AtomicHTMLToken&);
-    void insertElement(AtomicHTMLToken&);
-    void insertSelfClosingElement(AtomicHTMLToken&);
-    void insertFormattingElement(AtomicHTMLToken&);
-    void insertHTMLHtmlElement(AtomicHTMLToken&);
-    void insertHTMLHeadElement(AtomicHTMLToken&);
-    void insertHTMLBodyElement(AtomicHTMLToken&);
-    void insertScriptElement(AtomicHTMLToken&);
-    void insertTextNode(AtomicHTMLToken&);
-
-    void insertHTMLHtmlStartTagBeforeHTML(AtomicHTMLToken&);
-    void insertHTMLHtmlStartTagInBody(AtomicHTMLToken&);
-    void insertHTMLBodyStartTagInBody(AtomicHTMLToken&);
-
-    PassRefPtr<Element> createElement(AtomicHTMLToken&);
-
-    bool indexOfFirstUnopenFormattingElement(unsigned& firstUnopenElementIndex) const;
-    void reconstructTheActiveFormattingElements();
-
-    void generateImpliedEndTags();
-    void generateImpliedEndTagsWithExclusion(const AtomicString& tagName);
-
-    Element* currentElement() const { return m_openElements.top(); }
-    HTMLElementStack* openElements() const { return &m_openElements; }
-    HTMLFormattingElementList* activeFormattingElements() const { return &m_activeFormattingElements; }
-
-    Element* head() const { return m_head.get(); }
-
-    Element* form() const { return m_form.get(); }
-    PassRefPtr<Element> takeForm() { return m_form.release(); }
-
-    void setForm(PassRefPtr<Element> form) { m_form = form; }
-
-private:
-    template<typename ChildType>
-    PassRefPtr<ChildType> attach(Node* parent, PassRefPtr<ChildType> prpChild);
-
-    PassRefPtr<Element> createElementAndAttachToCurrent(AtomicHTMLToken&);
-    void mergeAttributesFromTokenIntoElement(AtomicHTMLToken&, Element*);
-
-    Document* m_document;
-    RefPtr<Element> m_head;
-    RefPtr<Element> m_form;
-    mutable HTMLElementStack m_openElements;
-    mutable HTMLFormattingElementList m_activeFormattingElements;
-    FragmentScriptingPermission m_fragmentScriptingPermission;
-};
 
 class HTMLTreeBuilder : public Noncopyable {
 public:

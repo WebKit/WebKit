@@ -1,3 +1,29 @@
+2010-07-06  Adam Barth  <abarth@webkit.org>
+
+        Rubber-stamped by Eric Seidel.
+
+        Move HTMLConstructionSite to its own file.  No behavior change.
+
+        * Android.mk:
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/HTMLConstructionSite.cpp: Copied from WebCore/html/HTMLTreeBuilder.cpp.
+        (WebCore::HTMLNames::hasImpliedEndTag):
+        (WebCore::HTMLConstructionSite::attach):
+        (WebCore::HTMLConstructionSite::HTMLConstructionSite):
+        (WebCore::HTMLConstructionSite::~HTMLConstructionSite):
+        (WebCore::HTMLConstructionSite::insertHTMLHtmlStartTagBeforeHTML):
+        (WebCore::HTMLConstructionSite::mergeAttributesFromTokenIntoElement):
+        (WebCore::HTMLConstructionSite::insertHTMLHtmlStartTagInBody):
+        (WebCore::HTMLConstructionSite::insertHTMLBodyStartTagInBody):
+        * html/HTMLConstructionSite.h: Copied from WebCore/html/HTMLTreeBuilder.h.
+        * html/HTMLTreeBuilder.cpp:
+        * html/HTMLTreeBuilder.h:
+
 2010-07-06  Mark Rowe  <mrowe@apple.com>
 
         Build fix.

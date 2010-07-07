@@ -647,6 +647,7 @@ SOURCES += \
     html/HTMLButtonElement.cpp \
     html/HTMLCanvasElement.cpp \
     html/HTMLCollection.cpp \
+    html/HTMLConstructionSite.cpp \
     html/HTMLDataGridElement.cpp \
     html/HTMLDataGridCellElement.cpp \
     html/HTMLDataGridColElement.cpp \

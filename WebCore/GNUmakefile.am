@@ -1173,6 +1173,8 @@ webcore_sources += \
 	WebCore/html/HTMLDivElement.h \
 	WebCore/html/HTMLDocument.cpp \
 	WebCore/html/HTMLDocument.h \
+	WebCore/html/HTMLConstructionSite.cpp \
+	WebCore/html/HTMLConstructionSite.h \
 	WebCore/html/HTMLElement.cpp \
 	WebCore/html/HTMLElement.h \
 	WebCore/html/HTMLElementStack.cpp \

@@ -1535,6 +1535,8 @@
             'html/HTMLCanvasElement.h',
             'html/HTMLCollection.cpp',
             'html/HTMLCollection.h',
+            'html/HTMLConstructionSite.cpp',
+            'html/HTMLConstructionSite.h',
             'html/HTMLDListElement.cpp',
             'html/HTMLDListElement.h',
             'html/HTMLDataGridCellElement.cpp',
