@@ -2,6 +2,26 @@
 
         Reviewed by Adam Barth.
 
+        Grease the TreeBuilder's lightning
+        https://bugs.webkit.org/show_bug.cgi?id=41756
+
+        Brings the new TreeBuilder from 7s to 3s on the parser benchmark.
+        This makes performance comparable to the old parser.
+
+        We have not begun to fight!  There is so much fat left on these bones.
+
+        * html/HTMLFormattingElementList.cpp:
+        (WebCore::HTMLFormattingElementList::find):
+        (WebCore::HTMLFormattingElementList::bookmarkFor):
+        (WebCore::HTMLFormattingElementList::insertAt):
+        (WebCore::HTMLFormattingElementList::remove):
+        * html/HTMLFormattingElementList.h:
+        (WebCore::HTMLFormattingElementList::findIndex):
+
+2010-07-07  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
         HTMLTreeBuilder is way too slow
         https://bugs.webkit.org/show_bug.cgi?id=41754
 

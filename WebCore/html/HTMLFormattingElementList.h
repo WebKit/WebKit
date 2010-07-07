@@ -124,6 +124,16 @@ public:
 #endif
 
 private:
+    size_t findIndex(Element* element) const
+    {
+        // A reverse find is more efficient than Vector<T>::find
+        for (size_t i = 1; i <= m_entries.size(); ++i) {
+            size_t index = m_entries.size() - i;
+            if (m_entries[index].element() == element)
+                return index;
+        }
+        return notFound;
+    }
     Vector<Entry> m_entries;
 };
 
