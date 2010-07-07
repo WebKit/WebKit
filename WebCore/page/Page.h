@@ -38,6 +38,7 @@ namespace JSC {
 namespace WebCore {
 
     class BackForwardController;
+    class BackForwardControllerClient;
     class BackForwardList;
     class Chrome;
     class ChromeClient;
@@ -88,7 +89,7 @@ namespace WebCore {
     public:
         static void setNeedsReapplyStyles();
 
-        Page(ChromeClient*, ContextMenuClient*, EditorClient*, DragClient*, InspectorClient*, PluginHalterClient*, GeolocationControllerClient*, DeviceOrientationClient*);
+        Page(ChromeClient*, ContextMenuClient*, EditorClient*, DragClient*, InspectorClient*, PluginHalterClient*, GeolocationControllerClient*, DeviceOrientationClient*, BackForwardControllerClient*);
         ~Page();
 
         RenderTheme* theme() const { return m_theme.get(); };

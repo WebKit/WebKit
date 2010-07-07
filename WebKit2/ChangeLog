@@ -1,3 +1,22 @@
+2010-07-07  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Patch for https://bugs.webkit.org/show_bug.cgi?id=41772
+        Add basic piping for BackForwardControllerClient.
+
+        - Add very basic WebBackForwardControllerClient.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/WebCoreSupport/WebBackForwardControllerClient.cpp: Added.
+        (WebKit::WebBackForwardControllerClient::backForwardControllerDestroyed):
+        (WebKit::WebBackForwardControllerClient::createBackForwardList):
+        * WebProcess/WebCoreSupport/WebBackForwardControllerClient.h: Added.
+        (WebKit::WebBackForwardControllerClient::WebBackForwardControllerClient):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+        * win/WebKit2.vcproj:
+
 2010-07-07  Antti Koivisto  <koivisto@iki.fi>
 
         Reviewed by Kenneth Rohde Christiansen.

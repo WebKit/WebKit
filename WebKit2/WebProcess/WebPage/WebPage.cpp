@@ -29,6 +29,7 @@
 #include "DrawingArea.h"
 #include "InjectedBundle.h"
 #include "MessageID.h"
+#include "WebBackForwardControllerClient.h"
 #include "WebChromeClient.h"
 #include "WebContextMenuClient.h"
 #include "WebCoreArgumentCoders.h"
@@ -76,7 +77,7 @@ PassRefPtr<WebPage> WebPage::create(uint64_t pageID, const IntSize& viewSize, co
 }
 
 WebPage::WebPage(uint64_t pageID, const IntSize& viewSize, const WebPreferencesStore& store, DrawingArea::Type drawingAreaType)
-    : m_page(new Page(new WebChromeClient(this), new WebContextMenuClient(this), new WebEditorClient(this), new WebDragClient(this), new WebInspectorClient(this), 0, 0, 0))
+    : m_page(new Page(new WebChromeClient(this), new WebContextMenuClient(this), new WebEditorClient(this), new WebDragClient(this), new WebInspectorClient(this), 0, 0, 0, new WebBackForwardControllerClient(this)))
     , m_viewSize(viewSize)
     , m_drawingArea(DrawingArea::create(drawingAreaType, this))
     , m_canGoBack(false)

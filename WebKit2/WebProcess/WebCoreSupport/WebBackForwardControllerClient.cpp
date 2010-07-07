@@ -23,24 +23,23 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef BackForwardControllerClient_h
-#define BackForwardControllerClient_h
+#include "WebBackForwardControllerClient.h"
 
-#include "BackForwardList.h"
-#include <wtf/PassRefPtr.h>
+#include "WebPage.h"
+#include <WebCore/BackForwardList.h>
 
-namespace WebCore {
+using namespace WebCore;
 
-class BackForwardControllerClient {
-public:
-    virtual void backForwardControllerDestroyed() = 0;
+namespace WebKit {
 
-    virtual PassRefPtr<BackForwardList> createBackForwardList() = 0;
+void WebBackForwardControllerClient::backForwardControllerDestroyed()
+{
+    delete this;
+}
 
-protected:
-    virtual ~BackForwardControllerClient() { }
-};
+PassRefPtr<BackForwardList> WebBackForwardControllerClient::createBackForwardList()
+{
+    return BackForwardList::create(m_page->corePage());
+}
 
-} // namespace WebCore
-
-#endif // BackForwardControllerClient_h
+} // namespace WebKit

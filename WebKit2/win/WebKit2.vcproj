@@ -587,6 +587,14 @@
 				Name="WebCoreSupport"
 				>
 				<File
+					RelativePath="..\WebProcess\WebCoreSupport\WebBackForwardControllerClient.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\WebProcess\WebCoreSupport\WebBackForwardControllerClient.h"
+					>
+				</File>
+				<File
 					RelativePath="..\WebProcess\WebCoreSupport\WebChromeClient.cpp"
 					>
 				</File>

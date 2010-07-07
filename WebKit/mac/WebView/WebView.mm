@@ -675,8 +675,7 @@ static bool shouldEnableLoadDeferring()
 #else
     WebGeolocationControllerClient* geolocationControllerClient = 0;
 #endif
-    DeviceOrientationClient* deviceOrientationClient = 0;
-    _private->page = new Page(new WebChromeClient(self), new WebContextMenuClient(self), new WebEditorClient(self), new WebDragClient(self), new WebInspectorClient(self), new WebPluginHalterClient(self), geolocationControllerClient, deviceOrientationClient);
+    _private->page = new Page(new WebChromeClient(self), new WebContextMenuClient(self), new WebEditorClient(self), new WebDragClient(self), new WebInspectorClient(self), new WebPluginHalterClient(self), geolocationControllerClient, 0, 0);
 
     _private->page->setCanStartMedia([self window]);
     _private->page->settings()->setLocalStorageDatabasePath([[self preferences] _localStorageDatabasePath]);
