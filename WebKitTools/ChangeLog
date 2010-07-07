@@ -1,3 +1,12 @@
+2010-07-07  Andras Becsi  <abecsi@webkit.org>
+
+        Unreviewed trivial fix.
+
+        Remove DUMPRENDERTREE_TEMP environment variable from NRWT
+        which was checked in accidentally in r62635.
+
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+
 2010-07-07  Gabor Rapcsanyi  <rgabor@inf.u-szeged.hu>
 
         Reviewed by Eric Seidel.
