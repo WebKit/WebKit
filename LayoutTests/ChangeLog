@@ -1,3 +1,9 @@
+2010-07-07  Yury Semikhatsky  <yurys@chromium.org>
+
+        Unreviewed. Add new debugger test to the skip list on Qt.
+
+        * platform/qt/Skipped:
+
 2010-07-07  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Yury Semikhatsky.
