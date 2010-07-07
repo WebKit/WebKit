@@ -102,10 +102,10 @@ NPReason WebNetscapePluginStream::reasonForError(NSError *error)
 NSError *WebNetscapePluginStream::pluginCancelledConnectionError() const
 {
     return [[[NSError alloc] _initWithPluginErrorCode:WebKitErrorPlugInCancelledConnection
-                                           contentURL:m_responseURL ? m_responseURL.get() : m_requestURL.get()
+                                           contentURL:m_responseURL ? m_responseURL.get() : (NSURL *)m_requestURL
                                         pluginPageURL:nil
                                            pluginName:[[m_pluginView.get() pluginPackage] pluginInfo].name
-                                             MIMEType:m_mimeType.get()] autorelease];
+                                             MIMEType:(NSString *)String::fromUTF8(m_mimeType.data(), m_mimeType.length())] autorelease];
 }
 
 NSError *WebNetscapePluginStream::errorForReason(NPReason reason) const
@@ -116,7 +116,7 @@ NSError *WebNetscapePluginStream::errorForReason(NPReason reason) const
     if (reason == NPRES_USER_BREAK)
         return [NSError _webKitErrorWithDomain:NSURLErrorDomain
                                           code:NSURLErrorCancelled 
-                                           URL:m_responseURL ? m_responseURL.get() : m_requestURL.get()];
+                                           URL:m_responseURL ? m_responseURL.get() : (NSURL *)m_requestURL];
 
     return pluginCancelledConnectionError();
 }
@@ -209,12 +209,12 @@ void WebNetscapePluginStream::setPlugin(NPP plugin)
     }        
 }
 
-void WebNetscapePluginStream::startStream(NSURL *url, long long expectedContentLength, NSDate *lastModifiedDate, NSString *mimeType, NSData *headers)
+void WebNetscapePluginStream::startStream(NSURL *url, long long expectedContentLength, NSDate *lastModifiedDate, const String& mimeType, NSData *headers)
 {
     ASSERT(!m_isTerminated);
     
     m_responseURL = url;
-    m_mimeType = mimeType;
+    m_mimeType = mimeType.utf8();
     
     free((void *)m_stream.url);
     m_stream.url = strdup([m_responseURL.get() _web_URLCString]);
@@ -243,10 +243,10 @@ void WebNetscapePluginStream::startStream(NSURL *url, long long expectedContentL
     NPError npErr;
     {
         PluginStopDeferrer deferrer(m_pluginView.get());
-        npErr = m_pluginFuncs->newstream(m_plugin, (char *)[m_mimeType.get() UTF8String], &m_stream, NO, &m_transferMode);
+        npErr = m_pluginFuncs->newstream(m_plugin, m_mimeType.mutableData(), &m_stream, NO, &m_transferMode);
     }
 
-    LOG(Plugins, "NPP_NewStream URL=%@ MIME=%@ error=%d", m_responseURL.get(), m_mimeType.get(), npErr);
+    LOG(Plugins, "NPP_NewStream URL=%@ MIME=%s error=%d", m_responseURL.get(), m_mimeType.data(), npErr);
 
     if (npErr != NPERR_NO_ERROR) {
         LOG_ERROR("NPP_NewStream failed with error: %d responseURL: %@", npErr, m_responseURL.get());
@@ -350,7 +350,7 @@ void WebNetscapePluginStream::didReceiveResponse(NetscapePlugInStreamLoader*, co
         // startStreamResponseURL:... will null-terminate.
     }
     
-    startStream([r URL], expectedContentLength, WKGetNSURLResponseLastModifiedDate(r), [r MIMEType], theHeaders);
+    startStream([r URL], expectedContentLength, WKGetNSURLResponseLastModifiedDate(r), response.mimeType(), theHeaders);
 }
 
 void WebNetscapePluginStream::startStreamWithResponse(NSURLResponse *response)
@@ -440,8 +440,8 @@ void WebNetscapePluginStream::destroyStream()
     if (m_sendNotification) {
         // NPP_URLNotify expects the request URL, not the response URL.
         PluginStopDeferrer deferrer(m_pluginView.get());
-        m_pluginFuncs->urlnotify(m_plugin, [m_requestURL.get() _web_URLCString], m_reason, m_notifyData);
-        LOG(Plugins, "NPP_URLNotify requestURL=%@ reason=%d", m_requestURL.get(), m_reason);
+        m_pluginFuncs->urlnotify(m_plugin, m_requestURL.string().utf8().data(), m_reason, m_notifyData);
+        LOG(Plugins, "NPP_URLNotify requestURL=%@ reason=%d", (NSURL *)m_requestURL, m_reason);
     }
 
     m_isTerminated = true;

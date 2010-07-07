@@ -12,6 +12,22 @@
 
         Reviewed by Sam Weinig.
 
+        Change requestURL to a KURL.
+        https://bugs.webkit.org/show_bug.cgi?id=41775
+
+        * Plugins/WebNetscapePluginStream.h:
+        (WebNetscapePluginStream::setRequestURL):
+        * Plugins/WebNetscapePluginStream.mm:
+        (WebNetscapePluginStream::pluginCancelledConnectionError):
+        (WebNetscapePluginStream::errorForReason):
+        (WebNetscapePluginStream::startStream):
+        (WebNetscapePluginStream::didReceiveResponse):
+        (WebNetscapePluginStream::destroyStream):
+
+2010-07-07  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
         Rename the WebBaseNetscapePluginStream.cpp and .h files to WebNetscapePluginStream.cpp and .h to match the class name.
 
         * Plugins/WebNetscapePluginStream.h: Renamed from WebKit/mac/Plugins/WebBaseNetscapePluginStream.h.
