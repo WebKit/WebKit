@@ -92,7 +92,7 @@ protected:
     static void parseMultipleAttribute(SelectElementData&, Element*, MappedAttribute*);
     static bool appendFormData(SelectElementData&, Element*, FormDataList&);
     static void reset(SelectElementData&, Element*);
-    static void defaultEventHandler(SelectElementData&, Element*, Event*);
+    static void defaultEventHandler(SelectElementData&, Element*, Event*, HTMLFormElement*);
     static int lastSelectedListIndex(const SelectElementData&, const Element*);
     static void typeAheadFind(SelectElementData&, Element*, KeyboardEvent*);
     static void insertedIntoTree(SelectElementData&, Element*);
@@ -103,8 +103,8 @@ protected:
                                     bool multi, bool shift);
  
 private:
-    static void menuListDefaultEventHandler(SelectElementData&, Element*, Event*);
-    static void listBoxDefaultEventHandler(SelectElementData&, Element*, Event*);
+    static void menuListDefaultEventHandler(SelectElementData&, Element*, Event*, HTMLFormElement*);
+    static void listBoxDefaultEventHandler(SelectElementData&, Element*, Event*, HTMLFormElement*);
     static void setOptionsChangedOnRenderer(SelectElementData&, Element*);
 };
 

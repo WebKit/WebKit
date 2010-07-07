@@ -27,6 +27,10 @@ var allTests = [
     [ "Single checkbox with a submit", "!checkbox,submit", "y" ],
     [ "Single checkbox with a submit disabled", "!checkbox,-submit", "n" ],
     [ "Single select", "!select", "n" ],
+    [ "Select with a submit", "!select,submit", "y" ], // match neither FF nor IE, instead follow logic.
+    [ "Select with a disabled submit", "!select,-submit", "n" ],
+    [ "Multi-line select with a submit", "!selectBox,submit", "y" ], // match neither FF nor IE, instead follow logic.
+    [ "Multi-line select with a disabled submit", "!selectBox,-submit", "n" ],
     [ "Text field and single select, text focused", "!text,select", "y" ],
     [ "Text field and single select, select focused", "text,!select", "n" ],
     [ "Isindex", "!isindex", "y"],
@@ -88,6 +92,10 @@ function runTestInIframe()
             control = document.createElement(type);
         } else if (type == "select") {
             control = document.createElement(type);
+            control.options.add(new Option("a"));
+        } else if (type == "selectBox") {
+            control = document.createElement("select");
+            control.size = 5;
             control.options.add(new Option("a"));
         } else if (type == "button") {
             control = document.createElement(type);
