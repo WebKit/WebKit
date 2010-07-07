@@ -68,6 +68,7 @@ public:
     };
     
     Element* top() const;
+    Element* oneBelowTop() const;
     ElementRecord* topRecord() const;
     Element* bottom() const;
     ElementRecord* find(Element*) const;

@@ -2,6 +2,15 @@
 
         Reviewed by Adam Barth.
 
+        Fix </optgroup> in "in select" mode
+        https://bugs.webkit.org/show_bug.cgi?id=41733
+
+        * html5lib/runner-expected-html5.txt:
+
+2010-07-06  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
         "In cell" does not correctly handle <td><tr> or <td><td>
         https://bugs.webkit.org/show_bug.cgi?id=41729
 

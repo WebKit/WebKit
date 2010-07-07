@@ -331,7 +331,6 @@ Expected:
 resources/tests2.dat:
 11
 13
-36
 47
 48
 49
@@ -373,29 +372,6 @@ Expected:
 |     <table>
 |       <tbody>
 |         <tr>
-
-Test 36 of 59 in resources/tests2.dat failed. Input:
-<!DOCTYPE html><select><optgroup><option></optgroup><option><select><option>
-Got:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <select>
-|       <optgroup>
-|         <option>
-|         <option>
-|     <option>
-Expected:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <select>
-|       <optgroup>
-|         <option>
-|       <option>
-|     <option>
 
 Test 47 of 59 in resources/tests2.dat failed. Input:
  

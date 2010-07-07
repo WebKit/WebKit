@@ -240,12 +240,22 @@ void HTMLElementStack::insertAbove(PassRefPtr<Element> element, ElementRecord* r
 
 HTMLElementStack::ElementRecord* HTMLElementStack::topRecord() const
 {
+    ASSERT(m_top);
     return m_top.get();
 }
 
 Element* HTMLElementStack::top() const
 {
+    ASSERT(m_top->element());
     return m_top->element();
+}
+
+Element* HTMLElementStack::oneBelowTop() const
+{
+    // We should never be calling this if it could be 0.
+    ASSERT(m_top);
+    ASSERT(m_top->next());
+    return m_top->next()->element();
 }
 
 Element* HTMLElementStack::bottom() const

@@ -1873,8 +1873,8 @@ void HTMLTreeBuilder::processEndTag(AtomicHTMLToken& token)
     case InSelectMode:
         ASSERT(insertionMode() == InSelectMode || insertionMode() == InSelectInTableMode);
         if (token.name() == optgroupTag) {
-            if (m_tree.currentElement()->hasTagName(optionTag))
-                notImplemented();
+            if (m_tree.currentElement()->hasTagName(optionTag) && m_tree.oneBelowTop()->hasTagName(optgroupTag))
+                processFakeEndTag(optionTag);
             if (m_tree.currentElement()->hasTagName(optgroupTag)) {
                 m_tree.openElements()->pop();
                 return;
