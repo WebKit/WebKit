@@ -46,6 +46,8 @@ import factory
 import http_server
 
 from webkitpy.common.system.executive import Executive
+from webkitpy.thirdparty.autoinstalled.pywebsocket import mod_pywebsocket
+
 
 _log = logging.getLogger("webkitpy.layout_tests.port.websocket_server")
 
@@ -159,7 +161,8 @@ class PyWebSocket(http_server.Lighttpd):
         python_interp = sys.executable
         pywebsocket_base = os.path.join(
             os.path.dirname(os.path.dirname(os.path.dirname(
-            os.path.abspath(__file__)))), 'thirdparty', 'pywebsocket')
+            os.path.abspath(__file__)))), 'thirdparty',
+            'autoinstalled', 'pywebsocket')
         pywebsocket_script = os.path.join(pywebsocket_base, 'mod_pywebsocket',
             'standalone.py')
         start_cmd = [

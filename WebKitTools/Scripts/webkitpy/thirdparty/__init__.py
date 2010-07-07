@@ -89,6 +89,11 @@ installer.install(url="http://iweb.dl.sourceforge.net/project/python-irclib/pyth
 installer.install(url="http://iweb.dl.sourceforge.net/project/python-irclib/python-irclib/0.4.8/python-irclib-0.4.8.zip",
                   url_subpath="ircbot.py")
 
+pywebsocket_dir = os.path.join(autoinstalled_dir, "pywebsocket")
+installer = AutoInstaller(target_dir=pywebsocket_dir)
+installer.install(url="http://pywebsocket.googlecode.com/files/mod_pywebsocket-0.5.tar.gz",
+                  url_subpath="pywebsocket-0.5/src/mod_pywebsocket")
+
 readme_path = os.path.join(autoinstalled_dir, "README")
 if not os.path.exists(readme_path):
     with codecs.open(readme_path, "w", "ascii") as file:

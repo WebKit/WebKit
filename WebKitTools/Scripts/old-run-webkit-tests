@@ -557,7 +557,7 @@ my $lastDirectory = "";
 
 my $isHttpdOpen = 0;
 my $isWebSocketServerOpen = 0;
-my $webSocketServerPID = 0;
+my $webSocketServerPidFile = 0;
 my $failedToStartWebSocketServer = 0;
 # wss is disabled until all platforms support pyOpenSSL.
 # my $webSocketSecureServerPID = 0;
@@ -1425,54 +1425,19 @@ sub openWebSocketServerIfNeeded()
     return 1 if $isWebSocketServerOpen;
     return 0 if $failedToStartWebSocketServer;
 
-    my $webSocketServerPath = "/usr/bin/python";
-    my $webSocketPythonPath = "WebKitTools/Scripts/webkitpy/thirdparty/pywebsocket";
     my $webSocketHandlerDir = "$testDirectory";
-    my $webSocketHandlerScanDir = "$testDirectory/websocket/tests";
-    my $webSocketHandlerMapFile = "$webSocketHandlerScanDir/handler_map.txt";
-    my $sslCertificate = "$testDirectory/http/conf/webkit-httpd.pem";
     my $absTestResultsDirectory = resolveAndMakeTestResultsDirectory();
-    my $logFile = "$absTestResultsDirectory/pywebsocket_log.txt";
+    $webSocketServerPidFile = "$absTestResultsDirectory/websocket.pid";
 
     my @args = (
-        "WebKitTools/Scripts/webkitpy/thirdparty/pywebsocket/mod_pywebsocket/standalone.py",
-        "--server-host", "127.0.0.1",
+        "WebKitTools/Scripts/new-run-webkit-websocketserver",
+        "--server", "start",
         "--port", "$webSocketPort",
-        "--document-root", "$webSocketHandlerDir",
-        "--scan-dir", "$webSocketHandlerScanDir",
-        "--websock-handlers-map-file", "$webSocketHandlerMapFile",
-        "--cgi-paths", "/websocket/tests",
-        "--log-file", "$logFile",
-        "--strict",
+        "--root", "$webSocketHandlerDir",
+        "--output-dir", "$absTestResultsDirectory",
+        "--pidfile", "$webSocketServerPidFile"
     );
-    # wss is disabled until all platforms support pyOpenSSL.
-    # my @argsSecure = (
-    #     "WebKitTools/Scripts/webkitpy/thirdparty/pywebsocket/mod_pywebsocket/standalone.py",
-    #     "-p", "$webSocketSecurePort",
-    #     "-d", "$webSocketHandlerDir",
-    #     "-t",
-    #     "-k", "$sslCertificate",
-    #     "-c", "$sslCertificate",
-    # );
-
-    $ENV{"PYTHONPATH"} = $webSocketPythonPath;
-    $webSocketServerPID = open3(\*WEBSOCKETSERVER_IN, \*WEBSOCKETSERVER_OUT, \*WEBSOCKETSERVER_ERR, $webSocketServerPath, @args);
-    # wss is disabled until all platforms support pyOpenSSL.
-    # $webSocketSecureServerPID = open3(\*WEBSOCKETSECURESERVER_IN, \*WEBSOCKETSECURESERVER_OUT, \*WEBSOCKETSECURESERVER_ERR, $webSocketServerPath, @argsSecure);
-    # my @listen = ("http://127.0.0.1:$webSocketPort", "https://127.0.0.1:$webSocketSecurePort");
-    my @listen = ("http://127.0.0.1:$webSocketPort");
-    for (my $i = 0; $i < @listen; $i++) {
-        my $retryCount = 10;
-        while (system("/usr/bin/curl -k -q --silent --stderr - --output /dev/null $listen[$i]") && $retryCount) {
-            sleep 1;
-            --$retryCount;
-        }
-        unless ($retryCount) {
-            print STDERR "Timed out waiting for WebSocketServer to start.\n";
-            $failedToStartWebSocketServer = 1;
-            return 0;
-        }
-    }
+    system "/usr/bin/python", @args;
 
     $isWebSocketServerOpen = 1;
     return 1;
@@ -1482,17 +1447,15 @@ sub closeWebSocketServer()
 {
     return if !$isWebSocketServerOpen;
 
-    close WEBSOCKETSERVER_IN;
-    close WEBSOCKETSERVER_OUT;
-    close WEBSOCKETSERVER_ERR;
-    kill 15, $webSocketServerPID;
+    my @args = (
+        "WebKitTools/Scripts/new-run-webkit-websocketserver",
+        "--server", "stop",
+        "--pidfile", "$webSocketServerPidFile"
+    );
+    system "/usr/bin/python", @args;
+    unlink "$webSocketServerPidFile";
 
     # wss is disabled until all platforms support pyOpenSSL.
-    # close WEBSOCKETSECURESERVER_IN;
-    # close WEBSOCKETSECURESERVER_OUT;
-    # close WEBSOCKETSECURESERVER_ERR;
-    # kill 15, $webSocketSecureServerPID;
-
     $isWebSocketServerOpen = 0;
 }
 

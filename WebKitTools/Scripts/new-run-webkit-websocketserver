@@ -59,6 +59,8 @@ def main():
                              dest="register_cygwin",
                              help='Register Cygwin paths (on Win try bots)')
     option_parser.add_option('--pidfile', help='path to pid file.')
+    option_parser.add_option('--output-dir', dest='output_dir',
+                             default=None, help='output directory.')
     option_parser.add_option('-v', '--verbose', action='store_true',
                              default=False, help='include debug-level logging')
     options, args = option_parser.parse_args()
@@ -70,6 +72,9 @@ def main():
         else:
             # FIXME: We shouldn't grab at this private variable.
             options.port = websocket_server._DEFAULT_WS_PORT
+
+    if not options.output_dir:
+        options.output_dir = tempfile.gettempdir()
 
     kwds = {'port': options.port, 'use_tls': options.use_tls}
     if options.root:
@@ -83,7 +88,7 @@ def main():
         kwds['pidfile'] = options.pidfile
 
     port_obj = factory.get()
-    pywebsocket = websocket_server.PyWebSocket(port_obj, tempfile.gettempdir(), **kwds)
+    pywebsocket = websocket_server.PyWebSocket(port_obj, options.output_dir, **kwds)
 
     log_level = logging.WARN
     if options.verbose:
