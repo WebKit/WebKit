@@ -168,3 +168,16 @@
 |         <tr>
 |           <td>
 |             "foo"
+
+#data
+<table><td><tr>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <table>
+|       <tbody>
+|         <tr>
+|           <td>
+|         <tr>

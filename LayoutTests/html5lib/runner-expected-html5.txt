@@ -11,11 +11,8 @@ resources/tests1.dat:
 78
 79
 80
-86
 90
 103
-109
-110
 112
 
 Test 30 of 113 in resources/tests1.dat failed. Input:
@@ -255,34 +252,6 @@ Expected:
 |       href="blah"
 |       "aoe"
 
-Test 86 of 113 in resources/tests1.dat failed. Input:
-<table><tr><tr><td><td><span><th><span>X</table>
-Got:
-| <html>
-|   <head>
-|   <body>
-|     <table>
-|       <tbody>
-|         <tr>
-|           <td>
-|             <span>
-|               <span>
-|                 "X"
-Expected:
-| <html>
-|   <head>
-|   <body>
-|     <table>
-|       <tbody>
-|         <tr>
-|         <tr>
-|           <td>
-|           <td>
-|             <span>
-|           <th>
-|             <span>
-|               "X"
-
 Test 90 of 113 in resources/tests1.dat failed. Input:
 <a><table><a></table><p><a><div><a>
 Got:
@@ -338,77 +307,6 @@ Expected:
 |                 <table>
 |               <a>
 |     <a>
-
-Test 109 of 113 in resources/tests1.dat failed. Input:
-<table><col><tbody><col><tr><col><td><col></table><col>
-Got:
-| <html>
-|   <head>
-|   <body>
-|     <table>
-|       <colgroup>
-|         <col>
-|       <tbody>
-|       <colgroup>
-|         <col>
-|       <tbody>
-|         <tr>
-|       <colgroup>
-|         <col>
-|       <tbody>
-|         <tr>
-|           <td>
-Expected:
-| <html>
-|   <head>
-|   <body>
-|     <table>
-|       <colgroup>
-|         <col>
-|       <tbody>
-|       <colgroup>
-|         <col>
-|       <tbody>
-|         <tr>
-|       <colgroup>
-|         <col>
-|       <tbody>
-|         <tr>
-|           <td>
-|       <colgroup>
-|         <col>
-
-Test 110 of 113 in resources/tests1.dat failed. Input:
-<table><colgroup><tbody><colgroup><tr><colgroup><td><colgroup></table><colgroup>
-Got:
-| <html>
-|   <head>
-|   <body>
-|     <table>
-|       <colgroup>
-|       <tbody>
-|       <colgroup>
-|       <tbody>
-|         <tr>
-|       <colgroup>
-|       <tbody>
-|         <tr>
-|           <td>
-Expected:
-| <html>
-|   <head>
-|   <body>
-|     <table>
-|       <colgroup>
-|       <tbody>
-|       <colgroup>
-|       <tbody>
-|         <tr>
-|       <colgroup>
-|       <tbody>
-|         <tr>
-|           <td>
-|       <colgroup>
 
 Test 112 of 113 in resources/tests1.dat failed. Input:
 <table><tr></strong></b></em></i></u></strike></s></blink></tt></pre></big></small></font></select></h1></h2></h3></h4></h5></h6></body></br></a></img></title></span></style></script></table></th></td></tr></frame></area></link></param></hr></input></col></base></meta></basefont></bgsound></embed></spacer></p></dd></dt></caption></colgroup></tbody></tfoot></thead></address></blockquote></center></dir></div></dl></fieldset></listing></menu></ol></ul></li></nobr></wbr></form></button></marquee></object></html></frameset></head></iframe></image></isindex></noembed></noframes></noscript></optgroup></option></plaintext></textarea>
@@ -949,6 +847,7 @@ Got:
 |     <table>
 |       <tbody>
 |         <tr>
+|           <div>
 Expected:
 | <html>
 |   <head>
@@ -967,6 +866,7 @@ Got:
 |     <table>
 |       <tbody>
 |         <tr>
+|           <div>
 |           <td>
 Expected:
 | <html>
@@ -1672,7 +1572,11 @@ Got:
 |     <table>
 |       <tbody>
 |         <tr>
-|           "foobar"
+|           <math>
+|             <mi>
+|               "foo"
+|               <mi>
+|                 "bar"
 Expected:
 | <!DOCTYPE html>
 | <html>
@@ -2211,7 +2115,11 @@ Got:
 |     <table>
 |       <tbody>
 |         <tr>
-|           "foobar"
+|           <svg>
+|             <g>
+|               "foo"
+|               <g>
+|                 "bar"
 Expected:
 | <!DOCTYPE html>
 | <html>
@@ -4019,7 +3927,7 @@ resources/tables01.dat:
 9
 10
 
-Test 4 of 14 in resources/tables01.dat failed. Input:
+Test 4 of 15 in resources/tables01.dat failed. Input:
 <table><colgroup></html>foo
 Got:
 | <html>
@@ -4036,7 +3944,7 @@ Expected:
 |     <table>
 |       <colgroup>
 
-Test 7 of 14 in resources/tables01.dat failed. Input:
+Test 7 of 15 in resources/tables01.dat failed. Input:
 <table><select><option>3</select></table>
 Got:
 | <html>
@@ -4055,7 +3963,7 @@ Expected:
 |         "3"
 |     <table>
 
-Test 8 of 14 in resources/tables01.dat failed. Input:
+Test 8 of 15 in resources/tables01.dat failed. Input:
 <table><select><table></table></select></table>
 Got:
 | <html>
@@ -4071,7 +3979,7 @@ Expected:
 |     <table>
 |     <table>
 
-Test 9 of 14 in resources/tables01.dat failed. Input:
+Test 9 of 15 in resources/tables01.dat failed. Input:
 <table><select></table>
 Got:
 | <html>
@@ -4086,7 +3994,7 @@ Expected:
 |     <select>
 |     <table>
 
-Test 10 of 14 in resources/tables01.dat failed. Input:
+Test 10 of 15 in resources/tables01.dat failed. Input:
 <table><select><option>A<tr><td>B</td></tr></table>
 Got:
 | <html>
