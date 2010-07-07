@@ -1,5 +1,14 @@
 2010-07-07  Mark Rowe  <mrowe@apple.com>
 
+        Fix the build.
+
+        Xcode decided to change the reference type from "Relative to Build Product" to "Relative to Group"
+        when I moved the file between folders. That's incredibly confusing so I'll file a bug against Xcode.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
+2010-07-07  Mark Rowe  <mrowe@apple.com>
+
         Fix the MathML build.
 
         * html/HTMLTreeBuilder.cpp:
