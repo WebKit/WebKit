@@ -1,5 +1,11 @@
 2010-07-07  Anders Carlsson  <andersca@apple.com>
 
+        Another attempt at fixing the Qt build.
+
+        * DumpRenderTree/qt/TestNetscapePlugin/TestNetscapePlugin.pro:
+
+2010-07-07  Anders Carlsson  <andersca@apple.com>
+
         Try to fix Qt build.
 
         * DumpRenderTree/qt/TestNetscapePlugin/TestNetscapePlugin.pro:
