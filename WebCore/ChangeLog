@@ -1,3 +1,15 @@
+2010-07-06  Mark Rowe  <mrowe@apple.com>
+
+        Fix clean builds on Mac OS X.
+
+        Since "Copy Forwarding and ICU Headers" was split in to a separate target
+        from the WebCore framework it no longer had automatica access to the
+        PRIVATE_HEADERS_FOLDER_PATH variable. This caused it to copy the header
+        files in to the wrong location. Fix that by giving PRIVATE_HEADERS_FOLDER_PATH
+        its correct value and ensuring that the path exists.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 2010-07-06  Sam Weinig  <sam@webkit.org>
 
         Fix Gtk build.
