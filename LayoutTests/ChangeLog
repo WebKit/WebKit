@@ -1,3 +1,11 @@
+2010-07-07  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Not reviewed. Add snow-leopard specific result for svg/custom/use-font-face-crash.svg
+
+        * platform/mac-snowleopard/svg: Added.
+        * platform/mac-snowleopard/svg/custom: Added.
+        * platform/mac-snowleopard/svg/custom/use-font-face-crash-expected.txt: Added.
+
 2010-07-07  Steve Block  <steveblock@google.com>
 
         Unreviewed fix for failing Chromium test.
