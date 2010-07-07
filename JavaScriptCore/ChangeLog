@@ -1,3 +1,13 @@
+2010-07-07  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Reviewed by Adam Roben.
+
+        Revert r62689.
+        https://bugs.webkit.org/show_bug.cgi?id=41804
+
+        * runtime/Collector.cpp:
+        (JSC::Heap::freeBlocks):
+
 2010-07-07  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Sam Weinig.

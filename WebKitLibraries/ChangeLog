@@ -1,3 +1,27 @@
+2010-07-07  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Reviewed by Adam Roben.
+
+        Disable MSVC warning 4288.
+        https://bugs.webkit.org/show_bug.cgi?id=41804
+
+        MSVC has a non-standard extension that allows variables declared
+        in for-loops to remain visible in the same scope even after
+        exiting the for-loop
+        (http://msdn.microsoft.com/en-us/library/bk5hc10s.aspx). The /Ze
+        option (turned on by default) enables all MSVC extensions, and
+        /Zc:forScope- tells the compiler to issue a C4288 warning when the
+        same variable is declared in the for-loop and re-declared later in
+        the same scope.
+
+        There seems to be a bug in VS2005 that erroneously enables
+        /Zc:forScope- even when that option is not specified
+        (http://connect.microsoft.com/VisualStudio/feedback/details/338010/bogus-compiler-warning-c4288). Looks
+        like our build got hit by that bug, so we need to disable warning
+        4288 to fix it.
+
+        * win/tools/vsprops/common.vsprops:
+
 2010-07-01  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Sam Weinig.
