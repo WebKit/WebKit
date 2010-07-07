@@ -88,6 +88,8 @@ namespace WebKit {
         WEBKIT_API int size() const;
         WEBKIT_API void setValue(const WebString&);
         WEBKIT_API WebString value() const;
+        WEBKIT_API void setSuggestedValue(const WebString&);
+        WEBKIT_API WebString suggestedValue() const;
         WEBKIT_API void setPlaceholder(const WebString&);
         WEBKIT_API WebString placeholder() const;
         WEBKIT_API bool isAutofilled() const;

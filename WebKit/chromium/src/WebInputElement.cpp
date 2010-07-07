@@ -85,6 +85,16 @@ WebString WebInputElement::value() const
     return constUnwrap<HTMLInputElement>()->value();
 }
 
+void WebInputElement::setSuggestedValue(const WebString& value)
+{
+    unwrap<HTMLInputElement>()->setSuggestedValue(value);
+}
+
+WebString WebInputElement::suggestedValue() const
+{
+    return constUnwrap<HTMLInputElement>()->suggestedValue();
+}
+
 void WebInputElement::setPlaceholder(const WebString& value)
 {
     unwrap<HTMLInputElement>()->setPlaceholder(value);

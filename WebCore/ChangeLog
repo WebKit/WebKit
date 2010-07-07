@@ -1,3 +1,16 @@
+2010-07-07  James Hawkins  <jhawkins@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Move setSuggestedValue() and suggestedValue() back to public as it's
+        now used by WebInputElement.
+        https://bugs.webkit.org/show_bug.cgi?id=41785
+
+        No new tests, as the method is only being used by Chromium's WebKit
+        API.
+
+        * html/HTMLInputElement.h:
+
 2010-07-07  Mark Rowe  <mrowe@apple.com>
 
         Rubber-stamped by Sam Weinig.
