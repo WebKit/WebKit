@@ -1,3 +1,10 @@
+2010-07-07  Mark Rowe  <mrowe@apple.com>
+
+        Fix failures in a handful of Java-related tests.
+
+        * WebCore.exp.in: Remove an extraneous ENABLE_ from an #if so that the condition
+        evalutes to true when we expect it to.
+
 2010-07-06  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Joseph Pecoraro.
