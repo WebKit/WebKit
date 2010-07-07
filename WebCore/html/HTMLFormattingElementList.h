@@ -47,7 +47,7 @@ public:
     class Entry {
     public:
         // Inline because they're hot and Vector<T> uses them.
-        Entry(Element* element)
+        explicit Entry(Element* element)
             : m_element(element)
         {
             ASSERT(element);
@@ -75,6 +75,8 @@ public:
         bool operator!=(const Entry& other) const { return m_element != other.m_element; }
 
     private:
+        friend class HTMLFormattingElementList;
+
         RefPtr<Element> m_element;
     };
 
@@ -126,10 +128,11 @@ public:
 private:
     size_t findIndex(Element* element) const
     {
+        ASSERT(element);
         // A reverse find is more efficient than Vector<T>::find
         for (size_t i = 1; i <= m_entries.size(); ++i) {
             size_t index = m_entries.size() - i;
-            if (m_entries[index].element() == element)
+            if (m_entries[index].m_element == element)
                 return index;
         }
         return notFound;

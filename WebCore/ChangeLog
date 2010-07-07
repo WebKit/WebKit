@@ -1,3 +1,14 @@
+2010-07-07  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed.
+
+        Fix ASSERT in Eric's previous patch.  I think he tested his patch in
+        Release and not Debug.
+
+        * html/HTMLFormattingElementList.h:
+        (WebCore::HTMLFormattingElementList::Entry::Entry):
+        (WebCore::HTMLFormattingElementList::findIndex):
+
 2010-07-07  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.
