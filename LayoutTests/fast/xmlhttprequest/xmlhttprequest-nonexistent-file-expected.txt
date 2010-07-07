@@ -1,3 +1,4 @@
+CONSOLE MESSAGE: line 1: XMLHttpRequest cannot load . Cross origin requests are only supported for HTTP.
 
 Bug 22475: REGRESSION: Async XMLHttpRequest never finishes on nonexistent files anymore
 

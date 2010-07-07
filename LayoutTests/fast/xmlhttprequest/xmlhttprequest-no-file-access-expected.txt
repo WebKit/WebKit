@@ -1,3 +1,4 @@
+CONSOLE MESSAGE: line 1: XMLHttpRequest cannot load xmlhttprequest-no-file-access-expected.txt. Cross origin requests are only supported for HTTP.
 CONSOLE MESSAGE: line 1: Unsafe JavaScript attempt to access frame with URL xmlhttprequest-no-file-access-real.html. Domains, protocols and ports must match.
 
 

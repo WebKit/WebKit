@@ -1,3 +1,16 @@
+2010-07-07  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed.
+
+        Clean up Alexey's mess from http://trac.webkit.org/changeset/62576
+        https://bugs.webkit.org/show_bug.cgi?id=41156
+
+        I think these results are correct, but I don't really know for sure.
+        What I do know is that he left this failure in the tree for 12 hours.
+
+        * fast/xmlhttprequest/xmlhttprequest-no-file-access-expected.txt:
+        * fast/xmlhttprequest/xmlhttprequest-nonexistent-file-expected.txt:
+
 2010-07-06  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
