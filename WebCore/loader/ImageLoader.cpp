@@ -27,6 +27,8 @@
 #include "DocLoader.h"
 #include "Document.h"
 #include "Element.h"
+#include "HTMLNames.h"
+#include "HTMLObjectElement.h"
 #include "RenderImage.h"
 
 #if !ASSERT_DISABLED
@@ -253,6 +255,9 @@ void ImageLoader::dispatchPendingBeforeLoadEvent()
         m_image = 0;
     }
     loadEventSender().cancelEvent(this);
+    
+    if (m_element->hasTagName(HTMLNames::objectTag))
+        static_cast<HTMLObjectElement*>(m_element)->renderFallbackContent();
 }
 
 void ImageLoader::dispatchPendingLoadEvent()
