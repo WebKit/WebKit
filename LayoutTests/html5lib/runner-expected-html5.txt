@@ -554,7 +554,6 @@ resources/tests6.dat:
 10
 11
 12
-14
 26
 27
 30
@@ -650,21 +649,6 @@ Expected:
 |   <frameset>
 |   "
 "
-
-Test 14 of 51 in resources/tests6.dat failed. Input:
-<button><button>
-Got:
-| <html>
-|   <head>
-|   <body>
-|     <button>
-|       <button>
-Expected:
-| <html>
-|   <head>
-|   <body>
-|     <button>
-|     <button>
 
 Test 26 of 51 in resources/tests6.dat failed. Input:
 <table><colgroup>foo

@@ -640,7 +640,12 @@ void HTMLTreeBuilder::processStartTagForInBody(AtomicHTMLToken& token)
         return;
     }
     if (token.name() == buttonTag) {
-        notImplemented();
+        if (m_tree.openElements()->inScope(buttonTag)) {
+            parseError(token);
+            processFakeEndTag(buttonTag);
+            processStartTag(token); // FIXME: Could we just fall through here?
+            return;
+        }
         m_tree.reconstructTheActiveFormattingElements();
         m_tree.insertElement(token);
         m_framesetOk = false;
