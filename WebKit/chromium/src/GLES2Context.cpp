@@ -56,7 +56,8 @@ public:
     GLES2ContextInternal() {}
     ~GLES2ContextInternal() {}
 
-    bool initialize(Page*);
+    bool initializeOnscreen(Page*);
+    bool initializeOffscreen(GLES2Context*);
 
     WebGLES2Context* getWebGLES2Context() { return m_impl; }
 
@@ -64,7 +65,7 @@ private:
     WebGLES2Context* m_impl;
 };
 
-bool GLES2ContextInternal::initialize(Page* page)
+bool GLES2ContextInternal::initializeOnscreen(Page* page)
 {
     ASSERT(page);
     WebViewImpl* webView = WebViewImpl::fromPage(page);
@@ -75,10 +76,22 @@ bool GLES2ContextInternal::initialize(Page* page)
     return true;
 }
 
-PassOwnPtr<GLES2Context> GLES2Context::create(Page* page)
+bool GLES2ContextInternal::initializeOffscreen(GLES2Context* parent)
+{
+    m_impl = webKitClient()->createGLES2Context();
+    if (!m_impl)
+        return false;
+    if (!m_impl->initialize(0, parent ? parent->m_internal->m_impl : 0)) {
+        delete m_impl;
+        return false;
+    }
+    return true;
+}
+
+PassOwnPtr<GLES2Context> GLES2Context::createOnscreen(Page* page)
 {
     GLES2ContextInternal* internal = new GLES2ContextInternal();
-    if (!internal->initialize(page)) {
+    if (!internal->initializeOnscreen(page)) {
         delete internal;
         return 0;
     }
@@ -86,6 +99,19 @@ PassOwnPtr<GLES2Context> GLES2Context::create(Page* page)
     result->m_internal.set(internal);
     return result;
 }
+
+PassOwnPtr<GLES2Context> GLES2Context::createOffscreen(GLES2Context* parent)
+{
+    GLES2ContextInternal* internal = new GLES2ContextInternal();
+    if (!internal->initializeOffscreen(parent)) {
+        delete internal;
+        return 0;
+    }
+    PassOwnPtr<GLES2Context> result = new GLES2Context();
+    result->m_internal.set(internal);
+    return result;
+}
+
 
 GLES2Context::~GLES2Context()
 {

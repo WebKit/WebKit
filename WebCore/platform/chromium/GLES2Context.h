@@ -42,10 +42,14 @@ class Page;
 
 class GLES2Context : public Noncopyable {
 public:
-    // If a Page is specified then the resulting GL ES context draws directly
-    // to the window associated with the Page, otherwise an off-screen GL ES context is
-    // created.
-    static PassOwnPtr<GLES2Context> create(Page*);
+    // Creates a GL ES context that draws directly to the window associated with
+    // the Page.
+    static PassOwnPtr<GLES2Context> createOnscreen(Page*);
+
+    // Creates a GL ES context that renders offscreen, optionally as a child
+    // of the given parent if specified.
+    static PassOwnPtr<GLES2Context> createOffscreen(GLES2Context* parent);
+
     ~GLES2Context();
 
     bool makeCurrent();

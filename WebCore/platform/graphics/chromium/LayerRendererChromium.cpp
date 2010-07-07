@@ -647,7 +647,7 @@ bool LayerRendererChromium::makeContextCurrent()
 
 bool LayerRendererChromium::initGL()
 {
-    m_gles2Context = GLES2Context::create(m_page);
+    m_gles2Context = GLES2Context::createOnscreen(m_page);
 
     if (!m_gles2Context)
         return false;
