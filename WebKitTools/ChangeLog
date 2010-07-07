@@ -1,3 +1,37 @@
+2010-07-07  David Kilzer  <ddkilzer@apple.com>
+
+        <http://webkit.org/b/41788> commit-log-editor: wrong ChangeLog read when invoked from subdir with git
+
+        Reviewed by Anders Carlsson.
+
+        For both svn and git, commit-log-editor is invoked from the root
+        of the working directory.  Unlike svn, git returns a list of
+        changed files that are relative to the directory where the
+        command was invoked.  This caused the ChangeLog file in the root
+        directory to be read instead of the ChangeLog in the current
+        directory.
+
+        The fix is to use $ENV{PWD} as the base directory when fixing
+        the path to the ChangeLog files.  With svn, this has no net
+        effect since $ENV{PWD} is the root of the working directory and
+        the ChangeLog paths are already relative to that directory.
+        With git, $ENV{PWD} is the directory that the commit was invoked
+        from, which fixes the ChangeLog paths so that the correct files
+        are read when creating the commit log entry.
+
+        Note that the call to makeFilePathRelative() was supposed to
+        address this issue, but it doesn't because (a) it does nothing
+        with svn working directories by design, and (b) it does nothing
+        with git working directories because it's invoked when the
+        current directory is the root of the working directory, thus
+        giving no relative path.
+
+        * Scripts/commit-log-editor: Removed call to
+        makeFilePathRelative() since since it does nothing.  Moved code
+        to fix up $changeLog path so that it's fixed before trying to
+        open the file, and use $ENV{PWD} as the base path.  Also use
+        canonicalizePath() to clean up paths with "../" in them.
+
 2010-07-07  Anders Carlsson  <andersca@apple.com>
 
         Another attempt at fixing the Qt build.
