@@ -1,3 +1,31 @@
+2010-07-07  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Implementation of QScriptValue::isArray()
+        https://bugs.webkit.org/show_bug.cgi?id=41713
+
+        Since we don't have access to the [[Class]] internal property of
+        builtins (including Array), the solution was to keep the original 'Array'
+        (constructor) and 'Array.prototype' objects and use them to identify
+        if a given object is an Array.
+
+        Also uncomment some tests and add some tests of newArray() that
+        depended on isArray(). 
+
+        * api/qscriptengine_p.cpp:
+        (QScriptEnginePrivate::QScriptEnginePrivate):
+        (QScriptEnginePrivate::~QScriptEnginePrivate):
+        * api/qscriptengine_p.h:
+        (QScriptEnginePrivate::isArray):
+        * api/qscriptvalue.cpp:
+        (QScriptValue::isArray):
+        * api/qscriptvalue.h:
+        * api/qscriptvalue_p.h:
+        (QScriptValuePrivate::isArray):
+        * tests/qscriptengine/tst_qscriptengine.cpp:
+        (tst_QScriptEngine::newArray):
+
 2010-07-06  Jedrzej Nowacki  <jedrzej.nowacki@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

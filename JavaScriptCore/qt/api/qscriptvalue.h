@@ -108,6 +108,7 @@ public:
     bool isUndefined() const;
     bool isObject() const;
     bool isError() const;
+    bool isArray() const;
 
     QString toString() const;
     qsreal toNumber() const;

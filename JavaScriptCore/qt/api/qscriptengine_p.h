@@ -77,10 +77,15 @@ public:
     inline QScriptStringPrivate* toStringHandle(const QString& str) const;
 
     inline operator JSGlobalContextRef() const;
+
+    inline bool isArray(JSValueRef value) const;
 private:
     QScriptEngine* q_ptr;
     JSGlobalContextRef m_context;
     JSValueRef m_exception;
+
+    JSObjectRef m_arrayConstructor;
+    JSValueRef m_arrayPrototype;
 };
 
 
@@ -209,6 +214,13 @@ QScriptEnginePrivate::operator JSGlobalContextRef() const
 {
     Q_ASSERT(this);
     return m_context;
+}
+
+bool QScriptEnginePrivate::isArray(JSValueRef value) const
+{
+    // JSC API doesn't export the [[Class]] information for the builtins. But we know that a value
+    // is an array if it was created with the Array constructor or if it is the Array.prototype.
+    return JSValueIsInstanceOfConstructor(m_context, value, m_arrayConstructor, /* exception */ 0) || JSValueIsStrictEqual(m_context, value, m_arrayPrototype);
 }
 
 #endif

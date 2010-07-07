@@ -416,21 +416,48 @@ void tst_QScriptEngine::newArray()
     QScriptEngine eng;
     QScriptValue array = eng.newArray();
     QCOMPARE(array.isValid(), true);
-    // QCOMPARE(array.isArray(), true);
+    QCOMPARE(array.isArray(), true);
     QCOMPARE(array.isObject(), true);
     QVERIFY(!array.isFunction());
     // QCOMPARE(array.scriptClass(), (QScriptClass*)0);
 
     // Prototype should be Array.prototype.
     QCOMPARE(array.prototype().isValid(), true);
-    // QCOMPARE(array.prototype().isArray(), true);
+    QCOMPARE(array.prototype().isArray(), true);
     QCOMPARE(array.prototype().strictlyEquals(eng.evaluate("Array.prototype")), true);
 
     QScriptValue arrayWithSize = eng.newArray(42);
     QCOMPARE(arrayWithSize.isValid(), true);
-    // QCOMPARE(arrayWithSize.isArray(), true);
+    QCOMPARE(arrayWithSize.isArray(), true);
     QCOMPARE(arrayWithSize.isObject(), true);
     QCOMPARE(arrayWithSize.property("length").toInt32(), 42);
+
+    // task 218092
+    {
+        QScriptValue ret = eng.evaluate("[].splice(0, 0, 'a')");
+        QVERIFY(ret.isArray());
+        QCOMPARE(ret.property("length").toInt32(), 0);
+    }
+    {
+        QScriptValue ret = eng.evaluate("['a'].splice(0, 1, 'b')");
+        QVERIFY(ret.isArray());
+        QCOMPARE(ret.property("length").toInt32(), 1);
+    }
+    {
+        QScriptValue ret = eng.evaluate("['a', 'b'].splice(0, 1, 'c')");
+        QVERIFY(ret.isArray());
+        QCOMPARE(ret.property("length").toInt32(), 1);
+    }
+    {
+        QScriptValue ret = eng.evaluate("['a', 'b', 'c'].splice(0, 2, 'd')");
+        QVERIFY(ret.isArray());
+        QCOMPARE(ret.property("length").toInt32(), 2);
+    }
+    {
+        QScriptValue ret = eng.evaluate("['a', 'b', 'c'].splice(1, 2, 'd', 'e', 'f')");
+        QVERIFY(ret.isArray());
+        QCOMPARE(ret.property("length").toInt32(), 2);
+    }
 }
 
 void tst_QScriptEngine::uncaughtException()

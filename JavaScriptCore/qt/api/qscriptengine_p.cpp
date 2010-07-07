@@ -32,11 +32,32 @@ QScriptEnginePrivate::QScriptEnginePrivate(const QScriptEngine* engine)
     : q_ptr(const_cast<QScriptEngine*>(engine))
     , m_context(JSGlobalContextCreate(0))
     , m_exception(0)
+    , m_arrayConstructor(0)
+    , m_arrayPrototype(0)
 {
+    JSObjectRef globalObject = JSContextGetGlobalObject(m_context);
+
+    // Save references to the Array constructor and prototype.
+    JSRetainPtr<JSStringRef> arrayName(Adopt, JSStringCreateWithUTF8CString("Array"));
+    JSValueRef arrayConstructor = JSObjectGetProperty(m_context, globalObject, arrayName.get(), /* exception */ 0);
+    Q_ASSERT(JSValueIsObject(m_context, arrayConstructor));
+    m_arrayConstructor = JSValueToObject(m_context, arrayConstructor, /* exception */ 0);
+    JSValueProtect(m_context, m_arrayConstructor);
+
+    // Note that this is not the [[Prototype]] internal property (which we could
+    // get via JSObjectGetPrototype), but the Array.prototype, that will be set
+    // as [[Prototype]] of Array instances.
+    JSRetainPtr<JSStringRef> prototypeName(Adopt, JSStringCreateWithUTF8CString("prototype"));
+    JSValueRef arrayPrototype = JSObjectGetProperty(m_context, m_arrayConstructor, prototypeName.get(), /* exception */ 0);
+    Q_ASSERT(JSValueIsObject(m_context, arrayPrototype));
+    m_arrayPrototype = arrayPrototype;
+    JSValueProtect(m_context, m_arrayPrototype);
 }
 
 QScriptEnginePrivate::~QScriptEnginePrivate()
 {
+    JSValueUnprotect(m_context, m_arrayConstructor);
+    JSValueUnprotect(m_context, m_arrayPrototype);
     if (m_exception)
         JSValueUnprotect(m_context, m_exception);
     JSGlobalContextRelease(m_context);

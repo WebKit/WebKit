@@ -313,6 +313,17 @@ bool QScriptValue::isError() const
 }
 
 /*!
+  Returns true if this QScriptValue is an object of the Array class;
+  otherwise returns false.
+
+  \sa QScriptEngine::newArray()
+*/
+bool QScriptValue::isArray() const
+{
+    return d_ptr->isArray();
+}
+
+/*!
   Returns true if this QScriptValue is of the Object type; otherwise
   returns false.
 
