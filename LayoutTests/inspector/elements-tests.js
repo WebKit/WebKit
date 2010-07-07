@@ -1,12 +1,3 @@
-function dumpArray(result)
-{
-    if (result instanceof Array) {
-        for (var i = 0; i < result.length; ++i)
-            output(result[i]);
-    } else
-        output(result);
-}
-
 // Frontend functions.
 
 function frontend_expandDOMSubtree(node)

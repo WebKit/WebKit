@@ -1,3 +1,38 @@
+2010-07-06  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Joseph Pecoraro.
+
+        Web Inspector: provide line numbers for inline styles.
+
+        https://bugs.webkit.org/show_bug.cgi?id=41691
+
+        Test: inspector/styles-source-lines-inline.html
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseSheet):
+        * css/CSSParser.h:
+        * css/CSSStyleSheet.cpp:
+        (WebCore::CSSStyleSheet::parseString):
+        (WebCore::CSSStyleSheet::parseStringAtLine):
+        * css/CSSStyleSheet.h:
+        * dom/StyleElement.cpp:
+        (WebCore::StyleElement::process):
+        (WebCore::StyleElement::createSheet):
+        * dom/StyleElement.h:
+        * html/HTMLStyleElement.cpp:
+        (WebCore::HTMLStyleElement::HTMLStyleElement):
+        (WebCore::HTMLStyleElement::finishParsingChildren):
+        * html/HTMLStyleElement.h:
+        * inspector/InspectorCSSStore.cpp:
+        (WebCore::InspectorCSSStore::getRuleRangesForStyleSheet):
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::buildObjectForRule):
+        * inspector/front-end/DOMAgent.js:
+        (WebInspector.CSSStyleDeclaration.parseRule):
+        * inspector/front-end/StylesSidebarPane.js:
+        (WebInspector.StylePropertiesSection.else.linkifyUncopyable):
+        (WebInspector.StylePropertiesSection):
+
 2010-07-06  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Jon Honeycutt.

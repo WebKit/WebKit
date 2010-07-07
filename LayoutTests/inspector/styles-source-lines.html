@@ -8,7 +8,7 @@
 -->
 
 <style type="text/css" media="screen">
-body, .at_line_5::/*
+body, .at_line_15::/*
 Multiline comment
 before pseudo element
               */before 
@@ -23,7 +23,7 @@ Multiline comment followed with whitespace
 
 */
 
-body, .at_line_19
+body, .at_line_29
 
 
 {
@@ -38,7 +38,7 @@ body, .at_line_19
 
 followed by selector
 */body,
-.at_line_33
+.at_line_43
 
 {
     font-size:
@@ -46,7 +46,7 @@ followed by selector
 }
 
 
-body, .at_line_40
+body, .at_line_50
 {
     border: 1px solid
     red;
@@ -63,7 +63,7 @@ function doit()
     {
         var matchedCSSRules = styles.matchedCSSRules;
         for (var i = 0; i < matchedCSSRules.length; ++i) {
-            output("Line:" + matchedCSSRules[i].sourceLine + "\t" + matchedCSSRules[i].selectorText);
+            output("Line:" + (matchedCSSRules[i].sourceLine + 1) + "\t" + matchedCSSRules[i].selectorText);
         }
         notifyDone();
     }

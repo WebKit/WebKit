@@ -36,13 +36,13 @@ StyleElement::StyleElement()
 StyleSheet* StyleElement::sheet(Element* e)
 {
     if (!m_sheet)
-        createSheet(e);
+        createSheet(e, 0);
     return m_sheet.get();
 }
 
 void StyleElement::insertedIntoDocument(Document*, Element* element)
 {
-    process(element);
+    process(element, 0);
 }
 
 void StyleElement::removedFromDocument(Document* document)
@@ -56,7 +56,7 @@ void StyleElement::removedFromDocument(Document* document)
         document->updateStyleSelector();
 }
 
-void StyleElement::process(Element* e)
+void StyleElement::process(Element* e, int startLineNumber)
 {
     if (!e || !e->inDocument())
         return;
@@ -82,10 +82,10 @@ void StyleElement::process(Element* e)
     }
     ASSERT(p == text + resultLength);
 
-    createSheet(e, sheetText);
+    createSheet(e, startLineNumber, sheetText);
 }
 
-void StyleElement::createSheet(Element* e, const String& text)
+void StyleElement::createSheet(Element* e, int startLineNumber, const String& text)
 {
     Document* document = e->document();
     if (m_sheet) {
@@ -104,7 +104,7 @@ void StyleElement::createSheet(Element* e, const String& text)
             document->addPendingSheet();
             setLoading(true);
             m_sheet = CSSStyleSheet::create(e, String(), KURL(), document->inputEncoding());
-            m_sheet->parseString(text, !document->inCompatMode());
+            m_sheet->parseStringAtLine(text, !document->inCompatMode(), startLineNumber);
             m_sheet->setMedia(mediaList.get());
             m_sheet->setTitle(e->title());
             setLoading(false);

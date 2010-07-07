@@ -183,9 +183,14 @@ const AtomicString& CSSStyleSheet::determineNamespace(const AtomicString& prefix
 
 bool CSSStyleSheet::parseString(const String &string, bool strict)
 {
+    return parseStringAtLine(string, strict, 0);
+}
+
+bool CSSStyleSheet::parseStringAtLine(const String& string, bool strict, int startLineNumber)
+{
     setStrictParsing(strict);
     CSSParser p(strict);
-    p.parseSheet(this, string);
+    p.parseSheet(this, string, startLineNumber);
     return true;
 }
 

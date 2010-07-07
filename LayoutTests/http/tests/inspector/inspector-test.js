@@ -84,6 +84,18 @@ function didEvaluateForTestInFrontend(callId, jsonResult)
     }
 }
 
+function runAfterIframeIsLoaded(continuation)
+{
+    function step()
+    {
+        if (!window.iframeLoaded)
+            setTimeout(step, 100);
+        else
+            continuation();
+    }
+    setTimeout(step, 100);
+}
+
 // Front-end utilities.
 
 function frontend_dumpTreeOutline(treeItem, result)

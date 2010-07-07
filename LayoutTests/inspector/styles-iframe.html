@@ -9,18 +9,6 @@
 <script src="elements-tests.js"></script>
 <script>
 
-function runAfterIframeIsLoaded(continuation)
-{
-    function step()
-    {
-        if (!window.iframeLoaded)
-            setTimeout(step, 100);
-        else
-            continuation();
-    }
-    setTimeout(step, 100);
-}
-
 function doit()
 {
     runAfterIframeIsLoaded(function() {

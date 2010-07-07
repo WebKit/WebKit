@@ -60,7 +60,7 @@ namespace WebCore {
         CSSParser(bool strictParsing = true);
         ~CSSParser();
 
-        void parseSheet(CSSStyleSheet*, const String&, StyleRuleRanges* ruleRangeMap = 0);
+        void parseSheet(CSSStyleSheet*, const String&, int startLineNumber = 0, StyleRuleRanges* ruleRangeMap = 0);
         PassRefPtr<CSSRule> parseRule(CSSStyleSheet*, const String&);
         PassRefPtr<CSSRule> parseKeyframeRule(CSSStyleSheet*, const String&);
         bool parseValue(CSSMutableStyleDeclaration*, int propId, const String&, bool important);
@@ -288,8 +288,8 @@ namespace WebCore {
         int yyleng;
         int yyTok;
         int yy_start;
-        int m_line;
-        int m_lastSelectorLine;
+        int m_lineNumber;
+        int m_lastSelectorLineNumber;
 
         bool m_allowImportRules;
         bool m_allowVariablesRules;

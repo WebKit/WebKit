@@ -65,6 +65,7 @@ private:
 
     bool m_loading;
     bool m_createdByParser;
+    int m_startLineNumber;
 };
 
 } //namespace

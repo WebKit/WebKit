@@ -151,8 +151,8 @@ CSSParser::CSSParser(bool strictParsing)
     , m_ruleRanges(0)
     , m_data(0)
     , yy_start(1)
-    , m_line(0)
-    , m_lastSelectorLine(0)
+    , m_lineNumber(0)
+    , m_lastSelectorLineNumber(0)
     , m_allowImportRules(true)
     , m_allowVariablesRules(true)
     , m_allowNamespaceDeclarations(true)
@@ -231,12 +231,13 @@ void CSSParser::setupParser(const char* prefix, const String& string, const char
     resetRuleBodyMarks();
 }
 
-void CSSParser::parseSheet(CSSStyleSheet* sheet, const String& string, StyleRuleRanges* ruleRangeMap)
+void CSSParser::parseSheet(CSSStyleSheet* sheet, const String& string, int startLineNumber, StyleRuleRanges* ruleRangeMap)
 {
     m_styleSheet = sheet;
     m_defaultNamespace = starAtom; // Reset the default namespace.
     m_ruleRanges = ruleRangeMap;
 
+    m_lineNumber = startLineNumber;
     setupParser("", string, "");
     cssyyparse(this);
     m_ruleRanges = 0;
@@ -5112,7 +5113,7 @@ void CSSParser::countLines()
 {
     for (UChar* current = yytext; current < yytext + yyleng; ++current) {
         if (*current == '\n')
-            ++m_line;
+            ++m_lineNumber;
     }
 }
 
@@ -5286,7 +5287,7 @@ CSSRule* CSSParser::createStyleRule(Vector<CSSSelector*>* selectors)
     CSSStyleRule* result = 0;
     markRuleBodyEnd();
     if (selectors) {
-        RefPtr<CSSStyleRule> rule = CSSStyleRule::create(m_styleSheet, m_lastSelectorLine);
+        RefPtr<CSSStyleRule> rule = CSSStyleRule::create(m_styleSheet, m_lastSelectorLineNumber);
         rule->adoptSelectorVector(*selectors);
         if (m_hasFontFaceOnlyValues)
             deleteFontFaceOnlyValues();
@@ -5392,7 +5393,7 @@ CSSRule* CSSParser::createPageRule(CSSSelector* pageSelector)
     m_allowImportRules = m_allowNamespaceDeclarations = m_allowVariablesRules = false;
     CSSPageRule* pageRule = 0;
     if (pageSelector) {
-        RefPtr<CSSPageRule> rule = CSSPageRule::create(m_styleSheet, pageSelector, m_lastSelectorLine);
+        RefPtr<CSSPageRule> rule = CSSPageRule::create(m_styleSheet, pageSelector, m_lastSelectorLineNumber);
         rule->setDeclaration(CSSMutableStyleDeclaration::create(rule.get(), m_parsedProperties, m_numParsedProperties));
         pageRule = rule.get();
         m_parsedStyleObjects.append(rule.release());
@@ -5540,7 +5541,7 @@ void CSSParser::invalidBlockHit()
 
 void CSSParser::updateLastSelectorLineAndPosition()
 {
-    m_lastSelectorLine = m_line;
+    m_lastSelectorLineNumber = m_lineNumber;
     markRuleBodyStart();
 }
 

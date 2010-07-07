@@ -562,6 +562,7 @@ WebInspector.CSSStyleDeclaration.parseRule = function(payload)
     rule.isUser = payload.isUser;
     rule.isViaInspector = payload.isViaInspector;
     rule.sourceLine = payload.sourceLine;
+    rule.documentURL = payload.documentURL;
     if (payload.parentStyleSheet)
         rule.parentStyleSheet = { href: payload.parentStyleSheet.href };
 

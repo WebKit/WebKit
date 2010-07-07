@@ -649,20 +649,24 @@ WebInspector.StylePropertiesSection = function(styleRule, subtitle, computedStyl
         this.headerElement.addStyleClass("hidden");
     } else {
         if (!subtitle) {
-            if (this.styleRule.parentStyleSheet && this.styleRule.parentStyleSheet.href) {
-                var url = this.styleRule.parentStyleSheet.href;
-                var link = WebInspector.linkifyResourceAsNode(url, "resources", this.rule.sourceLine + 1);
+            function linkifyUncopyable(url, line)
+            {
+                var link = WebInspector.linkifyResourceAsNode(url, "resources", line + 1);
                 link.setAttribute("data-uncopyable", link.textContent);
                 link.textContent = "";
-                this.subtitleElement.appendChild(link);
-            } else if (isUserAgent)
+                return link;
+            }
+
+            if (this.styleRule.parentStyleSheet && this.styleRule.parentStyleSheet.href)
+                this.subtitleElement.appendChild(linkifyUncopyable(this.styleRule.parentStyleSheet.href, this.rule.sourceLine));
+            else if (isUserAgent)
                 subtitle = WebInspector.UIString("user agent stylesheet");
             else if (isUser)
                 subtitle = WebInspector.UIString("user stylesheet");
             else if (isViaInspector)
                 subtitle = WebInspector.UIString("via inspector");
             else
-                subtitle = WebInspector.UIString("inline stylesheet");
+                this.subtitleElement.appendChild(linkifyUncopyable(this.rule.documentURL, this.rule.sourceLine));
         }
         if (isInherited)
             this.element.addStyleClass("show-inherited"); // This one is related to inherited rules, not compted style.
