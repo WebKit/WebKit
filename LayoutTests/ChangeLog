@@ -1,3 +1,15 @@
+2010-07-07  Steve Block  <steveblock@google.com>
+
+        Reviewed by Adam Barth.
+
+        document.createEvent() should support DeviceOrientationEvent
+        https://bugs.webkit.org/show_bug.cgi?id=41618
+
+        * fast/dom/DeviceOrientation/create-event-expected.txt: Added.
+        * fast/dom/DeviceOrientation/create-event.html: Added.
+        * fast/dom/DeviceOrientation/script-tests/create-event.js: Added.
+        * platform/gtk/Skipped:
+
 2010-07-07  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed fix.
