@@ -2113,16 +2113,6 @@ void RenderBlock::paintChildren(PaintInfo& paintInfo, int tx, int ty)
             return;
         }
 
-        // Check for page-break-inside: avoid, and it it's set, break and bail.
-        bool checkInsideAvoid = !childrenInline() && ((checkPageBreaks && child->style()->pageBreakInside() == PBAVOID) || (checkColumnBreaks && child->style()->columnBreakInside() == PBAVOID));
-        if (checkInsideAvoid
-            && ty + child->y() > paintInfo.rect.y()
-            && ty + child->y() < paintInfo.rect.bottom()
-            && ty + child->y() + child->height() > paintInfo.rect.bottom()) {
-            view()->setBestTruncatedAt(ty + child->y(), this, true);
-            return;
-        }
-
         if (!child->hasSelfPaintingLayer() && !child->isFloating())
             child->paint(info, tx, ty);
 

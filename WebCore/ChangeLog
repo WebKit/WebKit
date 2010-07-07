@@ -1,3 +1,15 @@
+2010-07-07  Hayato Ito  <hayato@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Rolling out 'page-break-inside:avoid' part of the r54929.
+        Rebased the related layout tests, which are now expected to fail, as well.
+
+        https://bugs.webkit.org/show_bug.cgi?id=41532
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::paintChildren):
+
 2010-07-07  Mark Rowe  <mrowe@apple.com>
 
         Fix failures in a handful of Java-related tests.
