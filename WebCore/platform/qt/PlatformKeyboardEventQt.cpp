@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-static String keyIdentifierForQtKeyCode(int keyCode)
+String keyIdentifierForQtKeyCode(int keyCode)
 {
     switch (keyCode) {
     case Qt::Key_Menu:
@@ -137,7 +137,7 @@ static String keyIdentifierForQtKeyCode(int keyCode)
     }
 }
 
-static int windowsKeyCodeForKeyEvent(unsigned int keycode, bool isKeypad = false)
+int windowsKeyCodeForKeyEvent(unsigned int keycode, bool isKeypad)
 {
     // Determine wheter the event comes from the keypad
     if (isKeypad) {
