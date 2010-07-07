@@ -1619,6 +1619,8 @@ def parse_args(args=None):
             help="run all tests in parallel"),
         # FIXME: Need --exit-after-n-failures N
         #      Exit after the first N failures instead of running all tests
+        # FIXME: Need --exit-after-n-crashes N
+        #      Exit after the first N crashes instead of running all tests
         # FIXME: consider: --iterations n
         #      Number of times to run the set of tests (e.g. ABCABCABC)
         optparse.make_option("--print-last-failures", action="store_true",

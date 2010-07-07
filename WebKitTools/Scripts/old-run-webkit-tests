@@ -120,6 +120,7 @@ sub writeToFile($$);
 my $addPlatformExceptions = 0;
 my $complexText = 0;
 my $exitAfterNFailures = 0;
+my $exitAfterNCrashes = 0;
 my $generateNewResults = isAppleMacWebKit() ? 1 : 0;
 my $guardMalloc = '';
 # FIXME: Dynamic HTTP-port configuration in this file is wrong.  The various
@@ -243,7 +244,8 @@ Usage: $programName [options] [testdir|testpath ...]
   --complex-text                  Use the complex text code path for all text (Mac OS X and Windows only)
   -c|--configuration config       Set DumpRenderTree build configuration
   -g|--guard-malloc               Enable malloc guard
-  --exit-after-n-failures N       Exit after the first N failures instead of running all tests
+  --exit-after-n-failures N       Exit after the first N failures (includes crashes) instead of running all tests
+  --exit-after-n-crashes N        Exit after the first N crashes instead of running all tests
   -h|--help                       Show this help message
   --[no-]http                     Run (or do not run) http tests (default: $httpDefault)
   --[no-]wait-for-httpd           Wait for httpd if some other test session is using it already (same as WEBKIT_WAIT_FOR_HTTPD=1). (default: $shouldWaitForHTTPD) 
@@ -289,6 +291,7 @@ my $getOptionsResult = GetOptions(
     'add-platform-exceptions' => \$addPlatformExceptions,
     'complex-text' => \$complexText,
     'exit-after-n-failures=i' => \$exitAfterNFailures,
+    'exit-after-n-crashes=i' => \$exitAfterNCrashes,
     'guard-malloc|g' => \$guardMalloc,
     'help|h' => \$showHelp,
     'http!' => \$testHTTP,
@@ -2264,14 +2267,23 @@ sub printResults
 sub stopRunningTestsEarlyIfNeeded()
 {
     # --reset-results does not check pass vs. fail, so exitAfterNFailures makes no sense with --reset-results.
-    return 0 if !$exitAfterNFailures || $resetResults;
+    return 0 if $resetResults;
 
     my $passCount = $counts{match} || 0; # $counts{match} will be undefined if we've not yet passed a test (e.g. the first test fails).
     my $newCount = $counts{new} || 0;
     my $failureCount = $count - $passCount - $newCount; # "Failure" here includes timeouts, crashes, etc.
-    return 0 if $failureCount < $exitAfterNFailures;
+    if ($exitAfterNFailures && $failureCount >= $exitAfterNFailures) {
+        print "\nExiting early after $failureCount failures. $count tests run.";
+        closeDumpTool();
+        return 1;
+    }
 
-    print "\nExiting early after $failureCount failures. $count tests run.";
-    closeDumpTool();
-    return 1;
+    my $crashCount = $counts{crash} || 0;
+    if ($exitAfterNCrashes && $crashCount >= $exitAfterNCrashes) {
+        print "\nExiting early after $crashCount crashes. $count tests run.";
+        closeDumpTool();
+        return 1;
+    }
+
+    return 0;
 }

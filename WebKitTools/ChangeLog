@@ -1,3 +1,18 @@
+2010-07-07  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by David Levin.
+
+        add --exit-after-n-crashes to run-webkit-tests
+        https://bugs.webkit.org/show_bug.cgi?id=41811
+
+        Change the bots at build.webkit.org to use --exit-after-n-crashes
+        instead of --exit-after-n-failures since we want to be able to have
+        more than 20 failures on those bots, but more than 20 crashes means
+        something should be rolled out.
+
+        * Scripts/old-run-webkit-tests:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+
 2010-07-07  Brian Weinstein  <bweinstein@apple.com>
 
         Fix the Windows build by removing win/TestNetscapePlugin/main.cpp from the
