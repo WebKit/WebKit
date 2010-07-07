@@ -1,3 +1,21 @@
+2010-07-06  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Expose URL matching from WebUserContentURLPattern
+        https://bugs.webkit.org/show_bug.cgi?id=41726
+        <rdar://problem/7910144>
+        
+        We previously had a way to construct WebUserContentURLPattern
+        instances via WebKit, but no way for callers to perform matching.
+        This patch adds the matchesURL functionality to allow for this.
+
+        * Interfaces/IWebUserContentURLPattern.idl: Added matchesURL.
+        * Interfaces/IWebView.idl: Touch to force a build.
+        * WebUserContentURLPattern.cpp:
+        (WebUserContentURLPattern::matchesURL): Added. Calls through to WebCore::UserContentURLPattern::matches.
+        * WebUserContentURLPattern.h: Added matchesURL.
+
 2010-07-03  Jon Honeycutt  <jhoneycutt@apple.com>
 
         The missing plug-in indicator should be clickable

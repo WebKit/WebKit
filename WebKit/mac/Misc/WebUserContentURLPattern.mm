@@ -24,6 +24,7 @@
 
 #import "WebUserContentURLPattern.h"
 
+#import <WebCore/KURL.h>
 #import <WebCore/UserContentURLPattern.h>
 
 using namespace WebCore;
@@ -78,6 +79,11 @@ using namespace WebCore;
 - (BOOL)matchesSubdomains
 {
     return _private->pattern.matchSubdomains();
+}
+
+- (BOOL)matchesURL:(NSURL *)url
+{
+    return _private->pattern.matches(url);
 }
 
 @end
