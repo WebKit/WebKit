@@ -1,3 +1,24 @@
+2010-07-07  Marc Mutz  <marc.mutz@kdab.com>
+
+        Reviewed by Adam Barth.
+
+        [Qt] QWebSettings: Don't leak native pixmaps
+
+        When Q_GLOBAL_STATIC gets around to deleting the QHash with the
+        pixmaps in, the QApplication destructor has already been
+        completed. This makes it impossible for ~QPixmap to return the
+        native pixmap to the OS, thus leaking them.
+
+        This patch adds a post routine (executed as part of ~QApplication)
+        that clears the hash so Q_GLOBAL_STATIC's destruction doesn't have
+        to execute ~QPixmap's anymore.
+
+        https://bugs.webkit.org/show_bug.cgi?id=41657
+
+        * Api/qwebsettings.cpp:
+        (earlyClearGraphics): New. Clears the pixmap hash.
+        (graphics): add earlyClearGraphics as a qAddPostRoutine()
+
 2010-07-06  Csaba Osztrogonác  <ossy@webkit.org>
 
         Rubber-stamped by Kenneth Rohde Christiansen.
