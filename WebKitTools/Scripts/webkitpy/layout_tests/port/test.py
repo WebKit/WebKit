@@ -60,7 +60,7 @@ class TestPort(base.Port):
         return False
 
     def diff_image(self, expected_filename, actual_filename,
-                   diff_filename=None):
+                   diff_filename=None, tolerance=0):
         return False
 
     def diff_text(self, expected_text, actual_text,

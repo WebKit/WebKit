@@ -128,12 +128,15 @@ class Port(object):
         return expected_text != actual_text
 
     def diff_image(self, expected_filename, actual_filename,
-                   diff_filename=None):
+                   diff_filename=None, tolerance=0):
         """Compare two image files and produce a delta image file.
 
         Return True if the two files are different, False if they are the same.
         Also produce a delta image of the two images and write that into
         |diff_filename| if it is not None.
+
+        |tolerance| should be a percentage value (0.0 - 100.0).
+        If it is omitted, the port default tolerance value is used.
 
         While this is a generic routine, we include it in the Port
         interface so that it can be overriden for testing purposes."""

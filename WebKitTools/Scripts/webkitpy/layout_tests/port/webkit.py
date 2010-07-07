@@ -116,9 +116,12 @@ class WebKitPort(base.Port):
         return True
 
     def diff_image(self, expected_filename, actual_filename,
-                   diff_filename=None):
+                   diff_filename=None, tolerance=0.1):
         """Return True if the two files are different. Also write a delta
         image of the two images into |diff_filename| if it is not None."""
+
+        # FIXME: either expose the tolerance argument as a command-line
+        # parameter, or make it go away and always use exact matches.
 
         # Handle the case where the test didn't actually generate an image.
         actual_length = os.stat(actual_filename).st_size
@@ -127,13 +130,11 @@ class WebKitPort(base.Port):
                 shutil.copyfile(actual_filename, expected_filename)
             return True
 
-        sp = self._diff_image_request(expected_filename, actual_filename)
+        sp = self._diff_image_request(expected_filename, actual_filename, tolerance)
         return self._diff_image_reply(sp, expected_filename, diff_filename)
 
-    def _diff_image_request(self, expected_filename, actual_filename):
-        # FIXME: either expose the tolerance argument as a command-line
-        # parameter, or make it go away and aways use exact matches.
-        command = [self._path_to_image_diff(), '--tolerance', '0.1']
+    def _diff_image_request(self, expected_filename, actual_filename, tolerance):
+        command = [self._path_to_image_diff(), '--tolerance', str(tolerance)]
         sp = server_process.ServerProcess(self, 'ImageDiff', command)
 
         actual_length = os.stat(actual_filename).st_size

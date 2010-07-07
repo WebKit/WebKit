@@ -192,7 +192,7 @@ class ImageDiff(test_type_base.TestTypeBase):
         return failures
 
     def diff_files(self, port, file1, file2):
-        """Diff two image files.
+        """Diff two image files exactly.
 
         Args:
           file1, file2: full paths of the files to compare.
@@ -202,6 +202,6 @@ class ImageDiff(test_type_base.TestTypeBase):
           False otherwise.
         """
         try:
-            return port.diff_image(file1, file2)
+            return port.diff_image(file1, file2, None, 0)
         except ValueError, e:
             return True

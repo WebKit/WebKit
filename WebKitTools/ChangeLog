@@ -1,3 +1,23 @@
+2010-07-06  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Shinichiro Hamaji.
+
+        Fix a wrong dup detection of rebaseline-chromium-webkit-tests
+        https://bugs.webkit.org/show_bug.cgi?id=41644
+
+        rebaseline-chromium-webkit-tests used ImageDiff with 0.1%
+        tolerance. We don't need tolerance for rebaseline.
+
+        * Scripts/webkitpy/layout_tests/port/base.py:
+          Add optional tolerance parameter to diff_image().
+        * Scripts/webkitpy/layout_tests/port/test.py:
+          Add optional tolerance parameter to diff_image().
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+          Add optional tolerance parameter to diff_image(), and pass it to ImageDiff command.
+        * Scripts/webkitpy/layout_tests/test_types/image_diff.py:
+          diff_files() always calls diff_image() with tolerance=0.
+          diff_files() is used only by rebaseline-chromium-webkit-tests.
+
 2010-07-06  Sam Weinig  <sam@webkit.org>
 
         Fix MiniBrowser build.
