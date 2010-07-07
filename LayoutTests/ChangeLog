@@ -1,3 +1,17 @@
+2010-07-07  Dan Bernstein  <mitz@apple.com>
+
+        Requested by Mark Rowe.
+
+        Reverted the part of r62675 in which Snow Leopard-and-earlier results for a mac-only
+        test were mistakenly removed.
+
+        * platform/mac-snowleopard/platform: Copied from platform/mac-snowleopard/platform.
+        * platform/mac-snowleopard/platform/mac: Copied from platform/mac-snowleopard/platform/mac.
+        * platform/mac-snowleopard/platform/mac/fast: Copied from platform/mac-snowleopard/platform/mac/fast.
+        * platform/mac-snowleopard/platform/mac/fast/loader: Copied from platform/mac-snowleopard/platform/mac/fast/loader.
+        * platform/mac-snowleopard/platform/mac/fast/loader/file-url-mimetypes-2-expected.txt: Copied from platform/mac-snowleopard/platform/mac/fast/loader/file-url-mimetypes-2-expected.txt.
+        * platform/mac-snowleopard/platform/mac/fast/loader/file-url-mimetypes-3-expected.txt: Copied from platform/mac-snowleopard/platform/mac/fast/loader/file-url-mimetypes-3-expected.txt.
+
 2010-07-07  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin.
