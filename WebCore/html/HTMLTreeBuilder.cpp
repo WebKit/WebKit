@@ -1980,7 +1980,7 @@ void HTMLTreeBuilder::processCharacter(AtomicHTMLToken& token)
     case InCaptionMode:
     case InCellMode:
         ASSERT(insertionMode() == InBodyMode || insertionMode() == InCaptionMode || insertionMode() == InCellMode);
-        notImplemented();
+        m_tree.reconstructTheActiveFormattingElements();
         m_tree.insertTextNode(token);
         break;
     case InTableMode:

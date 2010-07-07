@@ -7,7 +7,8 @@ resources/tests1.dat:
 30
 32
 50
-56
+52
+53
 78
 79
 80
@@ -112,31 +113,53 @@ Expected:
 |   <body>
 |     "-->  EOF"
 
-Test 56 of 113 in resources/tests1.dat failed. Input:
-<font><p>hello<b>cruel</font>world
+Test 52 of 113 in resources/tests1.dat failed. Input:
+<p id=a><b><p id=b></b>TEST
 Got:
 | <html>
 |   <head>
 |   <body>
-|     <font>
 |     <p>
-|       <font>
-|         "hello"
-|         <b>
-|           "cruel"
-|       "world"
+|       id="a"
+|       <b>
+|     <p>
+|       id="b"
+|       <b>
+|         "TEST"
 Expected:
 | <html>
 |   <head>
 |   <body>
-|     <font>
 |     <p>
-|       <font>
-|         "hello"
-|         <b>
-|           "cruel"
+|       id="a"
 |       <b>
-|         "world"
+|     <p>
+|       id="b"
+|       "TEST"
+
+Test 53 of 113 in resources/tests1.dat failed. Input:
+<b id=a><p><b id=b></p></b>TEST
+Got:
+| <html>
+|   <head>
+|   <body>
+|     <b>
+|       id="a"
+|       <p>
+|         <b>
+|           id="b"
+|       <b>
+|         "TEST"
+Expected:
+| <html>
+|   <head>
+|   <body>
+|     <b>
+|       id="a"
+|       <p>
+|         <b>
+|           id="b"
+|       "TEST"
 
 Test 78 of 113 in resources/tests1.dat failed. Input:
 <a href="blah">aba<table><a href="foo">br<tr><td></td></tr>x</table>aoe
@@ -3264,75 +3287,12 @@ Expected:
 resources/tests14.dat: PASS
 
 resources/tests15.dat:
-1
-2
 5
 7
 8
 9
 10
 11
-
-Test 1 of 14 in resources/tests15.dat failed. Input:
-<!DOCTYPE html><p><b><i><u></p> <p>X
-Got:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <p>
-|       <b>
-|         <i>
-|           <u>
-|     " "
-|     <p>
-|       "X"
-Expected:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <p>
-|       <b>
-|         <i>
-|           <u>
-|     <b>
-|       <i>
-|         <u>
-|           " "
-|           <p>
-|             "X"
-
-Test 2 of 14 in resources/tests15.dat failed. Input:
-<p><b><i><u></p>
-<p>X
-Got:
-| <html>
-|   <head>
-|   <body>
-|     <p>
-|       <b>
-|         <i>
-|           <u>
-|     "
-"
-|     <p>
-|       "X"
-Expected:
-| <html>
-|   <head>
-|   <body>
-|     <p>
-|       <b>
-|         <i>
-|           <u>
-|     <b>
-|       <i>
-|         <u>
-|           "
-"
-|           <p>
-|             "X"
 
 Test 5 of 14 in resources/tests15.dat failed. Input:
 <html></html><!-- foo -->
@@ -3486,7 +3446,6 @@ resources/comments01.dat: PASS
 
 resources/adoption01.dat:
 3
-4
 5
 
 Test 3 of 9 in resources/adoption01.dat failed. Input:
@@ -3508,28 +3467,6 @@ Expected:
 |       <button>
 |         "2"
 |     "3"
-
-Test 4 of 9 in resources/adoption01.dat failed. Input:
-<a>1<b>2</a>3</b>
-Got:
-| <html>
-|   <head>
-|   <body>
-|     <a>
-|       "1"
-|       <b>
-|         "2"
-|     "3"
-Expected:
-| <html>
-|   <head>
-|   <body>
-|     <a>
-|       "1"
-|       <b>
-|         "2"
-|     <b>
-|       "3"
 
 Test 5 of 9 in resources/adoption01.dat failed. Input:
 <a>1<div>2<div>3</a>4</div>5</div>
