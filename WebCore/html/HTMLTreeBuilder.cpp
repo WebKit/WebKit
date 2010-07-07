@@ -1193,28 +1193,6 @@ HTMLElementStack::ElementRecord* HTMLTreeBuilder::furthestBlockForFormattingElem
     return 0;
 }
 
-void HTMLTreeBuilder::findFosterParentFor(Element* element)
-{
-    Element* fosterParentElement = 0;
-    HTMLElementStack::ElementRecord* lastTableElementRecord = m_tree.openElements()->topmost(tableTag.localName());
-    if (lastTableElementRecord) {
-        Element* lastTableElement = lastTableElementRecord->element();
-        if (lastTableElement->parent()) {
-            // FIXME: We need an insertElement which does not send mutation events.
-            ExceptionCode ec = 0;
-            lastTableElement->parent()->insertBefore(element, lastTableElement, ec);
-            ASSERT(!ec);
-            return;
-        }
-        fosterParentElement = lastTableElementRecord->next()->element();
-    } else {
-        ASSERT(m_isParsingFragment);
-        fosterParentElement = m_tree.openElements()->bottom(); // <html> element
-    }
-
-    fosterParentElement->parserAddChild(element);
-}
-
 // FIXME: This should have a whitty name.
 // FIXME: This must be implemented in many other places in WebCore.
 void HTMLTreeBuilder::reparentChildren(Element* oldParent, Element* newParent)
@@ -1307,7 +1285,7 @@ void HTMLTreeBuilder::callTheAdoptionAgency(AtomicHTMLToken& token)
         if (commonAncestorTag == tableTag
             || commonAncestorTag == trTag
             || isTableBodyContextTag(commonAncestorTag))
-            findFosterParentFor(lastNode->element());
+            m_tree.fosterParent(lastNode->element());
         else {
             ExceptionCode ec;
             commonAncestor->appendChild(lastNode->element(), ec);

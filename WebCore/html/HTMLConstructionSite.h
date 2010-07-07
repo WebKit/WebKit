@@ -63,6 +63,8 @@ public:
 
     PassRefPtr<Element> createElement(AtomicHTMLToken&);
 
+    void fosterParent(Element*);
+
     bool indexOfFirstUnopenFormattingElement(unsigned& firstUnopenElementIndex) const;
     void reconstructTheActiveFormattingElements();
 

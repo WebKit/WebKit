@@ -1,5 +1,21 @@
 2010-07-06  Adam Barth  <abarth@webkit.org>
 
+        Reviewed by Eric Seidel.
+
+        Move fosterParent to HTMLConstructionSite
+        https://bugs.webkit.org/show_bug.cgi?id=41728
+
+        This paves the way for handling the default case of InTableMode
+        properly.
+
+        * html/HTMLConstructionSite.cpp:
+        (WebCore::HTMLConstructionSite::fosterParent):
+        * html/HTMLConstructionSite.h:
+        * html/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::callTheAdoptionAgency):
+
+2010-07-06  Adam Barth  <abarth@webkit.org>
+
         Rubber-stamped by Eric Seidel.
 
         Move HTMLConstructionSite to its own file.  No behavior change.

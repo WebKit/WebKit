@@ -276,4 +276,26 @@ void HTMLConstructionSite::generateImpliedEndTags()
         m_openElements.pop();
 }
 
+void HTMLConstructionSite::fosterParent(Element* element)
+{
+    Element* fosterParentElement = 0;
+    HTMLElementStack::ElementRecord* lastTableElementRecord = m_openElements.topmost(tableTag.localName());
+    if (lastTableElementRecord) {
+        Element* lastTableElement = lastTableElementRecord->element();
+        if (lastTableElement->parent()) {
+            // FIXME: We need an insertElement which does not send mutation events.
+            ExceptionCode ec = 0;
+            lastTableElement->parent()->insertBefore(element, lastTableElement, ec);
+            ASSERT(!ec);
+            return;
+        }
+        fosterParentElement = lastTableElementRecord->next()->element();
+    } else {
+        // Fragment case
+        fosterParentElement = m_openElements.bottom(); // <html> element
+    }
+
+    fosterParentElement->parserAddChild(element);
+}
+
 }
