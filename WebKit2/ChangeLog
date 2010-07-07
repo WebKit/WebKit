@@ -1,5 +1,15 @@
 2010-07-07  Antti Koivisto  <koivisto@iki.fi>
 
+        Not reviewed.
+
+        Fix build, remove some left over debugging code.
+
+        * Platform/CoreIPC/qt/ConnectionQt.cpp:
+        (CoreIPC::Connection::readyReadHandler):
+        (CoreIPC::Connection::sendOutgoingMessage):
+
+2010-07-07  Antti Koivisto  <koivisto@iki.fi>
+
         Reviewed by Kenneth Rohde Christiansen.
 
         [Qt] Initial WebKit2 implementation

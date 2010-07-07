@@ -27,7 +27,6 @@
 #include "Connection.h"
 
 #include "ArgumentEncoder.h"
-#include "MessageDebug.h"
 #include "WebPageProxyMessageKinds.h"
 #include "WorkItem.h"
 #include <QApplication>
@@ -87,14 +86,6 @@ void Connection::readyReadHandler()
         size_t realBufferSize = m_currentMessageSize - sizeof(MessageID);
         unsigned messageID = *reinterpret_cast<unsigned*>(m_readBuffer.data() + realBufferSize);
 
-#if 0
-        MessageID id = MessageID::fromInt(messageID);
-        if (id.is<CoreIPC::MessageClassWebPageProxy>())
-            printf("received WebPageProxyMessage::%s\n", getWebPageProxyMessage(messageID));
-        else
-            printf("received message id=%d, size=%d\n", messageID, (int)m_currentMessageSize);
-#endif
-
         std::auto_ptr<ArgumentDecoder> arguments(new ArgumentDecoder(m_readBuffer.data(), realBufferSize));
         processIncomingMessage(MessageID::fromInt(messageID), arguments);
 
@@ -137,13 +128,6 @@ void Connection::sendOutgoingMessage(MessageID messageID, auto_ptr<ArgumentEncod
     arguments->encodeUInt32(messageID.toInt());
 
     size_t bufferSize = arguments->bufferSize();
-
-#if 0
-    if (messageID.is<CoreIPC::MessageClassWebPage>())
-        printf("sent WebPageMessage::%s\n", getWebPageMessage(messageID.toInt()));
-    else
-        printf("send message id=%d, size=%d\n", messageID.toInt(), (int)bufferSize);
-#endif
 
     // Write message size first
     // FIXME: Should  just do a single write.
