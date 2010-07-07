@@ -1,3 +1,13 @@
+2010-07-07  Mark Rowe  <mrowe@apple.com>
+
+        Rubber-stamped by Sam Weinig.
+
+        Clean up the project file slightly.
+
+        Remove obsolete .exp files, add the new .exp.in file, and move ExportFileGenerator.cpp in to the Exports collection.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 2010-07-07  James Robinson  <jamesr@chromium.org> and Vincent Scheib <schieb@chromium.org>
 
         Reviewed by Dimitri Glazkov.
