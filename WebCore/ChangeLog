@@ -1,3 +1,42 @@
+2010-07-06  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <http://webkit.org/b/41725> REGRESSION(r62283): No longer possible to build for Tiger from SnowLeopard due to export file shenanigans
+
+        Change how the exports file is generated. Rather than having the logic for which symbols
+        to include be encoded in a Makefile that concatenated separate files, the logic is now
+        encoded as #if's in the base exports file. This ensures that the exact same preprocessor
+        settings are used when determining which symbols to export as when compiling the code that
+        defines the symbols.
+
+        * DerivedSources.make: Remove logic that determines which export files to concatenate.
+        Replace with an invocation of WebCoreExportFileGenerator.
+        * WebCore.3DRendering.exp: Removed.
+        * WebCore.AcceleratedCompositing.exp: Removed.
+        * WebCore.ClientBasedGeolocation.exp: Removed.
+        * WebCore.ContextMenus.exp: Removed.
+        * WebCore.DashboardSupport.exp: Removed.
+        * WebCore.DragSupport.exp: Removed.
+        * WebCore.Geolocation.exp: Removed.
+        * WebCore.Inspector.exp: Removed.
+        * WebCore.JNI.exp: Removed.
+        * WebCore.NPAPI.exp: Removed.
+        * WebCore.OrientationEvents.exp: Removed.
+        * WebCore.PluginHostProcess.exp: Removed.
+        * WebCore.ProtectionSpaceAuthCallback.exp: Removed.
+        * WebCore.SVG.Animation.exp: Removed.
+        * WebCore.SVG.Filters.exp: Removed.
+        * WebCore.SVG.ForeignObject.exp: Removed.
+        * WebCore.SVG.exp: Removed.
+        * WebCore.Tiger.exp: Removed.
+        * WebCore.Video.exp: Removed.
+        * WebCore.VideoProxy.exp: Removed.
+        * WebCore.exp.in: Renamed from WebCore/WebCore.base.exp. Merge the individual .exp
+        files in, wrapping the appropriate parts with the necessary #if's.
+        * WebCore.xcodeproj/project.pbxproj:
+        * make-exports-file-generator: Added.
+
 2010-07-06  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

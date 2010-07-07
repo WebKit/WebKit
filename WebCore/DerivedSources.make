@@ -113,7 +113,7 @@ DOM_CLASSES = \
     DOMCoreException \
     DOMFormData \
     DOMImplementation \
-	DOMMimeType \
+    DOMMimeType \
     DOMMimeTypeArray \
     DOMParser \
     DOMPlugin \
@@ -715,10 +715,6 @@ XMLNames.cpp : dom/make_names.pl xml/xmlattrs.in
 
 ifeq ($(findstring ENABLE_SVG,$(FEATURE_DEFINES)), ENABLE_SVG)
 
-ifeq ($(findstring ENABLE_SVG_DOM_OBJC_BINDINGS,$(FEATURE_DEFINES)), ENABLE_SVG_DOM_OBJC_BINDINGS)
-    WEBCORE_EXPORT_DEPENDENCIES := $(WEBCORE_EXPORT_DEPENDENCIES) WebCore.SVG.exp
-endif
-
 ifeq ($(findstring ENABLE_SVG_USE,$(FEATURE_DEFINES)), ENABLE_SVG_USE)
     SVG_FLAGS := $(SVG_FLAGS) ENABLE_SVG_USE=1
 endif
@@ -729,9 +725,6 @@ endif
 
 ifeq ($(findstring ENABLE_FILTERS,$(FEATURE_DEFINES)), ENABLE_FILTERS)
     SVG_FLAGS := $(SVG_FLAGS) ENABLE_FILTERS=1
-ifeq ($(findstring ENABLE_SVG_DOM_OBJC_BINDINGS,$(FEATURE_DEFINES)), ENABLE_SVG_DOM_OBJC_BINDINGS)
-    WEBCORE_EXPORT_DEPENDENCIES := $(WEBCORE_EXPORT_DEPENDENCIES) WebCore.SVG.Filters.exp
-endif
 endif
 
 ifeq ($(findstring ENABLE_SVG_AS_IMAGE,$(FEATURE_DEFINES)), ENABLE_SVG_AS_IMAGE)
@@ -740,16 +733,10 @@ endif
 
 ifeq ($(findstring ENABLE_SVG_ANIMATION,$(FEATURE_DEFINES)), ENABLE_SVG_ANIMATION)
     SVG_FLAGS := $(SVG_FLAGS) ENABLE_SVG_ANIMATION=1
-ifeq ($(findstring ENABLE_SVG_DOM_OBJC_BINDINGS,$(FEATURE_DEFINES)), ENABLE_SVG_DOM_OBJC_BINDINGS)
-    WEBCORE_EXPORT_DEPENDENCIES := $(WEBCORE_EXPORT_DEPENDENCIES) WebCore.SVG.Animation.exp
-endif
 endif
 
 ifeq ($(findstring ENABLE_SVG_FOREIGN_OBJECT,$(FEATURE_DEFINES)), ENABLE_SVG_FOREIGN_OBJECT)
     SVG_FLAGS := $(SVG_FLAGS) ENABLE_SVG_FOREIGN_OBJECT=1
-ifeq ($(findstring ENABLE_SVG_DOM_OBJC_BINDINGS,$(FEATURE_DEFINES)), ENABLE_SVG_DOM_OBJC_BINDINGS)
-    WEBCORE_EXPORT_DEPENDENCIES := $(WEBCORE_EXPORT_DEPENDENCIES) WebCore.SVG.ForeignObject.exp
-endif
 endif
 
 # SVG tag and attribute names (need to pass an extra flag if svg experimental features are enabled)
@@ -880,79 +867,10 @@ CharsetData.cpp : platform/text/mac/make-charset-table.pl platform/text/mac/char
 
 # --------
 
-# export file
+WebCore.exp : $(BUILT_PRODUCTS_DIR)/WebCoreExportFileGenerator
+	$^ > $@
 
-ifeq ($(shell gcc -E -P -dM $(FRAMEWORK_FLAGS) WebCore/ForwardingHeaders/wtf/Platform.h | grep ENABLE_JAVA_BRIDGE | cut -d' ' -f3), 1)
-    WEBCORE_EXPORT_DEPENDENCIES := $(WEBCORE_EXPORT_DEPENDENCIES) WebCore.JNI.exp
-endif
-
-ifeq ($(shell gcc -E -P -dM $(FRAMEWORK_FLAGS) WebCore/ForwardingHeaders/wtf/Platform.h | grep ENABLE_NETSCAPE_PLUGIN_API | cut -d' ' -f3), 1)
-    WEBCORE_EXPORT_DEPENDENCIES := $(WEBCORE_EXPORT_DEPENDENCIES) WebCore.NPAPI.exp
-endif
-
-# FIXME: WTF_USE_PLUGIN_HOST_PROCESS is only true when building for x86_64, but we shouldn't have to know about that here.
-ifeq ($(findstring x86_64,$(ARCHS)) $(findstring x86_64,$(VALID_ARCHS)), x86_64 x86_64)
-ifeq ($(shell gcc -arch x86_64 -E -P -dM $(FRAMEWORK_FLAGS) WebCore/ForwardingHeaders/wtf/Platform.h | grep WTF_USE_PLUGIN_HOST_PROCESS | cut -d' ' -f3), 1)
-    WEBCORE_EXPORT_DEPENDENCIES := $(WEBCORE_EXPORT_DEPENDENCIES) WebCore.PluginHostProcess.exp
-endif
-endif
-
-ifeq ($(findstring ENABLE_3D_RENDERING,$(FEATURE_DEFINES)), ENABLE_3D_RENDERING)
-    WEBCORE_EXPORT_DEPENDENCIES := $(WEBCORE_EXPORT_DEPENDENCIES) WebCore.3DRendering.exp
-endif
-
-ifeq ($(shell gcc -arch x86_64 -E -P -dM $(FRAMEWORK_FLAGS) WebCore/ForwardingHeaders/wtf/Platform.h | grep WTF_USE_ACCELERATED_COMPOSITING | cut -d' ' -f3), 1)
-    WEBCORE_EXPORT_DEPENDENCIES := $(WEBCORE_EXPORT_DEPENDENCIES) WebCore.AcceleratedCompositing.exp
-endif
-
-ifeq ($(shell gcc -E -P -dM $(FRAMEWORK_FLAGS) WebCore/ForwardingHeaders/wtf/Platform.h | grep ENABLE_CONTEXT_MENUS | cut -d' ' -f3), 1)
-    WEBCORE_EXPORT_DEPENDENCIES := $(WEBCORE_EXPORT_DEPENDENCIES) WebCore.ContextMenus.exp
-endif
-
-ifeq ($(ENABLE_DASHBOARD_SUPPORT), 1)
-    WEBCORE_EXPORT_DEPENDENCIES := $(WEBCORE_EXPORT_DEPENDENCIES) WebCore.DashboardSupport.exp
-endif
-
-ifeq ($(shell gcc -E -P -dM $(FRAMEWORK_FLAGS) WebCore/ForwardingHeaders/wtf/Platform.h | grep ENABLE_DRAG_SUPPORT | cut -d' ' -f3), 1)
-    WEBCORE_EXPORT_DEPENDENCIES := $(WEBCORE_EXPORT_DEPENDENCIES) WebCore.DragSupport.exp
-endif
-
-ifeq ($(shell gcc -E -P -dM $(FRAMEWORK_FLAGS) WebCore/ForwardingHeaders/wtf/Platform.h | grep ENABLE_INSPECTOR | cut -d' ' -f3), 1)
-    WEBCORE_EXPORT_DEPENDENCIES := $(WEBCORE_EXPORT_DEPENDENCIES) WebCore.Inspector.exp
-endif
-
-ifeq ($(ENABLE_ORIENTATION_EVENTS), 1)
-    WEBCORE_EXPORT_DEPENDENCIES := $(WEBCORE_EXPORT_DEPENDENCIES) WebCore.OrientationEvents.exp
-endif
-
-ifeq ($(findstring 10.4,$(MACOSX_DEPLOYMENT_TARGET)), 10.4)
-    WEBCORE_EXPORT_DEPENDENCIES := $(WEBCORE_EXPORT_DEPENDENCIES) WebCore.Tiger.exp
-endif
-
-ifeq ($(findstring ENABLE_PLUGIN_PROXY_FOR_VIDEO,$(FEATURE_DEFINES)), ENABLE_PLUGIN_PROXY_FOR_VIDEO)
-     WEBCORE_EXPORT_DEPENDENCIES := $(WEBCORE_EXPORT_DEPENDENCIES) WebCore.VideoProxy.exp
-endif
-
-ifeq ($(findstring ENABLE_VIDEO,$(FEATURE_DEFINES)), ENABLE_VIDEO)
-     WEBCORE_EXPORT_DEPENDENCIES := $(WEBCORE_EXPORT_DEPENDENCIES) WebCore.Video.exp
-endif
-
-ifeq ($(findstring ENABLE_GEOLOCATION,$(FEATURE_DEFINES)), ENABLE_GEOLOCATION)
-ifeq ($(findstring ENABLE_CLIENT_BASED_GEOLOCATION,$(FEATURE_DEFINES)), ENABLE_CLIENT_BASED_GEOLOCATION)
-    WEBCORE_EXPORT_DEPENDENCIES := $(WEBCORE_EXPORT_DEPENDENCIES) WebCore.ClientBasedGeolocation.exp
-else
-    WEBCORE_EXPORT_DEPENDENCIES := $(WEBCORE_EXPORT_DEPENDENCIES) WebCore.Geolocation.exp
-endif
-endif
-
-ifeq ($(shell gcc -E -P -dM $(FRAMEWORK_FLAGS) WebCore/ForwardingHeaders/wtf/Platform.h | grep WTF_USE_PROTECTION_SPACE_AUTH_CALLBACK | cut -d' ' -f3), 1)
-    WEBCORE_EXPORT_DEPENDENCIES := $(WEBCORE_EXPORT_DEPENDENCIES) WebCore.ProtectionSpaceAuthCallback.exp
-endif
-
-WebCore.exp : WebCore.base.exp $(WEBCORE_EXPORT_DEPENDENCIES)
-	cat $^ > $@
-
-# Switch NSRect, NSSize and NSPoint with their CG counterparts for 64-bit.
+# Switch NSRect, NSSize and NSPoint with their CG counterparts for the 64-bit exports file.
 WebCore.LP64.exp : WebCore.exp
 	cat $^ | sed -e s/7_NSRect/6CGRect/ -e s/7_NSSize/6CGSize/ -e s/8_NSPoint/7CGPoint/ > $@
 

@@ -7,6 +7,28 @@
 	objects = {
 
 /* Begin PBXAggregateTarget section */
+		5D87BB6411E3EBC100702B6F /* WebCoreExportFileGenerator Generator */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 5D87BB6C11E3EC0000702B6F /* Build configuration list for PBXAggregateTarget "WebCoreExportFileGenerator Generator" */;
+			buildPhases = (
+				5D87BB6311E3EBC100702B6F /* Generate Export File Generator */,
+			);
+			dependencies = (
+			);
+			name = "WebCoreExportFileGenerator Generator";
+			productName = "WebCoreExportFileGenerator Generator";
+		};
+		5D87BBBF11E3F42A00702B6F /* Copy Forwarding and ICU Headers */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 5D87BBC811E3F47C00702B6F /* Build configuration list for PBXAggregateTarget "Copy Forwarding and ICU Headers" */;
+			buildPhases = (
+				5D87BBBE11E3F42A00702B6F /* Copy Forwarding and ICU Headers */,
+			);
+			dependencies = (
+			);
+			name = "Copy Forwarding and ICU Headers";
+			productName = "Copy Forwarding and ICU Headers";
+		};
 		DD041FBE09D9DDBE0010AF2A /* Derived Sources */ = {
 			isa = PBXAggregateTarget;
 			buildConfigurationList = DD041FC109D9DDDC0010AF2A /* Build configuration list for PBXAggregateTarget "Derived Sources" */;
@@ -14,6 +36,7 @@
 				DD041FBD09D9DDBE0010AF2A /* Generate Derived Sources */,
 			);
 			dependencies = (
+				5D87BB8F11E3EE2B00702B6F /* PBXTargetDependency */,
 			);
 			name = "Derived Sources";
 			productName = "Derived Sources";
@@ -1200,6 +1223,7 @@
 		5D15E3AB0F9E6AC1009E0E3F /* XMLDocumentParserScope.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D15E3A90F9E6AC1009E0E3F /* XMLDocumentParserScope.cpp */; };
 		5D15E3AC0F9E6AC1009E0E3F /* XMLDocumentParserScope.h in Headers */ = {isa = PBXBuildFile; fileRef = 5D15E3AA0F9E6AC1009E0E3F /* XMLDocumentParserScope.h */; };
 		5D874F130D161D3200796C3B /* NetscapePlugInStreamLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93E227DD0AF589AD00D48324 /* NetscapePlugInStreamLoader.cpp */; };
+		5D87BB8311E3ED8600702B6F /* ExportFileGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D87BB8211E3ED8600702B6F /* ExportFileGenerator.cpp */; };
 		5D88EE9111407FD300BC3ABC /* DOMSVGFEMorphologyElement.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 84224189107E786F00766A87 /* DOMSVGFEMorphologyElement.h */; };
 		5D88EE9211407FF400BC3ABC /* DOMSVGFEMorphologyElementInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 8422418B107E786F00766A87 /* DOMSVGFEMorphologyElementInternal.h */; };
 		5D925B670F64D4DD00B847F0 /* ScrollBehavior.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D925B650F64D4DD00B847F0 /* ScrollBehavior.cpp */; };
@@ -5185,6 +5209,34 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		5D87BB6A11E3EBD200702B6F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5D87BB6411E3EBC100702B6F /* WebCoreExportFileGenerator Generator */;
+			remoteInfo = "WebCoreExportFileGenerator Generator";
+		};
+		5D87BB8E11E3EE2B00702B6F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5D87BB4E11E3EAEB00702B6F /* WebCoreExportFileGenerator */;
+			remoteInfo = WebCoreExportFileGenerator;
+		};
+		5D87BBC311E3F45C00702B6F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5D87BBBF11E3F42A00702B6F /* Copy Forwarding and ICU Headers */;
+			remoteInfo = "Copy Forwarding and ICU Headers";
+		};
+		5D87BBC511E3F46100702B6F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5D87BBBF11E3F42A00702B6F /* Copy Forwarding and ICU Headers */;
+			remoteInfo = "Copy Forwarding and ICU Headers";
+		};
 		DD041FF009D9E3250010AF2A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
@@ -6918,6 +6970,8 @@
 		59EE12311106082900885116 /* JNIUtility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JNIUtility.h; sourceTree = "<group>"; };
 		5D15E3A90F9E6AC1009E0E3F /* XMLDocumentParserScope.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XMLDocumentParserScope.cpp; sourceTree = "<group>"; };
 		5D15E3AA0F9E6AC1009E0E3F /* XMLDocumentParserScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XMLDocumentParserScope.h; sourceTree = "<group>"; };
+		5D87BB4F11E3EAEB00702B6F /* WebCoreExportFileGenerator */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = WebCoreExportFileGenerator; sourceTree = BUILT_PRODUCTS_DIR; };
+		5D87BB8211E3ED8600702B6F /* ExportFileGenerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ExportFileGenerator.cpp; path = ../WebKitBuild/Debug/DerivedSources/WebCore/ExportFileGenerator.cpp; sourceTree = SOURCE_ROOT; };
 		5D925B650F64D4DD00B847F0 /* ScrollBehavior.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScrollBehavior.cpp; sourceTree = "<group>"; };
 		5D925B660F64D4DD00B847F0 /* ScrollBehavior.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollBehavior.h; sourceTree = "<group>"; };
 		5DA5E0FA102B953800088CF9 /* JSWebSocket.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebSocket.cpp; sourceTree = "<group>"; };
@@ -10869,6 +10923,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		5D87BB4D11E3EAEB00702B6F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		93F19B1208245E59001E9ABC /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -10893,6 +10954,7 @@
 			isa = PBXGroup;
 			children = (
 				93F19B1A08245E5A001E9ABC /* WebCore.framework */,
+				5D87BB4F11E3EAEB00702B6F /* WebCoreExportFileGenerator */,
 			);
 			name = Products;
 			sourceTree = SOURCE_ROOT;
@@ -10902,6 +10964,7 @@
 		0867D691FE84028FC02AAC07 /* WebKit */ = {
 			isa = PBXGroup;
 			children = (
+				5D87BB8211E3ED8600702B6F /* ExportFileGenerator.cpp */,
 				65C97AF208EA908800ACD273 /* config.h */,
 				EDEC98020AED7E170059137F /* WebCorePrefix.h */,
 				9307061309E0CA8200B17FE4 /* DerivedSources.make */,
@@ -19723,6 +19786,24 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
+		5D87BB4E11E3EAEB00702B6F /* WebCoreExportFileGenerator */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5D87BB5911E3EB0700702B6F /* Build configuration list for PBXNativeTarget "WebCoreExportFileGenerator" */;
+			buildPhases = (
+				5D87BB4C11E3EAEB00702B6F /* Sources */,
+				5D87BB4D11E3EAEB00702B6F /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				5D87BB6B11E3EBD200702B6F /* PBXTargetDependency */,
+				5D87BBC411E3F45C00702B6F /* PBXTargetDependency */,
+			);
+			name = WebCoreExportFileGenerator;
+			productName = WebCoreExportFileGenerator;
+			productReference = 5D87BB4F11E3EAEB00702B6F /* WebCoreExportFileGenerator */;
+			productType = "com.apple.product-type.tool";
+		};
 		93F198A508245E59001E9ABC /* WebCore */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 149C283908902B11008A9EFC /* Build configuration list for PBXNativeTarget "WebCore" */;
@@ -19730,7 +19811,6 @@
 				5D2F7DA00C6879C600B5B72B /* Update Info.plist with version information */,
 				93F198A608245E59001E9ABC /* Headers */,
 				1C11CCB40AA6093700DADB20 /* Copy Generated Headers */,
-				1CC93C640DAE929600E4BC3A /* Copy Forwarding and ICU Headers */,
 				93F199FD08245E59001E9ABC /* Resources */,
 				1C81BA330E97357C00266E07 /* Copy Inspector Resources */,
 				1C5F9D760E09A1B400E91D0A /* Streamline Inspector Source */,
@@ -19744,6 +19824,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				5D87BBC611E3F46100702B6F /* PBXTargetDependency */,
 				DD041FF109D9E3250010AF2A /* PBXTargetDependency */,
 			);
 			name = WebCore;
@@ -19776,6 +19857,9 @@
 			targets = (
 				93F198A508245E59001E9ABC /* WebCore */,
 				DD041FBE09D9DDBE0010AF2A /* Derived Sources */,
+				5D87BB4E11E3EAEB00702B6F /* WebCoreExportFileGenerator */,
+				5D87BB6411E3EBC100702B6F /* WebCoreExportFileGenerator Generator */,
+				5D87BBBF11E3F42A00702B6F /* Copy Forwarding and ICU Headers */,
 			);
 		};
 /* End PBXProject section */
@@ -19859,20 +19943,6 @@
 			shellPath = /bin/sh;
 			shellScript = "# Copy all the Inspector front-end resources.\nditto \"${SRCROOT}/inspector/front-end\" \"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/inspector\"\n\n# Remove the WebKit.qrc file since it is not used on the Mac (this file is for Qt)\nrm -f \"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/inspector/WebKit.qrc\"\n";
 		};
-		1CC93C640DAE929600E4BC3A /* Copy Forwarding and ICU Headers */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Copy Forwarding and ICU Headers";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "rsync -aq --exclude \".svn\" --exclude \".DS_Store\" \"$SRCROOT/ForwardingHeaders\" \"$BUILT_PRODUCTS_DIR/$PRIVATE_HEADERS_FOLDER_PATH\"\nrsync -aq --exclude \".svn\" --exclude \".DS_Store\" \"$SRCROOT/icu\" \"$BUILT_PRODUCTS_DIR/$PRIVATE_HEADERS_FOLDER_PATH\"\n";
-		};
 		5D0D540D0E9862F60029E223 /* Check For Weak VTables and Externals */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -19903,6 +19973,37 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "# Touch Info.plist to let Xcode know it needs to copy it into the built product\nif [[ \"${CONFIGURATION}\" != \"Production\" ]]; then\n    touch \"$SRCROOT/Info.plist\";\nfi;\n";
+		};
+		5D87BB6311E3EBC100702B6F /* Generate Export File Generator */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/WebCore.exp.in",
+				"$(SRCROOT)/make-export-file-generator",
+			);
+			name = "Generate Export File Generator";
+			outputPaths = (
+				"$(BUILT_PRODUCTS_DIR)/DerivedSources/$(PROJECT_NAME)/ExportFileGenerator.cpp",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "OUTPUT_DIR=\"${BUILT_PRODUCTS_DIR}/DerivedSources/${PROJECT_NAME}\"\nmkdir -p \"${OUTPUT_DIR}\"\n\"${SRCROOT}\"/make-export-file-generator \"${SRCROOT}/WebCore.exp.in\" \"${OUTPUT_DIR}/ExportFileGenerator.cpp\"\n";
+		};
+		5D87BBBE11E3F42A00702B6F /* Copy Forwarding and ICU Headers */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Copy Forwarding and ICU Headers";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "rsync -aq --exclude \".svn\" --exclude \".DS_Store\" \"$SRCROOT/ForwardingHeaders\" \"$BUILT_PRODUCTS_DIR/$PRIVATE_HEADERS_FOLDER_PATH\"\nrsync -aq --exclude \".svn\" --exclude \".DS_Store\" \"$SRCROOT/icu\" \"$BUILT_PRODUCTS_DIR/$PRIVATE_HEADERS_FOLDER_PATH\"\n";
 		};
 		5DF50887116F3077005202AB /* Check For Inappropriate Files In Framework */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -19965,6 +20066,14 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		5D87BB4C11E3EAEB00702B6F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5D87BB8311E3ED8600702B6F /* ExportFileGenerator.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		93F19A0C08245E59001E9ABC /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -22064,6 +22173,26 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		5D87BB6B11E3EBD200702B6F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5D87BB6411E3EBC100702B6F /* WebCoreExportFileGenerator Generator */;
+			targetProxy = 5D87BB6A11E3EBD200702B6F /* PBXContainerItemProxy */;
+		};
+		5D87BB8F11E3EE2B00702B6F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5D87BB4E11E3EAEB00702B6F /* WebCoreExportFileGenerator */;
+			targetProxy = 5D87BB8E11E3EE2B00702B6F /* PBXContainerItemProxy */;
+		};
+		5D87BBC411E3F45C00702B6F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5D87BBBF11E3F42A00702B6F /* Copy Forwarding and ICU Headers */;
+			targetProxy = 5D87BBC311E3F45C00702B6F /* PBXContainerItemProxy */;
+		};
+		5D87BBC611E3F46100702B6F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5D87BBBF11E3F42A00702B6F /* Copy Forwarding and ICU Headers */;
+			targetProxy = 5D87BBC511E3F46100702B6F /* PBXContainerItemProxy */;
+		};
 		DD041FF109D9E3250010AF2A /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = DD041FBE09D9DDBE0010AF2A /* Derived Sources */;
@@ -22134,6 +22263,85 @@
 			};
 			name = Production;
 		};
+		5D87BB5111E3EAEB00702B6F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 1CDD45E50BA9C84600F90147 /* WebCore.xcconfig */;
+			buildSettings = {
+				EXPORTED_SYMBOLS_FILE = "";
+				GCC_OPTIMIZATION_LEVEL = 0;
+				INSTALL_PATH = /usr/local/bin;
+				PRODUCT_NAME = WebCoreExportFileGenerator;
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		5D87BB5211E3EAEB00702B6F /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 1CDD45E50BA9C84600F90147 /* WebCore.xcconfig */;
+			buildSettings = {
+				EXPORTED_SYMBOLS_FILE = "";
+				INSTALL_PATH = /usr/local/bin;
+				PRODUCT_NAME = WebCoreExportFileGenerator;
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+		5D87BB5311E3EAEB00702B6F /* Production */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 1CDD45E50BA9C84600F90147 /* WebCore.xcconfig */;
+			buildSettings = {
+				EXPORTED_SYMBOLS_FILE = "";
+				INSTALL_PATH = /usr/local/bin;
+				PRODUCT_NAME = WebCoreExportFileGenerator;
+				SKIP_INSTALL = YES;
+			};
+			name = Production;
+		};
+		5D87BB6511E3EBC200702B6F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "WebCoreExportFileGenerator Generator";
+			};
+			name = Debug;
+		};
+		5D87BB6611E3EBC200702B6F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "WebCoreExportFileGenerator Generator";
+			};
+			name = Release;
+		};
+		5D87BB6711E3EBC200702B6F /* Production */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "WebCoreExportFileGenerator Generator";
+			};
+			name = Production;
+		};
+		5D87BBC011E3F42A00702B6F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 1CDD45E50BA9C84600F90147 /* WebCore.xcconfig */;
+			buildSettings = {
+				PRODUCT_NAME = "Copy Forwarding and ICU Headers";
+			};
+			name = Debug;
+		};
+		5D87BBC111E3F42A00702B6F /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 1CDD45E50BA9C84600F90147 /* WebCore.xcconfig */;
+			buildSettings = {
+				PRODUCT_NAME = "Copy Forwarding and ICU Headers";
+			};
+			name = Release;
+		};
+		5D87BBC211E3F42A00702B6F /* Production */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 1CDD45E50BA9C84600F90147 /* WebCore.xcconfig */;
+			buildSettings = {
+				PRODUCT_NAME = "Copy Forwarding and ICU Headers";
+			};
+			name = Production;
+		};
 		DD041FC209D9DDDC0010AF2A /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 1CDD45E50BA9C84600F90147 /* WebCore.xcconfig */;
@@ -22177,6 +22385,36 @@
 				149C284408902B11008A9EFC /* Debug */,
 				149C284508902B11008A9EFC /* Release */,
 				149C284708902B11008A9EFC /* Production */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Production;
+		};
+		5D87BB5911E3EB0700702B6F /* Build configuration list for PBXNativeTarget "WebCoreExportFileGenerator" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5D87BB5111E3EAEB00702B6F /* Debug */,
+				5D87BB5211E3EAEB00702B6F /* Release */,
+				5D87BB5311E3EAEB00702B6F /* Production */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Production;
+		};
+		5D87BB6C11E3EC0000702B6F /* Build configuration list for PBXAggregateTarget "WebCoreExportFileGenerator Generator" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5D87BB6511E3EBC200702B6F /* Debug */,
+				5D87BB6611E3EBC200702B6F /* Release */,
+				5D87BB6711E3EBC200702B6F /* Production */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Production;
+		};
+		5D87BBC811E3F47C00702B6F /* Build configuration list for PBXAggregateTarget "Copy Forwarding and ICU Headers" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5D87BBC011E3F42A00702B6F /* Debug */,
+				5D87BBC111E3F42A00702B6F /* Release */,
+				5D87BBC211E3F42A00702B6F /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Production;
