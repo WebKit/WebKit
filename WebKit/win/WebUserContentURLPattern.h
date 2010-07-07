@@ -49,6 +49,7 @@ private:
     virtual HRESULT STDMETHODCALLTYPE scheme(BSTR*);
     virtual HRESULT STDMETHODCALLTYPE host(BSTR*);
     virtual HRESULT STDMETHODCALLTYPE matchesSubdomains(BOOL* matches);
+    virtual HRESULT STDMETHODCALLTYPE matchesURL(BSTR, BOOL*);
 
     ULONG m_refCount;
     WebCore::UserContentURLPattern m_pattern;

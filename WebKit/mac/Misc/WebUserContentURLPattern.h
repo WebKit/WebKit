@@ -34,5 +34,6 @@
 - (NSString *)scheme;
 - (NSString *)host;
 - (BOOL)matchesSubdomains;
+- (BOOL)matchesURL:(NSURL *)url;
 
 @end

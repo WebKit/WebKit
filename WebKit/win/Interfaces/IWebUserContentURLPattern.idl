@@ -40,4 +40,5 @@ interface IWebUserContentURLPattern : IUnknown
     HRESULT scheme([out, retval] BSTR*);
     HRESULT host([out, retval] BSTR*);
     HRESULT matchesSubdomains([out, retval] BOOL* matches);
+    HRESULT matchesURL([in] BSTR url, [out, retval] BOOL* matches);
 }
