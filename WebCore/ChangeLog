@@ -1,3 +1,22 @@
+2010-07-07  Andy Estes  <aestes@apple.com>
+
+        Reviewed by Adam Barth.
+
+        Allow a beforeload listener to prevent loading of images in <object> tags.
+        https://bugs.webkit.org/show_bug.cgi?id=41027
+        <rdar://problem/8120596>
+
+        Tests: fast/dom/beforeload/image-object-before-load-innerHTML.html
+               fast/dom/beforeload/image-object-before-load.html
+
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::attach): Do not call
+        RenderImage::setCachedImage() at the end of attach(). Instead, allow
+        this to happen conditionally after beforeload is dispatched.
+        * loader/ImageLoader.cpp:
+        (WebCore::ImageLoader::dispatchPendingBeforeLoadEvent): Render fallback
+        content if an object's load was cancelled.
+
 2010-07-06  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Dirk Schulze.
