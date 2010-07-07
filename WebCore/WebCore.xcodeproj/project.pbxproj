@@ -5213,28 +5213,28 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 5D87BB6411E3EBC100702B6F /* WebCoreExportFileGenerator Generator */;
+			remoteGlobalIDString = 5D87BB6411E3EBC100702B6F;
 			remoteInfo = "WebCoreExportFileGenerator Generator";
 		};
 		5D87BB8E11E3EE2B00702B6F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 5D87BB4E11E3EAEB00702B6F /* WebCoreExportFileGenerator */;
+			remoteGlobalIDString = 5D87BB4E11E3EAEB00702B6F;
 			remoteInfo = WebCoreExportFileGenerator;
 		};
 		5D87BBC311E3F45C00702B6F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 5D87BBBF11E3F42A00702B6F /* Copy Forwarding and ICU Headers */;
+			remoteGlobalIDString = 5D87BBBF11E3F42A00702B6F;
 			remoteInfo = "Copy Forwarding and ICU Headers";
 		};
 		5D87BBC511E3F46100702B6F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 5D87BBBF11E3F42A00702B6F /* Copy Forwarding and ICU Headers */;
+			remoteGlobalIDString = 5D87BBBF11E3F42A00702B6F;
 			remoteInfo = "Copy Forwarding and ICU Headers";
 		};
 		DD041FF009D9E3250010AF2A /* PBXContainerItemProxy */ = {
@@ -6971,7 +6971,7 @@
 		5D15E3A90F9E6AC1009E0E3F /* XMLDocumentParserScope.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XMLDocumentParserScope.cpp; sourceTree = "<group>"; };
 		5D15E3AA0F9E6AC1009E0E3F /* XMLDocumentParserScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XMLDocumentParserScope.h; sourceTree = "<group>"; };
 		5D87BB4F11E3EAEB00702B6F /* WebCoreExportFileGenerator */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = WebCoreExportFileGenerator; sourceTree = BUILT_PRODUCTS_DIR; };
-		5D87BB8211E3ED8600702B6F /* ExportFileGenerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ExportFileGenerator.cpp; path = ../WebKitBuild/Debug/DerivedSources/WebCore/ExportFileGenerator.cpp; sourceTree = SOURCE_ROOT; };
+		5D87BB8211E3ED8600702B6F /* ExportFileGenerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ExportFileGenerator.cpp; path = DerivedSources/WebCore/ExportFileGenerator.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
 		5D925B650F64D4DD00B847F0 /* ScrollBehavior.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScrollBehavior.cpp; sourceTree = "<group>"; };
 		5D925B660F64D4DD00B847F0 /* ScrollBehavior.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollBehavior.h; sourceTree = "<group>"; };
 		5DA5E0FA102B953800088CF9 /* JSWebSocket.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebSocket.cpp; sourceTree = "<group>"; };

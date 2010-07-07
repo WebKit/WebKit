@@ -1,5 +1,14 @@
 2010-07-06  Mark Rowe  <mrowe@apple.com>
 
+        Build fix.
+
+        The path to the generated file needs to be relative to the built product directory,
+        not to the project file.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
+2010-07-06  Mark Rowe  <mrowe@apple.com>
+
         Reviewed by Darin Adler.
 
         <http://webkit.org/b/41725> REGRESSION(r62283): No longer possible to build for Tiger from SnowLeopard due to export file shenanigans
