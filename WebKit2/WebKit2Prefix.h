@@ -29,7 +29,12 @@
 #include <wtf/FastMalloc.h>
 #endif
 
-#if defined(__APPLE__)
+#if defined(BUILDING_QT__)
+
+#define WTF_USE_JSC 1
+#define WTF_USE_V8 0
+
+#elif defined(__APPLE__)
 
 #import <CoreGraphics/CoreGraphics.h>
 
