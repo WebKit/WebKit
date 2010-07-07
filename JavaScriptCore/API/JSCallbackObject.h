@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2008, 2010 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Eric Seidel <eric@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -30,6 +30,7 @@
 #include "JSObjectRef.h"
 #include "JSValueRef.h"
 #include "JSObject.h"
+#include <wtf/PassOwnPtr.h>
 
 namespace JSC {
 
@@ -56,7 +57,7 @@ struct JSCallbackObjectData {
     void setPrivateProperty(const Identifier& propertyName, JSValue value)
     {
         if (!m_privateProperties)
-            m_privateProperties.set(new JSPrivatePropertyMap);
+            m_privateProperties = adoptPtr(new JSPrivatePropertyMap);
         m_privateProperties->setPrivateProperty(propertyName, value);
     }
     

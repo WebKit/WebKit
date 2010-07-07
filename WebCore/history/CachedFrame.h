@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2009, 2010 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +28,7 @@
 
 #include "KURL.h"
 #include "ScriptCachedFrameData.h"
+#include <wtf/PassOwnPtr.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
@@ -75,7 +76,7 @@ public:
     void clear();
     void destroy();
 
-    void setCachedFramePlatformData(CachedFramePlatformData* data);
+    void setCachedFramePlatformData(PassOwnPtr<CachedFramePlatformData>);
     CachedFramePlatformData* cachedFramePlatformData();
 
     using CachedFrameBase::document;

@@ -530,7 +530,7 @@ namespace JSC {
         void createRareDataIfNecessary()
         {
             if (!m_rareData)
-                m_rareData.set(new RareData);
+                m_rareData = adoptPtr(new RareData);
         }
 
         ScriptExecutable* m_ownerExecutable;

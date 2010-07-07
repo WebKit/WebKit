@@ -139,7 +139,7 @@ namespace JSC {
 
     inline Arguments::Arguments(CallFrame* callFrame)
         : JSObject(callFrame->lexicalGlobalObject()->argumentsStructure())
-        , d(new ArgumentsData)
+        , d(adoptPtr(new ArgumentsData))
     {
         JSFunction* callee;
         ptrdiff_t firstParameterIndex;
@@ -176,7 +176,7 @@ namespace JSC {
 
     inline Arguments::Arguments(CallFrame* callFrame, NoParametersType)
         : JSObject(callFrame->lexicalGlobalObject()->argumentsStructure())
-        , d(new ArgumentsData)
+        , d(adoptPtr(new ArgumentsData))
     {
         ASSERT(!asFunction(callFrame->callee())->jsExecutable()->parameterCount());
 

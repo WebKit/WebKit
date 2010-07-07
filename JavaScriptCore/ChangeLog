@@ -2,6 +2,54 @@
 
         Reviewed by Adam Barth.
 
+        More OwnPtr work
+        https://bugs.webkit.org/show_bug.cgi?id=41727
+
+        * API/JSCallbackObject.h:
+        (JSC::JSCallbackObjectData::setPrivateProperty): Use adoptPtr.
+        * API/JSCallbackObjectFunctions.h:
+        (JSC::JSCallbackObject::JSCallbackObject): Ditto.
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::CodeBlock): Ditto.
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::createRareDataIfNecessary): Ditto.
+        * parser/Nodes.cpp:
+        (JSC::ScopeNode::ScopeNode): Ditto.
+        * parser/ParserArena.cpp:
+        (JSC::ParserArena::ParserArena): Ditto.
+        * runtime/Arguments.h:
+        (JSC::Arguments::Arguments): Ditto.
+        * runtime/Executable.cpp:
+        (JSC::EvalExecutable::compile): Ditto.
+        (JSC::ProgramExecutable::compile): Ditto.
+        (JSC::FunctionExecutable::compileForCall): Ditto.
+        (JSC::FunctionExecutable::compileForConstruct): Ditto.
+        (JSC::FunctionExecutable::reparseExceptionInfo): Ditto.
+        (JSC::EvalExecutable::reparseExceptionInfo): Ditto.
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::sort): Ditto.
+        * runtime/RegExpConstructor.cpp:
+        (JSC::RegExpConstructor::RegExpConstructor): Ditto.
+        * runtime/RegExpObject.cpp:
+        (JSC::RegExpObject::RegExpObject): Ditto.
+        * runtime/SmallStrings.cpp:
+        (JSC::SmallStrings::createSingleCharacterString): Ditto.
+        (JSC::SmallStrings::singleCharacterStringRep): Ditto.
+
+        * wtf/unicode/icu/CollatorICU.cpp:
+        (WTF::Collator::userDefault): Use adoptPtr.
+        * yarr/RegexInterpreter.cpp:
+        (JSC::Yarr::ByteCompiler::ByteCompiler): Ditto.
+        (JSC::Yarr::ByteCompiler::compile): Ditto.
+        (JSC::Yarr::ByteCompiler::regexBegin): Ditto.
+        (JSC::Yarr::byteCompileRegex): Ditto.
+        * yarr/RegexInterpreter.h:
+        (JSC::Yarr::BytecodePattern::BytecodePattern): Ditto.
+
+2010-07-07  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adam Barth.
+
         Make clear set the pointer to 0 before deletion
         https://bugs.webkit.org/show_bug.cgi?id=41727
 

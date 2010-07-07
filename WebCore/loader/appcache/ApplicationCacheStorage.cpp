@@ -999,7 +999,7 @@ bool ApplicationCacheStorage::storeCopyOfCache(const String& cacheDirectory, App
     }
     
     // Now create a new cache group.
-    OwnPtr<ApplicationCacheGroup> groupCopy(new ApplicationCacheGroup(cache->group()->manifestURL(), true));
+    OwnPtr<ApplicationCacheGroup> groupCopy(adoptPtr(new ApplicationCacheGroup(cache->group()->manifestURL(), true)));
     
     groupCopy->setNewestCache(cacheCopy);
     

@@ -29,10 +29,12 @@
 #define SVGRenderStyleDefs_h
 
 #if ENABLE(SVG)
+
 #include "Color.h"
 #include "PlatformString.h"
 #include "ShadowData.h"
 #include <wtf/OwnPtr.h>
+#include <wtf/PassOwnPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
@@ -67,8 +69,8 @@
 
 #define SVG_RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL_OWNPTR(Data, Group, Variable, Type, Name, Initial) \
     Data* Name() const { return Group->Variable.get(); } \
-    void set##Type(Data* obj) { \
-        Group.access()->Variable.set(obj); \
+    void set##Type(PassOwnPtr<Data> obj) { \
+        Group.access()->Variable = obj; \
     } \
     static Data* initial##Type() { return Initial; }
 
@@ -300,4 +302,5 @@ namespace WebCore {
 } // namespace WebCore
 
 #endif // ENABLE(SVG)
+
 #endif // SVGRenderStyleDefs_h

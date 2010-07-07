@@ -95,7 +95,7 @@ const ClassInfo RegExpConstructor::info = { "Function", &InternalFunction::info,
 
 RegExpConstructor::RegExpConstructor(ExecState* exec, JSGlobalObject* globalObject, NonNullPassRefPtr<Structure> structure, RegExpPrototype* regExpPrototype)
     : InternalFunction(&exec->globalData(), globalObject, structure, Identifier(exec, "RegExp"))
-    , d(new RegExpConstructorPrivate)
+    , d(adoptPtr(new RegExpConstructorPrivate))
 {
     // ECMA 15.10.5.1 RegExp.prototype
     putDirectWithoutTransition(exec->propertyNames().prototype, regExpPrototype, DontEnum | DontDelete | ReadOnly);

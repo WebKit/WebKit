@@ -118,7 +118,7 @@ public:
     {
         ASSERT(!isDirty());
         if (!m_floats)
-            m_floats.set(new Vector<RenderBox*>());
+            m_floats= adoptPtr(new Vector<RenderBox*>);
         return *m_floats;
     }
 

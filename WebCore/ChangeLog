@@ -1,3 +1,52 @@
+2010-07-06  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adam Barth.
+
+        More OwnPtr work, including making clear set the pointer to 0 before deletion
+        https://bugs.webkit.org/show_bug.cgi?id=41727
+
+        * WebCore.exp.in: Updated.
+
+        * css/CSSSelector.h:
+        (WebCore::CSSSelector::RareData::RareData): Use adoptPtr.
+        (WebCore::CSSSelector::createRareData): Ditto.
+        * dom/SpaceSplitString.h:
+        (WebCore::SpaceSplitString::SpaceSplitString): Ditto.
+        (WebCore::SpaceSplitString::set): Ditto.
+        * history/CachedFrame.cpp:
+        (WebCore::CachedFrame::CachedFrame): Ditto.
+        (WebCore::CachedFrame::setCachedFramePlatformData): Ditto.
+
+        * history/CachedFrame.h: Use PassOwnPtr.
+
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        (WebCore::CallCacheListenerTask::create): Use adoptPtr.
+        * loader/appcache/ApplicationCacheStorage.cpp:
+        (WebCore::ApplicationCacheStorage::storeCopyOfCache): Ditto.
+        * platform/PurgeableBuffer.h:
+        (WebCore::PurgeableBuffer::create): Ditto.
+        * platform/graphics/GlyphMetricsMap.h:
+        (WebCore::::locatePageSlowCase): Ditto.
+        * platform/graphics/GraphicsLayer.h:
+        (WebCore::AnimationValue::AnimationValue): Ditto.
+        (WebCore::TransformAnimationValue::TransformAnimationValue): Ditto.
+        * platform/graphics/MediaPlayer.h:
+        (WebCore::MediaPlayer::create): Ditto.
+        * platform/graphics/SimpleFontData.h:
+        (WebCore::SimpleFontData::boundsForGlyph): Ditto.
+        * platform/mac/PurgeableBufferMac.cpp:
+        (WebCore::PurgeableBuffer::create): Ditto.
+        * rendering/InlineFlowBox.h:
+        (WebCore::InlineFlowBox::setHorizontalOverflowPositions): Ditto.
+        (WebCore::InlineFlowBox::setVerticalOverflowPositions): Ditto.
+        * rendering/RootInlineBox.h:
+        (WebCore::RootInlineBox::floats): Ditto.
+        * rendering/style/RenderStyle.h:
+        (WebCore::InheritedFlags::inheritAnimations): Ditto.
+        (WebCore::InheritedFlags::inheritTransitions): Ditto.
+
+        * rendering/style/SVGRenderStyleDefs.h: Use PassOwnPtr.
+
 2010-07-07  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

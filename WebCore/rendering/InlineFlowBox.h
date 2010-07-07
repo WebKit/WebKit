@@ -193,7 +193,7 @@ inline void InlineFlowBox::setHorizontalOverflowPositions(int leftLayoutOverflow
     if (!m_overflow) {
         if (leftLayoutOverflow == m_x && rightLayoutOverflow == m_x + m_width && leftVisualOverflow == m_x && rightVisualOverflow == m_x + m_width)
             return;
-        m_overflow.set(new RenderOverflow(IntRect(m_x, m_y, m_width, m_renderer->style(m_firstLine)->font().height())));    
+        m_overflow = adoptPtr(new RenderOverflow(IntRect(m_x, m_y, m_width, m_renderer->style(m_firstLine)->font().height())));    
     }
 
     m_overflow->setLeftLayoutOverflow(leftLayoutOverflow);
@@ -207,7 +207,7 @@ inline void InlineFlowBox::setVerticalOverflowPositions(int topLayoutOverflow, i
     if (!m_overflow) {
         if (topLayoutOverflow == m_y && bottomLayoutOverflow == m_y + boxHeight && topVisualOverflow == m_y && bottomVisualOverflow == m_y + boxHeight)
             return;
-        m_overflow.set(new RenderOverflow(IntRect(m_x, m_y, m_width, boxHeight)));
+        m_overflow = adoptPtr(new RenderOverflow(IntRect(m_x, m_y, m_width, boxHeight)));
     }
 
     m_overflow->setTopLayoutOverflow(topLayoutOverflow);

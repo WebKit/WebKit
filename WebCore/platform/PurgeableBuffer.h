@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008, 2010 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,14 +27,15 @@
 #define PurgeableBuffer_h
 
 #include <wtf/Noncopyable.h>
+#include <wtf/PassOwnPtr.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
     
     class PurgeableBuffer : public Noncopyable {
     public:
-        static PurgeableBuffer* create(const char* data, size_t);
-        static PurgeableBuffer* create(const Vector<char>& v) { return create(v.data(), v.size()); }
+        static PassOwnPtr<PurgeableBuffer> create(const char* data, size_t);
+        static PassOwnPtr<PurgeableBuffer> create(const Vector<char>& vector) { return create(vector.data(), vector.size()); }
         
         ~PurgeableBuffer();
 
@@ -63,7 +64,7 @@ namespace WebCore {
     };
 
 #if !OS(DARWIN) || defined(BUILDING_ON_TIGER) || PLATFORM(QT) || PLATFORM(GTK)
-    inline PurgeableBuffer* PurgeableBuffer::create(const char*, size_t) { return 0; }
+    inline PassOwnPtr<PurgeableBuffer> PurgeableBuffer::create(const char*, size_t) { return PassOwnPtr<PurgeableBuffer>(); }
     inline PurgeableBuffer::~PurgeableBuffer() { }
     inline const char* PurgeableBuffer::data() const { return 0; }
     inline void PurgeableBuffer::setPurgePriority(PurgePriority) { }

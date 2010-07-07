@@ -144,7 +144,7 @@ public:
 
     static PassOwnPtr<MediaPlayer> create(MediaPlayerClient* client)
     {
-        return new MediaPlayer(client);
+        return adoptPtr(new MediaPlayer(client));
     }
     virtual ~MediaPlayer();
 

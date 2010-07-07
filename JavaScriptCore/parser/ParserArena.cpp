@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2009, 2010 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,13 +27,14 @@
 #include "ParserArena.h"
 
 #include "Nodes.h"
+#include <wtf/PassOwnPtr.h>
 
 namespace JSC {
 
 ParserArena::ParserArena()
     : m_freeableMemory(0)
     , m_freeablePoolEnd(0)
-    , m_identifierArena(new IdentifierArena)
+    , m_identifierArena(adoptPtr(new IdentifierArena))
 {
 }
 

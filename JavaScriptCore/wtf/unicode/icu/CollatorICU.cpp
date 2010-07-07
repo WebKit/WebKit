@@ -69,13 +69,12 @@ PassOwnPtr<Collator> Collator::userDefault()
     CFStringRef collationOrder = collationOrderRetainer.get();
 #endif
     char buf[256];
-    if (collationOrder) {
-        CFStringGetCString(collationOrder, buf, sizeof(buf), kCFStringEncodingASCII);
-        return new Collator(buf);
-    } else
-        return new Collator("");
+    if (!collationOrder)
+        return adoptPtr(new Collator(""));
+    CFStringGetCString(collationOrder, buf, sizeof(buf), kCFStringEncodingASCII);
+    return adoptPtr(new Collator(buf));
 #else
-    return new Collator(0);
+    return adoptPtr(new Collator(0));
 #endif
 }
 

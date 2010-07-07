@@ -94,10 +94,9 @@ class AnimationValue : public Noncopyable {
 public:
     AnimationValue(float keyTime, const TimingFunction* timingFunction = 0)
         : m_keyTime(keyTime)
-        , m_timingFunction(0)
     {
         if (timingFunction)
-            m_timingFunction.set(new TimingFunction(*timingFunction));
+            m_timingFunction = adoptPtr(new TimingFunction(*timingFunction));
     }
     
     virtual ~AnimationValue() { }
@@ -132,7 +131,7 @@ public:
         : AnimationValue(keyTime, timingFunction)
     {
         if (value)
-            m_value.set(new TransformOperations(*value));
+            m_value = adoptPtr(new TransformOperations(*value));
     }
 
     const TransformOperations* value() const { return m_value.get(); }

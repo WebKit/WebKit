@@ -1362,7 +1362,7 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, CodeType codeType, PassR
     , m_source(sourceProvider)
     , m_sourceOffset(sourceOffset)
     , m_symbolTable(symTab)
-    , m_exceptionInfo(new ExceptionInfo)
+    , m_exceptionInfo(adoptPtr(new ExceptionInfo))
 {
     ASSERT(m_source);
 
