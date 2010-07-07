@@ -368,10 +368,6 @@
 	</References>
 	<Files>
 		<File
-			RelativePath="..\..\win\TestNetscapePlugin\main.cpp"
-			>
-		</File>
-		<File
 			RelativePath="..\main.cpp"
 			>
 			<FileConfiguration
