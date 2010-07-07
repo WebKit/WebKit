@@ -89,8 +89,8 @@ protected:
     RefPtr<JObjectWrapper> m_instance;
     mutable JavaClass* m_class;
 
-    virtual void virtualBegin() {}
-    virtual void virtualEnd() {}
+    virtual void virtualBegin();
+    virtual void virtualEnd();
 };
 
 } // namespace Bindings

@@ -1,3 +1,31 @@
+2010-07-07  Steve Block  <steveblock@google.com>
+
+        Reviewed by Adam Barth.
+
+        JavaInstanceV8 needs to push a local reference frame to avoid table overflow.
+        https://bugs.webkit.org/show_bug.cgi?id=41516
+
+        This change is required to help prevent the Java virtual machine from
+        running out of local references. The Java virtual machine supports only
+        a limited number of local references. Normally, local references are
+        cleared when the native method returns.
+
+        This change adds calls to PushLocalFrame() and PopLocalFrame() around
+        each invocation of a method on JavaInstance. These calls instruct the
+        virtual machine to clear local references when the frame is popped.
+        This means that in the case where many calls to JavaInstance methods
+        are made within the same native call, local references are cleared as
+        soon as they are no longer needed, thus conserving references.
+
+        This change mirrors exactly JavaInstanceJSC.
+
+        No new tests.
+
+        * bridge/jni/v8/JavaInstanceV8.cpp:
+        (JavaInstance::virtualBegin):
+        (JavaInstance::virtualEnd):
+        * bridge/jni/v8/JavaInstanceV8.h:
+
 2010-07-06  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.

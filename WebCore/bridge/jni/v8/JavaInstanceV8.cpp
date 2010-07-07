@@ -32,9 +32,6 @@
 #include "JavaClassV8.h"
 
 #include <assert.h>
-#include <utils/Log.h>
-
-#define LOG_TAG "v8binding"
 
 using namespace JSC::Bindings;
 
@@ -48,6 +45,18 @@ JavaInstance::~JavaInstance()
 {
     m_instance = 0;
     delete m_class;
+}
+
+#define NUM_LOCAL_REFS 64
+
+void JavaInstance::virtualBegin()
+{
+    getJNIEnv()->PushLocalFrame(NUM_LOCAL_REFS);
+}
+
+void JavaInstance::virtualEnd()
+{
+    getJNIEnv()->PopLocalFrame(0);
 }
 
 JavaClass* JavaInstance::getClass() const
@@ -79,10 +88,8 @@ bool JavaInstance::invokeMethod(const char* methodName, const NPVariant* args, i
             break;
         }
     }
-    if (!method) {
-        LOGW("unable to find an appropiate method\n");
+    if (!method)
         return false;
-    }
 
     const JavaMethod* jMethod = static_cast<const JavaMethod*>(method);
 
@@ -156,14 +163,11 @@ JObjectWrapper::JObjectWrapper(jobject instance)
 
     m_instance = m_env->NewGlobalRef(instance);
 
-    LOGV("new global ref %p for %p\n", m_instance, instance);
-
     if (!m_instance)
         fprintf(stderr, "%s:  could not get GlobalRef for %p\n", __PRETTY_FUNCTION__, instance);
 }
 
 JObjectWrapper::~JObjectWrapper()
 {
-    LOGV("deleting global ref %p\n", m_instance);
     m_env->DeleteGlobalRef(m_instance);
 }
