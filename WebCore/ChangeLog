@@ -2,6 +2,19 @@
 
         Reviewed by Beth Dakin.
 
+        AX: when a node's role changes, the AX tree might need to be updated
+        https://bugs.webkit.org/show_bug.cgi?id=41784
+
+        Test: platform/mac/accessibility/update-children-when-aria-role-changes.html
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::AccessibilityRenderObject):
+        (WebCore::AccessibilityRenderObject::updateAccessibilityRole):
+
+2010-07-07  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Beth Dakin.
+
         AX: when an element uses role="text" but no aria-label, it should default to textUnderElement()
         https://bugs.webkit.org/show_bug.cgi?id=41780
 

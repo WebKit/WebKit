@@ -91,7 +91,8 @@ AccessibilityRenderObject::AccessibilityRenderObject(RenderObject* renderer)
     , m_childrenDirty(false)
     , m_roleForMSAA(UnknownRole)
 {
-    updateAccessibilityRole();
+    m_role = determineAccessibilityRole();
+    
 #ifndef NDEBUG
     m_renderer->setHasAXObject(true);
 #endif
@@ -2968,7 +2969,12 @@ AccessibilityRole AccessibilityRenderObject::ariaRoleAttribute() const
     
 void AccessibilityRenderObject::updateAccessibilityRole()
 {
+    bool ignoredStatus = accessibilityIsIgnored();
     m_role = determineAccessibilityRole();
+    
+    // The AX hierarchy only needs to be updated if the ignored status of an element has changed.
+    if (ignoredStatus != accessibilityIsIgnored())
+        childrenChanged();
 }
     
 AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
