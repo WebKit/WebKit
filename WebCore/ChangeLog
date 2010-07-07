@@ -1,3 +1,26 @@
+2010-07-07  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Sam Weinig.
+
+        Add reverseFind to Vector and deploy in HTML5 parser
+        https://bugs.webkit.org/show_bug.cgi?id=41778
+
+        This patch moves reverseFind from begin an
+        HTMLFormattingElementList-specific concept to begin a general Vector
+        concept.  Also, instead of using Entry as the type for operator==, we
+        now use elements directly.  The old code compiled because the Entry
+        constructor wasn't explicit, which means we were churning refs on every
+        comparison!
+
+        * html/HTMLFormattingElementList.cpp:
+        (WebCore::HTMLFormattingElementList::find):
+        (WebCore::HTMLFormattingElementList::bookmarkFor):
+        (WebCore::HTMLFormattingElementList::insertAt):
+        (WebCore::HTMLFormattingElementList::remove):
+        * html/HTMLFormattingElementList.h:
+        (WebCore::HTMLFormattingElementList::Entry::operator==):
+        (WebCore::HTMLFormattingElementList::Entry::operator!=):
+
 2010-07-07  Darin Adler  <darin@apple.com>
 
         Reviewed by Adam Barth.

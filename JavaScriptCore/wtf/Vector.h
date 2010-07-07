@@ -557,6 +557,7 @@ namespace WTF {
         const T& last() const { return at(size() - 1); }
 
         template<typename U> size_t find(const U&) const;
+        template<typename U> size_t reverseFind(const U&) const;
 
         void shrink(size_t size);
         void grow(size_t size);
@@ -739,6 +740,18 @@ namespace WTF {
         for (size_t i = 0; i < size(); ++i) {
             if (at(i) == value)
                 return i;
+        }
+        return notFound;
+    }
+
+    template<typename T, size_t inlineCapacity>
+    template<typename U>
+    size_t Vector<T, inlineCapacity>::reverseFind(const U& value) const
+    {
+        for (size_t i = 1; i <= size(); ++i) {
+            const size_t index = size() - i;
+            if (at(index) == value)
+                return index;
         }
         return notFound;
     }

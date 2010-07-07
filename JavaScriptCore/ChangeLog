@@ -1,3 +1,16 @@
+2010-07-07  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Sam Weinig.
+
+        Add reverseFind to Vector and deploy in HTML5 parser
+        https://bugs.webkit.org/show_bug.cgi?id=41778
+
+        This method seems generally useful.  I'm slightly surprised we don't
+        have it already.
+
+        * wtf/Vector.h:
+        (WTF::::reverseFind):
+
 2010-07-07  Darin Adler  <darin@apple.com>
 
         Reviewed by Adam Barth.

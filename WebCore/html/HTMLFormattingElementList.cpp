@@ -58,7 +58,7 @@ bool HTMLFormattingElementList::contains(Element* element)
 
 HTMLFormattingElementList::Entry* HTMLFormattingElementList::find(Element* element)
 {
-    size_t index = findIndex(element);
+    size_t index = m_entries.reverseFind(element);
     if (index != notFound) {
         // This is somewhat of a hack, and is why this method can't be const.
         return &m_entries[index];
@@ -68,7 +68,7 @@ HTMLFormattingElementList::Entry* HTMLFormattingElementList::find(Element* eleme
 
 HTMLFormattingElementList::Bookmark HTMLFormattingElementList::bookmarkFor(Element* element)
 {
-    size_t index = findIndex(element);
+    size_t index = m_entries.reverseFind(element);
     ASSERT(index != notFound);
     Element* elementBefore = (index > 1) ? m_entries[index - 1].element() : 0;
     Element* elementAfter = (index < m_entries.size() - 1) ? m_entries[index + 1].element() : 0;
@@ -79,12 +79,12 @@ void HTMLFormattingElementList::insertAt(Element* element, const Bookmark& bookm
 {
     size_t beforeIndex = notFound;
     if (bookmark.elementBefore()) {
-        beforeIndex = findIndex(bookmark.elementBefore());
+        beforeIndex = m_entries.reverseFind(bookmark.elementBefore());
         ASSERT(beforeIndex != notFound);
     }
     size_t afterIndex = notFound;
     if (bookmark.elementAfter()) {
-        afterIndex = findIndex(bookmark.elementAfter());
+        afterIndex = m_entries.reverseFind(bookmark.elementAfter());
         ASSERT(afterIndex != notFound);
     }
 
@@ -109,7 +109,7 @@ void HTMLFormattingElementList::append(Element* element)
 
 void HTMLFormattingElementList::remove(Element* element)
 {
-    size_t index = findIndex(element);
+    size_t index = m_entries.reverseFind(element);
     if (index != notFound)
         m_entries.remove(index);
 }
