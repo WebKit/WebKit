@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008, 2010 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -53,13 +53,13 @@ namespace WebCore {
 
     class Worker : public AbstractWorker, private WorkerScriptLoaderClient {
     public:
-        static PassRefPtr<Worker> create(const String& url, ScriptExecutionContext* context, ExceptionCode& ec) { return adoptRef(new Worker(url, context, ec)); }
-        ~Worker();
+        static PassRefPtr<Worker> create(const String& url, ScriptExecutionContext*, ExceptionCode&);
+        virtual ~Worker();
 
         virtual Worker* toWorker() { return this; }
 
-        void postMessage(PassRefPtr<SerializedScriptValue>, ExceptionCode&);
-        void postMessage(PassRefPtr<SerializedScriptValue>, const MessagePortArray*, ExceptionCode&);
+        void postMessage(PassRefPtr<SerializedScriptValue> message, ExceptionCode&);
+        void postMessage(PassRefPtr<SerializedScriptValue> message, const MessagePortArray*, ExceptionCode&);
         // FIXME: remove this when we update the ObjC bindings (bug #28774).
         void postMessage(PassRefPtr<SerializedScriptValue> message, MessagePort*, ExceptionCode&);
 
@@ -72,7 +72,7 @@ namespace WebCore {
         DEFINE_ATTRIBUTE_EVENT_LISTENER(message);
 
     private:
-        Worker(const String&, ScriptExecutionContext*, ExceptionCode&);
+        Worker(ScriptExecutionContext*);
 
         virtual void notifyFinished();
 

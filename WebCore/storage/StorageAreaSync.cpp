@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008, 2009, 2010 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -49,12 +49,7 @@ static const double StorageSyncInterval = 1.0;
 // much harder to starve the rest of LocalStorage and the OS's IO subsystem in general.
 static const int MaxiumItemsToSync = 100;
 
-PassRefPtr<StorageAreaSync> StorageAreaSync::create(PassRefPtr<StorageSyncManager> storageSyncManager, PassRefPtr<StorageAreaImpl> storageArea, String databaseIdentifier)
-{
-    return adoptRef(new StorageAreaSync(storageSyncManager, storageArea, databaseIdentifier));
-}
-
-StorageAreaSync::StorageAreaSync(PassRefPtr<StorageSyncManager> storageSyncManager, PassRefPtr<StorageAreaImpl> storageArea, String databaseIdentifier)
+inline StorageAreaSync::StorageAreaSync(PassRefPtr<StorageSyncManager> storageSyncManager, PassRefPtr<StorageAreaImpl> storageArea, const String& databaseIdentifier)
     : m_syncTimer(this, &StorageAreaSync::syncTimerFired)
     , m_itemsCleared(false)
     , m_finalSyncScheduled(false)
@@ -70,11 +65,18 @@ StorageAreaSync::StorageAreaSync(PassRefPtr<StorageSyncManager> storageSyncManag
     ASSERT(isMainThread());
     ASSERT(m_storageArea);
     ASSERT(m_syncManager);
+}
+
+PassRefPtr<StorageAreaSync> StorageAreaSync::create(PassRefPtr<StorageSyncManager> storageSyncManager, PassRefPtr<StorageAreaImpl> storageArea, const String& databaseIdentifier)
+{
+    RefPtr<StorageAreaSync> area = adoptRef(new StorageAreaSync(storageSyncManager, storageArea, databaseIdentifier));
 
     // FIXME: If it can't import, then the default WebKit behavior should be that of private browsing,
-    // not silently ignoring it.  https://bugs.webkit.org/show_bug.cgi?id=25894
-    if (!m_syncManager->scheduleImport(this))
-        m_importComplete = true;
+    // not silently ignoring it. https://bugs.webkit.org/show_bug.cgi?id=25894
+    if (!area->m_syncManager->scheduleImport(area.get()))
+        area->m_importComplete = true;
+
+    return area.release();
 }
 
 StorageAreaSync::~StorageAreaSync()

@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2009 Ericsson AB
  * All rights reserved.
+ * Copyright (C) 2010 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -53,30 +54,45 @@ namespace WebCore {
 
 const unsigned long long EventSource::defaultReconnectDelay = 3000;
 
-EventSource::EventSource(const String& url, ScriptExecutionContext* context, ExceptionCode& ec)
+inline EventSource::EventSource(const KURL& url, ScriptExecutionContext* context)
     : ActiveDOMObject(context, this)
+    , m_url(url)
     , m_state(CONNECTING)
+    , m_decoder(TextResourceDecoder::create("text/plain", "UTF-8"))
     , m_reconnectTimer(this, &EventSource::reconnectTimerFired)
     , m_discardTrailingNewline(false)
     , m_failSilently(false)
     , m_requestInFlight(false)
     , m_reconnectDelay(defaultReconnectDelay)
+    , m_origin(context->securityOrigin()->toString())
 {
-    if (url.isEmpty() || !(m_url = context->completeURL(url)).isValid()) {
+}
+
+PassRefPtr<EventSource> EventSource::create(const String& url, ScriptExecutionContext* context, ExceptionCode& ec)
+{
+    if (url.isEmpty()) {
         ec = SYNTAX_ERR;
-        return;
+        return 0;
     }
-    // FIXME: should support cross-origin requests
-    if (!scriptExecutionContext()->securityOrigin()->canRequest(m_url)) {
+
+    KURL fullURL = context->completeURL(url);
+    if (!fullURL.isValid()) {
+        ec = SYNTAX_ERR;
+        return 0;
+    }
+
+    // FIXME: Should support at least some cross-origin requests.
+    if (!context->securityOrigin()->canRequest(fullURL)) {
         ec = SECURITY_ERR;
-        return;
+        return 0;
     }
 
-    m_origin = scriptExecutionContext()->securityOrigin()->toString();
-    m_decoder = TextResourceDecoder::create("text/plain", "UTF-8");
+    RefPtr<EventSource> source = adoptRef(new EventSource(fullURL, context));
 
-    setPendingActivity(this);
-    connect();
+    source->setPendingActivity(source.get());
+    source->connect();
+
+    return source.release();
 }
 
 EventSource::~EventSource()

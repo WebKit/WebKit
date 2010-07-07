@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2010 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -31,10 +32,9 @@
 #ifndef CrossThreadRefCounted_h
 #define CrossThreadRefCounted_h
 
-#include <wtf/Noncopyable.h>
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
-#include <wtf/Threading.h>
+#include "PassRefPtr.h"
+#include "RefCounted.h"
+#include "Threading.h"
 
 namespace WTF {
 
@@ -78,6 +78,9 @@ namespace WTF {
             , m_threadId(0)
 #endif
         {
+            // We use RefCountedBase in an unusual way here, so get rid of the requirement
+            // that adoptRef be called on it.
+            m_refCounter.relaxAdoptionRequirement();
         }
 
         ~CrossThreadRefCounted()

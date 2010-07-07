@@ -1,3 +1,17 @@
+2010-07-07  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adam Barth.
+
+        Turn on adoptRef assertion for RefCounted
+        https://bugs.webkit.org/show_bug.cgi?id=41547
+
+        * wtf/CrossThreadRefCounted.h: Fixed include style. Includes of other
+        WTF headers should use "" includes; consistent in most WTF headers.
+        Added a call to relaxAdoptionRequirement.
+
+        * wtf/RefCounted.h: Fixed include style. Removed LOOSE_REF_COUNTED.
+        Added relaxAdoptionRequirement.
+
 2010-07-07  Anders Carlsson  <andersca@apple.com>
 
         Try to fix the Windows build.

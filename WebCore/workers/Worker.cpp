@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008, 2010 Apple Inc. All Rights Reserved.
  * Copyright (C) 2009 Google Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -50,21 +50,32 @@
 
 namespace WebCore {
 
-Worker::Worker(const String& url, ScriptExecutionContext* context, ExceptionCode& ec)
+inline Worker::Worker(ScriptExecutionContext* context)
     : AbstractWorker(context)
     , m_contextProxy(WorkerContextProxy::create(this))
 {
-    KURL scriptURL = resolveURL(url, ec);
-    if (ec)
-        return;
+}
 
-    m_scriptLoader = new WorkerScriptLoader(ResourceRequestBase::TargetIsWorker);
-    m_scriptLoader->loadAsynchronously(scriptExecutionContext(), scriptURL, DenyCrossOriginRequests, this);
-    setPendingActivity(this);  // The worker context does not exist while loading, so we must ensure that the worker object is not collected, as well as its event listeners.
+PassRefPtr<Worker> Worker::create(const String& url, ScriptExecutionContext* context, ExceptionCode& ec)
+{
+    RefPtr<Worker> worker = adoptRef(new Worker(context));
+
+    KURL scriptURL = worker->resolveURL(url, ec);
+    if (scriptURL.isEmpty())
+        return 0;
+
+    worker->m_scriptLoader = adoptPtr(new WorkerScriptLoader(ResourceRequestBase::TargetIsWorker));
+    worker->m_scriptLoader->loadAsynchronously(context, scriptURL, DenyCrossOriginRequests, worker.get());
+
+    // The worker context does not exist while loading, so we must ensure that the worker object is not collected, nor are its event listeners.
+    worker->setPendingActivity(worker.get());
+
 #if ENABLE(INSPECTOR)
-    if (InspectorController* inspector = scriptExecutionContext()->inspectorController())
-        inspector->didCreateWorker(asID(), scriptURL.string(), false);
+    if (InspectorController* inspector = context->inspectorController())
+        inspector->didCreateWorker(worker->asID(), scriptURL.string(), false);
 #endif
+
+    return worker.release();
 }
 
 Worker::~Worker()

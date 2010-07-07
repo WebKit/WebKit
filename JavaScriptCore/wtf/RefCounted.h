@@ -21,11 +21,8 @@
 #ifndef RefCounted_h
 #define RefCounted_h
 
-#include <wtf/Assertions.h>
-#include <wtf/Noncopyable.h>
-
-// Remove this once we make all WebKit code compatible with stricter rules about RefCounted.
-#define LOOSE_REF_COUNTED
+#include "Assertions.h"
+#include "Noncopyable.h"
 
 namespace WTF {
 
@@ -37,9 +34,7 @@ public:
     void ref()
     {
         ASSERT(!m_deletionHasBegun);
-#ifndef LOOSE_REF_COUNTED
         ASSERT(!m_adoptionIsRequired);
-#endif
         ++m_refCount;
     }
 
@@ -54,6 +49,15 @@ public:
         return m_refCount;
     }
 
+    void relaxAdoptionRequirement()
+    {
+#ifndef NDEBUG
+        ASSERT(!m_deletionHasBegun);
+        ASSERT(m_adoptionIsRequired);
+        m_adoptionIsRequired = false;
+#endif
+    }
+
 protected:
     RefCountedBase()
         : m_refCount(1)
@@ -66,19 +70,15 @@ protected:
 
     ~RefCountedBase()
     {
-#ifndef LOOSE_REF_COUNTED
         ASSERT(m_deletionHasBegun);
         ASSERT(!m_adoptionIsRequired);
-#endif
     }
 
     // Returns whether the pointer should be freed or not.
     bool derefBase()
     {
         ASSERT(!m_deletionHasBegun);
-#ifndef LOOSE_REF_COUNTED
         ASSERT(!m_adoptionIsRequired);
-#endif
 
         ASSERT(m_refCount > 0);
         if (m_refCount == 1) {

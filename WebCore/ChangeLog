@@ -1,3 +1,70 @@
+2010-07-07  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adam Barth.
+
+        Turn on adoptRef assertion for RefCounted
+        https://bugs.webkit.org/show_bug.cgi?id=41547
+
+        The WebCore part of this fixes all the assertions I saw in testing.
+
+        * html/FileReader.cpp:
+        (WebCore::FileReader::readAsBinaryString): Added null checks.
+        Callers from JavaScript can pass the wrong type, which becomes null.
+        (WebCore::FileReader::readAsText): Ditto.
+        (WebCore::FileReader::readAsDataURL): Ditto.
+
+        * html/FileStreamClient.h: Removed unneeded include.
+
+        * html/FileStreamProxy.cpp:
+        (WebCore::FileStreamProxy::FileStreamProxy): Made inline and moved
+        some of the code, including the ref, into the create function.
+        (WebCore::FileStreamProxy::create): Moved some of the code from
+        the constructor here. It's safe to ref once the object has been
+        created and adopted.
+
+        * html/FileStreamProxy.h: Changed create function to no longer be
+        inlined. Also removed an unneeded include.
+
+        * page/EventSource.cpp:
+        (WebCore::EventSource::EventSource): Made inline, changed arguments
+        and moved code that involves the need to ref this object into the
+        create function. Also moved failure handling out there since it's
+        cleaner to have a function that fails than a constructor. For
+        example, the function can return 0.
+        (WebCore::EventSource::create): Moved some of the code from the
+        constructor here.
+
+        * page/EventSource.h: Removed unneeded includes. Made the
+        creation function non-inline. Changed the arguments to the constructor.
+
+        * storage/StorageAreaSync.cpp:
+        (WebCore::StorageAreaSync::StorageAreaSync): Made inline. Moved
+        code that requires ref'ing this object out to the create function.
+        (WebCore::StorageAreaSync::create): Moved some of the code from the
+        constructor here.
+
+        * storage/StorageAreaSync.h: Removed unneeded includes. Changed
+        the type of one of the constructor arguments from String to
+        const String&.
+
+        * workers/SharedWorker.cpp:
+        (WebCore::SharedWorker::SharedWorker): Made inline. Moved most of
+        the setup code out of here into the create function.
+        (WebCore::SharedWorker::create): Moved the code here.
+
+        * workers/SharedWorker.h: Removed unneeded includes. Made the
+        create function non-inline. Marked the toSharedWorker override private
+        to catch people doing an unnecessary virtual function call if they
+        already have a SharedWorker*.
+
+        * workers/Worker.cpp:
+        (WebCore::Worker::Worker): Made inline. Moved most of the setup code
+        out of here into the create function.
+        (WebCore::Worker::create): Moved the code here.
+
+        * workers/Worker.h: Made the create function non-inline. Changed
+        the arguments to the constructor.
+
 2010-07-07  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin.

@@ -34,7 +34,6 @@
 #if ENABLE(FILE_READER) || ENABLE(FILE_WRITER)
 
 #include "ExceptionCode.h"
-#include <wtf/PassRefPtr.h>
 
 namespace WebCore {
 

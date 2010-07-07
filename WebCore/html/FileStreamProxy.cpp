@@ -44,15 +44,24 @@
 
 namespace WebCore {
 
-FileStreamProxy::FileStreamProxy(ScriptExecutionContext* context, FileStreamClient* client)
+inline FileStreamProxy::FileStreamProxy(ScriptExecutionContext* context, FileStreamClient* client)
     : m_context(context)
     , m_client(client)
     , m_stream(FileStream::create(this))
 {
-    // Holds an extra ref so that the instance will not get deleted while there can be any tasks on the file thread.
-    ref();
+}
 
-    fileThread()->postTask(createFileThreadTask(m_stream.get(), &FileStream::start));
+PassRefPtr<FileStreamProxy> FileStreamProxy::create(ScriptExecutionContext* context, FileStreamClient* client)
+{
+    RefPtr<FileStreamProxy> proxy = adoptRef(new FileStreamProxy(context, client));
+
+    // Hold an ref so that the instance will not get deleted while there are tasks on the file thread.
+    // This is balanced by the deref in derefProxyOnContext below.
+    proxy->ref();
+
+    proxy->fileThread()->postTask(createFileThreadTask(proxy->m_stream.get(), &FileStream::start));
+
+    return proxy.release();
 }
 
 FileStreamProxy::~FileStreamProxy()
