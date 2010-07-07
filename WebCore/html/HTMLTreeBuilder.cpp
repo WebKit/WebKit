@@ -1432,7 +1432,7 @@ void HTMLTreeBuilder::resetInsertionModeAppropriately()
         || node->namespaceURI() == SVGNames::svgNamespaceURI
 #endif
 #if ENABLE(MATHML)
-        || node->namespaceURI() == MathMLNames::mathMLNamespaceURI
+        || node->namespaceURI() == MathMLNames::mathmlNamespaceURI
 #endif
             )
             foreign = true;

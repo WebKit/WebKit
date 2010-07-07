@@ -1,3 +1,10 @@
+2010-07-07  Mark Rowe  <mrowe@apple.com>
+
+        Fix the MathML build.
+
+        * html/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::resetInsertionModeAppropriately): Fix a typo in a variable name.
+
 2010-07-07  James Hawkins  <jhawkins@chromium.org>
 
         Reviewed by Dimitri Glazkov.
