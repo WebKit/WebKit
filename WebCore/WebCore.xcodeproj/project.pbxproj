@@ -18,17 +18,6 @@
 			name = "WebCoreExportFileGenerator Generator";
 			productName = "WebCoreExportFileGenerator Generator";
 		};
-		5D87BBBF11E3F42A00702B6F /* Copy Forwarding and ICU Headers */ = {
-			isa = PBXAggregateTarget;
-			buildConfigurationList = 5D87BBC811E3F47C00702B6F /* Build configuration list for PBXAggregateTarget "Copy Forwarding and ICU Headers" */;
-			buildPhases = (
-				5D87BBBE11E3F42A00702B6F /* Copy Forwarding and ICU Headers */,
-			);
-			dependencies = (
-			);
-			name = "Copy Forwarding and ICU Headers";
-			productName = "Copy Forwarding and ICU Headers";
-		};
 		DD041FBE09D9DDBE0010AF2A /* Derived Sources */ = {
 			isa = PBXAggregateTarget;
 			buildConfigurationList = DD041FC109D9DDDC0010AF2A /* Build configuration list for PBXAggregateTarget "Derived Sources" */;
@@ -5224,20 +5213,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = 5D87BB4E11E3EAEB00702B6F;
 			remoteInfo = WebCoreExportFileGenerator;
-		};
-		5D87BBC311E3F45C00702B6F /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 5D87BBBF11E3F42A00702B6F;
-			remoteInfo = "Copy Forwarding and ICU Headers";
-		};
-		5D87BBC511E3F46100702B6F /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 5D87BBBF11E3F42A00702B6F;
-			remoteInfo = "Copy Forwarding and ICU Headers";
 		};
 		DD041FF009D9E3250010AF2A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -19804,7 +19779,6 @@
 			);
 			dependencies = (
 				5D87BB6B11E3EBD200702B6F /* PBXTargetDependency */,
-				5D87BBC411E3F45C00702B6F /* PBXTargetDependency */,
 			);
 			name = WebCoreExportFileGenerator;
 			productName = WebCoreExportFileGenerator;
@@ -19818,6 +19792,7 @@
 				5D2F7DA00C6879C600B5B72B /* Update Info.plist with version information */,
 				93F198A608245E59001E9ABC /* Headers */,
 				1C11CCB40AA6093700DADB20 /* Copy Generated Headers */,
+				5D87BC0711E43BDE00702B6F /* Copy Forwarding and ICU Headers */,
 				93F199FD08245E59001E9ABC /* Resources */,
 				1C81BA330E97357C00266E07 /* Copy Inspector Resources */,
 				1C5F9D760E09A1B400E91D0A /* Streamline Inspector Source */,
@@ -19831,7 +19806,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				5D87BBC611E3F46100702B6F /* PBXTargetDependency */,
 				DD041FF109D9E3250010AF2A /* PBXTargetDependency */,
 			);
 			name = WebCore;
@@ -19866,7 +19840,6 @@
 				DD041FBE09D9DDBE0010AF2A /* Derived Sources */,
 				5D87BB4E11E3EAEB00702B6F /* WebCoreExportFileGenerator */,
 				5D87BB6411E3EBC100702B6F /* WebCoreExportFileGenerator Generator */,
-				5D87BBBF11E3F42A00702B6F /* Copy Forwarding and ICU Headers */,
 			);
 		};
 /* End PBXProject section */
@@ -19998,7 +19971,7 @@
 			shellPath = /bin/sh;
 			shellScript = "OUTPUT_DIR=\"${BUILT_PRODUCTS_DIR}/DerivedSources/${PROJECT_NAME}\"\nmkdir -p \"${OUTPUT_DIR}\"\n\"${SRCROOT}\"/make-export-file-generator \"${SRCROOT}/WebCore.exp.in\" \"${OUTPUT_DIR}/ExportFileGenerator.cpp\"\n";
 		};
-		5D87BBBE11E3F42A00702B6F /* Copy Forwarding and ICU Headers */ = {
+		5D87BC0711E43BDE00702B6F /* Copy Forwarding and ICU Headers */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -20010,7 +19983,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "PRIVATE_HEADERS_FOLDER_PATH=${PROJECT_NAME}.framework/Versions/A/PrivateHeaders\nmkdir -p \"$BUILT_PRODUCTS_DIR/$PRIVATE_HEADERS_FOLDER_PATH\"\nrsync -avq --exclude \".svn\" --exclude \".DS_Store\" \"$SRCROOT/ForwardingHeaders\" \"$BUILT_PRODUCTS_DIR/$PRIVATE_HEADERS_FOLDER_PATH\"\nrsync -avq --exclude \".svn\" --exclude \".DS_Store\" \"$SRCROOT/icu\" \"$BUILT_PRODUCTS_DIR/$PRIVATE_HEADERS_FOLDER_PATH\"\n";
+			shellScript = "rsync -av --exclude \".svn\" --exclude \".DS_Store\" \"$SRCROOT/ForwardingHeaders\" \"$BUILT_PRODUCTS_DIR/$PRIVATE_HEADERS_FOLDER_PATH\"\nrsync -av --exclude \".svn\" --exclude \".DS_Store\" \"$SRCROOT/icu\" \"$BUILT_PRODUCTS_DIR/$PRIVATE_HEADERS_FOLDER_PATH\"\n";
 		};
 		5DF50887116F3077005202AB /* Check For Inappropriate Files In Framework */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -22191,16 +22164,6 @@
 			target = 5D87BB4E11E3EAEB00702B6F /* WebCoreExportFileGenerator */;
 			targetProxy = 5D87BB8E11E3EE2B00702B6F /* PBXContainerItemProxy */;
 		};
-		5D87BBC411E3F45C00702B6F /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 5D87BBBF11E3F42A00702B6F /* Copy Forwarding and ICU Headers */;
-			targetProxy = 5D87BBC311E3F45C00702B6F /* PBXContainerItemProxy */;
-		};
-		5D87BBC611E3F46100702B6F /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 5D87BBBF11E3F42A00702B6F /* Copy Forwarding and ICU Headers */;
-			targetProxy = 5D87BBC511E3F46100702B6F /* PBXContainerItemProxy */;
-		};
 		DD041FF109D9E3250010AF2A /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = DD041FBE09D9DDBE0010AF2A /* Derived Sources */;
@@ -22329,30 +22292,6 @@
 			};
 			name = Production;
 		};
-		5D87BBC011E3F42A00702B6F /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 1CDD45E50BA9C84600F90147 /* WebCore.xcconfig */;
-			buildSettings = {
-				PRODUCT_NAME = "Copy Forwarding and ICU Headers";
-			};
-			name = Debug;
-		};
-		5D87BBC111E3F42A00702B6F /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 1CDD45E50BA9C84600F90147 /* WebCore.xcconfig */;
-			buildSettings = {
-				PRODUCT_NAME = "Copy Forwarding and ICU Headers";
-			};
-			name = Release;
-		};
-		5D87BBC211E3F42A00702B6F /* Production */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 1CDD45E50BA9C84600F90147 /* WebCore.xcconfig */;
-			buildSettings = {
-				PRODUCT_NAME = "Copy Forwarding and ICU Headers";
-			};
-			name = Production;
-		};
 		DD041FC209D9DDDC0010AF2A /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 1CDD45E50BA9C84600F90147 /* WebCore.xcconfig */;
@@ -22416,16 +22355,6 @@
 				5D87BB6511E3EBC200702B6F /* Debug */,
 				5D87BB6611E3EBC200702B6F /* Release */,
 				5D87BB6711E3EBC200702B6F /* Production */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Production;
-		};
-		5D87BBC811E3F47C00702B6F /* Build configuration list for PBXAggregateTarget "Copy Forwarding and ICU Headers" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				5D87BBC011E3F42A00702B6F /* Debug */,
-				5D87BBC111E3F42A00702B6F /* Release */,
-				5D87BBC211E3F42A00702B6F /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Production;

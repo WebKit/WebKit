@@ -856,7 +856,7 @@ OBJC_DOM_HEADERS=$(filter-out DOMDOMWindow.h DOMDOMMimeType.h DOMDOMPlugin.h,$(D
 
 all : $(OBJC_DOM_HEADERS)
 
-all : CharsetData.cpp WebCore.exp WebCore.LP64.exp
+all : CharsetData.cpp
 
 # --------
 
@@ -867,12 +867,18 @@ CharsetData.cpp : platform/text/mac/make-charset-table.pl platform/text/mac/char
 
 # --------
 
+ifneq ($(ACTION),installhdrs)
+
+all : WebCore.exp WebCore.LP64.exp
+
 WebCore.exp : $(BUILT_PRODUCTS_DIR)/WebCoreExportFileGenerator
 	$^ > $@
 
 # Switch NSRect, NSSize and NSPoint with their CG counterparts for the 64-bit exports file.
 WebCore.LP64.exp : WebCore.exp
 	cat $^ | sed -e s/7_NSRect/6CGRect/ -e s/7_NSSize/6CGSize/ -e s/8_NSPoint/7CGPoint/ > $@
+
+endif # installhdrs
 
 # --------
 

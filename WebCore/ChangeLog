@@ -1,3 +1,13 @@
+2010-07-06  Mark Rowe  <mrowe@apple.com>
+
+        Fix production builds on Mac OS X.
+
+        * DerivedSources.make: Don't try and generate the export file during the installhdrs build phase.
+        It's not useful until much later in the build process, and it's not possible to generate it until
+        after the tool has been compiled anyway.
+        * WebCore.xcodeproj/project.pbxproj: Tweak how the ICU and forwarding headers are copied so that it
+        works in production builds once more.
+
 2010-07-06  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Simon Fraser.
