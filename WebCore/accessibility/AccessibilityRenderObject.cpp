@@ -1101,8 +1101,12 @@ String AccessibilityRenderObject::stringValue() const
     if (!m_renderer || isPasswordField())
         return String();
     
-    if (ariaRoleAttribute() == StaticTextRole)
-        return text();
+    if (ariaRoleAttribute() == StaticTextRole) {
+        String staticText = text();
+        if (!staticText.length())
+            staticText = textUnderElement();
+        return staticText;
+    }
         
     if (m_renderer->isText())
         return textUnderElement();
@@ -1754,12 +1758,6 @@ bool AccessibilityRenderObject::accessibilityIsIgnored() const
     if (controlObject && !controlObject->exposesTitleUIElement() && controlObject->isCheckboxOrRadio())
         return true;
         
-    AccessibilityRole ariaRole = ariaRoleAttribute();
-    if (ariaRole == TextAreaRole || ariaRole == StaticTextRole) {
-        String ariaText = text();
-        return ariaText.isNull() || ariaText.isEmpty();
-    }    
-    
     // NOTE: BRs always have text boxes now, so the text box check here can be removed
     if (m_renderer->isText()) {
         // static text beneath MenuItems and MenuButtons are just reported along with the menu item, so it's ignored on an individual level
@@ -1784,7 +1782,7 @@ bool AccessibilityRenderObject::accessibilityIsIgnored() const
     if (isControl())
         return false;
     
-    if (ariaRole != UnknownRole)
+    if (ariaRoleAttribute() != UnknownRole)
         return false;
 
     if (!helpText().isEmpty())

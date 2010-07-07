@@ -1,3 +1,13 @@
+2010-07-07  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        AX: when an element uses role="text" but no aria-label, it should default to textUnderElement()
+        https://bugs.webkit.org/show_bug.cgi?id=41780
+
+        * platform/mac/accessibility/static-text-role-uses-text-under-element-expected.txt: Added.
+        * platform/mac/accessibility/static-text-role-uses-text-under-element.html: Added.
+
 2010-07-07  Alexey Proskuryakov  <ap@apple.com>
 
         Not reviewed, just updating test expectations.
