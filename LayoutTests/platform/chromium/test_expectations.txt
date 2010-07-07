@@ -2926,3 +2926,6 @@ BUG48144 LINUX : fast/js/activation-object-function-lifetime.html = CRASH PASS
 // Flaky.  Not sure why.  Trying to contact V8 folks about what's up.
 BUGPKASTING WIN LINUX : fast/js/function-apply-aliased.html = TEXT PASS
 BUG48239 DEBUG : fast/js/function-apply-many-args.html = TEXT
+
+// Needs rebaselining after http://trac.webkit.org/changeset/62662/
+BUG48452 LINUX MAC : svg/custom/use-font-face-crash.svg = IMAGE+TEXT

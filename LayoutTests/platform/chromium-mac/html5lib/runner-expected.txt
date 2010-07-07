@@ -4697,8 +4697,9 @@ resources/webkit01.dat:
 29
 30
 31
+33
 
-Test 15 of 32 in resources/webkit01.dat failed. Input:
+Test 15 of 33 in resources/webkit01.dat failed. Input:
 <p>Test</p<p>Test2</p>
 Got:
 | <html>
@@ -4714,7 +4715,7 @@ Expected:
 |     <p>
 |       "TestTest2"
 
-Test 17 of 32 in resources/webkit01.dat failed. Input:
+Test 17 of 33 in resources/webkit01.dat failed. Input:
 <A>test< /A>
 Got:
 | <html>
@@ -4730,7 +4731,7 @@ Expected:
 |     <a>
 |       "test< /A>"
 
-Test 20 of 32 in resources/webkit01.dat failed. Input:
+Test 20 of 33 in resources/webkit01.dat failed. Input:
 <body></br foo="bar"></body>
 Got:
 | <html>
@@ -4744,7 +4745,7 @@ Expected:
 |   <body>
 |     <br>
 
-Test 22 of 32 in resources/webkit01.dat failed. Input:
+Test 22 of 33 in resources/webkit01.dat failed. Input:
 <body></body></br foo="bar">
 Got:
 | <html>
@@ -4758,7 +4759,7 @@ Expected:
 |   <body>
 |     <br>
 
-Test 24 of 32 in resources/webkit01.dat failed. Input:
+Test 24 of 33 in resources/webkit01.dat failed. Input:
 <html><body></body></html><!-- Hi there -->
 Got:
 | <html>
@@ -4771,7 +4772,7 @@ Expected:
 |   <body>
 | <!--  Hi there  -->
 
-Test 26 of 32 in resources/webkit01.dat failed. Input:
+Test 26 of 33 in resources/webkit01.dat failed. Input:
 <html><body></body></html>x<!-- Hi there --></html><!-- Again -->
 Got:
 | <html>
@@ -4788,7 +4789,7 @@ Expected:
 |     <!--  Hi there  -->
 | <!--  Again  -->
 
-Test 27 of 32 in resources/webkit01.dat failed. Input:
+Test 27 of 33 in resources/webkit01.dat failed. Input:
 <html><body></body></html>x<!-- Hi there --></body></html><!-- Again -->
 Got:
 | <html>
@@ -4805,7 +4806,7 @@ Expected:
 |     <!--  Hi there  -->
 | <!--  Again  -->
 
-Test 28 of 32 in resources/webkit01.dat failed. Input:
+Test 28 of 33 in resources/webkit01.dat failed. Input:
 <html><body><ruby><div><rp>xx</rp></div></ruby></body></html>
 Got:
 | <html>
@@ -4824,7 +4825,7 @@ Expected:
 |       <rp>
 |         "xx"
 
-Test 29 of 32 in resources/webkit01.dat failed. Input:
+Test 29 of 33 in resources/webkit01.dat failed. Input:
 <html><body><ruby><div><rt>xx</rt></div></ruby></body></html>
 Got:
 | <html>
@@ -4843,7 +4844,7 @@ Expected:
 |       <rt>
 |         "xx"
 
-Test 30 of 32 in resources/webkit01.dat failed. Input:
+Test 30 of 33 in resources/webkit01.dat failed. Input:
 <html><frameset><!--1--><noframes>A</noframes><!--2--></frameset><!--3--><noframes>B</noframes><!--4--></html><!--5--><noframes>C</noframes><!--6-->
 Got:
 | <html>
@@ -4873,7 +4874,7 @@ Expected:
 | <!-- 5 -->
 | <!-- 6 -->
 
-Test 31 of 32 in resources/webkit01.dat failed. Input:
+Test 31 of 33 in resources/webkit01.dat failed. Input:
 <select><option>A<select><option>B<select><option>C<select><option>D<select><option>E<select><option>F<select><option>G<select>
 Got:
 | <html>
@@ -4916,6 +4917,31 @@ Expected:
 |       <select>
 |         <option>
 |           "G"
+
+Test 33 of 33 in resources/webkit01.dat failed. Input:
+<div><b></div><div><nobr>a<nobr>
+Got:
+| <html>
+|   <head>
+|   <body>
+|     <div>
+|       <b>
+|     <b>
+|       <div>
+|         <nobr>
+|           "a"
+|         <nobr>
+Expected:
+| <html>
+|   <head>
+|   <body>
+|     <div>
+|       <b>
+|     <div>
+|       <b>
+|         <nobr>
+|           "a"
+|         <nobr>
 resources/doctype01.dat: PASS
 
 resources/scriptdata01.dat: PASS
@@ -5135,7 +5161,7 @@ resources/tables01.dat:
 8
 9
 
-Test 3 of 14 in resources/tables01.dat failed. Input:
+Test 3 of 15 in resources/tables01.dat failed. Input:
 <table><col foo='bar'>
 Got:
 | <html>
@@ -5153,7 +5179,7 @@ Expected:
 |         <col>
 |           foo="bar"
 
-Test 7 of 14 in resources/tables01.dat failed. Input:
+Test 7 of 15 in resources/tables01.dat failed. Input:
 <table><select><option>3</select></table>
 Got:
 | <html>
@@ -5173,7 +5199,7 @@ Expected:
 |         "3"
 |     <table>
 
-Test 8 of 14 in resources/tables01.dat failed. Input:
+Test 8 of 15 in resources/tables01.dat failed. Input:
 <table><select><table></table></select></table>
 Got:
 | <html>
@@ -5191,7 +5217,7 @@ Expected:
 |     <table>
 |     <table>
 
-Test 9 of 14 in resources/tables01.dat failed. Input:
+Test 9 of 15 in resources/tables01.dat failed. Input:
 <table><select></table>
 Got:
 | <html>
