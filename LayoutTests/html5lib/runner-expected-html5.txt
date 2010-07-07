@@ -736,11 +736,7 @@ resources/tests7.dat:
 6
 7
 8
-15
 16
-17
-18
-19
 24
 27
 28
@@ -804,23 +800,6 @@ Expected:
 |   <head>
 |   <body>
 
-Test 15 of 30 in resources/tests7.dat failed. Input:
-<!doctype html><table><input type=hidDEN></table>
-Got:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <table>
-Expected:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <table>
-|       <input>
-|         type="hidDEN"
-
 Test 16 of 30 in resources/tests7.dat failed. Input:
 <!doctype html><table>X<input type=hidDEN></table>
 Got:
@@ -830,69 +809,14 @@ Got:
 |   <body>
 |     <table>
 |       "X"
+|       <input>
+|         type="hidDEN"
 Expected:
 | <!DOCTYPE html>
 | <html>
 |   <head>
 |   <body>
 |     "X"
-|     <table>
-|       <input>
-|         type="hidDEN"
-
-Test 17 of 30 in resources/tests7.dat failed. Input:
-<!doctype html><table>  <input type=hidDEN></table>
-Got:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <table>
-|       "  "
-Expected:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <table>
-|       "  "
-|       <input>
-|         type="hidDEN"
-
-Test 18 of 30 in resources/tests7.dat failed. Input:
-<!doctype html><table>  <input type='hidDEN'></table>
-Got:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <table>
-|       "  "
-Expected:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <table>
-|       "  "
-|       <input>
-|         type="hidDEN"
-
-Test 19 of 30 in resources/tests7.dat failed. Input:
-<!doctype html><table><input type=" hidden"><input type=hidDEN></table>
-Got:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <table>
-Expected:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <input>
-|       type=" hidden"
 |     <table>
 |       <input>
 |         type="hidDEN"

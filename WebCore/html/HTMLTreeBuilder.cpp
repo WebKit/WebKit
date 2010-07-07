@@ -874,8 +874,13 @@ void HTMLTreeBuilder::processStartTagForInTable(AtomicHTMLToken& token)
         return;
     }
     if (token.name() == inputTag) {
-        notImplemented();
-        return;
+        Attribute* typeAttribute = token.getAttributeItem(typeAttr);
+        if (!typeAttribute || equalIgnoringCase(typeAttribute->value(), "hidden")) {
+            parseError(token);
+            m_tree.insertSelfClosingElement(token);
+            return;
+        }
+        // Fall through to "anything else" case.
     }
     if (token.name() == formTag) {
         parseError(token);
