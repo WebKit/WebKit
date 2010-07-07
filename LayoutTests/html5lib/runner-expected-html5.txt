@@ -555,7 +555,6 @@ resources/tests6.dat:
 27
 30
 37
-42
 44
 45
 46
@@ -718,20 +717,6 @@ Got:
 |   <tr>
 Expected:
 | <tr>
-
-Test 42 of 51 in resources/tests6.dat failed. Input:
-<table><table>
-Got:
-| <html>
-|   <head>
-|   <body>
-|     <table>
-Expected:
-| <html>
-|   <head>
-|   <body>
-|     <table>
-|     <table>
 
 Test 44 of 51 in resources/tests6.dat failed. Input:
 </table><tr>
@@ -1177,6 +1162,7 @@ Got:
 |   <head>
 |   <body>
 |     "x"
+|     <table>
 |     <table>
 |       "x"
 Expected:
@@ -3581,7 +3567,6 @@ resources/isindex.dat: PASS
 
 resources/tables01.dat:
 4
-8
 
 Test 4 of 15 in resources/tables01.dat failed. Input:
 <table><colgroup></html>foo
@@ -3599,20 +3584,4 @@ Expected:
 |     "foo"
 |     <table>
 |       <colgroup>
-
-Test 8 of 15 in resources/tables01.dat failed. Input:
-<table><select><table></table></select></table>
-Got:
-| <html>
-|   <head>
-|   <body>
-|     <select>
-|     <table>
-Expected:
-| <html>
-|   <head>
-|   <body>
-|     <select>
-|     <table>
-|     <table>
 #EOF

@@ -16,6 +16,19 @@
 
         Reviewed by Eric Seidel.
 
+        Implement start table tag in table mode
+        https://bugs.webkit.org/show_bug.cgi?id=41736
+
+        * html/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::processStartTagForInTable):
+        (WebCore::HTMLTreeBuilder::processTableEndTagForInTable):
+        (WebCore::HTMLTreeBuilder::processEndTagForInTable):
+        * html/HTMLTreeBuilder.h:
+
+2010-07-06  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         Implement "act as if the banana has been peeled" (for lack of a better term)
         https://bugs.webkit.org/show_bug.cgi?id=41734
 

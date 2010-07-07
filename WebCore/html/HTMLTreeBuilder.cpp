@@ -852,7 +852,12 @@ void HTMLTreeBuilder::processStartTagForInTable(AtomicHTMLToken& token)
         return;
     }
     if (token.name() == tableTag) {
-        notImplemented();
+        parseError(token);
+        if (!processTableEndTagForInTable()) {
+            ASSERT(m_isParsingFragment);
+            return;
+        }
+        processStartTag(token);
         return;
     }
     if (token.name() == styleTag || token.name() == scriptTag) {
@@ -1570,18 +1575,24 @@ bool HTMLTreeBuilder::processTrEndTagForInRow()
     return true;
 }
 
+bool HTMLTreeBuilder::processTableEndTagForInTable()
+{
+    if (!m_tree.openElements()->inTableScope(tableTag)) {
+        ASSERT(m_isParsingFragment);
+        // FIXME: parse error.
+        return false;
+    }
+    m_tree.openElements()->popUntil(tableTag.localName());
+    m_tree.openElements()->pop();
+    resetInsertionModeAppropriately();
+    return true;
+}
+
 void HTMLTreeBuilder::processEndTagForInTable(AtomicHTMLToken& token)
 {
     ASSERT(token.type() == HTMLToken::EndTag);
     if (token.name() == tableTag) {
-        if (!m_tree.openElements()->inTableScope(token.name())) {
-            ASSERT(m_isParsingFragment);
-            parseError(token);
-            return;
-        }
-        m_tree.openElements()->popUntil(tableTag.localName());
-        m_tree.openElements()->pop();
-        resetInsertionModeAppropriately();
+        processTableEndTagForInTable();
         return;
     }
     if (token.name() == bodyTag
