@@ -82,7 +82,7 @@ svg/webarchive
 
 # This port doesn't support DeviceOrientation.
 fast/dom/DeviceOrientation
-fast/dom/Window/window-properties-on-device-orientation.html
+fast/dom/Window/window-properties-device-orientation.html
 
 # IndexedDB is not yet enabled.
 storage/indexeddb

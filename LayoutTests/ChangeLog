@@ -1,3 +1,25 @@
+2010-07-06  Steve Block  <steveblock@google.com>
+
+        Reviewed by Adam Barth.
+
+        DeviceOrientationEventConstructor should be exposed at window.DeviceOrientationEvent
+        https://bugs.webkit.org/show_bug.cgi?id=41685
+
+        This required fast/dom/Window/window-properties-on-device-orientation.html to be renamed
+        to fast/dom/Window/window-properties-device-orientation.html and updated.
+
+        * fast/dom/DeviceOrientation/script-tests/window-property.js:
+        * fast/dom/DeviceOrientation/window-property-expected.txt:
+        * fast/dom/Window/window-properties-device-orientation-expected.txt: Copied from LayoutTests/fast/dom/Window/window-properties-on-device-orientation-expected.txt.
+        * fast/dom/Window/window-properties-device-orientation.html: Copied from LayoutTests/fast/dom/Window/window-properties-on-device-orientation.html.
+        * fast/dom/Window/window-properties-on-device-orientation-expected.txt: Removed.
+        * fast/dom/Window/window-properties-on-device-orientation.html: Removed.
+        * fast/dom/Window/window-properties.html:
+        * platform/gtk/Skipped:
+        * platform/mac/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+
 2010-07-07  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r62645.

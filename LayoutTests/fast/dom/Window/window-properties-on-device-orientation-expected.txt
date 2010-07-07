@@ -1,4 +1,0 @@
-This test dumps all of the properties that are reachable from the window.ondeviceorientation object, along with their types.
-
-window.ondeviceorientation [null]
-

@@ -280,7 +280,7 @@ storage/indexeddb
 
 # This port doesn't support DeviceOrientation.
 fast/dom/DeviceOrientation
-fast/dom/Window/window-properties-on-device-orientation.html
+fast/dom/Window/window-properties-device-orientation.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=39908
 fast/dom/Geolocation/maximum-age.html
