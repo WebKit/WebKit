@@ -15,6 +15,25 @@
 
 2010-07-07  Simon Fraser  <simon.fraser@apple.com>
 
+        Reviewed by Darin Adler.
+
+        Document::ownerElement() should return an HTMLFrameOwnerElement
+        https://bugs.webkit.org/show_bug.cgi?id=41789
+
+        Change the return type of Document::ownerElement() to an HTMLFrameOwnerElement, for better
+        type checking. No behavioral changes.
+
+        * accessibility/mac/AccessibilityObjectWrapper.mm:
+        * dom/Document.cpp:
+        (WebCore::Document::ownerElement):
+        * dom/Document.h:
+        * editing/SelectionController.cpp:
+        * rendering/RenderBoxModelObject.cpp:
+        * rendering/RenderLayer.cpp:
+        * rendering/RenderView.cpp:
+
+2010-07-07  Simon Fraser  <simon.fraser@apple.com>
+
         Reviewed by Dan Bernstein.
 
         REGRESSION: GMail becomes blank after closing other tabs

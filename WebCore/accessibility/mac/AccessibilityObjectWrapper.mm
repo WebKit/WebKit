@@ -44,6 +44,7 @@
 #import "Frame.h"
 #import "HTMLAnchorElement.h"
 #import "HTMLAreaElement.h"
+#import "HTMLFrameOwnerElement.h"
 #import "HTMLImageElement.h"
 #import "HTMLInputElement.h"
 #import "HTMLTextAreaElement.h"

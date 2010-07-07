@@ -27,7 +27,7 @@
 #include "RenderBoxModelObject.h"
 
 #include "GraphicsContext.h"
-#include "HTMLElement.h"
+#include "HTMLFrameOwnerElement.h"
 #include "HTMLNames.h"
 #include "ImageBuffer.h"
 #include "Path.h"

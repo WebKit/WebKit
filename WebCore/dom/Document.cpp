@@ -3321,7 +3321,7 @@ CSSStyleDeclaration* Document::getOverrideStyle(Element*, const String&)
     return 0;
 }
 
-Element* Document::ownerElement() const
+HTMLFrameOwnerElement* Document::ownerElement() const
 {
     if (!frame())
         return 0;
