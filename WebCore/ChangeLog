@@ -1,3 +1,21 @@
+2010-07-06  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Darin Adler.
+
+        <use> on <font-face> causes crashes, if SVGUseElement gets detached
+        https://bugs.webkit.org/show_bug.cgi?id=41621
+
+        Do not call removeFromMappedElementSheet() from the destructor, as the call to document()->updateStyleSelector() that can potentially
+        cause the element to be reattached while destructing. It's not needed at all, because removedFromDocument() is called before destruction,
+        which already calls removeFromMappedElementSheet() - at this point it's still safe to update the style selector.
+
+        The crash is reproducable when using <use> on <font-face>.
+
+        Test: svg/custom/use-font-face-crash.svg
+
+        * svg/SVGFontFaceElement.cpp:
+        (WebCore::SVGFontFaceElement::~SVGFontFaceElement):
+
 2010-07-07  Hayato Ito  <hayato@chromium.org>
 
         Reviewed by Darin Adler.
