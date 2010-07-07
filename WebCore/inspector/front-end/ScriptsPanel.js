@@ -104,10 +104,10 @@ WebInspector.ScriptsPanel = function()
     this.sidebarButtonsElement.appendChild(this.stepOutButton);
 
     this.toggleBreakpointsButton = new WebInspector.StatusBarButton("", "toggle-breakpoints");
-    this.toggleBreakpointsButton.addEventListener("click", this.toggleBreakpointsClicked.bind(this), false);
+    this.toggleBreakpointsButton.addEventListener("click", this._toggleBreakpointsClicked.bind(this), false);
     this.sidebarButtonsElement.appendChild(this.toggleBreakpointsButton.element);
     // Breakpoints should be activated by default, so emulate a click to toggle on.
-    this.toggleBreakpointsClicked();
+    this._toggleBreakpointsClicked();
 
     this.debuggerStatusElement = document.createElement("div");
     this.debuggerStatusElement.id = "scripts-debugger-status";
@@ -162,7 +162,7 @@ WebInspector.ScriptsPanel = function()
     this._pauseOnExceptionButton = new WebInspector.StatusBarButton("", "scripts-pause-on-exceptions-status-bar-item", 3);
     this._pauseOnExceptionButton.addEventListener("click", this._togglePauseOnExceptions.bind(this), false);
     this._pauseOnExceptionButton.state = WebInspector.ScriptsPanel.PauseOnExceptionsState.DontPauseOnExceptions;
-    this._pauseOnExceptionButton.title = WebInspector.UIString("Don't pause on exceptions.\nClick to Pause on all exceptions.");
+    this._pauseOnExceptionButton.title = WebInspector.UIString("Don't pause on exceptions.\nClick to Pause on all exceptions."); 
 
     this._registerShortcuts();
 
@@ -217,7 +217,7 @@ WebInspector.ScriptsPanel.prototype = {
             delete this._attachDebuggerWhenShown;
         }
     },
-
+    
     hide: function()
     {
         if (this.visibleView)
@@ -276,7 +276,7 @@ WebInspector.ScriptsPanel.prototype = {
 
             // Remove script from the files list.
             script.filesSelectOption.parentElement.removeChild(script.filesSelectOption);
-
+            
             // Move breakpoints to the resource's frame.
             if (script._scriptView) {
                 var sourceFrame = script._scriptView.sourceFrame;
@@ -293,6 +293,9 @@ WebInspector.ScriptsPanel.prototype = {
     _breakpointAdded: function(event)
     {
         var breakpoint = event.data;
+
+        if (!this.breakpointsActivated)
+            this._toggleBreakpointsClicked();
 
         var sourceFrame;
         if (breakpoint.url) {
@@ -535,7 +538,7 @@ WebInspector.ScriptsPanel.prototype = {
         this._showScriptOrResource(scriptOrResource, {line: line, shouldHighlightLine: true});
     },
 
-    _scriptOrResourceForURLAndLine: function(url, line)
+    _scriptOrResourceForURLAndLine: function(url, line) 
     {
         var scriptWithMatchingUrl = null;
         for (var sourceID in this._sourceIDMap) {
@@ -607,7 +610,8 @@ WebInspector.ScriptsPanel.prototype = {
     _showScriptOrResource: function(scriptOrResource, options)
     {
         // options = {line:, shouldHighlightLine:, fromBackForwardAction:, initialLoad:}
-        options = options || {};
+        if (!options) 
+            options = {};
 
         if (!scriptOrResource)
             return;
@@ -689,7 +693,7 @@ WebInspector.ScriptsPanel.prototype = {
                 return;
             this._resourceForURLInFilesSelect[script.resource.url] = script.resource;
         }
-
+ 
         var displayName = script.sourceURL ? WebInspector.displayNameForURL(script.sourceURL) : WebInspector.UIString("(program)");
 
         var select = this.filesSelectElement;
@@ -808,7 +812,7 @@ WebInspector.ScriptsPanel.prototype = {
 
         this.resize();
     },
-
+    
     updatePauseOnExceptionsState: function(pauseOnExceptionsState)
     {
         if (pauseOnExceptionsState == WebInspector.ScriptsPanel.PauseOnExceptionsState.DontPauseOnExceptions)
@@ -967,7 +971,7 @@ WebInspector.ScriptsPanel.prototype = {
         InspectorBackend.stepOutOfFunctionInDebugger();
     },
 
-    toggleBreakpointsClicked: function()
+    _toggleBreakpointsClicked: function()
     {
         this.toggleBreakpointsButton.toggled = !this.toggleBreakpointsButton.toggled;
         if (this.toggleBreakpointsButton.toggled) {

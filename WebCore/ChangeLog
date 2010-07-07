@@ -1,3 +1,24 @@
+2010-07-07  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r62645.
+        http://trac.webkit.org/changeset/62645
+        https://bugs.webkit.org/show_bug.cgi?id=41757
+
+        "Broken inspector tests on several platforms" (Requested by
+        eseidel on #webkit).
+
+        * inspector/front-end/ScriptView.js:
+        (WebInspector.ScriptView.prototype._addBreakpoint):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel):
+        (WebInspector.ScriptsPanel.prototype._resourceLoadingFinished):
+        (WebInspector.ScriptsPanel.prototype._breakpointAdded):
+        (WebInspector.ScriptsPanel.prototype._scriptOrResourceForURLAndLine):
+        (WebInspector.ScriptsPanel.prototype._showScriptOrResource):
+        (WebInspector.ScriptsPanel.prototype._toggleBreakpointsClicked):
+        * inspector/front-end/SourceView.js:
+        (WebInspector.SourceView.prototype._addBreakpoint):
+
 2010-07-07  Steve Block  <steveblock@google.com>
 
         Reviewed by Adam Barth.

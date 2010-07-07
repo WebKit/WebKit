@@ -1,3 +1,15 @@
+2010-07-07  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r62645.
+        http://trac.webkit.org/changeset/62645
+        https://bugs.webkit.org/show_bug.cgi?id=41757
+
+        "Broken inspector tests on several platforms" (Requested by
+        eseidel on #webkit).
+
+        * src/js/DebuggerScript.js:
+        ():
+
 2010-07-07  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Yury Semikhatsky.

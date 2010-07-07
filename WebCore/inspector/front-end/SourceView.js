@@ -128,8 +128,6 @@ WebInspector.SourceView.prototype = {
     {
         var sourceID = this._sourceIDForLine(line);
         WebInspector.breakpointManager.setBreakpoint(sourceID, this.resource.url, line, true, "");
-        if (!WebInspector.panels.scripts.breakpointsActivated)
-            WebInspector.panels.scripts.toggleBreakpointsClicked();
     },
 
     _removeBreakpoint: function(breakpoint)
