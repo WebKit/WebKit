@@ -418,4 +418,14 @@ void HTMLElementStack::removeNonTopCommon(Element* element)
     ASSERT_NOT_REACHED();
 }
 
+#ifndef NDEBUG
+
+void HTMLElementStack::show()
+{
+    for (ElementRecord* record = m_top.get(); record; record = record->next())
+        record->element()->showNode();
+}
+
+#endif
+
 }

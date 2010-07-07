@@ -107,6 +107,10 @@ public:
     Element* headElement() const;
     Element* bodyElement() const;
 
+#ifndef NDEBUG
+    void show();
+#endif
+
 private:
     void pushCommon(PassRefPtr<Element>);
     void popCommon();

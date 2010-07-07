@@ -105,6 +105,10 @@ public:
     const Entry& at(size_t i) const { return m_entries[i]; }
     Entry& at(size_t i) { return m_entries[i]; }
 
+#ifndef NDEBUG
+    void show();
+#endif
+
 private:
     Vector<Entry> m_entries;
 };

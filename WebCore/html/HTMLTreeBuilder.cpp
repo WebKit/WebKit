@@ -1457,7 +1457,28 @@ void HTMLTreeBuilder::processEndTagForInBody(AtomicHTMLToken& token)
             processEndTag(token);
         return;
     }
-    if (token.name() == addressTag || token.name() == articleTag || token.name() == asideTag || token.name() == blockquoteTag || token.name() == buttonTag || token.name() == centerTag || token.name() == "details" || token.name() == dirTag || token.name() == divTag || token.name() == dlTag || token.name() == fieldsetTag || token.name() == "figure" || token.name() == footerTag || token.name() == headerTag || token.name() == hgroupTag || token.name() == listingTag || token.name() == menuTag || token.name() == navTag || token.name() == olTag || token.name() == preTag || token.name() == sectionTag || token.name() == ulTag) {
+    if (token.name() == addressTag
+        || token.name() == articleTag
+        || token.name() == asideTag
+        || token.name() == blockquoteTag
+        || token.name() == buttonTag
+        || token.name() == centerTag
+        || token.name() == "details"
+        || token.name() == dirTag
+        || token.name() == divTag
+        || token.name() == dlTag
+        || token.name() == fieldsetTag
+        || token.name() == "figure"
+        || token.name() == footerTag
+        || token.name() == headerTag
+        || token.name() == hgroupTag
+        || token.name() == listingTag
+        || token.name() == menuTag
+        || token.name() == navTag
+        || token.name() == olTag
+        || token.name() == preTag
+        || token.name() == sectionTag
+        || token.name() == ulTag) {
         if (!m_tree.openElements()->inScope(token.name())) {
             parseError(token);
             return;
@@ -1467,6 +1488,7 @@ void HTMLTreeBuilder::processEndTagForInBody(AtomicHTMLToken& token)
             parseError(token);
         m_tree.openElements()->popUntil(token.name());
         m_tree.openElements()->pop();
+        return;
     }
     if (token.name() == formTag) {
         RefPtr<Element> node = m_tree.takeForm();

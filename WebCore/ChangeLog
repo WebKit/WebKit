@@ -1,3 +1,26 @@
+2010-07-07  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        </div> pops too many <div> elements in body
+        https://bugs.webkit.org/show_bug.cgi?id=41751
+
+        Another missing return!
+
+        While tracking this down I added some debugging code to both the
+        open elements stack and the active formatting elements list.
+
+        I also unwrapped a very long || chain to make it more readable.
+
+        * html/HTMLElementStack.cpp:
+        (WebCore::HTMLElementStack::show):
+        * html/HTMLElementStack.h:
+        * html/HTMLFormattingElementList.cpp:
+        (WebCore::HTMLFormattingElementList::show):
+        * html/HTMLFormattingElementList.h:
+        * html/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::processEndTagForInBody):
+
 2010-07-06  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

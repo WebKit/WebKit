@@ -923,119 +923,8 @@ Expected:
 |     <select>
 |     <keygen>
 resources/tests8.dat:
-1
-2
-3
-4
-5
 6
 7
-
-Test 1 of 9 in resources/tests8.dat failed. Input:
-<div>
-<div></div>
-</span>x
-Got:
-| <html>
-|   <head>
-|   <body>
-|     <div>
-|       "
-"
-|       <div>
-|     "
-x"
-Expected:
-| <html>
-|   <head>
-|   <body>
-|     <div>
-|       "
-"
-|       <div>
-|       "
-x"
-
-Test 2 of 9 in resources/tests8.dat failed. Input:
-<div>x<div></div>
-</span>x
-Got:
-| <html>
-|   <head>
-|   <body>
-|     <div>
-|       "x"
-|       <div>
-|     "
-x"
-Expected:
-| <html>
-|   <head>
-|   <body>
-|     <div>
-|       "x"
-|       <div>
-|       "
-x"
-
-Test 3 of 9 in resources/tests8.dat failed. Input:
-<div>x<div></div>x</span>x
-Got:
-| <html>
-|   <head>
-|   <body>
-|     <div>
-|       "x"
-|       <div>
-|     "xx"
-Expected:
-| <html>
-|   <head>
-|   <body>
-|     <div>
-|       "x"
-|       <div>
-|       "xx"
-
-Test 4 of 9 in resources/tests8.dat failed. Input:
-<div>x<div></div>y</span>z
-Got:
-| <html>
-|   <head>
-|   <body>
-|     <div>
-|       "x"
-|       <div>
-|     "yz"
-Expected:
-| <html>
-|   <head>
-|   <body>
-|     <div>
-|       "x"
-|       <div>
-|       "yz"
-
-Test 5 of 9 in resources/tests8.dat failed. Input:
-<table><div>x<div></div>x</span>x
-Got:
-| <html>
-|   <head>
-|   <body>
-|     <div>
-|       "x"
-|       <div>
-|     <table>
-|       "xx"
-Expected:
-| <html>
-|   <head>
-|   <body>
-|     <div>
-|       "x"
-|       <div>
-|       "xx"
-|     <table>
 
 Test 6 of 9 in resources/tests8.dat failed. Input:
 x<table>x
@@ -3321,7 +3210,6 @@ resources/comments01.dat: PASS
 
 resources/adoption01.dat:
 3
-5
 
 Test 3 of 9 in resources/adoption01.dat failed. Input:
 <a>1<button>2</a>3</button>
@@ -3342,37 +3230,6 @@ Expected:
 |       <button>
 |         "2"
 |     "3"
-
-Test 5 of 9 in resources/adoption01.dat failed. Input:
-<a>1<div>2<div>3</a>4</div>5</div>
-Got:
-| <html>
-|   <head>
-|   <body>
-|     <a>
-|       "1"
-|     <div>
-|       <a>
-|         "2"
-|       <div>
-|         <a>
-|           "3"
-|         "4"
-|     "5"
-Expected:
-| <html>
-|   <head>
-|   <body>
-|     <a>
-|       "1"
-|     <div>
-|       <a>
-|         "2"
-|       <div>
-|         <a>
-|           "3"
-|         "4"
-|       "5"
 resources/inbody01.dat: PASS
 
 resources/isindex.dat: PASS
