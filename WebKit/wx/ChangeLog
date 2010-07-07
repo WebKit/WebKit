@@ -1,3 +1,10 @@
+2010-07-07  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Build fix after change in Page constructor.
+
+        * WebView.cpp:
+        (wxWebView::Create):
+
 2010-06-21  Kevin Ollivier  <kevino@theolliviers.com>
 
         Build fix after conversion of WebInterfaceSystem to Obj-C++.
