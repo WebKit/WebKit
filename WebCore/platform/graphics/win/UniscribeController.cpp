@@ -289,9 +289,16 @@ bool UniscribeController::shapeAndPlaceItem(const UChar* cp, unsigned i, const S
             roundingHackCharacters[clusters[k]] = m_currentCharacter + k + item.iCharPos;
 
         int boundary = k + m_currentCharacter + item.iCharPos;
-        if (boundary < m_run.length() &&
-            Font::isRoundingHackCharacter(*(str + k + 1)))
-            roundingHackWordBoundaries[clusters[k]] = boundary;
+        if (boundary < m_run.length()) {
+            // When at the last character in the str, don't look one past the end for a rounding hack character.
+            // Instead look ahead to the first character of next item, if there is a next one. 
+            if (k + 1 == len) {
+                if (i + 2 < m_items.size() // Check for at least 2 items remaining. The last item is a terminating item containing no characters.
+                    && Font::isRoundingHackCharacter(*(cp + m_items[i + 1].iCharPos)))
+                    roundingHackWordBoundaries[clusters[k]] = boundary;
+            } else if (Font::isRoundingHackCharacter(*(str + k + 1)))
+                roundingHackWordBoundaries[clusters[k]] = boundary;
+        }
     }
 
     // Populate our glyph buffer with this information.
