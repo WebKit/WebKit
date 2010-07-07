@@ -28,12 +28,10 @@
 
 WebInspector.ConsolePanel = function()
 {
-    WebInspector.Panel.call(this);
+    WebInspector.Panel.call(this, "console");
 }
 
 WebInspector.ConsolePanel.prototype = {
-    toolbarItemClass: "console",
-
     get toolbarItemLabel()
     {
         return WebInspector.UIString("Console");

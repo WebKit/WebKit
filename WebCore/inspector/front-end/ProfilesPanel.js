@@ -90,11 +90,10 @@ WebInspector.ProfileType.prototype = {
 
 WebInspector.ProfilesPanel = function()
 {
-    WebInspector.Panel.call(this);
+    WebInspector.Panel.call(this, "profiles");
 
     this.createSidebar();
 
-    this.element.addStyleClass("profiles");
     this._profileTypesByIdMap = {};
     this._profileTypeButtonsByIdMap = {};
 
@@ -128,8 +127,6 @@ WebInspector.ProfilesPanel = function()
 }
 
 WebInspector.ProfilesPanel.prototype = {
-    toolbarItemClass: "profiles",
-
     get toolbarItemLabel()
     {
         return WebInspector.UIString("Profiles");

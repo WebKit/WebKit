@@ -29,9 +29,7 @@
 
 WebInspector.ResourcesPanel = function()
 {
-    WebInspector.AbstractTimelinePanel.call(this);
-
-    this.element.addStyleClass("resources");
+    WebInspector.AbstractTimelinePanel.call(this, "resources");
 
     this._createPanelEnabler();
 
@@ -51,8 +49,6 @@ WebInspector.ResourcesPanel = function()
 }
 
 WebInspector.ResourcesPanel.prototype = {
-    toolbarItemClass: "resources",
-
     get toolbarItemLabel()
     {
         return WebInspector.UIString("Resources");
@@ -319,6 +315,7 @@ WebInspector.ResourcesPanel.prototype = {
     {
         this._resourceTrackingEnabled = true;
         this.reset();
+        this.restoreSidebarWidth();
     },
 
     resourceTrackingWasDisabled: function()

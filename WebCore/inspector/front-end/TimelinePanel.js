@@ -30,8 +30,7 @@
 
 WebInspector.TimelinePanel = function()
 {
-    WebInspector.Panel.call(this);
-    this.element.addStyleClass("timeline");
+    WebInspector.Panel.call(this, "timeline");
 
     this.element.appendChild(this._createTopPane());
     this.element.tabIndex = 0;
@@ -106,8 +105,6 @@ WebInspector.TimelinePanel.rowHeight = 18;
 WebInspector.TimelinePanel.shortRecordThreshold = 0.015;
 
 WebInspector.TimelinePanel.prototype = {
-    toolbarItemClass: "timeline",
-
     _createTopPane: function() {
         var topPaneElement = document.createElement("div");
         topPaneElement.id = "timeline-overview-panel";

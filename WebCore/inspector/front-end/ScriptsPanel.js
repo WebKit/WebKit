@@ -25,9 +25,7 @@
 
 WebInspector.ScriptsPanel = function()
 {
-    WebInspector.Panel.call(this);
-
-    this.element.addStyleClass("scripts");
+    WebInspector.Panel.call(this, "scripts");
 
     this.topStatusBar = document.createElement("div");
     this.topStatusBar.className = "status-bar";
@@ -184,8 +182,6 @@ WebInspector.ScriptsPanel.PauseOnExceptionsState = {
 };
 
 WebInspector.ScriptsPanel.prototype = {
-    toolbarItemClass: "scripts",
-
     get toolbarItemLabel()
     {
         return WebInspector.UIString("Scripts");
@@ -790,15 +786,20 @@ WebInspector.ScriptsPanel.prototype = {
     _endSidebarResizeDrag: function(event)
     {
         WebInspector.elementDragEnd(event);
-
         delete this._dragOffset;
+        this.saveSidebarWidth();
     },
 
     _sidebarResizeDrag: function(event)
     {
         var x = event.pageX + this._dragOffset;
         var newWidth = Number.constrain(window.innerWidth - x, Preferences.minScriptsSidebarWidth, window.innerWidth * 0.66);
+        this.setSidebarWidth(newWidth);
+        event.preventDefault();
+    },
 
+    setSidebarWidth: function(newWidth)
+    {
         this.sidebarElement.style.width = newWidth + "px";
         this.sidebarButtonsElement.style.width = newWidth + "px";
         this.viewsContainerElement.style.right = newWidth + "px";
@@ -806,7 +807,6 @@ WebInspector.ScriptsPanel.prototype = {
         this.sidebarResizeElement.style.right = (newWidth - 3) + "px";
 
         this.resize();
-        event.preventDefault();
     },
 
     updatePauseOnExceptionsState: function(pauseOnExceptionsState)

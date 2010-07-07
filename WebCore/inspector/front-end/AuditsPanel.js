@@ -30,7 +30,7 @@
 
 WebInspector.AuditsPanel = function()
 {
-    WebInspector.Panel.call(this);
+    WebInspector.Panel.call(this, "audits");
 
     this._constructCategories();
 
@@ -47,8 +47,6 @@ WebInspector.AuditsPanel = function()
     this.sidebarTree.appendChild(this.auditResultsTreeElement);
     this.auditResultsTreeElement.expand();
 
-    this.element.addStyleClass("audits");
-
     this.clearResultsButton = new WebInspector.StatusBarButton(WebInspector.UIString("Clear audit results."), "clear-status-bar-item");
     this.clearResultsButton.addEventListener("click", this._clearButtonClicked.bind(this), false);
 
@@ -60,8 +58,6 @@ WebInspector.AuditsPanel = function()
 }
 
 WebInspector.AuditsPanel.prototype = {
-    toolbarItemClass: "audits",
-
     get toolbarItemLabel()
     {
         return WebInspector.UIString("Audits");

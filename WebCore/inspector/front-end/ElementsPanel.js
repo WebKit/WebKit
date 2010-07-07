@@ -30,9 +30,7 @@
 
 WebInspector.ElementsPanel = function()
 {
-    WebInspector.Panel.call(this);
-
-    this.element.addStyleClass("elements");
+    WebInspector.Panel.call(this, "elements");
 
     this.contentElement = document.createElement("div");
     this.contentElement.id = "elements-content";
@@ -114,8 +112,6 @@ WebInspector.ElementsPanel = function()
 }
 
 WebInspector.ElementsPanel.prototype = {
-    toolbarItemClass: "elements",
-
     get toolbarItemLabel()
     {
         return WebInspector.UIString("Elements");
@@ -1121,20 +1117,23 @@ WebInspector.ElementsPanel.prototype = {
     rightSidebarResizerDragEnd: function(event)
     {
         WebInspector.elementDragEnd(event);
+        this.saveSidebarWidth();
     },
 
     rightSidebarResizerDrag: function(event)
     {
         var x = event.pageX;
         var newWidth = Number.constrain(window.innerWidth - x, Preferences.minElementsSidebarWidth, window.innerWidth * 0.66);
+        this.setSidebarWidth(newWidth);
+        event.preventDefault();
+    },
 
+    setSidebarWidth: function(newWidth)
+    {
         this.sidebarElement.style.width = newWidth + "px";
         this.contentElement.style.right = newWidth + "px";
         this.sidebarResizeElement.style.right = (newWidth - 3) + "px";
-
         this.treeOutline.updateSelection();
-
-        event.preventDefault();
     },
 
     _nodeSearchButtonClicked: function(event)

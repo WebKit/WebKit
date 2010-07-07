@@ -48,15 +48,16 @@ var Preferences = {
 WebInspector.populateApplicationSettings = function(settingsString)
 {
     WebInspector.applicationSettings._load(settingsString);
-    WebInspector.applicationSettings._installSetting("eventListenersFilter", "event-listeners-filter", "all");
-    WebInspector.applicationSettings._installSetting("colorFormat", "color-format", "hex");
-    WebInspector.applicationSettings._installSetting("resourcesLargeRows", "resources-large-rows", true);
-    WebInspector.applicationSettings._installSetting("watchExpressions", "watch-expressions", []);
-    WebInspector.applicationSettings._installSetting("lastViewedScriptFile", "last-viewed-script-file");
-    WebInspector.applicationSettings._installSetting("showInheritedComputedStyleProperties", "show-inherited-computed-style-properties", false);
-    WebInspector.applicationSettings._installSetting("showUserAgentStyles", "show-user-agent-styles", true);
-    WebInspector.applicationSettings._installSetting("resourceViewTab", "resource-view-tab", "content");
-    WebInspector.applicationSettings._installSetting("consoleHistory", "console-history", []);
+    WebInspector.applicationSettings.installSetting("eventListenersFilter", "event-listeners-filter", "all");
+    WebInspector.applicationSettings.installSetting("colorFormat", "color-format", "hex");
+    WebInspector.applicationSettings.installSetting("resourcesLargeRows", "resources-large-rows", true);
+    WebInspector.applicationSettings.installSetting("watchExpressions", "watch-expressions", []);
+    WebInspector.applicationSettings.installSetting("lastViewedScriptFile", "last-viewed-script-file");
+    WebInspector.applicationSettings.installSetting("showInheritedComputedStyleProperties", "show-inherited-computed-style-properties", false);
+    WebInspector.applicationSettings.installSetting("showUserAgentStyles", "show-user-agent-styles", true);
+    WebInspector.applicationSettings.installSetting("resourceViewTab", "resource-view-tab", "content");
+    WebInspector.applicationSettings.installSetting("consoleHistory", "console-history", []);
+
     WebInspector.applicationSettings.dispatchEventToListeners("loaded");
 }
 
@@ -69,6 +70,7 @@ WebInspector.populateSessionSettings = function(settingsString)
 WebInspector.Settings = function(sessionScope)
 {
     this._sessionScope = sessionScope;
+    this._defaultValues = {};
 }
 
 WebInspector.Settings.prototype = {
@@ -88,18 +90,18 @@ WebInspector.Settings.prototype = {
         }
     },
 
-    _installSetting: function(name, propertyName, defaultValue)
+    installSetting: function(name, propertyName, defaultValue)
     {
         this.__defineGetter__(name, this._get.bind(this, propertyName));
         this.__defineSetter__(name, this._set.bind(this, propertyName));
-        if (!(propertyName in this._store)) {
-            this._store[propertyName] = defaultValue;
-        }
+        this._defaultValues[propertyName] = defaultValue;
     },
 
     _get: function(propertyName)
     {
-        return this._store[propertyName];
+        if (propertyName in this._store)
+            return this._store[propertyName];
+        return this._defaultValues[propertyName];
     },
 
     _set: function(propertyName, newValue)

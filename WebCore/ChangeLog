@@ -1,3 +1,45 @@
+2010-07-06  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Inspector should remember the size of sidebars set by the user
+        https://bugs.webkit.org/show_bug.cgi?id=19207
+
+        * inspector/front-end/AbstractTimelinePanel.js:
+        (WebInspector.AbstractTimelinePanel):
+        * inspector/front-end/AuditsPanel.js:
+        (WebInspector.AuditsPanel):
+        * inspector/front-end/ConsolePanel.js:
+        (WebInspector.ConsolePanel):
+        * inspector/front-end/ElementsPanel.js:
+        (WebInspector.ElementsPanel.prototype.rightSidebarResizerDragEnd):
+        * inspector/front-end/Panel.js:
+        (WebInspector.Panel):
+        (WebInspector.Panel.prototype.get toolbarItemClass):
+        (WebInspector.Panel.prototype.show):
+        (WebInspector.Panel.prototype.createSidebar):
+        (WebInspector.Panel.prototype.get _sidebarWidthSettingName):
+        (WebInspector.Panel.prototype._endSidebarDragging):
+        (WebInspector.Panel.prototype.updateSidebarWidth):
+        (WebInspector.Panel.prototype.restoreSidebarWidth):
+        (WebInspector.Panel.prototype.saveSidebarWidth):
+        * inspector/front-end/ProfilesPanel.js:
+        (WebInspector.ProfilesPanel):
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.ResourcesPanel):
+        (WebInspector.ResourcesPanel.prototype.resourceTrackingWasEnabled):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel):
+        (WebInspector.ScriptsPanel.prototype._endSidebarResizeDrag):
+        (WebInspector.ScriptsPanel.prototype._sidebarResizeDrag):
+        (WebInspector.ScriptsPanel.prototype.setSidebarWidth):
+        * inspector/front-end/Settings.js:
+        (WebInspector.populateApplicationSettings):
+        * inspector/front-end/StoragePanel.js:
+        (WebInspector.StoragePanel):
+        * inspector/front-end/TimelinePanel.js:
+        (WebInspector.TimelinePanel):
+
 2010-07-05  Steve Block  <steveblock@google.com>
 
         Reviewed by Adam Barth.

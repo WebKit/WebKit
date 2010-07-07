@@ -28,9 +28,9 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.AbstractTimelinePanel = function()
+WebInspector.AbstractTimelinePanel = function(name)
 {
-    WebInspector.Panel.call(this);
+    WebInspector.Panel.call(this, name);
     this._items = [];
     this._staleItems = [];
 }

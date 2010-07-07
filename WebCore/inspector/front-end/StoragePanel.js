@@ -29,7 +29,7 @@
 
 WebInspector.StoragePanel = function(database)
 {
-    WebInspector.Panel.call(this);
+    WebInspector.Panel.call(this, "storage");
 
     this.createSidebar();
 
@@ -64,8 +64,6 @@ WebInspector.StoragePanel = function(database)
 }
 
 WebInspector.StoragePanel.prototype = {
-    toolbarItemClass: "storage",
-
     get toolbarItemLabel()
     {
         return WebInspector.UIString("Storage");
