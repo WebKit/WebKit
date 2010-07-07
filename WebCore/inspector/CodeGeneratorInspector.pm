@@ -13,18 +13,18 @@ $typeTransform{"InspectorClient"} = {
     "forward" => "InspectorClient",
     "header" => "InspectorClient.h",
 };
-$typeTransform{"RefPtr"} = {
-    "forwardHeader" => "wtf/RefPtr.h",
+$typeTransform{"PassRefPtr"} = {
+    "forwardHeader" => "wtf/PassRefPtr.h",
 };
 $typeTransform{"Object"} = {
-    "param" => "const RefPtr<InspectorObject>&",
+    "param" => "PassRefPtr<InspectorObject>",
     "retVal" => "PassRefPtr<InspectorObject>",
     "forward" => "InspectorObject",
     "header" => "InspectorValues.h",
     "push" => "push"
 };
 $typeTransform{"Array"} = {
-    "param" => "const RefPtr<InspectorArray>&",
+    "param" => "PassRefPtr<InspectorArray>",
     "retVal" => "PassRefPtr<InspectorArray>",
     "forward" => "InspectorArray",
     "header" => "InspectorValues.h",
@@ -140,7 +140,7 @@ sub GenerateInterface
 
     $discoveredTypes{"String"} = 1;
     $discoveredTypes{"InspectorClient"} = 1;
-    $discoveredTypes{"RefPtr"} = 1;
+    $discoveredTypes{"PassRefPtr"} = 1;
 
     push(@classDefinition, "class $className {");
     push(@classDefinition, "public:");

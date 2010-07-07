@@ -1,3 +1,47 @@
+2010-07-07  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: All RefPtr arguments and return values should be
+        changed to PassRefPtr whenever it is possible according to common practice.
+        https://bugs.webkit.org/show_bug.cgi?id=41759
+
+        * inspector/CodeGeneratorInspector.pm:
+        * inspector/InspectorTimelineAgent.cpp:
+        (WebCore::InspectorTimelineAgent::pushGCEventRecords):
+        (WebCore::InspectorTimelineAgent::didInstallTimer):
+        (WebCore::InspectorTimelineAgent::didRemoveTimer):
+        (WebCore::InspectorTimelineAgent::didScheduleResourceRequest):
+        (WebCore::InspectorTimelineAgent::willSendResourceRequest):
+        (WebCore::InspectorTimelineAgent::didFinishLoadingResource):
+        (WebCore::InspectorTimelineAgent::didMarkTimeline):
+        (WebCore::InspectorTimelineAgent::didMarkDOMContentEvent):
+        (WebCore::InspectorTimelineAgent::didMarkLoadEvent):
+        (WebCore::InspectorTimelineAgent::addRecordToTimeline):
+        (WebCore::InspectorTimelineAgent::setHeapSizeStatistic):
+        (WebCore::InspectorTimelineAgent::pushCurrentRecord):
+        * inspector/InspectorTimelineAgent.h:
+        (WebCore::InspectorTimelineAgent::TimelineRecordEntry::TimelineRecordEntry):
+        * inspector/TimelineRecordFactory.cpp:
+        (WebCore::TimelineRecordFactory::createGenericRecord):
+        (WebCore::TimelineRecordFactory::createGCEventData):
+        (WebCore::TimelineRecordFactory::createFunctionCallData):
+        (WebCore::TimelineRecordFactory::createEventDispatchData):
+        (WebCore::TimelineRecordFactory::createGenericTimerData):
+        (WebCore::TimelineRecordFactory::createTimerInstallData):
+        (WebCore::TimelineRecordFactory::createXHRReadyStateChangeData):
+        (WebCore::TimelineRecordFactory::createXHRLoadData):
+        (WebCore::TimelineRecordFactory::createEvaluateScriptData):
+        (WebCore::TimelineRecordFactory::createMarkTimelineData):
+        (WebCore::TimelineRecordFactory::createScheduleResourceRequestData):
+        (WebCore::TimelineRecordFactory::createResourceSendRequestData):
+        (WebCore::TimelineRecordFactory::createResourceReceiveResponseData):
+        (WebCore::TimelineRecordFactory::createResourceFinishData):
+        (WebCore::TimelineRecordFactory::createReceiveResourceData):
+        (WebCore::TimelineRecordFactory::createPaintData):
+        (WebCore::TimelineRecordFactory::createParseHTMLData):
+        * inspector/TimelineRecordFactory.h:
+
 2010-07-07  Antti Koivisto  <koivisto@iki.fi>
 
         Reviewed by Kenneth Rohde Christiansen.
