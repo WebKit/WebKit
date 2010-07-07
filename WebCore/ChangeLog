@@ -1,3 +1,16 @@
+2010-07-06  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Incorrect compositing order with negative z-index
+        https://bugs.webkit.org/show_bug.cgi?id=38959
+
+        Prerequisite: adopt new paintList() method that was added when painting compositing layer contents.
+        No behavioral changes.
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::paintIntoLayer):
+
 2010-07-07  Adam Barth  <abarth@webkit.org>
 
         Unreviewed.
