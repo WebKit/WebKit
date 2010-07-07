@@ -1627,7 +1627,6 @@ BUG23496 MAC : fast/forms/indeterminate.html = IMAGE
 BUG23496 MAC : fast/forms/input-appearance-height.html = IMAGE+TEXT
 BUG23496 MAC : fast/forms/input-value.html = IMAGE+TEXT
 // BUG23496 MAC : fast/forms/menulist-narrow-width.html = IMAGE
-BUG23496 MAC : fast/forms/menulist-no-overflow.html = IMAGE PASS
 BUG23496 MAC : fast/forms/radio-attr-order.html = IMAGE
 BUG23496 MAC : fast/forms/radio-nested-labels.html = IMAGE
 BUG23496 MAC : fast/forms/radio_checked.html = IMAGE
@@ -1636,8 +1635,6 @@ BUG23496 MAC : fast/forms/radio_checked_dynamic.html = IMAGE
 BUG23496 MAC : fast/inline/positionedLifetime.html = IMAGE
 BUG23496 MAC : fast/parser/bad-xml-slash.html = IMAGE
 BUG23496 MAC : fast/replaced/replaced-breaking.html = IMAGE
-BUG23496 MAC : fast/replaced/width100percent-checkbox.html = IMAGE PASS
-BUG23496 MAC : fast/replaced/width100percent-radio.html = IMAGE PASS
 BUG23496 MAC DEBUG : fast/text/textIteratorNilRenderer.html = IMAGE
 BUG23496 SLOW MAC RELEASE : fast/text/textIteratorNilRenderer.html = IMAGE
 BUG23496 MAC : fast/text/whitespace/normal-after-nowrap-breaking.html = IMAGE
@@ -1650,7 +1647,6 @@ BUG23496 MAC : tables/mozilla_expected_failures/core/captions2.html = IMAGE
 // Big button widgets are broken
 BUG23495 MAC : fast/forms/basic-buttons.html = IMAGE
 BUG23495 MAC : fast/forms/box-shadow-override.html = IMAGE+TEXT
-BUG23495 MAC : fast/forms/button-sizes.html = IMAGE PASS
 
 // Text declared as "monospace" with no size is bigger in Chromium
 BUG23494 MAC : css1/font_properties/font_family.html = IMAGE
