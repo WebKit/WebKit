@@ -1,3 +1,9 @@
+2010-07-07  Adam Roben  <aroben@apple.com>
+
+        Windows build fix
+
+        * Interfaces/WebKit.idl: Touched to force a build.
+
 2010-07-06  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Simon Fraser.
