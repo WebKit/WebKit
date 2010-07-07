@@ -1,3 +1,19 @@
+2010-07-07  Alexey Proskuryakov  <ap@apple.com>
+
+        Not reviewed, just updating test expectations.
+
+        https://bugs.webkit.org/show_bug.cgi?id=41156
+        Cross origin XMLHttpRequest should log the reason why connection failed
+
+        Synchronous resource loader on Tiger doesn't return a response if authentication failed.
+        It only returns an error, so WebKit cannot find out that the cross origin 401 response can
+        be passed to caller.        
+
+        Observable behavior is still the same (failure ot load), but an incorrect error is logged
+        to console.
+
+        * platform/mac-tiger/http/tests/xmlhttprequest/cross-origin-authorization-with-embedder-expected.txt: Copied from http/tests/xmlhttprequest/cross-origin-authorization-with-embedder-expected.txt.
+
 2010-07-06  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.
