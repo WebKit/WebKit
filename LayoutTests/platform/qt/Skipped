@@ -1568,7 +1568,6 @@ svg/hixie/rendering-model/003.xhtml
 svg/hixie/rendering-model/003a.xml
 svg/hixie/rendering-model/004.xhtml
 svg/hixie/shapes/path/001.xml
-svg/hixie/text/001-broken.xml
 svg/hixie/text/002.xml
 svg/hixie/text/003.html
 svg/hixie/text/003a.xml
@@ -4917,7 +4916,6 @@ tables/mozilla_expected_failures/marvin/x_table_rules_cols.xml
 tables/mozilla_expected_failures/marvin/x_table_rules_rows.xml
 tables/mozilla_expected_failures/other/empty_cells.html
 tables/mozilla_expected_failures/other/test4.html
-tables/mozilla/images/adforce_imgis_com.html
 tables/mozilla/marvin/body_col.html
 tables/mozilla/marvin/body_tbody.html
 tables/mozilla/marvin/body_tfoot.html
@@ -5440,7 +5438,6 @@ fast/js/sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Con
 
 # [Qt] Regression(r61749): inspector/debugger-pause-on-debugger-statement.html fails
 # https://bugs.webkit.org/show_bug.cgi?id=41147
-inspector/debugger-breakpoints-not-activated-on-reload.html
 inspector/debugger-pause-on-debugger-statement.html
 inspector/debugger-pause-in-eval-script.html
 inspector/debugger-proto-property.html

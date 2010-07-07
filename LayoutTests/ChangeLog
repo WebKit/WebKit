@@ -1,3 +1,19 @@
+2010-07-07  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed fix.
+
+        [Qt] Remove non-existent files from Skipped list, and 
+        add Qt specific expected result for svg/hixie/text/001.xml
+
+        * platform/qt/Skipped: Remove non-existent files.
+         - svg/hixie/text/001-broken.xml, because it was renamed by r61393.
+         - tables/mozilla/images/adforce_imgis_com.html, because it was removed by r61289.
+         - inspector/debugger-breakpoints-not-activated-on-reload.html, because it was removed by r62651.
+        * platform/qt/svg/hixie/text: Added.
+        * platform/qt/svg/hixie/text/001-expected.checksum: Added.
+        * platform/qt/svg/hixie/text/001-expected.png: Added.
+        * platform/qt/svg/hixie/text/001-expected.txt: Added.
+
 2010-07-06  Steve Block  <steveblock@google.com>
 
         Reviewed by Adam Barth.
