@@ -1,3 +1,17 @@
+2010-07-06  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Incorrect compositing order with negative z-index
+        https://bugs.webkit.org/show_bug.cgi?id=38959
+
+        Test with a compositing layer inside a negative z-index container.
+        
+        * compositing/z-order/negative-z-index-expected.checksum: Added.
+        * compositing/z-order/negative-z-index-expected.png: Added.
+        * compositing/z-order/negative-z-index-expected.txt: Added.
+        * compositing/z-order/negative-z-index.html: Added.
+
 2010-07-07  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Sam Weinig.

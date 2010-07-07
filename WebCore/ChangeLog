@@ -4,6 +4,23 @@
 
         Incorrect compositing order with negative z-index
         https://bugs.webkit.org/show_bug.cgi?id=38959
+        
+        When painting the contents of compositing layers whose phase is "GraphicsLayerPaintBackground"
+        (indicating that they are used for the background of elements with negative z-index children),
+        we need to paint the non-composited negative-z-order descendants at the end of the background phase, so
+        they appear behind composited negative-z-order descendants.
+
+        Test: compositing/z-order/negative-z-index.html
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::paintIntoLayer):
+
+2010-07-06  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Incorrect compositing order with negative z-index
+        https://bugs.webkit.org/show_bug.cgi?id=38959
 
         Prerequisite: adopt new paintList() method that was added when painting compositing layer contents.
         No behavioral changes.
