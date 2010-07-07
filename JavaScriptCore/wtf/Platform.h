@@ -972,6 +972,14 @@ on MinGW. See https://bugs.webkit.org/show_bug.cgi?id=29268 */
 
 #endif /* !defined(ENABLE_JIT) */
 
+#if !ENABLE(JIT)
+#define ENABLE_INTERPRETER 1
+#endif
+
+#if !(ENABLE(JIT) || ENABLE(INTERPRETER))
+#error You have to have at least one execution model enabled to build JSC
+#endif
+
 /* CPU architecture specific optimizations */
 #if CPU(ARM_TRADITIONAL)
 #if ENABLE(JIT) && !defined(ENABLE_JIT_OPTIMIZE_MOD) && WTF_ARM_ARCH_AT_LEAST(5)
@@ -1012,7 +1020,7 @@ on MinGW. See https://bugs.webkit.org/show_bug.cgi?id=29268 */
 #define JSC_HOST_CALL
 #endif
 
-#if COMPILER(GCC) && !ENABLE(JIT)
+#if COMPILER(GCC) && ENABLE(INTERPRETER)
 #define HAVE_COMPUTED_GOTO 1
 #endif
 

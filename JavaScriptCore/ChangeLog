@@ -1,3 +1,55 @@
+2010-07-06  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Make it possible to have both the JIT and Interpreter available in a single build
+        https://bugs.webkit.org/show_bug.cgi?id=41722
+
+        Separate the concept of !ENABLE(JIT) and ENABLE(INTERPRETER) and make it possible
+        to have both JIT and INTERPRETER enabled at the same time.  This doesn't add
+        support for mix mode execution, but it does allow a single build to contain all
+        the code needed to use either the interpreter or the jit.
+
+        If both ENABLE(INTERPRETER) and ENABLE(JIT) are true then setting the environment
+        variable JSC_FORCE_INTERPRETER will force JSC to use the interpreter.
+
+        This patch basically consists of replacing !ENABLE(JIT) with ENABLE(INTERPRETER),
+        or converting #if ENABLE(JIT) ... #else ... into #if ENABLE(JIT) ... #endif
+        #if ENABLE(INTERPRETER), etc.  There are also a few functions that need to be
+        renamed to resolve return type ambiguity.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::~CodeBlock):
+        (JSC::CodeBlock::shrinkToFit):
+        * bytecode/CodeBlock.h:
+        * interpreter/CallFrame.h:
+        (JSC::ExecState::returnVPC):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::unwindCallFrame):
+        (JSC::Interpreter::throwException):
+        (JSC::Interpreter::execute):
+        (JSC::Interpreter::executeCall):
+        (JSC::Interpreter::executeConstruct):
+        (JSC::Interpreter::prepareForRepeatCall):
+        (JSC::Interpreter::privateExecute):
+        (JSC::Interpreter::retrieveLastCaller):
+        * interpreter/Interpreter.h:
+        * runtime/ArrayPrototype.cpp:
+        (JSC::isNumericCompareFunction):
+        * runtime/Executable.cpp:
+        (JSC::EvalExecutable::generateJITCode):
+        (JSC::ProgramExecutable::generateJITCode):
+        (JSC::FunctionExecutable::generateJITCodeForCall):
+        (JSC::FunctionExecutable::generateJITCodeForConstruct):
+        (JSC::FunctionExecutable::reparseExceptionInfo):
+        (JSC::EvalExecutable::reparseExceptionInfo):
+        * runtime/JSFunction.cpp:
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::JSGlobalData):
+        * runtime/JSGlobalData.h:
+        (JSC::JSGlobalData::canUseJIT):
+        * wtf/Platform.h:
+
 2010-07-06  Darin Adler  <darin@apple.com>
 
         Reviewed by Adam Barth.

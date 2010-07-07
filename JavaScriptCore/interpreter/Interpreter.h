@@ -123,7 +123,7 @@ namespace JSC {
 
         JSValue execute(EvalExecutable*, CallFrame*, JSObject* thisObject, int globalRegisterOffset, ScopeChainNode*, JSValue* exception);
 
-#if !ENABLE(JIT)
+#if ENABLE(INTERPRETER)
         NEVER_INLINE bool resolve(CallFrame*, Instruction*, JSValue& exceptionValue);
         NEVER_INLINE bool resolveSkip(CallFrame*, Instruction*, JSValue& exceptionValue);
         NEVER_INLINE bool resolveGlobal(CallFrame*, Instruction*, JSValue& exceptionValue);
@@ -136,7 +136,7 @@ namespace JSC {
         void uncacheGetByID(CodeBlock*, Instruction* vPC);
         void tryCachePutByID(CallFrame*, CodeBlock*, Instruction*, JSValue baseValue, const PutPropertySlot&);
         void uncachePutByID(CodeBlock*, Instruction* vPC);        
-#endif // !ENABLE(JIT)
+#endif // ENABLE(INTERPRETER)
 
         NEVER_INLINE bool unwindCallFrame(CallFrame*&, JSValue, unsigned& bytecodeOffset, CodeBlock*&);
 

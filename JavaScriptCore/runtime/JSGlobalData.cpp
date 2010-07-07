@@ -58,6 +58,7 @@
 
 #if PLATFORM(MAC)
 #include "ProfilerServer.h"
+#include <CoreFoundation/CoreFoundation.h>
 #endif
 
 using namespace WTF;
@@ -155,6 +156,19 @@ JSGlobalData::JSGlobalData(GlobalDataType globalDataType, ThreadStackType thread
 {
 #if PLATFORM(MAC)
     startProfilerServerIfNeeded();
+#endif
+#if ENABLE(JIT) && ENABLE(INTERPRETER)
+#if PLATFORM(MAC)
+    CFStringRef canUseJITKey = CFStringCreateWithCString(0 , "JavaScriptCoreUseJIT", kCFStringEncodingMacRoman);
+    CFBooleanRef canUseJIT = (CFBooleanRef)CFPreferencesCopyAppValue(canUseJITKey, kCFPreferencesCurrentApplication);
+    m_canUseJIT = kCFBooleanTrue == canUseJIT;
+    CFRelease(canUseJIT);
+    CFRelease(canUseJITKey);
+#elif OS(UNIX)
+    m_canUseJIT = !getenv("JSC_FORCE_INTERPRETER");
+#else
+    m_canUseJIT = true;
+#endif
 #endif
 }
 

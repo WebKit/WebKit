@@ -358,7 +358,8 @@ namespace JSC {
         }
         
         bool functionRegisterForBytecodeOffset(unsigned bytecodeOffset, int& functionRegisterIndex);
-#else
+#endif
+#if ENABLE(INTERPRETER)
         unsigned bytecodeOffset(CallFrame*, Instruction* returnAddress)
         {
             return static_cast<Instruction*>(returnAddress) - instructions().begin();
@@ -416,11 +417,12 @@ namespace JSC {
         unsigned jumpTarget(int index) const { return m_jumpTargets[index]; }
         unsigned lastJumpTarget() const { return m_jumpTargets.last(); }
 
-#if !ENABLE(JIT)
+#if ENABLE(INTERPRETER)
         void addPropertyAccessInstruction(unsigned propertyAccessInstruction) { m_propertyAccessInstructions.append(propertyAccessInstruction); }
         void addGlobalResolveInstruction(unsigned globalResolveInstruction) { m_globalResolveInstructions.append(globalResolveInstruction); }
         bool hasGlobalResolveInstructionAtBytecodeOffset(unsigned bytecodeOffset);
-#else
+#endif
+#if ENABLE(JIT)
         size_t numberOfStructureStubInfos() const { return m_structureStubInfos.size(); }
         void addStructureStubInfo(const StructureStubInfo& stubInfo) { m_structureStubInfos.append(stubInfo); }
         StructureStubInfo& structureStubInfo(int index) { return m_structureStubInfos[index]; }
@@ -551,10 +553,11 @@ namespace JSC {
         RefPtr<SourceProvider> m_source;
         unsigned m_sourceOffset;
 
-#if !ENABLE(JIT)
+#if ENABLE(INTERPRETER)
         Vector<unsigned> m_propertyAccessInstructions;
         Vector<unsigned> m_globalResolveInstructions;
-#else
+#endif
+#if ENABLE(JIT)
         Vector<StructureStubInfo> m_structureStubInfos;
         Vector<GlobalResolveInfo> m_globalResolveInfos;
         Vector<CallLinkInfo> m_callLinkInfos;

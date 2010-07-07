@@ -167,6 +167,13 @@ namespace JSC {
         ExecutableAllocator executableAllocator;
 #endif
 
+#if ENABLE(JIT)
+#if ENABLE(INTERPRETER)
+        bool canUseJIT() { return m_canUseJIT; }
+#endif
+#else
+        bool canUseJIT() { return false; }
+#endif
         Lexer* lexer;
         Parser* parser;
         Interpreter* interpreter;
@@ -233,6 +240,9 @@ namespace JSC {
         JSGlobalData(GlobalDataType, ThreadStackType);
         static JSGlobalData*& sharedInstanceInternal();
         void createNativeThunk();
+#if ENABLE(JIT) && ENABLE(INTERPRETER)
+        bool m_canUseJIT;
+#endif
     };
 
 } // namespace JSC

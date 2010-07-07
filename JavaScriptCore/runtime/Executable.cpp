@@ -177,6 +177,9 @@ bool FunctionExecutable::compileForConstruct(ExecState*, ScopeChainNode* scopeCh
 
 void EvalExecutable::generateJITCode(ExecState* exec, ScopeChainNode* scopeChainNode)
 {
+#if ENABLE(INTERPRETER)
+    ASSERT(exec->globalData().canUseJIT());
+#endif
     CodeBlock* codeBlock = &bytecode(exec, scopeChainNode);
     m_jitCodeForCall = JIT::compile(scopeChainNode->globalData, codeBlock);
 
@@ -188,6 +191,9 @@ void EvalExecutable::generateJITCode(ExecState* exec, ScopeChainNode* scopeChain
 
 void ProgramExecutable::generateJITCode(ExecState* exec, ScopeChainNode* scopeChainNode)
 {
+#if ENABLE(INTERPRETER)
+    ASSERT(exec->globalData().canUseJIT());
+#endif
     CodeBlock* codeBlock = &bytecode(exec, scopeChainNode);
     m_jitCodeForCall = JIT::compile(scopeChainNode->globalData, codeBlock);
 
@@ -199,6 +205,9 @@ void ProgramExecutable::generateJITCode(ExecState* exec, ScopeChainNode* scopeCh
 
 void FunctionExecutable::generateJITCodeForCall(ExecState* exec, ScopeChainNode* scopeChainNode)
 {
+#if ENABLE(INTERPRETER)
+    ASSERT(exec->globalData().canUseJIT());
+#endif
     CodeBlock* codeBlock = bytecodeForCall(exec, scopeChainNode);
     m_jitCodeForCall = JIT::compile(scopeChainNode->globalData, codeBlock, &m_jitCodeForCallWithArityCheck);
 
@@ -210,6 +219,9 @@ void FunctionExecutable::generateJITCodeForCall(ExecState* exec, ScopeChainNode*
 
 void FunctionExecutable::generateJITCodeForConstruct(ExecState* exec, ScopeChainNode* scopeChainNode)
 {
+#if ENABLE(INTERPRETER)
+    ASSERT(exec->globalData().canUseJIT());
+#endif
     CodeBlock* codeBlock = bytecodeForConstruct(exec, scopeChainNode);
     m_jitCodeForConstruct = JIT::compile(scopeChainNode->globalData, codeBlock, &m_jitCodeForConstructWithArityCheck);
 
@@ -251,8 +263,13 @@ PassOwnPtr<ExceptionInfo> FunctionExecutable::reparseExceptionInfo(JSGlobalData*
     ASSERT(newCodeBlock->instructionCount() == codeBlock->instructionCount());
 
 #if ENABLE(JIT)
-    JITCode newJITCode = JIT::compile(globalData, newCodeBlock.get());
-    ASSERT(codeBlock->m_isConstructor ? newJITCode.size() == generatedJITCodeForConstruct().size() : newJITCode.size() == generatedJITCodeForCall().size());
+#if ENABLE(INTERPRETER)
+    if (globalData->canUseJIT())
+#endif
+    {
+        JITCode newJITCode = JIT::compile(globalData, newCodeBlock.get());
+        ASSERT(codeBlock->m_isConstructor ? newJITCode.size() == generatedJITCodeForConstruct().size() : newJITCode.size() == generatedJITCodeForCall().size());
+    }
 #endif
 
     globalData->functionCodeBlockBeingReparsed = 0;
@@ -278,8 +295,13 @@ PassOwnPtr<ExceptionInfo> EvalExecutable::reparseExceptionInfo(JSGlobalData* glo
     ASSERT(newCodeBlock->instructionCount() == codeBlock->instructionCount());
 
 #if ENABLE(JIT)
-    JITCode newJITCode = JIT::compile(globalData, newCodeBlock.get());
-    ASSERT(newJITCode.size() == generatedJITCodeForCall().size());
+#if ENABLE(INTERPRETER)
+    if (globalData->canUseJIT())
+#endif
+    {
+        JITCode newJITCode = JIT::compile(globalData, newCodeBlock.get());
+        ASSERT(newJITCode.size() == generatedJITCodeForCall().size());
+    }
 #endif
 
     return newCodeBlock->extractExceptionInfo();
