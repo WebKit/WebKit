@@ -102,6 +102,19 @@ struct _Ewk_View_Private_Data {
         Eina_Bool resizable_textareas:1;
         Eina_Bool private_browsing:1;
         Eina_Bool caret_browsing:1;
+        struct {
+            float w;
+            float h;
+            float init_scale;
+            float min_scale;
+            float max_scale;
+            float user_scalable;
+        } viewport;
+        struct {
+            float min_scale;
+            float max_scale;
+            Eina_Bool user_scalable:1;
+        } zoom_range;
     } settings;
     struct {
         struct {
@@ -576,6 +589,12 @@ static Ewk_View_Private_Data* _ewk_view_priv_new(Ewk_View_Smart_Data* sd)
     priv->settings.private_browsing = priv->page_settings->privateBrowsingEnabled();
     priv->settings.caret_browsing = priv->page_settings->caretBrowsingEnabled();
 
+    // Since there's no scale separated from zooming in webkit-efl, this functionality of
+    // viewport meta tag is implemented using zoom. When scale zoom is supported by webkit-efl,
+    // this functionality will be modified by the scale zoom patch.
+    priv->settings.zoom_range.min_scale = ZOOM_MIN;
+    priv->settings.zoom_range.max_scale = ZOOM_MAX;
+
     priv->main_frame = _ewk_view_core_frame_new(sd, priv, 0).get();
     if (!priv->main_frame) {
         CRITICAL("Could not create main frame.");
@@ -1001,6 +1020,11 @@ void ewk_view_fixed_layout_size_set(Evas_Object* o, Evas_Coord w, Evas_Coord h)
 {
     EWK_VIEW_SD_GET_OR_RETURN(o, sd);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv);
+
+    WebCore::FrameLoaderClientEfl* client = static_cast<WebCore::FrameLoaderClientEfl*>(priv->main_frame->loader()->client());
+    if (!client->getInitLayoutCompleted())
+        return;
+
     WebCore::FrameView* view = sd->_priv->main_frame->view();
     if (w <= 0 && h <= 0) {
         if (!priv->fixed_layout.use)
@@ -1757,14 +1781,22 @@ float ewk_view_zoom_get(const Evas_Object* o)
 Eina_Bool ewk_view_zoom_set(Evas_Object* o, float zoom, Evas_Coord cx, Evas_Coord cy)
 {
     EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
+    EWK_VIEW_PRIV_GET(sd, priv);
+
     EINA_SAFETY_ON_NULL_RETURN_VAL(sd->api, EINA_FALSE);
     EINA_SAFETY_ON_NULL_RETURN_VAL(sd->api->zoom_set, EINA_FALSE);
-    if (zoom < ZOOM_MIN) {
-        WRN("zoom level is < %f : %f", (double)ZOOM_MIN, (double)zoom);
+
+    if (!priv->settings.zoom_range.user_scalable) {
+        WRN("userScalable is false");
         return EINA_FALSE;
     }
-    if (zoom > ZOOM_MAX) {
-        WRN("zoom level is > %f : %f", (double)ZOOM_MAX, (double)zoom);
+
+    if (zoom < priv->settings.zoom_range.min_scale) {
+        WRN("zoom level is < %f : %f", (double)priv->settings.zoom_range.min_scale, (double)zoom);
+        return EINA_FALSE;
+    }
+    if (zoom > priv->settings.zoom_range.max_scale) {
+        WRN("zoom level is > %f : %f", (double)priv->settings.zoom_range.max_scale, (double)zoom);
         return EINA_FALSE;
     }
 
@@ -1827,14 +1859,22 @@ void ewk_view_zoom_weak_smooth_scale_set(Evas_Object* o, Eina_Bool smooth_scale)
 Eina_Bool ewk_view_zoom_weak_set(Evas_Object* o, float zoom, Evas_Coord cx, Evas_Coord cy)
 {
     EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
+    EWK_VIEW_PRIV_GET(sd, priv);
+
     EINA_SAFETY_ON_NULL_RETURN_VAL(sd->api, EINA_FALSE);
     EINA_SAFETY_ON_NULL_RETURN_VAL(sd->api->zoom_weak_set, EINA_FALSE);
-    if (zoom < ZOOM_MIN) {
-        WRN("zoom level is < %f : %f", (double)ZOOM_MIN, (double)zoom);
+
+    if (!priv->settings.zoom_range.user_scalable) {
+        WRN("userScalable is false");
         return EINA_FALSE;
     }
-    if (zoom > ZOOM_MAX) {
-        WRN("zoom level is > %f : %f", (double)ZOOM_MAX, (double)zoom);
+
+    if (zoom < priv->settings.zoom_range.min_scale) {
+        WRN("zoom level is < %f : %f", (double)priv->settings.zoom_range.min_scale, (double)zoom);
+        return EINA_FALSE;
+    }
+    if (zoom > priv->settings.zoom_range.max_scale) {
+        WRN("zoom level is > %f : %f", (double)priv->settings.zoom_range.max_scale, (double)zoom);
         return EINA_FALSE;
     }
 
@@ -1977,12 +2017,17 @@ Eina_Bool ewk_view_zoom_animated_set(Evas_Object* o, float zoom, float duration,
     EINA_SAFETY_ON_NULL_RETURN_VAL(sd->api, EINA_FALSE);
     EINA_SAFETY_ON_NULL_RETURN_VAL(sd->api->zoom_weak_set, EINA_FALSE);
 
-    if (zoom < ZOOM_MIN) {
-        WRN("zoom level is < %f : %f", (double)ZOOM_MIN, (double)zoom);
+    if (!priv->settings.zoom_range.user_scalable) {
+        WRN("userScalable is false");
         return EINA_FALSE;
     }
-    if (zoom > ZOOM_MAX) {
-        WRN("zoom level is > %f : %f", (double)ZOOM_MAX, (double)zoom);
+
+    if (zoom < priv->settings.zoom_range.min_scale) {
+        WRN("zoom level is < %f : %f", (double)priv->settings.zoom_range.min_scale, (double)zoom);
+        return EINA_FALSE;
+    }
+    if (zoom > priv->settings.zoom_range.max_scale) {
+        WRN("zoom level is > %f : %f", (double)priv->settings.zoom_range.max_scale, (double)zoom);
         return EINA_FALSE;
     }
 
@@ -3709,4 +3754,149 @@ void ewk_view_download_request(Evas_Object* o, Ewk_Download* download)
 {
     DBG("view=%p", o);
     evas_object_smart_callback_call(o, "download,request", download);
+}
+
+/**
+ * @internal
+ * Reports the viewport has changed.
+ *
+ * @param o view.
+ * @param w width.
+ * @param h height.
+ * @param init_scale initialScale value.
+ * @param max_scale maximumScale value.
+ * @param min_scale minimumScale value.
+ * @param user_scalable userscalable flag.
+ *
+ * Emits signal: "viewport,changed" with no parameters.
+ */
+void ewk_view_viewport_set(Evas_Object *o, float w, float h, float init_scale, float max_scale, float min_scale, float user_scalable)
+{
+    EWK_VIEW_SD_GET(o, sd);
+    EWK_VIEW_PRIV_GET(sd, priv);
+
+    priv->settings.viewport.w = w;
+    priv->settings.viewport.h = h;
+    priv->settings.viewport.init_scale = init_scale;
+    priv->settings.viewport.min_scale = min_scale;
+    priv->settings.viewport.max_scale = max_scale;
+    priv->settings.viewport.user_scalable = user_scalable;
+
+    evas_object_smart_callback_call(o, "viewport,changed", 0);
+}
+
+/**
+ * Gets data of viewport meta tag.
+ *
+ * @param o view.
+ * @param w width.
+ * @param h height.
+ * @param init_scale initial Scale value.
+ * @param max_scale maximum Scale value.
+ * @param min_scale minimum Scale value.
+ * @param user_scalable user Scalable value.
+ */
+void ewk_view_viewport_get(Evas_Object *o, float* w, float* h, float* init_scale, float* max_scale, float* min_scale, float* user_scalable)
+{
+    EWK_VIEW_SD_GET(o, sd);
+    EWK_VIEW_PRIV_GET(sd, priv);
+
+    if (w)
+        *w = priv->settings.viewport.w;
+    if (h)
+        *h = priv->settings.viewport.h;
+    if (init_scale)
+        *init_scale = priv->settings.viewport.init_scale;
+    if (max_scale)
+        *max_scale = priv->settings.viewport.max_scale;
+    if (min_scale)
+        *min_scale = priv->settings.viewport.min_scale;
+    if (user_scalable)
+        *user_scalable = priv->settings.viewport.user_scalable;
+}
+
+/**
+ * Sets the zoom range.
+ *
+ * @param o view.
+ * @param min_scale minimum value of zoom range.
+ * @param max_scale maximum value of zoom range.
+ * 
+ * @return @c EINA_TRUE if zoom range is changed, @c EINA_FALSE if not or failure.
+ */
+Eina_Bool ewk_view_zoom_range_set(Evas_Object* o, float min_scale, float max_scale)
+{
+    EWK_VIEW_SD_GET(o, sd);
+    EWK_VIEW_PRIV_GET(sd, priv);
+
+    if (max_scale < min_scale) {
+        WRN("min_scale is larger than max_scale");
+        return EINA_FALSE;
+    }
+
+    priv->settings.zoom_range.min_scale = min_scale;
+    priv->settings.zoom_range.max_scale = max_scale;
+
+    return EINA_TRUE;
+}
+
+/**
+ * Gets the minimum value of zoom range.
+ *
+ * @param o view.
+ *
+ * @return minimum value of zoom range.
+ */
+float ewk_view_zoom_range_min_get(Evas_Object* o)
+{
+    EWK_VIEW_SD_GET(o, sd);
+    EWK_VIEW_PRIV_GET(sd, priv);
+
+    return priv->settings.zoom_range.min_scale;
+}
+
+/**
+ * Gets the maximum value of zoom range.
+ *
+ * @param o view.
+ *
+ * @return maximum value of zoom range.
+ */
+float ewk_view_zoom_range_max_get(Evas_Object* o)
+{
+    EWK_VIEW_SD_GET(o, sd);
+    EWK_VIEW_PRIV_GET(sd, priv);
+
+    return priv->settings.zoom_range.max_scale;
+}
+
+/**
+ * Sets if zoom is enabled.
+ *
+ * @param o view.
+ * @param user_scalable boolean pointer in which to enable zoom. It defaults
+ * to @c EINA_TRUE.
+ */
+void ewk_view_user_scalable_set(Evas_Object* o, Eina_Bool user_scalable)
+{
+    EWK_VIEW_SD_GET(o, sd);
+    EWK_VIEW_PRIV_GET(sd, priv);
+
+    priv->settings.zoom_range.user_scalable = user_scalable;
+}
+
+/**
+ * Gets if zoom is enabled.
+ *
+ * @param o view.
+ * @param user_scalable where to return the current user scalable value.
+ *
+ * @return @c EINA_TRUE if zoom is enabled, @c EINA_FALSE if not.
+ */
+Eina_Bool ewk_view_user_scalable_get(Evas_Object* o)
+{
+    EWK_VIEW_SD_GET(o, sd);
+    EWK_VIEW_PRIV_GET(sd, priv);
+
+    return priv->settings.zoom_range.user_scalable;
 }

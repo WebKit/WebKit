@@ -47,6 +47,7 @@
 
 #define DEFAULT_WIDTH      800
 #define DEFAULT_HEIGHT     600
+#define DEFAULT_ZOOM_INIT  1.0
 
 #define info(format, args...)       \
     do {                            \
@@ -125,6 +126,15 @@ static const Ecore_Getopt options = {
     }
 };
 
+typedef struct _Viewport {
+    int w;
+    int h;
+    float initScale;
+    float minScale;
+    float maxScale;
+    Eina_Bool userScalable;
+} Viewport;
+
 typedef struct _ELauncher {
     Ecore_Evas *ee;
     Evas *evas;
@@ -132,6 +142,7 @@ typedef struct _ELauncher {
     Evas_Object *browser;
     const char *theme;
     const char *userAgent;
+    Viewport viewport;
 } ELauncher;
 
 static void browserDestroy(Ecore_Evas *ee);
@@ -223,6 +234,23 @@ title_set(Ecore_Evas *ee, const char *title, int progress)
         return;
 
     ecore_evas_title_set(ee, label);
+}
+
+/**
+ * This is en example function to adjust viewport via viewport tag's arguments.
+ * Application can invoke this function in order to adjust viewport tag when it is required.
+ */
+static void
+viewport_set()
+{
+    ELauncher *app;
+    app = (ELauncher*) eina_list_data_get(windows);
+
+    ewk_view_fixed_layout_size_set(app->browser, app->viewport.w, app->viewport.h);
+    ewk_view_zoom_set(app->browser, app->viewport.initScale, 0, 0);
+    if (!ewk_view_zoom_range_set(app->browser, app->viewport.minScale, app->viewport.maxScale))
+        info(" Fail to set zoom range. minScale = %f, maxScale = %f\n", app->viewport.minScale, app->viewport.maxScale);
+    ewk_view_user_scalable_set(app->browser, app->viewport.userScalable);
 }
 
 static void
@@ -343,6 +371,48 @@ on_tooltip_text_set(void* user_data, Evas_Object* webview, void* event_info)
     const char *text = (const char *)event_info;
     if (text && *text != '\0')
         info("%s\n", text);
+}
+
+/**
+ * "viewport,changed" signal will be always emitted regardless of the viewport existence.
+ *
+ * If you don't want to process the viewport tag, you can either do nothing in this callback
+ * or simply ignore the signal in your application.
+ * 
+ * More information about this can be found at http://developer.apple.com/safari/library/docum
+ * entation/appleapplications/reference/safariwebcontent/usingtheviewport/usingtheviewport.html
+ */
+static void
+on_viewport_changed(void* user_data, Evas_Object* webview, void* event_info)
+{
+    ELauncher *app = (ELauncher *)user_data;
+
+    float w, h, initScale, minScale, maxScale, userScalable;
+
+    ewk_view_viewport_get(webview, &w, &h, &initScale, &maxScale, &minScale, &userScalable);
+
+    /**
+     * If there is no argument in viewport tag, argument's value is -1.
+     */
+    if ((int)w == -1)
+        w = DEFAULT_WIDTH;
+    if ((int)h == -1)
+        h = DEFAULT_HEIGHT;
+    if ((int)initScale == -1)
+        initScale = DEFAULT_ZOOM_INIT; // There's no scale separated from zooming in webkit-efl.
+    if ((int)minScale == -1)
+        minScale = ewk_view_zoom_range_min_get(webview);
+    if ((int)maxScale == -1)
+        maxScale = ewk_view_zoom_range_max_get(webview);
+    if ((int)userScalable == -1)
+        userScalable = EINA_TRUE;
+
+    app->viewport.w = (int)w;
+    app->viewport.h = (int)h;
+    app->viewport.initScale = initScale;
+    app->viewport.minScale = minScale;
+    app->viewport.maxScale = maxScale;
+    app->viewport.userScalable = (Eina_Bool)userScalable;
 }
 
 static void
@@ -579,6 +649,7 @@ browserCreate(const char *url, const char *theme, const char *userAgent, Eina_Re
     evas_object_smart_callback_add(app->browser, "title,changed", on_title_changed, app);
     evas_object_smart_callback_add(app->browser, "load,progress", on_progress, app);
     evas_object_smart_callback_add(app->browser, "load,finished", on_load_finished, app);
+    evas_object_smart_callback_add(app->browser, "viewport,changed", on_viewport_changed, app);
 
     evas_object_smart_callback_add(app->browser, "toolbars,visible,set", on_toolbars_visible_set, app);
     evas_object_smart_callback_add(app->browser, "toolbars,visible,get", on_toolbars_visible_get, app);

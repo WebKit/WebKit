@@ -1,3 +1,42 @@
+2010-07-07  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [EFL] EFLWebKit doesn't support viewport meta tag.
+        Support viewport meta tag on EFL Port.
+        https://bugs.webkit.org/show_bug.cgi?id=40278
+
+        * efl/EWebLauncher/main.c: Process 'viewport,changed' signal.
+        (viewport_set):
+        (on_viewport_changed): Add a callback function for the 'viewport,changed' signal.
+        (browserCreate): Register the callback function for the 'viewport,changed' signal.
+        * efl/WebCoreSupport/ChromeClientEfl.cpp: Implement method to process viewport tag.
+        (WebCore::ChromeClientEfl::didReceiveViewportArguments):
+        * efl/WebCoreSupport/ChromeClientEfl.h: Define method to process viewport tag.
+        * efl/WebCoreSupport/FrameLoaderClientEfl.cpp:
+        (WebCore::FrameLoaderClientEfl::FrameLoaderClientEfl): Implement a function to set layout
+        when website doesn't contain viewport tag.
+        (WebCore::FrameLoaderClientEfl::dispatchDidCommitLoad):
+        (WebCore::FrameLoaderClientEfl::dispatchDidFirstLayout):
+        * efl/WebCoreSupport/FrameLoaderClientEfl.h:
+        (WebCore::FrameLoaderClientEfl::setInitLayoutCompleted):
+        (WebCore::FrameLoaderClientEfl::getInitLayoutCompleted):
+        * efl/ewk/ewk_private.h: Added internal APIs to process viewport tag.
+        * efl/ewk/ewk_view.cpp: Added APIs to process and to handle viewport tag.
+        (_ewk_view_priv_new):
+        (ewk_view_fixed_layout_size_set):
+        (ewk_view_zoom_set):
+        (ewk_view_zoom_weak_set):
+        (ewk_view_zoom_animated_set):
+        (ewk_view_viewport_set): Reports that viewport has changed.
+        (ewk_view_viewport_get): Reports that viewport has changed.
+        (ewk_view_zoom_range_set): Sets the zoom range.
+        (ewk_view_zoom_range_min_get): Gets minimum value of zoom range.
+        (ewk_view_zoom_range_max_get): Gets maximum value of zoom range.
+        (ewk_view_user_scalable_set): Sets if zoom is enabled.
+        (ewk_view_user_scalable_get): Gets if zoom is enabled.
+        * efl/ewk/ewk_view.h:
+
 2010-07-07  Rafael Antognolli  <antognolli@profusion.mobi>
 
         Reviewed by Adam Barth.

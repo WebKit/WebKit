@@ -47,6 +47,7 @@
 #include "KURL.h"
 #include "NotImplemented.h"
 #include "PlatformString.h"
+#include "ViewportArguments.h"
 #include "WindowFeatures.h"
 #include "ewk_private.h"
 #include <Ecore_Evas.h>
@@ -502,6 +503,15 @@ void ChromeClientEfl::iconForFiles(const Vector<String, 0u>&, PassRefPtr<FileCho
 void ChromeClientEfl::chooseIconForFiles(const Vector<String>&, FileChooser*)
 {
     notImplemented();
+}
+
+void ChromeClientEfl::didReceiveViewportArguments(Frame* frame, const ViewportArguments& arguments) const
+{
+    FrameLoaderClientEfl* client = static_cast<FrameLoaderClientEfl*>(frame->loader()->client());
+    if (client->getInitLayoutCompleted())
+        return;
+
+    ewk_view_viewport_set(m_view, arguments.width, arguments.height, arguments.initialScale, arguments.minimumScale, arguments.maximumScale, arguments.userScalable);
 }
 
 }

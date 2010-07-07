@@ -49,6 +49,7 @@
 #include "ProgressTracker.h"
 #include "RenderPart.h"
 #include "ResourceRequest.h"
+#include "ViewportArguments.h"
 #include "ewk_private.h"
 #include <wtf/text/CString.h>
 
@@ -70,6 +71,7 @@ FrameLoaderClientEfl::FrameLoaderClientEfl(Evas_Object *view)
     , m_customUserAgent("")
     , m_pluginView(0)
     , m_hasSentResponseToPlugin(false)
+    , m_initLayoutCompleted(false)
 {
 }
 
@@ -575,11 +577,16 @@ void FrameLoaderClientEfl::dispatchDidChangeIcons()
 
 void FrameLoaderClientEfl::dispatchDidCommitLoad()
 {
+    m_initLayoutCompleted = false;
+
     ewk_frame_uri_changed(m_frame);
     if (ewk_view_frame_main_get(m_view) != m_frame)
         return;
     ewk_view_title_set(m_view, 0);
     ewk_view_uri_changed(m_view);
+
+    ViewportArguments arguments;
+    ewk_view_viewport_set(m_view, arguments.width, arguments.height, arguments.initialScale, arguments.minimumScale, arguments.maximumScale, arguments.userScalable);
 }
 
 void FrameLoaderClientEfl::dispatchDidFinishDocumentLoad()
@@ -590,7 +597,7 @@ void FrameLoaderClientEfl::dispatchDidFinishDocumentLoad()
 void FrameLoaderClientEfl::dispatchDidFirstLayout()
 {
     // emit m_frame->initialLayoutCompleted();
-    notImplemented();
+    m_initLayoutCompleted = true;
 }
 
 void FrameLoaderClientEfl::dispatchDidFirstVisuallyNonEmptyLayout()
