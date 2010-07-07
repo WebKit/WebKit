@@ -315,10 +315,13 @@ void Heap::freeBlocks()
 
     m_heap.nextCell = 0;
     m_heap.nextBlock = 0;
-    DeadObjectIterator it(m_heap, m_heap.nextBlock, m_heap.nextCell);
-    DeadObjectIterator end(m_heap, m_heap.usedBlocks);
-    for ( ; it != end; ++it)
-        (*it)->~JSCell();
+
+    {
+        DeadObjectIterator it(m_heap, m_heap.nextBlock, m_heap.nextCell);
+        DeadObjectIterator end(m_heap, m_heap.usedBlocks);
+        for ( ; it != end; ++it)
+            (*it)->~JSCell();
+    }
 
     ASSERT(!protectedObjectCount());
 
