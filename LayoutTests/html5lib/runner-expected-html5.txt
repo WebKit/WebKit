@@ -3051,25 +3051,11 @@ Expected:
 resources/tests14.dat: PASS
 
 resources/tests15.dat:
-5
 7
 8
 9
 10
 11
-
-Test 5 of 14 in resources/tests15.dat failed. Input:
-<html></html><!-- foo -->
-Got:
-| <html>
-|   <!--  foo  -->
-|   <head>
-|   <body>
-Expected:
-| <html>
-|   <head>
-|   <body>
-| <!--  foo  -->
 
 Test 7 of 14 in resources/tests15.dat failed. Input:
 <!doctype html><table> X<meta></table>
