@@ -2928,4 +2928,4 @@ BUGPKASTING WIN LINUX : fast/js/function-apply-aliased.html = TEXT PASS
 BUG48239 DEBUG : fast/js/function-apply-many-args.html = TEXT
 
 // Needs rebaselining after http://trac.webkit.org/changeset/62662/
-BUG48452 LINUX MAC : svg/custom/use-font-face-crash.svg = IMAGE+TEXT
+BUG48452 LINUX MAC : svg/custom/use-font-face-crash.svg = IMAGE+TEXT IMAGE

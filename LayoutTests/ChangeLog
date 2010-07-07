@@ -2,6 +2,14 @@
 
         Unreviewed.
 
+        [chromium] Update more expectations.
+
+        * platform/chromium/test_expectations.txt:
+
+2010-07-07  Vitaly Repeshko  <vitalyr@chromium.org>
+
+        Unreviewed.
+
         [chromium] Update expectations.
 
         * platform/chromium-mac/html5lib/runner-expected.txt:
