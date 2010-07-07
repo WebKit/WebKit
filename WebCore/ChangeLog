@@ -1,3 +1,36 @@
+2010-07-07  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        REGRESSION: GMail becomes blank after closing other tabs
+        https://bugs.webkit.org/show_bug.cgi?id=40421
+
+        RenderLayerCompositor's attach/detachRootPlatformLayer methods use
+        setNeedsStyleRecalc() in order to trigger acclerated compositing layers
+        to be hooked together across iframe boundaries. However, it was possible
+        for these to get called while inside of Document::recalcStyle(), which
+        is bad because it can cause the recalc to fail to get processed.
+        
+        Fix this by using the existing queuePostAttachCallback() functionality
+        to delay the call to setNeedsStyleRecalc() if post-attach callbacks 
+        are suspended (indicating that we're inside recalcStyle()).
+        
+        No new tests because I wasn't able to make a test that shows the problem.
+
+        * dom/ContainerNode.h: Make queuePostAttachCallback() public.
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::postAttachCallbacksAreSuspended): Added; returns
+        whether s_attachDepth is non-zero.
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::attachRootPlatformLayer): Call scheduleNeedsStyleRecalc()
+        instead of setNeedsStyleRecalc().
+        (WebCore::RenderLayerCompositor::detachRootPlatformLayer): Ditto.
+        (WebCore::needsStyleRecalcCallback): Here we call setNeedsStyleRecalc().
+        (WebCore::RenderLayerCompositor::scheduleNeedsStyleRecalc):
+        (WebCore::RenderLayerCompositor::notifyIFramesOfCompositingChange):
+        * rendering/RenderLayerCompositor.h: Add scheduleNeedsStyleRecalc().
+
 2010-07-06  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.
