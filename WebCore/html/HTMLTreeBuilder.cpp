@@ -1519,11 +1519,7 @@ void HTMLTreeBuilder::processEndTagForInBody(AtomicHTMLToken& token)
     }
     if (token.name() == brTag) {
         parseError(token);
-        m_tree.reconstructTheActiveFormattingElements();
-        // Notice that we lose the attributes.
-        AtomicHTMLToken startBr(HTMLToken::StartTag, token.name());
-        m_tree.insertSelfClosingElement(startBr);
-        m_framesetOk = false;
+        processFakeStartTag(brTag);
         return;
     }
     processAnyOtherEndTagForInBody(token);
@@ -1714,7 +1710,7 @@ void HTMLTreeBuilder::processEndTag(AtomicHTMLToken& token)
             parseError(token);
             return;
         }
-        notImplemented();
+        processEndTagForInTable(token);
         break;
     case InCellMode:
         ASSERT(insertionMode() == InCellMode);

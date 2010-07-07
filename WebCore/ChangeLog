@@ -1,3 +1,22 @@
+2010-07-06  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Fix "in row" "Anything else" handling of end tags
+        https://bugs.webkit.org/show_bug.cgi?id=41731
+
+        I also fixed </br> handling to follow the spec more closely
+        since it implementation was old and didn't use all our
+        new processFake* hotness.
+
+        This is already covered by 3 tests, however we don't
+        pass them yet, due to lack of table foster parenting
+        code (which Adam is working on as we speak).
+
+        * html/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::processEndTagForInBody):
+        (WebCore::HTMLTreeBuilder::processEndTag):
+
 2010-07-06  Mark Rowe  <mrowe@apple.com>
 
         Fix clean builds on Mac OS X.

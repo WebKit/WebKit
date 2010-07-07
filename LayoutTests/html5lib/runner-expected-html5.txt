@@ -317,6 +317,7 @@ Got:
 |     <table>
 |       <tbody>
 |         <tr>
+|           <br>
 |     <p>
 Expected:
 | <html>
@@ -1575,8 +1576,8 @@ Got:
 |           <math>
 |             <mi>
 |               "foo"
-|               <mi>
-|                 "bar"
+|             <mi>
+|               "bar"
 Expected:
 | <!DOCTYPE html>
 | <html>
@@ -2118,8 +2119,8 @@ Got:
 |           <svg>
 |             <g>
 |               "foo"
-|               <g>
-|                 "bar"
+|             <g>
+|               "bar"
 Expected:
 | <!DOCTYPE html>
 | <html>
