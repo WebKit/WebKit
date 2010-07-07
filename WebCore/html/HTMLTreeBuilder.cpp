@@ -184,7 +184,7 @@ bool isScopingTag(const AtomicString& tagName)
         || isTableCellContextTag(tagName);
 }
 
-bool isNonAnchorFormattingTag(const AtomicString& tagName)
+bool isNonAnchorNonNobrFormattingTag(const AtomicString& tagName)
 {
     return tagName == bTag
         || tagName == bigTag
@@ -192,13 +192,18 @@ bool isNonAnchorFormattingTag(const AtomicString& tagName)
         || tagName == emTag
         || tagName == fontTag
         || tagName == iTag
-        || tagName == nobrTag
         || tagName == sTag
         || tagName == smallTag
         || tagName == strikeTag
         || tagName == strongTag
         || tagName == ttTag
         || tagName == uTag;
+}
+
+bool isNonAnchorFormattingTag(const AtomicString& tagName)
+{
+    return tagName == nobrTag
+        || isNonAnchorNonNobrFormattingTag(tagName);
 }
 
 bool requiresRedirectToFosterParent(Element* element)
@@ -651,14 +656,18 @@ void HTMLTreeBuilder::processStartTagForInBody(AtomicHTMLToken& token)
         m_tree.insertFormattingElement(token);
         return;
     }
-    if (isNonAnchorFormattingTag(token.name())) {
+    if (isNonAnchorNonNobrFormattingTag(token.name())) {
         m_tree.reconstructTheActiveFormattingElements();
         m_tree.insertFormattingElement(token);
         return;
     }
     if (token.name() == nobrTag) {
         m_tree.reconstructTheActiveFormattingElements();
-        notImplemented();
+        if (m_tree.openElements()->inScope(nobrTag)) {
+            parseError(token);
+            processFakeEndTag(nobrTag);
+            m_tree.reconstructTheActiveFormattingElements();
+        }
         m_tree.insertFormattingElement(token);
         return;
     }
