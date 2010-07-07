@@ -112,22 +112,22 @@ static String trimConsoleMessage(const char* p, size_t len)
 
 static void generateSecWebSocketKey(uint32_t& number, String& key)
 {
-    uint32_t space = static_cast<uint32_t>(randomNumber() * 12) + 1;
+    uint32_t space = static_cast<uint32_t>(WTF::randomNumber() * 12) + 1;
     uint32_t max = 4294967295U / space;
-    number = static_cast<uint32_t>(randomNumber() * max);
+    number = static_cast<uint32_t>(WTF::randomNumber() * max);
     uint32_t product = number * space;
 
     String s = String::number(product);
-    int n = static_cast<int>(randomNumber() * 12) + 1;
+    int n = static_cast<int>(WTF::randomNumber() * 12) + 1;
     DEFINE_STATIC_LOCAL(String, randomChars, (randomCharacterInSecWebSocketKey));
     for (int i = 0; i < n; i++) {
-        int pos = static_cast<int>(randomNumber() * (s.length() + 1));
-        int chpos = static_cast<int>(randomNumber() * randomChars.length());
+        int pos = static_cast<int>(WTF::randomNumber() * (s.length() + 1));
+        int chpos = static_cast<int>(WTF::randomNumber() * randomChars.length());
         s.insert(randomChars.substring(chpos, 1), pos);
     }
     DEFINE_STATIC_LOCAL(String, spaceChar, (" "));
     for (uint32_t i = 0; i < space; i++) {
-        int pos = static_cast<int>(randomNumber() * s.length() - 1) + 1;
+        int pos = static_cast<int>(WTF::randomNumber() * s.length() - 1) + 1;
         s.insert(spaceChar, pos);
     }
     key = s;
@@ -136,7 +136,7 @@ static void generateSecWebSocketKey(uint32_t& number, String& key)
 static void generateKey3(unsigned char key3[8])
 {
     for (int i = 0; i < 8; i++)
-        key3[i] = randomNumber() * 256;
+        key3[i] = WTF::randomNumber() * 256;
 }
 
 static void setChallengeNumber(unsigned char* buf, uint32_t number)
@@ -157,8 +157,7 @@ static void generateExpectedChallengeResponse(uint32_t number1, uint32_t number2
     memcpy(&challenge[8], key3, 8);
     MD5 md5;
     md5.addBytes(challenge, sizeof(challenge));
-    Vector<uint8_t, 16> digest;
-    md5.checksum(digest);
+    Vector<uint8_t, 16> digest = md5.checksum();
     memcpy(expectedChallenge, digest.data(), 16);
 }
 
