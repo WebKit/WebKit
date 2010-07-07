@@ -253,9 +253,9 @@ public:
     {
         ASSERT(name);
         PropertyNode::Type type;
-        if (*getOrSet == "get")
+        if (*getOrSet == m_globalData->propertyNames->get)
             type = PropertyNode::Getter;
-        else if (*getOrSet == "set")
+        else if (*getOrSet == m_globalData->propertyNames->set)
             type = PropertyNode::Setter;
         else
             return 0;

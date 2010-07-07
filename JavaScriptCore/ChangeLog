@@ -1,3 +1,18 @@
+2010-07-07  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        Lazy mode of parser allows invalid syntax in object literals.
+        https://bugs.webkit.org/show_bug.cgi?id=41809
+
+        Make the parser itself validate getter and setter syntax rather
+        than offloading it to the AST builder.
+
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::createGetterOrSetterProperty):
+        * parser/JSParser.cpp:
+        (JSC::JSParser::parseProperty):
+
 2010-07-07  Dumitru Daniliuc  <dumi@chromium.org>
 
         Reviewed by Adam Roben.
