@@ -1,3 +1,24 @@
+2010-07-07  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adam Barth.
+
+        Make clear set the pointer to 0 before deletion
+        https://bugs.webkit.org/show_bug.cgi?id=41727
+
+        * wtf/OwnArrayPtr.h: Changed code so we always set the pointer to its new
+        value before deleting the old one, including in the set function and the
+        clear function. This required changing safeDelete.
+        * wtf/OwnPtr.h: Ditto. Also removed some extra null checks.
+        * wtf/PassOwnPtr.h: Ditto.
+
+        * wtf/PassRefPtr.h: Changed code so we always set the pointer to its new
+        value before deref'ing the old one in the clear function. Also added a
+        leakRef function for NonNullPassRefPtr.
+        * wtf/RefPtr.h: Ditto.
+
+        * wtf/gobject/GOwnPtr.h: More of the same.
+        * wtf/gobject/GRefPtr.h: Ditto.
+
 2010-07-07  Zoltan Herczeg  <zherczeg@webkit.org>
 
         Reviewed by Oliver Hunt.

@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
+ *  Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -59,7 +59,7 @@ namespace WTF {
         
         T* get() const { return m_ptr; }
         
-        void clear() { derefIfNotNull(m_ptr); m_ptr = 0; }
+        void clear();
         PassRefPtr<T> release() { PassRefPtr<T> tmp = adoptRef(m_ptr); m_ptr = 0; return tmp; }
 
         T& operator*() const { return *m_ptr; }
@@ -95,6 +95,13 @@ namespace WTF {
     template <typename T> template <typename U> inline RefPtr<T>::RefPtr(const NonNullPassRefPtr<U>& o)
         : m_ptr(o.releaseRef())
     {
+    }
+
+    template <typename T> inline void RefPtr<T>::clear()
+    {
+        T* ptr = m_ptr;
+        m_ptr = 0;
+        derefIfNotNull(ptr);
     }
 
     template <typename T> inline RefPtr<T>& RefPtr<T>::operator=(const RefPtr<T>& o)

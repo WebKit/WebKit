@@ -52,9 +52,10 @@ public:
 
     void clear()
     {
-        if (T* ptr = m_ptr)
-            derefGPtr(ptr);
+        T* ptr = m_ptr;
         m_ptr = 0;
+        if (ptr)
+            derefGPtr(ptr);
     }
 
     T* get() const { return m_ptr; }
