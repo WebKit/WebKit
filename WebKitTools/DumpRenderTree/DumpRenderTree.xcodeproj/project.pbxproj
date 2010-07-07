@@ -180,7 +180,7 @@
 /* Begin PBXFileReference section */
 		141BF233096A44CF00E0753C /* TestNetscapePlugIn.plugin */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TestNetscapePlugIn.plugin; sourceTree = BUILT_PRODUCTS_DIR; };
 		141BF447096A45C800E0753C /* PluginObject.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = PluginObject.h; sourceTree = "<group>"; };
-		141BF448096A45C800E0753C /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		141BF448096A45C800E0753C /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.plist.xml; name = Info.plist; path = mac/Info.plist; sourceTree = "<group>"; };
 		14770FE00A22ADF7009342EE /* GCController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCController.h; sourceTree = "<group>"; };
 		1A8F024C0BB9B056008CFA34 /* TestObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestObject.h; sourceTree = "<group>"; };
 		1AC6C77F0D07589B00CD3161 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
@@ -341,7 +341,7 @@
 				BC9D90230C97472E0099A4A3 /* WorkQueueItem.h */,
 				A8B91AD20CF3B305008F91FF /* AppKit Overrides */,
 				A8B91AC40CF3B170008F91FF /* ObjCPlugin */,
-				141BF1F5096A439800E0753C /* TestNetscapePlugIn.subproj */,
+				141BF1F5096A439800E0753C /* TestNetscapePlugIn */,
 				9345229B0BD12B2C0086EDA0 /* Resources */,
 				A803FF6409CAACC1009B2A37 /* Frameworks */,
 				9340995508540CAF007F3BC8 /* Products */,
@@ -350,7 +350,7 @@
 			name = DumpRenderTree;
 			sourceTree = "<group>";
 		};
-		141BF1F5096A439800E0753C /* TestNetscapePlugIn.subproj */ = {
+		141BF1F5096A439800E0753C /* TestNetscapePlugIn */ = {
 			isa = PBXGroup;
 			children = (
 				141BF448096A45C800E0753C /* Info.plist */,
@@ -360,7 +360,7 @@
 				1AC6C7810D07589B00CD3161 /* TestObject.cpp */,
 				1A8F024C0BB9B056008CFA34 /* TestObject.h */,
 			);
-			path = TestNetscapePlugIn.subproj;
+			path = TestNetscapePlugIn;
 			sourceTree = "<group>";
 		};
 		1422A2690AF6F45200E1A883 /* Controllers */ = {
@@ -761,6 +761,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BCB283DE0CFA7C20007E533E /* TestNetscapePlugIn.xcconfig */;
 			buildSettings = {
+				INFOPLIST_FILE = TestNetscapePlugIn/mac/Info.plist;
 			};
 			name = Debug;
 		};
@@ -768,6 +769,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BCB283DE0CFA7C20007E533E /* TestNetscapePlugIn.xcconfig */;
 			buildSettings = {
+				INFOPLIST_FILE = TestNetscapePlugIn/mac/Info.plist;
 			};
 			name = Release;
 		};
@@ -859,6 +861,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BCB283DE0CFA7C20007E533E /* TestNetscapePlugIn.xcconfig */;
 			buildSettings = {
+				INFOPLIST_FILE = TestNetscapePlugIn/mac/Info.plist;
 				INSTALL_PATH = "$(SYSTEM_LIBRARY_DIR)/Frameworks/$(WEBKIT_FRAMEWORK_RESOURCES_PATH)";
 				SKIP_INSTALL = NO;
 			};

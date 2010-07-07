@@ -1,3 +1,24 @@
+2010-07-07  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Rename TestNetscapePlugin.subproj and move platform specific files to subdirectories
+        https://bugs.webkit.org/show_bug.cgi?id=41781
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        * DumpRenderTree/TestNetscapePlugIn/PluginObject.cpp: Renamed from WebKitTools/DumpRenderTree/TestNetscapePlugIn.subproj/PluginObject.cpp.
+        * DumpRenderTree/TestNetscapePlugIn/PluginObject.h: Renamed from WebKitTools/DumpRenderTree/TestNetscapePlugIn.subproj/PluginObject.h.
+        * DumpRenderTree/TestNetscapePlugIn/TestObject.cpp: Renamed from WebKitTools/DumpRenderTree/TestNetscapePlugIn.subproj/TestObject.cpp.
+        * DumpRenderTree/TestNetscapePlugIn/TestObject.h: Renamed from WebKitTools/DumpRenderTree/TestNetscapePlugIn.subproj/TestObject.h.
+        * DumpRenderTree/TestNetscapePlugIn/mac/Info.plist: Renamed from WebKitTools/DumpRenderTree/TestNetscapePlugIn.subproj/Info.plist.
+        * DumpRenderTree/TestNetscapePlugIn/main.cpp: Renamed from WebKitTools/DumpRenderTree/TestNetscapePlugIn.subproj/main.cpp.
+        * DumpRenderTree/TestNetscapePlugIn/win/TestNetscapePlugin.def: Renamed from WebKitTools/DumpRenderTree/win/TestNetscapePlugin/TestNetscapePlugin.def.
+        * DumpRenderTree/TestNetscapePlugIn/win/TestNetscapePlugin.rc: Renamed from WebKitTools/DumpRenderTree/win/TestNetscapePlugin/TestNetscapePlugin.rc.
+        * DumpRenderTree/TestNetscapePlugIn/win/TestNetscapePlugin.vcproj: Added.
+        * DumpRenderTree/TestNetscapePlugIn/win/TestNetscapePlugin_debug.def: Renamed from WebKitTools/DumpRenderTree/win/TestNetscapePlugin/TestNetscapePlugin_debug.def.
+        * DumpRenderTree/TestNetscapePlugIn/win/resource.h: Renamed from WebKitTools/DumpRenderTree/win/TestNetscapePlugin/resource.h.
+        * DumpRenderTree/win/TestNetscapePlugin/TestNetscapePlugin.vcproj: Removed.
+
 2010-07-07  Andras Becsi  <abecsi@webkit.org>
 
         Unreviewed trivial fix.

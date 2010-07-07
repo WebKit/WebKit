@@ -368,15 +368,15 @@
 	</References>
 	<Files>
 		<File
-			RelativePath=".\main.cpp"
+			RelativePath="..\..\win\TestNetscapePlugin\main.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\TestNetscapePlugIn.subproj\PluginObject.cpp"
+			RelativePath="..\PluginObject.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\TestNetscapePlugIn.subproj\PluginObject.h"
+			RelativePath="..\PluginObject.h"
 			>
 		</File>
 		<File
@@ -396,11 +396,11 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\TestNetscapePlugIn.subproj\TestObject.cpp"
+			RelativePath="..\TestObject.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\TestNetscapePlugIn.subproj\TestObject.h"
+			RelativePath="..\TestObject.h"
 			>
 		</File>
 	</Files>
