@@ -1,3 +1,16 @@
+2010-07-06  Kent Tamura  <tkent@chromium.org>
+
+        Unreviewed, test expectation update.
+
+        Update expectation files for fast/forms/indeterminate.html. Chromium
+        started to support them on Windows and Linux recently.
+
+        * platform/chromium-linux/fast/forms/indeterminate-expected.checksum:
+        * platform/chromium-linux/fast/forms/indeterminate-expected.png:
+        * platform/chromium-win/fast/forms/indeterminate-expected.checksum:
+        * platform/chromium-win/fast/forms/indeterminate-expected.png:
+        * platform/chromium/test_expectations.txt:
+
 2010-07-06  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
