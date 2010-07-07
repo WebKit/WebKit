@@ -389,7 +389,6 @@ resources/tests3.dat:
 16
 17
 18
-22
 
 Test 16 of 23 in resources/tests3.dat failed. Input:
 <!DOCTYPE html><textarea>
@@ -449,23 +448,6 @@ Expected:
 |     <textarea>
 |       "
 foo"
-
-Test 22 of 23 in resources/tests3.dat failed. Input:
-<!doctype html><html><body><p><table></table></body></html>
-Got:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <p>
-|       <table>
-Expected:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <p>
-|     <table>
 resources/tests4.dat:
 3
 5
@@ -3191,14 +3173,14 @@ Got:
 |               <foreignobject>
 |     <p>
 |       "spam"
-|       <table>
-|         <tbody>
-|           <tr>
-|             <td>
-|               <img>
-|       <g>
-|         "quux"
-|       "bar"
+|     <table>
+|       <tbody>
+|         <tr>
+|           <td>
+|             <img>
+|     <g>
+|       "quux"
+|     "bar"
 Expected:
 | <!DOCTYPE html>
 | <html>
@@ -3249,14 +3231,14 @@ Got:
 |             <foreignobject>
 |               <p>
 |                 "spam"
-|                 <table>
-|                   <tbody>
-|                     <tr>
-|                       <td>
-|                         <img>
-|                 <g>
-|                   "quux"
-|                 "bar"
+|               <table>
+|                 <tbody>
+|                   <tr>
+|                     <td>
+|                       <img>
+|           <g>
+|             "quux"
+|     "bar"
 Expected:
 | <!DOCTYPE html>
 | <html>

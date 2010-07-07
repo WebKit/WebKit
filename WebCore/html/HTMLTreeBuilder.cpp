@@ -679,7 +679,8 @@ void HTMLTreeBuilder::processStartTagForInBody(AtomicHTMLToken& token)
         return;
     }
     if (token.name() == tableTag) {
-        notImplemented();
+        if (m_document->parseMode() != Document::Compat && m_tree.openElements()->inScope(pTag))
+            processFakeEndTag(pTag);
         m_tree.insertElement(token);
         m_framesetOk = false;
         m_insertionMode = InTableMode;
