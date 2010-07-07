@@ -1,3 +1,16 @@
+2010-07-07  Kristian Monsen  <kristianm@google.com>
+
+        Reviewed by Steve Block.
+
+        Updating Android to use the UserGestureIndicator class instead of Android specific code.
+        The rest of the changes are in parts of the Android port which are yet to be upstreamed.
+
+        No change in behavior, so no new test.
+
+        * platform/network/android/ResourceRequest.h:
+        (WebCore::ResourceRequest::ResourceRequest):
+        (WebCore::ResourceRequest::doUpdateResourceRequest):
+
 2010-07-07  Andy Estes  <aestes@apple.com>
 
         Reviewed by Adam Barth.
