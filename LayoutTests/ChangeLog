@@ -1,3 +1,26 @@
+2010-07-07  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Move current Mac results from platform/mac-snowleopard to platform/mac,
+        move Leopard results from platform/mac to platform/mac-leopard, and remove
+        stray files and directories from platform/mac-snowleopard.
+
+        * platform/mac-leopard/svg/custom/use-font-face-crash-expected.txt: Copied from platform/mac/svg/custom/use-font-face-crash-expected.txt.
+        * platform/mac-snowleopard/platform: Removed.
+        * platform/mac-snowleopard/platform/mac: Removed.
+        * platform/mac-snowleopard/platform/mac/fast: Removed.
+        * platform/mac-snowleopard/platform/mac/fast/loader: Removed.
+        * platform/mac-snowleopard/platform/mac/fast/loader/file-url-mimetypes-2-expected.txt: Removed.
+        * platform/mac-snowleopard/platform/mac/fast/loader/file-url-mimetypes-3-expected.txt: Removed.
+        * platform/mac-snowleopard/svg: Removed.
+        * platform/mac-snowleopard/svg/custom: Removed.
+        * platform/mac-snowleopard/svg/custom/use-font-face-crash-expected.txt: Removed.
+        * platform/mac-snowleopard/tables: Removed.
+        * platform/mac-snowleopard/tables/mozilla: Removed.
+        * platform/mac-snowleopard/tables/mozilla/images: Removed.
+        * platform/mac/svg/custom/use-font-face-crash-expected.txt: Replaced with platform/mac-snowleopard/svg/custom/use-font-face-crash-expected.txt.
+
 2010-07-07  Vitaly Repeshko  <vitalyr@chromium.org>
 
         Unreviewed.
