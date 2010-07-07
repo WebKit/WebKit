@@ -1,3 +1,18 @@
+2010-07-07  Antti Koivisto  <koivisto@iki.fi>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] Initial WebKit2 implementation
+        https://bugs.webkit.org/show_bug.cgi?id=40233
+        
+        Implement WebPage for Qt.
+
+        * WebProcess/WebPage/qt/WebPageQt.cpp: Added.
+        (WebKit::WebPage::platformInitialize):
+        (WebKit::):
+        (WebKit::WebPage::interpretKeyEvent):
+
+
 2010-07-06  Anders Carlsson  <andersca@apple.com>
 
         Fix Windows WebKit2 build.
