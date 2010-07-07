@@ -458,7 +458,8 @@ void LayoutTestController::abortModal()
 
 JSRetainPtr<JSStringRef> LayoutTestController::pageProperty(const char* propertyName, int pageNumber) const
 {
-
+    // FIXME: Implement
+    return 0;
 }
 
 bool LayoutTestController::isPageBoxVisible(int pageNumber) const
