@@ -1022,7 +1022,7 @@ bool RenderLayerCompositor::shouldPropagateCompositingToEnclosingIFrame() const
     // Parent document content needs to be able to render on top of a composited iframe, so correct behavior
     // is to have the parent document become composited too. However, this can cause problems on platforms that
     // use native views for frames (like Mac), so disable that behavior on those platforms for now.
-    Element* ownerElement = enclosingIFrameElement();
+    HTMLFrameOwnerElement* ownerElement = enclosingIFrameElement();
     RenderObject* renderer = ownerElement ? ownerElement->renderer() : 0;
     if (!renderer || !renderer->isRenderIFrame())
         return false;
@@ -1050,9 +1050,9 @@ bool RenderLayerCompositor::shouldPropagateCompositingToEnclosingIFrame() const
 #endif
 }
 
-Element* RenderLayerCompositor::enclosingIFrameElement() const
+HTMLFrameOwnerElement* RenderLayerCompositor::enclosingIFrameElement() const
 {
-    if (Element* ownerElement = m_renderView->document()->ownerElement())
+    if (HTMLFrameOwnerElement* ownerElement = m_renderView->document()->ownerElement())
         return ownerElement->hasTagName(iframeTag) ? ownerElement : 0;
 
     return 0;
