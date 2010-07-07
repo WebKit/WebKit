@@ -1286,10 +1286,10 @@ SET(WebCore_SOURCES
 
     platform/text/transcoder/FontTranscoder.cpp
 
-    plugins/MimeTypeArray.cpp
-    plugins/MimeType.cpp
-    plugins/PluginArray.cpp
-    plugins/Plugin.cpp
+    plugins/DOMMimeTypeArray.cpp
+    plugins/DOMMimeType.cpp
+    plugins/DOMPluginArray.cpp
+    plugins/DOMPlugin.cpp
     plugins/PluginData.cpp
     plugins/PluginDataNone.cpp
     plugins/PluginMainThreadScheduler.cpp
