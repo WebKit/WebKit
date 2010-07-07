@@ -23,27 +23,32 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DeviceOrientation_h
-#define DeviceOrientation_h
+#include "config.h"
+#include "DeviceOrientationController.h"
+
+#if ENABLE(DEVICE_ORIENTATION)
+
+#include "DeviceOrientationClient.h"
+#include "DeviceOrientationEvent.h"
+#include <wtf/UnusedParam.h>
 
 namespace WebCore {
 
-class DeviceOrientationClient;
-class Page;
+DeviceOrientationController::DeviceOrientationController(Page* page, DeviceOrientationClient* client)
+    : m_page(page)
+    , m_client(client)
+{
+}
 
-class DeviceOrientation {
-public:
-    DeviceOrientation(Page*, DeviceOrientationClient*);
-
-    // FIXME: Add methods to start and stop the service.
-
-    void onDeviceOrientationChange(double alpha, double beta, double gamma);
-
-private:
-    Page* m_page;
-    DeviceOrientationClient* m_client;
-};
+void DeviceOrientationController::onDeviceOrientationChange(double alpha, double beta, double gamma)
+{
+    // FIXME: Fire DeviceOrientationEvents on the window object of all frames
+    // that are listening to orientation.
+    UNUSED_PARAM(alpha);
+    UNUSED_PARAM(beta);
+    UNUSED_PARAM(gamma);
+}
 
 } // namespace WebCore
 
-#endif // DeviceOrientation_h
+#endif // ENABLE(DEVICE_ORIENTATION)

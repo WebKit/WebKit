@@ -774,7 +774,7 @@ SET(WebCore_SOURCES
     dom/CustomEvent.cpp
     dom/DatasetDOMStringMap.cpp
     dom/DecodedDataDocumentParser.cpp
-    dom/DeviceOrientation.cpp
+    dom/DeviceOrientationController.cpp
     dom/DeviceOrientationEvent.cpp
     dom/Document.cpp
     dom/DocumentFragment.cpp

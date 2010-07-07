@@ -1,3 +1,30 @@
+2010-07-05  Steve Block  <steveblock@google.com>
+
+        Reviewed by Adam Barth.
+
+        DeviceOrientation should be renamed to DeviceOrientationController
+        https://bugs.webkit.org/show_bug.cgi?id=41608
+
+        No new tests, renaming only.
+
+        * Android.mk:
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/DeviceOrientation.cpp: Removed.
+        * dom/DeviceOrientation.h: Removed.
+        * dom/DeviceOrientationController.cpp: Copied from WebCore/dom/DeviceOrientation.cpp.
+        (WebCore::DeviceOrientationController::DeviceOrientationController):
+        (WebCore::DeviceOrientationController::onDeviceOrientationChange):
+        * dom/DeviceOrientationController.h: Copied from WebCore/dom/DeviceOrientation.h.
+        * page/Page.cpp:
+        (WebCore::Page::Page):
+        * page/Page.h:
+        (WebCore::Page::deviceOrientationController):
+
 2010-07-07  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Yury Semikhatsky.

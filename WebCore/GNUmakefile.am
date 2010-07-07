@@ -795,9 +795,9 @@ webcore_sources += \
 	WebCore/dom/DatasetDOMStringMap.h \
 	WebCore/dom/DecodedDataDocumentParser.cpp \
 	WebCore/dom/DecodedDataDocumentParser.h \
-	WebCore/dom/DeviceOrientation.cpp \
-	WebCore/dom/DeviceOrientation.h \
 	WebCore/dom/DeviceOrientationClient.h \
+	WebCore/dom/DeviceOrientationController.cpp \
+	WebCore/dom/DeviceOrientationController.h \
 	WebCore/dom/DeviceOrientationEvent.cpp \
 	WebCore/dom/DeviceOrientationEvent.h \
 	WebCore/dom/Document.cpp \

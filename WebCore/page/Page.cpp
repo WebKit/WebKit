@@ -29,7 +29,7 @@
 #include "ContextMenuClient.h"
 #include "ContextMenuController.h"
 #include "DOMWindow.h"
-#include "DeviceOrientation.h"
+#include "DeviceOrientationController.h"
 #include "DragController.h"
 #include "EditorClient.h"
 #include "Event.h"
@@ -138,7 +138,7 @@ Page::Page(ChromeClient* chromeClient, ContextMenuClient* contextMenuClient, Edi
     , m_geolocationController(new GeolocationController(this, geolocationControllerClient))
 #endif
 #if ENABLE(DEVICE_ORIENTATION)
-    , m_deviceOrientation(new DeviceOrientation(this, deviceOrientationClient))
+    , m_deviceOrientationController(new DeviceOrientationController(this, deviceOrientationClient))
 #endif
     , m_settings(new Settings(this))
     , m_progress(new ProgressTracker)

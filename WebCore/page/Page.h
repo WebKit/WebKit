@@ -43,8 +43,8 @@ namespace WebCore {
     class ChromeClient;
     class ContextMenuClient;
     class ContextMenuController;
-    class DeviceOrientation;
     class DeviceOrientationClient;
+    class DeviceOrientationController;
     class Document;
     class DragClient;
     class DragController;
@@ -149,7 +149,7 @@ namespace WebCore {
         GeolocationController* geolocationController() const { return m_geolocationController.get(); }
 #endif
 #if ENABLE(DEVICE_ORIENTATION)
-        DeviceOrientation* deviceOrientation() const { return m_deviceOrientation.get(); }
+        DeviceOrientationController* deviceOrientationController() const { return m_deviceOrientationController.get(); }
 #endif
         Settings* settings() const { return m_settings.get(); }
         ProgressTracker* progress() const { return m_progress.get(); }
@@ -266,7 +266,7 @@ namespace WebCore {
         OwnPtr<GeolocationController> m_geolocationController;
 #endif
 #if ENABLE(DEVICE_ORIENTATION)
-        OwnPtr<DeviceOrientation> m_deviceOrientation;
+        OwnPtr<DeviceOrientationController> m_deviceOrientationController;
 #endif
         OwnPtr<Settings> m_settings;
         OwnPtr<ProgressTracker> m_progress;

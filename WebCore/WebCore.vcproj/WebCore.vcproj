@@ -32373,15 +32373,15 @@
 				>
 			</File>
 			<File
-				RelativePath="..\dom\DeviceOrientation.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\dom\DeviceOrientation.h"
-				>
-			</File>
-			<File
 				RelativePath="..\dom\DeviceOrientationClient.h"
+				>
+			</File>
+			<File
+				RelativePath="..\dom\DeviceOrientationController.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\dom\DeviceOrientationController.h"
 				>
 			</File>
 			<File
