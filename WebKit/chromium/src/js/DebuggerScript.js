@@ -32,6 +32,7 @@
 
 var DebuggerScript = {};
 DebuggerScript._breakpoints = {};
+DebuggerScript._breakpointsActivated = true;
 
 DebuggerScript.PauseOnExceptionsState = {
     DontPauseOnExceptions : 0,
@@ -94,7 +95,7 @@ DebuggerScript.setBreakpoint = function(execState, args)
 {
     args.lineNumber = DebuggerScript._webkitToV8LineNumber(args.lineNumber);
     var breakId = Debug.setScriptBreakPointById(args.scriptId, args.lineNumber, 0 /* column */, args.condition);
-    if (!args.enabled)
+    if (!args.enabled || !DebuggerScript._breakpointsActivated)
         Debug.disableScriptBreakPoint(breakId);
 
     var actualLineNumber = args.lineNumber; // TODO: replace with real stuff after v8 roll.
@@ -203,6 +204,7 @@ DebuggerScript.setBreakpointsActivated = function(execState, args)
         else
             Debug.disableScriptBreakPoint(breakId);
     }
+    DebuggerScript._breakpointsActivated = args.enabled;
 }
 
 DebuggerScript._frameMirrorToJSCallFrame = function(frameMirror, callerFrame)
