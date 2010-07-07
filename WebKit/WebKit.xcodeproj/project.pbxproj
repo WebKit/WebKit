@@ -162,7 +162,7 @@
 		939810270824BF01008DF038 /* WebStringTruncator.h in Headers */ = {isa = PBXBuildFile; fileRef = F59668C802AD2923018635CA /* WebStringTruncator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		939810290824BF01008DF038 /* WebAuthenticationPanel.h in Headers */ = {isa = PBXBuildFile; fileRef = F8CA15B5029A39D901000122 /* WebAuthenticationPanel.h */; };
 		9398102A0824BF01008DF038 /* WebPanelAuthenticationHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 93154EF103A41270008635CE /* WebPanelAuthenticationHandler.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		9398102B0824BF01008DF038 /* WebBaseNetscapePluginStream.h in Headers */ = {isa = PBXBuildFile; fileRef = F5A672B90263866E01000102 /* WebBaseNetscapePluginStream.h */; };
+		9398102B0824BF01008DF038 /* WebNetscapePluginStream.h in Headers */ = {isa = PBXBuildFile; fileRef = F5A672B90263866E01000102 /* WebNetscapePluginStream.h */; };
 		9398102E0824BF01008DF038 /* WebBasePluginPackage.h in Headers */ = {isa = PBXBuildFile; fileRef = 83E4AF46036652150000E506 /* WebBasePluginPackage.h */; };
 		939810310824BF01008DF038 /* WebNetscapePluginPackage.h in Headers */ = {isa = PBXBuildFile; fileRef = F5F7171E0288493C018635CA /* WebNetscapePluginPackage.h */; };
 		939810350824BF01008DF038 /* WebPlugin.h in Headers */ = {isa = PBXBuildFile; fileRef = 848DFF840365FE6A00CA2ACA /* WebPlugin.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -259,7 +259,7 @@
 		939810CC0824BF01008DF038 /* WebStringTruncator.mm in Sources */ = {isa = PBXBuildFile; fileRef = F59668C902AD2923018635CA /* WebStringTruncator.mm */; };
 		939810CF0824BF01008DF038 /* WebAuthenticationPanel.m in Sources */ = {isa = PBXBuildFile; fileRef = F8CA15B6029A39D901000122 /* WebAuthenticationPanel.m */; };
 		939810D00824BF01008DF038 /* WebPanelAuthenticationHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 93154EF203A41270008635CE /* WebPanelAuthenticationHandler.m */; };
-		939810D10824BF01008DF038 /* WebBaseNetscapePluginStream.mm in Sources */ = {isa = PBXBuildFile; fileRef = F5A672BA0263866E01000102 /* WebBaseNetscapePluginStream.mm */; };
+		939810D10824BF01008DF038 /* WebNetscapePluginStream.mm in Sources */ = {isa = PBXBuildFile; fileRef = F5A672BA0263866E01000102 /* WebNetscapePluginStream.mm */; };
 		939810D30824BF01008DF038 /* WebBasePluginPackage.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83E4AF47036652150000E506 /* WebBasePluginPackage.mm */; };
 		939810D60824BF01008DF038 /* WebNetscapePluginPackage.mm in Sources */ = {isa = PBXBuildFile; fileRef = F5F7171F0288493C018635CA /* WebNetscapePluginPackage.mm */; };
 		939810DA0824BF01008DF038 /* WebPluginController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8467275D0367158500CA2ACA /* WebPluginController.mm */; };
@@ -679,8 +679,8 @@
 		F59EAE3E0253C7EE018635CA /* WebCoreStatistics.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreStatistics.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F59EAE410253C8DE018635CA /* WebCoreStatistics.mm */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCoreStatistics.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F5A55DC702BAA2E8018635CC /* WebHTMLRepresentationPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebHTMLRepresentationPrivate.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F5A672B90263866E01000102 /* WebBaseNetscapePluginStream.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebBaseNetscapePluginStream.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F5A672BA0263866E01000102 /* WebBaseNetscapePluginStream.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; indentWidth = 4; path = WebBaseNetscapePluginStream.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		F5A672B90263866E01000102 /* WebNetscapePluginStream.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebNetscapePluginStream.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		F5A672BA0263866E01000102 /* WebNetscapePluginStream.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; indentWidth = 4; path = WebNetscapePluginStream.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F5AEBB3D024A527601C1A526 /* WebPreferences.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; indentWidth = 4; path = WebPreferences.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F5B67130023EDF8901C1A525 /* url_icon.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = url_icon.tiff; sourceTree = "<group>"; };
 		F5B92B820223191D01C1A525 /* WebHistoryPrivate.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebHistoryPrivate.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -1057,8 +1057,8 @@
 				1A9C78030EBBC455008599D4 /* Events */,
 				1A1F91430ECBB16F006351DA /* Hosted */,
 				F5F717230288493C018635CA /* npapi.mm */,
-				F5A672B90263866E01000102 /* WebBaseNetscapePluginStream.h */,
-				F5A672BA0263866E01000102 /* WebBaseNetscapePluginStream.mm */,
+				F5A672B90263866E01000102 /* WebNetscapePluginStream.h */,
+				F5A672BA0263866E01000102 /* WebNetscapePluginStream.mm */,
 				1A4DF5E20EC8D104006BD4B4 /* WebBaseNetscapePluginView.h */,
 				1A4DF5E30EC8D104006BD4B4 /* WebBaseNetscapePluginView.mm */,
 				0AB752350FA2E4DB00D7CBB1 /* WebNetscapeContainerCheckContextInfo.h */,
@@ -1370,7 +1370,7 @@
 				939810110824BF01008DF038 /* WebBackForwardList.h in Headers */,
 				51C714FB0B20F79F00E5E33C /* WebBackForwardListInternal.h in Headers */,
 				22F219CC08D236730030E078 /* WebBackForwardListPrivate.h in Headers */,
-				9398102B0824BF01008DF038 /* WebBaseNetscapePluginStream.h in Headers */,
+				9398102B0824BF01008DF038 /* WebNetscapePluginStream.h in Headers */,
 				1A4DF5E40EC8D104006BD4B4 /* WebBaseNetscapePluginView.h in Headers */,
 				9398102E0824BF01008DF038 /* WebBasePluginPackage.h in Headers */,
 				5241ADF50B1BC48A004012BD /* WebCache.h in Headers */,
@@ -1789,7 +1789,7 @@
 				9398111D0824BF01008DF038 /* WebArchive.mm in Sources */,
 				939810CF0824BF01008DF038 /* WebAuthenticationPanel.m in Sources */,
 				939810BC0824BF01008DF038 /* WebBackForwardList.mm in Sources */,
-				939810D10824BF01008DF038 /* WebBaseNetscapePluginStream.mm in Sources */,
+				939810D10824BF01008DF038 /* WebNetscapePluginStream.mm in Sources */,
 				1A4DF5E50EC8D104006BD4B4 /* WebBaseNetscapePluginView.mm in Sources */,
 				939810D30824BF01008DF038 /* WebBasePluginPackage.mm in Sources */,
 				5241ADF60B1BC48A004012BD /* WebCache.mm in Sources */,

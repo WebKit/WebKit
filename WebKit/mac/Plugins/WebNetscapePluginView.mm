@@ -30,7 +30,6 @@
 
 #import "WebNetscapePluginView.h"
 
-#import "WebBaseNetscapePluginStream.h"
 #import "WebDataSourceInternal.h"
 #import "WebDefaultUIDelegate.h"
 #import "WebFrameInternal.h" 
@@ -49,6 +48,7 @@
 #import "WebNetscapeContainerCheckPrivate.h"
 #import "WebNetscapePluginEventHandler.h"
 #import "WebNetscapePluginPackage.h"
+#import "WebNetscapePluginStream.h"
 #import "WebPluginContainerCheck.h"
 #import "WebPluginRequest.h"
 #import "WebPreferences.h"

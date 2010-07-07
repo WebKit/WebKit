@@ -1,3 +1,12 @@
+2010-07-07  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Rename the WebBaseNetscapePluginStream.cpp and .h files to WebNetscapePluginStream.cpp and .h to match the class name.
+
+        * Plugins/WebNetscapePluginStream.h: Renamed from WebKit/mac/Plugins/WebBaseNetscapePluginStream.h.
+        * Plugins/WebNetscapePluginStream.mm: Renamed from WebKit/mac/Plugins/WebBaseNetscapePluginStream.mm.
+
 2010-07-06  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Simon Fraser.

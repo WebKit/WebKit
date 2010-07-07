@@ -27,7 +27,7 @@
  */
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
-#import "WebBaseNetscapePluginStream.h"
+#import "WebNetscapePluginStream.h"
 
 #import "WebNetscapePluginView.h"
 #import "WebFrameInternal.h"
