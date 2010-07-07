@@ -46,19 +46,33 @@ public:
     // access to Entry::isMarker() and Entry::replaceElement() to do so.
     class Entry {
     public:
-        Entry(Element*);
+        // Inline because they're hot and Vector<T> uses them.
+        Entry(Element* element)
+            : m_element(element)
+        {
+            ASSERT(element);
+        }
         enum MarkerEntryType { MarkerEntry };
-        Entry(MarkerEntryType);
-        ~Entry();
+        Entry(MarkerEntryType)
+            : m_element(0)
+        {
+        }
+        ~Entry() {}
 
-        bool isMarker() const;
+        bool isMarker() const { return !m_element; }
 
-        Element* element() const;
-        void replaceElement(PassRefPtr<Element>);
+        Element* element() const
+        {
+            // The fact that !m_element == isMarker() is an implementation detail
+            // callers should check isMarker() before calling element().
+            ASSERT(m_element);
+            return m_element.get();
+        }
+        void replaceElement(PassRefPtr<Element> element) { m_element = element; }
 
-        // Needed for use with Vector.
-        bool operator==(const Entry&) const;
-        bool operator!=(const Entry&) const;
+        // Needed for use with Vector.  These are super-hot and must be inline.
+        bool operator==(const Entry& other) const { return m_element == other.m_element; }
+        bool operator!=(const Entry& other) const { return m_element != other.m_element; }
 
     private:
         RefPtr<Element> m_element;

@@ -1,3 +1,31 @@
+2010-07-07  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        HTMLTreeBuilder is way too slow
+        https://bugs.webkit.org/show_bug.cgi?id=41754
+
+        This takes us from 14s to 7s on our parsing benchmark.
+        That's still much slower than the old tree builder, but there
+        is a huge amount of fat left to trim.
+
+        Vector<T> wasn't able to inline all the Entry functions when
+        they were buried in the cpp.  Turns out the active formatting elements
+        list is very hot.
+
+        I'm not sure Vector<T> is going to be the right data structure for us
+        in the end, but it has done alright for bring-up.
+
+        * html/HTMLFormattingElementList.cpp:
+        * html/HTMLFormattingElementList.h:
+        (WebCore::HTMLFormattingElementList::Entry::Entry):
+        (WebCore::HTMLFormattingElementList::Entry::~Entry):
+        (WebCore::HTMLFormattingElementList::Entry::isMarker):
+        (WebCore::HTMLFormattingElementList::Entry::element):
+        (WebCore::HTMLFormattingElementList::Entry::replaceElement):
+        (WebCore::HTMLFormattingElementList::Entry::operator==):
+        (WebCore::HTMLFormattingElementList::Entry::operator!=):
+
 2010-07-06  Darin Adler  <darin@apple.com>
 
         Reviewed by Adam Barth.

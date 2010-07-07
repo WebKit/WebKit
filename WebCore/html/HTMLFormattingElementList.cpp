@@ -31,49 +31,6 @@
 
 namespace WebCore {
 
-HTMLFormattingElementList::Entry::Entry(Element* element)
-    : m_element(element)
-{
-    ASSERT(element);
-}
-
-HTMLFormattingElementList::Entry::Entry(MarkerEntryType)
-{
-}
-
-HTMLFormattingElementList::Entry::~Entry()
-{
-}
-
-bool HTMLFormattingElementList::Entry::isMarker() const
-{
-    return !m_element;
-}
-
-Element* HTMLFormattingElementList::Entry::element() const
-{
-    // The fact that !m_element == isMarker() is an implementation detail
-    // callers should check isMarker() before calling element().
-    ASSERT(m_element);
-    return m_element.get();
-}
-
-void HTMLFormattingElementList::Entry::replaceElement(PassRefPtr<Element> element)
-{
-    ASSERT(m_element); // Once a marker, always a marker.
-    m_element = element;
-}
-
-bool HTMLFormattingElementList::Entry::operator==(const Entry& other) const
-{
-    return m_element == other.m_element;
-}
-
-bool HTMLFormattingElementList::Entry::operator!=(const Entry& other) const
-{
-    return m_element != other.m_element;
-}
-
 HTMLFormattingElementList::HTMLFormattingElementList()
 {
 }
