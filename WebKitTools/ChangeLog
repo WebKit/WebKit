@@ -1,5 +1,11 @@
 2010-07-07  Anders Carlsson  <andersca@apple.com>
 
+        Try to fix Qt build.
+
+        * DumpRenderTree/qt/TestNetscapePlugin/TestNetscapePlugin.pro:
+
+2010-07-07  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Simon Fraser.
 
         Rename TestNetscapePlugin.subproj and move platform specific files to subdirectories

@@ -1,7 +1,7 @@
 TEMPLATE = lib
 TARGET = TestNetscapePlugIn
 
-VPATH = ../../unix/TestNetscapePlugin ../../TestNetscapePlugIn.subproj
+VPATH = ../../unix/TestNetscapePlugin ../../TestNetscapePlugIn
 isEmpty(OUTPUT_DIR): OUTPUT_DIR = ../../../..
 include(../../../../WebKit.pri)
 
