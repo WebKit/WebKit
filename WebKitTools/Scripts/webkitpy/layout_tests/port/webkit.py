@@ -41,6 +41,7 @@ import signal
 import sys
 import time
 import webbrowser
+import tempfile
 
 from webkitpy.common.system.executive import Executive
 
@@ -379,8 +380,9 @@ class WebKitDriver(base.Driver):
         command += [self._port._path_to_driver(), '-']
         if self._image_path:
             command.append('--pixel-tests')
-        environment = os.environ
+        environment = self._port.setup_environ_for_server()
         environment['DYLD_FRAMEWORK_PATH'] = self._port._build_path()
+        environment['DUMPRENDERTREE_TEMP'] = tempfile.mkdtemp(prefix='DumpRenderTree-')
         self._server_process = server_process.ServerProcess(self._port,
             "DumpRenderTree", command, environment)
 

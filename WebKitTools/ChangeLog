@@ -1,3 +1,13 @@
+2010-07-07  Gabor Rapcsanyi  <rgabor@inf.u-szeged.hu>
+
+        Reviewed by Eric Seidel.
+
+        Pass port specific environment to server process.
+        https://bugs.webkit.org/show_bug.cgi?id=41593
+
+        * Scripts/webkitpy/layout_tests/port/qt.py:
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+
 2010-07-06  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Shinichiro Hamaji.
