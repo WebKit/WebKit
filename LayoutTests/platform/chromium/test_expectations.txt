@@ -1751,6 +1751,7 @@ BUG23473 MAC : fast/repaint/shadow-multiple-horizontal.html = PASS
 BUG23473 MAC : fast/repaint/shadow-multiple-strict-horizontal.html = PASS
 BUG23473 MAC : fast/repaint/shadow-multiple-strict-vertical.html = PASS
 BUG23473 MAC : fast/repaint/shadow-multiple-vertical.html = PASS
+BUG23473 MAC : fast/repaint/svg-layout-root-style-attr-update.html = PASS
 BUG23473 MAC : fast/repaint/table-cell-vertical-overflow.html = PASS
 BUG23473 MAC : fast/repaint/text-shadow.html = PASS
 BUG23473 MAC : fast/repaint/text-shadow-horizontal.html = PASS

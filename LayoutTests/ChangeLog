@@ -1,3 +1,11 @@
+2010-07-07  Peter Kasting  <pkasting@google.com>
+
+        Not reviewed.  Chromium test expectation update.
+
+        Mark as passing a test which has not failed in a while.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-07-07  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin.
