@@ -1,3 +1,11 @@
+2010-07-07  Steve Block  <steveblock@google.com>
+
+        Unreviewed fix for failing Chromium test.
+
+        Skip renamed window-properties-device-orientation.html on Chromium.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-07-07  Andy Estes  <aestes@apple.com>
 
         Reviewed by Adam Barth.
