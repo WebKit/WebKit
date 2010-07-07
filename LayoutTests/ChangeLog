@@ -1,5 +1,21 @@
 2010-07-07  Mark Rowe  <mrowe@apple.com>
 
+        Merge r62662.
+
+    2010-07-06  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Dirk Schulze.
+
+        <use> on <font-face> causes crashes, if SVGUseElement gets detached
+        https://bugs.webkit.org/show_bug.cgi?id=41621
+
+        * platform/mac/svg/custom/use-font-face-crash-expected.checksum: Added.
+        * platform/mac/svg/custom/use-font-face-crash-expected.png: Added.
+        * platform/mac/svg/custom/use-font-face-crash-expected.txt: Added.
+        * svg/custom/use-font-face-crash.svg: Added.
+
+2010-07-07  Mark Rowe  <mrowe@apple.com>
+
         Merge r59903.
 
     2010-05-20  Fumitoshi Ukai  <ukai@chromium.org>

@@ -575,8 +575,8 @@ void SVGUseElement::attach()
 
 void SVGUseElement::detach()
 {
-    SVGStyledTransformableElement::detach();
     m_targetElementInstance = 0;
+    SVGStyledTransformableElement::detach();
 }
 
 static bool isDirectReference(Node* n)
