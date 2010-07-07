@@ -201,6 +201,13 @@ bool isNonAnchorFormattingTag(const AtomicString& tagName)
         || tagName == uTag;
 }
 
+bool requiresRedirectToFosterParent(Element* element)
+{
+    return element->hasTagName(tableTag)
+        || isTableBodyContextTag(element->localName())
+        || element->hasTagName(trTag);
+}
+
 // http://www.whatwg.org/specs/web-apps/current-work/multipage/parsing.html#formatting
 bool isFormattingTag(const AtomicString& tagName)
 {
@@ -855,8 +862,7 @@ void HTMLTreeBuilder::processStartTagForInTable(AtomicHTMLToken& token)
         return;
     }
     parseError(token);
-    if (m_tree.currentElement()->hasTagName(tableTag) || isTableBodyContextTag(m_tree.currentElement()->localName()) || m_tree.currentElement()->hasTagName(trTag))
-        notImplemented(); // "whenever a node would be inserted into the current node, it must instead be foster parented."
+    HTMLConstructionSite::RedirectToFosterParentGuard redirecter(m_tree, requiresRedirectToFosterParent(m_tree.currentElement()));
     processStartTagForInBody(token);
 }
 
@@ -1578,7 +1584,8 @@ void HTMLTreeBuilder::processEndTagForInTable(AtomicHTMLToken& token)
         parseError(token);
         return;
     }
-    // FIXME: Do we need to worry about "whenever a node would be inserted into the current node, it must instead be foster parented"?
+    // Is this redirection necessary here?
+    HTMLConstructionSite::RedirectToFosterParentGuard redirecter(m_tree, requiresRedirectToFosterParent(m_tree.currentElement()));
     processEndTagForInBody(token);
 }
 

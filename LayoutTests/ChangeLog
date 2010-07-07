@@ -1,3 +1,14 @@
+2010-07-06  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Implement "act as if the banana has been peeled" (for lack of a better term)
+        https://bugs.webkit.org/show_bug.cgi?id=41734
+
+        Massive test progression.
+
+        * html5lib/runner-expected-html5.txt:
+
 2010-07-06  Kent Tamura  <tkent@chromium.org>
 
         Unreviewed, test expectation update.

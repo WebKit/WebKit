@@ -63,7 +63,7 @@ public:
 
     PassRefPtr<Element> createElement(AtomicHTMLToken&);
 
-    void fosterParent(Element*);
+    void fosterParent(Node*);
 
     bool indexOfFirstUnopenFormattingElement(unsigned& firstUnopenElementIndex) const;
     void reconstructTheActiveFormattingElements();
@@ -84,7 +84,28 @@ public:
 
     void setForm(PassRefPtr<Element> form) { m_form = form; }
 
+    class RedirectToFosterParentGuard : public Noncopyable {
+    public:
+        RedirectToFosterParentGuard(HTMLConstructionSite& tree, bool shouldRedirect)
+            : m_tree(tree)
+            , m_wasRedirectingBefore(tree.m_redirectAttachToFosterParent)
+        {
+            m_tree.m_redirectAttachToFosterParent = shouldRedirect;
+        }
+
+        ~RedirectToFosterParentGuard()
+        {
+            m_tree.m_redirectAttachToFosterParent = m_wasRedirectingBefore;
+        }
+
+    private:
+        HTMLConstructionSite& m_tree;
+        bool m_wasRedirectingBefore;
+    };
+
 private:
+    friend class RedirectToFosterParentGuard;
+
     template<typename ChildType>
     PassRefPtr<ChildType> attach(Node* parent, PassRefPtr<ChildType> prpChild);
 
@@ -97,6 +118,12 @@ private:
     mutable HTMLElementStack m_openElements;
     mutable HTMLFormattingElementList m_activeFormattingElements;
     FragmentScriptingPermission m_fragmentScriptingPermission;
+
+    // http://www.whatwg.org/specs/web-apps/current-work/multipage/tokenization.html#parsing-main-intable
+    // In the "in table" insertion mode, we sometimes get into a state where
+    // "whenever a node would be inserted into the current node, it must instead
+    // be foster parented."  This flag tracks whether we're in that state.
+    bool m_redirectAttachToFosterParent;
 };
 
 }
