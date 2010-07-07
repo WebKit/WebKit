@@ -1,3 +1,12 @@
+2010-07-07  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Not reviewed. Rollout r62633 - test crashes after some last-minute modifications.
+
+        * platform/mac/svg/custom/use-font-face-crash-expected.checksum: Removed.
+        * platform/mac/svg/custom/use-font-face-crash-expected.png: Removed.
+        * platform/mac/svg/custom/use-font-face-crash-expected.txt: Removed.
+        * svg/custom/use-font-face-crash.svg: Removed.
+
 2010-07-07  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

@@ -58,6 +58,7 @@ SVGFontFaceElement::SVGFontFaceElement(const QualifiedName& tagName, Document* d
 
 SVGFontFaceElement::~SVGFontFaceElement()
 {
+    removeFromMappedElementSheet();
 }
 
 static int cssPropertyIdForSVGAttributeName(const QualifiedName& attrName)

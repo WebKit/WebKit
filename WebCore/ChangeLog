@@ -1,3 +1,10 @@
+2010-07-07  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Not reviewed. Rollout r62633 - test crashes after some last-minute modifications.
+
+        * svg/SVGFontFaceElement.cpp:
+        (WebCore::SVGFontFaceElement::~SVGFontFaceElement):
+
 2010-07-07  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.
