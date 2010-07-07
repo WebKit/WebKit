@@ -1,3 +1,15 @@
+2010-07-06  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Jon Honeycutt.
+
+        <rdar://problem/8163651> Wrong value type being supplied for kCTTypesetterOptionForcedEmbeddingLevel key
+
+        No change in behavior, so no new test.
+
+        * platform/graphics/mac/ComplexTextControllerCoreText.cpp:
+        (WebCore::ComplexTextController::collectComplexTextRunsForCharactersCoreText): Use CFNumber instances
+        as the values of the kCTTypesetterOptionForcedEmbeddingLevel key, instead of CFBooleans.
+
 2010-07-06  Mark Rowe  <mrowe@apple.com>
 
         Fix production builds on Mac OS X.

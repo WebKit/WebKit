@@ -124,8 +124,10 @@ void ComplexTextController::collectComplexTextRunsForCharactersCoreText(const UC
 
     if (!m_mayUseNaturalWritingDirection || m_run.directionalOverride()) {
         static const void* optionKeys[] = { kCTTypesetterOptionForcedEmbeddingLevel };
-        static const void* ltrOptionValues[] = { kCFBooleanFalse };
-        static const void* rtlOptionValues[] = { kCFBooleanTrue };
+        const short ltrForcedEmbeddingLevelValue = 0;
+        const short rtlForcedEmbeddingLevelValue = 1;
+        static const void* ltrOptionValues[] = { CFNumberCreate(kCFAllocatorDefault, kCFNumberShortType, &ltrForcedEmbeddingLevelValue) };
+        static const void* rtlOptionValues[] = { CFNumberCreate(kCFAllocatorDefault, kCFNumberShortType, &rtlForcedEmbeddingLevelValue) };
         static CFDictionaryRef ltrTypesetterOptions = CFDictionaryCreate(kCFAllocatorDefault, optionKeys, ltrOptionValues, sizeof(optionKeys) / sizeof(*optionKeys), &kCFCopyStringDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
         static CFDictionaryRef rtlTypesetterOptions = CFDictionaryCreate(kCFAllocatorDefault, optionKeys, rtlOptionValues, sizeof(optionKeys) / sizeof(*optionKeys), &kCFCopyStringDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
         typesetter.adoptCF(CTTypesetterCreateWithAttributedStringAndOptions(attributedString.get(), m_run.ltr() ? ltrTypesetterOptions : rtlTypesetterOptions));
