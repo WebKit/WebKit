@@ -616,7 +616,10 @@ void HTMLTreeBuilder::processStartTagForInBody(AtomicHTMLToken& token)
         return;
     }
     if (token.name() == formTag) {
-        notImplemented();
+        if (m_tree.form()) {
+            parseError(token);
+            return;
+        }
         processFakePEndTagIfPInScope();
         m_tree.insertElement(token);
         m_tree.setForm(m_tree.currentElement());

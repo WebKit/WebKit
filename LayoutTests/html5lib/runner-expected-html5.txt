@@ -554,7 +554,6 @@ resources/tests6.dat:
 10
 11
 12
-13
 14
 26
 27
@@ -651,20 +650,6 @@ Expected:
 |   <frameset>
 |   "
 "
-
-Test 13 of 51 in resources/tests6.dat failed. Input:
-<form><form>
-Got:
-| <html>
-|   <head>
-|   <body>
-|     <form>
-|       <form>
-Expected:
-| <html>
-|   <head>
-|   <body>
-|     <form>
 
 Test 14 of 51 in resources/tests6.dat failed. Input:
 <button><button>
