@@ -106,48 +106,7 @@ void ScrollView::setGtkAdjustments(GtkAdjustment* hadj, GtkAdjustment* vadj, boo
     m_horizontalAdjustment = hadj;
     m_verticalAdjustment = vadj;
 
-    // Reset the adjustments to a sane default
-    if (m_horizontalAdjustment) {
-        // We may be lacking scrollbars when returning to a cached
-        // page, this kicks the page to recreate the scrollbars.
-        setHasVerticalScrollbar(true);
-        setHasHorizontalScrollbar(true);
-
-        ScrollbarGtk* hScrollbar = reinterpret_cast<ScrollbarGtk*>(horizontalScrollbar());
-        hScrollbar->attachAdjustment(m_horizontalAdjustment);
-
-        ScrollbarGtk* vScrollbar = reinterpret_cast<ScrollbarGtk*>(verticalScrollbar());
-        vScrollbar->attachAdjustment(m_verticalAdjustment);
-
-        // Reconsider having scrollbars early so that doing it doesn't
-        // undo the work that follows, in GtkScrollWindow's eyes
-        setHasVerticalScrollbar(false);
-        setHasHorizontalScrollbar(false);
-
-        // We used to reset everything to 0 here, but when page cache
-        // is enabled we reuse FrameViews that are cached. Since their
-        // size is not going to change when being restored, (which is
-        // what would cause the upper limit in the adjusments to be
-        // set in the normal case), we make sure they are up-to-date
-        // here. This is needed for the parent scrolling widget to be
-        // able to report correct values.
-
-        int horizontalPageStep = max(max<int>(frameRect().width() * Scrollbar::minFractionToStepWhenPaging(), frameRect().width() - Scrollbar::maxOverlapBetweenPages()), 1);
-        gtk_adjustment_configure(m_horizontalAdjustment,
-                                 resetValues ? 0 : scrollOffset().width(), 0,
-                                 resetValues ? 0 : contentsSize().width(),
-                                 resetValues ? 0 : Scrollbar::pixelsPerLineStep(),
-                                 resetValues ? 0 : horizontalPageStep,
-                                 resetValues ? 0 : frameRect().width());
-
-        int verticalPageStep = max(max<int>(frameRect().height() * Scrollbar::minFractionToStepWhenPaging(), frameRect().height() - Scrollbar::maxOverlapBetweenPages()), 1);
-        gtk_adjustment_configure(m_verticalAdjustment,
-                                 resetValues ? 0 : scrollOffset().height(), 0,
-                                 resetValues ? 0 : contentsSize().height(),
-                                 resetValues ? 0 : Scrollbar::pixelsPerLineStep(),
-                                 resetValues ? 0 : verticalPageStep,
-                                 resetValues ? 0 : frameRect().height());
-    } else {
+    if (!m_horizontalAdjustment) {
         ScrollbarGtk* hScrollbar = reinterpret_cast<ScrollbarGtk*>(horizontalScrollbar());
         if (hScrollbar)
             hScrollbar->detachAdjustment();
@@ -155,11 +114,44 @@ void ScrollView::setGtkAdjustments(GtkAdjustment* hadj, GtkAdjustment* vadj, boo
         ScrollbarGtk* vScrollbar = reinterpret_cast<ScrollbarGtk*>(verticalScrollbar());
         if (vScrollbar)
             vScrollbar->detachAdjustment();
+
+        return;
     }
 
-    /* reconsider having a scrollbar */
-    setHasVerticalScrollbar(false);
-    setHasHorizontalScrollbar(false);
+    // We may be lacking scrollbars when returning to a cached
+    // page, this kicks the page to recreate the scrollbars.
+    setHasVerticalScrollbar(true);
+    setHasHorizontalScrollbar(true);
+
+    ScrollbarGtk* hScrollbar = reinterpret_cast<ScrollbarGtk*>(horizontalScrollbar());
+    hScrollbar->attachAdjustment(m_horizontalAdjustment);
+
+    ScrollbarGtk* vScrollbar = reinterpret_cast<ScrollbarGtk*>(verticalScrollbar());
+    vScrollbar->attachAdjustment(m_verticalAdjustment);
+
+    // We used to reset everything to 0 here, but when page cache
+    // is enabled we reuse FrameViews that are cached. Since their
+    // size is not going to change when being restored, (which is
+    // what would cause the upper limit in the adjusments to be
+    // set in the normal case), we make sure they are up-to-date
+    // here. This is needed for the parent scrolling widget to be
+    // able to report correct values.
+
+    int horizontalPageStep = max(max<int>(frameRect().width() * Scrollbar::minFractionToStepWhenPaging(), frameRect().width() - Scrollbar::maxOverlapBetweenPages()), 1);
+    gtk_adjustment_configure(m_horizontalAdjustment,
+                             resetValues ? 0 : scrollOffset().width(), 0,
+                             resetValues ? 0 : contentsSize().width(),
+                             resetValues ? 0 : Scrollbar::pixelsPerLineStep(),
+                             resetValues ? 0 : horizontalPageStep,
+                             resetValues ? 0 : frameRect().width());
+
+    int verticalPageStep = max(max<int>(frameRect().height() * Scrollbar::minFractionToStepWhenPaging(), frameRect().height() - Scrollbar::maxOverlapBetweenPages()), 1);
+    gtk_adjustment_configure(m_verticalAdjustment,
+                             resetValues ? 0 : scrollOffset().height(), 0,
+                             resetValues ? 0 : contentsSize().height(),
+                             resetValues ? 0 : Scrollbar::pixelsPerLineStep(),
+                             resetValues ? 0 : verticalPageStep,
+                             resetValues ? 0 : frameRect().height());
 }
 
 void ScrollView::platformAddChild(Widget* child)
