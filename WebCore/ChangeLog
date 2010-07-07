@@ -1,3 +1,24 @@
+2010-07-06  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Dirk Schulze.
+
+        <use> on <font-face> causes crashes, if SVGUseElement gets detached
+        https://bugs.webkit.org/show_bug.cgi?id=41621
+
+        Do not call removeFromMappedElementSheet() from the SVGFontFaceElement destructor,
+        as that can potentially cause the element to be reattached while destructing.
+
+        In order to fix the crash in the testcase, the order of calling the base-class detach
+        method in SVGUseElement and the instance/shadow tree destruction has to be reversed,
+        matching the order in removedFromDocument().
+
+        Test: svg/custom/use-font-face-crash.svg
+
+        * svg/SVGFontFaceElement.cpp:
+        (WebCore::SVGFontFaceElement::~SVGFontFaceElement): Remove removeFromMappedElementSheet() call.
+        * svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::detach): Reverse order of calling base-class detach method and instance/shadow tree destruction.
+
 2010-07-07  Steve Block  <steveblock@google.com>
 
         Reviewed by Adam Barth.
