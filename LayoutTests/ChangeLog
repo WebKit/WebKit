@@ -1,3 +1,16 @@
+2010-07-07  Peter Kasting  <pkasting@google.com>
+
+        Not reviewed.  Chromium test expectation update.
+
+        Remove erroneously-added platform-specific expectations and instead mark
+        the tests as failing.
+
+        * platform/chromium-mac/fast/js/function-apply-expected.txt: Removed.
+        * platform/chromium-mac/fast/js/function-apply-many-args-expected.txt: Removed.
+        * platform/chromium-win/fast/js/function-apply-expected.txt: Removed.
+        * platform/chromium-win/fast/js/function-apply-many-args-expected.txt: Removed.
+        * platform/chromium/test_expectations.txt:
+
 2010-07-07  Dan Bernstein  <mitz@apple.com>
 
         Requested by Mark Rowe.
