@@ -39,8 +39,8 @@ namespace WebCore {
 namespace WebKit {
 
 class ImmutableArray;
+class WebBackForwardList;
 class WebBackForwardListItem;
-class WebBackForwardListProxy;
 class WebContext;
 class WebFramePolicyListenerProxy;
 class WebFrameProxy;
@@ -61,7 +61,7 @@ template<> struct APITypeInfo<WKURLRef>                         { typedef WebCor
 template<> struct APITypeInfo<WKNavigationDataRef>              { typedef WebNavigationData* ImplType; };
 template<> struct APITypeInfo<WKArrayRef>                       { typedef ImmutableArray* ImplType; };
 template<> struct APITypeInfo<WKBackForwardListItemRef>         { typedef WebBackForwardListItem* ImplType; };
-template<> struct APITypeInfo<WKBackForwardListRef>             { typedef WebBackForwardListProxy* ImplType; };
+template<> struct APITypeInfo<WKBackForwardListRef>             { typedef WebBackForwardList* ImplType; };
 
 template<typename ImplType> struct ImplTypeInfo { };
 template<> struct ImplTypeInfo<WebFrameProxy*>                  { typedef WKFrameRef APIType; };
@@ -74,7 +74,7 @@ template<> struct ImplTypeInfo<WebCore::StringImpl*>            { typedef WKStri
 template<> struct ImplTypeInfo<WebNavigationData*>              { typedef WKNavigationDataRef APIType; };
 template<> struct ImplTypeInfo<ImmutableArray*>                 { typedef WKArrayRef APIType; };
 template<> struct ImplTypeInfo<WebBackForwardListItem*>         { typedef WKBackForwardListItemRef APIType; };
-template<> struct ImplTypeInfo<WebBackForwardListProxy*>        { typedef WKBackForwardListRef APIType; };
+template<> struct ImplTypeInfo<WebBackForwardList*>             { typedef WKBackForwardListRef APIType; };
 
 } // namespace WebKit
 

@@ -28,7 +28,7 @@
 #include "DrawingAreaProxy.h"
 #include "MessageID.h"
 #include "PageClient.h"
-#include "WebBackForwardListProxy.h"
+#include "WebBackForwardList.h"
 #include "WebContext.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebEvent.h"
@@ -68,7 +68,7 @@ WebPageProxy::WebPageProxy(WebPageNamespace* pageNamespace, uint64_t pageID)
     , m_estimatedProgress(0.0)
     , m_canGoBack(false)
     , m_canGoForward(false)
-    , m_backForwardList(WebBackForwardListProxy::create(this))
+    , m_backForwardList(WebBackForwardList::create(this))
     , m_valid(true)
     , m_closed(false)
     , m_pageID(pageID)

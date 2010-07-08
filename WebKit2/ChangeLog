@@ -2,6 +2,35 @@
 
         Reviewed by Anders Carlsson.
 
+        Patch for https://bugs.webkit.org/show_bug.cgi?id=41874
+        Add stubbed out WebBackForwardListProxy
+
+        - No behavior change.
+        - Rename the old WebBackForwardListProxy to WebBackForwardList since it
+          will be the implementation, not the proxy.
+
+        * UIProcess/API/C/WKAPICast.h:
+        * UIProcess/API/C/WKBackForwardList.cpp:
+        * UIProcess/API/C/WKPage.cpp:
+        * UIProcess/WebBackForwardList.cpp: Copied from UIProcess/WebBackForwardListProxy.cpp.
+        * UIProcess/WebBackForwardList.h: Copied from UIProcess/WebBackForwardListProxy.h.
+        (WebKit::WebBackForwardList::create):
+        * UIProcess/WebBackForwardListProxy.cpp: Removed.
+        * UIProcess/WebBackForwardListProxy.h: Removed.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::backForwardList):
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/WebPage/WebBackForwardListProxy.cpp: Added.
+        * WebProcess/WebPage/WebBackForwardListProxy.h: Added.
+        (WebKit::WebBackForwardListProxy::create):
+        * win/WebKit2.vcproj:
+
+2010-07-08  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
         Pass Page to BackForwardControllerClient::createBackForwardList since it
         may be called before implementations of BackForwardControllerClient have
         access to a Page.

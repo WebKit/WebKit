@@ -25,7 +25,7 @@
 
 #include "WKBackForwardList.h"
 
-#include "WebBackForwardListProxy.h"
+#include "WebBackForwardList.h"
 #include "WKAPICast.h"
 
 using namespace WebKit;

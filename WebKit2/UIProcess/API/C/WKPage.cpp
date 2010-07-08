@@ -27,7 +27,7 @@
 #include "WKPagePrivate.h"
 
 #include "WKAPICast.h"
-#include "WebBackForwardListProxy.h"
+#include "WebBackForwardList.h"
 #include "WebPageProxy.h"
 
 #ifdef __BLOCKS__

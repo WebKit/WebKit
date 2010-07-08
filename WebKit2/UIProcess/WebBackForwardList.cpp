@@ -23,54 +23,54 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "WebBackForwardListProxy.h"
+#include "WebBackForwardList.h"
 
 namespace WebKit {
 
 static const unsigned NoCurrentItemIndex = UINT_MAX;
 
-WebBackForwardListProxy::WebBackForwardListProxy(WebPageProxy* page)
+WebBackForwardList::WebBackForwardList(WebPageProxy* page)
     : m_page(page)
     , m_current(NoCurrentItemIndex)
 {
 }
 
-WebBackForwardListProxy::~WebBackForwardListProxy()
+WebBackForwardList::~WebBackForwardList()
 {
 }
 
-WebBackForwardListItem* WebBackForwardListProxy::currentItem()
+WebBackForwardListItem* WebBackForwardList::currentItem()
 {
     if (m_current != NoCurrentItemIndex)
         return m_entries[m_current].get();
     return 0;
 }
 
-WebBackForwardListItem* WebBackForwardListProxy::backItem()
+WebBackForwardListItem* WebBackForwardList::backItem()
 {
     if (m_current && m_current != NoCurrentItemIndex)
         return m_entries[m_current - 1].get();
     return 0;
 }
 
-WebBackForwardListItem* WebBackForwardListProxy::forwardItem()
+WebBackForwardListItem* WebBackForwardList::forwardItem()
 {
     if (m_entries.size() && m_current < m_entries.size() - 1)
         return m_entries[m_current + 1].get();
     return 0;
 }
 
-unsigned WebBackForwardListProxy::backListCount()
+unsigned WebBackForwardList::backListCount()
 {
     return m_current == NoCurrentItemIndex ? 0 : m_current;
 }
 
-unsigned WebBackForwardListProxy::forwardListCount()
+unsigned WebBackForwardList::forwardListCount()
 {
     return m_current == NoCurrentItemIndex ? 0 : m_entries.size() - (m_current + 1);
 }
 
-BackForwardListItemVector WebBackForwardListProxy::backListWithLimit(unsigned limit)
+BackForwardListItemVector WebBackForwardList::backListWithLimit(unsigned limit)
 {
     BackForwardListItemVector list;
     unsigned size = std::min(backListCount(), limit);
@@ -84,7 +84,7 @@ BackForwardListItemVector WebBackForwardListProxy::backListWithLimit(unsigned li
     return list;
 }
 
-BackForwardListItemVector WebBackForwardListProxy::forwardListWithLimit(unsigned limit)
+BackForwardListItemVector WebBackForwardList::forwardListWithLimit(unsigned limit)
 {
     BackForwardListItemVector list;
     unsigned size = std::min(forwardListCount(), limit);
@@ -111,7 +111,7 @@ static void webBackForwardListItemDeref(const void* item)
     static_cast<WebBackForwardListItem*>(const_cast<void*>(item))->deref();
 }
 
-PassRefPtr<ImmutableArray> WebBackForwardListProxy::backListAsImmutableArrayWithLimit(unsigned limit)
+PassRefPtr<ImmutableArray> WebBackForwardList::backListAsImmutableArrayWithLimit(unsigned limit)
 {
     unsigned size = std::min(backListCount(), limit);
     if (!size)
@@ -131,7 +131,7 @@ PassRefPtr<ImmutableArray> WebBackForwardListProxy::backListAsImmutableArrayWith
     return ImmutableArray::adopt(array, size, &callbacks);
 }
 
-PassRefPtr<ImmutableArray> WebBackForwardListProxy::forwardListAsImmutableArrayWithLimit(unsigned limit)
+PassRefPtr<ImmutableArray> WebBackForwardList::forwardListAsImmutableArrayWithLimit(unsigned limit)
 {
     unsigned size = std::min(forwardListCount(), limit);
     if (!size)

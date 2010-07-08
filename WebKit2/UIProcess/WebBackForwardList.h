@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebBackForwardListProxy_h
-#define WebBackForwardListProxy_h
+#ifndef WebBackForwardList_h
+#define WebBackForwardList_h
 
 #include "ImmutableArray.h"
 #include "WebBackForwardListItem.h"
@@ -45,13 +45,13 @@ typedef Vector<RefPtr<WebBackForwardListItem> > BackForwardListItemVector;
  *      Back        Forward
  */
 
-class WebBackForwardListProxy : public RefCounted<WebBackForwardListProxy> {
+class WebBackForwardList : public RefCounted<WebBackForwardList> {
 public:
-    static PassRefPtr<WebBackForwardListProxy> create(WebPageProxy* page)
+    static PassRefPtr<WebBackForwardList> create(WebPageProxy* page)
     {
-        return adoptRef(new WebBackForwardListProxy(page));
+        return adoptRef(new WebBackForwardList(page));
     }
-    ~WebBackForwardListProxy();
+    ~WebBackForwardList();
 
     WebBackForwardListItem* currentItem();
     WebBackForwardListItem* backItem();
@@ -67,7 +67,7 @@ public:
     PassRefPtr<ImmutableArray> forwardListAsImmutableArrayWithLimit(unsigned limit);
 
 private:
-    WebBackForwardListProxy(WebPageProxy*);
+    WebBackForwardList(WebPageProxy*);
 
     WebPageProxy* m_page;
     BackForwardListItemVector m_entries;
@@ -76,4 +76,4 @@ private:
 
 } // namespace WebKit
 
-#endif // WebBackForwardListProxy_h
+#endif // WebBackForwardList_h

@@ -680,6 +680,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\WebProcess\WebPage\WebBackForwardListProxy.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\WebProcess\WebPage\WebBackForwardListProxy.h"
+					>
+				</File>
+				<File
 					RelativePath="..\WebProcess\WebPage\WebFrame.cpp"
 					>
 				</File>
@@ -853,19 +861,19 @@
 				>
 			</File>
 			<File
+				RelativePath="..\UIProcess\WebBackForwardList.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\UIProcess\WebBackForwardList.h"
+				>
+			</File>
+			<File
 				RelativePath="..\UIProcess\WebBackForwardListItem.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\UIProcess\WebBackForwardListItem.h"
-				>
-			</File>
-			<File
-				RelativePath="..\UIProcess\WebBackForwardListProxy.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\UIProcess\WebBackForwardListProxy.h"
 				>
 			</File>
 			<File
