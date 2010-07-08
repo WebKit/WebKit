@@ -1,3 +1,17 @@
+2010-07-08  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Darin Adler.
+
+        Fix adoptRef assertion failures caused by stack-allocated ResourceHandle objects
+        https://bugs.webkit.org/show_bug.cgi?id=41823
+
+        Create the ResourceHandle manually for now instead of calling
+        ::create, since that methods does a few extra checks that make us
+        fail a couple of HTTP tests.
+
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::):
+
 2010-07-08  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by David Levin.
