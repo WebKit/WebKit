@@ -1,3 +1,13 @@
+2010-07-08  Alexey Proskuryakov  <ap@apple.com>
+
+        Just landing a test for a bug that's been already fixed.
+
+        https://bugs.webkit.org/show_bug.cgi?id=17631
+        URL encoding problem with spaces
+
+        * fast/parser/href-whitespace-expected.txt: Added.
+        * fast/parser/href-whitespace.html: Added.
+
 2010-07-08  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r62778.
