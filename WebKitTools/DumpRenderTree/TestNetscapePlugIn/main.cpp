@@ -161,6 +161,7 @@ NPError NPP_New(NPMIMEType pluginType, NPP instance, uint16_t mode, int16_t argc
         else if (strcasecmp(argn[i], "testwindowopen") == 0)
             obj->testWindowOpen = TRUE;
         else if (strcasecmp(argn[i], "drawingmodel") == 0) {
+#if XP_MACOSX && !defined(BUILDING_ON_TIGER)
             const char* value = argv[i];
             if (strcasecmp(value, "coreanimation") == 0) {
                 if (supportsCoreAnimation)
@@ -174,6 +175,7 @@ NPError NPP_New(NPMIMEType pluginType, NPP instance, uint16_t mode, int16_t argc
                     return NPERR_INCOMPATIBLE_VERSION_ERROR;
              } else
                 return NPERR_INCOMPATIBLE_VERSION_ERROR;
+#endif
         } else if (strcasecmp(argn[i], "testGetURLOnDestroy") == 0) {
 #if XP_WIN
             // FIXME: When https://bugs.webkit.org/show_bug.cgi?id=41831 is fixed, this #ifdef can be removed.

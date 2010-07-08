@@ -1,5 +1,14 @@
 2010-07-08  Simon Fraser  <simon.fraser@apple.com>
 
+        Fix windows build.
+
+        #ifdef code for Mac.
+
+        * DumpRenderTree/TestNetscapePlugIn/main.cpp:
+        (NPP_New):
+
+2010-07-08  Simon Fraser  <simon.fraser@apple.com>
+
         Reviewed by Anders Carlsson.
 
         Allow the TestPlugin to use Core Animation rendering for testing
