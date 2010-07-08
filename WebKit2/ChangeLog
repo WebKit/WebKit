@@ -1,5 +1,19 @@
 2010-07-08  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        Add more parameters to Plugin::initialize
+        https://bugs.webkit.org/show_bug.cgi?id=41890
+
+        * WebProcess/Plugins/DummyPlugin.cpp:
+        (WebKit::DummyPlugin::initialize):
+        * WebProcess/Plugins/DummyPlugin.h:
+        * WebProcess/Plugins/Plugin.h:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::createPlugin):
+
+2010-07-08  Anders Carlsson  <andersca@apple.com>
+
         Fix build.
 
         * WebProcess/Plugins/DummyPlugin.h:

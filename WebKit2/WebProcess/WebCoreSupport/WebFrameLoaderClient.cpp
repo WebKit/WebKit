@@ -764,11 +764,13 @@ void WebFrameLoaderClient::didTransferChildFrameToNewDocument()
     notImplemented();
 }    
 
-PassRefPtr<Widget> WebFrameLoaderClient::createPlugin(const IntSize&, HTMLPlugInElement*, const KURL&, const Vector<String>&, const Vector<String>&, const String&, bool loadManually)
+PassRefPtr<Widget> WebFrameLoaderClient::createPlugin(const IntSize&, HTMLPlugInElement*, const KURL& url, const Vector<String>& paramNames, const Vector<String>& paramValues, const String& mimeType, bool loadManually)
 {
     notImplemented();
     
-    RefPtr<DummyPlugin> plugin = DummyPlugin::create();
+    RefPtr<Plugin> plugin = DummyPlugin::create();
+    if (!plugin->initialize(url, paramNames, paramValues, mimeType, loadManually))
+        return 0;
 
     return PluginView::create(plugin.release());
 }

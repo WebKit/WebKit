@@ -42,7 +42,7 @@ private:
     DummyPlugin();
 
     // Plugin
-    virtual void initialize(const WebCore::String& mimeType, const WebCore::KURL&, bool loadManually);
+    virtual bool initialize(const WebCore::KURL&, const Vector<WebCore::String>& paramNames, const Vector<WebCore::String>& paramValues, const WebCore::String& mimeType, bool loadManually);
     virtual void destroy();
     virtual void paint(WebCore::GraphicsContext*, const WebCore::IntRect& dirtyRect);
     virtual void geometryDidChange(const WebCore::IntRect& frameRect);
