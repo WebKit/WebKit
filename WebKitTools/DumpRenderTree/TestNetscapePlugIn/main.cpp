@@ -155,9 +155,12 @@ NPError NPP_New(NPMIMEType pluginType, NPP instance, uint16_t mode, int16_t argc
             obj->testDocumentOpenInDestroyStream = TRUE;
         else if (strcasecmp(argn[i], "testwindowopen") == 0)
             obj->testWindowOpen = TRUE;
-        else if (strcasecmp(argn[i], "testGetURLOnDestroy") == 0)
+        else if (strcasecmp(argn[i], "testGetURLOnDestroy") == 0) {
+#if XP_WIN
+            // FIXME: When https://bugs.webkit.org/show_bug.cgi?id=41831 is fixed, this #ifdef can be removed.
             obj->testGetURLOnDestroy = TRUE;
-        else if (strcasecmp(argn[i], "src") == 0 && strstr(argv[i], "plugin-document-has-focus.pl"))
+#endif
+        } else if (strcasecmp(argn[i], "src") == 0 && strstr(argv[i], "plugin-document-has-focus.pl"))
             obj->testKeyboardFocusForPlugins = TRUE;
     }
 

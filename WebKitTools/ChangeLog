@@ -1,3 +1,10 @@
+2010-07-07  Anders Carlsson  <andersca@apple.com>
+
+        Comment out a part of TestNetscapePlugin that caused tests to fail on Tiger and Leopard.
+
+        * DumpRenderTree/TestNetscapePlugIn/main.cpp:
+        (NPP_New):
+
 2010-07-07  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Adam Barth.
