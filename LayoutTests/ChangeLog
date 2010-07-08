@@ -1,3 +1,13 @@
+2010-07-07  Chris Fleizach  <cfleizach@apple.com>
+
+        No review. Fixing skipped layout test name.
+
+        AX: Data table heuristics: assume data table if at least one row or column of TH cells exist
+        https://bugs.webkit.org/show_bug.cgi?id=41806
+
+        * platform/mac-leopard/Skipped:
+        * platform/mac-tiger/Skipped:
+
 2010-07-07  Peter Kasting  <pkasting@google.com>
 
         Not reviewed.  Chromium test expectation update.

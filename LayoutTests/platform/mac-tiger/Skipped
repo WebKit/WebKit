@@ -37,7 +37,7 @@ platform/mac/accessibility/aria-treegrid.html
 platform/mac/accessibility/stale-table-rows.html
 platform/mac/accessibility/parent-of-table-row-is-table.html
 platform/mac/accessibility/aria-expanded-notifications.html
-platform/mac/accessibility/table-with-first-row-of-headers.html
+platform/mac/accessibility/table-with-row-col-of-headers.html
 # Lists are not supported on Leopard.
 platform/mac/accessibility/aria-directory.html
 platform/mac/accessibility/inherited-presentational-lists.html
