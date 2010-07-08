@@ -1,3 +1,28 @@
+2010-07-08  Vitaly Repeshko  <vitalyr@chromium.org>
+
+        Unreviewed.
+
+        [chromium] Update expectations.
+
+        * platform/chromium-linux/fast/gradients/list-item-gradient-expected.checksum:
+        * platform/chromium-linux/fast/gradients/list-item-gradient-expected.png:
+        * platform/chromium-linux/fast/gradients/radial-centered-expected.checksum: Added.
+        * platform/chromium-linux/fast/gradients/radial-centered-expected.png: Added.
+        * platform/chromium-linux/svg/custom/text-rotated-gradient-expected.checksum: Added.
+        * platform/chromium-linux/svg/custom/text-rotated-gradient-expected.png: Added.
+        * platform/chromium-mac/fast/gradients/radial-centered-expected.checksum: Added.
+        * platform/chromium-mac/fast/gradients/radial-centered-expected.png: Added.
+        * platform/chromium-mac/fast/gradients/radial-centered-expected.txt: Added.
+        * platform/chromium-win/fast/gradients/list-item-gradient-expected.checksum:
+        * platform/chromium-win/fast/gradients/list-item-gradient-expected.png:
+        * platform/chromium-win/fast/gradients/radial-centered-expected.checksum: Added.
+        * platform/chromium-win/fast/gradients/radial-centered-expected.png: Added.
+        * platform/chromium-win/fast/gradients/radial-centered-expected.txt: Added.
+        * platform/chromium-win/svg/custom/text-rotated-gradient-expected.checksum: Added.
+        * platform/chromium-win/svg/custom/text-rotated-gradient-expected.png: Added.
+        * platform/chromium-win/svg/custom/text-rotated-gradient-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
 2010-07-08  Alexey Proskuryakov  <ap@apple.com>
 
         Just landing a test for a bug that's been already fixed.
