@@ -49,6 +49,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalOptions="/NXCOMPAT"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -110,6 +111,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalOptions="/NXCOMPAT"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -171,6 +173,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalOptions="/NXCOMPAT"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -234,6 +237,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalOptions="/NXCOMPAT"
 			/>
 			<Tool
 				Name="VCALinkTool"

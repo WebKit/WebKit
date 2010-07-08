@@ -51,6 +51,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalOptions="/NXCOMPAT"
 				AdditionalDependencies="JavaScriptCore$(WebKitDLLConfigSuffix).lib CoreGraphics$(LibraryConfigSuffix).lib CoreFoundation$(LibraryConfigSuffix).lib"
 				AdditionalLibraryDirectories=""
 				SubSystem="1"
@@ -119,6 +120,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalOptions="/NXCOMPAT"
 				AdditionalDependencies="JavaScriptCore$(WebKitDLLConfigSuffix).lib CoreGraphics$(LibraryConfigSuffix).lib CoreFoundation$(LibraryConfigSuffix).lib"
 				AdditionalLibraryDirectories=""
 				SubSystem="1"
@@ -186,6 +188,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalOptions="/NXCOMPAT"
 				AdditionalDependencies="JavaScriptCore$(WebKitDLLConfigSuffix).lib CoreGraphics$(LibraryConfigSuffix).lib CoreFoundation$(LibraryConfigSuffix).lib"
 				AdditionalLibraryDirectories=""
 				SubSystem="1"
@@ -253,6 +256,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalOptions="/NXCOMPAT"
 				AdditionalDependencies="JavaScriptCore$(WebKitDLLConfigSuffix).lib CoreGraphics$(LibraryConfigSuffix).lib CoreFoundation$(LibraryConfigSuffix).lib"
 				AdditionalLibraryDirectories=""
 				SubSystem="1"

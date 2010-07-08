@@ -55,6 +55,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalOptions="/NXCOMPAT"
 				AdditionalDependencies="JavaScriptCore$(WebKitDLLConfigSuffix).lib WebKitGUID$(WebKitConfigSuffix).lib WebKit2$(WebKitDLLConfigSuffix).lib CoreGraphics$(LibraryConfigSuffix).lib CoreFoundation$(LibraryConfigSuffix).lib CFNetwork$(LibraryConfigSuffix).lib pthreadVC2$(LibraryConfigSuffix).lib getopt$(LibraryConfigSuffix).lib gdi32.lib ole32.lib oleaut32.lib user32.lib shlwapi.lib oleacc.lib comsuppw.lib"
 				AdditionalLibraryDirectories=""
 				DelayLoadDLLs=""
@@ -128,6 +129,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalOptions="/NXCOMPAT"
 				AdditionalDependencies="JavaScriptCore$(WebKitDLLConfigSuffix).lib WebKitGUID$(WebKitConfigSuffix).lib WebKit2$(WebKitDLLConfigSuffix).lib CoreGraphics$(LibraryConfigSuffix).lib CoreFoundation$(LibraryConfigSuffix).lib CFNetwork$(LibraryConfigSuffix).lib pthreadVC2$(LibraryConfigSuffix).lib getopt$(LibraryConfigSuffix).lib gdi32.lib ole32.lib oleaut32.lib user32.lib shlwapi.lib oleacc.lib comsuppw.lib"
 				AdditionalLibraryDirectories=""
 				DelayLoadDLLs=""
@@ -200,6 +202,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalOptions="/NXCOMPAT"
 				AdditionalDependencies="JavaScriptCore$(WebKitDLLConfigSuffix).lib WebKitGUID$(WebKitConfigSuffix).lib WebKit2$(WebKitDLLConfigSuffix).lib CoreGraphics$(LibraryConfigSuffix).lib CoreFoundation$(LibraryConfigSuffix).lib CFNetwork$(LibraryConfigSuffix).lib pthreadVC2$(LibraryConfigSuffix).lib getopt$(LibraryConfigSuffix).lib gdi32.lib ole32.lib oleaut32.lib user32.lib shlwapi.lib oleacc.lib comsuppw.lib"
 				AdditionalLibraryDirectories=""
 				DelayLoadDLLs=""
@@ -271,6 +274,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalOptions="/NXCOMPAT"
 				AdditionalDependencies="JavaScriptCore$(WebKitDLLConfigSuffix).lib WebKitGUID$(WebKitConfigSuffix).lib WebKit2$(WebKitDLLConfigSuffix).lib CoreGraphics$(LibraryConfigSuffix).lib CoreFoundation$(LibraryConfigSuffix).lib CFNetwork$(LibraryConfigSuffix).lib pthreadVC2$(LibraryConfigSuffix).lib getopt$(LibraryConfigSuffix).lib gdi32.lib ole32.lib oleaut32.lib user32.lib shlwapi.lib oleacc.lib comsuppw.lib"
 				AdditionalLibraryDirectories=""
 				DelayLoadDLLs=""

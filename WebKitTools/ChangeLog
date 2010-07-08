@@ -1,3 +1,15 @@
+2010-07-08  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Enable Data Execution Prevention for our test harnesses on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=41882
+
+        * DumpRenderTree/win/DumpRenderTree.vcproj:
+        * DumpRenderTree/win/ImageDiff.vcproj:
+        * WebKitAPITest/WebKitAPITest.vcproj:
+        * WebKitTestRunner/win/WebKitTestRunner.vcproj:
+
 2010-07-07  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.
