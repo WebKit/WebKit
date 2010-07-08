@@ -1,3 +1,9 @@
+2010-07-08  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Update my e-mail in committers.py
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2010-07-07  Daniel Bates  <dbates@rim.com>
 
         Reviewed by Dumitru Daniliuc.

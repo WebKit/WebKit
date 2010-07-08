@@ -254,7 +254,7 @@ reviewers_list = [
     Reviewer("Steve Falkenburg", "sfalken@apple.com", "sfalken"),
     Reviewer("Tim Omernick", "timo@apple.com"),
     Reviewer("Timothy Hatcher", ["timothy@hatcher.name", "timothy@apple.com"], "xenon"),
-    Reviewer(u"Tor Arne Vestb\u00f8", "vestbo@webkit.org", "torarne"),
+    Reviewer(u"Tor Arne Vestb\u00f8", ["vestbo@webkit.org", "tor.arne.vestbo@nokia.com"], "torarne"),
     Reviewer("Vicki Murley", "vicki@apple.com"),
     Reviewer("Xan Lopez", ["xan.lopez@gmail.com", "xan@gnome.org", "xan@webkit.org"], "xan"),
     Reviewer("Yury Semikhatsky", "yurys@chromium.org", "yurys"),
