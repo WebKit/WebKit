@@ -31,7 +31,7 @@ $typeTransform{"Array"} = {
     "push" => "push"
 };
 $typeTransform{"Value"} = {
-    "param" => "const RefPtr<InspectorValue>&",
+    "param" => "PassRefPtr<InspectorValue>",
     "retVal" => "PassRefPtr<InspectorValue>",
     "forward" => "InspectorValue",
     "header" => "InspectorValues.h",

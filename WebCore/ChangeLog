@@ -1,3 +1,12 @@
+2010-07-07  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Rubber-stamped by Pavel Feldman.
+
+        Web Inspector: All RefPtr arguments and return values should be changed to PassRefPtr according to common practice.
+        https://bugs.webkit.org/show_bug.cgi?id=41759
+
+        * inspector/CodeGeneratorInspector.pm:
+
 2010-07-07  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin.
