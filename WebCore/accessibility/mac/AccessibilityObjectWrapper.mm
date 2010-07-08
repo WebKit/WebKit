@@ -1465,7 +1465,7 @@ static NSString* roleValueToNSString(AccessibilityRole value)
         if ([attributeName isEqualToString: NSAccessibilitySelectedTextRangeAttribute]) {
             PlainTextRange textRange = m_object->selectedTextRange();
             if (textRange.isNull())
-                return nil;
+                return [NSValue valueWithRange:NSMakeRange(0, 0)];
             return [NSValue valueWithRange:NSMakeRange(textRange.start, textRange.length)];
         }
         // TODO: Get actual visible range. <rdar://problem/4712101>

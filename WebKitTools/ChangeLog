@@ -1,3 +1,13 @@
+2010-07-07  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Darin Adler.
+
+        AX: TextArea should return AXSelectedTextRange of 0,0 if the cursor is not in the text area
+        https://bugs.webkit.org/show_bug.cgi?id=41810
+
+        * DumpRenderTree/mac/AccessibilityUIElementMac.mm:
+        (AccessibilityUIElement::selectedTextRange):
+
 2010-07-07  Martin Robinson  <mrobinson@igalia.com>
 
         Unreviewed.

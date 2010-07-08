@@ -9,6 +9,18 @@
 
 2010-07-07  Chris Fleizach  <cfleizach@apple.com>
 
+        Reviewed by Darin Adler.
+
+        AX: TextArea should return AXSelectedTextRange of 0,0 if the cursor is not in the text area
+        https://bugs.webkit.org/show_bug.cgi?id=41810
+
+        Test: platform/mac/accessibility/selected-text-range-for-empty-textarea.html
+
+        * accessibility/mac/AccessibilityObjectWrapper.mm:
+        (-[AccessibilityObjectWrapper accessibilityAttributeValue:]):
+
+2010-07-07  Chris Fleizach  <cfleizach@apple.com>
+
         Reviewed by Beth Dakin.
 
         AX: Data table heuristics: assume data table if at least one row or column of TH cells exist
