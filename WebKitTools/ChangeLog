@@ -1,3 +1,34 @@
+2010-07-07  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Mark Rowe.
+
+        Clean up MiniBrowser Xcode project.
+
+        - Use xcconfig files.
+        - Rename plists to canonical Info.plist
+        - Remove localizations.
+
+        * MiniBrowser/Configurations: Added.
+        * MiniBrowser/Configurations/Base.xcconfig: Added.
+        * MiniBrowser/Configurations/DebugRelease.xcconfig: Added.
+        * MiniBrowser/Configurations/MiniBrowser.xcconfig: Added.
+        * MiniBrowser/Configurations/WebBundle.xcconfig: Added.
+        * MiniBrowser/MiniBrowser.xcodeproj/project.pbxproj:
+        * MiniBrowser/WebBundle-Info.plist: Removed.
+        * MiniBrowser/mac/BrowserStatisticsWindowController.m:
+        (-[BrowserStatisticsWindowController initWithThreadedWKContextRef:processWKContextRef:]):
+        * MiniBrowser/mac/BrowserWindow.xib: Added.
+        * MiniBrowser/mac/BrowserWindowController.m:
+        (-[BrowserWindowController initWithPageNamespace:]):
+        * MiniBrowser/mac/English.lproj: Removed.
+        * MiniBrowser/mac/English.lproj/BrowserWindow.xib: Removed.
+        * MiniBrowser/mac/English.lproj/InfoPlist.strings: Removed.
+        * MiniBrowser/mac/English.lproj/MainMenu.xib: Removed.
+        * MiniBrowser/mac/Info.plist: Copied from MiniBrowser/mac/MiniBrowser-Info.plist.
+        * MiniBrowser/mac/MainMenu.xib: Added.
+        * MiniBrowser/mac/MiniBrowser-Info.plist: Removed.
+        * MiniBrowser/mac/WebBundle/Info.plist: Copied from MiniBrowser/WebBundle-Info.plist.
+
 2010-07-07  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Dimitri Glazkov.

@@ -39,7 +39,7 @@
 
 - (id)initWithPageNamespace:(WKPageNamespaceRef)pageNamespace
 {
-    if (self = [super initWithWindowNibName:@"BrowserWindow"])
+    if ((self = [super initWithWindowNibName:@"BrowserWindow"]))
         _pageNamespace = WKPageNamespaceRetain(pageNamespace);
     
     return self;

@@ -14,7 +14,7 @@
 
 - (id)initWithThreadedWKContextRef:(WKContextRef)threadContext processWKContextRef:(WKContextRef)processContext
 {
-    if (self = [super initWithWindowNibName:@"BrowserStatisticsWindow"]) {
+    if ((self = [super initWithWindowNibName:@"BrowserStatisticsWindow"])) {
         _threadContext = WKContextRetain(threadContext);
         _processContext = WKContextRetain(processContext);
     }

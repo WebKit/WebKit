@@ -1,0 +1,65 @@
+// Copyright (C) 2010 Apple Inc. All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions
+// are met:
+// 1. Redistributions of source code must retain the above copyright
+//    notice, this list of conditions and the following disclaimer.
+// 2. Redistributions in binary form must reproduce the above copyright
+//    notice, this list of conditions and the following disclaimer in the
+//    documentation and/or other materials provided with the distribution.
+//
+// THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+// EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+// PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+// CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+// EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+// PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+// PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+// OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+// (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+// OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+
+DEBUG_INFORMATION_FORMAT = dwarf
+PREBINDING = NO
+GCC_C_LANGUAGE_STANDARD = gnu99
+GCC_PRECOMPILE_PREFIX_HEADER = YES
+GCC_TREAT_WARNINGS_AS_ERRORS = YES
+GCC_WARN_UNUSED_FUNCTION = YES
+GCC_WARN_UNUSED_VARIABLE = YES
+GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO
+WARNING_CFLAGS = -Wall -W -Wno-unused-parameter
+LINKER_DISPLAYS_MANGLED_NAMES = YES;
+
+
+TARGET_MAC_OS_X_VERSION_MAJOR = $(MAC_OS_X_VERSION_MAJOR);
+
+
+// Use GCC 4.2 with Xcode 3.1, which includes GCC 4.2 but defaults to GCC 4.0.
+// Note that Xcode versions as new as 3.1.2 use XCODE_VERSION_ACTUAL for the minor version
+// number.  Newer versions of Xcode use XCODE_VERSION_MINOR for the minor version, and
+// XCODE_VERSION_ACTUAL for the full version number.
+TARGET_GCC_VERSION = $(TARGET_GCC_VERSION_$(TARGET_MAC_OS_X_VERSION_MAJOR));
+TARGET_GCC_VERSION_ = $(TARGET_GCC_VERSION_1040);
+TARGET_GCC_VERSION_1040 = GCC_40;
+TARGET_GCC_VERSION_1050 = $(TARGET_GCC_VERSION_1050_$(XCODE_VERSION_MINOR));
+TARGET_GCC_VERSION_1050_ = $(TARGET_GCC_VERSION_1050_$(XCODE_VERSION_ACTUAL));
+TARGET_GCC_VERSION_1050_0310 = GCC_42;
+TARGET_GCC_VERSION_1050_0320 = GCC_42;
+TARGET_GCC_VERSION_1060 = GCC_42;
+TARGET_GCC_VERSION_1070 = LLVM_GCC_42;
+
+GCC_VERSION = $(GCC_VERSION_$(TARGET_GCC_VERSION));
+GCC_VERSION_GCC_40 = 4.0;
+GCC_VERSION_GCC_42 = 4.2;
+GCC_VERSION_LLVM_GCC_42 = com.apple.compilers.llvmgcc42;
+
+// If the target Mac OS X version does not match the current Mac OS X version then we'll want to build using the target version's SDK.
+SDKROOT = $(SDKROOT_$(MAC_OS_X_VERSION_MAJOR)_$(TARGET_MAC_OS_X_VERSION_MAJOR));
+SDKROOT_1050_1040 = macosx10.4;
+SDKROOT_1060_1040 = macosx10.4;
+SDKROOT_1060_1050 = macosx10.5;
+SDKROOT_1070_1040 = macosx10.4;
+SDKROOT_1070_1050 = macosx10.5;
+SDKROOT_1070_1060 = macosx10.6;
