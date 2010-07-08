@@ -480,13 +480,8 @@ start:
 
     int startOffset = currentOffset();
 
-    if (UNLIKELY(m_current == -1)) {
-        if (!m_terminator && !m_delimited && !m_isReparsing) {
-            // automatic semicolon insertion if program incomplete
-            goto doneSemicolon;
-        }
+    if (UNLIKELY(m_current == -1))
         return 0;
-    }
 
     m_delimited = false;
 

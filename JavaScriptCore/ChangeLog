@@ -1,5 +1,18 @@
 2010-07-08  Oliver Hunt  <oliver@apple.com>
 
+        Reviewed by Gavin Barraclough.
+
+        JavaScript parser violates ECMA automatic semicolon insertion rule
+        https://bugs.webkit.org/show_bug.cgi?id=41844
+
+        Remove (very) old and bogus logic that automatically inserted a semicolon
+        at the end of a script's source.
+
+        * parser/Lexer.cpp:
+        (JSC::Lexer::lex):
+
+2010-07-08  Oliver Hunt  <oliver@apple.com>
+
         Reviewed by Anders Carlson.
 
         Tidy up the lexer

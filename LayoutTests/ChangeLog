@@ -50,6 +50,20 @@
 
         Reviewed by Gavin Barraclough.
 
+        JavaScript parser violates ECMA automatic semicolon insertion rule
+        https://bugs.webkit.org/show_bug.cgi?id=41844
+
+        Add testcase to ensure that we don't automatically insert a semicolon
+        at the end of a script.
+
+        * fast/js/no-semi-insertion-at-end-of-script-expected.txt: Added.
+        * fast/js/no-semi-insertion-at-end-of-script.html: Added.
+        * fast/js/script-tests/no-semi-insertion-at-end-of-script.js: Added.
+
+2010-07-08  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
         Make object-literal parsing conformant with the spec.
         https://bugs.webkit.org/show_bug.cgi?id=41892
 
