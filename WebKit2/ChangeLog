@@ -2,6 +2,20 @@
 
         Reviewed by Sam Weinig.
 
+        Enable notImplemented messages by default and have the various clients explicitly disable them.
+
+        * Shared/NotImplemented.h:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        * WebProcess/WebCoreSupport/WebContextMenuClient.cpp:
+        * WebProcess/WebCoreSupport/WebDragClient.cpp:
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        * WebProcess/WebCoreSupport/WebInspectorClient.cpp:
+
+2010-07-08  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
         Add stubbed out NPN functions
         https://bugs.webkit.org/show_bug.cgi?id=41917
 

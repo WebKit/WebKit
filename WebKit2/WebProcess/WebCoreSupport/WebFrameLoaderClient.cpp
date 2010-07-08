@@ -25,11 +25,14 @@
 
 #include "WebFrameLoaderClient.h"
 
+#define DISABLE_NOT_IMPLEMENTED_WARNINGS 1
+#include "NotImplemented.h"
+
 #include "DummyPlugin.h"
 #if PLATFORM(MAC)
 #include "NetscapePluginModule.h"
 #endif
-#include "NotImplemented.h"
+
 #include "PluginView.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebErrors.h"

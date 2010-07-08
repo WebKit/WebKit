@@ -25,8 +25,10 @@
 
 #include "WebChromeClient.h"
 
-#include "DrawingArea.h"
+#define DISABLE_NOT_IMPLEMENTED_WARNINGS 1
 #include "NotImplemented.h"
+
+#include "DrawingArea.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebFrame.h"
 #include "WebFrameLoaderClient.h"
