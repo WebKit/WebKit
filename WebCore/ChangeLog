@@ -1,3 +1,14 @@
+2010-07-08  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Add stubbed out PluginView class
+        https://bugs.webkit.org/show_bug.cgi?id=41879
+
+        Export functions needed by WebKit2.
+
+        * WebCore.exp.in:
+
 2010-07-08  Ben Murdoch  <benm@google.com>
 
         Reviewed by Pavel Feldman.

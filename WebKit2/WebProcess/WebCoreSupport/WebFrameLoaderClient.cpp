@@ -26,6 +26,7 @@
 #include "WebFrameLoaderClient.h"
 
 #include "NotImplemented.h"
+#include "PluginView.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebErrors.h"
 #include "WebFrame.h"
@@ -765,7 +766,7 @@ void WebFrameLoaderClient::didTransferChildFrameToNewDocument()
 PassRefPtr<Widget> WebFrameLoaderClient::createPlugin(const IntSize&, HTMLPlugInElement*, const KURL&, const Vector<String>&, const Vector<String>&, const String&, bool loadManually)
 {
     notImplemented();
-    return 0;
+    return PluginView::create();
 }
 
 void WebFrameLoaderClient::redirectDataToPlugin(Widget* pluginWidget)

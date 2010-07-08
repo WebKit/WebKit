@@ -1,3 +1,31 @@
+2010-07-08  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Add stubbed out PluginView class
+        https://bugs.webkit.org/show_bug.cgi?id=41879
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Add PluginView.cpp and PluginView.h
+
+        * WebProcess/Plugins/PluginView.cpp: Added.
+        (WebKit::PluginView::PluginView):
+        (WebKit::PluginView::~PluginView):
+        (WebKit::PluginView::setFrameRect):
+        (WebKit::PluginView::paint):
+        (WebKit::PluginView::viewGeometryDidChange):
+        (WebKit::PluginView::invalidateRect):
+        Stub out these functions.
+
+        * WebProcess/Plugins/PluginView.h: Added.
+        (WebKit::PluginView::create):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::createPlugin):
+        Create a plug-in view.
+        
+        * win/WebKit2.vcproj:
+        Add PluginView.cpp and PluginView.h.
+
 2010-07-08  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Adam Roben.
