@@ -1,5 +1,11 @@
 2010-07-08  Gavin Barraclough  <barraclough@apple.com>
 
+        GTK build fix take two.
+
+        * GNUmakefile.am:
+
+2010-07-08  Gavin Barraclough  <barraclough@apple.com>
+
         GTK build fix.
 
         * GNUmakefile.am:
