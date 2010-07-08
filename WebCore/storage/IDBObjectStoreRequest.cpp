@@ -36,10 +36,12 @@
 
 namespace WebCore {
 
-IDBObjectStoreRequest::IDBObjectStoreRequest(PassRefPtr<IDBObjectStore> idbObjectStore) 
+IDBObjectStoreRequest::IDBObjectStoreRequest(PassRefPtr<IDBObjectStore> idbObjectStore)
     : m_objectStore(idbObjectStore)
 {
     m_this = IDBAny::create();
+    // We pass a reference to this object before it can be adopted.
+    relaxAdoptionRequirement();
     m_this->set(this);
 }
 
