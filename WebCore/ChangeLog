@@ -1,3 +1,15 @@
+2010-07-08  Patrick Gansterer  <paroga@paroga.com>
+
+        Reviewed by Kent Tamura.
+
+        [WINCE] Buildfix for EventHandler
+        https://bugs.webkit.org/show_bug.cgi?id=41829
+
+        SM_MENUDROPALIGNMENT isn't supported on WinCE.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::sendContextMenuEventForKey):
+
 2010-07-08  Xiaomei Ji  <xji@chromium.org>
 
         Reviewed by David Levin.
