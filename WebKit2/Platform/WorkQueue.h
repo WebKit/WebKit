@@ -38,6 +38,7 @@
 #include <wtf/Vector.h>
 
 #if PLATFORM(QT)
+class QLocalSocket;
 class QObject;
 class QThread;
 #endif
@@ -68,7 +69,9 @@ public:
     void unregisterHandle(HANDLE);
 #elif PLATFORM(QT)
     void connectSignal(QObject*, const char* signal, std::auto_ptr<WorkItem>);
-    void disconnectSignal(QObject*, const char* signa);
+    void disconnectSignal(QObject*, const char* signal);
+
+    void moveSocketToWorkThread(QLocalSocket*);
 #endif
 
 private:

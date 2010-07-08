@@ -91,11 +91,14 @@ bool Connection::open()
     if (m_isServer) {
         m_socket = WebKit::ProcessLauncher::takePendingConnection();
         m_isConnected = m_socket;
-        if (m_isConnected)
+        if (m_isConnected) {
+            m_connectionQueue.moveSocketToWorkThread(m_socket);
             m_connectionQueue.connectSignal(m_socket, SIGNAL(readyRead()), WorkItem::create(this, &Connection::readyReadHandler));
+        }
     } else {
         m_socket = new QLocalSocket();
         m_socket->connectToServer(m_serverName);
+        m_connectionQueue.moveSocketToWorkThread(m_socket);
         m_connectionQueue.connectSignal(m_socket, SIGNAL(readyRead()), WorkItem::create(this, &Connection::readyReadHandler));
         m_isConnected = m_socket->waitForConnected();
     }

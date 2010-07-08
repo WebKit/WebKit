@@ -26,6 +26,7 @@
 
 #include "WorkQueue.h"
 
+#include <QLocalSocket>
 #include <QObject>
 #include <QThread>
 #include <wtf/Threading.h>
@@ -90,6 +91,15 @@ void WorkQueue::disconnectSignal(QObject* o, const char* name)
         m_signalListeners.remove(it);
         return;
     }
+}
+
+void WorkQueue::moveSocketToWorkThread(QLocalSocket* socket)
+{
+    ASSERT(m_workThread);
+    ASSERT(socket);
+
+    socket->setParent(0);
+    socket->moveToThread(m_workThread);
 }
 
 void WorkQueue::platformInitialize(const char*)
