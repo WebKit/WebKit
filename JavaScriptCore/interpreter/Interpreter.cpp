@@ -3776,7 +3776,7 @@ skip_id_custom_self:
                 argStore[i] = callFrame->registers()[i - RegisterFile::CallFrameHeaderSize - expectedParams];
             // Then we copy any additional arguments that may be further up the stack ('-1' to account for 'this')
             for (; i < static_cast<int32_t>(argCount); i++)
-                argStore[i] = callFrame->registers()[i - RegisterFile::CallFrameHeaderSize - expectedParams - argCount - 1];
+                argStore[i] = callFrame->registers()[i - RegisterFile::CallFrameHeaderSize - expectedParams - static_cast<int32_t>(argCount) - 1];
         } else if (!arguments.isUndefinedOrNull()) {
             if (!arguments.isObject()) {
                 exceptionValue = createInvalidParamError(callFrame, "Function.prototype.apply", arguments, vPC - codeBlock->instructions().begin(), codeBlock);
