@@ -165,9 +165,10 @@ static bool executeToggleStyle(Frame* frame, EditorCommandSource source, EditAct
     // Style is considered present when
     // mac: present at the beginning of selection
     // other: present throughout the selection
-    Settings* settings = frame->document()->settings();
+
+    // FIXME: Make stateStyle() to use this editing method too for the cases where it's used for queryCommandState.
     bool styleIsPresent;
-    if (settings && settings->editingBehaviorType() == EditingMacBehavior)
+    if (!frame->editor()->behavior().shouldToggleStyleBasedOnStartOfSelection())
         styleIsPresent = frame->editor()->selectionStartHasStyle(style.get());
     else
         styleIsPresent = frame->editor()->selectionHasStyle(style.get()) == TrueTriState;

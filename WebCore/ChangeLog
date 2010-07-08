@@ -1,3 +1,24 @@
+2010-07-08  Antonio Gomes  <tonikitoo@webkit.org>
+
+        Reviewed by Ojan Vafai.
+
+        Refactor platform dependent editing behavior code out of Settings (part II)
+        https://bugs.webkit.org/show_bug.cgi?id=39854
+
+        Mac port is currently the only port relying on a style to be present on the start
+        of a selection to consider the style as applied or not. All other ports
+        have to have the style present in all text node of the selection for such.
+
+        Patch makes situations that depend on this check like this to be controlled by
+        the EditingBehavior class.
+
+        Refactoring, so no new tests needed.
+
+        * editing/EditingBehavior.h:
+        (WebCore::EditingBehavior::shouldToggleStyleBasedOnStartOfSelection):
+        * editing/EditorCommand.cpp:
+        (WebCore::executeToggleStyle):
+
 2010-07-08  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.
