@@ -1,3 +1,23 @@
+2010-07-07  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        [GTK] Implement ImageDiff and add it to the build system
+        https://bugs.webkit.org/show_bug.cgi?id=41779
+
+        Add the initial implementation of the ImageDiff tool for the GTK+
+        port. This is an essential tool for doing pixel tests. The implementation
+        is based on the Mac and Chromium ports.
+
+        * DumpRenderTree/gtk/ImageDiff.cpp: Added.
+        (readPixbufFromStdin): Added.
+        (differenceImageFromDifferenceBuffer): Ditto.
+        (calculateDifference): Ditto.
+        (printImage): Ditto.
+        (printImageDifferences): Ditto.
+        (main): Ditto.
+        * GNUmakefile.am: Add ImageDiff to the WebKitTools build scripts.
+
 2010-07-08  Jay Civelli  <jcivelli@chromium.org>
 
         Unreviewed. Adding myself as a committer.
