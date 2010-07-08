@@ -2,6 +2,40 @@
 
         Reviewed by Sam Weinig.
 
+        Add a Plugin abstract base class and a DummyPlugin that implements it
+        https://bugs.webkit.org/show_bug.cgi?id=41885
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Add files.
+
+        * WebProcess/Plugins/DummyPlugin.cpp: Added.
+        (WebKit::DummyPlugin::paint):
+        Paint a red rectangle.
+        
+        * WebProcess/Plugins/Plugin.cpp: Added.
+        * WebProcess/Plugins/Plugin.h: Added.
+        Add Plugin, an abstract baseclass.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::PluginView):
+        (WebKit::PluginView::~PluginView):
+        (WebKit::PluginView::paint):
+        (WebKit::PluginView::viewGeometryDidChange):
+        * WebProcess/Plugins/PluginView.h:
+        (WebKit::PluginView::create):
+        Add a Plugin member function and forward PluginView calls to it.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::createPlugin):
+        Make a DummyPlugin and pass it to the PluginView.
+
+        * win/WebKit2.vcproj:
+        Add files.
+        
+2010-07-08  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
         Add stubbed out PluginView class
         https://bugs.webkit.org/show_bug.cgi?id=41879
 

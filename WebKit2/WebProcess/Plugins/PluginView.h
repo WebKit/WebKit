@@ -36,13 +36,13 @@ class Plugin;
 
 class PluginView : public WebCore::Widget {
 public:
-    static PassRefPtr<PluginView> create()
+    static PassRefPtr<PluginView> create(PassRefPtr<Plugin> plugin)
     {
-        return adoptRef(new PluginView());
+        return adoptRef(new PluginView(plugin));
     }
 
 private:
-    PluginView();
+    PluginView(PassRefPtr<Plugin>);
     virtual ~PluginView();
 
     void viewGeometryDidChange();
@@ -51,6 +51,8 @@ private:
     virtual void setFrameRect(const WebCore::IntRect&);
     virtual void paint(WebCore::GraphicsContext*, const WebCore::IntRect&);
     virtual void invalidateRect(const WebCore::IntRect&);
+    
+    RefPtr<Plugin> m_plugin;
 };
 
 } // namespace WebKit

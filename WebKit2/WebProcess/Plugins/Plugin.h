@@ -23,50 +23,33 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "PluginView.h"
+#ifndef Plugin_h
+#define Plugin_h
 
-#include "Plugin.h"
-#include <WebCore/GraphicsContext.h>
+#include <wtf/RefCounted.h>
 
-using namespace WebCore;
+namespace WebCore {
+    class GraphicsContext;
+    class IntRect;
+    class KURL;
+    class String;
+}
 
 namespace WebKit {
 
-PluginView::PluginView(PassRefPtr<Plugin> plugin)
-    : m_plugin(plugin)
-{
-}
-
-PluginView::~PluginView()
-{
-    m_plugin->destroy();
-}
-
-void PluginView::setFrameRect(const WebCore::IntRect& rect)
-{
-    Widget::setFrameRect(rect);
-    viewGeometryDidChange();
-}
-
-void PluginView::paint(GraphicsContext* context, const IntRect& dirtyRect)
-{
-    if (context->paintingDisabled())
-        return;
+class Plugin : public RefCounted<Plugin> {
+public:
+    virtual ~Plugin();
     
-    IntRect paintRect = intersection(dirtyRect, frameRect());
-    if (paintRect.isEmpty())
-        return;
+    virtual void initialize(const WebCore::String& mimeType, const WebCore::KURL&, bool loadManually) = 0;
+    virtual void destroy() = 0;
+    virtual void paint(WebCore::GraphicsContext*, const WebCore::IntRect& dirtyRect) = 0;
+    virtual void geometryDidChange(const WebCore::IntRect& frameRect) = 0;
 
-    m_plugin->paint(context, paintRect);
-}
-
-void PluginView::viewGeometryDidChange()
-{
-    m_plugin->geometryDidChange(frameRect());
-}
-
-void PluginView::invalidateRect(const IntRect&)
-{
-}
-
+protected:
+    Plugin();
+};
+    
 } // namespace WebKit
+
+#endif // Plugin_h

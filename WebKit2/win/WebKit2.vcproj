@@ -824,6 +824,22 @@
 				Name="Plugins"
 				>
 				<File
+					RelativePath="..\WebProcess\Plugins\DummyPlugin.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\WebProcess\Plugins\DummyPlugin.h"
+					>
+				</File>
+				<File
+					RelativePath="..\WebProcess\Plugins\Plugin.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\WebProcess\Plugins\Plugin.h"
+					>
+				</File>
+				<File
 					RelativePath="..\WebProcess\Plugins\PluginView.cpp"
 					>
 				</File>

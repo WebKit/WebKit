@@ -23,49 +23,40 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "PluginView.h"
+#include "DummyPlugin.h"
 
-#include "Plugin.h"
 #include <WebCore/GraphicsContext.h>
 
 using namespace WebCore;
 
 namespace WebKit {
 
-PluginView::PluginView(PassRefPtr<Plugin> plugin)
-    : m_plugin(plugin)
+DummyPlugin::DummyPlugin()
 {
 }
 
-PluginView::~PluginView()
+void DummyPlugin::initialize(const String& mimeType, const KURL&, bool loadManually)
 {
-    m_plugin->destroy();
 }
-
-void PluginView::setFrameRect(const WebCore::IntRect& rect)
-{
-    Widget::setFrameRect(rect);
-    viewGeometryDidChange();
-}
-
-void PluginView::paint(GraphicsContext* context, const IntRect& dirtyRect)
-{
-    if (context->paintingDisabled())
-        return;
     
-    IntRect paintRect = intersection(dirtyRect, frameRect());
-    if (paintRect.isEmpty())
-        return;
-
-    m_plugin->paint(context, paintRect);
-}
-
-void PluginView::viewGeometryDidChange()
+void DummyPlugin::destroy()
 {
-    m_plugin->geometryDidChange(frameRect());
 }
-
-void PluginView::invalidateRect(const IntRect&)
+    
+void DummyPlugin::paint(GraphicsContext* context, const IntRect& dirtyRect)
+{
+#if PLATFORM(MAC)
+    CGContextRef cgContext = context->platformContext();
+    CGContextSaveGState(cgContext);
+    
+    CGColorRef redColor = CGColorCreateGenericRGB(1, 0, 0, 1);
+    CGContextSetFillColorWithColor(cgContext, redColor);
+    CGContextFillRect(cgContext, dirtyRect);
+    CGColorRelease(redColor);
+#endif    
+}
+    
+void DummyPlugin::geometryDidChange(const IntRect& frameRect)
 {
 }
 

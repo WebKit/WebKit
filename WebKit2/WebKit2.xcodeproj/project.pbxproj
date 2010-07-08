@@ -48,6 +48,10 @@
 		1A6FA31611E3923600DB1371 /* WebKitMain.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A6FA31511E3923600DB1371 /* WebKitMain.cpp */; };
 		1A6FB7AE11E64B6800DB1371 /* PluginView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A6FB7AC11E64B6800DB1371 /* PluginView.cpp */; };
 		1A6FB7AF11E64B6800DB1371 /* PluginView.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A6FB7AD11E64B6800DB1371 /* PluginView.h */; };
+		1A6FB7D211E651E200DB1371 /* Plugin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A6FB7D011E651E200DB1371 /* Plugin.cpp */; };
+		1A6FB7D311E651E200DB1371 /* Plugin.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A6FB7D111E651E200DB1371 /* Plugin.h */; };
+		1A6FB7E611E6530500DB1371 /* DummyPlugin.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A6FB7E411E6530500DB1371 /* DummyPlugin.h */; };
+		1A6FB7E711E6530500DB1371 /* DummyPlugin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A6FB7E511E6530500DB1371 /* DummyPlugin.cpp */; };
 		1AA1CC5D100FA1A10078DEBC /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AA1CC5C100FA1A10078DEBC /* QuartzCore.framework */; };
 		1AA1CD07100FA1BA0078DEBC /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AA1CD06100FA1BA0078DEBC /* Carbon.framework */; };
 		1AADE6FF10D855FC00D3D63D /* ApplicationServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AADE6FE10D855FC00D3D63D /* ApplicationServices.framework */; };
@@ -302,8 +306,12 @@
 		1A6FA01F11E1528700DB1371 /* WebProcessMain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebProcessMain.h; sourceTree = "<group>"; };
 		1A6FA31011E3921E00DB1371 /* MainMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MainMac.cpp; path = mac/MainMac.cpp; sourceTree = "<group>"; };
 		1A6FA31511E3923600DB1371 /* WebKitMain.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebKitMain.cpp; sourceTree = "<group>"; };
-		1A6FB7AC11E64B6800DB1371 /* PluginView.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PluginView.cpp; path = Plugins/PluginView.cpp; sourceTree = "<group>"; };
-		1A6FB7AD11E64B6800DB1371 /* PluginView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PluginView.h; path = Plugins/PluginView.h; sourceTree = "<group>"; };
+		1A6FB7AC11E64B6800DB1371 /* PluginView.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PluginView.cpp; sourceTree = "<group>"; };
+		1A6FB7AD11E64B6800DB1371 /* PluginView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginView.h; sourceTree = "<group>"; };
+		1A6FB7D011E651E200DB1371 /* Plugin.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Plugin.cpp; sourceTree = "<group>"; };
+		1A6FB7D111E651E200DB1371 /* Plugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Plugin.h; sourceTree = "<group>"; };
+		1A6FB7E411E6530500DB1371 /* DummyPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DummyPlugin.h; sourceTree = "<group>"; };
+		1A6FB7E511E6530500DB1371 /* DummyPlugin.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DummyPlugin.cpp; sourceTree = "<group>"; };
 		1AA1C79A100E7FC50078DEBC /* WebCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = WebCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		1AA1C7DE100E846E0078DEBC /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = JavaScriptCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		1AA1CC5C100FA1A10078DEBC /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = /System/Library/Frameworks/QuartzCore.framework; sourceTree = "<absolute>"; };
@@ -619,10 +627,14 @@
 		1A6FB7AA11E64B4900DB1371 /* Plugins */ = {
 			isa = PBXGroup;
 			children = (
+				1A6FB7E511E6530500DB1371 /* DummyPlugin.cpp */,
+				1A6FB7E411E6530500DB1371 /* DummyPlugin.h */,
+				1A6FB7D011E651E200DB1371 /* Plugin.cpp */,
+				1A6FB7D111E651E200DB1371 /* Plugin.h */,
 				1A6FB7AC11E64B6800DB1371 /* PluginView.cpp */,
 				1A6FB7AD11E64B6800DB1371 /* PluginView.h */,
 			);
-			name = Plugins;
+			path = Plugins;
 			sourceTree = "<group>";
 		};
 		1A7E814E1152D2240003695B /* mac */ = {
@@ -1170,6 +1182,8 @@
 				BC72B9FB11E6476B001EB4EA /* WebBackForwardListProxy.h in Headers */,
 				BC72BA1E11E64907001EB4EA /* WebBackForwardList.h in Headers */,
 				1A6FB7AF11E64B6800DB1371 /* PluginView.h in Headers */,
+				1A6FB7D311E651E200DB1371 /* Plugin.h in Headers */,
+				1A6FB7E611E6530500DB1371 /* DummyPlugin.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1352,6 +1366,8 @@
 				BC72B9FA11E6476B001EB4EA /* WebBackForwardListProxy.cpp in Sources */,
 				BC72BA1D11E64907001EB4EA /* WebBackForwardList.cpp in Sources */,
 				1A6FB7AE11E64B6800DB1371 /* PluginView.cpp in Sources */,
+				1A6FB7D211E651E200DB1371 /* Plugin.cpp in Sources */,
+				1A6FB7E711E6530500DB1371 /* DummyPlugin.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

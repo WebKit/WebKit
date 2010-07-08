@@ -23,50 +23,31 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "PluginView.h"
+#ifndef DummyPlugin_h
+#define DummyPlugin_h
 
 #include "Plugin.h"
-#include <WebCore/GraphicsContext.h>
-
-using namespace WebCore;
+#include <wtf/PassRefPtr.h>
 
 namespace WebKit {
 
-PluginView::PluginView(PassRefPtr<Plugin> plugin)
-    : m_plugin(plugin)
-{
-}
+class DummyPlugin : public Plugin {
+public:
+    static PassRefPtr<DummyPlugin> create()
+    {
+        return adoptRef(new DummyPlugin);
+    }
 
-PluginView::~PluginView()
-{
-    m_plugin->destroy();
-}
+private:
+    DummyPlugin();
 
-void PluginView::setFrameRect(const WebCore::IntRect& rect)
-{
-    Widget::setFrameRect(rect);
-    viewGeometryDidChange();
-}
-
-void PluginView::paint(GraphicsContext* context, const IntRect& dirtyRect)
-{
-    if (context->paintingDisabled())
-        return;
-    
-    IntRect paintRect = intersection(dirtyRect, frameRect());
-    if (paintRect.isEmpty())
-        return;
-
-    m_plugin->paint(context, paintRect);
-}
-
-void PluginView::viewGeometryDidChange()
-{
-    m_plugin->geometryDidChange(frameRect());
-}
-
-void PluginView::invalidateRect(const IntRect&)
-{
+    // Plugin
+    virtual void initialize(const WebCore::String& mimeType, const WebCore::KURL&, bool loadManually);
+    virtual void destroy();
+    virtual void paint(WebCore::GraphicsContext*, const WebCore::IntRect& dirtyRect);
+    virtual void geometryDidChange(const WebCore::IntRect& frameRect);
 }
 
 } // namespace WebKit
+
+#endif // DummyPlugin_h
