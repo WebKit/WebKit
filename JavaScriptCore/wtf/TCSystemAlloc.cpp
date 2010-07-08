@@ -34,7 +34,6 @@
 #include "TCSystemAlloc.h"
 
 #include <algorithm>
-#include <fcntl.h>
 #include "Assertions.h"
 #include "TCSpinLock.h"
 #include "UnusedParam.h"
