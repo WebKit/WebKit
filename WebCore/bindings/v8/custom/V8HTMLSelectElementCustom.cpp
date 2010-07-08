@@ -70,8 +70,7 @@ v8::Handle<v8::Value> V8HTMLSelectElement::namedPropertyGetter(v8::Local<v8::Str
     if (items.size() == 1)
         return toV8(items.at(0).release());
 
-    NodeList* list = new V8NamedNodesCollection(items);
-    return toV8(list);
+    return toV8(V8NamedNodesCollection::create(items));
 }
 
 v8::Handle<v8::Value> V8HTMLSelectElement::indexedPropertyGetter(uint32_t index, const v8::AccessorInfo& info)

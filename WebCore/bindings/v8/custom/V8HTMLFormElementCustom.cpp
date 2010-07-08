@@ -77,8 +77,7 @@ v8::Handle<v8::Value> V8HTMLFormElement::namedPropertyGetter(v8::Local<v8::Strin
     if (elements.size() == 1)
         return toV8(elements.at(0).release());
 
-    NodeList* collection = new V8NamedNodesCollection(elements);
-    return toV8(collection);
+    return toV8(V8NamedNodesCollection::create(elements));
 }
 
 } // namespace WebCore

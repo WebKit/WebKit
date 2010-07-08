@@ -45,6 +45,8 @@ IndexedDatabaseRequest::IndexedDatabaseRequest(IndexedDatabase* indexedDatabase)
     : m_indexedDatabase(indexedDatabase)
 {
     m_this = IDBAny::create();
+    // We pass a reference to this object before it can be adopted.
+    relaxAdoptionRequirement();
     m_this->set(this);
 }
 
@@ -94,4 +96,3 @@ PassRefPtr<IDBKeyRange> IndexedDatabaseRequest::makeBoundKeyRange(PassRefPtr<Ser
 } // namespace WebCore
 
 #endif // ENABLE(INDEXED_DATABASE)
-

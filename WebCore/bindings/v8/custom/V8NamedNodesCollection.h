@@ -33,6 +33,7 @@
 
 #include "Node.h"
 #include "NodeList.h"
+#include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
@@ -40,13 +41,19 @@ namespace WebCore {
 
     class V8NamedNodesCollection : public NodeList {
     public:
-        explicit V8NamedNodesCollection(const Vector<RefPtr<Node> >& nodes)
-            : m_nodes(nodes) { }
+        static PassRefPtr<NodeList> create(const Vector<RefPtr<Node> >& nodes)
+        {
+            return adoptRef(new V8NamedNodesCollection(nodes));
+        }
+
         virtual unsigned length() const { return m_nodes.size(); }
         virtual Node* item(unsigned) const;
         virtual Node* itemWithName(const AtomicString&) const;
 
     private:
+        explicit V8NamedNodesCollection(const Vector<RefPtr<Node> >& nodes)
+            : m_nodes(nodes) { }
+
         Vector<RefPtr<Node> > m_nodes;
     };
 

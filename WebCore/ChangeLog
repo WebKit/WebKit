@@ -1,3 +1,30 @@
+2010-07-08  Vitaly Repeshko  <vitalyr@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Fix adoptRef usage violations (mostly in chromium)
+        https://bugs.webkit.org/show_bug.cgi?id=41863
+
+        * bindings/v8/V8DOMWrapper.cpp:
+        (WebCore::V8DOMWrapper::wrapNativeNodeFilter):
+        * bindings/v8/V8NodeFilterCondition.h:
+        (WebCore::V8NodeFilterCondition::create):
+        * bindings/v8/custom/V8HTMLAllCollectionCustom.cpp:
+        (WebCore::getNamedItems):
+        * bindings/v8/custom/V8HTMLCollectionCustom.cpp:
+        (WebCore::getNamedItems):
+        * bindings/v8/custom/V8HTMLFormElementCustom.cpp:
+        (WebCore::V8HTMLFormElement::namedPropertyGetter):
+        * bindings/v8/custom/V8HTMLSelectElementCustom.cpp:
+        (WebCore::V8HTMLSelectElement::namedPropertyGetter):
+        * bindings/v8/custom/V8NamedNodesCollection.h:
+        (WebCore::V8NamedNodesCollection::create):
+        (WebCore::V8NamedNodesCollection::V8NamedNodesCollection):
+        * storage/IDBDatabaseRequest.cpp:
+        (WebCore::IDBDatabaseRequest::IDBDatabaseRequest):
+        * storage/IndexedDatabaseRequest.cpp:
+        (WebCore::IndexedDatabaseRequest::IndexedDatabaseRequest):
+
 2010-07-08  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Gustavo Noronha.

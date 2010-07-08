@@ -224,8 +224,7 @@ PassRefPtr<NodeFilter> V8DOMWrapper::wrapNativeNodeFilter(v8::Handle<v8::Value> 
     if (!filter->IsFunction())
         return 0;
 
-    NodeFilterCondition* condition = new V8NodeFilterCondition(filter);
-    return NodeFilter::create(condition);
+    return NodeFilter::create(V8NodeFilterCondition::create(filter));
 }
 
 static bool globalObjectPrototypeIsDOMWindow(v8::Handle<v8::Object> objectPrototype)

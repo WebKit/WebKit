@@ -170,7 +170,8 @@ static const PopupContainerSettings autoFillPopupSettings = {
 
 WebView* WebView::create(WebViewClient* client, WebDevToolsAgentClient* devToolsClient)
 {
-    return new WebViewImpl(client, devToolsClient);
+    // Pass the WebViewImpl's self-reference to the caller.
+    return adoptRef(new WebViewImpl(client, devToolsClient)).leakRef();
 }
 
 void WebView::updateVisitedLinkState(unsigned long long linkHash)

@@ -56,7 +56,8 @@ namespace WebKit {
 
 WebPopupMenu* WebPopupMenu::create(WebWidgetClient* client)
 {
-    return new WebPopupMenuImpl(client);
+    // Pass the WebPopupMenuImpl's self-reference to the caller.
+    return adoptRef(new WebPopupMenuImpl(client)).leakRef();
 }
 
 // WebWidget ------------------------------------------------------------------

@@ -40,6 +40,8 @@ IDBDatabaseRequest::IDBDatabaseRequest(PassRefPtr<IDBDatabase> database)
     : m_database(database)
 {
     m_this = IDBAny::create();
+    // We pass a reference to this object before it can be adopted.
+    relaxAdoptionRequirement();
     m_this->set(this);
 }
 

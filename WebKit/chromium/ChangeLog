@@ -1,3 +1,17 @@
+2010-07-08  Vitaly Repeshko  <vitalyr@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Fix adoptRef usage violations (mostly in chromium)
+        https://bugs.webkit.org/show_bug.cgi?id=41863
+
+        * src/IDBCallbacksProxy.cpp:
+        (WebCore::IDBCallbacksProxy::create):
+        * src/WebPopupMenuImpl.cpp:
+        (WebKit::WebPopupMenu::create):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebView::create):
+
 2010-07-07  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Darin Fisher.

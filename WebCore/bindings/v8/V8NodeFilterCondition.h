@@ -33,6 +33,7 @@
 
 #include "NodeFilterCondition.h"
 #include <v8.h>
+#include <wtf/PassRefPtr.h>
 
 // NodeFilter is a JavaScript function that takes a Node as parameter and returns a short (ACCEPT, SKIP, REJECT) as the result.
 namespace WebCore {
@@ -43,12 +44,18 @@ namespace WebCore {
     // NodeFilterCondition is a wrapper around a NodeFilter JS function.
     class V8NodeFilterCondition : public NodeFilterCondition {
     public:
-        explicit V8NodeFilterCondition(v8::Handle<v8::Value> filter);
+        static PassRefPtr<V8NodeFilterCondition> create(v8::Handle<v8::Value> filter)
+        {
+            return adoptRef(new V8NodeFilterCondition(filter));
+        }
+
         virtual ~V8NodeFilterCondition();
 
         virtual short acceptNode(ScriptState*, Node*) const;
 
     private:
+        explicit V8NodeFilterCondition(v8::Handle<v8::Value> filter);
+
         mutable v8::Persistent<v8::Value> m_filter;
     };
 
