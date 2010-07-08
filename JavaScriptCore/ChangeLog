@@ -1,5 +1,20 @@
 2010-07-08  Oliver Hunt  <oliver@apple.com>
 
+        Reviewed by Anders Carlson.
+
+        Tidy up the lexer
+
+        Remove some of the old yacc/lex-isms still present in the lexer
+
+        * parser/JSParser.h:
+        (JSC::):
+        * parser/Lexer.cpp:
+        (JSC::Lexer::parseString):
+        (JSC::Lexer::lex):
+        * parser/Lexer.h:
+
+2010-07-08  Oliver Hunt  <oliver@apple.com>
+
         Reviewed by Gavin Barraclough.
 
         Make object-literal parsing conformant with the spec.

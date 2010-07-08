@@ -387,7 +387,7 @@ inline void Lexer::record16(int c)
     record16(UChar(static_cast<unsigned short>(c)));
 }
 
-ALWAYS_INLINE bool Lexer::parseString(void* lvalp)
+ALWAYS_INLINE bool Lexer::parseString(JSTokenData* lvalp)
 {
     int stringQuoteCharacter = m_current;
     shift();
@@ -460,19 +460,17 @@ ALWAYS_INLINE bool Lexer::parseString(void* lvalp)
 
     if (currentCharacter() != stringStart)
         m_buffer16.append(stringStart, currentCharacter() - stringStart);
-    reinterpret_cast<YYSTYPE*>(lvalp)->ident = makeIdentifier(m_buffer16.data(), m_buffer16.size());
+    lvalp->ident = makeIdentifier(m_buffer16.data(), m_buffer16.size());
     m_buffer16.resize(0);
     return true;
 }
 
-int Lexer::lex(void* p1, void* p2)
+int Lexer::lex(JSTokenData* lvalp, JSTokenInfo* llocp)
 {
     ASSERT(!m_error);
     ASSERT(m_buffer8.isEmpty());
     ASSERT(m_buffer16.isEmpty());
 
-    YYSTYPE* lvalp = static_cast<YYSTYPE*>(p1);
-    YYLTYPE* llocp = static_cast<YYLTYPE*>(p2);
     int token = 0;
     m_terminator = false;
 

@@ -103,7 +103,6 @@ union JSTokenData {
     double doubleValue;
     const Identifier* ident;
 };
-typedef JSTokenData YYSTYPE;
 
 struct JSTokenInfo {
     JSTokenInfo() : last_line(0) {}
@@ -112,7 +111,7 @@ struct JSTokenInfo {
     int first_column;
     int last_column;
 };
-typedef JSTokenInfo YYLTYPE;
+
 struct JSToken {
     int m_type;
     JSTokenData m_data;
