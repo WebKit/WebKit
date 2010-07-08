@@ -78,25 +78,21 @@ void DRTDevToolsClient::sendDebuggerCommandToAgent(const WebString& command)
 void DRTDevToolsClient::activateWindow()
 {
     // Not implemented.
-    ASSERT_NOT_REACHED();
 }
 
 void DRTDevToolsClient::closeWindow()
 {
     // Not implemented.
-    ASSERT_NOT_REACHED();
 }
 
 void DRTDevToolsClient::dockWindow()
 {
     // Not implemented.
-    ASSERT_NOT_REACHED();
 }
 
 void DRTDevToolsClient::undockWindow()
 {
     // Not implemented.
-    ASSERT_NOT_REACHED();
 }
 
 void DRTDevToolsClient::asyncCall(const DRTDevToolsCallArgs& args)
