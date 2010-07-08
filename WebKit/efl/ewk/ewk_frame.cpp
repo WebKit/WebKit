@@ -31,6 +31,7 @@
 #include "FrameTree.h"
 #include "FrameView.h"
 #include "HTMLPlugInElement.h"
+#include "HistoryItem.h"
 #include "HitTestResult.h"
 #include "KURL.h"
 #include "PlatformKeyboardEvent.h"
@@ -1633,6 +1634,70 @@ WebCore::Frame* ewk_frame_core_get(const Evas_Object* o)
 
 /**
  * @internal
+ * Reports a resource will be requested. User may override behavior of webkit by
+ * changing values in @param request.
+ *
+ * @param o Frame.
+ * @param request Request details that user may override. Whenever values on
+ * this struct changes, it must be properly malloc'd as it will be freed
+ * afterwards.
+ *
+ * Emits signal: "resource,request,willsend"
+ */
+void ewk_frame_request_will_send(Evas_Object *o, Ewk_Frame_Resource_Request *request)
+{
+    evas_object_smart_callback_call(o, "resource,request,willsend", request);
+}
+
+/**
+ * @internal
+ * Reports that there's a new resource.
+ *
+ * @param o Frame.
+ * @param request New request details. No changes are allowed to fields.
+ *
+ * Emits signal: "resource,request,new"
+ */
+void ewk_frame_request_assign_identifier(Evas_Object *o, const Ewk_Frame_Resource_Request *request)
+{
+    evas_object_smart_callback_call(o, "resource,request,new", (void *)request);
+}
+
+/**
+ * @internal
+ * Reports that first navigation occurred
+ *
+ * @param o Frame.
+ *
+ * Emits signal: "navigation,first"
+ */
+void ewk_frame_did_perform_first_navigation(Evas_Object *o)
+{
+    evas_object_smart_callback_call(o, "navigation,first", 0);
+}
+
+/**
+ * @internal
+ * Reports frame will be saved to current state
+ *
+ * @param o Frame.
+ * @param item History item to save details to.
+ *
+ * Emits signal: "state,save"
+ */
+void ewk_frame_view_state_save(Evas_Object *o, WebCore::HistoryItem* item)
+{
+    const char *title = ewk_frame_title_get(o);
+    const char *uri = ewk_frame_uri_get(o);
+
+    item->setTitle(WebCore::String::fromUTF8(title));
+    item->setURLString(WebCore::String::fromUTF8(uri));
+
+    evas_object_smart_callback_call(o, "state,save", 0);
+}
+
+/**
+ * @internal
  * Reports the frame started loading something.
  *
  * Emits signal: "load,started" with no parameters.
@@ -1648,6 +1713,58 @@ void ewk_frame_load_started(Evas_Object* o)
     main_frame = ewk_view_frame_main_get(sd->view);
     if (main_frame == o)
         ewk_view_frame_main_load_started(sd->view);
+}
+
+/**
+ * @internal
+ * Reports the frame started provisional load.
+ *
+ * @param o Frame.
+ *
+ * Emits signal: "load,provisional" with no parameters.
+ */
+void ewk_frame_load_provisional(Evas_Object* o)
+{
+    evas_object_smart_callback_call(o, "load,provisional", 0);
+}
+
+/**
+ * @internal
+ * Reports the frame finished first layout.
+ *
+ * @param o Frame.
+ *
+ * Emits signal: "load,firstlayout,finished" with no parameters.
+ */
+void ewk_frame_load_firstlayout_finished(Evas_Object *o)
+{
+    evas_object_smart_callback_call(o, "load,firstlayout,finished", 0);
+}
+
+/**
+ * @internal
+ * Reports the frame finished first non empty layout.
+ *
+ * @param o Frame.
+ *
+ * Emits signal: "load,nonemptylayout,finished" with no parameters.
+ */
+void ewk_frame_load_firstlayout_nonempty_finished(Evas_Object *o)
+{
+    evas_object_smart_callback_call(o, "load,nonemptylayout,finished", 0);
+}
+
+/**
+ * @internal
+ * Reports the loading of a document has finished on frame.
+ *
+ * @param o Frame.
+ *
+ * Emits signal: "load,document,finished" with no parameters.
+ */
+void ewk_frame_load_document_finished(Evas_Object *o)
+{
+    evas_object_smart_callback_call(o, "load,document,finished", 0);
 }
 
 /**

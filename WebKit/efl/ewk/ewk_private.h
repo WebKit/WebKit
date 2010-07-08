@@ -52,10 +52,15 @@ void             ewk_view_ready(Evas_Object *o);
 void             ewk_view_title_set(Evas_Object *o, const char *title);
 void             ewk_view_uri_changed(Evas_Object *o);
 void             ewk_view_load_started(Evas_Object *o);
+void             ewk_view_load_provisional(Evas_Object *o);
 void             ewk_view_frame_main_load_started(Evas_Object *o);
+void             ewk_view_frame_main_cleared(Evas_Object *o);
+void             ewk_view_frame_main_icon_received(Evas_Object *o);
 void             ewk_view_load_finished(Evas_Object *o, const Ewk_Frame_Load_Error *error);
 void             ewk_view_load_error(Evas_Object *o, const Ewk_Frame_Load_Error *error);
 void             ewk_view_load_progress_changed(Evas_Object *o);
+void             ewk_view_load_show(Evas_Object* o);
+void             ewk_view_restore_state(Evas_Object *o, Evas_Object *frame);
 Evas_Object     *ewk_view_window_create(Evas_Object *o, Eina_Bool javascript, const WebCore::WindowFeatures* coreFeatures);
 
 void             ewk_view_mouse_link_hover_in(Evas_Object *o, void *data);
@@ -118,9 +123,19 @@ WebCore::Frame   *ewk_frame_core_get(const Evas_Object *o);
 void              ewk_frame_core_gone(Evas_Object *o);
 
 void              ewk_frame_load_started(Evas_Object *o);
+void              ewk_frame_load_provisional(Evas_Object *o);
+void              ewk_frame_load_firstlayout_finished(Evas_Object *o);
+void              ewk_frame_load_firstlayout_nonempty_finished(Evas_Object *o);
+void              ewk_frame_load_document_finished(Evas_Object *o);
 void              ewk_frame_load_finished(Evas_Object *o, const char *error_domain, int error_code, Eina_Bool is_cancellation, const char *error_description, const char *failing_url);
 void              ewk_frame_load_error(Evas_Object *o, const char *error_domain, int error_code, Eina_Bool is_cancellation, const char *error_description, const char *failing_url);
 void              ewk_frame_load_progress_changed(Evas_Object *o);
+
+void              ewk_frame_request_will_send(Evas_Object *o, Ewk_Frame_Resource_Request *request);
+void              ewk_frame_request_assign_identifier(Evas_Object *o, const Ewk_Frame_Resource_Request *request);
+void              ewk_frame_view_state_save(Evas_Object *o, WebCore::HistoryItem* item);
+
+void              ewk_frame_did_perform_first_navigation(Evas_Object *o);
 
 void              ewk_frame_contents_size_changed(Evas_Object *o, Evas_Coord w, Evas_Coord h);
 void              ewk_frame_title_set(Evas_Object *o, const char *title);

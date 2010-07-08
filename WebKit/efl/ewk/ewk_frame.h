@@ -48,16 +48,28 @@ extern "C" {
  *
  *  - "title,changed", const char*: title of the main frame changed.
  *  - "uri,changed", const char*: uri of the main frame changed.
+ *  - "load,document,finished", void: loading of a document has
+ *    finished on this frame.
+ *  - "load,nonemptylayout,finished", void: frame finished first
+ *    non-empty layout.
  *  - "load,started", void: frame started loading.
  *  - "load,progress", double*: load progress changed (overall value
  *    from 0.0 to 1.0, connect to individual frames for fine grained).
  *  - "load,finished", const Ewk_Frame_Load_Error*: reports load
  *    finished and as argument @c NULL if successfully or pointer to
  *    structure defining the error.
+ *  - "load,provisional", void: frame started provisional load.
+ *  - "load,firstlayout,finished", void: frame finished first layout.
  *  - "load,error", const Ewk_Frame_Load_Error*: reports load failed
  *    and as argument a pointer to structure defining the error.
  *  - "contents,size,changed", Evas_Coord[2]: reports contents size
  *    changed due new layout, script actions or any other events.
+ *  - "navigation,first", void: first navigation occurred.
+ *  - "resource,request,new", Ewk_Frame_Resource_Request*: reports that
+ *    there's a new resource request.
+ *  - "resource,request,willsend", Ewk_Frame_Resource_Request*: a resource will
+ *    be requested.
+ *  - "state,save", void: frame's state will be saved as a history item.
  */
 
 
@@ -79,6 +91,19 @@ struct _Ewk_Frame_Load_Error {
     const char *description; /**< error description already localized */
     const char *failing_url; /**< the url that failed to load */
     Evas_Object *frame; /**< frame where the failure happened */
+};
+
+/**
+ * Structure used to report resource requests
+ *
+ * Details given before a resource is loaded on a given frame. It's used by
+ * ewk_frame_request_will_send() to inform the details of a to-be-loaded
+ * resource, allowing them to be overridden.
+ */
+typedef struct _Ewk_Frame_Resource_Request Ewk_Frame_Resource_Request;
+struct _Ewk_Frame_Resource_Request {
+    const char *url; /**< url of this resource */
+    const unsigned long identifier; /**< resource's identifier. Can not be changed */
 };
 
 /**

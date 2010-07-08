@@ -2,6 +2,50 @@
 
         Reviewed by Kenneth Rohde Christiansen.
 
+        [EFL] Implement several notification hooks in FrameLoaderClient.
+        We just notify browser, making the appropriate type conversions about
+        the events occurring in WebCore.
+        https://bugs.webkit.org/show_bug.cgi?id=41005
+
+        * efl/WebCoreSupport/FrameLoaderClientEfl.cpp:
+        (WebCore::FrameLoaderClientEfl::dispatchWillSendRequest): alloc 2 new
+        wrapper structures in stack in order to give client the opportunity to
+        change parameters. Then, call the function it defines.
+        (WebCore::FrameLoaderClientEfl::assignIdentifierToInitialRequest):
+        (WebCore::FrameLoaderClientEfl::didPerformFirstNavigation): notify
+        client.
+        (WebCore::FrameLoaderClientEfl::saveViewStateToItem): notify client.
+        (WebCore::FrameLoaderClientEfl::restoreViewState): notify client.
+        (WebCore::FrameLoaderClientEfl::dispatchDidChangeLocationWithinPage):
+        notify browser that the url changed.
+        (WebCore::FrameLoaderClientEfl::dispatchDidReceiveIcon): notify
+        browser.
+        (WebCore::FrameLoaderClientEfl::dispatchDidStartProvisionalLoad):
+        notify browser.
+        (WebCore::FrameLoaderClientEfl::dispatchDidFinishDocumentLoad): notify
+        browser.
+        (WebCore::FrameLoaderClientEfl::dispatchDidFirstLayout): norify
+        browser.
+        (WebCore::FrameLoaderClientEfl::dispatchDidFirstVisuallyNonEmptyLayout):
+        notify browser.
+        (WebCore::FrameLoaderClientEfl::dispatchShow): notify browser.
+        * efl/ewk/ewk_frame.cpp:
+        (ewk_frame_request_will_send): emit signal notifying browser.
+        (ewk_frame_request_assign_identifier): emit signal notifying browser.
+        (ewk_frame_did_perform_first_navigation): emit signal notifying browser.
+        (ewk_frame_view_state_save): emit signal notifying browser.
+        (ewk_frame_load_provisional): emit signal notifying browser.
+        (ewk_frame_load_firstlayout_finished): emit signal notifying browser.
+        (ewk_frame_load_firstlayout_nonempty_finished): emit signal notifying browser.
+        (ewk_frame_load_document_finished): emit signal notifying browser.
+        * efl/ewk/ewk_frame.h: update documentation about signals being sent
+        and implement wrapper struct for ResourceRequest.
+        * efl/ewk/ewk_private.h: export private functions.
+
+2010-07-08  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
         [EFL] Flush backing store when going to new page.
         Call client method to flush backing store when going to a new page. This
         is the notification that data related to current page should be dropped,
