@@ -236,7 +236,7 @@ public:
     // user name input element, or 0 if none available.
     // Note that the returned listener is owner by the WebFrameImpl and should not
     // be kept around as it is deleted when the page goes away.
-    WebPasswordAutocompleteListener* getPasswordListener(WebCore::HTMLInputElement*);
+    WebPasswordAutocompleteListener* getPasswordListener(const WebCore::HTMLInputElement*);
 
     WebFrameClient* client() const { return m_client; }
     void setClient(WebFrameClient* client) { m_client = client; }

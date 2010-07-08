@@ -1,3 +1,23 @@
+2010-07-08  David Holloway  <dhollowa@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [chromium] Exposes WebNode::unwrap() and WebNode::constUnwrap() for 
+        use by other code in WebKit/chromium/src.
+
+        Specific use of these methods is made in WebFrameImpl.cpp.  This is
+        preferred to the cast operator call that was happening prior to this
+        change.
+
+        https://bugs.webkit.org/show_bug.cgi?id=41477
+
+        * public/WebNode.h:
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::registerPasswordListener):
+        (WebKit::WebFrameImpl::notifiyPasswordListenerOfAutocomplete):
+        (WebKit::WebFrameImpl::getPasswordListener):
+        * src/WebFrameImpl.h:
+
 2010-07-07  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Yury Semikhatsky.
