@@ -11,6 +11,16 @@
 
         Reviewed by David Levin.
 
+        change --exit-after-n-crashes to --exit-after-n-crashes-or-timeouts
+        https://bugs.webkit.org/show_bug.cgi?id=41814
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        * Scripts/old-run-webkit-tests:
+
+2010-07-07  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by David Levin.
+
         add --exit-after-n-crashes to run-webkit-tests
         https://bugs.webkit.org/show_bug.cgi?id=41811
 
