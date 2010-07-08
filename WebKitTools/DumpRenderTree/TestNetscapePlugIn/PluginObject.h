@@ -34,6 +34,7 @@ typedef struct {
     NPBool eventLogging;
     NPBool logSetWindow;
     NPBool logDestroy;
+    NPBool returnNegativeOneFromWrite;
     NPBool returnErrorFromNewStream;
     NPBool cachedPrivateBrowsingMode;
     NPObject* testObject;

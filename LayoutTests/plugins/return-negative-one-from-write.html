@@ -8,6 +8,7 @@
         <div id="console"></div>
 
         <script>
+            var newStreamCalled = false;
             var destroyStreamCalled = false;
 
             function main() {
@@ -21,13 +22,15 @@
             main();
 
             function streamStarted() {
-                testFailed("TestNetscapePlugin should have returned an error from NewStream.");
+                shouldBeFalse('newStreamCalled');
+                newStreamCalled = true;
             }
 
-            function streamDestroyed() { destroyStreamCalled = true; }
+            function streamDestroyed(reason) { 
+                window.reason = reason;
 
-            function requestCompleted() {
-                shouldBeFalse("destroyStreamCalled");
+                shouldBeTrue('newStreamCalled')
+                shouldBe('reason', '1');
 
                 debug('<br><span class="pass">TEST COMPLETE</span>');
 
@@ -39,18 +42,17 @@
             type="application/x-webkit-test-netscape"
             onStreamLoad="streamStarted()"
             onStreamDestroy="streamDestroyed"
-            onURLNotify="requestCompleted()"
             id="plugin">
     </body>
     <script>
-        description("This tests that NPP_DestroyStream is not called if a plug-in returns an error from its NPP_NewStream callback.");
+        description("This tests that NPP_DestroyStream is called with NPRES_NETWORK_ERR not called if a plug-in returns -1 its NPP_Write callback.");
 
         var plugin = document.getElementById("plugin");
 
-        plugin.returnErrorFromNewStream = true;
-        shouldBeTrue("plugin.returnErrorFromNewStream");
+        plugin.returnNegativeOneFromWrite = true;
+        shouldBeTrue("plugin.returnNegativeOneFromWrite");
 
-        plugin.getURLNotify("data:,", null, "callback");
+        plugin.getURLNotify("data:text/html,Test", null, "callback");
     </script>
 </html>
 

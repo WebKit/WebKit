@@ -239,7 +239,7 @@ NPError NPP_NewStream(NPP instance, NPMIMEType type, NPStream *stream, NPBool se
 {
     PluginObject* obj = static_cast<PluginObject*>(instance->pdata);
     obj->stream = stream;
-    *stype = NP_ASFILEONLY;
+    *stype = NP_NORMAL;
 
     if (obj->returnErrorFromNewStream)
         return NPERR_GENERIC_ERROR;
@@ -257,8 +257,28 @@ NPError NPP_DestroyStream(NPP instance, NPStream *stream, NPReason reason)
 {
     PluginObject* obj = (PluginObject*)instance->pdata;
 
-    if (obj->onStreamDestroy)
-        executeScript(obj, obj->onStreamDestroy);
+    if (obj->onStreamDestroy) {
+        NPObject* windowObject = 0;
+        NPError error = browser->getvalue(instance, NPNVWindowNPObject, &windowObject);
+        
+        if (error == NPERR_NO_ERROR) {
+            NPVariant onStreamDestroyVariant;
+            if (browser->getproperty(instance, windowObject, browser->getstringidentifier(obj->onStreamDestroy), &onStreamDestroyVariant)) {
+                if (NPVARIANT_IS_OBJECT(onStreamDestroyVariant)) {
+                    NPObject* onStreamDestroyFunction = NPVARIANT_TO_OBJECT(onStreamDestroyVariant);
+
+                    NPVariant reasonVariant;
+                    INT32_TO_NPVARIANT(reason, reasonVariant);
+
+                    NPVariant result;
+                    browser->invokeDefault(instance, onStreamDestroyFunction, &reasonVariant, 1, &result);
+                    browser->releasevariantvalue(&result);
+                }
+                browser->releasevariantvalue(&onStreamDestroyVariant);
+            }
+            browser->releaseobject(windowObject);
+        }
+    }
 
     if (obj->testDocumentOpenInDestroyStream) {
         testDocumentOpen(instance);
@@ -270,12 +290,17 @@ NPError NPP_DestroyStream(NPP instance, NPStream *stream, NPReason reason)
 
 int32_t NPP_WriteReady(NPP instance, NPStream *stream)
 {
-    return 0;
+    return 4096;
 }
 
 int32_t NPP_Write(NPP instance, NPStream *stream, int32_t offset, int32_t len, void *buffer)
 {
-    return 0;
+    PluginObject* obj = (PluginObject*)instance->pdata;
+
+    if (obj->returnNegativeOneFromWrite)
+        return -1;
+
+    return len;
 }
 
 void NPP_StreamAsFile(NPP instance, NPStream *stream, const char *fname)

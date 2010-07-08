@@ -1,3 +1,17 @@
+2010-07-07  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Test that we call NPP_DestroyStream if a plug-in returns -1 from its NPP_Write function
+        https://bugs.webkit.org/show_bug.cgi?id=41821
+
+        * plugins/return-error-from-new-stream-doesnt-invoke-destroy-stream.html:
+        Update for changes to onstreamdestroy.
+
+        * plugins/return-negative-one-from-write-expected.txt: Added.
+        * plugins/return-negative-one-from-write.html: Added.
+        Add new test.
+
 2010-07-07  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler.
