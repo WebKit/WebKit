@@ -722,11 +722,12 @@ WebInspector._registerShortcuts = function()
 
 WebInspector.documentKeyDown = function(event)
 {
+    var isInputElement = event.target.nodeName === "INPUT";
     var isInEditMode = event.target.enclosingNodeOrSelfWithClass("text-prompt") || WebInspector.isEditingAnyField();
     const helpKey = WebInspector.isMac() ? "U+003F" : "U+00BF"; // "?" for both platforms
 
     if (event.keyIdentifier === "F1" ||
-        (event.keyIdentifier === helpKey && event.shiftKey && (!isInEditMode || event.metaKey))) {
+        (event.keyIdentifier === helpKey && event.shiftKey && (!isInEditMode && !isInputElement || event.metaKey))) {
         WebInspector.shortcutsHelp.show();
         event.stopPropagation();
         event.preventDefault();
