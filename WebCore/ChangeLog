@@ -1,3 +1,14 @@
+2010-07-08  Darin Adler  <darin@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Fix a test failure seen only on the Leopard bot.
+
+        * bindings/js/JSSharedWorkerCustom.cpp:
+        (WebCore::JSSharedWorkerConstructor::constructJSSharedWorker):
+        If SharedWorker::create returns an exception, don't try to create a wrapper
+        for its return value, which can be 0.
+
 2010-07-08  Albert J. Wong  <ajwong@chromium.org>
 
         Not reviewed, build break fix for chromium.
