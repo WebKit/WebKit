@@ -1,3 +1,13 @@
+2010-07-07  Darin Adler  <darin@apple.com>
+
+        Fixed build in configurations like PowerPC.
+
+        * runtime/RegExpConstructor.cpp: Added include of PassOwnPtr.h.
+        * runtime/RegExpObject.cpp: Ditto.
+        * wtf/SizeLimits.cpp: Changed compile time assertion to work
+        even on platforms where two bool members do not end up taking
+        the same size as one int member!
+
 2010-07-07  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Geoffrey Garen.

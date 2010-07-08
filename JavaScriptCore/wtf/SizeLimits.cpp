@@ -41,7 +41,8 @@
 namespace WTF {
 
 #ifndef NDEBUG
-static const size_t refCountedExtraDebugSize = sizeof(int);
+struct StructWithIntAndTwoBools { int a; bool b; bool c; };
+static const size_t refCountedExtraDebugSize = sizeof(StructWithIntAndTwoBools) - sizeof(int);
 #else
 static const size_t refCountedExtraDebugSize = 0;
 #endif
