@@ -146,9 +146,9 @@ void ResourceHandle::loadResourceSynchronously(const ResourceRequest& request,
         Frame* frame) 
 {
     SyncLoader s(error, response, data);
-    ResourceHandle h(request, &s, false, false, false);
+    RefPtr<ResourceHandle> h = adoptRef(new ResourceHandle(request, &s, false, false, false));
     // This blocks until the load is finished.
-    ResourceLoaderAndroid::start(&h, request, frame->loader()->client(), false, true);
+    ResourceLoaderAndroid::start(h.get(), request, frame->loader()->client(), false, true);
 }
 
 } // namespace WebCore

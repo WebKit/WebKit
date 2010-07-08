@@ -1,3 +1,22 @@
+2010-07-07  Darin Adler  <darin@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Fix adoptRef assertion failures caused by stack-allocated ResourceHandle objects
+        https://bugs.webkit.org/show_bug.cgi?id=41823
+
+        * platform/network/android/ResourceHandleAndroid.cpp:
+        (WebCore::ResourceHandle::loadResourceSynchronously): Use adoptRef and new instead
+        of allocating an object on the stack.
+        * platform/network/curl/ResourceHandleCurl.cpp:
+        (WebCore::ResourceHandle::loadResourceSynchronously): Ditto.
+        * platform/network/qt/ResourceHandleQt.cpp:
+        (WebCore::ResourceHandle::loadResourceSynchronously): Ditto.
+
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::ResourceHandle::loadResourceSynchronously): Use create instead of
+        allocating an object on the stack.
+
 2010-07-07  Joseph Pecoraro  <joepeck@webkit.org>
 
         Rubber-stamped by Pavel Feldman.
