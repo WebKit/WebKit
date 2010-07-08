@@ -1,3 +1,19 @@
+2010-07-08  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Fix fallout from Darin's adoptRef assertion changes.
+
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::sharedProcessContext):
+        (WebKit::WebContext::sharedThreadContext):
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::createMainFrame):
+        (WebKit::WebFrame::createSubframe):
+        (WebKit::WebFrame::create):
+        (WebKit::WebFrame::WebFrame):
+        * WebProcess/WebPage/WebFrame.h:
+
 2010-07-08  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Mark Rowe.

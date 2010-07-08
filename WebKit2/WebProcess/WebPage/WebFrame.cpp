@@ -56,12 +56,22 @@ static uint64_t generateListenerID()
 
 PassRefPtr<WebFrame> WebFrame::createMainFrame(WebPage* page)
 {
-    return adoptRef(new WebFrame(page, String(), 0));
+    return create(page, String(), 0);
 }
 
 PassRefPtr<WebFrame> WebFrame::createSubframe(WebPage* page, const String& frameName, HTMLFrameOwnerElement* ownerElement)
 {
-    return adoptRef(new WebFrame(page, frameName, ownerElement));
+    return create(page, frameName, ownerElement);
+}
+
+PassRefPtr<WebFrame> WebFrame::create(WebPage* page, const String& frameName, HTMLFrameOwnerElement* ownerElement)
+{
+    RefPtr<WebFrame> frame = adoptRef(new WebFrame(page, frameName, ownerElement));
+    
+    // Add explict ref() that will be balanced in WebFrameLoaderClient::frameLoaderDestroyed().
+    frame->ref();
+    
+    return frame.release();
 }
 
 WebFrame::WebFrame(WebPage* page, const String& frameName, HTMLFrameOwnerElement* ownerElement)
@@ -72,9 +82,6 @@ WebFrame::WebFrame(WebPage* page, const String& frameName, HTMLFrameOwnerElement
     , m_frameLoaderClient(this)
     , m_frameID(generateFrameID())
 {
-    // Add explict ref() that will be balanced in WebFrameLoaderClient::frameLoaderDestroyed().
-    ref();
-
     m_page->addWebFrame(m_frameID, this);
 
     RefPtr<Frame> frame = Frame::create(page->corePage(), ownerElement, &m_frameLoaderClient);
