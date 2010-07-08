@@ -34,6 +34,7 @@
 #include "WebNavigationDataStore.h"
 #include "WebPage.h"
 #include "WebPageProxyMessageKinds.h"
+#include "WebProcessProxyMessageKinds.h"
 #include "WebProcess.h"
 #include <JavaScriptCore/APICast.h>
 #include <JavaScriptCore/JSObject.h>
@@ -766,8 +767,21 @@ void WebFrameLoaderClient::didTransferChildFrameToNewDocument()
 
 PassRefPtr<Widget> WebFrameLoaderClient::createPlugin(const IntSize&, HTMLPlugInElement*, const KURL& url, const Vector<String>& paramNames, const Vector<String>& paramValues, const String& mimeType, bool loadManually)
 {
-    notImplemented();
-    
+    String pluginPath;
+
+    // FIXME: In the future, this should return a real CoreIPC connection to the plug-in host, but for now we just
+    // return the path and load the plug-in in the web process.
+    if (!WebProcess::shared().connection()->sendSync(WebProcessProxyMessage::GetPluginHostConnection, 0, 
+                                                     CoreIPC::In(mimeType, url.string()), 
+                                                     CoreIPC::Out(pluginPath), 
+                                                     CoreIPC::Connection::NoTimeout))
+        return 0;
+
+    if (pluginPath.isNull())
+        return 0;
+
+    // FIXME: Use the plug-in path.
+
     RefPtr<Plugin> plugin = DummyPlugin::create();
     if (!plugin->initialize(url, paramNames, paramValues, mimeType, loadManually))
         return 0;

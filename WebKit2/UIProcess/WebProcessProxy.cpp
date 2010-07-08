@@ -33,6 +33,7 @@
 #include "WebProcessManager.h"
 #include "WebProcessMessageKinds.h"
 #include "WebProcessProxyMessageKinds.h"
+#include <WebCore/KURL.h>
 #include <WebCore/PlatformString.h>
 
 using namespace WebCore;
@@ -167,6 +168,17 @@ void WebProcessProxy::getPlugins(bool refresh, Vector<PluginInfo>& plugins)
     PluginInfoStore::shared().getPlugins(plugins);
 }
 
+void WebProcessProxy::getPluginHostConnection(const String& mimeType, const KURL& url, WebCore::String& pluginPath)
+{
+    String newMimeType = mimeType.lower();
+
+    PluginInfoStore::Plugin plugin = PluginInfoStore::shared().findPlugin(newMimeType, url);
+    if (!plugin.path)
+        return;
+
+    pluginPath = plugin.path;
+}
+
 void WebProcessProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)
 {
     if (messageID.is<CoreIPC::MessageClassWebProcessProxy>()) {
@@ -182,6 +194,7 @@ void WebProcessProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC
                 
             // These are synchronous messages and should never be handled here.
             case WebProcessProxyMessage::GetPlugins:
+            case WebProcessProxyMessage::GetPluginHostConnection:
                 ASSERT_NOT_REACHED();
                 break;
         }
@@ -212,6 +225,21 @@ void WebProcessProxy::didReceiveSyncMessage(CoreIPC::Connection* connection, Cor
                 getPlugins(refresh, plugins);
 
                 reply->encode(plugins);
+                break;
+            }
+
+            case WebProcessProxyMessage::GetPluginHostConnection: {
+#if PLATFORM(MAC)
+                String mimeType;
+                String urlString;
+                
+                if (!arguments->decode(CoreIPC::Out(mimeType, urlString)))
+                    return;
+                
+                String pluginPath;
+                getPluginHostConnection(mimeType, KURL(ParsedURLString, urlString), pluginPath);
+                reply->encode(CoreIPC::In(pluginPath));
+#endif
                 break;
             }
 

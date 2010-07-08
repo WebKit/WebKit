@@ -34,7 +34,8 @@ namespace WebProcessProxyMessage {
 
 enum Kind {
     PostMessage,
-    GetPlugins
+    GetPlugins,
+    GetPluginHostConnection
 };
 
 }
