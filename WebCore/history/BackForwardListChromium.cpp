@@ -150,4 +150,35 @@ bool BackForwardListImpl::closed()
     return m_closed;
 }
 
+void BackForwardListImpl::goBack()
+{
+    ASSERT_NOT_REACHED();
+}
+
+void BackForwardListImpl::goForward()
+{
+    ASSERT_NOT_REACHED();
+}
+
+void BackForwardListImpl::backListWithLimit(int, HistoryItemVector&)
+{
+    ASSERT_NOT_REACHED();
+}
+
+void BackForwardListImpl::forwardListWithLimit(int, HistoryItemVector&)
+{
+    ASSERT_NOT_REACHED();
+}
+
+bool BackForwardListImpl::containsItem(HistoryItem*)
+{
+    ASSERT_NOT_REACHED();
+    return false;
+}
+
+void BackForwardListImpl::removeItem(HistoryItem*)
+{
+    ASSERT_NOT_REACHED();
+}
+
 } // namespace WebCore

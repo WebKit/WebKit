@@ -1,5 +1,17 @@
 2010-07-08  Sam Weinig  <sam@webkit.org>
 
+        Another chromium build fix.
+
+        * history/BackForwardListChromium.cpp:
+        (WebCore::BackForwardListImpl::goBack):
+        (WebCore::BackForwardListImpl::goForward):
+        (WebCore::BackForwardListImpl::backListWithLimit):
+        (WebCore::BackForwardListImpl::forwardListWithLimit):
+        (WebCore::BackForwardListImpl::containsItem):
+        (WebCore::BackForwardListImpl::removeItem):
+
+2010-07-08  Sam Weinig  <sam@webkit.org>
+
         Fix Chromium build.
 
         * WebCore.gyp/WebCore.gyp:
