@@ -1294,12 +1294,12 @@ void WebViewHost::paintInvalidatedRegion()
     WebSize widgetSize = webWidget()->size();
     WebRect clientRect(0, 0, widgetSize.width, widgetSize.height);
 
-    // Paint the canvas if necessary.  Allow painting to generate extra rects the
-    // first time we call it.  This is necessary because some WebCore rendering
+    // Paint the canvas if necessary.  Allow painting to generate extra rects
+    // for the first two calls. This is necessary because some WebCore rendering
     // objects update their layout only when painted.
     // Store the total area painted in total_paint. Then tell the gdk window
     // to update that area after we're done painting it.
-    for (int i = 0; i < 2; ++i) {
+    for (int i = 0; i < 3; ++i) {
         // m_paintRect = intersect(m_paintRect , clientRect)
         int left = max(m_paintRect.x, clientRect.x);
         int top = max(m_paintRect.y, clientRect.y);
@@ -1315,7 +1315,7 @@ void WebViewHost::paintInvalidatedRegion()
         WebRect rect(m_paintRect);
         m_paintRect = WebRect();
         paintRect(rect);
-        if (i == 1)
+        if (i >= 1)
             LOG_ERROR("painting caused additional invalidations");
     }
     ASSERT(m_paintRect.isEmpty());
