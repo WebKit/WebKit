@@ -1,3 +1,13 @@
+2010-07-08  Mike Thole  <mthole@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Patch for https://bugs.webkit.org/show_bug.cgi?id=41896
+        Crash under allScriptsInPDFDocument() in WebPDFDocumentExtras.mm for certain PDFs
+
+        * WebView/WebPDFDocumentExtras.mm:
+        (allScriptsInPDFDocument): Null-check 'data', as CGPDFStreamCopyData() may have returned 0.
+
 2010-07-08  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

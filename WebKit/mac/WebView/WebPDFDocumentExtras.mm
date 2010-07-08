@@ -112,6 +112,8 @@ NSArray *allScriptsInPDFDocument(PDFDocument *document)
         if (CGPDFDictionaryGetStream(javaScriptAction, "JS", &stream)) {
             CGPDFDataFormat format;
             data.adoptCF(CGPDFStreamCopyData(stream, &format));
+            if (!data)
+                continue;
             bytes = CFDataGetBytePtr(data.get());
             length = CFDataGetLength(data.get());
         } else if (CGPDFDictionaryGetString(javaScriptAction, "JS", &string)) {
