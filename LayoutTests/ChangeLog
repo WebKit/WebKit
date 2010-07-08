@@ -1,5 +1,29 @@
 2010-07-08  Nikolas Zimmermann  <nzimmermann@rim.com>
 
+        Reviewed by Rob Buis & Dirk Schulze.
+
+        SVG text transformed incorrectly when a transform and gradient applied
+        https://bugs.webkit.org/show_bug.cgi?id=41563
+
+        * platform/mac/svg/custom/js-late-gradient-and-object-creation-expected.checksum:
+        * platform/mac/svg/custom/js-late-gradient-and-object-creation-expected.png:
+        * platform/mac/svg/custom/text-rotated-gradient-expected.checksum: Added.
+        * platform/mac/svg/custom/text-rotated-gradient-expected.png: Added.
+        * platform/mac/svg/custom/text-rotated-gradient-expected.txt: Added.
+        * svg/custom/text-rotated-gradient.svg: Added.
+        * platform/mac/svg/batik/text/textEffect3-expected.checksum: No more pixellation, text completely fixed.
+        * platform/mac/svg/batik/text/textEffect3-expected.png: Ditto.
+        * platform/mac/svg/custom/js-late-gradient-and-object-creation-expected.checksum: Marginal differences, only visible in diffs image.
+        * platform/mac/svg/custom/js-late-gradient-and-object-creation-expected.png: Ditto.
+        * platform/mac/svg/custom/text-rotated-gradient-expected.checksum: Added.
+        * platform/mac/svg/custom/text-rotated-gradient-expected.png: Added.
+        * platform/mac/svg/custom/text-rotated-gradient-expected.txt: Added.
+        * platform/mac/svg/text/selection-background-color-expected.checksum: Marginal differences, only visible in diffs image.
+        * platform/mac/svg/text/selection-background-color-expected.png: Ditto.
+        * svg/custom/text-rotated-gradient.svg: Added.
+
+2010-07-08  Nikolas Zimmermann  <nzimmermann@rim.com>
+
         Not reviewed. Add leopard specific pixel test results for svg/custom/svg-curve-with-relative-cordinates.html, to make run-webkit-tests pass again with --tolerance 0.
 
         * platform/mac-leopard/svg/custom/svg-curve-with-relative-cordinates-expected.checksum: Added.

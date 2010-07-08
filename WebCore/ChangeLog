@@ -1,3 +1,26 @@
+2010-07-08  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Rob Buis & Dirk Schulze.
+
+        SVG text transformed incorrectly when a transform and gradient applied
+        https://bugs.webkit.org/show_bug.cgi?id=41563
+
+        When rendering filled/stroked text with a gradient, RenderSVGResourceGradient creates a mask image,
+        renders the text into the image, and then clips the current context against that image buffer,
+        and filling a rect afterwards. This happened in the wrong coordinate space so far. Don't actually
+        try to compute the right transformation matrix (which failed), but extract it directly from the
+        GraphicsContext and apply this transformation to the mask image context.
+
+        Fixes pixellation in svg/batik/text/textEffect3.svg and makes the new test svg/custom/text-rotated-gradient.svg pass.
+        Only affects CoreGraphics platforms.
+
+        Test: svg/custom/text-rotated-gradient.svg
+
+        * rendering/RenderSVGResourceGradient.cpp:
+        (WebCore::absoluteTransformFromContext):
+        (WebCore::createMaskAndSwapContextForTextGradient):
+        (WebCore::clipToTextMask):
+
 2010-07-07  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Darin Fisher.
