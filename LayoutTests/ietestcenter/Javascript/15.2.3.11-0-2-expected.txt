@@ -1,0 +1,11 @@
+15.2.3.11-0-2 (TestCases/chapter15/15.2/15.2.3/15.2.3.11/15.2.3.11-0-2.js) Object.isSealed must exist as a function taking 1 parameter
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+FAIL ES5Harness.preconditionPassed should be true (of type boolean). Was undefined (of type undefined).
+FAIL ES5Harness.testPassed should be true (of type boolean). Was undefined (of type undefined).
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

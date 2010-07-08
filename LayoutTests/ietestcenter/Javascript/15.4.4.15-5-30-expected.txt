@@ -1,0 +1,11 @@
+15.4.4.15-5-30 (TestCases/chapter15/15.4/15.4.4/15.4.4.15/15.4.4.15-5-30.js) Array.prototype.lastIndexOf - any side-effects in ToPrimitive processing of 'fromIndex' don't occur if step 3 throw an exception
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS ES5Harness.preconditionPassed is true
+PASS ES5Harness.testPassed is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
