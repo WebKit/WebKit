@@ -50,6 +50,9 @@ struct WebRect;
 struct WebURLError;
 template <typename T> class WebVector;
 
+//FIXME: remove once the find functions below are rolled into chromium.
+#define WEBPLUGIN_HAS_FIND_INTERFACE
+
 class WebPlugin {
 public:
     virtual bool initialize(WebPluginContainer*) = 0;
