@@ -356,6 +356,10 @@ void ScriptDebugServer::handleV8DebugEvent(const v8::Debug::EventDetails& eventD
                     if (!stackTrace->GetFrameCount())
                         return;
                 }
+
+                // Don't allow nested breaks.
+                if (m_pausedPage)
+                    return;
                 m_executionState.set(eventDetails.GetExecutionState());
                 m_pausedPage = frame->page();
                 ScriptState* currentCallFrameState = mainWorldScriptState(frame);

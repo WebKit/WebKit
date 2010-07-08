@@ -1,3 +1,15 @@
+2010-07-07  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: skip breakpoints when script is already paused
+        https://bugs.webkit.org/show_bug.cgi?id=41768
+
+        Test: inspector/debugger-no-nested-pause.html
+
+        * bindings/v8/ScriptDebugServer.cpp:
+        (WebCore::ScriptDebugServer::handleV8DebugEvent):
+
 2010-07-08  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.
