@@ -1,3 +1,12 @@
+2010-07-07  Martin Robinson  <mrobinson@igalia.com>
+
+        Unreviewed.
+
+        Build fix after r62700.
+
+        * GNUmakefile.am: Update the source list to reflect the new TestNetscapePlugIn
+        source file locations.
+
 2010-07-07  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by David Levin.

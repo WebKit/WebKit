@@ -119,7 +119,7 @@ TestNetscapePlugin_libtestnetscapeplugin_la_CPPFLAGS = \
 	-I$(srcdir)/WebCore \
 	-I$(srcdir)/WebCore/bridge \
 	-I$(srcdir)/WebCore/plugins \
-	-I$(srcdir)/WebKitTools/DumpRenderTree/TestNetscapePlugIn.subproj \
+	-I$(srcdir)/WebKitTools/DumpRenderTree/TestNetscapePlugIn \
 	$(global_cppflags) \
 	$(javascriptcore_cppflags)
 
@@ -128,10 +128,10 @@ TestNetscapePlugin_libtestnetscapeplugin_la_SOURCES = \
 	WebKitTools/DumpRenderTree/unix/TestNetscapePlugin/ForwardingHeaders/WebKit/npfunctions.h \
 	WebKitTools/DumpRenderTree/unix/TestNetscapePlugin/ForwardingHeaders/WebKit/npruntime.h \
 	WebKitTools/DumpRenderTree/unix/TestNetscapePlugin/TestNetscapePlugin.cpp \
-	WebKitTools/DumpRenderTree/TestNetscapePlugIn.subproj/PluginObject.cpp \
-	WebKitTools/DumpRenderTree/TestNetscapePlugIn.subproj/PluginObject.h \
-	WebKitTools/DumpRenderTree/TestNetscapePlugIn.subproj/TestObject.cpp \
-	WebKitTools/DumpRenderTree/TestNetscapePlugIn.subproj/TestObject.h
+	WebKitTools/DumpRenderTree/TestNetscapePlugIn/PluginObject.cpp \
+	WebKitTools/DumpRenderTree/TestNetscapePlugIn/PluginObject.h \
+	WebKitTools/DumpRenderTree/TestNetscapePlugIn/TestObject.cpp \
+	WebKitTools/DumpRenderTree/TestNetscapePlugIn/TestObject.h
 
 TestNetscapePlugin_libtestnetscapeplugin_la_LDFLAGS = \
 	-rpath ${shell pwd}/$(top_builddir)/../unix/TestNetscapePlugin/.libs \
