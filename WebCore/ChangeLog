@@ -1,3 +1,12 @@
+2010-07-08  Antonio Gomes  <tonikitoo@webkit.org>
+
+        Unreviewed complementary fix for r62815
+
+        One last time change made me blind to a "!" in a if statment.
+
+        * editing/EditorCommand.cpp:
+        (WebCore::executeToggleStyle):
+
 2010-07-07  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Darin Adler.

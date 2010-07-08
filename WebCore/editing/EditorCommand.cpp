@@ -168,7 +168,7 @@ static bool executeToggleStyle(Frame* frame, EditorCommandSource source, EditAct
 
     // FIXME: Make stateStyle() to use this editing method too for the cases where it's used for queryCommandState.
     bool styleIsPresent;
-    if (!frame->editor()->behavior().shouldToggleStyleBasedOnStartOfSelection())
+    if (frame->editor()->behavior().shouldToggleStyleBasedOnStartOfSelection())
         styleIsPresent = frame->editor()->selectionStartHasStyle(style.get());
     else
         styleIsPresent = frame->editor()->selectionHasStyle(style.get()) == TrueTriState;
