@@ -1,3 +1,13 @@
+2010-07-08  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        Remove a warnings from the ImageDiff build by using the proper
+        printf format string for the gsize data type.
+
+        * DumpRenderTree/gtk/ImageDiff.cpp:
+        (printImage): Use the proper printf format string for the gsize data type.
+
 2010-07-08  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by Sam Weinig.

@@ -157,7 +157,7 @@ void printImage(GdkPixbuf* image)
         return; // Don't bail out, as we can still use the percentage output.
     }
 
-    printf("Content-Length: %lu\n", bufferSize);
+    printf("Content-Length: %"G_GSIZE_FORMAT"\n", bufferSize);
     fwrite(buffer, 1, bufferSize, stdout);
 }
 
