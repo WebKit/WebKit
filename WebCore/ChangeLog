@@ -1,3 +1,17 @@
+2010-07-08  Andreas Kling  <andreas.kling@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Canvas putImageData() resets painter state
+        https://bugs.webkit.org/show_bug.cgi?id=41827
+
+        Use drawImage() to copy pixels in putImageData() instead of QPixmap::operator=
+
+        Test: fast/canvas/canvas-state-intact-after-putImageData.html
+
+        * platform/graphics/qt/ImageBufferQt.cpp:
+        (WebCore::putImageData):
+
 2010-07-08  Andrey Kosyakov  <caseq@chromium.org>
 
         Reviewed by Pavel Feldman.

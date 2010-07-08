@@ -234,33 +234,43 @@ void putImageData(ImageData*& source, const IntRect& sourceRect, const IntPoint&
 
     unsigned srcBytesPerRow = 4 * source->width();
 
-    bool isPainting = data.m_painter->isActive();
-    if (isPainting)
-        data.m_painter->end();
+    QRect destRect(destx, desty, endx - destx, endy - desty);
 
-    QImage image = data.m_pixmap.toImage();
-    if (multiplied == Unmultiplied)
-        image = image.convertToFormat(QImage::Format_ARGB32);
-    else
-        image = image.convertToFormat(QImage::Format_ARGB32_Premultiplied);
+    QImage::Format format = multiplied == Unmultiplied ? QImage::Format_ARGB32 : QImage::Format_ARGB32_Premultiplied;
+    QImage image(destRect.size(), format);
 
     unsigned char* srcRows = source->data()->data()->data() + originy * srcBytesPerRow + originx * 4;
     for (int y = 0; y < numRows; ++y) {
-        quint32* scanLine = reinterpret_cast<quint32*>(image.scanLine(y + desty));
+        quint32* scanLine = reinterpret_cast<quint32*>(image.scanLine(y));
         for (int x = 0; x < numColumns; x++) {
             // ImageData stores the pixels in RGBA while QImage is ARGB
             quint32 pixel = reinterpret_cast<quint32*>(srcRows + 4 * x)[0];
             pixel = ((pixel << 16) & 0xff0000) | ((pixel >> 16) & 0xff) | (pixel & 0xff00ff00);
-            scanLine[x + destx] = pixel;
+            scanLine[x] = pixel;
         }
 
         srcRows += srcBytesPerRow;
     }
 
-    data.m_pixmap = QPixmap::fromImage(image);
-
-    if (isPainting)
+    bool isPainting = data.m_painter->isActive();
+    if (!isPainting)
         data.m_painter->begin(&data.m_pixmap);
+    else {
+        data.m_painter->save();
+
+        // putImageData() should be unaffected by painter state
+        data.m_painter->resetTransform();
+        data.m_painter->setOpacity(1.0);
+        data.m_painter->setClipping(false);
+    }
+
+    data.m_painter->setCompositionMode(QPainter::CompositionMode_Source);
+    data.m_painter->drawImage(destRect, image);
+
+    if (!isPainting)
+        data.m_painter->end();
+    else
+        data.m_painter->restore();
 }
 
 void ImageBuffer::putUnmultipliedImageData(ImageData* source, const IntRect& sourceRect, const IntPoint& destPoint)
