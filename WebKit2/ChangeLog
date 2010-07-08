@@ -1,5 +1,11 @@
 2010-07-08  Anders Carlsson  <andersca@apple.com>
 
+        Fix build.
+
+        * WebProcess/Plugins/DummyPlugin.h:
+
+2010-07-08  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Sam Weinig.
 
         Add a Plugin abstract base class and a DummyPlugin that implements it
