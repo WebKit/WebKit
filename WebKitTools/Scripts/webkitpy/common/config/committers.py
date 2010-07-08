@@ -114,6 +114,7 @@ committers_unable_to_review = [
     Committer("Jakub Wieczorek", "jwieczorek@webkit.org", "fawek"),
     Committer("James Hawkins", ["jhawkins@chromium.org", "jhawkins@google.com"], "jhawkins"),
     Committer("James Robinson", ["jamesr@chromium.org", "jamesr@google.com"], "jamesr"),
+    Committer("Jay Civelli", "jcivelli@chromium.org", "jcivelli"),
     Committer("Jens Alfke", ["snej@chromium.org", "jens@apple.com"]),
     Committer("Jer Noble", "jer.noble@apple.com", "jernoble"),
     Committer("Jeremy Moskovich", ["playmobil@google.com", "jeremy@chromium.org"], "jeremymos"),

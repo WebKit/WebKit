@@ -1,3 +1,9 @@
+2010-07-08  Jay Civelli  <jcivelli@chromium.org>
+
+        Unreviewed. Adding myself as a committer.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2010-07-08  Adam Roben  <aroben@apple.com>
 
         Make Windows stop running tests from platform/mac
