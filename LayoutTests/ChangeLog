@@ -1,3 +1,24 @@
+2010-07-08  Dmitry Titov  <dimich@chromium.org>
+
+        Reviewed by David Levin.
+
+        Remove IDL declarations and stubs for navigator.registerProtocolHandler and navigator.registerContentHandler
+        https://bugs.webkit.org/show_bug.cgi?id=41878
+
+        This is practically a rollback of http://trac.webkit.org/changeset/50477.
+
+        * fast/dom/Window/window-properties-expected.txt:
+        * fast/dom/navigator-detached-no-crash-expected.txt:
+        * fast/dom/registerContentHandler-expected.txt: Removed.
+        * fast/dom/registerContentHandler.html: Removed.
+        * fast/dom/registerProtocolHandler-expected.txt: Removed.
+        * fast/dom/registerProtocolHandler.html: Removed.
+        * platform/chromium-mac/fast/dom/navigator-detached-no-crash-expected.txt:
+        * platform/chromium-win/fast/dom/navigator-detached-no-crash-expected.txt:
+        * platform/gtk/fast/dom/Window/window-properties-expected.txt:
+        * platform/mac-leopard/fast/dom/navigator-detached-no-crash-expected.txt:
+        * platform/qt/fast/dom/Window/window-properties-expected.txt:
+
 2010-07-08  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed.

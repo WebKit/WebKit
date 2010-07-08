@@ -1,3 +1,19 @@
+2010-07-08  Dmitry Titov  <dimich@chromium.org>
+
+        Reviewed by David Levin.
+
+        Remove IDL declarations and stubs for navigator.registerProtocolHandler and navigator.registerContentHandler.
+        https://bugs.webkit.org/show_bug.cgi?id=41878
+
+        This is practically a rollback of http://trac.webkit.org/changeset/50477.
+
+        * page/Chrome.cpp:
+        * page/Chrome.h:
+        * page/ChromeClient.h:
+        * page/Navigator.cpp:
+        * page/Navigator.h:
+        * page/Navigator.idl:
+
 2010-07-08  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Darin Adler.
