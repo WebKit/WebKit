@@ -102,7 +102,8 @@ public:
     // Ends the print operation.
     void printEnd();
 
-    WebString selectedText();
+    // Copy the selected text.
+    void copy();
 
     // Resource load events for the plugin's source data:
     void didReceiveResponse(const WebCore::ResourceResponse&);

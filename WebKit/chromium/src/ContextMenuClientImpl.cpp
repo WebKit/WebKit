@@ -54,6 +54,7 @@
 #include "WebDataSourceImpl.h"
 #include "WebFrameImpl.h"
 #include "WebMenuItemInfo.h"
+#include "WebPlugin.h"
 #include "WebPluginContainerImpl.h"
 #include "WebPoint.h"
 #include "WebString.h"
@@ -209,7 +210,7 @@ PlatformMenuDescription ContextMenuClientImpl::getCustomMenuFromDefaultItems(
             Widget* widget = toRenderWidget(object)->widget();
             if (widget) {
                 WebPluginContainerImpl* plugin = static_cast<WebPluginContainerImpl*>(widget);
-                WebString text = plugin->selectedText();
+                WebString text = plugin->plugin()->selectionAsText();
                 if (!text.isEmpty()) {
                     data.selectedText = text;
                     data.editFlags |= WebContextMenuData::CanCopy;

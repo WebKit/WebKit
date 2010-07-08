@@ -56,6 +56,7 @@ class WebDataSourceImpl;
 class WebInputElement;
 class WebFrameClient;
 class WebPasswordAutocompleteListener;
+class WebPluginContainerImpl;
 class WebView;
 class WebViewImpl;
 
@@ -196,6 +197,10 @@ public:
 
     static WebFrameImpl* fromFrame(WebCore::Frame* frame);
     static WebFrameImpl* fromFrameOwnerElement(WebCore::Element* element);
+
+    // If the frame hosts a PluginDocument, this method returns the WebPluginContainerImpl
+    // that hosts the plugin.
+    static WebPluginContainerImpl* pluginContainerFromFrame(WebCore::Frame*);
 
     WebViewImpl* viewImpl() const;
 

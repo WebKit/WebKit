@@ -96,6 +96,8 @@
 #include "WebKitClient.h"
 #include "WebMediaPlayerAction.h"
 #include "WebNode.h"
+#include "WebPlugin.h"
+#include "WebPluginContainerImpl.h"
 #include "WebPoint.h"
 #include "WebPopupMenuImpl.h"
 #include "WebRect.h"
@@ -1434,8 +1436,11 @@ int WebViewImpl::setZoomLevel(bool textOnly, int zoomLevel)
     if (!view)
         return m_zoomLevel;
     if (zoomFactor != view->zoomFactor()) {
-        m_zoomLevel = zoomLevel;
         view->setZoomFactor(zoomFactor, textOnly ? ZoomTextOnly : ZoomPage);
+        WebPluginContainerImpl* pluginContainer = WebFrameImpl::pluginContainerFromFrame(frame);
+        if (pluginContainer)
+            pluginContainer->plugin()->setZoomFactor(zoomFactor, textOnly);
+        m_zoomLevel = zoomLevel;
     }
     return m_zoomLevel;
 }
