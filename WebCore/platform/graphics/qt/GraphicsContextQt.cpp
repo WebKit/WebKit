@@ -260,6 +260,7 @@ GraphicsContextPlatformPrivate::GraphicsContextPlatformPrivate(QPainter* p)
         antiAliasingForRectsAndLines = painter->testRenderHint(QPainter::Antialiasing);
         // FIXME: Maybe only enable in SVG mode?
         painter->setRenderHint(QPainter::Antialiasing, true);
+        painter->setRenderHint(QPainter::SmoothPixmapTransform, true);
     } else
         antiAliasingForRectsAndLines = false;
 }
@@ -1394,13 +1395,13 @@ void GraphicsContext::setImageInterpolationQuality(InterpolationQuality quality)
     m_data->imageInterpolationQuality = quality;
 
     switch (quality) {
-    case InterpolationDefault:
     case InterpolationNone:
     case InterpolationLow:
         // use nearest-neigbor
         m_data->p()->setRenderHint(QPainter::SmoothPixmapTransform, false);
         break;
 
+    case InterpolationDefault:
     case InterpolationMedium:
     case InterpolationHigh:
     default:
