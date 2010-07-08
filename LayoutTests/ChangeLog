@@ -1,3 +1,27 @@
+2010-07-08  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Make object-literal parsing conformant with the spec.
+        https://bugs.webkit.org/show_bug.cgi?id=41892
+
+        Add tests to ensure correct parsing of object literals.
+
+        * fast/js/object-literal-syntax-expected.txt: Added.
+        * fast/js/object-literal-syntax.html: Added.
+        * fast/js/parser-syntax-check-expected.txt:
+        * fast/js/script-tests/object-literal-syntax.js: Added.
+        * fast/js/script-tests/parser-syntax-check.js:
+        * ietestcenter/Javascript/11.1.5_4-4-b-1-expected.txt:
+        * ietestcenter/Javascript/11.1.5_4-4-b-2-expected.txt:
+        * ietestcenter/Javascript/11.1.5_4-4-c-1-expected.txt:
+        * ietestcenter/Javascript/11.1.5_4-4-c-2-expected.txt:
+        * ietestcenter/Javascript/11.1.5_4-4-d-1-expected.txt:
+        * ietestcenter/Javascript/11.1.5_4-4-d-2-expected.txt:
+        * ietestcenter/Javascript/11.1.5_4-4-d-3-expected.txt:
+        * ietestcenter/Javascript/11.1.5_4-4-d-4-expected.txt:
+        * platform/chromium/test_expectations.txt:
+
 2010-07-08  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Missing plug-ins may cause an assertion failure

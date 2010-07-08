@@ -29,7 +29,7 @@
 namespace JSC {
 class SyntaxChecker {
 public:
-    SyntaxChecker(JSGlobalData*, Lexer*)
+    SyntaxChecker(JSGlobalData* , Lexer*)
     {
     }
 
@@ -39,7 +39,25 @@ public:
     typedef int SourceElements;
     typedef int Arguments;
     typedef int Comma;
-    typedef int Property;
+    struct Property {
+        ALWAYS_INLINE Property(void* = 0)
+            : type((PropertyNode::Type)0)
+        {
+        }
+        ALWAYS_INLINE Property(const Identifier* ident, PropertyNode::Type ty)
+        : name(ident)
+        , type(ty)
+        {
+        }
+        ALWAYS_INLINE Property(PropertyNode::Type ty)
+            : name(0)
+            , type(ty)
+        {
+        }
+        ALWAYS_INLINE bool operator!() { return !type; }
+        const Identifier* name;
+        PropertyNode::Type type;
+    };
     typedef int PropertyList;
     typedef int ElementList;
     typedef int ArgumentsList;
@@ -90,10 +108,21 @@ public:
     int createArguments(int) { return 1; }
     int createArgumentsList(int) { return 1; }
     int createArgumentsList(int, int) { return 1; }
-    int createProperty(const Identifier*, int, PropertyNode::Type) { return 1; }
-    int createProperty(double, int, PropertyNode::Type) { return 1; }
-    int createPropertyList(int) { return 1; }
-    int createPropertyList(int, int) { return 1; }
+    template <bool complete> Property createProperty(const Identifier* name, int, PropertyNode::Type type)
+    {
+        ASSERT(name);
+        if (!complete)
+            return Property(type);
+        return Property(name, type);
+    }
+    template <bool complete> Property createProperty(JSGlobalData* globalData, double name, int, PropertyNode::Type type)
+    {
+        if (!complete)
+            return Property(type);
+        return Property(&globalData->parser->arena().identifierArena().makeNumericIdentifier(globalData, name), type);
+    }
+    int createPropertyList(Property) { return 1; }
+    int createPropertyList(Property, int) { return 1; }
     int createElementList(int, int) { return 1; }
     int createElementList(int, int, int) { return 1; }
     int createFormalParameterList(const Identifier&) { return 1; }
@@ -127,7 +156,13 @@ public:
     int createDebugger(int, int) { return 1; }
     int createConstStatement(int, int, int) { return 1; }
     int appendConstDecl(int, const Identifier*, int) { return 1; }
-    int createGetterOrSetterProperty(const Identifier*, const Identifier*, int, int, int, int, int, int) { return 1; }
+    template <bool strict> Property createGetterOrSetterProperty(PropertyNode::Type type, const Identifier* name, int, int, int, int, int, int)
+    {
+        ASSERT(name);
+        if (!strict)
+            return Property(type);
+        return Property(name, type);
+    }
 
     void appendStatement(int, int) { }
     void addVar(const Identifier*, bool) { }
@@ -151,6 +186,8 @@ public:
     
     void assignmentStackAppend(int, int, int, int, int, Operator) { }
     int createAssignment(int, int, int, int, int) { ASSERT_NOT_REACHED(); return 1; }
+    const Identifier& getName(const Property& property) { ASSERT(property.name); return *property.name; }
+    PropertyNode::Type getType(const Property& property) { return property.type; }
 };
 
 }

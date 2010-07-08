@@ -32,6 +32,7 @@ using namespace JSC;
 #include "JSGlobalData.h"
 #include "NodeInfo.h"
 #include "ASTBuilder.h"
+#include <wtf/HashFunctions.h>
 #include <utility>
 
 using namespace std;
@@ -63,7 +64,7 @@ static const ptrdiff_t kMaxParserStackUsage = 128 * sizeof(void*) * 1024;
 
 class JSParser {
 public:
-    JSParser(Lexer*, JSGlobalData*);
+    JSParser(Lexer*, JSGlobalData*, SourceProvider*);
     bool parseProgram();
 private:
     struct AllowInOverride {
@@ -150,8 +151,9 @@ private:
     template <class TreeBuilder> ALWAYS_INLINE TreeExpression parsePrimaryExpression(TreeBuilder&);
     template <class TreeBuilder> ALWAYS_INLINE TreeExpression parseArrayLiteral(TreeBuilder&);
     template <class TreeBuilder> ALWAYS_INLINE TreeExpression parseObjectLiteral(TreeBuilder&);
+    template <class TreeBuilder> ALWAYS_INLINE TreeExpression parseStrictObjectLiteral(TreeBuilder&);
     template <class TreeBuilder> ALWAYS_INLINE TreeArguments parseArguments(TreeBuilder&);
-    template <class TreeBuilder> ALWAYS_INLINE TreeProperty parseProperty(TreeBuilder&);
+    template <bool strict, class TreeBuilder> ALWAYS_INLINE TreeProperty parseProperty(TreeBuilder&);
     template <class TreeBuilder> ALWAYS_INLINE TreeFunctionBody parseFunctionBody(TreeBuilder&);
     template <class TreeBuilder> ALWAYS_INLINE TreeFormalParameterList parseFormalParameters(TreeBuilder&, bool& usesArguments);
     template <class TreeBuilder> ALWAYS_INLINE TreeExpression parseVarDeclarationList(TreeBuilder&, int& declarations, const Identifier*& lastIdent, TreeExpression& lastInitializer, int& identStart, int& initStart, int& initEnd);
@@ -194,15 +196,16 @@ private:
     int m_lastTokenEnd;
     int m_assignmentCount;
     int m_nonLHSCount;
+    bool m_syntaxAlreadyValidated;
 };
 
-int jsParse(JSGlobalData* globalData)
+int jsParse(JSGlobalData* globalData, const SourceCode* source)
 {
-    JSParser parser(globalData->lexer, globalData);
+    JSParser parser(globalData->lexer, globalData, source->provider());
     return parser.parseProgram();
 }
 
-JSParser::JSParser(Lexer* lexer, JSGlobalData* globalData)
+JSParser::JSParser(Lexer* lexer, JSGlobalData* globalData, SourceProvider* provider)
     : m_lexer(lexer)
     , m_endAddress(0)
     , m_error(false)
@@ -213,6 +216,7 @@ JSParser::JSParser(Lexer* lexer, JSGlobalData* globalData)
     , m_lastTokenEnd(0)
     , m_assignmentCount(0)
     , m_nonLHSCount(0)
+    , m_syntaxAlreadyValidated(provider->isValid())
 {
     m_endAddress = *(globalData->stackGuards);
     if (!m_endAddress) {
@@ -1145,7 +1149,7 @@ template <class TreeBuilder> TreeExpression JSParser::parseBinaryExpression(Tree
 }
 
 
-template <class TreeBuilder> TreeProperty JSParser::parseProperty(TreeBuilder& context)
+template <bool complete, class TreeBuilder> TreeProperty JSParser::parseProperty(TreeBuilder& context)
 {
     bool wasIdent = false;
     switch (token().m_type) {
@@ -1158,7 +1162,7 @@ template <class TreeBuilder> TreeProperty JSParser::parseProperty(TreeBuilder& c
             next();
             TreeExpression node = parseAssignmentExpression(context);
             failIfFalse(node);
-            return context.createProperty(ident, node, PropertyNode::Constant);
+            return context.template createProperty<complete>(ident, node, PropertyNode::Constant);
         }
         failIfFalse(wasIdent);
         matchOrFail(IDENT);
@@ -1168,9 +1172,15 @@ template <class TreeBuilder> TreeProperty JSParser::parseProperty(TreeBuilder& c
         int openBracePos = 0;
         int closeBracePos = 0;
         int bodyStartLine = 0;
-        failIfFalse(*ident == m_globalData->propertyNames->get || *ident == m_globalData->propertyNames->set);
+        PropertyNode::Type type;
+        if (*ident == m_globalData->propertyNames->get)
+            type = PropertyNode::Getter;
+        else if (*ident == m_globalData->propertyNames->set)
+            type = PropertyNode::Setter;
+        else
+            fail();
         failIfFalse(parseFunctionInfo<FunctionNeedsName>(context, accessorName, parameters, body, openBracePos, closeBracePos, bodyStartLine));
-        return context.createGetterOrSetterProperty(ident, accessorName, parameters, body, openBracePos, closeBracePos, bodyStartLine, m_lastLine);
+        return context.template createGetterOrSetterProperty<complete>(type, accessorName, parameters, body, openBracePos, closeBracePos, bodyStartLine, m_lastLine);
     }
     case NUMBER: {
         double propertyName = token().m_data.doubleValue;
@@ -1178,7 +1188,7 @@ template <class TreeBuilder> TreeProperty JSParser::parseProperty(TreeBuilder& c
         consumeOrFail(':');
         TreeExpression node = parseAssignmentExpression(context);
         failIfFalse(node);
-        return context.createProperty(propertyName, node, PropertyNode::Constant);
+        return context.template createProperty<complete>(m_globalData, propertyName, node, PropertyNode::Constant);
     }
     }
     fail();
@@ -1186,6 +1196,7 @@ template <class TreeBuilder> TreeProperty JSParser::parseProperty(TreeBuilder& c
 
 template <class TreeBuilder> TreeExpression JSParser::parseObjectLiteral(TreeBuilder& context)
 {
+    int startOffset = token().m_data.intValue;
     consumeOrFail(OPENBRACE);
 
     if (match(CLOSEBRACE)) {
@@ -1193,25 +1204,78 @@ template <class TreeBuilder> TreeExpression JSParser::parseObjectLiteral(TreeBui
         return context.createObjectLiteral();
     }
 
-    TreeProperty property = parseProperty(context);
+    TreeProperty property = parseProperty<false>(context);
     failIfFalse(property);
-
+    if (!m_syntaxAlreadyValidated && context.getType(property) != PropertyNode::Constant) {
+        m_lexer->setOffset(startOffset);
+        next();
+        return parseStrictObjectLiteral(context);
+    }
     TreePropertyList propertyList = context.createPropertyList(property);
     TreePropertyList tail = propertyList;
-
     while (match(',')) {
         next();
         // allow extra comma, see http://bugs.webkit.org/show_bug.cgi?id=5939
         if (match(CLOSEBRACE))
             break;
-        property = parseProperty(context);
+        property = parseProperty<false>(context);
         failIfFalse(property);
-
+        if (!m_syntaxAlreadyValidated && context.getType(property) != PropertyNode::Constant) {
+            m_lexer->setOffset(startOffset);
+            next();
+            return parseStrictObjectLiteral(context);
+        }
         tail = context.createPropertyList(property, tail);
     }
 
     consumeOrFail(CLOSEBRACE);
 
+    return context.createObjectLiteral(propertyList);
+}
+
+template <class TreeBuilder> TreeExpression JSParser::parseStrictObjectLiteral(TreeBuilder& context)
+{
+    consumeOrFail(OPENBRACE);
+    
+    if (match(CLOSEBRACE)) {
+        next();
+        return context.createObjectLiteral();
+    }
+    
+    TreeProperty property = parseProperty<true>(context);
+    failIfFalse(property);
+    
+    typedef HashMap<RefPtr<UString::Rep>, unsigned, IdentifierRepHash> ObjectValidationMap;
+    ObjectValidationMap objectValidator;
+    // Add the first property
+    if (!m_syntaxAlreadyValidated)
+        objectValidator.add(context.getName(property).ustring().rep(), context.getType(property));
+    
+    TreePropertyList propertyList = context.createPropertyList(property);
+    TreePropertyList tail = propertyList;
+    while (match(',')) {
+        next();
+        // allow extra comma, see http://bugs.webkit.org/show_bug.cgi?id=5939
+        if (match(CLOSEBRACE))
+            break;
+        property = parseProperty<true>(context);
+        failIfFalse(property);
+        if (!m_syntaxAlreadyValidated) {
+            std::pair<ObjectValidationMap::iterator, bool> propertyEntryIter = objectValidator.add(context.getName(property).ustring().rep(), context.getType(property));
+            if (!propertyEntryIter.second) {
+                if ((context.getType(property) & propertyEntryIter.first->second) != PropertyNode::Constant) {
+                    // Can't have multiple getters or setters with the same name, nor can we define 
+                    // a property as both an accessor and a constant value
+                    failIfTrue(context.getType(property) & propertyEntryIter.first->second);
+                    failIfTrue((context.getType(property) | propertyEntryIter.first->second) & PropertyNode::Constant);
+                }
+            }
+        }
+        tail = context.createPropertyList(property, tail);
+    }
+    
+    consumeOrFail(CLOSEBRACE);
+    
     return context.createObjectLiteral(propertyList);
 }
 

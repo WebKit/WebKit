@@ -249,16 +249,9 @@ public:
         return FunctionBodyNode::create(m_globalData);
     }
     
-    PropertyNode* createGetterOrSetterProperty(const Identifier* getOrSet, const Identifier* name, ParameterNode* params, FunctionBodyNode* body, int openBracePos, int closeBracePos, int bodyStartLine, int bodyEndLine)
+    template <bool> PropertyNode* createGetterOrSetterProperty(PropertyNode::Type type, const Identifier* name, ParameterNode* params, FunctionBodyNode* body, int openBracePos, int closeBracePos, int bodyStartLine, int bodyEndLine)
     {
         ASSERT(name);
-        PropertyNode::Type type;
-        if (*getOrSet == m_globalData->propertyNames->get)
-            type = PropertyNode::Getter;
-        else if (*getOrSet == m_globalData->propertyNames->set)
-            type = PropertyNode::Setter;
-        else
-            return 0;
         body->setLoc(bodyStartLine, bodyEndLine);
         return new (m_globalData) PropertyNode(m_globalData, *name, new (m_globalData) FuncExprNode(m_globalData, m_globalData->propertyNames->nullIdentifier, body, m_lexer->sourceCode(openBracePos, closeBracePos, bodyStartLine), params), type);
     }
@@ -269,8 +262,8 @@ public:
     ArgumentListNode* createArgumentsList(ExpressionNode* arg) { return new (m_globalData) ArgumentListNode(m_globalData, arg); }
     ArgumentListNode* createArgumentsList(ArgumentListNode* args, ExpressionNode* arg) { return new (m_globalData) ArgumentListNode(m_globalData, args, arg); }
 
-    PropertyNode* createProperty(const Identifier* propertyName, ExpressionNode* node, PropertyNode::Type type) { return new (m_globalData) PropertyNode(m_globalData, *propertyName, node, type); }
-    PropertyNode* createProperty(double propertyName, ExpressionNode* node, PropertyNode::Type type) { return new (m_globalData) PropertyNode(m_globalData, propertyName, node, type); }
+    template <bool> PropertyNode* createProperty(const Identifier* propertyName, ExpressionNode* node, PropertyNode::Type type) { return new (m_globalData) PropertyNode(m_globalData, *propertyName, node, type); }
+    template <bool> PropertyNode* createProperty(JSGlobalData*, double propertyName, ExpressionNode* node, PropertyNode::Type type) { return new (m_globalData) PropertyNode(m_globalData, propertyName, node, type); }
     PropertyListNode* createPropertyList(PropertyNode* property) { return new (m_globalData) PropertyListNode(m_globalData, property); }
     PropertyListNode* createPropertyList(PropertyNode* property, PropertyListNode* tail) { return new (m_globalData) PropertyListNode(m_globalData, property, tail); }
 
@@ -576,7 +569,9 @@ public:
         assignmentStackDepth--;
         return result;
     }
-
+    
+    const Identifier& getName(Property property) { return property->name(); }
+    PropertyNode::Type getType(Property property) { return property->type(); }
 private:
     struct Scope {
         Scope(JSGlobalData* globalData)

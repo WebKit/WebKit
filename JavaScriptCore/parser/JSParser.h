@@ -30,6 +30,7 @@ namespace JSC {
 
 class Identifier;
 class JSGlobalData;
+class SourceCode;
 
 enum JSTokenType {
     NULLTOKEN = 258,
@@ -118,6 +119,6 @@ struct JSToken {
     JSTokenInfo m_info;
 };
 
-int jsParse(JSGlobalData*);
+int jsParse(JSGlobalData*, const SourceCode*);
 }
 #endif // JSParser_h

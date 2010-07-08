@@ -38,6 +38,7 @@ namespace JSC {
     public:
         SourceProvider(const UString& url)
             : m_url(url)
+            , m_validated(false)
         {
         }
         virtual ~SourceProvider() { }
@@ -49,8 +50,12 @@ namespace JSC {
         const UString& url() { return m_url; }
         intptr_t asID() { return reinterpret_cast<intptr_t>(this); }
 
+        bool isValid() const { return m_validated; }
+        void setValid() { m_validated = true; }
+
     private:
         UString m_url;
+        bool m_validated;
     };
 
     class UStringSourceProvider : public SourceProvider {

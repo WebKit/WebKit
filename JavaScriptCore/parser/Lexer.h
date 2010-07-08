@@ -61,6 +61,12 @@ namespace JSC {
         // Functions for use after parsing.
         bool sawError() const { return m_error; }
         void clear();
+        int currentOffset() { return m_code - m_codeStart; }
+        void setOffset(int offset)
+        {
+            m_code = m_codeStart + offset;
+            m_current = *m_code;
+        }
 
     private:
         friend class JSGlobalData;
@@ -115,8 +121,6 @@ namespace JSC {
         JSGlobalData* m_globalData;
 
         const HashTable m_keywordTable;
-
-        Vector<UChar> m_codeWithoutBOMs;
     };
 
     inline bool Lexer::isWhiteSpace(int ch)

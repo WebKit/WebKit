@@ -1,3 +1,53 @@
+2010-07-08  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Make object-literal parsing conformant with the spec.
+        https://bugs.webkit.org/show_bug.cgi?id=41892
+
+        Bring our parsing of object literals into conformance with the ES5 spec.
+        Basically disallow conflicting accessor vs. normal property definitions
+        The bulk of this patch is just fiddling to maintain performance.
+
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::createGetterOrSetterProperty):
+        (JSC::ASTBuilder::createProperty):
+        (JSC::ASTBuilder::getName):
+        (JSC::ASTBuilder::getType):
+        * parser/JSParser.cpp:
+        (JSC::jsParse):
+        (JSC::JSParser::JSParser):
+        (JSC::JSParser::parseProperty):
+        (JSC::JSParser::parseObjectLiteral):
+        (JSC::JSParser::parseStrictObjectLiteral):
+        * parser/JSParser.h:
+        * parser/Lexer.cpp:
+        (JSC::Lexer::clear):
+        * parser/Lexer.h:
+        (JSC::Lexer::currentOffset):
+        (JSC::Lexer::setOffset):
+          Add logic to allow us to roll the lexer back in the input stream.
+        * parser/Nodes.h:
+        (JSC::PropertyNode::):
+        (JSC::PropertyNode::type):
+        * parser/Parser.cpp:
+        (JSC::Parser::parse):
+        * parser/SourceProvider.h:
+        (JSC::SourceProvider::SourceProvider):
+        (JSC::SourceProvider::isValid):
+        (JSC::SourceProvider::setValid):
+          SourceProvider now records whether the input text
+          has already been validated.
+        * parser/SyntaxChecker.h:
+        (JSC::SyntaxChecker::SyntaxChecker):
+        (JSC::SyntaxChecker::Property::Property):
+        (JSC::SyntaxChecker::Property::operator!):
+        (JSC::SyntaxChecker::createProperty):
+        (JSC::SyntaxChecker::createPropertyList):
+        (JSC::SyntaxChecker::createGetterOrSetterProperty):
+          The SyntaxChecker mode now needs to maintain a bit more information
+          to ensure that we can validate object literals correctly.
+
 2010-07-08  Darin Adler  <darin@apple.com>
 
         * runtime/JSGlobalData.cpp:

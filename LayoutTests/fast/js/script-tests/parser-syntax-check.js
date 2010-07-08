@@ -153,7 +153,7 @@ valid  ("[] in [5,6] * [,5,] / [,,5,,] || [a,] && new [,b] % [,,]");
 invalid("[5,");
 invalid("[,");
 invalid("(a,)");
-valid  ("1 + {get get(){}, set set(a){}, get:4, set:get-set, }");
+valid  ("1 + {get get(){}, set set(a){}, get1:4, set1:get-set, }");
 invalid("1 + {a");
 invalid("1 + {a:");
 invalid("1 + {get l(");

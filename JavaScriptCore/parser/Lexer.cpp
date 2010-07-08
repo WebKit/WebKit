@@ -1117,7 +1117,6 @@ bool Lexer::skipRegExp()
 void Lexer::clear()
 {
     m_arena = 0;
-    m_codeWithoutBOMs.clear();
 
     Vector<char> newBuffer8;
     m_buffer8.swap(newBuffer8);
