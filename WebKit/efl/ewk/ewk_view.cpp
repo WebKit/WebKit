@@ -533,6 +533,7 @@ static Ewk_View_Private_Data* _ewk_view_priv_new(Ewk_View_Smart_Data* sd)
         static_cast<WebCore::InspectorClient*>(new WebCore::InspectorClientEfl),
         0,
         0,
+        0,
         0);
     if (!priv->page) {
         CRITICAL("Could not create WebKit Page");
