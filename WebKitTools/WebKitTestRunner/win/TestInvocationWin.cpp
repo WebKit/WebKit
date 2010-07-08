@@ -23,16 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifdef __OBJC__
-#include <Cocoa/Cocoa.h>
-#endif
+#include "TestInvocation.h"
 
-#include <wtf/Platform.h>
-#if PLATFORM(WIN)
-// If we don't define these, they get defined in windef.h. 
-// We want to use std::min and std::max
-#define max max
-#define min min
-#endif
+namespace WTR {
 
-#include <WebKit2/WebKit2.h>
+void TestInvocation::runUntil(bool& done)
+{
+    // Implement
+}
+
+} // namespace WTR

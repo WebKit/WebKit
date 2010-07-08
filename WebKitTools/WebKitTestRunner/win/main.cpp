@@ -23,16 +23,12 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifdef __OBJC__
-#include <Cocoa/Cocoa.h>
-#endif
+#include "TestController.h"
 
-#include <wtf/Platform.h>
-#if PLATFORM(WIN)
-// If we don't define these, they get defined in windef.h. 
-// We want to use std::min and std::max
-#define max max
-#define min min
-#endif
+int main(int argc, const char* argv[])
+{
+    WTR::TestController::shared().initialize(argc, argv);
+    WTR::TestController::shared().run();
 
-#include <WebKit2/WebKit2.h>
+    return 0;
+}

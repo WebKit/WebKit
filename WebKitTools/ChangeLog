@@ -1,3 +1,30 @@
+2010-07-08  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=41653
+        Add new WebKitTestRunner project for Windows
+
+        * WebKitTestRunner/WebKitTestRunnerPrefix.h: 
+        Similar to how it's done in DumpRenderTree, define max and min early
+        on so that they don't get replaced by a macro requiring 2 arguments.
+
+        * WebKitTestRunner/win: Added.
+        * WebKitTestRunner/win/WebKitTestRunner.sln: Added.
+        * WebKitTestRunner/win/WebKitTestRunner.vcproj: Added.
+        * WebKitTestRunner/win/main.cpp: Added.
+        (main): Implemented
+
+        Added these files with stubbed out functions:
+        * WebKitTestRunner/win/PlatformWebViewWin.cpp: Added.
+        (WTR::PlatformWebView::PlatformWebView):
+        (WTR::PlatformWebView::~PlatformWebView):
+        (WTR::PlatformWebView::page):
+        * WebKitTestRunner/win/TestControllerWin.cpp: Added.
+        (WTR::TestController::initializeInjectedBundlePath):
+        * WebKitTestRunner/win/TestInvocationWin.cpp: Added.
+        (WTR::TestInvocation::runUntil):
+
 2010-07-07  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Gustavo Noronha Silva.
