@@ -553,16 +553,16 @@ javascriptcore_sources += \
 endif
 
 JavaScriptCore/Lexer.lut.h: $(CREATE_HASH_TABLE) $(srcdir)/JavaScriptCore/parser/Keywords.table
-	$(PERL) $^ > $@
+	$(AM_V_GEN)$(PERL) $^ > $@
 
 JavaScriptCore/%.lut.h: $(CREATE_HASH_TABLE) $(srcdir)/JavaScriptCore/%.cpp
-	$(PERL) $^ -i > $@
+	$(AM_V_GEN)$(PERL) $^ -i > $@
 
 JavaScriptCore/RegExpJitTables.h: $(srcdir)/JavaScriptCore/create_regex_tables
-	$(PYTHON) $(CREATE_REGEXP_TABLES) > $@
+	$(AM_V_GEN)$(PYTHON) $(CREATE_REGEXP_TABLES) > $@
 
 JavaScriptCore/pcre/chartables.c: $(srcdir)/JavaScriptCore/pcre/dftables
-	$(PERL) $^ $@
+	$(AM_V_GEN)$(PERL) $^ $@
 
 bin_PROGRAMS += \
 	Programs/jsc-@WEBKITGTK_API_MAJOR_VERSION@

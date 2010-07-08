@@ -1,3 +1,11 @@
+2010-07-08  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        Silence a few noisy build rules.
+
+        * GNUmakefile.am:
+
 2010-07-08  Andreas Kling  <andreas.kling@nokia.com>
 
         Reviewed by Simon Hausmann.

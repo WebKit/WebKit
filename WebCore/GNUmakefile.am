@@ -4054,7 +4054,7 @@ libWebCoreJS.la: $(libWebCoreJS_objects)
 
 
 DerivedSources/webkit/webkitdomdummy.c:
-	mkdir -p DerivedSources/webkit || echo > $@
+	$(AM_V_GEN)mkdir -p DerivedSources/webkit || echo > $@
 
 # Because WebCore/bindings/gobject/WebKitDOMObject.h is static source but is also a distributed header
 # required by other distributed headers (both static and auto-generated), need to move this to the
