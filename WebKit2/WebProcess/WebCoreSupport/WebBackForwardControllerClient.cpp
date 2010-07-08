@@ -37,9 +37,9 @@ void WebBackForwardControllerClient::backForwardControllerDestroyed()
     delete this;
 }
 
-PassRefPtr<BackForwardList> WebBackForwardControllerClient::createBackForwardList()
+PassRefPtr<BackForwardList> WebBackForwardControllerClient::createBackForwardList(Page* page)
 {
-    return BackForwardListImpl::create(m_page->corePage());
+    return BackForwardListImpl::create(page);
 }
 
 } // namespace WebKit

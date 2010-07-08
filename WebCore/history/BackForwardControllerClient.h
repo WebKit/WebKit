@@ -31,11 +31,13 @@
 
 namespace WebCore {
 
+class Page;
+
 class BackForwardControllerClient {
 public:
     virtual void backForwardControllerDestroyed() = 0;
 
-    virtual PassRefPtr<BackForwardList> createBackForwardList() = 0;
+    virtual PassRefPtr<BackForwardList> createBackForwardList(Page*) = 0;
 
 protected:
     virtual ~BackForwardControllerClient() { }

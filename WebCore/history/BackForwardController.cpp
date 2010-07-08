@@ -39,7 +39,7 @@ BackForwardController::BackForwardController(Page* page, BackForwardControllerCl
     if (!m_client)
         m_list = BackForwardListImpl::create(page);
     else
-        m_list = m_client->createBackForwardList();
+        m_list = m_client->createBackForwardList(page);
 }
 
 BackForwardController::~BackForwardController()

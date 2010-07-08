@@ -41,7 +41,7 @@ public:
 
 private:
     virtual void backForwardControllerDestroyed();
-    virtual PassRefPtr<WebCore::BackForwardList> createBackForwardList();
+    virtual PassRefPtr<WebCore::BackForwardList> createBackForwardList(WebCore::Page*);
 
     WebPage* m_page;
 };

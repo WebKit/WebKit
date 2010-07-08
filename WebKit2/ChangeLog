@@ -1,3 +1,15 @@
+2010-07-08  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Pass Page to BackForwardControllerClient::createBackForwardList since it
+        may be called before implementations of BackForwardControllerClient have
+        access to a Page.
+
+        * WebProcess/WebCoreSupport/WebBackForwardControllerClient.cpp:
+        (WebKit::WebBackForwardControllerClient::createBackForwardList):
+        * WebProcess/WebCoreSupport/WebBackForwardControllerClient.h:
+
 2010-07-08  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.
