@@ -25,38 +25,50 @@
 
 #include "NetscapePluginModule.h"
 
-using namespace WebCore;
-
 namespace WebKit {
 
-NetscapePluginModule::NetscapePluginModule(const String& pluginPath)
-    : m_pluginPath(pluginPath)
-    , m_isInitialized(false)
-    , m_shutdownProcPtr(0)
-    , m_pluginFuncs()
+void NetscapePluginModule::unload()
 {
-}
-
-PassRefPtr<NetscapePluginModule> NetscapePluginModule::create(const String& pluginPath)
-{
-    RefPtr<NetscapePluginModule> pluginModule(adoptRef(new NetscapePluginModule(pluginPath)));
-    
-    // Try to load and initialize the plug-in module.
-    if (!pluginModule->load())
-        return 0;
-    
-    return pluginModule.release();
-}
-
-bool NetscapePluginModule::load()
-{
-    if (!tryLoad()) {
-        unload();
-        return false;
+    if (m_bundle) {
+        CFBundleUnloadExecutable(m_bundle.get());
+        m_bundle = 0;
     }
+}
+
+template<typename FuncType> 
+static inline FuncType pointerToFunction(CFBundleRef bundle, const char* functionName)
+{
+    RetainPtr<CFStringRef> functionNameString(AdoptCF, CFStringCreateWithCStringNoCopy(kCFAllocatorDefault, functionName, kCFStringEncodingASCII, kCFAllocatorNull));
+    return reinterpret_cast<FuncType>(CFBundleGetFunctionPointerForName(bundle, functionNameString.get()));
+}
     
+bool NetscapePluginModule::tryLoad()
+{
+    RetainPtr<CFStringRef> bundlePath(AdoptCF, m_pluginPath.createCFString());
+    RetainPtr<CFURLRef> bundleURL(AdoptCF, CFURLCreateWithFileSystemPath(0, bundlePath.get(), kCFURLPOSIXPathStyle, FALSE));
+    if (!bundleURL)
+        return false;
+
+    m_bundle.adoptCF(CFBundleCreate(kCFAllocatorDefault, bundleURL.get()));
+    if (!m_bundle)
+        return false;
+    
+    if (!CFBundleLoadExecutable(m_bundle.get()))
+        return false;
+
+    NP_InitializeFuncPtr initializeFuncPtr = pointerToFunction<NP_InitializeFuncPtr>(m_bundle.get(), "NP_Initialize");
+    if (!initializeFuncPtr)
+        return false;
+
+    NP_GetEntryPointsFuncPtr getEntryPointsFuncPtr = pointerToFunction<NP_GetEntryPointsFuncPtr>(m_bundle.get(), "NP_GetEntryPoints");
+    if (!getEntryPointsFuncPtr)
+        return false;
+
+    m_shutdownProcPtr = pointerToFunction<NPP_ShutdownProcPtr>(m_bundle.get(), "NP_Shutdown");
+    if (!m_shutdownProcPtr)
+        return false;
+
     return true;
 }
 
 } // namespace WebKit
-

@@ -38,13 +38,14 @@ namespace WebKit {
 
 class NetscapePluginModule : public RefCounted<NetscapePluginModule> {
 public:
-    static PassRefPtr<NetscapePluginModule> create(const WebCore::String& pluginPath)
-    {
-        return adoptRef(new NetscapePluginModule(pluginPath));
-    }
+    static PassRefPtr<NetscapePluginModule> create(const WebCore::String& pluginPath);
 
 private:
     explicit NetscapePluginModule(const WebCore::String& pluginPath);
+
+    bool tryLoad();
+    bool load();
+    void unload();
 
     WebCore::String m_pluginPath;
     bool m_isInitialized;
