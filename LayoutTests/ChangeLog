@@ -1,3 +1,12 @@
+2010-07-08  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Missing plug-ins may cause an assertion failure
+        https://bugs.webkit.org/show_bug.cgi?id=41900
+
+        Reviewed by Adele Peterson.
+
+        * plugins/missing-plugin.html: Added.
+
 2010-07-08  Ojan Vafai  <ojan@chromium.org>
 
         Not reviewed. Just changing test expectations.

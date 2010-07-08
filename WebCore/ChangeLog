@@ -1,3 +1,20 @@
+2010-07-08  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Missing plug-ins may cause an assertion failure.
+        https://bugs.webkit.org/show_bug.cgi?id=41900
+
+        Reviewed by Adele Peterson.
+
+        Test: plugins/missing-plugin.html
+
+        * plugins/PluginView.cpp:
+        (WebCore::PluginView::~PluginView):
+        Check whether m_instance is null before trying to remove it from the
+        map. Trying to remove a null instance results in an assertion failure.
+        (WebCore::PluginView::PluginView):
+        Initialize m_instance to 0, because there is an early return that may
+        skip its being assigned its proper value.
+
 2010-07-08  Darin Adler  <darin@apple.com>
 
         Reviewed by Oliver Hunt.
