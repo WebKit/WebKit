@@ -22,7 +22,7 @@
 
 #include "ExecutableAllocator.h"
 
-#if ENABLE(ASSEMBLER) && OS(SYMBIAN)
+#if ENABLE(EXECUTABLE_ALLOCATOR_DEMAND) && OS(SYMBIAN)
 
 #include <e32hal.h>
 #include <e32std.h>
