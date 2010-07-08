@@ -24,6 +24,7 @@
  */
 
 #include "NetscapePluginModule.h"
+#include "NetscapeBrowserFuncs.h"
 
 namespace WebKit {
 
@@ -66,6 +67,14 @@ bool NetscapePluginModule::tryLoad()
 
     m_shutdownProcPtr = pointerToFunction<NPP_ShutdownProcPtr>(m_bundle.get(), "NP_Shutdown");
     if (!m_shutdownProcPtr)
+        return false;
+
+    if (initializeFuncPtr(netscapeBrowserFuncs()) != NPERR_NO_ERROR)
+        return false;
+    
+    m_pluginFuncs.size = sizeof(NPPluginFuncs);
+    m_pluginFuncs.version = (NP_VERSION_MAJOR << 8) | NP_VERSION_MINOR;
+    if (getEntryPointsFuncPtr(&m_pluginFuncs) != NPERR_NO_ERROR)
         return false;
 
     return true;

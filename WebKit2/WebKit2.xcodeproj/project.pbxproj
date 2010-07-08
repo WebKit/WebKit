@@ -55,6 +55,8 @@
 		1A6FB90B11E66FBC00DB1371 /* NetscapePluginModule.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A6FB90911E66FBC00DB1371 /* NetscapePluginModule.h */; };
 		1A6FB90C11E66FBC00DB1371 /* NetscapePluginModule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A6FB90A11E66FBC00DB1371 /* NetscapePluginModule.cpp */; };
 		1A6FBA0311E6813E00DB1371 /* NetscapePluginModuleMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A6FBA0211E6813E00DB1371 /* NetscapePluginModuleMac.cpp */; };
+		1A6FBA2A11E6862700DB1371 /* NetscapeBrowserFuncs.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A6FBA2811E6862700DB1371 /* NetscapeBrowserFuncs.h */; };
+		1A6FBA2B11E6862700DB1371 /* NetscapeBrowserFuncs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A6FBA2911E6862700DB1371 /* NetscapeBrowserFuncs.cpp */; };
 		1AA1CC5D100FA1A10078DEBC /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AA1CC5C100FA1A10078DEBC /* QuartzCore.framework */; };
 		1AA1CD07100FA1BA0078DEBC /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AA1CD06100FA1BA0078DEBC /* Carbon.framework */; };
 		1AADE6FF10D855FC00D3D63D /* ApplicationServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AADE6FE10D855FC00D3D63D /* ApplicationServices.framework */; };
@@ -318,6 +320,8 @@
 		1A6FB90911E66FBC00DB1371 /* NetscapePluginModule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetscapePluginModule.h; sourceTree = "<group>"; };
 		1A6FB90A11E66FBC00DB1371 /* NetscapePluginModule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetscapePluginModule.cpp; sourceTree = "<group>"; };
 		1A6FBA0211E6813E00DB1371 /* NetscapePluginModuleMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetscapePluginModuleMac.cpp; sourceTree = "<group>"; };
+		1A6FBA2811E6862700DB1371 /* NetscapeBrowserFuncs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetscapeBrowserFuncs.h; sourceTree = "<group>"; };
+		1A6FBA2911E6862700DB1371 /* NetscapeBrowserFuncs.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetscapeBrowserFuncs.cpp; sourceTree = "<group>"; };
 		1AA1C79A100E7FC50078DEBC /* WebCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = WebCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		1AA1C7DE100E846E0078DEBC /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = JavaScriptCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		1AA1CC5C100FA1A10078DEBC /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = /System/Library/Frameworks/QuartzCore.framework; sourceTree = "<absolute>"; };
@@ -648,6 +652,8 @@
 			isa = PBXGroup;
 			children = (
 				1A6FBA0111E6812B00DB1371 /* mac */,
+				1A6FBA2911E6862700DB1371 /* NetscapeBrowserFuncs.cpp */,
+				1A6FBA2811E6862700DB1371 /* NetscapeBrowserFuncs.h */,
 				1A6FB90A11E66FBC00DB1371 /* NetscapePluginModule.cpp */,
 				1A6FB90911E66FBC00DB1371 /* NetscapePluginModule.h */,
 			);
@@ -1210,6 +1216,7 @@
 				1A6FB7D311E651E200DB1371 /* Plugin.h in Headers */,
 				1A6FB7E611E6530500DB1371 /* DummyPlugin.h in Headers */,
 				1A6FB90B11E66FBC00DB1371 /* NetscapePluginModule.h in Headers */,
+				1A6FBA2A11E6862700DB1371 /* NetscapeBrowserFuncs.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1396,6 +1403,7 @@
 				1A6FB7E711E6530500DB1371 /* DummyPlugin.cpp in Sources */,
 				1A6FB90C11E66FBC00DB1371 /* NetscapePluginModule.cpp in Sources */,
 				1A6FBA0311E6813E00DB1371 /* NetscapePluginModuleMac.cpp in Sources */,
+				1A6FBA2B11E6862700DB1371 /* NetscapeBrowserFuncs.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1487,6 +1495,7 @@
 			buildSettings = {
 				DEBUG_DEFINES = "$(DEBUG_DEFINES_debug)";
 				GCC_OPTIMIZATION_LEVEL = "$(GCC_OPTIMIZATION_LEVEL_debug)";
+				GCC_VERSION = 4.2;
 			};
 			name = Debug;
 		};
@@ -1494,6 +1503,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 1A4F976B100E7B6600637A18 /* DebugRelease.xcconfig */;
 			buildSettings = {
+				GCC_VERSION = 4.2;
 			};
 			name = Release;
 		};
@@ -1501,6 +1511,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 1A4F976A100E7B6600637A18 /* Base.xcconfig */;
 			buildSettings = {
+				GCC_VERSION = 4.2;
 			};
 			name = Production;
 		};
