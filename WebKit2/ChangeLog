@@ -1,3 +1,9 @@
+2010-07-08  Anders Carlsson  <andersca@apple.com>
+
+        Fix Windows build.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+
 2010-07-08  Luiz Agostini  <luiz.agostini@openbossa.org>
 
         Reviewed by Kenneth Rohde Christiansen.

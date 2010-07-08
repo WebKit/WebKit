@@ -26,7 +26,9 @@
 #include "WebFrameLoaderClient.h"
 
 #include "DummyPlugin.h"
+#if PLATFORM(MAC)
 #include "NetscapePluginModule.h"
+#endif
 #include "NotImplemented.h"
 #include "PluginView.h"
 #include "WebCoreArgumentCoders.h"
