@@ -1,3 +1,10 @@
+2010-07-08  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Not reviewed. Add leopard specific pixel test results for svg/custom/svg-curve-with-relative-cordinates.html, to make run-webkit-tests pass again with --tolerance 0.
+
+        * platform/mac-leopard/svg/custom/svg-curve-with-relative-cordinates-expected.checksum: Added.
+        * platform/mac-leopard/svg/custom/svg-curve-with-relative-cordinates-expected.png: Added.
+
 2010-07-08  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.
