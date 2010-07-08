@@ -100,10 +100,24 @@ bool processingUserGesture()
     return frame && frame->script()->processingUserGesture();
 }
 
+Frame* callingOrEnteredFrame()
+{
+    Frame* frame = V8Proxy::retrieveFrameForCallingContext();
+    if (!frame) {
+        // Unfortunately, when processing script from a plug-in, we might not
+        // have a calling context.  In those cases, we fall back to the
+        // entered context for security checks.
+        // FIXME: We need a better API for retrieving frames that abstracts
+        //        away this concern.
+        frame = V8Proxy::retrieveFrameForEnteredContext();
+    }
+    return frame;
+}
+
 bool shouldAllowNavigation(Frame* frame)
 {
-    Frame* callingFrame = V8Proxy::retrieveFrameForCallingContext();
-    return callingFrame && callingFrame->loader()->shouldAllowNavigation(frame);
+    Frame* callingOrEntered = callingOrEnteredFrame();
+    return callingOrEntered && callingOrEntered->loader()->shouldAllowNavigation(frame);
 }
 
 KURL completeURL(const String& relativeURL)
@@ -117,12 +131,11 @@ KURL completeURL(const String& relativeURL)
 
 void navigateIfAllowed(Frame* frame, const KURL& url, bool lockHistory, bool lockBackForwardList)
 {
-    Frame* callingFrame = V8Proxy::retrieveFrameForCallingContext();
-    if (!callingFrame)
+    Frame* callingOrEntered = callingOrEnteredFrame();
+    if (!callingOrEntered)
         return;
-
     if (!protocolIsJavaScript(url) || ScriptController::isSafeScript(frame))
-        frame->redirectScheduler()->scheduleLocationChange(url.string(), callingFrame->loader()->outgoingReferrer(), lockHistory, lockBackForwardList, processingUserGesture());
+        frame->redirectScheduler()->scheduleLocationChange(url.string(), callingOrEntered->loader()->outgoingReferrer(), lockHistory, lockBackForwardList, processingUserGesture());
 }
 
 ScriptExecutionContext* getScriptExecutionContext()
