@@ -1,3 +1,11 @@
+2010-07-07  Anders Carlsson  <andersca@apple.com>
+
+        Use the correct XP_MACOSX define instead of XP_MAC. This was causing test failures on some platforms.
+
+        * DumpRenderTree/TestNetscapePlugIn/main.cpp:
+        (NPP_New):
+        (NPP_HandleEvent):
+
 2010-07-07  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Adam Roben.
