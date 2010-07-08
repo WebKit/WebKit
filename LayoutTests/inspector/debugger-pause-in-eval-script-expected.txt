@@ -6,4 +6,5 @@ Script execution paused.
 Execution line number: 3
 Execution line text:     debugger;
 Resumed script execution.
+Disabled debugger.
 

@@ -1,6 +1,7 @@
 <html>
 <head>
 <script src="../http/tests/inspector/inspector-test.js"></script>
+<script src="../http/tests/inspector/debugger-test.js"></script>
 <script>
 
 function testFunction() {
@@ -9,16 +10,7 @@ function testFunction() {
 
 function doit()
 {
-    function callback(result)
-    {
-        if (result instanceof Array) {
-            for (var i = 0; i < result.length; i++)
-                output(result[i]);
-        } else
-            output(result);
-        notifyDone();
-    }
-    evaluateInWebInspector("frontend_testPauseOnDebuggerStatement", callback);
+    evaluateInWebInspector("frontend_testPauseOnDebuggerStatement", completeTest);
 }
 
 function frontend_testPauseOnDebuggerStatement(testController)
@@ -40,22 +32,8 @@ function frontend_testPauseOnDebuggerStatement(testController)
     frontend_addSniffer(WebInspector, "pausedScript", function(callFrames)
     {
         testController.results.push("Script execution paused.");
-        if (WebInspector.panels.scripts.paused)
-            WebInspector.panels.scripts._togglePause();
-        testController.results.push("Resumed script execution.");
-        testController.notifyDone();
+        frontend_completeDebuggerTest(testController);
     });
-}
-
-function frontend_ensureDebuggerEnabled(callback)
-{
-    if (WebInspector.panels.scripts._debuggerEnabled) {
-        callback();
-        return;
-    }
-
-    frontend_addSniffer(WebInspector, "debuggerWasEnabled", callback);
-    WebInspector.panels.scripts._toggleDebugging(false);
 }
 
 </script>

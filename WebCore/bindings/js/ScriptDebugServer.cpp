@@ -568,7 +568,11 @@ void ScriptDebugServer::recompileAllJSFunctionsSoon()
 void ScriptDebugServer::recompileAllJSFunctions(Timer<ScriptDebugServer>*)
 {
     JSLock lock(SilenceAssertionsOnly);
-    Debugger::recompileAllJSFunctions(JSDOMWindow::commonJSGlobalData());
+    // If JavaScript stack is not empty postpone recompilation.
+    if (JSDOMWindow::commonJSGlobalData()->dynamicGlobalObject)
+        recompileAllJSFunctionsSoon();
+    else
+        Debugger::recompileAllJSFunctions(JSDOMWindow::commonJSGlobalData());
 }
 
 void ScriptDebugServer::didAddListener(Page* page)

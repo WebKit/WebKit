@@ -69,6 +69,12 @@ function dumpArray(result)
         output(result);
 }
 
+function completeTest(result)
+{
+    dumpArray(result);
+    notifyDone();
+}
+
 function output(text)
 {
     var output = document.getElementById("output");

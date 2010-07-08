@@ -1,3 +1,23 @@
+2010-07-08  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: factor out common part of debugger tests. Also explicitely disable debugger when test is complete.
+        https://bugs.webkit.org/show_bug.cgi?id=41836
+
+        * http/tests/inspector/debugger-test.js: Added.
+        (frontend_ensureDebuggerEnabled):
+        (frontend_ensureDebuggerDisabled):
+        (frontend_completeDebuggerTest):
+        * http/tests/inspector/inspector-test.js:
+        (completeTest):
+        * inspector/debugger-pause-in-eval-script-expected.txt:
+        * inspector/debugger-pause-in-eval-script.html:
+        * inspector/debugger-pause-on-debugger-statement-expected.txt:
+        * inspector/debugger-pause-on-debugger-statement.html:
+        * inspector/debugger-proto-property-expected.txt:
+        * inspector/debugger-proto-property.html:
+
 2010-07-07  Nicolas Weber  <thakis@chromium.org>
 
         Reviewed by Dimitri Glazkov.

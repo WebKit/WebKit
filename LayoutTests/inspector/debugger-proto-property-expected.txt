@@ -6,4 +6,5 @@ Script execution paused.
 Expanded property: o.__proto__.__proto__
 Expanded property: d.__proto__.__proto__.__proto__.__proto__.__proto__
 Resumed script execution.
+Disabled debugger.
 
