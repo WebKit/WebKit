@@ -2,6 +2,18 @@
 
         Reviewed by Pavel Feldman.
 
+        [chromium] Fix deletion has begun assert in TestWebPopupMenuImpl.
+        https://bugs.webkit.org/show_bug.cgi?id=41899
+
+        * tests/PopupMenuTest.cpp:
+        (WebKit::TestWebPopupMenuImpl::create):
+        (WebKit::TestWebViewClient::TestWebViewClient):
+        (WebKit::TestWebViewClient::createPopupMenu):
+
+2010-07-08  Vitaly Repeshko  <vitalyr@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
         [chromium] Fix deletion has begun assertion in TestImage destructor.
         https://bugs.webkit.org/show_bug.cgi?id=41883
 
