@@ -1,3 +1,21 @@
+2010-07-08  Xiaomei Ji  <xji@chromium.org>
+
+        Reviewed by David Levin.
+
+        Fix characters with unicode-bidi-mirror property are not correctly
+        mirrored in Linux.
+        https://bugs.webkit.org/show_bug.cgi?id=41305
+
+        Since harfbuzz does not do mirroring, chromium should iterate each
+        character in the string and mirror it if needed before passing the
+        string to harfbuzz for shaping.
+
+        Test: fast/text/international/bidi-mirror-he-ar.html
+
+        * platform/graphics/chromium/FontLinux.cpp:
+        (WebCore::TextRunWalker::TextRunWalker):
+        (WebCore::TextRunWalker::~TextRunWalker):
+
 2010-07-08  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Rob Buis & Dirk Schulze.
