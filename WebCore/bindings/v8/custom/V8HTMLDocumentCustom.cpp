@@ -51,20 +51,20 @@ namespace WebCore {
 
 v8::Local<v8::Object> V8HTMLDocument::WrapInShadowObject(v8::Local<v8::Object> wrapper, Node* impl)
 {
-    DEFINE_STATIC_LOCAL(v8::Persistent<v8::Function>, shadowConstructor, ());
-    if (shadowConstructor.IsEmpty()) {
-        v8::Local<v8::FunctionTemplate> shadowTemplate = v8::FunctionTemplate::New();
+    DEFINE_STATIC_LOCAL(v8::Persistent<v8::FunctionTemplate>, shadowTemplate, ());
+    if (shadowTemplate.IsEmpty()) {
+        shadowTemplate = v8::Persistent<v8::FunctionTemplate>::New(v8::FunctionTemplate::New());
         if (shadowTemplate.IsEmpty())
             return v8::Local<v8::Object>();
         shadowTemplate->SetClassName(v8::String::New("HTMLDocument"));
         shadowTemplate->Inherit(V8HTMLDocument::GetTemplate());
         shadowTemplate->InstanceTemplate()->SetInternalFieldCount(V8HTMLDocument::internalFieldCount);
-        shadowConstructor = v8::Persistent<v8::Function>::New(shadowTemplate->GetFunction());
-        if (shadowConstructor.IsEmpty())
-            return v8::Local<v8::Object>();
     }
 
-    ASSERT(!shadowConstructor.IsEmpty());
+    v8::Local<v8::Function> shadowConstructor = shadowTemplate->GetFunction();
+    if (shadowConstructor.IsEmpty())
+        return v8::Local<v8::Object>();
+
     v8::Local<v8::Object> shadow = shadowConstructor->NewInstance();
     if (shadow.IsEmpty())
         return v8::Local<v8::Object>();

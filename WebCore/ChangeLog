@@ -1,3 +1,14 @@
+2010-07-07  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Nate Chapin.
+
+        [V8] Fix document wrapper memory leak in bindings.
+        https://bugs.webkit.org/show_bug.cgi?id=41771
+
+        * bindings/v8/custom/V8HTMLDocumentCustom.cpp:
+        (WebCore::V8HTMLDocument::WrapInShadowObject): Do not create static persistent handle
+        to shadowConstructor because it keeps the first context alive forever.
+
 2010-07-07  Andreas Kling  <andreas.kling@nokia.com>
 
         Reviewed by Tor Arne Vestbø.
