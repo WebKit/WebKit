@@ -1,3 +1,14 @@
+2010-07-08  Albert J. Wong  <ajwong@chromium.org>
+
+        Not reviewed, build break fix for chromium.
+
+        A new MediaControlElementType enum was added which caused a warning in
+        the Chromium build.
+
+        * rendering/RenderMediaControlsChromium.cpp:
+        (WebCore::RenderMediaControlsChromium::paintMediaControlsPart):
+            Add MediaVolumeSliderMuteButton enumartion entry.
+
 2010-07-08  Dmitry Titov  <dimich@chromium.org>
 
         Reviewed by David Levin.

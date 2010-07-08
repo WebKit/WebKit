@@ -282,6 +282,7 @@ bool RenderMediaControlsChromium::paintMediaControlsPart(MediaControlElementType
         return paintMediaVolumeSliderThumb(object, paintInfo, rect);
     case MediaTimelineContainer:
         return paintMediaTimelineContainer(object, paintInfo, rect);
+    case MediaVolumeSliderMuteButton:
     case MediaFullscreenButton:
     case MediaSeekBackButton:
     case MediaSeekForwardButton:
