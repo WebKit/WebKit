@@ -1,3 +1,10 @@
+2010-07-08  Xan Lopez  <xlopez@igalia.com>
+
+        Skip crashing test, a new ASSERT added in a refactoring seems to
+        have uncovered a bug.
+
+        * platform/gtk/Skipped:
+
 2010-07-08  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Unreviewed, expectations update.

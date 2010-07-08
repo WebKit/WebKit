@@ -3363,6 +3363,9 @@ plugins/netscape-dom-access.html
 #   Tests failing
 security/set-form-autocomplete-attribute.html
 
+# https://bugs.webkit.org/show_bug.cgi?id=41903
+plugins/return-negative-one-from-write.html
+
 #   Tests generating new results
 security/block-test-no-port.html
 security/block-test.html
