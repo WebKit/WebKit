@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -1686,14 +1686,16 @@ void RenderThemeMac::adjustSliderThumbSize(RenderObject* o) const
 
 void RenderThemeMac::adjustMediaSliderThumbSize(RenderObject* o) const
 {
-    if (o->style()->appearance() == MediaSliderThumbPart) {
+    ControlPart part = o->style()->appearance();
+
+    if (part == MediaSliderThumbPart || part == MediaVolumeSliderThumbPart) {
         int width = mediaSliderThumbWidth;
         int height = mediaSliderThumbHeight;
         
         if (mediaControllerTheme() == MediaControllerThemeQuickTime) {
             CGSize  size;
             
-            wkMeasureMediaUIPart(MediaSliderThumb, MediaControllerThemeQuickTime, NULL, &size);
+            wkMeasureMediaUIPart(part == MediaSliderThumbPart ? MediaSliderThumb : MediaVolumeSliderThumb, MediaControllerThemeQuickTime, NULL, &size);
             width = size.width;
             height = size.height;
         }
@@ -1913,13 +1915,46 @@ bool RenderThemeMac::paintMediaTimeRemaining(RenderObject* o, const PaintInfo& p
     return false;
 }
 
+bool RenderThemeMac::paintMediaVolumeSliderContainer(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
+{
+    Node* node = o->node();
+    if (!node)
+        return false;
+
+    LocalCurrentGraphicsContext localContext(paintInfo.context);
+    wkDrawMediaUIPart(MediaVolumeSliderContainer, mediaControllerTheme(), paintInfo.context->platformContext(), r, getMediaUIPartStateFlags(node));
+    return false;
+}
+
+bool RenderThemeMac::paintMediaVolumeSliderTrack(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
+{
+    Node* node = o->node();
+    if (!node)
+        return false;
+
+    LocalCurrentGraphicsContext localContext(paintInfo.context);
+    wkDrawMediaUIPart(MediaVolumeSlider, mediaControllerTheme(), paintInfo.context->platformContext(), r, getMediaUIPartStateFlags(node));
+    return false;
+}
+    
+bool RenderThemeMac::paintMediaVolumeSliderThumb(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
+{
+    Node* node = o->node();
+    if (!node)
+        return false;
+
+    LocalCurrentGraphicsContext localContext(paintInfo.context);
+    wkDrawMediaUIPart(MediaVolumeSliderThumb, mediaControllerTheme(), paintInfo.context->platformContext(), r, getMediaUIPartStateFlags(node));
+    return false;
+}
+    
 String RenderThemeMac::extraMediaControlsStyleSheet()
 {
 #if PLATFORM(MAC)
     if (mediaControllerTheme() == MediaControllerThemeQuickTime)
         return String(mediaControlsQuickTimeUserAgentStyleSheet, sizeof(mediaControlsQuickTimeUserAgentStyleSheet));
-    else
-        return String();
+
+    return String();
 #else
     ASSERT_NOT_REACHED();
     return String();
@@ -1928,14 +1963,36 @@ String RenderThemeMac::extraMediaControlsStyleSheet()
 
 bool RenderThemeMac::shouldRenderMediaControlPart(ControlPart part, Element* element)
 {
-    if (part == MediaToggleClosedCaptionsButtonPart) {
-
+    switch (part) {
+    case MediaVolumeSliderContainerPart:
+    case MediaVolumeSliderPart:
+    case MediaVolumeSliderMuteButtonPart:
+    case MediaVolumeSliderThumbPart: {
+        HTMLMediaElement* mediaElement = static_cast<HTMLMediaElement*>(element);
+        return mediaControllerTheme() == MediaControllerThemeQuickTime && mediaElement->hasAudio();
+    }
+    case MediaToggleClosedCaptionsButtonPart:
         // We rely on QTKit to render captions so don't enable the button unless it will be able to do so.
         if (!element->hasTagName(videoTag))
             return false;
+    default:
+        break;
     }
 
     return RenderTheme::shouldRenderMediaControlPart(part, element);
+}
+
+IntPoint RenderThemeMac::volumeSliderOffsetFromMuteButton(Node* muteButton, const IntSize& size) const
+{
+    static const int xOffset = -4;
+    static const int yOffset = 5;
+
+    float zoomLevel = muteButton->renderer()->style()->effectiveZoom();
+    int y = yOffset * zoomLevel + muteButton->renderBox()->offsetHeight() - size.height();
+    FloatPoint absPoint = muteButton->renderer()->localToAbsolute(FloatPoint(muteButton->renderBox()->offsetLeft(), y), true, true);
+    if (absPoint.y() < 0)
+        y = muteButton->renderBox()->height();
+    return IntPoint(xOffset * zoomLevel, y);
 }
 
 #endif // ENABLE(VIDEO)

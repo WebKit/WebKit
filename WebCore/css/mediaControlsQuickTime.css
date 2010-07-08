@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc.  All rights reserved.
+ * Copyright (C) 2009, 2010 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,6 +32,7 @@ audio {
 audio::-webkit-media-controls-panel, video::-webkit-media-controls-panel {
     /* In mediaControls.css */
     -webkit-appearance: media-controls-background;
+    overflow: visible;
     height: 25px;
 }
 
@@ -41,10 +42,11 @@ video:-webkit-full-page-media::-webkit-media-controls-panel {
 
 audio::-webkit-media-controls-mute-button, video::-webkit-media-controls-mute-button {
     -webkit-box-ordinal-group: 2; /* Before the fullscreen button */
-    width: 15px;
-    height: 14px;
+
+    width: 14px;
+    height: 12px;
     margin-left: 2px;
-    margin-right: 8px;
+    margin-right: 9px;
 }
 
 audio::-webkit-media-controls-play-button, video::-webkit-media-controls-play-button {
@@ -184,4 +186,39 @@ audio::-webkit-media-controls-toggle-closed-captions-button, video::-webkit-medi
     margin-left: 7px;
     margin-right: 7px;
     -webkit-box-ordinal-group: 3; /* between mute and fullscreen */
+}
+
+audio::-webkit-media-controls-volume-slider-container, video::-webkit-media-controls-volume-slider-container {
+    -webkit-appearance: media-volume-slider-container;
+    position: absolute;
+
+    top: 0;
+    left: 0;
+
+    width: 22px;
+    height: 114px;
+}
+
+audio::-webkit-media-controls-volume-slider, video::-webkit-media-controls-volume-slider {
+    -webkit-appearance: media-volume-slider;
+    display: inline;
+    position: absolute;
+
+    top: 7px;
+    left: 6px;
+
+    width: 10px;
+    height: 80px;
+}
+
+audio::-webkit-media-controls-volume-slider-mute-button, video::-webkit-media-controls-volume-slider-mute-button {
+    -webkit-appearance: media-volume-slider-mute-button;
+    display: inline;
+    position: absolute;
+
+    bottom: 5px;
+    left: 4px;
+
+    width: 14px;
+    height: 12px;
 }

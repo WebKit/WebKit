@@ -104,6 +104,7 @@ private:
     void createTimeline();
     void createVolumeSliderContainer();
     void createVolumeSlider();
+    void createVolumeSliderMuteButton();
     void createCurrentTimeDisplay();
     void createTimeRemainingDisplay();
     void createFullscreenButton();
@@ -131,6 +132,7 @@ private:
     RefPtr<MediaControlToggleClosedCaptionsButtonElement> m_toggleClosedCaptionsButton;
     RefPtr<MediaControlTimelineElement> m_timeline;
     RefPtr<MediaControlVolumeSliderElement> m_volumeSlider;
+    RefPtr<MediaControlMuteButtonElement> m_volumeSliderMuteButton;
     RefPtr<MediaControlFullscreenButtonElement> m_fullscreenButton;
     RefPtr<MediaControlTimelineContainerElement> m_timelineContainer;
     RefPtr<MediaControlVolumeSliderContainerElement> m_volumeSliderContainer;

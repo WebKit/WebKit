@@ -583,6 +583,7 @@ media-sliderthumb
 media-volume-slider-container
 media-volume-slider
 media-volume-sliderthumb
+media-volume-slider-mute-button
 media-controls-background
 media-current-time-display
 media-time-remaining-display

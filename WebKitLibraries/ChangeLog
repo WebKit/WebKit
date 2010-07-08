@@ -1,3 +1,13 @@
+2010-07-08  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Update WebKitSystemInterface.
+
+        * libWebKitSystemInterfaceLeopard.a:
+        * libWebKitSystemInterfaceSnowLeopard.a:
+        * libWebKitSystemInterfaceTiger.a:
+
 2010-07-07  Dumitru Daniliuc  <dumi@chromium.org>
 
         Reviewed by Adam Roben.

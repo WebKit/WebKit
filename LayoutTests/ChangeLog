@@ -1,3 +1,28 @@
+2010-07-08  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Mac OS X media controls should have a way to adjust volume incrementally
+        https://bugs.webkit.org/show_bug.cgi?id=41718
+        <rdar://problem/5679472>
+
+        Updated results for the mute button size change. Remove some Leopard test results
+        where the SnowLeopard results are identical.
+
+        * platform/mac-leopard/media/audio-controls-rendering-expected.checksum: Removed.
+        * platform/mac-leopard/media/audio-controls-rendering-expected.png: Removed.
+        * platform/mac-leopard/media/audio-controls-rendering-expected.txt: Removed.
+        * platform/mac-leopard/media/controls-after-reload-expected.txt:
+        * platform/mac-leopard/media/controls-strict-expected.txt:
+        * platform/mac-leopard/media/controls-styling-expected.txt:
+        * platform/mac-leopard/media/video-controls-rendering-expected.txt:
+        * platform/mac-leopard/media/video-display-toggle-expected.txt:
+        * platform/mac-leopard/media/video-zoom-controls-expected.txt:
+        * platform/mac/media/audio-controls-rendering-expected.txt:
+        * platform/mac/media/controls-after-reload-expected.txt:
+        * platform/mac/media/controls-styling-expected.txt:
+        * platform/mac/media/video-zoom-controls-expected.txt:
+
 2010-07-07  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Darin Adler.

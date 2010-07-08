@@ -1,7 +1,7 @@
 /*
  * This file is part of the theme implementation for form controls in WebCore.
  *
- * Copyright (C) 2005 Apple Computer, Inc.
+ * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -156,12 +156,16 @@ protected:
     virtual bool paintMediaControlsBackground(RenderObject*, const PaintInfo&, const IntRect&);
     virtual bool paintMediaCurrentTime(RenderObject*, const PaintInfo&, const IntRect&);
     virtual bool paintMediaTimeRemaining(RenderObject*, const PaintInfo&, const IntRect&);
+    virtual bool paintMediaVolumeSliderContainer(RenderObject*, const PaintInfo&, const IntRect&);
+    virtual bool paintMediaVolumeSliderTrack(RenderObject*, const PaintInfo&, const IntRect&);
+    virtual bool paintMediaVolumeSliderThumb(RenderObject*, const PaintInfo&, const IntRect&);
 
     // Media controls
     virtual String extraMediaControlsStyleSheet();
 
     virtual bool shouldRenderMediaControlPart(ControlPart, Element*);
     virtual void adjustMediaSliderThumbSize(RenderObject*) const;
+    virtual IntPoint volumeSliderOffsetFromMuteButton(Node*, const IntSize&) const;
 #endif
 
 private:

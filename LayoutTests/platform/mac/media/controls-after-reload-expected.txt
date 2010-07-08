@@ -22,7 +22,7 @@ layer at (8,257) size 320x25
       RenderSlider {INPUT} at (45,2) size 126x13
         RenderBlock {DIV} at (0,2) size 10x8
     RenderButton {INPUT} at (297,4) size 16x16
-    RenderButton {INPUT} at (267,5) size 15x14
+    RenderButton {INPUT} at (267,6) size 14x12
 layer at (57,264) size 45x11
   RenderFlexibleBox {DIV} at (0,2) size 45x11 [color=#FFFFFF]
     RenderBlock (anonymous) at (9,0) size 26x11

@@ -1,3 +1,79 @@
+2010-07-08  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Mac OS X media controls should have a way to adjust volume incrementally
+        https://bugs.webkit.org/show_bug.cgi?id=41718
+        <rdar://problem/5679472>
+
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue): Handle MediaVolumeSliderMuteButtonPart.
+
+        * css/CSSSelector.cpp: 
+        (WebCore::CSSSelector::pseudoId): Handle PseudoMediaControlsVolumeSliderMuteButton.
+        (WebCore::nameToPseudoTypeMap): Define mediaControlsVolumeSliderMuteButton.
+        (WebCore::CSSSelector::extractPseudoType): Handle PseudoMediaControlsVolumeSliderMuteButton.
+
+        * css/CSSSelector.h:
+        (WebCore::CSSSelector::): Define PseudoMediaControlsVolumeSliderMuteButton.
+
+        * css/CSSValueKeywords.in: Define media-volume-slider-mute-button.
+
+        * css/mediaControls.css: 
+        (audio::-webkit-media-controls-volume-slider-mute-button, video::-webkit-media-controls-volume-slider-mute-button): New.
+
+        * css/mediaControlsQuickTime.css:
+        (audio::-webkit-media-controls-panel, video::-webkit-media-controls-panel): Add "overflow: visible" 
+        so volume slider pop-up will be visible.
+
+        (audio::-webkit-media-controls-mute-button, video::-webkit-media-controls-mute-button): Make 
+        mute button 14x12 instead of 15x14 so it matches the size in the volume slider.
+
+        (audio::-webkit-media-controls-volume-slider-container, video::-webkit-media-controls-volume-slider-container):
+        (audio::-webkit-media-controls-volume-slider, video::-webkit-media-controls-volume-slider):
+        (audio::-webkit-media-controls-volume-slider-mute-button, video::-webkit-media-controls-volume-slider-mute-button): 
+        New.
+
+        * platform/ThemeTypes.h: Define MediaVolumeSliderMuteButtonPart.
+
+        * rendering/MediaControlElements.cpp:
+        (WebCore::MediaControlInputElement::MediaControlInputElement): Handle MEDIA_CONTROLS_VOLUME_SLIDER_MUTE_BUTTON.
+        (WebCore::MediaControlMuteButtonElement::MediaControlMuteButtonElement): Add ButtonLocation 
+        parameter both mute buttons can be created.
+        (WebCore::MediaControlMuteButtonElement::create): Ditto.
+
+        * rendering/MediaControlElements.h: Define MediaVolumeSliderMuteButton and ButtonLocation.
+
+        * rendering/RenderMedia.cpp: 
+        (WebCore::RenderMedia::styleDidChange): Update volume slider mute button.
+        (WebCore::RenderMedia::createMuteButton): Pass ButtonLocation parameter to MediaControlMuteButtonElement::create.
+        (WebCore::RenderMedia::createVolumeSliderMuteButton): New.
+        (WebCore::RenderMedia::updateControls): Deal with volume slider mute button.
+        (WebCore::RenderMedia::updateVolumeSliderContainer): Don't assume all ports want to position
+        the volume slider in the same place, call new volumeSliderOffsetFromMuteButton theme function.
+        (WebCore::RenderMedia::forwardEvent): Handle volume slider mute button.
+        * rendering/RenderMedia.h:
+
+        * rendering/RenderTheme.cpp: 
+        (WebCore::RenderTheme::paint): Handle MediaVolumeSliderMuteButtonPart.
+        (WebCore::RenderTheme::volumeSliderOffsetFromMuteButton): New, return location previously hard
+        coded in RenderMedia::updateVolumeSliderContainer.
+        * rendering/RenderTheme.h:
+
+        * rendering/RenderThemeMac.h:
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::adjustMediaSliderThumbSize): Deal with the volume slider thumb.
+        (WebCore::RenderThemeMac::paintMediaVolumeSliderContainer): New, call the WKSI paint function 
+        for this button.
+        (WebCore::RenderThemeMac::paintMediaVolumeSliderTrack): Ditto.
+        (WebCore::RenderThemeMac::paintMediaVolumeSliderThumb): Ditto.
+        (WebCore::RenderThemeMac::shouldRenderMediaControlPart): Draw the volume slider parts when
+        using the new controller UI for a movie that has audio.
+        (WebCore::RenderThemeMac::volumeSliderOffsetFromMuteButton): New, position the volume slider 
+        directly above the mute button.
+
+        * rendering/style/RenderStyleConstants.h: Define MEDIA_CONTROLS_VOLUME_SLIDER_MUTE_BUTTON.
+
 2010-07-08  Antonio Gomes  <tonikitoo@webkit.org>
 
         Unreviewed complementary fix for r62815
