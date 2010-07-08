@@ -414,8 +414,6 @@ extern "C" const int jscore_fastmalloc_introspection = 0;
 #include "TCPageMap.h"
 #include "TCSpinLock.h"
 #include "TCSystemAlloc.h"
-#include "Threading.h"
-#include "ThreadSpecific.h"
 #include <algorithm>
 #include <errno.h>
 #include <limits>
@@ -1444,8 +1442,8 @@ class TCMalloc_PageHeap {
   // it's blocked waiting for more pages to be deleted.
   bool m_scavengeThreadActive;
 
-  Mutex m_scavengeMutex;
-  ThreadCondition m_scavengeCondition;
+  pthread_mutex_t m_scavengeMutex;
+  pthread_cond_t m_scavengeCondition;
 #else // !HAVE(DISPATCH_H)
   void periodicScavenge();
 
@@ -1491,6 +1489,8 @@ void TCMalloc_PageHeap::init()
 
 void TCMalloc_PageHeap::initializeScavenger()
 {
+  pthread_mutex_init(&m_scavengeMutex, 0);
+  pthread_cond_init(&m_scavengeCondition, 0);
   m_scavengeThreadActive = true;
   pthread_t thread;
   pthread_create(&thread, 0, runScavengerThread, this);
@@ -1508,7 +1508,7 @@ void* TCMalloc_PageHeap::runScavengerThread(void* context)
 ALWAYS_INLINE void TCMalloc_PageHeap::signalScavenger()
 {
   if (!m_scavengeThreadActive && shouldScavenge())
-    m_scavengeCondition.signal();
+    pthread_cond_signal(&m_scavengeCondition);
 }
 
 #else // !HAVE(DISPATCH_H)
@@ -2374,11 +2374,12 @@ void TCMalloc_PageHeap::scavengerThread()
 
   while (1) {
       if (!shouldScavenge()) {
-          MutexLocker locker(m_scavengeMutex);
+          pthread_mutex_lock(&m_scavengeMutex);
           m_scavengeThreadActive = false;
           // Block until there are enough free committed pages to release back to the system.
-          m_scavengeCondition.wait(m_scavengeMutex);
+          pthread_cond_wait(&m_scavengeCondition, &m_scavengeMutex);
           m_scavengeThreadActive = true;
+          pthread_mutex_unlock(&m_scavengeMutex);
       }
       sleep(kScavengeDelayInSeconds);
       {
