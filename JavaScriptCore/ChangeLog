@@ -1,3 +1,11 @@
+2010-07-08  Martin Robinson  <mrobinson@igalia.com>
+
+        Unreviewed.
+
+        Try fix the GTK+ build by touching this file.
+
+        * jit/ExecutableAllocatorFixedVMPool.cpp:
+
 2010-07-08  Gavin Barraclough  <barraclough@apple.com>
 
         GTK build fix take two.
