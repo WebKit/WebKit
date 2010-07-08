@@ -75,7 +75,7 @@ DocumentThreadableLoader::DocumentThreadableLoader(Document* document, Threadabl
     }
 
     if (m_options.crossOriginRequestPolicy == DenyCrossOriginRequests) {
-        m_client->didFail(ResourceError(errorDomainWebKit, 0, request.url().string(), "Cross origin requests are not supported."));
+        m_client->didFail(ResourceError(errorDomainWebKitInternal, 0, request.url().string(), "Cross origin requests are not supported."));
         return;
     }
     
@@ -103,7 +103,7 @@ void DocumentThreadableLoader::makeSimpleCrossOriginAccessRequest(const Resource
 
     // Cross-origin requests are only defined for HTTP. We would catch this when checking response headers later, but there is no reason to send a request that's guaranteed to be denied.
     if (!request.url().protocolInHTTPFamily()) {
-        m_client->didFail(ResourceError(errorDomainWebKit, 0, request.url().string(), "Cross origin requests are only supported for HTTP."));
+        m_client->didFail(ResourceError(errorDomainWebKitInternal, 0, request.url().string(), "Cross origin requests are only supported for HTTP."));
         return;
     }
 
@@ -205,7 +205,7 @@ void DocumentThreadableLoader::didReceiveResponse(SubresourceLoader* loader, con
     } else {
         if (!m_sameOriginRequest && m_options.crossOriginRequestPolicy == UseAccessControl) {
             if (!passesAccessControlCheck(response, m_options.allowCredentials, m_document->securityOrigin(), accessControlErrorDescription)) {
-                m_client->didFail(ResourceError(errorDomainWebKit, 0, response.url().string(), accessControlErrorDescription));
+                m_client->didFail(ResourceError(errorDomainWebKitInternal, 0, response.url().string(), accessControlErrorDescription));
                 return;
             }
         }
@@ -294,7 +294,7 @@ void DocumentThreadableLoader::preflightSuccess()
 void DocumentThreadableLoader::preflightFailure(const String& url, const String& errorDescription)
 {
     m_actualRequest = 0; // Prevent didFinishLoading() from bypassing access check.
-    m_client->didFail(ResourceError(errorDomainWebKit, 0, url, errorDescription));
+    m_client->didFail(ResourceError(errorDomainWebKitInternal, 0, url, errorDescription));
 }
 
 void DocumentThreadableLoader::loadRequest(const ResourceRequest& request, SecurityCheckPolicy securityCheck)

@@ -109,14 +109,14 @@ bool passesAccessControlCheck(const ResourceResponse& response, bool includeCred
     RefPtr<SecurityOrigin> accessControlOrigin = SecurityOrigin::createFromString(accessControlOriginString);
     if (!accessControlOrigin->isSameSchemeHostPort(securityOrigin)) {
         errorDescription = (accessControlOriginString == "*") ? "Cannot use wildcard in Access-Control-Allow-Origin when credentials flag is true."
-            : "Origin " + securityOrigin->toString() + " is not allowed by Access-Control-Allow-Origin response header.";
+            : "Origin " + securityOrigin->toString() + " is not allowed by Access-Control-Allow-Origin.";
         return false;
     }
 
     if (includeCredentials) {
         const String& accessControlCredentialsString = response.httpHeaderField("Access-Control-Allow-Credentials");
         if (accessControlCredentialsString != "true") {
-            errorDescription = "Credentials flag is true, but Access-Control-Allow-Credentials response header is not \"true\".";
+            errorDescription = "Credentials flag is true, but Access-Control-Allow-Credentials is not \"true\".";
             return false;
         }
     }

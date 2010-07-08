@@ -29,7 +29,7 @@
 
 namespace WebCore {
 
-const char* const errorDomainWebKit = "WebKit";
+const char* const errorDomainWebKitInternal = "WebKitInternal";
 
 ResourceError ResourceErrorBase::copy() const
 {

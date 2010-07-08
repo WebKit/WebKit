@@ -1,3 +1,32 @@
+2010-07-08  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by David Levin.
+
+        https://bugs.webkit.org/show_bug.cgi?id=41886
+        Shorten access control failure explanation messages
+
+        * loader/CrossOriginAccessControl.cpp:
+        (WebCore::passesAccessControlCheck):
+        * loader/CrossOriginPreflightResultCache.cpp:
+        (WebCore::CrossOriginPreflightResultCacheItem::allowsCrossOriginMethod):
+        (WebCore::CrossOriginPreflightResultCacheItem::allowsCrossOriginHeaders):
+        Removed "response header field" parts from error text - it's long, but doesn't add much
+        to header field name.
+
+        * platform/network/ResourceErrorBase.cpp:
+        * platform/network/ResourceErrorBase.h:
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::didFail):
+        * loader/DocumentThreadableLoader.cpp:
+        (WebCore::DocumentThreadableLoader::DocumentThreadableLoader):
+        (WebCore::DocumentThreadableLoader::makeSimpleCrossOriginAccessRequest):
+        (WebCore::DocumentThreadableLoader::didReceiveResponse):
+        (WebCore::DocumentThreadableLoader::preflightFailure):
+        Renamed the constant for domain. WebCore shouldn't be creating errors observable by WebKit
+        clients, because it can't create a platform error, and cannot load a localized string.
+        We don't treat cross origin access check failures as true loading failures, so we don't tell
+        clients about these.
+
 2010-07-08  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Dan Bernstein.
