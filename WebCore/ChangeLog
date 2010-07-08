@@ -1,3 +1,15 @@
+2010-07-08  Ben Murdoch  <benm@google.com>
+
+        Reviewed by Pavel Feldman.
+
+        Fix build break in V8ConsoleCustom.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=40825
+
+        No new tests as just fixing a build break.
+
+        * bindings/v8/custom/V8ConsoleCustom.cpp: Guard profilesAccessorGetter
+            appropriately.
+
 2010-07-08  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.
