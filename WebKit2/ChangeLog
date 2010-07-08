@@ -1,3 +1,10 @@
+2010-07-07  Steve Falkenburg  <sfalken@apple.com>
+
+        Windows release build fix.
+        Don't generate public symbols since this is exceeding address space on our builders.
+
+        * win/WebKit2.vcproj:
+
 2010-07-07  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.
