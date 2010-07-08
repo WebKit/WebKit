@@ -1,3 +1,18 @@
+2010-06-18  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Ojan Vafai.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26526
+        Add support for input events (oninput) to contentEditable elements
+        
+        Made a default event handler on the Node to dispatch an input event when
+        webkitEditableContentChanged arrived.
+        
+        Test: fast/events/event-input-contentEditable.html
+
+        * dom/Node.cpp:
+        (WebCore::Node::defaultEventHandler):
+
 2010-07-07  Darin Adler  <darin@apple.com>
 
         Reviewed by Anders Carlsson.

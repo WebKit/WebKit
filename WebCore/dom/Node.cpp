@@ -3045,6 +3045,8 @@ void Node::defaultEventHandler(Event* event)
         if (startNode && startNode->renderer())
             if (Frame* frame = document()->frame())
                 frame->eventHandler()->defaultWheelEventHandler(startNode, wheelEvent);
+    } else if (event->type() == eventNames().webkitEditableContentChangedEvent) {
+        dispatchEvent(Event::create(eventNames().inputEvent, true, false));
     }
 }
 
