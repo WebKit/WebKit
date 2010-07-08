@@ -1,0 +1,71 @@
+<html>
+<head>
+<script src="../http/tests/inspector/inspector-test.js"></script>
+<script src="../http/tests/inspector/debugger-test.js"></script>
+<script>
+
+var globalVar = { b: 1 };
+
+function slave(x) {
+    var y = 20;
+    debugger;
+}
+
+function testFunction() {
+    var localObject = {a: 300};
+    slave(4000);
+}
+
+function doit()
+{
+    evaluateInWebInspector("frontend_testPauseOnDebuggerStatement", completeTest);
+}
+
+function frontend_testPauseOnDebuggerStatement(testController)
+{
+    testController.waitUntilDone();
+
+    WebInspector.showScriptsPanel();
+    frontend_ensureDebuggerEnabled(debuggerWasEnabledCallback);
+
+    function debuggerWasEnabledCallback()
+    {
+        testController.results.push("Debugger was enabled.");
+        frontend_evaluateInConsole("setTimeout(testFunction, 0)", function(result)
+        {
+            testController.results.push("Set timer for test function.");
+        });
+    }
+
+    frontend_addSniffer(WebInspector, "pausedScript", function(callFrames)
+    {
+        testController.results.push("Script execution paused.");
+        frontend_evaluateInConsole("x + y + globalVar.b", function(result)
+        {
+            testController.results.push("Evaluated script on the top frame: " + result);
+            WebInspector.panels.scripts.sidebarPanes.callstack.selectedCallFrame = callFrames[1];
+            testController.runAfterPendingDispatches(testEvalInCallingFrame);
+        });
+
+        function testEvalInCallingFrame()
+        {
+            frontend_evaluateInConsole("localObject.a + globalVar.b", function(result)
+            {
+                testController.results.push("Evaluated script on the calling frame: " + result);
+                frontend_completeDebuggerTest(testController);
+            });
+        }
+    });
+}
+
+</script>
+</head>
+
+<body onload="onload()">
+<p>
+Tests that evaluation in console works fine when script is paused. It also checks that
+stack and global variables are accessible from the console.
+</p>
+
+</body>
+</html>
