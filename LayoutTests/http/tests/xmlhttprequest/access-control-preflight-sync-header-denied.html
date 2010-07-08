@@ -7,16 +7,15 @@ function log(message)
     document.getElementById('console').appendChild(document.createTextNode(message + "\n"));
 }
 
-if (window.layoutTestController) {
+if (window.layoutTestController)
     layoutTestController.dumpAsText();
-}
 
 (function() {
     var xhr = new XMLHttpRequest();
 
     try {
         xhr.open("GET", "http://localhost:8000/xmlhttprequest/resources/access-control-preflight-denied-xsrf.php?state=reset", false);
-        xhr.send("");
+        xhr.send(null);
     } catch(e) {
         log("FAIL: Unable to reset server state: [" + e.message + "].");
         return;
@@ -25,7 +24,7 @@ if (window.layoutTestController) {
     xhr = new XMLHttpRequest();
 
     try {
-        xhr.open("GET", "http://localhost:8000/xmlhttprequest/resources/access-control-preflight-denied-xsrf.php", false);
+        xhr.open("GET", "http://localhost:8000/xmlhttprequest/resources/access-control-preflight-denied-xsrf.php?state=header", false);
         xhr.setRequestHeader("X-NON-STANDARD", "filler");
     } catch(e) {
         log("FAIL: Exception thrown. Cross-domain access is not allowed in first 'open'. [" + e.message + "].");
@@ -33,7 +32,7 @@ if (window.layoutTestController) {
     }
 
     try {
-        xhr.send("");
+        xhr.send(null);
         log("FAIL: Cross-domain access allowed in first send without throwing an exception");
         return;
     } catch(e) {
@@ -50,7 +49,7 @@ if (window.layoutTestController) {
     }
 
     try {
-        xhr.send("");
+        xhr.send(null);
     } catch(e) {
         log("FAIL: Exception thrown. Cross-domain access is not allowed in second 'send'. [" + e.message + "].");
         return;

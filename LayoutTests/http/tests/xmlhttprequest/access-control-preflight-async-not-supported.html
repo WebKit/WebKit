@@ -24,7 +24,7 @@ if (window.layoutTestController)
     xhr = new XMLHttpRequest();
 
     try {
-        xhr.open("DELETE", "http://localhost:8000/xmlhttprequest/resources/access-control-preflight-denied-xsrf.php?state=method", true);
+        xhr.open("PUT", "http://localhost:8000/xmlhttprequest/resources/access-control-preflight-denied-xsrf.php", true);
     } catch(e) {
         log("FAIL: Exception thrown. Cross-domain access is not allowed in first 'open'. [" + e.message + "].");
         return;
@@ -52,7 +52,7 @@ if (window.layoutTestController)
             log("FAIL: Cross-domain access allowed in first send without throwing an exception");
     }
 
-    xhr.send(null);
+    xhr.send("");
 })();
 </script>
 </body>
