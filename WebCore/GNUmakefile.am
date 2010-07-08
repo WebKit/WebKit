@@ -1054,8 +1054,9 @@ webcore_sources += \
 	WebCore/history/BackForwardController.cpp \
 	WebCore/history/BackForwardController.h \
 	WebCore/history/BackForwardControllerClient.h \
-	WebCore/history/BackForwardList.cpp \
 	WebCore/history/BackForwardList.h \
+	WebCore/history/BackForwardListImpl.cpp \
+	WebCore/history/BackForwardListImpl.h \
 	WebCore/history/CachedFrame.cpp \
 	WebCore/history/CachedFrame.h \
 	WebCore/history/CachedFramePlatformData.h \

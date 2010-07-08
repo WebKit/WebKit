@@ -899,7 +899,7 @@ SET(WebCore_SOURCES
     editing/visible_units.cpp
 
     history/BackForwardController.cpp
-    history/BackForwardList.cpp
+    history/BackForwardListImpl.cpp
     history/CachedFrame.cpp
     history/CachedPage.cpp
     history/HistoryItem.cpp

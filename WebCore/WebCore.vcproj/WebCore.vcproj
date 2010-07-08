@@ -49465,11 +49465,15 @@
 				>
 			</File>
 			<File
-				RelativePath="..\history\BackForwardList.cpp"
+				RelativePath="..\history\BackForwardList.h"
 				>
 			</File>
 			<File
-				RelativePath="..\history\BackForwardList.h"
+				RelativePath="..\history\BackForwardListImpl.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\history\BackForwardListImpl.h"
 				>
 			</File>
 			<File

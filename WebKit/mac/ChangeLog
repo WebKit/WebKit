@@ -1,3 +1,16 @@
+2010-07-08  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Patch for https://bugs.webkit.org/show_bug.cgi?id=41826
+        Convert BackForwardList to an abstract base class and add BackForwardListImpl
+        as the concrete implementation of it.
+
+        * History/WebBackForwardList.mm:
+        (-[WebBackForwardList init]):
+        (-[WebBackForwardList setPageCacheSize:]):
+        (-[WebBackForwardList pageCacheSize]):
+
 2010-07-07  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

@@ -28,6 +28,7 @@
 
 #include "BackForwardControllerClient.h"
 #include "BackForwardList.h"
+#include "BackForwardListImpl.h"
 
 namespace WebCore {
 
@@ -36,7 +37,7 @@ BackForwardController::BackForwardController(Page* page, BackForwardControllerCl
     , m_client(client)
 {
     if (!m_client)
-        m_list = BackForwardList::create(page);
+        m_list = BackForwardListImpl::create(page);
     else
         m_list = m_client->createBackForwardList();
 }

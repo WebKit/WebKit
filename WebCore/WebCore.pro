@@ -600,7 +600,7 @@ SOURCES += \
     editing/visible_units.cpp \
     editing/WrapContentsInDummySpanCommand.cpp \
     history/BackForwardController.cpp \
-    history/BackForwardList.cpp \
+    history/BackForwardListImpl.cpp \
     history/CachedFrame.cpp \
     history/CachedPage.cpp \
     history/HistoryItem.cpp \
@@ -1354,6 +1354,7 @@ HEADERS += \
     editing/WrapContentsInDummySpanCommand.h \
     history/BackForwardController.h \
     history/BackForwardControllerClient.h \
+    history/BackForwardListImpl.h \
     history/BackForwardList.h \
     history/CachedFrame.h \
     history/CachedPage.h \

@@ -25,7 +25,7 @@
  */
 
 #include "config.h"
-#include "BackForwardList.h"
+#include "BackForwardListImpl.h"
 
 #include "Frame.h"
 #include "FrameLoader.h"
@@ -43,7 +43,7 @@ namespace WebCore {
 static const unsigned DefaultCapacity = 100;
 static const unsigned NoCurrentItemIndex = UINT_MAX;
 
-BackForwardList::BackForwardList(Page* page)
+BackForwardListImpl::BackForwardListImpl(Page* page)
     : m_page(page)
     , m_current(NoCurrentItemIndex)
     , m_capacity(DefaultCapacity)
@@ -52,12 +52,12 @@ BackForwardList::BackForwardList(Page* page)
 {
 }
 
-BackForwardList::~BackForwardList()
+BackForwardListImpl::~BackForwardListImpl()
 {
     ASSERT(m_closed);
 }
 
-void BackForwardList::addItem(PassRefPtr<HistoryItem> prpItem)
+void BackForwardListImpl::addItem(PassRefPtr<HistoryItem> prpItem)
 {
     ASSERT(prpItem);
     if (m_capacity == 0 || !m_enabled)
@@ -93,7 +93,7 @@ void BackForwardList::addItem(PassRefPtr<HistoryItem> prpItem)
         m_page->mainFrame()->loader()->client()->dispatchDidAddBackForwardItem(currentItem());
 }
 
-void BackForwardList::goBack()
+void BackForwardListImpl::goBack()
 {
     ASSERT(m_current > 0);
     if (m_current > 0) {
@@ -103,7 +103,7 @@ void BackForwardList::goBack()
     }
 }
 
-void BackForwardList::goForward()
+void BackForwardListImpl::goForward()
 {
     ASSERT(m_current < m_entries.size() - 1);
     if (m_current < m_entries.size() - 1) {
@@ -113,7 +113,7 @@ void BackForwardList::goForward()
     }
 }
 
-void BackForwardList::goToItem(HistoryItem* item)
+void BackForwardListImpl::goToItem(HistoryItem* item)
 {
     if (!m_entries.size() || !item)
         return;
@@ -129,28 +129,28 @@ void BackForwardList::goToItem(HistoryItem* item)
     }
 }
 
-HistoryItem* BackForwardList::backItem()
+HistoryItem* BackForwardListImpl::backItem()
 {
     if (m_current && m_current != NoCurrentItemIndex)
         return m_entries[m_current - 1].get();
     return 0;
 }
 
-HistoryItem* BackForwardList::currentItem()
+HistoryItem* BackForwardListImpl::currentItem()
 {
     if (m_current != NoCurrentItemIndex)
         return m_entries[m_current].get();
     return 0;
 }
 
-HistoryItem* BackForwardList::forwardItem()
+HistoryItem* BackForwardListImpl::forwardItem()
 {
     if (m_entries.size() && m_current < m_entries.size() - 1)
         return m_entries[m_current + 1].get();
     return 0;
 }
 
-void BackForwardList::backListWithLimit(int limit, HistoryItemVector& list)
+void BackForwardListImpl::backListWithLimit(int limit, HistoryItemVector& list)
 {
     list.clear();
     if (m_current != NoCurrentItemIndex) {
@@ -160,7 +160,7 @@ void BackForwardList::backListWithLimit(int limit, HistoryItemVector& list)
     }
 }
 
-void BackForwardList::forwardListWithLimit(int limit, HistoryItemVector& list)
+void BackForwardListImpl::forwardListWithLimit(int limit, HistoryItemVector& list)
 {
     ASSERT(limit > -1);
     list.clear();
@@ -176,12 +176,12 @@ void BackForwardList::forwardListWithLimit(int limit, HistoryItemVector& list)
     }
 }
 
-int BackForwardList::capacity()
+int BackForwardListImpl::capacity()
 {
     return m_capacity;
 }
 
-void BackForwardList::setCapacity(int size)
+void BackForwardListImpl::setCapacity(int size)
 {    
     while (size < (int)m_entries.size()) {
         RefPtr<HistoryItem> item = m_entries.last();
@@ -200,12 +200,12 @@ void BackForwardList::setCapacity(int size)
     m_capacity = size;
 }
 
-bool BackForwardList::enabled()
+bool BackForwardListImpl::enabled()
 {
     return m_enabled;
 }
 
-void BackForwardList::setEnabled(bool enabled)
+void BackForwardListImpl::setEnabled(bool enabled)
 {
     m_enabled = enabled;
     if (!enabled) {
@@ -215,17 +215,17 @@ void BackForwardList::setEnabled(bool enabled)
     }
 }
 
-int BackForwardList::backListCount()
+int BackForwardListImpl::backListCount()
 {
     return m_current == NoCurrentItemIndex ? 0 : m_current;
 }
 
-int BackForwardList::forwardListCount()
+int BackForwardListImpl::forwardListCount()
 {
     return m_current == NoCurrentItemIndex ? 0 : (int)m_entries.size() - (m_current + 1);
 }
 
-HistoryItem* BackForwardList::itemAtIndex(int index)
+HistoryItem* BackForwardListImpl::itemAtIndex(int index)
 {
     // Do range checks without doing math on index to avoid overflow.
     if (index < -(int)m_current)
@@ -237,12 +237,12 @@ HistoryItem* BackForwardList::itemAtIndex(int index)
     return m_entries[index + m_current].get();
 }
 
-HistoryItemVector& BackForwardList::entries()
+HistoryItemVector& BackForwardListImpl::entries()
 {
     return m_entries;
 }
 
-void BackForwardList::pushStateItem(PassRefPtr<HistoryItem> newItem)
+void BackForwardListImpl::pushStateItem(PassRefPtr<HistoryItem> newItem)
 {
     ASSERT(newItem);
     ASSERT(newItem->stateObject());
@@ -256,7 +256,7 @@ void BackForwardList::pushStateItem(PassRefPtr<HistoryItem> newItem)
         current->setStateObject(SerializedScriptValue::create());
 }
 
-void BackForwardList::close()
+void BackForwardListImpl::close()
 {
     int size = m_entries.size();
     for (int i = 0; i < size; ++i)
@@ -267,12 +267,12 @@ void BackForwardList::close()
     m_closed = true;
 }
 
-bool BackForwardList::closed()
+bool BackForwardListImpl::closed()
 {
     return m_closed;
 }
 
-void BackForwardList::removeItem(HistoryItem* item)
+void BackForwardListImpl::removeItem(HistoryItem* item)
 {
     if (!item)
         return;
@@ -294,13 +294,13 @@ void BackForwardList::removeItem(HistoryItem* item)
         }
 }
 
-bool BackForwardList::containsItem(HistoryItem* entry)
+bool BackForwardListImpl::containsItem(HistoryItem* entry)
 {
     return m_entryHash.contains(entry);
 }
 
 #if ENABLE(WML)
-void BackForwardList::clearWMLPageHistory()
+void BackForwardListImpl::clearWMLPageHistory()
 {
     RefPtr<HistoryItem> currentItem = this->currentItem();
 

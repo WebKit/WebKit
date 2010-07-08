@@ -1,3 +1,31 @@
+2010-07-08  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Patch for https://bugs.webkit.org/show_bug.cgi?id=41826
+        Convert BackForwardList to an abstract base class and add BackForwardListImpl
+        as the concrete implementation of it.
+
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.exp.in:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * history/BackForwardController.cpp:
+        (WebCore::BackForwardController::BackForwardController):
+        * history/BackForwardController.h:
+        * history/BackForwardList.cpp: Removed.
+        * history/BackForwardList.h:
+        (WebCore::BackForwardList::~BackForwardList):
+        (WebCore::BackForwardList::isBackForwardListImpl):
+        (WebCore::BackForwardList::BackForwardList):
+        * history/BackForwardListChromium.cpp:
+        * history/BackForwardListImpl.cpp: Copied from WebCore/history/BackForwardList.cpp.
+        * history/BackForwardListImpl.h: Copied from WebCore/history/BackForwardList.h.
+        (WebCore::BackForwardListImpl::isBackForwardListImpl):
+
 2010-07-08  Vitaly Repeshko  <vitalyr@chromium.org>
 
         Reviewed by Pavel Feldman.

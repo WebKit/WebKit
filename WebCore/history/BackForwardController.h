@@ -32,6 +32,7 @@
 
 namespace WebCore {
 
+class Page;
 class BackForwardControllerClient;
 
 class BackForwardController : public Noncopyable {

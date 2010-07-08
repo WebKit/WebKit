@@ -38,7 +38,7 @@
 #import "WebPreferencesPrivate.h"
 #import "WebTypesInternal.h"
 #import "WebViewPrivate.h"
-#import <WebCore/BackForwardList.h>
+#import <WebCore/BackForwardListImpl.h>
 #import <WebCore/HistoryItem.h>
 #import <WebCore/Page.h>
 #import <WebCore/PageCache.h>
@@ -109,7 +109,7 @@ WebBackForwardList *kit(BackForwardList* backForwardList)
 
 - (id)init
 {
-    return [self initWithBackForwardList:BackForwardList::create(0)];
+    return [self initWithBackForwardList:BackForwardListImpl::create(0)];
 }
 
 - (void)dealloc
@@ -293,12 +293,14 @@ static bool bumperCarBackForwardHackNeeded()
 
 - (void)setPageCacheSize:(NSUInteger)size
 {
-    [kit(core(self)->page()) setUsesPageCache:size != 0];
+    ASSERT(core(self)->isBackForwardListImpl());
+    [kit(static_cast<BackForwardListImpl*>(core(self))->page()) setUsesPageCache:size != 0];
 }
 
 - (NSUInteger)pageCacheSize
 {
-    return [kit(core(self)->page()) usesPageCache] ? pageCache()->capacity() : 0;
+    ASSERT(core(self)->isBackForwardListImpl());
+    return [kit(static_cast<BackForwardListImpl*>(core(self))->page()) usesPageCache] ? pageCache()->capacity() : 0;
 }
 
 - (int)backListCount

@@ -30,19 +30,13 @@
 
 #include <wtf/RefCounted.h>
 #include <wtf/PassRefPtr.h>
-#include <wtf/HashSet.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
-class Document;
 class HistoryItem;
-class Page;
-class SerializedScriptValue;
-class String;
 
 typedef Vector<RefPtr<HistoryItem> > HistoryItemVector;
-typedef HashSet<RefPtr<HistoryItem> > HistoryItemHashSet;
 
 #if PLATFORM(CHROMIUM)
 // In the Chromium port, the back/forward list is managed externally.
@@ -62,65 +56,56 @@ public:
 
 class BackForwardList : public RefCounted<BackForwardList> {
 public: 
-    static PassRefPtr<BackForwardList> create(Page* page) { return adoptRef(new BackForwardList(page)); }
-    ~BackForwardList();
+    virtual ~BackForwardList()
+    {
+    }
+
+    virtual bool isBackForwardListImpl() const { return false; }
 
 #if PLATFORM(CHROMIUM)
     // Must be called before any other methods. 
-    void setClient(BackForwardListClient* client) { m_client = client; }
+    virtual void setClient(BackForwardListClient*) = 0;
 #endif
-    
-    Page* page() { return m_page; }
-    
-    void addItem(PassRefPtr<HistoryItem>);
-    void goBack();
-    void goForward();
-    void goToItem(HistoryItem*);
+
+    virtual void addItem(PassRefPtr<HistoryItem>) = 0;
+    virtual void goBack() = 0;
+    virtual void goForward() = 0;
+    virtual void goToItem(HistoryItem*) = 0;
         
-    HistoryItem* backItem();
-    HistoryItem* currentItem();
-    HistoryItem* forwardItem();
-    HistoryItem* itemAtIndex(int);
+    virtual HistoryItem* backItem() = 0;
+    virtual HistoryItem* currentItem() = 0;
+    virtual HistoryItem* forwardItem() = 0;
+    virtual HistoryItem* itemAtIndex(int) = 0;
 
-    void backListWithLimit(int, HistoryItemVector&);
-    void forwardListWithLimit(int, HistoryItemVector&);
+    virtual void backListWithLimit(int, HistoryItemVector&) = 0;
+    virtual void forwardListWithLimit(int, HistoryItemVector&) = 0;
 
-    int capacity();
-    void setCapacity(int);
-    bool enabled();
-    void setEnabled(bool);
-    int backListCount();
-    int forwardListCount();
-    bool containsItem(HistoryItem*);
+    virtual int capacity() = 0;
+    virtual void setCapacity(int) = 0;
+    virtual bool enabled() = 0;
+    virtual void setEnabled(bool) = 0;
+    virtual int backListCount() = 0;
+    virtual int forwardListCount() = 0;
+    virtual bool containsItem(HistoryItem*) = 0;
 
-    void close();
-    bool closed();
+    virtual void close() = 0;
+    virtual bool closed() = 0;
     
-    void removeItem(HistoryItem*);
-    HistoryItemVector& entries();
+    virtual void removeItem(HistoryItem*)  = 0;
+    virtual HistoryItemVector& entries()  = 0;
     
-    void pushStateItem(PassRefPtr<HistoryItem>);
+    virtual void pushStateItem(PassRefPtr<HistoryItem>) = 0;
 
 #if ENABLE(WML)
-    void clearWMLPageHistory();
+    virtual void clearWMLPageHistory()  = 0;
 #endif
 
-private:
-    BackForwardList(Page*);
-    
-    Page* m_page;
-#if PLATFORM(CHROMIUM) 
-    BackForwardListClient* m_client;
-#else
-    HistoryItemVector m_entries;
-    HistoryItemHashSet m_entryHash;
-    unsigned m_current;
-#endif
-    unsigned m_capacity;
-    bool m_closed;
-    bool m_enabled;
+protected:
+    BackForwardList()
+    {
+    }
 };
     
-} //namespace WebCore
+} // namespace WebCore
 
-#endif
+#endif // BackForwardList_h
