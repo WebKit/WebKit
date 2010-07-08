@@ -79,8 +79,10 @@ String deprecatedParseURL(const String& url)
     // Optimize for the likely case there there is nothing to strip.
     if (l == length) {
         int k;
+        // If the URL has any control characters in it, we have to strip them.
+        // '\r' (ascii value 13) is the largest control character.
         for (k = 0; k < length; k++) {
-            if (characters[k] > '\r')
+            if (characters[k] <= '\r')
                 break;
         }
         if (k == length)
