@@ -190,7 +190,7 @@ webkit_test_plugin_new_stream(NPP instance,
 }
 
 static NPError
-webkit_test_plugin_destroy_stream(NPP instance, NPStream* /*stream*/, NPError /*reason*/)
+webkit_test_plugin_destroy_stream(NPP instance, NPStream* /*stream*/, NPError reason)
 {
     PluginObject* obj = (PluginObject*)instance->pdata;
 
