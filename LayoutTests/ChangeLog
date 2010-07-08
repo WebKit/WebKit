@@ -1,3 +1,13 @@
+2010-07-07  Nicolas Weber  <thakis@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+        https://bugs.webkit.org/show_bug.cgi?id=41580
+
+        Fix rendering of radial gradients in skia if both points of the
+        gradient are the same and r0 > 0.
+
+        * fast/gradients/radial-centered.html: Added.
+
 2010-06-18  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Ojan Vafai.
