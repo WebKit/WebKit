@@ -1,3 +1,16 @@
+2010-07-08  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [EFL] Flush backing store when going to new page.
+        Call client method to flush backing store when going to a new page. This
+        is the notification that data related to current page should be dropped,
+        since a new page is being loaded.
+        https://bugs.webkit.org/show_bug.cgi?id=41008
+
+        * efl/WebCoreSupport/FrameLoaderClientEfl.cpp:
+        (WebCore::FrameLoaderClientEfl::transitionToCommittedForNewPage):
+
 2010-07-07  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
 
         Unreviewed build fix after r62676.
