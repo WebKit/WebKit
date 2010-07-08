@@ -21,9 +21,9 @@
 #include "qwkpage.h"
 #include "qwkpage_p.h"
 
-#include "DefaultClientCallbacksQt.h"
+#include "ClientImpl.h"
 #include "LocalizedStrings.h"
-#include "WebEventFactory.h"
+#include "WebEventFactoryQt.h"
 #include "WKStringQt.h"
 #include "WKURLQt.h"
 #include <QAction>

@@ -28,6 +28,10 @@
 
 #include "ArgumentEncoder.h"
 
+#if PLATFORM(QT)
+class QPainter;
+#endif
+
 namespace CoreIPC {
     class ArgumentDecoder;
     class Connection;
@@ -45,6 +49,8 @@ namespace WebKit {
 typedef CGContextRef PlatformDrawingContext;
 #elif PLATFORM(WIN)
 typedef HDC PlatformDrawingContext;
+#elif PLATFORM(QT)
+typedef QPainter* PlatformDrawingContext;
 #endif
 
 class DrawingAreaProxy {

@@ -1,3 +1,20 @@
+2010-07-08  Antti Koivisto  <koivisto@iki.fi>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] Initial WebKit2 implementation
+        https://bugs.webkit.org/show_bug.cgi?id=40233
+    
+        Random build fixes.
+
+        * Shared/qt/WebEventFactoryQt.cpp:
+        * UIProcess/API/qt/ClientImpl.cpp:
+        * UIProcess/API/qt/qwkpage.cpp:
+        * UIProcess/API/qt/qwkpage.h:
+        * UIProcess/DrawingAreaProxy.h:
+        * UIProcess/qt/ChunkedUpdateDrawingAreaProxyQt.cpp:
+        * WebProcess/WebProcess.cpp:
+
 2010-07-07  Zoltan Horvath  <zoltan@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.

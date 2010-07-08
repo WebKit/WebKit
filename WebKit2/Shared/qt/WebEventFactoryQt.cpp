@@ -24,7 +24,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "WebEventFactory.h"
+#include "WebEventFactoryQt.h"
 
 #include <qgraphicssceneevent.h>
 #include <QApplication>

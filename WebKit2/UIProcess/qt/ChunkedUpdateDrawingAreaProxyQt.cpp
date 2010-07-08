@@ -31,7 +31,7 @@
 #include "UpdateChunk.h"
 #include "WKAPICast.h"
 #include "WebPageProxy.h"
-#include "qwkgraphicswidget.h"
+#include "qgraphicswkview.h"
 #include <QPainter>
 
 using namespace WebCore;

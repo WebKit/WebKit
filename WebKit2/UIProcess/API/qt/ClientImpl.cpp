@@ -17,7 +17,7 @@
     Boston, MA 02110-1301, USA.
 */
 
-#include "DefaultClientCallbacksQt.h"
+#include "ClientImpl.h"
 
 #include "WebFrameProxy.h"
 #include "WKAPICast.h"
