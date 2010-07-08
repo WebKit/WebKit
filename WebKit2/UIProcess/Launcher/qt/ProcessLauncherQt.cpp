@@ -39,12 +39,9 @@
 #include <meegotouch/MComponentData>
 #endif
 
-#ifdef Q_OS_UNIX
-#include <signal.h>
-#endif
-
 #include <QApplication>
 #include <QDebug>
+#include <QLocalServer>
 #include <QProcess>
 
 #include <QtCore/qglobal.h>
@@ -64,28 +61,72 @@ using namespace WebCore;
 
 namespace WebKit {
 
-void ProcessLauncher::launchProcess()
+class ProcessLauncherHelper : public QObject {
+    Q_OBJECT
+public:
+    void launch(WebKit::ProcessLauncher*);
+    QLocalSocket* takePendingConnection();
+    static ProcessLauncherHelper* instance();
+private:
+    ProcessLauncherHelper();
+    QLocalServer m_server;
+    QList<WorkItem*> m_items;
+
+    Q_SLOT void newConnection();
+};
+
+void ProcessLauncherHelper::launch(WebKit::ProcessLauncher* launcher)
 {
-    srandom(time(0));
-    QString connectionIdentifier = QString::number(random());
+    QString program("QtWebProcess " + m_server.serverName());
 
-    QString program("QtWebProcess " + connectionIdentifier);
-
-    QProcess* webProcess = new QProcess;
+    QProcess* webProcess = new QProcess();
     webProcess->start(program);
 
     if (!webProcess->waitForStarted()) {
         qDebug() << "Failed to start" << program;
         ASSERT_NOT_REACHED();
+        delete webProcess;
+        return;
     }
 
-    PlatformProcessIdentifier processIdentifier = webProcess->pid();
-    setpriority(PRIO_PROCESS, processIdentifier, 10);
+    setpriority(PRIO_PROCESS, webProcess->pid(), 10);
 
-    qDebug() << program << "nice" << getpriority(PRIO_PROCESS, processIdentifier);
+    m_items.append(WorkItem::create(launcher, &WebKit::ProcessLauncher::didFinishLaunchingProcess, webProcess, m_server.serverName()).release());
+}
 
-    // We've finished launching the process, message back to the run loop.
-    RunLoop::main()->scheduleWork(WorkItem::create(this, &ProcessLauncher::didFinishLaunchingProcess, processIdentifier, connectionIdentifier));
+QLocalSocket* ProcessLauncherHelper::takePendingConnection()
+{
+    return m_server.nextPendingConnection();
+}
+
+ProcessLauncherHelper::ProcessLauncherHelper()
+{
+    srandom(time(0));
+    if (!m_server.listen("QtWebKit" + QString::number(random()))) {
+        qDebug() << "Failed to create server socket.";
+        ASSERT_NOT_REACHED();
+    }
+    connect(&m_server, SIGNAL(newConnection()), this, SLOT(newConnection()));
+}
+
+ProcessLauncherHelper* ProcessLauncherHelper::instance()
+{
+    static ProcessLauncherHelper* result = new ProcessLauncherHelper();
+    return result;
+}
+
+void ProcessLauncherHelper::newConnection()
+{
+    ASSERT(!m_items.isEmpty());
+
+    m_items[0]->execute();
+    delete m_items[0];
+    m_items.pop_front();
+}
+
+void ProcessLauncher::launchProcess()
+{
+    ProcessLauncherHelper::instance()->launch(this);
 }
 
 void ProcessLauncher::terminateProcess()
@@ -93,9 +134,13 @@ void ProcessLauncher::terminateProcess()
     if (!m_processIdentifier)
         return;
 
-#ifdef Q_OS_UNIX
-    kill(m_processIdentifier, SIGKILL);
-#endif
+    QObject::connect(m_processIdentifier, SIGNAL(finished(int)), m_processIdentifier, SLOT(deleteLater()), Qt::QueuedConnection);
+    m_processIdentifier->kill();
+}
+
+QLocalSocket* ProcessLauncher::takePendingConnection()
+{
+    return ProcessLauncherHelper::instance()->takePendingConnection();
 }
 
 static void* webThreadBody(void* /* context */)
@@ -152,3 +197,5 @@ QWEBKIT_EXPORT int webProcessMain(int argc, char** argv)
 
     return 0;
 }
+
+#include "WebProcessLauncherQt.moc"

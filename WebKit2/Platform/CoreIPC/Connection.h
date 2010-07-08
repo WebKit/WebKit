@@ -173,14 +173,11 @@ private:
     HANDLE m_connectionPipe;
 #elif PLATFORM(QT)
     // Called on the connection queue.
-    void openConnectionHandler();
-    void newConnectionHandler();
     void readyReadHandler();
 
     Vector<uint8_t> m_readBuffer;
     size_t m_currentMessageSize;
     QLocalSocket* m_socket;
-    QLocalServer* m_server;
     QString m_serverName;
 #endif
 };

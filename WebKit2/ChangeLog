@@ -1,3 +1,45 @@
+2010-07-08  Luiz Agostini  <luiz@webkit.org>, Kenneth Rohde Christiansen <kenneth@webkit.org>
+
+        Reviewed by Antti Koivisto.
+
+        [Qt] Improve QtWebkit2 secondary process launching procedure
+        https://bugs.webkit.org/show_bug.cgi?id=41853
+
+        Changing secondary process launching procedure to make sure that the method
+        ProcessLauncher::didFinishLaunchingProcess will only be called after secondary
+        process has been launched and the connection has been stablished between the
+        UIProcess and WebProcess.
+
+        This solves the timing issues ocasionaly observed when launching MiniBrowser.
+
+        QLocalServer object and related code has been removed from the class Connection.
+        Server instances of the Connection class now get the QLocalSocket via ProcessLauncher.
+
+        * Platform/CoreIPC/Connection.h:
+        * Platform/CoreIPC/qt/ConnectionQt.cpp:
+        (CoreIPC::Connection::platformInitialize):
+        (CoreIPC::Connection::platformInvalidate):
+        (CoreIPC::Connection::open):
+
+        Using QProcess* as PlatformProcessIdentifier.
+
+        * Platform/PlatformProcessIdentifier.h:
+
+        A new singleton class named ProcessLauncherHelper was created to handle the QLocalServer
+        object used to receive connections. This class launches the process and waits for it to connect
+        before calling ProcessLauncher::didFinishLaunchingProcess.
+
+        * UIProcess/Launcher/ProcessLauncher.h:
+        * UIProcess/Launcher/qt/ProcessLauncherQt.cpp:
+        (WebKit::ProcessLauncherHelper::launch):
+        (WebKit::ProcessLauncherHelper::takePendingConnection):
+        (WebKit::ProcessLauncherHelper::ProcessLauncherHelper):
+        (WebKit::ProcessLauncherHelper::instance):
+        (WebKit::ProcessLauncherHelper::newConnection):
+        (WebKit::ProcessLauncher::launchProcess):
+        (WebKit::ProcessLauncher::terminateProcess):
+        (_qt_takePendingConnection):
+
 2010-07-08  Antti Koivisto  <koivisto@iki.fi>
 
         Reviewed by Kenneth Rohde Christiansen.
