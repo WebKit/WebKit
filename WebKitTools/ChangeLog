@@ -1,5 +1,12 @@
 2010-07-08  Simon Fraser  <simon.fraser@apple.com>
 
+        Fix the Tiger build.
+
+        * DumpRenderTree/TestNetscapePlugIn/main.cpp:
+        (NPP_New):
+
+2010-07-08  Simon Fraser  <simon.fraser@apple.com>
+
         Fix windows build.
 
         #ifdef code for Mac.
