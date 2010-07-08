@@ -1,3 +1,18 @@
+2010-07-08  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Add stubbed out NetscapePluginModule class
+        https://bugs.webkit.org/show_bug.cgi?id=41901
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/Plugins/Netscape/NetscapePluginModule.cpp: Added.
+        (WebKit::NetscapePluginModule::NetscapePluginModule):
+        * WebProcess/Plugins/Netscape/NetscapePluginModule.h: Added.
+        (WebKit::NetscapePluginModule::create):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::createPlugin):
+
 2010-07-08  Luiz Agostini  <luiz.agostini@openbossa.org>
 
         Reviewed by Kenneth Rohde Christiansen.

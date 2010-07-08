@@ -26,6 +26,7 @@
 #include "WebFrameLoaderClient.h"
 
 #include "DummyPlugin.h"
+#include "NetscapePluginModule.h"
 #include "NotImplemented.h"
 #include "PluginView.h"
 #include "WebCoreArgumentCoders.h"
@@ -780,7 +781,10 @@ PassRefPtr<Widget> WebFrameLoaderClient::createPlugin(const IntSize&, HTMLPlugIn
     if (pluginPath.isNull())
         return 0;
 
-    // FIXME: Use the plug-in path.
+    // FIXME: This is Mac specific now because Windows doesn't have the necessary parts of NetscapePluginModule implemented.
+#if PLATFORM(MAC)
+    RefPtr<NetscapePluginModule> pluginModule = NetscapePluginModule::create(pluginPath);
+#endif
 
     RefPtr<Plugin> plugin = DummyPlugin::create();
     if (!plugin->initialize(url, paramNames, paramValues, mimeType, loadManually))
