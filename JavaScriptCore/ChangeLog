@@ -1,5 +1,10 @@
 2010-07-08  Darin Adler  <darin@apple.com>
 
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::sharedInstance): Fix typo.
+
+2010-07-08  Darin Adler  <darin@apple.com>
+
         Reviewed by Oliver Hunt.
 
         Fix assertion seen on the Leopard buildbot.
