@@ -21,16 +21,14 @@
 #ifndef RegExpPrototype_h
 #define RegExpPrototype_h
 
+#include "RegExpObject.h"
 #include "JSObject.h"
 
 namespace JSC {
 
-    class RegExpPrototype : public JSObject {
+    class RegExpPrototype : public RegExpObject {
     public:
         RegExpPrototype(ExecState*, JSGlobalObject*, NonNullPassRefPtr<Structure>, Structure* prototypeFunctionStructure);
-
-        virtual const ClassInfo* classInfo() const { return &info; }
-        static const ClassInfo info;
     };
 
 } // namespace JSC

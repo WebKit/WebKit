@@ -1,3 +1,13 @@
+2010-07-08  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        RegExp's prototype should be an object of type RegExp.
+
+        * runtime/RegExpPrototype.cpp:
+        (JSC::RegExpPrototype::RegExpPrototype):
+        * runtime/RegExpPrototype.h:
+
 2010-07-08  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.
