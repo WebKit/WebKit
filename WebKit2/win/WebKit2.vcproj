@@ -1314,6 +1314,10 @@
 			</Filter>
 		</Filter>
 		<File
+			RelativePath=".\WebKit2.rc"
+			>
+		</File>
+		<File
 			RelativePath="..\WebKit2Prefix.cpp"
 			>
 			<FileConfiguration
