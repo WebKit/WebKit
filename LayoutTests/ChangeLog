@@ -1,3 +1,11 @@
+2010-07-08  Albert J. Wong  <ajwong@chromium.org>
+
+        Unreviewed, chromium build fix.
+
+        Undoing expectations with incorrect syntax from r62848
+
+        * platform/chromium/test_expectations.txt:
+
 2010-07-08  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.

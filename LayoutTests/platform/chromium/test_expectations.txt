@@ -3018,14 +3018,3 @@ BUGAWONG WIN LINUX : ietestcenter/Javascript/15.9.5.44-0-2.html = TEXT
 BUGAWONG WIN LINUX SKIP : ietestcenter/Javascript/15.4.4.15-3-14.html = TIMEOUT
 BUGAWONG WIN LINUX SKIP : ietestcenter/Javascript/15.4.4.15-3-29.html = TIMEOUT
 BUGAWONG WIN LINUX SKIP : ietestcenter/Javascript/15.4.4.15-3-8.html = TIMEOUT
-
-
-SKIP : fast/js/object-literal-syntax.html
-SKIP : ietestcenter/Javascript/11.1.5_4-4-b-1.html
-SKIP : ietestcenter/Javascript/11.1.5_4-4-b-2.html
-SKIP : ietestcenter/Javascript/11.1.5_4-4-c-1.html
-SKIP : ietestcenter/Javascript/11.1.5_4-4-c-2.html
-SKIP : ietestcenter/Javascript/11.1.5_4-4-d-1.html
-SKIP : ietestcenter/Javascript/11.1.5_4-4-d-2.html
-SKIP : ietestcenter/Javascript/11.1.5_4-4-d-3.html
-SKIP : ietestcenter/Javascript/11.1.5_4-4-d-4.html
