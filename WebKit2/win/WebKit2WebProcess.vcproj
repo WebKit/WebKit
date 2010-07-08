@@ -51,6 +51,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalOptions="/NXCOMPAT"
 				AdditionalDependencies="WebKit2$(WebKitDLLConfigSuffix).lib"
 			/>
 			<Tool
@@ -117,6 +118,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalOptions="/NXCOMPAT"
 				AdditionalDependencies="WebKit2$(WebKitDLLConfigSuffix).lib"
 			/>
 			<Tool
@@ -181,6 +183,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalOptions="/NXCOMPAT"
 				AdditionalDependencies="WebKit2$(WebKitDLLConfigSuffix).lib"
 			/>
 			<Tool
@@ -244,6 +247,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalOptions="/NXCOMPAT"
 				AdditionalDependencies="WebKit2$(WebKitDLLConfigSuffix).lib"
 			/>
 			<Tool

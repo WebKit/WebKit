@@ -1,3 +1,13 @@
+2010-07-08  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        WebKit2 should enable DEP (Data Execution Prevention) on Windows via /NXCOMPAT
+        https://bugs.webkit.org/show_bug.cgi?id=41837
+        <rdar://problem/8170505>
+
+        * win/WebKit2WebProcess.vcproj:
+
 2010-07-08  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.
