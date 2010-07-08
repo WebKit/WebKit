@@ -147,6 +147,32 @@ void WebThemeEngineDRT::paintButton(WebCanvas* canvas,
             cstate = WebThemeControlDRT::DisabledState;
             break;
 
+        case CBS_MIXEDNORMAL:
+            // Classic theme can't represent mixed state checkbox. We assume
+            // it's equivalent to unchecked.
+            ASSERT(classicState == DFCS_BUTTONCHECK);
+            ctype = WebThemeControlDRT::IndeterminateCheckboxType;
+            cstate = WebThemeControlDRT::NormalState;
+            break;
+
+        case CBS_MIXEDHOT:
+            ASSERT(classicState == (DFCS_BUTTONCHECK | DFCS_HOT));
+            ctype = WebThemeControlDRT::IndeterminateCheckboxType;
+            cstate = WebThemeControlDRT::HotState;
+            break;
+
+        case CBS_MIXEDPRESSED:
+            ASSERT(classicState == (DFCS_BUTTONCHECK | DFCS_PUSHED));
+            ctype = WebThemeControlDRT::IndeterminateCheckboxType;
+            cstate = WebThemeControlDRT::PressedState;
+            break;
+
+        case CBS_MIXEDDISABLED:
+            ASSERT(classicState == (DFCS_BUTTONCHECK | DFCS_INACTIVE));
+            ctype = WebThemeControlDRT::IndeterminateCheckboxType;
+            cstate = WebThemeControlDRT::DisabledState;
+            break;
+
         default:
             ASSERT_NOT_REACHED();
             break;

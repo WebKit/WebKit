@@ -1,3 +1,19 @@
+2010-07-07  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        [DRT/Chromium] Support for indeterminate checkbox
+        https://bugs.webkit.org/show_bug.cgi?id=41747
+
+        Import http://src.chromium.org/viewvc/chrome?view=rev&revision=51499
+
+        * DumpRenderTree/chromium/WebThemeControlDRT.cpp:
+        (WebThemeControlDRT::draw):
+        * DumpRenderTree/chromium/WebThemeControlDRT.h:
+        (WebThemeControlDRT::):
+        * DumpRenderTree/chromium/WebThemeEngineDRT.cpp:
+        (WebThemeEngineDRT::paintButton):
+
 2010-07-07  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Mark Rowe.

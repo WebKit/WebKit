@@ -98,6 +98,7 @@ public:
         PushButtonType,
         UncheckedBoxType,
         CheckedBoxType,
+        IndeterminateCheckboxType,
         UncheckedRadioType,
         CheckedRadioType,
         HorizontalScrollTrackBackType,
