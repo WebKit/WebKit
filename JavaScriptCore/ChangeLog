@@ -1,3 +1,14 @@
+2010-07-08  Darin Adler  <darin@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Fix assertion seen on the Leopard buildbot.
+        The single shared instance of JSGlobalData was not being
+        adopted after creation.
+
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::sharedInstance): Do adoptRef and then leakRef.
+
 2010-07-08  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Sam Weinig.

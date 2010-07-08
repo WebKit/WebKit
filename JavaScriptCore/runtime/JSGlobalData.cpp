@@ -242,7 +242,7 @@ JSGlobalData& JSGlobalData::sharedInstance()
 {
     JSGlobalData*& instance = sharedInstanceInternal();
     if (!instance) {
-        instance = new JSGlobalData(APIShared, ThreadStackTypeSmall);
+        instance = adoptRef(new JSGlobalData(APIShared, ThreadStackTypeSmall)).leakPtr();
 #if ENABLE(JSC_MULTIPLE_THREADS)
         instance->makeUsableFromMultipleThreads();
 #endif
