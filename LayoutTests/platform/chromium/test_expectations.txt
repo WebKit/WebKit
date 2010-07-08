@@ -2818,7 +2818,9 @@ BUG45106 WIN : svg/text/text-text-05-t.svg = PASS CRASH
 BUG45720 WIN LINUX : websocket/tests/reload-crash.html = PASS CRASH
 
 // Failing since http://trac.webkit.org/changeset/60865
+// Need to add setEditingBehavior to layoutTestController.
 BUG46096 : editing/selection/extend-selection-after-double-click.html = TEXT
+BUG46096 : editing/selection/5195166-1.html = TEXT
 
 // Flaky since at least r60276
 BUG46157 WIN RELEASE : transforms/2d/transform-value-types.html = PASS TEXT

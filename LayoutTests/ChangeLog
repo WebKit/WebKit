@@ -1,3 +1,15 @@
+2010-07-08  Ojan Vafai  <ojan@chromium.org>
+
+        Not reviewed. Just changing test expectations.
+
+        [chromium] editing/selection/5195166-1.html needs layoutTestController.setEditingBehavior
+        https://bugs.webkit.org/show_bug.cgi?id=41905
+
+        For now, mark it as failing since there are already other tests that are failing
+        due to this.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-07-08  Xan Lopez  <xlopez@igalia.com>
 
         Skip crashing test, a new ASSERT added in a refactoring seems to
