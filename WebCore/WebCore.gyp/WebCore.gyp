@@ -818,7 +818,7 @@
         '../storage/IndexedDatabase.cpp',
 
         # Use history/BackForwardListChromium.cpp instead.
-        '../history/BackForwardList.cpp',
+        '../history/BackForwardListImpl.cpp',
 
         # Use loader/icon/IconDatabaseNone.cpp instead.
         '../loader/icon/IconDatabase.cpp',

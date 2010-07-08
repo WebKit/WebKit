@@ -1,5 +1,11 @@
 2010-07-08  Sam Weinig  <sam@webkit.org>
 
+        Fix Chromium build.
+
+        * WebCore.gyp/WebCore.gyp:
+
+2010-07-08  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Anders Carlsson.
 
         Patch for https://bugs.webkit.org/show_bug.cgi?id=41826
