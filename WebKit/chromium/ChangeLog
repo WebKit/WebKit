@@ -1,3 +1,21 @@
+2010-07-07  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [Chromium] Crash when re-entering message loop
+
+        Allow re-entrancy of the message loop by tracking all suspended pages
+        through a PageGroupLoadDeferrer stack.
+        https://bugs.webkit.org/show_bug.cgi?id=41697
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebView::willEnterModalLoop):
+        (WebKit::WebView::didExitModalLoop):
+        * src/js/Tests.js:
+        (.TestSuite.prototype.evaluateInConsole_):
+        (.TestSuite.prototype.testCompletionOnPause):
+        (.TestSuite.prototype.testMessageLoopReentrant.this):
+
 2010-07-08  David Holloway  <dhollowa@chromium.org>
 
         Reviewed by Darin Fisher.

@@ -1,3 +1,17 @@
+2010-07-07  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [Chromium] Crash when re-entering message loop
+        https://bugs.webkit.org/show_bug.cgi?id=41697
+
+        A Chromium-specific test case will be submitted into Chromium shortly.
+
+        * page/PageGroupLoadDeferrer.cpp:
+        (WebCore::PageGroupLoadDeferrer::PageGroupLoadDeferrer):
+        * page/PageGroupLoadDeferrer.h:
+        (WebCore::PageGroupLoadDeferrer::nextDeferrer):
+
 2010-07-07  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.

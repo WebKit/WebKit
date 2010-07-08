@@ -852,7 +852,7 @@ TestSuite.prototype.showMainPageScriptSource_ = function(scriptName, callback)
  */
 TestSuite.prototype.evaluateInConsole_ = function(code, callback)
 {
-    WebInspector.console.visible = true;
+    WebInspector.showConsole();
     WebInspector.console.prompt.text = code;
     WebInspector.console.promptElement.dispatchEvent( TestSuite.createKeyEvent("Enter"));
 
@@ -952,8 +952,12 @@ TestSuite.prototype.testCompletionOnPause = function()
         showConsole);
 
     function showConsole() {
-        test.addSniffer(WebInspector.console, "afterShow", testLocalsCompletion);
-        WebInspector.showConsole();
+        if (WebInspector.currentFocusElement === WebInspector.console.promptElement)
+            testLocalsCompletion();
+        else {
+            test.addSniffer(WebInspector.console, "afterShow", testLocalsCompletion);
+            WebInspector.showConsole();
+        }
     }
 
     function testLocalsCompletion() {
@@ -1775,7 +1779,7 @@ TestSuite.prototype.testConsoleEval = function()
  */
 TestSuite.prototype.testConsoleLog = function()
 {
-    WebInspector.console.visible = true;
+    WebInspector.showConsole();
     var messages = WebInspector.console.messages;
     var index = 0;
 
@@ -1817,7 +1821,7 @@ TestSuite.prototype.testConsoleLog = function()
  */
 TestSuite.prototype.testEvalGlobal = function()
 {
-    WebInspector.console.visible = true;
+    WebInspector.showConsole();
 
     var inputs = ["foo", "foobar"];
     var expectations = ["foo", "fooValue", "foobar", "ReferenceError: foobar is not defined"];
@@ -1845,6 +1849,48 @@ TestSuite.prototype.testEvalGlobal = function()
         }, true);
 
     initEval(inputs[inputIndex++]);
+    this.takeControl();
+};
+
+
+/**
+ * Tests the message loop re-entrancy.
+ */
+TestSuite.prototype.testMessageLoopReentrant = function()
+{
+    var test = this;
+    this.showPanel("scripts");
+
+    var breakpointLine = 16;
+
+    WebInspector.showConsole();
+
+    this._waitUntilScriptsAreParsed(["debugger_test_page.html"],
+        function() {
+          test.showMainPageScriptSource_(
+              "debugger_test_page.html",
+              function(view, url) {
+                view._addBreakpoint(breakpointLine);
+
+                test.evaluateInConsole_(
+                    'setTimeout("calculate()", 0)',
+                    function(resultText) {
+                      test.assertTrue(!isNaN(resultText), "Failed to get timer id: " + resultText);
+                    });
+
+              });
+        });
+
+    // Wait until script is paused.
+    this.addSniffer(
+        WebInspector,
+        "pausedScript",
+        function(callFrames) {
+            test.evaluateInConsole_(
+                'document.cookie',
+                test.releaseControl.bind(test)); // This callback will be invoked only if the test succeeds (i.e. no crash).
+        });
+
     this.takeControl();
 };
 

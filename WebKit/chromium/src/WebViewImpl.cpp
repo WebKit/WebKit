@@ -185,9 +185,6 @@ void WebView::resetVisitedLinkState()
 
 void WebView::willEnterModalLoop()
 {
-    // It is not valid to nest more than once.
-    ASSERT(!pageGroupLoadDeferrer);
-
     PageGroup* pageGroup = PageGroup::pageGroup(pageGroupName);
     ASSERT(pageGroup);
 
@@ -195,13 +192,16 @@ void WebView::willEnterModalLoop()
         return;
 
     // Pick any page in the page group since we are deferring all pages.
-    pageGroupLoadDeferrer = new PageGroupLoadDeferrer(*pageGroup->pages().begin(), true);
+    pageGroupLoadDeferrer = new PageGroupLoadDeferrer(*pageGroup->pages().begin(), true, pageGroupLoadDeferrer);
 }
 
 void WebView::didExitModalLoop()
 {
+    ASSERT(pageGroupLoadDeferrer);
+    PageGroupLoadDeferrer* nextDeferrer = pageGroupLoadDeferrer->nextDeferrer();
+
     delete pageGroupLoadDeferrer;
-    pageGroupLoadDeferrer = 0;
+    pageGroupLoadDeferrer = nextDeferrer;
 }
 
 void WebViewImpl::initializeMainFrame(WebFrameClient* frameClient)

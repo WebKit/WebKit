@@ -30,11 +30,13 @@ namespace WebCore {
 
     class PageGroupLoadDeferrer : public Noncopyable {
     public:
-        PageGroupLoadDeferrer(Page*, bool deferSelf);
+        PageGroupLoadDeferrer(Page*, bool deferSelf, PageGroupLoadDeferrer* nextDeferrer = 0);
         ~PageGroupLoadDeferrer();
+        PageGroupLoadDeferrer* nextDeferrer() { return m_nextDeferrer; }
 
     private:
         Vector<RefPtr<Frame>, 16> m_deferredFrames;
+        PageGroupLoadDeferrer* m_nextDeferrer;
     };
 }
 
