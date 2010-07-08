@@ -1,3 +1,14 @@
+2010-07-08  Martin Robinson  <mrobinson@igalia.com>
+
+        Unreviewed.
+
+        [GTK] DRT implement execCommand()
+        https://bugs.webkit.org/show_bug.cgi?id=35351
+
+        Group and skip tests that require LayoutTestController.execCommand support.
+
+        * platform/gtk/Skipped:
+
 2010-07-08  Albert J. Wong  <ajwong@chromium.org>
 
         Unreviewed, build fix for chromium.
