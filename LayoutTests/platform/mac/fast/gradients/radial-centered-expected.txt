@@ -1,0 +1,15 @@
+layer at (0,0) size 785x769
+  RenderView at (0,0) size 785x600
+layer at (0,0) size 785x769
+  RenderBlock {HTML} at (0,0) size 785x769
+    RenderBody {BODY} at (8,8) size 769x753
+      RenderBlock {H1} at (0,0) size 769x37
+        RenderText {#text} at (0,0) size 727x37
+          text run at (0,0) width 727: "Radial Gradients With One Center, Inner Radius > 0"
+      RenderBlock {DIV} at (0,58) size 154x154 [border: (2px solid #000000)]
+      RenderBlock {DIV} at (0,212) size 154x154 [border: (2px solid #000000)]
+      RenderBlock {H1} at (0,387) size 769x37
+        RenderText {#text} at (0,0) size 643x37
+          text run at (0,0) width 643: "Radial Gradients With One, Inner Radius == 0"
+      RenderBlock {DIV} at (0,445) size 154x154 [border: (2px solid #000000)]
+      RenderBlock {DIV} at (0,599) size 154x154 [border: (2px solid #000000)]
