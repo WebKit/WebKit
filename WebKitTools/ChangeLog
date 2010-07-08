@@ -1,3 +1,10 @@
+2010-07-07  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Build fix for machines with both MSVC 2005 and 2008 installed. Ensures the
+        latest version is selected by default, and allows the version to be specified.
+
+        * wx/build/settings.py:
+
 2010-07-07  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler.

@@ -199,14 +199,21 @@ def common_set_options(opt):
     opt.add_option('--wx-compiler-prefix', action='store', default='vc',
                    help='Specify a different compiler prefix (do this if you used COMPILER_PREFIX when building wx itself)')
     opt.add_option('--macosx-version', action='store', default='', help="Version of OS X to build for.")
+    opt.add_option('--msvc-version', action='store', default='', help="MSVC version to use to build. Use 8 for 2005, 9 for 2008")
 
 def common_configure(conf):
     """
     Configuration used by all targets, called from the target's configure() step.
     """
     
-    conf.env['MSVC_VERSIONS'] = ['msvc 9.0', 'msvc 8.0']
     conf.env['MSVC_TARGETS'] = ['x86']
+    
+    if Options.options.msvc_version and Options.options.msvc_version != '':
+        print "msvc version = %s" % Options.options.msvc_version
+        conf.env['MSVC_VERSIONS'] = ['msvc %s.0' % Options.options.msvc_version]
+    else:
+        print "msvc not set!"
+        conf.env['MSVC_VERSIONS'] = ['msvc 9.0', 'msvc 8.0']
     
     if sys.platform.startswith('cygwin'):
         print "ERROR: You must use the Win32 Python from python.org, not Cygwin Python, when building on Windows."
@@ -238,10 +245,14 @@ def common_configure(conf):
     if building_on_win32:
         libprefix = 'lib'
 
-        found_versions = conf.get_msvc_versions()
-        if found_versions[0][0] == 'msvc 9.0':
+        found = conf.get_msvc_versions()
+        found_versions = []
+        for version in found:
+            found_versions.append(version[0])
+            
+        if 'msvc 9.0' in conf.env['MSVC_VERSIONS'] and 'msvc 9.0' in found_versions:
             msvc_version = 'msvc2008'
-        elif found_versions[0][0] == 'msvc 8.0':
+        elif 'msvc 8.0' in conf.env['MSVC_VERSIONS'] and 'msvc 8.0' in found_versions:
             msvc_version = 'msvc2005'
         
         msvclibs_dir = os.path.join(wklibs_dir, msvc_version, 'win')
