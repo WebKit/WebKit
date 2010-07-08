@@ -2940,6 +2940,14 @@ BUG48550 : plugins/return-negative-one-from-write.html = TIMEOUT
 // Marking all the ietestcenter tests as failed for now. Added in r62810.
 // Most probably only need a rebaseline, but rebaselining tool is broken
 // right now.
+BUGAWONG WIN LINUX MAC : ietestcenter/Javascript/11.1.5_4-4-b-1.html = TEXT
+BUGAWONG WIN LINUX MAC : ietestcenter/Javascript/11.1.5_4-4-b-2.html = TEXT
+BUGAWONG WIN LINUX MAC : ietestcenter/Javascript/11.1.5_4-4-c-1.html = TEXT
+BUGAWONG WIN LINUX MAC : ietestcenter/Javascript/11.1.5_4-4-c-2.html = TEXT
+BUGAWONG WIN LINUX MAC : ietestcenter/Javascript/11.1.5_4-4-d-1.html = TEXT
+BUGAWONG WIN LINUX MAC : ietestcenter/Javascript/11.1.5_4-4-d-2.html = TEXT
+BUGAWONG WIN LINUX MAC : ietestcenter/Javascript/11.1.5_4-4-d-3.html = TEXT
+BUGAWONG WIN LINUX MAC : ietestcenter/Javascript/11.1.5_4-4-d-4.html = TEXT
 BUGAWONG WIN LINUX MAC : ietestcenter/Javascript/11.4.1-4.a-10.html = TEXT
 BUGAWONG WIN LINUX MAC : ietestcenter/Javascript/11.4.1-4.a-5.html = TEXT
 BUGAWONG WIN LINUX MAC : ietestcenter/Javascript/11.4.1-4.a-7.html = TEXT
@@ -3021,3 +3029,6 @@ BUGAWONG WIN LINUX MAC SKIP : ietestcenter/Javascript/15.4.4.15-3-8.html = TIMEO
 
 // New from somewhere around r62815-r62855
 BUGAWONG MAC : media/video-volume-slider.html = IMAGE+TEXT
+
+// Regression from r62849.  Probably just needs rebaseline.
+BUGAWONG WIN LINUX MAC : fast/js/object-literal-syntax.html = TEXT
