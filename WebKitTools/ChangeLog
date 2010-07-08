@@ -1,3 +1,27 @@
+2010-07-08  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Allow the TestPlugin to use Core Animation rendering for testing
+        https://bugs.webkit.org/show_bug.cgi?id=41872
+        
+        Add the ability for the TestPlugin to use the CoreAnimation rendering model
+        when available, based on the "drawingmodel" attribute of the embed tag:
+            drawingmodel="coreanimation"
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj: Add PluginObjectMac.mm
+        * DumpRenderTree/TestNetscapePlugIn/PluginObject.h: Add some macros so we can detect
+        when building on Tiger. Add a void* coreAnimationLayer member.
+        
+        * DumpRenderTree/TestNetscapePlugIn/PluginObjectMac.mm: Added.
+        (createCoreAnimationLayer): Obj-C method to create the CALayer.
+        
+        * DumpRenderTree/TestNetscapePlugIn/main.cpp:
+        (NPP_New): Look for the drawingmodel attribute to decide which drawing
+        model to use.
+        (NPP_Destroy): Release the CALayer if we have one.
+        (NPP_GetValue): Return the retained CALayer.
+
 2010-07-08  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Xan Lopez.

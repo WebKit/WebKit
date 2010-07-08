@@ -24,6 +24,8 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		0F37A4A711E6628700275F54 /* PluginObjectMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0F37A4A611E6628700275F54 /* PluginObjectMac.mm */; };
+		0F37A4AA11E6629100275F54 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B5A752A108AF5D1F00138E45 /* QuartzCore.framework */; };
 		141BF435096A455900E0753C /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9335435F03D75502008635CE /* WebKit.framework */; };
 		141BF436096A455900E0753C /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A84F608908B136DA00E9745F /* Cocoa.framework */; };
 		141BF438096A455900E0753C /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A817090308B164D300CCB9FB /* JavaScriptCore.framework */; };
@@ -178,6 +180,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		0F37A4A611E6628700275F54 /* PluginObjectMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PluginObjectMac.mm; sourceTree = "<group>"; };
 		141BF233096A44CF00E0753C /* TestNetscapePlugIn.plugin */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TestNetscapePlugIn.plugin; sourceTree = BUILT_PRODUCTS_DIR; };
 		141BF447096A45C800E0753C /* PluginObject.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = PluginObject.h; sourceTree = "<group>"; };
 		141BF448096A45C800E0753C /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.plist.xml; name = Info.plist; path = mac/Info.plist; sourceTree = "<group>"; };
@@ -290,6 +293,7 @@
 				141BF436096A455900E0753C /* Cocoa.framework in Frameworks */,
 				141BF438096A455900E0753C /* JavaScriptCore.framework in Frameworks */,
 				141BF435096A455900E0753C /* WebKit.framework in Frameworks */,
+				0F37A4AA11E6629100275F54 /* QuartzCore.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -356,6 +360,7 @@
 				141BF448096A45C800E0753C /* Info.plist */,
 				1AC6C77F0D07589B00CD3161 /* main.cpp */,
 				1AC6C7800D07589B00CD3161 /* PluginObject.cpp */,
+				0F37A4A611E6628700275F54 /* PluginObjectMac.mm */,
 				141BF447096A45C800E0753C /* PluginObject.h */,
 				1AC6C7810D07589B00CD3161 /* TestObject.cpp */,
 				1A8F024C0BB9B056008CFA34 /* TestObject.h */,
@@ -678,6 +683,7 @@
 				1AC6C8490D07638600CD3161 /* main.cpp in Sources */,
 				1AC6C84A0D07638600CD3161 /* PluginObject.cpp in Sources */,
 				1AC6C84B0D07638600CD3161 /* TestObject.cpp in Sources */,
+				0F37A4A711E6628700275F54 /* PluginObjectMac.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
