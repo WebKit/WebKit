@@ -1,3 +1,27 @@
+2010-07-07  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Regression: Selection anchor + focus swap when arrow keys after setBaseAndExtent
+        https://bugs.webkit.org/show_bug.cgi?id=32605
+
+        Only have selections be non-directional when they are set via the mouse.
+        Otherwise, all selections are directional.
+
+        Test: editing/selection/extend-forward-after-set-base-and-extent.html
+
+        * WebCore.base.exp:
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::setSelection):
+        * editing/SelectionController.h:
+        (WebCore::SelectionController::setSelection):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::selectClosestWordFromMouseEvent):
+        (WebCore::EventHandler::selectClosestWordOrLinkFromMouseEvent):
+        (WebCore::EventHandler::handleMousePressEventTripleClick):
+        (WebCore::EventHandler::handleMousePressEventSingleClick):
+        (WebCore::EventHandler::updateSelectionForMouseDrag):
+
 2010-07-08  Antonio Gomes  <tonikitoo@webkit.org>
 
         Reviewed by Ojan Vafai.

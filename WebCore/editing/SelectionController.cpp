@@ -107,11 +107,11 @@ void SelectionController::moveTo(const Position &base, const Position &extent, E
     setSelection(VisibleSelection(base, extent, affinity), true, true, userTriggered);
 }
 
-void SelectionController::setSelection(const VisibleSelection& s, bool closeTyping, bool clearTypingStyle, bool userTriggered, CursorAlignOnScroll align, TextGranularity granularity)
+void SelectionController::setSelection(const VisibleSelection& s, bool closeTyping, bool clearTypingStyle, bool userTriggered, CursorAlignOnScroll align, TextGranularity granularity, DirectionalityPolicy directionalityPolicy)
 {
     m_granularity = granularity;
 
-    setIsDirectional(false);
+    setIsDirectional(directionalityPolicy == MakeDirectionalSelection);
 
     if (m_isDragCaretController) {
         invalidateCaretRect();

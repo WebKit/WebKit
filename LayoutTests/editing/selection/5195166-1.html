@@ -1,37 +1,56 @@
 <p>This tests for a bug where extending a selection created with the mouse would blow it away before extending it.</p>
-<div id="div" contenteditable="true">There should be six characters selected in this sentence on Mac and four characters selected on Win/Linux.</div>
+<div id="div" contenteditable="true">There <span id="select" style="color:green">should be</span> six characters selected in this sentence on Mac and four characters selected on Win/Linux.</div>
 <ul id="console"></ul>
 <script>
-function log(str) {
+function log(str)
+{
     console = document.getElementById("console");
     li = document.createElement("li");
     text = document.createTextNode(str);
     console.appendChild(li);
     li.appendChild(text);
 }
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText()
 
-    var text = document.getElementById("div").firstChild;
-    var selection = window.getSelection();
+function runTest(platform, expectedText)
+{
+    layoutTestController.setEditingBehavior(platform);
     
-    // FIXME: m_lastChangeWasHorizontalExtension isn't cleared in several places
-    // where it should be, when opening a new document for example.
-    selection.setPosition(text, 0);
-    selection.modify("move", "forward", "character");
-    
-    selection.setBaseAndExtent(text, 3 + 5, text, 3);
+    var target = document.getElementById('select');
+    var startX = target.offsetLeft + target.offsetWidth;
+    var y = target.offsetTop + target.offsetHeight / 2;
+    var endX = target.offsetLeft;
+
+    // Select all the green text using the mouse.
+    // Use a word-granularity selection to avoid eventSender bug.
+    // Using just a single-click would not act is if the initial
+    // mouseDown was at (endX, y), resulting in a collapsed selection.
+    eventSender.mouseMoveTo(startX, y);
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+    eventSender.mouseDown();
+    eventSender.mouseMoveTo(endX, y);
+    eventSender.mouseUp();
     // Extending this 5 character selection will select 6 characters on mac,
     // but shrink the selection on win/linux.
     layoutTestController.execCommand("MoveForwardAndModifySelection");
     // Extending it in this way flips the anchor and the focus on Mac.
-    var onMacPlatform = navigator.userAgent.search(/\bMac OS X\b/) != -1;
-    if (onMacPlatform && selection.focusOffset - selection.anchorOffset == 6 ||
-        !onMacPlatform && selection.anchorOffset - selection.focusOffset == 4)
-        log("Success");
+    var selectedText = window.getSelection().toString();
+    if (selectedText != expectedText)
+        log("Failure: Selected text was \"" + selectedText + "\" and should be \"" + expectedText + "\"");
     else
-        log("Failure: Selection isn't the right size. anchorOffset=" + selection.anchorOffset +
-            " focusOffset=" + selection.focusOffset + " onMacPlatform: " + onMacPlatform);
-} else
-    log ("Failure: This test cannot be run manually.")
+        log("Success");
+}
+
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText()
+    runTest('mac', 'should be s');
+    runTest('win', 'hould be ');
+} else {
+    log("Failure: To test manually, select the green text " +
+        "starting at the end via double-click (i.e. word granularity), then shift+right-arrow. " +
+        "On Win/Linux you should see 'hould be ' selected. On Mac, you should see 'should be s' selected." +
+        "There's currently a bug that selects the space " +
+        "after 'should be' during the initial selection (https://bugs.webkit.org/show_bug.cgi?id=36256). " +
+        "Once that's fixed, it the final selected text should be 'should be ' on Mac and 'hould be' on Win/Linux.")
+}
 </script>

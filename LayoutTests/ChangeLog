@@ -1,3 +1,15 @@
+2010-07-07  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Regression: Selection anchor + focus swap when arrow keys after setBaseAndExtent
+        https://bugs.webkit.org/show_bug.cgi?id=32605
+
+        * editing/selection/5195166-1.html:
+        * editing/selection/extend-forward-after-set-base-and-extent-expected.txt: Added.
+        * editing/selection/extend-forward-after-set-base-and-extent.html: Added.
+        * platform/mac/editing/selection/5195166-1-expected.txt:
+
 2010-07-05  Gavin Barraclough  <barraclough@apple.com>
 
         Rubber stamped by Oliver Hunt.

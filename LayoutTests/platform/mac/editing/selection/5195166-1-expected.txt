@@ -2,3 +2,4 @@ This tests for a bug where extending a selection created with the mouse would bl
 
 There should be six characters selected in this sentence on Mac and four characters selected on Win/Linux.
 Success
+Success
