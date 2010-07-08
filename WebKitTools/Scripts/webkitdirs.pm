@@ -73,6 +73,7 @@ my $isInspectorFrontend;
 my $vcBuildPath;
 my $windowsTmpPath;
 my $windowsSourceDir;
+my $winVersion;
 my $willUseVCExpressWhenBuilding = 0;
 
 # Defined in VCSUtils.
@@ -797,6 +798,41 @@ sub determineIsChromium()
 sub isCygwin()
 {
     return ($^O eq "cygwin") || 0;
+}
+
+sub determineWinVersion()
+{
+    return if $winVersion;
+
+    if (!isCygwin()) {
+        $winVersion = -1;
+        return;
+    }
+
+    my $versionString = `uname -s`;
+    $versionString =~ /(\d\.\d)/;
+    $winVersion = $1;
+}
+
+sub winVersion()
+{
+    determineWinVersion();
+    return $winVersion;
+}
+
+sub isWindows7()
+{
+    return winVersion() eq "6.1";
+}
+
+sub isWindowsVista()
+{
+    return winVersion() eq "6.0";
+}
+
+sub isWindowsXP()
+{
+    return winVersion() eq "5.1";
 }
 
 sub isDarwin()

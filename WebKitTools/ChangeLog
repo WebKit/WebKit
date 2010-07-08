@@ -1,3 +1,25 @@
+2010-07-07  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Need to have a way to specify different results for Windows XP and 7
+        https://bugs.webkit.org/show_bug.cgi?id=41776
+        
+        Add the ability to have platform/win-xp, platform/win-vista, and platform/win-7
+        subdirectories, so we can have different results for tests on Windows XP, Windows
+        Vista, and Windows 7.
+
+        Windows XP will try the order: win-xp, win-vista, win-7, win, mac-snowleopard, mac.
+        Windows Vista will try the order: win-vista, win-7, win, mac-snowleopard, mac.
+        Windows 7 will try the order: win-7, win, mac-snowleopard, mac.
+
+        This matches the behavior of the mac.
+
+        * Scripts/old-run-webkit-tests: Add multiple platforms for Windows, and if we are on XP
+            or Vista, try looking in other win-* subdirectories before win.
+        * Scripts/webkitdirs.pm: Add some helper functions to determine what version of Windows
+            we are running.
+
 2010-07-07  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Dimitri Glazkov.

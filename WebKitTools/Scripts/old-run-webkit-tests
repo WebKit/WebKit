@@ -186,6 +186,10 @@ my $errorTag = "stderr";
 
 my @macPlatforms = ("mac-tiger", "mac-leopard", "mac-snowleopard", "mac");
 
+# When running Windows tests, if no results are found in platform/win (or any of the specific
+# directories for versions of Windows), then we also try mac-snowleopard and mac. 
+my @winPlatforms = ("win-xp", "win-vista", "win-7", "win", "mac-snowleopard", "mac");
+
 if (isAppleMacWebKit()) {
     if (isTiger()) {
         $platform = "mac-tiger";
@@ -220,7 +224,15 @@ if (isAppleMacWebKit()) {
 } elsif (isWx()) {
     $platform = "wx";
 } elsif (isCygwin()) {
-    $platform = "win";
+    if (isWindowsXP()) {
+        $platform = "win-xp";
+    } elsif (isWindowsVista()) {
+        $platform = "win-vista";
+    } elsif (isWindows7()) {
+        $platform = "win-7";
+    } else {
+        $platform = "win";
+    }
 }
 
 if (!defined($platform)) {
@@ -1551,7 +1563,6 @@ sub expectedDirectoryForTest($;$;$)
     my ($base, $isText, $expectedExtension) = @_;
 
     my @directories = @platformResultHierarchy;
-    push @directories, map { catdir($platformBaseDirectory, $_) } qw(mac-snowleopard mac) if isCygwin();
     push @directories, $expectedDirectory;
 
     # If we already have expected results, just return their location.
@@ -1856,13 +1867,17 @@ sub buildPlatformResultHierarchy()
     mkpath($platformTestDirectory) if ($platform eq "undefined" && !-d "$platformTestDirectory");
 
     my @platforms;
-    if ($platform =~ /^mac-/) {
+    
+    my $isMac = $platform =~ /^mac/;
+    my $isWin = $platform =~ /^win/;
+    if ($isMac || $isWin) {
+        my @platformList = $isMac ? @macPlatforms : @winPlatforms;
         my $i;
-        for ($i = 0; $i < @macPlatforms; $i++) {
-            last if $macPlatforms[$i] eq $platform;
+        for ($i = 0; $i < @platformList; $i++) {
+            last if $platformList[$i] eq $platform;
         }
-        for (; $i < @macPlatforms; $i++) {
-            push @platforms, $macPlatforms[$i];
+        for (; $i < @platformList; $i++) {
+            push @platforms, $platformList[$i];
         }
     } elsif ($platform =~ /^qt-/) {
         push @platforms, $platform;
