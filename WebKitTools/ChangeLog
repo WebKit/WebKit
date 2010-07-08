@@ -1,3 +1,21 @@
+2010-07-07  Daniel Bates  <dbates@rim.com>
+
+        Reviewed by Dumitru Daniliuc.
+
+        VCSUtils.pm complains about uninitialized value $newLine
+        https://bugs.webkit.org/show_bug.cgi?id=41333
+
+        Fixes an issue where VCSUtils::fixChangeLogPatch() may read off the end of
+        an array when fixing a change log entry that overlaps with an earlier
+        entry. In particular, when a patch contains a change log entry inserted
+        earlier in the change log file, but after an entry with the same author
+        and date.
+
+        * Scripts/VCSUtils.pm:
+            - Added for-loop constraint to fixChangeLogPatch() so that it does not
+              read off the end of the @overlappingLines array.
+        * Scripts/webkitperl/VCSUtils_unittest/fixChangeLogPatch.pl: Added unit test.
+
 2010-07-07  Anders Carlsson  <andersca@apple.com>
 
         Comment out a part of TestNetscapePlugin that caused tests to fail on Tiger and Leopard.

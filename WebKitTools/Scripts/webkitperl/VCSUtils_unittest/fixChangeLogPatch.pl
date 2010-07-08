@@ -30,7 +30,7 @@
 
 # Unit tests of VCSUtils::fixChangeLogPatch().
 
-use Test::Simple tests => 7;
+use Test::Simple tests => 8;
 use VCSUtils;
 
 # The source ChangeLog for these tests is the following:
@@ -118,6 +118,31 @@ $in = <<'END';
          Changed some code on 2009-12-21.
  
          * File:
+END
+
+ok(fixChangeLogPatch($in) eq $in, $title);
+
+# New test
+$title = "fixChangeLogPatch: [no change] New entry inserted earlier in the file, but after an entry with the same author and date.";
+
+$in = <<'END';
+--- ChangeLog
++++ ChangeLog
+@@ -70,6 +70,14 @@
+ 
+ 2009-12-22  Alice  <alice@email.address>
+ 
++        Reviewed by Sue.
++
++        Changed some more code on 2009-12-22.
++
++        * File:
++
++2009-12-22  Alice  <alice@email.address>
++
+         Reviewed by Ray.
+ 
+         Changed some code on 2009-12-22.
 END
 
 ok(fixChangeLogPatch($in) eq $in, $title);

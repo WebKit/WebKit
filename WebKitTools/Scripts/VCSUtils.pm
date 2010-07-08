@@ -1300,7 +1300,7 @@ sub fixChangeLogPatch($)
 
     # Work backwards, shifting overlapping lines towards front
     # while checking that patch stays equivalent.
-    for ($i = $dateStartIndex - 1; $i >= $chunkStartIndex; --$i) {
+    for ($i = $dateStartIndex - 1; @overlappingLines && $i >= $chunkStartIndex; --$i) {
         my $line = $lines[$i];
         if (substr($line, 0, 1) ne " ") {
             next;
