@@ -185,10 +185,7 @@ my $diffsTag = "diffs";
 my $errorTag = "stderr";
 
 my @macPlatforms = ("mac-tiger", "mac-leopard", "mac-snowleopard", "mac");
-
-# When running Windows tests, if no results are found in platform/win (or any of the specific
-# directories for versions of Windows), then we also try mac-snowleopard and mac. 
-my @winPlatforms = ("win-xp", "win-vista", "win-7", "win", "mac-snowleopard", "mac");
+my @winPlatforms = ("win-xp", "win-vista", "win-7", "win");
 
 if (isAppleMacWebKit()) {
     if (isTiger()) {
@@ -1563,6 +1560,7 @@ sub expectedDirectoryForTest($;$;$)
     my ($base, $isText, $expectedExtension) = @_;
 
     my @directories = @platformResultHierarchy;
+    push @directories, map { catdir($platformBaseDirectory, $_) } qw(mac-snowleopard mac) if isCygwin();
     push @directories, $expectedDirectory;
 
     # If we already have expected results, just return their location.

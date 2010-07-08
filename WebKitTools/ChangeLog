@@ -1,3 +1,23 @@
+2010-07-08  Adam Roben  <aroben@apple.com>
+
+        Make Windows stop running tests from platform/mac
+
+        r62742 made a change (at my suggestion!) that caused us to start
+        looking for tests in platform/mac, rather than just looking for
+        expected results in platform/mac. This patch just undoes that part of
+        r62742.
+
+        Fixes <http://webkit.org/b/41855> REGRESSION (r62742): Windows runs
+        tests from platform/mac, but shouldn't
+
+        Reviewed by Antti Koivisto and Anders Carlsson.
+
+        * Scripts/old-run-webkit-tests:
+        (top level): Removed "mac-snowleopard" and "mac" from @winPlatforms,
+        so we won't look in those directories for tests to run.
+        (expectedDirectoryForTest): Added back code from pre-r62742 to look in
+        platform/mac-snowleopard and platform/mac for expected results.
+
 2010-07-08  Antonio Gomes  <tonikitoo@webkit.org>
 
         Unreviewed. Adding myself as a reviewer.
