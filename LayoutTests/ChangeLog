@@ -1,3 +1,14 @@
+2010-07-08  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed fix.
+
+        [Qt] Skip tests introduced in r62779, because they fail with Qt 4.6.2.
+        Fixed in Qt 4.7. They will be unskipped when buildbot is upgraded.
+
+        * platform/qt/Skipped:
+         - http/tests/xmlhttprequest/access-control-preflight-async-not-supported.html skipped.
+         - http/tests/xmlhttprequest/access-control-preflight-sync-not-supported.html skipped.
+
 2010-07-08  Vitaly Repeshko  <vitalyr@chromium.org>
 
         Unreviewed.

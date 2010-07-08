@@ -321,12 +321,14 @@ http/tests/xmlhttprequest/access-control-basic-post-fail-non-simple-content-type
 http/tests/xmlhttprequest/access-control-basic-whitelist-request-headers.html
 http/tests/xmlhttprequest/access-control-preflight-async-header-denied.html
 http/tests/xmlhttprequest/access-control-preflight-async-method-denied.html
+http/tests/xmlhttprequest/access-control-preflight-async-not-supported.html
 http/tests/xmlhttprequest/access-control-preflight-credential-async.html
 http/tests/xmlhttprequest/access-control-preflight-credential-sync.html
 http/tests/xmlhttprequest/access-control-preflight-headers-async.html
 http/tests/xmlhttprequest/access-control-preflight-headers-sync.html
 http/tests/xmlhttprequest/access-control-preflight-sync-header-denied.html
 http/tests/xmlhttprequest/access-control-preflight-sync-method-denied.html
+http/tests/xmlhttprequest/access-control-preflight-sync-not-supported.html
 http/tests/xmlhttprequest/access-control-response-with-body-sync.html
 http/tests/xmlhttprequest/cache-override.html
 http/tests/xmlhttprequest/simple-cross-origin-progress-events.html
