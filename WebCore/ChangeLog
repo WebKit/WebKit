@@ -1,3 +1,13 @@
+2010-07-07  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: Move v8-related script offset conversion to DebuggerScript.js
+        https://bugs.webkit.org/show_bug.cgi?id=41755
+
+        * bindings/v8/ScriptDebugServer.cpp:
+        (WebCore::ScriptDebugServer::dispatchDidParseSource):
+
 2010-07-07  Nicolas Weber  <thakis@chromium.org>
 
         Reviewed by Dimitri Glazkov.
