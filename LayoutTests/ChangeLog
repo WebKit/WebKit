@@ -2,6 +2,15 @@
 
         Unreviewed, chromium build fix.
 
+        Update test expectations for mac chromium layout tests to exclude
+        the ietestcenter tests.
+
+        * platform/chromium/test_expectations.txt:
+
+2010-07-08  Albert J. Wong  <ajwong@chromium.org>
+
+        Unreviewed, chromium build fix.
+
         Undoing expectations with incorrect syntax from r62848
 
         * platform/chromium/test_expectations.txt:
