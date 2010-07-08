@@ -604,6 +604,7 @@
             'type': 'executable',
             'mac_bundle': 1,
             'dependencies': [
+                'ImageDiff',
                 'webkit',
                 '../../JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.gyp:wtf_config',
                 '<(chromium_src_dir)/third_party/icu/icu.gyp:icuuc',
