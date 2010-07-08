@@ -529,6 +529,7 @@ javascriptcore_sources += \
 	JavaScriptCore/runtime/MarkStackWin.cpp
 else
 javascriptcore_sources += \
+	JavaScriptCore/jit/ExecutableAllocatorFixed.cpp \
 	JavaScriptCore/jit/ExecutableAllocatorPosix.cpp \
 	JavaScriptCore/runtime/MarkStackPosix.cpp
 endif
