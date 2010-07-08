@@ -141,6 +141,7 @@ static JSValue decode(ExecState* exec, const char* doNotUnescape, bool strict)
 bool isStrWhiteSpace(UChar c)
 {
     switch (c) {
+        // ECMA-262-5th 7.2 & 7.3
         case 0x0009:
         case 0x000A:
         case 0x000B:
@@ -150,6 +151,7 @@ bool isStrWhiteSpace(UChar c)
         case 0x00A0:
         case 0x2028:
         case 0x2029:
+        case 0xFEFF:
             return true;
         default:
             return c > 0xff && isSeparatorSpace(c);
