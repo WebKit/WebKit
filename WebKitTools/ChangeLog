@@ -1,3 +1,13 @@
+2010-07-07  Anders Carlsson  <andersca@apple.com>
+
+        Try to fix the GTK+ and Qt test failures by merging the newly added code from TestNetscapePlugin/main.cpp
+
+        * DumpRenderTree/unix/TestNetscapePlugin/TestNetscapePlugin.cpp:
+        (webkit_test_plugin_new_stream):
+        (webkit_test_plugin_destroy_stream):
+        (webkit_test_plugin_write_ready):
+        (webkit_test_plugin_write):
+
 2010-07-07  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Mark Rowe.
