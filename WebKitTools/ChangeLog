@@ -1,3 +1,19 @@
+2010-07-08  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] Support pixel tests
+        https://bugs.webkit.org/show_bug.cgi?id=31518
+
+        Convert this file from CRLF to NL line endings. It will soon
+        be used on more than just the WinCairo platform.
+
+        * DumpRenderTree/cairo/PixelDumpSupportCairo.cpp:
+        (writeFunction):
+        (printPNG):
+        (computeMD5HashStringForBitmapContext):
+        (dumpBitmap):
+
 2010-07-08  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Darin Adler.
