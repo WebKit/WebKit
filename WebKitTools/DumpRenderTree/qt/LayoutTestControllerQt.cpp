@@ -687,5 +687,26 @@ void LayoutTestController::evaluateScriptInIsolatedWorld(int worldID, const QStr
     DumpRenderTreeSupportQt::evaluateScriptInIsolatedWorld(m_drt->webPage()->mainFrame(), worldID, script);
 }
 
+bool LayoutTestController::isPageBoxVisible(int pageIndex)
+{
+    return DumpRenderTreeSupportQt::isPageBoxVisible(m_drt->webPage()->mainFrame(), pageIndex);
+}
+
+QString LayoutTestController::pageSizeAndMarginsInPixels(int pageIndex, int width, int height, int marginTop, int marginRight, int marginBottom, int marginLeft)
+{
+    return DumpRenderTreeSupportQt::pageSizeAndMarginsInPixels(m_drt->webPage()->mainFrame(), pageIndex,
+                                                               width, height, marginTop, marginRight, marginBottom, marginLeft);
+}
+
+QString LayoutTestController::pageProperty(const QString& propertyName, int pageNumber)
+{
+    return DumpRenderTreeSupportQt::pageProperty(m_drt->webPage()->mainFrame(), propertyName, pageNumber);
+}
+
+void LayoutTestController::addUserStyleSheet(const QString& sourceCode)
+{
+    DumpRenderTreeSupportQt::addUserStyleSheet(m_drt->webPage(), sourceCode);
+}
+
 const unsigned LayoutTestController::maxViewWidth = 800;
 const unsigned LayoutTestController::maxViewHeight = 600;

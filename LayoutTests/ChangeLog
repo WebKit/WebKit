@@ -1,3 +1,17 @@
+2010-07-07  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] Add DRT support for pageProperty etc.
+
+        https://bugs.webkit.org/show_bug.cgi?id=41584
+
+        Unskip:
+         printing/page-rule-selection.html
+         printing/page-format-data.html
+
+        * platform/qt/Skipped:
+
 2010-07-08  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by David Levin.

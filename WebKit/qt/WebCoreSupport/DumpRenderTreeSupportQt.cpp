@@ -669,6 +669,30 @@ void DumpRenderTreeSupportQt::evaluateScriptInIsolatedWorld(QWebFrame* frame, in
         proxy->executeScriptInWorld(scriptWorld->world(), script, true);
 }
 
+bool DumpRenderTreeSupportQt::isPageBoxVisible(QWebFrame* frame, int pageIndex)
+{
+    WebCore::Frame* coreFrame = QWebFramePrivate::core(frame);
+    return coreFrame->document()->isPageBoxVisible(pageIndex);
+}
+
+QString DumpRenderTreeSupportQt::pageSizeAndMarginsInPixels(QWebFrame* frame, int pageIndex, int width, int height, int marginTop, int marginRight, int marginBottom, int marginLeft)
+{
+    WebCore::Frame* coreFrame = QWebFramePrivate::core(frame);
+    return PrintContext::pageSizeAndMarginsInPixels(coreFrame, pageIndex, width, height,
+                                                    marginTop, marginRight, marginBottom, marginLeft);
+}
+
+QString DumpRenderTreeSupportQt::pageProperty(QWebFrame* frame, const QString& propertyName, int pageNumber)
+{
+    WebCore::Frame* coreFrame = QWebFramePrivate::core(frame);
+    return PrintContext::pageProperty(coreFrame, propertyName.toUtf8().constData(), pageNumber);
+}
+
+void DumpRenderTreeSupportQt::addUserStyleSheet(QWebPage* page, const QString& sourceCode)
+{
+    page->handle()->page->group().addUserStyleSheetToWorld(mainThreadNormalWorld(), sourceCode, QUrl(), 0, 0);
+}
+
 // Provide a backward compatibility with previously exported private symbols as of QtWebKit 4.6 release
 
 void QWEBKIT_EXPORT qt_resumeActiveDOMObjects(QWebFrame* frame)

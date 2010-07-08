@@ -135,6 +135,13 @@ public:
     static bool shouldClose(QWebFrame* frame);
 
     static void setCustomPolicyDelegate(bool enabled, bool permissive);
+
+    static bool isPageBoxVisible(QWebFrame* frame, int pageIndex);
+
+    static QString pageSizeAndMarginsInPixels(QWebFrame* frame, int pageIndex, int width, int height, int marginTop, int marginRight, int marginBottom, int marginLeft);
+    static QString pageProperty(QWebFrame* frame, const QString& propertyName, int pageNumber);
+    static void addUserStyleSheet(QWebPage* page, const QString& sourceCode);
+
 };
 
 #endif
