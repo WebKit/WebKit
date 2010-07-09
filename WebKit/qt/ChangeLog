@@ -1,3 +1,18 @@
+2010-07-09  Kent Hansen  <kent.hansen@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] Skip test that never terminates on maemo5
+
+        Due to https://bugs.webkit.org/show_bug.cgi?id=38538
+        the tst_QWebPage::infiniteLoopJS() autotest never terminates.
+        Skip the test so that the test case may run to completion.
+
+        Patch by Dominik Holland <dominik.holland@nokia.com>
+
+        * tests/qwebpage/tst_qwebpage.cpp:
+        (tst_QWebPage::infiniteLoopJS):
+
 2010-07-09  Simon Hausmann <simon.hausmann@nokia.com>
 
         Unreviewed trivial Symbian build fix.
