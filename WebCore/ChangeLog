@@ -1,3 +1,18 @@
+2010-07-09  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Add insertForeignElement in preparation for adding "in foreign content" support
+        https://bugs.webkit.org/show_bug.cgi?id=41940
+
+        No functional changes, thus no tests.
+
+        * html/HTMLConstructionSite.cpp:
+        (WebCore::HTMLConstructionSite::insertForeignElement):
+        (WebCore::HTMLConstructionSite::createElement):
+        (WebCore::HTMLConstructionSite::createHTMLElement):
+        * html/HTMLConstructionSite.h:
+
 2010-07-09  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

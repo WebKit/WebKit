@@ -57,6 +57,7 @@ public:
     void insertHTMLBodyElement(AtomicHTMLToken&);
     void insertScriptElement(AtomicHTMLToken&);
     void insertTextNode(const String&);
+    void insertForeignElement(AtomicHTMLToken&, const AtomicString& namespaceURI);
 
     void insertHTMLHtmlStartTagBeforeHTML(AtomicHTMLToken&);
     void insertHTMLHtmlStartTagInBody(AtomicHTMLToken&);
@@ -109,6 +110,8 @@ private:
 
     template<typename ChildType>
     PassRefPtr<ChildType> attach(Node* parent, PassRefPtr<ChildType> prpChild);
+
+    PassRefPtr<Element> createElement(AtomicHTMLToken&, const AtomicString& namespaceURI);
 
     PassRefPtr<Element> createHTMLElementAndAttachToCurrent(AtomicHTMLToken&);
     void mergeAttributesFromTokenIntoElement(AtomicHTMLToken&, Element*);

@@ -219,6 +219,16 @@ void HTMLConstructionSite::insertScriptElement(AtomicHTMLToken& token)
     m_openElements.push(attach(currentElement(), element.release()));
 }
 
+void HTMLConstructionSite::insertForeignElement(AtomicHTMLToken& token, const AtomicString& namespaceURI)
+{
+    ASSERT(token.type() == HTMLToken::StartTag);
+    notImplemented(); // parseError when xmlns or xmlns:xlink are wrong.
+
+    RefPtr<Element> element = attach(currentElement(), createElement(token, namespaceURI));
+    if (!token.selfClosing())
+        m_openElements.push(element);
+}
+
 void HTMLConstructionSite::insertTextNode(const String& characters)
 {
     if (Node* lastChild = currentElement()->lastChild()) {
@@ -233,10 +243,18 @@ void HTMLConstructionSite::insertTextNode(const String& characters)
     attach(currentElement(), Text::create(m_document, characters));
 }
 
+PassRefPtr<Element> HTMLConstructionSite::createElement(AtomicHTMLToken& token, const AtomicString& namespaceURI)
+{
+    QualifiedName tagName(nullAtom, token.name(), namespaceURI);
+    RefPtr<Element> element = m_document->createElement(tagName, true);
+    element->setAttributeMap(token.takeAtributes(), m_fragmentScriptingPermission);
+    return element.release();
+}
+
 PassRefPtr<Element> HTMLConstructionSite::createHTMLElement(AtomicHTMLToken& token)
 {
-    RefPtr<Element> element = HTMLElementFactory::createHTMLElement(QualifiedName(nullAtom, token.name(), xhtmlNamespaceURI), m_document, 0);
-    element->setAttributeMap(token.takeAtributes(), m_fragmentScriptingPermission);
+    RefPtr<Element> element = createElement(token, xhtmlNamespaceURI);
+    ASSERT(element->isHTMLElement());
     return element.release();
 }
 
