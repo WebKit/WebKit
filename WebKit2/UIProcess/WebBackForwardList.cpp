@@ -27,16 +27,60 @@
 
 namespace WebKit {
 
+static const unsigned DefaultCapacity = 100;
 static const unsigned NoCurrentItemIndex = UINT_MAX;
 
 WebBackForwardList::WebBackForwardList(WebPageProxy* page)
     : m_page(page)
     , m_current(NoCurrentItemIndex)
+    , m_capacity(DefaultCapacity)
+    , m_closed(true)
+    , m_enabled(true)
 {
 }
 
 WebBackForwardList::~WebBackForwardList()
 {
+}
+
+void WebBackForwardList::addItem(WebBackForwardListItem* newItem)
+{
+    if (m_capacity == 0 || !m_enabled)
+        return;
+    
+    // Toss anything in the forward list    
+    if (m_current != NoCurrentItemIndex) {
+        unsigned targetSize = m_current + 1;
+        while (m_entries.size() > targetSize) {
+            RefPtr<WebBackForwardListItem> item = m_entries.last();
+            m_entries.removeLast();
+        }
+    }
+
+    // Toss the first item if the list is getting too big, as long as we're not using it
+    // (or even if we are, if we only want 1 entry).
+    if (m_entries.size() == m_capacity && (m_current != 0 || m_capacity == 1)) {
+        RefPtr<WebBackForwardListItem> item = m_entries[0];
+        m_entries.remove(0);
+        m_current--;
+    }
+
+    m_entries.insert(m_current + 1, newItem);
+    m_current++;
+}
+
+void WebBackForwardList::goToItem(WebBackForwardListItem* item)
+{
+    if (!m_entries.size() || !item)
+        return;
+        
+    unsigned index = 0;
+    for (; index < m_entries.size(); ++index) {
+        if (m_entries[index] == item)
+            break;
+    }
+    if (index < m_entries.size())
+        m_current = index;
 }
 
 WebBackForwardListItem* WebBackForwardList::currentItem()
@@ -60,20 +104,32 @@ WebBackForwardListItem* WebBackForwardList::forwardItem()
     return 0;
 }
 
-unsigned WebBackForwardList::backListCount()
+WebBackForwardListItem* WebBackForwardList::itemAtIndex(int index)
+{
+    // Do range checks without doing math on index to avoid overflow.
+    if (index < -static_cast<int>(m_current))
+        return 0;
+    
+    if (index > forwardListCount())
+        return 0;
+        
+    return m_entries[index + m_current].get();
+}
+
+int WebBackForwardList::backListCount()
 {
     return m_current == NoCurrentItemIndex ? 0 : m_current;
 }
 
-unsigned WebBackForwardList::forwardListCount()
+int WebBackForwardList::forwardListCount()
 {
-    return m_current == NoCurrentItemIndex ? 0 : m_entries.size() - (m_current + 1);
+    return m_current == NoCurrentItemIndex ? 0 : static_cast<int>(m_entries.size()) - (m_current + 1);
 }
 
 BackForwardListItemVector WebBackForwardList::backListWithLimit(unsigned limit)
 {
     BackForwardListItemVector list;
-    unsigned size = std::min(backListCount(), limit);
+    unsigned size = std::min(backListCount(), static_cast<int>(limit));
     if (!size)
         return list;
 
@@ -87,7 +143,7 @@ BackForwardListItemVector WebBackForwardList::backListWithLimit(unsigned limit)
 BackForwardListItemVector WebBackForwardList::forwardListWithLimit(unsigned limit)
 {
     BackForwardListItemVector list;
-    unsigned size = std::min(forwardListCount(), limit);
+    unsigned size = std::min(forwardListCount(), static_cast<int>(limit));
     if (!size)
         return list;
 
@@ -113,7 +169,7 @@ static void webBackForwardListItemDeref(const void* item)
 
 PassRefPtr<ImmutableArray> WebBackForwardList::backListAsImmutableArrayWithLimit(unsigned limit)
 {
-    unsigned size = std::min(backListCount(), limit);
+    unsigned size = std::min(backListCount(), static_cast<int>(limit));
     if (!size)
         return ImmutableArray::create();
 
@@ -133,7 +189,7 @@ PassRefPtr<ImmutableArray> WebBackForwardList::backListAsImmutableArrayWithLimit
 
 PassRefPtr<ImmutableArray> WebBackForwardList::forwardListAsImmutableArrayWithLimit(unsigned limit)
 {
-    unsigned size = std::min(forwardListCount(), limit);
+    unsigned size = std::min(forwardListCount(), static_cast<int>(limit));
     if (!size)
         return ImmutableArray::create();
 

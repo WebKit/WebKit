@@ -53,12 +53,16 @@ public:
     }
     ~WebBackForwardList();
 
+    void addItem(WebBackForwardListItem*);
+    void goToItem(WebBackForwardListItem*);
+
     WebBackForwardListItem* currentItem();
     WebBackForwardListItem* backItem();
     WebBackForwardListItem* forwardItem();
+    WebBackForwardListItem* itemAtIndex(int);
 
-    unsigned backListCount();
-    unsigned forwardListCount();
+    int backListCount();
+    int forwardListCount();
 
     BackForwardListItemVector backListWithLimit(unsigned limit);
     BackForwardListItemVector forwardListWithLimit(unsigned limit);
@@ -72,6 +76,9 @@ private:
     WebPageProxy* m_page;
     BackForwardListItemVector m_entries;
     unsigned m_current;
+    unsigned m_capacity;
+    bool m_closed;
+    bool m_enabled;
 };
 
 } // namespace WebKit

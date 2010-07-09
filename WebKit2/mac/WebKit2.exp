@@ -43,6 +43,7 @@ _WKPageGetEstimatedProgress
 _WKPageGetMainFrame
 _WKPageGetPageNamespace
 _WKPageGetTitle
+_WKPageGoToBackForwardListItem
 _WKPageLoadURL
 _WKPageNamespaceCreate
 _WKPageNamespaceGetContext

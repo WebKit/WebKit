@@ -29,6 +29,7 @@
 #include "MessageID.h"
 #include "PageClient.h"
 #include "WebBackForwardList.h"
+#include "WebBackForwardListItem.h"
 #include "WebContext.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebEvent.h"
@@ -66,8 +67,6 @@ WebPageProxy::WebPageProxy(WebPageNamespace* pageNamespace, uint64_t pageID)
     , m_pageNamespace(pageNamespace)
     , m_mainFrame(0)
     , m_estimatedProgress(0.0)
-    , m_canGoBack(false)
-    , m_canGoForward(false)
     , m_backForwardList(WebBackForwardList::create(this))
     , m_valid(true)
     , m_closed(false)
@@ -183,9 +182,6 @@ void WebPageProxy::close()
         renderTreeExternalRepresentationCallbacks[i]->invalidate();
     m_renderTreeExternalRepresentationCallbacks.clear();
 
-    m_canGoForward = false;
-    m_canGoBack = false;
-
     m_estimatedProgress = 0.0;
     
     m_loaderClient.initialize(0);
@@ -237,11 +233,28 @@ void WebPageProxy::goForward()
     process()->send(WebPageMessage::GoForward, m_pageID, CoreIPC::In());
 }
 
+bool WebPageProxy::canGoForward() const
+{
+    return m_backForwardList->forwardItem();
+}
+
 void WebPageProxy::goBack()
 {
     if (!isValid())
         return;
     process()->send(WebPageMessage::GoBack, m_pageID, CoreIPC::In());
+}
+
+bool WebPageProxy::canGoBack() const
+{
+    return m_backForwardList->backItem();
+}
+
+void WebPageProxy::goToBackForwardItem(WebBackForwardListItem* item)
+{
+    if (!isValid())
+        return;
+    process()->send(WebPageMessage::GoToBackForwardItem, m_pageID, CoreIPC::In(item->itemID()));
 }
 
 void WebPageProxy::setFocused(bool isFocused)
@@ -453,20 +466,6 @@ void WebPageProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::M
             takeFocus(direction);
             break;
         }
-        case WebPageProxyMessage::DidChangeCanGoBack: {
-            bool canGoBack;
-            if (!arguments.decode(canGoBack))
-                return;
-            m_canGoBack = canGoBack;
-            break;
-        }
-        case WebPageProxyMessage::DidChangeCanGoForward: {
-            bool canGoForward;
-            if (!arguments.decode(canGoForward))
-                return;
-            m_canGoForward = canGoForward;
-            break;
-        }
         case WebPageProxyMessage::DecidePolicyForNavigationAction: {
             uint64_t frameID;
             uint32_t navigationType;
@@ -563,6 +562,16 @@ void WebPageProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::M
             didUpdateHistoryTitle(webFrame(frameID), title, url);
             break;
         }
+        case WebPageProxyMessage::BackForwardAddItem: {
+            uint64_t itemID;
+            String originalURLString;
+            String urlString;
+            String title;
+            if (!arguments.decode(CoreIPC::Out(itemID, originalURLString, urlString, title)))
+                return;
+            addItemToBackForwardList(itemID, originalURLString, urlString, title);
+            break;
+        }
         default:
             ASSERT_NOT_REACHED();
             break;
@@ -593,6 +602,34 @@ void WebPageProxy::didReceiveSyncMessage(CoreIPC::Connection*, CoreIPC::MessageI
             runJavaScriptAlert(webFrame(frameID), alertText);
             break;
         }
+
+        case WebPageProxyMessage::BackForwardCurrentItem: {
+            WebBackForwardListItem* currentItem = m_backForwardList->currentItem();
+            uint64_t currentItemID = currentItem ? currentItem->itemID() : 0;
+            reply.encode(CoreIPC::In(currentItemID));
+            break;
+        }
+        case WebPageProxyMessage::BackForwardItemAtIndex: {
+            int itemIndex;
+            if (!arguments.decode(CoreIPC::Out(itemIndex)))
+                return;
+
+            WebBackForwardListItem* item = m_backForwardList->itemAtIndex(itemIndex);
+            uint64_t itemID = item ? item->itemID() : 0;
+            reply.encode(CoreIPC::In(itemID));
+            break;
+        }
+        case WebPageProxyMessage::BackForwardBackListCount: {
+            int backListCount = m_backForwardList->backListCount();
+            reply.encode(CoreIPC::In(backListCount));
+            break;
+        }
+        case WebPageProxyMessage::BackForwardForwardListCount: {
+            int forwardListCount = m_backForwardList->forwardListCount();
+            reply.encode(CoreIPC::In(forwardListCount));
+            break;
+        }
+
         default:
             ASSERT_NOT_REACHED();
             break;
@@ -759,6 +796,27 @@ void WebPageProxy::didUpdateHistoryTitle(WebFrameProxy* frame, const String& tit
     m_historyClient.didUpdateHistoryTitle(this, title, url, frame);
 }
 
+// BackForwardList
+
+void WebPageProxy::addItemToBackForwardList(uint64_t itemID, const String& originalURLString, const String& urlString, const String& title)
+{
+    std::pair<HashMap<uint64_t, RefPtr<WebBackForwardListItem> >::iterator, bool> result = m_backForwardListItemMap.add(itemID, 0);
+    if (result.second)
+        result.first->second = WebBackForwardListItem::create(originalURLString, urlString, title, itemID);
+
+    ASSERT(result.first->second->originalURL() == originalURLString);
+    ASSERT(result.first->second->url() == urlString);
+    ASSERT(result.first->second->title() == title);
+
+    m_backForwardList->addItem(result.first->second.get());
+}
+
+void WebPageProxy::goToItemInBackForwardList(uint64_t itemID)
+{
+    WebBackForwardListItem* item = m_backForwardListItemMap.get(itemID).get();
+    m_backForwardList->goToItem(item);
+}
+
 // Other
 
 void WebPageProxy::takeFocus(bool direction)
@@ -853,9 +911,6 @@ void WebPageProxy::processDidExit()
     for (size_t i = 0, size = renderTreeExternalRepresentationCallbacks.size(); i < size; ++i)
         renderTreeExternalRepresentationCallbacks[i]->invalidate();
     m_renderTreeExternalRepresentationCallbacks.clear();
-
-    m_canGoForward = false;
-    m_canGoBack = false;
 
     m_estimatedProgress = 0.0;
     

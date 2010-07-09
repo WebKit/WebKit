@@ -29,10 +29,11 @@ using namespace WebCore;
 
 namespace WebKit {
 
-WebBackForwardListItem::WebBackForwardListItem(const String& originalURL, const String& url, const String& title)
+WebBackForwardListItem::WebBackForwardListItem(const String& originalURL, const String& url, const String& title, uint64_t itemID)
     : m_originalURL(originalURL)
     , m_url(url)
     , m_title(title)
+    , m_itemID(itemID)
 {
 }
 

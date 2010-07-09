@@ -96,6 +96,11 @@ bool WKPageCanGoBack(WKPageRef pageRef)
     return toWK(pageRef)->canGoBack();
 }
 
+void WKPageGoToBackForwardListItem(WKPageRef pageRef, WKBackForwardListItemRef itemRef)
+{
+    toWK(pageRef)->goToBackForwardItem(toWK(itemRef));
+}
+
 WKBackForwardListRef WKPageGetBackForwardList(WKPageRef pageRef)
 {
     return toRef(toWK(pageRef)->backForwardList());

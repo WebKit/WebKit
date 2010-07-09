@@ -1,3 +1,116 @@
+2010-07-09  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Patch for https://bugs.webkit.org/show_bug.cgi?id=41971
+        Add really basic BackForwardList support.
+
+        * Shared/CoreIPCSupport/WebPageMessageKinds.h:
+        (WebPageMessage::):
+        Add new message kind.
+
+        * Shared/CoreIPCSupport/WebPageProxyMessageKinds.h:
+        (WebPageProxyMessage::):
+        Add new message kinds. Remove DidChangeCanGoBack and DidChangeCanGoForward.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageGoToBackForwardListItem):
+        * UIProcess/API/C/WKPage.h:
+        Add function to initiate a navigation to a BackForward item.  The
+        BackForward list will be updated to use this as the current item
+        asynchronously. 
+
+        * UIProcess/WebBackForwardList.cpp:
+        (WebKit::WebBackForwardList::WebBackForwardList):
+        (WebKit::WebBackForwardList::addItem): Added.
+        (WebKit::WebBackForwardList::goToItem): Added.
+        (WebKit::WebBackForwardList::itemAtIndex): Added.
+        (WebKit::WebBackForwardList::backListCount): Changed to return int matching WebCore.
+        (WebKit::WebBackForwardList::forwardListCount): Ditto.
+        (WebKit::WebBackForwardList::backListWithLimit): Add cast to int.
+        (WebKit::WebBackForwardList::forwardListWithLimit): Ditto.
+        (WebKit::WebBackForwardList::backListAsImmutableArrayWithLimit): Ditto.
+        (WebKit::WebBackForwardList::forwardListAsImmutableArrayWithLimit): Ditto.
+        * UIProcess/WebBackForwardList.h:
+
+        * UIProcess/WebBackForwardListItem.cpp:
+        (WebKit::WebBackForwardListItem::WebBackForwardListItem):
+        * UIProcess/WebBackForwardListItem.h:
+        (WebKit::WebBackForwardListItem::create):
+        (WebKit::WebBackForwardListItem::itemID):
+        Added itemID.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        (WebKit::WebPageProxy::close):
+        (WebKit::WebPageProxy::canGoForward):
+        (WebKit::WebPageProxy::canGoBack):
+        (WebKit::WebPageProxy::goToBackForwardItem):
+        (WebKit::WebPageProxy::didReceiveMessage):
+        (WebKit::WebPageProxy::didReceiveSyncMessage):
+        (WebKit::WebPageProxy::addItemToBackForwardList):
+        (WebKit::WebPageProxy::goToItemInBackForwardList):
+        (WebKit::WebPageProxy::processDidExit):
+        * UIProcess/WebPageProxy.h:
+        - Removed m_canGoBack and m_canGoForward booleans and instead use the BackForwardList.
+        - Forward goToBackForwardItem to the WebProcess.
+        - Respond to messages from the WebBackForwardListProxy in the WebProcess,
+          forwarding to the WebBackForwardList.
+
+        * WebProcess/WebCoreSupport/WebBackForwardControllerClient.cpp:
+        (WebKit::WebBackForwardControllerClient::createBackForwardList):
+        Start using a WebBackForwardListProxy instead of a BackForwardListImpl.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDidAddBackForwardItem):
+        (WebKit::WebFrameLoaderClient::dispatchDidRemoveBackForwardItem):
+        (WebKit::WebFrameLoaderClient::dispatchDidChangeBackForwardIndex):
+        Remove calls backForwardListDidChange() now that we communicate much more
+        information than just this state.
+
+        * WebProcess/WebPage/WebBackForwardListProxy.cpp:
+        (WebKit::idToHistoryItemMap):
+        (WebKit::historyItemToIDMap):
+        (WebKit::generateHistoryItemID):
+        (WebKit::getIDForHistoryItem):
+        (WebKit::WebBackForwardListProxy::itemForID):
+        Add leaking cached maps of HistoryItems to IDs, the life time of these
+        objects will be improved in a subsequent patch.
+
+        (WebKit::WebBackForwardListProxy::WebBackForwardListProxy):
+        (WebKit::WebBackForwardListProxy::addItem):
+        (WebKit::WebBackForwardListProxy::goBack):
+        (WebKit::WebBackForwardListProxy::goForward):
+        (WebKit::WebBackForwardListProxy::goToItem):
+        (WebKit::WebBackForwardListProxy::backItem):
+        (WebKit::WebBackForwardListProxy::currentItem):
+        (WebKit::WebBackForwardListProxy::forwardItem):
+        (WebKit::WebBackForwardListProxy::itemAtIndex):
+        (WebKit::WebBackForwardListProxy::backListWithLimit):
+        (WebKit::WebBackForwardListProxy::forwardListWithLimit):
+        (WebKit::WebBackForwardListProxy::capacity):
+        (WebKit::WebBackForwardListProxy::setCapacity):
+        (WebKit::WebBackForwardListProxy::enabled):
+        (WebKit::WebBackForwardListProxy::setEnabled):
+        (WebKit::WebBackForwardListProxy::backListCount):
+        (WebKit::WebBackForwardListProxy::forwardListCount):
+        (WebKit::WebBackForwardListProxy::containsItem):
+        (WebKit::WebBackForwardListProxy::close):
+        (WebKit::WebBackForwardListProxy::closed):
+        (WebKit::WebBackForwardListProxy::removeItem):
+        (WebKit::WebBackForwardListProxy::entries):
+        (WebKit::WebBackForwardListProxy::pushStateItem):
+        * WebProcess/WebPage/WebBackForwardListProxy.h:
+        Forward functions to the UIProcess.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::goToBackForwardItem):
+        (WebKit::WebPage::didReceiveMessage):
+        * WebProcess/WebPage/WebPage.h:
+        Respond to GoToBackForwardItem message.
+
+        * mac/WebKit2.exp: Add new API function.
+
 2010-07-09  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

@@ -41,8 +41,6 @@ enum Kind {
     DecidePolicyForMIMEType,
     DecidePolicyForNavigationAction,
     DecidePolicyForNewWindowAction,
-    DidChangeCanGoBack,
-    DidChangeCanGoForward,
     DidChangeProgress,
     DidCommitLoadForFrame,
     DidCreateMainFrame,
@@ -67,6 +65,13 @@ enum Kind {
     DidUpdateHistoryTitle,
     SetToolTip,
     TakeFocus,
+    
+    BackForwardAddItem,
+    BackForwardGoToItem,
+    BackForwardCurrentItem,
+    BackForwardItemAtIndex,
+    BackForwardBackListCount,
+    BackForwardForwardListCount,
 };
 
 }

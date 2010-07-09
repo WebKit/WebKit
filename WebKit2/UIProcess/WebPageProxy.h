@@ -61,6 +61,7 @@ namespace WebKit {
 class DrawingAreaProxy;
 class PageClient;
 class WebBackForwardList;
+class WebBackForwardListItem;
 class WebKeyboardEvent;
 class WebMouseEvent;
 class WebPageNamespace;
@@ -105,9 +106,11 @@ public:
     void reload(bool reloadFromOrigin);
 
     void goForward();
-    bool canGoForward() const { return m_canGoForward; }
+    bool canGoForward() const;
     void goBack();
-    bool canGoBack() const { return m_canGoBack; }
+    bool canGoBack() const;
+
+    void goToBackForwardItem(WebBackForwardListItem*);
 
     void setFocused(bool isFocused);
     void setActive(bool active);
@@ -181,6 +184,9 @@ private:
     void didPerformServerRedirect(WebFrameProxy*, const WebCore::String& sourceURLString, const WebCore::String& destinationURLString);
     void didUpdateHistoryTitle(WebFrameProxy*, const WebCore::String& title, const WebCore::String& url);
 
+    void addItemToBackForwardList(uint64_t itemID, const WebCore::String& originalURLString, const WebCore::String& urlString, const WebCore::String& title);
+    void goToItemInBackForwardList(uint64_t itemID);
+
     void takeFocus(bool direction);
     void setToolTip(const WebCore::String&);
 
@@ -215,6 +221,7 @@ private:
     bool m_canGoBack;
     bool m_canGoForward;
     RefPtr<WebBackForwardList> m_backForwardList;
+    HashMap<uint64_t, RefPtr<WebBackForwardListItem> > m_backForwardListItemMap;
 
     WebCore::String m_toolTip;
 

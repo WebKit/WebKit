@@ -84,7 +84,6 @@ public:
     void layoutIfNeeded();
 
     // -- Called from WebCore clients.
-    void backForwardListDidChange();
     bool handleEditingKeyboardEvent(WebCore::KeyboardEvent*);
     void show();
 
@@ -114,6 +113,7 @@ private:
     void reload(bool reloadFromOrigin);
     void goForward();
     void goBack();
+    void goToBackForwardItem(uint64_t);
     void setActive(bool);
     void setFocused(bool);
     void mouseEvent(const WebCore::PlatformMouseEvent&);

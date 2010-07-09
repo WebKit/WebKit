@@ -36,22 +36,25 @@ class WebPageProxy;
 
 class WebBackForwardListItem : public RefCounted<WebBackForwardListItem> {
 public:
-    static PassRefPtr<WebBackForwardListItem> create(const WebCore::String& originalURL, const WebCore::String& url, const WebCore::String& title)
+    static PassRefPtr<WebBackForwardListItem> create(const WebCore::String& originalURL, const WebCore::String& url, const WebCore::String& title, uint64_t itemID)
     {
-        return adoptRef(new WebBackForwardListItem(originalURL, url, title));
+        return adoptRef(new WebBackForwardListItem(originalURL, url, title, itemID));
     }
     ~WebBackForwardListItem();
+
+    uint64_t itemID() const { return m_itemID; }
 
     const WebCore::String& originalURL() const { return m_originalURL; }
     const WebCore::String& url() const { return m_url; }
     const WebCore::String& title() const { return m_title; }
 
 private:
-    WebBackForwardListItem(const WebCore::String& originalURL, const WebCore::String& url, const WebCore::String& title);
+    WebBackForwardListItem(const WebCore::String& originalURL, const WebCore::String& url, const WebCore::String& title, uint64_t itemID);
 
     WebCore::String m_originalURL;
     WebCore::String m_url;
     WebCore::String m_title;
+    uint64_t m_itemID;
 };
 
 } // namespace WebKit

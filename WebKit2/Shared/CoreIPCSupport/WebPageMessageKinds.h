@@ -38,6 +38,7 @@ enum Kind {
     GetRenderTreeExternalRepresentation,
     GoBack,
     GoForward,
+    GoToBackForwardItem,
     KeyEvent,
     LoadURL,
     MouseEvent,

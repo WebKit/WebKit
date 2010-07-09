@@ -37,6 +37,8 @@ public:
     static PassRefPtr<WebBackForwardListProxy> create(WebPage* page) { return adoptRef(new WebBackForwardListProxy(page)); }
     ~WebBackForwardListProxy();
 
+    static WebCore::HistoryItem* itemForID(uint64_t);
+
     void addItem(PassRefPtr<WebCore::HistoryItem>);
     void goBack();
     void goForward();
@@ -74,6 +76,10 @@ private:
     WebBackForwardListProxy(WebPage*);
     
     WebPage* m_page;
+
+    unsigned m_capacity;
+    bool m_closed;
+    bool m_enabled;
 };
 
 } // namespace WebKit

@@ -575,20 +575,17 @@ bool WebFrameLoaderClient::shouldGoToHistoryItem(HistoryItem*) const
 
 void WebFrameLoaderClient::dispatchDidAddBackForwardItem(HistoryItem*) const
 {
-    if (WebPage* webPage = m_frame->page())
-        webPage->backForwardListDidChange();
+    notImplemented();
 }
 
 void WebFrameLoaderClient::dispatchDidRemoveBackForwardItem(HistoryItem*) const
 {
-    if (WebPage* webPage = m_frame->page())
-        webPage->backForwardListDidChange();
+    notImplemented();
 }
 
 void WebFrameLoaderClient::dispatchDidChangeBackForwardIndex() const
 {
-    if (WebPage* webPage = m_frame->page())
-        webPage->backForwardListDidChange();
+    notImplemented();
 }
 
 void WebFrameLoaderClient::didDisplayInsecureContent()

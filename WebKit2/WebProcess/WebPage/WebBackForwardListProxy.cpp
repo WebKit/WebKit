@@ -25,14 +25,70 @@
 
 #include "WebBackForwardListProxy.h"
 
+#include "WebCoreArgumentCoders.h"
+#include "WebPage.h"
+#include "WebPageProxyMessageKinds.h"
+#include "WebProcess.h"
 #include <WebCore/HistoryItem.h>
+#include <wtf/HashMap.h>
 
 using namespace WebCore;
 
 namespace WebKit {
 
+static const unsigned DefaultCapacity = 100;
+static const unsigned NoCurrentItemIndex = UINT_MAX;
+
+// FIXME: This leaks all HistoryItems that go into these maps.  We need to clear
+// up the life time of these objects.
+
+typedef HashMap<uint64_t, RefPtr<HistoryItem> > IDToHistoryItemMap;
+typedef HashMap<RefPtr<HistoryItem>, uint64_t> HistoryItemToIDMap;
+
+static IDToHistoryItemMap& idToHistoryItemMap()
+{
+    static IDToHistoryItemMap map;
+    return map;
+} 
+
+static HistoryItemToIDMap& historyItemToIDMap()
+{
+    static HistoryItemToIDMap map;
+    return map;
+} 
+
+static uint64_t generateHistoryItemID()
+{
+    static uint64_t uniqueHistoryItemID = 1;
+    return uniqueHistoryItemID++;
+}
+
+static uint64_t getIDForHistoryItem(HistoryItem* item)
+{
+    uint64_t itemID = 0;
+
+    std::pair<HistoryItemToIDMap::iterator, bool> result = historyItemToIDMap().add(item, 0);
+    if (result.second) {
+        itemID = generateHistoryItemID();
+        result.first->second = itemID;
+        idToHistoryItemMap().set(itemID, item);
+    } else
+        itemID = result.first->second;
+
+    ASSERT(itemID);
+    return itemID;
+}
+
+HistoryItem* WebBackForwardListProxy::itemForID(uint64_t itemID)
+{
+    return idToHistoryItemMap().get(itemID).get();
+}
+
 WebBackForwardListProxy::WebBackForwardListProxy(WebPage* page)
     : m_page(page)
+    , m_capacity(DefaultCapacity)
+    , m_closed(true)
+    , m_enabled(true)
 {
 }
 
@@ -40,12 +96,35 @@ WebBackForwardListProxy::~WebBackForwardListProxy()
 {
 }
 
-void WebBackForwardListProxy::addItem(PassRefPtr<HistoryItem>)
+void WebBackForwardListProxy::addItem(PassRefPtr<HistoryItem> prpItem)
 {
+    if (!m_capacity || !m_enabled)
+        return;
+
+    RefPtr<HistoryItem> item = prpItem;
+
+    uint64_t itemID = getIDForHistoryItem(item.get());
+    const String& originalURLString = item->originalURLString();
+    const String& urlString = item->urlString();
+    const String& title = item->title();
+
+    WebProcess::shared().connection()->send(WebPageProxyMessage::BackForwardAddItem, m_page->pageID(), CoreIPC::In(itemID, originalURLString, urlString, title));
 }
 
-void WebBackForwardListProxy::goToItem(HistoryItem*)
+void WebBackForwardListProxy::goBack()
 {
+    ASSERT_NOT_REACHED();
+}
+
+void WebBackForwardListProxy::goForward()
+{
+    ASSERT_NOT_REACHED();
+}
+
+void WebBackForwardListProxy::goToItem(HistoryItem* item)
+{
+    uint64_t itemID = historyItemToIDMap().get(item);
+    WebProcess::shared().connection()->send(WebPageProxyMessage::BackForwardGoToItem, m_page->pageID(), CoreIPC::In(itemID));
 }
 
 HistoryItem* WebBackForwardListProxy::backItem()
@@ -53,50 +132,118 @@ HistoryItem* WebBackForwardListProxy::backItem()
     return 0;
 }
 
+HistoryItem* WebBackForwardListProxy::currentItem()
+{
+    uint64_t currentItemID = 0;
+    if (!WebProcess::shared().connection()->sendSync(WebPageProxyMessage::BackForwardCurrentItem,
+                                                     m_page->pageID(), CoreIPC::In(),
+                                                     CoreIPC::Out(currentItemID),
+                                                     CoreIPC::Connection::NoTimeout)) {
+        return 0;
+    }
+
+    if (!currentItemID)
+        return 0;
+
+    RefPtr<HistoryItem> item = idToHistoryItemMap().get(currentItemID);
+    return item.get();
+}
+
 HistoryItem* WebBackForwardListProxy::forwardItem()
 {
     return 0;
 }
 
-HistoryItem* WebBackForwardListProxy::currentItem()
+HistoryItem* WebBackForwardListProxy::itemAtIndex(int itemIndex)
 {
-    return 0;
+    uint64_t itemID = 0;
+    if (!WebProcess::shared().connection()->sendSync(WebPageProxyMessage::BackForwardItemAtIndex,
+                                                     m_page->pageID(), CoreIPC::In(itemIndex),
+                                                     CoreIPC::Out(itemID),
+                                                     CoreIPC::Connection::NoTimeout)) {
+        return 0;
+    }
+
+    if (!itemID)
+        return 0;
+
+    RefPtr<HistoryItem> item = idToHistoryItemMap().get(itemID);
+    return item.get();
+}
+
+void WebBackForwardListProxy::backListWithLimit(int, HistoryItemVector&)
+{
+    ASSERT_NOT_REACHED();
+}
+
+void WebBackForwardListProxy::forwardListWithLimit(int, HistoryItemVector&)
+{
+    ASSERT_NOT_REACHED();
 }
 
 int WebBackForwardListProxy::capacity()
 {
-    return 0;
+    return m_capacity;
 }
 
-void WebBackForwardListProxy::setCapacity(int)
+void WebBackForwardListProxy::setCapacity(int capacity)
 {
+    m_capacity = capacity;
 }
 
 bool WebBackForwardListProxy::enabled()
 {
-    return false;
+    return m_enabled;
 }
 
-void WebBackForwardListProxy::setEnabled(bool)
+void WebBackForwardListProxy::setEnabled(bool enabled)
 {
+    m_enabled = enabled;
 }
 
 int WebBackForwardListProxy::backListCount()
 {
-    return 0;
+    int backListCount = 0;
+    if (!WebProcess::shared().connection()->sendSync(WebPageProxyMessage::BackForwardBackListCount,
+                                                     m_page->pageID(), CoreIPC::In(),
+                                                     CoreIPC::Out(backListCount),
+                                                     CoreIPC::Connection::NoTimeout)) {
+        return 0;
+    }
+
+    return backListCount;
 }
 
 int WebBackForwardListProxy::forwardListCount()
 {
-    return 0;
+    int forwardListCount = 0;
+    if (!WebProcess::shared().connection()->sendSync(WebPageProxyMessage::BackForwardForwardListCount,
+                                                     m_page->pageID(), CoreIPC::In(),
+                                                     CoreIPC::Out(forwardListCount),
+                                                     CoreIPC::Connection::NoTimeout)) {
+        return 0;
+    }
+
+    return forwardListCount;
 }
 
-HistoryItem* WebBackForwardListProxy::itemAtIndex(int)
+bool WebBackForwardListProxy::containsItem(HistoryItem*)
 {
-    return 0;
+    return false;
 }
 
-void WebBackForwardListProxy::pushStateItem(PassRefPtr<HistoryItem>)
+void WebBackForwardListProxy::close()
+{
+    m_closed = true;
+    m_page = 0;
+}
+
+bool WebBackForwardListProxy::closed()
+{
+    return m_closed;
+}
+
+void WebBackForwardListProxy::removeItem(HistoryItem*)
 {
 }
 
@@ -106,37 +253,7 @@ HistoryItemVector& WebBackForwardListProxy::entries()
     return noEntries;
 }
 
-void WebBackForwardListProxy::close()
-{
-}
-
-bool WebBackForwardListProxy::closed()
-{
-    return true;
-}
-
-void WebBackForwardListProxy::goBack()
-{
-}
-
-void WebBackForwardListProxy::goForward()
-{
-}
-
-void WebBackForwardListProxy::backListWithLimit(int, HistoryItemVector&)
-{
-}
-
-void WebBackForwardListProxy::forwardListWithLimit(int, HistoryItemVector&)
-{
-}
-
-bool WebBackForwardListProxy::containsItem(HistoryItem*)
-{
-    return false;
-}
-
-void WebBackForwardListProxy::removeItem(HistoryItem*)
+void WebBackForwardListProxy::pushStateItem(PassRefPtr<HistoryItem>)
 {
 }
 
