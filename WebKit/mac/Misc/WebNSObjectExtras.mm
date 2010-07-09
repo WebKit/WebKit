@@ -105,6 +105,11 @@ static bool returnTypeIsObject(NSInvocation *invocation)
 
 @implementation NSObject (WebNSObjectExtras)
 
++ (id)_webkit_invokeOnMainThread
+{
+    return [[[WebMainThreadInvoker alloc] initWithTarget:self] autorelease];
+}
+
 - (id)_webkit_invokeOnMainThread
 {
     return [[[WebMainThreadInvoker alloc] initWithTarget:self] autorelease];
