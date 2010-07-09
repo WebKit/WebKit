@@ -50,7 +50,9 @@ private:
     virtual void setFrameRect(const WebCore::IntRect&);
     virtual void paint(WebCore::GraphicsContext*, const WebCore::IntRect&);
     virtual void invalidateRect(const WebCore::IntRect&);
-    
+    virtual void frameRectsChanged();
+    virtual void setParent(WebCore::ScrollView*);
+
     RefPtr<Plugin> m_plugin;
 };
 

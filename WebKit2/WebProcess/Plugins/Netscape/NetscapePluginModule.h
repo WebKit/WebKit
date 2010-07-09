@@ -40,6 +40,8 @@ class NetscapePluginModule : public RefCounted<NetscapePluginModule> {
 public:
     static PassRefPtr<NetscapePluginModule> create(const WebCore::String& pluginPath);
 
+    const NPPluginFuncs& pluginFuncs() const { return m_pluginFuncs; }
+
 private:
     explicit NetscapePluginModule(const WebCore::String& pluginPath);
 

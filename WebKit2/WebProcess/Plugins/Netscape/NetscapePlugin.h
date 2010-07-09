@@ -47,6 +47,9 @@ private:
     virtual void destroy();
     virtual void paint(WebCore::GraphicsContext*, const WebCore::IntRect& dirtyRect);
     virtual void geometryDidChange(const WebCore::IntRect& frameRect);
+    
+    RefPtr<NetscapePluginModule> m_pluginModule;
+    NPP_t m_npp;
 };
 
 } // namespace WebKit

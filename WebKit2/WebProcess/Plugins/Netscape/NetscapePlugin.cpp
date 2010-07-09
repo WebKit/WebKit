@@ -25,12 +25,17 @@
 
 #include "NetscapePlugin.h"
 
+#include <WebCore/IntRect.h>
+
 using namespace WebCore;
 
 namespace WebKit {
 
 NetscapePlugin::NetscapePlugin(PassRefPtr<NetscapePluginModule> pluginModule)
+    : m_pluginModule(pluginModule)
 {
+    m_npp.ndata = this;
+    m_npp.pdata = 0;
 }
 
 NetscapePlugin::~NetscapePlugin()
@@ -39,6 +44,13 @@ NetscapePlugin::~NetscapePlugin()
 
 bool NetscapePlugin::initialize(const KURL&, const Vector<String>& paramNames, const Vector<String>& paramValues, const String& mimeType, bool loadManually)
 {
+    uint16_t mode = loadManually ? NP_FULL : NP_EMBED;
+    
+    // FIXME: Pass arguments to NPP_New.
+    NPError error = m_pluginModule->pluginFuncs().newp(0, &m_npp, mode, 0, 0, 0, 0);
+    if (error != NPERR_NO_ERROR)
+        return false;
+
     return true;
 }
     

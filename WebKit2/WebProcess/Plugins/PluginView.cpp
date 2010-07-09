@@ -27,6 +27,7 @@
 
 #include "Plugin.h"
 #include <WebCore/GraphicsContext.h>
+#include <WebCore/ScrollView.h>
 
 using namespace WebCore;
 
@@ -60,9 +61,27 @@ void PluginView::paint(GraphicsContext* context, const IntRect& dirtyRect)
     m_plugin->paint(context, paintRect);
 }
 
+
+void PluginView::frameRectsChanged()
+{
+    Widget::frameRectsChanged();
+    viewGeometryDidChange();
+}
+
+void PluginView::setParent(ScrollView* scrollView)
+{
+    Widget::setParent(scrollView);
+    viewGeometryDidChange();
+}
+
 void PluginView::viewGeometryDidChange()
 {
-    m_plugin->geometryDidChange(frameRect());
+    if (!parent())
+        return;
+
+    IntRect frameRectInWindowCoordinates = parent()->contentsToWindow(frameRect());
+    
+    m_plugin->geometryDidChange(frameRectInWindowCoordinates);
 }
 
 void PluginView::invalidateRect(const IntRect&)

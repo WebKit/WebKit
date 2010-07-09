@@ -202,8 +202,24 @@ NPError NPN_PostURLNotify(NPP instance, const char* url, const char* target, uin
 
 NPError NPN_GetValue(NPP instance, NPNVariable variable, void *value)
 {
-    notImplemented();
-    return NPERR_GENERIC_ERROR;
+    switch (variable) {
+#if PLATFORM(MAC)
+        case NPNVsupportsCoreGraphicsBool:
+            // Always claim to support the Core Graphics drawing model.
+            *(NPBool *)value = true;
+            break;
+
+        case NPNVsupportsCocoaBool:
+            // Always claim to support the Cocoa event model.
+            *(NPBool *)value = true;
+            break;
+#endif
+        default:
+            notImplemented();
+            return NPERR_GENERIC_ERROR;
+    }
+
+    return NPERR_NO_ERROR;
 }
 
 NPError NPN_SetValue(NPP instance, NPPVariable variable, void *value)

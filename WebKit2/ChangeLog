@@ -1,3 +1,39 @@
+2010-07-09  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Instantiate Netscape plug-ins, pass geometry information to Plugin
+        https://bugs.webkit.org/show_bug.cgi?id=41960
+
+        * WebProcess/Plugins/Netscape/NetscapeBrowserFuncs.cpp:
+        Handle NPNVsupportsCoreGraphicsBool and NPNVsupportsCocoaBool.
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::NetscapePlugin):
+        Set npp.ndata.
+
+        (WebKit::NetscapePlugin::initialize):
+        Try to instantiate the plug-in by calling NPP_New.
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.h:
+        Store the NetscapePluginModule and the NPP struct.
+
+        * WebProcess/Plugins/Netscape/NetscapePluginModule.h:
+        Add a getter for the NPPluginFuncs vtable.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::frameRectsChanged):
+        Make sure to call viewGeometryDidChange.
+
+        (WebKit::PluginView::setParent):
+        Ditto.
+
+        (WebKit::PluginView::viewGeometryDidChange):
+        Convert the frame rect to window coordinates and pass it to the plug-in.
+
+        * WebProcess/Plugins/PluginView.h:
+        Add function declarations.
+
 2010-07-08  Diego Gonzalez  <diegohcg@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.
