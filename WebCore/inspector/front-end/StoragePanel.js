@@ -49,10 +49,9 @@ WebInspector.StoragePanel = function(database)
     this.sidebarTree.appendChild(this.cookieListTreeElement);
     this.cookieListTreeElement.expand();
 
-    // TODO: uncomment when AppCache is implemented.
-    // this.applicationCacheListTreeElement = new WebInspector.SidebarSectionTreeElement(WebInspector.UIString("APPLICATION CACHE"), {}, true);
-    // this.sidebarTree.appendChild(this.applicationCacheListTreeElement);
-    // this.applicationCacheListTreeElement.expand();
+    this.applicationCacheListTreeElement = new WebInspector.SidebarSectionTreeElement(WebInspector.UIString("APPLICATION CACHE"), {}, true);
+    this.sidebarTree.appendChild(this.applicationCacheListTreeElement);
+    this.applicationCacheListTreeElement.expand();
 
     this.storageViews = document.createElement("div");
     this.storageViews.id = "storage-views";
@@ -109,8 +108,7 @@ WebInspector.StoragePanel.prototype = {
         this.localStorageListTreeElement.removeChildren();
         this.sessionStorageListTreeElement.removeChildren();
         this.cookieListTreeElement.removeChildren();
-        // TODO: uncomment when AppCache is implemented.
-        // this.applicationCacheListTreeElement.removeChildren();
+        this.applicationCacheListTreeElement.removeChildren();
 
         this.storageViews.removeChildren();
 
@@ -148,9 +146,8 @@ WebInspector.StoragePanel.prototype = {
 
     addApplicationCache: function(domain)
     {
-        // TODO: uncomment when AppCache is implemented.
-        // var applicationCacheTreeElement = new WebInspector.ApplicationCacheSidebarTreeElement(domain);
-        // this.applicationCacheListTreeElement.appendChild(applicationCacheTreeElement);
+        var applicationCacheTreeElement = new WebInspector.ApplicationCacheSidebarTreeElement(domain);
+        this.applicationCacheListTreeElement.appendChild(applicationCacheTreeElement);
     },
 
     selectDatabase: function(databaseId)
