@@ -66,6 +66,71 @@ inline bool isTreeBuilderWhitepace(UChar cc)
     return cc == '\t' || cc == '\x0A' || cc == '\x0C' || cc == '\x0D' || cc == ' ';
 }
 
+class ExternalCharacterTokenBuffer : public Noncopyable {
+public:
+    explicit ExternalCharacterTokenBuffer(AtomicHTMLToken& token)
+        : m_current(token.characters().characters())
+        , m_end(m_current + token.characters().length())
+    {
+        ASSERT(!isEmpty());
+    }
+
+    ~ExternalCharacterTokenBuffer()
+    {
+        ASSERT(isEmpty());
+    }
+
+    bool isEmpty() const { return m_current == m_end; }
+
+    void skipLeadingWhitespace()
+    {
+        ASSERT(!isEmpty());
+        while (isTreeBuilderWhitepace(*m_current)) {
+            if (++m_current == m_end)
+                return;
+        }
+    }
+
+    String takeLeadingWhitespace()
+    {
+        ASSERT(!isEmpty());
+        const UChar* start = m_current;
+        skipLeadingWhitespace();
+        if (start == m_current)
+            return String();
+        return String(start, m_current - start);
+    }
+
+    String takeRemaining()
+    {
+        ASSERT(!isEmpty());
+        const UChar* start = m_current;
+        m_current = m_end;
+        return String(start, m_current - start);
+    }
+
+    String takeRemainingWhitespace()
+    {
+        ASSERT(!isEmpty());
+        Vector<UChar> whitespace;
+        do {
+            UChar cc = *m_current++;
+            if (isTreeBuilderWhitepace(cc))
+                whitespace.append(cc);
+        } while (m_current < m_end);
+        // Returning the null string when there aren't any whitespace
+        // characters is slightly cleaner semantically because we don't want
+        // to insert a text node (as opposed to inserting an empty text node).
+        if (whitespace.isEmpty())
+            return String();
+        return String::adopt(whitespace);
+    }
+
+private:
+    const UChar* m_current;
+    const UChar* m_end;
+};
+
 inline bool hasNonWhitespace(const String& string)
 {
     const UChar* characters = string.characters();
@@ -2070,109 +2135,149 @@ void HTMLTreeBuilder::processComment(AtomicHTMLToken& token)
 void HTMLTreeBuilder::processCharacter(AtomicHTMLToken& token)
 {
     ASSERT(token.type() == HTMLToken::Character);
-    // FIXME: We need to figure out how to handle each character individually.
+
+    // FIXME: Currently this design has an extra memcpy because we copy the
+    // characters out of the HTMLTokenizer's buffer into the AtomicHTMLToken
+    // and then into the text node.  What we'd really like is to copy directly
+    // from the HTMLTokenizer's buffer into the text node.
+    ExternalCharacterTokenBuffer buffer(token);
+
+ReprocessBuffer:
     switch (insertionMode()) {
-    case InitialMode:
+    case InitialMode: {
         ASSERT(insertionMode() == InitialMode);
-        if (skipLeadingWhitespace(token))
+        buffer.skipLeadingWhitespace();
+        if (buffer.isEmpty())
             return;
         processDefaultForInitialMode(token);
         // Fall through.
-    case BeforeHTMLMode:
+    }
+    case BeforeHTMLMode: {
         ASSERT(insertionMode() == BeforeHTMLMode);
-        if (skipLeadingWhitespace(token))
+        buffer.skipLeadingWhitespace();
+        if (buffer.isEmpty())
             return;
         processDefaultForBeforeHTMLMode(token);
         // Fall through.
-    case BeforeHeadMode:
+    }
+    case BeforeHeadMode: {
         ASSERT(insertionMode() == BeforeHeadMode);
-        if (skipLeadingWhitespace(token))
+        buffer.skipLeadingWhitespace();
+        if (buffer.isEmpty())
             return;
         processDefaultForBeforeHeadMode(token);
         // Fall through.
-    case InHeadMode:
+    }
+    case InHeadMode: {
         ASSERT(insertionMode() == InHeadMode);
-        if (m_tree.insertLeadingWhitespace(token))
+        String leadingWhitespace = buffer.takeLeadingWhitespace();
+        if (!leadingWhitespace.isEmpty())
+            m_tree.insertTextNode(leadingWhitespace);
+        if (buffer.isEmpty())
             return;
         processDefaultForInHeadMode(token);
         // Fall through.
-    case AfterHeadMode:
+    }
+    case AfterHeadMode: {
         ASSERT(insertionMode() == AfterHeadMode);
-        if (m_tree.insertLeadingWhitespace(token))
+        String leadingWhitespace = buffer.takeLeadingWhitespace();
+        if (!leadingWhitespace.isEmpty())
+            m_tree.insertTextNode(leadingWhitespace);
+        if (buffer.isEmpty())
             return;
         processDefaultForAfterHeadMode(token);
-        // Fall through
+        // Fall through.
+    }
     case InBodyMode:
     case InCaptionMode:
-    case InCellMode:
+    case InCellMode: {
         ASSERT(insertionMode() == InBodyMode || insertionMode() == InCaptionMode || insertionMode() == InCellMode);
         m_tree.reconstructTheActiveFormattingElements();
-        m_tree.insertTextNode(token);
-        if (m_framesetOk && hasNonWhitespace(token.characters()))
+        String characters = buffer.takeRemaining();
+        m_tree.insertTextNode(characters);
+        if (m_framesetOk && hasNonWhitespace(characters))
             m_framesetOk = false;
         break;
+    }
     case InTableMode:
     case InTableBodyMode:
-    case InRowMode:
+    case InRowMode: {
         ASSERT(insertionMode() == InTableMode || insertionMode() == InTableBodyMode || insertionMode() == InRowMode);
         notImplemented(); // Crazy pending characters.
-        m_tree.insertTextNode(token);
+        m_tree.insertTextNode(buffer.takeRemaining());
         break;
-    case InTableTextMode:
+    }
+    case InTableTextMode: {
         notImplemented(); // Crazy pending characters.
         break;
-    case InColumnGroupMode:
+    }
+    case InColumnGroupMode: {
         ASSERT(insertionMode() == InColumnGroupMode);
-        if (m_tree.insertLeadingWhitespace(token))
+        String leadingWhitespace = buffer.takeLeadingWhitespace();
+        if (!leadingWhitespace.isEmpty())
+            m_tree.insertTextNode(leadingWhitespace);
+        if (buffer.isEmpty())
             return;
         if (!processColgroupEndTagForInColumnGroup()) {
             ASSERT(m_isParsingFragment);
             return;
         }
-        processCharacter(token);
-        break;
+        goto ReprocessBuffer;
+    }
     case AfterBodyMode:
-    case AfterAfterBodyMode:
+    case AfterAfterBodyMode: {
         ASSERT(insertionMode() == AfterBodyMode || insertionMode() == AfterAfterBodyMode);
         parseError(token);
         m_insertionMode = InBodyMode;
-        processCharacter(token);
+        goto ReprocessBuffer;
         break;
-    case TextMode:
-        notImplemented();
-        m_tree.insertTextNode(token);
+    }
+    case TextMode: {
+        ASSERT(insertionMode() == TextMode);
+        m_tree.insertTextNode(buffer.takeRemaining());
         break;
-    case InHeadNoscriptMode:
+    }
+    case InHeadNoscriptMode: {
         ASSERT(insertionMode() == InHeadNoscriptMode);
-        if (m_tree.insertLeadingWhitespace(token))
+        String leadingWhitespace = buffer.takeLeadingWhitespace();
+        if (!leadingWhitespace.isEmpty())
+            m_tree.insertTextNode(leadingWhitespace);
+        if (buffer.isEmpty())
             return;
         processDefaultForInHeadNoscriptMode(token);
-        processToken(token);
+        goto ReprocessBuffer;
         break;
+    }
     case InFramesetMode:
-    case AfterFramesetMode:
+    case AfterFramesetMode: {
         ASSERT(insertionMode() == InFramesetMode || insertionMode() == AfterFramesetMode || insertionMode() == AfterAfterFramesetMode);
-        if (m_tree.insertLeadingWhitespace(token))
-            return;
-        parseError(token);
-        // FIXME: We probably need some sort of loop here. We're basically
-        // filtering out the non-whitespace characters.
+        String leadingWhitespace = buffer.takeRemainingWhitespace();
+        if (!leadingWhitespace.isEmpty())
+            m_tree.insertTextNode(leadingWhitespace);
+        // FIXME: We should generate a parse error if we skipped over any
+        // non-whitespace characters.
         break;
+    }
     case InSelectInTableMode:
-    case InSelectMode:
+    case InSelectMode: {
         ASSERT(insertionMode() == InSelectMode || insertionMode() == InSelectInTableMode);
-        m_tree.insertTextNode(token);
+        m_tree.insertTextNode(buffer.takeRemaining());
         break;
-    case InForeignContentMode:
+    }
+    case InForeignContentMode: {
         notImplemented();
         break;
-    case AfterAfterFramesetMode:
-        if (m_tree.insertLeadingWhitespaceWithActiveFormattingElements(token))
-            return;
-        parseError(token);
-        // FIXME: We probably need some sort of loop here. We're basically
-        // filtering out the non-whitespace characters.
+    }
+    case AfterAfterFramesetMode: {
+        String leadingWhitespace = buffer.takeRemainingWhitespace();
+        if (!leadingWhitespace.isEmpty()) {
+            m_tree.reconstructTheActiveFormattingElements();
+            m_tree.insertTextNode(leadingWhitespace);
+        }
+        // FIXME: We should generate a parse error if we skipped over any
+        // non-whitespace characters.
         break;
+    }
     }
 }
 

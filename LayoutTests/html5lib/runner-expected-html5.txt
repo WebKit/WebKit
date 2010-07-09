@@ -6,7 +6,6 @@ Content-Type: text/plain
 resources/tests1.dat:
 30
 32
-50
 52
 53
 78
@@ -92,26 +91,6 @@ Expected:
 |                 <i>
 |                   "please!"
 |             <!-- X -->
-
-Test 50 of 113 in resources/tests1.dat failed. Input:
-<!DOCTYPE html><script> <!-- </script> --> </script> EOF
-Got:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|     <script>
-|       " <!-- "
-|   <body>
-|     " -->  EOF"
-Expected:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|     <script>
-|       " <!-- "
-|     " "
-|   <body>
-|     "-->  EOF"
 
 Test 52 of 113 in resources/tests1.dat failed. Input:
 <p id=a><b><p id=b></b>TEST
@@ -305,9 +284,6 @@ Expected:
 |     <a>
 resources/tests2.dat:
 13
-47
-48
-49
 
 Test 13 of 59 in resources/tests2.dat failed. Input:
 <!DOCTYPE html><table><tr>TEST
@@ -329,62 +305,6 @@ Expected:
 |     <table>
 |       <tbody>
 |         <tr>
-
-Test 47 of 59 in resources/tests2.dat failed. Input:
- 
- 
-Got:
-| <html>
-|   <head>
-|   <body>
-|     " 
- "
-Expected:
-| <html>
-|   <head>
-|   <body>
-
-Test 48 of 59 in resources/tests2.dat failed. Input:
-<!DOCTYPE html>  <html>
-Got:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     "  "
-Expected:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-
-Test 49 of 59 in resources/tests2.dat failed. Input:
-<!DOCTYPE html><script>
-</script>  <title>x</title>  </head>
-Got:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|     <script>
-|       "
-"
-|   <body>
-|     "  "
-|     <title>
-|       "x"
-|     "  "
-Expected:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|     <script>
-|       "
-"
-|     "  "
-|     <title>
-|       "x"
-|     "  "
-|   <body>
 resources/tests3.dat:
 16
 17
@@ -489,166 +409,16 @@ Got:
 Expected:
 | <title>
 |   "setting head's innerHTML"
-resources/tests5.dat:
-2
-7
-8
+resources/tests5.dat: PASS
 
-Test 2 of 16 in resources/tests5.dat failed. Input:
-<style> <!-- </style> --> </style>x
-Got:
-| <html>
-|   <head>
-|     <style>
-|       " <!-- "
-|   <body>
-|     " --> x"
-Expected:
-| <html>
-|   <head>
-|     <style>
-|       " <!-- "
-|     " "
-|   <body>
-|     "--> x"
-
-Test 7 of 16 in resources/tests5.dat failed. Input:
-<script> <!-- </script> --> </script>x
-Got:
-| <html>
-|   <head>
-|     <script>
-|       " <!-- "
-|   <body>
-|     " --> x"
-Expected:
-| <html>
-|   <head>
-|     <script>
-|       " <!-- "
-|     " "
-|   <body>
-|     "--> x"
-
-Test 8 of 16 in resources/tests5.dat failed. Input:
-<title> <!-- </title> --> </title>x
-Got:
-| <html>
-|   <head>
-|     <title>
-|       " <!-- "
-|   <body>
-|     " --> x"
-Expected:
-| <html>
-|   <head>
-|     <title>
-|       " <!-- "
-|     " "
-|   <body>
-|     "--> x"
 resources/tests6.dat:
-1
-8
-9
-10
-11
-12
 26
 27
 30
 37
 44
 45
-46
 47
-
-Test 1 of 51 in resources/tests6.dat failed. Input:
-<!doctype html></head> <head>
-Got:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     " "
-Expected:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   " "
-|   <body>
-
-Test 8 of 51 in resources/tests6.dat failed. Input:
-<frameset></frameset>
-foo
-Got:
-| <html>
-|   <head>
-|   <frameset>
-Expected:
-| <html>
-|   <head>
-|   <frameset>
-|   "
-"
-
-Test 9 of 51 in resources/tests6.dat failed. Input:
-<frameset></frameset>
-<noframes>
-Got:
-| <html>
-|   <head>
-|   <frameset>
-|   <noframes>
-Expected:
-| <html>
-|   <head>
-|   <frameset>
-|   "
-"
-|   <noframes>
-
-Test 10 of 51 in resources/tests6.dat failed. Input:
-<frameset></frameset>
-<div>
-Got:
-| <html>
-|   <head>
-|   <frameset>
-Expected:
-| <html>
-|   <head>
-|   <frameset>
-|   "
-"
-
-Test 11 of 51 in resources/tests6.dat failed. Input:
-<frameset></frameset>
-</html>
-Got:
-| <html>
-|   <head>
-|   <frameset>
-Expected:
-| <html>
-|   <head>
-|   <frameset>
-|   "
-"
-
-Test 12 of 51 in resources/tests6.dat failed. Input:
-<frameset></frameset>
-</div>
-Got:
-| <html>
-|   <head>
-|   <frameset>
-Expected:
-| <html>
-|   <head>
-|   <frameset>
-|   "
-"
 
 Test 26 of 51 in resources/tests6.dat failed. Input:
 <table><colgroup>foo
@@ -709,18 +479,6 @@ Expected:
 | <head>
 | <body>
 
-Test 46 of 51 in resources/tests6.dat failed. Input:
-<html><frameset></frameset></html> 
-Got:
-| <html>
-|   <head>
-|   <frameset>
-Expected:
-| <html>
-|   <head>
-|   <frameset>
-|   " "
-
 Test 47 of 51 in resources/tests6.dat failed. Input:
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"><html></html>
 Got:
@@ -735,8 +493,6 @@ Expected:
 |   <body>
 resources/tests7.dat:
 6
-7
-8
 16
 24
 27
@@ -772,34 +528,6 @@ Expected:
 |             <meta>
 |             <table>
 |               " "
-
-Test 7 of 30 in resources/tests7.dat failed. Input:
-<!doctype html><html> <head>
-Got:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     " "
-Expected:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-
-Test 8 of 30 in resources/tests7.dat failed. Input:
-<!doctype html> <head>
-Got:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     " "
-Expected:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
 
 Test 16 of 30 in resources/tests7.dat failed. Input:
 <!doctype html><table>X<input type=hidDEN></table>

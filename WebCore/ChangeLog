@@ -1,3 +1,20 @@
+2010-07-08  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Handle whitespace correctly
+        https://bugs.webkit.org/show_bug.cgi?id=41907
+
+        This patch introduces an extra memcpy in the character token pipeline.
+        I'll remove the memcpy in a future patch.
+
+        * html/HTMLConstructionSite.cpp:
+        (WebCore::HTMLConstructionSite::insertTextNode):
+        * html/HTMLConstructionSite.h:
+        * html/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::processCharacter):
+        * html/HTMLTreeBuilder.h:
+
 2010-07-09  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

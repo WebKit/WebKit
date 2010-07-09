@@ -219,18 +219,18 @@ void HTMLConstructionSite::insertScriptElement(AtomicHTMLToken& token)
     m_openElements.push(attach(currentElement(), element.release()));
 }
 
-void HTMLConstructionSite::insertTextNode(AtomicHTMLToken& token)
+void HTMLConstructionSite::insertTextNode(const String& characters)
 {
     if (Node* lastChild = currentElement()->lastChild()) {
         if (lastChild->isTextNode()) {
             // FIXME: We're only supposed to append to this text node if it
             // was the last text node inserted by the parser.
             CharacterData* textNode = static_cast<CharacterData*>(lastChild);
-            textNode->parserAppendData(token.characters());
+            textNode->parserAppendData(characters);
             return;
         }
     }
-    attach(currentElement(), Text::create(m_document, token.characters()));
+    attach(currentElement(), Text::create(m_document, characters));
 }
 
 PassRefPtr<Element> HTMLConstructionSite::createHTMLElement(AtomicHTMLToken& token)
