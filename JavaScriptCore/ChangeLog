@@ -1,3 +1,62 @@
+2010-07-08  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Property declarations in an object literal should not consider the prototype chain when being added to the new object
+        https://bugs.webkit.org/show_bug.cgi?id=41929
+
+        To fix this all we need to do is ensure that all new properties are
+        added with putDirect rather than a fully generic call to put.  This
+        is safe as an object literal is by definition going to produce a
+        completely normal object.
+
+        Rather than duplicating all the put_by_id logic we add an additional
+        flag to op_put_by_id to indicate it should be using putDirect.  In
+        the interpreter this adds a runtime branch, but in the jit this is
+        essentially free as the branch is taken at compile time.  This does
+        actually improve object literal creation time even in the interpreter
+        as we no longer need to walk the prototype chain to verify that the
+        cached put is safe.
+
+        We still emit normal put_by_id code when emitting __proto__ as we want
+        to get the correct handling for changing the prototype.
+
+        Sunspider claims this is a 0.7% speedup which is conceivably real due
+        to the performance improvement in object literals, but I suspect its
+        really just the result of code motion.
+
+        * bytecode/Opcode.h:
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitPutById):
+        (JSC::BytecodeGenerator::emitDirectPutById):
+        * bytecompiler/BytecodeGenerator.h:
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::PropertyListNode::emitBytecode):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::privateExecute):
+        * jit/JIT.h:
+        (JSC::JIT::compilePutByIdTransition):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_put_by_id):
+        (JSC::JIT::emitSlow_op_put_by_id):
+        (JSC::JIT::privateCompilePutByIdTransition):
+        (JSC::JIT::patchPutByIdReplace):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emitSlow_op_put_by_id):
+        (JSC::JIT::privateCompilePutByIdTransition):
+        (JSC::JIT::patchPutByIdReplace):
+        * jit/JITStubs.cpp:
+        (JSC::JITThunks::tryCachePutByID):
+        (JSC::DEFINE_STUB_FUNCTION):
+        * jit/JITStubs.h:
+        (JSC::):
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::JSGlobalData):
+        * runtime/JSObject.h:
+        (JSC::JSObject::putDirect):
+        (JSC::JSValue::putDirect):
+        * runtime/JSValue.h:
+
 2010-07-08  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Sam Weinig.

@@ -3004,6 +3004,7 @@ BUGAWONG WIN LINUX MAC : ietestcenter/Javascript/15.4.4.14-3-7.html = TEXT
 BUGAWONG WIN LINUX MAC : ietestcenter/Javascript/15.4.4.14-3-8.html = TEXT
 BUGAWONG WIN LINUX MAC : ietestcenter/Javascript/15.4.4.14-4-9.html = TEXT
 BUGAWONG WIN LINUX MAC : ietestcenter/Javascript/15.4.4.14-9-a-12.html = TEXT
+BUGAWONG WIN LINUX MAC : ietestcenter/Javascript/15.4.4.14-9-b-i-6.html = TEXT
 BUGAWONG WIN LINUX MAC : ietestcenter/Javascript/15.4.4.15-3-12.html = TEXT
 BUGAWONG WIN LINUX MAC : ietestcenter/Javascript/15.4.4.15-3-13.html = TEXT
 BUGAWONG WIN LINUX MAC : ietestcenter/Javascript/15.4.4.15-3-24.html = TEXT
@@ -3019,6 +3020,7 @@ BUGAWONG WIN LINUX MAC : ietestcenter/Javascript/15.4.4.15-5-16.html = TEXT
 BUGAWONG WIN LINUX MAC : ietestcenter/Javascript/15.4.4.15-5-4.html = TEXT
 BUGAWONG WIN LINUX MAC : ietestcenter/Javascript/15.4.4.15-8-9.html = TEXT
 BUGAWONG WIN LINUX MAC : ietestcenter/Javascript/15.4.4.15-8-a-12.html = TEXT
+BUGAWONG WIN LINUX MAC : ietestcenter/Javascript/15.4.4.15-8-b-i-6.html = TEXT
 BUGAWONG WIN LINUX MAC : ietestcenter/Javascript/15.5.4.20-4-10.html = TEXT
 BUGAWONG WIN LINUX MAC : ietestcenter/Javascript/15.5.4.20-4-18.html = TEXT
 BUGAWONG WIN LINUX MAC : ietestcenter/Javascript/15.5.4.20-4-34.html = TEXT
@@ -3045,3 +3047,4 @@ BUGAWONG WIN LINUX MAC : fast/js/object-literal-syntax.html = TEXT
 
 // Likely from r62862. Probably just needs rebaseline.
 BUGAWONG WIN LINUX MAC : fast/js/no-semi-insertion-at-end-of-script.html = TEXT
+BUGAWONG WIN LINUX MAC : fast/js/object-literal-direct-put.html = TEXT

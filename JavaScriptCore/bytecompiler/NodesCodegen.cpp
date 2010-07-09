@@ -266,7 +266,7 @@ RegisterID* PropertyListNode::emitBytecode(BytecodeGenerator& generator, Registe
         
         switch (p->m_node->m_type) {
             case PropertyNode::Constant: {
-                generator.emitPutById(newObj.get(), p->m_node->name(), value);
+                generator.emitDirectPutById(newObj.get(), p->m_node->name(), value);
                 break;
             }
             case PropertyNode::Getter: {
