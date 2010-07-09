@@ -1,3 +1,26 @@
+2010-07-09  Kenneth Rohde Christiansen  <kenneth.christiansen@openbossa.org>
+
+        Reviewed by Antti Koivisto.
+
+        Implement MiniBrowser for Qt.
+        https://bugs.webkit.org/show_bug.cgi?id=40233
+
+        * MiniBrowser/qt/BrowserWindow.cpp: Added.
+        (createNewPage):
+        (BrowserView::BrowserView):
+        (BrowserView::resizeEvent):
+        (BrowserView::load):
+        (BrowserView::view):
+        (BrowserWindow::BrowserWindow):
+        (BrowserWindow::load):
+        (BrowserWindow::changeLocation):
+        (BrowserWindow::~BrowserWindow):
+        * MiniBrowser/qt/BrowserWindow.h: Added.
+        (BrowserView::~BrowserView):
+        * MiniBrowser/qt/MiniBrowser.pro: Added.
+        * MiniBrowser/qt/main.cpp: Added.
+        (main):
+
 2010-07-09  Jedrzej Nowacki  <jedrzej.nowacki@nokia.com>
 
         Reviewed by Simon Hausmann.
