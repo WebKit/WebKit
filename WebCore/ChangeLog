@@ -1,3 +1,19 @@
+2010-07-09  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        Crash with uniform array test
+        https://bugs.webkit.org/show_bug.cgi?id=36028
+
+        * bindings/v8/custom/V8WebGLRenderingContextCustom.cpp:
+        (WebCore::vertexAttribAndUniformHelperf):
+        (WebCore::uniformHelperi):
+        (WebCore::uniformMatrixHelper):
+         - Fixed type tests and casting of incoming arrays.
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::getUniform):
+         - Fixed crash when null WebGLUniform is passed to getUniform.
+
 2010-07-09  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler.

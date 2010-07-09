@@ -90,7 +90,7 @@ var typeInfos = [
     setter: 'uniform1fv',
     elem: '',
     numSrcValues: 3,
-    badSet: function(loc) {
+    invalidSet: function(loc) {
       gl.uniform2fv(loc, [1, 2]);
     },
     srcValueAsString: function(index, srcValues) {
@@ -113,8 +113,11 @@ var typeInfos = [
     setter: 'uniform2fv',
     elem: '[1]',
     numSrcValues: 3,
-    badSet: function(loc) {
+    invalidSet: function(loc) {
       gl.uniform1fv(loc, [2]);
+    },
+    illegalSet: function(loc) {
+      gl.uniform1fv(loc, 2);
     },
     srcValueAsString: function(index, srcValues) {
       return "[" + srcValues[index * 2 + 0].toString() + ", " +
@@ -140,8 +143,11 @@ var typeInfos = [
     setter: 'uniform3fv',
     elem: '[2]',
     numSrcValues: 3,
-    badSet: function(loc) {
+    invalidSet: function(loc) {
       gl.uniform1fv(loc, [2]);
+    },
+    illegalSet: function(loc) {
+      gl.uniform1fv(loc, 2);
     },
     srcValueAsString: function(index, srcValues) {
       return "[" + srcValues[index * 3 + 0].toString() + ", " +
@@ -170,8 +176,11 @@ var typeInfos = [
     setter: 'uniform4fv',
     elem: '[3]',
     numSrcValues: 3,
-    badSet: function(loc) {
+    invalidSet: function(loc) {
       gl.uniform1fv(loc, [2]);
+    },
+    illegalSet: function(loc) {
+      gl.uniform1fv(loc, 2);
     },
     srcValueAsString: function(index, srcValues) {
       return "[" + srcValues[index * 4 + 0].toString() + ", " +
@@ -248,9 +257,18 @@ for (var tt = 0; tt < typeInfos.length; ++tt) {
               ") matches value pulled out (" +
               typeInfo.returnValueAsString(value) + ")");
   }
-  typeInfo.badSet(loc);
+  typeInfo.invalidSet(loc);
   assertMsg(gl.getError() == gl.INVALID_OPERATION,
             "using the wrong size of gl.Uniform fails");
+  var exceptionCaught = false;
+  if (typeInfo.illegalSet) {
+    try {
+      typeInfo.illegalSet(loc);
+    } catch (e) {
+      exceptionCaught = true;
+    }
+    assertMsg(exceptionCaught, "passing non-array to glUniform*fv should throw TypeError");
+  }
 
   gl.useProgram(null);
   assertMsg(gl.getError() == gl.NO_ERROR,

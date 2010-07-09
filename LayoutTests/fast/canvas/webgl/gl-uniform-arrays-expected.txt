@@ -42,6 +42,7 @@ PASS can get location of element 2 of array from gl.getUniformLocation
 PASS can get value of element 2 of array from gl.getUniform
 PASS value put in ([12, 11]) matches value pulled out ([12, 11])
 PASS using the wrong size of gl.Uniform fails
+PASS passing non-array to glUniform*fv should throw TypeError
 PASS can call gl.useProgram(null)
 
 check vec3
@@ -62,6 +63,7 @@ PASS can get location of element 2 of array from gl.getUniformLocation
 PASS can get value of element 2 of array from gl.getUniform
 PASS value put in ([10, 9, 8]) matches value pulled out ([10, 9, 8])
 PASS using the wrong size of gl.Uniform fails
+PASS passing non-array to glUniform*fv should throw TypeError
 PASS can call gl.useProgram(null)
 
 check vec4
@@ -82,6 +84,7 @@ PASS can get location of element 2 of array from gl.getUniformLocation
 PASS can get value of element 2 of array from gl.getUniform
 PASS value put in ([8, 7, 6, 5]) matches value pulled out ([8, 7, 6, 5])
 PASS using the wrong size of gl.Uniform fails
+PASS passing non-array to glUniform*fv should throw TypeError
 PASS can call gl.useProgram(null)
 
 PASS successfullyParsed is true
