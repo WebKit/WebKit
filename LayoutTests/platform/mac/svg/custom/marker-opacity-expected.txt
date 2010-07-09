@@ -1,7 +1,7 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
-  RenderSVGRoot {svg} at (0,0) size 800x600
+  RenderSVGRoot {svg} at (88,63) size 306x299
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
       RenderSVGResourceMarker {marker} [id="arrow"] [markerUnits=strokeWidth] [ref at (4,2)] [angle=auto]
         RenderPath {path} at (1,0) size 6x5 [stroke={[type=SOLID] [color=#5555FF] [line cap=ROUND] [line join=ROUND]}] [data="M2.00,0.50 L6.00,2.00 L2.00,3.50"]

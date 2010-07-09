@@ -1,7 +1,7 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 450x500
-  RenderSVGRoot {svg} at (0,0) size 450x500
+  RenderSVGRoot {svg} at (13,31) size 433x222
     RenderSVGText {text} at (158,31) size 134x17 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 134x17
         chunk 1 (middle anchor) text run 1 at (158.00,45.00) startOffset 0 endOffset 19 width 134.00: "Gradient Limit Test"

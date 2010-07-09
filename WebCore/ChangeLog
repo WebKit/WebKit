@@ -1,3 +1,21 @@
+2010-07-08  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Dirk Schulze.
+
+        RenderSVGRoot does not include border/padding while repainting
+        https://bugs.webkit.org/show_bug.cgi?id=41854
+
+        RenderSVGRoot does not include border/padding in the repaint rect.
+        clippedOverflowRectForRepaint() was missing. Affects all DRT results,
+        as <svg> now gets properly sized.
+
+        Test: svg/custom/repaint-moving-svg-and-div.xhtml
+
+        * rendering/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::repaintRectInLocalCoordinates):
+        (WebCore::RenderSVGRoot::clippedOverflowRectForRepaint):
+        * rendering/RenderSVGRoot.h:
+
 2010-07-09  Albert J. Wong  <ajwong@chromium.org>
 
         Reviewed by Nikolas Zimmermann.

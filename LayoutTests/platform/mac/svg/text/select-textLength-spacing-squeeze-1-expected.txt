@@ -1,7 +1,7 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
-  RenderSVGRoot {svg} at (0,0) size 800x600
+  RenderSVGRoot {svg} at (50,5) size 260x55
     RenderSVGContainer {g} at (50,5) size 70x55
       RenderPath {svg:rect} at (50,5) size 70x55 [fill={[type=SOLID] [color=#FF0000] [opacity=0.40]}] [data="M10.00,1.00 L23.40,1.00 L23.40,12.00 L10.00,12.00 Z"]
     RenderSVGText {text} at (10,1) size 52x11 contains 1 chunk(s)

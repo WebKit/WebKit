@@ -1,7 +1,7 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
-  RenderSVGRoot {svg} at (0,0) size 800x600
+  RenderSVGRoot {svg} at (10,30) size 100x60
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
       RenderPath {rect} at (10,10) size 100x100 [fill={[type=SOLID] [color=#008000]}] [data="M10.00,10.00 L110.00,10.00 L110.00,110.00 L10.00,110.00 Z"]
         [clipPath="clip-circle"] RenderSVGResourceClipper {clipPath} at (10,10) size 100x100

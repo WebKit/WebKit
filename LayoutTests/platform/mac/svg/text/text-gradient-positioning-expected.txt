@@ -1,7 +1,7 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x200
-  RenderSVGRoot {svg} at (0,0) size 800x200
+  RenderSVGRoot {svg} at (0,64) size 660x46
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
       RenderSVGResourceLinearGradient {linearGradient} [id="gradient"] [gradientUnits=userSpaceOnUse] [gradientTransform={m=((1.23,0.00)(0.00,1.26)) t=(-38.87,-39.26)}] [start=(120.03,161.07)] [end=(497.52,184.77)]
         RenderSVGGradientStop {stop} [offset=0.00] [color=#FF0000]

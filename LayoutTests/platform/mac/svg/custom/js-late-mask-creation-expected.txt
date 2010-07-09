@@ -1,7 +1,7 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
-  RenderSVGRoot {svg} at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,100) size 800x100
     RenderPath {rect} at (0,100) size 800x100 [fill={[type=SOLID] [color=#0000FF]}] [data="M0.00,100.00 L800.00,100.00 L800.00,200.00 L0.00,200.00 Z"]
       [masker="dynMask"] RenderSVGResourceMasker {mask} at (0,0) size 800x300
     RenderSVGContainer {g} at (0,0) size 0x0

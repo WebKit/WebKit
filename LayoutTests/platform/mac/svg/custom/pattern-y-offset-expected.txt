@@ -1,7 +1,7 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
-  RenderSVGRoot {svg} at (0,0) size 800x600
+  RenderSVGRoot {svg} at (19,19) size 102x62
     RenderSVGResourcePattern {pattern} [id="patternUserSpace"] [patternUnits=userSpaceOnUse] [patternContentUnits=userSpaceOnUse]
       RenderPath {rect} at (0,0) size 51x31 [stroke={[type=SOLID] [color=#008000]}] [fill={[type=SOLID] [color=#0000FF]}] [data="M0.00,0.00 L50.00,0.00 L50.00,30.00 L0.00,30.00 Z"]
     RenderPath {rect} at (19,19) size 102x62 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [id="patternUserSpace"]}] [data="M20.00,20.00 L120.00,20.00 L120.00,80.00 L20.00,80.00 Z"]

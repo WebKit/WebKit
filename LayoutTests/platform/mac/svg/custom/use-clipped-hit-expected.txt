@@ -1,7 +1,7 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
-  RenderSVGRoot {svg} at (0,0) size 800x600
+  RenderSVGRoot {svg} at (29,39) size 142x95
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
     RenderSVGContainer {use} at (29,39) size 142x22
       RenderSVGContainer {g} at (29,39) size 142x22 [transform={m=((1.00,0.00)(0.00,1.00)) t=(100.00,50.00)}]
