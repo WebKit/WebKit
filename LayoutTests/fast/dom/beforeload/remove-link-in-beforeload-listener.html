@@ -1,0 +1,34 @@
+<html>
+<head>
+    <script>
+        if (window.layoutTestController)
+            layoutTestController.dumpAsText();
+
+        document.addEventListener("beforeload", function(event) {
+            event.target.parentElement.removeChild(event.target);
+        }, true);
+    </script>
+    <link rel="stylesheet" href="data:text/css">
+</head>
+<body>
+    <p>This page tests that you can correctly remove a stylesheet link element in its beforeload listener without causing a crash.</p>
+    <div id="console"></div>
+    <script>
+        function print(message, color) 
+        {
+            var paragraph = document.createElement("div");
+            paragraph.appendChild(document.createTextNode(message));
+            paragraph.style.fontFamily = "monospace";
+            if (color)
+                paragraph.style.color = color;
+            document.getElementById("console").appendChild(paragraph);
+        }
+
+        if (document.getElementsByTagName("link").length)
+            print("FAIL", "red");
+        else
+            print("PASS", "green");
+    </script>
+</body>
+</html>
+

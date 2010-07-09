@@ -73,7 +73,11 @@ public:
     // overload from HTMLElement
     virtual void parseMappedAttribute(MappedAttribute*);
 
+    virtual void attach();
+    virtual bool canLazyAttach() { return false; }
+
     void process();
+    static void processCallback(Node*);
 
     virtual void insertedIntoDocument();
     virtual void removedFromDocument();
@@ -112,6 +116,7 @@ protected:
     bool m_isIcon;
     bool m_isDNSPrefetch;
     bool m_createdByParser;
+    bool m_shouldProcessAfterAttach;
 };
 
 } //namespace
