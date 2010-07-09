@@ -1,3 +1,21 @@
+2010-07-08  Tony Gentilcore  <tonyg@chromium.org>
+
+        Reviewed by Nate Chapin.
+
+        Implement unloadEventEnd, loadEventStart, and loadEventEnd for Web Timing
+        https://bugs.webkit.org/show_bug.cgi?id=41332
+
+        Expectations are set to FAIL because disabled by default. Passes with --web-timing.
+
+        * fast/dom/script-tests/webtiming.js: Added.
+        (sleepFiftyMilliseconds):
+        (shouldBeGreaterThanOrEqual):
+        (checkTimingBeforeLoad):
+        (checkWebTimingOnLoad):
+        (checkWebTimingAfterLoad):
+        * fast/dom/webtiming-expected.txt: Added.
+        * fast/dom/webtiming.html: Added.
+
 2010-07-09  Aaron Boodman  <aa@chromium.org>
 
         Reviewed by Ojan Vafai.

@@ -449,6 +449,7 @@ void FrameLoader::stopLoading(UnloadEventPolicy unloadEventPolicy, DatabasePolic
                         m_frame->domWindow()->dispatchEvent(PageTransitionEvent::create(eventNames().pagehideEvent, m_frame->document()->inPageCache()), m_frame->document());
                     if (!m_frame->document()->inPageCache())
                         m_frame->domWindow()->dispatchEvent(Event::create(eventNames().unloadEvent, false, false), m_frame->domWindow()->document());
+                    m_frameLoadTimeline.unloadEventEnd = currentTime();
                 }
                 m_pageDismissalEventBeingDispatched = false;
                 if (m_frame->document())
@@ -1498,6 +1499,8 @@ void FrameLoader::loadWithDocumentLoader(DocumentLoader* loader, FrameLoadType t
 
     if (m_pageDismissalEventBeingDispatched)
         return;
+
+    m_frameLoadTimeline = FrameLoadTimeline();
 
     policyChecker()->setLoadType(type);
     RefPtr<FormState> formState = prpFormState;

@@ -47,7 +47,10 @@ public:
     Frame* frame() const;
     void disconnectFrame();
 
-    unsigned long navigationStart() const;
+    unsigned long long navigationStart() const;
+    unsigned long long unloadEventEnd() const;
+    unsigned long long loadEventStart() const;
+    unsigned long long loadEventEnd() const;
 
 private:
     Timing(Frame*);

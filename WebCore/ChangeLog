@@ -1,3 +1,29 @@
+2010-07-08  Tony Gentilcore  <tonyg@chromium.org>
+
+        Reviewed by Nate Chapin.
+
+        Implement unloadEventEnd, loadEventStart, and loadEventEnd for Web Timing
+        https://bugs.webkit.org/show_bug.cgi?id=41332
+
+        Test: fast/dom/webtiming.html
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::stopLoading):
+        (WebCore::FrameLoader::loadWithDocumentLoader):
+        * loader/FrameLoader.h:
+        (WebCore::FrameLoader::frameLoadTimeline):
+        * loader/FrameLoaderTypes.h:
+        (WebCore::FrameLoadTimeline::FrameLoadTimeline):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::dispatchLoadEvent):
+        * page/Timing.cpp:
+        (WebCore::Timing::navigationStart):
+        (WebCore::Timing::unloadEventEnd):
+        (WebCore::Timing::loadEventStart):
+        (WebCore::Timing::loadEventEnd):
+        * page/Timing.h:
+        * page/Timing.idl:
+
 2010-07-09  Dumitru Daniliuc  <dumi@chromium.org>
 
         Unreviewed, but pre-approved by Eric Seidel.

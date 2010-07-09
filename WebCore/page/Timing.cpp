@@ -52,12 +52,36 @@ void Timing::disconnectFrame()
     m_frame = 0;
 }
 
-unsigned long Timing::navigationStart() const
+unsigned long long Timing::navigationStart() const
 {
     if (!m_frame)
         return 0;
 
     return 0; // FIXME
+}
+
+unsigned long long Timing::unloadEventEnd() const
+{
+    if (!m_frame)
+        return 0;
+
+    return static_cast<unsigned long long>(m_frame->loader()->frameLoadTimeline()->unloadEventEnd * 1000);
+}
+
+unsigned long long Timing::loadEventStart() const
+{
+    if (!m_frame)
+        return 0;
+
+    return static_cast<unsigned long long>(m_frame->loader()->frameLoadTimeline()->loadEventStart * 1000);
+}
+
+unsigned long long Timing::loadEventEnd() const
+{
+    if (!m_frame)
+        return 0;
+
+    return static_cast<unsigned long long>(m_frame->loader()->frameLoadTimeline()->loadEventEnd * 1000);
 }
 
 } // namespace WebCore
