@@ -26,13 +26,12 @@
 #ifndef PluginView_h
 #define PluginView_h
 
+#include "Plugin.h"
 #include <WebCore/Widget.h>
 
 // FIXME: Eventually this should move to WebCore.
 
 namespace WebKit {
-
-class Plugin;
 
 class PluginView : public WebCore::Widget {
 public:

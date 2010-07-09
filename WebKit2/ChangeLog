@@ -1,3 +1,12 @@
+2010-07-08  Brian Weinstein  <bweinstein@apple.com>
+
+        WebKit2 build fix for Windows.
+
+        * WebProcess/Plugins/PluginView.h: Change the forward declaration of Plugin
+            to an include.
+        * win/WebKit2.vcproj: Update the include paths for Release to match Debug, and
+            add some files to the vcproj that were added on Mac.
+
 2010-07-08  Sam Weinig  <sam@webkit.org>
 
         Attempt to fix the windows build.
