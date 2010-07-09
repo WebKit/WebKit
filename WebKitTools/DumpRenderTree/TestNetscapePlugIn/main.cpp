@@ -89,10 +89,8 @@ NPError NPP_New(NPMIMEType pluginType, NPP instance, uint16_t mode, int16_t argc
     if (!supportsCoreGraphics)
         return NPERR_INCOMPATIBLE_VERSION_ERROR;
 
-#if !defined(BUILDING_ON_TIGER)
     NPDrawingModel drawingModelToUse = NPDrawingModelCoreGraphics;
-#endif
-    
+
     NPBool supportsCoreAnimation;
     if (browser->getvalue(instance, NPNVsupportsCoreAnimationBool, &supportsCoreAnimation) != NPERR_NO_ERROR)
         supportsCoreAnimation = false;
@@ -189,10 +187,12 @@ NPError NPP_New(NPMIMEType pluginType, NPP instance, uint16_t mode, int16_t argc
             obj->testKeyboardFocusForPlugins = TRUE;
     }
 
-#if XP_MACOSX && !defined(BUILDING_ON_TIGER)
+#if XP_MACOSX
     browser->setvalue(instance, NPPVpluginDrawingModel, (void *)drawingModelToUse);
+#if !defined(BUILDING_ON_TIGER)
     if (drawingModelToUse == NPDrawingModelCoreAnimation)
         obj->coreAnimationLayer = createCoreAnimationLayer();
+#endif
 #endif
 
     browser->getvalue(instance, NPNVprivateModeBool, (void *)&obj->cachedPrivateBrowsingMode);

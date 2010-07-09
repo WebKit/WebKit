@@ -1,3 +1,11 @@
+2010-07-08  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix Tiger plugin test failures; the #ifdefs were incorrect, resulting
+        in the drawing model never getting set on Tiger.
+
+        * DumpRenderTree/TestNetscapePlugIn/main.cpp:
+        (NPP_New):
+
 2010-07-08  Aaron Boodman  <aa@chromium.org>
 
         Reviewed by Timothy Hatcher.
