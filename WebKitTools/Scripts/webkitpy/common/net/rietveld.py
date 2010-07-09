@@ -73,6 +73,6 @@ class Rietveld(object):
 
         # Use RealMain instead of calling upload from the commandline so that
         # we can pass in the diff ourselves. Otherwise, upload will just use
-        # git diff for git checkouts, which doesn't respect --squash and --git-commit.
+        # git diff for git checkouts, which doesn't respect --git-commit.
         issue, patchset = upload.RealMain(args, data=diff)
         return issue

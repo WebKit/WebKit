@@ -115,7 +115,7 @@ def main():
     if paths:
         file_reader.process_paths(paths)
     else:
-        patch = checkout.create_patch(options.git_commit, options.squash)
+        patch = checkout.create_patch(options.git_commit)
         patch_checker = PatchReader(file_reader)
         patch_checker.check(patch)
 

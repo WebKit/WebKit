@@ -41,8 +41,6 @@ class ValidateReviewer(AbstractStep):
     def options(cls):
         return AbstractStep.options() + [
             Options.git_commit,
-            Options.no_squash,
-            Options.squash,
         ]
 
     # FIXME: This should probably move onto ChangeLogEntry

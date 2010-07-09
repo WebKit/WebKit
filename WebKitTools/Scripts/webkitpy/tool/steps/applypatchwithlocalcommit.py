@@ -39,5 +39,5 @@ class ApplyPatchWithLocalCommit(ApplyPatch):
     def run(self, state):
         ApplyPatch.run(self, state)
         if self._options.local_commit:
-            commit_message = self._tool.checkout().commit_message_for_this_commit(git_commit=None, squash=False)
+            commit_message = self._tool.checkout().commit_message_for_this_commit(git_commit=None)
             self._tool.scm().commit_locally_with_message(commit_message.message() or state["patch"].name())

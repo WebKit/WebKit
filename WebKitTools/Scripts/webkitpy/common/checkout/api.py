@@ -83,16 +83,16 @@ class Checkout(object):
     def bug_id_for_revision(self, revision):
         return self.commit_info_for_revision(revision).bug_id()
 
-    def modified_changelogs(self, git_commit, squash):
+    def modified_changelogs(self, git_commit):
         # SCM returns paths relative to scm.checkout_root
         # Callers (especially those using the ChangeLog class) may
         # expect absolute paths, so this method returns absolute paths.
-        changed_files = self._scm.changed_files(git_commit, squash)
+        changed_files = self._scm.changed_files(git_commit)
         absolute_paths = [os.path.join(self._scm.checkout_root, path) for path in changed_files]
         return [path for path in absolute_paths if self._is_path_to_changelog(path)]
 
-    def commit_message_for_this_commit(self, git_commit, squash):
-        changelog_paths = self.modified_changelogs(git_commit, squash)
+    def commit_message_for_this_commit(self, git_commit):
+        changelog_paths = self.modified_changelogs(git_commit)
         if not len(changelog_paths):
             raise ScriptError(message="Found no modified ChangeLogs, cannot create a commit message.\n"
                               "All changes require a ChangeLog.  See:\n"
@@ -109,9 +109,9 @@ class Checkout(object):
         # FIXME: We should sort and label the ChangeLog messages like commit-log-editor does.
         return CommitMessage("".join(changelog_messages).splitlines())
 
-    def bug_id_for_this_commit(self, git_commit, squash):
+    def bug_id_for_this_commit(self, git_commit):
         try:
-            return parse_bug_id(self.commit_message_for_this_commit(git_commit, squash).message())
+            return parse_bug_id(self.commit_message_for_this_commit(git_commit).message())
         except ScriptError, e:
             pass # We might not have ChangeLogs.
 
@@ -131,7 +131,7 @@ class Checkout(object):
 
         # We revert the ChangeLogs because removing lines from a ChangeLog
         # doesn't make sense.  ChangeLogs are append only.
-        changelog_paths = self.modified_changelogs(git_commit=None, squash=False)
+        changelog_paths = self.modified_changelogs(git_commit=None)
         if len(changelog_paths):
             self._scm.revert_files(changelog_paths)
 

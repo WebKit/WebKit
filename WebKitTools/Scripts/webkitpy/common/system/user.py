@@ -51,7 +51,7 @@ except ImportError:
 
 
 class User(object):
-    # FIXME: These are @classmethods because scm.py and bugzilla.py don't have a Tool object (thus no User instance).
+    # FIXME: These are @classmethods because bugzilla.py doesn't have a Tool object (thus no User instance).
     @classmethod
     def prompt(cls, message, repeat=1, raw_input=raw_input):
         response = None

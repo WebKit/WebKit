@@ -147,8 +147,7 @@ class CommandOptionValues(object):
                  git_commit=None,
                  is_verbose=False,
                  min_confidence=1,
-                 output_format="emacs",
-                 squash=False):
+                 output_format="emacs"):
         if filter_rules is None:
             filter_rules = []
 
@@ -167,7 +166,6 @@ class CommandOptionValues(object):
         self.is_verbose = is_verbose
         self.min_confidence = min_confidence
         self.output_format = output_format
-        self.squash = squash
 
     # Useful for unit testing.
     def __eq__(self, other):
@@ -181,8 +179,6 @@ class CommandOptionValues(object):
         if self.min_confidence != other.min_confidence:
             return False
         if self.output_format != other.output_format:
-            return False
-        if self.squash != other.squash:
             return False
 
         return True
@@ -218,8 +214,6 @@ class ArgumentPrinter(object):
             flags['filter'] = ",".join(filter_rules)
         if options.git_commit:
             flags['git-commit'] = options.git_commit
-        if options.squash:
-            flags['squash'] = options.squash
 
         flag_string = ''
         # Alphabetizing lets us unit test this method.
@@ -309,7 +303,7 @@ class ArgumentParser(object):
         parser.add_option("-f", "--filter-rules", metavar="RULES",
                           dest="filter_value", help=filter_help)
 
-        git_commit_help = ("check all changes in the given git commit. "
+        git_commit_help = ("check all changes in the given commit. "
                            "Use 'commit_id..' to check all changes after commmit_id")
         parser.add_option("-g", "--git-diff", "--git-commit",
                           metavar="COMMIT", dest="git_commit", help=git_commit_help,)
@@ -329,14 +323,6 @@ class ArgumentParser(object):
                           choices=["emacs", "vs7"],
                           dest="output_format", default=default_output_format,
                           help=output_format_help)
-
-        squash_help = ("All diffs from the remote branch are checked."
-                       "If excluded, prompts whether to squash when there are multiple commits.")
-        parser.add_option("-s", "--squash", action="store_true", dest="squash", help=squash_help)
-
-        squash_help = ("Only working copy diffs are checked."
-                       "If excluded, prompts whether to squash when there are multiple commits.")
-        parser.add_option("--no-squash", action="store_false", dest="squash", help=squash_help)
 
         verbose_help = "enable verbose logging."
         parser.add_option("-v", "--verbose", dest="is_verbose", default=False,
@@ -458,8 +444,7 @@ class ArgumentParser(object):
                                       git_commit=git_commit,
                                       is_verbose=is_verbose,
                                       min_confidence=min_confidence,
-                                      output_format=output_format,
-                                      squash=options.squash)
+                                      output_format=output_format)
 
         return (paths, options)
 

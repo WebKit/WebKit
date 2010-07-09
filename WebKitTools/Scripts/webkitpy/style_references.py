@@ -67,6 +67,6 @@ class WebKitCheckout(object):
         """Return the checkout root as an absolute path."""
         return self._scm.checkout_root
 
-    def create_patch(self, git_commit, squash):
-        return self._scm.create_patch(git_commit, squash)
+    def create_patch(self, git_commit):
+        return self._scm.create_patch(git_commit)
 

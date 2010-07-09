@@ -36,7 +36,7 @@ class PrepareChangeLogForRevert(AbstractStep):
     def run(self, state):
         # This could move to prepare-ChangeLog by adding a --revert= option.
         self._run_script("prepare-ChangeLog")
-        changelog_paths = self._tool.checkout().modified_changelogs(git_commit=None, squash=False)
+        changelog_paths = self._tool.checkout().modified_changelogs(git_commit=None)
         bug_url = self._tool.bugs.bug_url_for_bug_id(state["bug_id"]) if state["bug_id"] else None
         for changelog_path in changelog_paths:
             # FIXME: Seems we should prepare the message outside of changelogs.py and then just pass in

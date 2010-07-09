@@ -40,8 +40,6 @@ class UpdateChangeLogsWithReviewer(AbstractStep):
         return AbstractStep.options() + [
             Options.git_commit,
             Options.reviewer,
-            Options.no_squash,
-            Options.squash,
         ]
 
     def _guess_reviewer_from_bug(self, bug_id):

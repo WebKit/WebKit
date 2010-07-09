@@ -27,6 +27,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 from webkitpy.common.system.deprecated_logging import log
+from webkitpy.common.system.executive import ScriptError
 from webkitpy.common.config.ports import WebKitPort
 from webkitpy.tool.steps.options import Options
 
@@ -34,6 +35,10 @@ from webkitpy.tool.steps.options import Options
 class AbstractStep(object):
     def __init__(self, tool, options):
         self._tool = tool
+        if options.no_squash:
+            raise ScriptError('--no-squash has been removed. Use "--git-commit=HEAD.." or "-g HEAD.." to operate on the working copy.')
+        if options.squash:
+            raise ScriptError('--squash has been removed. It is now the default behavior if --git-commit is omitted.')
         self._options = options
         self._port = None
 
@@ -53,8 +58,8 @@ class AbstractStep(object):
         return self._port
 
     _well_known_keys = {
-        "diff": lambda self, state: self._tool.scm().create_patch(self._options.git_commit, self._options.squash),
-        "changelogs": lambda self, state: self._tool.checkout().modified_changelogs(self._options.git_commit, self._options.squash),
+        "diff": lambda self, state: self._tool.scm().create_patch(self._options.git_commit),
+        "changelogs": lambda self, state: self._tool.checkout().modified_changelogs(self._options.git_commit),
         "bug_title": lambda self, state: self._tool.bugs.fetch_bug(state["bug_id"]).title(),
     }
 
@@ -69,8 +74,9 @@ class AbstractStep(object):
     @classmethod
     def options(cls):
         return [
-            # We need these options here because cached_lookup uses them.  :(
+            # We need this option here because cached_lookup uses it.  :(
             Options.git_commit,
+            # FIXME: Get rid of these.
             Options.no_squash,
             Options.squash,
         ]

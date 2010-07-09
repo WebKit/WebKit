@@ -93,7 +93,7 @@ If a bug id is provided, or one can be found in the ChangeLog land will update t
 
     def _prepare_state(self, options, args, tool):
         return {
-            "bug_id": (args and args[0]) or tool.checkout().bug_id_for_this_commit(options.git_commit, options.squash),
+            "bug_id": (args and args[0]) or tool.checkout().bug_id_for_this_commit(options.git_commit),
         }
 
 

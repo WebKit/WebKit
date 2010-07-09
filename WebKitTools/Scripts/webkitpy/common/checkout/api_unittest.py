@@ -114,11 +114,11 @@ class CommitMessageForThisCommitTest(unittest.TestCase):
     # ChangeLog is difficult to mock at current.
     def test_commit_message_for_this_commit(self):
         checkout = Checkout(None)
-        checkout.modified_changelogs = lambda git_commit, squash: ["ChangeLog1", "ChangeLog2"]
+        checkout.modified_changelogs = lambda git_commit: ["ChangeLog1", "ChangeLog2"]
         output = OutputCapture()
         expected_stderr = "Parsing ChangeLog: ChangeLog1\nParsing ChangeLog: ChangeLog2\n"
         commit_message = output.assert_outputs(self, checkout.commit_message_for_this_commit,
-            kwargs={"git_commit": None, "squash": False}, expected_stderr=expected_stderr)
+            kwargs={"git_commit": None}, expected_stderr=expected_stderr)
         self.assertEqual(commit_message.message(), self.expected_commit_message)
 
 
@@ -163,13 +163,13 @@ class CheckoutTest(unittest.TestCase):
     def test_bug_id_for_this_commit(self):
         scm = Mock()
         checkout = Checkout(scm)
-        checkout.commit_message_for_this_commit = lambda git_commit, squash: CommitMessage(ChangeLogEntry(_changelog1entry1).contents().splitlines())
-        self.assertEqual(checkout.bug_id_for_this_commit(git_commit=None, squash=False), 36629)
+        checkout.commit_message_for_this_commit = lambda git_commit: CommitMessage(ChangeLogEntry(_changelog1entry1).contents().splitlines())
+        self.assertEqual(checkout.bug_id_for_this_commit(git_commit=None), 36629)
 
     def test_modified_changelogs(self):
         scm = Mock()
         scm.checkout_root = "/foo/bar"
-        scm.changed_files = lambda git_commit, squash: ["file1", "ChangeLog", "relative/path/ChangeLog"]
+        scm.changed_files = lambda git_commit: ["file1", "ChangeLog", "relative/path/ChangeLog"]
         checkout = Checkout(scm)
         expected_changlogs = ["/foo/bar/ChangeLog", "/foo/bar/relative/path/ChangeLog"]
-        self.assertEqual(checkout.modified_changelogs(git_commit=None, squash=False), expected_changlogs)
+        self.assertEqual(checkout.modified_changelogs(git_commit=None), expected_changlogs)

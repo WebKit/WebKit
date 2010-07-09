@@ -1,3 +1,44 @@
+2010-07-09  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        --squash should go away and become the default
+        https://bugs.webkit.org/show_bug.cgi?id=39624
+
+        If there are local commits and working copy changes, then prompt the user
+        whether to continue. Setting git config webkit-patch.commit_should_always_squash
+        true bypasses the prompt.
+
+        --git-commit=HEAD.. operates on working copy changes only.
+        --git-commit=committish operates on a range of commits as a single commit.
+            e.g. --git-commit=HEAD only operates on the HEAD commit.
+            --git-commit=HEAD~4..HEAD~2 will operate on HEAD~3 and HEAD~2 as a single commit.
+
+        --no-squash and --squash are left in with descriptive error messages if used.
+
+        * Scripts/check-webkit-style:
+        * Scripts/webkitpy/common/checkout/api.py:
+        * Scripts/webkitpy/common/checkout/api_unittest.py:
+        * Scripts/webkitpy/common/checkout/scm.py:
+        * Scripts/webkitpy/common/checkout/scm_unittest.py:
+        * Scripts/webkitpy/common/net/rietveld.py:
+        * Scripts/webkitpy/common/system/user.py:
+        * Scripts/webkitpy/style/optparser.py:
+        * Scripts/webkitpy/style_references.py:
+        * Scripts/webkitpy/tool/commands/download.py:
+        * Scripts/webkitpy/tool/commands/upload.py:
+        * Scripts/webkitpy/tool/mocktool.py:
+        * Scripts/webkitpy/tool/steps/abstractstep.py:
+        * Scripts/webkitpy/tool/steps/applypatchwithlocalcommit.py:
+        * Scripts/webkitpy/tool/steps/checkstyle.py:
+        * Scripts/webkitpy/tool/steps/checkstyle_unittest.py: Removed.
+        * Scripts/webkitpy/tool/steps/commit.py:
+        * Scripts/webkitpy/tool/steps/options.py:
+        * Scripts/webkitpy/tool/steps/preparechangelog.py:
+        * Scripts/webkitpy/tool/steps/preparechangelogforrevert.py:
+        * Scripts/webkitpy/tool/steps/updatechangelogswithreviewer.py:
+        * Scripts/webkitpy/tool/steps/validatereviewer.py:
+
 2010-07-09  Mark Rowe  <mrowe@apple.com>
 
         Add two new Windows test build slaves.

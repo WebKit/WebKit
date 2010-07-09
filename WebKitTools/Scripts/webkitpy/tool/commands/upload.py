@@ -53,7 +53,6 @@ class CommitMessageForCurrentDiff(AbstractDeclarativeCommand):
 
     def __init__(self):
         options = [
-            steps.Options.squash,
             steps.Options.git_commit,
         ]
         AbstractDeclarativeCommand.__init__(self, options=options)
@@ -61,7 +60,7 @@ class CommitMessageForCurrentDiff(AbstractDeclarativeCommand):
     def execute(self, options, args, tool):
         # This command is a useful test to make sure commit_message_for_this_commit
         # always returns the right value regardless of the current working directory.
-        print "%s" % tool.checkout().commit_message_for_this_commit(options.git_commit, options.squash).message()
+        print "%s" % tool.checkout().commit_message_for_this_commit(options.git_commit).message()
 
 
 class CleanPendingCommit(AbstractDeclarativeCommand):
@@ -153,7 +152,7 @@ class AbstractPatchUploadingCommand(AbstractSequencedCommand):
         # Perfer a bug id passed as an argument over a bug url in the diff (i.e. ChangeLogs).
         bug_id = args and args[0]
         if not bug_id:
-            bug_id = tool.checkout().bug_id_for_this_commit(options.git_commit, options.squash)
+            bug_id = tool.checkout().bug_id_for_this_commit(options.git_commit)
         return bug_id
 
     def _prepare_state(self, options, args, tool):
@@ -423,11 +422,11 @@ class CreateBug(AbstractDeclarativeCommand):
         if options.prompt:
             (bug_title, comment_text) = self.prompt_for_bug_title_and_comment()
         else:
-            commit_message = tool.checkout().commit_message_for_this_commit(options.git_commit, options.squash)
+            commit_message = tool.checkout().commit_message_for_this_commit(options.git_commit)
             bug_title = commit_message.description(lstrip=True, strip_url=True)
             comment_text = commit_message.body(lstrip=True)
 
-        diff = tool.scm().create_patch(options.git_commit, options.squash)
+        diff = tool.scm().create_patch(options.git_commit)
         bug_id = tool.bugs.create_bug(bug_title, comment_text, options.component, diff, "Patch", cc=options.cc, mark_for_review=options.review, mark_for_commit_queue=options.request_commit)
 
     def prompt_for_bug_title_and_comment(self):
