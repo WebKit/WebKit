@@ -33,6 +33,7 @@ namespace WebKit {
 
 NetscapePlugin::NetscapePlugin(PassRefPtr<NetscapePluginModule> pluginModule)
     : m_pluginModule(pluginModule)
+    , m_npWindow()
 {
     m_npp.ndata = this;
     m_npp.pdata = 0;
@@ -40,6 +41,20 @@ NetscapePlugin::NetscapePlugin(PassRefPtr<NetscapePluginModule> pluginModule)
 
 NetscapePlugin::~NetscapePlugin()
 {
+}
+
+void NetscapePlugin::callSetWindow()
+{
+    m_npWindow.x = m_frameRect.x();
+    m_npWindow.y = m_frameRect.y();
+    m_npWindow.width = m_frameRect.width();
+    m_npWindow.height = m_frameRect.height();
+    m_npWindow.clipRect.top = m_clipRect.y();
+    m_npWindow.clipRect.left = m_clipRect.x();
+    m_npWindow.clipRect.bottom = m_clipRect.bottom();
+    m_npWindow.clipRect.right = m_clipRect.right();
+
+    m_pluginModule->pluginFuncs().setwindow(&m_npp, &m_npWindow);
 }
 
 bool NetscapePlugin::initialize(const KURL&, const Vector<String>& paramNames, const Vector<String>& paramValues, const String& mimeType, bool loadManually)
@@ -50,6 +65,9 @@ bool NetscapePlugin::initialize(const KURL&, const Vector<String>& paramNames, c
     NPError error = m_pluginModule->pluginFuncs().newp(0, &m_npp, mode, 0, 0, 0, 0);
     if (error != NPERR_NO_ERROR)
         return false;
+
+    // FIXME: This is not correct in all cases.
+    m_npWindow.type = NPWindowTypeDrawable;
 
     return true;
 }
@@ -62,8 +80,17 @@ void NetscapePlugin::paint(GraphicsContext* context, const IntRect& dirtyRect)
 {
 }
 
-void NetscapePlugin::geometryDidChange(const IntRect& frameRect)
+void NetscapePlugin::geometryDidChange(const IntRect& frameRect, const IntRect& clipRect)
 {
+    if (m_frameRect == frameRect && m_clipRect == clipRect) {
+        // Nothing to do.
+        return;
+    }
+
+    m_frameRect = frameRect;
+    m_clipRect = clipRect;
+
+    callSetWindow();
 }
 
 } // namespace WebKit

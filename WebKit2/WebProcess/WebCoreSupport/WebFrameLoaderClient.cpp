@@ -770,7 +770,7 @@ void WebFrameLoaderClient::didTransferChildFrameToNewDocument()
     notImplemented();
 }    
 
-PassRefPtr<Widget> WebFrameLoaderClient::createPlugin(const IntSize&, HTMLPlugInElement*, const KURL& url, const Vector<String>& paramNames, const Vector<String>& paramValues, const String& mimeType, bool loadManually)
+PassRefPtr<Widget> WebFrameLoaderClient::createPlugin(const IntSize&, HTMLPlugInElement* pluginElement, const KURL& url, const Vector<String>& paramNames, const Vector<String>& paramValues, const String& mimeType, bool loadManually)
 {
     String pluginPath;
 
@@ -795,7 +795,7 @@ PassRefPtr<Widget> WebFrameLoaderClient::createPlugin(const IntSize&, HTMLPlugIn
     if (!plugin->initialize(url, paramNames, paramValues, mimeType, loadManually))
         return 0;
 
-    return PluginView::create(plugin.release());
+    return PluginView::create(plugin.release(), pluginElement);
 #else
     return 0;
 #endif

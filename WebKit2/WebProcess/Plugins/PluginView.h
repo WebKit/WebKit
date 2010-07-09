@@ -31,17 +31,21 @@
 
 // FIXME: Eventually this should move to WebCore.
 
+namespace WebCore {
+    class HTMLPlugInElement;
+}
+
 namespace WebKit {
 
 class PluginView : public WebCore::Widget {
 public:
-    static PassRefPtr<PluginView> create(PassRefPtr<Plugin> plugin)
+    static PassRefPtr<PluginView> create(PassRefPtr<Plugin> plugin, WebCore::HTMLPlugInElement* pluginElement)
     {
-        return adoptRef(new PluginView(plugin));
+        return adoptRef(new PluginView(plugin, pluginElement));
     }
 
 private:
-    PluginView(PassRefPtr<Plugin>);
+    PluginView(PassRefPtr<Plugin>, WebCore::HTMLPlugInElement*);
     virtual ~PluginView();
 
     void viewGeometryDidChange();
@@ -54,6 +58,7 @@ private:
     virtual void setParent(WebCore::ScrollView*);
 
     RefPtr<Plugin> m_plugin;
+    WebCore::HTMLPlugInElement* m_pluginElement;
 };
 
 } // namespace WebKit

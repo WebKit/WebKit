@@ -57,7 +57,7 @@ void DummyPlugin::paint(GraphicsContext* context, const IntRect& dirtyRect)
 #endif    
 }
     
-void DummyPlugin::geometryDidChange(const IntRect& frameRect)
+void DummyPlugin::geometryDidChange(const IntRect& frameRect, const IntRect& clipRect)
 {
 }
 

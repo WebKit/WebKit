@@ -1,5 +1,51 @@
 2010-07-09  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        Pass a clip rect to the plugin and call NPP_SetWindow
+        https://bugs.webkit.org/show_bug.cgi?id=41969
+
+        * WebProcess/Plugins/DummyPlugin.cpp:
+        (WebKit::DummyPlugin::geometryDidChange):
+        * WebProcess/Plugins/DummyPlugin.h:
+        Add clip rect parameter.
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::NetscapePlugin):
+        Initialize m_npWindow.
+
+        (WebKit::NetscapePlugin::callSetWindow):
+        Call NPP_SetWindow.
+
+        (WebKit::NetscapePlugin::initialize):
+        Set the window type to NPWindowTypeDrawable for now.
+
+        (WebKit::NetscapePlugin::geometryDidChange):
+        Update the frame and clip rects and call NPP_SetWindow.
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.h:
+        Add an NPWindow member variable.
+
+        * WebProcess/Plugins/Plugin.h:
+        Add a clipRect parameter to geometryDidChange.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::PluginView):
+        Add the plug-in element to the constructor.
+        
+        (WebKit::PluginView::viewGeometryDidChange):
+        Compute the clip rect and pass it to the plug-in.
+
+        * WebProcess/Plugins/PluginView.h:
+        (WebKit::PluginView::create):
+        Pass the plug-in element to the constructor.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::createPlugin):
+        Pass the plug-in element to PluginView::create.
+
+2010-07-09  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Simon Fraser.
 
         Instantiate Netscape plug-ins, pass geometry information to Plugin
