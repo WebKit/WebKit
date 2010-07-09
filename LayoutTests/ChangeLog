@@ -5,6 +5,19 @@
         RenderSVGRoot does not include border/padding while repainting
         https://bugs.webkit.org/show_bug.cgi?id=41854
 
+        Last round of qt specific results.
+
+        * platform/qt/fast/repaint/moving-shadow-on-container-expected.txt:
+        * platform/qt/fast/repaint/moving-shadow-on-path-expected.txt:
+        * platform/qt/fast/repaint/svg-layout-root-style-attr-update-expected.txt:
+
+2010-07-09  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Not reviewed.
+
+        RenderSVGRoot does not include border/padding while repainting
+        https://bugs.webkit.org/show_bug.cgi?id=41854
+
         Next round of win specific results.
 
         * platform/win/svg/custom/broken-internal-references-expected.txt:
