@@ -94,6 +94,11 @@ void InsertLineBreakCommand::doApply()
         return;
     
     VisiblePosition caret(selection.visibleStart());
+    // FIXME: If the node is hidden, we should still be able to insert text. 
+    // For now, we return to avoid a crash.  https://bugs.webkit.org/show_bug.cgi?id=40342
+    if (caret.isNull())
+        return;
+
     Position pos(caret.deepEquivalent());
 
     pos = positionAvoidingSpecialElementBoundary(pos);

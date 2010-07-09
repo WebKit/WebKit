@@ -1,3 +1,13 @@
+2010-07-08  Tony Chang  <tony@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        WebCore::InsertLineBreakCommand::shouldUseBreakElement ReadAV@NULL
+        https://bugs.webkit.org/show_bug.cgi?id=30116
+
+        * editing/inserting/return-key-in-hidden-textarea-expected.txt: Added.
+        * editing/inserting/return-key-in-hidden-textarea.html: Added.
+
 2010-07-08  Adam Barth  <abarth@webkit.org>
 
         Unreviewed.
