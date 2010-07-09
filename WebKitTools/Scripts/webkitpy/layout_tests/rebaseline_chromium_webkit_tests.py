@@ -916,8 +916,14 @@ def main():
 
     option_parser.add_option('-d', '--html_directory',
                              default='',
-                             help=('The directory that stores the results for'
-                                   ' rebaselining comparison.'))
+                             help=('The directory that stores the results for '
+                                   'rebaselining comparison.'))
+
+    option_parser.add_option('', '--use_drt',
+                             action='store_true',
+                             default=False,
+                             help=('Use ImageDiff from DumpRenderTree instead '
+                                   'of image_diff for pixel tests.'))
 
     option_parser.add_option('', '--target-platform',
                              default='chromium',

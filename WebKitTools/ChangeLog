@@ -1,3 +1,16 @@
+2010-07-09  Albert J. Wong  <ajwong@chromium.org>
+
+        Reviewed by David Levin.
+
+        rebaseline_chromium_webkit_tests missing --use_drt option on linux
+        https://bugs.webkit.org/show_bug.cgi?id=41985
+
+        This adds in the --use_drt option for rebaseline_chromium_webkit_tests
+        so that it works on linux. This is essentially a "compile-fix" for the
+        script.
+
+        * Scripts/webkitpy/layout_tests/rebaseline_chromium_webkit_tests.py:
+
 2010-07-09  Nico Weber  <thakis@chromium.org>
 
         Unreviewed. Adding myself as committer.
