@@ -1,3 +1,51 @@
+2010-07-09  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Not reviewed.
+
+        RenderSVGRoot does not include border/padding while repainting
+        https://bugs.webkit.org/show_bug.cgi?id=41854
+
+        Update gtk/qt specific results, and 4 mac results I missed.
+
+        * fast/repaint/svg-layout-root-style-attr-update-expected.txt:
+        * platform/gtk/svg/css/shadow-and-opacity-expected.txt:
+        * platform/gtk/svg/custom/broken-internal-references-expected.txt:
+        * platform/gtk/svg/custom/clip-path-id-changes-expected.txt:
+        * platform/gtk/svg/custom/empty-mask-expected.txt:
+        * platform/gtk/svg/custom/fill-opacity-hsl-expected.txt:
+        * platform/gtk/svg/custom/fill-opacity-rgba-expected.txt:
+        * platform/gtk/svg/custom/js-repaint-rect-on-path-with-stroke-expected.txt:
+        * platform/gtk/svg/custom/marker-opacity-expected.txt:
+        * platform/gtk/svg/custom/marker-referencePoint-expected.txt:
+        * platform/gtk/svg/custom/mask-invalidation-expected.txt:
+        * platform/gtk/svg/custom/pattern-excessive-malloc-expected.txt:
+        * platform/gtk/svg/custom/pattern-size-bigger-than-target-size-expected.txt:
+        * platform/gtk/svg/custom/pattern-skew-transformed-expected.txt:
+        * platform/gtk/svg/custom/relative-sized-deep-shadow-tree-content-expected.txt:
+        * platform/gtk/svg/custom/repaint-stroke-width-changes-expected.txt:
+        * platform/gtk/svg/custom/stroke-width-large-expected.txt:
+        * platform/gtk/svg/custom/text-xy-updates-SVGList-expected.txt:
+        * platform/mac/fast/repaint/moving-shadow-on-container-expected.txt:
+        * platform/mac/fast/repaint/moving-shadow-on-path-expected.txt:
+        * platform/mac/transforms/svg-vs-css-expected.txt: 
+        * platform/qt/svg/batik/text/textDecoration-expected.txt:
+        * platform/qt/svg/css/arrow-with-shadow-expected.txt:
+        * platform/qt/svg/css/circle-in-mask-with-shadow-expected.txt:
+        * platform/qt/svg/css/clippath-with-shadow-expected.txt:
+        * platform/qt/svg/css/mask-with-shadow-expected.txt:
+        * platform/qt/svg/css/path-with-shadow-expected.txt:
+        * platform/qt/svg/css/shadow-and-opacity-expected.txt:
+        * platform/qt/svg/css/shadow-with-large-radius-expected.txt:
+        * platform/qt/svg/css/shadow-with-negative-offset-expected.txt:
+        * platform/qt/svg/css/stars-with-shadow-expected.txt:
+        * platform/qt/svg/custom/animation-currentColor-expected.txt:
+        * platform/qt/svg/custom/broken-internal-references-expected.txt:
+        * platform/qt/svg/custom/clip-path-id-changes-expected.txt:
+        * platform/qt/svg/custom/createImageElement-expected.txt:
+        * platform/qt/svg/custom/createImageElement2-expected.txt:
+        * platform/qt/svg/custom/empty-mask-expected.txt:
+        * platform/qt/svg/custom/js-repaint-rect-on-path-with-stroke-expected.txt:
+
 2010-07-09  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
