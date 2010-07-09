@@ -545,6 +545,8 @@ PASS inner.TextEvent.isInner is true
 PASS inner.TextEvent.constructor.isInner is true
 PASS inner.TextMetrics.isInner is true
 PASS inner.TextMetrics.constructor.isInner is true
+PASS inner.TimeRanges.isInner is true
+PASS inner.TimeRanges.constructor.isInner is true
 PASS inner.TouchEvent.isInner is true
 PASS inner.TouchEvent.constructor.isInner is true
 PASS inner.TypeError.isInner is true

@@ -1,5 +1,14 @@
 2010-07-08  Sam Weinig  <sam@webkit.org>
 
+        Update Qt test results.
+
+        * platform/qt/fast/dom/Window/window-properties-expected.txt:
+        * platform/qt/fast/dom/Window/window-property-descriptors-expected.txt:
+        * platform/qt/fast/dom/prototype-inheritance-expected.txt:
+        * platform/qt/fast/js/global-constructors-expected.txt:
+
+2010-07-08  Sam Weinig  <sam@webkit.org>
+
         Update Gtk test results.
 
         * platform/gtk/fast/dom/Window/window-properties-expected.txt:
