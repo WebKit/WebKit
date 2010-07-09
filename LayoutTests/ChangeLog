@@ -1,3 +1,13 @@
+2010-07-09  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed fix.
+
+        [Qt] Add platform specific expected file after r62889.
+        This test say it passes if doesn't crash. It passes, but
+        Qt has an extra newline character in its expected file.
+
+        * platform/qt/editing/inserting/return-key-in-hidden-field-expected.txt: Added.
+
 2010-07-08  Rob Buis  <rwlbuis@gmail.com>
 
         Reviewed by Eric Seidel.
