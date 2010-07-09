@@ -63,6 +63,7 @@ SVGUseElement::SVGUseElement(const QualifiedName& tagName, Document* doc)
     , m_y(LengthModeHeight)
     , m_width(LengthModeWidth)
     , m_height(LengthModeHeight)
+    , m_updatesBlocked(false)
     , m_isPendingResource(false)
     , m_needsShadowTreeRecreation(false)
 {
@@ -314,12 +315,16 @@ void SVGUseElement::updateContainerOffsets()
 void SVGUseElement::recalcStyle(StyleChange change)
 {
     // Eventually mark shadow root element needing style recalc
-    if (needsStyleRecalc() && m_targetElementInstance) {
+    if (needsStyleRecalc() && m_targetElementInstance && !m_updatesBlocked) {
         if (SVGElement* shadowRoot = m_targetElementInstance->shadowTreeElement())
             shadowRoot->setNeedsStyleRecalc();
     }
 
     SVGStyledTransformableElement::recalcStyle(change);
+
+    // Assure that the shadow tree has not been marked for recreation, while we're building it.
+    if (m_updatesBlocked)
+        ASSERT(!m_needsShadowTreeRecreation);
 
     bool needsStyleUpdate = !m_needsShadowTreeRecreation;
     if (m_needsShadowTreeRecreation) {
@@ -441,6 +446,26 @@ void SVGUseElement::buildPendingResource()
 
 void SVGUseElement::buildShadowAndInstanceTree(SVGShadowTreeRootElement* shadowRoot)
 {
+    struct ShadowTreeUpdateBlocker {
+        ShadowTreeUpdateBlocker(SVGUseElement* currentUseElement)
+            : useElement(currentUseElement)
+        {
+            useElement->setUpdatesBlocked(true);
+        }
+
+        ~ShadowTreeUpdateBlocker()
+        {
+            useElement->setUpdatesBlocked(false);
+        }
+
+        SVGUseElement* useElement;
+    };
+
+    // When cloning the target nodes, they may decide to synchronize style and/or animated SVG attributes.
+    // That causes calls to SVGElementInstance::updateAllInstancesOfElement(), which mark the shadow tree for recreation.
+    // Solution: block any updates to the shadow tree while we're building it.
+    ShadowTreeUpdateBlocker blocker(this);
+
     String id = SVGURIReference::getTarget(href());
     Element* targetElement = document()->getElementById(id);
     if (!targetElement) {
@@ -959,6 +984,10 @@ SVGElementInstance* SVGUseElement::instanceForShadowTreeElement(Node* element, S
 
 void SVGUseElement::invalidateShadowTree()
 {
+    // Don't mutate the shadow tree while we're building it.
+    if (m_updatesBlocked)
+        return;
+
     m_needsShadowTreeRecreation = true;
     setNeedsStyleRecalc();
 }

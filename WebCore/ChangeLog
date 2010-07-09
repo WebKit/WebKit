@@ -1,3 +1,23 @@
+2010-07-09  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Rob Buis.
+
+        svg/custom/use-instanceRoot-event-bubbling.xhtml test crashes
+        https://bugs.webkit.org/show_bug.cgi?id=41931
+
+        Be careful to not mutate (marking it for recreation) the shadow tree, while building it.
+        The recent change that cloneNode() properly synchronizes the style/SVG attributes caused this problem.
+
+        Fixes crash seen on the buildbots in svg/custom/use-instanceRoot-event-bubbling.xhtml.
+
+        * svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::SVGUseElement):
+        (WebCore::SVGUseElement::recalcStyle):
+        (WebCore::SVGUseElement::buildShadowAndInstanceTree):
+        (WebCore::SVGUseElement::invalidateShadowTree):
+        * svg/SVGUseElement.h:
+        (WebCore::SVGUseElement::setUpdatesBlocked):
+
 2010-07-09  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
