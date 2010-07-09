@@ -65,10 +65,14 @@ protected:
     void timerEvent(QTimerEvent*);
 
 private:
+#ifndef QT_NO_ACTION
+    Q_PRIVATE_SLOT(d, void _q_webActionTriggered(bool checked));
+#endif
+    QWKPagePrivate* d;
+
     friend class QGraphicsWKView;
     friend class QGraphicsWKViewPrivate;
     friend class QWKPagePrivate;
-    QWKPagePrivate* d;
 };
 
 #endif /* qwkpage_h */

@@ -354,3 +354,5 @@ QAction* QWKPage::action(WebAction action) const
     return a;
 }
 #endif // QT_NO_ACTION
+
+#include "moc_qwkpage.cpp"
