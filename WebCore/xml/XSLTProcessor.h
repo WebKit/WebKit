@@ -67,19 +67,16 @@ public:
     
     // Only for libXSLT callbacks
     XSLStyleSheet* xslStylesheet() const { return m_stylesheet.get(); }
-    Node* sourceNode() const { return m_sourceNode; }
 #endif
 
     typedef HashMap<String, String> ParameterMap;
 
 private:
-    XSLTProcessor() : m_sourceNode(0) { }
+    XSLTProcessor() { }
 
     RefPtr<XSLStyleSheet> m_stylesheet;
     RefPtr<Node> m_stylesheetRootNode;
     ParameterMap m_parameters;
-
-    Node* m_sourceNode; // Source node is only non-null in transformToString(), so this cannot become a dangling pointer.
 };
 
 }

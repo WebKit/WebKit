@@ -1,3 +1,22 @@
+2010-07-09  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r62937.
+        http://trac.webkit.org/changeset/62937
+        https://bugs.webkit.org/show_bug.cgi?id=41955
+
+        Crashes SnowLeopard leaks and Windows debug bot in fast/xsl
+        /xslt-relative-path.xml, with assertion in
+        XSLTProcessorLibxslt.cpp:264 (Requested by WildFox on
+        #webkit).
+
+        * xml/XSLTProcessor.h:
+        (WebCore::XSLTProcessor::XSLTProcessor):
+        * xml/XSLTProcessorLibxslt.cpp:
+        (WebCore::docLoaderFunc):
+        (WebCore::setXSLTLoadCallBack):
+        (WebCore::xsltStylesheetPointer):
+        (WebCore::XSLTProcessor::transformToString):
+
 2010-07-09  Yael Aharon  <yael.aharon@nokia.com>
 
         Reviewed by Laszlo Gombos.
