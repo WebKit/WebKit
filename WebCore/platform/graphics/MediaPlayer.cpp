@@ -53,11 +53,10 @@
 #include "MediaPlayerPrivateQuickTimeVisualContext.h"
 #include "MediaPlayerPrivateQuicktimeWin.h"
 #elif PLATFORM(QT)
-// QtMultimedia support is disabled currently.
-#if 1 || (QT_VERSION < 0x040700)
-#include "MediaPlayerPrivatePhonon.h"
-#else
+#if USE(QT_MULTIMEDIA)
 #include "MediaPlayerPrivateQt.h"
+#else
+#include "MediaPlayerPrivatePhonon.h"
 #endif
 #elif PLATFORM(CHROMIUM)
 #include "MediaPlayerPrivateChromium.h"

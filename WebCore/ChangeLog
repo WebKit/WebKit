@@ -1,3 +1,19 @@
+2010-07-09  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Reviewed by Tor Arne Vestbø.
+
+        [Qt] Re-enable support for QtMultimediaKit as backend for the media elements
+
+        Experimental support is re-enabled if QtMobility is available and the Qt
+        version is 4.7 or above.
+
+        * WebCore.pro:
+        * platform/graphics/MediaPlayer.cpp:
+        * platform/graphics/qt/MediaPlayerPrivateQt.cpp:
+        (WebCore::MediaPlayerPrivate::supportsType): Adapt to latest QtMultimediaKit API changes.
+        (WebCore::MediaPlayerPrivate::MediaPlayerPrivate):
+        (WebCore::MediaPlayerPrivate::totalBytes):
+
 2010-07-09  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Yury Semikhatsky.
