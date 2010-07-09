@@ -220,6 +220,7 @@ public:
     const ResourcesMap& resources() const { return m_resources; }
     InspectorResource* resourceForURL(const String& url);
     InspectorFrontend* inspectorFrontend() { return m_frontend.get(); }
+    InspectorFrontend2* inspectorFrontend2() { return m_frontend2.get(); }
 
     void drawNodeHighlight(GraphicsContext&) const;
 

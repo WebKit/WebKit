@@ -105,18 +105,18 @@ PassRefPtr<JSLazyEventListener> createAttributeEventListener(Frame* frame, Attri
     return JSLazyEventListener::create(attr->localName().string(), eventParameterName(frame->document()->isSVGDocument()), attr->value(), 0, sourceURL, lineNumber, wrapper, mainThreadNormalWorld());
 }
 
-String eventListenerHandlerBody(ScriptExecutionContext* context, ScriptState* scriptState, EventListener* eventListener)
+String eventListenerHandlerBody(Document* document, EventListener* eventListener)
 {
     const JSEventListener* jsListener = JSEventListener::cast(eventListener);
     if (!jsListener)
         return "";
-    JSC::JSObject* jsFunction = jsListener->jsFunction(context);
+    JSC::JSObject* jsFunction = jsListener->jsFunction(document);
     if (!jsFunction)
         return "";
-    return ustringToString(jsFunction->toString(scriptState));
+    return ustringToString(jsFunction->toString(scriptStateFromNode(jsListener->isolatedWorld(), document)));
 }
 
-bool eventListenerHandlerLocation(ScriptExecutionContext*, ScriptState*, EventListener*, String&, int&)
+bool eventListenerHandlerLocation(Document*, EventListener*, String&, int&)
 {
     // FIXME: Add support for getting function location.
     return false;

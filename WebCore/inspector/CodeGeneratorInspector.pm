@@ -51,6 +51,13 @@ $typeTransform{"long"} = {
     "header" => "",
     "push" => "pushNumber"
 };
+$typeTransform{"int"} = {
+    "param" => "int",
+    "retVal" => "int",
+    "forward" => "",
+    "header" => "",
+    "push" => "pushNumber"
+};
 $typeTransform{"unsigned long"} = {
     "param" => "unsigned long",
     "retVal" => "unsigned long",

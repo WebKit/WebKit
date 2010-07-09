@@ -487,7 +487,7 @@ void InspectorController::connectFrontend(const ScriptObject& webInspector)
     releaseFrontendLifetimeAgents();
     m_frontend = new InspectorFrontend(webInspector, m_client);
     m_frontend2 = new InspectorFrontend2(m_client);
-    m_domAgent = InspectorDOMAgent::create(m_cssStore.get(), m_frontend.get());
+    m_domAgent = InspectorDOMAgent::create(m_cssStore.get(), m_frontend2.get());
     if (m_timelineAgent)
         m_timelineAgent->resetFrontendProxyObject(m_frontend2.get());
 

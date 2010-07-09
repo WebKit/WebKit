@@ -581,8 +581,7 @@ WebInspector.dispatch = function() {
 
 WebInspector.dispatchMessageFromBackend = function(arguments)
 {
-    var methodName = arguments.shift();
-    WebInspector[methodName].apply(this, arguments);
+    WebInspector.dispatch.apply(this, arguments);
 }
 
 

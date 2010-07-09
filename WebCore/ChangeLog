@@ -1,3 +1,65 @@
+2010-07-08  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        WebInspector: migrate InspectorDOMAgent to the generated version of
+        InspectorFrontend interface. This is the next step on the way to
+        Remote Debugging.
+
+        * bindings/js/ScriptEventListener.cpp:
+        (WebCore::eventListenerHandlerBody):
+        (WebCore::eventListenerHandlerLocation):
+        * bindings/js/ScriptEventListener.h:
+        * bindings/v8/ScriptEventListener.cpp:
+        (WebCore::eventListenerHandlerBody):
+        (WebCore::eventListenerHandlerLocation):
+        * bindings/v8/ScriptEventListener.h:
+        * inspector/CodeGeneratorInspector.pm:
+        * inspector/InspectorCSSStore.cpp:
+        (WebCore::InspectorCSSStore::inspectorStyleSheet):
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::connectFrontend):
+        * inspector/InspectorController.h:
+        (WebCore::InspectorController::inspectorFrontend2):
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::InspectorDOMAgent):
+        (WebCore::InspectorDOMAgent::setDocument):
+        (WebCore::InspectorDOMAgent::handleEvent):
+        (WebCore::InspectorDOMAgent::pushChildNodesToFrontend):
+        (WebCore::InspectorDOMAgent::getEventListenersForNode):
+        (WebCore::InspectorDOMAgent::buildObjectForNode):
+        (WebCore::InspectorDOMAgent::buildArrayForElementAttributes):
+        (WebCore::InspectorDOMAgent::buildArrayForContainerChildren):
+        (WebCore::InspectorDOMAgent::buildObjectForEventListener):
+        (WebCore::InspectorDOMAgent::didInsertDOMNode):
+        (WebCore::InspectorDOMAgent::getStyles):
+        (WebCore::InspectorDOMAgent::getAllStyles):
+        (WebCore::InspectorDOMAgent::getStyleSheet):
+        (WebCore::InspectorDOMAgent::getRuleRangesForStyleSheetId):
+        (WebCore::InspectorDOMAgent::getInlineStyle):
+        (WebCore::InspectorDOMAgent::getComputedStyle):
+        (WebCore::InspectorDOMAgent::buildObjectForAttributeStyles):
+        (WebCore::InspectorDOMAgent::buildArrayForCSSRules):
+        (WebCore::InspectorDOMAgent::buildArrayForPseudoElements):
+        (WebCore::InspectorDOMAgent::applyStyleText):
+        (WebCore::InspectorDOMAgent::toggleStyleEnabled):
+        (WebCore::InspectorDOMAgent::setRuleSelector):
+        (WebCore::InspectorDOMAgent::addRule):
+        (WebCore::InspectorDOMAgent::buildObjectForStyle):
+        (WebCore::InspectorDOMAgent::populateObjectWithStyleProperties):
+        (WebCore::InspectorDOMAgent::buildArrayForDisabledStyleProperties):
+        (WebCore::InspectorDOMAgent::buildObjectForStyleSheet):
+        (WebCore::InspectorDOMAgent::buildObjectForRule):
+        (WebCore::InspectorDOMAgent::toArray):
+        (WebCore::InspectorDOMAgent::reportNodesAsSearchResults):
+        * inspector/InspectorDOMAgent.h:
+        (WebCore::InspectorDOMAgent::create):
+        * inspector/InspectorFrontend.cpp:
+        * inspector/InspectorFrontend.h:
+        * inspector/InspectorFrontend2.idl:
+        * inspector/front-end/inspector.js:
+        (WebInspector.dispatchMessageFromBackend):
+
 2010-07-08  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Darin Adler.

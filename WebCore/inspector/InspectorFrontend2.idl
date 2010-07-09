@@ -5,6 +5,35 @@
 module WebCore {
 
     interface [Conditional=INSPECTOR, JS] InspectorFrontend2 {
+        // TimelineAgent
         void addRecordToTimeline(in Object record);
+
+        // DOMAgent
+        void addNodesToSearchResult(in Array nodeIds);
+        void attributesUpdated(in long id, in Array attributes);
+        void childNodeCountUpdated(in long id, in int newValue);
+        void childNodeInserted(in long parentId, in long prevId, in Object node);
+        void childNodeRemoved(in long parentId, in long id);
+        void didAddRule(in long callId, in Value rule, in boolean selectorAffectsNode);
+        void didApplyDomChange(in long callId, in boolean success);
+        void didApplyStyleText(in long callId, in boolean success, in Value style, in Array changedProperties);
+        void didChangeTagName(in long callId, in long nodeId);
+        void didGetAllStyles(in long callId, in Array styles);
+        void didGetChildNodes(in long callId);
+        void didGetComputedStyle(in long callId, in Value style);
+        void didGetEventListenersForNode(in long callId, in long nodeId, in Array listenersArray);
+        void didGetInlineStyle(in long callId, in Value style);
+        void didGetOuterHTML(in long callId, in String outerHTML);
+        void didGetStyleSheet(in long callId, in Value styleSheet);
+        void didGetStyles(in long callId, in Value styles);
+        void didRemoveNode(in long callId, in long nodeId);
+        void didSetOuterHTML(in long callId, in long nodeId);
+        void didSetRuleSelector(in long callId, in Value rule, in boolean selectorAffectsNode);
+        void didSetStyleProperty(in long callId, in boolean success);
+        void didSetStyleText(in long callId, in boolean success);
+        void didToggleStyleEnabled(in long callId, in Value style);
+        void setChildNodes(in long parentId, in Array nodes);
+        void setDetachedRoot(in Object root);
+        void setDocument(in Value root);
     };
 }

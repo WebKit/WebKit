@@ -100,28 +100,32 @@ PassRefPtr<V8LazyEventListener> createAttributeEventListener(Frame* frame, Attri
     return V8LazyEventListener::create(attr->localName().string(), frame->document()->isSVGDocument(), attr->value(), sourceURL, lineNumber, columnNumber, WorldContextHandle(UseMainWorld));
 }
 
-String eventListenerHandlerBody(ScriptExecutionContext* context, ScriptState* scriptState, EventListener* listener)
+String eventListenerHandlerBody(Document* document, EventListener* listener)
 {
     if (listener->type() != EventListener::JSEventListenerType)
         return "";
 
-    ScriptScope scope(scriptState);
+    v8::HandleScope scope;
     V8AbstractEventListener* v8Listener = static_cast<V8AbstractEventListener*>(listener);
-    v8::Handle<v8::Object> function = v8Listener->getListenerObject(context);
+    v8::Handle<v8::Context> context = toV8Context(document, v8Listener->worldContext());
+    v8::Context::Scope contextScope(context);
+    v8::Handle<v8::Object> function = v8Listener->getListenerObject(document);
     if (function.IsEmpty())
         return "";
 
     return toWebCoreStringWithNullCheck(function);
 }
 
-bool eventListenerHandlerLocation(ScriptExecutionContext* context, ScriptState* scriptState, EventListener* listener, String& sourceName, int& lineNumber)
+bool eventListenerHandlerLocation(Document* document, EventListener* listener, String& sourceName, int& lineNumber)
 {
     if (listener->type() != EventListener::JSEventListenerType)
         return false;
 
-    ScriptScope scope(scriptState);
+    v8::HandleScope scope;
     V8AbstractEventListener* v8Listener = static_cast<V8AbstractEventListener*>(listener);
-    v8::Handle<v8::Object> object = v8Listener->getListenerObject(context);
+    v8::Handle<v8::Context> context = toV8Context(document, v8Listener->worldContext());
+    v8::Context::Scope contextScope(context);
+    v8::Handle<v8::Object> object = v8Listener->getListenerObject(document);
     if (object.IsEmpty() || !object->IsFunction())
         return false;
 
