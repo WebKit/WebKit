@@ -5,6 +5,20 @@
         RenderSVGRoot does not include border/padding while repainting
         https://bugs.webkit.org/show_bug.cgi?id=41854
 
+        Add mac-tiger specific results. That should mark the end of the journey.
+
+        * platform/mac-tiger/svg/hixie/text/003-expected.txt:
+        * platform/mac-tiger/svg/hixie/text/003a-expected.txt:
+        * platform/mac-tiger/svg/hixie/viewbox/preserveAspectRatio/001-expected.txt:
+        * platform/mac-tiger/svg/hixie/viewbox/preserveAspectRatio/002-expected.txt:
+
+2010-07-09  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Not reviewed.
+
+        RenderSVGRoot does not include border/padding while repainting
+        https://bugs.webkit.org/show_bug.cgi?id=41854
+
         Hopefully last round of gtk specific results.
 
         * platform/gtk/svg/text/select-x-list-with-tspans-1-expected.txt:
