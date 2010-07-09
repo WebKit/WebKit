@@ -1,3 +1,20 @@
+2010-07-09  Michael Nordman  <michaeln@google.com>
+
+        Reviewed by Dumitru Daniliuc.
+
+        Add a layout test to verify the expected number of progress events are raised by the appcache,
+        and that those events have properly set 'lengthComputable', 'loaded', and 'total' attributes.
+        Also update a couple of other tests that depend on counting the number of progress events to
+        determine success or failure to now expect the additional final progress event that is being
+        raised.
+        https://bugs.webkit.org/show_bug.cgi?id=37602
+
+        * http/tests/appcache/foreign-iframe-main-expected.txt:
+        * http/tests/appcache/progress-counter-expected.txt: Added.
+        * http/tests/appcache/progress-counter.html: Added.
+        * http/tests/appcache/resources/different-https-origin-resource.html:
+        * http/tests/appcache/resources/progress-counter.manifest: Added.
+
 2010-07-09  Ben Murdoch  <benm@google.com>
 
         Reviewed by Steve Block.

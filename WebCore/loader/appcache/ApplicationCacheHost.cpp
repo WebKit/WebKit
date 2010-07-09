@@ -37,6 +37,7 @@
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
 #include "MainResourceLoader.h"
+#include "ProgressEvent.h"
 #include "ResourceLoader.h"
 #include "ResourceRequest.h"
 #include "Settings.h"
@@ -228,33 +229,40 @@ void ApplicationCacheHost::setDOMApplicationCache(DOMApplicationCache* domApplic
     m_domApplicationCache = domApplicationCache;
 }
 
-void ApplicationCacheHost::notifyDOMApplicationCache(EventID id)
+void ApplicationCacheHost::notifyDOMApplicationCache(EventID id, int total, int done)
 {
     if (m_defersEvents) {
-        // Events are deferred until document.onload has fired.
-        m_deferredEvents.append(id);
+        // Event dispatching is deferred until document.onload has fired.
+        m_deferredEvents.append(DeferredEvent(id, total, done));
         return;
     }
-    if (m_domApplicationCache) {
-        ExceptionCode ec = 0;
-        m_domApplicationCache->dispatchEvent(Event::create(DOMApplicationCache::toEventType(id), false, false), ec);
-        ASSERT(!ec);    
-    }
+    dispatchDOMEvent(id, total, done);
 }
 
 void ApplicationCacheHost::stopDeferringEvents()
 {
     RefPtr<DocumentLoader> protect(documentLoader());
     for (unsigned i = 0; i < m_deferredEvents.size(); ++i) {
-        EventID id = m_deferredEvents[i];
-        if (m_domApplicationCache) {
-            ExceptionCode ec = 0;
-            m_domApplicationCache->dispatchEvent(Event::create(DOMApplicationCache::toEventType(id), false, false), ec);
-            ASSERT(!ec);
-        }
+        const DeferredEvent& deferred = m_deferredEvents[i];
+        dispatchDOMEvent(deferred.eventID, deferred.progressTotal, deferred.progressDone);
     }
     m_deferredEvents.clear();
     m_defersEvents = false;
+}
+
+void ApplicationCacheHost::dispatchDOMEvent(EventID id, int total, int done)
+{
+    if (m_domApplicationCache) {
+        const AtomicString& eventType = DOMApplicationCache::toEventType(id);
+        ExceptionCode ec = 0;
+        RefPtr<Event> event;
+        if (id == PROGRESS_EVENT)
+            event = ProgressEvent::create(eventType, true, done, total);
+        else
+            event = Event::create(eventType, false, false);
+        m_domApplicationCache->dispatchEvent(event, ec);
+        ASSERT(!ec);
+    }
 }
 
 void ApplicationCacheHost::setCandidateApplicationCacheGroup(ApplicationCacheGroup* group)

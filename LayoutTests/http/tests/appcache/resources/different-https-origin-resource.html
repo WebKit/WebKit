@@ -20,8 +20,14 @@ function error()
     hadError = true;
     finish();
 }
+function progressHandler(e)
+{
+    // The only resource listed in the manifest file is in a different https origin and should be skipped.
+    if (e.loaded != 0 || e.total != 0)
+        fail();
+}
 
-applicationCache.onprogress = function() { fail(); }
+applicationCache.onprogress = progressHandler;
 applicationCache.onnoupdate = function() { finish(); }
 applicationCache.oncached = function() { finish(); }
 applicationCache.onerror = function() { error(); }

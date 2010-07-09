@@ -92,8 +92,11 @@ public:
     bool isCopy() const { return m_isCopy; }
 
 private:
-    static void postListenerTask(ApplicationCacheHost::EventID, const HashSet<DocumentLoader*>&);
-    static void postListenerTask(ApplicationCacheHost::EventID, DocumentLoader*);
+    static void postListenerTask(ApplicationCacheHost::EventID id, const HashSet<DocumentLoader*>& set) { postListenerTask(id, 0, 0, set); }
+    static void postListenerTask(ApplicationCacheHost::EventID id, DocumentLoader* loader)  { postListenerTask(id, 0, 0, loader); }
+    static void postListenerTask(ApplicationCacheHost::EventID, int progressTotal, int progressDone, const HashSet<DocumentLoader*>&);
+    static void postListenerTask(ApplicationCacheHost::EventID, int progressTotal, int progressDone, DocumentLoader*);
+
     void scheduleReachedMaxAppCacheSizeCallback();
 
     PassRefPtr<ResourceHandle> createResourceHandle(const KURL&, ApplicationCacheResource* newestCachedResource);
@@ -151,6 +154,10 @@ private:
     // The URLs and types of pending cache entries.
     typedef HashMap<String, unsigned> EntryMap;
     EntryMap m_pendingEntries;
+    
+    // The total number of items to be processed to update the cache group and the number that have been done.
+    int m_progressTotal;
+    int m_progressDone;
 
     // Frame used for fetching resources when updating.
     // FIXME: An update started by a particular frame should not stop if it is destroyed, but there are other frames associated with the same cache group.

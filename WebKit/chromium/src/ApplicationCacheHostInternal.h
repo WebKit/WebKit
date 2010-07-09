@@ -55,18 +55,12 @@ public:
 
     virtual void notifyEventListener(WebKit::WebApplicationCacheHost::EventID eventID)
     {
-        m_innerHost->notifyDOMApplicationCache(static_cast<ApplicationCacheHost::EventID>(eventID));
+        m_innerHost->notifyDOMApplicationCache(static_cast<ApplicationCacheHost::EventID>(eventID), 0, 0);
     }
 
-    virtual void notifyProgressEventListener(const WebKit::WebURL&, int num_total, int num_complete) 
+    virtual void notifyProgressEventListener(const WebKit::WebURL&, int progressTotal, int progressDone) 
     {
-        // FIXME: Modify webcore's progress event handling to carry the extra info and alter the
-        // layout tests to not fail when the more recently specified 'final' event is raised.
-        // For now, we're eating the extra info and that last event.
-        // See https://bugs.webkit.org/show_bug.cgi?id=37602
-        if (num_complete == num_total)
-            return;
-        notifyEventListener(WebKit::WebApplicationCacheHost::ProgressEvent);
+        m_innerHost->notifyDOMApplicationCache(ApplicationCacheHost::PROGRESS_EVENT, progressTotal, progressDone);
     }
 
     static WebKit::WebApplicationCacheHost* toWebApplicationCacheHost(ApplicationCacheHost* innerHost)

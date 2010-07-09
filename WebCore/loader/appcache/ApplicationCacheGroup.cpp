@@ -57,6 +57,8 @@ ApplicationCacheGroup::ApplicationCacheGroup(const KURL& manifestURL, bool isCop
     : m_manifestURL(manifestURL)
     , m_updateStatus(Idle)
     , m_downloadingPendingMasterResourceLoadersCount(0)
+    , m_progressTotal(0)
+    , m_progressDone(0)
     , m_frame(0)
     , m_storageID(0)
     , m_isObsolete(false)
@@ -751,7 +753,10 @@ void ApplicationCacheGroup::didFinishLoadingManifest()
     m_cacheBeingUpdated->setOnlineWhitelist(manifest.onlineWhitelistedURLs);
     m_cacheBeingUpdated->setFallbackURLs(manifest.fallbackURLs);
     m_cacheBeingUpdated->setAllowsAllNetworkRequests(manifest.allowAllNetworkRequests);
-    
+
+    m_progressTotal = m_pendingEntries.size();
+    m_progressDone = 0;
+
     startLoadingEntry();
 }
 
@@ -859,7 +864,12 @@ void ApplicationCacheGroup::checkIfLoadIsComplete()
             // New cache stored, now remove the old cache.
             if (oldNewestCache)
                 cacheStorage().remove(oldNewestCache.get());
-            // Fire the success events.
+
+            // Fire the final progress event.
+            ASSERT(m_progressDone == m_progressTotal);
+            postListenerTask(ApplicationCacheHost::PROGRESS_EVENT, m_progressTotal, m_progressDone, m_associatedDocumentLoaders);
+
+            // Fire the success event.
             postListenerTask(isUpgradeAttempt ? ApplicationCacheHost::UPDATEREADY_EVENT : ApplicationCacheHost::CACHED_EVENT, m_associatedDocumentLoaders);
         } else {
             if (cacheStorage().isMaximumSizeReached() && !m_calledReachedMaxAppCacheSize) {
@@ -926,7 +936,8 @@ void ApplicationCacheGroup::startLoadingEntry()
     
     EntryMap::const_iterator it = m_pendingEntries.begin();
 
-    postListenerTask(ApplicationCacheHost::PROGRESS_EVENT, m_associatedDocumentLoaders);
+    postListenerTask(ApplicationCacheHost::PROGRESS_EVENT, m_progressTotal, m_progressDone, m_associatedDocumentLoaders);
+    m_progressDone++;
 
     ASSERT(!m_currentHandle);
     
@@ -1025,9 +1036,9 @@ void ApplicationCacheGroup::scheduleReachedMaxAppCacheSizeCallback()
 
 class CallCacheListenerTask : public ScriptExecutionContext::Task {
 public:
-    static PassOwnPtr<CallCacheListenerTask> create(PassRefPtr<DocumentLoader> loader, ApplicationCacheHost::EventID eventID)
+    static PassOwnPtr<CallCacheListenerTask> create(PassRefPtr<DocumentLoader> loader, ApplicationCacheHost::EventID eventID, int progressTotal, int progressDone)
     {
-        return adoptPtr(new CallCacheListenerTask(loader, eventID));
+        return adoptPtr(new CallCacheListenerTask(loader, eventID, progressTotal, progressDone));
     }
 
     virtual void performTask(ScriptExecutionContext* context)
@@ -1040,28 +1051,32 @@ public:
     
         ASSERT(frame->loader()->documentLoader() == m_documentLoader.get());
 
-        m_documentLoader->applicationCacheHost()->notifyDOMApplicationCache(m_eventID);
+        m_documentLoader->applicationCacheHost()->notifyDOMApplicationCache(m_eventID, m_progressTotal, m_progressDone);
     }
 
 private:
-    CallCacheListenerTask(PassRefPtr<DocumentLoader> loader, ApplicationCacheHost::EventID eventID)
+    CallCacheListenerTask(PassRefPtr<DocumentLoader> loader, ApplicationCacheHost::EventID eventID, int progressTotal, int progressDone)
         : m_documentLoader(loader)
         , m_eventID(eventID)
+        , m_progressTotal(progressTotal)
+        , m_progressDone(progressDone)
     {
     }
 
     RefPtr<DocumentLoader> m_documentLoader;
     ApplicationCacheHost::EventID m_eventID;
+    int m_progressTotal;
+    int m_progressDone;
 };
 
-void ApplicationCacheGroup::postListenerTask(ApplicationCacheHost::EventID eventID, const HashSet<DocumentLoader*>& loaderSet)
+void ApplicationCacheGroup::postListenerTask(ApplicationCacheHost::EventID eventID, int progressTotal, int progressDone, const HashSet<DocumentLoader*>& loaderSet)
 {
     HashSet<DocumentLoader*>::const_iterator loaderSetEnd = loaderSet.end();
     for (HashSet<DocumentLoader*>::const_iterator iter = loaderSet.begin(); iter != loaderSetEnd; ++iter)
-        postListenerTask(eventID, *iter);
+        postListenerTask(eventID, progressTotal, progressDone, *iter);
 }
 
-void ApplicationCacheGroup::postListenerTask(ApplicationCacheHost::EventID eventID, DocumentLoader* loader)
+void ApplicationCacheGroup::postListenerTask(ApplicationCacheHost::EventID eventID, int progressTotal, int progressDone, DocumentLoader* loader)
 {
     Frame* frame = loader->frame();
     if (!frame)
@@ -1069,7 +1084,7 @@ void ApplicationCacheGroup::postListenerTask(ApplicationCacheHost::EventID event
     
     ASSERT(frame->loader()->documentLoader() == loader);
 
-    frame->document()->postTask(CallCacheListenerTask::create(loader, eventID));
+    frame->document()->postTask(CallCacheListenerTask::create(loader, eventID, progressTotal, progressDone));
 }
 
 void ApplicationCacheGroup::setUpdateStatus(UpdateStatus status)

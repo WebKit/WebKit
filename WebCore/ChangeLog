@@ -1,3 +1,33 @@
+2010-07-09  Michael Nordman  <michaeln@google.com>
+
+        Reviewed by Dumitru Daniliuc.
+
+        Use class ProgressEvent when raising appcache related progress events and
+        set the 'total', 'loaded', and 'lengthComputable' attributes.
+        Also raise the final progress event with the 'total' and 'loaded' attribute
+        values are equal to one another to keep pace with the spec for this feature.
+        https://bugs.webkit.org/show_bug.cgi?id=37602
+
+        Test: http/tests/appcache/progress-counter.html
+
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        (WebCore::ApplicationCacheGroup::ApplicationCacheGroup):
+        (WebCore::ApplicationCacheGroup::didFinishLoadingManifest):
+        (WebCore::ApplicationCacheGroup::checkIfLoadIsComplete):
+        (WebCore::ApplicationCacheGroup::startLoadingEntry):
+        (WebCore::CallCacheListenerTask::create):
+        (WebCore::CallCacheListenerTask::performTask):
+        (WebCore::CallCacheListenerTask::CallCacheListenerTask):
+        (WebCore::ApplicationCacheGroup::postListenerTask):
+        * loader/appcache/ApplicationCacheGroup.h:
+        (WebCore::ApplicationCacheGroup::postListenerTask):
+        * loader/appcache/ApplicationCacheHost.cpp:
+        (WebCore::ApplicationCacheHost::notifyDOMApplicationCache):
+        (WebCore::ApplicationCacheHost::stopDeferringEvents):
+        (WebCore::ApplicationCacheHost::dispatchDOMEvent):
+        * loader/appcache/ApplicationCacheHost.h:
+        (WebCore::ApplicationCacheHost::DeferredEvent::DeferredEvent):
+
 2010-07-09  Sebastian Dröge  <sebastian.droege@collabora.co.uk>
 
         Reviewed by Gustavo Noronha Silva.
