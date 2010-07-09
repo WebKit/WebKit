@@ -30,13 +30,10 @@
 
     function doTest()
     {
-        // Need to wait for compositing layers to be updated.
-        window.setTimeout(function() {
-            if (window.layoutTestController) {
-                document.getElementById('layers').innerHTML = layoutTestController.layerTreeAsText();
-                layoutTestController.notifyDone();
-            }
-        }, 10);
+        if (window.layoutTestController) {
+            document.getElementById('layers').innerHTML = layoutTestController.layerTreeAsText();
+            layoutTestController.notifyDone();
+        }
     }
 
     window.addEventListener('load', doTest, false);

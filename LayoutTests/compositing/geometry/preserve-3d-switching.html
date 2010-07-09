@@ -55,25 +55,19 @@
     
     function startProgram()
     {
-        setTimeout(function()
-            {
-                document.getElementById("parent").style.webkitTransformStyle = "flat";
-                setTimeout(function()
-                    {
-                        document.getElementById("parent").style.webkitTransformStyle = "preserve-3d";
-                        setTimeout(function()
-                        {
-                            if (window.layoutTestController) {
-                                if (layoutTestController.layerTreeAsText) {
-                                    var layerTree = layoutTestController.layerTreeAsText();
-                                    document.getElementById("layerTree").innerHTML = "<pre>" + layerTree + "</pre>";
-                                }
-
-                                layoutTestController.notifyDone();
-                            }
-                        }, timeout);
-                    }, timeout);
+        setTimeout(function() {
+            document.getElementById("parent").style.webkitTransformStyle = "flat";
+            setTimeout(function() {
+                document.getElementById("parent").style.webkitTransformStyle = "preserve-3d";
+                if (window.layoutTestController) {
+                    if (layoutTestController.layerTreeAsText) {
+                        var layerTree = layoutTestController.layerTreeAsText();
+                        document.getElementById("layerTree").innerHTML = "<pre>" + layerTree + "</pre>";
+                    }
+                    layoutTestController.notifyDone();
+                }
             }, timeout);
+        }, timeout);
     }
     window.addEventListener('load', startProgram, false)
     </script>

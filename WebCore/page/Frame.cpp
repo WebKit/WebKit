@@ -1608,7 +1608,9 @@ String Frame::layerTreeAsText() const
     GraphicsLayer* rootLayer = contentRenderer()->compositor()->rootPlatformLayer();
     if (!rootLayer)
         return String();
-        
+
+    document()->updateLayout();
+
     return rootLayer->layerTreeAsText();
 #else
     return String();

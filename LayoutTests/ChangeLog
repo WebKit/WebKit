@@ -1,3 +1,24 @@
+2010-07-08  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Calling layoutTestController.layerTreeAsText() should update layout
+        https://bugs.webkit.org/show_bug.cgi?id=41818
+        
+        Remove setTimeout() calls that are no longer necessary now that
+        layerTreeAsText() updates layout.
+
+        * compositing/geometry/clip.html:
+        * compositing/geometry/preserve-3d-switching.html:
+        * compositing/iframes/composited-parent-iframe.html:
+        * compositing/iframes/connect-compositing-iframe-delayed.html:
+        * compositing/iframes/connect-compositing-iframe.html:
+        * compositing/iframes/connect-compositing-iframe2.html:
+        * compositing/iframes/connect-compositing-iframe3.html:
+        * compositing/iframes/overlapped-iframe.html:
+        * compositing/images/clip-on-directly-composited-image.html:
+        * compositing/overflow/clip-descendents.html:
+
 2010-07-08  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
