@@ -1,3 +1,29 @@
+2010-07-09  Eric Seidel  <eric@webkit.org>
+
+        Unreviewed.  Just renaming (discussed with Adam Barth).
+
+        Rename insertElement to insertHTMLElement and
+        insertSelfClosingElement to insertSelfClosingHTMLElement
+        to better reflect what they actually do.  This is in preparation
+        for adding foreign content support.
+
+        * html/HTMLConstructionSite.cpp:
+        (WebCore::HTMLConstructionSite::insertHTMLElement):
+        (WebCore::HTMLConstructionSite::insertSelfClosingHTMLElement):
+        (WebCore::HTMLConstructionSite::insertFormattingElement):
+        (WebCore::HTMLConstructionSite::reconstructTheActiveFormattingElements):
+        (WebCore::HTMLConstructionSite::fosterParent):
+        * html/HTMLConstructionSite.h:
+        * html/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::processCloseWhenNestedTag):
+        (WebCore::HTMLTreeBuilder::processStartTagForInBody):
+        (WebCore::HTMLTreeBuilder::processStartTagForInTable):
+        (WebCore::HTMLTreeBuilder::processStartTag):
+        (WebCore::HTMLTreeBuilder::callTheAdoptionAgency):
+        (WebCore::HTMLTreeBuilder::processStartTagForInHead):
+        (WebCore::HTMLTreeBuilder::processGenericRCDATAStartTag):
+        (WebCore::HTMLTreeBuilder::processGenericRawTextStartTag):
+
 2010-07-08  Rob Buis  <rwlbuis@gmail.com>
 
         Reviewed by Eric Seidel.

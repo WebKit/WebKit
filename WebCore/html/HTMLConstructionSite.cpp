@@ -190,12 +190,12 @@ void HTMLConstructionSite::insertHTMLBodyElement(AtomicHTMLToken& token)
     m_openElements.pushHTMLBodyElement(createElementAndAttachToCurrent(token));
 }
 
-void HTMLConstructionSite::insertElement(AtomicHTMLToken& token)
+void HTMLConstructionSite::insertHTMLElement(AtomicHTMLToken& token)
 {
     m_openElements.push(createElementAndAttachToCurrent(token));
 }
 
-void HTMLConstructionSite::insertSelfClosingElement(AtomicHTMLToken& token)
+void HTMLConstructionSite::insertSelfClosingHTMLElement(AtomicHTMLToken& token)
 {
     ASSERT(token.type() == HTMLToken::StartTag);
     attach(currentElement(), createElement(token));
@@ -208,7 +208,7 @@ void HTMLConstructionSite::insertFormattingElement(AtomicHTMLToken& token)
     // http://www.whatwg.org/specs/web-apps/current-work/multipage/parsing.html#the-stack-of-open-elements
     // Possible active formatting elements include:
     // a, b, big, code, em, font, i, nobr, s, small, strike, strong, tt, and u.
-    insertElement(token);
+    insertHTMLElement(token);
     m_activeFormattingElements.append(currentElement());
 }
 
@@ -269,7 +269,7 @@ void HTMLConstructionSite::reconstructTheActiveFormattingElements()
         HTMLFormattingElementList::Entry& unopenedEntry = m_activeFormattingElements.at(unopenEntryIndex);
         // FIXME: We're supposed to save the original token in the entry.
         AtomicHTMLToken fakeToken(HTMLToken::StartTag, unopenedEntry.element()->localName());
-        insertElement(fakeToken);
+        insertHTMLElement(fakeToken);
         unopenedEntry.replaceElement(currentElement());
     }
 }
@@ -293,7 +293,7 @@ void HTMLConstructionSite::fosterParent(Node* node)
     if (lastTableElementRecord) {
         Element* lastTableElement = lastTableElementRecord->element();
         if (lastTableElement->parent()) {
-            // FIXME: We need an insertElement which does not send mutation events.
+            // FIXME: We need an insertHTMLElement which does not send mutation events.
             ExceptionCode ec = 0;
             lastTableElement->parent()->insertBefore(node, lastTableElement, ec);
             // FIXME: Do we need to call attach()?
