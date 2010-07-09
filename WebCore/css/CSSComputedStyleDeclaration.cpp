@@ -1462,12 +1462,14 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
         case CSSPropertyWebkitColumns:
         case CSSPropertyWebkitColumnRule:
         case CSSPropertyWebkitMarginCollapse:
+        case CSSPropertyWebkitMarginEnd:
         case CSSPropertyWebkitMarginStart:
         case CSSPropertyWebkitMarquee:
         case CSSPropertyWebkitMarqueeSpeed:
         case CSSPropertyWebkitMask:
         case CSSPropertyWebkitMaskRepeatX:
         case CSSPropertyWebkitMaskRepeatY:
+        case CSSPropertyWebkitPaddingEnd:
         case CSSPropertyWebkitPaddingStart:
         case CSSPropertyWebkitPerspectiveOriginX:
         case CSSPropertyWebkitPerspectiveOriginY:

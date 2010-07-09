@@ -215,6 +215,7 @@ z-index
 -webkit-line-clamp
 -webkit-margin-bottom-collapse
 -webkit-margin-collapse
+-webkit-margin-end
 -webkit-margin-start
 -webkit-margin-top-collapse
 -webkit-marquee
@@ -239,6 +240,7 @@ z-index
 -webkit-mask-size
 -webkit-match-nearest-mail-blockquote-color
 -webkit-nbsp-mode
+-webkit-padding-end
 -webkit-padding-start
 -webkit-perspective
 -webkit-perspective-origin

@@ -987,6 +987,7 @@ bool CSSParser::parseValue(int propId, bool important)
     case CSSPropertyPaddingBottom:       //   <length> | <percentage>
     case CSSPropertyPaddingLeft:         ////
     case CSSPropertyWebkitPaddingStart:
+    case CSSPropertyWebkitPaddingEnd:
         validPrimitive = (!id && validUnit(value, FLength | FPercent | FNonNeg, m_strict));
         break;
 
@@ -1047,6 +1048,7 @@ bool CSSParser::parseValue(int propId, bool important)
     case CSSPropertyMarginBottom:        //   <length> | <percentage> | auto | inherit
     case CSSPropertyMarginLeft:          ////
     case CSSPropertyWebkitMarginStart:
+    case CSSPropertyWebkitMarginEnd:
         if (id == CSSValueAuto)
             validPrimitive = true;
         else

@@ -1,3 +1,19 @@
+2010-07-08  Erik Arvidsson  <arv@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        Add missing padding-end and margin-end CSS properties.
+        https://bugs.webkit.org/show_bug.cgi?id=25761
+
+        * fast/css/margin-start-end-expected.txt: Added.
+        * fast/css/margin-start-end.html: Added.
+        * fast/css/padding-start-end-expected.txt: Added.
+        * fast/css/padding-start-end.html: Added.
+        * fast/css/script-tests/margin-start-end.js: Added.
+        (test):
+        * fast/css/script-tests/padding-start-end.js: Added.
+        (test):
+
 2010-07-08  Aaron Boodman  <aa@chromium.org>
 
         Reviewed by Timothy Hatcher.
