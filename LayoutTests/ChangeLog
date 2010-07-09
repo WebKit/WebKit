@@ -1,3 +1,23 @@
+2010-07-09  Xiaomei Ji  <xji@chromium.org>
+
+        Reviewed by David Levin.
+
+        Rebaseline bidi-mirror-he-ar.html and bidi-neutral-run.html for Chromium after r62965
+        https://bugs.webkit.org/show_bug.cgi?id=41974
+
+        * platform/chromium-linux/fast/text/international/bidi-mirror-he-ar-expected.checksum: Added.
+        * platform/chromium-linux/fast/text/international/bidi-mirror-he-ar-expected.png: Added.
+        * platform/chromium-linux/fast/text/international/bidi-mirror-he-ar-expected.txt: Added.
+        * platform/chromium-linux/fast/text/international/bidi-neutral-run-expected.checksum:
+        * platform/chromium-linux/fast/text/international/bidi-neutral-run-expected.png:
+        * platform/chromium-mac/fast/text/international/bidi-mirror-he-ar-expected.checksum: Added.
+        * platform/chromium-mac/fast/text/international/bidi-mirror-he-ar-expected.png: Added.
+        * platform/chromium-mac/fast/text/international/bidi-mirror-he-ar-expected.txt: Added.
+        * platform/chromium-win/fast/text/international/bidi-mirror-he-ar-expected.checksum: Added.
+        * platform/chromium-win/fast/text/international/bidi-mirror-he-ar-expected.png: Added.
+        * platform/chromium-win/fast/text/international/bidi-mirror-he-ar-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
 2010-07-08  Tony Gentilcore  <tonyg@chromium.org>
 
         Reviewed by Nate Chapin.

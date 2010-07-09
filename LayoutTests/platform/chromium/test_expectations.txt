@@ -3054,9 +3054,6 @@ BUGAWONG WIN LINUX MAC : fast/js/object-literal-direct-put.html = TEXT
 BUG48696 WIN LINUX : fast/forms/focus2.html = CRASH
 BUG48696 WIN LINUX MAC : fast/forms/tabs-with-modifiers.html = CRASH
 
-// Newly added from r62965 by xji@chromium.org. Probably needs rebaseline.
-BUGAWONG WIN LINUX MAC : fast/text/international/bidi-mirror-he-ar.html = IMAGE+TEXT
-
 // Probably just needs rebaseline.
 BUGAWONG MAC : svg/custom/clip-path-child-changes.svg = TEXT
 
