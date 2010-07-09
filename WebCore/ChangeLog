@@ -2,6 +2,39 @@
 
         Reviewed by Adam Barth.
 
+        Add setInsertionMode setter in preparation for "in foreign content" mode
+        https://bugs.webkit.org/show_bug.cgi?id=41942
+
+        "in foreign content" mode needs to be able to use a fake
+        insertion mode for processing.  We need to be able to save the
+        original insertion mode, set a fake one, and then restore the original
+        if it wasn't changed.  To detect changes, we need all callsites to
+        use a setInsertionMode accessor instead of m_insertionMode =
+
+        No functional changes, thus no tests.
+
+        * html/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::processStartTagForInBody):
+        (WebCore::HTMLTreeBuilder::processColgroupEndTagForInColumnGroup):
+        (WebCore::HTMLTreeBuilder::processStartTagForInTable):
+        (WebCore::HTMLTreeBuilder::processStartTag):
+        (WebCore::HTMLTreeBuilder::processBodyEndTagForInBody):
+        (WebCore::HTMLTreeBuilder::setInsertionModeAndEnd):
+        (WebCore::HTMLTreeBuilder::processEndTagForInTableBody):
+        (WebCore::HTMLTreeBuilder::processEndTagForInCell):
+        (WebCore::HTMLTreeBuilder::processCaptionEndTagForInCaption):
+        (WebCore::HTMLTreeBuilder::processTrEndTagForInRow):
+        (WebCore::HTMLTreeBuilder::processEndTag):
+        (WebCore::HTMLTreeBuilder::processCharacter):
+        (WebCore::HTMLTreeBuilder::processDefaultForInTableTextMode):
+        (WebCore::HTMLTreeBuilder::processGenericRCDATAStartTag):
+        (WebCore::HTMLTreeBuilder::processGenericRawTextStartTag):
+        (WebCore::HTMLTreeBuilder::processScriptStartTag):
+
+2010-07-09  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
         Add insertForeignElement in preparation for adding "in foreign content" support
         https://bugs.webkit.org/show_bug.cgi?id=41940
 
