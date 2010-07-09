@@ -106,7 +106,7 @@ while (<LOG>) {
     }
     $existingLog = isGit() && !(/^#/ || /^\s*$/) unless $existingLog;
 
-    push @changeLogs, $1 if $inChangesToBeCommitted && (/^(?:M|A)....(.*ChangeLog)\r?\n?$/ || /^#\t(?:modified|new file):   (.*ChangeLog)$/) && !/-ChangeLog$/;
+    push @changeLogs, makeFilePathRelative($1) if $inChangesToBeCommitted && (/^(?:M|A)....(.*ChangeLog)\r?\n?$/ || /^#\t(?:modified|new file):   (.*ChangeLog)$/) && !/-ChangeLog$/;
 }
 close LOG;
 
@@ -133,8 +133,6 @@ my $topLevel = determineVCSRoot();
 my %changeLogSort;
 my %changeLogContents;
 for my $changeLog (@changeLogs) {
-    $changeLog = File::Spec->abs2rel(canonicalizePath(File::Spec->rel2abs($changeLog, $ENV{PWD})), $topLevel);
-
     open CHANGELOG, $changeLog or die "Can't open $changeLog";
     my $contents = "";
     my $blankLines = "";
@@ -200,6 +198,8 @@ for my $changeLog (@changeLogs) {
         $contents .= "\n".$reviewedByLine;
     }
     close CHANGELOG;
+
+    $changeLog = File::Spec->abs2rel(File::Spec->rel2abs($changeLog), $topLevel);
 
     my $label = dirname($changeLog);
     $label = "top level" unless length $label;
