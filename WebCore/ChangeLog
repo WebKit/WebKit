@@ -1,5 +1,25 @@
 2010-07-08  Simon Fraser  <simon.fraser@apple.com>
 
+        Reviewed by Darin Adler.
+
+        compositing/iframes/iframe-resize.html displays incorrectly after the resize
+        https://bugs.webkit.org/show_bug.cgi?id=41794
+        
+        The clip and scroll layers of a composited iframe's RenderLayerCompositor are updated from
+        from updateGraphicsLayerGeometry(), but this is too early to get the correct layoutWidth and
+        layoutHeight from the FrameView which happen later in layout. So when a widget size changes,
+        call updateAfterWidgetResize() directly on the RenderLayerBacking (if any).
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateAfterWidgetResize): New method that updates the clip
+        and scroll layers of the iframe's content RenderLayerCompositor.
+        (WebCore::RenderLayerBacking::updateGraphicsLayerGeometry): Call updateAfterWidgetResize()
+        * rendering/RenderLayerBacking.h: Add updateAfterWidgetResize().
+        * rendering/RenderWidget.cpp:
+        (WebCore::RenderWidget::setWidgetGeometry): Call updateAfterWidgetResize().
+
+2010-07-08  Simon Fraser  <simon.fraser@apple.com>
+
         Reviewed by Dan Bernstein.
 
         Calling layoutTestController.layerTreeAsText() should update layout

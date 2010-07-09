@@ -27,7 +27,7 @@
         (GraphicsLayer
           (position 8.00 8.00)
           (anchor 0.50 0.50)
-          (bounds 370.00 220.00)
+          (bounds 470.00 190.00)
           (opacity 1.00)
           (usingTiledLayer 0)
           (preserves3D 0)
@@ -40,7 +40,7 @@
             (GraphicsLayer
               (position 35.00 35.00)
               (anchor 0.50 0.50)
-              (bounds 285.00 150.00)
+              (bounds 385.00 120.00)
               (opacity 1.00)
               (usingTiledLayer 0)
               (preserves3D 0)
@@ -66,7 +66,7 @@
                     (GraphicsLayer
                       (position 0.00 0.00)
                       (anchor 0.50 0.50)
-                      (bounds 285.00 230.00)
+                      (bounds 385.00 230.00)
                       (opacity 1.00)
                       (usingTiledLayer 0)
                       (preserves3D 0)
@@ -79,7 +79,7 @@
                         (GraphicsLayer
                           (position 0.00 0.00)
                           (anchor 0.50 0.50)
-                          (bounds 285.00 230.00)
+                          (bounds 385.00 230.00)
                           (opacity 1.00)
                           (usingTiledLayer 0)
                           (preserves3D 0)

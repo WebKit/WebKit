@@ -30,10 +30,12 @@
 
     function doTest()
     {
-        if (window.layoutTestController) {
-            document.getElementById('layers').innerHTML = layoutTestController.layerTreeAsText();
-            layoutTestController.notifyDone();
-        }
+        window.setTimeout(function() {
+          if (window.layoutTestController) {
+              document.getElementById('layers').innerHTML = layoutTestController.layerTreeAsText();
+              layoutTestController.notifyDone();
+          }
+        }, 0);
     }
 
     window.addEventListener('load', doTest, false);

@@ -1,5 +1,20 @@
 2010-07-08  Simon Fraser  <simon.fraser@apple.com>
 
+        Reviewed by Darin Adler.
+
+        compositing/iframes/iframe-resize.html displays incorrectly after the resize
+        https://bugs.webkit.org/show_bug.cgi?id=41794
+        
+        Re-enable iframe-resize.html and overlapped-iframe.html tests, add an offsetWidth call to
+        force layout, and update the results.
+
+        * compositing/iframes/iframe-resize-expected.txt:
+        * compositing/iframes/iframe-resize.html:
+        * compositing/iframes/overlapped-iframe.html: Fix this test now that it's not skipped.
+        * platform/mac/Skipped:
+
+2010-07-08  Simon Fraser  <simon.fraser@apple.com>
+
         Reviewed by Dan Bernstein.
 
         Calling layoutTestController.layerTreeAsText() should update layout
