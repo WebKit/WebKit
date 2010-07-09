@@ -7,6 +7,28 @@
 
         Next round of gtk specific results.
 
+        * platform/gtk/fast/repaint/moving-shadow-on-container-expected.txt:
+        * platform/gtk/fast/repaint/moving-shadow-on-path-expected.txt:
+        * platform/gtk/svg/text/select-textLength-spacing-squeeze-1-expected.txt:
+        * platform/gtk/svg/text/select-textLength-spacing-squeeze-2-expected.txt:
+        * platform/gtk/svg/text/select-textLength-spacing-squeeze-3-expected.txt:
+        * platform/gtk/svg/text/select-textLength-spacing-squeeze-4-expected.txt:
+        * platform/gtk/svg/text/select-textLength-spacing-stretch-1-expected.txt:
+        * platform/gtk/svg/text/select-textLength-spacing-stretch-2-expected.txt:
+        * platform/gtk/svg/text/select-textLength-spacing-stretch-3-expected.txt:
+        * platform/gtk/svg/text/select-textLength-spacing-stretch-4-expected.txt:
+        * platform/gtk/svg/text/select-textLength-spacingAndGlyphs-squeeze-1-expected.txt:
+        * platform/gtk/svg/text/select-textLength-spacingAndGlyphs-squeeze-2-expected.txt:
+
+2010-07-09  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Not reviewed.
+
+        RenderSVGRoot does not include border/padding while repainting
+        https://bugs.webkit.org/show_bug.cgi?id=41854
+
+        Next round of gtk specific results.
+
         * platform/gtk/svg/custom/text-zoom-expected.txt:
         * platform/gtk/svg/filters/feDisplacementMap-expected.txt:
         * platform/gtk/svg/filters/feLighting-crash-expected.txt:
