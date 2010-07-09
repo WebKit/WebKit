@@ -1,3 +1,17 @@
+2010-07-09  Ben Murdoch  <benm@google.com>
+
+        Reviewed by Steve Block.
+
+        [Arm] Missing NaN check in XPath substring function
+        https://bugs.webkit.org/show_bug.cgi?id=41862
+
+        This layout test checks for the case described in the bug
+        and some related edge cases that do currently already pass
+        but only through a fluke.
+
+        * fast/xpath/substring-nan-position-expected.txt: Added.
+        * fast/xpath/substring-nan-position.html: Added.
+
 2010-07-09  François Sausset  <sausset@gmail.com>
 
         Reviewed by Beth Dakin.

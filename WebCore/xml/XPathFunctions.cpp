@@ -500,7 +500,10 @@ Value FunSubstringAfter::evaluate() const
 Value FunSubstring::evaluate() const
 {
     String s = arg(0)->evaluate().toString();
-    long pos = static_cast<long>(FunRound::round(arg(1)->evaluate().toNumber()));
+    double doublePos = arg(1)->evaluate().toNumber();
+    if (isnan(doublePos))
+        return "";
+    long pos = static_cast<long>(FunRound::round(doublePos));
     bool haveLength = argCount() == 3;
     long len = -1;
     if (haveLength) {
