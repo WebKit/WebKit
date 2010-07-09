@@ -1,3 +1,37 @@
+2010-07-08  Brian Weinstein  <bweinstein@apple.com>
+
+        Rubber-stamped by Dan Bernstein.
+
+        Some tests fail on Windows 7 but pass on XP due to fonts
+        https://bugs.webkit.org/show_bug.cgi?id=41933
+        
+        These tests are failing on Windows 7 while passing on XP due to font differences
+        between the two platforms.
+        
+        Use the ability added in r62742 to specify different results for Windows platforms
+        to move the current results to platform/win-xp, and add the Windows 7 results to
+        platform/win.
+
+        * platform/win-xp: Added.
+        * platform/win-xp/fast: Added.
+        * platform/win-xp/fast/lists: Added.
+        * platform/win-xp/fast/text: Added.
+        * platform/win-xp/fast/text/backslash-to-yen-sign-expected.txt: Copied from platform/win/fast/text/backslash-to-yen-sign-expected.txt.
+        * platform/win-xp/fast/text/international: Added.
+        * platform/win-xp/fast/text/international/bold-bengali-expected.txt: Copied from platform/win/fast/text/international/bold-bengali-expected.txt.
+        * platform/win-xp/fast/text/international/complex-character-based-fallback-expected.txt: Copied from platform/win/fast/text/international/complex-character-based-fallback-expected.txt.
+        * platform/win-xp/fast/text/international/w3-css3-list-styles-alphabetic-expected.txt: Copied from platform/win/fast/lists/w3-css3-list-styles-alphabetic-expected.txt.
+        * platform/win-xp/fast/text/international/w3-css3-list-styles-numeric-expected.txt: Copied from platform/win/fast/lists/w3-css3-list-styles-numeric-expected.txt.
+        * platform/win-xp/transforms: Added.
+        * platform/win-xp/transforms/2d: Added.
+        * platform/win-xp/transforms/2d/hindi-rotated-expected.txt: Copied from platform/win/transforms/2d/hindi-rotated-expected.txt.
+        * platform/win/fast/lists/w3-css3-list-styles-alphabetic-expected.txt: Updated with Windows Vista/7 results.
+        * platform/win/fast/lists/w3-css3-list-styles-numeric-expected.txt: Ditto.
+        * platform/win/fast/text/backslash-to-yen-sign-expected.txt: Ditto.
+        * platform/win/fast/text/international/bold-bengali-expected.txt: Ditto.
+        * platform/win/fast/text/international/complex-character-based-fallback-expected.txt: Ditto.
+        * platform/win/transforms/2d/hindi-rotated-expected.txt: Ditto.
+
 2010-07-08  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Sam Weinig.
