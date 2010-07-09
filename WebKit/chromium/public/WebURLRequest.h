@@ -129,6 +129,10 @@ public:
     WEBKIT_API bool reportUploadProgress() const;
     WEBKIT_API void setReportUploadProgress(bool);
 
+    // Controls whether load timing info is collected for the request.
+    WEBKIT_API bool reportLoadTiming() const;
+    WEBKIT_API void setReportLoadTiming(bool);
+
     WEBKIT_API TargetType targetType() const;
     WEBKIT_API void setTargetType(TargetType);
 

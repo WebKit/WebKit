@@ -1,3 +1,41 @@
+2010-07-08  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: Provide detailed network info in the resources panel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=40227
+
+        * WebKit.gyp:
+        * public/WebDevToolsAgent.h:
+        * public/WebURLLoadTiming.h: Added.
+        (WebKit::WebURLLoadTiming::~WebURLLoadTiming):
+        (WebKit::WebURLLoadTiming::WebURLLoadTiming):
+        (WebKit::WebURLLoadTiming::operator=):
+        (WebKit::WebURLLoadTiming::isNull):
+        * public/WebURLRequest.h:
+        * public/WebURLResponse.h:
+        * src/WebDevToolsAgentImpl.cpp:
+        (WebKit::WebDevToolsAgentImpl::willSendRequest):
+        * src/WebDevToolsAgentImpl.h:
+        * src/WebURLLoadTiming.cpp: Added.
+        (WebKit::WebURLLoadTiming::initialize):
+        (WebKit::WebURLLoadTiming::reset):
+        (WebKit::WebURLLoadTiming::assign):
+        (WebKit::WebURLLoadTiming::setDomainLookupTimes):
+        (WebKit::WebURLLoadTiming::setConnectStartTime):
+        (WebKit::WebURLLoadTiming::setRequestTimes):
+        (WebKit::WebURLLoadTiming::setHeadersAvailableTime):
+        (WebKit::WebURLLoadTiming::WebURLLoadTiming):
+        (WebKit::WebURLLoadTiming::operator=):
+        (WebKit::WebURLLoadTiming::operator PassRefPtr<ResourceLoadTiming>):
+        * src/WebURLRequest.cpp:
+        (WebKit::WebURLRequest::reportLoadTiming):
+        (WebKit::WebURLRequest::setReportLoadTiming):
+        * src/WebURLResponse.cpp:
+        (WebKit::WebURLResponse::setConnectionID):
+        (WebKit::WebURLResponse::setLoadTiming):
+
 2010-07-08  Jay Civelli  <jcivelli@chromium.org>
 
         Reviewed by Darin Fisher.

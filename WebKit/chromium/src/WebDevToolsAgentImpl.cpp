@@ -520,10 +520,10 @@ void WebDevToolsAgentImpl::identifierForInitialRequest(
     }
 }
 
-void WebDevToolsAgentImpl::willSendRequest(unsigned long resourceId, const WebURLRequest& request)
+void WebDevToolsAgentImpl::willSendRequest(unsigned long resourceId, WebURLRequest& request)
 {
     if (InspectorController* ic = inspectorController())
-        ic->willSendRequest(resourceId, request.toResourceRequest(), ResourceResponse());
+        ic->willSendRequest(resourceId, request.toMutableResourceRequest(), ResourceResponse());
 }
 
 void WebDevToolsAgentImpl::didReceiveData(unsigned long resourceId, int length)

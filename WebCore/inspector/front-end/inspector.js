@@ -1181,6 +1181,8 @@ WebInspector.updateResource = function(identifier, payload)
         resource.statusText = payload.statusText;
         resource.suggestedFilename = payload.suggestedFilename;
         resource.responseHeaders = payload.responseHeaders;
+        resource.connectionID = payload.connectionID;
+        resource.timing = payload.timing;
     }
 
     if (payload.didTypeChange) {

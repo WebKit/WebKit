@@ -947,7 +947,7 @@ bool InspectorController::isMainResourceLoader(DocumentLoader* loader, const KUR
     return loader->frame() == m_inspectedPage->mainFrame() && requestUrl == loader->requestURL();
 }
 
-void InspectorController::willSendRequest(unsigned long identifier, const ResourceRequest& request, const ResourceResponse& redirectResponse)
+void InspectorController::willSendRequest(unsigned long identifier, ResourceRequest& request, const ResourceResponse& redirectResponse)
 {
     if (!enabled())
         return;
@@ -960,11 +960,12 @@ void InspectorController::willSendRequest(unsigned long identifier, const Resour
     if (!resource)
         return;
 
+    request.setReportLoadTiming(true);
+
     if (!redirectResponse.isNull()) {
         // Redirect may have empty URL and we'd like to not crash with invalid HashMap entry.
         // See http/tests/misc/will-send-request-returns-null-on-redirect.html
         if (!request.url().isEmpty()) {
-            resource->markResponseReceivedTime();
             resource->endTiming();
             resource->updateResponse(redirectResponse);
 
@@ -995,7 +996,6 @@ void InspectorController::didReceiveResponse(unsigned long identifier, const Res
 
     if (RefPtr<InspectorResource> resource = getTrackedResource(identifier)) {
         resource->updateResponse(response);
-        resource->markResponseReceivedTime();
 
         if (resource != m_mainResource && m_frontend)
             resource->updateScriptObject(m_frontend.get());

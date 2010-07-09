@@ -479,7 +479,7 @@ PassRefPtr<ResourceHandle> ApplicationCacheGroup::createResourceHandle(const KUR
         InspectorController* inspectorController = page->inspectorController();
         inspectorController->identifierForInitialRequest(m_currentResourceIdentifier, m_frame->loader()->documentLoader(), handle->request());
         ResourceResponse redirectResponse = ResourceResponse();
-        inspectorController->willSendRequest(m_currentResourceIdentifier, handle->request(), redirectResponse);
+        inspectorController->willSendRequest(m_currentResourceIdentifier, request, redirectResponse);
     }
 #endif
     return handle;

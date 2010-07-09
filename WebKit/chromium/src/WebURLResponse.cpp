@@ -32,11 +32,15 @@
 #include "WebURLResponse.h"
 
 #include "ResourceResponse.h"
+#include "ResourceLoadTiming.h"
 
 #include "WebHTTPHeaderVisitor.h"
 #include "WebString.h"
 #include "WebURL.h"
+#include "WebURLLoadTiming.h"
 #include "WebURLResponsePrivate.h"
+
+#include <wtf/RefPtr.h>
 
 using namespace WebCore;
 
@@ -91,6 +95,27 @@ WebURL WebURLResponse::url() const
 void WebURLResponse::setURL(const WebURL& url)
 {
     m_private->m_resourceResponse->setURL(url);
+}
+
+unsigned WebURLResponse::connectionID() const
+{
+    return m_private->m_resourceResponse->connectionID();
+}
+
+void WebURLResponse::setConnectionID(unsigned connectionID)
+{
+    m_private->m_resourceResponse->setConnectionID(connectionID);
+}
+
+WebURLLoadTiming WebURLResponse::loadTiming()
+{
+    return WebURLLoadTiming(m_private->m_resourceResponse->resourceLoadTiming());
+}
+
+void WebURLResponse::setLoadTiming(const WebURLLoadTiming& timing)
+{
+    RefPtr<ResourceLoadTiming> loadTiming = PassRefPtr<ResourceLoadTiming>(timing);
+    m_private->m_resourceResponse->setResourceLoadTiming(loadTiming.release());
 }
 
 double WebURLResponse::responseTime() const

@@ -46,6 +46,8 @@ WebInspector.ResourcesPanel = function()
     this.filter(this.filterAllElement, false);
     this.graphsTreeElement.children[0].select();
     this._resourceTrackingEnabled = false;
+
+    this._popoverHelper = new WebInspector.PopoverHelper(this.element, this._getPopoverAnchor.bind(this), this._showPopover.bind(this), true);
 }
 
 WebInspector.ResourcesPanel.prototype = {
@@ -732,6 +734,51 @@ WebInspector.ResourcesPanel.prototype = {
     elementsToRestoreScrollPositionsFor: function()
     {
         return [ this.containerElement ];
+    },
+
+    _getPopoverAnchor: function(element)
+    {
+        var anchor = element.enclosingNodeOrSelfWithClass("resources-graph-bar-area");
+        if (!anchor)
+            return null;
+        var resource = anchor.resource;
+        return resource.timing ? anchor : null;
+    },
+
+    _showPopover: function(anchor)
+    {
+        var tableElement = document.createElement("table");
+        var resource = anchor.resource;
+        var data = [WebInspector.UIString("Blocking"), resource.timing.requestTime === 0 ? "?" : Number.secondsToString(Math.max(resource.timing.requestTime - resource.startTime, 0)),
+                    WebInspector.UIString("Proxy"), resource.timing.proxyDuration == -1 ? "none" : Number.secondsToString(resource.timing.proxyDuration),
+                    WebInspector.UIString("DNS Lookup"), resource.timing.dnsDuration == -1 ? "reused" : Number.secondsToString(resource.timing.dnsDuration),
+                    WebInspector.UIString("Connecting"), resource.timing.connectDuration == -1 ? "reused" : Number.secondsToString(resource.timing.connectDuration),
+                    WebInspector.UIString("Sending"), Number.secondsToString(resource.timing.sendDuration),
+                    WebInspector.UIString("Waiting"), Number.secondsToString(resource.timing.receiveHeadersDuration),
+                    WebInspector.UIString("Receiving"), Number.secondsToString(resource.endTime - resource.responseReceivedTime)];
+
+        for (var i = 0; i < data.length; i += 2) {
+            var tr = document.createElement("tr");
+            tableElement.appendChild(tr);
+
+            var td = document.createElement("td");
+            td.textContent = data[i];
+            tr.appendChild(td);
+
+            td = document.createElement("td");
+            td.textContent = data[i + 1];
+            tr.appendChild(td);
+        }
+
+        var popover = new WebInspector.Popover(tableElement);
+        popover.show(anchor.firstChild.nextSibling);
+        return popover;
+    },
+
+    hide: function()
+    {
+        WebInspector.Panel.prototype.hide.call(this);
+        this._popoverHelper.hidePopup();
     }
 }
 
@@ -855,6 +902,9 @@ WebInspector.ResourceTimeCalculator.prototype = {
         else
             var leftLabel = rightLabel;
 
+        if (resource.connectionID)
+            return {left: leftLabel, right: rightLabel};
+
         if (hasLatency && rightLabel) {
             var total = this.formatValue(resource.duration);
             var tooltip = WebInspector.UIString("%s latency, %s download (%s total)", leftLabel, rightLabel, total);
@@ -865,7 +915,6 @@ WebInspector.ResourceTimeCalculator.prototype = {
 
         if (resource.cached)
             tooltip = WebInspector.UIString("%s (from cache)", tooltip);
-
         return {left: leftLabel, right: rightLabel, tooltip: tooltip};
     },
 
@@ -1205,6 +1254,7 @@ WebInspector.ResourceGraph = function(resource)
 
     this._barAreaElement = document.createElement("div");
     this._barAreaElement.className = "resources-graph-bar-area hidden";
+    this._barAreaElement.resource = resource;
     this._graphElement.appendChild(this._barAreaElement);
 
     this._barLeftElement = document.createElement("div");

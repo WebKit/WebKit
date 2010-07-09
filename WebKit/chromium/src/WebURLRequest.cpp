@@ -194,6 +194,16 @@ void WebURLRequest::setReportUploadProgress(bool reportUploadProgress)
     m_private->m_resourceRequest->setReportUploadProgress(reportUploadProgress);
 }
 
+bool WebURLRequest::reportLoadTiming() const
+{
+    return m_private->m_resourceRequest->reportLoadTiming();
+}
+
+void WebURLRequest::setReportLoadTiming(bool reportLoadTiming)
+{
+    m_private->m_resourceRequest->setReportLoadTiming(reportLoadTiming);
+}
+
 WebURLRequest::TargetType WebURLRequest::targetType() const
 {
     return static_cast<TargetType>(m_private->m_resourceRequest->targetType());

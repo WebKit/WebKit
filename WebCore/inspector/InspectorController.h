@@ -167,7 +167,7 @@ public:
     void didLoadResourceFromMemoryCache(DocumentLoader*, const CachedResource*);
 
     void identifierForInitialRequest(unsigned long identifier, DocumentLoader*, const ResourceRequest&);
-    void willSendRequest(unsigned long identifier, const ResourceRequest&, const ResourceResponse& redirectResponse);
+    void willSendRequest(unsigned long identifier, ResourceRequest&, const ResourceResponse& redirectResponse);
     void didReceiveResponse(unsigned long identifier, const ResourceResponse&);
     void didReceiveContentLength(unsigned long identifier, int lengthReceived);
     void didFinishLoading(unsigned long identifier);

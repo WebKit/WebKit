@@ -1,3 +1,46 @@
+2010-07-08  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: Provide detailed network info in the resources panel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=40227
+
+        * English.lproj/localizedStrings.js:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::willSendRequest):
+        (WebCore::InspectorController::didReceiveResponse):
+        * inspector/InspectorController.h:
+        * inspector/InspectorResource.cpp:
+        (WebCore::InspectorResource::InspectorResource):
+        (WebCore::InspectorResource::updateResponse):
+        (WebCore::InspectorResource::updateScriptObject):
+        (WebCore::InspectorResource::buildObjectForTiming):
+        * inspector/InspectorResource.h:
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.ResourcesPanel):
+        (WebInspector.ResourcesPanel.prototype.elementsToRestoreScrollPositionsFor):
+        (WebInspector.ResourcesPanel.prototype._getPopoverAnchor):
+        (WebInspector.ResourcesPanel.prototype._showPopover):
+        (WebInspector.ResourcesPanel.prototype.hide):
+        (WebInspector.ResourceTimeCalculator.prototype.computeBarGraphLabels):
+        (WebInspector.ResourceGraph):
+        * inspector/front-end/inspector.js:
+        (WebInspector.updateResource):
+        * platform/network/ResourceLoadTiming.h:
+        (WebCore::ResourceLoadTiming::create):
+        (WebCore::ResourceLoadTiming::deepCopy):
+        (WebCore::ResourceLoadTiming::operator==):
+        (WebCore::ResourceLoadTiming::ResourceLoadTiming):
+        * platform/network/ResourceRequestBase.h:
+        (WebCore::ResourceRequestBase::reportLoadTiming):
+        (WebCore::ResourceRequestBase::setReportLoadTiming):
+        (WebCore::ResourceRequestBase::ResourceRequestBase):
+        * platform/network/ResourceResponseBase.cpp:
+        (WebCore::ResourceResponseBase::connectionID):
+        (WebCore::ResourceResponseBase::setConnectionID):
+        * platform/network/ResourceResponseBase.h:
+
 2010-07-09  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

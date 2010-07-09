@@ -49,9 +49,9 @@ namespace WebCore {
     class DocumentLoader;
     class InspectorFrontend;
     class Frame;
-    class ResourceResponse;
-
+    class ResourceLoadTiming;
     class ResourceRequest;
+    class ResourceResponse;
 
     class InspectorResource : public RefCounted<InspectorResource> {
     public:
@@ -102,7 +102,6 @@ namespace WebCore {
         String requestFormData() const { return m_requestFormData; }
 
         void startTiming();
-        void markResponseReceivedTime();
         void markLoadEventTime();
         void markDOMContentEventTime();
         void endTiming();
@@ -152,6 +151,8 @@ namespace WebCore {
         Type cachedResourceType() const;
         CachedResource* cachedResource() const;
 
+        ScriptObject buildObjectForTiming(InspectorFrontend*, ResourceLoadTiming*);
+
         unsigned long m_identifier;
         RefPtr<DocumentLoader> m_loader;
         RefPtr<Frame> m_frame;
@@ -172,6 +173,8 @@ namespace WebCore {
         double m_endTime;
         double m_loadEventTime;
         double m_domContentEventTime;
+        unsigned m_connectionID;
+        RefPtr<ResourceLoadTiming> m_loadTiming;
         ScriptString m_overrideContent;
         Type m_overrideContentType;
         Changes m_changes;

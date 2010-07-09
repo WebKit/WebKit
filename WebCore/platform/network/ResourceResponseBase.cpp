@@ -455,6 +455,20 @@ time_t ResourceResponseBase::lastModifiedDate() const
     return m_lastModifiedDate;
 }
 
+unsigned ResourceResponseBase::connectionID() const
+{
+    lazyInit();
+
+    return m_connectionID;
+}
+
+void ResourceResponseBase::setConnectionID(unsigned connectionID)
+{
+    lazyInit();
+
+    m_connectionID = connectionID;
+}
+
 ResourceLoadTiming* ResourceResponseBase::resourceLoadTiming() const
 {
     lazyInit();
