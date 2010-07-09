@@ -1,3 +1,15 @@
+2010-07-09  Simon Hausmann <simon.hausmann@nokia.com>
+
+        Unreviewed trivial Symbian build fix.
+
+        [Qt] Fix the Symbian build when compiling without S60
+
+        Use Q_OS_SYMBIAN instead of Q_WS_S60 for the user agent
+        determination.
+
+        * Api/qwebpage.cpp:
+        (QWebPage::userAgentForUrl):
+
 2010-07-09  Kristian Amlie  <kristian.amlie@nokia.com>
 
         Reviewed by Simon Hausmann.
