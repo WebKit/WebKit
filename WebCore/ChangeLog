@@ -1,3 +1,15 @@
+2010-07-09  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Darin Adler.
+
+        AX:  text editing not spoken by VO on web view contenteditable textbox
+        https://bugs.webkit.org/show_bug.cgi?id=41912
+
+        Test: platform/mac/accessibility/selection-value-changes-for-aria-textbox.html
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::renderObjectIsObservable):
+
 2010-07-09  Michael Nordman  <michaeln@google.com>
 
         Reviewed by Dumitru Daniliuc.
