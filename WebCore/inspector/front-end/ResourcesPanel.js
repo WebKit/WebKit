@@ -41,13 +41,12 @@ WebInspector.ResourcesPanel = function()
     this.createInterface();
 
     this._createStatusbarButtons();
+    this._popoverHelper = new WebInspector.PopoverHelper(this.element, this._getPopoverAnchor.bind(this), this._showPopover.bind(this), true);
 
     this.reset();
     this.filter(this.filterAllElement, false);
     this.graphsTreeElement.children[0].select();
     this._resourceTrackingEnabled = false;
-
-    this._popoverHelper = new WebInspector.PopoverHelper(this.element, this._getPopoverAnchor.bind(this), this._showPopover.bind(this), true);
 }
 
 WebInspector.ResourcesPanel.prototype = {
@@ -328,6 +327,7 @@ WebInspector.ResourcesPanel.prototype = {
 
     reset: function()
     {
+        this._popoverHelper.hidePopup();
         this.closeVisibleResource();
 
         delete this.currentQuery;
@@ -475,6 +475,8 @@ WebInspector.ResourcesPanel.prototype = {
     {
         if (!resource)
             return;
+
+        this._popoverHelper.hidePopup();
 
         this.containerElement.addStyleClass("viewing-resource");
 
@@ -738,21 +740,21 @@ WebInspector.ResourcesPanel.prototype = {
 
     _getPopoverAnchor: function(element)
     {
-        var anchor = element.enclosingNodeOrSelfWithClass("resources-graph-bar-area");
+        var anchor = element.enclosingNodeOrSelfWithClass("resources-graph-bar") || element.enclosingNodeOrSelfWithClass("resources-graph-label");
         if (!anchor)
             return null;
-        var resource = anchor.resource;
-        return resource.timing ? anchor : null;
+        var resource = anchor.parentElement.resource;
+        return resource && resource.timing ? anchor : null;
     },
 
     _showPopover: function(anchor)
     {
         var tableElement = document.createElement("table");
-        var resource = anchor.resource;
+        var resource = anchor.parentElement.resource;
         var data = [WebInspector.UIString("Blocking"), resource.timing.requestTime === 0 ? "?" : Number.secondsToString(Math.max(resource.timing.requestTime - resource.startTime, 0)),
-                    WebInspector.UIString("Proxy"), resource.timing.proxyDuration == -1 ? "none" : Number.secondsToString(resource.timing.proxyDuration),
-                    WebInspector.UIString("DNS Lookup"), resource.timing.dnsDuration == -1 ? "reused" : Number.secondsToString(resource.timing.dnsDuration),
-                    WebInspector.UIString("Connecting"), resource.timing.connectDuration == -1 ? "reused" : Number.secondsToString(resource.timing.connectDuration),
+                    WebInspector.UIString("Proxy"), resource.timing.proxyDuration == -1 ? WebInspector.UIString("(none)") : Number.secondsToString(resource.timing.proxyDuration),
+                    WebInspector.UIString("DNS Lookup"), resource.timing.dnsDuration == -1 ? WebInspector.UIString("(reused)") : Number.secondsToString(resource.timing.dnsDuration),
+                    WebInspector.UIString("Connecting"), resource.timing.connectDuration == -1 ? WebInspector.UIString("(reused)") : Number.secondsToString(resource.timing.connectDuration),
                     WebInspector.UIString("Sending"), Number.secondsToString(resource.timing.sendDuration),
                     WebInspector.UIString("Waiting"), Number.secondsToString(resource.timing.receiveHeadersDuration),
                     WebInspector.UIString("Receiving"), Number.secondsToString(resource.endTime - resource.responseReceivedTime)];
@@ -766,12 +768,13 @@ WebInspector.ResourcesPanel.prototype = {
             tr.appendChild(td);
 
             td = document.createElement("td");
+            td.align = "right";
             td.textContent = data[i + 1];
             tr.appendChild(td);
         }
 
         var popover = new WebInspector.Popover(tableElement);
-        popover.show(anchor.firstChild.nextSibling);
+        popover.show(anchor);
         return popover;
     },
 
@@ -902,7 +905,7 @@ WebInspector.ResourceTimeCalculator.prototype = {
         else
             var leftLabel = rightLabel;
 
-        if (resource.connectionID)
+        if (resource.timing)
             return {left: leftLabel, right: rightLabel};
 
         if (hasLatency && rightLabel) {
