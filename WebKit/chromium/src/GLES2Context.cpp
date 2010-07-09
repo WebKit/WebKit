@@ -31,6 +31,7 @@
 #include "config.h"
 
 #include "GLES2Context.h"
+#include "IntSize.h"
 #include "WebGLES2Context.h"
 #include "WebKit.h"
 #include "WebKitClient.h"
@@ -139,6 +140,20 @@ bool GLES2Context::swapBuffers()
     if (!webContext)
         return false;
     return webContext->swapBuffers();
+}
+
+void GLES2Context::resizeOffscreenContent(const IntSize& size)
+{
+    WebGLES2Context* webContext = m_internal->getWebGLES2Context();
+    ASSERT(webContext);
+    webContext->resizeOffscreenContent(size);
+}
+
+unsigned GLES2Context::getOffscreenContentParentTextureId()
+{
+    WebGLES2Context* webContext = m_internal->getWebGLES2Context();
+    ASSERT(webContext);
+    return webContext->getOffscreenContentParentTextureId();
 }
 
 }  // namespace WebCore

@@ -36,6 +36,7 @@
 
 namespace WebKit {
 
+class WebSize;
 class WebView;
 
 // This interface abstracts the creation and management of an
@@ -49,6 +50,14 @@ public:
     virtual bool makeCurrent() = 0;
     virtual bool destroy() = 0;
     virtual bool swapBuffers() = 0;
+
+    // The follow two functions are for managing a context that renders offscreen.
+
+    // Resizes the backing store used for offscreen rendering.
+    virtual void resizeOffscreenContent(const WebSize&) = 0;
+
+    // Returns the ID of the texture used for offscreen rendering in the context of the parent.
+    virtual unsigned getOffscreenContentParentTextureId() = 0;
 };
 
 } // namespace WebKit

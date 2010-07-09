@@ -1,3 +1,16 @@
+2010-07-08  James Robinson  <jamesr@google.com>
+
+        Reviewed by Darin Fisher.
+
+        Allow resizing and getting the texture id from an offscreen GLES2Context
+        https://bugs.webkit.org/show_bug.cgi?id=41828
+
+        When using an offscreen GLES2Context the caller needs to be able to resize the backing store
+        managed by the embedder and get access to a texture id to pass to the compositor.  WebGL
+        does these actions in an indirect way, it will be refactored to use this path.
+
+        * platform/chromium/GLES2Context.h:
+
 2010-07-02  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Adam Barth.

@@ -38,6 +38,7 @@
 namespace WebCore {
 
 class GLES2ContextInternal;
+class IntSize;
 class Page;
 
 class GLES2Context : public Noncopyable {
@@ -55,6 +56,13 @@ public:
     bool makeCurrent();
     bool destroy();
     bool swapBuffers();
+
+    // Only valid for offscreen contexts.
+    void resizeOffscreenContent(const IntSize&);
+
+    // Returns the ID of the texture used for offscreen rendering in the context of the parent.
+    // This texture is accessible by the GPU page compositor.
+    unsigned getOffscreenContentParentTextureId();
 
 private:
     friend class GLES2ContextInternal;
