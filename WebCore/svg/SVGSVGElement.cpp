@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005, 2006 Nikolas Zimmermann <zimmermann@kde.org>
-                  2004, 2005, 2006, 2007, 2008 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006, 2007, 2008, 2010 Rob Buis <buis@kde.org>
                   2007 Apple Inc.  All rights reserved.
 
     This library is free software; you can redistribute it and/or
@@ -590,6 +590,27 @@ void SVGSVGElement::documentWillBecomeInactive()
 void SVGSVGElement::documentDidBecomeActive()
 {
     unpauseAnimations();
+}
+
+// getElementById on SVGSVGElement is restricted to only the child subtree defined by the <svg> element.
+// See http://www.w3.org/TR/SVG11/struct.html#InterfaceSVGSVGElement
+Element* SVGSVGElement::getElementById(const AtomicString& id) const
+{
+    Element* element = document()->getElementById(id);
+    if (element && element->isDescendantOf(this))
+        return element;
+
+    // Fall back to traversing our subtree. Duplicate ids are allowed, the first found will
+    // be returned.
+    for (Node* node = traverseNextNode(this); node; node = node->traverseNextNode(this)) {
+        if (!node->isElementNode())
+            continue;
+
+        Element* element = static_cast<Element*>(node);
+        if (element->hasID() && element->getIdAttribute() == id)
+            return element;
+    }
+    return 0;
 }
 
 }

@@ -1,3 +1,21 @@
+2010-07-08  Rob Buis  <rwlbuis@gmail.com>
+
+        Reviewed by Eric Seidel.
+
+        Implement SVGSVGElement.getElementById
+        https://bugs.webkit.org/show_bug.cgi?id=41655
+
+        Implement getElementById for SVGSVGElement by trying to
+        reuse Document.getElementById. If that fails to find an
+        SVG element in the document fragent do a subtree search.
+
+        Test: svg/custom/svg-getelementid.xhtml
+
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::getElementById):
+        * svg/SVGSVGElement.h:
+        * svg/SVGSVGElement.idl:
+
 2010-07-08  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.
