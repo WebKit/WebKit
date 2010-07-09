@@ -658,6 +658,7 @@ Got:
 |   <body>
 |     <table>
 |       <colgroup>
+|       "foo"
 Expected:
 | <html>
 |   <head>

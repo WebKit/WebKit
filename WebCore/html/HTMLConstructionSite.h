@@ -29,6 +29,7 @@
 #include "FragmentScriptingPermission.h"
 #include "HTMLElementStack.h"
 #include "HTMLFormattingElementList.h"
+#include "NotImplemented.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
@@ -56,6 +57,18 @@ public:
     void insertHTMLBodyElement(AtomicHTMLToken&);
     void insertScriptElement(AtomicHTMLToken&);
     void insertTextNode(AtomicHTMLToken&);
+
+    bool insertLeadingWhitespace(AtomicHTMLToken&)
+    {
+        notImplemented();
+        return false;
+    }
+
+    bool insertLeadingWhitespaceWithActiveFormattingElements(AtomicHTMLToken&)
+    {
+        notImplemented();
+        return false;
+    }
 
     void insertHTMLHtmlStartTagBeforeHTML(AtomicHTMLToken&);
     void insertHTMLHtmlStartTagInBody(AtomicHTMLToken&);
