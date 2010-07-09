@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2009 Alex Milowski (alex@milowski.com). All rights reserved.
  * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010 François Sausset (sausset@gmail.com). All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -45,6 +46,25 @@ MathMLElement::MathMLElement(const QualifiedName& tagName, Document* document)
 PassRefPtr<MathMLElement> MathMLElement::create(const QualifiedName& tagName, Document* document)
 {
     return adoptRef(new MathMLElement(tagName, document));
+}
+
+bool MathMLElement::mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const
+{
+    if (attrName == MathMLNames::mathcolorAttr || attrName == MathMLNames::mathbackgroundAttr) {
+        result = eMathML;
+        return false;
+    }
+    return StyledElement::mapToEntry(attrName, result);
+}
+
+void MathMLElement::parseMappedAttribute(Attribute* attr)
+{
+    if (attr->name() == MathMLNames::mathcolorAttr)
+        addCSSProperty(attr, CSSPropertyColor, attr->value());
+    else if (attr->name() == MathMLNames::mathbackgroundAttr)
+        addCSSProperty(attr, CSSPropertyBackgroundColor, attr->value());
+    else
+        StyledElement::parseMappedAttribute(attr);
 }
     
 }

@@ -6,6 +6,8 @@ attrsNullNamespace
 close
 denomalign
 linethickness
+mathbackground
+mathcolor
 mathsize
 numalign
 open

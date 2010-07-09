@@ -1,3 +1,21 @@
+2010-07-09  François Sausset  <sausset@gmail.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Implement MathML mathcolor & mathbackground attributes
+        https://bugs.webkit.org/show_bug.cgi?id=41895
+
+        Test: mathml/presentation/attributes.xhtml
+
+        * dom/MappedAttributeEntry.h:
+        (WebCore::):
+        * mathml/MathMLElement.cpp:
+        (WebCore::MathMLElement::MathMLElement):
+        (WebCore::MathMLElement::mapToEntry):
+        (WebCore::MathMLElement::parseMappedAttribute):
+        * mathml/MathMLElement.h:
+        * mathml/mathattrs.in:
+
 2010-07-09  Xiaomei Ji  <xji@chromium.org>
 
         Reviewed by David Levin.

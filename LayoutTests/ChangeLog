@@ -1,3 +1,15 @@
+2010-07-09  François Sausset  <sausset@gmail.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Test for the newly implemented MathML mathcolor & mathbackground attributes
+        https://bugs.webkit.org/show_bug.cgi?id=41895
+
+        * mathml/presentation/attributes.xhtml: Added.
+        * platform/mac/mathml/presentation/attributes-expected.checksum: Added.
+        * platform/mac/mathml/presentation/attributes-expected.png: Added.
+        * platform/mac/mathml/presentation/attributes-expected.txt: Added.
+
 2010-07-09  Vitaly Repeshko  <vitalyr@chromium.org>
 
         Unreviewed.
