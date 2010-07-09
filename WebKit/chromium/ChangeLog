@@ -1,3 +1,9 @@
+2010-07-09  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed: chromium build fix.
+
+        * public/WebGLES2Context.h:
+
 2010-07-09  Yael Aharon  <yael.aharon@nokia.com>
 
         Reviewed by Laszlo Gombos.

@@ -36,7 +36,7 @@
 
 namespace WebKit {
 
-class WebSize;
+struct WebSize;
 class WebView;
 
 // This interface abstracts the creation and management of an
