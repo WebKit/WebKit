@@ -1,3 +1,17 @@
+2010-07-09  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Not reviewed.
+
+        RenderSVGRoot does not include border/padding while repainting
+        https://bugs.webkit.org/show_bug.cgi?id=41854
+
+        Next round of win specific results.
+
+        * platform/win/svg/custom/broken-internal-references-expected.txt:
+        * platform/win/svg/custom/clip-path-referencing-use2-expected.txt:
+        * platform/win/svg/custom/image-with-transform-clip-filter-expected.txt:
+        * platform/win/svg/filters/feColorMatrix-values-expected.txt:
+
 2010-07-09  Csaba Osztrogonác  <ossy@webkit.org>
 
         Reviewed by Nikolas Zimmermann.
