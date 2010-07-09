@@ -1,3 +1,18 @@
+2010-07-09  Albert J. Wong  <ajwong@chromium.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        Add RuntimeEnabledFeatures::timeRangesEnabled() required by r62880
+
+        https://bugs.webkit.org/show_bug.cgi?id=41935
+
+        * bindings/generic/RuntimeEnabledFeatures.cpp:
+        (WebCore::RuntimeEnabledFeatures::timeRangesEnabled):
+                Add in timeRangesEnabled() implementation.
+        * bindings/generic/RuntimeEnabledFeatures.h:
+                Add in timeRangesEnabled() declaration.
+
+
 2010-07-09  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.
