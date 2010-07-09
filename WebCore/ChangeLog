@@ -1,3 +1,14 @@
+2010-07-08  Brent Fulgham  <bfulgham@webkit.org>
+
+        Reviewed by Xan Lopez.
+
+        Correct a mistake in calculating squiggle extents.  The entire
+        quantity was being divided by two, rather than just the unitWidth.
+        This error caused the squiggle to be about half the expected length.
+
+        * platform/graphics/cairo/DrawErrorUnderline.h:
+        (drawErrorUnderline):
+
 2010-07-08  John Abd-El-Malek  <jam@chromium.org>
 
         Reviewed by Darin Fisher.

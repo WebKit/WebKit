@@ -53,7 +53,7 @@ static inline void drawErrorUnderline(cairo_t* cr, double x, double y, double wi
     double halfSquare = 0.5 * square;
 
     double unitWidth = (heightSquares - 1.0) * square;
-    int widthUnits = static_cast<int>(0.5 * (width + unitWidth) / unitWidth);
+    int widthUnits = static_cast<int>((width + 0.5 * unitWidth) / unitWidth);
 
     x += 0.5 * (width - widthUnits * unitWidth);
     width = widthUnits * unitWidth;
