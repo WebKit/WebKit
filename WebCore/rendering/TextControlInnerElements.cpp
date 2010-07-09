@@ -225,20 +225,27 @@ void SpinButtonElement::defaultEventHandler(Event* evt)
         return;
     }
 
+    RenderBox* box = renderBox();
+    if (!box) {
+        if (!evt->defaultHandled())
+            HTMLDivElement::defaultEventHandler(evt);
+        return;        
+    }
+    
     HTMLInputElement* input = static_cast<HTMLInputElement*>(shadowAncestorNode());
-    IntPoint local = roundedIntPoint(renderBox()->absoluteToLocal(mevt->absoluteLocation(), false, true));
+    IntPoint local = roundedIntPoint(box->absoluteToLocal(mevt->absoluteLocation(), false, true));
     if (evt->type() == eventNames().clickEvent) {
-        if (renderBox()->borderBoxRect().contains(local)) {
+        if (box->borderBoxRect().contains(local)) {
             input->focus();
             input->select();
-            if (local.y() < renderBox()->y() + renderBox()->height() / 2)
+            if (local.y() < box->y() + box->height() / 2)
                 input->stepUpFromRenderer(1);
             else
                 input->stepUpFromRenderer(-1);
             evt->setDefaultHandled();
         }
     } else if (evt->type() == eventNames().mousemoveEvent) {
-        if (renderBox()->borderBoxRect().contains(local)) {
+        if (box->borderBoxRect().contains(local)) {
             if (!m_capturing) {
                 if (Frame* frame = document()->frame()) {
                     frame->eventHandler()->setCapturingMouseEventsNode(input);
@@ -246,7 +253,7 @@ void SpinButtonElement::defaultEventHandler(Event* evt)
                 }
             }
             bool oldOnUpButton = m_onUpButton;
-            m_onUpButton = local.y() < renderBox()->y() + renderBox()->height() / 2;
+            m_onUpButton = local.y() < box->y() + box->height() / 2;
             if (m_onUpButton != oldOnUpButton)
                 renderer()->repaint();
         } else {
