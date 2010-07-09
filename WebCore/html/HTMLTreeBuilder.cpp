@@ -375,7 +375,10 @@ static void convertToOldStyle(AtomicHTMLToken& token, Token& oldStyleToken)
     case HTMLToken::StartTag:
     case HTMLToken::EndTag: {
         oldStyleToken.beginTag = (token.type() == HTMLToken::StartTag);
-        oldStyleToken.selfClosingTag = token.selfClosing();
+        // The LegacyHTMLTreeBuilder seems to work better if we lie here and
+        // say that tags are never self closing.  As a wise man once said:
+        // "You can't handle the truth!"
+        oldStyleToken.selfClosingTag = false;
         oldStyleToken.tagName = token.name();
         oldStyleToken.attrs = token.takeAtributes();
         break;
