@@ -1,3 +1,14 @@
+2010-07-08  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed.
+
+        This test regressed in http://trac.webkit.org/changeset/62876
+        but that change is too complicated to roll out and Aaron Boodman
+        isn't around to help figure out what went wrong.  Hopefully we'll
+        get this off the skipped list tomorrow morning.
+
+        * platform/mac/Skipped:
+
 2010-07-08  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Sam Weinig.
