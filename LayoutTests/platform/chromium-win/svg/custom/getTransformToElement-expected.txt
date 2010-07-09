@@ -1,7 +1,7 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
-  RenderSVGRoot {svg} at (0,0) size 800x600
+  RenderSVGRoot {svg} at (20,56) size 101x157
     RenderSVGContainer {g} at (0,0) size 0x0 [transform={m=((0.00,0.00)(0.00,0.00)) t=(0.00,0.00)}]
     RenderSVGContainer {g} at (20,56) size 40x18 [transform={m=((1.00,0.00)(0.00,1.00)) t=(15.00,15.00)}]
       RenderSVGText {text} at (50,123) size 80x34 contains 1 chunk(s)

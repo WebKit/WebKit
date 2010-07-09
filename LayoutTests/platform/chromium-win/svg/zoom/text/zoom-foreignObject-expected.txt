@@ -1,7 +1,7 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
-  RenderSVGRoot {svg} at (0,0) size 800x600
+  RenderSVGRoot {svg} at (9,9) size 791x591
     RenderForeignObject {foreignObject} at (10,10) size 580x380
       RenderBlock {xhtml:div} at (0,0) size 580x20
         RenderText {#text} at (0,0) size 74x19

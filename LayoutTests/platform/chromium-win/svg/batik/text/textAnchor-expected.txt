@@ -1,7 +1,7 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 450x500
-  RenderSVGRoot {svg} at (0,0) size 450x500
+  RenderSVGRoot {svg} at (53,25) size 342x433
     RenderSVGText {text} at (146,25) size 158x18 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 158x18
         chunk 1 (middle anchor) text run 1 at (146.50,40.00) startOffset 0 endOffset 22 width 157.00: "text-anchor on <tspan>"

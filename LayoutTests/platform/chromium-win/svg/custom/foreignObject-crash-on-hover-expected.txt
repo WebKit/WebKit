@@ -1,7 +1,7 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
-  RenderSVGRoot {svg} at (0,0) size 800x600
+  RenderSVGRoot {svg} at (49,49) size 302x302
     RenderSVGContainer {g} at (49,49) size 302x302 [transform={m=((1.00,0.00)(0.00,1.00)) t=(50.00,50.00)}]
       RenderPath {polygon} at (49,49) size 302x302 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#ADD8E6]}] [data="M0.00,0.00 L300.00,0.00 L300.00,300.00 L0.00,300.00 Z"]
       RenderForeignObject {foreignObject} at (10,10) size 280x280

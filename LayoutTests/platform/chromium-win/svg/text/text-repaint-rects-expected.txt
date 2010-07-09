@@ -6,7 +6,7 @@ layer at (0,0) size 800x164
       RenderBlock {p} at (0,0) size 784x132
         RenderText {#text} at (0,32) size 210x19
           text run at (0,32) width 210: "The alphabet A through M is here: "
-        RenderSVGRoot {svg} at (218,16) size 500x47
+        RenderSVGRoot {svg} at (218,17) size 500x46
           RenderSVGContainer {g} at (218,17) size 500x46 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,47.00)}]
             RenderSVGText {text} at (0,-46) size 35x57 contains 1 chunk(s)
               RenderSVGInlineText {#text} at (0,0) size 35x57

@@ -3,7 +3,7 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x221
   RenderBlock {html} at (0,0) size 800x221
     RenderBody {body} at (8,8) size 784x205
-      RenderSVGRoot {svg:svg} at (8,8) size 200x200
+      RenderSVGRoot {svg:svg} at (32,32) size 52x52
         RenderSVGHiddenContainer {svg:defs} at (0,0) size 0x0
         RenderSVGContainer {svg:use} at (32,32) size 52x52
           RenderSVGContainer {g} at (32,32) size 52x52 [transform={m=((1.00,0.00)(0.00,1.00)) t=(50.00,50.00)}]

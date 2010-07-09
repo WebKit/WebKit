@@ -4942,8 +4942,26 @@ Expected:
 |         <nobr>
 |           "a"
 |         <nobr>
-resources/doctype01.dat: PASS
+resources/doctype01.dat:
+31
 
+Test 31 of 37 in resources/doctype01.dat failed. Input:
+<!DOCTYPE root-element [SYSTEM OR PUBLIC FPI] "uri" [ 
+<!-- internal declarations -->
+]>
+Got:
+| <!DOCTYPE root-element>
+| <html>
+|   <head>
+|   <body>
+|     "
+]>"
+Expected:
+| <!DOCTYPE root-element>
+| <html>
+|   <head>
+|   <body>
+|     "]>"
 resources/scriptdata01.dat: PASS
 
 resources/entities01.dat:

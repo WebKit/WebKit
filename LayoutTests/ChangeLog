@@ -1,3 +1,293 @@
+2010-07-09  Vitaly Repeshko  <vitalyr@chromium.org>
+
+        Unreviewed.
+
+        [chromium] Updating expectations.
+
+        * platform/chromium-linux/svg/batik/paints/patternRegions-expected.txt:
+        * platform/chromium-linux/svg/batik/text/textOnPath-expected.txt:
+        * platform/chromium-linux/svg/batik/text/textPosition-expected.txt:
+        * platform/chromium-linux/svg/batik/text/textPosition2-expected.txt:
+        * platform/chromium-linux/svg/batik/text/verticalTextOnPath-expected.txt:
+        * platform/chromium-linux/svg/css/text-shadow-multiple-expected.txt: Removed.
+        * platform/chromium-linux/svg/custom/image-with-transform-clip-filter-expected.txt:
+        * platform/chromium-linux/svg/custom/repaint-moving-svg-and-div-expected.checksum: Added.
+        * platform/chromium-linux/svg/custom/stroke-width-large-expected.txt:
+        * platform/chromium-linux/svg/hixie/perf/001-expected.txt:
+        * platform/chromium-linux/svg/hixie/perf/002-expected.txt:
+        * platform/chromium-linux/svg/hixie/perf/007-expected.txt:
+        * platform/chromium-linux/svg/hixie/text/003a-expected.txt:
+        * platform/chromium-linux/svg/hixie/viewbox/preserveAspectRatio/001-expected.txt:
+        * platform/chromium-linux/svg/hixie/viewbox/preserveAspectRatio/002-expected.txt:
+        * platform/chromium-linux/svg/text/select-textLength-spacing-stretch-1-expected.txt:
+        * platform/chromium-linux/svg/text/select-textLength-spacing-stretch-2-expected.txt:
+        * platform/chromium-linux/svg/text/select-textLength-spacing-stretch-3-expected.txt:
+        * platform/chromium-linux/svg/text/select-textLength-spacing-stretch-4-expected.txt:
+        * platform/chromium-linux/svg/text/select-textLength-spacingAndGlyphs-stretch-1-expected.txt:
+        * platform/chromium-linux/svg/text/select-textLength-spacingAndGlyphs-stretch-2-expected.txt:
+        * platform/chromium-linux/svg/text/select-textLength-spacingAndGlyphs-stretch-3-expected.txt:
+        * platform/chromium-linux/svg/text/select-textLength-spacingAndGlyphs-stretch-4-expected.txt:
+        * platform/chromium-linux/svg/text/selection-doubleclick-expected.txt:
+        * platform/chromium-mac/fast/dom/prototype-inheritance-expected.txt: Added.
+        * platform/chromium-mac/html5lib/runner-expected.txt:
+        * platform/chromium-mac/ietestcenter/Javascript/15.5.4.20-1-1-expected.txt: Added.
+        * platform/chromium-mac/ietestcenter/Javascript/15.5.4.20-1-2-expected.txt: Added.
+        * platform/chromium-mac/plugins/clicking-missing-plugin-fires-delegate-expected.txt: Added.
+        * platform/chromium-mac/svg/clip-path/clip-path-childs-clipped-expected.txt: Removed.
+        * platform/chromium-mac/svg/clip-path/clip-path-clipped-expected.txt: Removed.
+        * platform/chromium-mac/svg/clip-path/clip-path-evenodd-expected.txt: Removed.
+        * platform/chromium-mac/svg/clip-path/clip-path-evenodd-nonzero-expected.txt: Removed.
+        * platform/chromium-mac/svg/clip-path/clip-path-nonzero-evenodd-expected.txt: Removed.
+        * platform/chromium-mac/svg/custom/clip-path-referencing-use2-expected.txt:
+        * platform/chromium-mac/svg/custom/createelement-expected.txt:
+        * platform/chromium-mac/svg/custom/junk-data-expected.txt:
+        * platform/chromium-mac/svg/custom/missing-xlink-expected.txt:
+        * platform/chromium-mac/svg/custom/repaint-moving-svg-and-div-expected.checksum: Added.
+        * platform/chromium-mac/svg/custom/repaint-moving-svg-and-div-expected.png: Added.
+        * platform/chromium-mac/userscripts/user-script-top-frame-only-expected.txt: Added.
+        * platform/chromium-mac/userscripts/user-style-top-frame-only-expected.txt: Added.
+        * platform/chromium-win-xp/svg/batik/text/textFeatures-expected.txt:
+        * platform/chromium-win/fast/dom/prototype-inheritance-expected.txt: Added.
+        * platform/chromium-win/html5lib/runner-expected.txt:
+        * platform/chromium-win/ietestcenter/Javascript/15.5.4.20-1-1-expected.txt: Added.
+        * platform/chromium-win/ietestcenter/Javascript/15.5.4.20-1-2-expected.txt: Added.
+        * platform/chromium-win/plugins/clicking-missing-plugin-fires-delegate-expected.txt: Added.
+        * platform/chromium-win/svg/W3C-SVG-1.1/struct-frag-03-t-expected.txt:
+        * platform/chromium-win/svg/batik/filters/feTile-expected.txt:
+        * platform/chromium-win/svg/batik/filters/filterRegions-expected.txt:
+        * platform/chromium-win/svg/batik/masking/maskRegions-expected.txt:
+        * platform/chromium-win/svg/batik/paints/patternRegionA-expected.txt:
+        * platform/chromium-win/svg/batik/paints/patternRegions-expected.txt:
+        * platform/chromium-win/svg/batik/text/longTextOnPath-expected.txt:
+        * platform/chromium-win/svg/batik/text/textAnchor-expected.txt:
+        * platform/chromium-win/svg/batik/text/textAnchor2-expected.txt:
+        * platform/chromium-win/svg/batik/text/textAnchor3-expected.txt:
+        * platform/chromium-win/svg/batik/text/textDecoration-expected.txt:
+        * platform/chromium-win/svg/batik/text/textDecoration2-expected.txt:
+        * platform/chromium-win/svg/batik/text/textEffect-expected.txt:
+        * platform/chromium-win/svg/batik/text/textEffect2-expected.txt:
+        * platform/chromium-win/svg/batik/text/textEffect3-expected.txt:
+        * platform/chromium-win/svg/batik/text/textFeatures-expected.txt:
+        * platform/chromium-win/svg/batik/text/textGlyphOrientationHorizontal-expected.txt:
+        * platform/chromium-win/svg/batik/text/textLayout-expected.txt:
+        * platform/chromium-win/svg/batik/text/textLayout2-expected.txt:
+        * platform/chromium-win/svg/batik/text/textOnPath-expected.txt:
+        * platform/chromium-win/svg/batik/text/textOnPath2-expected.txt:
+        * platform/chromium-win/svg/batik/text/textOnPath3-expected.txt:
+        * platform/chromium-win/svg/batik/text/textOnPathSpaces-expected.txt:
+        * platform/chromium-win/svg/batik/text/textPCDATA-expected.txt:
+        * platform/chromium-win/svg/batik/text/textPosition-expected.txt:
+        * platform/chromium-win/svg/batik/text/textPosition2-expected.txt:
+        * platform/chromium-win/svg/batik/text/textProperties-expected.txt:
+        * platform/chromium-win/svg/batik/text/textProperties2-expected.txt:
+        * platform/chromium-win/svg/batik/text/textStyles-expected.txt:
+        * platform/chromium-win/svg/batik/text/verticalText-expected.txt:
+        * platform/chromium-win/svg/batik/text/verticalTextOnPath-expected.txt:
+        * platform/chromium-win/svg/batik/text/xmlSpace-expected.txt:
+        * platform/chromium-win/svg/carto.net/scrollbar-expected.txt:
+        * platform/chromium-win/svg/carto.net/selectionlist-expected.txt:
+        * platform/chromium-win/svg/clip-path/clip-path-childs-clipped-expected.txt: Removed.
+        * platform/chromium-win/svg/clip-path/clip-path-clipped-expected.txt: Removed.
+        * platform/chromium-win/svg/clip-path/clip-path-evenodd-expected.txt: Removed.
+        * platform/chromium-win/svg/clip-path/clip-path-evenodd-nonzero-expected.txt: Removed.
+        * platform/chromium-win/svg/clip-path/clip-path-nonzero-evenodd-expected.txt: Removed.
+        * platform/chromium-win/svg/clip-path/clip-path-text-and-shape-expected.txt:
+        * platform/chromium-win/svg/clip-path/clip-path-text-and-stroke-expected.txt:
+        * platform/chromium-win/svg/clip-path/clip-path-text-expected.txt:
+        * platform/chromium-win/svg/clip-path/clip-path-with-text-clipped-expected.txt:
+        * platform/chromium-win/svg/css/group-with-shadow-expected.txt:
+        * platform/chromium-win/svg/css/text-shadow-multiple-expected.txt:
+        * platform/chromium-win/svg/custom/SVGMatrix-interface-expected.txt:
+        * platform/chromium-win/svg/custom/SVGPoint-matrixTransform-expected.txt:
+        * platform/chromium-win/svg/custom/alignment-baseline-modes-expected.txt:
+        * platform/chromium-win/svg/custom/altglyph-expected.txt:
+        * platform/chromium-win/svg/custom/circle-move-invalidation-expected.txt:
+        * platform/chromium-win/svg/custom/clip-path-referencing-use-expected.txt:
+        * platform/chromium-win/svg/custom/clip-path-referencing-use2-expected.txt:
+        * platform/chromium-win/svg/custom/clone-element-with-animated-svg-properties-expected.txt:
+        * platform/chromium-win/svg/custom/container-opacity-clip-viewBox-expected.txt:
+        * platform/chromium-win/svg/custom/createImageElement2-expected.txt:
+        * platform/chromium-win/svg/custom/createelement-expected.txt:
+        * platform/chromium-win/svg/custom/dominant-baseline-modes-expected.txt:
+        * platform/chromium-win/svg/custom/empty-clip-path-expected.txt:
+        * platform/chromium-win/svg/custom/empty-mask-expected.txt:
+        * platform/chromium-win/svg/custom/feComponentTransfer-Discrete-expected.txt:
+        * platform/chromium-win/svg/custom/feComponentTransfer-Gamma-expected.txt:
+        * platform/chromium-win/svg/custom/feComponentTransfer-Linear-expected.txt:
+        * platform/chromium-win/svg/custom/feComponentTransfer-Table-expected.txt:
+        * platform/chromium-win/svg/custom/fill-fallback-expected.txt:
+        * platform/chromium-win/svg/custom/focus-ring-expected.txt:
+        * platform/chromium-win/svg/custom/font-face-cascade-order-expected.txt:
+        * platform/chromium-win/svg/custom/font-face-simple-expected.txt:
+        * platform/chromium-win/svg/custom/foreignObject-crash-on-hover-expected.txt:
+        * platform/chromium-win/svg/custom/getTransformToElement-expected.txt:
+        * platform/chromium-win/svg/custom/gradient-cycle-detection-expected.txt:
+        * platform/chromium-win/svg/custom/gradient-deep-referencing-expected.txt:
+        * platform/chromium-win/svg/custom/hit-test-unclosed-subpaths-expected.txt:
+        * platform/chromium-win/svg/custom/image-small-width-height-expected.txt:
+        * platform/chromium-win/svg/custom/image-with-transform-clip-filter-expected.txt:
+        * platform/chromium-win/svg/custom/invalid-css-expected.txt:
+        * platform/chromium-win/svg/custom/invalid-fill-expected.txt:
+        * platform/chromium-win/svg/custom/invalid-fill-hex-expected.txt:
+        * platform/chromium-win/svg/custom/invalid-lengthlist-expected.txt:
+        * platform/chromium-win/svg/custom/js-late-clipPath-and-object-creation-expected.txt:
+        * platform/chromium-win/svg/custom/js-late-clipPath-creation-expected.txt:
+        * platform/chromium-win/svg/custom/js-late-gradient-and-object-creation-expected.txt:
+        * platform/chromium-win/svg/custom/js-late-gradient-creation-expected.txt:
+        * platform/chromium-win/svg/custom/js-late-pattern-and-object-creation-expected.txt:
+        * platform/chromium-win/svg/custom/js-late-pattern-creation-expected.txt:
+        * platform/chromium-win/svg/custom/junk-data-expected.txt:
+        * platform/chromium-win/svg/custom/marker-default-width-height-expected.txt:
+        * platform/chromium-win/svg/custom/marker-overflow-clip-expected.txt:
+        * platform/chromium-win/svg/custom/mask-invalidation-expected.txt:
+        * platform/chromium-win/svg/custom/missing-xlink-expected.txt:
+        * platform/chromium-win/svg/custom/non-opaque-filters-expected.txt:
+        * platform/chromium-win/svg/custom/path-bad-data-expected.txt:
+        * platform/chromium-win/svg/custom/path-textPath-simulation-expected.txt:
+        * platform/chromium-win/svg/custom/pattern-cycle-detection-expected.txt:
+        * platform/chromium-win/svg/custom/pattern-deep-referencing-expected.txt:
+        * platform/chromium-win/svg/custom/pattern-with-transformation-expected.txt:
+        * platform/chromium-win/svg/custom/pointer-events-image-expected.txt:
+        * platform/chromium-win/svg/custom/pointer-events-path-expected.txt:
+        * platform/chromium-win/svg/custom/pointer-events-text-expected.txt:
+        * platform/chromium-win/svg/custom/preserve-aspect-ratio-syntax-expected.txt:
+        * platform/chromium-win/svg/custom/relative-sized-deep-shadow-tree-content-expected.txt:
+        * platform/chromium-win/svg/custom/relative-sized-inner-svg-expected.txt:
+        * platform/chromium-win/svg/custom/relative-sized-use-on-symbol-expected.txt:
+        * platform/chromium-win/svg/custom/relative-sized-use-without-attributes-on-symbol-expected.txt:
+        * platform/chromium-win/svg/custom/repaint-moving-svg-and-div-expected.checksum: Added.
+        * platform/chromium-win/svg/custom/repaint-moving-svg-and-div-expected.png: Added.
+        * platform/chromium-win/svg/custom/second-inline-text-expected.txt:
+        * platform/chromium-win/svg/custom/shape-rendering-expected.txt:
+        * platform/chromium-win/svg/custom/shapes-supporting-markers-expected.txt:
+        * platform/chromium-win/svg/custom/stroke-fallback-expected.txt:
+        * platform/chromium-win/svg/custom/stroke-width-large-expected.txt:
+        * platform/chromium-win/svg/custom/stroked-pattern-expected.txt:
+        * platform/chromium-win/svg/custom/style-attribute-font-size-expected.txt:
+        * platform/chromium-win/svg/custom/svg-curve-with-relative-cordinates-expected.txt:
+        * platform/chromium-win/svg/custom/svg-float-border-padding-expected.txt:
+        * platform/chromium-win/svg/custom/text-clip-expected.txt:
+        * platform/chromium-win/svg/custom/text-ctm-expected.txt:
+        * platform/chromium-win/svg/custom/text-decoration-visibility-expected.txt:
+        * platform/chromium-win/svg/custom/text-filter-expected.txt:
+        * platform/chromium-win/svg/custom/text-hit-test-expected.txt:
+        * platform/chromium-win/svg/custom/text-image-opacity-expected.txt:
+        * platform/chromium-win/svg/custom/text-letter-spacing-expected.txt:
+        * platform/chromium-win/svg/custom/text-linking-expected.txt:
+        * platform/chromium-win/svg/custom/text-repaint-including-stroke-expected.txt:
+        * platform/chromium-win/svg/custom/text-whitespace-handling-expected.txt:
+        * platform/chromium-win/svg/custom/text-x-dx-lists-expected.txt:
+        * platform/chromium-win/svg/custom/text-x-override-in-tspan-child-expected.txt:
+        * platform/chromium-win/svg/custom/text-xy-updates-SVGList-expected.txt:
+        * platform/chromium-win/svg/custom/text-xy-updates-expected.txt:
+        * platform/chromium-win/svg/custom/tref-update-expected.txt:
+        * platform/chromium-win/svg/custom/use-clipped-hit-expected.txt:
+        * platform/chromium-win/svg/custom/use-dynamic-append-expected.txt:
+        * platform/chromium-win/svg/custom/use-elementInstance-event-target-expected.txt:
+        * platform/chromium-win/svg/custom/use-elementInstance-methods-expected.txt:
+        * platform/chromium-win/svg/custom/use-event-handler-on-referenced-element-expected.txt:
+        * platform/chromium-win/svg/custom/use-event-handler-on-use-element-expected.txt:
+        * platform/chromium-win/svg/custom/use-events-crash-expected.txt:
+        * platform/chromium-win/svg/custom/use-instanceRoot-modifications-expected.txt:
+        * platform/chromium-win/svg/custom/use-modify-container-in-target-expected.txt:
+        * platform/chromium-win/svg/custom/use-modify-target-container-expected.txt:
+        * platform/chromium-win/svg/custom/use-modify-target-symbol-expected.txt:
+        * platform/chromium-win/svg/custom/use-on-disallowed-foreign-object-1-expected.txt:
+        * platform/chromium-win/svg/custom/use-on-disallowed-foreign-object-2-expected.txt:
+        * platform/chromium-win/svg/custom/use-on-disallowed-foreign-object-4-expected.txt:
+        * platform/chromium-win/svg/custom/use-on-disallowed-foreign-object-5-expected.txt:
+        * platform/chromium-win/svg/custom/use-on-disallowed-foreign-object-6-expected.txt:
+        * platform/chromium-win/svg/custom/use-on-g-containing-symbol-expected.txt:
+        * platform/chromium-win/svg/custom/use-on-g-containing-use-expected.txt:
+        * platform/chromium-win/svg/custom/use-on-g-expected.txt:
+        * platform/chromium-win/svg/custom/use-on-non-svg-namespaced-element-expected.txt:
+        * platform/chromium-win/svg/custom/use-on-rect-expected.txt:
+        * platform/chromium-win/svg/custom/use-on-symbol-expected.txt:
+        * platform/chromium-win/svg/custom/use-on-symbol-inside-pattern-expected.txt:
+        * platform/chromium-win/svg/custom/use-on-text-expected.txt:
+        * platform/chromium-win/svg/custom/use-on-use-expected.txt:
+        * platform/chromium-win/svg/custom/use-property-changes-through-dom-expected.txt:
+        * platform/chromium-win/svg/custom/use-recursion-1-expected.txt:
+        * platform/chromium-win/svg/custom/use-recursion-2-expected.txt:
+        * platform/chromium-win/svg/custom/use-recursion-3-expected.txt:
+        * platform/chromium-win/svg/custom/use-recursion-4-expected.txt:
+        * platform/chromium-win/svg/custom/use-setAttribute-crash-expected.txt:
+        * platform/chromium-win/svg/custom/viewbox-syntax-expected.txt:
+        * platform/chromium-win/svg/custom/viewport-em-expected.txt:
+        * platform/chromium-win/svg/filters/feColorMatrix-values-expected.txt:
+        * platform/chromium-win/svg/filters/feComposite-expected.txt:
+        * platform/chromium-win/svg/filters/filter-on-filter-for-text-expected.txt:
+        * platform/chromium-win/svg/filters/filter-on-tspan-expected.txt:
+        * platform/chromium-win/svg/filters/filter-width-update-expected.txt:
+        * platform/chromium-win/svg/filters/sourceAlpha-expected.txt:
+        * platform/chromium-win/svg/foreignObject/no-crash-with-svg-content-in-html-document-expected.txt:
+        * platform/chromium-win/svg/foreignObject/svg-document-as-direct-child-expected.txt:
+        * platform/chromium-win/svg/foreignObject/svg-document-in-html-document-expected.txt:
+        * platform/chromium-win/svg/hixie/data-types/002-expected.txt:
+        * platform/chromium-win/svg/hixie/dynamic/002-expected.txt:
+        * platform/chromium-win/svg/hixie/error/002-expected.txt:
+        * platform/chromium-win/svg/hixie/error/010-expected.txt:
+        * platform/chromium-win/svg/hixie/error/011-expected.txt:
+        * platform/chromium-win/svg/hixie/error/012-expected.txt:
+        * platform/chromium-win/svg/hixie/error/013-expected.txt:
+        * platform/chromium-win/svg/hixie/error/017-expected.txt:
+        * platform/chromium-win/svg/hixie/links/002-expected.txt:
+        * platform/chromium-win/svg/hixie/links/003-broken-expected.txt:
+        * platform/chromium-win/svg/hixie/mixed/003-expected.txt:
+        * platform/chromium-win/svg/hixie/mixed/004-expected.txt:
+        * platform/chromium-win/svg/hixie/mixed/005-expected.txt:
+        * platform/chromium-win/svg/hixie/mixed/011-expected.txt:
+        * platform/chromium-win/svg/hixie/perf/001-expected.txt:
+        * platform/chromium-win/svg/hixie/perf/002-expected.txt:
+        * platform/chromium-win/svg/hixie/perf/007-expected.txt:
+        * platform/chromium-win/svg/hixie/shapes/path/001-expected.txt:
+        * platform/chromium-win/svg/hixie/text/002-expected.txt:
+        * platform/chromium-win/svg/hixie/text/003a-expected.txt:
+        * platform/chromium-win/svg/hixie/viewbox/preserveAspectRatio/001-expected.txt:
+        * platform/chromium-win/svg/hixie/viewbox/preserveAspectRatio/002-expected.txt:
+        * platform/chromium-win/svg/text/foreignObject-text-clipping-bug-expected.txt:
+        * platform/chromium-win/svg/text/kerning-expected.txt:
+        * platform/chromium-win/svg/text/multichar-glyph-expected.txt:
+        * platform/chromium-win/svg/text/select-textLength-spacing-squeeze-1-expected.txt:
+        * platform/chromium-win/svg/text/select-textLength-spacing-squeeze-2-expected.txt:
+        * platform/chromium-win/svg/text/select-textLength-spacing-squeeze-3-expected.txt:
+        * platform/chromium-win/svg/text/select-textLength-spacing-squeeze-4-expected.txt:
+        * platform/chromium-win/svg/text/select-textLength-spacing-stretch-1-expected.txt:
+        * platform/chromium-win/svg/text/select-textLength-spacing-stretch-2-expected.txt:
+        * platform/chromium-win/svg/text/select-textLength-spacing-stretch-3-expected.txt:
+        * platform/chromium-win/svg/text/select-textLength-spacing-stretch-4-expected.txt:
+        * platform/chromium-win/svg/text/select-textLength-spacingAndGlyphs-squeeze-1-expected.txt:
+        * platform/chromium-win/svg/text/select-textLength-spacingAndGlyphs-squeeze-2-expected.txt:
+        * platform/chromium-win/svg/text/select-textLength-spacingAndGlyphs-squeeze-3-expected.txt:
+        * platform/chromium-win/svg/text/select-textLength-spacingAndGlyphs-squeeze-4-expected.txt:
+        * platform/chromium-win/svg/text/select-textLength-spacingAndGlyphs-stretch-1-expected.txt:
+        * platform/chromium-win/svg/text/select-textLength-spacingAndGlyphs-stretch-2-expected.txt:
+        * platform/chromium-win/svg/text/select-textLength-spacingAndGlyphs-stretch-3-expected.txt:
+        * platform/chromium-win/svg/text/select-textLength-spacingAndGlyphs-stretch-4-expected.txt:
+        * platform/chromium-win/svg/text/select-x-list-1-expected.txt:
+        * platform/chromium-win/svg/text/select-x-list-2-expected.txt:
+        * platform/chromium-win/svg/text/select-x-list-3-expected.txt:
+        * platform/chromium-win/svg/text/select-x-list-4-expected.txt:
+        * platform/chromium-win/svg/text/select-x-list-with-tspans-1-expected.txt:
+        * platform/chromium-win/svg/text/select-x-list-with-tspans-2-expected.txt:
+        * platform/chromium-win/svg/text/select-x-list-with-tspans-3-expected.txt:
+        * platform/chromium-win/svg/text/select-x-list-with-tspans-4-expected.txt:
+        * platform/chromium-win/svg/text/selection-background-color-expected.txt:
+        * platform/chromium-win/svg/text/selection-doubleclick-expected.txt:
+        * platform/chromium-win/svg/text/selection-styles-expected.txt:
+        * platform/chromium-win/svg/text/selection-tripleclick-expected.txt:
+        * platform/chromium-win/svg/text/text-gradient-positioning-expected.txt:
+        * platform/chromium-win/svg/text/text-repaint-rects-expected.txt:
+        * platform/chromium-win/svg/text/textPathBoundsBug-expected.txt:
+        * platform/chromium-win/svg/zoom/page/zoom-coords-viewattr-01-b-expected.txt:
+        * platform/chromium-win/svg/zoom/page/zoom-foreignObject-expected.txt:
+        * platform/chromium-win/svg/zoom/page/zoom-svg-float-border-padding-expected.txt:
+        * platform/chromium-win/svg/zoom/text/zoom-foreignObject-expected.txt:
+        * platform/chromium-win/svg/zoom/text/zoom-svg-float-border-padding-expected.txt:
+        * platform/chromium-win/transforms/svg-vs-css-expected.txt:
+        * platform/chromium-win/userscripts/user-script-top-frame-only-expected.txt: Added.
+        * platform/chromium-win/userscripts/user-style-top-frame-only-expected.txt: Added.
+
 2010-07-09  Michael Nordman  <michaeln@google.com>
 
         Reviewed by Dumitru Daniliuc.

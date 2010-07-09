@@ -1,7 +1,7 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
-  RenderSVGRoot {svg} at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,8) size 615x296
     RenderSVGContainer {g} at (0,8) size 615x296
       RenderSVGText {text} at (0,5) size 369x19 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 369x19

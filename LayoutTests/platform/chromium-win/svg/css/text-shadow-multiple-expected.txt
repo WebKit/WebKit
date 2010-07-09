@@ -7,7 +7,7 @@ layer at (0,0) size 800x414
         RenderText {#text} at (0,0) size 425x19
           text run at (0,0) width 425: "The first two texts should look identical, as there is no shadow applied."
       RenderBlock (anonymous) at (0,36) size 800x155
-        RenderSVGRoot {svg} at (0,102) size 800x100
+        RenderSVGRoot {svg} at (20,121) size 720x58
           RenderSVGText {text} at (20,19) size 720x58 contains 1 chunk(s)
             RenderSVGTSpan {tspan} at (0,0) size 96x58
               RenderSVGInlineText {#text} at (0,0) size 96x58
@@ -30,7 +30,7 @@ layer at (0,0) size 800x414
         RenderText {#text} at (0,0) size 530x19
           text run at (0,0) width 530: "The next two texts have subtle differences, as the stroke/fill is painted seperated in SVG."
       RenderBlock (anonymous) at (0,243) size 800x155
-        RenderSVGRoot {svg} at (0,309) size 800x100
+        RenderSVGRoot {svg} at (20,328) size 720x58
           RenderSVGText {text} at (20,19) size 720x58 contains 1 chunk(s)
             RenderSVGTSpan {tspan} at (0,0) size 96x58
               RenderSVGInlineText {#text} at (0,0) size 96x58

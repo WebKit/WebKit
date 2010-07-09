@@ -7,7 +7,7 @@ layer at (0,0) size 800x462
         RenderText {#text} at (0,0) size 641x19
           text run at (0,0) width 641: "The svg area contained in the div element (red box), should fill out the whole area with a green shaped path"
       RenderBlock {div} at (0,36) size 402x402 [border: (1px solid #FF0000)]
-        RenderSVGRoot {svg} at (9,53) size 400x400
+        RenderSVGRoot {svg} at (45,87) size 328x328
           RenderSVGHiddenContainer {defs} at (0,0) size 0x0
           RenderSVGContainer {use} at (45,87) size 328x328
             RenderSVGContainer {g} at (45,87) size 328x328 [transform={m=((1.00,0.00)(0.00,1.00)) t=(20.00,20.00)}]
