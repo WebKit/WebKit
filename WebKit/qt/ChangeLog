@@ -1,3 +1,15 @@
+2010-07-08  Sam Magnuson  <smagnuson@netflix.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] instance objects created for QObjects are somtimes GC'd
+        https://bugs.webkit.org/show_bug.cgi?id=40352
+
+        Improved the test to check for jsObjects that that are garbage collected.
+
+        * tests/qwebframe/tst_qwebframe.cpp:
+        (tst_QWebFrame::):
+
 2010-07-08  Aaron Boodman  <aa@chromium.org>
 
         Unreviewed change to fix qt build after c62876.
