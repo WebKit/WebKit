@@ -2,6 +2,15 @@
 
         Reviewed by Adam Barth.
 
+        Fix SVG tag name casing for HTMLTreeBuilder
+        https://bugs.webkit.org/show_bug.cgi?id=41998
+
+        * html5lib/runner-expected-html5.txt:
+
+2010-07-09  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
         Implement SVG attribute case mapping for HTMLTreeBuilder
         https://bugs.webkit.org/show_bug.cgi?id=41949
 

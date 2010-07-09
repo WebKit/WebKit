@@ -1169,9 +1169,6 @@ Expected:
 |       "bar"
 resources/tests11.dat:
 4
-5
-6
-7
 8
 
 Test 4 of 9 in resources/tests11.dat failed. Input:
@@ -1313,267 +1310,6 @@ Expected:
 |       ychannelselector=""
 |       zoomandpan=""
 
-Test 5 of 9 in resources/tests11.dat failed. Input:
-<!DOCTYPE html><body><svg><altGlyph /><altGlyphDef /><altGlyphItem /><animateColor /><animateMotion /><animateTransform /><clipPath /><feBlend /><feColorMatrix /><feComponentTransfer /><feComposite /><feConvolveMatrix /><feDiffuseLighting /><feDisplacementMap /><feDistantLight /><feFlood /><feFuncA /><feFuncB /><feFuncG /><feFuncR /><feGaussianBlur /><feImage /><feMerge /><feMergeNode /><feMorphology /><feOffset /><fePointLight /><feSpecularLighting /><feSpotLight /><feTile /><feTurbulence /><foreignObject /><glyphRef /><linearGradient /><radialGradient /><textPath /></svg>
-Got:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <svg svg>
-|       <svg altglyph>
-|       <svg altglyphdef>
-|       <svg altglyphitem>
-|       <svg animatecolor>
-|       <svg animatemotion>
-|       <svg animatetransform>
-|       <svg clippath>
-|       <svg feblend>
-|       <svg fecolormatrix>
-|       <svg fecomponenttransfer>
-|       <svg fecomposite>
-|       <svg feconvolvematrix>
-|       <svg fediffuselighting>
-|       <svg fedisplacementmap>
-|       <svg fedistantlight>
-|       <svg feflood>
-|       <svg fefunca>
-|       <svg fefuncb>
-|       <svg fefuncg>
-|       <svg fefuncr>
-|       <svg fegaussianblur>
-|       <svg feimage>
-|       <svg femerge>
-|       <svg femergenode>
-|       <svg femorphology>
-|       <svg feoffset>
-|       <svg fepointlight>
-|       <svg fespecularlighting>
-|       <svg fespotlight>
-|       <svg fetile>
-|       <svg feturbulence>
-|       <svg foreignobject>
-|       <svg glyphref>
-|       <svg lineargradient>
-|       <svg radialgradient>
-|       <svg textpath>
-Expected:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <svg svg>
-|       <svg altGlyph>
-|       <svg altGlyphDef>
-|       <svg altGlyphItem>
-|       <svg animateColor>
-|       <svg animateMotion>
-|       <svg animateTransform>
-|       <svg clipPath>
-|       <svg feBlend>
-|       <svg feColorMatrix>
-|       <svg feComponentTransfer>
-|       <svg feComposite>
-|       <svg feConvolveMatrix>
-|       <svg feDiffuseLighting>
-|       <svg feDisplacementMap>
-|       <svg feDistantLight>
-|       <svg feFlood>
-|       <svg feFuncA>
-|       <svg feFuncB>
-|       <svg feFuncG>
-|       <svg feFuncR>
-|       <svg feGaussianBlur>
-|       <svg feImage>
-|       <svg feMerge>
-|       <svg feMergeNode>
-|       <svg feMorphology>
-|       <svg feOffset>
-|       <svg fePointLight>
-|       <svg feSpecularLighting>
-|       <svg feSpotLight>
-|       <svg feTile>
-|       <svg feTurbulence>
-|       <svg foreignObject>
-|       <svg glyphRef>
-|       <svg linearGradient>
-|       <svg radialGradient>
-|       <svg textPath>
-
-Test 6 of 9 in resources/tests11.dat failed. Input:
-<!DOCTYPE html><body><svg><altglyph /><altglyphdef /><altglyphitem /><animatecolor /><animatemotion /><animatetransform /><clippath /><feblend /><fecolormatrix /><fecomponenttransfer /><fecomposite /><feconvolvematrix /><fediffuselighting /><fedisplacementmap /><fedistantlight /><feflood /><fefunca /><fefuncb /><fefuncg /><fefuncr /><fegaussianblur /><feimage /><femerge /><femergenode /><femorphology /><feoffset /><fepointlight /><fespecularlighting /><fespotlight /><fetile /><feturbulence /><foreignobject /><glyphref /><lineargradient /><radialgradient /><textpath /></svg>
-Got:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <svg svg>
-|       <svg altglyph>
-|       <svg altglyphdef>
-|       <svg altglyphitem>
-|       <svg animatecolor>
-|       <svg animatemotion>
-|       <svg animatetransform>
-|       <svg clippath>
-|       <svg feblend>
-|       <svg fecolormatrix>
-|       <svg fecomponenttransfer>
-|       <svg fecomposite>
-|       <svg feconvolvematrix>
-|       <svg fediffuselighting>
-|       <svg fedisplacementmap>
-|       <svg fedistantlight>
-|       <svg feflood>
-|       <svg fefunca>
-|       <svg fefuncb>
-|       <svg fefuncg>
-|       <svg fefuncr>
-|       <svg fegaussianblur>
-|       <svg feimage>
-|       <svg femerge>
-|       <svg femergenode>
-|       <svg femorphology>
-|       <svg feoffset>
-|       <svg fepointlight>
-|       <svg fespecularlighting>
-|       <svg fespotlight>
-|       <svg fetile>
-|       <svg feturbulence>
-|       <svg foreignobject>
-|       <svg glyphref>
-|       <svg lineargradient>
-|       <svg radialgradient>
-|       <svg textpath>
-Expected:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <svg svg>
-|       <svg altGlyph>
-|       <svg altGlyphDef>
-|       <svg altGlyphItem>
-|       <svg animateColor>
-|       <svg animateMotion>
-|       <svg animateTransform>
-|       <svg clipPath>
-|       <svg feBlend>
-|       <svg feColorMatrix>
-|       <svg feComponentTransfer>
-|       <svg feComposite>
-|       <svg feConvolveMatrix>
-|       <svg feDiffuseLighting>
-|       <svg feDisplacementMap>
-|       <svg feDistantLight>
-|       <svg feFlood>
-|       <svg feFuncA>
-|       <svg feFuncB>
-|       <svg feFuncG>
-|       <svg feFuncR>
-|       <svg feGaussianBlur>
-|       <svg feImage>
-|       <svg feMerge>
-|       <svg feMergeNode>
-|       <svg feMorphology>
-|       <svg feOffset>
-|       <svg fePointLight>
-|       <svg feSpecularLighting>
-|       <svg feSpotLight>
-|       <svg feTile>
-|       <svg feTurbulence>
-|       <svg foreignObject>
-|       <svg glyphRef>
-|       <svg linearGradient>
-|       <svg radialGradient>
-|       <svg textPath>
-
-Test 7 of 9 in resources/tests11.dat failed. Input:
-<!DOCTYPE html><BODY><SVG><ALTGLYPH /><ALTGLYPHDEF /><ALTGLYPHITEM /><ANIMATECOLOR /><ANIMATEMOTION /><ANIMATETRANSFORM /><CLIPPATH /><FEBLEND /><FECOLORMATRIX /><FECOMPONENTTRANSFER /><FECOMPOSITE /><FECONVOLVEMATRIX /><FEDIFFUSELIGHTING /><FEDISPLACEMENTMAP /><FEDISTANTLIGHT /><FEFLOOD /><FEFUNCA /><FEFUNCB /><FEFUNCG /><FEFUNCR /><FEGAUSSIANBLUR /><FEIMAGE /><FEMERGE /><FEMERGENODE /><FEMORPHOLOGY /><FEOFFSET /><FEPOINTLIGHT /><FESPECULARLIGHTING /><FESPOTLIGHT /><FETILE /><FETURBULENCE /><FOREIGNOBJECT /><GLYPHREF /><LINEARGRADIENT /><RADIALGRADIENT /><TEXTPATH /></SVG>
-Got:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <svg svg>
-|       <svg altglyph>
-|       <svg altglyphdef>
-|       <svg altglyphitem>
-|       <svg animatecolor>
-|       <svg animatemotion>
-|       <svg animatetransform>
-|       <svg clippath>
-|       <svg feblend>
-|       <svg fecolormatrix>
-|       <svg fecomponenttransfer>
-|       <svg fecomposite>
-|       <svg feconvolvematrix>
-|       <svg fediffuselighting>
-|       <svg fedisplacementmap>
-|       <svg fedistantlight>
-|       <svg feflood>
-|       <svg fefunca>
-|       <svg fefuncb>
-|       <svg fefuncg>
-|       <svg fefuncr>
-|       <svg fegaussianblur>
-|       <svg feimage>
-|       <svg femerge>
-|       <svg femergenode>
-|       <svg femorphology>
-|       <svg feoffset>
-|       <svg fepointlight>
-|       <svg fespecularlighting>
-|       <svg fespotlight>
-|       <svg fetile>
-|       <svg feturbulence>
-|       <svg foreignobject>
-|       <svg glyphref>
-|       <svg lineargradient>
-|       <svg radialgradient>
-|       <svg textpath>
-Expected:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <svg svg>
-|       <svg altGlyph>
-|       <svg altGlyphDef>
-|       <svg altGlyphItem>
-|       <svg animateColor>
-|       <svg animateMotion>
-|       <svg animateTransform>
-|       <svg clipPath>
-|       <svg feBlend>
-|       <svg feColorMatrix>
-|       <svg feComponentTransfer>
-|       <svg feComposite>
-|       <svg feConvolveMatrix>
-|       <svg feDiffuseLighting>
-|       <svg feDisplacementMap>
-|       <svg feDistantLight>
-|       <svg feFlood>
-|       <svg feFuncA>
-|       <svg feFuncB>
-|       <svg feFuncG>
-|       <svg feFuncR>
-|       <svg feGaussianBlur>
-|       <svg feImage>
-|       <svg feMerge>
-|       <svg feMergeNode>
-|       <svg feMorphology>
-|       <svg feOffset>
-|       <svg fePointLight>
-|       <svg feSpecularLighting>
-|       <svg feSpotLight>
-|       <svg feTile>
-|       <svg feTurbulence>
-|       <svg foreignObject>
-|       <svg glyphRef>
-|       <svg linearGradient>
-|       <svg radialGradient>
-|       <svg textPath>
-
 Test 8 of 9 in resources/tests11.dat failed. Input:
 <!DOCTYPE html><body><math><altGlyph /><altGlyphDef /><altGlyphItem /><animateColor /><animateMotion /><animateTransform /><clipPath /><feBlend /><feColorMatrix /><feComponentTransfer /><feComposite /><feConvolveMatrix /><feDiffuseLighting /><feDisplacementMap /><feDistantLight /><feFlood /><feFuncA /><feFuncB /><feFuncG /><feFuncR /><feGaussianBlur /><feImage /><feMerge /><feMergeNode /><feMorphology /><feOffset /><fePointLight /><feSpecularLighting /><feSpotLight /><feTile /><feTurbulence /><foreignObject /><glyphRef /><linearGradient /><radialGradient /><textPath /></math>
 Got:
@@ -1683,7 +1419,7 @@ Got:
 |               <svg b>
 |                 "eggs"
 |             <svg g>
-|               <svg foreignobject>
+|               <svg foreignObject>
 |                 <svg p>
 |                   "spam"
 |                   <svg table>
@@ -1740,7 +1476,7 @@ Got:
 |             <svg b>
 |               "eggs"
 |           <svg g>
-|             <svg foreignobject>
+|             <svg foreignObject>
 |               <svg p>
 |                 "spam"
 |                 <svg table>

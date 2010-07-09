@@ -662,80 +662,80 @@ namespace {
 
 #if ENABLE(SVG)
 
-typedef HashMap<AtomicString, AtomicString> SVGAttributeCaseMap;
+typedef HashMap<AtomicString, AtomicString> NameCaseMap;
 
-void addAttribute(SVGAttributeCaseMap* map, const QualifiedName& attributeName)
+void addName(NameCaseMap* map, const QualifiedName& attributeName)
 {
     map->add(attributeName.localName().lower(), attributeName.localName());
 }
 
 void adjustSVGAttributes(AtomicHTMLToken& token)
 {
-    static SVGAttributeCaseMap* svgAttributes = 0;
-    if (!svgAttributes) {
-        svgAttributes = new SVGAttributeCaseMap;
-        addAttribute(svgAttributes, SVGNames::attributeNameAttr);
-        addAttribute(svgAttributes, SVGNames::attributeTypeAttr);
-        addAttribute(svgAttributes, SVGNames::baseFrequencyAttr);
-        addAttribute(svgAttributes, SVGNames::baseProfileAttr);
-        addAttribute(svgAttributes, SVGNames::calcModeAttr);
-        addAttribute(svgAttributes, SVGNames::clipPathUnitsAttr);
-        addAttribute(svgAttributes, SVGNames::contentScriptTypeAttr);
-        addAttribute(svgAttributes, SVGNames::contentStyleTypeAttr);
-        addAttribute(svgAttributes, SVGNames::diffuseConstantAttr);
-        addAttribute(svgAttributes, SVGNames::edgeModeAttr);
-        addAttribute(svgAttributes, SVGNames::externalResourcesRequiredAttr);
-        addAttribute(svgAttributes, SVGNames::filterResAttr);
-        addAttribute(svgAttributes, SVGNames::filterUnitsAttr);
-        addAttribute(svgAttributes, SVGNames::glyphRefAttr);
-        addAttribute(svgAttributes, SVGNames::gradientTransformAttr);
-        addAttribute(svgAttributes, SVGNames::gradientUnitsAttr);
-        addAttribute(svgAttributes, SVGNames::kernelMatrixAttr);
-        addAttribute(svgAttributes, SVGNames::kernelUnitLengthAttr);
-        addAttribute(svgAttributes, SVGNames::keyPointsAttr);
-        addAttribute(svgAttributes, SVGNames::keySplinesAttr);
-        addAttribute(svgAttributes, SVGNames::keyTimesAttr);
-        addAttribute(svgAttributes, SVGNames::lengthAdjustAttr);
-        addAttribute(svgAttributes, SVGNames::limitingConeAngleAttr);
-        addAttribute(svgAttributes, SVGNames::markerHeightAttr);
-        addAttribute(svgAttributes, SVGNames::markerUnitsAttr);
-        addAttribute(svgAttributes, SVGNames::markerWidthAttr);
-        addAttribute(svgAttributes, SVGNames::maskContentUnitsAttr);
-        addAttribute(svgAttributes, SVGNames::maskUnitsAttr);
-        addAttribute(svgAttributes, SVGNames::numOctavesAttr);
-        addAttribute(svgAttributes, SVGNames::pathLengthAttr);
-        addAttribute(svgAttributes, SVGNames::patternContentUnitsAttr);
-        addAttribute(svgAttributes, SVGNames::patternTransformAttr);
-        addAttribute(svgAttributes, SVGNames::patternUnitsAttr);
-        addAttribute(svgAttributes, SVGNames::pointsAtXAttr);
-        addAttribute(svgAttributes, SVGNames::pointsAtYAttr);
-        addAttribute(svgAttributes, SVGNames::pointsAtZAttr);
-        addAttribute(svgAttributes, SVGNames::preserveAlphaAttr);
-        addAttribute(svgAttributes, SVGNames::preserveAspectRatioAttr);
-        addAttribute(svgAttributes, SVGNames::primitiveUnitsAttr);
-        addAttribute(svgAttributes, SVGNames::refXAttr);
-        addAttribute(svgAttributes, SVGNames::refYAttr);
-        addAttribute(svgAttributes, SVGNames::repeatCountAttr);
-        addAttribute(svgAttributes, SVGNames::repeatDurAttr);
-        addAttribute(svgAttributes, SVGNames::requiredExtensionsAttr);
-        addAttribute(svgAttributes, SVGNames::requiredFeaturesAttr);
-        addAttribute(svgAttributes, SVGNames::specularConstantAttr);
-        addAttribute(svgAttributes, SVGNames::specularExponentAttr);
-        addAttribute(svgAttributes, SVGNames::spreadMethodAttr);
-        addAttribute(svgAttributes, SVGNames::startOffsetAttr);
-        addAttribute(svgAttributes, SVGNames::stdDeviationAttr);
-        addAttribute(svgAttributes, SVGNames::stitchTilesAttr);
-        addAttribute(svgAttributes, SVGNames::surfaceScaleAttr);
-        addAttribute(svgAttributes, SVGNames::systemLanguageAttr);
-        addAttribute(svgAttributes, SVGNames::tableValuesAttr);
-        addAttribute(svgAttributes, SVGNames::targetXAttr);
-        addAttribute(svgAttributes, SVGNames::targetYAttr);
-        addAttribute(svgAttributes, SVGNames::textLengthAttr);
-        addAttribute(svgAttributes, SVGNames::viewBoxAttr);
-        addAttribute(svgAttributes, SVGNames::viewTargetAttr);
-        addAttribute(svgAttributes, SVGNames::xChannelSelectorAttr);
-        addAttribute(svgAttributes, SVGNames::yChannelSelectorAttr);
-        addAttribute(svgAttributes, SVGNames::zoomAndPanAttr);
+    static NameCaseMap* caseMap = 0;
+    if (!caseMap) {
+        caseMap = new NameCaseMap;
+        addName(caseMap, SVGNames::attributeNameAttr);
+        addName(caseMap, SVGNames::attributeTypeAttr);
+        addName(caseMap, SVGNames::baseFrequencyAttr);
+        addName(caseMap, SVGNames::baseProfileAttr);
+        addName(caseMap, SVGNames::calcModeAttr);
+        addName(caseMap, SVGNames::clipPathUnitsAttr);
+        addName(caseMap, SVGNames::contentScriptTypeAttr);
+        addName(caseMap, SVGNames::contentStyleTypeAttr);
+        addName(caseMap, SVGNames::diffuseConstantAttr);
+        addName(caseMap, SVGNames::edgeModeAttr);
+        addName(caseMap, SVGNames::externalResourcesRequiredAttr);
+        addName(caseMap, SVGNames::filterResAttr);
+        addName(caseMap, SVGNames::filterUnitsAttr);
+        addName(caseMap, SVGNames::glyphRefAttr);
+        addName(caseMap, SVGNames::gradientTransformAttr);
+        addName(caseMap, SVGNames::gradientUnitsAttr);
+        addName(caseMap, SVGNames::kernelMatrixAttr);
+        addName(caseMap, SVGNames::kernelUnitLengthAttr);
+        addName(caseMap, SVGNames::keyPointsAttr);
+        addName(caseMap, SVGNames::keySplinesAttr);
+        addName(caseMap, SVGNames::keyTimesAttr);
+        addName(caseMap, SVGNames::lengthAdjustAttr);
+        addName(caseMap, SVGNames::limitingConeAngleAttr);
+        addName(caseMap, SVGNames::markerHeightAttr);
+        addName(caseMap, SVGNames::markerUnitsAttr);
+        addName(caseMap, SVGNames::markerWidthAttr);
+        addName(caseMap, SVGNames::maskContentUnitsAttr);
+        addName(caseMap, SVGNames::maskUnitsAttr);
+        addName(caseMap, SVGNames::numOctavesAttr);
+        addName(caseMap, SVGNames::pathLengthAttr);
+        addName(caseMap, SVGNames::patternContentUnitsAttr);
+        addName(caseMap, SVGNames::patternTransformAttr);
+        addName(caseMap, SVGNames::patternUnitsAttr);
+        addName(caseMap, SVGNames::pointsAtXAttr);
+        addName(caseMap, SVGNames::pointsAtYAttr);
+        addName(caseMap, SVGNames::pointsAtZAttr);
+        addName(caseMap, SVGNames::preserveAlphaAttr);
+        addName(caseMap, SVGNames::preserveAspectRatioAttr);
+        addName(caseMap, SVGNames::primitiveUnitsAttr);
+        addName(caseMap, SVGNames::refXAttr);
+        addName(caseMap, SVGNames::refYAttr);
+        addName(caseMap, SVGNames::repeatCountAttr);
+        addName(caseMap, SVGNames::repeatDurAttr);
+        addName(caseMap, SVGNames::requiredExtensionsAttr);
+        addName(caseMap, SVGNames::requiredFeaturesAttr);
+        addName(caseMap, SVGNames::specularConstantAttr);
+        addName(caseMap, SVGNames::specularExponentAttr);
+        addName(caseMap, SVGNames::spreadMethodAttr);
+        addName(caseMap, SVGNames::startOffsetAttr);
+        addName(caseMap, SVGNames::stdDeviationAttr);
+        addName(caseMap, SVGNames::stitchTilesAttr);
+        addName(caseMap, SVGNames::surfaceScaleAttr);
+        addName(caseMap, SVGNames::systemLanguageAttr);
+        addName(caseMap, SVGNames::tableValuesAttr);
+        addName(caseMap, SVGNames::targetXAttr);
+        addName(caseMap, SVGNames::targetYAttr);
+        addName(caseMap, SVGNames::textLengthAttr);
+        addName(caseMap, SVGNames::viewBoxAttr);
+        addName(caseMap, SVGNames::viewTargetAttr);
+        addName(caseMap, SVGNames::xChannelSelectorAttr);
+        addName(caseMap, SVGNames::yChannelSelectorAttr);
+        addName(caseMap, SVGNames::zoomAndPanAttr);
     }
 
     NamedNodeMap* attributes = token.attributes();
@@ -744,11 +744,67 @@ void adjustSVGAttributes(AtomicHTMLToken& token)
 
     for (unsigned x = 0; x < attributes->length(); ++x) {
         Attribute* attribute = attributes->attributeItem(x);
-        const AtomicString& casedName = svgAttributes->get(attribute->localName());
+        const AtomicString& casedName = caseMap->get(attribute->localName());
         if (!casedName.isNull())
             attribute->parserSetLocalName(casedName);
     }
 }
+
+// FIXME: This is a hack until we can fix SVGNames to always generate all names.
+QualifiedName svgTagNameFor(const AtomicString& localName)
+{
+    return QualifiedName(nullAtom, localName, SVGNames::svgNamespaceURI);
+}
+
+void adjustSVGTagNameCase(AtomicHTMLToken& token)
+{
+    static NameCaseMap* caseMap = 0;
+    if (!caseMap) {
+        caseMap = new NameCaseMap;
+        addName(caseMap, SVGNames::altGlyphTag);
+        addName(caseMap, svgTagNameFor("altGlyphDef"));
+        addName(caseMap, svgTagNameFor("altGlyphItem"));
+        addName(caseMap, SVGNames::animateColorTag);
+        addName(caseMap, SVGNames::animateMotionTag);
+        addName(caseMap, SVGNames::animateTransformTag);
+        addName(caseMap, SVGNames::clipPathTag);
+        addName(caseMap, SVGNames::feBlendTag);
+        addName(caseMap, SVGNames::feColorMatrixTag);
+        addName(caseMap, SVGNames::feComponentTransferTag);
+        addName(caseMap, SVGNames::feCompositeTag);
+        addName(caseMap, SVGNames::feConvolveMatrixTag);
+        addName(caseMap, SVGNames::feDiffuseLightingTag);
+        addName(caseMap, SVGNames::feDisplacementMapTag);
+        addName(caseMap, SVGNames::feDistantLightTag);
+        addName(caseMap, SVGNames::feFloodTag);
+        addName(caseMap, SVGNames::feFuncATag);
+        addName(caseMap, SVGNames::feFuncBTag);
+        addName(caseMap, SVGNames::feFuncGTag);
+        addName(caseMap, SVGNames::feFuncRTag);
+        addName(caseMap, SVGNames::feGaussianBlurTag);
+        addName(caseMap, SVGNames::feImageTag);
+        addName(caseMap, SVGNames::feMergeTag);
+        addName(caseMap, SVGNames::feMergeNodeTag);
+        addName(caseMap, SVGNames::feMorphologyTag);
+        addName(caseMap, SVGNames::feOffsetTag);
+        addName(caseMap, SVGNames::fePointLightTag);
+        addName(caseMap, SVGNames::feSpecularLightingTag);
+        addName(caseMap, SVGNames::feSpotLightTag);
+        addName(caseMap, SVGNames::feTileTag);
+        addName(caseMap, SVGNames::feTurbulenceTag);
+        addName(caseMap, SVGNames::foreignObjectTag);
+        addName(caseMap, svgTagNameFor("glyphRef"));
+        addName(caseMap, SVGNames::linearGradientTag);
+        addName(caseMap, SVGNames::radialGradientTag);
+        addName(caseMap, SVGNames::textPathTag);
+    }
+
+    const AtomicString& casedName = caseMap->get(token.name());
+    if (casedName.isNull())
+        return;
+    token.setName(casedName);
+}
+
 #endif
 
 #if ENABLE(MATHML)
@@ -1481,8 +1537,10 @@ void HTMLTreeBuilder::processStartTag(AtomicHTMLToken& token)
             adjustMathMLAttributes(token);
 #endif
 #if ENABLE(SVG)
-         if (currentNamespace == SVGNames::svgNamespaceURI)
+         if (currentNamespace == SVGNames::svgNamespaceURI) {
+            adjustSVGTagNameCase(token);
             adjustSVGAttributes(token);
+        }
 #endif
         adjustForeignAttributes(token);
         m_tree.insertForeignElement(token, currentNamespace);
