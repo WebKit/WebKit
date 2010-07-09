@@ -1,3 +1,31 @@
+2010-07-08  Aaron Boodman  <aa@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Add the ability for user scripts and user styles to affect just the top frame.
+
+        https://bugs.webkit.org/show_bug.cgi?id=41529
+
+        * DumpRenderTree/LayoutTestController.h: Added new allFrames param.
+        * DumpRenderTree/LayoutTestController.cpp: Ditto.
+        (addUserScriptCallback):
+        (addUserStyleSheetCallback):
+        * DumpRenderTree/chromium/LayoutTestController.cpp: Ditto.
+        (LayoutTestController::addUserScript):
+        (LayoutTestController::addUserStyleSheet):
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp: Ditto.
+        (LayoutTestController::addUserScript):
+        (LayoutTestController::addUserStyleSheet):
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm: Ditto.
+        (LayoutTestController::addUserScript):
+        (LayoutTestController::addUserStyleSheet):
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp: Ditto.
+        (LayoutTestController::addUserScript):
+        (LayoutTestController::addUserStyleSheet):
+        * DumpRenderTree/wx/LayoutTestControllerWx.cpp: Ditto.
+        (LayoutTestController::addUserScript):
+        (LayoutTestController::addUserStyleSheet):
+
 2010-07-08  Adele Peterson  <adele@apple.com>
 
         Reviewed by Jon Honeycutt, Adam Roben, and Darin Adler.

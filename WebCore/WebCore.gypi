@@ -2036,6 +2036,7 @@
             'page/Timing.h',
             'page/UserContentURLPattern.cpp',
             'page/UserContentURLPattern.h',
+            'page/UserContentTypes.h',
             'page/UserScript.h',
             'page/UserScriptTypes.h',
             'page/UserStyleSheet.h',

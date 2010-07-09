@@ -54,6 +54,18 @@ struct WebPoint;
 
 class WebView : public WebWidget {
 public:
+    // Controls the time that user scripts injected into the document run.
+    enum UserScriptInjectAt {
+        UserScriptInjectAtDocumentStart,
+        UserScriptInjectAtDocumentEnd
+    };
+
+    // Controls which frames user content is injected into.
+    enum UserContentInjectIn {
+        UserContentInjectInAllFrames,
+        UserContentInjectInTopFrameOnly
+    };
+
     // Initialization ------------------------------------------------------
 
     // Creates a WebView that is NOT yet initialized.  You will need to
@@ -286,18 +298,22 @@ public:
     // FIXME: These two methods are DEPRECATED. Remove once Chromium has been rolled.
     virtual void addUserScript(const WebString& sourceCode, bool runAtStart)
     {
-        addUserScript(sourceCode, WebVector<WebString>(), runAtStart);
+        addUserScript(sourceCode, WebVector<WebString>(),
+                      runAtStart ? UserScriptInjectAtDocumentStart : UserScriptInjectAtDocumentEnd,
+                      UserContentInjectInAllFrames);
     }
     virtual void addUserStyleSheet(const WebString& sourceCode)
     {
-        addUserStyleSheet(sourceCode, WebVector<WebString>());
+        addUserStyleSheet(sourceCode, WebVector<WebString>(), UserContentInjectInAllFrames);
     }
 
     WEBKIT_API static void addUserScript(const WebString& sourceCode,
                                          const WebVector<WebString>& patterns,
-                                         bool runAtStart);
+                                         UserScriptInjectAt injectAt,
+                                         UserContentInjectIn injectIn);
     WEBKIT_API static void addUserStyleSheet(const WebString& sourceCode,
-                                             const WebVector<WebString>& patterns);
+                                             const WebVector<WebString>& patterns,
+                                             UserContentInjectIn injectIn);
     WEBKIT_API static void removeAllUserContent();
 
     // Modal dialog support ------------------------------------------------

@@ -1870,7 +1870,10 @@ void WebViewImpl::setSelectionColors(unsigned activeBackgroundColor,
 #endif
 }
 
-void WebView::addUserScript(const WebString& sourceCode, const WebVector<WebString>& patternsIn, bool runAtStart)
+void WebView::addUserScript(const WebString& sourceCode,
+                            const WebVector<WebString>& patternsIn,
+                            WebView::UserScriptInjectAt injectAt,
+                            WebView::UserContentInjectIn injectIn)
 {
     OwnPtr<Vector<String> > patterns(new Vector<String>);
     for (size_t i = 0; i < patternsIn.size(); ++i)
@@ -1879,10 +1882,13 @@ void WebView::addUserScript(const WebString& sourceCode, const WebVector<WebStri
     PageGroup* pageGroup = PageGroup::pageGroup(pageGroupName);
     RefPtr<DOMWrapperWorld> world(DOMWrapperWorld::create());
     pageGroup->addUserScriptToWorld(world.get(), sourceCode, WebURL(), patterns.release(), 0,
-                                    runAtStart ? InjectAtDocumentStart : InjectAtDocumentEnd);
+                                    static_cast<UserScriptInjectionTime>(injectAt),
+                                    static_cast<UserContentInjectedFrames>(injectIn));
 }
 
-void WebView::addUserStyleSheet(const WebString& sourceCode, const WebVector<WebString>& patternsIn)
+void WebView::addUserStyleSheet(const WebString& sourceCode,
+                                const WebVector<WebString>& patternsIn,
+                                WebView::UserContentInjectIn injectIn)
 {
     OwnPtr<Vector<String> > patterns(new Vector<String>);
     for (size_t i = 0; i < patternsIn.size(); ++i)
@@ -1890,7 +1896,8 @@ void WebView::addUserStyleSheet(const WebString& sourceCode, const WebVector<Web
 
     PageGroup* pageGroup = PageGroup::pageGroup(pageGroupName);
     RefPtr<DOMWrapperWorld> world(DOMWrapperWorld::create());
-    pageGroup->addUserStyleSheetToWorld(world.get(), sourceCode, WebURL(), patterns.release(), 0);
+    pageGroup->addUserStyleSheetToWorld(world.get(), sourceCode, WebURL(), patterns.release(), 0,
+                                        static_cast<UserContentInjectedFrames>(injectIn));
 }
 
 void WebView::removeAllUserContent()

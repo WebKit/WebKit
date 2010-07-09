@@ -1499,28 +1499,30 @@ static JSValueRef setScrollbarPolicyCallback(JSContextRef context, JSObjectRef, 
 
 static JSValueRef addUserScriptCallback(JSContextRef context, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    if (argumentCount != 2)
+    if (argumentCount != 3)
         return JSValueMakeUndefined(context);
     
     JSRetainPtr<JSStringRef> source(Adopt, JSValueToStringCopy(context, arguments[0], exception));
     ASSERT(!*exception);
     bool runAtStart = JSValueToBoolean(context, arguments[1]);
+    bool allFrames = JSValueToBoolean(context, arguments[2]);
     
     LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
-    controller->addUserScript(source.get(), runAtStart);
+    controller->addUserScript(source.get(), runAtStart, allFrames);
     return JSValueMakeUndefined(context);
 }
  
 static JSValueRef addUserStyleSheetCallback(JSContextRef context, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    if (argumentCount != 1)
+    if (argumentCount != 2)
         return JSValueMakeUndefined(context);
     
     JSRetainPtr<JSStringRef> source(Adopt, JSValueToStringCopy(context, arguments[0], exception));
     ASSERT(!*exception);
+    bool allFrames = JSValueToBoolean(context, arguments[1]);
    
     LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
-    controller->addUserStyleSheet(source.get());
+    controller->addUserStyleSheet(source.get(), allFrames);
     return JSValueMakeUndefined(context);
 }
 

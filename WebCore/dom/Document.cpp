@@ -2154,6 +2154,8 @@ const Vector<RefPtr<CSSStyleSheet> >* Document::pageGroupUserSheets() const
         const UserStyleSheetVector* sheets = it->second;
         for (unsigned i = 0; i < sheets->size(); ++i) {
             const UserStyleSheet* sheet = sheets->at(i).get();
+            if (sheet->injectedFrames() == InjectInTopFrameOnly && ownerElement())
+                continue;
             if (!UserContentURLPattern::matchesPatterns(url(), sheet->whitelist(), sheet->blacklist()))
                 continue;
             RefPtr<CSSStyleSheet> parsedSheet = CSSStyleSheet::createInline(const_cast<Document*>(this), sheet->url());

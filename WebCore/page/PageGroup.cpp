@@ -213,12 +213,13 @@ IndexedDatabase* PageGroup::indexedDatabase()
 }
 #endif
 
-void PageGroup::addUserScriptToWorld(DOMWrapperWorld* world, const String& source, const KURL& url,  PassOwnPtr<Vector<String> > whitelist,
-                                     PassOwnPtr<Vector<String> > blacklist, UserScriptInjectionTime injectionTime)
+void PageGroup::addUserScriptToWorld(DOMWrapperWorld* world, const String& source, const KURL& url,
+                                     PassOwnPtr<Vector<String> > whitelist, PassOwnPtr<Vector<String> > blacklist,
+                                     UserScriptInjectionTime injectionTime, UserContentInjectedFrames injectedFrames)
 {
     ASSERT_ARG(world, world);
 
-    OwnPtr<UserScript> userScript(new UserScript(source, url, whitelist, blacklist, injectionTime));
+    OwnPtr<UserScript> userScript(new UserScript(source, url, whitelist, blacklist, injectionTime, injectedFrames));
     if (!m_userScripts)
         m_userScripts.set(new UserScriptMap);
     UserScriptVector*& scriptsInWorld = m_userScripts->add(world, 0).first->second;
@@ -227,19 +228,20 @@ void PageGroup::addUserScriptToWorld(DOMWrapperWorld* world, const String& sourc
     scriptsInWorld->append(userScript.release());
 }
 
-void PageGroup::addUserStyleSheetToWorld(DOMWrapperWorld* world, const String& source, const KURL& url, PassOwnPtr<Vector<String> > whitelist,
-                                         PassOwnPtr<Vector<String> > blacklist)
+void PageGroup::addUserStyleSheetToWorld(DOMWrapperWorld* world, const String& source, const KURL& url,
+                                         PassOwnPtr<Vector<String> > whitelist, PassOwnPtr<Vector<String> > blacklist,
+                                         UserContentInjectedFrames injectedFrames)
 {
     ASSERT_ARG(world, world);
 
-    OwnPtr<UserStyleSheet> userStyleSheet(new UserStyleSheet(source, url, whitelist, blacklist));
+    OwnPtr<UserStyleSheet> userStyleSheet(new UserStyleSheet(source, url, whitelist, blacklist, injectedFrames));
     if (!m_userStyleSheets)
         m_userStyleSheets.set(new UserStyleSheetMap);
     UserStyleSheetVector*& styleSheetsInWorld = m_userStyleSheets->add(world, 0).first->second;
     if (!styleSheetsInWorld)
         styleSheetsInWorld = new UserStyleSheetVector;
     styleSheetsInWorld->append(userStyleSheet.release());
-    
+
     // Clear our cached sheets and have them just reparse.
     HashSet<Page*>::const_iterator end = m_pages.end();
     for (HashSet<Page*>::const_iterator it = m_pages.begin(); it != end; ++it) {

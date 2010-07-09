@@ -691,6 +691,9 @@ void Frame::injectUserScriptsForWorld(DOMWrapperWorld* world, const UserScriptVe
     unsigned count = userScripts.size();
     for (unsigned i = 0; i < count; ++i) {
         UserScript* script = userScripts[i].get();
+        if (script->injectedFrames() == InjectInTopFrameOnly && ownerElement())
+            continue;
+
         if (script->injectionTime() == injectionTime && UserContentURLPattern::matchesPatterns(doc->url(), script->whitelist(), script->blacklist()))
             m_script.evaluateInWorld(ScriptSourceCode(script->source(), script->url()), world);
     }

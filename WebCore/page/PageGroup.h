@@ -74,20 +74,21 @@ namespace WebCore {
         IndexedDatabase* indexedDatabase();
 #endif
 
-        void addUserScriptToWorld(DOMWrapperWorld*, const String& source, const KURL&, 
+        void addUserScriptToWorld(DOMWrapperWorld*, const String& source, const KURL&,
                                   PassOwnPtr<Vector<String> > whitelist, PassOwnPtr<Vector<String> > blacklist,
-                                  UserScriptInjectionTime);
+                                  UserScriptInjectionTime, UserContentInjectedFrames);
         void addUserStyleSheetToWorld(DOMWrapperWorld*, const String& source, const KURL&,
-                               PassOwnPtr<Vector<String> > whitelist, PassOwnPtr<Vector<String> > blacklist);
-        
+                                      PassOwnPtr<Vector<String> > whitelist, PassOwnPtr<Vector<String> > blacklist,
+                                      UserContentInjectedFrames);
+
         void removeUserScriptFromWorld(DOMWrapperWorld*, const KURL&);
         void removeUserStyleSheetFromWorld(DOMWrapperWorld*, const KURL&);
-        
+
         void removeUserScriptsFromWorld(DOMWrapperWorld*);
         void removeUserStyleSheetsFromWorld(DOMWrapperWorld*);
-    
+
         void removeAllUserContent();
-        
+
         const UserScriptMap* userScripts() const { return m_userScripts.get(); }
         const UserStyleSheetMap* userStyleSheets() const { return m_userStyleSheets.get(); }
 

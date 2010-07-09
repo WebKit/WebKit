@@ -1600,6 +1600,7 @@ webcore_sources += \
 	WebCore/page/Timing.h \
 	WebCore/page/UserContentURLPattern.cpp \
 	WebCore/page/UserContentURLPattern.h \
+	WebCore/page/UserContentTypes.h \
 	WebCore/page/UserScript.h \
 	WebCore/page/UserScriptTypes.h \
 	WebCore/page/UserStyleSheet.h \

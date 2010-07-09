@@ -1273,17 +1273,22 @@ void LayoutTestController::forceRedSelectionColors(const CppArgumentList& argume
 void LayoutTestController::addUserScript(const CppArgumentList& arguments, CppVariant* result)
 {
     result->setNull();
-    if (arguments.size() < 2 || !arguments[0].isString() || !arguments[1].isBool())
+    if (arguments.size() < 3 || !arguments[0].isString() || !arguments[1].isBool() || !arguments[2].isBool())
         return;
-    m_shell->webView()->addUserScript(cppVariantToWebString(arguments[0]), arguments[1].toBoolean());
+    WebView::addUserScript(
+        cppVariantToWebString(arguments[0]), WebVector<WebString>(),
+        arguments[1].toBoolean() ? WebView::UserScriptInjectAtDocumentStart : WebView::UserScriptInjectAtDocumentEnd,
+        arguments[2].toBoolean() ? WebView::UserContentInjectInAllFrames : WebView::UserContentInjectInTopFrameOnly);
 }
 
 void LayoutTestController::addUserStyleSheet(const CppArgumentList& arguments, CppVariant* result)
 {
     result->setNull();
-    if (arguments.size() < 1 || !arguments[0].isString())
+    if (arguments.size() < 2 || !arguments[0].isString() || !arguments[1].isBool())
         return;
-    m_shell->webView()->addUserStyleSheet(cppVariantToWebString(arguments[0]));
+    WebView::addUserStyleSheet(
+        cppVariantToWebString(arguments[0]), WebVector<WebString>(),
+        arguments[2].toBoolean() ? WebView::UserContentInjectInAllFrames : WebView::UserContentInjectInTopFrameOnly);
 }
 
 void LayoutTestController::setEditingBehavior(const CppArgumentList& arguments, CppVariant* results)

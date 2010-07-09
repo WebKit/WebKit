@@ -624,12 +624,12 @@ void LayoutTestController::overridePreference(JSStringRef key, JSStringRef value
     g_free(strValue);
 }
 
-void LayoutTestController::addUserScript(JSStringRef source, bool runAtStart)
+void LayoutTestController::addUserScript(JSStringRef source, bool runAtStart, bool allFrames)
 {
     printf("LayoutTestController::addUserScript not implemented.\n");
 }
 
-void LayoutTestController::addUserStyleSheet(JSStringRef source)
+void LayoutTestController::addUserStyleSheet(JSStringRef source, bool allFrames)
 {
     printf("LayoutTestController::addUserStyleSheet not implemented.\n");
 }

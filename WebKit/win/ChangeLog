@@ -1,3 +1,15 @@
+2010-07-08  Aaron Boodman  <aa@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Add the ability for user scripts and user styles to affect just the top frame.
+
+        https://bugs.webkit.org/show_bug.cgi?id=41529
+
+        * WebView.cpp:
+        (WebView::addUserScriptToGroup):
+        (WebView::addUserStyleSheetToGroup):
+
 2010-07-08  Adele Peterson  <adele@apple.com>
 
         Reviewed by Jon Honeycutt, Adam Roben, and Darin Adler.

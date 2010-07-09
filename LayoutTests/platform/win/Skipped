@@ -944,3 +944,11 @@ fast/forms/input-appearance-speechbutton.html
 # Needs to be fixed at image decoder layer for Safari.
 fast/images/large-size-image-crash.html
 
+# Disable until the windows WebKit API supports injecting in the top frame only.
+# https://bugs.webkit.org/show_bug.cgi?id=41800
+userscripts/user-script-all-frames.html
+userscripts/user-script-top-frame-only.html
+userscripts/user-style-all-frames.html
+userscripts/user-style-top-frame-only.html
+userscripts/frameset-all-frames.html
+userscripts/frameset-top-frame-only.html

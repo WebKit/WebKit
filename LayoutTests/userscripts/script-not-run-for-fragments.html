@@ -5,7 +5,7 @@
 if (window.layoutTestController) {
     layoutTestController.dumpAsText();
     layoutTestController.waitUntilDone();
-    layoutTestController.addUserScript("console.log('injected'); var div = document.createElement('div'); div.innerHTML = '<p>hi</p>';", true);
+    layoutTestController.addUserScript("console.log('injected'); var div = document.createElement('div'); div.innerHTML = '<p>hi</p>';", true, true);
 }
 </script>
 </head>

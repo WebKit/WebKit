@@ -5970,7 +5970,8 @@ HRESULT WebView::addUserScriptToGroup(BSTR groupName, IWebScriptWorld* iWorld, B
 
     pageGroup->addUserScriptToWorld(world->world(), toString(source), toKURL(url),
                                     toStringVector(whitelistCount, whitelist), toStringVector(blacklistCount, blacklist),
-                                    injectionTime == WebInjectAtDocumentStart ? InjectAtDocumentStart : InjectAtDocumentEnd);
+                                    injectionTime == WebInjectAtDocumentStart ? InjectAtDocumentStart : InjectAtDocumentEnd,
+                                    InjectInAllFrames);
 
     return S_OK;
 }
@@ -5993,7 +5994,8 @@ HRESULT WebView::addUserStyleSheetToGroup(BSTR groupName, IWebScriptWorld* iWorl
         return E_FAIL;
 
     pageGroup->addUserStyleSheetToWorld(world->world(), toString(source), toKURL(url),
-                                        toStringVector(whitelistCount, whitelist), toStringVector(blacklistCount, blacklist));
+                                        toStringVector(whitelistCount, whitelist), toStringVector(blacklistCount, blacklist),
+                                        InjectInAllFrames);
 
     return S_OK;
 }

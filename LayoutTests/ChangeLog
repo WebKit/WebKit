@@ -1,3 +1,28 @@
+2010-07-08  Aaron Boodman  <aa@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Add the ability for user scripts and user styles to affect just the top frame.
+
+        https://bugs.webkit.org/show_bug.cgi?id=41529
+
+        * platform/win/Skipped: Skipped test because WebKit API needs updating.
+        * userscripts/mixed-case-stylesheet.html: Added new allFrames param.
+        * userscripts/resources/frame1.html: Added.
+        * userscripts/resources/frame2.html: Added.
+        * userscripts/script-not-run-for-fragments.html: Added new allFrames param.
+        * userscripts/script-run-at-end.html: Ditto.
+        * userscripts/script-run-at-start.html: Ditto.
+        * userscripts/simple-stylesheet.html: Ditto.
+        * userscripts/user-script-all-frames-expected.txt: Added.
+        * userscripts/user-script-all-frames.html: Added.
+        * userscripts/user-script-top-frame-only-expected.txt: Added.
+        * userscripts/user-script-top-frame-only.html: Added.
+        * userscripts/user-style-all-frames-expected.txt: Added.
+        * userscripts/user-style-all-frames.html: Added.
+        * userscripts/user-style-top-frame-only-expected.txt: Added.
+        * userscripts/user-style-top-frame-only.html: Added.
+
 2010-07-08  Adele Peterson  <adele@apple.com>
 
         Reviewed by Jon Honeycutt, Adam Roben, and Darin Adler.
