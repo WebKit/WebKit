@@ -1,3 +1,19 @@
+2010-07-09  Tony Gentilcore  <tonyg@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Implement performance.timing.navigationStart
+        https://bugs.webkit.org/show_bug.cgi?id=41815
+
+        See: http://dev.w3.org/2006/webapi/WebTiming/#nt-navigation-start
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadWithDocumentLoader):
+        * loader/FrameLoaderTypes.h:
+        (WebCore::FrameLoadTimeline::FrameLoadTimeline):
+        * page/Timing.cpp:
+        (WebCore::Timing::navigationStart):
+
 2010-07-09  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
 
         Reviewed by Kenneth Rohde Christiansen.

@@ -57,7 +57,7 @@ unsigned long long Timing::navigationStart() const
     if (!m_frame)
         return 0;
 
-    return 0; // FIXME
+    return static_cast<unsigned long long>(m_frame->loader()->frameLoadTimeline()->navigationStart * 1000);
 }
 
 unsigned long long Timing::unloadEventEnd() const

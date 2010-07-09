@@ -38,7 +38,9 @@ function shouldBeGreaterThanOrEqual(_a, _b) {
 
 function checkTimingBeforeLoad()
 {
-    shouldBeGreaterThanOrEqual("timing.unloadEventEnd", "timing.oneHourAgoUTC");
+    shouldBeGreaterThanOrEqual("timing.navigationStart", "oneHourAgoUTC");
+
+    shouldBeGreaterThanOrEqual("timing.unloadEventEnd", "timing.navigationStart");
 
     shouldBe("timing.loadEventStart", "0");
     shouldBe("timing.loadEventEnd", "0");
@@ -48,7 +50,9 @@ function checkTimingBeforeLoad()
 
 function checkWebTimingOnLoad()
 {
-    shouldBeGreaterThanOrEqual("timing.unloadEventEnd", "timing.oneHourAgoUTC");
+    shouldBeGreaterThanOrEqual("timing.navigationStart", "oneHourAgoUTC");
+
+    shouldBeGreaterThanOrEqual("timing.unloadEventEnd", "timing.navigationStart");
 
     shouldBeGreaterThanOrEqual("timing.loadEventStart", "timing.unloadEventEnd");
     shouldBe("timing.loadEventEnd", "0");
@@ -58,7 +62,9 @@ function checkWebTimingOnLoad()
 
 function checkWebTimingAfterLoad()
 {
-    shouldBeGreaterThanOrEqual("timing.unloadEventEnd", "timing.oneHourAgoUTC");
+    shouldBeGreaterThanOrEqual("timing.navigationStart", "oneHourAgoUTC");
+
+    shouldBeGreaterThanOrEqual("timing.unloadEventEnd", "timing.navigationStart");
 
     shouldBeGreaterThanOrEqual("timing.loadEventStart", "timing.unloadEventEnd");
     shouldBeGreaterThanOrEqual("timing.loadEventEnd", "timing.loadEventStart + 50");

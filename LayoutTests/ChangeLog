@@ -1,3 +1,16 @@
+2010-07-09  Tony Gentilcore  <tonyg@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Implement performance.timing.navigationStart
+        https://bugs.webkit.org/show_bug.cgi?id=41815
+
+        * fast/dom/script-tests/webtiming.js:
+        (checkTimingBeforeLoad):
+        (checkWebTimingOnLoad):
+        (checkWebTimingAfterLoad):
+        * fast/dom/webtiming-expected.txt:
+
 2010-07-09  Albert J. Wong  <ajwong@chromium.org>
 
         Unreviewed. Build fix.
