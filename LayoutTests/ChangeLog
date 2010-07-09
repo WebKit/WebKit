@@ -1,3 +1,16 @@
+2010-07-09  Xiaomei Ji  <xji@chromium.org>
+
+        Reviewed by David Levin.
+
+        Rebaseline bidi-mirror-he-ar.html for leopard and snowleopard.
+        https://bugs.webkit.org/show_bug.cgi?id=41974
+
+        * platform/mac-leopard/fast/text/international/bidi-mirror-he-ar-expected.txt: Added.
+        * platform/mac-snowleopard/platform/mac/fast/text: Removed.
+        * platform/mac-snowleopard/platform/mac/fast/text/international: Removed.
+        * platform/mac-snowleopard/platform/mac/fast/text/international/bidi-mirror-he-ar-expected.txt: Removed.
+        * platform/mac/fast/text/international/bidi-mirror-he-ar-expected.txt:
+
 2010-07-09  Albert J. Wong  <ajwong@chromium.org>
 
         Not reviewed
