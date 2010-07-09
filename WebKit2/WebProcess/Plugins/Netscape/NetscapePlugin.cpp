@@ -25,6 +25,7 @@
 
 #include "NetscapePlugin.h"
 
+#include <WebCore/GraphicsContext.h>
 #include <WebCore/IntRect.h>
 
 using namespace WebCore;
@@ -34,6 +35,11 @@ namespace WebKit {
 NetscapePlugin::NetscapePlugin(PassRefPtr<NetscapePluginModule> pluginModule)
     : m_pluginModule(pluginModule)
     , m_npWindow()
+    , m_isStarted(false)
+#if PLATFORM(MAC)
+    , m_drawingModel(static_cast<NPDrawingModel>(-1))
+    , m_eventModel(static_cast<NPEventModel>(-1))
+#endif
 {
     m_npp.ndata = this;
     m_npp.pdata = 0;
@@ -66,18 +72,30 @@ bool NetscapePlugin::initialize(const KURL&, const Vector<String>& paramNames, c
     if (error != NPERR_NO_ERROR)
         return false;
 
+    m_isStarted = true;
+
     // FIXME: This is not correct in all cases.
     m_npWindow.type = NPWindowTypeDrawable;
+
+    if (!platformPostInitialize()) {
+        destroy();
+        return false;
+    }
 
     return true;
 }
     
 void NetscapePlugin::destroy()
 {
+    ASSERT(m_isStarted);
+
+    m_pluginModule->pluginFuncs().destroy(&m_npp, 0);
+    m_isStarted = false;
 }
     
 void NetscapePlugin::paint(GraphicsContext* context, const IntRect& dirtyRect)
 {
+    platformPaint(context, dirtyRect);
 }
 
 void NetscapePlugin::geometryDidChange(const IntRect& frameRect, const IntRect& clipRect)

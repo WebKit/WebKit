@@ -45,6 +45,9 @@ private:
 
     void callSetWindow();
 
+    bool platformPostInitialize();
+    void platformPaint(WebCore::GraphicsContext*, const WebCore::IntRect& dirtyRect);
+
     // Plugin
     virtual bool initialize(const WebCore::KURL&, const Vector<WebCore::String>& paramNames, const Vector<WebCore::String>& paramValues, const WebCore::String& mimeType, bool loadManually);
     virtual void destroy();
@@ -54,10 +57,29 @@ private:
     RefPtr<NetscapePluginModule> m_pluginModule;
     NPP_t m_npp;
     NPWindow m_npWindow;
-    
+
     WebCore::IntRect m_frameRect;
     WebCore::IntRect m_clipRect;
+    
+    bool m_isStarted;
+
+#if PLATFORM(MAC)
+    NPDrawingModel m_drawingModel;
+    NPEventModel m_eventModel;
+#endif
 };
+
+// Move these functions to NetscapePluginWin.cpp
+#if !PLATFORM(MAC)
+inline bool NetscapePlugin::platformPostInitialize()
+{
+    return true;
+}
+
+inline void NetscapePlugin::platformPaint(WebCore::GraphicsContext*, const WebCore::IntRect&)
+{
+}
+#endif
 
 } // namespace WebKit
 

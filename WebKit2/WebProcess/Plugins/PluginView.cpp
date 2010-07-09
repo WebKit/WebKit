@@ -58,11 +58,19 @@ void PluginView::paint(GraphicsContext* context, const IntRect& dirtyRect)
     if (context->paintingDisabled())
         return;
     
-    IntRect paintRect = intersection(dirtyRect, frameRect());
-    if (paintRect.isEmpty())
+    IntRect dirtyRectInWindowCoordinates = parent()->contentsToWindow(dirtyRect);
+    
+    IntRect paintRectInWindowCoordinates = intersection(dirtyRectInWindowCoordinates, clipRectInWindowCoordinates());
+    if (paintRectInWindowCoordinates.isEmpty())
         return;
 
-    m_plugin->paint(context, paintRect);
+    context->save();
+
+    // Translate the context so that the origin is at the top left corner of the plug-in view.
+    context->translate(frameRect().x(), frameRect().y());
+
+    m_plugin->paint(context, paintRectInWindowCoordinates);
+    context->restore();
 }
 
 void PluginView::frameRectsChanged()
@@ -85,15 +93,23 @@ void PluginView::viewGeometryDidChange()
     // Get the frame rect in window coordinates.
     IntRect frameRectInWindowCoordinates = parent()->contentsToWindow(frameRect());
 
+    m_plugin->geometryDidChange(frameRectInWindowCoordinates, clipRectInWindowCoordinates());
+}
+
+IntRect PluginView::clipRectInWindowCoordinates() const
+{
+    ASSERT(parent());
+
+    // Get the frame rect in window coordinates.
+    IntRect frameRectInWindowCoordinates = parent()->contentsToWindow(frameRect());
+
     // Get the window clip rect for the enclosing layer (in window coordinates).
     RenderLayer* layer = m_pluginElement->renderer()->enclosingLayer();
     FrameView* parentView = m_pluginElement->document()->frame()->view();
     IntRect windowClipRect = parentView->windowClipRectForLayer(layer, true);
 
     // Intersect the two rects to get the view clip rect in window coordinates.
-    IntRect clipRectInWindowCoordinates = intersection(frameRectInWindowCoordinates, windowClipRect);
-
-    m_plugin->geometryDidChange(frameRectInWindowCoordinates, clipRectInWindowCoordinates);
+    return intersection(frameRectInWindowCoordinates, windowClipRect);
 }
 
 void PluginView::invalidateRect(const IntRect&)

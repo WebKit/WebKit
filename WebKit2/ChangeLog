@@ -2,6 +2,47 @@
 
         Reviewed by Sam Weinig.
 
+        Verify drawing coordinates, add crude painting support
+        https://bugs.webkit.org/show_bug.cgi?id=41984
+    
+        * WebKit2.xcodeproj/project.pbxproj:
+        Add NetscapePluginMac.cpp.
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::NetscapePlugin):
+        Initialize drawing and event models.
+
+        (WebKit::NetscapePlugin::initialize):
+        Call platformPostInitialize.
+
+        (WebKit::NetscapePlugin::destroy):
+        Call NPP_Destroy.
+
+        (WebKit::NetscapePlugin::paint):
+        Call platformPaint.
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.h:
+        Add member functions.
+
+        * WebProcess/Plugins/Netscape/mac/NetscapePluginMac.cpp: Added.
+        (WebKit::NetscapePlugin::platformPostInitialize):
+        Set default event and drawing models and verify that they are compatible.
+        
+        (WebKit::NetscapePlugin::platformPaint):
+        Send a paint event (assuming the Cocoa event model currently).
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::paint):
+        Change the paint rect to be in window coordinates.
+
+        (WebKit::PluginView::viewGeometryDidChange):
+        (WebKit::PluginView::clipRectInWindowCoordinates):
+        * WebProcess/Plugins/PluginView.h:
+
+2010-07-09  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
         Pass a clip rect to the plugin and call NPP_SetWindow
         https://bugs.webkit.org/show_bug.cgi?id=41969
 
