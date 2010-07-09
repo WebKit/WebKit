@@ -1,0 +1,9 @@
+This tests that performance.navigation.type is 0
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+FAIL navigation.type should be 0 (of type number). Was undefined (of type undefined).
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

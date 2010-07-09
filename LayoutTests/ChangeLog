@@ -1,3 +1,20 @@
+2010-07-09  Tony Gentilcore  <tonyg@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Implement performance.navigation.type
+        https://bugs.webkit.org/show_bug.cgi?id=41564
+
+        Expectations set to FAIL because disabled by default. Tests pass with --web-timing.
+
+        * fast/dom/navigation-type-back-forward-expected.txt: Added.
+        * fast/dom/navigation-type-back-forward.html: Added.
+        * fast/dom/navigation-type-navigate-expected.txt: Added.
+        * fast/dom/navigation-type-navigate.html: Added.
+        * fast/dom/navigation-type-reload-expected.txt: Added.
+        * fast/dom/navigation-type-reload.html: Added.
+        * fast/dom/resources/navigation-type-matches-querystring.html: Added.
+
 2010-07-09  François Sausset  <sausset@gmail.com>
 
         Reviewed by Kenneth Rohde Christiansen.

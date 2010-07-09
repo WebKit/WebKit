@@ -51,6 +51,13 @@ public:
     unsigned short redirectCount() const;
 
 private:
+    // Keep in sync with what's in the .idl file.
+    enum NavigationType {
+        Navigate = 0,
+        Reload = 1,
+        BackForward = 2,
+    };
+
     Navigation(Frame*);
 
     Frame* m_frame;

@@ -33,7 +33,9 @@
 
 #if ENABLE(WEB_TIMING)
 
+#include "DocumentLoader.h"
 #include "Frame.h"
+#include "FrameLoaderTypes.h"
 
 namespace WebCore {
 
@@ -55,9 +57,21 @@ void Navigation::disconnectFrame()
 unsigned short Navigation::type() const
 {
     if (!m_frame)
-        return 0;
+        return Navigate;
 
-    return 0; // FIXME
+    DocumentLoader* documentLoader = m_frame->loader()->documentLoader();
+    if (!documentLoader)
+        return Navigate;
+
+    WebCore::NavigationType navigationType = documentLoader->triggeringAction().type();
+    switch (navigationType) {
+    case NavigationTypeReload:
+        return Reload;
+    case NavigationTypeBackForward:
+        return BackForward;
+    default:
+        return Navigate;
+    }
 }
 
 unsigned short Navigation::redirectCount() const

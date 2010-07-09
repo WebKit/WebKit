@@ -32,13 +32,9 @@ module window {
 
     // See: http://dev.w3.org/2006/webapi/WebTiming/
     interface [Conditional=WEB_TIMING, OmitConstructor] Navigation {
-        const unsigned short NAVIGATION_OTHER = 0;
-        const unsigned short NAVIGATION_LINK = 1;
-        const unsigned short NAVIGATION_FORWARD_BACK = 2;
-        const unsigned short NAVIGATION_BROWSER = 3;
-        const unsigned short NAVIGATION_NEW_WINDOW = 4;
-        const unsigned short NAVIGATION_RELOAD = 5;
-        const unsigned short NAVIGATION_FRAME = 6;
+        const unsigned short NAVIGATE = 0;
+        const unsigned short RELOAD = 1;
+        const unsigned short BACK_FORWARD = 2;
         readonly attribute unsigned short type;
 
         readonly attribute unsigned short redirectCount;
