@@ -1,7 +1,7 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
-  RenderSVGRoot {svg} at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 100x100
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
       RenderSVGResourcePattern {pattern} [id="pattern"] [patternUnits=userSpaceOnUse] [patternContentUnits=userSpaceOnUse] [patternTransform={m=((1.00,0.00)(1.00,1.00)) t=(0.00,0.00)}]
         RenderPath {rect} at (0,0) size 110x110 [fill={[type=SOLID] [color=#0000FF]}] [data="M0.00,0.00 L110.00,0.00 L110.00,110.00 L0.00,110.00 L0.00,0.00"]

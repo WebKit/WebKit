@@ -14,7 +14,7 @@ layer at (0,0) size 784x783
           RenderText {#text} at (0,0) size 476x24
             text run at (0,0) width 476: "Below is a rendering of the page up to the first error."
       RenderBlock (anonymous) at (0,155) size 768x604
-        RenderSVGRoot {svg} at (8,183) size 768x588
+        RenderSVGRoot {svg} at (24,264) size 71x147
           RenderSVGContainer {g} at (24,264) size 71x147 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,30.00)}]
             RenderSVGContainer {g} at (24,264) size 71x147
               RenderSVGText {text} at (10,21) size 41x11 contains 1 chunk(s)

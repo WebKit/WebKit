@@ -1,7 +1,7 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 384x192
-  RenderSVGRoot {svg} at (0,0) size 37x19
+  RenderSVGRoot {svg} at (0,0) size 384x192
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
       RenderSVGResourceMarker {marker} [id="Triangle"] [markerUnits=strokeWidth] [ref at (0,5)] [angle=auto]
         RenderPath {path} at (0,0) size 1x1 [fill={[type=SOLID] [color=#000000]}] [data="M0.00,0.00 L10.00,5.00 L0.00,10.00 L0.00,0.00"]

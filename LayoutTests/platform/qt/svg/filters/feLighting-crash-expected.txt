@@ -1,7 +1,7 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
-  RenderSVGRoot {svg} at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 44x22
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
       RenderSVGResourceFilter {filter} [id="light"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
         [feSpecularLighting surfaceScale="5.00" specualConstant="10.00" specularExponent="6.00"]

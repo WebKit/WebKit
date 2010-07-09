@@ -1,7 +1,7 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 225x425
-  RenderSVGRoot {svg} at (0,0) size 225x425
+  RenderSVGRoot {svg} at (8,4) size 205x198
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
       RenderSVGResourcePattern {pattern} [id="pat00"] [patternUnits=userSpaceOnUse] [patternContentUnits=userSpaceOnUse]
         RenderSVGContainer {use} at (2,3) size 16x24 [transform={m=((0.75,0.00)(0.00,0.75)) t=(10.00,15.00)}]

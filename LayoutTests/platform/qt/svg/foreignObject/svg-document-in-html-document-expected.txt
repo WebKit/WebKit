@@ -1,14 +1,14 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
-  RenderSVGRoot {svg} at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 300x100
     RenderForeignObject {foreignObject} at (0,0) size 300x100
       RenderBlock {html} at (0,0) size 300x640
         RenderBlock {p} at (0,0) size 300x20
           RenderText {#text} at (0,0) size 230x20
             text run at (0,0) width 230: "Test from HTML in foreignObject"
         RenderBlock (anonymous) at (0,36) size 300x604
-          RenderSVGRoot {svg} at (0,36) size 300x564
+          RenderSVGRoot {svg} at (0,36) size 285x54
             RenderPath {rect} at (0,36) size 20x20 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00 L20.00,0.00 L20.00,20.00 L0.00,20.00 L0.00,0.00"]
             RenderSVGText {text} at (0,34) size 285x20 contains 1 chunk(s)
               RenderSVGInlineText {#text} at (0,0) size 285x20
