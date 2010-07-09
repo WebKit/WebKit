@@ -1,3 +1,15 @@
+2010-07-09  David Kozub  <zub@linux.fjfi.cvut.cz>
+
+        Reviewed by Darin Adler.
+
+        Fix build by adding missing html/TimeRanges.idl to CMakeLists.txt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=41945
+
+        No functional changes, thus no tests.
+
+        * CMakeLists.txt:
+
 2010-07-09  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

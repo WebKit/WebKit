@@ -266,6 +266,7 @@ SET(WebCore_IDL_FILES
     html/ImageData.idl
     html/MediaError.idl
     html/TextMetrics.idl
+    html/TimeRanges.idl
     html/ValidityState.idl
     html/VoidCallback.idl
 
