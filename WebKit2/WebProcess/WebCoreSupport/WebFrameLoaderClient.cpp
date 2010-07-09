@@ -28,7 +28,6 @@
 #define DISABLE_NOT_IMPLEMENTED_WARNINGS 1
 #include "NotImplemented.h"
 
-#include "DummyPlugin.h"
 #if PLATFORM(MAC)
 #include "NetscapePlugin.h"
 #endif
@@ -793,14 +792,13 @@ PassRefPtr<Widget> WebFrameLoaderClient::createPlugin(const IntSize&, HTMLPlugIn
         return 0;
     
     RefPtr<Plugin> plugin = NetscapePlugin::create(pluginModule.release());
-#else
-    RefPtr<Plugin> plugin = DummyPlugin::create();
-#endif
-
     if (!plugin->initialize(url, paramNames, paramValues, mimeType, loadManually))
         return 0;
 
     return PluginView::create(plugin.release());
+#else
+    return 0;
+#endif
 }
 
 void WebFrameLoaderClient::redirectDataToPlugin(Widget* pluginWidget)

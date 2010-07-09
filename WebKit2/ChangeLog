@@ -1,3 +1,10 @@
+2010-07-08  Sam Weinig  <sam@webkit.org>
+
+        Attempt to fix the windows build.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::createPlugin):
+
 2010-07-08  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.
