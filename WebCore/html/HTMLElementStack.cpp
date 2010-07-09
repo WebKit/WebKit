@@ -152,10 +152,22 @@ void HTMLElementStack::popUntil(const AtomicString& tagName)
     }
 }
 
+void HTMLElementStack::popUntilPopped(const AtomicString& tagName)
+{
+    popUntil(tagName);
+    pop();
+}
+
 void HTMLElementStack::popUntil(Element* element)
 {
     while (top() != element)
         pop();
+}
+
+void HTMLElementStack::popUntilPopped(Element* element)
+{
+    popUntil(element);
+    pop();
 }
 
 void HTMLElementStack::popUntilTableScopeMarker()

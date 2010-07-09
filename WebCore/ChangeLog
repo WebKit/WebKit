@@ -1,5 +1,27 @@
 2010-07-09  Eric Seidel  <eric@webkit.org>
 
+        Reviewed by Adam Barth.
+
+        Add new popUntilPopped functions to clean up code
+        https://bugs.webkit.org/show_bug.cgi?id=41936
+
+        Pretty self explanatory.  Much awesome code reduction.
+
+        No functional changes, thus no tests.
+
+        * html/HTMLElementStack.cpp:
+        (WebCore::HTMLElementStack::popUntilPopped):
+        * html/HTMLElementStack.h:
+        * html/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::processAnyOtherEndTagForInBody):
+        (WebCore::HTMLTreeBuilder::callTheAdoptionAgency):
+        (WebCore::HTMLTreeBuilder::processEndTagForInBody):
+        (WebCore::HTMLTreeBuilder::processCaptionEndTagForInCaption):
+        (WebCore::HTMLTreeBuilder::processTableEndTagForInTable):
+        (WebCore::HTMLTreeBuilder::processEndTag):
+
+2010-07-09  Eric Seidel  <eric@webkit.org>
+
         Unreviewed.  Just renaming (discussed with Adam Barth).
 
         Rename createElement* to createHTMLElement* to better reflect
