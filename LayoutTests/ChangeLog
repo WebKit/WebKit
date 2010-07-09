@@ -2,6 +2,15 @@
 
         Reviewed by Sam Weinig.
 
+        String.prototype methods should CheckObjectCoercible (test this is not null or undefined).
+
+        * ietestcenter/Javascript/15.5.4.20-1-1-expected.txt:
+        * ietestcenter/Javascript/15.5.4.20-1-2-expected.txt:
+
+2010-07-08  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Sam Weinig.
+
         Date.prototype.toJSON takes one argument, report this correctly.
 
         * ietestcenter/Javascript/15.9.5.44-0-2-expected.txt:
