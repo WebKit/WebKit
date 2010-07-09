@@ -1,3 +1,12 @@
+2010-07-09  David Holloway  <dhollowa@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Roll Chromium DEPS forward to r51736.
+        https://bugs.webkit.org/show_bug.cgi?id=41867
+
+        * DEPS:
+
 2010-07-09  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed: chromium build fix.
