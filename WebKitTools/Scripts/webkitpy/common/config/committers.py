@@ -64,6 +64,7 @@ class Reviewer(Committer):
 
 committers_unable_to_review = [
     Committer("Aaron Boodman", "aa@chromium.org", "aboodman"),
+    Committer("Abhishek Arya", "inferno@chromium.org", "inferno-sec"),
     Committer("Adam Langley", "agl@chromium.org", "agl"),
     Committer("Albert J. Wong", "ajwong@chromium.org"),
     Committer("Alejandro G. Castro", ["alex@igalia.com", "alex@webkit.org"]),
