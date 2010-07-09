@@ -2941,23 +2941,68 @@ BUG48668 MAC : svg/W3C-SVG-1.1/struct-use-01-t.svg = FAIL
 // Marking all the ietestcenter tests as failed for now. Added in r62810.
 // Most probably only need a rebaseline, but rebaselining tool is broken
 // right now.
-BUGAWONG REBASELINE WIN LINUX MAC : ietestcenter/Javascript/15.9.5.44-0-2.html = TEXT
-BUGAWONG WIN LINUX MAC SKIP : ietestcenter/Javascript/15.4.4.15-3-14.html = TIMEOUT
-BUGAWONG WIN LINUX MAC SKIP : ietestcenter/Javascript/15.4.4.15-3-29.html = TIMEOUT
-BUGAWONG WIN LINUX MAC SKIP : ietestcenter/Javascript/15.4.4.15-3-8.html = TIMEOUT
-
-// New from somewhere around r62815-r62855
-
-// Regression from r62849.  Probably just needs rebaseline.
-
-// Likely from r62862. Probably just needs rebaseline.
-BUGAWONG REBASELINE WIN LINUX MAC : fast/js/object-literal-direct-put.html = TEXT
+BUG48737 WIN LINUX MAC : ietestcenter/Javascript/11.1.5_4-4-b-1.html = TEXT
+BUG48737 WIN LINUX MAC : ietestcenter/Javascript/11.1.5_4-4-b-2.html = TEXT
+BUG48737 WIN LINUX MAC : ietestcenter/Javascript/11.1.5_4-4-c-1.html = TEXT
+BUG48737 WIN LINUX MAC : ietestcenter/Javascript/11.1.5_4-4-c-2.html = TEXT
+BUG48737 WIN LINUX MAC : ietestcenter/Javascript/11.1.5_4-4-d-1.html = TEXT
+BUG48737 WIN LINUX MAC : ietestcenter/Javascript/11.1.5_4-4-d-2.html = TEXT
+BUG48737 WIN LINUX MAC : ietestcenter/Javascript/11.1.5_4-4-d-3.html = TEXT
+BUG48737 WIN LINUX MAC : ietestcenter/Javascript/11.1.5_4-4-d-4.html = TEXT
+BUG48737 WIN LINUX MAC : ietestcenter/Javascript/11.4.1-4.a-5.html = TEXT
+BUG48737 WIN LINUX MAC : ietestcenter/Javascript/11.4.1-4.a-7.html = TEXT
+BUG48737 WIN LINUX MAC : ietestcenter/Javascript/15.2.3.3-4-178.html = TEXT
+BUG48737 WIN LINUX MAC : ietestcenter/Javascript/15.2.3.3-4-179.html = TEXT
+BUG48737 WIN LINUX MAC : ietestcenter/Javascript/15.2.3.3-4-180.html = TEXT
+BUG48737 WIN LINUX MAC : ietestcenter/Javascript/15.4.4.14-3-12.html = TEXT
+BUG48737 WIN LINUX MAC : ietestcenter/Javascript/15.4.4.14-3-13.html = TEXT
+BUG48737 WIN LINUX MAC : ietestcenter/Javascript/15.4.4.14-3-14.html = TEXT
+BUG48737 WIN LINUX MAC : ietestcenter/Javascript/15.4.4.14-3-24.html = TEXT
+BUG48737 WIN LINUX MAC : ietestcenter/Javascript/15.4.4.14-3-25.html = TEXT
+BUG48737 WIN LINUX MAC : ietestcenter/Javascript/15.4.4.14-3-28.html = TEXT
+BUG48737 WIN LINUX MAC : ietestcenter/Javascript/15.4.4.14-3-29.html = TEXT
+BUG48737 WIN LINUX MAC : ietestcenter/Javascript/15.4.4.14-3-7.html = TEXT
+BUG48737 WIN LINUX MAC : ietestcenter/Javascript/15.4.4.14-3-8.html = TEXT
+BUG48737 WIN LINUX MAC : ietestcenter/Javascript/15.4.4.14-4-9.html = TEXT
+BUG48737 WIN LINUX MAC : ietestcenter/Javascript/15.4.4.14-9-b-i-6.html = TEXT
+BUG48737 WIN LINUX MAC : ietestcenter/Javascript/15.4.4.15-3-12.html = TEXT
+BUG48737 WIN LINUX MAC : ietestcenter/Javascript/15.4.4.15-3-13.html = TEXT
+BUG48737 WIN LINUX MAC : ietestcenter/Javascript/15.4.4.15-3-24.html = TEXT
+BUG48737 WIN LINUX MAC : ietestcenter/Javascript/15.4.4.15-3-25.html = TEXT
+BUG48737 WIN LINUX MAC : ietestcenter/Javascript/15.4.4.15-3-28.html = TEXT
+BUG48737 WIN LINUX MAC : ietestcenter/Javascript/15.4.4.15-3-7.html = TEXT
+BUG48737 WIN LINUX MAC : ietestcenter/Javascript/15.4.4.15-8-b-i-6.html = TEXT
+BUG48737 WIN LINUX MAC : ietestcenter/Javascript/15.5.4.20-4-10.html = TEXT
+BUG48737 WIN LINUX MAC : ietestcenter/Javascript/15.5.4.20-4-18.html = TEXT
+BUG48737 WIN LINUX MAC : ietestcenter/Javascript/15.5.4.20-4-34.html = TEXT
+BUG48737 WIN LINUX MAC : ietestcenter/Javascript/15.9.5.44-0-2.html = TEXT
+BUG48737 WIN LINUX MAC : ietestcenter/Javascript/15.10.6.html = TEXT
+BUG48737 WIN LINUX MAC : ietestcenter/Javascript/15.10.7.1-1.html = TEXT
+BUG48737 WIN LINUX MAC : ietestcenter/Javascript/15.10.7.2-1.html = TEXT
+BUG48737 WIN LINUX MAC : ietestcenter/Javascript/15.10.7.3-1.html = TEXT
+BUG48737 WIN LINUX MAC : ietestcenter/Javascript/15.10.7.4-1.html = TEXT
+BUG48737 WIN LINUX MAC : ietestcenter/Javascript/15.10.7.5-1.html = TEXT
+BUG48737 WIN LINUX MAC : ietestcenter/Javascript/15.2.3.3-4-212.html = TEXT
+BUG48737 WIN LINUX MAC : ietestcenter/Javascript/15.2.3.3-4-213.html = TEXT
+BUG48737 WIN LINUX MAC : ietestcenter/Javascript/15.2.3.3-4-214.html = TEXT
+BUG48737 WIN LINUX MAC : ietestcenter/Javascript/15.2.3.3-4-215.html = TEXT
+BUG48737 WIN LINUX MAC SKIP : ietestcenter/Javascript/15.4.4.15-3-14.html = TIMEOUT
+BUG48737 WIN LINUX MAC SKIP : ietestcenter/Javascript/15.4.4.15-3-29.html = TIMEOUT
+BUG48737 WIN LINUX MAC SKIP : ietestcenter/Javascript/15.4.4.15-3-8.html = TIMEOUT
 
 // Broken prior to r62921.
 BUG48696 WIN LINUX : fast/forms/focus2.html = CRASH
 BUG48696 WIN LINUX MAC : fast/forms/tabs-with-modifiers.html = CRASH
 
+// Regression from r62849.  Probably just needs rebaseline.
+BUGAWONG WIN LINUX MAC : fast/js/object-literal-syntax.html = TEXT
+
+// Likely from r62862. Probably just needs rebaseline.
+BUGAWONG WIN LINUX MAC : fast/js/object-literal-direct-put.html = TEXT
+
 // Probably just needs rebaseline.
+BUGAWONG MAC : svg/custom/clip-path-child-changes.svg = TEXT
 
 // From webkit roll 62670 -> 62844.
+BUGAWONG WIN : http/tests/plugins/plugin-document-has-focus.html = TEXT
 
