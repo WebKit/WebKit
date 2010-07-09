@@ -274,8 +274,13 @@ bool HTMLTokenizer::nextToken(SegmentedString& source, HTMLToken& token)
     // without getting an extra newline at the start of their <pre> element.
     if (m_skipLeadingNewLineForListing) {
         m_skipLeadingNewLineForListing = false;
-        if (m_state == DataState && cc == '\n')
-            ADVANCE_TO(DataState);
+        if (cc == '\n') {
+            if (m_state == DataState)
+                ADVANCE_TO(DataState);
+            if (m_state == RCDATAState)
+                ADVANCE_TO(RCDATAState);
+            ASSERT_NOT_REACHED();
+        }
     }
 
     // Source: http://www.whatwg.org/specs/web-apps/current-work/#tokenisation0

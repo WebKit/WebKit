@@ -210,69 +210,8 @@ Expected:
 |     <a>
 resources/tests2.dat: PASS
 
-resources/tests3.dat:
-16
-17
-18
+resources/tests3.dat: PASS
 
-Test 16 of 23 in resources/tests3.dat failed. Input:
-<!DOCTYPE html><textarea>
-</textarea>
-Got:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <textarea>
-|       "
-"
-Expected:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <textarea>
-
-Test 17 of 23 in resources/tests3.dat failed. Input:
-<!DOCTYPE html><textarea>
-foo</textarea>
-Got:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <textarea>
-|       "
-foo"
-Expected:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <textarea>
-|       "foo"
-
-Test 18 of 23 in resources/tests3.dat failed. Input:
-<!DOCTYPE html><textarea>
-
-foo</textarea>
-Got:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <textarea>
-|       "
-
-foo"
-Expected:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <textarea>
-|       "
-foo"
 resources/tests4.dat:
 3
 5
