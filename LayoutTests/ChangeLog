@@ -1,3 +1,11 @@
+2010-07-09  Albert J. Wong  <ajwong@chromium.org>
+
+        Not reviewed, build fix.
+
+        [chromium] Update test expecations for failing tests.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-07-09  François Sausset  <sausset@gmail.com>
 
         Reviewed by Kenneth Rohde Christiansen.
