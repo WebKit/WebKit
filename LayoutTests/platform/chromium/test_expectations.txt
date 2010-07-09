@@ -862,7 +862,6 @@ BUG8763 LINUX WIN MAC : svg/custom/use-on-g-containing-foreignObject-and-image.s
 
 // We show reduced version of the entire SVN image rather than an image
 BUG23463 MAC : svg/W3C-SVG-1.1/struct-symbol-01-b.svg = IMAGE
-BUG23463 MAC : svg/W3C-SVG-1.1/struct-use-01-t.svg = IMAGE
 BUG23463 WIN LINUX : svg/W3C-SVG-1.1/struct-symbol-01-b.svg = IMAGE+TEXT TEXT
 BUG23463 WIN LINUX : svg/W3C-SVG-1.1/struct-use-01-t.svg = IMAGE+TEXT PASS
 BUG23463 WIN LINUX : svg/W3C-SVG-1.1/struct-image-02-b.svg = IMAGE+TEXT
@@ -2937,6 +2936,8 @@ BUG48452 LINUX MAC : svg/custom/use-font-face-crash.svg = IMAGE+TEXT IMAGE
 // Times out after http://trac.webkit.org/changeset/62739/
 BUG48550 SKIP : plugins/return-negative-one-from-write.html = TIMEOUT
 
+BUG48668 MAC : svg/W3C-SVG-1.1/struct-use-01-t.svg = FAIL
+
 // Marking all the ietestcenter tests as failed for now. Added in r62810.
 // Most probably only need a rebaseline, but rebaselining tool is broken
 // right now.
@@ -3062,3 +3063,4 @@ BUGAWONG MAC : svg/custom/clip-path-child-changes.svg = TEXT
 // From webkit roll 62670 -> 62844.
 BUGAWONG WIN : plugins/keyboard-events.html = TEXT
 BUGAWONG WIN : http/tests/plugins/plugin-document-has-focus.html = TEXT
+

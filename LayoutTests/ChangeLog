@@ -1,5 +1,13 @@
 2010-07-09  Albert J. Wong  <ajwong@chromium.org>
 
+        Not reviewed
+
+        [chromium] upstreaming expectations from chromium.
+
+        * platform/chromium/test_expectations.txt:
+
+2010-07-09  Albert J. Wong  <ajwong@chromium.org>
+
         Not reviewed, build fix.
 
         [chromium] Update test expecations for failing tests.
