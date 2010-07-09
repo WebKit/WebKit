@@ -1,3 +1,11 @@
+2010-07-09  Antti Koivisto  <koivisto@iki.fi>
+
+        Not reviewed.
+
+        Build fix.
+
+        * UIProcess/API/qt/qwkpage.h:
+
 2010-07-08  Brian Weinstein  <bweinstein@apple.com>
 
         WebKit2 build fix for Windows.
