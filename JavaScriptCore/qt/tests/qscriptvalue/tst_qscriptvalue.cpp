@@ -1219,4 +1219,46 @@ void tst_QScriptValue::setProperty()
     QVERIFY(skipInEnumeration != engine.evaluate("o.propertyIsEnumerable('defined2')").toBool());
 }
 
+void tst_QScriptValue::propertyFlag_data()
+{
+    QTest::addColumn<QString>("name");
+    QTest::addColumn<int>("flag");
+
+    QTest::newRow("?Cr@jzi!%$") << "?Cr@jzi!%$" << static_cast<int>(0);
+    QTest::newRow("ReadOnly") << "ReadOnly" << static_cast<int>(QScriptValue::ReadOnly);
+    QTest::newRow("Undeletable") << "Undeletable" << static_cast<int>(QScriptValue::Undeletable);
+    QTest::newRow("SkipInEnumeration") << "SkipInEnumeration" << static_cast<int>(QScriptValue::SkipInEnumeration);
+    QTest::newRow("ReadOnly | Undeletable") << "ReadOnly_Undeletable" << static_cast<int>(QScriptValue::ReadOnly | QScriptValue::Undeletable);
+    QTest::newRow("ReadOnly | SkipInEnumeration") << "ReadOnly_SkipInEnumeration" << static_cast<int>(QScriptValue::ReadOnly | QScriptValue::SkipInEnumeration);
+    QTest::newRow("Undeletable | SkipInEnumeration") << "Undeletable_SkipInEnumeration" << static_cast<int>(QScriptValue::Undeletable | QScriptValue::SkipInEnumeration);
+    QTest::newRow("ReadOnly | Undeletable | SkipInEnumeration") << "ReadOnly_Undeletable_SkipInEnumeration" << static_cast<int>(QScriptValue::ReadOnly | QScriptValue::Undeletable | QScriptValue::SkipInEnumeration);
+}
+
+void tst_QScriptValue::propertyFlag()
+{
+    QScriptEngine engine;
+    QFETCH(QString, name);
+    QFETCH(int, flag);
+    const QScriptString nameHandle = engine.toStringHandle(name);
+    const QString protoName = "proto" + name;
+    const QScriptString protoNameHandle = engine.toStringHandle(protoName);
+
+    QScriptValue proto = engine.newObject();
+    QScriptValue object = engine.newObject();
+    object.setPrototype(proto);
+
+    proto.setProperty(protoName, QScriptValue(124816), QScriptValue::PropertyFlag(flag));
+    object.setProperty(name, QScriptValue(124816), QScriptValue::PropertyFlag(flag));
+
+    // Check using QString name
+    QCOMPARE(object.propertyFlags(name), QScriptValue::PropertyFlag(flag));
+    QCOMPARE(object.propertyFlags(protoName, QScriptValue::ResolvePrototype), QScriptValue::PropertyFlag(flag));
+    QVERIFY(!object.propertyFlags(protoName, QScriptValue::ResolveLocal));
+
+    // Check using QScriptString name
+    QCOMPARE(object.propertyFlags(nameHandle), QScriptValue::PropertyFlag(flag));
+    QCOMPARE(object.propertyFlags(protoNameHandle, QScriptValue::ResolvePrototype), QScriptValue::PropertyFlag(flag));
+    QVERIFY(!object.propertyFlags(protoNameHandle, QScriptValue::ResolveLocal));
+}
+
 QTEST_MAIN(tst_QScriptValue)

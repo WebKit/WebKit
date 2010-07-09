@@ -96,6 +96,9 @@ public:
     void setProperty(quint32 arrayIndex, const QScriptValue& value, const PropertyFlags& flags = KeepExistingFlags);
     void setProperty(const QScriptString& name, const QScriptValue& value, const PropertyFlags& flags = KeepExistingFlags);
 
+    PropertyFlags propertyFlags(const QString& name, const ResolveFlags& mode = ResolvePrototype) const;
+    PropertyFlags propertyFlags(const QScriptString& name, const ResolveFlags& mode = ResolvePrototype) const;
+
     QScriptEngine* engine() const;
 
     bool isValid() const;

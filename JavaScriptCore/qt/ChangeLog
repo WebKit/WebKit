@@ -1,3 +1,26 @@
+2010-07-09  Jedrzej Nowacki  <jedrzej.nowacki@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        Implementation of the QScriptValue::propertyFlags function.
+
+        The function returns the flags of a property with the given name,
+        using a given mode to resolve the property. This is a simple
+        implementation that is sufficient to test the QScriptValueIterator.
+
+        [Qt] QScriptValue API should have a property flag accessor.
+        https://bugs.webkit.org/show_bug.cgi?id=41769
+
+        * api/qscriptvalue.cpp:
+        (QScriptValue::propertyFlags):
+        * api/qscriptvalue.h:
+        * api/qscriptvalue_p.h:
+        (QScriptValuePrivate::propertyFlags):
+        * tests/qscriptvalue/tst_qscriptvalue.cpp:
+        (tst_QScriptValue::propertyFlag_data):
+        (tst_QScriptValue::propertyFlag):
+        * tests/qscriptvalue/tst_qscriptvalue.h:
+
 2010-07-07  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         Reviewed by Kenneth Rohde Christiansen.

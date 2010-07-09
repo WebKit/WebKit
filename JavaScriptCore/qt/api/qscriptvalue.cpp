@@ -755,3 +755,25 @@ void QScriptValue::setProperty(const QScriptString& name, const QScriptValue& va
 {
     d_ptr->setProperty(QScriptStringPrivate::get(name).constData(), QScriptValuePrivate::get(value), flags);
 }
+
+/*!
+  Returns the flags of the property with the given \a name, using the
+  given \a mode to resolve the property.
+
+  \sa property()
+*/
+QScriptValue::PropertyFlags QScriptValue::propertyFlags(const QString& name, const ResolveFlags& mode) const
+{
+    return d_ptr->propertyFlags(name, mode);
+}
+
+/*!
+  Returns the flags of the property with the given \a name, using the
+  given \a mode to resolve the property.
+
+  \sa property()
+*/
+QScriptValue::PropertyFlags QScriptValue::propertyFlags(const QScriptString& name, const ResolveFlags& mode) const
+{
+    return d_ptr->propertyFlags(QScriptStringPrivate::get(name).constData(), mode);
+}

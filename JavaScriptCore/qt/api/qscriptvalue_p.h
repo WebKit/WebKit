@@ -141,6 +141,10 @@ public:
     template<typename T>
     inline void setProperty(T name, QScriptValuePrivate* value, const QScriptValue::PropertyFlags& flags);
 
+    QScriptValue::PropertyFlags propertyFlags(const QString& name, const QScriptValue::ResolveFlags& mode);
+    QScriptValue::PropertyFlags propertyFlags(const QScriptStringPrivate* name, const QScriptValue::ResolveFlags& mode);
+    QScriptValue::PropertyFlags propertyFlags(const JSStringRef name, const QScriptValue::ResolveFlags& mode);
+
     inline QScriptValuePrivate* call(const QScriptValuePrivate* , const QScriptValueList& args);
 
     inline operator JSValueRef() const;
@@ -989,6 +993,75 @@ inline void QScriptValuePrivate::setProperty(T name, QScriptValuePrivate* value,
     m_engine->setException(exception);
 }
 
+inline QScriptValue::PropertyFlags QScriptValuePrivate::propertyFlags(const QString& name, const QScriptValue::ResolveFlags& mode)
+{
+    JSRetainPtr<JSStringRef> propertyName(Adopt, QScriptConverter::toString(name));
+    return propertyFlags(propertyName.get(), mode);
+}
+
+inline QScriptValue::PropertyFlags QScriptValuePrivate::propertyFlags(const QScriptStringPrivate* name, const QScriptValue::ResolveFlags& mode)
+{
+    return propertyFlags(*name, mode);
+}
+
+inline QScriptValue::PropertyFlags QScriptValuePrivate::propertyFlags(JSStringRef name, const QScriptValue::ResolveFlags& mode)
+{
+    unsigned flags = 0;
+    if (!isObject())
+        return QScriptValue::PropertyFlags(flags);
+
+    // FIXME It could be faster and nicer, but new JSC C API should be created.
+    static JSStringRef objectName = QScriptConverter::toString("Object");
+    static JSStringRef propertyDescriptorName = QScriptConverter::toString("getOwnPropertyDescriptor");
+
+    // FIXME This is dangerous if global object was modified (bug 41839).
+    JSValueRef exception = 0;
+    JSObjectRef globalObject = JSContextGetGlobalObject(*m_engine);
+    JSValueRef objectConstructor = JSObjectGetProperty(*m_engine, globalObject, objectName, &exception);
+    Q_ASSERT(JSValueIsObject(*m_engine, objectConstructor));
+    JSValueRef propertyDescriptorGetter = JSObjectGetProperty(*m_engine, const_cast<JSObjectRef>(objectConstructor), propertyDescriptorName, &exception);
+    Q_ASSERT(JSValueIsObject(*m_engine, propertyDescriptorGetter));
+
+    JSValueRef arguments[] = { *this, JSValueMakeString(*m_engine, name) };
+    JSObjectRef propertyDescriptor
+            = const_cast<JSObjectRef>(JSObjectCallAsFunction(*m_engine,
+                                                            const_cast<JSObjectRef>(propertyDescriptorGetter),
+                                                            /* thisObject */ 0,
+                                                            /* argumentCount */ 2,
+                                                            arguments,
+                                                            &exception));
+    if (exception) {
+        // Invalid property.
+        return QScriptValue::PropertyFlags(flags);
+    }
+
+    if (!JSValueIsObject(*m_engine, propertyDescriptor)) {
+        // Property isn't owned by this object.
+        JSObjectRef proto;
+        if (mode == QScriptValue::ResolveLocal
+                || ((proto = const_cast<JSObjectRef>(JSObjectGetPrototype(*m_engine, *this))) && JSValueIsNull(*m_engine, proto))) {
+            return QScriptValue::PropertyFlags(flags);
+        }
+        QScriptValuePrivate p(engine(), proto);
+        return p.propertyFlags(name, QScriptValue::ResolvePrototype);
+    }
+
+    static JSStringRef writableName = QScriptConverter::toString("writable");
+    static JSStringRef configurableName = QScriptConverter::toString("configurable");
+    static JSStringRef enumerableName = QScriptConverter::toString("enumerable");
+
+    bool readOnly = !JSValueToBoolean(*m_engine, JSObjectGetProperty(*m_engine, propertyDescriptor, writableName, &exception));
+    if (!exception && readOnly)
+        flags |= QScriptValue::ReadOnly;
+    bool undeletable = !JSValueToBoolean(*m_engine, JSObjectGetProperty(*m_engine, propertyDescriptor, configurableName, &exception));
+    if (!exception && undeletable)
+        flags |= QScriptValue::Undeletable;
+    bool skipInEnum = !JSValueToBoolean(*m_engine, JSObjectGetProperty(*m_engine, propertyDescriptor, enumerableName, &exception));
+    if (!exception && skipInEnum)
+        flags |= QScriptValue::SkipInEnumeration;
+
+    return QScriptValue::PropertyFlags(flags);
+}
 
 QScriptValuePrivate* QScriptValuePrivate::call(const QScriptValuePrivate*, const QScriptValueList& args)
 {
