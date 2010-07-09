@@ -1,3 +1,22 @@
+2010-07-09  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Implementing pending table characters
+        https://bugs.webkit.org/show_bug.cgi?id=41916
+
+        This turned out to not be as scary as I thought it would be.
+
+        * html/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::processDoctypeToken):
+        (WebCore::HTMLTreeBuilder::processStartTag):
+        (WebCore::HTMLTreeBuilder::processEndTag):
+        (WebCore::HTMLTreeBuilder::processComment):
+        (WebCore::HTMLTreeBuilder::processCharacter):
+        (WebCore::HTMLTreeBuilder::processEndOfFile):
+        (WebCore::HTMLTreeBuilder::processDefaultForInTableTextMode):
+        * html/HTMLTreeBuilder.h:
+
 2010-07-08  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

@@ -64,10 +64,10 @@ Got:
 |     <font>
 |       <div>
 |         "hello"
+|         "excite!"
 |         <b>
 |           "me!"
 |         <table>
-|           "excite!"
 |           <tbody>
 |             <tr>
 |               <th>
@@ -152,11 +152,11 @@ Got:
 |       <a>
 |         href="foo"
 |         "br"
+|       "x"
 |       <table>
 |         <tbody>
 |           <tr>
 |             <td>
-|           "x"
 |     "aoe"
 Expected:
 | <html>
@@ -188,6 +188,7 @@ Got:
 |     <a>
 |       href="blah"
 |       "aba"
+|       "x"
 |       <table>
 |         <tbody>
 |           <tr>
@@ -195,7 +196,6 @@ Got:
 |               <a>
 |                 href="foo"
 |                 "br"
-|           "x"
 |       "aoe"
 Expected:
 | <html>
@@ -222,6 +222,7 @@ Got:
 |     <a>
 |       href="blah"
 |       "aba"
+|     "x"
 |     <table>
 |       <tbody>
 |         <tr>
@@ -229,7 +230,6 @@ Got:
 |             <a>
 |               href="foo"
 |               "br"
-|         "x"
 |     "aoe"
 Expected:
 | <html>
@@ -282,29 +282,8 @@ Expected:
 |                 <table>
 |               <a>
 |     <a>
-resources/tests2.dat:
-13
+resources/tests2.dat: PASS
 
-Test 13 of 59 in resources/tests2.dat failed. Input:
-<!DOCTYPE html><table><tr>TEST
-Got:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <table>
-|       <tbody>
-|         <tr>
-|           "TEST"
-Expected:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     "TEST"
-|     <table>
-|       <tbody>
-|         <tr>
 resources/tests3.dat:
 16
 17
@@ -412,30 +391,12 @@ Expected:
 resources/tests5.dat: PASS
 
 resources/tests6.dat:
-26
 27
 30
 37
 44
 45
 47
-
-Test 26 of 51 in resources/tests6.dat failed. Input:
-<table><colgroup>foo
-Got:
-| <html>
-|   <head>
-|   <body>
-|     <table>
-|       <colgroup>
-|       "foo"
-Expected:
-| <html>
-|   <head>
-|   <body>
-|     "foo"
-|     <table>
-|       <colgroup>
 
 Test 27 of 51 in resources/tests6.dat failed. Input:
 foo<col>
@@ -492,63 +453,11 @@ Expected:
 |   <head>
 |   <body>
 resources/tests7.dat:
-6
-16
 24
 27
 28
 29
 30
-
-Test 6 of 30 in resources/tests7.dat failed. Input:
-<!doctype html><table>X<tr><td><table> <meta></table></table>
-Got:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <table>
-|       "X"
-|       <tbody>
-|         <tr>
-|           <td>
-|             <meta>
-|             <table>
-|               " "
-Expected:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     "X"
-|     <table>
-|       <tbody>
-|         <tr>
-|           <td>
-|             <meta>
-|             <table>
-|               " "
-
-Test 16 of 30 in resources/tests7.dat failed. Input:
-<!doctype html><table>X<input type=hidDEN></table>
-Got:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <table>
-|       "X"
-|       <input>
-|         type="hidDEN"
-Expected:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     "X"
-|     <table>
-|       <input>
-|         type="hidDEN"
 
 Test 24 of 30 in resources/tests7.dat failed. Input:
 <body>X</body></body>
@@ -566,12 +475,12 @@ Got:
 |   <head>
 |   <body>
 |     <b>
+|     "bbb"
 |     <table>
 |       <tbody>
 |         <tr>
 |           <td>
 |             "aaa"
-|         "bbb"
 |     "ccc"
 Expected:
 | <html>
@@ -595,11 +504,11 @@ Got:
 |   <head>
 |   <body>
 |     "A"
+|     " B"
+|     " B"
 |     <table>
 |       <tbody>
 |         <tr>
-|           " B"
-|         " B"
 Expected:
 | <html>
 |   <head>
@@ -616,10 +525,10 @@ Got:
 |   <head>
 |   <body>
 |     "A"
+|     " B"
 |     <table>
 |       <tbody>
 |         <tr>
-|           " B"
 |         " C"
 Expected:
 | <html>
@@ -653,7 +562,6 @@ Expected:
 |     <keygen>
 resources/tests8.dat:
 6
-7
 
 Test 6 of 9 in resources/tests8.dat failed. Input:
 x<table>x
@@ -662,32 +570,13 @@ Got:
 |   <head>
 |   <body>
 |     "x"
+|     "x"
 |     <table>
-|       "x"
 Expected:
 | <html>
 |   <head>
 |   <body>
 |     "xx"
-|     <table>
-
-Test 7 of 9 in resources/tests8.dat failed. Input:
-x<table><table>x
-Got:
-| <html>
-|   <head>
-|   <body>
-|     "x"
-|     <table>
-|     <table>
-|       "x"
-Expected:
-| <html>
-|   <head>
-|   <body>
-|     "x"
-|     <table>
-|     "x"
 |     <table>
 resources/tests9.dat:
 1
@@ -2779,109 +2668,8 @@ Expected:
 |     "bar"
 resources/tests14.dat: PASS
 
-resources/tests15.dat:
-7
-8
-9
-10
-11
+resources/tests15.dat: PASS
 
-Test 7 of 14 in resources/tests15.dat failed. Input:
-<!doctype html><table> X<meta></table>
-Got:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <meta>
-|     <table>
-|       " X"
-Expected:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     " X"
-|     <meta>
-|     <table>
-
-Test 8 of 14 in resources/tests15.dat failed. Input:
-<!doctype html><table> x</table>
-Got:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <table>
-|       " x"
-Expected:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     " x"
-|     <table>
-
-Test 9 of 14 in resources/tests15.dat failed. Input:
-<!doctype html><table> x </table>
-Got:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <table>
-|       " x "
-Expected:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     " x "
-|     <table>
-
-Test 10 of 14 in resources/tests15.dat failed. Input:
-<!doctype html><table><tr> x</table>
-Got:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <table>
-|       <tbody>
-|         <tr>
-|           " x"
-Expected:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     " x"
-|     <table>
-|       <tbody>
-|         <tr>
-
-Test 11 of 14 in resources/tests15.dat failed. Input:
-<!doctype html><table>X<style> <tr>x </style> </table>
-Got:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <table>
-|       "X"
-|       <style>
-|         " <tr>x "
-|       " "
-Expected:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     "X"
-|     <table>
-|       <style>
-|         " <tr>x "
-|       " "
 resources/tests16.dat: PASS
 
 resources/webkit01.dat: PASS
@@ -2949,23 +2737,5 @@ resources/inbody01.dat: PASS
 
 resources/isindex.dat: PASS
 
-resources/tables01.dat:
-4
-
-Test 4 of 15 in resources/tables01.dat failed. Input:
-<table><colgroup></html>foo
-Got:
-| <html>
-|   <head>
-|   <body>
-|     <table>
-|       <colgroup>
-|       "foo"
-Expected:
-| <html>
-|   <head>
-|   <body>
-|     "foo"
-|     <table>
-|       <colgroup>
+resources/tables01.dat: PASS
 #EOF

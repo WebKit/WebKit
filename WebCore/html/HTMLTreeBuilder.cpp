@@ -109,6 +109,12 @@ public:
         return String(start, m_current - start);
     }
 
+    void giveRemainingTo(Vector<UChar>& recipient)
+    {
+        recipient.append(m_current, m_end - m_current);
+        m_current = m_end;
+    }
+
     String takeRemainingWhitespace()
     {
         ASSERT(!isEmpty());
@@ -531,8 +537,13 @@ void HTMLTreeBuilder::processToken(AtomicHTMLToken& token)
 void HTMLTreeBuilder::processDoctypeToken(AtomicHTMLToken& token)
 {
     ASSERT(token.type() == HTMLToken::DOCTYPE);
-    if (insertionMode() == InitialMode) {
+    if (m_insertionMode == InitialMode) {
         m_tree.insertDoctype(token);
+        return;
+    }
+    if (m_insertionMode == InTableTextMode) {
+        processDefaultForInTableTextMode(token);
+        processDoctypeToken(token);
         return;
     }
     parseError(token);
@@ -1328,8 +1339,11 @@ void HTMLTreeBuilder::processStartTag(AtomicHTMLToken& token)
             return;
         }
         break;
-    case TextMode:
     case InTableTextMode:
+        processDefaultForInTableTextMode(token);
+        processStartTag(token);
+        break;
+    case TextMode:
     case InForeignContentMode:
         notImplemented();
         break;
@@ -2109,6 +2123,9 @@ void HTMLTreeBuilder::processEndTag(AtomicHTMLToken& token)
         }
         break;
     case InTableTextMode:
+        processDefaultForInTableTextMode(token);
+        processEndTag(token);
+        break;
     case InForeignContentMode:
         notImplemented();
         break;
@@ -2127,6 +2144,11 @@ void HTMLTreeBuilder::processComment(AtomicHTMLToken& token)
     }
     if (m_insertionMode == AfterBodyMode) {
         m_tree.insertCommentOnHTMLHtmlElement(token);
+        return;
+    }
+    if (m_insertionMode == InTableTextMode) {
+        processDefaultForInTableTextMode(token);
+        processComment(token);
         return;
     }
     m_tree.insertComment(token);
@@ -2203,12 +2225,13 @@ ReprocessBuffer:
     case InTableBodyMode:
     case InRowMode: {
         ASSERT(insertionMode() == InTableMode || insertionMode() == InTableBodyMode || insertionMode() == InRowMode);
-        notImplemented(); // Crazy pending characters.
-        m_tree.insertTextNode(buffer.takeRemaining());
-        break;
+        ASSERT(m_pendingTableCharacters.isEmpty());
+        m_originalInsertionMode = m_insertionMode;
+        m_insertionMode = InTableTextMode;
+        // Fall through.
     }
     case InTableTextMode: {
-        notImplemented(); // Crazy pending characters.
+        buffer.giveRemainingTo(m_pendingTableCharacters);
         break;
     }
     case InColumnGroupMode: {
@@ -2344,8 +2367,11 @@ void HTMLTreeBuilder::processEndOfFile(AtomicHTMLToken& token)
         }
         processEndOfFile(token);
         break;
-    case TextMode:
     case InTableTextMode:
+        processDefaultForInTableTextMode(token);
+        processEndOfFile(token);
+        break;
+    case TextMode:
     case InCaptionMode:
     case InRowMode:
     case InForeignContentMode:
@@ -2391,6 +2417,22 @@ void HTMLTreeBuilder::processDefaultForAfterHeadMode(AtomicHTMLToken&)
     AtomicHTMLToken startBody(HTMLToken::StartTag, bodyTag.localName());
     processStartTag(startBody);
     m_framesetOk = true;
+}
+
+void HTMLTreeBuilder::processDefaultForInTableTextMode(AtomicHTMLToken& token)
+{
+    String characters = String::adopt(m_pendingTableCharacters);
+    if (hasNonWhitespace(characters)) {
+        parseError(token);
+        HTMLConstructionSite::RedirectToFosterParentGuard redirecter(m_tree, requiresRedirectToFosterParent(m_tree.currentElement()));
+        m_tree.reconstructTheActiveFormattingElements();
+        m_tree.insertTextNode(characters);
+        m_framesetOk = false;
+        m_insertionMode = m_originalInsertionMode;
+        return;
+    }
+    m_tree.insertTextNode(characters);
+    m_insertionMode = m_originalInsertionMode;
 }
 
 bool HTMLTreeBuilder::processStartTagForInHead(AtomicHTMLToken& token)

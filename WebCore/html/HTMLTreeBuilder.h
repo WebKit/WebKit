@@ -150,6 +150,7 @@ private:
     void processDefaultForInHeadMode(AtomicHTMLToken&);
     void processDefaultForInHeadNoscriptMode(AtomicHTMLToken&);
     void processDefaultForAfterHeadMode(AtomicHTMLToken&);
+    void processDefaultForInTableTextMode(AtomicHTMLToken&);
 
     PassRefPtr<NamedNodeMap> attributesForIsindexInput(AtomicHTMLToken&);
 
@@ -187,6 +188,9 @@ private:
     InsertionMode m_insertionMode;
     InsertionMode m_originalInsertionMode;
     InsertionMode m_secondaryInsertionMode;
+
+    // http://www.whatwg.org/specs/web-apps/current-work/multipage/tokenization.html#pending-table-character-tokens
+    Vector<UChar> m_pendingTableCharacters;
 
     // HTML5 spec requires that we be able to change the state of the tokenizer
     // from within parser actions.
