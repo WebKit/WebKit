@@ -30,6 +30,7 @@ symbian: {
     TARGET.EPOCALLOWDLLDATA=1
     TARGET.CAPABILITY = All -Tcb
     load(armcc_warnings)
+    TARGET = $$TARGET$${QT_LIBINFIX}
 }
 
 include(../../../WebKit.pri)
