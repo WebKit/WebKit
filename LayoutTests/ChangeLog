@@ -1,3 +1,11 @@
+2010-07-08  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Date.prototype.toJSON takes one argument, report this correctly.
+
+        * ietestcenter/Javascript/15.9.5.44-0-2-expected.txt:
+
 2010-07-08  Sam Weinig  <sam@webkit.org>
 
         Update Qt test results.

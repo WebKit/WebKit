@@ -411,7 +411,7 @@ const ClassInfo DatePrototype::info = {"Date", &DateInstance::info, 0, ExecState
   setUTCFullYear        dateProtoFuncSetUTCFullYear          DontEnum|Function       3
   setYear               dateProtoFuncSetYear                 DontEnum|Function       1
   getYear               dateProtoFuncGetYear                 DontEnum|Function       0
-  toJSON                dateProtoFuncToJSON                  DontEnum|Function       0
+  toJSON                dateProtoFuncToJSON                  DontEnum|Function       1
 @end
 */
 

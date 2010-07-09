@@ -2,6 +2,14 @@
 
         Reviewed by Sam Weinig.
 
+        Date.prototype.toJSON takes one argument, report this correctly.
+
+        * runtime/DatePrototype.cpp:
+
+2010-07-08  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Sam Weinig.
+
         RegExp's prototype should be an object of type RegExp.
 
         * runtime/RegExpPrototype.cpp:
