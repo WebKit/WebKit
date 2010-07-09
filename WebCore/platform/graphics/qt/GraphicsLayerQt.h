@@ -83,6 +83,7 @@ public:
     virtual void distributeOpacity(float);
     virtual float accumulatedOpacity() const;
     virtual void syncCompositingState();
+    virtual void syncCompositingStateForThisLayerOnly();
 
 private:
     OwnPtr<GraphicsLayerQtImpl> m_impl;

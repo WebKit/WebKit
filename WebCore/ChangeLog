@@ -1,3 +1,18 @@
+2010-07-09  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] GraphicsLayerQt must have syncCompositingStateForThisLayerOnly() implemented
+        https://bugs.webkit.org/show_bug.cgi?id=41954
+
+        Add GraphicsLayerQt::syncCompositingStateForThisLayerOnly, a non-recursive
+        implementation of GraphicsLayerQt::syncCompositingState and which targets
+        the current layer only.
+
+        * platform/graphics/qt/GraphicsLayerQt.cpp:
+        (WebCore::GraphicsLayerQt::syncCompositingStateForThisLayerOnly):
+        * platform/graphics/qt/GraphicsLayerQt.h:
+
 2010-07-09  David Kozub  <zub@linux.fjfi.cvut.cz>
 
         Reviewed by Darin Adler.
