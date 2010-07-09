@@ -1,3 +1,17 @@
+2010-07-09  Jedrzej Nowacki  <jedrzej.nowacki@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        Introduce the Qt autotest launcher.
+
+        Qt autotests should be executed more frequently, ideally by the Qt
+        build bot. This is the first step to provide the tests more accessible.
+
+        [Qt] It should be easier to run all Qt's autotests.
+        https://bugs.webkit.org/show_bug.cgi?id=31625
+
+        * Scripts/run-qtwebkit-tests: Added.
+
 2010-07-09  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
