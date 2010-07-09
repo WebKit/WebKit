@@ -1,3 +1,21 @@
+2010-07-09  Anders Bakken  <agbakken@gmail.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Remove superfluous function calls
+        https://bugs.webkit.org/show_bug.cgi?id=40353
+
+        QWebFrame::setUrl() calls ensureAbsoluteUrl() twice. It's better to
+        store a local variable and reuse this one.
+
+        QWebFrame::load(QUrl) calls QWebFrame::load(QNetworkRequest) which in
+        turn will get the QUrl from the request and make sure it's absolute by
+        calling ensureAbsoluteUrl() on it.
+
+        * Api/qwebframe.cpp:
+        (QWebFrame::setUrl):
+        (QWebFrame::load):
+
 2010-07-08  Sam Magnuson  <smagnuson@netflix.com>
 
         Reviewed by Simon Hausmann.

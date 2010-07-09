@@ -621,9 +621,10 @@ static inline QUrl ensureAbsoluteUrl(const QUrl &url)
 
 void QWebFrame::setUrl(const QUrl &url)
 {
-    d->frame->loader()->writer()->begin(ensureAbsoluteUrl(url));
+    const QUrl absolute = ensureAbsoluteUrl(url);
+    d->frame->loader()->writer()->begin(absolute);
     d->frame->loader()->writer()->end();
-    load(ensureAbsoluteUrl(url));
+    load(absolute);
 }
 
 QUrl QWebFrame::url() const
@@ -714,7 +715,8 @@ QWebPage *QWebFrame::page() const
 */
 void QWebFrame::load(const QUrl &url)
 {
-    load(QNetworkRequest(ensureAbsoluteUrl(url)));
+    // The load() overload ensures that the url is absolute.
+    load(QNetworkRequest(url));
 }
 
 /*!
