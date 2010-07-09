@@ -2,6 +2,18 @@
 
         Rubber-stamped by Dan Bernstein.
 
+        Revision 62900 put w3-css3-list-styles-alphabetic-expected.txt and w3-css3-list-styles-numeric-expected.txt
+        in the wrong place, this moves them into fast/lists.
+
+        * platform/win-xp/fast/lists/w3-css3-list-styles-alphabetic-expected.txt: Copied from platform/win-xp/fast/text/international/w3-css3-list-styles-alphabetic-expected.txt.
+        * platform/win-xp/fast/lists/w3-css3-list-styles-numeric-expected.txt: Copied from platform/win-xp/fast/text/international/w3-css3-list-styles-numeric-expected.txt.
+        * platform/win-xp/fast/text/international/w3-css3-list-styles-alphabetic-expected.txt: Removed.
+        * platform/win-xp/fast/text/international/w3-css3-list-styles-numeric-expected.txt: Removed.
+
+2010-07-08  Brian Weinstein  <bweinstein@apple.com>
+
+        Rubber-stamped by Dan Bernstein.
+
         Some tests fail on Windows 7 but pass on XP due to fonts
         https://bugs.webkit.org/show_bug.cgi?id=41933
         
