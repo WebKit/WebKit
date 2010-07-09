@@ -1,3 +1,16 @@
+2010-07-08  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Jon Honeycutt, Adam Roben, and Darin Adler.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=41721
+        <rdar://problem/8158561> Missing plug-in indicator should have a pressed state
+
+        Implement shouldMissingPluginMessageBeButton.
+
+        * WebCoreSupport/WebChromeClient.h:
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::shouldMissingPluginMessageBeButton):
+
 2010-07-08  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Tim Hatcher.

@@ -1,3 +1,15 @@
+2010-07-08  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Jon Honeycutt, Adam Roben, and Darin Adler.
+
+        Test for https://bugs.webkit.org/show_bug.cgi?id=41721
+        <rdar://problem/8158561> Missing plug-in indicator should have a pressed state
+
+        * platform/gtk/Skipped:
+        * platform/qt/Skipped:
+        * plugins/clicking-missing-plugin-fires-delegate-expected.txt: Added.
+        * plugins/clicking-missing-plugin-fires-delegate.html: Added.
+
 2010-07-02  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Adam Barth.

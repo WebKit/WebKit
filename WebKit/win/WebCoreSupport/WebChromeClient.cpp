@@ -535,6 +535,18 @@ void WebChromeClient::mouseDidMoveOverElement(const HitTestResult& result, unsig
     uiDelegate->mouseDidMoveOverElement(m_webView, element.get(), modifierFlags);
 }
 
+bool WebChromeClient::shouldMissingPluginMessageBeButton() const
+{
+    COMPtr<IWebUIDelegate> uiDelegate;
+    if (FAILED(m_webView->uiDelegate(&uiDelegate)))
+        return false;
+    
+    // If the UI delegate implements IWebUIDelegatePrivate3, 
+    // which contains didPressMissingPluginButton, then the message should be a button.
+    COMPtr<IWebUIDelegatePrivate3> uiDelegatePrivate3(Query, uiDelegate);
+    return uiDelegatePrivate3;
+}
+
 void WebChromeClient::missingPluginButtonClicked(Element* element) const
 {
     COMPtr<IWebUIDelegate> uiDelegate;

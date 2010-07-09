@@ -76,6 +76,9 @@ http/tests/webarchive
 webarchive
 svg/webarchive
 
+# This test is for clients that choose to make the missing plugin indicator a button
+plugins/clicking-missing-plugin-fires-delegate.html
+
 # =========================================================================== #
 #       Feature not supported... yet
 # =========================================================================== #

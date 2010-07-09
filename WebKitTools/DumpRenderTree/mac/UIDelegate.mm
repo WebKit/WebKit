@@ -183,6 +183,12 @@ DumpRenderTreeDraggingInfo *draggingInfo = nil;
     return NO;
 }
 
+- (BOOL)webView:(WebView *)webView didPressMissingPluginButton:(DOMElement *)element
+{
+    printf("MISSING PLUGIN BUTTON PRESSED\n");
+    return TRUE;
+}
+
 - (void)dealloc
 {
     [draggingInfo release];

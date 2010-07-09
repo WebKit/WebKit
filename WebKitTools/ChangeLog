@@ -1,3 +1,22 @@
+2010-07-08  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Jon Honeycutt, Adam Roben, and Darin Adler.
+
+        Test infrastructure for https://bugs.webkit.org/show_bug.cgi?id=41721
+        <rdar://problem/8158561> Missing plug-in indicator should have a pressed state
+
+        Log when the missing plugin button is pressed.
+
+        * DumpRenderTree/mac/UIDelegate.mm:
+        (-[UIDelegate webView:didPressMissingPluginButton:]):
+        * DumpRenderTree/win/UIDelegate.cpp:
+        (UIDelegate::QueryInterface):
+        (UIDelegate::createWebViewWithRequest):
+        (UIDelegate::drawBackground):
+        (UIDelegate::decidePolicyForGeolocationRequest):
+        (UIDelegate::didPressMissingPluginButton):
+        * DumpRenderTree/win/UIDelegate.h:
+
 2010-07-08  Simon Fraser  <simon.fraser@apple.com>
 
         Fix the Tiger build.

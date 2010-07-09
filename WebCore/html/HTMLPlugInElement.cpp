@@ -51,6 +51,7 @@ HTMLPlugInElement::HTMLPlugInElement(const QualifiedName& tagName, Document* doc
     : HTMLFrameOwnerElement(tagName, doc)
 #if ENABLE(NETSCAPE_PLUGIN_API)
     , m_NPObject(0)
+    , m_isCapturingMouseEvents(false)
 #endif
 {
 }
@@ -70,6 +71,13 @@ HTMLPlugInElement::~HTMLPlugInElement()
 void HTMLPlugInElement::detach()
 {
     m_instance.clear();
+
+    if (m_isCapturingMouseEvents) {
+        if (Frame* frame = document()->frame())
+            frame->eventHandler()->setCapturingMouseEventsNode(0);
+        m_isCapturingMouseEvents = false;
+    }
+
     HTMLFrameOwnerElement::detach();
 }
 
@@ -142,14 +150,7 @@ void HTMLPlugInElement::defaultEventHandler(Event* event)
 
     RenderObject* r = renderer();
     if (r && r->isEmbeddedObject() && toRenderEmbeddedObject(r)->showsMissingPluginIndicator()) {
-        if (event->type() != eventNames().clickEvent)
-            return;
-
-        Page* page = document()->page();
-        if (!page)
-            return;
-
-        page->chrome()->client()->missingPluginButtonClicked(this);
+        toRenderEmbeddedObject(r)->handleMissingPluginIndicatorEvent(event);
         return;
     }
 

@@ -1,3 +1,31 @@
+2010-07-08  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Jon Honeycutt, Adam Roben, and Darin Adler.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=41721
+        <rdar://problem/8158561> Missing plug-in indicator should have a pressed state
+
+        Test: plugins/clicking-missing-plugin-fires-delegate.html
+
+        * html/HTMLPlugInElement.cpp:
+        (WebCore::HTMLPlugInElement::HTMLPlugInElement): Initialize m_isCapturingMouseEvents.
+        (WebCore::HTMLPlugInElement::detach): If we're still capturing when getting detached, clear the capturing node on the EventHandler.
+        (WebCore::HTMLPlugInElement::defaultEventHandler): Call handleMissingPluginIndicatorEvent when the missing plugin indicator is showing.
+        * html/HTMLPlugInElement.h:
+        (WebCore::HTMLPlugInElement::isCapturingMouseEvents):
+        (WebCore::HTMLPlugInElement::setIsCapturingMouseEvents):
+        * page/ChromeClient.h:
+        (WebCore::ChromeClient::shouldMissingPluginMessageBeButton): Added default implementation.
+        * rendering/RenderEmbeddedObject.cpp:
+        (WebCore::replacementTextRoundedRectPressedColor):
+        (WebCore::RenderEmbeddedObject::RenderEmbeddedObject):
+        (WebCore::RenderEmbeddedObject::setMissingPluginIndicatorIsPressed): Added.  Causes a repaint when the state changes.
+        (WebCore::RenderEmbeddedObject::paintReplaced): Call getReplacementTextGeometry.
+        (WebCore::RenderEmbeddedObject::getReplacementTextGeometry): Factored this out so it can be used in paintReplaced and in isInMissingPluginIndicator.
+        (WebCore::RenderEmbeddedObject::isInMissingPluginIndicator): Hit test to see if the mouse event is in the missing plugin indicator.
+        (WebCore::RenderEmbeddedObject::handleMissingPluginIndicatorEvent): Capture mouse events as needed and track the pressed appearance.
+        * rendering/RenderEmbeddedObject.h:
+
 2010-07-08  James Robinson  <jamesr@google.com>
 
         Reviewed by Darin Fisher.
