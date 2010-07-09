@@ -1,3 +1,13 @@
+2010-07-08  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=41923
+        TimeRanges should expose a JS constructor
+
+        * html/TimeRanges.idl: Remove [OmitConstructor].
+        * page/DOMWindow.idl: Add constructor.
+
 2010-07-08  Erik Arvidsson  <arv@chromium.org>
 
         Reviewed by Ojan Vafai.

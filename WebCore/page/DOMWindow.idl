@@ -571,6 +571,7 @@ module window {
         attribute [Conditional=VIDEO, EnabledAtRuntime] HTMLMediaElementConstructor HTMLMediaElement;
         attribute [Conditional=VIDEO, EnabledAtRuntime] HTMLVideoElementConstructor HTMLVideoElement;
         attribute [Conditional=VIDEO, EnabledAtRuntime] MediaErrorConstructor MediaError;
+        attribute [Conditional=VIDEO, EnabledAtRuntime] TimeRangesConstructor TimeRanges;
 
 #if defined(ENABLE_XPATH) && ENABLE_XPATH
         attribute XPathEvaluatorConstructor XPathEvaluator;

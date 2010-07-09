@@ -201,6 +201,7 @@ PASS Text from inner.document.forms.testForm.0.parentNode.lastElementChild.previ
 PASS TextConstructor from inner.document.forms.testForm.0.attributes.0.lastChild.constructor
 PASS TextPrototype from inner.document.forms.testForm.0.attributes.0.lastChild.__proto__
 PASS TimeRanges from inner.document.forms.testForm.0.previousElementSibling.played
+PASS TimeRangesConstructor from inner.document.forms.testForm.0.previousElementSibling.played.constructor
 PASS TimeRangesPrototype from inner.document.forms.testForm.0.previousElementSibling.played.__proto__
 PASS ValidityState from inner.document.forms.testForm.0.0.validity
 PASS ValidityStatePrototype from inner.document.forms.testForm.0.0.validity.__proto__

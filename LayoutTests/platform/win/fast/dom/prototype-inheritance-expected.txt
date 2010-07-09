@@ -573,6 +573,8 @@ PASS inner.TextEvent.isInner is true
 PASS inner.TextEvent.constructor.isInner is true
 PASS inner.TextMetrics.isInner is true
 PASS inner.TextMetrics.constructor.isInner is true
+PASS inner.TimeRanges.isInner is true
+PASS inner.TimeRanges.constructor.isInner is true
 PASS inner.TypeError.isInner is true
 PASS inner.TypeError.constructor.isInner is true
 PASS inner.UIEvent.isInner is true
