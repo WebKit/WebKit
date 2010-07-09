@@ -1,3 +1,26 @@
+2010-07-09  Sebastian Dröge  <sebastian.droege@collabora.co.uk>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Bug 41340 - [GStreamer] Subtle race condition during seeks
+        https://bugs.webkit.org/show_bug.cgi?id=41340
+
+        * platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp:
+        (webKitWebSrcStop):
+        (webKitWebSrcNeedDataMainCb):
+        (webKitWebSrcNeedDataCb):
+        (webKitWebSrcEnoughDataMainCb):
+        (webKitWebSrcEnoughDataCb):
+        (webKitWebSrcSeekDataCb):
+        (StreamingClient::didFinishLoading):
+        Fix two subtle race conditions that can happen during seeks:
+        - The timeout callback could be called before the callback ID is
+          assigned to the instance private data. This causes the ID to
+          be set after the callback has finished and breaks all future
+          processing.
+        - The source must not go EOS while a seek is pending because
+          this confuses appsrc due to the different threads involved here.
+
 2010-07-09  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Reviewed by Tor Arne Vestbø.
