@@ -1,3 +1,35 @@
+2010-07-09  Vitaly Repeshko  <vitalyr@chromium.org>
+
+        Unreviewed.
+
+        [chromium] Updating expectations.
+
+        * platform/chromium-win/svg/batik/paints/gradientLimit-expected.txt:
+        * platform/chromium-win/svg/batik/paints/patternPreserveAspectRatioA-expected.txt:
+        * platform/chromium-win/svg/batik/text/textLength-expected.txt:
+        * platform/chromium-win/svg/carto.net/button-expected.txt:
+        * platform/chromium-win/svg/carto.net/colourpicker-expected.txt:
+        * platform/chromium-win/svg/carto.net/combobox-expected.txt:
+        * platform/chromium-win/svg/carto.net/slider-expected.txt:
+        * platform/chromium-win/svg/carto.net/textbox-expected.txt:
+        * platform/chromium-win/svg/carto.net/window-expected.txt:
+        * platform/chromium-win/svg/custom/animate-path-morphing-expected.txt:
+        * platform/chromium-win/svg/custom/coords-relative-units-transforms-expected.txt:
+        * platform/chromium-win/svg/custom/foreign-object-skew-expected.txt:
+        * platform/chromium-win/svg/custom/pattern-rotate-expected.txt:
+        * platform/chromium-win/svg/custom/text-rotated-gradient-expected.txt:
+        * platform/chromium-win/svg/custom/use-detach-expected.txt:
+        * platform/chromium-win/svg/custom/use-font-face-crash-expected.txt:
+        * platform/chromium-win/svg/custom/use-on-disallowed-foreign-object-3-expected.txt:
+        * platform/chromium-win/svg/custom/use-property-changes-through-svg-dom-expected.txt:
+        * platform/chromium-win/svg/custom/use-referencing-nonexisting-symbol-expected.txt:
+        * platform/chromium-win/svg/custom/use-transform-expected.txt:
+        * platform/chromium-win/svg/hixie/text/003b-expected.txt:
+        * platform/chromium-win/svg/text/foreignObject-repaint-expected.txt:
+        * platform/chromium-win/svg/transforms/animated-path-inside-transformed-html-expected.txt:
+        * platform/chromium-win/svg/transforms/text-with-pattern-inside-transformed-html-expected.txt:
+        * platform/chromium-win/svg/transforms/text-with-pattern-with-svg-transform-expected.txt:
+
 2010-07-09  Xiaomei Ji  <xji@chromium.org>
 
         Reviewed by David Levin.
