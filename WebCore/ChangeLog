@@ -1,3 +1,14 @@
+2010-07-09  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Get rid of manual case maps in HTMLTreeBuilder
+        https://bugs.webkit.org/show_bug.cgi?id=42000
+
+        No functional change, thus no tests.
+
+        * html/HTMLTreeBuilder.cpp:
+
 2010-07-09  Tony Gentilcore  <tonyg@chromium.org>
 
         Reviewed by Dimitri Glazkov.
