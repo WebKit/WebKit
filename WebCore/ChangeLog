@@ -1,5 +1,28 @@
 2010-07-09  Mark Rowe  <mrowe@apple.com>
 
+        Merge r61707.
+
+    2010-06-23  Andy Estes  <aestes@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+        
+        <rdar://problem/8107855> Prevent a crash in WebCore when removing an
+        object element with an invalid data URL in in a listener to its
+        beforeload event.
+        https://bugs.webkit.org/show_bug.cgi?id=41054
+
+        Tests: fast/dom/beforeload/remove-bad-object-in-beforeload-listener.html
+
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::renderFallbackContent): Exit early if the
+        object element is not in the document.
+        * rendering/RenderEmbeddedObject.cpp:
+        (WebCore::RenderEmbeddedObject::updateWidget): If RenderWidget::destroy()
+        was called during processing of onbeforeload, do not proceed with loading
+        the object.
+
+2010-07-09  Mark Rowe  <mrowe@apple.com>
+
         Merge r61424.
 
     2010-06-17  Andy Estes  <aestes@apple.com>
