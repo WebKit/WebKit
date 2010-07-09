@@ -78,6 +78,14 @@ public:
     void setValue(const AtomicString& value) { m_value = value; }
     void setPrefix(const AtomicString& prefix) { m_name.setPrefix(prefix); }
 
+    // Note: This API is only for HTMLTreeBuilder.  It is not safe to change the name
+    // of an attribute once parseMappedAttributes has been called as DOM elements
+    // may placed the Attribute in a hash.
+    void parserSetLocalName(const AtomicString& localName)
+    {
+        m_name = QualifiedName(m_name.prefix(), localName, m_name.namespaceURI());
+    }
+
     bool isMappedAttribute() { return m_isMappedAttribute; }
 
 private:

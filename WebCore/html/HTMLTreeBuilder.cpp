@@ -661,9 +661,93 @@ void HTMLTreeBuilder::processCloseWhenNestedTag(AtomicHTMLToken& token)
 namespace {
 
 #if ENABLE(SVG)
-void adjustSVGAttributes(AtomicHTMLToken&)
+
+typedef HashMap<AtomicString, AtomicString> SVGAttributeCaseMap;
+
+void addAttribute(SVGAttributeCaseMap* map, const QualifiedName& attributeName)
 {
-    notImplemented();
+    map->add(attributeName.localName().lower(), attributeName.localName());
+}
+
+void adjustSVGAttributes(AtomicHTMLToken& token)
+{
+    static SVGAttributeCaseMap* svgAttributes = 0;
+    if (!svgAttributes) {
+        svgAttributes = new SVGAttributeCaseMap;
+        addAttribute(svgAttributes, SVGNames::attributeNameAttr);
+        addAttribute(svgAttributes, SVGNames::attributeTypeAttr);
+        addAttribute(svgAttributes, SVGNames::baseFrequencyAttr);
+        addAttribute(svgAttributes, SVGNames::baseProfileAttr);
+        addAttribute(svgAttributes, SVGNames::calcModeAttr);
+        addAttribute(svgAttributes, SVGNames::clipPathUnitsAttr);
+        addAttribute(svgAttributes, SVGNames::contentScriptTypeAttr);
+        addAttribute(svgAttributes, SVGNames::contentStyleTypeAttr);
+        addAttribute(svgAttributes, SVGNames::diffuseConstantAttr);
+        addAttribute(svgAttributes, SVGNames::edgeModeAttr);
+        addAttribute(svgAttributes, SVGNames::externalResourcesRequiredAttr);
+        addAttribute(svgAttributes, SVGNames::filterResAttr);
+        addAttribute(svgAttributes, SVGNames::filterUnitsAttr);
+        addAttribute(svgAttributes, SVGNames::glyphRefAttr);
+        addAttribute(svgAttributes, SVGNames::gradientTransformAttr);
+        addAttribute(svgAttributes, SVGNames::gradientUnitsAttr);
+        addAttribute(svgAttributes, SVGNames::kernelMatrixAttr);
+        addAttribute(svgAttributes, SVGNames::kernelUnitLengthAttr);
+        addAttribute(svgAttributes, SVGNames::keyPointsAttr);
+        addAttribute(svgAttributes, SVGNames::keySplinesAttr);
+        addAttribute(svgAttributes, SVGNames::keyTimesAttr);
+        addAttribute(svgAttributes, SVGNames::lengthAdjustAttr);
+        addAttribute(svgAttributes, SVGNames::limitingConeAngleAttr);
+        addAttribute(svgAttributes, SVGNames::markerHeightAttr);
+        addAttribute(svgAttributes, SVGNames::markerUnitsAttr);
+        addAttribute(svgAttributes, SVGNames::markerWidthAttr);
+        addAttribute(svgAttributes, SVGNames::maskContentUnitsAttr);
+        addAttribute(svgAttributes, SVGNames::maskUnitsAttr);
+        addAttribute(svgAttributes, SVGNames::numOctavesAttr);
+        addAttribute(svgAttributes, SVGNames::pathLengthAttr);
+        addAttribute(svgAttributes, SVGNames::patternContentUnitsAttr);
+        addAttribute(svgAttributes, SVGNames::patternTransformAttr);
+        addAttribute(svgAttributes, SVGNames::patternUnitsAttr);
+        addAttribute(svgAttributes, SVGNames::pointsAtXAttr);
+        addAttribute(svgAttributes, SVGNames::pointsAtYAttr);
+        addAttribute(svgAttributes, SVGNames::pointsAtZAttr);
+        addAttribute(svgAttributes, SVGNames::preserveAlphaAttr);
+        addAttribute(svgAttributes, SVGNames::preserveAspectRatioAttr);
+        addAttribute(svgAttributes, SVGNames::primitiveUnitsAttr);
+        addAttribute(svgAttributes, SVGNames::refXAttr);
+        addAttribute(svgAttributes, SVGNames::refYAttr);
+        addAttribute(svgAttributes, SVGNames::repeatCountAttr);
+        addAttribute(svgAttributes, SVGNames::repeatDurAttr);
+        addAttribute(svgAttributes, SVGNames::requiredExtensionsAttr);
+        addAttribute(svgAttributes, SVGNames::requiredFeaturesAttr);
+        addAttribute(svgAttributes, SVGNames::specularConstantAttr);
+        addAttribute(svgAttributes, SVGNames::specularExponentAttr);
+        addAttribute(svgAttributes, SVGNames::spreadMethodAttr);
+        addAttribute(svgAttributes, SVGNames::startOffsetAttr);
+        addAttribute(svgAttributes, SVGNames::stdDeviationAttr);
+        addAttribute(svgAttributes, SVGNames::stitchTilesAttr);
+        addAttribute(svgAttributes, SVGNames::surfaceScaleAttr);
+        addAttribute(svgAttributes, SVGNames::systemLanguageAttr);
+        addAttribute(svgAttributes, SVGNames::tableValuesAttr);
+        addAttribute(svgAttributes, SVGNames::targetXAttr);
+        addAttribute(svgAttributes, SVGNames::targetYAttr);
+        addAttribute(svgAttributes, SVGNames::textLengthAttr);
+        addAttribute(svgAttributes, SVGNames::viewBoxAttr);
+        addAttribute(svgAttributes, SVGNames::viewTargetAttr);
+        addAttribute(svgAttributes, SVGNames::xChannelSelectorAttr);
+        addAttribute(svgAttributes, SVGNames::yChannelSelectorAttr);
+        addAttribute(svgAttributes, SVGNames::zoomAndPanAttr);
+    }
+
+    NamedNodeMap* attributes = token.attributes();
+    if (!attributes)
+        return;
+
+    for (unsigned x = 0; x < attributes->length(); ++x) {
+        Attribute* attribute = attributes->attributeItem(x);
+        const AtomicString& casedName = svgAttributes->get(attribute->localName());
+        if (!casedName.isNull())
+            attribute->parserSetLocalName(casedName);
+    }
 }
 #endif
 
