@@ -42,7 +42,7 @@ from webkitpy.tool.commands.stepsequence import StepSequenceErrorHandler
 from webkitpy.tool.bot.patchcollection import PersistentPatchCollection, PersistentPatchCollectionDelegate
 from webkitpy.tool.bot.queueengine import QueueEngine, QueueEngineDelegate
 from webkitpy.tool.grammar import pluralize
-from webkitpy.tool.multicommandtool import Command
+from webkitpy.tool.multicommandtool import Command, TryAgain
 
 class AbstractQueue(Command, QueueEngineDelegate):
     watchers = [
@@ -278,6 +278,17 @@ class CommitQueue(AbstractPatchQueue, StepSequenceErrorHandler):
         status_id = cls._update_status_for_script_error(tool, state, script_error)
         validator = CommitterValidator(tool.bugs)
         validator.reject_patch_from_commit_queue(state["patch"].id(), cls._error_message_for_bug(tool, status_id, script_error))
+
+    @classmethod
+    def handle_checkout_needs_update(cls, tool, state, options, error):
+        # The only time when we find out that out checkout needs update is
+        # when we were ready to actually pull the trigger and land the patch.
+        # Rather than spinning in the master process, we retry without
+        # building or testing, which is much faster.
+        options.build = False
+        options.test = False
+        options.update = True
+        raise TryAgain()
 
 
 class RietveldUploadQueue(AbstractPatchQueue, StepSequenceErrorHandler):

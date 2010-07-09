@@ -32,7 +32,7 @@ import unittest
 from optparse import make_option
 
 from webkitpy.common.system.outputcapture import OutputCapture
-from webkitpy.tool.multicommandtool import MultiCommandTool, Command
+from webkitpy.tool.multicommandtool import MultiCommandTool, Command, TryAgain
 
 
 class TrivialCommand(Command):
@@ -44,9 +44,25 @@ class TrivialCommand(Command):
     def execute(self, options, args, tool):
         pass
 
+
 class UncommonCommand(TrivialCommand):
     name = "uncommon"
     show_in_main_help = False
+
+
+class LikesToRetry(Command):
+    name = "likes-to-retry"
+    show_in_main_help = True
+
+    def __init__(self, **kwargs):
+        Command.__init__(self, "help text", **kwargs)
+        self.execute_count = 0
+
+    def execute(self, options, args, tool):
+        self.execute_count += 1
+        if self.execute_count < 2:
+            raise TryAgain()
+
 
 class CommandTest(unittest.TestCase):
     def test_name_with_arguments(self):
@@ -108,6 +124,12 @@ class MultiCommandToolTest(unittest.TestCase):
     def _assert_tool_main_outputs(self, tool, main_args, expected_stdout, expected_stderr = "", expected_exit_code=0):
         exit_code = OutputCapture().assert_outputs(self, tool.main, [main_args], expected_stdout=expected_stdout, expected_stderr=expected_stderr)
         self.assertEqual(exit_code, expected_exit_code)
+
+    def test_retry(self):
+        likes_to_retry = LikesToRetry()
+        tool = TrivialTool(commands=[likes_to_retry])
+        tool.main(["tool", "likes-to-retry"])
+        self.assertEqual(likes_to_retry.execute_count, 2)
 
     def test_global_help(self):
         tool = TrivialTool(commands=[TrivialCommand(), UncommonCommand()])

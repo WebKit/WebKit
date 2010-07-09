@@ -39,6 +39,10 @@ from webkitpy.tool.grammar import pluralize
 from webkitpy.common.system.deprecated_logging import log
 
 
+class TryAgain(Exception):
+    pass
+
+
 class Command(object):
     name = None
     show_in_main_help = False
@@ -299,6 +303,12 @@ class MultiCommandTool(object):
             log(failure_reason)
             return 0 # FIXME: Should this really be 0?
 
-        result = command.check_arguments_and_execute(options, args, self)
+        while True:
+            try:
+                result = command.check_arguments_and_execute(options, args, self)
+                break
+            except TryAgain, e:
+                pass
+
         self.command_completed()
         return result

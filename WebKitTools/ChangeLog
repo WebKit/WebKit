@@ -1,3 +1,24 @@
+2010-07-09  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        commit-queue should merge to TOT when checkout needs update
+        https://bugs.webkit.org/show_bug.cgi?id=41944
+
+        There are a bunch of different designs that are possible here.  This
+        one merges to top of tree by cleaning out the working copy and
+        re-applying the patch.  Once you decide to merge that way, you need to
+        decide who's going to retry.  In this patch, we retry in the child
+        process instead of plumbing the failure reason to the master process.
+
+        This patch is difficult to test end-to-end, but hopefully it will work.
+        :)
+
+        * Scripts/webkitpy/tool/commands/queues.py:
+        * Scripts/webkitpy/tool/commands/stepsequence.py:
+        * Scripts/webkitpy/tool/multicommandtool.py:
+        * Scripts/webkitpy/tool/multicommandtool_unittest.py:
+
 2010-07-09  Dumitru Daniliuc  <dumi@chromium.org>
 
         Reviewed by Darin Adler.

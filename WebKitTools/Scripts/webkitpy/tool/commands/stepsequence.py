@@ -39,6 +39,10 @@ class StepSequenceErrorHandler():
     def handle_script_error(cls, tool, patch, script_error):
         raise NotImplementedError, "subclasses must implement"
 
+    @classmethod
+    def handle_checkout_needs_update(cls, tool, state, options, error):
+        raise NotImplementedError, "subclasses must implement"
+
 
 class StepSequence(object):
     def __init__(self, steps):
@@ -66,6 +70,9 @@ class StepSequence(object):
             self._run(tool, options, state)
         except CheckoutNeedsUpdate, e:
             log("Commit failed because the checkout is out of date.  Please update and try again.")
+            if options.parent_command:
+                command = tool.command_by_name(options.parent_command)
+                command.handle_checkout_needs_update(tool, state, options, e)
             QueueEngine.exit_after_handled_error(e)
         except ScriptError, e:
             if not options.quiet:
