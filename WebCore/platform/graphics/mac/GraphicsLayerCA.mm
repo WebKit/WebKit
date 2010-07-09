@@ -1820,9 +1820,13 @@ bool GraphicsLayerCA::createTransformAnimationsFromKeyframes(const KeyframeValue
         TransformOperation::OperationType transformOp = isMatrixAnimation ? TransformOperation::MATRIX_3D : functionList[animationIndex];
         CAPropertyAnimation* caAnimation;
 
+#if defined(BUILDING_ON_LEOPARD) || defined(BUILDING_ON_SNOW_LEOPARD)
         // CA applies animations in reverse order (<rdar://problem/7095638>) so we need the last one we add (per property)
         // to be non-additive.
         bool additive = animationIndex < (numAnimations - 1);
+#else
+        bool additive = animationIndex > 0;
+#endif
         if (isKeyframe) {
             CAKeyframeAnimation* keyframeAnim = createKeyframeAnimation(animation, valueList.property(), additive);
             validMatrices = setTransformAnimationKeyframes(valueList, animation, keyframeAnim, animationIndex, transformOp, isMatrixAnimation, boxSize);
