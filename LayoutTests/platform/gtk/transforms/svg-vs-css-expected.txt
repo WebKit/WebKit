@@ -31,7 +31,7 @@ layer at (0,0) size 800x588
       RenderText {#text} at (0,0) size 0x0
 layer at (28,89) size 201x206
   RenderBlock (relative positioned) {div} at (10,71) size 200x200 [bgcolor=#C0C0C0] [border: (1px solid #000000)]
-    RenderSVGRoot {svg} at (29,90) size 200x200
+    RenderSVGRoot {svg} at (29,113) size 196x174
       RenderSVGContainer {g} at (29,113) size 196x174 [transform={m=((1.00,0.00)(0.00,1.00)) t=(75.00,25.00)}]
         RenderPath {rect} at (103,114) size 62x62 [stroke={[type=SOLID] [color=#000000] [dash array={1.00, 1.00}]}] [data="M0.00,0.00 L60.00,0.00 L60.00,60.00 L0.00,60.00 Z"]
         RenderSVGContainer {g} at (29,113) size 197x174 [transform={m=((2.00,0.00)(0.00,2.00)) t=(0.00,0.00)}]
@@ -48,7 +48,7 @@ layer at (31,363) size 60x60
   RenderBlock (positioned) {div} at (1,1) size 60x60 [border: (1px solid #0000FF)]
 layer at (272,89) size 201x206
   RenderBlock (relative positioned) {div} at (10,71) size 200x200 [bgcolor=#C0C0C0] [border: (1px solid #000000)]
-    RenderSVGRoot {svg} at (273,90) size 200x200
+    RenderSVGRoot {svg} at (273,113) size 162x174
       RenderPath {rect} at (273,112) size 163x176 [transform={m=((1.41,1.41)(-1.41,1.41)) t=(75.00,25.00)}] [stroke={[type=SOLID] [color=#0000FF]}] [data="M0.00,0.00 L60.00,0.00 L60.00,60.00 L0.00,60.00 Z"]
     RenderText {#text} at (0,0) size 0x0
 layer at (272,360) size 200x200
@@ -57,7 +57,7 @@ layer at (273,361) size 60x60
   RenderBlock (positioned) {div} at (1,1) size 60x60 [border: (1px solid #0000FF)]
 layer at (516,89) size 201x206
   RenderBlock (relative positioned) {div} at (10,71) size 200x200 [bgcolor=#C0C0C0] [border: (1px solid #000000)]
-    RenderSVGRoot {svg} at (517,90) size 200x200
+    RenderSVGRoot {svg} at (517,113) size 162x174
       RenderPath {rect} at (517,112) size 163x176 [transform={m=((1.41,1.41)(-1.41,1.41)) t=(75.00,25.00)}] [stroke={[type=SOLID] [color=#0000FF]}] [data="M0.00,0.00 L60.00,0.00 L60.00,60.00 L0.00,60.00 Z"]
     RenderText {#text} at (0,0) size 0x0
 layer at (516,360) size 200x200

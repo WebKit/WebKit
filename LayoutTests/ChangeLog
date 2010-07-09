@@ -5,6 +5,36 @@
         RenderSVGRoot does not include border/padding while repainting
         https://bugs.webkit.org/show_bug.cgi?id=41854
 
+        Hopefully last round of gtk specific results.
+
+        * platform/gtk/svg/text/select-x-list-with-tspans-1-expected.txt:
+        * platform/gtk/svg/text/select-x-list-with-tspans-2-expected.txt:
+        * platform/gtk/svg/text/select-x-list-with-tspans-3-expected.txt:
+        * platform/gtk/svg/text/select-x-list-with-tspans-4-expected.txt:
+        * platform/gtk/svg/text/selection-background-color-expected.txt:
+        * platform/gtk/svg/text/selection-doubleclick-expected.txt:
+        * platform/gtk/svg/text/selection-styles-expected.txt:
+        * platform/gtk/svg/text/selection-tripleclick-expected.txt:
+        * platform/gtk/svg/text/text-hkern-expected.txt:
+        * platform/gtk/svg/text/text-hkern-on-vertical-text-expected.txt:
+        * platform/gtk/svg/text/text-vkern-expected.txt:
+        * platform/gtk/svg/text/text-vkern-on-horizontal-text-expected.txt:
+        * platform/gtk/svg/zoom/page/relative-sized-document-scrollbars-expected.txt:
+        * platform/gtk/svg/zoom/page/zoom-coords-viewattr-01-b-expected.txt:
+        * platform/gtk/svg/zoom/page/zoom-foreignObject-expected.txt:
+        * platform/gtk/svg/zoom/page/zoom-svg-float-border-padding-expected.txt:
+        * platform/gtk/svg/zoom/text/relative-sized-document-scrollbars-expected.txt:
+        * platform/gtk/svg/zoom/text/zoom-foreignObject-expected.txt:
+        * platform/gtk/svg/zoom/text/zoom-svg-float-border-padding-expected.txt:
+        * platform/gtk/transforms/svg-vs-css-expected.txt:
+
+2010-07-09  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Not reviewed.
+
+        RenderSVGRoot does not include border/padding while repainting
+        https://bugs.webkit.org/show_bug.cgi?id=41854
+
         Next round of gtk specific results.
 
         * platform/gtk/svg/text/select-textLength-spacingAndGlyphs-squeeze-3-expected.txt:

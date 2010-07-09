@@ -4,7 +4,7 @@ layer at (0,0) size 800x237
   RenderBlock {html} at (0,0) size 800x237
     RenderBody {body} at (8,16) size 784x205
       RenderBlock {p} at (0,0) size 784x205
-        RenderSVGRoot {svg} at (8,16) size 600x200
+        RenderSVGRoot {svg} at (8,25) size 247x59
           RenderSVGHiddenContainer {defs} at (0,0) size 0x0
             RenderSVGResourceLinearGradient {linearGradient} [id="gradient"] [gradientUnits=objectBoundingBox] [gradientTransform={m=((0.71,0.71)(-0.71,0.71)) t=(0.00,0.00)}] [start=(0,0)] [end=(1,0)]
               RenderSVGGradientStop {stop} [offset=0.00] [color=#000000]
