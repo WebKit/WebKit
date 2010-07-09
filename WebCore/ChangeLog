@@ -1,3 +1,13 @@
+2010-07-09  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Reviewed by Tor Arne Vestbø.
+
+        [Qt] Removed hard-coded enabled default of video support
+
+        Properly detect video/audio instead of defaulting to true.Properly detect video/audio instead of defaulting to true.Properly detect video/audio instead of defaulting to true.Properly detect video/audio instead of defaulting to true.
+
+        * WebCore.pri:
+
 2010-07-09  Ben Murdoch  <benm@google.com>
 
         Reviewed by Steve Block.
