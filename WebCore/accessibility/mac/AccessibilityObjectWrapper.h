@@ -29,8 +29,6 @@
 #ifndef AccessibilityObjectWrapper_h
 #define AccessibilityObjectWrapper_h
 
-#include <wtf/RefPtr.h>
-
 #ifdef __OBJC__
 @class WebCoreTextMarker;
 @class WebCoreTextMarkerRange;

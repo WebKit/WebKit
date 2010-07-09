@@ -26,7 +26,6 @@
 #ifndef AccessibilityMenuList_h
 #define AccessibilityMenuList_h
 
-#include "AccessibilityObject.h"
 #include "AccessibilityRenderObject.h"
 
 namespace WebCore {
