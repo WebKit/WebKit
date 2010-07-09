@@ -129,9 +129,10 @@ CachedFrame::CachedFrame(Frame* frame)
     // Custom scrollbar renderers will get reattached when the document comes out of the page cache
     m_view->detachCustomScrollbars();
 
-    m_document->documentWillBecomeInactive(); 
+    m_document->documentWillBecomeInactive();
     frame->clearTimers();
     m_document->setInPageCache(true);
+    frame->loader()->stopLoading(UnloadEventPolicyUnloadAndPageHide);
     
     frame->loader()->client()->savePlatformDataToCachedFrame(this);
 

@@ -589,10 +589,7 @@ void FrameLoader::stopLoading(UnloadEventPolicy unloadEventPolicy, DatabasePolic
 #endif
     }
 
-    // tell all subframes to stop as well
-    for (Frame* child = m_frame->tree()->firstChild(); child; child = child->tree()->nextSibling())
-        child->loader()->stopLoading(unloadEventPolicy);
-
+    // FIXME: This will cancel redirection timer, which really needs to be restarted when restoring the frame from b/f cache.
     m_frame->redirectScheduler()->cancel();
 }
 
@@ -2341,7 +2338,7 @@ void FrameLoader::commitProvisionalLoad(PassRefPtr<CachedPage> prpCachedPage)
     // Check to see if we need to cache the page we are navigating away from into the back/forward cache.
     // We are doing this here because we know for sure that a new page is about to be loaded.
     cachePageForHistoryItem(history()->currentItem());
-    
+
     if (m_loadType != FrameLoadTypeReplace)
         closeOldDataSources();
     
@@ -3595,24 +3592,10 @@ void FrameLoader::cachePageForHistoryItem(HistoryItem* item)
     if (!canCachePage() || item->isInPageCache())
         return;
 
-    pageHidden();
-    
     if (Page* page = m_frame->page()) {
         RefPtr<CachedPage> cachedPage = CachedPage::create(page);
         pageCache()->add(item, cachedPage.release());
     }
-}
-
-void FrameLoader::pageHidden()
-{
-    m_pageDismissalEventBeingDispatched = true;
-    if (m_frame->domWindow())
-        m_frame->domWindow()->dispatchEvent(PageTransitionEvent::create(eventNames().pagehideEvent, true), m_frame->document());
-    m_pageDismissalEventBeingDispatched = false;
-
-    // Send pagehide event for subframes as well
-    for (Frame* child = m_frame->tree()->firstChild(); child; child = child->tree()->nextSibling())
-        child->loader()->pageHidden();
 }
 
 bool FrameLoader::shouldTreatURLAsSameAsCurrent(const KURL& url) const

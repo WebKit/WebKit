@@ -373,7 +373,6 @@ private:
     
     bool loadProvisionalItemFromCachedPage();
     void cachePageForHistoryItem(HistoryItem*);
-    void pageHidden();
 
     void receivedFirstData();
 

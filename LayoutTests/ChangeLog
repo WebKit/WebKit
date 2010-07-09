@@ -1,5 +1,22 @@
 2010-07-09  Mark Rowe  <mrowe@apple.com>
 
+        Merge r61801.
+
+    2010-06-24  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Brady Eidson.
+
+        https://bugs.webkit.org/show_bug.cgi?id=41178
+        Timed refresh in subframes isn't stopped when going into b/f cache
+
+        This is a slow test, because a fast redirect results in replacing the current item in b/f
+        list, so back/forward cache doesn't get involved. But this code path must be tested.
+
+        * fast/history/timed-refresh-in-cached-frame-expected.txt: Added.
+        * fast/history/timed-refresh-in-cached-frame.html: Added.
+
+2010-07-09  Mark Rowe  <mrowe@apple.com>
+
         Merge r61721.
 
     2010-06-23  Andy Estes  <aestes@apple.com>
