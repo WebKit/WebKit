@@ -963,16 +963,6 @@ Expected:
 |         xml lang="en"
 |       "bar"
 resources/tests10.dat:
-1
-2
-5
-6
-7
-8
-9
-10
-11
-12
 13
 14
 15
@@ -983,238 +973,9 @@ resources/tests10.dat:
 24
 25
 
-Test 1 of 25 in resources/tests10.dat failed. Input:
-<!DOCTYPE html><svg></svg>
+Test 13 of 25 in resources/tests10.dat failed. Input:
+<!DOCTYPE html><body><table><caption><svg><g>foo</g><g>bar</g><p>baz</table><p>quux
 Got:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <svg>
-Expected:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <svg svg>
-
-Test 2 of 25 in resources/tests10.dat failed. Input:
-<!DOCTYPE html><body><svg></svg>
-Got:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <svg>
-Expected:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <svg svg>
-
-Test 5 of 25 in resources/tests10.dat failed. Input:
-<!DOCTYPE html><body><table><svg></svg></table>
-Got:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <svg>
-|     <table>
-Expected:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <svg svg>
-|     <table>
-
-Test 6 of 25 in resources/tests10.dat failed. Input:
-<!DOCTYPE html><body><table><svg><g>foo</g></svg></table>
-Got:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <svg>
-|       <g>
-|         "foo"
-|     <table>
-Expected:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <svg svg>
-|       <svg g>
-|         "foo"
-|     <table>
-
-Test 7 of 25 in resources/tests10.dat failed. Input:
-<!DOCTYPE html><body><table><svg><g>foo</g><g>bar</g></svg></table>
-Got:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <svg>
-|       <g>
-|         "foo"
-|       <g>
-|         "bar"
-|     <table>
-Expected:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <svg svg>
-|       <svg g>
-|         "foo"
-|       <svg g>
-|         "bar"
-|     <table>
-
-Test 8 of 25 in resources/tests10.dat failed. Input:
-<!DOCTYPE html><body><table><tbody><svg><g>foo</g><g>bar</g></svg></tbody></table>
-Got:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <svg>
-|       <g>
-|         "foo"
-|       <g>
-|         "bar"
-|     <table>
-|       <tbody>
-Expected:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <svg svg>
-|       <svg g>
-|         "foo"
-|       <svg g>
-|         "bar"
-|     <table>
-|       <tbody>
-
-Test 9 of 25 in resources/tests10.dat failed. Input:
-<!DOCTYPE html><body><table><tbody><tr><svg><g>foo</g><g>bar</g></svg></tr></tbody></table>
-Got:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <svg>
-|       <g>
-|         "foo"
-|       <g>
-|         "bar"
-|     <table>
-|       <tbody>
-|         <tr>
-Expected:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <svg svg>
-|       <svg g>
-|         "foo"
-|       <svg g>
-|         "bar"
-|     <table>
-|       <tbody>
-|         <tr>
-
-Test 10 of 25 in resources/tests10.dat failed. Input:
-<!DOCTYPE html><body><table><tbody><tr><td><svg><g>foo</g><g>bar</g></svg></td></tr></tbody></table>
-Got:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <table>
-|       <tbody>
-|         <tr>
-|           <td>
-|             <svg>
-|               <g>
-|                 "foo"
-|               <g>
-|                 "bar"
-Expected:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <table>
-|       <tbody>
-|         <tr>
-|           <td>
-|             <svg svg>
-|               <svg g>
-|                 "foo"
-|               <svg g>
-|                 "bar"
-
-Test 11 of 25 in resources/tests10.dat failed. Input:
-<!DOCTYPE html><body><table><tbody><tr><td><svg><g>foo</g><g>bar</g></svg><p>baz</td></tr></tbody></table>
-Got:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <table>
-|       <tbody>
-|         <tr>
-|           <td>
-|             <svg>
-|               <g>
-|                 "foo"
-|               <g>
-|                 "bar"
-|             <p>
-|               "baz"
-Expected:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <table>
-|       <tbody>
-|         <tr>
-|           <td>
-|             <svg svg>
-|               <svg g>
-|                 "foo"
-|               <svg g>
-|                 "bar"
-|             <p>
-|               "baz"
-
-Test 12 of 25 in resources/tests10.dat failed. Input:
-<!DOCTYPE html><body><table><caption><svg><g>foo</g><g>bar</g></svg><p>baz</caption></table>
-Got:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <table>
-|       <caption>
-|         <svg>
-|           <g>
-|             "foo"
-|           <g>
-|             "bar"
-|         <p>
-|           "baz"
-Expected:
 | <!DOCTYPE html>
 | <html>
 |   <head>
@@ -1226,27 +987,10 @@ Expected:
 |             "foo"
 |           <svg g>
 |             "bar"
-|         <p>
-|           "baz"
-
-Test 13 of 25 in resources/tests10.dat failed. Input:
-<!DOCTYPE html><body><table><caption><svg><g>foo</g><g>bar</g><p>baz</table><p>quux
-Got:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <table>
-|       <caption>
-|         <svg>
-|           <g>
-|             "foo"
-|           <g>
-|             "bar"
-|           <p>
+|           <svg p>
 |             "baz"
-|     <p>
-|       "quux"
+|             <svg p>
+|               "quux"
 Expected:
 | <!DOCTYPE html>
 | <html>
@@ -1273,14 +1017,14 @@ Got:
 |   <body>
 |     <table>
 |       <caption>
-|         <svg>
-|           <g>
+|         <svg svg>
+|           <svg g>
 |             "foo"
-|           <g>
+|           <svg g>
 |             "bar"
 |           "baz"
-|     <p>
-|       "quux"
+|           <svg p>
+|             "quux"
 Expected:
 | <!DOCTYPE html>
 | <html>
@@ -1304,17 +1048,17 @@ Got:
 | <html>
 |   <head>
 |   <body>
-|     <svg>
-|       <g>
+|     <svg svg>
+|       <svg g>
 |         "foo"
-|       <g>
+|       <svg g>
 |         "bar"
-|       <p>
+|       <svg p>
 |         "baz"
+|         <svg p>
+|           "quux"
 |     <table>
 |       <colgroup>
-|     <p>
-|       "quux"
 Expected:
 | <!DOCTYPE html>
 | <html>
@@ -1339,12 +1083,12 @@ Got:
 | <html>
 |   <head>
 |   <body>
-|     <svg>
-|       <g>
+|     <svg svg>
+|       <svg g>
 |         "foo"
-|       <g>
+|       <svg g>
 |         "bar"
-|       <p>
+|       <svg p>
 |         "baz"
 Expected:
 | <!DOCTYPE html>
@@ -1366,12 +1110,12 @@ Got:
 | <html>
 |   <head>
 |   <body>
-|     <svg>
-|       <g>
+|     <svg svg>
+|       <svg g>
 |         "foo"
-|       <g>
+|       <svg g>
 |         "bar"
-|       <p>
+|       <svg p>
 |         "baz"
 Expected:
 | <!DOCTYPE html>
@@ -1394,7 +1138,7 @@ Got:
 |   <head>
 |   <body>
 |     xlink:href="foo"
-|     <svg>
+|     <svg svg>
 |       xlink:href="foo"
 Expected:
 | <!DOCTYPE html>
@@ -1414,8 +1158,8 @@ Got:
 |   <body>
 |     xlink:href="foo"
 |     xml:lang="en"
-|     <svg>
-|       <g>
+|     <svg svg>
+|       <svg g>
 |         xlink:href="foo"
 |         xml:lang="en"
 Expected:
@@ -1439,8 +1183,8 @@ Got:
 |   <body>
 |     xlink:href="foo"
 |     xml:lang="en"
-|     <svg>
-|       <g>
+|     <svg svg>
+|       <svg g>
 |         xlink:href="foo"
 |         xml:lang="en"
 Expected:
@@ -1464,11 +1208,11 @@ Got:
 |   <body>
 |     xlink:href="foo"
 |     xml:lang="en"
-|     <svg>
-|       <g>
+|     <svg svg>
+|       <svg g>
 |         xlink:href="foo"
 |         xml:lang="en"
-|         "bar"
+|       "bar"
 Expected:
 | <!DOCTYPE html>
 | <html>
@@ -1490,7 +1234,6 @@ resources/tests11.dat:
 6
 7
 8
-9
 
 Test 1 of 9 in resources/tests11.dat failed. Input:
 <!DOCTYPE html><body><svg attributeName='' attributeType='' baseFrequency='' baseProfile='' calcMode='' clipPathUnits='' contentScriptType='' contentStyleType='' diffuseConstant='' edgeMode='' externalResourcesRequired='' filterRes='' filterUnits='' glyphRef='' gradientTransform='' gradientUnits='' kernelMatrix='' kernelUnitLength='' keyPoints='' keySplines='' keyTimes='' lengthAdjust='' limitingConeAngle='' markerHeight='' markerUnits='' markerWidth='' maskContentUnits='' maskUnits='' numOctaves='' pathLength='' patternContentUnits='' patternTransform='' patternUnits='' pointsAtX='' pointsAtY='' pointsAtZ='' preserveAlpha='' preserveAspectRatio='' primitiveUnits='' refX='' refY='' repeatCount='' repeatDur='' requiredExtensions='' requiredFeatures='' specularConstant='' specularExponent='' spreadMethod='' startOffset='' stdDeviation='' stitchTiles='' surfaceScale='' systemLanguage='' tableValues='' targetX='' targetY='' textLength='' viewBox='' viewTarget='' xChannelSelector='' yChannelSelector='' zoomAndPan=''></svg>
@@ -1499,7 +1242,7 @@ Got:
 | <html>
 |   <head>
 |   <body>
-|     <svg>
+|     <svg svg>
 |       attributename=""
 |       attributetype=""
 |       basefrequency=""
@@ -1638,7 +1381,7 @@ Got:
 | <html>
 |   <head>
 |   <body>
-|     <svg>
+|     <svg svg>
 |       attributename=""
 |       attributetype=""
 |       basefrequency=""
@@ -1777,7 +1520,7 @@ Got:
 | <html>
 |   <head>
 |   <body>
-|     <svg>
+|     <svg svg>
 |       attributename=""
 |       attributetype=""
 |       basefrequency=""
@@ -2055,43 +1798,43 @@ Got:
 | <html>
 |   <head>
 |   <body>
-|     <svg>
-|       <altglyph>
-|         <altglyphdef>
-|           <altglyphitem>
-|             <animatecolor>
-|               <animatemotion>
-|                 <animatetransform>
-|                   <clippath>
-|                     <feblend>
-|                       <fecolormatrix>
-|                         <fecomponenttransfer>
-|                           <fecomposite>
-|                             <feconvolvematrix>
-|                               <fediffuselighting>
-|                                 <fedisplacementmap>
-|                                   <fedistantlight>
-|                                     <feflood>
-|                                       <fefunca>
-|                                         <fefuncb>
-|                                           <fefuncg>
-|                                             <fefuncr>
-|                                               <fegaussianblur>
-|                                                 <feimage>
-|                                                   <femerge>
-|                                                     <femergenode>
-|                                                       <femorphology>
-|                                                         <feoffset>
-|                                                           <fepointlight>
-|                                                             <fespecularlighting>
-|                                                               <fespotlight>
-|                                                                 <fetile>
-|                                                                   <feturbulence>
-|                                                                     <foreignobject>
-|                                                                       <glyphref>
-|                                                                         <lineargradient>
-|                                                                           <radialgradient>
-|                                                                             <textpath>
+|     <svg svg>
+|       <svg altglyph>
+|       <svg altglyphdef>
+|       <svg altglyphitem>
+|       <svg animatecolor>
+|       <svg animatemotion>
+|       <svg animatetransform>
+|       <svg clippath>
+|       <svg feblend>
+|       <svg fecolormatrix>
+|       <svg fecomponenttransfer>
+|       <svg fecomposite>
+|       <svg feconvolvematrix>
+|       <svg fediffuselighting>
+|       <svg fedisplacementmap>
+|       <svg fedistantlight>
+|       <svg feflood>
+|       <svg fefunca>
+|       <svg fefuncb>
+|       <svg fefuncg>
+|       <svg fefuncr>
+|       <svg fegaussianblur>
+|       <svg feimage>
+|       <svg femerge>
+|       <svg femergenode>
+|       <svg femorphology>
+|       <svg feoffset>
+|       <svg fepointlight>
+|       <svg fespecularlighting>
+|       <svg fespotlight>
+|       <svg fetile>
+|       <svg feturbulence>
+|       <svg foreignobject>
+|       <svg glyphref>
+|       <svg lineargradient>
+|       <svg radialgradient>
+|       <svg textpath>
 Expected:
 | <!DOCTYPE html>
 | <html>
@@ -2142,43 +1885,43 @@ Got:
 | <html>
 |   <head>
 |   <body>
-|     <svg>
-|       <altglyph>
-|         <altglyphdef>
-|           <altglyphitem>
-|             <animatecolor>
-|               <animatemotion>
-|                 <animatetransform>
-|                   <clippath>
-|                     <feblend>
-|                       <fecolormatrix>
-|                         <fecomponenttransfer>
-|                           <fecomposite>
-|                             <feconvolvematrix>
-|                               <fediffuselighting>
-|                                 <fedisplacementmap>
-|                                   <fedistantlight>
-|                                     <feflood>
-|                                       <fefunca>
-|                                         <fefuncb>
-|                                           <fefuncg>
-|                                             <fefuncr>
-|                                               <fegaussianblur>
-|                                                 <feimage>
-|                                                   <femerge>
-|                                                     <femergenode>
-|                                                       <femorphology>
-|                                                         <feoffset>
-|                                                           <fepointlight>
-|                                                             <fespecularlighting>
-|                                                               <fespotlight>
-|                                                                 <fetile>
-|                                                                   <feturbulence>
-|                                                                     <foreignobject>
-|                                                                       <glyphref>
-|                                                                         <lineargradient>
-|                                                                           <radialgradient>
-|                                                                             <textpath>
+|     <svg svg>
+|       <svg altglyph>
+|       <svg altglyphdef>
+|       <svg altglyphitem>
+|       <svg animatecolor>
+|       <svg animatemotion>
+|       <svg animatetransform>
+|       <svg clippath>
+|       <svg feblend>
+|       <svg fecolormatrix>
+|       <svg fecomponenttransfer>
+|       <svg fecomposite>
+|       <svg feconvolvematrix>
+|       <svg fediffuselighting>
+|       <svg fedisplacementmap>
+|       <svg fedistantlight>
+|       <svg feflood>
+|       <svg fefunca>
+|       <svg fefuncb>
+|       <svg fefuncg>
+|       <svg fefuncr>
+|       <svg fegaussianblur>
+|       <svg feimage>
+|       <svg femerge>
+|       <svg femergenode>
+|       <svg femorphology>
+|       <svg feoffset>
+|       <svg fepointlight>
+|       <svg fespecularlighting>
+|       <svg fespotlight>
+|       <svg fetile>
+|       <svg feturbulence>
+|       <svg foreignobject>
+|       <svg glyphref>
+|       <svg lineargradient>
+|       <svg radialgradient>
+|       <svg textpath>
 Expected:
 | <!DOCTYPE html>
 | <html>
@@ -2229,43 +1972,43 @@ Got:
 | <html>
 |   <head>
 |   <body>
-|     <svg>
-|       <altglyph>
-|         <altglyphdef>
-|           <altglyphitem>
-|             <animatecolor>
-|               <animatemotion>
-|                 <animatetransform>
-|                   <clippath>
-|                     <feblend>
-|                       <fecolormatrix>
-|                         <fecomponenttransfer>
-|                           <fecomposite>
-|                             <feconvolvematrix>
-|                               <fediffuselighting>
-|                                 <fedisplacementmap>
-|                                   <fedistantlight>
-|                                     <feflood>
-|                                       <fefunca>
-|                                         <fefuncb>
-|                                           <fefuncg>
-|                                             <fefuncr>
-|                                               <fegaussianblur>
-|                                                 <feimage>
-|                                                   <femerge>
-|                                                     <femergenode>
-|                                                       <femorphology>
-|                                                         <feoffset>
-|                                                           <fepointlight>
-|                                                             <fespecularlighting>
-|                                                               <fespotlight>
-|                                                                 <fetile>
-|                                                                   <feturbulence>
-|                                                                     <foreignobject>
-|                                                                       <glyphref>
-|                                                                         <lineargradient>
-|                                                                           <radialgradient>
-|                                                                             <textpath>
+|     <svg svg>
+|       <svg altglyph>
+|       <svg altglyphdef>
+|       <svg altglyphitem>
+|       <svg animatecolor>
+|       <svg animatemotion>
+|       <svg animatetransform>
+|       <svg clippath>
+|       <svg feblend>
+|       <svg fecolormatrix>
+|       <svg fecomponenttransfer>
+|       <svg fecomposite>
+|       <svg feconvolvematrix>
+|       <svg fediffuselighting>
+|       <svg fedisplacementmap>
+|       <svg fedistantlight>
+|       <svg feflood>
+|       <svg fefunca>
+|       <svg fefuncb>
+|       <svg fefuncg>
+|       <svg fefuncr>
+|       <svg fegaussianblur>
+|       <svg feimage>
+|       <svg femerge>
+|       <svg femergenode>
+|       <svg femorphology>
+|       <svg feoffset>
+|       <svg fepointlight>
+|       <svg fespecularlighting>
+|       <svg fespotlight>
+|       <svg fetile>
+|       <svg feturbulence>
+|       <svg foreignobject>
+|       <svg glyphref>
+|       <svg lineargradient>
+|       <svg radialgradient>
+|       <svg textpath>
 Expected:
 | <!DOCTYPE html>
 | <html>
@@ -2395,23 +2138,6 @@ Expected:
 |       <math lineargradient>
 |       <math radialgradient>
 |       <math textpath>
-
-Test 9 of 9 in resources/tests11.dat failed. Input:
-<!DOCTYPE html><body><svg><solidColor /></svg>
-Got:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <svg>
-|       <solidcolor>
-Expected:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <svg svg>
-|       <svg solidcolor>
 resources/tests12.dat:
 1
 2
@@ -2430,22 +2156,21 @@ Got:
 |           <i>
 |             "baz"
 |         <annotation-xml>
-|           <svg>
-|             <desc>
-|               <b>
+|           <svg svg>
+|             <svg desc>
+|               <svg b>
 |                 "eggs"
-|             <g>
-|               <foreignobject>
-|     <p>
-|       "spam"
-|     <table>
-|       <tbody>
-|         <tr>
-|           <td>
-|             <img>
-|     <g>
-|       "quux"
-|     "bar"
+|             <svg g>
+|               <svg foreignobject>
+|                 <svg p>
+|                   "spam"
+|                   <svg table>
+|                     <svg tr>
+|                       <svg td>
+|                         <svg img>
+|                           <svg g>
+|                             "quux"
+|                           "bar"
 Expected:
 | <!DOCTYPE html>
 | <html>
@@ -2488,22 +2213,21 @@ Got:
 |         <i>
 |           "baz"
 |       <annotation-xml>
-|         <svg>
-|           <desc>
-|             <b>
+|         <svg svg>
+|           <svg desc>
+|             <svg b>
 |               "eggs"
-|           <g>
-|             <foreignobject>
-|               <p>
+|           <svg g>
+|             <svg foreignobject>
+|               <svg p>
 |                 "spam"
-|               <table>
-|                 <tbody>
-|                   <tr>
-|                     <td>
-|                       <img>
-|           <g>
-|             "quux"
-|     "bar"
+|                 <svg table>
+|                   <svg tr>
+|                     <svg td>
+|                       <svg img>
+|                         <svg g>
+|                           "quux"
+|                         "bar"
 Expected:
 | <!DOCTYPE html>
 | <html>

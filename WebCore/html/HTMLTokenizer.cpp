@@ -1045,7 +1045,7 @@ bool HTMLTokenizer::nextToken(SegmentedString& source, HTMLToken& token)
 
     BEGIN_STATE(SelfClosingStartTagState) {
         if (cc == '>') {
-            notImplemented();
+            m_token->setSelfClosing();
             return emitAndResumeIn(source, DataState);
         } else if (cc == InputStreamPreprocessor::endOfFileMarker) {
             parseError();

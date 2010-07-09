@@ -32,7 +32,6 @@
 #include "Element.h"
 #include "Frame.h"
 #include "HTMLDocument.h"
-#include "HTMLElementFactory.h"
 #include "HTMLHtmlElement.h"
 #include "HTMLNames.h"
 #include "HTMLScriptElement.h"
@@ -215,7 +214,7 @@ void HTMLConstructionSite::insertHTMLElement(AtomicHTMLToken& token)
 void HTMLConstructionSite::insertSelfClosingHTMLElement(AtomicHTMLToken& token)
 {
     ASSERT(token.type() == HTMLToken::StartTag);
-    attach(currentElement(), createHTMLElement(token));
+    createHTMLElementAndAttachToCurrent(token);
     // FIXME: Do we want to acknowledge the token's self-closing flag?
     // http://www.whatwg.org/specs/web-apps/current-work/multipage/tokenization.html#acknowledge-self-closing-flag
 }

@@ -75,6 +75,7 @@ public:
     LegacyHTMLTreeBuilder* legacyTreeBuilder() const { return m_legacyTreeBuilder.get(); }
 
 private:
+    class FakeInsertionMode;
     // Represents HTML5 "insertion mode"
     // http://www.whatwg.org/specs/web-apps/current-work/multipage/parsing.html#insertion-mode
     enum InsertionMode {
@@ -152,6 +153,8 @@ private:
     void processDefaultForAfterHeadMode(AtomicHTMLToken&);
     void processDefaultForInTableTextMode(AtomicHTMLToken&);
 
+    void processEndTagUsingSecondaryInsertionModeAndAdjustInsertionMode(AtomicHTMLToken&);
+
     PassRefPtr<NamedNodeMap> attributesForIsindexInput(AtomicHTMLToken&);
 
     HTMLElementStack::ElementRecord* furthestBlockForFormattingElement(Element*);
@@ -171,8 +174,21 @@ private:
     void handleScriptStartTag();
     void handleScriptEndTag(Element*, int scriptStartLine);
 
-    void setInsertionMode(InsertionMode value) { m_insertionMode = value; }
     InsertionMode insertionMode() const { return m_insertionMode; }
+    void setInsertionMode(InsertionMode mode)
+    {
+        m_insertionMode = mode;
+        m_isFakeInsertionMode = false;
+    }
+
+    bool isFakeInsertionMode() { return m_isFakeInsertionMode; }
+    void setFakeInsertionMode(InsertionMode mode)
+    {
+        m_insertionMode = mode;
+        m_isFakeInsertionMode = true;
+    }
+
+    void setSecondaryInsertionMode(InsertionMode);
 
     void setInsertionModeAndEnd(InsertionMode, bool foreign); // Helper for resetInsertionModeAppropriately
     void resetInsertionModeAppropriately();
@@ -184,6 +200,7 @@ private:
 
     bool m_reportErrors;
     bool m_isPaused;
+    bool m_isFakeInsertionMode;
 
     // FIXME: InsertionModes should be a separate object to prevent direct
     // manipulation of these variables.  For now, be careful to always use

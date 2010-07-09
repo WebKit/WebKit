@@ -1,3 +1,60 @@
+2010-07-09  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Implement self closing start tag state in the tokenizer
+        https://bugs.webkit.org/show_bug.cgi?id=41946
+
+        Amazingly we got this far w/o needing self closing.
+        The LegacyHTMLTreeBuilder clearly uses the self-closing
+        state, but the fact that we never exposed it seems to
+        not have caused any test failures.  Sad.
+
+        The new HTMLTreeBuilder only needs the self closing state
+        for foreign content mode (and a few parse error cases).
+
+        * html/HTMLToken.h:
+        (WebCore::HTMLToken::setSelfClosing):
+        * html/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::nextToken):
+        * html/HTMLTreeBuilder.cpp:
+        (WebCore::):
+
+2010-07-09  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Add basic "in foreign content" support to the TreeBuilder
+        https://bugs.webkit.org/show_bug.cgi?id=41943
+
+        This is covered by numerous tests in html5lib/runner.html.
+
+        "in foreign content" mode requires us to be able to process
+        tokens using the "secondary insertion mode".  We have to set
+        a fake insertion mode to do that, so much of this code is enabling
+        setting of fake insertion modes, and then later restoration of the
+        insertion mode after execution.
+
+        There is a lot more of foreign content mode to implement, but this is
+        a good start resulting in huge test progressions.
+
+        * html/HTMLConstructionSite.cpp:
+        (WebCore::HTMLConstructionSite::insertSelfClosingHTMLElement):
+         - Use createHTMLElementAndAttachToCurrent instead of copy/paste code.
+         - No need to include HTMLElementFactory in this file.
+        * html/HTMLConstructionSite.h:
+         - RedirectToFosterParentGuard does not need to be a friend class.
+        * html/HTMLElementStack.cpp:
+        (WebCore::HTMLElementStack::isOnlyHTMLElementsInScope):
+        * html/HTMLElementStack.h:
+        * html/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::processStartTagForInBody):
+        (WebCore::):
+        * html/HTMLTreeBuilder.h:
+        (WebCore::HTMLTreeBuilder::setInsertionMode):
+        (WebCore::HTMLTreeBuilder::isFakeInsertionMode):
+        (WebCore::HTMLTreeBuilder::setFakeInsertionMode):
+
 2010-07-09  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

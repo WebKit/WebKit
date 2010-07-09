@@ -174,6 +174,12 @@ public:
         return m_selfClosing;
     }
 
+    void setSelfClosing()
+    {
+        ASSERT(m_type == HTMLToken::StartTag || m_type == HTMLToken::EndTag);
+        m_selfClosing = true;
+    }
+
     const AttributeList& attributes() const
     {
         ASSERT(m_type == StartTag || m_type == EndTag);

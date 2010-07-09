@@ -655,6 +655,29 @@ void HTMLTreeBuilder::processCloseWhenNestedTag(AtomicHTMLToken& token)
     m_tree.insertHTMLElement(token);
 }
 
+namespace {
+
+#if ENABLE(SVG)
+void adjustSVGAttributes(AtomicHTMLToken&)
+{
+    notImplemented();
+}
+#endif
+
+#if ENABLE(MATHML)
+void adjustMathMLAttributes(AtomicHTMLToken&)
+{
+    notImplemented();
+}
+#endif
+
+void adjustForeignAttributes(AtomicHTMLToken&)
+{
+    notImplemented();
+}
+
+}
+
 void HTMLTreeBuilder::processStartTagForInBody(AtomicHTMLToken& token)
 {
     ASSERT(token.type() == HTMLToken::StartTag);
@@ -914,14 +937,33 @@ void HTMLTreeBuilder::processStartTagForInBody(AtomicHTMLToken& token)
         m_tree.insertHTMLElement(token);
         return;
     }
-    if (token.name() == "math") {
-        // This is the MathML foreign content branch point.
-        notImplemented();
+    // FIXME: These should not need #if guards.
+#if ENABLE(MATHML)
+    if (token.name() == MathMLNames::mathTag.localName()) {
+        m_tree.reconstructTheActiveFormattingElements();
+        adjustMathMLAttributes(token);
+        adjustForeignAttributes(token);
+        m_tree.insertForeignElement(token, MathMLNames::mathMLNamespaceURI);
+        if (m_insertionMode != InForeignContentMode) {
+            setSecondaryInsertionMode(m_insertionMode));
+            setInsertionMode(InForeignContentMode);
+        }
+        return;
     }
-    if (token.name() == "svg") {
-        // This is the SVG foreign content branch point.
-        notImplemented();
+#endif
+#if ENABLE(SVG)
+    if (token.name() == SVGNames::svgTag.localName()) {
+        m_tree.reconstructTheActiveFormattingElements();
+        adjustSVGAttributes(token);
+        adjustForeignAttributes(token);
+        m_tree.insertForeignElement(token, SVGNames::svgNamespaceURI);
+        if (m_insertionMode != InForeignContentMode) {
+            setSecondaryInsertionMode(m_insertionMode);
+            setInsertionMode(InForeignContentMode);
+        }
+        return;
     }
+#endif
     if (isCaptionColOrColgroupTag(token.name())
         || token.name() == frameTag
         || token.name() == headTag
@@ -1343,8 +1385,23 @@ void HTMLTreeBuilder::processStartTag(AtomicHTMLToken& token)
         processDefaultForInTableTextMode(token);
         processStartTag(token);
         break;
+    case InForeignContentMode: {
+        // FIXME: We're missing a bunch of if branches here.
+        notImplemented();
+        const AtomicString& currentNamespace = m_tree.currentElement()->namespaceURI();
+#if ENABLE(MATHML)
+        if (currentNamespace == MathMLNames::mathMLNamespaceURI)
+            adjustMathMLAttributes(token);
+#endif
+#if ENABLE(SVG)
+         if (currentNamespace == SVGNames::svgNamespaceURI)
+            adjustSVGAttributes(token);
+#endif
+        adjustForeignAttributes(token);
+        m_tree.insertForeignElement(token, currentNamespace);
+        break;
+    }
     case TextMode:
-    case InForeignContentMode:
         notImplemented();
         break;
     }
@@ -1521,11 +1578,17 @@ void HTMLTreeBuilder::callTheAdoptionAgency(AtomicHTMLToken& token)
     }
 }
 
+void HTMLTreeBuilder::setSecondaryInsertionMode(InsertionMode mode)
+{
+    ASSERT(mode != InForeignContentMode);
+    m_secondaryInsertionMode = mode;
+}
+
 void HTMLTreeBuilder::setInsertionModeAndEnd(InsertionMode newInsertionMode, bool foreign)
 {
     setInsertionMode(newInsertionMode);
     if (foreign) {
-        m_secondaryInsertionMode = m_insertionMode;
+        setSecondaryInsertionMode(m_insertionMode);
         setInsertionMode(InForeignContentMode);
     }
 }
@@ -2127,9 +2190,68 @@ void HTMLTreeBuilder::processEndTag(AtomicHTMLToken& token)
         processEndTag(token);
         break;
     case InForeignContentMode:
-        notImplemented();
+#if ENABLE(SVG)
+        if (token.name() == SVGNames::scriptTag && m_tree.currentElement()->hasTagName(SVGNames::scriptTag)) {
+            notImplemented();
+            return;
+        }
+#endif
+        if (m_tree.currentElement()->namespaceURI() != xhtmlNamespaceURI) {
+            // FIXME: This code just wants an Element* iterator, instead of an ElementRecord*
+            HTMLElementStack::ElementRecord* nodeRecord = m_tree.openElements()->topRecord();
+            if (!nodeRecord->element()->hasLocalName(token.name())) {
+                parseError(token);
+                // FIXME: This return is not in the spec but appears to be needed.
+                // http://www.w3.org/Bugs/Public/show_bug.cgi?id=10118
+                return;
+            }
+            while (1) {
+                if (nodeRecord->element()->hasLocalName(token.name())) {
+                    m_tree.openElements()->popUntilPopped(nodeRecord->element());
+                    return;
+                }
+                nodeRecord = nodeRecord->next();
+                if (nodeRecord->element()->namespaceURI() == xhtmlNamespaceURI)
+                    processEndTagUsingSecondaryInsertionModeAndAdjustInsertionMode(token);
+            }
+            return;
+        }
+        processEndTagUsingSecondaryInsertionModeAndAdjustInsertionMode(token);
         break;
     }
+}
+
+class HTMLTreeBuilder::FakeInsertionMode : public Noncopyable {
+public:
+    FakeInsertionMode(HTMLTreeBuilder* treeBuilder, InsertionMode mode)
+        : m_treeBuilder(treeBuilder)
+        , m_originalMode(treeBuilder->insertionMode())
+    {
+        m_treeBuilder->setFakeInsertionMode(mode);
+    }
+
+    ~FakeInsertionMode()
+    {
+        if (m_treeBuilder->isFakeInsertionMode())
+            m_treeBuilder->setInsertionMode(m_originalMode);
+    }
+
+private:
+    HTMLTreeBuilder* m_treeBuilder;
+    InsertionMode m_originalMode;
+};
+
+// This handles both secondary insertion mode processing, as well as updating
+// the insertion mode.  These are separate steps in the spec, but always occur
+// right after one another.
+void HTMLTreeBuilder::processEndTagUsingSecondaryInsertionModeAndAdjustInsertionMode(AtomicHTMLToken& token)
+{
+    {
+        FakeInsertionMode fakeMode(this, m_secondaryInsertionMode);
+        processEndTag(token);
+    }
+    if (insertionMode() == InForeignContentMode && m_tree.openElements()->hasOnlyHTMLElementsInScope())
+        setInsertionMode(m_secondaryInsertionMode);
 }
 
 void HTMLTreeBuilder::processComment(AtomicHTMLToken& token)
@@ -2288,7 +2410,11 @@ ReprocessBuffer:
         break;
     }
     case InForeignContentMode: {
-        notImplemented();
+        ASSERT(insertionMode() == InForeignContentMode);
+        String characters = buffer.takeRemaining();
+        m_tree.insertTextNode(characters);
+        if (m_framesetOk && hasNonWhitespace(characters))
+            m_framesetOk = false;
         break;
     }
     case AfterAfterFramesetMode: {
@@ -2367,6 +2493,18 @@ void HTMLTreeBuilder::processEndOfFile(AtomicHTMLToken& token)
         }
         processEndOfFile(token);
         break;
+    case InForeignContentMode:
+        parseError(token);
+        // FIXME: Following the spec would infinitely recurse on <svg><svg>
+        // http://www.w3.org/Bugs/Public/show_bug.cgi?id=10115
+        while (m_tree.currentElement()) {
+            if (m_tree.currentElement()->namespaceURI() == xhtmlNamespaceURI)
+                break;
+            m_tree.openElements()->pop();
+        }
+        setInsertionMode(m_secondaryInsertionMode);
+        processEndOfFile(token);
+        break;
     case InTableTextMode:
         processDefaultForInTableTextMode(token);
         processEndOfFile(token);
@@ -2374,7 +2512,6 @@ void HTMLTreeBuilder::processEndOfFile(AtomicHTMLToken& token)
     case TextMode:
     case InCaptionMode:
     case InRowMode:
-    case InForeignContentMode:
         notImplemented();
         break;
     }

@@ -333,6 +333,19 @@ bool inScopeCommon(HTMLElementStack::ElementRecord* top, const AtomicString& tar
     return false;
 }
 
+bool HTMLElementStack::hasOnlyHTMLElementsInScope() const
+{
+    for (ElementRecord* record = m_top.get(); record; record = record->next()) {
+        Element* element = record->element();
+        if (element->namespaceURI() != xhtmlNamespaceURI)
+            return false;
+        if (isScopeMarker(element))
+            return true;
+    }
+    ASSERT_NOT_REACHED(); // <html> is always on the stack and is a scope marker.
+    return true;
+}
+
 bool HTMLElementStack::inScope(Element* targetElement) const
 {
     for (ElementRecord* pos = m_top.get(); pos; pos = pos->next()) {
