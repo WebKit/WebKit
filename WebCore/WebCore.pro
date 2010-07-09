@@ -164,21 +164,6 @@ defineTest(addExtraCompiler) {
 }
 include(WebCore.pri)
 
-# HTML5 Media Support
-# We require QtMultimedia or Phonon
-!contains(DEFINES, ENABLE_VIDEO=.) {
-    DEFINES -= ENABLE_VIDEO=1
-    DEFINES += ENABLE_VIDEO=0
-
-    !lessThan(QT_MINOR_VERSION, 6):contains(MOBILITY_CONFIG, multimedia) {
-        DEFINES -= ENABLE_VIDEO=0
-        DEFINES += ENABLE_VIDEO=1
-    } else:contains(QT_CONFIG, phonon) {
-        DEFINES -= ENABLE_VIDEO=0
-        DEFINES += ENABLE_VIDEO=1
-    }
-}
-
 INCLUDEPATH = \
     $$PWD \
     $$PWD/accessibility \

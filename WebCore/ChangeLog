@@ -16,6 +16,19 @@
 
         Reviewed by Tor Arne Vestbø.
 
+        [Qt] Prospective build fix.
+
+        Moved the media element detection from WebCore.pro into WebCore.pri, where
+        all the features are detected. This is also used by build-webkit to determine
+        the defaults, which may be the reason for the build breakage.
+
+        * WebCore.pri:
+        * WebCore.pro:
+
+2010-07-09  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Reviewed by Tor Arne Vestbø.
+
         [Qt] Re-enable support for QtMultimediaKit as backend for the media elements
 
         Experimental support is re-enabled if QtMobility is available and the Qt

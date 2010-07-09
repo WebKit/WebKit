@@ -142,6 +142,21 @@ greaterThan(QT_MINOR_VERSION, 5) {
 # Enable touch event support with Qt 4.6
 !lessThan(QT_MINOR_VERSION, 6): DEFINES += ENABLE_TOUCH_EVENTS=1
 
+# HTML5 Media Support
+# We require QtMultimedia or Phonon
+!contains(DEFINES, ENABLE_VIDEO=.) {
+    DEFINES -= ENABLE_VIDEO=1
+    DEFINES += ENABLE_VIDEO=0
+
+    !lessThan(QT_MINOR_VERSION, 6):contains(MOBILITY_CONFIG, multimedia) {
+        DEFINES -= ENABLE_VIDEO=0
+        DEFINES += ENABLE_VIDEO=1
+    } else:contains(QT_CONFIG, phonon) {
+        DEFINES -= ENABLE_VIDEO=0
+        DEFINES += ENABLE_VIDEO=1
+    }
+}
+
 # Used to compute defaults for the build-webkit script
 CONFIG(compute_defaults) {
     message($$DEFINES)
