@@ -45,7 +45,7 @@
 namespace WebCore {
 
 class Document;
-class KURL;
+class ScriptExecutionContext;
 
 class NotificationWrapper : public QObject, public QWebNotificationData {
     Q_OBJECT
@@ -84,8 +84,9 @@ public:
     virtual bool show(Notification*);
     virtual void cancel(Notification*);
     virtual void notificationObjectDestroyed(Notification*);
-    virtual void requestPermission(SecurityOrigin*, PassRefPtr<VoidCallback>);
-    virtual NotificationPresenter::Permission checkPermission(const KURL&);
+    virtual void requestPermission(ScriptExecutionContext*, PassRefPtr<VoidCallback>);
+    virtual NotificationPresenter::Permission checkPermission(ScriptExecutionContext*);
+    virtual void cancelRequestsForPermission(ScriptExecutionContext*);
 
     void cancel(NotificationWrapper*);
 

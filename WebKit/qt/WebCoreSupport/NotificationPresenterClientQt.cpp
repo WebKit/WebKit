@@ -37,6 +37,7 @@
 #include "EventNames.h"
 #include "KURL.h"
 #include "QtPlatformPlugin.h"
+#include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
 
 #include "qwebkitglobal.h"
@@ -252,12 +253,12 @@ void NotificationPresenterClientQt::notificationObjectDestroyed(Notification* no
         delete m_notifications.take(notification);
 }
 
-void NotificationPresenterClientQt::requestPermission(SecurityOrigin* origin, PassRefPtr<VoidCallback> callback)
+void NotificationPresenterClientQt::requestPermission(ScriptExecutionContext* context, PassRefPtr<VoidCallback> callback)
 {  
     if (dumpNotification)
-        printf("DESKTOP NOTIFICATION PERMISSION REQUESTED: %s\n", QString(origin->toString()).toUtf8().constData());
+        printf("DESKTOP NOTIFICATION PERMISSION REQUESTED: %s\n", QString(context->securityOrigin()->toString()).toUtf8().constData());
 
-    QString originString = origin->toString();
+    QString originString = context->securityOrigin()->toString();
     QHash<QString, QList<RefPtr<VoidCallback> > >::iterator iter = m_pendingPermissionRequests.find(originString);
     if (iter != m_pendingPermissionRequests.end())
         iter.value().append(callback);
@@ -271,10 +272,10 @@ void NotificationPresenterClientQt::requestPermission(SecurityOrigin* origin, Pa
     }
 }
 
-NotificationPresenter::Permission NotificationPresenterClientQt::checkPermission(const KURL& url)
+NotificationPresenter::Permission NotificationPresenterClientQt::checkPermission(ScriptExecutionContext* context)
 {
     NotificationPermission permission = NotificationNotAllowed;
-    QString origin = url.string();
+    QString origin = context->url().string();
     if (checkPermissionFunction)
         checkPermissionFunction(m_receiver, origin, permission);
     switch (permission) {
@@ -287,6 +288,12 @@ NotificationPresenter::Permission NotificationPresenterClientQt::checkPermission
     }
     ASSERT_NOT_REACHED();
     return NotificationPresenter::PermissionNotAllowed;
+}
+
+void NotificationPresenterClientQt::cancelRequestsForPermission(ScriptExecutionContext*)
+{
+    // FIXME: This will be implemented for https://bugs.webkit.org/show_bug.cgi?id=41413
+    // to avoid adding and removing new private API
 }
 
 void NotificationPresenterClientQt::allowNotificationForOrigin(const QString& origin)

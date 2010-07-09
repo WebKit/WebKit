@@ -49,14 +49,20 @@ int NotificationCenter::checkPermission()
 {
     if (!presenter())
         return NotificationPresenter::PermissionDenied;
-    return m_notificationPresenter->checkPermission(m_scriptExecutionContext->url());
+    return m_notificationPresenter->checkPermission(m_scriptExecutionContext);
 }
 
 void NotificationCenter::requestPermission(PassRefPtr<VoidCallback> callback)
 {
     if (!presenter())
         return;
-    m_notificationPresenter->requestPermission(m_scriptExecutionContext->securityOrigin(), callback);
+    m_notificationPresenter->requestPermission(m_scriptExecutionContext, callback);
+}
+
+void NotificationCenter::disconnectFrame()
+{
+    m_notificationPresenter->cancelRequestsForPermission(m_scriptExecutionContext);
+    m_notificationPresenter = 0;
 }
 
 } // namespace WebCore

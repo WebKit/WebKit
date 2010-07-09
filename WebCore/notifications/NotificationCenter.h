@@ -77,7 +77,7 @@ namespace WebCore {
         int checkPermission();
         void requestPermission(PassRefPtr<VoidCallback> callback);
 
-        void disconnectFrame() { m_notificationPresenter = 0; }
+        void disconnectFrame();
 
     private:
         NotificationCenter(ScriptExecutionContext*, NotificationPresenter*);

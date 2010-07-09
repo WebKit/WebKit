@@ -41,7 +41,7 @@ namespace WebCore {
     class Document;
     class Notification;
     class KURL;
-    class SecurityOrigin;
+    class ScriptExecutionContext;
     class String;
 
     class NotificationPresenter {
@@ -67,12 +67,15 @@ namespace WebCore {
         virtual void notificationObjectDestroyed(Notification*) = 0;
 
         // Requests user permission to show desktop notifications from a particular
-        // origin. The callback parameter should be run when the user has
+        // script context. The callback parameter should be run when the user has
         // made a decision.
-        virtual void requestPermission(SecurityOrigin*, PassRefPtr<VoidCallback>) = 0;
+        virtual void requestPermission(ScriptExecutionContext*, PassRefPtr<VoidCallback>) = 0;
+
+        // Cancel all outstanding requests for the ScriptExecutionContext
+        virtual void cancelRequestsForPermission(ScriptExecutionContext*) = 0;
 
         // Checks the current level of permission.
-        virtual Permission checkPermission(const KURL&) = 0;
+        virtual Permission checkPermission(ScriptExecutionContext*) = 0;
     };
 
 } // namespace WebCore
