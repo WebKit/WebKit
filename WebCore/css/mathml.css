@@ -5,6 +5,7 @@ math {
     display: inline-block;
     padding: 0px;
     margin: 0px;
+    text-align: left;
     vertical-align: baseline;
     line-height: 1.0;
     padding-left: 1px;
@@ -15,10 +16,6 @@ math[display="block"] {
     display: block;
     page-break-inside: avoid;
     margin-bottom: 1em;
-}
-
-math * {
-   text-align: left;
 }
 
 math > * {

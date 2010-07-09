@@ -1,3 +1,17 @@
+2010-07-09  François Sausset  <sausset@gmail.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Set the good default behaviour for the columalign attribute on MathML mtable element
+        https://bugs.webkit.org/show_bug.cgi?id=41631
+
+        Test updated.
+
+        * mathml/presentation/tables.xhtml:
+        * platform/mac/mathml/presentation/tables-expected.checksum:
+        * platform/mac/mathml/presentation/tables-expected.png:
+        * platform/mac/mathml/presentation/tables-expected.txt:
+
 2010-07-09  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Not reviewed.
