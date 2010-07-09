@@ -299,9 +299,3 @@ fast/forms/input-appearance-speechbutton.html
 # Needs to be fixed at image decoder layer for Safari.
 fast/images/large-size-image-crash.html
 
-# Regression from http://trac.webkit.org/changeset/62876
-# That change is too narly to roll out and Aaron Boodman isn't around to
-# figure out the correct fix.  If this entry stays in this file for more
-# than two days, the first one to point it out to Adam Barth will receive
-# a free beer.
-printing/page-rule-selection.html

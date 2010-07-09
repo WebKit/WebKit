@@ -1,3 +1,13 @@
+2010-07-09  Aaron Boodman  <aa@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        Fix regression from r62876.
+        https://bugs.webkit.org/show_bug.cgi?id=41928
+
+        * platform/mac/Skipped:
+        * printing/page-rule-selection.html:
+
 2010-07-09  Nico Weber  <thakis@chromium.org>
 
         Reviewed by Simon Fraser.
