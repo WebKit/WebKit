@@ -25,6 +25,7 @@
 
 #include "NetscapeBrowserFuncs.h"
 
+#include "NetscapePlugin.h"
 #include "NotImplemented.h"
 
 namespace WebKit {
@@ -222,10 +223,31 @@ NPError NPN_GetValue(NPP instance, NPNVariable variable, void *value)
     return NPERR_NO_ERROR;
 }
 
-NPError NPN_SetValue(NPP instance, NPPVariable variable, void *value)
+NPError NPN_SetValue(NPP npp, NPPVariable variable, void *value)
 {
-    notImplemented();
-    return NPERR_GENERIC_ERROR;
+    switch (variable) {
+#if PLATFORM(MAC)
+        case NPPVpluginDrawingModel: {
+            RefPtr<NetscapePlugin> plugin = NetscapePlugin::fromNPP(npp);
+            
+            NPDrawingModel drawingModel = static_cast<NPDrawingModel>(reinterpret_cast<uintptr_t>(value));
+            return plugin->setDrawingModel(drawingModel);
+        }
+
+        case NPPVpluginEventModel: {
+            RefPtr<NetscapePlugin> plugin = NetscapePlugin::fromNPP(npp);
+            
+            NPEventModel eventModel = static_cast<NPEventModel>(reinterpret_cast<uintptr_t>(value));
+            return plugin->setEventModel(eventModel);
+        }
+#endif
+
+        default:
+            notImplemented();
+            return NPERR_GENERIC_ERROR;
+    }
+    
+    return NPERR_NO_ERROR;
 }
 
 void NPN_InvalidateRect(NPP instance, NPRect *invalidRect)

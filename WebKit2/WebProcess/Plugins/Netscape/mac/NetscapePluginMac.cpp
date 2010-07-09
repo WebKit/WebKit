@@ -31,6 +31,49 @@ using namespace WebCore;
 
 namespace WebKit {
 
+NPError NetscapePlugin::setDrawingModel(NPDrawingModel drawingModel)
+{
+    // The drawing model can only be set from NPP_New.
+    if (!m_inNPPNew)
+        return NPERR_GENERIC_ERROR;
+
+    switch (drawingModel) {
+#ifndef NP_NO_QUICKDRAW
+        case NPDrawingModelQuickDraw:
+#endif
+        case NPDrawingModelCoreGraphics:
+        case NPDrawingModelCoreAnimation:
+            m_drawingModel = drawingModel;
+            break;
+
+        default:
+            return NPERR_GENERIC_ERROR;
+    }
+
+    return NPERR_NO_ERROR;
+}
+    
+NPError NetscapePlugin::setEventModel(NPEventModel eventModel)
+{
+    // The event model can only be set from NPP_New.
+    if (!m_inNPPNew)
+        return NPERR_GENERIC_ERROR;
+
+    switch (eventModel) {
+#ifndef NP_NO_CARBON
+        case NPEventModelCarbon:
+#endif
+        case NPEventModelCocoa:
+            m_eventModel = eventModel;
+            break;
+
+        default:
+            return NPERR_GENERIC_ERROR;
+    }
+    
+    return NPERR_NO_ERROR;
+}
+
 bool NetscapePlugin::platformPostInitialize()
 {
     if (m_drawingModel == static_cast<NPDrawingModel>(-1)) {
@@ -71,18 +114,35 @@ bool NetscapePlugin::platformPostInitialize()
     return true;
 }
 
-void NetscapePlugin::platformPaint(GraphicsContext* context, const IntRect& dirtyRect)
+static inline NPCocoaEvent initializeEvent(NPCocoaEventType type)
 {
     NPCocoaEvent event;
-    event.type = NPCocoaEventDrawRect;
+    
+    event.type = type;
     event.version = 0;
-    event.data.draw.context = context->platformContext();
-    event.data.draw.x = dirtyRect.x() - m_frameRect.x();
-    event.data.draw.y = dirtyRect.y() - m_frameRect.y();
-    event.data.draw.width = dirtyRect.width();
-    event.data.draw.height = dirtyRect.height();
+    
+    return event;
+}
 
-    m_pluginModule->pluginFuncs().event(&m_npp, &event);
+void NetscapePlugin::platformPaint(GraphicsContext* context, const IntRect& dirtyRect)
+{
+    switch (m_eventModel) {
+        case NPEventModelCocoa: {
+            NPCocoaEvent event = initializeEvent(NPCocoaEventDrawRect);
+
+            event.data.draw.context = context->platformContext();
+            event.data.draw.x = dirtyRect.x() - m_frameRect.x();
+            event.data.draw.y = dirtyRect.y() - m_frameRect.y();
+            event.data.draw.width = dirtyRect.width();
+            event.data.draw.height = dirtyRect.height();
+            
+            m_pluginModule->pluginFuncs().event(&m_npp, &event);
+            break;
+        }
+        
+        default:
+            ASSERT_NOT_REACHED();
+    }
 }
 
 } // namespace WebKit
