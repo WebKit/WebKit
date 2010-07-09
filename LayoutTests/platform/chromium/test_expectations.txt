@@ -2935,7 +2935,7 @@ BUG48239 : fast/js/function-apply-many-args.html = TEXT
 BUG48452 LINUX MAC : svg/custom/use-font-face-crash.svg = IMAGE+TEXT IMAGE
 
 // Times out after http://trac.webkit.org/changeset/62739/
-BUG48550 : plugins/return-negative-one-from-write.html = TIMEOUT
+BUG48550 SKIP : plugins/return-negative-one-from-write.html = TIMEOUT
 
 // Marking all the ietestcenter tests as failed for now. Added in r62810.
 // Most probably only need a rebaseline, but rebaselining tool is broken
