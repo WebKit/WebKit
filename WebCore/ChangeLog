@@ -1,3 +1,26 @@
+2010-07-09  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Coalesce text nodes when foster parenting
+        https://bugs.webkit.org/show_bug.cgi?id=41921
+
+        Introduces the notion of an AttachmentSite to the overall
+        HTMLConstructionSite.  Maybe we should rename HTMLConstructionSite to
+        HTMLConstructionArea since we construct things all over the tree?  :)
+
+        There's something wrong in the internal layering in this class, but I
+        can't quite see what it is.  I added a FIXME for the some of the
+        symptoms.
+
+        * html/HTMLConstructionSite.cpp:
+        (WebCore::HTMLConstructionSite::attach):
+        (WebCore::HTMLConstructionSite::attachAtSite):
+        (WebCore::HTMLConstructionSite::insertTextNode):
+        (WebCore::HTMLConstructionSite::findFosterSite):
+        (WebCore::HTMLConstructionSite::fosterParent):
+        * html/HTMLConstructionSite.h:
+
 2010-07-08  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Dirk Schulze.

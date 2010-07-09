@@ -5,11 +5,9 @@ CONSOLE MESSAGE: line 2: FOO<span>BAR</span>BAZ
 Content-Type: text/plain
 resources/tests1.dat:
 30
-32
 52
 53
 78
-79
 80
 103
 
@@ -53,44 +51,6 @@ Expected:
 |       "C"
 |     <a>
 |       "Y"
-
-Test 32 of 113 in resources/tests1.dat failed. Input:
-<!-----><font><div>hello<table>excite!<b>me!<th><i>please!</tr><!--X-->
-Got:
-| <!-- - -->
-| <html>
-|   <head>
-|   <body>
-|     <font>
-|       <div>
-|         "hello"
-|         "excite!"
-|         <b>
-|           "me!"
-|         <table>
-|           <tbody>
-|             <tr>
-|               <th>
-|                 <i>
-|                   "please!"
-|             <!-- X -->
-Expected:
-| <!-- - -->
-| <html>
-|   <head>
-|   <body>
-|     <font>
-|       <div>
-|         "helloexcite!"
-|         <b>
-|           "me!"
-|         <table>
-|           <tbody>
-|             <tr>
-|               <th>
-|                 <i>
-|                   "please!"
-|             <!-- X -->
 
 Test 52 of 113 in resources/tests1.dat failed. Input:
 <p id=a><b><p id=b></b>TEST
@@ -177,40 +137,6 @@ Expected:
 |             <td>
 |     <a>
 |       href="foo"
-|       "aoe"
-
-Test 79 of 113 in resources/tests1.dat failed. Input:
-<a href="blah">aba<table><tr><td><a href="foo">br</td></tr>x</table>aoe
-Got:
-| <html>
-|   <head>
-|   <body>
-|     <a>
-|       href="blah"
-|       "aba"
-|       "x"
-|       <table>
-|         <tbody>
-|           <tr>
-|             <td>
-|               <a>
-|                 href="foo"
-|                 "br"
-|       "aoe"
-Expected:
-| <html>
-|   <head>
-|   <body>
-|     <a>
-|       href="blah"
-|       "abax"
-|       <table>
-|         <tbody>
-|           <tr>
-|             <td>
-|               <a>
-|                 href="foo"
-|                 "br"
 |       "aoe"
 
 Test 80 of 113 in resources/tests1.dat failed. Input:
@@ -455,8 +381,6 @@ Expected:
 resources/tests7.dat:
 24
 27
-28
-29
 30
 
 Test 24 of 30 in resources/tests7.dat failed. Input:
@@ -497,49 +421,6 @@ Expected:
 |     <b>
 |       "ccc"
 
-Test 28 of 30 in resources/tests7.dat failed. Input:
-A<table><tr> B</tr> B</table>
-Got:
-| <html>
-|   <head>
-|   <body>
-|     "A"
-|     " B"
-|     " B"
-|     <table>
-|       <tbody>
-|         <tr>
-Expected:
-| <html>
-|   <head>
-|   <body>
-|     "A B B"
-|     <table>
-|       <tbody>
-|         <tr>
-
-Test 29 of 30 in resources/tests7.dat failed. Input:
-A<table><tr> B</tr> </em>C</table>
-Got:
-| <html>
-|   <head>
-|   <body>
-|     "A"
-|     " B"
-|     <table>
-|       <tbody>
-|         <tr>
-|         " C"
-Expected:
-| <html>
-|   <head>
-|   <body>
-|     "A BC"
-|     <table>
-|       <tbody>
-|         <tr>
-|         " "
-
 Test 30 of 30 in resources/tests7.dat failed. Input:
 <select><keygen>
 Got:
@@ -560,24 +441,8 @@ Expected:
 |   <body>
 |     <select>
 |     <keygen>
-resources/tests8.dat:
-6
+resources/tests8.dat: PASS
 
-Test 6 of 9 in resources/tests8.dat failed. Input:
-x<table>x
-Got:
-| <html>
-|   <head>
-|   <body>
-|     "x"
-|     "x"
-|     <table>
-Expected:
-| <html>
-|   <head>
-|   <body>
-|     "xx"
-|     <table>
 resources/tests9.dat:
 1
 2

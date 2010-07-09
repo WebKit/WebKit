@@ -1,3 +1,14 @@
+2010-07-09  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Coalesce text nodes when foster parenting
+        https://bugs.webkit.org/show_bug.cgi?id=41921
+
+        Yay test progression.
+
+        * html5lib/runner-expected-html5.txt:
+
 2010-07-08  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Dirk Schulze.

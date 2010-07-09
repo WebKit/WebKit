@@ -108,8 +108,16 @@ public:
 private:
     friend class RedirectToFosterParentGuard;
 
+    struct AttachmentSite {
+        Node* parent;
+        Node* nextChild;
+    };
+
     template<typename ChildType>
-    PassRefPtr<ChildType> attach(Node* parent, PassRefPtr<ChildType> prpChild);
+    PassRefPtr<ChildType> attach(Node* parent, PassRefPtr<ChildType> child);
+
+    void attachAtSite(const AttachmentSite&, PassRefPtr<Node> child);
+    void findFosterSite(AttachmentSite&);
 
     PassRefPtr<Element> createElement(AtomicHTMLToken&, const AtomicString& namespaceURI);
 
