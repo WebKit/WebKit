@@ -993,10 +993,9 @@ doneIdentifierOrKeyword: {
 
 returnToken: {
     int lineNumber = m_lineNumber;
-    llocp->first_line = lineNumber;
-    llocp->last_line = lineNumber;
-    llocp->first_column = startOffset;
-    llocp->last_column = currentOffset();
+    llocp->line = lineNumber;
+    llocp->startOffset = startOffset;
+    llocp->endOffset = currentOffset();
     m_lastToken = token;
     return token;
 }

@@ -1,3 +1,23 @@
+2010-07-09  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        Remove a couple of excess writes from the lexer
+        https://bugs.webkit.org/show_bug.cgi?id=41981
+
+        Remove a couple of fields from JSTokenInfo, and rename the remaining ones
+        to something more accurate
+
+        * parser/JSParser.cpp:
+        (JSC::JSParser::next):
+        (JSC::JSParser::tokenStart):
+        (JSC::JSParser::tokenLine):
+        (JSC::JSParser::tokenEnd):
+        * parser/JSParser.h:
+        (JSC::JSTokenInfo::JSTokenInfo):
+        * parser/Lexer.cpp:
+        (JSC::Lexer::lex):
+
 2010-07-08  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Sam Weinig.

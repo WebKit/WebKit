@@ -105,11 +105,10 @@ union JSTokenData {
 };
 
 struct JSTokenInfo {
-    JSTokenInfo() : last_line(0) {}
-    int first_line;
-    int last_line;
-    int first_column;
-    int last_column;
+    JSTokenInfo() : line(0) {}
+    int line;
+    int startOffset;
+    int endOffset;
 };
 
 struct JSToken {

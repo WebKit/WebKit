@@ -85,8 +85,8 @@ private:
     const JSToken& token() { return m_token; }
     void next()
     {
-        m_lastLine = token().m_info.last_line;
-        m_lastTokenEnd = token().m_info.last_column;
+        m_lastLine = token().m_info.line;
+        m_lastTokenEnd = token().m_info.endOffset;
         m_lexer->setLastLineNumber(m_lastLine);
         m_token.m_type = m_lexer->lex(&m_token.m_data, &m_token.m_info);
         m_tokenCount++;
@@ -107,17 +107,17 @@ private:
 
     int tokenStart()
     {
-        return token().m_info.first_column;
+        return token().m_info.startOffset;
     }
 
     int tokenLine()
     {
-        return token().m_info.first_line;
+        return token().m_info.line;
     }
 
     int tokenEnd()
     {
-        return token().m_info.last_column;
+        return token().m_info.endOffset;
     }
 
     template <class TreeBuilder> TreeSourceElements parseSourceElements(TreeBuilder&);
