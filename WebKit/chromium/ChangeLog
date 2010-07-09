@@ -1,3 +1,38 @@
+2010-07-08  Jay Civelli  <jcivelli@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [chromium] Exposing the EditorClient text field related methods
+        to the WebViewClient. Also adding some more accessors methods
+        to the WebNode and WebInputElement.
+        This is needed to move the password autocomplete out of the
+        Chromium WebKit API to the Chromium code.
+        https://bugs.webkit.org/show_bug.cgi?id=41286
+
+        * public/WebInputElement.h:
+        * public/WebNode.h:
+        (WebKit::operator!=):
+        (WebKit::operator<):
+        * public/WebViewClient.h:
+        (WebKit::WebViewClient::textFieldDidBeginEditing):
+        (WebKit::WebViewClient::textFieldDidEndEditing):
+        (WebKit::WebViewClient::textDidChangeInTextField):
+        (WebKit::WebViewClient::textFieldHandlingKeyDown):
+        (WebKit::WebViewClient::didAcceptAutocompleteSuggestion):
+        * src/EditorClientImpl.cpp:
+        (WebKit::EditorClientImpl::textFieldDidBeginEditing):
+        (WebKit::EditorClientImpl::textFieldDidEndEditing):
+        (WebKit::EditorClientImpl::textDidChangeInTextField):
+        (WebKit::EditorClientImpl::onAutocompleteSuggestionAccepted):
+        (WebKit::EditorClientImpl::doTextFieldCommandFromEvent):
+        * src/WebInputElement.cpp:
+        (WebKit::WebInputElement::readOnly):
+        (WebKit::WebInputElement::setSelectionRange):
+        (WebKit::WebInputElement::selectionStart):
+        (WebKit::WebInputElement::selectionEnd):
+        * src/WebNode.cpp:
+        (WebKit::WebNode::lessThan):
+
 2010-07-08  Aaron Boodman  <aa@chromium.org>
 
         Reviewed by Timothy Hatcher.

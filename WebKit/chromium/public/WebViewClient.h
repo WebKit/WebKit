@@ -45,10 +45,13 @@ namespace WebKit {
 
 class WebAccessibilityObject;
 class WebDragData;
+class WebElement;
 class WebFileChooserCompletion;
 class WebFrame;
 class WebGeolocationService;
 class WebImage;
+class WebInputElement;
+class WebKeyboardEvent;
 class WebNode;
 class WebNotificationPresenter;
 class WebRange;
@@ -131,6 +134,12 @@ public:
     virtual void didChangeContents() { }
     virtual void didExecuteCommand(const WebString& commandName) { }
     virtual void didEndEditing() { }
+
+    // These methods are called when the users edits a text-field.
+    virtual void textFieldDidBeginEditing(const WebInputElement&) { }
+    virtual void textFieldDidEndEditing(const WebInputElement&) { }
+    virtual void textFieldDidChange(const WebInputElement&) { }
+    virtual void textFieldDidReceiveKeyDown(const WebInputElement&, const WebKeyboardEvent&) { }
 
     // This method is called in response to WebView's handleInputEvent()
     // when the default action for the current keyboard event is not
@@ -311,6 +320,11 @@ public:
     // AutoFill suggestions dropdown.  This happens when a user uses the arrow
     // keys to navigate outside the range of possible selections.
     virtual void didClearAutoFillSelection(const WebNode&) { }
+
+    // Informs the browser that the user has selected an autocomplete (password
+    // or field) suggestion from the drop-down.  The input element text has
+    // already been set to the selected suggestion.
+    virtual void didAcceptAutocompleteSuggestion(const WebInputElement&) { }
 
     // Geolocation ---------------------------------------------------------
 
