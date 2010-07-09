@@ -2624,7 +2624,7 @@ BUG36415 : fast/events/touch/touch-target.html = TEXT
 
 // Need to implement NPP_HandleEvent in the layout_test_plugin
 BUG38353 MAC LINUX : plugins/keyboard-events.html = TEXT
-BUG38353 MAC LINUX : http/tests/plugins/plugin-document-has-focus.html = TIMEOUT
+BUG38353 MAC LINUX : http/tests/plugins/plugin-document-has-focus.html = TEXT TIMEOUT
 
 BUG38392 : plugins/resize-from-plugin.html = TEXT
 
@@ -3023,6 +3023,16 @@ BUGAWONG WIN LINUX MAC : ietestcenter/Javascript/15.5.4.20-4-10.html = TEXT
 BUGAWONG WIN LINUX MAC : ietestcenter/Javascript/15.5.4.20-4-18.html = TEXT
 BUGAWONG WIN LINUX MAC : ietestcenter/Javascript/15.5.4.20-4-34.html = TEXT
 BUGAWONG WIN LINUX MAC : ietestcenter/Javascript/15.9.5.44-0-2.html = TEXT
+BUGAWONG WIN LINUX MAC : ietestcenter/Javascript/15.10.6.html = TEXT
+BUGAWONG WIN LINUX MAC : ietestcenter/Javascript/15.10.7.1-1.html = TEXT
+BUGAWONG WIN LINUX MAC : ietestcenter/Javascript/15.10.7.2-1.html = TEXT
+BUGAWONG WIN LINUX MAC : ietestcenter/Javascript/15.10.7.3-1.html = TEXT
+BUGAWONG WIN LINUX MAC : ietestcenter/Javascript/15.10.7.4-1.html = TEXT
+BUGAWONG WIN LINUX MAC : ietestcenter/Javascript/15.10.7.5-1.html = TEXT
+BUGAWONG WIN LINUX MAC : ietestcenter/Javascript/15.2.3.3-4-212.html = TEXT
+BUGAWONG WIN LINUX MAC : ietestcenter/Javascript/15.2.3.3-4-213.html = TEXT
+BUGAWONG WIN LINUX MAC : ietestcenter/Javascript/15.2.3.3-4-214.html = TEXT
+BUGAWONG WIN LINUX MAC : ietestcenter/Javascript/15.2.3.3-4-215.html = TEXT
 BUGAWONG WIN LINUX MAC SKIP : ietestcenter/Javascript/15.4.4.15-3-14.html = TIMEOUT
 BUGAWONG WIN LINUX MAC SKIP : ietestcenter/Javascript/15.4.4.15-3-29.html = TIMEOUT
 BUGAWONG WIN LINUX MAC SKIP : ietestcenter/Javascript/15.4.4.15-3-8.html = TIMEOUT
@@ -3032,3 +3042,6 @@ BUGAWONG MAC : media/video-volume-slider.html = IMAGE+TEXT
 
 // Regression from r62849.  Probably just needs rebaseline.
 BUGAWONG WIN LINUX MAC : fast/js/object-literal-syntax.html = TEXT
+
+// Likely from r62862. Probably just needs rebaseline.
+BUGAWONG WIN LINUX MAC : fast/js/no-semi-insertion-at-end-of-script.html = TEXT
