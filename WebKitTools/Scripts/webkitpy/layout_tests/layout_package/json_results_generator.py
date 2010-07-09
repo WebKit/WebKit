@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # Copyright (C) 2010 Google Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -38,16 +37,27 @@ import time
 import urllib2
 import xml.dom.minidom
 
-from webkitpy.common.checkout import scm
-from webkitpy.common.system.executive import ScriptError
-from webkitpy.layout_tests.layout_package import test_expectations
 import webkitpy.thirdparty.simplejson as simplejson
 
-_log = logging.getLogger("webkitpy.layout_tests.layout_package."
-                         "json_results_generator")
+# A JSON results generator for generic tests.
+# FIXME: move this code out of the layout_package directory.
+
+_log = logging.getLogger("webkitpy.layout_tests.layout_package.json_results_generator")
 
 
-class JSONResultsGenerator(object):
+class TestResult(object):
+    """A simple class that represents a single test result."""
+    def __init__(self, name, failed=False, skipped=False, elapsed_time=0):
+        self.name = name
+        self.failed = failed
+        self.skipped = skipped
+        self.time = elapsed_time
+
+    def fixable(self):
+        return self.failed or self.skipped
+
+
+class JSONResultsGeneratorBase(object):
     """A JSON results generator for generic tests."""
 
     MAX_NUMBER_OF_BUILD_RESULTS_TO_LOG = 750
@@ -57,6 +67,7 @@ class JSONResultsGenerator(object):
     JSON_SUFFIX = ");"
     PASS_RESULT = "P"
     SKIP_RESULT = "X"
+    FAIL_RESULT = "F"
     NO_DATA_RESULT = "N"
     VERSION = 3
     VERSION_KEY = "version"
@@ -70,22 +81,11 @@ class JSONResultsGenerator(object):
     FIXABLE = "fixableCounts"
     ALL_FIXABLE_COUNT = "allFixableCount"
 
-    # Note that we omit test_expectations.FAIL from this list because
-    # it should never show up (it's a legacy input expectation, never
-    # an output expectation).
-    FAILURE_TO_CHAR = {test_expectations.CRASH: "C",
-                       test_expectations.TIMEOUT: "T",
-                       test_expectations.IMAGE: "I",
-                       test_expectations.TEXT: "F",
-                       test_expectations.MISSING: "O",
-                       test_expectations.IMAGE_PLUS_TEXT: "Z"}
-    FAILURE_CHARS = FAILURE_TO_CHAR.values()
-
     RESULTS_FILENAME = "results.json"
 
-    def __init__(self, port, builder_name, build_name, build_number,
+    def __init__(self, builder_name, build_name, build_number,
         results_file_base_path, builder_base_url,
-        test_timings, failures, passed_tests, skipped_tests, all_tests):
+        test_results_map, svn_repositories=None):
         """Modifies the results.json file. Grabs it off the archive directory
         if it is not found locally.
 
@@ -96,12 +96,11 @@ class JSONResultsGenerator(object):
           results_file_base_path: Absolute path to the directory containing the
               results json file.
           builder_base_url: the URL where we have the archived test results.
-          test_timings: Map of test name to a test_run-time.
-          failures: Map of test name to a failure type (of test_expectations).
-          passed_tests: A set containing all the passed tests.
-          skipped_tests: A set containing all the skipped tests.
-          all_tests: List of all the tests that were run.  This should not
-              include skipped tests.
+              If this is None no archived results will be retrieved.
+          test_results_map: A dictionary that maps test_name to TestResult.
+          svn_repositories: A (json_field_name, svn_path) pair for SVN
+              repositories that tests rely on.  The SVN revision will be
+              included in the JSON with the given json_field_name.
         """
         self._builder_name = builder_name
         self._build_name = build_name
@@ -109,31 +108,106 @@ class JSONResultsGenerator(object):
         self._builder_base_url = builder_base_url
         self._results_file_path = os.path.join(results_file_base_path,
             self.RESULTS_FILENAME)
-        self._test_timings = test_timings
-        self._failures = failures
-        self._passed_tests = passed_tests
-        self._skipped_tests = skipped_tests
-        self._all_tests = all_tests
-        self._svn_repositories = port.test_repository_paths()
 
-        self._generate_json_output()
+        self._test_results_map = test_results_map
+        self._test_results = test_results_map.values()
 
-    def _generate_json_output(self):
+        self._svn_repositories = svn_repositories
+        if not self._svn_repositories:
+            self._svn_repositories = {}
+
+        self._json = None
+
+    def generate_json_output(self):
         """Generates the JSON output file."""
-        json = self._get_json()
-        if json:
+        if not self._json:
+            self._json = self.get_json()
+        if self._json:
+            # Specify separators in order to get compact encoding.
+            json_data = simplejson.dumps(self._json, separators=(',', ':'))
+            json_string = self.JSON_PREFIX + json_data + self.JSON_SUFFIX
+
             results_file = codecs.open(self._results_file_path, "w", "utf-8")
-            results_file.write(json)
+            results_file.write(json_string)
             results_file.close()
 
+    def get_json(self):
+        """Gets the results for the results.json file."""
+        if self._json:
+            return self._json
+
+        results_json, error = self._get_archived_json_results()
+        if error:
+            # If there was an error don't write a results.json
+            # file at all as it would lose all the information on the bot.
+            _log.error("Archive directory is inaccessible. Not modifying "
+                       "or clobbering the results.json file: " + str(error))
+            return None
+
+        builder_name = self._builder_name
+        if results_json and builder_name not in results_json:
+            _log.debug("Builder name (%s) is not in the results.json file."
+                       % builder_name)
+
+        self._convert_json_to_current_version(results_json)
+
+        if builder_name not in results_json:
+            results_json[builder_name] = (
+                self._create_results_for_builder_json())
+
+        results_for_builder = results_json[builder_name]
+
+        self._insert_generic_metadata(results_for_builder)
+
+        self._insert_failure_summaries(results_for_builder)
+
+        # Update the all failing tests with result type and time.
+        tests = results_for_builder[self.TESTS]
+        all_failing_tests = self._get_failed_test_names()
+        all_failing_tests.update(tests.iterkeys())
+        for test in all_failing_tests:
+            self._insert_test_time_and_result(test, tests)
+
+        self._json = results_json
+        return self._json
+
+    def _get_test_timing(self, test_name):
+        """Returns test timing data (elapsed time) in second
+        for the given test_name."""
+        if test_name in self._test_results_map:
+            # Floor for now to get time in seconds.
+            return int(self._test_results_map[test_name].time)
+        return 0
+
+    def _get_failed_test_names(self):
+        """Returns a set of failed test names."""
+        return set([r.name for r in self._test_results if r.failed])
+
+    def _get_result_type_char(self, test_name):
+        """Returns a single char (e.g. SKIP_RESULT, FAIL_RESULT,
+        PASS_RESULT, NO_DATA_RESULT, etc) that indicates the test result
+        for the given test_name.
+        """
+        if test_name not in self._test_results_map:
+            return JSONResultsGenerator.NO_DATA_RESULT
+
+        test_result = self._test_results_map[test_name]
+        if test_result.skipped:
+            return JSONResultsGenerator.SKIP_RESULT
+        if test_result.failed:
+            return JSONResultsGenerator.FAIL_RESULT
+
+        return JSONResultsGenerator.PASS_RESULT
+
     # FIXME: Callers should use scm.py instead.
+    # FIXME: Identify and fix the run-time errors that were observed on Windows
+    # chromium buildbot when we had updated this code to use scm.py once before.
     def _get_svn_revision(self, in_directory):
         """Returns the svn revision for the given directory.
 
         Args:
           in_directory: The directory where svn is to be run.
         """
-
         if os.path.exists(os.path.join(in_directory, '.svn')):
             # Note: Not thread safe: http://bugs.python.org/issue2320
             output = subprocess.Popen(["svn", "info", "--xml"],
@@ -196,76 +270,34 @@ class JSONResultsGenerator(object):
 
         return results_json, error
 
-    def _get_json(self):
-        """Gets the results for the results.json file."""
-        results_json, error = self._get_archived_json_results()
-        if error:
-            # If there was an error don't write a results.json
-            # file at all as it would lose all the information on the bot.
-            _log.error("Archive directory is inaccessible. Not modifying "
-                       "or clobbering the results.json file: " + str(error))
-            return None
-
-        builder_name = self._builder_name
-        if results_json and builder_name not in results_json:
-            _log.debug("Builder name (%s) is not in the results.json file."
-                       % builder_name)
-
-        self._convert_json_to_current_version(results_json)
-
-        if builder_name not in results_json:
-            results_json[builder_name] = (
-                self._create_results_for_builder_json())
-
-        results_for_builder = results_json[builder_name]
-
-        self._insert_generic_metadata(results_for_builder)
-
-        self._insert_failure_summaries(results_for_builder)
-
-        # Update the all failing tests with result type and time.
-        tests = results_for_builder[self.TESTS]
-        all_failing_tests = set(self._failures.iterkeys())
-        all_failing_tests.update(tests.iterkeys())
-        for test in all_failing_tests:
-            self._insert_test_time_and_result(test, tests)
-
-        # Specify separators in order to get compact encoding.
-        results_str = simplejson.dumps(results_json, separators=(',', ':'))
-        return self.JSON_PREFIX + results_str + self.JSON_SUFFIX
-
     def _insert_failure_summaries(self, results_for_builder):
         """Inserts aggregate pass/failure statistics into the JSON.
-        This method reads self._skipped_tests, self._passed_tests and
-        self._failures and inserts FIXABLE, FIXABLE_COUNT and ALL_FIXABLE_COUNT
-        entries.
+        This method reads self._test_results and generates
+        FIXABLE, FIXABLE_COUNT and ALL_FIXABLE_COUNT entries.
 
         Args:
           results_for_builder: Dictionary containing the test results for a
               single builder.
         """
-        # Insert the number of tests that failed.
+        # Insert the number of tests that failed or skipped.
+        fixable_count = len([r for r in self._test_results if r.fixable()])
         self._insert_item_into_raw_list(results_for_builder,
-            len(set(self._failures.keys()) | self._skipped_tests),
-            self.FIXABLE_COUNT)
+            fixable_count, self.FIXABLE_COUNT)
 
         # Create a pass/skip/failure summary dictionary.
         entry = {}
-        entry[self.SKIP_RESULT] = len(self._skipped_tests)
-        entry[self.PASS_RESULT] = len(self._passed_tests)
-        get = entry.get
-        for failure_type in self._failures.values():
-            failure_char = self.FAILURE_TO_CHAR[failure_type]
-            entry[failure_char] = get(failure_char, 0) + 1
+        for test_name in self._test_results_map.iterkeys():
+            result_char = self._get_result_type_char(test_name)
+            entry[result_char] = entry.get(result_char, 0) + 1
 
         # Insert the pass/skip/failure summary dictionary.
         self._insert_item_into_raw_list(results_for_builder, entry,
                                         self.FIXABLE)
 
         # Insert the number of all the tests that are supposed to pass.
+        all_test_count = len(self._test_results)
         self._insert_item_into_raw_list(results_for_builder,
-            len(self._skipped_tests | self._all_tests),
-            self.ALL_FIXABLE_COUNT)
+            all_test_count, self.ALL_FIXABLE_COUNT)
 
     def _insert_item_into_raw_list(self, results_for_builder, item, key):
         """Inserts the item into the list with the given key in the results for
@@ -331,18 +363,8 @@ class JSONResultsGenerator(object):
           tests: Dictionary containing test result entries.
         """
 
-        result = JSONResultsGenerator.PASS_RESULT
-        time = 0
-
-        if test_name not in self._all_tests:
-            result = JSONResultsGenerator.NO_DATA_RESULT
-
-        if test_name in self._failures:
-            result = self.FAILURE_TO_CHAR[self._failures[test_name]]
-
-        if test_name in self._test_timings:
-            # Floor for now to get time in seconds.
-            time = int(self._test_timings[test_name])
+        result = self._get_result_type_char(test_name)
+        time = self._get_test_timing(test_name)
 
         if test_name not in tests:
             tests[test_name] = self._create_results_and_times_json()
@@ -420,3 +442,59 @@ class JSONResultsGenerator(object):
         """Returns whether all the results are of the given type
         (e.g. all passes)."""
         return len(results) == 1 and results[0][1] == type
+
+
+# A wrapper class for JSONResultsGeneratorBase.
+# Note: There's a script outside the WebKit codebase calling this script.
+# FIXME: Please keep the interface until the other script is cleaned up.
+# (http://src.chromium.org/viewvc/chrome/trunk/src/webkit/tools/layout_tests/webkitpy/layout_tests/test_output_xml_to_json.py?view=markup)
+class JSONResultsGenerator(JSONResultsGeneratorBase):
+    # The flag is for backward compatibility.
+    output_json_in_init = True
+
+    def __init__(self, port, builder_name, build_name, build_number,
+        results_file_base_path, builder_base_url,
+        test_timings, failures, passed_tests, skipped_tests, all_tests):
+        """Generates a JSON results file.
+
+        Args
+          builder_name: the builder name (e.g. Webkit).
+          build_name: the build name (e.g. webkit-rel).
+          build_number: the build number.
+          results_file_base_path: Absolute path to the directory containing the
+              results json file.
+          builder_base_url: the URL where we have the archived test results.
+          test_timings: Map of test name to a test_run-time.
+          failures: Map of test name to a failure type (of test_expectations).
+          passed_tests: A set containing all the passed tests.
+          skipped_tests: A set containing all the skipped tests.
+          all_tests: List of all the tests that were run.  This should not
+              include skipped tests.
+        """
+
+        # Create a map of (name, TestResult).
+        test_results_map = dict()
+        get = test_results_map.get
+        for (test, time) in test_timings.iteritems():
+            test_results_map[test] = TestResult(test, elapsed_time=time)
+        for test in failures.iterkeys():
+            test_results_map[test] = test_result = get(test, TestResult(test))
+            test_result.failed = True
+        for test in skipped_tests:
+            test_results_map[test] = test_result = get(test, TestResult(test))
+            test_result.skipped = True
+        for test in passed_tests:
+            test_results_map[test] = test_result = get(test, TestResult(test))
+            test_result.failed = False
+            test_result.skipped = False
+        for test in all_tests:
+            if test not in test_results_map:
+                test_results_map[test] = TestResult(test)
+
+        super(JSONResultsGenerator, self).__init__(
+            builder_name, build_name, build_number,
+            results_file_base_path, builder_base_url, test_results_map,
+            svn_repositories=port.test_repository_paths())
+
+        if self.__class__.output_json_in_init:
+            self.generate_json_output()

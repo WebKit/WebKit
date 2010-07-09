@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # Copyright (C) 2010 Google Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -35,7 +34,8 @@ from webkitpy.layout_tests.layout_package import test_expectations
 from webkitpy.layout_tests.layout_package import test_failures
 import webkitpy.thirdparty.simplejson as simplejson
 
-class JSONLayoutResultsGenerator(json_results_generator.JSONResultsGenerator):
+
+class JSONLayoutResultsGenerator(json_results_generator.JSONResultsGeneratorBase):
     """A JSON results generator for layout tests."""
 
     LAYOUT_TESTS_PATH = "LayoutTests"
@@ -43,6 +43,16 @@ class JSONLayoutResultsGenerator(json_results_generator.JSONResultsGenerator):
     # Additional JSON fields.
     WONTFIX = "wontfixCounts"
     DEFERRED = "deferredCounts"
+
+    # Note that we omit test_expectations.FAIL from this list because
+    # it should never show up (it's a legacy input expectation, never
+    # an output expectation).
+    FAILURE_TO_CHAR = {test_expectations.CRASH: "C",
+                       test_expectations.TIMEOUT: "T",
+                       test_expectations.IMAGE: "I",
+                       test_expectations.TEXT: "F",
+                       test_expectations.MISSING: "O",
+                       test_expectations.IMAGE_PLUS_TEXT: "Z"}
 
     def __init__(self, port, builder_name, build_name, build_number,
         results_file_base_path, builder_base_url,
@@ -53,19 +63,13 @@ class JSONLayoutResultsGenerator(json_results_generator.JSONResultsGenerator):
         Args:
           result_summary: ResultsSummary object storing the summary of the test
               results.
-          (see the comment of JSONResultsGenerator.__init__ for other Args)
         """
-        self._port = port
-        self._builder_name = builder_name
-        self._build_name = build_name
-        self._build_number = build_number
-        self._builder_base_url = builder_base_url
-        self._results_file_path = os.path.join(results_file_base_path,
-            self.RESULTS_FILENAME)
-        self._expectations = expectations
+        super(JSONLayoutResultsGenerator, self).__init__(
+            builder_name, build_name, build_number, results_file_base_path,
+            builder_base_url, {}, port.test_repository_paths())
 
-        # We don't use self._skipped_tests and self._passed_tests as we
-        # override _InsertFailureSummaries.
+        self._port = port
+        self._expectations = expectations
 
         # We want relative paths to LayoutTest root for JSON output.
         path_to_name = self._get_path_relative_to_layout_test_root
@@ -77,9 +81,8 @@ class JSONLayoutResultsGenerator(json_results_generator.JSONResultsGenerator):
         self._test_timings = dict(
             (path_to_name(test_tuple.filename), test_tuple.test_run_time)
             for test_tuple in test_timings)
-        self._svn_repositories = port.test_repository_paths()
 
-        self._generate_json_output()
+        self.generate_json_output()
 
     def _get_path_relative_to_layout_test_root(self, test):
         """Returns the path of the test relative to the layout test root.
@@ -100,6 +103,27 @@ class JSONLayoutResultsGenerator(json_results_generator.JSONResultsGenerator):
 
         # Make sure all paths are unix-style.
         return relativePath.replace('\\', '/')
+
+    # override
+    def _get_test_timing(self, test_name):
+        if test_name in self._test_timings:
+            # Floor for now to get time in seconds.
+            return int(self._test_timings[test_name])
+        return 0
+
+    # override
+    def _get_failed_test_names(self):
+        return set(self._failures.keys())
+
+    # override
+    def _get_result_type_char(self, test_name):
+        if test_name not in self._all_tests:
+            return self.NO_DATA_RESULT
+
+        if test_name in self._failures:
+            return self.FAILURE_TO_CHAR[self._failures[test_name]]
+
+        return self.PASS_RESULT
 
     # override
     def _convert_json_to_current_version(self, results_json):
