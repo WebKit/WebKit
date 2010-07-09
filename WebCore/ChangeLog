@@ -2,6 +2,25 @@
 
         Unreviewed.  Just renaming (discussed with Adam Barth).
 
+        Rename createElement* to createHTMLElement* to better reflect
+        behavior.  This is in preparation for adding foreign content support.
+
+        * html/HTMLConstructionSite.cpp:
+        (WebCore::HTMLConstructionSite::createHTMLElementAndAttachToCurrent):
+        (WebCore::HTMLConstructionSite::insertHTMLHtmlElement):
+        (WebCore::HTMLConstructionSite::insertHTMLHeadElement):
+        (WebCore::HTMLConstructionSite::insertHTMLBodyElement):
+        (WebCore::HTMLConstructionSite::insertHTMLElement):
+        (WebCore::HTMLConstructionSite::insertSelfClosingHTMLElement):
+        (WebCore::HTMLConstructionSite::createHTMLElement):
+        * html/HTMLConstructionSite.h:
+        * html/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::callTheAdoptionAgency):
+
+2010-07-09  Eric Seidel  <eric@webkit.org>
+
+        Unreviewed.  Just renaming (discussed with Adam Barth).
+
         Rename insertElement to insertHTMLElement and
         insertSelfClosingElement to insertSelfClosingHTMLElement
         to better reflect what they actually do.  This is in preparation

@@ -74,7 +74,7 @@ public:
     void insertHTMLHtmlStartTagInBody(AtomicHTMLToken&);
     void insertHTMLBodyStartTagInBody(AtomicHTMLToken&);
 
-    PassRefPtr<Element> createElement(AtomicHTMLToken&);
+    PassRefPtr<Element> createHTMLElement(AtomicHTMLToken&);
 
     void fosterParent(Node*);
 
@@ -122,7 +122,7 @@ private:
     template<typename ChildType>
     PassRefPtr<ChildType> attach(Node* parent, PassRefPtr<ChildType> prpChild);
 
-    PassRefPtr<Element> createElementAndAttachToCurrent(AtomicHTMLToken&);
+    PassRefPtr<Element> createHTMLElementAndAttachToCurrent(AtomicHTMLToken&);
     void mergeAttributesFromTokenIntoElement(AtomicHTMLToken&, Element*);
 
     Document* m_document;
