@@ -1,3 +1,26 @@
+2010-07-09  Xiaomei Ji  <xji@chromium.org>
+
+        Reviewed by David Levin.
+
+        Fix characters with unicode-bidi-mirror property are not correctly
+        mirrored in Linux.
+        https://bugs.webkit.org/show_bug.cgi?id=41305
+
+        Since harfbuzz does not do mirroring, chromium should iterate each
+        character in the string and mirror it if needed before passing the
+        string to harfbuzz for shaping.
+
+        * fast/text/international/bidi-mirror-he-ar.html: Added.
+        * platform/chromium-linux/fast/text/international/bidi-neutral-run-expected.checksum:
+        * platform/chromium-linux/fast/text/international/bidi-neutral-run-expected.png:
+        * platform/mac-snowleopard/platform/mac/fast/text: Added.
+        * platform/mac-snowleopard/platform/mac/fast/text/international: Added.
+        * platform/mac-snowleopard/platform/mac/fast/text/international/bidi-mirror-he-ar-expected.txt: Added.
+        * platform/mac-tiger/fast/text/international/bidi-mirror-he-ar-expected.txt: Added.
+        * platform/mac/fast/text/international/bidi-mirror-he-ar-expected.checksum: Added.
+        * platform/mac/fast/text/international/bidi-mirror-he-ar-expected.png: Added.
+        * platform/mac/fast/text/international/bidi-mirror-he-ar-expected.txt: Added.
+
 2010-07-09  Kenneth Russell  <kbr@google.com>
 
         Reviewed by Dimitri Glazkov.
