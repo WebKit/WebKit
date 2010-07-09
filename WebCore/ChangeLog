@@ -2,6 +2,25 @@
 
         Reviewed by Simon Hausmann.
 
+        [Qt] for debugging purposes nice I'm contributing back my FPS
+        counter in the AnimationQtBase
+        https://bugs.webkit.org/show_bug.cgi?id=40381
+
+        Simply start a timer and count frames in the AnimationQtBase and
+        spit out the FPS count at the end of a single animation.
+
+        No new tests: this is a simple debugging aid.
+
+        * platform/graphics/qt/GraphicsLayerQt.cpp:
+        (WebCore::AnimationQt::updateState):
+        (WebCore::AnimationQt::updateCurrentTime):
+        (WebCore::TransformAnimationQt::updateState):
+        (WebCore::OpacityAnimationQt::updateState):
+
+2010-07-08  Sam Magnuson  <smagnuson@netflix.com>
+
+        Reviewed by Simon Hausmann.
+
         [Qt] instance objects created for QObjects are somtimes GC'd
         https://bugs.webkit.org/show_bug.cgi?id=40352
 
