@@ -1513,6 +1513,119 @@ void HTMLTreeBuilder::resetInsertionModeAppropriately()
     }
 }
 
+void HTMLTreeBuilder::processEndTagForInTableBody(AtomicHTMLToken& token)
+{
+    ASSERT(token.type() == HTMLToken::EndTag);
+    if (isTableBodyContextTag(token.name())) {
+        if (!m_tree.openElements()->inTableScope(token.name())) {
+            parseError(token);
+            return;
+        }
+        m_tree.openElements()->popUntilTableBodyScopeMarker();
+        m_tree.openElements()->pop();
+        m_insertionMode = InTableMode;
+        return;
+    }
+    if (token.name() == tableTag) {
+        // FIXME: This is slow.
+        if (!m_tree.openElements()->inTableScope(tbodyTag.localName()) && !m_tree.openElements()->inTableScope(theadTag.localName()) && !m_tree.openElements()->inTableScope(tfootTag.localName())) {
+            ASSERT(m_isParsingFragment);
+            parseError(token);
+            return;
+        }
+        m_tree.openElements()->popUntilTableBodyScopeMarker();
+        ASSERT(isTableBodyContextTag(m_tree.currentElement()->localName()));
+        processFakeEndTag(m_tree.currentElement()->tagQName());
+        processEndTag(token);
+        return;
+    }
+    if (token.name() == bodyTag
+        || isCaptionColOrColgroupTag(token.name())
+        || token.name() == htmlTag
+        || isTableCellContextTag(token.name())
+        || token.name() == trTag) {
+        parseError(token);
+        return;
+    }
+    processEndTagForInTable(token);
+}
+
+void HTMLTreeBuilder::processEndTagForInRow(AtomicHTMLToken& token)
+{
+    ASSERT(token.type() == HTMLToken::EndTag);
+    if (token.name() == trTag) {
+        processTrEndTagForInRow();
+        return;
+    }
+    if (token.name() == tableTag) {
+        if (!processTrEndTagForInRow()) {
+            ASSERT(m_isParsingFragment);
+            return;
+        }
+        ASSERT(insertionMode() == InTableBodyMode);
+        processEndTag(token);
+        return;
+    }
+    if (isTableBodyContextTag(token.name())) {
+        if (!m_tree.openElements()->inTableScope(token.name())) {
+            parseError(token);
+            return;
+        }
+        processFakeEndTag(trTag);
+        ASSERT(insertionMode() == InTableBodyMode);
+        processEndTag(token);
+        return;
+    }
+    if (token.name() == bodyTag
+        || isCaptionColOrColgroupTag(token.name())
+        || token.name() == htmlTag
+        || isTableCellContextTag(token.name())) {
+        parseError(token);
+        return;
+    }
+    processEndTagForInTable(token);
+}
+
+void HTMLTreeBuilder::processEndTagForInCell(AtomicHTMLToken& token)
+{
+    ASSERT(token.type() == HTMLToken::EndTag);
+    if (isTableCellContextTag(token.name())) {
+        if (!m_tree.openElements()->inTableScope(token.name())) {
+            parseError(token);
+            return;
+        }
+        m_tree.generateImpliedEndTags();
+        if (!m_tree.currentElement()->hasLocalName(token.name()))
+            parseError(token);
+        m_tree.openElements()->popUntilPopped(token.name());
+        m_tree.activeFormattingElements()->clearToLastMarker();
+        m_insertionMode = InRowMode;
+        ASSERT(m_tree.currentElement()->hasTagName(trTag));
+        return;
+    }
+    if (token.name() == bodyTag
+        || isCaptionColOrColgroupTag(token.name())
+        || token.name() == htmlTag) {
+        parseError(token);
+        return;
+    }
+    if (token.name() == tableTag
+        || token.name() == trTag
+        || isTableBodyContextTag(token.name())) {
+        if (!m_tree.openElements()->inTableScope(token.name())) {
+            ASSERT(m_isParsingFragment);
+            // FIXME: It is unclear what the exact ASSERT should be.
+            // http://www.w3.org/Bugs/Public/show_bug.cgi?id=10098
+            parseError(token);
+            return;
+        }
+        closeTheCell();
+        processEndTag(token);
+        return;
+    }
+    processEndTagForInBody(token);
+}
+
 void HTMLTreeBuilder::processEndTagForInBody(AtomicHTMLToken& token)
 {
     ASSERT(token.type() == HTMLToken::EndTag);
@@ -1807,110 +1920,15 @@ void HTMLTreeBuilder::processEndTag(AtomicHTMLToken& token)
         break;
     case InRowMode:
         ASSERT(insertionMode() == InRowMode);
-        if (token.name() == trTag) {
-            processTrEndTagForInRow();
-            return;
-        }
-        if (token.name() == tableTag) {
-            if (!processTrEndTagForInRow()) {
-                ASSERT(m_isParsingFragment);
-                return;
-            }
-            ASSERT(insertionMode() == InTableBodyMode);
-            processEndTag(token);
-            return;
-        }
-        if (isTableBodyContextTag(token.name())) {
-            if (!m_tree.openElements()->inTableScope(token.name())) {
-                parseError(token);
-                return;
-            }
-            processFakeEndTag(trTag);
-            ASSERT(insertionMode() == InTableBodyMode);
-            processEndTag(token);
-            return;
-        }
-        if (token.name() == bodyTag
-            || isCaptionColOrColgroupTag(token.name())
-            || token.name() == htmlTag
-            || isTableCellContextTag(token.name())) {
-            parseError(token);
-            return;
-        }
-        processEndTagForInTable(token);
+        processEndTagForInRow(token);
         break;
     case InCellMode:
         ASSERT(insertionMode() == InCellMode);
-        if (isTableCellContextTag(token.name())) {
-            if (!m_tree.openElements()->inTableScope(token.name())) {
-                parseError(token);
-                return;
-            }
-            m_tree.generateImpliedEndTags();
-            if (!m_tree.currentElement()->hasLocalName(token.name()))
-                parseError(token);
-            m_tree.openElements()->popUntilPopped(token.name());
-            m_tree.activeFormattingElements()->clearToLastMarker();
-            m_insertionMode = InRowMode;
-            ASSERT(m_tree.currentElement()->hasTagName(trTag));
-            return;
-        }
-        if (token.name() == bodyTag
-            || isCaptionColOrColgroupTag(token.name())
-            || token.name() == htmlTag) {
-            parseError(token);
-            return;
-        }
-        if (token.name() == tableTag
-            || token.name() == trTag
-            || isTableBodyContextTag(token.name())) {
-            if (!m_tree.openElements()->inTableScope(token.name())) {
-                ASSERT(m_isParsingFragment);
-                // FIXME: It is unclear what the exact ASSERT should be.
-                // http://www.w3.org/Bugs/Public/show_bug.cgi?id=10098
-                parseError(token);
-                return;
-            }
-            closeTheCell();
-            processEndTag(token);
-            return;
-        }
-        processEndTagForInBody(token);
+        processEndTagForInCell(token);
         break;
     case InTableBodyMode:
         ASSERT(insertionMode() == InTableBodyMode);
-        if (isTableBodyContextTag(token.name())) {
-            if (!m_tree.openElements()->inTableScope(token.name())) {
-                parseError(token);
-                return;
-            }
-            m_tree.openElements()->popUntilTableBodyScopeMarker();
-            m_tree.openElements()->pop();
-            m_insertionMode = InTableMode;
-            return;
-        }
-        if (token.name() == tableTag) {
-            // FIXME: This is slow.
-            if (!m_tree.openElements()->inTableScope(tbodyTag.localName()) && !m_tree.openElements()->inTableScope(theadTag.localName()) && !m_tree.openElements()->inTableScope(tfootTag.localName())) {
-                ASSERT(m_isParsingFragment);
-                parseError(token);
-                return;
-            }
-            m_tree.openElements()->popUntilTableBodyScopeMarker();
-            ASSERT(isTableBodyContextTag(m_tree.currentElement()->localName()));
-            processFakeEndTag(m_tree.currentElement()->tagQName());
-            processEndTag(token);
-            return;
-        }
-        if (token.name() == bodyTag
-            || isCaptionColOrColgroupTag(token.name())
-            || token.name() == htmlTag
-            || isTableCellContextTag(token.name())
-            || token.name() == trTag) {
-            parseError(token);
-            return;
-        }
-        processEndTagForInTable(token);
+        processEndTagForInTableBody(token);
         break;
     case AfterBodyMode:
         ASSERT(insertionMode() == AfterBodyMode);
