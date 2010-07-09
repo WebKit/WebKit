@@ -1,3 +1,19 @@
+2010-07-09  François Sausset  <sausset@gmail.com>
+
+        Reviewed by Beth Dakin.
+
+        Add test to be sure that only <mi> elements use italic fonts by default.
+        Update test with fractions to take into account the correct behaviour of mtext (regular instead of italic).
+        https://bugs.webkit.org/show_bug.cgi?id=41626
+
+        * mathml/presentation/tokenElements.xhtml: Added.
+        * platform/mac/mathml/presentation/fractions-expected.checksum:
+        * platform/mac/mathml/presentation/fractions-expected.png:
+        * platform/mac/mathml/presentation/fractions-expected.txt:
+        * platform/mac/mathml/presentation/tokenElements-expected.checksum: Added.
+        * platform/mac/mathml/presentation/tokenElements-expected.png: Added.
+        * platform/mac/mathml/presentation/tokenElements-expected.txt: Added.
+
 2010-07-09  Tony Gentilcore  <tonyg@chromium.org>
 
         Reviewed by Dimitri Glazkov.

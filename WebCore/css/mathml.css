@@ -29,7 +29,7 @@ mrow, mfenced {
     padding-right: 1px;
 }
 
-mi, mtext {
+mi{
     font-style: italic;
     padding-right: 0.1em;
 }

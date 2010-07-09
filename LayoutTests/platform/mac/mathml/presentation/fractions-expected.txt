@@ -49,16 +49,16 @@ layer at (0,0) size 800x338
       RenderBlock {p} at (0,106) size 784x40
         RenderText {#text} at (0,10) size 31x18
           text run at (0,10) width 31: "text: "
-        RenderBlock {math} at (31,0) size 129x40
-          RenderBlock {mfrac} at (1,0) size 127x40
-            RenderBlock {mfrac} at (0,0) size 127x19
+        RenderBlock {math} at (31,0) size 128x40
+          RenderBlock {mfrac} at (1,0) size 126x40
+            RenderBlock {mfrac} at (0,0) size 126x19
               RenderInline {mtext} at (0,0) size 99x16
-                RenderText {#text} at (14,3) size 99x16
-                  text run at (14,3) width 99: "number of bugs"
-            RenderBlock {mfrac} at (0,19) size 127x21
-              RenderInline {mtext} at (0,0) size 121x16
-                RenderText {#text} at (3,5) size 121x16
-                  text run at (3,5) width 121: "number of changes"
+                RenderText {#text} at (13,3) size 99x16
+                  text run at (13,3) width 99: "number of bugs"
+            RenderBlock {mfrac} at (0,19) size 126x21
+              RenderInline {mtext} at (0,0) size 120x16
+                RenderText {#text} at (3,5) size 120x16
+                  text run at (3,5) width 120: "number of changes"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {p} at (0,162) size 784x38
         RenderText {#text} at (0,7) size 173x18
