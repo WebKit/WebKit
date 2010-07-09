@@ -690,7 +690,7 @@ QString DumpRenderTreeSupportQt::pageProperty(QWebFrame* frame, const QString& p
 
 void DumpRenderTreeSupportQt::addUserStyleSheet(QWebPage* page, const QString& sourceCode)
 {
-    page->handle()->page->group().addUserStyleSheetToWorld(mainThreadNormalWorld(), sourceCode, QUrl(), 0, 0);
+    page->handle()->page->group().addUserStyleSheetToWorld(mainThreadNormalWorld(), sourceCode, QUrl(), 0, 0, WebCore::InjectInAllFrames);
 }
 
 // Provide a backward compatibility with previously exported private symbols as of QtWebKit 4.6 release

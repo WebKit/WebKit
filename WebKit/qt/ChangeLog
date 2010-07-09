@@ -1,3 +1,10 @@
+2010-07-08  Aaron Boodman  <aa@chromium.org>
+
+        Unreviewed change to fix qt build after c62876.
+
+        * WebCoreSupport/DumpRenderTreeSupportQt.cpp:
+        (DumpRenderTreeSupportQt::addUserStyleSheet):
+
 2010-07-07  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.
