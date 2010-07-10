@@ -52,7 +52,7 @@
 #include "gtk/TextCodecGtk.h"
 #endif
 #if OS(WINCE) && !PLATFORM(QT)
-#include "TextCodecWince.h"
+#include "TextCodecWinCE.h"
 #endif
 
 using namespace WTF;
@@ -231,8 +231,8 @@ static void buildBaseTextCodecMaps()
 #endif
 
 #if OS(WINCE) && !PLATFORM(QT)
-    TextCodecWince::registerBaseEncodingNames(addToTextEncodingNameMap);
-    TextCodecWince::registerBaseCodecs(addToTextCodecMap);
+    TextCodecWinCE::registerBaseEncodingNames(addToTextEncodingNameMap);
+    TextCodecWinCE::registerBaseCodecs(addToTextCodecMap);
 #endif
 }
 
@@ -259,8 +259,8 @@ static void extendTextCodecMaps()
 #endif
 
 #if OS(WINCE) && !PLATFORM(QT)
-    TextCodecWince::registerExtendedEncodingNames(addToTextEncodingNameMap);
-    TextCodecWince::registerExtendedCodecs(addToTextCodecMap);
+    TextCodecWinCE::registerExtendedEncodingNames(addToTextEncodingNameMap);
+    TextCodecWinCE::registerExtendedCodecs(addToTextCodecMap);
 #endif
 
     pruneBlacklistedCodecs();
