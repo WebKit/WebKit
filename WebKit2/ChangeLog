@@ -1,5 +1,40 @@
 2010-07-10  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Oliver Hunt.
+
+        Call Page::canStartMedia when the WKView is added to/removed from a window
+        https://bugs.webkit.org/show_bug.cgi?id=42029
+
+        * Shared/CoreIPCSupport/WebPageMessageKinds.h:
+        (WebPageMessage::):
+        Add SetIsInWindow.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView initWithFrame:pageNamespaceRef:]):
+        Call setIsInWindow.
+
+        (-[WKView _updateVisibility]):
+        Call setIsInWindow.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        Initialize m_isInWindow.
+
+        (WebKit::WebPageProxy::setIsInWindow):
+        Send WebPageMessage::SetIsInWindow.
+
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::setIsInWindow):
+        Call Page::canStartMedia.
+
+        (WebKit::WebPage::didReceiveMessage):
+        Handle the SetIsInWindow message.
+
+        * WebProcess/WebPage/WebPage.h:
+
+2010-07-10  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Dan Bernstein.
 
         Reuse initialized NetscapePluginModules, pass parameters to NPP_New

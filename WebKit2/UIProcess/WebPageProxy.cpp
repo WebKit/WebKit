@@ -67,6 +67,7 @@ WebPageProxy::WebPageProxy(WebPageNamespace* pageNamespace, uint64_t pageID)
     , m_pageNamespace(pageNamespace)
     , m_mainFrame(0)
     , m_estimatedProgress(0.0)
+    , m_isInWindow(false)
     , m_backForwardList(WebBackForwardList::create(this))
     , m_valid(true)
     , m_closed(false)
@@ -271,6 +272,17 @@ void WebPageProxy::setActive(bool active)
     process()->send(WebPageMessage::SetActive, m_pageID, CoreIPC::In(active));
 }
 
+void WebPageProxy::setIsInWindow(bool isInWindow)
+{
+    if (m_isInWindow == isInWindow)
+        return;
+    
+    m_isInWindow = isInWindow;
+    if (!isValid())
+        return;
+    process()->send(WebPageMessage::SetIsInWindow, m_pageID, CoreIPC::In(isInWindow));
+}
+    
 void WebPageProxy::mouseEvent(const WebMouseEvent& event)
 {
     if (!isValid())

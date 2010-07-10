@@ -87,6 +87,7 @@ using namespace WebCore;
     _data->_page = toWK(pageNamespaceRef)->createWebPage();
     _data->_page->setPageClient(new PageClientImpl(self));
     _data->_page->initializeWebPage(IntSize(frame.size), new ChunkedUpdateDrawingAreaProxy(self));
+    _data->_page->setIsInWindow([self window]);
 
     return self;
 }
@@ -232,6 +233,7 @@ static bool isViewVisible(NSView *view)
 
 - (void)_updateVisibility
 {
+    _data->_page->setIsInWindow([self window]);
     _data->_page->drawingArea()->setPageIsVisible(isViewVisible(self));
 }
 

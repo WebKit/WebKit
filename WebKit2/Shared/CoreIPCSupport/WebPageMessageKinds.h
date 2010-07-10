@@ -47,6 +47,7 @@ enum Kind {
     RunJavaScriptInMainFrame,
     SetActive,
     SetFocused,
+    SetIsInWindow,
     StopLoading,
     TryClose,
     WheelEvent
