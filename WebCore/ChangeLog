@@ -1,3 +1,50 @@
+2010-07-09  Leon Clarke  <leonclarke@google.com>
+
+        Reviewed by Adam Barth.
+
+        add support for link prefetching
+        https://bugs.webkit.org/show_bug.cgi?id=3652
+
+        Test: fast/dom/HTMLLinkElement/prefetch.html
+
+        * Configurations/FeatureDefines.xcconfig:
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::tokenizeRelAttribute):
+        (WebCore::HTMLLinkElement::process):
+        * html/HTMLLinkElement.h:
+        (WebCore::HTMLLinkElement::RelAttribute::RelAttribute):
+        * loader/Cache.cpp:
+        (WebCore::createResource):
+        * loader/CachedResource.cpp:
+        (WebCore::CachedResource::data):
+        (WebCore::CachedResource::didAddClient):
+        * loader/CachedResource.h:
+        (WebCore::CachedResource::):
+        (WebCore::CachedResource::error):
+        (WebCore::CachedResource::isPrefetch):
+        (WebCore::CachedResource::schedule):
+        * loader/CachedScript.cpp:
+        * loader/CachedScript.h:
+        * loader/DocLoader.cpp:
+        (WebCore::DocLoader::requestLinkPrefetch):
+        (WebCore::DocLoader::canRequest):
+        (WebCore::DocLoader::incrementRequestCount):
+        (WebCore::DocLoader::decrementRequestCount):
+        * loader/DocLoader.h:
+        * loader/loader.cpp:
+        (WebCore::cachedResourceTypeToTargetType):
+        (WebCore::Loader::determinePriority):
+        (WebCore::Loader::load):
+        (WebCore::Loader::Host::servePendingRequests):
+        (WebCore::Loader::Host::didFinishLoading):
+        (WebCore::Loader::Host::didFail):
+        (WebCore::Loader::Host::didReceiveResponse):
+        (WebCore::Loader::Host::cancelPendingRequests):
+        * loader/loader.h:
+        (WebCore::Loader::):
+        * platform/network/ResourceRequestBase.h:
+        (WebCore::ResourceRequestBase::):
+
 2010-07-09  James Robinson  <jamesr@chromium.org>
 
         Unreviewed build fix.  Add #include to pick up ExceptionCode values for config (like Qt) where it's not picked up indirectly.

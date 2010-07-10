@@ -55,7 +55,7 @@ my $prefixPath;
 my $makeArgs;
 my $startTime = time();
 
-my ($threeDCanvasSupport, $threeDRenderingSupport, $channelMessagingSupport, $clientBasedGeolocationSupport, $databaseSupport, $datagridSupport, $datalistSupport,
+my ($linkPrefetchSupport, $threeDCanvasSupport, $threeDRenderingSupport, $channelMessagingSupport, $clientBasedGeolocationSupport, $databaseSupport, $datagridSupport, $datalistSupport,
     $domStorageSupport, $eventsourceSupport, $filtersSupport, $geolocationSupport, $iconDatabaseSupport, $imageResizerSupport, $indexedDatabaseSupport, $inputSpeechSupport,
     $javaScriptDebuggerSupport, $mathmlSupport, $offlineWebApplicationSupport, $rubySupport, $systemMallocSupport, $sandboxSupport, $sharedWorkersSupport,
     $svgSupport, $svgAnimationSupport, $svgAsImageSupport, $svgDOMObjCBindingsSupport, $svgFontsSupport,
@@ -64,6 +64,9 @@ my ($threeDCanvasSupport, $threeDRenderingSupport, $channelMessagingSupport, $cl
     $fileReaderSupport, $fileWriterSupport, $directoryUploadSupport);
 
 my @features = (
+    { option => "link-prefetch", desc => "Toggle pre fetching support",
+      define => "ENABLE_LINK_PREFETCH", default => 0, value => \$linkPrefetchSupport },
+
     { option => "3d-canvas", desc => "Toggle 3D canvas support",
       define => "ENABLE_3D_CANVAS", default => (isAppleMacWebKit() && !isTiger()), value => \$threeDCanvasSupport },
 

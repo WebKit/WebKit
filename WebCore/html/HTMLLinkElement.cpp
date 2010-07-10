@@ -144,12 +144,19 @@ void HTMLLinkElement::tokenizeRelAttribute(const AtomicString& rel, RelAttribute
     relAttribute.m_isIcon = false;
     relAttribute.m_isAlternate = false;
     relAttribute.m_isDNSPrefetch = false;
+#if ENABLE(LINK_PREFETCH)
+    relAttribute.m_isLinkPrefetch = false;
+#endif
     if (equalIgnoringCase(rel, "stylesheet"))
         relAttribute.m_isStyleSheet = true;
     else if (equalIgnoringCase(rel, "icon") || equalIgnoringCase(rel, "shortcut icon"))
         relAttribute.m_isIcon = true;
     else if (equalIgnoringCase(rel, "dns-prefetch"))
         relAttribute.m_isDNSPrefetch = true;
+#if ENABLE(LINK_PREFETCH)
+    else if (equalIgnoringCase(rel, "prefetch"))
+        relAttribute.m_isLinkPrefetch = true;
+#endif
     else if (equalIgnoringCase(rel, "alternate stylesheet") || equalIgnoringCase(rel, "stylesheet alternate")) {
         relAttribute.m_isStyleSheet = true;
         relAttribute.m_isAlternate = true;
@@ -185,6 +192,11 @@ void HTMLLinkElement::process()
 
     if (m_relAttribute.m_isDNSPrefetch && m_url.isValid() && !m_url.isEmpty())
         ResourceHandle::prepareForURL(m_url);
+
+#if ENABLE(LINK_PREFETCH)
+    if (m_relAttribute.m_isLinkPrefetch && m_url.isValid())
+        document()->docLoader()->requestLinkPrefetch(m_url);
+#endif
 
     bool acceptIfTypeContainsTextCSS = document()->page() && document()->page()->settings() && document()->page()->settings()->treatsAnyTextCSSLinkAsStylesheet();
 

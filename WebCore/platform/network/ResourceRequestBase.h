@@ -63,7 +63,8 @@ namespace WebCore {
             TargetIsObject,
             TargetIsMedia,
             TargetIsWorker,
-            TargetIsSharedWorker
+            TargetIsSharedWorker,
+            TargetIsPrefetch,
         };
 
         static PassOwnPtr<ResourceRequest> adopt(PassOwnPtr<CrossThreadResourceRequestData>);

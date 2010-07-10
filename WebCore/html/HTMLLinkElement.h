@@ -31,6 +31,7 @@
 namespace WebCore {
 
 class CachedCSSStyleSheet;
+class CachedLinkPrefetch;
 class KURL;
 
 class HTMLLinkElement : public HTMLElement, public CachedResourceClient {
@@ -40,8 +41,20 @@ public:
         bool m_isIcon;
         bool m_isAlternate;
         bool m_isDNSPrefetch;
+#if ENABLE(LINK_PREFETCH)
+        bool m_isLinkPrefetch;
+#endif
 
-        RelAttribute() : m_isStyleSheet(false), m_isIcon(false), m_isAlternate(false), m_isDNSPrefetch(false) { }
+        RelAttribute()
+            : m_isStyleSheet(false)
+            , m_isIcon(false)
+            , m_isAlternate(false)
+            , m_isDNSPrefetch(false)
+#if ENABLE(LINK_PREFETCH)
+            , m_isLinkPrefetch(false)
+#endif
+            { 
+            }
     };
 
     static PassRefPtr<HTMLLinkElement> create(const QualifiedName&, Document*, bool createdByParser);

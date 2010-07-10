@@ -64,6 +64,9 @@ public:
 #if ENABLE(XBL)
         , XBL
 #endif
+#if ENABLE(LINK_PREFETCH)
+        , LinkPrefetch
+#endif
     };
 
     enum Status {
@@ -82,8 +85,8 @@ public:
 
     virtual void setEncoding(const String&) { }
     virtual String encoding() const { return String(); }
-    virtual void data(PassRefPtr<SharedBuffer> data, bool allDataReceived) = 0;
-    virtual void error() = 0;
+    virtual void data(PassRefPtr<SharedBuffer> data, bool allDataReceived);
+    virtual void error() { }
     virtual void httpStatusCodeError() { error(); } // Images keep loading in spite of HTTP errors (for legacy compat with <img>, etc.).
 
     const String &url() const { return m_url; }
@@ -103,7 +106,7 @@ public:
     PreloadResult preloadResult() const { return static_cast<PreloadResult>(m_preloadResult); }
     void setRequestedFromNetworkingLayer() { m_requestedFromNetworkingLayer = true; }
 
-    virtual void didAddClient(CachedResourceClient*) = 0;
+    virtual void didAddClient(CachedResourceClient*);
     virtual void allClientsRemoved() { }
 
     unsigned count() const { return m_clients.size(); }
@@ -122,6 +125,11 @@ public:
     void setLoading(bool b) { m_loading = b; }
 
     virtual bool isImage() const { return false; }
+#if ENABLE(LINK_PREFETCH)
+    virtual bool isPrefetch() const { return type() != LinkPrefetch; }
+#else
+    virtual bool isPrefetch() const { return false; }
+#endif
 
     unsigned accessCount() const { return m_accessCount; }
     void increaseAccessCount() { m_accessCount++; }
@@ -162,7 +170,7 @@ public:
 
     bool isExpired() const;
 
-    virtual bool schedule() const { return false; }
+    virtual bool schedule() const { return isPrefetch(); }
 
     // List of acceptable MIME types separated by ",".
     // A MIME type may contain a wildcard, e.g. "text/*".

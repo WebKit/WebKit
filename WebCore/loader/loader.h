@@ -48,8 +48,8 @@ namespace WebCore {
 
         void cancelRequests(DocLoader*);
         
-        enum Priority { Low, Medium, High };
-        void servePendingRequests(Priority minimumPriority = Low);
+        enum Priority { VeryLow, Low, Medium, High };
+        void servePendingRequests(Priority minimumPriority = VeryLow);
 
         bool isSuspendingPendingRequests() { return m_isSuspendingPendingRequests; }
         void suspendPendingRequests();
@@ -76,7 +76,7 @@ namespace WebCore {
             void addRequest(Request*, Priority);
             void nonCacheRequestInFlight();
             void nonCacheRequestComplete();
-            void servePendingRequests(Priority minimumPriority = Low);
+            void servePendingRequests(Priority minimumPriority = VeryLow);
             void cancelRequests(DocLoader*);
             bool hasRequests() const;
 

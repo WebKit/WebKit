@@ -89,7 +89,12 @@ static ResourceRequest::TargetType cachedResourceTypeToTargetType(CachedResource
         return ResourceRequest::TargetIsFontResource;
     case CachedResource::ImageResource:
         return ResourceRequest::TargetIsImage;
+#if ENABLE(LINK_PREFETCH)
+    case CachedResource::LinkPrefetch:
+        return ResourceRequest::TargetIsPrefetch;
+#endif
     }
+    ASSERT_NOT_REACHED();
     return ResourceRequest::TargetIsSubresource;
 }
 
@@ -110,6 +115,10 @@ Loader::Priority Loader::determinePriority(const CachedResource* resource) const
             return Medium;
         case CachedResource::ImageResource:
             return Low;
+#if ENABLE(LINK_PREFETCH)
+        case CachedResource::LinkPrefetch:
+            return VeryLow;
+#endif
     }
     ASSERT_NOT_REACHED();
     return Low;
@@ -139,9 +148,9 @@ void Loader::load(DocLoader* docLoader, CachedResource* resource, bool increment
     bool hadRequests = host->hasRequests();
     Priority priority = determinePriority(resource);
     host->addRequest(request, priority);
-    docLoader->incrementRequestCount();
+    docLoader->incrementRequestCount(request->cachedResource());
 
-    if (priority > Low || !url.protocolInHTTPFamily() || !hadRequests) {
+    if (priority > Low || !url.protocolInHTTPFamily() || (priority == Low && !hadRequests)) {
         // Try to request important resources immediately
         host->servePendingRequests(priority);
     } else {
@@ -370,7 +379,7 @@ void Loader::Host::servePendingRequests(RequestQueue& requestsPending, bool& ser
             printf("HOST %s COUNT %d LOADING %s\n", resourceRequest.url().host().latin1().data(), m_requestsLoading.size(), request->cachedResource()->url().latin1().data());
 #endif
         } else {            
-            docLoader->decrementRequestCount();
+            docLoader->decrementRequestCount(request->cachedResource());
             docLoader->setLoadInProgress(true);
             request->cachedResource()->error();
             docLoader->setLoadInProgress(false);
@@ -394,7 +403,7 @@ void Loader::Host::didFinishLoading(SubresourceLoader* loader)
     // the docLoader that it will delete when the document gets deleted.
     RefPtr<Document> protector(docLoader->doc());
     if (!request->isMultipart())
-        docLoader->decrementRequestCount();
+        docLoader->decrementRequestCount(request->cachedResource());
 
     CachedResource* resource = request->cachedResource();
     ASSERT(!resource->resourceToRevalidate());
@@ -442,7 +451,7 @@ void Loader::Host::didFail(SubresourceLoader* loader, bool cancelled)
     // the docLoader that it will delete when the document gets deleted.
     RefPtr<Document> protector(docLoader->doc());
     if (!request->isMultipart())
-        docLoader->decrementRequestCount();
+        docLoader->decrementRequestCount(request->cachedResource());
 
     CachedResource* resource = request->cachedResource();
     
@@ -487,7 +496,7 @@ void Loader::Host::didReceiveResponse(SubresourceLoader* loader, const ResourceR
             // 304 Not modified / Use local copy
             m_requestsLoading.remove(loader);
             loader->clearClient();
-            request->docLoader()->decrementRequestCount();
+            request->docLoader()->decrementRequestCount(request->cachedResource());
 
             // Existing resource is ok, just use it updating the expiration time.
             cache()->revalidationSucceeded(resource, response);
@@ -519,7 +528,7 @@ void Loader::Host::didReceiveResponse(SubresourceLoader* loader, const ResourceR
         request->setIsMultipart(true);
         
         // We don't count multiParts in a DocLoader's request count
-        request->docLoader()->decrementRequestCount();
+        request->docLoader()->decrementRequestCount(request->cachedResource());
 
         // If we get a multipart response, we must have a handle
         ASSERT(loader->handle());
@@ -582,7 +591,7 @@ void Loader::Host::cancelPendingRequests(RequestQueue& requestsPending, DocLoade
         if (request->docLoader() == docLoader) {
             cache()->remove(request->cachedResource());
             delete request;
-            docLoader->decrementRequestCount();
+            docLoader->decrementRequestCount(request->cachedResource());
         } else
             remaining.append(request);
     }

@@ -5705,6 +5705,9 @@ fast/forms/slider-transformed.html
 fast/forms/slider-mouse-events.html
 fast/forms/slider-zoomed.html
 
+# Link prefetch is disabled by default
+fast/dom/HTMLLinkElement/prefetch.html
+
 # LayoutTestController::pageProperty is not implemented for GTK yet.
 printing/page-rule-selection.html
 

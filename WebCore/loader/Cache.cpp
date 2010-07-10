@@ -86,6 +86,10 @@ static CachedResource* createResource(CachedResource::Type type, const KURL& url
     case CachedResource::XBLStyleSheet:
         return new CachedXBLDocument(url.string());
 #endif
+#if ENABLE(LINK_PREFETCH)
+    case CachedResource::LinkPrefetch:
+        return new CachedResource(url.string(), CachedResource::LinkPrefetch);
+#endif
     default:
         break;
     }

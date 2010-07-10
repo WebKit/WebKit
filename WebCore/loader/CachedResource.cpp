@@ -26,6 +26,8 @@
 
 #include "Cache.h"
 #include "CachedMetadata.h"
+#include "CachedResourceClient.h"
+#include "CachedResourceClientWalker.h"
 #include "CachedResourceHandle.h"
 #include "DocLoader.h"
 #include "Frame.h"
@@ -106,6 +108,16 @@ void CachedResource::load(DocLoader* docLoader, bool incremental, SecurityCheckP
     m_sendResourceLoadCallbacks = sendResourceLoadCallbacks;
     cache()->loader()->load(docLoader, this, incremental, securityCheck, sendResourceLoadCallbacks);
     m_loading = true;
+}
+
+void CachedResource::data(PassRefPtr<SharedBuffer>, bool allDataReceived)
+{
+    if (!allDataReceived)
+        return;
+    
+    CachedResourceClientWalker w(m_clients);
+    while (CachedResourceClient* c = w.next())
+        c->notifyFinished(this);
 }
 
 void CachedResource::finish()
@@ -202,6 +214,12 @@ void CachedResource::addClient(CachedResourceClient* client)
 {
     addClientToSet(client);
     didAddClient(client);
+}
+
+void CachedResource::didAddClient(CachedResourceClient* c)
+{
+    if (!isLoading())
+        c->notifyFinished(this);
 }
 
 void CachedResource::addClientToSet(CachedResourceClient* client)

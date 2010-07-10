@@ -1,0 +1,14 @@
+<body>
+<script>
+if (window.layoutTestController) {
+    layoutTestController.waitUntilDone();
+    layoutTestController.dumpAsText();
+    layoutTestController.dumpResourceResponseMIMETypes();
+    setTimeout("layoutTestController.notifyDone()",50);
+}
+</script>
+<html>
+<p>This test requires DumpRenderTree to see the log of what resources are loaded.
+<link href="prefetch.link" rel="prefetch">
+</html>
+
