@@ -30,7 +30,8 @@ SOURCES = PluginObject.cpp \
 
 mac {
     SOURCES += ../../TestNetscapePlugIn/main.cpp
-    LIBS += -framework Carbon
+    OBJECTIVE_SOURCES += PluginObjectMac.mm
+    LIBS += -framework Carbon -framework Cocoa -framework QuartzCore
 } else {
     SOURCES += ../../unix/TestNetscapePlugin/TestNetscapePlugin.cpp
 }
