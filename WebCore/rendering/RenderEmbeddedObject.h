@@ -37,6 +37,7 @@ public:
     void updateWidget(bool onlyCreateNonNetscapePlugins);
     void setShowsMissingPluginIndicator();
     void setShowsCrashedPluginIndicator();
+    bool showsMissingPluginIndicator() const { return m_showsMissingPluginIndicator; }
 
     bool hasFallbackContent() const { return m_hasFallbackContent; }
 
@@ -60,6 +61,7 @@ private:
 
     String m_replacementText;
     bool m_hasFallbackContent;
+    bool m_showsMissingPluginIndicator;
 };
 
 inline RenderEmbeddedObject* toRenderEmbeddedObject(RenderObject* object)

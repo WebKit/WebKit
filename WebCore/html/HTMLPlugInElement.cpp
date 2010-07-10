@@ -23,6 +23,8 @@
 #include "config.h"
 #include "HTMLPlugInElement.h"
 
+#include "Chrome.h"
+#include "ChromeClient.h"
 #include "CSSPropertyNames.h"
 #include "Document.h"
 #include "Frame.h"
@@ -31,6 +33,7 @@
 #include "HTMLNames.h"
 #include "MappedAttribute.h"
 #include "Page.h"
+#include "RenderEmbeddedObject.h"
 #include "RenderWidget.h"
 #include "ScriptController.h"
 #include "Settings.h"
@@ -158,6 +161,18 @@ void HTMLPlugInElement::defaultEventHandler(Event* event)
     // FIXME: Mouse down and scroll events are passed down to plug-in via custom code in EventHandler; these code paths should be united.
 
     RenderObject* r = renderer();
+    if (r && r->isEmbeddedObject() && toRenderEmbeddedObject(r)->showsMissingPluginIndicator()) {
+        if (event->type() != eventNames().clickEvent)
+            return;
+
+        Page* page = document()->page();
+        if (!page)
+            return;
+
+        page->chrome()->client()->missingPluginButtonClicked(this);
+        return;
+    }
+
     if (!r || !r->isWidget())
         return;
     Widget* widget = toRenderWidget(r)->widget();

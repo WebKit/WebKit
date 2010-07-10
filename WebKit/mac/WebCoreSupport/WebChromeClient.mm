@@ -516,6 +516,11 @@ void WebChromeClient::scrollRectIntoView(const IntRect& r, const ScrollView*) co
 
 // End host window methods.
 
+void WebChromeClient::missingPluginButtonClicked(Element* element) const
+{
+    CallUIDelegate(m_webView, @selector(webView:didPressMissingPluginButton:), kit(element));
+}
+
 void WebChromeClient::mouseDidMoveOverElement(const HitTestResult& result, unsigned modifierFlags)
 {
     WebElementDictionary *element = [[WebElementDictionary alloc] initWithHitTestResult:result];
