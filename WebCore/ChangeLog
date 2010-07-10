@@ -1,3 +1,19 @@
+2010-07-09  Tony Chang  <tony@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        crash in WebCore::CompositeEditCommand::splitTreeToNode when indenting pre
+        https://bugs.webkit.org/show_bug.cgi?id=38231
+
+        Test: editing/execCommand/indent-pre.html
+
+        * editing/IndentOutdentCommand.cpp:
+        (WebCore::countParagraphs):
+        (WebCore::IndentOutdentCommand::indentRegion): Split text nodes into one node per paragraph
+                                                       so moveParagraph doesn't get confused.
+        (WebCore::IndentOutdentCommand::splitTextNodes):
+        * editing/IndentOutdentCommand.h:
+
 2010-07-09  Erik Arvidsson  <arv@chromium.org>
 
         Reviewed by Darin Adler.

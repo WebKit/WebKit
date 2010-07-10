@@ -51,6 +51,7 @@ private:
     void outdentParagraph();
     bool tryIndentingAsListItem(const VisiblePosition&);
     void indentIntoBlockquote(const VisiblePosition&, const VisiblePosition&, RefPtr<Element>&);
+    bool splitTextNodes(const VisiblePosition& start, int numParagraphs);
 
     EIndentType m_typeOfAction;
     int m_marginInPixels;

@@ -34,6 +34,7 @@
 #include "InsertListCommand.h"
 #include "Range.h"
 #include "SplitElementCommand.h"
+#include "Text.h"
 #include "TextIterator.h"
 #include "htmlediting.h"
 #include "visible_units.h"
@@ -60,6 +61,22 @@ static PassRefPtr<HTMLBlockquoteElement> createIndentBlockquoteElement(Document*
 static bool isListOrIndentBlockquote(const Node* node)
 {
     return node && (node->hasTagName(ulTag) || node->hasTagName(olTag) || node->hasTagName(blockquoteTag));
+}
+
+// This function can return -1 if we are unable to count the paragraphs between |start| and |end|.
+static int countParagraphs(const VisiblePosition& endOfFirstParagraph, const VisiblePosition& endOfLastParagraph)
+{
+    int count = 0;
+    VisiblePosition cur = endOfFirstParagraph;
+    while (cur != endOfLastParagraph) {
+        ++count;
+        cur = endOfParagraph(cur.next());
+        // If start is before a table and end is inside a table, we will never hit end because the
+        // whole table is considered a single paragraph.
+        if (cur.isNull())
+            return -1;
+    }
+    return count;
 }
 
 IndentOutdentCommand::IndentOutdentCommand(Document* document, EIndentType typeOfAction, int marginInPixels)
@@ -147,6 +164,24 @@ void IndentOutdentCommand::indentRegion(const VisiblePosition& startOfSelection,
     RefPtr<Element> blockquoteForNextIndent;
     VisiblePosition endOfCurrentParagraph = endOfParagraph(startOfSelection);
     VisiblePosition endAfterSelection = endOfParagraph(endOfParagraph(endOfSelection).next());
+    int endOfCurrentParagraphIndex = indexForVisiblePosition(endOfCurrentParagraph);
+    int endAfterSelectionIndex = indexForVisiblePosition(endAfterSelection);
+
+    // When indenting within a <pre> tag, we need to split each paragraph into a separate node for moveParagraphWithClones to work.
+    // However, splitting text nodes can cause endOfCurrentParagraph and endAfterSelection to point to an invalid position if we
+    // changed the text node it was pointing at.  So we have to reset these positions.
+    int numParagraphs = countParagraphs(endOfCurrentParagraph, endAfterSelection);
+    if (splitTextNodes(startOfParagraph(startOfSelection), numParagraphs + 1)) {
+        RefPtr<Range> endOfCurrentParagraphRange = TextIterator::rangeFromLocationAndLength(document()->documentElement(), endOfCurrentParagraphIndex, 0, true);
+        RefPtr<Range> endAfterSelectionRange = TextIterator::rangeFromLocationAndLength(document()->documentElement(), endAfterSelectionIndex, 0, true);
+        if (!endOfCurrentParagraphRange.get() || !endAfterSelectionRange.get()) {
+            ASSERT_NOT_REACHED();
+            return;
+        }
+        endOfCurrentParagraph = VisiblePosition(endOfCurrentParagraphRange->startPosition(), DOWNSTREAM);
+        endAfterSelection = VisiblePosition(endAfterSelectionRange->startPosition(), DOWNSTREAM);
+    }
+
     while (endOfCurrentParagraph != endAfterSelection) {
         // Iterate across the selected paragraphs...
         VisiblePosition endOfNextParagraph = endOfParagraph(endOfCurrentParagraph.next());
@@ -168,6 +203,29 @@ void IndentOutdentCommand::indentRegion(const VisiblePosition& startOfSelection,
         }
         endOfCurrentParagraph = endOfNextParagraph;
     }   
+}
+
+// Returns true if at least one text node was split.
+bool IndentOutdentCommand::splitTextNodes(const VisiblePosition& start, int numParagraphs)
+{
+    VisiblePosition currentParagraphStart = start;
+    bool hasSplit = false;
+    int paragraphCount;
+    for (paragraphCount = 0; paragraphCount < numParagraphs; ++paragraphCount) {
+        // If there are multiple paragraphs in a single text node, we split the text node into a separate node for each paragraph.
+        if (currentParagraphStart.deepEquivalent().node()->isTextNode() && currentParagraphStart.deepEquivalent().node() == startOfParagraph(currentParagraphStart.previous()).deepEquivalent().node()) {
+            Text* textNode = static_cast<Text *>(currentParagraphStart.deepEquivalent().node());
+            int offset = currentParagraphStart.deepEquivalent().offsetInContainerNode();
+            splitTextNode(textNode, offset);
+            currentParagraphStart = VisiblePosition(textNode, 0, VP_DEFAULT_AFFINITY);
+            hasSplit = true;
+        }
+        VisiblePosition nextParagraph = startOfParagraph(endOfParagraph(currentParagraphStart).next());
+        if (nextParagraph.isNull())
+            break;
+        currentParagraphStart = nextParagraph;
+    }
+    return hasSplit;
 }
 
 void IndentOutdentCommand::outdentParagraph()
