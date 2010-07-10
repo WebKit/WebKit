@@ -1,5 +1,11 @@
 2010-07-10  Dumitru Daniliuc  <dumi@chromium.org>
 
+        Unreviewed, GTK build fix.
+
+        * bindings/gobject/GObjectEventListener.h:
+
+2010-07-10  Dumitru Daniliuc  <dumi@chromium.org>
+
         Reviewed by Darin Adler.
 
         Remove unnecessary includes in header files in WebCore/dom.
