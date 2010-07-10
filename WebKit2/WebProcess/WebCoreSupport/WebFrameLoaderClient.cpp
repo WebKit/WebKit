@@ -787,12 +787,16 @@ PassRefPtr<Widget> WebFrameLoaderClient::createPlugin(const IntSize&, HTMLPlugIn
     RefPtr<NetscapePluginModule> pluginModule = NetscapePluginModule::getOrCreate(pluginPath);
     if (!pluginModule)
         return 0;
-    
-    RefPtr<Plugin> plugin = NetscapePlugin::create(pluginModule.release());
-    if (!plugin->initialize(url, paramNames, paramValues, mimeType, loadManually))
-        return 0;
 
-    return PluginView::create(plugin.release(), pluginElement);
+    Plugin::Parameters parameters;
+    parameters.url = url;
+    parameters.names = paramNames;
+    parameters.values = paramValues;
+    parameters.mimeType = mimeType;
+    parameters.loadManually = loadManually;
+
+    RefPtr<Plugin> plugin = NetscapePlugin::create(pluginModule.release());
+    return PluginView::create(pluginElement, plugin.release(), parameters);
 #else
     return 0;
 #endif

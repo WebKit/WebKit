@@ -26,23 +26,30 @@
 #ifndef Plugin_h
 #define Plugin_h
 
+#include <WebCore/KURL.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
     class GraphicsContext;
     class IntRect;
-    class KURL;
-    class String;
 }
 
 namespace WebKit {
 
 class Plugin : public RefCounted<Plugin> {
 public:
+    struct Parameters {
+        WebCore::KURL url;
+        Vector<WebCore::String> names;
+        Vector<WebCore::String> values;
+        WebCore::String mimeType;
+        bool loadManually;
+    };
+
     virtual ~Plugin();
     
-    virtual bool initialize(const WebCore::KURL&, const Vector<WebCore::String>& paramNames, const Vector<WebCore::String>& paramValues, const WebCore::String& mimeType, bool loadManually) = 0;
+    virtual bool initialize(const Parameters&) = 0;
     virtual void destroy() = 0;
     virtual void paint(WebCore::GraphicsContext*, const WebCore::IntRect& dirtyRect) = 0;
     virtual void geometryDidChange(const WebCore::IntRect& frameRect, const WebCore::IntRect& clipRect) = 0;

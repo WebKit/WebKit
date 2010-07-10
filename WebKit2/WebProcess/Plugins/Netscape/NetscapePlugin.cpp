@@ -85,32 +85,31 @@ void NetscapePlugin::callSetWindow()
     m_pluginModule->pluginFuncs().setwindow(&m_npp, &m_npWindow);
 }
 
-bool NetscapePlugin::initialize(const KURL& url, const Vector<String>& paramNames, const Vector<String>& paramValues, const String& mimeType, bool loadManually)
+bool NetscapePlugin::initialize(const Parameters& parameters)
 {
-    uint16_t mode = loadManually ? NP_FULL : NP_EMBED;
+    uint16_t mode = parameters.loadManually ? NP_FULL : NP_EMBED;
     
     m_inNPPNew = true;
 
-    CString mimeTypeCString = mimeType.utf8();
+    CString mimeTypeCString = parameters.mimeType.utf8();
 
-    ASSERT(paramNames.size() == paramValues.size());
+    ASSERT(parameters.names.size() == parameters.values.size());
 
-    Vector<CString> utf8ParamNames;
-    Vector<CString> utf8ParamValues;
-    for (size_t i = 0; i < paramNames.size(); ++i) {
-        utf8ParamNames.append(paramNames[i].utf8());
-        utf8ParamValues.append(paramValues[i].utf8());
+    Vector<CString> paramNames;
+    Vector<CString> paramValues;
+    for (size_t i = 0; i < parameters.names.size(); ++i) {
+        paramNames.append(parameters.names[i].utf8());
+        paramValues.append(parameters.values[i].utf8());
     }
 
-    // The strings that these pointers point to are kept alive by utf8ParamNames and utf8ParamValues.
+    // The strings that these pointers point to are kept alive by paramNames and paramValues.
     Vector<const char*> names;
     Vector<const char*> values;
     for (size_t i = 0; i < paramNames.size(); ++i) {
-        names.append(utf8ParamNames[i].data());
-        values.append(utf8ParamValues[i].data());
+        names.append(paramNames[i].data());
+        values.append(paramValues[i].data());
     }
     
-    // FIXME: Pass arguments to NPP_New.
     NPError error = m_pluginModule->pluginFuncs().newp(const_cast<char*>(mimeTypeCString.data()), &m_npp, mode, 
                                                        names.size(), const_cast<char**>(names.data()), const_cast<char**>(values.data()), 0);
     m_inNPPNew = false;

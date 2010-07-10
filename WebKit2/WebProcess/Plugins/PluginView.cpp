@@ -36,15 +36,38 @@ using namespace WebCore;
 
 namespace WebKit {
 
-PluginView::PluginView(PassRefPtr<Plugin> plugin, HTMLPlugInElement* pluginElement)
-    : m_plugin(plugin)
-    , m_pluginElement(pluginElement)
+PluginView::PluginView(WebCore::HTMLPlugInElement* pluginElement, PassRefPtr<Plugin> plugin, const Plugin::Parameters& parameters)
+    : m_pluginElement(pluginElement)
+    , m_plugin(plugin)
+    , m_parameters(parameters)
+    , m_isInitialized(false)
 {
 }
 
 PluginView::~PluginView()
 {
-    m_plugin->destroy();
+    if (m_plugin && m_isInitialized)
+        m_plugin->destroy();
+}
+
+void PluginView::initializePlugin()
+{
+    if (m_isInitialized)
+        return;
+
+    if (!m_plugin) {
+        // We've already tried and failed to initialize the plug-in.
+        return;
+    }
+
+    if (!m_plugin->initialize(m_parameters)) {
+        // We failed to initialize the plug-in.
+        m_plugin = 0;
+
+        return;
+    }
+    
+    m_isInitialized = true;
 }
 
 void PluginView::setFrameRect(const WebCore::IntRect& rect)
@@ -55,7 +78,7 @@ void PluginView::setFrameRect(const WebCore::IntRect& rect)
 
 void PluginView::paint(GraphicsContext* context, const IntRect& dirtyRect)
 {
-    if (context->paintingDisabled())
+    if (context->paintingDisabled() || !m_plugin)
         return;
     
     IntRect dirtyRectInWindowCoordinates = parent()->contentsToWindow(dirtyRect);
@@ -82,12 +105,16 @@ void PluginView::frameRectsChanged()
 void PluginView::setParent(ScrollView* scrollView)
 {
     Widget::setParent(scrollView);
+    
+    if (scrollView)
+        initializePlugin();
+
     viewGeometryDidChange();
 }
 
 void PluginView::viewGeometryDidChange()
 {
-    if (!parent())
+    if (!parent() || !m_plugin)
         return;
 
     // Get the frame rect in window coordinates.

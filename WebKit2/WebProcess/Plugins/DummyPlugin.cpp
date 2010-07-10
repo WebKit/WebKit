@@ -35,7 +35,7 @@ DummyPlugin::DummyPlugin()
 {
 }
 
-bool DummyPlugin::initialize(const KURL&, const Vector<String>& paramNames, const Vector<String>& paramValues, const String& mimeType, bool loadManually)
+bool DummyPlugin::initialize(const Parameters&)
 {
     return true;
 }
