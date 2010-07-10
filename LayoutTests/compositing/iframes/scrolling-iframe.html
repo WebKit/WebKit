@@ -28,39 +28,28 @@
         layoutTestController.waitUntilDone();
     }
 
-    var loadedCount = 0;
-    
-    function frameLoaded()
-    {
-      if (++loadedCount == 2)
-        doTest();
-    }
-
-    function pageLoaded()
-    {
-      if (++loadedCount == 2)
-        doTest();
-    }
-    
     function doTest()
     {
-        // Need to wait for compositing layers to be updated.
+        // For some reason this delay is required for AppKit to not short-circuit the display.
         window.setTimeout(function() {
+            if (window.layoutTestController)
+                layoutTestController.display();
+
             document.getElementById('parent-iframe').contentWindow.scrollTo(80, 80);
             if (window.layoutTestController) {
                 document.getElementById('layers').innerHTML = layoutTestController.layerTreeAsText();
                 layoutTestController.notifyDone();
             }
-        }, 10);
+        }, 0);
     }
     
-    window.addEventListener('load', pageLoaded, false);
+    window.addEventListener('load', doTest, false);
   </script>
 </head>
 <body>
 
     <!-- Test scrolling in the iframe -->
-    <iframe id="parent-iframe" src="resources/large-composited-subframe.html" onload="frameLoaded()"></iframe>
+    <iframe id="parent-iframe" src="resources/large-composited-subframe.html"></iframe>
     
     <div class="overlay">
     </div>

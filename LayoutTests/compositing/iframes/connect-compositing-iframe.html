@@ -32,8 +32,12 @@
     // Called from subframe.
     function testDone()
     {
+      document.getElementById('parent-iframe').contentDocument.body.offsetWidth; // work around bug 41999.
+
+      if (window.layoutTestController)
+        layoutTestController.display();
+
       if (window.layoutTestController) {
-        document.getElementById('parent-iframe').contentDocument.body.offsetWidth; // update iframe layout
         document.getElementById('layers').innerText = layoutTestController.layerTreeAsText();
         layoutTestController.notifyDone();
       }

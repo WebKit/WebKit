@@ -31,13 +31,14 @@
     // Called from subframe.
     function testDone()
     {
-      // Wait for a layer update.
-      window.setTimeout(function() {
-        if (window.layoutTestController) {
-          document.getElementById('layers').innerText = layoutTestController.layerTreeAsText();
-          layoutTestController.notifyDone();
-        }
-      }, 0);
+      document.getElementById('parent-iframe').contentDocument.body.offsetWidth; // work around bug 41999.
+      if (window.layoutTestController)
+        layoutTestController.display();
+
+      if (window.layoutTestController) {
+        document.getElementById('layers').innerText = layoutTestController.layerTreeAsText();
+        layoutTestController.notifyDone();
+      }
     }
   </script>
 </head>

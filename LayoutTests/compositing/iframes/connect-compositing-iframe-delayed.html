@@ -31,15 +31,15 @@
 
     function doTest()
     {
-      // Wait for a layer update.
-      window.setTimeout(function() {
+        if (window.layoutTestController)
+            layoutTestController.display();
+
         document.getElementById('box').className = 'composited';
         if (window.layoutTestController) {
           document.getElementById('iframe').contentDocument.body.offsetWidth; // update iframe layout
           document.getElementById('layers').innerText = layoutTestController.layerTreeAsText();
           layoutTestController.notifyDone();
         }
-      }, 0);
     }
     
     window.addEventListener('load', doTest, false);

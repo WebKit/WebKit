@@ -1,3 +1,16 @@
+2010-07-09  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Calling layoutTestController.layerTreeAsText() should update layout
+        https://bugs.webkit.org/show_bug.cgi?id=41818
+        
+        Need to call updateLayout() before we check for any layers, not after,
+        since layout will update compositing, and may create layers.
+
+        * page/Frame.cpp:
+        (WebCore::Frame::layerTreeAsText):
+
 2010-07-09  Kenneth Russell  <kbr@google.com>
 
         Reviewed by Nate Chapin.

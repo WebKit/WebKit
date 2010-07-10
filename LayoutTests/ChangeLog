@@ -1,3 +1,30 @@
+2010-07-09  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Calling layoutTestController.layerTreeAsText() should update layout
+        https://bugs.webkit.org/show_bug.cgi?id=41818
+        
+        Test cleanup to remove as many setTimeout() calls as possible, replacing them with
+        calls to display(), which is required for painting to happen, and therefore FrameView::setIsOverlapped()
+        to get called.
+        
+        Remove some logic that checked whether both iframe and parent document is loaded, since the load event
+        fires only once the iframes are loaded.
+
+        * compositing/iframes/composited-parent-iframe.html:
+        * compositing/iframes/connect-compositing-iframe-delayed.html:
+        * compositing/iframes/connect-compositing-iframe.html:
+        * compositing/iframes/connect-compositing-iframe2.html:
+        * compositing/iframes/connect-compositing-iframe3.html:
+        * compositing/iframes/enter-compositing-iframe.html:
+        * compositing/iframes/iframe-copy-on-scroll.html:
+        * compositing/iframes/iframe-resize.html:
+        * compositing/iframes/iframe-src-change.html:
+        * compositing/iframes/leave-compositing-iframe.html:
+        * compositing/iframes/overlapped-iframe.html:
+        * compositing/iframes/scrolling-iframe.html:
+
 2010-07-09  Kenneth Russell  <kbr@google.com>
 
         Reviewed by Nate Chapin.

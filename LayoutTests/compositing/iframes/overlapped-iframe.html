@@ -30,8 +30,10 @@
 
     function doTest()
     {
+        // For some reason this delay is required for AppKit to not short-circuit the display.
         window.setTimeout(function() {
           if (window.layoutTestController) {
+              layoutTestController.display();
               document.getElementById('layers').innerHTML = layoutTestController.layerTreeAsText();
               layoutTestController.notifyDone();
           }

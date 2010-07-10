@@ -1602,14 +1602,14 @@ IntRect Frame::tiledBackingStoreVisibleRect()
 String Frame::layerTreeAsText() const
 {
 #if USE(ACCELERATED_COMPOSITING)
+    document()->updateLayout();
+
     if (!contentRenderer())
         return String();
 
     GraphicsLayer* rootLayer = contentRenderer()->compositor()->rootPlatformLayer();
     if (!rootLayer)
         return String();
-
-    document()->updateLayout();
 
     return rootLayer->layerTreeAsText();
 #else

@@ -35,15 +35,18 @@
 
     function doTest()
     {
-        // Need to wait for compositing layers to be updated.
+        // For some reason this delay is required for AppKit to not short-circuit the display.
         window.setTimeout(function() {
+          if (window.layoutTestController)
+            layoutTestController.display();
+
             document.getElementById('parent-iframe').className = 'bigger';
             if (window.layoutTestController) {
-                document.body.offsetWidth;  // force layout, because layerTreeAsText() doesn't.
+                layoutTestController.display();
                 document.getElementById('layers').innerHTML = layoutTestController.layerTreeAsText();
                 layoutTestController.notifyDone();
             }
-        }, 10);
+        }, 0);
     }
 
     window.addEventListener('load', doTest, false);

@@ -16,20 +16,6 @@
     if (window.layoutTestController)
         layoutTestController.waitUntilDone();
 
-        var loadedCount = 0;
-
-        function frameLoaded()
-        {
-          if (++loadedCount == 2)
-            doTest();
-        }
-
-        function pageLoaded()
-        {
-          if (++loadedCount == 2)
-            doTest();
-        }
-
         function doTest()
         {
             // Need to wait for compositing layers to be updated.
@@ -40,13 +26,13 @@
             }, 0);
         }
 
-        window.addEventListener('load', pageLoaded, false);
+        window.addEventListener('load', doTest, false);
   </script>
 </head>
 <body>
   <p>In pixel results, the blue box should be scrolled out of view.</p>
   <div class="container">
-    <iframe id="iframe" src="resources/subframe.html" style="width: 300px; height: 200px;" onload="frameLoaded()"></iframe>
+    <iframe id="iframe" src="resources/subframe.html" style="width: 300px; height: 200px;"></iframe>
   </div>
   <div class="composited">
   </div>

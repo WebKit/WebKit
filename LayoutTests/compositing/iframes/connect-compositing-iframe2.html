@@ -31,10 +31,12 @@
 
     function doTest()
     {
+        if (window.layoutTestController)
+            layoutTestController.display();
+
       document.getElementById('iframe').className = 'composited';
 
       if (window.layoutTestController) {
-        document.getElementById('iframe').contentDocument.body.offsetWidth; // update iframe layout
         document.getElementById('layers').innerText = layoutTestController.layerTreeAsText();
         layoutTestController.notifyDone();
       }
