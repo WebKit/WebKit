@@ -74,10 +74,12 @@ public:
     
     bool dispatchBeforeLoadEvent(const String& sourceURL);
 
+    static void queuePostAttachCallback(NodeCallback, Node*);
+    static bool postAttachCallbacksAreSuspended();
+    
 protected:
     ContainerNode(Document*, ConstructionType = CreateContainer);
 
-    static void queuePostAttachCallback(NodeCallback, Node*);
     void suspendPostAttachCallbacks();
     void resumePostAttachCallbacks();
 

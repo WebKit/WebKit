@@ -201,6 +201,7 @@ private:
     
     void rootLayerAttachmentChanged();
     
+    void scheduleNeedsStyleRecalc(Element*);
     void notifyIFramesOfCompositingChange();
 
     // Whether a running transition or animation enforces the need for a compositing layer.

@@ -599,6 +599,11 @@ void ContainerNode::queuePostAttachCallback(NodeCallback callback, Node* node)
     s_postAttachCallbackQueue->append(std::pair<NodeCallback, RefPtr<Node> >(callback, node));
 }
 
+bool ContainerNode::postAttachCallbacksAreSuspended()
+{
+    return s_attachDepth;
+}
+
 void ContainerNode::dispatchPostAttachCallbacks()
 {
     // We recalculate size() each time through the loop because a callback
