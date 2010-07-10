@@ -140,11 +140,15 @@ void NetscapePlugin::destroy()
     
 void NetscapePlugin::paint(GraphicsContext* context, const IntRect& dirtyRect)
 {
+    ASSERT(m_isStarted);
+    
     platformPaint(context, dirtyRect);
 }
 
 void NetscapePlugin::geometryDidChange(const IntRect& frameRect, const IntRect& clipRect)
 {
+    ASSERT(m_isStarted);
+
     if (m_frameRect == frameRect && m_clipRect == clipRect) {
         // Nothing to do.
         return;

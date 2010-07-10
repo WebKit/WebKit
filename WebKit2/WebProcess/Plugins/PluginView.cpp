@@ -41,11 +41,15 @@ PluginView::PluginView(WebCore::HTMLPlugInElement* pluginElement, PassRefPtr<Plu
     , m_plugin(plugin)
     , m_parameters(parameters)
     , m_isInitialized(false)
+    , m_isWaitingUntilMediaCanStart(false)
 {
 }
 
 PluginView::~PluginView()
 {
+    if (m_isWaitingUntilMediaCanStart)
+        m_pluginElement->document()->removeMediaCanStartListener(this);
+
     if (m_plugin && m_isInitialized)
         m_plugin->destroy();
 }
@@ -60,6 +64,21 @@ void PluginView::initializePlugin()
         return;
     }
 
+    if (Frame* frame = m_pluginElement->document()->frame()) {
+        if (Page* page = frame->page()) {
+            
+            // We shouldn't initialize the plug-in right now, add a listener.
+            if (!page->canStartMedia()) {
+                if (m_isWaitingUntilMediaCanStart)
+                    return;
+                
+                m_isWaitingUntilMediaCanStart = true;
+                m_pluginElement->document()->addMediaCanStartListener(this);
+                return;
+            }
+        }
+    }
+    
     if (!m_plugin->initialize(m_parameters)) {
         // We failed to initialize the plug-in.
         m_plugin = 0;
@@ -78,7 +97,7 @@ void PluginView::setFrameRect(const WebCore::IntRect& rect)
 
 void PluginView::paint(GraphicsContext* context, const IntRect& dirtyRect)
 {
-    if (context->paintingDisabled() || !m_plugin)
+    if (context->paintingDisabled() || !m_plugin || !m_isInitialized)
         return;
     
     IntRect dirtyRectInWindowCoordinates = parent()->contentsToWindow(dirtyRect);
@@ -114,7 +133,7 @@ void PluginView::setParent(ScrollView* scrollView)
 
 void PluginView::viewGeometryDidChange()
 {
-    if (!parent() || !m_plugin)
+    if (!parent() || !m_plugin || !m_isInitialized)
         return;
 
     // Get the frame rect in window coordinates.
@@ -141,6 +160,14 @@ IntRect PluginView::clipRectInWindowCoordinates() const
 
 void PluginView::invalidateRect(const IntRect&)
 {
+}
+
+void PluginView::mediaCanStart()
+{
+    ASSERT(m_isWaitingUntilMediaCanStart);
+    m_isWaitingUntilMediaCanStart = false;
+    
+    initializePlugin();
 }
 
 } // namespace WebKit

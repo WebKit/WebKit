@@ -1,5 +1,38 @@
 2010-07-10  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        Don't initialize plug-ins until allowed by the page
+        https://bugs.webkit.org/show_bug.cgi?id=42033
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::paint):
+        (WebKit::NetscapePlugin::geometryDidChange):
+        Assert that the plug-in is started.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::PluginView):
+        Initialize m_isWaitingUntilMediaCanStart.
+        
+        (WebKit::PluginView::~PluginView):
+        If necessary, remove the plug-in view as a MediaCanStartListener.
+
+        (WebKit::PluginView::initializePlugin):
+        If we're not allowed to initialize the plug-in, add the plug-in view as a MediaCanStartListener.
+
+        (WebKit::PluginView::paint):
+        Check that the plug-in is initialized.
+
+        (WebKit::PluginView::viewGeometryDidChange):
+        Ditto.
+
+        (WebKit::PluginView::mediaCanStart):
+        Initialize the plug-in.
+
+        * WebProcess/Plugins/PluginView.h:
+
+2010-07-10  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Dan Bernstein.
 
         Have the plug-in view initialize the plug-in

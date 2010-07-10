@@ -27,6 +27,7 @@
 #define PluginView_h
 
 #include "Plugin.h"
+#include <WebCore/MediaCanStartListener.h>
 #include <WebCore/Widget.h>
 
 // FIXME: Eventually this should move to WebCore.
@@ -37,7 +38,7 @@ namespace WebCore {
 
 namespace WebKit {
 
-class PluginView : public WebCore::Widget {
+class PluginView : public WebCore::Widget, WebCore::MediaCanStartListener {
 public:
     static PassRefPtr<PluginView> create(WebCore::HTMLPlugInElement* pluginElement, PassRefPtr<Plugin> plugin, const Plugin::Parameters& parameters)
     {
@@ -61,11 +62,15 @@ private:
     virtual void frameRectsChanged();
     virtual void setParent(WebCore::ScrollView*);
 
+    // WebCore::MediaCanStartListener
+    virtual void mediaCanStart();
+
     WebCore::HTMLPlugInElement* m_pluginElement;
     RefPtr<Plugin> m_plugin;
     Plugin::Parameters m_parameters;
     
     bool m_isInitialized;
+    bool m_isWaitingUntilMediaCanStart;
 };
 
 } // namespace WebKit
