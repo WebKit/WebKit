@@ -1,3 +1,19 @@
+2010-07-09  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        HTML5 tree builder should pass some LayoutTests
+        https://bugs.webkit.org/show_bug.cgi?id=41991
+
+        Before this patch, we weren't attaching text nodes to the render tree,
+        which turns out to be important.  :)
+
+        This patch fixes more than 10,000 LayoutTests.
+
+        * html/HTMLConstructionSite.cpp:
+        (WebCore::HTMLConstructionSite::attach):
+        (WebCore::HTMLConstructionSite::attachAtSite):
+
 2010-07-09  Patrick Gansterer  <paroga@paroga.com>
 
         Reviewed by Darin Adler.
