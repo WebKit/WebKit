@@ -1047,9 +1047,9 @@ void HTMLTreeBuilder::processStartTagForInBody(AtomicHTMLToken& token)
         m_tree.reconstructTheActiveFormattingElements();
         adjustMathMLAttributes(token);
         adjustForeignAttributes(token);
-        m_tree.insertForeignElement(token, MathMLNames::mathMLNamespaceURI);
+        m_tree.insertForeignElement(token, MathMLNames::mathmlNamespaceURI);
         if (m_insertionMode != InForeignContentMode) {
-            setSecondaryInsertionMode(m_insertionMode));
+            setSecondaryInsertionMode(m_insertionMode);
             setInsertionMode(InForeignContentMode);
         }
         return;
@@ -1494,7 +1494,7 @@ void HTMLTreeBuilder::processStartTag(AtomicHTMLToken& token)
         notImplemented();
         const AtomicString& currentNamespace = m_tree.currentElement()->namespaceURI();
 #if ENABLE(MATHML)
-        if (currentNamespace == MathMLNames::mathMLNamespaceURI)
+        if (currentNamespace == MathMLNames::mathmlNamespaceURI)
             adjustMathMLAttributes(token);
 #endif
 #if ENABLE(SVG)
