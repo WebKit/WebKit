@@ -247,7 +247,7 @@ SYMBOL_STRING(ctiOpThrowNotCaught) ":" "\n"
 #define REGISTER_FILE_OFFSET             0x50
 #define CALLFRAME_OFFSET                 0x54
 #define EXCEPTION_OFFSET                 0x58
-#define ENABLE_PROFILER_REFERENCE_OFFSET 0x64
+#define ENABLE_PROFILER_REFERENCE_OFFSET 0x60
 
 #elif COMPILER(GCC) && CPU(ARM_TRADITIONAL)
 

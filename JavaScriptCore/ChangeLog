@@ -1,3 +1,14 @@
+2010-07-09  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Bug 42015 - Enable JSValue32_64 on ARMv7
+
+        * Configurations/JavaScriptCore.xcconfig:
+        * jit/JIT.h:
+        * jit/JITStubs.cpp:
+        * wtf/Platform.h:
+
 2010-07-09  Kenneth Russell  <kbr@google.com>
 
         Reviewed by Dimitri Glazkov.
