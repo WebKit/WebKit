@@ -1,5 +1,26 @@
 2010-07-09  Mark Rowe  <mrowe@apple.com>
 
+        Merge r59338.
+
+    2010-05-12  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by David Hyatt.
+
+        Composited plug-ins can cause missed painting
+        https://bugs.webkit.org/show_bug.cgi?id=39033
+        <rdar://problem/7972478>
+        
+        New testcases, one which removes the contents of a composited iframe, and checks that
+        all layers go away, and another that has a composited iframe, then toggles the parent
+        document into compositing mode, to check that the layer trees get connected.
+
+        * compositing/iframes/connect-compositing-iframe-delayed-expected.txt: Added.
+        * compositing/iframes/connect-compositing-iframe-delayed.html: Added.
+        * compositing/iframes/iframe-src-change-expected.txt: Added.
+        * compositing/iframes/iframe-src-change.html: Added.
+
+2010-07-09  Mark Rowe  <mrowe@apple.com>
+
         Merge r61645.
 
     2010-06-22  Adele Peterson  <adele@apple.com>

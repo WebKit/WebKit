@@ -40,6 +40,7 @@
 #import <WebCore/Bridge.h>
 #import <WebCore/Frame.h>
 #import <WebCore/FrameLoaderTypes.h>
+#import <WebCore/FrameView.h>
 #import <WebCore/HTMLPlugInElement.h>
 #import <WebCore/RenderEmbeddedObject.h>
 #import <WebCore/WebCoreObjCExtras.h>
@@ -134,6 +135,9 @@ extern "C" {
             realPluginLayer.get().autoresizingMask = kCALayerWidthSizable | kCALayerHeightSizable;
             [_pluginLayer.get() addSublayer:realPluginLayer.get()];
 #endif
+            // Eagerly enter compositing mode, since we know we'll need it. This avoids firing setNeedsStyleRecalc()
+            // for iframes that contain composited plugins at bad times. https://bugs.webkit.org/show_bug.cgi?id=39033
+            core([self webFrame])->view()->enterCompositingMode();
             [self element]->setNeedsStyleRecalc(SyntheticStyleChange);
         } else
             self.wantsLayer = YES;

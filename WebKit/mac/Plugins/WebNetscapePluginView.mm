@@ -61,6 +61,7 @@
 #import <WebCore/Frame.h> 
 #import <WebCore/FrameLoader.h> 
 #import <WebCore/FrameTree.h>
+#import <WebCore/FrameView.h>
 #import <WebCore/HTMLPlugInElement.h>
 #import <WebCore/Page.h> 
 #import <WebCore/PluginMainThreadScheduler.h>
@@ -1103,9 +1104,13 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
                 realPluginLayer.get().autoresizingMask = kCALayerWidthSizable | kCALayerHeightSizable;
                 [_pluginLayer.get() addSublayer:realPluginLayer.get()];
 #endif
+                // Eagerly enter compositing mode, since we know we'll need it. This avoids firing setNeedsStyleRecalc()
+                // for iframes that contain composited plugins at bad times. https://bugs.webkit.org/show_bug.cgi?id=39033
+                core([self webFrame])->view()->enterCompositingMode();
                 [self element]->setNeedsStyleRecalc(SyntheticStyleChange);
             } else
                 [self setWantsLayer:YES];
+
             LOG(Plugins, "%@ is using Core Animation drawing model with layer %@", _pluginPackage.get(), _pluginLayer.get());
         }
 

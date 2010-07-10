@@ -42,6 +42,7 @@
 #include "HTMLMediaElement.h"
 #include "HTMLNames.h"
 #endif
+#include "NodeList.h"
 #include "Page.h"
 #include "RenderEmbeddedObject.h"
 #include "RenderIFrame.h"
@@ -111,12 +112,10 @@ void RenderLayerCompositor::enableCompositingMode(bool enable /* = true */)
     if (enable != m_compositing) {
         m_compositing = enable;
         
-        // We never go out of compositing mode for a given page,
-        // but if all the layers disappear, we'll just be left with
-        // the empty root layer, which has minimal overhead.
-        if (m_compositing)
+        if (m_compositing) {
             ensureRootPlatformLayer();
-        else
+            notifyIFramesOfCompositingChange();
+        } else
             destroyRootPlatformLayer();
     }
 }
@@ -981,12 +980,18 @@ GraphicsLayer* RenderLayerCompositor::rootPlatformLayer() const
 
 void RenderLayerCompositor::didMoveOnscreen()
 {
+    if (!inCompositingMode() || m_rootLayerAttachment != RootLayerUnattached)
+        return;
+
     RootLayerAttachment attachment = shouldPropagateCompositingToEnclosingIFrame() ? RootLayerAttachedViaEnclosingIframe : RootLayerAttachedViaChromeClient;
     attachRootPlatformLayer(attachment);
 }
 
 void RenderLayerCompositor::willMoveOffscreen()
 {
+    if (!inCompositingMode() || m_rootLayerAttachment == RootLayerUnattached)
+        return;
+
     detachRootPlatformLayer();
 }
 
@@ -1371,6 +1376,21 @@ void RenderLayerCompositor::rootLayerAttachmentChanged()
     RenderLayer* layer = m_renderView->layer();
     if (RenderLayerBacking* backing = layer ? layer->backing() : 0)
         backing->updateDrawsContent();
+}
+
+// IFrames are special, because we hook compositing layers together across iframe boundaries
+// when both parent and iframe content are composited. So when this frame becomes composited, we have
+// to use a synthetic style change to get the iframes into RenderLayers in order to allow them to composite.
+void RenderLayerCompositor::notifyIFramesOfCompositingChange()
+{
+    Frame* frame = m_renderView->frameView() ? m_renderView->frameView()->frame() : 0;
+    if (!frame)
+        return;
+
+    for (Frame* child = frame->tree()->firstChild(); child; child = child->tree()->nextSibling()) {
+        if (child->document() && child->document()->ownerElement())
+            child->document()->ownerElement()->setNeedsStyleRecalc(SyntheticStyleChange);
+    }
 }
 
 bool RenderLayerCompositor::layerHas3DContent(const RenderLayer* layer) const
