@@ -23,6 +23,7 @@
 #ifndef Lexer_h
 #define Lexer_h
 
+#include "JSParser.h"
 #include "Lookup.h"
 #include "ParserArena.h"
 #include "SourceCode.h"
@@ -34,8 +35,6 @@
 
 namespace JSC {
 
-    union JSTokenData;
-    struct JSTokenInfo;
     class RegExp;
 
     class Lexer : public Noncopyable {
@@ -51,7 +50,7 @@ namespace JSC {
         void setIsReparsing() { m_isReparsing = true; }
 
         // Functions for the parser itself.
-        int lex(JSTokenData* lvalp, JSTokenInfo* llocp);
+        JSTokenType lex(JSTokenData* lvalp, JSTokenInfo* llocp);
         int lineNumber() const { return m_lineNumber; }
         void setLastLineNumber(int lastLineNumber) { m_lastLineNumber = lastLineNumber; }
         int lastLineNumber() const { return m_lastLineNumber; }

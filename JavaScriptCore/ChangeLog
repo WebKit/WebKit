@@ -1,3 +1,60 @@
+2010-07-09  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Tidy up lexer token ids
+        https://bugs.webkit.org/show_bug.cgi?id=42014
+
+        Stop using character literals to identify single character tokens
+        and instead use symbolic names for all tokens.
+
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::makeBinaryNode):
+        * parser/JSParser.cpp:
+        (JSC::JSParser::consume):
+        (JSC::JSParser::match):
+        (JSC::JSParser::autoSemiColon):
+        (JSC::JSParser::JSParser):
+        (JSC::JSParser::parseProgram):
+        (JSC::JSParser::allowAutomaticSemicolon):
+        (JSC::JSParser::parseDoWhileStatement):
+        (JSC::JSParser::parseWhileStatement):
+        (JSC::JSParser::parseVarDeclarationList):
+        (JSC::JSParser::parseConstDeclarationList):
+        (JSC::JSParser::parseForStatement):
+        (JSC::JSParser::parseReturnStatement):
+        (JSC::JSParser::parseWithStatement):
+        (JSC::JSParser::parseSwitchStatement):
+        (JSC::JSParser::parseSwitchClauses):
+        (JSC::JSParser::parseSwitchDefaultClause):
+        (JSC::JSParser::parseTryStatement):
+        (JSC::JSParser::parseDebuggerStatement):
+        (JSC::JSParser::parseStatement):
+        (JSC::JSParser::parseFormalParameters):
+        (JSC::JSParser::parseFunctionInfo):
+        (JSC::JSParser::parseExpressionOrLabelStatement):
+        (JSC::JSParser::parseIfStatement):
+        (JSC::JSParser::parseExpression):
+        (JSC::JSParser::parseAssignmentExpression):
+        (JSC::JSParser::parseConditionalExpression):
+        (JSC::isUnaryOp):
+        (JSC::JSParser::isBinaryOperator):
+        (JSC::JSParser::parseBinaryExpression):
+        (JSC::JSParser::parseProperty):
+        (JSC::JSParser::parseObjectLiteral):
+        (JSC::JSParser::parseStrictObjectLiteral):
+        (JSC::JSParser::parseArrayLiteral):
+        (JSC::JSParser::parsePrimaryExpression):
+        (JSC::JSParser::parseArguments):
+        (JSC::JSParser::parseMemberExpression):
+        (JSC::JSParser::parseUnaryExpression):
+        * parser/JSParser.h:
+        (JSC::):
+        * parser/Lexer.cpp:
+        (JSC::):
+        (JSC::Lexer::lex):
+        * parser/Lexer.h:
+
 2010-07-09  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Oliver Hunt.
