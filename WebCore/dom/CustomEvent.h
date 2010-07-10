@@ -29,7 +29,6 @@
 #include "AtomicString.h"
 #include "Event.h"
 #include "ScriptValue.h"
-#include <wtf/RefCounted.h>
 
 namespace WebCore {
 

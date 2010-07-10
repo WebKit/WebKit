@@ -26,7 +26,6 @@
 #define NodeFilter_h
 
 #include "NodeFilterCondition.h"
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {

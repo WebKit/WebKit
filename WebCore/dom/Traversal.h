@@ -26,7 +26,6 @@
 #define Traversal_h
 
 #include "ScriptState.h"
-#include <wtf/Forward.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {

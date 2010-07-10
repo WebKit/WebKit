@@ -28,8 +28,6 @@
 #define StyleMedia_h
 
 #include "PlatformString.h"
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
 
 namespace WebCore {
 

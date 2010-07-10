@@ -1,3 +1,26 @@
+2010-07-10  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Remove unnecessary includes in header files in WebCore/dom.
+        https://bugs.webkit.org/show_bug.cgi?id=41941
+
+        * css/StyleMedia.h:
+        * dom/BeforeLoadEvent.h:
+        * dom/CustomEvent.h:
+        * dom/DOMStringMap.h:
+        * dom/DeviceOrientationEvent.h:
+        * dom/EventListener.h:
+        * dom/MessagePort.h:
+        * dom/Node.cpp:
+        * dom/NodeFilter.h:
+        * dom/NodeRareData.h:
+        * dom/RegisteredEventListener.h:
+        * dom/SelectorNodeList.cpp:
+        * dom/SelectorNodeList.h:
+        * dom/StyleElement.h:
+        * dom/Traversal.h:
+
 2010-07-09  Tony Chang  <tony@chromium.org>
 
         Reviewed by Ojan Vafai.

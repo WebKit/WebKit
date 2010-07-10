@@ -29,11 +29,13 @@
 #ifndef SelectorNodeList_h
 #define SelectorNodeList_h
 
-#include "StaticNodeList.h"
+#include <wtf/PassRefPtr.h>
 
 namespace WebCore {
 
     class CSSSelectorList;
+    class Node;
+    class StaticNodeList;
 
     PassRefPtr<StaticNodeList> createSelectorNodeList(Node* rootNode, const CSSSelectorList&);
 

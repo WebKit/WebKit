@@ -69,6 +69,7 @@
 #include "RenderBox.h"
 #include "ScriptController.h"
 #include "SelectorNodeList.h"
+#include "StaticNodeList.h"
 #include "StringBuilder.h"
 #include "TagNodeList.h"
 #include "Text.h"

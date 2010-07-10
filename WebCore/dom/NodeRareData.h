@@ -24,10 +24,8 @@
 
 #include "ClassNodeList.h"
 #include "DynamicNodeList.h"
-#include "EventListener.h"
 #include "NameNodeList.h"
 #include "QualifiedName.h"
-#include "RegisteredEventListener.h"
 #include "StringHash.h"
 #include "TagNodeList.h"
 #include <wtf/HashSet.h>

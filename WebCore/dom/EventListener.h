@@ -21,7 +21,6 @@
 #ifndef EventListener_h
 #define EventListener_h
 
-#include "PlatformString.h"
 #include <wtf/RefCounted.h>
 
 namespace JSC {

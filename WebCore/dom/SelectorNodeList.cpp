@@ -35,6 +35,7 @@
 #include "Document.h"
 #include "Element.h"
 #include "HTMLNames.h"
+#include "StaticNodeList.h"
 
 namespace WebCore {
 
