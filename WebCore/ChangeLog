@@ -1,3 +1,19 @@
+2010-07-09  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Nate Chapin.
+
+        bufferSubData causes crash in WebGLBuffer::associateBufferSubData
+        https://bugs.webkit.org/show_bug.cgi?id=42004
+
+        Test: fast/canvas/webgl/index-validation-crash-with-buffer-sub-data.html
+
+        * html/canvas/WebGLBuffer.cpp:
+        (WebCore::WebGLBuffer::associateBufferData):
+         - Allocate m_elementArrayBuffer for entry point taking only size.
+           Guard against allocation failures of m_elementArrayBuffer.
+        (WebCore::WebGLBuffer::associateBufferSubData):
+         - Guard against any possibility of crashes due to m_elementArrayBuffer being NULL.
+
 2010-07-09  Dumitru Daniliuc  <dumi@chromium.org>
 
         Unreviewed, but pre-approved by Eric Seidel.

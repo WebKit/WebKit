@@ -54,14 +54,24 @@ void WebGLBuffer::_deleteObject(Platform3DObject object)
 
 bool WebGLBuffer::associateBufferData(int size)
 {
-    switch (m_target) {
-    case GraphicsContext3D::ELEMENT_ARRAY_BUFFER:
-    case GraphicsContext3D::ARRAY_BUFFER:
+    if (!m_target)
+        return false;
+
+    if (m_target == GraphicsContext3D::ELEMENT_ARRAY_BUFFER) {
+        m_byteLength = size;
+        clearCachedMaxIndices();
+        m_elementArrayBuffer = ArrayBuffer::create(size, 1);
+        if (!m_elementArrayBuffer) {
+            m_byteLength = 0;
+            return false;
+        }
+        return true;
+    } else if (m_target == GraphicsContext3D::ARRAY_BUFFER) {
         m_byteLength = size;
         return true;
-    default:
-        return false;
     }
+
+    return false;
 }
 
 bool WebGLBuffer::associateBufferData(ArrayBufferView* array)
@@ -78,6 +88,10 @@ bool WebGLBuffer::associateBufferData(ArrayBufferView* array)
         // modifications without calling bufferData or bufferSubData
         // must never be able to change the validation results.
         m_elementArrayBuffer = ArrayBuffer::create(array->buffer().get());
+        if (!m_elementArrayBuffer) {
+            m_byteLength = 0;
+            return false;
+        }
         return true;
     }
 
@@ -107,6 +121,9 @@ bool WebGLBuffer::associateBufferSubData(long offset, ArrayBufferView* array)
         if (uoffset > m_byteLength || array->byteLength() > m_byteLength - uoffset)
             return false;
             
+        if (!m_elementArrayBuffer)
+            return false;
+
         memcpy(static_cast<unsigned char*>(m_elementArrayBuffer->data()) + offset, array->baseAddress(), array->byteLength());
         return true;
     }
