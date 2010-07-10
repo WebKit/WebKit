@@ -1,3 +1,13 @@
+2010-07-09  John Abd-El-Malek  <jam@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [chromium] Take out WebPlugin::supportsFind since we can accomplish the same thing by having a return value on startFind
+        https://bugs.webkit.org/show_bug.cgi?id=42011
+
+        * public/WebPlugin.h:
+        (WebKit::WebPlugin::startFind):
+
 2010-07-09  Leon Clarke  <leonclarke@google.com>
 
         Reviewed by Adam Barth.
