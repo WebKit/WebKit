@@ -1,3 +1,24 @@
+2010-07-09  Daniel Bates  <dbates@rim.com>
+
+        Reviewed by Darin Adler.
+
+        Clean up: Move dump-list.js utility script from LayoutTests/fast/lists
+        to LayoutTests/fast/lists/resources
+        https://bugs.webkit.org/show_bug.cgi?id=42016
+
+        Move fast/lists/dump-list.js to fast/lists/resources since it
+        is a utility script and not a test case.
+
+        * fast/lists/dump-list.js: Removed. Moved to fast/lists/resources.
+        * fast/lists/ol-nested-items-dynamic-insert.html: Modified to look
+          for dump-list.js in new location.
+        * fast/lists/ol-nested-items-dynamic-remove.html: Ditto.
+        * fast/lists/ol-nested-items.html: Ditto.
+        * fast/lists/ol-nested-list-dynamic-insert.html: Ditto.
+        * fast/lists/ol-nested-list-dynamic-remove.html: Ditto.
+        * fast/lists/ol-nested-list.html: Ditto.
+        * fast/lists/resources/dump-list.js: Copied from LayoutTests/fast/lists/dump-list.js.
+
 2010-07-09  Leon Clarke  <leonclarke@google.com>
 
         Reviewed by Adam Barth.
