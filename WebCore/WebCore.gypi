@@ -695,6 +695,7 @@
             'bindings/js/WorkerScriptController.cpp',
             'bindings/js/WorkerScriptController.h',
             'bindings/ScriptControllerBase.cpp',
+            'bindings/ScriptControllerBase.h',
             'bindings/v8/ChildThreadDOMData.cpp',
             'bindings/v8/ChildThreadDOMData.h',
             'bindings/v8/custom/V8CanvasPixelArrayCustom.cpp',

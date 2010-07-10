@@ -567,6 +567,7 @@ webcore_sources += \
 	WebCore/bindings/js/StringSourceProvider.h \
 	WebCore/bindings/js/WebCoreJSClientData.h \
 	WebCore/bindings/ScriptControllerBase.cpp \
+	WebCore/bindings/ScriptControllerBase.h \
 	WebCore/bridge/Bridge.h \
 	WebCore/bridge/IdentifierRep.cpp \
 	WebCore/bridge/IdentifierRep.h \

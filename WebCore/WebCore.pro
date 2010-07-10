@@ -167,6 +167,7 @@ include(WebCore.pri)
 INCLUDEPATH = \
     $$PWD \
     $$PWD/accessibility \
+    $$PWD/bindings \
     $$PWD/bindings/js \
     $$PWD/bridge \
     $$PWD/bridge/c \
@@ -1058,6 +1059,7 @@ HEADERS += \
     accessibility/AccessibilityTableHeaderContainer.h \
     accessibility/AccessibilityTableRow.h \
     accessibility/AXObjectCache.h \
+    bindings/ScriptControllerBase.h \
     bindings/js/CachedScriptSourceProvider.h \
     bindings/js/GCController.h \
     bindings/js/DOMObjectHashTableMap.h \

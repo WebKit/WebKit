@@ -1,3 +1,27 @@
+2010-07-10  Daniel Bates  <dbates@rim.com>
+
+        Reviewed by Adam Barth.
+
+        Move enum ReasonForCallingCanExecuteScripts to header ScriptControllerBase.h
+        https://bugs.webkit.org/show_bug.cgi?id=39339
+
+        Moved the enum ReasonForCallingCanExecuteScripts, which was
+        defined in both the JSC and V8 ScriptController.h file, into
+        a shared file called ScriptControllerBase.h.
+
+        No functionality was changed, so no new tests.
+
+        * GNUmakefile.am: Added file bindings/ScriptControllerBase.h.
+        * WebCore.gypi: Ditto.
+        * WebCore.pro: Ditto.
+        * WebCore.vcproj/WebCore.vcproj: Ditto.
+        * WebCore.vcproj/WebCoreCommon.vsprops: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * bindings/ScriptControllerBase.h: Added.
+        (WebCore::):
+        * bindings/js/ScriptController.h: #include ScriptControllerBase.h
+        * bindings/v8/ScriptController.h: Ditto.
+
 2010-07-10  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Anders Carlsson.
