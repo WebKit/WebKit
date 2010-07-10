@@ -1,3 +1,14 @@
+2010-07-10  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Test for https://bugs.webkit.org/show_bug.cgi?id=42021
+        isEqualNode should work for DocumentType nodes
+
+        * fast/dom/Node/isEqualNode-expected.txt: Added.
+        * fast/dom/Node/isEqualNode.html: Added.
+        * fast/dom/Node/script-tests/isEqualNode.js: Added.
+
 2010-07-10  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Anders Carlsson.

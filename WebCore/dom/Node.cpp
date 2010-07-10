@@ -40,6 +40,7 @@
 #include "ContextMenuController.h"
 #include "DOMImplementation.h"
 #include "Document.h"
+#include "DocumentType.h"
 #include "DynamicNodeList.h"
 #include "Element.h"
 #include "Event.h"
@@ -1731,12 +1732,13 @@ KURL Node::baseURI() const
     return parentNode() ? parentNode()->baseURI() : KURL();
 }
 
-bool Node::isEqualNode(Node *other) const
+bool Node::isEqualNode(Node* other) const
 {
     if (!other)
         return false;
     
-    if (nodeType() != other->nodeType())
+    NodeType nodeType = this->nodeType();
+    if (nodeType != other->nodeType())
         return false;
     
     if (nodeName() != other->nodeName())
@@ -1754,17 +1756,17 @@ bool Node::isEqualNode(Node *other) const
     if (nodeValue() != other->nodeValue())
         return false;
     
-    NamedNodeMap *attrs = attributes();
-    NamedNodeMap *otherAttrs = other->attributes();
+    NamedNodeMap* attributes = this->attributes();
+    NamedNodeMap* otherAttributes = other->attributes();
     
-    if (!attrs && otherAttrs)
+    if (!attributes && otherAttributes)
         return false;
     
-    if (attrs && !attrs->mapsEquivalent(otherAttrs))
+    if (attributes && !attributes->mapsEquivalent(otherAttributes))
         return false;
     
-    Node *child = firstChild();
-    Node *otherChild = other->firstChild();
+    Node* child = firstChild();
+    Node* otherChild = other->firstChild();
     
     while (child) {
         if (!child->isEqualNode(otherChild))
@@ -1777,8 +1779,33 @@ bool Node::isEqualNode(Node *other) const
     if (otherChild)
         return false;
     
-    // FIXME: For DocumentType nodes we should check equality on
-    // the entities and notations NamedNodeMaps as well.
+    if (nodeType == DOCUMENT_TYPE_NODE) {
+        const DocumentType* documentTypeThis = static_cast<const DocumentType*>(this);
+        const DocumentType* documentTypeOther = static_cast<const DocumentType*>(other);
+        
+        if (documentTypeThis->publicId() != documentTypeOther->publicId())
+            return false;
+
+        if (documentTypeThis->systemId() != documentTypeOther->systemId())
+            return false;
+
+        if (documentTypeThis->internalSubset() != documentTypeOther->internalSubset())
+            return false;
+
+        NamedNodeMap* entities = documentTypeThis->entities();
+        NamedNodeMap* otherEntities = documentTypeOther->entities();
+        if (!entities && otherEntities)
+            return false;
+        if (entities && !entities->mapsEquivalent(otherEntities))
+            return false;
+
+        NamedNodeMap* notations = documentTypeThis->notations();
+        NamedNodeMap* otherNotations = documentTypeOther->notations();
+        if (!notations && otherNotations)
+            return false;
+        if (notations && !notations->mapsEquivalent(otherNotations))
+            return false;
+    }
     
     return true;
 }
