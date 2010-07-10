@@ -77,6 +77,7 @@ class StepSequence(object):
         except ScriptError, e:
             if not options.quiet:
                 log(e.message_with_output())
+            raise e
             if options.parent_command:
                 command = tool.command_by_name(options.parent_command)
                 command.handle_script_error(tool, state, e)

@@ -29,18 +29,17 @@
 import unittest
 
 from webkitpy.common.system.outputcapture import OutputCapture
-from webkitpy.thirdparty.mock import Mock
-from webkitpy.tool.mocktool import MockTool
+from webkitpy.tool.mocktool import MockOptions, MockTool
 from webkitpy.tool.steps.updatechangelogswithreviewer import UpdateChangeLogsWithReviewer
 
 class UpdateChangeLogsWithReviewerTest(unittest.TestCase):
     def test_guess_reviewer_from_bug(self):
         capture = OutputCapture()
-        step = UpdateChangeLogsWithReviewer(MockTool(), Mock())
+        step = UpdateChangeLogsWithReviewer(MockTool(), MockOptions())
         expected_stderr = "0 reviewed patches on bug 75, cannot infer reviewer.\n"
         capture.assert_outputs(self, step._guess_reviewer_from_bug, [75], expected_stderr=expected_stderr)
 
     def test_empty_state(self):
         capture = OutputCapture()
-        step = UpdateChangeLogsWithReviewer(MockTool(), Mock())
+        step = UpdateChangeLogsWithReviewer(MockTool(), MockOptions())
         capture.assert_outputs(self, step.run, [{}])

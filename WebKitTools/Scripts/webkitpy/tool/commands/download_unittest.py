@@ -32,7 +32,7 @@ from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.thirdparty.mock import Mock
 from webkitpy.tool.commands.commandtest import CommandsTest
 from webkitpy.tool.commands.download import *
-from webkitpy.tool.mocktool import MockTool
+from webkitpy.tool.mocktool import MockOptions, MockTool
 
 
 class AbstractRolloutPrepCommandTest(unittest.TestCase):
@@ -56,7 +56,7 @@ class AbstractRolloutPrepCommandTest(unittest.TestCase):
 
 class DownloadCommandsTest(CommandsTest):
     def _default_options(self):
-        options = Mock()
+        options = MockOptions()
         options.force_clean = False
         options.clean = True
         options.check_builders = True

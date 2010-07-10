@@ -515,6 +515,7 @@ class MockStatusServer(object):
     def results_url_for_status(self, status_id):
         return "http://dummy_url"
 
+
 class MockExecute(Mock):
     def __init__(self, should_log):
         self._should_log = should_log
@@ -535,6 +536,11 @@ class MockExecute(Mock):
         if self._should_log:
             log("MOCK run_command: %s" % args)
         return "MOCK output of child process"
+
+
+class MockOptions(Mock):
+    no_squash = False
+    squash = False
 
 
 class MockRietveld():

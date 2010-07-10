@@ -31,15 +31,14 @@ import unittest
 
 from webkitpy.common.checkout.changelog_unittest import ChangeLogTest
 from webkitpy.common.system.outputcapture import OutputCapture
-from webkitpy.thirdparty.mock import Mock
-from webkitpy.tool.mocktool import MockTool
+from webkitpy.tool.mocktool import MockOptions, MockTool
 from webkitpy.tool.steps.preparechangelog import PrepareChangeLog
 
 
 class PrepareChangeLogTest(ChangeLogTest):
     def test_ensure_bug_url(self):
         capture = OutputCapture()
-        step = PrepareChangeLog(MockTool(), Mock())
+        step = PrepareChangeLog(MockTool(), MockOptions())
         changelog_contents = u"%s\n%s" % (self._new_entry_boilerplate, self._example_changelog)
         changelog_path = self._write_tmp_file_with_contents(changelog_contents.encode("utf-8"))
         state = {

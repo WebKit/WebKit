@@ -2,6 +2,28 @@
 
         Reviewed by Adam Barth.
 
+        r63004 broke some python tests
+        https://bugs.webkit.org/show_bug.cgi?id=42007
+
+        AbstractStep now checks options.no_squash and options.squash, so
+        they needed to have real values. Mock would return an object for those,
+        which would then act as if the values were True.
+
+        * Scripts/webkitpy/tool/commands/commandtest.py:
+        * Scripts/webkitpy/tool/commands/download_unittest.py:
+        * Scripts/webkitpy/tool/commands/stepsequence.py:
+        * Scripts/webkitpy/tool/commands/upload_unittest.py:
+        * Scripts/webkitpy/tool/mocktool.py:
+        * Scripts/webkitpy/tool/steps/closebugforlanddiff_unittest.py:
+        * Scripts/webkitpy/tool/steps/preparechangelog_unittest.py:
+        * Scripts/webkitpy/tool/steps/steps_unittest.py:
+        * Scripts/webkitpy/tool/steps/updatechangelogswithreview_unittest.py:
+        * Scripts/webkitpy/tool/steps/validatereviewer_unittest.py:
+
+2010-07-09  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Adam Barth.
+
         --squash should go away and become the default
         https://bugs.webkit.org/show_bug.cgi?id=39624
 

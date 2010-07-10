@@ -30,8 +30,7 @@ import unittest
 
 from webkitpy.common.checkout.changelog import ChangeLogEntry
 from webkitpy.common.system.outputcapture import OutputCapture
-from webkitpy.thirdparty.mock import Mock
-from webkitpy.tool.mocktool import MockTool
+from webkitpy.tool.mocktool import MockOptions, MockTool
 from webkitpy.tool.steps.validatereviewer import ValidateReviewer
 
 class ValidateReviewerTest(unittest.TestCase):
@@ -48,7 +47,7 @@ class ValidateReviewerTest(unittest.TestCase):
         self.assertEqual(step._has_valid_reviewer(entry), expected)
 
     def test_has_valid_reviewer(self):
-        step = ValidateReviewer(MockTool(), Mock())
+        step = ValidateReviewer(MockTool(), MockOptions())
         self._test_review_text(step, "Reviewed by Eric Seidel.", True)
         self._test_review_text(step, "Reviewed by Eric Seidel", True) # Not picky about the '.'
         self._test_review_text(step, "Reviewed by Eric.", False)
