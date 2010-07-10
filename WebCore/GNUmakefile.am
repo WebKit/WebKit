@@ -755,8 +755,6 @@ webcore_sources += \
 	WebCore/dom/CDATASection.h \
 	WebCore/dom/CSSMappedAttributeDeclaration.cpp \
 	WebCore/dom/CSSMappedAttributeDeclaration.h \
-	WebCore/dom/CanvasSurface.cpp \
-	WebCore/dom/CanvasSurface.h \
 	WebCore/dom/CharacterData.cpp \
 	WebCore/dom/CharacterData.h \
 	WebCore/dom/CheckedRadioButtons.cpp \

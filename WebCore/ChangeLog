@@ -1,3 +1,51 @@
+2010-07-09  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Removes CanvasSurface and moves all of its functionality to HTMLCanvasElement.
+        https://bugs.webkit.org/show_bug.cgi?id=42005
+
+        http://trac.webkit.org/changeset/55201 introduced a new base class for HTMLCanvasElement called CanvasSurface.
+        The intention was that this would allow for code sharing with the then-proposed OffscreenCanvas.  However,
+        there is no OffscreenCanvas and there's unlikely to be one soon.  Additionally CanvasSurface breaks
+        encapsulation pretty badly by doing "static_cast<HTMLCanvasElement* const>(this)".  Until an abstraction is
+        really needed we should just use HTMLCanvasElement when we want to talk about a canvas.
+
+        This patch moves all of CanvasSurface's functionality back up to HTMLCanvasElement and reorders the header
+        to be a bit more logical.
+
+        Refactor with no behavior change, thus no new tests.
+
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/CanvasSurface.cpp: Removed.
+        * dom/CanvasSurface.h: Removed.
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::HTMLCanvasElement):
+        (WebCore::HTMLCanvasElement::willDraw):
+        (WebCore::HTMLCanvasElement::setSurfaceSize):
+        (WebCore::HTMLCanvasElement::toDataURL):
+        (WebCore::HTMLCanvasElement::convertLogicalToDevice):
+        (WebCore::HTMLCanvasElement::securityOrigin):
+        (WebCore::HTMLCanvasElement::styleSelector):
+        (WebCore::HTMLCanvasElement::createImageBuffer):
+        (WebCore::HTMLCanvasElement::drawingContext):
+        (WebCore::HTMLCanvasElement::buffer):
+        (WebCore::HTMLCanvasElement::baseTransform):
+        * html/HTMLCanvasElement.h:
+        (WebCore::HTMLCanvasElement::setObserver):
+        (WebCore::HTMLCanvasElement::width):
+        (WebCore::HTMLCanvasElement::height):
+        (WebCore::HTMLCanvasElement::size):
+        (WebCore::HTMLCanvasElement::toDataURL):
+        (WebCore::HTMLCanvasElement::setOriginTainted):
+        (WebCore::HTMLCanvasElement::originClean):
+        (WebCore::HTMLCanvasElement::hasCreatedImageBuffer):
+
 2010-07-09  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Darin Adler.

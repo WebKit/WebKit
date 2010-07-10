@@ -40,6 +40,7 @@
 #include "GraphicsContext.h"
 #include "HTMLNames.h"
 #include "ImageBuffer.h"
+#include "MIMETypeRegistry.h"
 #include "Page.h"
 #include "RenderHTMLCanvas.h"
 #include "Settings.h"
@@ -55,11 +56,23 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
+// These values come from the WhatWG spec.
+static const int DefaultWidth = 300;
+static const int DefaultHeight = 150;
+
+// Firefox limits width/height to 32767 pixels, but slows down dramatically before it
+// reaches that limit. We limit by area instead, giving us larger maximum dimensions,
+// in exchange for a smaller maximum canvas size.
+static const float MaxCanvasArea = 32768 * 8192; // Maximum canvas area in CSS pixels
+
 HTMLCanvasElement::HTMLCanvasElement(const QualifiedName& tagName, Document* document)
     : HTMLElement(tagName, document)
-    , CanvasSurface(document->frame() ? document->frame()->page()->chrome()->scaleFactor() : 1)
     , m_observer(0)
+    , m_size(DefaultWidth, DefaultHeight)
     , m_ignoreReset(false)
+    , m_pageScaleFactor(document->frame() ? document->frame()->page()->chrome()->scaleFactor() : 1)
+    , m_originClean(true)
+    , m_hasCreatedImageBuffer(false)
 {
     ASSERT(hasTagName(canvasTag));
 }
@@ -186,7 +199,8 @@ CanvasRenderingContext* HTMLCanvasElement::getContext(const String& type, Canvas
 
 void HTMLCanvasElement::willDraw(const FloatRect& rect)
 {
-    CanvasSurface::willDraw(rect);
+    if (m_imageBuffer)
+        m_imageBuffer->clearImage();
 
     if (RenderBox* ro = renderBox()) {
         FloatRect destRect = ro->contentBoxRect();
@@ -288,6 +302,110 @@ void HTMLCanvasElement::recalcStyle(StyleChange change)
         CanvasRenderingContext2D* ctx = static_cast<CanvasRenderingContext2D*>(m_context.get());
         ctx->updateFont();
     }
+}
+
+void HTMLCanvasElement::setSurfaceSize(const IntSize& size)
+{
+    m_size = size;
+    m_hasCreatedImageBuffer = false;
+    m_imageBuffer.clear();
+}
+
+String HTMLCanvasElement::toDataURL(const String& mimeType, const double* quality, ExceptionCode& ec)
+{
+    if (!m_originClean) {
+        ec = SECURITY_ERR;
+        return String();
+    }
+
+    if (m_size.isEmpty() || !buffer())
+        return String("data:,");
+
+    String lowercaseMimeType = mimeType.lower();
+
+    // FIXME: Make isSupportedImageMIMETypeForEncoding threadsafe (to allow this method to be used on a worker thread).
+    if (mimeType.isNull() || !MIMETypeRegistry::isSupportedImageMIMETypeForEncoding(lowercaseMimeType))
+        return buffer()->toDataURL("image/png");
+
+    return buffer()->toDataURL(lowercaseMimeType, quality);
+}
+
+IntRect HTMLCanvasElement::convertLogicalToDevice(const FloatRect& logicalRect) const
+{
+    return IntRect(convertLogicalToDevice(logicalRect.location()), convertLogicalToDevice(logicalRect.size()));
+}
+
+IntSize HTMLCanvasElement::convertLogicalToDevice(const FloatSize& logicalSize) const
+{
+    float wf = ceilf(logicalSize.width() * m_pageScaleFactor);
+    float hf = ceilf(logicalSize.height() * m_pageScaleFactor);
+
+    if (!(wf >= 1 && hf >= 1 && wf * hf <= MaxCanvasArea))
+        return IntSize();
+
+    return IntSize(static_cast<unsigned>(wf), static_cast<unsigned>(hf));
+}
+
+IntPoint HTMLCanvasElement::convertLogicalToDevice(const FloatPoint& logicalPos) const
+{
+    float xf = logicalPos.x() * m_pageScaleFactor;
+    float yf = logicalPos.y() * m_pageScaleFactor;
+
+    return IntPoint(static_cast<unsigned>(xf), static_cast<unsigned>(yf));
+}
+
+const SecurityOrigin& HTMLCanvasElement::securityOrigin() const
+{
+    return *document()->securityOrigin();
+}
+
+CSSStyleSelector* HTMLCanvasElement::styleSelector()
+{
+    return document()->styleSelector();
+}
+
+void HTMLCanvasElement::createImageBuffer() const
+{
+    ASSERT(!m_imageBuffer);
+
+    m_hasCreatedImageBuffer = true;
+
+    FloatSize unscaledSize(width(), height());
+    IntSize size = convertLogicalToDevice(unscaledSize);
+    if (!size.width() || !size.height())
+        return;
+
+    m_imageBuffer = ImageBuffer::create(size);
+    // The convertLogicalToDevice MaxCanvasArea check should prevent common cases
+    // where ImageBuffer::create() returns 0, however we could still be low on memory.
+    if (!m_imageBuffer)
+        return;
+    m_imageBuffer->context()->scale(FloatSize(size.width() / unscaledSize.width(), size.height() / unscaledSize.height()));
+    m_imageBuffer->context()->setShadowsIgnoreTransforms(true);
+}
+
+GraphicsContext* HTMLCanvasElement::drawingContext() const
+{
+    return buffer() ? m_imageBuffer->context() : 0;
+}
+
+ImageBuffer* HTMLCanvasElement::buffer() const
+{
+    if (!m_hasCreatedImageBuffer)
+        createImageBuffer();
+    return m_imageBuffer.get();
+}
+
+AffineTransform HTMLCanvasElement::baseTransform() const
+{
+    ASSERT(m_hasCreatedImageBuffer);
+    FloatSize unscaledSize(width(), height());
+    IntSize size = convertLogicalToDevice(unscaledSize);
+    AffineTransform transform;
+    if (size.width() && size.height())
+        transform.scaleNonUniform(size.width() / unscaledSize.width(), size.height() / unscaledSize.height());
+    transform.multiply(m_imageBuffer->baseTransform());
+    return transform;
 }
 
 }

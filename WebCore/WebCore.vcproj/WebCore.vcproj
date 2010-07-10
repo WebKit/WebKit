@@ -32237,14 +32237,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\dom\CanvasSurface.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\dom\CanvasSurface.h"
-				>
-			</File>
-			<File
 				RelativePath="..\dom\CDATASection.cpp"
 				>
 			</File>

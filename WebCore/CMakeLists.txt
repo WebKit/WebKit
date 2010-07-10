@@ -758,7 +758,6 @@ SET(WebCore_SOURCES
     dom/Attribute.cpp
     dom/BeforeTextInsertedEvent.cpp
     dom/BeforeUnloadEvent.cpp
-    dom/CanvasSurface.cpp
     dom/CDATASection.cpp
     dom/CharacterData.cpp
     dom/CheckedRadioButtons.cpp
