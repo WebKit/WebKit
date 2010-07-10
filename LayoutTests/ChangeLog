@@ -1,3 +1,14 @@
+2010-07-10  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        <rdar://problem/8153214> Continuation outlines in layers do not paint correctly
+
+        * fast/inline/continuation-outlines-with-layers-2.html: Added.
+        * platform/mac/fast/inline/continuation-outlines-with-layers-2-expected.checksum: Added.
+        * platform/mac/fast/inline/continuation-outlines-with-layers-2-expected.png: Added.
+        * platform/mac/fast/inline/continuation-outlines-with-layers-2-expected.txt: Added.
+
 2010-07-10  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

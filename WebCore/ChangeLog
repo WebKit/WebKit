@@ -1,3 +1,26 @@
+2010-07-10  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        <rdar://problem/8153214> Continuation outlines in layers do not paint correctly
+
+        Test: fast/inline/continuation-outlines-with-layers-2.html
+
+        Continuation outlines are normally painted by the containing block. However, when the
+        block and the inline are not enclosed by the same self-painting layer, the inline has to
+        paint its own outlines. This was handled correctly only for the case where the inline had
+        its own self-painting layer, but now when an ancestor inline had the self-painting layer.
+
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::paint): Instead of testing for having a self-painting layer, test
+        whether any intermediate box between the inline and the containing block has a self-painting
+        layer.
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::paintObject): Ditto.
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::enclosingBoxModelObject): Added this utility method.
+        * rendering/RenderObject.h:
+
 2010-07-10  François Sausset  <sausset@gmail.com>
 
         Reviewed by Kenneth Rohde Christiansen.
