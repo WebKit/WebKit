@@ -1,3 +1,14 @@
+2010-07-09  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        Assertion failure in String::utf8() for certain invalid UTF16 inputs
+        https://bugs.webkit.org/show_bug.cgi?id=41983
+
+        * wtf/text/WTFString.cpp:
+        (WebCore::String::utf8):
+         - Fixed assertion when sourceExhausted is returned from convertUTF16ToUTF8.
+
 2010-07-09  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Geoffrey Garen.

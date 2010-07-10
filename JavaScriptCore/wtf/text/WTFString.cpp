@@ -663,7 +663,7 @@ CString String::utf8() const
     // simply encode it to UTF-8.
     if (result == sourceExhausted) {
         // This should be one unpaired high surrogate.
-        ASSERT((characters + 1) == (characters + length));
+        ASSERT((characters + 1) == (this->characters() + length));
         ASSERT((*characters >= 0xD800) && (*characters <= 0xDBFF));
         // There should be room left, since one UChar hasn't been converted.
         ASSERT((buffer + 3) <= (buffer + bufferVector.size()));
