@@ -183,7 +183,7 @@ class Executive(object):
         # According to http://docs.python.org/library/os.html
         # os.kill isn't available on Windows. python 2.5.5 os.kill appears
         # to work in cygwin, however it occasionally raises EAGAIN.
-        retries_left = 3 if sys.platform == "cygwin" else 1
+        retries_left = 10 if sys.platform == "cygwin" else 1
         while retries_left > 0:
             try:
                 retries_left -= 1

@@ -1,3 +1,13 @@
+2010-07-09  Brian Weinstein  <bweinstein@apple.com>
+
+        Rubber-stamped by Dan Bernstein.
+
+        Windows testers running Windows 7 were hanging during test_kill_process. Changing the
+        number of attempts from 3 to 10 fixes the problem on the new bots (and doesn't seem to
+        slow down the tests).
+
+        * Scripts/webkitpy/common/system/executive.py:
+
 2010-07-09  Luiz Agostini  <luiz.agostini@openbossa.org>
 
         Reviewed by Kenneth Rohde Christiansen.
