@@ -39,6 +39,7 @@
         window.setTimeout(function() {
             document.getElementById('parent-iframe').className = 'bigger';
             if (window.layoutTestController) {
+                document.body.offsetWidth;  // force layout, because layerTreeAsText() doesn't.
                 document.getElementById('layers').innerHTML = layoutTestController.layerTreeAsText();
                 layoutTestController.notifyDone();
             }

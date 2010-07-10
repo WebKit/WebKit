@@ -168,6 +168,14 @@ void RenderLayerBacking::updateCompositedBounds()
     setCompositedBounds(layerBounds);
 }
 
+void RenderLayerBacking::updateAfterWidgetResize()
+{
+    if (renderer()->isRenderIFrame()) {
+        if (RenderLayerCompositor* innerCompositor = RenderLayerCompositor::iframeContentsCompositor(toRenderIFrame(renderer())))
+            innerCompositor->updateContentLayerOffset(contentsBox().location());
+    }
+}
+
 void RenderLayerBacking::updateAfterLayout(UpdateDepth updateDepth, bool isUpdateRoot)
 {
     RenderLayerCompositor* layerCompositor = compositor();
@@ -389,12 +397,7 @@ void RenderLayerBacking::updateGraphicsLayerGeometry()
 
     m_graphicsLayer->setContentsRect(contentsBox());
     updateDrawsContent();
-
-    // If this is an iframe parent, update the iframe content's box
-    if (renderer()->isRenderIFrame()) {
-        if (RenderLayerCompositor* innerCompositor = RenderLayerCompositor::iframeContentsCompositor(toRenderIFrame(renderer())))
-            innerCompositor->updateContentLayerOffset(contentsBox().location());
-    }
+    updateAfterWidgetResize();
 }
 
 void RenderLayerBacking::updateInternalHierarchy()

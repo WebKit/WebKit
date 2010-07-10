@@ -30,6 +30,10 @@
 #include "RenderView.h"
 #include "RenderWidgetProtector.h"
 
+#if USE(ACCELERATED_COMPOSITING)
+#include "RenderLayerBacking.h"
+#endif
+
 using namespace std;
 
 namespace WebCore {
@@ -166,6 +170,12 @@ bool RenderWidget::setWidgetGeometry(const IntRect& frame)
     RenderWidgetProtector protector(this);
     RefPtr<Node> protectedNode(node());
     m_widget->setFrameRect(frame);
+    
+#if USE(ACCELERATED_COMPOSITING)
+    if (hasLayer() && layer()->isComposited())
+        layer()->backing()->updateAfterWidgetResize();
+#endif
+    
     return boundsChanged;
 }
 
