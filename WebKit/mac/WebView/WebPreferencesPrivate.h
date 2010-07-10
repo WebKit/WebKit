@@ -50,6 +50,9 @@ extern NSString *WebPreferencesRemovedNotification;
 
 // Preferences that might be public in a future release
 
+- (BOOL)isDNSPrefetchingEnabled;
+- (void)setDNSPrefetchingEnabled:(BOOL)flag;
+
 - (BOOL)developerExtrasEnabled;
 - (void)setDeveloperExtrasEnabled:(BOOL)flag;
 
