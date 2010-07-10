@@ -29,9 +29,9 @@ module svg {
 
     interface [Conditional=SVG, ObjCProtocol, OmitConstructor] SVGStylable {
         readonly attribute SVGAnimatedString className;
-        readonly attribute css::CSSStyleDeclaration style;
+        readonly attribute CSSStyleDeclaration style;
 
-        css::CSSValue getPresentationAttribute(in core::DOMString name);
+        CSSValue getPresentationAttribute(in DOMString name);
     };
 
 }

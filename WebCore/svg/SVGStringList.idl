@@ -29,19 +29,19 @@ module svg {
         readonly attribute unsigned long numberOfItems;
 
         void clear()
-            raises(core::DOMException);
-        core::DOMString initialize(in core::DOMString item)
-            raises(core::DOMException, SVGException);
-        core::DOMString getItem(in unsigned long index)
-            raises(core::DOMException);
-        core::DOMString insertItemBefore(in core::DOMString item, in unsigned long index)
-            raises(core::DOMException, SVGException);
-        core::DOMString replaceItem(in core::DOMString item, in unsigned long index)
-            raises(core::DOMException, SVGException);
-        core::DOMString removeItem(in unsigned long index)
-            raises(core::DOMException);
-        core::DOMString appendItem(in core::DOMString item)
-            raises(core::DOMException, SVGException);
+            raises(DOMException);
+        DOMString initialize(in DOMString item)
+            raises(DOMException, SVGException);
+        DOMString getItem(in unsigned long index)
+            raises(DOMException);
+        DOMString insertItemBefore(in DOMString item, in unsigned long index)
+            raises(DOMException, SVGException);
+        DOMString replaceItem(in DOMString item, in unsigned long index)
+            raises(DOMException, SVGException);
+        DOMString removeItem(in unsigned long index)
+            raises(DOMException);
+        DOMString appendItem(in DOMString item)
+            raises(DOMException, SVGException);
     };
 
 }

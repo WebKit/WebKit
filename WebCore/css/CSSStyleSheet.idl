@@ -21,7 +21,7 @@
 module css {
 
     // Introduced in DOM Level 2:
-    interface CSSStyleSheet : stylesheets::StyleSheet {
+    interface CSSStyleSheet : StyleSheet {
         readonly attribute CSSRule          ownerRule;
         readonly attribute CSSRuleList      cssRules;
 

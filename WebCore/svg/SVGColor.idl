@@ -21,7 +21,7 @@
 
 module svg {
 
-    interface [Conditional=SVG] SVGColor : css::CSSValue {
+    interface [Conditional=SVG] SVGColor : CSSValue {
         // Color Types
         const unsigned short SVG_COLORTYPE_UNKNOWN           = 0;
         const unsigned short SVG_COLORTYPE_RGBCOLOR          = 1;
@@ -29,17 +29,17 @@ module svg {
         const unsigned short SVG_COLORTYPE_CURRENTCOLOR      = 3;
 
         readonly attribute unsigned short colorType;
-        readonly attribute css::RGBColor  rgbColor;
+        readonly attribute RGBColor  rgbColor;
         /*readonly attribute SVGICCColor    iccColor;*/
 
-        void setRGBColor(in core::DOMString rgbColor)
+        void setRGBColor(in DOMString rgbColor)
             raises(SVGException);
-        void setRGBColorICCColor(in core::DOMString rgbColor, 
-                                 in core::DOMString iccColor)
+        void setRGBColorICCColor(in DOMString rgbColor, 
+                                 in DOMString iccColor)
             raises(SVGException);
         void setColor(in unsigned short colorType,
-                      in core::DOMString rgbColor,
-                      in core::DOMString iccColor)
+                      in DOMString rgbColor,
+                      in DOMString iccColor)
             raises(SVGException);
     };
 

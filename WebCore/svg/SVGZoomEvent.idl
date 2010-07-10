@@ -25,7 +25,7 @@
 
 module svg {
 
-    interface [Conditional=SVG] SVGZoomEvent : events::UIEvent { 
+    interface [Conditional=SVG] SVGZoomEvent : UIEvent { 
         readonly attribute [Immutable] SVGRect zoomRectScreen;
         readonly attribute float previousScale;
         readonly attribute [Immutable] SVGPoint previousTranslate;

@@ -26,9 +26,9 @@
 module svg {
 
     interface [Conditional=SVG] SVGAnimatedString {
-                 attribute core::DOMString baseVal
+                 attribute DOMString baseVal
                      /*setter raises(DOMException)*/;
-        readonly attribute core::DOMString animVal;
+        readonly attribute DOMString animVal;
     };
 
 }

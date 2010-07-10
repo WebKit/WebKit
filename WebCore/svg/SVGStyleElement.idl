@@ -28,11 +28,11 @@ module svg {
 
     interface [Conditional=SVG] SVGStyleElement : SVGElement,
                                                   SVGLangSpace {
-                 attribute core::DOMString type
+                 attribute DOMString type
                      setter raises(DOMException);
-                 attribute core::DOMString media
+                 attribute DOMString media
                      setter raises(DOMException);
-                 attribute core::DOMString title
+                 attribute DOMString title
                      setter raises(DOMException);
     };
 

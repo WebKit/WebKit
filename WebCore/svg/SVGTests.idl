@@ -31,7 +31,7 @@ module svg {
         readonly attribute SVGStringList requiredExtensions;
         readonly attribute SVGStringList systemLanguage;
 
-        boolean hasExtension(in core::DOMString extension);
+        boolean hasExtension(in DOMString extension);
     };
 
 }

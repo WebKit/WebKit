@@ -37,9 +37,9 @@ module svg {
         readonly attribute SVGAnimatedLength y;
         readonly attribute SVGAnimatedLength width;
         readonly attribute SVGAnimatedLength height;
-                 attribute core::DOMString contentScriptType
+                 attribute DOMString contentScriptType
                      /*setter raises(DOMException)*/;
-                 attribute core::DOMString contentStyleType
+                 attribute DOMString contentStyleType
                      /*setter raises(DOMException)*/;
         readonly attribute [Immutable] SVGRect viewport;
         readonly attribute float pixelUnitToMillimeterX;
@@ -62,9 +62,9 @@ module svg {
         boolean animationsPaused();
         float getCurrentTime();
         void setCurrentTime(in float seconds);
-        core::NodeList getIntersectionList(in SVGRect rect, 
+        NodeList getIntersectionList(in SVGRect rect, 
                                            in SVGElement referenceElement);
-        core::NodeList getEnclosureList(in SVGRect rect, 
+        NodeList getEnclosureList(in SVGRect rect, 
                                         in SVGElement referenceElement);
         boolean checkIntersection(in SVGElement element, 
                                   in SVGRect rect);
@@ -80,7 +80,7 @@ module svg {
         SVGRect createSVGRect();
         SVGTransform createSVGTransform();
         SVGTransform createSVGTransformFromMatrix(in SVGMatrix matrix);
-        core::Element getElementById(in core::DOMString elementId);
+        Element getElementById(in DOMString elementId);
     };
 
 }
