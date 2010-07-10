@@ -1,5 +1,11 @@
 2010-07-09  James Robinson  <jamesr@chromium.org>
 
+        Unreviewed build fix.  Add #include to pick up ExceptionCode values for config (like Qt) where it's not picked up indirectly.
+
+        * html/HTMLCanvasElement.cpp:
+
+2010-07-09  James Robinson  <jamesr@chromium.org>
+
         Reviewed by Darin Adler.
 
         Removes CanvasSurface and moves all of its functionality to HTMLCanvasElement.

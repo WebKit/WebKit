@@ -36,6 +36,7 @@
 #include "CanvasStyle.h"
 #include "Chrome.h"
 #include "Document.h"
+#include "ExceptionCode.h"
 #include "Frame.h"
 #include "GraphicsContext.h"
 #include "HTMLNames.h"
