@@ -2314,6 +2314,12 @@
 		8A81BF8511DCFD9000DA2B98 /* ResourceLoadTiming.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A81BF8411DCFD9000DA2B98 /* ResourceLoadTiming.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		8A844D0411D3C18E0014065C /* Performance.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8A844D0111D3C18E0014065C /* Performance.cpp */; };
 		8A844D0511D3C18E0014065C /* Performance.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A844D0211D3C18E0014065C /* Performance.h */; };
+		8A9A587011E84C36008ACFD1 /* JSNavigation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8A9A586E11E84C35008ACFD1 /* JSNavigation.cpp */; };
+		8A9A587111E84C36008ACFD1 /* JSNavigation.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A9A586F11E84C36008ACFD1 /* JSNavigation.h */; };
+		8A9A587411E84C81008ACFD1 /* JSPerformance.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8A9A587211E84C81008ACFD1 /* JSPerformance.cpp */; };
+		8A9A587511E84C81008ACFD1 /* JSPerformance.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A9A587311E84C81008ACFD1 /* JSPerformance.h */; };
+		8A9A588711E84F37008ACFD1 /* JSTiming.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8A9A587611E84C98008ACFD1 /* JSTiming.cpp */; };
+		8A9A588811E84F37008ACFD1 /* JSTiming.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A9A587711E84C98008ACFD1 /* JSTiming.h */; };
 		8AF4E55511DC5A36000ED3DE /* Navigation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8AF4E55211DC5A36000ED3DE /* Navigation.cpp */; };
 		8AF4E55611DC5A36000ED3DE /* Navigation.h in Headers */ = {isa = PBXBuildFile; fileRef = 8AF4E55311DC5A36000ED3DE /* Navigation.h */; };
 		8AF4E55B11DC5A63000ED3DE /* Timing.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8AF4E55811DC5A63000ED3DE /* Timing.cpp */; };
@@ -8004,6 +8010,12 @@
 		8A844D0111D3C18E0014065C /* Performance.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Performance.cpp; sourceTree = "<group>"; };
 		8A844D0211D3C18E0014065C /* Performance.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Performance.h; sourceTree = "<group>"; };
 		8A844D0311D3C18E0014065C /* Performance.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Performance.idl; sourceTree = "<group>"; };
+		8A9A586E11E84C35008ACFD1 /* JSNavigation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSNavigation.cpp; sourceTree = "<group>"; };
+		8A9A586F11E84C36008ACFD1 /* JSNavigation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSNavigation.h; sourceTree = "<group>"; };
+		8A9A587211E84C81008ACFD1 /* JSPerformance.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSPerformance.cpp; sourceTree = "<group>"; };
+		8A9A587311E84C81008ACFD1 /* JSPerformance.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSPerformance.h; sourceTree = "<group>"; };
+		8A9A587611E84C98008ACFD1 /* JSTiming.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSTiming.cpp; sourceTree = "<group>"; };
+		8A9A587711E84C98008ACFD1 /* JSTiming.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSTiming.h; sourceTree = "<group>"; };
 		8AF4E55211DC5A36000ED3DE /* Navigation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Navigation.cpp; sourceTree = "<group>"; };
 		8AF4E55311DC5A36000ED3DE /* Navigation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Navigation.h; sourceTree = "<group>"; };
 		8AF4E55411DC5A36000ED3DE /* Navigation.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Navigation.idl; sourceTree = "<group>"; };
@@ -15875,10 +15887,16 @@
 				BCE1C43A0D9830D3003B02F2 /* JSLocation.h */,
 				9FFE3EA311B5A4390037874E /* JSMemoryInfo.cpp */,
 				9FFE3EA411B5A4390037874E /* JSMemoryInfo.h */,
+				8A9A586E11E84C35008ACFD1 /* JSNavigation.cpp */,
+				8A9A586F11E84C36008ACFD1 /* JSNavigation.h */,
 				A9D247F50D757E3300FDF959 /* JSNavigator.cpp */,
 				A9D247F60D757E3300FDF959 /* JSNavigator.h */,
+				8A9A587211E84C81008ACFD1 /* JSPerformance.cpp */,
+				8A9A587311E84C81008ACFD1 /* JSPerformance.h */,
 				BCEC01C00C274DDD009F4EC9 /* JSScreen.cpp */,
 				BCEC01C10C274DDD009F4EC9 /* JSScreen.h */,
+				8A9A587611E84C98008ACFD1 /* JSTiming.cpp */,
+				8A9A587711E84C98008ACFD1 /* JSTiming.h */,
 				494BD79B0F55C94C00747828 /* JSWebKitPoint.cpp */,
 				494BD79C0F55C94C00747828 /* JSWebKitPoint.h */,
 			);
@@ -19729,6 +19747,9 @@
 				BCA8CA6011E4E6D100812FB7 /* BackForwardListImpl.h in Headers */,
 				003F1FEA11E6AB43008258D9 /* UserContentTypes.h in Headers */,
 				CE02F0C411E83ADD00C6684A /* ScriptControllerBase.h in Headers */,
+				8A9A587111E84C36008ACFD1 /* JSNavigation.h in Headers */,
+				8A9A587511E84C81008ACFD1 /* JSPerformance.h in Headers */,
+				8A9A588811E84F37008ACFD1 /* JSTiming.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -22114,6 +22135,9 @@
 				4F4F5FFB11CBD2E100A186BF /* RemoteInspectorFrontend2.cpp in Sources */,
 				97EF561011E40783007E026F /* HTMLConstructionSite.cpp in Sources */,
 				BCA8CA5F11E4E6D100812FB7 /* BackForwardListImpl.cpp in Sources */,
+				8A9A587011E84C36008ACFD1 /* JSNavigation.cpp in Sources */,
+				8A9A587411E84C81008ACFD1 /* JSPerformance.cpp in Sources */,
+				8A9A588711E84F37008ACFD1 /* JSTiming.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -1,3 +1,17 @@
+2010-07-10  Tony Gentilcore  <tonyg@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Add missing derrived sources to xcode project
+        https://bugs.webkit.org/show_bug.cgi?id=42034
+
+        This allows --web-timing to work with build-webkit on OSX with JSC.
+        This should have been done in bug 41442.
+
+        No new tests because no new functionality.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 2010-07-10  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.
