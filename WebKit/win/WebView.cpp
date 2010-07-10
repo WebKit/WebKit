@@ -4782,6 +4782,11 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
     settings->setWebGLEnabled(true);
 #endif  // ENABLE(3D_CANVAS)
 
+    hr = prefsPrivate->isDNSPrefetchingEnabled(&enabled);
+    if (FAILED(hr))
+        return hr;
+    settings->setDNSPrefetchingEnabled(enabled);
+
     if (!m_closeWindowTimer)
         m_mainFrame->invalidate(); // FIXME
 

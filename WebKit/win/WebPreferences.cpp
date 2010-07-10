@@ -261,6 +261,8 @@ void WebPreferences::initializeDefaultSettings()
     
     CFDictionaryAddValue(defaults, CFSTR(WebKitShowDebugBordersPreferenceKey), kCFBooleanFalse);
 
+    CFDictionaryAddValue(defaults, CFSTR(WebKitDNSPrefetchingEnabledPreferenceKey), kCFBooleanTrue);
+
     defaultSettings = defaults;
 }
 
@@ -1453,6 +1455,18 @@ HRESULT WebPreferences::setCustomDragCursorsEnabled(BOOL enabled)
 HRESULT WebPreferences::customDragCursorsEnabled(BOOL* enabled)
 {
     *enabled = boolValueForKey(CFSTR(WebKitCustomDragCursorsEnabledPreferenceKey));
+    return S_OK;
+}
+
+HRESULT WebPreferences::setDNSPrefetchingEnabled(BOOL enabled)
+{
+    setBoolValue(CFSTR(WebKitDNSPrefetchingEnabledPreferenceKey), enabled);
+    return S_OK;
+}
+
+HRESULT WebPreferences::isDNSPrefetchingEnabled(BOOL* enabled)
+{
+    *enabled = boolValueForKey(CFSTR(WebKitDNSPrefetchingEnabledPreferenceKey));
     return S_OK;
 }
 
