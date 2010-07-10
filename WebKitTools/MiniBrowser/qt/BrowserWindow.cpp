@@ -86,6 +86,10 @@ BrowserWindow::BrowserWindow()
     connect(m_addressBar, SIGNAL(returnPressed()), SLOT(changeLocation()));
 
     QToolBar* bar = addToolBar("Navigation");
+    bar->addAction(m_browser->view()->page()->action(QWKPage::Back));
+    bar->addAction(m_browser->view()->page()->action(QWKPage::Forward));
+    bar->addAction(m_browser->view()->page()->action(QWKPage::Reload));
+    bar->addAction(m_browser->view()->page()->action(QWKPage::Stop));
     bar->addWidget(m_addressBar);
 
     this->setMenuBar(m_menu);

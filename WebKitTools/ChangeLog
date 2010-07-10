@@ -1,3 +1,13 @@
+2010-07-09  Diego Gonzalez  <diegohcg@webkit.org>
+
+        Reviewed by Antonio Gomes.
+
+        [Qt] [WebKit2] Add navigation actions to MiniBrowser toolbar
+        https://bugs.webkit.org/show_bug.cgi?id=41966
+
+        * MiniBrowser/qt/BrowserWindow.cpp:
+        (BrowserWindow::BrowserWindow):
+
 2010-07-09  Leon Clarke  <leonclarke@google.com>
 
         Reviewed by Adam Barth.
