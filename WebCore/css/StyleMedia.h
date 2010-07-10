@@ -27,9 +27,13 @@
 #ifndef StyleMedia_h
 #define StyleMedia_h
 
-#include "DOMWindow.h"
+#include "PlatformString.h"
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
+
+class Frame;
 
 class StyleMedia : public RefCounted<StyleMedia> {
 public:

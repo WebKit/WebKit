@@ -36,7 +36,6 @@
 #include "FontSmoothingMode.h"
 #include "GraphicsTypes.h"
 #include "Path.h"
-#include "RenderStyleConstants.h"
 #include "SVGRenderStyleDefs.h"
 #include "TextDirection.h"
 #include "TextRenderingMode.h"

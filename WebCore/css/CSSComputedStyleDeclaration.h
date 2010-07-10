@@ -22,14 +22,17 @@
 #define CSSComputedStyleDeclaration_h
 
 #include "CSSStyleDeclaration.h"
-#include "Node.h"
+#include "PlatformString.h"
 #include "RenderStyleConstants.h"
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
 class Color;
 class CSSMutableStyleDeclaration;
 class CSSPrimitiveValue;
+class Node;
+class RenderStyle;
 class ShadowData;
 
 enum EUpdateLayout { DoNotUpdateLayout = false, UpdateLayout = true };

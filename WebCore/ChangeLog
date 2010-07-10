@@ -1,3 +1,17 @@
+2010-07-09  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Unreviewed, but pre-approved by Eric Seidel.
+
+        Remove unnecessary includes in header files in WebCore/css.
+        https://bugs.webkit.org/show_bug.cgi?id=41941
+
+        * css/CSSComputedStyleDeclaration.h:
+        * css/CSSFontFaceSource.cpp:
+        (WebCore::CSSFontFaceSource::getFontData):
+        * css/CSSFontFaceSource.h:
+        * css/CSSPrimitiveValueMappings.h:
+        * css/StyleMedia.h:
+
 2010-07-09  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.
