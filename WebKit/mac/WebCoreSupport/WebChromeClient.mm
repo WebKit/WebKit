@@ -516,6 +516,11 @@ void WebChromeClient::scrollRectIntoView(const IntRect& r, const ScrollView*) co
 
 // End host window methods.
 
+bool WebChromeClient::shouldMissingPluginMessageBeButton() const
+{
+    return [[m_webView UIDelegate] respondsToSelector:@selector(webView:didPressMissingPluginButton:)];
+}
+
 void WebChromeClient::missingPluginButtonClicked(Element* element) const
 {
     CallUIDelegate(m_webView, @selector(webView:didPressMissingPluginButton:), kit(element));

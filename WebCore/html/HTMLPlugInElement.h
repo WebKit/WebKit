@@ -50,6 +50,9 @@ public:
     NPObject* getNPObject();
 #endif
 
+    bool isCapturingMouseEvents() const { return m_isCapturingMouseEvents; }
+    void setIsCapturingMouseEvents(bool capturing) { m_isCapturingMouseEvents = capturing; }
+
 protected:
     HTMLPlugInElement(const QualifiedName& tagName, Document*);
 
@@ -78,6 +81,7 @@ private:
 #if ENABLE(NETSCAPE_PLUGIN_API)
     NPObject* m_NPObject;
 #endif
+    bool m_isCapturingMouseEvents;
 };
 
 } // namespace WebCore

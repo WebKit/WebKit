@@ -180,6 +180,10 @@ HRESULT STDMETHODCALLTYPE UIDelegate::QueryInterface(REFIID riid, void** ppvObje
         *ppvObject = static_cast<IWebUIDelegate2*>(this);
     else if (IsEqualGUID(riid, IID_IWebUIDelegatePrivate))
         *ppvObject = static_cast<IWebUIDelegatePrivate*>(this);
+    else if (IsEqualGUID(riid, IID_IWebUIDelegatePrivate2))
+        *ppvObject = static_cast<IWebUIDelegatePrivate2*>(this);
+    else if (IsEqualGUID(riid, IID_IWebUIDelegatePrivate3))
+        *ppvObject = static_cast<IWebUIDelegatePrivate3*>(this);
     else
         return E_NOINTERFACE;
 
@@ -634,3 +638,25 @@ HRESULT STDMETHODCALLTYPE UIDelegate::desktopNotificationsDelegate(IWebDesktopNo
     m_desktopNotifications.copyRefTo(result);
     return S_OK;
 }
+
+HRESULT STDMETHODCALLTYPE UIDelegate::createWebViewWithRequest(IWebView* sender, IWebURLRequest* request, IPropertyBag* windowFeatures, IWebView** newWebView)
+{
+    return E_NOTIMPL;
+}
+
+HRESULT STDMETHODCALLTYPE UIDelegate::drawBackground(IWebView* sender, OLE_HANDLE hdc, const RECT* dirtyRect)
+{
+    return E_NOTIMPL;
+}
+
+HRESULT STDMETHODCALLTYPE UIDelegate::decidePolicyForGeolocationRequest(IWebView* sender, IWebFrame* frame, IWebSecurityOrigin* origin, IWebGeolocationPolicyListener* listener)
+{
+    return E_NOTIMPL;
+}
+
+HRESULT STDMETHODCALLTYPE UIDelegate::didPressMissingPluginButton(IDOMElement* element)
+{
+    printf("MISSING PLUGIN BUTTON PRESSED\n");
+    return S_OK;
+}
+

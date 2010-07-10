@@ -24,6 +24,8 @@
 #include "config.h"
 #include "RenderEmbeddedObject.h"
 
+#include "Chrome.h"
+#include "ChromeClient.h"
 #include "CSSValueKeywords.h"
 #include "Font.h"
 #include "FontSelector.h"
@@ -37,6 +39,7 @@
 #include "HTMLParamElement.h"
 #include "LocalizedStrings.h"
 #include "MIMETypeRegistry.h"
+#include "MouseEvent.h"
 #include "Page.h"
 #include "Path.h"
 #include "PluginWidget.h"
@@ -61,13 +64,23 @@ using namespace HTMLNames;
 static const float replacementTextRoundedRectHeight = 18;
 static const float replacementTextRoundedRectLeftRightTextMargin = 6;
 static const float replacementTextRoundedRectOpacity = 0.20f;
+static const float replacementTextPressedRoundedRectOpacity = 0.65f;
 static const float replacementTextRoundedRectRadius = 5;
 static const float replacementTextTextOpacity = 0.55f;
+static const float replacementTextPressedTextOpacity = 0.65f;
 
+static const Color& replacementTextRoundedRectPressedColor()
+{
+    static const Color lightGray(205, 205, 205);
+    return lightGray;
+}
+    
 RenderEmbeddedObject::RenderEmbeddedObject(Element* element)
     : RenderPart(element)
     , m_hasFallbackContent(false)
     , m_showsMissingPluginIndicator(false)
+    , m_missingPluginIndicatorIsPressed(false)
+    , m_mouseDownWasInMissingPluginIndicator(false)
 {
     view()->frameView()->setIsVisuallyNonEmpty();
 }
@@ -356,6 +369,15 @@ void RenderEmbeddedObject::setShowsCrashedPluginIndicator()
     m_replacementText = crashedPluginText();
 }
 
+void RenderEmbeddedObject::setMissingPluginIndicatorIsPressed(bool pressed)
+{
+    if (m_missingPluginIndicatorIsPressed == pressed)
+        return;
+    
+    m_missingPluginIndicatorIsPressed = pressed;
+    repaint();
+}
+
 void RenderEmbeddedObject::paint(PaintInfo& paintInfo, int tx, int ty)
 {
     if (!m_replacementText.isNull()) {
@@ -378,8 +400,35 @@ void RenderEmbeddedObject::paintReplaced(PaintInfo& paintInfo, int tx, int ty)
     if (context->paintingDisabled())
         return;
     
-    FloatRect pluginRect = contentBoxRect();
-    pluginRect.move(tx, ty);
+    FloatRect contentRect;
+    Path path;
+    FloatRect replacementTextRect;
+    Font font;
+    TextRun run("");
+    float textWidth;
+    if (!getReplacementTextGeometry(tx, ty, contentRect, path, replacementTextRect, font, run, textWidth))
+        return;
+    
+    context->save();
+    context->clip(contentRect);
+    context->beginPath();
+    context->addPath(path);  
+    context->setAlpha(m_missingPluginIndicatorIsPressed ? replacementTextPressedRoundedRectOpacity : replacementTextRoundedRectOpacity);
+    context->setFillColor(m_missingPluginIndicatorIsPressed ? replacementTextRoundedRectPressedColor() : Color::white, style()->colorSpace());
+    context->fillPath();
+
+    float labelX = roundf(replacementTextRect.location().x() + (replacementTextRect.size().width() - textWidth) / 2);
+    float labelY = roundf(replacementTextRect.location().y() + (replacementTextRect.size().height() - font.height()) / 2 + font.ascent());
+    context->setAlpha(m_missingPluginIndicatorIsPressed ? replacementTextPressedTextOpacity : replacementTextTextOpacity);
+    context->setFillColor(Color::black, style()->colorSpace());
+    context->drawBidiText(font, run, FloatPoint(labelX, labelY));
+    context->restore();
+}
+
+bool RenderEmbeddedObject::getReplacementTextGeometry(int tx, int ty, FloatRect& contentRect, Path& path, FloatRect& replacementTextRect, Font& font, TextRun& run, float& textWidth)
+{
+    contentRect = contentBoxRect();
+    contentRect.move(tx, ty);
     
     FontDescription fontDescription;
     RenderTheme::defaultTheme()->systemFont(CSSValueWebkitSmallControl, fontDescription);
@@ -387,36 +436,24 @@ void RenderEmbeddedObject::paintReplaced(PaintInfo& paintInfo, int tx, int ty)
     Settings* settings = document()->settings();
     ASSERT(settings);
     if (!settings)
-        return;
+        return false;
     fontDescription.setRenderingMode(settings->fontRenderingMode());
     fontDescription.setComputedSize(fontDescription.specifiedSize());
-    Font font(fontDescription, 0, 0);
+    font = Font(fontDescription, 0, 0);
     font.update(0);
     
-    TextRun run(m_replacementText.characters(), m_replacementText.length());
+    run = TextRun(m_replacementText.characters(), m_replacementText.length());
     run.disableRoundingHacks();
-    float textWidth = font.floatWidth(run);
+    textWidth = font.floatWidth(run);
     
-    FloatRect replacementTextRect;
     replacementTextRect.setSize(FloatSize(textWidth + replacementTextRoundedRectLeftRightTextMargin * 2, replacementTextRoundedRectHeight));
-    replacementTextRect.setLocation(FloatPoint((pluginRect.size().width() / 2 - replacementTextRect.size().width() / 2) + pluginRect.location().x(),
-                                             (pluginRect.size().height() / 2 - replacementTextRect.size().height() / 2) + pluginRect.location().y()));
-   
-    Path path = Path::createRoundedRectangle(replacementTextRect, FloatSize(replacementTextRoundedRectRadius, replacementTextRoundedRectRadius));
-    context->save();
-    context->clip(pluginRect);
-    context->beginPath();
-    context->addPath(path);  
-    context->setAlpha(replacementTextRoundedRectOpacity);
-    context->setFillColor(Color::white, style()->colorSpace());
-    context->fillPath();
+    float x = (contentRect.size().width() / 2 - replacementTextRect.size().width() / 2) + contentRect.location().x();
+    float y = (contentRect.size().height() / 2 - replacementTextRect.size().height() / 2) + contentRect.location().y();
+    replacementTextRect.setLocation(FloatPoint(x, y));
+    
+    path = Path::createRoundedRectangle(replacementTextRect, FloatSize(replacementTextRoundedRectRadius, replacementTextRoundedRectRadius));
 
-    FloatPoint labelPoint(roundf(replacementTextRect.location().x() + (replacementTextRect.size().width() - textWidth) / 2),
-                          roundf(replacementTextRect.location().y()+ (replacementTextRect.size().height() - font.height()) / 2 + font.ascent()));
-    context->setAlpha(replacementTextTextOpacity);
-    context->setFillColor(Color::black, style()->colorSpace());
-    context->drawBidiText(font, run, labelPoint);
-    context->restore();
+    return true;
 }
 
 void RenderEmbeddedObject::layout()
@@ -453,6 +490,64 @@ void RenderEmbeddedObject::viewCleared()
             view->setMarginWidth(marginw);
         if (marginh != -1)
             view->setMarginHeight(marginh);
+    }
+}
+ 
+bool RenderEmbeddedObject::isInMissingPluginIndicator(MouseEvent* event)
+{
+    FloatRect contentRect;
+    Path path;
+    FloatRect replacementTextRect;
+    Font font;
+    TextRun run("");
+    float textWidth;
+    if (!getReplacementTextGeometry(0, 0, contentRect, path, replacementTextRect, font, run, textWidth))
+        return false;
+    
+    return path.contains(absoluteToLocal(event->absoluteLocation(), false, true));
+}
+
+void RenderEmbeddedObject::handleMissingPluginIndicatorEvent(Event* event)
+{
+    if (Page* page = document()->page()) {
+        if (!page->chrome()->client()->shouldMissingPluginMessageBeButton())
+            return;
+    }
+    
+    if (!event->isMouseEvent())
+        return;
+    
+    MouseEvent* mouseEvent = static_cast<MouseEvent*>(event);
+    HTMLPlugInElement* element = static_cast<HTMLPlugInElement*>(node());
+    if (event->type() == eventNames().mousedownEvent && static_cast<MouseEvent*>(event)->button() == LeftButton) {
+        m_mouseDownWasInMissingPluginIndicator = isInMissingPluginIndicator(mouseEvent);
+        if (m_mouseDownWasInMissingPluginIndicator) {
+            if (Frame* frame = document()->frame()) {
+                frame->eventHandler()->setCapturingMouseEventsNode(element);
+                element->setIsCapturingMouseEvents(true);
+            }
+            setMissingPluginIndicatorIsPressed(true);
+        }
+        event->setDefaultHandled();
+    }        
+    if (event->type() == eventNames().mouseupEvent && static_cast<MouseEvent*>(event)->button() == LeftButton) {
+        if (m_missingPluginIndicatorIsPressed) {
+            if (Frame* frame = document()->frame()) {
+                frame->eventHandler()->setCapturingMouseEventsNode(0);
+                element->setIsCapturingMouseEvents(false);
+            }
+            setMissingPluginIndicatorIsPressed(false);
+        }
+        if (m_mouseDownWasInMissingPluginIndicator && isInMissingPluginIndicator(mouseEvent)) {
+            if (Page* page = document()->page())
+                page->chrome()->client()->missingPluginButtonClicked(element);            
+        }
+        m_mouseDownWasInMissingPluginIndicator = false;
+        event->setDefaultHandled();
+    }
+    if (event->type() == eventNames().mousemoveEvent) {
+        setMissingPluginIndicatorIsPressed(m_mouseDownWasInMissingPluginIndicator && isInMissingPluginIndicator(mouseEvent));
+        event->setDefaultHandled();
     }
 }
 

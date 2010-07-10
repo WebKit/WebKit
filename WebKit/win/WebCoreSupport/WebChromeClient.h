@@ -105,6 +105,7 @@ public:
 
     virtual void scrollbarsModeDidChange() const { }
     virtual void mouseDidMoveOverElement(const WebCore::HitTestResult&, unsigned modifierFlags);
+    virtual bool shouldMissingPluginMessageBeButton() const;
     virtual void missingPluginButtonClicked(WebCore::Element*) const;
 
     virtual void setToolTip(const WebCore::String&, WebCore::TextDirection);
