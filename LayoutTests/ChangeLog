@@ -1,3 +1,15 @@
+2010-07-09  Erik Arvidsson  <arv@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Computed style is not implemented for padding-start, padding-end, margin-start, margin-end
+        https://bugs.webkit.org/show_bug.cgi?id=41496
+
+        * fast/css/margin-start-end-expected.txt:
+        * fast/css/padding-start-end-expected.txt:
+        * fast/css/script-tests/margin-start-end.js: Added tests for computed style.
+        * fast/css/script-tests/padding-start-end.js: Added tests for computed style.
+
 2010-07-09  Daniel Bates  <dbates@rim.com>
 
         Reviewed by Darin Adler.

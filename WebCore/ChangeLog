@@ -1,3 +1,18 @@
+2010-07-09  Erik Arvidsson  <arv@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Computed style is not implemented for padding-start, padding-end, margin-start, margin-end
+        https://bugs.webkit.org/show_bug.cgi?id=41496
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/CSSProperty.cpp:
+        (WebCore::CSSProperty::resolveDirectionAwareProperty): This function resolves the property ID for a direction aware property.
+        * css/CSSProperty.h:
+        * css/CSSStyleSelector.cpp: Use helper function.
+        (WebCore::CSSStyleSelector::applyProperty):
+
 2010-07-09  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

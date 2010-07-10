@@ -22,6 +22,7 @@
 #define CSSProperty_h
 
 #include "CSSValue.h"
+#include "TextDirection.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 
@@ -57,6 +58,8 @@ public:
     CSSValue* value() const { return m_value.get(); }
     
     String cssText() const;
+
+    static int resolveDirectionAwareProperty(int propertyID, TextDirection);
 
     friend bool operator==(const CSSProperty&, const CSSProperty&);
 

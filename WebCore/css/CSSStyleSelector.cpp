@@ -3108,15 +3108,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     bool isInherit = m_parentNode && valueType == CSSValue::CSS_INHERIT;
     bool isInitial = valueType == CSSValue::CSS_INITIAL || (!m_parentNode && valueType == CSSValue::CSS_INHERIT);
     
-    // These properties are used to set the correct margins/padding on RTL lists.
-    if (id == CSSPropertyWebkitMarginEnd)
-        id = m_style->direction() == LTR ? CSSPropertyMarginRight : CSSPropertyMarginLeft;
-    else if (id == CSSPropertyWebkitMarginStart)
-        id = m_style->direction() == LTR ? CSSPropertyMarginLeft : CSSPropertyMarginRight;
-    else if (id == CSSPropertyWebkitPaddingEnd)
-        id = m_style->direction() == LTR ? CSSPropertyPaddingRight : CSSPropertyPaddingLeft;
-    else if (id == CSSPropertyWebkitPaddingStart)
-        id = m_style->direction() == LTR ? CSSPropertyPaddingLeft : CSSPropertyPaddingRight;
+    id = CSSProperty::resolveDirectionAwareProperty(id, m_style->direction());
 
     if (m_checker.m_matchVisitedPseudoClass && !isValidVisitedLinkProperty(id)) {
         // Limit the properties that can be applied to only the ones honored by :visited.
