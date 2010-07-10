@@ -1,3 +1,22 @@
+2010-07-10  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        HTMLTreeBuilder needs adjustForeignAttributes support
+        https://bugs.webkit.org/show_bug.cgi?id=42022
+
+        To add adjust foreign attributes support I had to add an
+        AtomicString (prefixed name) to QualifiedName hash.  Once I had
+        done that, I decided it would be best for the other "adjust" functions
+        to share the same hash logic, so I moved them to using the same
+        AtomicString -> QualifiedName hash as well.
+
+        Tested by html5lib/runner.html
+
+        * dom/Attribute.h:
+        (WebCore::Attribute::parserSetName):
+        * html/HTMLTreeBuilder.cpp:
+
 2010-07-10  Rob Buis  <rwlbuis@gmail.com>
 
         Reviewed by Darin Adler.

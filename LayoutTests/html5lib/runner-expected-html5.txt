@@ -910,10 +910,6 @@ resources/tests10.dat:
 15
 18
 19
-22
-23
-24
-25
 
 Test 13 of 25 in resources/tests10.dat failed. Input:
 <!DOCTYPE html><body><table><caption><svg><g>foo</g><g>bar</g><p>baz</table><p>quux
@@ -1071,102 +1067,6 @@ Expected:
 |         "bar"
 |     <p>
 |       "baz"
-
-Test 22 of 25 in resources/tests10.dat failed. Input:
-<!DOCTYPE html><body xlink:href=foo><svg xlink:href=foo></svg>
-Got:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     xlink:href="foo"
-|     <svg svg>
-|       xlink:href="foo"
-Expected:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     xlink:href="foo"
-|     <svg svg>
-|       xlink href="foo"
-
-Test 23 of 25 in resources/tests10.dat failed. Input:
-<!DOCTYPE html><body xlink:href=foo xml:lang=en><svg><g xml:lang=en xlink:href=foo></g></svg>
-Got:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     xlink:href="foo"
-|     xml:lang="en"
-|     <svg svg>
-|       <svg g>
-|         xlink:href="foo"
-|         xml:lang="en"
-Expected:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     xlink:href="foo"
-|     xml:lang="en"
-|     <svg svg>
-|       <svg g>
-|         xlink href="foo"
-|         xml lang="en"
-
-Test 24 of 25 in resources/tests10.dat failed. Input:
-<!DOCTYPE html><body xlink:href=foo xml:lang=en><svg><g xml:lang=en xlink:href=foo /></svg>
-Got:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     xlink:href="foo"
-|     xml:lang="en"
-|     <svg svg>
-|       <svg g>
-|         xlink:href="foo"
-|         xml:lang="en"
-Expected:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     xlink:href="foo"
-|     xml:lang="en"
-|     <svg svg>
-|       <svg g>
-|         xlink href="foo"
-|         xml lang="en"
-
-Test 25 of 25 in resources/tests10.dat failed. Input:
-<!DOCTYPE html><body xlink:href=foo xml:lang=en><svg><g xml:lang=en xlink:href=foo />bar</svg>
-Got:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     xlink:href="foo"
-|     xml:lang="en"
-|     <svg svg>
-|       <svg g>
-|         xlink:href="foo"
-|         xml:lang="en"
-|       "bar"
-Expected:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     xlink:href="foo"
-|     xml:lang="en"
-|     <svg svg>
-|       <svg g>
-|         xlink href="foo"
-|         xml lang="en"
-|       "bar"
 resources/tests11.dat:
 4
 8

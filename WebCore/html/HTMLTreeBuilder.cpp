@@ -51,6 +51,9 @@
 #include "ScriptController.h"
 #include "Settings.h"
 #include "Text.h"
+#include "XLinkNames.h"
+#include "XMLNSNames.h"
+#include "XMLNames.h"
 #include <wtf/UnusedParam.h>
 
 namespace WebCore {
@@ -660,35 +663,61 @@ void HTMLTreeBuilder::processCloseWhenNestedTag(AtomicHTMLToken& token)
 
 namespace {
 
-#if ENABLE(SVG)
+typedef HashMap<AtomicString, QualifiedName> PrefixedNameToQualifiedNameMap;
 
-typedef HashMap<AtomicString, AtomicString> NameCaseMap;
-
-void addName(NameCaseMap* map, const QualifiedName& attributeName)
+void mapLoweredLocalNameToName(PrefixedNameToQualifiedNameMap* map, QualifiedName** names, size_t length)
 {
-    map->add(attributeName.localName().lower(), attributeName.localName());
-}
-
-NameCaseMap* createCaseMapForNames(QualifiedName** names, size_t length)
-{
-    NameCaseMap* caseMap = new NameCaseMap;
     for (size_t i = 0; i < length; ++i) {
-        QualifiedName* name = names[i];
-        const AtomicString& localName = name->localName();
+        const QualifiedName& name = *names[i];
+        const AtomicString& localName = name.localName();
         AtomicString loweredLocalName = localName.lower();
         if (loweredLocalName != localName)
-            caseMap->add(loweredLocalName, localName);
+            map->add(loweredLocalName, name);
     }
-    return caseMap;
+}
+
+#if ENABLE(SVG)
+
+// FIXME: This is a hack until we can fix SVGNames to always generate all names.
+QualifiedName svgTagNameFor(const AtomicString& localName)
+{
+    return QualifiedName(nullAtom, localName, SVGNames::svgNamespaceURI);
+}
+
+void addName(PrefixedNameToQualifiedNameMap* map, const QualifiedName& name)
+{
+    map->add(name.localName().lower(), name);
+}
+
+void adjustSVGTagNameCase(AtomicHTMLToken& token)
+{
+    static PrefixedNameToQualifiedNameMap* caseMap = 0;
+    if (!caseMap) {
+        caseMap = new PrefixedNameToQualifiedNameMap;
+        size_t length = 0;
+        QualifiedName** svgTags = SVGNames::getSVGTags(&length);
+        mapLoweredLocalNameToName(caseMap, svgTags, length);
+        // FIXME: This is a hack around the fact that SVGNames does not
+        // currently include all values HTML5 expects it to.
+        addName(caseMap, svgTagNameFor("altGlyphDef"));
+        addName(caseMap, svgTagNameFor("altGlyphItem"));
+        addName(caseMap, svgTagNameFor("glyphRef"));
+    }
+
+    const QualifiedName& casedName = caseMap->get(token.name());
+    if (casedName.localName().isNull())
+        return;
+    token.setName(casedName.localName());
 }
 
 void adjustSVGAttributes(AtomicHTMLToken& token)
 {
-    static NameCaseMap* caseMap = 0;
+    static PrefixedNameToQualifiedNameMap* caseMap = 0;
     if (!caseMap) {
+        caseMap = new PrefixedNameToQualifiedNameMap;
         size_t length = 0;
         QualifiedName** svgAttrs = SVGNames::getSVGAttrs(&length);
-        caseMap = createCaseMapForNames(svgAttrs, length);
+        mapLoweredLocalNameToName(caseMap, svgAttrs, length);
     }
 
     NamedNodeMap* attributes = token.attributes();
@@ -697,36 +726,10 @@ void adjustSVGAttributes(AtomicHTMLToken& token)
 
     for (unsigned x = 0; x < attributes->length(); ++x) {
         Attribute* attribute = attributes->attributeItem(x);
-        const AtomicString& casedName = caseMap->get(attribute->localName());
-        if (!casedName.isNull())
-            attribute->parserSetLocalName(casedName);
+        const QualifiedName& casedName = caseMap->get(attribute->localName());
+        if (!casedName.localName().isNull())
+            attribute->parserSetName(casedName);
     }
-}
-
-// FIXME: This is a hack until we can fix SVGNames to always generate all names.
-QualifiedName svgTagNameFor(const AtomicString& localName)
-{
-    return QualifiedName(nullAtom, localName, SVGNames::svgNamespaceURI);
-}
-
-void adjustSVGTagNameCase(AtomicHTMLToken& token)
-{
-    static NameCaseMap* caseMap = 0;
-    if (!caseMap) {
-        size_t length = 0;
-        QualifiedName** svgTags = SVGNames::getSVGTags(&length);
-        caseMap = createCaseMapForNames(svgTags, length);
-        // FIXME: This is a hack around the fact that SVGNames does not
-        // currently include all values HTML5 expects it to.
-        addName(caseMap, svgTagNameFor("altGlyphDef"));
-        addName(caseMap, svgTagNameFor("altGlyphItem"));
-        addName(caseMap, svgTagNameFor("glyphRef"));
-    }
-
-    const AtomicString& casedName = caseMap->get(token.name());
-    if (casedName.isNull())
-        return;
-    token.setName(casedName);
 }
 
 #endif
@@ -738,9 +741,43 @@ void adjustMathMLAttributes(AtomicHTMLToken&)
 }
 #endif
 
-void adjustForeignAttributes(AtomicHTMLToken&)
+void addNamesWithPrefix(PrefixedNameToQualifiedNameMap* map, const AtomicString& prefix, QualifiedName** names, size_t length)
 {
-    notImplemented();
+    for (size_t i = 0; i < length; ++i) {
+        QualifiedName* name = names[i];
+        const AtomicString& localName = name->localName();
+        AtomicString prefixColonLocalName(prefix + ":" + localName);
+        QualifiedName nameWithPrefix(prefix, localName, name->namespaceURI());
+        map->add(prefixColonLocalName, nameWithPrefix);
+    }
+}
+
+void adjustForeignAttributes(AtomicHTMLToken& token)
+{
+    static PrefixedNameToQualifiedNameMap* map = 0;
+    if (!map) {
+        map = new PrefixedNameToQualifiedNameMap;
+        size_t length = 0;
+        QualifiedName** attrs = XLinkNames::getXLinkAttrs(&length);
+        addNamesWithPrefix(map, "xlink", attrs, length);
+
+        attrs = XMLNames::getXMLAttrs(&length);
+        addNamesWithPrefix(map, "xml", attrs, length);
+
+        map->add("xmlns", XMLNSNames::xmlnsAttr);
+        map->add("xmlns:xlink", QualifiedName("xmlns", "xlink", XMLNSNames::xmlnsNamespaceURI));
+    }
+
+    NamedNodeMap* attributes = token.attributes();
+    if (!attributes)
+        return;
+
+    for (unsigned x = 0; x < attributes->length(); ++x) {
+        Attribute* attribute = attributes->attributeItem(x);
+        const QualifiedName& name = map->get(attribute->localName());
+        if (!name.localName().isNull())
+            attribute->parserSetName(name);
+    }
 }
 
 }
