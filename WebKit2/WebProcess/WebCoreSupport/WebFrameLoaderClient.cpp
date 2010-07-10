@@ -784,7 +784,7 @@ PassRefPtr<Widget> WebFrameLoaderClient::createPlugin(const IntSize&, HTMLPlugIn
 
     // FIXME: This is Mac specific now because Windows doesn't have the necessary parts of NetscapePluginModule implemented.
 #if PLATFORM(MAC)
-    RefPtr<NetscapePluginModule> pluginModule = NetscapePluginModule::create(pluginPath);
+    RefPtr<NetscapePluginModule> pluginModule = NetscapePluginModule::getOrCreate(pluginPath);
     if (!pluginModule)
         return 0;
     

@@ -1,3 +1,53 @@
+2010-07-10  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Reuse initialized NetscapePluginModules, pass parameters to NPP_New
+        https://bugs.webkit.org/show_bug.cgi?id=42028
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::NetscapePlugin):
+        Let the plug-in module know that a plug-in has been created.
+
+        (WebKit::NetscapePlugin::~NetscapePlugin):
+        Let the plug-in module know that a plug-in has been destroyed.
+
+        (WebKit::NetscapePlugin::initialize):
+        Pass the MIME type and parameters to the plug-in.
+
+        * WebProcess/Plugins/Netscape/NetscapePluginModule.cpp:
+        (WebKit::initializedNetscapePluginModules):
+        Add list of initialized plug-in modules.
+
+        (WebKit::NetscapePluginModule::NetscapePluginModule):
+        Initialize m_pluginCount to 0.
+
+        (WebKit::NetscapePluginModule::~NetscapePluginModule):
+        Assert that we're not in the list of initialized plug-ins.
+
+        (WebKit::NetscapePluginModule::pluginCreated):
+        Increment the plug-in count.
+
+        (WebKit::NetscapePluginModule::pluginDestroyed):
+        Decrement the plug-in count and call shutdown if it's 0.
+
+        (WebKit::NetscapePluginModule::shutdown):
+        Call NP_Shutdown and remove the plug-in from the list of initialized plug-ins.
+
+        (WebKit::NetscapePluginModule::getOrCreate):
+        Look for an already initialized plug-in module before creating one.
+
+        (WebKit::NetscapePluginModule::load):
+        Set m_isInitialized to true.
+
+        * WebProcess/Plugins/Netscape/mac/NetscapePluginModuleMac.cpp:
+        (WebKit::NetscapePluginModule::unload):
+        Leak the CFBundleRef to avoid possible crashes.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::createPlugin):
+        Call getOrCreate instead of create.
+
 2010-07-09  Leon Clarke  <leonclarke@google.com>
 
         Reviewed by Adam Barth.

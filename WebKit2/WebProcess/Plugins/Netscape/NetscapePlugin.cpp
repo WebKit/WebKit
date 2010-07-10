@@ -27,6 +27,8 @@
 
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/IntRect.h>
+#include <WebCore/KURL.h>
+#include <wtf/text/CString.h>
 
 using namespace WebCore;
 
@@ -44,11 +46,15 @@ NetscapePlugin::NetscapePlugin(PassRefPtr<NetscapePluginModule> pluginModule)
 {
     m_npp.ndata = this;
     m_npp.pdata = 0;
+    
+    m_pluginModule->pluginCreated();
 }
 
 NetscapePlugin::~NetscapePlugin()
 {
     ASSERT(!m_isStarted);
+
+    m_pluginModule->pluginDestroyed();
 }
 
 PassRefPtr<NetscapePlugin> NetscapePlugin::fromNPP(NPP npp)
@@ -79,15 +85,34 @@ void NetscapePlugin::callSetWindow()
     m_pluginModule->pluginFuncs().setwindow(&m_npp, &m_npWindow);
 }
 
-bool NetscapePlugin::initialize(const KURL&, const Vector<String>& paramNames, const Vector<String>& paramValues, const String& mimeType, bool loadManually)
+bool NetscapePlugin::initialize(const KURL& url, const Vector<String>& paramNames, const Vector<String>& paramValues, const String& mimeType, bool loadManually)
 {
     uint16_t mode = loadManually ? NP_FULL : NP_EMBED;
     
     m_inNPPNew = true;
 
-    // FIXME: Pass arguments to NPP_New.
-    NPError error = m_pluginModule->pluginFuncs().newp(0, &m_npp, mode, 0, 0, 0, 0);
+    CString mimeTypeCString = mimeType.utf8();
 
+    ASSERT(paramNames.size() == paramValues.size());
+
+    Vector<CString> utf8ParamNames;
+    Vector<CString> utf8ParamValues;
+    for (size_t i = 0; i < paramNames.size(); ++i) {
+        utf8ParamNames.append(paramNames[i].utf8());
+        utf8ParamValues.append(paramValues[i].utf8());
+    }
+
+    // The strings that these pointers point to are kept alive by utf8ParamNames and utf8ParamValues.
+    Vector<const char*> names;
+    Vector<const char*> values;
+    for (size_t i = 0; i < paramNames.size(); ++i) {
+        names.append(utf8ParamNames[i].data());
+        values.append(utf8ParamValues[i].data());
+    }
+    
+    // FIXME: Pass arguments to NPP_New.
+    NPError error = m_pluginModule->pluginFuncs().newp(const_cast<char*>(mimeTypeCString.data()), &m_npp, mode, 
+                                                       names.size(), const_cast<char**>(names.data()), const_cast<char**>(values.data()), 0);
     m_inNPPNew = false;
 
     if (error != NPERR_NO_ERROR)

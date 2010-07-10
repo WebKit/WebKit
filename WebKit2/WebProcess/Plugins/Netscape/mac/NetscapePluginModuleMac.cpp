@@ -31,8 +31,9 @@ namespace WebKit {
 void NetscapePluginModule::unload()
 {
     if (m_bundle) {
-        CFBundleUnloadExecutable(m_bundle.get());
-        m_bundle = 0;
+        // We explicitly leak the bundle here, to avoid crashes when a bundle is unloaded and there are live Objective-C objects
+        // whose methods come from that bundle.
+        m_bundle.releaseRef();
     }
 }
 

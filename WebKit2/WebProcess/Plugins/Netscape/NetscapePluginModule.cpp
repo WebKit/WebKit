@@ -29,16 +29,62 @@ using namespace WebCore;
 
 namespace WebKit {
 
+static Vector<NetscapePluginModule*>& initializedNetscapePluginModules()
+{
+    DEFINE_STATIC_LOCAL(Vector<NetscapePluginModule*>, initializedNetscapePluginModules, ());
+    return initializedNetscapePluginModules;
+}
+
 NetscapePluginModule::NetscapePluginModule(const String& pluginPath)
     : m_pluginPath(pluginPath)
     , m_isInitialized(false)
+    , m_pluginCount(0)
     , m_shutdownProcPtr(0)
     , m_pluginFuncs()
 {
 }
 
-PassRefPtr<NetscapePluginModule> NetscapePluginModule::create(const String& pluginPath)
+NetscapePluginModule::~NetscapePluginModule()
 {
+    ASSERT(initializedNetscapePluginModules().find(this) == notFound);
+}
+
+void NetscapePluginModule::pluginCreated()
+{
+    m_pluginCount++;
+}
+
+void NetscapePluginModule::pluginDestroyed()
+{
+    ASSERT(m_pluginCount > 0);
+    m_pluginCount--;
+    
+    if (!m_pluginCount)
+        shutdown();
+}
+
+void NetscapePluginModule::shutdown()
+{
+    ASSERT(m_isInitialized);
+
+    m_shutdownProcPtr();
+
+    size_t pluginModuleIndex = initializedNetscapePluginModules().find(this);
+    ASSERT(pluginModuleIndex != notFound);
+    
+    initializedNetscapePluginModules().remove(pluginModuleIndex);
+}
+
+PassRefPtr<NetscapePluginModule> NetscapePluginModule::getOrCreate(const String& pluginPath)
+{
+    // First, see if we already have a module with this plug-in path.
+    for (size_t i = 0; i < initializedNetscapePluginModules().size(); ++i) {
+        NetscapePluginModule* pluginModule = initializedNetscapePluginModules()[i];
+
+        if (pluginModule->m_pluginPath == pluginPath)
+            return pluginModule;
+    }
+
     RefPtr<NetscapePluginModule> pluginModule(adoptRef(new NetscapePluginModule(pluginPath)));
     
     // Try to load and initialize the plug-in module.
@@ -55,6 +101,11 @@ bool NetscapePluginModule::load()
         return false;
     }
     
+    m_isInitialized = true;
+
+    ASSERT(initializedNetscapePluginModules().find(this) == notFound);
+    initializedNetscapePluginModules().append(this);
+
     return true;
 }
 
