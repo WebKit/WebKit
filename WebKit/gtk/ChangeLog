@@ -1,3 +1,28 @@
+2010-07-11  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] WebKitWebView should support drops
+        https://bugs.webkit.org/show_bug.cgi?id=39843
+
+        Add support for dropping content onto GTK+ WebViews.
+
+        * webkit/webkitprivate.h:
+        Add a DroppingContext struct to keep track of drop data while the drop is
+        in progress. Have WebKitWebView keep a map of GdkDragContexts to DroppingContexts.
+        * webkit/webkitwebview.cpp: Add necessary includes and globalPointForClientPoint helper.
+        (webkit_web_view_popup_menu_handler): Use globalPointForClientPoint helper.
+        (webkit_web_view_dispose): Properly clean up droppingContexts member.
+        (webkit_web_view_finalize): Delete droppingContext member.
+        (globalPointForClientPoint): Added.
+        (doDragLeaveLater): Added.
+        (webkit_web_view_drag_leave): Added.
+        (webkit_web_view_drag_motion): Added.
+        (webkit_web_view_drag_data_received): Added.
+        (webkit_web_view_drag_drop): Added.
+        (webkit_web_view_class_init): Connect new drop signal handlers to the widget definition.
+        (webkit_web_view_init): Set up the widget as a drop destination and initialize droppingContexts.
+
 2010-07-07  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

@@ -1,3 +1,29 @@
+2010-07-11  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] WebKitWebView should support drops
+        https://bugs.webkit.org/show_bug.cgi?id=39843
+
+        Add support for dropping content onto GTK+ WebViews.
+
+        No new tests, as the DRT does not support simulating drops yet.
+
+        * platform/gtk/ClipboardUtilitiesGtk.cpp:
+        (WebCore::dragOperationToGdkDragAction): Added.
+        (WebCore::gdkDragActionToDragOperation): Properly detect DragOperationEvery.
+        * platform/gtk/ClipboardUtilitiesGtk.h: Add declaration for dragOperationToGdkDragAction.
+        * platform/gtk/PasteboardHelper.cpp:
+        Add new target atom and rename the markup target type to match the others.
+        Add a method which fills a data object from drop data.
+        (WebCore::PasteboardHelper::initializeTargetList): Add support for new atoms.
+        (WebCore::selectionDataToUTF8String): Added this helper.
+        (WebCore::PasteboardHelper::getClipboardContents): Use the selectionDataToUTF8String helper.
+        (WebCore::PasteboardHelper::targetListForDataObject): Change to reflect markup atom rename.
+        (WebCore::PasteboardHelper::fillDataObjectFromDropData): Added.
+        (WebCore::PasteboardHelper::dropAtoms): Added.
+        * platform/gtk/PasteboardHelper.h: Add declarations of new methods.
+
 2010-07-10  Darin Adler  <darin@apple.com>
 
         Reviewed by Anders Carlsson.

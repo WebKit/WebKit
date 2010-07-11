@@ -39,8 +39,27 @@ GdkDragAction dragOperationToGdkDragActions(DragOperation coreAction)
     return gdkAction;
 }
 
+GdkDragAction dragOperationToSingleGdkDragAction(DragOperation coreAction)
+{
+    if (coreAction == DragOperationEvery || coreAction & DragOperationCopy)
+        return GDK_ACTION_COPY;
+    if (coreAction & DragOperationMove)
+        return GDK_ACTION_MOVE;
+    if (coreAction & DragOperationLink)
+        return GDK_ACTION_LINK;
+    if (coreAction & DragOperationPrivate)
+        return GDK_ACTION_PRIVATE;
+    return static_cast<GdkDragAction>(0);
+}
+
 DragOperation gdkDragActionToDragOperation(GdkDragAction gdkAction)
 {
+    // We have no good way to detect DragOperationEvery other than
+    // to use it when all applicable flags are on.
+    if (gdkAction & GDK_ACTION_COPY && gdkAction & GDK_ACTION_MOVE
+        && gdkAction & GDK_ACTION_LINK && gdkAction & GDK_ACTION_PRIVATE)
+        return DragOperationEvery;
+
     unsigned int action = DragOperationNone;
     if (gdkAction & GDK_ACTION_COPY)
         action |= DragOperationCopy;

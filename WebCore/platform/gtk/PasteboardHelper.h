@@ -36,6 +36,8 @@ typedef struct _GtkClipboard GtkClipboard;
 typedef struct _GtkTargetList GtkTargetList;
 typedef struct _GtkWidget GtkWidget;
 typedef struct _GtkSelectionData GtkSelectionData;
+typedef struct _GdkDragContext GdkDragContext;
+typedef struct _GdkAtom* GdkAtom;
 
 namespace WebCore {
 
@@ -52,6 +54,8 @@ public:
     GtkTargetList* targetList() const;
     GtkTargetList* targetListForDataObject(DataObjectGtk*);
     void fillSelectionData(GtkSelectionData*, guint, DataObjectGtk*);
+    void fillDataObjectFromDropData(GtkSelectionData*, guint, DataObjectGtk*);
+    Vector<GdkAtom> dropAtomsForContext(GtkWidget*, GdkDragContext*);
     void writeClipboardContents(GtkClipboard*, GClosure* closure = 0);
     void getClipboardContents(GtkClipboard*);
 

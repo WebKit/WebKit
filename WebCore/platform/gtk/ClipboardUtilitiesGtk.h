@@ -25,6 +25,7 @@
 namespace WebCore {
 
 GdkDragAction dragOperationToGdkDragActions(DragOperation);
+GdkDragAction dragOperationToSingleGdkDragAction(DragOperation);
 DragOperation gdkDragActionToDragOperation(GdkDragAction);
 
 }

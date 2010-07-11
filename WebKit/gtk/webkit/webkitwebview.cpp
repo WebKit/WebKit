@@ -7,7 +7,7 @@
  *  Copyright (C) 2008 Gustavo Noronha Silva <gns@gnome.org>
  *  Copyright (C) 2008 Nuanti Ltd.
  *  Copyright (C) 2008, 2009, 2010 Collabora Ltd.
- *  Copyright (C) 2009 Igalia S.L.
+ *  Copyright (C) 2009, 2010 Igalia S.L.
  *  Copyright (C) 2009 Movial Creative Technologies Inc.
  *  Copyright (C) 2009 Bobby Powers
  *
@@ -52,7 +52,10 @@
 #include "Cursor.h"
 #include "Document.h"
 #include "DocumentLoader.h"
+#include "DragActions.h"
 #include "DragClientGtk.h"
+#include "DragController.h"
+#include "DragData.h"
 #include "EditorClientGtk.h"
 #include "Editor.h"
 #include "EventHandler.h"
@@ -123,6 +126,7 @@
 
 static const double defaultDPI = 96.0;
 static WebKitCacheModel cacheModel;
+static IntPoint globalPointForClientPoint(GdkWindow* window, const IntPoint& clientPoint);
 
 using namespace WebKit;
 using namespace WebCore;
@@ -370,9 +374,6 @@ static gboolean webkit_web_view_popup_menu_handler(GtkWidget* widget)
         location = IntPoint(rightAligned ? firstRect.right() : firstRect.x(), firstRect.bottom());
     }
 
-    int x, y;
-    gdk_window_get_origin(gtk_widget_get_window(GTK_WIDGET(view->hostWindow()->platformPageClient())), &x, &y);
-
     // FIXME: The IntSize(0, -1) is a hack to get the hit-testing to result in the selected element.
     // Ideally we'd have the position of a context menu event be separate from its target node.
     location = view->contentsToWindow(location) + IntSize(0, -1);
@@ -384,7 +385,7 @@ static gboolean webkit_web_view_popup_menu_handler(GtkWidget* widget)
         location.setX(contextMenuMargin);
     else if (location.x() > view->width())
         location.setX(view->width() - contextMenuMargin);
-    IntPoint global = location + IntSize(x, y);
+    IntPoint global(globalPointForClientPoint(gtk_widget_get_window(widget), location));
 
     PlatformMouseEvent event(location, global, RightButton, MouseEventPressed, 0, false, false, false, false, gtk_get_current_event_time());
 
@@ -1197,6 +1198,10 @@ static void webkit_web_view_dispose(GObject* object)
     }
 
     priv->draggingDataObjects->clear();
+    HashMap<GdkDragContext*, DroppingContext*>::iterator endDroppingContexts = priv->droppingContexts->end();
+    for (HashMap<GdkDragContext*, DroppingContext*>::iterator iter = priv->droppingContexts->begin(); iter != endDroppingContexts; ++iter)
+        delete (iter->second);
+    priv->droppingContexts->clear();
 
     G_OBJECT_CLASS(webkit_web_view_parent_class)->dispose(object);
 }
@@ -1214,6 +1219,7 @@ static void webkit_web_view_finalize(GObject* object)
 
     delete priv->previousClickPoint;
     delete priv->draggingDataObjects;
+    delete priv->droppingContexts;
 
     G_OBJECT_CLASS(webkit_web_view_parent_class)->finalize(object);
 }
@@ -1309,6 +1315,14 @@ static void webkit_web_view_screen_changed(GtkWidget* widget, GdkScreen* previou
     settings->setMinimumLogicalFontSize(minimumLogicalFontSize / 72.0 * DPI);
 }
 
+static IntPoint globalPointForClientPoint(GdkWindow* window, const IntPoint& clientPoint)
+{
+    int x, y;
+    gdk_window_get_origin(window, &x, &y);
+    return clientPoint + IntSize(x, y);
+}
+
+
 static void webkit_web_view_drag_end(GtkWidget* widget, GdkDragContext* context)
 {
     WebKitWebView* webView = WEBKIT_WEB_VIEW(widget);
@@ -1358,6 +1372,130 @@ static void webkit_web_view_drag_data_get(GtkWidget* widget, GdkDragContext* con
         return;
 
     pasteboardHelperInstance()->fillSelectionData(selectionData, info, priv->draggingDataObjects->get(context).get());
+}
+
+static gboolean doDragLeaveLater(DroppingContext* context)
+{
+    WebKitWebView* webView = context->webView;
+    WebKitWebViewPrivate* priv = webView->priv;
+
+    if (!priv->droppingContexts->contains(context->gdkContext))
+        return FALSE;
+
+    // If the view doesn't know about the drag yet (there are still pending data)
+    // requests, don't update it with information about the drag.
+    if (context->pendingDataRequests)
+        return FALSE;
+
+    // Don't call dragExited if we have just received a drag-drop signal. This
+    // happens in the case of a successful drop onto the view.
+    if (!context->dropHappened) {
+        const IntPoint& position = context->lastMotionPosition;
+        DragData dragData(context->dataObject.get(), position, globalPointForClientPoint(gtk_widget_get_window(GTK_WIDGET(webView)), position), DragOperationNone);
+        core(webView)->dragController()->dragExited(&dragData);
+    }
+
+    core(webView)->dragController()->dragEnded();
+    priv->droppingContexts->remove(context->gdkContext);
+    delete context;
+    return FALSE;
+}
+
+static void webkit_web_view_drag_leave(GtkWidget* widget, GdkDragContext* context, guint time)
+{
+    WebKitWebView* webView = WEBKIT_WEB_VIEW(widget);
+    WebKitWebViewPrivate* priv = webView->priv;
+
+    if (!priv->droppingContexts->contains(context))
+        return;
+
+    // During a drop GTK+ will fire a drag-leave signal right before firing
+    // the drag-drop signal. We want the actions for drag-leave to happen after
+    // those for drag-drop, so schedule them to happen asynchronously here.
+    g_timeout_add(0, reinterpret_cast<GSourceFunc>(doDragLeaveLater), priv->droppingContexts->get(context));
+}
+
+static gboolean webkit_web_view_drag_motion(GtkWidget* widget, GdkDragContext* context, gint x, gint y, guint time)
+{
+    WebKitWebView* webView = WEBKIT_WEB_VIEW(widget);
+    WebKitWebViewPrivate* priv = webView->priv;
+
+    DroppingContext* droppingContext = 0;
+    IntPoint position = IntPoint(x, y);
+    if (!priv->droppingContexts->contains(context)) {
+        droppingContext = new DroppingContext;
+        droppingContext->webView = webView;
+        droppingContext->gdkContext = context;
+        droppingContext->dataObject = WebCore::DataObjectGtk::create();
+        droppingContext->dropHappened = false;
+        droppingContext->lastMotionPosition = position;
+        priv->droppingContexts->set(context, droppingContext);
+
+        Vector<GdkAtom> acceptableTargets(pasteboardHelperInstance()->dropAtomsForContext(widget, context));
+        droppingContext->pendingDataRequests = acceptableTargets.size();
+        for (size_t i = 0; i < acceptableTargets.size(); i++)
+            gtk_drag_get_data(widget, context, acceptableTargets.at(i), time);
+    } else {
+        droppingContext = priv->droppingContexts->get(context);
+        droppingContext->lastMotionPosition = position;
+    }
+
+    // Don't send any drag information to WebCore until we've retrieved all
+    // the data for this drag operation. Otherwise we'd have to block to wait
+    // for the drag's data.
+    ASSERT(droppingContext);
+    if (droppingContext->pendingDataRequests > 0)
+        return TRUE;
+
+    DragData dragData(droppingContext->dataObject.get(), position, globalPointForClientPoint(gtk_widget_get_window(widget), position), gdkDragActionToDragOperation(context->actions));
+    DragOperation operation = core(webView)->dragController()->dragUpdated(&dragData);
+    gdk_drag_status(context, dragOperationToSingleGdkDragAction(operation), time);
+
+    return TRUE;
+}
+
+static void webkit_web_view_drag_data_received(GtkWidget* widget, GdkDragContext* context, gint x, gint y, GtkSelectionData* selectionData, guint info, guint time)
+{
+    WebKitWebView* webView = WEBKIT_WEB_VIEW(widget);
+    WebKitWebViewPrivate* priv = webView->priv;
+
+    if (!priv->droppingContexts->contains(context))
+        return;
+
+    DroppingContext* droppingContext = priv->droppingContexts->get(context);
+    droppingContext->pendingDataRequests--;
+    pasteboardHelperInstance()->fillDataObjectFromDropData(selectionData, info, droppingContext->dataObject.get());
+
+    if (droppingContext->pendingDataRequests)
+        return;
+
+    // The coordinates passed to drag-data-received signal are sometimes
+    // inaccurate in DRT, so use the coordinates of the last motion event.
+    const IntPoint& position = droppingContext->lastMotionPosition;
+
+    // If there are no more pending requests, start sending dragging data to WebCore.
+    DragData dragData(droppingContext->dataObject.get(), position, globalPointForClientPoint(gtk_widget_get_window(widget), position), gdkDragActionToDragOperation(context->actions));
+    DragOperation operation = core(webView)->dragController()->dragEntered(&dragData);
+    gdk_drag_status(context, dragOperationToSingleGdkDragAction(operation), time);
+}
+
+static gboolean webkit_web_view_drag_drop(GtkWidget* widget, GdkDragContext* context, gint x, gint y, guint time)
+{
+    WebKitWebView* webView = WEBKIT_WEB_VIEW(widget);
+    WebKitWebViewPrivate* priv = webView->priv;
+
+    if (!priv->droppingContexts->contains(context))
+        return FALSE;
+
+    DroppingContext* droppingContext = priv->droppingContexts->get(context);
+    droppingContext->dropHappened = true;
+
+    IntPoint position(x, y);
+    DragData dragData(droppingContext->dataObject.get(), position, globalPointForClientPoint(gtk_widget_get_window(widget), position), gdkDragActionToDragOperation(context->actions));
+    core(webView)->dragController()->performDrag(&dragData);
+
+    gtk_drag_finish(context, TRUE, FALSE, time);
+    return TRUE;
 }
 
 #if GTK_CHECK_VERSION(2, 12, 0)
@@ -2356,6 +2494,10 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
     widgetClass->screen_changed = webkit_web_view_screen_changed;
     widgetClass->drag_end = webkit_web_view_drag_end;
     widgetClass->drag_data_get = webkit_web_view_drag_data_get;
+    widgetClass->drag_motion = webkit_web_view_drag_motion;
+    widgetClass->drag_leave = webkit_web_view_drag_leave;
+    widgetClass->drag_drop = webkit_web_view_drag_drop;
+    widgetClass->drag_data_received = webkit_web_view_drag_data_received;
 #if GTK_CHECK_VERSION(2, 12, 0)
     widgetClass->query_tooltip = webkit_web_view_query_tooltip;
 #endif
@@ -2937,6 +3079,9 @@ static void webkit_web_view_init(WebKitWebView* webView)
     priv->previousClickTime = 0;
 
     priv->draggingDataObjects = new HashMap<GdkDragContext*, RefPtr<WebCore::DataObjectGtk> >();
+    priv->droppingContexts = new HashMap<GdkDragContext*, DroppingContext*>();
+    gtk_drag_dest_set(GTK_WIDGET(webView), static_cast<GtkDestDefaults>(0), 0, 0, static_cast<GdkDragAction>(GDK_ACTION_COPY | GDK_ACTION_COPY | GDK_ACTION_MOVE | GDK_ACTION_LINK | GDK_ACTION_PRIVATE));
+    gtk_drag_dest_set_target_list(GTK_WIDGET(webView), pasteboardHelperInstance()->targetList());
 }
 
 GtkWidget* webkit_web_view_new(void)
