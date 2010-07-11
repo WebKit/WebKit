@@ -210,7 +210,7 @@ namespace JSC {
         FOR_EACH_OPCODE_ID(VERIFY_OPCODE_ID);
     #undef VERIFY_OPCODE_ID
 
-#if HAVE(COMPUTED_GOTO)
+#if ENABLE(COMPUTED_GOTO_INTERPRETER)
 #if COMPILER(RVCT) || COMPILER(INTEL)
     typedef void* Opcode;
 #else

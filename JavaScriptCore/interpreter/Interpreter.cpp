@@ -384,12 +384,12 @@ Interpreter::Interpreter()
     : m_sampleEntryDepth(0)
     , m_reentryDepth(0)
 {
-#if HAVE(COMPUTED_GOTO)
+#if ENABLE(COMPUTED_GOTO_INTERPRETER)
     privateExecute(InitializeAndReturn, 0, 0, 0);
 
     for (int i = 0; i < numOpcodeIDs; ++i)
         m_opcodeIDTable.add(m_opcodeTable[i], static_cast<OpcodeID>(i));
-#endif // HAVE(COMPUTED_GOTO)
+#endif // ENABLE(COMPUTED_GOTO_INTERPRETER)
 
 #if ENABLE(OPCODE_SAMPLING)
     enableSampler();
@@ -497,7 +497,7 @@ void Interpreter::dumpRegisters(CallFrame* callFrame)
 
 bool Interpreter::isOpcode(Opcode opcode)
 {
-#if HAVE(COMPUTED_GOTO)
+#if ENABLE(COMPUTED_GOTO_INTERPRETER)
     return opcode != HashTraits<Opcode>::emptyValue()
         && !HashTraits<Opcode>::isDeletedValue(opcode)
         && m_opcodeIDTable.contains(opcode);
@@ -1385,13 +1385,13 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
     // One-time initialization of our address tables. We have to put this code
     // here because our labels are only in scope inside this function.
     if (UNLIKELY(flag == InitializeAndReturn)) {
-        #if HAVE(COMPUTED_GOTO)
+        #if ENABLE(COMPUTED_GOTO_INTERPRETER)
             #define LIST_OPCODE_LABEL(id, length) &&id,
                 static Opcode labels[] = { FOR_EACH_OPCODE_ID(LIST_OPCODE_LABEL) };
                 for (size_t i = 0; i < sizeof(labels) / sizeof(Opcode); ++i)
                     m_opcodeTable[i] = labels[i];
             #undef LIST_OPCODE_LABEL
-        #endif // HAVE(COMPUTED_GOTO)
+        #endif // ENABLE(COMPUTED_GOTO_INTERPRETER)
         return JSValue();
     }
     
@@ -1447,7 +1447,7 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
     #define SAMPLE(codeBlock, vPC)
 #endif
 
-#if HAVE(COMPUTED_GOTO)
+#if ENABLE(COMPUTED_GOTO_INTERPRETER)
     #define NEXT_INSTRUCTION() SAMPLE(codeBlock, vPC); goto *vPC->u.opcode
 #if ENABLE(OPCODE_STATS)
     #define DEFINE_OPCODE(opcode) opcode: OpcodeStats::recordInstruction(opcode);
@@ -2479,7 +2479,7 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
         uncacheGetByID(codeBlock, vPC);
         NEXT_INSTRUCTION();
     }
-#if HAVE(COMPUTED_GOTO)
+#if ENABLE(COMPUTED_GOTO_INTERPRETER)
     goto *(&&skip_id_getter_proto);
 #endif
     DEFINE_OPCODE(op_get_by_id_getter_proto) {
@@ -2521,10 +2521,10 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
         uncacheGetByID(codeBlock, vPC);
         NEXT_INSTRUCTION();
     }
-#if HAVE(COMPUTED_GOTO)
+#if ENABLE(COMPUTED_GOTO_INTERPRETER)
     skip_id_getter_proto:
 #endif
-#if HAVE(COMPUTED_GOTO)
+#if ENABLE(COMPUTED_GOTO_INTERPRETER)
     goto *(&&skip_id_custom_proto);
 #endif
     DEFINE_OPCODE(op_get_by_id_custom_proto) {
@@ -2563,7 +2563,7 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
         uncacheGetByID(codeBlock, vPC);
         NEXT_INSTRUCTION();
     }
-#if HAVE(COMPUTED_GOTO)
+#if ENABLE(COMPUTED_GOTO_INTERPRETER)
     skip_id_custom_proto:
 #endif
     DEFINE_OPCODE(op_get_by_id_self_list) {
@@ -2654,7 +2654,7 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
         uncacheGetByID(codeBlock, vPC);
         NEXT_INSTRUCTION();
     }
-#if HAVE(COMPUTED_GOTO)
+#if ENABLE(COMPUTED_GOTO_INTERPRETER)
     goto *(&&skip_id_getter_self);
 #endif
     DEFINE_OPCODE(op_get_by_id_getter_self) {
@@ -2694,10 +2694,10 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
         uncacheGetByID(codeBlock, vPC);
         NEXT_INSTRUCTION();
     }
-#if HAVE(COMPUTED_GOTO)
+#if ENABLE(COMPUTED_GOTO_INTERPRETER)
     skip_id_getter_self:
 #endif
-#if HAVE(COMPUTED_GOTO)
+#if ENABLE(COMPUTED_GOTO_INTERPRETER)
     goto *(&&skip_id_custom_self);
 #endif
     DEFINE_OPCODE(op_get_by_id_custom_self) {
@@ -2731,7 +2731,7 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
         uncacheGetByID(codeBlock, vPC);
         NEXT_INSTRUCTION();
     }
-#if HAVE(COMPUTED_GOTO)
+#if ENABLE(COMPUTED_GOTO_INTERPRETER)
 skip_id_custom_self:
 #endif
     DEFINE_OPCODE(op_get_by_id_generic) {
@@ -2754,7 +2754,7 @@ skip_id_custom_self:
         vPC += OPCODE_LENGTH(op_get_by_id_generic);
         NEXT_INSTRUCTION();
     }
-#if HAVE(COMPUTED_GOTO)
+#if ENABLE(COMPUTED_GOTO_INTERPRETER)
     goto *(&&skip_id_getter_chain);
 #endif
     DEFINE_OPCODE(op_get_by_id_getter_chain) {
@@ -2806,10 +2806,10 @@ skip_id_custom_self:
         uncacheGetByID(codeBlock, vPC);
         NEXT_INSTRUCTION();
     }
-#if HAVE(COMPUTED_GOTO)
+#if ENABLE(COMPUTED_GOTO_INTERPRETER)
     skip_id_getter_chain:
 #endif
-#if HAVE(COMPUTED_GOTO)
+#if ENABLE(COMPUTED_GOTO_INTERPRETER)
     goto *(&&skip_id_custom_chain);
 #endif
     DEFINE_OPCODE(op_get_by_id_custom_chain) {
@@ -2858,7 +2858,7 @@ skip_id_custom_self:
         uncacheGetByID(codeBlock, vPC);
         NEXT_INSTRUCTION();
     }
-#if HAVE(COMPUTED_GOTO)
+#if ENABLE(COMPUTED_GOTO_INTERPRETER)
     skip_id_custom_chain:
 #endif
     DEFINE_OPCODE(op_get_array_length) {
@@ -4375,7 +4375,7 @@ skip_id_custom_self:
         vPC += target;
         NEXT_INSTRUCTION();
     }
-#if HAVE(COMPUTED_GOTO)
+#if ENABLE(COMPUTED_GOTO_INTERPRETER)
     // Appease GCC
     goto *(&&skip_new_scope);
 #endif
@@ -4391,7 +4391,7 @@ skip_id_custom_self:
         vPC += OPCODE_LENGTH(op_push_new_scope);
         NEXT_INSTRUCTION();
     }
-#if HAVE(COMPUTED_GOTO)
+#if ENABLE(COMPUTED_GOTO_INTERPRETER)
     skip_new_scope:
 #endif
     DEFINE_OPCODE(op_catch) {
@@ -4605,7 +4605,7 @@ skip_id_custom_self:
         NEXT_INSTRUCTION();
     }
     }
-#if !HAVE(COMPUTED_GOTO)
+#if !ENABLE(COMPUTED_GOTO_INTERPRETER)
     } // iterator loop ends
 #endif
     #undef NEXT_INSTRUCTION

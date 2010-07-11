@@ -1020,8 +1020,12 @@ on MinGW. See https://bugs.webkit.org/show_bug.cgi?id=29268 */
 #define JSC_HOST_CALL
 #endif
 
-#if COMPILER(GCC) && ENABLE(INTERPRETER)
+#if COMPILER(GCC)
 #define HAVE_COMPUTED_GOTO 1
+#endif
+
+#if HAVE(COMPUTED_GOTO) && ENABLE(INTERPRETER)
+#define ENABLE_COMPUTED_GOTO_INTERPRETER 1
 #endif
 
 /* Yet Another Regex Runtime. */
