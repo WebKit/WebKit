@@ -1,3 +1,20 @@
+2010-07-10  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Remove switches from inner expression loops in the parser
+        https://bugs.webkit.org/show_bug.cgi?id=42035
+
+        Use bitmasks and flags on the token types to identify unary and
+        binary operators, rather than switching on the token type to
+        identify them.
+
+        * parser/JSParser.cpp:
+        (JSC::isUnaryOp):
+        (JSC::JSParser::isBinaryOperator):
+        * parser/JSParser.h:
+        (JSC::):
+
 2010-07-09  Leon Clarke  <leonclarke@google.com>
 
         Reviewed by Adam Barth.

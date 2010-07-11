@@ -59,6 +59,8 @@ namespace JSC {
 #define TreeProperty typename TreeBuilder::Property
 #define TreePropertyList typename TreeBuilder::PropertyList
 
+COMPILE_ASSERT(LastUntaggedToken < 64, LessThan64UntaggedTokens);
+
 // This matches v8
 static const ptrdiff_t kMaxParserStackUsage = 128 * sizeof(void*) * 1024;
 
@@ -160,7 +162,7 @@ private:
     template <class TreeBuilder> ALWAYS_INLINE TreeConstDeclList parseConstDeclarationList(TreeBuilder& context);
     enum FunctionRequirements { FunctionNoRequirements, FunctionNeedsName };
     template <FunctionRequirements, class TreeBuilder> bool parseFunctionInfo(TreeBuilder&, const Identifier*&, TreeFormalParameterList&, TreeFunctionBody&, int& openBrace, int& closeBrace, int& bodyStartLine);
-    int isBinaryOperator(JSTokenType token);
+    ALWAYS_INLINE int isBinaryOperator(JSTokenType token);
     bool allowAutomaticSemicolon();
 
     bool autoSemiColon()
@@ -1029,80 +1031,16 @@ template <class TreeBuilder> TreeExpression JSParser::parseConditionalExpression
     return context.createConditionalExpr(cond, lhs, rhs);
 }
 
-static bool isUnaryOp(JSTokenType token)
+ALWAYS_INLINE static bool isUnaryOp(JSTokenType token)
 {
-    switch (token) {
-    case EXCLAMATION:
-    case TILDE:
-    case MINUS:
-    case PLUS:
-    case PLUSPLUS:
-    case AUTOPLUSPLUS:
-    case MINUSMINUS:
-    case AUTOMINUSMINUS:
-    case TYPEOF:
-    case VOIDTOKEN:
-    case DELETETOKEN:
-        return true;
-    default:
-        return false;
-    }
+    return token & UnaryOpTokenFlag;
 }
 
 int JSParser::isBinaryOperator(JSTokenType token)
 {
-    switch (token) {
-    case OR:
-        return 1;
-
-    case AND:
-        return 2;
-
-    case BITOR:
-        return 3;
-
-    case BITXOR:
-        return 4;
-
-    case BITAND:
-        return 5;
-
-    case EQEQ:
-    case NE:
-    case STREQ:
-    case STRNEQ:
-        return 6;
-
-    case LT:
-    case GT:
-    case LE:
-    case GE:
-    case INSTANCEOF:
-        return 7;
-
-    case INTOKEN:
-        // same precedence as the above but needs a validity check
-        if (m_allowsIn)
-            return 7;
-        return 0;
-
-    case LSHIFT:
-    case RSHIFT:
-    case URSHIFT:
-        return 8;
-
-    case PLUS:
-    case MINUS:
-        return 9;
-
-    case TIMES:
-    case DIVIDE:
-    case MOD:
-        return 10;
-
-    default:
-        return 0;
-    }
+    if (m_allowsIn)
+        return token & (BinaryOpTokenPrecedenceMask << BinaryOpTokenAllowsInPrecedenceAdditionalShift);
+    return token & BinaryOpTokenPrecedenceMask;
 }
 
 template <class TreeBuilder> TreeExpression JSParser::parseBinaryExpression(TreeBuilder& context)
