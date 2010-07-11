@@ -1534,6 +1534,20 @@ KURL Element::getURLAttribute(const QualifiedName& name) const
     return document()->completeURL(deprecatedParseURL(getAttribute(name)));
 }
 
+KURL Element::getNonEmptyURLAttribute(const QualifiedName& name) const
+{
+#if !ASSERT_DISABLED
+    if (m_attributeMap) {
+        if (Attribute* attribute = m_attributeMap->getAttributeItem(name))
+            ASSERT(isURLAttribute(attribute));
+    }
+#endif
+    String value = deprecatedParseURL(getAttribute(name));
+    if (value.isEmpty())
+        return KURL();
+    return document()->completeURL(value);
+}
+
 int Element::getIntegralAttribute(const QualifiedName& attributeName) const
 {
     return getAttribute(attributeName).string().toInt();

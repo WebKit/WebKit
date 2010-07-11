@@ -1,0 +1,36 @@
+Test reflecting URL attributes with empty string values.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS testURLReflection('attribute', 'element') is 'none'
+PASS testURLReflection('id', 'element') is 'non-URL'
+FAIL testURLReflection('action', 'form') should be URL. Was non-URL.
+FAIL testURLReflection('cite', 'blockquote') should be URL. Was non-URL.
+FAIL testURLReflection('cite', 'del') should be URL. Was non-URL.
+FAIL testURLReflection('cite', 'ins') should be URL. Was non-URL.
+FAIL testURLReflection('cite', 'q') should be URL. Was non-URL.
+FAIL testURLReflection('data', 'object') should be non-empty URL. Was URL.
+FAIL testURLReflection('formaction', 'button') should be URL. Was none.
+FAIL testURLReflection('formaction', 'input') should be URL. Was none.
+PASS testURLReflection('href', 'a') is 'URL'
+PASS testURLReflection('href', 'area') is 'URL'
+FAIL testURLReflection('href', 'link') should be non-empty URL. Was URL.
+FAIL testURLReflection('href', 'base') should be URL. Was non-URL.
+FAIL testURLReflection('icon', 'command') should be non-empty URL. Was none.
+FAIL testURLReflection('manifest', 'html') should be non-empty URL. Was none.
+FAIL testURLReflection('poster', 'video') should be non-empty URL. Was URL.
+FAIL testURLReflection('src', 'audio') should be non-empty URL. Was URL.
+FAIL testURLReflection('src', 'embed') should be non-empty URL. Was non-URL.
+FAIL testURLReflection('src', 'iframe') should be non-empty URL. Was non-URL.
+FAIL testURLReflection('src', 'img') should be non-empty URL. Was URL.
+FAIL testURLReflection('src', 'input') should be non-empty URL. Was URL.
+FAIL testURLReflection('src', 'script') should be non-empty URL. Was URL.
+FAIL testURLReflection('src', 'source') should be non-empty URL. Was URL.
+FAIL testURLReflection('src', 'video') should be non-empty URL. Was URL.
+FAIL testURLReflection('longDesc', 'img') should be non-empty URL. Was URL.
+FAIL testURLReflection('lowsrc', 'img') should be non-empty URL. Was URL.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

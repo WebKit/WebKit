@@ -1,3 +1,58 @@
+2010-07-10  Darin Adler  <darin@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Enhance content attribute reflection for URL attributes, including adding a non-empty option
+        https://bugs.webkit.org/show_bug.cgi?id=42040
+
+        Test: fast/dom/URL-attribute-reflection.html
+
+        Changed syntax from [ReflectURL] to [Reflect,URL] and also added support for
+        a new option, NonEmpty, which implements the non-empty URL concept from the
+        HTML5 specification.
+
+        * bindings/scripts/CodeGenerator.pm: Changed code to expect the Reflect and URL
+        extended attributes to come in separately. The URL one simply means "the string
+        of this attribute is a URL", since we don't have a distinct type for URL. Also
+        added a new NonEmpty extended attribute.
+
+        * bindings/scripts/CodeGeneratorJS.pm: Removed now-unneeded code to handle ReflectURL.
+        * bindings/scripts/CodeGeneratorV8.pm: Ditto.
+
+        * bindings/scripts/test/CPP/WebDOMTestObj.cpp: Updated for new added test cases
+        and the fix I made to the reflectedCustomURLAttr test.
+        * bindings/scripts/test/CPP/WebDOMTestObj.h: Ditto.
+        * bindings/scripts/test/GObject/WebKitDOMTestObj.cpp: Ditto.
+        * bindings/scripts/test/GObject/WebKitDOMTestObj.h: Ditto.
+        * bindings/scripts/test/JS/JSTestObj.cpp: Ditto.
+        * bindings/scripts/test/JS/JSTestObj.h: Ditto.
+        * bindings/scripts/test/ObjC/DOMTestObj.h: Ditto.
+        * bindings/scripts/test/ObjC/DOMTestObj.mm: Ditto.
+        * bindings/scripts/test/V8/V8TestObj.cpp: Ditto. Also, for some reason the V8
+        bindig writes out the keywords into the generated file as comments, so the keyword
+        change had a direct efffect on the output file.
+
+        * bindings/scripts/test/TestObj.idl: Changed the test cases for ReflectURL to use
+        the new syntax. Added test cases for NonEmpty. Fixed the name of
+        reflectedNonEmptyURLAttr, which accidentally was repeating reflectedURLAttr
+        instead; never noticed because we never compile the test output.
+
+        * dom/Element.cpp:
+        (WebCore::Element::getNonEmptyURLAttribute): Added. For use by NonEmpty and also
+        by any code that wants to implement the non-empty URL content attribute semantic.
+        * dom/Element.h: Ditto.
+
+        * html/HTMLAnchorElement.idl: Use Reflect,URL instead of ReflectURL.
+        * html/HTMLAreaElement.idl: Ditto.
+        * html/HTMLFrameElement.idl: Ditto.
+        * html/HTMLImageElement.idl: Ditto.
+        * html/HTMLInputElement.idl: Ditto.
+        * html/HTMLLinkElement.idl: Ditto.
+        * html/HTMLMediaElement.idl: Ditto.
+        * html/HTMLObjectElement.idl: Ditto.
+        * html/HTMLScriptElement.idl: Ditto.
+        * html/HTMLVideoElement.idl: Ditto.
+
 2010-07-10  Tony Gentilcore  <tonyg@chromium.org>
 
         Reviewed by Darin Adler.

@@ -1,3 +1,17 @@
+2010-07-10  Darin Adler  <darin@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Enhance content attribute reflection for URL attributes, including adding a non-empty option
+        https://bugs.webkit.org/show_bug.cgi?id=42040
+
+        The current test results show many failures, and we should follow up with fixes
+        either to the DOM implementation, or to the test result expectations.
+
+        * fast/dom/URL-attribute-reflection-expected.txt: Added.
+        * fast/dom/URL-attribute-reflection.html: Added.
+        * fast/dom/script-tests/URL-attribute-reflection.js: Added.
+
 2010-07-10  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

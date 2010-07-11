@@ -30,15 +30,15 @@ module html {
         attribute long height;
         attribute [Reflect] long hspace;
         attribute [Reflect] boolean isMap;
-        attribute [ReflectURL=longdesc] DOMString longDesc;
-        attribute [ReflectURL] DOMString src;
+        attribute [Reflect,URL] DOMString longDesc;
+        attribute [Reflect,URL] DOMString src;
         attribute [Reflect] DOMString useMap;
         attribute [Reflect] long vspace;
         attribute long width;
         
         // Extensions
         readonly attribute boolean complete;
-        attribute [ReflectURL] DOMString lowsrc;
+        attribute [Reflect,URL] DOMString lowsrc;
         readonly attribute long naturalHeight;
         readonly attribute long naturalWidth;
         readonly attribute long x;

@@ -3,7 +3,7 @@
 #
 # Copyright (C) 2005 Nikolas Zimmermann <wildfox@kde.org>
 # Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
-# Copyright (C) 2007 Apple Inc. All rights reserved.
+# Copyright (C) 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
 # Copyright (C) 2009 Cameron McCormack <cam@mcc.id.au>
 #
 # This library is free software; you can redistribute it and/or
@@ -402,8 +402,7 @@ sub ContentAttributeName
 {
     my ($generator, $implIncludes, $interfaceName, $attribute) = @_;
 
-    my $contentAttributeName = $attribute->signature->extendedAttributes->{"Reflect"}
-        || $attribute->signature->extendedAttributes->{"ReflectURL"};
+    my $contentAttributeName = $attribute->signature->extendedAttributes->{"Reflect"};
     return undef if !$contentAttributeName;
 
     $contentAttributeName = lc $generator->AttributeNameForGetterAndSetter($attribute) if $contentAttributeName eq "1";
@@ -425,8 +424,12 @@ sub GetterExpressionPrefix
     }
 
     my $functionName;
-    if ($attribute->signature->extendedAttributes->{"ReflectURL"}) {
-        $functionName = "getURLAttribute";
+    if ($attribute->signature->extendedAttributes->{"URL"}) {
+        if ($attribute->signature->extendedAttributes->{"NonEmpty"}) {
+            $functionName = "getNonEmptyURLAttribute";
+        } else {
+            $functionName = "getURLAttribute";
+        }
     } elsif ($attribute->signature->type eq "boolean") {
         $functionName = "hasAttribute";
     } elsif ($attribute->signature->type eq "long") {

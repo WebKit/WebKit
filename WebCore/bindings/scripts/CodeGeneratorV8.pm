@@ -863,10 +863,9 @@ END
     } else {
         my $attrType = GetTypeFromSignature($attribute->signature);
         my $reflect = $attribute->signature->extendedAttributes->{"Reflect"};
-        my $reflectURL = $attribute->signature->extendedAttributes->{"ReflectURL"};
-        if (($reflect || $reflectURL) && IsNodeSubType($dataNode) && $codeGenerator->IsStringType($attrType)) {
+        if ($reflect && IsNodeSubType($dataNode) && $codeGenerator->IsStringType($attrType)) {
             # Generate super-compact call for regular attribute setter:
-            my $contentAttributeName = ($reflect || $reflectURL) eq "1" ? lc $attrName : ($reflect || $reflectURL);
+            my $contentAttributeName = $reflect eq "1" ? lc $attrName : $reflect;
             my $namespace = $codeGenerator->NamespaceForAttributeName($interfaceName, $contentAttributeName);
             $implIncludes{"${namespace}.h"} = 1;
             push(@implContentDecls, "    setElementStringAttr(info, ${namespace}::${contentAttributeName}Attr, value);\n");
@@ -2678,7 +2677,7 @@ sub GetNativeTypeFromSignature
         my $mode = "";
         if ($signature->extendedAttributes->{"ConvertUndefinedOrNullToNullString"}) {
             $mode = "WithUndefinedOrNullCheck";
-        } elsif ($signature->extendedAttributes->{"ConvertNullToNullString"} || $signature->extendedAttributes->{"Reflect"} || $signature->extendedAttributes->{"ReflectURL"}) {
+        } elsif ($signature->extendedAttributes->{"ConvertNullToNullString"} || $signature->extendedAttributes->{"Reflect"}) {
             $mode = "WithNullCheck";
         }
         $type .= "<$mode>";

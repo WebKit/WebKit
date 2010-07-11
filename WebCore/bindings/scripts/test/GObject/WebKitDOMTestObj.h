@@ -188,6 +188,12 @@ WEBKIT_API void
 webkit_dom_test_obj_set_reflected_url_attr(WebKitDOMTestObj* self, gchar*  value);
 
 WEBKIT_API gchar* 
+webkit_dom_test_obj_get_reflected_non_empty_url_attr(WebKitDOMTestObj* self);
+
+WEBKIT_API void
+webkit_dom_test_obj_set_reflected_non_empty_url_attr(WebKitDOMTestObj* self, gchar*  value);
+
+WEBKIT_API gchar* 
 webkit_dom_test_obj_get_reflected_string_attr(WebKitDOMTestObj* self);
 
 WEBKIT_API void
@@ -206,10 +212,16 @@ WEBKIT_API void
 webkit_dom_test_obj_set_reflected_custom_boolean_attr(WebKitDOMTestObj* self, gboolean value);
 
 WEBKIT_API gchar* 
-webkit_dom_test_obj_get_reflected_url_attr(WebKitDOMTestObj* self);
+webkit_dom_test_obj_get_reflected_custom_url_attr(WebKitDOMTestObj* self);
 
 WEBKIT_API void
-webkit_dom_test_obj_set_reflected_url_attr(WebKitDOMTestObj* self, gchar*  value);
+webkit_dom_test_obj_set_reflected_custom_url_attr(WebKitDOMTestObj* self, gchar*  value);
+
+WEBKIT_API gchar* 
+webkit_dom_test_obj_get_reflected_custom_non_empty_url_attr(WebKitDOMTestObj* self);
+
+WEBKIT_API void
+webkit_dom_test_obj_set_reflected_custom_non_empty_url_attr(WebKitDOMTestObj* self, gchar*  value);
 
 WEBKIT_API glong
 webkit_dom_test_obj_get_attr_with_getter_exception(WebKitDOMTestObj* self, GError **error);

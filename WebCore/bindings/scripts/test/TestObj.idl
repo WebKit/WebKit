@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2010 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary formstrArg, with or without
  * modification, are permitted provided that the following conditions
@@ -44,11 +45,13 @@ module test {
         attribute [Reflect] DOMString reflectedStringAttr;
         attribute [Reflect] long reflectedIntegralAttr;
         attribute [Reflect] boolean reflectedBooleanAttr;
-        attribute [ReflectURL] DOMString reflectedURLAttr;
+        attribute [Reflect,URL] DOMString reflectedURLAttr;
+        attribute [Reflect,NonEmpty,URL] DOMString reflectedNonEmptyURLAttr;
         attribute [Reflect=customContentStringAttr] DOMString reflectedStringAttr;
         attribute [Reflect=customContentIntegralAttr] long reflectedCustomIntegralAttr;
         attribute [Reflect=customContentBooleanAttr] boolean reflectedCustomBooleanAttr;
-        attribute [ReflectURL=customContentURLAttr] DOMString reflectedURLAttr;
+        attribute [Reflect=customContentURLAttr,URL] DOMString reflectedCustomURLAttr;
+        attribute [Reflect=customContentNonEmptyURLAttr,NonEmpty,URL] DOMString reflectedCustomNonEmptyURLAttr;
 
         // Methods
         void    voidMethod();

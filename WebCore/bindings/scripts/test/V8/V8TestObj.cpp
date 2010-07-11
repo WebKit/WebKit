@@ -218,6 +218,22 @@ static void reflectedURLAttrAttrSetter(v8::Local<v8::String> name, v8::Local<v8:
     return;
 }
 
+static v8::Handle<v8::Value> reflectedNonEmptyURLAttrAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+{
+    INC_STATS("DOM.TestObj.reflectedNonEmptyURLAttr._get");
+    TestObj* imp = V8TestObj::toNative(info.Holder());
+    return v8String(imp->getNonEmptyURLAttribute(WebCore::HTMLNames::reflectednonemptyurlattrAttr));
+}
+
+static void reflectedNonEmptyURLAttrAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+{
+    INC_STATS("DOM.TestObj.reflectedNonEmptyURLAttr._set");
+    TestObj* imp = V8TestObj::toNative(info.Holder());
+    V8Parameter<WithNullCheck> v = value;
+    imp->setAttribute(WebCore::HTMLNames::reflectednonemptyurlattrAttr, v);
+    return;
+}
+
 static v8::Handle<v8::Value> reflectedStringAttrAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     INC_STATS("DOM.TestObj.reflectedStringAttr._get");
@@ -266,19 +282,35 @@ static void reflectedCustomBooleanAttrAttrSetter(v8::Local<v8::String> name, v8:
     return;
 }
 
-static v8::Handle<v8::Value> reflectedURLAttrAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+static v8::Handle<v8::Value> reflectedCustomURLAttrAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
-    INC_STATS("DOM.TestObj.reflectedURLAttr._get");
+    INC_STATS("DOM.TestObj.reflectedCustomURLAttr._get");
     TestObj* imp = V8TestObj::toNative(info.Holder());
     return v8String(imp->getURLAttribute(WebCore::HTMLNames::customContentURLAttrAttr));
 }
 
-static void reflectedURLAttrAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+static void reflectedCustomURLAttrAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
-    INC_STATS("DOM.TestObj.reflectedURLAttr._set");
+    INC_STATS("DOM.TestObj.reflectedCustomURLAttr._set");
     TestObj* imp = V8TestObj::toNative(info.Holder());
     V8Parameter<WithNullCheck> v = value;
     imp->setAttribute(WebCore::HTMLNames::customContentURLAttrAttr, v);
+    return;
+}
+
+static v8::Handle<v8::Value> reflectedCustomNonEmptyURLAttrAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+{
+    INC_STATS("DOM.TestObj.reflectedCustomNonEmptyURLAttr._get");
+    TestObj* imp = V8TestObj::toNative(info.Holder());
+    return v8String(imp->getNonEmptyURLAttribute(WebCore::HTMLNames::customContentNonEmptyURLAttrAttr));
+}
+
+static void reflectedCustomNonEmptyURLAttrAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+{
+    INC_STATS("DOM.TestObj.reflectedCustomNonEmptyURLAttr._set");
+    TestObj* imp = V8TestObj::toNative(info.Holder());
+    V8Parameter<WithNullCheck> v = value;
+    imp->setAttribute(WebCore::HTMLNames::customContentNonEmptyURLAttrAttr, v);
     return;
 }
 
@@ -912,16 +944,20 @@ static const BatchedAttribute TestObjAttrs[] = {
     {"reflectedIntegralAttr", TestObjInternal::reflectedIntegralAttrAttrGetter, TestObjInternal::reflectedIntegralAttrAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
     // Attribute 'reflectedBooleanAttr' (Type: 'attribute' ExtAttr: 'Reflect')
     {"reflectedBooleanAttr", TestObjInternal::reflectedBooleanAttrAttrGetter, TestObjInternal::reflectedBooleanAttrAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
-    // Attribute 'reflectedURLAttr' (Type: 'attribute' ExtAttr: 'ReflectURL')
+    // Attribute 'reflectedURLAttr' (Type: 'attribute' ExtAttr: 'URL Reflect')
     {"reflectedURLAttr", TestObjInternal::reflectedURLAttrAttrGetter, TestObjInternal::reflectedURLAttrAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    // Attribute 'reflectedNonEmptyURLAttr' (Type: 'attribute' ExtAttr: 'URL NonEmpty Reflect')
+    {"reflectedNonEmptyURLAttr", TestObjInternal::reflectedNonEmptyURLAttrAttrGetter, TestObjInternal::reflectedNonEmptyURLAttrAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
     // Attribute 'reflectedStringAttr' (Type: 'attribute' ExtAttr: 'Reflect')
     {"reflectedStringAttr", TestObjInternal::reflectedStringAttrAttrGetter, TestObjInternal::reflectedStringAttrAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
     // Attribute 'reflectedCustomIntegralAttr' (Type: 'attribute' ExtAttr: 'Reflect')
     {"reflectedCustomIntegralAttr", TestObjInternal::reflectedCustomIntegralAttrAttrGetter, TestObjInternal::reflectedCustomIntegralAttrAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
     // Attribute 'reflectedCustomBooleanAttr' (Type: 'attribute' ExtAttr: 'Reflect')
     {"reflectedCustomBooleanAttr", TestObjInternal::reflectedCustomBooleanAttrAttrGetter, TestObjInternal::reflectedCustomBooleanAttrAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
-    // Attribute 'reflectedURLAttr' (Type: 'attribute' ExtAttr: 'ReflectURL')
-    {"reflectedURLAttr", TestObjInternal::reflectedURLAttrAttrGetter, TestObjInternal::reflectedURLAttrAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    // Attribute 'reflectedCustomURLAttr' (Type: 'attribute' ExtAttr: 'URL Reflect')
+    {"reflectedCustomURLAttr", TestObjInternal::reflectedCustomURLAttrAttrGetter, TestObjInternal::reflectedCustomURLAttrAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    // Attribute 'reflectedCustomNonEmptyURLAttr' (Type: 'attribute' ExtAttr: 'URL NonEmpty Reflect')
+    {"reflectedCustomNonEmptyURLAttr", TestObjInternal::reflectedCustomNonEmptyURLAttrAttrGetter, TestObjInternal::reflectedCustomNonEmptyURLAttrAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
     // Attribute 'attrWithGetterException' (Type: 'attribute' ExtAttr: '')
     {"attrWithGetterException", TestObjInternal::attrWithGetterExceptionAttrGetter, TestObjInternal::attrWithGetterExceptionAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
     // Attribute 'attrWithSetterException' (Type: 'attribute' ExtAttr: '')
