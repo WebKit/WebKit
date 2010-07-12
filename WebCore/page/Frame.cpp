@@ -95,15 +95,13 @@
 #include "runtime_root.h"
 #endif
 
-#if ENABLE(MATHML)
 #include "MathMLNames.h"
-#endif
+#include "SVGNames.h"
+#include "XLinkNames.h"
 
 #if ENABLE(SVG)
 #include "SVGDocument.h"
 #include "SVGDocumentExtensions.h"
-#include "SVGNames.h"
-#include "XLinkNames.h"
 #endif
 
 #if ENABLE(TILED_BACKING_STORE)
@@ -157,22 +155,15 @@ inline Frame::Frame(Page* page, HTMLFrameOwnerElement* ownerElement, FrameLoader
     HTMLNames::init();
     QualifiedName::init();
     MediaFeatureNames::init();
-
-#if ENABLE(SVG)
     SVGNames::init();
     XLinkNames::init();
-#endif
+    MathMLNames::init();
+    XMLNSNames::init();
+    XMLNames::init();
 
 #if ENABLE(WML)
     WMLNames::init();
 #endif
-
-#if ENABLE(MATHML)
-    MathMLNames::init();
-#endif
-
-    XMLNSNames::init();
-    XMLNames::init();
 
     if (!ownerElement) {
 #if ENABLE(TILED_BACKING_STORE)

@@ -41,13 +41,9 @@
 #include "LegacyHTMLDocumentParser.h"
 #include "LegacyHTMLTreeBuilder.h"
 #include "LocalizedStrings.h"
-#if ENABLE(MATHML)
 #include "MathMLNames.h"
-#endif
 #include "NotImplemented.h"
-#if ENABLE(SVG)
 #include "SVGNames.h"
-#endif
 #include "ScriptController.h"
 #include "Settings.h"
 #include "Text.h"
@@ -259,9 +255,7 @@ bool isScopingTag(const AtomicString& tagName)
     return tagName == appletTag
         || tagName == buttonTag
         || tagName == captionTag
-#if ENABLE(SVG_FOREIGN_OBJECT)
         || tagName == SVGNames::foreignObjectTag
-#endif
         || tagName == htmlTag
         || tagName == marqueeTag
         || tagName == objectTag
@@ -676,14 +670,6 @@ void mapLoweredLocalNameToName(PrefixedNameToQualifiedNameMap* map, QualifiedNam
     }
 }
 
-#if ENABLE(SVG)
-
-// FIXME: This is a hack until we can fix SVGNames to always generate all names.
-QualifiedName svgTagNameFor(const AtomicString& localName)
-{
-    return QualifiedName(nullAtom, localName, SVGNames::svgNamespaceURI);
-}
-
 void addName(PrefixedNameToQualifiedNameMap* map, const QualifiedName& name)
 {
     map->add(name.localName().lower(), name);
@@ -697,11 +683,6 @@ void adjustSVGTagNameCase(AtomicHTMLToken& token)
         size_t length = 0;
         QualifiedName** svgTags = SVGNames::getSVGTags(&length);
         mapLoweredLocalNameToName(caseMap, svgTags, length);
-        // FIXME: This is a hack around the fact that SVGNames does not
-        // currently include all values HTML5 expects it to.
-        addName(caseMap, svgTagNameFor("altGlyphDef"));
-        addName(caseMap, svgTagNameFor("altGlyphItem"));
-        addName(caseMap, svgTagNameFor("glyphRef"));
     }
 
     const QualifiedName& casedName = caseMap->get(token.name());
@@ -732,14 +713,10 @@ void adjustSVGAttributes(AtomicHTMLToken& token)
     }
 }
 
-#endif
-
-#if ENABLE(MATHML)
 void adjustMathMLAttributes(AtomicHTMLToken&)
 {
     notImplemented();
 }
-#endif
 
 void addNamesWithPrefix(PrefixedNameToQualifiedNameMap* map, const AtomicString& prefix, QualifiedName** names, size_t length)
 {
@@ -1041,8 +1018,6 @@ void HTMLTreeBuilder::processStartTagForInBody(AtomicHTMLToken& token)
         m_tree.insertHTMLElement(token);
         return;
     }
-    // FIXME: These should not need #if guards.
-#if ENABLE(MATHML)
     if (token.name() == MathMLNames::mathTag.localName()) {
         m_tree.reconstructTheActiveFormattingElements();
         adjustMathMLAttributes(token);
@@ -1054,8 +1029,6 @@ void HTMLTreeBuilder::processStartTagForInBody(AtomicHTMLToken& token)
         }
         return;
     }
-#endif
-#if ENABLE(SVG)
     if (token.name() == SVGNames::svgTag.localName()) {
         m_tree.reconstructTheActiveFormattingElements();
         adjustSVGAttributes(token);
@@ -1067,7 +1040,6 @@ void HTMLTreeBuilder::processStartTagForInBody(AtomicHTMLToken& token)
         }
         return;
     }
-#endif
     if (isCaptionColOrColgroupTag(token.name())
         || token.name() == frameTag
         || token.name() == headTag
@@ -1493,16 +1465,12 @@ void HTMLTreeBuilder::processStartTag(AtomicHTMLToken& token)
         // FIXME: We're missing a bunch of if branches here.
         notImplemented();
         const AtomicString& currentNamespace = m_tree.currentElement()->namespaceURI();
-#if ENABLE(MATHML)
         if (currentNamespace == MathMLNames::mathmlNamespaceURI)
             adjustMathMLAttributes(token);
-#endif
-#if ENABLE(SVG)
          if (currentNamespace == SVGNames::svgNamespaceURI) {
             adjustSVGTagNameCase(token);
             adjustSVGAttributes(token);
         }
-#endif
         adjustForeignAttributes(token);
         m_tree.insertForeignElement(token, currentNamespace);
         break;
@@ -1744,14 +1712,8 @@ void HTMLTreeBuilder::resetInsertionModeAppropriately()
             ASSERT(m_isParsingFragment);
             return setInsertionModeAndEnd(BeforeHeadMode, foreign);
         }
-        if (false
-#if ENABLE(SVG)
-        || node->namespaceURI() == SVGNames::svgNamespaceURI
-#endif
-#if ENABLE(MATHML)
-        || node->namespaceURI() == MathMLNames::mathmlNamespaceURI
-#endif
-            )
+        if (node->namespaceURI() == SVGNames::svgNamespaceURI
+            || node->namespaceURI() == MathMLNames::mathmlNamespaceURI)
             foreign = true;
         if (last) {
             ASSERT(m_isParsingFragment);
@@ -2296,12 +2258,10 @@ void HTMLTreeBuilder::processEndTag(AtomicHTMLToken& token)
         processEndTag(token);
         break;
     case InForeignContentMode:
-#if ENABLE(SVG)
         if (token.name() == SVGNames::scriptTag && m_tree.currentElement()->hasTagName(SVGNames::scriptTag)) {
             notImplemented();
             return;
         }
-#endif
         if (m_tree.currentElement()->namespaceURI() != xhtmlNamespaceURI) {
             // FIXME: This code just wants an Element* iterator, instead of an ElementRecord*
             HTMLElementStack::ElementRecord* nodeRecord = m_tree.openElements()->topRecord();

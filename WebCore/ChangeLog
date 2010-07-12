@@ -1,3 +1,27 @@
+2010-07-12  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Update HTMLTreeBuilder now that MathMLNames is always generated
+        https://bugs.webkit.org/show_bug.cgi?id=42059
+
+        Fix the HTMLTreeBuilder MathML code path to compile and remove
+        the MathML and SVG guards now that SVGNames and MathMLNames are
+        always compiled into ever port after:
+        https://bugs.webkit.org/show_bug.cgi?id=42050
+
+        This fixed a whole bunch of libhtml5 tests now that we have the
+        mathml code paths enabled.
+
+        * html/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::processStartTagForInBody):
+        (WebCore::HTMLTreeBuilder::processStartTag):
+        (WebCore::HTMLTreeBuilder::resetInsertionModeAppropriately):
+        (WebCore::HTMLTreeBuilder::processEndTag):
+        * page/Frame.cpp:
+        (WebCore::Frame::Frame):
+         - Always init SVGNames and MathML names.
+
 2010-07-12  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.

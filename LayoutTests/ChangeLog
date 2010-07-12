@@ -1,3 +1,14 @@
+2010-07-12  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Update HTMLTreeBuilder now that MathMLNames is always generated
+        https://bugs.webkit.org/show_bug.cgi?id=42059
+
+        We pass a bunch more tests now that our MathML code path is enabled.
+
+        * html5lib/runner-expected-html5.txt:
+
 2010-07-12  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.

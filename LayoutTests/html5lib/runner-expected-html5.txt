@@ -386,258 +386,15 @@ Expected:
 resources/tests8.dat: PASS
 
 resources/tests9.dat:
-1
-2
-5
-6
-7
-8
-9
-10
-11
-12
 13
 14
 15
 18
 19
-22
-23
-24
-25
 
-Test 1 of 25 in resources/tests9.dat failed. Input:
-<!DOCTYPE html><math></math>
+Test 13 of 25 in resources/tests9.dat failed. Input:
+<!DOCTYPE html><body><table><caption><math><mi>foo</mi><mi>bar</mi><p>baz</table><p>quux
 Got:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <math>
-Expected:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <math math>
-
-Test 2 of 25 in resources/tests9.dat failed. Input:
-<!DOCTYPE html><body><math></math>
-Got:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <math>
-Expected:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <math math>
-
-Test 5 of 25 in resources/tests9.dat failed. Input:
-<!DOCTYPE html><body><table><math></math></table>
-Got:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <math>
-|     <table>
-Expected:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <math math>
-|     <table>
-
-Test 6 of 25 in resources/tests9.dat failed. Input:
-<!DOCTYPE html><body><table><math><mi>foo</mi></math></table>
-Got:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <math>
-|       <mi>
-|         "foo"
-|     <table>
-Expected:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <math math>
-|       <math mi>
-|         "foo"
-|     <table>
-
-Test 7 of 25 in resources/tests9.dat failed. Input:
-<!DOCTYPE html><body><table><math><mi>foo</mi><mi>bar</mi></math></table>
-Got:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <math>
-|       <mi>
-|         "foo"
-|       <mi>
-|         "bar"
-|     <table>
-Expected:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <math math>
-|       <math mi>
-|         "foo"
-|       <math mi>
-|         "bar"
-|     <table>
-
-Test 8 of 25 in resources/tests9.dat failed. Input:
-<!DOCTYPE html><body><table><tbody><math><mi>foo</mi><mi>bar</mi></math></tbody></table>
-Got:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <math>
-|       <mi>
-|         "foo"
-|       <mi>
-|         "bar"
-|     <table>
-|       <tbody>
-Expected:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <math math>
-|       <math mi>
-|         "foo"
-|       <math mi>
-|         "bar"
-|     <table>
-|       <tbody>
-
-Test 9 of 25 in resources/tests9.dat failed. Input:
-<!DOCTYPE html><body><table><tbody><tr><math><mi>foo</mi><mi>bar</mi></math></tr></tbody></table>
-Got:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <math>
-|       <mi>
-|         "foo"
-|       <mi>
-|         "bar"
-|     <table>
-|       <tbody>
-|         <tr>
-Expected:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <math math>
-|       <math mi>
-|         "foo"
-|       <math mi>
-|         "bar"
-|     <table>
-|       <tbody>
-|         <tr>
-
-Test 10 of 25 in resources/tests9.dat failed. Input:
-<!DOCTYPE html><body><table><tbody><tr><td><math><mi>foo</mi><mi>bar</mi></math></td></tr></tbody></table>
-Got:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <table>
-|       <tbody>
-|         <tr>
-|           <td>
-|             <math>
-|               <mi>
-|                 "foo"
-|               <mi>
-|                 "bar"
-Expected:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <table>
-|       <tbody>
-|         <tr>
-|           <td>
-|             <math math>
-|               <math mi>
-|                 "foo"
-|               <math mi>
-|                 "bar"
-
-Test 11 of 25 in resources/tests9.dat failed. Input:
-<!DOCTYPE html><body><table><tbody><tr><td><math><mi>foo</mi><mi>bar</mi></math><p>baz</td></tr></tbody></table>
-Got:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <table>
-|       <tbody>
-|         <tr>
-|           <td>
-|             <math>
-|               <mi>
-|                 "foo"
-|               <mi>
-|                 "bar"
-|             <p>
-|               "baz"
-Expected:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <table>
-|       <tbody>
-|         <tr>
-|           <td>
-|             <math math>
-|               <math mi>
-|                 "foo"
-|               <math mi>
-|                 "bar"
-|             <p>
-|               "baz"
-
-Test 12 of 25 in resources/tests9.dat failed. Input:
-<!DOCTYPE html><body><table><caption><math><mi>foo</mi><mi>bar</mi></math><p>baz</caption></table>
-Got:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <table>
-|       <caption>
-|         <math>
-|           <mi>
-|             "foo"
-|           <mi>
-|             "bar"
-|         <p>
-|           "baz"
-Expected:
 | <!DOCTYPE html>
 | <html>
 |   <head>
@@ -649,27 +406,10 @@ Expected:
 |             "foo"
 |           <math mi>
 |             "bar"
-|         <p>
-|           "baz"
-
-Test 13 of 25 in resources/tests9.dat failed. Input:
-<!DOCTYPE html><body><table><caption><math><mi>foo</mi><mi>bar</mi><p>baz</table><p>quux
-Got:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <table>
-|       <caption>
-|         <math>
-|           <mi>
-|             "foo"
-|           <mi>
-|             "bar"
-|           <p>
+|           <math p>
 |             "baz"
-|     <p>
-|       "quux"
+|             <math p>
+|               "quux"
 Expected:
 | <!DOCTYPE html>
 | <html>
@@ -696,14 +436,14 @@ Got:
 |   <body>
 |     <table>
 |       <caption>
-|         <math>
-|           <mi>
+|         <math math>
+|           <math mi>
 |             "foo"
-|           <mi>
+|           <math mi>
 |             "bar"
 |           "baz"
-|     <p>
-|       "quux"
+|           <math p>
+|             "quux"
 Expected:
 | <!DOCTYPE html>
 | <html>
@@ -727,17 +467,17 @@ Got:
 | <html>
 |   <head>
 |   <body>
-|     <math>
-|       <mi>
+|     <math math>
+|       <math mi>
 |         "foo"
-|       <mi>
+|       <math mi>
 |         "bar"
-|       <p>
+|       <math p>
 |         "baz"
+|         <math p>
+|           "quux"
 |     <table>
 |       <colgroup>
-|     <p>
-|       "quux"
 Expected:
 | <!DOCTYPE html>
 | <html>
@@ -762,12 +502,12 @@ Got:
 | <html>
 |   <head>
 |   <body>
-|     <math>
-|       <mi>
+|     <math math>
+|       <math mi>
 |         "foo"
-|       <mi>
+|       <math mi>
 |         "bar"
-|       <p>
+|       <math p>
 |         "baz"
 Expected:
 | <!DOCTYPE html>
@@ -789,12 +529,12 @@ Got:
 | <html>
 |   <head>
 |   <body>
-|     <math>
-|       <mi>
+|     <math math>
+|       <math mi>
 |         "foo"
-|       <mi>
+|       <math mi>
 |         "bar"
-|       <p>
+|       <math p>
 |         "baz"
 Expected:
 | <!DOCTYPE html>
@@ -808,102 +548,6 @@ Expected:
 |         "bar"
 |     <p>
 |       "baz"
-
-Test 22 of 25 in resources/tests9.dat failed. Input:
-<!DOCTYPE html><body xlink:href=foo><math xlink:href=foo></math>
-Got:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     xlink:href="foo"
-|     <math>
-|       xlink:href="foo"
-Expected:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     xlink:href="foo"
-|     <math math>
-|       xlink href="foo"
-
-Test 23 of 25 in resources/tests9.dat failed. Input:
-<!DOCTYPE html><body xlink:href=foo xml:lang=en><math><mi xml:lang=en xlink:href=foo></mi></math>
-Got:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     xlink:href="foo"
-|     xml:lang="en"
-|     <math>
-|       <mi>
-|         xlink:href="foo"
-|         xml:lang="en"
-Expected:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     xlink:href="foo"
-|     xml:lang="en"
-|     <math math>
-|       <math mi>
-|         xlink href="foo"
-|         xml lang="en"
-
-Test 24 of 25 in resources/tests9.dat failed. Input:
-<!DOCTYPE html><body xlink:href=foo xml:lang=en><math><mi xml:lang=en xlink:href=foo /></math>
-Got:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     xlink:href="foo"
-|     xml:lang="en"
-|     <math>
-|       <mi>
-|         xlink:href="foo"
-|         xml:lang="en"
-Expected:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     xlink:href="foo"
-|     xml:lang="en"
-|     <math math>
-|       <math mi>
-|         xlink href="foo"
-|         xml lang="en"
-
-Test 25 of 25 in resources/tests9.dat failed. Input:
-<!DOCTYPE html><body xlink:href=foo xml:lang=en><math><mi xml:lang=en xlink:href=foo />bar</math>
-Got:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     xlink:href="foo"
-|     xml:lang="en"
-|     <math>
-|       <mi>
-|         xlink:href="foo"
-|         xml:lang="en"
-|         "bar"
-Expected:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     xlink:href="foo"
-|     xml:lang="en"
-|     <math math>
-|       <math mi>
-|         xlink href="foo"
-|         xml lang="en"
-|       "bar"
 resources/tests10.dat:
 13
 14
@@ -1067,235 +711,8 @@ Expected:
 |         "bar"
 |     <p>
 |       "baz"
-resources/tests11.dat:
-4
-8
+resources/tests11.dat: PASS
 
-Test 4 of 9 in resources/tests11.dat failed. Input:
-<!DOCTYPE html><body><math attributeName='' attributeType='' baseFrequency='' baseProfile='' calcMode='' clipPathUnits='' contentScriptType='' contentStyleType='' diffuseConstant='' edgeMode='' externalResourcesRequired='' filterRes='' filterUnits='' glyphRef='' gradientTransform='' gradientUnits='' kernelMatrix='' kernelUnitLength='' keyPoints='' keySplines='' keyTimes='' lengthAdjust='' limitingConeAngle='' markerHeight='' markerUnits='' markerWidth='' maskContentUnits='' maskUnits='' numOctaves='' pathLength='' patternContentUnits='' patternTransform='' patternUnits='' pointsAtX='' pointsAtY='' pointsAtZ='' preserveAlpha='' preserveAspectRatio='' primitiveUnits='' refX='' refY='' repeatCount='' repeatDur='' requiredExtensions='' requiredFeatures='' specularConstant='' specularExponent='' spreadMethod='' startOffset='' stdDeviation='' stitchTiles='' surfaceScale='' systemLanguage='' tableValues='' targetX='' targetY='' textLength='' viewBox='' viewTarget='' xChannelSelector='' yChannelSelector='' zoomAndPan=''></math>
-Got:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <math>
-|       attributename=""
-|       attributetype=""
-|       basefrequency=""
-|       baseprofile=""
-|       calcmode=""
-|       clippathunits=""
-|       contentscripttype=""
-|       contentstyletype=""
-|       diffuseconstant=""
-|       edgemode=""
-|       externalresourcesrequired=""
-|       filterres=""
-|       filterunits=""
-|       glyphref=""
-|       gradienttransform=""
-|       gradientunits=""
-|       kernelmatrix=""
-|       kernelunitlength=""
-|       keypoints=""
-|       keysplines=""
-|       keytimes=""
-|       lengthadjust=""
-|       limitingconeangle=""
-|       markerheight=""
-|       markerunits=""
-|       markerwidth=""
-|       maskcontentunits=""
-|       maskunits=""
-|       numoctaves=""
-|       pathlength=""
-|       patterncontentunits=""
-|       patterntransform=""
-|       patternunits=""
-|       pointsatx=""
-|       pointsaty=""
-|       pointsatz=""
-|       preservealpha=""
-|       preserveaspectratio=""
-|       primitiveunits=""
-|       refx=""
-|       refy=""
-|       repeatcount=""
-|       repeatdur=""
-|       requiredextensions=""
-|       requiredfeatures=""
-|       specularconstant=""
-|       specularexponent=""
-|       spreadmethod=""
-|       startoffset=""
-|       stddeviation=""
-|       stitchtiles=""
-|       surfacescale=""
-|       systemlanguage=""
-|       tablevalues=""
-|       targetx=""
-|       targety=""
-|       textlength=""
-|       viewbox=""
-|       viewtarget=""
-|       xchannelselector=""
-|       ychannelselector=""
-|       zoomandpan=""
-Expected:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <math math>
-|       attributename=""
-|       attributetype=""
-|       basefrequency=""
-|       baseprofile=""
-|       calcmode=""
-|       clippathunits=""
-|       contentscripttype=""
-|       contentstyletype=""
-|       diffuseconstant=""
-|       edgemode=""
-|       externalresourcesrequired=""
-|       filterres=""
-|       filterunits=""
-|       glyphref=""
-|       gradienttransform=""
-|       gradientunits=""
-|       kernelmatrix=""
-|       kernelunitlength=""
-|       keypoints=""
-|       keysplines=""
-|       keytimes=""
-|       lengthadjust=""
-|       limitingconeangle=""
-|       markerheight=""
-|       markerunits=""
-|       markerwidth=""
-|       maskcontentunits=""
-|       maskunits=""
-|       numoctaves=""
-|       pathlength=""
-|       patterncontentunits=""
-|       patterntransform=""
-|       patternunits=""
-|       pointsatx=""
-|       pointsaty=""
-|       pointsatz=""
-|       preservealpha=""
-|       preserveaspectratio=""
-|       primitiveunits=""
-|       refx=""
-|       refy=""
-|       repeatcount=""
-|       repeatdur=""
-|       requiredextensions=""
-|       requiredfeatures=""
-|       specularconstant=""
-|       specularexponent=""
-|       spreadmethod=""
-|       startoffset=""
-|       stddeviation=""
-|       stitchtiles=""
-|       surfacescale=""
-|       systemlanguage=""
-|       tablevalues=""
-|       targetx=""
-|       targety=""
-|       textlength=""
-|       viewbox=""
-|       viewtarget=""
-|       xchannelselector=""
-|       ychannelselector=""
-|       zoomandpan=""
-
-Test 8 of 9 in resources/tests11.dat failed. Input:
-<!DOCTYPE html><body><math><altGlyph /><altGlyphDef /><altGlyphItem /><animateColor /><animateMotion /><animateTransform /><clipPath /><feBlend /><feColorMatrix /><feComponentTransfer /><feComposite /><feConvolveMatrix /><feDiffuseLighting /><feDisplacementMap /><feDistantLight /><feFlood /><feFuncA /><feFuncB /><feFuncG /><feFuncR /><feGaussianBlur /><feImage /><feMerge /><feMergeNode /><feMorphology /><feOffset /><fePointLight /><feSpecularLighting /><feSpotLight /><feTile /><feTurbulence /><foreignObject /><glyphRef /><linearGradient /><radialGradient /><textPath /></math>
-Got:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <math>
-|       <altglyph>
-|         <altglyphdef>
-|           <altglyphitem>
-|             <animatecolor>
-|               <animatemotion>
-|                 <animatetransform>
-|                   <clippath>
-|                     <feblend>
-|                       <fecolormatrix>
-|                         <fecomponenttransfer>
-|                           <fecomposite>
-|                             <feconvolvematrix>
-|                               <fediffuselighting>
-|                                 <fedisplacementmap>
-|                                   <fedistantlight>
-|                                     <feflood>
-|                                       <fefunca>
-|                                         <fefuncb>
-|                                           <fefuncg>
-|                                             <fefuncr>
-|                                               <fegaussianblur>
-|                                                 <feimage>
-|                                                   <femerge>
-|                                                     <femergenode>
-|                                                       <femorphology>
-|                                                         <feoffset>
-|                                                           <fepointlight>
-|                                                             <fespecularlighting>
-|                                                               <fespotlight>
-|                                                                 <fetile>
-|                                                                   <feturbulence>
-|                                                                     <foreignobject>
-|                                                                       <glyphref>
-|                                                                         <lineargradient>
-|                                                                           <radialgradient>
-|                                                                             <textpath>
-Expected:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <math math>
-|       <math altglyph>
-|       <math altglyphdef>
-|       <math altglyphitem>
-|       <math animatecolor>
-|       <math animatemotion>
-|       <math animatetransform>
-|       <math clippath>
-|       <math feblend>
-|       <math fecolormatrix>
-|       <math fecomponenttransfer>
-|       <math fecomposite>
-|       <math feconvolvematrix>
-|       <math fediffuselighting>
-|       <math fedisplacementmap>
-|       <math fedistantlight>
-|       <math feflood>
-|       <math fefunca>
-|       <math fefuncb>
-|       <math fefuncg>
-|       <math fefuncr>
-|       <math fegaussianblur>
-|       <math feimage>
-|       <math femerge>
-|       <math femergenode>
-|       <math femorphology>
-|       <math feoffset>
-|       <math fepointlight>
-|       <math fespecularlighting>
-|       <math fespotlight>
-|       <math fetile>
-|       <math feturbulence>
-|       <math foreignobject>
-|       <math glyphref>
-|       <math lineargradient>
-|       <math radialgradient>
-|       <math textpath>
 resources/tests12.dat:
 1
 2
@@ -1309,24 +726,24 @@ Got:
 |   <body>
 |     <p>
 |       "foo"
-|       <math>
-|         <mtext>
-|           <i>
+|       <math math>
+|         <math mtext>
+|           <math i>
 |             "baz"
-|         <annotation-xml>
-|           <svg svg>
-|             <svg desc>
-|               <svg b>
+|         <math annotation-xml>
+|           <math svg>
+|             <math desc>
+|               <math b>
 |                 "eggs"
-|             <svg g>
-|               <svg foreignObject>
-|                 <svg p>
+|             <math g>
+|               <math foreignobject>
+|                 <math p>
 |                   "spam"
-|                   <svg table>
-|                     <svg tr>
-|                       <svg td>
-|                         <svg img>
-|                           <svg g>
+|                   <math table>
+|                     <math tr>
+|                       <math td>
+|                         <math img>
+|                           <math g>
 |                             "quux"
 |                           "bar"
 Expected:
@@ -1366,24 +783,24 @@ Got:
 |   <head>
 |   <body>
 |     "foo"
-|     <math>
-|       <mtext>
-|         <i>
+|     <math math>
+|       <math mtext>
+|         <math i>
 |           "baz"
-|       <annotation-xml>
-|         <svg svg>
-|           <svg desc>
-|             <svg b>
+|       <math annotation-xml>
+|         <math svg>
+|           <math desc>
+|             <math b>
 |               "eggs"
-|           <svg g>
-|             <svg foreignObject>
-|               <svg p>
+|           <math g>
+|             <math foreignobject>
+|               <math p>
 |                 "spam"
-|                 <svg table>
-|                   <svg tr>
-|                     <svg td>
-|                       <svg img>
-|                         <svg g>
+|                 <math table>
+|                   <math tr>
+|                     <math td>
+|                       <math img>
+|                         <math g>
 |                           "quux"
 |                         "bar"
 Expected:
