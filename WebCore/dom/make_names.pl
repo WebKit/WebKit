@@ -37,17 +37,26 @@ use IO::File;
 use InFilesParser;
 use Switch;
 
+sub readTags($$);
+sub readAttrs($$);
+
 my $printFactory = 0; 
 my $printWrapperFactory = 0; 
 my $printWrapperFactoryV8 = 0; 
 my $tagsFile = "";
 my $attrsFile = "";
 my $outputDir = ".";
-my %tags = ();
-my %attrs = ();
+my %parsedTags = ();
+my %parsedAttrs = ();
+my %enabledTags = ();
+my %enabledAttrs = ();
+my %allTags = ();
+my %allAttrs = ();
 my %parameters = ();
 my $extraDefines = 0;
+
 require Config;
+
 my $gccLocation = "";
 if ($ENV{CC}) {
     $gccLocation = $ENV{CC};
@@ -71,8 +80,15 @@ GetOptions(
 
 die "You must specify at least one of --tags <file> or --attrs <file>" unless (length($tagsFile) || length($attrsFile));
 
-readNames($tagsFile, "tags") if length($tagsFile);
-readNames($attrsFile, "attrs") if length($attrsFile);
+if (length($tagsFile)) {
+    %allTags = %{readTags($tagsFile, 0)};
+    %enabledTags = %{readTags($tagsFile, 1)};
+}
+
+if (length($attrsFile)) {
+    %allAttrs = %{readAttrs($attrsFile, 0)};
+    %enabledAttrs = %{readAttrs($attrsFile, 1)};
+}
 
 die "You must specify a namespace (e.g. SVG) for <namespace>Names.h" unless $parameters{namespace};
 die "You must specify a namespaceURI (e.g. http://www.w3.org/2000/svg)" unless $parameters{namespaceURI};
@@ -149,16 +165,16 @@ sub tagsHandler
     $tag =~ s/-/_/g;
 
     # Initialize default property values.
-    $tags{$tag} = { defaultTagPropertyHash($tag) } if !defined($tags{$tag});
+    $parsedTags{$tag} = { defaultTagPropertyHash($tag) } if !defined($parsedTags{$tag});
 
     if ($property) {
-        die "Unknown property $property for tag $tag\n" if !defined($tags{$tag}{$property});
+        die "Unknown property $property for tag $tag\n" if !defined($parsedTags{$tag}{$property});
 
         # The code relies on JSInterfaceName deriving from interfaceName to check for custom JSInterfaceName.
         # So override JSInterfaceName if it was not already set.
-        $tags{$tag}{JSInterfaceName} = $value if $property eq "interfaceName" && $tags{$tag}{JSInterfaceName} eq $tags{$tag}{interfaceName};
+        $parsedTags{$tag}{JSInterfaceName} = $value if $property eq "interfaceName" && $parsedTags{$tag}{JSInterfaceName} eq $parsedTags{$tag}{interfaceName};
 
-        $tags{$tag}{$property} = $value;
+        $parsedTags{$tag}{$property} = $value;
     }
 }
 
@@ -169,11 +185,11 @@ sub attrsHandler
     $attr =~ s/-/_/g;
 
     # Initialize default properties' values.
-    $attrs{$attr} = {} if !defined($attrs{$attr});
+    $parsedAttrs{$attr} = {} if !defined($parsedAttrs{$attr});
 
     if ($property) {
-        die "Unknown property $property for attribute $attr\n" if !defined($attrs{$attr}{$property});
-        $attrs{$attr}{$property} = $value;
+        die "Unknown property $property for attribute $attr\n" if !defined($parsedAttrs{$attr}{$property});
+        $parsedAttrs{$attr}{$property} = $value;
     }
 }
 
@@ -190,39 +206,43 @@ sub parametersHandler
 
 ## Support routines
 
-sub readNames
+sub preprocessorCommand()
 {
-    my ($namesFile, $type) = @_;
+    return $preprocessor if $extraDefines eq 0;
+    return $preprocessor . " -D" . join(" -D", split(" ", $extraDefines));
+}
+
+sub readNames($$$$)
+{
+    my ($namesFile, $hashToFillRef, $handler, $usePreprocessor) = @_;
 
     my $names = new IO::File;
-
-    if ($extraDefines eq 0) {
-        open($names, $preprocessor . " " . $namesFile . "|") or die "Failed to open file: $namesFile";
+    if ($usePreprocessor) {
+        open($names, preprocessorCommand() . " " . $namesFile . "|") or die "Failed to open file: $namesFile";
     } else {
-        open($names, $preprocessor . " -D" . join(" -D", split(" ", $extraDefines)) . " " . $namesFile . "|") or die "Failed to open file: $namesFile";
+        open($names, $namesFile) or die "Failed to open file: $namesFile";
     }
-
-    # Store hashes keys count to know if some insertion occured.
-    my $tagsCount = keys %tags;
-    my $attrsCount = keys %attrs;
 
     my $InParser = InFilesParser->new();
-
-    switch ($type) {
-        case "tags" {
-            $InParser->parse($names, \&parametersHandler, \&tagsHandler);
-        }
-        case "attrs" {
-            $InParser->parse($names, \&parametersHandler, \&attrsHandler);
-        }
-        else {
-            die "Do not know how to parse $type";
-        }
-    }
+    $InParser->parse($names, \&parametersHandler, $handler);
 
     close($names);
+    die "Failed to read names from file: $namesFile" if (keys %{$hashToFillRef} == 0);
+    return $hashToFillRef;
+}
 
-    die "Failed to read names from file: $namesFile" if ((keys %tags == $tagsCount) && (keys %attrs == $attrsCount));
+sub readAttrs($$)
+{
+    my ($namesFile, $usePreprocessor) = @_;
+    %parsedAttrs = ();
+    return readNames($namesFile, \%parsedAttrs, \&attrsHandler, $usePreprocessor);
+}
+
+sub readTags($$)
+{
+    my ($namesFile, $usePreprocessor) = @_;
+    %parsedTags = ();
+    return readNames($namesFile, \%parsedTags, \&tagsHandler, $usePreprocessor);
 }
 
 sub printMacros
@@ -246,13 +266,13 @@ sub usesDefaultWrapper
 sub buildConstructorMap
 {
     my %tagConstructorMap = ();
-    for my $tagName (keys %tags) {
-        my $interfaceName = $tags{$tagName}{interfaceName};
+    for my $tagName (keys %enabledTags) {
+        my $interfaceName = $enabledTags{$tagName}{interfaceName};
         next if (usesDefaultWrapper($interfaceName));
 
-        if ($tags{$tagName}{mapToTagName}) {
-            die "Cannot handle multiple mapToTagName for $tagName\n" if $tags{$tags{$tagName}{mapToTagName}}{mapToTagName};
-            $interfaceName = $tags{ $tags{$tagName}{mapToTagName} }{interfaceName};
+        if ($enabledTags{$tagName}{mapToTagName}) {
+            die "Cannot handle multiple mapToTagName for $tagName\n" if $enabledTags{$enabledTags{$tagName}{mapToTagName}}{mapToTagName};
+            $interfaceName = $enabledTags{ $enabledTags{$tagName}{mapToTagName} }{interfaceName};
         }
 
         # Chop the string to keep the interesting part.
@@ -272,10 +292,10 @@ sub printConstructorSignature
     print F "static PassRefPtr<$parameters{namespace}Element> ${constructorName}Constructor(const QualifiedName& $constructorTagName, Document* document";
     if ($parameters{namespace} eq "HTML") {
         print F ", HTMLFormElement*";
-        print F " formElement" if $tags{$tagName}{constructorNeedsFormElement};
+        print F " formElement" if $enabledTags{$tagName}{constructorNeedsFormElement};
     }
     print F ", bool";
-    print F " createdByParser" if $tags{$tagName}{constructorNeedsCreatedByParser};
+    print F " createdByParser" if $enabledTags{$tagName}{constructorNeedsCreatedByParser};
     print F ")\n{\n";
 }
 
@@ -287,7 +307,7 @@ sub printConstructorInterior
     my ($F, $tagName, $interfaceName, $constructorTagName) = @_;
 
     # Handle media elements.
-    if ($tags{$tagName}{wrapperOnlyIfMediaIsAvailable}) {
+    if ($enabledTags{$tagName}{wrapperOnlyIfMediaIsAvailable}) {
         print F <<END
     Settings* settings = document->settings();
     if (!MediaPlayer::isAvailable() || (settings && !settings->isMediaEnabled()))
@@ -300,15 +320,15 @@ END
     my $newPrefix = "";
     my $createSuffix = "::create";
 
-    if ($tags{$tagName}{createWithNew}) {
+    if ($enabledTags{$tagName}{createWithNew}) {
         $newPrefix = "new ";
         $createSuffix = "";
     }
 
     # Call the constructor with the right parameters.
     print F "    return $newPrefix$interfaceName${createSuffix}($constructorTagName, document";
-    print F ", formElement" if $tags{$tagName}{constructorNeedsFormElement};
-    print F ", createdByParser" if $tags{$tagName}{constructorNeedsCreatedByParser};
+    print F ", formElement" if $enabledTags{$tagName}{constructorNeedsFormElement};
+    print F ", createdByParser" if $enabledTags{$tagName}{constructorNeedsCreatedByParser};
     print F ");\n}\n\n";
 }
 
@@ -322,15 +342,15 @@ sub printConstructors
     # This is to avoid generating the same constructor several times.
     my %uniqueTags = ();
     for my $tagName (sort keys %tagConstructorMap) {
-        my $interfaceName = $tags{$tagName}{interfaceName};
+        my $interfaceName = $enabledTags{$tagName}{interfaceName};
 
         # Ignore the mapped tag
         # FIXME: It could be moved inside this loop but was split for readibility.
-        next if (defined($uniqueTags{$interfaceName}) || $tags{$tagName}{mapToTagName});
+        next if (defined($uniqueTags{$interfaceName}) || $enabledTags{$tagName}{mapToTagName});
 
         $uniqueTags{$interfaceName} = '1';
 
-        my $conditional = $tags{$tagName}{conditional};
+        my $conditional = $enabledTags{$tagName}{conditional};
         if ($conditional) {
             my $conditionalString = "ENABLE(" . join(") && ENABLE(", split(/&/, $conditional)) . ")";
             print F "#if ${conditionalString}\n\n";
@@ -346,10 +366,10 @@ sub printConstructors
 
     # Mapped tag name uses a special wrapper to keep their prefix and namespaceURI while using the mapped localname.
     for my $tagName (sort keys %tagConstructorMap) {
-        if ($tags{$tagName}{mapToTagName}) {
-            my $mappedName = $tags{$tagName}{mapToTagName};
+        if ($enabledTags{$tagName}{mapToTagName}) {
+            my $mappedName = $enabledTags{$tagName}{mapToTagName};
             printConstructorSignature($F, $mappedName, $mappedName . "To" . $tagName, "tagName");
-            printConstructorInterior($F, $mappedName, $tags{$mappedName}{interfaceName}, "QualifiedName(tagName.prefix(), ${mappedName}Tag.localName(), tagName.namespaceURI())");
+            printConstructorInterior($F, $mappedName, $enabledTags{$mappedName}{interfaceName}, "QualifiedName(tagName.prefix(), ${mappedName}Tag.localName(), tagName.namespaceURI())");
         }
     }
 
@@ -363,14 +383,14 @@ sub printFunctionInits
 
     for my $tagName (sort keys %tagConstructorMap) {
 
-        my $conditional = $tags{$tagName}{conditional};
+        my $conditional = $enabledTags{$tagName}{conditional};
         if ($conditional) {
             my $conditionalString = "ENABLE(" . join(") && ENABLE(", split(/&/, $conditional)) . ")";
             print F "#if ${conditionalString}\n";
         }
 
-        if ($tags{$tagName}{mapToTagName}) {
-            print F "    addTag(${tagName}Tag, $tags{$tagName}{mapToTagName}To${tagName}Constructor);\n";
+        if ($enabledTags{$tagName}{mapToTagName}) {
+            print F "    addTag(${tagName}Tag, $enabledTags{$tagName}{mapToTagName}To${tagName}Constructor);\n";
         } else {
             print F "    addTag(${tagName}Tag, $tagConstructorMap{$tagName}Constructor);\n";
         }
@@ -456,22 +476,22 @@ sub printNamesHeaderFile
     print F "// Namespace\n";
     print F "extern const WebCore::AtomicString ${lowerNamespace}NamespaceURI;\n\n";
 
-    if (keys %tags) {
+    if (keys %allTags) {
         print F "// Tags\n";
-        printMacros($F, "extern const WebCore::QualifiedName", "Tag", \%tags);
+        printMacros($F, "extern const WebCore::QualifiedName", "Tag", \%allTags);
     }
     
-    if (keys %attrs) {
+    if (keys %allAttrs) {
         print F "// Attributes\n";
-        printMacros($F, "extern const WebCore::QualifiedName", "Attr", \%attrs);
+        printMacros($F, "extern const WebCore::QualifiedName", "Attr", \%allAttrs);
     }
     print F "#endif\n\n";
 
-    if (keys %tags) {
+    if (keys %allTags) {
         print F "WebCore::QualifiedName** get$parameters{namespace}Tags(size_t* size);\n";
     }
 
-    if (keys %attrs) {
+    if (keys %allAttrs) {
         print F "WebCore::QualifiedName** get$parameters{namespace}Attrs(size_t* size);\n";
     }
 
@@ -511,35 +531,35 @@ using namespace WebCore;
 DEFINE_GLOBAL(AtomicString, ${lowerNamespace}NamespaceURI, \"$parameters{namespaceURI}\")
 ";
 
-    if (keys %tags) {
+    if (keys %allTags) {
         print F "// Tags\n";
-        for my $name (sort keys %tags) {
+        for my $name (sort keys %allTags) {
             print F "DEFINE_GLOBAL(QualifiedName, ", $name, "Tag, nullAtom, \"$name\", ${lowerNamespace}NamespaceURI);\n";
         }
         
         print F "\n\nWebCore::QualifiedName** get$parameters{namespace}Tags(size_t* size)\n";
         print F "{\n    static WebCore::QualifiedName* $parameters{namespace}Tags[] = {\n";
-        for my $name (sort keys %tags) {
+        for my $name (sort keys %allTags) {
             print F "        (WebCore::QualifiedName*)&${name}Tag,\n";
         }
         print F "    };\n";
-        print F "    *size = ", scalar(keys %tags), ";\n";
+        print F "    *size = ", scalar(keys %allTags), ";\n";
         print F "    return $parameters{namespace}Tags;\n";
         print F "}\n";
     }
 
-    if (keys %attrs) {
+    if (keys %allAttrs) {
         print F "\n// Attributes\n";
-        for my $name (sort keys %attrs) {
+        for my $name (sort keys %allAttrs) {
             print F "DEFINE_GLOBAL(QualifiedName, ", $name, "Attr, nullAtom, \"$name\", ${lowerNamespace}NamespaceURI);\n";
         }
         print F "\n\nWebCore::QualifiedName** get$parameters{namespace}Attrs(size_t* size)\n";
         print F "{\n    static WebCore::QualifiedName* $parameters{namespace}Attr[] = {\n";
-        for my $name (sort keys %attrs) {
+        for my $name (sort keys %allAttrs) {
             print F "        (WebCore::QualifiedName*)&${name}Attr,\n";
         }
         print F "    };\n";
-        print F "    *size = ", scalar(keys %attrs), ";\n";
+        print F "    *size = ", scalar(keys %allAttrs), ";\n";
         print F "    return $parameters{namespace}Attr;\n";
         print F "}\n";
     }
@@ -560,13 +580,13 @@ print F "\nvoid init()
 
     print(F "    // Namespace\n");
     print(F "    new ((void*)&${lowerNamespace}NamespaceURI) AtomicString(${lowerNamespace}NS);\n\n");
-    if (keys %tags) {
+    if (keys %allTags) {
         my $tagsNamespace = $parameters{tagsNullNamespace} ? "nullAtom" : "${lowerNamespace}NS";
-        printDefinitions($F, \%tags, "tags", $tagsNamespace);
+        printDefinitions($F, \%allTags, "tags", $tagsNamespace);
     }
-    if (keys %attrs) {
+    if (keys %allAttrs) {
         my $attrsNamespace = $parameters{attrsNullNamespace} ? "nullAtom" : "${lowerNamespace}NS";
-        printDefinitions($F, \%attrs, "attributes", $attrsNamespace);
+        printDefinitions($F, \%allAttrs, "attributes", $attrsNamespace);
     }
 
     print F "}\n\n} }\n\n";
@@ -579,8 +599,8 @@ sub printJSElementIncludes
     my $wrapperFactoryType = shift;
 
     my %tagsSeen;
-    for my $tagName (sort keys %tags) {
-        my $JSInterfaceName = $tags{$tagName}{JSInterfaceName};
+    for my $tagName (sort keys %enabledTags) {
+        my $JSInterfaceName = $enabledTags{$tagName}{JSInterfaceName};
         next if defined($tagsSeen{$JSInterfaceName}) || usesDefaultJSWrapper($tagName);
         $tagsSeen{$JSInterfaceName} = 1;
 
@@ -593,8 +613,8 @@ sub printElementIncludes
     my $F = shift;
 
     my %tagsSeen;
-    for my $tagName (sort keys %tags) {
-        my $interfaceName = $tags{$tagName}{interfaceName};
+    for my $tagName (sort keys %enabledTags) {
+        my $interfaceName = $enabledTags{$tagName}{interfaceName};
         next if defined($tagsSeen{$interfaceName});
         $tagsSeen{$interfaceName} = 1;
 
@@ -815,7 +835,7 @@ sub usesDefaultJSWrapper
     my $name = shift;
 
     # A tag reuses the default wrapper if its JSInterfaceName matches the default namespace Element.
-    return $tags{$name}{JSInterfaceName} eq $parameters{namespace} . "Element" || $tags{$name}{JSInterfaceName} eq "HTMLNoScriptElement";
+    return $enabledTags{$name}{JSInterfaceName} eq $parameters{namespace} . "Element" || $enabledTags{$name}{JSInterfaceName} eq "HTMLNoScriptElement";
 }
 
 sub printWrapperFunctions
@@ -824,13 +844,13 @@ sub printWrapperFunctions
     my $wrapperFactoryType = shift;
 
     my %tagsSeen;
-    for my $tagName (sort keys %tags) {
+    for my $tagName (sort keys %enabledTags) {
         # Avoid defining the same wrapper method twice.
-        my $JSInterfaceName = $tags{$tagName}{JSInterfaceName};
+        my $JSInterfaceName = $enabledTags{$tagName}{JSInterfaceName};
         next if defined($tagsSeen{$JSInterfaceName}) || usesDefaultJSWrapper($tagName);
         $tagsSeen{$JSInterfaceName} = 1;
 
-        my $conditional = $tags{$tagName}{conditional};
+        my $conditional = $enabledTags{$tagName}{conditional};
         if ($conditional) {
             my $conditionalString = "ENABLE(" . join(") && ENABLE(", split(/&/, $conditional)) . ")";
             print F "#if ${conditionalString}\n\n";
@@ -839,7 +859,7 @@ sub printWrapperFunctions
         if ($wrapperFactoryType eq "JS") {
             # Hack for the media tags
             # FIXME: This should have been done via a CustomWrapper attribute and a separate *Custom file.
-            if ($tags{$tagName}{wrapperOnlyIfMediaIsAvailable}) {
+            if ($enabledTags{$tagName}{wrapperOnlyIfMediaIsAvailable}) {
                 print F <<END
 static JSNode* create${JSInterfaceName}Wrapper(ExecState* exec, JSDOMGlobalObject* globalObject, PassRefPtr<$parameters{namespace}Element> element)
 {
@@ -862,7 +882,7 @@ END
 ;
             }
         } elsif ($wrapperFactoryType eq "V8") {
-            if ($tags{$tagName}{wrapperOnlyIfMediaIsAvailable}) {
+            if ($enabledTags{$tagName}{wrapperOnlyIfMediaIsAvailable}) {
                 print F <<END
 static v8::Handle<v8::Value> create${JSInterfaceName}Wrapper($parameters{namespace}Element* element)
 {
@@ -984,17 +1004,17 @@ END
 ;
     }
 
-    for my $tag (sort keys %tags) {
+    for my $tag (sort keys %enabledTags) {
         # Do not add the name to the map if it does not have a JS wrapper constructor or uses the default wrapper.
-        next if usesDefaultJSWrapper($tag, \%tags);
+        next if usesDefaultJSWrapper($tag, \%enabledTags);
 
-        my $conditional = $tags{$tag}{conditional};
+        my $conditional = $enabledTags{$tag}{conditional};
         if ($conditional) {
             my $conditionalString = "ENABLE(" . join(") && ENABLE(", split(/&/, $conditional)) . ")";
             print F "#if ${conditionalString}\n";
         }
 
-        my $ucTag = $tags{$tag}{JSInterfaceName};
+        my $ucTag = $enabledTags{$tag}{JSInterfaceName};
         print F "       map.set(${tag}Tag.localName().impl(), create${ucTag}Wrapper);\n";
 
         if ($conditional) {
