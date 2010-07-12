@@ -1383,7 +1383,11 @@ sub openDumpTool()
         setPathForRunningWebKitApp(\%CLEAN_ENV);
     }
 
-    # Port spesifics
+    # Port specifics
+    if (isGtk()) {
+        $CLEAN_ENV{GTK_MODULES} = "gail";
+    }
+
     if (isQt()) {
         $CLEAN_ENV{QTWEBKIT_PLUGIN_PATH} = productDir() . "/lib/plugins";
         $CLEAN_ENV{QT_DRT_WEBVIEW_MODE} = $ENV{"QT_DRT_WEBVIEW_MODE"};
