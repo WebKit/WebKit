@@ -1,3 +1,16 @@
+2010-07-12  Eric Seidel  <eric@webkit.org>
+
+        Unreviewed, build fix.
+
+        Update HTMLTreeBuilder now that MathMLNames is always generated
+        https://bugs.webkit.org/show_bug.cgi?id=42059
+
+        Fix the Windows project file to build MathMLNames.*.
+        Also added MathMLElementFactory.* which is a NOOP now, but will
+        prevent folks from breaking the build when they turn MathML on.
+
+        * WebCore.vcproj/WebCore.vcproj:
+
 2010-07-12  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Darin Adler.
