@@ -1,4 +1,4 @@
-/ This file consists of lines with specifications of what
+// This file consists of lines with specifications of what
 // to expect from layout test cases. The test cases can be directories
 // in which case the expectations apply to all test cases in that
 // directory and any subdirectory. The format of the file is along the
