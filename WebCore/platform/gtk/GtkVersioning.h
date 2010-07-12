@@ -27,6 +27,7 @@
 #define gdk_visual_get_depth(visual) (visual)->depth
 #define gdk_visual_get_bits_per_rgb(visual) (visual)->bits_per_rgb
 #define gdk_drag_context_get_selected_action(context) (context)->action
+#define gdk_drag_context_get_actions(context) (context)->actions
 #endif // GTK_CHECK_VERSION(2, 21, 2)
 
 #if !GTK_CHECK_VERSION(2, 20, 0)
@@ -55,6 +56,7 @@
 #define gtk_dialog_get_action_area(dialog) (dialog)->action_area
 #define gtk_selection_data_get_length(data) (data)->length
 #define gtk_selection_data_get_data(data) (data)->data
+#define gtk_selection_data_get_target(data) (data)->target
 #define gtk_adjustment_set_page_size(adj, value) (adj)->page_size = value
 #endif // GTK_CHECK_VERSION(2, 14, 0)
 

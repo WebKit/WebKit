@@ -1447,7 +1447,7 @@ static gboolean webkit_web_view_drag_motion(GtkWidget* widget, GdkDragContext* c
     if (droppingContext->pendingDataRequests > 0)
         return TRUE;
 
-    DragData dragData(droppingContext->dataObject.get(), position, globalPointForClientPoint(gtk_widget_get_window(widget), position), gdkDragActionToDragOperation(context->actions));
+    DragData dragData(droppingContext->dataObject.get(), position, globalPointForClientPoint(gtk_widget_get_window(widget), position), gdkDragActionToDragOperation(gdk_drag_context_get_actions(context)));
     DragOperation operation = core(webView)->dragController()->dragUpdated(&dragData);
     gdk_drag_status(context, dragOperationToSingleGdkDragAction(operation), time);
 
@@ -1474,7 +1474,7 @@ static void webkit_web_view_drag_data_received(GtkWidget* widget, GdkDragContext
     const IntPoint& position = droppingContext->lastMotionPosition;
 
     // If there are no more pending requests, start sending dragging data to WebCore.
-    DragData dragData(droppingContext->dataObject.get(), position, globalPointForClientPoint(gtk_widget_get_window(widget), position), gdkDragActionToDragOperation(context->actions));
+    DragData dragData(droppingContext->dataObject.get(), position, globalPointForClientPoint(gtk_widget_get_window(widget), position), gdkDragActionToDragOperation(gdk_drag_context_get_actions(context)));
     DragOperation operation = core(webView)->dragController()->dragEntered(&dragData);
     gdk_drag_status(context, dragOperationToSingleGdkDragAction(operation), time);
 }
@@ -1491,7 +1491,7 @@ static gboolean webkit_web_view_drag_drop(GtkWidget* widget, GdkDragContext* con
     droppingContext->dropHappened = true;
 
     IntPoint position(x, y);
-    DragData dragData(droppingContext->dataObject.get(), position, globalPointForClientPoint(gtk_widget_get_window(widget), position), gdkDragActionToDragOperation(context->actions));
+    DragData dragData(droppingContext->dataObject.get(), position, globalPointForClientPoint(gtk_widget_get_window(widget), position), gdkDragActionToDragOperation(gdk_drag_context_get_actions(context)));
     core(webView)->dragController()->performDrag(&dragData);
 
     gtk_drag_finish(context, TRUE, FALSE, time);

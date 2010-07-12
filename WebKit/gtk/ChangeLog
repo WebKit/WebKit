@@ -1,3 +1,14 @@
+2010-07-12  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        Fix compilation with sealed GTK+.
+
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_drag_motion):
+        (webkit_web_view_drag_data_received):
+        (webkit_web_view_drag_drop):
+
 2010-07-11  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Xan Lopez.

@@ -1,3 +1,13 @@
+2010-07-12  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        Fix compilation with sealed GTK+.
+
+        * platform/gtk/GtkVersioning.h:
+        * platform/gtk/PasteboardHelper.cpp:
+        (WebCore::PasteboardHelper::fillDataObjectFromDropData):
+
 2010-07-12  François Sausset  <sausset@gmail.com>
 
         Reviewed by Kenneth Rohde Christiansen.

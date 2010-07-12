@@ -200,14 +200,15 @@ GtkTargetList* PasteboardHelper::targetListForDataObject(DataObjectGtk* dataObje
 
 void PasteboardHelper::fillDataObjectFromDropData(GtkSelectionData* data, guint info, DataObjectGtk* dataObject)
 {
-    if (!data->data)
+    if (!gtk_selection_data_get_data(data))
         return;
 
-    if (data->target == textPlainAtom)
+    GdkAtom target = gtk_selection_data_get_target(data);
+    if (target == textPlainAtom)
         dataObject->setText(selectionDataToUTF8String(data));
-    else if (data->target == markupAtom)
+    else if (target == markupAtom)
         dataObject->setMarkup(selectionDataToUTF8String(data));
-    else if (data->target == uriListAtom) {
+    else if (target == uriListAtom) {
         gchar** uris = gtk_selection_data_get_uris(data);
         if (!uris)
             return;
@@ -215,7 +216,7 @@ void PasteboardHelper::fillDataObjectFromDropData(GtkSelectionData* data, guint 
         Vector<KURL> uriList(urisToKURLVector(uris));
         dataObject->setURIList(uriList);
         g_strfreev(uris);
-    } else if (data->target == netscapeURLAtom) {
+    } else if (target == netscapeURLAtom) {
         String urlWithLabel(selectionDataToUTF8String(data));
 
         Vector<String> pieces;
