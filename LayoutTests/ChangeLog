@@ -1,5 +1,14 @@
 2010-07-12  Shinichiro Hamaji  <hamaji@chromium.org>
 
+        Unreviewed. Put the expected result for Win.
+
+        REGRESSION: printing is broken if stylesheet has @page
+        https://bugs.webkit.org/show_bug.cgi?id=40452
+
+        * platform/win/printing/page-rule-in-media-query-expected.txt: Added.
+
+2010-07-12  Shinichiro Hamaji  <hamaji@chromium.org>
+
         Unreviewed. Put wrong results for Mac and Win instead of Skipped list.
 
         Results for editing/pasteboard/5761530-1.html are wrong
