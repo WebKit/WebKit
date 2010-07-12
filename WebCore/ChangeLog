@@ -1,3 +1,9 @@
+2010-07-12  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
+
+        Unreviewed build fix after r60050.
+
+        * CMakeLists.txt: Add WebCore/bindings to the include path.
+
 2010-07-09  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Reviewed by Xan Lopez.
