@@ -26,8 +26,8 @@
 #ifndef Color_h
 #define Color_h
 
-#include "PlatformString.h"
 #include <wtf/FastAllocBase.h>
+#include <wtf/unicode/Unicode.h>
 
 #if PLATFORM(CG)
 typedef struct CGColor* CGColorRef;
@@ -55,6 +55,7 @@ struct rgb_color;
 namespace WebCore {
 
 class Color;
+class String;
 
 typedef unsigned RGBA32;        // RGBA quadruplet
 

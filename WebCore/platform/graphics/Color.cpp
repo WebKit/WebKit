@@ -26,6 +26,7 @@
 #include "config.h"
 #include "Color.h"
 
+#include "PlatformString.h"
 #include <math.h>
 #include <wtf/Assertions.h>
 #include <wtf/MathExtras.h>

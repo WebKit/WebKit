@@ -1,3 +1,13 @@
+2010-07-12  Andreas Kling  <andreas.kling@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Remove dependency on PlatformString.h in Color.h
+        https://bugs.webkit.org/show_bug.cgi?id=42109
+
+        * platform/graphics/Color.cpp:
+        * platform/graphics/Color.h:
+
 2010-07-12  Eric Seidel  <eric@webkit.org>
 
         Unreviewed, build fix.
