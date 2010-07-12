@@ -668,7 +668,6 @@ SET(WebCore_SOURCES
     bindings/js/ScriptCallFrame.cpp
     bindings/js/ScriptCallStack.cpp
     bindings/js/ScriptController.cpp
-    bindings/js/ScriptControllerEfl.cpp
     bindings/js/ScriptDebugServer.cpp
     bindings/js/ScriptEventListener.cpp
     bindings/js/ScriptFunctionCall.cpp

@@ -1,5 +1,15 @@
 2010-07-12  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
 
+        Unreviewed.
+
+        [EFL] Move ScriptConcotrollerEfl.cpp from CMakeLists.txt to
+        CMakeListsEfl.txt.
+
+        * CMakeLists.txt:
+        * CMakeListsEfl.txt:
+
+2010-07-12  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
+
         Unreviewed build fix after r60050.
 
         * CMakeLists.txt: Add WebCore/bindings to the include path.
