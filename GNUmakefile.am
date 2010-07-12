@@ -457,6 +457,7 @@ $(WEBKIT_GIRSOURCES): $(G_IR_SCANNER) $(JSCORE_GIRSOURCES) libwebkitgtk-@WEBKITG
 	     --add-include-path $(builddir) \
 	     -I$(top_srcdir)/WebKit/gtk \
 	     -I$(top_builddir)/WebKit/gtk \
+	     -I$(top_builddir)/DerivedSources \
 	     -I$(top_builddir)/DerivedSources/webkit \
 	     -I$(top_srcdir)/JavaScriptCore/ForwardingHeaders \
 	     -I$(top_srcdir) \

@@ -1,3 +1,13 @@
+2010-07-12  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        Add another include path to the scanner to avoid warnings related
+        to undefined types. It wasn't picking up <webkit/foo.h>-like
+        headers.
+
+        * GNUmakefile.am:
+
 2010-07-07  Rafael Antognolli  <antognolli@profusion.mobi>
 
         Reviewed by Adam Barth.
