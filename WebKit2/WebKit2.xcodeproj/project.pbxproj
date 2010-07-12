@@ -245,7 +245,6 @@
 		BCF69FA31176D01400471A52 /* WebNavigationData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCF69FA11176D01400471A52 /* WebNavigationData.cpp */; };
 		BCF69FA91176D1CB00471A52 /* WKNavigationData.h in Headers */ = {isa = PBXBuildFile; fileRef = BCF69FA71176D1CB00471A52 /* WKNavigationData.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BCF69FAA1176D1CB00471A52 /* WKNavigationData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCF69FA81176D1CB00471A52 /* WKNavigationData.cpp */; };
-		EDFB360311B5C28900692D57 /* WebKit2.exp in CopyFiles */ = {isa = PBXBuildFile; fileRef = EDFB360211B5C28900692D57 /* WebKit2.exp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -280,7 +279,6 @@
 			dstSubfolderSpec = 1;
 			files = (
 				1A50DB66110A3D57000D3FE5 /* WebProcess.app in CopyFiles */,
-				EDFB360311B5C28900692D57 /* WebKit2.exp in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -519,7 +517,6 @@
 		BCF69FA11176D01400471A52 /* WebNavigationData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebNavigationData.cpp; sourceTree = "<group>"; };
 		BCF69FA71176D1CB00471A52 /* WKNavigationData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKNavigationData.h; sourceTree = "<group>"; };
 		BCF69FA81176D1CB00471A52 /* WKNavigationData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKNavigationData.cpp; sourceTree = "<group>"; };
-		EDFB360211B5C28900692D57 /* WebKit2.exp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.exports; name = WebKit2.exp; path = mac/WebKit2.exp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -563,7 +560,6 @@
 		0867D691FE84028FC02AAC07 /* WebKit2 */ = {
 			isa = PBXGroup;
 			children = (
-				EDFB360211B5C28900692D57 /* WebKit2.exp */,
 				BC2E6E74114196F000A63B1E /* Platform */,
 				1AADDF4B10D82AF000D3D63D /* Shared */,
 				BC032D5C10F436D50058C15A /* WebProcess */,

@@ -1,5 +1,12 @@
 2010-07-12  Mark Rowe  <mrowe@apple.com>
 
+        Re-do an Xcode project change that Xcode decided not to save.
+
+        * WebKit2.xcodeproj/project.pbxproj: Remove WebKit2.exp from the project.
+        For some reason it was being copied in to the framework wrapper.
+
+2010-07-12  Mark Rowe  <mrowe@apple.com>
+
         Reviewed by Sam Weinig.
 
         Remove the exports file from WebKit2.
