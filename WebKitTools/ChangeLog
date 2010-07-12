@@ -1,3 +1,13 @@
+2010-07-12  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed.
+
+        Remove stray "raise e" that got included in a previous patch.  This
+        caused the EWS bots to turn red instead of purple when a patch failed
+        to apply.
+
+        * Scripts/webkitpy/tool/commands/stepsequence.py:
+
 2010-07-12  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r63101.
