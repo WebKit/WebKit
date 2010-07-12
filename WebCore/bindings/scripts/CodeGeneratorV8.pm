@@ -675,7 +675,8 @@ END
 END
     } else {
         my $reflect = $attribute->signature->extendedAttributes->{"Reflect"};
-        if ($getterStringUsesImp && $reflect && IsNodeSubType($dataNode) && $codeGenerator->IsStringType($attrType)) {
+        my $url = $attribute->signature->extendedAttributes->{"URL"};
+        if ($getterStringUsesImp && $reflect && !$url && IsNodeSubType($dataNode) && $codeGenerator->IsStringType($attrType)) {
             # Generate super-compact call for regular attribute getter:
             my $contentAttributeName = $reflect eq "1" ? lc $attrName : $reflect;
             my $namespace = $codeGenerator->NamespaceForAttributeName($interfaceName, $contentAttributeName);
