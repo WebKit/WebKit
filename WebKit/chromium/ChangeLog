@@ -1,3 +1,14 @@
+2010-07-12  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        [Chromium] Crash when stepping on a breakpoint while debugging Web Inspector
+        https://bugs.webkit.org/show_bug.cgi?id=41958
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebView::willEnterModalLoop):
+        (WebKit::WebView::didExitModalLoop):
+
 2010-07-12  Jeremy Orlow  <jorlow@chromium.org>
 
         Speculative fix for visual studio retardedness.
