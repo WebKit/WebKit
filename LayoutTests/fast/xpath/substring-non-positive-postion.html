@@ -1,0 +1,23 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../js/resources/js-test-style.css">
+<script src="../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p>Test for <a href="http://bugs.webkit.org/show_bug.cgi?id=41913">bug 41913</a>:
+XPath substring function does not correctly handle non-positive values for the position argument</p>
+<div id="console"></div>
+
+<script>
+    shouldBe("document.evaluate(\"substring('abcde', 0)\", document, null, XPathResult.STRING_TYPE, null).stringValue", "'abcde'");
+    shouldBe("document.evaluate(\"substring('abcde', -2)\", document, null, XPathResult.STRING_TYPE, null).stringValue", "'abcde'");
+    shouldBe("document.evaluate(\"substring('abcde', 0, 5)\", document, null, XPathResult.STRING_TYPE, null).stringValue", "'abcd'");
+    shouldBe("document.evaluate(\"substring('abcde', -2, 5)\", document, null, XPathResult.STRING_TYPE, null).stringValue", "'ab'");
+
+    var successfullyParsed = true;
+
+</script>
+<script src="../js/resources/js-test-post.js"></script>
+</body>
+</html>

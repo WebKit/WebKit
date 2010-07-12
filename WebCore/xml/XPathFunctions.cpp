@@ -516,11 +516,13 @@ Value FunSubstring::evaluate() const
     if (pos > long(s.length())) 
         return "";
 
-    if (haveLength && pos < 1) {
-        len -= 1 - pos;
+    if (pos < 1) {
+        if (haveLength) {
+            len -= 1 - pos;
+            if (len < 1)
+                return "";
+        }
         pos = 1;
-        if (len < 1)
-            return "";
     }
 
     return s.substring(pos - 1, len);

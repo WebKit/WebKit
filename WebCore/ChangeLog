@@ -1,3 +1,20 @@
+2010-07-12  Steve Block  <steveblock@google.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        XPath substring function does not correctly handle non-positive values for the position argument
+        https://bugs.webkit.org/show_bug.cgi?id=41913
+
+        This patch changes the behavior of the XPath evaluate function when a non-positive
+        position argument is supplied and no length argument is supplied. In this case,
+        we reset the position to 1. This follows the spec and matches the current behaviour
+        when a length argument is supplied.
+
+        Test: fast/xpath/substring-non-positive-postion.html
+
+        * xml/XPathFunctions.cpp:
+        (WebCore::XPath::FunSubstring::evaluate):
+
 2010-06-27  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Dumitru Daniliuc.

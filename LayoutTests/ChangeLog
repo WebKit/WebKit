@@ -1,3 +1,13 @@
+2010-07-12  Steve Block  <steveblock@google.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        XPath substring function does not correctly handle non-positive values for the position argument
+        https://bugs.webkit.org/show_bug.cgi?id=41913
+
+        * fast/xpath/substring-non-positive-postion-expected.txt: Added.
+        * fast/xpath/substring-non-positive-postion.html: Added.
+
 2010-06-27  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Dumitru Daniliuc.
