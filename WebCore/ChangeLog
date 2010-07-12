@@ -1,3 +1,11 @@
+2010-07-11  Adam Barth  <abarth@webkit.org>
+
+        Rubber-stamped by Eric Seidel
+
+        Add a complete list of the HTML5 entities in JSON format.
+
+        * html/HTMLEntityNames.json: Added.
+
 2010-07-11  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Xan Lopez.
