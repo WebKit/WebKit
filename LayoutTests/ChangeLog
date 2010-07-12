@@ -1,3 +1,18 @@
+2010-07-12  Alexey Proskuryakov  <ap@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=13075
+        XMLHttpRequest with failed authentication should set status to 401
+
+        https://bugs.webkit.org/show_bug.cgi?id=6871
+        <rdar://problem/3363403> 401 error page is never shown
+
+        The fix doesn't help Tiger, update results of one test and skip another.
+
+        * platform/mac-tiger/Skipped: Skip 401-alternative-content.php.
+        * platform/mac-tiger/http/tests/xmlhttprequest/failed-auth-expected.txt:
+        Copied from http/tests/xmlhttprequest/failed-auth-expected.txt, updated for failure result
+        in async case.
+
 2010-07-12  Nate Chapin  <japhet@chromium.org>
 
         Reviewed by Darin Fisher.

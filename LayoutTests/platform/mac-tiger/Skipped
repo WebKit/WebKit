@@ -207,3 +207,6 @@ fast/encoding/japanese-encoding-mix.html
 # Tests introduced in http://trac.webkit.org/changeset/61599.
 fast/events/show-modal-dialog-onblur-onfocus.html
 fast/harness/show-modal-dialog.html
+
+# Loading fails on Tiger with error -1012 after asking NSURLConnection to continue without credentials.
+http/tests/misc/401-alternative-content.php
