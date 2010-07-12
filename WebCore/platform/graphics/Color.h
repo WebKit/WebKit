@@ -26,6 +26,7 @@
 #ifndef Color_h
 #define Color_h
 
+#include "PlatformString.h"
 #include <wtf/FastAllocBase.h>
 
 #if PLATFORM(CG)
@@ -53,7 +54,6 @@ struct rgb_color;
 
 namespace WebCore {
 
-class String;
 class Color;
 
 typedef unsigned RGBA32;        // RGBA quadruplet
@@ -135,6 +135,7 @@ public:
 #endif
 
     static bool parseHexColor(const String& name, RGBA32& rgb);
+    static bool parseHexColor(const UChar* name, unsigned length, RGBA32& rgb);
 
     static const RGBA32 black = 0xFF000000;
     static const RGBA32 white = 0xFFFFFFFF;

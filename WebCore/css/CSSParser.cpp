@@ -291,21 +291,21 @@ bool CSSParser::parseValue(CSSMutableStyleDeclaration* declaration, int id, cons
 // possible to set up a default color.
 bool CSSParser::parseColor(RGBA32& color, const String& string, bool strict)
 {
+    // First try creating a color specified by name, rgb() or "#" syntax.
+    if (parseColor(string, color, strict))
+        return true;
+
     CSSParser parser(true);
+    RefPtr<CSSMutableStyleDeclaration> dummyStyleDeclaration = CSSMutableStyleDeclaration::create();
 
-    // First try creating a color specified by name or the "#" syntax.
-    if (!parser.parseColor(string, color, strict)) {
-        RefPtr<CSSMutableStyleDeclaration> dummyStyleDeclaration = CSSMutableStyleDeclaration::create();
+    // Now try to create a color from rgba() syntax.
+    if (!parser.parseColor(dummyStyleDeclaration.get(), string))
+        return false;
 
-        // Now try to create a color from the rgb() or rgba() syntax.
-        if (parser.parseColor(dummyStyleDeclaration.get(), string)) {
-            CSSValue* value = parser.m_parsedProperties[0]->value();
-            if (value->cssValueType() == CSSValue::CSS_PRIMITIVE_VALUE) {
-                CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
-                color = primitiveValue->getRGBA32Value();
-            }
-        } else
-            return false;
+    CSSValue* value = parser.m_parsedProperties[0]->value();
+    if (value->cssValueType() == CSSValue::CSS_PRIMITIVE_VALUE) {
+        CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
+        color = primitiveValue->getRGBA32Value();
     }
 
     return true;
@@ -3716,13 +3716,23 @@ static inline bool parseColorInt(const UChar*& string, const UChar* end, UChar t
 
 bool CSSParser::parseColor(const String &name, RGBA32& rgb, bool strict)
 {
-    if (!strict && Color::parseHexColor(name, rgb))
-        return true;
+    const UChar* characters = name.characters();
+    unsigned length = name.length();
+
+    if (!strict && length >= 3) {
+        if (name[0] == '#') {
+            if (Color::parseHexColor(characters + 1, length - 1, rgb))
+                return true;
+        } else {
+            if (Color::parseHexColor(characters, length, rgb))
+                return true;
+        }
+    }
 
     // Try rgb() syntax.
     if (name.startsWith("rgb(")) {
-        const UChar* current = name.characters() + 4;
-        const UChar* end = name.characters() + name.length();
+        const UChar* current = characters + 4;
+        const UChar* end = characters + length;
         int red;
         int green;
         int blue;
