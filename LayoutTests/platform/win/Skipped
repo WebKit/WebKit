@@ -354,7 +354,6 @@ editing/deleting/deletionUI-single-instance.html
 editing/pasteboard/input-field-1.html
 editing/selection/contains-boundaries.html
 editing/undo/5378473.html
-http/tests/xmlhttprequest/failed-auth.html
 http/tests/xmlhttprequest/connection-error-sync.html
 plugins/netscape-plugin-setwindow-size.html
 svg/custom/gradient-stop-style-change.svg
@@ -953,5 +952,3 @@ userscripts/user-script-all-frames.html
 userscripts/user-script-top-frame-only.html
 userscripts/user-style-all-frames.html
 userscripts/user-style-top-frame-only.html
-userscripts/frameset-all-frames.html
-userscripts/frameset-top-frame-only.html
