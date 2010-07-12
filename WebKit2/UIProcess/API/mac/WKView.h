@@ -28,6 +28,7 @@
 
 @class WKViewData;
 
+WK_EXPORT
 @interface WKView : NSView {
     WKViewData *_data;
 }

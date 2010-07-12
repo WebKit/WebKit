@@ -36,7 +36,7 @@ using namespace WebKit;
 
 #if PLATFORM(MAC)
 
-extern "C" int WebKitMain(int argc, char** argv);
+extern "C" WK_EXPORT int WebKitMain(int argc, char** argv);
 
 int WebKitMain(int argc, char** argv)
 {

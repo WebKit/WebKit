@@ -26,5 +26,3 @@
 PRODUCT_NAME = WebKit2;
 INFOPLIST_FILE = Info.plist;
 INSTALL_PATH = $(SYSTEM_LIBRARY_DIR)/PrivateFrameworks;
-
-EXPORTED_SYMBOLS_FILE = mac/WebKit2.exp;
