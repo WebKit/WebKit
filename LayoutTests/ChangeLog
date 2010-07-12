@@ -1,3 +1,17 @@
+2010-07-12  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed.
+
+        [Qt] Some inspector test fail intermittently
+        https://bugs.webkit.org/show_bug.cgi?id=42090
+
+        Add tests to the Skipped list until fix to avoid false positive alarms.
+
+        * platform/qt/Skipped:
+         - inspector/timeline-layout.html skipped.
+         - inspector/timeline-parse-html.html skipped.
+         - inspector/timeline-recalculate-styles.html skipped.
+
 2010-07-09  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Darin Adler.
