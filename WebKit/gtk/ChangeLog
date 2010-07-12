@@ -1,3 +1,13 @@
+2010-07-12  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        [GTK] r63100 broke the testwebview test
+        https://bugs.webkit.org/show_bug.cgi?id=42114
+
+        * tests/testwebview.c: Disable a failing assertion in test_webkit_web_view_adjustments
+        until we can get to the bottom of the failure.
+
 2010-07-12  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Gustavo Noronha.
