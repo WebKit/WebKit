@@ -1,3 +1,14 @@
+2010-07-12  Steve Block  <steveblock@google.com>
+
+        Reviewed by Jeremy Orlow.
+
+        add ANDROID to STORE_FONT_CUSTOM_PLATFORM_DATA
+        https://bugs.webkit.org/show_bug.cgi?id=32273
+
+        Tested by existing tests, just adding ANDROID to the list of platforms that use this feature.
+
+        * loader/CachedFont.cpp:
+
 2010-07-12  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
 
         Unreviewed.
