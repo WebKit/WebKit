@@ -1,3 +1,17 @@
+2010-07-12  Adam Roben  <aroben@apple.com>
+
+        Stop generating stripped symbols for Release builds
+
+        It turns out we can strip the symbols after-the-fact using PDBCopy.
+
+        Fixes <http://webkit.org/b/42085>.
+
+        Reviewed by Steve Falkenburg.
+
+        * win/tools/vsprops/release.vsprops: Removed the StripPrivateSymbols
+        attribute, which caused link.exe to generate a stripped PDB file for
+        each project.
+
 2010-07-08  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Dan Bernstein.

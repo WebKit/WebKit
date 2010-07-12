@@ -139,7 +139,6 @@
 				OutputFile="$(OutDir)\$(ProjectName)$(WebKitDLLConfigSuffix).dll"
 				AdditionalLibraryDirectories="$(DXSDK_DIR)\Lib\x86"
 				DelayLoadDLLs="usp10.dll;comctl32.dll;version.dll;libxslt$(LibraryConfigSuffix).dll;SQLite3$(LibraryConfigSuffix).dll;msimg32.dll;QTMovieWin$(WebKitConfigSuffix).dll;iphlpapi.dll"
-				StripPrivateSymbols=""
 			/>
 			<Tool
 				Name="VCALinkTool"

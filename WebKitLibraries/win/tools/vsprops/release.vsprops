@@ -13,7 +13,6 @@
 	<Tool
 		Name="VCLinkerTool"
 		LinkIncremental="1"
-		StripPrivateSymbols="$(WebKitOutputDir)\public\sym\$(TargetName).pdb"
 		OptimizeReferences="2"
 		EnableCOMDATFolding="2"
 		OptimizeForWindows98="1"

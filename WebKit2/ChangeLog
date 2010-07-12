@@ -1,3 +1,17 @@
+2010-07-12  Adam Roben  <aroben@apple.com>
+
+        Stop generating stripped symbols for Release builds
+
+        It turns out we can strip the symbols after-the-fact using PDBCopy.
+
+        Fixes <http://webkit.org/b/42085>.
+
+        Reviewed by Steve Falkenburg.
+
+        * win/WebKit2.vcproj: Removed the no-longer-needed Release override of
+        the StripPrivateSymbols attribute. (This attribute is no longer set in
+        release.vsprops, so doesn't need to be overridden.)
+
 2010-07-12  Brian Weinstein  <bweinstein@apple.com>
 
         WebKit2 build fix for Windows.

@@ -1,3 +1,17 @@
+2010-07-12  Adam Roben  <aroben@apple.com>
+
+        Stop generating stripped symbols for Release builds
+
+        It turns out we can strip the symbols after-the-fact using PDBCopy.
+
+        Fixes <http://webkit.org/b/42085>.
+
+        Reviewed by Steve Falkenburg.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreCommon.vsprops:
+        Removed the pre-link event, which just created the public\sym
+        directory.
+
 2010-07-12  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Dan Bernstein.
