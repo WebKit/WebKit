@@ -171,3 +171,8 @@ void MainWindow::openFile()
     }
 }
 
+void MainWindow::openLocation()
+{
+    urlEdit->selectAll();
+    urlEdit->setFocus();
+}
