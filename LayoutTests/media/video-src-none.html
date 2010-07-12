@@ -1,16 +1,60 @@
 <html>
-    <body onload="setTimeout(test, 250)">
-        <p>No src attribute defined.  Video should remain in NETWORK_EMPTY.</p>
-        <video controls></video>
-
+    <head>
         <script src=video-test.js></script>
         <script>
-            function test()
+            var state;
+
+            function someTimeLater()
             {
-                testExpected("video.error", null);
-                testExpected("video.networkState", HTMLMediaElement.NETWORK_EMPTY);
+                testExpected("state", "load() with no 'src'");
+                testExpected("videos[0].error", null);
+                testExpected("videos[0].networkState", HTMLMediaElement.NETWORK_EMPTY);
+                testExpected("videos[0].src", "");
                 endTest();
             }
+
+            function errorEvent()
+            {
+                consoleWrite("'error' event:");
+                testExpected("state", "load() with empty 'src'");
+                testExpected(event.target, videos[1]);
+                testExpected("videos[1].error.code", MediaError.MEDIA_ERR_SRC_NOT_SUPPORTED);
+                testExpected("videos[1].networkState", HTMLMediaElement.NETWORK_NO_SOURCE);
+
+                consoleWrite("<i>Calling load() with no 'src' should NOT fire 'error' event, set network state to NETWORK_EMPTY.<" + "/i>");
+                state = "load() with missing 'src'";
+                videos[0].load();
+
+                setTimeout(someTimeLater, 100) ;
+            }
+
+            function test()
+            {
+                videos = document.querySelectorAll('video');
+
+                consoleWrite("<br><i>Network state should remain in NETWORK_EMPTY with empty or missing 'src' attribute.<" + "/i>");
+                consoleWrite("** &lt;video&gt; with no src attribute**");
+                testExpected("videos[0].error", null);
+                testExpected("videos[0].networkState", HTMLMediaElement.NETWORK_EMPTY);
+                testExpected("videos[0].src", "");
+
+                consoleWrite("** &lt;video&gt; with empty src attribute **");
+                testExpected("videos[1].error", null);
+                testExpected("videos[1].networkState", HTMLMediaElement.NETWORK_EMPTY);
+                testExpected("videos[1].src", "");
+
+                consoleWrite("<br><" + "i>Calling load() with empty 'src' should fire 'error' event, set network state to NETWORK_NO_SOURCE, and set error to MEDIA_ERR_SRC_NOT_SUPPORTED.<" + "/i>");
+                state = "load() with empty 'src'";
+                videos[1].load();
+            }
         </script>
+    </head>
+
+    <body onload="setTimeout(test, 100)">
+        <video width=320 height=60 controls onerror="errorEvent()"></video>
+        <br>
+        <video width=320 height=60 controls src="" onerror="errorEvent()"></video>
+
+
     </body>
 </html>

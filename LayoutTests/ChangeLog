@@ -1,3 +1,33 @@
+2010-07-12  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Update media element's handling of empty 'src' attribute
+        https://bugs.webkit.org/show_bug.cgi?id=42001
+
+        * fast/dom/URL-attribute-reflection-expected.txt: Update results now that audio, video, and
+        source return 'non-empty URL'.
+
+        * media/video-poster-expected.txt:
+        * media/video-poster.html: Test empty poster url.
+
+        * media/video-source-error-no-candidate-expected.txt:
+        * media/video-source-error-no-candidate.html: Empty 'src' should fires an error event.
+
+        * media/video-source-expected.txt:
+        * media/video-source.html: Test <source> element's 'src' attribute and property as well 
+        as currentSrc.
+
+        * media/video-src-empty-expected.txt: Removed.
+        * media/video-src-empty.html: Removed, the test is no longer valid.
+
+        * media/video-src-none-expected.txt:
+        * media/video-src-none.html: Updated to test empty 'src'. Add tests to ensure that an error 
+        is fired when load() is called and the 'src' is empty, but not when 'src' is missing.
+
+        * media/video-src.html:
+        * media/video-src-expected.txt: Test 'src' attribute and property as well as currentSrc.
+
 2010-07-12  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

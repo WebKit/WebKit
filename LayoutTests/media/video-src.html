@@ -1,16 +1,28 @@
-<body>
-<script src=media-file.js></script>
-<script src=video-test.js></script>
-<video controls></video>
+<html>
+    <head>
+        <script src=media-file.js></script>
+        <script src=video-test.js></script>
+        <script>
 
-<script>
-    video = mediaElement = document.getElementsByTagName('video')[0];
-    var mediaFile = findMediaFile("video", "content/test");
+            function test()
+            {
+                video = mediaElement = document.getElementsByTagName('video')[0];
+                var mediaFile = findMediaFile("video", "content/test");
+            
+                waitForEvent("loadstart", function () {
+                    testExpected("relativeURL(video.currentSrc) ", mediaFile);
+                    testExpected("relativeURL(video.src) ", mediaFile);
+                    testExpected("video.getAttribute('src')", mediaFile);
+                    endTest();
+                });
+            
+                video.src = mediaFile;
+            }
+        </script>
+    </head>
 
-    waitForEvent("loadstart", function () {
-        testExpected("relativeURL(video.currentSrc) ", mediaFile);
-        endTest();
-    });
+    <body onload="setTimeout(test, 100)">
+        <video controls></video>
+    </body>
+</html>
 
-    video.src = mediaFile;
-</script>

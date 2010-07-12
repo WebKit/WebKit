@@ -19,15 +19,15 @@ FAIL testURLReflection('href', 'link') should be non-empty URL. Was URL.
 FAIL testURLReflection('href', 'base') should be URL. Was non-URL.
 FAIL testURLReflection('icon', 'command') should be non-empty URL. Was none.
 FAIL testURLReflection('manifest', 'html') should be non-empty URL. Was none.
-FAIL testURLReflection('poster', 'video') should be non-empty URL. Was URL.
-FAIL testURLReflection('src', 'audio') should be non-empty URL. Was URL.
+PASS testURLReflection('poster', 'video') is 'non-empty URL'
+PASS testURLReflection('src', 'audio') is 'non-empty URL'
 FAIL testURLReflection('src', 'embed') should be non-empty URL. Was non-URL.
 FAIL testURLReflection('src', 'iframe') should be non-empty URL. Was non-URL.
 FAIL testURLReflection('src', 'img') should be non-empty URL. Was URL.
 FAIL testURLReflection('src', 'input') should be non-empty URL. Was URL.
 FAIL testURLReflection('src', 'script') should be non-empty URL. Was URL.
-FAIL testURLReflection('src', 'source') should be non-empty URL. Was URL.
-FAIL testURLReflection('src', 'video') should be non-empty URL. Was URL.
+PASS testURLReflection('src', 'source') is 'non-empty URL'
+PASS testURLReflection('src', 'video') is 'non-empty URL'
 FAIL testURLReflection('longDesc', 'img') should be non-empty URL. Was URL.
 FAIL testURLReflection('lowsrc', 'img') should be non-empty URL. Was URL.
 PASS successfullyParsed is true

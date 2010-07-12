@@ -1,10 +1,38 @@
-<video poster="content/greenbox.png" controls></video>
-<script src=video-test.js></script>
-<script>
-    testExpected("video.getAttribute('poster')", "content/greenbox.png");
-    testExpected("relativeURL(video.poster)", "content/greenbox.png");
-    video.setAttribute('poster', 'content/abe.png');
-    testExpected("video.getAttribute('poster')", "content/abe.png");
-    testExpected("relativeURL(video.poster)", "content/abe.png");
-    endTest();
-</script>
+<html>
+    <head>
+        <script src=video-test.js></script>
+        <script>
+
+            function testPoster(url)
+            {
+                testExpected("video.getAttribute('poster')", url);
+                testExpected("relativeURL(video.poster)", url);
+            }
+            
+            function test()
+            {
+                findMediaElement();
+
+                consoleWrite("<br><i>Set 'poster' to 'content/greenbox.png'.<" + "/i>");
+                testPoster('content/greenbox.png');
+
+                consoleWrite("<br><i>Set 'poster' to ''.<" + "/i>");
+                video.setAttribute('poster', '');
+                testPoster('');
+
+                consoleWrite("<br><i>Set 'poster' to 'content/abe.png'.<" + "/i>");
+                video.setAttribute('poster', 'content/abe.png');
+                testPoster('content/abe.png');
+
+                consoleWrite('');
+                endTest();
+            }
+        </script>
+    </head>
+
+    <body onload="setTimeout(test, 100)">
+
+        <video poster="content/greenbox.png" controls></video>
+
+    </body>
+</html>

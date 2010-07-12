@@ -424,7 +424,7 @@ PassRefPtr<MediaError> HTMLMediaElement::error() const
 
 KURL HTMLMediaElement::src() const
 {
-    return document()->completeURL(getAttribute(srcAttr));
+    return getNonEmptyURLAttribute(srcAttr);
 }
 
 void HTMLMediaElement::setSrc(const String& url)
@@ -545,14 +545,16 @@ void HTMLMediaElement::loadInternal()
 
 void HTMLMediaElement::selectMediaResource()
 {
+    enum Mode { attribute, children };
+    Mode mode = attribute;
+
     // 1 - Set the networkState to NETWORK_NO_SOURCE
     m_networkState = NETWORK_NO_SOURCE;
 
     // 2 - Asynchronously await a stable state.
 
     // 3 - ... the media element has neither a src attribute ...
-    String mediaSrc = getAttribute(srcAttr);
-    if (!mediaSrc) {
+    if (!hasAttribute(srcAttr)) {
         // ... nor a source element child: ...
         Node* node;
         for (node = firstChild(); node; node = node->nextSibling()) {
@@ -568,6 +570,8 @@ void HTMLMediaElement::selectMediaResource()
             ASSERT(!m_delayingTheLoadEvent);
             return;
         }
+
+        mode = children;
     }
 
     // 4
@@ -577,11 +581,17 @@ void HTMLMediaElement::selectMediaResource()
     // 5
     scheduleEvent(eventNames().loadstartEvent);
 
-    // 6 - If the media element has a src attribute, then run these substeps
-    ContentType contentType("");
-    if (!mediaSrc.isNull()) {
-        KURL mediaURL = document()->completeURL(mediaSrc);
+    // 6 - If mode is attribute, then run these substeps
+    if (mode == attribute) {
+        // If the src attribute's value is the empty string ... jump down to the failed step below
+        KURL mediaURL = getNonEmptyURLAttribute(srcAttr);
+        if (mediaURL.isEmpty()) {
+            noneSupported();
+            return;
+        }
+
         if (isSafeToLoadURL(mediaURL, Complain) && dispatchBeforeLoadEvent(mediaURL.string())) {
+            ContentType contentType("");
             m_loadState = LoadingFromSrcAttr;
             loadResource(mediaURL, contentType);
         } else 
@@ -1468,9 +1478,12 @@ KURL HTMLMediaElement::selectNextSourceChild(ContentType *contentType, InvalidSo
         }
 
         HTMLSourceElement* source = static_cast<HTMLSourceElement*>(node);
-        if (!source->hasAttribute(srcAttr))
-            goto check_again; 
 
+        // If candidate does not have a src attribute, or if its src attribute's value is the empty string ... jump down to the failed step below
+        mediaURL = source->getNonEmptyURLAttribute(srcAttr);
+        if (mediaURL.isEmpty())
+            goto check_again;
+        
         if (source->hasAttribute(mediaAttr)) {
             MediaQueryEvaluator screenEval("screen", document()->frame(), renderer() ? renderer()->style() : 0);
             RefPtr<MediaList> media = MediaList::createAllowingDescriptionSyntax(source->media());
@@ -1484,7 +1497,6 @@ KURL HTMLMediaElement::selectNextSourceChild(ContentType *contentType, InvalidSo
         }
 
         // Is it safe to load this url?
-        mediaURL = source->src();
         if (!isSafeToLoadURL(mediaURL, actionIfInvalid) || !dispatchBeforeLoadEvent(mediaURL.string()))
             goto check_again;
 

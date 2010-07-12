@@ -64,7 +64,7 @@ void HTMLSourceElement::insertedIntoDocument()
 
 KURL HTMLSourceElement::src() const
 {
-    return document()->completeURL(getAttribute(srcAttr));
+    return getNonEmptyURLAttribute(srcAttr);
 }
 
 void HTMLSourceElement::setSrc(const String& url)
@@ -110,5 +110,11 @@ void HTMLSourceElement::errorEventTimerFired(Timer<HTMLSourceElement>*)
     dispatchEvent(Event::create(eventNames().errorEvent, false, true));
 }
 
+bool HTMLSourceElement::isURLAttribute(Attribute* attribute) const
+{
+    return attribute->name() == srcAttr;
 }
+
+}
+
 #endif

@@ -1,3 +1,31 @@
+2010-07-12  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Update media element's handling of empty 'src' attribute
+        https://bugs.webkit.org/show_bug.cgi?id=42001
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::src): Return getNonEmptyURLAttribute().
+        (WebCore::HTMLMediaElement::selectMediaResource): Call noneSupported() for empty 'src'.
+        (WebCore::HTMLMediaElement::selectNextSourceChild): Use getNonEmptyURLAttribute() to convert 
+        'src' to URL instead of document()->completeURL(). Don't consider a <source> with an empty 'src'. 
+
+        * html/HTMLMediaElement.idl: Add 'NonEmpty' option to 'src' attribute.
+
+        * html/HTMLSourceElement.cpp:
+        (WebCore::HTMLSourceElement::src): Return getNonEmptyURLAttribute().
+        (WebCore::HTMLSourceElement::isURLAttribute): New, 'src' is a URL attribute.
+        * html/HTMLSourceElement.h:
+
+        * html/HTMLSourceElement.idl: Add 'NonEmpty' option to 'src' attribute.
+
+        * html/HTMLVideoElement.cpp:
+        (WebCore::HTMLVideoElement::parseMappedAttribute): Use getNonEmptyURLAttribute() to convert 
+        'poster' to URL instead of document()->completeURL().
+
+        * html/HTMLVideoElement.idl:  Add 'NonEmpty' option to 'poster' attribute.
+
 2010-07-12  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Xan Lopez.

@@ -101,7 +101,7 @@ void HTMLVideoElement::parseMappedAttribute(Attribute* attr)
     const QualifiedName& attrName = attr->name();
 
     if (attrName == posterAttr) {
-        m_posterURL = document()->completeURL(attr->value());
+        m_posterURL = getNonEmptyURLAttribute(posterAttr);
         updatePosterImage();
         if (m_shouldDisplayPosterImage) {
 #if !ENABLE(PLUGIN_PROXY_FOR_VIDEO)

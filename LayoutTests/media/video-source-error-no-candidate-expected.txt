@@ -1,13 +1,16 @@
-Test that 'error' events are fired when no urls are passed to the media engine.
+Test that 'error' events are fired from <source> element when it can not be used.
 
 
-EVENT(error) from <source id='missing-src' src=''> OK
+EVENT(error) from <source id='missing-src' src=null> OK
 EXPECTED (video.error == 'null') OK
 
 EVENT(error) from <source id='bogus-type' src='content/test.mp4'> OK
 EXPECTED (video.error == 'null') OK
 
 EVENT(error) from <source id='unsupported-media-query' src='content/test.mp4'> OK
+EXPECTED (video.error == 'null') OK
+
+EVENT(error) from <source id='empty-src' src=''> OK
 EXPECTED (video.error == 'null') OK
 
 END OF TEST

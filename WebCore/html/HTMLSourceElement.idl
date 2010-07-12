@@ -25,7 +25,7 @@
 
 module html {
 interface [Conditional=VIDEO] HTMLSourceElement : HTMLElement {
-    attribute DOMString src;
+    attribute [Reflect,NonEmpty,URL] DOMString src;
     attribute DOMString type;
     attribute DOMString media;
 };

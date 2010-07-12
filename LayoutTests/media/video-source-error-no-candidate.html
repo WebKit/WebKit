@@ -8,6 +8,7 @@
 
             var sources = [];
             var errorCount = 0;
+            var expectedErrorCount = 4;
 
             function errorEvent(evt)
             {
@@ -19,16 +20,17 @@
                         break;
                 }
 
+                var src = sources[ndx].getAttribute('src') == null ? "null" : "'" + relativeURL(evt.target.src) + "'";
                 if (sources[ndx] == evt.target)
-                    logResult(true, "EVENT(error) from &lt;source id='<em>" + evt.target.id + "</em>' src='<em>" + relativeURL(evt.target.src) + "</em>'&gt;");
+                    logResult(true, "EVENT(error) from &lt;source id='<em>" + evt.target.id + "</em>' src=<em>" + src + "</em>&gt;");
                 else
                     logResult(false, "EVENT(error) from " + evt.target);
 
                 testExpected("video.error", null);
                 
-                if (++errorCount == 3) {
+                if (++errorCount == expectedErrorCount) {
                     consoleWrite("");
-                    setTimeout(endTest, 1000);
+                    setTimeout(endTest, 200);
                 }
             }
 
@@ -39,7 +41,6 @@
                 sources = document.getElementsByTagName('source');
 
                 findMediaElement();
-                waitForEvent("loadstart");
             }
         </script>
     </head>
@@ -50,9 +51,10 @@
             <source id=missing-src type="video/blahblah">
             <source id=bogus-type src=content/test.mp4 type="video/blahblah">
             <source id=unsupported-media-query src=content/test.mp4 media=print>
+            <source id=empty-src src="" type="video/mp4">
         </video>
         
-        <p>Test that 'error' events are fired when no urls are passed to the media engine.</p>
+        <p>Test that 'error' events are fired from &lt;source&gt; element when it can not be used.</p>
 
     </body>
 </html>

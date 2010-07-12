@@ -1,16 +1,32 @@
-<body>
-<script src=media-file.js></script>
-<script src=video-test.js></script>
-<div id=panel></div>
-<script>
-    var panel = document.getElementById("panel");
-    var mediaFile = findMediaFile("video", "content/test");
-    panel.innerHTML = "<video controls><source src='" + mediaFile + "'></video>";
-</script>
-<script>
-    video = mediaElement = document.getElementsByTagName('video')[0];
-    waitForEvent("loadstart", function () {
-        testExpected("relativeURL(video.currentSrc) ", mediaFile);
-        endTest();
-    });
-</script>
+<html>
+    <head>
+        <script src=media-file.js></script>
+        <script src=video-test.js></script>
+        <script>
+
+            function test()
+            {
+                var panel = document.getElementById("panel");
+                var mediaFile = findMediaFile("video", "content/test");
+                panel.innerHTML = "<video controls><source src='" + mediaFile + "'></video>";
+
+                video = mediaElement = document.getElementsByTagName('video')[0];
+                waitForEvent("loadstart", function () {
+                    testExpected("relativeURL(video.currentSrc) ", mediaFile);
+
+                    source = document.querySelector('source');
+                    testExpected("source.getAttribute('src')", mediaFile);
+                    testExpected("relativeURL(source.src) ", mediaFile);
+
+                    endTest();
+                });
+            }
+        </script>
+    </head>
+
+    <body onload="setTimeout(test, 100)">
+
+    <div id=panel></div>
+
+    </body>
+</html>
