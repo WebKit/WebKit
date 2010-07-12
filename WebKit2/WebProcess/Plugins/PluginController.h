@@ -23,42 +23,26 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "DummyPlugin.h"
+#ifndef PluginController_h
+#define PluginController_h
 
-#include <WebCore/GraphicsContext.h>
-
-using namespace WebCore;
+namespace WebCore {
+    class IntRect;
+    class KURL;
+    class String;
+}
 
 namespace WebKit {
 
-DummyPlugin::DummyPlugin()
-{
-}
+class PluginController {
+public:
+    virtual void invalidate(const WebCore::IntRect&) = 0;
+    virtual WebCore::String userAgent(const WebCore::KURL&) = 0;
 
-bool DummyPlugin::initialize(PluginController*, const Parameters&)
-{
-    return true;
-}
-    
-void DummyPlugin::destroy()
-{
-}
-    
-void DummyPlugin::paint(GraphicsContext* context, const IntRect& dirtyRect)
-{
-#if PLATFORM(MAC)
-    CGContextRef cgContext = context->platformContext();
-    CGContextSaveGState(cgContext);
-    
-    CGColorRef redColor = CGColorCreateGenericRGB(1, 0, 0, 1);
-    CGContextSetFillColorWithColor(cgContext, redColor);
-    CGContextFillRect(cgContext, dirtyRect);
-    CGColorRelease(redColor);
-#endif    
-}
-    
-void DummyPlugin::geometryDidChange(const IntRect& frameRect, const IntRect& clipRect)
-{
-}
+protected:
+    virtual ~PluginController() { }
+};
 
 } // namespace WebKit
+
+#endif // PluginController_h

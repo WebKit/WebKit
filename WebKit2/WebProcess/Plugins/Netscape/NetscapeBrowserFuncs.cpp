@@ -150,21 +150,27 @@ void NPN_Status(NPP instance, const char* message)
     notImplemented();
 }
     
-const char* NPN_UserAgent(NPP instance)
+const char* NPN_UserAgent(NPP npp)
 {
-    notImplemented();
-    return 0;
+    if (!npp)
+        return 0;
+    
+    RefPtr<NetscapePlugin> plugin = NetscapePlugin::fromNPP(npp);
+    return plugin->userAgent();
 }
 
 void* NPN_MemAlloc(uint32_t size)
 {
-    notImplemented();
-    return 0;
+    // We could use fastMalloc here, but there might be plug-ins that mix NPN_MemAlloc/NPN_MemFree with malloc and free,
+    // so having them be equivalent seems like a good idea.
+    return malloc(size);
 }
 
 void NPN_MemFree(void* ptr)
 {
-    notImplemented();
+    // We could use fastFree here, but there might be plug-ins that mix NPN_MemAlloc/NPN_MemFree with malloc and free,
+    // so having them be equivalent seems like a good idea.
+    free(ptr);
 }
 
 uint32_t NPN_MemFlush(uint32_t size)
@@ -250,14 +256,17 @@ NPError NPN_SetValue(NPP npp, NPPVariable variable, void *value)
     return NPERR_NO_ERROR;
 }
 
-void NPN_InvalidateRect(NPP instance, NPRect *invalidRect)
+void NPN_InvalidateRect(NPP npp, NPRect* invalidRect)
 {
-    notImplemented();
+    RefPtr<NetscapePlugin> plugin = NetscapePlugin::fromNPP(npp);
+    plugin->invalidate(invalidRect);
 }
 
-void NPN_InvalidateRegion(NPP instance, NPRegion invalidRegion)
+void NPN_InvalidateRegion(NPP npp, NPRegion invalidRegion)
 {
-    notImplemented();
+    // FIXME: We could at least figure out the bounding rectangle of the invalid region.
+    RefPtr<NetscapePlugin> plugin = NetscapePlugin::fromNPP(npp);
+    plugin->invalidate(0);
 }
 
 void NPN_ForceRedraw(NPP instance)

@@ -1,3 +1,54 @@
+2010-07-12  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Add a PluginController class, use it for invalidation and getting the user agent
+        https://bugs.webkit.org/show_bug.cgi?id=42084
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Add PluginController.h
+
+        * WebProcess/Plugins/DummyPlugin.cpp:
+        (WebKit::DummyPlugin::initialize):
+        * WebProcess/Plugins/DummyPlugin.h:
+        Pass the PluginController to initialize.
+
+        * WebProcess/Plugins/Netscape/NetscapeBrowserFuncs.cpp:
+        Implement NPN_UserAgent, NPN_MemAlloc, NPN_MemFree, NPN_InvalidateRect and NPN_InvalidateRegion.
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::NetscapePlugin):
+        Initialize m_pluginController to null.
+
+        (WebKit::NetscapePlugin::invalidate):
+        Ask the plug-in controller to invalidate.
+
+        (WebKit::NetscapePlugin::userAgent):´
+        Ask the plug-in controller for the user agent.
+
+        (WebKit::NetscapePlugin::initialize):
+        Set the m_pluginController member variable.
+
+        * WebProcess/Plugins/Plugin.h:
+        Make initialize take a PluginController.
+
+        * WebProcess/Plugins/PluginController.h: Added.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::initializePlugin):
+        Pass the PluginController to initialize.
+
+        (WebKit::PluginView::invalidateRect):
+        Tell the host window to invalidate the given rect.
+
+        (WebKit::PluginView::invalidate):
+        Call invalidateRect.
+
+        (WebKit::PluginView::userAgent):
+        Ask the frame loader client for the user agent.
+
+        * WebProcess/Plugins/PluginView.h:
+
 2010-07-12  Adam Roben  <aroben@apple.com>
 
         Windows build fix

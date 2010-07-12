@@ -47,6 +47,9 @@ public:
     NPError setEventModel(NPEventModel);
 #endif
 
+    void invalidate(const NPRect*);
+    const char* userAgent();
+    
 private:
     NetscapePlugin(PassRefPtr<NetscapePluginModule> pluginModule);
 
@@ -56,18 +59,22 @@ private:
     void platformPaint(WebCore::GraphicsContext*, const WebCore::IntRect& dirtyRect);
 
     // Plugin
-    virtual bool initialize(const Parameters&);
+    virtual bool initialize(PluginController*, const Parameters&);
     virtual void destroy();
     virtual void paint(WebCore::GraphicsContext*, const WebCore::IntRect& dirtyRect);
     virtual void geometryDidChange(const WebCore::IntRect& frameRect, const WebCore::IntRect& clipRect);
-    
+
+    PluginController* m_pluginController;
+
     RefPtr<NetscapePluginModule> m_pluginModule;
     NPP_t m_npp;
     NPWindow m_npWindow;
 
     WebCore::IntRect m_frameRect;
     WebCore::IntRect m_clipRect;
-    
+
+    CString m_userAgent;
+
     bool m_isStarted;
     bool m_inNPPNew;
 

@@ -37,6 +37,8 @@ namespace WebCore {
 
 namespace WebKit {
 
+class PluginController;
+
 class Plugin : public RefCounted<Plugin> {
 public:
     struct Parameters {
@@ -49,7 +51,7 @@ public:
 
     virtual ~Plugin();
     
-    virtual bool initialize(const Parameters&) = 0;
+    virtual bool initialize(PluginController*, const Parameters&) = 0;
     virtual void destroy() = 0;
     virtual void paint(WebCore::GraphicsContext*, const WebCore::IntRect& dirtyRect) = 0;
     virtual void geometryDidChange(const WebCore::IntRect& frameRect, const WebCore::IntRect& clipRect) = 0;

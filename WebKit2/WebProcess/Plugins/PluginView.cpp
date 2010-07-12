@@ -26,9 +26,11 @@
 #include "PluginView.h"
 
 #include "Plugin.h"
+#include <WebCore/FrameLoaderClient.h>
 #include <WebCore/FrameView.h>
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/HTMLPlugInElement.h>
+#include <WebCore/HostWindow.h>
 #include <WebCore/RenderLayer.h>
 #include <WebCore/ScrollView.h>
 
@@ -79,7 +81,7 @@ void PluginView::initializePlugin()
         }
     }
     
-    if (!m_plugin->initialize(m_parameters)) {
+    if (!m_plugin->initialize(this, m_parameters)) {
         // We failed to initialize the plug-in.
         m_plugin = 0;
 
@@ -158,8 +160,14 @@ IntRect PluginView::clipRectInWindowCoordinates() const
     return intersection(frameRectInWindowCoordinates, windowClipRect);
 }
 
-void PluginView::invalidateRect(const IntRect&)
+void PluginView::invalidateRect(const IntRect& dirtyRect)
 {
+    if (!parent() || !m_plugin || !m_isInitialized)
+        return;
+
+    IntRect dirtyRectInWindowCoordinates = convertToContainingWindow(dirtyRect);
+
+    parent()->hostWindow()->invalidateContentsAndWindow(intersection(dirtyRectInWindowCoordinates, clipRectInWindowCoordinates()), false);
 }
 
 void PluginView::mediaCanStart()
@@ -168,6 +176,20 @@ void PluginView::mediaCanStart()
     m_isWaitingUntilMediaCanStart = false;
     
     initializePlugin();
+}
+
+void PluginView::invalidate(const IntRect& dirtyRect)
+{
+    invalidateRect(dirtyRect);
+}
+
+String PluginView::userAgent(const KURL& url)
+{
+    Frame* frame = m_pluginElement->document()->frame();
+    if (!frame)
+        return String();
+    
+    return frame->loader()->client()->userAgent(url);
 }
 
 } // namespace WebKit

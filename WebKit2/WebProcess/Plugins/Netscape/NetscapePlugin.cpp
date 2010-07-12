@@ -25,6 +25,7 @@
 
 #include "NetscapePlugin.h"
 
+#include "PluginController.h"
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/KURL.h>
@@ -35,7 +36,8 @@ using namespace WebCore;
 namespace WebKit {
 
 NetscapePlugin::NetscapePlugin(PassRefPtr<NetscapePluginModule> pluginModule)
-    : m_pluginModule(pluginModule)
+    : m_pluginController(0)
+    , m_pluginModule(pluginModule)
     , m_npWindow()
     , m_isStarted(false)
     , m_inNPPNew(false)
@@ -71,6 +73,30 @@ PassRefPtr<NetscapePlugin> NetscapePlugin::fromNPP(NPP npp)
     return 0;
 }
 
+void NetscapePlugin::invalidate(const NPRect* invalidRect)
+{
+    IntRect rect;
+    
+    if (!invalidRect)
+        rect = IntRect(0, 0, m_frameRect.width(), m_frameRect.height());
+    else
+        rect = IntRect(invalidRect->left, invalidRect->top,
+                       invalidRect->right - invalidRect->left, invalidRect->bottom - invalidRect->top);
+    
+    m_pluginController->invalidate(rect);
+}
+
+const char* NetscapePlugin::userAgent()
+{
+    if (m_userAgent.isNull()) {
+        // FIXME: Pass the src URL.
+        m_userAgent = m_pluginController->userAgent(KURL()).utf8();
+        ASSERT(!m_userAgent.isNull());
+    }
+    
+    return m_userAgent.data();
+}
+
 void NetscapePlugin::callSetWindow()
 {
     m_npWindow.x = m_frameRect.x();
@@ -85,8 +111,13 @@ void NetscapePlugin::callSetWindow()
     m_pluginModule->pluginFuncs().setwindow(&m_npp, &m_npWindow);
 }
 
-bool NetscapePlugin::initialize(const Parameters& parameters)
+bool NetscapePlugin::initialize(PluginController* pluginController, const Parameters& parameters)
 {
+    ASSERT(!m_pluginController);
+    ASSERT(pluginController);
+
+    m_pluginController = pluginController;
+    
     uint16_t mode = parameters.loadManually ? NP_FULL : NP_EMBED;
     
     m_inNPPNew = true;
@@ -159,5 +190,12 @@ void NetscapePlugin::geometryDidChange(const IntRect& frameRect, const IntRect& 
 
     callSetWindow();
 }
+
+#if !PLATFORM(MAC)
+// FIXME: Remove these and build NetscapePluginModule on Windows as well.
+void NetscapePluginModule::pluginCreated() { }
+void NetscapePluginModule::pluginDestroyed() { }
+NetscapePluginModule::~NetscapePluginModule() { }
+#endif
 
 } // namespace WebKit
