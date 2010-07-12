@@ -196,6 +196,28 @@ double parseIntOverflow(const char* s, int length, int radix)
     return number;
 }
 
+double parseIntOverflow(const UChar* s, int length, int radix)
+{
+    double number = 0.0;
+    double radixMultiplier = 1.0;
+
+    for (const UChar* p = s + length - 1; p >= s; p--) {
+        if (radixMultiplier == Inf) {
+            if (*p != '0') {
+                number = Inf;
+                break;
+            }
+        } else {
+            int digit = parseDigit(*p, radix);
+            number += digit * radixMultiplier;
+        }
+
+        radixMultiplier *= radix;
+    }
+
+    return number;
+}
+
 static double parseInt(const UString& s, int radix)
 {
     int length = s.size();

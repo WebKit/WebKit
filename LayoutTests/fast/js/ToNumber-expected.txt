@@ -16,7 +16,7 @@ PASS +'x1' is NaN
 PASS +'1x' is NaN
 PASS +'0x1' is 1
 PASS +'1x0' is NaN
-FAIL +(nullCharacter + '1') should be NaN. Was 0.
+PASS +(nullCharacter + '1') is NaN
 PASS +('1' + nullCharacter) is NaN
 PASS +('1' + nullCharacter + '1') is NaN
 PASS +(nonASCIICharacter + '1') is NaN
@@ -46,77 +46,77 @@ PASS +'0xAB' is 171
 PASS +'1e1' is 10
 PASS +'1E1' is 10
 PASS +tab is 0
-FAIL +nbsp should be 0. Was NaN.
+PASS +nbsp is 0
 PASS +ff is 0
 PASS +vt is 0
 PASS +cr is 0
 PASS +lf is 0
-FAIL +ls should be 0. Was NaN.
-FAIL +ps should be 0. Was NaN.
-FAIL +oghamSpaceMark should be 0. Was NaN.
-FAIL +mongolianVowelSeparator should be 0. Was NaN.
-FAIL +enQuad should be 0. Was NaN.
-FAIL +emQuad should be 0. Was NaN.
-FAIL +enSpace should be 0. Was NaN.
-FAIL +emSpace should be 0. Was NaN.
-FAIL +threePerEmSpace should be 0. Was NaN.
-FAIL +fourPerEmSpace should be 0. Was NaN.
-FAIL +sixPerEmSpace should be 0. Was NaN.
-FAIL +figureSpace should be 0. Was NaN.
-FAIL +punctuationSpace should be 0. Was NaN.
-FAIL +thinSpace should be 0. Was NaN.
-FAIL +hairSpace should be 0. Was NaN.
-FAIL +narrowNoBreakSpace should be 0. Was NaN.
-FAIL +mediumMathematicalSpace should be 0. Was NaN.
-FAIL +ideographicSpace should be 0. Was NaN.
+PASS +ls is 0
+PASS +ps is 0
+PASS +oghamSpaceMark is 0
+PASS +mongolianVowelSeparator is 0
+PASS +enQuad is 0
+PASS +emQuad is 0
+PASS +enSpace is 0
+PASS +emSpace is 0
+PASS +threePerEmSpace is 0
+PASS +fourPerEmSpace is 0
+PASS +sixPerEmSpace is 0
+PASS +figureSpace is 0
+PASS +punctuationSpace is 0
+PASS +thinSpace is 0
+PASS +hairSpace is 0
+PASS +narrowNoBreakSpace is 0
+PASS +mediumMathematicalSpace is 0
+PASS +ideographicSpace is 0
 PASS +(tab + '1') is 1
-FAIL +(nbsp + '1') should be 1. Was NaN.
+PASS +(nbsp + '1') is 1
 PASS +(ff + '1') is 1
 PASS +(vt + '1') is 1
 PASS +(cr + '1') is 1
 PASS +(lf + '1') is 1
-FAIL +(ls + '1') should be 1. Was NaN.
-FAIL +(ps + '1') should be 1. Was NaN.
-FAIL +(oghamSpaceMark + '1') should be 1. Was NaN.
-FAIL +(mongolianVowelSeparator + '1') should be 1. Was NaN.
-FAIL +(enQuad + '1') should be 1. Was NaN.
-FAIL +(emQuad + '1') should be 1. Was NaN.
-FAIL +(enSpace + '1') should be 1. Was NaN.
-FAIL +(emSpace + '1') should be 1. Was NaN.
-FAIL +(threePerEmSpace + '1') should be 1. Was NaN.
-FAIL +(fourPerEmSpace + '1') should be 1. Was NaN.
-FAIL +(sixPerEmSpace + '1') should be 1. Was NaN.
-FAIL +(figureSpace + '1') should be 1. Was NaN.
-FAIL +(punctuationSpace + '1') should be 1. Was NaN.
-FAIL +(thinSpace + '1') should be 1. Was NaN.
-FAIL +(hairSpace + '1') should be 1. Was NaN.
-FAIL +(narrowNoBreakSpace + '1') should be 1. Was NaN.
-FAIL +(mediumMathematicalSpace + '1') should be 1. Was NaN.
-FAIL +(ideographicSpace + '1') should be 1. Was NaN.
+PASS +(ls + '1') is 1
+PASS +(ps + '1') is 1
+PASS +(oghamSpaceMark + '1') is 1
+PASS +(mongolianVowelSeparator + '1') is 1
+PASS +(enQuad + '1') is 1
+PASS +(emQuad + '1') is 1
+PASS +(enSpace + '1') is 1
+PASS +(emSpace + '1') is 1
+PASS +(threePerEmSpace + '1') is 1
+PASS +(fourPerEmSpace + '1') is 1
+PASS +(sixPerEmSpace + '1') is 1
+PASS +(figureSpace + '1') is 1
+PASS +(punctuationSpace + '1') is 1
+PASS +(thinSpace + '1') is 1
+PASS +(hairSpace + '1') is 1
+PASS +(narrowNoBreakSpace + '1') is 1
+PASS +(mediumMathematicalSpace + '1') is 1
+PASS +(ideographicSpace + '1') is 1
 PASS +('1' + tab) is 1
-FAIL +('1' + nbsp) should be 1. Was NaN.
+PASS +('1' + nbsp) is 1
 PASS +('1' + ff) is 1
 PASS +('1' + vt) is 1
 PASS +('1' + cr) is 1
 PASS +('1' + lf) is 1
-FAIL +('1' + ls) should be 1. Was NaN.
-FAIL +('1' + ps) should be 1. Was NaN.
-FAIL +('1' + oghamSpaceMark) should be 1. Was NaN.
-FAIL +('1' + mongolianVowelSeparator) should be 1. Was NaN.
-FAIL +('1' + enQuad) should be 1. Was NaN.
-FAIL +('1' + emQuad) should be 1. Was NaN.
-FAIL +('1' + enSpace) should be 1. Was NaN.
-FAIL +('1' + emSpace) should be 1. Was NaN.
-FAIL +('1' + threePerEmSpace) should be 1. Was NaN.
-FAIL +('1' + fourPerEmSpace) should be 1. Was NaN.
-FAIL +('1' + sixPerEmSpace) should be 1. Was NaN.
-FAIL +('1' + figureSpace) should be 1. Was NaN.
-FAIL +('1' + punctuationSpace) should be 1. Was NaN.
-FAIL +('1' + thinSpace) should be 1. Was NaN.
-FAIL +('1' + hairSpace) should be 1. Was NaN.
-FAIL +('1' + narrowNoBreakSpace) should be 1. Was NaN.
-FAIL +('1' + mediumMathematicalSpace) should be 1. Was NaN.
-FAIL +('1' + ideographicSpace) should be 1. Was NaN.
+PASS +('1' + ls) is 1
+PASS +('1' + ps) is 1
+PASS +('1' + oghamSpaceMark) is 1
+PASS +('1' + mongolianVowelSeparator) is 1
+PASS +('1' + enQuad) is 1
+PASS +('1' + emQuad) is 1
+PASS +('1' + enSpace) is 1
+PASS +('1' + emSpace) is 1
+PASS +('1' + threePerEmSpace) is 1
+PASS +('1' + fourPerEmSpace) is 1
+PASS +('1' + sixPerEmSpace) is 1
+PASS +('1' + figureSpace) is 1
+PASS +('1' + punctuationSpace) is 1
+PASS +('1' + thinSpace) is 1
+PASS +('1' + hairSpace) is 1
+PASS +('1' + narrowNoBreakSpace) is 1
+PASS +('1' + mediumMathematicalSpace) is 1
+PASS +('1' + ideographicSpace) is 1
 PASS +('1' + tab + '1') is NaN
 PASS +('1' + nbsp + '1') is NaN
 PASS +('1' + ff + '1') is NaN

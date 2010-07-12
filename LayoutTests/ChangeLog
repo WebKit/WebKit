@@ -1,3 +1,21 @@
+2010-07-09  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        String to number coercion is not spec compliant
+        https://bugs.webkit.org/show_bug.cgi?id=31349
+
+        * fast/js/ToNumber-expected.txt: Updated to expect more tests to pass.
+        * fast/js/parseFloat-expected.txt: Ditto.
+        * fast/js/sputnik/Conformance/09_Type_Conversion/9.3_ToNumber/9.3.1_ToNumber_from_String/S9.3.1_A2-expected.txt: Ditto.
+        * fast/js/sputnik/Conformance/09_Type_Conversion/9.3_ToNumber/9.3.1_ToNumber_from_String/S9.3.1_A3_T1-expected.txt: Ditto.
+        * fast/js/sputnik/Conformance/09_Type_Conversion/9.3_ToNumber/9.3.1_ToNumber_from_String/S9.3.1_A3_T2-expected.txt: Ditto.
+        * fast/js/sputnik/Conformance/15_Native_Objects/15.1_The_Global_Object/15.1.2/15.1.2.3_parseFloat/S15.1.2.3_A2_T10-expected.txt: Ditto.
+        * fast/js/sputnik/Conformance/15_Native_Objects/15.1_The_Global_Object/15.1.2/15.1.2.3_parseFloat/S15.1.2.3_A2_T3-expected.txt: Ditto.
+        * fast/js/sputnik/Conformance/15_Native_Objects/15.1_The_Global_Object/15.1.2/15.1.2.3_parseFloat/S15.1.2.3_A2_T8-expected.txt: Ditto.
+        * fast/js/sputnik/Conformance/15_Native_Objects/15.1_The_Global_Object/15.1.2/15.1.2.3_parseFloat/S15.1.2.3_A2_T9-expected.txt: Ditto.
+        * fast/js/sputnik/Conformance/15_Native_Objects/15.1_The_Global_Object/15.1.2/15.1.2.3_parseFloat/S15.1.2.3_A6-expected.txt: Ditto.
+
 2010-07-12  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Darin Adler.

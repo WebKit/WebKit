@@ -1,6 +1,6 @@
 S15.1.2.3_A6
 
-FAIL SputnikError: #D800-DBFF 
+PASS 
 
 TEST COMPLETE
 

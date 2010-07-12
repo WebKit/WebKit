@@ -1,3 +1,27 @@
+2010-07-09  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        String to number coercion is not spec compliant
+        https://bugs.webkit.org/show_bug.cgi?id=31349
+
+        ToNumber should ignore NBSP (\u00a0)
+        https://bugs.webkit.org/show_bug.cgi?id=25490
+
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::parseIntOverflow): Added a version that works on UChar.
+        * runtime/JSGlobalObjectFunctions.h: Ditto.
+
+        * runtime/UString.cpp:
+        (JSC::isInfinity): Added helper functions.
+        (JSC::UString::toDouble): Use isStrWhiteSpace instead of
+        isSASCIISpace to define what we should skip. Got rid of the
+        code that used CString and UTF8String, instead processing the
+        UChar of the string directly, except for when we call strtod.
+        For strtod, use our own home-grown conversion function that
+        does not try to do any UTF-16 processing. Tidied up the logic
+        a bit as well.
+
 2010-07-12  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Xan Lopez.

@@ -242,13 +242,33 @@ UChar UString::operator[](unsigned pos) const
     return data()[pos];
 }
 
+static inline bool isInfinity(double number)
+{
+    return number == Inf || number == -Inf;
+}
+
+static bool isInfinity(const UChar* data, const UChar* end)
+{
+    return data + 7 < end
+        && data[0] == 'I'
+        && data[1] == 'n'
+        && data[2] == 'f'
+        && data[3] == 'i'
+        && data[4] == 'n'
+        && data[5] == 'i'
+        && data[6] == 't'
+        && data[7] == 'y';
+}
+
 double UString::toDouble(bool tolerateTrailingJunk, bool tolerateEmptyString) const
 {
-    if (size() == 1) {
+    unsigned size = this->size();
+
+    if (size == 1) {
         UChar c = data()[0];
         if (isASCIIDigit(c))
             return c - '0';
-        if (isASCIISpace(c) && tolerateEmptyString)
+        if (isStrWhiteSpace(c) && tolerateEmptyString)
             return 0;
         return NaN;
     }
@@ -264,77 +284,90 @@ double UString::toDouble(bool tolerateTrailingJunk, bool tolerateEmptyString) co
     // need to skip all StrWhiteSpace. The isStrWhiteSpace function does the
     // right thing but requires UChar, not char, for its argument.
 
-    CString s = UTF8String();
-    if (s.isNull())
-        return NaN;
-    const char* c = s.data();
+    const UChar* data = this->data();
+    const UChar* end = data + size;
 
-    // skip leading white space
-    while (isASCIISpace(*c))
-        c++;
+    // Skip leading white space.
+    for (; data < end; ++data) {
+        if (!isStrWhiteSpace(*data))
+            break;
+    }
 
-    // empty string ?
-    if (*c == '\0')
+    // Empty string.
+    if (data == end)
         return tolerateEmptyString ? 0.0 : NaN;
 
-    double d;
+    double number;
 
-    // hex number ?
-    if (*c == '0' && (*(c + 1) == 'x' || *(c + 1) == 'X')) {
-        const char* firstDigitPosition = c + 2;
-        c++;
-        d = 0.0;
-        while (*(++c)) {
-            if (*c >= '0' && *c <= '9')
-                d = d * 16.0 + *c - '0';
-            else if ((*c >= 'A' && *c <= 'F') || (*c >= 'a' && *c <= 'f'))
-                d = d * 16.0 + (*c & 0xdf) - 'A' + 10.0;
-            else
+    if (data[0] == '0' && data + 2 < end && (data[1] | 0x20) == 'x' && isASCIIHexDigit(data[2])) {
+        // Hex number.
+        data += 2;
+        const UChar* firstDigitPosition = data;
+        number = 0;
+        while (true) {
+            number = number * 16 + toASCIIHexValue(*data);
+            ++data;
+            if (data == end)
+                break;
+            if (!isASCIIHexDigit(*data))
                 break;
         }
-
-        if (d >= mantissaOverflowLowerBound)
-            d = parseIntOverflow(firstDigitPosition, c - firstDigitPosition, 16);
+        if (number >= mantissaOverflowLowerBound)
+            number = parseIntOverflow(firstDigitPosition, data - firstDigitPosition, 16);
     } else {
-        // regular number ?
-        char* end;
-        d = WTF::strtod(c, &end);
-        if ((d != 0.0 || end != c) && d != Inf && d != -Inf) {
-            c = end;
-        } else {
-            double sign = 1.0;
+        // Decimal number.
 
-            if (*c == '+')
-                c++;
-            else if (*c == '-') {
-                sign = -1.0;
-                c++;
-            }
+        // Put into a null-terminated byte buffer.
+        Vector<char, 32> byteBuffer;
+        for (const UChar* characters = data; characters < end; ++characters) {
+            UChar character = *characters;
+            byteBuffer.append(isASCII(character) ? character : 0);
+        }
+        byteBuffer.append(0);
 
+        char* byteBufferEnd;
+        number = WTF::strtod(byteBuffer.data(), &byteBufferEnd);
+        const UChar* pastNumber = data + (byteBufferEnd - byteBuffer.data());
+
+        if ((number || pastNumber != data) && !isInfinity(number))
+            data = pastNumber;
+        else {
             // We used strtod() to do the conversion. However, strtod() handles
             // infinite values slightly differently than JavaScript in that it
             // converts the string "inf" with any capitalization to infinity,
             // whereas the ECMA spec requires that it be converted to NaN.
 
-            if (c[0] == 'I' && c[1] == 'n' && c[2] == 'f' && c[3] == 'i' && c[4] == 'n' && c[5] == 'i' && c[6] == 't' && c[7] == 'y') {
-                d = sign * Inf;
-                c += 8;
-            } else if ((d == Inf || d == -Inf) && *c != 'I' && *c != 'i')
-                c = end;
+            double signedInfinity = Inf;
+            if (data < end) {
+                if (*data == '+')
+                    data++;
+                else if (*data == '-') {
+                    signedInfinity = -Inf;
+                    data++;
+                }
+            }
+            if (isInfinity(data, end)) {
+                number = signedInfinity;
+                data += 8;
+            } else if (isInfinity(number) && data < end && (*data | 0x20) != 'i')
+                data = pastNumber;
             else
                 return NaN;
         }
     }
 
+    // Look for trailing junk.
     if (!tolerateTrailingJunk) {
-        // allow trailing white space
-        while (isASCIISpace(*c))
-            c++;
-        if (c != s.data() + s.length())
-            d = NaN;
+        // Allow trailing white space.
+        for (; data < end; ++data) {
+            if (!isStrWhiteSpace(*data))
+                break;
+        }
+        if (data != end)
+            return NaN;
     }
 
-    return d;
+    return number;
 }
 
 double UString::toDouble(bool tolerateTrailingJunk) const
