@@ -1,3 +1,14 @@
+2010-07-12  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Unreviewed. Put wrong results for Mac and Win instead of Skipped list.
+
+        Results for editing/pasteboard/5761530-1.html are wrong
+        https://bugs.webkit.org/show_bug.cgi?id=38437
+
+        * platform/mac/Skipped:
+        * platform/mac/editing/pasteboard/5761530-1-expected.txt: Copied from LayoutTests/platform/chromium/editing/pasteboard/5761530-1-expected.txt.
+        * platform/win/editing/pasteboard/5761530-1-expected.txt: Copied from LayoutTests/platform/chromium/editing/pasteboard/5761530-1-expected.txt.
+
 2010-07-12  Steve Block  <steveblock@google.com>
 
         Reviewed by Alexey Proskuryakov.
@@ -26422,4 +26433,3 @@
         * html5lib/webkit-runner.html:
 
 == Rolled over to ChangeLog-2010-05-24 ==
->>>>>>> .r55032
