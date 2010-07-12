@@ -59,10 +59,15 @@ bool MathMLElement::mapToEntry(const QualifiedName& attrName, MappedAttributeEnt
 
 void MathMLElement::parseMappedAttribute(Attribute* attr)
 {
-    if (attr->name() == MathMLNames::mathcolorAttr)
-        addCSSProperty(attr, CSSPropertyColor, attr->value());
-    else if (attr->name() == MathMLNames::mathbackgroundAttr)
+    if (attr->name() == MathMLNames::mathbackgroundAttr)
         addCSSProperty(attr, CSSPropertyBackgroundColor, attr->value());
+    else if (attr->name() == MathMLNames::mathcolorAttr)
+        addCSSProperty(attr, CSSPropertyColor, attr->value());
+    else if (attr->name() == MathMLNames::mathsizeAttr) {
+        // The following three values of mathsize are handled in WebCore/css/mathml.css
+        if (attr->value() != "normal" && attr->value() != "small" && attr->value() != "big")
+            addCSSProperty(attr, CSSPropertyFontSize, attr->value());
+    }
     else
         StyledElement::parseMappedAttribute(attr);
 }

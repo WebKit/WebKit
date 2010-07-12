@@ -1,8 +1,8 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x75
-  RenderBlock {html} at (0,0) size 800x75
-    RenderBody {body} at (8,16) size 784x43
+layer at (0,0) size 800x128
+  RenderBlock {html} at (0,0) size 800x128
+    RenderBody {body} at (8,16) size 784x96
       RenderBlock {p} at (0,0) size 784x43
         RenderText {#text} at (0,13) size 432x18
           text run at (0,13) width 432: "following elements should appear in blue on an orange background: "
@@ -27,4 +27,21 @@ layer at (0,0) size 800x75
             RenderInline {mn} at (0,0) size 8x16
               RenderText {#text} at (12,3) size 8x16
                 text run at (12,3) width 8: "2"
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {p} at (0,59) size 784x37
+        RenderText {#text} at (0,13) size 348x18
+          text run at (0,13) width 348: "following elements should appear with increasing size: "
+        RenderBlock {math} at (348,0) size 39x37
+          RenderInline {mi} at (0,0) size 5x12
+            RenderText {#text} at (1,19) size 5x12
+              text run at (1,19) width 5: "x"
+          RenderInline {mi} at (0,0) size 7x16
+            RenderText {#text} at (6,16) size 7x16
+              text run at (6,16) width 7: "x"
+          RenderInline {mi} at (0,0) size 11x24
+            RenderText {#text} at (13,10) size 11x24
+              text run at (13,10) width 11: "x"
+          RenderInline {mi} at (0,0) size 14x32
+            RenderText {#text} at (24,5) size 14x32
+              text run at (24,5) width 14: "x"
         RenderText {#text} at (0,0) size 0x0

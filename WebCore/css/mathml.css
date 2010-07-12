@@ -94,15 +94,15 @@ math > mo, mrow > mo, mfenced > mo {
     padding-right: 0.05em;
 }
 
-mo[mathsize="small"], mn[mathsize="small"], mi[mathsize="small"] {
+math[mathsize="small"], mstyle[mathsize="small"], mo[mathsize="small"], mn[mathsize="small"], mi[mathsize="small"], mtext[mathsize="small"], mspace[mathsize="small"], ms[mathsize="small"]{
     font-size: 0.75em;
 }
 
-mo[mathsize="normal"],mn[mathsize="normal"],mi[mathsize="normal"] {
+math[mathsize="normal"], mstyle[mathsize="normal"], mo[mathsize="normal"], mn[mathsize="normal"], mi[mathsize="normal"], mtext[mathsize="normal"], mspace[mathsize="normal"], ms[mathsize="normal"]{
     font-size: 1em;
 }
 
-mo[mathsize="big"], mn[mathsize="big"], mi[mathsize="big"] {
+math[mathsize="big"], mstyle[mathsize="big"], mo[mathsize="big"], mn[mathsize="big"], mi[mathsize="big"], mtext[mathsize="big"], mspace[mathsize="big"], ms[mathsize="big"]{
     font-size: 1.5em;
 }
  

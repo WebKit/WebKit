@@ -1,3 +1,19 @@
+2010-07-12  François Sausset  <sausset@gmail.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Make the mathsize MathML attribute handle values in em, px, pt,...
+        https://bugs.webkit.org/show_bug.cgi?id=42067
+
+        Test: mathml/presentation/attributes.xhtml
+
+        * css/mathml.css:
+        (math[mathsize="small"], mstyle[mathsize="small"], mo[mathsize="small"], mn[mathsize="small"], mi[mathsize="small"], mtext[mathsize="small"], mspace[mathsize="small"], ms[mathsize="small"]):
+        (math[mathsize="normal"], mstyle[mathsize="normal"], mo[mathsize="normal"], mn[mathsize="normal"], mi[mathsize="normal"], mtext[mathsize="normal"], mspace[mathsize="normal"], ms[mathsize="normal"]):
+        (math[mathsize="big"], mstyle[mathsize="big"], mo[mathsize="big"], mn[mathsize="big"], mi[mathsize="big"], mtext[mathsize="big"], mspace[mathsize="big"], ms[mathsize="big"]):
+        * mathml/MathMLElement.cpp:
+        (WebCore::MathMLElement::parseMappedAttribute):
+
 2010-07-12  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Gustavo Noronha.
