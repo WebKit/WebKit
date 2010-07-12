@@ -1,4 +1,4 @@
-// This file consists of lines with specifications of what
+/ This file consists of lines with specifications of what
 // to expect from layout test cases. The test cases can be directories
 // in which case the expectations apply to all test cases in that
 // directory and any subdirectory. The format of the file is along the
@@ -2851,6 +2851,8 @@ BUGWK35961 : printing/page-rule-selection.html = TEXT
 
 // Needs to implement layoutTestController.dumpResourceResponseMIMETypes()
 BUG46872 : fast/preloader = TEXT
+BUG46872 : fast/dom/HTMLLinkElement/prefetch.html = TIMEOUT
+
 // Became a flaky crash in http://trac.webkit.org/log/?verbose=on&rev=61417&stop_rev=61393
 BUG46974 WIN : inspector/audits-panel-functional.html = CRASH PASS
 
