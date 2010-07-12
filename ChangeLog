@@ -2,6 +2,15 @@
 
         Reviewed by Gustavo Noronha.
 
+        Suffix .mo files with the GTK+ API version so that they can be
+        parallel installable.
+
+        * configure.ac:
+
+2010-07-12  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
         Add another include path to the scanner to avoid warnings related
         to undefined types. It wasn't picking up <webkit/foo.h>-like
         headers.
