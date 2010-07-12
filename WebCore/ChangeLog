@@ -1,3 +1,16 @@
+2010-07-12  Andreas Kling  <andreas.kling@nokia.com>
+
+        Reviewed by Antti Koivisto.
+
+        Canvas: arc() with startAngle == endAngle shouldn't add to the path
+        https://bugs.webkit.org/show_bug.cgi?id=41420
+
+        Spec link:
+        http://www.whatwg.org/specs/web-apps/current-work/#dom-context-2d-stroke
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::arc):
+
 2010-07-12  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Reviewed by Ojan Vafai.
