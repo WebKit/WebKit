@@ -1,5 +1,24 @@
 2010-07-12  Adam Roben  <aroben@apple.com>
 
+        Move WebKit2.vcproj's settings into .vsprops files
+
+        This makes it easier to make changes that affect all configurations.
+
+        Fixes <http://webkit.org/b/42097> WebKit2 should use .vsprops files
+
+        Reviewed by Steve Falkenburg.
+
+        * win/WebKit2.vcproj: Moved settings from here to the files below.
+        * win/WebKit2Apple.vsprops: Added. Links against Apple-specific
+        libraries.
+        * win/WebKit2CFLite.vsprops: Added. Links against CFLite.
+        * win/WebKit2Common.vsprops: Added. Contains settings shared by all
+        configurations.
+        * win/WebKit2DirectX.vsprops: Added. Contains settings to help with
+        linking against DirectX.
+
+2010-07-12  Adam Roben  <aroben@apple.com>
+
         Stop generating stripped symbols for Release builds
 
         It turns out we can strip the symbols after-the-fact using PDBCopy.

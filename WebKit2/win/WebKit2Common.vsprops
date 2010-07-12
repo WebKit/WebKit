@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<VisualStudioPropertySheet
+	ProjectType="Visual C++"
+	Version="8.00"
+	Name="WebKit2Common"
+	>
+	<Tool
+		Name="VCCLCompilerTool"
+		AdditionalIncludeDirectories="&quot;$(ProjectDir)\..\Platform&quot;;&quot;$(ProjectDir)\..\Platform\CoreIPC&quot;;&quot;$(ProjectDir)\..\Shared&quot;;&quot;$(ProjectDir)\..\Shared\win&quot;;&quot;$(ProjectDir)\..\Shared\CoreIPCSupport&quot;;&quot;$(ProjectDir)\..\UIProcess&quot;;&quot;$(ProjectDir)\..\UIProcess\API\C&quot;;&quot;$(ProjectDir)\..\UIProcess\API\cpp&quot;;&quot;$(ProjectDir)\..\UIProcess\API\win&quot;;&quot;$(ProjectDir)\..\UIProcess\Launcher&quot;;&quot;$(ProjectDir)\..\UIProcess\Plugins&quot;;&quot;$(ProjectDir)\..\UIProcess\win&quot;;&quot;$(ProjectDir)\..\WebProcess&quot;;&quot;$(ProjectDir)\..\WebProcess\WebCoreSupport&quot;;&quot;$(ProjectDir)\..\WebProcess\WebPage&quot;;&quot;$(ProjectDir)\..\WebProcess\WebPage\win&quot;;&quot;$(ProjectDir)\..\WebProcess\InjectedBundle&quot;;&quot;$(ProjectDir)\..\WebProcess\InjectedBundle\API\c&quot;;&quot;$(ProjectDir)\..\WebProcess\InjectedBundle\win&quot;;&quot;$(ProjectDir)\..\WebProcess\Plugins&quot;;&quot;$(ProjectDir)\..\WebProcess\Plugins\Netscape&quot;;&quot;$(ProjectDir)\..\WebProcess\win&quot;;&quot;$(WebKitOutputDir)\Include&quot;;&quot;$(WebKitOutputDir)\Include\private&quot;;&quot;$(WebKitLibrariesDir)\Include&quot;;&quot;$(WebKitLibrariesDir)\Include\private&quot;;&quot;$(WebKitLibrariesDir)\Include\pthreads&quot;;&quot;$(WebKitOutputDir)\Include\JavaScriptCore&quot;;&quot;$(WebKitOutputDir)\Include\private\JavaScriptCore&quot;;&quot;$(WebKitLibrariesDir)\Include\JavaScriptCore&quot;;&quot;$(WebKitLibrariesDir)\Include\private\JavaScriptCore&quot;;&quot;$(WebKitOutputDir)\Include\WebCore\ForwardingHeaders&quot;;&quot;$(WebKitLibrariesDir)\Include\WebCore\ForwardingHeaders&quot;"
+		PreprocessorDefinitions="_USRDLL;WEBKIT_EXPORTS;FRAMEWORK_NAME=WebKit2;BUILDING_WEBKIT2"
+		UsePrecompiledHeader="2"
+		PrecompiledHeaderThrough="WebKit2Prefix.h"
+		DisableSpecificWarnings="4819"
+		ForcedIncludeFiles="WebKit2Prefix.h"
+	/>
+	<Tool
+		Name="VCLinkerTool"
+		AdditionalDependencies="delayimp.lib kernel32.lib user32.lib gdi32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib usp10.lib comctl32.lib version.lib shlwapi.lib libxml2$(LibraryConfigSuffix).lib libxslt$(LibraryConfigSuffix).lib icuin$(LibraryConfigSuffix).lib icuuc$(LibraryConfigSuffix).lib SQLite3$(LibraryConfigSuffix).lib pthreadVC2$(LibraryConfigSuffix).lib JavaScriptCore$(WebKitDLLConfigSuffix).lib WebCore$(WebKitConfigSuffix).lib msimg32.lib crypt32.lib iphlpapi.lib winmm.lib comsuppw.lib"
+		OutputFile="$(OutDir)\$(ProjectName)$(WebKitDLLConfigSuffix).dll"
+		DelayLoadDLLs="usp10.dll;comctl32.dll;version.dll;libxslt$(LibraryConfigSuffix).dll;SQLite3$(LibraryConfigSuffix).dll;msimg32.dll;iphlpapi.dll"
+	/>
+	<Tool
+		Name="VCPostBuildEventTool"
+		CommandLine="if exist &quot;$(WebKitOutputDir)\buildfailed&quot; del &quot;$(WebKitOutputDir)\buildfailed&quot;&#x0D;&#x0A;"
+	/>
+	<Tool
+		Name="VCPreBuildEventTool"
+		CommandLine="%SystemDrive%\cygwin\bin\which.exe bash&#x0D;&#x0A;if errorlevel 1 set PATH=%SystemDrive%\cygwin\bin;%PATH%&#x0D;&#x0A;cmd /c&#x0D;&#x0A;if exist &quot;$(WebKitOutputDir)\buildfailed&quot; grep XX$(ProjectName)XX &quot;$(WebKitOutputDir)\buildfailed&quot;&#x0D;&#x0A;if errorlevel 1 exit 1&#x0D;&#x0A;echo XX$(ProjectName)XX &gt; &quot;$(WebKitOutputDir)\buildfailed&quot;&#x0D;&#x0A;&#x0D;&#x0A;touch &quot;$(WebKitOutputDir)\tmp.cpp&quot;&#x0D;&#x0A;cl /analyze /nologo /c &quot;$(WebKitOutputDir)\tmp.cpp&quot; /Fo&quot;$(IntDir)\tmp.obj&quot; 2&gt;&amp;1 | findstr D9040&#x0D;&#x0A;if ERRORLEVEL 1 (set EnablePREfast=&quot;true&quot;) else (set EnablePREfast=&quot;false&quot;)&#x0D;&#x0A;if ERRORLEVEL 1 (set AnalyzeWithLargeStack=&quot;/analyze:65536&quot;) else (set AnalyzeWithLargeStack=&quot;&quot;)&#x0D;&#x0A;&#x0D;&#x0A;mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(WebKitLibrariesDir)\include\JavaScriptCore\*&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;&#x0D;&#x0A;bash &quot;$(WebKitLibrariesDir)\tools\scripts\auto-version.sh&quot; &quot;$(IntDir)&quot;&#x0D;&#x0A;"
+	/>
+	<Tool
+		Name="VCResourceCompilerTool"
+		AdditionalIncludeDirectories="$(WebKitOutputDir)\obj\WebKit2\"
+	/>
+</VisualStudioPropertySheet>
