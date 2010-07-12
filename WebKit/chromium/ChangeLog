@@ -1,3 +1,9 @@
+2010-07-12  Jeremy Orlow  <jorlow@chromium.org>
+
+        Build fix.  Add an include.
+
+        * public/WebCommon.h:
+
 2010-06-27  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Dumitru Daniliuc.
