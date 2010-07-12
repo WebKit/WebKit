@@ -1,5 +1,18 @@
 2010-07-12  Adam Roben  <aroben@apple.com>
 
+        Make the Python autoinstaller not use a dead SourceForge server
+
+        Fixes <http://webkit.org/b/42080> webkit-patch is broken due to
+        offline SourceForge server
+
+        Reviewed by Anders Carlsson.
+
+        * Scripts/webkitpy/thirdparty/__init__.py: Use
+        surfnet.dl.sourceforge.net instead of hivelocity.dl.sourceforge.net,
+        which seems to be down.
+
+2010-07-12  Adam Roben  <aroben@apple.com>
+
         Make run-webkit-tests print how many tests timed out when exiting
         early
 
