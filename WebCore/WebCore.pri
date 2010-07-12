@@ -666,14 +666,12 @@ IDL_BINDINGS += \
 
 INSPECTOR_INTERFACES = inspector/InspectorFrontend2.idl
 
-contains(DEFINES, ENABLE_MATHML=1) {
-    mathmlnames.output = $${WC_GENERATED_SOURCES_DIR}/MathMLNames.cpp
-    mathmlnames.input = MATHML_NAMES
-    mathmlnames.wkScript = $$PWD/dom/make_names.pl
-    mathmlnames.commands = perl -I$$PWD/bindings/scripts $$mathmlnames.wkScript --tags $$PWD/mathml/mathtags.in --attrs $$PWD/mathml/mathattrs.in --extraDefines \"$${DEFINES}\" --preprocessor \"$${QMAKE_MOC} -E\" --factory --wrapperFactory --outputDir $$WC_GENERATED_SOURCES_DIR
-    mathmlnames.wkExtraSources = $${WC_GENERATED_SOURCES_DIR}/MathMLElementFactory.cpp 
-    addExtraCompiler(mathmlnames)
-}
+mathmlnames.output = $${WC_GENERATED_SOURCES_DIR}/MathMLNames.cpp
+mathmlnames.input = MATHML_NAMES
+mathmlnames.wkScript = $$PWD/dom/make_names.pl
+mathmlnames.commands = perl -I$$PWD/bindings/scripts $$mathmlnames.wkScript --tags $$PWD/mathml/mathtags.in --attrs $$PWD/mathml/mathattrs.in --extraDefines \"$${DEFINES}\" --preprocessor \"$${QMAKE_MOC} -E\" --factory --wrapperFactory --outputDir $$WC_GENERATED_SOURCES_DIR
+mathmlnames.wkExtraSources = $${WC_GENERATED_SOURCES_DIR}/MathMLElementFactory.cpp 
+addExtraCompiler(mathmlnames)
 
 contains(DEFINES, ENABLE_WML=1) {
     wmlnames.output = $${WC_GENERATED_SOURCES_DIR}/WMLNames.cpp
@@ -684,16 +682,14 @@ contains(DEFINES, ENABLE_WML=1) {
     addExtraCompiler(wmlnames)
 }
 
-contains(DEFINES, ENABLE_SVG=1) {
-    # GENERATOR 5-C:
-    svgnames.output = $${WC_GENERATED_SOURCES_DIR}/SVGNames.cpp
-    svgnames.input = SVG_NAMES
-    svgnames.depends = $$PWD/svg/svgattrs.in
-    svgnames.wkScript = $$PWD/dom/make_names.pl
-    svgnames.commands = perl -I$$PWD/bindings/scripts $$svgnames.wkScript --tags $$PWD/svg/svgtags.in --attrs $$PWD/svg/svgattrs.in --extraDefines \"$${DEFINES}\" --preprocessor \"$${QMAKE_MOC} -E\" --factory --wrapperFactory --outputDir $$WC_GENERATED_SOURCES_DIR
-    svgnames.wkExtraSources = $${WC_GENERATED_SOURCES_DIR}/SVGElementFactory.cpp $${WC_GENERATED_SOURCES_DIR}/JSSVGElementWrapperFactory.cpp
-    addExtraCompiler(svgnames)
-}
+# GENERATOR 5-C:
+svgnames.output = $${WC_GENERATED_SOURCES_DIR}/SVGNames.cpp
+svgnames.input = SVG_NAMES
+svgnames.depends = $$PWD/svg/svgattrs.in
+svgnames.wkScript = $$PWD/dom/make_names.pl
+svgnames.commands = perl -I$$PWD/bindings/scripts $$svgnames.wkScript --tags $$PWD/svg/svgtags.in --attrs $$PWD/svg/svgattrs.in --extraDefines \"$${DEFINES}\" --preprocessor \"$${QMAKE_MOC} -E\" --factory --wrapperFactory --outputDir $$WC_GENERATED_SOURCES_DIR
+svgnames.wkExtraSources = $${WC_GENERATED_SOURCES_DIR}/SVGElementFactory.cpp $${WC_GENERATED_SOURCES_DIR}/JSSVGElementWrapperFactory.cpp
+addExtraCompiler(svgnames)
 
 # GENERATOR 5-D:
 xlinknames.output = $${WC_GENERATED_SOURCES_DIR}/XLinkNames.cpp

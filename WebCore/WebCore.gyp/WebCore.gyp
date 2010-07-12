@@ -388,6 +388,27 @@
           ],
         },
         {
+          'action_name': 'MathMLNames',
+          'inputs': [
+            '../dom/make_names.pl',
+            '../mathml/mathtags.in',
+            '../mathml/mathattrs.in',
+          ],
+          'outputs': [
+            '<(SHARED_INTERMEDIATE_DIR)/webkit/MathMLNames.cpp',
+            '<(SHARED_INTERMEDIATE_DIR)/webkit/MathMLNames.h',
+          ],
+          'action': [
+            'python',
+            'scripts/action_makenames.py',
+            '<@(_outputs)',
+            '--',
+            '<@(_inputs)',
+            '--',
+            '--extraDefines', '<(feature_defines)'
+          ],
+        },
+        {
           'action_name': 'UserAgentStyleSheets',
           'inputs': [
             '../css/make-css-file-arrays.pl',
@@ -685,6 +706,8 @@
         '<(SHARED_INTERMEDIATE_DIR)/webkit/XLinkNames.cpp',
         '<(SHARED_INTERMEDIATE_DIR)/webkit/XMLNSNames.cpp',
         '<(SHARED_INTERMEDIATE_DIR)/webkit/XMLNames.cpp',
+        '<(SHARED_INTERMEDIATE_DIR)/webkit/SVGNames.cpp',
+        '<(SHARED_INTERMEDIATE_DIR)/webkit/MathMLNames.cpp',
 
         # Additional .cpp files from the webcore_bindings_sources rules.
         '<(SHARED_INTERMEDIATE_DIR)/webkit/CSSGrammar.cpp',
@@ -709,7 +732,6 @@
         ['enable_svg!=0', {
           'sources': [
             '<(SHARED_INTERMEDIATE_DIR)/webkit/SVGElementFactory.cpp',
-            '<(SHARED_INTERMEDIATE_DIR)/webkit/SVGNames.cpp',
             '<(SHARED_INTERMEDIATE_DIR)/webkit/V8SVGElementWrapperFactory.cpp',
          ],
         }],

@@ -1,3 +1,27 @@
+2010-07-11  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Always generate SVGNames and MathMLNames for all ports (to support HTML5)
+        https://bugs.webkit.org/show_bug.cgi?id=42050
+
+        Historically, FOONames has only been generate when ENABLE(FOO) is defined.
+        However, for HTML5 parser support, we need to have access to the SVG
+        and MathML tag names regardless of whether we the engine is configured
+        to render SVG or MathML content.
+
+        This change enables generation of SVGNames and MathMLNames on all ports and
+        makes it so that ports can include FOOElementFactory.* regardless of whether
+        ENABLE(FOO) is defined (and have it do the right thing).
+
+        No functional change (yet) so no tests.
+
+        * DerivedSources.make:
+        * GNUmakefile.am:
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.pri:
+        * dom/make_names.pl:
+
 2010-07-10  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

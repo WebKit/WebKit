@@ -337,8 +337,6 @@ sub printConstructors
     my ($F, $tagConstructorMapRef) = @_;
     my %tagConstructorMap = %$tagConstructorMapRef;
 
-    print F "#if $parameters{guardFactoryWith}\n" if $parameters{guardFactoryWith};
-
     # This is to avoid generating the same constructor several times.
     my %uniqueTags = ();
     for my $tagName (sort keys %tagConstructorMap) {
@@ -372,8 +370,6 @@ sub printConstructors
             printConstructorInterior($F, $mappedName, $enabledTags{$mappedName}{interfaceName}, "QualifiedName(tagName.prefix(), ${mappedName}Tag.localName(), tagName.namespaceURI())");
         }
     }
-
-    print F "#endif\n" if $parameters{guardFactoryWith};
 }
 
 sub printFunctionInits
@@ -652,10 +648,11 @@ printLicenseHeader($F);
 print F <<END
 #include "config.h"
 #include "$parameters{namespace}ElementFactory.h"
-
 #include "$parameters{namespace}Names.h"
 END
 ;
+
+print F "\n#if $parameters{guardFactoryWith}\n\n" if $parameters{guardFactoryWith};
 
 printElementIncludes($F);
 
@@ -689,8 +686,6 @@ my %tagConstructorMap = buildConstructorMap();
 
 printConstructors($F, \%tagConstructorMap);
 
-print F "#if $parameters{guardFactoryWith}\n" if $parameters{guardFactoryWith};
-
 print F <<END
 static void addTag(const QualifiedName& tag, ConstructorFunction func)
 {
@@ -711,13 +706,10 @@ END
 printFunctionInits($F, \%tagConstructorMap);
 
 print F "}\n";
-print F "#endif\n" if $parameters{guardFactoryWith};
 
 print F "\nPassRefPtr<$parameters{namespace}Element> $parameters{namespace}ElementFactory::create$parameters{namespace}Element(const QualifiedName& qName, Document* document";
 print F ", HTMLFormElement* formElement" if $parameters{namespace} eq "HTML";
 print F ", bool createdByParser)\n{\n";
-
-print F "#if $parameters{guardFactoryWith}\n" if $parameters{guardFactoryWith};
 
 print F <<END
     if (!document)
@@ -753,17 +745,6 @@ if ($parameters{namespace} eq "HTML") {
 
 print F "    return $parameters{namespace}Element::create(qName, document);\n";
 
-if ($parameters{guardFactoryWith}) {
-
-print F <<END
-#else
-    return 0;
-#endif
-END
-;
-
-}
-
 print F <<END
 }
 
@@ -771,6 +752,8 @@ print F <<END
 
 END
 ;
+
+    print F "#endif\n" if $parameters{guardFactoryWith};
 
     close F;
 }
@@ -814,7 +797,7 @@ END
 ;
 print F "        static PassRefPtr<$parameters{namespace}Element> create$parameters{namespace}Element(const WebCore::QualifiedName&, WebCore::Document*";
 print F ", HTMLFormElement* = 0" if $parameters{namespace} eq "HTML";
-print F ", bool /*createdByParser*/ = true);\n";
+print F ", bool createdByParser = true);\n";
 
 printf F<<END
     };
@@ -923,11 +906,10 @@ sub printWrapperFactoryCppFile
 
     printLicenseHeader($F);
 
-    print F "#include \"config.h\"\n\n";
-
-    print F "#if $parameters{guardFactoryWith}\n\n" if $parameters{guardFactoryWith};
-
+    print F "#include \"config.h\"\n";
     print F "#include \"$wrapperFactoryType$parameters{namespace}ElementWrapperFactory.h\"\n";
+
+    print F "\n#if $parameters{guardFactoryWith}\n\n" if $parameters{guardFactoryWith};
 
     printJSElementIncludes($F, $wrapperFactoryType);
 

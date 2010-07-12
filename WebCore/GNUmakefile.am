@@ -3136,6 +3136,8 @@ webcore_sources += \
 	WebCore/mathml/RenderMathMLUnderOver.cpp \
 	WebCore/mathml/RenderMathMLUnderOver.h
 
+endif # END ENABLE_MATHML
+
 webcore_built_sources += \
 	DerivedSources/WebCore/MathMLElementFactory.cpp \
 	DerivedSources/WebCore/MathMLElementFactory.h \
@@ -3149,14 +3151,7 @@ DerivedSources/WebCore/MathMLNames.h: DerivedSources/WebCore/MathMLNames.cpp
 
 DerivedSources/WebCore/MathMLElementFactory.cpp DerivedSources/WebCore/MathMLNames.cpp: $(WebCore)/dom/make_names.pl $(WebCore)/mathml/mathtags.in $(WebCore)/mathml/mathattrs.in
 	$(AM_V_GEN)$(PERL) -I$(WebCore)/bindings/scripts $< --tags $(WebCore)/mathml/mathtags.in --attrs $(WebCore)/mathml/mathattrs.in --factory --wrapperFactory --outputDir "$(GENSOURCES_WEBCORE)"
-else 
-DerivedSources/WebCore/MathMLElementFactory.cpp:
-	echo > $@
 
-DerivedSources/WebCore/MathMLNames.cpp:
-	echo > $@
-
-endif # END ENABLE_MATHML
 
 # ----
 # Notifications support
@@ -3187,12 +3182,6 @@ FEATURE_DEFINES += ENABLE_SVG=1
 
 WEBCORE_CSS_PROPERTY_NAMES += $(WebCore)/css/SVGCSSPropertyNames.in 
 WEBCORE_CSS_VALUE_KEYWORDS += $(WebCore)/css/SVGCSSValueKeywords.in
-
-webcore_built_sources += \
-	DerivedSources/WebCore/JSSVGElementWrapperFactory.cpp \
-	DerivedSources/WebCore/SVGElementFactory.cpp \
-	DerivedSources/WebCore/SVGNames.cpp \
-	DerivedSources/WebCore/XLinkNames.cpp
 
 IDL_BINDINGS += \
 	WebCore/svg/ElementTimeControl.idl \
@@ -3800,6 +3789,14 @@ SVG_FEATURES += ENABLE_SVG_ANIMATION=1
 webcore_cppflags += -DENABLE_SVG_ANIMATION=1
 endif
 
+endif # END ENABLE_SVG
+
+webcore_built_sources += \
+	DerivedSources/WebCore/JSSVGElementWrapperFactory.cpp \
+	DerivedSources/WebCore/SVGElementFactory.cpp \
+	DerivedSources/WebCore/SVGNames.cpp \
+	DerivedSources/WebCore/XLinkNames.cpp
+
 # SVG tag and attribute names (need to pass an extra flag if svg experimental features are enabled)
 DerivedSources/WebCore/SVGNames.cpp: DerivedSources/WebCore/SVGElementFactory.cpp;
 DerivedSources/WebCore/JSSVGElementWrapperFactory.cpp: DerivedSources/WebCore/SVGElementFactory.cpp
@@ -3819,8 +3816,6 @@ DerivedSources/WebCore/XLinkNames.h: DerivedSources/WebCore/XLinkNames.cpp;
 
 DerivedSources/WebCore/XLinkNames.cpp : $(WebCore)/dom/make_names.pl $(WebCore)/svg/xlinkattrs.in
 	$(AM_V_GEN)$(PERL) -I$(WebCore)/bindings/scripts $< --attrs $(WebCore)/svg/xlinkattrs.in --outputDir "$(GENSOURCES_WEBCORE)"
-
-endif # END ENABLE_SVG
 
 # ----
 # Web Sockets Support
