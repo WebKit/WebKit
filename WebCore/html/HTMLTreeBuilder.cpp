@@ -1148,6 +1148,30 @@ void HTMLTreeBuilder::processStartTagForInTable(AtomicHTMLToken& token)
     processStartTagForInBody(token);
 }
 
+namespace {
+
+bool shouldProcessUsingSecondaryInsertionMode(AtomicHTMLToken& token, Element* currentElement)
+{
+    ASSERT(token.type() == HTMLToken::StartTag);
+    if (currentElement->hasTagName(MathMLNames::miTag)
+        || currentElement->hasTagName(MathMLNames::moTag)
+        || currentElement->hasTagName(MathMLNames::mnTag)
+        || currentElement->hasTagName(MathMLNames::msTag)
+        || currentElement->hasTagName(MathMLNames::mtextTag)) {
+        return token.name() != MathMLNames::mglyphTag
+            && token.name() != MathMLNames::malignmarkTag;
+    }
+    if (currentElement->hasTagName(MathMLNames::annotation_xmlTag))
+        return token.name() == SVGNames::svgTag;
+    if (currentElement->hasTagName(SVGNames::foreignObjectTag)
+        || currentElement->hasTagName(SVGNames::descTag)
+        || currentElement->hasTagName(SVGNames::titleTag))
+        return true;
+    return currentElement->namespaceURI() == HTMLNames::xhtmlNamespaceURI;
+}
+
+}
+
 void HTMLTreeBuilder::processStartTag(AtomicHTMLToken& token)
 {
     ASSERT(token.type() == HTMLToken::StartTag);
@@ -1463,6 +1487,10 @@ void HTMLTreeBuilder::processStartTag(AtomicHTMLToken& token)
         break;
     case InForeignContentMode: {
         // FIXME: We're missing a bunch of if branches here.
+        if (shouldProcessUsingSecondaryInsertionMode(token, m_tree.currentElement())) {
+            processUsingSecondaryInsertionModeAndAdjustInsertionMode(token);
+            return;
+        }
         notImplemented();
         const AtomicString& currentNamespace = m_tree.currentElement()->namespaceURI();
         if (currentNamespace == MathMLNames::mathmlNamespaceURI)
@@ -2278,11 +2306,11 @@ void HTMLTreeBuilder::processEndTag(AtomicHTMLToken& token)
                 }
                 nodeRecord = nodeRecord->next();
                 if (nodeRecord->element()->namespaceURI() == xhtmlNamespaceURI)
-                    processEndTagUsingSecondaryInsertionModeAndAdjustInsertionMode(token);
+                    processUsingSecondaryInsertionModeAndAdjustInsertionMode(token);
             }
             return;
         }
-        processEndTagUsingSecondaryInsertionModeAndAdjustInsertionMode(token);
+        processUsingSecondaryInsertionModeAndAdjustInsertionMode(token);
         break;
     }
 }
@@ -2310,11 +2338,12 @@ private:
 // This handles both secondary insertion mode processing, as well as updating
 // the insertion mode.  These are separate steps in the spec, but always occur
 // right after one another.
-void HTMLTreeBuilder::processEndTagUsingSecondaryInsertionModeAndAdjustInsertionMode(AtomicHTMLToken& token)
+void HTMLTreeBuilder::processUsingSecondaryInsertionModeAndAdjustInsertionMode(AtomicHTMLToken& token)
 {
+    ASSERT(token.type() == HTMLToken::StartTag || token.type() == HTMLToken::EndTag);
     {
         FakeInsertionMode fakeMode(this, m_secondaryInsertionMode);
-        processEndTag(token);
+        processToken(token);
     }
     if (insertionMode() == InForeignContentMode && m_tree.openElements()->hasOnlyHTMLElementsInScope())
         setInsertionMode(m_secondaryInsertionMode);

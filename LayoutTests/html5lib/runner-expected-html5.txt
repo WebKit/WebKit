@@ -728,24 +728,25 @@ Got:
 |       "foo"
 |       <math math>
 |         <math mtext>
-|           <math i>
+|           <i>
 |             "baz"
 |         <math annotation-xml>
-|           <math svg>
-|             <math desc>
-|               <math b>
+|           <svg svg>
+|             <svg desc>
+|               <b>
 |                 "eggs"
-|             <math g>
-|               <math foreignobject>
-|                 <math p>
+|             <svg g>
+|               <svg foreignObject>
+|                 <p>
 |                   "spam"
-|                   <math table>
-|                     <math tr>
-|                       <math td>
-|                         <math img>
-|                           <math g>
-|                             "quux"
-|                           "bar"
+|                 <table>
+|                   <tbody>
+|                     <tr>
+|                       <td>
+|                         <img>
+|                 <g>
+|                   "quux"
+|                 "bar"
 Expected:
 | <!DOCTYPE html>
 | <html>
@@ -785,24 +786,25 @@ Got:
 |     "foo"
 |     <math math>
 |       <math mtext>
-|         <math i>
+|         <i>
 |           "baz"
 |       <math annotation-xml>
-|         <math svg>
-|           <math desc>
-|             <math b>
+|         <svg svg>
+|           <svg desc>
+|             <b>
 |               "eggs"
-|           <math g>
-|             <math foreignobject>
-|               <math p>
+|           <svg g>
+|             <svg foreignObject>
+|               <p>
 |                 "spam"
-|                 <math table>
-|                   <math tr>
-|                     <math td>
-|                       <math img>
-|                         <math g>
-|                           "quux"
-|                         "bar"
+|               <table>
+|                 <tbody>
+|                   <tr>
+|                     <td>
+|                       <img>
+|               <g>
+|                 "quux"
+|               "bar"
 Expected:
 | <!DOCTYPE html>
 | <html>

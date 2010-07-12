@@ -2,6 +2,26 @@
 
         Reviewed by Adam Barth.
 
+        HTMLTreeBuilder needs to support mixing SVG and MathML content
+        https://bugs.webkit.org/show_bug.cgi?id=42096
+
+        This is just a direct transcription of another paragraph of the
+        HTML5 spec.
+
+        This improved a couple results in html5lib/runner.html, but more
+        work to do yet to pass all the foreign content tests.
+
+        * html/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::processStartTag):
+        (WebCore::HTMLTreeBuilder::processEndTag):
+        (WebCore::HTMLTreeBuilder::processUsingSecondaryInsertionModeAndAdjustInsertionMode):
+        * html/HTMLTreeBuilder.h:
+        * mathml/mathtags.in:
+
+2010-07-12  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
         Update HTMLTreeBuilder now that MathMLNames is always generated
         https://bugs.webkit.org/show_bug.cgi?id=42059
 

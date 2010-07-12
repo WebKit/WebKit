@@ -153,7 +153,7 @@ private:
     void processDefaultForAfterHeadMode(AtomicHTMLToken&);
     void processDefaultForInTableTextMode(AtomicHTMLToken&);
 
-    void processEndTagUsingSecondaryInsertionModeAndAdjustInsertionMode(AtomicHTMLToken&);
+    void processUsingSecondaryInsertionModeAndAdjustInsertionMode(AtomicHTMLToken&);
 
     PassRefPtr<NamedNodeMap> attributesForIsindexInput(AtomicHTMLToken&);
 

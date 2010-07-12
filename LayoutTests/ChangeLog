@@ -2,6 +2,15 @@
 
         Reviewed by Adam Barth.
 
+        HTMLTreeBuilder needs to support mixing SVG and MathML content
+        https://bugs.webkit.org/show_bug.cgi?id=42096
+
+        * html5lib/runner-expected-html5.txt:
+
+2010-07-12  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
         Update HTMLTreeBuilder now that MathMLNames is always generated
         https://bugs.webkit.org/show_bug.cgi?id=42059
 
