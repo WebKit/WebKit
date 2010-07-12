@@ -2622,8 +2622,9 @@ BUG38278 : fast/events/platform-wheelevent-in-scrolling-div.html = TIMEOUT
 BUG36415 : fast/events/touch/touch-target.html = TEXT
 
 // Need to implement NPP_HandleEvent in the layout_test_plugin
-BUG38353 MAC LINUX : plugins/keyboard-events.html = TEXT
-BUG38353 MAC LINUX : http/tests/plugins/plugin-document-has-focus.html = TEXT TIMEOUT
+// WIN started failing during webkit roll 62670 -> 62844.
+BUG38353 WIN MAC LINUX : plugins/keyboard-events.html = TEXT
+BUG38353 WIN MAC LINUX : http/tests/plugins/plugin-document-has-focus.html = TEXT TIMEOUT
 
 BUG38392 : plugins/resize-from-plugin.html = TEXT
 
@@ -3005,9 +3006,6 @@ BUGAWONG WIN LINUX MAC : fast/js/object-literal-direct-put.html = TEXT
 // Probably just needs rebaseline.
 BUGAWONG MAC : svg/custom/clip-path-child-changes.svg = TEXT
 
-// From webkit roll 62670 -> 62844.
-BUGAWONG WIN : http/tests/plugins/plugin-document-has-focus.html = TEXT
-
 // The size of button padding was updated, just need rebaseline
 BUG_WK38016 WIN LINUX : tables/mozilla/bugs/bug51037.html = IMAGE+TEXT
 BUG_WK38016 WIN LINUX : fast/forms/button-white-space.html = IMAGE+TEXT
@@ -3097,3 +3095,5 @@ BUG_WK38016 WIN LINUX : fast/block/float/float-avoidance.html = IMAGE+TEXT
 BUG_WK38016 WIN LINUX : fast/forms/button-positioned.html = IMAGE+TEXT
 BUG_WK38016 WIN LINUX : fast/block/positioning/inline-block-relposition.html = IMAGE+TEXT
 BUG_WK38016 WIN : fast/forms/input-first-letter.html = IMAGE+TEXT
+
+BUG48859 WIN : fast/inline/continuation-outlines-with-layers-2.html = IMAGE+TEXT
