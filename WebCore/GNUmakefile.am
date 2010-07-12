@@ -335,6 +335,12 @@ IDL_BINDINGS += \
 	WebCore/xml/XMLSerializer.idl \
 	WebCore/xml/XSLTProcessor.idl
 
+# This IDL file should not be used when calculating the source list
+# of libWebCoreJS, so we add it directly to  the header list here, so
+# that it will be included in the distribution.
+noinst_HEADERS += \
+	WebCore/inspector/InspectorFrontend2.idl
+
 webcoregtk_dom_sources = \
 	WebCore/bindings/gobject/ConvertToUTF8String.cpp \
 	WebCore/bindings/gobject/ConvertToUTF8String.h \
@@ -2503,6 +2509,7 @@ webcore_sources += \
 	WebCore/storage/DatabaseTracker.cpp \
 	WebCore/storage/DatabaseTracker.h \
 	WebCore/storage/DatabaseTrackerClient.h \
+	WebCore/storage/IDBKey.h \
 	WebCore/storage/OriginQuotaManager.cpp \
 	WebCore/storage/OriginQuotaManager.h \
 	WebCore/storage/OriginUsageRecord.cpp \
@@ -4277,6 +4284,7 @@ webcore_dist += \
 	WebCore/css/SVGCSSValueKeywords.in \
 	WebCore/css/makegrammar.pl \
 	WebCore/dom/make_names.pl \
+	WebCore/inspector/CodeGeneratorInspector.pm \
 	WebCore/mathml/mathtags.in \
 	WebCore/platform/text/mac/make-charset-table.pl \
 	WebCore/platform/ColorData.gperf \

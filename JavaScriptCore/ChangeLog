@@ -1,3 +1,12 @@
+2010-07-12  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] make dist is broken because of missing headers and other miscellaneous reasons
+        https://bugs.webkit.org/show_bug.cgi?id=42107
+
+        * GNUmakefile.am: Add missing header to the sources list.
+
 2010-07-12  Adam Roben  <aroben@apple.com>
 
         Stop generating stripped symbols for Release builds

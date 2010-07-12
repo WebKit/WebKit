@@ -1,3 +1,14 @@
+2010-07-12  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] make dist is broken because of missing headers and other miscellaneous reasons
+        https://bugs.webkit.org/show_bug.cgi?id=42107
+
+        * GNUmakefile.am: Remove InspectorFrontend2.idl from the list of IDL files, so
+        that it is not built into libWebCoreJS. Add missing header to the source list.
+        Make sure to distribute the new file: WebCore/inspector/CodeGeneratorInspector.pm.
+
 2010-07-12  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

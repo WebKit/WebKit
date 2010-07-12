@@ -423,6 +423,7 @@ javascriptcore_sources += \
 	JavaScriptCore/wtf/FastAllocBase.h \
 	JavaScriptCore/wtf/FastMalloc.cpp \
 	JavaScriptCore/wtf/FastMalloc.h \
+	JavaScriptCore/wtf/FixedArray.h \
 	JavaScriptCore/wtf/Forward.h \
 	JavaScriptCore/wtf/GetPtr.h \
 	JavaScriptCore/wtf/gobject/GOwnPtr.cpp \
