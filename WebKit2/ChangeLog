@@ -1,3 +1,10 @@
+2010-07-12  Brian Weinstein  <bweinstein@apple.com>
+
+        WebKit2 build fix for Windows.
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp: Remove some stub function definitions.
+        * win/WebKit2.vcproj: Add PluginController.h to the vcproj.
+
 2010-07-12  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adam Roben.

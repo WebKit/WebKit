@@ -191,11 +191,4 @@ void NetscapePlugin::geometryDidChange(const IntRect& frameRect, const IntRect& 
     callSetWindow();
 }
 
-#if !PLATFORM(MAC)
-// FIXME: Remove these and build NetscapePluginModule on Windows as well.
-void NetscapePluginModule::pluginCreated() { }
-void NetscapePluginModule::pluginDestroyed() { }
-NetscapePluginModule::~NetscapePluginModule() { }
-#endif
-
 } // namespace WebKit

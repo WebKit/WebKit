@@ -840,6 +840,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\WebProcess\Plugins\PluginController.h"
+					>
+				</File>
+				<File
 					RelativePath="..\WebProcess\Plugins\PluginView.cpp"
 					>
 				</File>
