@@ -13,7 +13,7 @@ layer at (0,0) size 800x86
           RenderBlock {mo} at (9,3) size 11x16
             RenderBlock {mo} at (0,0) size 11x16
               RenderText {mo} at (0,0) size 11x16
-                text run at (0,0) width 11: "\x{2211}"
+                text run at (0,0) width 11: "\x{2207}"
           RenderInline {mtext} at (0,0) size 23x16
             RenderText {#text} at (20,3) size 23x16
               text run at (20,3) width 23: "text"
