@@ -1,3 +1,20 @@
+2010-07-12  Andreas Kling  <andreas.kling@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Dragging within webkit with a drag created via Javascript ends up misinterpreting the data
+        https://bugs.webkit.org/show_bug.cgi?id=41457
+
+        Treat non-special-cased mime-types as Unicode strings in ClipboardQt's getData()
+        Fixes corruption when retrieving data that was set with anything other than text/plain
+
+        Also use QMimeData::setHtml() when applicable to be consistent with PasteboardQt.
+
+        * platform/qt/ClipboardQt.cpp:
+        (WebCore::isHtmlMimeType):
+        (WebCore::ClipboardQt::getData):
+        (WebCore::ClipboardQt::setData):
+
 2010-07-12  Steve Block  <steveblock@google.com>
 
         Reviewed by Jeremy Orlow.

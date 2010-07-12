@@ -1,3 +1,14 @@
+2010-07-12  Andreas Kling  <andreas.kling@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Dragging within webkit with a drag created via Javascript ends up misinterpreting the data
+        https://bugs.webkit.org/show_bug.cgi?id=41457
+
+        Rebaseline test now that Qt doesn't corrupt non-breaking spaces on clipboard roundtrip.
+
+        * platform/qt/editing/pasteboard/onpaste-text-html-expected.txt:
+
 2010-07-12  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed: rebaseline chromium layout tests.

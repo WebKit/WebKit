@@ -50,6 +50,7 @@
 #include <QList>
 #include <QMimeData>
 #include <QStringList>
+#include <QTextCodec>
 #include <QUrl>
 #include <qdebug.h>
 
@@ -60,6 +61,11 @@ namespace WebCore {
 static bool isTextMimeType(const String& type)
 {
     return type == "text/plain" || type.startsWith("text/plain;");
+}
+
+static bool isHtmlMimeType(const String& type)
+{
+    return type == "text/html" || type.startsWith("text/html;");
 }
 
 ClipboardQt::ClipboardQt(ClipboardAccessPolicy policy, const QMimeData* readableClipboard)
@@ -135,15 +141,21 @@ String ClipboardQt::getData(const String& type, bool& success) const
         return String();
     }
 
+    if (isHtmlMimeType(type) && m_readableData->hasHtml()) {
+        success = true;
+        return m_readableData->html();
+    }
+
     if (isTextMimeType(type) && m_readableData->hasText()) {
         success = true;
         return m_readableData->text();
     }
 
     ASSERT(m_readableData);
-    QByteArray data = m_readableData->data(QString(type));
+    QByteArray rawData = m_readableData->data(type);
+    QString data = QTextCodec::codecForName("UTF-16")->toUnicode(rawData);
     success = !data.isEmpty();
-    return String(data.constData(), data.size());
+    return data;
 }
 
 bool ClipboardQt::setData(const String& type, const String& data)
@@ -156,6 +168,8 @@ bool ClipboardQt::setData(const String& type, const String& data)
 
     if (isTextMimeType(type))
         m_writableData->setText(QString(data));
+    else if (isHtmlMimeType(type))
+        m_writableData->setHtml(QString(data));
     else {
         QByteArray array(reinterpret_cast<const char*>(data.characters()), data.length() * 2);
         m_writableData->setData(QString(type), array);
