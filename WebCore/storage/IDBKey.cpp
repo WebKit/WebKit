@@ -26,18 +26,14 @@
 #include "config.h"
 #include "IDBKey.h"
 
-#include "SerializedScriptValue.h"
-
 #if ENABLE(INDEXED_DATABASE)
+
+#include "SerializedScriptValue.h"
 
 namespace WebCore {
 
 IDBKey::IDBKey()
     : m_type(NullType)
-{
-}
-
-IDBKey::~IDBKey()
 {
 }
 

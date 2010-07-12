@@ -55,7 +55,7 @@ public:
     String version() const { return m_database->version(); }
     PassRefPtr<DOMStringList> objectStores() const { return m_database->objectStores(); }
 
-    PassRefPtr<IDBRequest> createObjectStore(ScriptExecutionContext*, const String& name, const String& keyPath = "", bool autoIncrement = false);
+    PassRefPtr<IDBRequest> createObjectStore(ScriptExecutionContext*, const String& name, const String& keyPath = String(), bool autoIncrement = false);
     PassRefPtr<IDBObjectStoreRequest> objectStore(const String& name, unsigned short mode = 0); // FIXME: Use constant rather than 0.
     PassRefPtr<IDBRequest> removeObjectStore(ScriptExecutionContext*, const String& name);
 

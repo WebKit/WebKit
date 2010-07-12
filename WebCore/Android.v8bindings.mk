@@ -42,6 +42,7 @@ LOCAL_SRC_FILES += \
 	bindings/v8/DateExtension.cpp \
 	bindings/v8/DOMData.cpp \
 	bindings/v8/DOMDataStore.cpp \
+	bindings/v8/IDBBindingUtilities.cpp \
 	bindings/v8/MainThreadDOMData.cpp \
 	bindings/v8/NPV8Object.cpp \
 	bindings/v8/RuntimeEnabledFeatures.cpp \
@@ -101,7 +102,7 @@ LOCAL_SRC_FILES += \
 	bindings/v8/custom/V8CustomSQLTransactionCallback.cpp \
 	bindings/v8/custom/V8CustomSQLTransactionErrorCallback.cpp \
 	bindings/v8/custom/V8CustomVoidCallback.cpp \
-  bindings/v8/custom/V8DOMFormDataCustom.cpp \
+	bindings/v8/custom/V8DOMFormDataCustom.cpp \
 	bindings/v8/custom/V8DOMWindowCustom.cpp \
 	bindings/v8/custom/V8DataGridColumnListCustom.cpp \
 	bindings/v8/custom/V8DatabaseCallback.cpp \
@@ -114,6 +115,8 @@ LOCAL_SRC_FILES += \
 	bindings/v8/custom/V8EventSourceConstructor.cpp \
 	bindings/v8/custom/V8FileListCustom.cpp \
 	bindings/v8/custom/V8GeolocationCustom.cpp \
+	bindings/v8/custom/V8IDBAny.cpp \
+	bindings/v8/custom/V8IDBKey.cpp \
 	bindings/v8/custom/V8HTMLAllCollectionCustom.cpp \
 	bindings/v8/custom/V8HTMLAudioElementConstructor.cpp \
 	bindings/v8/custom/V8HTMLCanvasElementCustom.cpp \

@@ -53,17 +53,29 @@ public:
         WEBKIT_ASSERT_NOT_REACHED();
         return WebDOMStringList();
     }
-    void createIndex(const WebString& name, const WebString& keyPath, bool unique, WebIDBCallbacks*)
+    virtual void get(const WebIDBKey& key, WebIDBCallbacks*)
+    {
+        WEBKIT_ASSERT_NOT_REACHED();
+    }
+    virtual void put(const WebSerializedScriptValue& value, const WebIDBKey& key, bool addOnly, WebIDBCallbacks*)
+    {
+        WEBKIT_ASSERT_NOT_REACHED();
+    }
+    virtual void remove(const WebIDBKey& key, WebIDBCallbacks*)
+    {
+        WEBKIT_ASSERT_NOT_REACHED();
+    }
+    virtual void createIndex(const WebString& name, const WebString& keyPath, bool unique, WebIDBCallbacks*)
     {
         WEBKIT_ASSERT_NOT_REACHED();
     }
     // Transfers ownership of the WebIDBIndex to the caller.
-    WebIDBIndex* index(const WebString& name)
+    virtual WebIDBIndex* index(const WebString& name)
     {
         WEBKIT_ASSERT_NOT_REACHED();
         return 0;
     }
-    void removeIndex(const WebString& name, WebIDBCallbacks*)
+    virtual void removeIndex(const WebString& name, WebIDBCallbacks*)
     {
         WEBKIT_ASSERT_NOT_REACHED();
     }

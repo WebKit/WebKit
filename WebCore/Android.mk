@@ -739,6 +739,7 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	storage/IDBEvent.cpp \
 	storage/IDBIndexImpl.cpp \
 	storage/IDBIndexRequest.cpp \
+	storage/IDBKey.cpp \
 	storage/IDBKeyRange.cpp \
 	storage/IDBObjectStoreImpl.cpp \
 	storage/IDBObjectStoreRequest.cpp \

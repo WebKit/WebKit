@@ -11,9 +11,6 @@
  * copyright notice, this list of conditions and the following disclaimer
  * in the documentation and/or other materials provided with the
  * distribution.
- *     * Neither the name of Google Inc. nor the names of its
- * contributors may be used to endorse or promote products derived from
- * this software without specific prior written permission.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -37,6 +34,7 @@
 #include "SerializedScriptValue.h"
 #include "V8IDBDatabaseRequest.h"
 #include "V8IDBIndexRequest.h"
+#include "V8IDBKey.h"
 #include "V8IDBObjectStoreRequest.h"
 #include "V8IndexedDatabaseRequest.h"
 
@@ -56,6 +54,8 @@ v8::Handle<v8::Value> toV8(IDBAny* impl)
         return toV8(impl->idbDatabaseRequest());
     case IDBAny::IDBIndexRequestType:
         return toV8(impl->idbIndexRequest());
+    case IDBAny::IDBKeyType:
+        return toV8(impl->idbKey());
     case IDBAny::IDBObjectStoreRequestType:
         return toV8(impl->idbObjectStoreRequest());
     case IDBAny::IndexedDatabaseRequestType:

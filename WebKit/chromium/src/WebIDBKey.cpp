@@ -11,9 +11,6 @@
  * copyright notice, this list of conditions and the following disclaimer
  * in the documentation and/or other materials provided with the
  * distribution.
- *     * Neither the name of Google Inc. nor the names of its
- * contributors may be used to endorse or promote products derived from
- * this software without specific prior written permission.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -29,54 +26,93 @@
  */
 
 #include "config.h"
-#include "WebSerializedScriptValue.h"
+#include "WebIDBKey.h"
 
-#include "SerializedScriptValue.h"
-#include "WebString.h"
+#if ENABLE(INDEXED_DATABASE)
+
+#include "IDBKey.h"
 
 using namespace WebCore;
 
 namespace WebKit {
 
-WebSerializedScriptValue WebSerializedScriptValue::fromString(const WebString& s)
-{
-    return SerializedScriptValue::createFromWire(s);
-}
-
-WebSerializedScriptValue WebSerializedScriptValue::createInvalid()
-{
-    return SerializedScriptValue::create();
-}
-
-void WebSerializedScriptValue::reset()
+WebIDBKey::~WebIDBKey()
 {
     m_private.reset();
 }
 
-void WebSerializedScriptValue::assign(const WebSerializedScriptValue& other)
+WebIDBKey WebIDBKey::createNull()
 {
-    m_private = other.m_private;
+    WebIDBKey key;
+    key.assignNull();
+    return key;
 }
 
-WebString WebSerializedScriptValue::toString() const
+WebIDBKey WebIDBKey::createInvalid()
 {
-    return m_private->toWireString();
+    WebIDBKey key;
+    key.assignInvalid();
+    return key;
 }
 
-WebSerializedScriptValue::WebSerializedScriptValue(const PassRefPtr<SerializedScriptValue>& value)
+void WebIDBKey::assign(const WebIDBKey& value)
+{
+    m_private = value.m_private;
+}
+
+void WebIDBKey::assignNull()
+{
+    m_private = IDBKey::create();
+}
+
+void WebIDBKey::assign(const WebString& string)
+{
+    m_private = IDBKey::create(string);
+}
+
+void WebIDBKey::assign(int32_t number)
+{
+    m_private = IDBKey::create(number);
+}
+
+void WebIDBKey::assignInvalid()
+{
+    m_private = 0;
+}
+
+WebIDBKey::Type WebIDBKey::type() const
+{
+    if (!m_private.get())
+        return InvalidType;
+    return Type(m_private->type());
+}
+
+WebString WebIDBKey::string() const
+{
+    return m_private->string();
+}
+
+int32_t WebIDBKey::number() const
+{
+    return m_private->number();
+}
+
+WebIDBKey::WebIDBKey(const PassRefPtr<IDBKey>& value)
     : m_private(value)
 {
 }
 
-WebSerializedScriptValue& WebSerializedScriptValue::operator=(const PassRefPtr<SerializedScriptValue>& value)
+WebIDBKey& WebIDBKey::operator=(const PassRefPtr<IDBKey>& value)
 {
     m_private = value;
     return *this;
 }
 
-WebSerializedScriptValue::operator PassRefPtr<SerializedScriptValue>() const
+WebIDBKey::operator PassRefPtr<IDBKey>() const
 {
     return m_private.get();
 }
 
 } // namespace WebKit
+
+#endif // ENABLE(INDEXED_DATABASE)

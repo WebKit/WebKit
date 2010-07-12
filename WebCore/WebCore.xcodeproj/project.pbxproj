@@ -1391,10 +1391,6 @@
 		7AED3E060FBB1EAA00D2B03C /* InspectorFrontend.h in Headers */ = {isa = PBXBuildFile; fileRef = 7AED3E040FBB1EAA00D2B03C /* InspectorFrontend.h */; };
 		7AFD4A8B1131C2760035B883 /* ScriptBreakpoint.h in Headers */ = {isa = PBXBuildFile; fileRef = 7AFD4A8A1131C2760035B883 /* ScriptBreakpoint.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7AFD4FF4113277B60035B883 /* ScriptDebugListener.h in Headers */ = {isa = PBXBuildFile; fileRef = 7AFD4FF3113277B60035B883 /* ScriptDebugListener.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		816C806811BE887E009A45E9 /* IDBKeyRange.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 816C806611BE887E009A45E9 /* IDBKeyRange.cpp */; };
-		816C806911BE887E009A45E9 /* IDBKeyRange.h in Headers */ = {isa = PBXBuildFile; fileRef = 816C806711BE887E009A45E9 /* IDBKeyRange.h */; };
-		816C80AF11BE990D009A45E9 /* JSIDBKeyRange.h in Headers */ = {isa = PBXBuildFile; fileRef = 816C80AE11BE990D009A45E9 /* JSIDBKeyRange.h */; };
-		816C80B111BE9934009A45E9 /* JSIDBKeyRange.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 816C80B011BE9934009A45E9 /* JSIDBKeyRange.cpp */; };
 		82B658981189E39200E052A1 /* InspectorCSSStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 82B658971189E39200E052A1 /* InspectorCSSStore.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		82B6589A1189E47600E052A1 /* InspectorCSSStore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82B658991189E47600E052A1 /* InspectorCSSStore.cpp */; };
 		841FDC261178C9BE00F8AC9B /* RenderSVGResourceFilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 841FDC241178C9BE00F8AC9B /* RenderSVGResourceFilter.cpp */; };
@@ -4321,14 +4317,6 @@
 		B5C1123B102B6C4600096578 /* SQLTransactionCoordinator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B5C11239102B6C4600096578 /* SQLTransactionCoordinator.cpp */; };
 		B5C1123C102B6C4600096578 /* SQLTransactionCoordinator.h in Headers */ = {isa = PBXBuildFile; fileRef = B5C1123A102B6C4600096578 /* SQLTransactionCoordinator.h */; };
 		B5D3601A112F8B560048DEA8 /* DatabaseCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = B5D36019112F8B560048DEA8 /* DatabaseCallback.h */; };
-		B627FB2D11AD743500E97B72 /* IDBDatabaseImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C50AD2A911AC1631008CF2FB /* IDBDatabaseImpl.cpp */; };
-		B6693EEC11AD63E6003F2770 /* IDBObjectStore.h in Headers */ = {isa = PBXBuildFile; fileRef = B6693EE811AD63E6003F2770 /* IDBObjectStore.h */; };
-		B6693EED11AD63E6003F2770 /* IDBObjectStoreRequest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B6693EE911AD63E6003F2770 /* IDBObjectStoreRequest.cpp */; };
-		B6693EEE11AD63E6003F2770 /* IDBObjectStoreRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = B6693EEA11AD63E6003F2770 /* IDBObjectStoreRequest.h */; };
-		B6693EF211AD6486003F2770 /* JSIDBObjectStoreRequest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B6693EF011AD6486003F2770 /* JSIDBObjectStoreRequest.cpp */; };
-		B6693EF311AD6486003F2770 /* JSIDBObjectStoreRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = B6693EF111AD6486003F2770 /* JSIDBObjectStoreRequest.h */; };
-		B6B0540911B68F10002564C5 /* IDBObjectStoreImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B6B0540711B68F10002564C5 /* IDBObjectStoreImpl.cpp */; };
-		B6B0540A11B68F10002564C5 /* IDBObjectStoreImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = B6B0540811B68F10002564C5 /* IDBObjectStoreImpl.h */; };
 		B71FE6DF11091CB300DAEF77 /* PrintContext.h in Headers */ = {isa = PBXBuildFile; fileRef = B776D43A1104525D00BEB0EC /* PrintContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B734B181119B9911006587BD /* FontTranscoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B734B180119B9911006587BD /* FontTranscoder.cpp */; };
 		B734B183119B991D006587BD /* FontTranscoder.h in Headers */ = {isa = PBXBuildFile; fileRef = B734B182119B991D006587BD /* FontTranscoder.h */; };
@@ -4889,61 +4877,82 @@
 		C5137CF311A58378004ADB99 /* JSDOMStringList.h in Headers */ = {isa = PBXBuildFile; fileRef = C5137CF111A58378004ADB99 /* JSDOMStringList.h */; };
 		C5160EEA1004543A00A7CEE2 /* StorageAreaImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C5160EE81004543A00A7CEE2 /* StorageAreaImpl.cpp */; };
 		C5160EEB1004543A00A7CEE2 /* StorageAreaImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = C5160EE91004543A00A7CEE2 /* StorageAreaImpl.h */; };
-		C5198F4C1192ECFD002B74A6 /* IDBCallbacks.h in Headers */ = {isa = PBXBuildFile; fileRef = C5198F381192ECFD002B74A6 /* IDBCallbacks.h */; };
-		C5198F4E1192ECFD002B74A6 /* IDBDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = C5198F3A1192ECFD002B74A6 /* IDBDatabase.h */; };
-		C5198F4F1192ECFD002B74A6 /* IDBDatabaseError.h in Headers */ = {isa = PBXBuildFile; fileRef = C5198F3B1192ECFD002B74A6 /* IDBDatabaseError.h */; };
-		C5198F511192ECFD002B74A6 /* IDBDatabaseException.h in Headers */ = {isa = PBXBuildFile; fileRef = C5198F3D1192ECFD002B74A6 /* IDBDatabaseException.h */; };
-		C5198F531192ECFD002B74A6 /* IDBDatabaseRequest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C5198F3F1192ECFD002B74A6 /* IDBDatabaseRequest.cpp */; };
-		C5198F541192ECFD002B74A6 /* IDBDatabaseRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = C5198F401192ECFD002B74A6 /* IDBDatabaseRequest.h */; };
-		C5198F561192ECFD002B74A6 /* IDBRequest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C5198F421192ECFD002B74A6 /* IDBRequest.cpp */; };
-		C5198F571192ECFD002B74A6 /* IDBRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = C5198F431192ECFD002B74A6 /* IDBRequest.h */; };
-		C5198F591192ECFD002B74A6 /* IndexedDatabase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C5198F451192ECFD002B74A6 /* IndexedDatabase.cpp */; };
-		C5198F5A1192ECFD002B74A6 /* IndexedDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = C5198F461192ECFD002B74A6 /* IndexedDatabase.h */; };
-		C5198F5B1192ECFD002B74A6 /* IndexedDatabaseImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C5198F471192ECFD002B74A6 /* IndexedDatabaseImpl.cpp */; };
-		C5198F5C1192ECFD002B74A6 /* IndexedDatabaseImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = C5198F481192ECFD002B74A6 /* IndexedDatabaseImpl.h */; };
-		C5198F5D1192ECFD002B74A6 /* IndexedDatabaseRequest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C5198F491192ECFD002B74A6 /* IndexedDatabaseRequest.cpp */; };
-		C5198F5E1192ECFD002B74A6 /* IndexedDatabaseRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = C5198F4A1192ECFD002B74A6 /* IndexedDatabaseRequest.h */; };
-		C51DA9A511AEF2C1009799C5 /* IDBIndex.h in Headers */ = {isa = PBXBuildFile; fileRef = C51DA99F11AEF2C1009799C5 /* IDBIndex.h */; };
-		C51DA9A611AEF2C1009799C5 /* IDBIndexImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C51DA9A011AEF2C1009799C5 /* IDBIndexImpl.cpp */; };
-		C51DA9A711AEF2C1009799C5 /* IDBIndexImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = C51DA9A111AEF2C1009799C5 /* IDBIndexImpl.h */; };
-		C51DA9A811AEF2C1009799C5 /* IDBIndexRequest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C51DA9A211AEF2C1009799C5 /* IDBIndexRequest.cpp */; };
-		C51DA9A911AEF2C1009799C5 /* IDBIndexRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = C51DA9A311AEF2C1009799C5 /* IDBIndexRequest.h */; };
 		C544274B11A57E7A0063A749 /* DOMStringList.h in Headers */ = {isa = PBXBuildFile; fileRef = C544274911A57E7A0063A749 /* DOMStringList.h */; };
 		C55610F111A704EB00B82D27 /* DOMStringList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C55610F011A704EB00B82D27 /* DOMStringList.cpp */; };
 		C55E38BF10040D5D00A56BDB /* StorageNamespaceImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = C55E38BB10040D5D00A56BDB /* StorageNamespaceImpl.h */; };
 		C55E38C010040D5D00A56BDB /* StorageNamespaceImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C55E38BC10040D5D00A56BDB /* StorageNamespaceImpl.cpp */; };
-		C56C914E119D849800DE4CD9 /* JSIDBAnyCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C56C914D119D849800DE4CD9 /* JSIDBAnyCustom.cpp */; };
-		C56C9152119D84CB00DE4CD9 /* IDBAny.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C56C914F119D84CB00DE4CD9 /* IDBAny.cpp */; };
-		C56C9153119D84CB00DE4CD9 /* IDBAny.h in Headers */ = {isa = PBXBuildFile; fileRef = C56C9150119D84CB00DE4CD9 /* IDBAny.h */; };
-		C56C915F119D84E600DE4CD9 /* IDBErrorEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C56C9159119D84E600DE4CD9 /* IDBErrorEvent.cpp */; };
-		C56C9160119D84E600DE4CD9 /* IDBErrorEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = C56C915A119D84E600DE4CD9 /* IDBErrorEvent.h */; };
-		C56C9162119D84E600DE4CD9 /* IDBEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C56C915C119D84E600DE4CD9 /* IDBEvent.cpp */; };
-		C56C9163119D84E600DE4CD9 /* IDBEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = C56C915D119D84E600DE4CD9 /* IDBEvent.h */; };
-		C56C9168119D84FF00DE4CD9 /* IDBSuccessEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C56C9165119D84FF00DE4CD9 /* IDBSuccessEvent.cpp */; };
-		C56C9169119D84FF00DE4CD9 /* IDBSuccessEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = C56C9166119D84FF00DE4CD9 /* IDBSuccessEvent.h */; };
-		C56C919A119D915300DE4CD9 /* JSIDBAny.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C56C9198119D915300DE4CD9 /* JSIDBAny.cpp */; };
-		C56C919B119D915300DE4CD9 /* JSIDBAny.h in Headers */ = {isa = PBXBuildFile; fileRef = C56C9199119D915300DE4CD9 /* JSIDBAny.h */; };
-		C56C91A0119D918100DE4CD9 /* JSIDBErrorEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C56C919C119D918100DE4CD9 /* JSIDBErrorEvent.cpp */; };
-		C56C91A1119D918100DE4CD9 /* JSIDBErrorEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = C56C919D119D918100DE4CD9 /* JSIDBErrorEvent.h */; };
-		C56C91A2119D918100DE4CD9 /* JSIDBEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C56C919E119D918100DE4CD9 /* JSIDBEvent.cpp */; };
-		C56C91A3119D918100DE4CD9 /* JSIDBEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = C56C919F119D918100DE4CD9 /* JSIDBEvent.h */; };
-		C56C91A6119D918700DE4CD9 /* JSIDBSuccessEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C56C91A4119D918700DE4CD9 /* JSIDBSuccessEvent.cpp */; };
-		C56C91A7119D918700DE4CD9 /* JSIDBSuccessEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = C56C91A5119D918700DE4CD9 /* JSIDBSuccessEvent.h */; };
-		C5BBC9D011AEF838007C2BFE /* JSIDBIndexRequest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C5BBC9CE11AEF838007C2BFE /* JSIDBIndexRequest.cpp */; };
-		C5BBC9D111AEF838007C2BFE /* JSIDBIndexRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = C5BBC9CF11AEF838007C2BFE /* JSIDBIndexRequest.h */; };
+		C585A65E11D4FAB2004C3E4B /* JSIDBAnyCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C585A65C11D4FAB2004C3E4B /* JSIDBAnyCustom.cpp */; };
+		C585A65F11D4FAB2004C3E4B /* JSIDBKeyCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C585A65D11D4FAB2004C3E4B /* JSIDBKeyCustom.cpp */; };
+		C585A66211D4FAC5004C3E4B /* IDBBindingUtilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C585A66011D4FAC5004C3E4B /* IDBBindingUtilities.cpp */; };
+		C585A66311D4FAC5004C3E4B /* IDBBindingUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = C585A66111D4FAC5004C3E4B /* IDBBindingUtilities.h */; };
+		C585A67C11D4FB08004C3E4B /* JSIDBAny.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C585A66411D4FB07004C3E4B /* JSIDBAny.cpp */; };
+		C585A67D11D4FB08004C3E4B /* JSIDBAny.h in Headers */ = {isa = PBXBuildFile; fileRef = C585A66511D4FB07004C3E4B /* JSIDBAny.h */; };
+		C585A67E11D4FB08004C3E4B /* JSIDBDatabaseError.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C585A66611D4FB07004C3E4B /* JSIDBDatabaseError.cpp */; };
+		C585A67F11D4FB08004C3E4B /* JSIDBDatabaseError.h in Headers */ = {isa = PBXBuildFile; fileRef = C585A66711D4FB07004C3E4B /* JSIDBDatabaseError.h */; };
+		C585A68011D4FB08004C3E4B /* JSIDBDatabaseException.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C585A66811D4FB07004C3E4B /* JSIDBDatabaseException.cpp */; };
+		C585A68111D4FB08004C3E4B /* JSIDBDatabaseException.h in Headers */ = {isa = PBXBuildFile; fileRef = C585A66911D4FB07004C3E4B /* JSIDBDatabaseException.h */; };
+		C585A68211D4FB08004C3E4B /* JSIDBDatabaseRequest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C585A66A11D4FB07004C3E4B /* JSIDBDatabaseRequest.cpp */; };
+		C585A68311D4FB08004C3E4B /* JSIDBDatabaseRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = C585A66B11D4FB07004C3E4B /* JSIDBDatabaseRequest.h */; };
+		C585A68411D4FB08004C3E4B /* JSIDBErrorEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C585A66C11D4FB07004C3E4B /* JSIDBErrorEvent.cpp */; };
+		C585A68511D4FB08004C3E4B /* JSIDBErrorEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = C585A66D11D4FB07004C3E4B /* JSIDBErrorEvent.h */; };
+		C585A68611D4FB08004C3E4B /* JSIDBEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C585A66E11D4FB07004C3E4B /* JSIDBEvent.cpp */; };
+		C585A68711D4FB08004C3E4B /* JSIDBEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = C585A66F11D4FB07004C3E4B /* JSIDBEvent.h */; };
+		C585A68811D4FB08004C3E4B /* JSIDBIndexRequest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C585A67011D4FB07004C3E4B /* JSIDBIndexRequest.cpp */; };
+		C585A68911D4FB08004C3E4B /* JSIDBIndexRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = C585A67111D4FB07004C3E4B /* JSIDBIndexRequest.h */; };
+		C585A68A11D4FB08004C3E4B /* JSIDBKey.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C585A67211D4FB07004C3E4B /* JSIDBKey.cpp */; };
+		C585A68B11D4FB08004C3E4B /* JSIDBKey.h in Headers */ = {isa = PBXBuildFile; fileRef = C585A67311D4FB07004C3E4B /* JSIDBKey.h */; };
+		C585A68C11D4FB08004C3E4B /* JSIDBKeyRange.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C585A67411D4FB07004C3E4B /* JSIDBKeyRange.cpp */; };
+		C585A68D11D4FB08004C3E4B /* JSIDBKeyRange.h in Headers */ = {isa = PBXBuildFile; fileRef = C585A67511D4FB07004C3E4B /* JSIDBKeyRange.h */; };
+		C585A68E11D4FB08004C3E4B /* JSIDBObjectStoreRequest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C585A67611D4FB07004C3E4B /* JSIDBObjectStoreRequest.cpp */; };
+		C585A68F11D4FB08004C3E4B /* JSIDBObjectStoreRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = C585A67711D4FB07004C3E4B /* JSIDBObjectStoreRequest.h */; };
+		C585A69011D4FB08004C3E4B /* JSIDBRequest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C585A67811D4FB07004C3E4B /* JSIDBRequest.cpp */; };
+		C585A69111D4FB08004C3E4B /* JSIDBRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = C585A67911D4FB07004C3E4B /* JSIDBRequest.h */; };
+		C585A69211D4FB08004C3E4B /* JSIDBSuccessEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C585A67A11D4FB07004C3E4B /* JSIDBSuccessEvent.cpp */; };
+		C585A69311D4FB08004C3E4B /* JSIDBSuccessEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = C585A67B11D4FB07004C3E4B /* JSIDBSuccessEvent.h */; };
+		C585A69611D4FB13004C3E4B /* JSIndexedDatabaseRequest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C585A69411D4FB13004C3E4B /* JSIndexedDatabaseRequest.cpp */; };
+		C585A69711D4FB13004C3E4B /* JSIndexedDatabaseRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = C585A69511D4FB13004C3E4B /* JSIndexedDatabaseRequest.h */; };
+		C585A6CC11D4FB3D004C3E4B /* IDBAny.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C585A69811D4FB3D004C3E4B /* IDBAny.cpp */; };
+		C585A6CD11D4FB3D004C3E4B /* IDBAny.h in Headers */ = {isa = PBXBuildFile; fileRef = C585A69911D4FB3D004C3E4B /* IDBAny.h */; };
+		C585A6CF11D4FB3D004C3E4B /* IDBCallbacks.h in Headers */ = {isa = PBXBuildFile; fileRef = C585A69B11D4FB3D004C3E4B /* IDBCallbacks.h */; };
+		C585A6D011D4FB3D004C3E4B /* IDBDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = C585A69C11D4FB3D004C3E4B /* IDBDatabase.h */; };
+		C585A6D111D4FB3D004C3E4B /* IDBDatabaseError.h in Headers */ = {isa = PBXBuildFile; fileRef = C585A69D11D4FB3D004C3E4B /* IDBDatabaseError.h */; };
+		C585A6D311D4FB3D004C3E4B /* IDBDatabaseException.h in Headers */ = {isa = PBXBuildFile; fileRef = C585A69F11D4FB3D004C3E4B /* IDBDatabaseException.h */; };
+		C585A6D511D4FB3D004C3E4B /* IDBDatabaseImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C585A6A111D4FB3D004C3E4B /* IDBDatabaseImpl.cpp */; };
+		C585A6D611D4FB3D004C3E4B /* IDBDatabaseImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = C585A6A211D4FB3D004C3E4B /* IDBDatabaseImpl.h */; };
+		C585A6D711D4FB3D004C3E4B /* IDBDatabaseRequest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C585A6A311D4FB3D004C3E4B /* IDBDatabaseRequest.cpp */; };
+		C585A6D811D4FB3D004C3E4B /* IDBDatabaseRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = C585A6A411D4FB3D004C3E4B /* IDBDatabaseRequest.h */; };
+		C585A6DA11D4FB3D004C3E4B /* IDBErrorEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C585A6A611D4FB3D004C3E4B /* IDBErrorEvent.cpp */; };
+		C585A6DB11D4FB3D004C3E4B /* IDBErrorEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = C585A6A711D4FB3D004C3E4B /* IDBErrorEvent.h */; };
+		C585A6DD11D4FB3D004C3E4B /* IDBEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C585A6A911D4FB3D004C3E4B /* IDBEvent.cpp */; };
+		C585A6DE11D4FB3D004C3E4B /* IDBEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = C585A6AA11D4FB3D004C3E4B /* IDBEvent.h */; };
+		C585A6E011D4FB3D004C3E4B /* IDBIndex.h in Headers */ = {isa = PBXBuildFile; fileRef = C585A6AC11D4FB3D004C3E4B /* IDBIndex.h */; };
+		C585A6E111D4FB3D004C3E4B /* IDBIndexImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C585A6AD11D4FB3D004C3E4B /* IDBIndexImpl.cpp */; };
+		C585A6E211D4FB3D004C3E4B /* IDBIndexImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = C585A6AE11D4FB3D004C3E4B /* IDBIndexImpl.h */; };
+		C585A6E311D4FB3D004C3E4B /* IDBIndexRequest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C585A6AF11D4FB3D004C3E4B /* IDBIndexRequest.cpp */; };
+		C585A6E411D4FB3D004C3E4B /* IDBIndexRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = C585A6B011D4FB3D004C3E4B /* IDBIndexRequest.h */; };
+		C585A6E611D4FB3D004C3E4B /* IDBKey.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C585A6B211D4FB3D004C3E4B /* IDBKey.cpp */; };
+		C585A6E711D4FB3D004C3E4B /* IDBKey.h in Headers */ = {isa = PBXBuildFile; fileRef = C585A6B311D4FB3D004C3E4B /* IDBKey.h */; };
+		C585A6E911D4FB3D004C3E4B /* IDBKeyRange.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C585A6B511D4FB3D004C3E4B /* IDBKeyRange.cpp */; };
+		C585A6EA11D4FB3D004C3E4B /* IDBKeyRange.h in Headers */ = {isa = PBXBuildFile; fileRef = C585A6B611D4FB3D004C3E4B /* IDBKeyRange.h */; };
+		C585A6EC11D4FB3D004C3E4B /* IDBKeyTree.h in Headers */ = {isa = PBXBuildFile; fileRef = C585A6B811D4FB3D004C3E4B /* IDBKeyTree.h */; };
+		C585A6ED11D4FB3D004C3E4B /* IDBObjectStore.h in Headers */ = {isa = PBXBuildFile; fileRef = C585A6B911D4FB3D004C3E4B /* IDBObjectStore.h */; };
+		C585A6EE11D4FB3D004C3E4B /* IDBObjectStoreImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C585A6BA11D4FB3D004C3E4B /* IDBObjectStoreImpl.cpp */; };
+		C585A6EF11D4FB3D004C3E4B /* IDBObjectStoreImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = C585A6BB11D4FB3D004C3E4B /* IDBObjectStoreImpl.h */; };
+		C585A6F011D4FB3D004C3E4B /* IDBObjectStoreRequest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C585A6BC11D4FB3D004C3E4B /* IDBObjectStoreRequest.cpp */; };
+		C585A6F111D4FB3D004C3E4B /* IDBObjectStoreRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = C585A6BD11D4FB3D004C3E4B /* IDBObjectStoreRequest.h */; };
+		C585A6F311D4FB3D004C3E4B /* IDBRequest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C585A6BF11D4FB3D004C3E4B /* IDBRequest.cpp */; };
+		C585A6F411D4FB3D004C3E4B /* IDBRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = C585A6C011D4FB3D004C3E4B /* IDBRequest.h */; };
+		C585A6F611D4FB3D004C3E4B /* IDBSuccessEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C585A6C211D4FB3D004C3E4B /* IDBSuccessEvent.cpp */; };
+		C585A6F711D4FB3D004C3E4B /* IDBSuccessEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = C585A6C311D4FB3D004C3E4B /* IDBSuccessEvent.h */; };
+		C585A6F911D4FB3D004C3E4B /* IndexedDatabase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C585A6C511D4FB3D004C3E4B /* IndexedDatabase.cpp */; };
+		C585A6FA11D4FB3D004C3E4B /* IndexedDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = C585A6C611D4FB3D004C3E4B /* IndexedDatabase.h */; };
+		C585A6FB11D4FB3D004C3E4B /* IndexedDatabaseImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C585A6C711D4FB3D004C3E4B /* IndexedDatabaseImpl.cpp */; };
+		C585A6FC11D4FB3D004C3E4B /* IndexedDatabaseImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = C585A6C811D4FB3D004C3E4B /* IndexedDatabaseImpl.h */; };
+		C585A6FD11D4FB3D004C3E4B /* IndexedDatabaseRequest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C585A6C911D4FB3D004C3E4B /* IndexedDatabaseRequest.cpp */; };
+		C585A6FE11D4FB3D004C3E4B /* IndexedDatabaseRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = C585A6CA11D4FB3D004C3E4B /* IndexedDatabaseRequest.h */; };
 		C5D4AA7A116BAFB60069CA93 /* GlyphMetricsMap.h in Headers */ = {isa = PBXBuildFile; fileRef = C5D4AA78116BAFB60069CA93 /* GlyphMetricsMap.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C5E9B67710697E1300C7BB1A /* StorageEventDispatcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C5E9B67610697E1300C7BB1A /* StorageEventDispatcher.cpp */; };
 		C5EBDD84105EDDEC0056816F /* StorageEventDispatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = C5EBDD81105EDDEC0056816F /* StorageEventDispatcher.h */; };
-		C5F4F406119306AC00FDFADD /* JSIDBDatabaseError.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C5F4F3FE119306AC00FDFADD /* JSIDBDatabaseError.cpp */; };
-		C5F4F407119306AC00FDFADD /* JSIDBDatabaseError.h in Headers */ = {isa = PBXBuildFile; fileRef = C5F4F3FF119306AC00FDFADD /* JSIDBDatabaseError.h */; };
-		C5F4F408119306AC00FDFADD /* JSIDBDatabaseException.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C5F4F400119306AC00FDFADD /* JSIDBDatabaseException.cpp */; };
-		C5F4F409119306AC00FDFADD /* JSIDBDatabaseException.h in Headers */ = {isa = PBXBuildFile; fileRef = C5F4F401119306AC00FDFADD /* JSIDBDatabaseException.h */; };
-		C5F4F40A119306AC00FDFADD /* JSIDBDatabaseRequest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C5F4F402119306AC00FDFADD /* JSIDBDatabaseRequest.cpp */; };
-		C5F4F40B119306AC00FDFADD /* JSIDBDatabaseRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = C5F4F403119306AC00FDFADD /* JSIDBDatabaseRequest.h */; };
-		C5F4F40C119306AC00FDFADD /* JSIDBRequest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C5F4F404119306AC00FDFADD /* JSIDBRequest.cpp */; };
-		C5F4F40D119306AC00FDFADD /* JSIDBRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = C5F4F405119306AC00FDFADD /* JSIDBRequest.h */; };
-		C5F4F410119306C000FDFADD /* JSIndexedDatabaseRequest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C5F4F40E119306C000FDFADD /* JSIndexedDatabaseRequest.cpp */; };
-		C5F4F411119306C000FDFADD /* JSIndexedDatabaseRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = C5F4F40F119306C000FDFADD /* JSIndexedDatabaseRequest.h */; };
 		C6D74AD509AA282E000B0A52 /* ModifySelectionListLevel.h in Headers */ = {isa = PBXBuildFile; fileRef = C6D74AD309AA282E000B0A52 /* ModifySelectionListLevel.h */; };
 		C6D74AE409AA290A000B0A52 /* ModifySelectionListLevel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6D74AE309AA290A000B0A52 /* ModifySelectionListLevel.cpp */; };
 		CE02F0C411E83ADD00C6684A /* ScriptControllerBase.h in Headers */ = {isa = PBXBuildFile; fileRef = CE02F0C311E83ADD00C6684A /* ScriptControllerBase.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -7134,11 +7143,6 @@
 		7AED3E040FBB1EAA00D2B03C /* InspectorFrontend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorFrontend.h; sourceTree = "<group>"; };
 		7AFD4A8A1131C2760035B883 /* ScriptBreakpoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptBreakpoint.h; sourceTree = "<group>"; };
 		7AFD4FF3113277B60035B883 /* ScriptDebugListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptDebugListener.h; sourceTree = "<group>"; };
-		816C806611BE887E009A45E9 /* IDBKeyRange.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBKeyRange.cpp; sourceTree = "<group>"; };
-		816C806711BE887E009A45E9 /* IDBKeyRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBKeyRange.h; sourceTree = "<group>"; };
-		816C80AE11BE990D009A45E9 /* JSIDBKeyRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSIDBKeyRange.h; sourceTree = "<group>"; };
-		816C80B011BE9934009A45E9 /* JSIDBKeyRange.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSIDBKeyRange.cpp; sourceTree = "<group>"; };
-		81CC114011BEAA9D00D0D856 /* IDBKeyRange.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = IDBKeyRange.idl; sourceTree = "<group>"; };
 		82B658971189E39200E052A1 /* InspectorCSSStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorCSSStore.h; sourceTree = "<group>"; };
 		82B658991189E47600E052A1 /* InspectorCSSStore.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorCSSStore.cpp; sourceTree = "<group>"; };
 		841FDC241178C9BE00F8AC9B /* RenderSVGResourceFilter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSVGResourceFilter.cpp; sourceTree = "<group>"; };
@@ -9906,14 +9910,6 @@
 		B5C11239102B6C4600096578 /* SQLTransactionCoordinator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SQLTransactionCoordinator.cpp; sourceTree = "<group>"; };
 		B5C1123A102B6C4600096578 /* SQLTransactionCoordinator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SQLTransactionCoordinator.h; sourceTree = "<group>"; };
 		B5D36019112F8B560048DEA8 /* DatabaseCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DatabaseCallback.h; sourceTree = "<group>"; };
-		B6693EE811AD63E6003F2770 /* IDBObjectStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBObjectStore.h; sourceTree = "<group>"; };
-		B6693EE911AD63E6003F2770 /* IDBObjectStoreRequest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBObjectStoreRequest.cpp; sourceTree = "<group>"; };
-		B6693EEA11AD63E6003F2770 /* IDBObjectStoreRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBObjectStoreRequest.h; sourceTree = "<group>"; };
-		B6693EEF11AD63F6003F2770 /* IDBObjectStoreRequest.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = IDBObjectStoreRequest.idl; sourceTree = "<group>"; };
-		B6693EF011AD6486003F2770 /* JSIDBObjectStoreRequest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSIDBObjectStoreRequest.cpp; sourceTree = "<group>"; };
-		B6693EF111AD6486003F2770 /* JSIDBObjectStoreRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSIDBObjectStoreRequest.h; sourceTree = "<group>"; };
-		B6B0540711B68F10002564C5 /* IDBObjectStoreImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBObjectStoreImpl.cpp; sourceTree = "<group>"; };
-		B6B0540811B68F10002564C5 /* IDBObjectStoreImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBObjectStoreImpl.h; sourceTree = "<group>"; };
 		B734B180119B9911006587BD /* FontTranscoder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FontTranscoder.cpp; path = transcoder/FontTranscoder.cpp; sourceTree = "<group>"; };
 		B734B182119B991D006587BD /* FontTranscoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FontTranscoder.h; path = transcoder/FontTranscoder.h; sourceTree = "<group>"; };
 		B776D43A1104525D00BEB0EC /* PrintContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrintContext.h; sourceTree = "<group>"; };
@@ -10500,8 +10496,6 @@
 		C0DFC86F0DB6841A003EAE7C /* JSConsoleCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSConsoleCustom.cpp; sourceTree = "<group>"; };
 		C105DA610F3AA68F001DD44F /* TextEncodingDetectorICU.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextEncodingDetectorICU.cpp; sourceTree = "<group>"; };
 		C105DA630F3AA6B8001DD44F /* TextEncodingDetector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextEncodingDetector.h; sourceTree = "<group>"; };
-		C50AD2A911AC1631008CF2FB /* IDBDatabaseImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBDatabaseImpl.cpp; sourceTree = "<group>"; };
-		C50AD2AA11AC1631008CF2FB /* IDBDatabaseImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBDatabaseImpl.h; sourceTree = "<group>"; };
 		C50D0E800FF4272900AC2644 /* StorageNamespace.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StorageNamespace.cpp; sourceTree = "<group>"; };
 		C50D0E810FF4272900AC2644 /* StorageNamespace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StorageNamespace.h; sourceTree = "<group>"; };
 		C5102D920FD9AA2D00FAFF04 /* StorageSyncManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StorageSyncManager.h; sourceTree = "<group>"; };
@@ -10512,72 +10506,96 @@
 		C5137CF111A58378004ADB99 /* JSDOMStringList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMStringList.h; sourceTree = "<group>"; };
 		C5160EE81004543A00A7CEE2 /* StorageAreaImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StorageAreaImpl.cpp; sourceTree = "<group>"; };
 		C5160EE91004543A00A7CEE2 /* StorageAreaImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StorageAreaImpl.h; sourceTree = "<group>"; };
-		C5198F381192ECFD002B74A6 /* IDBCallbacks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBCallbacks.h; sourceTree = "<group>"; };
-		C5198F3A1192ECFD002B74A6 /* IDBDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBDatabase.h; sourceTree = "<group>"; };
-		C5198F3B1192ECFD002B74A6 /* IDBDatabaseError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBDatabaseError.h; sourceTree = "<group>"; };
-		C5198F3C1192ECFD002B74A6 /* IDBDatabaseError.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = IDBDatabaseError.idl; sourceTree = "<group>"; };
-		C5198F3D1192ECFD002B74A6 /* IDBDatabaseException.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBDatabaseException.h; sourceTree = "<group>"; };
-		C5198F3E1192ECFD002B74A6 /* IDBDatabaseException.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = IDBDatabaseException.idl; sourceTree = "<group>"; };
-		C5198F3F1192ECFD002B74A6 /* IDBDatabaseRequest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBDatabaseRequest.cpp; sourceTree = "<group>"; };
-		C5198F401192ECFD002B74A6 /* IDBDatabaseRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBDatabaseRequest.h; sourceTree = "<group>"; };
-		C5198F411192ECFD002B74A6 /* IDBDatabaseRequest.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = IDBDatabaseRequest.idl; sourceTree = "<group>"; };
-		C5198F421192ECFD002B74A6 /* IDBRequest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBRequest.cpp; sourceTree = "<group>"; };
-		C5198F431192ECFD002B74A6 /* IDBRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBRequest.h; sourceTree = "<group>"; };
-		C5198F441192ECFD002B74A6 /* IDBRequest.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = IDBRequest.idl; sourceTree = "<group>"; };
-		C5198F451192ECFD002B74A6 /* IndexedDatabase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IndexedDatabase.cpp; sourceTree = "<group>"; };
-		C5198F461192ECFD002B74A6 /* IndexedDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IndexedDatabase.h; sourceTree = "<group>"; };
-		C5198F471192ECFD002B74A6 /* IndexedDatabaseImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IndexedDatabaseImpl.cpp; sourceTree = "<group>"; };
-		C5198F481192ECFD002B74A6 /* IndexedDatabaseImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IndexedDatabaseImpl.h; sourceTree = "<group>"; };
-		C5198F491192ECFD002B74A6 /* IndexedDatabaseRequest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IndexedDatabaseRequest.cpp; sourceTree = "<group>"; };
-		C5198F4A1192ECFD002B74A6 /* IndexedDatabaseRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IndexedDatabaseRequest.h; sourceTree = "<group>"; };
-		C5198F4B1192ECFD002B74A6 /* IndexedDatabaseRequest.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = IndexedDatabaseRequest.idl; sourceTree = "<group>"; };
-		C51DA99F11AEF2C1009799C5 /* IDBIndex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBIndex.h; sourceTree = "<group>"; };
-		C51DA9A011AEF2C1009799C5 /* IDBIndexImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBIndexImpl.cpp; sourceTree = "<group>"; };
-		C51DA9A111AEF2C1009799C5 /* IDBIndexImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBIndexImpl.h; sourceTree = "<group>"; };
-		C51DA9A211AEF2C1009799C5 /* IDBIndexRequest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBIndexRequest.cpp; sourceTree = "<group>"; };
-		C51DA9A311AEF2C1009799C5 /* IDBIndexRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBIndexRequest.h; sourceTree = "<group>"; };
-		C51DA9A411AEF2C1009799C5 /* IDBIndexRequest.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = IDBIndexRequest.idl; sourceTree = "<group>"; };
 		C544274911A57E7A0063A749 /* DOMStringList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMStringList.h; sourceTree = "<group>"; };
 		C544274A11A57E7A0063A749 /* DOMStringList.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DOMStringList.idl; sourceTree = "<group>"; };
 		C55610F011A704EB00B82D27 /* DOMStringList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMStringList.cpp; sourceTree = "<group>"; };
 		C55E38BB10040D5D00A56BDB /* StorageNamespaceImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StorageNamespaceImpl.h; sourceTree = "<group>"; };
 		C55E38BC10040D5D00A56BDB /* StorageNamespaceImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StorageNamespaceImpl.cpp; sourceTree = "<group>"; };
-		C56C914D119D849800DE4CD9 /* JSIDBAnyCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSIDBAnyCustom.cpp; sourceTree = "<group>"; };
-		C56C914F119D84CB00DE4CD9 /* IDBAny.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBAny.cpp; sourceTree = "<group>"; };
-		C56C9150119D84CB00DE4CD9 /* IDBAny.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBAny.h; sourceTree = "<group>"; };
-		C56C9151119D84CB00DE4CD9 /* IDBAny.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = IDBAny.idl; sourceTree = "<group>"; };
-		C56C9159119D84E600DE4CD9 /* IDBErrorEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBErrorEvent.cpp; sourceTree = "<group>"; };
-		C56C915A119D84E600DE4CD9 /* IDBErrorEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBErrorEvent.h; sourceTree = "<group>"; };
-		C56C915B119D84E600DE4CD9 /* IDBErrorEvent.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = IDBErrorEvent.idl; sourceTree = "<group>"; };
-		C56C915C119D84E600DE4CD9 /* IDBEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBEvent.cpp; sourceTree = "<group>"; };
-		C56C915D119D84E600DE4CD9 /* IDBEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBEvent.h; sourceTree = "<group>"; };
-		C56C915E119D84E600DE4CD9 /* IDBEvent.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = IDBEvent.idl; sourceTree = "<group>"; };
-		C56C9165119D84FF00DE4CD9 /* IDBSuccessEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBSuccessEvent.cpp; sourceTree = "<group>"; };
-		C56C9166119D84FF00DE4CD9 /* IDBSuccessEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBSuccessEvent.h; sourceTree = "<group>"; };
-		C56C9167119D84FF00DE4CD9 /* IDBSuccessEvent.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = IDBSuccessEvent.idl; sourceTree = "<group>"; };
-		C56C9198119D915300DE4CD9 /* JSIDBAny.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSIDBAny.cpp; sourceTree = "<group>"; };
-		C56C9199119D915300DE4CD9 /* JSIDBAny.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSIDBAny.h; sourceTree = "<group>"; };
-		C56C919C119D918100DE4CD9 /* JSIDBErrorEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSIDBErrorEvent.cpp; sourceTree = "<group>"; };
-		C56C919D119D918100DE4CD9 /* JSIDBErrorEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSIDBErrorEvent.h; sourceTree = "<group>"; };
-		C56C919E119D918100DE4CD9 /* JSIDBEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSIDBEvent.cpp; sourceTree = "<group>"; };
-		C56C919F119D918100DE4CD9 /* JSIDBEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSIDBEvent.h; sourceTree = "<group>"; };
-		C56C91A4119D918700DE4CD9 /* JSIDBSuccessEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSIDBSuccessEvent.cpp; sourceTree = "<group>"; };
-		C56C91A5119D918700DE4CD9 /* JSIDBSuccessEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSIDBSuccessEvent.h; sourceTree = "<group>"; };
-		C5BBC9CE11AEF838007C2BFE /* JSIDBIndexRequest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSIDBIndexRequest.cpp; sourceTree = "<group>"; };
-		C5BBC9CF11AEF838007C2BFE /* JSIDBIndexRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSIDBIndexRequest.h; sourceTree = "<group>"; };
+		C585A65C11D4FAB2004C3E4B /* JSIDBAnyCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSIDBAnyCustom.cpp; sourceTree = "<group>"; };
+		C585A65D11D4FAB2004C3E4B /* JSIDBKeyCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSIDBKeyCustom.cpp; sourceTree = "<group>"; };
+		C585A66011D4FAC5004C3E4B /* IDBBindingUtilities.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBBindingUtilities.cpp; sourceTree = "<group>"; };
+		C585A66111D4FAC5004C3E4B /* IDBBindingUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBBindingUtilities.h; sourceTree = "<group>"; };
+		C585A66411D4FB07004C3E4B /* JSIDBAny.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSIDBAny.cpp; sourceTree = "<group>"; };
+		C585A66511D4FB07004C3E4B /* JSIDBAny.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSIDBAny.h; sourceTree = "<group>"; };
+		C585A66611D4FB07004C3E4B /* JSIDBDatabaseError.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSIDBDatabaseError.cpp; sourceTree = "<group>"; };
+		C585A66711D4FB07004C3E4B /* JSIDBDatabaseError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSIDBDatabaseError.h; sourceTree = "<group>"; };
+		C585A66811D4FB07004C3E4B /* JSIDBDatabaseException.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSIDBDatabaseException.cpp; sourceTree = "<group>"; };
+		C585A66911D4FB07004C3E4B /* JSIDBDatabaseException.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSIDBDatabaseException.h; sourceTree = "<group>"; };
+		C585A66A11D4FB07004C3E4B /* JSIDBDatabaseRequest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSIDBDatabaseRequest.cpp; sourceTree = "<group>"; };
+		C585A66B11D4FB07004C3E4B /* JSIDBDatabaseRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSIDBDatabaseRequest.h; sourceTree = "<group>"; };
+		C585A66C11D4FB07004C3E4B /* JSIDBErrorEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSIDBErrorEvent.cpp; sourceTree = "<group>"; };
+		C585A66D11D4FB07004C3E4B /* JSIDBErrorEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSIDBErrorEvent.h; sourceTree = "<group>"; };
+		C585A66E11D4FB07004C3E4B /* JSIDBEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSIDBEvent.cpp; sourceTree = "<group>"; };
+		C585A66F11D4FB07004C3E4B /* JSIDBEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSIDBEvent.h; sourceTree = "<group>"; };
+		C585A67011D4FB07004C3E4B /* JSIDBIndexRequest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSIDBIndexRequest.cpp; sourceTree = "<group>"; };
+		C585A67111D4FB07004C3E4B /* JSIDBIndexRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSIDBIndexRequest.h; sourceTree = "<group>"; };
+		C585A67211D4FB07004C3E4B /* JSIDBKey.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSIDBKey.cpp; sourceTree = "<group>"; };
+		C585A67311D4FB07004C3E4B /* JSIDBKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSIDBKey.h; sourceTree = "<group>"; };
+		C585A67411D4FB07004C3E4B /* JSIDBKeyRange.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSIDBKeyRange.cpp; sourceTree = "<group>"; };
+		C585A67511D4FB07004C3E4B /* JSIDBKeyRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSIDBKeyRange.h; sourceTree = "<group>"; };
+		C585A67611D4FB07004C3E4B /* JSIDBObjectStoreRequest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSIDBObjectStoreRequest.cpp; sourceTree = "<group>"; };
+		C585A67711D4FB07004C3E4B /* JSIDBObjectStoreRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSIDBObjectStoreRequest.h; sourceTree = "<group>"; };
+		C585A67811D4FB07004C3E4B /* JSIDBRequest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSIDBRequest.cpp; sourceTree = "<group>"; };
+		C585A67911D4FB07004C3E4B /* JSIDBRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSIDBRequest.h; sourceTree = "<group>"; };
+		C585A67A11D4FB07004C3E4B /* JSIDBSuccessEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSIDBSuccessEvent.cpp; sourceTree = "<group>"; };
+		C585A67B11D4FB07004C3E4B /* JSIDBSuccessEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSIDBSuccessEvent.h; sourceTree = "<group>"; };
+		C585A69411D4FB13004C3E4B /* JSIndexedDatabaseRequest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSIndexedDatabaseRequest.cpp; sourceTree = "<group>"; };
+		C585A69511D4FB13004C3E4B /* JSIndexedDatabaseRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSIndexedDatabaseRequest.h; sourceTree = "<group>"; };
+		C585A69811D4FB3D004C3E4B /* IDBAny.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBAny.cpp; sourceTree = "<group>"; };
+		C585A69911D4FB3D004C3E4B /* IDBAny.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBAny.h; sourceTree = "<group>"; };
+		C585A69A11D4FB3D004C3E4B /* IDBAny.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = IDBAny.idl; sourceTree = "<group>"; };
+		C585A69B11D4FB3D004C3E4B /* IDBCallbacks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBCallbacks.h; sourceTree = "<group>"; };
+		C585A69C11D4FB3D004C3E4B /* IDBDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBDatabase.h; sourceTree = "<group>"; };
+		C585A69D11D4FB3D004C3E4B /* IDBDatabaseError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBDatabaseError.h; sourceTree = "<group>"; };
+		C585A69E11D4FB3D004C3E4B /* IDBDatabaseError.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = IDBDatabaseError.idl; sourceTree = "<group>"; };
+		C585A69F11D4FB3D004C3E4B /* IDBDatabaseException.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBDatabaseException.h; sourceTree = "<group>"; };
+		C585A6A011D4FB3D004C3E4B /* IDBDatabaseException.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = IDBDatabaseException.idl; sourceTree = "<group>"; };
+		C585A6A111D4FB3D004C3E4B /* IDBDatabaseImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBDatabaseImpl.cpp; sourceTree = "<group>"; };
+		C585A6A211D4FB3D004C3E4B /* IDBDatabaseImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBDatabaseImpl.h; sourceTree = "<group>"; };
+		C585A6A311D4FB3D004C3E4B /* IDBDatabaseRequest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBDatabaseRequest.cpp; sourceTree = "<group>"; };
+		C585A6A411D4FB3D004C3E4B /* IDBDatabaseRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBDatabaseRequest.h; sourceTree = "<group>"; };
+		C585A6A511D4FB3D004C3E4B /* IDBDatabaseRequest.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = IDBDatabaseRequest.idl; sourceTree = "<group>"; };
+		C585A6A611D4FB3D004C3E4B /* IDBErrorEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBErrorEvent.cpp; sourceTree = "<group>"; };
+		C585A6A711D4FB3D004C3E4B /* IDBErrorEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBErrorEvent.h; sourceTree = "<group>"; };
+		C585A6A811D4FB3D004C3E4B /* IDBErrorEvent.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = IDBErrorEvent.idl; sourceTree = "<group>"; };
+		C585A6A911D4FB3D004C3E4B /* IDBEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBEvent.cpp; sourceTree = "<group>"; };
+		C585A6AA11D4FB3D004C3E4B /* IDBEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBEvent.h; sourceTree = "<group>"; };
+		C585A6AB11D4FB3D004C3E4B /* IDBEvent.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = IDBEvent.idl; sourceTree = "<group>"; };
+		C585A6AC11D4FB3D004C3E4B /* IDBIndex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBIndex.h; sourceTree = "<group>"; };
+		C585A6AD11D4FB3D004C3E4B /* IDBIndexImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBIndexImpl.cpp; sourceTree = "<group>"; };
+		C585A6AE11D4FB3D004C3E4B /* IDBIndexImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBIndexImpl.h; sourceTree = "<group>"; };
+		C585A6AF11D4FB3D004C3E4B /* IDBIndexRequest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBIndexRequest.cpp; sourceTree = "<group>"; };
+		C585A6B011D4FB3D004C3E4B /* IDBIndexRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBIndexRequest.h; sourceTree = "<group>"; };
+		C585A6B111D4FB3D004C3E4B /* IDBIndexRequest.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = IDBIndexRequest.idl; sourceTree = "<group>"; };
+		C585A6B211D4FB3D004C3E4B /* IDBKey.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBKey.cpp; sourceTree = "<group>"; };
+		C585A6B311D4FB3D004C3E4B /* IDBKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBKey.h; sourceTree = "<group>"; };
+		C585A6B411D4FB3D004C3E4B /* IDBKey.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = IDBKey.idl; sourceTree = "<group>"; };
+		C585A6B511D4FB3D004C3E4B /* IDBKeyRange.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBKeyRange.cpp; sourceTree = "<group>"; };
+		C585A6B611D4FB3D004C3E4B /* IDBKeyRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBKeyRange.h; sourceTree = "<group>"; };
+		C585A6B711D4FB3D004C3E4B /* IDBKeyRange.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = IDBKeyRange.idl; sourceTree = "<group>"; };
+		C585A6B811D4FB3D004C3E4B /* IDBKeyTree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBKeyTree.h; sourceTree = "<group>"; };
+		C585A6B911D4FB3D004C3E4B /* IDBObjectStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBObjectStore.h; sourceTree = "<group>"; };
+		C585A6BA11D4FB3D004C3E4B /* IDBObjectStoreImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBObjectStoreImpl.cpp; sourceTree = "<group>"; };
+		C585A6BB11D4FB3D004C3E4B /* IDBObjectStoreImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBObjectStoreImpl.h; sourceTree = "<group>"; };
+		C585A6BC11D4FB3D004C3E4B /* IDBObjectStoreRequest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBObjectStoreRequest.cpp; sourceTree = "<group>"; };
+		C585A6BD11D4FB3D004C3E4B /* IDBObjectStoreRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBObjectStoreRequest.h; sourceTree = "<group>"; };
+		C585A6BE11D4FB3D004C3E4B /* IDBObjectStoreRequest.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = IDBObjectStoreRequest.idl; sourceTree = "<group>"; };
+		C585A6BF11D4FB3D004C3E4B /* IDBRequest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBRequest.cpp; sourceTree = "<group>"; };
+		C585A6C011D4FB3D004C3E4B /* IDBRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBRequest.h; sourceTree = "<group>"; };
+		C585A6C111D4FB3D004C3E4B /* IDBRequest.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = IDBRequest.idl; sourceTree = "<group>"; };
+		C585A6C211D4FB3D004C3E4B /* IDBSuccessEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBSuccessEvent.cpp; sourceTree = "<group>"; };
+		C585A6C311D4FB3D004C3E4B /* IDBSuccessEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBSuccessEvent.h; sourceTree = "<group>"; };
+		C585A6C411D4FB3D004C3E4B /* IDBSuccessEvent.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = IDBSuccessEvent.idl; sourceTree = "<group>"; };
+		C585A6C511D4FB3D004C3E4B /* IndexedDatabase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IndexedDatabase.cpp; sourceTree = "<group>"; };
+		C585A6C611D4FB3D004C3E4B /* IndexedDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IndexedDatabase.h; sourceTree = "<group>"; };
+		C585A6C711D4FB3D004C3E4B /* IndexedDatabaseImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IndexedDatabaseImpl.cpp; sourceTree = "<group>"; };
+		C585A6C811D4FB3D004C3E4B /* IndexedDatabaseImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IndexedDatabaseImpl.h; sourceTree = "<group>"; };
+		C585A6C911D4FB3D004C3E4B /* IndexedDatabaseRequest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IndexedDatabaseRequest.cpp; sourceTree = "<group>"; };
+		C585A6CA11D4FB3D004C3E4B /* IndexedDatabaseRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IndexedDatabaseRequest.h; sourceTree = "<group>"; };
+		C585A6CB11D4FB3D004C3E4B /* IndexedDatabaseRequest.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = IndexedDatabaseRequest.idl; sourceTree = "<group>"; };
 		C5D4AA78116BAFB60069CA93 /* GlyphMetricsMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GlyphMetricsMap.h; sourceTree = "<group>"; };
 		C5E9B67610697E1300C7BB1A /* StorageEventDispatcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StorageEventDispatcher.cpp; sourceTree = "<group>"; };
 		C5EBDD81105EDDEC0056816F /* StorageEventDispatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StorageEventDispatcher.h; sourceTree = "<group>"; };
-		C5F4F3FE119306AC00FDFADD /* JSIDBDatabaseError.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSIDBDatabaseError.cpp; sourceTree = "<group>"; };
-		C5F4F3FF119306AC00FDFADD /* JSIDBDatabaseError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSIDBDatabaseError.h; sourceTree = "<group>"; };
-		C5F4F400119306AC00FDFADD /* JSIDBDatabaseException.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSIDBDatabaseException.cpp; sourceTree = "<group>"; };
-		C5F4F401119306AC00FDFADD /* JSIDBDatabaseException.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSIDBDatabaseException.h; sourceTree = "<group>"; };
-		C5F4F402119306AC00FDFADD /* JSIDBDatabaseRequest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSIDBDatabaseRequest.cpp; sourceTree = "<group>"; };
-		C5F4F403119306AC00FDFADD /* JSIDBDatabaseRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSIDBDatabaseRequest.h; sourceTree = "<group>"; };
-		C5F4F404119306AC00FDFADD /* JSIDBRequest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSIDBRequest.cpp; sourceTree = "<group>"; };
-		C5F4F405119306AC00FDFADD /* JSIDBRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSIDBRequest.h; sourceTree = "<group>"; };
-		C5F4F40E119306C000FDFADD /* JSIndexedDatabaseRequest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSIndexedDatabaseRequest.cpp; sourceTree = "<group>"; };
-		C5F4F40F119306C000FDFADD /* JSIndexedDatabaseRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSIndexedDatabaseRequest.h; sourceTree = "<group>"; };
 		C6D74AD309AA282E000B0A52 /* ModifySelectionListLevel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModifySelectionListLevel.h; sourceTree = "<group>"; };
 		C6D74AE309AA290A000B0A52 /* ModifySelectionListLevel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ModifySelectionListLevel.cpp; sourceTree = "<group>"; };
 		CE02F0C311E83ADD00C6684A /* ScriptControllerBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptControllerBase.h; sourceTree = "<group>"; };
@@ -11241,60 +11259,58 @@
 				1AD51A130CB59CD300953D11 /* DatabaseTracker.cpp */,
 				1AD51A120CB59CD300953D11 /* DatabaseTracker.h */,
 				51FAFE330CECBF2D00BB3F24 /* DatabaseTrackerClient.h */,
-				C56C914F119D84CB00DE4CD9 /* IDBAny.cpp */,
-				C56C9150119D84CB00DE4CD9 /* IDBAny.h */,
-				C56C9151119D84CB00DE4CD9 /* IDBAny.idl */,
-				C5198F381192ECFD002B74A6 /* IDBCallbacks.h */,
-				C5198F3A1192ECFD002B74A6 /* IDBDatabase.h */,
-				C5198F3B1192ECFD002B74A6 /* IDBDatabaseError.h */,
-				C5198F3C1192ECFD002B74A6 /* IDBDatabaseError.idl */,
-				C5198F3D1192ECFD002B74A6 /* IDBDatabaseException.h */,
-				C5198F3E1192ECFD002B74A6 /* IDBDatabaseException.idl */,
-				C50AD2A911AC1631008CF2FB /* IDBDatabaseImpl.cpp */,
-				C50AD2AA11AC1631008CF2FB /* IDBDatabaseImpl.h */,
-				C5198F3F1192ECFD002B74A6 /* IDBDatabaseRequest.cpp */,
-				C5198F401192ECFD002B74A6 /* IDBDatabaseRequest.h */,
-				C5198F411192ECFD002B74A6 /* IDBDatabaseRequest.idl */,
-				C56C9159119D84E600DE4CD9 /* IDBErrorEvent.cpp */,
-				C56C915A119D84E600DE4CD9 /* IDBErrorEvent.h */,
-				C56C915B119D84E600DE4CD9 /* IDBErrorEvent.idl */,
-				C56C915C119D84E600DE4CD9 /* IDBEvent.cpp */,
-				C56C915D119D84E600DE4CD9 /* IDBEvent.h */,
-				C56C915E119D84E600DE4CD9 /* IDBEvent.idl */,
-				C51DA99F11AEF2C1009799C5 /* IDBIndex.h */,
-				C51DA9A011AEF2C1009799C5 /* IDBIndexImpl.cpp */,
-				C51DA9A111AEF2C1009799C5 /* IDBIndexImpl.h */,
-				C51DA9A211AEF2C1009799C5 /* IDBIndexRequest.cpp */,
-				C51DA9A311AEF2C1009799C5 /* IDBIndexRequest.h */,
-				C51DA9A411AEF2C1009799C5 /* IDBIndexRequest.idl */,
-				816C806611BE887E009A45E9 /* IDBKeyRange.cpp */,
-				816C806711BE887E009A45E9 /* IDBKeyRange.h */,
-				81CC114011BEAA9D00D0D856 /* IDBKeyRange.idl */,
-				B6693EE811AD63E6003F2770 /* IDBObjectStore.h */,
-				B6693EE811AD63E6003F2770 /* IDBObjectStore.h */,
-				B6B0540711B68F10002564C5 /* IDBObjectStoreImpl.cpp */,
-				B6B0540711B68F10002564C5 /* IDBObjectStoreImpl.cpp */,
-				B6B0540811B68F10002564C5 /* IDBObjectStoreImpl.h */,
-				B6B0540811B68F10002564C5 /* IDBObjectStoreImpl.h */,
-				B6693EE911AD63E6003F2770 /* IDBObjectStoreRequest.cpp */,
-				B6693EE911AD63E6003F2770 /* IDBObjectStoreRequest.cpp */,
-				B6693EEA11AD63E6003F2770 /* IDBObjectStoreRequest.h */,
-				B6693EEA11AD63E6003F2770 /* IDBObjectStoreRequest.h */,
-				B6693EEF11AD63F6003F2770 /* IDBObjectStoreRequest.idl */,
-				B6693EEF11AD63F6003F2770 /* IDBObjectStoreRequest.idl */,
-				C5198F421192ECFD002B74A6 /* IDBRequest.cpp */,
-				C5198F431192ECFD002B74A6 /* IDBRequest.h */,
-				C5198F441192ECFD002B74A6 /* IDBRequest.idl */,
-				C56C9165119D84FF00DE4CD9 /* IDBSuccessEvent.cpp */,
-				C56C9166119D84FF00DE4CD9 /* IDBSuccessEvent.h */,
-				C56C9167119D84FF00DE4CD9 /* IDBSuccessEvent.idl */,
-				C5198F451192ECFD002B74A6 /* IndexedDatabase.cpp */,
-				C5198F461192ECFD002B74A6 /* IndexedDatabase.h */,
-				C5198F471192ECFD002B74A6 /* IndexedDatabaseImpl.cpp */,
-				C5198F481192ECFD002B74A6 /* IndexedDatabaseImpl.h */,
-				C5198F491192ECFD002B74A6 /* IndexedDatabaseRequest.cpp */,
-				C5198F4A1192ECFD002B74A6 /* IndexedDatabaseRequest.h */,
-				C5198F4B1192ECFD002B74A6 /* IndexedDatabaseRequest.idl */,
+				C585A69811D4FB3D004C3E4B /* IDBAny.cpp */,
+				C585A69911D4FB3D004C3E4B /* IDBAny.h */,
+				C585A69A11D4FB3D004C3E4B /* IDBAny.idl */,
+				C585A69B11D4FB3D004C3E4B /* IDBCallbacks.h */,
+				C585A69C11D4FB3D004C3E4B /* IDBDatabase.h */,
+				C585A69D11D4FB3D004C3E4B /* IDBDatabaseError.h */,
+				C585A69E11D4FB3D004C3E4B /* IDBDatabaseError.idl */,
+				C585A69F11D4FB3D004C3E4B /* IDBDatabaseException.h */,
+				C585A6A011D4FB3D004C3E4B /* IDBDatabaseException.idl */,
+				C585A6A111D4FB3D004C3E4B /* IDBDatabaseImpl.cpp */,
+				C585A6A211D4FB3D004C3E4B /* IDBDatabaseImpl.h */,
+				C585A6A311D4FB3D004C3E4B /* IDBDatabaseRequest.cpp */,
+				C585A6A411D4FB3D004C3E4B /* IDBDatabaseRequest.h */,
+				C585A6A511D4FB3D004C3E4B /* IDBDatabaseRequest.idl */,
+				C585A6A611D4FB3D004C3E4B /* IDBErrorEvent.cpp */,
+				C585A6A711D4FB3D004C3E4B /* IDBErrorEvent.h */,
+				C585A6A811D4FB3D004C3E4B /* IDBErrorEvent.idl */,
+				C585A6A911D4FB3D004C3E4B /* IDBEvent.cpp */,
+				C585A6AA11D4FB3D004C3E4B /* IDBEvent.h */,
+				C585A6AB11D4FB3D004C3E4B /* IDBEvent.idl */,
+				C585A6AC11D4FB3D004C3E4B /* IDBIndex.h */,
+				C585A6AD11D4FB3D004C3E4B /* IDBIndexImpl.cpp */,
+				C585A6AE11D4FB3D004C3E4B /* IDBIndexImpl.h */,
+				C585A6AF11D4FB3D004C3E4B /* IDBIndexRequest.cpp */,
+				C585A6B011D4FB3D004C3E4B /* IDBIndexRequest.h */,
+				C585A6B111D4FB3D004C3E4B /* IDBIndexRequest.idl */,
+				C585A6B211D4FB3D004C3E4B /* IDBKey.cpp */,
+				C585A6B311D4FB3D004C3E4B /* IDBKey.h */,
+				C585A6B411D4FB3D004C3E4B /* IDBKey.idl */,
+				C585A6B511D4FB3D004C3E4B /* IDBKeyRange.cpp */,
+				C585A6B611D4FB3D004C3E4B /* IDBKeyRange.h */,
+				C585A6B711D4FB3D004C3E4B /* IDBKeyRange.idl */,
+				C585A6B811D4FB3D004C3E4B /* IDBKeyTree.h */,
+				C585A6B911D4FB3D004C3E4B /* IDBObjectStore.h */,
+				C585A6BA11D4FB3D004C3E4B /* IDBObjectStoreImpl.cpp */,
+				C585A6BB11D4FB3D004C3E4B /* IDBObjectStoreImpl.h */,
+				C585A6BC11D4FB3D004C3E4B /* IDBObjectStoreRequest.cpp */,
+				C585A6BD11D4FB3D004C3E4B /* IDBObjectStoreRequest.h */,
+				C585A6BE11D4FB3D004C3E4B /* IDBObjectStoreRequest.idl */,
+				C585A6BF11D4FB3D004C3E4B /* IDBRequest.cpp */,
+				C585A6C011D4FB3D004C3E4B /* IDBRequest.h */,
+				C585A6C111D4FB3D004C3E4B /* IDBRequest.idl */,
+				C585A6C211D4FB3D004C3E4B /* IDBSuccessEvent.cpp */,
+				C585A6C311D4FB3D004C3E4B /* IDBSuccessEvent.h */,
+				C585A6C411D4FB3D004C3E4B /* IDBSuccessEvent.idl */,
+				C585A6C511D4FB3D004C3E4B /* IndexedDatabase.cpp */,
+				C585A6C611D4FB3D004C3E4B /* IndexedDatabase.h */,
+				C585A6C711D4FB3D004C3E4B /* IndexedDatabaseImpl.cpp */,
+				C585A6C811D4FB3D004C3E4B /* IndexedDatabaseImpl.h */,
+				C585A6C911D4FB3D004C3E4B /* IndexedDatabaseRequest.cpp */,
+				C585A6CA11D4FB3D004C3E4B /* IndexedDatabaseRequest.h */,
+				C585A6CB11D4FB3D004C3E4B /* IndexedDatabaseRequest.idl */,
 				511F23130DC160DA004F0032 /* LocalStorageTask.cpp */,
 				511F23140DC160DA004F0032 /* LocalStorageTask.h */,
 				511F23150DC160DA004F0032 /* LocalStorageThread.cpp */,
@@ -14681,30 +14697,32 @@
 				B59DD697119029E5007E9684 /* JSDatabaseCallback.h */,
 				B58CEB6811913607002A6790 /* JSDatabaseSync.cpp */,
 				B58CEB6711913607002A6790 /* JSDatabaseSync.h */,
-				C56C9198119D915300DE4CD9 /* JSIDBAny.cpp */,
-				C56C9199119D915300DE4CD9 /* JSIDBAny.h */,
-				C5F4F3FE119306AC00FDFADD /* JSIDBDatabaseError.cpp */,
-				C5F4F3FF119306AC00FDFADD /* JSIDBDatabaseError.h */,
-				C5F4F400119306AC00FDFADD /* JSIDBDatabaseException.cpp */,
-				C5F4F401119306AC00FDFADD /* JSIDBDatabaseException.h */,
-				C5F4F402119306AC00FDFADD /* JSIDBDatabaseRequest.cpp */,
-				C5F4F403119306AC00FDFADD /* JSIDBDatabaseRequest.h */,
-				C56C919C119D918100DE4CD9 /* JSIDBErrorEvent.cpp */,
-				C56C919D119D918100DE4CD9 /* JSIDBErrorEvent.h */,
-				C56C919E119D918100DE4CD9 /* JSIDBEvent.cpp */,
-				C56C919F119D918100DE4CD9 /* JSIDBEvent.h */,
-				C5BBC9CE11AEF838007C2BFE /* JSIDBIndexRequest.cpp */,
-				C5BBC9CF11AEF838007C2BFE /* JSIDBIndexRequest.h */,
-				816C80B011BE9934009A45E9 /* JSIDBKeyRange.cpp */,
-				816C80AE11BE990D009A45E9 /* JSIDBKeyRange.h */,
-				B6693EF011AD6486003F2770 /* JSIDBObjectStoreRequest.cpp */,
-				B6693EF111AD6486003F2770 /* JSIDBObjectStoreRequest.h */,
-				C5F4F404119306AC00FDFADD /* JSIDBRequest.cpp */,
-				C5F4F405119306AC00FDFADD /* JSIDBRequest.h */,
-				C56C91A4119D918700DE4CD9 /* JSIDBSuccessEvent.cpp */,
-				C56C91A5119D918700DE4CD9 /* JSIDBSuccessEvent.h */,
-				C5F4F40E119306C000FDFADD /* JSIndexedDatabaseRequest.cpp */,
-				C5F4F40F119306C000FDFADD /* JSIndexedDatabaseRequest.h */,
+				C585A66411D4FB07004C3E4B /* JSIDBAny.cpp */,
+				C585A66511D4FB07004C3E4B /* JSIDBAny.h */,
+				C585A66611D4FB07004C3E4B /* JSIDBDatabaseError.cpp */,
+				C585A66711D4FB07004C3E4B /* JSIDBDatabaseError.h */,
+				C585A66811D4FB07004C3E4B /* JSIDBDatabaseException.cpp */,
+				C585A66911D4FB07004C3E4B /* JSIDBDatabaseException.h */,
+				C585A66A11D4FB07004C3E4B /* JSIDBDatabaseRequest.cpp */,
+				C585A66B11D4FB07004C3E4B /* JSIDBDatabaseRequest.h */,
+				C585A66C11D4FB07004C3E4B /* JSIDBErrorEvent.cpp */,
+				C585A66D11D4FB07004C3E4B /* JSIDBErrorEvent.h */,
+				C585A66E11D4FB07004C3E4B /* JSIDBEvent.cpp */,
+				C585A66F11D4FB07004C3E4B /* JSIDBEvent.h */,
+				C585A67011D4FB07004C3E4B /* JSIDBIndexRequest.cpp */,
+				C585A67111D4FB07004C3E4B /* JSIDBIndexRequest.h */,
+				C585A67211D4FB07004C3E4B /* JSIDBKey.cpp */,
+				C585A67311D4FB07004C3E4B /* JSIDBKey.h */,
+				C585A67411D4FB07004C3E4B /* JSIDBKeyRange.cpp */,
+				C585A67511D4FB07004C3E4B /* JSIDBKeyRange.h */,
+				C585A67611D4FB07004C3E4B /* JSIDBObjectStoreRequest.cpp */,
+				C585A67711D4FB07004C3E4B /* JSIDBObjectStoreRequest.h */,
+				C585A67811D4FB07004C3E4B /* JSIDBRequest.cpp */,
+				C585A67911D4FB07004C3E4B /* JSIDBRequest.h */,
+				C585A67A11D4FB07004C3E4B /* JSIDBSuccessEvent.cpp */,
+				C585A67B11D4FB07004C3E4B /* JSIDBSuccessEvent.h */,
+				C585A69411D4FB13004C3E4B /* JSIndexedDatabaseRequest.cpp */,
+				C585A69511D4FB13004C3E4B /* JSIndexedDatabaseRequest.h */,
 				514C76350CE9225E007EF3CD /* JSSQLError.cpp */,
 				BC8243250D0CE8A200460C8F /* JSSQLError.h */,
 				B525A96411CA2340003A23A8 /* JSSQLException.cpp */,
@@ -15576,6 +15594,8 @@
 				BC53DA2D1143121E000D817E /* DOMWrapperWorld.h */,
 				1432E8480C51493F00B1500F /* GCController.cpp */,
 				1432E8460C51493800B1500F /* GCController.h */,
+				C585A66011D4FAC5004C3E4B /* IDBBindingUtilities.cpp */,
+				C585A66111D4FAC5004C3E4B /* IDBBindingUtilities.h */,
 				1C81BA030E97348300266E07 /* JavaScriptCallFrame.cpp */,
 				1C81BA040E97348300266E07 /* JavaScriptCallFrame.h */,
 				BC53DAC411432FD9000D817E /* JSDebugWrapperSet.cpp */,
@@ -15749,7 +15769,8 @@
 				448AD27A0A4813790023D179 /* JSHTMLOptionsCollectionCustom.cpp */,
 				BC17F9650B64EBB8004A65CB /* JSHTMLSelectElementCustom.cpp */,
 				AB4CB4EA0B8BDA3D009F40B0 /* JSHTMLSelectElementCustom.h */,
-				C56C914D119D849800DE4CD9 /* JSIDBAnyCustom.cpp */,
+				C585A65C11D4FAB2004C3E4B /* JSIDBAnyCustom.cpp */,
+				C585A65D11D4FAB2004C3E4B /* JSIDBKeyCustom.cpp */,
 				A7D0318D0E93540300E24ACD /* JSImageDataCustom.cpp */,
 				7A0E76D410BF050700A0276E /* JSInjectedScriptHostCustom.cpp */,
 				7A74ECBC101839DA00BF939E /* JSInspectorFrontendHostCustom.cpp */,
@@ -18362,29 +18383,6 @@
 				1A2D753D0DE47FAB00F0A648 /* IconFetcher.h in Headers */,
 				513F14540AB634C400094DDF /* IconLoader.h in Headers */,
 				51E1ECC10C91C90400DC255B /* IconRecord.h in Headers */,
-				C56C9153119D84CB00DE4CD9 /* IDBAny.h in Headers */,
-				C5198F4C1192ECFD002B74A6 /* IDBCallbacks.h in Headers */,
-				C5198F4E1192ECFD002B74A6 /* IDBDatabase.h in Headers */,
-				C5198F4F1192ECFD002B74A6 /* IDBDatabaseError.h in Headers */,
-				C5198F511192ECFD002B74A6 /* IDBDatabaseException.h in Headers */,
-				C5198F541192ECFD002B74A6 /* IDBDatabaseRequest.h in Headers */,
-				C56C9160119D84E600DE4CD9 /* IDBErrorEvent.h in Headers */,
-				C56C9163119D84E600DE4CD9 /* IDBEvent.h in Headers */,
-				C51DA9A511AEF2C1009799C5 /* IDBIndex.h in Headers */,
-				C51DA9A511AEF2C1009799C5 /* IDBIndex.h in Headers */,
-				C51DA9A711AEF2C1009799C5 /* IDBIndexImpl.h in Headers */,
-				C51DA9A711AEF2C1009799C5 /* IDBIndexImpl.h in Headers */,
-				C51DA9A911AEF2C1009799C5 /* IDBIndexRequest.h in Headers */,
-				C51DA9A911AEF2C1009799C5 /* IDBIndexRequest.h in Headers */,
-				816C806911BE887E009A45E9 /* IDBKeyRange.h in Headers */,
-				B6693EEC11AD63E6003F2770 /* IDBObjectStore.h in Headers */,
-				B6693EEC11AD63E6003F2770 /* IDBObjectStore.h in Headers */,
-				B6B0540A11B68F10002564C5 /* IDBObjectStoreImpl.h in Headers */,
-				B6B0540A11B68F10002564C5 /* IDBObjectStoreImpl.h in Headers */,
-				B6693EEE11AD63E6003F2770 /* IDBObjectStoreRequest.h in Headers */,
-				B6693EEE11AD63E6003F2770 /* IDBObjectStoreRequest.h in Headers */,
-				C5198F571192ECFD002B74A6 /* IDBRequest.h in Headers */,
-				C56C9169119D84FF00DE4CD9 /* IDBSuccessEvent.h in Headers */,
 				1A71D57C0F33819000F9CE4E /* IdentifierRep.h in Headers */,
 				49E911C50EF86D47009D0CAF /* IdentityTransformOperation.h in Headers */,
 				C0C054CD1118C8E400CE2636 /* IDLParser.pm in Headers */,
@@ -18400,9 +18398,6 @@
 				4B3480940EEF50D400AC1B41 /* ImageSourceCG.h in Headers */,
 				316FE1180E6E1DA700BF6088 /* ImplicitAnimation.h in Headers */,
 				DB23C2CC0A508D29002489EB /* IndentOutdentCommand.h in Headers */,
-				C5198F5A1192ECFD002B74A6 /* IndexedDatabase.h in Headers */,
-				C5198F5C1192ECFD002B74A6 /* IndexedDatabaseImpl.h in Headers */,
-				C5198F5E1192ECFD002B74A6 /* IndexedDatabaseRequest.h in Headers */,
 				F3644B001119805900E0D537 /* InjectedScript.h in Headers */,
 				7A0E76FA10BF08ED00A0276E /* InjectedScriptHost.h in Headers */,
 				A8CFF5E50A155A05000A4234 /* InlineBox.h in Headers */,
@@ -18615,22 +18610,8 @@
 				A80E7B0C0A19D606007FB8C5 /* JSHTMLTitleElement.h in Headers */,
 				1A85B2110A1B258700D8C87C /* JSHTMLUListElement.h in Headers */,
 				E44614170CD6826900FADA75 /* JSHTMLVideoElement.h in Headers */,
-				C56C919B119D915300DE4CD9 /* JSIDBAny.h in Headers */,
-				C5F4F407119306AC00FDFADD /* JSIDBDatabaseError.h in Headers */,
-				C5F4F409119306AC00FDFADD /* JSIDBDatabaseException.h in Headers */,
-				C5F4F40B119306AC00FDFADD /* JSIDBDatabaseRequest.h in Headers */,
-				C56C91A1119D918100DE4CD9 /* JSIDBErrorEvent.h in Headers */,
-				C56C91A3119D918100DE4CD9 /* JSIDBEvent.h in Headers */,
-				C5BBC9D111AEF838007C2BFE /* JSIDBIndexRequest.h in Headers */,
-				C5BBC9D111AEF838007C2BFE /* JSIDBIndexRequest.h in Headers */,
-				816C80AF11BE990D009A45E9 /* JSIDBKeyRange.h in Headers */,
-				B6693EF311AD6486003F2770 /* JSIDBObjectStoreRequest.h in Headers */,
-				B6693EF311AD6486003F2770 /* JSIDBObjectStoreRequest.h in Headers */,
-				C5F4F40D119306AC00FDFADD /* JSIDBRequest.h in Headers */,
-				C56C91A7119D918700DE4CD9 /* JSIDBSuccessEvent.h in Headers */,
 				BC6C49F40D7DBA0500FFA558 /* JSImageConstructor.h in Headers */,
 				A77979290D6B9E64003851B9 /* JSImageData.h in Headers */,
-				C5F4F411119306C000FDFADD /* JSIndexedDatabaseRequest.h in Headers */,
 				7A0E76DB10BF059800A0276E /* JSInjectedScriptHost.h in Headers */,
 				41F060CE0F5EEB2B00A07EAC /* JSInspectorBackend.h in Headers */,
 				7A0E771F10C00DB100A0276E /* JSInspectorFrontendHost.h in Headers */,
@@ -19750,6 +19731,43 @@
 				8A9A587111E84C36008ACFD1 /* JSNavigation.h in Headers */,
 				8A9A587511E84C81008ACFD1 /* JSPerformance.h in Headers */,
 				8A9A588811E84F37008ACFD1 /* JSTiming.h in Headers */,
+				C585A66311D4FAC5004C3E4B /* IDBBindingUtilities.h in Headers */,
+				C585A67D11D4FB08004C3E4B /* JSIDBAny.h in Headers */,
+				C585A67F11D4FB08004C3E4B /* JSIDBDatabaseError.h in Headers */,
+				C585A68111D4FB08004C3E4B /* JSIDBDatabaseException.h in Headers */,
+				C585A68311D4FB08004C3E4B /* JSIDBDatabaseRequest.h in Headers */,
+				C585A68511D4FB08004C3E4B /* JSIDBErrorEvent.h in Headers */,
+				C585A68711D4FB08004C3E4B /* JSIDBEvent.h in Headers */,
+				C585A68911D4FB08004C3E4B /* JSIDBIndexRequest.h in Headers */,
+				C585A68B11D4FB08004C3E4B /* JSIDBKey.h in Headers */,
+				C585A68D11D4FB08004C3E4B /* JSIDBKeyRange.h in Headers */,
+				C585A68F11D4FB08004C3E4B /* JSIDBObjectStoreRequest.h in Headers */,
+				C585A69111D4FB08004C3E4B /* JSIDBRequest.h in Headers */,
+				C585A69311D4FB08004C3E4B /* JSIDBSuccessEvent.h in Headers */,
+				C585A69711D4FB13004C3E4B /* JSIndexedDatabaseRequest.h in Headers */,
+				C585A6CD11D4FB3D004C3E4B /* IDBAny.h in Headers */,
+				C585A6CF11D4FB3D004C3E4B /* IDBCallbacks.h in Headers */,
+				C585A6D011D4FB3D004C3E4B /* IDBDatabase.h in Headers */,
+				C585A6D111D4FB3D004C3E4B /* IDBDatabaseError.h in Headers */,
+				C585A6D311D4FB3D004C3E4B /* IDBDatabaseException.h in Headers */,
+				C585A6D611D4FB3D004C3E4B /* IDBDatabaseImpl.h in Headers */,
+				C585A6D811D4FB3D004C3E4B /* IDBDatabaseRequest.h in Headers */,
+				C585A6DB11D4FB3D004C3E4B /* IDBErrorEvent.h in Headers */,
+				C585A6DE11D4FB3D004C3E4B /* IDBEvent.h in Headers */,
+				C585A6E011D4FB3D004C3E4B /* IDBIndex.h in Headers */,
+				C585A6E211D4FB3D004C3E4B /* IDBIndexImpl.h in Headers */,
+				C585A6E411D4FB3D004C3E4B /* IDBIndexRequest.h in Headers */,
+				C585A6E711D4FB3D004C3E4B /* IDBKey.h in Headers */,
+				C585A6EA11D4FB3D004C3E4B /* IDBKeyRange.h in Headers */,
+				C585A6EC11D4FB3D004C3E4B /* IDBKeyTree.h in Headers */,
+				C585A6ED11D4FB3D004C3E4B /* IDBObjectStore.h in Headers */,
+				C585A6EF11D4FB3D004C3E4B /* IDBObjectStoreImpl.h in Headers */,
+				C585A6F111D4FB3D004C3E4B /* IDBObjectStoreRequest.h in Headers */,
+				C585A6F411D4FB3D004C3E4B /* IDBRequest.h in Headers */,
+				C585A6F711D4FB3D004C3E4B /* IDBSuccessEvent.h in Headers */,
+				C585A6FA11D4FB3D004C3E4B /* IndexedDatabase.h in Headers */,
+				C585A6FC11D4FB3D004C3E4B /* IndexedDatabaseImpl.h in Headers */,
+				C585A6FE11D4FB3D004C3E4B /* IndexedDatabaseRequest.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -20776,23 +20794,6 @@
 				513F14530AB634C400094DDF /* IconLoader.cpp in Sources */,
 				B275358E0B053A66002CE64F /* IconMac.mm in Sources */,
 				51E1ECC00C91C90400DC255B /* IconRecord.cpp in Sources */,
-				C56C9152119D84CB00DE4CD9 /* IDBAny.cpp in Sources */,
-				B627FB2D11AD743500E97B72 /* IDBDatabaseImpl.cpp in Sources */,
-				B627FB2D11AD743500E97B72 /* IDBDatabaseImpl.cpp in Sources */,
-				C5198F531192ECFD002B74A6 /* IDBDatabaseRequest.cpp in Sources */,
-				C56C915F119D84E600DE4CD9 /* IDBErrorEvent.cpp in Sources */,
-				C56C9162119D84E600DE4CD9 /* IDBEvent.cpp in Sources */,
-				C51DA9A611AEF2C1009799C5 /* IDBIndexImpl.cpp in Sources */,
-				C51DA9A611AEF2C1009799C5 /* IDBIndexImpl.cpp in Sources */,
-				C51DA9A811AEF2C1009799C5 /* IDBIndexRequest.cpp in Sources */,
-				C51DA9A811AEF2C1009799C5 /* IDBIndexRequest.cpp in Sources */,
-				816C806811BE887E009A45E9 /* IDBKeyRange.cpp in Sources */,
-				B6B0540911B68F10002564C5 /* IDBObjectStoreImpl.cpp in Sources */,
-				B6B0540911B68F10002564C5 /* IDBObjectStoreImpl.cpp in Sources */,
-				B6693EED11AD63E6003F2770 /* IDBObjectStoreRequest.cpp in Sources */,
-				B6693EED11AD63E6003F2770 /* IDBObjectStoreRequest.cpp in Sources */,
-				C5198F561192ECFD002B74A6 /* IDBRequest.cpp in Sources */,
-				C56C9168119D84FF00DE4CD9 /* IDBSuccessEvent.cpp in Sources */,
 				1A71D57B0F33819000F9CE4E /* IdentifierRep.cpp in Sources */,
 				B275356F0B053814002CE64F /* Image.cpp in Sources */,
 				B2A10B940B3818D700099AA4 /* ImageBufferCG.cpp in Sources */,
@@ -20806,9 +20807,6 @@
 				4B3480930EEF50D400AC1B41 /* ImageSourceCGMac.mm in Sources */,
 				316FE1170E6E1DA700BF6088 /* ImplicitAnimation.cpp in Sources */,
 				DB23C2CB0A508D29002489EB /* IndentOutdentCommand.cpp in Sources */,
-				C5198F591192ECFD002B74A6 /* IndexedDatabase.cpp in Sources */,
-				C5198F5B1192ECFD002B74A6 /* IndexedDatabaseImpl.cpp in Sources */,
-				C5198F5D1192ECFD002B74A6 /* IndexedDatabaseRequest.cpp in Sources */,
 				F3644AFF1119805900E0D537 /* InjectedScript.cpp in Sources */,
 				7A0E76F910BF08ED00A0276E /* InjectedScriptHost.cpp in Sources */,
 				A8CFF5E60A155A05000A4234 /* InlineBox.cpp in Sources */,
@@ -21061,24 +21059,9 @@
 				A80E7B130A19D606007FB8C5 /* JSHTMLTitleElement.cpp in Sources */,
 				1A85B2100A1B258700D8C87C /* JSHTMLUListElement.cpp in Sources */,
 				E44614160CD6826900FADA75 /* JSHTMLVideoElement.cpp in Sources */,
-				C56C919A119D915300DE4CD9 /* JSIDBAny.cpp in Sources */,
-				C56C914E119D849800DE4CD9 /* JSIDBAnyCustom.cpp in Sources */,
-				C5F4F406119306AC00FDFADD /* JSIDBDatabaseError.cpp in Sources */,
-				C5F4F408119306AC00FDFADD /* JSIDBDatabaseException.cpp in Sources */,
-				C5F4F40A119306AC00FDFADD /* JSIDBDatabaseRequest.cpp in Sources */,
-				C56C91A0119D918100DE4CD9 /* JSIDBErrorEvent.cpp in Sources */,
-				C56C91A2119D918100DE4CD9 /* JSIDBEvent.cpp in Sources */,
-				C5BBC9D011AEF838007C2BFE /* JSIDBIndexRequest.cpp in Sources */,
-				C5BBC9D011AEF838007C2BFE /* JSIDBIndexRequest.cpp in Sources */,
-				816C80B111BE9934009A45E9 /* JSIDBKeyRange.cpp in Sources */,
-				B6693EF211AD6486003F2770 /* JSIDBObjectStoreRequest.cpp in Sources */,
-				B6693EF211AD6486003F2770 /* JSIDBObjectStoreRequest.cpp in Sources */,
-				C5F4F40C119306AC00FDFADD /* JSIDBRequest.cpp in Sources */,
-				C56C91A6119D918700DE4CD9 /* JSIDBSuccessEvent.cpp in Sources */,
 				BC6C49F30D7DBA0500FFA558 /* JSImageConstructor.cpp in Sources */,
 				A77979280D6B9E64003851B9 /* JSImageData.cpp in Sources */,
 				A7D0318E0E93540300E24ACD /* JSImageDataCustom.cpp in Sources */,
-				C5F4F410119306C000FDFADD /* JSIndexedDatabaseRequest.cpp in Sources */,
 				7A0E76DA10BF059800A0276E /* JSInjectedScriptHost.cpp in Sources */,
 				7A0E76D510BF050700A0276E /* JSInjectedScriptHostCustom.cpp in Sources */,
 				41F060CD0F5EEB2B00A07EAC /* JSInspectorBackend.cpp in Sources */,
@@ -22138,6 +22121,38 @@
 				8A9A587011E84C36008ACFD1 /* JSNavigation.cpp in Sources */,
 				8A9A587411E84C81008ACFD1 /* JSPerformance.cpp in Sources */,
 				8A9A588711E84F37008ACFD1 /* JSTiming.cpp in Sources */,
+				C585A65E11D4FAB2004C3E4B /* JSIDBAnyCustom.cpp in Sources */,
+				C585A65F11D4FAB2004C3E4B /* JSIDBKeyCustom.cpp in Sources */,
+				C585A66211D4FAC5004C3E4B /* IDBBindingUtilities.cpp in Sources */,
+				C585A67C11D4FB08004C3E4B /* JSIDBAny.cpp in Sources */,
+				C585A67E11D4FB08004C3E4B /* JSIDBDatabaseError.cpp in Sources */,
+				C585A68011D4FB08004C3E4B /* JSIDBDatabaseException.cpp in Sources */,
+				C585A68211D4FB08004C3E4B /* JSIDBDatabaseRequest.cpp in Sources */,
+				C585A68411D4FB08004C3E4B /* JSIDBErrorEvent.cpp in Sources */,
+				C585A68611D4FB08004C3E4B /* JSIDBEvent.cpp in Sources */,
+				C585A68811D4FB08004C3E4B /* JSIDBIndexRequest.cpp in Sources */,
+				C585A68A11D4FB08004C3E4B /* JSIDBKey.cpp in Sources */,
+				C585A68C11D4FB08004C3E4B /* JSIDBKeyRange.cpp in Sources */,
+				C585A68E11D4FB08004C3E4B /* JSIDBObjectStoreRequest.cpp in Sources */,
+				C585A69011D4FB08004C3E4B /* JSIDBRequest.cpp in Sources */,
+				C585A69211D4FB08004C3E4B /* JSIDBSuccessEvent.cpp in Sources */,
+				C585A69611D4FB13004C3E4B /* JSIndexedDatabaseRequest.cpp in Sources */,
+				C585A6CC11D4FB3D004C3E4B /* IDBAny.cpp in Sources */,
+				C585A6D511D4FB3D004C3E4B /* IDBDatabaseImpl.cpp in Sources */,
+				C585A6D711D4FB3D004C3E4B /* IDBDatabaseRequest.cpp in Sources */,
+				C585A6DA11D4FB3D004C3E4B /* IDBErrorEvent.cpp in Sources */,
+				C585A6DD11D4FB3D004C3E4B /* IDBEvent.cpp in Sources */,
+				C585A6E111D4FB3D004C3E4B /* IDBIndexImpl.cpp in Sources */,
+				C585A6E311D4FB3D004C3E4B /* IDBIndexRequest.cpp in Sources */,
+				C585A6E611D4FB3D004C3E4B /* IDBKey.cpp in Sources */,
+				C585A6E911D4FB3D004C3E4B /* IDBKeyRange.cpp in Sources */,
+				C585A6EE11D4FB3D004C3E4B /* IDBObjectStoreImpl.cpp in Sources */,
+				C585A6F011D4FB3D004C3E4B /* IDBObjectStoreRequest.cpp in Sources */,
+				C585A6F311D4FB3D004C3E4B /* IDBRequest.cpp in Sources */,
+				C585A6F611D4FB3D004C3E4B /* IDBSuccessEvent.cpp in Sources */,
+				C585A6F911D4FB3D004C3E4B /* IndexedDatabase.cpp in Sources */,
+				C585A6FB11D4FB3D004C3E4B /* IndexedDatabaseImpl.cpp in Sources */,
+				C585A6FD11D4FB3D004C3E4B /* IndexedDatabaseRequest.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

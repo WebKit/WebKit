@@ -26,11 +26,11 @@
 #ifndef IDBKeyTree_h
 #define IDBKeyTree_h
 
+#if ENABLE(INDEXED_DATABASE)
+
 #include "IDBKey.h"
 #include <wtf/AVLTree.h>
 #include <wtf/Vector.h>
-
-#if ENABLE(INDEXED_DATABASE)
 
 namespace WebCore {
 
@@ -43,9 +43,9 @@ public:
     }
     ~IDBKeyTree();
 
-    PassRefPtr<ValueType> get(PassRefPtr<IDBKey> key);
-    void put(PassRefPtr<IDBKey> key, PassRefPtr<ValueType> value);
-    void remove(PassRefPtr<IDBKey> key);
+    ValueType* get(IDBKey* key);
+    void put(IDBKey* key, ValueType* value);
+    void remove(IDBKey* key);
 
 private:
     struct TreeNode {
@@ -118,34 +118,30 @@ int IDBKeyTree<ValueType>::AVLTreeAbstractor::compare_key_key(key va, key vb)
 }
 
 template <typename ValueType>
-PassRefPtr<ValueType> IDBKeyTree<ValueType>::get(PassRefPtr<IDBKey> prpKey)
+ValueType* IDBKeyTree<ValueType>::get(IDBKey* key)
 {
-    RefPtr<IDBKey> key = prpKey;
-    TreeNode* node = m_tree.search(key.get());
+    TreeNode* node = m_tree.search(key);
     if (!node)
         return 0;
-    return node->value;
+    return node->value.get();
 }
 
-
 template <typename ValueType>
-void IDBKeyTree<ValueType>::put(PassRefPtr<IDBKey> prpKey, PassRefPtr<ValueType> value)
+void IDBKeyTree<ValueType>::put(IDBKey* key, ValueType* value)
 {
-    RefPtr<IDBKey> key = prpKey;
-    TreeNode* node = m_tree.search(key.get());
+    TreeNode* node = m_tree.search(key);
     if (!node) {
         node = new TreeNode();
-        node->key = key.release();
+        node->key = key;
         m_tree.insert(node);
     }
     node->value = value;
 }
 
 template <typename ValueType>
-void IDBKeyTree<ValueType>::remove(PassRefPtr<IDBKey> prpKey)
+void IDBKeyTree<ValueType>::remove(IDBKey* key)
 {
-    RefPtr<IDBKey> key = prpKey;
-    TreeNode* node = m_tree.remove(key.get());
+    TreeNode* node = m_tree.remove(key);
     if (node)
         delete node;
 }

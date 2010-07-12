@@ -23,42 +23,63 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebIDBObjectStoreImpl_h
-#define WebIDBObjectStoreImpl_h
+#ifndef WebIDBKey_h
+#define WebIDBKey_h
 
 #include "WebCommon.h"
-#include "WebIDBObjectStore.h"
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefPtr.h>
+#include "WebPrivatePtr.h"
+#include "WebString.h"
 
-namespace WebCore { class IDBObjectStore; }
+namespace WebCore { class IDBKey; }
 
 namespace WebKit {
 
-class WebIDBIndex;
-
-// See comment in WebIndexedObjectStore for a high level overview these classes.
-class WebIDBObjectStoreImpl : public WebIDBObjectStore {
+class WebIDBKey {
 public:
-    WebIDBObjectStoreImpl(WTF::PassRefPtr<WebCore::IDBObjectStore> objectStore);
-    ~WebIDBObjectStoreImpl();
+    ~WebIDBKey();
+  
+    WEBKIT_API static WebIDBKey createNull();
+    WEBKIT_API static WebIDBKey createInvalid();
 
-    WebString name() const;
-    WebString keyPath() const;
-    WebDOMStringList indexNames() const;
+    WebIDBKey(const WebString& string) { assign(string); }
+    WebIDBKey(int32_t number) { assign(number); }
+    WebIDBKey(const WebIDBKey& e) { assign(e); }
+    WebIDBKey& operator=(const WebIDBKey& e)
+    {
+        assign(e);
+        return *this;
+    }
 
-    void get(const WebIDBKey& key, WebIDBCallbacks*);
-    void put(const WebSerializedScriptValue& value, const WebIDBKey& key, bool addOnly, WebIDBCallbacks*);
-    void remove(const WebIDBKey& key, WebIDBCallbacks*);
+    WEBKIT_API void assign(const WebIDBKey&);
+    WEBKIT_API void assignNull();
+    WEBKIT_API void assign(const WebString&);
+    WEBKIT_API void assign(int32_t);
+    WEBKIT_API void assignInvalid();
 
-    void createIndex(const WebString& name, const WebString& keyPath, bool unique, WebIDBCallbacks* callbacks);
-    WebIDBIndex* index(const WebString& name);
-    void removeIndex(const WebString& name, WebIDBCallbacks* callbacks);
+    enum Type {
+        NullType = 0,
+        StringType,
+        NumberType,
+        // Types not in WebCore::IDBKey:
+        InvalidType
+    };
 
- private:
-    WTF::RefPtr<WebCore::IDBObjectStore> m_objectStore;
+    WEBKIT_API Type type() const;
+    WEBKIT_API WebString string() const; // Only valid for StringType.
+    WEBKIT_API int32_t number() const; // Only valid for numberType.
+
+#if WEBKIT_IMPLEMENTATION
+    WebIDBKey(const WTF::PassRefPtr<WebCore::IDBKey>&);
+    WebIDBKey& operator=(const WTF::PassRefPtr<WebCore::IDBKey>&);
+    operator WTF::PassRefPtr<WebCore::IDBKey>() const;
+#endif
+
+private:
+    WebIDBKey() { }
+
+    WebPrivatePtr<WebCore::IDBKey> m_private;
 };
 
 } // namespace WebKit
 
-#endif // WebIDBObjectStoreImpl_h
+#endif // WebIDBKey_h

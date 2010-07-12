@@ -335,6 +335,7 @@ SET(WebCore_IDL_FILES
     storage/IDBErrorEvent.idl
     storage/IDBEvent.idl
     storage/IDBIndexRequest.idl
+    storage/IDBKey.idl
     storage/IDBKeyRange.idl
     storage/IDBObjectStoreRequest.idl
     storage/IDBRequest.idl
@@ -556,6 +557,7 @@ SET(WebCore_SOURCES
     bindings/js/DOMObjectHashTableMap.cpp
     bindings/js/DOMWrapperWorld.cpp
     bindings/js/GCController.cpp
+    bindings/js/IDBBindingUtilities.cpp
     bindings/js/JavaScriptCallFrame.cpp
     bindings/js/JSAttrCustom.cpp
     bindings/js/JSCallbackData.cpp
@@ -599,6 +601,8 @@ SET(WebCore_SOURCES
     bindings/js/JSExceptionBase.cpp
     bindings/js/JSGeolocationCustom.cpp
     bindings/js/JSHistoryCustom.cpp
+    bindings/js/JSIDBAnyCustom.cpp
+    bindings/js/JSIDBKeyCustom.cpp
     bindings/js/JSHTMLAllCollectionCustom.cpp
     bindings/js/JSHTMLAppletElementCustom.cpp
     bindings/js/JSHTMLCanvasElementCustom.cpp
@@ -1406,6 +1410,7 @@ SET(WebCore_SOURCES
     storage/IDBDatabaseRequest.cpp
     storage/IDBErrorEvent.cpp
     storage/IDBEvent.cpp
+    storage/IDBKey.cpp
     storage/IDBKeyRange.cpp
     storage/IDBRequest.cpp
     storage/IDBObjectStoreImpl.cpp

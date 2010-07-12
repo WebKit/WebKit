@@ -30,11 +30,13 @@
 #include "IDBDatabaseError.h"
 #include "IDBDatabaseProxy.h"
 #include "IDBIndexProxy.h"
+#include "IDBKey.h"
 #include "IDBObjectStoreProxy.h"
 #include "WebIDBCallbacks.h"
 #include "WebIDBDatabase.h"
 #include "WebIDBDatabaseError.h"
 #include "WebIDBIndex.h"
+#include "WebIDBKey.h"
 #include "WebIDBObjectStore.h"
 #include "WebSerializedScriptValue.h"
 
@@ -66,6 +68,12 @@ void WebIDBCallbacksImpl::onSuccess()
 void WebIDBCallbacksImpl::onSuccess(WebKit::WebIDBDatabase* webKitInstance)
 {
     m_callbacks->onSuccess(IDBDatabaseProxy::create(webKitInstance));
+    m_callbacks.clear();
+}
+
+void WebIDBCallbacksImpl::onSuccess(const WebKit::WebIDBKey& key)
+{
+    m_callbacks->onSuccess(key);
     m_callbacks.clear();
 }
 

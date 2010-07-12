@@ -29,6 +29,7 @@
 #include "DOMStringList.h"
 #include "IDBAny.h"
 #include "IDBIndexRequest.h"
+#include "IDBKey.h"
 #include "SerializedScriptValue.h"
 #include <wtf/UnusedParam.h>
 
@@ -60,47 +61,32 @@ PassRefPtr<DOMStringList> IDBObjectStoreRequest::indexNames() const
     return m_objectStore->indexNames();
 }
 
-PassRefPtr<IDBRequest> IDBObjectStoreRequest::get(ScriptExecutionContext* context, PassRefPtr<SerializedScriptValue> key)
+PassRefPtr<IDBRequest> IDBObjectStoreRequest::get(ScriptExecutionContext* context, PassRefPtr<IDBKey> key)
 {
-    // FIXME: implement
-    UNUSED_PARAM(context);
-    UNUSED_PARAM(key);
-    return 0;
+    RefPtr<IDBRequest> request = IDBRequest::create(context, m_this);
+    m_objectStore->get(key, request);
+    return request;
 }
 
-PassRefPtr<IDBRequest> IDBObjectStoreRequest::add(ScriptExecutionContext* context, PassRefPtr<SerializedScriptValue> value, PassRefPtr<SerializedScriptValue> key)
+PassRefPtr<IDBRequest> IDBObjectStoreRequest::add(ScriptExecutionContext* context, PassRefPtr<SerializedScriptValue> value, PassRefPtr<IDBKey> key)
 {
-    // FIXME: implement
-    UNUSED_PARAM(context);
-    UNUSED_PARAM(value);
-    UNUSED_PARAM(key);
-    return 0;
+    RefPtr<IDBRequest> request = IDBRequest::create(context, m_this);
+    m_objectStore->put(value, key, true, request);
+    return request;
 }
 
-PassRefPtr<IDBRequest> IDBObjectStoreRequest::modify(ScriptExecutionContext* context, PassRefPtr<SerializedScriptValue> value, PassRefPtr<SerializedScriptValue> key)
+PassRefPtr<IDBRequest> IDBObjectStoreRequest::put(ScriptExecutionContext* context, PassRefPtr<SerializedScriptValue> value, PassRefPtr<IDBKey> key)
 {
-    // FIXME: implement
-    UNUSED_PARAM(context);
-    UNUSED_PARAM(value);
-    UNUSED_PARAM(key);
-    return 0;
+    RefPtr<IDBRequest> request = IDBRequest::create(context, m_this);
+    m_objectStore->put(value, key, false, request);
+    return request;
 }
 
-PassRefPtr<IDBRequest> IDBObjectStoreRequest::addOrModify(ScriptExecutionContext* context, PassRefPtr<SerializedScriptValue> value, PassRefPtr<SerializedScriptValue> key)
+PassRefPtr<IDBRequest> IDBObjectStoreRequest::remove(ScriptExecutionContext* context, PassRefPtr<IDBKey> key)
 {
-    // FIXME: implement
-    UNUSED_PARAM(context);
-    UNUSED_PARAM(value);
-    UNUSED_PARAM(key);
-    return 0;
-}
-
-PassRefPtr<IDBRequest> IDBObjectStoreRequest::remove(ScriptExecutionContext* context, PassRefPtr<SerializedScriptValue> key)
-{
-    // FIXME: implement
-    UNUSED_PARAM(context);
-    UNUSED_PARAM(key);
-    return 0;
+    RefPtr<IDBRequest> request = IDBRequest::create(context, m_this);
+    m_objectStore->remove(key, request);
+    return request;
 }
 
 PassRefPtr<IDBRequest> IDBObjectStoreRequest::createIndex(ScriptExecutionContext* context, const String& name, const String& keyPath, bool unique)

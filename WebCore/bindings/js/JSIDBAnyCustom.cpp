@@ -11,9 +11,6 @@
  * copyright notice, this list of conditions and the following disclaimer
  * in the documentation and/or other materials provided with the
  * distribution.
- *     * Neither the name of Google Inc. nor the names of its
- * contributors may be used to endorse or promote products derived from
- * this software without specific prior written permission.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -37,10 +34,12 @@
 #include "IDBAny.h"
 #include "IDBDatabaseRequest.h"
 #include "IDBIndexRequest.h"
+#include "IDBKey.h"
 #include "IDBObjectStoreRequest.h"
 #include "IndexedDatabaseRequest.h"
 #include "JSIDBDatabaseRequest.h"
 #include "JSIDBIndexRequest.h"
+#include "JSIDBKey.h"
 #include "JSIDBObjectStoreRequest.h"
 #include "JSIndexedDatabaseRequest.h"
 #include "SerializedScriptValue.h"
@@ -63,6 +62,8 @@ JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, IDBAny* idbAny)
         return toJS(exec, globalObject, idbAny->idbDatabaseRequest());
     case IDBAny::IDBIndexRequestType:
         return toJS(exec, globalObject, idbAny->idbIndexRequest());
+    case IDBAny::IDBKeyType:
+        return toJS(exec, globalObject, idbAny->idbKey());
     case IDBAny::IDBObjectStoreRequestType:
         return toJS(exec, globalObject, idbAny->idbObjectStoreRequest());
     case IDBAny::IndexedDatabaseRequestType:

@@ -27,9 +27,11 @@
 #include "IDBObjectStoreImpl.h"
 
 #include "DOMStringList.h"
+#include "IDBBindingUtilities.h"
 #include "IDBCallbacks.h"
 #include "IDBDatabaseException.h"
 #include "IDBIndexImpl.h"
+#include "IDBKeyTree.h"
 
 #if ENABLE(INDEXED_DATABASE)
 
@@ -43,6 +45,7 @@ IDBObjectStoreImpl::IDBObjectStoreImpl(const String& name, const String& keyPath
     : m_name(name)
     , m_keyPath(keyPath)
     , m_autoIncrement(autoIncrement)
+    , m_tree(Tree::create())
 {
 }
 
@@ -52,6 +55,50 @@ PassRefPtr<DOMStringList> IDBObjectStoreImpl::indexNames() const
     for (IndexMap::const_iterator it = m_indexes.begin(); it != m_indexes.end(); ++it)
         indexNames->append(it->first);
     return indexNames.release();
+}
+
+void IDBObjectStoreImpl::get(PassRefPtr<IDBKey> key, PassRefPtr<IDBCallbacks> callbacks)
+{
+    RefPtr<SerializedScriptValue> value = m_tree->get(key.get());
+    if (!value) {
+        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::NOT_FOUND_ERR, "Key does not exist in the object store."));
+        return;
+    }
+    callbacks->onSuccess(value.get());
+}
+
+void IDBObjectStoreImpl::put(PassRefPtr<SerializedScriptValue> value, PassRefPtr<IDBKey> prpKey, bool addOnly, PassRefPtr<IDBCallbacks> callbacks)
+{
+    RefPtr<IDBKey> key = prpKey;
+
+    if (!m_keyPath.isNull()) {
+        if (key) {
+            callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UNKNOWN_ERR, "A key was supplied for an objectStore that has a keyPath.")); 
+            return;
+        }
+        ASSERT_NOT_REACHED();
+        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UNKNOWN_ERR, "FIXME: keyPath not yet supported."));
+        return;
+    }
+
+    if (!key) {
+        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::DATA_ERR, "No key supplied."));
+        return;
+    }
+
+    if (addOnly && m_tree->get(key.get())) {
+        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::CONSTRAINT_ERR, "Key already exists in the object store."));
+        return;
+    }
+
+    m_tree->put(key.get(), value.get());
+    callbacks->onSuccess(key.get());
+}
+
+void IDBObjectStoreImpl::remove(PassRefPtr<IDBKey> key, PassRefPtr<IDBCallbacks> callbacks)
+{
+    m_tree->remove(key.get());
+    callbacks->onSuccess();
 }
 
 void IDBObjectStoreImpl::createIndex(const String& name, const String& keyPath, bool unique, PassRefPtr<IDBCallbacks> callbacks)

@@ -53,6 +53,9 @@ public:
 
     WEBKIT_API static WebSerializedScriptValue fromString(const WebString&);
 
+    // Create a WebSerializedScriptValue that represents a serialization error.
+    WEBKIT_API static WebSerializedScriptValue createInvalid();
+
     WEBKIT_API void reset();
     WEBKIT_API void assign(const WebSerializedScriptValue&);
 

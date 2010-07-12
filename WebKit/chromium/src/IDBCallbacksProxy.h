@@ -42,11 +42,6 @@ class WebIDBCallbacks;
 
 namespace WebCore {
 
-class IDBDatabaseError;
-class IDBDatabase;
-class IDBObjectStore;
-class SerializedScriptValue;
-
 class IDBCallbacksProxy : public IDBCallbacks {
 public:
     static PassRefPtr<IDBCallbacksProxy> create(PassOwnPtr<WebKit::WebIDBCallbacks>);

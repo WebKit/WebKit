@@ -26,10 +26,10 @@
 #include "config.h"
 #include "IDBBindingUtilities.h"
 
+#if ENABLE(INDEXED_DATABASE)
+
 #include "IDBKey.h"
 #include "V8Binding.h"
-
-#if ENABLE(INDEXED_DATABASE)
 
 namespace WebCore {
 

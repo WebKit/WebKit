@@ -35,6 +35,7 @@
 #include "WebIDBDatabaseImpl.h"
 #include "WebIDBDatabaseError.h"
 #include "WebIDBIndexImpl.h"
+#include "WebIDBKey.h"
 #include "WebIDBObjectStoreImpl.h"
 #include "WebSerializedScriptValue.h"
 
@@ -82,7 +83,8 @@ void IDBCallbacksProxy::onSuccess(PassRefPtr<IDBIndex> idbIndex)
 
 void IDBCallbacksProxy::onSuccess(PassRefPtr<IDBKey> idbKey)
 {
-    ASSERT_NOT_REACHED();
+    m_callbacks->onSuccess(WebKit::WebIDBKey(idbKey));
+    m_callbacks.clear();
 }
 
 void IDBCallbacksProxy::onSuccess(PassRefPtr<IDBObjectStore> idbObjectStore)

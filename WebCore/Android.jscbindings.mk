@@ -58,6 +58,7 @@ BINDING_C_INCLUDES := \
 
 LOCAL_SRC_FILES += \
 	bindings/js/GCController.cpp \
+	bindings/js/IDBBindingUtilities.cpp \
 	bindings/js/JSAttrCustom.cpp \
 	bindings/js/JSAudioConstructor.cpp \
 	bindings/js/JSCDATASectionCustom.cpp \
@@ -115,6 +116,8 @@ LOCAL_SRC_FILES += \
 	bindings/js/JSHTMLOptionsCollectionCustom.cpp \
 	bindings/js/JSHTMLSelectElementCustom.cpp \
 	bindings/js/JSHistoryCustom.cpp \
+	bindings/js/JSIDBAnyCustom.cpp \
+	bindings/js/JSIDBKeyCustom.cpp \
 	bindings/js/JSImageConstructor.cpp \
 	bindings/js/JSImageDataCustom.cpp \
 	bindings/js/JSLazyEventListener.cpp \

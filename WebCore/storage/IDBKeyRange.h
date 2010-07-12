@@ -29,12 +29,11 @@
 #if ENABLE(INDEXED_DATABASE)
 
 #include "IDBAny.h"
+#include "SerializedScriptValue.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
-
-class SerializedScriptValue;
 
 class IDBKeyRange : public RefCounted<IDBKeyRange> {
 public:

@@ -31,7 +31,9 @@
 #include "IDBIndexProxy.h"
 #include "WebIDBCallbacksImpl.h"
 #include "WebIDBIndex.h"
+#include "WebIDBKey.h"
 #include "WebIDBObjectStore.h"
+#include "WebSerializedScriptValue.h"
 
 #if ENABLE(INDEXED_DATABASE)
 
@@ -64,6 +66,21 @@ String IDBObjectStoreProxy::keyPath() const
 PassRefPtr<DOMStringList> IDBObjectStoreProxy::indexNames() const
 {
     return m_webIDBObjectStore->indexNames();
+}
+
+void IDBObjectStoreProxy::get(PassRefPtr<IDBKey> key, PassRefPtr<IDBCallbacks> callbacks)
+{
+    m_webIDBObjectStore->get(key, new WebIDBCallbacksImpl(callbacks));
+}
+
+void IDBObjectStoreProxy::put(PassRefPtr<SerializedScriptValue> value, PassRefPtr<IDBKey> key, bool addOnly, PassRefPtr<IDBCallbacks> callbacks)
+{
+    m_webIDBObjectStore->put(value, key, addOnly, new WebIDBCallbacksImpl(callbacks));
+}
+
+void IDBObjectStoreProxy::remove(PassRefPtr<IDBKey> key, PassRefPtr<IDBCallbacks> callbacks)
+{
+    m_webIDBObjectStore->remove(key, new WebIDBCallbacksImpl(callbacks));
 }
 
 void IDBObjectStoreProxy::createIndex(const String& name, const String& keyPath, bool unique, PassRefPtr<IDBCallbacks> callbacks)

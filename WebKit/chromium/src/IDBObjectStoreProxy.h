@@ -43,15 +43,19 @@ class IDBIndex;
 class IDBObjectStoreProxy : public IDBObjectStore {
 public:
     static PassRefPtr<IDBObjectStore> create(PassOwnPtr<WebKit::WebIDBObjectStore>);
-    virtual ~IDBObjectStoreProxy();
+    ~IDBObjectStoreProxy();
 
-    virtual String name() const;
-    virtual String keyPath() const;
-    virtual PassRefPtr<DOMStringList> indexNames() const;
+    String name() const;
+    String keyPath() const;
+    PassRefPtr<DOMStringList> indexNames() const;
 
-    virtual void createIndex(const String& name, const String& keyPath, bool unique, PassRefPtr<IDBCallbacks>);
-    virtual PassRefPtr<IDBIndex> index(const String& name);
-    virtual void removeIndex(const String& name, PassRefPtr<IDBCallbacks>);
+    void get(PassRefPtr<IDBKey> key, PassRefPtr<IDBCallbacks>);
+    void put(PassRefPtr<SerializedScriptValue> value, PassRefPtr<IDBKey> key, bool addOnly, PassRefPtr<IDBCallbacks>);
+    void remove(PassRefPtr<IDBKey> key, PassRefPtr<IDBCallbacks>);
+
+    void createIndex(const String& name, const String& keyPath, bool unique, PassRefPtr<IDBCallbacks>);
+    PassRefPtr<IDBIndex> index(const String& name);
+    void removeIndex(const String& name, PassRefPtr<IDBCallbacks>);
 
 private:
     IDBObjectStoreProxy(PassOwnPtr<WebKit::WebIDBObjectStore>);

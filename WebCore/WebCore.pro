@@ -2382,6 +2382,7 @@ contains(DEFINES, ENABLE_DATABASE=1) {
 
 contains(DEFINES, ENABLE_INDEXED_DATABASE=1) {
     HEADERS += \
+        bindings/js/IDBBindingUtilities.h \
         storage/IDBAny.h \
         storage/IDBCallbacks.h \
         storage/IDBDatabase.h \
@@ -2394,6 +2395,7 @@ contains(DEFINES, ENABLE_INDEXED_DATABASE=1) {
         storage/IDBIndex.h \
         storage/IDBIndexImpl.h \
         storage/IDBIndexRequest.h \
+        storage/IDBKey.h \
         storage/IDBKeyRange.h \
         storage/IDBObjectStore.h \
         storage/IDBObjectStoreImpl.h \
@@ -2405,7 +2407,9 @@ contains(DEFINES, ENABLE_INDEXED_DATABASE=1) {
         storage/IndexedDatabaseRequest.h
 
     SOURCES += \
+        bindings/js/IDBBindingUtilities.cpp \
         bindings/js/JSIDBAnyCustom.cpp \
+        bindings/js/JSIDBKeyCustom.cpp \
         storage/IDBAny.cpp \
         storage/IDBDatabaseImpl.cpp \
         storage/IDBDatabaseRequest.cpp \
@@ -2413,6 +2417,7 @@ contains(DEFINES, ENABLE_INDEXED_DATABASE=1) {
         storage/IDBEvent.cpp \
         storage/IDBIndexImpl.cpp \
         storage/IDBIndexRequest.cpp \
+        storage/IDBKey.cpp \
         storage/IDBKeyRange.cpp \
         storage/IDBObjectStoreImpl.cpp \
         storage/IDBObjectStoreRequest.cpp \

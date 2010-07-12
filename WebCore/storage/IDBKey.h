@@ -27,9 +27,7 @@
 #define IDBKey_h
 
 #include "PlatformString.h"
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
+#include <wtf/Forward.h>
 
 #if ENABLE(INDEXED_DATABASE)
 
@@ -50,9 +48,9 @@ public:
     {
         return adoptRef(new IDBKey(string));
     }
-    ~IDBKey() { }
+    ~IDBKey();
 
-    // In order of the least to the most precident in terms of sort order.
+    // In order of the least to the highest precedent in terms of sort order.
     enum Type {
         NullType = 0,
         StringType,

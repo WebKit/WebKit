@@ -36,6 +36,8 @@ namespace WebCore {
 class DOMStringList;
 class IDBCallbacks;
 class IDBIndex;
+class IDBKey;
+class SerializedScriptValue;
 
 class IDBObjectStore : public ThreadSafeShared<IDBObjectStore> {
 public:
@@ -44,6 +46,10 @@ public:
     virtual String name() const = 0;
     virtual String keyPath() const = 0;
     virtual PassRefPtr<DOMStringList> indexNames() const = 0;
+
+    virtual void get(PassRefPtr<IDBKey> key, PassRefPtr<IDBCallbacks>) = 0;
+    virtual void put(PassRefPtr<SerializedScriptValue> value, PassRefPtr<IDBKey> key, bool addOnly, PassRefPtr<IDBCallbacks>) = 0;
+    virtual void remove(PassRefPtr<IDBKey> key, PassRefPtr<IDBCallbacks>) = 0;
 
     virtual void createIndex(const String& name, const String& keyPath, bool unique, PassRefPtr<IDBCallbacks>) = 0;
     virtual PassRefPtr<IDBIndex> index(const String& name) = 0;

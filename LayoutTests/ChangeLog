@@ -1,3 +1,20 @@
+2010-06-27  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Dumitru Daniliuc.
+
+        Implement IDBObjectStore.get/set/remove
+        https://bugs.webkit.org/show_bug.cgi?id=41250
+
+        Modify existing test to provide basic coverage for get/put/remove functions.
+
+        * storage/indexeddb/script-tests/idb-objectstore-request.js:
+        (test):
+        (openSuccess):
+        (createSuccess):
+        (addSuccess):
+        (getSuccess):
+        (removeSuccess):
+
 2010-07-10  Darin Adler  <darin@apple.com>
 
         Reviewed by Anders Carlsson.

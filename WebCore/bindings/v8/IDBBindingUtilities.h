@@ -26,10 +26,10 @@
 #ifndef IDBBindingUtilities_h
 #define IDBBindingUtilities_h
 
-#include <v8.h>
-#include <wtf/PassRefPtr.h>
-
 #if ENABLE(INDEXED_DATABASE)
+
+#include <v8.h>
+#include <wtf/Forward.h>
 
 namespace WebCore {
 

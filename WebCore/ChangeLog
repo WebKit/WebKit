@@ -1,3 +1,63 @@
+2010-06-27  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Dumitru Daniliuc.
+
+        Implement IDBObjectStore.get/set/remove
+        https://bugs.webkit.org/show_bug.cgi?id=41250
+
+        Implement these functions in IDBObjectStore,
+        add plumbing, teach IDBAny/Callbacks how to deal
+        with IDBKey, and a few small bits of cleanup.
+
+        Test: Modified existing test to provide basic coverage.
+              Will add much more extensive layout test coverage
+              in future patches.
+
+        * Android.derived.jscbindings.mk:
+        * Android.derived.v8bindings.mk:
+        * Android.jscbindings.mk:
+        * Android.mk:
+        * Android.v8bindings.mk:
+        * CMakeLists.txt:
+        * WebCore.gypi:
+        * WebCore.pri:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSIDBAnyCustom.cpp:
+        (WebCore::toJS):
+        * bindings/v8/custom/V8IDBAnyCustom.cpp:
+        (WebCore::toV8):
+        * storage/IDBAny.cpp:
+        (WebCore::IDBAny::idbKey):
+        (WebCore::IDBAny::set):
+        * storage/IDBAny.h:
+        (WebCore::IDBAny::):
+        * storage/IDBAny.idl:
+        * storage/IDBCallbacks.h:
+        * storage/IDBDatabaseRequest.h:
+        * storage/IDBDatabaseRequest.idl:
+        * storage/IDBKeyRange.h:
+        * storage/IDBObjectStore.h:
+        (WebCore::IDBObjectStore::):
+        * storage/IDBObjectStoreImpl.cpp:
+        (WebCore::IDBObjectStoreImpl::IDBObjectStoreImpl):
+        (WebCore::IDBObjectStoreImpl::get):
+        (WebCore::IDBObjectStoreImpl::set):
+        (WebCore::IDBObjectStoreImpl::remove):
+        * storage/IDBObjectStoreImpl.h:
+        * storage/IDBObjectStoreRequest.cpp:
+        (WebCore::IDBObjectStoreRequest::get):
+        (WebCore::IDBObjectStoreRequest::add):
+        (WebCore::IDBObjectStoreRequest::modify):
+        (WebCore::IDBObjectStoreRequest::addOrModify):
+        (WebCore::IDBObjectStoreRequest::remove):
+        * storage/IDBObjectStoreRequest.h:
+        * storage/IDBObjectStoreRequest.idl:
+        * storage/IDBRequest.cpp:
+        (WebCore::IDBRequest::onSuccess):
+        * storage/IDBRequest.h:
+
 2010-07-11  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Dan Bernstein.

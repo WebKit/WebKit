@@ -26,9 +26,9 @@
 #include "config.h"
 #include "IDBBindingUtilities.h"
 
-#include "IDBKey.h"
-
 #if ENABLE(INDEXED_DATABASE)
+
+#include "IDBKey.h"
 
 namespace WebCore {
 
