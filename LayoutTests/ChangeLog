@@ -1,3 +1,16 @@
+2010-07-12  Nate Chapin  <japhet@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Test that Cache-Control headers are not included on XHRs that occur
+        after the load event.
+
+        https://bugs.webkit.org/show_bug.cgi?id=41813
+
+        * http/tests/xmlhttprequest/cache-headers-after-reload-expected.txt: Added.
+        * http/tests/xmlhttprequest/cache-headers-after-reload.html: Added.
+        * http/tests/xmlhttprequest/resources/print-cache-control-header.cgi: Added.
+
 2010-07-12  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed.

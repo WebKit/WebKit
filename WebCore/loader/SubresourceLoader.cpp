@@ -84,17 +84,6 @@ PassRefPtr<SubresourceLoader> SubresourceLoader::create(Frame* frame, Subresourc
         newRequest.setHTTPReferrer(fl->outgoingReferrer());
     FrameLoader::addHTTPOriginIfNeeded(newRequest, fl->outgoingOrigin());
 
-    // Use the original request's cache policy for two reasons:
-    // 1. For POST requests, we mutate the cache policy for the main resource,
-    //    but we do not want this to apply to subresources
-    // 2. Delegates that modify the cache policy using willSendRequest: should
-    //    not affect any other resources. Such changes need to be done
-    //    per request.
-    if (newRequest.isConditional())
-        newRequest.setCachePolicy(ReloadIgnoringCacheData);
-    else
-        newRequest.setCachePolicy(fl->originalRequest().cachePolicy());
-
     fl->addExtraFieldsToSubresourceRequest(newRequest);
 
     RefPtr<SubresourceLoader> subloader(adoptRef(new SubresourceLoader(frame, client, sendResourceLoadCallbacks, shouldContentSniff)));
