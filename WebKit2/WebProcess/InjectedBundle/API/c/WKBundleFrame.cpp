@@ -53,3 +53,13 @@ WKArrayRef WKBundleFrameCopyChildFrames(WKBundleFrameRef frameRef)
 {
     return toRef(toWK(frameRef)->childFrames().releaseRef());    
 }
+
+unsigned WKBundleFrameGetNumberOfActiveAnimations(WKBundleFrameRef frameRef)
+{
+    return toWK(frameRef)->numberOfActiveAnimations();
+}
+
+bool WKBundleFramePauseAnimationOnElementWithId(WKBundleFrameRef frameRef, WKStringRef name, WKStringRef elementID, double time)
+{
+    return toWK(frameRef)->pauseAnimationOnElementWithId(toWK(name), toWK(elementID), time);
+}

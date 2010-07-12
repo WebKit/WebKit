@@ -26,6 +26,7 @@
 #include "WebFrame.h"
 
 #include "WebPage.h"
+#include <WebCore/AnimationController.h>
 #include <WebCore/Frame.h>
 #include <WebCore/HTMLFrameOwnerElement.h>
 #include <WebCore/PlatformString.h>
@@ -210,5 +211,37 @@ PassRefPtr<ImmutableArray> WebFrame::childFrames()
     };
     return ImmutableArray::adopt(array, size, &callbacks);
 }
+
+unsigned WebFrame::numberOfActiveAnimations()
+{
+    if (!m_coreFrame)
+        return 0;
+
+    AnimationController* controller = m_coreFrame->animation();
+    if (!controller)
+        return 0;
+
+    return controller->numberOfActiveAnimations();
+}
+
+bool WebFrame::pauseAnimationOnElementWithId(const String& animationName, const String& elementID, double time)
+{
+    if (!m_coreFrame)
+        return false;
+
+    AnimationController* controller = m_coreFrame->animation();
+    if (!controller)
+        return false;
+
+    if (!m_coreFrame->document())
+        return false;
+
+    Node* coreNode = m_coreFrame->document()->getElementById(elementID);
+    if (!coreNode || !coreNode->renderer())
+        return false;
+
+    return controller->pauseAnimationAtTime(coreNode->renderer(), animationName, time);
+}
+
 
 } // namespace WebKit

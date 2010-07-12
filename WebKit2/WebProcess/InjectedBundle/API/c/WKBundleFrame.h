@@ -45,6 +45,10 @@ WK_EXPORT WKStringRef WKBundleFrameCopyInnerText(WKBundleFrameRef frame);
 
 WK_EXPORT WKArrayRef WKBundleFrameCopyChildFrames(WKBundleFrameRef frame);
 
+WK_EXPORT unsigned WKBundleFrameGetNumberOfActiveAnimations(WKBundleFrameRef frame);
+
+WK_EXPORT bool WKBundleFramePauseAnimationOnElementWithId(WKBundleFrameRef frame, WKStringRef name, WKStringRef elementID, double time);
+
 #ifdef __cplusplus
 }
 #endif

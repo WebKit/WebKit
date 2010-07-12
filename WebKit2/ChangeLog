@@ -1,3 +1,22 @@
+2010-07-11  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Implement animation-related methods for WebKitTestRunner
+        https://bugs.webkit.org/show_bug.cgi?id=42053
+
+        Implemented some helpers for WebKitTestRunner;
+        
+        * WebProcess/InjectedBundle/API/c/WKBundleFrame.cpp:
+        (WKBundleFrameGetNumberOfActiveAnimations):
+        (WKBundleFramePauseAnimationOnElementWithId):
+        * WebProcess/InjectedBundle/API/c/WKBundleFrame.h:
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::numberOfActiveAnimations):
+        (WebKit::WebFrame::pauseAnimationOnElementWithId):
+        * WebProcess/WebPage/WebFrame.h:
+        * mac/WebKit2.exp:
+
 2010-07-10  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

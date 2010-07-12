@@ -28,6 +28,10 @@
 #include "InjectedBundlePage.h"
 
 #include <JavaScriptCore/JSRetainPtr.h>
+#include <WebKit2/WKBundleFrame.h>
+#include <WebKit2/WKRetainPtr.h>
+#include <WebKit2/WKStringCF.h>
+#include <WebKit2/WebKit2.h>
 
 namespace WTR {
 
@@ -88,6 +92,23 @@ void LayoutTestController::notifyDone()
     m_waitToDump = false;
 }
 
+unsigned LayoutTestController::numberOfActiveAnimations() const
+{
+    WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(InjectedBundle::shared().page()->page());
+    return WKBundleFrameGetNumberOfActiveAnimations(mainFrame);
+}
+
+bool LayoutTestController::pauseAnimationAtTimeOnElementWithId(JSStringRef animationName, double time, JSStringRef elementId)
+{
+    RetainPtr<CFStringRef> idCF(AdoptCF, JSStringCopyCFString(kCFAllocatorDefault, elementId));
+    WKRetainPtr<WKStringRef> idWK(AdoptWK, WKStringCreateWithCFString(idCF.get()));
+    RetainPtr<CFStringRef> nameCF(AdoptCF, JSStringCopyCFString(kCFAllocatorDefault, animationName));
+    WKRetainPtr<WKStringRef> nameWK(AdoptWK, WKStringCreateWithCFString(nameCF.get()));
+
+    WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(InjectedBundle::shared().page()->page());
+    return WKBundleFramePauseAnimationOnElementWithId(mainFrame, nameWK.get(), idWK.get(), time);
+}
+
 static JSValueRef dumpAsTextCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
@@ -107,6 +128,31 @@ static JSValueRef notifyDoneCallback(JSContextRef context, JSObjectRef function,
     LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
     controller->notifyDone();
     return JSValueMakeUndefined(context);
+}
+
+static JSValueRef numberOfActiveAnimationsCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    if (argumentCount)
+        return JSValueMakeUndefined(context);
+
+    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    return JSValueMakeNumber(context, controller->numberOfActiveAnimations());
+}
+
+static JSValueRef pauseAnimationAtTimeOnElementWithIdCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    if (argumentCount != 3)
+        return JSValueMakeUndefined(context);
+
+    JSRetainPtr<JSStringRef> animationName(Adopt, JSValueToStringCopy(context, arguments[0], exception));
+    ASSERT(!*exception);
+    double time = JSValueToNumber(context, arguments[1], exception);
+    ASSERT(!*exception);
+    JSRetainPtr<JSStringRef> elementId(Adopt, JSValueToStringCopy(context, arguments[2], exception));
+    ASSERT(!*exception);
+
+    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    return JSValueMakeBoolean(context, controller->pauseAnimationAtTimeOnElementWithId(animationName.get(), time, elementId.get()));
 }
 
 // Object Finalization
@@ -147,6 +193,8 @@ JSStaticFunction* LayoutTestController::staticFunctions()
     static JSStaticFunction staticFunctions[] = {
         { "dumpAsText", dumpAsTextCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "notifyDone", notifyDoneCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "numberOfActiveAnimations", numberOfActiveAnimationsCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "pauseAnimationAtTimeOnElementWithId", pauseAnimationAtTimeOnElementWithIdCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "waitUntilDone", waitUntilDoneCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { 0, 0, 0 }
     };
