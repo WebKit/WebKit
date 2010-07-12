@@ -1,3 +1,14 @@
+2010-07-12  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Darin Fisher.
+
+        Bring bufferData and clear to GLES2 compliant
+        https://bugs.webkit.org/show_bug.cgi?id=41574
+
+        * fast/canvas/webgl/invalidPassedParams-expected.txt: Add wrong param test cases for bufferData and clear.
+        * fast/canvas/webgl/invalidPassedParams.html: Ditto.
+        * fast/canvas/webgl/resources/desktop-gl-constants.js: Add ACCUM_BUFFER_BIT enum.
+
 2010-07-12  Alexey Proskuryakov  <ap@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=13075

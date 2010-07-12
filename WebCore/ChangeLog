@@ -1,3 +1,16 @@
+2010-07-12  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Darin Fisher.
+
+        Bring bufferData and clear to GLES2 compliant
+        https://bugs.webkit.org/show_bug.cgi?id=41574
+
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::bufferData): Call validateBufferDataUsage().
+        (WebCore::WebGLRenderingContext::clear): Check mask.
+        (WebCore::WebGLRenderingContext::validateBufferDataUsage): Check usage.
+        * html/canvas/WebGLRenderingContext.h: Declare validateBufferDataUsage.
+
 2010-07-12  Eric Seidel  <eric@webkit.org>
 
         Unreviewed.  Attempt to fix Chromium Windows build.

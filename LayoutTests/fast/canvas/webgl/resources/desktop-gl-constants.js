@@ -18,6 +18,7 @@ var desktopGL = {
   'STATIC_READ': '0x88E5',
   'CLIP_PLANE0': '0x3000',
   'PERSPECTIVE_CORRECTION_HINT': '0x0C50',
+  'ACCUM_BUFFER_BIT': '0x0200',
   'RGB4': '0x804F',
   'RGB5': '0x8050',
   'RGB8': '0x8051',

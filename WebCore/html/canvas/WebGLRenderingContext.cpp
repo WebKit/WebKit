@@ -349,6 +349,10 @@ void WebGLRenderingContext::blendFuncSeparate(unsigned long srcRGB, unsigned lon
 void WebGLRenderingContext::bufferData(unsigned long target, int size, unsigned long usage, ExceptionCode& ec)
 {
     UNUSED_PARAM(ec);
+    if (!isGLES2Compliant()) {
+        if (!validateBufferDataUsage(usage))
+            return;
+    }
     if (target == GraphicsContext3D::ELEMENT_ARRAY_BUFFER && m_boundElementArrayBuffer) {
         if (!m_boundElementArrayBuffer->associateBufferData(size)) {
             m_context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE);
@@ -371,6 +375,10 @@ void WebGLRenderingContext::bufferData(unsigned long target, int size, unsigned 
 void WebGLRenderingContext::bufferData(unsigned long target, ArrayBufferView* data, unsigned long usage, ExceptionCode& ec)
 {
     UNUSED_PARAM(ec);
+    if (!isGLES2Compliant()) {
+        if (!validateBufferDataUsage(usage))
+            return;
+    }
     if (target == GraphicsContext3D::ELEMENT_ARRAY_BUFFER && m_boundElementArrayBuffer) {
         if (!m_boundElementArrayBuffer->associateBufferData(data)) {
             m_context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE);
@@ -428,6 +436,12 @@ unsigned long WebGLRenderingContext::checkFramebufferStatus(unsigned long target
 
 void WebGLRenderingContext::clear(unsigned long mask)
 {
+    if (!isGLES2Compliant()) {
+        if (mask & ~(GraphicsContext3D::COLOR_BUFFER_BIT | GraphicsContext3D::DEPTH_BUFFER_BIT | GraphicsContext3D::STENCIL_BUFFER_BIT)) {
+            m_context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE);
+            return;
+        }
+    }
     m_context->clear(mask);
     cleanupAfterGraphicsCall(true);
 }
@@ -3576,6 +3590,18 @@ bool WebGLRenderingContext::validateUniformMatrixParameters(const WebGLUniformLo
         return false;
     }
     return true;
+}
+
+bool WebGLRenderingContext::validateBufferDataUsage(unsigned long usage)
+{
+    switch (usage) {
+    case GraphicsContext3D::STREAM_DRAW:
+    case GraphicsContext3D::STATIC_DRAW:
+    case GraphicsContext3D::DYNAMIC_DRAW:
+        return true;
+    }
+    m_context->synthesizeGLError(GraphicsContext3D::INVALID_ENUM);
+    return false;
 }
 
 void WebGLRenderingContext::vertexAttribfImpl(unsigned long index, int expectedSize, float v0, float v1, float v2, float v3)
