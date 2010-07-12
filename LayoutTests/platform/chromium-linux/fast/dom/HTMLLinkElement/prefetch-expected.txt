@@ -1,0 +1,3 @@
+CONSOLE MESSAGE: line 6: Uncaught TypeError: Object [object Object] has no method 'dumpResourceResponseMIMETypes'
+
+This test requires DumpRenderTree to see the log of what resources are loaded.

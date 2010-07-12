@@ -1,3 +1,24 @@
+2010-07-12  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed: rebaseline chromium layout tests.
+
+        * platform/chromium-linux/fast/dom/HTMLLinkElement/prefetch-expected.txt: Added.
+        * platform/chromium-linux/fast/gradients/radial-centered-expected.checksum:
+        * platform/chromium-linux/fast/gradients/radial-centered-expected.png:
+        * platform/chromium-linux/fast/gradients/radial-centered-expected.txt: Added.
+        * platform/chromium-linux/fast/inline/continuation-outlines-with-layers-2-expected.checksum: Added.
+        * platform/chromium-linux/fast/inline/continuation-outlines-with-layers-2-expected.png: Added.
+        * platform/chromium-linux/fast/inline/continuation-outlines-with-layers-2-expected.txt: Added.
+        * platform/chromium-mac/fast/dom/HTMLLinkElement/prefetch-expected.txt: Added.
+        * platform/chromium-mac/fast/gradients/radial-centered-expected.checksum: Removed.
+        * platform/chromium-mac/fast/gradients/radial-centered-expected.png: Removed.
+        * platform/chromium-mac/fast/gradients/radial-centered-expected.txt: Removed.
+        * platform/chromium-mac/fast/inline/continuation-outlines-with-layers-2-expected.checksum: Added.
+        * platform/chromium-mac/fast/inline/continuation-outlines-with-layers-2-expected.png: Added.
+        * platform/chromium-win-vista/fast/gradients/radial-centered-expected.checksum: Added.
+        * platform/chromium-win-vista/fast/gradients/radial-centered-expected.png: Added.
+        * platform/chromium-win-vista/fast/gradients/radial-centered-expected.txt: Added.
+
 2010-07-12  François Sausset  <sausset@gmail.com>
 
         Reviewed by Kenneth Rohde Christiansen.
