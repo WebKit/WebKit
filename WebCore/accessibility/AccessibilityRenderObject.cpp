@@ -554,7 +554,7 @@ bool AccessibilityRenderObject::isPressed() const
 
     // If this is an ARIA button, check the aria-pressed attribute rather than node()->active()
     if (ariaRoleAttribute() == ButtonRole) {
-        if (equalIgnoringCase(getAttribute(aria_pressedAttr).string(), "true"))
+        if (equalIgnoringCase(getAttribute(aria_pressedAttr), "true"))
             return true;
         return false;
     }
@@ -878,7 +878,7 @@ static Element* siblingWithAriaRole(String role, Node* node)
     Node* sibling = node->parent()->firstChild();
     while (sibling) {
         if (sibling->isElementNode()) {
-            String siblingAriaRole = static_cast<Element*>(sibling)->getAttribute(roleAttr).string();
+            const AtomicString& siblingAriaRole = static_cast<Element*>(sibling)->getAttribute(roleAttr);
             if (equalIgnoringCase(siblingAriaRole, role))
                 return static_cast<Element*>(sibling);
         }
@@ -1056,7 +1056,7 @@ int AccessibilityRenderObject::intValue() const
     // If this is an ARIA checkbox or radio, check the aria-checked attribute rather than node()->checked()
     AccessibilityRole ariaRole = ariaRoleAttribute();
     if (ariaRole == RadioButtonRole || ariaRole == CheckBoxRole) {
-        if (equalIgnoringCase(getAttribute(aria_checkedAttr).string(), "true"))
+        if (equalIgnoringCase(getAttribute(aria_checkedAttr), "true"))
             return true;
         return false;
     }
@@ -1341,7 +1341,7 @@ String AccessibilityRenderObject::accessibilityDescription() const
     if (!m_renderer)
         return String();
 
-    String ariaLabel = getAttribute(aria_labelAttr).string();
+    const AtomicString& ariaLabel = getAttribute(aria_labelAttr);
     if (!ariaLabel.isEmpty())
         return ariaLabel;
     
@@ -1547,7 +1547,7 @@ bool AccessibilityRenderObject::hasTextAlternative() const
 {
     // ARIA: section 2A, bullet #3 says if aria-labeledby or aria-label appears, it should
     // override the "label" element association.
-    if (!ariaLabeledByAttribute().isEmpty() || !getAttribute(aria_labelAttr).string().isEmpty())
+    if (!ariaLabeledByAttribute().isEmpty() || !getAttribute(aria_labelAttr).isEmpty())
         return true;
         
     return false;   
@@ -1560,7 +1560,7 @@ bool AccessibilityRenderObject::ariaHasPopup() const
     
 bool AccessibilityRenderObject::supportsARIAFlowTo() const
 {
-    return !getAttribute(aria_flowtoAttr).string().isEmpty();
+    return !getAttribute(aria_flowtoAttr).isEmpty();
 }
     
 void AccessibilityRenderObject::ariaFlowToElements(AccessibilityChildrenVector& flowTo) const
@@ -1581,13 +1581,13 @@ void AccessibilityRenderObject::ariaFlowToElements(AccessibilityChildrenVector& 
     
 bool AccessibilityRenderObject::supportsARIADropping() const 
 {
-    const AtomicString& dropEffect = getAttribute(aria_dropeffectAttr).string();
+    const AtomicString& dropEffect = getAttribute(aria_dropeffectAttr);
     return !dropEffect.isEmpty();
 }
 
 bool AccessibilityRenderObject::supportsARIADragging() const
 {
-    const AtomicString& grabbed = getAttribute(aria_grabbedAttr).string();
+    const AtomicString& grabbed = getAttribute(aria_grabbedAttr);
     return equalIgnoringCase(grabbed, "true") || equalIgnoringCase(grabbed, "false");   
 }
 
@@ -1603,14 +1603,15 @@ void AccessibilityRenderObject::setARIAGrabbed(bool grabbed)
 
 void AccessibilityRenderObject::determineARIADropEffects(Vector<String>& effects)
 {
-    String dropEffects = getAttribute(aria_dropeffectAttr).string();
+    const AtomicString& dropEffects = getAttribute(aria_dropeffectAttr);
     if (dropEffects.isEmpty()) {
         effects.clear();
         return;
     }
     
-    dropEffects.replace('\n', ' ');
-    dropEffects.split(' ', effects);
+    String dropEffectsString = dropEffects.string();
+    dropEffectsString.replace('\n', ' ');
+    dropEffectsString.split(' ', effects);
 }
     
 bool AccessibilityRenderObject::exposesTitleUIElement() const
@@ -2046,7 +2047,7 @@ bool AccessibilityRenderObject::isVisited() const
     
 bool AccessibilityRenderObject::isExpanded() const
 {
-    if (equalIgnoringCase(getAttribute(aria_expandedAttr).string(), "true"))
+    if (equalIgnoringCase(getAttribute(aria_expandedAttr), "true"))
         return true;
     
     return false;  
@@ -2091,7 +2092,7 @@ void AccessibilityRenderObject::setIsExpanded(bool isExpanded)
     
 bool AccessibilityRenderObject::isRequired() const
 {
-    if (equalIgnoringCase(getAttribute(aria_requiredAttr).string(), "true"))
+    if (equalIgnoringCase(getAttribute(aria_requiredAttr), "true"))
         return true;
     
     return false;
@@ -2106,7 +2107,7 @@ bool AccessibilityRenderObject::isSelected() const
     if (!node)
         return false;
     
-    String ariaSelected = getAttribute(aria_selectedAttr).string();
+    const AtomicString& ariaSelected = getAttribute(aria_selectedAttr);
     if (equalIgnoringCase(ariaSelected, "true"))
         return true;    
     
@@ -2262,7 +2263,7 @@ bool AccessibilityRenderObject::supportsARIAOwns() const
 {
     if (!m_renderer)
         return false;
-    const AtomicString& ariaOwns = getAttribute(aria_ownsAttr).string();
+    const AtomicString& ariaOwns = getAttribute(aria_ownsAttr);
 
     return !ariaOwns.isEmpty();
 }
@@ -2271,7 +2272,7 @@ bool AccessibilityRenderObject::isEnabled() const
 {
     ASSERT(m_renderer);
     
-    if (equalIgnoringCase(getAttribute(aria_disabledAttr).string(), "true"))
+    if (equalIgnoringCase(getAttribute(aria_disabledAttr), "true"))
         return false;
     
     Node* node = m_renderer->node();
@@ -2816,7 +2817,7 @@ AccessibilityObject* AccessibilityRenderObject::activeDescendant() const
         return 0;
     Element* element = static_cast<Element*>(m_renderer->node());
         
-    String activeDescendantAttrStr = element->getAttribute(aria_activedescendantAttr).string();
+    const AtomicString& activeDescendantAttrStr = element->getAttribute(aria_activedescendantAttr);
     if (activeDescendantAttrStr.isNull() || activeDescendantAttrStr.isEmpty())
         return 0;
     
@@ -2939,7 +2940,7 @@ AccessibilityObject* AccessibilityRenderObject::observableObject() const
 
 AccessibilityRole AccessibilityRenderObject::determineAriaRoleAttribute() const
 {
-    String ariaRole = getAttribute(roleAttr).string();
+    const AtomicString& ariaRole = getAttribute(roleAttr);
     if (ariaRole.isNull() || ariaRole.isEmpty())
         return UnknownRole;
     
@@ -3085,7 +3086,7 @@ AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
 
 AccessibilityOrientation AccessibilityRenderObject::orientation() const
 {
-    const AtomicString& ariaOrientation = getAttribute(aria_orientationAttr).string();
+    const AtomicString& ariaOrientation = getAttribute(aria_orientationAttr);
     if (equalIgnoringCase(ariaOrientation, "horizontal"))
         return AccessibilityOrientationHorizontal;
     if (equalIgnoringCase(ariaOrientation, "vertical"))
@@ -3194,13 +3195,13 @@ bool AccessibilityRenderObject::canSetFocusAttribute() const
 bool AccessibilityRenderObject::canSetExpandedAttribute() const
 {
     // An object can be expanded if it aria-expanded is true or false.
-    String ariaExpanded = getAttribute(aria_expandedAttr).string();
+    const AtomicString& ariaExpanded = getAttribute(aria_expandedAttr);
     return equalIgnoringCase(ariaExpanded, "true") || equalIgnoringCase(ariaExpanded, "false");
 }
 
 bool AccessibilityRenderObject::canSetValueAttribute() const
 {
-    if (equalIgnoringCase(getAttribute(aria_readonlyAttr).string(), "true"))
+    if (equalIgnoringCase(getAttribute(aria_readonlyAttr), "true"))
         return false;
 
     // Any node could be contenteditable, so isReadOnly should be relied upon
