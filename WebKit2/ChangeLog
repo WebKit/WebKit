@@ -1,3 +1,20 @@
+2010-07-12  Adam Roben  <aroben@apple.com>
+
+        Windows build fix
+
+        * WebProcess/Plugins/Netscape/win/NetscapePluginModuleWin.cpp: Added.
+        (WebKit::NetscapePluginModule::tryLoad):
+        (WebKit::NetscapePluginModule::unload):
+        Stubbed these out.
+
+        * win/WebKit2.vcproj: Added a Netscape filter beneath
+        WebProcess/Plugins, and moved NetscapePlugin into it. Added
+        NetscapePluginModule to the new Netscape filter. Added
+        WebProcess/Plugins to the include path for all configurations (it was
+        only added to Release and Debug_Internal previously) and added
+        WebProcess/Plugins/Netscape to the include path for all
+        configurations.
+
 2010-07-11  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Dan Bernstein.
