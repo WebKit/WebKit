@@ -272,9 +272,13 @@ void GraphicsContext::fillRect(const FloatRect& rect, const Color& color, ColorS
     if (paintingDisabled())
         return;
 
+    savePlatformState();
+
     m_data->context->SetPen(*wxTRANSPARENT_PEN);
     m_data->context->SetBrush(wxBrush(color));
     m_data->context->DrawRectangle(rect.x(), rect.y(), rect.width(), rect.height());
+
+    restorePlatformState();
 }
 
 void GraphicsContext::fillRoundedRect(const IntRect& rect, const IntSize& topLeft, const IntSize& topRight, const IntSize& bottomLeft, const IntSize& bottomRight, const Color& color, ColorSpace colorSpace)

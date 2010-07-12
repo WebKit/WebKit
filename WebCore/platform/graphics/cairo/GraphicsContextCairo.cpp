@@ -563,8 +563,10 @@ void GraphicsContext::fillRect(const FloatRect& rect)
         return;
 
     cairo_t* cr = m_data->cr;
+    cairo_save(cr);
     cairo_rectangle(cr, rect.x(), rect.y(), rect.width(), rect.height());
     fillPath();
+    cairo_restore(cr);
 }
 
 static void drawBorderlessRectShadow(GraphicsContext* context, const FloatRect& rect, const Color& rectColor)

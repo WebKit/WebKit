@@ -1,3 +1,24 @@
+2010-07-12  Andreas Kling  <andreas.kling@nokia.com>
+
+        Reviewed by Oliver Hunt.
+
+        Canvas: Move fillRect() save/restore into GraphicsContext implementations
+        https://bugs.webkit.org/show_bug.cgi?id=42088
+
+        Saving the platform painter state is an expensive operation,
+        so don't do it in fillRect() for platforms that don't need it. (CG, Qt)
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::fillRect):
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::fillRect):
+        * platform/graphics/skia/GraphicsContextSkia.cpp:
+        (WebCore::GraphicsContext::fillRect):
+        * platform/graphics/wince/GraphicsContextWince.cpp:
+        (WebCore::GraphicsContext::fillRect):
+        * platform/graphics/wx/GraphicsContextWx.cpp:
+        (WebCore::GraphicsContext::fillRect):
+
 2010-07-12  Nate Chapin  <japhet@chromium.org>
 
         Reviewed by Darin Fisher.

@@ -767,9 +767,7 @@ void CanvasRenderingContext2D::fillRect(float x, float y, float width, float hei
     FloatRect rect(x, y, width, height);
     willDraw(rect);
 
-    c->save();
     c->fillRect(rect);
-    c->restore();
 }
 
 void CanvasRenderingContext2D::strokeRect(float x, float y, float width, float height)

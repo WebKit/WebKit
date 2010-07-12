@@ -1555,10 +1555,14 @@ void GraphicsContext::clipToImageBuffer(const FloatRect&, const ImageBuffer*)
 
 void GraphicsContext::fillRect(const FloatRect& rect)
 {
+    savePlatformState();
+
     if (m_common->state.fillGradient)
         fillRect(rect, m_common->state.fillGradient.get());
     else
         fillRect(rect, fillColor(), DeviceColorSpace);
+
+    restorePlatformState();
 }
 
 void GraphicsContext::setPlatformShadow(const FloatSize&, float, const Color&, ColorSpace)
