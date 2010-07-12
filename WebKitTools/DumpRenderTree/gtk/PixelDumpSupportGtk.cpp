@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2009 Apple Inc. All rights reserved.
- *           (C) 2009 Brent Fulgham <bfulgham@webkit.org>
+ * Copyright (C) 2009 Zan Dobersek <zandobersek@gmail.com>
+ * Copyright (C) 2010 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,55 +27,24 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PixelDumpSupportCairo_h
-#define PixelDumpSupportCairo_h
+#include "config.h"
 
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
+#include "DumpRenderTree.h"
+#include "PixelDumpSupportCairo.h"
+#include <webkit/webkit.h>
 
-#if PLATFORM(WIN)
-#include <windows.h>
-#include <cairo-win32.h>
-#elif PLATFORM(GTK)
-#include <cairo.h>
-#endif
+PassRefPtr<BitmapContext> createBitmapContextFromWebView(bool, bool, bool, bool)
+{
+    WebKitWebView* view = webkit_web_frame_get_web_view(mainFrame);
+    GdkPixmap* pixmap = gtk_widget_get_snapshot(GTK_WIDGET(view), 0);
+    gint width, height;
+    gdk_drawable_get_size(GDK_DRAWABLE(pixmap), &width, &height);
 
-#if PLATFORM(WIN)
-typedef HBITMAP PlatformBitmapBuffer;
-#else
-typedef void* PlatformBitmapBuffer;
-#endif
+    cairo_surface_t* imageSurface = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, width, height);
+    cairo_t* context = cairo_create(imageSurface);
+    gdk_cairo_set_source_pixmap(context, pixmap, 0, 0);
+    cairo_paint(context);
+    g_object_unref(pixmap);
 
-class BitmapContext : public RefCounted<BitmapContext> {
-public:
-    static PassRefPtr<BitmapContext> createByAdoptingBitmapAndContext(PlatformBitmapBuffer buffer, cairo_t* context)
-    {
-        return adoptRef(new BitmapContext(buffer, context));
-    }
-
-    ~BitmapContext()
-    {
-        if (m_buffer)
-#if PLATFORM(WIN)
-            DeleteObject(m_buffer);
-#else
-            free(m_buffer);
-#endif
-        cairo_destroy(m_context);
-    }
-
-    cairo_t* cairoContext() const { return m_context; }
-
-private:
-
-    BitmapContext(PlatformBitmapBuffer buffer, cairo_t* context)
-        : m_buffer(buffer)
-        , m_context(context)
-    {
-    }
-
-    PlatformBitmapBuffer m_buffer;
-    cairo_t* m_context;
-};
-
-#endif // PixelDumpSupportCairo_h
+    return BitmapContext::createByAdoptingBitmapAndContext(0, context);
+}

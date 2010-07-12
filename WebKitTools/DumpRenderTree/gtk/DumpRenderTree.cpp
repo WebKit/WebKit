@@ -36,23 +36,22 @@
 #include "EventSender.h"
 #include "GCController.h"
 #include "LayoutTestController.h"
+#include "PixelDumpSupport.h"
 #include "WorkQueue.h"
 #include "WorkQueueItem.h"
-
+#include <JavaScriptCore/JavaScript.h>
+#include <cassert>
+#include <cstdlib>
+#include <cstring>
+#include <getopt.h>
 #include <gtk/gtk.h>
 #include <webkit/webkit.h>
-#include <JavaScriptCore/JavaScript.h>
-
 #include <wtf/Assertions.h>
 
 #if PLATFORM(X11)
 #include <fontconfig/fontconfig.h>
 #endif
 
-#include <cassert>
-#include <getopt.h>
-#include <stdlib.h>
-#include <string.h>
 
 using namespace std;
 
@@ -422,7 +421,7 @@ void dump()
 
     if (dumpPixels) {
         if (!gLayoutTestController->dumpAsText() && !gLayoutTestController->dumpDOMAsWebArchive() && !gLayoutTestController->dumpSourceAsWebArchive()) {
-            // FIXME: Add support for dumping pixels
+            dumpWebViewAsPixelsAndCompareWithExpected(gLayoutTestController->expectedPixelHash());
         }
     }
 

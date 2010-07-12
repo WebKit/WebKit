@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2009 Apple Inc. All rights reserved.
  *           (C) 2009 Brent Fulgham <bfulgham@webkit.org>
+ *           (C) 2010 Igalia S.L
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,13 +36,9 @@
 #include <algorithm>
 #include <ctype.h>
 #include <wtf/Assertions.h>
+#include <wtf/MD5.h>
 #include <wtf/RefPtr.h>
-#include <wtf/RetainPtr.h>
 #include <wtf/StringExtras.h>
-
-#if PLATFORM(WIN)
-#include "MD5.h"
-#endif
 
 using namespace std;
 
@@ -73,21 +70,20 @@ void computeMD5HashStringForBitmapContext(BitmapContext* context, char hashStrin
 
     size_t pixelsHigh = cairo_image_surface_get_height(surface);
     size_t pixelsWide = cairo_image_surface_get_width(surface);
-    size_t bytesPerRow = pixelsWide * cairo_image_surface_get_stride(surface);
+    size_t bytesPerRow = cairo_image_surface_get_stride(surface);
 
-    MD5_CTX md5Context;
-    MD5_Init(&md5Context);
+    MD5 md5Context;
     unsigned char* bitmapData = static_cast<unsigned char*>(cairo_image_surface_get_data(surface));
     for (unsigned row = 0; row < pixelsHigh; row++) {
-        MD5_Update(&md5Context, bitmapData, 4 * pixelsWide);
+        md5Context.addBytes(bitmapData, 4 * pixelsWide);
         bitmapData += bytesPerRow;
     }
-    unsigned char hash[16];
-    MD5_Final(hash, &md5Context);
+    Vector<uint8_t, 16> hash;
+    md5Context.checksum(hash);
 
-    hashString[0] = '\0';
-    for (int i = 0; i < 16; i++)
-        snprintf(hashString, 33, "%s%02x", hashString, hash[i]);
+    snprintf(hashString, 33, "%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x",
+        hash[0], hash[1], hash[2], hash[3], hash[4], hash[5], hash[6], hash[7],
+        hash[8], hash[9], hash[10], hash[11], hash[12], hash[13], hash[14], hash[15]);
 }
 
 void dumpBitmap(BitmapContext* context)

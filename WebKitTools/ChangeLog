@@ -1,3 +1,31 @@
+2010-07-12  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Dirk Schulze.
+
+        [GTK] Support pixel tests
+        https://bugs.webkit.org/show_bug.cgi?id=31518
+
+        Finish support for pixel tests on GTK+.
+
+        * DumpRenderTree/PixelDumpSupport.cpp: Remove unecessary RetainPtr include (only
+        works on CoreFoundation systems) and add missing cstdio include.
+        * DumpRenderTree/cairo/PixelDumpSupportCairo.cpp: Switch to using the MD5 support found
+        in JSC library. MD5.cpp and MD5.h are only available for the Windows build.
+        (computeMD5HashStringForBitmapContext): The number of bytes per row should be the row stride
+        of the image, not the row stride multiplied by the width. Use JSC MD5 implementation to calculate
+        the MD5 hash here. According to glibc manpages, using snprintf to build a string in unsupported
+        by the ANSI standard and this fails on Linux, so unroll the loop here.
+        * DumpRenderTree/cairo/PixelDumpSupportCairo.h: Correct some constructor misbehavior.
+        (BitmapContext::BitmapContext): There is no reason to check the value of the
+        m_context member in the constructor and it certainly should not be freed. Instead
+        just initialize it with the incoming value.
+        * DumpRenderTree/gtk/DumpRenderTree.cpp: Fix the order of includes.
+        (dump): Actually call dumpWebViewAsPixelsAndCompareWithExpected when it is time to
+        dump pixels.
+        * DumpRenderTree/gtk/PixelDumpSupportGtk.cpp: Added.
+        (createBitmapContextFromWebView):
+        * GNUmakefile.am: Add new files to the build.
+
 2010-07-12  Adam Barth  <abarth@webkit.org>
 
         Unreviewed.
