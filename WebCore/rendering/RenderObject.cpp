@@ -1695,6 +1695,14 @@ StyleDifference RenderObject::adjustStyleDifference(StyleDifference diff, unsign
         else if (diff < StyleDifferenceRecompositeLayer)
             diff = StyleDifferenceRecompositeLayer;
     }
+    
+    // The answer to requiresLayer() for plugins and iframes can change outside of the style system,
+    // since it depends on whether we decide to composite these elements. When the layer status of
+    // one of these elements changes, we need to force a layout.
+    if (diff == StyleDifferenceEqual && style() && isBoxModelObject()) {
+        if (hasLayer() != toRenderBoxModelObject(this)->requiresLayer())
+            diff = StyleDifferenceLayout;
+    }
 #else
     UNUSED_PARAM(contextSensitiveProperties);
 #endif

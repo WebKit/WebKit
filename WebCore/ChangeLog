@@ -1,3 +1,19 @@
+2010-07-12  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Need to do a layout when RenderLayers come and go because of compositing
+        https://bugs.webkit.org/show_bug.cgi?id=42108
+        
+        If we create or destroy RenderLayers for reasons other than style changes
+        (e.g. because of composited iframes or plugins), then we need to ensure
+        that we do a layout.
+
+        Test: compositing/iframes/layout-on-compositing-change.html
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::adjustStyleDifference):
+
 2010-07-11  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Darin Adler.
