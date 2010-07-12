@@ -77,7 +77,7 @@ namespace WTF {
         T* get() const { return m_ptr; }
 
         void clear();
-        T* leakRef() const;
+        T* leakRef() const WARN_UNUSED_RETURN;
 
         T& operator*() const { return *m_ptr; }
         T* operator->() const { return m_ptr; }
@@ -96,7 +96,7 @@ namespace WTF {
         friend PassRefPtr adoptRef<T>(T*);
 
         // FIXME: Remove releaseRef once we change all callers to call leakRef instead.
-        T* releaseRef() const { return leakRef(); }
+        T* releaseRef() const { return leakRef(); } WARN_UNUSED_RETURN;
 
     private:
         // adopting constructor
@@ -152,13 +152,13 @@ namespace WTF {
         T* get() const { return m_ptr; }
 
         void clear();
-        T* leakRef() const { T* tmp = m_ptr; m_ptr = 0; return tmp; }
+        T* leakRef() const { T* tmp = m_ptr; m_ptr = 0; return tmp; } WARN_UNUSED_RETURN;
 
         T& operator*() const { return *m_ptr; }
         T* operator->() const { return m_ptr; }
 
         // FIXME: Remove releaseRef once we change all callers to call leakRef instead.
-        T* releaseRef() const { return leakRef(); }
+        T* releaseRef() const { return leakRef(); } WARN_UNUSED_RETURN;
 
     private:
         mutable T* m_ptr;

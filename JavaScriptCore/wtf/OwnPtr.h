@@ -60,7 +60,7 @@ namespace WTF {
 
         void clear();
         PassOwnPtr<T> release();
-        PtrType leakPtr();
+        PtrType leakPtr() WARN_UNUSED_RETURN;
 
         ValueType& operator*() const { ASSERT(m_ptr); return *m_ptr; }
         PtrType operator->() const { ASSERT(m_ptr); return m_ptr; }

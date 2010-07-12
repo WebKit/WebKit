@@ -1,3 +1,19 @@
+2010-07-12  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Add WARN_UNUSED_RETURN to the smart pointer "leak" member functions
+        https://bugs.webkit.org/show_bug.cgi?id=42086
+
+        * wtf/OwnPtr.h:
+        * wtf/PassOwnPtr.h:
+        * wtf/PassRefPtr.h:
+        (WTF::PassRefPtr::releaseRef):
+        (WTF::NonNullPassRefPtr::leakRef):
+        (WTF::NonNullPassRefPtr::releaseRef):
+        * wtf/RetainPtr.h:
+        (WTF::RetainPtr::releaseRef):
+
 2010-07-10  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Maciej Stachowiak.

@@ -71,7 +71,7 @@ namespace WTF {
         
         PtrType get() const { return m_ptr; }
         
-        PtrType releaseRef() { PtrType tmp = m_ptr; m_ptr = 0; return tmp; }
+        PtrType releaseRef() { PtrType tmp = m_ptr; m_ptr = 0; return tmp; } WARN_UNUSED_RETURN;
         
         PtrType operator->() const { return m_ptr; }
         
