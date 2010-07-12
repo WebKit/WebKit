@@ -3,12 +3,14 @@ Test IndexedDB's IDBObjectStoreRequest.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
+indexedDB.open('name', 'description')
 PASS 'onsuccess' in result is true
 PASS 'onerror' in result is true
 PASS 'abort' in result is true
 PASS 'readyState' in result is true
 An event should fire shortly...
 
+openSuccess():
 Success event fired:
 PASS 'result' in event is true
 PASS 'code' in event is false
@@ -22,12 +24,14 @@ PASS 'readyState' in event.target is true
 PASS event.target.readyState is event.target.DONE
 
 db = event.result
+db.createObjectStore('storeName', null)
 PASS 'onsuccess' in result is true
 PASS 'onerror' in result is true
 PASS 'abort' in result is true
 PASS 'readyState' in result is true
 An event should fire shortly...
 
+createSuccess():
 Success event fired:
 PASS 'result' in event is true
 PASS 'code' in event is false
@@ -42,7 +46,72 @@ PASS event.target.readyState is event.target.DONE
 
 store = event.result
 PASS store.name is "storeName"
-PASS store.keyPath is "keyPath"
+PASS store.keyPath is null
+store.add('value', 'key')
+PASS 'onsuccess' in result is true
+PASS 'onerror' in result is true
+PASS 'abort' in result is true
+PASS 'readyState' in result is true
+An event should fire shortly...
+
+addSuccess():
+Success event fired:
+PASS 'result' in event is true
+PASS 'code' in event is false
+PASS 'message' in event is false
+PASS 'source' in event is true
+PASS event.source != null is true
+PASS 'onsuccess' in event.target is true
+PASS 'onerror' in event.target is true
+PASS 'abort' in event.target is true
+PASS 'readyState' in event.target is true
+PASS event.target.readyState is event.target.DONE
+
+PASS event.result is "key"
+store = event.source
+store.get('key')
+PASS 'onsuccess' in result is true
+PASS 'onerror' in result is true
+PASS 'abort' in result is true
+PASS 'readyState' in result is true
+An event should fire shortly...
+
+getSuccess():
+Success event fired:
+PASS 'result' in event is true
+PASS 'code' in event is false
+PASS 'message' in event is false
+PASS 'source' in event is true
+PASS event.source != null is true
+PASS 'onsuccess' in event.target is true
+PASS 'onerror' in event.target is true
+PASS 'abort' in event.target is true
+PASS 'readyState' in event.target is true
+PASS event.target.readyState is event.target.DONE
+
+PASS event.result is "value"
+store = event.source
+store.remove('key')
+PASS 'onsuccess' in result is true
+PASS 'onerror' in result is true
+PASS 'abort' in result is true
+PASS 'readyState' in result is true
+An event should fire shortly...
+
+removeSuccess():
+Success event fired:
+PASS 'result' in event is true
+PASS 'code' in event is false
+PASS 'message' in event is false
+PASS 'source' in event is true
+PASS event.source != null is true
+PASS 'onsuccess' in event.target is true
+PASS 'onerror' in event.target is true
+PASS 'abort' in event.target is true
+PASS 'readyState' in event.target is true
+PASS event.target.readyState is event.target.DONE
+
+PASS event.result is null
 PASS successfullyParsed is true
 
 TEST COMPLETE

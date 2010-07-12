@@ -1,3 +1,9 @@
+2010-07-12  Jeremy Orlow  <jorlow@chromium.org>
+
+        Somehow the updated expectations got dropped form the original patch.  Added.
+
+        * storage/indexeddb/idb-objectstore-request-expected.txt:
+
 2010-07-12  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Reviewed by Ojan Vafai.
