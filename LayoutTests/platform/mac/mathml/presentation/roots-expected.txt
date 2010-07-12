@@ -4,10 +4,10 @@ layer at (0,0) size 800x594
   RenderBlock {html} at (0,0) size 800x594
     RenderBody {body} at (8,16) size 784x562
       RenderBlock {p} at (0,0) size 784x19
-        RenderText {#text} at (0,0) size 78x18
-          text run at (0,0) width 78: "square root: "
-        RenderBlock {math} at (78,0) size 22x19
-          RenderBlock {msqrt} at (1,0) size 20x19
+        RenderText {#text} at (0,0) size 177x18
+          text run at (0,0) width 177: "square root (should be red): "
+        RenderBlock {math} at (177,0) size 22x19
+          RenderBlock {msqrt} at (1,0) size 20x19 [color=#FF0000]
             RenderInline {mn} at (0,0) size 8x16
               RenderText {#text} at (12,3) size 8x16
                 text run at (12,3) width 8: "2"

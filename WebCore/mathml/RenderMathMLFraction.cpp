@@ -168,7 +168,7 @@ void RenderMathMLFraction::paint(PaintInfo& info, int tx, int ty)
     
     info.context->setStrokeThickness(static_cast<float>(m_lineThickness));
     info.context->setStrokeStyle(SolidStroke);
-    info.context->setStrokeColor(Color(0, 0, 0), sRGBColorSpace);
+    info.context->setStrokeColor(style()->visitedDependentColor(CSSPropertyColor), sRGBColorSpace);
     
     info.context->drawLine(IntPoint(tx, ty), IntPoint(tx + offsetWidth(), ty));
     

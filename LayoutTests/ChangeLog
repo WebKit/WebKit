@@ -1,3 +1,19 @@
+2010-07-12  François Sausset  <sausset@gmail.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Update tests to check that msqrt and mfrac use style color to draw themselves
+        https://bugs.webkit.org/show_bug.cgi?id=41889
+
+        * mathml/presentation/fractions.xhtml:
+        * mathml/presentation/roots.xhtml:
+        * platform/mac/mathml/presentation/fractions-expected.checksum:
+        * platform/mac/mathml/presentation/fractions-expected.png:
+        * platform/mac/mathml/presentation/fractions-expected.txt:
+        * platform/mac/mathml/presentation/roots-expected.checksum:
+        * platform/mac/mathml/presentation/roots-expected.png:
+        * platform/mac/mathml/presentation/roots-expected.txt:
+
 2010-07-12  Andreas Kling  <andreas.kling@nokia.com>
 
         Reviewed by Antti Koivisto.

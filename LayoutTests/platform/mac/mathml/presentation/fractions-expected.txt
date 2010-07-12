@@ -17,10 +17,10 @@ layer at (0,0) size 800x338
                 RenderText {#text} at (3,2) size 8x16
                   text run at (3,2) width 8: "2"
       RenderBlock {p} at (0,50) size 784x40
-        RenderText {#text} at (0,10) size 98x18
-          text run at (0,10) width 98: "more complex: "
-        RenderBlock {math} at (98,0) size 34x40
-          RenderBlock {mfrac} at (1,0) size 32x40
+        RenderText {#text} at (0,10) size 197x18
+          text run at (0,10) width 197: "more complex (should be red): "
+        RenderBlock {math} at (197,0) size 34x40
+          RenderBlock {mfrac} at (1,0) size 32x40 [color=#FF0000]
             RenderBlock {mfrac} at (0,0) size 32x19
               RenderBlock {mrow} at (3,0) size 26x19
                 RenderInline {mi} at (0,0) size 7x16

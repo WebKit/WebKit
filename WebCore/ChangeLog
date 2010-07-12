@@ -1,3 +1,20 @@
+2010-07-12  François Sausset  <sausset@gmail.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Fix a bug preventing msqrt and mfrac to use style color to draw themselves.
+        In mfrac, the fraction bar is now using the color defined by the element style instead of black.
+        In msqrt, the radical was always drawn in black due to a colorSpace problem.
+        https://bugs.webkit.org/show_bug.cgi?id=41889
+
+        Test: mathml/presentation/roots.xhtml
+        Test: mathml/presentation/fractions.xhtml
+
+        * mathml/RenderMathMLFraction.cpp:
+        (WebCore::RenderMathMLFraction::paint):
+        * mathml/RenderMathMLSquareRoot.cpp:
+        (WebCore::RenderMathMLSquareRoot::paint):
+
 2010-07-12  Andreas Kling  <andreas.kling@nokia.com>
 
         Reviewed by Antti Koivisto.
