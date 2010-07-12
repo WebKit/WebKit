@@ -2,5 +2,5 @@ Test for bug 13075: XMLHttpRequest with failed authentication should set status 
 
 Sync, no credentials: OK
 Sync, incorrect credentials: OK
-Async, no credentials: [test disabled]
-Async, incorrect credentials: [test disabled]
+Async, no credentials: OK
+Async, incorrect credentials: OK

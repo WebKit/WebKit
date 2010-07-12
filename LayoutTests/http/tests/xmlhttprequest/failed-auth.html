@@ -3,8 +3,8 @@ XMLHttpRequest with failed authentication should set status to 401.</p>
 <ol>
   <li>Sync, no credentials:
   <li>Sync, incorrect credentials:
-  <li>Async, no credentials: [test disabled]
-  <li>Async, incorrect credentials: [test disabled]
+  <li>Async, no credentials: 
+  <li>Async, incorrect credentials: 
 </ol>
 <script>
 function checkResult(n, code) {
@@ -20,7 +20,7 @@ function log(n, message) {
 
 if (window.layoutTestController) {
     layoutTestController.dumpAsText();
-//    layoutTestController.waitUntilDone();
+    layoutTestController.waitUntilDone();
 } else {
     alert("Please cancel all authentication dialogs that will appear");
 }
@@ -43,7 +43,6 @@ try {
     log(2, ex);
 }
 
-/*
 try {
     var r = new XMLHttpRequest();
     r.open("GET", "resources/basic-auth/basic-auth.php?uid=login3", true);
@@ -75,5 +74,4 @@ function test4() {
         layoutTestController.notifyDone();
     }
 }
-*/
 </script>

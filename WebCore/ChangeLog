@@ -1,3 +1,19 @@
+2010-07-09  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=13075
+        XMLHttpRequest with failed authentication should set status to 401
+
+        https://bugs.webkit.org/show_bug.cgi?id=6871
+        <rdar://problem/3363403> 401 error page is never shown
+
+        * platform/network/mac/ResourceHandleMac.mm: (WebCore::ResourceHandle::receivedCredential):
+        Added a comment explaining why we handle empty credentials differently here.
+
+        * platform/network/cf/ResourceHandleCFNet.cpp: (WebCore::ResourceHandle::receivedCredential):
+        Bring this code in sync with Mac.
+
 2010-07-12  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adam Roben.

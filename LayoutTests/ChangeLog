@@ -1,3 +1,21 @@
+2010-07-09  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=13075
+        XMLHttpRequest with failed authentication should set status to 401
+
+        https://bugs.webkit.org/show_bug.cgi?id=6871
+        <rdar://problem/3363403> 401 error page is never shown
+
+        * http/tests/xmlhttprequest/failed-auth-expected.txt:
+        * http/tests/xmlhttprequest/failed-auth.html:
+        Uncommented relevant subtests.
+
+        * http/tests/misc/401-alternative-content-expected.txt:
+        * http/tests/misc/401-alternative-content.php:
+        Added a test for the main resource aspect of this issue.
+
 2010-07-12  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed: chromium test expectations updated.

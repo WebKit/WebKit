@@ -113,7 +113,7 @@ WebPanelAuthenticationHandler *sharedHandler;
 
     // In this case, we have an attached sheet that's not one of our
     // authentication panels, so enqueing is not an option. Just
-    // cancel authentication instead, since this case is fairly
+    // cancel loading instead, since this case is fairly
     // unlikely (how would you be loading a page if you had an error
     // sheet up?)
     if ([w attachedSheet] != nil) {
@@ -152,7 +152,7 @@ WebPanelAuthenticationHandler *sharedHandler;
     }
 
     if (credential == nil) {
-        [[challenge sender] cancelAuthenticationChallenge:challenge];
+        [[challenge sender] continueWithoutCredentialForAuthenticationChallenge:challenge];
     } else {
         [[challenge sender] useCredential:credential forAuthenticationChallenge:challenge];
     }

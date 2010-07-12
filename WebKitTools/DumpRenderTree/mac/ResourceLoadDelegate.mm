@@ -166,8 +166,10 @@ using namespace std;
 
 - (void)webView:(WebView *)wv resource:(id)identifier didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge fromDataSource:(WebDataSource *)dataSource
 {
-    if (!gLayoutTestController->handlesAuthenticationChallenges())
+    if (!gLayoutTestController->handlesAuthenticationChallenges()) {
+        [[challenge sender] continueWithoutCredentialForAuthenticationChallenge:challenge];
         return;
+    }
     
     const char* user = gLayoutTestController->authenticationUsername().c_str();
     NSString *nsUser = [NSString stringWithFormat:@"%s", user ? user : ""];

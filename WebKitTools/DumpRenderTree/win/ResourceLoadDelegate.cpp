@@ -280,18 +280,20 @@ HRESULT STDMETHODCALLTYPE ResourceLoadDelegate::didReceiveAuthenticationChalleng
     /* [in] */ IWebURLAuthenticationChallenge *challenge,
     /* [in] */ IWebDataSource *dataSource)
 {
-    if (!gLayoutTestController->handlesAuthenticationChallenges())
+    COMPtr<IWebURLAuthenticationChallengeSender> sender;
+    if (!challenge || FAILED(challenge->sender(&sender)))
         return E_FAIL;
+
+    if (!gLayoutTestController->handlesAuthenticationChallenges()) {
+        sender->continueWithoutCredentialForAuthenticationChallenge(challenge);
+        return E_FAIL;
+    }
     
     const char* user = gLayoutTestController->authenticationUsername().c_str();
     const char* password = gLayoutTestController->authenticationPassword().c_str();
 
     printf("%S - didReceiveAuthenticationChallenge - Responding with %s:%s\n", descriptionSuitableForTestResult(identifier).c_str(), user, password);
-    
-    COMPtr<IWebURLAuthenticationChallengeSender> sender;
-    if (!challenge || FAILED(challenge->sender(&sender)))
-        return E_FAIL;
-        
+
     COMPtr<IWebURLCredential> credential;
     if (FAILED(WebKitCreateInstance(CLSID_WebURLCredential, 0, IID_IWebURLCredential, (void**)&credential)))
         return E_FAIL;

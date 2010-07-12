@@ -583,7 +583,8 @@ void ResourceHandle::receivedCredential(const AuthenticationChallenge& challenge
     ASSERT(!challenge.isNull());
     if (challenge != d->m_currentWebChallenge)
         return;
-    
+
+    // FIXME: Support empty credentials. Currently, an empty credential cannot be stored in WebCore credential storage, as that's empty value for its map.
     if (credential.isEmpty()) {
         receivedRequestToContinueWithoutCredential(challenge);
         return;
