@@ -1,5 +1,11 @@
 2010-07-12  Jeremy Orlow  <jorlow@chromium.org>
 
+        Speculative fix for visual studio retardedness.
+
+        * public/WebCommon.h:
+
+2010-07-12  Jeremy Orlow  <jorlow@chromium.org>
+
         Build fix.  Add an include.
 
         * public/WebCommon.h:
