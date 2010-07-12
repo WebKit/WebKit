@@ -91,10 +91,6 @@ Index: test_file.swf
 Cannot display: file marked as a binary type.
 svn:mime-type = application/octet-stream
 
-Property changes on: test_file.swf
-___________________________________________________________________
-Name: svn:mime-type
-   + application/octet-stream
 
 
 Q1dTBx0AAAB42itg4GlgYJjGwMDDyODMxMDw34GBgQEAJPQDJA==
@@ -234,6 +230,401 @@ END
 }],
 undef],
     expectedNextLine => undef,
+},
+####
+# Property Changes: Simple
+##
+{
+    # New test
+    diffName => "SVN: file change diff with property change diff",
+    inputText => <<'END',
+Index: Makefile
+===================================================================
+--- Makefile	(revision 60021)
++++ Makefile	(working copy)
+@@ -1,3 +1,4 @@
++
+ MODULES = JavaScriptCore JavaScriptGlue WebCore WebKit WebKit2 WebKitTools 
+
+ all:
+
+Property changes on: Makefile
+___________________________________________________________________
+Name: svn:executable
+   + *
+END
+    expectedReturn => [
+[{
+    svnConvertedText =>  <<'END', # Same as input text
+Index: Makefile
+===================================================================
+--- Makefile	(revision 60021)
++++ Makefile	(working copy)
+@@ -1,3 +1,4 @@
++
+ MODULES = JavaScriptCore JavaScriptGlue WebCore WebKit WebKit2 WebKitTools 
+
+ all:
+
+END
+    executableBitDelta => 1,
+    indexPath => "Makefile",
+    isSvn => 1,
+    sourceRevision => "60021",
+}],
+undef],
+    expectedNextLine => undef,
+},
+{
+    # New test
+    diffName => "SVN: file change diff, followed by property change diff on different file",
+    inputText => <<'END',
+Index: Makefile
+===================================================================
+--- Makefile	(revision 60021)
++++ Makefile	(working copy)
+@@ -1,3 +1,4 @@
++
+ MODULES = JavaScriptCore JavaScriptGlue WebCore WebKit WebKit2 WebKitTools 
+
+ all:
+
+Property changes on: Makefile.shared
+___________________________________________________________________
+Name: svn:executable
+   + *
+END
+    expectedReturn => [
+[{
+    svnConvertedText =>  <<'END', # Same as input text
+Index: Makefile
+===================================================================
+--- Makefile	(revision 60021)
++++ Makefile	(working copy)
+@@ -1,3 +1,4 @@
++
+ MODULES = JavaScriptCore JavaScriptGlue WebCore WebKit WebKit2 WebKitTools 
+
+ all:
+
+END
+    indexPath => "Makefile",
+    isSvn => 1,
+    sourceRevision => "60021",
+}],
+"Property changes on: Makefile.shared\n"],
+    expectedNextLine => "___________________________________________________________________\n",
+},
+{
+    # New test
+    diffName => "SVN: property diff, followed by file change diff",
+    inputText => <<'END',
+Property changes on: Makefile
+___________________________________________________________________
+Deleted: svn:executable
+   - *
+
+Index: Makefile.shared
+===================================================================
+--- Makefile.shared	(revision 60021)
++++ Makefile.shared	(working copy)
+@@ -1,3 +1,4 @@
++
+SCRIPTS_PATH ?= ../WebKitTools/Scripts
+XCODE_OPTIONS = `perl -I$(SCRIPTS_PATH) -Mwebkitdirs -e 'print XcodeOptionString()'` $(ARGS)
+END
+    expectedReturn => [
+[{
+    executableBitDelta => -1,
+    indexPath => "Makefile",
+    isSvn => 1,
+}],
+"Index: Makefile.shared\n"],
+    expectedNextLine => "===================================================================\n",
+},
+{
+    # New test
+    diffName => "SVN: copied file with property change",
+    inputText => <<'END',
+Index: NMakefile
+===================================================================
+--- NMakefile	(revision 60021)	(from Makefile:60021)
++++ NMakefile	(working copy)
+@@ -0,0 +1,1 @@
++MODULES = JavaScriptCore JavaScriptGlue WebCore WebKit WebKit2 WebKitTools 
+
+Property changes on: NMakefile
+___________________________________________________________________
+Added: svn:executable
+   + *
+END
+    expectedReturn => [
+[{
+    copiedFromPath => "Makefile",
+    executableBitDelta => 1,
+    indexPath => "NMakefile",
+    sourceRevision => "60021",
+}],
+undef],
+    expectedNextLine => undef,
+},
+{
+    # New test
+    diffName => "SVN: two consecutive property diffs",
+    inputText => <<'END',
+Property changes on: Makefile
+___________________________________________________________________
+Added: svn:executable
+   + *
+
+
+Property changes on: Makefile.shared
+___________________________________________________________________
+Added: svn:executable
+   + *
+END
+    expectedReturn => [
+[{
+    executableBitDelta => 1,
+    indexPath => "Makefile",
+    isSvn => 1,
+}],
+"Property changes on: Makefile.shared\n"],
+    expectedNextLine => "___________________________________________________________________\n",
+},
+####
+# Property Changes: Binary files
+##
+{
+    # New test
+    diffName => "SVN: binary file with executable bit change",
+    inputText => <<'END',
+Index: test_file.swf
+===================================================================
+Cannot display: file marked as a binary type.
+svn:mime-type = application/octet-stream
+
+Property changes on: test_file.swf
+___________________________________________________________________
+Name: svn:mime-type
+   + application/octet-stream
+Name: svn:executable
+   + *
+
+
+Q1dTBx0AAAB42itg4GlgYJjGwMDDyODMxMDw34GBgQEAJPQDJA==
+END
+    expectedReturn => [
+[{
+    svnConvertedText =>  <<'END', # Same as input text
+Index: test_file.swf
+===================================================================
+Cannot display: file marked as a binary type.
+svn:mime-type = application/octet-stream
+
+
+
+Q1dTBx0AAAB42itg4GlgYJjGwMDDyODMxMDw34GBgQEAJPQDJA==
+END
+    executableBitDelta => 1,
+    indexPath => "test_file.swf",
+    isBinary => 1,
+    isSvn => 1,
+}],
+undef],
+    expectedNextLine => undef,
+},
+{
+    # New test
+    diffName => "SVN: binary file followed by property change on different file",
+    inputText => <<'END',
+Index: test_file.swf
+===================================================================
+Cannot display: file marked as a binary type.
+svn:mime-type = application/octet-stream
+
+Property changes on: test_file.swf
+___________________________________________________________________
+Name: svn:mime-type
+   + application/octet-stream
+
+
+Q1dTBx0AAAB42itg4GlgYJjGwMDDyODMxMDw34GBgQEAJPQDJA==
+
+Property changes on: Makefile
+___________________________________________________________________
+Added: svn:executable
+   + *
+END
+    expectedReturn => [
+[{
+    svnConvertedText =>  <<'END', # Same as input text
+Index: test_file.swf
+===================================================================
+Cannot display: file marked as a binary type.
+svn:mime-type = application/octet-stream
+
+
+
+Q1dTBx0AAAB42itg4GlgYJjGwMDDyODMxMDw34GBgQEAJPQDJA==
+
+END
+    indexPath => "test_file.swf",
+    isBinary => 1,
+    isSvn => 1,
+}],
+"Property changes on: Makefile\n"],
+    expectedNextLine => "___________________________________________________________________\n",
+},
+{
+    # New test
+    diffName => "SVN: binary file followed by file change on different file",
+    inputText => <<'END',
+Index: test_file.swf
+===================================================================
+Cannot display: file marked as a binary type.
+svn:mime-type = application/octet-stream
+
+Property changes on: test_file.swf
+___________________________________________________________________
+Name: svn:mime-type
+   + application/octet-stream
+
+
+Q1dTBx0AAAB42itg4GlgYJjGwMDDyODMxMDw34GBgQEAJPQDJA==
+
+Index: Makefile
+===================================================================
+--- Makefile	(revision 60021)
++++ Makefile	(working copy)
+@@ -1,3 +1,4 @@
++
+ MODULES = JavaScriptCore JavaScriptGlue WebCore WebKit WebKit2 WebKitTools 
+
+ all:
+END
+    expectedReturn => [
+[{
+    svnConvertedText =>  <<'END', # Same as input text
+Index: test_file.swf
+===================================================================
+Cannot display: file marked as a binary type.
+svn:mime-type = application/octet-stream
+
+
+
+Q1dTBx0AAAB42itg4GlgYJjGwMDDyODMxMDw34GBgQEAJPQDJA==
+
+END
+    indexPath => "test_file.swf",
+    isBinary => 1,
+    isSvn => 1,
+}],
+"Index: Makefile\n"],
+    expectedNextLine => "===================================================================\n",
+},
+####
+# Property Changes: File change with property change
+##
+{
+    # New test
+    diffName => "SVN: file change diff with property change, followed by property change diff",
+    inputText => <<'END',
+Index: Makefile
+===================================================================
+--- Makefile	(revision 60021)
++++ Makefile	(working copy)
+@@ -1,3 +1,4 @@
++
+ MODULES = JavaScriptCore JavaScriptGlue WebCore WebKit WebKit2 WebKitTools 
+
+ all:
+
+Property changes on: Makefile
+___________________________________________________________________
+Added: svn:executable
+   + *
+
+
+Property changes on: Makefile.shared
+___________________________________________________________________
+Deleted: svn:executable
+   - *
+END
+    expectedReturn => [
+[{
+    svnConvertedText =>  <<'END', # Same as input text
+Index: Makefile
+===================================================================
+--- Makefile	(revision 60021)
++++ Makefile	(working copy)
+@@ -1,3 +1,4 @@
++
+ MODULES = JavaScriptCore JavaScriptGlue WebCore WebKit WebKit2 WebKitTools 
+
+ all:
+
+
+
+END
+    executableBitDelta => 1,
+    indexPath => "Makefile",
+    isSvn => 1,
+    sourceRevision => "60021",
+}],
+"Property changes on: Makefile.shared\n"],
+    expectedNextLine => "___________________________________________________________________\n",
+},
+{
+    # New test
+    diffName => "SVN: file change diff with property change, followed by file change diff",
+    inputText => <<'END',
+Index: Makefile
+===================================================================
+--- Makefile	(revision 60021)
++++ Makefile	(working copy)
+@@ -1,3 +1,4 @@
++
+ MODULES = JavaScriptCore JavaScriptGlue WebCore WebKit WebKit2 WebKitTools 
+
+ all:
+
+Property changes on: Makefile
+___________________________________________________________________
+Name: svn:executable
+   - *
+
+Index: Makefile.shared
+===================================================================
+--- Makefile.shared	(revision 60021)
++++ Makefile.shared	(working copy)
+@@ -1,3 +1,4 @@
++
+SCRIPTS_PATH ?= ../WebKitTools/Scripts
+XCODE_OPTIONS = `perl -I$(SCRIPTS_PATH) -Mwebkitdirs -e 'print XcodeOptionString()'` $(ARGS)
+END
+    expectedReturn => [
+[{
+    svnConvertedText =>  <<'END', # Same as input text
+Index: Makefile
+===================================================================
+--- Makefile	(revision 60021)
++++ Makefile	(working copy)
+@@ -1,3 +1,4 @@
++
+ MODULES = JavaScriptCore JavaScriptGlue WebCore WebKit WebKit2 WebKitTools 
+
+ all:
+
+
+END
+    executableBitDelta => -1,
+    indexPath => "Makefile",
+    isSvn => 1,
+    sourceRevision => "60021",
+}],
+"Index: Makefile.shared\n"],
+    expectedNextLine => "===================================================================\n",
 },
 ####
 #    Git test cases
@@ -451,6 +842,7 @@ END
     indexPath => "foo_new",
 },
 {
+    executableBitDelta => 1,
     indexPath => "foo_new",
     isGit => 1,
     svnConvertedText => <<'END',

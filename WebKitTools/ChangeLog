@@ -1,3 +1,44 @@
+2010-07-11  Daniel Bates  <dbates@rim.com>
+
+        Reviewed by David Kilzer.
+
+        Enable executable support for svn-apply and svn-unapply
+        https://bugs.webkit.org/show_bug.cgi?id=39409
+
+        Connect up the Git and SVN executable bit support in parseDiff() so that
+        executable bit changes are propagated via the returned diff hash to the
+        patch function in svn-apply and svn-unapply.
+
+        * Scripts/VCSUtils.pm:
+          - Modified parseDiff() to call parseSvnDiffProperties when
+            it finds the start of an SVN property change diff.
+          - Removed FIXME comment above parseSvnDiffProperties() since
+            it is now being used by parseDiff().
+          - Export method scmToggleExecutableBit() now that we added the
+            executableBitDelta hash key. (This should have been exported
+            when we added this function in Bug #38423 <https://bugs.webkit.org/show_bug.cgi?id=38423>).
+        * Scripts/webkitperl/VCSUtils_unittest/parseDiff.pl:
+          - Updated results for:
+            "rename (with executable bit change)"
+              - Test value of executableBitDelta (now that we have support).
+            "SVN: binary file (isBinary true)"
+              - Remove the property change diff from svnConvertedText. We plan
+                to remove svnConvertedText in the future. So, we decided
+                against adding such support to any new code, such as the
+                property parsing routines. Therefore, we do not keep SVN
+                converted text for property change diffs.
+          - Added unit tests:
+            "SVN: file change diff with property change diff"
+            "SVN: file change diff, followed by property change diff on different file"
+            "SVN: property diff, followed by file change diff"
+            "SVN: copied file with property change"
+            "SVN: two consecutive property diffs"
+            "SVN: binary file with executable bit change"
+            "SVN: binary file followed by property change on different file"
+            "SVN: binary file followed by file change on different file"
+            "SVN: file change diff with property change, followed by property change diff"
+            "SVN: file change diff with property change, followed by file change diff"
+
 2010-07-11  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Dan Bernstein.

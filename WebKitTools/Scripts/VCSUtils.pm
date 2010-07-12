@@ -68,6 +68,7 @@ BEGIN {
         &pathRelativeToSVNRepositoryRootForPath
         &prepareParsedPatch
         &runPatchCommand
+        &scmToggleExecutableBit
         &setChangeLogDateAndReviewer
         &svnRevisionForDirectory
         &svnStatus
@@ -90,6 +91,7 @@ my $changeLogTimeZone = "PST8PDT";
 
 my $gitDiffStartRegEx = qr#^diff --git (\w/)?(.+) (\w/)?([^\r\n]+)#;
 my $svnDiffStartRegEx = qr#^Index: ([^\r\n]+)#;
+my $svnPropertiesStartRegEx = qr#^Property changes on: ([^\r\n]+)#; # $1 is normally the same as the index path.
 my $svnPropertyStartRegEx = qr#^(Modified|Name|Added|Deleted): ([^\r\n]+)#; # $2 is the name of the property.
 my $svnPropertyValueStartRegEx = qr#^   (\+|-) ([^\r\n]+)#; # $2 is the start of the property's value (which may span multiple lines).
 
@@ -735,6 +737,8 @@ sub parseDiffHeader($$)
 #
 #   copiedFromPath: the path from which the file was copied if the diff
 #                   is a copy.
+#   executableBitDelta: the value 1 or -1 if the executable bit was added or
+#                       removed from the target file, respectively.
 #   indexPath: the path of the target file.  For SVN-formatted diffs,
 #              this is the same as the path in the "Index:" line.
 #   isBinary: the value 1 if the diff is for a binary file.
@@ -753,6 +757,13 @@ sub parseDiffHeader($$)
 # of the next header block.
 #
 # This subroutine preserves any leading junk encountered before the header.
+#
+# Composition of an SVN diff
+#
+# There are three parts to an SVN diff: the header, the property change, and
+# the binary contents, in that order. Either the header or the property change
+# may be ommitted, but not both. If there are binary changes, then you always
+# have all three.
 #
 # Args:
 #   $fileHandle: a file handle advanced to the first line of the next
@@ -773,6 +784,7 @@ sub parseDiff($$)
     my $headerStartRegEx = $svnDiffStartRegEx; # SVN-style header for the default
 
     my $headerHashRef; # Last header found, as returned by parseDiffHeader().
+    my $svnPropertiesHashRef; # Last SVN properties diff found, as returned by parseSvnDiffProperties().
     my $svnText;
     while (defined($line)) {
         if (!$headerHashRef && ($line =~ $gitDiffStartRegEx)) {
@@ -782,6 +794,18 @@ sub parseDiff($$)
             $headerStartRegEx = $gitDiffStartRegEx;
         }
 
+        if ($line =~ $svnPropertiesStartRegEx) {
+            my $propertyPath = $1;
+            if ($svnPropertiesHashRef || $headerHashRef && ($propertyPath ne $headerHashRef->{indexPath})) {
+                # This is the start of the second diff in the while loop, which happens to
+                # be a property diff.  If $svnPropertiesHasRef is defined, then this is the
+                # second consecutive property diff, otherwise it's the start of a property
+                # diff for a file that only has property changes.
+                last;
+            }
+            ($svnPropertiesHashRef, $line) = parseSvnDiffProperties($fileHandle, $line);
+            next;
+        }
         if ($line !~ $headerStartRegEx) {
             # Then we are in the body of the diff.
             $svnText .= $line;
@@ -789,8 +813,9 @@ sub parseDiff($$)
             next;
         } # Otherwise, we found a diff header.
 
-        if ($headerHashRef) {
-            # Then this is the second diff header of this while loop.
+        if ($svnPropertiesHashRef || $headerHashRef) {
+            # Then either we just processed an SVN property change or this
+            # is the start of the second diff header of this while loop.
             last;
         }
 
@@ -812,12 +837,29 @@ sub parseDiff($$)
         $copyHash{copiedFromPath} = $headerHashRef->{copiedFromPath};
         $copyHash{indexPath} = $headerHashRef->{indexPath};
         $copyHash{sourceRevision} = $headerHashRef->{sourceRevision} if $headerHashRef->{sourceRevision};
+        if ($headerHashRef->{isSvn}) {
+            $copyHash{executableBitDelta} = $svnPropertiesHashRef->{executableBitDelta} if $svnPropertiesHashRef->{executableBitDelta};
+        }
         push @diffHashRefs, \%copyHash;
     }
-    if (!$headerHashRef->{copiedFromPath} || $headerHashRef->{isCopyWithChanges}) {
+
+    # Note, the order of evaluation for the following if conditional has been explicitly chosen so that
+    # it evaluates to false when there is no headerHashRef (e.g. a property change diff for a file that
+    # only has property changes).
+    if ($headerHashRef->{isCopyWithChanges} || (%$headerHashRef && !$headerHashRef->{copiedFromPath})) {
         # Then add the usual file modification.
         my %diffHash;
-        # FIXME: Add executableBitDelta as a key.
+        # FIXME: We should expand this code to support other properties.  In the future,
+        #        parseSvnDiffProperties may return a hash whose keys are the properties.
+        if ($headerHashRef->{isSvn}) {
+            # SVN records the change to the executable bit in a separate property change diff
+            # that follows the contents of the diff, except for binary diffs.  For binary
+            # diffs, the property change diff follows the diff header.
+            $diffHash{executableBitDelta} = $svnPropertiesHashRef->{executableBitDelta} if $svnPropertiesHashRef->{executableBitDelta};
+        } elsif ($headerHashRef->{isGit}) {
+            # Git records the change to the executable bit in the header of a diff.
+            $diffHash{executableBitDelta} = $headerHashRef->{executableBitDelta} if $headerHashRef->{executableBitDelta};
+        }
         $diffHash{indexPath} = $headerHashRef->{indexPath};
         $diffHash{isBinary} = $headerHashRef->{isBinary} if $headerHashRef->{isBinary};
         $diffHash{isDeletion} = $headerHashRef->{isDeletion} if $headerHashRef->{isDeletion};
@@ -831,8 +873,22 @@ sub parseDiff($$)
         }
         # FIXME: Remove the need for svnConvertedText.  See the %diffHash
         #        code comments above for more information.
-        $diffHash{svnConvertedText} = $svnText;
+        #
+        # Note, we may not always have SVN converted text since we intend
+        # to deprecate it in the future.  For example, a property change
+        # diff for a file that only has property changes will not return
+        # any SVN converted text.
+        $diffHash{svnConvertedText} = $svnText if $svnText;
         push @diffHashRefs, \%diffHash;
+    }
+
+    if (!%$headerHashRef && $svnPropertiesHashRef) {
+        # A property change diff for a file that only has property changes.
+        my %propertyChangeHash;
+        $propertyChangeHash{executableBitDelta} = $svnPropertiesHashRef->{executableBitDelta} if $svnPropertiesHashRef->{executableBitDelta};
+        $propertyChangeHash{indexPath} = $svnPropertiesHashRef->{propertyPath};
+        $propertyChangeHash{isSvn} = 1;
+        push @diffHashRefs, \%propertyChangeHash;
     }
 
     return (\@diffHashRefs, $line);
@@ -859,19 +915,14 @@ sub parseDiff($$)
 #     executableBitDelta: the value 1 or -1 if the executable bit was added or
 #                         removed from the target file, respectively.
 #   $lastReadLine: the line last read from $fileHandle.
-#
-# FIXME: This method is unused as of (05/22/2010).  We will call this function
-#        as part of parsing a diff.  See <https://bugs.webkit.org/show_bug.cgi?id=39409>.
 sub parseSvnDiffProperties($$)
 {
     my ($fileHandle, $line) = @_;
 
     $_ = $line;
 
-    my $svnFooterDiffStartRegEx = qr#Property changes on: ([^\r\n]+)#; # $1 is normally the same as the index path.
-
     my %footer;
-    if (/$svnFooterDiffStartRegEx/) {
+    if (/$svnPropertiesStartRegEx/) {
         $footer{propertyPath} = $1;
     } else {
         die("Failed to find start of SVN property change, \"Property changes on \": \"$_\"");
