@@ -2775,7 +2775,7 @@ void EventHandler::sendResizeEvent()
 void EventHandler::sendScrollEvent()
 {
     setFrameWasScrolledByUser();
-    if (m_frame->view())
+    if (m_frame->view() && m_frame->document())
         m_frame->document()->dispatchEvent(Event::create(eventNames().scrollEvent, true, false));
 }
 
