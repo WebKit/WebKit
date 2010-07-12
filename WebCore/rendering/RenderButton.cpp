@@ -108,11 +108,6 @@ void RenderButton::setupInnerStyle(RenderStyle* innerStyle)
     // safe to modify.
     innerStyle->setBoxFlex(1.0f);
     innerStyle->setBoxOrient(style()->boxOrient());
-
-    innerStyle->setPaddingTop(Length(theme()->buttonInternalPaddingTop(), Fixed));
-    innerStyle->setPaddingRight(Length(theme()->buttonInternalPaddingRight(), Fixed));
-    innerStyle->setPaddingBottom(Length(theme()->buttonInternalPaddingBottom(), Fixed));
-    innerStyle->setPaddingLeft(Length(theme()->buttonInternalPaddingLeft(), Fixed));
 }
 
 void RenderButton::updateFromElement()

@@ -78,8 +78,7 @@ input[type="search"]::-webkit-search-results-button {
 }
 
 input[type="button"], input[type="submit"], input[type="reset"], input[type="file"]::-webkit-file-upload-button, button {
-    /* Matches Firefox */
-    padding: 0 6px;
+    padding: 1px 6px;
 }
 
 /* Windows selects are not rounded. Custom borders for them shouldn't be either. */

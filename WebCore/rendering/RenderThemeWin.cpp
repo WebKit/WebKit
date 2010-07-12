@@ -761,26 +761,6 @@ void RenderThemeWin::adjustSliderThumbSize(RenderObject* o) const
 #endif
 }
 
-int RenderThemeWin::buttonInternalPaddingLeft() const
-{
-    return 3;
-}
-
-int RenderThemeWin::buttonInternalPaddingRight() const
-{
-    return 3;
-}
-
-int RenderThemeWin::buttonInternalPaddingTop() const
-{
-    return 1;
-}
-
-int RenderThemeWin::buttonInternalPaddingBottom() const
-{
-    return 1;
-}
-
 bool RenderThemeWin::paintSearchField(RenderObject* o, const PaintInfo& i, const IntRect& r)
 {
     return paintTextField(o, i, r);

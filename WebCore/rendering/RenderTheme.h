@@ -165,11 +165,6 @@ public:
     virtual int popupInternalPaddingBottom(RenderStyle*) const { return 0; }
     virtual bool popupOptionSupportsTextIndent() const { return false; }
 
-    virtual int buttonInternalPaddingLeft() const { return 0; }
-    virtual int buttonInternalPaddingRight() const { return 0; }
-    virtual int buttonInternalPaddingTop() const { return 0; }
-    virtual int buttonInternalPaddingBottom() const { return 0; }
-
     virtual ScrollbarControlSize scrollbarControlSizeForPart(ControlPart) { return RegularScrollbar; }
 
     // Method for painting the caps lock indicator

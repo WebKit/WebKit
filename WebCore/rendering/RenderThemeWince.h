@@ -93,11 +93,6 @@ namespace WebCore {
 
         virtual bool popupOptionSupportsTextIndent() const { return true; }
 
-        virtual int buttonInternalPaddingLeft() const;
-        virtual int buttonInternalPaddingRight() const;
-        virtual int buttonInternalPaddingTop() const;
-        virtual int buttonInternalPaddingBottom() const;
-
         virtual void adjustSearchFieldStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
         virtual bool paintSearchField(RenderObject*, const PaintInfo&, const IntRect&);
 

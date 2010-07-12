@@ -528,26 +528,6 @@ bool RenderThemeWince::paintSliderThumb(RenderObject* o, const PaintInfo& i, con
     return rc;
 }
 
-int RenderThemeWince::buttonInternalPaddingLeft() const
-{
-    return 3;
-}
-
-int RenderThemeWince::buttonInternalPaddingRight() const
-{
-    return 3;
-}
-
-int RenderThemeWince::buttonInternalPaddingTop() const
-{
-    return 1;
-}
-
-int RenderThemeWince::buttonInternalPaddingBottom() const
-{
-    return 1;
-}
-
 void RenderThemeWince::adjustSearchFieldStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const
 {
     const int padding = 1;
@@ -665,4 +645,3 @@ bool RenderThemeWince::paintMediaSliderThumb(RenderObject* o, const PaintInfo& p
 #endif
 
 }
-
