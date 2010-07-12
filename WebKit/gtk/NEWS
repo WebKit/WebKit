@@ -1,4 +1,14 @@
 ================
+WebKitGTK+ 1.3.3
+================
+
+What's new in WebKitGTK+ 1.3.3?
+
+  - Fixes to compile with latest GTK+ 2.90.x.
+  - Add support for dropping content in WebKitWebViews.
+  - Many other bugfixes.
+
+================
 WebKitGTK+ 1.3.2
 ================
 
