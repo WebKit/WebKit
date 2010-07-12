@@ -36,6 +36,9 @@ public:
     ~InjectedBundlePage();
 
     WKBundlePageRef page() const { return m_page; }
+    void dump();
+
+    bool isLoading() { return m_isLoading; }
 
 private:
     // Loader Client
@@ -61,6 +64,7 @@ private:
     void addMessageToConsole(WKStringRef message, uint32_t lineNumber);
 
     WKBundlePageRef m_page;
+    bool m_isLoading;
 };
 
 } // namespace WTR

@@ -85,7 +85,9 @@ void InjectedBundle::done()
 
 void InjectedBundle::didCreatePage(WKBundlePageRef page)
 {
-    m_pages.add(page, new InjectedBundlePage(page));
+    // FIXME: we really need the main page ref to be sent over from the ui process
+    m_mainPage = new InjectedBundlePage(page);
+    m_pages.add(page, m_mainPage);
 }
 
 void InjectedBundle::willDestroyPage(WKBundlePageRef page)

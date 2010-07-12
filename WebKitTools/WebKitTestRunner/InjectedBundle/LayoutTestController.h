@@ -29,6 +29,7 @@
 #include <JavaScriptCore/JavaScriptCore.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
+#include <wtf/RetainPtr.h>
 #include <string>
 
 namespace WTR {
@@ -43,13 +44,22 @@ public:
     bool dumpAsText() const { return m_dumpAsText; }
     void setDumpAsText(bool dumpAsText) { m_dumpAsText = dumpAsText; }
 
+    bool waitToDump() const { return m_waitToDump; }
+    void setWaitToDump();
+    void waitToDumpWatchdogTimerFired();
+    void invalidateWaitToDumpWatchdog();
+    void notifyDone();
+
 private:
     LayoutTestController(const std::string& testPathOrURL);
 
     bool m_dumpAsText;
+    bool m_waitToDump; // True if waitUntilDone() has been called, but notifyDone() has not yet been called.
 
     std::string m_testPathOrURL;
     
+    RetainPtr<CFRunLoopTimerRef> m_waitToDumpWatchdog;
+
     static JSClassRef getJSClass();
     static JSStaticValue* staticValues();
     static JSStaticFunction* staticFunctions();

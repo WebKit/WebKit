@@ -1,3 +1,45 @@
+2010-07-11  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Implement waitUntilDone and notifyDone for WebKitTestRunner
+        https://bugs.webkit.org/show_bug.cgi?id=42049
+
+        With this fix, most of the DOM tests pass.
+        
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::didCreatePage): Track the main page. Not
+        a great way to do it in the future case where we may get multiple
+        pages - we really need a way to send it over from the ui process.
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.h:
+        (WTR::InjectedBundle::page): A way to get the main page.
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::InjectedBundlePage): Initialize m_isLoading to false.
+        (WTR::InjectedBundlePage::didStartProvisionalLoadForFrame): Track that we
+        are loading.
+        (WTR::InjectedBundlePage::dump): Factor into a method so this can be
+        called by the layout test controller. Also, cancel any pending watchdogs.
+        (WTR::InjectedBundlePage::didFinishLoadForFrame): Note that we are done loading.
+        (WTR::InjectedBundlePage::didFailLoadWithErrorForFrame): Ditto.
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.h:
+        (WTR::InjectedBundlePage::isLoading): A way to track if we are loading.
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.cpp:
+        (WTR::LayoutTestController::LayoutTestController): Initialize m_waitToDump
+        to false.
+        (WTR::LayoutTestController::invalidateWaitToDumpWatchdog): Invalidate 
+        the watchdog.
+        (WTR::waitUntilDoneWatchdogFired): Static helper for the watchdog timer.
+        (WTR::LayoutTestController::setWaitToDump): Set the flag.
+        (WTR::LayoutTestController::waitToDumpWatchdogTimerFired): Handle the case
+        where waitUntilDone times out.
+        (WTR::LayoutTestController::notifyDone): Dump, if loading is done.
+        (WTR::waitUntilDoneCallback): JS glue for waitUntilDone.
+        (WTR::notifyDoneCallback): JS glue for notifyDone.
+        (WTR::LayoutTestController::staticFunctions): Add waitUntilDone and notifyDone
+        to the layoutController.
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.h:
+        (WTR::LayoutTestController::waitToDump): Inline method to get the wait state.
+
 2010-07-09  Brian Weinstein  <bweinstein@apple.com>
 
         Rubber-stamped by Dan Bernstein.

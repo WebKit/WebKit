@@ -48,6 +48,7 @@ public:
     void done();
 
     LayoutTestController* layoutTestController() { return m_layoutTestController.get(); }
+    InjectedBundlePage* page() { return m_mainPage; }
 
     std::ostringstream& os() { return m_outputStream; }
 
@@ -67,6 +68,7 @@ private:
 
     WKBundleRef m_bundle;
     HashMap<WKBundlePageRef, InjectedBundlePage*> m_pages;
+    InjectedBundlePage* m_mainPage;
 
     RefPtr<LayoutTestController> m_layoutTestController;
 

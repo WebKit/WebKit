@@ -24,6 +24,8 @@
  */
 
 #include "LayoutTestController.h"
+#include "InjectedBundle.h"
+#include "InjectedBundlePage.h"
 
 #include <JavaScriptCore/JSRetainPtr.h>
 
@@ -36,6 +38,7 @@ PassRefPtr<LayoutTestController> LayoutTestController::create(const std::string&
 
 LayoutTestController::LayoutTestController(const std::string& testPathOrURL)
     : m_dumpAsText(false)
+    , m_waitToDump(false)
     , m_testPathOrURL(testPathOrURL)
 {
 }
@@ -44,10 +47,65 @@ LayoutTestController::~LayoutTestController()
 {
 }
 
+static const CFTimeInterval waitToDumpWatchdogInterval = 30.0;
+
+
+void LayoutTestController::invalidateWaitToDumpWatchdog()
+{
+    if (m_waitToDumpWatchdog) {
+        CFRunLoopTimerInvalidate(m_waitToDumpWatchdog.get());
+        m_waitToDumpWatchdog = 0;
+    }
+}
+
+static void waitUntilDoneWatchdogFired(CFRunLoopTimerRef timer, void* info)
+{
+    InjectedBundle::shared().layoutTestController()->waitToDumpWatchdogTimerFired();
+}
+
+void LayoutTestController::setWaitToDump()
+{
+    m_waitToDump = true;
+    if (!m_waitToDumpWatchdog) {
+        m_waitToDumpWatchdog.adoptCF(CFRunLoopTimerCreate(kCFAllocatorDefault, CFAbsoluteTimeGetCurrent() + waitToDumpWatchdogInterval, 
+                                                      0, 0, 0, waitUntilDoneWatchdogFired, NULL));
+        CFRunLoopAddTimer(CFRunLoopGetCurrent(), m_waitToDumpWatchdog.get(), kCFRunLoopCommonModes);
+    }
+}
+
+void LayoutTestController::waitToDumpWatchdogTimerFired()
+{
+    invalidateWaitToDumpWatchdog();
+    const char* message = "FAIL: Timed out waiting for notifyDone to be called\n";
+    InjectedBundle::shared().os() << message << "\n";
+    InjectedBundle::shared().done();
+}
+
+void LayoutTestController::notifyDone()
+{
+    if (m_waitToDump && !InjectedBundle::shared().page()->isLoading())
+        InjectedBundle::shared().page()->dump();
+    m_waitToDump = false;
+}
+
 static JSValueRef dumpAsTextCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
     controller->setDumpAsText(true);
+    return JSValueMakeUndefined(context);
+}
+
+static JSValueRef waitUntilDoneCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    controller->setWaitToDump();
+    return JSValueMakeUndefined(context);
+}
+
+static JSValueRef notifyDoneCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    controller->notifyDone();
     return JSValueMakeUndefined(context);
 }
 
@@ -88,6 +146,8 @@ JSStaticFunction* LayoutTestController::staticFunctions()
 {
     static JSStaticFunction staticFunctions[] = {
         { "dumpAsText", dumpAsTextCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "notifyDone", notifyDoneCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "waitUntilDone", waitUntilDoneCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { 0, 0, 0 }
     };
 

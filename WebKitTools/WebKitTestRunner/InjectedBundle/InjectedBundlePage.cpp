@@ -38,6 +38,7 @@ namespace WTR {
 
 InjectedBundlePage::InjectedBundlePage(WKBundlePageRef page)
     : m_page(page)
+    , m_isLoading(false)
 {
     WKBundlePageLoaderClient loaderClient = {
         0,
@@ -110,6 +111,8 @@ void InjectedBundlePage::_didClearWindowForFrame(WKBundlePageRef page, WKBundleF
 
 void InjectedBundlePage::didStartProvisionalLoadForFrame(WKBundleFrameRef frame)
 {
+    if (frame == WKBundlePageGetMainFrame(m_page))
+        m_isLoading = true;
 }
 
 void InjectedBundlePage::didReceiveServerRedirectForProvisionalLoadForFrame(WKBundleFrameRef frame)
@@ -137,14 +140,13 @@ static std::auto_ptr<Vector<char> > WKStringToUTF8(WKStringRef wkStringRef)
     return buffer;
 }
 
-void InjectedBundlePage::didFinishLoadForFrame(WKBundleFrameRef frame)
+void InjectedBundlePage::dump()
 {
-    if (!WKBundleFrameIsMainFrame(frame))
-        return;
+    InjectedBundle::shared().layoutTestController()->invalidateWaitToDumpWatchdog();
 
     if (InjectedBundle::shared().layoutTestController()->dumpAsText()) {
         // FIXME: Support dumping subframes when layoutTestController()->dumpChildFramesAsText() is true.
-        WKRetainPtr<WKStringRef> innerText(AdoptWK, WKBundleFrameCopyInnerText(frame));
+        WKRetainPtr<WKStringRef> innerText(AdoptWK, WKBundleFrameCopyInnerText(WKBundlePageGetMainFrame(m_page)));
         std::auto_ptr<Vector<char> > utf8InnerText = WKStringToUTF8(innerText.get());
         InjectedBundle::shared().os() << utf8InnerText->data() << "\n";
     } else {
@@ -155,10 +157,25 @@ void InjectedBundlePage::didFinishLoadForFrame(WKBundleFrameRef frame)
     InjectedBundle::shared().done();
 }
 
+void InjectedBundlePage::didFinishLoadForFrame(WKBundleFrameRef frame)
+{
+    if (!WKBundleFrameIsMainFrame(frame))
+        return;
+
+    m_isLoading = false;
+
+    if (InjectedBundle::shared().layoutTestController()->waitToDump())
+        return;
+
+    dump();
+}
+
 void InjectedBundlePage::didFailLoadWithErrorForFrame(WKBundleFrameRef frame)
 {
     if (!WKBundleFrameIsMainFrame(frame))
         return;
+
+    m_isLoading = false;
 
     InjectedBundle::shared().done();
 }
