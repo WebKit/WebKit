@@ -1,3 +1,11 @@
+2010-07-12  Adam Roben  <aroben@apple.com>
+
+        Windows failure-to-launch fix
+
+        * DumpRenderTree/win/DumpRenderTree.vcproj: Copy CoreVideo.dll and
+        CoreVideo.pdb into WebKitOutputDir in the post-build event, too, like
+        we already do for CoreFoundation, CFNetwork, etc.
+
 2010-07-12  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Reviewed by Xan Lopez.
