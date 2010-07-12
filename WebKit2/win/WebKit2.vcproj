@@ -148,7 +148,6 @@
 		</Configuration>
 		<Configuration
 			Name="Debug_Internal|Win32"
-			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="2"
 			InheritedPropertySheets="$(WebKitLibrariesDir)\tools\vsprops\FeatureDefines.vsprops;$(WebKitLibrariesDir)\tools\vsprops\common.vsprops;$(WebKitLibrariesDir)\tools\vsprops\debug.vsprops;$(WebKitLibrariesDir)\tools\vsprops\debug_internal.vsprops;.\WebKit2Common.vsprops;.\WebKit2DirectX.vsprops;.\WebKit2Apple.vsprops"
 			CharacterSet="1"
@@ -283,7 +282,6 @@
 		<Configuration
 			Name="Release_Cairo|Win32"
 			OutputDirectory="$(WebKitOutputDir)\bin"
-			IntermediateDirectory="$(WebKitOutputDir)\obj\$(ProjectName)\$(ConfigurationName)"
 			ConfigurationType="2"
 			InheritedPropertySheets="$(WebKitLibrariesDir)\tools\vsprops\FeatureDefinesCairo.vsprops;$(WebKitLibrariesDir)\tools\vsprops\common.vsprops;$(WebKitLibrariesDir)\tools\vsprops\release.vsprops;$(WebKitLibrariesDir)\tools\vsprops\WinCairo.vsprops;$(WebKitLibrariesDir)\tools\vsprops\cURL.vsprops;.\WebKit2Common.vsprops;.\WebKit2CFLite.vsprops"
 			CharacterSet="1"
