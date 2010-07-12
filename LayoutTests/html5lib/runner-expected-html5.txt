@@ -386,46 +386,7 @@ Expected:
 resources/tests8.dat: PASS
 
 resources/tests9.dat:
-13
 14
-15
-18
-19
-
-Test 13 of 25 in resources/tests9.dat failed. Input:
-<!DOCTYPE html><body><table><caption><math><mi>foo</mi><mi>bar</mi><p>baz</table><p>quux
-Got:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <table>
-|       <caption>
-|         <math math>
-|           <math mi>
-|             "foo"
-|           <math mi>
-|             "bar"
-|           <math p>
-|             "baz"
-|             <math p>
-|               "quux"
-Expected:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <table>
-|       <caption>
-|         <math math>
-|           <math mi>
-|             "foo"
-|           <math mi>
-|             "bar"
-|         <p>
-|           "baz"
-|     <p>
-|       "quux"
 
 Test 14 of 25 in resources/tests9.dat failed. Input:
 <!DOCTYPE html><body><table><caption><math><mi>foo</mi><mi>bar</mi>baz</table><p>quux
@@ -442,8 +403,8 @@ Got:
 |           <math mi>
 |             "bar"
 |           "baz"
-|           <math p>
-|             "quux"
+|         <p>
+|           "quux"
 Expected:
 | <!DOCTYPE html>
 | <html>
@@ -459,136 +420,8 @@ Expected:
 |           "baz"
 |     <p>
 |       "quux"
-
-Test 15 of 25 in resources/tests9.dat failed. Input:
-<!DOCTYPE html><body><table><colgroup><math><mi>foo</mi><mi>bar</mi><p>baz</table><p>quux
-Got:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <math math>
-|       <math mi>
-|         "foo"
-|       <math mi>
-|         "bar"
-|       <math p>
-|         "baz"
-|         <math p>
-|           "quux"
-|     <table>
-|       <colgroup>
-Expected:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <math math>
-|       <math mi>
-|         "foo"
-|       <math mi>
-|         "bar"
-|     <p>
-|       "baz"
-|     <table>
-|       <colgroup>
-|     <p>
-|       "quux"
-
-Test 18 of 25 in resources/tests9.dat failed. Input:
-<!DOCTYPE html><body></body></html><math><mi>foo</mi><mi>bar</mi><p>baz
-Got:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <math math>
-|       <math mi>
-|         "foo"
-|       <math mi>
-|         "bar"
-|       <math p>
-|         "baz"
-Expected:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <math math>
-|       <math mi>
-|         "foo"
-|       <math mi>
-|         "bar"
-|     <p>
-|       "baz"
-
-Test 19 of 25 in resources/tests9.dat failed. Input:
-<!DOCTYPE html><body></body><math><mi>foo</mi><mi>bar</mi><p>baz
-Got:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <math math>
-|       <math mi>
-|         "foo"
-|       <math mi>
-|         "bar"
-|       <math p>
-|         "baz"
-Expected:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <math math>
-|       <math mi>
-|         "foo"
-|       <math mi>
-|         "bar"
-|     <p>
-|       "baz"
 resources/tests10.dat:
-13
 14
-15
-18
-19
-
-Test 13 of 25 in resources/tests10.dat failed. Input:
-<!DOCTYPE html><body><table><caption><svg><g>foo</g><g>bar</g><p>baz</table><p>quux
-Got:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <table>
-|       <caption>
-|         <svg svg>
-|           <svg g>
-|             "foo"
-|           <svg g>
-|             "bar"
-|           <svg p>
-|             "baz"
-|             <svg p>
-|               "quux"
-Expected:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <table>
-|       <caption>
-|         <svg svg>
-|           <svg g>
-|             "foo"
-|           <svg g>
-|             "bar"
-|         <p>
-|           "baz"
-|     <p>
-|       "quux"
 
 Test 14 of 25 in resources/tests10.dat failed. Input:
 <!DOCTYPE html><body><table><caption><svg><g>foo</g><g>bar</g>baz</table><p>quux
@@ -605,8 +438,8 @@ Got:
 |           <svg g>
 |             "bar"
 |           "baz"
-|           <svg p>
-|             "quux"
+|         <p>
+|           "quux"
 Expected:
 | <!DOCTYPE html>
 | <html>
@@ -622,95 +455,6 @@ Expected:
 |           "baz"
 |     <p>
 |       "quux"
-
-Test 15 of 25 in resources/tests10.dat failed. Input:
-<!DOCTYPE html><body><table><colgroup><svg><g>foo</g><g>bar</g><p>baz</table><p>quux
-Got:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <svg svg>
-|       <svg g>
-|         "foo"
-|       <svg g>
-|         "bar"
-|       <svg p>
-|         "baz"
-|         <svg p>
-|           "quux"
-|     <table>
-|       <colgroup>
-Expected:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <svg svg>
-|       <svg g>
-|         "foo"
-|       <svg g>
-|         "bar"
-|     <p>
-|       "baz"
-|     <table>
-|       <colgroup>
-|     <p>
-|       "quux"
-
-Test 18 of 25 in resources/tests10.dat failed. Input:
-<!DOCTYPE html><body></body></html><svg><g>foo</g><g>bar</g><p>baz
-Got:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <svg svg>
-|       <svg g>
-|         "foo"
-|       <svg g>
-|         "bar"
-|       <svg p>
-|         "baz"
-Expected:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <svg svg>
-|       <svg g>
-|         "foo"
-|       <svg g>
-|         "bar"
-|     <p>
-|       "baz"
-
-Test 19 of 25 in resources/tests10.dat failed. Input:
-<!DOCTYPE html><body></body><svg><g>foo</g><g>bar</g><p>baz
-Got:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <svg svg>
-|       <svg g>
-|         "foo"
-|       <svg g>
-|         "bar"
-|       <svg p>
-|         "baz"
-Expected:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <svg svg>
-|       <svg g>
-|         "foo"
-|       <svg g>
-|         "bar"
-|     <p>
-|       "baz"
 resources/tests11.dat: PASS
 
 resources/tests12.dat:

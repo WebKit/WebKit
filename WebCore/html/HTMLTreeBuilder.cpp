@@ -1491,7 +1491,51 @@ void HTMLTreeBuilder::processStartTag(AtomicHTMLToken& token)
             processUsingSecondaryInsertionModeAndAdjustInsertionMode(token);
             return;
         }
-        notImplemented();
+        if (token.name() == bTag
+            || token.name() == bigTag
+            || token.name() == blockquoteTag
+            || token.name() == bodyTag
+            || token.name() == brTag
+            || token.name() == centerTag
+            || token.name() == codeTag
+            || token.name() == ddTag
+            || token.name() == divTag
+            || token.name() == dlTag
+            || token.name() == dtTag
+            || token.name() == emTag
+            || token.name() == embedTag
+            || isNumberedHeaderTag(token.name())
+            || token.name() == headTag
+            || token.name() == hrTag
+            || token.name() == iTag
+            || token.name() == imgTag
+            || token.name() == liTag
+            || token.name() == listingTag
+            || token.name() == menuTag
+            || token.name() == metaTag
+            || token.name() == nobrTag
+            || token.name() == olTag
+            || token.name() == pTag
+            || token.name() == preTag
+            || token.name() == rubyTag
+            || token.name() == sTag
+            || token.name() == smallTag
+            || token.name() == spanTag
+            || token.name() == strongTag
+            || token.name() == strikeTag
+            || token.name() == subTag
+            || token.name() == supTag
+            || token.name() == tableTag
+            || token.name() == ttTag
+            || token.name() == uTag
+            || token.name() == ulTag
+            || token.name() == varTag
+            || (token.name() == fontTag && (token.getAttributeItem(colorAttr) || token.getAttributeItem(faceAttr) || token.getAttributeItem(sizeAttr)))) {
+            m_tree.openElements()->popUntilElementWithNamespace(xhtmlNamespaceURI);
+            setInsertionMode(m_secondaryInsertionMode);
+            processStartTag(token);
+            return;
+        }
         const AtomicString& currentNamespace = m_tree.currentElement()->namespaceURI();
         if (currentNamespace == MathMLNames::mathmlNamespaceURI)
             adjustMathMLAttributes(token);
@@ -2592,11 +2636,7 @@ void HTMLTreeBuilder::processEndOfFile(AtomicHTMLToken& token)
         parseError(token);
         // FIXME: Following the spec would infinitely recurse on <svg><svg>
         // http://www.w3.org/Bugs/Public/show_bug.cgi?id=10115
-        while (m_tree.currentElement()) {
-            if (m_tree.currentElement()->namespaceURI() == xhtmlNamespaceURI)
-                break;
-            m_tree.openElements()->pop();
-        }
+        m_tree.openElements()->popUntilElementWithNamespace(xhtmlNamespaceURI);
         setInsertionMode(m_secondaryInsertionMode);
         processEndOfFile(token);
         break;

@@ -1,3 +1,19 @@
+2010-07-12  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        HTML tags should break out of foreign content
+        https://bugs.webkit.org/show_bug.cgi?id=42106
+
+        Implement another paragraph of the spec to pass another
+        bunch of foreign content tests.
+
+        This fixes a bunch of tests in html5lib/runner.html.
+        After this change we only have 4 remaining foreign content failures.
+
+        * html/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::processStartTag):
+
 2010-07-12  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Darin Fisher.

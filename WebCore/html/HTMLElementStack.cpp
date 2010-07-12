@@ -143,6 +143,12 @@ void HTMLElementStack::pop()
     popCommon();
 }
 
+void HTMLElementStack::popUntilElementWithNamespace(const AtomicString& namespaceURI)
+{
+    while (top()->namespaceURI() != namespaceURI)
+        pop();
+}
+
 void HTMLElementStack::popUntil(const AtomicString& tagName)
 {
     while (!top()->hasLocalName(tagName)) {
