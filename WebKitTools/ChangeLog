@@ -1,3 +1,22 @@
+2010-07-12  Adam Roben  <aroben@apple.com>
+
+        Make run-webkit-tests print how many tests timed out when exiting
+        early
+
+        The number of timed-out tests is taken into account when deciding
+        whether to exit early. Leaving it out of the output just makes the
+        script look buggy (because it might say something like "Exiting early
+        after 0 crashes.").
+
+        Fixes <http://webkit.org/b/42077> run-webkit-tests prints confusing
+        messages when exiting early due to crashes and time-outs
+
+        Reviewed by Anders Carlsson.
+
+        * Scripts/old-run-webkit-tests:
+        (stopRunningTestsEarlyIfNeeded): When stopping, print the number of
+        timed-out tests, too.
+
 2010-07-11  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Dan Bernstein.

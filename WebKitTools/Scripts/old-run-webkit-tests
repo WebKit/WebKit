@@ -2295,7 +2295,7 @@ sub stopRunningTestsEarlyIfNeeded()
     my $crashCount = $counts{crash} || 0;
     my $timeoutCount = $counts{timedout} || 0;
     if ($exitAfterNCrashesOrTimeouts && $crashCount + $timeoutCount >= $exitAfterNCrashesOrTimeouts) {
-        print "\nExiting early after $crashCount crashes. $count tests run.";
+        print "\nExiting early after $crashCount crashes and $timeoutCount timeouts. $count tests run.";
         closeDumpTool();
         return 1;
     }
