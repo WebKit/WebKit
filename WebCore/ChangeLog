@@ -1,3 +1,18 @@
+2010-07-12  Eric Seidel  <eric@webkit.org>
+
+        Unreviewed.  Attempt to fix Chromium Windows build.
+
+        Always generate SVGNames and MathMLNames for all ports (to support HTML5)
+        https://bugs.webkit.org/show_bug.cgi?id=42050
+
+        Another way to fix this might be to mark all the .in files with
+        svn:eol=native.  But fixing the perl to be more robust against
+        stray whitespace seems to be a better long-term fix.
+
+        No functional change, thus no tests.
+
+        * bindings/scripts/InFilesParser.pm:
+
 2010-07-12  Andreas Kling  <andreas.kling@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

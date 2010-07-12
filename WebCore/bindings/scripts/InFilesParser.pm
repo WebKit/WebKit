@@ -85,6 +85,10 @@ sub parse($)
     my $perTagHandler = shift;
 
     foreach (<$fileStream>) {
+        # Ignore whitespace, in case the .in files have the wrong EOL
+        # markers and those are getting treated as whitespace.
+        $_ = trimWS($_);
+
         # Empty line, change from common parameter part
         # to per tag part if we have started parsing.
         if (/^$/) {
