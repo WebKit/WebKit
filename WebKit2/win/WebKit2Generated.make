@@ -2,6 +2,7 @@ all:
     touch "$(WEBKITOUTPUTDIR)\buildfailed"
     -mkdir 2>NUL "$(WEBKITOUTPUTDIR)\include\WebKit2"
     xcopy /y /d "..\UIProcess\API\C\WebKit2.h" "$(WEBKITOUTPUTDIR)\include\WebKit2"
+    xcopy /y /d "..\UIProcess\API\C\WKArray.h" "$(WEBKITOUTPUTDIR)\include\WebKit2"
     xcopy /y /d "..\UIProcess\API\C\WKBackForwardList.h" "$(WEBKITOUTPUTDIR)\include\WebKit2"
     xcopy /y /d "..\UIProcess\API\C\WKBackForwardListItem.h" "$(WEBKITOUTPUTDIR)\include\WebKit2"
     xcopy /y /d "..\UIProcess\API\C\WKBase.h" "$(WEBKITOUTPUTDIR)\include\WebKit2"

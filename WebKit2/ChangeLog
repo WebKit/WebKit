@@ -1,3 +1,9 @@
+2010-07-12  Ada Chan  <adachan@apple.com>
+
+        Build fix.  Copy WKArray.h to the include directory.
+
+        * win/WebKit2Generated.make:
+
 2010-07-12  Mark Rowe  <mrowe@apple.com>
 
         Re-do an Xcode project change that Xcode decided not to save.
