@@ -446,9 +446,6 @@ editing/pasteboard/get-data-text-plain-drop.html
 # ---- https://bugs.webkit.org/show_bug.cgi?id=36721
 plugins/get-url-with-blank-target.html
 
-# ---- https://bugs.webkit.org/show_bug.cgi?id=40879
-plugins/resize-from-plugin.html
-
 # ---- plugins rendered in incorrect position
 plugins/embed-attributes-style.html
 # ---- depends on QuickTime support
