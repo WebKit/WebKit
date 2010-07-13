@@ -1,3 +1,14 @@
+2010-07-13  Martin Robinson  <mrobinson@igalia.com>
+
+        Unreviewed.
+
+        Unskip and add results for a test that is passing after r63176.
+
+        * platform/gtk/Skipped:
+        * platform/gtk/fast/text/shadow-translucent-fill-expected.checksum: Added.
+        * platform/gtk/fast/text/shadow-translucent-fill-expected.png: Added.
+        * platform/gtk/fast/text/shadow-translucent-fill-expected.txt: Added.
+
 2010-07-13  Andreas Kling  <andreas.kling@nokia.com>
 
         Unreviewed. Rebaseline resize-from-plugin.html

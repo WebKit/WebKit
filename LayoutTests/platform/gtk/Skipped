@@ -5132,7 +5132,6 @@ fast/repaint/float-new-in-block.html
 fast/repaint/line-in-scrolled-clipped-block.html
 fast/repaint/positioned-document-element.html
 fast/text/international/khmer-selection.html
-fast/text/shadow-translucent-fill.html
 fast/text/text-letter-spacing.html
 media/audio-no-installed-engines.html
 svg/batik/filters/feTile.svg
