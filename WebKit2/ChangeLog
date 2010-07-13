@@ -1,5 +1,15 @@
 2010-07-13  John Sullivan  <sullivan@apple.com>
 
+        Written by Simon Fraser, reviewed by me.
+
+        Cleaner fix for previous check-in.
+
+        * UIProcess/WebBackForwardList.cpp:
+        (WebKit::WebBackForwardList::backListAsImmutableArrayWithLimit):
+        Use std::max<int> for int-casting brevity.
+
+2010-07-13  John Sullivan  <sullivan@apple.com>
+
         Reviewed by Sam Weinig.
 
         Fixed signed/unsigned problem that led to bogus contents in the array
