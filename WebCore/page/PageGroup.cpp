@@ -242,12 +242,7 @@ void PageGroup::addUserStyleSheetToWorld(DOMWrapperWorld* world, const String& s
         styleSheetsInWorld = new UserStyleSheetVector;
     styleSheetsInWorld->append(userStyleSheet.release());
 
-    // Clear our cached sheets and have them just reparse.
-    HashSet<Page*>::const_iterator end = m_pages.end();
-    for (HashSet<Page*>::const_iterator it = m_pages.begin(); it != end; ++it) {
-        for (Frame* frame = (*it)->mainFrame(); frame; frame = frame->tree()->traverseNext())
-            frame->document()->clearPageGroupUserSheets();
-    }
+    resetUserStyleCacheInAllFrames();
 }
 
 void PageGroup::removeUserScriptFromWorld(DOMWrapperWorld* world, const KURL& url)
@@ -301,13 +296,8 @@ void PageGroup::removeUserStyleSheetFromWorld(DOMWrapperWorld* world, const KURL
         delete it->second;
         m_userStyleSheets->remove(it);
     }
-    
-    // Clear our cached sheets and have them just reparse.
-    HashSet<Page*>::const_iterator end = m_pages.end();
-    for (HashSet<Page*>::const_iterator it = m_pages.begin(); it != end; ++it) {
-        for (Frame* frame = (*it)->mainFrame(); frame; frame = frame->tree()->traverseNext())
-            frame->document()->clearPageGroupUserSheets();
-    }
+
+    resetUserStyleCacheInAllFrames();
 }
 
 void PageGroup::removeUserScriptsFromWorld(DOMWrapperWorld* world)
@@ -339,12 +329,7 @@ void PageGroup::removeUserStyleSheetsFromWorld(DOMWrapperWorld* world)
     delete it->second;
     m_userStyleSheets->remove(it);
 
-    // Clear our cached sheets and have them just reparse.
-    HashSet<Page*>::const_iterator end = m_pages.end();
-    for (HashSet<Page*>::const_iterator it = m_pages.begin(); it != end; ++it) {
-        for (Frame* frame = (*it)->mainFrame(); frame; frame = frame->tree()->traverseNext())
-            frame->document()->clearPageGroupUserSheets();
-    }
+    resetUserStyleCacheInAllFrames();
 }
 
 void PageGroup::removeAllUserContent()
@@ -353,12 +338,24 @@ void PageGroup::removeAllUserContent()
         deleteAllValues(*m_userScripts);
         m_userScripts.clear();
     }
-    
-    
+
     if (m_userStyleSheets) {
         deleteAllValues(*m_userStyleSheets);
         m_userStyleSheets.clear();
+        resetUserStyleCacheInAllFrames();
     }
+}
+
+void PageGroup::resetUserStyleCacheInAllFrames()
+{
+#if !PLATFORM(CHROMIUM)
+    // Clear our cached sheets and have them just reparse.
+    HashSet<Page*>::const_iterator end = m_pages.end();
+    for (HashSet<Page*>::const_iterator it = m_pages.begin(); it != end; ++it) {
+        for (Frame* frame = (*it)->mainFrame(); frame; frame = frame->tree()->traverseNext())
+            frame->document()->clearPageGroupUserSheets();
+    }
+#endif
 }
 
 } // namespace WebCore

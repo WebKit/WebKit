@@ -94,7 +94,8 @@ namespace WebCore {
 
     private:
         void addVisitedLink(LinkHash stringHash);
-
+        void resetUserStyleCacheInAllFrames();
+  
         String m_name;
 
         HashSet<Page*> m_pages;
