@@ -3013,4 +3013,3 @@ BUGAWONG MAC : svg/custom/clip-path-child-changes.svg = TEXT
 
 BUG48859 WIN : fast/inline/continuation-outlines-with-layers-2.html = IMAGE+TEXT
 
-BUGFOO REBASELINE LINUX MAC : fast/gradients/radial-centered.html = IMAGE+TEXT
