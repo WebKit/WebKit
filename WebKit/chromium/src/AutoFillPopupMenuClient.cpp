@@ -66,20 +66,22 @@ unsigned AutoFillPopupMenuClient::getSuggestionsCount() const
 
 WebString AutoFillPopupMenuClient::getSuggestion(unsigned listIndex) const
 {
-    if (listIndex == static_cast<unsigned>(m_separatorIndex))
+    int index = convertListIndexToInternalIndex(listIndex);
+    if (index == -1)
         return WebString();
 
-    if (m_separatorIndex != -1 && listIndex > static_cast<unsigned>(m_separatorIndex))
-        --listIndex;
+    ASSERT(index < m_names.size());
+    return m_names[index];
+}
 
-    // FIXME: Modify the PopupMenu to add the label in gray right-justified.
-    ASSERT(listIndex < m_names.size());
+WebString AutoFillPopupMenuClient::getLabel(unsigned listIndex) const
+{
+    int index = convertListIndexToInternalIndex(listIndex);
+    if (index == -1)
+        return WebString();
 
-    WebString suggestion = m_names[listIndex];
-    if (m_labels[listIndex].isEmpty())
-        return suggestion;
-
-    return suggestion + String(" (") + m_labels[listIndex] + String(")");
+    ASSERT(index < m_labels.size());
+    return m_labels[index];
 }
 
 void AutoFillPopupMenuClient::removeSuggestionAtIndex(unsigned listIndex)
@@ -148,6 +150,11 @@ void AutoFillPopupMenuClient::selectionCleared()
 String AutoFillPopupMenuClient::itemText(unsigned listIndex) const
 {
     return getSuggestion(listIndex);
+}
+
+String AutoFillPopupMenuClient::itemLabel(unsigned listIndex) const
+{
+    return getLabel(listIndex);
 }
 
 PopupMenuStyle AutoFillPopupMenuClient::itemStyle(unsigned listIndex) const
@@ -268,6 +275,16 @@ void AutoFillPopupMenuClient::setSuggestions(const WebVector<WebString>& names,
     // Try to preserve selection if possible.
     if (getSelectedIndex() >= static_cast<int>(names.size()))
         setSelectedIndex(-1);
+}
+
+int AutoFillPopupMenuClient::convertListIndexToInternalIndex(unsigned listIndex) const
+{
+    if (listIndex == static_cast<unsigned>(m_separatorIndex))
+        return -1;
+
+    if (m_separatorIndex == -1 || listIndex < static_cast<unsigned>(m_separatorIndex))
+        return listIndex;
+    return listIndex - 1;
 }
 
 WebViewImpl* AutoFillPopupMenuClient::getWebView() const

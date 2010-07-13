@@ -42,6 +42,7 @@ public:
     virtual void selectionCleared() = 0;
 
     virtual String itemText(unsigned listIndex) const = 0;
+    virtual String itemLabel(unsigned listIndex) const = 0;
     virtual String itemToolTip(unsigned listIndex) const = 0;
     virtual String itemAccessibilityText(unsigned listIndex) const = 0;
     virtual bool itemIsEnabled(unsigned listIndex) const = 0;

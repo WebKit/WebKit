@@ -876,6 +876,11 @@ String RenderTextControlSingleLine::itemText(unsigned listIndex) const
     return m_recentSearches[listIndex - 1];
 }
 
+String RenderTextControlSingleLine::itemLabel(unsigned) const
+{
+    return String();
+}
+
 bool RenderTextControlSingleLine::itemIsEnabled(unsigned listIndex) const
 {
      if (!listIndex || itemIsSeparator(listIndex))

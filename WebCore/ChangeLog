@@ -1,3 +1,20 @@
+2010-07-12  Jay Civelli  <jcivelli@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        Adding right aligned text called labels to PopupMenus.
+        https://bugs.webkit.org/show_bug.cgi?id=41964
+
+        * platform/PopupMenuClient.h:
+        * platform/chromium/PopupMenuChromium.cpp:
+        (WebCore::PopupListBox::paintRow):
+        * rendering/RenderMenuList.cpp:
+        (WebCore::RenderMenuList::itemLabel):
+        * rendering/RenderMenuList.h:
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::itemLabel):
+        * rendering/RenderTextControlSingleLine.h:
+
 2010-07-12  Mihnea Ovidenea  <mihnea@adobe.com>
 
         Reviewed by Dirk Schulze.

@@ -70,6 +70,7 @@ typedef unsigned long long TimeStamp;
 static const int kMaxVisibleRows = 20;
 static const int kMaxHeight = 500;
 static const int kBorderSize = 1;
+static const int kTextToLabelPadding = 10;
 static const TimeStamp kTypeAheadTimeoutMs = 1000;
 
 // The settings used for the drop down menu.
@@ -917,10 +918,23 @@ void PopupListBox::paintRow(GraphicsContext* gc, const IntRect& rect, int rowInd
     }
     // Prepare text to be drawn.
     String itemText = m_popupClient->itemText(rowIndex);
-    if (m_settings.restrictWidthOfListBox)  // truncate string to fit in.
-        itemText = StringTruncator::rightTruncate(itemText, maxWidth, itemFont);
-    unsigned length = itemText.length();
-    const UChar* str = itemText.characters();
+    String itemLabel = m_popupClient->itemLabel(rowIndex);
+    if (m_settings.restrictWidthOfListBox) { // Truncate strings to fit in.
+        // FIXME: We should leftTruncate for the rtl case.
+        // StringTruncator::leftTruncate would have to be implemented.
+        String str = StringTruncator::rightTruncate(itemText, maxWidth, itemFont);
+        if (str != itemText) {
+            itemText = str;
+            // Don't display the label, we already don't have enough room for the
+            // item text.
+            itemLabel = "";
+        } else if (!itemLabel.isEmpty()) {
+            int availableWidth = maxWidth - kTextToLabelPadding -
+                StringTruncator::width(itemText, itemFont);
+            itemLabel = StringTruncator::rightTruncate(itemLabel, availableWidth, itemFont);
+        }
+    }
+
     // Prepare the directionality to draw text.
     bool rtl = false;
     if (m_settings.itemTextDirectionalityHint == PopupContainerSettings::DOMElementDirection)
@@ -928,14 +942,33 @@ void PopupListBox::paintRow(GraphicsContext* gc, const IntRect& rect, int rowInd
     else if (m_settings.itemTextDirectionalityHint ==
              PopupContainerSettings::FirstStrongDirectionalCharacterDirection)
         rtl = itemText.defaultWritingDirection() == WTF::Unicode::RightToLeft;
-    TextRun textRun(str, length, false, 0, 0, rtl);
+    TextRun textRun(itemText.characters(), itemText.length(), false, 0, 0, rtl);
     // If the text is right-to-left, make it right-aligned by adjusting its
     // beginning position.
     if (rightAligned)
         textX += maxWidth - itemFont.width(textRun);
+
     // Draw the item text.
     int textY = rowRect.y() + itemFont.ascent() + (rowRect.height() - itemFont.height()) / 2;
     gc->drawBidiText(itemFont, textRun, IntPoint(textX, textY));
+
+    // Draw the the label if applicable.
+    if (itemLabel.isEmpty())
+        return;
+    TextRun labelTextRun(itemLabel.characters(), itemLabel.length(), false, 0, 0, rtl);
+    if (rightAligned)
+        textX = max(0, m_popupClient->clientPaddingLeft() - m_popupClient->clientInsetLeft());
+    else {
+        // We are using the left padding as the right padding includes room for the scroll-bar which
+        // does not show in this case.
+        int rightPadding = max(0, m_popupClient->clientPaddingLeft() - m_popupClient->clientInsetLeft());
+        textX = rowRect.width() - rightPadding - itemFont.width(labelTextRun);
+    }
+
+    // FIXME: for now the label color is hard-coded. It should be added to the
+    //        PopupMenuStyle.
+    gc->setFillColor(Color(115, 115, 115), DeviceColorSpace);
+    gc->drawBidiText(itemFont, labelTextRun, IntPoint(textX, textY));
 }
 
 Font PopupListBox::getRowFont(int rowIndex)
