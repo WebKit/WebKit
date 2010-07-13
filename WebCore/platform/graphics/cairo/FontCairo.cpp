@@ -73,8 +73,8 @@ void Font::drawGlyphs(GraphicsContext* context, const SimpleFontData* font, cons
     FloatSize shadowSize;
     float shadowBlur = 0;
     Color shadowColor;
-    bool hasShadow = context->textDrawingMode() == cTextFill &&
-        context->getShadow(shadowSize, shadowBlur, shadowColor);
+    bool hasShadow = context->textDrawingMode() & cTextFill
+                     && context->getShadow(shadowSize, shadowBlur, shadowColor);
 
     // TODO: Blur support
     if (hasShadow) {

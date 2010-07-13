@@ -1,3 +1,20 @@
+2010-07-12  Mihnea Ovidenea  <mihnea@adobe.com>
+
+        Reviewed by Dirk Schulze.
+
+        [Cairo] Incorrect Test for Text Fill
+        https://bugs.webkit.org/show_bug.cgi?id=42123
+
+        Correct test used for text shadow.  It currently checks for
+        equality with cTextFill.  However, this test fails if the
+        text drawing mode is set to 'cTextFill | cTextStroke'.  Fix
+        is to modify the test to be like other Cairo uses of the
+        text drawing mode, and check for the cTextFill bit being
+        set, not for equality with the bit.
+
+        * platform/graphics/cairo/FontCairo.cpp:
+        (WebCore::Font::drawGlyphs):
+
 2010-07-12  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Sam Weinig.

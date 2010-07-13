@@ -1,5 +1,23 @@
 2010-07-12  Martin Robinson  <mrobinson@igalia.com>
 
+        Reviewed by Dirk Schulze.
+
+        [Cairo] Incorrect Test for Text Fill
+        https://bugs.webkit.org/show_bug.cgi?id=42123
+
+        Unskip tests which cover text stroking and add pixel dump results for
+        them via the GTK+ port.
+
+        * platform/gtk/Skipped: Unskip passing tests.
+        * platform/gtk/fast/text/stroking-decorations-expected.checksum: Added.
+        * platform/gtk/fast/text/stroking-decorations-expected.png: Added.
+        * platform/gtk/fast/text/stroking-decorations-expected.txt: Added.
+        * platform/gtk/fast/text/stroking-expected.checksum: Added.
+        * platform/gtk/fast/text/stroking-expected.png: Added.
+        * platform/gtk/fast/text/stroking-expected.txt: Added.
+
+2010-07-12  Martin Robinson  <mrobinson@igalia.com>
+
         Unreviewed.
 
         Fix a small error in the Skipped list.

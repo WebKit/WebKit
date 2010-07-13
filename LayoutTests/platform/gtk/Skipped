@@ -2990,7 +2990,6 @@ fast/text/soft-hyphen-3.html
 fast/text/softHyphen.html
 fast/text/stripNullFromText.html
 fast/text/stroking-decorations.html
-fast/text/stroking.html
 fast/text/textIteratorNilRenderer.html
 fast/text/trailing-white-space-2.html
 fast/text/trailing-white-space.html
