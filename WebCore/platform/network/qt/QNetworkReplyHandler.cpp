@@ -309,7 +309,7 @@ void QNetworkReplyHandler::sendResponseIfNeeded()
     }
 
     KURL url(m_reply->url());
-    ResourceResponse response(url, mimeType,
+    ResourceResponse response(url, mimeType.lower(),
                               m_reply->header(QNetworkRequest::ContentLengthHeader).toLongLong(),
                               encoding, String());
 

@@ -1,3 +1,17 @@
+2010-07-13  Richard Moore <rich@kde.org>, Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] MIME handling in qtwebkit network layer case-sensitivity
+
+        https://bugs.webkit.org/show_bug.cgi?id=28654
+
+        Like other platforms, Qt needs to convert MIME types to lower case
+        so they will be handled by WebCore.
+
+        * platform/network/qt/QNetworkReplyHandler.cpp:
+        (WebCore::QNetworkReplyHandler::sendResponseIfNeeded):
+
 2010-07-13  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Simon Fraser.

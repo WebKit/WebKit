@@ -1,3 +1,17 @@
+2010-07-13  Richard Moore <rich@kde.org>, Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] MIME handling in qtwebkit network layer case-sensitivity
+
+        https://bugs.webkit.org/show_bug.cgi?id=28654
+
+        Modify existing test uppercase-mime-type.html to test for the
+        lower-casing explicitly.
+
+        * http/tests/mime/uppercase-mime-type-expected.txt:
+        * http/tests/mime/uppercase-mime-type.html:
+
 2010-07-10  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Darin Fisher.
