@@ -1,3 +1,33 @@
+2010-07-13  Martin Robinson  <mrobinson@igalia.com>
+
+        Unreviewed.
+
+        Adding baselines for new tests.
+
+        * platform/gtk/fast/gradients/radial-centered-expected.txt: Added.
+        * platform/gtk/fast/inline/continuation-outlines-with-layers-2-expected.txt: Added.
+        * platform/gtk/fast/repaint/stacked-diacritics-expected.txt: Added.
+        * platform/gtk/fast/text/international/bidi-mirror-he-ar-expected.txt: Added.
+        * platform/gtk/fast/text/international/plane2-expected.txt: Added.
+        * platform/gtk/scrollbars/basic-scrollbar-expected.txt: Added.
+        * platform/gtk/svg/batik/text/textDecoration-expected.txt: Added.
+        * platform/gtk/svg/css/text-shadow-multiple-expected.txt: Added.
+        * platform/gtk/svg/custom/bug45331-expected.txt: Added.
+        * platform/gtk/svg/custom/clone-element-with-animated-svg-properties-expected.txt: Added.
+        * platform/gtk/svg/custom/relative-sized-inner-svg-expected.txt: Added.
+        * platform/gtk/svg/custom/relative-sized-use-without-attributes-on-symbol-expected.txt: Added.
+        * platform/gtk/svg/custom/repaint-moving-svg-and-div-expected.txt: Copied from LayoutTests/platform/mac/svg/custom/repaint-moving-svg-and-div-expected.txt.
+        * platform/gtk/svg/custom/svg-curve-with-relative-cordinates-expected.txt: Added.
+        * platform/gtk/svg/custom/text-rotated-gradient-expected.txt: Added.
+        * platform/gtk/svg/custom/use-font-face-crash-expected.txt: Added.
+        * platform/gtk/svg/custom/use-property-synchronization-crash-expected.txt: Copied from LayoutTests/platform/mac/svg/custom/use-property-synchronization-crash-expected.txt.
+        * platform/gtk/svg/filters/filter-width-update-expected.txt: Added.
+        * platform/gtk/svg/foreignObject/disallowed-svg-nodes-as-direct-children-expected.txt: Copied from LayoutTests/platform/mac/svg/foreignObject/disallowed-svg-nodes-as-direct-children-expected.txt.
+        * platform/gtk/svg/foreignObject/no-crash-with-svg-content-in-html-document-expected.txt: Added.
+        * platform/gtk/svg/foreignObject/svg-document-as-direct-child-expected.txt: Added.
+        * platform/gtk/svg/foreignObject/svg-document-in-html-document-expected.txt: Added.
+        * platform/gtk/svg/foreignObject/text-tref-02-b-expected.txt: Added.
+
 2010-07-10  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Darin Fisher.
