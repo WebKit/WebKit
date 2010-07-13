@@ -94,6 +94,7 @@ RenderLayerCompositor::RenderLayerCompositor(RenderView* renderView)
     , m_showDebugBorders(false)
     , m_showRepaintCounter(false)
     , m_compositingConsultsOverlap(true)
+    , m_compositingDependsOnGeometry(false)
     , m_compositing(false)
     , m_compositingLayersNeedRebuild(false)
     , m_rootLayerAttachment(RootLayerUnattached)
@@ -168,7 +169,10 @@ void RenderLayerCompositor::scheduleSync()
 
 void RenderLayerCompositor::updateCompositingLayers(CompositingUpdateType updateType, RenderLayer* updateRoot)
 {
-    bool checkForHierarchyUpdate = false;
+    if (!m_compositingDependsOnGeometry && !m_compositing)
+        return;
+
+    bool checkForHierarchyUpdate = m_compositingDependsOnGeometry;
     bool needGeometryUpdate = false;
     
     switch (updateType) {
@@ -186,8 +190,6 @@ void RenderLayerCompositor::updateCompositingLayers(CompositingUpdateType update
 
     if (!checkForHierarchyUpdate && !needGeometryUpdate)
         return;
-
-    ASSERT(inCompositingMode());
 
     bool needHierarchyUpdate = m_compositingLayersNeedRebuild;
     if (!updateRoot) {
@@ -597,7 +599,11 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* layer, O
             }
         }
     }
-
+    
+    // If we just entered compositing mode, the root will have become composited.
+    if (layer->isRootLayer() && inCompositingMode())
+        willBeComposited = true;
+    
     ASSERT(willBeComposited == needsToBeComposited(layer));
 
     // If we have a software transform, and we have layers under us, we need to also
@@ -632,7 +638,7 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* layer, O
     // If we're back at the root, and no other layers need to be composited, and the root layer itself doesn't need
     // to be composited, then we can drop out of compositing mode altogether.
     if (layer->isRootLayer() && !childState.m_subtreeIsCompositing && !requiresCompositingLayer(layer)) {
-        m_compositing = false;
+        enableCompositingMode(false);
         willBeComposited = false;
     }
     
@@ -1186,7 +1192,22 @@ bool RenderLayerCompositor::requiresCompositingForCanvas(RenderObject* renderer)
 
 bool RenderLayerCompositor::requiresCompositingForPlugin(RenderObject* renderer) const
 {
-    return renderer->isEmbeddedObject() && toRenderEmbeddedObject(renderer)->allowsAcceleratedCompositing();
+    if (!renderer->isEmbeddedObject())
+        return false;
+    
+    RenderEmbeddedObject* embedRenderer = toRenderEmbeddedObject(renderer);
+    if (!embedRenderer->allowsAcceleratedCompositing())
+        return false;
+
+    m_compositingDependsOnGeometry = true;
+
+    // If we can't reliably know the size of the plugin yet, don't change compositing state.
+    if (renderer->needsLayout())
+        return embedRenderer->hasLayer() && embedRenderer->layer()->isComposited();
+
+    // Don't go into compositing mode if height or width are zero, or size is 1x1.
+    IntRect contentBox = embedRenderer->contentBoxRect();
+    return contentBox.height() * contentBox.width() > 1;
 }
 
 bool RenderLayerCompositor::requiresCompositingForIFrame(RenderObject* renderer) const
@@ -1194,13 +1215,24 @@ bool RenderLayerCompositor::requiresCompositingForIFrame(RenderObject* renderer)
     if (!renderer->isRenderIFrame())
         return false;
     
-    RenderIFrame* iframe = toRenderIFrame(renderer);
+    RenderIFrame* iframeRenderer = toRenderIFrame(renderer);
 
-    if (!iframe->requiresAcceleratedCompositing())
+    if (!iframeRenderer->requiresAcceleratedCompositing())
         return false;
-        
-    RenderLayerCompositor* innerCompositor = iframeContentsCompositor(iframe);
-    return innerCompositor->shouldPropagateCompositingToEnclosingIFrame();
+
+    m_compositingDependsOnGeometry = true;
+
+    RenderLayerCompositor* innerCompositor = iframeContentsCompositor(iframeRenderer);
+    if (!innerCompositor->shouldPropagateCompositingToEnclosingIFrame())
+        return false;
+
+    // If we can't reliably know the size of the iframe yet, don't change compositing state.
+    if (renderer->needsLayout())
+        return iframeRenderer->hasLayer() && iframeRenderer->layer()->isComposited();
+    
+    // Don't go into compositing mode if height or width are zero.
+    IntRect contentBox = iframeRenderer->contentBoxRect();
+    return contentBox.height() * contentBox.width() > 0;
 }
 
 bool RenderLayerCompositor::requiresCompositingForAnimation(RenderObject* renderer) const

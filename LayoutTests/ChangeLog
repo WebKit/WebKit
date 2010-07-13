@@ -124,6 +124,26 @@
 
         Reviewed by Dan Bernstein.
 
+        Don't go into compositing mode for 0x0 plugins
+        https://bugs.webkit.org/show_bug.cgi?id=34009
+        
+        Tests for compositing and changing iframe size, changing plugin size, and a 1x1 plugin.
+
+        * compositing/iframes/iframe-size-from-zero-expected.txt: Added.
+        * compositing/iframes/iframe-size-from-zero.html: Added.
+        * compositing/iframes/iframe-size-to-zero-expected.txt: Added.
+        * compositing/iframes/iframe-size-to-zero.html: Added.
+        * compositing/plugins/1x1-composited-plugin-expected.txt: Added.
+        * compositing/plugins/1x1-composited-plugin.html: Added.
+        * compositing/plugins/large-to-small-composited-plugin-expected.txt: Added.
+        * compositing/plugins/large-to-small-composited-plugin.html: Added.
+        * compositing/plugins/small-to-large-composited-plugin-expected.txt: Added.
+        * compositing/plugins/small-to-large-composited-plugin.html: Added.
+
+2010-07-12  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
         Need to do a layout when RenderLayers come and go because of compositing
         https://bugs.webkit.org/show_bug.cgi?id=42108
 

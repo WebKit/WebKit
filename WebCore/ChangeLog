@@ -194,6 +194,53 @@
 
         Reviewed by Dan Bernstein.
 
+        Don't go into compositing mode for 0x0 plugins
+        https://bugs.webkit.org/show_bug.cgi?id=34009
+        
+        Don't use compositing for small (0-height or width, or 1x1) plugins, or iframes whose
+        height or width is zero.
+        
+        Previously we made all compositing decisions inside styleChanged(). However,
+        now that plugin and iframe compositing behavior depends on renderer size, we have
+        to wait until layout before deciding whether to composite these. This behavior
+        change is controlled by the m_compositingDependsOnGeometry flag. When set,
+        updateCompositingLayers() always does a hierarchy update.
+
+        Tests: compositing/iframes/iframe-size-from-zero.html
+               compositing/iframes/iframe-size-to-zero.html
+               compositing/plugins/1x1-composited-plugin.html
+               compositing/plugins/large-to-small-composited-plugin.html
+               compositing/plugins/small-to-large-composited-plugin.html
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::updateCompositingLayers): No longer bail if usesCompositing() is false; we
+        have to always enter updateCompositingLayers().
+        (WebCore::FrameView::repaintFixedElementsAfterScrolling): Ditto
+        (WebCore::FrameView::enterCompositingMode): Remove bogus return of a void.
+
+        * rendering/RenderLayerCompositor.h: Add m_compositingDependsOnGeometry.
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::RenderLayerCompositor): Initialize m_compositingDependsOnGeometry to false.
+        (WebCore::RenderLayerCompositor::updateCompositingLayers): If m_compositingDependsOnGeometry is true,
+        we always need to run through the layer hierarchy looking for things which need to be composited, even if
+        we're not (yet) in compositing mode.
+        
+        (WebCore::RenderLayerCompositor::computeCompositingRequirements): Because we can enter compositing mode
+        on the fly inside updateCompositingLayers() now, the state of willBeComposited needs to be updated
+        when processing the root layer, for the case where the compositing mode changes.
+        
+        (WebCore::RenderLayerCompositor::requiresCompositingForPlugin): Set the m_compositingDependsOnGeometry
+        flag if we see a potentially-composited plugin. Once we have layout information, only composite the plugin
+        if height * width > 1.
+        
+        (WebCore::RenderLayerCompositor::requiresCompositingForIFrame): Set the m_compositingDependsOnGeometry
+        flag if we see a potentially-composited iframe. Once we have layout information, only composite the plugin
+        if height or width is greater than zero.
+
+2010-07-12  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
         Need to do a layout when RenderLayers come and go because of compositing
         https://bugs.webkit.org/show_bug.cgi?id=42108
         
