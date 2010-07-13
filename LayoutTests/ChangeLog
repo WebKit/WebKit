@@ -2,6 +2,34 @@
 
         Reviewed by Darin Fisher.
 
+        Fold most WebGL script-tests into .html files
+        https://bugs.webkit.org/show_bug.cgi?id=42204
+
+        For each WebGL script-test layout test which has a corresponding
+        copy in the Khronos repository, folded the .js into the .html. This
+        will make it easier to synchronize these tests between repositories.
+
+        * fast/canvas/webgl/error-reporting.html:
+        * fast/canvas/webgl/get-active-test.html:
+        * fast/canvas/webgl/gl-object-get-calls.html:
+        * fast/canvas/webgl/incorrect-context-object-behaviour.html:
+        * fast/canvas/webgl/index-validation.html:
+        * fast/canvas/webgl/null-object-behaviour.html:
+        * fast/canvas/webgl/null-uniform-location.html:
+        * fast/canvas/webgl/script-tests/error-reporting.js: Removed.
+        * fast/canvas/webgl/script-tests/get-active-test.js: Removed.
+        * fast/canvas/webgl/script-tests/gl-object-get-calls.js: Removed.
+        * fast/canvas/webgl/script-tests/incorrect-context-object-behaviour.js: Removed.
+        * fast/canvas/webgl/script-tests/index-validation.js: Removed.
+        * fast/canvas/webgl/script-tests/null-object-behaviour.js: Removed.
+        * fast/canvas/webgl/script-tests/null-uniform-location.js: Removed.
+        * fast/canvas/webgl/script-tests/uniform-location.js: Removed.
+        * fast/canvas/webgl/uniform-location.html:
+
+2010-07-13  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Darin Fisher.
+
         Rename bug-zzzzz.html WebGL tests
         https://bugs.webkit.org/show_bug.cgi?id=42200
 
