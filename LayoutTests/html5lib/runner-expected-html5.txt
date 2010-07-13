@@ -8,8 +8,6 @@ CONSOLE MESSAGE: line 2: FOO<span>BAR</span>BAZ
 Content-Type: text/plain
 resources/tests1.dat:
 30
-52
-53
 78
 80
 103
@@ -54,54 +52,6 @@ Expected:
 |       "C"
 |     <a>
 |       "Y"
-
-Test 52 of 113 in resources/tests1.dat failed. Input:
-<p id=a><b><p id=b></b>TEST
-Got:
-| <html>
-|   <head>
-|   <body>
-|     <p>
-|       id="a"
-|       <b>
-|     <p>
-|       id="b"
-|       <b>
-|         "TEST"
-Expected:
-| <html>
-|   <head>
-|   <body>
-|     <p>
-|       id="a"
-|       <b>
-|     <p>
-|       id="b"
-|       "TEST"
-
-Test 53 of 113 in resources/tests1.dat failed. Input:
-<b id=a><p><b id=b></p></b>TEST
-Got:
-| <html>
-|   <head>
-|   <body>
-|     <b>
-|       id="a"
-|       <p>
-|         <b>
-|           id="b"
-|       <b>
-|         "TEST"
-Expected:
-| <html>
-|   <head>
-|   <body>
-|     <b>
-|       id="a"
-|       <p>
-|         <b>
-|           id="b"
-|       "TEST"
 
 Test 78 of 113 in resources/tests1.dat failed. Input:
 <a href="blah">aba<table><a href="foo">br<tr><td></td></tr>x</table>aoe
