@@ -25,6 +25,7 @@
 
 #include "InjectedBundle.h"
 
+#include "ActivateFonts.h"
 #include "InjectedBundlePage.h"
 #include <WebKit2/WKBundle.h>
 #include <WebKit2/WKBundlePage.h>
@@ -73,6 +74,8 @@ void InjectedBundle::initialize(WKBundleRef bundle)
         _didRecieveMessage
     };
     WKBundleSetClient(m_bundle, &client);
+
+    activateFonts();
 }
 
 void InjectedBundle::done()

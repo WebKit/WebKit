@@ -7,6 +7,18 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		6510A78211EC643800410867 /* AHEM____.TTF in Resources */ = {isa = PBXBuildFile; fileRef = 6510A77711EC643800410867 /* AHEM____.TTF */; };
+		6510A78311EC643800410867 /* ColorBits.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6510A77811EC643800410867 /* ColorBits.ttf */; };
+		6510A78411EC643800410867 /* WebKitWeightWatcher100.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6510A77911EC643800410867 /* WebKitWeightWatcher100.ttf */; };
+		6510A78511EC643800410867 /* WebKitWeightWatcher200.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6510A77A11EC643800410867 /* WebKitWeightWatcher200.ttf */; };
+		6510A78611EC643800410867 /* WebKitWeightWatcher300.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6510A77B11EC643800410867 /* WebKitWeightWatcher300.ttf */; };
+		6510A78711EC643800410867 /* WebKitWeightWatcher400.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6510A77C11EC643800410867 /* WebKitWeightWatcher400.ttf */; };
+		6510A78811EC643800410867 /* WebKitWeightWatcher500.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6510A77D11EC643800410867 /* WebKitWeightWatcher500.ttf */; };
+		6510A78911EC643800410867 /* WebKitWeightWatcher600.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6510A77E11EC643800410867 /* WebKitWeightWatcher600.ttf */; };
+		6510A78A11EC643800410867 /* WebKitWeightWatcher700.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6510A77F11EC643800410867 /* WebKitWeightWatcher700.ttf */; };
+		6510A78B11EC643800410867 /* WebKitWeightWatcher800.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6510A78011EC643800410867 /* WebKitWeightWatcher800.ttf */; };
+		6510A78C11EC643800410867 /* WebKitWeightWatcher900.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6510A78111EC643800410867 /* WebKitWeightWatcher900.ttf */; };
+		65EB85A011EC67CC0034D300 /* ActivateFonts.mm in Sources */ = {isa = PBXBuildFile; fileRef = 65EB859F11EC67CC0034D300 /* ActivateFonts.mm */; };
 		BC25193E11D15D8B002EBC01 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC7934A411906584005EA8E2 /* Cocoa.framework */; };
 		BC25193F11D15D8B002EBC01 /* WebKit2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC7934AB1190658C005EA8E2 /* WebKit2.framework */; };
 		BC25194011D15D8B002EBC01 /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BCDA2B991191051F00C3BC47 /* JavaScriptCore.framework */; };
@@ -35,19 +47,20 @@
 		};
 /* End PBXContainerItemProxy section */
 
-/* Begin PBXCopyFilesBuildPhase section */
-		8DD76F9E0486AA7600D96B5E /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 8;
-			dstPath = /usr/share/man/man1/;
-			dstSubfolderSpec = 0;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 1;
-		};
-/* End PBXCopyFilesBuildPhase section */
-
 /* Begin PBXFileReference section */
+		6510A77711EC643800410867 /* AHEM____.TTF */ = {isa = PBXFileReference; lastKnownFileType = file; name = "AHEM____.TTF"; path = "fonts/AHEM____.TTF"; sourceTree = "<group>"; };
+		6510A77811EC643800410867 /* ColorBits.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = ColorBits.ttf; path = fonts/ColorBits.ttf; sourceTree = "<group>"; };
+		6510A77911EC643800410867 /* WebKitWeightWatcher100.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = WebKitWeightWatcher100.ttf; path = fonts/WebKitWeightWatcher100.ttf; sourceTree = "<group>"; };
+		6510A77A11EC643800410867 /* WebKitWeightWatcher200.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = WebKitWeightWatcher200.ttf; path = fonts/WebKitWeightWatcher200.ttf; sourceTree = "<group>"; };
+		6510A77B11EC643800410867 /* WebKitWeightWatcher300.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = WebKitWeightWatcher300.ttf; path = fonts/WebKitWeightWatcher300.ttf; sourceTree = "<group>"; };
+		6510A77C11EC643800410867 /* WebKitWeightWatcher400.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = WebKitWeightWatcher400.ttf; path = fonts/WebKitWeightWatcher400.ttf; sourceTree = "<group>"; };
+		6510A77D11EC643800410867 /* WebKitWeightWatcher500.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = WebKitWeightWatcher500.ttf; path = fonts/WebKitWeightWatcher500.ttf; sourceTree = "<group>"; };
+		6510A77E11EC643800410867 /* WebKitWeightWatcher600.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = WebKitWeightWatcher600.ttf; path = fonts/WebKitWeightWatcher600.ttf; sourceTree = "<group>"; };
+		6510A77F11EC643800410867 /* WebKitWeightWatcher700.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = WebKitWeightWatcher700.ttf; path = fonts/WebKitWeightWatcher700.ttf; sourceTree = "<group>"; };
+		6510A78011EC643800410867 /* WebKitWeightWatcher800.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = WebKitWeightWatcher800.ttf; path = fonts/WebKitWeightWatcher800.ttf; sourceTree = "<group>"; };
+		6510A78111EC643800410867 /* WebKitWeightWatcher900.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = WebKitWeightWatcher900.ttf; path = fonts/WebKitWeightWatcher900.ttf; sourceTree = "<group>"; };
+		65EB859D11EC67CC0034D300 /* ActivateFonts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ActivateFonts.h; sourceTree = "<group>"; };
+		65EB859F11EC67CC0034D300 /* ActivateFonts.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ActivateFonts.mm; sourceTree = "<group>"; };
 		8DD76FA10486AA7600D96B5E /* WebKitTestRunner */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = WebKitTestRunner; sourceTree = BUILT_PRODUCTS_DIR; };
 		BC25184611D15767002EBC01 /* InjectedBundleMain.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedBundleMain.cpp; sourceTree = "<group>"; };
 		BC25186211D15D54002EBC01 /* InjectedBundle.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = InjectedBundle.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -147,10 +160,20 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		65EB859E11EC67CC0034D300 /* mac */ = {
+			isa = PBXGroup;
+			children = (
+				65EB859F11EC67CC0034D300 /* ActivateFonts.mm */,
+			);
+			path = mac;
+			sourceTree = "<group>";
+		};
 		BC25183511D1571D002EBC01 /* InjectedBundle */ = {
 			isa = PBXGroup;
 			children = (
 				BCC997A011D3C8F60017BCA2 /* InjectedBundle.cpp */,
+				65EB859D11EC67CC0034D300 /* ActivateFonts.h */,
+				65EB859E11EC67CC0034D300 /* mac */,
 				BCC997A111D3C8F60017BCA2 /* InjectedBundle.h */,
 				BC25184611D15767002EBC01 /* InjectedBundleMain.cpp */,
 				BCC997A211D3C8F60017BCA2 /* InjectedBundlePage.cpp */,
@@ -165,6 +188,17 @@
 			isa = PBXGroup;
 			children = (
 				BC25186311D15D54002EBC01 /* InjectedBundle-Info.plist */,
+				6510A77711EC643800410867 /* AHEM____.TTF */,
+				6510A77811EC643800410867 /* ColorBits.ttf */,
+				6510A77911EC643800410867 /* WebKitWeightWatcher100.ttf */,
+				6510A77A11EC643800410867 /* WebKitWeightWatcher200.ttf */,
+				6510A77B11EC643800410867 /* WebKitWeightWatcher300.ttf */,
+				6510A77C11EC643800410867 /* WebKitWeightWatcher400.ttf */,
+				6510A77D11EC643800410867 /* WebKitWeightWatcher500.ttf */,
+				6510A77E11EC643800410867 /* WebKitWeightWatcher600.ttf */,
+				6510A77F11EC643800410867 /* WebKitWeightWatcher700.ttf */,
+				6510A78011EC643800410867 /* WebKitWeightWatcher800.ttf */,
+				6510A78111EC643800410867 /* WebKitWeightWatcher900.ttf */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -200,7 +234,6 @@
 			buildPhases = (
 				8DD76F990486AA7600D96B5E /* Sources */,
 				8DD76F9B0486AA7600D96B5E /* Frameworks */,
-				8DD76F9E0486AA7600D96B5E /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -253,6 +286,17 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6510A78211EC643800410867 /* AHEM____.TTF in Resources */,
+				6510A78311EC643800410867 /* ColorBits.ttf in Resources */,
+				6510A78411EC643800410867 /* WebKitWeightWatcher100.ttf in Resources */,
+				6510A78511EC643800410867 /* WebKitWeightWatcher200.ttf in Resources */,
+				6510A78611EC643800410867 /* WebKitWeightWatcher300.ttf in Resources */,
+				6510A78711EC643800410867 /* WebKitWeightWatcher400.ttf in Resources */,
+				6510A78811EC643800410867 /* WebKitWeightWatcher500.ttf in Resources */,
+				6510A78911EC643800410867 /* WebKitWeightWatcher600.ttf in Resources */,
+				6510A78A11EC643800410867 /* WebKitWeightWatcher700.ttf in Resources */,
+				6510A78B11EC643800410867 /* WebKitWeightWatcher800.ttf in Resources */,
+				6510A78C11EC643800410867 /* WebKitWeightWatcher900.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -280,6 +324,7 @@
 				BCC997A411D3C8F60017BCA2 /* InjectedBundle.cpp in Sources */,
 				BCC997A511D3C8F60017BCA2 /* InjectedBundlePage.cpp in Sources */,
 				BCC9981811D3F51E0017BCA2 /* LayoutTestController.cpp in Sources */,
+				65EB85A011EC67CC0034D300 /* ActivateFonts.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

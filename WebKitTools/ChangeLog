@@ -1,3 +1,37 @@
+2010-07-13  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Nikolas Zimmermann.
+
+        Activate test fonts for layout tests in WebKitTestRunner (on Mac)
+        https://bugs.webkit.org/show_bug.cgi?id=42153
+
+        * WebKitTestRunner/InjectedBundle/ActivateFonts.h: Added.
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::initialize): Activate fonts on startup.
+        * WebKitTestRunner/InjectedBundle/mac: Added.
+        * WebKitTestRunner/InjectedBundle/mac/ActivateFonts.mm: Added.
+        (WTR::activateFonts): Activate our fonts.
+        * WebKitTestRunner/InjectedBundle/win: Added.
+        * WebKitTestRunner/InjectedBundle/win/ActivateFonts.cpp: Added.
+        (WTR::activateFonts): Dummy version.
+        * WebKitTestRunner/WebKitTestRunner.xcodeproj/project.pbxproj: Copy fonts to bundle;
+        add more files.
+        * WebKitTestRunner/fonts: Added.
+        * WebKitTestRunner/fonts/AHEM____.TTF: Added.
+        * WebKitTestRunner/fonts/ColorBits-A.png: Added.
+        * WebKitTestRunner/fonts/ColorBits.ttf: Added.
+        * WebKitTestRunner/fonts/WebKit Layout Tests 2.ttf: Added.
+        * WebKitTestRunner/fonts/WebKit Layout Tests.ttf: Added.
+        * WebKitTestRunner/fonts/WebKitWeightWatcher100.ttf: Added.
+        * WebKitTestRunner/fonts/WebKitWeightWatcher200.ttf: Added.
+        * WebKitTestRunner/fonts/WebKitWeightWatcher300.ttf: Added.
+        * WebKitTestRunner/fonts/WebKitWeightWatcher400.ttf: Added.
+        * WebKitTestRunner/fonts/WebKitWeightWatcher500.ttf: Added.
+        * WebKitTestRunner/fonts/WebKitWeightWatcher600.ttf: Added.
+        * WebKitTestRunner/fonts/WebKitWeightWatcher700.ttf: Added.
+        * WebKitTestRunner/fonts/WebKitWeightWatcher800.ttf: Added.
+        * WebKitTestRunner/fonts/WebKitWeightWatcher900.ttf: Added.
+
 2010-07-13  Dumitru Daniliuc  <dumi@chromium.org>
 
         Reviewed by Eric Seidel.
