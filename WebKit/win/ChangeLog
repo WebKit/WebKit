@@ -1,3 +1,11 @@
+2010-07-13  Steve Falkenburg  <sfalken@apple.com>
+
+        Windows build fix.
+        Make WebKit.sln build WebKit.dll as it used to in the past.
+        (sln is updated to include necessary projects)
+
+        * WebKit.vcproj/WebKit.sln:
+
 2010-07-13  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         Windows build fix
