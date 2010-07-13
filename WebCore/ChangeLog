@@ -1,5 +1,25 @@
 2010-07-12  Mark Rowe  <mrowe@apple.com>
 
+        Merge r62302.
+
+    2010-07-01  Andy Estes  <aestes@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/8113003> Correctly fire beforeload events for images
+        added to the DOM using .innerHTML.
+        https://bugs.webkit.org/show_bug.cgi?id=40919
+
+        Test: fast/dom/beforeload/image-before-load-innerHTML.html
+
+        * html/LegacyHTMLDocumentParser.cpp:
+        (WebCore::LegacyHTMLDocumentParser::write): Do not fire synchronous
+        image beforeload events immediately after parsing a document fragment.
+        Let the events fire later, giving the fragment time to potentially be
+        inserted into the document.
+
+2010-07-12  Mark Rowe  <mrowe@apple.com>
+
         Merge r62271.
 
     2010-07-01  Justin Schuh  <jschuh@chromium.org>

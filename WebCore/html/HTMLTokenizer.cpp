@@ -1809,9 +1809,12 @@ void HTMLTokenizer::write(const SegmentedString& str, bool appendData)
 
     if (m_noMoreData && !m_inWrite && !state.loadingExtScript() && !m_executingScript && !m_timer.isActive())
         end(); // this actually causes us to be deleted
-    
-    // After parsing, go ahead and dispatch image beforeload events.
-    ImageLoader::dispatchPendingBeforeLoadEvents();
+
+    // After parsing, go ahead and dispatch image beforeload events, but only if we're doing
+    // document parsing.  For document fragments we wait, since they'll likely end up in the document by the time
+    // the beforeload events fire.
+    if (!m_fragment)
+        ImageLoader::dispatchPendingBeforeLoadEvents();
 }
 
 void HTMLTokenizer::stopParsing()
