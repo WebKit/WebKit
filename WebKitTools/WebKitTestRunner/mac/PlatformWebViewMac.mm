@@ -40,6 +40,11 @@ PlatformWebView::PlatformWebView(WKPageNamespaceRef namespaceRef)
     [m_window setAutodisplay:NO];
 }
 
+void PlatformWebView::resizeTo(unsigned width, unsigned height)
+{
+    [m_view setFrame:NSMakeRect(0, 0, width, height)];
+}
+
 PlatformWebView::~PlatformWebView()
 {
     [m_window close];

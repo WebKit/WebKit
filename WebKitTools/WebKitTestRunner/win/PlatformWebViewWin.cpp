@@ -37,6 +37,11 @@ PlatformWebView::~PlatformWebView()
     // Implement
 }
 
+void PlatformWebView::resizeTo(unsigned width, unsigned height)
+{
+    // Implement
+}
+
 WKPageRef PlatformWebView::page()
 {
     // Implement

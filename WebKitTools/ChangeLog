@@ -1,3 +1,24 @@
+2010-07-12  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Make WebKitTestRunner resize the view specially for the W3C SVG tests.
+        https://bugs.webkit.org/show_bug.cgi?id=42126
+
+        * WebKitTestRunner/PlatformWebView.h:
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::TestInvocation): Store the path as a C
+        string for later use.
+        (WTR::TestInvocation::~TestInvocation):
+        (WTR::sizeWebViewForCurrentTest): Resize the WebView to the proper
+        size, depending on whether this is a W3C SVG test.
+        (WTR::TestInvocation::invoke): Call the size function.
+        * WebKitTestRunner/TestInvocation.h:
+        * WebKitTestRunner/mac/PlatformWebViewMac.mm:
+        (WTR::PlatformWebView::resizeTo): Implement.
+        * WebKitTestRunner/win/PlatformWebViewWin.cpp:
+        (WTR::PlatformWebView::resizeTo): Placeholder.
+
 2010-07-12  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Reviewed by Xan Lopez.
