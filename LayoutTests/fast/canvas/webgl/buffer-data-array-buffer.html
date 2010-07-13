@@ -1,0 +1,41 @@
+<html>
+<head>
+<link rel="stylesheet" href="../../js/resources/js-test-style.css"/>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script src="resources/webgl-test.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+
+<script>
+description("Test bufferData/bufferSubData with ArrayBuffer input");
+
+debug('Regression test for <a href="https://bugs.webkit.org/show_bug.cgi?id=41884">https://bugs.webkit.org/show_bug.cgi?id=41884</a> : <code>Implement bufferData and bufferSubData with ArrayBuffer as input</code>');
+
+var gl = create3DContext();
+shouldBeNonNull("gl");
+
+var array = new ArrayBuffer(128);
+shouldBeNonNull("array");
+
+var buf = gl.createBuffer();
+shouldBeNonNull(buf);
+
+gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+shouldBe("gl.getError()", "gl.NO_ERROR");
+
+gl.bufferData(gl.ARRAY_BUFFER, array, gl.STATIC_DRAW);
+shouldBe("gl.getError()", "gl.NO_ERROR");
+
+array = new ArrayBuffer(64);
+
+gl.bufferSubData(gl.ARRAY_BUFFER, 10, array);
+shouldBe("gl.getError()", "gl.NO_ERROR");
+
+successfullyParsed = true;
+</script>
+
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

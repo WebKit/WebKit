@@ -77,7 +77,9 @@ class WebKitCSSMatrix;
         void blendFuncSeparate(unsigned long srcRGB, unsigned long dstRGB, unsigned long srcAlpha, unsigned long dstAlpha);
 
         void bufferData(unsigned long target, int size, unsigned long usage, ExceptionCode&);
+        void bufferData(unsigned long target, ArrayBuffer* data, unsigned long usage, ExceptionCode&);
         void bufferData(unsigned long target, ArrayBufferView* data, unsigned long usage, ExceptionCode&);
+        void bufferSubData(unsigned long target, long offset, ArrayBuffer* data, ExceptionCode&);
         void bufferSubData(unsigned long target, long offset, ArrayBufferView* data, ExceptionCode&);
 
         unsigned long checkFramebufferStatus(unsigned long target);

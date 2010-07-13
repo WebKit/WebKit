@@ -477,9 +477,10 @@ module html {
         void         blendEquationSeparate(in unsigned long modeRGB, in unsigned long modeAlpha);
         void         blendFunc(in unsigned long sfactor, in unsigned long dfactor);
         void         blendFuncSeparate(in unsigned long srcRGB, in unsigned long dstRGB, in unsigned long srcAlpha, in unsigned long dstAlpha);
-
+        void         bufferData(in unsigned long target, in ArrayBuffer data, in unsigned long usage) raises (DOMException);
         void         bufferData(in unsigned long target, in ArrayBufferView data, in unsigned long usage) raises (DOMException);
         void         bufferData(in unsigned long target, in long size, in unsigned long usage) raises (DOMException);
+        void         bufferSubData(in unsigned long target, in long offset, in ArrayBuffer data) raises (DOMException);
         void         bufferSubData(in unsigned long target, in long offset, in ArrayBufferView data) raises (DOMException);
 
         unsigned long checkFramebufferStatus(in unsigned long target);

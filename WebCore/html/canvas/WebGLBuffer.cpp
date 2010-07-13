@@ -74,6 +74,35 @@ bool WebGLBuffer::associateBufferData(int size)
     return false;
 }
 
+bool WebGLBuffer::associateBufferData(ArrayBuffer* array)
+{
+    if (!m_target)
+        return false;
+    if (!array)
+        return false;
+
+    if (m_target == GraphicsContext3D::ELEMENT_ARRAY_BUFFER) {
+        clearCachedMaxIndices();
+        m_byteLength = array->byteLength();
+        // We must always clone the incoming data because client-side
+        // modifications without calling bufferData or bufferSubData
+        // must never be able to change the validation results.
+        m_elementArrayBuffer = ArrayBuffer::create(array);
+        if (!m_elementArrayBuffer) {
+            m_byteLength = 0;
+            return false;
+        }
+        return true;
+    }
+
+    if (m_target == GraphicsContext3D::ARRAY_BUFFER) {
+        m_byteLength = array->byteLength();
+        return true;
+    }
+
+    return false;
+}
+
 bool WebGLBuffer::associateBufferData(ArrayBufferView* array)
 {
     if (!m_target)
@@ -100,6 +129,39 @@ bool WebGLBuffer::associateBufferData(ArrayBufferView* array)
         return true;
     }
     
+    return false;
+}
+
+bool WebGLBuffer::associateBufferSubData(long offset, ArrayBuffer* array)
+{
+    if (!m_target)
+        return false;
+    if (!array)
+        return false;
+
+    if (m_target == GraphicsContext3D::ELEMENT_ARRAY_BUFFER) {
+        clearCachedMaxIndices();
+
+        // We need to protect against integer overflow with these tests
+        if (offset < 0)
+            return false;
+
+        unsigned long uoffset = static_cast<unsigned long>(offset);
+        if (uoffset > m_byteLength || array->byteLength() > m_byteLength - uoffset)
+            return false;
+
+        if (!m_elementArrayBuffer)
+            return false;
+
+        memcpy(static_cast<unsigned char*>(m_elementArrayBuffer->data()) + offset,
+               static_cast<unsigned char*>(array->data()),
+               array->byteLength());
+        return true;
+    }
+
+    if (m_target == GraphicsContext3D::ARRAY_BUFFER)
+        return array->byteLength() + offset <= m_byteLength;
+
     return false;
 }
 

@@ -41,7 +41,9 @@ namespace WebCore {
         static PassRefPtr<WebGLBuffer> create(WebGLRenderingContext*);
 
         bool associateBufferData(int size);
+        bool associateBufferData(ArrayBuffer* array);
         bool associateBufferData(ArrayBufferView* array);
+        bool associateBufferSubData(long offset, ArrayBuffer* array);
         bool associateBufferSubData(long offset, ArrayBufferView* array);
         
         unsigned byteLength() const;

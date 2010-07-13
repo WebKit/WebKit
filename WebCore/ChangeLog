@@ -1,3 +1,26 @@
+2010-07-10  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Darin Fisher.
+
+        Implement bufferData and bufferSubData with ArrayBuffer as input
+        https://bugs.webkit.org/show_bug.cgi?id=41884
+
+        Test: fast/canvas/webgl/buffer-data-array-buffer.html
+
+        * html/canvas/WebGLBuffer.cpp: Implement associateBufferData & associateBufferSubData with ArrayBuffer as input.
+        (WebCore::WebGLBuffer::associateBufferData):
+        (WebCore::WebGLBuffer::associateBufferSubData):
+        * html/canvas/WebGLBuffer.h: Ditto.
+        * html/canvas/WebGLRenderingContext.cpp: Implement bufferData and bufferSubData with ArrayBuffer as input.
+        (WebCore::WebGLRenderingContext::bufferData):
+        (WebCore::WebGLRenderingContext::bufferSubData):
+        * html/canvas/WebGLRenderingContext.h: Ditto.
+        * html/canvas/WebGLRenderingContext.idl: Ditto.
+        * platform/graphics/GraphicsContext3D.h: Ditto.
+        * platform/graphics/mac/GraphicsContext3DMac.mm: Ditto.
+        (WebCore::GraphicsContext3D::bufferData):
+        (WebCore::GraphicsContext3D::bufferSubData):
+
 2010-07-13  Tony Gentilcore  <tonyg@chromium.org>
 
         Reviewed by Darin Fisher.
