@@ -2853,6 +2853,7 @@ BUGWK35961 : printing/page-rule-selection.html = TEXT
 // Needs to implement layoutTestController.dumpResourceResponseMIMETypes()
 BUG46872 : fast/preloader = TEXT
 BUG46872 : fast/dom/HTMLLinkElement/prefetch.html = TIMEOUT
+BUG46872 : http/tests/loading/preload-slow-loading.php = TEXT
 
 // Became a flaky crash in http://trac.webkit.org/log/?verbose=on&rev=61417&stop_rev=61393
 BUG46974 WIN : inspector/audits-panel-functional.html = CRASH PASS
@@ -3097,3 +3098,5 @@ BUG_WK38016 WIN LINUX : fast/block/positioning/inline-block-relposition.html = I
 BUG_WK38016 WIN : fast/forms/input-first-letter.html = IMAGE+TEXT
 
 BUG48859 WIN : fast/inline/continuation-outlines-with-layers-2.html = IMAGE+TEXT
+
+BUGFOO REBASELINE LINUX MAC : fast/gradients/radial-centered.html = IMAGE+TEXT

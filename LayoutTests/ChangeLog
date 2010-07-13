@@ -1,3 +1,12 @@
+2010-07-12  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed: rebaseline chromium tests.
+
+        * platform/chromium-win-xp/fast/gradients/radial-centered-expected.checksum: Copied from LayoutTests/platform/chromium-win/fast/gradients/radial-centered-expected.checksum.
+        * platform/chromium-win-xp/fast/gradients/radial-centered-expected.png: Copied from LayoutTests/platform/chromium-win/fast/gradients/radial-centered-expected.png.
+        * platform/chromium-win-xp/fast/gradients/radial-centered-expected.txt: Copied from LayoutTests/platform/chromium-win/fast/gradients/radial-centered-expected.txt.
+        * platform/chromium/test_expectations.txt:
+
 2010-07-12  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by David Levin.
