@@ -140,7 +140,6 @@ JSGlobalData::JSGlobalData(GlobalDataType globalDataType, ThreadStackType thread
     , jitStubs(this)
 #endif
     , heap(this)
-    , initializingLazyNumericCompareFunction(false)
     , head(0)
     , dynamicGlobalObject(0)
     , functionCodeBlockBeingReparsed(0)
@@ -255,19 +254,6 @@ JSGlobalData*& JSGlobalData::sharedInstanceInternal()
     ASSERT(JSLock::currentThreadIsHoldingLock());
     static JSGlobalData* sharedInstance;
     return sharedInstance;
-}
-
-// FIXME: We can also detect forms like v1 < v2 ? -1 : 0, reverse comparison, etc.
-const Vector<Instruction>& JSGlobalData::numericCompareFunction(ExecState* exec)
-{
-    if (!lazyNumericCompareFunction.size() && !initializingLazyNumericCompareFunction) {
-        initializingLazyNumericCompareFunction = true;
-        RefPtr<FunctionExecutable> function = FunctionExecutable::fromGlobalCode(Identifier(exec, "numericCompare"), exec, 0, makeSource(UString("(function (v1, v2) { return v1 - v2; })")), 0, 0);
-        lazyNumericCompareFunction = function->bytecodeForCall(exec, exec->scopeChain())->instructions();
-        initializingLazyNumericCompareFunction = false;
-    }
-
-    return lazyNumericCompareFunction;
 }
 
 #if ENABLE(JIT)

@@ -1,3 +1,41 @@
+2010-07-13  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Bug 42182 - Change how numeric compare functions are detected
+
+        There are three problems with the current mechanism:
+          * It requires that a function executable be bytecode compiled without
+            being JIT generated (in order to copy the bytecode from the numeric
+            compare function).  This is a problem since we have an invariant when
+            running with the JIT that functions are never bytecode compiled without
+            also being JIT generated (after checking the codeblock we assume the
+            function has JIT code).  To help maintain this invariant 
+          * This implementation will prevent us from experimenting with alternate
+            compilation paths which do not compile via bytecode.
+          * It doesn't work.  Functions passing more than two arguments will match
+            if they are comparing their last two arguments, not the first two.
+            Generally the mapping back from bytecode to semantics may be more
+            complex then initially expected.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::generate):
+        (JSC::BytecodeGenerator::setIsNumericCompareFunction):
+        (JSC::BytecodeGenerator::argumentNumberFor):
+        * bytecompiler/BytecodeGenerator.h:
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::BlockNode::singleStatement):
+        (JSC::FunctionBodyNode::emitBytecode):
+        * parser/Nodes.h:
+        (JSC::ExpressionNode::isSubtract):
+        (JSC::BinaryOpNode::lhs):
+        (JSC::BinaryOpNode::rhs):
+        (JSC::SubNode::isSubtract):
+        (JSC::ReturnNode::value):
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::JSGlobalData):
+        * runtime/JSGlobalData.h:
+
 2010-07-12  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.

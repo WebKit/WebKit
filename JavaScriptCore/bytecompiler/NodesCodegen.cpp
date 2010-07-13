@@ -1359,6 +1359,11 @@ inline StatementNode* BlockNode::lastStatement() const
     return m_statements ? m_statements->lastStatement() : 0;
 }
 
+inline StatementNode* BlockNode::singleStatement() const
+{
+    return m_statements ? m_statements->singleStatement() : 0;
+}
+
 RegisterID* BlockNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 {
     if (m_statements)
@@ -2011,16 +2016,38 @@ RegisterID* FunctionBodyNode::emitBytecode(BytecodeGenerator& generator, Registe
 {
     generator.emitDebugHook(DidEnterCallFrame, firstLine(), lastLine());
     emitStatementsBytecode(generator, generator.ignoredResult());
+
     StatementNode* singleStatement = this->singleStatement();
+    ReturnNode* returnNode = 0;
+
+    // Check for a return statement at the end of a function composed of a single block.
     if (singleStatement && singleStatement->isBlock()) {
         StatementNode* lastStatementInBlock = static_cast<BlockNode*>(singleStatement)->lastStatement();
         if (lastStatementInBlock && lastStatementInBlock->isReturnNode())
-            return 0;
+            returnNode = static_cast<ReturnNode*>(lastStatementInBlock);
     }
 
-    RegisterID* r0 = generator.isConstructor() ? generator.thisRegister() : generator.emitLoad(0, jsUndefined());
-    generator.emitDebugHook(WillLeaveCallFrame, firstLine(), lastLine());
-    generator.emitReturn(r0);
+    // If there is no return we must automatically insert one.
+    if (!returnNode) {
+        RegisterID* r0 = generator.isConstructor() ? generator.thisRegister() : generator.emitLoad(0, jsUndefined());
+        generator.emitDebugHook(WillLeaveCallFrame, firstLine(), lastLine());
+        generator.emitReturn(r0);
+        return 0;
+    }
+
+    // If there is a return statment, and it is the only statement in the function, check if this is a numeric compare.
+    if (returnNode && static_cast<BlockNode*>(singleStatement)->singleStatement()) {
+        ExpressionNode* returnValueExpression = returnNode->value();
+        if (returnValueExpression && returnValueExpression->isSubtract()) {
+            ExpressionNode* lhsExpression = static_cast<SubNode*>(returnValueExpression)->lhs();
+            ExpressionNode* rhsExpression = static_cast<SubNode*>(returnValueExpression)->rhs();
+            if (lhsExpression->isResolveNode() && rhsExpression->isResolveNode()) {
+                generator.setIsNumericCompareFunction(generator.argumentNumberFor(static_cast<ResolveNode*>(lhsExpression)->identifier()) == 1
+                    && generator.argumentNumberFor(static_cast<ResolveNode*>(rhsExpression)->identifier()) == 2);
+            }
+        }
+    }
+
     return 0;
 }
 

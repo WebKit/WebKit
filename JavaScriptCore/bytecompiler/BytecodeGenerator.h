@@ -108,7 +108,12 @@ namespace JSC {
         // such register exists. Registers returned by registerFor do not
         // require explicit reference counting.
         RegisterID* registerFor(const Identifier&);
-        
+
+        // Returns the agument number if this is an argument, or 0 if not.
+        int argumentNumberFor(const Identifier&);
+
+        void setIsNumericCompareFunction(bool isNumericCompareFunction);
+
         bool willResolveToArguments(const Identifier&);
         RegisterID* uncheckedRegisterForArguments();
 

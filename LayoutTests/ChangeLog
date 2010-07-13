@@ -1,3 +1,17 @@
+2010-07-13  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Bug 42182 - Change how numeric compare functions are detected
+
+        Test case.
+
+        * fast/js/array-sort-numericCompare-expected.txt: Added.
+        * fast/js/array-sort-numericCompare.html: Added.
+        * fast/js/script-tests/array-sort-numericCompare.js: Added.
+        (doSort):
+        (dontSort):
+
 2010-07-13  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Dan Bernstein.

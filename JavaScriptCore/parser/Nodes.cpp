@@ -67,7 +67,7 @@ void SourceElements::append(StatementNode* statement)
     m_statements.append(statement);
 }
 
-inline StatementNode* SourceElements::singleStatement() const
+StatementNode* SourceElements::singleStatement() const
 {
     size_t size = m_statements.size();
     return size == 1 ? m_statements[0] : 0;

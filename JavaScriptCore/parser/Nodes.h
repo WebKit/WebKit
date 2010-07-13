@@ -152,6 +152,7 @@ namespace JSC {
         virtual bool isCommaNode() const { return false; }
         virtual bool isSimpleArray() const { return false; }
         virtual bool isAdd() const { return false; }
+        virtual bool isSubtract() const { return false; }
         virtual bool hasConditionContextCodegen() const { return false; }
 
         virtual void emitBytecodeInConditionContext(BytecodeGenerator&, Label*, Label*, bool) { ASSERT_NOT_REACHED(); }
@@ -806,6 +807,9 @@ namespace JSC {
 
         RegisterID* emitStrcat(BytecodeGenerator& generator, RegisterID* destination, RegisterID* lhs = 0, ReadModifyResolveNode* emitExpressionInfoForMe = 0);
 
+        ExpressionNode* lhs() { return m_expr1; };
+        ExpressionNode* rhs() { return m_expr2; };
+
     private:
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0);
 
@@ -854,6 +858,8 @@ namespace JSC {
     class SubNode : public BinaryOpNode {
     public:
         SubNode(JSGlobalData*, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments);
+
+        virtual bool isSubtract() const { return true; }
     };
 
     class LeftShiftNode : public BinaryOpNode {
@@ -1143,6 +1149,7 @@ namespace JSC {
     public:
         BlockNode(JSGlobalData*, SourceElements* = 0);
 
+        StatementNode* singleStatement() const;
         StatementNode* lastStatement() const;
 
     private:
@@ -1293,6 +1300,8 @@ namespace JSC {
     class ReturnNode : public StatementNode, public ThrowableExpressionData {
     public:
         ReturnNode(JSGlobalData*, ExpressionNode* value);
+
+        ExpressionNode* value() { return m_value; }
 
     private:
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0);
