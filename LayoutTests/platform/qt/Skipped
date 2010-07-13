@@ -5270,13 +5270,9 @@ canvas/philip/tests/2d.gradient.radial.cone.behind.html
 canvas/philip/tests/2d.gradient.radial.cone.beside.html
 canvas/philip/tests/2d.gradient.radial.cone.bottom.html
 canvas/philip/tests/2d.gradient.radial.cone.cylinder.html
-canvas/philip/tests/2d.gradient.radial.cone.front.html
 canvas/philip/tests/2d.gradient.radial.cone.shape2.html
 canvas/philip/tests/2d.gradient.radial.cone.top.html
-canvas/philip/tests/2d.gradient.radial.inside2.html
-canvas/philip/tests/2d.gradient.radial.inside3.html
 canvas/philip/tests/2d.gradient.radial.negative.html
-canvas/philip/tests/2d.gradient.radial.outside1.html
 canvas/philip/tests/2d.gradient.radial.outside2.html
 canvas/philip/tests/2d.gradient.radial.outside3.html
 canvas/philip/tests/2d.gradient.radial.touch1.html
@@ -5289,10 +5285,8 @@ canvas/philip/tests/2d.imageData.get.type.html
 canvas/philip/tests/2d.imageData.object.round.html
 canvas/philip/tests/2d.imageData.object.wrap.html
 canvas/philip/tests/2d.imageData.put.unchanged.html
-canvas/philip/tests/2d.line.cap.closed.html
 canvas/philip/tests/2d.line.cap.open.html
 canvas/philip/tests/2d.line.join.open.html
-canvas/philip/tests/2d.line.join.parallel.html
 canvas/philip/tests/2d.line.miter.lineedge.html
 canvas/philip/tests/2d.missingargs.html
 canvas/philip/tests/2d.path.arc.twopie.3.html

@@ -1,5 +1,19 @@
 2010-07-13  Andreas Kling  <andreas.kling@nokia.com>
 
+        Rubber-stamped by Simon Hausmann.
+
+        [Qt] Unskip 6 canvas/philip tests for Qt
+
+        * canvas/philip/tests/2d.gradient.radial.cone.front-expected.txt:
+        * canvas/philip/tests/2d.gradient.radial.inside2-expected.txt:
+        * canvas/philip/tests/2d.gradient.radial.inside3-expected.txt:
+        * canvas/philip/tests/2d.gradient.radial.outside1-expected.txt:
+        * canvas/philip/tests/2d.line.cap.closed-expected.txt:
+        * canvas/philip/tests/2d.line.join.parallel-expected.txt:
+        * platform/qt/Skipped:
+
+2010-07-13  Andreas Kling  <andreas.kling@nokia.com>
+
         Reviewed by Darin Adler.
 
         Unskip canvas/philip/tests/2d.imageData.get.source.outside.html
