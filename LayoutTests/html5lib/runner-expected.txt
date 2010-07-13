@@ -5250,4 +5250,3 @@ Expected:
 |   <body>
 |     <select>
 |     <table>
-resources/whitespace01.dat: PASS

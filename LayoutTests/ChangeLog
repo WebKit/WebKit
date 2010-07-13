@@ -1,3 +1,13 @@
+2010-07-13  Andras Becsi  <abecsi@webkit.org>
+
+        Unreviewed.
+
+        Remove extra line added in r63183 "resources/whitespace01.dat: PASS"
+        from html5lib/runner-expected.txt (which was probably added accidentally),
+        because no bot produces this output in the tree.
+
+        * html5lib/runner-expected.txt:
+
 2010-07-12  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.
