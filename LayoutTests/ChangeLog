@@ -1,3 +1,18 @@
+2010-07-13  Tony Gentilcore  <tonyg@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Implement performance.timing.fetchStart
+        https://bugs.webkit.org/show_bug.cgi?id=41816
+
+        Tests pass with --web-timing. Expectations set to FAIL because disabled by default.
+
+        * fast/dom/script-tests/webtiming.js:
+        (checkTimingBeforeLoad):
+        (checkWebTimingOnLoad):
+        (checkWebTimingAfterLoad):
+        * fast/dom/webtiming-expected.txt:
+
 2010-07-13  Richard Moore <rich@kde.org>, Robert Hogan  <robert@webkit.org>
 
         Reviewed by Simon Hausmann.
@@ -30,21 +45,6 @@
 
         * platform/gtk/svg/custom/relative-sized-inner-svg-expected.txt:
         * platform/gtk/svg/custom/relative-sized-use-without-attributes-on-symbol-expected.txt:
-
-2010-07-13  Tony Gentilcore  <tonyg@chromium.org>
-
-        Reviewed by Darin Fisher.
-
-        Implement performance.timing.fetchStart
-        https://bugs.webkit.org/show_bug.cgi?id=41816
-
-        Tests pass with --web-timing. Expectations set to FAIL because disabled by default.
-
-        * fast/dom/script-tests/webtiming.js:
-        (checkTimingBeforeLoad):
-        (checkWebTimingOnLoad):
-        (checkWebTimingAfterLoad):
-        * fast/dom/webtiming-expected.txt:
 
 2010-07-13  Tony Gentilcore  <tonyg@chromium.org>
 
