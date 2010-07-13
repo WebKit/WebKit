@@ -1,3 +1,39 @@
+2010-07-04  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Darin Fisher.
+
+        Need to track texture completeness
+        https://bugs.webkit.org/show_bug.cgi?id=41381
+
+        Test: fast/canvas/webgl/texture-complete.html
+
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::WebGLRenderingContext): Init max texture level.
+        (WebCore::WebGLRenderingContext::bindTexture): Pass max texture level to setTarget().
+        (WebCore::WebGLRenderingContext::copyTexImage2D): Cache full texture info rather than partial.
+        (WebCore::WebGLRenderingContext::generateMipmap): Ditto.
+        (WebCore::WebGLRenderingContext::texImage2DBase): Ditto.
+        (WebCore::WebGLRenderingContext::validateTexFuncParameters): Also validate level.
+        * html/canvas/WebGLRenderingContext.h: Add max texture level.
+        * html/canvas/WebGLTexture.cpp: Update the class to fully cache texture information and track NPOT and COMPLETE states.
+        (WebCore::WebGLTexture::WebGLTexture):
+        (WebCore::WebGLTexture::setTarget): Check whether the texture is initialized or has been deleted.
+        (WebCore::WebGLTexture::setParameteri): Ditto.
+        (WebCore::WebGLTexture::setParameterf): Ditto.
+        (WebCore::WebGLTexture::setLevelInfo): Set texture info.
+        (WebCore::WebGLTexture::generateMipmapLevelInfo): Generate texture info for all levels after generateMipmaps() is called.
+        (WebCore::WebGLTexture::getInternalFormat): Return internal format on texture face 0 level 0.
+        (WebCore::WebGLTexture::isNPOT): Check whether the texture is initialized or has been deleted.
+        (WebCore::WebGLTexture::needToUseBlackTexture): Ditto.
+        (WebCore::WebGLTexture::_deleteObject):
+        (WebCore::WebGLTexture::mapTargetToIndex): Map target to index.
+        (WebCore::WebGLTexture::canGenerateMipmaps): Check whether Mipmaps can be generated.
+        (WebCore::WebGLTexture::computeLevelCount): Compute texture level count from width/height.
+        (WebCore::WebGLTexture::update): Update NPOT/COMPLETE states.
+        * html/canvas/WebGLTexture.h: Ditto.
+        (WebCore::WebGLTexture::LevelInfo::LevelInfo): Add data structure to fully cache texture info.
+        (WebCore::WebGLTexture::LevelInfo::setInfo): Set information.
+
 2010-07-13  Andreas Kling  <andreas.kling@nokia.com>
 
         Reviewed by Darin Adler.

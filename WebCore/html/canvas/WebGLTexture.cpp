@@ -45,32 +45,39 @@ WebGLTexture::WebGLTexture(WebGLRenderingContext* ctx)
     , m_magFilter(GraphicsContext3D::LINEAR)
     , m_wrapS(GraphicsContext3D::REPEAT)
     , m_wrapT(GraphicsContext3D::REPEAT)
-    , m_internalFormat(0)
     , m_isNPOT(false)
+    , m_isComplete(false)
     , m_needToUseBlackTexture(false)
 {
     setObject(context()->graphicsContext3D()->createTexture());
-    for (int ii = 0; ii < 6; ++ii) {
-        m_width[ii] = 0;
-        m_height[ii] = 0;
-    }
 }
 
-void WebGLTexture::setTarget(unsigned long target)
+void WebGLTexture::setTarget(unsigned long target, int maxLevel)
 {
+    if (!object())
+        return;
     // Target is finalized the first time bindTexture() is called.
     if (m_target)
         return;
     switch (target) {
     case GraphicsContext3D::TEXTURE_2D:
+        m_target = target;
+        m_info.resize(1);
+        m_info[0].resize(maxLevel);
+        break;
     case GraphicsContext3D::TEXTURE_CUBE_MAP:
         m_target = target;
+        m_info.resize(6);
+        for (int ii = 0; ii < 6; ++ii)
+            m_info[ii].resize(maxLevel);
         break;
     }
 }
 
 void WebGLTexture::setParameteri(unsigned long pname, int param)
 {
+    if (!object() || !m_target)
+        return;
     switch (pname) {
     case GraphicsContext3D::TEXTURE_MIN_FILTER:
         switch (param) {
@@ -113,50 +120,58 @@ void WebGLTexture::setParameteri(unsigned long pname, int param)
     default:
         return;
     }
-    updateNPOTStates();
+    update();
 }
 
 void WebGLTexture::setParameterf(unsigned long pname, float param)
 {
+    if (!object() || !m_target)
+        return;
     int iparam = static_cast<int>(param);
     setParameteri(pname, iparam);
 }
 
-void WebGLTexture::setSize(unsigned long target, unsigned width, unsigned height)
+void WebGLTexture::setLevelInfo(unsigned long target, int level, unsigned long internalFormat, int width, int height, unsigned long type)
 {
-    if (!width || !height)
+    if (!object() || !m_target)
         return;
-    int iTarget = -1;
-    if (m_target == GraphicsContext3D::TEXTURE_2D) {
-        if (target == GraphicsContext3D::TEXTURE_2D)
-            iTarget = 0;
-    } else if (m_target == GraphicsContext3D::TEXTURE_CUBE_MAP && width == height) {
-        switch (target) {
-        case GraphicsContext3D::TEXTURE_CUBE_MAP_POSITIVE_X:
-            iTarget = 0;
-            break;
-        case GraphicsContext3D::TEXTURE_CUBE_MAP_NEGATIVE_X:
-            iTarget = 1;
-            break;
-        case GraphicsContext3D::TEXTURE_CUBE_MAP_POSITIVE_Y:
-            iTarget = 2;
-            break;
-        case GraphicsContext3D::TEXTURE_CUBE_MAP_NEGATIVE_Y:
-            iTarget = 3;
-            break;
-        case GraphicsContext3D::TEXTURE_CUBE_MAP_POSITIVE_Z:
-            iTarget = 4;
-            break;
-        case GraphicsContext3D::TEXTURE_CUBE_MAP_NEGATIVE_Z:
-            iTarget = 5;
-            break;
+    // We assume level, internalFormat, width, height, and type have all been
+    // validated already.
+    int index = mapTargetToIndex(target);
+    if (index < 0)
+        return;
+    m_info[index][level].setInfo(internalFormat, width, height, type);
+    update();
+}
+
+void WebGLTexture::generateMipmapLevelInfo()
+{
+    if (!object() || !m_target)
+        return;
+    if (!canGenerateMipmaps())
+        return;
+    if (m_isComplete)
+        return;
+    for (size_t ii = 0; ii < m_info.size(); ++ii) {
+        const LevelInfo& info0 = m_info[ii][0];
+        int width = info0.width;
+        int height = info0.height;
+        int levelCount = computeLevelCount(width, height);
+        for (int level = 1; level < levelCount; ++level) {
+            width = std::max(1, width >> 1);
+            height = std::max(1, height >> 1);
+            LevelInfo& info = m_info[ii][level];
+            info.setInfo(info0.internalFormat, width, height, info0.type);
         }
     }
-    if (iTarget < 0)
-        return;
-    m_width[iTarget] = width;
-    m_height[iTarget] = height;
-    updateNPOTStates();
+    m_isComplete = true;
+}
+
+unsigned long WebGLTexture::getInternalFormat() const
+{
+    if (!object() || !m_target)
+        return 0;
+    return m_info[0][0].internalFormat;
 }
 
 bool WebGLTexture::isNPOT(unsigned width, unsigned height)
@@ -168,32 +183,131 @@ bool WebGLTexture::isNPOT(unsigned width, unsigned height)
     return false;
 }
 
+bool WebGLTexture::isNPOT() const
+{
+    if (!object())
+        return false;
+    return m_isNPOT;
+}
+
+bool WebGLTexture::needToUseBlackTexture() const
+{
+    if (!object())
+        return false;
+    return m_needToUseBlackTexture;
+}
+
 void WebGLTexture::_deleteObject(Platform3DObject object)
 {
     context()->graphicsContext3D()->deleteTexture(object);
 }
 
-void WebGLTexture::updateNPOTStates()
+int WebGLTexture::mapTargetToIndex(unsigned long target)
 {
-    int numTargets = 0;
-    if (m_target == GraphicsContext3D::TEXTURE_2D)
-        numTargets = 1;
-    else if (m_target == GraphicsContext3D::TEXTURE_CUBE_MAP)
-        numTargets = 6;
+    if (m_target == GraphicsContext3D::TEXTURE_2D) {
+        if (target == GraphicsContext3D::TEXTURE_2D)
+            return 0;
+    } else if (m_target == GraphicsContext3D::TEXTURE_CUBE_MAP) {
+        switch (target) {
+        case GraphicsContext3D::TEXTURE_CUBE_MAP_POSITIVE_X:
+            return 0;
+        case GraphicsContext3D::TEXTURE_CUBE_MAP_NEGATIVE_X:
+            return 1;
+        case GraphicsContext3D::TEXTURE_CUBE_MAP_POSITIVE_Y:
+            return 2;
+        case GraphicsContext3D::TEXTURE_CUBE_MAP_NEGATIVE_Y:
+            return 3;
+        case GraphicsContext3D::TEXTURE_CUBE_MAP_POSITIVE_Z:
+            return 4;
+        case GraphicsContext3D::TEXTURE_CUBE_MAP_NEGATIVE_Z:
+            return 5;
+        }
+    }
+    return -1;
+}
+
+bool WebGLTexture::canGenerateMipmaps()
+{
+    if (isNPOT())
+        return false;
+    const LevelInfo& first = m_info[0][0];
+    for (size_t ii = 0; ii < m_info.size(); ++ii) {
+        const LevelInfo& info = m_info[ii][0];
+        if (!info.valid
+            || info.width != first.width || info.height != first.height
+            || info.internalFormat != first.internalFormat || info.type != first.type)
+            return false;
+    }
+    return true;
+}
+
+int WebGLTexture::computeLevelCount(int width, int height)
+{
+    // return 1 + log2Floor(std::max(width, height));
+    int n = std::max(width, height);
+    if (n <= 0)
+        return 0;
+    int log = 0;
+    int value = n;
+    for (int ii = 4; ii >= 0; --ii) {
+        int shift = (1 << ii);
+        int x = (value >> shift);
+        if (x) {
+            value = x;
+            log += shift;
+        }
+    }
+    ASSERT(value == 1);
+    return log + 1;
+}
+
+void WebGLTexture::update()
+{
     m_isNPOT = false;
-    unsigned w0 = m_width[0], h0 = m_height[0];
-    for (int ii = 0; ii < numTargets; ++ii) {
-        if (ii && (!m_width[ii] || !m_height[ii] || m_width[ii] != w0 || m_height[ii] != h0)) {
-            // We only set NPOT for complete cube map textures.
-            m_isNPOT = false;
+    for (size_t ii = 0; ii < m_info.size(); ++ii) {
+        if (isNPOT(m_info[ii][0].width, m_info[ii][0].height)) {
+            m_isNPOT = true;
             break;
         }
-        if (isNPOT(m_width[ii], m_height[ii]))
-            m_isNPOT = true;
     }
+    m_isComplete = true;
+    const LevelInfo& first = m_info[0][0];
+    int levelCount = computeLevelCount(first.width, first.height);
+    if (levelCount < 1)
+        m_isComplete = false;
+    else {
+        for (size_t ii = 0; ii < m_info.size() && m_isComplete; ++ii) {
+            const LevelInfo& info0 = m_info[ii][0];
+            if (!info0.valid
+                || info0.width != first.width || info0.height != first.height
+                || info0.internalFormat != first.internalFormat || info0.type != first.type) {
+                m_isComplete = false;
+                break;
+            }
+            int width = info0.width;
+            int height = info0.height;
+            for (int level = 1; level < levelCount; ++level) {
+                width = std::max(1, width >> 1);
+                height = std::max(1, height >> 1);
+                const LevelInfo& info = m_info[ii][level];
+                if (!info.valid
+                    || info.width != width || info.height != height
+                    || info.internalFormat != info0.internalFormat || info.type != info0.type) {
+                    m_isComplete = false;
+                    break;
+                }
+
+            }
+        }
+    }
+
     m_needToUseBlackTexture = false;
+    // NPOT
     if (m_isNPOT && ((m_minFilter != GraphicsContext3D::NEAREST && m_minFilter != GraphicsContext3D::LINEAR)
                      || m_wrapS != GraphicsContext3D::CLAMP_TO_EDGE || m_wrapT != GraphicsContext3D::CLAMP_TO_EDGE))
+        m_needToUseBlackTexture = true;
+    // Completeness
+    if (!m_isComplete && m_minFilter != GraphicsContext3D::NEAREST && m_minFilter != GraphicsContext3D::LINEAR)
         m_needToUseBlackTexture = true;
 }
 

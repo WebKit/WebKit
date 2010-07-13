@@ -1,3 +1,13 @@
+2010-07-04  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Darin Fisher.
+
+        Need to track texture completeness
+        https://bugs.webkit.org/show_bug.cgi?id=41381
+
+        * fast/canvas/webgl/texture-complete-expected.txt: Added.
+        * fast/canvas/webgl/texture-complete.html: Added.
+
 2010-07-13  Andreas Kling  <andreas.kling@nokia.com>
 
         Reviewed by Darin Adler.
