@@ -1,3 +1,14 @@
+2010-07-13  Albert J. Wong  <ajwong@chromium.org>
+
+        Unreviewed, build fix.
+
+        [chromium] The comparision between signed/unsigned breaks the chromium
+        mac build.
+
+        * src/AutoFillPopupMenuClient.cpp:
+        (WebKit::AutoFillPopupMenuClient::getSuggestion):
+        (WebKit::AutoFillPopupMenuClient::getLabel):
+
 2010-07-10  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Darin Fisher.

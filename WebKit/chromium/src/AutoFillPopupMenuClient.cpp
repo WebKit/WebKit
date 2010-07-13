@@ -70,7 +70,7 @@ WebString AutoFillPopupMenuClient::getSuggestion(unsigned listIndex) const
     if (index == -1)
         return WebString();
 
-    ASSERT(index < m_names.size());
+    ASSERT(index >= 0 && static_cast<size_t>(index) < m_names.size());
     return m_names[index];
 }
 
@@ -80,7 +80,7 @@ WebString AutoFillPopupMenuClient::getLabel(unsigned listIndex) const
     if (index == -1)
         return WebString();
 
-    ASSERT(index < m_labels.size());
+    ASSERT(index >= 0 && static_cast<size_t>(index) < m_labels.size());
     return m_labels[index];
 }
 
