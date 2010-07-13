@@ -1,3 +1,18 @@
+2010-07-12  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        REGRESSION (HTML5 parser?): Impossible to get past the CAPTCHA on postcode.royalmail.com
+        https://bugs.webkit.org/show_bug.cgi?id=41797
+
+        Once we resume parsing after script execution, we want to clear the
+        preload scanner so we don't scan any bytes it might have accumulated.
+
+        Test: http/tests/loading/preload-slow-loading.php
+
+        * html/HTMLDocumentParser.cpp:
+        (WebCore::HTMLDocumentParser::resumeParsingAfterScriptExecution):
+
 2010-07-12  Albert J. Wong  <ajwong@chromium.org>
 
         Reviewed by Jian Li.
