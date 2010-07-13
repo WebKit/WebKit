@@ -1,3 +1,14 @@
+2010-07-12  Albert J. Wong  <ajwong@chromium.org>
+
+        Unreviewed, build fix.
+
+        [chromium] rebaseline new test expectations.
+
+        * platform/chromium-mac/media/video-source-expected.txt:
+        * platform/chromium-mac/media/video-src-expected.txt:
+        * platform/chromium-win/media/video-source-expected.txt:
+        * platform/chromium-win/media/video-src-expected.txt:
+
 2010-07-12  Tony Chang  <tony@chromium.org>
 
         Reviewed by David Hyatt.

@@ -1,3 +1,5 @@
 EVENT(loadstart)
 EXPECTED (relativeURL(video.currentSrc) == 'content/test.ogv') OK
+EXPECTED (relativeURL(video.src) == 'content/test.ogv') OK
+EXPECTED (video.getAttribute('src') == 'content/test.ogv') OK
 END OF TEST
