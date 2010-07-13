@@ -300,6 +300,7 @@ bool WorkerThreadableWebSocketChannel::Bridge::send(const String& message)
     ASSERT(m_peer);
     setMethodNotCompleted();
     m_loaderProxy.postTaskToLoader(createCallbackTask(&WorkerThreadableWebSocketChannel::mainThreadSend, m_peer, message));
+    RefPtr<Bridge> protect(this);
     waitForMethodCompletion();
     ThreadableWebSocketChannelClientWrapper* clientWrapper = m_workerClientWrapper.get();
     return clientWrapper && clientWrapper->sent();
@@ -321,6 +322,7 @@ unsigned long WorkerThreadableWebSocketChannel::Bridge::bufferedAmount()
     ASSERT(m_peer);
     setMethodNotCompleted();
     m_loaderProxy.postTaskToLoader(createCallbackTask(&WorkerThreadableWebSocketChannel::mainThreadBufferedAmount, m_peer));
+    RefPtr<Bridge> protect(this);
     waitForMethodCompletion();
     ThreadableWebSocketChannelClientWrapper* clientWrapper = m_workerClientWrapper.get();
     if (clientWrapper)
@@ -404,6 +406,8 @@ void WorkerThreadableWebSocketChannel::Bridge::setMethodNotCompleted()
     m_workerClientWrapper->clearSyncMethodDone();
 }
 
+// Caller of this function should hold a reference to the bridge, because this function may call WebSocket::didClose() in the end,
+// which causes the bridge to get disconnected from the WebSocket and deleted if there is no other reference.
 void WorkerThreadableWebSocketChannel::Bridge::waitForMethodCompletion()
 {
     if (!m_workerContext)
@@ -411,8 +415,8 @@ void WorkerThreadableWebSocketChannel::Bridge::waitForMethodCompletion()
     WorkerRunLoop& runLoop = m_workerContext->thread()->runLoop();
     MessageQueueWaitResult result = MessageQueueMessageReceived;
     ThreadableWebSocketChannelClientWrapper* clientWrapper = m_workerClientWrapper.get();
-    while (clientWrapper && !clientWrapper->syncMethodDone() && result != MessageQueueTerminated) {
-        result = runLoop.runInMode(m_workerContext.get(), m_taskMode);
+    while (m_workerContext && clientWrapper && !clientWrapper->syncMethodDone() && result != MessageQueueTerminated) {
+        result = runLoop.runInMode(m_workerContext.get(), m_taskMode); // May cause this bridge to get disconnected, which makes m_workerContext become null.
         clientWrapper = m_workerClientWrapper.get();
     }
 }

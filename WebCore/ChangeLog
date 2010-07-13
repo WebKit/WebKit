@@ -1,3 +1,26 @@
+2010-07-12  Yuta Kitamura  <yutak@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Fix crash caused by unintentional deletion of worker bridge and channel.
+
+        WebSocket: Crash caused by calling close() within onmessage handler
+        https://bugs.webkit.org/show_bug.cgi?id=41507
+
+        Test: websocket/tests/workers/close-in-onmessage-crash.html
+
+        * websockets/WebSocket.cpp:
+        (WebCore::WebSocket::close): bufferedAmount() may call WebSocket::didClose(),
+        which causes m_channel to get freed.
+        * websockets/WorkerThreadableWebSocketChannel.cpp:
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::send): Add reference to
+        the bridge because waitForMethodCompletion() may dereference the bridge.
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::bufferedAmount): Ditto.
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::waitForMethodCompletion):
+        The root cause is a call to WorkerRunLoop::runInMode in this function.
+        It may call WebSocket::didClose() even inside WebSocket::close(), which frees
+        everything including the worker bridge and the channel.
+
 2010-07-12  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

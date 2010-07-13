@@ -179,7 +179,10 @@ void WebSocket::close()
         return;
     m_state = CLOSED;
     m_bufferedAmountAfterClose = m_channel->bufferedAmount();
-    m_channel->close();
+    // didClose notification may be already queued, which we will inadvertently process while waiting for bufferedAmount() to return.
+    // In this case m_channel will be set to null during didClose() call, thus we need to test validness of m_channel here.
+    if (m_channel)
+        m_channel->close();
 }
 
 const KURL& WebSocket::url() const
