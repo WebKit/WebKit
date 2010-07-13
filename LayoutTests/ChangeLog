@@ -1,3 +1,12 @@
+2010-07-13  Andras Becsi  <abecsi@webkit.org>
+
+        Rubber-stamped by Tor Arne Vestbø.
+
+        [Qt] http/tests/inspector/resource-har-conversion.html is failing on the 32bit Linux Release bot.
+        webkit.org/b/42162
+
+        * platform/qt/Skipped: Skip the test until fix.
+
 2010-07-13  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Pavel Feldman.
