@@ -458,12 +458,13 @@ void WebPluginContainerImpl::handleKeyboardEvent(KeyboardEvent* event)
             && webEvent.windowsKeyCode == VKEY_C) {
             copy();
             event->setDefaultHandled();
+            return;
         }
-    } else {
-        WebCursorInfo cursorInfo;
-        if (m_webPlugin->handleInputEvent(webEvent, cursorInfo))
-            event->setDefaultHandled();
     }
+
+    WebCursorInfo cursorInfo;
+    if (m_webPlugin->handleInputEvent(webEvent, cursorInfo))
+        event->setDefaultHandled();
 }
 
 void WebPluginContainerImpl::calculateGeometry(const IntRect& frameRect,
