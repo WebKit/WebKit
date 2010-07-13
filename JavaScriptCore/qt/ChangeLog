@@ -1,3 +1,68 @@
+2010-07-13  Jedrzej Nowacki  <jedrzej.nowacki@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        Introduce QScriptValueIterator.
+
+        The QScriptValueIterator class permits to iterate over a QScriptValue's properties.
+
+        [Qt] QtScript should provide an API for enumerating a JS object's properties
+        https://bugs.webkit.org/show_bug.cgi?id=41680
+
+        * api/QtScript.pro:
+        * api/qscriptvalueiterator.cpp: Added.
+        (QScriptValueIterator::QScriptValueIterator):
+        (QScriptValueIterator::~QScriptValueIterator):
+        (QScriptValueIterator::hasNext):
+        (QScriptValueIterator::next):
+        (QScriptValueIterator::hasPrevious):
+        (QScriptValueIterator::previous):
+        (QScriptValueIterator::toFront):
+        (QScriptValueIterator::toBack):
+        (QScriptValueIterator::name):
+        (QScriptValueIterator::scriptName):
+        (QScriptValueIterator::value):
+        (QScriptValueIterator::setValue):
+        (QScriptValueIterator::remove):
+        (QScriptValueIterator::flags):
+        (QScriptValueIterator::operator=):
+        * api/qscriptvalueiterator.h: Added.
+        * api/qscriptvalueiterator_p.h: Added.
+        (QScriptValueIteratorPrivate::QScriptValueIteratorPrivate):
+        (QScriptValueIteratorPrivate::~QScriptValueIteratorPrivate):
+        (QScriptValueIteratorPrivate::hasNext):
+        (QScriptValueIteratorPrivate::next):
+        (QScriptValueIteratorPrivate::hasPrevious):
+        (QScriptValueIteratorPrivate::previous):
+        (QScriptValueIteratorPrivate::name):
+        (QScriptValueIteratorPrivate::scriptName):
+        (QScriptValueIteratorPrivate::value):
+        (QScriptValueIteratorPrivate::setValue):
+        (QScriptValueIteratorPrivate::remove):
+        (QScriptValueIteratorPrivate::toFront):
+        (QScriptValueIteratorPrivate::toBack):
+        (QScriptValueIteratorPrivate::flags):
+        (QScriptValueIteratorPrivate::isValid):
+        (QScriptValueIteratorPrivate::engine):
+        * tests/qscriptvalueiterator/qscriptvalueiterator.pro: Added.
+        * tests/qscriptvalueiterator/tst_qscriptvalueiterator.cpp: Added.
+        (tst_QScriptValueIterator::tst_QScriptValueIterator):
+        (tst_QScriptValueIterator::~tst_QScriptValueIterator):
+        (tst_QScriptValueIterator::iterateForward_data):
+        (tst_QScriptValueIterator::iterateForward):
+        (tst_QScriptValueIterator::iterateBackward_data):
+        (tst_QScriptValueIterator::iterateBackward):
+        (tst_QScriptValueIterator::iterateArray_data):
+        (tst_QScriptValueIterator::iterateArray):
+        (tst_QScriptValueIterator::iterateBackAndForth):
+        (tst_QScriptValueIterator::setValue):
+        (tst_QScriptValueIterator::remove):
+        (tst_QScriptValueIterator::removeMixed):
+        (tst_QScriptValueIterator::removeUndeletable):
+        (tst_QScriptValueIterator::iterateString):
+        (tst_QScriptValueIterator::assignObjectToIterator):
+        * tests/tests.pro:
+
 2010-07-09  Jedrzej Nowacki  <jedrzej.nowacki@nokia.com>
 
         Reviewed by Simon Hausmann.

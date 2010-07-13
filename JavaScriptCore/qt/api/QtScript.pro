@@ -24,6 +24,7 @@ INCLUDEPATH += $$PWD/../../API
 SOURCES +=  $$PWD/qscriptengine.cpp \
             $$PWD/qscriptengine_p.cpp \
             $$PWD/qscriptvalue.cpp \
+            $$PWD/qscriptvalueiterator.cpp \
             $$PWD/qscriptstring.cpp \
             $$PWD/qscriptprogram.cpp \
             $$PWD/qscriptsyntaxcheckresult.cpp \
@@ -33,6 +34,8 @@ HEADERS +=  $$PWD/qtscriptglobal.h \
             $$PWD/qscriptengine_p.h \
             $$PWD/qscriptvalue.h \
             $$PWD/qscriptvalue_p.h \
+            $$PWD/qscriptvalueiterator.h \
+            $$PWD/qscriptvalueiterator_p.h \
             $$PWD/qscriptconverter_p.h \
             $$PWD/qscriptstring.h \
             $$PWD/qscriptstring_p.h \
