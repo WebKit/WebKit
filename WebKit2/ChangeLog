@@ -1,3 +1,85 @@
+2010-07-13  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Add support for URL frame loading using NPN_GetURLNotify
+        https://bugs.webkit.org/show_bug.cgi?id=42192
+
+        * WebProcess/Plugins/DummyPlugin.cpp:
+        (WebKit::DummyPlugin::frameDidFinishLoading):
+        (WebKit::DummyPlugin::frameDidFail):
+        * WebProcess/Plugins/DummyPlugin.h:
+        Add empty stubs.
+        
+        * WebProcess/Plugins/Netscape/NetscapeBrowserFuncs.cpp:
+        Implement NPN_GetURLNotify and have it call NetscapePlugin::loadURL.
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::NetscapePlugin):
+        Initialize m_nextRequestID to 0.
+
+        (WebKit::NetscapePlugin::loadURL):
+        Ask the plug-in controller to load the URL.
+
+        (WebKit::NetscapePlugin::frameDidFinishLoading):
+        (WebKit::NetscapePlugin::frameDidFail):
+        Add empty stubs for now.
+
+        * WebProcess/Plugins/Plugin.h:
+        Add new member functions for frame load notifications.
+
+        * WebProcess/Plugins/PluginController.h:
+        Add loadURL.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::URLRequest::URLRequest):
+        Add class that represents an URL request.
+
+        (WebKit::PluginView::PluginView):
+        Initialize m_pendingURLRequestsTimer.
+
+        (WebKit::PluginView::~PluginView):
+        Unset all active load listeners.
+
+        (WebKit::PluginView::pendingURLRequestsTimerFired):
+        Take the first request in the queue and process it.
+
+        (WebKit::PluginView::performURLRequest):
+        Call performFrameLoadURLRequest if necessary.
+
+        (WebKit::PluginView::performFrameLoadURLRequest):
+        Find a frame to load the request in. If a frame doesn't exist try to create a new frame.
+
+        (WebKit::PluginView::loadURL):
+        Create a URLRequest and add it to the queue.
+
+        (WebKit::PluginView::didFinishLoad):
+        Get the pending frame load request and call Plugin::frameDidFinishLoading.
+
+        (WebKit::PluginView::didFailLoad):
+        Get the pending frame load request and call Plugin::frameDidFail.
+
+        * WebProcess/Plugins/PluginView.h:
+        Inherit from WebFrame::LoadListener.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDidFailProvisionalLoad):
+        (WebKit::WebFrameLoaderClient::dispatchDidFailLoad):
+        (WebKit::WebFrameLoaderClient::dispatchDidFinishLoad):
+        (WebKit::WebFrameLoaderClient::didFinishLoad):
+        Call the WebFrame's load listener if needed.
+
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::WebFrame):
+        Initialize m_loadListener to 0.
+
+        * WebProcess/WebPage/WebFrame.h:
+        Add a LoadListener class that the plug-in view can use to track frame loads.
+
+        (WebKit::WebFrame::LoadListener::~LoadListener):
+        (WebKit::WebFrame::setLoadListener):
+        (WebKit::WebFrame::loadListener):
+
 2010-07-13  Diego Gonzalez  <diegohcg@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.

@@ -63,6 +63,12 @@ public:
     // Tells the plug-in that either the plug-ins frame rect or its clip rect has changed. Both rects are in window coordinates.
     virtual void geometryDidChange(const WebCore::IntRect& frameRect, const WebCore::IntRect& clipRect) = 0;
 
+    /// Tells the plug-in that a frame load request that the plug-in made by calling PluginController::loadURL has finished.
+    virtual void frameDidFinishLoading(uint64_t requestID) = 0;
+
+    /// Tells the plug-in that a frame load request that the plug-in made by calling PluginController::loadURL has failed.
+    virtual void frameDidFail(uint64_t requestID, bool wasCancelled) = 0;
+
 protected:
     Plugin();
 };

@@ -49,6 +49,7 @@ public:
 
     void invalidate(const NPRect*);
     const char* userAgent();
+    void loadURL(const WebCore::String& urlString, const WebCore::String& target, bool sendNotification, void* notificationData);
     
 private:
     NetscapePlugin(PassRefPtr<NetscapePluginModule> pluginModule);
@@ -63,8 +64,11 @@ private:
     virtual void destroy();
     virtual void paint(WebCore::GraphicsContext*, const WebCore::IntRect& dirtyRect);
     virtual void geometryDidChange(const WebCore::IntRect& frameRect, const WebCore::IntRect& clipRect);
+    virtual void frameDidFinishLoading(uint64_t requestID);
+    virtual void frameDidFail(uint64_t requestID, bool wasCancelled);
 
     PluginController* m_pluginController;
+    uint64_t m_nextRequestID;
 
     RefPtr<NetscapePluginModule> m_pluginModule;
     NPP_t m_npp;

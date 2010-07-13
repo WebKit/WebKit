@@ -42,6 +42,13 @@ public:
     // Returns the user agent string for the given URL.
     virtual WebCore::String userAgent(const WebCore::KURL&) = 0;
 
+    // Loads the given URL and associates it with the request ID.
+    // 
+    // If a target is specified, then the URL will be loaded in the window or frame that the target refers to.
+    // Once the URL finishes loading, Plugin::frameDidFinishLoading will be called with the given requestID. If the URL
+    // fails to load, Plugin::frameDidFailToLoad will be called.
+    virtual void loadURL(uint64_t requestID, const WebCore::String& urlString, const WebCore::String& target, bool allowPopups) = 0;
+    
 protected:
     virtual ~PluginController() { }
 };

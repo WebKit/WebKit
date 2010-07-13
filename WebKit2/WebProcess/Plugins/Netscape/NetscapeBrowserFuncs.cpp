@@ -28,6 +28,8 @@
 #include "NetscapePlugin.h"
 #include "NotImplemented.h"
 
+using namespace WebCore;
+
 namespace WebKit {
     
 static NPError NPN_GetURL(NPP instance, const char* url, const char* target)
@@ -116,10 +118,26 @@ static jref NPN_GetJavaPeer(NPP instance)
     return 0;
 }
 
-static NPError NPN_GetURLNotify(NPP instance, const char* url, const char* target, void* notifyData)
+static String makeURLString(const char* url)
 {
-    notImplemented();
-    return NPERR_GENERIC_ERROR;
+    String urlString(url);
+    
+    // Strip return characters.
+    urlString.replace('\r', "");
+    urlString.replace('\n', "");
+
+    return urlString;
+}
+
+static NPError NPN_GetURLNotify(NPP npp, const char* url, const char* target, void* notifyData)
+{
+    if (!url)
+        return NPERR_GENERIC_ERROR;
+
+    RefPtr<NetscapePlugin> plugin = NetscapePlugin::fromNPP(npp);
+    plugin->loadURL(makeURLString(url), target, true, notifyData);
+    
+    return NPERR_NO_ERROR;
 }
 
 static NPError NPN_PostURLNotify(NPP instance, const char* url, const char* target, uint32_t len, const char* buf, NPBool file, void* notifyData)

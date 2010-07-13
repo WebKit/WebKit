@@ -28,9 +28,12 @@
 
 #include "Plugin.h"
 #include "PluginController.h"
+#include "RunLoop.h"
+#include "WebFrame.h"
 
 #include <WebCore/MediaCanStartListener.h>
 #include <WebCore/Widget.h>
+#include <wtf/Deque.h>
 
 // FIXME: Eventually this should move to WebCore.
 
@@ -40,7 +43,7 @@ namespace WebCore {
 
 namespace WebKit {
 
-class PluginView : public WebCore::Widget, WebCore::MediaCanStartListener, PluginController {
+class PluginView : public WebCore::Widget, WebCore::MediaCanStartListener, PluginController, WebFrame::LoadListener {
 public:
     static PassRefPtr<PluginView> create(WebCore::HTMLPlugInElement* pluginElement, PassRefPtr<Plugin> plugin, const Plugin::Parameters& parameters)
     {
@@ -57,6 +60,13 @@ private:
     void viewGeometryDidChange();
     WebCore::IntRect clipRectInWindowCoordinates() const;
 
+    void pendingURLRequestsTimerFired();
+    class URLRequest;
+    void performURLRequest(URLRequest*);
+
+    // Perform an URL request where the frame target is not null.
+    void performFrameLoadURLRequest(URLRequest*);
+
     // WebCore::Widget
     virtual void setFrameRect(const WebCore::IntRect&);
     virtual void paint(WebCore::GraphicsContext*, const WebCore::IntRect&);
@@ -70,6 +80,11 @@ private:
     // PluginController
     virtual void invalidate(const WebCore::IntRect&);
     virtual WebCore::String userAgent(const WebCore::KURL&);
+    virtual void loadURL(uint64_t requestID, const WebCore::String& urlString, const WebCore::String& target, bool allowPopups);
+
+    // WebFrame::LoadListener
+    virtual void didFinishLoad(WebFrame*);
+    virtual void didFailLoad(WebFrame*, bool wasCancelled);
 
     WebCore::HTMLPlugInElement* m_pluginElement;
     RefPtr<Plugin> m_plugin;
@@ -77,6 +92,15 @@ private:
     
     bool m_isInitialized;
     bool m_isWaitingUntilMediaCanStart;
+
+    // Pending URLRequests that the plug-in has made.
+    Deque<RefPtr<URLRequest> > m_pendingURLRequests;
+    RunLoop::Timer<PluginView> m_pendingURLRequestsTimer;
+
+    // Pending frame loads that the plug-in has made.
+    typedef HashMap<RefPtr<WebFrame>, RefPtr<URLRequest> > FrameLoadMap;
+    FrameLoadMap m_pendingFrameLoads;
+
 };
 
 } // namespace WebKit

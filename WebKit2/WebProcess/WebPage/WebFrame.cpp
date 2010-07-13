@@ -81,6 +81,7 @@ WebFrame::WebFrame(WebPage* page, const String& frameName, HTMLFrameOwnerElement
     , m_policyListenerID(0)
     , m_policyFunction(0)
     , m_frameLoaderClient(this)
+    , m_loadListener(0)
     , m_frameID(generateFrameID())
 {
     m_page->addWebFrame(m_frameID, this);

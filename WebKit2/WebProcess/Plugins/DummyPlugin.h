@@ -46,6 +46,9 @@ private:
     virtual void destroy();
     virtual void paint(WebCore::GraphicsContext*, const WebCore::IntRect& dirtyRect);
     virtual void geometryDidChange(const WebCore::IntRect& frameRect, const WebCore::IntRect& clipRect);
+    virtual void frameDidFinishLoading(uint64_t requestID);
+    virtual void frameDidFail(uint64_t requestID, bool wasCancelled);
+
 };
 
 } // namespace WebKit

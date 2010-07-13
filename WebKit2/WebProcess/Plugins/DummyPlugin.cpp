@@ -61,4 +61,12 @@ void DummyPlugin::geometryDidChange(const IntRect& frameRect, const IntRect& cli
 {
 }
 
+void DummyPlugin::frameDidFinishLoading(uint64_t requestID)
+{
+}
+
+void DummyPlugin::frameDidFail(uint64_t requestID, bool wasCancelled)
+{
+}
+
 } // namespace WebKit

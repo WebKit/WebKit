@@ -37,6 +37,7 @@ namespace WebKit {
 
 NetscapePlugin::NetscapePlugin(PassRefPtr<NetscapePluginModule> pluginModule)
     : m_pluginController(0)
+    , m_nextRequestID(0)
     , m_pluginModule(pluginModule)
     , m_npWindow()
     , m_isStarted(false)
@@ -95,6 +96,16 @@ const char* NetscapePlugin::userAgent()
     }
     
     return m_userAgent.data();
+}
+
+void NetscapePlugin::loadURL(const String& urlString, const String& target, bool sendNotification, void* notificationData)
+{
+    uint64_t requestID = ++m_nextRequestID;
+
+    // FIXME: Handle popups.
+    bool allowPopups = false;
+
+    m_pluginController->loadURL(requestID, urlString, target, allowPopups);
 }
 
 void NetscapePlugin::callSetWindow()
@@ -189,6 +200,16 @@ void NetscapePlugin::geometryDidChange(const IntRect& frameRect, const IntRect& 
     m_clipRect = clipRect;
 
     callSetWindow();
+}
+
+void NetscapePlugin::frameDidFinishLoading(uint64_t requestID)
+{
+    // FIXME: Implement.
+}
+
+void NetscapePlugin::frameDidFail(uint64_t requestID, bool wasCancelled)
+{
+    // FIXME: Implement.
 }
 
 } // namespace WebKit

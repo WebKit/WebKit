@@ -26,6 +26,7 @@
 #include "PluginView.h"
 
 #include "Plugin.h"
+#include <WebCore/FrameLoadRequest.h>
 #include <WebCore/FrameLoaderClient.h>
 #include <WebCore/FrameView.h>
 #include <WebCore/GraphicsContext.h>
@@ -38,12 +39,38 @@ using namespace WebCore;
 
 namespace WebKit {
 
+class PluginView::URLRequest : public RefCounted<URLRequest> {
+public:
+    static PassRefPtr<PluginView::URLRequest> create(uint64_t requestID, const FrameLoadRequest& request, bool allowPopups)
+    {
+        return adoptRef(new URLRequest(requestID, request, allowPopups));
+    }
+
+    uint64_t requestID() const { return m_requestID; }
+    const String& target() const { return m_request.frameName(); }
+    const ResourceRequest & request() const { return m_request.resourceRequest(); }
+    bool allowPopups() const { return m_allowPopups; }
+
+private:
+    URLRequest(uint64_t requestID, const FrameLoadRequest& request, bool allowPopups)
+        : m_requestID(requestID)
+        , m_request(request)
+        , m_allowPopups(allowPopups)
+    {
+    }
+    
+    uint64_t m_requestID;
+    FrameLoadRequest m_request;
+    bool m_allowPopups;
+};
+
 PluginView::PluginView(WebCore::HTMLPlugInElement* pluginElement, PassRefPtr<Plugin> plugin, const Plugin::Parameters& parameters)
     : m_pluginElement(pluginElement)
     , m_plugin(plugin)
     , m_parameters(parameters)
     , m_isInitialized(false)
     , m_isWaitingUntilMediaCanStart(false)
+    , m_pendingURLRequestsTimer(RunLoop::main(), this, &PluginView::pendingURLRequestsTimerFired)
 {
 }
 
@@ -52,6 +79,10 @@ PluginView::~PluginView()
     if (m_isWaitingUntilMediaCanStart)
         m_pluginElement->document()->removeMediaCanStartListener(this);
 
+    FrameLoadMap::iterator end = m_pendingFrameLoads.end();
+    for (FrameLoadMap::iterator it = m_pendingFrameLoads.begin(), end = m_pendingFrameLoads.end(); it != end; ++it)
+        it->first->setLoadListener(0);
+    
     if (m_plugin && m_isInitialized)
         m_plugin->destroy();
 }
@@ -160,6 +191,59 @@ IntRect PluginView::clipRectInWindowCoordinates() const
     return intersection(frameRectInWindowCoordinates, windowClipRect);
 }
 
+void PluginView::pendingURLRequestsTimerFired()
+{
+    ASSERT(!m_pendingURLRequests.isEmpty());
+    
+    RefPtr<URLRequest> urlRequest = m_pendingURLRequests.takeFirst();
+
+    // If there are more requests to perform, reschedule the timer.
+    if (!m_pendingURLRequests.isEmpty())
+        m_pendingURLRequestsTimer.startOneShot(0);
+    
+    performURLRequest(urlRequest.get());
+}
+    
+void PluginView::performURLRequest(URLRequest* request)
+{
+    if (!request->target().isNull())
+        return performFrameLoadURLRequest(request);
+}
+
+void PluginView::performFrameLoadURLRequest(URLRequest* request)
+{
+    ASSERT(!request->target().isNull());
+
+    Frame* frame = m_pluginElement->document()->frame();
+    if (!frame)
+        return;
+
+    // First, try to find a target frame.
+    Frame* targetFrame = frame->loader()->findFrameForNavigation(request->target());
+    if (!targetFrame) {
+        // We did not find a target frame. Ask our frame to load the page. This may or may not create a popup window.
+        frame->loader()->load(request->request(), request->target(), false);
+
+        // FIXME: We don't know whether the window was successfully created here so we just assume that it worked.
+        // It's better than not telling the plug-in anything.
+        m_plugin->frameDidFinishLoading(request->requestID());
+        return;
+    }
+
+    // Now ask the frame to load the request.
+    targetFrame->loader()->load(request->request(), false);
+
+    WebFrame* targetWebFrame = static_cast<WebFrameLoaderClient*>(targetFrame->loader()->client())->webFrame();
+    if (WebFrame::LoadListener* loadListener = targetWebFrame->loadListener()) {
+        // Check if another plug-in view or even this view is waiting for the frame to load.
+        // If it is, tell it that the load was cancelled because it will be anyway.
+        loadListener->didFailLoad(targetWebFrame, true);
+    }
+    
+    m_pendingFrameLoads.set(targetWebFrame, request);
+    targetWebFrame->setLoadListener(this);
+}
+
 void PluginView::invalidateRect(const IntRect& dirtyRect)
 {
     if (!parent() || !m_plugin || !m_isInitialized)
@@ -190,6 +274,35 @@ String PluginView::userAgent(const KURL& url)
         return String();
     
     return frame->loader()->client()->userAgent(url);
+}
+
+void PluginView::loadURL(uint64_t requestID, const String& urlString, const String& target, bool allowPopups)
+{
+    FrameLoadRequest frameLoadRequest;
+    frameLoadRequest.setFrameName(target);
+    frameLoadRequest.resourceRequest().setHTTPMethod("GET");
+    frameLoadRequest.resourceRequest().setURL(m_pluginElement->document()->completeURL(urlString));
+    
+    m_pendingURLRequests.append(URLRequest::create(requestID, frameLoadRequest, allowPopups));
+    m_pendingURLRequestsTimer.startOneShot(0);
+}
+
+void PluginView::didFinishLoad(WebFrame* webFrame)
+{
+    RefPtr<URLRequest> request = m_pendingFrameLoads.take(webFrame);
+    ASSERT(request);
+    webFrame->setLoadListener(0);
+
+    m_plugin->frameDidFinishLoading(request->requestID());
+}
+
+void PluginView::didFailLoad(WebFrame* webFrame, bool wasCancelled)
+{
+    RefPtr<URLRequest> request = m_pendingFrameLoads.take(webFrame);
+    ASSERT(request);
+    webFrame->setLoadListener(0);
+    
+    m_plugin->frameDidFail(request->requestID(), wasCancelled);
 }
 
 } // namespace WebKit
