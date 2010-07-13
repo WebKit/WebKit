@@ -1,3 +1,38 @@
+2010-07-12  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        REGRESSION: Crash at JSC::JIT::privateCompile(JSC::MacroAssemblerCodePtr*)
+        https://bugs.webkit.org/show_bug.cgi?id=41763
+
+        There are two parts to this patch, the first is to fix the actual
+        problem.  When calling copyStringWithoutBOMs on a string we know
+        to contain BOMs we return a value indicating that there are no
+        BOMs.
+
+        The second part of this fix is simply to harden the path that
+        led to a crash when parsing failed.
+
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::privateCompileCTIMachineTrampolines):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::privateCompileCTIMachineTrampolines):
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+           Harden compilation stubs against parser failure.
+        * parser/Lexer.cpp:
+        (JSC::Lexer::sourceCode):
+           Add assertions to ensure that subranges into a source provider
+           are always actually braces.  Hopefully this should catch similar
+           failures in future.  These assertions fire on existing tests
+           without this fix.
+        * runtime/Executable.h:
+        (JSC::FunctionExecutable::tryJitCodeForCall):
+        (JSC::FunctionExecutable::tryJitCodeForConstruct):
+        * wtf/text/StringImpl.h:
+        (WebCore::StringImpl::copyStringWithoutBOMs):
+           Make copyStringWithBOMs do the right thing.
+
 2010-07-13  Gabor Loki  <loki@webkit.org>
 
         Reviewed by Gavin Barraclough.

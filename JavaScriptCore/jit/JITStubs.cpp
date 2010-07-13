@@ -1858,8 +1858,10 @@ DEFINE_STUB_FUNCTION(void*, op_call_jitCompile)
     ASSERT(!function->isHostFunction());
     FunctionExecutable* executable = function->jsExecutable();
     ScopeChainNode* callDataScopeChain = function->scope().node();
-    executable->jitCodeForCall(stackFrame.callFrame, callDataScopeChain);
-
+    if (!executable->tryJitCodeForCall(stackFrame.callFrame, callDataScopeChain)) {
+        stackFrame.callFrame->globalData().exception = createStackOverflowError(stackFrame.callFrame);
+        return 0;
+    }
     return function;
 }
 
@@ -1876,8 +1878,10 @@ DEFINE_STUB_FUNCTION(void*, op_construct_jitCompile)
     ASSERT(!function->isHostFunction());
     FunctionExecutable* executable = function->jsExecutable();
     ScopeChainNode* callDataScopeChain = function->scope().node();
-    executable->jitCodeForConstruct(stackFrame.callFrame, callDataScopeChain);
-
+    if (!executable->tryJitCodeForConstruct(stackFrame.callFrame, callDataScopeChain)) {
+        stackFrame.callFrame->globalData().exception = createStackOverflowError(stackFrame.callFrame);
+        return 0;
+    }
     return function;
 }
 
@@ -2050,7 +2054,7 @@ DEFINE_STUB_FUNCTION(void*, vm_lazyLinkConstruct)
         codeBlock = functionExecutable->bytecodeForConstruct(stackFrame.callFrame, callee->scope().node());
         if (!codeBlock) {
             throwStackOverflowError(callFrame, stackFrame.globalData, ReturnAddressPtr(callFrame->returnPC()), STUB_RETURN_ADDRESS);
-            VM_THROW_EXCEPTION();
+            return 0;
         }
         functionExecutable->jitCodeForConstruct(callFrame, callee->scope().node());
         if (callFrame->argumentCountIncludingThis() == static_cast<size_t>(codeBlock->m_numParameters))

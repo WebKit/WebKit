@@ -274,6 +274,7 @@ public:
             if (!hasBOMs)
                 return this;
         }
+        hasBOMs = true;
         Vector<UChar> result;
         result.reserveInitialCapacity(m_length);
         size_t firstBOM = i;

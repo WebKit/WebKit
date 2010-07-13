@@ -1157,6 +1157,8 @@ void Lexer::clear()
 
 SourceCode Lexer::sourceCode(int openBrace, int closeBrace, int firstLine)
 {
+    ASSERT(m_source->provider()->data()[openBrace] == '{');
+    ASSERT(m_source->provider()->data()[closeBrace] == '}');
     return SourceCode(m_source->provider(), openBrace, closeBrace + 1, firstLine);
 }
 
