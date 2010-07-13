@@ -2016,7 +2016,7 @@ void Document::write(const SegmentedString& text, Document* ownerDocument)
         printf("Beginning a document.write at %d\n", elapsedTime());
 #endif
 
-    if (!m_parser || m_parser->finishWasCalled())
+    if (!m_parser)
         open(ownerDocument);
 
     ASSERT(m_parser);

@@ -1,3 +1,14 @@
+2010-07-12  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        HTML5 Parser: document.write after onload blows away document
+        https://bugs.webkit.org/show_bug.cgi?id=40745
+
+        Update test to expect new behavior.
+
+        * http/tests/misc/write-while-waiting.html:
+
 2010-07-12  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Sam Weinig.

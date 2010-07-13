@@ -1,3 +1,27 @@
+2010-07-12  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        HTML5 Parser: document.write after onload blows away document
+        https://bugs.webkit.org/show_bug.cgi?id=40745
+
+        Rather than blowing away the document when we get a document.write call
+        after the document is closed, we new ignore the write.  This
+        technically violates the spec (which requires us to blow away the
+        document), but blowing away the document breaks too many web sites.
+
+        Rather than this patch, we could go back to our old behavior (which was
+        to append the bytes just before EOF), but implementing this approach
+        (suggested by Henri) will let us gather data about whether his approach
+        is workable.
+
+        See also: http://www.w3.org/Bugs/Public/show_bug.cgi?id=9767
+
+        * dom/Document.cpp:
+        (WebCore::Document::write):
+        * html/HTMLDocumentParser.cpp:
+        (WebCore::HTMLDocumentParser::insert):
+
 2010-07-12  Tony Gentilcore  <tonyg@chromium.org>
 
         Reviewed by Oliver Hunt.
