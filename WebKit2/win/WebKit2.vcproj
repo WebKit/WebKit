@@ -2,7 +2,7 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="8.00"
-	Name="WebKit2"
+	Name="WebKit"
 	ProjectGUID="{2E51ABE8-76CB-485B-A66C-46AEF4DF8ACD}"
 	RootNamespace="WebKit2"
 	Keyword="Win32Proj"
@@ -592,10 +592,6 @@
 					Name="win"
 					>
 					<File
-						RelativePath="..\WebProcess\WebCoreSupport\win\WebCoreLocalizedStrings.cpp"
-						>
-					</File>
-					<File
 						RelativePath="..\WebProcess\WebCoreSupport\win\WebErrorsWin.cpp"
 						>
 					</File>
@@ -660,18 +656,6 @@
 			<Filter
 				Name="win"
 				>
-				<File
-					RelativePath="..\WebProcess\win\DllMain.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\WebProcess\win\WebLocalizableStrings.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\WebProcess\win\WebLocalizableStrings.h"
-					>
-				</File>
 				<File
 					RelativePath="..\WebProcess\win\WebProcessMainWin.cpp"
 					>
@@ -1310,10 +1294,118 @@
 				</Filter>
 			</Filter>
 		</Filter>
-		<File
-			RelativePath=".\WebKit2.rc"
+		<Filter
+			Name="Resources"
 			>
-		</File>
+			<File
+				RelativePath=".\deleteButton.png"
+				>
+			</File>
+			<File
+				RelativePath=".\deleteButtonPressed.png"
+				>
+			</File>
+			<File
+				RelativePath=".\fsVideoAudioVolumeHigh.png"
+				>
+			</File>
+			<File
+				RelativePath=".\fsVideoAudioVolumeLow.png"
+				>
+			</File>
+			<File
+				RelativePath=".\fsVideoExitFullscreen.png"
+				>
+			</File>
+			<File
+				RelativePath=".\fsVideoPause.png"
+				>
+			</File>
+			<File
+				RelativePath=".\fsVideoPlay.png"
+				>
+			</File>
+			<File
+				RelativePath=".\missingImage.png"
+				>
+			</File>
+			<File
+				RelativePath=".\nullplugin.png"
+				>
+			</File>
+			<File
+				RelativePath=".\panEastCursor.png"
+				>
+			</File>
+			<File
+				RelativePath=".\panIcon.png"
+				>
+			</File>
+			<File
+				RelativePath=".\panNorthCursor.png"
+				>
+			</File>
+			<File
+				RelativePath=".\panNorthEastCursor.png"
+				>
+			</File>
+			<File
+				RelativePath=".\panNorthWestCursor.png"
+				>
+			</File>
+			<File
+				RelativePath=".\panSouthCursor.png"
+				>
+			</File>
+			<File
+				RelativePath=".\panSouthEastCursor.png"
+				>
+			</File>
+			<File
+				RelativePath=".\panSouthWestCursor.png"
+				>
+			</File>
+			<File
+				RelativePath=".\panWestCursor.png"
+				>
+			</File>
+			<File
+				RelativePath=".\searchCancel.png"
+				>
+			</File>
+			<File
+				RelativePath=".\searchCancelPressed.png"
+				>
+			</File>
+			<File
+				RelativePath=".\searchMagnifier.png"
+				>
+			</File>
+			<File
+				RelativePath=".\searchMagnifierResults.png"
+				>
+			</File>
+			<File
+				RelativePath=".\textAreaResizeCorner.png"
+				>
+			</File>
+			<File
+				RelativePath=".\verticalTextCursor.png"
+				>
+			</File>
+			<File
+				RelativePath=".\WebKit2.rc"
+				>
+			</File>
+			<File
+				RelativePath=".\zoomInCursor.png"
+				>
+			</File>
+			<File
+				RelativePath=".\zoomOutCursor.png"
+				>
+			</File>
+		</Filter>
 		<File
 			RelativePath="..\WebKit2Prefix.cpp"
 			>

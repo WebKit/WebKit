@@ -1,3 +1,56 @@
+2010-07-12  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Alice Liu.
+
+        <rdar://problem/8113038> WebKit1 and WebKit2 should build as a single DLL
+        https://bugs.webkit.org/show_bug.cgi?id=40921
+        
+        Pre-WebKit2 WebKit now builds into a static library named WebKitLib.lib.
+        WebKit.dll now links in WebCore.lib, WebKitLib.lib and WebKit2 code.
+
+        This is a first step. We'll likely want to migrate the remainder of
+        the non-deprecated WebKit code (strings, DLLMain, resources) into WebKit2.
+
+        * UIProcess/API/C/WKBase.h: Updated to new BUILDING_ name.
+        * WebProcess/InjectedBundle/API/c/WKBundleBase.h: Updated to new BUILDING_ name.
+        * WebProcess/WebCoreSupport/win/WebCoreLocalizedStrings.cpp: Removed.
+        * WebProcess/win/DllMain.cpp: Removed. Overlaps with implementation in WebKitLib.lib.
+        * WebProcess/win/WebLocalizableStrings.cpp: Removed. Overlaps with implementation in WebKitLib.lib.
+        * WebProcess/win/WebLocalizableStrings.h: Removed. Overlaps with implementation in WebKitLib.lib.
+        * win/WebKit2.def: Added. Copied from WebKit project.
+        * win/WebKit2.rc: Added resources previously in WebKit.
+        * win/WebKit2.vcproj: Changed project name to WebKit so we will link output to WebKit.dll.
+        Removed implementations overlapping with WebKitLib (WebCoreLocalizedStrings, DllMain, WebLocalizableStrings, WebProcessMain).
+        * win/WebKit2Common.vsprops: Use a framework name of WebKit instead of WebKit2 to reflect project name.
+        Renamed BUILDING_WEBKIT2 to BUILDING_WEBKIT since there is now just a single WebKit.dll.
+        * win/WebKit2WebProcess.vcproj: Link against WebKit instead of WebKit2 due to renaming.        
+        * win/deleteButton.png: Copied from ../WebKit/win/WebKit.vcproj/deleteButton.png.
+        * win/deleteButtonPressed.png: Copied from ../WebKit/win/WebKit.vcproj/deleteButtonPressed.png.
+        * win/fsVideoAudioVolumeHigh.png: Copied from ../WebKit/win/WebKit.vcproj/fsVideoAudioVolumeHigh.png.
+        * win/fsVideoAudioVolumeLow.png: Copied from ../WebKit/win/WebKit.vcproj/fsVideoAudioVolumeLow.png.
+        * win/fsVideoExitFullscreen.png: Copied from ../WebKit/win/WebKit.vcproj/fsVideoExitFullscreen.png.
+        * win/fsVideoPause.png: Copied from ../WebKit/win/WebKit.vcproj/fsVideoPause.png.
+        * win/fsVideoPlay.png: Copied from ../WebKit/win/WebKit.vcproj/fsVideoPlay.png.
+        * win/missingImage.png: Copied from ../WebKit/win/WebKit.vcproj/missingImage.png.
+        * win/nullplugin.png: Copied from ../WebKit/win/WebKit.vcproj/nullplugin.png.
+        * win/panEastCursor.png: Copied from ../WebKit/win/WebKit.vcproj/panEastCursor.png.
+        * win/panIcon.png: Copied from ../WebKit/win/WebKit.vcproj/panIcon.png.
+        * win/panNorthCursor.png: Copied from ../WebKit/win/WebKit.vcproj/panNorthCursor.png.
+        * win/panNorthEastCursor.png: Copied from ../WebKit/win/WebKit.vcproj/panNorthEastCursor.png.
+        * win/panNorthWestCursor.png: Copied from ../WebKit/win/WebKit.vcproj/panNorthWestCursor.png.
+        * win/panSouthCursor.png: Copied from ../WebKit/win/WebKit.vcproj/panSouthCursor.png.
+        * win/panSouthEastCursor.png: Copied from ../WebKit/win/WebKit.vcproj/panSouthEastCursor.png.
+        * win/panSouthWestCursor.png: Copied from ../WebKit/win/WebKit.vcproj/panSouthWestCursor.png.
+        * win/panWestCursor.png: Copied from ../WebKit/win/WebKit.vcproj/panWestCursor.png.
+        * win/searchCancel.png: Copied from ../WebKit/win/WebKit.vcproj/searchCancel.png.
+        * win/searchCancelPressed.png: Copied from ../WebKit/win/WebKit.vcproj/searchCancelPressed.png.
+        * win/searchMagnifier.png: Copied from ../WebKit/win/WebKit.vcproj/searchMagnifier.png.
+        * win/searchMagnifierResults.png: Copied from ../WebKit/win/WebKit.vcproj/searchMagnifierResults.png.
+        * win/textAreaResizeCorner.png: Copied from ../WebKit/win/WebKit.vcproj/textAreaResizeCorner.png.
+        * win/verticalTextCursor.png: Copied from ../WebKit/win/WebKit.vcproj/verticalTextCursor.png.
+        * win/zoomInCursor.png: Copied from ../WebKit/win/WebKit.vcproj/zoomInCursor.png.
+        * win/zoomOutCursor.png: Copied from ../WebKit/win/WebKit.vcproj/zoomOutCursor.png.
+
 2010-07-12  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Anders Carlsson.
