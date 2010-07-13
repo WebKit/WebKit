@@ -174,6 +174,8 @@ void WebDevToolsFrontendImpl::executeScript(const Vector<String>& v)
     Vector< v8::Handle<v8::Value> > args;
     for (size_t i = 0; i < v.size(); i++)
         args.append(ToV8String(v.at(i)));
+    v8::TryCatch tryCatch;
+    tryCatch.SetVerbose(true);
     function->Call(frameContext->Global(), args.size(), args.data());
 }
 
