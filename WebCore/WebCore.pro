@@ -2246,12 +2246,12 @@ maemo5 {
 
     win32-* {
         LIBS += -lgdi32
-        LIBS += -lOle32
+        LIBS += -lole32
         LIBS += -luser32
     }
     wince* {
         LIBS += -lmmtimer
-        LIBS += -lOle32
+        LIBS += -lole32
     }
 
 contains(DEFINES, ENABLE_NETSCAPE_PLUGIN_API=1) {

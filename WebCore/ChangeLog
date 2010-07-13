@@ -1,3 +1,14 @@
+2010-07-13  Andras Becsi  <abecsi@webkit.org>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Fix the case of a linker option to lowercase to be able to
+        cross compile QtWebKit for Windows on Linux.
+
+        No new tests needed.
+
+        * WebCore.pro:
+
 2010-07-12  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Yury Semikhatsky.
