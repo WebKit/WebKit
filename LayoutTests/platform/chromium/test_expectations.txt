@@ -3013,3 +3013,6 @@ BUGAWONG MAC : svg/custom/clip-path-child-changes.svg = TEXT
 
 BUG48859 WIN : fast/inline/continuation-outlines-with-layers-2.html = IMAGE+TEXT
 
+// Somehow rebaseline in http://trac.webkit.org/changeset/63196 failed.
+// Need investigation.
+BUGWK38016 WIN : svg/custom/foreign-object-skew.svg = FAIL

@@ -1,3 +1,12 @@
+2010-07-13  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Unreviewed. It seems rebaseline for foreign-object-skew.svg somehow failed.
+
+        Update padding on Windows?
+        https://bugs.webkit.org/show_bug.cgi?id=38016
+
+        * platform/chromium/test_expectations.txt:
+
 2010-07-13  W. James MacLean <wjmaclean@chromium.org>
 
         Reviewed by Darin Fisher
