@@ -1,3 +1,13 @@
+2010-07-12  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r63171.
+        http://trac.webkit.org/changeset/63171
+        https://bugs.webkit.org/show_bug.cgi?id=42144
+
+        Broke Chromium canary (Requested by tkent on #webkit).
+
+        * WebKit.gyp:
+
 2010-07-12  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by David Levin.
