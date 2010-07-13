@@ -31,7 +31,6 @@
 namespace WebCore {
 
 class CachedCSSStyleSheet;
-class CachedLinkPrefetch;
 class KURL;
 
 class HTMLLinkElement : public HTMLElement, public CachedResourceClient {

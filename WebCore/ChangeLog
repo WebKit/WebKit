@@ -1,3 +1,19 @@
+2010-07-13  Leon Clarke  <leonclarke@google.com>
+
+        Reviewed by Pavel Feldman.
+
+        Don't access objects after deleting them, following
+        the addition of link prefetching. Also remove a forward declaration
+        of the now-nonexistent CachedLinkPrefetch class.
+        https://bugs.webkit.org/show_bug.cgi?id=3652
+
+        No new tests. Correcting aspects of the prefetch change that shouldn't
+        have affected functionality.
+
+        * html/HTMLLinkElement.h:
+        * loader/loader.cpp:
+        (WebCore::Loader::Host::cancelPendingRequests):
+
 2010-07-13  Andras Becsi  <abecsi@webkit.org>
 
         Reviewed by Simon Hausmann.
