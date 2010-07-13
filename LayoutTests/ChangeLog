@@ -1,3 +1,23 @@
+2010-07-13  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Steve Falkenburg.
+
+        Sputnik tests aren't running on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=42208
+        
+        We should run the Sputnik tests on Windows, by unskipping fast/js/Sputnik, and adding Windows
+        specific test results. There are 6 tests that needs Windows specific results. 3 of them are
+        progressions (Unicode_510/S7.6_A3.2.html, Unicode_510/S7.6_A5.3_T1.html, Unicode_510/S7.6_A5.3_T2.html)
+        and the others are failures that are being tracked by https://bugs.webkit.org/show_bug.cgi?id=42209.
+
+        * platform/win/Skipped: Remove fast/js/sputnik from the Skipped list.
+        * platform/win/fast/js/sputnik/Conformance/11_Expressions/11.5_Multiplicative_Operators/11.5.3_Applying_the_percent_Operator/S11.5.3_A4_T6-expected.txt: Added failing result.
+        * platform/win/fast/js/sputnik/Conformance/15_Native_Objects/15.4_Array/15.4.4/15.4.4.12_Array_prototype_splice/S15.4.4.12_A2.1_T3-expected.txt: Added failing result.
+        * platform/win/fast/js/sputnik/Unicode/Unicode_510/S7.6_A3.1-expected.txt: Added failing result.
+        * platform/win/fast/js/sputnik/Unicode/Unicode_510/S7.6_A3.2-expected.txt: Added progression.
+        * platform/win/fast/js/sputnik/Unicode/Unicode_510/S7.6_A5.3_T1-expected.txt: Added progression.
+        * platform/win/fast/js/sputnik/Unicode/Unicode_510/S7.6_A5.3_T2-expected.txt: Added progression.
+
 2010-07-12  Tony Gentilcore  <tonyg@chromium.org>
 
         Reviewed by Darin Fisher.
