@@ -209,7 +209,7 @@ WONTFIX SKIP MAC WIN : platform/chromium/fast/text/chromium-linux-fontconfig-ren
 
 // Needs DRT queueLoadHTMLString and setDeferMainResourceLoad-implementations
 // See: https://bugs.webkit.org/show_bug.cgi?id=42151
-SKIP : fast/loader/non-deferred-substitute-load.html = FAIL
+BUGWK42151 SKIP : fast/loader/non-deferred-substitute-load.html = FAIL
 
 // -----------------------------------------------------------------
 // WONTFIX TESTS
@@ -779,7 +779,7 @@ BUG13907 BUG25375 : media/video-controls-transformed.html = FAIL
 // These tests are WONTFIX because they use codecs Chromium doesn't support.
 BUG16779 WONTFIX SKIP : media/audio-mpeg-supported.html = FAIL TIMEOUT
 BUG16779 WONTFIX SKIP : media/audio-data-url.html = FAIL TIMEOUT
-BUG16779 WONTFIX SKIP : media/media-can-play-mp3.html = TEXT
+BUG16779 WONTFIX SKIP : media/media-can-play-mpeg-audio.html = TEXT
 BUG16779 WONTFIX SKIP : media/video-can-play-type.html = FAIL TIMEOUT
 BUG16779 WONTFIX SKIP : media/video-document-types.html = FAIL TIMEOUT
 BUG16779 WONTFIX SKIP : media/video-size-intrinsic-scale.html = FAIL TIMEOUT
@@ -2498,7 +2498,7 @@ BUG32155 : fast/js/Object-getOwnPropertyNames.html = TEXT
 BUG32145 WIN : animations/3d/transform-origin-vs-functions.html = TEXT PASS
 BUG32149 WIN RELEASE : fast/dom/Document/early-document-access.html = TIMEOUT PASS
 
-BUG32195 : fast/repaint/renderer-destruction-by-invalidateSelection-crash.html = IMAGE+TEXT IMAGE PASS
+BUG32195 MAC : fast/repaint/renderer-destruction-by-invalidateSelection-crash.html = IMAGE+TEXT TEXT IMAGE PASS
 
 // Expectations from roll to 53171:53194
 
@@ -3016,3 +3016,12 @@ BUG48859 WIN : fast/inline/continuation-outlines-with-layers-2.html = IMAGE+TEXT
 // Somehow rebaseline in http://trac.webkit.org/changeset/63196 failed.
 // Need investigation.
 BUGWK38016 WIN : svg/custom/foreign-object-skew.svg = FAIL
+
+// Introduced before r63242.
+BUGAWONG LINUX : fast/repaint/renderer-destruction-by-invalidateSelection-crash.html = IMAGE+TEXT TEXT IMAGE PASS
+BUGAWONG WIN LINUX : userscripts/simple-stylesheet.html = TEXT
+BUGAWONG WIN LINUX : userscripts/user-style-all-frames.html = TEXT
+BUGAWONG WIN LINUX : userscripts/user-style-top-frame-only.html = TEXT
+BUGAWONG WIN LINUX MAC : http/tests/mime/uppercase-mime-type.html = MISSING
+BUGAWONG WIN : editing/selection/drag-in-iframe.html = IMAGE+TEXT PASS
+
