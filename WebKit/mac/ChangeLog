@@ -1,3 +1,13 @@
+2010-07-13  Philippe Normand  <pnormand@igalia.com>
+
+        Rubber-stamped by Xan Lopez.
+
+        Updated the copyright headers of the files modified in r62476.
+
+        * WebView/WebView.mm:
+        * WebView/WebViewData.h:
+        * WebView/WebViewInternal.h:
+
 2010-07-09  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Darin Adler.
