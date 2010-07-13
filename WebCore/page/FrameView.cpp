@@ -462,10 +462,6 @@ void FrameView::updateCompositingLayers()
 
     // This call will make sure the cached hasAcceleratedCompositing is updated from the pref
     view->compositor()->cacheAcceleratedCompositingFlags();
-    
-    if (!view->usesCompositing())
-        return;
-
     view->compositor()->updateCompositingLayers(CompositingUpdateAfterLayoutOrStyleChange);
 }
 
@@ -492,7 +488,7 @@ void FrameView::enterCompositingMode()
 {
 #if USE(ACCELERATED_COMPOSITING)
     if (RenderView* view = m_frame->contentRenderer())
-        return view->compositor()->enableCompositingMode();
+        view->compositor()->enableCompositingMode();
 #endif
 }
 
@@ -1042,8 +1038,7 @@ void FrameView::scrollPositionChanged()
             root->updateWidgetPositions();
             root->layer()->updateRepaintRectsAfterScroll();
 #if USE(ACCELERATED_COMPOSITING)
-            if (root->usesCompositing())
-                root->compositor()->updateCompositingLayers(CompositingUpdateOnScroll);
+            root->compositor()->updateCompositingLayers(CompositingUpdateOnScroll);
 #endif
         }
     }
