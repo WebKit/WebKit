@@ -2692,6 +2692,13 @@ if ENABLE_INPUT_SPEECH
 FEATURE_DEFINES += ENABLE_INPUT_SPEECH=1
 webcore_cppflags += -DENABLE_INPUT_SPEECH=1
 
+webcore_sources += \
+	WebCore/page/SpeechInput.cpp \
+	WebCore/page/SpeechInput.h \
+	WebCore/page/SpeechInputClient.h \
+	WebCore/page/SpeechInputClientListener.h \
+	WebCore/page/SpeechInputListener.h
+
 else
 
 webcore_cppflags += -DENABLE_INPUT_SPEECH=0

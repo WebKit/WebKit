@@ -22481,6 +22481,26 @@
 				>
 			</File>
 			<File
+				RelativePath="..\page\SpeechInput.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\page\SpeechInput.h"
+				>
+			</File>
+			<File
+				RelativePath="..\page\SpeechInputClient.h"
+				>
+			</File>
+			<File
+				RelativePath="..\page\SpeechInputClientListener.h"
+				>
+			</File>
+			<File
+				RelativePath="..\page\SpeechInputListener.h"
+				>
+			</File>
+			<File
 				RelativePath="..\page\SuspendableTimer.cpp"
 				>
 			</File>

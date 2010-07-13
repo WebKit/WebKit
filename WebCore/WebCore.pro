@@ -1597,6 +1597,10 @@ HEADERS += \
     page/SecurityOrigin.h \
     page/Settings.h \
     page/SpatialNavigation.h \
+    page/SpeechInput.h \
+    page/SpeechInputClient.h \
+    page/SpeechInputClientListener.h \
+    page/SpeechInputListener.h \
     page/WindowFeatures.h \
     page/WorkerNavigator.h \
     page/XSSAuditor.h \
@@ -2526,6 +2530,7 @@ contains(DEFINES, ENABLE_SHARED_WORKERS=1) {
 
 contains(DEFINES, ENABLE_INPUT_SPEECH=1) {
     SOURCES += \
+        page/SpeechInput.cpp \
         rendering/RenderInputSpeech.cpp
 }
 

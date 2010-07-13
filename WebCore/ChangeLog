@@ -1,3 +1,45 @@
+2010-07-13  Satish Sampath  <satish@chromium.org>
+
+        Reviewed by Steve Block.
+
+        Speech input plumbing in webcore
+        https://bugs.webkit.org/show_bug.cgi?id=41518
+
+        Adds the following:
+        - a SpeechInput class to be used by the speech enabled HTML elements
+        - a SpeechInputListener interface to be implemented by the speech enabled HTML elements
+        - a SpeechInputClient interface (defined in WebCore, implemented by WebKit) for WebCore to call into WebKit.
+          This is available as a member of WebCore::Page, set by the platforms which support speech input.
+        - a SpeechInputClientListener interface for WebCore to receive events from WebKit
+
+        No new tests, the relevant LayoutTestController bindings will be added in a subsequent patch.
+
+        * Android.mk:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/Page.cpp:
+        (WebCore::Page::Page):
+        * page/Page.h: Added SpeechInputClient member variable and associated methods.
+        (WebCore::Page::setSpeechInputClient):
+        (WebCore::Page::speechInputClient):
+        * page/SpeechInput.cpp: Added new class to provide speech API services to HTML elements.
+        (WebCore::SpeechInput::SpeechInput):
+        (WebCore::SpeechInput::recordingComplete):
+        (WebCore::SpeechInput::setRecognitionResult):
+        (WebCore::SpeechInput::startRecognition):
+        * page/SpeechInput.h: Added.
+        (WebCore::SpeechInput::~SpeechInput):
+        (WebCore::SpeechInput::client):
+        * page/SpeechInputListener.h: Added.
+        (WebCore::SpeechInputListener::~SpeechInputListener):
+        * page/SpeechInputClient.h: Added new interface implemented by WebKit to bubble up speech API requests to the embedder.
+        (WebCore::SpeechInputClient::~SpeechInputClient):
+        * page/SpeechInputClientListener.h: Added.
+        (WebCore::SpeechInputClientListener::~SpeechInputClientListener):
+
 2010-07-13  Richard Moore <rich@kde.org>, Robert Hogan  <robert@webkit.org>
 
         Reviewed by Simon Hausmann.

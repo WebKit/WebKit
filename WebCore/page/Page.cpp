@@ -61,6 +61,7 @@
 #include "SelectionController.h"
 #include "Settings.h"
 #include "SharedBuffer.h"
+#include "SpeechInputClient.h"
 #include "StringHash.h"
 #include "TextResourceDecoder.h"
 #include "Widget.h"
@@ -139,6 +140,9 @@ Page::Page(ChromeClient* chromeClient, ContextMenuClient* contextMenuClient, Edi
 #endif
 #if ENABLE(DEVICE_ORIENTATION)
     , m_deviceOrientationController(new DeviceOrientationController(this, deviceOrientationClient))
+#endif
+#if ENABLE(INPUT_SPEECH)
+    , m_speechInputClient(0)
 #endif
     , m_settings(new Settings(this))
     , m_progress(new ProgressTracker)

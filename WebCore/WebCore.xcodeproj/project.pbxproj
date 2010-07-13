@@ -1345,6 +1345,11 @@
 		754133AA102E00F400075D00 /* InspectorTimelineAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 754133A9102E00F400075D00 /* InspectorTimelineAgent.cpp */; };
 		7553CFE8108F473F00EA281E /* TimelineRecordFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 7553CFE6108F473F00EA281E /* TimelineRecordFactory.h */; };
 		7553CFE9108F473F00EA281E /* TimelineRecordFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7553CFE7108F473F00EA281E /* TimelineRecordFactory.cpp */; };
+		7578F90B11DDF26900D933C5 /* SpeechInput.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7578F90811DDF26900D933C5 /* SpeechInput.cpp */; };
+		7578F90C11DDF26900D933C5 /* SpeechInput.h in Headers */ = {isa = PBXBuildFile; fileRef = 7578F90911DDF26900D933C5 /* SpeechInput.h */; };
+		7578F90D11DDF26900D933C5 /* SpeechInputClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 7578F90A11DDF26900D933C5 /* SpeechInputClient.h */; };
+		7578F91F11E4E32800D933C5 /* SpeechInputClientListener.h in Headers */ = {isa = PBXBuildFile; fileRef = 7578F91D11E4E32800D933C5 /* SpeechInputClientListener.h */; };
+		7578F92011E4E32800D933C5 /* SpeechInputListener.h in Headers */ = {isa = PBXBuildFile; fileRef = 7578F91E11E4E32800D933C5 /* SpeechInputListener.h */; };
 		75793E830D0CE0B3007FC0AC /* MessageEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75793E800D0CE0B3007FC0AC /* MessageEvent.cpp */; };
 		75793E840D0CE0B3007FC0AC /* MessageEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 75793E810D0CE0B3007FC0AC /* MessageEvent.h */; };
 		75793EC80D0CE72D007FC0AC /* JSMessageEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75793EC60D0CE72D007FC0AC /* JSMessageEvent.cpp */; };
@@ -7095,6 +7100,11 @@
 		754133A9102E00F400075D00 /* InspectorTimelineAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorTimelineAgent.cpp; sourceTree = "<group>"; };
 		7553CFE6108F473F00EA281E /* TimelineRecordFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TimelineRecordFactory.h; sourceTree = "<group>"; };
 		7553CFE7108F473F00EA281E /* TimelineRecordFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TimelineRecordFactory.cpp; sourceTree = "<group>"; };
+		7578F90811DDF26900D933C5 /* SpeechInput.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SpeechInput.cpp; sourceTree = "<group>"; };
+		7578F90911DDF26900D933C5 /* SpeechInput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpeechInput.h; sourceTree = "<group>"; };
+		7578F90A11DDF26900D933C5 /* SpeechInputClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpeechInputClient.h; sourceTree = "<group>"; };
+		7578F91D11E4E32800D933C5 /* SpeechInputClientListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpeechInputClientListener.h; sourceTree = "<group>"; };
+		7578F91E11E4E32800D933C5 /* SpeechInputListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpeechInputListener.h; sourceTree = "<group>"; };
 		75793E800D0CE0B3007FC0AC /* MessageEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = MessageEvent.cpp; path = dom/MessageEvent.cpp; sourceTree = SOURCE_ROOT; };
 		75793E810D0CE0B3007FC0AC /* MessageEvent.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = MessageEvent.h; path = dom/MessageEvent.h; sourceTree = SOURCE_ROOT; };
 		75793E820D0CE0B3007FC0AC /* MessageEvent.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = MessageEvent.idl; path = dom/MessageEvent.idl; sourceTree = SOURCE_ROOT; };
@@ -12337,6 +12347,11 @@
 				F587863A02DE3A1401EA4122 /* Settings.h */,
 				626CDE0C1140424C001E5A68 /* SpatialNavigation.cpp */,
 				626CDE0D1140424C001E5A68 /* SpatialNavigation.h */,
+				7578F90811DDF26900D933C5 /* SpeechInput.cpp */,
+				7578F90911DDF26900D933C5 /* SpeechInput.h */,
+				7578F90A11DDF26900D933C5 /* SpeechInputClient.h */,
+				7578F91D11E4E32800D933C5 /* SpeechInputClientListener.h */,
+				7578F91E11E4E32800D933C5 /* SpeechInputListener.h */,
 				62C1217A11AB9E76003C462C /* SuspendableTimer.cpp */,
 				62C1217B11AB9E77003C462C /* SuspendableTimer.h */,
 				8AF4E55811DC5A63000ED3DE /* Timing.cpp */,
@@ -19778,6 +19793,10 @@
 				C585A6FC11D4FB3D004C3E4B /* IndexedDatabaseImpl.h in Headers */,
 				C585A6FE11D4FB3D004C3E4B /* IndexedDatabaseRequest.h in Headers */,
 				590E1B4911E4EF4B0069F784 /* DeviceOrientation.h in Headers */,
+				7578F90C11DDF26900D933C5 /* SpeechInput.h in Headers */,
+				7578F90D11DDF26900D933C5 /* SpeechInputClient.h in Headers */,
+				7578F91F11E4E32800D933C5 /* SpeechInputClientListener.h in Headers */,
+				7578F92011E4E32800D933C5 /* SpeechInputListener.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -22165,6 +22184,7 @@
 				C585A6FD11D4FB3D004C3E4B /* IndexedDatabaseRequest.cpp in Sources */,
 				590E1B4B11E4EF700069F784 /* JSDeviceOrientationEventCustom.cpp in Sources */,
 				59D1C10411EB5DCF00B638C8 /* DeviceOrientation.cpp in Sources */,
+				7578F90B11DDF26900D933C5 /* SpeechInput.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
