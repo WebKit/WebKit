@@ -100,6 +100,24 @@
 
         Reviewed by Darin Fisher.
 
+        Implement performance.timing.fetchStart
+        https://bugs.webkit.org/show_bug.cgi?id=41816
+
+        See: http://dev.w3.org/2006/webapi/WebTiming/#nt-fetch-start
+
+        * loader/MainResourceLoader.cpp:
+        (WebCore::MainResourceLoader::willSendRequest): Record the fetchStart time for each request for the main resource. This means it is called for each server redirect, overwritting the previous value. In https://bugs.webkit.org/show_bug.cgi?id=42018, this will be modified such that if a previous value exists, it is stored as the redirect time.
+        * loader/FrameLoaderTypes.h:
+        (WebCore::FrameLoadTimeline::FrameLoadTimeline):
+        * page/Timing.cpp:
+        (WebCore::Timing::fetchStart):
+        * page/Timing.h:
+        * page/Timing.idl:
+
+2010-07-13  Tony Gentilcore  <tonyg@chromium.org>
+
+        Reviewed by Darin Fisher.
+
         Implement performance.timing.responseEnd
         https://bugs.webkit.org/show_bug.cgi?id=42006
 

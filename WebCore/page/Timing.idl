@@ -34,10 +34,10 @@ module window {
     interface [Conditional=WEB_TIMING, OmitConstructor] Timing {
         // FIXME: Implement remainder of interface.
         readonly attribute unsigned long long navigationStart;
-        // readonly attribute unsigned long long fetchStart;
         readonly attribute unsigned long long unloadEventEnd;
         // readonly attribute unsigned long long redirectStart;
         // readonly attribute unsigned long long redirectEnd;
+        readonly attribute unsigned long long fetchStart;
         // readonly attribute unsigned long long domainLookupStart;
         // readonly attribute unsigned long long domainLookupEnd;
         // readonly attribute unsigned long long connectStart;
