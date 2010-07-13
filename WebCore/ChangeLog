@@ -1,3 +1,26 @@
+2010-07-12  Albert J. Wong  <ajwong@chromium.org>
+
+        Reviewed by Jian Li.
+
+        Adding directional property enums back into
+        CSSComputedStyleDeclaration::getPropertyCSSValue().
+
+        https://bugs.webkit.org/show_bug.cgi?id=42122
+
+        The four directional -webkit- properties --  CSSPropertyWebkitMarginEnd,
+        CSSPropertyWebkitMarginStart, CSSPropertyWebkitPaddingEnd, and
+        CSSPropertyWebkitPaddingStart -- are resolved into other css
+        properties before the swtich statement via a call to
+        CSSProperty::resolveDirectionAwareProperty().  Thus, they are never
+        seen by the switch statement.  However, if you leave out a potential
+        enum value from the switch, gcc will generate a warning if -Wall is
+        specified.  This warning breaks the Chromium build.  To avoid this,
+        we add in the enum values and ASSERT_NOT_REACHED() if they are hit.
+
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+
 2010-07-12  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler.
