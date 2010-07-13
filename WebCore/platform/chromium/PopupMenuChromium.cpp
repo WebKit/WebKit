@@ -752,8 +752,11 @@ bool PopupListBox::handleKeyEvent(const PlatformKeyboardEvent& event)
     if (event.windowsVirtualKeyCode() == VKEY_TAB) {
         // TAB is a special case as it should select the current item if any and
         // advance focus.
-        if (m_selectedIndex >= 0)
-            m_popupClient->setTextFromItem(m_selectedIndex);
+        if (m_selectedIndex >= 0) {
+            acceptIndex(m_selectedIndex); // May delete us.
+            // Return false so the TAB key event is propagated to the page.
+            return false;
+        }
         // Call abandon() so we honor m_acceptedIndexOnAbandon if set.
         abandon();
         // Return false so the TAB key event is propagated to the page.

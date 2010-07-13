@@ -1,3 +1,12 @@
+2010-07-13  Scott Violet  <sky@chromium.org>
+
+        Reviewed by David Levin.
+
+        [Chromium] Makes pressing tab accept the currently selected item in a popup.
+        https://bugs.webkit.org/show_bug.cgi?id=42172
+
+        * WebCore/platform/chromium/PopupMenuChromium.cpp:
+
 2010-07-12  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Gustavo Noronha.
