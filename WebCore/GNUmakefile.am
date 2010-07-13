@@ -99,8 +99,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/HTMLNames.cpp \
 	DerivedSources/WebCore/HTMLNames.h \
 	DerivedSources/WebCore/JSHTMLElementWrapperFactory.cpp \
-	DerivedSources/WebCore/RemoteInspectorFrontend2.cpp \
-	DerivedSources/WebCore/RemoteInspectorFrontend2.h \
+	DerivedSources/WebCore/RemoteInspectorFrontend.cpp \
+	DerivedSources/WebCore/RemoteInspectorFrontend.h \
 	DerivedSources/WebCore/UserAgentStyleSheets.h \
 	DerivedSources/WebCore/UserAgentStyleSheetsData.cpp \
 	DerivedSources/WebCore/XMLNSNames.cpp \
@@ -339,7 +339,7 @@ IDL_BINDINGS += \
 # of libWebCoreJS, so we add it directly to  the header list here, so
 # that it will be included in the distribution.
 noinst_HEADERS += \
-	WebCore/inspector/InspectorFrontend2.idl
+	WebCore/inspector/Inspector.idl
 
 webcoregtk_dom_sources = \
 	WebCore/bindings/gobject/ConvertToUTF8String.cpp \
@@ -3986,7 +3986,7 @@ DerivedSources/WebCore/XMLNames.cpp DerivedSources/WebCore/XMLNames.h: $(WebCore
 	$(AM_V_GEN)$(PERL) -I$(WebCore)/bindings/scripts $< --attrs $(WebCore)/xml/xmlattrs.in --outputDir "$(GENSOURCES_WEBCORE)"
 
 # Remote Inspector frontend
-DerivedSources/WebCore/RemoteInspectorFrontend2.cpp DerivedSources/WebCore/RemoteInspectorFrontend2.h: $(WebCore)/inspector/InspectorFrontend2.idl $(SCRIPTS_BINDINGS) $(WebCore)/inspector/CodeGeneratorInspector.pm
+DerivedSources/WebCore/RemoteInspectorFrontend.cpp DerivedSources/WebCore/RemoteInspectorFrontend.h: $(WebCore)/inspector/Inspector.idl $(SCRIPTS_BINDINGS) $(WebCore)/inspector/CodeGeneratorInspector.pm
 	$(AM_V_GEN)$(PERL) -I$(WebCore)/bindings/scripts -I$(WebCore)/inspector $(WebCore)/bindings/scripts/generate-bindings.pl $(IDL_PATH:%=--include "%") --outputDir "$(GENSOURCES_WEBCORE)" --defines "LANGUAGE_JAVASCRIPT=1 $(FEATURE_DEFINES)" --generator Inspector $<
 
 IDL_PATH := \

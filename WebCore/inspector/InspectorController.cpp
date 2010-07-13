@@ -68,7 +68,7 @@
 #include "Page.h"
 #include "ProgressTracker.h"
 #include "Range.h"
-#include "RemoteInspectorFrontend2.h"
+#include "RemoteInspectorFrontend.h"
 #include "RenderInline.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
@@ -486,10 +486,10 @@ void InspectorController::connectFrontend(const ScriptObject& webInspector)
     m_openingFrontend = false;
     releaseFrontendLifetimeAgents();
     m_frontend = new InspectorFrontend(webInspector, m_client);
-    m_frontend2 = new InspectorFrontend2(m_client);
-    m_domAgent = InspectorDOMAgent::create(m_cssStore.get(), m_frontend2.get());
+    m_remoteFrontend = new RemoteInspectorFrontend(m_client);
+    m_domAgent = InspectorDOMAgent::create(m_cssStore.get(), m_remoteFrontend.get());
     if (m_timelineAgent)
-        m_timelineAgent->resetFrontendProxyObject(m_frontend2.get());
+        m_timelineAgent->resetFrontendProxyObject(m_remoteFrontend.get());
 
     // Initialize Web Inspector title.
     m_frontend->inspectedURLChanged(m_inspectedPage->mainFrame()->loader()->url().string());
@@ -1163,7 +1163,7 @@ void InspectorController::startTimelineProfiler()
     if (m_timelineAgent)
         return;
 
-    m_timelineAgent = new InspectorTimelineAgent(m_frontend2.get());
+    m_timelineAgent = new InspectorTimelineAgent(m_remoteFrontend.get());
     if (m_frontend)
         m_frontend->timelineProfilerWasStarted();
     m_client->timelineProfilerWasStarted();

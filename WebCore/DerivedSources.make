@@ -471,11 +471,11 @@ DOM_CLASSES = \
     XSLTProcessor \
 #
 
-INSPECTOR_CLASSES = InspectorFrontend2
+INSPECTOR_CLASSES = Inspector
 
 .PHONY : all
 
-JS_DOM_HEADERS=$(filter-out JSEventListener.h JSEventTarget.h,$(DOM_CLASSES:%=JS%.h) $(INSPECTOR_CLASSES:%=Remote%.h))
+JS_DOM_HEADERS=$(filter-out JSEventListener.h JSEventTarget.h,$(DOM_CLASSES:%=JS%.h) $(INSPECTOR_CLASSES:%=Remote%Frontend.h))
 
 all : \
     remove-stray-plugin-and-mime-type-files \
@@ -808,8 +808,8 @@ JS%.h : %.idl $(JS_BINDINGS_SCRIPTS)
 
 INSPECTOR_GENERATOR_SCRIPTS = $(GENERATE_SCRIPTS) inspector/CodeGeneratorInspector.pm
 
-Remote%.h : %.idl $(INSPECTOR_GENERATOR_SCRIPTS)
-	$(call generator_script, $(INSPECTOR_GENERATOR_SCRIPTS)) --outputDir .  --defines "LANGUAGE_JAVASCRIPT" --generator Inspector $<
+Remote%Frontend.h : %.idl $(INSPECTOR_GENERATOR_SCRIPTS)
+	$(call generator_script, $(INSPECTOR_GENERATOR_SCRIPTS)) --outputDir .  --defines "$(FEATURE_DEFINES) LANGUAGE_JAVASCRIPT" --generator Inspector $<
 
 -include $(JS_DOM_HEADERS:.h=.dep)
 

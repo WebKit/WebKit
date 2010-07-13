@@ -59,7 +59,7 @@
 #include "Node.h"
 #include "NodeList.h"
 #include "PlatformString.h"
-#include "RemoteInspectorFrontend2.h"
+#include "RemoteInspectorFrontend.h"
 #include "RenderStyle.h"
 #include "RenderStyleConstants.h"
 #include "ScriptEventListener.h"
@@ -195,7 +195,7 @@ public:
 
 }
 
-InspectorDOMAgent::InspectorDOMAgent(InspectorCSSStore* cssStore, InspectorFrontend2* frontend)
+InspectorDOMAgent::InspectorDOMAgent(InspectorCSSStore* cssStore, RemoteInspectorFrontend* frontend)
     : EventListener(InspectorDOMAgentType)
     , m_cssStore(cssStore)
     , m_frontend(frontend)

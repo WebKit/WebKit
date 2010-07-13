@@ -329,11 +329,13 @@ sub ParseInterface
                     my $line = $_;
 
                     $line =~ /$IDLStructure::interfaceParameterSelector/;
-                    my $paramExtendedAttributes = (defined($1) ? $1 : " "); chop($paramExtendedAttributes);
-                    my $paramType = (defined($2) ? $2 : die("Parsing error!\nSource:\n$line\n)"));
-                    my $paramName = (defined($3) ? $3 : die("Parsing error!\nSource:\n$line\n)"));
+                    my $paramDirection = $1;
+                    my $paramExtendedAttributes = (defined($2) ? $2 : " "); chop($paramExtendedAttributes);
+                    my $paramType = (defined($3) ? $3 : die("Parsing error!\nSource:\n$line\n)"));
+                    my $paramName = (defined($4) ? $4 : die("Parsing error!\nSource:\n$line\n)"));
 
                     my $paramDataNode = new domSignature();
+                    $paramDataNode->direction($paramDirection);
                     $paramDataNode->name($paramName);
                     $paramDataNode->type($paramType);
                     $paramDataNode->extendedAttributes(parseExtendedAttributes($paramExtendedAttributes));

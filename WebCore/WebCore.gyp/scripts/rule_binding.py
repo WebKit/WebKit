@@ -100,6 +100,10 @@ def main(args):
     else:
         prefixIndex = options.index('--generator')
 
+    fileName = ''
+    if '--filename' in options:
+        fileName = options[options.index('--filename') + 1]
+
     if prefixIndex + 1 < len(options):
         prefix = options[prefixIndex + 1]
 
@@ -130,7 +134,10 @@ def main(args):
     if cppdir != hdir:
         inputBasename = os.path.basename(input)
         (root, ext) = os.path.splitext(inputBasename)
-        hname = '%s%s.h' % (prefix, root)
+        if fileName != '':
+            hname = '%s.h' % (fileName)
+        else:
+            hname = '%s%s.h' % (prefix, root)
         hsrc = os.path.join(cppdir, hname)
         hdst = os.path.join(hdir, hname)
         shutil.copyfile(hsrc, hdst)

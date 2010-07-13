@@ -92,10 +92,11 @@ my $writeDependencies;
 my $verbose;
 
 my $namespace;
-my $fileName;
+my $frontendClassName;
 my %discoveredTypes;
+my %generatedFunctions;
 
-my @classDefinition;
+my @frontendClassDeclaration;
 my @functionDefinitions;
 
 sub typeSpec
@@ -133,6 +134,7 @@ sub GenerateModule
     my $dataNode = shift;
 
     $namespace = $dataNode->module;
+    $namespace =~ s/core/WebCore/;
 }
 
 # Params: 'idlDocument' struct
@@ -143,49 +145,73 @@ sub GenerateInterface
     my $defines = shift;
 
     my $className = $interface->name;
-    $fileName = $className;
+    $frontendClassName = "Remote" . $className . "Frontend";
 
     $discoveredTypes{"String"} = 1;
     $discoveredTypes{"InspectorClient"} = 1;
     $discoveredTypes{"PassRefPtr"} = 1;
 
-    push(@classDefinition, "class $className {");
-    push(@classDefinition, "public:");
-    push(@classDefinition, "    $className(InspectorClient* inspectorClient) : m_inspectorClient(inspectorClient) { }");
-    push(@classDefinition, "");
-    push(@classDefinition, generateFunctionsDeclarations($interface, $className));
-    push(@classDefinition, "");
-    push(@classDefinition, "private:");
-    push(@classDefinition, "    void sendSimpleMessageToFrontend(const String&);");
-    push(@classDefinition, "    InspectorClient* m_inspectorClient;");
-    push(@classDefinition, "};");
-
-    push(@functionDefinitions, "void ${className}::sendSimpleMessageToFrontend(const String& functionName)");
-    push(@functionDefinitions, "{");
-    push(@functionDefinitions, "    RefPtr<InspectorArray> arguments = InspectorArray::create();");
-    push(@functionDefinitions, "    arguments->pushString(functionName);");
-    push(@functionDefinitions, "    m_inspectorClient->sendMessageToFrontend(arguments->toJSONString());");
-    push(@functionDefinitions, "}");
+    push(@frontendClassDeclaration, "class $frontendClassName {");
+    push(@frontendClassDeclaration, "public:");
+    push(@frontendClassDeclaration, "    $frontendClassName(InspectorClient* inspectorClient) : m_inspectorClient(inspectorClient) { }");
+    push(@frontendClassDeclaration, "");
+    push(@frontendClassDeclaration, generateFunctions($interface, $frontendClassName));
+    push(@frontendClassDeclaration, "");
+    push(@frontendClassDeclaration, "private:");
+    push(@frontendClassDeclaration, "    InspectorClient* m_inspectorClient;");
+    push(@frontendClassDeclaration, "};");
 }
 
-sub generateFunctionsDeclarations
+sub generateFunctions
 {
     my $interface = shift;
     my $className = shift;
 
     my @functionDeclarations;
     foreach my $function (@{$interface->functions}) {
-        my $functionName = $function->signature->name;
-        my $abstract = $function->signature->extendedAttributes->{"abstract"};
-        my $arguments = "";
-        foreach my $parameter (@{$function->parameters}) {
-            $parameter->name or die "empty argument name specified for function ${className}::$functionName and argument type " . $parameter->type;
-            $arguments = $arguments . ", " if ($arguments);
-            $arguments = $arguments . typeSpec($parameter) . " " . $parameter->name;
+        my $functionName;
+        my $argumentsDirectionFilter;
+        my $arguments;
+        my @functionBody;
+        push(@functionBody, "    RefPtr<InspectorArray> arguments = InspectorArray::create();");
+        if ($function->signature->extendedAttributes->{"notify"}) {
+            $functionName = $function->signature->name;
+            $argumentsDirectionFilter = "in";
+            $arguments = "";
+            push(@functionBody, "    arguments->pushString(\"$functionName\");");
+        } else {
+            my $customResponse = $function->signature->extendedAttributes->{"customResponse"};
+            $functionName = $customResponse ? $customResponse : "did" . ucfirst($function->signature->name);
+            $argumentsDirectionFilter = "out";
+            $arguments = "long callId";
+            push(@functionBody, "    arguments->pushString(\"$functionName\");");
+            push(@functionBody, "    arguments->pushNumber(callId);");
         }
-        my $signature = "    " . typeSpec($function->signature, 1) . " $functionName($arguments)";
-        push(@functionDeclarations, $abstract ? "$signature = 0;" : "$signature;");
-        push(@functionDefinitions, generateFunctionsImpl($className, $function, $arguments)) if !$abstract;
+
+        foreach my $parameter (@{$function->parameters}) {
+            if ($parameter->direction eq $argumentsDirectionFilter) {
+                $parameter->name or die "empty argument name specified for function ${frontendClassName}::$functionName and argument type " . $parameter->type;
+                $arguments = $arguments . ", " if ($arguments);
+                $arguments = $arguments . typeSpec($parameter) . " " . $parameter->name;
+                my $pushFunctionName =  $typeTransform{$parameter->type}->{"push"};
+                push(@functionBody, "    arguments->$pushFunctionName(" . $parameter->name . ");");
+            }
+        }
+        push(@functionBody, "    m_inspectorClient->sendMessageToFrontend(arguments->toJSONString());");
+
+        my $signature = "    " . typeSpec($function->signature, 1) . " $functionName($arguments);";
+        if (!$generatedFunctions{${signature}}) {
+            $generatedFunctions{${signature}} = 1;
+            push(@functionDeclarations, $signature);
+
+            my @function;
+            push(@function, typeSpec($function->signature, 1) . " " . $className . "::" . $functionName . "(" . $arguments . ")");
+            push(@function, "{");
+            push(@function, @functionBody);
+            push(@function, "}");
+            push(@function, "");
+            push(@functionDefinitions, @function);
+        }
     }
     return @functionDeclarations;
 }
@@ -193,8 +219,8 @@ sub generateFunctionsDeclarations
 sub generateHeader
 {
     my @headerContent = split("\r", $licenseTemplate);
-    push(@headerContent, "#ifndef ${fileName}_h");
-    push(@headerContent, "#define ${fileName}_h");
+    push(@headerContent, "#ifndef ${frontendClassName}_h");
+    push(@headerContent, "#define ${frontendClassName}_h");
     push(@headerContent, "");
 
     my @forwardHeaders;
@@ -213,11 +239,11 @@ sub generateHeader
     push(@headerContent, sort @forwardDeclarations);
 
     push(@headerContent, "");
-    push(@headerContent, @classDefinition);
+    push(@headerContent, @frontendClassDeclaration);
     push(@headerContent, "");
     push(@headerContent, "} // namespace $namespace");
     push(@headerContent, "");
-    push(@headerContent, "#endif // !defined(${fileName}_h)");
+    push(@headerContent, "#endif // !defined(${frontendClassName}_h)");
     push(@headerContent, "");
     return @headerContent;
 }
@@ -226,7 +252,7 @@ sub generateSource
 {
     my @sourceContent = split("\r", $licenseTemplate);
     push(@sourceContent, "\n#include \"config.h\"");
-    push(@sourceContent, "#include \"Remote$fileName.h\"");
+    push(@sourceContent, "#include \"$frontendClassName.h\"");
     push(@sourceContent, "");
     push(@sourceContent, "#if ENABLE(INSPECTOR)");
     push(@sourceContent, "");
@@ -248,43 +274,12 @@ sub generateSource
     return @sourceContent;
 }
 
-sub generateFunctionsImpl
-{
-    my $className = shift;
-    my $function = shift;
-    my $arguments = shift;
-
-    my @func;
-
-    my $functionName = $function->signature->name;
-
-    push(@func, typeSpec($function->signature, 1) . " " . $className . "::" . $functionName . "(" . $arguments . ")");
-    push(@func, "{");
-
-    my $numParameters = @{$function->parameters};
-    if ($numParameters > 0) {
-        push(@func, "    RefPtr<InspectorArray> arguments = InspectorArray::create();");
-        push(@func, "    arguments->pushString(\"$functionName\");");
-        foreach my $parameter (@{$function->parameters}) {
-            my $pushCall =  $typeTransform{$parameter->type}->{"push"};
-            push(@func, "    arguments->$pushCall(" . $parameter->name . ");");
-        }
-        push(@func, "    m_inspectorClient->sendMessageToFrontend(arguments->toJSONString());");
-    } else {
-        push(@func, "    sendSimpleMessageToFrontend(\"$functionName\");");
-    }
-
-    push(@func, "}");
-    push(@func, "");
-    return @func;
-}
-
 sub finish
 {
     my $object = shift;
 
-    open(my $SOURCE, ">$outputDir/Remote$fileName.cpp") || die "Couldn't open file $outputDir/Remote$fileName.cpp";
-    open(my $HEADER, ">$outputDir/Remote$fileName.h") || die "Couldn't open file $outputDir/Remote$fileName.h";
+    open(my $SOURCE, ">$outputDir/$frontendClassName.cpp") || die "Couldn't open file $outputDir/$frontendClassName.cpp";
+    open(my $HEADER, ">$outputDir/$frontendClassName.h") || die "Couldn't open file $outputDir/$frontendClassName.h";
 
     print $SOURCE join("\n", generateSource());
     close($SOURCE);

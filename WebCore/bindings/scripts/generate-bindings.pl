@@ -42,6 +42,7 @@ my $outputDirectory;
 my $generator;
 my $defines;
 my $prefix;
+my $filename;
 my $preprocessor;
 my $writeDependencies;
 my $verbose;
@@ -51,6 +52,7 @@ GetOptions('include=s@' => \@idlDirectories,
            'generator=s' => \$generator,
            'defines=s' => \$defines,
            'prefix=s' => \$prefix,
+           'filename=s' => \$filename,
            'preprocessor=s' => \$preprocessor,
            'verbose' => \$verbose,
            'write-dependencies' => \$writeDependencies);

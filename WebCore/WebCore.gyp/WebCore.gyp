@@ -475,18 +475,18 @@
           ],
         },
         {
-          'action_name': 'InspectorFrontend2',
+          'action_name': 'RemoteInspectorFrontend',
           'inputs': [
             '../bindings/scripts/generate-bindings.pl',
             '../bindings/scripts/CodeGenerator.pm',
             '../bindings/scripts/IDLParser.pm',
             '../bindings/scripts/IDLStructure.pm',
             '../inspector/CodeGeneratorInspector.pm',
-            '../inspector/InspectorFrontend2.idl',
+            '../inspector/Inspector.idl',
           ],
           'outputs': [
-            '<(SHARED_INTERMEDIATE_DIR)/webcore/bindings/RemoteInspectorFrontend2.cpp',
-            '<(SHARED_INTERMEDIATE_DIR)/webkit/bindings/RemoteInspectorFrontend2.h',
+            '<(SHARED_INTERMEDIATE_DIR)/webcore/bindings/RemoteInspectorFrontend.cpp',
+            '<(SHARED_INTERMEDIATE_DIR)/webkit/bindings/RemoteInspectorFrontend.h',
           ],
           'variables': {
             'generator_include_dirs': [
@@ -495,18 +495,18 @@
           'action': [
             'python',
             'scripts/rule_binding.py',
-            '../inspector/InspectorFrontend2.idl',
+            '../inspector/Inspector.idl',
             '<(SHARED_INTERMEDIATE_DIR)/webcore/bindings',
             '<(SHARED_INTERMEDIATE_DIR)/webkit/bindings',
             '--',
             '<@(_inputs)',
             '--',
-            '--defines', 'LANGUAGE_JAVASCRIPT',
-            '--prefix', 'Remote',
+            '--defines', '<(feature_defines) LANGUAGE_JAVASCRIPT',
+            '--filename', 'RemoteInspectorFrontend',
             '--generator', 'Inspector',
             '<@(generator_include_dirs)'
           ],
-          'message': 'Generating InspectorFrontend2 class from InspectorFrontend2.idl',
+          'message': 'Generating RemoteInspectorFrontend class from Inspector.idl',
         },
         {
           'action_name': 'XMLNames',
@@ -714,7 +714,7 @@
         '<(SHARED_INTERMEDIATE_DIR)/webkit/XPathGrammar.cpp',
 
         # Additional .cpp files from the webcore_inspector_sources list.
-        '<(SHARED_INTERMEDIATE_DIR)/webcore/bindings/RemoteInspectorFrontend2.cpp',
+        '<(SHARED_INTERMEDIATE_DIR)/webcore/bindings/RemoteInspectorFrontend.cpp',
       ],
       'conditions': [
         ['javascript_engine=="v8"', {

@@ -20761,11 +20761,11 @@
 				>
 			</File>
 			<File
-				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\RemoteInspectorFrontend2.cpp"
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\RemoteInspectorFrontend.cpp"
 				>
 			</File>
 			<File
-				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\RemoteInspectorFrontend2.h"
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\RemoteInspectorFrontend.h"
 				>
 			</File>
 			<File

@@ -1,0 +1,158 @@
+/*
+ * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2008 Matt Lilek <webkit@mattlilek.com>
+ * Copyright (C) 2009, 2010 Google Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are
+ * met:
+ *
+ *     * Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ *     * Redistributions in binary form must reproduce the above
+ * copyright notice, this list of conditions and the following disclaimer
+ * in the documentation and/or other materials provided with the
+ * distribution.
+ *     * Neither the name of Google Inc. nor the names of its
+ * contributors may be used to endorse or promote products derived from
+ * this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+module core {
+    interface [Conditional=INSPECTOR] Inspector {
+        [notify] void addRecordToTimeline(in Object record);
+        [notify] void addNodesToSearchResult(in Array nodeIds);
+        [notify] void attributesUpdated(in long id, in Array attributes);
+        [notify] void childNodeCountUpdated(in long id, in int newValue);
+        [notify] void childNodeInserted(in long parentId, in long prevId, in Object node);
+        [notify] void childNodeRemoved(in long parentId, in long id);
+        [notify] void setChildNodes(in long parentId, in Array nodes);
+        [notify] void setDetachedRoot(in Object root);
+        [notify] void setDocument(in Value root);
+
+        void storeLastActivePanel(in String panelName);
+
+        void saveApplicationSettings(in String settings);
+        void saveSessionSettings(in String settings);
+
+        void enableSearchingForNode();
+        void disableSearchingForNode();
+
+        void enableMonitoringXHR();
+        void disableMonitoringXHR();
+
+        void enableResourceTracking(in boolean always);
+        void disableResourceTracking(in boolean always);
+        void getResourceContent(in unsigned long identifier);
+        void reloadPage();
+
+        void startTimelineProfiler();
+        void stopTimelineProfiler();
+
+#if defined(ENABLE_JAVASCRIPT_DEBUGGER) && ENABLE_JAVASCRIPT_DEBUGGER
+        void enableDebugger(in boolean always);
+        void disableDebugger(in boolean always);
+
+        void setBreakpoint(in String sourceID, in unsigned long lineNumber, in boolean enabled, in String condition);
+        void removeBreakpoint(in String sourceID, in unsigned long lineNumber);
+        void activateBreakpoints();
+        void deactivateBreakpoints();
+
+        void pauseInDebugger();
+        void resumeDebugger();
+
+        void stepOverStatementInDebugger();
+        void stepIntoStatementInDebugger();
+        void stepOutOfFunctionInDebugger();
+
+        void setPauseOnExceptionsState(in long pauseOnExceptionsState);
+
+        void editScriptSource(in String sourceID, in String newContent);
+        void getScriptSource(in String sourceID);
+
+        void enableProfiler(in boolean always);
+        void disableProfiler(in boolean always);
+
+        void startProfiling();
+        void stopProfiling();
+
+        void getProfileHeaders();
+        void getProfile(in unsigned long uid);
+
+        void removeProfile(in unsigned long uid);
+        void clearProfiles();
+
+        void takeHeapSnapshot();
+#endif
+        void setInjectedScriptSource(in String scriptSource);
+        void dispatchOnInjectedScript(in long injectedScriptId, in String methodName, in String arguments, in boolean async);
+
+        void addScriptToEvaluateOnLoad(in String scriptSource);
+        void removeAllScriptsToEvaluateOnLoad();
+
+        void getChildNodes(in long nodeId);
+        [custorResponse=didApplyDomChange] void setAttribute(in long elementId, in String name, in String value, out boolean success);
+        [customResponse=didApplyDomChange] void removeAttribute(in long elementId, in String name, out boolean success);
+        void setTextNodeValue(in long nodeId, in String value);
+        void getEventListenersForNode(in long nodeId, out long nodeId, out Array listenersArray);
+        void copyNode(in long nodeId);
+        void removeNode(in long nodeId, out long nodeId);
+        void changeTagName(in long nodeId, in String newTagName, out long nodeId);
+        void getOuterHTML(in long nodeId, out String outerHTML);
+        void setOuterHTML(in long nodeId, in String outerHTML, out long nodeId);
+        void addInspectedNode(in long nodeId);
+        void performSearch(in String query, in boolean runSynchronously);
+        void searchCanceled();
+        void pushNodeByPathToFrontend(in String path);
+
+        void clearConsoleMessages();
+
+        void highlightDOMNode(in long nodeId);
+        void hideDOMNodeHighlight();
+
+        void getStyles(in long nodeId, in boolean authOnly, out Value styles);
+        void getAllStyles(out Array styles);
+        void getInlineStyle(in long nodeId, out Value style);
+        void getComputedStyle(in long nodeId, out Value style);
+        void getStyleSheet(in long styleSheetId, out Value styleSheet);
+        void getRuleRangesForStyleSheetId(in long styleSheetId);
+        void applyStyleText(in long styleId, in String styleText, in String propertyName, out boolean success, out Value style, out Array changedProperties);
+        void setStyleText(in long styleId, in String styleText, out boolean success);
+        void setStyleProperty(in long styleId, in String name, in String value, out boolean success);
+        void toggleStyleEnabled(in long styleId, in String propertyName, in boolean disabled, out Value style);
+        void setRuleSelector(in long ruleId, in String selector, in long selectedNodeId, out Value rule, out boolean selectorAffectsNode);
+        void addRule(in String selector, in long selectedNodeId, out Value rule, out boolean selectorAffectsNode);
+
+        void getCookies();
+        void deleteCookie(in String cookieName, in String domain);
+
+#if defined(ENABLE_OFFLINE_WEB_APPLICATIONS)
+        void getApplicationCaches();
+#endif
+
+        void releaseWrapperObjectGroup(in long injectedScriptId, in String objectGroup);
+        void didEvaluateForTestInFrontend(in String jsonResult);
+
+#if defined(ENABLE_DATABASE) && ENABLE_DATABASE
+        void getDatabaseTableNames(in long databaseId);
+#endif
+
+#if defined(ENABLE_DOM_STORAGE) && ENABLE_DOM_STORAGE
+        void getDOMStorageEntries(in long storageId);
+        void setDOMStorageItem(in long storageId, in String key, in String value);
+        void removeDOMStorageItem(in long storageId, in String key);
+#endif
+    };
+}

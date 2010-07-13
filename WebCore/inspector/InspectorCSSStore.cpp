@@ -41,7 +41,7 @@
 #include "InspectorController.h"
 #include "InspectorResource.h"
 #include "PlatformString.h"
-#include "RemoteInspectorFrontend2.h"
+#include "RemoteInspectorFrontend.h"
 #include "StyleSheetList.h"
 
 namespace WebCore {
@@ -95,13 +95,13 @@ CSSStyleSheet* InspectorCSSStore::inspectorStyleSheet(Document* ownerDocument, b
     if (!ec)
         ownerDocument->head()->appendChild(styleElement, ec);
     if (ec) {
-        m_inspectorController->inspectorFrontend2()->didAddRule(callId, InspectorValue::null(), false);
+        m_inspectorController->remoteInspectorFrontend()->didAddRule(callId, InspectorValue::null(), false);
         return 0;
     }
     StyleSheetList* styleSheets = ownerDocument->styleSheets();
     StyleSheet* styleSheet = styleSheets->item(styleSheets->length() - 1);
     if (!styleSheet->isCSSStyleSheet()) {
-        m_inspectorController->inspectorFrontend2()->didAddRule(callId, InspectorValue::null(), false);
+        m_inspectorController->remoteInspectorFrontend()->didAddRule(callId, InspectorValue::null(), false);
         return 0;
     }
     CSSStyleSheet* inspectorStyleSheet = static_cast<CSSStyleSheet*>(styleSheet);

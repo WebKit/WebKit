@@ -59,6 +59,7 @@ struct( domAttribute => {
 
 # Used to represent a map of 'variable name' <-> 'variable type'
 struct( domSignature => {
+    direction => '$', # Variable direction (in or out)
     name => '$',      # Variable name
     type => '$',      # Variable type
     extendedAttributes => '$' # Extended attributes
@@ -100,7 +101,7 @@ our $exceptionSubSelector = '{\s*' . $supportedTypes . '\s*(' . $idlType . '*)\s
 
 our $interfaceSelector = 'interface\s*((?:' . $extendedAttributeSyntax . ' )?)(' . $idlIdNs . '*)\s*(?::(\s*[^{]*))?{([a-zA-Z0-9_=\s(),;:\[\]&\|]*)';
 our $interfaceMethodSelector = '\s*((?:' . $extendedAttributeSyntax . ' )?)' . $supportedTypes . '\s*(' . $idlIdNs . '*)\s*\(\s*([a-zA-Z0-9:\s,=\[\]]*)';
-our $interfaceParameterSelector = 'in\s*((?:' . $extendedAttributeSyntax . ' )?)' . $supportedTypes . '\s*(' . $idlIdNs . '*)';
+our $interfaceParameterSelector = '(in|out)\s*((?:' . $extendedAttributeSyntax . ' )?)' . $supportedTypes . '\s*(' . $idlIdNs . '*)';
 
 our $interfaceAttributeSelector = '\s*(readonly attribute|attribute)\s*(' . $extendedAttributeSyntax . ' )?' . $supportedTypes . '\s*(' . $idlType . '*)';
 

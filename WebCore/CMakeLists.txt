@@ -1717,7 +1717,7 @@ FOREACH (_file ${WebCore_IDL_PURE_FILES})
     GENERATE_JS_FROM_IDL_PURE(${_file})
 ENDFOREACH ()
 
-GENERATE_INSPECTOR_FROM_IDL(inspector/InspectorFrontend2.idl)
+GENERATE_INSPECTOR_FROM_IDL(inspector/Inspector.idl)
 
 LIST(APPEND WebCore_SOURCES ${JS_IDL_FILES} ${Inspector_IDL_FILES})
 

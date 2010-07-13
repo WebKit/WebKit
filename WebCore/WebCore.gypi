@@ -279,7 +279,7 @@
             'xml/XSLTProcessor.idl',
         ],
         'webcore_inspector_idl_files': [
-            'inspector/InspectorFrontend2.idl',
+            'inspector/Inspector.idl',
         ],
         'webcore_svg_bindings_idl_files': [
             'svg/ElementTimeControl.idl',

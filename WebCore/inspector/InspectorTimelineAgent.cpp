@@ -35,7 +35,7 @@
 
 #include "Event.h"
 #include "IntRect.h"
-#include "RemoteInspectorFrontend2.h"
+#include "RemoteInspectorFrontend.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
 #include "TimelineRecordFactory.h"
@@ -46,7 +46,7 @@ namespace WebCore {
 
 int InspectorTimelineAgent::s_instanceCount = 0;
 
-InspectorTimelineAgent::InspectorTimelineAgent(InspectorFrontend2* frontend)
+InspectorTimelineAgent::InspectorTimelineAgent(RemoteInspectorFrontend* frontend)
     : m_frontend(frontend)
 {
     ++s_instanceCount;
@@ -279,7 +279,7 @@ void InspectorTimelineAgent::reset()
     m_recordStack.clear();
 }
 
-void InspectorTimelineAgent::resetFrontendProxyObject(InspectorFrontend2* frontend)
+void InspectorTimelineAgent::resetFrontendProxyObject(RemoteInspectorFrontend* frontend)
 {
     ASSERT(frontend);
     reset();
