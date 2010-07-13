@@ -1,3 +1,15 @@
+2010-07-12  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Make WebKit2 be built by build-webkit (so it will be built by build.webkit.org bots)
+        https://bugs.webkit.org/show_bug.cgi?id=40922
+        
+        Always build WebKit2 on Windows. Necessary since our WebKit build on
+        Windows is packaged into a DLL with WebKit2.
+
+        * Scripts/build-webkit: Always build WebKit2 on Windows.
+
 2010-07-12  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Steve Falkenburg.

@@ -434,7 +434,7 @@ for my $dir (@projects) {
         $result = buildXCodeProject($dir, $clean, @options, @ARGV);
     } elsif (isAppleWinWebKit()) {
         if ($dir eq "WebKit") {
-            $result = buildVisualStudioProject("win/WebKit.vcproj/WebKit.sln", $clean);
+            $result = buildVisualStudioProject("../WebKit2/WebKit2.sln", $clean);
         }
     } elsif (isWx()) {
         @options = ();

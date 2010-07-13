@@ -1,3 +1,15 @@
+2010-07-12  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Make WebKit2 be built by build-webkit (so it will be built by build.webkit.org bots)
+        https://bugs.webkit.org/show_bug.cgi?id=40922
+        
+        Add additional dependent projects. Necessary since our WebKit build on
+        Windows is packaged into a DLL with WebKit2.
+
+        * WebKit2.sln:
+
 2010-07-12  Mark Rowe  <mrowe@apple.com>
 
         Rubber-stamped by Maciej Stachowiak.
