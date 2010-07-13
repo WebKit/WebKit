@@ -1,5 +1,18 @@
 2010-07-12  Mark Rowe  <mrowe@apple.com>
 
+        Merge r62464.
+
+    2010-07-04  Mark Rowe  <mrowe@apple.com>
+
+        Build fix after r62456.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::privateExecute): Be slightly more consistent in using uint32_t to prevent
+        warnings about comparisons between signed and unsigned types, and attempts to call an overload
+        of std::min that doesn't exist.
+
+2010-07-12  Mark Rowe  <mrowe@apple.com>
+
         Merge r62456.
 
     2010-07-03  Yong Li  <yoli@rim.com>
