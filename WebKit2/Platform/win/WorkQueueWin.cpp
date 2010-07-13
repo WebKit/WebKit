@@ -102,7 +102,7 @@ void WorkQueue::platformInvalidate()
     // FIXME: Stop the thread and do other cleanup.
 }
 
-void WorkQueue::scheduleWork(PassOwn<WorkItem> item)
+void WorkQueue::scheduleWork(PassOwnPtr<WorkItem> item)
 {
     MutexLocker locker(m_workItemQueueLock);
     m_workItemQueue.append(item.leakPtr());
