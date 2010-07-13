@@ -1,3 +1,13 @@
+2010-07-12  Eric Seidel  <eric@webkit.org>
+
+        Unreviewed.  Just skipping a test on Gtk due to missing DRT features.
+
+        REGRESSION (HTML5 parser?): Impossible to get past the CAPTCHA on postcode.royalmail.com
+        https://bugs.webkit.org/show_bug.cgi?id=41797
+
+        * platform/gtk/Skipped:
+         - Gtk is missing DRT api.
+
 2010-07-12  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

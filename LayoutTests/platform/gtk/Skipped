@@ -5845,3 +5845,6 @@ editing/execCommand/remove-list-items.html
 editing/execCommand/switch-list-type.html
 editing/execCommand/unlink.html
 editing/selection/extend-forward-after-set-base-and-extent.html
+
+# Missing DRT API.
+http/tests/loading/preload-slow-loading-pretty-diff.html
