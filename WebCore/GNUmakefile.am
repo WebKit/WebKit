@@ -4285,6 +4285,7 @@ webcore_dist += \
 	WebCore/css/makegrammar.pl \
 	WebCore/dom/make_names.pl \
 	WebCore/inspector/CodeGeneratorInspector.pm \
+	WebCore/mathml/mathattrs.in \
 	WebCore/mathml/mathtags.in \
 	WebCore/platform/text/mac/make-charset-table.pl \
 	WebCore/platform/ColorData.gperf \
