@@ -1,3 +1,11 @@
+2010-07-12  Martin Robinson  <mrobinson@igalia.com>
+
+        Unreviewed.
+
+        Fix a small error in the Skipped list.
+
+        * platform/gtk/Skipped:
+
 2010-07-12  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed: rebaseline chromium tests.
