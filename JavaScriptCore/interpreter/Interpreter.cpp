@@ -3573,6 +3573,7 @@ skip_id_custom_self:
         int32_t argCount = 0;
         if (!arguments) {
             argCount = (uint32_t)(callFrame->argumentCount()) - 1;
+            argCount = min(argCount, static_cast<int32_t>(Arguments::MaxArguments));
             int32_t sizeDelta = argsOffset + argCount + RegisterFile::CallFrameHeaderSize;
             Register* newEnd = callFrame->registers() + sizeDelta;
             if (!registerFile->grow(newEnd) || ((newEnd - callFrame->registers()) != sizeDelta)) {
@@ -3599,6 +3600,7 @@ skip_id_custom_self:
             if (asObject(arguments)->classInfo() == &Arguments::info) {
                 Arguments* args = asArguments(arguments);
                 argCount = args->numProvidedArguments(callFrame);
+                argCount = min(argCount, static_cast<int32_t>(Arguments::MaxArguments));
                 int32_t sizeDelta = argsOffset + argCount + RegisterFile::CallFrameHeaderSize;
                 Register* newEnd = callFrame->registers() + sizeDelta;
                 if (!registerFile->grow(newEnd) || ((newEnd - callFrame->registers()) != sizeDelta)) {
@@ -3609,6 +3611,7 @@ skip_id_custom_self:
             } else if (isJSArray(&callFrame->globalData(), arguments)) {
                 JSArray* array = asArray(arguments);
                 argCount = array->length();
+                argCount = min(argCount, static_cast<int32_t>(Arguments::MaxArguments));
                 int32_t sizeDelta = argsOffset + argCount + RegisterFile::CallFrameHeaderSize;
                 Register* newEnd = callFrame->registers() + sizeDelta;
                 if (!registerFile->grow(newEnd) || ((newEnd - callFrame->registers()) != sizeDelta)) {
@@ -3619,6 +3622,7 @@ skip_id_custom_self:
             } else if (asObject(arguments)->inherits(&JSArray::info)) {
                 JSObject* argObject = asObject(arguments);
                 argCount = argObject->get(callFrame, callFrame->propertyNames().length).toUInt32(callFrame);
+                argCount = min(argCount, static_cast<int32_t>(Arguments::MaxArguments));
                 int32_t sizeDelta = argsOffset + argCount + RegisterFile::CallFrameHeaderSize;
                 Register* newEnd = callFrame->registers() + sizeDelta;
                 if (!registerFile->grow(newEnd) || ((newEnd - callFrame->registers()) != sizeDelta)) {

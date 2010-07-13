@@ -55,6 +55,10 @@ namespace JSC {
 
     class Arguments : public JSObject {
     public:
+        // Use an enum because otherwise gcc insists on doing a memory
+        // read.
+        enum { MaxArguments = 0x10000 };
+
         enum NoParametersType { NoParameters };
 
         Arguments(CallFrame*);
