@@ -1,3 +1,9 @@
+2010-07-13  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Windows build fix
+
+        * Interfaces/WebKit.idl: Touched to force a build
+
 2010-07-07  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         Reviewed by Darin Adler.
