@@ -1,3 +1,14 @@
+2010-07-12  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        WKView should override setFrameSize: instead of setFrame:
+        https://bugs.webkit.org/show_bug.cgi?id=42127
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView setFrameSize:]): Override this method instead of setFrame:,
+        since that is the right way to do it.
+
 2010-07-12  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Alice Liu.

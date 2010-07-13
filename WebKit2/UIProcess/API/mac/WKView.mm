@@ -137,11 +137,11 @@ using namespace WebCore;
     return YES;
 }
 
-- (void)setFrame:(NSRect)frame
+- (void)setFrameSize:(NSSize)size
 {
-    [super setFrame:frame];
+    [super setFrameSize:size];
 
-    _data->_page->drawingArea()->setSize(IntSize(frame.size));
+    _data->_page->drawingArea()->setSize(IntSize(size));
 }
 
 // Events
