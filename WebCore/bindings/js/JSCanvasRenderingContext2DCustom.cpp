@@ -260,9 +260,8 @@ JSValue JSCanvasRenderingContext2D::drawImage(ExecState* exec)
                     return throwSyntaxError(exec);
         }
 #endif
-    } else {
-        setDOMException(exec, TYPE_MISMATCH_ERR);
-    }
+    } else
+       return throwTypeError(exec);
     
     return jsUndefined();    
 }

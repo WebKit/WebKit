@@ -1,3 +1,18 @@
+2010-07-13  Andreas Kling  <andreas.kling@nokia.com>
+
+        Reviewed by Darin Adler.
+
+        Canvas: drawImage() with wrong 'image' argument type should always throw TypeError
+        https://bugs.webkit.org/show_bug.cgi?id=42160
+
+        Updated 2d.drawImage.wrongtype.html from http://dvcs.w3.org/hg/html/
+        and unskipped it.
+
+        * canvas/philip/tests/2d.drawImage.wrongtype-expected.txt:
+        * canvas/philip/tests/2d.drawImage.wrongtype.html:
+        * platform/mac/Skipped:
+        * platform/qt/Skipped:
+
 2010-07-13  Kenneth Russell  <kbr@google.com>
 
         Reviewed by Darin Fisher.

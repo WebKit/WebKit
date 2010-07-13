@@ -1,3 +1,16 @@
+2010-07-13  Andreas Kling  <andreas.kling@nokia.com>
+
+        Reviewed by Darin Adler.
+
+        Canvas: drawImage() with wrong 'image' argument type should always throw TypeError
+        https://bugs.webkit.org/show_bug.cgi?id=42160
+
+        Test: canvas/philip/tests/2d.drawImage.wrongtype.html
+
+        * bindings/js/JSCanvasRenderingContext2DCustom.cpp:
+        (WebCore::JSCanvasRenderingContext2D::drawImage): Throw TypeError instead of
+        TYPE_MISMATCH_ERR if 'image' argument is not an image, canvas or video element.
+
 2010-07-13  Aaron Boodman  <aa@chromium.org>
 
         Reviewed by Timothy Hatcher.
