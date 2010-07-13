@@ -43,24 +43,34 @@ public:
     {
         RefPtr<ResourceLoadTiming> timing = create();
         timing->requestTime = requestTime;
-        timing->proxyDuration = proxyDuration;
-        timing->dnsDuration = dnsDuration;
-        timing->connectDuration = connectDuration;
-        timing->sendDuration = sendDuration;
-        timing->receiveHeadersDuration = receiveHeadersDuration;
-        timing->sslDuration = sslDuration;
+        timing->proxyStart = proxyStart;
+        timing->proxyEnd = proxyEnd;
+        timing->dnsStart = dnsStart;
+        timing->dnsEnd = dnsEnd;
+        timing->connectStart = connectStart;
+        timing->connectEnd = connectEnd;
+        timing->sendStart = sendStart;
+        timing->sendEnd = sendEnd;
+        timing->receiveHeadersEnd = receiveHeadersEnd;
+        timing->sslStart = sslStart;
+        timing->sslEnd = sslEnd;
         return timing.release();
     }
 
     bool operator==(const ResourceLoadTiming& other) const
     {
         return requestTime == other.requestTime
-            && proxyDuration == other.proxyDuration
-            && dnsDuration == other.dnsDuration
-            && connectDuration == other.connectDuration
-            && sendDuration == other.sendDuration
-            && receiveHeadersDuration == other.receiveHeadersDuration
-            && sslDuration == other.sslDuration;
+            && proxyStart == other.proxyStart
+            && proxyEnd == other.proxyEnd
+            && dnsStart == other.dnsStart
+            && dnsEnd == other.dnsEnd
+            && connectStart == other.connectStart
+            && connectEnd == other.connectEnd
+            && sendStart == other.sendStart
+            && sendEnd == other.sendEnd
+            && receiveHeadersEnd == other.receiveHeadersEnd
+            && sslStart == other.sslStart
+            && sslEnd == other.sslEnd;
     }
 
     bool operator!=(const ResourceLoadTiming& other) const
@@ -69,22 +79,32 @@ public:
     }
 
     double requestTime;
-    double proxyDuration;
-    double dnsDuration;
-    double connectDuration;
-    double sendDuration;
-    double receiveHeadersDuration;
-    double sslDuration;
+    int proxyStart;
+    int proxyEnd;
+    int dnsStart;
+    int dnsEnd;
+    int connectStart;
+    int connectEnd;
+    int sendStart;
+    int sendEnd;
+    int receiveHeadersEnd;
+    int sslStart;
+    int sslEnd;
 
 private:
     ResourceLoadTiming()
-        : requestTime(0.0)
-        , proxyDuration(-1.0)
-        , dnsDuration(-1.0)
-        , connectDuration(-1.0)
-        , sendDuration(0.0)
-        , receiveHeadersDuration(0.0)
-        , sslDuration(-1.0)
+        : requestTime(0)
+        , proxyStart(-1)
+        , proxyEnd(-1)
+        , dnsStart(-1)
+        , dnsEnd(-1)
+        , connectStart(-1)
+        , connectEnd(-1)
+        , sendStart(0)
+        , sendEnd(0)
+        , receiveHeadersEnd(0)
+        , sslStart(-1)
+        , sslEnd(-1)
     {
     }
 };

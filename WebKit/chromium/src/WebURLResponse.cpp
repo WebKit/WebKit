@@ -292,6 +292,16 @@ const ResourceResponse& WebURLResponse::toResourceResponse() const
     return *m_private->m_resourceResponse;
 }
 
+bool WebURLResponse::wasCached() const
+{
+    return m_private->m_resourceResponse->wasCached();
+}
+
+void WebURLResponse::setWasCached(bool value)
+{
+    m_private->m_resourceResponse->setWasCached(value);
+}
+
 bool WebURLResponse::wasFetchedViaSPDY() const
 {
     return m_private->m_resourceResponse->wasFetchedViaSPDY();

@@ -128,6 +128,10 @@ public:
     const WebCore::ResourceResponse& toResourceResponse() const;
 #endif
 
+    // Flag whether this request was served from the disk cache entry.
+    WEBKIT_API bool wasCached() const;
+    WEBKIT_API void setWasCached(bool);
+
     // Flag whether this request was loaded via the SPDY protocol or not.
     // SPDY is an experimental web protocol, see http://dev.chromium.org/spdy
     WEBKIT_API bool wasFetchedViaSPDY() const;

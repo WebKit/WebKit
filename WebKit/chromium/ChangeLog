@@ -1,3 +1,42 @@
+2010-07-12  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Joseph Pecoraro.
+
+        Web Inspector: provide starts and ends for network phases instead of duration.
+
+        https://bugs.webkit.org/show_bug.cgi?id=42091
+
+        * public/WebURLLoadTiming.h:
+        * public/WebURLResponse.h:
+        * src/WebURLLoadTiming.cpp:
+        (WebKit::WebURLLoadTiming::proxyStart):
+        (WebKit::WebURLLoadTiming::setProxyStart):
+        (WebKit::WebURLLoadTiming::proxyEnd):
+        (WebKit::WebURLLoadTiming::setProxyEnd):
+        (WebKit::WebURLLoadTiming::dnsStart):
+        (WebKit::WebURLLoadTiming::setDNSStart):
+        (WebKit::WebURLLoadTiming::dnsEnd):
+        (WebKit::WebURLLoadTiming::setDNSEnd):
+        (WebKit::WebURLLoadTiming::connectStart):
+        (WebKit::WebURLLoadTiming::setConnectStart):
+        (WebKit::WebURLLoadTiming::connectEnd):
+        (WebKit::WebURLLoadTiming::setConnectEnd):
+        (WebKit::WebURLLoadTiming::sendStart):
+        (WebKit::WebURLLoadTiming::setSendStart):
+        (WebKit::WebURLLoadTiming::sendEnd):
+        (WebKit::WebURLLoadTiming::setSendEnd):
+        (WebKit::WebURLLoadTiming::receiveHeadersStart):
+        (WebKit::WebURLLoadTiming::setReceiveHeadersStart):
+        (WebKit::WebURLLoadTiming::receiveHeadersEnd):
+        (WebKit::WebURLLoadTiming::setReceiveHeadersEnd):
+        (WebKit::WebURLLoadTiming::sslStart):
+        (WebKit::WebURLLoadTiming::setSSLStart):
+        (WebKit::WebURLLoadTiming::sslEnd):
+        (WebKit::WebURLLoadTiming::setSSLEnd):
+        * src/WebURLResponse.cpp:
+        (WebKit::WebURLResponse::wasCached):
+        (WebKit::WebURLResponse::setWasCached):
+
 2010-07-12  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r63156.

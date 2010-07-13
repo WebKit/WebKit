@@ -756,7 +756,7 @@ WebInspector.ResourcesPanel.prototype = {
                     WebInspector.UIString("DNS Lookup"), resource.timing.dnsDuration == -1 ? WebInspector.UIString("(reused)") : Number.secondsToString(resource.timing.dnsDuration),
                     WebInspector.UIString("Connecting"), resource.timing.connectDuration == -1 ? WebInspector.UIString("(reused)") : Number.secondsToString(resource.timing.connectDuration),
                     WebInspector.UIString("Sending"), Number.secondsToString(resource.timing.sendDuration),
-                    WebInspector.UIString("Waiting"), Number.secondsToString(resource.timing.receiveHeadersDuration),
+                    WebInspector.UIString("Waiting"), Number.secondsToString(resource.timing.waitDuration),
                     WebInspector.UIString("Receiving"), Number.secondsToString(resource.endTime - resource.responseReceivedTime)];
 
         for (var i = 0; i < data.length; i += 2) {

@@ -60,23 +60,38 @@ public:
     WEBKIT_API double requestTime() const;
     WEBKIT_API void setRequestTime(double time);
 
-    WEBKIT_API double proxyDuration() const;
-    WEBKIT_API void setProxyDuration(double duration);
+    WEBKIT_API int proxyStart() const;
+    WEBKIT_API void setProxyStart(int start);
 
-    WEBKIT_API double dnsDuration() const;
-    WEBKIT_API void setDNSDuration(double duration);
+    WEBKIT_API int proxyEnd() const;
+    WEBKIT_API void setProxyEnd(int end);
 
-    WEBKIT_API double connectDuration() const;
-    WEBKIT_API void setConnectDuration(double duration);
+    WEBKIT_API int dnsStart() const;
+    WEBKIT_API void setDNSStart(int start);
 
-    WEBKIT_API double sendDuration() const;
-    WEBKIT_API void setSendDuration(double duration);
+    WEBKIT_API int dnsEnd() const;
+    WEBKIT_API void setDNSEnd(int end);
 
-    WEBKIT_API double receiveHeadersDuration() const;
-    WEBKIT_API void setReceiveHeadersDuration(double duration);
+    WEBKIT_API int connectStart() const;
+    WEBKIT_API void setConnectStart(int start);
 
-    WEBKIT_API double sslDuration() const;
-    WEBKIT_API void setSSLDuration(double duration);
+    WEBKIT_API int connectEnd() const;
+    WEBKIT_API void setConnectEnd(int end);
+
+    WEBKIT_API int sendStart() const;
+    WEBKIT_API void setSendStart(int start);
+
+    WEBKIT_API int sendEnd() const;
+    WEBKIT_API void setSendEnd(int end);
+
+    WEBKIT_API int receiveHeadersEnd() const;
+    WEBKIT_API void setReceiveHeadersEnd(int end);
+
+    WEBKIT_API int sslStart() const;
+    WEBKIT_API void setSSLStart(int start);
+
+    WEBKIT_API int sslEnd() const;
+    WEBKIT_API void setSSLEnd(int end);
 
 #if WEBKIT_IMPLEMENTATION
     WebURLLoadTiming(const WTF::PassRefPtr<WebCore::ResourceLoadTiming>&);

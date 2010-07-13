@@ -132,17 +132,11 @@ void InspectorResource::updateResponse(const ResourceResponse& response)
 
     m_connectionID = response.connectionID();
     m_loadTiming = response.resourceLoadTiming();
-    if (m_loadTiming && m_loadTiming->requestTime) {
-       m_responseReceivedTime = m_loadTiming->requestTime;
-       if (m_loadTiming->proxyDuration != -1)
-         m_responseReceivedTime += m_loadTiming->proxyDuration;
-       if (m_loadTiming->dnsDuration != -1)
-         m_responseReceivedTime += m_loadTiming->dnsDuration;
-       if (m_loadTiming->connectDuration != -1)
-         m_responseReceivedTime += m_loadTiming->connectDuration;
-       m_responseReceivedTime += m_loadTiming->sendDuration;
-       m_responseReceivedTime += m_loadTiming->receiveHeadersDuration;
-    } else
+    m_cached = response.wasCached();
+
+    if (!m_cached && m_loadTiming && m_loadTiming->requestTime)
+        m_responseReceivedTime = m_loadTiming->requestTime + m_loadTiming->receiveHeadersEnd / 1000.0;
+    else
         m_responseReceivedTime = currentTime();
 
     m_changes.set(TimingChange);
@@ -177,7 +171,6 @@ void InspectorResource::updateScriptObject(InspectorFrontend* frontend)
         jsonObject.set("requestMethod", m_requestMethod);
         jsonObject.set("requestFormData", m_requestFormData);
         jsonObject.set("didRequestChange", true);
-        jsonObject.set("cached", m_cached);
     }
 
     if (m_changes.hasChange(ResponseChange)) {
@@ -190,7 +183,8 @@ void InspectorResource::updateScriptObject(InspectorFrontend* frontend)
         populateHeadersObject(&responseHeaders, m_responseHeaderFields);
         jsonObject.set("responseHeaders", responseHeaders);
         jsonObject.set("connectionID", m_connectionID);
-        if (m_loadTiming)
+        jsonObject.set("cached", m_cached);
+        if (m_loadTiming && !m_cached)
             jsonObject.set("timing", buildObjectForTiming(frontend, m_loadTiming.get()));
         jsonObject.set("didResponseChange", true);
     }
@@ -397,12 +391,12 @@ ScriptObject InspectorResource::buildObjectForTiming(InspectorFrontend* frontend
 {
     ScriptObject jsonObject = frontend->newScriptObject();
     jsonObject.set("requestTime", timing->requestTime);
-    jsonObject.set("proxyDuration", timing->proxyDuration);
-    jsonObject.set("dnsDuration", timing->dnsDuration);
-    jsonObject.set("connectDuration", timing->connectDuration);
-    jsonObject.set("sendDuration", timing->sendDuration);
-    jsonObject.set("receiveHeadersDuration", timing->receiveHeadersDuration);
-    jsonObject.set("sslDuration", timing->sslDuration);
+    jsonObject.set("proxyDuration", timing->proxyStart == -1 ? -1 : (timing->proxyEnd - timing->proxyStart) / 1000.0);
+    jsonObject.set("dnsDuration", timing->dnsStart == -1 ? -1 : (timing->dnsEnd - timing->dnsStart) / 1000.0);
+    jsonObject.set("connectDuration", timing->connectStart == -1 ? -1 : (timing->connectEnd - timing->connectStart) / 1000.0);
+    jsonObject.set("sendDuration", (timing->sendEnd - timing->sendStart) / 1000.0);
+    jsonObject.set("waitDuration", (timing->receiveHeadersEnd - timing->sendEnd)  / 1000.0);
+    jsonObject.set("sslDuration", (timing->sslEnd - timing->sslStart) / 1000.0);
     return jsonObject;
 }
 
