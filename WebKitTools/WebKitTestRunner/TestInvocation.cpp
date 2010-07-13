@@ -31,8 +31,9 @@
 #include <WebKit2/WKRetainPtr.h>
 #include <WebKit2/WKStringCF.h>
 #include <WebKit2/WKURLCF.h>
-#include <wtf/Vector.h>
+#include <wtf/PassOwnPtr.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/Vector.h>
 
 using namespace WebKit;
 
@@ -49,17 +50,17 @@ static WKURLRef createWKURL(const char* pathOrURL)
     return WKURLCreateWithCFURL(cfURL.get());
 }
 
-static std::auto_ptr<Vector<char> > WKStringToUTF8(WKStringRef wkStringRef)
+static PassOwnPtr<Vector<char> > WKStringToUTF8(WKStringRef wkStringRef)
 {
     RetainPtr<CFStringRef> cfString(AdoptCF, WKStringCopyCFString(0, wkStringRef));
     CFIndex bufferLength = CFStringGetMaximumSizeForEncoding(CFStringGetLength(cfString.get()), kCFStringEncodingUTF8) + 1;
-    std::auto_ptr<Vector<char> > buffer(new Vector<char>(bufferLength));
+    OwnPtr<Vector<char> > buffer(new Vector<char>(bufferLength));
     if (!CFStringGetCString(cfString.get(), buffer->data(), bufferLength, kCFStringEncodingUTF8)) {
         buffer->shrink(1);
         (*buffer)[0] = 0;
     } else
         buffer->shrink(strlen(buffer->data()) + 1);
-    return buffer;
+    return buffer.release();
 }
 
 TestInvocation::TestInvocation(const char* pathOrURL)
@@ -142,7 +143,7 @@ void TestInvocation::didRecieveMessageFromInjectedBundle(WKStringRef message)
         return;
     }
 
-    std::auto_ptr<Vector<char> > utf8Message = WKStringToUTF8(message);
+    OwnPtr<Vector<char> > utf8Message = WKStringToUTF8(message);
 
     dump(utf8Message->data());
     m_gotFinalMessage = true;

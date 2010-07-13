@@ -31,6 +31,7 @@
 #include <WebKit2/WKRetainPtr.h>
 #include <WebKit2/WKString.h>
 #include <WebKit2/WKStringCF.h>
+#include <wtf/PassOwnPtr.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/Vector.h>
 
@@ -127,17 +128,17 @@ void InjectedBundlePage::didCommitLoadForFrame(WKBundleFrameRef frame)
 {
 }
 
-static std::auto_ptr<Vector<char> > WKStringToUTF8(WKStringRef wkStringRef)
+static PassOwnPtr<Vector<char> > WKStringToUTF8(WKStringRef wkStringRef)
 {
     RetainPtr<CFStringRef> cfString(AdoptCF, WKStringCopyCFString(0, wkStringRef));
     CFIndex bufferLength = CFStringGetMaximumSizeForEncoding(CFStringGetLength(cfString.get()), kCFStringEncodingUTF8) + 1;
-    std::auto_ptr<Vector<char> > buffer(new Vector<char>(bufferLength));
+    OwnPtr<Vector<char> > buffer(new Vector<char>(bufferLength));
     if (!CFStringGetCString(cfString.get(), buffer->data(), bufferLength, kCFStringEncodingUTF8)) {
         buffer->shrink(1);
         (*buffer)[0] = 0;
     } else
         buffer->shrink(strlen(buffer->data()) + 1);
-    return buffer;
+    return buffer.release();
 }
 
 void InjectedBundlePage::dump()
@@ -147,11 +148,11 @@ void InjectedBundlePage::dump()
     if (InjectedBundle::shared().layoutTestController()->dumpAsText()) {
         // FIXME: Support dumping subframes when layoutTestController()->dumpChildFramesAsText() is true.
         WKRetainPtr<WKStringRef> innerText(AdoptWK, WKBundleFrameCopyInnerText(WKBundlePageGetMainFrame(m_page)));
-        std::auto_ptr<Vector<char> > utf8InnerText = WKStringToUTF8(innerText.get());
+        OwnPtr<Vector<char> > utf8InnerText = WKStringToUTF8(innerText.get());
         InjectedBundle::shared().os() << utf8InnerText->data() << "\n";
     } else {
         WKRetainPtr<WKStringRef> externalRepresentation(AdoptWK, WKBundlePageCopyRenderTreeExternalRepresentation(m_page));
-        std::auto_ptr<Vector<char> > utf8externalRepresentation = WKStringToUTF8(externalRepresentation.get());
+        OwnPtr<Vector<char> > utf8externalRepresentation = WKStringToUTF8(externalRepresentation.get());
         InjectedBundle::shared().os() << utf8externalRepresentation->data();
     }
     InjectedBundle::shared().done();
@@ -200,7 +201,7 @@ void InjectedBundlePage::_addMessageToConsole(WKBundlePageRef page, WKStringRef 
 void InjectedBundlePage::addMessageToConsole(WKStringRef message, uint32_t lineNumber)
 {
     // FIXME: Strip file: urls.
-    std::auto_ptr<Vector<char> > utf8Message = WKStringToUTF8(message);
+    OwnPtr<Vector<char> > utf8Message = WKStringToUTF8(message);
     InjectedBundle::shared().os() << "CONSOLE MESSAGE: line " << lineNumber << ": " << utf8Message->data() << "\n";
 }
 

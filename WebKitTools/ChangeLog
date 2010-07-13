@@ -1,5 +1,22 @@
 2010-07-12  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by Dan Bernstein.
+
+        Remove use of auto_ptr in WebKitTestRunner
+        https://bugs.webkit.org/show_bug.cgi?id=42134
+        
+        Replaced auto_ptr with PassOwnPtr / OwnPtr.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::WKStringToUTF8):
+        (WTR::InjectedBundlePage::dump):
+        (WTR::InjectedBundlePage::addMessageToConsole):
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::WKStringToUTF8):
+        (WTR::TestInvocation::didRecieveMessageFromInjectedBundle):
+
+2010-07-12  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Sam Weinig.
 
         Need support for a WebKit2-specific Skipped list (and initially add accessibility tests to it)
