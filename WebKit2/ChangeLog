@@ -1,3 +1,12 @@
+2010-07-13  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Document the member functions of the abstract Plugin and PluginController classes.
+
+        * WebProcess/Plugins/Plugin.h:
+        * WebProcess/Plugins/PluginController.h:
+
 2010-07-13  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Trivial build fix.

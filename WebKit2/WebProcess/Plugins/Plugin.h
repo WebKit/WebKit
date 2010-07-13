@@ -51,9 +51,16 @@ public:
 
     virtual ~Plugin();
     
+    // Initializes the plug-in. If the plug-in fails to initialize this should return false.
     virtual bool initialize(PluginController*, const Parameters&) = 0;
+
+    // Destroys the plug-in.
     virtual void destroy() = 0;
+
+    // Tells the plug-in to paint itself into the given graphics context. The passed in dirty rect is in window coordinates.
     virtual void paint(WebCore::GraphicsContext*, const WebCore::IntRect& dirtyRect) = 0;
+
+    // Tells the plug-in that either the plug-ins frame rect or its clip rect has changed. Both rects are in window coordinates.
     virtual void geometryDidChange(const WebCore::IntRect& frameRect, const WebCore::IntRect& clipRect) = 0;
 
 protected:

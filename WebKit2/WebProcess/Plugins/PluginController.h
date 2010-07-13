@@ -36,7 +36,10 @@ namespace WebKit {
 
 class PluginController {
 public:
+    // Tells the controller that the plug-in wants the given rect to be repainted. The rect is in the plug-in's coordinate system.
     virtual void invalidate(const WebCore::IntRect&) = 0;
+
+    // Returns the user agent string for the given URL.
     virtual WebCore::String userAgent(const WebCore::KURL&) = 0;
 
 protected:
