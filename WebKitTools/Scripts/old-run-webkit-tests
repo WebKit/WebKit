@@ -184,6 +184,8 @@ my $prettyDiffTag = "pretty-diff";
 my $diffsTag = "diffs";
 my $errorTag = "stderr";
 
+my $realPlatform;
+
 my @macPlatforms = ("mac-tiger", "mac-leopard", "mac-snowleopard", "mac");
 my @winPlatforms = ("win-xp", "win-vista", "win-7", "win");
 
@@ -343,6 +345,14 @@ if (!$getOptionsResult || $showHelp) {
     print STDERR $usage;
     exit 1;
 }
+
+if ($useWebKitTestRunner) {
+    if (isAppleMacWebKit()) {
+        $realPlatform = $platform;
+        $platform = "mac-wk2";
+    }
+}
+
 
 my $ignoreSkipped = $treatSkipped eq "ignore";
 my $skippedOnly = $treatSkipped eq "only";
@@ -1873,10 +1883,16 @@ sub buildPlatformResultHierarchy()
     my $isMac = $platform =~ /^mac/;
     my $isWin = $platform =~ /^win/;
     if ($isMac || $isWin) {
+        my $effectivePlatform = $platform;
+        if ($platform eq "mac-wk2") {
+            push @platforms, "mac-wk2";
+            $effectivePlatform = $realPlatform;
+        }
+
         my @platformList = $isMac ? @macPlatforms : @winPlatforms;
         my $i;
         for ($i = 0; $i < @platformList; $i++) {
-            last if $platformList[$i] eq $platform;
+            last if $platformList[$i] eq $effectivePlatform;
         }
         for (; $i < @platformList; $i++) {
             push @platforms, $platformList[$i];
@@ -1893,7 +1909,7 @@ sub buildPlatformResultHierarchy()
         my $scoped = catdir($platformBaseDirectory, $platforms[$i]);
         push(@hierarchy, $scoped) if (-d $scoped);
     }
-
+    
     return @hierarchy;
 }
 
@@ -1901,7 +1917,9 @@ sub buildPlatformTestHierarchy(@)
 {
     my (@platformHierarchy) = @_;
     return @platformHierarchy if (@platformHierarchy < 2);
-
+    if ($platformHierarchy[0] =~ /mac-wk2/) {
+        return ($platformHierarchy[0], $platformHierarchy[1], $platformHierarchy[$#platformHierarchy]);
+    }
     return ($platformHierarchy[0], $platformHierarchy[$#platformHierarchy]);
 }
 
