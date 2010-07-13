@@ -1,3 +1,24 @@
+2010-07-13  Gabor Loki  <loki@webkit.org>
+
+        Reviewed by Gavin Barraclough.
+
+        Fix the constant encoding in data transfer instructions on ARM
+        https://bugs.webkit.org/show_bug.cgi?id=42166
+
+        The getImm function is designed to produce modified immediate constant
+        for data processing instructions. It should not be used to encode
+        any constant for data transfer. In the current situation there is no
+        way to use any immediate constant for data transfer. So, the moveImm
+        function is the desired method to pass the offset value to the data
+        transfer instructions.
+
+        Reported by Jacob Bramley.
+
+        * assembler/ARMAssembler.cpp:
+        (JSC::ARMAssembler::dataTransfer32):
+        * assembler/MacroAssemblerARM.h:
+        (JSC::MacroAssemblerARM::call32):
+
 2010-07-09  Darin Adler  <darin@apple.com>
 
         Reviewed by Geoffrey Garen.

@@ -956,9 +956,9 @@ protected:
                 prepareCall();
                 m_assembler.dtr_u(true, targetReg, tmpReg, offset & 0xfff);
             } else {
-                ARMWord reg = m_assembler.getImm(offset, tmpReg);
+                m_assembler.moveImm(offset, tmpReg);
                 prepareCall();
-                m_assembler.dtr_ur(true, targetReg, base, reg);
+                m_assembler.dtr_ur(true, targetReg, base, tmpReg);
             }
         } else  {
             offset = -offset;
@@ -970,9 +970,9 @@ protected:
                 prepareCall();
                 m_assembler.dtr_d(true, targetReg, tmpReg, offset & 0xfff);
             } else {
-                ARMWord reg = m_assembler.getImm(offset, tmpReg);
+                m_assembler.moveImm(offset, tmpReg);
                 prepareCall();
-                m_assembler.dtr_dr(true, targetReg, base, reg);
+                m_assembler.dtr_dr(true, targetReg, base, tmpReg);
             }
         }
 #if WTF_ARM_ARCH_AT_LEAST(5)
