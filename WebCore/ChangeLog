@@ -1,3 +1,22 @@
+2010-07-13  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Simon Fraser.
+
+        REGRESSION(55056) debug builds ASSERT falsely on pages with animations
+        https://bugs.webkit.org/show_bug.cgi?id=42175
+
+        Revision 55065 added some repaint box precomputation and some debug ASSERT()ions
+        to ensure the precomputed values were valid.  However, if animations are enabled and
+        not hardware accelerated, the repaint box dimensions become time-dependent and the
+        ASSERT()s can trigger.  This can make it impossible to interactively debug pages
+        like google maps.
+
+        https://bugs.webkit.org/show_bug.cgi?id=37048 is another example of an assertion
+        failing due to time dependent animation values.
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::repaintAfterLayoutIfNeeded):
+
 2010-07-10  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Darin Fisher.
