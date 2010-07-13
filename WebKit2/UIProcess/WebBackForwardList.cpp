@@ -174,7 +174,7 @@ PassRefPtr<ImmutableArray> WebBackForwardList::backListAsImmutableArrayWithLimit
         return ImmutableArray::create();
 
     void** array = new void*[size];
-    for (unsigned i = std::max(m_current - limit, 0U), j = 0; i < m_current; ++i, ++j) {
+    for (unsigned i = std::max(static_cast<int>(m_current) - static_cast<int>(limit), 0), j = 0; i < m_current; ++i, ++j) {
         WebBackForwardListItem* item = m_entries[i].get();
         item->ref();
         array[j] = item;

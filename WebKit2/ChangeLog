@@ -1,3 +1,14 @@
+2010-07-13  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Fixed signed/unsigned problem that led to bogus contents in the array
+        returned by WKBackForwardListCopyBackListWithLimit().
+
+        * UIProcess/WebBackForwardList.cpp:
+        (WebKit::WebBackForwardList::backListAsImmutableArrayWithLimit):
+        Cast m_current and limit to signed values in std::max call.
+
 2010-07-13  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Ada Chan.
