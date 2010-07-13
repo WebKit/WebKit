@@ -2251,6 +2251,7 @@ void HTMLTreeBuilder::processEndTag(AtomicHTMLToken& token)
             m_isPaused = true;
             ASSERT(m_tree.currentElement()->hasTagName(scriptTag));
             m_scriptToProcess = m_tree.currentElement();
+            m_scriptToProcessStartLine = m_lastScriptElementStartLine + 1;
             m_tree.openElements()->pop();
             setInsertionMode(m_originalInsertionMode);
             return;
@@ -2775,6 +2776,7 @@ void HTMLTreeBuilder::processScriptStartTag(AtomicHTMLToken& token)
     m_tree.insertScriptElement(token);
     m_tokenizer->setState(HTMLTokenizer::ScriptDataState);
     m_originalInsertionMode = m_insertionMode;
+    m_lastScriptElementStartLine = m_tokenizer->lineNumber();
     setInsertionMode(TextMode);
 }
 
