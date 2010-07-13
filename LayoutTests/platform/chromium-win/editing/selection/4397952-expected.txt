@@ -12,13 +12,13 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 545x19
           text run at (0,0) width 255: "This tests caret movement across buttons. "
           text run at (255,0) width 290: "The caret should be just after the second button."
-      RenderBlock {DIV} at (0,36) size 784x24
-        RenderButton {INPUT} at (2,2) size 38x20 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
-          RenderBlock (anonymous) at (8,2) size 22x16
+      RenderBlock {DIV} at (0,36) size 784x26
+        RenderButton {INPUT} at (2,2) size 38x22 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+          RenderBlock (anonymous) at (8,3) size 22x16
             RenderText at (0,0) size 22x16
               text run at (0,0) width 22: "Foo"
-        RenderButton {INPUT} at (44,2) size 36x20 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
-          RenderBlock (anonymous) at (8,2) size 20x16
+        RenderButton {INPUT} at (44,2) size 36x22 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+          RenderBlock (anonymous) at (8,3) size 20x16
             RenderText at (0,0) size 20x16
               text run at (0,0) width 20: "Bar"
         RenderText {#text} at (0,0) size 0x0

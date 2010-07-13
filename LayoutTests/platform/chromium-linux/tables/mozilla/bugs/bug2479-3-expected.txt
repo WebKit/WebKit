@@ -1,8 +1,8 @@
-layer at (0,0) size 785x711
+layer at (0,0) size 785x713
   RenderView at (0,0) size 785x600
-layer at (0,0) size 785x711
-  RenderBlock {HTML} at (0,0) size 785x711
-    RenderBody {BODY} at (8,21) size 769x674
+layer at (0,0) size 785x713
+  RenderBlock {HTML} at (0,0) size 785x713
+    RenderBody {BODY} at (8,21) size 769x676
       RenderBlock {H1} at (0,0) size 769x37
         RenderText {#text} at (0,0) size 314x36
           text run at (0,0) width 314: "Generic Table Tests - 1"
@@ -62,8 +62,8 @@ layer at (0,0) size 785x711
       RenderBlock {H2} at (0,416) size 769x27
         RenderText {#text} at (0,0) size 153x26
           text run at (0,0) width 153: "Submit Results"
-      RenderBlock {FORM} at (0,462) size 769x50
-        RenderBlock {P} at (0,0) size 769x50
+      RenderBlock {FORM} at (0,462) size 769x52
+        RenderBlock {P} at (0,0) size 769x52
           RenderText {#text} at (0,3) size 254x19
             text run at (0,3) width 254: "How does your browser fare on this test? "
           RenderMenuList {SELECT} at (256,4) size 248x18 [bgcolor=#DDDDDD]
@@ -77,13 +77,13 @@ layer at (0,0) size 785x711
               text run at (510,3) width 66: "Comment: "
             RenderTextControl {INPUT} at (578,2) size 155x22 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
           RenderText {#text} at (0,0) size 0x0
-          RenderButton {INPUT} at (2,28) size 57x20 [bgcolor=#DDDDDD] [border: (2px outset #DDDDDD)]
-            RenderBlock (anonymous) at (8,2) size 41x16
+          RenderButton {INPUT} at (2,28) size 57x22 [bgcolor=#DDDDDD] [border: (2px outset #DDDDDD)]
+            RenderBlock (anonymous) at (8,3) size 41x16
               RenderText at (0,0) size 41x16
                 text run at (0,0) width 41: "Submit"
           RenderText {#text} at (0,0) size 0x0
-      RenderBlock {HR} at (0,528) size 769x2 [border: (1px inset #000000)]
-      RenderBlock {P} at (0,546) size 769x20
+      RenderBlock {HR} at (0,530) size 769x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,548) size 769x20
         RenderText {#text} at (0,0) size 61x19
           text run at (0,0) width 61: "Up to the "
         RenderInline {A} at (0,0) size 70x19 [color=#0000EE]
@@ -91,7 +91,7 @@ layer at (0,0) size 785x711
             text run at (61,0) width 70: "Table Tests"
         RenderText {#text} at (131,0) size 4x19
           text run at (131,0) width 4: "."
-      RenderBlock {P} at (0,582) size 769x20
+      RenderBlock {P} at (0,584) size 769x20
         RenderText {#text} at (0,0) size 61x19
           text run at (0,0) width 61: "Up to the "
         RenderInline {A} at (0,0) size 92x19 [color=#0000EE]
@@ -99,7 +99,7 @@ layer at (0,0) size 785x711
             text run at (61,0) width 92: "Evil Tests Page"
         RenderText {#text} at (153,0) size 4x19
           text run at (153,0) width 4: "."
-      RenderBlock {P} at (0,618) size 769x20
+      RenderBlock {P} at (0,620) size 769x20
         RenderText {#text} at (0,0) size 162x19
           text run at (0,0) width 162: "This page is maintained by "
         RenderInline {A} at (0,0) size 73x19 [color=#0000EE]
@@ -112,7 +112,7 @@ layer at (0,0) size 785x711
             text run at (244,0) width 118: "py8ieh@bath.ac.uk"
         RenderText {#text} at (362,0) size 9x19
           text run at (362,0) width 9: ")."
-      RenderBlock {P} at (0,654) size 769x20
+      RenderBlock {P} at (0,656) size 769x20
         RenderText {#text} at (0,0) size 177x19
           text run at (0,0) width 177: "Last updated in March 1999."
 layer at (588,488) size 151x16

@@ -14,8 +14,8 @@ layer at (0,0) size 800x600
                 RenderTextControl {INPUT} at (2,2) size 113x22 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
                 RenderText {#text} at (117,3) size 4x19
                   text run at (117,3) width 4: " "
-                RenderButton {INPUT} at (123,3) size 41x20 [bgcolor=#DDDDDD] [border: (2px outset #DDDDDD)]
-                  RenderBlock (anonymous) at (8,2) size 25x16
+                RenderButton {INPUT} at (123,2) size 41x22 [bgcolor=#DDDDDD] [border: (2px outset #DDDDDD)]
+                  RenderBlock (anonymous) at (8,3) size 25x16
                     RenderText at (0,0) size 25x16
                       text run at (0,0) width 25: " Go "
                 RenderText {#text} at (166,3) size 4x19
@@ -36,8 +36,8 @@ layer at (0,0) size 800x600
                 RenderTextControl {INPUT} at (2,2) size 113x22 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
                 RenderText {#text} at (117,3) size 4x19
                   text run at (117,3) width 4: " "
-                RenderButton {INPUT} at (123,3) size 41x20 [bgcolor=#DDDDDD] [border: (2px outset #DDDDDD)]
-                  RenderBlock (anonymous) at (8,2) size 25x16
+                RenderButton {INPUT} at (123,2) size 41x22 [bgcolor=#DDDDDD] [border: (2px outset #DDDDDD)]
+                  RenderBlock (anonymous) at (8,3) size 25x16
                     RenderText at (0,0) size 25x16
                       text run at (0,0) width 25: " Go "
                 RenderText {#text} at (166,3) size 4x19

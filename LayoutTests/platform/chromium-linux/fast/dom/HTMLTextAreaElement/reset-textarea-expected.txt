@@ -3,17 +3,17 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock {FORM} at (0,0) size 784x47
+      RenderBlock {FORM} at (0,0) size 784x48
         RenderText {#text} at (183,25) size 4x19
           text run at (183,25) width 4: " "
         RenderText {#text} at (370,25) size 4x19
           text run at (370,25) width 4: " "
-        RenderButton {INPUT} at (376,25) size 50x20 [bgcolor=#DDDDDD] [border: (2px outset #DDDDDD)]
-          RenderBlock (anonymous) at (8,2) size 34x16
+        RenderButton {INPUT} at (376,24) size 50x22 [bgcolor=#DDDDDD] [border: (2px outset #DDDDDD)]
+          RenderBlock (anonymous) at (8,3) size 34x16
             RenderText at (0,0) size 34x16
               text run at (0,0) width 34: "Reset"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,63) size 784x80
+      RenderBlock {P} at (0,64) size 784x80
         RenderText {#text} at (0,0) size 345x19
           text run at (0,0) width 345: "This test verifies that textarea controls are properly reset. "
         RenderBR {BR} at (345,15) size 0x0

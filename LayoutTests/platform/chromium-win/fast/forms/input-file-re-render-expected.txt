@@ -1,15 +1,15 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x84
-  RenderBlock {HTML} at (0,0) size 800x84
-    RenderBody {BODY} at (8,8) size 784x60
-      RenderBlock {FORM} at (0,0) size 784x24
-        RenderFileUploadControl {INPUT} at (2,2) size 238x20 "2 files"
-          RenderButton {INPUT} at (0,0) size 85x20 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
-            RenderBlock (anonymous) at (8,2) size 69x16
+layer at (0,0) size 800x86
+  RenderBlock {HTML} at (0,0) size 800x86
+    RenderBody {BODY} at (8,8) size 784x62
+      RenderBlock {FORM} at (0,0) size 784x26
+        RenderFileUploadControl {INPUT} at (2,2) size 238x22 "2 files"
+          RenderButton {INPUT} at (0,0) size 85x22 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+            RenderBlock (anonymous) at (8,3) size 69x16
               RenderText at (0,0) size 69x16
                 text run at (0,0) width 69: "Choose File"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,40) size 784x20
+      RenderBlock {P} at (0,42) size 784x20
         RenderText {#text} at (0,0) size 417x19
           text run at (0,0) width 417: "The file upload control above should have text '2 files,' not a filename."
