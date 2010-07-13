@@ -215,7 +215,6 @@ bool ContainerNode::replaceChild(PassRefPtr<Node> newChild, Node* oldChild, Exce
     bool isFragment = newChild->nodeType() == DOCUMENT_FRAGMENT_NODE;
 
     // Add the new child(ren)
-    int childCountDelta = 0;
     RefPtr<Node> child = isFragment ? newChild->firstChild() : newChild;
     while (child) {
         // If the new child is already in the right place, we're done.
@@ -239,8 +238,6 @@ bool ContainerNode::replaceChild(PassRefPtr<Node> newChild, Node* oldChild, Exce
             break;
         if (child->parentNode())
             break;
-
-        childCountDelta++;
 
         ASSERT(!child->nextSibling());
         ASSERT(!child->previousSibling());
@@ -269,6 +266,7 @@ bool ContainerNode::replaceChild(PassRefPtr<Node> newChild, Node* oldChild, Exce
         child->setNextSibling(next);
         allowEventDispatch();
 
+        childrenChanged(false, prev.get(), next, 1);
         notifyChildInserted(child.get());
                 
         // Add child to the rendering tree
@@ -287,8 +285,6 @@ bool ContainerNode::replaceChild(PassRefPtr<Node> newChild, Node* oldChild, Exce
         child = nextChild.release();
     }
 
-    if (childCountDelta)
-        childrenChanged(false, prev.get(), next.get(), childCountDelta);
     dispatchSubtreeModifiedEvent();
     return true;
 }
@@ -531,6 +527,7 @@ bool ContainerNode::appendChild(PassRefPtr<Node> newChild, ExceptionCode& ec, bo
         // Now that the child is attached to the render tree, dispatch
         // the relevant mutation events.
         dispatchChildInsertionEvents(child);
+        prev = child;
     }
 
     dispatchSubtreeModifiedEvent();

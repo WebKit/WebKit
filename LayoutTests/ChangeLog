@@ -1,3 +1,14 @@
+2010-07-13  Yoshiki Hayashi  <yhayashi@google.com>
+
+        Reviewed by Kent Tamura.
+
+        Make sure correct Nodes are passed to childrenChanged so that
+        :last-child gets properly applied when fragment is inserted.
+        https://bugs.webkit.org/show_bug.cgi?id=37944
+
+        * fast/css/last-child-innerhtml-expected.txt: Added.
+        * fast/css/last-child-innerhtml.html: Added.
+
 2010-07-12  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Steve Falkenburg.
