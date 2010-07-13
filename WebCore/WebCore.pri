@@ -664,7 +664,87 @@ IDL_BINDINGS += \
     xml/XPathEvaluator.idl \
     xml/XSLTProcessor.idl
 
+
 INSPECTOR_INTERFACES = inspector/Inspector.idl
+
+WEBCORE_HEADERS_FOR_WEBKIT2 += \
+    bindings/js/DOMWrapperWorld.h \
+    platform/FileChooser.h \
+    platform/network/qt/ResourceError.h \
+    platform/network/qt/ResourceRequest.h \
+    platform/network/qt/ResourceResponse.h \
+    dom/KeyboardEvent.h \
+    editing/EditCommand.h \
+    history/BackForwardList.h \
+    history/BackForwardControllerClient.h \
+    history/HistoryItem.h \
+    html/HTMLFormElement.h \
+    html/HTMLFrameOwnerElement.h \
+    inspector/InspectorClient.h \
+    loader/DocumentLoader.h \
+    loader/FormState.h \
+    loader/FrameLoader.h \
+    loader/FrameLoaderClient.h \
+    loader/FrameLoaderTypes.h \
+    loader/PolicyChecker.h \
+    loader/ProgressTracker.h \
+    page/animation/AnimationController.h \
+    page/Chrome.h \
+    page/ChromeClient.h \
+    page/ContextMenuClient.h \
+    page/DragClient.h \
+    page/EditorClient.h \
+    page/EventHandler.h \
+    page/FocusController.h \
+    page/Frame.h \
+    page/FrameLoadRequest.h \
+    page/FrameView.h \
+    page/Page.h \
+    page/Settings.h \
+    page/WindowFeatures.h \
+    platform/PlatformKeyboardEvent.h \
+    platform/PlatformMouseEvent.h \
+    platform/PlatformWheelEvent.h \
+    platform/Widget.h \
+    platform/KURL.h \
+    platform/graphics/FloatRect.h \
+    platform/graphics/GraphicsContext.h \
+    platform/graphics/GraphicsLayerClient.h \
+    platform/graphics/IntPoint.h \
+    platform/graphics/IntRect.h \
+    platform/graphics/IntSize.h \
+    platform/graphics/Tile.h \
+    platform/graphics/TiledBackingStore.h \
+    platform/graphics/TiledBackingStoreClient.h \
+    platform/text/PlatformString.h \
+    platform/text/StringImpl.h \
+    platform/MIMETypeRegistry.h \
+    rendering/RenderTreeAsText.h \
+    plugins/PluginData.h \
+
+JSC_HEADERS_FOR_WEBKIT2 += \
+    ../JavaScriptCore/runtime/JSObject.h \
+
+WEBKIT2_API_HEADERS += \
+    ../WebKit2/UIProcess/API/C/WKAPICast.h \
+    ../WebKit2/UIProcess/API/C/WKBase.h \
+    ../WebKit2/UIProcess/API/C/WKContext.h \
+    ../WebKit2/UIProcess/API/C/WKContextPrivate.h \
+    ../WebKit2/UIProcess/API/C/WKFrame.h \
+    ../WebKit2/UIProcess/API/C/WKFramePolicyListener.h \
+    ../WebKit2/UIProcess/API/C/WKNavigationData.h \
+    ../WebKit2/UIProcess/API/C/WKPage.h \
+    ../WebKit2/UIProcess/API/C/WKPageNamespace.h \
+    ../WebKit2/UIProcess/API/C/WKPagePrivate.h \
+    ../WebKit2/UIProcess/API/C/WKPreferences.h \
+    ../WebKit2/UIProcess/API/C/WKString.h \
+    ../WebKit2/UIProcess/API/C/WKURL.h \
+    ../WebKit2/UIProcess/API/C/WebKit2.h \
+    ../WebKit2/UIProcess/API/cpp/WKRetainPtr.h \
+    ../WebKit2/UIProcess/API/qt/qgraphicswkview.h \
+    ../WebKit2/UIProcess/API/qt/qwkpage.h \
+    ../WebKit2/WebProcess/InjectedBundle/API/c/WKBundleBase.h \
+    ../WebKit2/WebProcess/InjectedBundle/API/c/WKBundlePage.h \
 
 mathmlnames.output = $${WC_GENERATED_SOURCES_DIR}/MathMLNames.cpp
 mathmlnames.input = MATHML_NAMES
@@ -830,3 +910,30 @@ webkitversion.clean = ${QMAKE_VAR_WC_GENERATED_SOURCES_DIR}/WebKitVersion.h
 webkitversion.wkAddOutputToSources = false
 addExtraCompiler(webkitversion)
 
+webkit2 {
+
+# GENERATOR 12: Copy WebCore headers for WebKit2
+webcoreheaders.output = ../include/WebCore/${QMAKE_FILE_BASE}.h
+webcoreheaders.input = WEBCORE_HEADERS_FOR_WEBKIT2
+webcoreheaders.commands = $$QMAKE_COPY ${QMAKE_FILE_NAME} ${QMAKE_FILE_OUT}
+webcoreheaders.clean = ${QMAKE_FILE_OUT}
+webcoreheaders.wkAddOutputToSources = false
+addExtraCompiler(webcoreheaders)
+
+# GENERATOR 12-B: Copy JavaScriptCore headers for WebKit2
+jscheaders.output = ../include/JavaScriptCore/${QMAKE_FILE_BASE}.h
+jscheaders.input = JSC_HEADERS_FOR_WEBKIT2
+jscheaders.commands = $$QMAKE_COPY ${QMAKE_FILE_NAME} ${QMAKE_FILE_OUT}
+jscheaders.clean = ${QMAKE_FILE_OUT}
+jscheaders.wkAddOutputToSources = false
+addExtraCompiler(jscheaders)
+
+# GENERATOR 13: Copy WebKit2 headers
+webkit2headers.output = ../include/WebKit2/${QMAKE_FILE_BASE}.h
+webkit2headers.input = WEBKIT2_API_HEADERS
+webkit2headers.commands = $$QMAKE_COPY ${QMAKE_FILE_NAME} ${QMAKE_FILE_OUT}
+webkit2headers.clean = ${QMAKE_FILE_OUT}
+webkit2headers.wkAddOutputToSources = false
+addExtraCompiler(webkit2headers)
+
+}
