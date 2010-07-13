@@ -1,3 +1,18 @@
+2010-07-12  Tony Gentilcore  <tonyg@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Wire network times from ResourceLoadTiming to performance.timing
+        https://bugs.webkit.org/show_bug.cgi?id=41824
+
+        Expectations set to fail because --web-timing disabled by default.
+
+        * fast/dom/script-tests/webtiming.js:
+        (checkTimingBeforeLoad):
+        (checkWebTimingOnLoad):
+        (checkWebTimingAfterLoad):
+        * fast/dom/webtiming-expected.txt:
+
 2010-07-04  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Darin Fisher.

@@ -44,6 +44,17 @@ function checkTimingBeforeLoad()
 
     shouldBeGreaterThanOrEqual("timing.fetchStart", "timing.navigationStart");
 
+    shouldBe("timing.domainLookupStart", "0");
+    shouldBe("timing.domainLookupEnd", "0");
+
+    shouldBe("timing.connectStart", "0");
+    shouldBe("timing.connectEnd", "0");
+
+    shouldBeGreaterThanOrEqual("timing.requestStart", "timing.navigationStart");
+    shouldBeGreaterThanOrEqual("timing.requestEnd", "timing.requestStart");
+
+    shouldBeGreaterThanOrEqual("timing.responseStart", "timing.requestEnd");
+
     shouldBe("timing.loadEventStart", "0");
     shouldBe("timing.loadEventEnd", "0");
 
@@ -58,7 +69,17 @@ function checkWebTimingOnLoad()
 
     shouldBeGreaterThanOrEqual("timing.fetchStart", "timing.navigationStart");
 
-    shouldBeGreaterThanOrEqual("timing.responseEnd", "timing.fetchStart");
+    shouldBe("timing.domainLookupStart", "0");
+    shouldBe("timing.domainLookupEnd", "0");
+
+    shouldBe("timing.connectStart", "0");
+    shouldBe("timing.connectEnd", "0");
+
+    shouldBeGreaterThanOrEqual("timing.requestStart", "timing.navigationStart");
+    shouldBeGreaterThanOrEqual("timing.requestEnd", "timing.requestStart");
+
+    shouldBeGreaterThanOrEqual("timing.responseStart", "timing.requestEnd");
+    shouldBeGreaterThanOrEqual("timing.responseEnd", "timing.responseStart");
 
     shouldBeGreaterThanOrEqual("timing.loadEventStart", "timing.responseEnd");
     shouldBe("timing.loadEventEnd", "0");
@@ -74,7 +95,17 @@ function checkWebTimingAfterLoad()
 
     shouldBeGreaterThanOrEqual("timing.fetchStart", "timing.navigationStart");
 
-    shouldBeGreaterThanOrEqual("timing.responseEnd", "timing.fetchStart");
+    shouldBe("timing.domainLookupStart", "0");
+    shouldBe("timing.domainLookupEnd", "0");
+
+    shouldBe("timing.connectStart", "0");
+    shouldBe("timing.connectEnd", "0");
+
+    shouldBeGreaterThanOrEqual("timing.requestStart", "timing.navigationStart");
+    shouldBeGreaterThanOrEqual("timing.requestEnd", "timing.requestStart");
+
+    shouldBeGreaterThanOrEqual("timing.responseStart", "timing.requestEnd");
+    shouldBeGreaterThanOrEqual("timing.responseEnd", "timing.responseStart");
 
     shouldBeGreaterThanOrEqual("timing.loadEventStart", "timing.responseEnd");
     shouldBeGreaterThanOrEqual("timing.loadEventEnd", "timing.loadEventStart + 50");

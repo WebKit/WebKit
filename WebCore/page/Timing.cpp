@@ -33,7 +33,10 @@
 
 #if ENABLE(WEB_TIMING)
 
+#include "DocumentLoader.h"
 #include "Frame.h"
+#include "ResourceLoadTiming.h"
+#include "ResourceResponse.h"
 
 namespace WebCore {
 
@@ -57,7 +60,7 @@ unsigned long long Timing::navigationStart() const
     if (!m_frame)
         return 0;
 
-    return static_cast<unsigned long long>(m_frame->loader()->frameLoadTimeline()->navigationStart * 1000);
+    return toIntegerMilliseconds(m_frame->loader()->frameLoadTimeline()->navigationStart);
 }
 
 unsigned long long Timing::unloadEventEnd() const
@@ -65,7 +68,7 @@ unsigned long long Timing::unloadEventEnd() const
     if (!m_frame)
         return 0;
 
-    return static_cast<unsigned long long>(m_frame->loader()->frameLoadTimeline()->unloadEventEnd * 1000);
+    return toIntegerMilliseconds(m_frame->loader()->frameLoadTimeline()->unloadEventEnd);
 }
 
 unsigned long long Timing::fetchStart() const
@@ -73,7 +76,76 @@ unsigned long long Timing::fetchStart() const
     if (!m_frame)
         return 0;
 
-    return static_cast<unsigned long long>(m_frame->loader()->frameLoadTimeline()->fetchStart * 1000);
+    return toIntegerMilliseconds(m_frame->loader()->frameLoadTimeline()->fetchStart);
+}
+
+unsigned long long Timing::domainLookupStart() const
+{
+    ResourceLoadTiming* timing = resourceLoadTiming();
+    if (!timing)
+        return 0;
+
+    return toIntegerMilliseconds(timing->dnsStart);
+}
+
+unsigned long long Timing::domainLookupEnd() const
+{
+    ResourceLoadTiming* timing = resourceLoadTiming();
+    if (!timing)
+        return 0;
+
+    return toIntegerMilliseconds(timing->dnsEnd);
+}
+
+unsigned long long Timing::connectStart() const
+{
+    ResourceLoadTiming* timing = resourceLoadTiming();
+    if (!timing)
+        return 0;
+
+    return toIntegerMilliseconds(timing->connectStart);
+}
+
+unsigned long long Timing::connectEnd() const
+{
+    ResourceLoadTiming* timing = resourceLoadTiming();
+    if (!timing)
+        return 0;
+
+    return toIntegerMilliseconds(timing->connectEnd);
+}
+
+unsigned long long Timing::requestStart() const
+{
+    ResourceLoadTiming* timing = resourceLoadTiming();
+    if (!timing)
+        return 0;
+
+    return toIntegerMilliseconds(timing->sendStart);
+}
+
+unsigned long long Timing::requestEnd() const
+{
+    ResourceLoadTiming* timing = resourceLoadTiming();
+    if (!timing)
+        return 0;
+
+    return toIntegerMilliseconds(timing->sendEnd);
+}
+
+unsigned long long Timing::responseStart() const
+{
+    ResourceLoadTiming* timing = resourceLoadTiming();
+    if (!timing)
+        return 0;
+
+    // FIXME: Response start needs to be the time of the first received byte.
+    // However, the ResourceLoadTiming API currently only supports the time
+    // the last header byte was received. For many responses with reasonable
+    // sized cookies, the HTTP headers fit into a single packet so this time
+    // is basically equivalent. But for some responses, particularly those with
+    // headers larger than a single packet, this time will be too late.
+    return toIntegerMilliseconds(timing->receiveHeadersEnd);
 }
 
 unsigned long long Timing::responseEnd() const
@@ -81,7 +153,7 @@ unsigned long long Timing::responseEnd() const
     if (!m_frame)
         return 0;
 
-    return static_cast<unsigned long long>(m_frame->loader()->frameLoadTimeline()->responseEnd * 1000);
+    return toIntegerMilliseconds(m_frame->loader()->frameLoadTimeline()->responseEnd);
 }
 
 unsigned long long Timing::loadEventStart() const
@@ -89,7 +161,7 @@ unsigned long long Timing::loadEventStart() const
     if (!m_frame)
         return 0;
 
-    return static_cast<unsigned long long>(m_frame->loader()->frameLoadTimeline()->loadEventStart * 1000);
+    return toIntegerMilliseconds(m_frame->loader()->frameLoadTimeline()->loadEventStart);
 }
 
 unsigned long long Timing::loadEventEnd() const
@@ -97,7 +169,23 @@ unsigned long long Timing::loadEventEnd() const
     if (!m_frame)
         return 0;
 
-    return static_cast<unsigned long long>(m_frame->loader()->frameLoadTimeline()->loadEventEnd * 1000);
+    return toIntegerMilliseconds(m_frame->loader()->frameLoadTimeline()->loadEventEnd);
+}
+
+ResourceLoadTiming* Timing::resourceLoadTiming() const
+{
+    DocumentLoader* documentLoader = m_frame->loader()->documentLoader();
+    if (!documentLoader)
+        return 0;
+
+    return documentLoader->response().resourceLoadTiming();
+}
+
+unsigned long long Timing::toIntegerMilliseconds(double milliseconds)
+{
+    if (milliseconds <= 0)
+        return 0;
+    return static_cast<unsigned long long>(milliseconds * 1000.0);
 }
 
 } // namespace WebCore

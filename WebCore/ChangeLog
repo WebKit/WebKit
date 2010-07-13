@@ -1,3 +1,22 @@
+2010-07-12  Tony Gentilcore  <tonyg@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Wire network times from ResourceLoadTiming to performance.timing
+        https://bugs.webkit.org/show_bug.cgi?id=41824
+
+        * page/Timing.cpp:
+        (WebCore::Timing::domainLookupStart): http://dev.w3.org/2006/webapi/WebTiming/#nt-domain-lookupstart
+        (WebCore::Timing::domainLookupEnd): http://dev.w3.org/2006/webapi/WebTiming/#nt-domain-lookupend
+        (WebCore::Timing::connectStart): http://dev.w3.org/2006/webapi/WebTiming/#nt-connect-start
+        (WebCore::Timing::connectEnd): http://dev.w3.org/2006/webapi/WebTiming/#nt-connect-end
+        (WebCore::Timing::requestStart): http://dev.w3.org/2006/webapi/WebTiming/#nt-request-start
+        (WebCore::Timing::requestEnd): http://dev.w3.org/2006/webapi/WebTiming/#nt-request-end
+        (WebCore::Timing::responseStart): http://dev.w3.org/2006/webapi/WebTiming/#nt-response-start
+        (WebCore::Timing::resourceLoadTiming):
+        * page/Timing.h:
+        * page/Timing.idl:
+
 2010-07-13  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

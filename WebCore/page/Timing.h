@@ -39,6 +39,7 @@
 namespace WebCore {
 
 class Frame;
+class ResourceLoadTiming;
 
 class Timing : public RefCounted<Timing> {
 public:
@@ -50,12 +51,23 @@ public:
     unsigned long long navigationStart() const;
     unsigned long long unloadEventEnd() const;
     unsigned long long fetchStart() const;
+    unsigned long long domainLookupStart() const;
+    unsigned long long domainLookupEnd() const;
+    unsigned long long connectStart() const;
+    unsigned long long connectEnd() const;
+    unsigned long long requestStart() const;
+    unsigned long long requestEnd() const;
+    unsigned long long responseStart() const;
     unsigned long long responseEnd() const;
     unsigned long long loadEventStart() const;
     unsigned long long loadEventEnd() const;
 
 private:
     Timing(Frame*);
+
+    ResourceLoadTiming* resourceLoadTiming() const;
+
+    static unsigned long long toIntegerMilliseconds(double milliseconds);
 
     Frame* m_frame;
 };
