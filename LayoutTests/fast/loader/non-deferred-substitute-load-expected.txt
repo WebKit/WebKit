@@ -1,0 +1,2 @@
+ALERT: Triggering bug through JS-alert
+PASS

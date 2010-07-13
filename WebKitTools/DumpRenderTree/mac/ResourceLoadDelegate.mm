@@ -33,6 +33,7 @@
 #import "LayoutTestController.h"
 #import <WebKit/WebKit.h>
 #import <WebKit/WebTypesInternal.h>
+#import <WebKit/WebDataSourcePrivate.h>
 #import <wtf/Assertions.h>
 
 using namespace std;
@@ -129,6 +130,10 @@ using namespace std;
         NSString *string = [NSString stringWithFormat:@"%@ - willSendRequest %@ redirectResponse %@", identifier, [request _drt_descriptionSuitableForTestResult],
             [redirectResponse _drt_descriptionSuitableForTestResult]];
         printf("%s\n", [string UTF8String]);
+    }
+
+    if (!done && !gLayoutTestController->deferMainResourceDataLoad()) {
+        [dataSource _setDeferMainResourceDataLoad:false];
     }
 
     if (!done && gLayoutTestController->willSendRequestReturnsNull())

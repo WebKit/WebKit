@@ -81,6 +81,22 @@ bool LoadItem::invoke() const
     return true;
 }
 
+bool LoadHTMLStringItem::invoke() const
+{
+    wstring content = jsStringRefToWString(m_content.get());
+    wstring baseURL = jsStringRefToWString(m_baseURL.get());
+
+    BSTR contentBSTR = SysAllocString(content.c_str());
+    BSTR baseURLBSTR = SysAllocString(baseURL.c_str());
+
+    frame->loadHTMLString(contentBSTR, baseURLBSTR);
+
+    SysFreeString(contentBSTR);
+    SysFreeString(baseURLBSTR);
+
+    return true;
+}
+
 bool ReloadItem::invoke() const
 {
     COMPtr<IWebView> webView;

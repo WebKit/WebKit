@@ -211,6 +211,16 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
 #endif
 }
 
+- (void)_setDeferMainResourceDataLoad:(BOOL)flag
+{
+    DocumentLoader* loader = [self _documentLoader];
+
+    if (!loader)
+        return;
+
+    loader->setDeferMainResourceDataLoad(flag);
+}
+
 @end
 
 @implementation WebDataSource (WebInternal)

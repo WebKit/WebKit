@@ -119,6 +119,16 @@ HRESULT STDMETHODCALLTYPE WebDataSource::mainDocumentError(
     return S_OK;
 }
 
+HRESULT STDMETHODCALLTYPE WebDataSource::setDeferMainResourceDataLoad(
+    /* [in] */ BOOL flag)
+{
+    if (!m_loader)
+        return E_FAIL;
+
+    m_loader->setDeferMainResourceDataLoad(flag);
+    return S_OK;
+}
+
 // IUnknown -------------------------------------------------------------------
 
 HRESULT STDMETHODCALLTYPE WebDataSource::QueryInterface(REFIID riid, void** ppvObject)

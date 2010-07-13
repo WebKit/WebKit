@@ -250,6 +250,13 @@ HRESULT STDMETHODCALLTYPE ResourceLoadDelegate::willSendRequest(
             descriptionSuitableForTestResult(redirectResponse).c_str());
     }
 
+    if (!done && !gLayoutTestController->deferMainResourceDataLoad()) {
+        COMPtr<IWebDataSourcePrivate> dataSourcePrivate(Query, dataSource);
+        if (!dataSourcePrivate)
+            return E_FAIL;
+        dataSourcePrivate->setDeferMainResourceDataLoad(FALSE);
+    }
+
     if (!done && gLayoutTestController->willSendRequestReturnsNull()) {
         *newRequest = 0;
         return S_OK;

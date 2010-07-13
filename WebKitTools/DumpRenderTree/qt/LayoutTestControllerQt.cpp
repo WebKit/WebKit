@@ -72,6 +72,7 @@ void LayoutTestController::reset()
     DumpRenderTreeSupportQt::dumpFrameLoader(false);
     DumpRenderTreeSupportQt::dumpResourceLoadCallbacks(false);
     DumpRenderTreeSupportQt::dumpResourceResponseMIMETypes(false);
+    DumpRenderTreeSupportQt::setDeferMainResourceDataLoad(true);
     DumpRenderTreeSupportQt::setWillSendRequestReturnsNullOnRedirect(false);
     DumpRenderTreeSupportQt::setWillSendRequestReturnsNull(false);
     DumpRenderTreeSupportQt::setWillSendRequestClearHeaders(QStringList());
@@ -249,6 +250,11 @@ void LayoutTestController::setWillSendRequestClearHeader(const QStringList& head
     DumpRenderTreeSupportQt::setWillSendRequestClearHeaders(headers);
 }
 
+void LayoutTestController::setDeferMainResourceDataLoad(bool defer)
+{
+    DumpRenderTreeSupportQt::setDeferMainResourceDataLoad(defer);
+}
+
 void LayoutTestController::queueBackNavigation(int howFarBackward)
 {
     //qDebug() << ">>>queueBackNavigation" << howFarBackward;
@@ -267,6 +273,11 @@ void LayoutTestController::queueLoad(const QString& url, const QString& target)
     QUrl mainResourceUrl = m_drt->webPage()->mainFrame()->url();
     QString absoluteUrl = mainResourceUrl.resolved(QUrl(url)).toEncoded();
     WorkQueue::shared()->queue(new LoadItem(absoluteUrl, target, m_drt->webPage()));
+}
+
+void LayoutTestController::queueLoadHTMLString(const QString& content, const QString& baseURL)
+{
+    WorkQueue::shared()->queue(new LoadHTMLStringItem(content, baseURL, m_drt->webPage()));
 }
 
 void LayoutTestController::queueReload()

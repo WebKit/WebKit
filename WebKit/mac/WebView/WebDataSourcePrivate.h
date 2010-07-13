@@ -37,4 +37,6 @@
 
 - (BOOL)_transferApplicationCache:(NSString*)destinationBundleIdentifier;
 
+- (void)_setDeferMainResourceDataLoad:(BOOL)flag;
+
 @end

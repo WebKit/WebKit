@@ -110,6 +110,9 @@ public:
     virtual HRESULT STDMETHODCALLTYPE mainDocumentError(
         /* [retval][out] */ IWebError** error);
 
+    virtual HRESULT STDMETHODCALLTYPE setDeferMainResourceDataLoad(
+        /* [in] */ BOOL flag);
+
     // WebDataSource
     WebDocumentLoader* documentLoader() const;
 protected:

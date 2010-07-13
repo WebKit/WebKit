@@ -214,4 +214,5 @@ interface IWebDataSourcePrivate : IUnknown
     HRESULT overrideEncoding([out, retval] BSTR* encoding);
     HRESULT setOverrideEncoding([in] BSTR encoding);
     HRESULT mainDocumentError([out, retval] IWebError** error);
+    HRESULT setDeferMainResourceDataLoad([in] BOOL flag);
 }

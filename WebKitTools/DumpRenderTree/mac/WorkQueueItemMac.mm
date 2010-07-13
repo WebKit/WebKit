@@ -54,6 +54,15 @@ bool LoadItem::invoke() const
     return true;
 }
 
+bool LoadHTMLStringItem::invoke() const
+{
+    RetainPtr<CFStringRef> contentCF(AdoptCF, JSStringCopyCFString(kCFAllocatorDefault, m_content.get()));
+    RetainPtr<CFStringRef> baseURLCF(AdoptCF, JSStringCopyCFString(kCFAllocatorDefault, m_baseURL.get()));
+
+    [mainFrame loadHTMLString:(NSString *)contentCF.get() baseURL:[NSURL URLWithString:(NSString *)baseURLCF.get()]];
+    return true;
+}
+
 bool ReloadItem::invoke() const
 {
     [[mainFrame webView] reload:nil];

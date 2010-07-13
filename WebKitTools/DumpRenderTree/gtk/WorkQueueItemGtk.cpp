@@ -56,6 +56,11 @@ bool LoadItem::invoke() const
     return true;
 }
 
+bool LoadHTMLStringItem::invoke() const
+{
+    return false;
+}
+
 bool ReloadItem::invoke() const
 {
     webkit_web_frame_reload(mainFrame);

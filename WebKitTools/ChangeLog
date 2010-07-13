@@ -1,3 +1,61 @@
+2010-07-07  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Reviewed by Darin Adler.
+
+        Prevent assertion/duplicate loads for non-deferred subtitute-data loads
+
+        https://bugs.webkit.org/show_bug.cgi?id=30879
+
+        MainResourceLoader uses the member m_initialRequest to store requests for future
+        deferred loads. When doing the actual load in handleDataLoadNow(), we therefore
+        have to clear this request so that subsequent entries into the loader will not
+        start yet another load.
+
+        This can happen as a result of a PageGroupLoadDeferrer going out of scope when
+        returning from Chrome::runJavaScriptAlert(), which calls setDeferredLoading(false),
+        but only in the case of using both substitute-data and non-deferred main resource
+        load together. That's why two new DRT functions were added:
+
+         * queueLoadHTMLString()
+         * setDeferMainResourceLoad()
+
+        The change adds DRT hooks for Mac, Win and Qt for these two functions. For Mac
+        and Win the hook uses new SPI in WebDataSource. For Qt a new static member was
+        added to the FrameLoaderClientQt and accessed though DumpRenderTreeSupportQt.
+
+        * DumpRenderTree/LayoutTestController.cpp:
+        (LayoutTestController::LayoutTestController):
+        (queueLoadHTMLStringCallback):
+        (setDeferMainResourceDataLoadCallback):
+        (LayoutTestController::staticFunctions):
+        (LayoutTestController::queueLoadHTMLString):
+        * DumpRenderTree/LayoutTestController.h:
+        (LayoutTestController::deferMainResourceDataLoad):
+        (LayoutTestController::setDeferMainResourceDataLoad):
+        * DumpRenderTree/WorkQueueItem.h:
+        (LoadHTMLStringItem::LoadHTMLStringItem):
+        * DumpRenderTree/gtk/WorkQueueItemGtk.cpp:
+        (LoadHTMLStringItem::invoke):
+        * DumpRenderTree/mac/ResourceLoadDelegate.mm:
+        (-[ResourceLoadDelegate webView:resource:willSendRequest:redirectResponse:fromDataSource:]):
+        * DumpRenderTree/mac/WorkQueueItemMac.mm:
+        (LoadHTMLStringItem::invoke):
+        * DumpRenderTree/qt/LayoutTestControllerQt.cpp:
+        (LayoutTestController::reset):
+        (LayoutTestController::setDeferMainResourceDataLoad):
+        (LayoutTestController::queueLoadHTMLString):
+        * DumpRenderTree/qt/LayoutTestControllerQt.h:
+        * DumpRenderTree/qt/WorkQueueItemQt.cpp:
+        (LoadHTMLStringItem::invoke):
+        * DumpRenderTree/qt/WorkQueueItemQt.h:
+        (LoadHTMLStringItem::LoadHTMLStringItem):
+        * DumpRenderTree/win/ResourceLoadDelegate.cpp:
+        (ResourceLoadDelegate::willSendRequest):
+        * DumpRenderTree/win/WorkQueueItemWin.cpp:
+        (LoadHTMLStringItem::invoke):
+        * DumpRenderTree/wx/WorkQueueItemWx.cpp:
+        (LoadHTMLStringItem::invoke):
+
 2010-07-13  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Nikolas Zimmermann.
