@@ -111,7 +111,7 @@ static inline size_t machMessageSize(size_t bodySize, size_t numberOfPortDescrip
     return round_msg(size);
 }
 
-void Connection::sendOutgoingMessage(MessageID messageID, auto_ptr<ArgumentEncoder> arguments)
+void Connection::sendOutgoingMessage(MessageID messageID, PassOwnPtr<ArgumentEncoder> arguments)
 {
     Vector<Attachment> attachments = arguments->releaseAttachments();
     
@@ -205,14 +205,14 @@ void Connection::initializeDeadNameSource()
     m_connectionQueue.registerMachPortEventHandler(m_sendPort, WorkQueue::MachPortDeadNameNotification, WorkItem::create(this, &Connection::connectionDidClose));
 }
 
-static auto_ptr<ArgumentDecoder> createArgumentDecoder(mach_msg_header_t* header)
+static PassOwnPtr<ArgumentDecoder> createArgumentDecoder(mach_msg_header_t* header)
 {
     if (!(header->msgh_bits & MACH_MSGH_BITS_COMPLEX)) {
         // We have a simple message.
         size_t bodySize = header->msgh_size - sizeof(mach_msg_header_t);
         uint8_t* body = reinterpret_cast<uint8_t*>(header + 1);
         
-        return auto_ptr<ArgumentDecoder>(new ArgumentDecoder(body, bodySize));
+        return adoptPtr(new ArgumentDecoder(body, bodySize));
     }
 
     bool messageBodyIsOOL = header->msgh_id & MessageBodyIsOOL;
@@ -266,13 +266,13 @@ static auto_ptr<ArgumentDecoder> createArgumentDecoder(mach_msg_header_t* header
 
         vm_deallocate(mach_task_self(), reinterpret_cast<vm_address_t>(messageBodyAttachment.address()), messageBodyAttachment.size());
 
-        return auto_ptr<ArgumentDecoder>(argumentDecoder);
+        return adoptPtr(argumentDecoder);
     }
 
     uint8_t* messageBody = descriptorData;
     size_t messageBodySize = header->msgh_size - (descriptorData - reinterpret_cast<uint8_t*>(header));
 
-    return auto_ptr<ArgumentDecoder>(new ArgumentDecoder(messageBody, messageBodySize, attachments));
+    return adoptPtr(new ArgumentDecoder(messageBody, messageBodySize, attachments));
 }
 
 void Connection::receiveSourceEventHandler()
@@ -293,8 +293,8 @@ void Connection::receiveSourceEventHandler()
     }
     
     MessageID messageID = MessageID::fromInt(header->msgh_id);
-    std::auto_ptr<ArgumentDecoder> arguments = createArgumentDecoder(header);
-    ASSERT(arguments.get());
+    OwnPtr<ArgumentDecoder> arguments = createArgumentDecoder(header);
+    ASSERT(arguments);
 
     if (messageID == MessageID(CoreIPCMessage::InitializeConnection)) {
         ASSERT(m_isServer);
@@ -321,7 +321,7 @@ void Connection::receiveSourceEventHandler()
         return;
     }
     
-    processIncomingMessage(messageID, arguments);
+    processIncomingMessage(messageID, arguments.release());
 }    
 
 } // namespace CoreIPC

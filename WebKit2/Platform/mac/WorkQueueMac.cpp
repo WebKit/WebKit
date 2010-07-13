@@ -26,13 +26,14 @@
 #include "WorkQueue.h"
 
 #include <mach/mach_port.h>
+#include <wtf/PassOwnPtr.h>
 
 #if HAVE(DISPATCH_H)
 
 void WorkQueue::executeWorkItem(void* item)
 {
     WorkQueue* queue = static_cast<WorkQueue*>(dispatch_get_context(dispatch_get_current_queue()));
-    std::auto_ptr<WorkItem> workItem(static_cast<WorkItem*>(item));
+    OwnPtr<WorkItem> workItem(static_cast<WorkItem*>(item));
     
     {
         MutexLocker locker(queue->m_isValidMutex);
@@ -43,14 +44,14 @@ void WorkQueue::executeWorkItem(void* item)
     workItem->execute();
 }
 
-void WorkQueue::scheduleWork(std::auto_ptr<WorkItem> item)
+void WorkQueue::scheduleWork(PassOwnPtr<WorkItem> item)
 {
-    dispatch_async_f(m_dispatchQueue, item.release(), executeWorkItem);
+    dispatch_async_f(m_dispatchQueue, item.leakPtr(), executeWorkItem);
 }
 
 class WorkQueue::EventSource {
 public:
-    EventSource(MachPortEventType eventType, dispatch_source_t dispatchSource, std::auto_ptr<WorkItem> workItem)
+    EventSource(MachPortEventType eventType, dispatch_source_t dispatchSource, PassOwnPtr<WorkItem> workItem)
         : m_eventType(eventType)
         , m_dispatchSource(dispatchSource)
         , m_workItem(workItem)
@@ -97,10 +98,10 @@ private:
     // This is a weak reference, since m_dispatchSource references the event source.
     dispatch_source_t m_dispatchSource;
     
-    std::auto_ptr<WorkItem> m_workItem;
+    OwnPtr<WorkItem> m_workItem;
 };
 
-void WorkQueue::registerMachPortEventHandler(mach_port_t machPort, MachPortEventType eventType, std::auto_ptr<WorkItem> workItem)
+void WorkQueue::registerMachPortEventHandler(mach_port_t machPort, MachPortEventType eventType, PassOwnPtr<WorkItem> workItem)
 {
     dispatch_source_type_t sourceType = 0;
     switch (eventType) {
@@ -169,11 +170,11 @@ void WorkQueue::platformInvalidate()
 
 #else /* !HAVE(DISPATCH_H) */
 
-void WorkQueue::scheduleWork(std::auto_ptr<WorkItem> item)
+void WorkQueue::scheduleWork(PassOwnPtr<WorkItem> item)
 {
 }
 
-void WorkQueue::registerMachPortEventHandler(mach_port_t, MachPortEventType, std::auto_ptr<WorkItem>)
+void WorkQueue::registerMachPortEventHandler(mach_port_t, MachPortEventType, PassOwnPtr<WorkItem>)
 {
 }
 

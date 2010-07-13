@@ -32,7 +32,6 @@
 #include "Arguments.h"
 #include "MessageID.h"
 #include "WorkQueue.h"
-#include <memory>
 #include <wtf/HashMap.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/OwnPtr.h>
@@ -86,16 +85,16 @@ public:
     static const unsigned long long NoTimeout = 10000000000ULL;
     template<typename E, typename T, typename U> bool sendSync(E messageID, uint64_t destinationID, const T& arguments, const U& reply, double timeout);
 
-    template<typename E> std::auto_ptr<ArgumentDecoder> waitFor(E messageID, uint64_t destinationID, double timeout);
+    template<typename E> PassOwnPtr<ArgumentDecoder> waitFor(E messageID, uint64_t destinationID, double timeout);
 
-    bool sendMessage(MessageID, std::auto_ptr<ArgumentEncoder>);
+    bool sendMessage(MessageID, PassOwnPtr<ArgumentEncoder>);
 
 private:
     template<typename T> class Message {
     public:
-        Message(MessageID messageID, std::auto_ptr<T> arguments)
+        Message(MessageID messageID, PassOwnPtr<T> arguments)
             : m_messageID(messageID)
-            , m_arguments(arguments.release())
+            , m_arguments(arguments.leakPtr())
         {
         }
         
@@ -122,13 +121,13 @@ private:
     
     bool isValid() const { return m_client; }
     
-    std::auto_ptr<ArgumentDecoder> sendSyncMessage(MessageID, uint64_t syncRequestID, std::auto_ptr<ArgumentEncoder>, double timeout);
-    std::auto_ptr<ArgumentDecoder> waitForMessage(MessageID, uint64_t destinationID, double timeout);
+    PassOwnPtr<ArgumentDecoder> sendSyncMessage(MessageID, uint64_t syncRequestID, PassOwnPtr<ArgumentEncoder>, double timeout);
+    PassOwnPtr<ArgumentDecoder> waitForMessage(MessageID, uint64_t destinationID, double timeout);
     
     // Called on the connection work queue.
-    void processIncomingMessage(MessageID, std::auto_ptr<ArgumentDecoder>);
+    void processIncomingMessage(MessageID, PassOwnPtr<ArgumentDecoder>);
     void sendOutgoingMessages();
-    void sendOutgoingMessage(MessageID, std::auto_ptr<ArgumentEncoder>);
+    void sendOutgoingMessage(MessageID, PassOwnPtr<ArgumentEncoder>);
     void connectionDidClose();
     
     // Called on the listener thread.
@@ -185,16 +184,16 @@ private:
 template<typename E, typename T>
 bool Connection::send(E messageID, uint64_t destinationID, const T& arguments)
 {
-    std::auto_ptr<ArgumentEncoder> argumentEncoder(new ArgumentEncoder(destinationID));
+    OwnPtr<ArgumentEncoder> argumentEncoder(new ArgumentEncoder(destinationID));
     argumentEncoder->encode(arguments);
 
-    return sendMessage(MessageID(messageID), argumentEncoder);
+    return sendMessage(MessageID(messageID), argumentEncoder.release());
 }
 
 template<typename E, typename T, typename U>
 inline bool Connection::sendSync(E messageID, uint64_t destinationID, const T& arguments, const U& reply, double timeout)
 {
-    std::auto_ptr<ArgumentEncoder> argumentEncoder(new ArgumentEncoder(destinationID));
+    OwnPtr<ArgumentEncoder> argumentEncoder(new ArgumentEncoder(destinationID));
 
     uint64_t syncRequestID = ++m_syncRequestID;
     
@@ -205,15 +204,15 @@ inline bool Connection::sendSync(E messageID, uint64_t destinationID, const T& a
     argumentEncoder->encode(arguments);
     
     // Now send the message and wait for a reply.
-    std::auto_ptr<ArgumentDecoder> replyDecoder = sendSyncMessage(MessageID(messageID, MessageID::SyncMessage), syncRequestID, argumentEncoder, timeout);
-    if (!replyDecoder.get())
+    OwnPtr<ArgumentDecoder> replyDecoder = sendSyncMessage(MessageID(messageID, MessageID::SyncMessage), syncRequestID, argumentEncoder.release(), timeout);
+    if (!replyDecoder)
         return false;
     
     // Decode the reply.
     return replyDecoder->decode(const_cast<U&>(reply));
 }
 
-template<typename E> inline std::auto_ptr<ArgumentDecoder> Connection::waitFor(E messageID, uint64_t destinationID, double timeout)
+template<typename E> inline PassOwnPtr<ArgumentDecoder> Connection::waitFor(E messageID, uint64_t destinationID, double timeout)
 {
     return waitForMessage(MessageID(messageID), destinationID, timeout);
 }

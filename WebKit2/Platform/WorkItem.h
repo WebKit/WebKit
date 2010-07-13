@@ -26,15 +26,15 @@
 #ifndef WorkItem_h
 #define WorkItem_h
 
-#include <memory>
+#include <wtf/PassOwnPtr.h>
 
 class WorkItem {
 public:
     template<typename C> 
-    static std::auto_ptr<WorkItem> create(C*, void (C::*)());
+    static PassOwnPtr<WorkItem> create(C*, void (C::*)());
 
     template<typename C, typename T0, typename T1>
-    static std::auto_ptr<WorkItem> create(C*, void (C::*)(T0, T1), T0, T1);
+    static PassOwnPtr<WorkItem> create(C*, void (C::*)(T0, T1), T0, T1);
 
     virtual ~WorkItem() { }
     virtual void execute() = 0;
@@ -108,15 +108,15 @@ class MemberFunctionWorkItem2 : private WorkItem {
 };
 
 template<typename C>
-std::auto_ptr<WorkItem> WorkItem::create(C* ptr, void (C::*function)())
+PassOwnPtr<WorkItem> WorkItem::create(C* ptr, void (C::*function)())
 {
-    return std::auto_ptr<WorkItem>(new MemberFunctionWorkItem0<C>(ptr, function));
+    return adoptPtr(static_cast<WorkItem*>(new MemberFunctionWorkItem0<C>(ptr, function)));
 }
 
 template<typename C, typename T0, typename T1>
-std::auto_ptr<WorkItem> WorkItem::create(C* ptr, void (C::*function)(T0, T1), T0 t0, T1 t1)
+PassOwnPtr<WorkItem> WorkItem::create(C* ptr, void (C::*function)(T0, T1), T0 t0, T1 t1)
 {
-    return std::auto_ptr<WorkItem>(new MemberFunctionWorkItem2<C, T0, T1>(ptr, function, t0, t1));
+    return adoptPtr(static_cast<WorkItem*>(new MemberFunctionWorkItem2<C, T0, T1>(ptr, function, t0, t1)));
 }
 
 #endif // WorkItem_h

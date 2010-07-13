@@ -34,6 +34,7 @@
 
 #include "WorkItem.h"
 #include <wtf/HashMap.h>
+#include <wtf/PassOwnPtr.h>
 #include <wtf/Threading.h>
 #include <wtf/Vector.h>
 
@@ -48,7 +49,7 @@ public:
     explicit WorkQueue(const char* name);
     ~WorkQueue();
 
-    void scheduleWork(std::auto_ptr<WorkItem>);
+    void scheduleWork(PassOwnPtr<WorkItem>);
     void invalidate();
 
 #if PLATFORM(MAC)
@@ -62,13 +63,13 @@ public:
     
     // Will execute the given work item whenever the given mach port event fires.
     // Note that this will adopt the mach port and destroy it when the work queue is invalidated.
-    void registerMachPortEventHandler(mach_port_t, MachPortEventType, std::auto_ptr<WorkItem>);
+    void registerMachPortEventHandler(mach_port_t, MachPortEventType, PassOwnPtr<WorkItem>);
     void unregisterMachPortEventHandler(mach_port_t);
 #elif PLATFORM(WIN)
-    void registerHandle(HANDLE, std::auto_ptr<WorkItem>);
+    void registerHandle(HANDLE, PassOwnPtr<WorkItem>);
     void unregisterHandle(HANDLE);
 #elif PLATFORM(QT)
-    void connectSignal(QObject*, const char* signal, std::auto_ptr<WorkItem>);
+    void connectSignal(QObject*, const char* signal, PassOwnPtr<WorkItem>);
     void disconnectSignal(QObject*, const char* signal);
 
     void moveSocketToWorkThread(QLocalSocket*);

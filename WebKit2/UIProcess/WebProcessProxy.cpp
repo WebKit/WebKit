@@ -92,7 +92,7 @@ void WebProcessProxy::connect()
     m_processLauncher = ProcessLauncher::create(this);
 }
 
-bool WebProcessProxy::sendMessage(CoreIPC::MessageID messageID, std::auto_ptr<CoreIPC::ArgumentEncoder> arguments)
+bool WebProcessProxy::sendMessage(CoreIPC::MessageID messageID, PassOwnPtr<CoreIPC::ArgumentEncoder> arguments)
 {
     // If we're waiting for the web process to launch, we need to stash away the messages so we can send them once we have
     // a CoreIPC connection.
@@ -301,7 +301,7 @@ void WebProcessProxy::didFinishLaunching(ProcessLauncher*, const CoreIPC::Connec
     
     for (size_t i = 0; i < m_pendingMessages.size(); ++i) {
         CoreIPC::Connection::OutgoingMessage& outgoingMessage = m_pendingMessages[i];
-        m_connection->sendMessage(outgoingMessage.messageID(), std::auto_ptr<CoreIPC::ArgumentEncoder>(outgoingMessage.arguments()));
+        m_connection->sendMessage(outgoingMessage.messageID(), adoptPtr(outgoingMessage.arguments()));
     }
 
     m_pendingMessages.clear();    

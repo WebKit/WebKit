@@ -27,8 +27,8 @@
 #ifndef RunLoop_h
 #define RunLoop_h
 
-#include <memory>
 #include <wtf/HashMap.h>
+#include <wtf/PassOwnPtr.h>
 #include <wtf/ThreadSpecific.h>
 #include <wtf/Threading.h>
 #include <wtf/Vector.h>
@@ -43,7 +43,7 @@ public:
     static RunLoop* current();
     static RunLoop* main();
 
-    void scheduleWork(std::auto_ptr<WorkItem>);
+    void scheduleWork(PassOwnPtr<WorkItem>);
 
     static void run();
     void stop();

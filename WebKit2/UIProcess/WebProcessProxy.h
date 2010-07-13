@@ -89,7 +89,7 @@ private:
     void setUpAcceleratedCompositing();
 #endif
 
-    bool sendMessage(CoreIPC::MessageID, std::auto_ptr<CoreIPC::ArgumentEncoder>);
+    bool sendMessage(CoreIPC::MessageID, PassOwnPtr<CoreIPC::ArgumentEncoder>);
 
     void forwardMessageToWebContext(const WebCore::String&);
     void getPlugins(bool refresh, Vector<WebCore::PluginInfo>&);
@@ -122,10 +122,10 @@ private:
 template<typename E, typename T>
 bool WebProcessProxy::send(E messageID, uint64_t destinationID, const T& arguments)
 {
-    std::auto_ptr<CoreIPC::ArgumentEncoder> argumentEncoder(new CoreIPC::ArgumentEncoder(destinationID));
+    OwnPtr<CoreIPC::ArgumentEncoder> argumentEncoder(new CoreIPC::ArgumentEncoder(destinationID));
     argumentEncoder->encode(arguments);
 
-    return sendMessage(CoreIPC::MessageID(messageID), argumentEncoder);
+    return sendMessage(CoreIPC::MessageID(messageID), argumentEncoder.release());
 }
 
 } // namespace WebKit

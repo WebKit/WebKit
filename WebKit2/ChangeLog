@@ -1,3 +1,61 @@
+2010-07-12  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Get rid of auto_ptr use in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=42119
+        
+        Replace all use of auto_ptr with OwnPtr/PassOwnPtr.
+
+        * Platform/CoreIPC/Connection.cpp:
+        (CoreIPC::Connection::sendMessage):
+        (CoreIPC::Connection::waitForMessage):
+        (CoreIPC::Connection::sendSyncMessage):
+        (CoreIPC::Connection::processIncomingMessage):
+        (CoreIPC::Connection::sendOutgoingMessages):
+        (CoreIPC::Connection::dispatchMessages):
+        * Platform/CoreIPC/Connection.h:
+        (CoreIPC::Connection::Message::Message):
+        (CoreIPC::Connection::send):
+        (CoreIPC::Connection::sendSync):
+        (CoreIPC::Connection::waitFor):
+        * Platform/CoreIPC/mac/ConnectionMac.cpp:
+        (CoreIPC::Connection::sendOutgoingMessage):
+        (CoreIPC::createArgumentDecoder):
+        (CoreIPC::Connection::receiveSourceEventHandler):
+        * Platform/CoreIPC/qt/ConnectionQt.cpp:
+        (CoreIPC::Connection::readyReadHandler):
+        (CoreIPC::Connection::sendOutgoingMessage):
+        * Platform/CoreIPC/win/ConnectionWin.cpp:
+        (CoreIPC::Connection::readEventHandler):
+        (CoreIPC::Connection::sendOutgoingMessage):
+        * Platform/RunLoop.cpp:
+        (RunLoop::performWork):
+        (RunLoop::scheduleWork):
+        * Platform/RunLoop.h:
+        * Platform/WorkItem.h:
+        (WorkItem::create):
+        * Platform/WorkQueue.h:
+        * Platform/mac/WorkQueueMac.cpp:
+        (WorkQueue::executeWorkItem):
+        (WorkQueue::scheduleWork):
+        (WorkQueue::EventSource::EventSource):
+        (WorkQueue::registerMachPortEventHandler):
+        * Platform/qt/WorkQueueQt.cpp:
+        (WorkQueue::connectSignal):
+        (WorkQueue::scheduleWork):
+        * Platform/win/WorkQueueWin.cpp:
+        (WorkQueue::registerHandle):
+        (WorkQueue::scheduleWork):
+        (WorkQueue::performWork):
+        * UIProcess/ChunkedUpdateDrawingAreaProxy.cpp:
+        (WebKit::ChunkedUpdateDrawingAreaProxy::paint):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::sendMessage):
+        (WebKit::WebProcessProxy::didFinishLaunching):
+        * UIProcess/WebProcessProxy.h:
+        (WebKit::WebProcessProxy::send):
+
 2010-07-12  Ada Chan  <adachan@apple.com>
 
         Build fix.  Copy WKArray.h to the include directory.

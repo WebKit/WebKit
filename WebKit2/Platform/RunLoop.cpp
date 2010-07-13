@@ -58,15 +58,15 @@ void RunLoop::performWork()
     }
 
     for (size_t i = 0; i < workItemQueue.size(); ++i) {
-        std::auto_ptr<WorkItem> item(workItemQueue[i]);
+        OwnPtr<WorkItem> item(workItemQueue[i]);
         item->execute();
     }
 }
 
-void RunLoop::scheduleWork(std::auto_ptr<WorkItem> item)
+void RunLoop::scheduleWork(PassOwnPtr<WorkItem> item)
 {
     MutexLocker locker(m_workItemQueueLock);
-    m_workItemQueue.append(item.release());
+    m_workItemQueue.append(item.leakPtr());
 
     wakeUp();
 }

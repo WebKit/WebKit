@@ -28,12 +28,12 @@
 #include <process.h>
 #include <wtf/Threading.h>
 
-void WorkQueue::registerHandle(HANDLE handle, std::auto_ptr<WorkItem> item)
+void WorkQueue::registerHandle(HANDLE handle, PassOwnPtr<WorkItem> item)
 {
     // Add the item.
     {
         MutexLocker locker(m_handlesLock);
-        m_handles.set(handle, item.release());
+        m_handles.set(handle, item.leakPtr());
     }
 
     // Set the work event.
@@ -102,10 +102,10 @@ void WorkQueue::platformInvalidate()
     // FIXME: Stop the thread and do other cleanup.
 }
 
-void WorkQueue::scheduleWork(std::auto_ptr<WorkItem> item)
+void WorkQueue::scheduleWork(PassOwn<WorkItem> item)
 {
     MutexLocker locker(m_workItemQueueLock);
-    m_workItemQueue.append(item.release());
+    m_workItemQueue.append(item.leakPtr());
 
     // Set the work event.
     ::SetEvent(m_performWorkEvent);
@@ -120,7 +120,7 @@ void WorkQueue::performWork()
     }
 
     for (size_t i = 0; i < workItemQueue.size(); ++i) {
-        std::auto_ptr<WorkItem> item(workItemQueue[i]);
+        OwnPtr<WorkItem> item(workItemQueue[i]);
 
         MutexLocker locker(m_isValidMutex);
         if (m_isValid)

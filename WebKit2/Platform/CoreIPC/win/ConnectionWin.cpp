@@ -137,8 +137,7 @@ void Connection::readEventHandler()
 
             unsigned messageID = *reinterpret_cast<unsigned*>(m_readBuffer.data() + realBufferSize);
 
-            std::auto_ptr<ArgumentDecoder> arguments(new ArgumentDecoder(m_readBuffer.data(), realBufferSize));
-            processIncomingMessage(MessageID::fromInt(messageID), arguments);
+            processIncomingMessage(MessageID::fromInt(messageID), adoptPtr(new ArgumentDecoder(m_readBuffer.data(), realBufferSize)));
         }
 
         // FIXME: Do this somewhere else.
@@ -197,7 +196,7 @@ bool Connection::open()
     return true;
 }
 
-void Connection::sendOutgoingMessage(MessageID messageID, auto_ptr<ArgumentEncoder> arguments)
+void Connection::sendOutgoingMessage(MessageID messageID, PassOwnPtr<ArgumentEncoder> arguments)
 {
     // Just bail if the handle has been closed.
     if (m_connectionPipe == INVALID_HANDLE_VALUE)
