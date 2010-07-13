@@ -53,11 +53,11 @@ private:
 
     HTMLElement* fixOrphanedListChild(Node*);
     bool modifyRange();
+    void doApplyForSingleParagraph(bool forceCreateList);
     void unlistifyParagraph(const VisiblePosition& originalStart, HTMLElement* listNode, Node* listChildNode);
     PassRefPtr<HTMLElement> listifyParagraph(const VisiblePosition& originalStart, const QualifiedName& listTag);
     RefPtr<HTMLElement> m_listElement;
     Type m_type;
-    bool m_forceCreateList;
 };
 
 } // namespace WebCore

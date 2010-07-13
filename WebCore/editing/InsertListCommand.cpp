@@ -55,53 +55,8 @@ HTMLElement* InsertListCommand::fixOrphanedListChild(Node* node)
 }
 
 InsertListCommand::InsertListCommand(Document* document, Type type) 
-    : CompositeEditCommand(document), m_type(type), m_forceCreateList(false)
+    : CompositeEditCommand(document), m_type(type)
 {
-}
-
-bool InsertListCommand::modifyRange()
-{
-    VisibleSelection selection = selectionForParagraphIteration(endingSelection());
-    ASSERT(selection.isRange());
-    VisiblePosition startOfSelection = selection.visibleStart();
-    VisiblePosition endOfSelection = selection.visibleEnd();
-    VisiblePosition startOfLastParagraph = startOfParagraph(endOfSelection);
-    
-    if (startOfParagraph(startOfSelection) == startOfLastParagraph)
-        return false;
-
-    Node* startList = enclosingList(startOfSelection.deepEquivalent().node());
-    Node* endList = enclosingList(endOfSelection.deepEquivalent().node());
-    if (!startList || startList != endList)
-        m_forceCreateList = true;
-
-    setEndingSelection(startOfSelection);
-    doApply();
-    // Fetch the start of the selection after moving the first paragraph,
-    // because moving the paragraph will invalidate the original start.  
-    // We'll use the new start to restore the original selection after 
-    // we modified all selected paragraphs.
-    startOfSelection = endingSelection().visibleStart();
-    VisiblePosition startOfCurrentParagraph = startOfNextParagraph(startOfSelection);
-    while (startOfCurrentParagraph != startOfLastParagraph) {
-        // doApply() may operate on and remove the last paragraph of the selection from the document 
-        // if it's in the same list item as startOfCurrentParagraph.  Return early to avoid an 
-        // infinite loop and because there is no more work to be done.
-        // FIXME(<rdar://problem/5983974>): The endingSelection() may be incorrect here.  Compute 
-        // the new location of endOfSelection and use it as the end of the new selection.
-        if (!startOfLastParagraph.deepEquivalent().node()->inDocument())
-            return true;
-        setEndingSelection(startOfCurrentParagraph);
-        doApply();
-        startOfCurrentParagraph = startOfNextParagraph(endingSelection().visibleStart());
-    }
-    setEndingSelection(endOfSelection);
-    doApply();
-    // Fetch the end of the selection, for the reason mentioned above.
-    endOfSelection = endingSelection().visibleEnd();
-    setEndingSelection(VisibleSelection(startOfSelection, endOfSelection));
-    m_forceCreateList = false;
-    return true;
 }
 
 void InsertListCommand::doApply()
@@ -125,9 +80,53 @@ void InsertListCommand::doApply()
     if (visibleEnd != visibleStart && isStartOfParagraph(visibleEnd))
         setEndingSelection(VisibleSelection(visibleStart, visibleEnd.previous(true)));
 
-    if (endingSelection().isRange() && modifyRange())
-        return;
-    
+    if (endingSelection().isRange()) {
+        VisibleSelection selection = selectionForParagraphIteration(endingSelection());
+        ASSERT(selection.isRange());
+        VisiblePosition startOfSelection = selection.visibleStart();
+        VisiblePosition endOfSelection = selection.visibleEnd();
+        VisiblePosition startOfLastParagraph = startOfParagraph(endOfSelection);
+
+        if (startOfParagraph(startOfSelection) != startOfLastParagraph) {
+            Node* startList = enclosingList(startOfSelection.deepEquivalent().node());
+            Node* endList = enclosingList(endOfSelection.deepEquivalent().node());
+            bool forceCreateList = !startList || startList != endList;
+
+            VisiblePosition startOfCurrentParagraph = startOfSelection;
+            while (startOfCurrentParagraph != startOfLastParagraph) {
+                // doApply() may operate on and remove the last paragraph of the selection from the document 
+                // if it's in the same list item as startOfCurrentParagraph.  Return early to avoid an 
+                // infinite loop and because there is no more work to be done.
+                // FIXME(<rdar://problem/5983974>): The endingSelection() may be incorrect here.  Compute 
+                // the new location of endOfSelection and use it as the end of the new selection.
+                if (!startOfLastParagraph.deepEquivalent().node()->inDocument())
+                    return;
+                setEndingSelection(startOfCurrentParagraph);
+                doApplyForSingleParagraph(forceCreateList);
+
+                // Fetch the start of the selection after moving the first paragraph,
+                // because moving the paragraph will invalidate the original start.  
+                // We'll use the new start to restore the original selection after 
+                // we modified all selected paragraphs.
+                if (startOfCurrentParagraph == startOfSelection)
+                    startOfSelection = endingSelection().visibleStart();
+
+                startOfCurrentParagraph = startOfNextParagraph(endingSelection().visibleStart());
+            }
+            setEndingSelection(endOfSelection);
+            doApplyForSingleParagraph(forceCreateList);
+            // Fetch the end of the selection, for the reason mentioned above.
+            endOfSelection = endingSelection().visibleEnd();
+            setEndingSelection(VisibleSelection(startOfSelection, endOfSelection));
+            return;
+        }
+    }
+
+    doApplyForSingleParagraph(false);
+}
+
+void InsertListCommand::doApplyForSingleParagraph(bool forceCreateList)
+{
     // FIXME: This will produce unexpected results for a selection that starts just before a
     // table and ends inside the first cell, selectionForParagraphIteration should probably
     // be renamed and deployed inside setEndingSelection().
@@ -147,7 +146,7 @@ void InsertListCommand::doApply()
         unlistifyParagraph(endingSelection().visibleStart(), listNode, listChildNode);
     }
 
-    if (!listChildNode || switchListType || m_forceCreateList)
+    if (!listChildNode || switchListType || forceCreateList)
         m_listElement = listifyParagraph(endingSelection().visibleStart(), listTag);
 }
 

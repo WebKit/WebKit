@@ -1,3 +1,21 @@
+2010-07-13  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Kent Tamura.
+
+        InsertListCommand's modifyRange and doApply should be merged
+        https://bugs.webkit.org/show_bug.cgi?id=41403
+
+        Isolated the code in doApply to insert and remove lists for single paragraph into doApplyForSingleParagraph.
+        Merged the code in modifyRange into doApply and cleaned up.
+
+        No test is added since this is a clean up.
+
+        * editing/InsertListCommand.cpp:
+        (WebCore::InsertListCommand::InsertListCommand): m_forceCreateList is no longer initialized
+        (WebCore::InsertListCommand::doApply): Isolated the code to insert/remove lists in doApplyForSingleParagraph
+        (WebCore::InsertListCommand::doApplyForSingleParagraph): Insert/remove lists for single paragraph
+        * editing/InsertListCommand.h: Added doApplyForSingleParagraph and removed m_forceCreateList
+
 2010-07-12  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.
