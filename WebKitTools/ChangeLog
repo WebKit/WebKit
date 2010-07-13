@@ -1,3 +1,9 @@
+2010-07-13  Andreas Kling  <andreas.kling@nokia.com>
+
+        Unreviewed. Adding myself as committer.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2010-07-07  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         Reviewed by Darin Adler.

@@ -74,6 +74,7 @@ committers_unable_to_review = [
     Committer("Andrei Popescu", "andreip@google.com", "andreip"),
     Committer("Andrew Wellington", ["andrew@webkit.org", "proton@wiretapped.net"], "proton"),
     Committer("Andras Becsi", "abecsi@webkit.org", "bbandix"),
+    Committer("Andreas Kling", "andreas.kling@nokia.com", "kling"),
     Committer("Andy Estes", "aestes@apple.com", "estes"),
     Committer("Anthony Ricaud", "rik@webkit.org", "rik"),
     Committer("Anton Muhin", "antonm@chromium.org", "antonm"),
