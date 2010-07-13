@@ -1,3 +1,14 @@
+2010-07-13  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        Reviewed by Oliver Hunt.
+
+        Separate CoreFoundation specific tests in JSC's testapi.c
+
+        testapi.c depends on the Core Foundation.
+        https://bugs.webkit.org/show_bug.cgi?id=40058
+
+        * WebKit.pro: enable compilation of JSC C API test.
+
 2010-07-13  Scott Violet  <sky@chromium.org>
 
         Reviewed by David Levin.

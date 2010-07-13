@@ -13,6 +13,7 @@ contains(QT_CONFIG, declarative) {
     exists($$PWD/WebKit/qt/declarative): SUBDIRS += WebKit/qt/declarative
 }
 exists($$PWD/JavaScriptCore/jsc.pro): SUBDIRS += JavaScriptCore/jsc.pro
+exists($$PWD/JavaScriptCore/testapi.pro): SUBDIRS += JavaScriptCore/testapi.pro
 exists($$PWD/WebKit/qt/tests): SUBDIRS += WebKit/qt/tests
 exists($$PWD/WebKitTools/DumpRenderTree/qt/DumpRenderTree.pro): SUBDIRS += WebKitTools/DumpRenderTree/qt/DumpRenderTree.pro
 exists($$PWD/WebKitTools/DumpRenderTree/qt/ImageDiff.pro): SUBDIRS += WebKitTools/DumpRenderTree/qt/ImageDiff.pro

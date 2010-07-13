@@ -1,3 +1,21 @@
+2010-07-13  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        Reviewed by Oliver Hunt.
+
+        testapi.c depends on the Core Foundation.
+        https://bugs.webkit.org/show_bug.cgi?id=40058
+
+        Separate CoreFoundation specific tests in JSC's testapi.c. Enabling it
+        to compile in Qt environments.
+
+        All tests should work except for the JSStringCreateWithCharacters() function,
+        because its tests depend on Core Foundation specific functions.
+
+        * API/tests/testapi.c:
+        (testJSStringRefCF): moved CoreFoundation specific tests to this function.
+        (main): The moves plus some minor tweaks.
+        * testapi.pro: Added.
+
 2010-07-13  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Oliver Hunt.
