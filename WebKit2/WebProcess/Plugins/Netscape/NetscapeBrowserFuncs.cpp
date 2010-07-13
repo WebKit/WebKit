@@ -29,6 +29,350 @@
 #include "NotImplemented.h"
 
 namespace WebKit {
+    
+static NPError NPN_GetURL(NPP instance, const char* url, const char* target)
+{
+    notImplemented();
+    return NPERR_GENERIC_ERROR;
+}
+
+static NPError NPN_PostURL(NPP instance, const char* url, const char* target, uint32_t len, const char* buf, NPBool file)
+{
+    notImplemented();
+    return NPERR_GENERIC_ERROR;
+}
+
+static NPError NPN_RequestRead(NPStream* stream, NPByteRange* rangeList)
+{
+    notImplemented();
+    return NPERR_GENERIC_ERROR;
+}
+
+static NPError NPN_NewStream(NPP instance, NPMIMEType type, const char* target, NPStream** stream)
+{
+    notImplemented();
+    return NPERR_GENERIC_ERROR;
+}
+    
+static int32_t NPN_Write(NPP instance, NPStream* stream, int32_t len, void* buffer)
+{
+    notImplemented();    
+    return -1;
+}
+    
+static NPError NPN_DestroyStream(NPP instance, NPStream* stream, NPReason reason)
+{
+    notImplemented();
+    return NPERR_GENERIC_ERROR;
+}
+
+static void NPN_Status(NPP instance, const char* message)
+{
+    notImplemented();
+}
+    
+static const char* NPN_UserAgent(NPP npp)
+{
+    if (!npp)
+        return 0;
+    
+    RefPtr<NetscapePlugin> plugin = NetscapePlugin::fromNPP(npp);
+    return plugin->userAgent();
+}
+
+static void* NPN_MemAlloc(uint32_t size)
+{
+    // We could use fastMalloc here, but there might be plug-ins that mix NPN_MemAlloc/NPN_MemFree with malloc and free,
+    // so having them be equivalent seems like a good idea.
+    return malloc(size);
+}
+
+static void NPN_MemFree(void* ptr)
+{
+    // We could use fastFree here, but there might be plug-ins that mix NPN_MemAlloc/NPN_MemFree with malloc and free,
+    // so having them be equivalent seems like a good idea.
+    free(ptr);
+}
+
+static uint32_t NPN_MemFlush(uint32_t size)
+{
+    return 0;
+}
+
+static void NPN_ReloadPlugins(NPBool reloadPages)
+{
+    notImplemented();
+}
+
+static JRIEnv* NPN_GetJavaEnv(void)
+{
+    notImplemented();
+    return 0;
+}
+
+static jref NPN_GetJavaPeer(NPP instance)
+{
+    notImplemented();
+    return 0;
+}
+
+static NPError NPN_GetURLNotify(NPP instance, const char* url, const char* target, void* notifyData)
+{
+    notImplemented();
+    return NPERR_GENERIC_ERROR;
+}
+
+static NPError NPN_PostURLNotify(NPP instance, const char* url, const char* target, uint32_t len, const char* buf, NPBool file, void* notifyData)
+{
+    notImplemented();
+    return NPERR_GENERIC_ERROR;
+}
+
+static NPError NPN_GetValue(NPP instance, NPNVariable variable, void *value)
+{
+    switch (variable) {
+#if PLATFORM(MAC)
+        case NPNVsupportsCoreGraphicsBool:
+            // Always claim to support the Core Graphics drawing model.
+            *(NPBool *)value = true;
+            break;
+
+        case NPNVsupportsCocoaBool:
+            // Always claim to support the Cocoa event model.
+            *(NPBool *)value = true;
+            break;
+#endif
+        default:
+            notImplemented();
+            return NPERR_GENERIC_ERROR;
+    }
+
+    return NPERR_NO_ERROR;
+}
+
+static NPError NPN_SetValue(NPP npp, NPPVariable variable, void *value)
+{
+    switch (variable) {
+#if PLATFORM(MAC)
+        case NPPVpluginDrawingModel: {
+            RefPtr<NetscapePlugin> plugin = NetscapePlugin::fromNPP(npp);
+            
+            NPDrawingModel drawingModel = static_cast<NPDrawingModel>(reinterpret_cast<uintptr_t>(value));
+            return plugin->setDrawingModel(drawingModel);
+        }
+
+        case NPPVpluginEventModel: {
+            RefPtr<NetscapePlugin> plugin = NetscapePlugin::fromNPP(npp);
+            
+            NPEventModel eventModel = static_cast<NPEventModel>(reinterpret_cast<uintptr_t>(value));
+            return plugin->setEventModel(eventModel);
+        }
+#endif
+
+        default:
+            notImplemented();
+            return NPERR_GENERIC_ERROR;
+    }
+    
+    return NPERR_NO_ERROR;
+}
+
+static void NPN_InvalidateRect(NPP npp, NPRect* invalidRect)
+{
+    RefPtr<NetscapePlugin> plugin = NetscapePlugin::fromNPP(npp);
+    plugin->invalidate(invalidRect);
+}
+
+static void NPN_InvalidateRegion(NPP npp, NPRegion invalidRegion)
+{
+    // FIXME: We could at least figure out the bounding rectangle of the invalid region.
+    RefPtr<NetscapePlugin> plugin = NetscapePlugin::fromNPP(npp);
+    plugin->invalidate(0);
+}
+
+static void NPN_ForceRedraw(NPP instance)
+{
+    notImplemented();
+}
+
+static NPIdentifier NPN_GetStringIdentifier(const NPUTF8 *name)
+{
+    notImplemented();
+    return 0;
+}
+    
+static void NPN_GetStringIdentifiers(const NPUTF8 **names, int32_t nameCount, NPIdentifier *identifiers)
+{
+    notImplemented();
+}
+
+static NPIdentifier NPN_GetIntIdentifier(int32_t intid)
+{
+    notImplemented();
+    return 0;
+}
+
+static bool NPN_IdentifierIsString(NPIdentifier identifier)
+{
+    notImplemented();
+    return false;
+}
+
+static NPUTF8 *NPN_UTF8FromIdentifier(NPIdentifier identifier)
+{
+    notImplemented();
+    return 0;
+}
+
+static int32_t NPN_IntFromIdentifier(NPIdentifier identifier)
+{
+    notImplemented();
+    return 0;
+}
+
+static NPObject *NPN_CreateObject(NPP npp, NPClass *aClass)
+{
+    notImplemented();
+    return 0;
+}
+
+static NPObject *NPN_RetainObject(NPObject *npobj)
+{
+    notImplemented();
+    return 0;
+}
+
+static void NPN_ReleaseObject(NPObject *npobj)
+{
+    notImplemented();
+}
+
+static bool NPN_Invoke(NPP npp, NPObject *npobj, NPIdentifier methodName, const NPVariant *args, uint32_t argCount, NPVariant *result)
+{
+    notImplemented();
+    return false;
+}
+
+static bool NPN_InvokeDefault(NPP npp, NPObject *npobj, const NPVariant *args, uint32_t argCount, NPVariant *result)
+{
+    notImplemented();
+    return false;
+}
+
+static bool NPN_Evaluate(NPP npp, NPObject *npobj, NPString *script, NPVariant *result)
+{
+    notImplemented();
+    return false;
+}
+
+static bool NPN_GetProperty(NPP npp, NPObject *npobj, NPIdentifier propertyName, NPVariant *result)
+{
+    notImplemented();
+    return false;
+}
+
+static bool NPN_SetProperty(NPP npp, NPObject *npobj, NPIdentifier propertyName, const NPVariant *value)
+{
+    notImplemented();
+    return false;
+}
+
+static bool NPN_RemoveProperty(NPP npp, NPObject *npobj, NPIdentifier propertyName)
+{
+    notImplemented();
+    return false;
+}
+
+static bool NPN_HasProperty(NPP npp, NPObject *npobj, NPIdentifier propertyName)
+{
+    notImplemented();
+    return false;
+}
+
+static bool NPN_HasMethod(NPP npp, NPObject *npobj, NPIdentifier methodName)
+{
+    notImplemented();
+    return false;
+}
+
+static void NPN_ReleaseVariantValue(NPVariant *variant)
+{
+    notImplemented();
+}
+
+static void NPN_SetException(NPObject *npobj, const NPUTF8 *message)
+{
+    notImplemented();
+}
+
+static void NPN_PushPopupsEnabledState(NPP instance, NPBool enabled)
+{
+    notImplemented();
+}
+    
+static void NPN_PopPopupsEnabledState(NPP instance)
+{
+    notImplemented();
+}
+    
+static bool NPN_Enumerate(NPP npp, NPObject *npobj, NPIdentifier **identifier, uint32_t *count)
+{
+    notImplemented();
+    return false;
+}
+
+static void NPN_PluginThreadAsyncCall(NPP instance, void (*func) (void *), void *userData)
+{
+    notImplemented();
+}
+
+static bool NPN_Construct(NPP npp, NPObject *npobj, const NPVariant *args, uint32_t argCount, NPVariant *result)
+{
+    notImplemented();
+    return false;
+}
+
+static NPError NPN_GetValueForURL(NPP instance, NPNURLVariable variable, const char *url, char **value, uint32_t *len)
+{
+    notImplemented();
+    return NPERR_GENERIC_ERROR;
+}
+
+static NPError NPN_SetValueForURL(NPP instance, NPNURLVariable variable, const char *url, const char *value, uint32_t len)
+{
+    notImplemented();
+    return NPERR_GENERIC_ERROR;
+}
+
+static NPError NPN_GetAuthenticationInfo(NPP instance, const char *protocol, const char *host, int32_t port, const char *scheme, 
+                                         const char *realm, char **username, uint32_t *ulen, char **password, uint32_t *plen)
+{
+    notImplemented();
+    return NPERR_GENERIC_ERROR;
+}
+
+static uint32_t NPN_ScheduleTimer(NPP instance, uint32_t interval, NPBool repeat, void (*timerFunc)(NPP npp, uint32_t timerID))
+{
+    notImplemented();
+    return NPERR_GENERIC_ERROR;
+}
+
+static void NPN_UnscheduleTimer(NPP instance, uint32_t timerID)
+{
+    notImplemented();
+}
+
+static NPError NPN_PopUpContextMenu(NPP instance, NPMenu* menu)
+{
+    notImplemented();
+    return NPERR_GENERIC_ERROR;
+}
+
+static NPBool NPN_ConvertPoint(NPP instance, double sourceX, double sourceY, NPCoordinateSpace sourceSpace, double *destX, double *destY, NPCoordinateSpace destSpace)
+{
+    notImplemented();
+    return false;
+}
 
 static void initializeBrowserFuncs(NPNetscapeFuncs &netscapeFuncs)
 {
@@ -104,353 +448,3 @@ NPNetscapeFuncs* netscapeBrowserFuncs()
 }
 
 } // namespace WebKit
-
-using namespace WebKit;
-
-extern "C" {
-    
-NPError NPN_GetURL(NPP instance, const char* url, const char* target)
-{
-    notImplemented();
-    return NPERR_GENERIC_ERROR;
-}
-
-NPError NPN_PostURL(NPP instance, const char* url, const char* target, uint32_t len, const char* buf, NPBool file)
-{
-    notImplemented();
-    return NPERR_GENERIC_ERROR;
-}
-
-NPError NPN_RequestRead(NPStream* stream, NPByteRange* rangeList)
-{
-    notImplemented();
-    return NPERR_GENERIC_ERROR;
-}
-
-NPError NPN_NewStream(NPP instance, NPMIMEType type, const char* target, NPStream** stream)
-{
-    notImplemented();
-    return NPERR_GENERIC_ERROR;
-}
-    
-int32_t NPN_Write(NPP instance, NPStream* stream, int32_t len, void* buffer)
-{
-    notImplemented();    
-    return -1;
-}
-    
-NPError NPN_DestroyStream(NPP instance, NPStream* stream, NPReason reason)
-{
-    notImplemented();
-    return NPERR_GENERIC_ERROR;
-}
-
-void NPN_Status(NPP instance, const char* message)
-{
-    notImplemented();
-}
-    
-const char* NPN_UserAgent(NPP npp)
-{
-    if (!npp)
-        return 0;
-    
-    RefPtr<NetscapePlugin> plugin = NetscapePlugin::fromNPP(npp);
-    return plugin->userAgent();
-}
-
-void* NPN_MemAlloc(uint32_t size)
-{
-    // We could use fastMalloc here, but there might be plug-ins that mix NPN_MemAlloc/NPN_MemFree with malloc and free,
-    // so having them be equivalent seems like a good idea.
-    return malloc(size);
-}
-
-void NPN_MemFree(void* ptr)
-{
-    // We could use fastFree here, but there might be plug-ins that mix NPN_MemAlloc/NPN_MemFree with malloc and free,
-    // so having them be equivalent seems like a good idea.
-    free(ptr);
-}
-
-uint32_t NPN_MemFlush(uint32_t size)
-{
-    return 0;
-}
-
-void NPN_ReloadPlugins(NPBool reloadPages)
-{
-    notImplemented();
-}
-
-JRIEnv* NPN_GetJavaEnv(void)
-{
-    notImplemented();
-    return 0;
-}
-
-jref NPN_GetJavaPeer(NPP instance)
-{
-    notImplemented();
-    return 0;
-}
-
-NPError NPN_GetURLNotify(NPP instance, const char* url, const char* target, void* notifyData)
-{
-    notImplemented();
-    return NPERR_GENERIC_ERROR;
-}
-
-NPError NPN_PostURLNotify(NPP instance, const char* url, const char* target, uint32_t len, const char* buf, NPBool file, void* notifyData)
-{
-    notImplemented();
-    return NPERR_GENERIC_ERROR;
-}
-
-NPError NPN_GetValue(NPP instance, NPNVariable variable, void *value)
-{
-    switch (variable) {
-#if PLATFORM(MAC)
-        case NPNVsupportsCoreGraphicsBool:
-            // Always claim to support the Core Graphics drawing model.
-            *(NPBool *)value = true;
-            break;
-
-        case NPNVsupportsCocoaBool:
-            // Always claim to support the Cocoa event model.
-            *(NPBool *)value = true;
-            break;
-#endif
-        default:
-            notImplemented();
-            return NPERR_GENERIC_ERROR;
-    }
-
-    return NPERR_NO_ERROR;
-}
-
-NPError NPN_SetValue(NPP npp, NPPVariable variable, void *value)
-{
-    switch (variable) {
-#if PLATFORM(MAC)
-        case NPPVpluginDrawingModel: {
-            RefPtr<NetscapePlugin> plugin = NetscapePlugin::fromNPP(npp);
-            
-            NPDrawingModel drawingModel = static_cast<NPDrawingModel>(reinterpret_cast<uintptr_t>(value));
-            return plugin->setDrawingModel(drawingModel);
-        }
-
-        case NPPVpluginEventModel: {
-            RefPtr<NetscapePlugin> plugin = NetscapePlugin::fromNPP(npp);
-            
-            NPEventModel eventModel = static_cast<NPEventModel>(reinterpret_cast<uintptr_t>(value));
-            return plugin->setEventModel(eventModel);
-        }
-#endif
-
-        default:
-            notImplemented();
-            return NPERR_GENERIC_ERROR;
-    }
-    
-    return NPERR_NO_ERROR;
-}
-
-void NPN_InvalidateRect(NPP npp, NPRect* invalidRect)
-{
-    RefPtr<NetscapePlugin> plugin = NetscapePlugin::fromNPP(npp);
-    plugin->invalidate(invalidRect);
-}
-
-void NPN_InvalidateRegion(NPP npp, NPRegion invalidRegion)
-{
-    // FIXME: We could at least figure out the bounding rectangle of the invalid region.
-    RefPtr<NetscapePlugin> plugin = NetscapePlugin::fromNPP(npp);
-    plugin->invalidate(0);
-}
-
-void NPN_ForceRedraw(NPP instance)
-{
-    notImplemented();
-}
-
-NPIdentifier NPN_GetStringIdentifier(const NPUTF8 *name)
-{
-    notImplemented();
-    return 0;
-}
-    
-void NPN_GetStringIdentifiers(const NPUTF8 **names, int32_t nameCount, NPIdentifier *identifiers)
-{
-    notImplemented();
-}
-
-NPIdentifier NPN_GetIntIdentifier(int32_t intid)
-{
-    notImplemented();
-    return 0;
-}
-
-bool NPN_IdentifierIsString(NPIdentifier identifier)
-{
-    notImplemented();
-    return false;
-}
-
-NPUTF8 *NPN_UTF8FromIdentifier(NPIdentifier identifier)
-{
-    notImplemented();
-    return 0;
-}
-
-int32_t NPN_IntFromIdentifier(NPIdentifier identifier)
-{
-    notImplemented();
-    return 0;
-}
-
-NPObject *NPN_CreateObject(NPP npp, NPClass *aClass)
-{
-    notImplemented();
-    return 0;
-}
-
-NPObject *NPN_RetainObject(NPObject *npobj)
-{
-    notImplemented();
-    return 0;
-}
-
-void NPN_ReleaseObject(NPObject *npobj)
-{
-    notImplemented();
-}
-
-bool NPN_Invoke(NPP npp, NPObject *npobj, NPIdentifier methodName, const NPVariant *args, uint32_t argCount, NPVariant *result)
-{
-    notImplemented();
-    return false;
-}
-
-bool NPN_InvokeDefault(NPP npp, NPObject *npobj, const NPVariant *args, uint32_t argCount, NPVariant *result)
-{
-    notImplemented();
-    return false;
-}
-
-bool NPN_Evaluate(NPP npp, NPObject *npobj, NPString *script, NPVariant *result)
-{
-    notImplemented();
-    return false;
-}
-
-bool NPN_GetProperty(NPP npp, NPObject *npobj, NPIdentifier propertyName, NPVariant *result)
-{
-    notImplemented();
-    return false;
-}
-
-bool NPN_SetProperty(NPP npp, NPObject *npobj, NPIdentifier propertyName, const NPVariant *value)
-{
-    notImplemented();
-    return false;
-}
-
-bool NPN_RemoveProperty(NPP npp, NPObject *npobj, NPIdentifier propertyName)
-{
-    notImplemented();
-    return false;
-}
-
-bool NPN_HasProperty(NPP npp, NPObject *npobj, NPIdentifier propertyName)
-{
-    notImplemented();
-    return false;
-}
-
-bool NPN_HasMethod(NPP npp, NPObject *npobj, NPIdentifier methodName)
-{
-    notImplemented();
-    return false;
-}
-
-void NPN_ReleaseVariantValue(NPVariant *variant)
-{
-    notImplemented();
-}
-
-void NPN_SetException(NPObject *npobj, const NPUTF8 *message)
-{
-    notImplemented();
-}
-
-void NPN_PushPopupsEnabledState(NPP instance, NPBool enabled)
-{
-    notImplemented();
-}
-    
-void NPN_PopPopupsEnabledState(NPP instance)
-{
-    notImplemented();
-}
-    
-bool NPN_Enumerate(NPP npp, NPObject *npobj, NPIdentifier **identifier, uint32_t *count)
-{
-    notImplemented();
-    return false;
-}
-
-void NPN_PluginThreadAsyncCall(NPP instance, void (*func) (void *), void *userData)
-{
-    notImplemented();
-}
-
-bool NPN_Construct(NPP npp, NPObject *npobj, const NPVariant *args, uint32_t argCount, NPVariant *result)
-{
-    notImplemented();
-    return false;
-}
-
-NPError NPN_GetValueForURL(NPP instance, NPNURLVariable variable, const char *url, char **value, uint32_t *len)
-{
-    notImplemented();
-    return NPERR_GENERIC_ERROR;
-}
-
-NPError NPN_SetValueForURL(NPP instance, NPNURLVariable variable, const char *url, const char *value, uint32_t len)
-{
-    notImplemented();
-    return NPERR_GENERIC_ERROR;
-}
-
-NPError NPN_GetAuthenticationInfo(NPP instance, const char *protocol, const char *host, int32_t port, const char *scheme, 
-                                  const char *realm, char **username, uint32_t *ulen, char **password, uint32_t *plen)
-{
-    notImplemented();
-    return NPERR_GENERIC_ERROR;
-}
-
-uint32_t NPN_ScheduleTimer(NPP instance, uint32_t interval, NPBool repeat, void (*timerFunc)(NPP npp, uint32_t timerID))
-{
-    notImplemented();
-    return NPERR_GENERIC_ERROR;
-}
-
-void NPN_UnscheduleTimer(NPP instance, uint32_t timerID)
-{
-    notImplemented();
-}
-
-NPError NPN_PopUpContextMenu(NPP instance, NPMenu* menu)
-{
-    notImplemented();
-    return NPERR_GENERIC_ERROR;
-}
-
-NPBool NPN_ConvertPoint(NPP instance, double sourceX, double sourceY, NPCoordinateSpace sourceSpace, double *destX, double *destY, NPCoordinateSpace destSpace)
-{
-    notImplemented();
-    return false;
-}
-
-} // extern "C"

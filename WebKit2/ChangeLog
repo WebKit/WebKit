@@ -37,6 +37,14 @@
 
         Reviewed by Adam Roben.
 
+        Make all NPN_ functions static.
+
+        * WebProcess/Plugins/Netscape/NetscapeBrowserFuncs.cpp:
+
+2010-07-13  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam Roben.
+
         Document the member functions of the abstract Plugin and PluginController classes.
 
         * WebProcess/Plugins/Plugin.h:
