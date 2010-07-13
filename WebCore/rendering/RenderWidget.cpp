@@ -27,6 +27,7 @@
 #include "AnimationController.h"
 #include "GraphicsContext.h"
 #include "HitTestResult.h"
+#include "RenderCounter.h"
 #include "RenderView.h"
 #include "RenderWidgetProtector.h"
 
@@ -118,6 +119,9 @@ void RenderWidget::destroy()
     if (RenderView* v = view())
         v->removeWidget(this);
 
+    if (m_hasCounterNodeMap)
+        RenderCounter::destroyCounterNodes(this);
+    
     if (AXObjectCache::accessibilityEnabled()) {
         document()->axObjectCache()->childrenChanged(this->parent());
         document()->axObjectCache()->remove(this);
