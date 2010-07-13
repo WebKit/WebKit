@@ -1,5 +1,12 @@
 2010-07-12  Steve Falkenburg  <sfalken@apple.com>
 
+        Windows build fix.
+        Don't build MiniBrowser except for Debug_Internal.
+
+        * WebKit2.sln:
+
+2010-07-12  Steve Falkenburg  <sfalken@apple.com>
+
         Reviewed by Maciej Stachowiak.
 
         Make WebKit2 be built by build-webkit (so it will be built by build.webkit.org bots)
