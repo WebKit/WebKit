@@ -1,3 +1,12 @@
+2010-07-13  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Remove check-header-includes, as it didn't turn out to be very useful.
+        https://bugs.webkit.org/show_bug.cgi?id=41970
+
+        * Scripts/check-header-includes: Removed.
+
 2010-07-12  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Maciej Stachowiak.
