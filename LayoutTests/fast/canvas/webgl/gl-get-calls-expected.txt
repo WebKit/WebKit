@@ -67,6 +67,9 @@ PASS context.getParameter(context.UNPACK_ALIGNMENT) is 4
 PASS context.getParameter(context.UNPACK_FLIP_Y_WEBGL) is false
 PASS context.getParameter(context.UNPACK_PREMULTIPLY_ALPHA_WEBGL) is false
 PASS context.getParameter(context.VIEWPORT) is [0, 0, 2, 2]
+PASS context.getParameter(context.MAX_FRAGMENT_UNIFORM_VECTORS) >= 16 is true
+PASS context.getParameter(context.MAX_VERTEX_UNIFORM_VECTORS) >= 128 is true
+PASS context.getParameter(context.MAX_VARYING_VECTORS) >= 8 is true
 
 PASS successfullyParsed is true
 

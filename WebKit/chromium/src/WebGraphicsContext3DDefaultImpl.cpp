@@ -1120,6 +1120,10 @@ void WebGraphicsContext3DDefaultImpl::getIntegerv(unsigned long pname, int* valu
     // Need to emulate IMPLEMENTATION_COLOR_READ_FORMAT/TYPE for GL.  Any valid
     // combination should work, but GL_RGB/GL_UNSIGNED_BYTE might be the most
     // useful for desktop WebGL users.
+    // Need to emulate MAX_FRAGMENT/VERTEX_UNIFORM_VECTORS and MAX_VARYING_VECTORS
+    // because desktop GL's corresponding queries return the number of components
+    // whereas GLES2 return the number of vectors (each vector has 4 components).
+    // Therefore, the value returned by desktop GL needs to be divided by 4.
     makeContextCurrent();
     switch (pname) {
     case 0x8B9B: // IMPLEMENTATION_COLOR_READ_FORMAT
@@ -1127,6 +1131,18 @@ void WebGraphicsContext3DDefaultImpl::getIntegerv(unsigned long pname, int* valu
         break;
     case 0x8B9A: // IMPLEMENTATION_COLOR_READ_TYPE
         *value = GL_UNSIGNED_BYTE;
+        break;
+    case 0x8DFD: // MAX_FRAGMENT_UNIFORM_VECTORS
+        glGetIntegerv(GL_MAX_FRAGMENT_UNIFORM_COMPONENTS, value);
+        *value /= 4;
+        break;
+    case 0x8DFB: // MAX_VERTEX_UNIFORM_VECTORS
+        glGetIntegerv(GL_MAX_VERTEX_UNIFORM_COMPONENTS, value);
+        *value /= 4;
+        break;
+    case 0x8DFC: // MAX_VARYING_VECTORS
+        glGetIntegerv(GL_MAX_VARYING_FLOATS, value);
+        *value /= 4;
         break;
     default:
         glGetIntegerv(pname, value);
