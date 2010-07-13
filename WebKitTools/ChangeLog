@@ -1,3 +1,18 @@
+2010-07-12  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Steve Falkenburg.
+
+        One http test timing out on Windows can cause all future tests to time out
+        https://bugs.webkit.org/show_bug.cgi?id=42146
+        
+        There have been multiple times on the Windows bots where one http test timing out causes all future
+        http tests to time out. This is because the httpd process becomes unresponsive. When an http test
+        times out, we should restart httpd on Cygwin to prevent this.
+
+        * Scripts/old-run-webkit-tests: If an http test timed out on Cygwin, close httpd and restart it.
+        * Scripts/webkitperl/httpd.pm: Add additional logic to closeHTTPD to teach it about taskkill if
+            using kill fails.
+
 2010-07-12  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Dan Bernstein.

@@ -1635,6 +1635,12 @@ sub testCrashedOrTimedOut($$$$$)
     kill 9, $dumpToolPID unless $didCrash;
 
     closeDumpTool();
+    
+    return unless isCygwin() && !$didCrash && $base =~ /^http/;
+    # On Cygwin, http tests timing out can be a symptom of a non-responsive httpd.
+    # If we timed out running an http test, try restarting httpd.
+    $isHttpdOpen = !closeHTTPD();
+    configureAndOpenHTTPDIfNeeded();
 }
 
 sub printFailureMessageForTest($$)

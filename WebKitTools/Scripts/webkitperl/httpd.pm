@@ -206,6 +206,13 @@ sub closeHTTPD
     }
     cleanUp();
     if (!$retryCount) {
+        if (isCygwin()) {
+            my $result = system("taskkill /f /im httpd.exe");
+            # taskkill returning 0 means a successful kill, and 32768 means that no process matching
+            # the name was found. For either of these cases, the process has been successfully killed.
+            return 1 if $result == 0 || $result == 32768;
+            return 0;
+        }
         print STDERR "Timed out waiting for httpd to terminate!\n";
         return 0;
     }
