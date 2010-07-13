@@ -243,15 +243,27 @@ void FillLayer::fillUnsetProperties()
 
 void FillLayer::cullEmptyLayers()
 {
+    // CSS3 background layering: the number of background layers is determined
+    // by the number of values in the 'background-image' property.
+    // http://www.w3.org/TR/css3-background/#layering
+
     FillLayer* next;
     for (FillLayer* p = this; p; p = next) {
         next = p->m_next;
-        if (next && !next->isImageSet() &&
-            !next->isXPositionSet() && !next->isYPositionSet() &&
-            !next->isAttachmentSet() && !next->isClipSet() &&
-            !next->isCompositeSet() && !next->isOriginSet() &&
-            !next->isRepeatXSet() && !next->isRepeatYSet()
-            && !next->isSizeSet()) {
+        if (!next)
+            break;
+
+        bool anyAttributeSet = next->isXPositionSet()
+            || next->isYPositionSet()
+            || next->isAttachmentSet()
+            || next->isClipSet()
+            || next->isCompositeSet()
+            || next->isOriginSet()
+            || next->isRepeatXSet()
+            || next->isRepeatYSet()
+            || next->isSizeSet();
+
+        if (!next->isImageSet() || !anyAttributeSet) {
             delete next;
             p->m_next = 0;
             break;
