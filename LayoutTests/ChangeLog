@@ -1,5 +1,14 @@
 2010-07-13  Andreas Kling  <andreas.kling@nokia.com>
 
+        Unreviewed. Rebaseline resize-from-plugin.html
+
+        * platform/gtk/plugins/resize-from-plugin-expected.txt:
+        * platform/qt/plugins/resize-from-plugin-expected.txt:
+        * platform/win/plugins/resize-from-plugin-expected.txt:
+        * plugins/resize-from-plugin-expected.txt:
+
+2010-07-13  Andreas Kling  <andreas.kling@nokia.com>
+
         Unreviewed.
 
         Putting 2d.imageData.get.source.outside.html back on the mac skiplist
