@@ -32,6 +32,7 @@ LIST(APPEND WebKit_SOURCES
     efl/WebCoreSupport/InspectorClientEfl.cpp
 
     efl/ewk/ewk_contextmenu.cpp
+    efl/ewk/ewk_cookies.cpp
     efl/ewk/ewk_frame.cpp
     efl/ewk/ewk_history.cpp
     efl/ewk/ewk_main.cpp

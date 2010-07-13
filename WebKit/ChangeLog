@@ -1,3 +1,27 @@
+2010-07-13  Rafael Antognolli  <antognolli@profusion.mobi>
+
+        Reviewed by Antonio Gomes.
+
+        This commit implements an API for configuring a path to the cookie
+        file in the Mozilla "cookies.txt" format, and functions to deal with it
+        in a more EFL like API.
+
+        [EFL] Add API for dealing with cookies in EFL port.
+        https://bugs.webkit.org/show_bug.cgi?id=41770
+
+        * CMakeListsEfl.txt:
+        * efl/ewk/EWebKit.h:
+        * efl/ewk/ewk_cookies.cpp: Added.
+        (ewk_cookies_file_set): Set a path to the file storing cookies.
+        (ewk_cookies_clear): Clear all the cookies from the current cookie jar.
+        (ewk_cookies_get_all): Get all the cookies from the current cookie jar.
+        (ewk_cookies_cookie_del): Delete a specific cookie from the cookie jar.
+        (ewk_cookies_cookie_free): Free memory used by a cookie.
+        (ewk_cookies_policy_set): Set which acceptance policy will be used.
+        (ewk_cookies_policy_get): Get current acceptance policy being used.
+        * efl/ewk/ewk_cookies.h: Added.
+        (_Ewk_Cookie::):
+
 2010-07-12  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
 
         Unreviewed build fix after r60050.

@@ -23,6 +23,7 @@
 #define EWebKit_h
 
 #include "ewk_contextmenu.h"
+#include "ewk_cookies.h"
 #include "ewk_eapi.h"
 #include "ewk_frame.h"
 #include "ewk_history.h"
