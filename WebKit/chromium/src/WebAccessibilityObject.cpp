@@ -32,13 +32,9 @@
 #include "WebAccessibilityObject.h"
 
 #include "AccessibilityObject.h"
-#include "AccessibilityRenderObject.h"
 #include "EventHandler.h"
 #include "FrameView.h"
-#include "Node.h"
 #include "PlatformKeyboardEvent.h"
-#include "WebDocument.h"
-#include "WebNode.h"
 #include "WebPoint.h"
 #include "WebRect.h"
 #include "WebString.h"
@@ -403,39 +399,6 @@ WebString WebAccessibilityObject::title() const
 
     m_private->updateBackingStore();
     return m_private->title();
-}
-
-
-WebNode WebAccessibilityObject::node() const
-{
-    if (!m_private)
-        return WebNode();
-
-    m_private->updateBackingStore();
-
-    if (!m_private->isAccessibilityRenderObject())
-        return WebNode();
-
-    AccessibilityRenderObject* renderObject =
-        reinterpret_cast<AccessibilityRenderObject*>(m_private);
-    Node* node = renderObject->node();
-    if (!node)
-        return WebNode();
-
-    return WebNode(node);
-}
-
-WebDocument WebAccessibilityObject::document() const
-{
-    if (!m_private)
-        return WebDocument();
-
-    m_private->updateBackingStore();
-
-    if (!m_private->isAccessibilityRenderObject())
-        return WebDocument();
-
-    return WebDocument(m_private->document());
 }
 
 WebAccessibilityObject::WebAccessibilityObject(const WTF::PassRefPtr<WebCore::AccessibilityObject>& object)

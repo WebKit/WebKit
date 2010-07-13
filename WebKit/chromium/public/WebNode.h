@@ -39,12 +39,10 @@ namespace WebCore { class Node; }
 
 namespace WebKit {
 class WebDocument;
-class WebElement;
 class WebEventListener;
 class WebEventListenerPrivate;
 class WebFrame;
 class WebNodeList;
-class WebRenderStyle;
 
 // Provides access to some properties of a DOM node.
 class WebNode {
@@ -103,8 +101,6 @@ public:
     WEBKIT_API void removeEventListener(const WebString& eventType, WebEventListener* listener, bool useCapture);
     WEBKIT_API void simulateClick();
     WEBKIT_API WebNodeList getElementsByTagName(const WebString&) const;
-    WEBKIT_API bool hasComputedStyle() const;
-    WEBKIT_API WebRenderStyle computedStyle() const;
 
     // Returns true if the node has a non-empty bounding box in layout.
     // This does not 100% guarantee the user can see it, but is pretty close.

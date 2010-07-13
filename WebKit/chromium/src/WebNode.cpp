@@ -32,21 +32,17 @@
 #include "WebNode.h"
 
 #include "Document.h"
-#include "Element.h"
 #include "Frame.h"
 #include "FrameLoaderClientImpl.h"
 #include "Node.h"
 #include "NodeList.h"
-#include "RenderStyle.h"
 
 #include "EventListenerWrapper.h"
 #include "WebDocument.h"
-#include "WebElement.h"
 #include "WebEvent.h"
 #include "WebEventListener.h"
 #include "WebFrameImpl.h"
 #include "WebNodeList.h"
-#include "WebRenderStyle.h"
 #include "WebString.h"
 #include "WebVector.h"
 
@@ -180,16 +176,6 @@ void WebNode::simulateClick()
 WebNodeList WebNode::getElementsByTagName(const WebString& tag) const
 {
     return WebNodeList(m_private->getElementsByTagName(tag));
-}
-
-bool WebNode::hasComputedStyle() const
-{
-    return m_private->computedStyle();
-}
-
-WebRenderStyle WebNode::computedStyle() const
-{
-    return WebRenderStyle(m_private->computedStyle());
 }
 
 bool WebNode::hasNonEmptyBoundingBox() const
