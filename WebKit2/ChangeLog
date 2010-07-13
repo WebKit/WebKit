@@ -1,3 +1,17 @@
+2010-07-13  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Ada Chan.
+
+        Fix missing resources causing layout test failures
+        https://bugs.webkit.org/show_bug.cgi?id=42179
+        
+        Quick fix to get the layout tests going again.
+        I'll work on getting resource.h from WebKit into a cross-project
+        propagated header after this lands.
+
+        * win/WebKit2.rc:
+        * win/resource.h: Copied from WebKit/win/WebKit.vcproj/resource.h.
+
 2010-07-13  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adam Roben.

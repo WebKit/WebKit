@@ -1,6 +1,7 @@
 // Microsoft Visual C++ generated resource script.
 //
 #include "autoversion.h"
+#include "resource.h"
 #include "winresrc.h"
 
 #ifdef _WIN32
