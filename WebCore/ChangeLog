@@ -1,3 +1,18 @@
+2010-07-12  Tony Gentilcore  <tonyg@chromium.org>
+
+        Reviewed by Oliver Hunt.
+
+        Strip BOMs from source before passing to V8
+        https://bugs.webkit.org/show_bug.cgi?id=42102
+
+        This extra copy may carry a performance penalty. We should investigate
+        whether this allows any simplification in v8/scanner.cc:SkipJavaScriptWhiteSpace().
+
+        No new tests because no new functionality.
+
+        * bindings/v8/ScriptSourceCode.h:
+        (WebCore::ScriptSourceCode::ScriptSourceCode):
+
 2010-07-12  Gustavo Noronha Silva  <gns@gnome.org>
 
         Unreviewed. make distcheck fix.
