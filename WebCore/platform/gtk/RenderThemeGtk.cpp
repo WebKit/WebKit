@@ -762,11 +762,12 @@ bool RenderThemeGtk::paintMediaMuteButton(RenderObject* o, const PaintInfo& pain
 
 bool RenderThemeGtk::paintMediaPlayButton(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
 {
-    HTMLMediaElement* mediaElement = getMediaElementFromRenderObject(o);
-    if (!mediaElement)
+    Node* node = o->node();
+    if (!node)
         return false;
 
-    return paintMediaButton(paintInfo.context, r, mediaElement->canPlay() ? m_playButton.get() : m_pauseButton.get(), m_panelColor, m_mediaIconSize);
+    MediaControlPlayButtonElement* button = static_cast<MediaControlPlayButtonElement*>(node);
+    return paintMediaButton(paintInfo.context, r, button->displayType() == MediaPlayButton ? m_playButton.get() : m_pauseButton.get(), m_panelColor, m_mediaIconSize);
 }
 
 bool RenderThemeGtk::paintMediaSeekBackButton(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
