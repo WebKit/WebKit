@@ -1,3 +1,21 @@
+2010-07-13  Tony Gentilcore  <tonyg@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Implement performance.timing.responseEnd
+        https://bugs.webkit.org/show_bug.cgi?id=42006
+
+        See: http://dev.w3.org/2006/webapi/WebTiming/#nt-response-end
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::finishedLoading):
+        * loader/FrameLoaderTypes.h:
+        (WebCore::FrameLoadTimeline::FrameLoadTimeline):
+        * page/Timing.cpp:
+        (WebCore::Timing::responseEnd):
+        * page/Timing.h:
+        * page/Timing.idl:
+
 2010-07-13  W. James MacLean <wjmaclean@chromium.org>
 
         Reviewed by Darin Fisher

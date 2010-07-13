@@ -54,7 +54,9 @@ function checkWebTimingOnLoad()
 
     shouldBeGreaterThanOrEqual("timing.unloadEventEnd", "timing.navigationStart");
 
-    shouldBeGreaterThanOrEqual("timing.loadEventStart", "timing.unloadEventEnd");
+    shouldBeGreaterThanOrEqual("timing.responseEnd", "timing.unloadEventEnd");
+
+    shouldBeGreaterThanOrEqual("timing.loadEventStart", "timing.responseEnd");
     shouldBe("timing.loadEventEnd", "0");
 
     setTimeout("checkWebTimingAfterLoad()", 0);
@@ -66,7 +68,9 @@ function checkWebTimingAfterLoad()
 
     shouldBeGreaterThanOrEqual("timing.unloadEventEnd", "timing.navigationStart");
 
-    shouldBeGreaterThanOrEqual("timing.loadEventStart", "timing.unloadEventEnd");
+    shouldBeGreaterThanOrEqual("timing.responseEnd", "timing.unloadEventEnd");
+
+    shouldBeGreaterThanOrEqual("timing.loadEventStart", "timing.responseEnd");
     shouldBeGreaterThanOrEqual("timing.loadEventEnd", "timing.loadEventStart + 50");
 
     finishJSTest();

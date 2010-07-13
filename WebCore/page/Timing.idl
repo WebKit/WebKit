@@ -45,7 +45,7 @@ module window {
         // readonly attribute unsigned long long requestStart;
         // readonly attribute unsigned long long requestEnd;
         // readonly attribute unsigned long long responseStart;
-        // readonly attribute unsigned long long responseEnd;
+        readonly attribute unsigned long long responseEnd;
         readonly attribute unsigned long long loadEventStart;
         readonly attribute unsigned long long loadEventEnd;
     };

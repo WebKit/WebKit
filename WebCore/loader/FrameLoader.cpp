@@ -2215,6 +2215,9 @@ void FrameLoader::finishedLoading()
     // Retain because the stop may release the last reference to it.
     RefPtr<Frame> protect(m_frame);
 
+    ASSERT(!m_frameLoadTimeline.responseEnd);
+    m_frameLoadTimeline.responseEnd = currentTime();
+
     RefPtr<DocumentLoader> dl = activeDocumentLoader();
     dl->finishedLoading();
     if (!dl->mainDocumentError().isNull() || !dl->frameLoader())

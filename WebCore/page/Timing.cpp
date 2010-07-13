@@ -68,6 +68,14 @@ unsigned long long Timing::unloadEventEnd() const
     return static_cast<unsigned long long>(m_frame->loader()->frameLoadTimeline()->unloadEventEnd * 1000);
 }
 
+unsigned long long Timing::responseEnd() const
+{
+    if (!m_frame)
+        return 0;
+
+    return static_cast<unsigned long long>(m_frame->loader()->frameLoadTimeline()->responseEnd * 1000);
+}
+
 unsigned long long Timing::loadEventStart() const
 {
     if (!m_frame)
