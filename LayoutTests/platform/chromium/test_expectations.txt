@@ -2498,7 +2498,8 @@ BUG32155 : fast/js/Object-getOwnPropertyNames.html = TEXT
 BUG32145 WIN : animations/3d/transform-origin-vs-functions.html = TEXT PASS
 BUG32149 WIN RELEASE : fast/dom/Document/early-document-access.html = TIMEOUT PASS
 
-BUG32195 MAC : fast/repaint/renderer-destruction-by-invalidateSelection-crash.html = IMAGE+TEXT TEXT IMAGE PASS
+BUG32195 MAC : fast/repaint/renderer-destruction-by-invalidateSelection-crash.html = TEXT IMAGE
+BUG32195 WIN : fast/repaint/renderer-destruction-by-invalidateSelection-crash.html = IMAGE+TEXT TEXT
 
 // Expectations from roll to 53171:53194
 
@@ -3018,10 +3019,9 @@ BUG48859 WIN : fast/inline/continuation-outlines-with-layers-2.html = IMAGE+TEXT
 BUGWK38016 WIN : svg/custom/foreign-object-skew.svg = FAIL
 
 // Introduced before r63242.
-BUGAWONG LINUX : fast/repaint/renderer-destruction-by-invalidateSelection-crash.html = IMAGE+TEXT TEXT IMAGE PASS
-BUGAWONG WIN LINUX : userscripts/simple-stylesheet.html = TEXT
-BUGAWONG WIN LINUX : userscripts/user-style-all-frames.html = TEXT
-BUGAWONG WIN LINUX : userscripts/user-style-top-frame-only.html = TEXT
 BUGAWONG WIN LINUX MAC : http/tests/mime/uppercase-mime-type.html = MISSING
 BUGAWONG WIN : editing/selection/drag-in-iframe.html = IMAGE+TEXT PASS
 
+BUG49021 : userscripts/simple-stylesheet.html = TEXT
+BUG49021 : userscripts/user-style-all-frames.html = TEXT
+BUG49021 : userscripts/user-style-top-frame-only.html = TEXT

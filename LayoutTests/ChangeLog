@@ -123,6 +123,15 @@
 
 2010-07-13  Albert J. Wong  <ajwong@chromium.org>
 
+        Unreviewed, updating test expectatins.
+
+        [chromium] Adding more test expectations to bring chromium build
+        green.
+
+        * platform/chromium/test_expectations.txt:
+
+2010-07-13  Albert J. Wong  <ajwong@chromium.org>
+
         Unreviewed, build fix.
 
         Updating chromium test expectations to keep pace with regressions and
