@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2010 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -28,42 +28,45 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebElement_h
-#define WebElement_h
+#ifndef WebRenderStyle_h
+#define WebRenderStyle_h
 
-#include "WebNode.h"
+#include "WebCommon.h"
+#include "WebPrivatePtr.h"
 
+namespace WebCore { class RenderStyle; }
 #if WEBKIT_IMPLEMENTATION
-namespace WebCore { class Element; }
+namespace WTF { template <typename T> class PassRefPtr; }
 #endif
 
 namespace WebKit {
-class WebNamedNodeMap;
+class WebString;
 
-    // Provides access to some properties of a DOM element node.
-    class WebElement : public WebNode {
-    public:
-        WebElement() : WebNode() { }
-        WebElement(const WebElement& e) : WebNode(e) { }
+// Provides readonly access to some properties of a DOM node's style.
+class WebRenderStyle {
+public:
+    ~WebRenderStyle() { reset(); }
 
-        WebElement& operator=(const WebElement& e) { WebNode::assign(e); return *this; }
-        void assign(const WebElement& e) { WebNode::assign(e); }
+    WebRenderStyle() { }
+    WebRenderStyle(const WebRenderStyle& n) { assign(n); }
+    WebRenderStyle& operator=(const WebRenderStyle& n)
+    {
+        assign(n);
+        return *this;
+    }
 
-        WEBKIT_API bool isFormControlElement() const;
-        WEBKIT_API WebString tagName() const;
-        WEBKIT_API bool hasTagName(const WebString&) const;
-        WEBKIT_API bool hasAttribute(const WebString&) const;
-        WEBKIT_API WebString getAttribute(const WebString&) const;
-        WEBKIT_API bool setAttribute(const WebString& name, const WebString& value);
-        WEBKIT_API WebNamedNodeMap attributes() const;
-        WEBKIT_API WebString innerText() const;
+    WEBKIT_API void reset();
+    WEBKIT_API void assign(const WebRenderStyle&);
+
+    WEBKIT_API WebString display() const;
 
 #if WEBKIT_IMPLEMENTATION
-        WebElement(const WTF::PassRefPtr<WebCore::Element>&);
-        WebElement& operator=(const WTF::PassRefPtr<WebCore::Element>&);
-        operator WTF::PassRefPtr<WebCore::Element>() const;
+    WebRenderStyle(const WTF::PassRefPtr<WebCore::RenderStyle>&);
 #endif
-    };
+
+private:
+    WebPrivatePtr<WebCore::RenderStyle> m_private;
+};
 
 } // namespace WebKit
 

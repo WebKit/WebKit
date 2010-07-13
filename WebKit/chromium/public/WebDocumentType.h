@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2010 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -28,42 +28,40 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebElement_h
-#define WebElement_h
+#ifndef WebDocumentType_h
+#define WebDocumentType_h
 
 #include "WebNode.h"
 
 #if WEBKIT_IMPLEMENTATION
-namespace WebCore { class Element; }
+namespace WebCore { class DocumentType; }
+namespace WTF { template <typename T> class PassRefPtr; }
 #endif
 
 namespace WebKit {
-class WebNamedNodeMap;
+class WebString;
 
-    // Provides access to some properties of a DOM element node.
-    class WebElement : public WebNode {
-    public:
-        WebElement() : WebNode() { }
-        WebElement(const WebElement& e) : WebNode(e) { }
+// Provides readonly access to some properties of a DOM document type.
+class WebDocumentType : public WebNode {
+public:
+    WebDocumentType() { }
+    WebDocumentType(const WebDocumentType& e) : WebNode(e) { }
 
-        WebElement& operator=(const WebElement& e) { WebNode::assign(e); return *this; }
-        void assign(const WebElement& e) { WebNode::assign(e); }
+    WebDocumentType& operator=(const WebDocumentType& e)
+    {
+        WebNode::assign(e);
+        return *this;
+    }
+    void assign(const WebDocumentType& e) { WebNode::assign(e); }
 
-        WEBKIT_API bool isFormControlElement() const;
-        WEBKIT_API WebString tagName() const;
-        WEBKIT_API bool hasTagName(const WebString&) const;
-        WEBKIT_API bool hasAttribute(const WebString&) const;
-        WEBKIT_API WebString getAttribute(const WebString&) const;
-        WEBKIT_API bool setAttribute(const WebString& name, const WebString& value);
-        WEBKIT_API WebNamedNodeMap attributes() const;
-        WEBKIT_API WebString innerText() const;
+    WEBKIT_API WebString name() const;
 
 #if WEBKIT_IMPLEMENTATION
-        WebElement(const WTF::PassRefPtr<WebCore::Element>&);
-        WebElement& operator=(const WTF::PassRefPtr<WebCore::Element>&);
-        operator WTF::PassRefPtr<WebCore::Element>() const;
+    WebDocumentType(const WTF::PassRefPtr<WebCore::DocumentType>&);
+    WebDocumentType& operator=(const WTF::PassRefPtr<WebCore::DocumentType>&);
+    operator WTF::PassRefPtr<WebCore::DocumentType>() const;
 #endif
-    };
+};
 
 } // namespace WebKit
 

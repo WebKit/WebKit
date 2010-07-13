@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2010 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -28,43 +28,42 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebElement_h
-#define WebElement_h
+#include "config.h"
+#include "WebNamedNodeMap.h"
 
+#include "NamedNodeMap.h"
+#include "Node.h"
+#include "WebAttribute.h"
 #include "WebNode.h"
+#include <wtf/PassRefPtr.h>
 
-#if WEBKIT_IMPLEMENTATION
-namespace WebCore { class Element; }
-#endif
+using namespace WebCore;
 
 namespace WebKit {
-class WebNamedNodeMap;
 
-    // Provides access to some properties of a DOM element node.
-    class WebElement : public WebNode {
-    public:
-        WebElement() : WebNode() { }
-        WebElement(const WebElement& e) : WebNode(e) { }
+void WebNamedNodeMap::reset()
+{
+    m_private.reset();
+}
 
-        WebElement& operator=(const WebElement& e) { WebNode::assign(e); return *this; }
-        void assign(const WebElement& e) { WebNode::assign(e); }
+void WebNamedNodeMap::assign(const WebNamedNodeMap& other)
+{
+    m_private = other.m_private;
+}
 
-        WEBKIT_API bool isFormControlElement() const;
-        WEBKIT_API WebString tagName() const;
-        WEBKIT_API bool hasTagName(const WebString&) const;
-        WEBKIT_API bool hasAttribute(const WebString&) const;
-        WEBKIT_API WebString getAttribute(const WebString&) const;
-        WEBKIT_API bool setAttribute(const WebString& name, const WebString& value);
-        WEBKIT_API WebNamedNodeMap attributes() const;
-        WEBKIT_API WebString innerText() const;
+WebNamedNodeMap::WebNamedNodeMap(const PassRefPtr<NamedNodeMap>& other)
+    : m_private(other)
+{
+}
 
-#if WEBKIT_IMPLEMENTATION
-        WebElement(const WTF::PassRefPtr<WebCore::Element>&);
-        WebElement& operator=(const WTF::PassRefPtr<WebCore::Element>&);
-        operator WTF::PassRefPtr<WebCore::Element>() const;
-#endif
-    };
+unsigned WebNamedNodeMap::length() const
+{
+    return m_private->length();
+}
+
+WebAttribute WebNamedNodeMap::attributeItem(unsigned index) const
+{
+    return WebAttribute(m_private->attributeItem(index));
+}
 
 } // namespace WebKit
-
-#endif

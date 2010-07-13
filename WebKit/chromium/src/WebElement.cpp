@@ -36,6 +36,8 @@
 #include "RenderObject.h"
 #include <wtf/PassRefPtr.h>
 
+#include "WebNamedNodeMap.h"
+
 using namespace WebCore;
 
 namespace WebKit {
@@ -71,6 +73,11 @@ bool WebElement::setAttribute(const WebString& attrName, const WebString& attrVa
     ExceptionCode exceptionCode = 0;
     unwrap<Element>()->setAttribute(attrName, attrValue, exceptionCode);
     return !exceptionCode;
+}
+
+WebNamedNodeMap WebElement::attributes() const
+{
+    return WebNamedNodeMap(m_private->attributes());
 }
 
 WebString WebElement::innerText() const

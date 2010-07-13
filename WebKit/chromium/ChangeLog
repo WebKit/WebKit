@@ -1,3 +1,65 @@
+2010-07-12  Dominic Mazzoni  <dmazzoni@google.com>
+
+        Reviewed by Darin Fisher.
+
+        Add methods to WebAccessibilityObject to access the Node and
+        Document, and then add methods to access some document, node,
+        and element properties needed for Windows accessibility.
+
+        https://bugs.webkit.org/show_bug.cgi?id=41569
+
+        * WebKit.gyp:
+        * public/WebAccessibilityObject.h:
+        * public/WebAttribute.h: Added.
+        (WebKit::WebAttribute::~WebAttribute):
+        (WebKit::WebAttribute::WebAttribute):
+        (WebKit::WebAttribute::operator=):
+        * public/WebDocumentType.h: Added.
+        (WebKit::WebDocumentType::WebDocumentType):
+        (WebKit::WebDocumentType::operator=):
+        (WebKit::WebDocumentType::assign):
+        * public/WebElement.h:
+        * public/WebNamedNodeMap.h: Added.
+        (WebKit::WebNamedNodeMap::~WebNamedNodeMap):
+        (WebKit::WebNamedNodeMap::WebNamedNodeMap):
+        (WebKit::WebNamedNodeMap::operator=):
+        * public/WebNode.h:
+        * public/WebRenderStyle.h: Added.
+        (WebKit::WebRenderStyle::~WebRenderStyle):
+        (WebKit::WebRenderStyle::WebRenderStyle):
+        (WebKit::WebRenderStyle::operator=):
+        * src/WebAccessibilityObject.cpp:
+        (WebKit::WebAccessibilityObject::node):
+        (WebKit::WebAccessibilityObject::document):
+        * src/WebAttribute.cpp: Added.
+        (WebKit::WebAttribute::reset):
+        (WebKit::WebAttribute::assign):
+        (WebKit::WebAttribute::WebAttribute):
+        (WebKit::WebAttribute::localName):
+        (WebKit::WebAttribute::value):
+        * src/WebDocumentType.cpp: Added.
+        (WebKit::WebDocumentType::name):
+        (WebKit::WebDocumentType::WebDocumentType):
+        (WebKit::WebDocumentType::operator=):
+        (WebKit::WebDocumentType::operator PassRefPtr<DocumentType>):
+        * src/WebElement.cpp:
+        (WebKit::WebElement::attributes):
+        * src/WebNamedNodeMap.cpp: Added.
+        (WebKit::WebNamedNodeMap::reset):
+        (WebKit::WebNamedNodeMap::assign):
+        (WebKit::WebNamedNodeMap::WebNamedNodeMap):
+        (WebKit::WebNamedNodeMap::length):
+        (WebKit::WebNamedNodeMap::attributeItem):
+        * src/WebNode.cpp:
+        (WebKit::WebNode::element):
+        (WebKit::WebNode::hasComputedStyle):
+        (WebKit::WebNode::computedStyle):
+        * src/WebRenderStyle.cpp: Added.
+        (WebKit::WebRenderStyle::reset):
+        (WebKit::WebRenderStyle::assign):
+        (WebKit::WebRenderStyle::WebRenderStyle):
+        (WebKit::WebRenderStyle::display):
+
 2010-07-12  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Yury Semikhatsky.

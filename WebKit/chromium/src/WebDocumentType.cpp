@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2010 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -28,43 +28,37 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebElement_h
-#define WebElement_h
+#include "config.h"
+#include "WebDocumentType.h"
 
-#include "WebNode.h"
+#include "DocumentType.h"
+#include "WebString.h"
 
-#if WEBKIT_IMPLEMENTATION
-namespace WebCore { class Element; }
-#endif
+#include <wtf/PassRefPtr.h>
+
+using namespace WebCore;
 
 namespace WebKit {
-class WebNamedNodeMap;
 
-    // Provides access to some properties of a DOM element node.
-    class WebElement : public WebNode {
-    public:
-        WebElement() : WebNode() { }
-        WebElement(const WebElement& e) : WebNode(e) { }
+WebString WebDocumentType::name() const
+{
+    return WebString(constUnwrap<DocumentType>()->name());
+}
 
-        WebElement& operator=(const WebElement& e) { WebNode::assign(e); return *this; }
-        void assign(const WebElement& e) { WebNode::assign(e); }
+WebDocumentType::WebDocumentType(const PassRefPtr<DocumentType>& elem)
+    : WebNode(elem)
+{
+}
 
-        WEBKIT_API bool isFormControlElement() const;
-        WEBKIT_API WebString tagName() const;
-        WEBKIT_API bool hasTagName(const WebString&) const;
-        WEBKIT_API bool hasAttribute(const WebString&) const;
-        WEBKIT_API WebString getAttribute(const WebString&) const;
-        WEBKIT_API bool setAttribute(const WebString& name, const WebString& value);
-        WEBKIT_API WebNamedNodeMap attributes() const;
-        WEBKIT_API WebString innerText() const;
+WebDocumentType& WebDocumentType::operator=(const PassRefPtr<DocumentType>& elem)
+{
+    m_private = elem;
+    return *this;
+}
 
-#if WEBKIT_IMPLEMENTATION
-        WebElement(const WTF::PassRefPtr<WebCore::Element>&);
-        WebElement& operator=(const WTF::PassRefPtr<WebCore::Element>&);
-        operator WTF::PassRefPtr<WebCore::Element>() const;
-#endif
-    };
+WebDocumentType::operator PassRefPtr<DocumentType>() const
+{
+    return static_cast<DocumentType*>(m_private.get());
+}
 
 } // namespace WebKit
-
-#endif
