@@ -44,10 +44,8 @@ namespace WebCore {
 IndexedDatabaseRequest::IndexedDatabaseRequest(IndexedDatabase* indexedDatabase)
     : m_indexedDatabase(indexedDatabase)
 {
-    m_this = IDBAny::create();
     // We pass a reference to this object before it can be adopted.
     relaxAdoptionRequirement();
-    m_this->set(this);
 }
 
 IndexedDatabaseRequest::~IndexedDatabaseRequest()
@@ -65,7 +63,7 @@ PassRefPtr<IDBRequest> IndexedDatabaseRequest::open(ScriptExecutionContext* cont
     if (!document->frame())
         return 0;
 
-    RefPtr<IDBRequest> request = IDBRequest::create(document, m_this);
+    RefPtr<IDBRequest> request = IDBRequest::create(document, IDBAny::create(this));
     m_indexedDatabase->open(name, description, request, document->securityOrigin(), document->frame());
     return request;
 }

@@ -1,3 +1,41 @@
+2010-07-13  Marcus Bulach  <bulach@chromium.org>
+
+        Reviewed by Jeremy Orlow.
+
+        Removes cycles caused by "m_this" members in a few IndexedDB classes.
+        https://bugs.webkit.org/show_bug.cgi?id=42161
+
+        Adds IDBAny::create for the various types.
+        No functionality change, just cleaning up.
+
+        * storage/IDBAny.cpp:
+        (WebCore::createIDBAny):
+        (WebCore::IDBAny::create):
+        * storage/IDBAny.h:
+        * storage/IDBDatabaseRequest.cpp:
+        (WebCore::IDBDatabaseRequest::IDBDatabaseRequest):
+        (WebCore::IDBDatabaseRequest::createObjectStore):
+        (WebCore::IDBDatabaseRequest::removeObjectStore):
+        * storage/IDBDatabaseRequest.h:
+        * storage/IDBKeyRange.cpp:
+        (WebCore::IDBKeyRange::IDBKeyRange):
+        * storage/IDBKeyRange.h:
+        (WebCore::IDBKeyRange::left):
+        (WebCore::IDBKeyRange::right):
+        * storage/IDBObjectStoreRequest.cpp:
+        (WebCore::IDBObjectStoreRequest::IDBObjectStoreRequest):
+        (WebCore::IDBObjectStoreRequest::get):
+        (WebCore::IDBObjectStoreRequest::add):
+        (WebCore::IDBObjectStoreRequest::put):
+        (WebCore::IDBObjectStoreRequest::remove):
+        (WebCore::IDBObjectStoreRequest::createIndex):
+        (WebCore::IDBObjectStoreRequest::removeIndex):
+        * storage/IDBObjectStoreRequest.h:
+        * storage/IndexedDatabaseRequest.cpp:
+        (WebCore::IndexedDatabaseRequest::IndexedDatabaseRequest):
+        (WebCore::IndexedDatabaseRequest::open):
+        * storage/IndexedDatabaseRequest.h:
+
 2010-07-13  Antti Koivisto  <koivisto@iki.fi>
 
         Reviewed by Kenneth Rohde Christiansen.

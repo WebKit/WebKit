@@ -40,10 +40,8 @@ namespace WebCore {
 IDBObjectStoreRequest::IDBObjectStoreRequest(PassRefPtr<IDBObjectStore> idbObjectStore)
     : m_objectStore(idbObjectStore)
 {
-    m_this = IDBAny::create();
     // We pass a reference to this object before it can be adopted.
     relaxAdoptionRequirement();
-    m_this->set(this);
 }
 
 String IDBObjectStoreRequest::name() const
@@ -63,35 +61,35 @@ PassRefPtr<DOMStringList> IDBObjectStoreRequest::indexNames() const
 
 PassRefPtr<IDBRequest> IDBObjectStoreRequest::get(ScriptExecutionContext* context, PassRefPtr<IDBKey> key)
 {
-    RefPtr<IDBRequest> request = IDBRequest::create(context, m_this);
+    RefPtr<IDBRequest> request = IDBRequest::create(context, IDBAny::create(this));
     m_objectStore->get(key, request);
     return request;
 }
 
 PassRefPtr<IDBRequest> IDBObjectStoreRequest::add(ScriptExecutionContext* context, PassRefPtr<SerializedScriptValue> value, PassRefPtr<IDBKey> key)
 {
-    RefPtr<IDBRequest> request = IDBRequest::create(context, m_this);
+    RefPtr<IDBRequest> request = IDBRequest::create(context, IDBAny::create(this));
     m_objectStore->put(value, key, true, request);
     return request;
 }
 
 PassRefPtr<IDBRequest> IDBObjectStoreRequest::put(ScriptExecutionContext* context, PassRefPtr<SerializedScriptValue> value, PassRefPtr<IDBKey> key)
 {
-    RefPtr<IDBRequest> request = IDBRequest::create(context, m_this);
+    RefPtr<IDBRequest> request = IDBRequest::create(context, IDBAny::create(this));
     m_objectStore->put(value, key, false, request);
     return request;
 }
 
 PassRefPtr<IDBRequest> IDBObjectStoreRequest::remove(ScriptExecutionContext* context, PassRefPtr<IDBKey> key)
 {
-    RefPtr<IDBRequest> request = IDBRequest::create(context, m_this);
+    RefPtr<IDBRequest> request = IDBRequest::create(context, IDBAny::create(this));
     m_objectStore->remove(key, request);
     return request;
 }
 
 PassRefPtr<IDBRequest> IDBObjectStoreRequest::createIndex(ScriptExecutionContext* context, const String& name, const String& keyPath, bool unique)
 {
-    RefPtr<IDBRequest> request = IDBRequest::create(context, m_this);
+    RefPtr<IDBRequest> request = IDBRequest::create(context, IDBAny::create(this));
     m_objectStore->createIndex(name, keyPath, unique, request);
     return request;
 }
@@ -105,7 +103,7 @@ PassRefPtr<IDBIndexRequest> IDBObjectStoreRequest::index(const String& name)
 
 PassRefPtr<IDBRequest> IDBObjectStoreRequest::removeIndex(ScriptExecutionContext* context, const String& name)
 {
-    RefPtr<IDBRequest> request = IDBRequest::create(context, m_this);
+    RefPtr<IDBRequest> request = IDBRequest::create(context, IDBAny::create(this));
     m_objectStore->removeIndex(name, request);
     return request;
 }

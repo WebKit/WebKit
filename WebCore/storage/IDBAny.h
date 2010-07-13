@@ -44,6 +44,13 @@ class SerializedScriptValue;
 class IDBAny : public RefCounted<IDBAny> {
 public:
     static PassRefPtr<IDBAny> create();
+    template<typename T>
+    static PassRefPtr<IDBAny> create(T* idbObject)
+    {
+        RefPtr<IDBAny> any = IDBAny::create();
+        any->set(idbObject);
+        return any.release();
+    }
     ~IDBAny();
 
     enum Type {

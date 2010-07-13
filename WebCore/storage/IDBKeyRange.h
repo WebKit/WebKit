@@ -53,15 +53,15 @@ public:
     ~IDBKeyRange() { }
 
 
-    PassRefPtr<IDBAny> left() const { return m_left; }
-    PassRefPtr<IDBAny> right() const { return m_right; }
+    PassRefPtr<IDBAny> left() const { return IDBAny::create(m_left.get()); }
+    PassRefPtr<IDBAny> right() const { return IDBAny::create(m_right.get()); }
     unsigned short flags() const { return m_flags; }
 
 private:
     IDBKeyRange(PassRefPtr<SerializedScriptValue> left, PassRefPtr<SerializedScriptValue> right, unsigned short flags);
 
-    RefPtr<IDBAny> m_left;
-    RefPtr<IDBAny> m_right;
+    RefPtr<SerializedScriptValue> m_left;
+    RefPtr<SerializedScriptValue> m_right;
     unsigned short m_flags;
 };
 

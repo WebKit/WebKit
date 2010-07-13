@@ -64,7 +64,6 @@ private:
     IndexedDatabaseRequest(IndexedDatabase*);
 
     RefPtr<IndexedDatabase> m_indexedDatabase;
-    RefPtr<IDBAny> m_this;
 };
 
 } // namespace WebCore
