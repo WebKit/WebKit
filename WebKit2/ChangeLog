@@ -1,5 +1,14 @@
 2010-07-13  Simon Hausmann  <simon.hausmann@nokia.com>
 
+        [Qt] Trivial build fix.
+
+        Provide a stub for mimeTypeFromExtension() that uses notImplemented().
+
+        * UIProcess/Plugins/qt/PluginInfoStoreQt.cpp:
+        (WebKit::PluginInfoStore::mimeTypeFromExtension):
+
+2010-07-13  Simon Hausmann  <simon.hausmann@nokia.com>
+
         Reviewed by Kenneth Rohde Christiansen.
 
         [Qt] Tweaks needed to compile WebKit2 with Qt
