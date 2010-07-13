@@ -1,3 +1,14 @@
+2010-07-13  Robert Hogan  <robert@webkit.org>
+
+        [Gtk] Skip http/tests/uppercase-mime-type.html on Gtk
+
+        Unreviewed.
+
+        The test now requires dumpResourceResponseMIMETypes(), which Gtk
+        does not yet support.
+
+        * platform/gtk/Skipped:
+
 2010-07-13  Tony Gentilcore  <tonyg@chromium.org>
 
         Reviewed by Darin Fisher.

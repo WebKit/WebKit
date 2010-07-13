@@ -5732,6 +5732,7 @@ editing/selection/5354455-2.html
 # Gtk doesn't implement dumpResourceResponseMIMETypes which is required for the
 # preloader tests.
 fast/preloader
+http/tests/mime/uppercase-mime-type.html
 
 # SVG tests that seem to produce incorrect output
 svg/css/shadow-with-large-radius.svg
