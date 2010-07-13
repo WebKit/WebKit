@@ -661,7 +661,7 @@ media/audio-no-installed-engines.html
 media/audio-play-event.html
 media/before-load-member-access.html
 media/broken-video.html
-media/media-can-play-mp3.html
+media/media-can-play-mpeg-audio.html
 media/constructors.html
 media/controls-after-reload.html
 media/controls-css-overload.html

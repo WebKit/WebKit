@@ -276,6 +276,7 @@ static MediaMIMETypeMap& mediaMIMETypeMap()
         { "audio/x-m4a", "m4a" },
         { "audio/x-m4b", "m4b" },
         { "audio/x-m4p", "m4p" },
+        { "audio/mp4", "m4a" },
  
         // MP3
         { "audio/mp3", "mp3" },

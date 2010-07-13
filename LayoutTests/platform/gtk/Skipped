@@ -3329,7 +3329,7 @@ media/media-captions.html
 media/video-poster-scale.html
 
 # don't play mp3 files
-media/media-can-play-mp3.html
+media/media-can-play-mpeg-audio.html
 
 # Tests in plugins/ directory
 #   These tests require ObjC plugin, do not bother trying to get them to work

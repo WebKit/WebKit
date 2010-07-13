@@ -8,11 +8,14 @@
             function start()
             {
                 video = mediaElement = document.getElementsByTagName('video')[0];
-    
+
                 testExpected("video.canPlayType('audio/x-mpeg')", "maybe");
                 testExpected("video.canPlayType('audio/x-mp3')", "maybe");
                 testExpected("video.canPlayType('audio/mp3')", "maybe");
-    
+
+                testExpected("video.canPlayType('audio/mp4')", "maybe");
+                testExpected("video.canPlayType('audio/aac')", "maybe");
+
                 endTest();
             }
         </script>

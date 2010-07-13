@@ -1,3 +1,15 @@
+2010-07-13  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        On Leopard, media element can't handle audio/mp4 MIME type in source tag
+        https://bugs.webkit.org/show_bug.cgi?id=29326
+
+        Test: media/media-can-play-mpeg-audio.html
+
+        * platform/MIMETypeRegistry.cpp:
+        (WebCore::TypeExtensionPair::): Add "audio/mp4", "m4a" to mappings table.
+
 2010-07-13  Tony Gentilcore  <tonyg@chromium.org>
 
         Reviewed by Darin Fisher.
@@ -91,7 +103,7 @@
         * rendering/RenderObject.cpp:
         (WebCore::RenderObject::repaintAfterLayoutIfNeeded):
 
-2010-07-10  Zhenyao Mo  <zmo@google.com>
+2010-07-13  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Darin Fisher.
 
