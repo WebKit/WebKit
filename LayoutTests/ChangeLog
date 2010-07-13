@@ -1,3 +1,11 @@
+2010-07-13  Steve Block  <steveblock@google.com>
+
+        Unreviewed test fix.
+
+        Add new DeviceOrientation test to GTK skipped list.
+
+        * platform/gtk/Skipped:
+
 2010-07-12  Steve Block  <steveblock@google.com>
 
         Reviewed by Jeremy Orlow.
