@@ -1,3 +1,14 @@
+2010-07-12  Steve Block  <steveblock@google.com>
+
+        Reviewed by Jeremy Orlow.
+
+        DeviceOrientationEvent should use optional properties
+        https://bugs.webkit.org/show_bug.cgi?id=41607
+
+        * fast/dom/DeviceOrientation/optional-event-properties-expected.txt: Added.
+        * fast/dom/DeviceOrientation/optional-event-properties.html: Added.
+        * fast/dom/DeviceOrientation/script-tests/optional-event-properties.js: Added.
+
 2010-07-07  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         Reviewed by Darin Adler.

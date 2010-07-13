@@ -584,6 +584,7 @@ SET(WebCore_SOURCES
     bindings/js/JSDataGridDataSource.cpp
     bindings/js/JSDebugWrapperSet.cpp
     bindings/js/JSDedicatedWorkerContextCustom.cpp
+    bindings/js/JSDeviceOrientationEventCustom.cpp
     bindings/js/JSDocumentCustom.cpp
     bindings/js/JSDOMApplicationCacheCustom.cpp
     bindings/js/JSDOMBinding.cpp
@@ -778,6 +779,7 @@ SET(WebCore_SOURCES
     dom/CustomEvent.cpp
     dom/DatasetDOMStringMap.cpp
     dom/DecodedDataDocumentParser.cpp
+    dom/DeviceOrientation.cpp
     dom/DeviceOrientationController.cpp
     dom/DeviceOrientationEvent.cpp
     dom/Document.cpp

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010, The Android Open Source Project
+ * Copyright (C) 2010 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,15 +23,38 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module core {
+#ifndef DeviceOrientation_h
+#define DeviceOrientation_h
 
-    interface [
-        Conditional=DEVICE_ORIENTATION
-    ] DeviceOrientationEvent : Event {
-        readonly attribute [Custom] double alpha;
-        readonly attribute [Custom] double beta;
-        readonly attribute [Custom] double gamma;
-        [Custom] void initDeviceOrientationEvent(in DOMString type, in boolean bubbles, in boolean cancelable, in double alpha, in double beta, in double gamma);
-    };
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefCounted.h>
 
-}
+namespace WebCore {
+
+class DeviceOrientation : public RefCounted<DeviceOrientation> {
+public:
+    static PassRefPtr<DeviceOrientation> create();
+    static PassRefPtr<DeviceOrientation> create(bool canProvideAlpha, double alpha, bool canProvideBeta, double beta, bool canProvideGamma, double gamma);
+
+    double alpha() const;
+    double beta() const;
+    double gamma() const;
+    bool canProvideAlpha() const;
+    bool canProvideBeta() const;
+    bool canProvideGamma() const;
+
+private:
+    DeviceOrientation();
+    DeviceOrientation(bool canProvideAlpha, double alpha, bool canProvideBeta, double beta, bool canProvideGamma, double gamma);
+
+    bool m_canProvideAlpha;
+    bool m_canProvideBeta;
+    bool m_canProvideGamma;
+    double m_alpha;
+    double m_beta;
+    double m_gamma;
+};
+
+} // namespace WebCore
+
+#endif // DeviceOrientation_h

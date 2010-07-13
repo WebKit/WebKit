@@ -62,6 +62,7 @@
 #include "JSDebugWrapperSet.cpp"
 #include "JSDedicatedWorkerContextCustom.cpp"
 #include "JSDesktopNotificationsCustom.cpp"
+#include "JSDeviceOrientationEventCustom.cpp"
 #include "JSDocumentCustom.cpp"
 #include "JSElementCustom.cpp"
 #include "JSEventCustom.cpp"

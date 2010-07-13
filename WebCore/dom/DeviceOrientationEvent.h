@@ -30,31 +30,30 @@
 
 namespace WebCore {
 
+class DeviceOrientation;
+
 class DeviceOrientationEvent : public Event {
 public:
     static PassRefPtr<DeviceOrientationEvent> create()
     {
         return adoptRef(new DeviceOrientationEvent);
     }
-    static PassRefPtr<DeviceOrientationEvent> create(const AtomicString& eventType, double alpha, double beta, double gamma)
+    static PassRefPtr<DeviceOrientationEvent> create(const AtomicString& eventType, DeviceOrientation* orientation)
     {
-        return adoptRef(new DeviceOrientationEvent(eventType, alpha, beta, gamma));
+        return adoptRef(new DeviceOrientationEvent(eventType, orientation));
     }
 
-    void initDeviceOrientationEvent(const AtomicString& eventType, bool canBubble, bool cancelable, double alpha, double beta, double gamma);
-    double alpha() const { return m_alpha; }
-    double beta() const { return m_beta; }
-    double gamma() const { return m_gamma; }
+    void initDeviceOrientationEvent(const AtomicString& type, bool bubbles, bool cancelable, DeviceOrientation*);
 
     virtual bool isDeviceOrientationEvent() const { return true; }
 
+    DeviceOrientation* orientation() const { return m_orientation.get(); }
+
 private:
     DeviceOrientationEvent();
-    DeviceOrientationEvent(const AtomicString& eventType, double alpha, double beta, double gamma);
+    DeviceOrientationEvent(const AtomicString& eventType, DeviceOrientation*);
 
-    double m_alpha;
-    double m_beta;
-    double m_gamma;
+    RefPtr<DeviceOrientation> m_orientation;
 };
 
 } // namespace WebCore

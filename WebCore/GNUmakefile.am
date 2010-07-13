@@ -452,6 +452,7 @@ webcore_sources += \
 	WebCore/bindings/js/JSDOMWindowShell.h \
 	WebCore/bindings/js/JSDOMWrapper.cpp \
 	WebCore/bindings/js/JSDOMWrapper.h \
+	WebCore/bindings/js/JSDeviceOrientationEventCustom.cpp \
 	WebCore/bindings/js/JSDocumentCustom.cpp \
 	WebCore/bindings/js/JSElementCustom.cpp \
 	WebCore/bindings/js/JSEventCustom.cpp \
@@ -800,6 +801,8 @@ webcore_sources += \
 	WebCore/dom/DatasetDOMStringMap.h \
 	WebCore/dom/DecodedDataDocumentParser.cpp \
 	WebCore/dom/DecodedDataDocumentParser.h \
+	WebCore/dom/DeviceOrientation.cpp \
+	WebCore/dom/DeviceOrientation.h \
 	WebCore/dom/DeviceOrientationClient.h \
 	WebCore/dom/DeviceOrientationController.cpp \
 	WebCore/dom/DeviceOrientationController.h \

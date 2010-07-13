@@ -286,6 +286,7 @@ SOURCES += \
     bindings/js/JSDataGridDataSource.cpp \
     bindings/js/JSDebugWrapperSet.cpp \
     bindings/js/JSDesktopNotificationsCustom.cpp \
+    bindings/js/JSDeviceOrientationEventCustom.cpp \
     bindings/js/JSDocumentCustom.cpp \
     bindings/js/JSDOMFormDataCustom.cpp \
     bindings/js/JSDOMGlobalObject.cpp \
@@ -462,6 +463,7 @@ SOURCES += \
     dom/CSSMappedAttributeDeclaration.cpp \
     dom/CustomEvent.cpp \
     dom/DecodedDataDocumentParser.cpp \
+    dom/DeviceOrientation.cpp \
     dom/DeviceOrientationController.cpp \
     dom/DeviceOrientationEvent.cpp \
     dom/Document.cpp \
@@ -1219,6 +1221,7 @@ HEADERS += \
     dom/CSSMappedAttributeDeclaration.h \
     dom/CustomEvent.h \
     dom/default/PlatformMessagePortChannel.h \
+    dom/DeviceOrientation.h \
     dom/DeviceOrientationClient.h \
     dom/DeviceOrientationController.h \
     dom/DeviceOrientationEvent.h \

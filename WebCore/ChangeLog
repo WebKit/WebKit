@@ -1,3 +1,55 @@
+2010-07-12  Steve Block  <steveblock@google.com>
+
+        Reviewed by Jeremy Orlow.
+
+        DeviceOrientationEvent should use optional properties
+        https://bugs.webkit.org/show_bug.cgi?id=41607
+
+        This change adds a new DeviceOrientation class which takes care of which of the
+        optional properties are present. DeviceOrientationEvent owns an instance of
+        DeviceOrientation, rather than owning the properties directly.
+        DeviceOrientationEvent now requires custom bindings.
+
+        Test: fast/dom/DeviceOrientation/optional-event-properties.html
+
+        * Android.mk:
+        * Android.jscbindings.mk:
+        * Android.v8bindings.mk:
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSBindingsAllInOne.cpp:
+        * bindings/js/JSDeviceOrientationEventCustom.cpp: Added.
+        (WebCore::JSDeviceOrientationEvent::alpha):
+        (WebCore::JSDeviceOrientationEvent::beta):
+        (WebCore::JSDeviceOrientationEvent::gamma):
+        (WebCore::JSDeviceOrientationEvent::initDeviceOrientationEvent):
+        * bindings/v8/custom/V8DeviceOrientationEventCustom.cpp: Added.
+        (WebCore::V8DeviceOrientationEvent::alphaAccessorGetter):
+        (WebCore::V8DeviceOrientationEvent::betaAccessorGetter):
+        (WebCore::V8DeviceOrientationEvent::gammaAccessorGetter):
+        (WebCore::V8DeviceOrientationEvent::initDeviceOrientationEventCallback):
+        * dom/DeviceOrientation.cpp: Added.
+        * dom/DeviceOrientation.h: Added.
+        (WebCore::DeviceOrientation::create):
+        (WebCore::DeviceOrientation::canProvideAlpha):
+        (WebCore::DeviceOrientation::alpha):
+        (WebCore::DeviceOrientation::canProvideBeta):
+        (WebCore::DeviceOrientation::beta):
+        (WebCore::DeviceOrientation::canProvideGamma):
+        (WebCore::DeviceOrientation::gamma):
+        (WebCore::DeviceOrientation::DeviceOrientation):
+        * dom/DeviceOrientationEvent.cpp:
+        (WebCore::DeviceOrientationEvent::DeviceOrientationEvent):
+        (WebCore::DeviceOrientationEvent::initDeviceOrientationEvent):
+        * dom/DeviceOrientationEvent.h:
+        (WebCore::DeviceOrientationEvent::create):
+        (WebCore::DeviceOrientationEvent::orientation):
+        * dom/DeviceOrientationEvent.idl:
+
 2010-07-13  Andreas Kling  <andreas.kling@nokia.com>
 
         Reviewed by Antti Koivisto.
