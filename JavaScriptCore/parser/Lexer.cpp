@@ -352,26 +352,26 @@ static inline bool isIdentPart(int c)
 static inline int singleEscape(int c)
 {
     switch (c) {
-        case 'b':
-            return 0x08;
-        case 't':
-            return 0x09;
-        case 'n':
-            return 0x0A;
-        case 'v':
-            return 0x0B;
-        case 'f':
-            return 0x0C;
-        case 'r':
-            return 0x0D;
-        case '\\':
-            return '\\';
-        case '\'':
-            return '\'';
-        case '"':
-            return '"';
-        default:
-            return 0;
+    case 'b':
+        return 0x08;
+    case 't':
+        return 0x09;
+    case 'n':
+        return 0x0A;
+    case 'v':
+        return 0x0B;
+    case 'f':
+        return 0x0C;
+    case 'r':
+        return 0x0D;
+    case '\\':
+        return '\\';
+    case '\'':
+        return '\'';
+    case '"':
+        return '"';
+    default:
+        return 0;
     }
 }
 
@@ -496,279 +496,279 @@ start:
     if (isASCII(m_current)) {
         ASSERT(m_current >= 0 && m_current < 128);
 
-        switch (AsciiCharacters[m_current]) {
-        case CharacterGreater:
+    switch (AsciiCharacters[m_current]) {
+    case CharacterGreater:
+        shift();
+        if (m_current == '>') {
             shift();
             if (m_current == '>') {
                 shift();
-                if (m_current == '>') {
-                    shift();
-                    if (m_current == '=') {
-                        shift();
-                        token = URSHIFTEQUAL;
-                        break;
-                    }
-                    token = URSHIFT;
-                    break;
-                }
                 if (m_current == '=') {
                     shift();
-                    token = RSHIFTEQUAL;
+                    token = URSHIFTEQUAL;
                     break;
                 }
-                token = RSHIFT;
+                token = URSHIFT;
                 break;
             }
             if (m_current == '=') {
                 shift();
-                token = GE;
+                token = RSHIFTEQUAL;
                 break;
             }
-            token = GT;
+            token = RSHIFT;
             break;
-        case CharacterEqual:
-            shift();
-            if (m_current == '=') {
-                shift();
-                if (m_current == '=') {
-                    shift();
-                    token = STREQ;
-                    break;
-                }
-                token = EQEQ;
-                break;
-            }
-            token = EQUAL;
-            break;
-        case CharacterLess:
-            shift();
-            if (m_current == '!' && peek(1) == '-' && peek(2) == '-') {
-                // <!-- marks the beginning of a line comment (for www usage)
-                goto inSingleLineComment;
-            }
-            if (m_current == '<') {
-                shift();
-                if (m_current == '=') {
-                    shift();
-                    token = LSHIFTEQUAL;
-                    break;
-                }
-                token = LSHIFT;
-                break;
-            }
-            if (m_current == '=') {
-                shift();
-                token = LE;
-                break;
-            }
-            token = LT;
-            break;
-        case CharacterExclamationMark:
-            shift();
-            if (m_current == '=') {
-                shift();
-                if (m_current == '=') {
-                    shift();
-                    token = STRNEQ;
-                    break;
-                }
-                token = NE;
-                break;
-            }
-            token = EXCLAMATION;
-            break;
-        case CharacterAdd:
-            shift();
-            if (m_current == '+') {
-                shift();
-                token = (!m_terminator) ? PLUSPLUS : AUTOPLUSPLUS;
-                break;
-            }
-            if (m_current == '=') {
-                shift();
-                token = PLUSEQUAL;
-                break;
-            }
-            token = PLUS;
-            break;
-        case CharacterSub:
-            shift();
-            if (m_current == '-') {
-                shift();
-                if (m_atLineStart && m_current == '>') {
-                    shift();
-                    goto inSingleLineComment;
-                }
-                token = (!m_terminator) ? MINUSMINUS : AUTOMINUSMINUS;
-                break;
-            }
-            if (m_current == '=') {
-                shift();
-                token = MINUSEQUAL;
-                break;
-            }
-            token = MINUS;
-            break;
-        case CharacterMultiply:
-            shift();
-            if (m_current == '=') {
-                shift();
-                token = MULTEQUAL;
-                break;
-            }
-            token = TIMES;
-            break;
-        case CharacterSlash:
-            shift();
-            if (m_current == '/') {
-                shift();
-                goto inSingleLineComment;
-            }
-            if (m_current == '*') {
-                shift();
-                goto inMultiLineComment;
-            }
-            if (m_current == '=') {
-                shift();
-                token = DIVEQUAL;
-                break;
-            }
-            token = DIVIDE;
-            break;
-        case CharacterAnd:
-            shift();
-            if (m_current == '&') {
-                shift();
-                token = AND;
-                break;
-            }
-            if (m_current == '=') {
-                shift();
-                token = ANDEQUAL;
-                break;
-            }
-            token = BITAND;
-            break;
-        case CharacterXor:
-            shift();
-            if (m_current == '=') {
-                shift();
-                token = XOREQUAL;
-                break;
-            }
-            token = BITXOR;
-            break;
-        case CharacterModulo:
-            shift();
-            if (m_current == '=') {
-                shift();
-                token = MODEQUAL;
-                break;
-            }
-            token = MOD;
-            break;
-        case CharacterOr:
-            shift();
-            if (m_current == '=') {
-                shift();
-                token = OREQUAL;
-                break;
-            }
-            if (m_current == '|') {
-                shift();
-                token = OR;
-                break;
-            }
-            token = BITOR;
-            break;
-        case CharacterDot:
-            shift();
-            if (isASCIIDigit(m_current)) {
-                record8('.');
-                goto inNumberAfterDecimalPoint;
-            }
-            token = DOT;
-            break;
-        case CharacterOpenParen:
-            token = OPENPAREN;
-            shift();
-            break;
-        case CharacterCloseParen:
-            token = CLOSEPAREN;
-            shift();
-            break;
-        case CharacterOpenBracket:
-            token = OPENBRACKET;
-            shift();
-            break;
-        case CharacterCloseBracket:
-            token = CLOSEBRACKET;
-            shift();
-            break;
-        case CharacterComma:
-            token = COMMA;
-            shift();
-            break;
-        case CharacterColon:
-            token = COLON;
-            shift();
-            break;
-        case CharacterQuestion:
-            token = QUESTION;
-            shift();
-            break;
-        case CharacterTilde:
-            token = TILDE;
-            shift();
-            break;
-        case CharacterSemicolon:
-            m_delimited = true;
-            shift();
-            token = SEMICOLON;
-            break;
-        case CharacterOpenBrace:
-            lvalp->intValue = currentOffset();
-            shift();
-            token = OPENBRACE;
-            break;
-        case CharacterCloseBrace:
-            lvalp->intValue = currentOffset();
-            m_delimited = true;
-            shift();
-            token = CLOSEBRACE;
-            break;
-        case CharacterBackSlash:
-            goto startIdentifierWithBackslash;
-        case CharacterZero:
-            goto startNumberWithZeroDigit;
-        case CharacterNumber:
-            goto startNumber;
-        case CharacterQuote:
-            if (UNLIKELY(!parseString(lvalp)))
-                goto returnError;
-            shift();
-            m_delimited = false;
-            token = STRING;
-            break;
-        case CharacterAlpha:
-            ASSERT(isIdentStart(m_current));
-            goto startIdentifierOrKeyword;
-        case CharacterLineTerminator:
-            ASSERT(isLineTerminator(m_current));
-            shiftLineTerminator();
-            m_atLineStart = true;
-            m_terminator = true;
-            if (lastTokenWasRestrKeyword()) {
-                token = SEMICOLON;
-                goto doneSemicolon;
-            }
-            goto start;
-        case CharacterInvalid:
-            goto returnError;
-        default:
-            ASSERT_NOT_REACHED();
-            goto returnError;
         }
+        if (m_current == '=') {
+            shift();
+            token = GE;
+            break;
+        }
+        token = GT;
+        break;
+    case CharacterEqual:
+        shift();
+        if (m_current == '=') {
+            shift();
+            if (m_current == '=') {
+                shift();
+                token = STREQ;
+                break;
+            }
+            token = EQEQ;
+            break;
+        }
+        token = EQUAL;
+        break;
+    case CharacterLess:
+        shift();
+        if (m_current == '!' && peek(1) == '-' && peek(2) == '-') {
+            // <!-- marks the beginning of a line comment (for www usage)
+            goto inSingleLineComment;
+        }
+        if (m_current == '<') {
+            shift();
+            if (m_current == '=') {
+                shift();
+                token = LSHIFTEQUAL;
+                break;
+            }
+            token = LSHIFT;
+            break;
+        }
+        if (m_current == '=') {
+            shift();
+            token = LE;
+            break;
+        }
+        token = LT;
+        break;
+    case CharacterExclamationMark:
+        shift();
+        if (m_current == '=') {
+            shift();
+            if (m_current == '=') {
+                shift();
+                token = STRNEQ;
+                break;
+            }
+            token = NE;
+            break;
+        }
+        token = EXCLAMATION;
+        break;
+    case CharacterAdd:
+        shift();
+        if (m_current == '+') {
+            shift();
+            token = (!m_terminator) ? PLUSPLUS : AUTOPLUSPLUS;
+            break;
+        }
+        if (m_current == '=') {
+            shift();
+            token = PLUSEQUAL;
+            break;
+        }
+        token = PLUS;
+        break;
+    case CharacterSub:
+        shift();
+        if (m_current == '-') {
+            shift();
+            if (m_atLineStart && m_current == '>') {
+                shift();
+                goto inSingleLineComment;
+            }
+            token = (!m_terminator) ? MINUSMINUS : AUTOMINUSMINUS;
+            break;
+        }
+        if (m_current == '=') {
+            shift();
+            token = MINUSEQUAL;
+            break;
+        }
+        token = MINUS;
+        break;
+    case CharacterMultiply:
+        shift();
+        if (m_current == '=') {
+            shift();
+            token = MULTEQUAL;
+            break;
+        }
+        token = TIMES;
+        break;
+    case CharacterSlash:
+        shift();
+        if (m_current == '/') {
+            shift();
+            goto inSingleLineComment;
+        }
+        if (m_current == '*') {
+            shift();
+            goto inMultiLineComment;
+        }
+        if (m_current == '=') {
+            shift();
+            token = DIVEQUAL;
+            break;
+        }
+        token = DIVIDE;
+        break;
+    case CharacterAnd:
+        shift();
+        if (m_current == '&') {
+            shift();
+            token = AND;
+            break;
+        }
+        if (m_current == '=') {
+            shift();
+            token = ANDEQUAL;
+            break;
+        }
+        token = BITAND;
+        break;
+    case CharacterXor:
+        shift();
+        if (m_current == '=') {
+            shift();
+            token = XOREQUAL;
+            break;
+        }
+        token = BITXOR;
+        break;
+    case CharacterModulo:
+        shift();
+        if (m_current == '=') {
+            shift();
+            token = MODEQUAL;
+            break;
+        }
+        token = MOD;
+        break;
+    case CharacterOr:
+        shift();
+        if (m_current == '=') {
+            shift();
+            token = OREQUAL;
+            break;
+        }
+        if (m_current == '|') {
+            shift();
+            token = OR;
+            break;
+        }
+        token = BITOR;
+        break;
+    case CharacterDot:
+        shift();
+        if (isASCIIDigit(m_current)) {
+            record8('.');
+            goto inNumberAfterDecimalPoint;
+        }
+        token = DOT;
+        break;
+    case CharacterOpenParen:
+        token = OPENPAREN;
+        shift();
+        break;
+    case CharacterCloseParen:
+        token = CLOSEPAREN;
+        shift();
+        break;
+    case CharacterOpenBracket:
+        token = OPENBRACKET;
+        shift();
+        break;
+    case CharacterCloseBracket:
+        token = CLOSEBRACKET;
+        shift();
+        break;
+    case CharacterComma:
+        token = COMMA;
+        shift();
+        break;
+    case CharacterColon:
+        token = COLON;
+        shift();
+        break;
+    case CharacterQuestion:
+        token = QUESTION;
+        shift();
+        break;
+    case CharacterTilde:
+        token = TILDE;
+        shift();
+        break;
+    case CharacterSemicolon:
+        m_delimited = true;
+        shift();
+        token = SEMICOLON;
+        break;
+    case CharacterOpenBrace:
+        lvalp->intValue = currentOffset();
+        shift();
+        token = OPENBRACE;
+        break;
+    case CharacterCloseBrace:
+        lvalp->intValue = currentOffset();
+        m_delimited = true;
+        shift();
+        token = CLOSEBRACE;
+        break;
+    case CharacterBackSlash:
+        goto startIdentifierWithBackslash;
+    case CharacterZero:
+        goto startNumberWithZeroDigit;
+    case CharacterNumber:
+        goto startNumber;
+    case CharacterQuote:
+        if (UNLIKELY(!parseString(lvalp)))
+            goto returnError;
+        shift();
+        m_delimited = false;
+        token = STRING;
+        break;
+    case CharacterAlpha:
+        ASSERT(isIdentStart(m_current));
+        goto startIdentifierOrKeyword;
+    case CharacterLineTerminator:
+        ASSERT(isLineTerminator(m_current));
+        shiftLineTerminator();
+        m_atLineStart = true;
+        m_terminator = true;
+        if (lastTokenWasRestrKeyword()) {
+            token = SEMICOLON;
+            goto doneSemicolon;
+        }
+        goto start;
+    case CharacterInvalid:
+        goto returnError;
+    default:
+        ASSERT_NOT_REACHED();
+        goto returnError;
+    }
     } else {
         // Rare characters
 

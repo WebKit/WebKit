@@ -1,3 +1,22 @@
+2010-07-14  Zoltan Herczeg  <zherczeg@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Change indentations in the lexer
+        https://bugs.webkit.org/show_bug.cgi?id=41845
+
+        This patch fixes an old, indentation error comes from kjs,
+        as webkit has a different style rule for switches, and change
+        the indentation of the main switch, which is a temporary
+        style error. This change makes easier to see the behavioural
+        changes in the follow-up patch.
+
+        No behavioural changes.
+
+        * parser/Lexer.cpp:
+        (JSC::singleEscape):
+        (JSC::Lexer::lex):
+
 2010-07-13  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r63262.
