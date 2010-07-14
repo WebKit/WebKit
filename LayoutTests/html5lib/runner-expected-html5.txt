@@ -7,51 +7,8 @@ CONSOLE MESSAGE: line 2: PASS
 CONSOLE MESSAGE: line 2: FOO<span>BAR</span>BAZ
 Content-Type: text/plain
 resources/tests1.dat:
-30
 78
 80
-103
-
-Test 30 of 113 in resources/tests1.dat failed. Input:
-<a><table><td><a><table></table><a></tr><a></table><b>X</b>C<a>Y
-Got:
-| <html>
-|   <head>
-|   <body>
-|     <a>
-|       <a>
-|       <table>
-|         <tbody>
-|           <tr>
-|             <td>
-|               <a>
-|                 <table>
-|               <a>
-|       <a>
-|         <b>
-|           "X"
-|         "C"
-|       <a>
-|         "Y"
-Expected:
-| <html>
-|   <head>
-|   <body>
-|     <a>
-|       <a>
-|       <table>
-|         <tbody>
-|           <tr>
-|             <td>
-|               <a>
-|                 <table>
-|               <a>
-|     <a>
-|       <b>
-|         "X"
-|       "C"
-|     <a>
-|       "Y"
 
 Test 78 of 113 in resources/tests1.dat failed. Input:
 <a href="blah">aba<table><a href="foo">br<tr><td></td></tr>x</table>aoe
@@ -65,12 +22,14 @@ Got:
 |       <a>
 |         href="foo"
 |         "br"
+|       <a>
 |       "x"
 |       <table>
 |         <tbody>
 |           <tr>
 |             <td>
-|     "aoe"
+|     <a>
+|       "aoe"
 Expected:
 | <html>
 |   <head>
@@ -101,6 +60,7 @@ Got:
 |     <a>
 |       href="blah"
 |       "aba"
+|     <a>
 |     "x"
 |     <table>
 |       <tbody>
@@ -109,7 +69,8 @@ Got:
 |             <a>
 |               href="foo"
 |               "br"
-|     "aoe"
+|     <a>
+|       "aoe"
 Expected:
 | <html>
 |   <head>
@@ -130,37 +91,6 @@ Expected:
 |     <a>
 |       href="blah"
 |       "aoe"
-
-Test 103 of 113 in resources/tests1.dat failed. Input:
-<a><table><td><a><table></table><a></tr><a></table><a>
-Got:
-| <html>
-|   <head>
-|   <body>
-|     <a>
-|       <a>
-|       <table>
-|         <tbody>
-|           <tr>
-|             <td>
-|               <a>
-|                 <table>
-|               <a>
-|       <a>
-Expected:
-| <html>
-|   <head>
-|   <body>
-|     <a>
-|       <a>
-|       <table>
-|         <tbody>
-|           <tr>
-|             <td>
-|               <a>
-|                 <table>
-|               <a>
-|     <a>
 resources/tests2.dat: PASS
 
 resources/tests3.dat: PASS
@@ -291,13 +221,15 @@ Got:
 |   <head>
 |   <body>
 |     <b>
+|     <b>
 |     "bbb"
 |     <table>
 |       <tbody>
 |         <tr>
 |           <td>
 |             "aaa"
-|     "ccc"
+|     <b>
+|       "ccc"
 Expected:
 | <html>
 |   <head>

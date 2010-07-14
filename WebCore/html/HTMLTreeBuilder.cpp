@@ -1561,7 +1561,7 @@ bool HTMLTreeBuilder::processBodyEndTagForInBody(AtomicHTMLToken& token)
         parseError(token);
         return false;
     }
-    notImplemented();
+    notImplemented(); // Emit a more specific parse error based on stack contents.
     setInsertionMode(AfterBodyMode);
     return true;
 }
@@ -2604,7 +2604,7 @@ void HTMLTreeBuilder::processEndOfFile(AtomicHTMLToken& token)
     case InBodyMode:
     case InCellMode:
         ASSERT(insertionMode() == InBodyMode || insertionMode() == InCellMode);
-        notImplemented();
+        notImplemented(); // Emit parse error based on what elemtns are still open.
         break;
     case AfterBodyMode:
     case AfterAfterBodyMode:

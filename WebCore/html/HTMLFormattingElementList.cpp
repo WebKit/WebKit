@@ -121,8 +121,13 @@ void HTMLFormattingElementList::appendMarker()
 
 void HTMLFormattingElementList::clearToLastMarker()
 {
-    while (m_entries.size() && !m_entries.last().isMarker())
+    // http://www.whatwg.org/specs/web-apps/current-work/multipage/parsing.html#clear-the-list-of-active-formatting-elements-up-to-the-last-marker
+    while (m_entries.size()) {
+        bool shouldStop = m_entries.last().isMarker();
         m_entries.removeLast();
+        if (shouldStop)
+            break;
+    }
 }
 
 #ifndef NDEBUG

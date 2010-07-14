@@ -1,3 +1,17 @@
+2010-07-13  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Fix my misreading of "clear to the last marker" in the HTML5 spec
+        https://bugs.webkit.org/show_bug.cgi?id=42199
+
+        * html/HTMLFormattingElementList.cpp:
+        (WebCore::HTMLFormattingElementList::clearToLastMarker):
+        * html/HTMLFormattingElementList.h:
+        * html/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::processBodyEndTagForInBody):
+        (WebCore::HTMLTreeBuilder::processEndOfFile):
+
 2010-07-13  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.
