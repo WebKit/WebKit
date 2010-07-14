@@ -73,7 +73,7 @@ void RenderSVGText::mapLocalToContainer(RenderBoxModelObject* repaintContainer, 
 void RenderSVGText::layout()
 {
     ASSERT(needsLayout());
-    LayoutRepainter repainter(*this, checkForRepaintDuringLayout());
+    LayoutRepainter repainter(*this, m_everHadLayout && checkForRepaintDuringLayout());
 
     if (m_needsTransformUpdate) {
         SVGTextElement* text = static_cast<SVGTextElement*>(node());

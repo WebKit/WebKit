@@ -1,3 +1,28 @@
+2010-07-14  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Dirk Schulze.
+
+        Inconsistent LayoutRepainter usage in the SVG renderers
+        https://bugs.webkit.org/show_bug.cgi?id=42245
+
+        Unify LayoutRepainter usage in the SVG renders, as RenderBlock does it, always use:
+        LayoutRepainter repainter(*this, m_everHadLayout && checkForRepaintDuringLayout());
+        instead of including selfWillPaint / selfNeedsLayout checks. This improves layout test
+        performance by 8s on my machine with a debug build (from 76.72s -> 68.59s, averaged over 5 runs)
+
+        * rendering/RenderForeignObject.cpp:
+        (WebCore::RenderForeignObject::layout):
+        * rendering/RenderPath.cpp:
+        (WebCore::RenderPath::layout):
+        * rendering/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::layout):
+        * rendering/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::layout):
+        * rendering/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::layout):
+        * rendering/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::layout):
+
 2010-07-14  Kent Tamura  <tkent@chromium.org>
 
         Unreviewed, build fix for r63300.

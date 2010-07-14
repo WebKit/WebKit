@@ -52,7 +52,7 @@ void RenderSVGImage::layout()
 {
     ASSERT(needsLayout());
 
-    LayoutRepainter repainter(*this, checkForRepaintDuringLayout());
+    LayoutRepainter repainter(*this, m_everHadLayout && checkForRepaintDuringLayout());
     SVGImageElement* image = static_cast<SVGImageElement*>(node());
 
     if (m_needsTransformUpdate) {

@@ -97,7 +97,7 @@ bool RenderPath::strokeContains(const FloatPoint& point, bool requiresStroke) co
 
 void RenderPath::layout()
 {
-    LayoutRepainter repainter(*this, checkForRepaintDuringLayout() && selfNeedsLayout());
+    LayoutRepainter repainter(*this, m_everHadLayout && checkForRepaintDuringLayout());
     SVGStyledTransformableElement* element = static_cast<SVGStyledTransformableElement*>(node());
 
     bool needsPathUpdate = m_needsPathUpdate;
