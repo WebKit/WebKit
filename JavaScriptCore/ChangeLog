@@ -1,3 +1,16 @@
+2010-07-14  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Don Melton.
+
+        Crash when trying to enable JIT and Interpreter in a single build.
+
+        CFPreferences code added at the last minute failed to account for
+        the preference not being present and then attempted to CFRelease
+        a null value.
+
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::JSGlobalData):
+
 2010-07-14  Zoltan Herczeg  <zherczeg@webkit.org>
 
         Reviewed by Darin Adler.
