@@ -1,3 +1,37 @@
+2010-07-14  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Avoid extra memcpy of character tokens
+        https://bugs.webkit.org/show_bug.cgi?id=42002
+
+        This patch is just some cleanup to make fixing this bug easier.
+
+        * html/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::ExternalCharacterTokenBuffer::ExternalCharacterTokenBuffer):
+        (WebCore::HTMLTreeBuilder::ExternalCharacterTokenBuffer::~ExternalCharacterTokenBuffer):
+        (WebCore::HTMLTreeBuilder::ExternalCharacterTokenBuffer::isEmpty):
+        (WebCore::HTMLTreeBuilder::ExternalCharacterTokenBuffer::skipLeadingWhitespace):
+        (WebCore::HTMLTreeBuilder::ExternalCharacterTokenBuffer::takeLeadingWhitespace):
+        (WebCore::HTMLTreeBuilder::ExternalCharacterTokenBuffer::takeRemaining):
+        (WebCore::HTMLTreeBuilder::ExternalCharacterTokenBuffer::giveRemainingTo):
+        (WebCore::HTMLTreeBuilder::ExternalCharacterTokenBuffer::takeRemainingWhitespace):
+        (WebCore::HTMLTreeBuilder::processDoctypeToken):
+        (WebCore::HTMLTreeBuilder::processStartTag):
+        (WebCore::HTMLTreeBuilder::processEndTag):
+        (WebCore::HTMLTreeBuilder::processComment):
+        (WebCore::HTMLTreeBuilder::processCharacter):
+        (WebCore::HTMLTreeBuilder::processCharacterBuffer):
+        (WebCore::HTMLTreeBuilder::processEndOfFile):
+        (WebCore::HTMLTreeBuilder::defaultForInitial):
+        (WebCore::HTMLTreeBuilder::defaultForBeforeHTML):
+        (WebCore::HTMLTreeBuilder::defaultForBeforeHead):
+        (WebCore::HTMLTreeBuilder::defaultForInHead):
+        (WebCore::HTMLTreeBuilder::defaultForInHeadNoscript):
+        (WebCore::HTMLTreeBuilder::defaultForAfterHead):
+        (WebCore::HTMLTreeBuilder::defaultForInTableText):
+        * html/HTMLTreeBuilder.h:
+
 2010-07-14  Andreas Kling  <andreas.kling@nokia.com>
 
         Reviewed by Darin Adler.

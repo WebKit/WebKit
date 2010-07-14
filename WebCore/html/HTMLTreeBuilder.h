@@ -76,6 +76,7 @@ public:
 
 private:
     class FakeInsertionMode;
+    class ExternalCharacterTokenBuffer;
     // Represents HTML5 "insertion mode"
     // http://www.whatwg.org/specs/web-apps/current-work/multipage/parsing.html#insertion-mode
     enum InsertionMode {
@@ -134,6 +135,8 @@ private:
     // needs to assert which tokens it can be called with.
     void processAnyOtherEndTagForInBody(AtomicHTMLToken&);
 
+    void processCharacterBuffer(ExternalCharacterTokenBuffer&);
+
     void processFakeStartTag(const QualifiedName&, PassRefPtr<NamedNodeMap> attributes = 0);
     void processFakeEndTag(const QualifiedName&);
     void processFakeCharacters(const String&);
@@ -144,14 +147,13 @@ private:
     void processScriptStartTag(AtomicHTMLToken&);
 
     // Default processing for the different insertion modes.
-    // FIXME: These functions need to be renamed to remove "process" from their names.
-    void processDefaultForInitialMode(AtomicHTMLToken&);
-    void processDefaultForBeforeHTMLMode(AtomicHTMLToken&);
-    void processDefaultForBeforeHeadMode(AtomicHTMLToken&);
-    void processDefaultForInHeadMode(AtomicHTMLToken&);
-    void processDefaultForInHeadNoscriptMode(AtomicHTMLToken&);
-    void processDefaultForAfterHeadMode(AtomicHTMLToken&);
-    void processDefaultForInTableTextMode(AtomicHTMLToken&);
+    void defaultForInitial();
+    void defaultForBeforeHTML();
+    void defaultForBeforeHead();
+    void defaultForInHead();
+    void defaultForInHeadNoscript();
+    void defaultForAfterHead();
+    void defaultForInTableText();
 
     void processUsingSecondaryInsertionModeAndAdjustInsertionMode(AtomicHTMLToken&);
 
