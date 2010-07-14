@@ -1,5 +1,11 @@
 2010-07-14  Darin Adler  <darin@apple.com>
 
+        * platform/mac-snowleopard/Skipped: Removed a bogus filename for a file that does not
+        exist. Clearly it was OK to not skip this test, because we were not skipping it before.
+        But if it does need to be skipped, someone can add it back later.
+
+2010-07-14  Darin Adler  <darin@apple.com>
+
         Reviewed by Sam Weinig.
 
         TreeWalker::previousSibling calls firstChild instead of lastChild when handling FILTER_SKIP
