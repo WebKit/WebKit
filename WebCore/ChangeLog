@@ -1,3 +1,10 @@
+2010-07-14  Eric Carlson  <eric.carlson@apple.com>
+
+        One more unreviewed build fix for r63319.
+
+        * html/TimeRanges.cpp:
+        (TimeRanges::nearest):
+
 2010-07-14  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Pavel Feldman.
