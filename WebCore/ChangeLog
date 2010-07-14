@@ -1,3 +1,16 @@
+2010-07-14  Hans Wennborg  <hans@chromium.org>
+
+        Reviewed by Steve Block.
+
+        Rename DeviceOrientationController::onOrientationChange to didChangeDeviceOrientation
+        https://bugs.webkit.org/show_bug.cgi?id=42257
+
+        According to convention, we should avoid "on" in favor of "did" in function names.
+
+        * dom/DeviceOrientationController.cpp:
+        (WebCore::DeviceOrientationController::didChangeDeviceOrientation):
+        * dom/DeviceOrientationController.h:
+
 2010-07-14  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
 
         Reviewed by Kent Tamura.

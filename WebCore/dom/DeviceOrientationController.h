@@ -43,7 +43,7 @@ public:
     void removeListener(DOMWindow*);
     void removeAllListeners(DOMWindow*);
 
-    void onDeviceOrientationChange(DeviceOrientation*);
+    void didChangeDeviceOrientation(DeviceOrientation*);
 
 private:
     Page* m_page;
