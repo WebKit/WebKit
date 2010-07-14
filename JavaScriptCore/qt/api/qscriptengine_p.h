@@ -22,6 +22,7 @@
 
 #include "qscriptconverter_p.h"
 #include "qscriptengine.h"
+#include "qscriptoriginalglobalobject_p.h"
 #include "qscriptstring_p.h"
 #include "qscriptsyntaxcheckresult_p.h"
 #include "qscriptvalue.h"
@@ -79,13 +80,15 @@ public:
     inline operator JSGlobalContextRef() const;
 
     inline bool isArray(JSValueRef value) const;
+    inline bool isError(JSValueRef value) const;
+    inline bool objectHasOwnProperty(JSObjectRef object, JSStringRef property) const;
+    inline QVector<JSStringRef> objectGetOwnPropertyNames(JSObjectRef object) const;
 private:
     QScriptEngine* q_ptr;
     JSGlobalContextRef m_context;
     JSValueRef m_exception;
 
-    JSObjectRef m_arrayConstructor;
-    JSValueRef m_arrayPrototype;
+    QScriptOriginalGlobalObject m_originalGlobalObject;
 };
 
 
@@ -218,9 +221,24 @@ QScriptEnginePrivate::operator JSGlobalContextRef() const
 
 bool QScriptEnginePrivate::isArray(JSValueRef value) const
 {
-    // JSC API doesn't export the [[Class]] information for the builtins. But we know that a value
-    // is an array if it was created with the Array constructor or if it is the Array.prototype.
-    return JSValueIsInstanceOfConstructor(m_context, value, m_arrayConstructor, /* exception */ 0) || JSValueIsStrictEqual(m_context, value, m_arrayPrototype);
+    return m_originalGlobalObject.isArray(value);
+}
+
+bool QScriptEnginePrivate::isError(JSValueRef value) const
+{
+    return m_originalGlobalObject.isError(value);
+}
+
+inline bool QScriptEnginePrivate::objectHasOwnProperty(JSObjectRef object, JSStringRef property) const
+{
+    // FIXME We need a JSC C API function for this.
+    return m_originalGlobalObject.objectHasOwnProperty(object, property);
+}
+
+inline QVector<JSStringRef> QScriptEnginePrivate::objectGetOwnPropertyNames(JSObjectRef object) const
+{
+    // FIXME We can't use C API function JSObjectGetPropertyNames as it returns only enumerable properties.
+    return m_originalGlobalObject.objectGetOwnPropertyNames(object);
 }
 
 #endif

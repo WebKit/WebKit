@@ -63,42 +63,8 @@ inline QScriptValueIteratorPrivate::QScriptValueIteratorPrivate(const QScriptVal
     : m_object(const_cast<QScriptValuePrivate*>(value))
     , m_idx(m_names)
 {
-    // FIXME There is assumption that global object wasn't changed (bug 41839).
-    // FIXME We can't use C API function JSObjectGetPropertyNames as it returns only enumerable properties.
-    if (const_cast<QScriptValuePrivate*>(value)->isObject()) {
-        static JSStringRef objectName = QScriptConverter::toString("Object");
-        static JSStringRef getOwnPropertyNamesName = QScriptConverter::toString("getOwnPropertyNames");
-
-        JSValueRef exception = 0;
-        JSObjectRef globalObject = JSContextGetGlobalObject(*engine());
-        Q_ASSERT(JSValueIsObject(*engine(), globalObject));
-        JSValueRef objectConstructor = JSObjectGetProperty(*engine(), globalObject, objectName, &exception);
-        Q_ASSERT(JSValueIsObject(*engine(), objectConstructor));
-        Q_ASSERT(!exception);
-        JSValueRef propertyNamesGetter = JSObjectGetProperty(*engine(), const_cast<JSObjectRef>(objectConstructor), getOwnPropertyNamesName, &exception);
-        Q_ASSERT(JSValueIsObject(*engine(), propertyNamesGetter));
-        Q_ASSERT(!exception);
-
-        JSValueRef arguments[] = { *m_object };
-        JSObjectRef propertyNames
-                = const_cast<JSObjectRef>(JSObjectCallAsFunction(*engine(),
-                                                                const_cast<JSObjectRef>(propertyNamesGetter),
-                                                                /* thisObject */ 0,
-                                                                /* argumentCount */ 1,
-                                                                arguments,
-                                                                &exception));
-        Q_ASSERT(JSValueIsObject(*engine(), propertyNames));
-        Q_ASSERT(!exception);
-        static JSStringRef lengthName = QScriptConverter::toString("length");
-        int count = JSValueToNumber(*engine(), JSObjectGetProperty(*engine(), propertyNames, lengthName, &exception), &exception);
-
-        Q_ASSERT(!exception);
-        m_names.reserve(count);
-        for (int i = 0; i < count; ++i) {
-            JSValueRef tmp = JSObjectGetPropertyAtIndex(*engine(), propertyNames, i, &exception);
-            m_names.append(JSValueToStringCopy(*engine(), tmp, &exception));
-            Q_ASSERT(!exception);
-        }
+    if (m_object->isObject()) {
+        m_names = engine()->objectGetOwnPropertyNames(*m_object);
         m_idx = m_names;
     } else
         m_object = 0;

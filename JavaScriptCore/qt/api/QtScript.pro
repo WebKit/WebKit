@@ -42,6 +42,7 @@ HEADERS +=  $$PWD/qtscriptglobal.h \
             $$PWD/qscriptprogram.h \
             $$PWD/qscriptprogram_p.h \
             $$PWD/qscriptsyntaxcheckresult.h \
+            $$PWD/qscriptoriginalglobalobject_p.h \
 
 
 !static: DEFINES += QT_MAKEDLL

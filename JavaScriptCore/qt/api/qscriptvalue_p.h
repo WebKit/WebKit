@@ -184,7 +184,6 @@ private:
         Value(QString* string) : m_string(string) {}
     } u;
 
-    inline bool inherits(const char*);
     inline State refinedJSValue();
 
     inline bool isJSBased() const;
@@ -416,7 +415,7 @@ bool QScriptValuePrivate::isError()
             return false;
         // Fall-through.
     case JSObject:
-        return inherits("Error");
+        return m_engine->isError(*this);
     default:
         return false;
     }
@@ -868,13 +867,7 @@ inline bool QScriptValuePrivate::hasOwnProperty(quint32 property)
 inline bool QScriptValuePrivate::hasOwnProperty(JSStringRef property)
 {
     Q_ASSERT(isObject());
-    // FIXME it could be faster, but JSC C API doesn't expose needed functionality.
-    JSRetainPtr<JSStringRef> hasOwnPropertyName(Adopt, JSStringCreateWithUTF8CString("hasOwnProperty"));
-    JSValueRef exception = 0;
-    JSValueRef hasOwnProperty = JSObjectGetProperty(*m_engine, *this, hasOwnPropertyName.get(), &exception);
-    JSValueRef propertyName[] = { JSValueMakeString(*m_engine, property) };
-    JSValueRef result = JSObjectCallAsFunction(*m_engine, const_cast<JSObjectRef>(hasOwnProperty), *this, 1, propertyName, &exception);
-    return exception ? false : JSValueToBoolean(*m_engine, result);
+    return m_engine->objectHasOwnProperty(*this, property);
 }
 
 /*!
@@ -1120,24 +1113,6 @@ QScriptValuePrivate::operator JSObjectRef() const
     Q_ASSERT(m_state == JSObject);
     Q_ASSERT(u.m_object);
     return u.m_object;
-}
-
-/*!
-  \internal
-  Returns true if QSV is created from constructor with the given \a name, it has to be a
-  built-in type.
-*/
-bool QScriptValuePrivate::inherits(const char* name)
-{
-    Q_ASSERT(isJSBased());
-    JSObjectRef globalObject = JSContextGetGlobalObject(*m_engine);
-    JSStringRef errorAttrName = QScriptConverter::toString(name);
-    JSValueRef exception = 0;
-    JSValueRef error = JSObjectGetProperty(*m_engine, globalObject, errorAttrName, &exception);
-    JSStringRelease(errorAttrName);
-    bool result = JSValueIsInstanceOfConstructor(*m_engine, *this, JSValueToObject(*m_engine, error, &exception), &exception);
-    m_engine->setException(exception);
-    return result;
 }
 
 /*!

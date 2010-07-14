@@ -60,6 +60,7 @@ private slots:
     void getPropertyResolveFlag();
     void propertyFlag_data();
     void propertyFlag();
+    void globalObjectChanges();
 
     // Generated test functions.
     void isBool_data();

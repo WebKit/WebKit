@@ -1261,4 +1261,28 @@ void tst_QScriptValue::propertyFlag()
     QVERIFY(!object.propertyFlags(protoNameHandle, QScriptValue::ResolveLocal));
 }
 
+void tst_QScriptValue::globalObjectChanges()
+{
+    // API functionality shouldn't depend on Global Object.
+    QScriptEngine engine;
+    QScriptValue array = engine.newArray();
+    QScriptValue error = engine.evaluate("new Error");
+    QScriptValue object = engine.newObject();
+
+    object.setProperty("foo", 512);
+
+    // Remove properties form global object.
+    engine.evaluate("delete Object; delete Error; delete Array;");
+
+    QVERIFY(array.isArray());
+    QVERIFY(error.isError());
+    QVERIFY(object.isObject());
+
+    QVERIFY(object.property("foo").isValid());
+    QVERIFY(object.property("foo", QScriptValue::ResolveLocal).isValid());
+    object.setProperty("foo", QScriptValue());
+    QVERIFY(!object.property("foo").isValid());
+    QVERIFY(!object.property("foo", QScriptValue::ResolveLocal).isValid());
+}
+
 QTEST_MAIN(tst_QScriptValue)
