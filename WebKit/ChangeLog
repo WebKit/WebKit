@@ -1,3 +1,17 @@
+2010-07-14  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
+
+        Reviewed by Antonio Gomes.
+
+        [EFL] Add eina_safety to popup menu deletion.
+        https://bugs.webkit.org/show_bug.cgi?id=41873
+
+        Since this is a public call, it's better to have an eina_safety on
+        public calls. It would crash if browser calls this function to select
+        an item of a nonexistent popup.
+
+        * efl/ewk/ewk_view.cpp: add eina_safety to return if popup menu client does
+        not exist.
+
 2010-07-13  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.
