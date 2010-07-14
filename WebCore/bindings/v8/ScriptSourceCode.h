@@ -46,14 +46,6 @@ public:
         , m_url(url)
         , m_startLine(startLine)
     {
-        // FIXME: Copying the source to strip BOMs isn't strictly necessary
-        // because V8 treats BOMs as whitespace. However, it is here because it
-        // must be in sync with CachedScript::script() which strips the BOMs. We
-        // should investigate the performance implications.
-        if (m_source.length()) { 
-            bool scratch = false; 
-            m_source = String(source.impl()->copyStringWithoutBOMs(false, scratch)); 
-        } 
     }
 
     // We lose the encoding information from CachedScript.
