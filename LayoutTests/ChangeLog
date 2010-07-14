@@ -1,5 +1,14 @@
 2010-07-14  Philippe Normand  <pnormand@igalia.com>
 
+        Unreviewed, fix comment in Skipped file.
+
+        [GTK] http/tests/media/video-cookie.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=42240
+
+        * platform/gtk/Skipped:
+
+2010-07-14  Philippe Normand  <pnormand@igalia.com>
+
         Unreviewed, skip failing test.
 
         [GTK] http/tests/media/video-cookie.html fails
