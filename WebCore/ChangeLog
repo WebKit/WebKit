@@ -1,3 +1,13 @@
+2010-07-14  Darin Adler  <darin@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Fix warning seen with newer gcc (on Qt buildbot).
+
+        * html/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::callTheAdoptionAgency):
+        Add parentheses around && expression.
+
 2010-07-14  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
