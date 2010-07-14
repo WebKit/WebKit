@@ -36,6 +36,7 @@ platform/mac/accessibility/stale-table-rows.html
 platform/mac/accessibility/parent-of-table-row-is-table.html
 platform/mac/accessibility/aria-expanded-notifications.html
 platform/mac/accessibility/table-with-row-col-of-headers.html
+platform/mac/accessibility/table-with-zebra-rows.html
 
 # This test requires ogg codecs
 media/media-can-play-ogg.html
