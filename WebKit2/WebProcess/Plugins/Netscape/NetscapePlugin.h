@@ -50,7 +50,13 @@ public:
     void invalidate(const NPRect*);
     const char* userAgent();
     void loadURL(const WebCore::String& urlString, const WebCore::String& target, bool sendNotification, void* notificationData);
-    
+
+    // Member functions for calling into the plug-in.
+    NPError NPP_New(NPMIMEType pluginType, uint16_t mode, int16_t argc, char* argn[], char* argv[], NPSavedData* savedData);
+    NPError NPP_Destroy(NPSavedData** savedData);
+    NPError NPP_SetWindow(NPWindow*);
+    void NPP_URLNotify(const char* url, NPReason reason, void* notifyData);
+
 private:
     NetscapePlugin(PassRefPtr<NetscapePluginModule> pluginModule);
 

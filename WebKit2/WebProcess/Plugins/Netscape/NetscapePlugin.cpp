@@ -108,6 +108,26 @@ void NetscapePlugin::loadURL(const String& urlString, const String& target, bool
     m_pluginController->loadURL(requestID, urlString, target, allowPopups);
 }
 
+NPError NetscapePlugin::NPP_New(NPMIMEType pluginType, uint16_t mode, int16_t argc, char* argn[], char* argv[], NPSavedData* savedData)
+{
+    return m_pluginModule->pluginFuncs().newp(pluginType, &m_npp, mode, argc, argn, argv, savedData);
+}
+    
+NPError NetscapePlugin::NPP_Destroy(NPSavedData** savedData)
+{
+    return m_pluginModule->pluginFuncs().destroy(&m_npp, savedData);
+}
+
+NPError NetscapePlugin::NPP_SetWindow(NPWindow* npWindow)
+{
+    return m_pluginModule->pluginFuncs().setwindow(&m_npp, npWindow);
+}
+
+void NetscapePlugin::NPP_URLNotify(const char* url, NPReason reason, void* notifyData)
+{
+    m_pluginModule->pluginFuncs().urlnotify(&m_npp, url, reason, notifyData);
+}
+
 void NetscapePlugin::callSetWindow()
 {
     m_npWindow.x = m_frameRect.x();
@@ -119,7 +139,7 @@ void NetscapePlugin::callSetWindow()
     m_npWindow.clipRect.bottom = m_clipRect.bottom();
     m_npWindow.clipRect.right = m_clipRect.right();
 
-    m_pluginModule->pluginFuncs().setwindow(&m_npp, &m_npWindow);
+    NPP_SetWindow(&m_npWindow);
 }
 
 bool NetscapePlugin::initialize(PluginController* pluginController, const Parameters& parameters)
@@ -152,8 +172,8 @@ bool NetscapePlugin::initialize(PluginController* pluginController, const Parame
         values.append(paramValues[i].data());
     }
     
-    NPError error = m_pluginModule->pluginFuncs().newp(const_cast<char*>(mimeTypeCString.data()), &m_npp, mode, 
-                                                       names.size(), const_cast<char**>(names.data()), const_cast<char**>(values.data()), 0);
+    NPError error = NPP_New(const_cast<char*>(mimeTypeCString.data()), mode, names.size(),
+                            const_cast<char**>(names.data()), const_cast<char**>(values.data()), 0);
     m_inNPPNew = false;
 
     if (error != NPERR_NO_ERROR)
@@ -176,7 +196,8 @@ void NetscapePlugin::destroy()
 {
     ASSERT(m_isStarted);
 
-    m_pluginModule->pluginFuncs().destroy(&m_npp, 0);
+    NPP_Destroy(0);
+
     m_isStarted = false;
     m_pluginController = 0;
 }

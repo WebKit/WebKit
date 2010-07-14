@@ -2,6 +2,23 @@
 
         Reviewed by Sam Weinig.
 
+        Add NetscapePlugin::NPP_ member functions for calling into the plug-in
+        https://bugs.webkit.org/show_bug.cgi?id=42287
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::NPP_New):
+        (WebKit::NetscapePlugin::NPP_Destroy):
+        (WebKit::NetscapePlugin::NPP_SetWindow):
+        (WebKit::NetscapePlugin::NPP_URLNotify):
+        (WebKit::NetscapePlugin::callSetWindow):
+        (WebKit::NetscapePlugin::initialize):
+        (WebKit::NetscapePlugin::destroy):
+        * WebProcess/Plugins/Netscape/NetscapePlugin.h:
+
+2010-07-14  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
         Send JavaScript url request results back to the plug-in
         https://bugs.webkit.org/show_bug.cgi?id=42277
 
