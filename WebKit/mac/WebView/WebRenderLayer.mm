@@ -55,7 +55,7 @@ using namespace WebCore;
             name = [name stringByAppendingFormat:@" %@", (NSString *)static_cast<Element*>(node)->tagName()];
 
         if (node->hasID())
-            name = [name stringByAppendingFormat:@" ‘%@’", (NSString *)static_cast<Element*>(node)->getIdAttribute()];
+            name = [name stringByAppendingFormat:@" \u2018%@\u2019", (NSString *)static_cast<Element*>(node)->getIdAttribute()];
     }
 
     if (layer->isReflection())

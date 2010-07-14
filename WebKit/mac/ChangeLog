@@ -1,5 +1,14 @@
 2010-07-13  Simon Fraser  <simon.fraser@apple.com>
 
+        Fix Tiger build.
+
+        Avoid non-ASCII in souce files to keep Tiger compiler happy.
+
+        * WebView/WebRenderLayer.mm:
+        (+[WebRenderLayer nameForLayer:]):
+
+2010-07-13  Simon Fraser  <simon.fraser@apple.com>
+
         Reviewed by Dan Bernstein.
 
         <rdar://problem/8186963> Expose RenderLayer hierarchy via Obj-C for debugging.
