@@ -25,6 +25,7 @@
 .objc_class_name_WebPanelAuthenticationHandler
 .objc_class_name_WebPluginDatabase
 .objc_class_name_WebPreferences
+.objc_class_name_WebRenderLayer
 .objc_class_name_WebRenderNode
 .objc_class_name_WebResource
 .objc_class_name_WebScriptCallFrame

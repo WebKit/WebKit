@@ -1,3 +1,13 @@
+2010-07-13  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        <rdar://problem/8186963> Expose RenderLayer hierarchy via Obj-C for debugging.
+        
+        Add WebRenderLayer files.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
 2010-07-13  Rafael Antognolli  <antognolli@profusion.mobi>
 
         Reviewed by Antonio Gomes.

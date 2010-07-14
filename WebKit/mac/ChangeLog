@@ -1,3 +1,16 @@
+2010-07-13  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        <rdar://problem/8186963> Expose RenderLayer hierarchy via Obj-C for debugging.
+
+        Add a WebRenderLayer class that reflects the RenderLayer tree into a hierarchy
+        of Objective-C objects suitable for display in an outline view.
+        
+        * WebKit.exp: Export the WebRenderLayer Objective-C class.
+        * WebView/WebRenderLayer.h: Added.
+        * WebView/WebRenderLayer.mm: Added.
+
 2010-07-07  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         Reviewed by Darin Adler.
