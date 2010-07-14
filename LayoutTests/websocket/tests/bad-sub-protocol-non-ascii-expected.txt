@@ -2,7 +2,7 @@ CONSOLE MESSAGE: line 0: Wrong protocol for WebSocket '\u007F'
 CONSOLE MESSAGE: line 0: Wrong protocol for WebSocket '\u0080'
 CONSOLE MESSAGE: line 0: Wrong protocol for WebSocket '\u3042'
 CONSOLE MESSAGE: line 0: Wrong protocol for WebSocket '\uFFFF'
-CONSOLE MESSAGE: line 0: Wrong protocol for WebSocket ''
+CONSOLE MESSAGE: line 0: Wrong protocol for WebSocket '\uFEFF'
 CONSOLE MESSAGE: line 0: Wrong protocol for WebSocket '\uFFFE'
 CONSOLE MESSAGE: line 0: Wrong protocol for WebSocket '\uD840\uDC0B'
 Test WebSocket bad sub-protocol names by non-ASCII chars.

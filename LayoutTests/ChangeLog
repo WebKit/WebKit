@@ -1,5 +1,12 @@
 2010-07-14  Kent Tamura  <tkent@chromium.org>
 
+        Unreviewed, test expectation update.
+
+        * websocket/tests/bad-sub-protocol-non-ascii-expected.txt:
+        Updated because r63273 changed BOM behavior.
+
+2010-07-14  Kent Tamura  <tkent@chromium.org>
+
         Reviewed by Darin Fisher.
 
         <input type=number> UI: inner spin button layout
