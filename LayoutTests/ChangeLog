@@ -1,5 +1,23 @@
 2010-07-14  Yury Semikhatsky  <yurys@chromium.org>
 
+        Unreviewed. Update Chromium test expectations.
+
+        * platform/chromium-linux/svg/custom/recursive-gradient-expected.checksum: Added.
+        * platform/chromium-linux/svg/custom/recursive-pattern-expected.checksum: Added.
+        * platform/chromium-mac/svg/custom/recursive-filter-expected.checksum: Added.
+        * platform/chromium-mac/svg/custom/recursive-filter-expected.png: Added.
+        * platform/chromium-win/svg/custom/recursive-filter-expected.checksum: Added.
+        * platform/chromium-win/svg/custom/recursive-filter-expected.png: Added.
+        * platform/chromium-win/svg/custom/recursive-gradient-expected.checksum: Added.
+        * platform/chromium-win/svg/custom/recursive-gradient-expected.png: Added.
+        * platform/chromium-win/svg/custom/recursive-mask-expected.checksum: Added.
+        * platform/chromium-win/svg/custom/recursive-mask-expected.png: Added.
+        * platform/chromium-win/svg/custom/recursive-pattern-expected.checksum: Added.
+        * platform/chromium-win/svg/custom/recursive-pattern-expected.png: Added.
+        * platform/chromium/test_expectations.txt:
+
+2010-07-14  Yury Semikhatsky  <yurys@chromium.org>
+
         Unreviewed. Add new debugger test to the skip list on Qt.
 
         * platform/qt/Skipped:
