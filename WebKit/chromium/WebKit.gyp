@@ -639,7 +639,7 @@
                 'search_path': [
                     '../../WebCore/inspector/front-end',
                     'src/js',
-                    'v8/tools',
+                    '<(chromium_src_dir)/v8/tools',
                 ],
                 'outputs': ['<(PRODUCT_DIR)/resources/inspector/DevTools.js'],
                 'action': ['python', '<@(_script_name)', '<@(_input_page)', '<@(_search_path)', '<@(_outputs)'],

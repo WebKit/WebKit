@@ -1,5 +1,11 @@
 2010-07-14  Kent Tamura  <tkent@chromium.org>
 
+        Unreviewed, 2nd attempt to fix build on 'Webkit.org Reliability Builder'.
+
+        * WebKit.gyp:
+
+2010-07-14  Kent Tamura  <tkent@chromium.org>
+
         Unreviewed, attempt to fix build on 'Webkit.org Reliability Builder'.
 
         * WebKit.gyp:
