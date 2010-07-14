@@ -1,5 +1,12 @@
 2010-07-14  Simon Fraser  <simon.fraser@apple.com>
 
+        Fix non-ACCELERATED_COMPOSITING build.
+
+        * WebView/WebRenderLayer.mm:
+        (+[WebRenderLayer compositingInfoForLayer:]):
+
+2010-07-14  Simon Fraser  <simon.fraser@apple.com>
+
         Reviewed by John Sullivan.
 
         <rdar://problem/8186963> Expose information about compositing layers.
