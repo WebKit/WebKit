@@ -23,12 +23,14 @@ Got:
 |         href="foo"
 |         "br"
 |       <a>
+|         href="foo"
 |       "x"
 |       <table>
 |         <tbody>
 |           <tr>
 |             <td>
 |     <a>
+|       href="foo"
 |       "aoe"
 Expected:
 | <html>
@@ -61,6 +63,7 @@ Got:
 |       href="blah"
 |       "aba"
 |     <a>
+|       href="blah"
 |     "x"
 |     <table>
 |       <tbody>
@@ -70,6 +73,7 @@ Got:
 |               href="foo"
 |               "br"
 |     <a>
+|       href="blah"
 |       "aoe"
 Expected:
 | <html>
@@ -322,8 +326,9 @@ resources/comments01.dat: PASS
 
 resources/adoption01.dat:
 3
+11
 
-Test 3 of 9 in resources/adoption01.dat failed. Input:
+Test 3 of 11 in resources/adoption01.dat failed. Input:
 <a>1<button>2</a>3</button>
 Got:
 | <html>
@@ -342,6 +347,33 @@ Expected:
 |       <button>
 |         "2"
 |     "3"
+
+Test 11 of 11 in resources/adoption01.dat failed. Input:
+<p><b id="A"><script>document.getElementById("A").id = "B"</script></p>TEXT</b>
+Got:
+| <html>
+|   <head>
+|   <body>
+|     <p>
+|       <b>
+|         id="B"
+|         <script>
+|           "document.getElementById("A").id = "B""
+|     <b>
+|       id="B"
+|       "TEXT"
+Expected:
+| <html>
+|   <head>
+|   <body>
+|     <p>
+|       <b>
+|         id="B"
+|         <script>
+|           "document.getElementById("A").id = "B""
+|     <b>
+|       id="A"
+|       "TEXT"
 resources/inbody01.dat: PASS
 
 resources/isindex.dat: PASS

@@ -193,40 +193,39 @@ void HTMLConstructionSite::insertCommentOnHTMLHtmlElement(AtomicHTMLToken& token
     attach(m_openElements.htmlElement(), Comment::create(m_document, token.comment()));
 }
 
-PassRefPtr<Element> HTMLConstructionSite::createHTMLElementAndAttachToCurrent(AtomicHTMLToken& token)
+PassRefPtr<Element> HTMLConstructionSite::attachToCurrent(PassRefPtr<Element> child)
 {
-    ASSERT(token.type() == HTMLToken::StartTag);
-    return attach(currentElement(), createHTMLElement(token));
+    return attach(currentElement(), child);
 }
 
 void HTMLConstructionSite::insertHTMLHtmlElement(AtomicHTMLToken& token)
 {
     ASSERT(!m_redirectAttachToFosterParent);
-    m_openElements.pushHTMLHtmlElement(createHTMLElementAndAttachToCurrent(token));
+    m_openElements.pushHTMLHtmlElement(attachToCurrent(createHTMLElement(token)));
 }
 
 void HTMLConstructionSite::insertHTMLHeadElement(AtomicHTMLToken& token)
 {
     ASSERT(!m_redirectAttachToFosterParent);
-    m_head = createHTMLElementAndAttachToCurrent(token);
+    m_head = attachToCurrent(createHTMLElement(token));
     m_openElements.pushHTMLHeadElement(m_head);
 }
 
 void HTMLConstructionSite::insertHTMLBodyElement(AtomicHTMLToken& token)
 {
     ASSERT(!m_redirectAttachToFosterParent);
-    m_openElements.pushHTMLBodyElement(createHTMLElementAndAttachToCurrent(token));
+    m_openElements.pushHTMLBodyElement(attachToCurrent(createHTMLElement(token)));
 }
 
 void HTMLConstructionSite::insertHTMLElement(AtomicHTMLToken& token)
 {
-    m_openElements.push(createHTMLElementAndAttachToCurrent(token));
+    m_openElements.push(attachToCurrent(createHTMLElement(token)));
 }
 
 void HTMLConstructionSite::insertSelfClosingHTMLElement(AtomicHTMLToken& token)
 {
     ASSERT(token.type() == HTMLToken::StartTag);
-    createHTMLElementAndAttachToCurrent(token);
+    attachToCurrent(createHTMLElement(token));
     // FIXME: Do we want to acknowledge the token's self-closing flag?
     // http://www.whatwg.org/specs/web-apps/current-work/multipage/tokenization.html#acknowledge-self-closing-flag
 }
@@ -244,7 +243,7 @@ void HTMLConstructionSite::insertScriptElement(AtomicHTMLToken& token)
 {
     RefPtr<HTMLScriptElement> element = HTMLScriptElement::create(scriptTag, m_document, true);
     element->setAttributeMap(token.takeAtributes(), m_fragmentScriptingPermission);
-    m_openElements.push(attach(currentElement(), element.release()));
+    m_openElements.push(attachToCurrent(element.release()));
 }
 
 void HTMLConstructionSite::insertForeignElement(AtomicHTMLToken& token, const AtomicString& namespaceURI)
@@ -252,7 +251,7 @@ void HTMLConstructionSite::insertForeignElement(AtomicHTMLToken& token, const At
     ASSERT(token.type() == HTMLToken::StartTag);
     notImplemented(); // parseError when xmlns or xmlns:xlink are wrong.
 
-    RefPtr<Element> element = attach(currentElement(), createElement(token, namespaceURI));
+    RefPtr<Element> element = attachToCurrent(createElement(token, namespaceURI));
     if (!token.selfClosing())
         m_openElements.push(element);
 }
@@ -292,6 +291,48 @@ PassRefPtr<Element> HTMLConstructionSite::createHTMLElement(AtomicHTMLToken& tok
     return element.release();
 }
 
+PassRefPtr<Element> HTMLConstructionSite::createHTMLElementFromElementRecord(HTMLElementStack::ElementRecord* record)
+{
+    // FIXME: This will change to use
+    // return createHTMLElementFromSavedElement(record->element());
+    // in a later patch once tested.
+    AtomicHTMLToken fakeToken(HTMLToken::StartTag, record->element()->localName());
+    return createHTMLElement(fakeToken);
+}
+
+namespace {
+
+PassRefPtr<NamedNodeMap> cloneAttributes(Element* element)
+{
+    NamedNodeMap* attributes = element->attributes(true);
+    if (!attributes)
+        return 0;
+
+    RefPtr<NamedNodeMap> newAttributes = NamedNodeMap::create();
+    for (size_t i = 0; i < attributes->length(); ++i) {
+        Attribute* attribute = attributes->attributeItem(i);
+        RefPtr<Attribute> clone = Attribute::createMapped(attribute->name(), attribute->value());
+        newAttributes->addAttribute(clone);
+    }
+    return newAttributes.release();
+}
+
+}
+
+PassRefPtr<Element> HTMLConstructionSite::createHTMLElementFromSavedElement(Element* element)
+{
+    // FIXME: This method is wrong.  We should be using the original token.
+    // Using an Element* causes us to fail examples like this:
+    // <b id="1"><p><script>document.getElementById("1").id = "2"</script></p>TEXT</b>
+    // When reconstructActiveFormattingElements calls this method to open
+    // a second <b> tag to wrap TEXT, it will have id "2", even though the HTML5
+    // spec implies it should be "1".  Minefield matches the HTML5 spec here.
+
+    ASSERT(element->isHTMLElement()); // otherwise localName() might be wrong.
+    AtomicHTMLToken fakeToken(HTMLToken::StartTag, element->localName(), cloneAttributes(element));
+    return createHTMLElement(fakeToken);
+}
+
 bool HTMLConstructionSite::indexOfFirstUnopenFormattingElement(unsigned& firstUnopenElementIndex) const
 {
     if (m_activeFormattingElements.isEmpty())
@@ -319,9 +360,8 @@ void HTMLConstructionSite::reconstructTheActiveFormattingElements()
     ASSERT(unopenEntryIndex < m_activeFormattingElements.size());
     for (; unopenEntryIndex < m_activeFormattingElements.size(); ++unopenEntryIndex) {
         HTMLFormattingElementList::Entry& unopenedEntry = m_activeFormattingElements.at(unopenEntryIndex);
-        // FIXME: We're supposed to save the original token in the entry.
-        AtomicHTMLToken fakeToken(HTMLToken::StartTag, unopenedEntry.element()->localName());
-        insertHTMLElement(fakeToken);
+        RefPtr<Element> reconstructed = createHTMLElementFromSavedElement(unopenedEntry.element());
+        m_openElements.push(attachToCurrent(reconstructed.release()));
         unopenedEntry.replaceElement(currentElement());
     }
 }

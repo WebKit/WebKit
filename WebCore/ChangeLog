@@ -1,3 +1,45 @@
+2010-07-13  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        reconstructActiveFormElements should reconstruct attributes as well
+        https://bugs.webkit.org/show_bug.cgi?id=42222
+
+        The case in question is "<p><b foo='bar'></p>text</b>".
+        When the "b" is re-opened to wrap the text it should include
+        any attributes from the original (now closed) tag name.
+
+        There are also similar cases for the Adoption Agency algorithm, but since
+        the html5lib test suite did not cover those (and it wasn't immediately
+        obvious to me how to test those) I've saved fixing that bug for a
+        later patch.  For now I've just made the adoption agency use
+        HTMLConstructionSite::createHTMLElementFromElementRecord so the
+        FIXME can be in one place instead of two.
+
+        In order to cleanly support createHTMLElementFromSavedElement
+        I re-factored "attachToCurrent" out from createHTMLElementAndAttachToCurrent
+        and changed all callers to use attachToCurrent(createHTMLElement(token)).
+
+        This is covered by two existing tests in html5lib/runner.html
+        and I wrote two more.  One to cover the basic case that we now pass
+        and a second to cover an evil edge case which we do not.
+
+        * html/HTMLConstructionSite.cpp:
+        (WebCore::HTMLConstructionSite::attachToCurrent):
+        (WebCore::HTMLConstructionSite::insertHTMLHtmlElement):
+        (WebCore::HTMLConstructionSite::insertHTMLHeadElement):
+        (WebCore::HTMLConstructionSite::insertHTMLBodyElement):
+        (WebCore::HTMLConstructionSite::insertHTMLElement):
+        (WebCore::HTMLConstructionSite::insertSelfClosingHTMLElement):
+        (WebCore::HTMLConstructionSite::insertScriptElement):
+        (WebCore::HTMLConstructionSite::insertForeignElement):
+        (WebCore::HTMLConstructionSite::createHTMLElementFromElementRecord):
+        (WebCore::HTMLConstructionSite::createHTMLElementFromSavedElement):
+        (WebCore::HTMLConstructionSite::reconstructTheActiveFormattingElements):
+        * html/HTMLConstructionSite.h:
+        * html/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::callTheAdoptionAgency):
+
 2010-07-13  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Darin Adler.
