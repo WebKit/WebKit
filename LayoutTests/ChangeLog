@@ -1,3 +1,12 @@
+2010-07-14  Brian Weinstein  <bweinstein@apple.com>
+
+        Rubber-stamped by Adam Roben.
+
+        Update the Windows platform specific results to S7.6_A3.1.html, because it is now
+        passing on Windows.
+
+        * platform/win/fast/js/sputnik/Unicode/Unicode_510/S7.6_A3.1-expected.txt:
+
 2010-07-14  Kenneth Russell  <kbr@google.com>
 
         Reviewed by Darin Fisher.
