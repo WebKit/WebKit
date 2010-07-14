@@ -265,7 +265,12 @@ void InspectorController::setSetting(const String& key, const String& value)
     m_client->storeSetting(key, value);
 }
 
-void InspectorController::setSessionSettings(const String& settingsJSON)
+void InspectorController::saveApplicationSettings(const String& settings)
+{
+    setSetting(InspectorController::frontendSettingsSettingName(), settings);
+}
+
+void InspectorController::saveSessionSettings(const String& settingsJSON)
 {
     m_sessionSettings = InspectorValue::parseJSON(settingsJSON);
 }
@@ -309,6 +314,13 @@ void InspectorController::highlight(Node* node)
     ASSERT_ARG(node, node);
     m_highlightedNode = node;
     m_client->highlight(node);
+}
+
+void InspectorController::highlightDOMNode(long nodeId)
+{
+    Node* node = 0;
+    if (m_domAgent && (node = m_domAgent->nodeForId(nodeId)))
+        highlight(node);
 }
 
 void InspectorController::hideHighlight()
@@ -1741,11 +1753,18 @@ void InspectorController::getScriptSource(long callId, const String& sourceID)
     m_frontend->didGetScriptSource(callId, scriptSource);
 }
 
-void InspectorController::resumeDebugger()
+void InspectorController::resume()
 {
     if (!m_debuggerEnabled)
         return;
     ScriptDebugServer::shared().continueProgram();
+}
+
+void InspectorController::setPauseOnExceptionsState(long pauseState)
+{
+    ScriptDebugServer::shared().setPauseOnExceptionsState(static_cast<ScriptDebugServer::PauseOnExceptionsState>(pauseState));
+    if (m_frontend)
+        m_frontend->updatePauseOnExceptionsState(ScriptDebugServer::shared().pauseOnExceptionsState());
 }
 
 PassRefPtr<SerializedScriptValue> InspectorController::currentCallFrames()
@@ -2152,6 +2171,23 @@ void InspectorController::addScriptToEvaluateOnLoad(const String& source)
 void InspectorController::removeAllScriptsToEvaluateOnLoad()
 {
     m_scriptsToEvaluateOnLoad.clear();
+}
+
+void InspectorController::getResourceContent(long callId, unsigned long identifier)
+{
+    if (!m_frontend)
+        return;
+
+    RefPtr<InspectorResource> resource = m_resources.get(identifier);
+    if (resource)
+        m_frontend->didGetResourceContent(callId, resource->sourceString());
+    else
+        m_frontend->didGetResourceContent(callId, "");
+}
+
+void InspectorController::reloadPage()
+{
+    m_inspectedPage->mainFrame()->redirectScheduler()->scheduleRefresh(true);
 }
 
 } // namespace WebCore

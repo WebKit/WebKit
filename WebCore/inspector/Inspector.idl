@@ -70,12 +70,12 @@ module core {
         void activateBreakpoints();
         void deactivateBreakpoints();
 
-        void pauseInDebugger();
-        void resumeDebugger();
+        void pause();
+        void resume();
 
-        void stepOverStatementInDebugger();
-        void stepIntoStatementInDebugger();
-        void stepOutOfFunctionInDebugger();
+        void stepOverStatement();
+        void stepIntoStatement();
+        void stepOutOfFunction();
 
         void setPauseOnExceptionsState(in long pauseOnExceptionsState);
 
@@ -103,7 +103,7 @@ module core {
         void removeAllScriptsToEvaluateOnLoad();
 
         void getChildNodes(in long nodeId);
-        [custorResponse=didApplyDomChange] void setAttribute(in long elementId, in String name, in String value, out boolean success);
+        [customResponse=didApplyDomChange] void setAttribute(in long elementId, in String name, in String value, out boolean success);
         [customResponse=didApplyDomChange] void removeAttribute(in long elementId, in String name, out boolean success);
         void setTextNodeValue(in long nodeId, in String value);
         void getEventListenersForNode(in long nodeId, out long nodeId, out Array listenersArray);
@@ -115,7 +115,7 @@ module core {
         void addInspectedNode(in long nodeId);
         void performSearch(in String query, in boolean runSynchronously);
         void searchCanceled();
-        void pushNodeByPathToFrontend(in String path);
+        void pushNodeByPathToFrontend(in String path, out long nodeId);
 
         void clearConsoleMessages();
 
@@ -138,7 +138,7 @@ module core {
         void getCookies();
         void deleteCookie(in String cookieName, in String domain);
 
-#if defined(ENABLE_OFFLINE_WEB_APPLICATIONS)
+#if defined(ENABLE_OFFLINE_WEB_APPLICATIONS) && ENABLE_OFFLINE_WEB_APPLICATIONS
         void getApplicationCaches();
 #endif
 

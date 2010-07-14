@@ -111,10 +111,10 @@ devtools.InspectorBackendImpl = function()
     this.installInspectorControllerDelegate_("removeBreakpoint");
     this.installInspectorControllerDelegate_("activateBreakpoints");
     this.installInspectorControllerDelegate_("deactivateBreakpoints");
-    this.installInspectorControllerDelegate_("resumeDebugger");
-    this.installInspectorControllerDelegate_("stepIntoStatementInDebugger");
-    this.installInspectorControllerDelegate_("stepOutOfFunctionInDebugger");
-    this.installInspectorControllerDelegate_("stepOverStatementInDebugger");
+    this.installInspectorControllerDelegate_("resume");
+    this.installInspectorControllerDelegate_("stepIntoStatement");
+    this.installInspectorControllerDelegate_("stepOutOfFunction");
+    this.installInspectorControllerDelegate_("stepOverStatement");
     this.installInspectorControllerDelegate_("setPauseOnExceptionsState");
     }
 };
@@ -166,31 +166,31 @@ devtools.InspectorBackendImpl.prototype.deactivateBreakpoints = function()
 };
 
 
-devtools.InspectorBackendImpl.prototype.pauseInDebugger = function()
+devtools.InspectorBackendImpl.prototype.pause = function()
 {
     devtools.tools.getDebuggerAgent().pauseExecution();
 };
 
 
-devtools.InspectorBackendImpl.prototype.resumeDebugger = function()
+devtools.InspectorBackendImpl.prototype.resume = function()
 {
     devtools.tools.getDebuggerAgent().resumeExecution();
 };
 
 
-devtools.InspectorBackendImpl.prototype.stepIntoStatementInDebugger = function()
+devtools.InspectorBackendImpl.prototype.stepIntoStatement = function()
 {
     devtools.tools.getDebuggerAgent().stepIntoStatement();
 };
 
 
-devtools.InspectorBackendImpl.prototype.stepOutOfFunctionInDebugger = function()
+devtools.InspectorBackendImpl.prototype.stepOutOfFunction = function()
 {
     devtools.tools.getDebuggerAgent().stepOutOfFunction();
 };
 
 
-devtools.InspectorBackendImpl.prototype.stepOverStatementInDebugger = function()
+devtools.InspectorBackendImpl.prototype.stepOverStatement = function()
 {
     devtools.tools.getDebuggerAgent().stepOverStatement();
 };
@@ -227,7 +227,7 @@ devtools.InspectorBackendImpl.prototype.setPauseOnExceptions = function(value)
 
 } else {
 
-devtools.InspectorBackendImpl.prototype.pauseInDebugger = function()
+devtools.InspectorBackendImpl.prototype.pause = function()
 {
     RemoteDebuggerCommandExecutor.DebuggerPauseScript();
 };

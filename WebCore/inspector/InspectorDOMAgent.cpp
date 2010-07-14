@@ -58,6 +58,7 @@
 #include "MutationEvent.h"
 #include "Node.h"
 #include "NodeList.h"
+#include "Pasteboard.h"
 #include "PlatformString.h"
 #include "RemoteInspectorFrontend.h"
 #include "RenderStyle.h"
@@ -69,6 +70,8 @@
 #if ENABLE(XPATH)
 #include "XPathResult.h"
 #endif
+
+#include "markup.h"
 
 #include <wtf/text/CString.h>
 #include <wtf/HashSet.h>
@@ -352,14 +355,6 @@ void InspectorDOMAgent::pushChildNodesToFrontend(long nodeId)
     RefPtr<InspectorArray> children = buildArrayForContainerChildren(node, 1, nodeMap);
     m_childrenRequested.add(nodeId);
     m_frontend->setChildNodes(nodeId, children.release());
-}
-
-long InspectorDOMAgent::pushNodeByPathToFrontend(const String& path)
-{
-    Node* node = nodeForPath(path);
-    if (!node)
-        return 0;
-    return pushNodePathToFrontend(node);
 }
 
 long InspectorDOMAgent::inspectedNode(unsigned long num)
@@ -1633,6 +1628,28 @@ void InspectorDOMAgent::reportNodesAsSearchResults(ListHashSet<Node*>& resultCol
         nodeIds->pushNumber(static_cast<long long>(pushNodePathToFrontend(*it)));
     }
     m_frontend->addNodesToSearchResult(nodeIds.release());
+}
+
+void InspectorDOMAgent::copyNode(long nodeId)
+{
+    Node* node = nodeForId(nodeId);
+    if (!node)
+        return;
+    String markup = createMarkup(node);
+    Pasteboard::generalPasteboard()->writePlainText(markup);
+}
+
+void InspectorDOMAgent::pushNodeByPathToFrontend(long callId, const String& path)
+{
+    if (!m_frontend)
+        return;
+
+    long id = 0;
+    Node* node = nodeForPath(path);
+    if (node)
+        id = pushNodePathToFrontend(node);
+
+    m_frontend->didPushNodeByPathToFrontend(callId, id);
 }
 
 } // namespace WebCore

@@ -184,7 +184,7 @@ WebInspector.InspectorBackendStub.prototype = {
         this._breakpointsActivated = false;
     },
 
-    pauseInDebugger: function()
+    pause: function()
     {
     },
 
@@ -203,7 +203,7 @@ WebInspector.InspectorBackendStub.prototype = {
         WebInspector.didGetScriptSource(callId, null);
     },
 
-    resumeDebugger: function()
+    resume: function()
     {
     },
 
@@ -243,15 +243,15 @@ WebInspector.InspectorBackendStub.prototype = {
         return [];
     },
 
-    stepIntoStatementInDebugger: function()
+    stepIntoStatement: function()
     {
     },
 
-    stepOutOfFunctionInDebugger: function()
+    stepOutOfFunction: function()
     {
     },
 
-    stepOverStatementInDebugger: function()
+    stepOverStatement: function()
     {
     },
 

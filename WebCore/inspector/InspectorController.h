@@ -127,14 +127,19 @@ public:
     bool enabled() const;
 
     Page* inspectedPage() const { return m_inspectedPage; }
+    void reloadPage();
 
     String setting(const String& key) const;
     void setSetting(const String& key, const String& value);
-    void setSessionSettings(const String&);
+    void saveApplicationSettings(const String& settings);
+    void saveSessionSettings(const String&);
+
 
     void inspect(Node*);
     void highlight(Node*);
     void hideHighlight();
+    void highlightDOMNode(long nodeId);
+    void hideDOMNodeHighlight() { hideHighlight(); }
 
     void show();
     void showPanel(SpecialPanels);
@@ -246,6 +251,8 @@ public:
     String getCurrentUserInitiatedProfileName(bool incrementProfileNumber);
     void startUserInitiatedProfiling(Timer<InspectorController>* = 0);
     void stopUserInitiatedProfiling();
+    void startProfiling() { startUserInitiatedProfiling(); }
+    void stopProfiling() { stopUserInitiatedProfiling(); }
 
     void enableProfiler(bool always = false, bool skipRecompile = false);
     void disableProfiler(bool always = false);
@@ -260,7 +267,8 @@ public:
     void editScriptSource(long callId, const String& sourceID, const String& newContent);
     void getScriptSource(long callId, const String& sourceID);
 
-    void resumeDebugger();
+    void resume();
+    void setPauseOnExceptionsState(long pauseState);
     PassRefPtr<SerializedScriptValue> currentCallFrames();
 
     virtual void didParseSource(const String& sourceID, const String& url, const String& data, int firstLine, ScriptWorldType);
@@ -288,7 +296,12 @@ private:
 
     // Following are used from InspectorBackend and internally.
     void setSearchingForNode(bool enabled);
+    void enableSearchingForNode() { setSearchingForNode(true); }
+    void disableSearchingForNode() { setSearchingForNode(false); }
+
     void setMonitoringXHR(bool enabled);
+    void enableMonitoringXHR() { setMonitoringXHR(true); }
+    void disableMonitoringXHR() { setMonitoringXHR(false); }
     void storeLastActivePanel(const String& panelName);
     InspectorDOMAgent* domAgent() { return m_domAgent.get(); }
     void releaseFrontendLifetimeAgents();
@@ -324,6 +337,7 @@ private:
     void addResource(InspectorResource*);
     void removeResource(InspectorResource*);
     InspectorResource* getTrackedResource(unsigned long identifier);
+    void getResourceContent(long callId, unsigned long identifier);
 
     void pruneResources(ResourcesMap*, DocumentLoader* loaderToKeep = 0);
     void removeAllResources(ResourcesMap* map) { pruneResources(map); }

@@ -86,12 +86,12 @@ public:
     void activateBreakpoints();
     void deactivateBreakpoints();
 
-    void pauseInDebugger();
-    void resumeDebugger();
+    void pause();
+    void resume();
 
-    void stepOverStatementInDebugger();
-    void stepIntoStatementInDebugger();
-    void stepOutOfFunctionInDebugger();
+    void stepOverStatement();
+    void stepIntoStatement();
+    void stepOutOfFunction();
 
     void setPauseOnExceptionsState(long pauseState);
 

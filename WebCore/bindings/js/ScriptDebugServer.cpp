@@ -200,7 +200,7 @@ void ScriptDebugServer::setPauseOnExceptionsState(PauseOnExceptionsState pause)
     m_pauseOnExceptionsState = pause;
 }
 
-void ScriptDebugServer::pauseProgram()
+void ScriptDebugServer::pause()
 {
     m_pauseOnNextStatement = true;
 }

@@ -135,8 +135,9 @@ namespace WebCore {
         Node* nodeForId(long nodeId);
         long pushNodePathToFrontend(Node* node);
         void pushChildNodesToFrontend(long nodeId);
-        long pushNodeByPathToFrontend(const String& path);
+        void pushNodeByPathToFrontend(long callId, const String& path);
         long inspectedNode(unsigned long num);
+        void copyNode(long nodeId);
 
     private:
         static CSSStyleSheet* getParentStyleSheet(CSSStyleDeclaration*);
