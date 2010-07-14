@@ -147,10 +147,10 @@ void Cursor::ensurePlatformCursor() const
         m_platformCursor = HardRetain(leakNamedCursor("northWestSouthEastResizeCursor", 7, 7));
         break;
     case Cursor::ColumnResize:
-        m_platformCursor = [NSCursor resizeLeftRightCursor];
+        m_platformCursor = HardRetain([NSCursor resizeLeftRightCursor]);
         break;
     case Cursor::RowResize:
-        m_platformCursor = [NSCursor resizeUpDownCursor];
+        m_platformCursor = HardRetain([NSCursor resizeUpDownCursor]);
         break;
     case Cursor::VerticalText:
         m_platformCursor = HardRetain(leakNamedCursor("verticalTextCursor", 7, 7));

@@ -1,3 +1,12 @@
+2010-07-14  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Brady Eidson.
+
+        Fix crashing layout test on snowleopard.
+
+        * platform/mac/CursorMac.mm:
+        (WebCore::Cursor::ensurePlatformCursor): Make sure to retain the cursor.
+
 2010-07-14  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler.
