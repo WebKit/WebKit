@@ -188,9 +188,9 @@ static void restartedCallback(SoupMessage* msg, gpointer data)
     char* uri = soup_uri_to_string(soup_message_get_uri(msg), false);
     String location = String(uri);
     g_free(uri);
-    KURL newURL = KURL(handle->request().url(), location);
+    KURL newURL = KURL(handle->firstRequest().url(), location);
 
-    ResourceRequest request = handle->request();
+    ResourceRequest request = handle->firstRequest();
     ResourceResponse response;
     request.setURL(newURL);
     request.setHTTPMethod(msg->method);
@@ -354,7 +354,7 @@ static gboolean parseDataUrl(gpointer callbackData)
     if (!client)
         return false;
 
-    String url = handle->request().url().string();
+    String url = handle->firstRequest().url().string();
     ASSERT(url.startsWith("data:", false));
 
     int index = url.find(',');
@@ -377,7 +377,7 @@ static gboolean parseDataUrl(gpointer callbackData)
     String charset = extractCharsetFromMediaType(mediaType);
 
     ResourceResponse response;
-    response.setURL(handle->request().url());
+    response.setURL(handle->firstRequest().url());
     response.setMimeType(mimeType);
 
     if (isBase64) {
@@ -478,7 +478,7 @@ static bool startHttp(ResourceHandle* handle)
 
     ResourceHandleInternal* d = handle->getInternal();
 
-    ResourceRequest request(handle->request());
+    ResourceRequest request(handle->firstRequest());
     KURL url(request.url());
     url.removeFragmentIdentifier();
     request.setURL(url);
@@ -504,7 +504,7 @@ static bool startHttp(ResourceHandle* handle)
 #endif
     g_object_set_data(G_OBJECT(d->m_msg), "resourceHandle", reinterpret_cast<void*>(handle));
 
-    FormData* httpBody = d->m_request.httpBody();
+    FormData* httpBody = d->m_firstRequest.httpBody();
     if (httpBody && !httpBody->isEmpty()) {
         size_t numElements = httpBody->elements().size();
 
@@ -512,7 +512,7 @@ static bool startHttp(ResourceHandle* handle)
         if (numElements < 2) {
             Vector<char> body;
             httpBody->flatten(body);
-            soup_message_set_request(d->m_msg, d->m_request.httpContentType().utf8().data(),
+            soup_message_set_request(d->m_msg, firstRequest().httpContentType().utf8().data(),
                                      SOUP_MEMORY_COPY, body.data(), body.size());
         } else {
             /*
@@ -590,7 +590,7 @@ bool ResourceHandle::start(Frame* frame)
     if (frame && !frame->page())
         return false;
 
-    KURL url = request().url();
+    KURL url = firstRequest().url();
     String urlString = url.string();
     String protocol = url.protocol();
 
@@ -889,7 +889,7 @@ static bool startGio(ResourceHandle* handle, KURL url)
 
     ResourceHandleInternal* d = handle->getInternal();
 
-    if (handle->request().httpMethod() != "GET" && handle->request().httpMethod() != "POST")
+    if (handle->firstRequest().httpMethod() != "GET" && handle->firstRequest().httpMethod() != "POST")
         return false;
 
     // GIO doesn't know how to handle refs and queries, so remove them

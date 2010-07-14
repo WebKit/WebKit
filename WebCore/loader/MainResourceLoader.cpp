@@ -233,7 +233,7 @@ void MainResourceLoader::continueAfterContentPolicy(PolicyAction contentPolicy, 
             receivedError(cannotShowURLError());
             return;
         }
-        frameLoader()->client()->download(m_handle.get(), request(), m_handle.get()->request(), r);
+        frameLoader()->client()->download(m_handle.get(), request(), m_handle.get()->firstRequest(), r);
         // It might have gone missing
         if (frameLoader())
             receivedError(interruptionForPolicyChangeError());

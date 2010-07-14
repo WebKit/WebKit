@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2006, 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,30 +37,28 @@ namespace WebCore {
 
 static bool shouldForceContentSniffing;
 
-ResourceHandle::ResourceHandle(const ResourceRequest& request, ResourceHandleClient* client, bool defersLoading,
-         bool shouldContentSniff)
-    : d(new ResourceHandleInternal(this, request, client, defersLoading, shouldContentSniff))
+ResourceHandle::ResourceHandle(const ResourceRequest& request, ResourceHandleClient* client, bool defersLoading, bool shouldContentSniff)
+    : d(new ResourceHandleInternal(this, request, client, defersLoading, shouldContentSniff && shouldContentSniffURL(request.url())))
 {
+    if (!request.url().isValid()) {
+        scheduleFailure(InvalidURLFailure);
+        return;
+    }
+
+    if (!portAllowed(request.url())) {
+        scheduleFailure(BlockedFailure);
+        return;
+    }
 }
 
 PassRefPtr<ResourceHandle> ResourceHandle::create(const ResourceRequest& request, ResourceHandleClient* client,
     Frame* frame, bool defersLoading, bool shouldContentSniff)
 {
-    if (shouldContentSniff)
-        shouldContentSniff = shouldContentSniffURL(request.url());
-
     RefPtr<ResourceHandle> newHandle(adoptRef(new ResourceHandle(request, client, defersLoading, shouldContentSniff)));
 
-    if (!request.url().isValid()) {
-        newHandle->scheduleFailure(InvalidURLFailure);
+    if (newHandle->d->m_scheduledFailureType != NoFailure)
         return newHandle.release();
-    }
 
-    if (!portAllowed(request.url())) {
-        newHandle->scheduleFailure(BlockedFailure);
-        return newHandle.release();
-    }
-        
     if (newHandle->start(frame))
         return newHandle.release();
 
@@ -105,9 +103,9 @@ void ResourceHandle::setClient(ResourceHandleClient* client)
     d->m_client = client;
 }
 
-const ResourceRequest& ResourceHandle::request() const
+ResourceRequest& ResourceHandle::firstRequest()
 {
-    return d->m_request;
+    return d->m_firstRequest;
 }
 
 const String& ResourceHandle::lastHTTPMethod() const

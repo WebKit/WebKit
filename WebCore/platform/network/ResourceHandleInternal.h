@@ -83,7 +83,7 @@ namespace WebCore {
     public:
         ResourceHandleInternal(ResourceHandle* loader, const ResourceRequest& request, ResourceHandleClient* c, bool defersLoading, bool shouldContentSniff)
             : m_client(c)
-            , m_request(request)
+            , m_firstRequest(request)
             , m_lastHTTPMethod(request.httpMethod())
             , status(0)
             , m_defersLoading(defersLoading)
@@ -136,10 +136,10 @@ namespace WebCore {
             , m_scheduledFailureType(ResourceHandle::NoFailure)
             , m_failureTimer(loader, &ResourceHandle::fireFailure)
         {
-            const KURL& url = m_request.url();
+            const KURL& url = m_firstRequest.url();
             m_user = url.user();
             m_pass = url.pass();
-            m_request.removeCredentials();
+            m_firstRequest.removeCredentials();
         }
         
         ~ResourceHandleInternal();
@@ -147,7 +147,7 @@ namespace WebCore {
         ResourceHandleClient* client() { return m_client; }
         ResourceHandleClient* m_client;
         
-        ResourceRequest m_request;
+        ResourceRequest m_firstRequest;
         String m_lastHTTPMethod;
 
         // Suggested credentials for the current redirection step.

@@ -150,7 +150,7 @@ QNetworkReplyHandler::QNetworkReplyHandler(ResourceHandle* handle, LoadMode load
     , m_shouldForwardData(false)
     , m_redirectionTries(gMaxRecursionLimit)
 {
-    const ResourceRequest &r = m_resourceHandle->request();
+    const ResourceRequest &r = m_resourceHandle->firstRequest();
 
     if (r.httpMethod() == "GET")
         m_method = QNetworkAccessManager::GetOperation;
@@ -358,7 +358,7 @@ void QNetworkReplyHandler::sendResponseIfNeeded()
         }
         m_redirected = true;
 
-        ResourceRequest newRequest = m_resourceHandle->request();
+        ResourceRequest newRequest = m_resourceHandle->firstRequest();
         newRequest.setURL(newUrl);
 
         if (((statusCode >= 301 && statusCode <= 303) || statusCode == 307) && newRequest.httpMethod() == "POST") {
@@ -442,7 +442,7 @@ void QNetworkReplyHandler::start()
             m_reply = manager->get(m_request);
             break;
         case QNetworkAccessManager::PostOperation: {
-            FormDataIODevice* postDevice = new FormDataIODevice(d->m_request.httpBody()); 
+            FormDataIODevice* postDevice = new FormDataIODevice(d->m_firstRequest.httpBody()); 
             m_reply = manager->post(m_request, postDevice);
             postDevice->setParent(m_reply);
             break;
@@ -451,7 +451,7 @@ void QNetworkReplyHandler::start()
             m_reply = manager->head(m_request);
             break;
         case QNetworkAccessManager::PutOperation: {
-            FormDataIODevice* putDevice = new FormDataIODevice(d->m_request.httpBody()); 
+            FormDataIODevice* putDevice = new FormDataIODevice(d->m_firstRequest.httpBody()); 
             m_reply = manager->put(m_request, putDevice);
             putDevice->setParent(m_reply);
             break;
@@ -464,7 +464,7 @@ void QNetworkReplyHandler::start()
 #endif
 #if QT_VERSION >= 0x040700
         case QNetworkAccessManager::CustomOperation:
-            m_reply = manager->sendCustomRequest(m_request, m_resourceHandle->request().httpMethod().latin1().data());
+            m_reply = manager->sendCustomRequest(m_request, m_resourceHandle->firstRequest().httpMethod().latin1().data());
             break;
 #endif
         case QNetworkAccessManager::UnknownOperation: {
@@ -494,7 +494,7 @@ void QNetworkReplyHandler::start()
     connect(m_reply, SIGNAL(readyRead()),
             this, SLOT(forwardData()), SIGNAL_CONN);
 
-    if (m_resourceHandle->request().reportUploadProgress()) {
+    if (m_resourceHandle->firstRequest().reportUploadProgress()) {
         connect(m_reply, SIGNAL(uploadProgress(qint64, qint64)),
                 this, SLOT(uploadProgress(qint64, qint64)), SIGNAL_CONN);
     }

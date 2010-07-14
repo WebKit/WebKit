@@ -271,7 +271,7 @@ static size_t headerCallback(char* ptr, size_t size, size_t nmemb, void* data)
                 if (client)
                     client->willSendRequest(job, redirectedRequest, d->m_response);
 
-                d->m_request.setURL(newURL);
+                d->m_firstRequest.setURL(newURL);
 
                 return totalSize;
             }

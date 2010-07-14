@@ -1,3 +1,14 @@
+2010-07-13  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=42201
+        Use ResourceHandle object for synchronous loading
+
+        * src/ResourceHandle.cpp:
+        (WebCore::ResourceHandle::request):
+        This method is no longer const in cross-platform code, and is called firstRequest.
+
 2010-07-14  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r63305.

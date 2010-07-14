@@ -91,7 +91,7 @@ void IconLoader::didReceiveResponse(SubresourceLoader* resourceLoader, const Res
 
     if (status && (status < 200 || status > 299)) {
         ResourceHandle* handle = resourceLoader->handle();
-        finishLoading(handle ? handle->request().url() : KURL(), 0);
+        finishLoading(handle ? handle->firstRequest().url() : KURL(), 0);
     }
 }
 
@@ -115,7 +115,7 @@ void IconLoader::didFail(SubresourceLoader* resourceLoader, const ResourceError&
     if (m_loadIsInProgress) {
         ASSERT(resourceLoader == m_resourceLoader);
         ResourceHandle* handle = resourceLoader->handle();
-        finishLoading(handle ? handle->request().url() : KURL(), 0);
+        finishLoading(handle ? handle->firstRequest().url() : KURL(), 0);
     }
 }
 
@@ -137,7 +137,7 @@ void IconLoader::didFinishLoading(SubresourceLoader* resourceLoader)
     if (m_loadIsInProgress) {
         ASSERT(resourceLoader == m_resourceLoader);
         ResourceHandle* handle = resourceLoader->handle();
-        finishLoading(handle ? handle->request().url() : KURL(), m_resourceLoader->resourceData());
+        finishLoading(handle ? handle->firstRequest().url() : KURL(), m_resourceLoader->resourceData());
     }
 }
 

@@ -1,3 +1,90 @@
+2010-07-13  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=42201
+        Use ResourceHandle object for synchronous loading
+
+        * platform/network/ResourceHandle.cpp:
+        (WebCore::ResourceHandle::ResourceHandle): Moved common tasks from create() to constructor.
+        (WebCore::ResourceHandle::firstRequest): Renamed from request(). This is not changed with
+        redirect, so the old name was quite confusing.
+
+        * platform/network/ResourceHandle.h: Made createNSURLConnection() a member function, since
+        it now needs access to both ResourceHandle and ResourceHandleInternal. Added createCFURLConnection().
+
+        * platform/network/ResourceHandleInternal.h:
+        (WebCore::ResourceHandleInternal::ResourceHandleInternal): Renamed m_request to m_firstRequest.
+
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCoreSynchronousLoaderClient): Replaced an Objective C delegate class with a ResourceHandleClient
+        subclass. This allows for much better code sharing, with common logic is in ResourceHandle.
+        (WebCore::ResourceHandle::createNSURLConnection): Factored out more code that is common
+        between sync and async parts.
+        (WebCore::ResourceHandle::start): Ditto.
+        (WebCore::ResourceHandle::cancel): Updated for firstRequest() renaming.
+        (WebCore::ResourceHandle::loadResourceSynchronously): Use ResourceHandle and ResourceHandleClient,
+        like a good loader.
+        (WebCore::ResourceHandle::didReceiveAuthenticationChallenge): Updated for firstRequest() renaming.
+        (WebCore::ResourceHandle::receivedCredential): Ditto.
+        (-[WebCoreResourceHandleAsDelegate connection:willSendRequest:redirectResponse:]): Ditto.
+        (-[WebCoreResourceHandleAsDelegate connection:didReceiveResponse:]): Ditto.
+        (-[WebCoreResourceHandleAsDelegate connectionDidFinishLoading:]): Ditto.
+        (-[WebCoreResourceHandleAsDelegate connection:didFailWithError:]): Ditto.
+
+        * platform/network/cf/ResourceHandleCFNet.cpp:
+        (WebCore::WebCoreSynchronousLoaderClient::create):
+        (WebCore::WebCoreSynchronousLoaderClient::setAllowStoredCredentials):
+        (WebCore::WebCoreSynchronousLoaderClient::isDone):
+        (WebCore::WebCoreSynchronousLoaderClient::data):
+        (WebCore::WebCoreSynchronousLoaderClient::WebCoreSynchronousLoaderClient):
+        (WebCore::willSendRequest):
+        (WebCore::didReceiveResponse):
+        (WebCore::didReceiveData):
+        (WebCore::shouldUseCredentialStorageCallback):
+        (WebCore::didFinishLoading):
+        (WebCore::didFail):
+        (WebCore::didReceiveChallenge):
+        (WebCore::ResourceHandleInternal::~ResourceHandleInternal):
+        (WebCore::ResourceHandle::~ResourceHandle):
+        (WebCore::ResourceHandle::createCFURLConnection):
+        (WebCore::ResourceHandle::start):
+        (WebCore::ResourceHandle::didReceiveAuthenticationChallenge):
+        (WebCore::ResourceHandle::receivedCredential):
+        (WebCore::ResourceHandle::loadResourceSynchronously):
+        (WebCore::WebCoreSynchronousLoaderClient::willSendRequest):
+        (WebCore::WebCoreSynchronousLoaderClient::didReceiveResponse):
+        (WebCore::WebCoreSynchronousLoaderClient::didReceiveData):
+        (WebCore::WebCoreSynchronousLoaderClient::didFinishLoading):
+        (WebCore::WebCoreSynchronousLoaderClient::didFail):
+        (WebCore::WebCoreSynchronousLoaderClient::didReceiveAuthenticationChallenge):
+        (WebCore::WebCoreSynchronousLoaderClient::shouldUseCredentialStorage):
+        Same changes for CFNetwork version. Now it's a more direct copy/paste than before, some
+        day we'll share the code.
+
+        * loader/MainResourceLoader.cpp:
+        (WebCore::MainResourceLoader::continueAfterContentPolicy):
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        (WebCore::ApplicationCacheGroup::createResourceHandle):
+        (WebCore::ApplicationCacheGroup::didReceiveResponse):
+        (WebCore::ApplicationCacheGroup::didFinishLoading):
+        (WebCore::ApplicationCacheGroup::didFail):
+        (WebCore::ApplicationCacheGroup::didReceiveManifestResponse):
+        * loader/icon/IconLoader.cpp:
+        (WebCore::IconLoader::didReceiveResponse):
+        (WebCore::IconLoader::didFail):
+        (WebCore::IconLoader::didFinishLoading):
+        * platform/network/curl/ResourceHandleManager.cpp:
+        (WebCore::headerCallback):
+        * platform/network/qt/QNetworkReplyHandler.cpp:
+        (WebCore::QNetworkReplyHandler::start):
+        * platform/network/qt/ResourceHandleQt.cpp:
+        (WebCore::ResourceHandle::start):
+        (WebCore::ResourceHandle::loadResourceSynchronously):
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::startHttp):
+        Updated for request() -> firstRequest renaming.
+
 2010-07-14  Marcus Bulach  <bulach@chromium.org>
 
         Reviewed by Jeremy Orlow.
