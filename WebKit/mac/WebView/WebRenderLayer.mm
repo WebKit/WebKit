@@ -30,7 +30,7 @@
 #import <WebCore/FrameLoaderClient.h>
 #import <WebCore/PlatformString.h>
 #import <WebCore/RenderLayer.h>
-#import <WebCore/RenderView.h>
+#import <WebCore/RenderLayerBacking.h>
 #import <WebCore/RenderView.h>
 
 using namespace WebCore;
@@ -54,7 +54,18 @@ using namespace WebCore;
         if (node->isElementNode())
             name = [name stringByAppendingFormat:@" %@", (NSString *)static_cast<Element*>(node)->tagName()];
         if (node->hasID())
-            name = [name stringByAppendingFormat:@" %C%@%C", 0x2018, (NSString *)static_cast<Element*>(node)->getIdAttribute(), 0x2019];
+            name = [name stringByAppendingFormat:@" id=\"%@\"", (NSString *)static_cast<Element*>(node)->getIdAttribute()];
+
+        if (node->hasClass()) {
+            StyledElement* styledElement = static_cast<StyledElement*>(node);
+            String classes;
+            for (size_t i = 0; i < styledElement->classNames().size(); ++i) {
+                if (i > 0)
+                    classes += " ";
+                classes += styledElement->classNames()[i];
+            }
+            name = [name stringByAppendingFormat:@" class=\"%@\"", (NSString *)classes];
+        }
     }
 
     if (layer->isReflection())
@@ -63,12 +74,54 @@ using namespace WebCore;
     return name;
 }
 
++ (NSString *)compositingInfoForLayer:(RenderLayer*)layer;
+{
+    if (!layer->isComposited())
+        return @"";
+
+    NSString *layerType = @"";
+    RenderLayerBacking* backing = layer->backing();
+    switch (backing->compositingLayerType()) {
+        case NormalCompositingLayer:
+            layerType = @"composited";
+            break;
+        case TiledCompositingLayer:
+            layerType = @"composited: tiled layer";
+            break;
+        case MediaCompositingLayer:
+            layerType = @"composited for plug-in, video or WebGL";
+            break;
+        case ContainerCompositingLayer:
+            layerType = @"composited: container layer";
+            break;
+    }
+    
+    if (backing->hasClippingLayer())
+        layerType = [layerType stringByAppendingString:@" (clipping)"];
+
+    if (backing->hasAncestorClippingLayer())
+        layerType = [layerType stringByAppendingString:@" (clipped)"];
+
+    return layerType;
+}
+
 - (id)initWithRenderLayer:(RenderLayer*)layer
 {
     if ((self = [super init])) {
         name = [[WebRenderLayer nameForLayer:layer] retain];
         bounds = layer->absoluteBoundingBox();
         composited = layer->isComposited();
+        compositingInfo = [[WebRenderLayer compositingInfoForLayer:layer] retain];
+    }
+
+    return self;
+}
+
+- (id)initWithName:(NSString*)layerName
+{
+    if ((self = [super init])) {
+        name = [layerName copy];
+        separator = YES;
     }
 
     return self;
@@ -97,6 +150,7 @@ using namespace WebCore;
         name = [[WebRenderLayer nameForLayer:layer] retain];
         bounds = layer->absoluteBoundingBox();
         composited = layer->isComposited();
+        compositingInfo = [[WebRenderLayer compositingInfoForLayer:layer] retain];
     
         [self buildDescendantLayers:layer];
     }
@@ -108,6 +162,7 @@ using namespace WebCore;
 {
     [children release];
     [name release];
+    [compositingInfo release];
     [super dealloc];
 }
 
@@ -119,6 +174,13 @@ using namespace WebCore;
     
     if (Vector<RenderLayer*>* negZOrderList = layer->negZOrderList()) {
         size_t listSize = negZOrderList->size();
+
+        if (listSize) {
+            WebRenderLayer* newLayer = [[WebRenderLayer alloc] initWithName:@"-ve z-order list"];
+            [childWebLayers addObject:newLayer];
+            [newLayer release];
+        }
+
         for (size_t i = 0; i < listSize; ++i) {
             RenderLayer* curLayer = negZOrderList->at(i);
 
@@ -132,6 +194,13 @@ using namespace WebCore;
 
     if (Vector<RenderLayer*>* normalFlowList = layer->normalFlowList()) {
         size_t listSize = normalFlowList->size();
+
+        if (listSize) {
+            WebRenderLayer* newLayer = [[WebRenderLayer alloc] initWithName:@"normal flow list"];
+            [childWebLayers addObject:newLayer];
+            [newLayer release];
+        }
+        
         for (size_t i = 0; i < listSize; ++i) {
             RenderLayer* curLayer = normalFlowList->at(i);
 
@@ -145,6 +214,13 @@ using namespace WebCore;
 
     if (Vector<RenderLayer*>* posZOrderList = layer->posZOrderList()) {
         size_t listSize = posZOrderList->size();
+
+        if (listSize) {
+            WebRenderLayer* newLayer = [[WebRenderLayer alloc] initWithName:@"+ve z-order list"];
+            [childWebLayers addObject:newLayer];
+            [newLayer release];
+        }
+
         for (size_t i = 0; i < listSize; ++i) {
             RenderLayer* curLayer = posZOrderList->at(i);
 
@@ -184,9 +260,19 @@ using namespace WebCore;
     return [NSString stringWithFormat:@"%.0f", bounds.size.height];
 }
 
-- (BOOL)composited
+- (NSString *)compositingInfo
+{
+    return compositingInfo;
+}
+
+- (BOOL)isComposited
 {
     return composited;
+}
+
+- (BOOL)isSeparator
+{
+    return separator;
 }
 
 @end

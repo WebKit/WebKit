@@ -1267,6 +1267,17 @@ String RenderLayerBacking::nameForLayer() const
 }
 #endif
 
+CompositingLayerType RenderLayerBacking::compositingLayerType() const
+{
+    if (m_graphicsLayer->hasContentsLayer())
+        return MediaCompositingLayer;
+
+    if (m_graphicsLayer->drawsContent())
+        return m_graphicsLayer->usingTiledLayer() ? TiledCompositingLayer : NormalCompositingLayer;
+    
+    return ContainerCompositingLayer;
+}
+
 } // namespace WebCore
 
 #endif // USE(ACCELERATED_COMPOSITING)

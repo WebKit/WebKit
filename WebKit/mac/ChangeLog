@@ -1,3 +1,27 @@
+2010-07-14  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by John Sullivan.
+
+        <rdar://problem/8186963> Expose information about compositing layers.
+
+        Use RenderLayerBacking::compositingLayerType() to add more information about compositing to
+        WebRenderLayer, via a compositingInfo property. Also show element classnames.
+        
+        Also add separator items between the various z-order lists.
+        
+        * WebView/WebRenderLayer.h:
+        * WebView/WebRenderLayer.mm:
+        (+[WebRenderLayer nameForLayer:]):
+        (+[WebRenderLayer compositingInfoForLayer:]):
+        (-[WebRenderLayer initWithRenderLayer:]):
+        (-[WebRenderLayer initWithName:]):
+        (-[WebRenderLayer initWithWebFrame:]):
+        (-[WebRenderLayer dealloc]):
+        (-[WebRenderLayer buildDescendantLayers:]):
+        (-[WebRenderLayer compositingInfo]):
+        (-[WebRenderLayer isComposited]):
+        (-[WebRenderLayer isSeparator]):
+
 2010-07-14  Darin Adler  <darin@apple.com>
 
         Another try at fixing the Tiger build.

@@ -40,6 +40,13 @@ namespace WebCore {
 class KeyframeList;
 class RenderLayerCompositor;
 
+enum CompositingLayerType {
+    NormalCompositingLayer, // non-tiled layer with backing store
+    TiledCompositingLayer, // tiled layer (always has backing store)
+    MediaCompositingLayer, // layer that contains an image, video, webGL or plugin
+    ContainerCompositingLayer // layer with no backing store
+};
+
 // RenderLayerBacking controls the compositing behavior for a single RenderLayer.
 // It holds the various GraphicsLayers, and makes decisions about intra-layer rendering
 // optimizations.
@@ -126,6 +133,9 @@ public:
     virtual bool showRepaintCounter() const;
 
     IntRect contentsBox() const;
+    
+    // For informative purposes only.
+    CompositingLayerType compositingLayerType() const;
     
 private:
     void createGraphicsLayer();

@@ -106,6 +106,7 @@ public:
 #if ENABLE(3D_CANVAS)
     virtual void setContentsToWebGL(PlatformLayer*);
 #endif
+    virtual bool hasContentsLayer() const { return m_contentsLayer; }
     
     virtual PlatformLayer* platformLayer() const;
 

@@ -1,3 +1,22 @@
+2010-07-14  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by John Sullivan.
+
+        <rdar://problem/8186963> Expose information about compositing layers.
+
+        Expose information about the types of compositing layers via RenderLayerBacking::compositingLayerType().
+
+        * WebCore.exp.in: Export WebCore::SpaceSplitStringData::createVector().
+        * WebCore.xcodeproj/project.pbxproj: Make RenderLayerBacking.h a Private header for use by WebKit.
+        * platform/graphics/GraphicsLayer.h: Add hasContentsLayer() and usingTiledLayer() methods.
+        (WebCore::GraphicsLayer::hasContentsLayer):
+        (WebCore::GraphicsLayer::usingTiledLayer):
+        * platform/graphics/mac/GraphicsLayerCA.h:
+        (WebCore::GraphicsLayerCA::hasContentsLayer): Return true if we have a contents layer.
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::compositingLayerType): Return information about the type of composited layer.
+        * rendering/RenderLayerBacking.h:
+
 2010-07-14  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam Weinig.
