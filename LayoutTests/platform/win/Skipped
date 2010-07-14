@@ -935,6 +935,10 @@ fast/js/sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Con
 # LayoutTestController::isPageBoxVisible, pageAreaRectInPixels, and preferredPageSizeInPixels are not implemented yet for WIN.
 printing/page-format-data.html
 
+# Need to implement inner-spin-button
+# https://bugs.webkit.org/show_bug.cgi?id=38381
+fast/forms/input-appearance-spinbutton-disabled-readonly.html
+
 # Speech input is not yet enabled.
 fast/forms/input-appearance-numberandspeech.html
 fast/forms/input-appearance-searchandspeech.html

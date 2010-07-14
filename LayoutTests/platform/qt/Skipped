@@ -5442,6 +5442,9 @@ inspector/debugger-eval-while-paused.html
 # https://bugs.webkit.org/show_bug.cgi?id=41241
 fast/text/bidi-explicit-embedding-past-end.html
 
+# Need to implement inner-spin-button or outer-spin-button
+fast/forms/input-appearance-spinbutton-disabled-readonly.html
+
 # Speech input is not yet enabled.
 fast/forms/input-appearance-numberandspeech.html
 fast/forms/input-appearance-searchandspeech.html

@@ -1,3 +1,28 @@
+2010-07-14  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        <input type=number> UI: Support disabled/readonly states
+        https://bugs.webkit.org/show_bug.cgi?id=38568
+
+        Implement isEnabledFormControl() and isReadOnlyFormControl() of
+        SpinButtonElement. They returns the states of the parent <input> element.
+        The existing isEnabledFormControl() had a bug. It didn't have 'const'
+        modifier.
+
+        Test: fast/forms/input-appearance-spinbutton-disabled-readonly.html
+
+        * rendering/TextControlInnerElements.cpp:
+        (WebCore::SpinButtonElement::defaultEventHandler):
+         - If the input element is disabled or read-only, don't process events.
+         - Protect 'input' object from destruction during focus().
+         - Fix a hit-test issue. We don't need to add renderBox()->y() because
+           'local' is relative to the RenderBox.
+         - Some code cleanup
+        * rendering/TextControlInnerElements.h:
+        (WebCore::SpinButtonElement::isEnabledFormControl):
+        (WebCore::SpinButtonElement::isReadOnlyFormControl):
+
 2010-07-13  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.

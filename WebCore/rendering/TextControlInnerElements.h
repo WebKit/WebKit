@@ -98,7 +98,9 @@ private:
     SpinButtonElement(Node*);
 
     virtual bool isSpinButtonElement() const { return true; }
-    virtual bool isEnabledFormControl() { return static_cast<Element*>(shadowAncestorNode())->isEnabledFormControl(); }
+    // FIXME: shadowAncestorNode() should be const.
+    virtual bool isEnabledFormControl() const { return static_cast<Element*>(const_cast<SpinButtonElement*>(this)->shadowAncestorNode())->isEnabledFormControl(); }
+    virtual bool isReadOnlyFormControl() const { return static_cast<Element*>(const_cast<SpinButtonElement*>(this)->shadowAncestorNode())->isReadOnlyFormControl(); }
     virtual void defaultEventHandler(Event*);
 
     bool m_capturing;

@@ -278,12 +278,19 @@ void SpinButtonElement::defaultEventHandler(Event* event)
     }
     
     HTMLInputElement* input = static_cast<HTMLInputElement*>(shadowAncestorNode());
+    if (input->disabled() || input->isReadOnlyFormControl()) {
+        if (!event->defaultHandled())
+            HTMLDivElement::defaultEventHandler(event);
+        return;
+    }
+
     IntPoint local = roundedIntPoint(box->absoluteToLocal(mouseEvent->absoluteLocation(), false, true));
     if (event->type() == eventNames().clickEvent) {
         if (box->borderBoxRect().contains(local)) {
+            RefPtr<Node> protector(input);
             input->focus();
             input->select();
-            if (local.y() < box->y() + box->height() / 2)
+            if (local.y() < box->height() / 2)
                 input->stepUpFromRenderer(1);
             else
                 input->stepUpFromRenderer(-1);
@@ -298,7 +305,7 @@ void SpinButtonElement::defaultEventHandler(Event* event)
                 }
             }
             bool oldOnUpButton = m_onUpButton;
-            m_onUpButton = local.y() < box->y() + box->height() / 2;
+            m_onUpButton = local.y() < box->height() / 2;
             if (m_onUpButton != oldOnUpButton)
                 renderer()->repaint();
         } else {

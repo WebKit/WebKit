@@ -1,3 +1,22 @@
+2010-07-14  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        <input type=number> UI: Support disabled/readonly states
+        https://bugs.webkit.org/show_bug.cgi?id=38568
+
+        * fast/forms/input-appearance-spinbutton-disabled-readonly.html: Added.
+        * platform/chromium/test_expectations.txt:
+        * platform/gtk/Skipped:
+        * platform/mac/fast/forms/input-appearance-spinbutton-disabled-readonly-expected.checksum: Added.
+        * platform/mac/fast/forms/input-appearance-spinbutton-disabled-readonly-expected.png: Added.
+        * platform/mac/fast/forms/input-appearance-spinbutton-disabled-readonly-expected.txt: Added.
+        * platform/mac/fast/forms/input-number-click-expected.txt:
+        * platform/mac/fast/forms/input-number-click.html:
+          Add tests for disabled/readonly states.
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+
 2010-07-13  Brian Weinstein  <bweinstein@apple.com>
 
         Fix Windows checkouts by shortening paths.
