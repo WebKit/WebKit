@@ -1,3 +1,24 @@
+2010-07-14  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        <rdar://problem/7759909> Certain text runs measure 1 pixel wider when measured as a whole than when measured piecewise
+        https://bugs.webkit.org/show_bug.cgi?id=42279
+
+        No test because the issue cannot be reproduced with standard fonts.
+
+        Word- and run-rounding works by advancing ahead to the nearest integral width. As the total
+        width accumulated becomes large, the float type’s low precision results in accumulated rounding
+        error, sometimes crossing an integer. Consequently, word-rounding makes different decisions when
+        measuring a multi-word run than when measuring its words individually. To work around this,
+        word- and run-rounding are applied only to the width accumulated since the last rounding
+        character.
+
+        * platform/graphics/WidthIterator.cpp:
+        (WebCore::WidthIterator::advance):
+        * platform/graphics/mac/ComplexTextController.cpp:
+        (WebCore::ComplexTextController::adjustGlyphsAndAdvances):
+
 2010-07-14  Tony Gentilcore  <tonyg@chromium.org>
 
         Reviewed by Darin Adler.

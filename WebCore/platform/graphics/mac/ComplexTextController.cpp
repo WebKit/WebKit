@@ -431,6 +431,7 @@ void ComplexTextController::advance(unsigned offset, GlyphBuffer* glyphBuffer)
 
 void ComplexTextController::adjustGlyphsAndAdvances()
 {
+    CGFloat widthSinceLastRounding = 0;
     size_t runCount = m_complexTextRuns.size();
     for (size_t r = 0; r < runCount; ++r) {
         ComplexTextRun& complexTextRun = *m_complexTextRuns[r];
@@ -474,7 +475,7 @@ void ComplexTextController::adjustGlyphsAndAdvances()
 
             if (ch == '\t' && m_run.allowTabs()) {
                 float tabWidth = m_font.tabWidth();
-                advance.width = tabWidth - fmodf(m_run.xPos() + m_totalWidth, tabWidth);
+                advance.width = tabWidth - fmodf(m_run.xPos() + m_totalWidth + widthSinceLastRounding, tabWidth);
             } else if (ch == zeroWidthSpace || Font::treatAsZeroWidthSpace(ch) && !treatAsSpace) {
                 advance.width = 0;
                 glyph = fontData->spaceGlyph();
@@ -532,21 +533,23 @@ void ComplexTextController::adjustGlyphsAndAdvances()
             // Check to see if the next character is a "rounding hack character", if so, adjust the
             // width so that the total run width will be on an integer boundary.
             if (m_run.applyWordRounding() && !lastGlyph && Font::isRoundingHackCharacter(nextCh) || m_run.applyRunRounding() && lastGlyph) {
-                CGFloat totalWidth = m_totalWidth + advance.width;
-                CGFloat extraWidth = ceilCGFloat(totalWidth) - totalWidth;
+                CGFloat totalWidth = widthSinceLastRounding + advance.width;
+                widthSinceLastRounding = ceilCGFloat(totalWidth);
+                CGFloat extraWidth = widthSinceLastRounding - totalWidth;
                 if (m_run.ltr())
                     advance.width += extraWidth;
                 else {
-                    m_totalWidth += extraWidth;
                     if (m_lastRoundingGlyph)
                         m_adjustedAdvances[m_lastRoundingGlyph - 1].width += extraWidth;
                     else
                         m_finalRoundingWidth = extraWidth;
                     m_lastRoundingGlyph = m_adjustedAdvances.size() + 1;
                 }
-            }
+                m_totalWidth += widthSinceLastRounding;
+                widthSinceLastRounding = 0;
+            } else
+                widthSinceLastRounding += advance.width;
 
-            m_totalWidth += advance.width;
             advance.height *= -1;
             m_adjustedAdvances.append(advance);
             m_adjustedGlyphs.append(glyph);
@@ -565,6 +568,7 @@ void ComplexTextController::adjustGlyphsAndAdvances()
         if (!isMonotonic)
             complexTextRun.setIsNonMonotonic();
     }
+    m_totalWidth += widthSinceLastRounding;
 }
 
 } // namespace WebCore
