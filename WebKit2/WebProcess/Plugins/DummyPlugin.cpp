@@ -74,4 +74,8 @@ PluginController* DummyPlugin::controller()
     return 0;
 }
 
+void DummyPlugin::didEvaluateJavaScript(uint64_t requestID, const WebCore::String& requestURLString, const WebCore::String& result)
+{
+}
+
 } // namespace WebKit

@@ -69,6 +69,10 @@ public:
     // Tells the plug-in that a frame load request that the plug-in made by calling PluginController::loadURL has failed.
     virtual void frameDidFail(uint64_t requestID, bool wasCancelled) = 0;
 
+    // Tells the plug-in that a request to evaluate JavaScript (using PluginController::loadURL) has been fulfilled and passes
+    // back the result. If evaluating the script failed, result will be null.
+    virtual void didEvaluateJavaScript(uint64_t requestID, const WebCore::String& requestURLString, const WebCore::String& result) = 0;
+
     // Returns the plug-in controller for this plug-in.
     // FIXME: We could just have the controller be a member variable of Plugin.
     virtual PluginController* controller() = 0;

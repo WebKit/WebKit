@@ -213,6 +213,11 @@ void NetscapePlugin::frameDidFail(uint64_t requestID, bool wasCancelled)
     // FIXME: Implement.
 }
 
+void NetscapePlugin::didEvaluateJavaScript(uint64_t requestID, const String& requestURLString, const String& result)
+{
+    // FIXME: Implement.
+}
+
 PluginController* NetscapePlugin::controller()
 {
     return m_pluginController;
