@@ -254,6 +254,7 @@ void ResourceHandle::createNSURLConnection(id delegate, bool shouldUseCredential
 #else
     // Building on Tiger. Don't use WebCore credential storage, don't try to disable content sniffing.
     UNUSED_PARAM(shouldUseCredentialStorage);
+    UNUSED_PARAM(shouldContentSniff);
     d->m_connection.adoptNS([[NSURLConnection alloc] initWithRequest:firstRequest().nsURLRequest() delegate:delegate]);
 #endif
 }
@@ -499,10 +500,9 @@ void ResourceHandle::loadResourceSynchronously(const ResourceRequest& request, S
 
 #else
     UNUSED_PARAM(storedCredentials);
-    NSURLRequest *nsRequest = mutableRequest ? mutableRequest : request.nsURLRequest();
-
+    UNUSED_PARAM(frame);
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    result = [NSURLConnection sendSynchronousRequest:nsRequest returningResponse:&nsURLResponse error:&nsError];
+    result = [NSURLConnection sendSynchronousRequest:request.nsURLRequest() returningResponse:&nsURLResponse error:&nsError];
     END_BLOCK_OBJC_EXCEPTIONS;
 #endif
 

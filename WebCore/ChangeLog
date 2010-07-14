@@ -1,3 +1,16 @@
+2010-07-14  Alexey Proskuryakov  <ap@apple.com>
+
+        Tiger and Gtk build fixes.
+
+        https://bugs.webkit.org/show_bug.cgi?id=42201
+        Use ResourceHandle object for synchronous loading
+
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::ResourceHandle::createNSURLConnection):
+        (WebCore::ResourceHandle::loadResourceSynchronously):
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::startHttp):
+
 2010-07-14  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin Adler.

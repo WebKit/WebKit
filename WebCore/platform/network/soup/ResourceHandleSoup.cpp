@@ -512,7 +512,7 @@ static bool startHttp(ResourceHandle* handle)
         if (numElements < 2) {
             Vector<char> body;
             httpBody->flatten(body);
-            soup_message_set_request(d->m_msg, firstRequest().httpContentType().utf8().data(),
+            soup_message_set_request(d->m_msg, d->m_firstRequest.httpContentType().utf8().data(),
                                      SOUP_MEMORY_COPY, body.data(), body.size());
         } else {
             /*
