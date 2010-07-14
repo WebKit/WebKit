@@ -1,3 +1,25 @@
+2010-07-14  Andreas Kling  <andreas.kling@nokia.com>
+
+        Reviewed by Darin Adler.
+
+        Canvas: Fast-path for assigning the same color string as before to fillStyle or strokeStyle
+        https://bugs.webkit.org/show_bug.cgi?id=42272
+
+        Always route assignment of color strings via setFillColor() or setStrokeColor()
+        where we can check it against the previous value and return early if it's the same.
+
+        * bindings/js/JSCanvasRenderingContext2DCustom.cpp:
+        (WebCore::toHTMLCanvasStyle):
+        (WebCore::JSCanvasRenderingContext2D::strokeStyle):
+        (WebCore::JSCanvasRenderingContext2D::setStrokeStyle):
+        (WebCore::JSCanvasRenderingContext2D::setFillStyle):
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::setStrokeStyle):
+        (WebCore::CanvasRenderingContext2D::setFillStyle):
+        (WebCore::CanvasRenderingContext2D::setStrokeColor):
+        (WebCore::CanvasRenderingContext2D::setFillColor):
+        * html/canvas/CanvasRenderingContext2D.h:
+
 2010-07-14  Kinuko Yasuda  <kinuko@chromium.org>
 
         Reviewed by Jian Li.
