@@ -36,7 +36,6 @@
 #include "DatabaseThread.h"
 #include "DatabaseTracker.h"
 #include "Document.h"
-#include "ExceptionCode.h"
 #include "InspectorController.h"
 #include "Logging.h"
 #include "NotImplemented.h"
@@ -336,7 +335,7 @@ Vector<String> Database::performGetTableNames()
 {
     disableAuthorizer();
 
-    SQLiteStatement statement(m_sqliteDatabase, "SELECT name FROM sqlite_master WHERE type='table';");
+    SQLiteStatement statement(sqliteDatabase(), "SELECT name FROM sqlite_master WHERE type='table';");
     if (statement.prepare() != SQLResultOk) {
         LOG_ERROR("Unable to retrieve list of tables for database %s", databaseDebugName().ascii().data());
         enableAuthorizer();
@@ -395,14 +394,6 @@ SecurityOrigin* Database::securityOrigin() const
     if (currentThread() == m_scriptExecutionContext->databaseThread()->getThreadID())
         return m_databaseThreadSecurityOrigin.get();
     return 0;
-}
-
-void Database::incrementalVacuumIfNeeded()
-{
-    int64_t freeSpaceSize = m_sqliteDatabase.freeSpaceSize();
-    int64_t totalSize = m_sqliteDatabase.totalSize();
-    if (totalSize <= 10 * freeSpaceSize)
-        m_sqliteDatabase.runIncrementalVacuumCommand();
 }
 
 } // namespace WebCore

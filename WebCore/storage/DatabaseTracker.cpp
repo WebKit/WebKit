@@ -221,7 +221,6 @@ bool DatabaseTracker::hasEntryForDatabase(SecurityOrigin* origin, const String& 
 
 unsigned long long DatabaseTracker::getMaxSizeForDatabase(const AbstractDatabase* database)
 {
-    ASSERT(currentThread() == database->scriptExecutionContext()->databaseThread()->getThreadID());
     // The maximum size for a database is the full quota for its origin, minus the current usage within the origin,
     // plus the current usage of the given database
     MutexLocker lockDatabase(m_databaseGuard);

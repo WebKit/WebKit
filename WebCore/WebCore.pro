@@ -2379,6 +2379,7 @@ contains(DEFINES, ENABLE_DATABASE=1) {
         storage/SQLResultSet.cpp \
         storage/SQLResultSetRowList.cpp \
         storage/SQLStatement.cpp \
+        storage/SQLStatementSync.cpp \
         storage/SQLTransaction.cpp \
         storage/SQLTransactionClient.cpp \
         storage/SQLTransactionCoordinator.cpp \
@@ -2457,6 +2458,7 @@ contains(DEFINES, ENABLE_DOM_STORAGE=1) {
         storage/SQLResultSet.h \
         storage/SQLResultSetRowList.h \
         storage/SQLStatement.h \
+        storage/SQLStatementSync.h \
         storage/SQLTransaction.h \
         storage/SQLTransactionClient.h \
         storage/SQLTransactionCoordinator.h \

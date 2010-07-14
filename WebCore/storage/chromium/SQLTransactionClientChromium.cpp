@@ -31,18 +31,15 @@
 #include "config.h"
 #include "SQLTransactionClient.h"
 
-#include "Database.h"
+#include "AbstractDatabase.h"
 #include "DatabaseObserver.h"
-#include "DatabaseThread.h"
-#include "Document.h"
-#include "SQLTransaction.h"
-#include <wtf/MainThread.h>
+#include "ScriptExecutionContext.h"
 
 namespace WebCore {
 
 class NotifyDatabaseChangedTask : public ScriptExecutionContext::Task {
 public:
-    static PassOwnPtr<NotifyDatabaseChangedTask> create(Database *database)
+    static PassOwnPtr<NotifyDatabaseChangedTask> create(AbstractDatabase *database)
     {
         return new NotifyDatabaseChangedTask(database);
     }
@@ -53,34 +50,35 @@ public:
     }
 
 private:
-    NotifyDatabaseChangedTask(PassRefPtr<Database> database)
+    NotifyDatabaseChangedTask(PassRefPtr<AbstractDatabase> database)
         : m_database(database)
     {
     }
 
-    RefPtr<Database> m_database;
+    RefPtr<AbstractDatabase> m_database;
 };
 
-void SQLTransactionClient::didCommitTransaction(SQLTransaction* transaction)
+void SQLTransactionClient::didCommitWriteTransaction(AbstractDatabase* database)
 {
-    ASSERT(currentThread() == transaction->database()->scriptExecutionContext()->databaseThread()->getThreadID());
-    if (!transaction->isReadOnly()) {
-        transaction->database()->scriptExecutionContext()->postTask(NotifyDatabaseChangedTask::create(transaction->database()));
+    if (!database->scriptExecutionContext()->isContextThread()) {
+        database->scriptExecutionContext()->postTask(NotifyDatabaseChangedTask::create(database));
+        return;
     }
+
+    WebCore::DatabaseObserver::databaseModified(database);
 }
 
-void SQLTransactionClient::didExecuteStatement(SQLTransaction* transaction)
+void SQLTransactionClient::didExecuteStatement(AbstractDatabase* database)
 {
     // This method is called after executing every statement that changes the DB.
     // Chromium doesn't need to do anything at that point.
-    ASSERT(currentThread() == transaction->database()->scriptExecutionContext()->databaseThread()->getThreadID());
 }
 
-bool SQLTransactionClient::didExceedQuota(SQLTransaction* transaction)
+bool SQLTransactionClient::didExceedQuota(AbstractDatabase* database)
 {
     // Chromium does not allow users to manually change the quota for an origin (for now, at least).
     // Don't do anything.
-    ASSERT(transaction->database()->scriptExecutionContext()->isContextThread());
+    ASSERT(database->scriptExecutionContext()->isContextThread());
     return false;
 }
 

@@ -31,6 +31,7 @@
 
 #if ENABLE(DATABASE)
 
+#include "ExceptionCode.h"
 #include "PlatformString.h"
 #include "SQLiteDatabase.h"
 #include <wtf/Forward.h>
@@ -44,8 +45,6 @@ namespace WebCore {
 class DatabaseAuthorizer;
 class ScriptExecutionContext;
 class SecurityOrigin;
-
-typedef int ExceptionCode;
 
 class AbstractDatabase : public ThreadSafeShared<AbstractDatabase> {
 public:
@@ -65,6 +64,10 @@ public:
     virtual String displayName() const;
     virtual unsigned long estimatedSize() const;
     virtual String fileName() const;
+    SQLiteDatabase& sqliteDatabase() { return m_sqliteDatabase; }
+
+    unsigned long long maximumSize() const;
+    void incrementalVacuumIfNeeded();
 
     // FIXME: move all version-related methods to a DatabaseVersionTracker class
     bool versionMatchesExpected() const;
@@ -103,8 +106,6 @@ protected:
     unsigned long m_estimatedSize;
     String m_filename;
 
-    SQLiteDatabase m_sqliteDatabase;
-
 #ifndef NDEBUG
     String databaseDebugName() const { return m_contextThreadSecurityOrigin->toString() + "::" + m_name; }
 #endif
@@ -115,6 +116,8 @@ private:
     int m_guid;
     bool m_opened;
     bool m_new;
+
+    SQLiteDatabase m_sqliteDatabase;
 
     RefPtr<DatabaseAuthorizer> m_databaseAuthorizer;
 };

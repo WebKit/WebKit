@@ -290,7 +290,7 @@ int DatabaseAuthorizer::createVTable(const String& tableName, const String& modu
         return SQLAuthDeny;
 
     // Allow only the FTS3 extension
-    if (moduleName != "fts3")
+    if (!equalIgnoringCase(moduleName, "fts3"))
         return SQLAuthDeny;
 
     m_lastActionChangedDatabase = true;
@@ -303,7 +303,7 @@ int DatabaseAuthorizer::dropVTable(const String& tableName, const String& module
         return SQLAuthDeny;
 
     // Allow only the FTS3 extension
-    if (moduleName != "fts3")
+    if (!equalIgnoringCase(moduleName, "fts3"))
         return SQLAuthDeny;
 
     return updateDeletesBasedOnTableName(tableName);

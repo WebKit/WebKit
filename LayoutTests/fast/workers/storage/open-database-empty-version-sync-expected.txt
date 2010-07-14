@@ -1,0 +1,3 @@
+Test that no exception is thrown when the database is opened with an empty version.
+PASS
+

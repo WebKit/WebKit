@@ -1,0 +1,7 @@
+Test that the values returned by DB queries are of the same type as the values inserted in the database.
+PASS: property 'timestamp' OK, type was number
+PASS: property 'id' OK, type was number
+PASS: property 'real' OK, type was number
+PASS: property 'text' OK, type was string
+PASS: property 'blob' OK, type was string
+

@@ -1,3 +1,99 @@
+2010-07-13  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Reviewed by Darin Fisher
+
+        Implementing DatabaseSync::transaction() and DatabaseSync::changeVersion().
+        https://bugs.webkit.org/show_bug.cgi?id=40607
+
+        Tests: fast/workers/storage/change-version-handle-reuse-sync.html
+               fast/workers/storage/change-version-sync.html
+               fast/workers/storage/empty-statement-sync.html
+               fast/workers/storage/execute-sql-args-sync.html
+               fast/workers/storage/executesql-accepts-only-one-statement-sync.html
+               fast/workers/storage/multiple-transactions-on-different-handles-sync.html
+               fast/workers/storage/open-database-creation-callback-sync.html
+               fast/workers/storage/open-database-empty-version-sync.html
+               fast/workers/storage/open-database-inputs-sync.html
+               fast/workers/storage/open-database-set-empty-version-sync.html
+               fast/workers/storage/open-database-while-transaction-in-progress-sync.html
+               fast/workers/storage/sql-data-types-sync.html
+               fast/workers/storage/sql-exception-codes-sync.html
+               fast/workers/storage/test-authorizer-sync.html
+               fast/workers/storage/transaction-in-transaction-sync.html
+
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * storage/AbstractDatabase.cpp:
+        (WebCore::AbstractDatabase::maximumSize):
+        (WebCore::AbstractDatabase::incrementalVacuumIfNeeded):
+        * storage/AbstractDatabase.h:
+        (WebCore::AbstractDatabase::sqliteDatabase):
+        * storage/ChangeVersionWrapper.cpp:
+        (WebCore::ChangeVersionWrapper::performPreflight):
+        (WebCore::ChangeVersionWrapper::performPostflight):
+        * storage/Database.cpp:
+        (WebCore::Database::performGetTableNames):
+        * storage/Database.h:
+        * storage/DatabaseAuthorizer.cpp:
+        (WebCore::DatabaseAuthorizer::createVTable):
+        (WebCore::DatabaseAuthorizer::dropVTable):
+        * storage/DatabaseCallback.h:
+        * storage/DatabaseSync.cpp:
+        (WebCore::ChangeVersionPreflightStep::create):
+        (WebCore::ChangeVersionPreflightStep::performStep):
+        (WebCore::ChangeVersionPreflightStep::ChangeVersionPreflightStep):
+        (WebCore::ChangeVersionPostflightStep::create):
+        (WebCore::ChangeVersionPostflightStep::performStep):
+        (WebCore::ChangeVersionPostflightStep::ChangeVersionPostflightStep):
+        (WebCore::DatabaseSync::changeVersion):
+        (WebCore::DatabaseSync::transaction):
+        (WebCore::DatabaseSync::runTransaction):
+        * storage/DatabaseSync.h:
+        * storage/DatabaseTracker.cpp:
+        (WebCore::DatabaseTracker::getMaxSizeForDatabase):
+        * storage/SQLError.h:
+        * storage/SQLResultSet.cpp:
+        * storage/SQLResultSet.h:
+        * storage/SQLStatementCallback.h:
+        * storage/SQLStatementErrorCallback.h:
+        * storage/SQLStatementSync.cpp: Copied from WebCore/storage/SQLStatement.cpp.
+        (WebCore::SQLStatementSync::SQLStatementSync):
+        (WebCore::SQLStatementSync::execute):
+        * storage/SQLStatementSync.h: Added.
+        * storage/SQLTransaction.cpp:
+        (WebCore::SQLTransaction::runCurrentStatement):
+        (WebCore::SQLTransaction::deliverQuotaIncreaseCallback):
+        (WebCore::SQLTransaction::postflightAndCommit):
+        * storage/SQLTransaction.h:
+        * storage/SQLTransactionCallback.h:
+        * storage/SQLTransactionClient.cpp:
+        (WebCore::SQLTransactionClient::didCommitWriteTransaction):
+        (WebCore::SQLTransactionClient::didExecuteStatement):
+        (WebCore::SQLTransactionClient::didExceedQuota):
+        * storage/SQLTransactionClient.h:
+        * storage/SQLTransactionErrorCallback.h:
+        * storage/SQLTransactionSync.cpp:
+        (WebCore::transactionClient):
+        (WebCore::SQLTransactionSync::create):
+        (WebCore::SQLTransactionSync::SQLTransactionSync):
+        (WebCore::SQLTransactionSync::~SQLTransactionSync):
+        (WebCore::SQLTransactionSync::executeSQL):
+        (WebCore::SQLTransactionSync::begin):
+        (WebCore::SQLTransactionSync::execute):
+        (WebCore::SQLTransactionSync::commit):
+        (WebCore::SQLTransactionSync::rollback):
+        * storage/SQLTransactionSync.h:
+        (WebCore::SQLTransactionSync::SQLTransactionSyncOptionalStep::~SQLTransactionSyncOptionalStep):
+        * storage/SQLTransactionSyncCallback.h:
+        * storage/chromium/SQLTransactionClientChromium.cpp:
+        (WebCore::SQLTransactionClient::didCommitWriteTransaction):
+        (WebCore::SQLTransactionClient::didExecuteStatement):
+        (WebCore::SQLTransactionClient::didExceedQuota):
+
 2010-07-13  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r63162.

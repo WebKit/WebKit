@@ -1,0 +1,71 @@
+Test the database authorizer.
+Beginning write transaction:
+SQLITE_CREATE_TABLE statement succeeded.
+SQLITE_CREATE_INDEX statement succeeded.
+SQLITE_CREATE_TEMP_TABLE statement succeeded.
+SQLITE_CREATE_TEMP_TRIGGER statement succeeded.
+SQLITE_CREATE_TEMP_VIEW statement succeeded.
+SQLITE_CREATE_TRIGGER statement succeeded.
+SQLITE_CREATE_VIEW statement succeeded.
+SQLITE_CREATE_VTABLE statement failed: [object SQLException] (5)
+SQLITE_READ statement succeeded.
+SQLITE_SELECT statement succeeded.
+SQLITE_DELETE statement succeeded.
+SQLITE_INSERT statement succeeded.
+SQLITE_UPDATE statement succeeded.
+SQLITE_PRAGMA statement failed: [object SQLException] (5)
+SQLITE_ALTER_TABLE statement succeeded.
+SQLITE_ALTER_TABLE statement succeeded.
+SQLITE_TRANSACTION statement failed: [object SQLException] (5)
+SQLITE_ATTACH statement failed: [object SQLException] (5)
+SQLITE_DETACH statement failed: [object SQLException] (5)
+SQLITE_REINDEX statement succeeded.
+SQLITE_ANALYZE statement failed: [object SQLException] (5)
+SQLITE_DROP_INDEX statement succeeded.
+SQLITE_DROP_TEMP_TABLE statement succeeded.
+SQLITE_DROP_TEMP_TRIGGER statement succeeded.
+SQLITE_DROP_TEMP_VIEW statement succeeded.
+SQLITE_DROP_TRIGGER statement succeeded.
+SQLITE_DROP_VIEW statement succeeded.
+SQLITE_DROP_TABLE statement succeeded.
+Write transaction succeeded.
+
+Beginning read transactions:
+SQLITE_CREATE_TABLE statement failed: [object SQLException] (5)
+SQLITE_CREATE_TABLE statement succeeded.
+SQLITE_CREATE_INDEX statement failed: [object SQLException] (5)
+SQLITE_CREATE_TEMP_TABLE statement failed: [object SQLException] (5)
+SQLITE_CREATE_TEMP_TRIGGER statement failed: [object SQLException] (5)
+SQLITE_CREATE_TEMP_VIEW statement failed: [object SQLException] (5)
+SQLITE_CREATE_TRIGGER statement failed: [object SQLException] (5)
+SQLITE_CREATE_VIEW statement failed: [object SQLException] (5)
+SQLITE_CREATE_VTABLE statement failed: [object SQLException] (5)
+SQLITE_CREATE_INDEX statement succeeded.
+SQLITE_CREATE_TEMP_TABLE statement succeeded.
+SQLITE_CREATE_TEMP_TRIGGER statement succeeded.
+SQLITE_CREATE_TEMP_VIEW statement succeeded.
+SQLITE_CREATE_TRIGGER statement succeeded.
+SQLITE_CREATE_VIEW statement succeeded.
+SQLITE_CREATE_VTABLE statement failed: [object SQLException] (5)
+SQLITE_READ statement succeeded.
+SQLITE_SELECT statement succeeded.
+SQLITE_DELETE statement failed: [object SQLException] (5)
+SQLITE_INSERT statement failed: [object SQLException] (5)
+SQLITE_UPDATE statement failed: [object SQLException] (5)
+SQLITE_PRAGMA statement failed: [object SQLException] (5)
+SQLITE_ALTER_TABLE statement failed: [object SQLException] (5)
+SQLITE_ALTER_TABLE statement failed: [object SQLException] (5)
+SQLITE_TRANSACTION statement failed: [object SQLException] (5)
+SQLITE_ATTACH statement failed: [object SQLException] (5)
+SQLITE_DETACH statement failed: [object SQLException] (5)
+SQLITE_REINDEX statement failed: [object SQLException] (5)
+SQLITE_ANALYZE statement failed: [object SQLException] (5)
+SQLITE_DROP_INDEX statement failed: [object SQLException] (5)
+SQLITE_DROP_TEMP_TABLE statement failed: [object SQLException] (5)
+SQLITE_DROP_TEMP_TRIGGER statement failed: [object SQLException] (5)
+SQLITE_DROP_TEMP_VIEW statement failed: [object SQLException] (5)
+SQLITE_DROP_TRIGGER statement failed: [object SQLException] (5)
+SQLITE_DROP_VIEW statement failed: [object SQLException] (5)
+SQLITE_DROP_TABLE statement failed: [object SQLException] (5)
+Read transactions succeeded.
+

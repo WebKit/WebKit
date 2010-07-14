@@ -3509,6 +3509,8 @@
             'storage/SQLStatement.h',
             'storage/SQLStatementCallback.h',
             'storage/SQLStatementErrorCallback.h',
+            'storage/SQLStatementSync.cpp',
+            'storage/SQLStatementSync.h',
             'storage/SQLTransaction.cpp',
             'storage/SQLTransaction.h',
             'storage/SQLTransactionCallback.h',

@@ -30,16 +30,14 @@
 
 #if ENABLE(DATABASE)
 
-#include <wtf/Threading.h>
-
+#include "ExceptionCode.h"
 #include "SQLStatement.h"
 #include <wtf/Deque.h>
 #include <wtf/Forward.h>
+#include <wtf/ThreadSafeShared.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
-
-typedef int ExceptionCode;
 
 class Database;
 class SQLError;

@@ -1,3 +1,94 @@
+2010-07-13  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Porting as many async DB tests as possible to sync DBs.
+        https://bugs.webkit.org/show_bug.cgi?id=40607
+
+        * fast/workers/storage/change-version-handle-reuse-sync-expected.txt: Added.
+        * fast/workers/storage/change-version-handle-reuse-sync.html: Added.
+        * fast/workers/storage/change-version-sync-expected.txt: Added.
+        * fast/workers/storage/change-version-sync.html: Added.
+        * fast/workers/storage/empty-statement-sync-expected.txt: Added.
+        * fast/workers/storage/empty-statement-sync.html: Added.
+        * fast/workers/storage/execute-sql-args-sync-expected.txt: Added.
+        * fast/workers/storage/execute-sql-args-sync.html: Added.
+        * fast/workers/storage/executesql-accepts-only-one-statement-sync-expected.txt: Added.
+        * fast/workers/storage/executesql-accepts-only-one-statement-sync.html: Added.
+        * fast/workers/storage/multiple-transactions-on-different-handles-sync-expected.txt: Added.
+        * fast/workers/storage/multiple-transactions-on-different-handles-sync.html: Added.
+        * fast/workers/storage/open-database-creation-callback-sync-expected.txt: Added.
+        * fast/workers/storage/open-database-creation-callback-sync.html: Added.
+        * fast/workers/storage/open-database-empty-version-sync-expected.txt: Added.
+        * fast/workers/storage/open-database-empty-version-sync.html: Added.
+        * fast/workers/storage/open-database-inputs-sync-expected.txt: Copied from LayoutTests/fast/workers/storage/open-database-sync-inputs-expected.txt.
+        * fast/workers/storage/open-database-inputs-sync.html: Copied from LayoutTests/fast/workers/storage/open-database-sync-inputs.html.
+        * fast/workers/storage/open-database-set-empty-version-sync-expected.txt: Added.
+        * fast/workers/storage/open-database-set-empty-version-sync.html: Added.
+        * fast/workers/storage/open-database-sync-inputs-expected.txt: Removed.
+        * fast/workers/storage/open-database-sync-inputs.html: Removed.
+        * fast/workers/storage/open-database-while-transaction-in-progress-sync-expected.txt: Added.
+        * fast/workers/storage/open-database-while-transaction-in-progress-sync.html: Added.
+        * fast/workers/storage/resources/change-version-handle-reuse-sync.js: Added.
+        (catch):
+        * fast/workers/storage/resources/change-version-sync-1.js: Added.
+        ():
+        (try):
+        * fast/workers/storage/resources/change-version-sync-2.js: Added.
+        * fast/workers/storage/resources/empty-statement-sync.js: Added.
+        * fast/workers/storage/resources/execute-sql-args-sync.js: Added.
+        (throwOnToStringObject.toString):
+        (var):
+        ():
+        (runTransactionTest):
+        (runTransactionTests):
+        * fast/workers/storage/resources/executesql-accepts-only-one-statement-sync.js: Added.
+        (executeStatement):
+        * fast/workers/storage/resources/multiple-transactions-on-different-handles-sync.js: Added.
+        (runTransaction):
+        (var):
+        * fast/workers/storage/resources/multiple-transactions-sync.js: Added.
+        (checkCompletion):
+        (runTest.db):
+        (runTest):
+        * fast/workers/storage/resources/open-database-creation-callback-sync.js: Added.
+        * fast/workers/storage/resources/open-database-empty-version-sync.js: Added.
+        * fast/workers/storage/resources/open-database-inputs-sync.js: Copied from LayoutTests/fast/workers/storage/resources/open-database-sync-inputs.js.
+        * fast/workers/storage/resources/open-database-set-empty-version-sync.js: Added.
+        * fast/workers/storage/resources/open-database-sync-inputs.js: Removed.
+        * fast/workers/storage/resources/open-database-while-transaction-in-progress-sync.js: Added.
+        (openTestDatabase):
+        * fast/workers/storage/resources/sql-data-types-sync.js: Added.
+        ():
+        (testDBValues):
+        * fast/workers/storage/resources/sql-exception-codes-sync.js: Added.
+        (testTransaction):
+        ():
+        (testInvalidStatement):
+        (testIncorrectNumberOfBindParameters):
+        (testBindParameterOfWrongType.badString.toString):
+        (testBindParameterOfWrongType):
+        (testVersionMismatch.testTransaction):
+        (testVersionMismatch):
+        * fast/workers/storage/resources/test-authorizer-sync.js: Added.
+        (cleanup):
+        (executeStatement):
+        (createTableCallback):
+        (createStatementsCallback):
+        (otherStatementsCallback):
+        (dropStatementsCallback):
+        (testReadWriteMode):
+        (testReadOnlyMode):
+        * fast/workers/storage/resources/transaction-in-transaction-sync.js: Added.
+        * fast/workers/storage/sql-data-types-sync-expected.txt: Added.
+        * fast/workers/storage/sql-data-types-sync.html: Added.
+        * fast/workers/storage/sql-exception-codes-sync-expected.txt: Added.
+        * fast/workers/storage/sql-exception-codes-sync.html: Added.
+        * fast/workers/storage/test-authorizer-sync-expected.txt: Added.
+        * fast/workers/storage/test-authorizer-sync.html: Added.
+        * fast/workers/storage/transaction-in-transaction-sync-expected.txt: Added.
+        * fast/workers/storage/transaction-in-transaction-sync.html: Added.
+
 2010-07-13  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Oliver Hunt.

@@ -1428,6 +1428,7 @@ SET(WebCore_SOURCES
     storage/SQLResultSet.cpp
     storage/SQLResultSetRowList.cpp
     storage/SQLStatement.cpp
+    storage/SQLStatementSync.cpp
     storage/SQLTransaction.cpp
     storage/SQLTransactionClient.cpp
     storage/SQLTransactionCoordinator.cpp

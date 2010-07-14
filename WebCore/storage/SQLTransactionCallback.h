@@ -31,7 +31,7 @@
 
 #if ENABLE(DATABASE)
 
-#include <wtf/Threading.h>
+#include <wtf/ThreadSafeShared.h>
 
 namespace WebCore {
 

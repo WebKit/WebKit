@@ -31,12 +31,11 @@
 
 #if ENABLE(DATABASE)
 
+#include "ExceptionCode.h"
 #include "SQLResultSetRowList.h"
-#include <wtf/Threading.h>
+#include <wtf/ThreadSafeShared.h>
 
 namespace WebCore {
-
-typedef int ExceptionCode;
 
 class SQLResultSet : public ThreadSafeShared<SQLResultSet> {
 public:

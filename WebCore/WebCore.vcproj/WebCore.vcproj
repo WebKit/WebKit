@@ -50081,6 +50081,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\storage\SQLStatementSync.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\storage\SQLStatementSync.h"
+				>
+			</File>
+			<File
 				RelativePath="..\storage\SQLTransaction.cpp"
 				>
 			</File>

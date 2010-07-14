@@ -32,7 +32,7 @@
 #if ENABLE(DATABASE)
 
 #include "PlatformString.h"
-#include <wtf/Threading.h>
+#include <wtf/ThreadSafeShared.h>
 
 namespace WebCore {
 

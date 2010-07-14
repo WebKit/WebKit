@@ -2527,6 +2527,8 @@ webcore_sources += \
 	WebCore/storage/SQLStatement.h \
 	WebCore/storage/SQLStatementCallback.h \
 	WebCore/storage/SQLStatementErrorCallback.h \
+	WebCore/storage/SQLStatementSync.cpp \
+	WebCore/storage/SQLStatementSync.h \
 	WebCore/storage/SQLTransaction.cpp \
 	WebCore/storage/SQLTransaction.h \
 	WebCore/storage/SQLTransactionCallback.h \
