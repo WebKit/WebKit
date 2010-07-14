@@ -1,3 +1,19 @@
+2010-07-13  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Page flashes to mostly white towards the end of loading
+        https://bugs.webkit.org/show_bug.cgi?id=42230
+        
+        We constrain the size of huge composited layers. When doing so, we
+        need to use the constained size to set the position as well
+        as the dimensions, to ensure the layer appears in the correct place.
+
+        Test: compositing/tiling/constrained-layer-size.html
+
+        * platform/graphics/mac/GraphicsLayerCA.mm:
+        (WebCore::GraphicsLayerCA::updateLayerPosition):
+
 2010-07-13  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Darin Fisher.

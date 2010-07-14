@@ -1,3 +1,18 @@
+2010-07-13  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Page flashes to mostly white towards the end of loading
+        https://bugs.webkit.org/show_bug.cgi?id=42230
+        
+        Pixel test with a tiled layer whose size gets constrained.
+        Has to be a pixel test because the layer dump does not expose the bug fix.
+
+        * compositing/tiling/constrained-layer-size-expected.checksum: Added.
+        * compositing/tiling/constrained-layer-size-expected.png: Added.
+        * compositing/tiling/constrained-layer-size-expected.txt: Added.
+        * compositing/tiling/constrained-layer-size.html: Added.
+
 2010-07-13  Dumitru Daniliuc  <dumi@chromium.org>
 
         Reviewed by Darin Fisher.
