@@ -1071,6 +1071,14 @@ WebInspector.elementDragEnd = function(event)
     event.preventDefault();
 }
 
+WebInspector.toggleSearchingForNode = function()
+{
+    if (this.panels.elements) {
+        this.showElementsPanel();
+        this.panels.elements.toggleSearchingForNode();
+    }
+}
+
 WebInspector.showConsole = function()
 {
     this.drawer.showView(this.console);

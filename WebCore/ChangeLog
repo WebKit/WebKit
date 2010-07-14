@@ -1,3 +1,17 @@
+2010-07-14  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Enable toggling of the "Inspect Element" mode from the browser
+        https://bugs.webkit.org/show_bug.cgi?id=42169
+
+        * inspector/front-end/ElementsPanel.js:
+        (WebInspector.ElementsPanel):
+        (WebInspector.ElementsPanel.prototype.handleShortcut):
+        (WebInspector.ElementsPanel.prototype.toggleSearchingForNode):
+        * inspector/front-end/inspector.js:
+        (WebInspector.toggleSearchingForNode):
+
 2010-07-14  Eric Carlson  <eric.carlson@apple.com>
 
         Unreviewed, build fix for r63319.
