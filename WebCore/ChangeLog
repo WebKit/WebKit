@@ -1,3 +1,15 @@
+2010-07-14  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Darin Adler.
+
+        AX: VoiceOver cannot navigate this page because Safari is taking too long
+        https://bugs.webkit.org/show_bug.cgi?id=42219
+
+        No tests. Existing tests cover change.
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::boundingBoxRect):
+
 2010-07-14  Andreas Kling  <andreas.kling@nokia.com>
 
         Reviewed by Darin Adler.

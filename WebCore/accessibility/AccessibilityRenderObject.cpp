@@ -1397,8 +1397,10 @@ IntRect AccessibilityRenderObject::boundingBoxRect() const
     if (obj->node()) // If we are a continuation, we want to make sure to use the primary renderer.
         obj = obj->node()->renderer();
     
+    // absoluteFocusRingQuads will query the hierarchy below this element, which for large webpages can be very slow.
+    // For a web area, which will have the most elements of any element, absoluteQuads should be used.
     Vector<FloatQuad> quads;
-    if (obj->isText())
+    if (obj->isText() || isWebArea())
         obj->absoluteQuads(quads);
     else
         obj->absoluteFocusRingQuads(quads);
