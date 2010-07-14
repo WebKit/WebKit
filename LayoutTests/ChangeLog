@@ -1,3 +1,13 @@
+2010-07-14  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        html5lib/runner.html fails after http://trac.webkit.org/changeset/63338/
+        https://bugs.webkit.org/show_bug.cgi?id=42290
+
+        * platform/chromium-mac/html5lib/runner-expected.txt:
+        * platform/chromium-win/html5lib/runner-expected.txt:
+
 2010-07-14  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler.

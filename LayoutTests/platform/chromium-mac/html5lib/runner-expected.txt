@@ -5003,8 +5003,9 @@ resources/adoption01.dat:
 7
 8
 9
+11
 
-Test 1 of 9 in resources/adoption01.dat failed. Input:
+Test 1 of 11 in resources/adoption01.dat failed. Input:
 <a><p></a></p>
 Got:
 | <html>
@@ -5020,7 +5021,7 @@ Expected:
 |     <p>
 |       <a>
 
-Test 6 of 9 in resources/adoption01.dat failed. Input:
+Test 6 of 11 in resources/adoption01.dat failed. Input:
 <table><a>1<p>2</a>3</p>
 Got:
 | <html>
@@ -5045,7 +5046,7 @@ Expected:
 |       "3"
 |     <table>
 
-Test 7 of 9 in resources/adoption01.dat failed. Input:
+Test 7 of 11 in resources/adoption01.dat failed. Input:
 <b><b><a><p></a>
 Got:
 | <html>
@@ -5065,7 +5066,7 @@ Expected:
 |         <p>
 |           <a>
 
-Test 8 of 9 in resources/adoption01.dat failed. Input:
+Test 8 of 11 in resources/adoption01.dat failed. Input:
 <b><a><b><p></a>
 Got:
 | <html>
@@ -5087,7 +5088,7 @@ Expected:
 |         <p>
 |           <a>
 
-Test 9 of 9 in resources/adoption01.dat failed. Input:
+Test 9 of 11 in resources/adoption01.dat failed. Input:
 <a><b><b><p></a>
 Got:
 | <html>
@@ -5110,6 +5111,33 @@ Expected:
 |       <b>
 |         <p>
 |           <a>
+
+Test 11 of 11 in resources/adoption01.dat failed. Input:
+<p><b id="A"><script>document.getElementById("A").id = "B"</script></p>TEXT</b>
+Got:
+| <html>
+|   <head>
+|   <body>
+|     <p>
+|       <b>
+|         id="B"
+|         <script>
+|           "document.getElementById("A").id = "B""
+|     <b>
+|       id="B"
+|       "TEXT"
+Expected:
+| <html>
+|   <head>
+|   <body>
+|     <p>
+|       <b>
+|         id="B"
+|         <script>
+|           "document.getElementById("A").id = "B""
+|     <b>
+|       id="A"
+|       "TEXT"
 resources/inbody01.dat: PASS
 
 resources/isindex.dat:
