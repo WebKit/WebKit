@@ -1,3 +1,17 @@
+2010-07-14  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=42280
+        JIT_STUB_ARGUMENT_VA_LIST is only slowing us down! Remove it!
+
+        * jit/JIT.h:
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::restoreArgumentReferenceForTrampoline):
+        * jit/JITStubs.cpp:
+        * jit/JITStubs.h:
+        * wtf/Platform.h:
+
 2010-07-14  Oliver Hunt  <oliver@apple.com>
 
         RS=Geoff Garen.

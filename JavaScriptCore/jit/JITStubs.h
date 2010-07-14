@@ -225,26 +225,15 @@ namespace JSC {
 
 #define JITSTACKFRAME_ARGS_INDEX (OBJECT_OFFSETOF(JITStackFrame, args) / sizeof(void*))
 
-#if USE(JIT_STUB_ARGUMENT_VA_LIST)
-    #define STUB_ARGS_DECLARATION void* args, ...
-    #define STUB_ARGS (reinterpret_cast<void**>(vl_args) - 1)
+#define STUB_ARGS_DECLARATION void** args
+#define STUB_ARGS (args)
 
-    #if COMPILER(MSVC)
-    #define JIT_STUB __cdecl
-    #else
-    #define JIT_STUB
-    #endif
+#if CPU(X86) && COMPILER(MSVC)
+#define JIT_STUB __fastcall
+#elif CPU(X86) && COMPILER(GCC)
+#define JIT_STUB  __attribute__ ((fastcall))
 #else
-    #define STUB_ARGS_DECLARATION void** args
-    #define STUB_ARGS (args)
-
-    #if CPU(X86) && COMPILER(MSVC)
-    #define JIT_STUB __fastcall
-    #elif CPU(X86) && COMPILER(GCC)
-    #define JIT_STUB  __attribute__ ((fastcall))
-    #else
-    #define JIT_STUB
-    #endif
+#define JIT_STUB
 #endif
 
     extern "C" void ctiVMThrowTrampoline();

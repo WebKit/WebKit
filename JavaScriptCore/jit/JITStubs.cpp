@@ -139,9 +139,7 @@ asm (
 ".globl " SYMBOL_STRING(ctiVMThrowTrampoline) "\n"
 HIDE_SYMBOL(ctiVMThrowTrampoline) "\n"
 SYMBOL_STRING(ctiVMThrowTrampoline) ":" "\n"
-#if !USE(JIT_STUB_ARGUMENT_VA_LIST)
     "movl %esp, %ecx" "\n"
-#endif
     "call " SYMBOL_STRING_RELOCATION(cti_vm_throw) "\n"
     "addl $0x3c, %esp" "\n"
     "popl %ebx" "\n"
@@ -164,10 +162,6 @@ SYMBOL_STRING(ctiOpThrowNotCaught) ":" "\n"
 );
     
 #elif COMPILER(GCC) && CPU(X86_64)
-
-#if USE(JIT_STUB_ARGUMENT_VA_LIST)
-#error "JIT_STUB_ARGUMENT_VA_LIST not supported on x86-64."
-#endif
 
 // These ASSERTs remind you that, if you change the layout of JITStackFrame, you
 // need to change the assembly trampolines below to match.
@@ -235,10 +229,6 @@ SYMBOL_STRING(ctiOpThrowNotCaught) ":" "\n"
 
 #elif COMPILER(GCC) && CPU(ARM_THUMB2)
 
-#if USE(JIT_STUB_ARGUMENT_VA_LIST)
-#error "JIT_STUB_ARGUMENT_VA_LIST not supported on ARMv7."
-#endif
-
 #define THUNK_RETURN_ADDRESS_OFFSET      0x3C
 #define PRESERVED_RETURN_ADDRESS_OFFSET  0x40
 #define PRESERVED_R4_OFFSET              0x44
@@ -255,10 +245,6 @@ SYMBOL_STRING(ctiOpThrowNotCaught) ":" "\n"
 #define PRESERVEDR4_OFFSET          68
 
 #elif COMPILER(MSVC) && CPU(X86)
-
-#if USE(JIT_STUB_ARGUMENT_VA_LIST)
-#error "JIT_STUB_ARGUMENT_VA_LIST configuration not supported on MSVC."
-#endif
 
 // These ASSERTs remind you that, if you change the layout of JITStackFrame, you
 // need to change the assembly trampolines below to match.
@@ -358,9 +344,7 @@ asm (
 ".globl " SYMBOL_STRING(ctiVMThrowTrampoline) "\n"
 HIDE_SYMBOL(ctiVMThrowTrampoline) "\n"
 SYMBOL_STRING(ctiVMThrowTrampoline) ":" "\n"
-#if !USE(JIT_STUB_ARGUMENT_VA_LIST)
     "movl %esp, %ecx" "\n"
-#endif
     "call " SYMBOL_STRING_RELOCATION(cti_vm_throw) "\n"
     "addl $0x1c, %esp" "\n"
     "popl %ebx" "\n"
@@ -383,10 +367,6 @@ SYMBOL_STRING(ctiOpThrowNotCaught) ":" "\n"
 );
     
 #elif COMPILER(GCC) && CPU(X86_64)
-
-#if USE(JIT_STUB_ARGUMENT_VA_LIST)
-#error "JIT_STUB_ARGUMENT_VA_LIST not supported on x86-64."
-#endif
 
 // These ASSERTs remind you that, if you change the layout of JITStackFrame, you
 // need to change the assembly trampolines below to match.
@@ -461,10 +441,6 @@ SYMBOL_STRING(ctiOpThrowNotCaught) ":" "\n"
 
 #elif COMPILER(GCC) && CPU(ARM_THUMB2)
 
-#if USE(JIT_STUB_ARGUMENT_VA_LIST)
-#error "JIT_STUB_ARGUMENT_VA_LIST not supported on ARMv7."
-#endif
-
 #define THUNK_RETURN_ADDRESS_OFFSET      0x1C
 #define PRESERVED_RETURN_ADDRESS_OFFSET  0x20
 #define PRESERVED_R4_OFFSET              0x24
@@ -481,10 +457,6 @@ SYMBOL_STRING(ctiOpThrowNotCaught) ":" "\n"
 #define PRESERVEDR4_OFFSET          36
 
 #elif CPU(MIPS)
-
-#if USE(JIT_STUB_ARGUMENT_VA_LIST)
-#error "JIT_STUB_ARGUMENT_VA_LIST not supported on MIPS."
-#endif
 
 asm volatile(
 ".text" "\n"
@@ -619,10 +591,6 @@ __asm void ctiOpThrowNotCaught()
 }
 
 #elif COMPILER(MSVC) && CPU(X86)
-
-#if USE(JIT_STUB_ARGUMENT_VA_LIST)
-#error "JIT_STUB_ARGUMENT_VA_LIST configuration not supported on MSVC."
-#endif
 
 // These ASSERTs remind you that, if you change the layout of JITStackFrame, you
 // need to change the assembly trampolines below to match.
@@ -985,12 +953,6 @@ NEVER_INLINE void JITThunks::tryCacheGetByID(CallFrame* callFrame, CodeBlock* co
 
 #endif // ENABLE(JIT_OPTIMIZE_PROPERTY_ACCESS)
 
-#if USE(JIT_STUB_ARGUMENT_VA_LIST)
-#define SETUP_VA_LISTL_ARGS va_list vl_args; va_start(vl_args, args)
-#else
-#define SETUP_VA_LISTL_ARGS
-#endif
-
 #ifndef NDEBUG
 
 extern "C" {
@@ -1021,13 +983,13 @@ struct StackHack {
     ReturnAddressPtr savedReturnAddress;
 };
 
-#define STUB_INIT_STACK_FRAME(stackFrame) SETUP_VA_LISTL_ARGS; JITStackFrame& stackFrame = *reinterpret_cast<JITStackFrame*>(STUB_ARGS); StackHack stackHack(stackFrame)
+#define STUB_INIT_STACK_FRAME(stackFrame) JITStackFrame& stackFrame = *reinterpret_cast<JITStackFrame*>(STUB_ARGS); StackHack stackHack(stackFrame)
 #define STUB_SET_RETURN_ADDRESS(returnAddress) stackHack.savedReturnAddress = ReturnAddressPtr(returnAddress)
 #define STUB_RETURN_ADDRESS stackHack.savedReturnAddress
 
 #else
 
-#define STUB_INIT_STACK_FRAME(stackFrame) SETUP_VA_LISTL_ARGS; JITStackFrame& stackFrame = *reinterpret_cast<JITStackFrame*>(STUB_ARGS)
+#define STUB_INIT_STACK_FRAME(stackFrame) JITStackFrame& stackFrame = *reinterpret_cast<JITStackFrame*>(STUB_ARGS)
 #define STUB_SET_RETURN_ADDRESS(returnAddress) *stackFrame.returnAddressSlot() = ReturnAddressPtr(returnAddress)
 #define STUB_RETURN_ADDRESS *stackFrame.returnAddressSlot()
 

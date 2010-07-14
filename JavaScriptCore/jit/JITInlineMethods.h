@@ -181,18 +181,12 @@ ALWAYS_INLINE void JIT::restoreReturnAddressBeforeReturn(Address address)
 
 #endif
 
-#if USE(JIT_STUB_ARGUMENT_VA_LIST)
-ALWAYS_INLINE void JIT::restoreArgumentReference()
-{
-    poke(callFrameRegister, OBJECT_OFFSETOF(struct JITStackFrame, callFrame) / sizeof (void*));
-}
-ALWAYS_INLINE void JIT::restoreArgumentReferenceForTrampoline() {}
-#else
 ALWAYS_INLINE void JIT::restoreArgumentReference()
 {
     move(stackPointerRegister, firstArgumentRegister);
     poke(callFrameRegister, OBJECT_OFFSETOF(struct JITStackFrame, callFrame) / sizeof (void*));
 }
+
 ALWAYS_INLINE void JIT::restoreArgumentReferenceForTrampoline()
 {
 #if CPU(X86)
@@ -203,7 +197,6 @@ ALWAYS_INLINE void JIT::restoreArgumentReferenceForTrampoline()
 #endif
     // In the trampoline on x86-64, the first argument register is not overwritten.
 }
-#endif
 
 ALWAYS_INLINE JIT::Jump JIT::checkStructure(RegisterID reg, Structure* structure)
 {
