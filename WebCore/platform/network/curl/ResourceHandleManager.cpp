@@ -264,9 +264,9 @@ static size_t headerCallback(char* ptr, size_t size, size_t nmemb, void* data)
         if (httpCode >= 300 && httpCode < 400) {
             String location = d->m_response.httpHeaderField("location");
             if (!location.isEmpty()) {
-                KURL newURL = KURL(job->request().url(), location);
+                KURL newURL = KURL(job->firstRequest().url(), location);
 
-                ResourceRequest redirectedRequest = job->request();
+                ResourceRequest redirectedRequest = job->firstRequest();
                 redirectedRequest.setURL(newURL);
                 if (client)
                     client->willSendRequest(job, redirectedRequest, d->m_response);
@@ -463,17 +463,17 @@ void ResourceHandleManager::setupPOST(ResourceHandle* job, struct curl_slist** h
     curl_easy_setopt(d->m_handle, CURLOPT_POST, TRUE);
     curl_easy_setopt(d->m_handle, CURLOPT_POSTFIELDSIZE, 0);
 
-    if (!job->request().httpBody())
+    if (!job->firstRequest().httpBody())
         return;
 
-    Vector<FormDataElement> elements = job->request().httpBody()->elements();
+    Vector<FormDataElement> elements = job->firstRequest().httpBody()->elements();
     size_t numElements = elements.size();
     if (!numElements)
         return;
 
     // Do not stream for simple POST data
     if (numElements == 1) {
-        job->request().httpBody()->flatten(d->m_postBytes);
+        job->firstRequest().httpBody()->flatten(d->m_postBytes);
         if (d->m_postBytes.size() != 0) {
             curl_easy_setopt(d->m_handle, CURLOPT_POSTFIELDSIZE, d->m_postBytes.size());
             curl_easy_setopt(d->m_handle, CURLOPT_POSTFIELDS, d->m_postBytes.data());
@@ -580,7 +580,7 @@ static void parseDataUrl(ResourceHandle* handle)
     if (!client)
         return;
 
-    String url = handle->request().url().string();
+    String url = handle->firstRequest().url().string();
     ASSERT(url.startsWith("data:", false));
 
     int index = url.find(',');
@@ -628,7 +628,7 @@ static void parseDataUrl(ResourceHandle* handle)
 
 void ResourceHandleManager::dispatchSynchronousJob(ResourceHandle* job)
 {
-    KURL kurl = job->request().url();
+    KURL kurl = job->firstRequest().url();
 
     if (kurl.protocolIs("data")) {
         parseDataUrl(job);
@@ -659,7 +659,7 @@ void ResourceHandleManager::dispatchSynchronousJob(ResourceHandle* job)
 
 void ResourceHandleManager::startJob(ResourceHandle* job)
 {
-    KURL kurl = job->request().url();
+    KURL kurl = job->firstRequest().url();
 
     if (kurl.protocolIs("data")) {
         parseDataUrl(job);
@@ -674,7 +674,7 @@ void ResourceHandleManager::startJob(ResourceHandle* job)
     // timeout will occur and do curl_multi_perform
     if (ret && ret != CURLM_CALL_MULTI_PERFORM) {
 #ifndef NDEBUG
-        fprintf(stderr, "Error %d starting job %s\n", ret, encodeWithURLEscapeSequences(job->request().url().string()).latin1().data());
+        fprintf(stderr, "Error %d starting job %s\n", ret, encodeWithURLEscapeSequences(job->firstRequest().url().string()).latin1().data());
 #endif
         job->cancel();
         return;
@@ -683,7 +683,7 @@ void ResourceHandleManager::startJob(ResourceHandle* job)
 
 void ResourceHandleManager::initializeHandle(ResourceHandle* job)
 {
-    KURL kurl = job->request().url();
+    KURL kurl = job->firstRequest().url();
 
     // Remove any fragment part, otherwise curl will send it as part of the request.
     kurl.removeFragmentIdentifier();
@@ -753,8 +753,8 @@ void ResourceHandleManager::initializeHandle(ResourceHandle* job)
     }
 
     struct curl_slist* headers = 0;
-    if (job->request().httpHeaderFields().size() > 0) {
-        HTTPHeaderMap customHeaders = job->request().httpHeaderFields();
+    if (job->firstRequest().httpHeaderFields().size() > 0) {
+        HTTPHeaderMap customHeaders = job->firstRequest().httpHeaderFields();
         HTTPHeaderMap::const_iterator end = customHeaders.end();
         for (HTTPHeaderMap::const_iterator it = customHeaders.begin(); it != end; ++it) {
             String key = it->first;
@@ -767,13 +767,13 @@ void ResourceHandleManager::initializeHandle(ResourceHandle* job)
         }
     }
 
-    if ("GET" == job->request().httpMethod())
+    if ("GET" == job->firstRequest().httpMethod())
         curl_easy_setopt(d->m_handle, CURLOPT_HTTPGET, TRUE);
-    else if ("POST" == job->request().httpMethod())
+    else if ("POST" == job->firstRequest().httpMethod())
         setupPOST(job, &headers);
-    else if ("PUT" == job->request().httpMethod())
+    else if ("PUT" == job->firstRequest().httpMethod())
         setupPUT(job, &headers);
-    else if ("HEAD" == job->request().httpMethod())
+    else if ("HEAD" == job->firstRequest().httpMethod())
         curl_easy_setopt(d->m_handle, CURLOPT_NOBODY, TRUE);
 
     if (headers) {

@@ -1,3 +1,18 @@
+2010-07-14  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [CURL] Build fix after request -> firstRequest rename.
+
+        * platform/network/curl/FormDataStreamCurl.cpp:
+        (WebCore::FormDataStream::read):
+        (WebCore::FormDataStream::hasMoreElements):
+        * platform/network/curl/ResourceHandleManager.cpp:
+        (WebCore::headerCallback):
+        (WebCore::ResourceHandleManager::setupPOST):
+        (WebCore::parseDataUrl):
+        (WebCore::ResourceHandleManager::dispatchSynchronousJob):
+        (WebCore::ResourceHandleManager::startJob):
+        (WebCore::ResourceHandleManager::initializeHandle):
+
 2010-07-14  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by John Sullivan.
