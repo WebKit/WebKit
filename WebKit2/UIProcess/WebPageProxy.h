@@ -52,6 +52,7 @@ namespace CoreIPC {
 
 namespace WebCore {
     class IntSize;
+    class Cursor;
 }
 
 struct WKContextStatistics;
@@ -190,10 +191,12 @@ private:
 
     void takeFocus(bool direction);
     void setToolTip(const WebCore::String&);
+    void setCursor(const WebCore::Cursor&);
 
     void didReceiveEvent(WebEvent::Type);
     void didRunJavaScriptInMainFrame(const WebCore::String&, uint64_t);
     void didGetRenderTreeExternalRepresentation(const WebCore::String&, uint64_t);
+
 
 #if PLATFORM(WIN)
     PageClient* m_pageClient;

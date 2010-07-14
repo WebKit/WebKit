@@ -1,3 +1,49 @@
+2010-07-14  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Patch for https://bugs.webkit.org/show_bug.cgi?id=42232
+        Make changing Cursors work in WebKit2.
+
+        * Shared/CoreIPCSupport/WebPageProxyMessageKinds.h:
+        Add SetCursor message.
+
+        * Shared/WebCoreArgumentCoders.h:
+        Add encoding/decoding of Cursors. For now we don't support Custom
+        cursors.
+
+        * UIProcess/API/mac/PageClientImpl.h:
+        * UIProcess/API/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::setCursor):
+        * UIProcess/PageClient.h:
+        Add pass through functions to get the cursor from the WebPageProxy
+        to the WKView.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _setCursor:]):
+        * UIProcess/API/mac/WKViewInternal.h:
+        Implement changing the cursor.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didReceiveMessage):
+        (WebKit::WebPageProxy::setCursor):
+        * UIProcess/WebPageProxy.h:
+        Decode the cursor.
+
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::wndProc):
+        (WebKit::WebView::WebView):
+        (WebKit::WebView::onSetCursor):
+        (WebKit::WebView::setCursor):
+        * UIProcess/win/WebView.h:
+        Implement changing the cursor.
+
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::setCursor):
+        (WebKit::WebChromeClient::setLastSetCursorToCurrentCursor):
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        Encode the cursor when setCursor is called.
+
 2010-07-13  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

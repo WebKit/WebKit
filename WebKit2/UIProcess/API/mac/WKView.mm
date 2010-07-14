@@ -319,6 +319,12 @@ static bool isViewVisible(NSView *view)
         [[self window] selectKeyViewPrecedingView:self];
 }
 
+- (void)_setCursor:(NSCursor *)cursor
+{
+    if ([NSCursor currentCursor] == cursor)
+        return;
+    [cursor set];
+}
 
 // Any non-zero value will do, but using something recognizable might help us debug some day.
 #define TRACKING_RECT_TAG 0xBADFACE

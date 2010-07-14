@@ -123,11 +123,12 @@ void Widget::setFocus(bool focused)
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
- void Widget::setCursor(const Cursor& cursor)
- {
-    if ([NSCursor currentCursor] == cursor.impl())
+void Widget::setCursor(const Cursor& cursor)
+{
+    ScrollView* view = root();
+    if (!view)
         return;
-    [cursor.impl() set];
+    view->hostWindow()->setCursor(cursor);
 }
 
 void Widget::show()

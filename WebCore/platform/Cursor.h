@@ -26,12 +26,15 @@
 #ifndef Cursor_h
 #define Cursor_h
 
+#include "Image.h"
+#include "IntPoint.h"
+#include <wtf/RefPtr.h>
+
 #if PLATFORM(WIN)
 typedef struct HICON__* HICON;
 typedef HICON HCURSOR;
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
 #elif PLATFORM(GTK)
 typedef struct _GdkCursor GdkCursor;
 #elif PLATFORM(QT)
@@ -59,10 +62,13 @@ typedef struct HICON__ *HICON;
 typedef HICON HCURSOR;
 #endif
 
+#if PLATFORM(WIN) || PLATFORM(MAC)
+#define WTF_USE_LAZY_NATIVE_CURSOR 1
+#endif
+
 namespace WebCore {
 
     class Image;
-    class IntPoint;
 
 #if PLATFORM(WIN)
     class SharedCursor : public RefCounted<SharedCursor> {
@@ -75,55 +81,113 @@ namespace WebCore {
         HCURSOR m_nativeCursor;
     };
     typedef RefPtr<SharedCursor> PlatformCursor;
-    typedef HCURSOR PlatformCursorHandle;
 #elif PLATFORM(MAC)
     typedef NSCursor* PlatformCursor;
-    typedef NSCursor* PlatformCursorHandle;
 #elif PLATFORM(GTK)
     typedef GdkCursor* PlatformCursor;
-    typedef GdkCursor* PlatformCursorHandle;
 #elif PLATFORM(EFL)
     typedef const char* PlatformCursor;
-    typedef const char* PlatformCursorHandle;
 #elif PLATFORM(QT) && !defined(QT_NO_CURSOR)
     typedef QCursor PlatformCursor;
-    typedef QCursor* PlatformCursorHandle;
 #elif PLATFORM(WX)
     typedef wxCursor* PlatformCursor;
-    typedef wxCursor* PlatformCursorHandle;
 #elif PLATFORM(CHROMIUM)
     // See PlatformCursor.h
-    typedef void* PlatformCursorHandle;
 #elif PLATFORM(HAIKU)
     typedef BCursor* PlatformCursor;
-    typedef BCursor* PlatformCursorHandle;
 #else
     typedef void* PlatformCursor;
-    typedef void* PlatformCursorHandle;
 #endif
 
     class Cursor {
     public:
+        enum Type {
+            Pointer,
+            Cross,
+            Hand,
+            IBeam,
+            Wait,
+            Help,
+            EastResize,
+            NorthResize,
+            NorthEastResize,
+            NorthWestResize,
+            SouthResize,
+            SouthEastResize,
+            SouthWestResize,
+            WestResize,
+            NorthSouthResize,
+            EastWestResize,
+            NorthEastSouthWestResize,
+            NorthWestSouthEastResize,
+            ColumnResize,
+            RowResize,
+            MiddlePanning,
+            EastPanning,
+            NorthPanning,
+            NorthEastPanning,
+            NorthWestPanning,
+            SouthPanning,
+            SouthEastPanning,
+            SouthWestPanning,
+            WestPanning,
+            Move,
+            VerticalText,
+            Cell,
+            ContextMenu,
+            Alias,
+            Progress,
+            NoDrop,
+            Copy,
+            None,
+            NotAllowed,
+            ZoomIn,
+            ZoomOut,
+            Grab,
+            Grabbing,
+            Custom
+        };
+
+        static const Cursor& fromType(Cursor::Type);
+
         Cursor()
 #if !PLATFORM(QT) && !PLATFORM(EFL)
-        : m_impl(0)
+            : m_platformCursor(0)
 #endif
-        { }
+        {
+        }
 
         Cursor(Image*, const IntPoint& hotSpot);
         Cursor(const Cursor&);
         ~Cursor();
         Cursor& operator=(const Cursor&);
 
+#if USE(LAZY_NATIVE_CURSOR)
+        Cursor(Type);
+        Type type() const { return m_type; }
+        Image* image() const { return m_image.get(); }
+        const IntPoint& hotSpot() const { return m_hotSpot; }
+        PlatformCursor platformCursor() const;
+#else
         Cursor(PlatformCursor);
-        PlatformCursor impl() const { return m_impl; }
+        PlatformCursor impl() const { return m_platformCursor; }
+#endif
 
      private:
-        PlatformCursor m_impl;
+#if USE(LAZY_NATIVE_CURSOR)
+        void ensurePlatformCursor() const;
+
+        Type m_type;
+        RefPtr<Image> m_image;
+        IntPoint m_hotSpot;
+#endif
+
+        mutable PlatformCursor m_platformCursor;
     };
 
     IntPoint determineHotSpot(Image*, const IntPoint& specifiedHotSpot);
-
+    const char* nameForCursorType(Cursor::Type);
+    
     const Cursor& pointerCursor();
     const Cursor& crossCursor();
     const Cursor& handCursor();

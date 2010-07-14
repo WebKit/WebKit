@@ -161,7 +161,7 @@ namespace WebCore {
 
         virtual PassOwnPtr<HTMLParserQuirks> createHTMLParserQuirks() { return 0; }
 
-        virtual bool setCursor(PlatformCursorHandle);
+        virtual void setCursor(const Cursor&);
 
         virtual void scrollRectIntoView(const IntRect&, const ScrollView*) const {}
 

@@ -437,10 +437,9 @@ void ChromeClientEfl::formStateDidChange(const Node*)
     notImplemented();
 }
 
-bool ChromeClientEfl::setCursor(PlatformCursorHandle)
+void ChromeClientEfl::setCursor(const Cursor&)
 {
     notImplemented();
-    return false;
 }
 
 void ChromeClientEfl::requestGeolocationPermissionForFrame(Frame*, Geolocation*)

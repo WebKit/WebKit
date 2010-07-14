@@ -344,6 +344,7 @@ WebView::WebView()
     , m_isAcceleratedCompositing(false)
 #endif
     , m_nextDisplayIsSynchronous(false)
+    , m_lastSetCursor(0)
 {
     JSC::initializeThreading();
     WTF::initializeMainThread();
@@ -1972,10 +1973,6 @@ bool WebView::registerWebViewWindowClass()
     return !!RegisterClassEx(&wcex);
 }
 
-namespace WebCore {
-    extern HCURSOR lastSetCursor;
-}
-
 static HWND findTopLevelParent(HWND window)
 {
     if (!window)
@@ -2250,10 +2247,8 @@ LRESULT CALLBACK WebView::WebViewWndProc(HWND hWnd, UINT message, WPARAM wParam,
             }
             break;
         case WM_SETCURSOR:
-            if (handled = webView->page()->chrome()->setCursor(lastSetCursor))
-                break;
-
-            __fallthrough;
+            handled = ::SetCursor(webView->m_lastSetCursor);
+            break;
         case WM_VSCROLL:
             handled = webView->verticalScroll(wParam, lParam);
             break;

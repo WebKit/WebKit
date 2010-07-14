@@ -116,7 +116,7 @@ namespace WebKit {
 
         virtual PassOwnPtr<WebCore::HTMLParserQuirks> createHTMLParserQuirks() { return 0; }
 
-        virtual bool setCursor(WebCore::PlatformCursorHandle);
+        virtual void setCursor(const WebCore::Cursor&);
 
         virtual void scrollRectIntoView(const WebCore::IntRect&, const WebCore::ScrollView*) const {}
         virtual void requestGeolocationPermissionForFrame(WebCore::Frame*, WebCore::Geolocation*);

@@ -63,6 +63,7 @@ enum Kind {
     DidStartProgress,
     DidStartProvisionalLoadForFrame,
     DidUpdateHistoryTitle,
+    SetCursor,
     SetToolTip,
     TakeFocus,
     

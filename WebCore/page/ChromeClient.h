@@ -135,11 +135,13 @@ namespace WebCore {
         virtual IntPoint screenToWindow(const IntPoint&) const = 0;
         virtual IntRect windowToScreen(const IntRect&) const = 0;
         virtual PlatformPageClient platformPageClient() const = 0;
-        virtual void contentsSizeChanged(Frame*, const IntSize&) const = 0;
-        virtual void scrollRectIntoView(const IntRect&, const ScrollView*) const = 0; // Currently only Mac has a non empty implementation.
+        virtual void scrollbarsModeDidChange() const = 0;
+        virtual void setCursor(const Cursor&) = 0;
         // End methods used by HostWindow.
 
-        virtual void scrollbarsModeDidChange() const = 0;
+        virtual void contentsSizeChanged(Frame*, const IntSize&) const = 0;
+        virtual void scrollRectIntoView(const IntRect&, const ScrollView*) const = 0; // Currently only Mac has a non empty implementation.
+       
         virtual bool shouldMissingPluginMessageBeButton() const { return false; }
         virtual void missingPluginButtonClicked(Element*) const { }
         virtual void mouseDidMoveOverElement(const HitTestResult&, unsigned modifierFlags) = 0;
@@ -194,8 +196,6 @@ namespace WebCore {
         // Asynchronous request to load an icon for specified filenames.
         virtual void chooseIconForFiles(const Vector<String>&, FileChooser*) = 0;
 
-        virtual bool setCursor(PlatformCursorHandle) = 0;
-
         // Notification that the given form element has changed. This function
         // will be called frequently, so handling should be very fast.
         virtual void formStateDidChange(const Node*) = 0;
@@ -234,6 +234,10 @@ namespace WebCore {
         virtual void makeFirstResponder(NSResponder *) { }
 
         virtual void willPopUpMenu(NSMenu *) { }
+#endif
+
+#if PLATFORM(WIN)
+        virtual void setLastSetCursorToCurrentCursor() = 0;
 #endif
 
 #if ENABLE(TOUCH_EVENTS)

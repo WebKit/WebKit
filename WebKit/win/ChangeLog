@@ -1,3 +1,25 @@
+2010-07-14  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Patch for https://bugs.webkit.org/show_bug.cgi?id=42232
+        Make changing Cursors work in WebKit2.
+
+        * WebCoreSupport/WebChromeClient.cpp:
+        (WebChromeClient::setCursor):
+        We now need to grab the native cursor out of the WebCore cursor.
+
+        (WebChromeClient::setLastSetCursorToCurrentCursor):
+        Sets the WebView's "last set cursor" to be the current cursor so that
+        the cursor is set correctly for plugins.
+        * WebCoreSupport/WebChromeClient.h:
+        * WebView.cpp:
+        (WebView::WebView):
+        (WebView::WebViewWndProc):
+        * WebView.h:
+        (WebView::setLastCursor):
+        Change the "last set cursor" to be stored as a member instead of a global.
+
 2010-07-13  Steve Falkenburg  <sfalken@apple.com>
 
         Windows build fix.

@@ -34,12 +34,12 @@
 namespace WebCore {
 
 Cursor::Cursor(const Cursor& other)
-    : m_impl(other.m_impl)
+    : m_platformCursor(other.m_platformCursor)
 {
 }
 
 Cursor::Cursor(Image* image, const IntPoint& hotSpot)
-    : m_impl(image, hotSpot)
+    : m_platformCursor(image, hotSpot)
 {
 }
 
@@ -49,12 +49,12 @@ Cursor::~Cursor()
 
 Cursor& Cursor::operator=(const Cursor& other)
 {
-    m_impl = other.m_impl;
+    m_platformCursor = other.m_platformCursor;
     return *this;
 }
 
 Cursor::Cursor(PlatformCursor c)
-    : m_impl(c)
+    : m_platformCursor(c)
 {
 }
 

@@ -1,3 +1,85 @@
+2010-07-14  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Patch for https://bugs.webkit.org/show_bug.cgi?id=42232
+        Make changing Cursors work in WebKit2.
+
+        - Converted Mac and Windows Cursor implementations to lazily
+          create the platform cursor.
+        - Add HostWindow function to set the cursor and use it from Widget::setCursor.
+        - Rework Windows cursor code to use fewer global variables.
+
+        * WebCore.exp.in: Updated
+        * loader/EmptyClients.h:
+        (WebCore::EmptyChromeClient::setCursor): 
+        (WebCore::EmptyChromeClient::setLastSetCursorToCurrentCursor):
+        Added empty implementations.
+
+        * page/Chrome.cpp:
+        (WebCore::Chrome::setCursor):
+        * page/Chrome.h:
+        * page/ChromeClient.h:
+        Change existing setCursor() function to take a Cursor instead of a
+        PlatformCursorHandle. Added setLastSetCursorToCurrentCursor.
+
+        * platform/Cursor.cpp:
+        * platform/Cursor.h:
+        Added Cursor Type and the option of lazily creating the native cursor
+        (used on Mac and Windows for now).
+
+        * platform/HostWindow.h:
+        Add setCursor.
+
+        * platform/mac/CursorMac.mm:
+        (WebCore::createCustomCursor): This no longer needs to call determineHotSpot
+        as that is done when on construction of the cursor now and the hotSpot passed
+        in is correct.
+        (WebCore::Cursor::ensurePlatformCursor):
+        (WebCore::Cursor::Cursor):
+        (WebCore::Cursor::~Cursor):
+        (WebCore::Cursor::operator=):
+        (WebCore::Cursor::platformCursor):
+        Convert to lazily creating the native cursor on the first request and
+        storing the type.
+
+        * platform/mac/WidgetMac.mm:
+        (WebCore::Widget::setCursor):
+        Use HostWindow::setCursor to set the cursor. This in turn will call the
+        ChromeClient.
+
+        * platform/win/CursorWin.cpp:
+        (WebCore::createSharedCursor):
+        (WebCore::loadSharedCursor):
+        (WebCore::loadCursorByName):
+        (WebCore::Cursor::ensurePlatformCursor):
+        (WebCore::SharedCursor::~SharedCursor):
+        (WebCore::Cursor::Cursor):
+        (WebCore::Cursor::~Cursor):
+        (WebCore::Cursor::operator=):
+        (WebCore::Cursor::platformCursor):
+        Convert to lazily creating the native cursor on the first request and
+        storing the type.
+
+        * platform/win/WidgetWin.cpp:
+        (WebCore::Widget::setCursor):
+        Use HostWindow::setCursor to set the cursor. This in turn will call the
+        ChromeClient.
+
+        * plugins/win/PluginViewWin.cpp:
+        (WebCore::PluginView::handleMouseEvent):
+        Use the new setLastSetCursorToCurrentCursor client function to ensure
+        the cursor is properly updated when over a plugin.
+
+        * platform/chromium/CursorChromium.cpp:
+        * platform/efl/CursorEfl.cpp:
+        * platform/gtk/CursorGtk.cpp:
+        * platform/haiku/CursorHaiku.cpp:
+        * platform/wince/CursorWince.cpp:
+        * platform/wx/CursorWx.cpp:
+        * platform/qt/CursorQt.cpp:
+        Change m_impl -> m_platformCursor.
+
 2010-07-13  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

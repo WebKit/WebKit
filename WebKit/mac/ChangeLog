@@ -1,3 +1,19 @@
+2010-07-14  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Patch for https://bugs.webkit.org/show_bug.cgi?id=42232
+        Make changing Cursors work in WebKit2.
+
+        * WebCoreSupport/WebChromeClient.h:
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::setCursor):
+        * WebView/WebView.mm:
+        Implement cursor changing at the WebKit level for the sake of WebKit2.
+        This functionality is being moved from WidgetMac.mm.
+        (+[WebView _pointingHandCursor]):
+        Update to use platformCursor() instead of impl().
+
 2010-07-13  Simon Fraser  <simon.fraser@apple.com>
 
         Fix Tiger build.

@@ -447,10 +447,9 @@ void ChromeClientWx::chooseIconForFiles(const Vector<String>& filenames, FileCho
     chooser->iconLoaded(Icon::createIconForFiles(filenames));
 }
 
-bool ChromeClientWx::setCursor(PlatformCursorHandle)
+void ChromeClientWx::setCursor(const Cursor&)
 {
     notImplemented();
-    return false;
 }
 
 void ChromeClientWx::requestGeolocationPermissionForFrame(Frame*, Geolocation*)

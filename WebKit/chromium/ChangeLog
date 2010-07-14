@@ -1,3 +1,19 @@
+2010-07-14  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Patch for https://bugs.webkit.org/show_bug.cgi?id=42232
+        Make changing Cursors work in WebKit2.
+
+        * src/ChromeClientImpl.h:
+        (WebKit::ChromeClientImpl::setCursor):
+        Change prototype to match new one.
+
+        * src/WebPopupMenuImpl.cpp:
+        (WebKit::WebPopupMenuImpl::setCursor):
+        * src/WebPopupMenuImpl.h:
+        Add empty setCursor function to satisfy the HostWindow interface.
+
 2010-07-13  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Darin Adler.

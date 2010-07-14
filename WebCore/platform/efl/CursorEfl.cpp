@@ -45,33 +45,33 @@ namespace WebCore {
 
 Cursor::Cursor(PlatformCursor p)
 {
-    m_impl = eina_stringshare_add(p);
+    m_platformCursor = eina_stringshare_add(p);
 }
 
 Cursor::Cursor(const Cursor& other)
 {
-    m_impl = eina_stringshare_ref(other.m_impl);
+    m_platformCursor = eina_stringshare_ref(other.m_platformCursor);
 }
 
 Cursor::~Cursor()
 {
-    if (m_impl) {
-        eina_stringshare_del(m_impl);
-        m_impl = 0;
+    if (m_platformCursor) {
+        eina_stringshare_del(m_platformCursor);
+        m_platformCursor = 0;
     }
 }
 
 Cursor::Cursor(Image* image, const IntPoint& hotspot)
-    : m_impl(0)
+    : m_platformCursor(0)
 {
     notImplemented();
 }
 
 Cursor& Cursor::operator=(const Cursor& other)
 {
-    eina_stringshare_ref(other.m_impl);
-    eina_stringshare_del(m_impl);
-    m_impl = other.m_impl;
+    eina_stringshare_ref(other.m_platformCursor);
+    eina_stringshare_del(m_platformCursor);
+    m_platformCursor = other.m_platformCursor;
     return *this;
 }
 

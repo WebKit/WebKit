@@ -127,7 +127,7 @@ public:
     virtual void runOpenPanel(WebCore::Frame*, PassRefPtr<WebCore::FileChooser>);
     virtual void chooseIconForFiles(const Vector<WebCore::String>&, WebCore::FileChooser*);
 
-    virtual bool setCursor(WebCore::PlatformCursorHandle) { return false; }
+    virtual void setCursor(const WebCore::Cursor&);
 
     virtual WebCore::FloatRect customHighlightRect(WebCore::Node*, const WebCore::AtomicString& type,
         const WebCore::FloatRect& lineRect);

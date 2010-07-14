@@ -57,38 +57,38 @@ static GdkCursor* customCursorNew(CustomCursorType cursorType)
 
 
 Cursor::Cursor(const Cursor& other)
-    : m_impl(other.m_impl)
+    : m_platformCursor(other.m_platformCursor)
 {
-    if (m_impl)
-        gdk_cursor_ref(m_impl);
+    if (m_platformCursor)
+        gdk_cursor_ref(m_platformCursor);
 }
 
 Cursor::Cursor(Image* image, const IntPoint& hotSpot)
 {
     IntPoint effectiveHotSpot = determineHotSpot(image, hotSpot);
     GdkPixbuf* pixbuf = image->getGdkPixbuf();
-    m_impl = gdk_cursor_new_from_pixbuf(gdk_display_get_default(), pixbuf, effectiveHotSpot.x(), effectiveHotSpot.y());
+    m_platformCursor = gdk_cursor_new_from_pixbuf(gdk_display_get_default(), pixbuf, effectiveHotSpot.x(), effectiveHotSpot.y());
     g_object_unref(pixbuf);
 }
 
 Cursor::~Cursor()
 {
-    if (m_impl)
-        gdk_cursor_unref(m_impl);
+    if (m_platformCursor)
+        gdk_cursor_unref(m_platformCursor);
 }
 
 Cursor& Cursor::operator=(const Cursor& other)
 {
-    gdk_cursor_ref(other.m_impl);
-    gdk_cursor_unref(m_impl);
-    m_impl = other.m_impl;
+    gdk_cursor_ref(other.m_platformCursor);
+    gdk_cursor_unref(m_platformCursor);
+    m_platformCursor = other.m_platformCursor;
     return *this;
 }
 
 Cursor::Cursor(GdkCursor* c)
-    : m_impl(c)
+    : m_platformCursor(c)
 {
-    m_impl = c;
+    m_platformCursor = c;
 
     // The GdkCursor may be NULL - the default cursor for the window.
     if (c)

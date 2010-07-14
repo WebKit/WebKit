@@ -2220,7 +2220,7 @@ static inline IMP getMethod(id o, SEL s)
 
 + (NSCursor *)_pointingHandCursor
 {
-    return handCursor().impl();
+    return handCursor().platformCursor();
 }
 
 - (BOOL)_postsAcceleratedCompositingNotifications

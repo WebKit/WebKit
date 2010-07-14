@@ -1,3 +1,15 @@
+2010-07-14  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Patch for https://bugs.webkit.org/show_bug.cgi?id=42232
+        Make changing Cursors work in WebKit2.
+
+        * WebCoreSupport/ChromeClientQt.cpp:
+        (WebCore::ChromeClientQt::setCursor):
+        * WebCoreSupport/ChromeClientQt.h:
+        Change prototype to match new one.
+
 2010-07-07  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         Reviewed by Darin Adler.

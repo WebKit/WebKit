@@ -46,7 +46,8 @@ private:
     virtual void processDidRevive();
     virtual void takeFocus(bool direction);
     virtual void toolTipChanged(const WebCore::String& oldToolTip, const WebCore::String& newToolTip);
-    
+    virtual void setCursor(const WebCore::Cursor&);
+
     WKView* m_wkView;
 };
 

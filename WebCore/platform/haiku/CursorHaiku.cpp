@@ -34,31 +34,31 @@
 namespace WebCore {
 
 Cursor::Cursor(PlatformCursor cursor)
-    : m_impl(cursor)
+    : m_platformCursor(cursor)
 {
 }
 
 Cursor::Cursor(const Cursor& other)
-    : m_impl(0)
+    : m_platformCursor(0)
 {
     *this = other;
 }
 
 Cursor::~Cursor()
 {
-    delete m_impl;
+    delete m_platformCursor;
 }
 
 Cursor::Cursor(Image*, const IntPoint&)
-    : m_impl(0)
+    : m_platformCursor(0)
 {
     notImplemented();
 }
 
 Cursor& Cursor::operator=(const Cursor& other)
 {
-    delete m_impl;
-    m_impl = other.m_impl ? new BCursor(*other.m_impl) : 0;
+    delete m_platformCursor;
+    m_platformCursor = other.m_platformCursor ? new BCursor(*other.m_platformCursor) : 0;
     return *this;
 }
 

@@ -129,6 +129,9 @@ LRESULT WebView::wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         case WM_SHOWWINDOW:
             lResult = onShowWindowEvent(hWnd, message, wParam, lParam, handled);
             break;
+        case WM_SETCURSOR:
+            lResult = onSetCursor(hWnd, message, wParam, lParam, handled);
+            break;
         default:
             handled = false;
             break;
@@ -170,6 +173,7 @@ WebView::WebView(RECT rect, WebPageNamespace* pageNamespace, HWND hostWindow)
     , m_hostWindow(hostWindow)
     , m_topLevelParentWindow(0)
     , m_toolTipWindow(0)
+    , m_lastCursorSet(0)
     , m_trackingMouseLeave(false)
     , m_isBeingDestroyed(false)
 {
@@ -408,6 +412,12 @@ LRESULT WebView::onShowWindowEvent(HWND hWnd, UINT message, WPARAM wParam, LPARA
     return 0;
 }
 
+LRESULT WebView::onSetCursor(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& handled)
+{
+    handled = ::SetCursor(m_lastCursorSet);
+    return 0;
+}
+
 bool WebView::isActive()
 {
     HWND activeWindow = ::GetActiveWindow();
@@ -531,6 +541,16 @@ void WebView::toolTipChanged(const String&, const String& newToolTip)
     }
 
     ::SendMessage(m_toolTipWindow, TTM_ACTIVATE, !newToolTip.isEmpty(), 0);
+}
+
+void WebView::setCursor(const WebCore::Cursor& cursor)
+{
+    HCURSOR platformCursor = cursor.platformCursor()->nativeCursor();
+    if (!platformCursor)
+        return;
+
+    m_lastCursorSet = platformCursor;
+    ::SetCursor(platformCursor);
 }
 
 // WebCore::WindowMessageListener

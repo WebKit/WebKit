@@ -38,12 +38,12 @@ static const Cursor& getCursor(CursorType type)
 }
 
 Cursor::Cursor(const Cursor& other)
-: m_impl(other.m_impl)
+: m_platformCursor(other.m_platformCursor)
 {
 }
 
 Cursor::Cursor(Image* img, const IntPoint& hotspot)
-: m_impl(CursorNone)
+: m_platformCursor(CursorNone)
 {
 }
 
@@ -53,12 +53,12 @@ Cursor::~Cursor()
 
 Cursor& Cursor::operator=(const Cursor& other)
 {
-    m_impl = other.m_impl;
+    m_platformCursor = other.m_platformCursor;
     return *this;
 }
 
 Cursor::Cursor(PlatformCursor c)
-: m_impl(c)
+: m_platformCursor(c)
 {
 }
 

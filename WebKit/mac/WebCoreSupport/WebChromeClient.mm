@@ -48,6 +48,7 @@
 #import <Foundation/Foundation.h>
 #import <WebCore/BlockExceptions.h>
 #import <WebCore/Console.h>
+#import <WebCore/Cursor.h>
 #import <WebCore/Element.h>
 #import <WebCore/FileChooser.h>
 #import <WebCore/FloatRect.h>
@@ -657,6 +658,14 @@ void WebChromeClient::runOpenPanel(Frame*, PassRefPtr<FileChooser> chooser)
 void WebChromeClient::chooseIconForFiles(const Vector<String>& filenames, FileChooser* chooser)
 {
     chooser->iconLoaded(Icon::createIconForFiles(filenames));
+}
+
+void WebChromeClient::setCursor(const WebCore::Cursor& cursor)
+{
+    NSCursor *platformCursor = cursor.platformCursor();
+    if ([NSCursor currentCursor] == platformCursor)
+        return;
+    [platformCursor set];
 }
 
 KeyboardUIMode WebChromeClient::keyboardUIMode()

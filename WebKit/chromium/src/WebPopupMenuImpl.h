@@ -110,6 +110,7 @@ public:
     virtual PlatformPageClient platformPageClient() const { return 0; }
     virtual void scrollRectIntoView(const WebCore::IntRect&, const WebCore::ScrollView*) const;
     virtual void scrollbarsModeDidChange() const;
+    virtual void setCursor(const WebCore::Cursor&);
 
     // WebCore::FramelessScrollViewClient methods:
     virtual void popupClosed(WebCore::FramelessScrollView*);

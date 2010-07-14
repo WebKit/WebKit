@@ -30,6 +30,7 @@
 #include "ArgumentDecoder.h"
 #include "ArgumentEncoder.h"
 #include "Arguments.h"
+#include <WebCore/Cursor.h>
 #include <WebCore/FloatRect.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/PlatformString.h>
@@ -106,6 +107,30 @@ template<> struct ArgumentCoder<WebCore::PluginInfo> {
         if (!decoder->decode(pluginInfo.mimes))
             return false;
 
+        return true;
+    }
+};
+
+template<> struct ArgumentCoder<WebCore::Cursor> {
+    static void encode(ArgumentEncoder* encoder, const WebCore::Cursor& cursor)
+    {
+        // FIXME: Support custom cursors.
+        if (cursor.type() == WebCore::Cursor::Custom)
+            encoder->encode(static_cast<uint32_t>(WebCore::Cursor::Pointer));
+        else
+            encoder->encode(static_cast<uint32_t>(cursor.type()));
+    }
+    
+    static bool decode(ArgumentDecoder* decoder, WebCore::Cursor& cursor)
+    {
+        uint32_t typeInt;
+        if (!decoder->decode(typeInt))
+            return false;
+
+        WebCore::Cursor::Type type = static_cast<WebCore::Cursor::Type>(typeInt);
+        ASSERT(type != WebCore::Cursor::Custom);
+
+        cursor = WebCore::Cursor::fromType(type);
         return true;
     }
 };

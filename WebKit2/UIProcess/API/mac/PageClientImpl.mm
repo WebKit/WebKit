@@ -28,6 +28,7 @@
 #import "WKAPICast.h"
 #import "WKStringCF.h"
 #import "WKViewInternal.h"
+#import <WebCore/Cursor.h>
 #import <WebCore/FoundationExtras.h>
 #import <WebCore/PlatformString.h>
 
@@ -67,6 +68,11 @@ void PageClientImpl::takeFocus(bool direction)
 void PageClientImpl::toolTipChanged(const String& oldToolTip, const String& newToolTip)
 {
     [m_wkView _toolTipChangedFrom:nsStringFromWebCoreString(oldToolTip) to:nsStringFromWebCoreString(newToolTip)];
+}
+
+void PageClientImpl::setCursor(const WebCore::Cursor& cursor)
+{
+    [m_wkView _setCursor:cursor.platformCursor()];
 }
 
 } // namespace WebKit

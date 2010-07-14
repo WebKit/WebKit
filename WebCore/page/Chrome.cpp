@@ -426,9 +426,9 @@ void Chrome::chooseIconForFiles(const Vector<String>& filenames, FileChooser* fi
     m_client->chooseIconForFiles(filenames, fileChooser);
 }
 
-bool Chrome::setCursor(PlatformCursorHandle cursor)
+void Chrome::setCursor(const Cursor& cursor)
 {
-    return m_client->setCursor(cursor);
+    m_client->setCursor(cursor);
 }
 
 #if ENABLE(NOTIFICATIONS)
