@@ -29,9 +29,11 @@
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/KURL.h>
+#include <utility>
 #include <wtf/text/CString.h>
 
 using namespace WebCore;
+using namespace std;
 
 namespace WebKit {
 
@@ -102,10 +104,17 @@ void NetscapePlugin::loadURL(const String& urlString, const String& target, bool
 {
     uint64_t requestID = ++m_nextRequestID;
 
+    if (!target.isNull() && sendNotification) {
+        // Eventually we are going to get a frameDidFinishLoading or frameDidFail call for this request.
+        // Keep track of the notification data so we can call NPP_URLNotify.
+        ASSERT(!m_pendingURLNotifications.contains(requestID));
+        m_pendingURLNotifications.set(requestID, make_pair(urlString, notificationData));
+    }
+
     // FIXME: Handle popups.
     bool allowPopups = false;
-
     m_pluginController->loadURL(requestID, urlString, target, allowPopups);
+    
 }
 
 NPError NetscapePlugin::NPP_New(NPMIMEType pluginType, uint16_t mode, int16_t argc, char* argn[], char* argv[], NPSavedData* savedData)
@@ -226,12 +235,30 @@ void NetscapePlugin::geometryDidChange(const IntRect& frameRect, const IntRect& 
 
 void NetscapePlugin::frameDidFinishLoading(uint64_t requestID)
 {
-    // FIXME: Implement.
+    PendingURLNotifyMap::iterator it = m_pendingURLNotifications.find(requestID);
+    if (it == m_pendingURLNotifications.end())
+        return;
+
+    String url = it->second.first;
+    void* notificationData = it->second.second;
+
+    m_pendingURLNotifications.remove(it);
+    
+    NPP_URLNotify(url.utf8().data(), NPRES_DONE, notificationData);
 }
 
 void NetscapePlugin::frameDidFail(uint64_t requestID, bool wasCancelled)
 {
-    // FIXME: Implement.
+    PendingURLNotifyMap::iterator it = m_pendingURLNotifications.find(requestID);
+    if (it == m_pendingURLNotifications.end())
+        return;
+
+    String url = it->second.first;
+    void* notificationData = it->second.second;
+
+    m_pendingURLNotifications.remove(it);
+    
+    NPP_URLNotify(url.utf8().data(), wasCancelled ? NPRES_USER_BREAK : NPRES_NETWORK_ERR, notificationData);
 }
 
 void NetscapePlugin::didEvaluateJavaScript(uint64_t requestID, const String& requestURLString, const String& result)

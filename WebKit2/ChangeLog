@@ -2,6 +2,25 @@
 
         Reviewed by Sam Weinig.
 
+        Call NPN_URLNotify for frame loads initiated by plug-ins
+        https://bugs.webkit.org/show_bug.cgi?id=42291
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::loadURL):
+        If needed, keep track of the request ID and URL so we can call NPP_URLNotify at a later point.
+
+        (WebKit::NetscapePlugin::frameDidFinishLoading):
+        Get the notification data and the URL from the map and call NPP_URLNotify.
+
+        (WebKit::NetscapePlugin::frameDidFail):
+        Get the notification data and the URL from the map and call NPP_URLNotify.
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.h:
+
+2010-07-14  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
         Add NetscapePlugin::NPP_ member functions for calling into the plug-in
         https://bugs.webkit.org/show_bug.cgi?id=42287
 

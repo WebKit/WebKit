@@ -29,6 +29,7 @@
 #include "NetscapePluginModule.h"
 #include "Plugin.h"
 #include <WebCore/IntRect.h>
+#include <WebCore/StringHash.h>
 
 namespace WebKit {
 
@@ -78,6 +79,9 @@ private:
 
     PluginController* m_pluginController;
     uint64_t m_nextRequestID;
+
+    typedef HashMap<uint64_t, std::pair<WebCore::String, void*> > PendingURLNotifyMap;
+    PendingURLNotifyMap m_pendingURLNotifications;
 
     RefPtr<NetscapePluginModule> m_pluginModule;
     NPP_t m_npp;
