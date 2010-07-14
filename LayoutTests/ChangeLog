@@ -1,5 +1,18 @@
 2010-07-14  Tony Gentilcore  <tonyg@chromium.org>
 
+        Unreviewed, build fix for r63326.
+
+        Update platform expectations for r63326
+        https://bugs.webkit.org/show_bug.cgi?id=42269
+
+        r63326 added shouldBeGreaterThanOrEqual and updated the root expectations. This patch makes the same change to the platform-specific expectations.
+
+        * platform/gtk/fast/dom/Window/window-property-descriptors-expected.txt:
+        * platform/qt/fast/dom/Window/window-property-descriptors-expected.txt:
+        * platform/win/fast/dom/Window/window-property-descriptors-expected.txt:
+
+2010-07-14  Tony Gentilcore  <tonyg@chromium.org>
+
         Reviewed by Darin Fisher.
 
         Implement Web Timing redirectStart, redirectEnd, redirectCount
