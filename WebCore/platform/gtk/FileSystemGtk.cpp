@@ -24,12 +24,13 @@
 
 #include "GOwnPtr.h"
 #include "PlatformString.h"
-#include <wtf/text/CString.h>
 
+#include <errno.h>
+#include <fcntl.h>
 #include <glib.h>
 #include <glib/gstdio.h>
-
 #include <unistd.h>
+#include <wtf/text/CString.h>
 
 namespace WebCore {
 
@@ -233,6 +234,22 @@ CString openTemporaryFile(const char* prefix, PlatformFileHandle& handle)
     return tempFilePath;
 }
 
+PlatformFileHandle openFile(const String& path, FileOpenMode mode)
+{
+    CString fsRep = fileSystemRepresentation(path);
+
+    if (fsRep.isNull())
+        return invalidPlatformFileHandle;
+
+    int platformFlag = 0;
+    if (mode == OpenForRead)
+        platformFlag |= O_RDONLY;
+    else if (mode == OpenForWrite)
+        platformFlag |= (O_WRONLY | O_CREAT | O_TRUNC);
+
+    return g_open(fsRep.data(), platformFlag, 0666);
+}
+
 void closeFile(PlatformFileHandle& handle)
 {
     if (isHandleValid(handle)) {
@@ -253,6 +270,17 @@ int writeToFile(PlatformFileHandle handle, const char* data, int length)
     }
 
     return totalBytesWritten;
+}
+
+int readFromFile(PlatformFileHandle handle, char* data, int length)
+{
+    do {
+        int bytesRead = read(handle, data, static_cast<size_t>(length));
+        if (bytesRead >= 0)
+            return bytesRead;
+    } while (errno == EINTR);
+
+    return -1;
 }
 
 bool unloadModule(PlatformModule module)

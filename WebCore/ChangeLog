@@ -1,3 +1,16 @@
+2010-07-14  Joone Hur  <joone@kldp.org>
+
+        Reviewed by Jian Li.
+
+        [GTK] Enabling File Reader/Writer APIs
+        https://bugs.webkit.org/show_bug.cgi?id=40209
+
+        The layout test fast/files will be enabled after eventSender.beginDragWithFiles is implemented for GTK.
+
+        * platform/gtk/FileSystemGtk.cpp:
+        (WebCore::openFile): Added.
+        (WebCore::readFromFile): Added.
+
 2010-07-14  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Dirk Schulze.
