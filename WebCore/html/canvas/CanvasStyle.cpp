@@ -130,9 +130,9 @@ bool operator==(const CanvasStyle& s1, const CanvasStyle& s2)
     case CanvasStyle::RGBA:
         return s1.m_rgba == s2.m_rgba;
     case CanvasStyle::Gradient:
-        return s1.m_gradient == s2.m_gradient;
+        return false;
     case CanvasStyle::ImagePattern:
-        return s1.m_pattern == s2.m_pattern;
+        return false;
     case CanvasStyle::CMYKA:
         return s1.m_cmyka.c == s2.m_cmyka.c
             && s1.m_cmyka.m == s2.m_cmyka.m

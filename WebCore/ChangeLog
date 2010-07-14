@@ -1,5 +1,20 @@
 2010-07-14  Andreas Kling  <andreas.kling@nokia.com>
 
+        Reviewed by Ojan Vafai.
+
+        Unbreak fast/canvas/gradient-add-second-start-end-stop.html
+
+        Assigning the same CanvasGradient or CanvasPattern to fillStyle
+        or strokeStyle may not be a no-op since the object could have been
+        modified since it was last set.
+
+        Regressed with <http://trac.webkit.org/changeset/63327>
+
+        * html/canvas/CanvasStyle.cpp:
+        (WebCore::operator==):
+
+2010-07-14  Andreas Kling  <andreas.kling@nokia.com>
+
         Reviewed by Darin Adler.
 
         Canvas: Make assigning the same fillStyle or strokeStyle a fast no-op
