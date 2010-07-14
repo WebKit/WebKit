@@ -1,3 +1,26 @@
+2010-07-13  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Make our end tag in-foreign-content mode spec bug workarounds more closely match minefield
+        https://bugs.webkit.org/show_bug.cgi?id=42187
+
+        I do not expect these work-arounds to be permanent.  Hixie has promised to
+        addresses the feedback to the parser sections of HTML5 soon.
+        I added these hacks to make our hacks more-closely match Minefield's hacks
+        and thus have us "pass" a few more html5lib runner tests.
+
+        We now pass all of the html5lib foreign content tests
+        (thus we'll likely need to write more).
+
+        Tested by html5lib/runner.html
+
+        * html/HTMLElementStack.cpp:
+        (WebCore::HTMLElementStack::contains):
+        * html/HTMLElementStack.h:
+        * html/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::processEndTag):
+
 2010-07-12  Tony Gentilcore  <tonyg@chromium.org>
 
         Reviewed by Darin Fisher.

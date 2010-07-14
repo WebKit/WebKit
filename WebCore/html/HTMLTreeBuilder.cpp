@@ -2340,9 +2340,11 @@ void HTMLTreeBuilder::processEndTag(AtomicHTMLToken& token)
             HTMLElementStack::ElementRecord* nodeRecord = m_tree.openElements()->topRecord();
             if (!nodeRecord->element()->hasLocalName(token.name())) {
                 parseError(token);
-                // FIXME: This return is not in the spec but appears to be needed.
+                // FIXME: This return is not in the spec but it needed for now
+                // to prevent walking off the bottom of the stack.
                 // http://www.w3.org/Bugs/Public/show_bug.cgi?id=10118
-                return;
+                if (!m_tree.openElements()->contains(token.name()))
+                    return;
             }
             while (1) {
                 if (nodeRecord->element()->hasLocalName(token.name())) {
@@ -2350,8 +2352,13 @@ void HTMLTreeBuilder::processEndTag(AtomicHTMLToken& token)
                     return;
                 }
                 nodeRecord = nodeRecord->next();
-                if (nodeRecord->element()->namespaceURI() == xhtmlNamespaceURI)
+                if (nodeRecord->element()->namespaceURI() == xhtmlNamespaceURI) {
                     processUsingSecondaryInsertionModeAndAdjustInsertionMode(token);
+                    // FIXME: This is a hack around a spec bug and is likely wrong.
+                    // http://www.w3.org/Bugs/Public/show_bug.cgi?id=9581
+                    if (nodeRecord != m_tree.openElements()->topRecord())
+                        return;
+                }
             }
             return;
         }

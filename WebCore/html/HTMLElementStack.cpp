@@ -325,6 +325,11 @@ bool HTMLElementStack::contains(Element* element) const
     return !!find(element);
 }
 
+bool HTMLElementStack::contains(const AtomicString& tagName) const
+{
+    return !!topmost(tagName);
+}
+
 template <bool isMarker(Element*)>
 bool inScopeCommon(HTMLElementStack::ElementRecord* top, const AtomicString& targetTag)
 {
