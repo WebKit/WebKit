@@ -1,3 +1,9 @@
+2010-07-13  Simon Fraser  <simon.fraser@apple.com>
+
+        Build fix: fix WebCore exports by editing the .in file, rather than the generated file.
+
+        * WebCore.exp.in:
+
 2010-07-13  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Darin Adler.
