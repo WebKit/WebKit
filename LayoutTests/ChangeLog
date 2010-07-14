@@ -1,5 +1,15 @@
 2010-07-14  Chris Fleizach  <cfleizach@apple.com>
 
+        Reviewed by Darin Adler.
+
+        AX: aria-checked not recognized on image map radio buttons
+        https://bugs.webkit.org/show_bug.cgi?id=42055
+
+        * platform/mac/accessibility/image-map-link-used-as-radiobutton-expected.txt: Added.
+        * platform/mac/accessibility/image-map-link-used-as-radiobutton.html: Added.
+
+2010-07-14  Chris Fleizach  <cfleizach@apple.com>
+
         No review. Make sure Tiger and Leopard don't run this test.
 
         AX: Data table heuristics: consider assuming data table for 'zebra-striped' rows

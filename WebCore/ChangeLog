@@ -1,3 +1,56 @@
+2010-07-14  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Darin Adler.
+
+        AX: aria-checked not recognized on image map radio buttons
+        https://bugs.webkit.org/show_bug.cgi?id=42055
+
+        Moves some code from AccessibilityRenderObject to AccessibilityObject so that
+        elements that do not have render objects, but do have Nodes (like image map links 
+        and list box options) can still make use of certain aria attributes.
+
+        Test: platform/mac/accessibility/image-map-link-used-as-radiobutton.html
+
+        * accessibility/AccessibilityImageMapLink.cpp:
+        (WebCore::AccessibilityImageMapLink::roleValue):
+        (WebCore::AccessibilityImageMapLink::accessibilityDescription):
+        (WebCore::AccessibilityImageMapLink::title):
+           Make imageMap use standard AccessibilityObject methods for getAttribute()
+        * accessibility/AccessibilityImageMapLink.h:
+        (WebCore::AccessibilityImageMapLink::node):
+        * accessibility/AccessibilityListBoxOption.cpp:
+        (WebCore::AccessibilityListBoxOption::accessibilityIsIgnored):
+        (WebCore::AccessibilityListBoxOption::stringValue):
+        * accessibility/AccessibilityListBoxOption.h:
+        (WebCore::AccessibilityListBoxOption::node):
+       * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::language):
+             Language method doesn't need a node() anymore, it can use the node from AccessibilityObject.
+        (WebCore::renderListItemContainerForNode):
+        (WebCore::AccessibilityObject::getAttribute):
+        (WebCore::AccessibilityObject::intValue):
+           Move intValue into AccessibilityObject.
+        (WebCore::AccessibilityObject::hasIntValue):
+        * accessibility/AccessibilityObject.h:
+        (WebCore::AccessibilityObject::isCheckbox):
+        (WebCore::AccessibilityObject::isRadioButton):
+        (WebCore::AccessibilityObject::isCheckboxOrRadio):
+           Consolidate what defines a checkbox and radio button into AccessibilityObject.
+        (WebCore::AccessibilityObject::node):
+        (WebCore::AccessibilityObject::headingLevel):
+       (WebCore::AccessibilityObject::isDetached):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::isPasswordField):
+        (WebCore::AccessibilityRenderObject::headingLevel):
+        (WebCore::AccessibilityRenderObject::selectedTabItem):
+        (WebCore::AccessibilityRenderObject::hierarchicalLevel):
+        (WebCore::AccessibilityRenderObject::node):
+        (WebCore::AccessibilityRenderObject::intValue):
+        * accessibility/AccessibilityRenderObject.h:
+        * rendering/RenderMenuList.cpp:
+        (WebCore::RenderMenuList::itemAccessibilityText):
+            Stop using AccessibilityObjects getAttribute (no reason to use it really).
+
 2010-07-14  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Simon Fraser.

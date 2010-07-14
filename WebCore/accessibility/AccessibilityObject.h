@@ -264,7 +264,8 @@ public:
     virtual bool isTextControl() const { return false; }
     virtual bool isNativeTextControl() const { return false; }
     virtual bool isWebArea() const { return false; }
-    virtual bool isCheckboxOrRadio() const { return false; }
+    virtual bool isCheckbox() const { return roleValue() == CheckBoxRole; }
+    virtual bool isRadioButton() const { return roleValue() == RadioButtonRole; }
     virtual bool isListBox() const { return roleValue() == ListBoxRole; }
     virtual bool isMediaTimeline() const { return false; }
     virtual bool isMenuRelated() const { return false; }
@@ -298,6 +299,7 @@ public:
     bool isScrollbar() const { return roleValue() == ScrollBarRole; }
     bool isButton() const { return roleValue() == ButtonRole; }
     bool isListItem() const { return roleValue() == ListItemRole; }
+    bool isCheckboxOrRadio() const { return isCheckbox() || isRadioButton(); }
     
     virtual bool isChecked() const { return false; }
     virtual bool isEnabled() const { return false; }
@@ -325,16 +327,17 @@ public:
     virtual bool canSetSelectedChildrenAttribute() const { return false; }
     virtual bool canSetExpandedAttribute() const { return false; }
     
-    virtual bool hasIntValue() const { return false; }
-
+    bool hasIntValue() const;
+    virtual int intValue() const;
+    
     // A programmatic way to set a name on an AccessibleObject.
     virtual void setAccessibleName(String&) { }
     
+    virtual Node* node() const { return 0; }
     bool accessibilityShouldUseUniqueId() const { return true; }
     virtual bool accessibilityIsIgnored() const  { return true; }
 
     virtual int headingLevel() const { return 0; }
-    virtual int intValue() const { return 0; }
     virtual String valueDescription() const { return String(); }
     virtual float valueForRange() const { return 0.0f; }
     virtual float maxValueForRange() const { return 0.0f; }
@@ -419,8 +422,7 @@ public:
     virtual Document* document() const { return 0; }
     virtual FrameView* topDocumentFrameView() const { return 0; }
     virtual FrameView* documentFrameView() const;
-    virtual String language() const;
-    String language(Node*) const;
+    String language() const;
     virtual unsigned hierarchicalLevel() const { return 0; }
     
     virtual void setFocused(bool) { }
@@ -454,7 +456,7 @@ public:
     virtual void handleAriaExpandedChanged() { }
     
     static AccessibilityRole ariaRoleToWebCoreRole(const String&);
-    static const AtomicString& getAttribute(Node*, const QualifiedName&);
+    const AtomicString& getAttribute(const QualifiedName&) const;
 
     virtual VisiblePositionRange visiblePositionRange() const { return VisiblePositionRange(); }
     virtual VisiblePositionRange visiblePositionRangeForLine(unsigned) const { return VisiblePositionRange(); }
@@ -564,7 +566,6 @@ protected:
     
     virtual void clearChildren();
     virtual bool isDetached() const { return true; }
-    RenderListItem* renderListItemContainerForNode(Node* node) const;
     
 #if PLATFORM(MAC)
     RetainPtr<AccessibilityObjectWrapper> m_wrapper;

@@ -73,7 +73,7 @@ AccessibilityRole AccessibilityImageMapLink::roleValue() const
     if (!m_areaElement)
         return WebCoreLinkRole;
     
-    const AtomicString& ariaRole = m_areaElement->getAttribute(roleAttr);
+    const AtomicString& ariaRole = getAttribute(roleAttr);
     if (!ariaRole.isEmpty())
         return AccessibilityObject::ariaRoleToWebCoreRole(ariaRole);
 
@@ -100,13 +100,10 @@ KURL AccessibilityImageMapLink::url() const
     
 String AccessibilityImageMapLink::accessibilityDescription() const
 {
-    if (!m_areaElement)
-        return String();
-
-    const AtomicString& ariaLabel = m_areaElement->getAttribute(aria_labelAttr);
+    const AtomicString& ariaLabel = getAttribute(aria_labelAttr);
     if (!ariaLabel.isEmpty())
         return ariaLabel;
-    const AtomicString& alt = m_areaElement->getAttribute(altAttr);
+    const AtomicString& alt = getAttribute(altAttr);
     if (!alt.isEmpty())
         return alt;
 
@@ -115,13 +112,10 @@ String AccessibilityImageMapLink::accessibilityDescription() const
     
 String AccessibilityImageMapLink::title() const
 {
-    if (!m_areaElement)
-        return String();
-    
-    const AtomicString& title = m_areaElement->getAttribute(titleAttr);
+    const AtomicString& title = getAttribute(titleAttr);
     if (!title.isEmpty())
         return title;
-    const AtomicString& summary = m_areaElement->getAttribute(summaryAttr);
+    const AtomicString& summary = getAttribute(summaryAttr);
     if (!summary.isEmpty())
         return summary;
 

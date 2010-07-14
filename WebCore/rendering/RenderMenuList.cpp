@@ -26,7 +26,6 @@
 #include "RenderMenuList.h"
 
 #include "AXObjectCache.h"
-#include "AccessibilityObject.h"
 #include "CSSStyleSelector.h"
 #include "Frame.h"
 #include "FrameView.h"
@@ -363,7 +362,7 @@ String RenderMenuList::itemAccessibilityText(unsigned listIndex) const
     if (listIndex >= listItems.size())
         return String();
 
-    return AccessibilityObject::getAttribute(listItems[listIndex], aria_labelAttr); 
+    return listItems[listIndex]->getAttribute(aria_labelAttr);
 }
     
 String RenderMenuList::itemToolTip(unsigned listIndex) const

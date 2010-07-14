@@ -56,7 +56,7 @@ public:
     virtual bool isEnabled() const;
     virtual String stringValue() const;
     virtual Element* actionElement() const;
-    
+    virtual Node* node() const { return m_optionElement; }
     virtual void setSelected(bool);
     virtual bool canSetSelectedAttribute() const;
 
@@ -68,7 +68,6 @@ public:
 private:
     HTMLElement* m_optionElement;
     
-    virtual String language() const;
     virtual bool canHaveChildren() const { return false; }
     HTMLSelectElement* listBoxOptionParentNode() const;
     int listBoxOptionIndex() const;

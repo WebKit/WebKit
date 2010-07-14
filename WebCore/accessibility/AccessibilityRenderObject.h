@@ -75,7 +75,6 @@ public:
     virtual bool isTextControl() const;
     virtual bool isNativeTextControl() const;
     virtual bool isWebArea() const;
-    virtual bool isCheckboxOrRadio() const;
     virtual bool isFileUploadButton() const;
     virtual bool isInputImage() const;
     virtual bool isProgressIndicator() const;
@@ -106,14 +105,11 @@ public:
     virtual bool isExpanded() const;
     virtual void setIsExpanded(bool);
 
-    const AtomicString& getAttribute(const QualifiedName&) const;
     virtual bool canSetFocusAttribute() const;
     virtual bool canSetTextRangeAttributes() const;
     virtual bool canSetValueAttribute() const;
     virtual bool canSetExpandedAttribute() const;
 
-    virtual bool hasIntValue() const;
-    
     virtual void setAccessibleName(String&);
     
     // Provides common logic used by all elements when determining isIgnored.
@@ -169,10 +165,7 @@ public:
     
     void setRenderer(RenderObject* renderer) { m_renderer = renderer; }
     RenderObject* renderer() const { return m_renderer; }
-    Node* node() const 
-    { 
-        return m_renderer ? m_renderer->node() : 0; 
-    };
+    virtual Node* node() const;
 
     RenderView* topRenderer() const;
     RenderTextControl* textControl() const;
@@ -283,7 +276,6 @@ private:
     bool isAllowedChildOfTree() const;
     bool hasTextAlternative() const;
     String positionalDescriptionForMSAA() const;
-    virtual String language() const;
 
     Element* menuElementForMenuButton() const;
     Element* menuItemElementForMenu() const;

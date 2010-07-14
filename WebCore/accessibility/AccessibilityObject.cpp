@@ -148,17 +148,12 @@ bool AccessibilityObject::press() const
     return true;
 }
     
-String AccessibilityObject::language(Node* node) const
-{
-    const AtomicString& lang = getAttribute(node, langAttr);
-    if (lang.isEmpty())
-        return AccessibilityObject::language();
-    
-    return lang;
-}
-    
 String AccessibilityObject::language() const
 {
+    const AtomicString& lang = getAttribute(langAttr);
+    if (!lang.isEmpty())
+        return lang;
+
     AccessibilityObject* parent = parentObject();
     
     // as a last resort, fall back to the content language specified in the meta tag
@@ -166,7 +161,7 @@ String AccessibilityObject::language() const
         Document* doc = document();
         if (doc)
             return doc->contentLanguage();
-        return String();
+        return nullAtom;
     }
     
     return parent->language();
@@ -403,7 +398,7 @@ static bool replacedNodeNeedsCharacter(Node* replacedNode)
 }
 
 // Finds a RenderListItem parent give a node.
-RenderListItem* AccessibilityObject::renderListItemContainerForNode(Node* node) const
+static RenderListItem* renderListItemContainerForNode(Node* node)
 {
     for (Node* stringNode = node; stringNode; stringNode = stringNode->parent()) {
         RenderObject* renderObject = stringNode->renderer();
@@ -844,15 +839,16 @@ const String& AccessibilityObject::actionVerb() const
     }
 }
  
-const AtomicString& AccessibilityObject::getAttribute(Node* node, const QualifiedName& attribute)
+const AtomicString& AccessibilityObject::getAttribute(const QualifiedName& attribute) const
 {
-    if (!node)
+    Node* elementNode = node();
+    if (!elementNode)
         return nullAtom;
     
-    if (!node->isElementNode())
+    if (!elementNode->isElementNode())
         return nullAtom;
     
-    Element* element = static_cast<Element*>(node);
+    Element* element = static_cast<Element*>(elementNode);
     return element->getAttribute(attribute);
 }
     
@@ -980,6 +976,32 @@ bool AccessibilityObject::supportsARIALiveRegion() const
     const AtomicString& liveRegion = ariaLiveRegionStatus();
     return equalIgnoringCase(liveRegion, "polite") || equalIgnoringCase(liveRegion, "assertive");
 }
+    
+int AccessibilityObject::intValue() const
+{
+    if (isPasswordField())
+        return 0;
+    
+    if (isHeading())
+        return headingLevel();
+    
+    // If this is a real checkbox or radio button, AccessibilityRenderObject will handle.
+    // If it's an ARIA checkbox or radio, the aria-checked attribute should be used.
+    if (isCheckboxOrRadio())
+        return equalIgnoringCase(getAttribute(aria_checkedAttr), "true");
+    
+    return 0;
+}
 
+bool AccessibilityObject::hasIntValue() const
+{
+    if (isHeading())
+        return true;
+    
+    if (isCheckboxOrRadio())
+        return true;
+    
+    return false;
+}
     
 } // namespace WebCore

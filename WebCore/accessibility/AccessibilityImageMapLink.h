@@ -49,6 +49,7 @@ public:
     void setHTMLMapElement(HTMLMapElement* element) { m_mapElement = element; }    
     HTMLMapElement* mapElement() const { return m_mapElement; }
     
+    virtual Node* node() const { return m_areaElement; }
     void setParent(AccessibilityObject* parent) { m_parent = parent; }
         
     virtual AccessibilityRole roleValue() const;
