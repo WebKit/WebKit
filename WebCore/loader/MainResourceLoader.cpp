@@ -158,8 +158,15 @@ void MainResourceLoader::willSendRequest(ResourceRequest& newRequest, const Reso
     // The additional processing can do anything including possibly removing the last
     // reference to this object; one example of this is 3266216.
     RefPtr<MainResourceLoader> protect(this);
-    
-    frameLoader()->frameLoadTimeline()->fetchStart = currentTime();
+
+    FrameLoadTimeline* frameLoadTimeline = frameLoader()->frameLoadTimeline();
+    double fetchTime = currentTime();
+    if (double fetchStart = frameLoadTimeline->fetchStart) {
+        if (!frameLoadTimeline->redirectCount++)
+            frameLoadTimeline->redirectStart = fetchStart;
+        frameLoadTimeline->redirectEnd = fetchTime;
+    }
+    frameLoadTimeline->fetchStart = fetchTime;
 
     // Update cookie policy base URL as URL changes, except for subframes, which use the
     // URL of the main frame which doesn't change when we redirect.

@@ -1,3 +1,25 @@
+2010-07-14  Tony Gentilcore  <tonyg@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Implement Web Timing redirectStart, redirectEnd, redirectCount
+        https://bugs.webkit.org/show_bug.cgi?id=42018
+
+        Tests: http/tests/misc/webtiming-one-redirect.php
+               http/tests/misc/webtiming-two-redirects.php
+
+        * loader/FrameLoaderTypes.h:
+        (WebCore::FrameLoadTimeline::FrameLoadTimeline):
+        * loader/MainResourceLoader.cpp:
+        (WebCore::MainResourceLoader::willSendRequest): This method is called for each request (including server redirects). fetchStart is updated to the current time on each invocation so that it represents fetching of the final document and doesn't include redirect time. For each redirect, redirectCount is incremented and redirectStart to redirectEnd measures the cumulative fetch time for all redirects.
+        * page/Navigation.cpp:
+        (WebCore::Navigation::redirectCount): http://dev.w3.org/2006/webapi/WebTiming/#nt-redirect-count
+        * page/Timing.cpp:
+        (WebCore::Timing::redirectStart): http://dev.w3.org/2006/webapi/WebTiming/#nt-redirect-start
+        (WebCore::Timing::redirectEnd): http://dev.w3.org/2006/webapi/WebTiming/#nt-redirect-end
+        * page/Timing.h:
+        * page/Timing.idl:
+
 2010-07-14  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
 
         Reviewed by Antonio Gomes.

@@ -1,6 +1,7 @@
 description("This test checks that all of the <a href='http://dev.w3.org/2006/webapi/WebTiming/'>Web Timing</a> attributes are available and have reasonable values in the right order.");
 
 var performance = window.webkitPerformance || {};
+var navigation = performance.navigation || {};
 var timing = performance.timing || {};
 
 // Get the order of magnitude correct without a chance for flakiness.
@@ -14,33 +15,15 @@ function sleepFiftyMilliseconds() {
 }
 window.addEventListener("load", sleepFiftyMilliseconds, false);
 
-// FIXME: Move this to js-test-pre.js if it is needed by other tests.
-function shouldBeGreaterThanOrEqual(_a, _b) {
-    if (typeof _a != "string" || typeof _b != "string")
-        debug("WARN: shouldBeGreaterThanOrEqual expects string arguments");
-
-    var exception;
-    var _av;
-    try {
-        _av = eval(_a);
-    } catch (e) {
-        exception = e;
-    }
-    var _bv = eval(_b);
-
-    if (exception)
-        testFailed(_a + " should be >= " + _b + ". Threw exception " + exception);
-    else if (typeof _av == "undefined" || _av < _bv)
-        testFailed(_a + " should be >= " + _b + ". Was " + _av + " (of type " + typeof _av + ").");
-    else
-        testPassed(_a + " is >= " + _b);
-}
-
 function checkTimingBeforeLoad()
 {
     shouldBeGreaterThanOrEqual("timing.navigationStart", "oneHourAgoUTC");
 
     shouldBeGreaterThanOrEqual("timing.unloadEventEnd", "timing.navigationStart");
+
+    shouldBe("timing.redirectStart", "0");
+    shouldBe("timing.redirectEnd", "0");
+    shouldBe("navigation.redirectCount", "0");
 
     shouldBeGreaterThanOrEqual("timing.fetchStart", "timing.navigationStart");
 
@@ -67,6 +50,10 @@ function checkWebTimingOnLoad()
 
     shouldBeGreaterThanOrEqual("timing.unloadEventEnd", "timing.navigationStart");
 
+    shouldBe("timing.redirectStart", "0");
+    shouldBe("timing.redirectEnd", "0");
+    shouldBe("navigation.redirectCount", "0");
+
     shouldBeGreaterThanOrEqual("timing.fetchStart", "timing.navigationStart");
 
     shouldBe("timing.domainLookupStart", "0");
@@ -92,6 +79,10 @@ function checkWebTimingAfterLoad()
     shouldBeGreaterThanOrEqual("timing.navigationStart", "oneHourAgoUTC");
 
     shouldBeGreaterThanOrEqual("timing.unloadEventEnd", "timing.navigationStart");
+
+    shouldBe("timing.redirectStart", "0");
+    shouldBe("timing.redirectEnd", "0");
+    shouldBe("navigation.redirectCount", "0");
 
     shouldBeGreaterThanOrEqual("timing.fetchStart", "timing.navigationStart");
 

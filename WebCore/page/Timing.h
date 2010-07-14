@@ -50,6 +50,8 @@ public:
 
     unsigned long long navigationStart() const;
     unsigned long long unloadEventEnd() const;
+    unsigned long long redirectStart() const;
+    unsigned long long redirectEnd() const;
     unsigned long long fetchStart() const;
     unsigned long long domainLookupStart() const;
     unsigned long long domainLookupEnd() const;

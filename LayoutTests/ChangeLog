@@ -1,3 +1,26 @@
+2010-07-14  Tony Gentilcore  <tonyg@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Implement Web Timing redirectStart, redirectEnd, redirectCount
+        https://bugs.webkit.org/show_bug.cgi?id=42018
+
+        Tests pass with --web-timing. Expectations set to FAIL because disabled by default.
+
+        * fast/dom/script-tests/webtiming.js: Since this is not a redirect, redirect times and count should be zero.
+        (checkTimingBeforeLoad):
+        (checkWebTimingOnLoad):
+        (checkWebTimingAfterLoad):
+        * fast/dom/webtiming-expected.txt:
+        * fast/js/resources/js-test-pre.js:
+        (shouldBeGreaterThanOrEqual): Factored out so that other tests can share this method.
+        * http/tests/misc/resources/webtiming-one-redirect.html: Added.
+        * http/tests/misc/resources/webtiming-two-redirects.html: Added.
+        * http/tests/misc/webtiming-one-redirect-expected.txt: Added.
+        * http/tests/misc/webtiming-one-redirect.php: Added.
+        * http/tests/misc/webtiming-two-redirects-expected.txt: Added.
+        * http/tests/misc/webtiming-two-redirects.php: Added.
+
 2010-07-14  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Darin Adler.

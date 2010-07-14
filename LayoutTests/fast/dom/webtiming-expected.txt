@@ -5,6 +5,9 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 FAIL timing.navigationStart should be >= oneHourAgoUTC. Was undefined (of type undefined).
 FAIL timing.unloadEventEnd should be >= timing.navigationStart. Was undefined (of type undefined).
+FAIL timing.redirectStart should be 0 (of type number). Was undefined (of type undefined).
+FAIL timing.redirectEnd should be 0 (of type number). Was undefined (of type undefined).
+FAIL navigation.redirectCount should be 0 (of type number). Was undefined (of type undefined).
 FAIL timing.fetchStart should be >= timing.navigationStart. Was undefined (of type undefined).
 FAIL timing.domainLookupStart should be 0 (of type number). Was undefined (of type undefined).
 FAIL timing.domainLookupEnd should be 0 (of type number). Was undefined (of type undefined).
@@ -17,6 +20,9 @@ FAIL timing.loadEventStart should be 0 (of type number). Was undefined (of type 
 FAIL timing.loadEventEnd should be 0 (of type number). Was undefined (of type undefined).
 FAIL timing.navigationStart should be >= oneHourAgoUTC. Was undefined (of type undefined).
 FAIL timing.unloadEventEnd should be >= timing.navigationStart. Was undefined (of type undefined).
+FAIL timing.redirectStart should be 0 (of type number). Was undefined (of type undefined).
+FAIL timing.redirectEnd should be 0 (of type number). Was undefined (of type undefined).
+FAIL navigation.redirectCount should be 0 (of type number). Was undefined (of type undefined).
 FAIL timing.fetchStart should be >= timing.navigationStart. Was undefined (of type undefined).
 FAIL timing.domainLookupStart should be 0 (of type number). Was undefined (of type undefined).
 FAIL timing.domainLookupEnd should be 0 (of type number). Was undefined (of type undefined).
@@ -30,6 +36,9 @@ FAIL timing.loadEventStart should be >= timing.responseEnd. Was undefined (of ty
 FAIL timing.loadEventEnd should be 0 (of type number). Was undefined (of type undefined).
 FAIL timing.navigationStart should be >= oneHourAgoUTC. Was undefined (of type undefined).
 FAIL timing.unloadEventEnd should be >= timing.navigationStart. Was undefined (of type undefined).
+FAIL timing.redirectStart should be 0 (of type number). Was undefined (of type undefined).
+FAIL timing.redirectEnd should be 0 (of type number). Was undefined (of type undefined).
+FAIL navigation.redirectCount should be 0 (of type number). Was undefined (of type undefined).
 FAIL timing.fetchStart should be >= timing.navigationStart. Was undefined (of type undefined).
 FAIL timing.domainLookupStart should be 0 (of type number). Was undefined (of type undefined).
 FAIL timing.domainLookupEnd should be 0 (of type number). Was undefined (of type undefined).

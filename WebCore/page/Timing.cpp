@@ -70,6 +70,22 @@ unsigned long long Timing::unloadEventEnd() const
 
     return toIntegerMilliseconds(m_frame->loader()->frameLoadTimeline()->unloadEventEnd);
 }
+    
+unsigned long long Timing::redirectStart() const
+{
+    if (!m_frame)
+        return 0;
+        
+    return toIntegerMilliseconds(m_frame->loader()->frameLoadTimeline()->redirectStart);
+}
+    
+unsigned long long Timing::redirectEnd() const
+{
+    if (!m_frame)
+        return 0;
+        
+    return toIntegerMilliseconds(m_frame->loader()->frameLoadTimeline()->redirectEnd);
+}
 
 unsigned long long Timing::fetchStart() const
 {

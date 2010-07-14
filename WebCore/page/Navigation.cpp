@@ -79,7 +79,7 @@ unsigned short Navigation::redirectCount() const
     if (!m_frame)
         return 0;
 
-    return 0; // FIXME
+    return m_frame->loader()->frameLoadTimeline()->redirectCount;
 }
 
 } // namespace WebCore
