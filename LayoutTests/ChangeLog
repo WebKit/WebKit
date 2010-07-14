@@ -1,3 +1,24 @@
+2010-07-14  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Darin Fisher.
+
+        Delete remaining references to utils3d.js from WebGL layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=42275
+
+        * fast/canvas/webgl/context-attributes-alpha-depth-stencil-antialias.html:
+        * fast/canvas/webgl/copy-tex-image-and-sub-image-2d.html:
+        * fast/canvas/webgl/gl-uniformmatrix4fv.html:
+        * fast/canvas/webgl/point-size.html:
+        * fast/canvas/webgl/read-pixels.html:
+        * fast/canvas/webgl/renderbuffer-initialization.html:
+        * fast/canvas/webgl/tex-image-and-sub-image-2d-with-array-buffer-view.html:
+        * fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-data.html:
+        * fast/canvas/webgl/tex-image-and-sub-image-2d-with-image.html:
+        * fast/canvas/webgl/tex-image-with-format-and-type.html:
+        * fast/canvas/webgl/tex-sub-image-2d.html:
+        * fast/canvas/webgl/texture-npot.html:
+        * fast/canvas/webgl/texture-transparent-pixels-initialized.html:
+
 2010-07-14  Brian Weinstein  <bweinstein@apple.com>
 
         Rubber-stamped by Adam Roben.
