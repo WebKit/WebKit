@@ -1,3 +1,17 @@
+2010-07-14  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: use OwnPtr to manage ConsoleMessages in InspectorController
+        https://bugs.webkit.org/show_bug.cgi?id=42243
+
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::~InspectorController):
+        (WebCore::InspectorController::addConsoleMessage):
+        (WebCore::InspectorController::clearConsoleMessages):
+        * inspector/InspectorController.h:
+        (WebCore::InspectorController::consoleMessages):
+
 2010-07-14  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Eric Seidel.

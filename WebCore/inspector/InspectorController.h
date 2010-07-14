@@ -149,7 +149,7 @@ public:
     void addMessageToConsole(MessageSource, MessageType, MessageLevel, ScriptCallStack*);
     void addMessageToConsole(MessageSource, MessageType, MessageLevel, const String& message, unsigned lineNumber, const String& sourceID);
     void clearConsoleMessages();
-    const Vector<ConsoleMessage*>& consoleMessages() const { return m_consoleMessages; }
+    const Vector<OwnPtr<ConsoleMessage> >& consoleMessages() const { return m_consoleMessages; }
 
     bool searchingForNodeInPage() const { return m_searchingForNode; }
     void mouseDidMoveOverElement(const HitTestResult&, unsigned modifierFlags);
@@ -319,7 +319,7 @@ private:
 
     void focusNode();
 
-    void addConsoleMessage(ScriptState*, ConsoleMessage*);
+    void addConsoleMessage(ScriptState*, PassOwnPtr<ConsoleMessage>);
 
     void addResource(InspectorResource*);
     void removeResource(InspectorResource*);
@@ -359,7 +359,7 @@ private:
     ResourcesMap m_resources;
     HashSet<String> m_knownResources;
     FrameResourcesMap m_frameResources;
-    Vector<ConsoleMessage*> m_consoleMessages;
+    Vector<OwnPtr<ConsoleMessage> > m_consoleMessages;
     unsigned m_expiredConsoleMessageCount;
     HashMap<String, double> m_times;
     HashMap<String, unsigned> m_counts;
