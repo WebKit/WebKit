@@ -2498,8 +2498,8 @@ BUG32155 : fast/js/Object-getOwnPropertyNames.html = TEXT
 BUG32145 WIN : animations/3d/transform-origin-vs-functions.html = TEXT PASS
 BUG32149 WIN RELEASE : fast/dom/Document/early-document-access.html = TIMEOUT PASS
 
-BUG32195 MAC : fast/repaint/renderer-destruction-by-invalidateSelection-crash.html = TEXT IMAGE
-BUG32195 WIN : fast/repaint/renderer-destruction-by-invalidateSelection-crash.html = IMAGE+TEXT TEXT
+BUG32195 LINUX : fast/repaint/renderer-destruction-by-invalidateSelection-crash.html = IMAGE TEXT
+BUG32195 WIN : fast/repaint/renderer-destruction-by-invalidateSelection-crash.html = IMAGE+TEXT IMAGE TEXT
 
 // Expectations from roll to 53171:53194
 
@@ -2947,9 +2947,9 @@ BUG48550 SKIP : plugins/return-negative-one-from-write.html = TIMEOUT
 
 BUG48668 MAC : svg/W3C-SVG-1.1/struct-use-01-t.svg = FAIL
 
-// Marking all the ietestcenter tests as failed for now. Added in r62810.
-// Most probably only need a rebaseline, but rebaselining tool is broken
-// right now.
+// These ietestcenter tests still don't pass. Careful before removing these
+// that the baselines aren't incorrect
+// (like in: https://bugs.webkit.org/show_bug.cgi?id=42215)
 BUG48737 WIN LINUX MAC : ietestcenter/Javascript/11.1.5_4-4-b-1.html = TEXT
 BUG48737 WIN LINUX MAC : ietestcenter/Javascript/11.1.5_4-4-b-2.html = TEXT
 BUG48737 WIN LINUX MAC : ietestcenter/Javascript/11.1.5_4-4-c-1.html = TEXT
@@ -3003,14 +3003,10 @@ BUG48737 WIN LINUX MAC SKIP : ietestcenter/Javascript/15.4.4.15-3-8.html = TIMEO
 BUG48696 WIN LINUX : fast/forms/focus2.html = CRASH
 BUG48696 WIN LINUX MAC : fast/forms/tabs-with-modifiers.html = CRASH
 
-// Regression from r62849.  Probably just needs rebaseline.
-BUGAWONG WIN LINUX MAC : fast/js/object-literal-syntax.html = TEXT
+BUG49029 WIN LINUX MAC : fast/js/object-literal-syntax.html = TEXT
 
 // Likely from r62862. Probably just needs rebaseline.
-BUGAWONG WIN LINUX MAC : fast/js/object-literal-direct-put.html = TEXT
-
-// Probably just needs rebaseline.
-BUGAWONG MAC : svg/custom/clip-path-child-changes.svg = TEXT
+BUG49032 WIN LINUX MAC : fast/js/object-literal-direct-put.html = TEXT
 
 BUG48859 WIN : fast/inline/continuation-outlines-with-layers-2.html = IMAGE+TEXT
 
@@ -3018,9 +3014,8 @@ BUG48859 WIN : fast/inline/continuation-outlines-with-layers-2.html = IMAGE+TEXT
 // Need investigation.
 BUGWK38016 WIN : svg/custom/foreign-object-skew.svg = FAIL
 
-// Introduced before r63242.
-BUGAWONG WIN LINUX MAC : http/tests/mime/uppercase-mime-type.html = MISSING
-BUGAWONG WIN : editing/selection/drag-in-iframe.html = IMAGE+TEXT PASS
+BUG49031 WIN LINUX MAC : http/tests/mime/uppercase-mime-type.html = MISSING
+BUG24233 WIN : editing/selection/drag-in-iframe.html = IMAGE+TEXT PASS
 
 BUG49021 : userscripts/simple-stylesheet.html = TEXT
 BUG49021 : userscripts/user-style-all-frames.html = TEXT

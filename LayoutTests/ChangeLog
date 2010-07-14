@@ -1,3 +1,13 @@
+2010-07-13  Albert J. Wong  <ajwong@chromium.org>
+
+        Unreviewed, add details to chromium test expectations.
+
+        Adding details and references to filed bugs to chromium expectations
+        that were added in the past few days.  Also rebaseline the svg test.
+
+        * platform/chromium-mac/svg/custom/clip-path-child-changes-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
 2010-07-13  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.
