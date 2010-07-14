@@ -34,4 +34,4 @@ layer at (0,0) size 800x600
       RenderBlock (anonymous) at (0,77) size 784x0
 layer at (334,67) size 119x13
   RenderBlock {DIV} at (3,3) size 119x13
-caret: position 1 of child 0 {#text} of child 3 {SPAN} of child 1 {DIV} of child 4 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+caret: position 1 of child 0 {#text} of child 3 {SPAN} of child 1 {DIV} of child 4 {DIV} of body

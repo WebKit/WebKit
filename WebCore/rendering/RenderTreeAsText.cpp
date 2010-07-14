@@ -598,6 +598,7 @@ static String nodePosition(Node* node)
 {
     String result;
 
+    Element* body = node->document()->body();
     Node* parent;
     for (Node* n = node; n; n = parent) {
         parent = n->parentNode();
@@ -605,9 +606,14 @@ static String nodePosition(Node* node)
             parent = n->shadowParentNode();
         if (n != node)
             result += " of ";
-        if (parent)
+        if (parent) {
+            if (body && n == body) {
+                // We don't care what offset body may be in the document.
+                result += "body";
+                break;
+            }
             result += "child " + String::number(n->nodeIndex()) + " {" + getTagName(n) + "}";
-        else
+        } else
             result += "document";
     }
 

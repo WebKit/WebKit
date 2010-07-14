@@ -22,4 +22,4 @@ layer at (0,0) size 800x600
             text run at (29,0) width 44: "second"
         RenderText {#text} at (73,0) size 543x18
           text run at (73,0) width 543: " word, and only the second word of this sentence should have a red background color."
-caret: position 0 of child 0 {#text} of child 0 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+caret: position 0 of child 0 {#text} of child 0 {DIV} of body

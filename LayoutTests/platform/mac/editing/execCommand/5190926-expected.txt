@@ -20,5 +20,5 @@ layer at (0,0) size 800x600
             RenderText {#text} at (0,0) size 222x18
               text run at (0,0) width 222: "And all three should be underlined."
       RenderBlock (anonymous) at (0,70) size 784x0
-selection start: position 0 of child 0 {#text} of child 0 {U} of child 0 {LI} of child 0 {OL} of child 1 {BODY} of child 0 {HTML} of document
-selection end:   position 35 of child 0 {#text} of child 0 {U} of child 2 {LI} of child 0 {OL} of child 1 {BODY} of child 0 {HTML} of document
+selection start: position 0 of child 0 {#text} of child 0 {U} of child 0 {LI} of child 0 {OL} of body
+selection end:   position 35 of child 0 {#text} of child 0 {U} of child 2 {LI} of child 0 {OL} of body

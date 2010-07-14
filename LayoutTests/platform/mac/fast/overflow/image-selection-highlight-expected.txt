@@ -45,5 +45,5 @@ layer at (8,122) size 100x200 clip at (8,122) size 85x200 scrollY 40 scrollHeigh
       text run at (0,234) width 53: "ultricies."
       text run at (0,252) width 79: "Pellentesque"
       text run at (0,270) width 54: "aliquet..."
-selection start: position 58 of child 0 {#text} of child 7 {DIV} of child 1 {BODY} of child 0 {HTML} of document
-selection end:   position 11 of child 2 {#text} of child 7 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+selection start: position 58 of child 0 {#text} of child 7 {DIV} of body
+selection end:   position 11 of child 2 {#text} of child 7 {DIV} of body

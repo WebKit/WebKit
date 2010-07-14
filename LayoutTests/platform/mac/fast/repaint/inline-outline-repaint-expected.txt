@@ -37,4 +37,4 @@ layer at (0,0) size 800x210
             text run at (84,0) width 4: " "
             text run at (0,18) width 33: "dolor"
             text run at (33,18) width 4: " "
-caret: position 18 of child 0 {#text} of child 1 {SPAN} of child 7 {DIV} of child 1 {BODY} of child 1 {HTML} of document
+caret: position 18 of child 0 {#text} of child 1 {SPAN} of child 7 {DIV} of body

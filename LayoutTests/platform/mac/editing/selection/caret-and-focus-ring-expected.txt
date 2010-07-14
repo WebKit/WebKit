@@ -16,4 +16,4 @@ layer at (0,0) size 800x600
             text run at (65,0) width 49: "editable"
         RenderText {#text} at (114,0) size 404x18
           text run at (114,0) width 404: " region. No caret or focus ring should appear in the pixel results."
-caret: position 11 of child 0 {#text} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+caret: position 11 of child 0 {#text} of child 3 {DIV} of body

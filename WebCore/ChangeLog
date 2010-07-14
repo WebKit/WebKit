@@ -1,3 +1,16 @@
+2010-07-14  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        Selection dumping code should not dump body's offset in the document
+        https://bugs.webkit.org/show_bug.cgi?id=42238
+
+        This requires updating the results of many layout tests,
+        but has no functional change.
+
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::nodePosition):
+
 2010-07-14  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Darin Fisher.

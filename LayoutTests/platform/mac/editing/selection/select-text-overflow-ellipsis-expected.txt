@@ -15,5 +15,5 @@ layer at (8,48) size 95x18 scrollWidth 121
   RenderBlock {DIV} at (0,40) size 95x18
     RenderText {#text} at (0,0) size 121x18
       text run at (0,0) width 121: "Lorem ipsum dolor"
-selection start: position 0 of child 0 {#text} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document
-selection end:   position 11 of child 0 {#text} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+selection start: position 0 of child 0 {#text} of child 3 {DIV} of body
+selection end:   position 11 of child 0 {#text} of child 3 {DIV} of body

@@ -26,6 +26,6 @@ layer at (13,3099) size 119x13 scrollWidth 127
   RenderBlock {DIV} at (3,3) size 119x13
     RenderText {#text} at (1,0) size 125x13
       text run at (1,0) width 125: "select some of this text"
-selection start: position 1 of child 0 {#text} of child 0 {DIV} of child 7 {INPUT} of child 1 {BODY} of child 0 {HTML} of document
-selection end:   position 16 of child 0 {#text} of child 0 {DIV} of child 7 {INPUT} of child 1 {BODY} of child 0 {HTML} of document
+selection start: position 1 of child 0 {#text} of child 0 {DIV} of child 7 {INPUT} of body
+selection end:   position 16 of child 0 {#text} of child 0 {DIV} of child 7 {INPUT} of body
 scrolled to 0,2567

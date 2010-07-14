@@ -15,4 +15,4 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 401x18
           text run at (0,0) width 401: "Click in the div, the caret should be on the right edge of the div."
       RenderBlock {DIV} at (0,68) size 200x368
-caret: position 0 of child 5 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+caret: position 0 of child 5 {DIV} of body

@@ -22,4 +22,4 @@ layer at (0,0) size 210x33 clip at (0,0) size 210x18 scrollX 33 scrollWidth 243
   RenderBlock {DIV} at (0,0) size 210x33
     RenderText {#text} at (0,0) size 243x18
       text run at (0,0) width 243: "Seals and caribou live in the arctic, too"
-caret: position 40 of child 0 {#text} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+caret: position 40 of child 0 {#text} of child 1 {DIV} of body

@@ -25,4 +25,4 @@ layer at (0,0) size 800x600
         RenderBR {BR} at (99,14) size 0x0
         RenderText {#text} at (0,18) size 118x18
           text run at (0,18) width 118: "Second paragraph."
-caret: position 16 of child 0 {#text} of child 4 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+caret: position 16 of child 0 {#text} of child 4 {DIV} of body

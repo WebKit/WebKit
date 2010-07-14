@@ -17,6 +17,6 @@ layer at (0,0) size 785x894
         RenderText {#text} at (0,0) size 78x18
           text run at (0,0) width 78: "Test Passed."
       RenderBlock {DIV} at (0,878) size 769x0
-selection start: position 0 of child 0 {#text} of child 5 {DIV} of child 1 {BODY} of child 0 {HTML} of document
-selection end:   position 19 of child 0 {#text} of child 5 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+selection start: position 0 of child 0 {#text} of child 5 {DIV} of body
+selection end:   position 19 of child 0 {#text} of child 5 {DIV} of body
 scrolled to 0,276

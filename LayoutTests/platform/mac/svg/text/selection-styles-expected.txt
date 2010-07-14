@@ -49,5 +49,5 @@ layer at (0,0) size 800x504
             RenderSVGInlineText {#text} at (0,0) size 589x23
               chunk 1 text run 1 at (0.00,390.00) startOffset 0 endOffset 73 width 589.00: "Selected text should have both gradient fill, solid stroke and background"
       RenderText {#text} at (0,0) size 0x0
-selection start: position 0 of child 0 {#text} of child 3 {text} of child 3 {g} of child 1 {svg} of child 3 {body} of child 0 {html} of document
-selection end:   position 73 of child 0 {#text} of child 27 {text} of child 3 {g} of child 1 {svg} of child 3 {body} of child 0 {html} of document
+selection start: position 0 of child 0 {#text} of child 3 {text} of child 3 {g} of child 1 {svg} of body
+selection end:   position 73 of child 0 {#text} of child 27 {text} of child 3 {g} of child 1 {svg} of body

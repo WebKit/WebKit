@@ -14,4 +14,4 @@ layer at (0,0) size 800x600
           text run at (65,0) width 77: "editable link"
       RenderText {#text} at (142,0) size 4x18
         text run at (142,0) width 4: "."
-caret: position 6 of child 0 {#text} of child 3 {A} of child 1 {BODY} of child 0 {HTML} of document
+caret: position 6 of child 0 {#text} of child 3 {A} of body

@@ -37,4 +37,4 @@ layer at (0,0) size 800x600
                   text run at (0,15) width 24: "bar"
             RenderBlock (anonymous) at (0,43) size 784x0
               RenderInline {SPAN} at (0,0) size 0x0
-caret: position 7 of child 0 {#text} of child 0 {PRE} of child 0 {SPAN} of child 1 {PRE} of child 1 {DIV} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+caret: position 7 of child 0 {#text} of child 0 {PRE} of child 0 {SPAN} of child 1 {PRE} of child 1 {DIV} of child 3 {DIV} of body

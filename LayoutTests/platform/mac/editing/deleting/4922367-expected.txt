@@ -22,4 +22,4 @@ layer at (0,0) size 800x600
           RenderBlock (anonymous) at (0,28) size 784x0
         RenderBlock (anonymous) at (0,28) size 784x0
       RenderBlock {UL} at (0,96) size 784x0
-caret: position 0 of child 0 {TABLE} of child 1 {DIV} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+caret: position 0 of child 0 {TABLE} of child 1 {DIV} of child 2 {DIV} of body

@@ -25,4 +25,4 @@ layer at (0,0) size 800x600
           text run at (0,0) width 76: "38,512,4,18"
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
-caret: position 8 of child 0 {#text} of child 3 {P} of child 1 {BODY} of child 0 {HTML} of document
+caret: position 8 of child 0 {#text} of child 3 {P} of body

@@ -51,5 +51,5 @@ layer at (0,0) size 800x600
             text run at (84,90) width 8: "g"
         RenderText {#text} at (92,90) size 32x18
           text run at (92,90) width 32: "raph."
-selection start: position 1 of child 0 {#text} of child 5 {DIV} of child 1 {BODY} of child 0 {HTML} of document
-selection end:   position 5 of child 14 {#text} of child 5 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+selection start: position 1 of child 0 {#text} of child 5 {DIV} of body
+selection end:   position 5 of child 14 {#text} of child 5 {DIV} of body

@@ -35,4 +35,4 @@ layer at (0,0) size 800x600
             text run at (1,1) width 28: "This"
           RenderText {#text} at (29,1) size 271x18
             text run at (29,1) width 271: " text should be surrounded by a red border."
-caret: position 4 of child 0 {#text} of child 2 {DIV} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+caret: position 4 of child 0 {#text} of child 2 {DIV} of child 3 {DIV} of body

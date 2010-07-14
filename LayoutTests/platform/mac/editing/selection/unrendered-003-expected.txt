@@ -13,5 +13,5 @@ layer at (0,0) size 820x585
             text run at (74,84) width 32: "foo"
         RenderText {#text} at (106,84) size 40x28
           text run at (106,84) width 40: " baz"
-selection start: position 0 of child 3 {#text} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document
-selection end:   position 1 of child 3 {#text} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+selection start: position 0 of child 3 {#text} of child 1 {DIV} of body
+selection end:   position 1 of child 3 {#text} of child 1 {DIV} of body

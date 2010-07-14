@@ -20,4 +20,4 @@ layer at (0,0) size 800x600
         RenderEmbeddedObject {OBJECT} at (35,0) size 302x152 [border: (1px solid #AAAAAA)]
         RenderText {#text} at (337,138) size 49x18
           text run at (337,138) width 49: " World!"
-caret: position 1 of child 1 {OBJECT} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+caret: position 1 of child 1 {OBJECT} of child 3 {DIV} of body

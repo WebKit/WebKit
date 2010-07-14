@@ -23,5 +23,5 @@ layer at (0,0) size 800x600
             text run at (178,0) width 55: "this span"
         RenderText {#text} at (233,0) size 441x18
           text run at (233,0) width 441: " should not have a reflection, and selecting it should not cause a crash."
-selection start: position 0 of child 0 {#text} of child 1 {SPAN} of child 2 {P} of child 1 {BODY} of child 0 {HTML} of document
-selection end:   position 9 of child 0 {#text} of child 1 {SPAN} of child 2 {P} of child 1 {BODY} of child 0 {HTML} of document
+selection start: position 0 of child 0 {#text} of child 1 {SPAN} of child 2 {P} of body
+selection end:   position 9 of child 0 {#text} of child 1 {SPAN} of child 2 {P} of body

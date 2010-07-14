@@ -13,4 +13,4 @@ layer at (0,0) size 800x600
           text run at (778,0) width 4: "."
 layer at (50,50) size 200x200
   RenderBlock (positioned) zI: 1 {DIV} at (50,50) size 200x200 [bgcolor=#FFFF00]
-caret: position 1 of child 2 {#text} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+caret: position 1 of child 2 {#text} of child 1 {DIV} of body

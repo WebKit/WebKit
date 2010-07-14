@@ -29,5 +29,5 @@ layer at (0,0) size 800x600
         RenderText {#text} at (3,3) size 100x36
           text run at (3,3) width 100: "Lo re mi"
           text run at (3,21) width 67: "psumdolor"
-selection start: position 1 of child 0 {#text} of child 8 {DIV} of child 1 {BODY} of child 0 {HTML} of document
-selection end:   position 4 of child 0 {#text} of child 8 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+selection start: position 1 of child 0 {#text} of child 8 {DIV} of body
+selection end:   position 4 of child 0 {#text} of child 8 {DIV} of body

@@ -33,4 +33,4 @@ layer at (10,62) size 161x32 clip at (11,63) size 159x30
     RenderBlock {DIV} at (3,3) size 155x13
       RenderText {#text} at (0,0) size 84x13
         text run at (0,0) width 84: "Tab->\x{9}<-Tab"
-caret: position 5 of child 2 {#text} of child 4 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+caret: position 5 of child 2 {#text} of child 4 {DIV} of body

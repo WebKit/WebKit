@@ -18,4 +18,4 @@ layer at (0,0) size 800x600
           text run at (62,18) width 632: " by clicking the X and verifying that the correct caret position (13) is reported to the editing delegate."
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
-caret: position 13 of child 2 {#text} of child 1 {BODY} of child 0 {HTML} of document
+caret: position 13 of child 2 {#text} of body

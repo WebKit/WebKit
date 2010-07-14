@@ -34,4 +34,4 @@ layer at (0,0) size 800x208
           text run at (0,0) width 755: "To reproduce the bug outside of DumpRenderTree, mouse over the div several times, and the style change won't update"
           text run at (0,18) width 70: "every time "
           text run at (70,18) width 85: "like it should."
-caret: position 3 of child 0 {#text} of child 1 {DIV} of child 1 {BODY} of child 1 {HTML} of document
+caret: position 3 of child 0 {#text} of child 1 {DIV} of body

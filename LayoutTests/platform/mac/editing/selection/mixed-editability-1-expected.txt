@@ -18,5 +18,5 @@ layer at (0,0) size 800x600
         text run at (782,0) width 2: " "
         text run at (0,18) width 351: "the first two letters of the first word of the first sentence."
       RenderText {#text} at (0,0) size 0x0
-selection start: position 0 of child 0 {#text} of child 0 {SPAN} of child 1 {BODY} of child 0 {HTML} of document
-selection end:   position 2 of child 0 {#text} of child 0 {SPAN} of child 1 {BODY} of child 0 {HTML} of document
+selection start: position 0 of child 0 {#text} of child 0 {SPAN} of body
+selection end:   position 2 of child 0 {#text} of child 0 {SPAN} of body

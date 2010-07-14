@@ -39,4 +39,4 @@ layer at (0,0) size 2000x585
           text run at (293,235) width 4: " "
           text run at (1,253) width 142: "longer test for the bug."
       RenderBlock {DIV} at (0,272) size 2000x0
-caret: position 0 of child 0 {#text} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+caret: position 0 of child 0 {#text} of child 1 {DIV} of body
