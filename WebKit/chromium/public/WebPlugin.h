@@ -50,9 +50,6 @@ struct WebRect;
 struct WebURLError;
 template <typename T> class WebVector;
 
-// FIXME: remove once the chromium is updated.
-#define WEBPLUGIN_FIND_HAS_RETURN_TYPE
-
 class WebPlugin {
 public:
     virtual bool initialize(WebPluginContainer*) = 0;
