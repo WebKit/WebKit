@@ -37,6 +37,7 @@ namespace JSC {
     class ExecState;
     class Identifier;
     class JSGlobalData;
+    class JSGlobalObject;
     class JSNotAnObjectErrorStub;
     class JSObject;
     class Node;
@@ -45,6 +46,7 @@ namespace JSC {
     JSValue createInterruptedExecutionException(JSGlobalData*);
     JSValue createTerminatedExecutionException(JSGlobalData*);
     JSObject* createStackOverflowError(ExecState*);
+    JSObject* createStackOverflowError(JSGlobalObject*);
     JSValue createUndefinedVariableError(ExecState*, const Identifier&, unsigned bytecodeOffset, CodeBlock*);
     JSNotAnObjectErrorStub* createNotAnObjectErrorStub(ExecState*, bool isNull);
     JSObject* createInvalidParamError(ExecState*, const char* op, JSValue, unsigned bytecodeOffset, CodeBlock*);

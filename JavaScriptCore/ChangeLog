@@ -1,3 +1,59 @@
+2010-07-13  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Bug 42207 - Clean up interface to compile executables, always check for exceptions
+
+        Presently interface to compile executable is inconsistent between eval/program and
+        function code, and is error prone in allowing a caller to byte compile without JIT
+        compiling an executable (we rely on all executables with codeblocks having JIT code).
+        Unify on an interface where all compilation is performed by a single compile (with
+        ForCall|ForConstruct variants) method, and make all clients check for errors.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::unwindCallFrame):
+        (JSC::Interpreter::execute):
+        (JSC::Interpreter::executeCall):
+        (JSC::Interpreter::executeConstruct):
+        (JSC::Interpreter::prepareForRepeatCall):
+        (JSC::Interpreter::privateExecute):
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        * parser/Parser.h:
+        (JSC::Parser::isFunctionBodyNode):
+        (JSC::Parser::parse):
+        * runtime/ArrayPrototype.cpp:
+        (JSC::isNumericCompareFunction):
+        * runtime/ExceptionHelpers.cpp:
+        (JSC::createStackOverflowError):
+        * runtime/ExceptionHelpers.h:
+        * runtime/Executable.cpp:
+        (JSC::EvalExecutable::compileInternal):
+        (JSC::ProgramExecutable::checkSyntax):
+        (JSC::ProgramExecutable::compileInternal):
+        (JSC::FunctionExecutable::compileForCallInternal):
+        (JSC::FunctionExecutable::compileForConstructInternal):
+        (JSC::FunctionExecutable::reparseExceptionInfo):
+        (JSC::EvalExecutable::reparseExceptionInfo):
+        (JSC::FunctionExecutable::fromGlobalCode):
+        * runtime/Executable.h:
+        (JSC::EvalExecutable::compile):
+        (JSC::EvalExecutable::generatedBytecode):
+        (JSC::EvalExecutable::generatedJITCode):
+        (JSC::ProgramExecutable::compile):
+        (JSC::ProgramExecutable::generatedBytecode):
+        (JSC::ProgramExecutable::generatedJITCode):
+        (JSC::FunctionExecutable::generatedBytecode):
+        (JSC::FunctionExecutable::compileForCall):
+        (JSC::FunctionExecutable::compileForConstruct):
+        (JSC::FunctionExecutable::generatedJITCodeForConstructWithArityCheck):
+        * runtime/FunctionConstructor.cpp:
+        (JSC::constructFunction):
+        * runtime/JSActivation.cpp:
+        (JSC::JSActivation::argumentsGetter):
+        * runtime/JSGlobalData.h:
+        (JSC::JSGlobalData::canUseJIT):
+
 2010-07-13  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         Reviewed by Oliver Hunt.

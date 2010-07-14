@@ -95,14 +95,15 @@ JSObject* constructFunction(ExecState* exec, const ArgList& args, const Identifi
         program = builder.build();
     }
 
-    int errLine;
-    UString errMsg;
     JSGlobalObject* globalObject = exec->lexicalGlobalObject();
     JSGlobalData* globalData = globalObject->globalData();
     SourceCode source = makeSource(program, sourceURL, lineNumber);
-    RefPtr<FunctionExecutable> function = FunctionExecutable::fromGlobalCode(functionName, exec, exec->dynamicGlobalObject()->debugger(), source, &errLine, &errMsg);
-    if (!function)
-        return throwError(exec, addErrorInfo(globalData, createSyntaxError(globalObject, errMsg), errLine, source));
+    JSObject* exception = 0;
+    RefPtr<FunctionExecutable> function = FunctionExecutable::fromGlobalCode(functionName, exec, exec->dynamicGlobalObject()->debugger(), source, &exception);
+    if (!function) {
+        ASSERT(exception);
+        return throwError(exec, exception);
+    }
 
     ScopeChain scopeChain(globalObject, globalData, globalObject, exec->globalThisValue());
     return new (exec) JSFunction(exec, function, scopeChain.node());

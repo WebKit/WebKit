@@ -73,26 +73,13 @@ static inline bool isNumericCompareFunction(ExecState* exec, CallType callType, 
     if (callType != CallTypeJS)
         return false;
 
-#if ENABLE(JIT)
-    // If the JIT is enabled then we need to preserve the invariant that every
-    // function with a CodeBlock also has JIT code.
-    CodeBlock* codeBlock = 0;
-#if ENABLE(INTERPRETER)
-    if (!exec->globalData().canUseJIT())
-        codeBlock = callData.js.functionExecutable->bytecodeForCall(exec, callData.js.scopeChain);
-    else
-#endif
-    {
-        callData.js.functionExecutable->jitCodeForCall(exec, callData.js.scopeChain);
-        codeBlock = &callData.js.functionExecutable->generatedBytecodeForCall();
-    }
-#else
-    CodeBlock* codeBlock = callData.js.functionExecutable->bytecodeForCall(exec, callData.js.scopeChain);
-#endif
-    if (!codeBlock)
+    FunctionExecutable* executable = callData.js.functionExecutable;
+
+    JSObject* error = executable->compileForCall(exec, callData.js.scopeChain);
+    if (error)
         return false;
 
-    return codeBlock->isNumericCompareFunction();
+    return executable->generatedBytecodeForCall().isNumericCompareFunction();
 }
 
 // ------------------------------ ArrayPrototype ----------------------------

@@ -78,6 +78,11 @@ JSObject* createStackOverflowError(ExecState* exec)
     return createRangeError(exec, "Maximum call stack size exceeded.");
 }
 
+JSObject* createStackOverflowError(JSGlobalObject* globalObject)
+{
+    return createRangeError(globalObject, "Maximum call stack size exceeded.");
+}
+
 JSValue createUndefinedVariableError(ExecState* exec, const Identifier& ident, unsigned bytecodeOffset, CodeBlock* codeBlock)
 {
     int startOffset = 0;

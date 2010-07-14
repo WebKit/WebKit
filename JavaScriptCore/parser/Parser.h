@@ -24,6 +24,7 @@
 #define Parser_h
 
 #include "Debugger.h"
+#include "ExceptionHelpers.h"
 #include "Executable.h"
 #include "JSGlobalObject.h"
 #include "Lexer.h"
@@ -38,6 +39,7 @@
 namespace JSC {
 
     class FunctionBodyNode;
+    
     class ProgramNode;
     class UString;
 
@@ -46,7 +48,7 @@ namespace JSC {
     class Parser : public Noncopyable {
     public:
         template <class ParsedNode>
-        PassRefPtr<ParsedNode> parse(JSGlobalData* globalData, Debugger*, ExecState*, const SourceCode& source, int* errLine = 0, UString* errMsg = 0);
+        PassRefPtr<ParsedNode> parse(JSGlobalData* globalData, JSGlobalObject* lexicalGlobalObject, Debugger*, ExecState*, const SourceCode& source, JSObject** exception);
 
         void didFinishParsing(SourceElements*, ParserArenaData<DeclarationStacks::VarStack>*, 
                               ParserArenaData<DeclarationStacks::FunctionStack>*, CodeFeatures features, int lastLine, int numConstants);
@@ -55,6 +57,10 @@ namespace JSC {
 
     private:
         void parse(JSGlobalData*, int* errLine, UString* errMsg);
+
+        // Used to determine type of error to report.
+        bool isFunctionBodyNode(ScopeNode*) { return false; }
+        bool isFunctionBodyNode(FunctionBodyNode*) { return true; }
 
         ParserArena m_arena;
         const SourceCode* m_source;
@@ -67,12 +73,16 @@ namespace JSC {
     };
 
     template <class ParsedNode>
-    PassRefPtr<ParsedNode> Parser::parse(JSGlobalData* globalData, Debugger* debugger, ExecState* debuggerExecState, const SourceCode& source, int* errLine, UString* errMsg)
+    PassRefPtr<ParsedNode> Parser::parse(JSGlobalData* globalData, JSGlobalObject* lexicalGlobalObject, Debugger* debugger, ExecState* debuggerExecState, const SourceCode& source, JSObject** exception)
     {
+        ASSERT(exception && !*exception);
+        int errLine;
+        UString errMsg;
+
         m_source = &source;
         if (ParsedNode::scopeIsFunction)
             globalData->lexer->setIsReparsing();
-        parse(globalData, errLine, errMsg);
+        parse(globalData, &errLine, &errMsg);
 
         RefPtr<ParsedNode> result;
         if (m_sourceElements) {
@@ -84,6 +94,17 @@ namespace JSC {
             m_features,
             m_numConstants);
             result->setLoc(m_source->firstLine(), m_lastLine);
+        } else if (lexicalGlobalObject) {
+            // We can never see a syntax error when reparsing a function, since we should have
+            // reported the error when parsing the containing program or eval code. So if we're
+            // parsing a function body node, we assume that what actually happened here is that
+            // we ran out of stack while parsing. If we see an error while parsing eval or program
+            // code we assume that it was a syntax error since running out of stack is much less
+            // likely, and we are currently unable to distinguish between the two cases.
+            if (isFunctionBodyNode(static_cast<ParsedNode*>(0)))
+                *exception = createStackOverflowError(lexicalGlobalObject);
+            else
+                *exception = addErrorInfo(globalData, createSyntaxError(lexicalGlobalObject, errMsg), errLine, source);
         }
 
         m_arena.reset();
@@ -94,7 +115,7 @@ namespace JSC {
         m_funcDeclarations = 0;
 
         if (debugger && !ParsedNode::scopeIsFunction)
-            debugger->sourceParsed(debuggerExecState, source, *errLine, *errMsg);
+            debugger->sourceParsed(debuggerExecState, source, errLine, errMsg);
         return result.release();
     }
 

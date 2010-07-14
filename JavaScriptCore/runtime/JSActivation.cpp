@@ -143,7 +143,7 @@ JSValue JSActivation::argumentsGetter(ExecState*, JSValue slotBase, const Identi
 {
     JSActivation* activation = asActivation(slotBase);
     CallFrame* callFrame = CallFrame::create(activation->d()->registers);
-    int argumentsRegister = activation->d()->functionExecutable->generatedByteCode().argumentsRegister();
+    int argumentsRegister = activation->d()->functionExecutable->generatedBytecode().argumentsRegister();
     if (!callFrame->r(argumentsRegister).jsValue()) {
         JSValue arguments = JSValue(new (callFrame) Arguments(callFrame));
         callFrame->r(argumentsRegister) = arguments;
