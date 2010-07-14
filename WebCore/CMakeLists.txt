@@ -19,6 +19,7 @@ SET(WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/loader/appcache"
     "${WEBCORE_DIR}/loader/archive"
     "${WEBCORE_DIR}/loader/icon"
+    "${WEBCORE_DIR}/mathml"
     "${WEBCORE_DIR}/notifications"
     "${WEBCORE_DIR}/page"
     "${WEBCORE_DIR}/page/animation"
@@ -525,6 +526,7 @@ SET(WebCore_SOURCES
     ${DERIVED_SOURCES_DIR}/HTMLElementFactory.cpp
     ${DERIVED_SOURCES_DIR}/HTMLEntityNames.cpp
     ${DERIVED_SOURCES_DIR}/HTMLNames.cpp
+    ${DERIVED_SOURCES_DIR}/MathMLNames.cpp
     ${DERIVED_SOURCES_DIR}/JSHTMLElementWrapperFactory.cpp
     ${DERIVED_SOURCES_DIR}/UserAgentStyleSheetsData.cpp
     ${DERIVED_SOURCES_DIR}/XMLNames.cpp
@@ -1111,6 +1113,20 @@ SET(WebCore_SOURCES
     loader/icon/IconRecord.cpp
     loader/icon/PageURLRecord.cpp
     loader/loader.cpp
+
+    mathml/MathMLElement.cpp
+    mathml/MathMLInlineContainerElement.cpp
+    mathml/MathMLMathElement.cpp
+    mathml/MathMLTextElement.cpp
+    mathml/RenderMathMLBlock.cpp
+    mathml/RenderMathMLFraction.cpp
+    mathml/RenderMathMLMath.cpp
+    mathml/RenderMathMLOperator.cpp
+    mathml/RenderMathMLRoot.cpp
+    mathml/RenderMathMLRow.cpp
+    mathml/RenderMathMLSquareRoot.cpp
+    mathml/RenderMathMLSubSup.cpp
+    mathml/RenderMathMLUnderOver.cpp
 
     page/BarInfo.cpp
     page/Chrome.cpp
@@ -1743,9 +1759,11 @@ ADD_SOURCE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/platform/graphics/Color.cpp Color
 ADD_SOURCE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/css/CSSParser.cpp tokenizer.cpp)
 ADD_SOURCE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/html/LegacyPreloadScanner.cpp HTMLEntityNames.cpp)
 ADD_SOURCE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/html/HTMLEntityParser.cpp HTMLEntityNames.cpp)
+ADD_SOURCE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/html/HTMLTreeBuilder.cpp MathMLNames.cpp)
 ADD_SOURCE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/css/CSSStyleSelector.cpp UserAgentStyleSheetsData.cpp UserAgentStyleSheets.h)
 
 GENERATE_DOM_NAMES_FACTORY(HTML ${WEBCORE_DIR}/html/HTMLTagNames.in ${WEBCORE_DIR}/html/HTMLAttributeNames.in "${HTML_FEATURES}")
+GENERATE_DOM_NAMES_FACTORY(MathML ${WEBCORE_DIR}/mathml/mathtags.in ${WEBCORE_DIR}/mathml/mathattrs.in "${MATHML_FEATURES}")
 GENERATE_DOM_NAMES_FACTORY(SVG ${WEBCORE_DIR}/svg/svgtags.in ${WEBCORE_DIR}/svg/svgattrs.in "${SVG_FEATURES}")
 GENERATE_DOM_NAMES_ONLY(XLink ${WEBCORE_DIR}/svg/xlinkattrs.in)
 GENERATE_DOM_NAMES_ONLY(XMLNS ${WEBCORE_DIR}/xml/xmlnsattrs.in)
