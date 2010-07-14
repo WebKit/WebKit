@@ -1,5 +1,12 @@
 2010-07-14  Sam Weinig  <sam@webkit.org>
 
+        Fix the chromium mac build.
+
+        * src/WebPopupMenuImpl.cpp:
+        (WebKit::WebPopupMenuImpl::setCursor):
+
+2010-07-14  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Darin Adler.
 
         Patch for https://bugs.webkit.org/show_bug.cgi?id=42232
