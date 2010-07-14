@@ -1,3 +1,17 @@
+2010-07-14  Erik Arvidsson  <arv@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Implement border-start and border-end properties
+        https://bugs.webkit.org/show_bug.cgi?id=41782
+
+        * fast/css/border-start-end-expected.txt: Added.
+        * fast/css/border-start-end.html: Added.
+        * fast/css/script-tests/border-start-end.js: Added.
+        (test):
+        (testSame):
+        (testWidth):
+
 2010-07-13  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

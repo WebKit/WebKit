@@ -760,6 +760,8 @@ bool CSSParser::parseValue(int propId, bool important)
     case CSSPropertyBorderRightStyle:   //   Defined as:    none | hidden | dotted | dashed |
     case CSSPropertyBorderBottomStyle:  //   solid | double | groove | ridge | inset | outset
     case CSSPropertyBorderLeftStyle:
+    case CSSPropertyWebkitBorderStartStyle:
+    case CSSPropertyWebkitBorderEndStyle:
     case CSSPropertyWebkitColumnRuleStyle:
         if (id >= CSSValueNone && id <= CSSValueDouble)
             validPrimitive = true;
@@ -799,12 +801,14 @@ bool CSSParser::parseValue(int propId, bool important)
             break;
         }
         /* nobreak */
-    case CSSPropertyBackgroundColor:     // <color> | inherit
-    case CSSPropertyBorderTopColor:     // <color> | inherit
-    case CSSPropertyBorderRightColor:   // <color> | inherit
-    case CSSPropertyBorderBottomColor:  // <color> | inherit
-    case CSSPropertyBorderLeftColor:    // <color> | inherit
-    case CSSPropertyColor:                // <color> | inherit
+    case CSSPropertyBackgroundColor: // <color> | inherit
+    case CSSPropertyBorderTopColor: // <color> | inherit
+    case CSSPropertyBorderRightColor:
+    case CSSPropertyBorderBottomColor:
+    case CSSPropertyBorderLeftColor:
+    case CSSPropertyWebkitBorderStartColor:
+    case CSSPropertyWebkitBorderEndColor:
+    case CSSPropertyColor: // <color> | inherit
     case CSSPropertyTextLineThroughColor: // CSS3 text decoration colors
     case CSSPropertyTextUnderlineColor:
     case CSSPropertyTextOverlineColor:
@@ -953,6 +957,8 @@ bool CSSParser::parseValue(int propId, bool important)
     case CSSPropertyBorderRightWidth:   //   Which is defined as
     case CSSPropertyBorderBottomWidth:  //   thin | medium | thick | <length>
     case CSSPropertyBorderLeftWidth:
+    case CSSPropertyWebkitBorderStartWidth:
+    case CSSPropertyWebkitBorderEndWidth:
     case CSSPropertyWebkitColumnRuleWidth:
         if (id == CSSValueThin || id == CSSValueMedium || id == CSSValueThick)
             validPrimitive = true;
@@ -1644,6 +1650,20 @@ bool CSSParser::parseValue(int propId, bool important)
     {
         const int properties[3] = { CSSPropertyBorderLeftWidth, CSSPropertyBorderLeftStyle,
                                     CSSPropertyBorderLeftColor };
+        return parseShorthand(propId, properties, 3, important);
+    }
+    case CSSPropertyWebkitBorderStart:
+        // [ '-webkit-border-start-width' || 'border-style' || <color> ] | inherit
+    {
+        const int properties[3] = { CSSPropertyWebkitBorderStartWidth, CSSPropertyWebkitBorderStartStyle,
+            CSSPropertyWebkitBorderStartColor };
+        return parseShorthand(propId, properties, 3, important);
+    }
+    case CSSPropertyWebkitBorderEnd:
+        // [ '-webkit-border-end-width' || 'border-style' || <color> ] | inherit
+    {
+        const int properties[3] = { CSSPropertyWebkitBorderEndWidth, CSSPropertyWebkitBorderEndStyle,
+            CSSPropertyWebkitBorderEndColor };
         return parseShorthand(propId, properties, 3, important);
     }
     case CSSPropertyOutline:

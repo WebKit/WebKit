@@ -1440,6 +1440,14 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             break;
 
         /* Directional properties are resolved by resolveDirectionAwareProperty() before the switch. */
+        case CSSPropertyWebkitBorderEnd:
+        case CSSPropertyWebkitBorderEndColor:
+        case CSSPropertyWebkitBorderEndStyle:
+        case CSSPropertyWebkitBorderEndWidth:
+        case CSSPropertyWebkitBorderStart:
+        case CSSPropertyWebkitBorderStartColor:
+        case CSSPropertyWebkitBorderStartStyle:
+        case CSSPropertyWebkitBorderStartWidth:
         case CSSPropertyWebkitMarginEnd:
         case CSSPropertyWebkitMarginStart:
         case CSSPropertyWebkitPaddingEnd:

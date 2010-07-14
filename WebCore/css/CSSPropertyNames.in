@@ -173,14 +173,21 @@ z-index
 # whereas background-size: l; is equivalent to background-size: l auto;
 -webkit-background-size
 -webkit-binding
+-webkit-border-end
+-webkit-border-end-color
+-webkit-border-end-style
+-webkit-border-end-width
 -webkit-border-fit
 -webkit-border-horizontal-spacing
 -webkit-border-image
-
 # -webkit-border-radius differs from border-radius only in the interpretation of
 # a value consisting of two lengths: "-webkit-border-radius: l1 l2;" is equivalent
 # to "border-radius: l1 / l2;"
 -webkit-border-radius
+-webkit-border-start
+-webkit-border-start-color
+-webkit-border-start-style
+-webkit-border-start-width
 -webkit-border-vertical-spacing
 -webkit-box-align
 -webkit-box-direction
