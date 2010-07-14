@@ -12,5 +12,5 @@ layer at (13,13) size 142x13
       text run at (1,0) width 33: " world"
     RenderText {#text} at (34,0) size 27x13
       text run at (34,0) width 27: "hello"
-selection start: position 0 of child 1 {#text} of child 0 {DIV} of child 1 {INPUT} of child 1 {BODY} of child 0 {HTML} of document
-selection end:   position 5 of child 1 {#text} of child 0 {DIV} of child 1 {INPUT} of child 1 {BODY} of child 0 {HTML} of document
+selection start: position 0 of child 1 {#text} of child 0 {DIV} of child 1 {INPUT} of body
+selection end:   position 5 of child 1 {#text} of child 0 {DIV} of child 1 {INPUT} of body

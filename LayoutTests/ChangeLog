@@ -1,3 +1,27 @@
+2010-07-14  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        Selection dumping code should not dump body's offset in the document
+        https://bugs.webkit.org/show_bug.cgi?id=42238
+
+        Update results now that we're no longer dumping
+        body's offset within HTML as part of selection dumps.
+        I used a little python script to do all these updates.
+        Basically it was just:
+        s/child \d {BODY} .* of document/body/i
+
+        LayoutTests will be updated across several commits to keep the SVN server happy.
+
+        Final commit (4 of 4).
+
+        * editing/execCommand/create-list-1-expected.txt:
+        * editing/pasteboard/paste-text-013-expected.txt:
+        * editing/selection/drag-text-delay-expected.txt:
+        * editing/selection/extend-selection-bidi-expected.txt:
+        * editing/style/apply-through-end-of-document-expected.txt:
+        * fast/events/pointer-events-2-expected.txt:
+
 2010-07-14  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, fix comment in Skipped file.

@@ -195,4 +195,4 @@ layer at (540,540) size 80x80
   RenderBlock (positioned) {DIV} at (200,0) size 80x80
     RenderText {#text} at (0,0) size 24x18
       text run at (0,0) width 24: "p15"
-caret: position 1 of child 0 {#text} of child 0 {SPAN} of child 1 {P} of child 1 {DIV} of child 23 {DIV} of child 1 {BODY} of child 1 {HTML} of document
+caret: position 1 of child 0 {#text} of child 0 {SPAN} of child 1 {P} of child 1 {DIV} of child 23 {DIV} of body
