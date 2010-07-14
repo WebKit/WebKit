@@ -3023,3 +3023,5 @@ BUG24233 WIN : editing/selection/drag-in-iframe.html = IMAGE+TEXT PASS
 BUG49021 : userscripts/simple-stylesheet.html = TEXT
 BUG49021 : userscripts/user-style-all-frames.html = TEXT
 BUG49021 : userscripts/user-style-top-frame-only.html = TEXT
+
+BUGWK42241 LINUX : svg/custom/text-rotated-gradient.svg = IMAGE

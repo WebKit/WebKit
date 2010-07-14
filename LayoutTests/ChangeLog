@@ -1,3 +1,12 @@
+2010-07-14  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        [Chromium] Add svg/custom/text-rotated-gradient.svg to test_expectations
+        https://bugs.webkit.org/show_bug.cgi?id=42241
+
+        * platform/chromium/test_expectations.txt:
+
 2010-07-14  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Eric Seidel.
