@@ -1,3 +1,13 @@
+2010-07-13  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r63262.
+        http://trac.webkit.org/changeset/63262
+        https://bugs.webkit.org/show_bug.cgi?id=42229
+
+        broke Windows compile (Requested by bweinstein on #webkit).
+
+        * WebKit.pro:
+
 2010-07-13  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         Reviewed by Oliver Hunt.
