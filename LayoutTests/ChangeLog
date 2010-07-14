@@ -1,3 +1,37 @@
+2010-07-14  Yuta Kitamura  <yutak@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Add tests to check if WebSocket's challenge value is random
+        https://bugs.webkit.org/show_bug.cgi?id=42163
+
+        Chromium has a bug that it always sends a same challenge value due to
+        inability to generate a random value in a worker process. The new test checks
+        if WebSocket does not generate the same challenge value in a row.
+
+        In theory, there is a very small possibility of collision between two challenge
+        values, but you will not observe such an event in reality (unless random number
+        generator is broken).
+
+        * websocket/tests/echo-challenge_wsh.py: Added.
+        * websocket/tests/handshake-challenge-randomness-expected.txt: Added.
+        * websocket/tests/handshake-challenge-randomness.html: Added.
+        * websocket/tests/script-tests/handshake-challenge-randomness.js: Added.
+        (endTest):
+        (ws1.onmessage):
+        (ws1.onclose.ws2.onmessage):
+        (ws1.onclose.ws2.onclose):
+        (ws1.onclose):
+        * websocket/tests/workers/resources/worker-handshake-challenge-randomness.js: Added.
+        (endTest):
+        (runTests.try.ws1.onmessage):
+        (runTests.try.ws1.onclose.ws2.onmessage):
+        (runTests.try.ws1.onclose.ws2.onclose):
+        (runTests.try.ws1.onclose):
+        (runTests):
+        * websocket/tests/workers/worker-handshake-challenge-randomness-expected.txt: Added.
+        * websocket/tests/workers/worker-handshake-challenge-randomness.html: Added.
+
 2010-07-14  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Nikolas Zimmermann.

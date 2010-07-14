@@ -1,0 +1,9 @@
+Handshake request should contain random challenge values (in a worker process).
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS: worker: Parsed successfully.
+PASS: worker: challenge1 !== challenge2
+DONE
+TEST COMPLETE
+
