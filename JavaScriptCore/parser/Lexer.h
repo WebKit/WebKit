@@ -126,7 +126,7 @@ namespace JSC {
 
     inline bool Lexer::isWhiteSpace(int ch)
     {
-        return isASCII(ch) ? (ch == ' ' || ch == '\t' || ch == 0xB || ch == 0xC) : WTF::Unicode::isSeparatorSpace(ch);
+        return isASCII(ch) ? (ch == ' ' || ch == '\t' || ch == 0xB || ch == 0xC) : (WTF::Unicode::isSeparatorSpace(ch) || ch == 0xFEFF);
     }
 
     inline bool Lexer::isLineTerminator(int ch)

@@ -37,7 +37,6 @@ namespace WebCore {
 
 CachedScript::CachedScript(const String& url, const String& charset)
     : CachedResource(url, Script)
-    , m_scriptHasBOMs(SourceCouldHaveBOMs)
     , m_decoder(TextResourceDecoder::create("application/javascript", charset))
     , m_decodedDataDeletionTimer(this, &CachedScript::decodedDataDeletionTimerFired)
 {
@@ -73,14 +72,8 @@ const String& CachedScript::script()
     if (!m_script && m_data) {
         m_script = m_decoder->decode(m_data->data(), encodedSize());
         m_script += m_decoder->flush();
-        if (m_scriptHasBOMs != SourceHasNoBOMs && m_script.length()) {
-            bool hasBOMs = false;
-            m_script = String(m_script.impl()->copyStringWithoutBOMs(m_scriptHasBOMs == SourceHasBOMs, hasBOMs));
-            m_scriptHasBOMs = hasBOMs ? SourceHasBOMs : SourceHasNoBOMs;
-        }
         setDecodedSize(m_script.length() * sizeof(UChar));
     }
-
     m_decodedDataDeletionTimer.startOneShot(0);
     return m_script;
 }

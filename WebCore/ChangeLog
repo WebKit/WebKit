@@ -1,3 +1,19 @@
+2010-07-13  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        ES5 requires BOMs to be treated as whitespace
+        https://bugs.webkit.org/show_bug.cgi?id=42218
+
+        Remove BOM handling logic from WebCore Script objects.
+
+        * bindings/js/StringSourceProvider.h:
+        (WebCore::StringSourceProvider::StringSourceProvider):
+        * loader/CachedScript.cpp:
+        (WebCore::CachedScript::CachedScript):
+        (WebCore::CachedScript::script):
+        * loader/CachedScript.h:
+
 2010-07-13  Andreas Kling  <andreas.kling@nokia.com>
 
         Reviewed by Darin Adler.

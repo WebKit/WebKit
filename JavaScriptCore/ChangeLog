@@ -1,3 +1,21 @@
+2010-07-13  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        ES5 requires BOMs to be treated as whitespace
+        https://bugs.webkit.org/show_bug.cgi?id=42218
+
+        Add BOM character to the Lexer's definition of whitespace,
+        and remove the logic that dealt with stripping BOMs and
+        caching the cleaned string.
+
+        * parser/Lexer.h:
+        (JSC::Lexer::isWhiteSpace):
+        * parser/SourceProvider.h:
+        (JSC::UStringSourceProvider::create):
+        (JSC::UStringSourceProvider::UStringSourceProvider):
+        * wtf/text/StringImpl.h:
+
 2010-07-13  Andreas Kling  <andreas.kling@nokia.com>
 
         Reviewed by Darin Adler.

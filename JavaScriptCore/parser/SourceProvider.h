@@ -60,9 +60,9 @@ namespace JSC {
 
     class UStringSourceProvider : public SourceProvider {
     public:
-        static PassRefPtr<UStringSourceProvider> create(const UString& source, const UString& url, bool hasBOMs = true)
+        static PassRefPtr<UStringSourceProvider> create(const UString& source, const UString& url)
         {
-            return adoptRef(new UStringSourceProvider(source, url, hasBOMs));
+            return adoptRef(new UStringSourceProvider(source, url));
         }
 
         UString getRange(int start, int end) const
@@ -73,14 +73,10 @@ namespace JSC {
         int length() const { return m_source.size(); }
 
     private:
-        UStringSourceProvider(const UString& source, const UString& url, bool hasBOMs)
+        UStringSourceProvider(const UString& source, const UString& url)
             : SourceProvider(url)
             , m_source(source)
         {
-            if (hasBOMs && m_source.size()) {
-                bool scratch = false;
-                m_source = UString(m_source.rep()->copyStringWithoutBOMs(false, scratch));
-            }
         }
 
         UString m_source;
