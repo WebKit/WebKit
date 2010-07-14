@@ -56,6 +56,18 @@
 
         Reviewed by Darin Adler.
 
+        Canvas: rect(x,y,w,h) should move to (x,y) even if w=0 and h=0
+        https://bugs.webkit.org/show_bug.cgi?id=42211
+
+        Unskip canvas/philip/tests/2d.path.rect.zero.4.html
+
+        * platform/mac/Skipped:
+        * platform/qt/Skipped:
+
+2010-07-13  Andreas Kling  <andreas.kling@nokia.com>
+
+        Reviewed by Darin Adler.
+
         Canvas: drawImage() with wrong 'image' argument type should always throw TypeError
         https://bugs.webkit.org/show_bug.cgi?id=42160
 

@@ -646,10 +646,27 @@ static bool validateRectForCanvas(float& x, float& y, float& width, float& heigh
 
 void CanvasRenderingContext2D::rect(float x, float y, float width, float height)
 {
-    if (!validateRectForCanvas(x, y, width, height))
-        return;
     if (!state().m_invertibleCTM)
         return;
+
+    if (!isfinite(x) || !isfinite(y) || !isfinite(width) || !isfinite(height))
+        return;
+
+    if (!width && !height) {
+        m_path.moveTo(FloatPoint(x, y));
+        return;
+    }
+
+    if (width < 0) {
+        width = -width;
+        x -= width;
+    }
+
+    if (height < 0) {
+        height = -height;
+        y -= height;
+    }
+
     m_path.addRect(FloatRect(x, y, width, height));
 }
 

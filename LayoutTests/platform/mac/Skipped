@@ -224,7 +224,6 @@ canvas/philip/tests/2d.missingargs.html
 canvas/philip/tests/2d.path.arcTo.ensuresubpath.2.html
 canvas/philip/tests/2d.path.clip.empty.html
 canvas/philip/tests/2d.path.rect.winding.html
-canvas/philip/tests/2d.path.rect.zero.4.html
 canvas/philip/tests/2d.path.stroke.prune.arc.html
 canvas/philip/tests/2d.path.stroke.prune.closed.html
 canvas/philip/tests/2d.path.stroke.prune.curve.html
