@@ -178,6 +178,7 @@ void NetscapePlugin::destroy()
 
     m_pluginModule->pluginFuncs().destroy(&m_npp, 0);
     m_isStarted = false;
+    m_pluginController = 0;
 }
     
 void NetscapePlugin::paint(GraphicsContext* context, const IntRect& dirtyRect)
@@ -210,6 +211,11 @@ void NetscapePlugin::frameDidFinishLoading(uint64_t requestID)
 void NetscapePlugin::frameDidFail(uint64_t requestID, bool wasCancelled)
 {
     // FIXME: Implement.
+}
+
+PluginController* NetscapePlugin::controller()
+{
+    return m_pluginController;
 }
 
 } // namespace WebKit

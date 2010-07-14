@@ -2,6 +2,45 @@
 
         Reviewed by Sam Weinig.
 
+        Add support for loading javascript: URLs
+        https://bugs.webkit.org/show_bug.cgi?id=42221
+
+        * WebProcess/Plugins/DummyPlugin.cpp:
+        (WebKit::DummyPlugin::controller):
+        * WebProcess/Plugins/DummyPlugin.h:
+        Add stub function.
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::destroy):
+        Set the plug-in controller to 0.
+
+        (WebKit::NetscapePlugin::controller):
+        Return the plug-in controller.
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.h:
+        Add controller() member function.
+
+        * WebProcess/Plugins/Plugin.h:
+        Add controller() pure virtual member function.
+        
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::performURLRequest):
+        If the given URL request has a javascript: protocol, call
+        performJavaScriptURLRequest.
+
+        (WebKit::PluginView::performFrameLoadURLRequest):
+        Add a security origin check.
+
+        (WebKit::PluginView::performJavaScriptURLRequest):
+        Evaluate the JavaScript code, Get the resulting string.
+
+        * WebProcess/Plugins/PluginView.h:
+        Add performJavaScriptURLRequest.
+
+2010-07-13  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
         Add support for URL frame loading using NPN_GetURLNotify
         https://bugs.webkit.org/show_bug.cgi?id=42192
 

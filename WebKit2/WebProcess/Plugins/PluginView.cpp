@@ -58,7 +58,7 @@ private:
         , m_allowPopups(allowPopups)
     {
     }
-    
+
     uint64_t m_requestID;
     FrameLoadRequest m_request;
     bool m_allowPopups;
@@ -206,8 +206,16 @@ void PluginView::pendingURLRequestsTimerFired()
     
 void PluginView::performURLRequest(URLRequest* request)
 {
-    if (!request->target().isNull())
-        return performFrameLoadURLRequest(request);
+    // First, check if this is a javascript: url.
+    if (protocolIsJavaScript(request->request().url())) {
+        performJavaScriptURLRequest(request);
+        return;
+    }
+
+    if (!request->target().isNull()) {
+        performFrameLoadURLRequest(request);
+        return;
+    }
 }
 
 void PluginView::performFrameLoadURLRequest(URLRequest* request)
@@ -217,6 +225,13 @@ void PluginView::performFrameLoadURLRequest(URLRequest* request)
     Frame* frame = m_pluginElement->document()->frame();
     if (!frame)
         return;
+
+    // Check if this is URL can be loaded.
+    if (!SecurityOrigin::canLoad(request->request().url(), String(), m_pluginElement->document())) {
+        // We can't load the request, send back a reply to the plug-in.
+        m_plugin->frameDidFail(request->requestID(), false);
+        return;
+    }
 
     // First, try to find a target frame.
     Frame* targetFrame = frame->loader()->findFrameForNavigation(request->target());
@@ -242,6 +257,42 @@ void PluginView::performFrameLoadURLRequest(URLRequest* request)
     
     m_pendingFrameLoads.set(targetWebFrame, request);
     targetWebFrame->setLoadListener(this);
+}
+
+void PluginView::performJavaScriptURLRequest(URLRequest* request)
+{
+    ASSERT(protocolIsJavaScript(request->request().url()));
+
+    RefPtr<Frame> frame = m_pluginElement->document()->frame();
+    if (!frame)
+        return;
+    
+    String jsString = decodeURLEscapeSequences(request->request().url().string().substring(11));
+
+    if (!request->target().isNull()) {
+        // For security reasons, only allow JS requests to be made on the frame that contains the plug-in.
+        if (frame->tree()->find(request->target()) != frame) {
+            // Let the plug-in know that its frame load failed.
+            m_plugin->frameDidFail(request->requestID(), false);
+            return;
+        }
+    }
+    
+    // Evaluate the JavaScript code. Note that running JavaScript here could cause the plug-in to be destroyed, so we
+    // grab references to the plug-in here. (We already have a reference to the frame).
+    RefPtr<Plugin> plugin = m_plugin;
+    
+    ScriptValue result = m_pluginElement->document()->frame()->script()->executeScript(jsString);
+
+    // Check if evaluating the JavaScript destroyed the plug-in.
+    if (!plugin->controller())
+        return;
+
+    ScriptState* scriptState = m_pluginElement->document()->frame()->script()->globalObject(pluginWorld())->globalExec();
+    String resultString;
+    result.getString(scriptState, resultString);
+    
+    // FIXME: Send the result string back to the plug-in.
 }
 
 void PluginView::invalidateRect(const IntRect& dirtyRect)

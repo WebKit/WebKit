@@ -64,8 +64,11 @@ private:
     class URLRequest;
     void performURLRequest(URLRequest*);
 
-    // Perform an URL request where the frame target is not null.
+    // Perform a URL request where the frame target is not null.
     void performFrameLoadURLRequest(URLRequest*);
+
+    // Perform a URL request where the URL protocol is "javascript:".
+    void performJavaScriptURLRequest(URLRequest*);
 
     // WebCore::Widget
     virtual void setFrameRect(const WebCore::IntRect&);
