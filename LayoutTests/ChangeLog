@@ -2,6 +2,22 @@
 
         Reviewed by Yury Semikhatsky.
 
+        Web Inspector: do not activate all breakpoints on page reload
+        https://bugs.webkit.org/show_bug.cgi?id=41461
+
+        * http/tests/inspector/debugger-test.js:
+        (frontend_scriptsAreParsed):
+        (frontend_waitUntilScriptsAreParsed.waitForAllScripts):
+        (frontend_waitUntilScriptsAreParsed):
+        (frontend_ensureSourceFrameLoaded):
+        (frontend_showScriptSource):
+        * inspector/debugger-breakpoints-not-activated-on-reload-expected.txt: Added.
+        * inspector/debugger-breakpoints-not-activated-on-reload.html: Added.
+
+2010-07-14  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
         [Chromium] Add svg/custom/text-rotated-gradient.svg to test_expectations
         https://bugs.webkit.org/show_bug.cgi?id=42241
 

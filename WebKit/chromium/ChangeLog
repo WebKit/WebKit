@@ -1,3 +1,13 @@
+2010-07-14  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: if breakpoints were deactivated, add new breakpoints as disabled.
+        https://bugs.webkit.org/show_bug.cgi?id=41461
+
+        * src/js/DebuggerScript.js:
+        ():
+
 2010-07-14  Kent Tamura  <tkent@chromium.org>
 
         Unreviewed, 2nd attempt to fix build on 'Webkit.org Reliability Builder'.
