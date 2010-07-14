@@ -1,3 +1,16 @@
+2010-07-14  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] Get rid of libWebCoreJS
+        https://bugs.webkit.org/show_bug.cgi?id=42083
+
+        Remove the need to build libWebCoreJS.
+
+        * GNUmakefile.am: List all auto-generated source files for libWebCoreJS
+        instead of relying on make to build libWebCoreJS. This is a more autotools-
+        -friendly approach.
+
 2010-07-14  Eric Carlson  <eric.carlson@apple.com>
 
         One more unreviewed build fix for r63319.

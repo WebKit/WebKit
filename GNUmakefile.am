@@ -256,7 +256,6 @@ libwebkitgtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_LDFL
 libwebkitgtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_LIBADD = \
 	-lpthread \
 	libJavaScriptCore.la \
-	libWebCoreJS.la \
 	libgdom.la \
 	$(webcore_ldflags) \
 	$(CAIRO_LIBS) \
@@ -835,6 +834,34 @@ distclean-local:
 
 dist-hook:
 	cp $(srcdir)/WebKit/gtk/NEWS $(distdir)/
+	mkdir -p $(distdir)/WebCore/css
+	cp $(srcdir)/WebCore/css/*.idl $(distdir)/WebCore/css
+	mkdir -p $(distdir)/WebCore/dom
+	cp $(srcdir)/WebCore/dom/*.idl $(distdir)/WebCore/dom
+	mkdir -p $(distdir)/WebCore/html
+	cp $(srcdir)/WebCore/html/*.idl $(distdir)/WebCore/html
+	mkdir -p $(distdir)/WebCore/html/canvas
+	cp $(srcdir)/WebCore/html/canvas/*.idl $(distdir)/WebCore/html/canvas
+	mkdir -p $(distdir)/WebCore/inspector
+	cp $(srcdir)/WebCore/inspector/*.idl $(distdir)/WebCore/inspector
+	mkdir -p $(distdir)/WebCore/loader/appcache
+	cp $(srcdir)/WebCore/loader/appcache/*.idl $(distdir)/WebCore/loader/appcache
+	mkdir -p $(distdir)/WebCore/notifications
+	cp $(srcdir)/WebCore/notifications/*.idl $(distdir)/WebCore/notifications
+	mkdir -p $(distdir)/WebCore/page
+	cp $(srcdir)/WebCore/page/*.idl $(distdir)/WebCore/page
+	mkdir -p $(distdir)/WebCore/plugins
+	cp $(srcdir)/WebCore/plugins/*.idl $(distdir)/WebCore/plugins
+	mkdir -p $(distdir)/WebCore/storage
+	cp $(srcdir)/WebCore/storage/*.idl $(distdir)/WebCore/storage
+	mkdir -p $(distdir)/WebCore/svg
+	cp $(srcdir)/WebCore/svg/*.idl $(distdir)/WebCore/svg
+	mkdir -p $(distdir)/WebCore/workers
+	cp $(srcdir)/WebCore/workers/*.idl $(distdir)/WebCore/workers
+	mkdir -p $(distdir)/WebCore/xml
+	cp $(srcdir)/WebCore/xml/*.idl $(distdir)/WebCore/xml
+	mkdir -p $(distdir)/WebCore/websockets
+	cp $(srcdir)/WebCore/websockets/*.idl $(distdir)/WebCore/websockets
 
 install-data-local: po-install-data-local
 
