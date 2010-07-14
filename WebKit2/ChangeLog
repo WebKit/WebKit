@@ -1,3 +1,17 @@
+2010-07-14  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Add NetscapePluginStream class
+        https://bugs.webkit.org/show_bug.cgi?id=42296
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/Plugins/Netscape/NetscapePluginStream.cpp: Added.
+        (WebKit::NetscapePluginStream::NetscapePluginStream):
+        (WebKit::NetscapePluginStream::~NetscapePluginStream):
+        * WebProcess/Plugins/Netscape/NetscapePluginStream.h: Added.
+        (WebKit::NetscapePluginStream::create):
+
 2010-07-14  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin Adler.
