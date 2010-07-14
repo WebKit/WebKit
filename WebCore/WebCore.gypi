@@ -2836,6 +2836,8 @@
             'platform/text/CharacterNames.h',
             'platform/text/Hyphenation.cpp',
             'platform/text/Hyphenation.h',
+            'platform/text/LineEnding.cpp',
+            'platform/text/LineEnding.h',
             'platform/text/ParserUtilities.h',
             'platform/text/PlatformString.h',
             'platform/text/RegularExpression.cpp',

@@ -32,7 +32,6 @@
 #define BlobItem_h
 
 #include "PlatformString.h"
-#include "TextEncoding.h"
 #include <wtf/OwnPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -40,15 +39,6 @@
 #include <wtf/text/CString.h>
 
 namespace WebCore {
-
-// String ending types.
-enum LineEnding {
-    EndingTransparent = 0,
-    EndingNative,
-    EndingLF,
-    EndingCR,
-    EndingCRLF,
-};
 
 class ByteArrayBlobItem;
 class DataBlobItem;
@@ -126,7 +116,6 @@ protected:
 
 class StringBlobItem : public DataBlobItem {
 public:
-    static PassRefPtr<BlobItem> create(const String&, LineEnding, TextEncoding);
     static PassRefPtr<BlobItem> create(const CString&);
     const CString& cstr() const { return m_data; }
 
@@ -138,9 +127,7 @@ public:
     virtual const char* data() const { return m_data.data(); }
 
 private:
-    StringBlobItem(const String&, LineEnding, TextEncoding);
     StringBlobItem(const CString&);
-    static CString convertToCString(const String&, LineEnding, TextEncoding);
     CString m_data;
 };
 

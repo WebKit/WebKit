@@ -1,4 +1,5 @@
 /*
+ * Copyright (C) 2005, 2006, 2008 Apple Inc. All rights reserved.
  * Copyright (C) 2010 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,62 +29,28 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
+#ifndef LineEnding_h
+#define LineEnding_h
 
-#include "BlobBuilder.h"
-
-#include "AtomicString.h"
-#include "Blob.h"
-#include "ExceptionCode.h"
-#include "LineEnding.h"
-#include "TextEncoding.h"
+namespace WTF {
+class CString;
+}
 
 namespace WebCore {
 
-static CString convertToCString(const String& text, const String& endingType, ExceptionCode& ec)
-{
-    DEFINE_STATIC_LOCAL(AtomicString, transparent, ("transparent"));
-    DEFINE_STATIC_LOCAL(AtomicString, native, ("native"));
+// Normalize all line-endings in the given string to CRLF.
+WTF::CString normalizeLineEndingsToCRLF(const WTF::CString&);
 
-    ec = 0;
+// Normalize all line-endings in the given string to CR.
+WTF::CString normalizeLineEndingsToCR(const WTF::CString&);
 
-    if (endingType.isEmpty() || endingType == transparent)
-        return UTF8Encoding().encode(text.characters(), text.length(), EntitiesForUnencodables);
-    if (endingType == native)
-        return normalizeLineEndingsToNative(UTF8Encoding().encode(text.characters(), text.length(), EntitiesForUnencodables));
+// Normalize all line-endings in the given string to LF.
+WTF::CString normalizeLineEndingsToLF(const WTF::CString&);
 
-    ec = SYNTAX_ERR;
-    return CString();
-}
-
-bool BlobBuilder::append(const String& text, const String& endingType, ExceptionCode& ec)
-{
-    CString cstr = convertToCString(text, endingType, ec);
-    if (ec)
-        return false;
-
-    m_items.append(StringBlobItem::create(cstr));
-    return true;
-}
-
-bool BlobBuilder::append(const String& text, ExceptionCode& ec)
-{
-    return append(text, String(), ec);
-}
-
-bool BlobBuilder::append(PassRefPtr<Blob> blob)
-{
-    if (blob) {
-        for (size_t i = 0; i < blob->items().size(); ++i)
-            m_items.append(blob->items()[i]);
-        return true;
-    }
-    return false;
-}
-
-PassRefPtr<Blob> BlobBuilder::getBlob(const String& contentType) const
-{
-    return Blob::create(contentType, m_items);
-}
+// Normalize all line-endings in the given string to the native line-endings.
+// (Normalize to CRLF on Windows and normalize to LF on all other platforms.)
+WTF::CString normalizeLineEndingsToNative(const WTF::CString&);
 
 } // namespace WebCore
+
+#endif // LineEnding_h

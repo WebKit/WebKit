@@ -2311,6 +2311,8 @@
 		895253DF116C4F0600CABF00 /* FileThreadTask.h in Headers */ = {isa = PBXBuildFile; fileRef = 895253DE116C4F0600CABF00 /* FileThreadTask.h */; };
 		8988E10E11A3508B00DB732E /* BlobItem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8988E10C11A3508B00DB732E /* BlobItem.cpp */; };
 		8988E10F11A3508B00DB732E /* BlobItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 8988E10D11A3508B00DB732E /* BlobItem.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		89B5EAA111E8003D00F2367E /* LineEnding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 89B5EA9F11E8003D00F2367E /* LineEnding.cpp */; };
+		89B5EAA211E8003D00F2367E /* LineEnding.h in Headers */ = {isa = PBXBuildFile; fileRef = 89B5EAA011E8003D00F2367E /* LineEnding.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		89BED5EB11BE11CE00448492 /* BlobBuilder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 89BED5E911BE11CE00448492 /* BlobBuilder.cpp */; };
 		89BED5EC11BE11CE00448492 /* BlobBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = 89BED5EA11BE11CE00448492 /* BlobBuilder.h */; };
 		89CD029311C85B870070B791 /* JSBlobBuilder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 89CD029111C85B870070B791 /* JSBlobBuilder.cpp */; };
@@ -8023,6 +8025,8 @@
 		895253DE116C4F0600CABF00 /* FileThreadTask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileThreadTask.h; sourceTree = "<group>"; };
 		8988E10C11A3508B00DB732E /* BlobItem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BlobItem.cpp; sourceTree = "<group>"; };
 		8988E10D11A3508B00DB732E /* BlobItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlobItem.h; sourceTree = "<group>"; };
+		89B5EA9F11E8003D00F2367E /* LineEnding.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LineEnding.cpp; sourceTree = "<group>"; };
+		89B5EAA011E8003D00F2367E /* LineEnding.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LineEnding.h; sourceTree = "<group>"; };
 		89BED5E911BE11CE00448492 /* BlobBuilder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BlobBuilder.cpp; sourceTree = "<group>"; };
 		89BED5EA11BE11CE00448492 /* BlobBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlobBuilder.h; sourceTree = "<group>"; };
 		89CD027911C859A80070B791 /* BlobBuilder.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = BlobBuilder.idl; sourceTree = "<group>"; };
@@ -15507,6 +15511,8 @@
 				B2C3D9F40D006C1D00EF6F26 /* BidiResolver.h */,
 				B2C3D9F50D006C1D00EF6F26 /* CharacterNames.h */,
 				375CD231119D43C800A2A859 /* Hyphenation.h */,
+				89B5EA9F11E8003D00F2367E /* LineEnding.cpp */,
+				89B5EAA011E8003D00F2367E /* LineEnding.h */,
 				BC76AC110DD7AD5C00415F34 /* ParserUtilities.h */,
 				B2C3D9FB0D006C1D00EF6F26 /* PlatformString.h */,
 				B2C3D9FC0D006C1D00EF6F26 /* RegularExpression.cpp */,
@@ -18912,6 +18918,7 @@
 				BCFF64920EAD15C200C1D6F7 /* LengthSize.h in Headers */,
 				B22279650D00BF220071B782 /* LinearGradientAttributes.h in Headers */,
 				AB31C91E10AE1B8E000C7B92 /* LineClampValue.h in Headers */,
+				89B5EAA211E8003D00F2367E /* LineEnding.h in Headers */,
 				A7AD2F880EC89D07008AB002 /* LinkHash.h in Headers */,
 				BCB16C2D0979C3BD00467741 /* loader.h in Headers */,
 				656D37320ADBA5DE00A4554D /* LoaderNSURLExtras.h in Headers */,
@@ -21413,6 +21420,7 @@
 				51B2417B0D931F3F00E83F5C /* LegacyWebArchiveMac.mm in Sources */,
 				BCE65BEA0EACDF16007E4533 /* Length.cpp in Sources */,
 				A7AD2F870EC89D07008AB002 /* LinkHash.cpp in Sources */,
+				89B5EAA111E8003D00F2367E /* LineEnding.cpp in Sources */,
 				BCB16C2C0979C3BD00467741 /* loader.cpp in Sources */,
 				656D37330ADBA5DE00A4554D /* LoaderNSURLExtras.mm in Sources */,
 				06E81EEC0AB5DA9700C87837 /* LocalCurrentGraphicsContext.mm in Sources */,

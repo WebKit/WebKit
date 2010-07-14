@@ -1,3 +1,28 @@
+2010-07-14  Kinuko Yasuda  <kinuko@chromium.org>
+
+        Reviewed by Jian Li.
+
+        Separate line-ending conversion code from BlobItem
+        https://bugs.webkit.org/show_bug.cgi?id=40932
+
+        Add common line-ending normalization code under platform/text.
+        No new tests as it doesn't change any functionality.
+
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/BlobBuilder.cpp:
+        (WebCore::BlobBuilder::appendString):
+        * html/FormDataList.cpp:
+        (WebCore::FormDataList::appendString):
+        * platform/BlobItem.cpp:
+        * platform/BlobItem.h:
+        * platform/text/LineEnding.cpp: Added.
+        * platform/text/LineEnding.h: Added.
+
 2010-07-14  Erik Arvidsson  <arv@chromium.org>
 
         Reviewed by Darin Adler.

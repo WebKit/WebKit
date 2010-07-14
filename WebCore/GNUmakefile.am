@@ -2091,6 +2091,8 @@ webcore_sources += \
 	WebCore/platform/text/CharacterNames.h \
 	WebCore/platform/text/Hyphenation.cpp \
 	WebCore/platform/text/Hyphenation.h \
+	WebCore/platform/text/LineEnding.cpp \
+	WebCore/platform/text/LineEnding.h \
 	WebCore/platform/text/ParserUtilities.h \
 	WebCore/platform/text/PlatformString.h \
 	WebCore/platform/text/RegularExpression.cpp \

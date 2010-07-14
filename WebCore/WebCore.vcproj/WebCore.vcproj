@@ -27144,6 +27144,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\platform\text\LineEnding.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\platform\text\LineEnding.h"
+					>
+				</File>
+				<File
 					RelativePath="..\platform\text\ParserUtilities.h"
 					>
 				</File>

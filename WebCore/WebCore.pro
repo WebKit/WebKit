@@ -897,6 +897,7 @@ SOURCES += \
     platform/KillRingNone.cpp \
     platform/KURL.cpp \
     platform/Length.cpp \
+    platform/text/LineEnding.cpp \
     platform/LinkHash.cpp \
     platform/Logging.cpp \
     platform/MIMETypeRegistry.cpp \
@@ -1672,6 +1673,7 @@ HEADERS += \
     platform/KillRing.h \
     platform/KURL.h \
     platform/Length.h \
+    platform/text/LineEnding.h \
     platform/LinkHash.h \
     platform/Logging.h \
     platform/MIMETypeRegistry.h \
