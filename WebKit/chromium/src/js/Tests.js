@@ -863,29 +863,6 @@ TestSuite.prototype.evaluateInConsole_ = function(code, callback)
 };
 
 
-/*
- * Waits for "setbreakpoint" response, checks that corresponding breakpoint
- * was successfully set and invokes the callback if it was.
- * @param {string} scriptUrl
- * @param {number} breakpointLine
- * @param {function()} callback
- */
-TestSuite.prototype.waitForSetBreakpointResponse_ = function(scriptUrl, breakpointLine, callback)
-{
-    var test = this;
-    test.addSniffer(
-        devtools.DebuggerAgent.prototype,
-        "handleSetBreakpointResponse_",
-        function(msg) {
-            var bps = this.urlToBreakpoints_[scriptUrl];
-            test.assertTrue(!!bps, "No breakpoints for line " + breakpointLine);
-            var line = devtools.DebuggerAgent.webkitToV8LineNumber_(breakpointLine);
-            test.assertTrue(!!bps[line].getV8Id(), "Breakpoint id was not assigned.");
-            callback();
-        });
-};
-
-
 /**
  * Tests eval on call frame.
  */
@@ -996,60 +973,7 @@ TestSuite.prototype.testCompletionOnPause = function()
  */
 TestSuite.prototype.testAutoContinueOnSyntaxError = function()
 {
-    if (window.v8ScriptDebugServerEnabled)
-        return;
-
-    this.showPanel("scripts");
-    var test = this;
-
-    function checkScriptsList() {
-        var scriptSelect = document.getElementById("scripts-files");
-        var options = scriptSelect.options;
-        // There should be only console API source (see
-        // InjectedScript._ensureCommandLineAPIInstalled) since the page script
-        // contains a syntax error.
-        for (var i = 0 ; i < options.length; i++) {
-            if (options[i].text.search("script_syntax_error.html") !== -1)
-                test.fail("Script with syntax error should not be in the list of parsed scripts.");
-        }
-    }
-
-
-    this.addSniffer(devtools.DebuggerAgent.prototype, "handleScriptsResponse_",
-        function(msg) {
-            checkScriptsList();
-
-            // Reload inspected page.
-            test.evaluateInConsole_(
-                "window.location.reload(true);",
-                function(resultText) {
-                    test.assertEquals("undefined", resultText, "Unexpected result of reload().");
-                    waitForExceptionEvent();
-                });
-        });
-
-    function waitForExceptionEvent() {
-      var exceptionCount = 0;
-      test.addSniffer(
-          devtools.DebuggerAgent.prototype,
-          "handleExceptionEvent_",
-          function(msg) {
-              exceptionCount++;
-              test.assertEquals(1, exceptionCount, "Too many exceptions.");
-              test.assertEquals(undefined, msg.getBody().script, "Unexpected exception: " + JSON.stringify(msg));
-              test.releaseControl();
-          });
-
-      // Check that the script is not paused on parse error.
-      test.addSniffer(
-          WebInspector,
-          "pausedScript",
-          function(callFrames) {
-              test.fail("Script execution should not pause on syntax error.");
-          });
-    }
-
-    this.takeControl();
+    // TODO(yurys): provide an implementation that works with ScriptDebugServer.
 };
 
 
@@ -1500,14 +1424,14 @@ TestSuite.prototype.testExpandScope = function()
                 properties: {
                     x:"2009",
                     innerFunctionLocalVar:"2011",
-                    "this": (window.v8ScriptDebugServerEnabled ? "DOMWindow" : "global"),
+                    "this": "DOMWindow",
                 }
             },
             {
                 title: "Closure",
                 properties: {
-                    n: (window.v8ScriptDebugServerEnabled ? '"TextParam"' : "TextParam"),
-                    makeClosureLocalVar: (window.v8ScriptDebugServerEnabled ? '"local.TextParam"' : "local.TextParam"),
+                    n: '"TextParam"',
+                    makeClosureLocalVar: '"local.TextParam"',
                 }
             },
             {
@@ -1611,7 +1535,6 @@ TestSuite.prototype.testDebugIntrinsicProperties = function()
     }
 
     function examineLocalScope() {
-      if (window.v8ScriptDebugServerEnabled) {
       var scopeExpectations = [
           "a", "Child", [
             "__proto__", "Child", [
@@ -1633,47 +1556,12 @@ TestSuite.prototype.testDebugIntrinsicProperties = function()
             "childField", "20", null,
           ]
       ];
-      } else {
-      var scopeExpectations = [
-          "a", "Object", [
-              "constructor", "function Child()", [
-                  "constructor", "function Function()", null,
-                  "name", "Child", null,
-                  "prototype", "Object", [
-                      "childProtoField", 21, null
-                  ]
-              ],
-
-            "__proto__", "Object", [
-                  "__proto__", "Object", [
-                      "__proto__", "Object", [
-                          "__proto__", "null", null,
-                          "constructor", "function Object()", null,
-                      ],
-                    "constructor", "function Parent()", [
-                        "name", "Parent", null,
-                        "prototype", "Object", [
-                            "parentProtoField", 11, null,
-                        ]
-                    ],
-                    "parentProtoField", 11, null,
-                ],
-                "constructor", "function Child()", null,
-                "childProtoField", 21, null,
-            ],
-
-            "parentField", 10, null,
-            "childField", 20, null,
-          ]
-      ];
-      }
-
       checkProperty(localScopeSection.propertiesTreeOutline, "<Local Scope>", scopeExpectations);
     }
 
     var propQueue = [];
     var index = 0;
-    var expectedFinalIndex = (window.v8ScriptDebugServerEnabled ? 5 : 8);
+    var expectedFinalIndex = 5;
 
     function expandAndCheckNextProperty() {
         if (index === propQueue.length) {

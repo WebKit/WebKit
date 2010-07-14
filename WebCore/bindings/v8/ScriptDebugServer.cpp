@@ -44,7 +44,6 @@
 
 namespace WebCore {
 
-#if ENABLE(V8_SCRIPT_DEBUG_SERVER)
 static Frame* retrieveFrame(v8::Handle<v8::Context> context)
 {
     if (context.IsEmpty())
@@ -61,7 +60,6 @@ static Frame* retrieveFrame(v8::Handle<v8::Context> context)
 
     return V8Proxy::retrieveFrame(context);
 }
-#endif
 
 ScriptDebugServer& ScriptDebugServer::shared()
 {
@@ -83,7 +81,6 @@ void ScriptDebugServer::setDebuggerScriptSource(const String& scriptSource)
 
 void ScriptDebugServer::addListener(ScriptDebugListener* listener, Page* page)
 {
-#if ENABLE(V8_SCRIPT_DEBUG_SERVER)
     if (!m_enabled)
         return;
     v8::HandleScope scope;
@@ -108,7 +105,6 @@ void ScriptDebugServer::addListener(ScriptDebugListener* listener, Page* page)
     v8::Handle<v8::Array> scriptsArray = v8::Handle<v8::Array>::Cast(value);
     for (unsigned i = 0; i < scriptsArray->Length(); ++i)
         dispatchDidParseSource(listener, v8::Handle<v8::Object>::Cast(scriptsArray->Get(v8::Integer::New(i))));
-#endif
 }
 
 void ScriptDebugServer::removeListener(ScriptDebugListener* listener, Page* page)
@@ -128,7 +124,6 @@ void ScriptDebugServer::removeListener(ScriptDebugListener* listener, Page* page
 
 bool ScriptDebugServer::setBreakpoint(const String& sourceID, ScriptBreakpoint breakpoint, unsigned lineNumber, unsigned* actualLineNumber)
 {
-#if ENABLE(V8_SCRIPT_DEBUG_SERVER)
     v8::HandleScope scope;
     v8::Local<v8::Context> debuggerContext = v8::Debug::GetDebugContext();
     v8::Context::Scope contextScope(debuggerContext);
@@ -146,14 +141,10 @@ bool ScriptDebugServer::setBreakpoint(const String& sourceID, ScriptBreakpoint b
     ASSERT(result->Int32Value() >= 0);
     *actualLineNumber = result->Int32Value();
     return true;
-#else
-    return false;
-#endif
 }
 
 void ScriptDebugServer::removeBreakpoint(const String& sourceID, unsigned lineNumber)
 {
-#if ENABLE(V8_SCRIPT_DEBUG_SERVER)
     v8::HandleScope scope;
     v8::Local<v8::Context> debuggerContext = v8::Debug::GetDebugContext();
     v8::Context::Scope contextScope(debuggerContext);
@@ -164,12 +155,10 @@ void ScriptDebugServer::removeBreakpoint(const String& sourceID, unsigned lineNu
 
     v8::Handle<v8::Function> removeBreakpointFunction = v8::Local<v8::Function>::Cast(m_debuggerScript.get()->Get(v8::String::New("removeBreakpoint")));
     v8::Debug::Call(removeBreakpointFunction, args);
-#endif
 }
 
 void ScriptDebugServer::clearBreakpoints()
 {
-#if ENABLE(V8_SCRIPT_DEBUG_SERVER)
     ensureDebuggerScriptCompiled();
     v8::HandleScope scope;
     v8::Local<v8::Context> debuggerContext = v8::Debug::GetDebugContext();
@@ -177,12 +166,10 @@ void ScriptDebugServer::clearBreakpoints()
 
     v8::Handle<v8::Function> clearBreakpoints = v8::Local<v8::Function>::Cast(m_debuggerScript.get()->Get(v8::String::New("clearBreakpoints")));
     v8::Debug::Call(clearBreakpoints);
-#endif
 }
 
 void ScriptDebugServer::setBreakpointsActivated(bool enabled)
 {
-#if ENABLE(V8_SCRIPT_DEBUG_SERVER)
     ensureDebuggerScriptCompiled();
     v8::HandleScope scope;
     v8::Local<v8::Context> debuggerContext = v8::Debug::GetDebugContext();
@@ -192,12 +179,10 @@ void ScriptDebugServer::setBreakpointsActivated(bool enabled)
     args->Set(v8::String::New("enabled"), v8::Boolean::New(enabled));
     v8::Handle<v8::Function> setBreakpointsActivated = v8::Local<v8::Function>::Cast(m_debuggerScript.get()->Get(v8::String::New("setBreakpointsActivated")));
     v8::Debug::Call(setBreakpointsActivated, args);
-#endif
 }
 
 ScriptDebugServer::PauseOnExceptionsState ScriptDebugServer::pauseOnExceptionsState()
 {
-#if ENABLE(V8_SCRIPT_DEBUG_SERVER)
     ensureDebuggerScriptCompiled();
     v8::HandleScope scope;
     v8::Context::Scope contextScope(v8::Debug::GetDebugContext());
@@ -206,14 +191,10 @@ ScriptDebugServer::PauseOnExceptionsState ScriptDebugServer::pauseOnExceptionsSt
     v8::Handle<v8::Value> argv[] = { v8::Handle<v8::Value>() };
     v8::Handle<v8::Value> result = function->Call(m_debuggerScript.get(), 0, argv);
     return static_cast<ScriptDebugServer::PauseOnExceptionsState>(result->Int32Value());
-#else
-    return DontPauseOnExceptions;
-#endif
 }
 
 void ScriptDebugServer::setPauseOnExceptionsState(PauseOnExceptionsState pauseOnExceptionsState)
 {
-#if ENABLE(V8_SCRIPT_DEBUG_SERVER)
     ensureDebuggerScriptCompiled();
     v8::HandleScope scope;
     v8::Context::Scope contextScope(v8::Debug::GetDebugContext());
@@ -221,54 +202,44 @@ void ScriptDebugServer::setPauseOnExceptionsState(PauseOnExceptionsState pauseOn
     v8::Handle<v8::Function> setPauseOnExceptionsFunction = v8::Local<v8::Function>::Cast(m_debuggerScript.get()->Get(v8::String::New("setPauseOnExceptionsState")));
     v8::Handle<v8::Value> argv[] = { v8::Int32::New(pauseOnExceptionsState) };
     setPauseOnExceptionsFunction->Call(m_debuggerScript.get(), 1, argv);
-#endif
 }
 
 void ScriptDebugServer::continueProgram()
 {
-#if ENABLE(V8_SCRIPT_DEBUG_SERVER)
     if (m_pausedPage)
         m_clientMessageLoop->quitNow();
     didResume();
-#endif
 }
 
 void ScriptDebugServer::stepIntoStatement()
 {
-#if ENABLE(V8_SCRIPT_DEBUG_SERVER)
     ASSERT(m_pausedPage);
     v8::Handle<v8::Function> function = v8::Local<v8::Function>::Cast(m_debuggerScript.get()->Get(v8::String::New("stepIntoStatement")));
     v8::Handle<v8::Value> argv[] = { m_executionState.get() };
     function->Call(m_debuggerScript.get(), 1, argv);
     continueProgram();
-#endif
 }
 
 void ScriptDebugServer::stepOverStatement()
 {
-#if ENABLE(V8_SCRIPT_DEBUG_SERVER)
     ASSERT(m_pausedPage);
     v8::Handle<v8::Function> function = v8::Local<v8::Function>::Cast(m_debuggerScript.get()->Get(v8::String::New("stepOverStatement")));
     v8::Handle<v8::Value> argv[] = { m_executionState.get() };
     function->Call(m_debuggerScript.get(), 1, argv);
     continueProgram();
-#endif
 }
 
 void ScriptDebugServer::stepOutOfFunction()
 {
-#if ENABLE(V8_SCRIPT_DEBUG_SERVER)
     ASSERT(m_pausedPage);
     v8::Handle<v8::Function> function = v8::Local<v8::Function>::Cast(m_debuggerScript.get()->Get(v8::String::New("stepOutOfFunction")));
     v8::Handle<v8::Value> argv[] = { m_executionState.get() };
     function->Call(m_debuggerScript.get(), 1, argv);
     continueProgram();
-#endif
 }
 
 bool ScriptDebugServer::editScriptSource(const String& sourceID, const String& newContent, String& newSourceOrErrorMessage)
 {
-#if ENABLE(V8_SCRIPT_DEBUG_SERVER)
     ensureDebuggerScriptCompiled();
     v8::HandleScope scope;
 
@@ -295,9 +266,6 @@ bool ScriptDebugServer::editScriptSource(const String& sourceID, const String& n
     if (m_currentCallFrame)
         m_currentCallFrame.clear();
     return true;
-#else
-    return false;
-#endif
 }
 
 PassRefPtr<JavaScriptCallFrame> ScriptDebugServer::currentCallFrame()
@@ -321,7 +289,6 @@ bool ScriptDebugServer::isDebuggerAlwaysEnabled()
     return m_enabled;
 }
 
-#if ENABLE(V8_SCRIPT_DEBUG_SERVER)
 void ScriptDebugServer::v8DebugEventCallback(const v8::Debug::EventDetails& eventDetails)
 {
     ScriptDebugServer::shared().handleV8DebugEvent(eventDetails);
@@ -376,7 +343,6 @@ void ScriptDebugServer::handleV8DebugEvent(const v8::Debug::EventDetails& eventD
         }
     }
 }
-#endif
 
 void ScriptDebugServer::dispatchDidParseSource(ScriptDebugListener* listener, v8::Handle<v8::Object> object)
 {

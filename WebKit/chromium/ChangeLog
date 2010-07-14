@@ -1,3 +1,34 @@
+2010-07-14  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: remove v8 debugger code that doesn't use ScriptDebugServer
+        https://bugs.webkit.org/show_bug.cgi?id=42164
+
+        * WebKit.gypi:
+        * src/DebuggerAgentManager.cpp:
+        (WebKit::DebuggerAgentManager::debugAttach):
+        (WebKit::DebuggerAgentManager::debugDetach):
+        * src/InspectorFrontendClientImpl.cpp:
+        (WebKit::InspectorFrontendClientImpl::windowObjectCleared):
+        * src/WebDevToolsAgentImpl.cpp:
+        (WebKit::WebDevToolsAgentImpl::~WebDevToolsAgentImpl):
+        (WebKit::WebDevToolsAgentImpl::attach):
+        (WebKit::WebDevToolsAgentImpl::didNavigate):
+        (WebKit::WebDevToolsAgentImpl::createInspectorFrontendProxy):
+        * src/js/DebuggerAgent.js: Removed.
+        * src/js/DevTools.js:
+        (devtools.ToolsAgent):
+        (WebInspector.loaded):
+        * src/js/DevToolsHostStub.js:
+        * src/js/InspectorControllerImpl.js:
+        (devtools.InspectorBackendImpl):
+        * src/js/Tests.js:
+        (.TestSuite.prototype.testAutoContinueOnSyntaxError):
+        (.TestSuite.prototype.testExpandScope.examineScopes):
+        (.TestSuite.prototype.testExpandScope):
+        (.TestSuite.prototype.testDebugIntrinsicProperties):
+
 2010-07-14  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Yury Semikhatsky.

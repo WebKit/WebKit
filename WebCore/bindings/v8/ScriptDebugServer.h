@@ -103,10 +103,8 @@ private:
     ScriptDebugServer();
     ~ScriptDebugServer() { }
 
-#if ENABLE(V8_SCRIPT_DEBUG_SERVER)
     static void v8DebugEventCallback(const v8::Debug::EventDetails& eventDetails);
     void handleV8DebugEvent(const v8::Debug::EventDetails& eventDetails);
-#endif
 
     void dispatchDidParseSource(ScriptDebugListener* listener, v8::Handle<v8::Object> sourceObject);
 

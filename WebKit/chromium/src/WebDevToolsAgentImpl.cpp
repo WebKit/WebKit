@@ -231,9 +231,7 @@ WebDevToolsAgentImpl::WebDevToolsAgentImpl(
 WebDevToolsAgentImpl::~WebDevToolsAgentImpl()
 {
     DebuggerAgentManager::onWebViewClosed(m_webViewImpl);
-#if ENABLE(V8_SCRIPT_DEBUG_SERVER)
     ClientMessageLoopAdapter::inspectedViewClosed(m_webViewImpl);
-#endif
     disposeUtilityContext();
 }
 
@@ -250,10 +248,8 @@ void WebDevToolsAgentImpl::attach()
     if (m_attached)
         return;
 
-#if ENABLE(V8_SCRIPT_DEBUG_SERVER)
     if (!m_client->exposeV8DebuggerProtocol())
         ClientMessageLoopAdapter::ensureClientMessageLoopCreated(m_client);
-#endif
 
     m_debuggerAgentImpl.set(
         new DebuggerAgentImpl(m_webViewImpl,
@@ -294,9 +290,7 @@ void WebDevToolsAgentImpl::detach()
 
 void WebDevToolsAgentImpl::didNavigate()
 {
-#if ENABLE(V8_SCRIPT_DEBUG_SERVER)
     ClientMessageLoopAdapter::didNavigate();
-#endif
     DebuggerAgentManager::onNavigate();
 }
 
@@ -432,11 +426,9 @@ void WebDevToolsAgentImpl::createInspectorFrontendProxy()
     m_utilityContext = v8::Context::New();
     compileUtilityScripts();
     initDevToolsAgentHost();
-#if ENABLE(V8_SCRIPT_DEBUG_SERVER)
     WebCString debuggerScriptJs = m_client->debuggerScriptSource();
     WebCore::ScriptDebugServer::shared().setDebuggerScriptSource(
         WebCore::String(debuggerScriptJs.data(), debuggerScriptJs.length()));
-#endif
 }
 
 void WebDevToolsAgentImpl::setInspectorFrontendProxyToInspectorController()

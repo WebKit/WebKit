@@ -1,3 +1,27 @@
+2010-07-14  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: remove v8 debugger code that doesn't use ScriptDebugServer
+        https://bugs.webkit.org/show_bug.cgi?id=42164
+
+        * bindings/v8/ScriptDebugServer.cpp:
+        (WebCore::retrieveFrame):
+        (WebCore::ScriptDebugServer::addListener):
+        (WebCore::ScriptDebugServer::setBreakpoint):
+        (WebCore::ScriptDebugServer::removeBreakpoint):
+        (WebCore::ScriptDebugServer::clearBreakpoints):
+        (WebCore::ScriptDebugServer::setBreakpointsActivated):
+        (WebCore::ScriptDebugServer::pauseOnExceptionsState):
+        (WebCore::ScriptDebugServer::setPauseOnExceptionsState):
+        (WebCore::ScriptDebugServer::continueProgram):
+        (WebCore::ScriptDebugServer::stepIntoStatement):
+        (WebCore::ScriptDebugServer::stepOverStatement):
+        (WebCore::ScriptDebugServer::stepOutOfFunction):
+        (WebCore::ScriptDebugServer::editScriptSource):
+        (WebCore::ScriptDebugServer::handleV8DebugEvent):
+        * bindings/v8/ScriptDebugServer.h:
+
 2010-07-14  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Yury Semikhatsky.

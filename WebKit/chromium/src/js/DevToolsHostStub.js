@@ -33,8 +33,7 @@
  * DevTools frontend to function as a standalone web app.
  */
 
-if (!window["RemoteDebuggerAgent"]) {
-    window["RemoteDebuggerAgent"] = { setDebuggerScriptSource: function() {} };
+if (!window["RemoteDebuggerCommandExecutor"]) {
     window["RemoteDebuggerCommandExecutor"] = {};
     window["RemoteProfilerAgent"] = {};
     window["RemoteToolsAgent"] = {

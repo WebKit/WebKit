@@ -62,17 +62,7 @@ devtools.ToolsAgent = function()
 {
     RemoteToolsAgent.didDispatchOn = WebInspector.Callback.processCallback;
     RemoteToolsAgent.dispatchOnClient = this.dispatchOnClient_.bind(this);
-    this.debuggerAgent_ = new devtools.DebuggerAgent();
     this.profilerAgent_ = new devtools.ProfilerAgent();
-};
-
-
-/**
- * Resets tools agent to its initial state.
- */
-devtools.ToolsAgent.prototype.reset = function()
-{
-    this.debuggerAgent_.reset();
 };
 
 
@@ -89,31 +79,12 @@ devtools.ToolsAgent.prototype.evaluateJavaScript = function(script, opt_callback
 
 
 /**
- * @return {devtools.DebuggerAgent} Debugger agent instance.
- */
-devtools.ToolsAgent.prototype.getDebuggerAgent = function()
-{
-    return this.debuggerAgent_;
-};
-
-
-/**
  * @return {devtools.ProfilerAgent} Profiler agent instance.
  */
 devtools.ToolsAgent.prototype.getProfilerAgent = function()
 {
     return this.profilerAgent_;
 };
-
-
-(function () {
-var orig = WebInspector.reset;
-WebInspector.reset = function()
-{
-    devtools.tools.reset();
-    orig.call(this);
-};
-})();
 
 
 /**
@@ -165,7 +136,6 @@ var oldLoaded = WebInspector.loaded;
 WebInspector.loaded = function()
 {
     devtools.tools = new devtools.ToolsAgent();
-    devtools.tools.reset();
 
     Preferences.ignoreWhitespace = false;
     Preferences.samplingCPUProfiler = true;
@@ -195,76 +165,6 @@ devtools.domContentLoaded = function()
     }
 }
 document.addEventListener("DOMContentLoaded", devtools.domContentLoaded, false);
-
-
-if (!window.v8ScriptDebugServerEnabled) {
-
-(function()
-{
-    var oldShow = WebInspector.ScriptsPanel.prototype.show;
-    WebInspector.ScriptsPanel.prototype.show =  function()
-    {
-        devtools.tools.getDebuggerAgent().initUI();
-        this.enableToggleButton.visible = false;
-        oldShow.call(this);
-    };
-})();
-
-
-(function () {
-var orig = InjectedScriptAccess.prototype.getProperties;
-InjectedScriptAccess.prototype.getProperties = function(objectProxy, ignoreHasOwnProperty, abbreviate, callback)
-{
-    if (objectProxy.isScope)
-        devtools.tools.getDebuggerAgent().resolveScope(objectProxy.objectId, callback);
-    else if (objectProxy.isV8Ref)
-        devtools.tools.getDebuggerAgent().resolveChildren(objectProxy.objectId, callback, false);
-    else
-        orig.apply(this, arguments);
-};
-})();
-
-
-(function()
-{
-InjectedScriptAccess.prototype.evaluateInCallFrame = function(callFrameId, code, objectGroup, callback)
-{
-    //TODO(pfeldman): remove once 49084 is rolled.
-    if (!callback)
-        callback = objectGroup;
-    devtools.tools.getDebuggerAgent().evaluateInCallFrame(callFrameId, code, callback);
-};
-})();
-
-
-(function()
-{
-var orig = InjectedScriptAccess.prototype.getCompletions;
-InjectedScriptAccess.prototype.getCompletions = function(expressionString, includeInspectorCommandLineAPI, callFrameId, reportCompletions)
-{
-    if (typeof callFrameId === "number")
-        devtools.tools.getDebuggerAgent().resolveCompletionsOnFrame(expressionString, callFrameId, reportCompletions);
-    else
-        return orig.apply(this, arguments);
-};
-})();
-
-// Highlight extension content scripts in the scripts list.
-(function () {
-    var original = WebInspector.ScriptsPanel.prototype._addScriptToFilesMenu;
-    WebInspector.ScriptsPanel.prototype._addScriptToFilesMenu = function(script)
-    {
-        var result = original.apply(this, arguments);
-        var debuggerAgent = devtools.tools.getDebuggerAgent();
-        var type = debuggerAgent.getScriptContextType(script.sourceID);
-        var option = script.filesSelectOption;
-        if (type === "injected" && option)
-            option.addStyleClass("injected");
-        return result;
-    };
-})();
-
-}
 
 
 (function InterceptProfilesPanelEvents()
@@ -368,4 +268,9 @@ WebInspector.resetToolbarColors = function()
     if (WebInspector._themeStyleElement)
         WebInspector._themeStyleElement.textContent = "";
 
+}
+
+// TODO(yurys): should be removed when eclipse debugger stops using it.
+if (window.RemoteDebuggerAgent) {
+    RemoteDebuggerAgent.setContextId = function() {};
 }

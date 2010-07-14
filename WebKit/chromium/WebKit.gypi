@@ -34,7 +34,6 @@
         # for copying them to resource dir, and for generating 'devtools.html' file.
         'devtools_js_files': [
             'src/js/InspectorControllerImpl.js',
-            'src/js/DebuggerAgent.js',
             'src/js/ProfilerAgent.js',
             'src/js/ProfilerProcessor.js',
             'src/js/HeapProfilerPanel.js',
