@@ -40,7 +40,8 @@ enum RenderAsTextBehaviorFlags {
     RenderAsTextShowLayerNesting = 1 << 1, // Annotate the layer lists.
     RenderAsTextShowCompositedLayers = 1 << 2, // Show which layers are composited.
     RenderAsTextShowAddresses = 1 << 3, // Show layer and renderer addresses.
-    RenderAsTextPrintingMode = 1 << 4 // Dump the tree in printing mode.
+    RenderAsTextShowIDAndClass = 1 << 4, // Show id and class attributes
+    RenderAsTextPrintingMode = 1 << 5 // Dump the tree in printing mode.
 };
 typedef unsigned RenderAsTextBehavior;
 

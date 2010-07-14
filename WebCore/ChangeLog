@@ -1,5 +1,24 @@
 2010-07-13  Simon Fraser  <simon.fraser@apple.com>
 
+        Reviewed by Dan Bernstein.
+
+        Show IDs and classnames in layer tree dumps
+        https://bugs.webkit.org/show_bug.cgi?id=42213
+
+        When dumping the layer tree via showLayerTree(), include id and class attributes for
+        ease of debugging.
+        
+        No tests, since this is debug-only code.
+
+        * rendering/RenderLayer.cpp:
+        (showLayerTree):
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::RenderTreeAsText::writeRenderObject):
+        * rendering/RenderTreeAsText.h:
+        (WebCore::):
+
+2010-07-13  Simon Fraser  <simon.fraser@apple.com>
+
         Build fix: fix WebCore exports by editing the .in file, rather than the generated file.
 
         * WebCore.exp.in:
