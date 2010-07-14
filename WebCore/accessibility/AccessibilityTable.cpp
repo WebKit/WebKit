@@ -137,6 +137,9 @@ bool AccessibilityTable::isTableExposableThroughAccessibility()
     unsigned borderedCellCount = 0;
     unsigned backgroundDifferenceCellCount = 0;
     
+    Color alternatingRowColors[5];
+    int alternatingRowColorCount = 0;
+    
     int headersInFirstColumnCount = 0;
     for (int row = 0; row < numRows; ++row) {
     
@@ -189,6 +192,19 @@ bool AccessibilityTable::isTableExposableThroughAccessibility()
             // if we've found 10 "good" cells, we don't need to keep searching
             if (borderedCellCount >= 10 || backgroundDifferenceCellCount >= 10)
                 return true;
+            
+            // For the first 5 rows, cache the background color so we can check if this table has zebra-striped rows.
+            if (row < 5 && row == alternatingRowColorCount) {
+                RenderObject* renderRow = cell->parent();
+                if (!renderRow || !renderRow->isTableRow())
+                    continue;
+                RenderStyle* rowRenderStyle = renderRow->style();
+                if (!rowRenderStyle)
+                    continue;
+                Color rowColor = rowRenderStyle->visitedDependentColor(CSSPropertyBackgroundColor);
+                alternatingRowColors[alternatingRowColorCount] = rowColor;
+                alternatingRowColorCount++;
+            }
         }
         
         if (!row && headersInFirstRowCount == numCols && numCols > 1)
@@ -211,6 +227,20 @@ bool AccessibilityTable::isTableExposableThroughAccessibility()
     if (backgroundDifferenceCellCount >= neededCellCount)
         return true;
 
+    // Check if there is an alternating row background color indicating a zebra striped style pattern.
+    if (alternatingRowColorCount > 2) {
+        Color firstColor = alternatingRowColors[0];
+        for (int k = 1; k < alternatingRowColorCount; k++) {
+            // If an odd row was the same color as the first row, its not alternating.
+            if (k % 2 == 1 && alternatingRowColors[k] == firstColor)
+                return false;
+            // If an even row is not the same as the first row, its not alternating.
+            if (!(k % 2) && alternatingRowColors[k] != firstColor)
+                return false;
+        }
+        return true;
+    }
+    
     return false;
 }
     
