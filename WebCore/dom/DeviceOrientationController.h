@@ -26,8 +26,12 @@
 #ifndef DeviceOrientationController_h
 #define DeviceOrientationController_h
 
+#include "DOMWindow.h"
+#include <wtf/HashCountedSet.h>
+
 namespace WebCore {
 
+class DeviceOrientation;
 class DeviceOrientationClient;
 class Page;
 
@@ -35,13 +39,17 @@ class DeviceOrientationController {
 public:
     DeviceOrientationController(Page*, DeviceOrientationClient*);
 
-    // FIXME: Add methods to start and stop the service.
+    void addListener(DOMWindow*);
+    void removeListener(DOMWindow*);
+    void removeAllListeners(DOMWindow*);
 
-    void onDeviceOrientationChange(double alpha, double beta, double gamma);
+    void onDeviceOrientationChange(DeviceOrientation*);
 
 private:
     Page* m_page;
     DeviceOrientationClient* m_client;
+    typedef HashCountedSet<DOMWindow*> ListenersSet;
+    ListenersSet m_listeners;
 };
 
 } // namespace WebCore

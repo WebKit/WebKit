@@ -35,11 +35,12 @@
 #include "CSSStyleSelector.h"
 #include "Chrome.h"
 #include "Console.h"
-#include "Database.h"
-#include "DatabaseCallback.h"
 #include "DOMApplicationCache.h"
 #include "DOMSelection.h"
 #include "DOMTimer.h"
+#include "Database.h"
+#include "DatabaseCallback.h"
+#include "DeviceOrientationController.h"
 #include "PageTransitionEvent.h"
 #include "Document.h"
 #include "Element.h"
@@ -1410,6 +1411,10 @@ bool DOMWindow::addEventListener(const AtomicString& eventType, PassRefPtr<Event
         addUnloadEventListener(this);
     else if (eventType == eventNames().beforeunloadEvent && allowsBeforeUnloadListeners(this))
         addBeforeUnloadEventListener(this);
+#if ENABLE(DEVICE_ORIENTATION)
+    else if (eventType == eventNames().deviceorientationEvent && frame() && frame()->page())
+        frame()->page()->deviceOrientation()->addListener(this);
+#endif
 
     return true;
 }
@@ -1423,6 +1428,10 @@ bool DOMWindow::removeEventListener(const AtomicString& eventType, EventListener
         removeUnloadEventListener(this);
     else if (eventType == eventNames().beforeunloadEvent && allowsBeforeUnloadListeners(this))
         removeBeforeUnloadEventListener(this);
+#if ENABLE(DEVICE_ORIENTATION)
+    else if (eventType == eventNames().deviceorientationEvent && frame() && frame()->page())
+        frame()->page()->deviceOrientation()->removeListener(this);
+#endif
 
     return true;
 }
@@ -1496,6 +1505,11 @@ bool DOMWindow::dispatchEvent(PassRefPtr<Event> prpEvent, PassRefPtr<EventTarget
 void DOMWindow::removeAllEventListeners()
 {
     EventTarget::removeAllEventListeners();
+
+#if ENABLE(DEVICE_ORIENTATION)
+    if (frame() && frame()->page())
+        frame()->page()->deviceOrientation()->removeAllListeners(this);
+#endif
 
     removeAllUnloadEventListeners(this);
     removeAllBeforeUnloadEventListeners(this);

@@ -1,3 +1,29 @@
+2010-07-14  Steve Block  <steveblock@google.com>
+
+        Reviewed by Jeremy Orlow.
+
+        Provide implementation of DeviceOrientationController and hook into DOMWindow
+        https://bugs.webkit.org/show_bug.cgi?id=39588
+
+        Added DeviceOrientationController::addListener() and removeListener()
+        to start and stop the client and added calls from DomWindow. Implemented
+        DeviceOrientationController::onDeviceOrientationChange() to fire a
+        DeviceOrientationEvent on the window object.
+
+        No new tests yet, pending LayoutTestController methods for mock DeviceOrientation.
+
+        * dom/DeviceOrientationClient.h:
+        * dom/DeviceOrientationController.cpp:
+        (WebCore::DeviceOrientation::addListener):
+        (WebCore::DeviceOrientation::removeListener):
+        (WebCore::DeviceOrientation::removeAllListeners):
+        (WebCore::DeviceOrientationController::onDeviceOrientationChange):
+        * dom/DeviceOrientationController.h:
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::addEventListener):
+        (WebCore::DOMWindow::removeEventListener):
+        (WebCore::DOMWindow::removeAllEventListeners):
+
 2010-07-14  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.
