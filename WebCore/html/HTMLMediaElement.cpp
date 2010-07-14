@@ -1015,49 +1015,55 @@ bool HTMLMediaElement::supportsSave() const
     
 void HTMLMediaElement::seek(float time, ExceptionCode& ec)
 {
-    // 4.8.10.10. Seeking
-    // 1
+    // 4.8.9.9 Seeking
+
+    // 1 - If the media element's readyState is HAVE_NOTHING, then raise an INVALID_STATE_ERR exception.
     if (m_readyState == HAVE_NOTHING || !m_player) {
         ec = INVALID_STATE_ERR;
         return;
     }
 
-    // 2
+    // Get the current time before setting m_seeking, m_lastSeekTime is returned once it is set.
+    float now = currentTime();
+
+    // 3 - Set the seeking IDL attribute to true.
+    // The flag will be cleared when the engine tells is the time has actually changed
+    m_seeking = true;
+
+    // 4 - Queue a task to fire a simple event named timeupdate at the element.
+    scheduleTimeupdateEvent(false);
+
+    // 6 - If the new playback position is later than the end of the media resource, then let it be the end 
+    // of the media resource instead.
     time = min(time, duration());
 
-    // 3
-    time = max(time, 0.0f);
+    // 7 - If the new playback position is less than the earliest possible position, let it be that position instead.
+    float earliestTime = m_player->startTime();
+    time = max(time, earliestTime);
 
-    // 4
+    // 8 - If the (possibly now changed) new playback position is not in one of the ranges given in the 
+    // seekable attribute, then let it be the position in one of the ranges given in the seekable attribute 
+    // that is the nearest to the new playback position. ... If there are no ranges given in the seekable
+    // attribute then set the seeking IDL attribute to false and abort these steps.
     RefPtr<TimeRanges> seekableRanges = seekable();
-    if (!seekableRanges->contain(time)) {
-        ec = INDEX_SIZE_ERR;
+    if (!seekableRanges->length() || time == now) {
+        m_seeking = false;
         return;
     }
-    
-    // avoid generating events when the time won't actually change
-    float now = currentTime();
-    if (time == now)
-        return;
+    time = seekableRanges->nearest(time);
 
-    // 5
     if (m_playing) {
         if (m_lastSeekTime < now)
             addPlayedRange(m_lastSeekTime, now);
     }
     m_lastSeekTime = time;
-
-    // 6 - set the seeking flag, it will be cleared when the engine tells is the time has actually changed
-    m_seeking = true;
-
-    // 7
-    scheduleTimeupdateEvent(false);
-
-    // 8 - this is covered, if necessary, when the engine signals a readystate change
-
-    // 10
-    m_player->seek(time);
     m_sentEndEvent = false;
+
+    // 9 - Set the current playback position to the given new playback position
+    m_player->seek(time);
+
+    // 10-15 are handled, if necessary, when the engine signals a readystate change.
+
 }
 
 void HTMLMediaElement::finishSeek()

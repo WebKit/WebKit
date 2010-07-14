@@ -1,3 +1,15 @@
+2010-07-14  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Update media element's seeking logic.
+        https://bugs.webkit.org/show_bug.cgi?id=42178
+        <rdar://problem/8185817>
+
+        * http/tests/media/video-seekable-stall-expected.txt:
+        * http/tests/media/video-seekable-stall.html: Seeking to an unbuffered time no longer
+        generates an exception.
+
 2010-07-14  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r63305.

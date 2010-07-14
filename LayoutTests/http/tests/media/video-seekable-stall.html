@@ -8,7 +8,6 @@ waitForEvent('canplay', function () {
     test("video.seekable.start(0) == 0");
     test("video.seekable.end(0) > 0");
     test("video.seekable.end(0) < video.duration - 1");
-    testException("video.currentTime = video.duration - 1", "DOMException.INDEX_SIZE_ERR");
     endTest();
 } );
 video.src = "http://127.0.0.1:8000/media/video-load-and-stall.cgi?name=../../../media/content/test.mp4&stallAt=100000";

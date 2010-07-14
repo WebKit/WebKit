@@ -6,6 +6,5 @@ TEST(video.seekable.length == 1) OK
 TEST(video.seekable.start(0) == 0) OK
 TEST(video.seekable.end(0) > 0) OK
 TEST(video.seekable.end(0) < video.duration - 1) OK
-TEST(video.currentTime = video.duration - 1) THROWS(DOMException.INDEX_SIZE_ERR) OK
 END OF TEST
 

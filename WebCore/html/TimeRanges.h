@@ -55,6 +55,8 @@ public:
     void add(float start, float end);
     
     bool contain(float time) const;
+    
+    float nearest(float time) const;
 
 private:
     TimeRanges() { }
