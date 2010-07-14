@@ -1,3 +1,35 @@
+2010-07-14  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Eric Seidel.
+
+        SVG patterns and masks should not be able to reference themselves
+        https://bugs.webkit.org/show_bug.cgi?id=32171
+
+        Don't apply pattern/mask resources, if they contain cyclic references. Gradients/Filters are not affected.
+        Clippers are already correcly handling this on their own, as well as markers (all which require subtle quirks, covered by existing tests).
+
+        Tests: svg/custom/recursive-filter.svg
+               svg/custom/recursive-gradient.svg
+               svg/custom/recursive-mask.svg
+               svg/custom/recursive-pattern.svg
+
+        * rendering/RenderSVGResourceContainer.h:
+        (WebCore::RenderSVGResourceContainer::RenderSVGResourceContainer): Stop using idForStyleResolution(), but use getIdAttribute(), no functional change though.
+        (WebCore::RenderSVGResourceContainer::idChanged): Ditto.
+        (WebCore::RenderSVGResourceContainer::childElementReferencesResource): To be implemented by classes inheriting from us. Defaults to false.
+        (WebCore::RenderSVGResourceContainer::containsCyclicReference): Check whether this resource contains contains a child which references ourselves.
+        * rendering/RenderSVGResourceMasker.cpp:
+        (WebCore::RenderSVGResourceMasker::childElementReferencesResource): Check whether the masker child specifies mask=".." with the same URI than ourselves.
+        (WebCore::RenderSVGResourceMasker::applyResource): Early exit if we contain a cylic reference.
+        * rendering/RenderSVGResourceMasker.h:
+        * rendering/RenderSVGResourcePattern.cpp:
+        (WebCore::RenderSVGResourcePattern::childElementReferencesResource): Check whether the masker child specifies fill=".." with the same URI than ourselves.
+        (WebCore::RenderSVGResourcePattern::applyResource): Early exit if we contain a cylic reference.
+        * rendering/RenderSVGResourcePattern.h:
+        * svg/SVGPaint.cpp:
+        (WebCore::SVGPaint::matchesTargetURI): Add new helper function comparing a SVGPaint URI with a given reference id.
+        * svg/SVGPaint.h:
+
 2010-07-14  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Nikolas Zimmermann.

@@ -69,6 +69,8 @@ private:
     void createMaskImage(MaskerData*, const SVGMaskElement*, RenderObject*);
     void calculateMaskContentRepaintRect();
 
+    virtual bool childElementReferencesResource(const SVGRenderStyle*, const String&) const;
+
     FloatRect m_maskBoundaries;
     HashMap<RenderObject*, MaskerData*> m_masker;
 };

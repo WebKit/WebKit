@@ -1,6 +1,7 @@
 /*
-    Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
+    Copyright (C) 2004, 2005 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
+    Copyright (C) Research In Motion Limited 2010. All rights reserved.
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -19,8 +20,10 @@
 */
 
 #include "config.h"
+
 #if ENABLE(SVG)
 #include "SVGPaint.h"
+#include "SVGURIReference.h"
 
 namespace WebCore {
 
@@ -108,8 +111,14 @@ String SVGPaint::cssText() const
     return SVGColor::cssText();
 }
 
+bool SVGPaint::matchesTargetURI(const String& referenceId)
+{
+    if (m_paintType != SVG_PAINTTYPE_URI && m_paintType != SVG_PAINTTYPE_URI_RGBCOLOR)
+        return false;
+
+    return referenceId == SVGURIReference::getTarget(m_uri);
 }
 
-// vim:ts=4:noet
-#endif // ENABLE(SVG)
+}
 
+#endif // ENABLE(SVG)

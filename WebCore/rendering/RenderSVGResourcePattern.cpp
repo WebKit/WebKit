@@ -69,6 +69,21 @@ void RenderSVGResourcePattern::invalidateClient(RenderObject* object)
     markForLayoutAndResourceInvalidation(object);
 }
 
+bool RenderSVGResourcePattern::childElementReferencesResource(const SVGRenderStyle* style, const String& referenceId) const
+{
+    if (style->hasFill()) {
+        if (style->fillPaint()->matchesTargetURI(referenceId))
+            return true;
+    }
+
+    if (style->hasStroke()) {
+        if (style->strokePaint()->matchesTargetURI(referenceId))
+            return true;
+    }
+
+    return false;
+}
+
 bool RenderSVGResourcePattern::applyResource(RenderObject* object, RenderStyle* style, GraphicsContext*& context, unsigned short resourceMode)
 {
     ASSERT(object);
@@ -91,6 +106,9 @@ bool RenderSVGResourcePattern::applyResource(RenderObject* object, RenderStyle* 
 
     PatternData* patternData = m_pattern.get(object);
     if (!patternData->pattern) {
+        // Early exit, if this resource contains a child which references ourselves.
+        if (containsCyclicReference(node()))
+            return false;
 
         // Create tile image
         OwnPtr<ImageBuffer> tileImage = createTileImage(patternData, patternElement, object);

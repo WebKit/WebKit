@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
+    Copyright (C) 2004, 2005 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
     Copyright (C) 2006 Samuel Weinig (sam.weinig@gmial.com)
 
@@ -78,6 +78,8 @@ namespace WebCore {
         static SVGPaint* defaultFill();
         static SVGPaint* defaultStroke();
 
+        bool matchesTargetURI(const String& referenceId);
+
     private:
         SVGPaint();
         SVGPaint(const String& uri);
@@ -96,5 +98,3 @@ namespace WebCore {
 
 #endif // ENABLE(SVG)
 #endif // SVGPaint_h
-
-// vim:ts=4:noet

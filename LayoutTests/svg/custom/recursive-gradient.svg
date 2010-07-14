@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<defs>
+    <radialGradient xlink:href="#gradient1" id="gradient1" gradientUnits="objectBoundingBox" cx=".5" cy=".5" fx=".5" fy=".5" r=".5">
+        <stop stop-color="blue" offset="0"/>
+        <stop stop-color="red" offset="1"/>
+    </radialGradient>
+</defs>
+
+<!-- This should not crash -->
+<rect x="0" y="0" width="100" height="100" fill="url(#gradient1)" stroke="green"/>
+</svg>

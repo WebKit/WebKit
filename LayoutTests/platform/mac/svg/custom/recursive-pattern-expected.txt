@@ -1,0 +1,15 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 201x201
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+      RenderSVGResourcePattern {pattern} [id="pattern1"] [patternUnits=objectBoundingBox] [patternContentUnits=userSpaceOnUse]
+        RenderPath {rect} at (0,0) size 100x100 [fill={[type=PATTERN] [id="pattern1"]}] [data="M0.00,0.00 L100.00,0.00 L100.00,100.00 L0.00,100.00 Z"]
+      RenderSVGResourcePattern {pattern} [id="pattern2"] [patternUnits=objectBoundingBox] [patternContentUnits=userSpaceOnUse]
+        RenderPath {rect} at (0,0) size 100x100 [fill={[type=PATTERN] [id="pattern1"]}] [data="M0.00,0.00 L100.00,0.00 L100.00,100.00 L0.00,100.00 Z"]
+      RenderSVGResourcePattern {pattern} [id="pattern3"] [patternUnits=objectBoundingBox] [patternContentUnits=userSpaceOnUse]
+      RenderSVGResourcePattern {pattern} [id="pattern4"] [patternUnits=objectBoundingBox] [patternContentUnits=userSpaceOnUse]
+    RenderPath {rect} at (0,0) size 101x101 [stroke={[type=SOLID] [color=#008000]}] [fill={[type=PATTERN] [id="pattern1"]}] [data="M0.00,0.00 L100.00,0.00 L100.00,100.00 L0.00,100.00 Z"]
+    RenderPath {rect} at (0,99) size 101x102 [stroke={[type=SOLID] [color=#008000]}] [fill={[type=PATTERN] [id="pattern2"]}] [data="M0.00,100.00 L100.00,100.00 L100.00,200.00 L0.00,200.00 Z"]
+    RenderPath {rect} at (99,0) size 102x101 [stroke={[type=SOLID] [color=#008000]}] [fill={[type=PATTERN] [id="pattern3"]}] [data="M100.00,0.00 L200.00,0.00 L200.00,100.00 L100.00,100.00 Z"]
+    RenderPath {rect} at (99,99) size 102x102 [stroke={[type=SOLID] [color=#008000]}] [fill={[type=PATTERN] [id="pattern4"]}] [data="M100.00,100.00 L200.00,100.00 L200.00,200.00 L100.00,200.00 Z"]

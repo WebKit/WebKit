@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<defs>
+    <pattern id="pattern1" x="0" y="0" width="100" height="100">
+        <rect x="0" y="0" width="100" height="100" fill="url(#pattern1)"/>
+    </pattern>
+
+    <pattern id="pattern2" x="0" y="0" width="100" height="100">
+        <rect x="0" y="0" width="100" height="100" fill="url(#pattern1)"/>
+    </pattern>
+
+    <pattern id="pattern3" x="0" y="0" width="100" height="100" xlink:href="#pattern1"/>
+    <pattern id="pattern4" x="0" y="0" width="100" height="100" xlink:href="#pattern2"/>
+</defs>
+
+<!-- This should not crash -->
+<rect x="0" y="0" width="100" height="100" fill="url(#pattern1)" stroke="green"/>
+<rect x="0" y="100" width="100" height="100" fill="url(#pattern2)" stroke="green"/>
+<rect x="100" y="0" width="100" height="100" fill="url(#pattern3)" stroke="green"/>
+<rect x="100" y="100" width="100" height="100" fill="url(#pattern4)" stroke="green"/>
+</svg>

@@ -1,3 +1,29 @@
+2010-07-14  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Eric Seidel.
+
+        SVG patterns and masks should not be able to reference themselves
+        https://bugs.webkit.org/show_bug.cgi?id=32171
+
+        Add new layout tests covering recursion in pattern/mask/gradient/filter. Nothing crashing anymore.
+
+        * platform/mac/svg/custom/recursive-filter-expected.checksum: Added.
+        * platform/mac/svg/custom/recursive-filter-expected.png: Added.
+        * platform/mac/svg/custom/recursive-filter-expected.txt: Added.
+        * platform/mac/svg/custom/recursive-gradient-expected.checksum: Added.
+        * platform/mac/svg/custom/recursive-gradient-expected.png: Added.
+        * platform/mac/svg/custom/recursive-gradient-expected.txt: Added.
+        * platform/mac/svg/custom/recursive-mask-expected.checksum: Added.
+        * platform/mac/svg/custom/recursive-mask-expected.png: Added.
+        * platform/mac/svg/custom/recursive-mask-expected.txt: Added.
+        * platform/mac/svg/custom/recursive-pattern-expected.checksum: Added.
+        * platform/mac/svg/custom/recursive-pattern-expected.png: Added.
+        * platform/mac/svg/custom/recursive-pattern-expected.txt: Added.
+        * svg/custom/recursive-filter.svg: Added.
+        * svg/custom/recursive-gradient.svg: Added.
+        * svg/custom/recursive-mask.svg: Added.
+        * svg/custom/recursive-pattern.svg: Added.
+
 2010-07-14  Yuta Kitamura  <yutak@chromium.org>
 
         Reviewed by Alexey Proskuryakov.

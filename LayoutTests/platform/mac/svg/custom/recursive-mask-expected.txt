@@ -1,0 +1,21 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 150x50
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+      RenderSVGResourceMasker {mask} [id="mask1"] [maskUnits=objectBoundingBox] [maskContentUnits=userSpaceOnUse]
+        RenderPath {rect} at (0,0) size 50x50 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M0.00,0.00 L50.00,0.00 L50.00,50.00 L0.00,50.00 Z"]
+      RenderSVGResourceMasker {mask} [id="mask2"] [maskUnits=objectBoundingBox] [maskContentUnits=userSpaceOnUse]
+        RenderPath {rect} at (100,0) size 50x50 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M100.00,0.00 L150.00,0.00 L150.00,50.00 L100.00,50.00 Z"]
+          [masker="mask2"] RenderSVGResourceMasker {mask} at (100,0) size 50x50
+      RenderSVGResourceMasker {mask} [id="mask3"] [maskUnits=objectBoundingBox] [maskContentUnits=userSpaceOnUse]
+        RenderPath {rect} at (0,0) size 0x0 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M0.00,100.00 L50.00,100.00 L50.00,150.00 L0.00,150.00 Z"]
+          [masker="mask1"] RenderSVGResourceMasker {mask} at (0,0) size 0x0
+        RenderPath {rect} at (0,0) size 0x0 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M100.00,100.00 L150.00,100.00 L150.00,150.00 L100.00,150.00 Z"]
+          [masker="mask2"] RenderSVGResourceMasker {mask} at (0,0) size 0x0
+    RenderPath {rect} at (0,0) size 50x50 [stroke={[type=SOLID] [color=#008000]}] [fill={[type=SOLID] [color=#0000FF]}] [data="M0.00,0.00 L100.00,0.00 L100.00,100.00 L0.00,100.00 Z"]
+      [masker="mask1"] RenderSVGResourceMasker {mask} at (0,0) size 50x50
+    RenderPath {rect} at (100,0) size 50x50 [stroke={[type=SOLID] [color=#008000]}] [fill={[type=SOLID] [color=#0000FF]}] [data="M100.00,0.00 L200.00,0.00 L200.00,100.00 L100.00,100.00 Z"]
+      [masker="mask2"] RenderSVGResourceMasker {mask} at (100,0) size 50x50
+    RenderPath {rect} at (0,0) size 0x0 [stroke={[type=SOLID] [color=#008000]}] [fill={[type=SOLID] [color=#0000FF]}] [data="M100.00,100.00 L200.00,100.00 L200.00,200.00 L100.00,200.00 Z"]
+      [masker="mask3"] RenderSVGResourceMasker {mask} at (0,0) size 0x0
