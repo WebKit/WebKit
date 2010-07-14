@@ -33,9 +33,10 @@
 namespace WebProcessProxyMessage {
 
 enum Kind {
-    PostMessage,
+    AddBackForwardItem,
+    GetPluginHostConnection,
     GetPlugins,
-    GetPluginHostConnection
+    PostMessage,
 };
 
 }

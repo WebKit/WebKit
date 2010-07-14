@@ -1,3 +1,53 @@
+2010-07-14  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Patch for https://bugs.webkit.org/show_bug.cgi?id=42297
+        <rdar://problem/8187355>
+        Make titles in WebBackForwardListItems work.
+
+        - Make WebBackForwardListItemMap per WebProcessProxy to allow updating
+          them separate from a page. They are conceptually per process anyway.
+        - Add a message to add or update a WebBackForwardListItemMap triggered
+          by the WebCore::notifyHistoryItemChanged mechanism.
+
+        * Shared/CoreIPCSupport/WebProcessProxyMessageKinds.h:
+        (WebProcessProxyMessage::):
+        Add AddOrUpdateBackForwardItem message.
+
+        * UIProcess/WebBackForwardListItem.h:
+        (WebKit::WebBackForwardListItem::setOriginalURL):
+        (WebKit::WebBackForwardListItem::setURL):
+        (WebKit::WebBackForwardListItem::setTitle):
+        Add setters.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didReceiveMessage):
+        BackForwardAddItem now assumes the item has already been created, so
+        now just forwards the add message onto the WebBackForwardList.
+
+        (WebKit::WebPageProxy::addItemToBackForwardList): Take a WebBackForwardList instead of an ID.
+        (WebKit::WebPageProxy::goToItemInBackForwardList): Ditto.
+        * UIProcess/WebPageProxy.h: Ditto.
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::webBackForwardItem):
+        (WebKit::WebProcessProxy::addOrUpdateBackForwardListItem):
+        (WebKit::WebProcessProxy::didReceiveMessage):
+        (WebKit::WebProcessProxy::didReceiveSyncMessage):
+        * UIProcess/WebProcessProxy.h:
+        Have the WebProcessProxy manage the WebBackForwardListItems.
+
+        * WebProcess/WebPage/WebBackForwardListProxy.cpp:
+        (WebKit::updateBackForwardItem):
+        (WebKit::WK2NotifyHistoryItemChanged): Use this to notify UIProcess
+        of HistoryItem changes (such as the title being added).
+        (WebKit::WebBackForwardListProxy::WebBackForwardListProxy):
+        Register the notifyHistoryItemChanged function.
+        (WebKit::WebBackForwardListProxy::addItem):
+        Just send the ID as the updateBackForwardItem is already going to have
+        been called by this time.
+
 2010-07-14  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

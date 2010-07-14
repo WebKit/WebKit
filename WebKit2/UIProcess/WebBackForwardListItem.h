@@ -44,8 +44,13 @@ public:
 
     uint64_t itemID() const { return m_itemID; }
 
+    void setOriginalURL(const WebCore::String& originalURL) { m_originalURL = originalURL; }
     const WebCore::String& originalURL() const { return m_originalURL; }
+
+    void setURL(const WebCore::String& url) { m_url = url; }
     const WebCore::String& url() const { return m_url; }
+
+    void setTitle(const WebCore::String& title) { m_title = title; }
     const WebCore::String& title() const { return m_title; }
 
 private:
