@@ -53,9 +53,8 @@ using namespace WebCore;
     if (Node* node = renderer->node()) {
         if (node->isElementNode())
             name = [name stringByAppendingFormat:@" %@", (NSString *)static_cast<Element*>(node)->tagName()];
-
         if (node->hasID())
-            name = [name stringByAppendingFormat:@" \u2018%@\u2019", (NSString *)static_cast<Element*>(node)->getIdAttribute()];
+            name = [name stringByAppendingFormat:@" %C%@%C", 0x2018, (NSString *)static_cast<Element*>(node)->getIdAttribute(), 0x2019];
     }
 
     if (layer->isReflection())

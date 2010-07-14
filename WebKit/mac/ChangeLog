@@ -1,3 +1,12 @@
+2010-07-14  Darin Adler  <darin@apple.com>
+
+        Another try at fixing the Tiger build.
+
+        Avoid non-ASCII in source files to keep Tiger compiler happy.
+
+        * WebView/WebRenderLayer.mm:
+        (+[WebRenderLayer nameForLayer:]): Use %C for the non-ASCII characters.
+
 2010-07-14  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin Adler.
