@@ -172,6 +172,9 @@ void CanvasRenderingContext2D::setStrokeStyle(PassRefPtr<CanvasStyle> style)
     if (!style)
         return;
 
+    if (state().m_strokeStyle && *style == *state().m_strokeStyle)
+        return;
+
     if (canvas()->originClean()) {
         if (CanvasPattern* pattern = style->canvasPattern()) {
             if (!pattern->originClean())
@@ -194,6 +197,9 @@ CanvasStyle* CanvasRenderingContext2D::fillStyle() const
 void CanvasRenderingContext2D::setFillStyle(PassRefPtr<CanvasStyle> style)
 {
     if (!style)
+        return;
+
+    if (state().m_fillStyle && *style == *state().m_fillStyle)
         return;
  
     if (canvas()->originClean()) {

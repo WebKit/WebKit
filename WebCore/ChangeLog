@@ -1,3 +1,20 @@
+2010-07-14  Andreas Kling  <andreas.kling@nokia.com>
+
+        Reviewed by Darin Adler.
+
+        Canvas: Make assigning the same fillStyle or strokeStyle a fast no-op
+        https://bugs.webkit.org/show_bug.cgi?id=42267
+
+        Avoid calling into GraphicsContext when setting a style to its current value.
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::setStrokeStyle): Return early if the
+        new style is the same as the current one.
+        (WebCore::CanvasRenderingContext2D::setFillStyle): Same.
+        * html/canvas/CanvasStyle.cpp:
+        (WebCore::operator==): Added operator==(CanvasStyle, CanvasStyle)
+        * html/canvas/CanvasStyle.h:
+
 2010-07-14  Tony Gentilcore  <tonyg@chromium.org>
 
         Reviewed by Darin Fisher.
