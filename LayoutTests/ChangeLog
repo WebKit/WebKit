@@ -1,3 +1,9 @@
+2010-07-13  Brian Weinstein  <bweinstein@apple.com>
+
+        Fix Windows checkouts by shortening paths.
+
+        * fast/js/sputnik/Conformance: Renamed a few directories so checkouts can succeed.
+        
 2010-07-13  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.
