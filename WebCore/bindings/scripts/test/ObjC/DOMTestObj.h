@@ -34,6 +34,14 @@
 @class NSString;
 @protocol DOMEventListener;
 
+enum {
+    DOM_CONST_VALUE_0 = 0,
+    DOM_CONST_VALUE_1 = 1,
+    DOM_CONST_VALUE_2 = 2,
+    DOM_CONST_VALUE_4 = 4,
+    DOM_CONST_VALUE_8 = 8
+};
+
 @interface DOMTestObj : DOMObject
 - (int)readOnlyIntAttr;
 - (NSString *)readOnlyStringAttr;

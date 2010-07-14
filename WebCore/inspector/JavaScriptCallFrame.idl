@@ -25,7 +25,11 @@
 
 module inspector {
 
-    interface [Conditional=JAVASCRIPT_DEBUGGER, OmitConstructor] JavaScriptCallFrame {
+    interface [
+        Conditional=JAVASCRIPT_DEBUGGER,
+        OmitConstructor,
+        DontCheckEnums
+    ] JavaScriptCallFrame {
 
         // Scope type
         const unsigned short GLOBAL_SCOPE = 0;

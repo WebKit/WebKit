@@ -1,3 +1,66 @@
+2010-07-14  Marcus Bulach  <bulach@chromium.org>
+
+        Reviewed by Jeremy Orlow.
+
+        Code generator: ensure generated constants match their corresponding enums.
+        https://bugs.webkit.org/show_bug.cgi?id=42250
+
+        Specific interfaces can use DontCheckEnums attribute to avoid generating the compile-time check.
+
+        Tests: updated bindings tests. Generated code should compile.
+
+        * bindings/scripts/CodeGenerator.pm:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * bindings/scripts/CodeGeneratorV8.pm:
+        * bindings/scripts/test/CPP/WebDOMTestObj.h:
+        (WebDOMTestObj::):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::):
+        (WebCore::JSTestObjPrototype::getOwnPropertySlot):
+        (WebCore::JSTestObjPrototype::getOwnPropertyDescriptor):
+        (WebCore::jsTestObjCONST_VALUE_0):
+        (WebCore::jsTestObjCONST_VALUE_1):
+        (WebCore::jsTestObjCONST_VALUE_2):
+        (WebCore::jsTestObjCONST_VALUE_4):
+        (WebCore::jsTestObjCONST_VALUE_8):
+        * bindings/scripts/test/JS/JSTestObj.h:
+        * bindings/scripts/test/ObjC/DOMTestObj.h:
+        * bindings/scripts/test/TestObj.idl:
+        * bindings/scripts/test/V8/V8TestObj.cpp:
+        (WebCore::):
+        (WebCore::ConfigureV8TestObjTemplate):
+        * css/WebKitCSSTransformValue.idl:
+        * dom/DOMCoreException.idl:
+        * dom/EventException.idl:
+        * dom/Node.idl:
+        * dom/OverflowEvent.idl:
+        * dom/RangeException.idl:
+        * html/FileError.idl:
+        * html/FileReader.idl:
+        * html/canvas/Float32Array.idl:
+        * html/canvas/Int16Array.idl:
+        * html/canvas/Int32Array.idl:
+        * html/canvas/Int8Array.idl:
+        * html/canvas/Uint16Array.idl:
+        * html/canvas/Uint32Array.idl:
+        * html/canvas/Uint8Array.idl:
+        * html/canvas/WebGLRenderingContext.idl:
+        * inspector/JavaScriptCallFrame.idl:
+        * loader/appcache/DOMApplicationCache.idl:
+        * storage/SQLException.idl:
+        * svg/SVGComponentTransferFunctionElement.idl:
+        * svg/SVGException.idl:
+        * svg/SVGFEBlendElement.idl:
+        * svg/SVGFEColorMatrixElement.idl:
+        * svg/SVGFECompositeElement.idl:
+        * svg/SVGFEConvolveMatrixElement.idl:
+        * svg/SVGFEDisplacementMapElement.idl:
+        * svg/SVGFEMorphologyElement.idl:
+        * svg/SVGFETurbulenceElement.idl:
+        * svg/SVGGradientElement.idl:
+        * xml/XMLHttpRequestException.idl:
+        * xml/XPathException.idl:
+
 2010-07-14  Andreas Kling  <andreas.kling@nokia.com>
 
         Reviewed by Ojan Vafai.

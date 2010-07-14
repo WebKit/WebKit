@@ -25,8 +25,11 @@
 
 module svg {
 
-    interface [Conditional=SVG&FILTERS] SVGFEColorMatrixElement : SVGElement,
-                                                          SVGFilterPrimitiveStandardAttributes {
+    interface [
+        Conditional=SVG&FILTERS,
+        DontCheckEnums
+    ] SVGFEColorMatrixElement : SVGElement,
+                                SVGFilterPrimitiveStandardAttributes {
         // Color Matrix Types
         const unsigned short SVG_FECOLORMATRIX_TYPE_UNKNOWN          = 0;
         const unsigned short SVG_FECOLORMATRIX_TYPE_MATRIX           = 1;

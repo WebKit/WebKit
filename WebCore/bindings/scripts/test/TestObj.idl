@@ -129,5 +129,12 @@ module test {
         readonly attribute long      description;
         attribute long               id;
         readonly attribute DOMString hash;
+
+        // Check constants and enums.
+        const unsigned short CONST_VALUE_0 = 0;
+        const unsigned short CONST_VALUE_1 = 1;
+        const unsigned short CONST_VALUE_2 = 2;
+        const unsigned short CONST_VALUE_4 = 4;
+        const unsigned short CONST_VALUE_8 = 8;
     };
 }

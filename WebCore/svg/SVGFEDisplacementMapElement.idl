@@ -25,8 +25,11 @@
 
 module svg {
 
-    interface [Conditional=SVG&FILTERS] SVGFEDisplacementMapElement : SVGElement,
-                                                              SVGFilterPrimitiveStandardAttributes {    
+    interface [
+        Conditional=SVG&FILTERS,
+        DontCheckEnums
+    ] SVGFEDisplacementMapElement : SVGElement,
+                                    SVGFilterPrimitiveStandardAttributes {
         // Channel Selectors
         const unsigned short SVG_CHANNEL_UNKNOWN = 0;
         const unsigned short SVG_CHANNEL_R       = 1;

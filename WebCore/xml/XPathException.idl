@@ -29,7 +29,8 @@
 module xpath {
 
     interface [
-        Conditional=XPATH
+        Conditional=XPATH,
+        DontCheckEnums
     ] XPathException {
 
         readonly attribute unsigned short   code;

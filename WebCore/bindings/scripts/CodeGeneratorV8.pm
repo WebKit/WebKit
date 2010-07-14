@@ -1753,6 +1753,7 @@ END
     }
     if ($has_constants) {
         push(@implContent, "};\n");
+        push(@implContent, $codeGenerator->GenerateCompileTimeCheckForEnumsIfNeeded($dataNode));
     }
 
     push(@implContentDecls, "} // namespace ${interfaceName}Internal\n\n");

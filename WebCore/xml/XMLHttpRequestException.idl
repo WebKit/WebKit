@@ -29,7 +29,8 @@
 module xml {
 
     interface [
-        NoStaticTables
+        NoStaticTables,
+        DontCheckEnums
     ] XMLHttpRequestException {
 
         readonly attribute unsigned short   code;

@@ -100,13 +100,25 @@ static JSC_CONST_HASHTABLE HashTable JSTestObjTable = { 68, 63, JSTestObjTableVa
 #define THUNK_GENERATOR(generator)
 #endif
 
-static const HashTableValue JSTestObjConstructorTableValues[1] =
+static const HashTableValue JSTestObjConstructorTableValues[6] =
 {
+    { "CONST_VALUE_0", DontDelete | ReadOnly, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjCONST_VALUE_0), (intptr_t)0 THUNK_GENERATOR(0) },
+    { "CONST_VALUE_1", DontDelete | ReadOnly, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjCONST_VALUE_1), (intptr_t)0 THUNK_GENERATOR(0) },
+    { "CONST_VALUE_2", DontDelete | ReadOnly, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjCONST_VALUE_2), (intptr_t)0 THUNK_GENERATOR(0) },
+    { "CONST_VALUE_4", DontDelete | ReadOnly, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjCONST_VALUE_4), (intptr_t)0 THUNK_GENERATOR(0) },
+    { "CONST_VALUE_8", DontDelete | ReadOnly, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjCONST_VALUE_8), (intptr_t)0 THUNK_GENERATOR(0) },
     { 0, 0, 0, 0 THUNK_GENERATOR(0) }
 };
 
 #undef THUNK_GENERATOR
-static JSC_CONST_HASHTABLE HashTable JSTestObjConstructorTable = { 1, 0, JSTestObjConstructorTableValues, 0 };
+static JSC_CONST_HASHTABLE HashTable JSTestObjConstructorTable = { 16, 15, JSTestObjConstructorTableValues, 0 };
+
+COMPILE_ASSERT(0 == TestObj::CONST_VALUE_0, TestObjEnumCONST_VALUE_0IsWrongUseDontCheckEnums);
+COMPILE_ASSERT(1 == TestObj::CONST_VALUE_1, TestObjEnumCONST_VALUE_1IsWrongUseDontCheckEnums);
+COMPILE_ASSERT(2 == TestObj::CONST_VALUE_2, TestObjEnumCONST_VALUE_2IsWrongUseDontCheckEnums);
+COMPILE_ASSERT(4 == TestObj::CONST_VALUE_4, TestObjEnumCONST_VALUE_4IsWrongUseDontCheckEnums);
+COMPILE_ASSERT(8 == TestObj::CONST_VALUE_8, TestObjEnumCONST_VALUE_8IsWrongUseDontCheckEnums);
+
 class JSTestObjConstructor : public DOMConstructorObject {
 public:
     JSTestObjConstructor(JSC::ExecState*, JSDOMGlobalObject*);
@@ -148,8 +160,13 @@ bool JSTestObjConstructor::getOwnPropertyDescriptor(ExecState* exec, const Ident
 #define THUNK_GENERATOR(generator)
 #endif
 
-static const HashTableValue JSTestObjPrototypeTableValues[31] =
+static const HashTableValue JSTestObjPrototypeTableValues[36] =
 {
+    { "CONST_VALUE_0", DontDelete | ReadOnly, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjCONST_VALUE_0), (intptr_t)0 THUNK_GENERATOR(0) },
+    { "CONST_VALUE_1", DontDelete | ReadOnly, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjCONST_VALUE_1), (intptr_t)0 THUNK_GENERATOR(0) },
+    { "CONST_VALUE_2", DontDelete | ReadOnly, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjCONST_VALUE_2), (intptr_t)0 THUNK_GENERATOR(0) },
+    { "CONST_VALUE_4", DontDelete | ReadOnly, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjCONST_VALUE_4), (intptr_t)0 THUNK_GENERATOR(0) },
+    { "CONST_VALUE_8", DontDelete | ReadOnly, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjCONST_VALUE_8), (intptr_t)0 THUNK_GENERATOR(0) },
     { "voidMethod", DontDelete | Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionVoidMethod), (intptr_t)0 THUNK_GENERATOR(0) },
     { "voidMethodWithArgs", DontDelete | Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionVoidMethodWithArgs), (intptr_t)3 THUNK_GENERATOR(0) },
     { "intMethod", DontDelete | Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionIntMethod), (intptr_t)0 THUNK_GENERATOR(0) },
@@ -184,7 +201,7 @@ static const HashTableValue JSTestObjPrototypeTableValues[31] =
 };
 
 #undef THUNK_GENERATOR
-static JSC_CONST_HASHTABLE HashTable JSTestObjPrototypeTable = { 130, 127, JSTestObjPrototypeTableValues, 0 };
+static JSC_CONST_HASHTABLE HashTable JSTestObjPrototypeTable = { 132, 127, JSTestObjPrototypeTableValues, 0 };
 const ClassInfo JSTestObjPrototype::s_info = { "TestObjPrototype", 0, &JSTestObjPrototypeTable, 0 };
 
 JSObject* JSTestObjPrototype::self(ExecState* exec, JSGlobalObject* globalObject)
@@ -194,12 +211,12 @@ JSObject* JSTestObjPrototype::self(ExecState* exec, JSGlobalObject* globalObject
 
 bool JSTestObjPrototype::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
-    return getStaticFunctionSlot<JSObject>(exec, &JSTestObjPrototypeTable, this, propertyName, slot);
+    return getStaticPropertySlot<JSTestObjPrototype, JSObject>(exec, &JSTestObjPrototypeTable, this, propertyName, slot);
 }
 
 bool JSTestObjPrototype::getOwnPropertyDescriptor(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
 {
-    return getStaticFunctionDescriptor<JSObject>(exec, &JSTestObjPrototypeTable, this, propertyName, descriptor);
+    return getStaticPropertyDescriptor<JSTestObjPrototype, JSObject>(exec, &JSTestObjPrototypeTable, this, propertyName, descriptor);
 }
 
 const ClassInfo JSTestObj::s_info = { "TestObj", 0, &JSTestObjTable, 0 };
@@ -1226,6 +1243,33 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod(ExecStat
     if (exec->argumentCount() == 1)
         return jsTestObjPrototypeFunctionOverloadedMethod4(exec);
     return throwVMTypeError(exec);
+}
+
+// Constant getters
+
+JSValue jsTestObjCONST_VALUE_0(ExecState* exec, JSValue, const Identifier&)
+{
+    return jsNumber(exec, static_cast<int>(0));
+}
+
+JSValue jsTestObjCONST_VALUE_1(ExecState* exec, JSValue, const Identifier&)
+{
+    return jsNumber(exec, static_cast<int>(1));
+}
+
+JSValue jsTestObjCONST_VALUE_2(ExecState* exec, JSValue, const Identifier&)
+{
+    return jsNumber(exec, static_cast<int>(2));
+}
+
+JSValue jsTestObjCONST_VALUE_4(ExecState* exec, JSValue, const Identifier&)
+{
+    return jsNumber(exec, static_cast<int>(4));
+}
+
+JSValue jsTestObjCONST_VALUE_8(ExecState* exec, JSValue, const Identifier&)
+{
+    return jsNumber(exec, static_cast<int>(8));
 }
 
 JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, TestObj* object)

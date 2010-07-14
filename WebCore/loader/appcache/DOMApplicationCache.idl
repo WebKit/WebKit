@@ -28,7 +28,8 @@ module offline {
     interface [
         Conditional=OFFLINE_WEB_APPLICATIONS,
         EventTarget,
-        OmitConstructor
+        OmitConstructor,
+        DontCheckEnums
     ] DOMApplicationCache {
         // update status
         const unsigned short UNCACHED = 0;

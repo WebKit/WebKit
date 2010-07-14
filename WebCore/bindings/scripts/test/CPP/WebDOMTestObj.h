@@ -42,6 +42,14 @@ public:
     WebDOMTestObj(const WebDOMTestObj&);
     ~WebDOMTestObj();
 
+    enum {
+        WEBDOM_CONST_VALUE_0 = 0,
+        WEBDOM_CONST_VALUE_1 = 1,
+        WEBDOM_CONST_VALUE_2 = 2,
+        WEBDOM_CONST_VALUE_4 = 4,
+        WEBDOM_CONST_VALUE_8 = 8
+    };
+
     int readOnlyIntAttr() const;
     WebDOMString readOnlyStringAttr() const;
     WebDOMTestObj readOnlyTestObjAttr() const;

@@ -25,11 +25,14 @@
 
 module svg {
 
-    interface [Conditional=SVG] SVGGradientElement : SVGElement,
-                                                     SVGURIReference,
-                                                     SVGExternalResourcesRequired,
-                                                     SVGStylable
-                                                  /* SVGUnitTypes */ {
+    interface [
+        Conditional=SVG,
+        DontCheckEnums
+    ] SVGGradientElement : SVGElement,
+                           SVGURIReference,
+                           SVGExternalResourcesRequired,
+                           SVGStylable
+                           /* SVGUnitTypes */ {
         // Spread Method Types
         const unsigned short SVG_SPREADMETHOD_UNKNOWN = 0;
         const unsigned short SVG_SPREADMETHOD_PAD     = 1;

@@ -1242,6 +1242,8 @@ sub GenerateImplementation
                                    \@hashKeys, \@hashSpecials,
                                    \@hashValue1, \@hashValue2);
 
+        push(@implContent, $codeGenerator->GenerateCompileTimeCheckForEnumsIfNeeded($dataNode));
+
         my $protoClassName = "${className}Prototype";
 
         GenerateConstructorDeclaration(\@implContent, $className, $dataNode) unless $dataNode->extendedAttributes->{"CustomConstructFunction"};

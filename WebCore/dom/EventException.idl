@@ -30,7 +30,8 @@ module events {
 
     // Introduced in DOM Level 2:
     interface [
-        NoStaticTables
+        NoStaticTables,
+        DontCheckEnums
     ] EventException {
 
         readonly attribute unsigned short   code;

@@ -467,4 +467,28 @@ sub SetterExpressionPrefix
     return "$functionName($contentAttributeName, "
 }
 
+sub ShouldCheckEnums
+{
+    my $dataNode = shift;
+    return not $dataNode->extendedAttributes->{"DontCheckEnums"};
+}
+
+sub GenerateCompileTimeCheckForEnumsIfNeeded
+{
+    my ($object, $dataNode) = @_;
+    my $interfaceName = $dataNode->name;
+    my @checks = ();
+    # If necessary, check that all constants are available as enums with the same value.
+    if (ShouldCheckEnums($dataNode) && @{$dataNode->constants}) {
+        push(@checks, "\n");
+        foreach my $constant (@{$dataNode->constants}) {
+            my $name = $constant->name;
+            my $value = $constant->value;
+            push(@checks, "COMPILE_ASSERT($value == ${interfaceName}::$name, ${interfaceName}Enum${name}IsWrongUseDontCheckEnums);\n");
+        }
+        push(@checks, "\n");
+    }
+    return @checks;
+}
+
 1;

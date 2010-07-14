@@ -28,7 +28,8 @@ module html {
     interface [
         Conditional=3D_CANVAS,
         InterfaceUUID=98fb48ae-7216-489c-862b-8e1217fc4443,
-        ImplementationUUID=ab4f0781-152f-450e-9546-5b3987491a54
+        ImplementationUUID=ab4f0781-152f-450e-9546-5b3987491a54,
+        DontCheckEnums
     ] WebGLRenderingContext : CanvasRenderingContext {
 
         /* ClearBufferMask */

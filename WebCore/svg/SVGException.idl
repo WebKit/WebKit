@@ -21,7 +21,8 @@
 module svg {
 
     interface [
-        Conditional=SVG
+        Conditional=SVG,
+        DontCheckEnums
     ] SVGException {
 
         readonly attribute unsigned short   code;

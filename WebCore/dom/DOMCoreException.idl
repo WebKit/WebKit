@@ -29,7 +29,8 @@
 module core {
 
     interface [
-        NoStaticTables
+        NoStaticTables,
+        DontCheckEnums
     ] DOMCoreException {
 
         readonly attribute unsigned short   code;

@@ -25,8 +25,11 @@
 
 module svg {
 
-    interface [Conditional=SVG&FILTERS] SVGFEBlendElement : SVGElement,
-                                                    SVGFilterPrimitiveStandardAttributes {
+    interface [
+        Conditional=SVG&FILTERS,
+        DontCheckEnums
+    ] SVGFEBlendElement : SVGElement,
+                          SVGFilterPrimitiveStandardAttributes {
         // Blend Mode Types
         const unsigned short SVG_FEBLEND_MODE_UNKNOWN  = 0;
         const unsigned short SVG_FEBLEND_MODE_NORMAL   = 1;

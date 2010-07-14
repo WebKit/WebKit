@@ -1015,6 +1015,20 @@ static const BatchedCallback TestObjCallbacks[] = {
     {"methodWithNonOptionalArgAndTwoOptionalArgs", TestObjInternal::methodWithNonOptionalArgAndTwoOptionalArgsCallback},
     {"overloadedMethod", TestObjInternal::overloadedMethodCallback},
 };
+static const BatchedConstant TestObjConsts[] = {
+    {"CONST_VALUE_0", static_cast<signed int>(0)},
+    {"CONST_VALUE_1", static_cast<signed int>(1)},
+    {"CONST_VALUE_2", static_cast<signed int>(2)},
+    {"CONST_VALUE_4", static_cast<signed int>(4)},
+    {"CONST_VALUE_8", static_cast<signed int>(8)},
+};
+
+COMPILE_ASSERT(0 == TestObj::CONST_VALUE_0, TestObjEnumCONST_VALUE_0IsWrongUseDontCheckEnums);
+COMPILE_ASSERT(1 == TestObj::CONST_VALUE_1, TestObjEnumCONST_VALUE_1IsWrongUseDontCheckEnums);
+COMPILE_ASSERT(2 == TestObj::CONST_VALUE_2, TestObjEnumCONST_VALUE_2IsWrongUseDontCheckEnums);
+COMPILE_ASSERT(4 == TestObj::CONST_VALUE_4, TestObjEnumCONST_VALUE_4IsWrongUseDontCheckEnums);
+COMPILE_ASSERT(8 == TestObj::CONST_VALUE_8, TestObjEnumCONST_VALUE_8IsWrongUseDontCheckEnums);
+
 static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestObjTemplate(v8::Persistent<v8::FunctionTemplate> desc)
 {
     v8::Local<v8::Signature> defaultSignature = configureTemplate(desc, "TestObj", v8::Persistent<v8::FunctionTemplate>(), V8TestObj::internalFieldCount,
@@ -1059,6 +1073,7 @@ static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestObjTemplate(v8::Persi
     v8::Handle<v8::FunctionTemplate> customArgsAndExceptionArgv[customArgsAndExceptionArgc] = { V8log::GetRawTemplate() };
     v8::Handle<v8::Signature> customArgsAndExceptionSignature = v8::Signature::New(desc, customArgsAndExceptionArgc, customArgsAndExceptionArgv);
     proto->Set(v8::String::New("customArgsAndException"), v8::FunctionTemplate::New(TestObjInternal::customArgsAndExceptionCallback, v8::Handle<v8::Value>(), customArgsAndExceptionSignature));
+    batchConfigureConstants(desc, proto, TestObjConsts, sizeof(TestObjConsts) / sizeof(*TestObjConsts));
 
     // Custom toString template
     desc->Set(getToStringName(), getToStringTemplate());

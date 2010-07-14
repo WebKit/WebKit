@@ -25,8 +25,11 @@
 
 module svg {
 
-    interface [Conditional=SVG&FILTERS] SVGFECompositeElement : SVGElement,
-                                                        SVGFilterPrimitiveStandardAttributes {
+    interface [
+        Conditional=SVG&FILTERS,
+        DontCheckEnums
+    ] SVGFECompositeElement : SVGElement,
+                              SVGFilterPrimitiveStandardAttributes {
         // Composite Operators
         const unsigned short SVG_FECOMPOSITE_OPERATOR_UNKNOWN    = 0;
         const unsigned short SVG_FECOMPOSITE_OPERATOR_OVER       = 1;

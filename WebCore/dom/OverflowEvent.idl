@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 module events {
-
-    interface OverflowEvent : Event {
+    # FIXME: Converge these consts and OverflowEvent::orientType values and remove DontCheckEnums attribute.
+    interface [DontCheckEnums] OverflowEvent : Event {
         const unsigned short HORIZONTAL = 0;
         const unsigned short VERTICAL   = 1;
         const unsigned short BOTH       = 2;
