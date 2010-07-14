@@ -1,3 +1,21 @@
+2010-07-14  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        TreeWalker::previousSibling calls firstChild instead of lastChild when handling FILTER_SKIP
+        https://bugs.webkit.org/show_bug.cgi?id=42008
+
+        TreeWalker::previousNode does not handle FILTER_REJECT when processing lastChild
+        https://bugs.webkit.org/show_bug.cgi?id=42010
+
+        Tests: fast/dom/TreeWalker/previousNodeLastChildReject.html
+               fast/dom/TreeWalker/previousSiblingLastChildSkip.html
+
+        * dom/TreeWalker.cpp:
+        (WebCore::TreeWalker::previousSibling): Call lastChild instead of firstChild.
+        (WebCore::TreeWalker::previousNode): Fix handling of FILTER_REJECT by exiting
+        the lastChild loop when we encounter it.
+
 2010-07-14  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Brady Eidson.
