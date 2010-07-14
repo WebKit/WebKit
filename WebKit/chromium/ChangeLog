@@ -1,5 +1,11 @@
 2010-07-14  Kent Tamura  <tkent@chromium.org>
 
+        Unreviewed, attempt to fix build on 'Webkit.org Reliability Builder'.
+
+        * WebKit.gyp:
+
+2010-07-14  Kent Tamura  <tkent@chromium.org>
+
         Reviewed by David Levin.
 
         [Chromium] Upstreaming inspector_resources target
