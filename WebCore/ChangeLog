@@ -1,5 +1,12 @@
 2010-07-14  Eric Carlson  <eric.carlson@apple.com>
 
+        Unreviewed, build fix for r63319.
+
+        * html/TimeRanges.cpp:
+        (TimeRanges::nearest): Include math.h and use narrowPrecisionToFloat.
+
+2010-07-14  Eric Carlson  <eric.carlson@apple.com>
+
         Reviewed by Darin Adler.
 
         Update media element's seeking logic

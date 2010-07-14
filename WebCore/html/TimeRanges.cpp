@@ -27,6 +27,9 @@
 
 #include "TimeRanges.h"
 
+#include "FloatConversion.h"
+#include <math.h>
+
 using namespace WebCore;
 
 TimeRanges::TimeRanges(float start, float end)
@@ -127,9 +130,9 @@ float TimeRanges::nearest(float time) const
         if (time >= startTime && time <= endTime)
             return time;
         if (fabs(startTime - time) < closest)
-            closest = fabs(startTime - time);
+            closest = narrowPrecisionToFloat(fabs(startTime - time));
         else if (fabs(endTime - time) < closest)
-            closest = fabs(endTime - time);
+            closest = narrowPrecisionToFloat(fabs(endTime - time));
     }
     return closest;
 }
