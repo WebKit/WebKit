@@ -29,4 +29,4 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,246) size 784x131 [border: (2px solid #FF0000)]
         RenderImage {IMG} at (14,14) size 76x103
         RenderText {#text} at (0,0) size 0x0
-caret: position 1 of child 0 {IMG} of child 7 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+caret: position 1 of child 0 {IMG} of child 7 {DIV} of body

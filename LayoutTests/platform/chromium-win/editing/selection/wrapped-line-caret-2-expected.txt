@@ -14,4 +14,4 @@ layer at (0,0) size 800x600
         RenderInline {SPAN} at (0,0) size 301x19 [color=#0000FF]
           RenderText {#text} at (12,1) size 301x19
             text run at (12,1) width 301: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-caret: position 2 of child 0 {#text} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+caret: position 2 of child 0 {#text} of child 2 {DIV} of body

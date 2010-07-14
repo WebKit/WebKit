@@ -47,4 +47,4 @@ layer at (0,0) size 800x600
               text run at (0,0) width 20: "bar"
             RenderText {#text} at (20,0) size 27x19
               text run at (20,0) width 27: "Text"
-caret: position 3 of child 0 {#text} of child 0 {DIV} of child 1 {BLOCKQUOTE} of child 10 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+caret: position 3 of child 0 {#text} of child 0 {DIV} of child 1 {BLOCKQUOTE} of child 10 {DIV} of body

@@ -32,4 +32,4 @@ layer at (0,0) size 800x600
                 RenderText {#text} at (1,1) size 35x19
                   text run at (1,1) width 35: "world"
         RenderBlock (anonymous) at (0,26) size 784x0
-caret: position 5 of child 0 {#text} of child 1 {TD} of child 0 {TR} of child 0 {TBODY} of child 0 {TABLE} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+caret: position 5 of child 0 {#text} of child 1 {TD} of child 0 {TR} of child 0 {TBODY} of child 0 {TABLE} of child 3 {DIV} of body

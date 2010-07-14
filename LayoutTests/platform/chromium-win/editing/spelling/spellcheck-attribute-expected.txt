@@ -63,4 +63,4 @@ layer at (36,199) size 151x16
   RenderBlock {DIV} at (2,3) size 151x16
     RenderText {#text} at (1,0) size 18x16
       text run at (1,0) width 18: "zz "
-caret: position 3 of child 0 {#text} of child 0 {DIV} of child 10 {INPUT} of child 5 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+caret: position 3 of child 0 {#text} of child 0 {DIV} of child 10 {INPUT} of child 5 {DIV} of body

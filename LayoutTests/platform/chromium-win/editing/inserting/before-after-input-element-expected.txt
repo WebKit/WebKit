@@ -24,4 +24,4 @@ layer at (0,0) size 800x600
           text run at (191,3) width 39: "World"
 layer at (44,49) size 151x16
   RenderBlock {DIV} at (2,3) size 151x16
-caret: position 5 of child 2 {#text} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+caret: position 5 of child 2 {#text} of child 2 {DIV} of body

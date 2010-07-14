@@ -12,4 +12,4 @@ layer at (0,0) size 800x74
           RenderText {#text} at (114,14) size 40x30
             text run at (114,14) width 40: " baz"
         RenderText {#text} at (0,0) size 0x0
-caret: position 3 of child 1 {#text} of child 1 {span} of child 1 {div} of child 3 {body} of child 1 {html} of document
+caret: position 3 of child 1 {#text} of child 1 {span} of child 1 {div} of body

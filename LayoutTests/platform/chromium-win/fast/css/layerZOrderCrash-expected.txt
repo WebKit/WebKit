@@ -31,4 +31,4 @@ layer at (11,55) size 50x66
           RenderText {#text} at (1,41) size 44x19
             text run at (1,41) width 44: "content"
           RenderBR {BR} at (45,56) size 0x0
-caret: position 5 of child 0 {#text} of child 1 {BODY} of child 0 {HTML} of document
+caret: position 5 of child 0 {#text} of body

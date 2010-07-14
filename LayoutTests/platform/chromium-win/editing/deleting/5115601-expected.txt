@@ -17,4 +17,4 @@ layer at (0,0) size 800x600
                     RenderText {#text} at (2,2) size 282x19
                       text run at (2,2) width 282: "This sentence should be inside the editable cell."
         RenderBlock (anonymous) at (0,30) size 784x0
-caret: position 0 of child 0 {#text} of child 0 {SPAN} of child 0 {SPAN} of child 0 {TD} of child 0 {TR} of child 0 {TBODY} of child 1 {TABLE} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+caret: position 0 of child 0 {#text} of child 0 {SPAN} of child 0 {SPAN} of child 0 {TD} of child 0 {TR} of child 0 {TBODY} of child 1 {TABLE} of child 2 {DIV} of body

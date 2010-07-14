@@ -14,4 +14,4 @@ layer at (0,0) size 800x600
         RenderBlock {DIV} at (2,2) size 780x24 [border: (2px solid #AAAAFF)]
           RenderText {#text} at (2,2) size 94x20
             text run at (2,2) width 94: "( this is a test. )"
-caret: position 18 of child 0 {#text} of child 1 {DIV} of child 7 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+caret: position 18 of child 0 {#text} of child 1 {DIV} of child 7 {DIV} of body

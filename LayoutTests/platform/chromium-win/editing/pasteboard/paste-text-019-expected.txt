@@ -56,4 +56,4 @@ layer at (0,0) size 800x600
           RenderText {#text} at (80,2) size 74x27
             text run at (80,2) width 74: " bazBar"
         RenderText {#text} at (0,0) size 0x0
-caret: position 7 of child 1 {#text} of child 1 {SPAN} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+caret: position 7 of child 1 {#text} of child 1 {SPAN} of child 3 {DIV} of body

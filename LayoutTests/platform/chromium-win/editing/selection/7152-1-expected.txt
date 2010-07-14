@@ -32,5 +32,5 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (2,28) size 148x24 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 144x19
                 text run at (2,2) width 144: "This should be selected."
-selection start: position 0 of child 0 {#text} of child 1 {P} of child 1 {BODY} of child 0 {HTML} of document
-selection end:   position 1 of child 5 {TABLE} of child 1 {BODY} of child 0 {HTML} of document
+selection start: position 0 of child 0 {#text} of child 1 {P} of body
+selection end:   position 1 of child 5 {TABLE} of body

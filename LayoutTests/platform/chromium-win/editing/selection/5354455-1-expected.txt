@@ -15,4 +15,4 @@ layer at (0,0) size 800x600
               text run at (0,0) width 246: "The paragraph break should be selected."
         RenderBlock (anonymous) at (0,20) size 784x20
           RenderBR {BR} at (0,0) size 0x19
-caret: position 39 of child 0 {#text} of child 0 {SPAN} of child 1 {DIV} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+caret: position 39 of child 0 {#text} of child 0 {SPAN} of child 1 {DIV} of child 2 {DIV} of body

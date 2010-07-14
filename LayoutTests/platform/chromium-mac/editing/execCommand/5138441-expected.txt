@@ -17,4 +17,4 @@ layer at (0,0) size 800x600
         RenderBlock {BLOCKQUOTE} at (8,26) size 768x36 [border: (1px dashed #AAAAAA)]
           RenderText {#text} at (9,9) size 175x18
             text run at (9,9) width 175: "This text should be Quoted."
-caret: position 0 of child 0 {#text} of child 0 {DIV} of child 1 {BLOCKQUOTE} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+caret: position 0 of child 0 {#text} of child 0 {DIV} of child 1 {BLOCKQUOTE} of child 3 {DIV} of body

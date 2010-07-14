@@ -55,4 +55,4 @@ layer at (0,0) size 800x600
             RenderListMarker at (-22,0) size 9x27: bullet
             RenderText {#text} at (0,0) size 37x27
               text run at (0,0) width 37: "five"
-caret: position 0 of child 0 {BR} of child 5 {LI} of child 1 {UL} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+caret: position 0 of child 0 {BR} of child 5 {LI} of child 1 {UL} of child 1 {DIV} of body

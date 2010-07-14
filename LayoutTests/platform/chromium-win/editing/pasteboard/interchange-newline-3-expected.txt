@@ -28,4 +28,4 @@ layer at (0,0) size 800x600
       RenderBlock (anonymous) at (0,136) size 784x20
         RenderText {#text} at (0,0) size 169x19
           text run at (0,0) width 169: "This is non-editable content."
-caret: position 0 of child 0 {BR} of child 2 {DIV} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+caret: position 0 of child 0 {BR} of child 2 {DIV} of child 2 {DIV} of body

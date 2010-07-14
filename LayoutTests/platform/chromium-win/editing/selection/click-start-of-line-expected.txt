@@ -30,4 +30,4 @@ layer at (0,0) size 800x600
           text run at (0,1) width 147: "Alice in"
           text run at (147,1) width 12: " "
           text run at (0,58) width 232: "Wonderland"
-caret: position 10 of child 0 {#text} of child 7 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+caret: position 10 of child 0 {#text} of child 7 {DIV} of body

@@ -26,4 +26,4 @@ layer at (0,0) size 800x600
           RenderBlock {BLOCKQUOTE} at (40,104) size 676x28
             RenderText {#text} at (0,0) size 41x27
               text run at (0,0) width 41: "Test"
-caret: position 1 of child 3 {#text} of child 1 {DIV} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+caret: position 1 of child 3 {#text} of child 1 {DIV} of child 1 {DIV} of body

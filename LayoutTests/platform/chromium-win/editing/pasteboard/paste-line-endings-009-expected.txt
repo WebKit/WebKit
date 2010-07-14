@@ -53,4 +53,4 @@ layer at (0,0) size 800x600
                 text run at (0,0) width 6: "l"
               RenderText {#text} at (6,0) size 71x27
                 text run at (6,0) width 71: "ine two"
-caret: position 1 of child 0 {#text} of child 2 {DIV} of child 1 {DIV} of child 1 {DIV} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+caret: position 1 of child 0 {#text} of child 2 {DIV} of child 1 {DIV} of child 1 {DIV} of child 3 {DIV} of body

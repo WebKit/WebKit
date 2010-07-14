@@ -19,4 +19,4 @@ layer at (0,0) size 800x600
             RenderInline {SPAN} at (0,0) size 20x19
               RenderText {#text} at (0,0) size 20x19
                 text run at (0,0) width 20: "foo"
-caret: position 0 of child 0 {#text} of child 0 {SPAN} of child 0 {LI} of child 0 {UL} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+caret: position 0 of child 0 {#text} of child 0 {SPAN} of child 0 {LI} of child 0 {UL} of child 2 {DIV} of body

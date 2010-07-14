@@ -30,4 +30,4 @@ layer at (0,0) size 800x600
           RenderText {#text} at (110,42) size 10x27
             text run at (110,42) width 10: "z"
         RenderText {#text} at (0,0) size 0x0
-caret: position 1 of child 3 {#text} of child 1 {SPAN} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+caret: position 1 of child 3 {#text} of child 1 {SPAN} of child 1 {DIV} of body

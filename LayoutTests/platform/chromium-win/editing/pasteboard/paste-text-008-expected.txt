@@ -131,4 +131,4 @@ layer at (0,0) size 800x600
           text run at (14,14) width 194: "Upon such a full sea"
         RenderText {#text} at (208,14) size 184x27
           text run at (208,14) width 184: " are we now afloat,"
-caret: position 20 of child 0 {#text} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+caret: position 20 of child 0 {#text} of child 2 {DIV} of body

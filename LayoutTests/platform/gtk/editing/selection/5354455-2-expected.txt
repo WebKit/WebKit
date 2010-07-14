@@ -22,4 +22,4 @@ layer at (8,8) size 612x155
       RenderText {#text} at (0,0) size 0x0
       RenderText {#text} at (0,0) size 0x0
       RenderText {#text} at (0,0) size 0x0
-caret: position 0 of child 0 {#text} of child 1 {H1} of child 1 {BODY} of child 0 {HTML} of document
+caret: position 0 of child 0 {#text} of child 1 {H1} of body

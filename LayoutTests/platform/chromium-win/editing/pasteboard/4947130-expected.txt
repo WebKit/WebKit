@@ -17,5 +17,5 @@ layer at (0,0) size 800x600
         RenderImage {IMG} at (42,0) size 76x103
         RenderText {#text} at (118,88) size 28x19
           text run at (118,88) width 28: "xxxx"
-selection start: position 0 of child 1 {IMG} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document
-selection end:   position 1 of child 1 {IMG} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+selection start: position 0 of child 1 {IMG} of child 2 {DIV} of body
+selection end:   position 1 of child 1 {IMG} of child 2 {DIV} of body

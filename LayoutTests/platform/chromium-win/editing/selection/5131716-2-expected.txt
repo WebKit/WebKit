@@ -24,4 +24,4 @@ layer at (0,0) size 800x600
         RenderBlock {DIV} at (26,76) size 732x20
           RenderText {#text} at (0,0) size 98x19
             text run at (0,0) width 98: "Paragraph Two."
-caret: position 0 of child 3 {TABLE} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+caret: position 0 of child 3 {TABLE} of child 3 {DIV} of body

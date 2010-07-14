@@ -36,5 +36,5 @@ layer at (0,0) size 800x600
           RenderText {#text} at (1,21) size 159x19
             text run at (1,21) width 159: "try to select just this text"
         RenderText {#text} at (0,0) size 0x0
-selection start: position 0 of child 0 {#text} of child 1 {I} of child 7 {DIV} of child 1 {BODY} of child 0 {HTML} of document
-selection end:   position 3 of child 0 {#text} of child 1 {I} of child 7 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+selection start: position 0 of child 0 {#text} of child 1 {I} of child 7 {DIV} of body
+selection end:   position 3 of child 0 {#text} of child 1 {I} of child 7 {DIV} of body

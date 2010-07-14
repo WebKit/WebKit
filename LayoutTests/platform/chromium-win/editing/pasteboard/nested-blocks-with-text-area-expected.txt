@@ -34,4 +34,4 @@ layer at (305,50) size 179x36 clip at (306,51) size 177x34
     RenderBlock {DIV} at (3,3) size 175x16
       RenderText {#text} at (0,0) size 8x16
         text run at (0,0) width 8: " "
-caret: position 1 of child 0 {#text} of child 3 {SPAN} of child 1 {DIV} of child 4 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+caret: position 1 of child 0 {#text} of child 3 {SPAN} of child 1 {DIV} of child 4 {DIV} of body

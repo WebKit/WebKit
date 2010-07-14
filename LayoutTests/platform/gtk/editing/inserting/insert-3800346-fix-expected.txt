@@ -16,4 +16,4 @@ layer at (0,0) size 800x600
             RenderBR {BR} at (0,30) size 0x30
             RenderBR {BR} at (0,60) size 0x30
             RenderBR {BR} at (0,90) size 0x30
-caret: position 0 of child 5 {BR} of child 1 {DIV} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+caret: position 0 of child 5 {BR} of child 1 {DIV} of child 1 {DIV} of body

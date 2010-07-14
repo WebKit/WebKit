@@ -34,4 +34,4 @@ layer at (0,0) size 800x600
             RenderListMarker at (-18,0) size 7x19: bullet
             RenderText {#text} at (0,0) size 20x19
               text run at (0,0) width 20: "bar"
-caret: position 3 of child 0 {#text} of child 0 {B} of child 0 {DIV} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+caret: position 3 of child 0 {#text} of child 0 {B} of child 0 {DIV} of child 2 {DIV} of body

@@ -15,4 +15,4 @@ layer at (0,0) size 800x600
           RenderText {#text} at (90,204) size 105x30
             text run at (90,204) width 105: " conceived"
         RenderText {#text} at (0,0) size 0x0
-caret: position 0 of child 4 {IMG} of child 1 {SPAN} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+caret: position 0 of child 4 {IMG} of child 1 {SPAN} of child 1 {DIV} of body

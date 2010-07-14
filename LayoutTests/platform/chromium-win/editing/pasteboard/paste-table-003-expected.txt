@@ -47,4 +47,4 @@ layer at (0,0) size 800x600
                 RenderBR {BR} at (24,16) size 0x0
                 RenderBR {BR} at (1,21) size 0x19
         RenderBlock (anonymous) at (0,46) size 784x0
-caret: position 0 of child 2 {BR} of child 1 {TD} of child 0 {TR} of child 0 {TBODY} of child 0 {TABLE} of child 5 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+caret: position 0 of child 2 {BR} of child 1 {TD} of child 0 {TR} of child 0 {TBODY} of child 0 {TABLE} of child 5 {DIV} of body

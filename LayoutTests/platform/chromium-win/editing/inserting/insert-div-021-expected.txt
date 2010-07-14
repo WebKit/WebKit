@@ -43,4 +43,4 @@ layer at (0,0) size 800x600
         RenderInline {SPAN} at (0,0) size 0x0
         RenderText {#text} at (14,14) size 31x27
           text run at (14,14) width 31: "bar"
-caret: position 0 of child 1 {#text} of child 7 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+caret: position 0 of child 1 {#text} of child 7 {DIV} of body

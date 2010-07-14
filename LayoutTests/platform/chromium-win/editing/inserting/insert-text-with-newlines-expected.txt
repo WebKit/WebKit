@@ -66,4 +66,4 @@ layer at (0,0) size 800x600
           RenderBR {BR} at (14,70) size 0x27
           RenderText {#text} at (14,98) size 69x27
             text run at (14,98) width 69: "bazxxx"
-caret: position 6 of child 6 {#text} of child 1 {SPAN} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+caret: position 6 of child 6 {#text} of child 1 {SPAN} of child 1 {DIV} of body

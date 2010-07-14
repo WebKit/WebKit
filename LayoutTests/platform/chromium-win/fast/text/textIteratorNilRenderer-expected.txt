@@ -31,4 +31,4 @@ layer at (0,0) size 800x600
           RenderBR {BR} at (392,0) size 0x19
 layer at (205,13) size 271x16
   RenderBlock {DIV} at (2,3) size 271x16
-caret: position 1 of child 0 {#text} of child 1 {TD} of child 0 {TR} of child 1 {TBODY} of child 1 {TABLE} of child 1 {FORM} of child 1 {CENTER} of child 1 {BODY} of child 0 {HTML} of document
+caret: position 1 of child 0 {#text} of child 1 {TD} of child 0 {TR} of child 1 {TBODY} of child 1 {TABLE} of child 1 {FORM} of child 1 {CENTER} of body

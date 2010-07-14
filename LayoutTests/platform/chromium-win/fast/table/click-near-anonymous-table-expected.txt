@@ -39,4 +39,4 @@ layer at (0,0) size 800x600
               RenderTableCell (anonymous) at (0,0) size 166x20 [r=0 c=0 rs=1 cs=1]
                 RenderText {#text} at (0,0) size 166x19
                   text run at (0,0) width 166: "Click to the right of this text"
-caret: position 40 of child 0 {#text} of child 7 {DIV} of child 7 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+caret: position 40 of child 0 {#text} of child 7 {DIV} of child 7 {DIV} of body

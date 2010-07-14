@@ -40,4 +40,4 @@ layer at (0,0) size 800x600
                   text run at (0,0) width 29: "This"
             RenderText {#text} at (29,0) size 146x19
               text run at (29,0) width 146: " is another paragraph."
-caret: position 4 of child 0 {#text} of child 0 {B} of child 0 {SPAN} of child 0 {B} of child 2 {SPAN} of child 5 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+caret: position 4 of child 0 {#text} of child 0 {B} of child 0 {SPAN} of child 0 {B} of child 2 {SPAN} of child 5 {DIV} of body

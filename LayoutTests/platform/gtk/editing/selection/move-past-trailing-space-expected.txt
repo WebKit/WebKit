@@ -10,4 +10,4 @@ layer at (0,0) size 800x600
             text run at (118,39) width 96 RTL: "\x{5D0}\x{5D7}\x{5E8}\x{5D9}"
             text run at (-50,64) width 264 RTL: "\x{5D0}\x{5E0}\x{5E6}\x{5D9}\x{5E7}\x{5DC}\x{5D5}\x{5E4}\x{5D3}\x{5D9}\x{5D4}"
         RenderText {#text} at (0,0) size 0x0
-caret: position 12 of child 0 {#text} of child 1 {SPAN} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+caret: position 12 of child 0 {#text} of child 1 {SPAN} of child 1 {DIV} of body

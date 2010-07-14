@@ -24,4 +24,4 @@ layer at (0,0) size 800x600
             text run at (294,14) width 88: "flush left"
         RenderText {#text} at (382,14) size 6x27
           text run at (382,14) width 6: "."
-caret: position 1 of child 0 {#text} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+caret: position 1 of child 0 {#text} of child 1 {DIV} of body

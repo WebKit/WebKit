@@ -72,4 +72,4 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,387) size 784x56 [border: (2px solid #0000FF)]
         RenderText {#text} at (14,14) size 36x27
           text run at (14,14) width 36: "xxx"
-caret: position 3 of child 0 {#text} of child 8 {P} of child 1 {BODY} of child 0 {HTML} of document
+caret: position 3 of child 0 {#text} of child 8 {P} of body

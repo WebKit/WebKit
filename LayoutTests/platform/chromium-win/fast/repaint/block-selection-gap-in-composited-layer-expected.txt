@@ -10,5 +10,5 @@ layer at (58,50) size 734x20
 layer at (58,50) size 100x100
   RenderBlock (positioned) {DIV} at (0,0) size 100x100 [bgcolor=#FF0000]
     RenderBR {BR} at (0,0) size 0x19
-selection start: position 0 of child 0 {BR} of child 1 {DIV} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document
-selection end:   position 1 of child 2 {#text} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+selection start: position 0 of child 0 {BR} of child 1 {DIV} of child 1 {DIV} of body
+selection end:   position 1 of child 2 {#text} of child 1 {DIV} of body

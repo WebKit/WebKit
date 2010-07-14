@@ -73,4 +73,4 @@ layer at (0,0) size 800x600
               text run at (2,29) width 49: "after"
       RenderBlock (anonymous) at (0,398) size 784x0
         RenderInline {B} at (0,0) size 0x0
-caret: position 0 of child 1 {#text} of child 1 {DIV} of child 3 {DIV} of child 2 {B} of child 1 {BODY} of child 0 {HTML} of document
+caret: position 0 of child 1 {#text} of child 1 {DIV} of child 3 {DIV} of child 2 {B} of body
