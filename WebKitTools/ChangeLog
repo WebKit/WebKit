@@ -1,3 +1,17 @@
+2010-07-14  Adam Roben  <aroben@apple.com>
+
+        Make urlSuitableForTestResult work for http: URLs, too
+
+        Fixes <http://webkit.org/b/42276>
+        http/tests/loading/preload-slow-loading.php and
+        http/tests/mime/uppercase-mime-type.html fail on Windows.
+
+        Reviewed by Darin Adler.
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (urlSuitableForTestResult): Don't bail if the URL starts with http://.
+        We want this function to work for those URLs, too!
+
 2010-07-13  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Oliver Hunt.
