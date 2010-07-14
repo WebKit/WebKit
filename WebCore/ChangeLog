@@ -1,3 +1,19 @@
+2010-07-14  Tony Gentilcore  <tonyg@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Fix enum value names for Navigation.{idl|h}
+        https://bugs.webkit.org/show_bug.cgi?id=42282
+
+        This is necessary after https://bugs.webkit.org/show_bug.cgi?id=42250.
+
+        No new tests because no new functionality.
+
+        * page/Navigation.cpp:
+        (WebCore::Navigation::type):
+        * page/Navigation.h:
+        (WebCore::Navigation::):
+
 2010-07-14  Johnny Ding  <jnd@chromium.org>
 
         Reviewed by Adam Barth.

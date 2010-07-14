@@ -57,20 +57,20 @@ void Navigation::disconnectFrame()
 unsigned short Navigation::type() const
 {
     if (!m_frame)
-        return Navigate;
+        return NAVIGATE;
 
     DocumentLoader* documentLoader = m_frame->loader()->documentLoader();
     if (!documentLoader)
-        return Navigate;
+        return NAVIGATE;
 
     WebCore::NavigationType navigationType = documentLoader->triggeringAction().type();
     switch (navigationType) {
     case NavigationTypeReload:
-        return Reload;
+        return RELOAD;
     case NavigationTypeBackForward:
-        return BackForward;
+        return BACK_FORWARD;
     default:
-        return Navigate;
+        return NAVIGATE;
     }
 }
 
