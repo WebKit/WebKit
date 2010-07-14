@@ -1,3 +1,23 @@
+2010-07-13  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Add placebo versions of some repaint test functions to WebKitTestRunner - good enough for non-pixel tests
+        https://bugs.webkit.org/show_bug.cgi?id=42227
+
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.cpp:
+        (WTR::LayoutTestController::LayoutTestController): Initialize new bool
+        members.
+        (WTR::LayoutTestController::display): Dummy method.
+        (WTR::displayCallback): Call the dummy.
+        (WTR::repaintSweepHorizontallyCallback): ditto
+        (WTR::testRepaintCallback): ditto
+        (WTR::LayoutTestController::staticFunctions): Expose new methods.
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.h:
+        (WTR::LayoutTestController::setTestRepaint): Set the flag (which currently does
+        nothing).
+        (WTR::LayoutTestController::setTestRepaintSweepHorizontally): ditto
+
 2010-07-13  Andreas Kling  <andreas.kling@nokia.com>
 
         Unreviewed. Adding myself as committer.

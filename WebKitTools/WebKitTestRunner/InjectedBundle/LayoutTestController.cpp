@@ -43,6 +43,8 @@ PassRefPtr<LayoutTestController> LayoutTestController::create(const std::string&
 LayoutTestController::LayoutTestController(const std::string& testPathOrURL)
     : m_dumpAsText(false)
     , m_waitToDump(false)
+    , m_testRepaint(false)
+    , m_testRepaintSweepHorizontally(false)
     , m_testPathOrURL(testPathOrURL)
 {
 }
@@ -53,6 +55,10 @@ LayoutTestController::~LayoutTestController()
 
 static const CFTimeInterval waitToDumpWatchdogInterval = 30.0;
 
+void LayoutTestController::display()
+{
+    // FIXME: actually implement, once we want pixel tests
+}
 
 void LayoutTestController::invalidateWaitToDumpWatchdog()
 {
@@ -109,6 +115,15 @@ bool LayoutTestController::pauseAnimationAtTimeOnElementWithId(JSStringRef anima
     return WKBundleFramePauseAnimationOnElementWithId(mainFrame, nameWK.get(), idWK.get(), time);
 }
 
+static JSValueRef displayCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    // Has mac & windows implementation
+    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    controller->display();
+
+    return JSValueMakeUndefined(context);
+}
+
 static JSValueRef dumpAsTextCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
@@ -155,6 +170,20 @@ static JSValueRef pauseAnimationAtTimeOnElementWithIdCallback(JSContextRef conte
     return JSValueMakeBoolean(context, controller->pauseAnimationAtTimeOnElementWithId(animationName.get(), time, elementId.get()));
 }
 
+static JSValueRef repaintSweepHorizontallyCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    controller->setTestRepaintSweepHorizontally();
+    return JSValueMakeUndefined(context);
+}
+
+static JSValueRef testRepaintCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    controller->setTestRepaint();
+    return JSValueMakeUndefined(context);
+}
+
 // Object Finalization
 
 static void layoutTestControllerObjectFinalize(JSObjectRef object)
@@ -191,10 +220,13 @@ JSClassRef LayoutTestController::getJSClass()
 JSStaticFunction* LayoutTestController::staticFunctions()
 {
     static JSStaticFunction staticFunctions[] = {
+        { "display", displayCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "dumpAsText", dumpAsTextCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "notifyDone", notifyDoneCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "numberOfActiveAnimations", numberOfActiveAnimationsCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "pauseAnimationAtTimeOnElementWithId", pauseAnimationAtTimeOnElementWithIdCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "repaintSweepHorizontally", repaintSweepHorizontallyCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "testRepaint", testRepaintCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "waitUntilDone", waitUntilDoneCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { 0, 0, 0 }
     };

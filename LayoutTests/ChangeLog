@@ -1,3 +1,13 @@
+2010-07-13  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Add placebo versions of some repaint test functions to WebKitTestRunner - good enough for non-pixel tests
+        https://bugs.webkit.org/show_bug.cgi?id=42227
+
+        * platform/mac-wk2/Skipped: Skip some tests newly revealed as failing
+        for an already-classified reason.
+
 2010-07-13  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.
