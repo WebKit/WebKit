@@ -2,6 +2,37 @@
 
         Reviewed by Darin Fisher.
 
+        <input type=number> UI: inner spin button layout
+        https://bugs.webkit.org/show_bug.cgi?id=41924
+
+        Add layout/event/style code for the inner spin button, which is
+        going to be used for Windows implementation.
+        No new tests because no ports implement the inner spin button yet.
+
+        * rendering/RenderTextControlSingleLine.cpp:
+          Introduce m_innerSpinButton.
+        (WebCore::RenderTextControlSingleLine::~RenderTextControlSingleLine):
+          Detach m_innerSpinButton.
+        (WebCore::RenderTextControlSingleLine::layout):
+          Set position and size of m_innerSpinButton.
+        (WebCore::RenderTextControlSingleLine::nodeAtPoint):
+          Handle m_innerSpinButton.
+        (WebCore::RenderTextControlSingleLine::forwardEvent):
+          Handle m_innerSpinButton.
+        (WebCore::RenderTextControlSingleLine::textBlockWidth):
+          Shorten the text block width by m_innerSpinButton width.
+        (WebCore::RenderTextControlSingleLine::preferredContentWidth):
+          Add m_innerSpinButton width.
+        (WebCore::RenderTextControlSingleLine::createSubtreeIfNeeded):
+          Handle m_innerSpinButton.
+        (WebCore::RenderTextControlSingleLine::createInnerSpinButtonStyle):
+          Make style for m_innerSpinButton with INNER_SPIN_BUTTON pseudo class.
+        * rendering/RenderTextControlSingleLine.h:
+
+2010-07-14  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Darin Fisher.
+
         <input type=number> UI: Support disabled/readonly states
         https://bugs.webkit.org/show_bug.cgi?id=38568
 
