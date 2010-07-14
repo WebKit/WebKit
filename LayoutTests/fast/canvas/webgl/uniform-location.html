@@ -11,8 +11,8 @@
 <script>
 description("Tests WebGL APIs related to shader uniforms");
 
-var contextA = create3DDebugContext();
-var contextB = create3DDebugContext();
+var contextA = create3DContext();
+var contextB = create3DContext();
 var programA1 = loadStandardProgram(contextA);
 var programA2 = loadStandardProgram(contextA);
 var programB = loadStandardProgram(contextB);
@@ -27,21 +27,21 @@ var locationVec4 = contextA.getUniformLocation(programV, "fval4");
 var vec = [1, 2, 3, 4];
 var mat = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16];
 
-shouldBeUndefined("contextA.useProgram(programA2)");
-shouldThrow("contextA.uniformMatrix4fv(locationA, false, mat)");
-shouldBeUndefined("contextA.useProgram(programA1)");
-shouldBeUndefined("contextA.uniformMatrix4fv(locationA, false, mat)");
-shouldBeUndefined("contextA.uniformMatrix4fv(null, false, mat)");
+shouldGenerateGLError(contextA, contextA.NO_ERROR, "contextA.useProgram(programA2)");
+shouldGenerateGLError(contextA, contextA.INVALID_OPERATION, "contextA.uniformMatrix4fv(locationA, false, mat)");
+shouldGenerateGLError(contextA, contextA.NO_ERROR, "contextA.useProgram(programA1)");
+shouldGenerateGLError(contextA, contextA.NO_ERROR, "contextA.uniformMatrix4fv(locationA, false, mat)");
+shouldGenerateGLError(contextA, contextA.NO_ERROR, "contextA.uniformMatrix4fv(null, false, mat)");
 
-shouldBeUndefined("contextA.useProgram(programS)");
-shouldBeUndefined("contextA.uniform1i(locationSx, 3)");
-shouldBeUndefined("contextA.uniform1f(locationArray0, 4.0)");
+shouldGenerateGLError(contextA, contextA.NO_ERROR, "contextA.useProgram(programS)");
+shouldGenerateGLError(contextA, contextA.NO_ERROR, "contextA.uniform1i(locationSx, 3)");
+shouldGenerateGLError(contextA, contextA.NO_ERROR, "contextA.uniform1f(locationArray0, 4.0)");
 
 shouldBe("contextA.getUniform(programS, locationSx)", "3");
 shouldBe("contextA.getUniform(programS, locationArray0)", "4.0");
 
-shouldBeUndefined("contextA.useProgram(programV)");
-shouldBeUndefined("contextA.uniform4fv(locationVec4, vec)");
+shouldGenerateGLError(contextA, contextA.NO_ERROR, "contextA.useProgram(programV)");
+shouldGenerateGLError(contextA, contextA.NO_ERROR, "contextA.uniform4fv(locationVec4, vec)");
 shouldBe("contextA.getUniform(programV, locationVec4)", "vec");
 
 shouldBeNull("contextA.getUniformLocation(programV, \"IDontExist\")");

@@ -1,3 +1,64 @@
+2010-07-14  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Darin Fisher.
+
+        Synchronize webgl-test.js from Khronos repository
+        https://bugs.webkit.org/show_bug.cgi?id=42212
+
+        Incorporated latest webgl-test.js from Khronos repository. Deleted
+        utils3d.js and removed references to it from tests. Updated those
+        tests which were using the create3DDebugContext helper function,
+        which has been removed. Rebaselined five tests.
+
+        * fast/canvas/webgl/context-attributes-expected.txt:
+        * fast/canvas/webgl/context-attributes.html:
+        * fast/canvas/webgl/index-validation-copies-indices-expected.txt:
+        * fast/canvas/webgl/index-validation-copies-indices.html:
+        * fast/canvas/webgl/index-validation-verifies-too-many-indices-expected.txt:
+        * fast/canvas/webgl/index-validation-verifies-too-many-indices.html:
+        * fast/canvas/webgl/index-validation-with-resized-buffer.html:
+        * fast/canvas/webgl/null-object-behaviour-expected.txt:
+        * fast/canvas/webgl/null-object-behaviour.html:
+        * fast/canvas/webgl/resources/utils3d.js: Removed.
+        * fast/canvas/webgl/resources/webgl-test.js:
+        (assertMsg):
+        (webglTestLog):
+        (create3DContext):
+        (create3DContextWithWrapperThatThrowsOnGLError.wrap.getError):
+        (create3DContextWithWrapperThatThrowsOnGLError):
+        (getGLErrorAsString):
+        (shouldGenerateGLError):
+        (glErrorShouldBe):
+        (createProgram):
+        (initWebGL):
+        (getShaderSource):
+        (loadShader):
+        (loadShaderFromFile):
+        (loadShaderFromScript):
+        (loadProgram):
+        (loadStandardVertexShader):
+        (loadStandardFragmentShader):
+        (makeBox):
+        (makeSphere):
+        (loadObj.req.onreadystatechange):
+        (loadObj):
+        (processLoadObj):
+        (doLoadObj):
+        (loadImageTexture.texture.image.onload):
+        (loadImageTexture):
+        (doLoadImageTexture):
+        (Framerate.fr):
+        (Framerate):
+        (Framerate.prototype.updateFramerate):
+        (Framerate.prototype.snapshot):
+        * fast/canvas/webgl/texImage2DImageDataTest.html:
+        * fast/canvas/webgl/texture-active-bind.html:
+        * fast/canvas/webgl/texture-complete.html:
+        * fast/canvas/webgl/triangle.html:
+        * fast/canvas/webgl/uniform-location-expected.txt:
+        * fast/canvas/webgl/uniform-location.html:
+        * fast/canvas/webgl/viewport-unchanged-upon-resize.html:
+
 2010-07-14  Tony Gentilcore  <tonyg@chromium.org>
 
         Unreviewed, build fix for r63326.

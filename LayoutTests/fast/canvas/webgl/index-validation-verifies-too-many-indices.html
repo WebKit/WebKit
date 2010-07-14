@@ -11,7 +11,7 @@
 <script>
 description('Regression test for <a href="https://bugs.webkit.org/show_bug.cgi?id=32692">https://bugs.webkit.org/show_bug.cgi?id=32692</a> : <code>Index validation for drawElements examines too many indices</code>');
 
-var context = create3DDebugContext();
+var context = create3DContext();
 var program = loadStandardProgram(context);
 
 context.useProgram(program);
@@ -27,9 +27,9 @@ var indexObject = context.createBuffer();
 debug("Test out of range indices")
 context.bindBuffer(context.ELEMENT_ARRAY_BUFFER, indexObject);
 context.bufferData(context.ELEMENT_ARRAY_BUFFER, new WebGLUnsignedShortArray([ 10000, 0, 1, 2, 3, 10000 ]), context.STATIC_DRAW);
-shouldBeUndefined("context.drawElements(context.TRIANGLE_STRIP, 4, context.UNSIGNED_SHORT, 2)");
-shouldThrow("context.drawElements(context.TRIANGLE_STRIP, 4, context.UNSIGNED_SHORT, 0)");
-shouldThrow("context.drawElements(context.TRIANGLE_STRIP, 4, context.UNSIGNED_SHORT, 4)");
+shouldGenerateGLError(context, context.NO_ERROR, "context.drawElements(context.TRIANGLE_STRIP, 4, context.UNSIGNED_SHORT, 2)");
+shouldGenerateGLError(context, context.INVALID_OPERATION, "context.drawElements(context.TRIANGLE_STRIP, 4, context.UNSIGNED_SHORT, 0)");
+shouldGenerateGLError(context, context.INVALID_OPERATION, "context.drawElements(context.TRIANGLE_STRIP, 4, context.UNSIGNED_SHORT, 4)");
 
 debug("")
 successfullyParsed = true;
