@@ -1,5 +1,17 @@
 2010-07-14  Oliver Hunt  <oliver@apple.com>
 
+        RS=Geoff Garen.
+
+        Guard the CF path of interpreter vs. jit selection with PLATFORM(CF)
+
+        This allows the code to work on windows as well.  Also unifies the
+        environment variable with the preference name.
+
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::JSGlobalData):
+
+2010-07-14  Oliver Hunt  <oliver@apple.com>
+
         Reviewed by Don Melton.
 
         Crash when trying to enable JIT and Interpreter in a single build.
