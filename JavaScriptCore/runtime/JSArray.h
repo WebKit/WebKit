@@ -23,6 +23,8 @@
 
 #include "JSObject.h"
 
+#define CHECK_ARRAY_CONSISTENCY 0
+
 namespace JSC {
 
     typedef HashMap<unsigned, JSValue> SparseArrayValueMap;
@@ -33,8 +35,21 @@ namespace JSC {
         SparseArrayValueMap* m_sparseValueMap;
         void* subclassData; // A JSArray subclass can use this to fill the vector lazily.
         size_t reportedMapCapacity;
+#if CHECK_ARRAY_CONSISTENCY
+        bool m_inCompactInitialization;
+#endif
         JSValue m_vector[1];
     };
+
+    // The CreateCompact creation mode is used for fast construction of arrays
+    // whose size and contents are known at time of creation.
+    //
+    // There are two obligations when using this mode:
+    //
+    //   - uncheckedSetIndex() must be used when initializing the array.
+    //   - setLength() must be called after initialization.
+
+    enum ArrayCreationMode { CreateCompact, CreateInitialized };
 
     class JSArray : public JSObject {
         friend class JIT;
@@ -42,7 +57,7 @@ namespace JSC {
 
     public:
         explicit JSArray(NonNullPassRefPtr<Structure>);
-        JSArray(NonNullPassRefPtr<Structure>, unsigned initialLength);
+        JSArray(NonNullPassRefPtr<Structure>, unsigned initialLength, ArrayCreationMode);
         JSArray(NonNullPassRefPtr<Structure>, const ArgList& initialValues);
         virtual ~JSArray();
 
@@ -81,6 +96,15 @@ namespace JSC {
                     m_storage->m_length = i + 1;
             }
             x = v;
+        }
+
+        void uncheckedSetIndex(unsigned i, JSValue v)
+        {
+            ASSERT(canSetIndex(i));
+#if CHECK_ARRAY_CONSISTENCY
+            ASSERT(m_storage->m_inCompactInitialization);
+#endif
+            m_storage->m_vector[i] = v;
         }
 
         void fillArgList(ExecState*, MarkedArgumentBuffer&);

@@ -547,8 +547,6 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncSplice(ExecState* exec)
     JSObject* thisObj = thisValue.toThisObject(exec);
 
     // 15.4.4.12
-    JSArray* resObj = constructEmptyArray(exec);
-    JSValue result = resObj;
 
     // FIXME: Firefox returns an empty array.
     if (!exec->argumentCount())
@@ -569,10 +567,12 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncSplice(ExecState* exec)
     else
         deleteCount = length - begin;
 
-    for (unsigned k = 0; k < deleteCount; k++) {
-        if (JSValue v = getProperty(exec, thisObj, k + begin))
-            resObj->put(exec, k, v);
-    }
+    JSArray* resObj = new (exec) JSArray(exec->lexicalGlobalObject()->arrayStructure(), deleteCount, CreateCompact);
+    JSValue result = resObj;
+
+    for (unsigned k = 0; k < deleteCount; k++)
+        resObj->uncheckedSetIndex(k, getProperty(exec, thisObj, k + begin));
+
     resObj->setLength(deleteCount);
 
     unsigned additionalArgs = std::max<int>(exec->argumentCount() - 2, 0);

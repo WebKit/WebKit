@@ -33,8 +33,6 @@
 #include <wtf/OwnPtr.h>
 #include <Operations.h>
 
-#define CHECK_ARRAY_CONSISTENCY 0
-
 using namespace std;
 using namespace WTF;
 
@@ -141,22 +139,37 @@ JSArray::JSArray(NonNullPassRefPtr<Structure> structure)
     checkConsistency();
 }
 
-JSArray::JSArray(NonNullPassRefPtr<Structure> structure, unsigned initialLength)
+JSArray::JSArray(NonNullPassRefPtr<Structure> structure, unsigned initialLength, ArrayCreationMode creationMode)
     : JSObject(structure)
 {
-    unsigned initialCapacity = min(initialLength, MIN_SPARSE_ARRAY_INDEX);
+    unsigned initialCapacity;
+    if (creationMode == CreateCompact)
+        initialCapacity = initialLength;
+    else
+        initialCapacity = min(initialLength, MIN_SPARSE_ARRAY_INDEX);
 
     m_storage = static_cast<ArrayStorage*>(fastMalloc(storageSize(initialCapacity)));
-    m_storage->m_length = initialLength;
     m_vectorLength = initialCapacity;
-    m_storage->m_numValuesInVector = 0;
     m_storage->m_sparseValueMap = 0;
     m_storage->subclassData = 0;
     m_storage->reportedMapCapacity = 0;
 
-    JSValue* vector = m_storage->m_vector;
-    for (size_t i = 0; i < initialCapacity; ++i)
-        vector[i] = JSValue();
+    if (creationMode == CreateCompact) {
+#if CHECK_ARRAY_CONSISTENCY
+        m_storage->m_inCompactInitialization = !!initialCapacity;
+#endif
+        m_storage->m_length = 0;
+        m_storage->m_numValuesInVector = initialCapacity;
+    } else {
+#if CHECK_ARRAY_CONSISTENCY
+        m_storage->m_inCompactInitialization = false;
+#endif
+        m_storage->m_length = initialLength;
+        m_storage->m_numValuesInVector = 0;
+        JSValue* vector = m_storage->m_vector;
+        for (size_t i = 0; i < initialCapacity; ++i)
+            vector[i] = JSValue();
+    }
 
     checkConsistency();
 
@@ -175,6 +188,9 @@ JSArray::JSArray(NonNullPassRefPtr<Structure> structure, const ArgList& list)
     m_storage->m_sparseValueMap = 0;
     m_storage->subclassData = 0;
     m_storage->reportedMapCapacity = 0;
+#if CHECK_ARRAY_CONSISTENCY
+    m_storage->m_inCompactInitialization = false;
+#endif
 
     size_t i = 0;
     ArgList::const_iterator end = list.end();
@@ -524,7 +540,12 @@ bool JSArray::increaseVectorLength(unsigned newLength)
 
 void JSArray::setLength(unsigned newLength)
 {
-    checkConsistency();
+#if CHECK_ARRAY_CONSISTENCY
+    if (!m_storage->m_inCompactInitialization)
+        checkConsistency();
+    else
+        m_storage->m_inCompactInitialization = false;
+#endif
 
     ArrayStorage* storage = m_storage;
 
@@ -1045,7 +1066,7 @@ void JSArray::checkConsistency(ConsistencyCheckType type)
         if (JSValue value = m_storage->m_vector[i]) {
             ASSERT(i < m_storage->m_length);
             if (type != DestructorConsistencyCheck)
-                value->type(); // Likely to crash if the object was deallocated.
+                value.isUndefined(); // Likely to crash if the object was deallocated.
             ++numValuesInVector;
         } else {
             if (type == SortConsistencyCheck)
@@ -1064,7 +1085,7 @@ void JSArray::checkConsistency(ConsistencyCheckType type)
             ASSERT(index <= MAX_ARRAY_INDEX);
             ASSERT(it->second);
             if (type != DestructorConsistencyCheck)
-                it->second->type(); // Likely to crash if the object was deallocated.
+                it->second.isUndefined(); // Likely to crash if the object was deallocated.
         }
     }
 }

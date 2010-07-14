@@ -1,3 +1,32 @@
+2010-07-13  Andreas Kling  <andreas.kling@nokia.com>
+
+        Reviewed by Darin Adler.
+
+        Avoid slow-path for put() in Array.splice()
+        https://bugs.webkit.org/show_bug.cgi?id=41920
+
+        Defer creation of the returned array until its final size is known
+        to avoid growing it while adding elements.
+
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::JSArray): Add two modes of creation, CreateInitialized (old)
+        and CreateCompact (which should only be used when constructing arrays whose
+        size and contents are known at the time of creation.)
+        (JSC::JSArray::setLength): Skip first consistency check if in CreateCompact
+        initialization mode. (Only applies to non-empty arrays.)
+        (JSC::JSArray::checkConsistency): Build fix (JSValue::type() is gone)
+        * runtime/JSArray.h:
+        (JSC::JSArray::uncheckedSetIndex): Added for fast initialization of compact
+        arrays. Does no bounds or other sanity checking.
+        * runtime/ArrayPrototype.cpp:
+        (JSC::arrayProtoFuncSplice): Optimized creation of the returned JSArray.
+        * runtime/ArrayConstructor.cpp:
+        (JSC::constructArrayWithSizeQuirk): Pass CreateInitialized to ctor.
+        * runtime/JSGlobalObject.h:
+        (JSC::constructEmptyArray): Pass CreateInitialized to ctor.
+        * runtime/RegExpConstructor.cpp:
+        (JSC::RegExpMatchesArray::RegExpMatchesArray): Pass CreateInitialized to ctor.
+
 2010-07-13  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Oliver Hunt.
