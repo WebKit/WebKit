@@ -35,4 +35,4 @@ layer at (0,0) size 800x600
           text run at (326,0) width 444: "To run it manually, click in the space after all the text on the first line in"
           text run at (0,19) width 169: "the above editable region. "
           text run at (169,19) width 392: "Clicking should create a caret after the first space after the 'e'."
-caret: position 1 of child 2 {#text} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+caret: position 1 of child 2 {#text} of child 1 {DIV} of body

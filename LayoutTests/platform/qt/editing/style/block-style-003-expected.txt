@@ -74,5 +74,5 @@ layer at (0,0) size 800x600
             text run at (495,14) width 99: "centered"
         RenderText {#text} at (594,15) size 7x31
           text run at (594,15) width 7: "."
-selection start: position 1 of child 0 {#text} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document
-selection end:   position 13 of child 0 {#text} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+selection start: position 1 of child 0 {#text} of child 1 {DIV} of body
+selection end:   position 13 of child 0 {#text} of child 3 {DIV} of body

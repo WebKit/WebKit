@@ -19,4 +19,4 @@ layer at (0,0) size 800x600
           text run at (46,0) width 48: "should"
         RenderText {#text} at (94,0) size 245x20
           text run at (94,0) width 245: " be no line breaks in this sentence."
-caret: position 6 of child 1 {#text} of child 0 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+caret: position 6 of child 1 {#text} of child 0 {DIV} of body

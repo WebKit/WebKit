@@ -24,4 +24,4 @@ layer at (0,0) size 800x600
           RenderText {#text} at (21,14) size 33x31
             text run at (21,14) width 33: "foo"
         RenderText {#text} at (0,0) size 0x0
-caret: position 1 of child 0 {#text} of child 0 {SPAN} of child 1 {SPAN} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+caret: position 1 of child 0 {#text} of child 0 {SPAN} of child 1 {SPAN} of child 1 {DIV} of body

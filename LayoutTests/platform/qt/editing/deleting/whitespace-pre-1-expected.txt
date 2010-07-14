@@ -20,4 +20,4 @@ layer at (0,0) size 800x600
           text run at (0,19) width 361: "There should be three paragraphs in this editable region."
           text run at (361,19) width 0: " "
           text run at (0,38) width 193: "The first one should be empty."
-caret: position 0 of child 0 {#text} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+caret: position 0 of child 0 {#text} of child 2 {DIV} of body

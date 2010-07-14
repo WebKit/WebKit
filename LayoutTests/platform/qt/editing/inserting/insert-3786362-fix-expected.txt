@@ -35,4 +35,4 @@ layer at (0,0) size 800x600
             text run at (2,2) width 13: "a"
           RenderBR {BR} at (15,25) size 0x0
           RenderBR {BR} at (2,32) size 0x29
-caret: position 0 of child 2 {BR} of child 3 {DIV} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+caret: position 0 of child 2 {BR} of child 3 {DIV} of child 3 {DIV} of body

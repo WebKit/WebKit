@@ -24,5 +24,5 @@ layer at (0,0) size 800x600
           text run at (0,0) width 34: "hello "
         RenderText {#text} at (34,0) size 38x19
           text run at (34,0) width 38: "world!"
-selection start: position 0 of child 0 {#text} of child 1 {P} of child 1 {BODY} of child 0 {HTML} of document
-selection end:   position 7 of child 1 {#text} of child 5 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+selection start: position 0 of child 0 {#text} of child 1 {P} of body
+selection end:   position 7 of child 1 {#text} of child 5 {DIV} of body

@@ -62,4 +62,4 @@ layer at (0,0) size 800x600
         RenderBlock {DIV} at (0,0) size 784x36 [border: (2px solid #FF0000)]
           RenderText {#text} at (2,2) size 67x31
             text run at (2,2) width 67: "before"
-caret: position 7 of child 0 {#text} of child 1 {DIV} of child 5 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+caret: position 7 of child 0 {#text} of child 1 {DIV} of child 5 {DIV} of body

@@ -27,5 +27,5 @@ layer at (0,0) size 820x948
             text run at (0,536) width 527: "continent, a new nation, conceived in Liberty, and "
             text run at (0,584) width 555: "dedicated to the proposition that all men are created "
             text run at (0,632) width 64: "equal."
-selection start: position 1 of child 0 {#text} of child 1 {DIV} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document
-selection end:   position 737 of child 0 {#text} of child 1 {DIV} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+selection start: position 1 of child 0 {#text} of child 1 {DIV} of child 1 {DIV} of body
+selection end:   position 737 of child 0 {#text} of child 1 {DIV} of child 1 {DIV} of body

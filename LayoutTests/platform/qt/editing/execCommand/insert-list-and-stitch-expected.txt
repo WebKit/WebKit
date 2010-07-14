@@ -40,4 +40,4 @@ layer at (0,0) size 800x600
               RenderText {#text} at (0,0) size 23x19
                 text run at (0,0) width 23: "baz"
           RenderBlock (anonymous) at (0,71) size 784x0
-caret: position 0 of child 0 {#text} of child 2 {LI} of child 0 {OL} of child 1 {DIV} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+caret: position 0 of child 0 {#text} of child 2 {LI} of child 0 {OL} of child 1 {DIV} of child 1 {DIV} of body

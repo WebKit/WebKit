@@ -28,5 +28,5 @@ layer at (8,158) size 784x19
   RenderBlock {P} at (0,150) size 784x19
     RenderText {#text} at (0,0) size 421x19
       text run at (0,0) width 421: "This is a paragraph outside the editable block with overflow:hidden"
-selection start: position 0 of child 0 {#text} of child 1 {P} of child 5 {DIV} of child 1 {BODY} of child 0 {HTML} of document
-selection end:   position 113 of child 0 {#text} of child 1 {P} of child 5 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+selection start: position 0 of child 0 {#text} of child 1 {P} of child 5 {DIV} of body
+selection end:   position 113 of child 0 {#text} of child 1 {P} of child 5 {DIV} of body

@@ -32,5 +32,5 @@ layer at (0,0) size 800x600
           text run at (0,38) width 106: "an atomic node. "
           text run at (106,38) width 629: "It didn't make the same assumption about start of a selection, but for good measure, we also test a "
           text run at (0,57) width 300: "selection that starts at a position before a table."
-selection start: position 0 of child 1 {TABLE} of child 1 {BODY} of child 0 {HTML} of document
-selection end:   position 341 of child 2 {#text} of child 5 {P} of child 1 {BODY} of child 0 {HTML} of document
+selection start: position 0 of child 1 {TABLE} of body
+selection end:   position 341 of child 2 {#text} of child 5 {P} of body

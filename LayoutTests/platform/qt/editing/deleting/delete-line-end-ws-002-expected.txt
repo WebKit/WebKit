@@ -76,4 +76,4 @@ layer at (0,0) size 820x600
             text run at (671,82) width 3: " "
             text run at (74,130) width 328: "onthis continent a new nation..."
         RenderText {#text} at (0,0) size 0x0
-caret: position 58 of child 0 {#text} of child 1 {SPAN} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+caret: position 58 of child 0 {#text} of child 1 {SPAN} of child 1 {DIV} of body

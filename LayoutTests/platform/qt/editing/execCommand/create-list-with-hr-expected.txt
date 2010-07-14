@@ -26,4 +26,4 @@ layer at (0,0) size 800x600
             RenderBlock (anonymous) at (0,9) size 744x19
               RenderListMarker at (-17,0) size 7x19: bullet
         RenderBlock (anonymous) at (0,42) size 784x0
-caret: position 0 of child 0 {HR} of child 0 {LI} of child 0 {UL} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+caret: position 0 of child 0 {HR} of child 0 {LI} of child 0 {UL} of child 2 {DIV} of body

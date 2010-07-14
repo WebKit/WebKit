@@ -18,4 +18,4 @@ layer at (0,0) size 800x600
           RenderInline {A} at (0,0) size 23x31 [color=#0000EE]
             RenderText {#text} at (102,14) size 23x31
               text run at (102,14) width 23: "lin"
-caret: position 3 of child 0 {#text} of child 1 {A} of child 1 {SPAN} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+caret: position 3 of child 0 {#text} of child 1 {A} of child 1 {SPAN} of child 1 {DIV} of body

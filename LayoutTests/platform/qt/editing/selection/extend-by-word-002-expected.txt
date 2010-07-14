@@ -69,5 +69,5 @@ layer at (0,0) size 800x600
             RenderInline {A} at (0,0) size 38x14 [color=#0000EE]
               RenderText {#text} at (17,5) size 38x14
                 text run at (17,5) width 38: "Combos"
-selection start: position 0 of child 0 {#text} of child 1 {A} of child 1 {LI} of child 1 {UL} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document
-selection end:   position 5 of child 0 {#text} of child 1 {A} of child 7 {LI} of child 1 {UL} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+selection start: position 0 of child 0 {#text} of child 1 {A} of child 1 {LI} of child 1 {UL} of child 1 {DIV} of body
+selection end:   position 5 of child 0 {#text} of child 1 {A} of child 7 {LI} of child 1 {UL} of child 1 {DIV} of body

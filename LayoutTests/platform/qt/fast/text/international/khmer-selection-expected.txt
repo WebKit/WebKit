@@ -44,5 +44,5 @@ layer at (0,0) size 800x129
             text run at (124,43) width 56: "test_shell"
         RenderText {#text} at (180,40) size 289x20
           text run at (180,40) width 289: " shouldn't trigger any assertions or crash."
-selection start: position 0 of child 0 {#text} of child 0 {B} of child 1 {NOBR} of child 1 {P} of child 1 {BODY} of child 1 {HTML} of document
-selection end:   position 7 of child 0 {#text} of child 6 {A} of child 1 {NOBR} of child 1 {P} of child 1 {BODY} of child 1 {HTML} of document
+selection start: position 0 of child 0 {#text} of child 0 {B} of child 1 {NOBR} of child 1 {P} of body
+selection end:   position 7 of child 0 {#text} of child 6 {A} of child 1 {NOBR} of child 1 {P} of body

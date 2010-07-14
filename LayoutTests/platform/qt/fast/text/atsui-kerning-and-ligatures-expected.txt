@@ -21,5 +21,5 @@ layer at (0,0) size 800x600
             RenderText {#text} at (0,0) size 538x31
               text run at (0,0) width 538: "AVAVAVAVAVfififififififi Lorem ipsum dolor sit ame\x{300}t"
           RenderText {#text} at (0,0) size 0x0
-selection start: position 37 of child 0 {#text} of child 3 {SPAN} of child 5 {DIV} of child 1 {BODY} of child 0 {HTML} of document
-selection end:   position 42 of child 0 {#text} of child 3 {SPAN} of child 5 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+selection start: position 37 of child 0 {#text} of child 3 {SPAN} of child 5 {DIV} of body
+selection end:   position 42 of child 0 {#text} of child 3 {SPAN} of child 5 {DIV} of body

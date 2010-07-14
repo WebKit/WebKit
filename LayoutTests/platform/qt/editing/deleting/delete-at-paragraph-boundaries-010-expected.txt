@@ -61,4 +61,4 @@ layer at (0,0) size 800x606
           RenderBlock {DIV} at (2,134) size 780x32
             RenderText {#text} at (0,0) size 128x31
               text run at (0,0) width 128: "cha cha cha"
-caret: position 0 of child 0 {#text} of child 4 {DIV} of child 1 {DIV} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+caret: position 0 of child 0 {#text} of child 4 {DIV} of child 1 {DIV} of child 3 {DIV} of body

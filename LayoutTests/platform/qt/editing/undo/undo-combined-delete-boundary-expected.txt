@@ -36,5 +36,5 @@ layer at (0,0) size 800x600
             text run at (127,15) width 635: "should be selected, since the test deleted it a character at a "
             text run at (14,47) width 281: "time and then did an undo."
         RenderText {#text} at (0,0) size 0x0
-selection start: position 5 of child 0 {#text} of child 1 {SPAN} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document
-selection end:   position 2 of child 0 {#text} of child 1 {B} of child 1 {SPAN} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+selection start: position 5 of child 0 {#text} of child 1 {SPAN} of child 1 {DIV} of body
+selection end:   position 2 of child 0 {#text} of child 1 {B} of child 1 {SPAN} of child 1 {DIV} of body

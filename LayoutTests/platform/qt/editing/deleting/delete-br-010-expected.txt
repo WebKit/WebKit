@@ -24,4 +24,4 @@ layer at (0,0) size 800x600
         RenderText {#text} at (59,14) size 45x31
           text run at (59,14) width 45: "Two"
       RenderBlock (anonymous) at (0,60) size 784x0
-caret: position 3 of child 0 {#text} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+caret: position 3 of child 0 {#text} of child 1 {DIV} of body

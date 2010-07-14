@@ -44,4 +44,4 @@ layer at (0,0) size 800x600
         RenderBlock {ADDRESS} at (1,198) size 782x20
           RenderText {#text} at (0,0) size 277x19
             text run at (0,0) width 277: "Attempt to apply the current formatting here"
-caret: position 0 of child 0 {#text} of child 9 {ADDRESS} of child 4 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+caret: position 0 of child 0 {#text} of child 9 {ADDRESS} of child 4 {DIV} of body

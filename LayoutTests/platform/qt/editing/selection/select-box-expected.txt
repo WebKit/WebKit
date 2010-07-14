@@ -68,4 +68,4 @@ layer at (0,0) size 800x600
                 text run at (0,0) width 8: "1"
           RenderText {#text} at (150,6) size 68x19
             text run at (150,6) width 68: " the end ..."
-caret: position 1 of child 0 {#text} of child 1 {DIV} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+caret: position 1 of child 0 {#text} of child 1 {DIV} of child 3 {DIV} of body

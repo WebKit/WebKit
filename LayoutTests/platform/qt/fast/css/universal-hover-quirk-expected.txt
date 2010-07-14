@@ -26,4 +26,4 @@ layer at (0,0) size 800x600
         RenderText {#text} at (738,0) size 773x39
           text run at (738,0) width 35: " does"
           text run at (0,20) width 222: "not match anything in quirks mode."
-caret: position 1 of child 0 {#text} of child 1 {SPAN} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+caret: position 1 of child 0 {#text} of child 1 {SPAN} of child 1 {DIV} of body

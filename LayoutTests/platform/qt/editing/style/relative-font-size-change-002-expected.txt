@@ -43,5 +43,5 @@ layer at (0,0) size 800x600
           RenderBlock (anonymous) at (14,120) size 756x32
             RenderText {#text} at (0,0) size 256x31
               text run at (0,0) width 256: "Which taken at the flood"
-selection start: position 0 of child 0 {#text} of child 0 {SPAN} of child 1 {DIV} of child 5 {DIV} of child 1 {BODY} of child 0 {HTML} of document
-selection end:   position 7 of child 0 {#text} of child 0 {SPAN} of child 1 {DIV} of child 1 {DIV} of child 5 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+selection start: position 0 of child 0 {#text} of child 0 {SPAN} of child 1 {DIV} of child 5 {DIV} of body
+selection end:   position 7 of child 0 {#text} of child 0 {SPAN} of child 1 {DIV} of child 1 {DIV} of child 5 {DIV} of body
