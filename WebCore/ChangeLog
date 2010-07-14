@@ -1,3 +1,21 @@
+2010-07-14  Satish Sampath  <satish@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        Invoke speech recognition when user clicks on the speech button of input elements.
+        http://bugs.webkit.org/show_bug.cgi?id=42047
+
+        No new tests, the relevant LayoutTestController bindings will be added in a subsequent patch.
+
+        * rendering/TextControlInnerElements.cpp:
+        (WebCore::InputFieldSpeechButtonElement::InputFieldSpeechButtonElement):
+        (WebCore::InputFieldSpeechButtonElement::defaultEventHandler): Added click handling.
+        (WebCore::InputFieldSpeechButtonElement::speechInput):
+        (WebCore::InputFieldSpeechButtonElement::recordingComplete): Callback to indicate recording progress.
+        (WebCore::InputFieldSpeechButtonElement::setRecognitionResult): Callback to receive recognized text.
+        (WebCore::InputFieldSpeechButtonElement::detach):
+        * rendering/TextControlInnerElements.h:
+
 2010-07-14  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r63305.

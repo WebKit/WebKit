@@ -28,9 +28,11 @@
 #define TextControlInnerElements_h
 
 #include "HTMLDivElement.h"
+#include "SpeechInputListener.h"
 
 namespace WebCore {
 
+class SpeechInput;
 class String;
 
 class TextControlInnerElement : public HTMLDivElement {
@@ -109,14 +111,25 @@ private:
 
 #if ENABLE(INPUT_SPEECH)
 
-class InputFieldSpeechButtonElement : public TextControlInnerElement {
+class InputFieldSpeechButtonElement
+    : public TextControlInnerElement,
+      public SpeechInputListener {
 public:
     static PassRefPtr<InputFieldSpeechButtonElement> create(Document*);
 
     virtual void defaultEventHandler(Event*);
 
+    // SpeechInputListener methods.
+    void recordingComplete();
+    void setRecognitionResult(const String& result);
+
 private:
     InputFieldSpeechButtonElement(Document*);
+    virtual void detach();
+    SpeechInput* speechInput();
+
+    bool m_capturing;
+    OwnPtr<SpeechInput> m_speechInput;
 };
 
 #endif // ENABLE(INPUT_SPEECH)
