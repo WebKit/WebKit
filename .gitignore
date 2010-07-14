@@ -8,8 +8,17 @@ autoinstall.cache.d
 WebKitTools/Scripts/webkitpy/thirdparty/autoinstalled
 
 # Ignore Chromium projects auto-generated from .gyp files:
+JavaScriptCore/JavaScriptCore.gyp/*.sln
+JavaScriptCore/JavaScriptCore.gyp/*.vcproj*
 JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.xcodeproj
+WebCore/WebCore.gyp/*.mk
+WebCore/WebCore.gyp/*.rules
+WebCore/WebCore.gyp/*.sln
+WebCore/WebCore.gyp/*.tmp
+WebCore/WebCore.gyp/*.vcproj*
 WebCore/WebCore.gyp/WebCore.xcodeproj
+WebKit/chromium/*.sln
+WebKit/chromium/*.vcproj*
 WebKit/chromium/WebKit.xcodeproj
 WebKitTools/DumpRenderTree/DumpRenderTree.gyp/DumpRenderTree.xcodeproj
 
