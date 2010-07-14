@@ -2110,6 +2110,8 @@
             'platform/chromium/PlatformCursor.h',
             'platform/chromium/PlatformKeyboardEventChromium.cpp',
             'platform/chromium/PlatformScreenChromium.cpp',
+            'platform/chromium/PlatformThemeChromiumGtk.cpp',
+            'platform/chromium/PlatformThemeChromiumGtk.h',
             'platform/chromium/PlatformWidget.h',
             'platform/chromium/PopupMenuChromium.cpp',
             'platform/chromium/PopupMenuChromium.h',

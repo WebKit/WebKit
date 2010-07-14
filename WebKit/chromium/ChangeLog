@@ -1,3 +1,15 @@
+2010-07-13  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [Chromium] Linux implementation of <input type=number> UI
+        https://bugs.webkit.org/show_bug.cgi?id=41925
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::setScrollbarColors):
+         Call PlatformThemeChromiumGtk::setScrollbarColors() instead of
+         RenderThemeChromiumLinux::setScrollbarColors().
+
 2010-07-13  Chris Guillory  <chris.guillory@google.com>
 
         Reviewed by David Levin.

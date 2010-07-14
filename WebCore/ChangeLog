@@ -1,3 +1,33 @@
+2010-07-13  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [Chromium] Linux implementation of <input type=number> UI
+        https://bugs.webkit.org/show_bug.cgi?id=41925
+
+        - Move the code for scrollbar steppers from ScrollbarThemeChromiumLinux
+          to PlatformThemeChromiumGtk.
+        - Move the code for scrollbar colors from RenderThemeChromiumLinux
+          to PlatformThemeChromiumGtk.
+
+        * WebCore.gypi:
+        * platform/chromium/PlatformThemeChromiumGtk.cpp: Added.
+        (WebCore::PlatformThemeChromiumGtk::setScrollbarColors): Moved from RenderThemeChromiumLinux.
+        (WebCore::clamp): Moved from ScrollbarThemeChromiumLinux.
+        (WebCore::PlatformThemeChromiumGtk::saturateAndBrighten): ditto.
+        (WebCore::PlatformThemeChromiumGtk::outlineColor): ditto.
+        (WebCore::PlatformThemeChromiumGtk::paintArrowButton): ditto.
+        * platform/chromium/PlatformThemeChromiumGtk.h: Added.
+        * platform/chromium/ScrollbarThemeChromiumLinux.cpp:
+        (WebCore::ScrollbarThemeChromiumLinux::paintTrackPiece):
+        (WebCore::ScrollbarThemeChromiumLinux::paintButton):
+         Move the main part of the code to PlatformThemeChromiumGtk.
+        (WebCore::ScrollbarThemeChromiumLinux::paintThumb):
+        * rendering/RenderThemeChromiumLinux.cpp:
+        (WebCore::RenderThemeChromiumLinux::adjustInnerSpinButtonStyle): Added.
+        (WebCore::RenderThemeChromiumLinux::paintInnerSpinButton): Added.
+        * rendering/RenderThemeChromiumLinux.h:
+
 2010-07-13  Dumitru Daniliuc  <dumi@chromium.org>
 
         Reviewed by Darin Fisher

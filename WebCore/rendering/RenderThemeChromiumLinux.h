@@ -59,17 +59,13 @@ namespace WebCore {
         static void setCaretBlinkInterval(double interval);
         virtual double caretBlinkIntervalInternal() const;
 
+        virtual void adjustInnerSpinButtonStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
+        virtual bool paintInnerSpinButton(RenderObject*, const PaintInfo&, const IntRect&);
+
         static void setSelectionColors(unsigned activeBackgroundColor,
                                        unsigned activeForegroundColor,
                                        unsigned inactiveBackgroundColor,
                                        unsigned inactiveForegroundColor);
-
-        static void setScrollbarColors(unsigned inactive_color,
-                                       unsigned active_color,
-                                       unsigned track_color);
-        static unsigned thumbInactiveColor() { return m_thumbInactiveColor; }
-        static unsigned thumbActiveColor() { return m_thumbActiveColor; }
-        static unsigned trackColor() { return m_trackColor; }
 
     private:
         RenderThemeChromiumLinux();
@@ -84,10 +80,6 @@ namespace WebCore {
         static unsigned m_activeSelectionForegroundColor;
         static unsigned m_inactiveSelectionBackgroundColor;
         static unsigned m_inactiveSelectionForegroundColor;
-
-        static unsigned m_thumbInactiveColor;
-        static unsigned m_thumbActiveColor;
-        static unsigned m_trackColor;
     };
 
 } // namespace WebCore

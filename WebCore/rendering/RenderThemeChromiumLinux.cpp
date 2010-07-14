@@ -27,14 +27,13 @@
 
 #include "CSSValueKeywords.h"
 #include "Color.h"
+#include "PlatformThemeChromiumGtk.h"
 #include "RenderObject.h"
+#include "ScrollbarTheme.h"
 #include "UserAgentStyleSheets.h"
 
 namespace WebCore {
 
-unsigned RenderThemeChromiumLinux::m_thumbInactiveColor = 0xeaeaea;
-unsigned RenderThemeChromiumLinux::m_thumbActiveColor = 0xf4f4f4;
-unsigned RenderThemeChromiumLinux::m_trackColor = 0xd3d3d3;
 unsigned RenderThemeChromiumLinux::m_activeSelectionBackgroundColor =
     0xff1e90ff;
 unsigned RenderThemeChromiumLinux::m_activeSelectionForegroundColor =
@@ -168,12 +167,29 @@ void RenderThemeChromiumLinux::setSelectionColors(
     m_inactiveSelectionForegroundColor = inactiveForegroundColor;
 }
 
-void RenderThemeChromiumLinux::setScrollbarColors(
-    SkColor inactiveColor, SkColor activeColor, SkColor trackColor)
+void RenderThemeChromiumLinux::adjustInnerSpinButtonStyle(CSSStyleSelector*, RenderStyle* style, Element*) const
 {
-    m_thumbInactiveColor = inactiveColor;
-    m_thumbActiveColor = activeColor;
-    m_trackColor = trackColor;
+    int width = ScrollbarTheme::nativeTheme()->scrollbarThickness();
+    style->setWidth(Length(width, Fixed));
+    style->setMinWidth(Length(width, Fixed));
+}
+
+bool RenderThemeChromiumLinux::paintInnerSpinButton(RenderObject* object, const PaintInfo& info, const IntRect& rect)
+{
+    ControlStates northStates = controlStatesForRenderer(object);
+    ControlStates southStates = northStates;
+    if (northStates & SpinUpState)
+        southStates &= ~(HoverState | PressedState);
+    else
+        northStates &= ~(HoverState | PressedState);
+
+    IntRect half = rect;
+    half.setHeight(rect.height() / 2);
+    PlatformThemeChromiumGtk::paintArrowButton(info.context, half, PlatformThemeChromiumGtk::North, northStates);
+
+    half.setY(rect.y() + rect.height() / 2);
+    PlatformThemeChromiumGtk::paintArrowButton(info.context, half, PlatformThemeChromiumGtk::South, southStates);
+    return false;
 }
 
 } // namespace WebCore
