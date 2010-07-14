@@ -143,8 +143,9 @@ void AutoFillPopupMenuClient::selectionChanged(unsigned listIndex, bool fireEven
 
 void AutoFillPopupMenuClient::selectionCleared()
 {
-    // Same effect desired as popupDidHide, so call through.
-    popupDidHide();
+    WebViewImpl* webView = getWebView();
+    if (webView)
+        webView->client()->didClearAutoFillSelection(WebNode(getTextField()));
 }
 
 String AutoFillPopupMenuClient::itemText(unsigned listIndex) const
