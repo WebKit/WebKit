@@ -1,3 +1,13 @@
+2010-07-14  Andreas Kling  <andreas.kling@nokia.com>
+
+        Reviewed by Darin Adler.
+
+        Canvas: Don't add shadow rect to dirty region when shadow alpha is 0
+        https://bugs.webkit.org/show_bug.cgi?id=42300
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::willDraw):
+
 2010-07-14  Kevin Ollivier  <kevino@theolliviers.com>
 
         [CURL] Build fix after request -> firstRequest rename.
