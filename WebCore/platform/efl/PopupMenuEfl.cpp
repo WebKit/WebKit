@@ -39,6 +39,9 @@ PopupMenu::PopupMenu(PopupMenuClient* client)
 
 PopupMenu::~PopupMenu()
 {
+    // Tell client to destroy data related to this popup since this object is
+    // going away.
+    hide();
 }
 
 void PopupMenu::show(const IntRect& rect, FrameView* view, int index)

@@ -1,3 +1,24 @@
+2010-07-14  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
+
+        Reviewed by Kent Tamura.
+
+        Notify browser about popup being deleted. In EFL and BREW ports, the
+        WebCore::Popup object was being deleted leaving the popup in browser
+        alive. Popups can be deleted in two ways: either from browser to webcore or
+        from webcore to browser. The first path was ok. The problem was when the
+        user changed the page with a popup still opened. This would trigger the
+        second path and would cause WebCore::Popup to be deleted without
+        notifying browser.
+        https://bugs.webkit.org/show_bug.cgi?id=41877
+
+        No new functionality so no new tests.
+
+        * platform/brew/PopupMenuBrew.cpp:
+        (WebCore::PopupMenu::~PopupMenu): call hide() when object is
+        destroyed.
+        * platform/efl/PopupMenuEfl.cpp:
+        (WebCore::PopupMenu::~PopupMenu): ditto.
+
 2010-07-14  Satish Sampath  <satish@chromium.org>
 
         Reviewed by Kent Tamura.
