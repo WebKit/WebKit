@@ -1,3 +1,15 @@
+2010-07-14  Johnny Ding  <jnd@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        https://bugs.webkit.org/show_bug.cgi?id=41292
+        Set right UserGestureIndicator to indicate whether the NPN_Evaluate allows popup window or not.
+
+        Test: plugins/plugin-initiate-popup-window.html
+
+        * bindings/v8/NPV8Object.cpp:
+        (_NPN_EvaluateHelper):
+
 2010-07-14  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler.
