@@ -198,7 +198,20 @@ sub closeHTTPD
     close HTTPDIN;
     my $retryCount = 20;
     if ($httpdPid) {
-        kill 15, $httpdPid;
+        if (isCygwin()) {
+            # Kill the process (and all its child processes) using taskkill, as
+            # perl's kill doesn't seem to work with Apache. A return value of 0
+            # means the process was killed, and return value of 32768 means
+            # there was no process with that PID. We use open/close here
+            # instead of system to avoid having taskkill print to stdout.
+            if (open(TASKKILL, "-|", qw(taskkill /f /t /pid), $httpdPid) && close(TASKKILL) && (!$? || $? == 32768)) {
+                # Cygwin's Apache doesn't delete the PID file itself when
+                # killed. We delete the PID file for it to work around this.
+                unlink $httpdPidFile;
+            }
+        } else {
+            kill 15, $httpdPid;
+        }
         while (-f $httpdPidFile && $retryCount) {
             sleep 1;
             --$retryCount;
@@ -206,13 +219,6 @@ sub closeHTTPD
     }
     cleanUp();
     if (!$retryCount) {
-        if (isCygwin()) {
-            my $result = system("taskkill /f /im httpd.exe");
-            # taskkill returning 0 means a successful kill, and 32768 means that no process matching
-            # the name was found. For either of these cases, the process has been successfully killed.
-            return 1 if $result == 0 || $result == 32768;
-            return 0;
-        }
         print STDERR "Timed out waiting for httpd to terminate!\n";
         return 0;
     }

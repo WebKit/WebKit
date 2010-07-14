@@ -1,3 +1,18 @@
+2010-07-14  Adam Roben  <aroben@apple.com>
+
+        Speed up killing of Apache on Windows
+
+        Fixes <http://webkit.org/b/42289> Killing Apache (and thus quitting
+        run-webkit-tests) takes a long time on Windows
+
+        Reviewed by Darin Adler and Jon Honeycutt.
+
+        * Scripts/webkitperl/httpd.pm:
+        (closeHTTPD): Use taskkill to kill Apache and its child processes.
+        Perl's kill seems ineffectual. We were already using taskkill, but
+        only after trying kill 20 times. Since kill never works, let's just
+        skip it entirely.
+
 2010-07-14  Johnny Ding  <jnd@chromium.org>
 
         Reviewed by Adam Barth.
