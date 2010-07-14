@@ -30,8 +30,10 @@
 
 {
     'includes': [
-        'features.gypi',
+        '../../WebCore/WebCore.gypi',
         '../../WebKitTools/DumpRenderTree/DumpRenderTree.gypi',
+        'WebKit.gypi',
+        'features.gypi',
     ],
     'variables': {
         'webkit_target_type': 'static_library',
@@ -42,12 +44,42 @@
                 # Webkit is being built outside of the full chromium project.
                 # e.g. via build-webkit --chromium
                 'chromium_src_dir': '../../WebKit/chromium',
+
+                # List of DevTools source files, ordered by dependencies. It is used both
+                # for copying them to resource dir, and for generating 'devtools.html' file.
+                'devtools_files': [
+                    '<@(devtools_css_files)',
+                    'v8/tools/codemap.js',
+                    'v8/tools/consarray.js',
+                    'v8/tools/csvparser.js',
+                    'v8/tools/logreader.js',
+                    'v8/tools/profile.js',
+                    'v8/tools/profile_view.js',
+                    'v8/tools/splaytree.js',
+                    '<@(devtools_js_files)',
+                ],
             },{
                 # WebKit is checked out in src/chromium/third_party/WebKit
                 'chromium_src_dir': '../../../..',
+
+                'devtools_files': [
+                    '<@(devtools_css_files)',
+                    '../../../../v8/tools/codemap.js',
+                    '../../../../v8/tools/consarray.js',
+                    '../../../../v8/tools/csvparser.js',
+                    '../../../../v8/tools/logreader.js',
+                    '../../../../v8/tools/profile.js',
+                    '../../../../v8/tools/profile_view.js',
+                    '../../../../v8/tools/splaytree.js',
+                    '<@(devtools_js_files)',
+                ],
             }],
         ],
         'ahem_path': '../../WebKitTools/DumpRenderTree/qt/fonts/AHEM____.TTF',
+
+        # If debug_devtools is set to 1, JavaScript files for DevTools are
+        # stored as is. Otherwise, a concatenated file is stored.
+        'debug_devtools%': 0,
     },
     'targets': [
         {
@@ -541,6 +573,79 @@
                 }],
             ],
         },
+
+        {
+            'target_name': 'inspector_resources',
+            'type': 'none',
+            'dependencies': ['devtools_html'],
+            'conditions': [
+                ['debug_devtools==0', {
+                    'dependencies': ['concatenated_devtools_js'],
+                }],
+            ],
+            'copies': [
+                {
+                    'destination': '<(PRODUCT_DIR)/resources/inspector',
+                    'files': [
+                        '<@(devtools_files)',
+                        '<@(webinspector_files)',
+                    ],
+                    'conditions': [
+                        ['debug_devtools==0', {
+                            'files/': [['exclude', '\\.js$']],
+                        }],
+                    ],
+                },
+                {
+                    'destination': '<(PRODUCT_DIR)/resources/inspector/Images',
+                    'files': [
+                        '<@(webinspector_image_files)',
+                        '<@(devtools_image_files)',
+                    ],
+               },
+            ],
+        },
+        {
+            'target_name': 'devtools_html',
+            'type': 'none',
+            'sources': ['<(PRODUCT_DIR)/resources/inspector/devtools.html'],
+            'actions': [{
+                'action_name': 'devtools_html',
+                'inputs': [
+                    '<(chromium_src_dir)/webkit/build/generate_devtools_html.py',
+                    # See issue 29695: WebKit.gypi is a source file for devtools.html.
+                    'WebKit.gypi',
+                    '../../WebCore/inspector/front-end/inspector.html',
+                ],
+                'outputs': ['<(PRODUCT_DIR)/resources/inspector/devtools.html'],
+                'action': ['python', '<@(_inputs)', '<@(_outputs)', '<@(devtools_files)'],
+            }],
+        },
+        {
+            'target_name': 'concatenated_devtools_js',
+            'type': 'none',
+            'dependencies': ['devtools_html'],
+            'sources': ['<(PRODUCT_DIR)/resources/inspector/DevTools.js'],
+            'actions': [{
+                'action_name': 'concatenate_devtools_js',
+                'script_name': '<(chromium_src_dir)/webkit/build/concatenate_js_files.py',
+                'input_page': '<(PRODUCT_DIR)/resources/inspector/devtools.html',
+                'inputs': [
+                    '<@(_script_name)',
+                    '<@(_input_page)',
+                    '<@(webinspector_files)',
+                    '<@(devtools_files)',
+                ],
+                'search_path': [
+                    '../../WebCore/inspector/front-end',
+                    'src/js',
+                    'v8/tools',
+                ],
+                'outputs': ['<(PRODUCT_DIR)/resources/inspector/DevTools.js'],
+                'action': ['python', '<@(_script_name)', '<@(_input_page)', '<@(_search_path)', '<@(_outputs)'],
+            }],
+        },
+
         {
             'target_name': 'webkit_unit_tests',
             'conditions': [
@@ -609,6 +714,7 @@
             'mac_bundle': 1,
             'dependencies': [
                 'ImageDiff',
+                'inspector_resources',
                 'webkit',
                 '../../JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.gyp:wtf_config',
                 '<(chromium_src_dir)/third_party/icu/icu.gyp:icuuc',

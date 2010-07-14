@@ -1,3 +1,19 @@
+2010-07-14  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by David Levin.
+
+        [Chromium] Upstreaming inspector_resources target
+        https://bugs.webkit.org/show_bug.cgi?id=41669
+
+        'inspector_resource' is currently in src/webkit/webkit.gyp of
+        Chromium tree. We move it to WebKit tree because:
+        - DumpRenderTree in WebKit tree needs it, and
+        - It's hard to refer to WebKit.gypi and WebCore.gypi from
+          webkit_support in both cases of Chromium-tree build and
+          WebKit-tree build.
+
+        * WebKit.gyp:
+
 2010-07-13  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Darin Fisher.
