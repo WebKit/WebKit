@@ -1,3 +1,11 @@
+2010-07-14  Brian Weinstein  <bweinstein@apple.com>
+
+        A sputnik test was removed from the Skipped list in r63366 because it was a bogus filename,
+        but this was because its directory was renamed. Add it back to the Skipped list with its new
+        directory name.
+
+        * platform/mac-snowleopard/Skipped:
+
 2010-07-14  Darin Adler  <darin@apple.com>
 
         * platform/mac-snowleopard/Skipped: Removed a bogus filename for a file that does not
