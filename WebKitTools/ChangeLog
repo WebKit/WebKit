@@ -1,3 +1,20 @@
+2010-07-15  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Add toolbar and toolbar item validation for MiniBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=42422
+
+        * MiniBrowser/MBToolbarItem.h: Added.
+        * MiniBrowser/MBToolbarItem.m: Added.
+        (-[MBToolbarItem validate]):
+
+        * MiniBrowser/mac/BrowserWindowController.m:
+        (-[BrowserWindowController validateUserInterfaceItem:]):
+
+        * MiniBrowser/MiniBrowser.xcodeproj/project.pbxproj:
+        * MiniBrowser/mac/BrowserWindow.xib:
+
 2010-07-15  Victor Wang  <victorw@chromium.org>
 
         Unreviewed, add victorw irc nickname to committer list.

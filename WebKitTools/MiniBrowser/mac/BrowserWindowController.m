@@ -108,6 +108,19 @@
     WKPageGoForward(_webView.pageRef);
 }
 
+- (BOOL)validateUserInterfaceItem:(id <NSValidatedUserInterfaceItem>)item
+{
+    SEL action = [item action];
+    
+    if (action == @selector(goBack:))
+        return _webView && WKPageCanGoBack(_webView.pageRef);
+    
+    if (action == @selector(goForward:))
+        return _webView && WKPageCanGoForward(_webView.pageRef);
+    
+    return YES;
+}
+
 - (BOOL)windowShouldClose:(id)sender
 {
     LOG(@"windowShouldClose");
