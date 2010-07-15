@@ -15,4 +15,3 @@ layer at (0,0) size 800x160
       RenderBlock {P} at (0,108) size 784x20
         RenderText {#text} at (0,0) size 56x19
           text run at (0,0) width 56: "RTL End"
-        RenderText {#text} at (0,0) size 0x0
