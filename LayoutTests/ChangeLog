@@ -1,3 +1,11 @@
+2010-07-15  Eric Seidel  <eric@webkit.org>
+
+        Unreviewed, just updating expectations.
+
+        * html5lib/runner-expected.txt:
+         - I think my changes got out of order with one another.
+           The new results here are correct.
+
 2010-07-14  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r63352.

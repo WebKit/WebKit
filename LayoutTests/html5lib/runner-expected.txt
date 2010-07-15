@@ -1668,10 +1668,11 @@ Got:
 |   <body>
 |     "A"
 |     " B"
+|     "C"
 |     <table>
 |       <tbody>
 |         <tr>
-|         " C"
+|         " "
 Expected:
 | <html>
 |   <head>
