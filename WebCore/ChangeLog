@@ -1,3 +1,15 @@
+2010-07-15  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
+        Patch for https://bugs.webkit.org/show_bug.cgi?id=42410
+        Many leaking DatasetDOMStringMaps seen on buildbot
+
+        * dom/NodeRareData.h:
+        (WebCore::NodeRareData::~NodeRareData): Add a virtual destructor so
+        that the ElementRareData's destructor will be called when this is deleted
+        from the Node's destructor.
+
 2010-07-15  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler.
