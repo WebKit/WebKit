@@ -413,7 +413,7 @@ static float floatWidthOfSubStringUsingSVGFont(const Font* font, const TextRun& 
         }
 
         SVGTextRunWalker<SVGTextRunWalkerMeasuredLengthData> runWalker(fontData, fontElement, data, floatWidthUsingSVGFontCallback, floatWidthMissingGlyphCallback);
-        runWalker.walk(run, isVerticalText, language, 0, run.length());
+        runWalker.walk(run, isVerticalText, language, from, to);
         charsConsumed = data.charsConsumed;
         glyphName = data.glyphName;
         return data.length;

@@ -1,3 +1,18 @@
+2010-07-15  MORITA Hajime  <morrita@google.com>
+
+        Text layout is wrong with a SVG Font that lacks <missing-glyph> element
+        https://bugs.webkit.org/show_bug.cgi?id=42352
+
+        floatWidthOfSubStringUsingSVGFont() calculated a wrong value for a
+        sub-run, and a fallback to system font triggers such a computation.
+        This change made floatWidthOfSubStringUsingSVGFont() to deal with
+        sub-runs.
+        
+        Test: svg/custom/svg-fonts-without-missing-glyph.xhtml
+
+        * svg/SVGFont.cpp:
+        (WebCore::floatWidthOfSubStringUsingSVGFont):
+
 2010-07-15  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Dirk Schulze.
