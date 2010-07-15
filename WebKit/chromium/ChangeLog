@@ -1,3 +1,31 @@
+2010-07-14  George Yakovlev  <georgey@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Allow Chromium access to Select control choices
+        https://bugs.webkit.org/show_bug.cgi?id=41384
+
+        * WebKit.gyp:
+        * public/WebOptionElement.h: Added.
+        (WebKit::WebOptionElement::WebOptionElement):
+        (WebKit::WebOptionElement::operator=):
+        (WebKit::WebOptionElement::assign):
+        * public/WebSelectElement.h:
+        * src/WebOptionElement.cpp: Added.
+        (WebKit::WebOptionElement::setValue):
+        (WebKit::WebOptionElement::value):
+        (WebKit::WebOptionElement::index):
+        (WebKit::WebOptionElement::text):
+        (WebKit::WebOptionElement::defaultSelected):
+        (WebKit::WebOptionElement::setDefaultSelected):
+        (WebKit::WebOptionElement::label):
+        (WebKit::WebOptionElement::disabled):
+        (WebKit::WebOptionElement::WebOptionElement):
+        (WebKit::WebOptionElement::operator=):
+        (WebKit::WebOptionElement::operator PassRefPtr<HTMLOptionElement>):
+        * src/WebSelectElement.cpp:
+        (WebKit::WebSelectElement::listItems):
+
 2010-07-14  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r63389.

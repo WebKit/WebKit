@@ -31,6 +31,8 @@
 #include "config.h"
 #include "WebSelectElement.h"
 
+#include "HTMLNames.h"
+#include "HTMLOptionElement.h"
 #include "HTMLSelectElement.h"
 #include "WebString.h"
 #include <wtf/PassRefPtr.h>
@@ -47,6 +49,16 @@ void WebSelectElement::setValue(const WebString& value)
 WebString WebSelectElement::value()
 {
     return unwrap<HTMLSelectElement>()->value();
+}
+
+WebVector<WebElement> WebSelectElement::listItems()
+{
+    const Vector<Element*>& sourceItems = unwrap<HTMLSelectElement>()->listItems();
+    WebVector<WebElement> items(sourceItems.size());
+    for (size_t i = 0; i < sourceItems.size(); ++i)
+        items[i] = WebElement(static_cast<HTMLElement*>(sourceItems[i]));
+
+    return items;
 }
 
 WebSelectElement::WebSelectElement(const PassRefPtr<HTMLSelectElement>& elem)

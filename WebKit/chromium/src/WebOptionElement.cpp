@@ -28,43 +28,73 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebSelectElement_h
-#define WebSelectElement_h
-
-#include "WebFormControlElement.h"
+#include "config.h"
 #include "WebOptionElement.h"
-#include "WebVector.h"
 
-#if WEBKIT_IMPLEMENTATION
-namespace WebCore { class HTMLSelectElement; }
-#endif
+#include "HTMLNames.h"
+#include "HTMLOptionElement.h"
+#include "HTMLSelectElement.h"
+#include "WebString.h"
+#include <wtf/PassRefPtr.h>
+
+using namespace WebCore;
 
 namespace WebKit {
 
-// Provides readonly access to some properties of a DOM select element node.
-class WebSelectElement : public WebFormControlElement {
-public:
-    WebSelectElement() : WebFormControlElement() { }
-    WebSelectElement(const WebSelectElement& e) : WebFormControlElement(e) { }
+void WebOptionElement::setValue(const WebString& newValue)
+{
+    return unwrap<HTMLOptionElement>()->setValue(newValue);
+}
 
-    WebSelectElement& operator=(const WebSelectElement& e)
-    { 
-        WebFormControlElement::assign(e); 
-        return *this; 
-    }
-    WEBKIT_API void assign(const WebSelectElement& e) { WebFormControlElement::assign(e); }
+WebString WebOptionElement::value() const
+{
+    return constUnwrap<HTMLOptionElement>()->value();
+}
 
-    WEBKIT_API void setValue(const WebString&);
-    WEBKIT_API WebString value();
-    WEBKIT_API WebVector<WebElement> listItems();
+int WebOptionElement::index() const
+{
+    return constUnwrap<HTMLOptionElement>()->index();
+}
 
-#if WEBKIT_IMPLEMENTATION
-    WebSelectElement(const WTF::PassRefPtr<WebCore::HTMLSelectElement>&);
-    WebSelectElement& operator=(const WTF::PassRefPtr<WebCore::HTMLSelectElement>&);
-    operator WTF::PassRefPtr<WebCore::HTMLSelectElement>() const;
-#endif
-};
+WebString WebOptionElement::text() const
+{
+    return constUnwrap<HTMLOptionElement>()->text();
+}
+
+bool WebOptionElement::defaultSelected() const
+{
+    return constUnwrap<HTMLOptionElement>()->defaultSelected();
+}
+
+void WebOptionElement::setDefaultSelected(bool newSelected)
+{
+    return unwrap<HTMLOptionElement>()->setDefaultSelected(newSelected);
+}
+
+WebString WebOptionElement::label() const
+{
+    return constUnwrap<HTMLOptionElement>()->label();
+}
+
+bool WebOptionElement::isEnabled() const
+{
+    return !(constUnwrap<HTMLOptionElement>()->disabled());
+}
+
+WebOptionElement::WebOptionElement(const PassRefPtr<HTMLOptionElement>& elem)
+    : WebFormControlElement(elem)
+{
+}
+
+WebOptionElement& WebOptionElement::operator=(const PassRefPtr<HTMLOptionElement>& elem)
+{
+    m_private = elem;
+    return *this;
+}
+
+WebOptionElement::operator PassRefPtr<HTMLOptionElement>() const
+{
+    return static_cast<HTMLOptionElement*>(m_private.get());
+}
 
 } // namespace WebKit
-
-#endif

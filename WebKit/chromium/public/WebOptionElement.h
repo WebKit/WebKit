@@ -28,40 +28,45 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebSelectElement_h
-#define WebSelectElement_h
+#ifndef WebOptionElement_h
+#define WebOptionElement_h
 
 #include "WebFormControlElement.h"
-#include "WebOptionElement.h"
 #include "WebVector.h"
 
 #if WEBKIT_IMPLEMENTATION
-namespace WebCore { class HTMLSelectElement; }
+namespace WebCore { class HTMLOptionElement; }
 #endif
 
 namespace WebKit {
 
-// Provides readonly access to some properties of a DOM select element node.
-class WebSelectElement : public WebFormControlElement {
+// Provides readonly access to some properties of a DOM option element node.
+class WebOptionElement : public WebFormControlElement {
 public:
-    WebSelectElement() : WebFormControlElement() { }
-    WebSelectElement(const WebSelectElement& e) : WebFormControlElement(e) { }
+    WebOptionElement() : WebFormControlElement() { }
+    WebOptionElement(const WebOptionElement& e) : WebFormControlElement(e) { }
 
-    WebSelectElement& operator=(const WebSelectElement& e)
-    { 
-        WebFormControlElement::assign(e); 
-        return *this; 
+    WebOptionElement& operator=(const WebOptionElement& e)
+    {
+        WebFormControlElement::assign(e);
+        return *this;
     }
-    WEBKIT_API void assign(const WebSelectElement& e) { WebFormControlElement::assign(e); }
+    WEBKIT_API void assign(const WebOptionElement& e) { WebFormControlElement::assign(e); }
 
     WEBKIT_API void setValue(const WebString&);
-    WEBKIT_API WebString value();
-    WEBKIT_API WebVector<WebElement> listItems();
+    WEBKIT_API WebString value() const;
+
+    WEBKIT_API int index() const;
+    WEBKIT_API WebString text() const;
+    WEBKIT_API bool defaultSelected() const;
+    WEBKIT_API void setDefaultSelected(bool);
+    WEBKIT_API WebString label() const;
+    WEBKIT_API bool isEnabled() const;
 
 #if WEBKIT_IMPLEMENTATION
-    WebSelectElement(const WTF::PassRefPtr<WebCore::HTMLSelectElement>&);
-    WebSelectElement& operator=(const WTF::PassRefPtr<WebCore::HTMLSelectElement>&);
-    operator WTF::PassRefPtr<WebCore::HTMLSelectElement>() const;
+    WebOptionElement(const WTF::PassRefPtr<WebCore::HTMLOptionElement>&);
+    WebOptionElement& operator=(const WTF::PassRefPtr<WebCore::HTMLOptionElement>&);
+    operator WTF::PassRefPtr<WebCore::HTMLOptionElement>() const;
 #endif
 };
 
