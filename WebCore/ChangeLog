@@ -1,3 +1,18 @@
+2010-07-14  Victor Wang  <victorw@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [chromium] update KURLGoogle decodeURLEscapeSequences to
+        use googleurl public api so it does not access functions in
+        url_canon_internal. This is for chromium multi-dll build.
+
+        https://bugs.webkit.org/show_bug.cgi?id=42177
+
+        Test: (unittest) WebKit\chromium\tests\KURLTest.cpp
+
+        * platform/KURLGoogle.cpp:
+        (WebCore::decodeURLEscapeSequences):
+
 2010-07-14  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

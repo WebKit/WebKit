@@ -48,7 +48,6 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/CString.h>
 
-#include <googleurl/src/url_canon_internal.h>
 #include <googleurl/src/url_util.h>
 
 using WTF::isASCIILower;
@@ -943,55 +942,13 @@ String decodeURLEscapeSequences(const String& str, const TextEncoding& encoding)
 
     const char* input = cstr.data();
     int inputLength = cstr.length();
-    url_canon::RawCanonOutputT<char> unescaped;
-    for (int i = 0; i < inputLength; i++) {
-        if (input[i] == '%') {
-            unsigned char ch;
-            if (url_canon::DecodeEscaped(input, &i, inputLength, &ch))
-                unescaped.push_back(ch);
-            else {
-                // Invalid escape sequence, copy the percent literal.
-                unescaped.push_back('%');
-            }
-        } else {
-            // Regular non-escaped 8-bit character.
-            unescaped.push_back(input[i]);
-        }
-    }
 
-    // Convert that 8-bit to UTF-16. It's not clear IE does this at all to
-    // JavaScript URLs, but Firefox and Safari do.
-    url_canon::RawCanonOutputT<url_parse::UTF16Char> utf16;
-    for (int i = 0; i < unescaped.length(); i++) {
-        unsigned char uch = static_cast<unsigned char>(unescaped.at(i));
-        if (uch < 0x80) {
-            // Non-UTF-8, just append directly
-            utf16.push_back(uch);
-        } else {
-            // next_ch will point to the last character of the decoded
-            // character.
-            int nextCharacter = i;
-            unsigned codePoint;
-            if (url_canon::ReadUTFChar(unescaped.data(), &nextCharacter,
-                                       unescaped.length(), &codePoint)) {
-                // Valid UTF-8 character, convert to UTF-16.
-                url_canon::AppendUTF16Value(codePoint, &utf16);
-                i = nextCharacter;
-            } else {
-                // KURL.cpp strips any sequences that are not valid UTF-8. This
-                // sounds scary. Instead, we just keep those invalid code
-                // points and promote to UTF-16. We copy all characters from
-                // the current position to the end of the identified sqeuqnce.
-                while (i < nextCharacter) {
-                    utf16.push_back(static_cast<unsigned char>(unescaped.at(i)));
-                    i++;
-                }
-                utf16.push_back(static_cast<unsigned char>(unescaped.at(i)));
-            }
-        }
-    }
+    url_canon::RawCanonOutputT<url_parse::UTF16Char> unescaped;
 
-    return String(reinterpret_cast<UChar*>(utf16.data()), utf16.length());
+    url_util::DecodeURLEscapeSequences(input, inputLength, &unescaped);
+
+    return String(reinterpret_cast<UChar*>(unescaped.data()),
+                  unescaped.length());
 }
 
 bool KURL::protocolIs(const char* protocol) const

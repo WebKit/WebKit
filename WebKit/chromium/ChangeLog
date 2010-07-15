@@ -1,3 +1,20 @@
+2010-07-14  Victor Wang  <victorw@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [Chromium] Chromium webkit dll updates:
+        -. Fix WEBKIT_IMPLEMENTATION in WebCommon so
+           dllimport works as expected.
+        -. Update webkit.gyp so targets that depend on webkit
+           has correct macros defined.
+        -. Roll forward chromium deps to r52273.
+
+        https://bugs.webkit.org/show_bug.cgi?id=42177
+
+        * DEPS:
+        * WebKit.gyp:
+        * public/WebCommon.h:
+
 2010-07-14  James Hawkins  <jhawkins@chromium.org>
 
         UNREVIEWED Build Fix.
