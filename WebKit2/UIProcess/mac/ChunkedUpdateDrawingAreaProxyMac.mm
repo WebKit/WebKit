@@ -47,7 +47,7 @@ void ChunkedUpdateDrawingAreaProxy::ensureBackingStore()
         return;
 
     RetainPtr<CGColorSpaceRef> colorSpace(AdoptCF, CGColorSpaceCreateDeviceRGB());
-    m_bitmapContext.adoptCF(CGBitmapContextCreate(0, m_viewSize.width(), m_viewSize.height(), 8, m_viewSize.width() * 4, colorSpace.get(), kCGImageAlphaPremultipliedLast));
+    m_bitmapContext.adoptCF(CGBitmapContextCreate(0, m_viewSize.width(), m_viewSize.height(), 8, m_viewSize.width() * 4, colorSpace.get(), kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host));
     
     // Flip the bitmap context coordinate system.
     CGContextTranslateCTM(m_bitmapContext.get(), 0, m_viewSize.height());

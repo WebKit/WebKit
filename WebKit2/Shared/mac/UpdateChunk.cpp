@@ -60,7 +60,7 @@ RetainPtr<CGImageRef> UpdateChunk::createImage()
 {
     RetainPtr<CGDataProviderRef> provider(AdoptCF, CGDataProviderCreateWithData(0, m_data, size(), 0));
     RetainPtr<CGColorSpaceRef> colorSpace(AdoptCF, CGColorSpaceCreateDeviceRGB());
-    RetainPtr<CGImageRef> image(AdoptCF, CGImageCreate(m_rect.width(), m_rect.height(), 8, 32, m_rect.width() * 4, colorSpace.get(), kCGImageAlphaPremultipliedLast, provider.get(), 0, false, kCGRenderingIntentDefault));
+    RetainPtr<CGImageRef> image(AdoptCF, CGImageCreate(m_rect.width(), m_rect.height(), 8, 32, m_rect.width() * 4, colorSpace.get(), kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host, provider.get(), 0, false, kCGRenderingIntentDefault));
     
     return image;
 }

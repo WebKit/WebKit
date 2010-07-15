@@ -1,3 +1,21 @@
+2010-07-14  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        Patch for https://bugs.webkit.org/show_bug.cgi?id=42315
+        <rdar://problem/8185281>
+        All text in WebKit2 draws with no subpixel antialiasing
+
+        - Change CGBitmapInfo passed to CGBitmapContextCreate and CGImageCreate
+          from kCGImageAlphaPremultipliedLast to kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host.
+
+        * Shared/mac/UpdateChunk.cpp:
+        (WebKit::UpdateChunk::createImage):
+        * UIProcess/mac/ChunkedUpdateDrawingAreaProxyMac.mm:
+        (WebKit::ChunkedUpdateDrawingAreaProxy::ensureBackingStore):
+        * WebProcess/WebPage/mac/ChunkedUpdateDrawingAreaMac.cpp:
+        (WebKit::ChunkedUpdateDrawingArea::paintIntoUpdateChunk):
+
 2010-07-14  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Mark Rowe.
