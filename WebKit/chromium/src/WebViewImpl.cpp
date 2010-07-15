@@ -94,6 +94,7 @@
 #include "WebDragData.h"
 #include "WebFrameImpl.h"
 #include "WebImage.h"
+#include "WebInputElement.h"
 #include "WebInputEvent.h"
 #include "WebInputEventConversion.h"
 #include "WebKit.h"
@@ -596,8 +597,7 @@ bool WebViewImpl::autocompleteHandleKeyEvent(const WebKeyboardEvent& event)
         if (!m_autoFillPopupClient->canRemoveSuggestionAtIndex(selectedIndex))
             return false;
 
-        HTMLInputElement* inputElement = static_cast<HTMLInputElement*>(element);
-        WebString name = inputElement->name();
+        WebString name = WebInputElement(static_cast<HTMLInputElement*>(element)).nameForAutofill();
         WebString value = m_autoFillPopupClient->itemText(selectedIndex);
         m_client->removeAutofillSuggestions(name, value);
         // Update the entries in the currently showing popup to reflect the
