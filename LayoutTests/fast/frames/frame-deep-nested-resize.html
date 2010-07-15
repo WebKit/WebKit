@@ -84,9 +84,10 @@
                     log(Seven, Seven.frameElement.width == 100, true, 100)
                     log(Eight, Eight.frameElement.width == 100, true, 100)
             }
+
+            window.onload = init;
         </script>
     </head>
-    <body onload="init()">
         <frameset cols='90,*' onmousemove="checkProgress()" onmouseup="checkProgress()" onmousedown="checkProgress()">
             <frame framemargin=0 frameborder=1 name="One" framespacing=1 />
             <frameset rows='70,50,*' onmousemove="checkProgress()" onmouseup="checkProgress()" onmousedown="checkProgress()">
@@ -103,5 +104,4 @@
                 </frameset>
             </frameset>
         </frameset>
-    </body>
 </html>
