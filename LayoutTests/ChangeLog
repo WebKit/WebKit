@@ -1,5 +1,16 @@
 2010-07-15  Nikolas Zimmermann  <nzimmermann@rim.com>
 
+        Rubber-stamped by Dirk Schulze.
+
+        Extend svg/custom/recursive-gradient.svg with the same recursion tests patterns have.
+
+        * platform/mac/svg/custom/recursive-gradient-expected.checksum:
+        * platform/mac/svg/custom/recursive-gradient-expected.png:
+        * platform/mac/svg/custom/recursive-gradient-expected.txt:
+        * svg/custom/recursive-gradient.svg:
+
+2010-07-15  Nikolas Zimmermann  <nzimmermann@rim.com>
+
         Reviewed by Eric Seidel.
 
         SVG patterns and masks should not be able to reference themselves

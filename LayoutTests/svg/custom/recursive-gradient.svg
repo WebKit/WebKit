@@ -4,8 +4,12 @@
         <stop stop-color="blue" offset="0"/>
         <stop stop-color="red" offset="1"/>
     </radialGradient>
+    <radialGradient id="gradient2" xlink:href="#gradient3"/>
+    <radialGradient id="gradient3" xlink:href="#gradient2"/>
 </defs>
 
 <!-- This should not crash -->
 <rect x="0" y="0" width="100" height="100" fill="url(#gradient1)" stroke="green"/>
+<rect x="100" y="0" width="100" height="100" fill="url(#gradient2)" stroke="green"/>
+<rect x="0" y="100" width="100" height="100" fill="url(#gradient3)" stroke="green"/>
 </svg>
