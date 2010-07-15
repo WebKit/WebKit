@@ -1,3 +1,14 @@
+2010-07-15  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=42358
+        <rdar://problem/8194512>
+        Hyphenation tests crash the Web process
+
+        * WebProcess/WebCoreSupport/mac/WebSystemInterface.mm:
+        (InitWebCoreSystemInterface): Add missing initializer.
+
 2010-07-15  Anders Carlsson  <andersca@apple.com>
 
         Attempt to fix the Windows build.
