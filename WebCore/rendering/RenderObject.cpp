@@ -941,10 +941,10 @@ void RenderObject::drawBoxSideFromPath(GraphicsContext* graphicsContext, IntRect
             whiteSpaceWidth += (patWidth  / numberOfWhitespaceDashes);
         }
 
-        DashArray* lineDash = new DashArray();
-        lineDash->append(patWidth);
-        lineDash->append(whiteSpaceWidth);
-        graphicsContext->setLineDash(*lineDash, patWidth);
+        DashArray lineDash;
+        lineDash.append(patWidth);
+        lineDash.append(whiteSpaceWidth);
+        graphicsContext->setLineDash(lineDash, patWidth);
         graphicsContext->addPath(borderPath);
         graphicsContext->strokePath();
         return;

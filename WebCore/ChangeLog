@@ -1,5 +1,14 @@
 2010-07-15  Mark Rowe  <mrowe@apple.com>
 
+        Reviewed by Maciej Stachowiak.
+
+        Fix a leak of Vector instances seen on the build bot.
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::drawBoxSideFromPath): Don't unnecessarily heap allocate then leak the DashArray.
+
+2010-07-15  Mark Rowe  <mrowe@apple.com>
+
         Update the sorting in the Xcode project files.
 
         * WebCore.xcodeproj/project.pbxproj:
