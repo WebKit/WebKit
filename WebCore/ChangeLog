@@ -1,3 +1,15 @@
+2010-07-15  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Adam Barth.
+
+        Pixel test failure in moving-shadow-on-path.html and moving-shadow-on-container.html
+        https://bugs.webkit.org/show_bug.cgi?id=42249
+
+        Partly revert <http://trac.webkit.org/changeset/63307>. The RenderSVGRoot change caused a pixel test regression in two fast/repaint tests.
+
+        * rendering/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::layout): Include selfNeedsLayout() check in LayoutStateRepainter argument.
+
 2010-07-14  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r63352.

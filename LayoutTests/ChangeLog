@@ -1,3 +1,15 @@
+2010-07-15  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Adam Barth.
+
+        Pixel test failure in moving-shadow-on-path.html and moving-shadow-on-container.html
+        https://bugs.webkit.org/show_bug.cgi?id=42249
+
+        Update fast/repaint/moving-shadow-on-path.html result, which shows a slightly smaller repaint rect.
+
+        * platform/mac/fast/repaint/moving-shadow-on-path-expected.checksum:
+        * platform/mac/fast/repaint/moving-shadow-on-path-expected.png:
+
 2010-07-15  Maciej Stachowiak  <mjs@apple.com>
 
         Unreviewed, trivial error in previous commit.
