@@ -160,10 +160,11 @@ COMPILE_ASSERT_MATCHING_ENUM(DragOperationDelete);
 COMPILE_ASSERT_MATCHING_ENUM(DragOperationEvery);
 
 static const PopupContainerSettings autoFillPopupSettings = {
-    false,  // setTextOnIndexChange
-    false,  // acceptOnAbandon
-    true,   // loopSelectionNavigation
-    true,   // restrictWidthOfListBox. Same as other browser (Fx, IE, and safari)
+    false, // setTextOnIndexChange
+    false, // acceptOnAbandon
+    true,  // loopSelectionNavigation
+    false, // restrictWidthOfListBox (For security reasons show the entire entry
+           // so the user doesn't enter information it did not intend to.)
     // For suggestions, we use the direction of the input field as the direction
     // of the popup items. The main reason is to keep the display of items in
     // drop-down the same as the items in the input field.
