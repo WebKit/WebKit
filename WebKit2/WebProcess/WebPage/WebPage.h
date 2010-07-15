@@ -111,8 +111,8 @@ private:
     void loadURL(const WebCore::String&);
     void stopLoading();
     void reload(bool reloadFromOrigin);
-    void goForward();
-    void goBack();
+    void goForward(uint64_t);
+    void goBack(uint64_t);
     void goToBackForwardItem(uint64_t);
     void setActive(bool);
     void setFocused(bool);
@@ -131,9 +131,6 @@ private:
 
     WebCore::IntSize m_viewSize;
     DrawingArea* m_drawingArea;
-
-    bool m_canGoBack;
-    bool m_canGoForward;
 
     InjectedBundlePageLoaderClient m_loaderClient;
     InjectedBundlePageUIClient m_uiClient;

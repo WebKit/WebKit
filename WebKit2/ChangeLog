@@ -1,3 +1,21 @@
+2010-07-14  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by John Sullivan.
+
+        Make Back/Forward work.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::goForward): Pass the item ID to avoid roundtrip.
+        (WebKit::WebPageProxy::goBack): Ditto.
+        (WebKit::WebPageProxy::didReceiveMessage): Implement WebPageProxyMessage::BackForwardGoToItem.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+        (WebKit::WebPage::goForward): Use m_page->goToItem with the correct type instead of the Page shortcut.
+        (WebKit::WebPage::goBack): Ditto.
+        (WebKit::WebPage::didReceiveMessage):
+        * WebProcess/WebPage/WebPage.h:
+        Remove unused m_canGoBack and m_canGoForward.
+
 2010-07-14  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin Adler.

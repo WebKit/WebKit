@@ -231,7 +231,11 @@ void WebPageProxy::goForward()
 {
     if (!isValid())
         return;
-    process()->send(WebPageMessage::GoForward, m_pageID, CoreIPC::In());
+
+    if (!canGoForward())
+        return;
+
+    process()->send(WebPageMessage::GoForward, m_pageID, CoreIPC::In(m_backForwardList->forwardItem()->itemID()));
 }
 
 bool WebPageProxy::canGoForward() const
@@ -243,7 +247,11 @@ void WebPageProxy::goBack()
 {
     if (!isValid())
         return;
-    process()->send(WebPageMessage::GoBack, m_pageID, CoreIPC::In());
+
+    if (!canGoBack())
+        return;
+
+    process()->send(WebPageMessage::GoBack, m_pageID, CoreIPC::In(m_backForwardList->backItem()->itemID()));
 }
 
 bool WebPageProxy::canGoBack() const
@@ -255,6 +263,7 @@ void WebPageProxy::goToBackForwardItem(WebBackForwardListItem* item)
 {
     if (!isValid())
         return;
+
     process()->send(WebPageMessage::GoToBackForwardItem, m_pageID, CoreIPC::In(item->itemID()));
 }
 
@@ -586,6 +595,13 @@ void WebPageProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::M
             if (!arguments.decode(CoreIPC::Out(itemID)))
                 return;
             addItemToBackForwardList(process()->webBackForwardItem(itemID));
+            break;
+        }
+        case WebPageProxyMessage::BackForwardGoToItem: {
+            uint64_t itemID;
+            if (!arguments.decode(CoreIPC::Out(itemID)))
+                return;
+            goToItemInBackForwardList(process()->webBackForwardItem(itemID));
             break;
         }
         default:
