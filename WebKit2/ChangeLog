@@ -26,6 +26,28 @@
 
         Reviewed by Sam Weinig.
 
+        Add a PluginView::Stream class
+        https://bugs.webkit.org/show_bug.cgi?id=42398
+
+        * WebProcess/Plugins/PluginView.cpp:
+        Add the Stream class.
+
+        (WebKit::PluginView::performURLRequest):
+        Create the stream and start it.
+
+        (WebKit::PluginView::addStream):
+        Add the stream to the map.
+
+        (WebKit::PluginView::removeStream):
+        Remove the stream from the map.
+
+        * WebProcess/Plugins/PluginView.h:
+        Add Stream forward declaration and the m_streams map.
+
+2010-07-15  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
         Don't allow multiple calls to NetscapePluginStream::stop
         https://bugs.webkit.org/show_bug.cgi?id=42395
 

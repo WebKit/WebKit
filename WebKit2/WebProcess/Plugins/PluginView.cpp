@@ -64,6 +64,35 @@ private:
     bool m_allowPopups;
 };
 
+class PluginView::Stream : public RefCounted<PluginView::Stream> {
+public:
+    static PassRefPtr<Stream> create(PluginView* pluginView, uint64_t streamID, const ResourceRequest& request)
+    {
+        return adoptRef(new Stream(pluginView, streamID, request));
+    }
+
+    void start();
+
+    uint64_t streamID() const { return m_streamID; }
+
+private:
+    Stream(PluginView* pluginView, uint64_t streamID, const ResourceRequest& request)
+        : m_pluginView(pluginView)
+        , m_streamID(streamID)
+        , m_request(request)
+    {
+    }
+
+    RefPtr<PluginView> m_pluginView;
+    uint64_t m_streamID;
+    const ResourceRequest m_request;
+};
+
+void PluginView::Stream::start()
+{
+    // FIXME: Implement.
+}
+    
 PluginView::PluginView(WebCore::HTMLPlugInElement* pluginElement, PassRefPtr<Plugin> plugin, const Plugin::Parameters& parameters)
     : m_pluginElement(pluginElement)
     , m_plugin(plugin)
@@ -216,6 +245,11 @@ void PluginView::performURLRequest(URLRequest* request)
         performFrameLoadURLRequest(request);
         return;
     }
+
+    // This request is to load a URL and create a stream.
+    RefPtr<PluginView::Stream> stream = PluginView::Stream::create(this, request->requestID(), request->request());
+    addStream(stream.get());
+    stream->start();
 }
 
 void PluginView::performFrameLoadURLRequest(URLRequest* request)
@@ -303,6 +337,19 @@ void PluginView::performJavaScriptURLRequest(URLRequest* request)
 
     // Send the result back to the plug-in.
     plugin->didEvaluateJavaScript(request->requestID(), decodeURLEscapeSequences(request->request().url()), resultString);
+}
+
+void PluginView::addStream(Stream* stream)
+{
+    ASSERT(!m_streams.contains(stream->streamID()));
+    m_streams.set(stream->streamID(), stream);
+}
+    
+void PluginView::removeStream(Stream* stream)
+{
+    ASSERT(m_streams.get(stream->streamID()) == stream);
+    
+    m_streams.remove(stream->streamID());
 }
 
 void PluginView::invalidateRect(const IntRect& dirtyRect)
