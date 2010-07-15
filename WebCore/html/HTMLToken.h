@@ -339,7 +339,7 @@ public:
             m_data = String(token.comment().data(), token.comment().size());
             break;
         case HTMLToken::Character:
-            m_data = String(token.characters().data(), token.characters().size());
+            m_externalCharacters = &token.characters();
             break;
         }
     }
@@ -350,12 +350,6 @@ public:
         , m_attributes(attributes)
     {
         ASSERT(usesName());
-    }
-
-    explicit AtomicHTMLToken(const String& characters)
-        : m_type(HTMLToken::Character)
-        , m_data(characters)
-    {
     }
 
     HTMLToken::Type type() const { return m_type; }
@@ -398,10 +392,10 @@ public:
         return m_attributes.release();
     }
 
-    const String& characters() const
+    const HTMLToken::DataVector& characters() const
     {
         ASSERT(m_type == HTMLToken::Character);
-        return m_data;
+        return *m_externalCharacters;
     }
 
     const String& comment() const
@@ -446,9 +440,18 @@ private:
     // "name" for DOCTYPE, StartTag, and EndTag
     AtomicString m_name;
 
-    // "characters" for Character
     // "data" for Comment
     String m_data;
+
+    // "characters" for Character
+    //
+    // We don't want to copy the the characters out of the HTMLToken, so we
+    // keep a pointer to its buffer instead.  This buffer is owned by the
+    // HTMLToken and causes a lifetime dependence between these objects.
+    //
+    // FIXME: Add a mechanism for "internalizing" the characters when the
+    //        HTMLToken is destructed.
+    const HTMLToken::DataVector* m_externalCharacters;
 
     // For DOCTYPE
     OwnPtr<HTMLToken::DoctypeData> m_doctypeData;

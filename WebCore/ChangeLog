@@ -1,3 +1,21 @@
+2010-07-14  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Avoid extra memcpy of character tokens
+        https://bugs.webkit.org/show_bug.cgi?id=42002
+
+        Eric tells me this patch makes the new tree builder 1% faster than the
+        old tree builder on our parser benchmark.
+
+        * html/HTMLToken.h:
+        (WebCore::AtomicHTMLToken::AtomicHTMLToken):
+        (WebCore::AtomicHTMLToken::characters):
+        * html/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::ExternalCharacterTokenBuffer::ExternalCharacterTokenBuffer):
+        (WebCore::convertToOldStyle):
+        (WebCore::HTMLTreeBuilder::processFakeCharacters):
+
 2010-07-14  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.
