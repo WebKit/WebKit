@@ -2,6 +2,21 @@
 
         Reviewed by Dirk Schulze.
 
+        Cycle detection needs to include shadow tree
+        https://bugs.webkit.org/show_bug.cgi?id=42360
+
+        Search for cycles in shadow tree fragments as well. Extended the svg/custom/recursion-* tests. No more crashes in any of them.
+
+        * rendering/RenderSVGResourceContainer.h:
+        (WebCore::RenderSVGResourceContainer::containsCyclicReference):
+        * rendering/RenderSVGShadowTreeRootContainer.cpp: Implemented here, not inline, so that clients don't need to include SVGShadowTreeElements.h
+        (WebCore::RenderSVGShadowTreeRootContainer::rootElement): Expose helper function, that returns the shadow tree root element as Node*.
+        * rendering/RenderSVGShadowTreeRootContainer.h:
+
+2010-07-15  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Dirk Schulze.
+
         clipPath is missing cycle detection
         https://bugs.webkit.org/show_bug.cgi?id=42350
 

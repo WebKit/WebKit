@@ -3,6 +3,11 @@
     <clipPath id='clipPath_0'>
         <rect x='0' y='0' width='100' height='100' fill='none' clip-path='url(#clipPath_0)'/>
     </clipPath>
+
+    <rect x='0' y='100' width='100' height='100' id="rect" fill='none' clip-path='url(#clipPath_1)'/>
+    <clipPath id='clipPath_1'>
+        <use xlink:href="#rect"/>
+    </clipPath>
 </defs>
 
 <!--
@@ -15,4 +20,7 @@ Spec: clip-path: If the IRI reference is not valid (e.g it points to an object t
 
 <rect x='0' y='0' width='200' height='200' fill='red'/>
 <rect x='0' y='0' width='200' height='200' fill='green' clip-path='url(#clipPath_0)'/>
+
+<rect x='0' y='100' width='200' height='200' fill='red'/>
+<rect x='0' y='100' width='200' height='200' fill='green' clip-path='url(#clipPath_1)'/>
 </svg>

@@ -26,6 +26,7 @@
 
 #include "SVGStyledTransformableElement.h"
 #include "RenderSVGResource.h"
+#include "RenderSVGShadowTreeRootContainer.h"
 
 namespace WebCore {
 
@@ -116,7 +117,17 @@ public:
             // Let the class inheriting from us decide whether the child element references ourselves.
             if (childElementReferencesResource(svgStyle, m_id))
                 return true;
-    
+
+            // Dive into shadow tree to check for cycles there.
+            if (node->hasTagName(SVGNames::useTag)) {
+                ASSERT(renderer->isSVGShadowTreeRootContainer());
+                if (Node* shadowRoot = static_cast<RenderSVGShadowTreeRootContainer*>(renderer)->rootElement()) {
+                    if (containsCyclicReference(shadowRoot))
+                        return true;
+                }
+
+            }
+
             if (node->hasChildNodes()) {
                 if (containsCyclicReference(node))
                     return true;

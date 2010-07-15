@@ -2,6 +2,26 @@
 
         Reviewed by Dirk Schulze.
 
+        Cycle detection needs to include shadow tree
+        https://bugs.webkit.org/show_bug.cgi?id=42360
+
+        Extend recursion tests to cover indirect recursion through <use> elements.
+
+        * platform/mac/svg/custom/recursive-clippath-expected.checksum:
+        * platform/mac/svg/custom/recursive-clippath-expected.png:
+        * platform/mac/svg/custom/recursive-clippath-expected.txt:
+        * platform/mac/svg/custom/recursive-mask-expected.txt:
+        * platform/mac/svg/custom/recursive-pattern-expected.checksum:
+        * platform/mac/svg/custom/recursive-pattern-expected.png:
+        * platform/mac/svg/custom/recursive-pattern-expected.txt:
+        * svg/custom/recursive-clippath.svg:
+        * svg/custom/recursive-mask.svg:
+        * svg/custom/recursive-pattern.svg:
+
+2010-07-15  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Dirk Schulze.
+
         clipPath is missing cycle detection
         https://bugs.webkit.org/show_bug.cgi?id=42350
 

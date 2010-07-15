@@ -96,6 +96,11 @@ void RenderSVGShadowTreeRootContainer::styleDidChange(StyleDifference diff, cons
         shadowRootRenderer->setStyle(style());
 }
 
+Node* RenderSVGShadowTreeRootContainer::rootElement() const
+{
+    return m_shadowRoot.get();
+}
+
 }
 
 #endif
