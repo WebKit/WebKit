@@ -69,6 +69,11 @@ RGBA32 makeRGBAFromCMYKA(float c, float m, float y, float k, float a);
 
 int differenceSquared(const Color&, const Color&);
 
+inline int redChannel(RGBA32 color) { return (color >> 16) & 0xFF; }
+inline int greenChannel(RGBA32 color) { return (color >> 8) & 0xFF; }
+inline int blueChannel(RGBA32 color) { return color & 0xFF; }
+inline int alphaChannel(RGBA32 color) { return (color >> 24) & 0xFF; }
+
 class Color : public FastAllocBase {
 public:
     Color() : m_color(0), m_valid(false) { }
@@ -93,10 +98,10 @@ public:
 
     bool hasAlpha() const { return alpha() < 255; }
 
-    int red() const { return (m_color >> 16) & 0xFF; }
-    int green() const { return (m_color >> 8) & 0xFF; }
-    int blue() const { return m_color & 0xFF; }
-    int alpha() const { return (m_color >> 24) & 0xFF; }
+    int red() const { return redChannel(m_color); }
+    int green() const { return greenChannel(m_color); }
+    int blue() const { return blueChannel(m_color); }
+    int alpha() const { return alphaChannel(m_color); }
     
     RGBA32 rgb() const { return m_color; } // Preserve the alpha.
     void setRGB(int r, int g, int b) { m_color = makeRGB(r, g, b); m_valid = true; }

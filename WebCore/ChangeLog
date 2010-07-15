@@ -1,3 +1,22 @@
+2010-07-14  Andreas Kling  <andreas.kling@nokia.com>
+
+        Reviewed by Darin Adler.
+
+        Add functions to extract individual RGBA32 components
+        https://bugs.webkit.org/show_bug.cgi?id=42305
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::willDraw): Use alphaChannel()
+        * platform/graphics/Color.h:
+        (WebCore::redChannel):
+        (WebCore::greenChannel):
+        (WebCore::blueChannel):
+        (WebCore::alphaChannel):
+        (WebCore::Color::red):
+        (WebCore::Color::green):
+        (WebCore::Color::blue):
+        (WebCore::Color::alpha):
+
 2010-07-14  Alexey Proskuryakov  <ap@apple.com>
 
         Not reviewed.

@@ -1375,7 +1375,7 @@ void CanvasRenderingContext2D::willDraw(const FloatRect& r, unsigned options)
         dirtyRect = ctm.mapRect(r);
     }
     
-    if (options & CanvasWillDrawApplyShadow && Color(state().m_shadowColor).alpha()) {
+    if (options & CanvasWillDrawApplyShadow && alphaChannel(state().m_shadowColor)) {
         // The shadow gets applied after transformation
         FloatRect shadowRect(dirtyRect);
         shadowRect.move(state().m_shadowOffset);
