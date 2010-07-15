@@ -1,3 +1,12 @@
+2010-07-14  James Hawkins  <jhawkins@chromium.org>
+
+        UNREVIEWED Build Fix.
+
+        Fix a typo.
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::applyAutoFillSuggestions):
+
 2010-07-14  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Darin Fisher.
