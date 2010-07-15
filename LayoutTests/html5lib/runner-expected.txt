@@ -699,7 +699,8 @@ Got:
 |     <col>
 |     <col>
 |     <table>
-|       <col>
+|       <colgroup>
+|         <col>
 |       <tbody>
 |         <tr>
 |           <td>
@@ -4875,28 +4876,9 @@ Expected:
 |   <body>
 |     <form>
 resources/tables01.dat:
-3
 7
 8
 9
-
-Test 3 of 16 in resources/tables01.dat failed. Input:
-<table><col foo='bar'>
-Got:
-| <html>
-|   <head>
-|   <body>
-|     <table>
-|       <col>
-|         foo="bar"
-Expected:
-| <html>
-|   <head>
-|   <body>
-|     <table>
-|       <colgroup>
-|         <col>
-|           foo="bar"
 
 Test 7 of 16 in resources/tables01.dat failed. Input:
 <table><select><option>3</select></table>

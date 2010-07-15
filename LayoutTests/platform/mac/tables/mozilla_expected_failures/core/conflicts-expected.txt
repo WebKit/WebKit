@@ -61,7 +61,8 @@ layer at (0,0) size 785x1306
         RenderText {#text} at (0,18) size 344x18
           text run at (0,18) width 344: "fixed table - percent cell wins over fix cell (and in IE5)"
       RenderTable {TABLE} at (0,304) size 500x52 [border: (1px outset #808080)]
-        RenderTableCol {COL} at (0,0) size 0x0
+        RenderTableCol {COLGROUP} at (0,0) size 0x0
+          RenderTableCol {COL} at (0,0) size 0x0
         RenderTableSection {TBODY} at (1,1) size 498x50
           RenderTableRow {TR} at (0,2) size 498x22
             RenderTableCell {TD} at (2,2) size 246x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
@@ -82,7 +83,8 @@ layer at (0,0) size 785x1306
         RenderText {#text} at (0,18) size 344x18
           text run at (0,18) width 344: "fixed table - percent cell wins over fix cell (and in IE5)"
       RenderTable {TABLE} at (0,392) size 500x52 [border: (1px outset #808080)]
-        RenderTableCol {COL} at (0,0) size 0x0
+        RenderTableCol {COLGROUP} at (0,0) size 0x0
+          RenderTableCol {COL} at (0,0) size 0x0
         RenderTableSection {TBODY} at (1,1) size 498x50
           RenderTableRow {TR} at (0,2) size 498x22
             RenderTableCell {TD} at (2,2) size 246x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
@@ -103,7 +105,8 @@ layer at (0,0) size 785x1306
         RenderText {#text} at (0,18) size 344x18
           text run at (0,18) width 344: "fixed table - percent cell wins over fix cell (and in IE5)"
       RenderTable {TABLE} at (0,480) size 500x52 [border: (1px outset #808080)]
-        RenderTableCol {COL} at (0,0) size 0x0
+        RenderTableCol {COLGROUP} at (0,0) size 0x0
+          RenderTableCol {COL} at (0,0) size 0x0
         RenderTableSection {TBODY} at (1,1) size 498x50
           RenderTableRow {TR} at (0,2) size 498x22
             RenderTableCell {TD} at (2,2) size 246x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
@@ -124,7 +127,8 @@ layer at (0,0) size 785x1306
         RenderText {#text} at (0,18) size 344x18
           text run at (0,18) width 344: "fixed table - percent cell wins over fix cell (and in IE5)"
       RenderTable {TABLE} at (0,568) size 500x52 [border: (1px outset #808080)]
-        RenderTableCol {COL} at (0,0) size 0x0
+        RenderTableCol {COLGROUP} at (0,0) size 0x0
+          RenderTableCol {COL} at (0,0) size 0x0
         RenderTableSection {TBODY} at (1,1) size 498x50
           RenderTableRow {TR} at (0,2) size 498x22
             RenderTableCell {TD} at (2,2) size 118x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
@@ -295,7 +299,8 @@ layer at (0,0) size 785x1306
         RenderText {#text} at (0,18) size 373x18
           text run at (0,18) width 373: "percent cell/col percentage conflict goes to cell (and in IE5)"
       RenderTable {TABLE} at (0,1256) size 500x34 [border: (1px outset #808080)]
-        RenderTableCol {COL} at (0,0) size 0x0
+        RenderTableCol {COLGROUP} at (0,0) size 0x0
+          RenderTableCol {COL} at (0,0) size 0x0
         RenderTableSection {TBODY} at (1,1) size 498x32
           RenderTableRow {TR} at (0,5) size 498x22
             RenderTableCell {TD} at (5,5) size 386x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]

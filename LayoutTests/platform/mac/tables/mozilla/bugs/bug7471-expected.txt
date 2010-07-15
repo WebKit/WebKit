@@ -42,9 +42,10 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 287x18
           text run at (0,0) width 287: "col elements with align=center on second col:"
       RenderTable {TABLE} at (0,160) size 705x76 [border: (1px outset #808080)]
-        RenderTableCol {COL} at (0,0) size 0x0
-        RenderTableCol {COL} at (0,0) size 0x0
-        RenderTableCol {COL} at (0,0) size 0x0
+        RenderTableCol {COLGROUP} at (0,0) size 0x0
+          RenderTableCol {COL} at (0,0) size 0x0
+          RenderTableCol {COL} at (0,0) size 0x0
+          RenderTableCol {COL} at (0,0) size 0x0
         RenderTableSection {TBODY} at (1,1) size 703x74
           RenderTableRow {TR} at (0,2) size 703x22
             RenderTableCell {TD} at (2,2) size 231x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]

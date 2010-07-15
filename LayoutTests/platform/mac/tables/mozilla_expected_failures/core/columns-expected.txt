@@ -39,8 +39,9 @@ layer at (0,0) size 785x940
         RenderText {#text} at (0,18) size 174x18
           text run at (0,18) width 174: "auto table 2 cols with 1*,1*"
       RenderTable {TABLE} at (0,146) size 197x28 [border: (1px outset #808080)]
-        RenderTableCol {COL} at (0,0) size 0x0
-        RenderTableCol {COL} at (0,0) size 0x0
+        RenderTableCol {COLGROUP} at (0,0) size 0x0
+          RenderTableCol {COL} at (0,0) size 0x0
+          RenderTableCol {COL} at (0,0) size 0x0
         RenderTableSection {TBODY} at (1,1) size 195x26
           RenderTableRow {TR} at (0,2) size 195x22
             RenderTableCell {TD} at (2,2) size 31x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
@@ -57,8 +58,9 @@ layer at (0,0) size 785x940
         RenderText {#text} at (0,18) size 174x18
           text run at (0,18) width 174: "auto table 2 cols with 2*,1*"
       RenderTable {TABLE} at (0,210) size 197x28 [border: (1px outset #808080)]
-        RenderTableCol {COL} at (0,0) size 0x0
-        RenderTableCol {COL} at (0,0) size 0x0
+        RenderTableCol {COLGROUP} at (0,0) size 0x0
+          RenderTableCol {COL} at (0,0) size 0x0
+          RenderTableCol {COL} at (0,0) size 0x0
         RenderTableSection {TBODY} at (1,1) size 195x26
           RenderTableRow {TR} at (0,2) size 195x22
             RenderTableCell {TD} at (2,2) size 31x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
@@ -212,7 +214,8 @@ layer at (0,0) size 785x940
         RenderText {#text} at (0,18) size 61x18
           text run at (0,18) width 61: "auto table"
       RenderTable {TABLE} at (0,832) size 82x28 [border: (1px outset #808080)]
-        RenderTableCol {COL} at (0,0) size 0x0
+        RenderTableCol {COLGROUP} at (0,0) size 0x0
+          RenderTableCol {COL} at (0,0) size 0x0
         RenderTableSection {TBODY} at (1,1) size 80x26
           RenderTableRow {TR} at (0,2) size 80x22
             RenderTableCell {TD} at (2,2) size 43x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
@@ -226,7 +229,8 @@ layer at (0,0) size 785x940
         RenderText {#text} at (0,18) size 66x18
           text run at (0,18) width 66: "fixed table"
       RenderTable {TABLE} at (0,896) size 200x28 [border: (1px outset #808080)]
-        RenderTableCol {COL} at (0,0) size 0x0
+        RenderTableCol {COLGROUP} at (0,0) size 0x0
+          RenderTableCol {COL} at (0,0) size 0x0
         RenderTableSection {TBODY} at (1,1) size 198x26
           RenderTableRow {TR} at (0,2) size 198x22
             RenderTableCell {TD} at (2,2) size 111x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]

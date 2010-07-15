@@ -1,3 +1,22 @@
+2010-07-15  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        LegacyHTMLTreeBuilder should insert an implicit <colgroup> before inserting <col> to match HTML5
+        https://bugs.webkit.org/show_bug.cgi?id=42346
+
+        This turned out to be an easy fix.
+
+        This is covered by lots of layout tests.  I believe
+        all of the changed results to be progressions.
+
+        This change had no measurable effect on the parser benchmark.
+
+        * html/LegacyHTMLTreeBuilder.cpp:
+        (WebCore::LegacyHTMLTreeBuilder::colCreateErrorCheck):
+        (WebCore::LegacyHTMLTreeBuilder::getNode):
+        * html/LegacyHTMLTreeBuilder.h:
+
 2010-07-15  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Oliver Hunt.
