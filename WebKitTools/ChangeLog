@@ -1,3 +1,9 @@
+2010-07-15  Victor Wang  <victorw@chromium.org>
+
+        Unreviewed, add victorw irc nickname to committer list.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2010-07-15  Adam Roben  <aroben@apple.com>
 
         Make killing Apache more reliable (on both Mac and Windows)

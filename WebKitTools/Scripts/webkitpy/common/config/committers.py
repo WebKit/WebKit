@@ -166,7 +166,7 @@ committers_unable_to_review = [
     Committer("Tony Gentilcore", "tonyg@chromium.org", "tonyg-cr"),
     Committer("Trey Matteson", "trey@usa.net", "trey"),
     Committer("Tristan O'Tierney", ["tristan@otierney.net", "tristan@apple.com"]),
-    Committer("Victor Wang", "victorw@chromium.org"),
+    Committer("Victor Wang", "victorw@chromium.org", "victorw"),
     Committer("Vitaly Repeshko", "vitalyr@chromium.org"),
     Committer("William Siegrist", "wsiegrist@apple.com", "wms"),
     Committer("Xiaomei Ji", "xji@chromium.org", "xji"),
