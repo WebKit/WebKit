@@ -101,9 +101,10 @@ PassRefPtr<ChildType> HTMLConstructionSite::attach(Node* parent, PassRefPtr<Chil
     // |parent| to hold a ref at this point.  In the common case (at least
     // for elements), however, we'll get to use this ref in the stack of
     // open elements.
-    ASSERT(parent->attached());
-    ASSERT(!child->attached());
-    child->attach();
+    if (parent->attached()) {
+        ASSERT(!child->attached());
+        child->attach();
+    }
     return child.release();
 }
 
@@ -116,8 +117,7 @@ void HTMLConstructionSite::attachAtSite(const AttachmentSite& site, PassRefPtr<N
         ExceptionCode ec = 0;
         site.parent->insertBefore(child, site.nextChild, ec);
         ASSERT(!ec);
-        ASSERT(site.parent->attached());
-        if (!child->attached())
+        if (site.parent->attached() && !child->attached())
             child->attach();
         return;
     }
@@ -125,8 +125,7 @@ void HTMLConstructionSite::attachAtSite(const AttachmentSite& site, PassRefPtr<N
     // It's slightly unfortunate that we need to hold a reference to child
     // here to call attach().  We should investigate whether we can rely on
     // |site.parent| to hold a ref at this point.
-    ASSERT(site.parent->attached());
-    if (!child->attached())
+    if (site.parent->attached() && !child->attached())
         child->attach();
 }
 

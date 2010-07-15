@@ -1,3 +1,19 @@
+2010-07-14  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        HTMLTreeBuilder shouldn't crash during fast/parser/remove-parser-current-node.html
+        https://bugs.webkit.org/show_bug.cgi?id=42312
+
+        We were crashing because of an ASSERT I added to the attach logic in
+        the HTMLConstructionSite.  I knew this ASSERT was wrong when I added
+        it, I just wanted to make sure we had test coverage of those cases.
+        Turns out we do!  :)
+
+        * html/HTMLConstructionSite.cpp:
+        (WebCore::HTMLConstructionSite::attach):
+        (WebCore::HTMLConstructionSite::attachAtSite):
+
 2010-07-14  Victor Wang  <victorw@chromium.org>
 
         Reviewed by Darin Fisher.
