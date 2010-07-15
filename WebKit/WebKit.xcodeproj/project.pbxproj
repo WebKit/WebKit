@@ -730,13 +730,13 @@
 			files = (
 				939811290824BF01008DF038 /* Carbon.framework in Frameworks */,
 				9398112A0824BF01008DF038 /* Cocoa.framework in Frameworks */,
+				CD8EAC7311CAC9A300774075 /* IOKit.framework in Frameworks */,
 				9398112B0824BF01008DF038 /* JavaScriptCore.framework in Frameworks */,
 				9398112E0824BF01008DF038 /* libicucore.dylib in Frameworks */,
 				0ACE917310FE47E30096A45F /* OpenGL.framework in Frameworks */,
 				1A20D08B0ED384F20043FA9F /* QuartzCore.framework in Frameworks */,
 				9398112F0824BF01008DF038 /* Security.framework in Frameworks */,
 				9398112C0824BF01008DF038 /* WebCore.framework in Frameworks */,
-				CD8EAC7311CAC9A300774075 /* IOKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -782,9 +782,9 @@
 		0867D69AFE84028FC02AAC07 /* Frameworks and Libraries */ = {
 			isa = PBXGroup;
 			children = (
-				CD8EAC7211CAC9A300774075 /* IOKit.framework */,
 				F5C2869402846DCD018635CA /* Carbon.framework */,
 				F5C2869502846DCD018635CA /* Cocoa.framework */,
+				CD8EAC7211CAC9A300774075 /* IOKit.framework */,
 				F738C9E903FAD3DF0321FBE0 /* JavaScriptCore.framework */,
 				93D623DD051E791F002F47DD /* libicucore.dylib */,
 				0ACE917210FE47E30096A45F /* OpenGL.framework */,
@@ -964,8 +964,8 @@
 				F59668C802AD2923018635CA /* WebStringTruncator.h */,
 				F59668C902AD2923018635CA /* WebStringTruncator.mm */,
 				DD7CDEE60A23BA9E00069928 /* WebTypesInternal.h */,
-				C0C5B3ED1177A4A0002B0AEF /* WebUserContentURLPattern.mm */,
 				C0C5B3EC1177A4A0002B0AEF /* WebUserContentURLPattern.h */,
+				C0C5B3ED1177A4A0002B0AEF /* WebUserContentURLPattern.mm */,
 			);
 			name = Misc;
 			path = mac/Misc;
@@ -1061,8 +1061,6 @@
 				1A9C78030EBBC455008599D4 /* Events */,
 				1A1F91430ECBB16F006351DA /* Hosted */,
 				F5F717230288493C018635CA /* npapi.mm */,
-				F5A672B90263866E01000102 /* WebNetscapePluginStream.h */,
-				F5A672BA0263866E01000102 /* WebNetscapePluginStream.mm */,
 				1A4DF5E20EC8D104006BD4B4 /* WebBaseNetscapePluginView.h */,
 				1A4DF5E30EC8D104006BD4B4 /* WebBaseNetscapePluginView.mm */,
 				0AB752350FA2E4DB00D7CBB1 /* WebNetscapeContainerCheckContextInfo.h */,
@@ -1073,6 +1071,8 @@
 				226E9E6809D0AA8200F3A2BC /* WebNetscapeDeprecatedFunctions.h */,
 				F5F7171E0288493C018635CA /* WebNetscapePluginPackage.h */,
 				F5F7171F0288493C018635CA /* WebNetscapePluginPackage.mm */,
+				F5A672B90263866E01000102 /* WebNetscapePluginStream.h */,
+				F5A672BA0263866E01000102 /* WebNetscapePluginStream.mm */,
 				1A4DF5200EC8C74D006BD4B4 /* WebNetscapePluginView.h */,
 				1A4DF5210EC8C74D006BD4B4 /* WebNetscapePluginView.mm */,
 				1A77B02C0EE7730500C8A1F9 /* WebPluginRequest.h */,
@@ -1376,7 +1376,6 @@
 				939810110824BF01008DF038 /* WebBackForwardList.h in Headers */,
 				51C714FB0B20F79F00E5E33C /* WebBackForwardListInternal.h in Headers */,
 				22F219CC08D236730030E078 /* WebBackForwardListPrivate.h in Headers */,
-				9398102B0824BF01008DF038 /* WebNetscapePluginStream.h in Headers */,
 				1A4DF5E40EC8D104006BD4B4 /* WebBaseNetscapePluginView.h in Headers */,
 				9398102E0824BF01008DF038 /* WebBasePluginPackage.h in Headers */,
 				5241ADF50B1BC48A004012BD /* WebCache.h in Headers */,
@@ -1479,6 +1478,7 @@
 				1AEA66D80DC6B209003D12BF /* WebNetscapePluginEventHandlerCarbon.h in Headers */,
 				1AEA6A500DC8CE2F003D12BF /* WebNetscapePluginEventHandlerCocoa.h in Headers */,
 				939810310824BF01008DF038 /* WebNetscapePluginPackage.h in Headers */,
+				9398102B0824BF01008DF038 /* WebNetscapePluginStream.h in Headers */,
 				1A4DF5220EC8C74D006BD4B4 /* WebNetscapePluginView.h in Headers */,
 				1C68F66F095B5FC100C2984E /* WebNodeHighlight.h in Headers */,
 				1C68F671095B5FC100C2984E /* WebNodeHighlightView.h in Headers */,
@@ -1505,6 +1505,7 @@
 				37B6FB4E1063530C000FDB3B /* WebPDFDocumentExtras.h in Headers */,
 				939810A50824BF01008DF038 /* WebPDFRepresentation.h in Headers */,
 				939810A40824BF01008DF038 /* WebPDFView.h in Headers */,
+				1AA879B611CBE9BF003C664F /* WebPlatformStrategies.h in Headers */,
 				939810350824BF01008DF038 /* WebPlugin.h in Headers */,
 				939810360824BF01008DF038 /* WebPluginContainer.h in Headers */,
 				939810B10824BF01008DF038 /* WebPluginContainerCheck.h in Headers */,
@@ -1523,6 +1524,7 @@
 				939810A80824BF01008DF038 /* WebPreferenceKeysPrivate.h in Headers */,
 				9398105D0824BF01008DF038 /* WebPreferences.h in Headers */,
 				9398105E0824BF01008DF038 /* WebPreferencesPrivate.h in Headers */,
+				0F30985F11ECFE4500F559DF /* WebRenderLayer.h in Headers */,
 				9398105F0824BF01008DF038 /* WebRenderNode.h in Headers */,
 				939810880824BF01008DF038 /* WebResource.h in Headers */,
 				934C4AA00F0141F7009372C0 /* WebResourceInternal.h in Headers */,
@@ -1545,6 +1547,7 @@
 				939810750824BF01008DF038 /* WebUIDelegate.h in Headers */,
 				939810830824BF01008DF038 /* WebUIDelegatePrivate.h in Headers */,
 				939810150824BF01008DF038 /* WebURLsWithTitles.h in Headers */,
+				C0C5B3EE1177A4A0002B0AEF /* WebUserContentURLPattern.h in Headers */,
 				0FD3B0F21076C3E900039B96 /* WebVideoFullscreenController.h in Headers */,
 				0FD3B0F41076C3E900039B96 /* WebVideoFullscreenHUDWindowController.h in Headers */,
 				939810700824BF01008DF038 /* WebView.h in Headers */,
@@ -1554,9 +1557,6 @@
 				939810710824BF01008DF038 /* WebViewPrivate.h in Headers */,
 				0FD3B0F81076C3F700039B96 /* WebWindowAnimation.h in Headers */,
 				41F4484F10338E8C0030E55E /* WebWorkersPrivate.h in Headers */,
-				C0C5B3EE1177A4A0002B0AEF /* WebUserContentURLPattern.h in Headers */,
-				1AA879B611CBE9BF003C664F /* WebPlatformStrategies.h in Headers */,
-				0F30985F11ECFE4500F559DF /* WebRenderLayer.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1796,7 +1796,6 @@
 				9398111D0824BF01008DF038 /* WebArchive.mm in Sources */,
 				939810CF0824BF01008DF038 /* WebAuthenticationPanel.m in Sources */,
 				939810BC0824BF01008DF038 /* WebBackForwardList.mm in Sources */,
-				939810D10824BF01008DF038 /* WebNetscapePluginStream.mm in Sources */,
 				1A4DF5E50EC8D104006BD4B4 /* WebBaseNetscapePluginView.mm in Sources */,
 				939810D30824BF01008DF038 /* WebBasePluginPackage.mm in Sources */,
 				5241ADF60B1BC48A004012BD /* WebCache.mm in Sources */,
@@ -1858,6 +1857,7 @@
 				1AEA66D90DC6B209003D12BF /* WebNetscapePluginEventHandlerCarbon.mm in Sources */,
 				1AEA6A510DC8CE2F003D12BF /* WebNetscapePluginEventHandlerCocoa.mm in Sources */,
 				939810D60824BF01008DF038 /* WebNetscapePluginPackage.mm in Sources */,
+				939810D10824BF01008DF038 /* WebNetscapePluginStream.mm in Sources */,
 				1A4DF5230EC8C74D006BD4B4 /* WebNetscapePluginView.mm in Sources */,
 				1C68F670095B5FC100C2984E /* WebNodeHighlight.mm in Sources */,
 				1C68F672095B5FC100C2984E /* WebNodeHighlightView.mm in Sources */,
@@ -1883,6 +1883,7 @@
 				37B6FB4F1063530C000FDB3B /* WebPDFDocumentExtras.mm in Sources */,
 				9398111F0824BF01008DF038 /* WebPDFRepresentation.mm in Sources */,
 				9398111E0824BF01008DF038 /* WebPDFView.mm in Sources */,
+				1AA879B711CBE9BF003C664F /* WebPlatformStrategies.mm in Sources */,
 				939811260824BF01008DF038 /* WebPluginContainerCheck.mm in Sources */,
 				939810DA0824BF01008DF038 /* WebPluginController.mm in Sources */,
 				939810DB0824BF01008DF038 /* WebPluginDatabase.mm in Sources */,
@@ -1892,6 +1893,7 @@
 				224100F90918190100D2D266 /* WebPluginsPrivate.m in Sources */,
 				939811080824BF01008DF038 /* WebPolicyDelegate.mm in Sources */,
 				939810F80824BF01008DF038 /* WebPreferences.mm in Sources */,
+				0F30986011ECFE4500F559DF /* WebRenderLayer.mm in Sources */,
 				939810F90824BF01008DF038 /* WebRenderNode.mm in Sources */,
 				9398111A0824BF01008DF038 /* WebResource.mm in Sources */,
 				7E6FEF0908985A7200C44C3F /* WebScriptDebugDelegate.mm in Sources */,
@@ -1905,6 +1907,7 @@
 				1A74A28F0F4F75400082E228 /* WebTextInputWindowController.m in Sources */,
 				F834AAD80E64B1C700E2737C /* WebTextIterator.mm in Sources */,
 				939810BE0824BF01008DF038 /* WebURLsWithTitles.m in Sources */,
+				C0C5B3EF1177A4A0002B0AEF /* WebUserContentURLPattern.mm in Sources */,
 				0FD3B0F31076C3E900039B96 /* WebVideoFullscreenController.mm in Sources */,
 				0FD3B0F51076C3E900039B96 /* WebVideoFullscreenHUDWindowController.mm in Sources */,
 				939811070824BF01008DF038 /* WebView.mm in Sources */,
@@ -1913,9 +1916,6 @@
 				939810E80824BF01008DF038 /* WebViewFactory.mm in Sources */,
 				0FD3B0F91076C3F700039B96 /* WebWindowAnimation.m in Sources */,
 				41F4485010338E8C0030E55E /* WebWorkersPrivate.mm in Sources */,
-				C0C5B3EF1177A4A0002B0AEF /* WebUserContentURLPattern.mm in Sources */,
-				1AA879B711CBE9BF003C664F /* WebPlatformStrategies.mm in Sources */,
-				0F30986011ECFE4500F559DF /* WebRenderLayer.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
