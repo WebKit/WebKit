@@ -45,7 +45,6 @@
 namespace WebCore {
 
 class GLES2Context;
-class Page;
 
 class ShaderProgram {
 public:
@@ -60,9 +59,9 @@ public:
 // Class that handles drawing of composited render layers using GL.
 class LayerRendererChromium : public Noncopyable {
 public:
-    static PassOwnPtr<LayerRendererChromium> create(Page* page);
+    static PassOwnPtr<LayerRendererChromium> create(PassOwnPtr<GLES2Context> gles2Context);
 
-    LayerRendererChromium(Page* page);
+    LayerRendererChromium(PassOwnPtr<GLES2Context> gles2Context);
     ~LayerRendererChromium();
 
     // Updates the contents of the root layer that fall inside the updateRect and recomposites
@@ -105,7 +104,6 @@ private:
     enum VboIds { Vertices, LayerElements };
 
     // These are here only temporarily and should be removed once we switch over to GGL
-    bool initGL();
     bool makeContextCurrent();
 
     bool initializeSharedGLObjects();
@@ -151,9 +149,6 @@ private:
     IntSize m_rootLayerCanvasSize;
 
     OwnPtr<GLES2Context> m_gles2Context;
-
-    // The WebCore Page that the compositor renders into.
-    Page* m_page;
 };
 
 }

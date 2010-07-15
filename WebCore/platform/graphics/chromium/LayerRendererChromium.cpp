@@ -37,7 +37,6 @@
 #include "GLES2Context.h"
 #include "LayerChromium.h"
 #include "NotImplemented.h"
-#include "Page.h"
 #include "TransformLayerChromium.h"
 #include "WebGLLayerChromium.h"
 #if PLATFORM(SKIA)
@@ -190,24 +189,24 @@ ShaderProgram::ShaderProgram()
 {
 }
 
-PassOwnPtr<LayerRendererChromium> LayerRendererChromium::create(Page* page)
+PassOwnPtr<LayerRendererChromium> LayerRendererChromium::create(PassOwnPtr<GLES2Context> gles2Context)
 {
-    return new LayerRendererChromium(page);
+    return new LayerRendererChromium(gles2Context);
 }
 
-LayerRendererChromium::LayerRendererChromium(Page* page)
+LayerRendererChromium::LayerRendererChromium(PassOwnPtr<GLES2Context> gles2Context)
     : m_rootLayer(0)
     , m_needsDisplay(false)
     , m_positionLocation(0)
     , m_texCoordLocation(1)
-    , m_page(page)
     , m_rootLayerTextureWidth(0)
     , m_rootLayerTextureHeight(0)
     , m_scrollPosition(IntPoint(-1, -1))
     , m_currentShaderProgramType(NumShaderProgramTypes)
+    , m_gles2Context(gles2Context)
 {
     m_quadVboIds[Vertices] = m_quadVboIds[LayerElements] = 0;
-    m_hardwareCompositing = (initGL() && initializeSharedGLObjects());
+    m_hardwareCompositing = (m_gles2Context && initializeSharedGLObjects());
 }
 
 LayerRendererChromium::~LayerRendererChromium()
@@ -643,16 +642,6 @@ void LayerRendererChromium::drawLayer(LayerChromium* layer)
 bool LayerRendererChromium::makeContextCurrent()
 {
     return m_gles2Context->makeCurrent();
-}
-
-bool LayerRendererChromium::initGL()
-{
-    m_gles2Context = GLES2Context::createOnscreen(m_page);
-
-    if (!m_gles2Context)
-        return false;
-
-    return true;
 }
 
 void LayerRendererChromium::bindCommonAttribLocations(ShaderProgramType program)

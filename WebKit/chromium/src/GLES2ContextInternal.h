@@ -1,10 +1,10 @@
 /*
- * Copyright (c) 2008, Google Inc. All rights reserved.
- * 
+ * Copyright (C) 2010 Google Inc. All rights reserved.
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
  * met:
- * 
+ *
  *     * Redistributions of source code must retain the above copyright
  * notice, this list of conditions and the following disclaimer.
  *     * Redistributions in binary form must reproduce the above
@@ -14,7 +14,7 @@
  *     * Neither the name of Google Inc. nor the names of its
  * contributors may be used to endorse or promote products derived from
  * this software without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -28,45 +28,28 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ChromeClientChromium_h
-#define ChromeClientChromium_h
+#include <wtf/PassOwnPtr.h>
 
-#include "ChromeClient.h"
-#include <wtf/Forward.h>
+namespace WebKit {
+class WebGLES2Context;
+}
 
 namespace WebCore {
-class AccessibilityObject;
-class IntRect;
-class PopupContainer;
 
-#if USE(ACCELERATED_COMPOSITING)
-class GLES2Context;
-#endif
-
-// Contains Chromium-specific extensions to the ChromeClient.  Only put
-// things here that don't make sense for other ports.
-class ChromeClientChromium : public ChromeClient {
+class GLES2ContextInternal {
 public:
-    // Notifies the client of a new popup widget.  The client should place
-    // and size the widget with the given bounds, relative to the screen.
-    // If handleExternal is true, then drawing and input handling for the
-    // popup will be handled by the external embedder.
-    virtual void popupOpened(PopupContainer* popupContainer, const IntRect& bounds,
-                             bool handleExternal) = 0;
-                             
-    // Notifies the client a popup was closed.
-    virtual void popupClosed(PopupContainer* popupContainer) = 0;
+    // If 'owns' is set to true, this GLES2ContextInternal takes ownership of the passed in WebKit::WebGLES2Context.
+    static PassOwnPtr<GLES2ContextInternal> create(WebKit::WebGLES2Context* impl, bool owns);
 
-    // Notifies embedder that the state of an accessibility object has changed.
-    virtual void didChangeAccessibilityObjectState(AccessibilityObject*) = 0;
+    WebKit::WebGLES2Context* getWebGLES2Context() { return m_impl; }
 
-#if USE(ACCELERATED_COMPOSITING)
-    // Request a GL ES 2 context to use for compositing this page's content.
-    virtual PassOwnPtr<GLES2Context> getOnscreenGLES2Context() = 0;
-    virtual PassOwnPtr<GLES2Context> getOffscreenGLES2Context() = 0;
-#endif
+    ~GLES2ContextInternal();
+
+private:
+    GLES2ContextInternal(WebKit::WebGLES2Context* impl, bool owns);
+
+    bool m_owns;
+    WebKit::WebGLES2Context* m_impl;
 };
 
-} // namespace WebCore
-
-#endif
+}

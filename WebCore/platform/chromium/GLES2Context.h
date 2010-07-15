@@ -43,14 +43,8 @@ class Page;
 
 class GLES2Context : public Noncopyable {
 public:
-    // Creates a GL ES context that draws directly to the window associated with
-    // the Page.
-    static PassOwnPtr<GLES2Context> createOnscreen(Page*);
-
-    // Creates a GL ES context that renders offscreen, optionally as a child
-    // of the given parent if specified.
-    static PassOwnPtr<GLES2Context> createOffscreen(GLES2Context* parent);
-
+    // Used by the implementation only
+    static PassOwnPtr<GLES2Context> create(PassOwnPtr<GLES2ContextInternal>);
     ~GLES2Context();
 
     bool makeCurrent();
@@ -65,6 +59,8 @@ public:
     unsigned getOffscreenContentParentTextureId();
 
 private:
+    GLES2Context();
+
     friend class GLES2ContextInternal;
     OwnPtr<GLES2ContextInternal> m_internal;
 };

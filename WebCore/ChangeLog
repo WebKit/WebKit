@@ -1,3 +1,22 @@
+2010-07-14  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Breaks all dependencies on Page from platform/ and cleans up GLES2Context lifetime
+        https://bugs.webkit.org/show_bug.cgi?id=42203
+
+        Rather than constructing a GLES2Context from a Page, pass the LayerRendererChromium
+        a GLES2Context in from the constructor.  This way the platform/ directory can remain
+        ignorant of Page and friends.  Also adds functions on ChromeClientChromium to request
+        onscreen and offscreen GLES2Contexts for callers in WebCore that need them.
+
+        * page/chromium/ChromeClientChromium.h:
+        * platform/chromium/GLES2Context.h:
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::create):
+        (WebCore::LayerRendererChromium::LayerRendererChromium):
+        * platform/graphics/chromium/LayerRendererChromium.h:
+
 2010-07-14  Andreas Kling  <andreas.kling@nokia.com>
 
         Reviewed by Darin Adler.

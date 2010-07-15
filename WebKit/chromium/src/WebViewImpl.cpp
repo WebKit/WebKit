@@ -54,10 +54,12 @@
 #include "FrameLoader.h"
 #include "FrameTree.h"
 #include "FrameView.h"
+#include "GLES2Context.h"
+#include "GLES2ContextInternal.h"
 #include "GraphicsContext.h"
-#include "HitTestResult.h"
 #include "HTMLInputElement.h"
 #include "HTMLMediaElement.h"
+#include "HitTestResult.h"
 #include "HTMLNames.h"
 #include "Image.h"
 #include "InspectorController.h"
@@ -2072,7 +2074,7 @@ void WebViewImpl::setIsAcceleratedCompositingActive(bool active)
         return;
 
     if (active) {
-        m_layerRenderer = LayerRendererChromium::create(page());
+        m_layerRenderer = LayerRendererChromium::create(getOnscreenGLES2Context());
         if (m_layerRenderer->hardwareCompositing())
             m_isAcceleratedCompositingActive = true;
         else {
@@ -2145,6 +2147,18 @@ void WebViewImpl::setRootLayerNeedsDisplay()
         m_layerRenderer->setNeedsDisplay();
 }
 #endif // USE(ACCELERATED_COMPOSITING)
+
+PassOwnPtr<GLES2Context> WebViewImpl::getOnscreenGLES2Context()
+{
+    return GLES2Context::create(GLES2ContextInternal::create(gles2Context(), false));
+}
+
+PassOwnPtr<GLES2Context> WebViewImpl::getOffscreenGLES2Context()
+{
+    WebGLES2Context* context = webKitClient()->createGLES2Context();
+    context->initialize(0, gles2Context());
+    return GLES2Context::create(GLES2ContextInternal::create(context, true));
+}
 
 // Returns the GLES2 context associated with this View. If one doesn't exist
 // it will get created first.

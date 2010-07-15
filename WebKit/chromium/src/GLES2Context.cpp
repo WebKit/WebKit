@@ -31,6 +31,7 @@
 #include "config.h"
 
 #include "GLES2Context.h"
+#include "GLES2ContextInternal.h"
 #include "IntSize.h"
 #include "WebGLES2Context.h"
 #include "WebKit.h"
@@ -52,67 +53,22 @@ using namespace WebKit;
 
 namespace WebCore {
 
-class GLES2ContextInternal {
-public:
-    GLES2ContextInternal() {}
-    ~GLES2ContextInternal() {}
-
-    bool initializeOnscreen(Page*);
-    bool initializeOffscreen(GLES2Context*);
-
-    WebGLES2Context* getWebGLES2Context() { return m_impl; }
-
-private:
-    WebGLES2Context* m_impl;
-};
-
-bool GLES2ContextInternal::initializeOnscreen(Page* page)
+PassOwnPtr<GLES2ContextInternal> GLES2ContextInternal::create(WebGLES2Context* impl, bool owns)
 {
-    ASSERT(page);
-    WebViewImpl* webView = WebViewImpl::fromPage(page);
-    m_impl = webView->gles2Context();
-    if (!m_impl)
-        return false;
-
-    return true;
-}
-
-bool GLES2ContextInternal::initializeOffscreen(GLES2Context* parent)
-{
-    m_impl = webKitClient()->createGLES2Context();
-    if (!m_impl)
-        return false;
-    if (!m_impl->initialize(0, parent ? parent->m_internal->m_impl : 0)) {
-        delete m_impl;
-        return false;
-    }
-    return true;
-}
-
-PassOwnPtr<GLES2Context> GLES2Context::createOnscreen(Page* page)
-{
-    GLES2ContextInternal* internal = new GLES2ContextInternal();
-    if (!internal->initializeOnscreen(page)) {
-        delete internal;
-        return 0;
-    }
-    PassOwnPtr<GLES2Context> result = new GLES2Context();
-    result->m_internal.set(internal);
+    PassOwnPtr<GLES2ContextInternal> result = new GLES2ContextInternal(impl, owns);
     return result;
 }
 
-PassOwnPtr<GLES2Context> GLES2Context::createOffscreen(GLES2Context* parent)
+PassOwnPtr<GLES2Context> GLES2Context::create(PassOwnPtr<GLES2ContextInternal> internal)
 {
-    GLES2ContextInternal* internal = new GLES2ContextInternal();
-    if (!internal->initializeOffscreen(parent)) {
-        delete internal;
-        return 0;
-    }
     PassOwnPtr<GLES2Context> result = new GLES2Context();
-    result->m_internal.set(internal);
+    result->m_internal = internal;
     return result;
 }
 
+GLES2Context::GLES2Context()
+{
+}
 
 GLES2Context::~GLES2Context()
 {

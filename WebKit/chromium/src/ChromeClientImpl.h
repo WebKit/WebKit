@@ -145,7 +145,11 @@ public:
     // Sets a flag to specify that the view needs to be updated, so we need
     // to do an eager layout before the drawing.
     virtual void scheduleCompositingLayerSync();
+
+    virtual PassOwnPtr<WebCore::GLES2Context> getOnscreenGLES2Context();
+    virtual PassOwnPtr<WebCore::GLES2Context> getOffscreenGLES2Context();
 #endif
+
     virtual bool supportsFullscreenForNode(const WebCore::Node*);
     virtual void enterFullscreenForNode(WebCore::Node*);
     virtual void exitFullscreenForNode(WebCore::Node*);
