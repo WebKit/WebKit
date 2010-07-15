@@ -9,8 +9,6 @@ layer at (0,0) size 800x600
       RenderText {#text} at (104,262) size 4x19
         text run at (104,262) width 4: " "
       RenderText {#text} at (0,0) size 0x0
-      RenderText {#text} at (0,0) size 0x0
-      RenderText {#text} at (0,0) size 0x0
 layer at (8,81) size 104x204 clip at (10,83) size 85x200 scrollHeight 519
   RenderBlock {DIV} at (0,73) size 104x204 [border: (2px solid #800080)]
     RenderText {#text} at (2,2) size 74x39

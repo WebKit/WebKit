@@ -86,4 +86,3 @@ layer at (0,0) size 785x716
           text run at (0,0) width 744: "I tested the above with M4 and May01 build for win95. (The above examples assume that images load normally -- N.B. for"
           text run at (0,20) width 764: "May01 the images initially load, and the width error is visually apparent, but then the images get replaced by their ALT text, and"
           text run at (0,40) width 463: "the width error is no longer present -- this is, of course, a different issue/bug.)"
-        RenderText {#text} at (0,0) size 0x0

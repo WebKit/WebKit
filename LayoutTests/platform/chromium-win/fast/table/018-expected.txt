@@ -37,4 +37,3 @@ layer at (0,0) size 800x600
             text run at (277,3) width 88: "hello world"
         RenderText {#text} at (365,0) size 225x19
           text run at (365,0) width 225: ". Notice it is displayed correctly now."
-        RenderText {#text} at (0,0) size 0x0

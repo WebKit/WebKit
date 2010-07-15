@@ -22,5 +22,3 @@ layer at (0,0) size 800x600
             RenderCounter at (56,0) size 8x16
               text run at (56,0) width 8: "\x{25A0}"
         RenderText {#text} at (0,0) size 0x0
-        RenderText {#text} at (0,0) size 0x0
-        RenderText {#text} at (0,0) size 0x0

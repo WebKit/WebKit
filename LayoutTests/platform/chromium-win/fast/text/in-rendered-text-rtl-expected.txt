@@ -25,6 +25,4 @@ layer at (0,0) size 800x600
             text run at (0,0) width 50 RTL: "\x{5E9}\x{5EA}\x{5D4} \x{5DE}\x{5D9}\x{5E5}"
             text run at (50,0) width 66 RTL: "\x{5D0}\x{5DB}\x{5DC}\x{5EA} \x{5E4}\x{5DC}\x{5E4}\x{5DC} "
         RenderText {#text} at (0,0) size 0x0
-        RenderText {#text} at (0,0) size 0x0
-        RenderText {#text} at (0,0) size 0x0
 caret: position 3 of child 0 {#text} of child 7 {SPAN} of body

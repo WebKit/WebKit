@@ -8,4 +8,3 @@ layer at (0,0) size 800x600
           text run at (196,0) width 252: "This span has 25% margins on either side."
       RenderText {#text} at (644,0) size 30x19
         text run at (644,0) width 30: "See?"
-      RenderText {#text} at (0,0) size 0x0

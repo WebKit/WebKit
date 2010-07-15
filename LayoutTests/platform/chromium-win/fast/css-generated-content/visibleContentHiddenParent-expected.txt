@@ -10,5 +10,3 @@ layer at (0,0) size 800x600
         RenderText {#text} at (344,0) size 176x19
           text run at (344,0) width 176: "But it fails if this text appears."
       RenderText {#text} at (0,0) size 0x0
-      RenderText {#text} at (0,0) size 0x0
-      RenderText {#text} at (0,0) size 0x0

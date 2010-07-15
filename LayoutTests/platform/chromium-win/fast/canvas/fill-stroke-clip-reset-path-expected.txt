@@ -28,5 +28,3 @@ layer at (0,0) size 800x600
           text run at (44,5) width 4: " "
         RenderHTMLCanvas {CANVAS} at (48,0) size 20x20
         RenderText {#text} at (0,0) size 0x0
-        RenderText {#text} at (0,0) size 0x0
-        RenderText {#text} at (0,0) size 0x0

@@ -921,7 +921,6 @@ layer at (0,0) size 785x2481
                 RenderText {#text} at (16,22) size 48x39
                   text run at (16,22) width 48: "span=7"
                   text run at (25,42) width 31: "rows"
-                RenderText {#text} at (0,0) size 0x0
               RenderTableCell {TD} at (85,15) size 78x64 [bgcolor=#FFFACD] [border: (1px inset #808080)] [r=0 c=1 rs=2 cs=1]
                 RenderText {#text} at (2,2) size 41x19
                   text run at (2,2) width 41: "Data 1"
@@ -1202,7 +1201,6 @@ layer at (0,0) size 785x2481
                 RenderText {#text} at (16,22) size 48x39
                   text run at (16,22) width 48: "span=3"
                   text run at (25,42) width 31: "rows"
-                RenderText {#text} at (0,0) size 0x0
               RenderTableCell {TD} at (85,360) size 78x64 [bgcolor=#FFFACD] [border: (1px inset #808080)] [r=7 c=1 rs=3 cs=1]
                 RenderText {#text} at (2,2) size 41x19
                   text run at (2,2) width 41: "Data 3"

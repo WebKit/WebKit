@@ -12,8 +12,6 @@ layer at (0,0) size 800x600
         text run at (256,40) width 520: "The black box's top should be aligned with the end of the last line in this parargaph and"
         text run at (0,60) width 355: "its left side should begin right after the end of this sentence. "
       RenderText {#text} at (0,0) size 0x0
-      RenderText {#text} at (0,0) size 0x0
-      RenderText {#text} at (0,0) size 0x0
 layer at (363,68) size 240x340
   RenderBlock (positioned) {SPAN} at (363,68) size 240x340 [border: (20px solid #000000)]
 layer at (483,188) size 100x100

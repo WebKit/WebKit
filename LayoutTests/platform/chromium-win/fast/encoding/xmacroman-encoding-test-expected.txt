@@ -16,4 +16,3 @@ layer at (0,0) size 800x600
         RenderBR {BR} at (62,35) size 0x0
         RenderText {#text} at (0,40) size 75x19
           text run at (0,40) width 75: "em-dash: \x{2014}"
-        RenderText {#text} at (0,0) size 0x0

@@ -6,8 +6,6 @@ layer at (0,0) size 785x600
       RenderBlock (anonymous) at (0,0) size 769x20
         RenderText {#text} at (0,0) size 115x19
           text run at (0,0) width 115: "Content at the end."
-        RenderText {#text} at (0,0) size 0x0
-        RenderText {#text} at (0,0) size 0x0
 layer at (8,8) size 16x2400
   RenderBlock (positioned) {DIV} at (0,0) size 16x2400
     RenderText {#text} at (0,0) size 8x19

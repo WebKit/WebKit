@@ -40,5 +40,3 @@ layer at (0,0) size 800x600
           RenderBlock {DIV} at (194,195) size 160x160 [border: (30px none #000000)]
           RenderText {#text} at (0,0) size 0x0
       RenderText {#text} at (0,0) size 0x0
-      RenderText {#text} at (0,0) size 0x0
-      RenderText {#text} at (0,0) size 0x0

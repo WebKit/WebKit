@@ -15,5 +15,3 @@ layer at (0,0) size 800x600
             RenderInline {B} at (0,0) size 24x19
               RenderText {#text} at (72,145) size 24x19
                 text run at (72,145) width 24: "___"
-              RenderText {#text} at (0,0) size 0x0
-              RenderText {#text} at (0,0) size 0x0

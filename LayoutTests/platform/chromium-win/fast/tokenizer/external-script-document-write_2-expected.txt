@@ -7,4 +7,3 @@ layer at (0,0) size 800x600
       RenderText {#text} at (0,0) size 259x19
         text run at (0,0) width 106: "TEST PASSED. "
         text run at (106,0) width 153: "This text should show up."
-      RenderText {#text} at (0,0) size 0x0

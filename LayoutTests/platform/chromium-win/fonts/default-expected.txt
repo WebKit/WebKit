@@ -859,5 +859,3 @@ layer at (0,0) size 785x5732
             text run at (0,1860) width 24: "}}}}"
           RenderBR {BR} at (24,1875) size 0x0
         RenderText {#text} at (0,0) size 0x0
-        RenderText {#text} at (0,0) size 0x0
-        RenderText {#text} at (0,0) size 0x0

@@ -7,8 +7,6 @@ layer at (0,0) size 800x36
         text run at (0,0) width 397: "You should see the text 'after' in the inner box, no mangled pixels. "
       RenderText {#text} at (0,0) size 0x0
       RenderText {#text} at (0,0) size 0x0
-      RenderText {#text} at (0,0) size 0x0
-      RenderText {#text} at (0,0) size 0x0
 layer at (8,28) size 302x302 clip at (9,29) size 300x300 scrollX 2 scrollY 2 scrollWidth 302 scrollHeight 302
   RenderBlock (positioned) {DIV} at (8,28) size 302x302 [border: (1px solid #FFFF00)]
 layer at (7,27) size 302x302 backgroundClip at (9,29) size 300x300 clip at (9,29) size 299x299 outlineClip at (9,29) size 300x300 scrollX 7 scrollY 7 scrollWidth 1000 scrollHeight 1000

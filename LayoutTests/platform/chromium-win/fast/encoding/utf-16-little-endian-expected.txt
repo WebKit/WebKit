@@ -432,8 +432,6 @@ layer at (0,0) size 785x1146
         RenderInline {SPAN} at (0,0) size 0x0
           RenderInline {SPAN} at (0,0) size 0x0
           RenderText {#text} at (0,0) size 0x0
-          RenderText {#text} at (0,0) size 0x0
-          RenderText {#text} at (0,0) size 0x0
 layer at (23,44) size 102x16
   RenderInline (relative positioned) {SPAN} at (0,0) size 102x16
     RenderText {#text} at (0,0) size 0x0

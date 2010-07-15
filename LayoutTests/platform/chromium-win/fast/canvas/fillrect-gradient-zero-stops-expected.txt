@@ -14,4 +14,3 @@ layer at (0,0) size 800x600
         RenderHTMLCanvas {CANVAS} at (0,0) size 300x150
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
-        RenderText {#text} at (0,0) size 0x0

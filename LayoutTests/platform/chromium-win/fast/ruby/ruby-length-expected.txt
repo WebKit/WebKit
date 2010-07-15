@@ -30,4 +30,3 @@ layer at (0,0) size 800x600
               text run at (28,0) width 37: "CSS3"
       RenderText {#text} at (445,72) size 42x19
         text run at (445,72) width 42: " specs."
-      RenderText {#text} at (0,0) size 0x0

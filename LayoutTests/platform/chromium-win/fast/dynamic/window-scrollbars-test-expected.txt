@@ -6,4 +6,3 @@ layer at (0,0) size 800x600
       RenderText {#text} at (0,0) size 245x19
         text run at (0,0) width 245: "This window should not have scroll bars."
       RenderText {#text} at (0,0) size 0x0
-      RenderText {#text} at (0,0) size 0x0

@@ -134,5 +134,3 @@ layer at (0,0) size 800x578
       RenderBlock {P} at (0,534) size 784x20
         RenderText {#text} at (0,0) size 43x19
           text run at (0,0) width 43: "correct"
-        RenderText {#text} at (0,0) size 0x0
-        RenderText {#text} at (0,0) size 0x0

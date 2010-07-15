@@ -14,8 +14,6 @@ layer at (0,0) size 800x226
         RenderBR {BR} at (159,29) size 0x19
         RenderBR {BR} at (185,79) size 0x19
         RenderText {#text} at (0,0) size 0x0
-        RenderText {#text} at (0,0) size 0x0
-        RenderText {#text} at (0,0) size 0x0
 layer at (12,77) size 151x16
   RenderBlock {DIV} at (2,3) size 151x16 [color=#A9A9A9]
     RenderText {#text} at (1,0) size 115x16

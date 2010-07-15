@@ -26,8 +26,6 @@ layer at (0,0) size 800x600
               RenderBR {BR} at (0,0) size 0x0
               RenderText {#text} at (0,296) size 563x36
                 text run at (0,296) width 563: "This page was requested with an HTTP GET"
-              RenderText {#text} at (0,0) size 0x0
-              RenderText {#text} at (0,0) size 0x0
       RenderFrame {FRAME} at (0,540) size 800x60
         layer at (0,0) size 785x90
           RenderView at (0,0) size 785x60
@@ -37,8 +35,6 @@ layer at (0,0) size 800x600
               RenderText {#text} at (0,0) size 704x73
                 text run at (0,0) width 704: "This is just a minimal page that we navigate to as part of"
                 text run at (0,37) width 268: "testing back/forward."
-              RenderText {#text} at (0,0) size 0x0
-              RenderText {#text} at (0,0) size 0x0
 
 ============== Back Forward List ==============
         http://127.0.0.1:8000/navigation/postredirect-frames.html  **nav target**

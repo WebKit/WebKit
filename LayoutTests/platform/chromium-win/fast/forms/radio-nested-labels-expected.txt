@@ -26,7 +26,6 @@ layer at (0,0) size 800x600
                 RenderInline {LABEL} at (0,0) size 24x19
                   RenderText {#text} at (171,1) size 24x19
                     text run at (171,1) width 24: "four"
-                  RenderText {#text} at (0,0) size 0x0
         RenderBlock (anonymous) at (0,21) size 784x20
           RenderBlock {DIV} at (0,0) size 784x20
             RenderText {#text} at (0,0) size 102x19

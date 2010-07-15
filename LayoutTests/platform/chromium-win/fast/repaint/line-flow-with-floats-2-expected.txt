@@ -77,4 +77,3 @@ layer at (0,0) size 800x600
                   text run at (6,487) width 406: "They\x{2019}re dreadfully fond of beheading people here; the great"
                   text run at (6,507) width 248: "wonder is, that there\x{2018}s any one left alive!\x{2019}"
       RenderText {#text} at (0,0) size 0x0
-      RenderText {#text} at (0,0) size 0x0

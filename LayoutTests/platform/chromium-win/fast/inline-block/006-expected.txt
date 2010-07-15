@@ -32,4 +32,3 @@ layer at (0,0) size 800x600
       RenderBR {BR} at (560,117) size 0x0
       RenderText {#text} at (0,174) size 80x19
         text run at (0,174) width 80: "The next line."
-      RenderText {#text} at (0,0) size 0x0

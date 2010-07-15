@@ -8,7 +8,6 @@ layer at (0,0) size 800x600
         text run at (195,0) width 275: "It should not be clipped by the overflow rect. "
         text run at (470,0) width 307: "The inner div has a green outline and a red border. "
       RenderText {#text} at (0,0) size 0x0
-      RenderText {#text} at (0,0) size 0x0
 layer at (8,28) size 304x204 backgroundClip at (83,28) size 229x204 clip at (83,28) size 229x204 outlineClip at (83,28) size 229x204
   RenderBlock (positioned) {DIV} at (8,28) size 304x204 [border: (2px solid #0000FF)]
     RenderText {#text} at (2,2) size 97x19

@@ -7,4 +7,3 @@ layer at (0,0) size 800x600
       RenderImage {IMG} at (0,0) size 20x20
       RenderText {#text} at (20,5) size 700x19
         text run at (20,5) width 700: " This test verifies that starting a subresource load from an unload handler does not cause crashes or assertion failures."
-      RenderText {#text} at (0,0) size 0x0

@@ -6,4 +6,3 @@ layer at (0,0) size 800x600
       RenderInline {MAP} at (0,0) size 564x19
         RenderImage {IMG} at (0,0) size 564x294
       RenderText {#text} at (0,0) size 0x0
-      RenderText {#text} at (0,0) size 0x0

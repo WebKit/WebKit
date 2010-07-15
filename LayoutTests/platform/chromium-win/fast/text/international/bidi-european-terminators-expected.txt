@@ -78,5 +78,3 @@ layer at (0,0) size 785x612
           RenderText {#text} at (0,0) size 72x19
             text run at (0,0) width 72 LTR override: "$%1 @ ^ \x{5D0}"
         RenderText {#text} at (0,0) size 0x0
-        RenderText {#text} at (0,0) size 0x0
-        RenderText {#text} at (0,0) size 0x0

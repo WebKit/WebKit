@@ -923,8 +923,6 @@ layer at (0,0) size 785x6064
               RenderBR {BR} at (24,1875) size 0x0
             RenderText {#text} at (0,0) size 0x0
           RenderText {#text} at (0,0) size 0x0
-          RenderText {#text} at (0,0) size 0x0
-          RenderText {#text} at (0,0) size 0x0
       RenderBlock (anonymous) at (0,6056) size 769x0
         RenderInline {FONT} at (0,0) size 0x0
           RenderInline {FONT} at (0,0) size 0x0

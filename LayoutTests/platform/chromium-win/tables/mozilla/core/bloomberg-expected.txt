@@ -387,5 +387,3 @@ layer at (0,0) size 785x716
           RenderText {#text} at (429,0) size 3x13
             text run at (429,0) width 3: "."
         RenderText {#text} at (0,0) size 0x0
-        RenderText {#text} at (0,0) size 0x0
-        RenderText {#text} at (0,0) size 0x0

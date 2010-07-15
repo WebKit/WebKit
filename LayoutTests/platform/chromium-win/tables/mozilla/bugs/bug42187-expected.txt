@@ -29,5 +29,3 @@ layer at (0,0) size 800x600
       RenderBlock (anonymous) at (0,155) size 784x20
         RenderText {#text} at (0,0) size 502x19
           text run at (0,0) width 502: "200*150 =3000twips 100*150=1500twips 180*150=1200twips sum: 5700 twips"
-        RenderText {#text} at (0,0) size 0x0
-        RenderText {#text} at (0,0) size 0x0

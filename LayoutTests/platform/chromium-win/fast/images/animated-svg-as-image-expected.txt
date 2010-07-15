@@ -11,5 +11,3 @@ layer at (0,0) size 800x600
         RenderBR {BR} at (374,274) size 0x0
         RenderImage {IMG} at (10,284) size 354x254 [border: (2px solid #000000)]
         RenderText {#text} at (0,0) size 0x0
-        RenderText {#text} at (0,0) size 0x0
-        RenderText {#text} at (0,0) size 0x0

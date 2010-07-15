@@ -23,5 +23,3 @@ layer at (0,0) size 800x600
       RenderBlock (anonymous) at (0,260) size 784x20
         RenderText {#text} at (0,0) size 293x19
           text run at (0,0) width 293: "No space between this line and the previous line."
-        RenderText {#text} at (0,0) size 0x0
-        RenderText {#text} at (0,0) size 0x0

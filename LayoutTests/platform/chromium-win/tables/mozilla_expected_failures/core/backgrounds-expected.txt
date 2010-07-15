@@ -483,4 +483,3 @@ layer at (0,0) size 785x2652
       RenderBlock (anonymous) at (0,2616) size 769x20
         RenderText {#text} at (0,0) size 21x19
           text run at (0,0) width 21: "-->"
-        RenderText {#text} at (0,0) size 0x0

@@ -21,7 +21,6 @@ layer at (0,0) size 785x1319
       RenderBlock {P} at (0,176) size 769x16
         RenderText {#text} at (0,0) size 728x16
           text run at (0,0) width 728: "There should be three aqua stripes just inside the bottom and right padding edges of Cell M"
-        RenderText {#text} at (0,0) size 0x0
       RenderBlock {DL} at (0,205) size 769x96
         RenderBlock {DT} at (0,0) size 769x16
           RenderText {#text} at (0,0) size 32x16

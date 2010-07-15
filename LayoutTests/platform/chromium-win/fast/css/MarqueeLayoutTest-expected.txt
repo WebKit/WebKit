@@ -47,7 +47,6 @@ layer at (0,0) size 785x891
           RenderText {#text} at (0,0) size 106x19
             text run at (0,0) width 106: "This is 100px tall."
         RenderText {#text} at (0,0) size 0x0
-        RenderText {#text} at (0,0) size 0x0
 layer at (8,186) size 769x16 scrollX -769 scrollWidth 1640 scrollHeight 19
   RenderBlock {MARQUEE} at (0,0) size 769x16 [bgcolor=#00FFFF]
     RenderInline {B} at (0,0) size 1640x19

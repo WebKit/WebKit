@@ -13,5 +13,3 @@ layer at (0,0) size 785x1140
       RenderBlock (anonymous) at (0,1104) size 769x20
         RenderText {#text} at (0,0) size 53x19
           text run at (0,0) width 53: "The end."
-        RenderText {#text} at (0,0) size 0x0
-        RenderText {#text} at (0,0) size 0x0
