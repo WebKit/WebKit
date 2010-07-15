@@ -2,6 +2,32 @@
 
         Reviewed by Sam Weinig.
 
+        Don't allow multiple calls to NetscapePluginStream::stop
+        https://bugs.webkit.org/show_bug.cgi?id=42395
+
+        * WebProcess/Plugins/Netscape/NetscapePluginStream.cpp:
+        (WebKit::NetscapePluginStream::NetscapePluginStream):
+        Initialize m_urlNotifyHasBeenCalled.
+
+        (WebKit::NetscapePluginStream::~NetscapePluginStream):
+        Assert that the stream didn't need a URL notification or that one was sent.
+
+        (WebKit::NetscapePluginStream::sendJavaScriptStream):
+        Don't call stop in the JS failure case because the stream won't be started.
+
+        (WebKit::NetscapePluginStream::stop):
+        Remove m_isStarted check and add an assertion instead. Move code that calls NPP_URLNotify and
+        destroys the stream out to a separate function.
+
+        (WebKit::NetscapePluginStream::notifyAndDestroyStream):
+        Call NPP_URLNotify if necessary and destroy the stream.
+
+        * WebProcess/Plugins/Netscape/NetscapePluginStream.h:
+
+2010-07-15  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
         Implement NPN_DestroyStream
         https://bugs.webkit.org/show_bug.cgi?id=42393
 

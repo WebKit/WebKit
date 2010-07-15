@@ -63,6 +63,8 @@ private:
                uint32_t lastModifiedTime, const WebCore::String& mimeType, const WebCore::String& headers);
     void stop(NPReason);
 
+    void notifyAndDestroyStream(NPReason);
+
     void deliverData(const char* bytes, int length);
     void deliverDataToPlugin();
 
@@ -78,6 +80,10 @@ private:
 
     // Whether NPP_NewStream has successfully been called.
     bool m_isStarted;
+
+#if !ASSERT_DISABLED
+    bool m_urlNotifyHasBeenCalled;
+#endif
 
     CString m_responseURL;
     CString m_mimeType;

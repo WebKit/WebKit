@@ -42,6 +42,9 @@ NetscapePluginStream::NetscapePluginStream(PassRefPtr<NetscapePlugin> plugin, ui
     , m_transferMode(NP_NORMAL)
     , m_offset(0)
     , m_isStarted(false)
+#if !ASSERT_DISABLED
+    , m_urlNotifyHasBeenCalled(false)
+#endif    
     , m_deliveryDataTimer(RunLoop::main(), this, &NetscapePluginStream::deliverDataToPlugin)
     , m_stopStreamWhenDoneDelivering(false)
 {
@@ -50,6 +53,7 @@ NetscapePluginStream::NetscapePluginStream(PassRefPtr<NetscapePlugin> plugin, ui
 NetscapePluginStream::~NetscapePluginStream()
 {
     ASSERT(!m_isStarted);
+    ASSERT(!m_sendNotification || m_urlNotifyHasBeenCalled);
 }
 
 void NetscapePluginStream::sendJavaScriptStream(const String& requestURLString, const String& result)
@@ -60,8 +64,8 @@ void NetscapePluginStream::sendJavaScriptStream(const String& requestURLString, 
 
     CString resultCString = requestURLString.utf8();
     if (resultCString.isNull()) {
-        // There was an error evaluating the JavaScript, just call stop.
-        stop(NPRES_NETWORK_ERR);
+        // There was an error evaluating the JavaScript, call NPP_URLNotify if needed and then destroy the stream.
+        notifyAndDestroyStream(NPRES_NETWORK_ERR);
         return;
     }
 
@@ -198,34 +202,43 @@ void NetscapePluginStream::deliverDataToPlugin()
 
 void NetscapePluginStream::stop(NPReason reason)
 {
-    if (!m_isStarted)
+    ASSERT(m_isStarted);
+
+    if (reason == NPRES_DONE && m_deliveryData && !m_deliveryData->isEmpty()) {
+        // There is still data left that the plug-in hasn't been able to consume yet.
+        ASSERT(m_deliveryDataTimer.isActive());
+        
+        // Set m_stopStreamWhenDoneDelivering to true so that the next time the delivery timer fires
+        // and calls deliverDataToPlugin the stream will be closed if all the remaining data was
+        // successfully delivered.
+        m_stopStreamWhenDoneDelivering = true;
         return;
-
-    if (m_isStarted) {
-        if (reason == NPRES_DONE && m_deliveryData && !m_deliveryData->isEmpty()) {
-            // There is still data left that the plug-in hasn't been able to consume yet.
-            ASSERT(m_deliveryDataTimer.isActive());
-            
-            // Set m_stopStreamWhenDoneDelivering to true so that the next time the delivery timer fires
-            // and calls deliverDataToPlugin the stream will be closed if all the remaining data was
-            // successfully delivered.
-            m_stopStreamWhenDoneDelivering = true;
-            return;
-        }
-
-        m_deliveryData = 0;
-        m_deliveryDataTimer.stop();
-
-        // Set m_isStarted to false before calling NPP_DestroyStream in case NPP_DestroyStream calls NPN_DestroyStream.
-        m_isStarted = false;
-
-        m_plugin->NPP_DestroyStream(&m_npStream, reason);
     }
 
-    ASSERT(!m_deliveryDataTimer.isActive());
+    m_deliveryData = 0;
+    m_deliveryDataTimer.stop();
 
-    if (m_sendNotification)
+    // Set m_isStarted to false before calling NPP_DestroyStream in case NPP_DestroyStream calls NPN_DestroyStream.
+    m_isStarted = false;
+
+    m_plugin->NPP_DestroyStream(&m_npStream, reason);
+
+    notifyAndDestroyStream(reason);
+}
+
+void NetscapePluginStream::notifyAndDestroyStream(NPReason reason)
+{
+    ASSERT(!m_isStarted);
+    ASSERT(!m_deliveryDataTimer.isActive());
+    ASSERT(!m_urlNotifyHasBeenCalled);
+    
+    if (m_sendNotification) {
         m_plugin->NPP_URLNotify(m_responseURL.data(), reason, m_notificationData);
+    
+#if !ASSERT_DISABLED
+        m_urlNotifyHasBeenCalled = true;
+#endif    
+    }
 
     m_plugin->removePluginStream(this);
 }
