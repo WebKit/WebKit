@@ -11,8 +11,4 @@ layer at (0,0) size 800x600
             RenderBody {BODY} at (8,8) size 284x134
               RenderText {#text} at (0,0) size 80x20
                 text run at (0,0) width 80: "SUCCESS"
-              RenderText {#text} at (0,0) size 0x0
-              RenderText {#text} at (0,0) size 0x0
-      RenderText {#text} at (0,0) size 0x0
-      RenderText {#text} at (0,0) size 0x0
       RenderText {#text} at (0,0) size 0x0

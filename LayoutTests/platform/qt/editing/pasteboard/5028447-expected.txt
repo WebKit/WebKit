@@ -11,5 +11,4 @@ layer at (0,0) size 800x600
         text run at (0,31) width 164: "the same size."
         text run at (164,31) width 7: " "
       RenderText {#text} at (0,0) size 0x0
-      RenderText {#text} at (0,0) size 0x0
 caret: position 43 of child 1 {#text} of body
