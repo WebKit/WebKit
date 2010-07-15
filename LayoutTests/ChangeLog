@@ -1,3 +1,14 @@
+2010-07-14  Martin Robinson  <mrobinson@igalia.com>
+
+        Unreviewed.
+
+        Second pass of updating baselines, fixing bad media baselines.
+
+        * platform/gtk/media/controls-after-reload-expected.txt:
+        * platform/gtk/media/controls-strict-expected.txt:
+        * platform/gtk/media/controls-styling-expected.txt:
+        * platform/gtk/media/video-replaces-poster-expected.txt:
+
 2010-07-14  Eric Seidel  <eric@webkit.org>
 
         Unreviewed.  Just updating expected results.
