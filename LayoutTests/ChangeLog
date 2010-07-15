@@ -1,3 +1,11 @@
+2010-07-15  Ojan Vafai  <ojan@chromium.org>
+
+        Unreviewed.
+
+        Mark fast/forms/input-file-directory-upload.html as expected to fail.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-07-15  Alex Nicolaou  <anicolao@chromium.org>
 
         Reviewed by Eric Seidel.

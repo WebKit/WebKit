@@ -3118,3 +3118,6 @@ BUGWK42403 LINUX WIN : svg/custom/grayscale-gradient-mask.svg = IMAGE
 BUGWK42403 MAC WIN : svg/custom/mask-colorspace.svg = IMAGE
 
 BUGWK42402 LINUX WIN : svg/custom/svg-fonts-without-missing-glyph.xhtml = IMAGE+TEXT
+
+BUGWK42419 LINUX : fast/forms/input-file-directory-upload.html = CRASH
+BUGWK42419 WIN MAC : fast/forms/input-file-directory-upload.html = TIMEOUT
