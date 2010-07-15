@@ -554,14 +554,14 @@ javascriptcore_sources += \
 	JavaScriptCore/wtf/unicode/glib/UnicodeMacrosFromICU.h
 endif
 
-JavaScriptCore/Lexer.lut.h: $(CREATE_HASH_TABLE) $(srcdir)/JavaScriptCore/parser/Keywords.table
+JavaScriptCore/Lexer.lut.h: $(srcdir)/JavaScriptCore/create_hash_table $(srcdir)/JavaScriptCore/parser/Keywords.table
 	$(AM_V_GEN)$(PERL) $^ > $@
 
-JavaScriptCore/%.lut.h: $(CREATE_HASH_TABLE) $(srcdir)/JavaScriptCore/%.cpp
+JavaScriptCore/%.lut.h: $(srcdir)/JavaScriptCore/create_hash_table $(srcdir)/JavaScriptCore/%.cpp
 	$(AM_V_GEN)$(PERL) $^ -i > $@
 
 JavaScriptCore/RegExpJitTables.h: $(srcdir)/JavaScriptCore/create_regex_tables
-	$(AM_V_GEN)$(PYTHON) $(CREATE_REGEXP_TABLES) > $@
+	$(AM_V_GEN)$(PYTHON) $^ > $@
 
 JavaScriptCore/pcre/chartables.c: $(srcdir)/JavaScriptCore/pcre/dftables
 	$(AM_V_GEN)$(PERL) $^ $@
@@ -627,20 +627,20 @@ Programs_jsc_CXXFLAGS = \
 Programs_jsc_LDADD = \
 	libJavaScriptCore.la
 
-javascriptcore_dist += \
-	$(CREATE_HASH_TABLE) \
-	$(CREATE_REGEXP_TABLES) \
+EXTRA_DIST += \
 	JavaScriptCore/AUTHORS \
-	JavaScriptCore/COPYING.LIB \
 	JavaScriptCore/ChangeLog \
-	JavaScriptCore/THANKS \
+	JavaScriptCore/COPYING.LIB \
+	JavaScriptCore/create_hash_table \
+	JavaScriptCore/create_regex_tables \
 	JavaScriptCore/icu/LICENSE \
 	JavaScriptCore/icu/README \
-	JavaScriptCore/pcre/COPYING \
+	JavaScriptCore/parser/Keywords.table \
 	JavaScriptCore/pcre/AUTHORS \
+	JavaScriptCore/pcre/COPYING \
 	JavaScriptCore/pcre/dftables \
 	JavaScriptCore/pcre/ucptable.cpp \
-	JavaScriptCore/parser/Keywords.table
+	JavaScriptCore/THANKS
 
 # Clean rules for JavaScriptCore
 CLEANFILES += \

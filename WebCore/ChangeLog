@@ -1,3 +1,16 @@
+2010-07-15  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Oliver Hunt.
+
+        [GTK] Simplify the distribution step
+        https://bugs.webkit.org/show_bug.cgi?id=42414
+
+        No new tests as this is just a build change.
+
+        * GNUmakefile.am: Modify EXTRA_DIST directly and make sure the list
+        of files is sorted. Also handle distributing the IDL files from the
+        WebCore source tree.
+
 2010-07-15  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

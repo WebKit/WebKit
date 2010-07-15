@@ -1,3 +1,15 @@
+2010-07-15  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Oliver Hunt.
+
+        [GTK] Simplify the distribution step
+        https://bugs.webkit.org/show_bug.cgi?id=42414
+
+        * GNUmakefile.am: Add extra dist files directly to EXTRA_DIST instead
+        of adding them by proxy via javascriptcore_dist. Sort the EXTRA_DIST list.
+        Refer to create_hash_table and create_regexp_tables directly, as is the
+        behavior with other code generation scripts.
+
 2010-07-15  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Geoff Garen.

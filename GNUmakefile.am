@@ -40,12 +40,6 @@ GENSOURCES_WEBCORE := $(top_builddir)/DerivedSources/WebCore
 GENSOURCES_WEBKIT := $(top_builddir)/DerivedSources/webkit
 GENPROGRAMS := $(top_builddir)/Programs
 
-# Script for creating hash tables
-CREATE_HASH_TABLE = $(srcdir)/JavaScriptCore/create_hash_table
-
-# Script for creating regexp tables
-CREATE_REGEXP_TABLES = $(srcdir)/JavaScriptCore/create_regex_tables
-
 # Programs to run the WebKitGtk unit tests
 GTESTER = gtester
 GTESTER_REPORT = gtester-report
@@ -65,13 +59,11 @@ javascriptcore_cppflags:=
 javascriptcore_sources :=
 javascriptcore_built_sources :=
 javascriptcore_built_nosources :=
-javascriptcore_dist :=
 webcore_cppflags :=
 webcore_sources :=
 webcore_libadd :=
 webcore_built_sources :=
 webcore_built_nosources :=
-webcore_dist :=
 webcoregtk_cppflags :=
 webcoregtk_sources :=
 IDL_BINDINGS_GDOM :=
@@ -587,8 +579,6 @@ DerivedSources/webkit/webkitdomenumtypes.cpp: $(top_builddir)/WebKit/gtk/webkit/
 EXTRA_DIST += \
 	$(srcdir)/gtk-doc.make \
 	WebKit/LICENSE \
-	$(javascriptcore_dist) \
-	$(webcore_dist) \
 	$(srcdir)/autotools/symbols.filter \
 	$(srcdir)/WebKit/gtk/ChangeLog \
 	$(srcdir)/WebKit/gtk/NEWS \
@@ -833,35 +823,7 @@ distclean-local:
 	-rm -rf $(GENSOURCES) $(GENPROGRAMS)
 
 dist-hook:
-	cp $(srcdir)/WebKit/gtk/NEWS $(distdir)/
-	mkdir -p $(distdir)/WebCore/css
-	cp $(srcdir)/WebCore/css/*.idl $(distdir)/WebCore/css
-	mkdir -p $(distdir)/WebCore/dom
-	cp $(srcdir)/WebCore/dom/*.idl $(distdir)/WebCore/dom
-	mkdir -p $(distdir)/WebCore/html
-	cp $(srcdir)/WebCore/html/*.idl $(distdir)/WebCore/html
-	mkdir -p $(distdir)/WebCore/html/canvas
-	cp $(srcdir)/WebCore/html/canvas/*.idl $(distdir)/WebCore/html/canvas
-	mkdir -p $(distdir)/WebCore/inspector
-	cp $(srcdir)/WebCore/inspector/*.idl $(distdir)/WebCore/inspector
-	mkdir -p $(distdir)/WebCore/loader/appcache
-	cp $(srcdir)/WebCore/loader/appcache/*.idl $(distdir)/WebCore/loader/appcache
-	mkdir -p $(distdir)/WebCore/notifications
-	cp $(srcdir)/WebCore/notifications/*.idl $(distdir)/WebCore/notifications
-	mkdir -p $(distdir)/WebCore/page
-	cp $(srcdir)/WebCore/page/*.idl $(distdir)/WebCore/page
-	mkdir -p $(distdir)/WebCore/plugins
-	cp $(srcdir)/WebCore/plugins/*.idl $(distdir)/WebCore/plugins
-	mkdir -p $(distdir)/WebCore/storage
-	cp $(srcdir)/WebCore/storage/*.idl $(distdir)/WebCore/storage
-	mkdir -p $(distdir)/WebCore/svg
-	cp $(srcdir)/WebCore/svg/*.idl $(distdir)/WebCore/svg
-	mkdir -p $(distdir)/WebCore/workers
-	cp $(srcdir)/WebCore/workers/*.idl $(distdir)/WebCore/workers
-	mkdir -p $(distdir)/WebCore/xml
-	cp $(srcdir)/WebCore/xml/*.idl $(distdir)/WebCore/xml
-	mkdir -p $(distdir)/WebCore/websockets
-	cp $(srcdir)/WebCore/websockets/*.idl $(distdir)/WebCore/websockets
+	cp $(srcdir)/WebKit/gtk/NEWS $(distdir)
 
 install-data-local: po-install-data-local
 

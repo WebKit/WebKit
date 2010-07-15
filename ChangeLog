@@ -1,3 +1,13 @@
+2010-07-15  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Oliver Hunt.
+
+        [GTK] Simplify the distribution step
+        https://bugs.webkit.org/show_bug.cgi?id=42414
+
+        * GNUmakefile.am: Remove unused variables. Rely on WebCore/GNUmakefile.am
+        to handle distributing IDL files from WebCore and to modify EXTRA_DIST.
+
 2010-07-14  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Xan Lopez.

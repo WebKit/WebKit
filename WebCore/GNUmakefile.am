@@ -4602,56 +4602,70 @@ $(libgdom_objects): AM_CXXFLAGS+=$(libwebkitgtk_@WEBKITGTK_API_MAJOR_VERSION@_@W
 libgdom.la: $(libgdom_objects)
 	$(CXXLINK) $(libgdom_objects) $(LIBS)
 
-webcore_dist += \
-	WebCore/ChangeLog \
-	WebCore/LICENSE-APPLE \
-	WebCore/LICENSE-LGPL-2 \
-	WebCore/LICENSE-LGPL-2.1 \
-	WebCore/icu/LICENSE \
+EXTRA_DIST += \
+	$(shell ls $(srcdir)/WebCore/css/*.idl) \
+	$(shell ls $(srcdir)/WebCore/dom/*.idl) \
+	$(shell ls $(srcdir)/WebCore/html/canvas/*.idl) \
+	$(shell ls $(srcdir)/WebCore/html/*.idl) \
+	$(shell ls $(srcdir)/WebCore/inspector/*.idl) \
+	$(shell ls $(srcdir)/WebCore/loader/appcache/*.idl) \
+	$(shell ls $(srcdir)/WebCore/notifications/*.idl) \
+	$(shell ls $(srcdir)/WebCore/page/*.idl) \
+	$(shell ls $(srcdir)/WebCore/plugins/*.idl) \
+	$(shell ls $(srcdir)/WebCore/storage/*.idl) \
+	$(shell ls $(srcdir)/WebCore/svg/*.idl) \
+	$(shell ls $(srcdir)/WebCore/websockets/*.idl) \
+	$(shell ls $(srcdir)/WebCore/workers/*.idl) \
+	$(shell ls $(srcdir)/WebCore/xml/*.idl) \
+	WebCore/bindings/scripts/CodeGeneratorGObject.pm \
+	WebCore/bindings/scripts/CodeGeneratorJS.pm \
 	WebCore/bindings/scripts/CodeGenerator.pm \
+	WebCore/bindings/scripts/generate-bindings.pl \
+	WebCore/bindings/scripts/gobject-generate-headers.pl \
 	WebCore/bindings/scripts/IDLParser.pm \
 	WebCore/bindings/scripts/IDLStructure.pm \
 	WebCore/bindings/scripts/InFilesParser.pm \
-	WebCore/bindings/scripts/generate-bindings.pl \
-	WebCore/bindings/scripts/CodeGeneratorJS.pm \
-	WebCore/bindings/scripts/CodeGeneratorGObject.pm \
-	WebCore/bindings/scripts/gobject-generate-headers.pl \
+	WebCore/ChangeLog \
+	WebCore/css/CSSGrammar.y \
+	WebCore/css/CSSPropertyNames.in \
+	WebCore/css/CSSValueKeywords.in \
 	WebCore/css/html.css \
+	WebCore/css/make-css-file-arrays.pl \
+	WebCore/css/makegrammar.pl \
+	WebCore/css/makeprop.pl \
+	WebCore/css/maketokenizer \
+	WebCore/css/makevalues.pl \
 	WebCore/css/mathml.css \
-	WebCore/css/quirks.css \
-	WebCore/css/view-source.css \
-	WebCore/css/svg.css \
-	WebCore/css/wml.css \
 	WebCore/css/mediaControls.css \
 	WebCore/css/mediaControlsGtk.css \
-	WebCore/css/CSSGrammar.y \
-	WebCore/css/CSSValueKeywords.in \
+	WebCore/css/quirks.css \
+	WebCore/css/svg.css \
 	WebCore/css/SVGCSSPropertyNames.in \
-	WebCore/css/maketokenizer \
-	WebCore/css/makeprop.pl \
-	WebCore/css/makevalues.pl \
-	WebCore/css/tokenizer.flex \
-	WebCore/css/CSSPropertyNames.in \
-	WebCore/css/make-css-file-arrays.pl \
 	WebCore/css/SVGCSSValueKeywords.in \
-	WebCore/css/makegrammar.pl \
+	WebCore/css/tokenizer.flex \
+	WebCore/css/view-source.css \
+	WebCore/css/wml.css \
 	WebCore/dom/make_names.pl \
+	WebCore/html/DocTypeStrings.gperf \
+	WebCore/html/HTMLAttributeNames.in \
+	WebCore/html/HTMLEntityNames.gperf \
+	WebCore/html/HTMLTagNames.in \
+	WebCore/icu/LICENSE \
 	WebCore/inspector/CodeGeneratorInspector.pm \
+	WebCore/LICENSE-APPLE \
+	WebCore/LICENSE-LGPL-2 \
+	WebCore/LICENSE-LGPL-2.1 \
+	WebCore/make-hash-tools.pl \
 	WebCore/mathml/mathattrs.in \
 	WebCore/mathml/mathtags.in \
-	WebCore/platform/text/mac/make-charset-table.pl \
 	WebCore/platform/ColorData.gperf \
-	WebCore/svg/xlinkattrs.in \
+	WebCore/platform/text/mac/make-charset-table.pl \
 	WebCore/svg/svgattrs.in \
 	WebCore/svg/svgtags.in \
-	WebCore/html/DocTypeStrings.gperf \
-	WebCore/html/HTMLTagNames.in \
-	WebCore/html/HTMLEntityNames.gperf \
-	WebCore/html/HTMLAttributeNames.in \
+	WebCore/svg/xlinkattrs.in \
 	WebCore/xml/xmlattrs.in \
 	WebCore/xml/xmlnsattrs.in \
-	WebCore/xml/XPathGrammar.y \
-	WebCore/make-hash-tools.pl
+	WebCore/xml/XPathGrammar.y
 
 # Installing web inspector files
 webinspectordir = ${datadir}/webkit-@WEBKITGTK_API_VERSION@/webinspector
