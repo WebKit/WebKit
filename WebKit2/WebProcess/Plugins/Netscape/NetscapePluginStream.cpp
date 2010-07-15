@@ -58,9 +58,20 @@ NetscapePluginStream::~NetscapePluginStream()
 
 void NetscapePluginStream::didReceiveResponse(const KURL& responseURL, uint32_t streamLength, uint32_t lastModifiedTime, const String& mimeType, const String& headers)
 {
+    // Starting the stream could cause the plug-in stream to go away so we keep a reference to it here.
+    RefPtr<NetscapePluginStream> protect(this);
+
     start(responseURL, streamLength, lastModifiedTime, mimeType, headers);
 }
 
+void NetscapePluginStream::didFail(bool wasCancelled)
+{
+    // Stopping the stream could cause the plug-in stream to go away so we keep a reference to it here.
+    RefPtr<NetscapePluginStream> protect(this);
+
+    stop(wasCancelled ? NPRES_USER_BREAK : NPRES_NETWORK_ERR);
+}
+    
 void NetscapePluginStream::sendJavaScriptStream(const String& requestURLString, const String& result)
 {
     // starting the stream or delivering the data to it might cause the plug-in stream to go away, so we keep
@@ -92,6 +103,7 @@ NPError NetscapePluginStream::destroy(NPReason reason)
     if (reason == NPRES_DONE)
         return NPERR_INVALID_PARAM;
 
+    cancel();
     stop(reason);
     return NPERR_NO_ERROR;
 }
@@ -129,7 +141,8 @@ bool NetscapePluginStream::start(const WebCore::String& responseURLString, uint3
 
     NPError error = m_plugin->NPP_NewStream(const_cast<char*>(m_mimeType.data()), &m_npStream, false, &m_transferMode);
     if (error != NPERR_NO_ERROR) {
-        // We failed to start the stream, destroy it.
+        // We failed to start the stream, cancel the load and destroy it.
+        cancel();
         notifyAndDestroyStream(NPRES_NETWORK_ERR);
         return false;
     }
@@ -138,7 +151,8 @@ bool NetscapePluginStream::start(const WebCore::String& responseURLString, uint3
     m_isStarted = true;
 
     if (!isSupportedTransferMode(m_transferMode)) {
-        // Stop the stream.
+        // Cancel the load and stop the stream.
+        cancel();
         stop(NPRES_NETWORK_ERR);
         return false;
     }
@@ -243,6 +257,11 @@ void NetscapePluginStream::stop(NPReason reason)
     notifyAndDestroyStream(reason);
 }
 
+void NetscapePluginStream::cancel()
+{
+    m_plugin->cancelStreamLoad(this);
+}
+
 void NetscapePluginStream::notifyAndDestroyStream(NPReason reason)
 {
     ASSERT(!m_isStarted);
@@ -256,9 +275,6 @@ void NetscapePluginStream::notifyAndDestroyStream(NPReason reason)
         m_urlNotifyHasBeenCalled = true;
 #endif    
     }
-
-    if (reason != NPRES_DONE)
-        m_plugin->cancelStreamLoad(this);
 
     m_plugin->removePluginStream(this);
 }

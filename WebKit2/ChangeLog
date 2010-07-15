@@ -1,3 +1,55 @@
+2010-07-15  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Handle failed loads correctly
+        https://bugs.webkit.org/show_bug.cgi?id=42418
+
+        * WebProcess/Plugins/DummyPlugin.cpp:
+        (WebKit::DummyPlugin::streamDidFail):
+        * WebProcess/Plugins/DummyPlugin.h:
+        Add empty stub.
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::streamDidFail):
+        Call NetscapePluginStream::didFail.
+    
+        * WebProcess/Plugins/Netscape/NetscapePluginStream.cpp:
+        (WebKit::NetscapePluginStream::didReceiveResponse):
+        Take a reference to the plug-in stream in case starting it causes it to be destroyed.
+        
+        (WebKit::NetscapePluginStream::didFail):
+        Take a reference to the plug-in stream in case stopping it causes it to be destroyed.
+
+        (WebKit::NetscapePluginStream::destroy):
+        Cancel the stream.
+
+        (WebKit::NetscapePluginStream::start):
+        If we fail to start the stream, cancel the load.
+
+        (WebKit::NetscapePluginStream::cancel):
+        Call NetscapePlugin::cancelStreamLoad.
+
+        (WebKit::NetscapePluginStream::notifyAndDestroyStream):
+        Don't call cancel here. notifyAndDestroyStream can be called when we don't want to cancel the
+        load, such as when it's already failed to load.
+
+        * WebProcess/Plugins/Netscape/NetscapePluginStream.h:
+        Add didFail.
+
+        * WebProcess/Plugins/Plugin.h:
+        Add pure virtual streamDidFail member function.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::Stream::Stream):
+        Initialize m_streamWasCancelled to false.
+
+        (WebKit::PluginView::Stream::cancel):
+        Set m_streamWasCancelled to true.
+
+        (WebKit::PluginView::Stream::didFail):
+        Call Plugin::streamDidFail.
+
 2010-07-15  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.
