@@ -1,3 +1,14 @@
+2010-07-15  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed.
+
+        Update some more baselines for Eric's text node coalescing patch.  I
+        think these bots were behind and he didn't see the results before he
+        went to sleep.
+
+        * platform/mac/fast/repaint/fixed-move-after-keyboard-scroll-expected.txt:
+        * platform/mac/plugins/netscape-dom-access-expected.txt:
+
 2010-07-15  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Yury Semikhatsky.
