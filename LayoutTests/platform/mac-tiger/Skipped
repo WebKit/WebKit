@@ -158,7 +158,7 @@ media/media-document-audio-size.html
 # These tests fail on Tiger/PPC, probably because of bugs in JSC intepreter.
 fast/js/sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.5_Regular_Expression_Literals/S7.8.5_A1.4_T2.html
 fast/js/sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.5_Regular_Expression_Literals/S7.8.5_A2.4_T2.html
-fast/js/sputnik/Conformance/11_Expressions/11.5_Multiplicative_Operators/11.5.3_Applying_the_percent_Operator/S11.5.3_A4_T2.html
+fast/js/sputnik/Conformance/11_Expressions/11.5_Multiplicative_Operators/11.5.3_Percent/S11.5.3_A4_T2.html
 fast/js/sputnik/Conformance/15_Native_Objects/15.3_Function/15.3.4/15.3.4.3_Function.prototype.apply/S15.3.4.3_A6_T1.html
 fast/js/sputnik/Conformance/15_Native_Objects/15.3_Function/15.3.4/15.3.4.3_Function.prototype.apply/S15.3.4.3_A6_T4.html
 fast/js/sputnik/Conformance/15_Native_Objects/15.3_Function/15.3.5/S15.3.5.3_A2_T6.html

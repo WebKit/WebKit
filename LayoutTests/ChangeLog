@@ -1,3 +1,9 @@
+2010-07-14  Alexey Proskuryakov  <ap@apple.com>
+
+        The same old directory name was present in mac-tiger skipped list.
+
+        * platform/mac-tiger/Skipped:
+
 2010-07-14  Brian Weinstein  <bweinstein@apple.com>
 
         A sputnik test was removed from the Skipped list in r63366 because it was a bogus filename,
