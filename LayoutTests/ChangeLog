@@ -1,5 +1,12 @@
 2010-07-15  Nikolas Zimmermann  <nzimmermann@rim.com>
 
+        Not reviewed. Forgot to reset pixel test result to the old result after the partial revert.
+
+        * platform/mac/svg/transforms/animated-path-inside-transformed-html-expected.checksum:
+        * platform/mac/svg/transforms/animated-path-inside-transformed-html-expected.png:
+
+2010-07-15  Nikolas Zimmermann  <nzimmermann@rim.com>
+
         Reviewed by Adam Barth.
 
         Pixel test failure in moving-shadow-on-path.html and moving-shadow-on-container.html
