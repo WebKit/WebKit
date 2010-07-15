@@ -1390,7 +1390,8 @@ WebGLGetInfo WebGLRenderingContext::getParameter(unsigned long pname, ExceptionC
     case GraphicsContext3D::MAX_VIEWPORT_DIMS:
         return getWebGLIntArrayParameter(pname);
     case GraphicsContext3D::NUM_COMPRESSED_TEXTURE_FORMATS:
-        return getLongParameter(pname);
+        // WebGL 1.0 specifies that there are no compressed texture formats.
+        return WebGLGetInfo(static_cast<long>(0));
     case GraphicsContext3D::NUM_SHADER_BINARY_FORMATS:
         // FIXME: should we always return 0 for this?
         return getLongParameter(pname);

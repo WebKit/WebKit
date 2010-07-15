@@ -1,3 +1,12 @@
+2010-07-15  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Nate Chapin.
+
+        Query of NUM_COMPRESSED_TEXTURE_FORMATS must be handled by WebGL
+        https://bugs.webkit.org/show_bug.cgi?id=42401
+
+        * fast/canvas/webgl/gl-get-calls-expected.txt:
+
 2010-07-15  Simon Fraser  <simon.fraser@apple.com>
 
         Fix results of two tests that are affected by r63452.

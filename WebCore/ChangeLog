@@ -1,3 +1,16 @@
+2010-07-15  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Nate Chapin.
+
+        Query of NUM_COMPRESSED_TEXTURE_FORMATS must be handled by WebGL
+        https://bugs.webkit.org/show_bug.cgi?id=42401
+
+        No new tests; covered by gl-get-calls.html.
+
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::getParameter):
+         - Return 0 for getParameter(NUM_COMPRESSED_TEXTURE_FORMATS).
+
 2010-07-07  John Gregg  <johnnyg@google.com>
 
         Reviewed by Jian Li.
