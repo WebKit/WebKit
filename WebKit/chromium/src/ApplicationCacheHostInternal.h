@@ -53,6 +53,11 @@ public:
         m_outerHost.set(webFrame->client()->createApplicationCacheHost(webFrame, this));
     }
 
+    virtual void didChangeCacheAssociation()
+    {
+        // FIXME: Prod the inspector to update it's notion of what cache the page is using.
+    }
+
     virtual void notifyEventListener(WebKit::WebApplicationCacheHost::EventID eventID)
     {
         m_innerHost->notifyDOMApplicationCache(static_cast<ApplicationCacheHost::EventID>(eventID), 0, 0);

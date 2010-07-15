@@ -32,6 +32,8 @@
 #define WebApplicationCacheHost_h
 
 #include "WebCommon.h"
+#include "WebURL.h"
+#include "WebVector.h"
 
 namespace WebKit {
 
@@ -71,24 +73,46 @@ public:
     virtual ~WebApplicationCacheHost() { }
 
     // Called for every request made within the context.
-    virtual void willStartMainResourceRequest(WebURLRequest&) = 0;
-    virtual void willStartSubResourceRequest(WebURLRequest&) = 0;
+    virtual void willStartMainResourceRequest(WebURLRequest&) { }
+    virtual void willStartSubResourceRequest(WebURLRequest&) { }
 
     // One or the other selectCache methods is called after having parsed the <html> tag.
     // The latter returns false if the current document has been identified as a "foreign"
     // entry, in which case the frame navigation will be restarted by webkit.
-    virtual void selectCacheWithoutManifest() = 0;
-    virtual bool selectCacheWithManifest(const WebURL& manifestURL) = 0;
+    virtual void selectCacheWithoutManifest() { }
+    virtual bool selectCacheWithManifest(const WebURL& manifestURL) { return true; }
 
     // Called as the main resource is retrieved.
-    virtual void didReceiveResponseForMainResource(const WebURLResponse&) = 0;
-    virtual void didReceiveDataForMainResource(const char* data, int len) = 0;
-    virtual void didFinishLoadingMainResource(bool success) = 0;
+    virtual void didReceiveResponseForMainResource(const WebURLResponse&) { }
+    virtual void didReceiveDataForMainResource(const char* data, int len) { }
+    virtual void didFinishLoadingMainResource(bool success) { }
 
     // Called on behalf of the scriptable interface.
-    virtual Status status() = 0;
-    virtual bool startUpdate() = 0;
-    virtual bool swapCache() = 0;
+    virtual Status status() { return Uncached; }
+    virtual bool startUpdate() { return false; }
+    virtual bool swapCache() { return false; }
+
+    // Structures and methods to support inspecting Application Caches.
+    struct CacheInfo {
+        WebURL manifestURL; // Empty if there is no associated cache.
+        double creationTime;
+        double updateTime;
+        long long totalSize;
+        CacheInfo() : creationTime(0), updateTime(0), totalSize(0) { }
+    };
+    struct ResourceInfo {
+        WebURL url;
+        long long size;
+        bool isMaster;
+        bool isManifest;
+        bool isExplicit;
+        bool isForeign;
+        bool isFallback;
+        ResourceInfo() : size(0), isMaster(false), isManifest(false), isExplicit(false), isForeign(false), isFallback(false) { }
+    };
+    virtual void getAssociatedCacheInfo(CacheInfo*) { }
+    virtual void getResourceList(WebVector<ResourceInfo>*) { }
+    virtual void deleteAssociatedCacheGroup() { }
 };
 
 }  // namespace WebKit

@@ -1,3 +1,21 @@
+2010-07-15  Michael Nordman  <michaeln@google.com>
+
+        Reviewed by Darin Fisher.
+
+        WebKitAPI additions to support inspecting application caches.
+        https://bugs.webkit.org/show_bug.cgi?id=41993
+
+        * public/WebApplicationCacheHost.h:
+        (WebKit::WebApplicationCacheHost::CacheInfo::CacheInfo):
+        (WebKit::WebApplicationCacheHost::ResourceInfo::ResourceInfo):
+        (WebKit::WebApplicationCacheHost::getAssociatedCacheInfo):
+        (WebKit::WebApplicationCacheHost::getResourceList):
+        (WebKit::WebApplicationCacheHost::deleteAssociatedCacheGroup):
+        * public/WebApplicationCacheHostClient.h:
+        (WebKit::WebApplicationCacheHostClient::didChangeCacheAssociation):
+        * src/ApplicationCacheHostInternal.h:
+        (WebCore::ApplicationCacheHostInternal::didChangeCacheAssociation):
+
 2010-07-15  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Yury Semikhatsky.
