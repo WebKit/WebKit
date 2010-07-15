@@ -1,5 +1,22 @@
 2010-07-15  Nikolas Zimmermann  <nzimmermann@rim.com>
 
+        Reviewed by Dirk Schulze.
+
+        clipPath is missing cycle detection
+        https://bugs.webkit.org/show_bug.cgi?id=42350
+
+        Change clipPath behaviour: clipPath children that reference the clipPath they define, are not ignored.
+        Updated tests accordingly. Raised SVG WG question, as the handling is inconsistent between Opera/FF & WebKit.
+
+        * platform/mac/svg/clip-path/clip-path-recursive-call-by-child-expected.txt:
+        * platform/mac/svg/custom/recursive-clippath-expected.checksum:
+        * platform/mac/svg/custom/recursive-clippath-expected.png:
+        * platform/mac/svg/custom/recursive-clippath-expected.txt:
+        * svg/clip-path/clip-path-recursive-call-by-child.svg:
+        * svg/custom/recursive-clippath.svg:
+
+2010-07-15  Nikolas Zimmermann  <nzimmermann@rim.com>
+
         Rubber-stamped by Dirk Schulze.
 
         Extend svg/custom/recursive-gradient.svg with the same recursion tests patterns have.

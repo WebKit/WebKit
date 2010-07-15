@@ -68,6 +68,8 @@ private:
     bool createClipData(ClipperData*, const FloatRect&, const FloatRect&);
     void calculateClipContentRepaintRect();
 
+    virtual bool childElementReferencesResource(const SVGRenderStyle*, const String&) const;
+
     FloatRect m_clipBoundaries;
     HashMap<RenderObject*, ClipperData*> m_clipper;
 };
