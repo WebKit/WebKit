@@ -501,8 +501,18 @@ void ResourceHandle::loadResourceSynchronously(const ResourceRequest& request, S
 #else
     UNUSED_PARAM(storedCredentials);
     UNUSED_PARAM(frame);
+    NSURLRequest *firstRequest = request.nsURLRequest();
+
+    // If a URL already has cookies, then we'll relax the 3rd party cookie policy and accept new cookies.
+    NSHTTPCookieStorage *sharedStorage = [NSHTTPCookieStorage sharedHTTPCookieStorage];
+    if ([sharedStorage cookieAcceptPolicy] == NSHTTPCookieAcceptPolicyOnlyFromMainDocumentDomain && [[sharedStorage cookiesForURL:[firstRequest URL]] count]) {
+        NSMutableURLRequest *mutableRequest = [[firstRequest copy] autorelease];
+        [mutableRequest setMainDocumentURL:[mutableRequest URL]];
+        firstRequest = mutableRequest;
+    }
+
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    result = [NSURLConnection sendSynchronousRequest:request.nsURLRequest() returningResponse:&nsURLResponse error:&nsError];
+    result = [NSURLConnection sendSynchronousRequest:firstRequest returningResponse:&nsURLResponse error:&nsError];
     END_BLOCK_OBJC_EXCEPTIONS;
 #endif
 

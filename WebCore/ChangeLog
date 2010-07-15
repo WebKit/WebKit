@@ -1,3 +1,23 @@
+2010-07-14  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Brady Eidson.
+
+        https://bugs.webkit.org/show_bug.cgi?id=42201
+        Use ResourceHandle object for synchronous loading
+
+        Fix a Tiger test failure.
+
+        Setting NSURLRequest properties has been moved to createNSURLConnection to share code between
+        sync and async cases, but on Tiger, we don't call this function.
+
+        There is more refactoring needed to make this nice, and we need to figure out if some of
+        request-tweaking code in createNSURLConnection needs to run on every redirect, as it happens
+        with CFNetwork version.
+
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::ResourceHandle::loadResourceSynchronously): Set main document for cookies, which is
+        the only thing we've been missing.
+
 2010-07-14  Mark Rowe  <mrowe@apple.com>
 
         Rubber-stamped by Dan Bernstein.
