@@ -1,3 +1,20 @@
+2010-07-15  Maciej Stachowiak  <mjs@apple.com>
+
+        Unreviewed, trivial error in previous commit.
+
+        Fix mistake in the last commit due to last minute change.
+
+        * platform/mac-wk2/Skipped: change extensions from -diffs.txt to .html
+
+2010-07-14  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Add more tests that fail under WebKit2 to the WebKit2 skipped list
+        https://bugs.webkit.org/show_bug.cgi?id=42334
+
+        * platform/mac-wk2/Skipped:
+
 2010-07-15  Eric Seidel  <eric@webkit.org>
 
         Unreviewed, just updating expectations.
