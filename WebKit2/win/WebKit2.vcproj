@@ -799,6 +799,14 @@
 						RelativePath="..\WebProcess\Plugins\Netscape\win\NetscapePluginModuleWin.cpp"
 						>
 					</File>
+					<File
+						RelativePath="..\WebProcess\Plugins\Netscape\NetscapePluginStream.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\WebProcess\Plugins\Netscape\NetscapePluginStream.h"
+						>
+					</File>
 				</Filter>
 			</Filter>
 		</Filter>
