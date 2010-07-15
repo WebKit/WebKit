@@ -343,6 +343,12 @@ void NetscapePlugin::streamDidReceiveData(uint64_t streamID, const char* bytes, 
         pluginStream->didReceiveData(bytes, length);
 }
 
+void NetscapePlugin::streamDidFinishLoading(uint64_t streamID)
+{
+    if (NetscapePluginStream* pluginStream = streamFromID(streamID))
+        pluginStream->didFinishLoading();
+}
+
 void NetscapePlugin::streamDidFail(uint64_t streamID, bool wasCancelled)
 {
     if (NetscapePluginStream* pluginStream = streamFromID(streamID))

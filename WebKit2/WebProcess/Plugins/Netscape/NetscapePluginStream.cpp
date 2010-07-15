@@ -72,6 +72,14 @@ void NetscapePluginStream::didReceiveData(const char* bytes, int length)
     deliverData(bytes, length);
 }
 
+void NetscapePluginStream::didFinishLoading()
+{
+    // Stopping the stream could cause the plug-in stream to go away so we keep a reference to it here.
+    RefPtr<NetscapePluginStream> protect(this);
+
+    stop(NPRES_DONE);
+}
+
 void NetscapePluginStream::didFail(bool wasCancelled)
 {
     // Stopping the stream could cause the plug-in stream to go away so we keep a reference to it here.

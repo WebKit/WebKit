@@ -2,6 +2,33 @@
 
         Reviewed by Sam Weinig.
 
+        Stop the plug-in stream when it's finished loading
+        https://bugs.webkit.org/show_bug.cgi?id=42423
+
+        * WebProcess/Plugins/DummyPlugin.cpp:
+        (WebKit::DummyPlugin::streamDidFinishLoading):
+        * WebProcess/Plugins/DummyPlugin.h:
+        Add empty stub.
+        
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::streamDidFinishLoading):
+        Call NetscapePluginStream::didFinishLoading.
+
+        * WebProcess/Plugins/Netscape/NetscapePluginStream.cpp:
+        (WebKit::NetscapePluginStream::didFinishLoading):
+        Stop the stream with NPRES_DONE.
+
+        * WebProcess/Plugins/Plugin.h:
+        Add streamDidFinishLoading.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::Stream::didFinishLoading):
+        Call Plugin::streamDidFinishLoading.
+
+2010-07-15  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
         Pass URL stream data to the plug-in
         https://bugs.webkit.org/show_bug.cgi?id=42420
 

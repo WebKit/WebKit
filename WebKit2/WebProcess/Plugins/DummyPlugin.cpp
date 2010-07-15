@@ -87,6 +87,10 @@ void DummyPlugin::streamDidReceiveData(uint64_t streamID, const char* bytes, int
 {
 }
 
+void DummyPlugin::streamDidFinishLoading(uint64_t streamID)
+{
+}
+
 void DummyPlugin::streamDidFail(uint64_t streamID, bool wasCancelled)
 {
 }

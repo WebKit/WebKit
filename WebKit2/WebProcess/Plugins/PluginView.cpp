@@ -188,7 +188,11 @@ void PluginView::Stream::didFail(NetscapePlugInStreamLoader*, const ResourceErro
 
 void PluginView::Stream::didFinishLoading(NetscapePlugInStreamLoader*)
 {
-    // FIXME: Implement.
+    // Calling streamDidFinishLoading could cause us to be deleted, so we hold on to a reference here.
+    RefPtr<Stream> protect(this);
+
+    m_pluginView->m_plugin->streamDidFinishLoading(m_streamID);
+    m_pluginView->removeStream(this);
 }
 
 PluginView::PluginView(WebCore::HTMLPlugInElement* pluginElement, PassRefPtr<Plugin> plugin, const Plugin::Parameters& parameters)
