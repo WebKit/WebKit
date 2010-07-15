@@ -69,5 +69,3 @@ layer at (0,0) size 800x600
             RenderText at (0,0) size 88x16
               text run at (0,0) width 88: "Positive margin"
         RenderText {#text} at (0,0) size 0x0
-        RenderText {#text} at (0,0) size 0x0
-        RenderText {#text} at (0,0) size 0x0

@@ -10,5 +10,3 @@ layer at (0,0) size 800x600
       RenderBlock (anonymous) at (0,20) size 784x20
         RenderText {#text} at (0,0) size 278x19
           text run at (0,0) width 278: "This text should be *below* the select widget."
-        RenderText {#text} at (0,0) size 0x0
-        RenderText {#text} at (0,0) size 0x0

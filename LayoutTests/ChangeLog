@@ -1,3 +1,48 @@
+2010-07-15  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        [Chromium] Rebaseline some tests
+        https://bugs.webkit.org/show_bug.cgi?id=42382
+
+        Chromium linux expected results needed after http://trac.webkit.org/changeset/63403.
+
+        * platform/chromium-linux/editing/pasteboard/4641033-expected.txt:
+        * platform/chromium-linux/editing/pasteboard/select-element-1-expected.txt:
+        * platform/chromium-linux/fast/block/positioning/inline-block-relposition-expected.txt:
+        * platform/chromium-linux/fast/css/continuationCrash-expected.txt:
+        * platform/chromium-linux/fast/css/margin-top-bottom-dynamic-expected.txt:
+        * platform/chromium-linux/fast/dom/HTMLTableColElement/resize-table-using-col-width-expected.txt:
+        * platform/chromium-linux/fast/dom/HTMLTextAreaElement/reset-textarea-expected.txt:
+        * platform/chromium-linux/fast/forms/003-expected.txt:
+        * platform/chromium-linux/fast/forms/box-shadow-override-expected.txt:
+        * platform/chromium-linux/fast/forms/button-default-title-expected.txt:
+        * platform/chromium-linux/fast/forms/button-inner-block-reuse-expected.txt:
+        * platform/chromium-linux/fast/forms/control-restrict-line-height-expected.txt:
+        * platform/chromium-linux/fast/forms/formmove3-expected.txt:
+        * platform/chromium-linux/fast/forms/listbox-width-change-expected.txt:
+        * platform/chromium-linux/fast/forms/option-script-expected.txt:
+        * platform/chromium-linux/fast/forms/option-strip-whitespace-expected.txt:
+        * platform/chromium-linux/fast/forms/select-empty-option-height-expected.txt:
+        * platform/chromium-linux/fast/forms/select-item-background-clip-expected.txt:
+        * platform/chromium-linux/fast/forms/targeted-frame-submission-expected.txt:
+        * platform/chromium-linux/fast/forms/textfield-outline-expected.txt:
+        * platform/chromium-linux/fast/table/append-cells2-expected.txt:
+        * platform/chromium-linux/fast/table/remove-td-display-none-expected.txt:
+        * platform/chromium-linux/fast/text/international/001-expected.txt:
+        * platform/chromium-linux/fast/text/international/wrap-CJK-001-expected.txt:
+        * platform/chromium-linux/fast/text/updateNewFont-expected.txt:
+        * platform/chromium-linux/fonts/fantasy-expected.txt:
+        * platform/chromium-linux/http/tests/multipart/invalid-image-data-expected.txt:
+        * platform/chromium-linux/http/tests/navigation/anchor-frames-expected.txt:
+        * platform/chromium-linux/tables/mozilla/bugs/bug138725-expected.txt:
+        * platform/chromium-linux/tables/mozilla/bugs/bug33855-expected.txt:
+        * platform/chromium-linux/tables/mozilla/bugs/bug46368-1-expected.txt:
+        * platform/chromium-linux/tables/mozilla/bugs/bug46368-2-expected.txt:
+        * platform/chromium-linux/tables/mozilla/core/bloomberg-expected.txt:
+        * platform/chromium-linux/tables/mozilla/other/move_row-expected.txt:
+        * platform/chromium-linux/tables/mozilla_expected_failures/bugs/bug58402-2-expected.txt:
+
 2010-07-15  Adam Barth  <abarth@webkit.org>
 
         Unreviewed.

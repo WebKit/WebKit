@@ -22,5 +22,3 @@ layer at (0,0) size 800x600
       RenderBlock (anonymous) at (0,92) size 784x100
         RenderImage {IMG} at (0,0) size 100x100
         RenderText {#text} at (0,0) size 0x0
-        RenderText {#text} at (0,0) size 0x0
-        RenderText {#text} at (0,0) size 0x0

@@ -8,5 +8,3 @@ layer at (0,0) size 800x600
       RenderBR {BR} at (0,0) size 0x0
       RenderListBox {SELECT} at (2,22) size 209x69 [bgcolor=#DDDDDD] [border: (1px inset #808080)]
       RenderText {#text} at (0,0) size 0x0
-      RenderText {#text} at (0,0) size 0x0
-      RenderText {#text} at (0,0) size 0x0

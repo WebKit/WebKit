@@ -20,4 +20,3 @@ layer at (0,0) size 800x600
         RenderListBox {SELECT} at (2,0) size 60x67 [bgcolor=#DDDDDD] [border: (3px solid #0000FF)]
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
-        RenderText {#text} at (0,0) size 0x0

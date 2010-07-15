@@ -68,8 +68,6 @@ layer at (0,0) size 800x600
             RenderText {#text} at (0,0) size 56x23
               text run at (0,0) width 56: "Button"
         RenderText {#text} at (0,0) size 0x0
-        RenderText {#text} at (0,0) size 0x0
-        RenderText {#text} at (0,0) size 0x0
 layer at (14,85) size 138x16
   RenderBlock {DIV} at (1,0) size 138x16
     RenderText {#text} at (1,0) size 41x16

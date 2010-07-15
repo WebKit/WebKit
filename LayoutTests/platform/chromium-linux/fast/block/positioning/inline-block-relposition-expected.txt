@@ -4,8 +4,6 @@ layer at (0,0) size 800x42
   RenderBlock {HTML} at (0,0) size 800x42
     RenderBody {BODY} at (8,8) size 784x26
       RenderText {#text} at (0,0) size 0x0
-      RenderText {#text} at (0,0) size 0x0
-      RenderText {#text} at (0,0) size 0x0
 layer at (8,10) size 100x22
   RenderButton {BUTTON} at (0,2) size 100x22 [bgcolor=#DDDDDD] [border: (2px outset #DDDDDD)]
     RenderBlock (anonymous) at (8,3) size 84x16

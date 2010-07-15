@@ -40,5 +40,3 @@ layer at (0,0) size 800x600
             RenderText at (4,1) size 55x16
               text run at (4,1) width 55: "Five Tabs"
         RenderText {#text} at (0,0) size 0x0
-        RenderText {#text} at (0,0) size 0x0
-        RenderText {#text} at (0,0) size 0x0
