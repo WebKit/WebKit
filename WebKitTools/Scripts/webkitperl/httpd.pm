@@ -154,19 +154,12 @@ sub openHTTPD(@)
         close PIDFILE;
         if (0 != kill 0, $oldPid) {
             print "\nhttpd is already running: pid $oldPid, killing...\n";
-            kill 15, $oldPid;
-
-            my $retryCount = 20;
-            while ((kill(0, $oldPid) != 0) && $retryCount) {
-                sleep 1;
-                --$retryCount;
-            }
-
-            if (!$retryCount) {
+            if (!killHTTPD($oldPid)) {
                 cleanUp();
                 die "Timed out waiting for httpd to quit";
             }
         }
+        unlink $httpdPidFile;
     }
 
     $httpdPath = "/usr/sbin/httpd" unless ($httpdPath);
@@ -196,33 +189,29 @@ sub openHTTPD(@)
 sub closeHTTPD
 {
     close HTTPDIN;
-    my $retryCount = 20;
-    if ($httpdPid) {
-        if (isCygwin()) {
-            # Kill the process (and all its child processes) using taskkill, as
-            # perl's kill doesn't seem to work with Apache. A return value of 0
-            # means the process was killed, and return value of 32768 means
-            # there was no process with that PID. We use open/close here
-            # instead of system to avoid having taskkill print to stdout.
-            if (open(TASKKILL, "-|", qw(taskkill /f /t /pid), $httpdPid) && close(TASKKILL) && (!$? || $? == 32768)) {
-                # Cygwin's Apache doesn't delete the PID file itself when
-                # killed. We delete the PID file for it to work around this.
-                unlink $httpdPidFile;
-            }
-        } else {
-            kill 15, $httpdPid;
-        }
-        while (-f $httpdPidFile && $retryCount) {
-            sleep 1;
-            --$retryCount;
-        }
-    }
+    my $succeeded = killHTTPD($httpdPid);
     cleanUp();
-    if (!$retryCount) {
-        print STDERR "Timed out waiting for httpd to terminate!\n";
+    unless ($succeeded) {
+        print STDERR "Timed out waiting for httpd to terminate!\n" unless $succeeded;
         return 0;
     }
     return 1;
+}
+
+sub killHTTPD
+{
+    my ($pid) = @_;
+
+    return 1 unless $pid;
+
+    kill 15, $pid;
+
+    my $retryCount = 20;
+    while (kill(0, $pid) && $retryCount) {
+        sleep 1;
+        --$retryCount;
+    }
+    return $retryCount != 0;
 }
 
 sub setShouldWaitForUserInterrupt
@@ -232,7 +221,16 @@ sub setShouldWaitForUserInterrupt
 
 sub handleInterrupt
 {
-    closeHTTPD();
+    # On Cygwin, when we receive a signal Apache is still running, so we need
+    # to kill it. On other platforms (at least Mac OS X), Apache will have
+    # already been killed, and trying to kill it again will cause us to hang.
+    # All we need to do in this case is clean up our own files.
+    if (isCygwin()) {
+        closeHTTPD();
+    } else {
+        cleanUp();
+    }
+
     print "\n";
     exit(1);
 }

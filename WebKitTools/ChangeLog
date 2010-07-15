@@ -1,3 +1,40 @@
+2010-07-15  Adam Roben  <aroben@apple.com>
+
+        Make killing Apache more reliable (on both Mac and Windows)
+
+        We previously had two ways of determining whether we had succeeded in
+        killing Apache:
+          1) checking the return value of kill(0, $apachePID)
+          2) checking whether Apache's PID file still exists
+
+        On Cygwin, Apache doesn't always delete its PID file when it exits,
+        making (2) unreliable. We unfortunately misdiagnosed this as an
+        impotency of Perl's kill function, which led to r63177 and r63355.
+
+        Now that we know that the real problem is that Apache doesn't always
+        delete its PID file on Windows, we can make a much better fix: always
+        use method (1) to determine whether we've killed Apache.
+
+        Fixes <http://webkit.org/b/42415> Killing Apache is unreliable,
+        leading to regression test failures (and general annoyance).
+
+        Reviewed by Anders Carlsson.
+
+        * Scripts/webkitperl/httpd.pm:
+        (openHTTPD): Moved killing code from here to killHTTPD. Added a call
+        to delete the PID file in case Apache doesn't do this itself when
+        killed. Our later logic relies on the PID file being deleted after
+        this point.
+        (closeHTTPD): Removed killing logic and changed to just call killHTTPD
+        instead. killHTTPD's logic is a bit different from the logic we had
+        here, for the reasons stated above.
+        (killHTTPD): Added. Code came from openHTTPD.
+        (handleInterrupt): Bonus fix for Mac: don't hang when pressing Ctrl-C!
+        On Mac, don't try to kill Apache when we receive a signal, as Apache
+        will already have been killed by this point (though for some reason
+        this isn't detected by our killing logic in killHTTPD). On Cygwin, we
+        still need to kill Apache manually.
+
 2010-07-15  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.
