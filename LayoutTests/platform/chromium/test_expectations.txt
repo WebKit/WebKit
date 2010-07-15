@@ -3002,9 +3002,6 @@ BUG48737 WIN LINUX MAC SKIP : ietestcenter/Javascript/15.4.4.15-3-14.html = TIME
 BUG48737 WIN LINUX MAC SKIP : ietestcenter/Javascript/15.4.4.15-3-29.html = TIMEOUT
 BUG48737 WIN LINUX MAC SKIP : ietestcenter/Javascript/15.4.4.15-3-8.html = TIMEOUT
 
-// Implement new test logic in Chromium's TestNetscape Plugin to pass the plugins/plugin-initiate-popup-window.html
-BUG48033 SKIP : plugins/plugin-initiate-popup-window.html = TIMEOUT
-
 // Broken prior to r62921.
 BUG48696 WIN LINUX : fast/forms/focus2.html = CRASH
 BUG48696 WIN LINUX MAC : fast/forms/tabs-with-modifiers.html = CRASH

@@ -3341,14 +3341,13 @@ plugins/throw-on-dealloc.html
 plugins/undefined-property-crash.html
 #   These test require Qt Widgets
 plugins/qt-qwidget-plugin.html
-#   Tests failing, need to implement NPP_HandleEvent() in TestNetscapePlugin
+#   Tests failing
 plugins/embed-attributes-setting.html
 plugins/get-url-with-blank-target.html
 plugins/mouse-events.html
 plugins/mouse-events-fixedpos.html
 plugins/keyboard-events.html
 plugins/geturlnotify-during-document-teardown.html
-plugins/plugin-initiate-popup-window.html
 
 # This test is for clients that choose to make the missing plugin indicator a button
 plugins/clicking-missing-plugin-fires-delegate.html

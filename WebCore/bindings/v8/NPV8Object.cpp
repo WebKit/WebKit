@@ -34,7 +34,6 @@
 #include "OwnArrayPtr.h"
 #include "PlatformString.h"
 #include "ScriptController.h"
-#include "UserGestureIndicator.h"
 #include "V8GCController.h"
 #include "V8Helpers.h"
 #include "V8NPUtils.h"
@@ -278,8 +277,6 @@ bool _NPN_EvaluateHelper(NPP npp, bool popupsAllowed, NPObject* npObject, NPStri
     String filename;
     if (!popupsAllowed)
         filename = "npscript";
-
-    UserGestureIndicator gestureIndicator(popupsAllowed ? DefinitelyProcessingUserGesture : DefinitelyNotProcessingUserGesture);
 
     String script = String::fromUTF8(npScript->UTF8Characters, npScript->UTF8Length);
     v8::Local<v8::Value> v8result = proxy->evaluate(ScriptSourceCode(script, KURL(ParsedURLString, filename)), 0);

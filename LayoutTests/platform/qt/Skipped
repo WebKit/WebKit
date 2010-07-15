@@ -457,7 +457,6 @@ fast/dom/object-embed-plugin-scripting.html
 plugins/mouse-events.html
 plugins/keyboard-events.html
 plugins/mouse-events-fixedpos.html
-plugins/plugin-initiate-popup-window.html
 # ---- to be reviewed
 http/tests/plugins/plugin-document-has-focus.html
 
