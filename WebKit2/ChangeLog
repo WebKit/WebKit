@@ -1,5 +1,37 @@
 2010-07-15  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        Implement NPN_DestroyStream
+        https://bugs.webkit.org/show_bug.cgi?id=42393
+
+        * WebProcess/Plugins/Netscape/NetscapeBrowserFuncs.cpp:
+        (WebKit::NPN_DestroyStream):
+        Call NetscapePlugin::destroyStream.
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::destroyStream):
+        Check if the stream is valid, and if it is call NetscapePluginStream::destroy.
+
+        * WebProcess/Plugins/Netscape/NetscapePluginStream.cpp:
+        (WebKit::NetscapePluginStream::sendJavaScriptStream):
+        Keep a reference to the stream in case it's destroyed by an NPP_ call.
+
+        (WebKit::NetscapePluginStream::destroy):
+        Verify that the stream can be destroyed and stop it.
+
+        (WebKit::NetscapePluginStream::deliverDataToPlugin):
+        Add m_isStarted checks after any calls to NPP_ functions.
+
+        (WebKit::NetscapePluginStream::stop):
+        Set m_isStarted to false before calling NPP_DestroyStream.
+        
+        * WebProcess/Plugins/Netscape/NetscapePluginStream.h:
+        (WebKit::NetscapePluginStream::npStream):
+        Add NPStream getter.
+
+2010-07-15  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Darin Adler.
 
         WebKitTestRunner goes off the deep end, spinning in a dispatch queue thread

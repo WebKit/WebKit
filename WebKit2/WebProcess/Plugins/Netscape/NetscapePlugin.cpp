@@ -126,6 +126,23 @@ void NetscapePlugin::loadURL(const String& urlString, const String& target, bool
     }
 }
 
+NPError NetscapePlugin::destroyStream(NPStream* stream, NPReason reason)
+{
+    NetscapePluginStream* pluginStream = 0;
+
+    for (StreamsMap::const_iterator it = m_streams.begin(), end = m_streams.end(); it != end; ++it) {
+        if (it->second->npStream() == stream) {
+            pluginStream = it->second.get();
+            break;
+        }
+    }
+
+    if (!pluginStream)
+        return NPERR_INVALID_INSTANCE_ERROR;
+
+    return pluginStream->destroy(reason);
+}
+
 void NetscapePlugin::removePluginStream(NetscapePluginStream* pluginStream)
 {
     ASSERT(m_streams.get(pluginStream->streamID()) == pluginStream);

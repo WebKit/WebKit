@@ -53,6 +53,7 @@ public:
     void invalidate(const NPRect*);
     const char* userAgent();
     void loadURL(const WebCore::String& urlString, const WebCore::String& target, bool sendNotification, void* notificationData);
+    NPError destroyStream(NPStream*, NPReason);
 
     void removePluginStream(NetscapePluginStream*);
 
@@ -94,7 +95,8 @@ private:
     typedef HashMap<uint64_t, std::pair<WebCore::String, void*> > PendingURLNotifyMap;
     PendingURLNotifyMap m_pendingURLNotifications;
 
-    HashMap<uint64_t, RefPtr<NetscapePluginStream> > m_streams;
+    typedef HashMap<uint64_t, RefPtr<NetscapePluginStream> > StreamsMap;
+    StreamsMap m_streams;
 
     RefPtr<NetscapePluginModule> m_pluginModule;
     NPP_t m_npp;

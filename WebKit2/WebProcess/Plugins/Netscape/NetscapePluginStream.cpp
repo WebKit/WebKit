@@ -54,6 +54,10 @@ NetscapePluginStream::~NetscapePluginStream()
 
 void NetscapePluginStream::sendJavaScriptStream(const String& requestURLString, const String& result)
 {
+    // starting the stream or delivering the data to it might cause the plug-in stream to go away, so we keep
+    // a reference to it here.
+    RefPtr<NetscapePluginStream> protect(this);
+
     CString resultCString = requestURLString.utf8();
     if (resultCString.isNull()) {
         // There was an error evaluating the JavaScript, just call stop.
@@ -68,6 +72,21 @@ void NetscapePluginStream::sendJavaScriptStream(const String& requestURLString, 
 
     deliverData(resultCString.data(), resultCString.length());
     stop(NPRES_DONE);
+}
+
+NPError NetscapePluginStream::destroy(NPReason reason)
+{
+    // It doesn't make sense to call NPN_DestroyStream on a stream that hasn't been started yet.
+    if (!m_isStarted)
+        return NPERR_GENERIC_ERROR;
+
+    // It isn't really valid for a plug-in to call NPN_DestroyStream with NPRES_DONE.
+    // (At least not for browser initiated streams, and we don't support plug-in initiated streams).
+    if (reason == NPRES_DONE)
+        return NPERR_INVALID_PARAM;
+
+    stop(reason);
+    return NPERR_NO_ERROR;
 }
 
 bool NetscapePluginStream::start(const WebCore::String& responseURLString, uint32_t expectedContentLength, 
@@ -133,6 +152,10 @@ void NetscapePluginStream::deliverDataToPlugin()
     while (numBytesDelivered < numBytesToDeliver) {
         int32_t numBytesPluginCanHandle = m_plugin->NPP_WriteReady(&m_npStream);
         
+        // NPP_WriteReady could call NPN_DestroyStream and destroy the stream.
+        if (!m_isStarted)
+            return;
+
         if (numBytesPluginCanHandle <= 0) {
             // The plug-in can't handle more data, we'll send the rest later
             m_deliveryDataTimer.startOneShot(0);
@@ -148,6 +171,10 @@ void NetscapePluginStream::deliverDataToPlugin()
             // FIXME: Destroy the stream!
             ASSERT_NOT_REACHED();
         }
+
+        // NPP_Write could call NPN_DestroyStream and destroy the stream.
+        if (!m_isStarted)
+            return;
 
         numBytesWritten = min(numBytesWritten, dataLength);
         m_offset += numBytesWritten;
@@ -171,6 +198,9 @@ void NetscapePluginStream::deliverDataToPlugin()
 
 void NetscapePluginStream::stop(NPReason reason)
 {
+    if (!m_isStarted)
+        return;
+
     if (m_isStarted) {
         if (reason == NPRES_DONE && m_deliveryData && !m_deliveryData->isEmpty()) {
             // There is still data left that the plug-in hasn't been able to consume yet.
@@ -186,8 +216,10 @@ void NetscapePluginStream::stop(NPReason reason)
         m_deliveryData = 0;
         m_deliveryDataTimer.stop();
 
-        m_plugin->NPP_DestroyStream(&m_npStream, reason);
+        // Set m_isStarted to false before calling NPP_DestroyStream in case NPP_DestroyStream calls NPN_DestroyStream.
         m_isStarted = false;
+
+        m_plugin->NPP_DestroyStream(&m_npStream, reason);
     }
 
     ASSERT(!m_deliveryDataTimer.isActive());
