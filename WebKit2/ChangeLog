@@ -1,5 +1,13 @@
 2010-07-15  Anders Carlsson  <andersca@apple.com>
 
+        Attempt to fix the Windows build.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::Stream::didReceiveResponse):
+        expectedContentLength should be a signed long long.
+
+2010-07-15  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Sam Weinig.
 
         Start loading plug-in streams

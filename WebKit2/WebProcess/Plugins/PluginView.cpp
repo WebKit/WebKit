@@ -117,7 +117,7 @@ void PluginView::Stream::didReceiveResponse(NetscapePlugInStreamLoader*, const R
     // Compute the stream related data from the resource response.
     const KURL& responseURL = response.url();
     const String& mimeType = response.mimeType();
-    unsigned long long expectedContentLength = response.expectedContentLength();
+    long long expectedContentLength = response.expectedContentLength();
     
     String headers;
     if (response.isHTTP()) {
