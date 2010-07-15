@@ -35,16 +35,12 @@ var correctColor = null;
 
 function init()
 {
-    if (window.layoutTestController) {
-        layoutTestController.overridePreference("WebKitWebGLEnabled", "1");
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.initNonKhronosFramework) {
+        window.initNonKhronosFramework(true);
     }
 
     description('Verify WebGLContextAttributes are working as specified, including alpha, depth, stencil, antialias, but not premultipliedAlpha');
 
-    debug('Regression test for <a href="https://bugs.webkit.org/show_bug.cgi?id=33416">https://bugs.webkit.org/show_bug.cgi?id=33416</a> : <code>Hook up WebGLContextAttributes to OpenGL context creation code</code>');
-    
     runTest();
 }
 
@@ -57,7 +53,7 @@ function getWebGL(canvasName, contextAttribs, clearColor, clearDepth, clearStenc
         return null;
     }
     var actualContextAttribs = gl.getContextAttributes();
-    
+
     // Add a console
     gl.console = ("console" in window) ? window.console : { log: function() { } };
 
@@ -294,8 +290,8 @@ function runTest()
 }
 
 function finish() {
-    if (window.layoutTestController) {
-        layoutTestController.notifyDone();
+    if (window.nonKhronosFrameworkNotifyDone) {
+        window.nonKhronosFrameworkNotifyDone();
     }
 }
 </script>

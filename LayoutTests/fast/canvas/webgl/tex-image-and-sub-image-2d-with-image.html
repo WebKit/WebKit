@@ -33,15 +33,11 @@ var successfullyParsed = false;
 
 function init()
 {
-    if (window.layoutTestController) {
-        layoutTestController.overridePreference("WebKitWebGLEnabled", "1");
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.initNonKhronosFramework) {
+        window.initNonKhronosFramework(true);
     }
 
     description('Verify texImage2D and texSubImage2D code paths taking Images');
-
-    debug('Regression test for <a href="https://bugs.webkit.org/show_bug.cgi?id=34458">https://bugs.webkit.org/show_bug.cgi?id=34458</a> : <code>Refactor texImage2D and texSubImage2D taking Image to use common code</code>');
 
     gl = initWebGL("example", "vshader", "fshader", [ "g_Position", "g_TexCoord0" ], [ 0, 0, 0, 1 ], 1);
 
@@ -186,8 +182,8 @@ function runTest(image)
 }
 
 function finish() {
-    if (window.layoutTestController) {
-        layoutTestController.notifyDone();
+    if (window.nonKhronosFrameworkNotifyDone) {
+        window.nonKhronosFrameworkNotifyDone();
     }
 }
 </script>

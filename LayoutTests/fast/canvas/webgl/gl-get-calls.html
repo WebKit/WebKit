@@ -1,5 +1,8 @@
+
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>WebGL gl calls Conformance Tests</title>
 <link rel="stylesheet" href="../../js/resources/js-test-style.css"/>
 <script src="../../js/resources/js-test-pre.js"></script>
 <script src="resources/webgl-test.js"></script>
@@ -16,7 +19,7 @@ description("This test ensures basic functionality of the underlying graphics li
 debug("");
 debug("Canvas.getContext");
 
-var context = document.getElementById("canvas").getContext("experimental-webgl");
+var context = create3DContext(document.getElementById("canvas"));
 if (!context)
     testFailed("context does not exist");
 else {
@@ -78,10 +81,12 @@ else {
     shouldBe('context.getParameter(context.STENCIL_BACK_PASS_DEPTH_FAIL)', 'context.KEEP');
     shouldBe('context.getParameter(context.STENCIL_BACK_PASS_DEPTH_PASS)', 'context.KEEP');
     shouldBe('context.getParameter(context.STENCIL_BACK_REF)', '0');
-    
+
     // FIXME: Current WebKit implementation returns the wrong value (https://bugs.webkit.org/show_bug.cgi?id=31842)
-    //shouldBe('context.getParameter(context.STENCIL_BACK_VALUE_MASK)', '0xFFFFFFFF');
-    //shouldBe('context.getParameter(context.STENCIL_BACK_WRITEMASK)', '0xFFFFFFFF');
+    // Re-enable these tests as soon as that bug has been fixed.
+    // shouldBe('context.getParameter(context.STENCIL_BACK_VALUE_MASK)', '0xFFFFFFFF');
+    // shouldBe('context.getParameter(context.STENCIL_BACK_WRITEMASK)', '0xFFFFFFFF');
+
     // If EXT_packed_depth_stencil is supported, STENCIL_BITS > 0; otherwise, STENCIL_BITS == 0.
     shouldBe('context.getParameter(context.STENCIL_BITS) >= 0', 'true');
     shouldBe('context.getParameter(context.STENCIL_CLEAR_VALUE)', '0');
@@ -91,8 +96,12 @@ else {
     shouldBe('context.getParameter(context.STENCIL_PASS_DEPTH_PASS)', 'context.KEEP');
     shouldBe('context.getParameter(context.STENCIL_REF)', '0');
     shouldBe('context.getParameter(context.STENCIL_TEST)', 'false');
-    //shouldBe('context.getParameter(context.STENCIL_VALUE_MASK)', '0xFFFFFFFF');
-    //shouldBe('context.getParameter(context.STENCIL_WRITEMASK)', '0xFFFFFFFF');
+
+    // FIXME: Current WebKit implementation returns the wrong value (https://bugs.webkit.org/show_bug.cgi?id=31842)
+    // Re-enable these tests as soon as that bug has been fixed.
+    // shouldBe('context.getParameter(context.STENCIL_VALUE_MASK)', '0xFFFFFFFF');
+    // shouldBe('context.getParameter(context.STENCIL_WRITEMASK)', '0xFFFFFFFF');
+
     shouldBe('context.getParameter(context.TEXTURE_BINDING_2D)', 'null');
     shouldBe('context.getParameter(context.TEXTURE_BINDING_CUBE_MAP)', 'null');
     shouldBe('context.getParameter(context.UNPACK_ALIGNMENT)', '4');
@@ -102,6 +111,8 @@ else {
     shouldBeTrue('context.getParameter(context.MAX_FRAGMENT_UNIFORM_VECTORS) >= 16');
     shouldBeTrue('context.getParameter(context.MAX_VERTEX_UNIFORM_VECTORS) >= 128');
     shouldBeTrue('context.getParameter(context.MAX_VARYING_VECTORS) >= 8');
+    shouldBe('context.getParameter(context.NUM_COMPRESSED_TEXTURE_FORMATS)', '0');
+    shouldBe('context.getParameter(context.SHADER_COMPILER)', 'true');
 }
 
 debug("");

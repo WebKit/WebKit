@@ -34,15 +34,11 @@ var imageData = null;
 
 function init()
 {
-    if (window.layoutTestController) {
-        layoutTestController.overridePreference("WebKitWebGLEnabled", "1");
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.initNonKhronosFramework) {
+        window.initNonKhronosFramework(true);
     }
 
     description('Verify texImage2D and texSubImage2D code paths taking ImageData');
-
-    debug('Regression test for <a href="https://bugs.webkit.org/show_bug.cgi?id=34459">https://bugs.webkit.org/show_bug.cgi?id=34459</a> : <code>Refactor texImage2D and texSubImage2D taking ImageData to use common code</code>');
 
     var canvas2d = document.getElementById("texcanvas");
     var context2d = canvas2d.getContext("2d");
@@ -187,8 +183,8 @@ function runTest()
 }
 
 function finish() {
-    if (window.layoutTestController) {
-        layoutTestController.notifyDone();
+    if (window.nonKhronosFrameworkNotifyDone) {
+        window.nonKhronosFrameworkNotifyDone();
     }
 }
 </script>

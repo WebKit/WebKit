@@ -11,8 +11,6 @@
 <script>
 description('Verifies that the index validation code which is within bufferSubData does not crash.')
 
-debug('Regression test for <a href="https://bugs.webkit.org/show_bug.cgi?id=42004">https://bugs.webkit.org/show_bug.cgi?id=42004</a> : <code>bufferSubData causes crash in WebGLBuffer::associateBufferSubData</code>');
-
 var gl = create3DContext();
 
 var elementBuffer = gl.createBuffer();

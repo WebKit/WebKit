@@ -18,15 +18,15 @@ attribute vec4 vColor;
 varying vec4 color;
 void main()
 {
-    gl_Position = vPosition;
-    color = vColor;
+  gl_Position = vPosition;
+  color = vColor;
 }
 </script>
 <script id="fshader" type="text/something-not-javascript">
 varying vec4 color;
 void main()
 {
-    gl_FragColor = color;
+  gl_FragColor = color;
 }
 </script>
 <script>
@@ -35,21 +35,19 @@ description("This test ensures WebGL implementations don't allow names that star
 debug("");
 debug("Canvas.getContext");
 
-var canvas = document.getElementById("canvas");
-shouldBeNonNull(canvas);
-var gl = canvas.getContext("experimental-webgl");
+var gl = create3DContext(document.getElementById("canvas"));
 shouldBeNonNull(gl);
 
 function fail(x,y, buf, shouldBe)
 {
-    var i = (y*50+x) * 4;
-    var reason = "pixel at ("+x+","+y+") is ("+buf[i]+","+buf[i+1]+","+buf[i+2]+","+buf[i+3]+"), should be "+shouldBe;
-    testFailed(reason);
+  var i = (y*50+x) * 4;
+  var reason = "pixel at ("+x+","+y+") is ("+buf[i]+","+buf[i+1]+","+buf[i+2]+","+buf[i+3]+"), should be "+shouldBe;
+  testFailed(reason);
 }
 
 function pass()
 {
-    testPassed("drawing is correct");
+  testPassed("drawing is correct");
 }
 
 function loadShader(shaderType, shaderId) {
@@ -59,8 +57,8 @@ function loadShader(shaderType, shaderId) {
   // Create the shader object
   var shader = gl.createShader(shaderType);
   if (shader == null) {
-      debug("*** Error: unable to create shader '"+shaderId+"'");
-      return null;
+    debug("*** Error: unable to create shader '"+shaderId+"'");
+    return null;
   }
 
   // Load the shader source
@@ -72,11 +70,11 @@ function loadShader(shaderType, shaderId) {
   // Check the compile status
   var compiled = gl.getShaderParameter(shader, gl.COMPILE_STATUS);
   if (!compiled) {
-      // Something went wrong during compilation; get the error
-      var error = gl.getShaderInfoLog(shader);
-      debug("*** Error compiling shader '"+shader+"':"+error);
-      gl.deleteShader(shader);
-      return null;
+    // Something went wrong during compilation; get the error
+    var error = gl.getShaderInfoLog(shader);
+    debug("*** Error compiling shader '"+shader+"':"+error);
+    gl.deleteShader(shader);
+    return null;
   }
   return shader;
 }
@@ -104,9 +102,9 @@ gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([ 0,0.5,0, -0.5,-0.5,0, 0.5,-0.5
 var colors = gl.createBuffer();
 gl.bindBuffer(gl.ARRAY_BUFFER, colors);
 gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
-   0,1,0,1,
-   0,1,0,1,
-   0,1,0,1]), gl.STATIC_DRAW);
+    0,1,0,1,
+    0,1,0,1,
+    0,1,0,1]), gl.STATIC_DRAW);
 
 function setBindLocations(colorLocation, positionLocation) {
   gl.bindAttribLocation(program, positionLocation, "vPosition");

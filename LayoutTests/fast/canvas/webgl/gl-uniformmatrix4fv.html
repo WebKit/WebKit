@@ -43,7 +43,7 @@ for (var ii = 2; ii <= 4; ++ii) {
   var mat = [];
   for (var jj = 0; jj < ii; ++jj) {
     for (var ll = 0; ll < ii; ++ll) {
-      if (jj == ii -1 && ll == ii - 1)
+      if (jj == ii - 1 && ll == ii - 1)
         continue;
       mat[jj * ii + ll] = (jj == ll) ? 1 : 0;
     }
@@ -60,8 +60,8 @@ for (var ii = 2; ii <= 4; ++ii) {
 
 debug("");
 successfullyParsed = true;
-</script>
 
+</script>
 <script src="../../js/resources/js-test-post.js"></script>
 
 </body>

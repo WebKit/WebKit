@@ -33,19 +33,17 @@ var successfullyParsed = false;
 
 function init()
 {
-    if (window.layoutTestController) {
-        layoutTestController.overridePreference("WebKitWebGLEnabled", "1");
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.initNonKhronosFramework) {
+        window.initNonKhronosFramework(true);
     }
 
-    description('Regression test for <a href="https://bugs.webkit.org/show_bug.cgi?id=32888">https://bugs.webkit.org/show_bug.cgi?id=32888</a> : <code>Garbage in transparent regions of images uploaded as textures</code>');
+    description('Tests there is no garbage in transparent regions of images uploaded as textures');
 
     gl = initWebGL("example", "vshader", "fshader", [ "g_Position", "g_TexCoord0" ], [ 0, 0, 0, 1 ], 1);
 
     textureLoc = gl.getUniformLocation(gl.program, "tex");
 
-    var vertices = new WebGLFloatArray([
+    var vertices = new Float32Array([
          1.0,  1.0, 0.0,
         -1.0,  1.0, 0.0,
         -1.0, -1.0, 0.0,
@@ -54,7 +52,7 @@ function init()
          1.0, -1.0, 0.0]);
     // The input texture has 8 characters; take the leftmost one
     var coeff = 1.0 / 8.0;
-    var texCoords = new WebGLFloatArray([
+    var texCoords = new Float32Array([
         coeff, 1.0,
         0.0, 1.0,
         0.0, 0.0,
@@ -147,8 +145,8 @@ function runTest()
 }
 
 function finish() {
-    if (window.layoutTestController) {
-        layoutTestController.notifyDone();
+    if (window.nonKhronosFrameworkNotifyDone) {
+        window.nonKhronosFrameworkNotifyDone();
     }
 }
 </script>

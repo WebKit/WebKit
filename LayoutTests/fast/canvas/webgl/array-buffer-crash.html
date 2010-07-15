@@ -10,12 +10,12 @@
 
 <script>
 
-description('Regression test for <a href="https://bugs.webkit.org/show_bug.cgi?id=31889">https://bugs.webkit.org/show_bug.cgi?id=31889</a> : <code>[v8] WebCore::WebGLArrayBufferInternal::byteLengthAttrGetter NULL pointer</code>');
+description('Test ArrayBuffer.byteLength');
 
 <!-- The following used to cause a crash in Chrome -->
-new WebGLArrayBuffer().byteLength;
+new ArrayBuffer().byteLength;
 
-testPassed("new WebGLArrayBuffer().byteLength did not crash");
+testPassed("new ArrayBuffer().byteLength did not crash");
 successfullyParsed = true;
 
 </script>

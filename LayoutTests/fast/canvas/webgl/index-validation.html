@@ -9,24 +9,24 @@
 <div id="console"></div>
 
 <script>
-description("Test of validating indices for drawElements().");
+description("Tests that index validation verifies the correct number of indices");
 
 var gl = create3DContext();
 var program = loadStandardProgram(gl);
 
 // 3 vertices => 1 triangle, interleaved data
-var dataComplete = new WebGLFloatArray([0, 0, 0, 1,
-                                        0, 0, 1,
-                                        1, 0, 0, 1,
-                                        0, 0, 1,
-                                        1, 1, 1, 1,
-                                        0, 0, 1]);
-var dataIncomplete = new WebGLFloatArray([0, 0, 0, 1,
-                                          0, 0, 1,
-                                          1, 0, 0, 1,
-                                          0, 0, 1,
-                                          1, 1, 1, 1]);
-var indices = new WebGLUnsignedShortArray([0, 1, 2]);
+var dataComplete = new Float32Array([0, 0, 0, 1,
+                                     0, 0, 1,
+                                     1, 0, 0, 1,
+                                     0, 0, 1,
+                                     1, 1, 1, 1,
+                                     0, 0, 1]);
+var dataIncomplete = new Float32Array([0, 0, 0, 1,
+                                       0, 0, 1,
+                                       1, 0, 0, 1,
+                                       0, 0, 1,
+                                       1, 1, 1, 1]);
+var indices = new Uint16Array([0, 1, 2]);
 
 debug("Testing with valid indices");
 

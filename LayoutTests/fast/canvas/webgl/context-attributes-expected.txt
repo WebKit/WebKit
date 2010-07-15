@@ -32,7 +32,7 @@ PASS attribs.depth is true
 PASS attribs.alpha is true
 PASS attribs.stencil == true || attribs.stencil == false is true
 PASS attribs.antialias is false
-PASS attribs.premultipliedAlpha is true
+PASS attribs.premultipliedAlpha == true || attribs.premultipliedAlpha == false is true
 PASS successfullyParsed is true
 
 TEST COMPLETE

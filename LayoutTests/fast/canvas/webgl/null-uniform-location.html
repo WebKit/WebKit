@@ -20,34 +20,34 @@ var floatArray = new WebGLFloatArray([1, 2, 3, 4]);
 var intArray = new WebGLIntArray([1, 2, 3, 4]);
 
 function callUniformFunction(name) {
-    var isArrayVariant = (name.charAt(name.length - 1) == 'v');
-    var isMatrix = (name.indexOf("Matrix") != -1);
-    var isFloat =
-        (name.charAt(name.length - 1) == 'f' ||
-         name.charAt(name.length - 2) == 'f');
-    var sizeIndex = (isArrayVariant ? name.length - 3 : name.length - 2);
-    var size = parseInt(name.substring(sizeIndex, sizeIndex + 1));
-    // Initialize argument list with null uniform location
-    var args = [ null ];
-    if (isArrayVariant) {
-        // Call variant which takes values as array
-        if (isMatrix) {
-            size = size * size;
-            args.push(false);
-        }
-        var array = (isFloat ? new WebGLFloatArray(size) : new WebGLIntArray(size));
-        for (var i = 0; i < size; i++) {
-            array[i] = i;
-        }
-        args.push(array);
-    } else {
-        // Call variant which takes values as parameters
-        for (var i = 0; i < size; i++) {
-            args.push(i);
-        }
+  var isArrayVariant = (name.charAt(name.length - 1) == 'v');
+  var isMatrix = (name.indexOf("Matrix") != -1);
+  var isFloat =
+      (name.charAt(name.length - 1) == 'f' ||
+       name.charAt(name.length - 2) == 'f');
+  var sizeIndex = (isArrayVariant ? name.length - 3 : name.length - 2);
+  var size = parseInt(name.substring(sizeIndex, sizeIndex + 1));
+  // Initialize argument list with null uniform location
+  var args = [ null ];
+  if (isArrayVariant) {
+    // Call variant which takes values as array
+    if (isMatrix) {
+      size = size * size;
+      args.push(false);
     }
-    var func = gl[name];
-    return func.apply(gl, args);
+    var array = (isFloat ? new WebGLFloatArray(size) : new WebGLIntArray(size));
+    for (var i = 0; i < size; i++) {
+      array[i] = i;
+    }
+    args.push(array);
+  } else {
+    // Call variant which takes values as parameters
+    for (var i = 0; i < size; i++) {
+      args.push(i);
+    }
+  }
+  var func = gl[name];
+  return func.apply(gl, args);
 }
 
 var funcs = [ "uniform1f", "uniform1fv", "uniform1i", "uniform1iv",
@@ -56,9 +56,9 @@ var funcs = [ "uniform1f", "uniform1fv", "uniform1i", "uniform1iv",
               "uniform4f", "uniform4fv", "uniform4i", "uniform4iv",
               "uniformMatrix2fv", "uniformMatrix3fv", "uniformMatrix4fv" ];
 for (var i = 0; i < funcs.length; i++) {
-    callString = "callUniformFunction('" + funcs[i] + "')";
-    shouldBeUndefined(callString);
-    shouldBe("gl.getError()", "gl.NO_ERROR");
+  callString = "callUniformFunction('" + funcs[i] + "')";
+  shouldBeUndefined(callString);
+  shouldBe("gl.getError()", "gl.NO_ERROR");
 }
 
 successfullyParsed = true;

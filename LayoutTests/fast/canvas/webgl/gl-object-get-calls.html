@@ -13,30 +13,12 @@ description("Test of get calls against GL objects like getBufferParameter, etc."
 
 var gl = create3DContext();
 
-var errorVert = gl.createShader(gl.VERTEX_SHADER);
-gl.shaderSource(errorVert, "I am a bad vertex shader");
-gl.compileShader(errorVert);
-
-var errorFrag = gl.createShader(gl.FRAGMENT_SHADER);
-gl.shaderSource(errorFrag, "I am a bad fragment shader");
-gl.compileShader(errorFrag);
-
 var standardVert = loadStandardVertexShader(gl);
 var standardFrag = loadStandardFragmentShader(gl);
 var standardProgram = gl.createProgram();
 gl.attachShader(standardProgram, standardVert);
 gl.attachShader(standardProgram, standardFrag);
 gl.linkProgram(standardProgram);
-
-// Test program and shader gets
-var parseError = "ERROR: 0:1: 'I' : syntax error syntax error\nERROR: Parser found no code to compile in source strings.\n";
-var errorVertString = "I am a bad vertex shader\n";
-var errorFragString = "I am a bad fragment shader\n";
-shouldBe('gl.getProgramInfoLog(standardProgram)', '""');
-shouldBe('gl.getShaderInfoLog(errorVert)', 'parseError');
-shouldBe('gl.getShaderInfoLog(errorFrag)', 'parseError');
-shouldBe('gl.getShaderSource(errorVert)', 'errorVertString');
-shouldBe('gl.getShaderSource(errorFrag)', 'errorFragString');
 var shaders = gl.getAttachedShaders(standardProgram);
 shouldBe('shaders.length', '2');
 shouldBeTrue('shaders[0] == standardVert && shaders[1] == standardFrag || shaders[1] == standardVert && shaders[0] == standardFrag');
@@ -57,10 +39,11 @@ shouldBe('gl.getBufferParameter(gl.ARRAY_BUFFER, gl.BUFFER_USAGE)', 'gl.DYNAMIC_
 var texture = gl.createTexture();
 gl.bindTexture(gl.TEXTURE_2D, texture);
 gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 2, 2, 0, gl.RGBA, gl.UNSIGNED_BYTE,
-              new WebGLUnsignedByteArray([0, 0, 0, 255,
-                                          255, 255, 255, 255,
-                                          255, 255, 255, 255,
-                                          0, 0, 0, 255]));
+              new Uint8Array([
+                  0, 0, 0, 255,
+                  255, 255, 255, 255,
+                  255, 255, 255, 255,
+                  0, 0, 0, 255]));
 gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
 gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
 gl.bindTexture(gl.TEXTURE_2D, null);
@@ -68,18 +51,18 @@ var framebuffer = gl.createFramebuffer();
 gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer);
 gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, texture, 0);
 var renderbuffer = gl.createRenderbuffer();
-shouldBe('gl.getError()', '0');
+glErrorShouldBe(gl, gl.NO_ERROR);
 gl.bindRenderbuffer(gl.RENDERBUFFER, renderbuffer);
-shouldBe('gl.getError()', '0');
+glErrorShouldBe(gl, gl.NO_ERROR);
 gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_COMPONENT16, 2, 2);
-shouldBe('gl.getError()', '0');
+glErrorShouldBe(gl, gl.NO_ERROR);
 gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, renderbuffer);
 // FIXME: on some machines (in particular the WebKit commit bots) the
 // framebuffer status is FRAMEBUFFER_UNSUPPORTED; more investigation
 // is needed why this is the case, because the FBO allocated
 // internally by the WebKit implementation has almost identical
 // parameters to this one. See https://bugs.webkit.org/show_bug.cgi?id=31843.
-//shouldBe('gl.checkFramebufferStatus(gl.FRAMEBUFFER)', 'gl.FRAMEBUFFER_COMPLETE');
+shouldBe('gl.checkFramebufferStatus(gl.FRAMEBUFFER)', 'gl.FRAMEBUFFER_COMPLETE');
 shouldBe('gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE)', 'gl.TEXTURE');
 shouldBe('gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_NAME)', 'texture');
 shouldBe('gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.FRAMEBUFFER_ATTACHMENT_TEXTURE_LEVEL)', '0');
@@ -107,9 +90,9 @@ shouldBe('gl.getRenderbufferParameter(gl.RENDERBUFFER, gl.RENDERBUFFER_HEIGHT)',
 shouldBeNonZero('gl.getRenderbufferParameter(gl.RENDERBUFFER, gl.RENDERBUFFER_INTERNAL_FORMAT)');
 shouldBeNonZero('gl.getRenderbufferParameter(gl.RENDERBUFFER, gl.RENDERBUFFER_DEPTH_SIZE)');
 var colorbuffer = gl.createRenderbuffer();
-shouldBe('gl.getError()', '0');
+glErrorShouldBe(gl, gl.NO_ERROR);
 gl.bindRenderbuffer(gl.RENDERBUFFER, renderbuffer);
-shouldBe('gl.getError()', '0');
+glErrorShouldBe(gl, gl.NO_ERROR);
 gl.renderbufferStorage(gl.RENDERBUFFER, gl.RGBA4, 2, 2);
 shouldBeNonZero('gl.getRenderbufferParameter(gl.RENDERBUFFER, gl.RENDERBUFFER_RED_SIZE)');
 shouldBeNonZero('gl.getRenderbufferParameter(gl.RENDERBUFFER, gl.RENDERBUFFER_GREEN_SIZE)');
@@ -148,7 +131,7 @@ gl.uniform1i(bvalLoc, 1);
 gl.uniform2i(bval2Loc, 1, 0);
 gl.uniform3i(bval3Loc, 1, 0, 1);
 gl.uniform4i(bval4Loc, 1, 0, 1, 0);
-shouldBe('gl.getError()', '0');
+glErrorShouldBe(gl, gl.NO_ERROR);
 shouldBe('gl.getUniform(boolProgram, bvalLoc)', 'true');
 shouldBe('gl.getUniform(boolProgram, bval2Loc)', '[1, 0]');
 shouldBe('gl.getUniform(boolProgram, bval3Loc)', '[1, 0, 1]');
@@ -165,7 +148,7 @@ gl.uniform1i(ivalLoc, 1);
 gl.uniform2i(ival2Loc, 2, 3);
 gl.uniform3i(ival3Loc, 4, 5, 6);
 gl.uniform4i(ival4Loc, 7, 8, 9, 10);
-shouldBe('gl.getError()', '0');
+glErrorShouldBe(gl, gl.NO_ERROR);
 shouldBe('gl.getUniform(intProgram, ivalLoc)', '1');
 shouldBe('gl.getUniform(intProgram, ival2Loc)', '[2, 3]');
 shouldBe('gl.getUniform(intProgram, ival3Loc)', '[4, 5, 6]');
@@ -182,7 +165,7 @@ gl.uniform1f(fvalLoc, 11);
 gl.uniform2f(fval2Loc, 12, 13);
 gl.uniform3f(fval3Loc, 14, 15, 16);
 gl.uniform4f(fval4Loc, 17, 18, 19, 20);
-shouldBe('gl.getError()', '0');
+glErrorShouldBe(gl, gl.NO_ERROR);
 shouldBe('gl.getUniform(floatProgram, fvalLoc)', '11');
 shouldBe('gl.getUniform(floatProgram, fval2Loc)', '[12, 13]');
 shouldBe('gl.getUniform(floatProgram, fval3Loc)', '[14, 15, 16]');
@@ -197,13 +180,13 @@ gl.useProgram(matProgram);
 gl.uniformMatrix2fv(mval2Loc, false, [1, 2, 3, 4]);
 gl.uniformMatrix3fv(mval3Loc, false, [5, 6, 7, 8, 9, 10, 11, 12, 13]);
 gl.uniformMatrix4fv(mval4Loc, false, [14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29]);
-shouldBe('gl.getError()', '0');
+glErrorShouldBe(gl, gl.NO_ERROR);
 shouldBe('gl.getUniform(matProgram, mval2Loc)', '[1, 2, 3, 4]');
 shouldBe('gl.getUniform(matProgram, mval3Loc)', '[5, 6, 7, 8, 9, 10, 11, 12, 13]');
 shouldBe('gl.getUniform(matProgram, mval4Loc)', '[14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29]');
 
 // Test getVertexAttrib
-var array = new WebGLFloatArray([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]);
+var array = new Float32Array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]);
 gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
 gl.bufferData(gl.ARRAY_BUFFER, array, gl.DYNAMIC_DRAW);
 // Vertex attribute 0 is special in that it has no current state, so
@@ -221,7 +204,7 @@ gl.disableVertexAttribArray(1);
 shouldBe('gl.getVertexAttrib(1, gl.VERTEX_ATTRIB_ARRAY_ENABLED)', 'false');
 gl.vertexAttrib4f(1, 5, 6, 7, 8);
 shouldBe('gl.getVertexAttrib(1, gl.CURRENT_VERTEX_ATTRIB)', '[5, 6, 7, 8]');
-shouldBe('gl.getError()', '0');
+glErrorShouldBe(gl, gl.NO_ERROR);
 
 // Test cases where name == 0
 gl.deleteTexture(texture);
@@ -230,7 +213,7 @@ gl.deleteRenderbuffer(renderbuffer);
 shouldBeNull('gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_NAME)');
 gl.deleteBuffer(buffer);
 shouldBeNull('gl.getVertexAttrib(1, gl.VERTEX_ATTRIB_ARRAY_BUFFER_BINDING)');
-shouldBe('gl.getError()', '0');
+glErrorShouldBe(gl, gl.NO_ERROR);
 
 successfullyParsed = true;
 </script>

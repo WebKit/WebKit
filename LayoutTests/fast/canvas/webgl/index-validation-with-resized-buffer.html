@@ -30,8 +30,6 @@ void main() {
 <script>
 description('Test that updating the size of a vertex buffer is properly noticed by the WebGL implementation.')
 
-debug('Regression test for <a href="https://bugs.webkit.org/show_bug.cgi?id=41092">https://bugs.webkit.org/show_bug.cgi?id=41092</a> : <code>Index validation caches buffer size information too aggressively</code>');
-
 var gl = initWebGL("example", "vs", "fs", ["vPosition", "vColor"], [0, 0, 0, 1], 1);
 glErrorShouldBe(gl, gl.NO_ERROR, "after initialization");
 

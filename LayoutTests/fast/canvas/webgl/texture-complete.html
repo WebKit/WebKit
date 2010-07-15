@@ -35,9 +35,8 @@ void main()
 <script>
 function init()
 {
-  if (window.layoutTestController) {
-    layoutTestController.overridePreference("WebKitWebGLEnabled", "1");
-    layoutTestController.dumpAsText();
+  if (window.initNonKhronosFramework) {
+    window.initNonKhronosFramework(false);
   }
 
   debug("Checks that a texture that is not -texture-complete- does not draw if"+

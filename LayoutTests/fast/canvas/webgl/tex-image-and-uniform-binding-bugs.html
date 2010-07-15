@@ -10,14 +10,14 @@
 
 <script>
 
-description('Regression test for <a href="https://bugs.webkit.org/show_bug.cgi?id=32364">https://bugs.webkit.org/show_bug.cgi?id=32364</a> : <code>[Chromium] SporeViewer demo doesn\'t work in Chromium</code>');
+description('Tests passing a vec4 to a uniform and a canvas to texImage2D');
 
 var gl = create3DContext();
 var floatProgram = loadProgram(gl, "resources/floatUniformShader.vert", "resources/noopUniformShader.frag");
 shouldBeUndefined("gl.useProgram(floatProgram)");
 var fval4Loc = gl.getUniformLocation(floatProgram, "fval4");
 shouldBe("gl.getError()", "gl.NO_ERROR");
-shouldBeUndefined("gl.uniform4fv(fval4Loc, new WebGLFloatArray([0.1, 0.2, 0.4, 1.0]));");
+shouldBeUndefined("gl.uniform4fv(fval4Loc, new Float32Array([0.1, 0.2, 0.4, 1.0]));");
 
 var tmpcanvas = document.createElement("canvas");
 tmpcanvas.width = 2;

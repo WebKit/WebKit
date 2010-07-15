@@ -27,8 +27,6 @@ void main()
 <script>
 description('Verifies that GL viewport does not change when canvas is resized');
 
-debug('Regression test for <a href="https://bugs.webkit.org/show_bug.cgi?id=34766">https://bugs.webkit.org/show_bug.cgi?id=34766</a> : <code>Remove automatic viewport resizing</code>');
-
 var gl = initWebGL("example", "vshader", "fshader", [ "g_Position" ], [ 0, 0, 1, 1 ], 1);
 
 var vertices = new WebGLFloatArray([

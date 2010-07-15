@@ -3,18 +3,23 @@
 <link rel="stylesheet" href="../../js/resources/js-test-style.css"/>
 <script src="../../js/resources/js-test-pre.js"></script>
 <script src="resources/webgl-test.js"></script>
+<script src="resources/webgl-test-utils.js"></script>
 </head>
 <body>
 <div id="description"></div>
 <div id="console"></div>
 
 <script>
+var wtu = WebGLTestUtils;
 description("Tests calling WebGL APIs without providing the necessary objects");
 
-var context = create3DContext();
-var program = loadStandardProgram(context);
-var shader = loadStandardVertexShader(context);
+var context = wtu.create3DContext();
+var program = wtu.loadStandardProgram(context);
+var shader = wtu.loadStandardVertexShader(context);
+var shouldGenerateGLError = wtu.shouldGenerateGLError;
 
+assertMsg(program != null, "Program Compiled");
+assertMsg(shader != null, "Shader Compiled");
 shouldGenerateGLError(context, context.INVALID_VALUE, "context.compileShader()");
 shouldGenerateGLError(context, context.INVALID_VALUE, "context.linkProgram()");
 shouldGenerateGLError(context, context.INVALID_VALUE, "context.attachShader()");

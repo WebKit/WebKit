@@ -70,6 +70,8 @@ PASS context.getParameter(context.VIEWPORT) is [0, 0, 2, 2]
 PASS context.getParameter(context.MAX_FRAGMENT_UNIFORM_VECTORS) >= 16 is true
 PASS context.getParameter(context.MAX_VERTEX_UNIFORM_VECTORS) >= 128 is true
 PASS context.getParameter(context.MAX_VARYING_VECTORS) >= 8 is true
+FAIL context.getParameter(context.NUM_COMPRESSED_TEXTURE_FORMATS) should be 0. Was 4.
+FAIL context.getParameter(context.SHADER_COMPILER) should be true (of type boolean). Was null (of type object).
 
 PASS successfullyParsed is true
 

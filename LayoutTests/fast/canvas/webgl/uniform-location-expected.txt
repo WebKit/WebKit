@@ -1,4 +1,4 @@
-Tests WebGL APIs related to shader uniforms
+Tests the WebGLUniformLocation API
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
@@ -16,6 +16,8 @@ PASS contextA.useProgram(programV) generated expected GL error: NO_ERROR.
 PASS contextA.uniform4fv(locationVec4, vec) generated expected GL error: NO_ERROR.
 PASS contextA.getUniform(programV, locationVec4) is vec
 PASS contextA.getUniformLocation(programV, "IDontExist") is null
+PASS contextA.linkProgram(programA1) generated expected GL error: NO_ERROR.
+PASS contextA.uniformMatrix4fv(locationA, false, mat) generated expected GL error: INVALID_OPERATION.
 PASS successfullyParsed is true
 
 TEST COMPLETE

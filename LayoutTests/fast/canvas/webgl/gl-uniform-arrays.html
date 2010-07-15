@@ -21,7 +21,12 @@
 </script>
 
 <script id="fshader" type="x-shader/x-fragment">
+    // Workaround for non-compliant WebGL implementations (FIXME)
+    #if defined(GL_ES)
+    uniform mediump $type color[3];
+    #else
     uniform $type color[3];
+    #endif
     void main()
     {
         gl_FragColor = vec4(color[0]$elem, color[1]$elem, color[2]$elem, 1);

@@ -44,14 +44,14 @@ shouldBe("attribs.antialias", "false");
 shouldBe("attribs.premultipliedAlpha", "true");
 
 debug("Test customized values");
-// (premultipliedAlpha == false) is not supported, default to true
+// (premultipliedAlpha == false) is not supported by most implementations yet
 shouldBeNonNull("context = create3DContext(null, { premultipliedAlpha: false, antialias: false })");
 shouldBeNonNull("attribs = context.getContextAttributes()");
 shouldBe("attribs.depth", "true");
 shouldBe("attribs.alpha", "true");
 shouldBe("attribs.stencil == true || attribs.stencil == false", "true");
 shouldBe("attribs.antialias", "false");
-shouldBe("attribs.premultipliedAlpha", "true");
+shouldBe("attribs.premultipliedAlpha == true || attribs.premultipliedAlpha == false", "true");
 
 successfullyParsed = true;
 </script>

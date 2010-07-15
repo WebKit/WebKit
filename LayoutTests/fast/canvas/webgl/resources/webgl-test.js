@@ -11,6 +11,22 @@ function assertMsg(assertion, msg) {
     }
 }
 
+function initNonKhronosFramework(waitUntilDone) {
+  if (window.layoutTestController) {
+    layoutTestController.overridePreference("WebKitWebGLEnabled", "1");
+    layoutTestController.dumpAsText();
+    if (waitUntilDone) {
+      layoutTestController.waitUntilDone();
+    }
+  }
+}
+
+function nonKhronosFrameworkNotifyDone() {
+  if (window.layoutTestController) {
+    layoutTestController.notifyDone();
+  }
+}
+
 //
 //----------------------------------------------------------------------
 

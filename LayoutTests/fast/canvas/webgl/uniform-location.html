@@ -9,7 +9,7 @@
 <div id="console"></div>
 
 <script>
-description("Tests WebGL APIs related to shader uniforms");
+description("Tests the WebGLUniformLocation API");
 
 var contextA = create3DContext();
 var contextB = create3DContext();
@@ -45,6 +45,9 @@ shouldGenerateGLError(contextA, contextA.NO_ERROR, "contextA.uniform4fv(location
 shouldBe("contextA.getUniform(programV, locationVec4)", "vec");
 
 shouldBeNull("contextA.getUniformLocation(programV, \"IDontExist\")");
+shouldGenerateGLError(contextA, contextA.NO_ERROR, "contextA.linkProgram(programA1)");
+// After linking all boxes are bad.
+shouldGenerateGLError(contextA, contextA.INVALID_OPERATION, "contextA.uniformMatrix4fv(locationA, false, mat)");
 
 successfullyParsed = true;
 </script>

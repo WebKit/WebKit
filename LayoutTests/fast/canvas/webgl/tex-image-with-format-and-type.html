@@ -51,17 +51,11 @@ var DataMode = {
 
 function init()
 {
-    if (window.layoutTestController) {
-        layoutTestController.overridePreference("WebKitWebGLEnabled", "1");
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.initNonKhronosFramework) {
+        window.initNonKhronosFramework(true);
     }
 
     description('Verify texImage2D and texSubImage2D code paths taking both HTML and user-specified data with all format/type combinations');
-
-    debug('Regression test for:');
-    debug('<a href="https://bugs.webkit.org/show_bug.cgi?id=40319">https://bugs.webkit.org/show_bug.cgi?id=40319</a> : <code>Implement format conversions in texImage2D and texSubImage2D taking HTML data</code>');
-    debug('<a href="https://bugs.webkit.org/show_bug.cgi?id=40398">https://bugs.webkit.org/show_bug.cgi?id=40398</a> : <code>Support UNPACK_FLIP_Y_WEBGL and UNPACK_PREMULTIPLY_ALPHA_WEBGL for texImage2D taking ArrayBufferView</code>');
 
     gl = initWebGL("example", "vshader", "fshader", [ "g_Position", "g_TexCoord0" ], [ 0, 0, 0, 1 ], 1);
     gl.disable(gl.BLEND);
@@ -480,8 +474,8 @@ function runOneTest(testCase)
 }
 
 function finish() {
-    if (window.layoutTestController) {
-        layoutTestController.notifyDone();
+    if (window.nonKhronosFrameworkNotifyDone) {
+        window.nonKhronosFrameworkNotifyDone();
     }
 }
 
