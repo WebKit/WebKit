@@ -172,8 +172,8 @@ private:
     void didChangeProgress(double);
     void didFinishProgress();
     
-    void decidePolicyForNavigationAction(WebFrameProxy*, uint32_t navigationType, const WebCore::String& url, uint64_t listenerID);
-    void decidePolicyForNewWindowAction(WebFrameProxy*, uint32_t navigationType, const WebCore::String& url, uint64_t listenerID);
+    void decidePolicyForNavigationAction(WebFrameProxy*, WebCore::NavigationType navigationType, const WebCore::String& url, uint64_t listenerID);
+    void decidePolicyForNewWindowAction(WebFrameProxy*, WebCore::NavigationType navigationType, const WebCore::String& url, uint64_t listenerID);
     void decidePolicyForMIMEType(WebFrameProxy*, const WebCore::String& MIMEType, const WebCore::String& url, uint64_t listenerID);
 
     WebPageProxy* createNewPage();

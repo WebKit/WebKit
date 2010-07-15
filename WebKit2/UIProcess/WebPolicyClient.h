@@ -27,6 +27,7 @@
 #define WebPolicyClient_h
 
 #include "WKPage.h"
+#include <WebCore/FrameLoaderTypes.h>
 
 namespace WebCore {
     class String;
@@ -43,8 +44,8 @@ public:
     WebPolicyClient();
     void initialize(WKPagePolicyClient*);
 
-    bool decidePolicyForNavigationAction(WebPageProxy*, uint32_t, const WebCore::String& url, WebFrameProxy*, WebFramePolicyListenerProxy*);
-    bool decidePolicyForNewWindowAction(WebPageProxy*, uint32_t, const WebCore::String& url, WebFrameProxy*, WebFramePolicyListenerProxy*);
+    bool decidePolicyForNavigationAction(WebPageProxy*, WebCore::NavigationType, const WebCore::String& url, WebFrameProxy*, WebFramePolicyListenerProxy*);
+    bool decidePolicyForNewWindowAction(WebPageProxy*, WebCore::NavigationType, const WebCore::String& url, WebFrameProxy*, WebFramePolicyListenerProxy*);
     bool decidePolicyForMIMEType(WebPageProxy*, const WebCore::String&, const WebCore::String& url, WebFrameProxy*, WebFramePolicyListenerProxy*);
 
 private:

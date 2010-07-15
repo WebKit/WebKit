@@ -1,3 +1,27 @@
+2010-07-15  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Patch for https://bugs.webkit.org/show_bug.cgi?id=42396
+        Give the navigation type in the policy client callbacks meaning. 
+
+        - Use the new WKFrameNavigationType instead of just uint32_t.
+
+        * UIProcess/API/C/WKAPICast.h:
+        (toWK):
+        Add conversion method from WebCore::NavigationType to WKFrameNavigationType.
+        * UIProcess/API/C/WKPage.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didReceiveMessage):
+        (WebKit::WebPageProxy::decidePolicyForNavigationAction):
+        (WebKit::WebPageProxy::decidePolicyForNewWindowAction):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPolicyClient.cpp:
+        (WebKit::WebPolicyClient::decidePolicyForNavigationAction):
+        (WebKit::WebPolicyClient::decidePolicyForNewWindowAction):
+        * UIProcess/WebPolicyClient.h:
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.h:
+
 2010-07-15  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.
