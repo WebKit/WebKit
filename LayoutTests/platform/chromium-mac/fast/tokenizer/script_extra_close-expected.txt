@@ -10,4 +10,3 @@ layer at (0,0) size 800x600
       RenderText {#text} at (55,0) size 232x18
         text run at (55,0) width 69: "PASSED. "
         text run at (124,0) width 163: "This text should show up."
-      RenderText {#text} at (0,0) size 0x0

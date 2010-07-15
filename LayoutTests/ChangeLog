@@ -1,3 +1,21 @@
+2010-07-15  Ojan Vafai  <ojan@chromium.org>
+
+        Unreviewed.
+
+        [chromium] Cleanup more fallout from r63403.
+
+        * platform/chromium-mac/fast/layers/video-layer-expected.txt:
+        * platform/chromium-mac/fast/tokenizer/external-script-document-write_2-expected.txt:
+        * platform/chromium-mac/fast/tokenizer/script_extra_close-expected.txt:
+        * platform/chromium-mac/html5lib/runner-expected.txt:
+        * platform/chromium-mac/media/controls-after-reload-expected.txt:
+        * platform/chromium-mac/media/controls-strict-expected.txt:
+        * platform/chromium-mac/media/video-aspect-ratio-expected.txt: Removed.
+        * platform/chromium-mac/media/video-display-toggle-expected.txt:
+        * platform/chromium-mac/media/video-empty-source-expected.txt:
+        * platform/chromium-mac/media/video-no-audio-expected.txt:
+        * platform/chromium-mac/media/video-volume-slider-expected.txt:
+
 2010-07-15  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Ojan Vafai.
