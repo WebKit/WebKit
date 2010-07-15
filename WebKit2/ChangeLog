@@ -2,6 +2,27 @@
 
         Reviewed by Darin Adler.
 
+        WebKitTestRunner goes off the deep end, spinning in a dispatch queue thread
+        https://bugs.webkit.org/show_bug.cgi?id=42355
+
+        Sometimes, when receiving a message whose size is very close to the inlineMessageMaxSize,
+        mach_msg would return with MACH_RCV_TOO_LARGE. In debug builds we would assert, but in release
+        builds we would just bail and the receiveSourceEventHandler would be run again shortly since we didn't
+        actually pull the message off the mach message queue.
+
+        Fix this by setting the receive source buffer size to include the maximum message trailer size, which
+        mach_msg requires. Also, handle mach_msg returning MACH_RCV_TOO_LARGE (even though in theory it would never happen
+        now that the receivedBufferSize always includes the maximum message trailer size.
+
+        * Platform/CoreIPC/mac/ConnectionMac.cpp:
+        (CoreIPC::Connection::receiveSourceEventHandler):
+        Use a Vector with inline data instead of a char array. This way we can resize the Vector if the message received
+        is too big.
+
+2010-07-15  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin Adler.
+
         Send JavaScript stream data to plug-ins
         https://bugs.webkit.org/show_bug.cgi?id=42384
 

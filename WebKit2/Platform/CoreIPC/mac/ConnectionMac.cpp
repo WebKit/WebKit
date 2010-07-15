@@ -126,7 +126,6 @@ void Connection::sendOutgoingMessage(MessageID messageID, PassOwnPtr<ArgumentEnc
     }
     
     size_t messageSize = machMessageSize(arguments->bufferSize(), numberOfPortDescriptors, numberOfOOLMemoryDescriptors);
-    
     char buffer[inlineMessageMaxSize];
 
     bool messageBodyIsOOL = false;
@@ -277,21 +276,32 @@ static PassOwnPtr<ArgumentDecoder> createArgumentDecoder(mach_msg_header_t* head
 
 void Connection::receiveSourceEventHandler()
 {
-    char buffer[inlineMessageMaxSize];
+    // The receive buffer size should always include the maximum trailer size.
+    static const size_t receiveBufferSize = inlineMessageMaxSize + MAX_TRAILER_SIZE;
+
+    Vector<char, receiveBufferSize> buffer(receiveBufferSize);
     
-    mach_msg_header_t* header = reinterpret_cast<mach_msg_header_t*>(&buffer);
+    mach_msg_header_t* header = reinterpret_cast<mach_msg_header_t*>(buffer.data());
     
-    kern_return_t kr = mach_msg(header, MACH_RCV_MSG | MACH_RCV_LARGE | MACH_RCV_TIMEOUT, 0, sizeof(buffer), m_receivePort, 0, MACH_PORT_NULL);
+    kern_return_t kr = mach_msg(header, MACH_RCV_MSG | MACH_RCV_LARGE | MACH_RCV_TIMEOUT, 0, buffer.size(), m_receivePort, 0, MACH_PORT_NULL);
     if (kr == MACH_RCV_TIMED_OUT)
         return;
 
-    if (kr != MACH_MSG_SUCCESS) {
+    if (kr == MACH_RCV_TOO_LARGE) {
+        // The message was too large, resize the buffer and try again.
+        buffer.resize(header->msgh_size + MAX_TRAILER_SIZE);
+        
+        header = reinterpret_cast<mach_msg_header_t*>(buffer.data());
+        
+        kr = mach_msg(header, MACH_RCV_MSG | MACH_RCV_LARGE | MACH_RCV_TIMEOUT, 0, buffer.size(), m_receivePort, 0, MACH_PORT_NULL);
+        ASSERT(kr != MACH_RCV_TOO_LARGE);
+    }
 
+    if (kr != MACH_MSG_SUCCESS) {
         ASSERT_NOT_REACHED();
-        // FIXME: Handle MACH_RCV_MSG_TOO_LARGE.
         return;
     }
-    
+
     MessageID messageID = MessageID::fromInt(header->msgh_id);
     OwnPtr<ArgumentDecoder> arguments = createArgumentDecoder(header);
     ASSERT(arguments);
