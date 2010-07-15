@@ -56,6 +56,11 @@ NetscapePluginStream::~NetscapePluginStream()
     ASSERT(!m_sendNotification || m_urlNotifyHasBeenCalled);
 }
 
+void NetscapePluginStream::didReceiveResponse(const KURL& responseURL, uint32_t streamLength, uint32_t lastModifiedTime, const String& mimeType, const String& headers)
+{
+    start(responseURL, streamLength, lastModifiedTime, mimeType, headers);
+}
+
 void NetscapePluginStream::sendJavaScriptStream(const String& requestURLString, const String& result)
 {
     // starting the stream or delivering the data to it might cause the plug-in stream to go away, so we keep
@@ -69,10 +74,8 @@ void NetscapePluginStream::sendJavaScriptStream(const String& requestURLString, 
         return;
     }
 
-    if (!start(requestURLString, resultCString.length(), 0, "text/plain", "")) {
-        stop(NPRES_NETWORK_ERR);
+    if (!start(requestURLString, resultCString.length(), 0, "text/plain", ""))
         return;
-    }
 
     deliverData(resultCString.data(), resultCString.length());
     stop(NPRES_DONE);
@@ -93,8 +96,25 @@ NPError NetscapePluginStream::destroy(NPReason reason)
     return NPERR_NO_ERROR;
 }
 
-bool NetscapePluginStream::start(const WebCore::String& responseURLString, uint32_t expectedContentLength, 
-                                 uint32_t lastModifiedTime, const WebCore::String& mimeType, const WebCore::String& headers)
+static bool isSupportedTransferMode(uint16_t transferMode)
+{
+    switch (transferMode) {
+    case NP_NORMAL:
+        return true;
+    // FIXME: We don't support streaming to files.
+    case NP_ASFILEONLY:
+    case NP_ASFILE:
+        return false;
+    // FIXME: We don't support seekable streams.
+    case NP_SEEK:
+        return false;
+    }
+
+    ASSERT_NOT_REACHED();
+    return false;
+}
+    
+bool NetscapePluginStream::start(const WebCore::String& responseURLString, uint32_t streamLength, uint32_t lastModifiedTime, const String& mimeType, const String& headers)
 {
     m_responseURL = responseURLString.utf8();
     m_mimeType = mimeType.utf8();
@@ -102,28 +122,25 @@ bool NetscapePluginStream::start(const WebCore::String& responseURLString, uint3
 
     m_npStream.ndata = this;
     m_npStream.url = m_responseURL.data();
-    m_npStream.end = expectedContentLength;
+    m_npStream.end = streamLength;
     m_npStream.lastmodified = lastModifiedTime;
     m_npStream.notifyData = 0;
     m_npStream.headers = m_headers.length() == 0 ? 0 : m_headers.data();
 
     NPError error = m_plugin->NPP_NewStream(const_cast<char*>(m_mimeType.data()), &m_npStream, false, &m_transferMode);
-    if (error != NPERR_NO_ERROR)
+    if (error != NPERR_NO_ERROR) {
+        // We failed to start the stream, destroy it.
+        notifyAndDestroyStream(NPRES_NETWORK_ERR);
         return false;
+    }
 
     // We successfully started the stream.
     m_isStarted = true;
 
-    switch (m_transferMode) {
-        case NP_NORMAL:
-            break;
-        // FIXME: We don't support streaming to files.
-        case NP_ASFILEONLY:
-        case NP_ASFILE:
-            return false;
-        // FIXME: We don't support seekable streams.
-        case NP_SEEK:
-            return false;
+    if (!isSupportedTransferMode(m_transferMode)) {
+        // Stop the stream.
+        stop(NPRES_NETWORK_ERR);
+        return false;
     }
 
     return true;
@@ -239,6 +256,9 @@ void NetscapePluginStream::notifyAndDestroyStream(NPReason reason)
         m_urlNotifyHasBeenCalled = true;
 #endif    
     }
+
+    if (reason != NPRES_DONE)
+        m_plugin->cancelStreamLoad(this);
 
     m_plugin->removePluginStream(this);
 }

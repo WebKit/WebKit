@@ -10,6 +10,49 @@
 
         Reviewed by Sam Weinig.
 
+        Cancel stream loads when destroying NetscapePluginStreams
+        https://bugs.webkit.org/show_bug.cgi?id=42413
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::cancelStreamLoad):
+        Call PluginController::cancelStreamLoad.
+
+        (WebKit::NetscapePlugin::streamDidReceiveResponse):
+        Call NetscapePluginStream::didReceiveResponse.
+
+        * WebProcess/Plugins/Netscape/NetscapePluginStream.cpp:
+        (WebKit::NetscapePluginStream::didReceiveResponse):
+        Try to start the stream.
+
+        (WebKit::NetscapePluginStream::sendJavaScriptStream):
+        Don't stop the stream if it can't be started. start handles that now.
+
+        (WebKit::isSupportedTransferMode):
+        Return whether the given transfer mode is supported.
+
+        (WebKit::NetscapePluginStream::start):
+        If the stream fails to start, call notifyAndDestroyStream. If it starts successfully but has
+        an unsupported transfer mode, call stop.
+        
+        (WebKit::NetscapePluginStream::notifyAndDestroyStream):
+        Cancel the stream load unless it's being destroyed because it has finished loading.
+
+        * WebProcess/Plugins/PluginController.h:
+        Add cancelStreamLoad pure virtual member function.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::Stream::cancel):
+        Tell the stream loader to cancel and null it out.
+
+        (WebKit::PluginView::cancelStreamLoad):
+        Get the stream and cancel it.
+
+        * WebProcess/Plugins/PluginView.h:
+
+2010-07-15  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
         Start loading plug-in streams
         https://bugs.webkit.org/show_bug.cgi?id=42407
 

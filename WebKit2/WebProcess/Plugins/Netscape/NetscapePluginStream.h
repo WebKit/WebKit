@@ -34,6 +34,7 @@
 #include <wtf/text/CString.h>
 
 namespace WebCore {
+    class KURL;
     class String;
 }
 
@@ -52,6 +53,9 @@ public:
     uint64_t streamID() const { return m_streamID; }
     const NPStream* npStream() const { return &m_npStream; }
 
+    void didReceiveResponse(const WebCore::KURL& responseURL, uint32_t streamLength,
+                            uint32_t lastModifiedTime, const WebCore::String& mimeType, const WebCore::String& headers);
+
     void sendJavaScriptStream(const WebCore::String& requestURLString, const WebCore::String& result);
 
     NPError destroy(NPReason);
@@ -59,7 +63,7 @@ public:
 private:
     NetscapePluginStream(PassRefPtr<NetscapePlugin>, uint64_t streamID, bool sendNotification, void* notificationData);
 
-    bool start(const WebCore::String& responseURLString, uint32_t expectedContentLength, 
+    bool start(const WebCore::String& responseURLString, uint32_t streamLength, 
                uint32_t lastModifiedTime, const WebCore::String& mimeType, const WebCore::String& headers);
     void stop(NPReason);
 
