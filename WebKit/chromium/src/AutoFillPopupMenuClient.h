@@ -59,9 +59,12 @@ public:
 
     // Returns the label at |listIndex|.
     virtual WebString getLabel(unsigned listIndex) const;
-    
+
     // Removes the suggestion at |listIndex| from the list of suggestions.
     virtual void removeSuggestionAtIndex(unsigned listIndex);
+
+    // Returns true if the suggestion at |listIndex| can be removed.
+    bool canRemoveSuggestionAtIndex(unsigned listIndex);
 
     // WebCore::PopupMenuClient methods:
     virtual void valueChanged(unsigned listIndex, bool fireEvents = true);

@@ -86,10 +86,27 @@ WebString AutoFillPopupMenuClient::getLabel(unsigned listIndex) const
 
 void AutoFillPopupMenuClient::removeSuggestionAtIndex(unsigned listIndex)
 {
-    // FIXME: Do we want to remove AutoFill suggestions?
-    ASSERT(listIndex < m_names.size());
-    m_names.remove(listIndex);
-    m_labels.remove(listIndex);
+    if (!canRemoveSuggestionAtIndex(listIndex))
+        return;
+
+    int index = convertListIndexToInternalIndex(listIndex);
+
+    ASSERT(index < m_names.size());
+
+    m_names.remove(index);
+    m_labels.remove(index);
+
+    // Shift the separator index if necessary.
+    if (m_separatorIndex != -1)
+        m_separatorIndex--;
+}
+
+bool AutoFillPopupMenuClient::canRemoveSuggestionAtIndex(unsigned listIndex)
+{
+    // Only allow deletion of items before the separator and those that don't
+    // have a label (autocomplete).
+    int index = convertListIndexToInternalIndex(listIndex);
+    return m_labels[index].isEmpty() && (m_separatorIndex == -1 || listIndex < m_separatorIndex);
 }
 
 void AutoFillPopupMenuClient::valueChanged(unsigned listIndex, bool fireEvents)

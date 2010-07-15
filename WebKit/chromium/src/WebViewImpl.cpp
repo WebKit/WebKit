@@ -592,6 +592,10 @@ bool WebViewImpl::autocompleteHandleKeyEvent(const WebKeyboardEvent& event)
         }
 
         int selectedIndex = m_autoFillPopup->selectedIndex();
+
+        if (!m_autoFillPopupClient->canRemoveSuggestionAtIndex(selectedIndex))
+            return false;
+
         HTMLInputElement* inputElement = static_cast<HTMLInputElement*>(element);
         WebString name = inputElement->name();
         WebString value = m_autoFillPopupClient->itemText(selectedIndex);
