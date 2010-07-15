@@ -1,3 +1,15 @@
+2010-07-15  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Darin Adler.
+
+        AX: Crash when table has empty thead tag
+        https://bugs.webkit.org/show_bug.cgi?id=42391
+
+        Test: accessibility/table-with-empty-thead-causes-crash.html
+
+        * accessibility/AccessibilityTableColumn.cpp:
+        (WebCore::AccessibilityTableColumn::headerObjectForSection):
+
 2010-07-15  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.
