@@ -53,7 +53,9 @@ LayoutTestController::~LayoutTestController()
 {
 }
 
-static const CFTimeInterval waitToDumpWatchdogInterval = 30.0;
+// This is lower than DumpRenderTree's timeout, to make it easier to work through the failures
+// Eventually it should be changed to match.
+static const CFTimeInterval waitToDumpWatchdogInterval = 6.0;
 
 void LayoutTestController::display()
 {

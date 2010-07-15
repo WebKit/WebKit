@@ -1,3 +1,11 @@
+2010-07-14  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        Lower WebKitTestRunner notifyDone timeout to 6.0 for now, to make it easier to grind through the failures.
+
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.cpp:
+
 2010-07-14  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r63346.
