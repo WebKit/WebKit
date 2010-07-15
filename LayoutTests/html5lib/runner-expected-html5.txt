@@ -6,95 +6,8 @@ CONSOLE MESSAGE: line 0: Warning: Problem parsing viewBox=""
 CONSOLE MESSAGE: line 2: PASS
 CONSOLE MESSAGE: line 2: FOO<span>BAR</span>BAZ
 Content-Type: text/plain
-resources/tests1.dat:
-78
-80
+resources/tests1.dat: PASS
 
-Test 78 of 113 in resources/tests1.dat failed. Input:
-<a href="blah">aba<table><a href="foo">br<tr><td></td></tr>x</table>aoe
-Got:
-| <html>
-|   <head>
-|   <body>
-|     <a>
-|       href="blah"
-|       "aba"
-|       <a>
-|         href="foo"
-|         "br"
-|       <a>
-|         href="foo"
-|       "x"
-|       <table>
-|         <tbody>
-|           <tr>
-|             <td>
-|     <a>
-|       href="foo"
-|       "aoe"
-Expected:
-| <html>
-|   <head>
-|   <body>
-|     <a>
-|       href="blah"
-|       "aba"
-|       <a>
-|         href="foo"
-|         "br"
-|       <a>
-|         href="foo"
-|         "x"
-|       <table>
-|         <tbody>
-|           <tr>
-|             <td>
-|     <a>
-|       href="foo"
-|       "aoe"
-
-Test 80 of 113 in resources/tests1.dat failed. Input:
-<table><a href="blah">aba<tr><td><a href="foo">br</td></tr>x</table>aoe
-Got:
-| <html>
-|   <head>
-|   <body>
-|     <a>
-|       href="blah"
-|       "aba"
-|     <a>
-|       href="blah"
-|     "x"
-|     <table>
-|       <tbody>
-|         <tr>
-|           <td>
-|             <a>
-|               href="foo"
-|               "br"
-|     <a>
-|       href="blah"
-|       "aoe"
-Expected:
-| <html>
-|   <head>
-|   <body>
-|     <a>
-|       href="blah"
-|       "aba"
-|     <a>
-|       href="blah"
-|       "x"
-|     <table>
-|       <tbody>
-|         <tr>
-|           <td>
-|             <a>
-|               href="foo"
-|               "br"
-|     <a>
-|       href="blah"
-|       "aoe"
 resources/tests2.dat: PASS
 
 resources/tests3.dat: PASS
@@ -206,7 +119,6 @@ Expected:
 |   <body>
 resources/tests7.dat:
 24
-27
 30
 
 Test 24 of 30 in resources/tests7.dat failed. Input:
@@ -217,37 +129,6 @@ Expected:
 | <head>
 | <body>
 |   "X"
-
-Test 27 of 30 in resources/tests7.dat failed. Input:
-<table><b><tr><td>aaa</td></tr>bbb</table>ccc
-Got:
-| <html>
-|   <head>
-|   <body>
-|     <b>
-|     <b>
-|     "bbb"
-|     <table>
-|       <tbody>
-|         <tr>
-|           <td>
-|             "aaa"
-|     <b>
-|       "ccc"
-Expected:
-| <html>
-|   <head>
-|   <body>
-|     <b>
-|     <b>
-|       "bbb"
-|     <table>
-|       <tbody>
-|         <tr>
-|           <td>
-|             "aaa"
-|     <b>
-|       "ccc"
 
 Test 30 of 30 in resources/tests7.dat failed. Input:
 <select><keygen>
@@ -328,7 +209,7 @@ resources/adoption01.dat:
 3
 11
 
-Test 3 of 11 in resources/adoption01.dat failed. Input:
+Test 3 of 12 in resources/adoption01.dat failed. Input:
 <a>1<button>2</a>3</button>
 Got:
 | <html>
@@ -348,7 +229,7 @@ Expected:
 |         "2"
 |     "3"
 
-Test 11 of 11 in resources/adoption01.dat failed. Input:
+Test 11 of 12 in resources/adoption01.dat failed. Input:
 <p><b id="A"><script>document.getElementById("A").id = "B"</script></p>TEXT</b>
 Got:
 | <html>

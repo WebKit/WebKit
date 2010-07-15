@@ -164,3 +164,20 @@
 |     <b>
 |       id="A"
 |       "TEXT"
+
+#data
+<table><a>1<td>2</td>3</table>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <a>
+|       "1"
+|     <a>
+|       "3"
+|     <table>
+|       <tbody>
+|         <tr>
+|           <td>
+|             "2"

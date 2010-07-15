@@ -5004,8 +5004,9 @@ resources/adoption01.dat:
 8
 9
 11
+12
 
-Test 1 of 11 in resources/adoption01.dat failed. Input:
+Test 1 of 12 in resources/adoption01.dat failed. Input:
 <a><p></a></p>
 Got:
 | <html>
@@ -5021,7 +5022,7 @@ Expected:
 |     <p>
 |       <a>
 
-Test 6 of 11 in resources/adoption01.dat failed. Input:
+Test 6 of 12 in resources/adoption01.dat failed. Input:
 <table><a>1<p>2</a>3</p>
 Got:
 | <html>
@@ -5046,7 +5047,7 @@ Expected:
 |       "3"
 |     <table>
 
-Test 7 of 11 in resources/adoption01.dat failed. Input:
+Test 7 of 12 in resources/adoption01.dat failed. Input:
 <b><b><a><p></a>
 Got:
 | <html>
@@ -5066,7 +5067,7 @@ Expected:
 |         <p>
 |           <a>
 
-Test 8 of 11 in resources/adoption01.dat failed. Input:
+Test 8 of 12 in resources/adoption01.dat failed. Input:
 <b><a><b><p></a>
 Got:
 | <html>
@@ -5088,7 +5089,7 @@ Expected:
 |         <p>
 |           <a>
 
-Test 9 of 11 in resources/adoption01.dat failed. Input:
+Test 9 of 12 in resources/adoption01.dat failed. Input:
 <a><b><b><p></a>
 Got:
 | <html>
@@ -5112,7 +5113,7 @@ Expected:
 |         <p>
 |           <a>
 
-Test 11 of 11 in resources/adoption01.dat failed. Input:
+Test 11 of 12 in resources/adoption01.dat failed. Input:
 <p><b id="A"><script>document.getElementById("A").id = "B"</script></p>TEXT</b>
 Got:
 | <html>
@@ -5138,6 +5139,34 @@ Expected:
 |     <b>
 |       id="A"
 |       "TEXT"
+
+Test 12 of 12 in resources/adoption01.dat failed. Input:
+<table><a>1<td>2</td>3</table>
+Got:
+| <html>
+|   <head>
+|   <body>
+|     <a>
+|       "1"
+|     "3"
+|     <table>
+|       <tbody>
+|         <tr>
+|           <td>
+|             "2"
+Expected:
+| <html>
+|   <head>
+|   <body>
+|     <a>
+|       "1"
+|     <a>
+|       "3"
+|     <table>
+|       <tbody>
+|         <tr>
+|           <td>
+|             "2"
 resources/inbody01.dat: PASS
 
 resources/isindex.dat:

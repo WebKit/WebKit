@@ -66,6 +66,7 @@ public:
     PassRefPtr<Element> createHTMLElement(AtomicHTMLToken&);
     PassRefPtr<Element> createHTMLElementFromElementRecord(HTMLElementStack::ElementRecord*);
 
+    bool shouldFosterParent() const;
     void fosterParent(Node*);
 
     bool indexOfFirstUnopenFormattingElement(unsigned& firstUnopenElementIndex) const;

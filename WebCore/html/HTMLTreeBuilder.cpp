@@ -1695,6 +1695,8 @@ void HTMLTreeBuilder::callTheAdoptionAgency(AtomicHTMLToken& token)
         }
         // 7
         const AtomicString& commonAncestorTag = commonAncestor->localName();
+        // FIXME: If this moves to HTMLConstructionSite, this check should use
+        // causesFosterParenting(tagName) instead.
         if (commonAncestorTag == tableTag
             || commonAncestorTag == trTag
             || isTableBodyContextTag(commonAncestorTag))

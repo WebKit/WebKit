@@ -1,3 +1,36 @@
+2010-07-14  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        HTMLTreeBuilder foster parents when it should not
+        https://bugs.webkit.org/show_bug.cgi?id=42235
+
+        Regarding foster parenting of nodes inside tables:
+        "Process the token using the rules for the "in body" insertion mode,
+        except that if the current node is a table, tbody, tfoot, thead, or
+        tr element, then, whenever a node would be inserted into the current
+        node, it must instead be foster parented."
+
+        We were forgetting the "when the current node is" part of that check
+        and always foster parenting, even if we had just inserted another
+        element (which would have just changed the current node).
+
+        This was covered by multiple tests in html5lib/runner.html
+        but I wrote a reduction (one which I included) as it makes it
+        easier to see what's going on.
+
+        * html/HTMLConstructionSite.cpp:
+        (WebCore::HTMLNames::causesFosterParenting):
+        (WebCore::HTMLConstructionSite::attach):
+        (WebCore::HTMLConstructionSite::insertHTMLHtmlElement):
+        (WebCore::HTMLConstructionSite::insertHTMLHeadElement):
+        (WebCore::HTMLConstructionSite::insertHTMLBodyElement):
+        (WebCore::HTMLConstructionSite::insertTextNode):
+        (WebCore::HTMLConstructionSite::shouldFosterParent):
+        * html/HTMLConstructionSite.h:
+        * html/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::callTheAdoptionAgency):
+
 2010-07-14  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Mark Rowe.
