@@ -1,3 +1,20 @@
+2010-07-15  Darin Adler  <darin@apple.com>
+
+        More fixes for the text node coalescing.
+
+        Some of this was done directly based on buildbot output, but other cases
+        are speculative. The patch was much bigger before Adam landed almost all the
+        same fixes while I was committing ;-). I did not land similar chromium fixes
+        because I don't know how to interpret the different buildbot output format.
+
+        * platform/mac/media/controls-strict-expected.txt:
+        * platform/mac/media/video-display-toggle-expected.txt:
+        * platform/mac/media/video-no-audio-expected.txt:
+        * platform/win/media/controls-after-reload-expected.txt:
+        * platform/win/media/controls-strict-expected.txt:
+        * platform/win/media/controls-styling-expected.txt:
+        * platform/win/media/video-no-audio-expected.txt:
+
 2010-07-15  Adam Barth  <abarth@webkit.org>
 
         Unreviewed.
