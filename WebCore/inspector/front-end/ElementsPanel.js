@@ -453,7 +453,7 @@ WebInspector.ElementsPanel.prototype = {
         }
 
         WebInspector.showConsole();
-        WebInspector.console.addMessage(new WebInspector.ConsoleTextMessage(builder.join("\n")));
+        WebInspector.console.addMessage(WebInspector.ConsoleMessage.createTextMessage(builder.join("\n")));
     },
 
     get rootDOMNode()

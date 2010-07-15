@@ -1464,10 +1464,10 @@ WebInspector.didCommitLoad = function()
 WebInspector.updateConsoleMessageExpiredCount = function(count)
 {
     var message = String.sprintf(WebInspector.UIString("%d console messages are not shown."), count);
-    WebInspector.console.addMessage(new WebInspector.ConsoleTextMessage(message, WebInspector.ConsoleMessage.MessageLevel.Warning));
+    WebInspector.console.addMessage(WebInspector.ConsoleMessage.createTextMessage(message, WebInspector.ConsoleMessage.MessageLevel.Warning));
 }
 
-WebInspector.addConsoleMessage = function(payload, opt_args)
+WebInspector.addConsoleMessage = function(payload)
 {
     var consoleMessage = new WebInspector.ConsoleMessage(
         payload.source,
@@ -1476,8 +1476,10 @@ WebInspector.addConsoleMessage = function(payload, opt_args)
         payload.line,
         payload.url,
         payload.groupLevel,
-        payload.repeatCount);
-    consoleMessage.setMessageBody(Array.prototype.slice.call(arguments, 1));
+        payload.repeatCount,
+        payload.message,
+        payload.parameters,
+        payload.stackTrace);
     this.console.addMessage(consoleMessage);
 }
 
@@ -1545,7 +1547,9 @@ WebInspector.log = function(message, messageLevel)
             null,
             null,
             repeatCount,
-            message);
+            null,
+            [message],
+            null);
 
         self.console.addMessage(msg);
     }

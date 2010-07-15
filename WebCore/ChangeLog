@@ -1,3 +1,46 @@
+2010-07-15  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: pass all parameters to WebInspector.addConsoleMessage as a single payload object
+        https://bugs.webkit.org/show_bug.cgi?id=42345
+
+        This refactoring is covered by existing console tests.
+
+        * bindings/js/ScriptArray.cpp:
+        (WebCore::ScriptArray::set):
+        * bindings/js/ScriptArray.h:
+        (WebCore::ScriptArray::ScriptArray):
+        (WebCore::ScriptArray::jsArray):
+        * bindings/v8/ScriptArray.cpp:
+        (WebCore::ScriptArray::set):
+        * bindings/v8/ScriptArray.h:
+        (WebCore::ScriptArray::ScriptArray):
+        (WebCore::ScriptArray::~ScriptArray):
+        * inspector/ConsoleMessage.cpp:
+        (WebCore::ConsoleMessage::addToFrontend):
+        * inspector/InspectorFrontend.cpp:
+        (WebCore::InspectorFrontend::addConsoleMessage):
+        * inspector/InspectorFrontend.h:
+        * inspector/front-end/ConsoleView.js:
+        (WebInspector.ConsoleView.prototype.updateMessageRepeatCount):
+        (WebInspector.ConsoleMessage):
+        (WebInspector.ConsoleMessage.createTextMessage):
+        (WebInspector.ConsoleCommandResult):
+        * inspector/front-end/ElementsPanel.js:
+        (WebInspector.ElementsPanel.prototype.generateStylesheet):
+        * inspector/front-end/InjectedScriptAccess.js:
+        (InjectedScriptAccess._installHandler.InjectedScriptAccess.prototype.methodName.myCallback):
+        (InjectedScriptAccess._installHandler.InjectedScriptAccess.prototype.methodName):
+        (InjectedScriptAccess._installHandler):
+        * inspector/front-end/Resource.js:
+        (WebInspector.Resource.prototype._checkWarning):
+        * inspector/front-end/inspector.js:
+        (WebInspector.updateConsoleMessageExpiredCount):
+        (WebInspector.addConsoleMessage):
+        (WebInspector.log.logMessage):
+        (WebInspector.log):
+
 2010-07-14  Tony Gentilcore  <tonyg@chromium.org>
 
         Reviewed by Darin Fisher.

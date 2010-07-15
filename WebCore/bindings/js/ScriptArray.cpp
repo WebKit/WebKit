@@ -31,6 +31,8 @@
 #include "config.h"
 #include "ScriptArray.h"
 
+#include "SerializedScriptValue.h"
+
 #include <runtime/JSLock.h>
 
 using namespace JSC;
@@ -59,6 +61,19 @@ bool ScriptArray::set(unsigned index, const ScriptObject& value)
     }
     JSLock lock(SilenceAssertionsOnly);
     jsArray()->put(m_scriptState, index, value.jsObject());
+    return handleException(m_scriptState);
+}
+
+bool ScriptArray::set(unsigned index, SerializedScriptValue* value)
+{
+    ScriptValue scriptValue = ScriptValue::deserialize(m_scriptState, value);
+    if (scriptValue.hasNoValue()) {
+        ASSERT_NOT_REACHED();
+        return false;
+    }
+
+    JSLock lock(SilenceAssertionsOnly);
+    jsArray()->put(m_scriptState, index, scriptValue.jsValue());
     return handleException(m_scriptState);
 }
 

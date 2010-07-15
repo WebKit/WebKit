@@ -31,11 +31,11 @@
 #include "config.h"
 #include "ScriptArray.h"
 
-#include "ScriptScope.h"
-#include "ScriptState.h"
-
 #include "Document.h"
 #include "Frame.h"
+#include "ScriptScope.h"
+#include "ScriptState.h"
+#include "SerializedScriptValue.h"
 #include "V8Binding.h"
 #include "V8Proxy.h"
 
@@ -54,6 +54,19 @@ bool ScriptArray::set(unsigned index, const ScriptObject& value)
     }
     ScriptScope scope(m_scriptState);
     v8Object()->Set(v8::Integer::New(index), value.v8Value());
+    return scope.success();
+}
+
+bool ScriptArray::set(unsigned index, SerializedScriptValue* value)
+{
+    ScriptValue scriptValue = ScriptValue::deserialize(m_scriptState, value);
+    if (scriptValue.hasNoValue()) {
+        ASSERT_NOT_REACHED();
+        return false;
+    }
+
+    ScriptScope scope(m_scriptState);
+    v8Object()->Set(v8::Integer::New(index), scriptValue.v8Value());
     return scope.success();
 }
 

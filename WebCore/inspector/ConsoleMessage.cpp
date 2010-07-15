@@ -93,15 +93,26 @@ void ConsoleMessage::addToFrontend(InspectorFrontend* frontend, InjectedScriptHo
     jsonObj.set("url", m_url);
     jsonObj.set("groupLevel", static_cast<int>(m_groupLevel));
     jsonObj.set("repeatCount", static_cast<int>(m_repeatCount));
-    Vector<RefPtr<SerializedScriptValue> > arguments;
+    jsonObj.set("message", m_message);
     if (!m_arguments.isEmpty()) {
+        ScriptArray jsonArgs = frontend->newScriptArray();
         InjectedScript injectedScript = injectedScriptHost->injectedScriptFor(m_scriptState.get());
         for (unsigned i = 0; i < m_arguments.size(); ++i) {
             RefPtr<SerializedScriptValue> serializedValue = injectedScript.wrapForConsole(m_arguments[i]);
-            arguments.append(serializedValue);
+            if (!jsonArgs.set(i, serializedValue.get())) {
+                ASSERT_NOT_REACHED();
+                return;
+            }
         }
-    }   
-    frontend->addConsoleMessage(jsonObj, m_frames, arguments,  m_message);
+        jsonObj.set("parameters", jsonArgs);
+    }
+    if (!m_frames.isEmpty()) {
+        ScriptArray jsonFrames = frontend->newScriptArray();
+        for (unsigned i = 0; i < m_frames.size(); ++i)
+            jsonFrames.set(i, m_frames[i]);
+        jsonObj.set("stackTrace", jsonFrames);
+    }
+    frontend->addConsoleMessage(jsonObj);
 }
 
 void ConsoleMessage::updateRepeatCountInConsole(InspectorFrontend* frontend)
