@@ -1,3 +1,9 @@
+2010-07-15  Adam Barth  <abarth@webkit.org>
+
+        Update Qt expectionat to account for implicit <colgroup>.
+
+        * platform/qt/fast/repaint/table-col-background-expected.txt:
+
 2010-07-15  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.
