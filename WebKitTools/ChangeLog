@@ -1,3 +1,16 @@
+2010-07-15  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Hook up back/forward in MiniBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=42397
+
+        * MiniBrowser/mac/BrowserWindow.xib:
+        * MiniBrowser/mac/BrowserWindowController.h:
+        * MiniBrowser/mac/BrowserWindowController.m:
+        (-[BrowserWindowController goBack:]):
+        (-[BrowserWindowController goForward:]):
+
 2010-07-15  Daniel Bates  <dbates@rim.com>
 
         Reviewed by Darin Adler.

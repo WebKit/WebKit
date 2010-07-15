@@ -98,6 +98,16 @@
     [_webView setNeedsDisplay:YES];
 }
 
+- (IBAction)goBack:(id)sender
+{
+    WKPageGoBack(_webView.pageRef);
+}
+
+- (IBAction)goForward:(id)sender
+{
+    WKPageGoForward(_webView.pageRef);
+}
+
 - (BOOL)windowShouldClose:(id)sender
 {
     LOG(@"windowShouldClose");

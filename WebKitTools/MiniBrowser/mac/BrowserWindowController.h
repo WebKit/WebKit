@@ -26,6 +26,8 @@
 @interface BrowserWindowController : NSWindowController {
     IBOutlet NSProgressIndicator *progressIndicator;
     IBOutlet NSButton *reloadButton;
+    IBOutlet NSButton *backButton;
+    IBOutlet NSButton *forwardButton;
     IBOutlet NSTextField *urlText;
     IBOutlet NSView *containerView;
 
@@ -35,6 +37,8 @@
 - (IBAction)fetch:(id)sender;
 - (IBAction)reload:(id)sender;
 - (IBAction)forceRepaint:(id)sender;
+- (IBAction)goBack:(id)sender;
+- (IBAction)goForward:(id)sender;
 
 - (IBAction)showHideWebView:(id)sender;
 - (IBAction)removeReinsertWebView:(id)sender;
