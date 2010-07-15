@@ -6,6 +6,20 @@
         think these bots were behind and he didn't see the results before he
         went to sleep.
 
+        * platform/mac-tiger/media/controls-after-reload-expected.txt:
+        * platform/mac-tiger/media/controls-strict-expected.txt:
+        * platform/mac-tiger/media/controls-styling-expected.txt:
+        * platform/mac-tiger/media/video-display-toggle-expected.txt:
+        * platform/mac-tiger/media/video-no-audio-expected.txt:
+
+2010-07-15  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed.
+
+        Update some more baselines for Eric's text node coalescing patch.  I
+        think these bots were behind and he didn't see the results before he
+        went to sleep.
+
         * platform/mac-leopard/media/controls-after-reload-expected.txt:
         * platform/mac-leopard/media/controls-strict-expected.txt:
         * platform/mac-leopard/media/controls-styling-expected.txt:
