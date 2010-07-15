@@ -1,3 +1,21 @@
+2010-07-15  Mads Ager  <ager@chromium.org>
+
+        Reviewed by Jeremy Orlow.
+
+        Chromium test expectations update after ES5 Object.freeze and Object.seal implementation.
+        https://bugs.webkit.org/show_bug.cgi?id=42369
+
+        Add Object.freeze and Object.seal tests as expected to fail to the
+        chromium test expectations file. The tests actually pass with V8
+        but the text expectations expect them to fail because JSC has not
+        yet implemented freeze and seal.
+
+        Not adding new chromium baselines because the baselines would
+        contain little extra information (because the text files basically
+        just contains either PASS or FAIL with little extra information).
+
+        * platform/chromium/test_expectations.txt:
+
 2010-07-15  MORITA Hajime  <morrita@google.com>
 
         Text layout is wrong with a SVG Font that lacks <missing-glyph> element
