@@ -506,7 +506,7 @@ void ResourceHandle::loadResourceSynchronously(const ResourceRequest& request, S
     // If a URL already has cookies, then we'll relax the 3rd party cookie policy and accept new cookies.
     NSHTTPCookieStorage *sharedStorage = [NSHTTPCookieStorage sharedHTTPCookieStorage];
     if ([sharedStorage cookieAcceptPolicy] == NSHTTPCookieAcceptPolicyOnlyFromMainDocumentDomain && [[sharedStorage cookiesForURL:[firstRequest URL]] count]) {
-        NSMutableURLRequest *mutableRequest = [[firstRequest copy] autorelease];
+        NSMutableURLRequest *mutableRequest = [[firstRequest mutableCopy] autorelease];
         [mutableRequest setMainDocumentURL:[mutableRequest URL]];
         firstRequest = mutableRequest;
     }
