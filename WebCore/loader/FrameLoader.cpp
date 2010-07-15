@@ -2699,7 +2699,7 @@ void FrameLoader::addExtraFieldsToRequest(ResourceRequest& request, FrameLoadTyp
         request.setHTTPHeaderField("Pragma", "no-cache");
     } else if (request.isConditional())
         request.setCachePolicy(ReloadIgnoringCacheData);
-    else if (isBackForwardLoadType(loadType) && !request.url().protocolIs("https"))
+    else if (isBackForwardLoadType(loadType) && m_stateMachine.committedFirstRealDocumentLoad() && !request.url().protocolIs("https"))
         request.setCachePolicy(ReturnCacheDataElseLoad);
     else if (!mainResource && documentLoader()->isLoadingInAPISense())
         request.setCachePolicy(documentLoader()->originalRequest().cachePolicy());
@@ -3247,7 +3247,9 @@ void FrameLoader::navigateToDifferentDocument(HistoryItem* item, FrameLoadType l
             case FrameLoadTypeBackWMLDeckNotAccessible:
             case FrameLoadTypeForward:
             case FrameLoadTypeIndexedBackForward:
-                if (!itemURL.protocolIs("https"))
+                // If the first load within a frame is a navigation within a back/forward list that was attached 
+                // without any of the items being loaded then we should use the default caching policy (<rdar://problem/8131355>).
+                if (m_stateMachine.committedFirstRealDocumentLoad() && !itemURL.protocolIs("https"))
                     request.setCachePolicy(ReturnCacheDataElseLoad);
                 break;
             case FrameLoadTypeStandard:

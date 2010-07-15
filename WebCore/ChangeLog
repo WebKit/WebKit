@@ -1,3 +1,17 @@
+2010-07-14  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        <rdar://problem/8131355> Apps load stale versions of pages when initial load happens via back/forward navigation.
+
+        No test case is added because DumpRenderTree is not able to test the scenario where the initial load in a WebView
+        occurs via a back/forward navigation.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::navigateToDifferentDocument): When the first load in a page is a back/forward navigation, we
+          shouldn't try to prefer cached data but should do revalidation by default.
+        (WebCore::FrameLoader::addExtraFieldsToRequest): Ditto.
+
 2010-07-14  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Darin Fisher.
