@@ -17,11 +17,10 @@ print "\r\n";
 print <<HERE_DOC_END
 <html>
 <script type="text/javascript" src="testcode.js"></script>
-body>\n";
 <frameset rows="90%,10%">
 <frame src="$frameURL" name="main">
 <frame src="otherpage.html" name="footer">
 </frameset>
-</body></html>
+</html>
 HERE_DOC_END
 

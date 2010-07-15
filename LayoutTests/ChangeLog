@@ -1,3 +1,16 @@
+2010-07-15  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        frameset.pl has some bogus HTML
+        https://bugs.webkit.org/show_bug.cgi?id=42347
+
+        HTML5 ignores <frameset> elements inside <body> elements.  Instead of
+        creating a random body element (using bogus Perl), we just create the
+        frameset.  The body/frameset interaction is covered by parser tests.
+
+        * http/tests/navigation/resources/frameset.pl:
+
 2010-07-07  John Gregg  <johnnyg@google.com>
 
         Reviewed by Jian Li.
