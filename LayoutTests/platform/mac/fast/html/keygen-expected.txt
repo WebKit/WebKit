@@ -8,4 +8,3 @@ layer at (0,0) size 800x600
           RenderText at (8,2) size 99x13
             text run at (8,2) width 99: "2048 (High Grade)"
       RenderText {#text} at (0,0) size 0x0
-      RenderText {#text} at (0,0) size 0x0

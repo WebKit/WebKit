@@ -10,8 +10,6 @@ layer at (0,0) size 800x600
         RenderText {#text} at (320,147) size 4x18
           text run at (320,147) width 4: " "
         RenderText {#text} at (0,0) size 0x0
-        RenderText {#text} at (0,0) size 0x0
-        RenderText {#text} at (0,0) size 0x0
 layer at (68,102) size 200x200 layerType: background only
 layer at (28,62) size 150x150
   RenderBlock (positioned) zI: -1 {DIV} at (-40,-40) size 150x150 [color=#808080] [bgcolor=#C86464] [border: (2px solid #000000)]

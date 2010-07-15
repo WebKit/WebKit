@@ -30,4 +30,3 @@ layer at (0,0) size 800x600
                 RenderImage {IMG} at (728,5) size 28x15
               RenderText {#text} at (5,5) size 63x18
                 text run at (5,5) width 63: "Some text"
-              RenderText {#text} at (0,0) size 0x0

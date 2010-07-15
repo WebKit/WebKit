@@ -10,8 +10,6 @@ layer at (0,0) size 800x600
       RenderBlock (anonymous) at (0,37) size 784x25
         RenderTextControl {INPUT} at (0,2) size 300x21 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
         RenderText {#text} at (0,0) size 0x0
-        RenderText {#text} at (0,0) size 0x0
-        RenderText {#text} at (0,0) size 0x0
 layer at (11,50) size 294x15
   RenderBlock {DIV} at (3,3) size 294x15
     RenderText {#text} at (1,0) size 99x15

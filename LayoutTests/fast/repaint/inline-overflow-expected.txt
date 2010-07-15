@@ -7,4 +7,3 @@ layer at (0,0) size 800x600
         RenderText {#text} at (50,50) size 200x50
           text run at (50,50) width 200: "A  B"
       RenderText {#text} at (0,0) size 0x0
-      RenderText {#text} at (0,0) size 0x0

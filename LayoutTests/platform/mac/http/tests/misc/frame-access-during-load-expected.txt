@@ -17,8 +17,6 @@ layer at (0,0) size 800x600
               RenderBody {BODY} at (8,8) size 284x24
                 RenderText {#text} at (0,0) size 71x18
                   text run at (0,0) width 71: "SUCCESS"
-                RenderText {#text} at (0,0) size 0x0
-                RenderText {#text} at (0,0) size 0x0
         RenderBR {BR} at (300,40) size 0x0
         RenderPartObject {IFRAME} at (0,40) size 300x40
           layer at (0,0) size 300x40
@@ -28,8 +26,6 @@ layer at (0,0) size 800x600
               RenderBody {BODY} at (8,8) size 284x24
                 RenderText {#text} at (0,0) size 71x18
                   text run at (0,0) width 71: "SUCCESS"
-                RenderText {#text} at (0,0) size 0x0
-                RenderText {#text} at (0,0) size 0x0
         RenderBR {BR} at (300,80) size 0x0
         RenderText {#text} at (0,80) size 164x18
           text run at (0,80) width 164: "[object HTMLDocument]"
@@ -39,5 +35,3 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,184) size 784x18
         RenderText {#text} at (0,0) size 614x18
           text run at (0,0) width 614: "If this test passes, you should see SUCCESS twice, followed by [object HTMLDocument] twice."
-        RenderText {#text} at (0,0) size 0x0
-        RenderText {#text} at (0,0) size 0x0

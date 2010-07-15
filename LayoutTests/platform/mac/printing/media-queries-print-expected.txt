@@ -9,5 +9,3 @@ layer at (0,0) size 1000x585
           RenderText {#text} at (0,0) size 533x18
             text run at (0,0) width 533: "When printing, you should see a green square above and this text should be italic."
         RenderText {#text} at (0,0) size 0x0
-        RenderText {#text} at (0,0) size 0x0
-        RenderText {#text} at (0,0) size 0x0

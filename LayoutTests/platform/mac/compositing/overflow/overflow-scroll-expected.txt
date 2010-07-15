@@ -32,8 +32,6 @@ layer at (0,0) size 800x586
         RenderText {#text} at (524,510) size 4x18
           text run at (524,510) width 4: " "
         RenderText {#text} at (0,0) size 0x0
-        RenderText {#text} at (0,0) size 0x0
-        RenderText {#text} at (0,0) size 0x0
 layer at (18,60) size 152x152 clip at (19,61) size 135x135 scrollY 50 scrollWidth 210 scrollHeight 510
   RenderBlock {DIV} at (10,10) size 152x152 [border: (1px solid #000000)]
 layer at (194,60) size 152x152 clip at (195,61) size 135x135 scrollY 50 scrollWidth 210 scrollHeight 510

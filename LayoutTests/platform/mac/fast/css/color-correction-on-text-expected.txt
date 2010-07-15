@@ -21,5 +21,3 @@ layer at (0,0) size 800x600
           RenderText {#text} at (242,0) size 117x174
             text run at (242,0) width 117: "H"
         RenderText {#text} at (0,0) size 0x0
-        RenderText {#text} at (0,0) size 0x0
-        RenderText {#text} at (0,0) size 0x0

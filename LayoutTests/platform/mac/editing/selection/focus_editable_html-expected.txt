@@ -22,5 +22,4 @@ layer at (0,0) size 2008x2088
       RenderBlock (anonymous) at (0,2054) size 769x18
         RenderText {#text} at (0,0) size 237x18
           text run at (0,0) width 237: "If the document scrolls here, test fails."
-        RenderText {#text} at (0,0) size 0x0
 caret: position 1 of child 0 {#text} of body

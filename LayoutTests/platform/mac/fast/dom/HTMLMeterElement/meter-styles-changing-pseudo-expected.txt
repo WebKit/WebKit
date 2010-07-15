@@ -29,5 +29,3 @@ layer at (0,0) size 800x600
       RenderBlock (anonymous) at (0,326) size 784x20
         RenderMeter {METER} at (0,0) size 80x20
         RenderText {#text} at (0,0) size 0x0
-        RenderText {#text} at (0,0) size 0x0
-        RenderText {#text} at (0,0) size 0x0

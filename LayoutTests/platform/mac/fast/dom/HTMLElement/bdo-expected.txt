@@ -47,4 +47,3 @@ layer at (0,0) size 800x600
           RenderText {#text} at (81,90) size 209x18
             text run at (81,90) width 209 LTR override: " sure would be useful in this rain."
         RenderText {#text} at (0,0) size 0x0
-        RenderText {#text} at (0,0) size 0x0

@@ -35,7 +35,6 @@ layer at (0,0) size 800x600
             text run at (133,2) width 162: "drop me into the text field"
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
-        RenderText {#text} at (0,0) size 0x0
 layer at (13,109) size 119x13 scrollWidth 121
   RenderBlock {DIV} at (3,3) size 119x13
     RenderText {#text} at (1,0) size 119x13

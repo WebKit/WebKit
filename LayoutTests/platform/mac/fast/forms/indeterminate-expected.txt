@@ -6,7 +6,5 @@ layer at (0,0) size 800x600
       RenderText {#text} at (18,0) size 491x18
         text run at (18,0) width 491: " This checkbox should look 50% transparent and should be in the mixed state."
       RenderText {#text} at (0,0) size 0x0
-      RenderText {#text} at (0,0) size 0x0
-      RenderText {#text} at (0,0) size 0x0
 layer at (11,12) size 12x12
   RenderBlock {INPUT} at (3,4) size 12x12

@@ -119,8 +119,6 @@ layer at (0,0) size 800x600
               RenderText {#text} at (0,0) size 722x74
                 text run at (0,0) width 722: "This is just a minimal page that we navigate to as part of"
                 text run at (0,37) width 272: "testing back/forward."
-              RenderText {#text} at (0,0) size 0x0
-              RenderText {#text} at (0,0) size 0x0
 
 ============== Back Forward List ==============
         http://127.0.0.1:8000/navigation/javascriptlink-frames.html  **nav target**

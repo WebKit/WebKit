@@ -22,4 +22,3 @@ layer at (0,0) size 800x600
           text run at (0,234) width 774: "that this goes onto many lines. I am still typing. I am typing a lot of text so that this goes onto many lines. I am still typing. I"
           text run at (0,252) width 456: "am typing a lot of text so that this goes onto many lines. I am still typing."
       RenderText {#text} at (0,0) size 0x0
-      RenderText {#text} at (0,0) size 0x0

@@ -75,4 +75,3 @@ layer at (0,0) size 800x600
                   text run at (6,474) width 93: "here; the great "
                   text run at (99,474) width 261: "wonder is, that there\x{2018}s any one left alive!\x{2019}"
       RenderText {#text} at (0,0) size 0x0
-      RenderText {#text} at (0,0) size 0x0

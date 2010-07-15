@@ -11,8 +11,6 @@ layer at (0,0) size 800x310
         RenderText {#text} at (302,151) size 4x18
           text run at (302,151) width 4: " "
         RenderText {#text} at (0,0) size 0x0
-        RenderText {#text} at (0,0) size 0x0
-        RenderText {#text} at (0,0) size 0x0
 layer at (59,138) size 200x86
   RenderBlock {P} at (1,38) size 200x86 [color=#0000FF]
     RenderText {#text} at (22,0) size 156x86

@@ -15,7 +15,6 @@ layer at (0,0) size 800x308
       RenderBlock (anonymous) at (0,52) size 784x202
       RenderBlock (anonymous) at (0,254) size 784x18
         RenderText {#text} at (0,0) size 0x0
-        RenderText {#text} at (0,0) size 0x0
 layer at (18,110) size 82x58
   RenderInline (relative positioned) {SPAN} at (0,0) size 82x58 [bgcolor=#DDDDDD]
     RenderText {#text} at (20,0) size 62x18

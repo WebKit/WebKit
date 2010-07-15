@@ -144,8 +144,6 @@ layer at (0,0) size 785x1382
       RenderBlock (anonymous) at (0,1374) size 769x0
         RenderInline {SPAN} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
-        RenderText {#text} at (0,0) size 0x0
-        RenderText {#text} at (0,0) size 0x0
 layer at (29,70) size 119x13
   RenderBlock {DIV} at (3,3) size 119x13
 layer at (29,128) size 119x13

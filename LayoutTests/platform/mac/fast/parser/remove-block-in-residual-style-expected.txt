@@ -17,4 +17,3 @@ layer at (0,0) size 800x52
             text run at (199,18) width 60: "bug 6778"
         RenderText {#text} at (259,18) size 4x18
           text run at (259,18) width 4: "."
-        RenderText {#text} at (0,0) size 0x0

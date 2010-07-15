@@ -9,4 +9,3 @@ layer at (0,0) size 800x600
           text run at (0,0) width 45: "10pt = "
         RenderText {#text} at (45,0) size 383x18
           text run at (45,0) width 383: "3.4395833015441895mm (should be 3.4395833015441895)"
-        RenderText {#text} at (0,0) size 0x0

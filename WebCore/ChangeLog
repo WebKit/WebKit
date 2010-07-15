@@ -1,3 +1,26 @@
+2010-07-14  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Make the LegacyHTMLTreeBuilder coalesce text nodes
+        https://bugs.webkit.org/show_bug.cgi?id=42314
+
+        This is slightly tricky as we're side-stepping the old
+        parsers insertion logic in the cases where we know we can
+        safely merge text into an existing text node instead of
+        inserting a new one.
+
+        This affects lots of tests (which will need to change for
+        the HTML5 TreeBuilder anyway) and causes the LegacyHTMLTreeBuilder
+        to now pass a bunch more subtests in html5lib/runner.html.
+
+        The parser benchmark thinks that this is a small speedup.
+        I think I happen to have been lucky enough to get the right
+        cache alignment, and that this is likely a wash.
+
+        * html/LegacyHTMLTreeBuilder.cpp:
+        (WebCore::LegacyHTMLTreeBuilder::parseToken):
+
 2010-07-14  Evan Stade  <estade@chromium.org>
 
         Reviewed by Kent Tamura.

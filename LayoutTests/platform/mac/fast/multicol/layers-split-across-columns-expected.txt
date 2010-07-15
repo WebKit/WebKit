@@ -15,7 +15,6 @@ layer at (0,0) size 785x676
             text run at (0,0) width 76: "Transforms:"
       RenderText {#text} at (444,314) size 4x18
         text run at (444,314) width 4: " "
-      RenderText {#text} at (0,0) size 0x0
       RenderBlock {DIV} at (448,0) size 220x328
         RenderBlock (anonymous) at (0,0) size 220x18
           RenderText {#text} at (0,0) size 131x18

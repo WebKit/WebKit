@@ -277,7 +277,29 @@ PassRefPtr<Node> LegacyHTMLTreeBuilder::parseToken(Token* t)
         if (m_inBody && !skipMode() && m_current->localName() != styleTag &&
             m_current->localName() != titleTag && !t->text->containsOnlyWhitespace())
             m_haveContent = true;
-        
+
+        // HTML5 requires text node coalescing.
+        // http://www.whatwg.org/specs/web-apps/current-work/multipage/tokenization.html#insert-a-character
+        Node* previousChild = m_current->lastChild();
+        if (previousChild && previousChild->isTextNode()) {
+            // Only coalesce text nodes if the text node wouldn't be foster parented.
+            if (!m_current->hasTagName(tableTag)
+                && !m_current->hasTagName(trTag)
+                && !m_current->hasTagName(theadTag)
+                && !m_current->hasTagName(tbodyTag)
+                && !m_current->hasTagName(tfootTag)
+                && !m_current->hasTagName(titleTag)) {
+                // Technically we're only supposed to merge into the previous
+                // text node if it was the last node inserted by the parser.
+                // (This was a spec modification made to make it easier for
+                // mozilla to run their parser in a thread.)
+                // In practice it does not seem to matter.
+                CharacterData* textNode = static_cast<CharacterData*>(previousChild);
+                textNode->parserAppendData(t->text);
+                return textNode;
+            }
+        }
+
         RefPtr<Node> n;
         String text = t->text.get();
         unsigned charsLeft = text.length();

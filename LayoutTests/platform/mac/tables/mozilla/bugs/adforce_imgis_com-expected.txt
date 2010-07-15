@@ -7,5 +7,3 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 0x0
         RenderImage {IMG} at (0,0) size 468x60
       RenderText {#text} at (0,0) size 0x0
-      RenderText {#text} at (0,0) size 0x0
-      RenderText {#text} at (0,0) size 0x0

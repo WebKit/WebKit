@@ -12,8 +12,6 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (513,21) size 202x202 [border: (1px solid #000000)]
       RenderText {#text} at (0,0) size 0x0
       RenderText {#text} at (0,0) size 0x0
-      RenderText {#text} at (0,0) size 0x0
-      RenderText {#text} at (0,0) size 0x0
 layer at (30,500) size 314x90
   RenderBlock (positioned) {DIV} at (30,500) size 314x90
     RenderInline {SPAN} at (0,0) size 314x18 [color=#008000]

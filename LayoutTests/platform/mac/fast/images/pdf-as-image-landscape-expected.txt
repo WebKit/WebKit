@@ -10,5 +10,3 @@ layer at (0,0) size 850x653
       RenderBlock {P} at (0,34) size 769x595
         RenderImage {IMG} at (0,0) size 842x595
         RenderText {#text} at (0,0) size 0x0
-        RenderText {#text} at (0,0) size 0x0
-        RenderText {#text} at (0,0) size 0x0

@@ -15,5 +15,3 @@ layer at (0,0) size 800x600
           RenderText {#text} at (8,0) size 12x18
             text run at (8,0) width 12: "A"
         RenderText {#text} at (0,0) size 0x0
-        RenderText {#text} at (0,0) size 0x0
-        RenderText {#text} at (0,0) size 0x0

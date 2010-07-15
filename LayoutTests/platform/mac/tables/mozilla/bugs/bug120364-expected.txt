@@ -21,5 +21,3 @@ layer at (0,0) size 785x1813
                 text run at (1,19) width 89: "Get organized"
                 text run at (1,37) width 94: "online with the"
       RenderText {#text} at (0,0) size 0x0
-      RenderText {#text} at (0,0) size 0x0
-      RenderText {#text} at (0,0) size 0x0

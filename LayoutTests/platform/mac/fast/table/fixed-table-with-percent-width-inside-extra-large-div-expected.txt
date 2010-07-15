@@ -8,4 +8,3 @@ layer at (0,0) size 800x600
           text run at (0,0) width 617: "Success! The width of the fixed table is 1994px, which is based on the width of its containing div."
       RenderText {#text} at (0,0) size 0x0
       RenderText {#text} at (0,0) size 0x0
-      RenderText {#text} at (0,0) size 0x0

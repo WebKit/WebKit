@@ -37,5 +37,3 @@ layer at (0,0) size 800x600
       RenderBR {BR} at (0,36) size 0x18
       RenderText {#text} at (0,54) size 487x18
         text run at (0,54) width 487: "The three tables above should abut each other. (in NN3/4 and IE4/5 they do)."
-      RenderText {#text} at (0,0) size 0x0
-      RenderText {#text} at (0,0) size 0x0

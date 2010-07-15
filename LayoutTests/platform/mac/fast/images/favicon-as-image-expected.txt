@@ -18,5 +18,3 @@ layer at (0,0) size 800x600
               RenderBody {BODY} at (0,0) size 16x16
                 RenderImage {IMG} at (0,0) size 16x16
         RenderText {#text} at (0,0) size 0x0
-        RenderText {#text} at (0,0) size 0x0
-        RenderText {#text} at (0,0) size 0x0

@@ -8,4 +8,3 @@ layer at (0,0) size 800x335
         RenderBlock {DIV} at (14,7) size 752x50
           RenderText {#text} at (300,0) size 86x18
             text run at (300,0) width 86: "Other content"
-          RenderText {#text} at (0,0) size 0x0

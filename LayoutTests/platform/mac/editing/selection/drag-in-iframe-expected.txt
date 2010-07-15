@@ -26,5 +26,3 @@ layer at (0,0) size 800x600
                   text run at (0,18) width 42: "See it?"
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
-        RenderText {#text} at (0,0) size 0x0
-        RenderText {#text} at (0,0) size 0x0

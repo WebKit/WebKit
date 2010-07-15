@@ -1330,5 +1330,3 @@ layer at (0,0) size 2026x2393
             text run at (176,306) width 569: ". (with monospace font from elements to"
             text run at (0,324) width 45: "too)"
         RenderText {#text} at (0,0) size 0x0
-        RenderText {#text} at (0,0) size 0x0
-        RenderText {#text} at (0,0) size 0x0

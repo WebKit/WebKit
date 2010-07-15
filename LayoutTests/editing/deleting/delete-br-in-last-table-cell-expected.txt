@@ -73,10 +73,8 @@ deleteCommand();
 runTest();
 </SCRIPT>
 <#text>
-</#text>
-<#text>
-</#text>
-<#text>
+
+
 </#text>
 </BODY>
 </HTML>

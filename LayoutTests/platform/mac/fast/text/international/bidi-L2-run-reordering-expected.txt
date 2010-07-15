@@ -34,5 +34,3 @@ layer at (0,0) size 800x103
             text run at (360,1) width 31 RTL: "\x{5D0}\x{5D1}\x{5D2} "
             text run at (391,1) width 24: " def"
         RenderText {#text} at (0,0) size 0x0
-        RenderText {#text} at (0,0) size 0x0
-        RenderText {#text} at (0,0) size 0x0

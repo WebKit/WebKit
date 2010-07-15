@@ -871,5 +871,3 @@ layer at (0,0) size 785x7165
             RenderBR {BR} at (24,2343) size 0x0
           RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
-        RenderText {#text} at (0,0) size 0x0
-        RenderText {#text} at (0,0) size 0x0

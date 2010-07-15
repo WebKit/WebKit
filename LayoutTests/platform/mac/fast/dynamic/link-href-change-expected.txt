@@ -8,4 +8,3 @@ layer at (0,0) size 800x600
           text run at (15,0) width 336: "This should have a 10px solid black border around it."
       RenderText {#text} at (0,0) size 0x0
       RenderText {#text} at (0,0) size 0x0
-      RenderText {#text} at (0,0) size 0x0

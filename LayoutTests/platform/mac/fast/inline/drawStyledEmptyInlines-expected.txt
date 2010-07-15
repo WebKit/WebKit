@@ -51,5 +51,3 @@ layer at (0,0) size 800x600
             text run at (0,0) width 722: "This text should be flush with the anchor. There should not be a space between the anchor and the text on this line."
         RenderInline {A} at (0,0) size 0x0
           RenderText {#text} at (0,0) size 0x0
-          RenderText {#text} at (0,0) size 0x0
-          RenderText {#text} at (0,0) size 0x0

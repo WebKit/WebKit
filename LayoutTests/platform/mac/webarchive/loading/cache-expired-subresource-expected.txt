@@ -38,5 +38,3 @@ layer at (0,0) size 800x600
       RenderText {#text} at (0,154) size 777x36
         text run at (0,154) width 777: "This tests that loading a webarchive with a subresource that has an expired cache header does not attempt to hit the network"
         text run at (0,172) width 301: "for resource, and actually uses the archived data"
-      RenderText {#text} at (0,0) size 0x0
-      RenderText {#text} at (0,0) size 0x0

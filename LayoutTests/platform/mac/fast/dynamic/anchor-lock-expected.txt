@@ -36,6 +36,4 @@ layer at (0,0) size 785x2122
       RenderBlock (anonymous) at (0,2088) size 769x18
         RenderText {#text} at (0,0) size 59x18
           text run at (0,0) width 59: "#anchor1"
-        RenderText {#text} at (0,0) size 0x0
-        RenderText {#text} at (0,0) size 0x0
 scrolled to 0,982

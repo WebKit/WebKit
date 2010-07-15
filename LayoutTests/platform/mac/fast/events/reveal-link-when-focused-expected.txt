@@ -11,6 +11,4 @@ layer at (0,0) size 785x2034
           RenderText {#text} at (0,0) size 355x18
             text run at (0,0) width 355: "this link should be focused and revealed after page loads"
         RenderText {#text} at (0,0) size 0x0
-        RenderText {#text} at (0,0) size 0x0
-        RenderText {#text} at (0,0) size 0x0
 scrolled to 0,1434

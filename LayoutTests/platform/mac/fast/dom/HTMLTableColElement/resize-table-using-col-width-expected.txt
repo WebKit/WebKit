@@ -36,5 +36,3 @@ layer at (0,0) size 800x600
               text run at (0,0) width 356: "Click me to test manually. The first column should grow to 500px."
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
-        RenderText {#text} at (0,0) size 0x0
-        RenderText {#text} at (0,0) size 0x0

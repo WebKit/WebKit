@@ -30,4 +30,3 @@ layer at (0,0) size 800x600
       RenderBlock (anonymous) at (0,28) size 784x18
         RenderText {#text} at (0,0) size 104x18
           text run at (0,0) width 104: "Form did submit"
-        RenderText {#text} at (0,0) size 0x0

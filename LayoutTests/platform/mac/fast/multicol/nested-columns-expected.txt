@@ -46,5 +46,3 @@ layer at (8,8) size 750x500
       RenderText {#text} at (0,0) size 354x36
         text run at (0,0) width 354: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit."
         text run at (0,18) width 154: "Nulla varius enim ac mi."
-      RenderText {#text} at (0,0) size 0x0
-      RenderText {#text} at (0,0) size 0x0

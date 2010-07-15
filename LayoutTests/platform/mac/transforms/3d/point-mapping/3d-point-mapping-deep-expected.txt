@@ -7,8 +7,6 @@ layer at (0,0) size 785x600
       RenderText {#text} at (0,0) size 0x0
       RenderText {#text} at (0,0) size 0x0
       RenderText {#text} at (0,0) size 0x0
-      RenderText {#text} at (0,0) size 0x0
-      RenderText {#text} at (0,0) size 0x0
 layer at (42,42) size 340x340
   RenderBlock {DIV} at (21,21) size 340x340 [bgcolor=#DDDDDD] [border: (1px solid #000000)]
 layer at (63,63) size 300x300

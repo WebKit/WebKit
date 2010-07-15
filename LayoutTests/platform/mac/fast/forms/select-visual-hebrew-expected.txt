@@ -17,5 +17,3 @@ layer at (0,0) size 800x600
             RenderText at (8,2) size 30x13
               text run at (8,2) width 30 RTL: "\x{5DB}\x{5E4}\x{5EA}\x{5D5}\x{5E8}"
         RenderText {#text} at (0,0) size 0x0
-        RenderText {#text} at (0,0) size 0x0
-        RenderText {#text} at (0,0) size 0x0

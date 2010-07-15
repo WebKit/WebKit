@@ -26,6 +26,4 @@ layer at (0,0) size 800x600
       RenderText {#text} at (14,42) size 36x28
         text run at (14,42) width 36: "xxx"
       RenderText {#text} at (0,0) size 0x0
-      RenderText {#text} at (0,0) size 0x0
-      RenderText {#text} at (0,0) size 0x0
 caret: position 3 of child 1 {#text} of body

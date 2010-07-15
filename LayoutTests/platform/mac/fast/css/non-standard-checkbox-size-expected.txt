@@ -10,5 +10,3 @@ layer at (0,0) size 800x600
         text run at (307,37) width 4: " "
       RenderBlock {INPUT} at (314,3) size 12x50
       RenderText {#text} at (0,0) size 0x0
-      RenderText {#text} at (0,0) size 0x0
-      RenderText {#text} at (0,0) size 0x0

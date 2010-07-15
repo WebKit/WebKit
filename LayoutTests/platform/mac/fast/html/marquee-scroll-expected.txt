@@ -17,7 +17,6 @@ layer at (0,0) size 800x600
           text run at (0,18) width 557: "It should scroll until the text, \"The marquee scroll test passed\" is visible and left justified."
       RenderBlock (anonymous) at (0,86) size 784x18
         RenderText {#text} at (0,0) size 0x0
-        RenderText {#text} at (0,0) size 0x0
 layer at (8,94) size 392x18 scrollX -392
   RenderBlock {MARQUEE} at (0,0) size 392x18 [bgcolor=#00FFFF]
     RenderText {#text} at (0,0) size 192x18

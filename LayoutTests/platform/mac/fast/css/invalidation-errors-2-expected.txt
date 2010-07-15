@@ -13,7 +13,6 @@ layer at (0,0) size 800x600
         RenderInline {DIV} at (0,0) size 0x0
           RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
-        RenderText {#text} at (0,0) size 0x0
 layer at (8,42) size 200x200
   RenderBlock (floating) {DIV} at (0,0) size 200x200 [color=#FFFFFF] [bgcolor=#006400]
     RenderText {#text} at (0,0) size 194x128

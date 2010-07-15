@@ -7,4 +7,3 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 263x18
           text run at (0,0) width 263: "You should not see anything but this link."
       RenderText {#text} at (0,0) size 0x0
-      RenderText {#text} at (0,0) size 0x0

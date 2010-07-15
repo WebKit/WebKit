@@ -25,8 +25,6 @@ layer at (0,0) size 800x600
         RenderBR {BR} at (175,50) size 0x0
         RenderText {#text} at (0,54) size 176x18
           text run at (0,54) width 176: "hasDefaultText: SUCCESS"
-        RenderText {#text} at (0,0) size 0x0
-        RenderText {#text} at (0,0) size 0x0
 layer at (10,10) size 161x32 clip at (11,11) size 159x30
   RenderTextControl {TEXTAREA} at (2,2) size 161x32 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 155x13

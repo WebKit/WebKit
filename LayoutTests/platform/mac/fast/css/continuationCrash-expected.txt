@@ -18,7 +18,6 @@ layer at (0,0) size 800x600
           RenderListMarker at (-20,0) size 16x18: "1"
           RenderText {#text} at (0,0) size 193x18
             text run at (0,0) width 193: "Start with the outmost left one."
-          RenderText {#text} at (0,0) size 0x0
         RenderListItem {LI} at (40,18) size 744x18
           RenderListMarker at (-20,0) size 16x18: "2"
           RenderText {#text} at (0,0) size 135x18
@@ -64,5 +63,4 @@ layer at (0,0) size 800x600
             RenderBlock (anonymous) at (8,2) size 135x13
               RenderText at (0,0) size 135x13
                 text run at (0,0) width 135: "3. Replace span-element"
-          RenderText {#text} at (0,0) size 0x0
           RenderText {#text} at (0,0) size 0x0

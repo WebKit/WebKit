@@ -35,6 +35,4 @@ layer at (0,0) size 800x600
           text run at (0,0) width 197: "in the affairs of men"
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
-        RenderText {#text} at (0,0) size 0x0
-        RenderText {#text} at (0,0) size 0x0
 caret: position 1 of child 0 {#text} of child 1 {DIV} of body

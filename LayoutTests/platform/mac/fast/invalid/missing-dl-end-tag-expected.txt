@@ -12,7 +12,5 @@ layer at (0,0) size 800x600
         RenderText {#text} at (173,0) size 475x18
           text run at (173,0) width 475: " Minor refactoring to HTMLParser::handleError() to remove duplicate code"
       RenderBlock {DL} at (0,34) size 784x18
-        RenderText {#text} at (0,0) size 12x18
-          text run at (0,0) width 12: "dl"
-        RenderText {#text} at (12,0) size 9x18
-          text run at (12,0) width 9: "tr"
+        RenderText {#text} at (0,0) size 21x18
+          text run at (0,0) width 21: "dltr"

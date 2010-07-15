@@ -11,7 +11,6 @@ layer at (0,0) size 800x600
             RenderBody {BODY} at (1,8) size 498x584
               RenderText {#text} at (0,0) size 374x18
                 text run at (0,0) width 374: "escape(window.frameElement.name)='left' (should be 'left')"
-              RenderText {#text} at (0,0) size 0x0
       RenderFrame {FRAME} at (501,0) size 299x600
         layer at (0,0) size 299x600
           RenderView at (0,0) size 299x600
@@ -21,4 +20,3 @@ layer at (0,0) size 800x600
               RenderText {#text} at (0,0) size 249x36
                 text run at (0,0) width 249: "escape(window.frameElement.name)=''"
                 text run at (0,18) width 81: "(should be '')"
-              RenderText {#text} at (0,0) size 0x0

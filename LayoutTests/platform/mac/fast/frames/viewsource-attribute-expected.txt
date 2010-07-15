@@ -67,5 +67,3 @@ layer at (0,0) size 800x600
                                   RenderText {#text} at (117,0) size 32x15
                                     text run at (117,0) width 32: "</p>"
         RenderText {#text} at (0,0) size 0x0
-        RenderText {#text} at (0,0) size 0x0
-        RenderText {#text} at (0,0) size 0x0

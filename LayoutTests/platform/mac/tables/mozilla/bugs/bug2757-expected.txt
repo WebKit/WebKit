@@ -20,7 +20,6 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (2,26) size 116x22 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 40x18
                 text run at (2,2) width 40: "Guilty"
-              RenderText {#text} at (0,0) size 0x0
           RenderTableRow {TR} at (0,50) size 214x22
             RenderTableCell {TD} at (2,50) size 116x22 [border: (1px inset #808080)] [r=2 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 4x18

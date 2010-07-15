@@ -50,5 +50,3 @@ layer at (0,0) size 800x600
         RenderBR {BR} at (0,0) size 0x18
         RenderText {#text} at (0,18) size 325x18
           text run at (0,18) width 325: "Tables have a thick border, cells have a thin border."
-        RenderText {#text} at (0,0) size 0x0
-        RenderText {#text} at (0,0) size 0x0

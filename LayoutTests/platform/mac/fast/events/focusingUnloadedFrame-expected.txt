@@ -18,8 +18,6 @@ layer at (0,0) size 800x600
                 RenderText {#text} at (580,18) size 37x18
                   text run at (580,18) width 37: "Crash"
               RenderText {#text} at (0,0) size 0x0
-              RenderText {#text} at (0,0) size 0x0
-              RenderText {#text} at (0,0) size 0x0
       RenderFrame {FRAME} at (0,0) size 0x0
         layer at (0,0) size 0x0
           RenderView at (0,0) size 0x0

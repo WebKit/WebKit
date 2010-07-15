@@ -16,7 +16,5 @@ layer at (0,0) size 800x350
           text run at (0,18) width 238: "You should see the video play below."
       RenderBlock (anonymous) at (0,52) size 784x274
         RenderText {#text} at (0,0) size 0x0
-        RenderText {#text} at (0,0) size 0x0
-        RenderText {#text} at (0,0) size 0x0
 layer at (8,68) size 480x270
   RenderVideo {VIDEO} at (0,0) size 480x270

@@ -41,8 +41,6 @@ layer at (0,0) size 800x600
             RenderText at (0,0) size 14x13
               text run at (0,0) width 14: "go"
         RenderText {#text} at (0,0) size 0x0
-        RenderText {#text} at (0,0) size 0x0
-        RenderText {#text} at (0,0) size 0x0
 layer at (13,147) size 24x13
   RenderBlock {DIV} at (3,3) size 24x13
     RenderText {#text} at (1,0) size 7x13

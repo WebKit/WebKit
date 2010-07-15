@@ -10,8 +10,6 @@ layer at (0,0) size 785x616
         RenderText {#text} at (262,548) size 4x18
           text run at (262,548) width 4: " "
         RenderText {#text} at (0,0) size 0x0
-        RenderText {#text} at (0,0) size 0x0
-        RenderText {#text} at (0,0) size 0x0
 layer at (8,42) size 262x562
   RenderBlock {DIV} at (0,0) size 262x562 [border: (1px solid #000000)]
 layer at (39,73) size 200x200

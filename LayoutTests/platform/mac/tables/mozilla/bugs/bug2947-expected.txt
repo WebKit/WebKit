@@ -13,7 +13,6 @@ layer at (0,0) size 785x1092
             text run at (42,18) width 66: "should not"
         RenderText {#text} at (108,18) size 131x18
           text run at (108,18) width 131: " overrun the borders."
-        RenderText {#text} at (0,0) size 0x0
       RenderBlock {DIV} at (0,52) size 610x2 [border: (1px solid #FF0000)]
       RenderTable {TABLE} at (0,70) size 608x383 [border: (1px dotted #000080)]
         RenderTableSection {TBODY} at (1,1) size 606x381
