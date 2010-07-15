@@ -332,6 +332,9 @@ class MockBuilder(object):
     def name(self):
         return self._name
 
+    def results_url(self):
+        return "http://example.com/builders/%s/results/" % self.name()
+
     def force_build(self, username, comments):
         log("MOCK: force_build: name=%s, username=%s, comments=%s" % (
             self._name, username, comments))

@@ -273,6 +273,7 @@ class FailureReason(AbstractDeclarativeCommand):
             return 1
         return self._explain_failures_for_builder(builder, start_revision=int(start_revision))
 
+
 class TreeStatus(AbstractDeclarativeCommand):
     name = "tree-status"
     help_text = "Print the status of the %s buildbots" % BuildBot.default_host

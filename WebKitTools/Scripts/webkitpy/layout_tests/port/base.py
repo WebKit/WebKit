@@ -410,6 +410,8 @@ class Port(object):
         """Relative unix-style path for a filename under the LayoutTests
         directory. Filenames outside the LayoutTests directory should raise
         an error."""
+        # FIXME This should assert() here but cannot due to printing_unittest.Testprinter
+        # assert(filename.startswith(self.layout_tests_dir()))
         return filename[len(self.layout_tests_dir()) + 1:]
 
     def results_directory(self):
