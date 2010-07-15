@@ -1,3 +1,12 @@
+2010-07-15  Andreas Kling  <andreas.kling@nokia.com>
+
+        Rubber-stamped by Kenneth Rohde Christiansen.
+
+        [Qt] Remove an unused variable in BitmapImage::draw()
+
+        * platform/graphics/qt/ImageQt.cpp:
+        (WebCore::BitmapImage::draw): Remove selfSize.
+
 2010-07-15  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.

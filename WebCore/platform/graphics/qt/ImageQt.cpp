@@ -180,8 +180,6 @@ void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& dst,
         return;
     }
 
-    IntSize selfSize = size();
-
     QPainter* painter(ctxt->platformContext());
 
     QPainter::CompositionMode compositionMode = GraphicsContext::toQtCompositionMode(op);
