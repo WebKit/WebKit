@@ -1,3 +1,18 @@
+2010-07-14  Brent Fulgham  <bfulgham@webkit.org>
+
+        Reviewed by Steve Falkenburg.
+
+        Patch for https://bugs.webkit.org/show_bug.cgi?id=42299
+        Correct WinCairo build for new WebKit2 project structure.
+
+        * win/WebKit2Apple.vsprops: Put WebKit2.def here.
+        * win/WebKit2CFLite.def: Added CFLite version of def file.
+        * win/WebKit2CFLite.vsprops: Add new WebKit2CFLite.def here.
+        * win/WebKit2Common.vsprops: Remove WebKit2.def definition as
+          WinCairo and Apple need different versions of this.
+        * win/WebKit2WebProcess.vcproj: Add a new Debug_Cairo target
+          for the WebKit2WebProcess project.
+
 2010-07-15  Mark Rowe  <mrowe@apple.com>
 
         Update the sorting in the Xcode project files.
