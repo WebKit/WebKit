@@ -26,9 +26,15 @@
 #ifndef NetscapePluginStream_h
 #define NetscapePluginStream_h
 
+#include <WebCore/npapi.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/text/CString.h>
+
+namespace WebCore {
+    class String;
+}
 
 namespace WebKit {
 
@@ -42,14 +48,33 @@ public:
     }
     ~NetscapePluginStream();
 
+    uint64_t streamID() const { return m_streamID; }
+
+    void sendJavaScriptStream(const WebCore::String& requestURLString, const WebCore::String& result);
+
 private:
     NetscapePluginStream(PassRefPtr<NetscapePlugin>, uint64_t streamID, bool sendNotification, void* notificationData);
+
+    bool start(const WebCore::String& responseURLString, uint32_t expectedContentLength, 
+               uint32_t lastModifiedTime, const WebCore::String& mimeType, const WebCore::String& headers);
+    void stop(NPReason);
 
     RefPtr<NetscapePlugin> m_plugin;
     uint64_t m_streamID;
     
     bool m_sendNotification;
     void* m_notificationData;
+
+    NPStream m_npStream;
+    uint16_t m_transferMode;
+    int32_t m_offset;
+
+    // Whether NPP_NewStream has successfully been called.
+    bool m_isStarted;
+
+    CString m_responseURL;
+    CString m_mimeType;
+    CString m_headers;
 };
 
 } // namespace WebKit

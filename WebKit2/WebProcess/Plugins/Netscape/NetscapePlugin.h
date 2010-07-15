@@ -33,6 +33,8 @@
 
 namespace WebKit {
 
+class NetscapePluginStream;
+    
 class NetscapePlugin : public Plugin {
 public:
     static PassRefPtr<NetscapePlugin> create(PassRefPtr<NetscapePluginModule> pluginModule)
@@ -52,16 +54,22 @@ public:
     const char* userAgent();
     void loadURL(const WebCore::String& urlString, const WebCore::String& target, bool sendNotification, void* notificationData);
 
+    void removePluginStream(NetscapePluginStream*);
+
     // Member functions for calling into the plug-in.
-    NPError NPP_New(NPMIMEType pluginType, uint16_t mode, int16_t argc, char* argn[], char* argv[], NPSavedData* savedData);
-    NPError NPP_Destroy(NPSavedData** savedData);
+    NPError NPP_New(NPMIMEType pluginType, uint16_t mode, int16_t argc, char* argn[], char* argv[], NPSavedData*);
+    NPError NPP_Destroy(NPSavedData**);
     NPError NPP_SetWindow(NPWindow*);
+    NPError NPP_NewStream(NPMIMEType, NPStream*, NPBool seekable, uint16_t* stype);
+    NPError NPP_DestroyStream(NPStream*, NPReason);
     void NPP_URLNotify(const char* url, NPReason reason, void* notifyData);
 
 private:
     NetscapePlugin(PassRefPtr<NetscapePluginModule> pluginModule);
 
     void callSetWindow();
+
+    NetscapePluginStream* streamFromID(uint64_t streamID);
 
     bool platformPostInitialize();
     void platformPaint(WebCore::GraphicsContext*, const WebCore::IntRect& dirtyRect);
@@ -82,6 +90,8 @@ private:
 
     typedef HashMap<uint64_t, std::pair<WebCore::String, void*> > PendingURLNotifyMap;
     PendingURLNotifyMap m_pendingURLNotifications;
+
+    HashMap<uint64_t, RefPtr<NetscapePluginStream> > m_streams;
 
     RefPtr<NetscapePluginModule> m_pluginModule;
     NPP_t m_npp;

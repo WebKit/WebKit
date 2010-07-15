@@ -25,6 +25,7 @@
 
 #include "NetscapePlugin.h"
 
+#include "NetscapePluginStream.h"
 #include "PluginController.h"
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/IntRect.h>
@@ -104,17 +105,32 @@ void NetscapePlugin::loadURL(const String& urlString, const String& target, bool
 {
     uint64_t requestID = ++m_nextRequestID;
 
-    if (!target.isNull() && sendNotification) {
+    // FIXME: Handle popups.
+    bool allowPopups = false;
+    m_pluginController->loadURL(requestID, urlString, target, allowPopups);
+    
+    if (target.isNull()) {
+        // The browser is going to send the data in a stream, create a plug-in stream.
+        RefPtr<NetscapePluginStream> pluginStream = NetscapePluginStream::create(this, requestID, sendNotification, notificationData);
+        ASSERT(!m_streams.contains(requestID));
+
+        m_streams.set(requestID, pluginStream.release());
+        return;
+    }
+
+    if (sendNotification) {
         // Eventually we are going to get a frameDidFinishLoading or frameDidFail call for this request.
         // Keep track of the notification data so we can call NPP_URLNotify.
         ASSERT(!m_pendingURLNotifications.contains(requestID));
         m_pendingURLNotifications.set(requestID, make_pair(urlString, notificationData));
     }
+}
 
-    // FIXME: Handle popups.
-    bool allowPopups = false;
-    m_pluginController->loadURL(requestID, urlString, target, allowPopups);
+void NetscapePlugin::removePluginStream(NetscapePluginStream* pluginStream)
+{
+    ASSERT(m_streams.get(pluginStream->streamID()) == pluginStream);
     
+    m_streams.remove(pluginStream->streamID());
 }
 
 NPError NetscapePlugin::NPP_New(NPMIMEType pluginType, uint16_t mode, int16_t argc, char* argn[], char* argv[], NPSavedData* savedData)
@@ -130,6 +146,16 @@ NPError NetscapePlugin::NPP_Destroy(NPSavedData** savedData)
 NPError NetscapePlugin::NPP_SetWindow(NPWindow* npWindow)
 {
     return m_pluginModule->pluginFuncs().setwindow(&m_npp, npWindow);
+}
+
+NPError NetscapePlugin::NPP_NewStream(NPMIMEType mimeType, NPStream* stream, NPBool seekable, uint16_t* streamType)
+{
+    return m_pluginModule->pluginFuncs().newstream(&m_npp, mimeType, stream, seekable, streamType);
+}
+
+NPError NetscapePlugin::NPP_DestroyStream(NPStream* stream, NPReason reason)
+{
+    return m_pluginModule->pluginFuncs().destroystream(&m_npp, stream, reason);
 }
 
 void NetscapePlugin::NPP_URLNotify(const char* url, NPReason reason, void* notifyData)
@@ -149,6 +175,11 @@ void NetscapePlugin::callSetWindow()
     m_npWindow.clipRect.right = m_clipRect.right();
 
     NPP_SetWindow(&m_npWindow);
+}
+
+NetscapePluginStream* NetscapePlugin::streamFromID(uint64_t streamID)
+{
+    return m_streams.get(streamID).get();
 }
 
 bool NetscapePlugin::initialize(PluginController* pluginController, const Parameters& parameters)
@@ -263,7 +294,8 @@ void NetscapePlugin::frameDidFail(uint64_t requestID, bool wasCancelled)
 
 void NetscapePlugin::didEvaluateJavaScript(uint64_t requestID, const String& requestURLString, const String& result)
 {
-    // FIXME: Implement.
+    if (NetscapePluginStream* pluginStream = streamFromID(requestID))
+        pluginStream->sendJavaScriptStream(requestURLString, result);
 }
 
 PluginController* NetscapePlugin::controller()
