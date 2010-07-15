@@ -1,3 +1,13 @@
+2010-07-15  Stephanie Lewis  <slewis@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        http://bugs.webkit.org/show_bug.cgi?id=42406
+        Make SunSpider work better with roots.
+
+        * Scripts/sunspider-compare-results: fix argument bug
+        * Scripts/webkitdirs.pm: look inside JavaScriptCore if jsc isn't top-level.
+
 2010-07-15  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Sam Weinig.

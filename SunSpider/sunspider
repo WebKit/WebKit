@@ -229,6 +229,8 @@ dumpToFile(File::Spec->rel2abs($resultsFile), "$resultDirectory/baseline-filenam
 
 system("$jsShellPath", "-f", $prefixFile, "-f", $resultsFile, "-f", "resources/sunspider-analyze-results.js");
 
+print("\nResults are located at $resultsFile\n");
+
 if ($runShark) {
     my $newestMShark = newestFile(".", qr/\.mshark$/);
     if ($newestMShark) {

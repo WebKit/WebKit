@@ -258,7 +258,8 @@ sub jscPath($)
     my ($productDir) = @_;
     my $jscName = "jsc";
     $jscName .= "_debug"  if (isCygwin() && ($configuration eq "Debug"));
-    return "$productDir/$jscName";
+    return "$productDir/$jscName" if -e "$productDir/$jscName";
+    return "$productDir/JavaScriptCore.framework/Resources/$jscName";
 }
 
 sub argumentsForConfiguration()

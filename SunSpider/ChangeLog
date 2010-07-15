@@ -1,3 +1,12 @@
+2010-07-15  Stephanie Lewis  <slewis@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        http://bugs.webkit.org/show_bug.cgi?id=42406
+        Output location of results file.
+
+        * sunspider:
+
 2010-05-17  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Mark Rowe.

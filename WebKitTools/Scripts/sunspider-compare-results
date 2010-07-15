@@ -55,7 +55,7 @@ Usage: $programName [options] FILE FILE
   --parse-only      Use the parse-only benchmark suite. Same as --suite=parse-only
 EOF
 
-GetOptions('root=s' => sub { my ($argName, $value); setConfigurationProductDir(Cwd::abs_path($value)); },
+GetOptions('root=s' => sub { my ($argName, $value) = @_; setConfigurationProductDir(Cwd::abs_path($value)); },
            'suite=s' => \$suite,
            'ubench' => \$ubench,
            'v8' => \$v8,
