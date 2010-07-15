@@ -1,3 +1,9 @@
+2010-07-14  James Robinson  <jamesr@chromium.org>
+
+        Unreviewed. Compile fix, initialization/declaration order mismatch.
+
+        * src/GLES2ContextInternal.h:
+
 2010-07-14  Jay Civelli  <jcivelli@chromium.org>
 
         Reviewed by David Levin.
