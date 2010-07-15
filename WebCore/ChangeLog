@@ -1,3 +1,14 @@
+2010-07-15  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Start loading plug-in streams
+        https://bugs.webkit.org/show_bug.cgi?id=42407
+
+        Export some ResourceRequestBase getters.
+
+        * WebCore.exp.in:
+
 2010-07-15  Kenneth Russell  <kbr@google.com>
 
         Reviewed by Nate Chapin.

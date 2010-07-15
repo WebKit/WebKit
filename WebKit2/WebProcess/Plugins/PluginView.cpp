@@ -26,12 +26,14 @@
 #include "PluginView.h"
 
 #include "Plugin.h"
+#include <WebCore/DocumentLoader.h>
 #include <WebCore/FrameLoadRequest.h>
 #include <WebCore/FrameLoaderClient.h>
 #include <WebCore/FrameView.h>
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/HTMLPlugInElement.h>
 #include <WebCore/HostWindow.h>
+#include <WebCore/NetscapePlugInStreamLoader.h>
 #include <WebCore/RenderLayer.h>
 #include <WebCore/ScrollView.h>
 
@@ -64,7 +66,7 @@ private:
     bool m_allowPopups;
 };
 
-class PluginView::Stream : public RefCounted<PluginView::Stream> {
+class PluginView::Stream : public RefCounted<PluginView::Stream>, NetscapePlugInStreamLoaderClient {
 public:
     static PassRefPtr<Stream> create(PluginView* pluginView, uint64_t streamID, const ResourceRequest& request)
     {
@@ -83,16 +85,90 @@ private:
     {
     }
 
+    // NetscapePluginStreamLoaderClient
+    virtual void didReceiveResponse(NetscapePlugInStreamLoader*, const ResourceResponse&);
+    virtual void didReceiveData(NetscapePlugInStreamLoader*, const char*, int);
+    virtual void didFail(NetscapePlugInStreamLoader*, const ResourceError&);
+    virtual void didFinishLoading(NetscapePlugInStreamLoader*);
+
     RefPtr<PluginView> m_pluginView;
     uint64_t m_streamID;
     const ResourceRequest m_request;
+    
+    RefPtr<NetscapePlugInStreamLoader> m_loader;
 };
 
 void PluginView::Stream::start()
 {
+    ASSERT(!m_loader);
+
+    Frame* frame = m_pluginView->m_pluginElement->document()->frame();
+    ASSERT(frame);
+
+    m_loader = NetscapePlugInStreamLoader::create(frame, this);
+    m_loader->setShouldBufferData(false);
+    
+    m_loader->documentLoader()->addPlugInStreamLoader(m_loader.get());
+    m_loader->load(m_request);
+}
+
+void PluginView::Stream::didReceiveResponse(NetscapePlugInStreamLoader*, const ResourceResponse& response)
+{
+    // Compute the stream related data from the resource response.
+    const KURL& responseURL = response.url();
+    const String& mimeType = response.mimeType();
+    unsigned long long expectedContentLength = response.expectedContentLength();
+    
+    String headers;
+    if (response.isHTTP()) {
+        Vector<UChar> stringBuilder;
+        String separator(": ");
+
+        String statusLine = String::format("HTTP %d ", response.httpStatusCode());
+        stringBuilder.append(statusLine.characters(), statusLine.length());
+        stringBuilder.append(response.httpStatusText().characters(), response.httpStatusText().length());
+        stringBuilder.append('\n');
+
+        HTTPHeaderMap::const_iterator end = response.httpHeaderFields().end();
+        for (HTTPHeaderMap::const_iterator it = response.httpHeaderFields().begin(); it != end; ++it) {
+            stringBuilder.append(it->first.characters(), it->first.length());
+            stringBuilder.append(separator.characters(), separator.length());
+            stringBuilder.append(it->second.characters(), it->second.length());
+            stringBuilder.append('\n');
+        }
+
+        headers = String::adopt(stringBuilder);
+
+        // If the content is encoded (most likely compressed), then don't send its length to the plugin,
+        // which is only interested in the decoded length, not yet known at the moment.
+        // <rdar://problem/4470599> tracks a request for -[NSURLResponse expectedContentLength] to incorporate this logic.
+        String contentEncoding = response.httpHeaderField("Content-Encoding");
+        if (!contentEncoding.isNull() && contentEncoding != "identity")
+            expectedContentLength = -1;
+    }
+
+    uint32_t streamLength = 0;
+    if (expectedContentLength > 0)
+        streamLength = expectedContentLength;
+
+    m_pluginView->m_plugin->streamDidReceiveResponse(m_streamID, responseURL, streamLength, response.lastModifiedDate(), mimeType, headers);
+}
+
+void PluginView::Stream::didReceiveData(NetscapePlugInStreamLoader*, const char* bytes, int length)
+{
     // FIXME: Implement.
 }
-    
+
+void PluginView::Stream::didFail(NetscapePlugInStreamLoader*, const ResourceError& error) 
+{
+    // FIXME: Implement.
+}
+
+void PluginView::Stream::didFinishLoading(NetscapePlugInStreamLoader*)
+{
+    // FIXME: Implement.
+}
+
 PluginView::PluginView(WebCore::HTMLPlugInElement* pluginElement, PassRefPtr<Plugin> plugin, const Plugin::Parameters& parameters)
     : m_pluginElement(pluginElement)
     , m_plugin(plugin)

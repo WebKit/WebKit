@@ -325,6 +325,12 @@ void NetscapePlugin::didEvaluateJavaScript(uint64_t requestID, const String& req
         pluginStream->sendJavaScriptStream(requestURLString, result);
 }
 
+void NetscapePlugin::streamDidReceiveResponse(uint64_t streamID, const KURL& responseURL, uint32_t streamLength, 
+                                              uint32_t lastModifiedTime, const String& mimeType, const String& headers)
+{
+    // FIXME: Implement.
+}
+
 PluginController* NetscapePlugin::controller()
 {
     return m_pluginController;
