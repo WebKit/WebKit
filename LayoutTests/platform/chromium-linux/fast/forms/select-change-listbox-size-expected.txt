@@ -23,5 +23,3 @@ layer at (0,0) size 800x600
         RenderListBox {SELECT} at (2,2) size 53x103 [bgcolor=#DDDDDD] [border: (1px inset #808080)]
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
-        RenderText {#text} at (0,0) size 0x0
-        RenderText {#text} at (0,0) size 0x0

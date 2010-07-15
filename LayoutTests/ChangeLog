@@ -1,103 +1,11 @@
-2010-07-15  Daniel Bates  <dbates@rim.com>
+2010-07-15  Ojan Vafai  <ojan@chromium.org>
 
-        Reviewed by Darin Adler.
+        Unreviewed.
 
-        [Mac] Implement LayoutTestController::markerTextForListItem()
-        https://bugs.webkit.org/show_bug.cgi?id=37929
+        [chromium] Hopefully final cleanup for fallout from r63403.
 
-        Remove skipped layout tests now that we have DRT support.
-
-        * platform/mac/Skipped:
-
-2010-07-15  Kenneth Russell  <kbr@google.com>
-
-        Reviewed by Nate Chapin.
-
-        Synchronize Khronos and WebKit WebGL tests
-        https://bugs.webkit.org/show_bug.cgi?id=42185
-
-        For the WebGL tests in the Khronos repository that originated in
-        the WebKit repository, synchronized the latest versions of these
-        tests using a script which will be checked in later. Copied
-        webgl-test-utils.js from Khronos repo and added needed entry
-        points to webgl-test.js. Rebaselined tests as necessary and
-        verified the rebaselining manually.
-
-        * fast/canvas/webgl/array-buffer-crash-expected.txt:
-        * fast/canvas/webgl/array-buffer-crash.html:
-        * fast/canvas/webgl/array-unit-tests.html:
-        * fast/canvas/webgl/context-attributes-alpha-depth-stencil-antialias-expected.txt:
-        * fast/canvas/webgl/context-attributes-alpha-depth-stencil-antialias.html:
-        * fast/canvas/webgl/context-attributes-expected.txt:
-        * fast/canvas/webgl/context-attributes.html:
-        * fast/canvas/webgl/copy-tex-image-and-sub-image-2d.html:
-        * fast/canvas/webgl/draw-arrays-out-of-bounds-expected.txt:
-        * fast/canvas/webgl/draw-arrays-out-of-bounds.html:
-        * fast/canvas/webgl/draw-elements-out-of-bounds-expected.txt:
-        * fast/canvas/webgl/draw-elements-out-of-bounds.html:
-        * fast/canvas/webgl/error-reporting-expected.txt:
-        * fast/canvas/webgl/error-reporting.html:
-        * fast/canvas/webgl/get-active-test-expected.txt:
-        * fast/canvas/webgl/get-active-test.html:
-        * fast/canvas/webgl/gl-bind-attrib-location-test-expected.txt:
-        * fast/canvas/webgl/gl-bind-attrib-location-test.html:
-        * fast/canvas/webgl/gl-enable-enum-test.html:
-        * fast/canvas/webgl/gl-enum-tests-expected.txt:
-        * fast/canvas/webgl/gl-enum-tests.html:
-        * fast/canvas/webgl/gl-get-calls-expected.txt:
-        * fast/canvas/webgl/gl-get-calls.html:
-        * fast/canvas/webgl/gl-object-get-calls-expected.txt:
-        * fast/canvas/webgl/gl-object-get-calls.html:
-        * fast/canvas/webgl/gl-uniform-arrays.html:
-        * fast/canvas/webgl/gl-uniformmatrix4fv.html:
-        * fast/canvas/webgl/index-validation-copies-indices-expected.txt:
-        * fast/canvas/webgl/index-validation-copies-indices.html:
-        * fast/canvas/webgl/index-validation-crash-with-buffer-sub-data-expected.txt:
-        * fast/canvas/webgl/index-validation-crash-with-buffer-sub-data.html:
-        * fast/canvas/webgl/index-validation-expected.txt:
-        * fast/canvas/webgl/index-validation-verifies-too-many-indices-expected.txt:
-        * fast/canvas/webgl/index-validation-verifies-too-many-indices.html:
-        * fast/canvas/webgl/index-validation-with-resized-buffer-expected.txt:
-        * fast/canvas/webgl/index-validation-with-resized-buffer.html:
-        * fast/canvas/webgl/index-validation.html:
-        * fast/canvas/webgl/invalid-UTF-16.html:
-        * fast/canvas/webgl/null-object-behaviour-expected.txt:
-        * fast/canvas/webgl/null-object-behaviour.html:
-        * fast/canvas/webgl/null-uniform-location.html:
-        * fast/canvas/webgl/point-size-expected.txt:
-        * fast/canvas/webgl/point-size.html:
-        * fast/canvas/webgl/renderbuffer-initialization-expected.txt:
-        * fast/canvas/webgl/renderbuffer-initialization.html:
-        * fast/canvas/webgl/resources/webgl-test-utils.js: Added.
-        (WebGLTestUtils):
-        (WebGLTestUtils.):
-        * fast/canvas/webgl/resources/webgl-test.js:
-        (initNonKhronosFramework):
-        (nonKhronosFrameworkNotifyDone):
-        * fast/canvas/webgl/tex-image-and-sub-image-2d-with-array-buffer-view-expected.txt:
-        * fast/canvas/webgl/tex-image-and-sub-image-2d-with-array-buffer-view.html:
-        * fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-data-expected.txt:
-        * fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-data.html:
-        * fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-expected.txt:
-        * fast/canvas/webgl/tex-image-and-sub-image-2d-with-image.html:
-        * fast/canvas/webgl/tex-image-and-uniform-binding-bugs-expected.txt:
-        * fast/canvas/webgl/tex-image-and-uniform-binding-bugs.html:
-        * fast/canvas/webgl/tex-image-with-format-and-type-expected.txt:
-        * fast/canvas/webgl/tex-image-with-format-and-type.html:
-        * fast/canvas/webgl/tex-sub-image-2d-expected.txt:
-        * fast/canvas/webgl/tex-sub-image-2d.html:
-        * fast/canvas/webgl/texture-active-bind.html:
-        * fast/canvas/webgl/texture-complete.html:
-        * fast/canvas/webgl/texture-npot-expected.txt:
-        * fast/canvas/webgl/texture-npot.html:
-        * fast/canvas/webgl/texture-transparent-pixels-initialized-expected.txt:
-        * fast/canvas/webgl/texture-transparent-pixels-initialized.html:
-        * fast/canvas/webgl/triangle-expected.txt:
-        * fast/canvas/webgl/triangle.html:
-        * fast/canvas/webgl/uniform-location-expected.txt:
-        * fast/canvas/webgl/uniform-location.html:
-        * fast/canvas/webgl/viewport-unchanged-upon-resize-expected.txt:
-        * fast/canvas/webgl/viewport-unchanged-upon-resize.html:
+        * platform/chromium-linux/fast/forms/select-change-listbox-size-expected.txt:
+        * platform/chromium-win-xp/fast/forms/search-styled-expected.txt:
 
 2010-07-15  Ojan Vafai  <ojan@chromium.org>
 
