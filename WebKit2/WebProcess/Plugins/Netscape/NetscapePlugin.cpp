@@ -337,6 +337,12 @@ void NetscapePlugin::streamDidReceiveResponse(uint64_t streamID, const KURL& res
         pluginStream->didReceiveResponse(responseURL, streamLength, lastModifiedTime, mimeType, headers);
 }
 
+void NetscapePlugin::streamDidReceiveData(uint64_t streamID, const char* bytes, int length)
+{
+    if (NetscapePluginStream* pluginStream = streamFromID(streamID))
+        pluginStream->didReceiveData(bytes, length);
+}
+
 void NetscapePlugin::streamDidFail(uint64_t streamID, bool wasCancelled)
 {
     if (NetscapePluginStream* pluginStream = streamFromID(streamID))

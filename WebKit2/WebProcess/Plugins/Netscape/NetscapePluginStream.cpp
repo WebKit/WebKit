@@ -64,6 +64,14 @@ void NetscapePluginStream::didReceiveResponse(const KURL& responseURL, uint32_t 
     start(responseURL, streamLength, lastModifiedTime, mimeType, headers);
 }
 
+void NetscapePluginStream::didReceiveData(const char* bytes, int length)
+{
+    // Delivering the data could cause the plug-in stream to go away so we keep a reference to it here.
+    RefPtr<NetscapePluginStream> protect(this);
+
+    deliverData(bytes, length);
+}
+
 void NetscapePluginStream::didFail(bool wasCancelled)
 {
     // Stopping the stream could cause the plug-in stream to go away so we keep a reference to it here.

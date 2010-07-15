@@ -2,6 +2,33 @@
 
         Reviewed by Sam Weinig.
 
+        Pass URL stream data to the plug-in
+        https://bugs.webkit.org/show_bug.cgi?id=42420
+
+        * WebProcess/Plugins/DummyPlugin.cpp:
+        (WebKit::DummyPlugin::streamDidReceiveData):
+        * WebProcess/Plugins/DummyPlugin.h:
+        Add empty stub.
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::streamDidReceiveData):
+        Call NetscapePluginStream::didReceiveData.
+
+        * WebProcess/Plugins/Netscape/NetscapePluginStream.cpp:
+        (WebKit::NetscapePluginStream::didReceiveData):
+        Deliver the data to the plug-in.
+
+        * WebProcess/Plugins/Plugin.h:
+        Add pure virtual streamDidReceiveData member function.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::Stream::didReceiveData):
+        Call Plugin::streamDidReceiveData.
+
+2010-07-15  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
         Handle failed loads correctly
         https://bugs.webkit.org/show_bug.cgi?id=42418
 
