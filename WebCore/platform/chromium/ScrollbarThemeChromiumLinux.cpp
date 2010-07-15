@@ -118,10 +118,12 @@ void ScrollbarThemeChromiumLinux::paintButton(GraphicsContext* gc, Scrollbar* sc
         || (direction == PlatformThemeChromiumGtk::East || direction == PlatformThemeChromiumGtk::South) && scrollbar->currentPos() != scrollbar->maximum())
         states |= EnabledState;
 
-    if (part == scrollbar->pressedPart())
-        states |= PressedState;
-    else if (part == scrollbar->hoveredPart() && states & EnabledState)
-        states |= HoverState;
+    if (states & EnabledState) {
+        if (part == scrollbar->pressedPart())
+            states |= PressedState;
+        else if (part == scrollbar->hoveredPart())
+            states |= HoverState;
+    }
 
     PlatformThemeChromiumGtk::paintArrowButton(gc, rect, direction, states);
 }
