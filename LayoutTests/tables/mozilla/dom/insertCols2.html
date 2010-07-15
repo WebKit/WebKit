@@ -4,11 +4,10 @@
 <SCRIPT>
 
 function doIt() {
-  var table = document.getElementsByTagName("TABLE")[0];
   var refCol = document.getElementsByTagName("COL")[1];
   var col = document.createElement("COL", null);
   col.width = 200;
-  table.insertBefore(col, refCol);
+  refCol.parentNode.insertBefore(col, refCol);
 }
 </SCRIPT>  
 </HEAD>

@@ -1,3 +1,29 @@
+2010-07-15  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        deleteCol{1,2,3} and insertCols{1,2,3} will fail in HTML5 parser
+        https://bugs.webkit.org/show_bug.cgi?id=42404
+
+        The HTML5 parser adds an implied colgroup element as a parent of the
+        col element. This DOM change breaks these tests because they assume
+        the col element's parent is the table element. However, these tests
+        don't appear to be intended to test this behavior specifically.
+
+        I checked the behavior in IE8. These tests fail in IE8 in the same way
+        that they fail under the HTML5 parser (i.e., with an exception), which
+        leads me to believe that we're moving in the right direction. With this
+        patch, the DOM operations succeed in IE8 but the tests fail because the
+        layout isn't what we expect. I'm not sure whose layout is correct, but
+        that's not really my concern in this patch.
+
+        * tables/mozilla/dom/deleteCol1.html:
+        * tables/mozilla/dom/deleteCol2.html:
+        * tables/mozilla/dom/deleteCol3.html:
+        * tables/mozilla/dom/insertCols1.html:
+        * tables/mozilla/dom/insertCols2.html:
+        * tables/mozilla/dom/insertCols3.html:
+
 2010-07-15  Ojan Vafai  <ojan@chromium.org>
 
         Unreviewed.

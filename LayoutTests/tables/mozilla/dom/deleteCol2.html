@@ -4,9 +4,8 @@
 <SCRIPT>
 
 function doIt() {
-  var table = document.getElementsByTagName("TABLE")[0];
   var col = document.getElementsByTagName("COL")[1];
-  table.removeChild(col);
+  col.parentNode.removeChild(col);
 }
 </SCRIPT>  
 </HEAD>
