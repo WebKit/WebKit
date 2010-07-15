@@ -26,8 +26,10 @@
 #include "NetscapePluginStream.h"
 
 #include "NetscapePlugin.h"
+#include <utility>
 
 using namespace WebCore;
+using namespace std;
 
 namespace WebKit {
 
@@ -40,6 +42,8 @@ NetscapePluginStream::NetscapePluginStream(PassRefPtr<NetscapePlugin> plugin, ui
     , m_transferMode(NP_NORMAL)
     , m_offset(0)
     , m_isStarted(false)
+    , m_deliveryDataTimer(RunLoop::main(), this, &NetscapePluginStream::deliverDataToPlugin)
+    , m_stopStreamWhenDoneDelivering(false)
 {
 }
 
@@ -62,7 +66,8 @@ void NetscapePluginStream::sendJavaScriptStream(const String& requestURLString, 
         return;
     }
 
-    // FIXME: Send the JavaScript string as well.
+    deliverData(resultCString.data(), resultCString.length());
+    stop(NPRES_DONE);
 }
 
 bool NetscapePluginStream::start(const WebCore::String& responseURLString, uint32_t expectedContentLength, 
@@ -100,13 +105,92 @@ bool NetscapePluginStream::start(const WebCore::String& responseURLString, uint3
 
     return true;
 }
-    
+
+void NetscapePluginStream::deliverData(const char* bytes, int length)
+{
+    ASSERT(m_isStarted);
+
+    if (m_transferMode != NP_ASFILEONLY) {
+        if (!m_deliveryData)
+            m_deliveryData.set(new Vector<char>);
+
+        m_deliveryData->reserveCapacity(m_deliveryData->size() + length);
+        m_deliveryData->append(bytes, length);
+        
+        deliverDataToPlugin();
+    }
+
+    // FIXME: Deliver the data to a file as well if needed.
+}
+
+void NetscapePluginStream::deliverDataToPlugin()
+{
+    ASSERT(m_isStarted);
+
+    int32_t numBytesToDeliver = m_deliveryData->size();
+    int32_t numBytesDelivered = 0;
+
+    while (numBytesDelivered < numBytesToDeliver) {
+        int32_t numBytesPluginCanHandle = m_plugin->NPP_WriteReady(&m_npStream);
+        
+        if (numBytesPluginCanHandle <= 0) {
+            // The plug-in can't handle more data, we'll send the rest later
+            m_deliveryDataTimer.startOneShot(0);
+            break;
+        }
+
+        // Figure out how much data to send to the plug-in.
+        int32_t dataLength = min(numBytesPluginCanHandle, numBytesToDeliver - numBytesDelivered);
+        char* data = m_deliveryData->data() + numBytesDelivered;
+
+        int32_t numBytesWritten = m_plugin->NPP_Write(&m_npStream, m_offset, dataLength, data);
+        if (numBytesWritten < 0) {
+            // FIXME: Destroy the stream!
+            ASSERT_NOT_REACHED();
+        }
+
+        numBytesWritten = min(numBytesWritten, dataLength);
+        m_offset += numBytesWritten;
+        numBytesDelivered += numBytesWritten;
+    }
+
+    // We didn't write anything.
+    if (!numBytesDelivered)
+        return;
+
+    if (numBytesDelivered < numBytesToDeliver) {
+        // Remove the bytes that we actually delivered.
+        m_deliveryData->remove(0, numBytesDelivered);
+    } else {
+        m_deliveryData->clear();
+
+        if (m_stopStreamWhenDoneDelivering)
+            stop(NPRES_DONE);
+    }
+}
+
 void NetscapePluginStream::stop(NPReason reason)
 {
     if (m_isStarted) {
+        if (reason == NPRES_DONE && m_deliveryData && !m_deliveryData->isEmpty()) {
+            // There is still data left that the plug-in hasn't been able to consume yet.
+            ASSERT(m_deliveryDataTimer.isActive());
+            
+            // Set m_stopStreamWhenDoneDelivering to true so that the next time the delivery timer fires
+            // and calls deliverDataToPlugin the stream will be closed if all the remaining data was
+            // successfully delivered.
+            m_stopStreamWhenDoneDelivering = true;
+            return;
+        }
+
+        m_deliveryData = 0;
+        m_deliveryDataTimer.stop();
+
         m_plugin->NPP_DestroyStream(&m_npStream, reason);
         m_isStarted = false;
     }
+
+    ASSERT(!m_deliveryDataTimer.isActive());
 
     if (m_sendNotification)
         m_plugin->NPP_URLNotify(m_responseURL.data(), reason, m_notificationData);
@@ -115,4 +199,3 @@ void NetscapePluginStream::stop(NPReason reason)
 }
 
 } // namespace WebKit
-

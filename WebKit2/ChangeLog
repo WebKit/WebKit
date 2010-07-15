@@ -1,3 +1,40 @@
+2010-07-15  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Send JavaScript stream data to plug-ins
+        https://bugs.webkit.org/show_bug.cgi?id=42384
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::NPP_WriteReady):
+        (WebKit::NetscapePlugin::NPP_Write):
+        * WebProcess/Plugins/Netscape/NetscapePlugin.h:
+        Add NPP_ wrappers.
+        
+        * WebProcess/Plugins/Netscape/NetscapePluginStream.cpp:
+        (WebKit::NetscapePluginStream::NetscapePluginStream):
+        Initialize m_deliveryDataTimer and m_stopstreamWhenDoneDelivering.
+
+        (WebKit::NetscapePluginStream::sendJavaScriptStream):
+        Call deliverData and stop.
+
+        (WebKit::NetscapePluginStream::deliverData):
+        Add the data to m_deliveryData and call deliverDataToPlugin.
+
+        (WebKit::NetscapePluginStream::deliverDataToPlugin):
+        Deliver the data in m_deliveryData to the plug-in. Call NPP_WriteReady to see how much
+        data the plug-in can handle right now. If the plug-in returns zero or a negative value, delay the
+        delivery using the delivery data timer. Otherwise, call NPP_Write in chunks until all the data has been
+        delivered, then stop the stream if needed.
+
+        (WebKit::NetscapePluginStream::stop):
+        If the reason for stopping the stream is that it's finished and the plug-in hasn't processed all the data,
+        don't close the stream now. Instead, set m_stopStreamWhenDoneDelivering to true which will cause the stream to be
+        closed once all data has been delivered.
+
+        * WebProcess/Plugins/Netscape/NetscapePluginStream.h:
+        Add member functions and member variables.
+
 2010-07-14  Brent Fulgham  <bfulgham@webkit.org>
 
         Reviewed by Steve Falkenburg.

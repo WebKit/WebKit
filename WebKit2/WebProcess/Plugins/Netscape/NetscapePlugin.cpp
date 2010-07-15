@@ -158,6 +158,16 @@ NPError NetscapePlugin::NPP_DestroyStream(NPStream* stream, NPReason reason)
     return m_pluginModule->pluginFuncs().destroystream(&m_npp, stream, reason);
 }
 
+int32_t NetscapePlugin::NPP_WriteReady(NPStream* stream)
+{
+    return m_pluginModule->pluginFuncs().writeready(&m_npp, stream);
+}
+
+int32_t NetscapePlugin::NPP_Write(NPStream* stream, int32_t offset, int32_t len, void* buffer)
+{
+    return m_pluginModule->pluginFuncs().write(&m_npp, stream, offset, len, buffer);
+}
+
 void NetscapePlugin::NPP_URLNotify(const char* url, NPReason reason, void* notifyData)
 {
     m_pluginModule->pluginFuncs().urlnotify(&m_npp, url, reason, notifyData);
