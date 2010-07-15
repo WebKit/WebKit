@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <style type="text/css" media="screen">
+    body {
+      position: relative;
+    }
+    .container {
+      position: relative;
+      width: 200px;
+      height: 120px;
+      padding: 20px;
+      overflow-x: scroll;
+      border: 1px solid black;
+      -webkit-transform: translate(100px, 0);
+    }
+    
+    embed {
+      position: absolute;
+      top: 21px;
+      left: 121px;
+      width: 100px;
+      height: 100px;
+    }
+    
+    .far-left {
+      position: relative;
+      left: -1000px;
+      width: 2050px;
+      height: 100px;
+      background-color: green;
+    }
+    
+    p.middle {
+      position: absolute;
+      left: 50%;
+    }
+
+    .indicator {
+      position: absolute;
+      top: 21px;
+      left: 121px;
+      width: 200px;
+      height: 100px;
+      background-color: red;
+    }
+  </style>
+  <script type="text/javascript" charset="utf-8">
+    if (window.layoutTestController) {
+      layoutTestController.dumpAsText();
+      layoutTestController.waitUntilDone();
+    }
+
+    function doTest()
+    {
+      if (window.layoutTestController) {
+        document.getElementById('layers').innerText = layoutTestController.layerTreeAsText();
+        layoutTestController.notifyDone();
+      }
+    }
+
+    window.addEventListener('load', doTest, false);
+  </script>
+</head>
+
+<body>
+  
+  <!-- Go into compositing without transforms. -->
+  <embed type="application/x-webkit-test-netscape" drawingmodel="coreanimation">
+
+  <div class="indicator"></div>
+
+  <!-- Test clipping to viewport with some intermediate layers. -->
+  <!-- Green box should extend to the left edge. No red visible. "middle" should be visible -->
+  <div class="container">
+    <div class="far-left">
+      <p class="middle">middle</p>
+    </div>
+  </div>
+  <pre id="layers">Layer tree goes here in DRT</pre>
+</body>
+</html>
+

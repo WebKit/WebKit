@@ -1,3 +1,30 @@
+2010-07-15  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Avoid creating huge compositing layers for elements that project outside the viewport
+        https://bugs.webkit.org/show_bug.cgi?id=42338
+        
+        Tests for constraining the size of compositing layers to the layout bounds, or the enclosing
+        overflow ancestor.
+
+        * compositing/geometry/limit-layer-bounds-clipping-ancestor-expected.txt: Added.
+        * compositing/geometry/limit-layer-bounds-clipping-ancestor.html: Added.
+        * compositing/geometry/limit-layer-bounds-fixed-positioned-expected.txt: Added.
+        * compositing/geometry/limit-layer-bounds-fixed-positioned.html: Added.
+        * compositing/geometry/limit-layer-bounds-overflow-repaint.html: Added.
+        * compositing/geometry/limit-layer-bounds-positioned-expected.txt: Added.
+        * compositing/geometry/limit-layer-bounds-positioned-transition-expected.txt: Added.
+        * compositing/geometry/limit-layer-bounds-positioned-transition.html: Added.
+        * compositing/geometry/limit-layer-bounds-positioned.html: Added.
+        * compositing/geometry/limit-layer-bounds-transformed-expected.txt: Added.
+        * compositing/geometry/limit-layer-bounds-transformed-overflow-expected.txt: Added.
+        * compositing/geometry/limit-layer-bounds-transformed-overflow.html: Added.
+        * compositing/geometry/limit-layer-bounds-transformed.html: Added.
+        * platform/mac/compositing/geometry/limit-layer-bounds-overflow-repaint-expected.checksum: Added.
+        * platform/mac/compositing/geometry/limit-layer-bounds-overflow-repaint-expected.png: Added.
+        * platform/mac/compositing/geometry/limit-layer-bounds-overflow-repaint-expected.txt: Added.
+
 2010-07-15  Alex Nicolaou  <anicolao@chromium.org>
 
         Reviewed by Dirk Schulze.

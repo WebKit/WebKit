@@ -1,3 +1,39 @@
+2010-07-15  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Avoid creating huge compositing layers for elements that project outside the viewport
+        https://bugs.webkit.org/show_bug.cgi?id=42338
+
+        The logic that computed the bounds of compositing layers naively used the
+        union of the bounds of descendant, non-composited RenderLayers, without regard
+        to what is actually visible. This could result in huge layers for page with
+        elements are large negative offsets, or with large negative text-indent (both
+        common).
+        
+        For elements without transforms on them or in their ancestor chain, and when
+        no 3d transforms or hardware-accelerated animations are used, can clip compositing
+        layers to the size of the document, or based on CSS overflow and clip.
+
+        Tests: compositing/geometry/limit-layer-bounds-clipping-ancestor.html
+               compositing/geometry/limit-layer-bounds-fixed-positioned.html
+               compositing/geometry/limit-layer-bounds-overflow-repaint.html
+               compositing/geometry/limit-layer-bounds-positioned-transition.html
+               compositing/geometry/limit-layer-bounds-positioned.html
+               compositing/geometry/limit-layer-bounds-transformed-overflow.html
+               compositing/geometry/limit-layer-bounds-transformed.html
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::enclosingOverflowClipAncestor):  Walk up the RenderLayer tree
+        looking for an ancestor that has overflow, or to the root. Along the way, check for
+        transformed elements.
+        (WebCore::RenderLayerBacking::updateCompositedBounds):  If we're in "consult
+        overlap" mode, and we don't have transforms, then constrain the bounds
+        of composited layers by the RenderView's layoutOverflowRect(), or by the
+        enclosing layer with overflow.
+        (WebCore::RenderLayerBacking::updateGraphicsLayerGeometry): If the offset from the renderer changes,
+        we need to repaint the layer.
+
 2010-07-15  Alex Nicolaou  <anicolao@chromium.org>
 
         Reviewed by Dirk Schulze.

@@ -64,6 +64,7 @@ using namespace HTMLNames;
 static bool hasBorderOutlineOrShadow(const RenderStyle*);
 static bool hasBoxDecorationsOrBackground(const RenderObject*);
 static bool hasBoxDecorationsOrBackgroundImage(const RenderStyle*);
+static IntRect clipBox(RenderBox* renderer);
 
 static inline bool is3DCanvas(RenderObject* renderer)
 {
@@ -139,10 +140,60 @@ static bool hasNonZeroTransformOrigin(const RenderObject* renderer)
         || (style->transformOriginY().type() == Fixed && style->transformOriginY().value());
 }
 
+static RenderLayer* enclosingOverflowClipAncestor(RenderLayer* layer, bool& crossesTransform)
+{
+    crossesTransform = false;
+
+    for (RenderLayer* curr = layer->parent(); curr; curr = curr->parent()) {
+        if (curr->renderer()->hasOverflowClip())
+            return curr;
+
+        if (curr->hasTransform())
+            crossesTransform = true;
+    }
+    
+    return 0;
+}
+
 void RenderLayerBacking::updateCompositedBounds()
 {
     IntRect layerBounds = compositor()->calculateCompositedBounds(m_owningLayer, m_owningLayer);
 
+    // Clip to the size of the document or enclosing overflow-scroll layer.
+    if (compositor()->compositingConsultsOverlap() && !m_owningLayer->hasTransform()) {
+        bool crossesTransform;
+        RenderLayer* overflowAncestor = enclosingOverflowClipAncestor(m_owningLayer, crossesTransform);
+        // If an ancestor is transformed, we can't currently compute the correct rect to intersect with.
+        // We'd need RenderObject::convertContainerToLocalQuad(), which doesn't yet exist.
+        if (!crossesTransform) {
+            IntRect clippingBounds;
+            RenderLayer* boundsRelativeLayer;
+
+            if (overflowAncestor) {
+                RenderBox* overflowBox = toRenderBox(overflowAncestor->renderer());
+                // If scrollbars are visible, then constrain the layer to the scrollable area, so we can avoid redraws
+                // on scrolling. Otherwise just clip to the visible area (it can still be scrolled via JS, but we'll come
+                // back through this code when the scroll offset changes).
+                if (overflowBox->scrollsOverflow())
+                    clippingBounds = IntRect(-overflowAncestor->scrollXOffset(), -overflowAncestor->scrollYOffset(), overflowBox->scrollWidth(), overflowBox->scrollHeight());
+                else
+                    clippingBounds = clipBox(overflowBox);
+
+                boundsRelativeLayer = overflowAncestor;
+            } else {
+                RenderView* view = m_owningLayer->renderer()->view();
+                clippingBounds = view->layoutOverflowRect();
+                boundsRelativeLayer = view->layer();
+            }
+            
+            int deltaX = 0;
+            int deltaY = 0;
+            m_owningLayer->convertToLayerCoords(boundsRelativeLayer, deltaX, deltaY);
+            clippingBounds.move(-deltaX, -deltaY);
+            layerBounds.intersect(clippingBounds);
+        }
+    }
+    
     // If the element has a transform-origin that has fixed lengths, and the renderer has zero size,
     // then we need to ensure that the compositing layer has non-zero size so that we can apply
     // the transform-origin via the GraphicsLayer anchorPoint (which is expressed as a fractional value).
@@ -308,7 +359,12 @@ void RenderLayerBacking::updateGraphicsLayerGeometry()
     }
 
     m_graphicsLayer->setPosition(FloatPoint() + (relativeCompositingBounds.location() - graphicsLayerParentLocation));
+    
+    IntSize oldOffsetFromRenderer = m_graphicsLayer->offsetFromRenderer();
     m_graphicsLayer->setOffsetFromRenderer(localCompositingBounds.location() - IntPoint());
+    // If the compositing layer offset changes, we need to repaint.
+    if (oldOffsetFromRenderer != m_graphicsLayer->offsetFromRenderer())
+        m_graphicsLayer->setNeedsDisplay();
     
     FloatSize oldSize = m_graphicsLayer->size();
     FloatSize newSize = relativeCompositingBounds.size();
