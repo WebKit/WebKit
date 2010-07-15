@@ -99,7 +99,7 @@
                 'src',
             ],
             'defines': [
-                'WEBKIT_IMPLEMENTATION=1',
+                'WEBKIT_IMPLEMENTATION',
             ],
             'sources': [
                 'public/gtk/WebInputEventFactory.h',
@@ -486,10 +486,10 @@
                         ['component=="shared_library"', {
                             'defines': [
                                 'WEBKIT_DLL',
+                                'USING_V8_SHARED',
                             ],
                             'dependencies': [
                                 '../../WebCore/WebCore.gyp/WebCore.gyp:webcore_bindings',
-                                '<(chromium_src_dir)/build/temp_gyp/googleurl.gyp:googleurl',
                                 '<(chromium_src_dir)/gpu/gpu.gyp:gles2_c_lib',
                                 '<(chromium_src_dir)/third_party/icu/icu.gyp:*',
                                 '<(chromium_src_dir)/third_party/libjpeg/libjpeg.gyp:libjpeg',
@@ -500,15 +500,6 @@
                                 '<(chromium_src_dir)/third_party/nss/nss.gyp:*',
                                 '<(chromium_src_dir)/third_party/ots/ots.gyp:ots',
                                 '<(chromium_src_dir)/third_party/zlib/zlib.gyp:zlib',
-                                '<(chromium_src_dir)/v8/tools/gyp/v8.gyp:v8',
-                            ],
-                            'direct_dependent_settings': {
-                                'defines': [
-                                    'WEBKIT_DLL',
-                                ],
-                            },
-                            'export_dependent_settings': [
-                                '<(chromium_src_dir)/build/temp_gyp/googleurl.gyp:googleurl',
                                 '<(chromium_src_dir)/v8/tools/gyp/v8.gyp:v8',
                             ],
                         }],

@@ -66,7 +66,7 @@
 // Exported symbols need to be annotated with WEBKIT_API
 
 #if defined(WIN32) && defined(WEBKIT_DLL)
-    #if WEBKIT_IMPLEMENTATION
+    #if defined(WEBKIT_IMPLEMENTATION)
         #define WEBKIT_API __declspec(dllexport)
     #else
         #define WEBKIT_API __declspec(dllimport)

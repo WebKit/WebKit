@@ -1,3 +1,15 @@
+2010-07-14  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r63389.
+        http://trac.webkit.org/changeset/63389
+        https://bugs.webkit.org/show_bug.cgi?id=42311
+
+        It broke the Chromium Linux build. (Requested by dave_levin on
+        #webkit).
+
+        * platform/KURLGoogle.cpp:
+        (WebCore::decodeURLEscapeSequences):
+
 2010-07-13  Mirko Damiani  <mirko@develer.com>
 
         Reviewed by Simon Hausmann.
