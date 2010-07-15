@@ -1,3 +1,27 @@
+2010-07-15  Zoltan Herczeg  <zherczeg@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Refactoring some parts of the lexer
+        https://bugs.webkit.org/show_bug.cgi?id=41845
+
+        This patch is a precursor of refactoring the identifier
+        parsing, which currently slows down the lexer, and not
+        ready for landing. This patch contains those sources,
+        which does not slow down the lexer (mainly style changes).
+
+        SunSpider: no change (529.4ms to 528.7ms)
+        --parse-only: no change (31.0ms to 31.2ms)
+
+        * parser/Lexer.cpp:
+        (JSC::isIdentStart): using typesOfASCIICharacters to determine
+             whether the current character is in identifier start
+        (JSC::isIdentPart): using typesOfASCIICharacters to determine
+             whether the current character is in identifier part
+        (JSC::Lexer::parseString): style fix
+        (JSC::Lexer::lex): removing the else after the main which
+             which reduces code duplication
+
 2010-07-15  Mark Rowe  <mrowe@apple.com>
 
         Update the sorting in the Xcode project files.
