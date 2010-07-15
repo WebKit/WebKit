@@ -1050,11 +1050,11 @@ void GraphicsLayerCA::updateSublayerList()
 
 void GraphicsLayerCA::updateLayerPosition()
 {
-    // FIXME: if constrained the size, the position will be wrong. Fixing this is not trivial.
+    FloatSize usedSize = m_usingTiledLayer ? constrainedSize() : m_size;
 
     // Position is offset on the layer by the layer anchor point.
-    CGPoint posPoint = CGPointMake(m_position.x() + m_anchorPoint.x() * m_size.width(),
-                                   m_position.y() + m_anchorPoint.y() * m_size.height());
+    CGPoint posPoint = CGPointMake(m_position.x() + m_anchorPoint.x() * usedSize.width(),
+                                   m_position.y() + m_anchorPoint.y() * usedSize.height());
     
     [primaryLayer() setPosition:posPoint];
 
