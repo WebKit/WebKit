@@ -1,3 +1,25 @@
+2010-07-15  Ojan Vafai  <ojan@chromium.org>
+
+        Unreviewed.
+
+        Assorted changes to chromiums test expectations. New results are all clearly correct.
+        
+        svg/custom/recursive-clippath.svg started failing at r63420
+        fast/repaint/renderer-destruction-by-invalidateSelection-crash.html started failing at r63403
+        svg/custom/recursive-gradient.svg started failing at r63416
+        svg/custom/recursive-pattern.svg started failing at r63415
+
+        * platform/chromium-linux/svg/custom/recursive-gradient-expected.checksum:
+        * platform/chromium-linux/svg/custom/recursive-pattern-expected.checksum:
+        * platform/chromium-win/fast/repaint/renderer-destruction-by-invalidateSelection-crash-expected.txt:
+        * platform/chromium-win/svg/custom/recursive-clippath-expected.checksum: Removed.
+        * platform/chromium-win/svg/custom/recursive-clippath-expected.png:
+        * platform/chromium-win/svg/custom/recursive-gradient-expected.checksum:
+        * platform/chromium-win/svg/custom/recursive-gradient-expected.png:
+        * platform/chromium-win/svg/custom/recursive-pattern-expected.checksum:
+        * platform/chromium-win/svg/custom/recursive-pattern-expected.png:
+        * platform/chromium/test_expectations.txt:
+
 2010-07-15  Kenneth Russell  <kbr@google.com>
 
         Reviewed by Nate Chapin.

@@ -3111,3 +3111,10 @@ BUGWK42371 : ietestcenter/Javascript/15.2.3.4-4-2.html = FAIL
 BUGWK42371 : ietestcenter/Javascript/15.2.3.8-0-1.html = FAIL
 BUGWK42371 : ietestcenter/Javascript/15.2.3.8-0-2.html = FAIL
 BUGWK42371 : ietestcenter/Javascript/15.2.3.8-1.html = FAIL
+
+BUGWK42403 LINUX WIN : svg/W3C-SVG-1.1/masking-intro-01-f.svg = IMAGE
+BUGWK42403 LINUX WIN : svg/css/circle-in-mask-with-shadow.svg = IMAGE
+BUGWK42403 LINUX WIN : svg/custom/grayscale-gradient-mask.svg = IMAGE
+BUGWK42403 MAC WIN : svg/custom/mask-colorspace.svg = IMAGE
+
+BUGWK42402 LINUX WIN : svg/custom/svg-fonts-without-missing-glyph.xhtml = IMAGE+TEXT
