@@ -203,13 +203,13 @@ static void _didBecomeResponsive(WKPageRef page, const void *clientInfo)
 
 #pragma mark Policy Client Callbacks
 
-static void _decidePolicyForNavigationAction(WKPageRef page, uint32_t navigationType, WKURLRef url, WKFrameRef frame, WKFramePolicyListenerRef listener, const void *clientInfo)
+static void _decidePolicyForNavigationAction(WKPageRef page, WKFrameNavigationType navigationType, WKURLRef url, WKFrameRef frame, WKFramePolicyListenerRef listener, const void *clientInfo)
 {
     LOG(@"decidePolicyForNavigationAction");
     WKFramePolicyListenerUse(listener);
 }
 
-static void _decidePolicyForNewWindowAction(WKPageRef page, uint32_t navigationType, WKURLRef url, WKFrameRef frame, WKFramePolicyListenerRef listener, const void *clientInfo)
+static void _decidePolicyForNewWindowAction(WKPageRef page, WKFrameNavigationType navigationType, WKURLRef url, WKFrameRef frame, WKFramePolicyListenerRef listener, const void *clientInfo)
 {
     LOG(@"decidePolicyForNewWindowAction");
     WKFramePolicyListenerUse(listener);
