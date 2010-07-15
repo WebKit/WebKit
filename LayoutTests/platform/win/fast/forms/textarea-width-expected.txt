@@ -10,8 +10,6 @@ layer at (0,0) size 800x600
       RenderBlock (anonymous) at (0,36) size 784x264
         RenderBR {BR} at (0,0) size 0x18
         RenderText {#text} at (0,0) size 0x0
-        RenderText {#text} at (0,0) size 0x0
-        RenderText {#text} at (0,0) size 0x0
 layer at (8,62) size 549x246 clip at (9,63) size 547x244
   RenderTextControl {TEXTAREA} at (0,18) size 549x246 [color=#333333] [bgcolor=#FFFFFF] [border: (1px solid #333333)]
     RenderBlock {DIV} at (3,3) size 543x36

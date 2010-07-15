@@ -1,3 +1,25 @@
+2010-07-15  Adam Barth  <abarth@webkit.org>
+
+        Update some more baselines for Eric's text node coalescing patch.  I
+        think these bots were behind and he didn't see the results before he
+        went to sleep.
+
+        * platform/win/editing/selection/drag-text-delay-expected.txt:
+        * platform/win/fast/css/resize-corner-tracking-expected.txt:
+        * platform/win/fast/dom/HTMLTextAreaElement/reset-textarea-expected.txt:
+        * platform/win/fast/forms/basic-textareas-expected.txt:
+        * platform/win/fast/forms/search-display-none-cancel-button-expected.txt:
+        * platform/win/fast/forms/textarea-placeholder-set-value-expected.txt:
+        * platform/win/fast/forms/textarea-scrollbar-expected.txt:
+        * platform/win/fast/forms/textarea-width-expected.txt:
+        * platform/win/fast/images/favicon-as-image-expected.txt:
+        * platform/win/fast/layers/video-layer-expected.txt:
+        * platform/win/fast/parser/entity-comment-in-textarea-expected.txt:
+        * platform/win/fast/parser/open-comment-in-textarea-expected.txt:
+        * platform/win/fast/ruby/ruby-empty-rt-expected.txt:
+        * platform/win/fast/ruby/ruby-length-expected.txt:
+        * platform/win/media/video-display-toggle-expected.txt:
+
 2010-07-15  Darin Adler  <darin@apple.com>
 
         More fixes for the text node coalescing.

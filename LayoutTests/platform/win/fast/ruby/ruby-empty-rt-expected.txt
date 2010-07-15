@@ -26,5 +26,3 @@ layer at (0,0) size 800x600
                 text run at (0,0) width 15: "text"
         RenderText {#text} at (124,13) size 163x18
           text run at (124,13) width 163: " to contain the annotation."
-        RenderText {#text} at (0,0) size 0x0
-        RenderText {#text} at (0,0) size 0x0

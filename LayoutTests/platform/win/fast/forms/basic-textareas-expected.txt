@@ -1343,5 +1343,3 @@ layer at (0,0) size 785x1438
                 text run at (0,13) width 183: "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
                 text run at (0,26) width 130: "abcdefghijklmnopqrstuv"
       RenderText {#text} at (0,0) size 0x0
-      RenderText {#text} at (0,0) size 0x0
-      RenderText {#text} at (0,0) size 0x0
