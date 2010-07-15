@@ -181,3 +181,18 @@
 |         <tr>
 |           <td>
 |             "2"
+
+#data
+<table>A<td>B</td>C</table>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     "A"
+|     "C"
+|     <table>
+|       <tbody>
+|         <tr>
+|           <td>
+|             "B"
