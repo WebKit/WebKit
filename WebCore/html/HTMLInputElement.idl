@@ -40,6 +40,9 @@ module html {
         attribute long maxLength setter raises(DOMException);
         attribute [Reflect] DOMString min;
         attribute [Reflect] boolean multiple;
+#if defined(ENABLE_DIRECTORY_UPLOAD) && ENABLE_DIRECTORY_UPLOAD
+        attribute [Reflect] boolean webkitdirectory;
+#endif
         attribute [Reflect] DOMString name;
         attribute [Reflect] DOMString pattern;
         attribute [Reflect] DOMString placeholder;

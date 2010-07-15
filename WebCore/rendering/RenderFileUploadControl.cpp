@@ -94,9 +94,22 @@ void RenderFileUploadControl::valueChanged()
 
 bool RenderFileUploadControl::allowsMultipleFiles()
 {
+#if ENABLE(DIRECTORY_UPLOAD)
+    if (allowsDirectoryUpload())
+      return true;
+#endif
+
     HTMLInputElement* input = static_cast<HTMLInputElement*>(node());
     return !input->getAttribute(multipleAttr).isNull();
 }
+
+#if ENABLE(DIRECTORY_UPLOAD)
+bool RenderFileUploadControl::allowsDirectoryUpload()
+{
+    HTMLInputElement* input = static_cast<HTMLInputElement*>(node());
+    return !input->getAttribute(webkitdirectoryAttr).isNull();
+}
+#endif
 
 String RenderFileUploadControl::acceptTypes()
 {

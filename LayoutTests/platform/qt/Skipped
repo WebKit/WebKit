@@ -5460,3 +5460,6 @@ fast/dom/beforeload/remove-video-in-beforeload-listener.html
 inspector/timeline-layout.html
 inspector/timeline-parse-html.html
 inspector/timeline-recalculate-styles.html
+
+# Directory upload is not enabled.
+fast/forms/input-file-directory-upload.html

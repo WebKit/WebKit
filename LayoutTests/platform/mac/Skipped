@@ -288,3 +288,5 @@ fast/forms/input-appearance-speechbutton.html
 # Needs to be fixed at image decoder layer for Safari.
 fast/images/large-size-image-crash.html
 
+# Directory upload is not enabled.
+fast/forms/input-file-directory-upload.html

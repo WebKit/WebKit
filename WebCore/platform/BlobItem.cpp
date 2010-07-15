@@ -78,6 +78,20 @@ FileBlobItem::FileBlobItem(const String& path)
 {
 }
 
+#if ENABLE(DIRECTORY_UPLOAD)
+PassRefPtr<BlobItem> FileBlobItem::create(const String& path, const String& relativePath)
+{
+    return adoptRef(static_cast<BlobItem*>(new FileBlobItem(path, relativePath)));
+}
+
+FileBlobItem::FileBlobItem(const String& path, const String& relativePath)
+    : m_path(path)
+    , m_fileName(pathGetFileName(m_path))
+    , m_relativePath(relativePath)
+{
+}
+#endif
+
 unsigned long long FileBlobItem::size() const
 {
     // FIXME: synchronized file call

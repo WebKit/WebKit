@@ -40,6 +40,7 @@
 #include "ExceptionCode.h"
 #include "File.h"
 #include "FileList.h"
+#include "FileSystem.h"
 #include "FocusController.h"
 #include "FormDataList.h"
 #include "Frame.h"
@@ -1967,8 +1968,30 @@ void HTMLInputElement::setFileListFromRenderer(const Vector<String>& paths)
 {
     m_fileList->clear();
     int size = paths.size();
+
+#if ENABLE(DIRECTORY_UPLOAD)
+    // If a directory is being selected, the UI allows a directory to be chosen
+    // and the paths provided here share a root directory somewhere up the tree;
+    // we want to store only the relative paths from that point.
+    if (webkitdirectory() && size > 0) {
+        String rootPath = directoryName(paths[0]);
+        // Find the common root path.
+        for (int i = 1; i < size; i++) {
+            while (!paths[i].startsWith(rootPath))
+                rootPath = directoryName(rootPath);
+        }
+        rootPath = directoryName(rootPath);
+        ASSERT(rootPath.length());
+        for (int i = 0; i < size; i++)
+            m_fileList->append(File::create(paths[i].substring(1 + rootPath.length()), paths[i]));
+    } else {
+        for (int i = 0; i < size; i++)
+            m_fileList->append(File::create(paths[i]));
+    }
+#else
     for (int i = 0; i < size; i++)
         m_fileList->append(File::create(paths[i]));
+#endif
 
     setFormControlValueMatchesRenderer(true);
     InputElement::notifyFormStateChanged(this);
@@ -2447,6 +2470,13 @@ bool HTMLInputElement::multiple() const
 {
     return !getAttribute(multipleAttr).isNull();
 }
+
+#if ENABLE(DIRECTORY_UPLOAD)
+bool HTMLInputElement::webkitdirectory() const
+{
+    return !getAttribute(webkitdirectoryAttr).isNull();
+}
+#endif
 
 void HTMLInputElement::setSize(unsigned size)
 {

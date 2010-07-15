@@ -62,6 +62,9 @@ private:
     void valueChanged();
     void repaint() { RenderBlock::repaint(); }
     bool allowsMultipleFiles();
+#if ENABLE(DIRECTORY_UPLOAD)
+    bool allowsDirectoryUpload();
+#endif
     String acceptTypes();
     void chooseIconForFiles(FileChooser*, const Vector<String>&);
 

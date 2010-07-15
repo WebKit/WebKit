@@ -1,0 +1,19 @@
+
+PASS: name is file1; path is dirupload/path1/file1
+PASS: name is file2; path is dirupload/path1/file2
+PASS: name is file1; path is dirupload/path1/subpath1/file1
+PASS: name is file1; path is dirupload/path2/file1
+PASS: name is file1; path is dirupload/path2/subpath1/subpath2/file1
+PASS: name is file2; path is dirupload/path2/file2
+PASS: name is file1; path is dirupload/path3/file1
+PASS: name is file1; path is dirupload/file1
+
+PASS: name is file1; path is path1/file1
+PASS: name is file2; path is path1/file2
+
+PASS: name is file1; path is dirupload/path1/file1
+PASS: name is file1; path is dirupload/path2/file1
+
+PASS: name is file1; path is path1/file1
+PASS: name is file1; path is path1/subpath1/file1
+

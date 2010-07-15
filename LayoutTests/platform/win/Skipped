@@ -953,3 +953,6 @@ userscripts/user-script-all-frames.html
 userscripts/user-script-top-frame-only.html
 userscripts/user-style-all-frames.html
 userscripts/user-style-top-frame-only.html
+
+# Directory upload is not enabled.
+fast/forms/input-file-directory-upload.html

@@ -1,3 +1,17 @@
+2010-07-07  John Gregg  <johnnyg@google.com>
+
+        Reviewed by Jian Li.
+
+        Layout test for experimental directory upload feature.  Only enabled on chromium since that's where the feature is compiled in.
+        https://bugs.webkit.org/show_bug.cgi?id=40872
+
+        * fast/forms/input-file-directory-upload-expected.txt: Added.
+        * fast/forms/input-file-directory-upload.html: Added.
+        * platform/gtk/Skipped:
+        * platform/mac/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+
 2010-07-15  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.

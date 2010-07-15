@@ -39,9 +39,20 @@ public:
         return adoptRef(new File(path));
     }
 
+#if ENABLE(DIRECTORY_UPLOAD)
+    static PassRefPtr<File> create(const String& relativePath, const String& path)
+    {
+        return adoptRef(new File(relativePath, path));
+    }
+#endif
+
     virtual bool isFile() const { return true; }
 
     const String& name() const;
+#if ENABLE(DIRECTORY_UPLOAD)
+    // Returns the relative path of this file in the context of a directory selection.
+    const String& webkitRelativePath() const;
+#endif
 
     // FIXME: obsolete attributes. To be removed.
     const String& fileName() const { return name(); }
@@ -49,6 +60,11 @@ public:
 
 private:
     File(const String& path);
+    void Init();
+
+#if ENABLE(DIRECTORY_UPLOAD)
+    File(const String& relativePath, const String& path);
+#endif
 };
 
 } // namespace WebCore

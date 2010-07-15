@@ -1,3 +1,53 @@
+2010-07-07  John Gregg  <johnnyg@google.com>
+
+        Reviewed by Jian Li.
+
+        Experimental directory upload feature.
+        https://bugs.webkit.org/show_bug.cgi?id=40872
+
+        This patch adds a new HTML attribute webkitdirectory which applies to 
+        <input type="file"> tags and allows the user to specify a folder
+        which is recursively enumerated so that all the files in that folder
+        are added to the file list.
+
+        The files chosen in that way have a .webkitRelativePath attribute which contains
+        the relative path starting from the chosen folder.  The relative path is
+        also appended to each item in the FormData when uploaded.
+
+        All the code is behind an ENABLE_DIRECTORY_UPLOAD flag.
+
+        Test: fast/forms/input-file-directory-upload.html
+
+        * html/Blob.cpp:
+        (WebCore::Blob::Blob):
+        * html/Blob.h:
+        * html/File.cpp:
+        (WebCore::File::File):
+        (WebCore::File::Init):
+        (WebCore::File::webkitRelativePath):
+        * html/File.h:
+        (WebCore::File::create):
+        * html/File.idl:
+        * html/HTMLAttributeNames.in: add webkitdirectory attribute
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::setFileListFromRenderer):
+        (WebCore::HTMLInputElement::webkitdirectory):
+        * html/HTMLInputElement.h:
+        * html/HTMLInputElement.idl:
+        * platform/BlobItem.cpp:
+        (WebCore::FileBlobItem::create):
+        (WebCore::FileBlobItem::FileBlobItem):
+        * platform/BlobItem.h:
+        (WebCore::FileBlobItem::relativePath):
+        * platform/FileChooser.h:
+        (WebCore::FileChooser::allowsDirectoryUpload):
+        * platform/network/FormData.cpp:
+        (WebCore::FormData::appendKeyValuePairItems):
+        * rendering/RenderFileUploadControl.cpp:
+        (WebCore::RenderFileUploadControl::allowsMultipleFiles):
+        (WebCore::RenderFileUploadControl::allowsDirectoryUpload):
+        * rendering/RenderFileUploadControl.h:
+
 2010-07-15  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.

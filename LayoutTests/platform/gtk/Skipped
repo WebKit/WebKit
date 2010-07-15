@@ -5858,3 +5858,6 @@ editing/selection/extend-forward-after-set-base-and-extent.html
 
 # Missing DRT API.
 http/tests/loading/preload-slow-loading.php
+
+# Directory upload is not enabled.
+fast/forms/input-file-directory-upload.html
