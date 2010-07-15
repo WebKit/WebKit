@@ -27,6 +27,7 @@
 #define WKBundlePage_h
 
 #include <JavaScriptCore/JavaScript.h>
+#include <stdint.h>
 #include <WebKit2/WKBase.h>
 #include <WebKit2/WKBundleBase.h>
 
