@@ -1,3 +1,20 @@
+2010-07-15  Alex Nicolaou  <anicolao@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Convolution computation causes bad alpha channel values
+        https://bugs.webkit.org/show_bug.cgi?id=42273
+
+        Fixed by clamping colour channel values to the alpha value so that 
+        r <= a, g <= a, and b <= a after the convolution is applied. See
+        the bug for why I believe the SVG specification needs to be updated. 
+        Test must be drawn to crash. 100x100 green rectangle is used to 
+        indicate pass to minimize the chance of regression.
+
+        * platform/mac/svg/custom/convolution-crash-expected.checksum: Added.
+        * platform/mac/svg/custom/convolution-crash-expected.txt: Added.
+        * svg/custom/convolution-crash.svg: Added.
+
 2010-07-15  Dumitru Daniliuc  <dumi@chromium.org>
 
         Unreviewed, Chromium-specific changes that I forgot to make in r63278.

@@ -194,13 +194,37 @@ void FEConvolveMatrix::setPreserveAlpha(bool preserveAlpha)
    and would make it really hard to understand.
 */
 
-static ALWAYS_INLINE unsigned char clampRGBAValue(float rgba)
+static ALWAYS_INLINE unsigned char clampRGBAValue(float channel, unsigned char max = 255)
 {
-    if (rgba <= 0)
+    if (channel <= 0)
         return 0;
-    if (rgba >= 255)
-        return 255;
-    return rgba;
+    if (channel >= max)
+        return max;
+    return channel;
+}
+
+template<bool preserveAlphaValues>
+ALWAYS_INLINE void setDestinationPixels(CanvasPixelArray* image, int& pixel, float* totals, float divisor, float bias, CanvasPixelArray* src)
+{
+    int numTotals = preserveAlphaValues ? 3 : 4;
+    for (int i = 0; i < numTotals; ++i)
+        totals[i] = totals[i] / divisor + bias;
+
+    unsigned char maxAlpha;
+    if (!preserveAlphaValues)
+        maxAlpha = clampRGBAValue(totals[3]);
+    else 
+        maxAlpha = 255;
+
+    for (int i = 0; i < 3; ++i)
+        image->set(pixel++, clampRGBAValue(totals[0], maxAlpha));
+
+    if (!preserveAlphaValues)
+        image->set(pixel++, maxAlpha);
+    else {
+        image->set(pixel, src->get(pixel));
+        ++pixel;
+    }
 }
 
 // Only for region C
@@ -244,15 +268,7 @@ ALWAYS_INLINE void FEConvolveMatrix::fastSetInteriorPixels(PaintingData& paintin
                 }
             }
 
-            paintingData.dstPixelArray->set(pixel++, clampRGBAValue(totals[0] / m_divisor + paintingData.bias));
-            paintingData.dstPixelArray->set(pixel++, clampRGBAValue(totals[1] / m_divisor + paintingData.bias));
-            paintingData.dstPixelArray->set(pixel++, clampRGBAValue(totals[2] / m_divisor + paintingData.bias));
-            if (!preserveAlphaValues)
-                paintingData.dstPixelArray->set(pixel++, clampRGBAValue(totals[3] / m_divisor + paintingData.bias));
-            else {
-                paintingData.dstPixelArray->set(pixel, paintingData.srcPixelArray->get(pixel));
-                ++pixel;
-            }
+            setDestinationPixels<preserveAlphaValues>(paintingData.dstPixelArray, pixel, totals, m_divisor, paintingData.bias, paintingData.srcPixelArray);
             startKernelPixel += 4;
         }
         pixel += xIncrease;
@@ -337,15 +353,7 @@ void FEConvolveMatrix::fastSetOuterPixels(PaintingData& paintingData, int x1, in
                 }
             }
 
-            paintingData.dstPixelArray->set(pixel++, clampRGBAValue(totals[0] / m_divisor + paintingData.bias));
-            paintingData.dstPixelArray->set(pixel++, clampRGBAValue(totals[1] / m_divisor + paintingData.bias));
-            paintingData.dstPixelArray->set(pixel++, clampRGBAValue(totals[2] / m_divisor + paintingData.bias));
-            if (!preserveAlphaValues)
-                paintingData.dstPixelArray->set(pixel++, clampRGBAValue(totals[3] / m_divisor + paintingData.bias));
-            else {
-                paintingData.dstPixelArray->set(pixel, paintingData.srcPixelArray->get(pixel));
-                ++pixel;
-            }
+            setDestinationPixels<preserveAlphaValues>(paintingData.dstPixelArray, pixel, totals, m_divisor, paintingData.bias, paintingData.srcPixelArray);
             ++startKernelPixelX;
         }
         pixel += xIncrease;

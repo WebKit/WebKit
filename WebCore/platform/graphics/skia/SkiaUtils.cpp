@@ -82,10 +82,18 @@ static U8CPU InvScaleByte(U8CPU component, uint32_t scale)
 
 SkColor SkPMColorToColor(SkPMColor pm)
 {
-    if (0 == pm)
+    if (!pm)
         return 0;
-    
     unsigned a = SkGetPackedA32(pm);
+    if (!a) {
+        // A zero alpha value when there are non-zero R, G, or B channels is an
+        // invalid premultiplied color (since all channels should have been
+        // multiplied by 0 if a=0).
+        SkASSERT(false); 
+        // In production, return 0 to protect against division by zero.
+        return 0;
+    }
+    
     uint32_t scale = (255 << 16) / a;
     
     return SkColorSetARGB(a,
