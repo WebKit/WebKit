@@ -29,6 +29,7 @@
 #import "WebDOMOperationsPrivate.h"
 
 #import "DOMDocumentInternal.h"
+#import "DOMElementInternal.h"
 #import "DOMNodeInternal.h"
 #import "DOMRangeInternal.h"
 #import "WebArchiveInternal.h"
@@ -36,15 +37,42 @@
 #import "WebFrameInternal.h"
 #import "WebFramePrivate.h"
 #import "WebKitNSStringExtras.h"
+#import <JavaScriptCore/APICast.h>
 #import <WebCore/CSSHelper.h>
 #import <WebCore/Document.h>
+#import <WebCore/JSElement.h>
 #import <WebCore/LegacyWebArchive.h>
 #import <WebCore/markup.h>
+#import <WebCore/RenderTreeAsText.h>
 #import <WebKit/DOMExtensions.h>
 #import <WebKit/DOMHTML.h>
+#import <runtime/JSLock.h>
+#import <runtime/JSValue.h>
 #import <wtf/Assertions.h>
 
 using namespace WebCore;
+using namespace JSC;
+
+@implementation DOMElement (WebDOMElementOperationsPrivate)
+
++ (DOMElement *)_DOMElementFromJSContext:(JSContextRef)context value:(JSValueRef)value
+{
+    if (!context)
+        return 0;
+
+    if (!value)
+        return 0;
+
+    JSLock lock(SilenceAssertionsOnly);
+    return kit(toElement(toJS(toJS(context), value)));
+}
+
+- (NSString *)_markerTextForListItem
+{
+    return WebCore::markerTextForListItem(core(self));
+}
+
+@end
 
 @implementation DOMNode (WebDOMNodeOperations)
 

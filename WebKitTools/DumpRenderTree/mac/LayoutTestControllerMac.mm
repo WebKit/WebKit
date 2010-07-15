@@ -46,6 +46,7 @@
 #import <WebKit/WebCoreStatistics.h>
 #import <WebKit/WebDataSource.h>
 #import <WebKit/WebDatabaseManagerPrivate.h>
+#import <WebKit/WebDOMOperationsPrivate.h>
 #import <WebKit/WebFrame.h>
 #import <WebKit/WebFrameViewPrivate.h>
 #import <WebKit/WebGeolocationPosition.h>
@@ -196,8 +197,12 @@ JSRetainPtr<JSStringRef> LayoutTestController::layerTreeAsText() const
 
 JSRetainPtr<JSStringRef> LayoutTestController::markerTextForListItem(JSContextRef context, JSValueRef nodeObject) const
 {
-    // FIXME: Implement me.
-    return JSRetainPtr<JSStringRef>();
+    DOMElement *element = [DOMElement _DOMElementFromJSContext:context value:nodeObject];
+    if (!element)
+        return JSRetainPtr<JSStringRef>();
+
+    JSRetainPtr<JSStringRef> markerText(Adopt, JSStringCreateWithCFString((CFStringRef)[element _markerTextForListItem]));
+    return markerText;
 }
 
 int LayoutTestController::pageNumberForElementById(JSStringRef id, float pageWidthInPixels, float pageHeightInPixels)

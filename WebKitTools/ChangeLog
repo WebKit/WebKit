@@ -1,3 +1,15 @@
+2010-07-15  Daniel Bates  <dbates@rim.com>
+
+        Reviewed by Darin Adler.
+
+        [Mac] Implement LayoutTestController::markerTextForListItem()
+        https://bugs.webkit.org/show_bug.cgi?id=37929
+
+        Implements DRT support for markerTextForListItem in the Mac port.
+
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm:
+        (LayoutTestController::markerTextForListItem): Implemented.
+
 2010-07-15  Adam Barth  <abarth@webkit.org>
 
         Unreviewed.

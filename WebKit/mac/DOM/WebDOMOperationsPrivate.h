@@ -27,6 +27,12 @@
  */
 
 #import <WebKit/WebDOMOperations.h>
+#import <JavaScriptCore/JSBase.h>
+
+@interface DOMElement (WebDOMElementOperationsPrivate)
++ (DOMElement *)_DOMElementFromJSContext:(JSContextRef)context value:(JSValueRef)value;
+- (NSString *)_markerTextForListItem;
+@end
 
 @interface DOMDocument (WebDOMDocumentOperationsPrivate)
 - (NSArray *)_focusableNodes;

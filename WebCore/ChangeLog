@@ -1,3 +1,14 @@
+2010-07-15  Daniel Bates  <dbates@rim.com>
+
+        Reviewed by Darin Adler.
+
+        [Mac] Implement LayoutTestController::markerTextForListItem()
+        https://bugs.webkit.org/show_bug.cgi?id=37929
+
+        Export symbols for WebCore::markerTextForListItem() and WebCore::toElement().
+
+        * WebCore.exp.in:
+
 2010-07-15  Andreas Kling  <andreas.kling@nokia.com>
 
         Rubber-stamped by Kenneth Rohde Christiansen.
