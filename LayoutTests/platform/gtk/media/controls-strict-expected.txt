@@ -1,25 +1,25 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x305
-  RenderBlock {HTML} at (0,0) size 800x305
-    RenderBody {BODY} at (8,16) size 784x281
+layer at (0,0) size 800x215
+  RenderBlock {HTML} at (0,0) size 800x215
+    RenderBody {BODY} at (8,16) size 784x191
       RenderBlock {P} at (0,0) size 784x20
         RenderText {#text} at (0,0) size 226x20
           text run at (0,0) width 226: "Drawing the controls in strict mode."
-      RenderBlock (anonymous) at (0,36) size 784x245
-        RenderText {#text} at (0,0) size 0x0
-        RenderText {#text} at (0,0) size 0x0
-        RenderText {#text} at (0,0) size 0x0
-layer at (8,52) size 320x240
-  RenderVideo {VIDEO} at (0,0) size 320x240
-layer at (8,52) size 320x240
-  RenderBlock (relative positioned) {DIV} at (0,0) size 320x240
-layer at (8,272) size 320x20
-  RenderFlexibleBox (positioned) {DIV} at (0,220) size 320x20
+      RenderBlock (anonymous) at (0,36) size 784x155
+        RenderText {#text} at (300,135) size 4x20
+          text run at (300,135) width 4: " "
+        RenderText {#text} at (304,135) size 36x20
+          text run at (304,135) width 36: "FAIL"
+layer at (8,52) size 300x150
+  RenderVideo {VIDEO} at (0,0) size 300x150
+layer at (8,52) size 300x150
+  RenderBlock (relative positioned) {DIV} at (0,0) size 300x150
+layer at (8,182) size 300x20
+  RenderFlexibleBox (positioned) {DIV} at (0,130) size 300x20
     RenderButton {INPUT} at (0,0) size 20x20
     RenderFlexibleBox {DIV} at (20,0) size 240x20 [border: (1px solid #FFFFFF33) none (1px solid #FFFFFF33)]
       RenderSlider {INPUT} at (1,0) size 238x20
         RenderBlock {DIV} at (2,4) size 12x12
     RenderButton {INPUT} at (260,0) size 20x20
     RenderButton {INPUT} at (280,0) size 20x20
-    RenderButton {INPUT} at (300,0) size 20x20

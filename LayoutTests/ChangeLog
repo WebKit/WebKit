@@ -1,3 +1,37 @@
+2010-07-14  Martin Robinson  <mrobinson@igalia.com>
+
+        Unreviewed.
+
+        Update baselines after text node coalescing changes in r63403.
+
+        * platform/gtk/editing/deleting/delete-line-013-expected.txt:
+        * platform/gtk/editing/deleting/delete-line-014-expected.txt:
+        * platform/gtk/editing/inserting/insert-3654864-fix-expected.txt:
+        * platform/gtk/editing/inserting/insert-3907422-fix-expected.txt:
+        * platform/gtk/editing/pasteboard/paste-text-010-expected.txt:
+        * platform/gtk/editing/selection/drag-in-iframe-expected.txt:
+        * platform/gtk/editing/selection/move-by-sentence-001-expected.txt:
+        * platform/gtk/fast/backgrounds/size/backgroundSize16-expected.txt:
+        * platform/gtk/fast/css/non-standard-checkbox-size-expected.txt:
+        * platform/gtk/fast/forms/placeholder-stripped-expected.txt:
+        * platform/gtk/fast/forms/slider-thumb-stylability-expected.txt:
+        * platform/gtk/fast/forms/thumbslider-crash-expected.txt:
+        * platform/gtk/fast/forms/thumbslider-no-parent-slider-expected.txt:
+        * platform/gtk/fast/images/icon-decoding-expected.txt:
+        * platform/gtk/fast/layers/remove-only-this-layer-update-expected.txt:
+        * platform/gtk/fast/multicol/layers-split-across-columns-expected.txt:
+        * platform/gtk/fast/multicol/nested-columns-expected.txt:
+        * platform/gtk/fast/multicol/span/span-as-nested-columns-child-dynamic-expected.txt:
+        * platform/gtk/fast/repaint/fixed-move-after-keyboard-scroll-expected.txt:
+        * platform/gtk/fast/repaint/layout-state-scrolloffset-expected.txt:
+        * platform/gtk/fast/repaint/layout-state-scrolloffset2-expected.txt:
+        * platform/gtk/fast/repaint/layout-state-scrolloffset3-expected.txt:
+        * platform/gtk/fast/table/fixed-table-with-percent-width-inside-extra-large-div-expected.txt:
+        * platform/gtk/media/controls-after-reload-expected.txt:
+        * platform/gtk/media/controls-strict-expected.txt:
+        * platform/gtk/media/controls-styling-expected.txt:
+        * platform/gtk/media/video-replaces-poster-expected.txt:
+
 2010-07-14  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.
