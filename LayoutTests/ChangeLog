@@ -1,3 +1,19 @@
+2010-07-15  Alex Nicolaou  <anicolao@chromium.org>
+
+        Reviewed by Dirk Schulze.
+
+        https://bugs.webkit.org/show_bug.cgi?id=42228
+        
+        SVG Masks were in the wrong colour space for non-CG graphics layers,
+        because for those cases ImageBuffer needs to be explicitly told to
+        convert the pixels. This change adds a test that demonstrates the
+        problem and the conversion call to make the mask LinearRGB.
+
+        * platform/mac/svg/custom/mask-colorspace-expected.checksum: Added.
+        * platform/mac/svg/custom/mask-colorspace-expected.png: Added.
+        * platform/mac/svg/custom/mask-colorspace-expected.txt: Added.
+        * svg/custom/mask-colorspace.svg: Added.
+
 2010-07-15  Ojan Vafai  <ojan@chromium.org>
 
         Unreviewed.
