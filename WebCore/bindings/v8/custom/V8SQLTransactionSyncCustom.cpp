@@ -41,6 +41,7 @@
 #include "V8Binding.h"
 #include "V8BindingMacros.h"
 #include "V8Proxy.h"
+#include "V8SQLResultSet.h"
 #include <wtf/Vector.h>
 
 using namespace WTF;
@@ -90,10 +91,10 @@ v8::Handle<v8::Value> V8SQLTransactionSync::executeSqlCallback(const v8::Argumen
     SQLTransactionSync* transaction = V8SQLTransactionSync::toNative(args.Holder());
 
     ExceptionCode ec = 0;
-    transaction->executeSQL(statement, sqlValues, ec);
+    v8::Handle<v8::Value> result = toV8(transaction->executeSQL(statement, sqlValues, ec));
     V8Proxy::setDOMException(ec);
 
-    return v8::Undefined();
+    return result;
 }
 
 } // namespace WebCore

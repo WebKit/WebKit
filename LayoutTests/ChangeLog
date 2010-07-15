@@ -1,3 +1,15 @@
+2010-07-15  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Unreviewed, Chromium-specific changes that I forgot to make in r63278.
+
+        Make the output of test-authorizer-sync.html shorter, so it can
+        all fit into a cookie (needed in order to be able to run it as a
+        Chromium UI test).
+
+        * fast/workers/storage/resources/test-authorizer-sync.js:
+        (executeStatement):
+        * fast/workers/storage/test-authorizer-sync-expected.txt:
+
 2010-07-15  Adam Barth  <abarth@webkit.org>
 
         Update Qt expectionat to account for implicit <colgroup>.

@@ -12,9 +12,9 @@ function executeStatement(tx, statement, operation)
 {
     try {
         tx.executeSql(statement);
-        postMessage(operation + " statement succeeded.");
+        postMessage(operation + " allowed.");
     } catch (err) {
-        postMessage(operation + " statement failed: " + err + " (" + err.code + ")");
+        postMessage(operation + " not allowed: " + err + " (" + err.code + ")");
     }
 }
 

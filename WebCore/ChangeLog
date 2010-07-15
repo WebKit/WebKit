@@ -1,3 +1,17 @@
+2010-07-15  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Unreviewed, Chromium-specific changes that I forgot to make in r63278.
+
+        1. DatabaseTrackerChromium::getMaxSizeForDatabase() is called on
+        the context thread by sync DBs.
+        2. Forgot to change V8SQLTransactionSyncCustom to return the
+        result set when executeSql() is called.
+
+        * bindings/v8/custom/V8SQLTransactionSyncCustom.cpp:
+        (WebCore::V8SQLTransactionSync::executeSqlCallback):
+        * storage/chromium/DatabaseTrackerChromium.cpp:
+        (WebCore::DatabaseTracker::getMaxSizeForDatabase):
+
 2010-07-15  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Oliver Hunt.

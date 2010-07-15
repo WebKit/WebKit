@@ -33,16 +33,13 @@
 
 #include "AbstractDatabase.h"
 #include "DatabaseObserver.h"
-#include "DatabaseThread.h"
 #include "QuotaTracker.h"
+#include "PlatformString.h"
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
 #include "SecurityOriginHash.h"
 #include "SQLiteFileSystem.h"
-#include <wtf/HashSet.h>
-#include <wtf/MainThread.h>
 #include <wtf/StdLibExtras.h>
-#include <wtf/text/CString.h>
 
 namespace WebCore {
 
@@ -167,7 +164,6 @@ void DatabaseTracker::getOpenDatabases(SecurityOrigin* origin, const String& nam
 
 unsigned long long DatabaseTracker::getMaxSizeForDatabase(const AbstractDatabase* database)
 {
-    ASSERT(currentThread() == database->scriptExecutionContext()->databaseThread()->getThreadID());
     unsigned long long spaceAvailable = 0;
     unsigned long long databaseSize = 0;
     QuotaTracker::instance().getDatabaseSizeAndSpaceAvailableToOrigin(
