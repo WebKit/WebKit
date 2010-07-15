@@ -40,7 +40,7 @@
             (GraphicsLayer
               (position 0.00 0.00)
               (anchor 0.50 0.50)
-              (bounds 302.00 152.00)
+              (bounds 200.00 100.00)
               (opacity 1.00)
               (usingTiledLayer 0)
               (preserves3D 0)
