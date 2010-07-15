@@ -174,7 +174,7 @@ void CodeBlock::printPutByIdOp(ExecState* exec, int location, Vector<Instruction
     int id0 = (++it)->u.operand;
     int r1 = (++it)->u.operand;
     printf("[%4d] %s\t %s, %s, %s\n", location, op, registerName(exec, r0).data(), idName(id0, m_identifiers[id0]).data(), registerName(exec, r1).data());
-    it += 4;
+    it += 5;
 }
 
 #if ENABLE(JIT)
