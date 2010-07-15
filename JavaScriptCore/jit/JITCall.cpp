@@ -81,7 +81,7 @@ void JIT::compileOpCallVarargs(Instruction* instruction)
     addPtr(callFrameRegister, regT3);
     storePtr(callFrameRegister, regT3);
     addPtr(regT2, callFrameRegister);
-    emitNakedCall(m_globalData->jitStubs.ctiVirtualCall());
+    emitNakedCall(m_globalData->jitStubs->ctiVirtualCall());
 
     sampleCodeBlock(m_codeBlock);
 }
@@ -132,7 +132,7 @@ void JIT::compileOpCall(OpcodeID opcodeID, Instruction* instruction, unsigned)
     addPtr(Imm32(registerOffset * static_cast<int>(sizeof(Register))), callFrameRegister);
     move(Imm32(argCount), regT1);
 
-    emitNakedCall(opcodeID == op_construct ? m_globalData->jitStubs.ctiVirtualConstruct() : m_globalData->jitStubs.ctiVirtualCall());
+    emitNakedCall(opcodeID == op_construct ? m_globalData->jitStubs->ctiVirtualConstruct() : m_globalData->jitStubs->ctiVirtualCall());
 
     if (opcodeID == op_call_eval)
         wasEval.link(this);
@@ -231,7 +231,7 @@ void JIT::compileOpCallSlowCase(Instruction* instruction, Vector<SlowCaseEntry>:
     addPtr(Imm32(registerOffset * static_cast<int>(sizeof(Register))), callFrameRegister);
     move(Imm32(argCount), regT1);
 
-    m_callStructureStubCompilationInfo[callLinkInfoIndex].callReturnLocation = emitNakedCall(opcodeID == op_construct ? m_globalData->jitStubs.ctiVirtualConstructLink() : m_globalData->jitStubs.ctiVirtualCallLink());
+    m_callStructureStubCompilationInfo[callLinkInfoIndex].callReturnLocation = emitNakedCall(opcodeID == op_construct ? m_globalData->jitStubs->ctiVirtualConstructLink() : m_globalData->jitStubs->ctiVirtualCallLink());
 
     // Done! - return back to the hot path.
     ASSERT(OPCODE_LENGTH(op_call) == OPCODE_LENGTH(op_call_eval));

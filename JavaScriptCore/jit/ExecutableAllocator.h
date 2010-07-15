@@ -150,12 +150,20 @@ public:
     {
         if (!pageSize)
             intializePageSize();
-        m_smallAllocationPool = ExecutablePool::create(JIT_ALLOCATOR_LARGE_ALLOC_SIZE);
+        if (isValid())
+            m_smallAllocationPool = ExecutablePool::create(JIT_ALLOCATOR_LARGE_ALLOC_SIZE);
+#if !ENABLE(INTERPRETER)
+        else
+            CRASH();
+#endif
     }
 
+    bool isValid() const;
+    
     PassRefPtr<ExecutablePool> poolForSize(size_t n)
     {
         // Try to fit in the existing small allocator
+        ASSERT(m_smallAllocationPool);
         if (n < m_smallAllocationPool->available())
             return m_smallAllocationPool;
 

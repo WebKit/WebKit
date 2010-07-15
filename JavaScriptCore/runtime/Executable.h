@@ -98,6 +98,8 @@ namespace JSC {
     public:
         static PassRefPtr<NativeExecutable> create(MacroAssemblerCodePtr callThunk, NativeFunction function, MacroAssemblerCodePtr constructThunk, NativeFunction constructor)
         {
+            if (!callThunk)
+                return adoptRef(new NativeExecutable(JITCode(), function, JITCode(), constructor));
             return adoptRef(new NativeExecutable(JITCode::HostFunction(callThunk), function, JITCode::HostFunction(constructThunk), constructor));
         }
 

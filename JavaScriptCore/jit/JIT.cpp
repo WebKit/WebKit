@@ -637,7 +637,7 @@ void JIT::linkCall(JSFunction* callee, CodeBlock* callerCodeBlock, CodeBlock* ca
     }
 
     // patch the call so we do not continue to try to link.
-    repatchBuffer.relink(callLinkInfo->callReturnLocation, globalData->jitStubs.ctiVirtualCall());
+    repatchBuffer.relink(callLinkInfo->callReturnLocation, globalData->jitStubs->ctiVirtualCall());
 }
 
 void JIT::linkConstruct(JSFunction* callee, CodeBlock* callerCodeBlock, CodeBlock* calleeCodeBlock, JIT::CodePtr code, CallLinkInfo* callLinkInfo, int callerArgCount, JSGlobalData* globalData)
@@ -657,7 +657,7 @@ void JIT::linkConstruct(JSFunction* callee, CodeBlock* callerCodeBlock, CodeBloc
     }
 
     // patch the call so we do not continue to try to link.
-    repatchBuffer.relink(callLinkInfo->callReturnLocation, globalData->jitStubs.ctiVirtualConstruct());
+    repatchBuffer.relink(callLinkInfo->callReturnLocation, globalData->jitStubs->ctiVirtualConstruct());
 }
 #endif // ENABLE(JIT_OPTIMIZE_CALL)
 

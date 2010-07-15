@@ -1370,7 +1370,7 @@ void JIT::emit_op_mod(Instruction* currentInstruction)
 
     addSlowCase(branch32(Equal, regT2, Imm32(0)));
 
-    emitNakedCall(m_globalData->jitStubs.ctiSoftModulo());
+    emitNakedCall(m_globalData->jitStubs->ctiSoftModulo());
 
     emitStoreInt32(dst, regT0, (op1 == dst || op2 == dst));
 #else

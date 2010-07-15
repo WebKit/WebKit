@@ -1203,7 +1203,7 @@ void JIT::emit_op_mod(Instruction* currentInstruction)
 
     addSlowCase(branch32(Equal, regT2, Imm32(1)));
 
-    emitNakedCall(m_globalData->jitStubs.ctiSoftModulo());
+    emitNakedCall(m_globalData->jitStubs->ctiSoftModulo());
 
     emitPutVirtualRegister(result, regT0);
 #else

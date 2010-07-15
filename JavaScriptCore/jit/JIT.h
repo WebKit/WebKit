@@ -219,12 +219,16 @@ namespace JSC {
 
         static void compileCTIMachineTrampolines(JSGlobalData* globalData, RefPtr<ExecutablePool>* executablePool, TrampolineStructure *trampolines)
         {
+            if (!globalData->canUseJIT())
+                return;
             JIT jit(globalData);
             jit.privateCompileCTIMachineTrampolines(executablePool, globalData, trampolines);
         }
 
         static CodePtr compileCTINativeCall(JSGlobalData* globalData, PassRefPtr<ExecutablePool> executablePool, NativeFunction func)
         {
+            if (!globalData->canUseJIT())
+                return CodePtr();
             JIT jit(globalData);
             return jit.privateCompileCTINativeCall(executablePool, globalData, func);
         }

@@ -306,20 +306,30 @@ public:
         randomLocation <<= 21;
 #endif
         m_base = mmap(reinterpret_cast<void*>(randomLocation), m_totalHeapSize, INITIAL_PROTECTION_FLAGS, MAP_PRIVATE | MAP_ANON, VM_TAG_FOR_EXECUTABLEALLOCATOR_MEMORY, 0);
-        if (!m_base)
-            CRASH();
 
-        // For simplicity, we keep all memory in m_freeList in a 'released' state.
-        // This means that we can simply reuse all memory when allocating, without
-        // worrying about it's previous state, and also makes coalescing m_freeList
-        // simpler since we need not worry about the possibility of coalescing released
-        // chunks with non-released ones.
-        release(m_base, m_totalHeapSize);
-        m_freeList.insert(new FreeListEntry(m_base, m_totalHeapSize));
+        if (m_base) {
+            // For simplicity, we keep all memory in m_freeList in a 'released' state.
+            // This means that we can simply reuse all memory when allocating, without
+            // worrying about it's previous state, and also makes coalescing m_freeList
+            // simpler since we need not worry about the possibility of coalescing released
+            // chunks with non-released ones.
+            release(m_base, m_totalHeapSize);
+            m_freeList.insert(new FreeListEntry(m_base, m_totalHeapSize));
+        }
+#if !ENABLE(INTERPRETER)
+        else
+            CRASH();
+#endif
     }
 
     void* alloc(size_t size)
     {
+#if ENABLE(INTERPRETER)
+        if (!m_base)
+            return 0;
+#else
+        ASSERT(m_base);
+#endif
         void* result;
 
         // Freed allocations of the common size are not stored back into the main
@@ -382,6 +392,7 @@ public:
 
     void free(void* pointer, size_t size)
     {
+        ASSERT(m_base);
         // Call release to report to the operating system that this
         // memory is no longer in use, and need not be paged out.
         ASSERT(isWithinVMPool(pointer, size));
@@ -403,6 +414,8 @@ public:
             coalesceFreeSpace();
         }
     }
+
+    bool isValid() const { return !!m_base; }
 
 private:
 
@@ -435,19 +448,26 @@ void ExecutableAllocator::intializePageSize()
 static FixedVMPoolAllocator* allocator = 0;
 static SpinLock spinlock = SPINLOCK_INITIALIZER;
 
-ExecutablePool::Allocation ExecutablePool::systemAlloc(size_t size)
+bool ExecutableAllocator::isValid() const
 {
-  SpinLockHolder lock_holder(&spinlock);
-
+    SpinLockHolder lock_holder(&spinlock);
     if (!allocator)
         allocator = new FixedVMPoolAllocator(JIT_ALLOCATOR_LARGE_ALLOC_SIZE, VM_POOL_SIZE);
+    return allocator->isValid();
+}
+
+ExecutablePool::Allocation ExecutablePool::systemAlloc(size_t size)
+{
+    SpinLockHolder lock_holder(&spinlock);
+    
+    ASSERT(allocator);
     ExecutablePool::Allocation alloc = {reinterpret_cast<char*>(allocator->alloc(size)), size};
     return alloc;
 }
 
 void ExecutablePool::systemRelease(const ExecutablePool::Allocation& allocation) 
 {
-  SpinLockHolder lock_holder(&spinlock);
+    SpinLockHolder lock_holder(&spinlock);
 
     ASSERT(allocator);
     allocator->free(allocation.pages, allocation.size);

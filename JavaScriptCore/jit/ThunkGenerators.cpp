@@ -68,7 +68,7 @@ MacroAssemblerCodePtr charCodeAtThunkGenerator(JSGlobalData* globalData, Executa
     SpecializedThunkJIT jit(1, globalData, pool);
     stringCharLoad(jit);
     jit.returnInt32(SpecializedThunkJIT::regT0);
-    return jit.finalize(globalData->jitStubs.ctiNativeCall());
+    return jit.finalize(globalData->jitStubs->ctiNativeCall());
 }
 
 MacroAssemblerCodePtr charAtThunkGenerator(JSGlobalData* globalData, ExecutablePool* pool)
@@ -77,7 +77,7 @@ MacroAssemblerCodePtr charAtThunkGenerator(JSGlobalData* globalData, ExecutableP
     stringCharLoad(jit);
     charToString(jit, globalData, SpecializedThunkJIT::regT0, SpecializedThunkJIT::regT0, SpecializedThunkJIT::regT1);
     jit.returnJSCell(SpecializedThunkJIT::regT0);
-    return jit.finalize(globalData->jitStubs.ctiNativeCall());
+    return jit.finalize(globalData->jitStubs->ctiNativeCall());
 }
 
 MacroAssemblerCodePtr fromCharCodeThunkGenerator(JSGlobalData* globalData, ExecutablePool* pool)
@@ -87,7 +87,7 @@ MacroAssemblerCodePtr fromCharCodeThunkGenerator(JSGlobalData* globalData, Execu
     jit.loadInt32Argument(0, SpecializedThunkJIT::regT0);
     charToString(jit, globalData, SpecializedThunkJIT::regT0, SpecializedThunkJIT::regT0, SpecializedThunkJIT::regT1);
     jit.returnJSCell(SpecializedThunkJIT::regT0);
-    return jit.finalize(globalData->jitStubs.ctiNativeCall());
+    return jit.finalize(globalData->jitStubs->ctiNativeCall());
 }
 
 MacroAssemblerCodePtr sqrtThunkGenerator(JSGlobalData* globalData, ExecutablePool* pool)
@@ -95,15 +95,15 @@ MacroAssemblerCodePtr sqrtThunkGenerator(JSGlobalData* globalData, ExecutablePoo
 #if USE(JSVALUE64) || USE(JSVALUE32_64)
     SpecializedThunkJIT jit(1, globalData, pool);
     if (!jit.supportsFloatingPointSqrt())
-        return globalData->jitStubs.ctiNativeCall();
+        return globalData->jitStubs->ctiNativeCall();
 
     jit.loadDoubleArgument(0, SpecializedThunkJIT::fpRegT0, SpecializedThunkJIT::regT0);
     jit.sqrtDouble(SpecializedThunkJIT::fpRegT0, SpecializedThunkJIT::fpRegT0);
     jit.returnDouble(SpecializedThunkJIT::fpRegT0);
-    return jit.finalize(globalData->jitStubs.ctiNativeCall());
+    return jit.finalize(globalData->jitStubs->ctiNativeCall());
 #else
     UNUSED_PARAM(pool);
-    return globalData->jitStubs.ctiNativeCall();
+    return globalData->jitStubs->ctiNativeCall();
 #endif
 }
 
@@ -115,7 +115,7 @@ MacroAssemblerCodePtr powThunkGenerator(JSGlobalData* globalData, ExecutablePool
 #if USE(JSVALUE64) || USE(JSVALUE32_64)
     SpecializedThunkJIT jit(2, globalData, pool);
     if (!jit.supportsFloatingPoint())
-        return globalData->jitStubs.ctiNativeCall();
+        return globalData->jitStubs->ctiNativeCall();
 
     jit.loadDouble(&oneConstant, SpecializedThunkJIT::fpRegT1);
     jit.loadDoubleArgument(0, SpecializedThunkJIT::fpRegT0, SpecializedThunkJIT::regT0);
@@ -148,10 +148,10 @@ MacroAssemblerCodePtr powThunkGenerator(JSGlobalData* globalData, ExecutablePool
     } else
         jit.appendFailure(nonIntExponent);
 
-    return jit.finalize(globalData->jitStubs.ctiNativeCall());
+    return jit.finalize(globalData->jitStubs->ctiNativeCall());
 #else
     UNUSED_PARAM(pool);
-    return globalData->jitStubs.ctiNativeCall();
+    return globalData->jitStubs->ctiNativeCall();
 #endif
 }
 

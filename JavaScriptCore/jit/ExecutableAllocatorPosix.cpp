@@ -55,6 +55,11 @@ void ExecutablePool::systemRelease(const ExecutablePool::Allocation& alloc)
     ASSERT_UNUSED(result, !result);
 }
 
+bool ExecutableAllocator::isValid() const
+{
+    return true;
+}
+
 }
 
 #endif

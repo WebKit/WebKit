@@ -1,3 +1,70 @@
+2010-07-14  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Make sure that mixed interpreter/jit builds don't try to use the jit if the allocator fails
+        https://bugs.webkit.org/show_bug.cgi?id=42310
+
+        Add some null checks to deal with the Fixed VM allocator failing
+        to get the requested executable region, delay the creation of the
+        JITStubs in JSGlobalData until after we know whether we're using
+        the JIT.
+
+        * jit/ExecutableAllocator.h:
+        (JSC::ExecutableAllocator::ExecutableAllocator):
+        (JSC::ExecutableAllocator::poolForSize):
+        * jit/ExecutableAllocatorFixedVMPool.cpp:
+        (JSC::FixedVMPoolAllocator::FixedVMPoolAllocator):
+        (JSC::FixedVMPoolAllocator::alloc):
+        (JSC::FixedVMPoolAllocator::free):
+        (JSC::FixedVMPoolAllocator::isValid):
+        (JSC::ExecutableAllocator::isValid):
+        (JSC::ExecutablePool::systemAlloc):
+        (JSC::ExecutablePool::systemRelease):
+        * jit/ExecutableAllocatorPosix.cpp:
+        (JSC::ExecutableAllocator::isValid):
+        * jit/ExecutableAllocatorWin.cpp:
+        (JSC::ExecutableAllocator::isValid):
+        * jit/JIT.cpp:
+        (JSC::JIT::linkCall):
+        (JSC::JIT::linkConstruct):
+        * jit/JIT.h:
+        (JSC::JIT::compileCTIMachineTrampolines):
+        (JSC::JIT::compileCTINativeCall):
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emit_op_mod):
+        * jit/JITArithmetic32_64.cpp:
+        (JSC::JIT::emit_op_mod):
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileOpCallVarargs):
+        (JSC::JIT::compileOpCall):
+        (JSC::JIT::compileOpCallSlowCase):
+        * jit/JITCall32_64.cpp:
+        (JSC::JIT::compileOpCallVarargs):
+        (JSC::JIT::compileOpCall):
+        (JSC::JIT::compileOpCallSlowCase):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::privateCompileCTINativeCall):
+        * jit/JITStubs.cpp:
+        (JSC::JITThunks::JITThunks):
+        (JSC::JITThunks::tryCacheGetByID):
+        (JSC::JITThunks::hostFunctionStub):
+        * jit/ThunkGenerators.cpp:
+        (JSC::charCodeAtThunkGenerator):
+        (JSC::charAtThunkGenerator):
+        (JSC::fromCharCodeThunkGenerator):
+        (JSC::sqrtThunkGenerator):
+        (JSC::powThunkGenerator):
+        * runtime/Executable.h:
+        (JSC::NativeExecutable::create):
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::JSGlobalData):
+        (JSC::JSGlobalData::getHostFunction):
+        * runtime/JSGlobalData.h:
+        (JSC::JSGlobalData::getCTIStub):
+        * yarr/RegexJIT.cpp:
+        (JSC::Yarr::jitCompileRegex):
+
 2010-07-14  Gavin Barraclough  <barraclough@apple.com>
 
         Speculative Qt/Windows build fix.

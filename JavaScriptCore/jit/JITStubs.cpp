@@ -765,8 +765,11 @@ SYMBOL_STRING(ctiOpThrowNotCaught) ":" "\n"
 
 JITThunks::JITThunks(JSGlobalData* globalData)
 {
-    JIT::compileCTIMachineTrampolines(globalData, &m_executablePool, &m_trampolineStructure);
+    if (!globalData->executableAllocator.isValid())
+        return;
 
+    JIT::compileCTIMachineTrampolines(globalData, &m_executablePool, &m_trampolineStructure);
+    ASSERT(m_executablePool);
 #if CPU(ARM_THUMB2)
     // Unfortunate the arm compiler does not like the use of offsetof on JITStackFrame (since it contains non POD types),
     // and the OBJECT_OFFSETOF macro does not appear constantish enough for it to be happy with its use in COMPILE_ASSERT
@@ -883,7 +886,7 @@ NEVER_INLINE void JITThunks::tryCacheGetByID(CallFrame* callFrame, CodeBlock* co
     if (isJSString(globalData, baseValue) && propertyName == callFrame->propertyNames().length) {
         // The tradeoff of compiling an patched inline string length access routine does not seem
         // to pay off, so we currently only do this for arrays.
-        ctiPatchCallByReturnAddress(codeBlock, returnAddress, globalData->jitStubs.ctiStringLengthTrampoline());
+        ctiPatchCallByReturnAddress(codeBlock, returnAddress, globalData->jitStubs->ctiStringLengthTrampoline());
         return;
     }
 
@@ -3504,8 +3507,10 @@ PassRefPtr<NativeExecutable> JITThunks::hostFunctionStub(JSGlobalData* globalDat
 PassRefPtr<NativeExecutable> JITThunks::hostFunctionStub(JSGlobalData* globalData, NativeFunction function, ThunkGenerator generator)
 {
     std::pair<HostFunctionStubMap::iterator, bool> entry = m_hostFunctionStubMap.add(function, 0);
-    if (entry.second)
-        entry.first->second = NativeExecutable::create(generator(globalData, m_executablePool.get()), function, ctiNativeConstruct(), callHostFunctionAsConstructor);
+    if (entry.second) {
+        MacroAssemblerCodePtr code = globalData->canUseJIT() ? generator(globalData, m_executablePool.get()) : MacroAssemblerCodePtr();
+        entry.first->second = NativeExecutable::create(code, function, ctiNativeConstruct(), callHostFunctionAsConstructor);
+    }
     return entry.first->second;
 }
 

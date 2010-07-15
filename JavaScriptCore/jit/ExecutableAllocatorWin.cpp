@@ -54,6 +54,11 @@ void ExecutablePool::systemRelease(const ExecutablePool::Allocation& alloc)
     VirtualFree(alloc.pages, 0, MEM_RELEASE); 
 }
 
+bool ExecutableAllocator::isValid() const
+{
+    return true;
+}
+
 #if ENABLE(ASSEMBLER_WX_EXCLUSIVE)
 #error "ASSEMBLER_WX_EXCLUSIVE not yet suported on this platform."
 #endif

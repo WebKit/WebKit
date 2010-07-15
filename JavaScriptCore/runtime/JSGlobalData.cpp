@@ -136,9 +136,6 @@ JSGlobalData::JSGlobalData(GlobalDataType globalDataType, ThreadStackType thread
     , lexer(new Lexer(this))
     , parser(new Parser)
     , interpreter(new Interpreter)
-#if ENABLE(JIT)
-    , jitStubs(this)
-#endif
     , heap(this)
     , head(0)
     , dynamicGlobalObject(0)
@@ -171,6 +168,13 @@ JSGlobalData::JSGlobalData(GlobalDataType globalDataType, ThreadStackType thread
 #else
     m_canUseJIT = true;
 #endif
+#endif
+#if ENABLE(JIT)
+#if ENABLE(INTERPRETER)
+    if (m_canUseJIT)
+        m_canUseJIT = executableAllocator.isValid();
+#endif
+    jitStubs = new JITThunks(this);
 #endif
 }
 
@@ -262,11 +266,11 @@ JSGlobalData*& JSGlobalData::sharedInstanceInternal()
 #if ENABLE(JIT)
 PassRefPtr<NativeExecutable> JSGlobalData::getHostFunction(NativeFunction function)
 {
-    return jitStubs.hostFunctionStub(this, function);
+    return jitStubs->hostFunctionStub(this, function);
 }
 PassRefPtr<NativeExecutable> JSGlobalData::getHostFunction(NativeFunction function, ThunkGenerator generator)
 {
-    return jitStubs.hostFunctionStub(this, function, generator);
+    return jitStubs->hostFunctionStub(this, function, generator);
 }
 #endif
 
