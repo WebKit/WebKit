@@ -35,4 +35,4 @@ class BuilderToPortTest(unittest.TestCase):
     def test_port_for_builder(self):
         converter = BuilderToPort()
         port = converter.port_for_builder("Leopard Intel Debug (Tests)")
-        self.assertEqual(port.name(), "mac")
+        self.assertEqual(port.name(), "mac-leopard")

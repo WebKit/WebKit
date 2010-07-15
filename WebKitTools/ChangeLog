@@ -1,3 +1,13 @@
+2010-07-15  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed.
+
+        Update the port names to be more specific.  Before this patch,
+        port-specific results for Mac would end up in the wrong place.
+
+        * Scripts/webkitpy/tool/commands/rebaseline.py:
+        * Scripts/webkitpy/tool/commands/rebaseline_unittest.py:
+
 2010-07-14  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.
