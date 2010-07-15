@@ -121,6 +121,7 @@ void AutoFillPopupMenuClient::valueChanged(unsigned listIndex, bool fireEvents)
       webView->client()->didAcceptAutoFillSuggestion(WebNode(getTextField()),
                                                      m_names[listIndex],
                                                      m_labels[listIndex],
+                                                     m_uniqueIDs[listIndex],
                                                      listIndex);
     }
 }
@@ -138,7 +139,8 @@ void AutoFillPopupMenuClient::selectionChanged(unsigned listIndex, bool fireEven
 
     webView->client()->didSelectAutoFillSuggestion(WebNode(getTextField()),
                                                    m_names[listIndex],
-                                                   m_labels[listIndex]);
+                                                   m_labels[listIndex],
+                                                   m_uniqueIDs[listIndex]);
 }
 
 void AutoFillPopupMenuClient::selectionCleared()
@@ -230,9 +232,11 @@ void AutoFillPopupMenuClient::initialize(
     HTMLInputElement* textField,
     const WebVector<WebString>& names,
     const WebVector<WebString>& labels,
+    const WebVector<int>& uniqueIDs,
     int separatorIndex)
 {
     ASSERT(names.size() == labels.size());
+    ASSERT(names.size() == uniqueIDs.size());
     ASSERT(separatorIndex < static_cast<int>(names.size()));
 
     m_selectedIndex = -1;
@@ -240,7 +244,7 @@ void AutoFillPopupMenuClient::initialize(
 
     // The suggestions must be set before initializing the
     // AutoFillPopupMenuClient.
-    setSuggestions(names, labels, separatorIndex);
+    setSuggestions(names, labels, uniqueIDs, separatorIndex);
 
     FontDescription fontDescription;
     RenderTheme::defaultTheme()->systemFont(CSSValueWebkitControl,
@@ -259,16 +263,20 @@ void AutoFillPopupMenuClient::initialize(
 
 void AutoFillPopupMenuClient::setSuggestions(const WebVector<WebString>& names,
                                              const WebVector<WebString>& labels,
+                                             const WebVector<int>& uniqueIDs,
                                              int separatorIndex)
 {
     ASSERT(names.size() == labels.size());
+    ASSERT(names.size() == uniqueIDs.size());
     ASSERT(separatorIndex < static_cast<int>(names.size()));
 
     m_names.clear();
     m_labels.clear();
+    m_uniqueIDs.clear();
     for (size_t i = 0; i < names.size(); ++i) {
         m_names.append(names[i]);
         m_labels.append(labels[i]);
+        m_uniqueIDs.append(uniqueIDs[i]);
     }
 
     m_separatorIndex = separatorIndex;
@@ -306,7 +314,7 @@ RenderStyle* AutoFillPopupMenuClient::textFieldStyle() const
     RenderStyle* style = m_textField->computedStyle();
     if (!style) {
         // It seems we can only have a 0 style in a TextField if the
-        // node is detached, in which case we the popup shoud not be
+        // node is detached, in which case we the popup should not be
         // showing.  Please report this in http://crbug.com/7708 and
         // include the page you were visiting.
         ASSERT_NOT_REACHED();

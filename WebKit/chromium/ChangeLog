@@ -1,3 +1,27 @@
+2010-07-14  James Hawkins  <jhawkins@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [Chromium] Use the unique ID instead of the profile label to identify
+        the accepted AutoFill suggestion.
+        https://bugs.webkit.org/show_bug.cgi?id=42301
+
+        * public/WebView.h:
+        * public/WebViewClient.h:
+        (WebKit::WebViewClient::didAcceptAutoFillSuggestion):
+        (WebKit::WebViewClient::didSelectAutoFillSuggestion):
+        * src/AutoFillPopupMenuClient.cpp:
+        (WebKit::AutoFillPopupMenuClient::valueChanged):
+        (WebKit::AutoFillPopupMenuClient::selectionChanged):
+        (WebKit::AutoFillPopupMenuClient::initialize):
+        (WebKit::AutoFillPopupMenuClient::setSuggestions):
+        (WebKit::AutoFillPopupMenuClient::textFieldStyle):
+        * src/AutoFillPopupMenuClient.h:
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::applyAutoFillSuggestions):
+        (WebKit::WebViewImpl::applyAutocompleteSuggestions):
+        * src/WebViewImpl.h:
+
 2010-07-14  Jay Civelli  <jcivelli@chromium.org>
 
         Reviewed by David Levin.

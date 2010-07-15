@@ -164,10 +164,17 @@ public:
                                      const WebString& value);
     virtual WebDevToolsAgent* devToolsAgent();
     virtual WebAccessibilityObject accessibilityObject();
+    // DEPRECATED.
     virtual void applyAutoFillSuggestions(
         const WebNode&,
         const WebVector<WebString>& names,
         const WebVector<WebString>& labels,
+        int separatorIndex);
+    virtual void applyAutoFillSuggestions(
+        const WebNode&,
+        const WebVector<WebString>& names,
+        const WebVector<WebString>& labels,
+        const WebVector<int>& uniqueIDs,
         int separatorIndex);
     // DEPRECATED: replacing with applyAutoFillSuggestions.
     virtual void applyAutocompleteSuggestions(

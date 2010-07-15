@@ -97,10 +97,12 @@ public:
     void initialize(WebCore::HTMLInputElement*,
                     const WebVector<WebString>& names,
                     const WebVector<WebString>& labels,
+                    const WebVector<int>& uniqueIDs,
                     int separatorIndex);
 
     void setSuggestions(const WebVector<WebString>& names,
                         const WebVector<WebString>& labels,
+                        const WebVector<int>& uniqueIDs,
                         int separatorIndex);
 
     // DEPRECATED: Will be removed once Autocomplete and AutoFill merge is
@@ -122,6 +124,7 @@ private:
     // The names and labels that make up the text of the menu items.
     Vector<WebCore::String> m_names;
     Vector<WebCore::String> m_labels;
+    Vector<int> m_uniqueIDs;
 
     // The index of the separator.  -1 if there is no separator.
     int m_separatorIndex;
