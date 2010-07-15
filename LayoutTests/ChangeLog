@@ -1,3 +1,19 @@
+2010-07-15  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Darin Fisher.
+
+        Rename read-pixels and invalidPassedParams tests to match Khronos repo
+        https://bugs.webkit.org/show_bug.cgi?id=42335
+
+        * fast/canvas/webgl/invalid-passed-params-expected.txt: Copied from LayoutTests/fast/canvas/webgl/invalidPassedParams-expected.txt.
+        * fast/canvas/webgl/invalid-passed-params.html: Copied from LayoutTests/fast/canvas/webgl/invalidPassedParams.html.
+        * fast/canvas/webgl/invalidPassedParams-expected.txt: Removed.
+        * fast/canvas/webgl/invalidPassedParams.html: Removed.
+        * fast/canvas/webgl/read-pixels-expected.txt: Removed.
+        * fast/canvas/webgl/read-pixels-pack-alignment-expected.txt: Copied from LayoutTests/fast/canvas/webgl/read-pixels-expected.txt.
+        * fast/canvas/webgl/read-pixels-pack-alignment.html: Copied from LayoutTests/fast/canvas/webgl/read-pixels.html.
+        * fast/canvas/webgl/read-pixels.html: Removed.
+
 2010-07-15  Adam Barth  <abarth@webkit.org>
 
         Update some more baselines for Eric's text node coalescing patch.  I
