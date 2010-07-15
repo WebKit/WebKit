@@ -1,3 +1,23 @@
+2010-07-15  Nico Weber  <thakis@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        chromium/skia: Fix canvas.toDataURL in the presence of transparency
+        https://bugs.webkit.org/show_bug.cgi?id=42214
+
+        The problem was that SkBitmaps contain premultiplied data, but pnglib
+        doesn't expect premultiplied data. Now, the encoder unpremultiplies
+        data before sending it to pnglib.
+
+        Patch partially by deanm.
+
+        Covered by fast/canvas/toDataURL-alpha.html.
+
+        * platform/image-encoders/skia/PNGImageEncoder.cpp:
+        (WebCore::preMultipliedBGRAtoRGBA):
+        (WebCore::encodeImpl):
+        (WebCore::PNGImageEncoder::encode):
+
 2010-07-15  Alex Nicolaou  <anicolao@chromium.org>
 
         Reviewed by Eric Seidel.

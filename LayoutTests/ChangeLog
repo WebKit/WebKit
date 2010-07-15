@@ -1,3 +1,18 @@
+2010-07-15  Nico Weber  <thakis@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        chromium/skia: Fix canvas.toDataURL in the presence of transparency
+        https://bugs.webkit.org/show_bug.cgi?id=42214
+
+        Test that toDataURL works with transparent images.
+
+        * fast/canvas/toDataURL-alpha-expected.txt: Added.
+        * fast/canvas/toDataURL-alpha.html: Added.
+        * platform/chromium/test_expectations.txt:
+        * platform/mac-leopard/fast/canvas/toDataURL-alpha-expected.checksum: Added.
+        * platform/mac-leopard/fast/canvas/toDataURL-alpha-expected.png: Added.
+
 2010-07-15  Ojan Vafai  <ojan@chromium.org>
 
         Unreviewed.

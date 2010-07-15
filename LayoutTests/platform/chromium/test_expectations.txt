@@ -2899,6 +2899,8 @@ BUG47826 MAC SKIP : fast/dom/HTMLMeterElement/meter-optimums.html = FAIL
 BUG47826 MAC SKIP : fast/dom/HTMLMeterElement/meter-styles.html = FAIL
 BUG47826 MAC SKIP : fast/dom/HTMLMeterElement/meter-styles-changing-pseudo.html = FAIL
 
+BUGWK42214 WIN LINUX : fast/canvas/toDataURL-alpha.html = IMAGE
+
 BUGWK41311 WIN LINUX : fast/borders/border-radius-circle.html = IMAGE
 BUGWK41311 WIN LINUX : fast/borders/border-radius-groove-01.html = IMAGE
 BUGWK41311 WIN LINUX : fast/borders/border-radius-groove-02.html = IMAGE
