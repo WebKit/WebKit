@@ -69,8 +69,6 @@ private:
 
     ResourceLoadTiming* resourceLoadTiming() const;
 
-    static unsigned long long toIntegerMilliseconds(double milliseconds);
-
     Frame* m_frame;
 };
 

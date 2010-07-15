@@ -1,3 +1,27 @@
+2010-07-14  Tony Gentilcore  <tonyg@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Backfill DNS and connect times rather than exposing hard zeros
+        https://bugs.webkit.org/show_bug.cgi?id=42303
+
+        There are several cases where domain lookup is not performed and/or a new connection is not established. Previously in these cases, we exposed a "0" to the API. Now, we instead "backfill" with the most recent mark's time.
+
+        Also, previously, I was using the ResourceLoadTiming API incorrectly. Each mark is an integer representing offset in milliseconds from requestTime. So all values need to be added to requestTime.
+
+        No new test because existing test expectations are set to FAIL because disable disabled by default. The expected results of existings tests change as expected when enabled.
+
+        * page/Timing.cpp:
+        (WebCore::toIntegerMilliseconds): Move to file static instead of class static because it might generate more optimal code. Also, instead of converting negative doubles to zero, ASSERT that they are >= 0. This is because we no longer expose hard zeros for DNS and connect, so we want to be sure that the -1s returned by the API are properly handled.
+        (WebCore::Timing::domainLookupStart):
+        (WebCore::Timing::domainLookupEnd):
+        (WebCore::Timing::connectStart):
+        (WebCore::Timing::connectEnd):
+        (WebCore::Timing::requestStart):
+        (WebCore::Timing::requestEnd):
+        (WebCore::Timing::responseStart):
+        * page/Timing.h:
+
 2010-07-15  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Yury Semikhatsky.
