@@ -3072,14 +3072,13 @@ void FrameLoader::loadedResourceFromMemoryCache(const CachedResource* resource)
     if (!page)
         return;
 
-#if ENABLE(INSPECTOR)
-    page->inspectorController()->didLoadResourceFromMemoryCache(m_documentLoader.get(), resource);
-#endif
-
     if (!resource->sendResourceLoadCallbacks() || m_documentLoader->haveToldClientAboutLoad(resource->url()))
         return;
 
     if (!page->areMemoryCacheClientCallsEnabled()) {
+#if ENABLE(INSPECTOR)
+        page->inspectorController()->didLoadResourceFromMemoryCache(m_documentLoader.get(), resource);
+#endif
         m_documentLoader->recordMemoryCacheLoadForFutureClientNotification(resource->url());
         m_documentLoader->didTellClientAboutLoad(resource->url());
         return;
@@ -3087,6 +3086,9 @@ void FrameLoader::loadedResourceFromMemoryCache(const CachedResource* resource)
 
     ResourceRequest request(resource->url());
     if (m_client->dispatchDidLoadResourceFromMemoryCache(m_documentLoader.get(), request, resource->response(), resource->encodedSize())) {
+#if ENABLE(INSPECTOR)
+        page->inspectorController()->didLoadResourceFromMemoryCache(m_documentLoader.get(), resource);
+#endif
         m_documentLoader->didTellClientAboutLoad(resource->url());
         return;
     }

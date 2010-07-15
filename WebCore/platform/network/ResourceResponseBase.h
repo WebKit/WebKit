@@ -100,6 +100,9 @@ public:
     unsigned connectionID() const;
     void setConnectionID(unsigned);
 
+    bool connectionReused() const;
+    void setConnectionReused(bool);
+
     bool wasCached() const;
     void setWasCached(bool);
 
@@ -136,8 +139,9 @@ protected:
     String m_httpStatusText;
     HTTPHeaderMap m_httpHeaderFields;
     time_t m_lastModifiedDate;
-    bool m_wasCached;
+    bool m_wasCached : 1;
     unsigned m_connectionID;
+    bool m_connectionReused : 1;
     RefPtr<ResourceLoadTiming> m_resourceLoadTiming;
 
     bool m_isNull : 1;

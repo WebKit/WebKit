@@ -1,3 +1,16 @@
+2010-07-15  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: differentiate between blocking and connecting timers.
+
+        https://bugs.webkit.org/show_bug.cgi?id=42372
+
+        * public/WebURLResponse.h:
+        * src/WebURLResponse.cpp:
+        (WebKit::WebURLResponse::connectionReused):
+        (WebKit::WebURLResponse::setConnectionReused):
+
 2010-07-15  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Yury Semikhatsky.

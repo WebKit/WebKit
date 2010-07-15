@@ -107,6 +107,16 @@ void WebURLResponse::setConnectionID(unsigned connectionID)
     m_private->m_resourceResponse->setConnectionID(connectionID);
 }
 
+bool WebURLResponse::connectionReused() const
+{
+    return m_private->m_resourceResponse->connectionReused();
+}
+
+void WebURLResponse::setConnectionReused(bool connectionReused)
+{
+    m_private->m_resourceResponse->setConnectionReused(connectionReused);
+}
+
 WebURLLoadTiming WebURLResponse::loadTiming()
 {
     return WebURLLoadTiming(m_private->m_resourceResponse->resourceLoadTiming());

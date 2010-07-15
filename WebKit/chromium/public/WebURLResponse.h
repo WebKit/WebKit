@@ -76,6 +76,9 @@ public:
     WEBKIT_API unsigned connectionID() const;
     WEBKIT_API void setConnectionID(unsigned);
 
+    WEBKIT_API bool connectionReused() const;
+    WEBKIT_API void setConnectionReused(bool);
+
     WEBKIT_API WebURLLoadTiming loadTiming();
     WEBKIT_API void setLoadTiming(const WebURLLoadTiming&);
 

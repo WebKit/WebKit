@@ -308,6 +308,17 @@ WebInspector.Resource.prototype = {
         }
     },
 
+    get cached()
+    {
+        return this._cached;
+    },
+
+    set cached(x)
+    {
+        this._cached = x;
+        this.dispatchEventToListeners("cached changed");
+    },
+
     get mimeType()
     {
         return this._mimeType;

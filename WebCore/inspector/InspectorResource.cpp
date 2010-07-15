@@ -64,6 +64,7 @@ InspectorResource::InspectorResource(unsigned long identifier, DocumentLoader* l
     , m_loadEventTime(-1.0)
     , m_domContentEventTime(-1.0)
     , m_connectionID(0)
+    , m_connectionReused(false)
     , m_isMainResource(false)
 {
 }
@@ -131,6 +132,7 @@ void InspectorResource::updateResponse(const ResourceResponse& response)
     m_suggestedFilename = response.suggestedFilename();
 
     m_connectionID = response.connectionID();
+    m_connectionReused = response.connectionReused();
     m_loadTiming = response.resourceLoadTiming();
     m_cached = response.wasCached();
 
@@ -183,6 +185,7 @@ void InspectorResource::updateScriptObject(InspectorFrontend* frontend)
         populateHeadersObject(&responseHeaders, m_responseHeaderFields);
         jsonObject.set("responseHeaders", responseHeaders);
         jsonObject.set("connectionID", m_connectionID);
+        jsonObject.set("connectionReused", m_connectionReused);
         jsonObject.set("cached", m_cached);
         if (m_loadTiming && !m_cached)
             jsonObject.set("timing", buildObjectForTiming(frontend, m_loadTiming.get()));
@@ -394,9 +397,9 @@ ScriptObject InspectorResource::buildObjectForTiming(InspectorFrontend* frontend
     jsonObject.set("proxyDuration", timing->proxyStart == -1 ? -1 : (timing->proxyEnd - timing->proxyStart) / 1000.0);
     jsonObject.set("dnsDuration", timing->dnsStart == -1 ? -1 : (timing->dnsEnd - timing->dnsStart) / 1000.0);
     jsonObject.set("connectDuration", timing->connectStart == -1 ? -1 : (timing->connectEnd - timing->connectStart) / 1000.0);
+    jsonObject.set("sslDuration", (timing->sslEnd - timing->sslStart) / 1000.0);
     jsonObject.set("sendDuration", (timing->sendEnd - timing->sendStart) / 1000.0);
     jsonObject.set("waitDuration", (timing->receiveHeadersEnd - timing->sendEnd)  / 1000.0);
-    jsonObject.set("sslDuration", (timing->sslEnd - timing->sslStart) / 1000.0);
     return jsonObject;
 }
 

@@ -1,3 +1,36 @@
+2010-07-15  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: differentiate between blocking and connecting timers.
+
+        https://bugs.webkit.org/show_bug.cgi?id=42372
+
+        * inspector/InspectorResource.cpp:
+        (WebCore::InspectorResource::InspectorResource):
+        (WebCore::InspectorResource::updateResponse):
+        (WebCore::InspectorResource::updateScriptObject):
+        (WebCore::InspectorResource::buildObjectForTiming):
+        * inspector/InspectorResource.h:
+        * inspector/front-end/Resource.js:
+        (WebInspector.Resource.prototype.get cached):
+        (WebInspector.Resource.prototype.set cached):
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.ResourcesPanel.prototype._showPopover):
+        (WebInspector.ResourceGraph):
+        (WebInspector.ResourceGraph.prototype.refresh):
+        (WebInspector.ResourceGraph.prototype._cachedChanged):
+        * inspector/front-end/inspector.js:
+        (WebInspector.updateResource):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadedResourceFromMemoryCache):
+        * loader/FrameLoader.h:
+        * platform/network/ResourceResponseBase.cpp:
+        (WebCore::ResourceResponseBase::ResourceResponseBase):
+        (WebCore::ResourceResponseBase::connectionReused):
+        (WebCore::ResourceResponseBase::setConnectionID):
+        * platform/network/ResourceResponseBase.h:
+
 2010-07-15  MORITA Hajime  <morrita@google.com>
 
         Text layout is wrong with a SVG Font that lacks <missing-glyph> element

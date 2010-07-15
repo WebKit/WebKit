@@ -1167,7 +1167,6 @@ WebInspector.updateResource = function(identifier, payload)
         resource.mainResource = payload.mainResource;
         resource.requestMethod = payload.requestMethod;
         resource.requestFormData = payload.requestFormData;
-        resource.cached = payload.cached;
         resource.documentURL = payload.documentURL;
 
         if (resource.mainResource)
@@ -1190,7 +1189,9 @@ WebInspector.updateResource = function(identifier, payload)
         resource.suggestedFilename = payload.suggestedFilename;
         resource.responseHeaders = payload.responseHeaders;
         resource.connectionID = payload.connectionID;
+        resource.connectionReused = payload.connectionReused;
         resource.timing = payload.timing;
+        resource.cached = payload.cached;
     }
 
     if (payload.didTypeChange) {
