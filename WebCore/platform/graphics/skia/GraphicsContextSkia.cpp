@@ -473,7 +473,8 @@ void GraphicsContext::drawConvexPolygon(size_t numPoints,
 
     if (strokeStyle() != NoStroke) {
         paint.reset();
-        platformContext()->setupPaintForStroking(&paint, 0, 0);
+        if (!platformContext()->setupPaintForStroking(&paint, 0, 0))
+            return;
         platformContext()->canvas()->drawPath(path, paint);
     }
 }
@@ -505,7 +506,8 @@ void GraphicsContext::drawEllipse(const IntRect& elipseRect)
 
     if (strokeStyle() != NoStroke) {
         paint.reset();
-        platformContext()->setupPaintForStroking(&paint, &rect, 0);
+        if (!platformContext()->setupPaintForStroking(&paint, &rect, 0))
+            return;
         platformContext()->canvas()->drawOval(rect, paint);
     }
 }
@@ -568,7 +570,8 @@ void GraphicsContext::drawLine(const IntPoint& point1, const IntPoint& point2)
     // probably worth the speed up of no square root, which also won't be exact.
     FloatSize disp = p2 - p1;
     int length = SkScalarRound(disp.width() + disp.height());
-    platformContext()->setupPaintForStroking(&paint, 0, length);
+    if (!platformContext()->setupPaintForStroking(&paint, 0, length))
+        return;
 
     if (strokeStyle() == DottedStroke || strokeStyle() == DashedStroke) {
         // Do a rect fill of our endpoints.  This ensures we always have the
@@ -1110,8 +1113,10 @@ void GraphicsContext::strokeArc(const IntRect& r, int startAngle, int angleSpan)
         platformContext()->setupPaintForFilling(&paint);
         paint.setStyle(SkPaint::kStroke_Style);
         paint.setStrokeWidth(WebCoreFloatToSkScalar(strokeThickness()));
-    } else
-        platformContext()->setupPaintForStroking(&paint, 0, 0);
+    } else {
+        if (!platformContext()->setupPaintForStroking(&paint, 0, 0))
+            return;
+    }
 
     // We do this before converting to scalar, so we don't overflow SkFixed.
     startAngle = fastMod(startAngle, 360);
@@ -1134,7 +1139,8 @@ void GraphicsContext::strokePath()
         return;
 
     SkPaint paint;
-    platformContext()->setupPaintForStroking(&paint, 0, 0);
+    if (!platformContext()->setupPaintForStroking(&paint, 0, 0))
+        return;
     platformContext()->canvas()->drawPath(path, paint);
 }
 
@@ -1147,7 +1153,8 @@ void GraphicsContext::strokeRect(const FloatRect& rect, float lineWidth)
         return;
 
     SkPaint paint;
-    platformContext()->setupPaintForStroking(&paint, 0, 0);
+    if (!platformContext()->setupPaintForStroking(&paint, 0, 0))
+        return;
     paint.setStrokeWidth(WebCoreFloatToSkScalar(lineWidth));
     platformContext()->canvas()->drawRect(rect, paint);
 }

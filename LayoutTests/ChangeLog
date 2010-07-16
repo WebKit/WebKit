@@ -1,3 +1,23 @@
+2010-07-16  Fady Samuel  <fsamuel@chromium.org>
+
+        Reviewed by David Levin.
+
+        Added layout test to show correct zero-width stroke.
+
+        SVG - stroke-width:0 bug with stroke other than "none"
+        https://bugs.webkit.org/show_bug.cgi?id=42387
+
+        * platform/chromium-linux/svg/stroke/path-zero-strokewidth-test-expected.checksum: Added.
+        * platform/chromium-linux/svg/stroke/path-zero-strokewidth-test-expected.png: Added.
+        * platform/chromium-linux/svg/stroke/path-zero-strokewidth-test-expected.txt: Added.
+        * platform/chromium-mac/svg/stroke/path-zero-strokewidth-test-expected.checksum: Added.
+        * platform/chromium-mac/svg/stroke/path-zero-strokewidth-test-expected.png: Added.
+        * platform/chromium-mac/svg/stroke/path-zero-strokewidth-test-expected.txt: Added.
+        * platform/mac/svg/stroke/path-zero-strokewidth-test-expected.checksum: Added.
+        * platform/mac/svg/stroke/path-zero-strokewidth-test-expected.png: Added.
+        * platform/mac/svg/stroke/path-zero-strokewidth-test-expected.txt: Added.
+        * svg/stroke/path-zero-strokewidth-test.svg: Added.
+
 2010-07-16  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Darin Fisher.

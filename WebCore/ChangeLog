@@ -1,3 +1,22 @@
+2010-07-16  Fady Samuel  <fsamuel@chromium.org>
+
+        Reviewed by David Levin.
+        
+        Avoids adding stroke when stroke-width is zero.
+
+        SVG - stroke-width:0 bug with stroke other than "none"
+        https://bugs.webkit.org/show_bug.cgi?id=42387
+
+        Test: svg/stroke/path-zero-strokewidth-test.svg
+
+        * platform/graphics/skia/GraphicsContextSkia.cpp:
+        (WebCore::GraphicsContext::drawConvexPolygon):
+        (WebCore::GraphicsContext::drawEllipse):
+        (WebCore::GraphicsContext::drawLine):
+        (WebCore::GraphicsContext::strokeArc):
+        (WebCore::GraphicsContext::strokePath):
+        (WebCore::GraphicsContext::strokeRect):
+
 2010-07-16  Kent Tamura  <tkent@chromium.org>
 
         Unreviewed, build fix.
