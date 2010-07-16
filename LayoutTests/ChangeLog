@@ -1,3 +1,20 @@
+2010-07-15  Yuta Kitamura  <yutak@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        WebSocket: Put echo-challenge_wsh.py under workers/resources directory
+        https://bugs.webkit.org/show_bug.cgi?id=42439
+
+        I have realized that tests under workers/ directory should not depend on
+        a pywebsocket script in a directory above.
+
+        Putting *_wsh.py files under resources/ directory also benefits Chromium's
+        worker test which only copies the contents under workers/resources directory
+        when running WebSocket worker tests.
+
+        * websocket/tests/workers/resources/echo-challenge_wsh.py: Copied from LayoutTests/websocket/tests/echo-challenge_wsh.py.
+        * websocket/tests/workers/resources/worker-handshake-challenge-randomness.js:
+
 2010-07-15  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Unreviewed fix for chromium's expectation.

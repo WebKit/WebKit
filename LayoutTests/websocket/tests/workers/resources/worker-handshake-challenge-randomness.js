@@ -14,7 +14,7 @@ function endTest()
 function runTests()
 {
     try {
-        var url = 'ws://localhost:8880/websocket/tests/echo-challenge';
+        var url = 'ws://localhost:8880/websocket/tests/workers/resources/echo-challenge';
         var ws1 = new WebSocket(url);
 
         ws1.onmessage = function(messageEvent)
