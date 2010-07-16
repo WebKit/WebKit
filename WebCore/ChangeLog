@@ -14,6 +14,19 @@
 
         Reviewed by Nate Chapin.
 
+        bufferData and bufferSubData generate wrong error when null buffer is bound
+        https://bugs.webkit.org/show_bug.cgi?id=42125
+
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::bufferData): Call validateBufferDataParameters().
+        (WebCore::WebGLRenderingContext::bufferSubData): Ditto.
+        (WebCore::WebGLRenderingContext::validateBufferDataParameters): Parameters validation for buffer{Sub}Data().
+        * html/canvas/WebGLRenderingContext.h: Declare validateBufferDataParameters().
+
+2010-07-13  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Nate Chapin.
+
         WebGL rendering results must be made available to Canvas.toDataURL and 2D drawImage
         https://bugs.webkit.org/show_bug.cgi?id=34719
 

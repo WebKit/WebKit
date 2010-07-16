@@ -1,3 +1,13 @@
+2010-07-13  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Nate Chapin.
+
+        bufferData and bufferSubData generate wrong error when null buffer is bound
+        https://bugs.webkit.org/show_bug.cgi?id=42125
+
+        * fast/canvas/webgl/buffer-data-array-buffer-expected.txt:
+        * fast/canvas/webgl/buffer-data-array-buffer.html: Test against the case where bound buffer is 0.
+
 2010-07-15  Ojan Vafai  <ojan@chromium.org>
 
         Unreviewed. Fix expected failure for test from r63494.

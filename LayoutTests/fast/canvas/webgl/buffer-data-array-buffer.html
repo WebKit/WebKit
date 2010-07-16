@@ -22,6 +22,9 @@ shouldBeNonNull("array");
 var buf = gl.createBuffer();
 shouldBeNonNull(buf);
 
+gl.bufferData(gl.ARRAY_BUFFER, array, gl.STATIC_DRAW);
+shouldBe("gl.getError()", "gl.INVALID_OPERATION"); 
+
 gl.bindBuffer(gl.ARRAY_BUFFER, buf);
 shouldBe("gl.getError()", "gl.NO_ERROR");
 

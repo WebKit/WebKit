@@ -358,22 +358,11 @@ void WebGLRenderingContext::blendFuncSeparate(unsigned long srcRGB, unsigned lon
 void WebGLRenderingContext::bufferData(unsigned long target, int size, unsigned long usage, ExceptionCode& ec)
 {
     UNUSED_PARAM(ec);
-    if (!isGLES2Compliant()) {
-        if (!validateBufferDataUsage(usage))
-            return;
-    }
-    if (target == GraphicsContext3D::ELEMENT_ARRAY_BUFFER && m_boundElementArrayBuffer) {
-        if (!m_boundElementArrayBuffer->associateBufferData(size)) {
-            m_context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE);
-            return;
-        }
-    } else if (target == GraphicsContext3D::ARRAY_BUFFER && m_boundArrayBuffer) {
-        if (!m_boundArrayBuffer->associateBufferData(size)) {
-            m_context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE);
-            return;
-        }
-    } else {
-        m_context->synthesizeGLError(GraphicsContext3D::INVALID_ENUM);
+    WebGLBuffer* buffer = validateBufferDataParameters(target, usage);
+    if (!buffer)
+        return;
+    if (!buffer->associateBufferData(size)) {
+        m_context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE);
         return;
     }
 
@@ -384,22 +373,11 @@ void WebGLRenderingContext::bufferData(unsigned long target, int size, unsigned 
 void WebGLRenderingContext::bufferData(unsigned long target, ArrayBuffer* data, unsigned long usage, ExceptionCode& ec)
 {
     UNUSED_PARAM(ec);
-    if (!isGLES2Compliant()) {
-        if (!validateBufferDataUsage(usage))
-            return;
-    }
-    if (target == GraphicsContext3D::ELEMENT_ARRAY_BUFFER && m_boundElementArrayBuffer) {
-        if (!m_boundElementArrayBuffer->associateBufferData(data)) {
-            m_context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE);
-            return;
-        }
-    } else if (target == GraphicsContext3D::ARRAY_BUFFER && m_boundArrayBuffer) {
-        if (!m_boundArrayBuffer->associateBufferData(data)) {
-            m_context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE);
-            return;
-        }
-    } else {
-        m_context->synthesizeGLError(GraphicsContext3D::INVALID_ENUM);
+    WebGLBuffer* buffer = validateBufferDataParameters(target, usage);
+    if (!buffer)
+        return;
+    if (!buffer->associateBufferData(data)) {
+        m_context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE);
         return;
     }
 
@@ -410,22 +388,11 @@ void WebGLRenderingContext::bufferData(unsigned long target, ArrayBuffer* data, 
 void WebGLRenderingContext::bufferData(unsigned long target, ArrayBufferView* data, unsigned long usage, ExceptionCode& ec)
 {
     UNUSED_PARAM(ec);
-    if (!isGLES2Compliant()) {
-        if (!validateBufferDataUsage(usage))
-            return;
-    }
-    if (target == GraphicsContext3D::ELEMENT_ARRAY_BUFFER && m_boundElementArrayBuffer) {
-        if (!m_boundElementArrayBuffer->associateBufferData(data)) {
-            m_context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE);
-            return;
-        }
-    } else if (target == GraphicsContext3D::ARRAY_BUFFER && m_boundArrayBuffer) {
-        if (!m_boundArrayBuffer->associateBufferData(data)) {
-            m_context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE);
-            return;
-        }
-    } else {
-        m_context->synthesizeGLError(GraphicsContext3D::INVALID_ENUM);
+    WebGLBuffer* buffer = validateBufferDataParameters(target, usage);
+    if (!buffer)
+        return;
+    if (!buffer->associateBufferData(data)) {
+        m_context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE);
         return;
     }
 
@@ -436,18 +403,11 @@ void WebGLRenderingContext::bufferData(unsigned long target, ArrayBufferView* da
 void WebGLRenderingContext::bufferSubData(unsigned long target, long offset, ArrayBuffer* data, ExceptionCode& ec)
 {
     UNUSED_PARAM(ec);
-    if (target == GraphicsContext3D::ELEMENT_ARRAY_BUFFER && m_boundElementArrayBuffer) {
-        if (!m_boundElementArrayBuffer->associateBufferSubData(offset, data)) {
-            m_context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE);
-            return;
-        }
-    } else if (target == GraphicsContext3D::ARRAY_BUFFER && m_boundArrayBuffer) {
-        if (!m_boundArrayBuffer->associateBufferSubData(offset, data)) {
-            m_context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE);
-            return;
-        }
-    } else {
-        m_context->synthesizeGLError(GraphicsContext3D::INVALID_ENUM);
+    WebGLBuffer* buffer = validateBufferDataParameters(target, GraphicsContext3D::STATIC_DRAW);
+    if (!buffer)
+        return;
+    if (!buffer->associateBufferSubData(offset, data)) {
+        m_context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE);
         return;
     }
 
@@ -458,18 +418,11 @@ void WebGLRenderingContext::bufferSubData(unsigned long target, long offset, Arr
 void WebGLRenderingContext::bufferSubData(unsigned long target, long offset, ArrayBufferView* data, ExceptionCode& ec)
 {
     UNUSED_PARAM(ec);
-    if (target == GraphicsContext3D::ELEMENT_ARRAY_BUFFER && m_boundElementArrayBuffer) {
-        if (!m_boundElementArrayBuffer->associateBufferSubData(offset, data)) {
-            m_context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE);
-            return;
-        }
-    } else if (target == GraphicsContext3D::ARRAY_BUFFER && m_boundArrayBuffer) {
-        if (!m_boundArrayBuffer->associateBufferSubData(offset, data)) {
-            m_context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE);
-            return;
-        }
-    } else {
-        m_context->synthesizeGLError(GraphicsContext3D::INVALID_ENUM);
+    WebGLBuffer* buffer = validateBufferDataParameters(target, GraphicsContext3D::STATIC_DRAW);
+    if (!buffer)
+        return;
+    if (!buffer->associateBufferSubData(offset, data)) {
+        m_context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE);
         return;
     }
 
@@ -3647,16 +3600,32 @@ bool WebGLRenderingContext::validateUniformMatrixParameters(const WebGLUniformLo
     return true;
 }
 
-bool WebGLRenderingContext::validateBufferDataUsage(unsigned long usage)
+WebGLBuffer* WebGLRenderingContext::validateBufferDataParameters(unsigned long target, unsigned long usage)
 {
+    WebGLBuffer* buffer = 0;
+    switch (target) {
+    case GraphicsContext3D::ELEMENT_ARRAY_BUFFER:
+        buffer = m_boundElementArrayBuffer.get();
+        break;
+    case GraphicsContext3D::ARRAY_BUFFER:
+        buffer = m_boundArrayBuffer.get();
+        break;
+    default:
+        m_context->synthesizeGLError(GraphicsContext3D::INVALID_ENUM);
+        return 0;
+    }
+    if (!buffer) {
+        m_context->synthesizeGLError(GraphicsContext3D::INVALID_OPERATION);
+        return 0;
+    }
     switch (usage) {
     case GraphicsContext3D::STREAM_DRAW:
     case GraphicsContext3D::STATIC_DRAW:
     case GraphicsContext3D::DYNAMIC_DRAW:
-        return true;
+        return buffer;
     }
     m_context->synthesizeGLError(GraphicsContext3D::INVALID_ENUM);
-    return false;
+    return 0;
 }
 
 void WebGLRenderingContext::vertexAttribfImpl(unsigned long index, int expectedSize, float v0, float v1, float v2, float v3)
