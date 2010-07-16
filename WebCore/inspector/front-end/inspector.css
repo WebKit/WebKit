@@ -711,6 +711,16 @@ body.platform-linux .monospace, body.platform-linux .source-code {
     content: url(Images/treeDownTriangleBlack.png);
 }
 
+.console-message > ol.stack-trace {
+    margin: 5px 0 5px -30px;
+    list-style: none;
+}
+
+.console-message.repeated-message > ol.stack-trace.trace-message {
+    margin-top: -9px;
+    margin-left: -12px;
+}
+
 .console-group-messages .section .header .title {
     color: black;
     font-weight: normal;

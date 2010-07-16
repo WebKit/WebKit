@@ -673,13 +673,8 @@ WebInspector.ConsoleMessage.prototype = {
     {
         switch (this.type) {
             case WebInspector.ConsoleMessage.MessageType.Trace:
-                var span = document.createElement("span");
-                span.className = "console-formatted-trace source-code";
-                var funcNames = this._stackTrace.map(function(f) {
-                    return f || WebInspector.UIString("(anonymous function)");
-                });
-                span.appendChild(document.createTextNode(funcNames.join("\n")));
-                this.formattedMessage = span;
+                this.formattedMessage = this._createStackTraceElement();
+                this.formattedMessage.addStyleClass("trace-message");
                 break;
             case WebInspector.ConsoleMessage.MessageType.Object:
                 var obj = this._parameters ? this._parameters[0] : undefined;
@@ -830,34 +825,56 @@ WebInspector.ConsoleMessage.prototype = {
             return element;
         }
 
-        if (this.url && this.url !== "undefined") {
-            var urlElement = document.createElement("a");
-            urlElement.className = "console-message-url webkit-html-resource-link";
-            urlElement.href = this.url;
-            urlElement.lineNumber = this.line;
+        if (this.type === WebInspector.ConsoleMessage.MessageType.Trace) {
+            element.appendChild(this.formattedMessage);
+        } else {
+            if (this.url && this.url !== "undefined") {
+                var urlElement = WebInspector.linkifyResourceAsNode(this.url, "scripts", this.line, "console-message-url"); 
+                element.appendChild(urlElement);
+            }
 
-            if (this.source === WebInspector.ConsoleMessage.MessageSource.JS)
-                urlElement.preferredPanel = "scripts";
+            var messageTextElement = document.createElement("span");
+            messageTextElement.className = "console-message-text source-code";
+            if (this.type === WebInspector.ConsoleMessage.MessageType.Assert)
+                messageTextElement.appendChild(document.createTextNode(WebInspector.UIString("Assertion failed: ")));
+            messageTextElement.appendChild(this.formattedMessage);
+            element.appendChild(messageTextElement);
 
-            if (this.line > 0)
-                urlElement.textContent = WebInspector.displayNameForURL(this.url) + ":" + this.line;
-            else
-                urlElement.textContent = WebInspector.displayNameForURL(this.url);
-
-            element.appendChild(urlElement);
+            if (this._stackTrace) {
+                var ol = this._createStackTraceElement();
+                element.appendChild(ol);
+            }
         }
-
-        var messageTextElement = document.createElement("span");
-        messageTextElement.className = "console-message-text source-code";
-        if (this.type === WebInspector.ConsoleMessage.MessageType.Assert)
-            messageTextElement.appendChild(document.createTextNode(WebInspector.UIString("Assertion failed: ")));
-        messageTextElement.appendChild(this.formattedMessage);
-        element.appendChild(messageTextElement);
 
         if (this.repeatCount > 1)
             this._updateRepeatCount();
 
         return element;
+    },
+
+    _createStackTraceElement: function()
+    {
+        var ol = document.createElement("ol");
+        ol.addStyleClass("stack-trace");
+        var treeOutline = new TreeOutline(ol);
+        for (var i = 0; i < this._stackTrace.length; i++) {
+            var frame = this._stackTrace[i];
+
+            var li = document.createElement("li");
+            var messageTextElement = document.createElement("span");
+            messageTextElement.className = "console-message-text source-code";
+            var functionName = frame.functionName || WebInspector.UIString("(anonymous function)");
+            messageTextElement.appendChild(document.createTextNode(functionName));
+            li.appendChild(messageTextElement);
+
+            var urlElement = WebInspector.linkifyResourceAsNode(frame.sourceURL, "scripts", frame.lineNumber, "console-message-url"); 
+            li.appendChild(urlElement);
+
+
+            var treeElement = new TreeElement(li.innerHTML);
+            treeOutline.appendChild(treeElement);
+        }
+        return ol;
     },
 
     _updateRepeatCount: function() {

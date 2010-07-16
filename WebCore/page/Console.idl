@@ -41,7 +41,7 @@ module window {
         [CustomArgumentHandling] void warn();
         [CustomArgumentHandling] void dir();
         [CustomArgumentHandling] void dirxml();
-        [CustomArgumentHandling] void trace();
+        [V8Custom, CustomArgumentHandling] void trace();
         [CustomArgumentHandling, ImplementationFunction=assertCondition] void assert(in boolean condition);
         [CustomArgumentHandling] void count();
         [CustomArgumentHandling] void markTimeline();

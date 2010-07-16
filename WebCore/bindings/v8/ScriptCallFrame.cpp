@@ -45,8 +45,15 @@ ScriptCallFrame::ScriptCallFrame(const String& functionName, const String& urlSt
     , m_sourceURL(ParsedURLString, urlString)
     , m_lineNumber(lineNumber)
 {
-    for (int i = 0; i < arguments.Length(); ++i)
+    for (int i = skipArgumentCount; i < arguments.Length(); ++i)
         m_arguments.append(ScriptValue(arguments[i]));
+}
+
+ScriptCallFrame::ScriptCallFrame(const String& functionName, const String& urlString, int lineNumber)
+    : m_functionName(functionName)
+    , m_sourceURL(ParsedURLString, urlString)
+    , m_lineNumber(lineNumber)
+{
 }
 
 ScriptCallFrame::~ScriptCallFrame()

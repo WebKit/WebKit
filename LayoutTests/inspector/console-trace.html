@@ -1,0 +1,32 @@
+<html>
+<head>
+<script src="../http/tests/inspector/inspector-test.js"></script>
+<script src="../http/tests/inspector/console-tests.js"></script>
+<script>
+
+function b()
+{
+    console.trace();
+}
+
+function a()
+{
+    b();
+}
+
+function doit()
+{
+    setTimeout(a, 0);
+    dumpConsoleMessages();
+}
+
+</script>
+</head>
+
+<body onload="onload()">
+<p>
+Tests that console.trace dumps stack trace with source URLs and line numbers.
+</p>
+
+</body>
+</html>

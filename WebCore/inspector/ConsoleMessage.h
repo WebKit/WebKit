@@ -40,12 +40,13 @@
 namespace WebCore {
 class InjectedScriptHost;
 class InspectorFrontend;
+class ScriptCallFrame;
 class ScriptCallStack;
 class ScriptString;
 
 class ConsoleMessage : public Noncopyable {
 public:
-    ConsoleMessage(MessageSource, MessageType, MessageLevel, const String& m, unsigned li, const String& u, unsigned g);        
+    ConsoleMessage(MessageSource, MessageType, MessageLevel, const String& m, unsigned li, const String& u, unsigned g);
     ConsoleMessage(MessageSource, MessageType, MessageLevel, ScriptCallStack*, unsigned g, bool storeTrace = false);
 
 #if ENABLE(INSPECTOR)
@@ -59,6 +60,19 @@ public:
     const String& message() const { return m_message; }
 
 private:
+    class CallFrame {
+    public:
+        explicit CallFrame(const ScriptCallFrame& frame);
+        CallFrame();
+        bool isEqual(const CallFrame& o) const;
+        ScriptObject buildObject(InspectorFrontend* frontend) const;
+
+    private:
+        String m_functionName;
+        KURL m_sourceURL;
+        unsigned m_lineNumber;
+    };
+
     MessageSource m_source;
     MessageType m_type;
     MessageLevel m_level;
@@ -67,7 +81,7 @@ private:
     Vector<ScriptValue> m_arguments;
     ScriptStateProtectedPtr m_scriptState;
 #endif
-    Vector<ScriptString> m_frames;
+    Vector<CallFrame> m_frames;
     unsigned m_line;
     String m_url;
     unsigned m_groupLevel;

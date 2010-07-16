@@ -1,3 +1,48 @@
+2010-07-16  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        console.trace should show file and line number for each function in the stack
+        https://bugs.webkit.org/show_bug.cgi?id=21180
+
+        Test: inspector/console-trace.html
+
+        * bindings/js/ScriptCallStack.cpp:
+        (WebCore::ScriptCallStack::initialize):
+        * bindings/v8/ScriptCallFrame.cpp:
+        (WebCore::ScriptCallFrame::ScriptCallFrame):
+        * bindings/v8/ScriptCallFrame.h:
+        * bindings/v8/ScriptCallStack.cpp:
+        (WebCore::getFrameLocation):
+        (WebCore::toScriptCallFrame):
+        (WebCore::ScriptCallStack::create):
+        (WebCore::ScriptCallStack::ScriptCallStack):
+        (WebCore::ScriptCallStack::at):
+        (WebCore::ScriptCallStack::size):
+        * bindings/v8/ScriptCallStack.h:
+        * bindings/v8/custom/V8ConsoleCustom.cpp:
+        (WebCore::V8Console::traceCallback):
+        * inspector/ConsoleMessage.cpp:
+        (WebCore::ConsoleMessage::CallFrame::CallFrame):
+        (WebCore::ConsoleMessage::CallFrame::isEqual):
+        (WebCore::ConsoleMessage::CallFrame::createFrontendObject):
+        (WebCore::ConsoleMessage::ConsoleMessage):
+        (WebCore::ConsoleMessage::addToFrontend):
+        (WebCore::ConsoleMessage::isEqual):
+        * inspector/ConsoleMessage.h:
+        * inspector/front-end/ConsoleView.js:
+        (WebInspector.ConsoleMessage.prototype._formatMessage):
+        (WebInspector.ConsoleMessage.prototype._createStackTraceElement):
+        (WebInspector.ConsoleMessage.prototype._createSourceUrlLink):
+        * inspector/front-end/inspector.css:
+        (.console-message.expandable > .console-message-text::before):
+        (.console-message.expandable.collapsed > .console-message-text::before):
+        (.console-message.expandable.collapsed > ol.stack-trace):
+        (.console-message > ol.stack-trace):
+        (.console-message.repeated-message > ol.stack-trace):
+        (.console-message.repeated-message > ol.stack-trace.trace-message):
+        * page/Console.idl:
+
 2010-07-16  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
 
         Reviewed by Antonio Gomes.

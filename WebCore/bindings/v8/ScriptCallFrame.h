@@ -50,6 +50,7 @@ namespace WebCore {
     class ScriptCallFrame  {
     public:
         ScriptCallFrame(const String& functionName, const String& urlString, int lineNumber, const v8::Arguments&, unsigned skipArgumentCount);
+        ScriptCallFrame(const String& functionName, const String& urlString, int lineNumber);
         ~ScriptCallFrame();
 
         const ScriptString& functionName() const { return m_functionName; }

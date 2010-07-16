@@ -48,7 +48,8 @@ class InspectorArray;
 
 class ScriptCallStack : public Noncopyable {
 public:
-    static ScriptCallStack* create(const v8::Arguments&, unsigned skipArgumentCount = 0);
+    static PassOwnPtr<ScriptCallStack> create(const v8::Arguments&, unsigned skipArgumentCount = 0);
+    static PassOwnPtr<ScriptCallStack> create(ScriptState*, v8::Handle<v8::StackTrace>);
     ~ScriptCallStack();
 
     // Returns false if there is no running JavaScript or if fetching the stack failed.
@@ -62,20 +63,19 @@ public:
     // }
     static bool stackTrace(int frameLimit, const RefPtr<InspectorArray>& stackTrace);
 
-    const ScriptCallFrame& at(unsigned) const;
-    // FIXME: implement retrieving and storing call stack trace
-    unsigned size() const { return 1; }
+    const ScriptCallFrame& at(unsigned);
+    unsigned size();
 
     ScriptState* state() const { return m_scriptState; }
     ScriptState* globalState() const { return m_scriptState; }
 
 private:
     ScriptCallStack(const v8::Arguments& arguments, unsigned skipArgumentCount, String sourceName, int sourceLineNumber, String funcName);
+    ScriptCallStack(ScriptState* scriptState, v8::Handle<v8::StackTrace> stackTrace);
 
-    static bool callLocation(String* sourceName, int* sourceLineNumber, String* functionName);
-
-    ScriptCallFrame m_lastCaller;
+    OwnPtr<ScriptCallFrame> m_topFrame;
     ScriptState* m_scriptState;
+    Vector<OwnPtr<ScriptCallFrame> > m_scriptCallFrames;
 };
 
 } // namespace WebCore
