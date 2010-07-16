@@ -1,3 +1,21 @@
+2010-07-16  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        <rdar://problem/8198266> white-space: pre text containing tabs is not laid out correctly when the font lacks a space glyph
+        https://bugs.webkit.org/show_bug.cgi?id=42437
+
+        No test because none of the fonts available to DumpRenderTree are missing a space glyph.
+
+        Changed the tab width computation to use the width of the space glyph from the font that has
+        a space glyph, which may be a fallback font if the primary font lacks a space glyph.
+
+        * platform/graphics/Font.h: Removed Font::tabWidth().
+        * platform/graphics/WidthIterator.cpp:
+        (WebCore::WidthIterator::advance):
+        * platform/graphics/mac/ComplexTextController.cpp:
+        (WebCore::ComplexTextController::adjustGlyphsAndAdvances):
+
 2010-07-16  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed. Chromium build fix. Add missing include.

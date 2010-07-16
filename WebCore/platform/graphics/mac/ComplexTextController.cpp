@@ -474,7 +474,7 @@ void ComplexTextController::adjustGlyphsAndAdvances()
             CGSize advance = treatAsSpace ? CGSizeMake(fontData->spaceWidth(), advances[i].height) : advances[i];
 
             if (ch == '\t' && m_run.allowTabs()) {
-                float tabWidth = m_font.tabWidth();
+                float tabWidth = 8 * ceilf(fontData->adjustedSpaceWidth() + m_font.letterSpacing());
                 advance.width = tabWidth - fmodf(m_run.xPos() + m_totalWidth + widthSinceLastRounding, tabWidth);
             } else if (ch == zeroWidthSpace || Font::treatAsZeroWidthSpace(ch) && !treatAsSpace) {
                 advance.width = 0;

@@ -135,7 +135,6 @@ public:
     float xHeight() const { return primaryFont()->xHeight(); }
     unsigned unitsPerEm() const { return primaryFont()->unitsPerEm(); }
     int spaceWidth() const { return (int)ceilf(primaryFont()->adjustedSpaceWidth() + m_letterSpacing); }
-    int tabWidth() const { return 8 * spaceWidth(); }
 
     const SimpleFontData* primaryFont() const;
     const FontData* fontDataAt(unsigned) const;
