@@ -774,7 +774,7 @@ AnimationBase::AnimationBase(const Animation* transition, RenderObject* renderer
     , m_object(renderer)
     , m_animation(const_cast<Animation*>(transition))
     , m_compAnim(compAnim)
-    , m_fallbackAnimating(false)
+    , m_isAccelerated(false)
     , m_transformFunctionListValid(false)
     , m_nextIterationDuration(-1)
     , m_next(0)
@@ -837,7 +837,7 @@ bool AnimationBase::blendProperties(const AnimationBase* anim, int prop, RenderS
     if (wrapper) {
         wrapper->blend(anim, dst, a, b, progress);
 #if USE(ACCELERATED_COMPOSITING)
-        return !wrapper->animationIsAccelerated() || anim->isFallbackAnimating();
+        return !wrapper->animationIsAccelerated() || !anim->isAccelerated();
 #else
         return true;
 #endif
@@ -974,7 +974,7 @@ void AnimationBase::updateStateMachine(AnimStateInput input, double param)
                 // We won't try to start accelerated animations if we are overridden and
                 // just move on to the next state.
                 m_animState = AnimationStateStartWaitResponse;
-                m_fallbackAnimating = true;
+                m_isAccelerated = false;
                 updateStateMachine(AnimationStateInputStartTimeSet, beginAnimationUpdateTime());
             }
             else {
@@ -985,7 +985,7 @@ void AnimationBase::updateStateMachine(AnimStateInput input, double param)
                 bool started = startAnimation(timeOffset);
 
                 m_compAnim->animationController()->addToStartTimeResponseWaitList(this, started);
-                m_fallbackAnimating = !started;
+                m_isAccelerated = started;
             }
             break;
         case AnimationStateStartWaitResponse:
@@ -1108,11 +1108,11 @@ void AnimationBase::updateStateMachine(AnimStateInput input, double param)
                 // We won't try to start accelerated animations if we are overridden and
                 // just move on to the next state.
                 updateStateMachine(AnimationStateInputStartTimeSet, beginAnimationUpdateTime());
-                m_fallbackAnimating = true;
+                m_isAccelerated = false;
             } else {
                 bool started = startAnimation(beginAnimationUpdateTime() - m_startTime);
                 m_compAnim->animationController()->addToStartTimeResponseWaitList(this, started);
-                m_fallbackAnimating = !started;
+                m_isAccelerated = started;
             }
             break;
         case AnimationStateFillingForwards:

@@ -2,6 +2,62 @@
 
         Reviewed by Sam Weinig.
 
+        Safari pegs CPU and drops frames on http://neography.com/experiment/circles/solarsystem/ (CSS animations)
+        https://bugs.webkit.org/show_bug.cgi?id=41409
+        
+        AnimationController::isAnimatingPropertyOnRenderer() really asked whether an accelerated animation
+        or transition was running. This prevented us from falling into compositing layers for animation
+        on platforms, like Windows, that don't have accelerated animations.
+        
+        Fix by making things more explicit: we now have two methods, isRunningAnimationOnRenderer()
+        and isRunningAcceleratedAnimationOnRenderer().
+        
+        Changes are more extensive because I flipped the sense of 'm_fallbackAnimating', which is
+        now 'm_isAccelerated', for clarity.
+
+        Test: compositing/animation/animation-compositing.html
+
+        * page/animation/AnimationBase.cpp:
+        (WebCore::AnimationBase::AnimationBase): m_fallbackAnimating -> m_isAccelerated
+        (WebCore::AnimationBase::blendProperties): Ditto.
+        (WebCore::AnimationBase::updateStateMachine): Ditto.
+        * page/animation/AnimationBase.h:
+        (WebCore::AnimationBase::isAnimatingProperty): Takes new acceleratedOnly parameter
+        which causes the method to only return true if the animation is accelerated.
+        (WebCore::AnimationBase::isAccelerated): Changed from isFallbackAnimating.
+
+        * page/animation/AnimationController.cpp:
+        (WebCore::AnimationControllerPrivate::isRunningAnimationOnRenderer):
+        (WebCore::AnimationControllerPrivate::isRunningAcceleratedAnimationOnRenderer):
+        (WebCore::AnimationController::isRunningAnimationOnRenderer):
+        (WebCore::AnimationController::isRunningAcceleratedAnimationOnRenderer):
+
+        * page/animation/CompositeAnimation.h:
+        * page/animation/AnimationController.h: Rename isAnimatingPropertyOnRenderer(), add
+        isRunningAcceleratedAnimationOnRenderer().
+        * page/animation/AnimationControllerPrivate.h: Ditto.
+        * page/animation/CompositeAnimation.cpp:
+        (WebCore::CompositeAnimation::updateTransitions): !isFallbackAnimating() -> isAccelerated().
+        (WebCore::CompositeAnimation::isAnimatingProperty): Pass acceleratedOnly down.
+
+        * page/animation/ImplicitAnimation.cpp:
+        (WebCore::ImplicitAnimation::timeToNextService): !isFallbackAnimating() -> isAccelerated().
+
+        * page/animation/KeyframeAnimation.cpp:
+        (WebCore::KeyframeAnimation::timeToNextService): isFallbackAnimating() -> !isAccelerated().
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateGraphicsLayerGeometry): Avoid touching the transform or
+        opacity if an accelerated animation is running.
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::requiresCompositingForAnimation): Make compositing layers
+        if an animation of transform or opacity is running.
+
+2010-07-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Sam Weinig.
+
         Assertion when turning Accelerated Compositing off on a composited page
         https://bugs.webkit.org/show_bug.cgi?id=42408
 

@@ -209,13 +209,22 @@ void AnimationControllerPrivate::animationTimerFired(Timer<AnimationControllerPr
     fireEventsAndUpdateStyle();
 }
 
-bool AnimationControllerPrivate::isAnimatingPropertyOnRenderer(RenderObject* renderer, CSSPropertyID property, bool isRunningNow) const
+bool AnimationControllerPrivate::isRunningAnimationOnRenderer(RenderObject* renderer, CSSPropertyID property, bool isRunningNow) const
 {
     RefPtr<CompositeAnimation> animation = m_compositeAnimations.get(renderer);
     if (!animation)
         return false;
 
-    return animation->isAnimatingProperty(property, isRunningNow);
+    return animation->isAnimatingProperty(property, false, isRunningNow);
+}
+
+bool AnimationControllerPrivate::isRunningAcceleratedAnimationOnRenderer(RenderObject* renderer, CSSPropertyID property, bool isRunningNow) const
+{
+    RefPtr<CompositeAnimation> animation = m_compositeAnimations.get(renderer);
+    if (!animation)
+        return false;
+
+    return animation->isAnimatingProperty(property, true, isRunningNow);
 }
 
 void AnimationControllerPrivate::suspendAnimations(Document* document)
@@ -532,9 +541,14 @@ bool AnimationController::pauseTransitionAtTime(RenderObject* renderer, const St
     return m_data->pauseTransitionAtTime(renderer, property, t);
 }
 
-bool AnimationController::isAnimatingPropertyOnRenderer(RenderObject* renderer, CSSPropertyID property, bool isRunningNow) const
+bool AnimationController::isRunningAnimationOnRenderer(RenderObject* renderer, CSSPropertyID property, bool isRunningNow) const
 {
-    return m_data->isAnimatingPropertyOnRenderer(renderer, property, isRunningNow);
+    return m_data->isRunningAnimationOnRenderer(renderer, property, isRunningNow);
+}
+
+bool AnimationController::isRunningAcceleratedAnimationOnRenderer(RenderObject* renderer, CSSPropertyID property, bool isRunningNow) const
+{
+    return m_data->isRunningAcceleratedAnimationOnRenderer(renderer, property, isRunningNow);
 }
 
 void AnimationController::suspendAnimations(Document* document)

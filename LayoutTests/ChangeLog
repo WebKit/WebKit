@@ -1,3 +1,16 @@
+2010-07-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Safari pegs CPU and drops frames on http://neography.com/experiment/circles/solarsystem/ (CSS animations)
+        https://bugs.webkit.org/show_bug.cgi?id=41409
+        
+        Test for creating compositing layers when running animations of transform, even on platforms that don't
+        run accelerated animations.
+
+        * compositing/animation/animation-compositing-expected.txt: Added.
+        * compositing/animation/animation-compositing.html: Added.
+
 2010-07-16  Ojan Vafai  <ojan@chromium.org>
 
         Unreviewed. Put expected result from r63568 in the right place.

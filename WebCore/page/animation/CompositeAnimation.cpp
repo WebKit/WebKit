@@ -136,7 +136,7 @@ void CompositeAnimation::updateTransitions(RenderObject* renderer, RenderStyle* 
     #if USE(ACCELERATED_COMPOSITING)
                         // For accelerated animations we need to return a new RenderStyle with the _current_ value
                         // of the property, so that restarted transitions use the correct starting point.
-                        if (AnimationBase::animationOfPropertyIsAccelerated(prop) && !implAnim->isFallbackAnimating()) {
+                        if (AnimationBase::animationOfPropertyIsAccelerated(prop) && implAnim->isAccelerated()) {
                             if (!modifiedCurrentStyle)
                                 modifiedCurrentStyle = RenderStyle::clone(currentStyle);
 
@@ -460,14 +460,14 @@ void CompositeAnimation::resumeOverriddenImplicitAnimations(int property)
     }
 }
 
-bool CompositeAnimation::isAnimatingProperty(int property, bool isRunningNow) const
+bool CompositeAnimation::isAnimatingProperty(int property, bool acceleratedOnly, bool isRunningNow) const
 {
     if (!m_keyframeAnimations.isEmpty()) {
         m_keyframeAnimations.checkConsistency();
         AnimationNameMap::const_iterator animationsEnd = m_keyframeAnimations.end();
         for (AnimationNameMap::const_iterator it = m_keyframeAnimations.begin(); it != animationsEnd; ++it) {
             KeyframeAnimation* anim = it->second.get();
-            if (anim && anim->isAnimatingProperty(property, isRunningNow))
+            if (anim && anim->isAnimatingProperty(property, acceleratedOnly, isRunningNow))
                 return true;
         }
     }
@@ -476,7 +476,7 @@ bool CompositeAnimation::isAnimatingProperty(int property, bool isRunningNow) co
         CSSPropertyTransitionsMap::const_iterator transitionsEnd = m_transitions.end();
         for (CSSPropertyTransitionsMap::const_iterator it = m_transitions.begin(); it != transitionsEnd; ++it) {
             ImplicitAnimation* anim = it->second.get();
-            if (anim && anim->isAnimatingProperty(property, isRunningNow))
+            if (anim && anim->isAnimatingProperty(property, acceleratedOnly, isRunningNow))
                 return true;
         }
     }
