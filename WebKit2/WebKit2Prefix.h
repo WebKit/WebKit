@@ -76,6 +76,9 @@
 
 #include <WebCore/config.h>
 #include <windows.h>
+
+#if PLATFORM(CG)
 #include <CoreGraphics/CoreGraphics.h>
+#endif
 
 #endif /* defined(WIN32) || defined(_WIN32) */

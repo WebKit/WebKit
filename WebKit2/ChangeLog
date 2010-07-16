@@ -1,3 +1,10 @@
+2010-07-15  Brent Fulgham  <bfulgham@webkit.org>
+
+        Build fix.  Don't include CoreGraphics.h on non-CG builds.
+
+        * WebKit2Prefix.h: Conditionalize include of CoreGraphics.h
+        to avoid build break on WinCairo.
+
 2010-07-15  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.
