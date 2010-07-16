@@ -38,6 +38,7 @@
 #include <wtf/Assertions.h>
 #include <wtf/RefPtr.h>
 
+#import <WebKit/WebCoreStatistics.h>
 #import <WebKit/WebDocumentPrivate.h>
 #import <WebKit/WebHTMLViewPrivate.h>
 #import <WebKit/WebKit.h>
@@ -104,18 +105,8 @@ void setupMainDisplayColorProfile()
     signal(SIGTERM, restoreMainDisplayColorProfile);
 }
 
-PassRefPtr<BitmapContext> createBitmapContextFromWebView(bool onscreen, bool incrementalRepaint, bool sweepHorizontally, bool drawSelectionRect)
+static PassRefPtr<BitmapContext> createBitmapContext(size_t pixelsWide, size_t pixelsHigh)
 {
-    WebView* view = [mainFrame webView];
-
-    // If the WebHTMLView uses accelerated compositing, we need for force the on-screen capture path
-    // and also force Core Animation to start its animations with -display since the DRT window has autodisplay disabled.
-    if ([view _isUsingAcceleratedCompositing])
-        onscreen = YES;
-
-    NSSize webViewSize = [view frame].size;
-    size_t pixelsWide = static_cast<size_t>(webViewSize.width);
-    size_t pixelsHigh = static_cast<size_t>(webViewSize.height);
     size_t rowBytes = (4 * pixelsWide + 63) & ~63; // Use a multiple of 64 bytes to improve CG performance
 
     void *buffer = calloc(pixelsHigh, rowBytes);
@@ -140,9 +131,26 @@ PassRefPtr<BitmapContext> createBitmapContextFromWebView(bool onscreen, bool inc
         return 0;
     }
 
-    // The BitmapContext keeps the CGContextRef and the pixel buffer alive
-    RefPtr<BitmapContext> bitmapContext = BitmapContext::createByAdoptingBitmapAndContext(buffer, context);
-    
+    return BitmapContext::createByAdoptingBitmapAndContext(buffer, context);
+}
+
+PassRefPtr<BitmapContext> createBitmapContextFromWebView(bool onscreen, bool incrementalRepaint, bool sweepHorizontally, bool drawSelectionRect)
+{
+    WebView* view = [mainFrame webView];
+
+    // If the WebHTMLView uses accelerated compositing, we need for force the on-screen capture path
+    // and also force Core Animation to start its animations with -display since the DRT window has autodisplay disabled.
+    if ([view _isUsingAcceleratedCompositing])
+        onscreen = YES;
+
+    NSSize webViewSize = [view frame].size;
+    size_t pixelsWide = static_cast<size_t>(webViewSize.width);
+    size_t pixelsHigh = static_cast<size_t>(webViewSize.height);
+    RefPtr<BitmapContext> bitmapContext = createBitmapContext(pixelsWide, pixelsHigh);
+    if (!bitmapContext)
+        return 0;
+    CGContextRef context = bitmapContext->cgContext();
+
     NSGraphicsContext *nsContext = [NSGraphicsContext graphicsContextWithGraphicsPort:context flipped:NO];
     ASSERT(nsContext);
     
@@ -252,5 +260,16 @@ PassRefPtr<BitmapContext> createBitmapContextFromWebView(bool onscreen, bool inc
         CGContextRestoreGState(context);
     }
     
+    return bitmapContext.release();
+}
+
+PassRefPtr<BitmapContext> createPagedBitmapContext()
+{
+    int pageWidthInPixels = LayoutTestController::maxViewWidth;
+    int pageHeightInPixels = LayoutTestController::maxViewHeight;
+    int numberOfPages = [mainFrame numberOfPages:pageWidthInPixels:pageHeightInPixels];
+
+    RefPtr<BitmapContext> bitmapContext = createBitmapContext(pageWidthInPixels, numberOfPages * (pageHeightInPixels + 1) - 1);
+    [mainFrame printToCGContext:bitmapContext->cgContext():pageWidthInPixels:pageHeightInPixels];
     return bitmapContext.release();
 }

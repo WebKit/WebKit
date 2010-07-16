@@ -956,3 +956,6 @@ userscripts/user-style-top-frame-only.html
 
 # Directory upload is not enabled.
 fast/forms/input-file-directory-upload.html
+
+# Need setPrinting. See https://bugs.webkit.org/show_bug.cgi?id=20011
+printing/setPrinting.html

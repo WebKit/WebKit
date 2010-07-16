@@ -1,3 +1,14 @@
+2010-07-15  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Printing test results differ between machines, we should use ImageDiff instead
+        https://bugs.webkit.org/show_bug.cgi?id=20011
+
+        * Misc/WebCoreStatistics.h:
+        * Misc/WebCoreStatistics.mm:
+        (-[WebFrame printToCGContext:cgContext:pageWidthInPixels:]):
+
 2010-07-15  Daniel Bates  <dbates@rim.com>
 
         Reviewed by Darin Adler.

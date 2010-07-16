@@ -35,9 +35,6 @@ fast/events/attempt-scroll-with-no-scrollbars.html
 # see bug <rdar://problem/5646437> REGRESSION (r28015): svg/batik/text/smallFonts fails
 svg/batik/text/smallFonts.svg
 
-# see bug https://bugs.webkit.org/show_bug.cgi?id=20011 -- Printing tests should use ImageDiff
-printing/compositing-layer-printing.html
-
 # Skip because fix for https://bugs.webkit.org/show_bug.cgi?id=26770 was reverted
 compositing/animation/animated-composited-inside-hidden.html
 

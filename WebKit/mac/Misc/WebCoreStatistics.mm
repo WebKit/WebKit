@@ -37,6 +37,7 @@
 #import <WebCore/Frame.h>
 #import <WebCore/GCController.h>
 #import <WebCore/GlyphPageTreeNode.h>
+#import <WebCore/GraphicsContext.h>
 #import <WebCore/IconDatabase.h>
 #import <WebCore/JSDOMWindow.h>
 #import <WebCore/PageCache.h>
@@ -289,4 +290,15 @@ using namespace WebCore;
 {
     return PrintContext::pageSizeAndMarginsInPixels(_private->coreFrame, pageNumber, width, height, marginTop, marginRight, marginBottom, marginLeft);
 }
+
+- (void)printToCGContext:(CGContextRef)cgContext:(float)pageWidthInPixels:(float)pageHeightInPixels
+{
+    Frame* coreFrame = _private->coreFrame;
+    if (!coreFrame)
+        return;
+
+    GraphicsContext graphicsContext(cgContext);
+    PrintContext::spoolAllPagesWithBoundaries(coreFrame, graphicsContext, FloatSize(pageWidthInPixels, pageHeightInPixels));
+}
+
 @end
