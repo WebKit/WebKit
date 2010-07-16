@@ -3132,3 +3132,6 @@ BUGWK42428 LINUX WIN : svg/W3C-SVG-1.1/filters-conv-01-f.svg = IMAGE+TEXT
 BUGWK20011 : printing/setPrinting.html = FAIL
 
 BUGWK42450 MAC : svg/custom/clip-path-child-changes.svg = TEXT PASS
+
+// Needs V8 change.
+BUG49343 : fast/js/reserved-words-as-property.html = TEXT

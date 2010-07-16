@@ -1,5 +1,12 @@
 2010-07-16  Ojan Vafai  <ojan@chromium.org>
 
+        Unreviewed. Add another expected chromium failure and the missing the text expectation in r63567.
+
+        * platform/chromium-linux/svg/custom/relative-sized-content-with-resources-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
+2010-07-16  Ojan Vafai  <ojan@chromium.org>
+
         Unreviewed. Add new chromium expectations and update expected failures. All updated expected
         failures have the relevant details in the bugs.webkit.org bug.
         
