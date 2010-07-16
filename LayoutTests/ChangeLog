@@ -1,3 +1,29 @@
+2010-07-16  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Remove fast/dynamic/flash-replacement-test.html
+        https://bugs.webkit.org/show_bug.cgi?id=42467
+
+        This test doesn't really test anything since the flash file it points to doesn't exist, and
+        the flash replacement test requires a SWF file that triggers a style layout when instantiating the plug-in.
+        
+        Furthermore, we don't even instantiate Netscape plug-ins from attach anymore which makes this test
+        even less accurate.
+
+        Also, it's failing on Mac if Flash 10.1, which uses the Core Animation drawing model, is installed.
+
+        * fast/dynamic/flash-replacement-test.html: Removed.
+        * platform/chromium-linux/fast/dynamic/flash-replacement-test-expected.checksum: Removed.
+        * platform/chromium-linux/fast/dynamic/flash-replacement-test-expected.png: Removed.
+        * platform/chromium-win/fast/dynamic/flash-replacement-test-expected.checksum: Removed.
+        * platform/chromium-win/fast/dynamic/flash-replacement-test-expected.png: Removed.
+        * platform/chromium-win/fast/dynamic/flash-replacement-test-expected.txt: Removed.
+        * platform/mac/fast/dynamic/flash-replacement-test-expected.checksum: Removed.
+        * platform/mac/fast/dynamic/flash-replacement-test-expected.png: Removed.
+        * platform/mac/fast/dynamic/flash-replacement-test-expected.txt: Removed.
+        * platform/qt/fast/dynamic/flash-replacement-test-expected.txt: Removed.
+
 2010-07-15  Rob Buis  <rwlbuis@gmail.com>
 
         Reviewed by Darin Adler.
