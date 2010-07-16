@@ -1,3 +1,10 @@
+2010-07-16  Ojan Vafai  <ojan@chromium.org>
+
+        Unreviewed. Put expected result from r63568 in the right place.
+        It should apply to windows and linux, not just linux.
+
+        * platform/chromium-win/svg/custom/relative-sized-content-with-resources-expected.txt: Renamed from LayoutTests/platform/chromium-linux/svg/custom/relative-sized-content-with-resources-expected.txt.
+
 2010-07-16  Tony Gentilcore  <tonyg@chromium.org>
 
         Reviewed by Ojan Vafai.
