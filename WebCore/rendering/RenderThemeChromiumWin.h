@@ -86,6 +86,8 @@ namespace WebCore {
         // See comment in RenderThemeChromiumSkia::setDefaultFontSize() regarding ugliness of this hack.
         static void setDefaultFontSize(int);
 
+        virtual void adjustInnerSpinButtonStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
+        virtual bool paintInnerSpinButton(RenderObject*, const PaintInfo&, const IntRect&);
 
 #if ENABLE(PROGRESS_TAG)
         virtual double animationRepeatIntervalForProgressBar(RenderProgress*) const;
@@ -98,14 +100,20 @@ namespace WebCore {
         virtual double caretBlinkIntervalInternal() const;
 
     private:
+        enum ControlSubPart {
+            None,
+            SpinButtonDown,
+            SpinButtonUp,
+        };
+
         RenderThemeChromiumWin() { }
         virtual ~RenderThemeChromiumWin() { }
 
-        unsigned determineState(RenderObject*);
+        unsigned determineState(RenderObject*, ControlSubPart = None);
         unsigned determineSliderThumbState(RenderObject*);
-        unsigned determineClassicState(RenderObject*);
+        unsigned determineClassicState(RenderObject*, ControlSubPart = None);
 
-        ThemeData getThemeData(RenderObject*);
+        ThemeData getThemeData(RenderObject*, ControlSubPart = None);
 
         bool paintTextFieldInternal(RenderObject*, const PaintInfo&, const IntRect&, bool);
     };

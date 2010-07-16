@@ -583,6 +583,64 @@ void WebThemeEngineDRT::paintScrollbarTrack(WebCanvas* canvas,
     drawControl(canvas, rect, ctype, cstate);
 }
 
+void WebThemeEngineDRT::paintSpinButton(WebCanvas* canvas,
+                                        int part,
+                                        int state,
+                                        int classicState,
+                                        const WebRect& rect)
+{
+    WebThemeControlDRT::Type ctype = WebThemeControlDRT::UnknownType;
+    WebThemeControlDRT::State cstate = WebThemeControlDRT::UnknownState;
+
+    if (part == SPNP_UP) {
+        ctype = WebThemeControlDRT::UpArrowType;
+        switch (state) {
+        case UPS_NORMAL:
+            ASSERT(classicState == DFCS_SCROLLUP);
+            cstate = WebThemeControlDRT::NormalState;
+            break;
+        case UPS_DISABLED:
+            ASSERT(classicState == (DFCS_SCROLLUP | DFCS_INACTIVE));
+            cstate = WebThemeControlDRT::DisabledState;
+            break;
+        case UPS_PRESSED:
+            ASSERT(classicState == (DFCS_SCROLLUP | DFCS_PUSHED));
+            cstate = WebThemeControlDRT::PressedState;
+            break;
+        case UPS_HOT:
+            ASSERT(classicState == (DFCS_SCROLLUP | DFCS_HOT));
+            cstate = WebThemeControlDRT::HoverState;
+            break;
+        default:
+            ASSERT_NOT_REACHED();
+        }
+    } else if (part == SPNP_DOWN) {
+        ctype = WebThemeControlDRT::DownArrowType;
+        switch (state) {
+        case DNS_NORMAL:
+            ASSERT(classicState == DFCS_SCROLLDOWN);
+            cstate = WebThemeControlDRT::NormalState;
+            break;
+        case DNS_DISABLED:
+            ASSERT(classicState == (DFCS_SCROLLDOWN | DFCS_INACTIVE));
+            cstate = WebThemeControlDRT::DisabledState;
+            break;
+        case DNS_PRESSED:
+            ASSERT(classicState == (DFCS_SCROLLDOWN | DFCS_PUSHED));
+            cstate = WebThemeControlDRT::PressedState;
+            break;
+        case DNS_HOT:
+            ASSERT(classicState == (DFCS_SCROLLDOWN | DFCS_HOT));
+            cstate = WebThemeControlDRT::HoverState;
+            break;
+        default:
+            ASSERT_NOT_REACHED();
+        }
+    } else
+        ASSERT_NOT_REACHED();
+    drawControl(canvas, rect, ctype, cstate);
+}
+
 void WebThemeEngineDRT::paintTextField(WebCanvas* canvas,
                                        int part,
                                        int state,

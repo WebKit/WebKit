@@ -1,3 +1,15 @@
+2010-07-16  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [Chromium] <input type=number> UI implementation for Windows
+        https://bugs.webkit.org/show_bug.cgi?id=42259
+
+        * DumpRenderTree/chromium/WebThemeEngineDRT.cpp:
+        (WebThemeEngineDRT::paintSpinButton):
+         Added. Check state consistency and use existing arrow painting code.
+        * DumpRenderTree/chromium/WebThemeEngineDRT.h:
+
 2010-07-16  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by Sam Weinig.

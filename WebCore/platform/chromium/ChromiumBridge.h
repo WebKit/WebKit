@@ -241,6 +241,8 @@ namespace WebCore {
             GraphicsContext*, int part, int state, int classicState, const IntRect&);
         static void paintScrollbarTrack(
             GraphicsContext*, int part, int state, int classicState, const IntRect&, const IntRect& alignRect);
+        static void paintSpinButton(
+            GraphicsContext*, int part, int state, int classicState, const IntRect&);
         static void paintTextField(
             GraphicsContext*, int part, int state, int classicState, const IntRect&, const Color&, bool fillContentArea, bool drawEdges);
         static void paintTrackbar(

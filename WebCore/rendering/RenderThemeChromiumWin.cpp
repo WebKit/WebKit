@@ -505,19 +505,20 @@ double RenderThemeChromiumWin::caretBlinkIntervalInternal() const
     return blinkInterval;
 }
 
-unsigned RenderThemeChromiumWin::determineState(RenderObject* o)
+unsigned RenderThemeChromiumWin::determineState(RenderObject* o, ControlSubPart subPart)
 {
     unsigned result = TS_NORMAL;
     ControlPart appearance = o->style()->appearance();
     if (!isEnabled(o))
         result = TS_DISABLED;
-    else if (isReadOnlyControl(o) && (TextFieldPart == appearance || TextAreaPart == appearance || SearchFieldPart == appearance))
-        result = ETS_READONLY; // Readonly is supported on textfields.
-    else if (isPressed(o)) // Active overrides hover and focused.
+    else if (isReadOnlyControl(o))
+        result = (appearance == TextFieldPart || appearance == TextAreaPart || appearance == SearchFieldPart) ? ETS_READONLY : TS_DISABLED;
+    // Active overrides hover and focused.
+    else if (isPressed(o) && (subPart == SpinButtonUp) == isSpinUpButtonPartPressed(o))
         result = TS_PRESSED;
     else if (supportsFocus(appearance) && isFocused(o))
         result = ETS_FOCUSED;
-    else if (isHovered(o))
+    else if (isHovered(o) && (subPart == SpinButtonUp) == isSpinUpButtonPartHovered(o))
         result = TS_HOT;
 
     // CBS_UNCHECKED*: 1-4
@@ -544,7 +545,7 @@ unsigned RenderThemeChromiumWin::determineSliderThumbState(RenderObject* o)
     return result;
 }
 
-unsigned RenderThemeChromiumWin::determineClassicState(RenderObject* o)
+unsigned RenderThemeChromiumWin::determineClassicState(RenderObject* o, ControlSubPart subPart)
 {
     unsigned result = 0;
 
@@ -566,13 +567,14 @@ unsigned RenderThemeChromiumWin::determineClassicState(RenderObject* o)
         else if (isHovered(o))
             result = DFCS_HOT;
     } else {
-        if (!isEnabled(o))
+        if (!isEnabled(o) || isReadOnlyControl(o))
             result = DFCS_INACTIVE;
-        else if (isPressed(o)) // Active supersedes hover
+        // Active supersedes hover
+        else if (isPressed(o) && (subPart == SpinButtonUp) == isSpinUpButtonPartPressed(o))
             result = DFCS_PUSHED;
         else if (supportsFocus(part) && isFocused(o)) // So does focused
             result = 0;
-        else if (isHovered(o))
+        else if (isHovered(o) && (subPart == SpinButtonUp) == isSpinUpButtonPartHovered(o))
             result = DFCS_HOT;
         // Classic theme can't represent indeterminate states. Use unchecked appearance.
         if (isChecked(o) && !isIndeterminate(o))
@@ -581,7 +583,7 @@ unsigned RenderThemeChromiumWin::determineClassicState(RenderObject* o)
     return result;
 }
 
-ThemeData RenderThemeChromiumWin::getThemeData(RenderObject* o)
+ThemeData RenderThemeChromiumWin::getThemeData(RenderObject* o, ControlSubPart subPart)
 {
     ThemeData result;
     switch (o->style()->appearance()) {
@@ -626,9 +628,14 @@ ThemeData RenderThemeChromiumWin::getThemeData(RenderObject* o)
         result.m_part = EP_EDITTEXT;
         result.m_state = determineState(o);
         break;
+    case InnerSpinButtonPart:
+        result.m_part = subPart == SpnButtonUp ? SPNP_UP : SPNP_DOWN;
+        result.m_state = determineState(o, subPart);
+        result.m_classicState = subPart == SpinButtonUp ? DFCS_SCROLLUP : DFCS_SCROLLDOWN;
+        break;
     }
 
-    result.m_classicState |= determineClassicState(o);
+    result.m_classicState |= determineClassicState(o, subPart);
 
     return result;
 }
@@ -677,6 +684,37 @@ bool RenderThemeChromiumWin::paintTextFieldInternal(RenderObject* o,
     }
     if (o->style()->hasBorderRadius())
         i.context->restore();
+    return false;
+}
+
+void RenderThemeChromiumWin::adjustInnerSpinButtonStyle(CSSStyleSelector*, RenderStyle* style, Element*) const
+{
+    int width = ScrollbarTheme::nativeTheme()->scrollbarThickness();
+    style->setWidth(Length(width, Fixed));
+    style->setMinWidth(Length(width, Fixed));
+}
+
+bool RenderThemeChromiumWin::paintInnerSpinButton(RenderObject* object, const PaintInfo& info, const IntRect& rect)
+{
+    IntRect half = rect;
+
+    half.setHeight(rect.height() / 2);
+    const ThemeData& upThemeData = getThemeData(object, SpinButtonUp);
+    WebCore::ThemePainter upPainter(info.context, half);
+    ChromiumBridge::paintSpinButton(upPainter.context(),
+                                    upThemeData.m_part,
+                                    upThemeData.m_state,
+                                    upThemeData.m_classicState,
+                                    upPainter.drawRect());
+
+    half.setY(rect.y() + rect.height() / 2);
+    const ThemeData& downThemeData = getThemeData(object, SpinButtonDown);
+    WebCore::ThemePainter downPainter(info.context, half);
+    ChromiumBridge::paintSpinButton(downPainter.context(),
+                                    downThemeData.m_part,
+                                    downThemeData.m_state,
+                                    downThemeData.m_classicState,
+                                    downPainter.drawRect());
     return false;
 }
 

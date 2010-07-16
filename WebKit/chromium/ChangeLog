@@ -1,3 +1,16 @@
+2010-07-16  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [Chromium] <input type=number> UI implementation for Windows
+        https://bugs.webkit.org/show_bug.cgi?id=42259
+
+        * public/WebThemeEngine.h:
+        (WebKit::WebThemeEngine::paintSpinButton): Added.
+        * src/ChromiumBridge.cpp:
+        (WebCore::ChromiumBridge::paintSpinButton):
+          Added. It calls WebThemeEngine::paintSpinButton().
+
 2010-07-16  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Darin Fisher.

@@ -1,3 +1,24 @@
+2010-07-16  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [Chromium] <input type=number> UI implementation for Windows
+        https://bugs.webkit.org/show_bug.cgi?id=42259
+
+        No additional tests.  Existing tests cover this change and we'll
+        update expectations.
+
+        * platform/chromium/ChromiumBridge.h: Add paintSpinButton().
+        * rendering/RenderThemeChromiumWin.cpp:
+        (WebCore::RenderThemeChromiumWin::determineState):
+         Add ControlSubPart parameter and add support for spin buttons.
+        (WebCore::RenderThemeChromiumWin::determineClassicState): ditto.
+        (WebCore::RenderThemeChromiumWin::getThemeData): ditto.
+        (WebCore::RenderThemeChromiumWin::adjustInnerSpinButtonStyle): Added.
+        (WebCore::RenderThemeChromiumWin::paintInnerSpinButton): Added.
+        * rendering/RenderThemeChromiumWin.h:
+          Declare ControlSubpart, and add it to some functions.
+
 2010-07-16  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
 
         Reviewed by Antonio Gomes.
