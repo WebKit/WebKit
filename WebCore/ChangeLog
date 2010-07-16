@@ -1,3 +1,15 @@
+2010-07-15  Erik Arvidsson  <arv@chromium.org>
+
+        Reviewed by David Levin.
+
+        Add directional property enums to the switch in applyProperty
+        https://bugs.webkit.org/show_bug.cgi?id=42438
+
+        Build fix for chromium mac.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+
 2010-07-13  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Nate Chapin.
