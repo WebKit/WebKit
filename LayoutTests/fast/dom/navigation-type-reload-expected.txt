@@ -2,7 +2,7 @@ This tests that performance.navigation.type is 1
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
-FAIL navigation.type should be 1 (of type number). Was undefined (of type undefined).
+PASS navigation.type is 1
 PASS successfullyParsed is true
 
 TEST COMPLETE

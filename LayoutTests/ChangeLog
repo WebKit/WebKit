@@ -1,3 +1,27 @@
+2010-07-15  Tony Gentilcore  <tonyg@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Update expectations for Web Timing enabled in chromium port.
+        https://bugs.webkit.org/show_bug.cgi?id=42313
+
+        Default expectations are to PASS (Web Timing enabled). Since the gtk, qt, win, and mac platforms do not have WEB_TIMING enabled, they must skip these tests.
+
+        * fast/dom/Window/window-properties-performance-expected.txt: Added.
+        * fast/dom/Window/window-properties-performance.html: Added.
+        * fast/dom/Window/window-properties.html: Skip webkitPerformance so that its platform-specific expectations can be managed in window-properties-performance.html.
+        * fast/dom/navigation-type-back-forward-expected.txt: Update to PASS
+        * fast/dom/navigation-type-navigate-expected.txt: Update to PASS
+        * fast/dom/navigation-type-reload-expected.txt: Update to PASS
+        * fast/dom/webtiming-expected.txt: Updated to mostly PASS. Currently has failures because chromium is not populating the ResourceLoadTiming API. This will be resolved when http://codereview.chromium.org/2909016 lands.
+        * fast/dom/webtiming.html: Update test based on new backfill functionality from https://bugs.webkit.org/show_bug.cgi?id=42303.
+        * http/tests/misc/webtiming-one-redirect-expected.txt: Update to PASS
+        * http/tests/misc/webtiming-two-redirects-expected.txt: Update to PASS
+        * platform/gtk/Skipped:
+        * platform/mac/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+
 2010-07-16  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.

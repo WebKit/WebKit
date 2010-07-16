@@ -27,13 +27,13 @@ function checkTimingBeforeLoad()
 
     shouldBeGreaterThanOrEqual("timing.fetchStart", "timing.navigationStart");
 
-    shouldBe("timing.domainLookupStart", "0");
-    shouldBe("timing.domainLookupEnd", "0");
+    shouldBeGreaterThanOrEqual("timing.domainLookupStart", "timing.fetchStart");
+    shouldBeGreaterThanOrEqual("timing.domainLookupEnd", "timing.domainLookupStart");
 
-    shouldBe("timing.connectStart", "0");
-    shouldBe("timing.connectEnd", "0");
+    shouldBeGreaterThanOrEqual("timing.connectStart", "timing.domainLookupEnd");
+    shouldBeGreaterThanOrEqual("timing.connectEnd", "timing.connectStart");
 
-    shouldBeGreaterThanOrEqual("timing.requestStart", "timing.navigationStart");
+    shouldBeGreaterThanOrEqual("timing.requestStart", "timing.connectEnd");
     shouldBeGreaterThanOrEqual("timing.requestEnd", "timing.requestStart");
 
     shouldBeGreaterThanOrEqual("timing.responseStart", "timing.requestEnd");
@@ -56,13 +56,13 @@ function checkWebTimingOnLoad()
 
     shouldBeGreaterThanOrEqual("timing.fetchStart", "timing.navigationStart");
 
-    shouldBe("timing.domainLookupStart", "0");
-    shouldBe("timing.domainLookupEnd", "0");
+    shouldBeGreaterThanOrEqual("timing.domainLookupStart", "timing.fetchStart");
+    shouldBeGreaterThanOrEqual("timing.domainLookupEnd", "timing.domainLookupStart");
 
-    shouldBe("timing.connectStart", "0");
-    shouldBe("timing.connectEnd", "0");
+    shouldBeGreaterThanOrEqual("timing.connectStart", "timing.domainLookupEnd");
+    shouldBeGreaterThanOrEqual("timing.connectEnd", "timing.connectStart");
 
-    shouldBeGreaterThanOrEqual("timing.requestStart", "timing.navigationStart");
+    shouldBeGreaterThanOrEqual("timing.requestStart", "timing.connectEnd");
     shouldBeGreaterThanOrEqual("timing.requestEnd", "timing.requestStart");
 
     shouldBeGreaterThanOrEqual("timing.responseStart", "timing.requestEnd");
@@ -86,13 +86,13 @@ function checkWebTimingAfterLoad()
 
     shouldBeGreaterThanOrEqual("timing.fetchStart", "timing.navigationStart");
 
-    shouldBe("timing.domainLookupStart", "0");
-    shouldBe("timing.domainLookupEnd", "0");
+    shouldBeGreaterThanOrEqual("timing.domainLookupStart", "timing.fetchStart");
+    shouldBeGreaterThanOrEqual("timing.domainLookupEnd", "timing.domainLookupStart");
 
-    shouldBe("timing.connectStart", "0");
-    shouldBe("timing.connectEnd", "0");
+    shouldBeGreaterThanOrEqual("timing.connectStart", "timing.domainLookupEnd");
+    shouldBeGreaterThanOrEqual("timing.connectEnd", "timing.connectStart");
 
-    shouldBeGreaterThanOrEqual("timing.requestStart", "timing.navigationStart");
+    shouldBeGreaterThanOrEqual("timing.requestStart", "timing.connectEnd");
     shouldBeGreaterThanOrEqual("timing.requestEnd", "timing.requestStart");
 
     shouldBeGreaterThanOrEqual("timing.responseStart", "timing.requestEnd");

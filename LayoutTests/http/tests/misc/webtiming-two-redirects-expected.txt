@@ -3,9 +3,9 @@ This test checks that Web Timing reports redirectCount correctly and has reasona
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-FAIL timing.redirectStart should be >= timing.navigationStart. Was undefined (of type undefined).
-FAIL timing.redirectEnd should be >= timing.redirectStart. Was undefined (of type undefined).
-FAIL navigation.redirectCount should be 2 (of type number). Was undefined (of type undefined).
+PASS timing.redirectStart is >= timing.navigationStart
+PASS timing.redirectEnd is >= timing.redirectStart
+PASS navigation.redirectCount is 2
 PASS successfullyParsed is true
 
 TEST COMPLETE
