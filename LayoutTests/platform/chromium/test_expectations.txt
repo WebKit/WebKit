@@ -3120,8 +3120,6 @@ BUGWK42403 LINUX WIN : svg/css/circle-in-mask-with-shadow.svg = IMAGE
 BUGWK42403 LINUX WIN : svg/custom/grayscale-gradient-mask.svg = IMAGE
 BUGWK42403 : svg/custom/mask-colorspace.svg = IMAGE
 
-BUGWK42402 LINUX WIN : svg/custom/svg-fonts-without-missing-glyph.xhtml = IMAGE+TEXT
-
 BUGWK42419 : fast/forms/input-file-directory-upload.html = CRASH
 
 BUGWK42428 : svg/custom/convolution-crash.svg = IMAGE
@@ -3135,3 +3133,7 @@ BUGWK42450 MAC : svg/custom/clip-path-child-changes.svg = TEXT PASS
 
 // Needs V8 change.
 BUG49343 : fast/js/reserved-words-as-property.html = TEXT
+
+BUG42485 WIN : inspector/console-trace.html = TEXT
+
+BUG42486 LINUX MAC DEBUG : svg/filters/filter-empty-g.svg = CRASH

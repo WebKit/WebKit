@@ -1,3 +1,9 @@
+2010-07-16  Ojan Vafai  <ojan@chromium.org>
+
+        Unreviewed. Update expectations with new failures.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-07-16  Fady Samuel  <fsamuel@chromium.org>
 
         Reviewed by David Levin.
