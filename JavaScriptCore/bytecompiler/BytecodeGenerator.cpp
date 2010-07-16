@@ -2051,7 +2051,10 @@ void BytecodeGenerator::setIsNumericCompareFunction(bool isNumericCompareFunctio
 int BytecodeGenerator::argumentNumberFor(const Identifier& ident)
 {
     int parameterCount = m_parameters.size(); // includes 'this'
-    int index = registerFor(ident)->index() + RegisterFile::CallFrameHeaderSize + parameterCount;
+    RegisterID* registerID = registerFor(ident);
+    if (!registerID)
+        return 0;
+    int index = registerID->index() + RegisterFile::CallFrameHeaderSize + parameterCount;
     return (index > 0 && index < parameterCount) ? index : 0;
 }
 

@@ -2036,7 +2036,7 @@ RegisterID* FunctionBodyNode::emitBytecode(BytecodeGenerator& generator, Registe
     }
 
     // If there is a return statment, and it is the only statement in the function, check if this is a numeric compare.
-    if (returnNode && static_cast<BlockNode*>(singleStatement)->singleStatement()) {
+    if (static_cast<BlockNode*>(singleStatement)->singleStatement()) {
         ExpressionNode* returnValueExpression = returnNode->value();
         if (returnValueExpression && returnValueExpression->isSubtract()) {
             ExpressionNode* lhsExpression = static_cast<SubNode*>(returnValueExpression)->lhs();

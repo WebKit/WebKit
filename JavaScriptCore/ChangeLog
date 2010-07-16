@@ -1,3 +1,20 @@
+2010-07-15  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Crash entering mail.yahoo.com
+        https://bugs.webkit.org/show_bug.cgi?id=42394
+    
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::argumentNumberFor): Added a NULL check. If the
+        identifier we're resolving is not a local variable, registerFor returns
+        NULL.
+
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::FunctionBodyNode::emitBytecode): Unrelated to the crash, but I
+        noticed this while working on it: No need to NULL-check returnNode,
+        since an early return has already done so.
+
 2010-07-15  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Oliver Hunt.
