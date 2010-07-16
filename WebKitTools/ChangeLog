@@ -1,3 +1,17 @@
+2010-07-15  Yuta Kitamura  <yutak@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        Pull in pywebsocket-0.5.1
+        https://bugs.webkit.org/show_bug.cgi?id=42353
+
+        pywebsocket-0.5.1 contains a small bug fix (*) that should fix a worker test
+        in Chromium. There is no other functional change.
+
+        (*) http://code.google.com/p/pywebsocket/source/detail?r=265
+
+        * Scripts/webkitpy/thirdparty/__init__.py: Bump pywebsocket version to 0.5.1.
+
 2010-07-15  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Sam Weinig.
