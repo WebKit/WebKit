@@ -13,7 +13,8 @@
 if (window.layoutTestController)
     layoutTestController.dumpDOMAsWebArchive();
 &lt;/script&gt;
-&lt;/head&gt;&lt;body&gt;
+&lt;/head&gt;
+&lt;body&gt;
 &lt;div&gt;
 Test for &lt;a href="https://bugs.webkit.org/show_bug.cgi?id=11850"&gt;Bug 11850:
 Webarchive fails to save images referenced in CSS&lt;/a&gt;

@@ -63,7 +63,9 @@ function procedeAfterClosedWindow()
 }
 
 &lt;/script&gt;
-&lt;/head&gt;&lt;body onload="startTest();"&gt;
+&lt;/head&gt;
+
+&lt;body onload="startTest();"&gt;
 &lt;span id="testSpan"&gt;This test takes a body with inline link color styling from a second window, moves it to the document of an iframe, makes sure the 
 second window has closed, then makes a WebArchive.  The test passes if it doesn't crash.  If running the test in Safari then garbage collection might get in the
 way of fulling testing the bug.  One should wait "awhile" before making the WebArchive.&lt;br&gt;&lt;/span&gt;&lt;br&gt;

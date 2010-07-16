@@ -10,7 +10,8 @@
     if (window.layoutTestController)
         layoutTestController.dumpDOMAsWebArchive();
 &lt;/script&gt;
-&lt;/head&gt;&lt;body&gt;
+&lt;/head&gt;
+&lt;body&gt;
   &lt;img src="resources/apple.gif"&gt;
 
 

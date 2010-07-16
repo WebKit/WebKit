@@ -21,6 +21,9 @@ deleteCommand();
 <#text>
 </#text>
 </HEAD>
+<#text>
+
+</#text>
 <BODY>
 <#text>
 </#text>

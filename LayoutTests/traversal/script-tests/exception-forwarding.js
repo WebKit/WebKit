@@ -23,8 +23,8 @@ shouldThrow("w.firstChild()"); // 7
 shouldThrow("w.lastChild()"); // 8
 shouldThrow("w.nextSibling()"); // 9
 shouldBe("w.previousSibling()", "null");
-shouldBe("w.nextSibling()", "document.body"); // 10
-shouldBe("w.previousSibling()", "document.body.previousSibling"); // 11
+shouldBe("w.nextSibling()", "document.body.previousSibling"); // 10
+shouldBe("w.previousSibling()", "document.head"); // 11
 shouldBe("iteration", "11");
 
 var successfullyParsed = true;

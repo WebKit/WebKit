@@ -13,8 +13,8 @@ PASS w.firstChild() threw exception Roses.
 PASS w.lastChild() threw exception Roses.
 PASS w.nextSibling() threw exception Roses.
 PASS w.previousSibling() is null
-PASS w.nextSibling() is document.body
-PASS w.previousSibling() is document.body.previousSibling
+PASS w.nextSibling() is document.body.previousSibling
+PASS w.previousSibling() is document.head
 PASS iteration is 11
 PASS successfullyParsed is true
 

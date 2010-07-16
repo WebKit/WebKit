@@ -283,7 +283,8 @@ PassRefPtr<Node> LegacyHTMLTreeBuilder::parseToken(Token* t)
         Node* previousChild = m_current->lastChild();
         if (previousChild && previousChild->isTextNode()) {
             // Only coalesce text nodes if the text node wouldn't be foster parented.
-            if (!m_current->hasTagName(tableTag)
+            if (!m_current->hasTagName(htmlTag)
+                && !m_current->hasTagName(tableTag)
                 && !m_current->hasTagName(trTag)
                 && !m_current->hasTagName(theadTag)
                 && !m_current->hasTagName(tbodyTag)
@@ -588,8 +589,17 @@ bool LegacyHTMLTreeBuilder::handleError(Node* n, bool flat, const AtomicString& 
             } else {
                 if (n->isTextNode()) {
                     Text* t = static_cast<Text*>(n);
-                    if (t->containsOnlyWhitespace())
+                    if (t->containsOnlyWhitespace()) {
+                        if (m_head && !m_inBody) {
+                            // We're between </head> and <body>.  According to
+                            // the HTML5 parsing algorithm, we're supposed to
+                            // insert whitespace text nodes into the HTML element.
+                            ExceptionCode ec;
+                            m_current->appendChild(n, ec);
+                            return true;
+                        }
                         return false;
+                    }
                 }
                 if (!m_haveFrameSet) {
                     // Ensure that head exists.

@@ -10,7 +10,8 @@
     if (window.layoutTestController)
         layoutTestController.dumpDOMAsWebArchive();
 &lt;/script&gt;
-&lt;/head&gt;&lt;frameset rows="*"&gt;
+&lt;/head&gt;
+&lt;frameset rows="*"&gt;
   &lt;frame src="resources/test-frame.html" name="myframe"&gt;
 &lt;/frameset&gt;&lt;/html&gt;</string>
 		<key>WebResourceFrameName</key>
@@ -30,7 +31,8 @@
 				<key>WebResourceData</key>
 				<string>&lt;html&gt;&lt;head&gt;
 &lt;link rel="stylesheet" href="test-style.css" type="text/css"&gt;
-&lt;/head&gt;&lt;body&gt;
+&lt;/head&gt;
+&lt;body&gt;
 &lt;div&gt;
   &lt;img src="apple.gif"&gt;
 &lt;/div&gt;

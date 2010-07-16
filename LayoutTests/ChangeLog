@@ -1,3 +1,44 @@
+2010-07-15  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Update LegacyHTMLTreeBuilder to insert whitespace between </head> and <body>
+        https://bugs.webkit.org/show_bug.cgi?id=42431
+
+        Update expected results.  These results match the HTML5 parser.
+
+        * editing/deleting/delete-br-in-last-table-cell-expected.txt:
+        * fast/innerHTML/005-expected.txt:
+        * html5lib/resources/webkit01.dat:
+        * html5lib/runner-expected.txt:
+        * http/tests/webarchive/cross-origin-stylesheet-crash-expected.webarchive:
+        * http/tests/webarchive/test-css-url-encoding-expected.webarchive:
+        * http/tests/webarchive/test-css-url-encoding-shift-jis-expected.webarchive:
+        * http/tests/webarchive/test-css-url-encoding-utf-8-expected.webarchive:
+        * platform/mac/css2.1/t1204-root-e-expected.txt:
+        * platform/mac/fast/css/empty-generated-content-expected.txt:
+        * traversal/exception-forwarding-expected.txt:
+        * traversal/script-tests/exception-forwarding.js:
+        * webarchive/adopt-attribute-styled-body-webarchive-expected.webarchive:
+        * webarchive/adopt-attribute-styled-node-webarchive-expected.webarchive:
+        * webarchive/adopt-inline-styled-node-webarchive-expected.webarchive:
+        * webarchive/archive-empty-frame-dom-expected.webarchive:
+        * webarchive/archive-with-unencoded-url-expected.webarchive:
+        * webarchive/test-body-background-expected.webarchive:
+        * webarchive/test-css-import-expected.webarchive:
+        * webarchive/test-css-url-resources-in-stylesheets-expected.webarchive:
+        * webarchive/test-css-url-resources-inline-styles-expected.webarchive:
+        * webarchive/test-duplicate-resources-expected.webarchive:
+        * webarchive/test-frameset-expected.webarchive:
+        * webarchive/test-img-src-expected.webarchive:
+        * webarchive/test-input-src-expected.webarchive:
+        * webarchive/test-link-href-expected.webarchive:
+        * webarchive/test-link-rel-icon-expected.webarchive:
+        * webarchive/test-object-data-expected.webarchive:
+        * webarchive/test-script-src-expected.webarchive:
+        * webarchive/test-table-background-expected.webarchive:
+        * webarchive/test-td-background-expected.webarchive:
+
 2010-07-15  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Maciej Stachowiak.

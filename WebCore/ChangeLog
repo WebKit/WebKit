@@ -1,3 +1,17 @@
+2010-07-15  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Update LegacyHTMLTreeBuilder to insert whitespace between </head> and <body>
+        https://bugs.webkit.org/show_bug.cgi?id=42431
+
+        Insert these whitespace text nodes into the HTML element between <head>
+        and <body>, as required by HTML5.  Previously, we just dropped them on
+        the floor.
+
+        * html/LegacyHTMLTreeBuilder.cpp:
+        (WebCore::LegacyHTMLTreeBuilder::handleError):
+
 2010-07-15  Victor Wang  <victorw@chromium.org>
 
         Reviewed by David Levin.

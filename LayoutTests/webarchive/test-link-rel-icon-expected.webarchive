@@ -17,7 +17,8 @@ function runTest()
 }
 &lt;/script&gt;
 &lt;link rel="icon" href="resources/favicon.ico" type="image/x-icon"&gt;
-&lt;/head&gt;&lt;body onload="runTest()"&gt;
+&lt;/head&gt;
+&lt;body onload="runTest()"&gt;
 
 
 &lt;/body&gt;&lt;/html&gt;</string>

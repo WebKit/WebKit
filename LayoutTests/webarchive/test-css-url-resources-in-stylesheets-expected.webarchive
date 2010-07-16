@@ -134,7 +134,8 @@ div.webkit-mask-image-list {
 }
 
 &lt;/style&gt;
-&lt;/head&gt;&lt;body onload="notifyDone()"&gt;
+&lt;/head&gt;
+&lt;body onload="notifyDone()"&gt;
 &lt;div&gt;&lt;p&gt;This page tests that url() resources referenced in CSS stylesheets are saved in webarchives.&lt;/p&gt;&lt;/div&gt;
 &lt;div class="background"&gt;This element should have one Apple logo in the background at the top left.&lt;/div&gt;
 &lt;div class="background-image"&gt;This element should have repeated Apple logos in both x- and y-dimensions in the background.&lt;/div&gt;

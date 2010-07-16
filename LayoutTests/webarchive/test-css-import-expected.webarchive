@@ -14,7 +14,8 @@
 &lt;style type="text/css"&gt;
     @import url('resources/test-css-import.css');
 &lt;/style&gt;
-&lt;/head&gt;&lt;body&gt;
+&lt;/head&gt;
+&lt;body&gt;
 &lt;div class="blue"&gt;This text should be blue.&lt;/div&gt;
 &lt;div class="red"&gt;This text should be red.&lt;/div&gt;
 &lt;div class="green"&gt;This text should be green.&lt;/div&gt;

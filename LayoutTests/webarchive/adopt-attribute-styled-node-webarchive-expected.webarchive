@@ -63,7 +63,9 @@ function procedeAfterClosedWindow()
 }
 
 &lt;/script&gt;
-&lt;/head&gt;&lt;body onload="startTest();"&gt;
+&lt;/head&gt;
+
+&lt;body onload="startTest();"&gt;
 &lt;span id="testSpan"&gt;This test takes a node with mapped style attributes from a different document, moves it to this document, makes sure the other document has closed,
 then makes a WebArchive from this document.  The test passes if it doesn't crash.  If running the test in Safari then garbage collection might get in the
 way of fulling testing the bug.  One should wait "awhile" before making the WebArchive.&lt;br&gt;&lt;marquee id="otherMarquee" bgcolor="blue" width="300px"&gt;Hello there marquee!&lt;/marquee&gt;&lt;/span&gt;

@@ -10,7 +10,8 @@
 &lt;link rel="stylesheet" href="resources/test-style.css" type="text/css"&gt;
 &lt;script src="resources/dump-webarchive.js" language="javascript" type="text/javascript"&gt;&lt;/script&gt;
 &lt;link rel="stylesheet" href="resources/test-style.css" type="text/css"&gt;
-&lt;/head&gt;&lt;body&gt;
+&lt;/head&gt;
+&lt;body&gt;
 &lt;div&gt;
   &lt;img src="resources/apple.gif"&gt;
 &lt;/div&gt;
@@ -41,7 +42,8 @@
 				<key>WebResourceData</key>
 				<string>&lt;html&gt;&lt;head&gt;
 &lt;link rel="stylesheet" href="test-style.css" type="text/css"&gt;
-&lt;/head&gt;&lt;body&gt;
+&lt;/head&gt;
+&lt;body&gt;
 &lt;div&gt;
   &lt;img src="apple.gif"&gt;
 &lt;/div&gt;

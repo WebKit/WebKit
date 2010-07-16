@@ -408,3 +408,25 @@ console.log("FOO<span>BAR</span>BAZ");
 |         <nobr>
 |           "a"
 |         <nobr>
+
+#data
+<head></head>
+<body></body>
+#errors
+#document
+| <html>
+|   <head>
+|   "
+"
+|   <body>
+
+#data
+<head></head> <style></style>ddd
+#errors
+#document
+| <html>
+|   <head>
+|     <style>
+|   " "
+|   <body>
+|     "ddd"

@@ -11,7 +11,8 @@ if (window.layoutTestController)
     layoutTestController.dumpDOMAsWebArchive();
 &lt;/script&gt;
 &lt;link rel="stylesheet" href="http://localhost:8000/webarchive/resources/localhost-stylesheet.css" type="text/css"&gt;
-&lt;/head&gt;&lt;body&gt;
+&lt;/head&gt;
+&lt;body&gt;
 This HTML links to an external stylesheet from a different security origin.&lt;br&gt;
 Making a webarchive of this page should not crash.
 

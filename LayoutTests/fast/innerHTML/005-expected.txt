@@ -2,7 +2,8 @@ Content:
 <head>
 <meta name="description" content="This tests html output">
 <title>html innerHTML test</title>
-</head><body>
+</head>
+<body>
 <span>Content:</span>
 <pre id="content">placeholder</pre>
 <div></div>
