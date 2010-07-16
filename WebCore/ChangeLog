@@ -1,3 +1,16 @@
+2010-07-16  Satish Sampath  <satish@chromium.org>
+
+        Reviewed by Anders Carlsson.
+
+        Add speech attribute to IDL for enabling access from JS.
+        https://bugs.webkit.org/show_bug.cgi?id=42483
+
+        No tests added, this change is a pre-requisite for future layout tests.
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::parseMappedAttribute): Update the renderer when speech attribute changes.
+        * html/HTMLInputElement.idl: Added the speech attribute to IDL.
+
 2010-07-16  Fady Samuel  <fsamuel@chromium.org>
 
         Reviewed by David Levin.

@@ -98,6 +98,10 @@ module html {
 
         readonly attribute FileList files;
         readonly attribute NodeList labels;
+
+#if defined(ENABLE_INPUT_SPEECH) && ENABLE_INPUT_SPEECH
+        attribute [Reflect] boolean speech;
+#endif
     };
 
 }
