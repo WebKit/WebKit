@@ -1,3 +1,13 @@
+2010-07-16  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Add WebKitTestRunner to the WebKit2 solution
+
+        * WebKit2.sln: Add InjectedBundle and WebKitTestRunner projects.  Also change the build dependency order from
+        DumpRunderTree --> WebKitAPITest to
+        DumpRenderTree --> InjectedBundle --> WebKitTestRunner --> WebKitAPITest
+
 2010-07-15  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Dan Bernstein.
