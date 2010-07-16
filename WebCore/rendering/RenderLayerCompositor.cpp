@@ -600,9 +600,11 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* layer, O
         }
     }
     
-    // If we just entered compositing mode, the root will have become composited.
-    if (layer->isRootLayer() && inCompositingMode())
-        willBeComposited = true;
+    // If we just entered compositing mode, the root will have become composited (as long as accelerated compositing is enabled).
+    if (layer->isRootLayer()) {
+        if (inCompositingMode() && m_hasAcceleratedCompositing)
+            willBeComposited = true;
+    }
     
     ASSERT(willBeComposited == needsToBeComposited(layer));
 

@@ -1,3 +1,16 @@
+2010-07-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Assertion when turning Accelerated Compositing off on a composited page
+        https://bugs.webkit.org/show_bug.cgi?id=42408
+
+        When accelerated compositing is turned off, check m_hasAcceleratedCompositing
+        before saying that the root layer will be composited. Fixes an assertion.
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::computeCompositingRequirements):
+
 2010-07-16  Antonio Gomes  <tonikitoo@webkit.org>
 
         Reviewed by Simon Fraser.
