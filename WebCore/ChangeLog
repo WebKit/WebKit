@@ -1,3 +1,29 @@
+2010-07-15  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        [Chromium] Update ThemeChromiumMac.mm for the recent changes of ThemeMac.mm
+        https://bugs.webkit.org/show_bug.cgi?id=41932
+
+        Sync with ThemeMac.mm r61760.
+        This change doesn't contain r54299, r57603, r57734, r57741, and
+        r58533 because they conflict with Chromium change for
+        FlippedView().
+
+        * platform/chromium/ThemeChromiumMac.mm:
+        (WebCore::sizeFromNSControlSize):
+        (WebCore::sizeFromFont):
+        (WebCore::controlSizeFromPixelSize):
+        (WebCore::setControlSize):
+        (WebCore::convertControlStatesToThemeDrawState):
+        (WebCore::stepperSizes):
+        (WebCore::stepperControlSizeForFont):
+        (WebCore::paintStepper):
+        (WebCore::ThemeChromiumMac::controlSize):
+        (WebCore::ThemeChromiumMac::minimumControlSize):
+        (WebCore::ThemeChromiumMac::inflateControlPaintRect):
+        (WebCore::ThemeChromiumMac::paint):
+
 2010-07-15  MORITA Hajime  <morrita@google.com>
 
         Reviewed by David Levin.

@@ -32,6 +32,7 @@
 #import "LocalCurrentGraphicsContext.h"
 #import "ScrollView.h"
 #import "WebCoreSystemInterface.h"
+#import <Carbon/Carbon.h>
 #include <wtf/StdLibExtras.h>
 #import <objc/runtime.h>
 
@@ -210,9 +211,9 @@ static NSControlSize controlSizeForFont(const Font& font)
     return NSMiniControlSize;
 }
 
-static LengthSize sizeFromFont(const Font& font, const LengthSize& zoomedSize, float zoomFactor, const IntSize* sizes)
+static LengthSize sizeFromNSControlSize(NSControlSize nsControlSize, const LengthSize& zoomedSize, float zoomFactor, const IntSize* sizes)
 {
-    IntSize controlSize = sizes[controlSizeForFont(font)];
+    IntSize controlSize = sizes[nsControlSize];
     if (zoomFactor != 1.0f)
         controlSize = IntSize(controlSize.width() * zoomFactor, controlSize.height() * zoomFactor);
     LengthSize result = zoomedSize;
@@ -223,19 +224,27 @@ static LengthSize sizeFromFont(const Font& font, const LengthSize& zoomedSize, f
     return result;
 }
 
-static void setControlSize(NSCell* cell, const IntSize* sizes, const IntSize& minZoomedSize, float zoomFactor)
+static LengthSize sizeFromFont(const Font& font, const LengthSize& zoomedSize, float zoomFactor, const IntSize* sizes)
 {
-    NSControlSize size;
+    return sizeFromNSControlSize(controlSizeForFont(font), zoomedSize, zoomFactor, sizes);
+}
+
+static ControlSize controlSizeFromPixelSize(const IntSize* sizes, const IntSize& minZoomedSize, float zoomFactor)
+{
     if (minZoomedSize.width() >= static_cast<int>(sizes[NSRegularControlSize].width() * zoomFactor) &&
         minZoomedSize.height() >= static_cast<int>(sizes[NSRegularControlSize].height() * zoomFactor))
-        size = NSRegularControlSize;
-    else if (minZoomedSize.width() >= static_cast<int>(sizes[NSSmallControlSize].width() * zoomFactor) &&
-             minZoomedSize.height() >= static_cast<int>(sizes[NSSmallControlSize].height() * zoomFactor))
-        size = NSSmallControlSize;
-    else
-        size = NSMiniControlSize;
+        return NSRegularControlSize;
+    if (minZoomedSize.width() >= static_cast<int>(sizes[NSSmallControlSize].width() * zoomFactor) &&
+        minZoomedSize.height() >= static_cast<int>(sizes[NSSmallControlSize].height() * zoomFactor))
+        return NSSmallControlSize;
+    return NSMiniControlSize;
+}
+
+static void setControlSize(NSCell* cell, const IntSize* sizes, const IntSize& minZoomedSize, float zoomFactor)
+{
+    ControlSize size = controlSizeFromPixelSize(sizes, minZoomedSize, zoomFactor);
     if (size != [cell controlSize]) // Only update if we have to, since AppKit does work even if the size is the same.
-        [cell setControlSize:size];
+        [cell setControlSize:(NSControlSize)size];
 }
 
 static void updateStates(NSCell* cell, ControlStates states)
@@ -275,6 +284,22 @@ static void updateStates(NSCell* cell, ControlStates states)
                                         : [NSColor currentControlTint];
     if (tint != oldTint)
         [cell setControlTint:tint];
+}
+
+static ThemeDrawState convertControlStatesToThemeDrawState(ThemeButtonKind kind, ControlStates states)
+{
+    if (states & ReadOnlyState)
+        return kThemeStateUnavailableInactive;
+    if (!(states & EnabledState))
+        return kThemeStateUnavailableInactive;
+
+    // Do not process PressedState if !EnabledState or ReadOnlyState.
+    if (states & PressedState) {
+        if (kind == kThemeIncDecButton || kind == kThemeIncDecButtonSmall || kind == kThemeIncDecButtonMini)
+            return states & SpinUpState ? kThemeStatePressedUp : kThemeStatePressedDown;
+        return kThemeStatePressed;
+    }
+    return kThemeStateActive;
 }
 
 static IntRect inflateRect(const IntRect& zoomedRect, const IntSize& zoomedSize, const int* margins, float zoomFactor)
@@ -571,6 +596,64 @@ static void paintButton(ControlPart part, ControlStates states, GraphicsContext*
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
+// Stepper
+
+static const IntSize* stepperSizes()
+{
+    static const IntSize sizes[3] = { IntSize(19, 27), IntSize(15, 22), IntSize(13, 15) };
+    return sizes;
+}
+
+// We don't use controlSizeForFont() for steppers because the stepper height
+// should be equal to or less than the corresponding text field height,
+static NSControlSize stepperControlSizeForFont(const Font& font)
+{
+    int fontSize = font.pixelSize();
+    if (fontSize >= 18)
+        return NSRegularControlSize;
+    if (fontSize >= 13)
+        return NSSmallControlSize;
+    return NSMiniControlSize;
+}
+
+static void paintStepper(ControlStates states, GraphicsContext* context, const IntRect& zoomedRect, float zoomFactor, ScrollView*)
+{
+    // We don't use NSStepperCell because there are no ways to draw an
+    // NSStepperCell with the up button highlighted.
+
+    HIThemeButtonDrawInfo drawInfo;
+    drawInfo.version = 0;
+    drawInfo.state = convertControlStatesToThemeDrawState(kThemeIncDecButton, states);
+    drawInfo.adornment = kThemeAdornmentDefault;
+    ControlSize controlSize = controlSizeFromPixelSize(stepperSizes(), zoomedRect.size(), zoomFactor);
+    if (controlSize == NSSmallControlSize)
+        drawInfo.kind = kThemeIncDecButtonSmall;
+    else if (controlSize == NSMiniControlSize)
+        drawInfo.kind = kThemeIncDecButtonMini;
+    else
+        drawInfo.kind = kThemeIncDecButton;
+
+    IntRect rect(zoomedRect);
+    context->save();
+    if (zoomFactor != 1.0f) {
+        rect.setWidth(rect.width() / zoomFactor);
+        rect.setHeight(rect.height() / zoomFactor);
+        context->translate(rect.x(), rect.y());
+        context->scale(FloatSize(zoomFactor, zoomFactor));
+        context->translate(-rect.x(), -rect.y());
+    }
+    CGRect bounds(rect);
+    // Adjust 'bounds' so that HIThemeDrawButton(bounds,...) draws exactly on 'rect'.
+    CGRect backgroundBounds;
+    HIThemeGetButtonBackgroundBounds(&bounds, &drawInfo, &backgroundBounds);
+    if (bounds.origin.x != backgroundBounds.origin.x)
+        bounds.origin.x += bounds.origin.x - backgroundBounds.origin.x;
+    if (bounds.origin.y != backgroundBounds.origin.y)
+        bounds.origin.y += bounds.origin.y - backgroundBounds.origin.y;
+    HIThemeDrawButton(&bounds, &drawInfo, context->platformContext(), kHIThemeOrientationNormal, 0);
+    context->restore();
+}
+
 // Theme overrides
 
 int ThemeChromiumMac::baselinePositionAdjustment(ControlPart part) const
@@ -613,6 +696,13 @@ LengthSize ThemeChromiumMac::controlSize(ControlPart part, const Font& font, con
         case ListButtonPart:
             return sizeFromFont(font, LengthSize(zoomedSize.width(), Length()), zoomFactor, listButtonSizes());
 #endif
+        case InnerSpinButtonPart:
+            // We don't use inner spin buttons on Mac.
+            return LengthSize(Length(Fixed), Length(Fixed));
+        case OuterSpinButtonPart:
+            if (!zoomedSize.width().isIntrinsicOrAuto() && !zoomedSize.height().isIntrinsicOrAuto())
+                return zoomedSize;
+            return sizeFromNSControlSize(stepperControlSizeForFont(font), zoomedSize, zoomFactor, stepperSizes());
         default:
             return zoomedSize;
     }
@@ -626,6 +716,14 @@ LengthSize ThemeChromiumMac::minimumControlSize(ControlPart part, const Font& fo
         case ButtonPart:
         case ListButtonPart:
             return LengthSize(Length(0, Fixed), Length(static_cast<int>(15 * zoomFactor), Fixed));
+        case InnerSpinButtonPart:
+            // We don't use inner spin buttons on Mac.
+            return LengthSize(Length(Fixed), Length(Fixed));
+        case OuterSpinButtonPart: {
+            IntSize base = stepperSizes()[NSMiniControlSize];
+            return LengthSize(Length(static_cast<int>(base.width() * zoomFactor), Fixed),
+                              Length(static_cast<int>(base.height() * zoomFactor), Fixed));
+        }
         default:
             return Theme::minimumControlSize(part, font, zoomFactor);
     }
@@ -702,6 +800,15 @@ void ThemeChromiumMac::inflateControlPaintRect(ControlPart part, ControlStates s
             }
             break;
         }
+        case OuterSpinButtonPart: {
+            static const int stepperMargin[4] = { 0, 0, 0, 0};
+            ControlSize controlSize = controlSizeFromPixelSize(stepperSizes(), zoomedRect.size(), zoomFactor);
+            IntSize zoomedSize = stepperSizes()[controlSize];
+            zoomedSize.setHeight(zoomedSize.height() * zoomFactor);
+            zoomedSize.setWidth(zoomedSize.width() * zoomFactor);
+            zoomedRect = inflateRect(zoomedRect, zoomedSize, stepperMargin, zoomFactor);
+            break;
+        }
         default:
             break;
     }
@@ -723,6 +830,9 @@ void ThemeChromiumMac::paint(ControlPart part, ControlStates states, GraphicsCon
         case SquareButtonPart:
         case ListButtonPart:
             paintButton(part, states, context, zoomedRect, zoomFactor, scrollView);
+            break;
+        case OuterSpinButtonPart:
+            paintStepper(states, context, zoomedRect, zoomFactor, scrollView);
             break;
         default:
             break;
