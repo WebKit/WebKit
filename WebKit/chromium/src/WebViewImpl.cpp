@@ -2164,7 +2164,10 @@ PassOwnPtr<GLES2Context> WebViewImpl::getOnscreenGLES2Context()
 PassOwnPtr<GLES2Context> WebViewImpl::getOffscreenGLES2Context()
 {
     WebGLES2Context* context = webKitClient()->createGLES2Context();
-    context->initialize(0, gles2Context());
+    if (!context)
+        return 0;
+    if (!context->initialize(0, gles2Context()))
+        return 0;
     return GLES2Context::create(GLES2ContextInternal::create(context, true));
 }
 

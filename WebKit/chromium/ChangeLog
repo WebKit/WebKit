@@ -1,3 +1,16 @@
+2010-07-16  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [chromium] Avoid crashing if offscreen GLES2 context creation fails
+        https://bugs.webkit.org/show_bug.cgi?id=42469
+
+        If creating or initializing an offscreen GLES2Context fails we should return null
+        rather than crashing or returning an invalid context.
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::getOffscreenGLES2Context):
+
 2010-07-15  Tony Gentilcore  <tonyg@chromium.org>
 
         Reviewed by Darin Fisher.
