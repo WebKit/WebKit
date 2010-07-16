@@ -1,3 +1,20 @@
+2010-07-16  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r63593.
+        http://trac.webkit.org/changeset/63593
+        https://bugs.webkit.org/show_bug.cgi?id=42487
+
+        Broke a few chromium pixel tests (Requested by tony^work on
+        #webkit).
+
+        * platform/graphics/skia/GraphicsContextSkia.cpp:
+        (WebCore::GraphicsContext::drawConvexPolygon):
+        (WebCore::GraphicsContext::drawEllipse):
+        (WebCore::GraphicsContext::drawLine):
+        (WebCore::GraphicsContext::strokeArc):
+        (WebCore::GraphicsContext::strokePath):
+        (WebCore::GraphicsContext::strokeRect):
+
 2010-07-16  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Sam Weinig.
