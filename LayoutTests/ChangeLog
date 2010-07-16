@@ -1,5 +1,186 @@
 2010-07-16  Nikolas Zimmermann  <nzimmermann@rim.com>
 
+        Rubber-stamped by Dirk Schulze.
+
+        Regenerated pixel test results for svg/dynamic-updates. Not enabling the actual dumping of pixel test results yet,
+        as we're having several regressions that should be identified first. Only updated results which only have text
+        rendering differences (after the text rewrite, last month).
+
+        * platform/mac/svg/dynamic-updates/SVGCircleElement-dom-cx-attr-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGCircleElement-dom-cx-attr-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGCircleElement-dom-cy-attr-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGCircleElement-dom-cy-attr-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGCircleElement-dom-r-attr-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGCircleElement-dom-r-attr-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGCircleElement-svgdom-cx-prop-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGCircleElement-svgdom-cx-prop-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGCircleElement-svgdom-cy-prop-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGCircleElement-svgdom-cy-prop-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGCircleElement-svgdom-r-prop-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGCircleElement-svgdom-r-prop-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGClipPath-influences-hitTesting-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGClipPath-influences-hitTesting-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGClipPathElement-dom-clipPathUnits-attr-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGClipPathElement-dom-clipPathUnits-attr-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGClipPathElement-svgdom-clipPathUnits-prop-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGClipPathElement-svgdom-clipPathUnits-prop-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGEllipseElement-dom-cx-attr-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGEllipseElement-dom-cx-attr-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGEllipseElement-dom-cy-attr-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGEllipseElement-dom-cy-attr-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGEllipseElement-dom-rx-attr-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGEllipseElement-dom-rx-attr-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGEllipseElement-dom-ry-attr-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGEllipseElement-dom-ry-attr-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGEllipseElement-svgdom-cx-prop-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGEllipseElement-svgdom-cx-prop-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGEllipseElement-svgdom-cy-prop-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGEllipseElement-svgdom-cy-prop-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGEllipseElement-svgdom-rx-prop-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGEllipseElement-svgdom-rx-prop-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGEllipseElement-svgdom-ry-prop-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGEllipseElement-svgdom-ry-prop-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGImageElement-dom-height-attr-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGImageElement-dom-height-attr-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGImageElement-dom-preserveAspectRatio-attr-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGImageElement-dom-preserveAspectRatio-attr-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGImageElement-dom-width-attr-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGImageElement-dom-width-attr-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGImageElement-dom-x-attr-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGImageElement-dom-x-attr-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGImageElement-dom-y-attr-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGImageElement-dom-y-attr-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGImageElement-svgdom-height-prop-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGImageElement-svgdom-height-prop-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGImageElement-svgdom-preserveAspectRatio-prop-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGImageElement-svgdom-preserveAspectRatio-prop-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGImageElement-svgdom-width-prop-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGImageElement-svgdom-width-prop-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGImageElement-svgdom-x-prop-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGImageElement-svgdom-x-prop-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGImageElement-svgdom-y-prop-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGImageElement-svgdom-y-prop-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGLineElement-dom-x1-attr-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGLineElement-dom-x1-attr-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGLineElement-dom-x2-attr-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGLineElement-dom-x2-attr-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGLineElement-dom-y1-attr-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGLineElement-dom-y1-attr-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGLineElement-dom-y2-attr-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGLineElement-dom-y2-attr-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGLineElement-svgdom-x1-prop-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGLineElement-svgdom-x1-prop-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGLineElement-svgdom-x2-prop-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGLineElement-svgdom-x2-prop-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGLineElement-svgdom-y1-prop-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGLineElement-svgdom-y1-prop-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGLineElement-svgdom-y2-prop-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGLineElement-svgdom-y2-prop-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGLinearGradientElement-dom-x1-attr-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGLinearGradientElement-dom-x1-attr-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGLinearGradientElement-dom-x2-attr-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGLinearGradientElement-dom-x2-attr-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGLinearGradientElement-dom-y1-attr-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGLinearGradientElement-dom-y1-attr-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGLinearGradientElement-dom-y2-attr-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGLinearGradientElement-dom-y2-attr-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGLinearGradientElement-svgdom-x1-prop-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGLinearGradientElement-svgdom-x1-prop-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGLinearGradientElement-svgdom-x2-prop-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGLinearGradientElement-svgdom-x2-prop-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGLinearGradientElement-svgdom-y1-prop-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGLinearGradientElement-svgdom-y1-prop-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGLinearGradientElement-svgdom-y2-prop-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGLinearGradientElement-svgdom-y2-prop-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGMarkerElement-dom-markerUnits-attr-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGMarkerElement-dom-markerUnits-attr-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGMarkerElement-dom-orient-attr-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGMarkerElement-dom-orient-attr-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGMarkerElement-dom-refX-attr-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGMarkerElement-dom-refX-attr-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGMarkerElement-dom-refY-attr-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGMarkerElement-dom-refY-attr-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGMarkerElement-svgdom-markerUnits-prop-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGMarkerElement-svgdom-markerUnits-prop-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGMarkerElement-svgdom-orientAngle-prop-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGMarkerElement-svgdom-orientAngle-prop-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGMarkerElement-svgdom-orientType-prop-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGMarkerElement-svgdom-orientType-prop-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGMarkerElement-svgdom-refX-prop-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGMarkerElement-svgdom-refX-prop-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGMarkerElement-svgdom-refY-prop-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGMarkerElement-svgdom-refY-prop-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGMarkerElement-svgdom-setOrientToAngle-call-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGMarkerElement-svgdom-setOrientToAngle-call-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGMarkerElement-svgdom-setOrientToAuto-call-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGMarkerElement-svgdom-setOrientToAuto-call-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGPatternElement-dom-height-attr-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGPatternElement-dom-height-attr-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGPatternElement-dom-patternContentUnits-attr-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGPatternElement-dom-patternContentUnits-attr-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGPatternElement-dom-patternTransform-attr-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGPatternElement-dom-patternTransform-attr-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGPatternElement-dom-patternUnits-attr-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGPatternElement-dom-patternUnits-attr-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGPatternElement-dom-width-attr-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGPatternElement-dom-width-attr-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGPatternElement-dom-x-attr-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGPatternElement-dom-x-attr-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGPatternElement-dom-y-attr-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGPatternElement-dom-y-attr-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGPatternElement-svgdom-height-prop-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGPatternElement-svgdom-height-prop-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGPatternElement-svgdom-patternContentUnits-prop-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGPatternElement-svgdom-patternContentUnits-prop-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGPatternElement-svgdom-patternTransform-prop-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGPatternElement-svgdom-patternTransform-prop-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGPatternElement-svgdom-patternUnits-prop-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGPatternElement-svgdom-patternUnits-prop-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGPatternElement-svgdom-width-prop-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGPatternElement-svgdom-width-prop-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGPatternElement-svgdom-x-prop-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGPatternElement-svgdom-x-prop-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGPatternElement-svgdom-y-prop-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGPatternElement-svgdom-y-prop-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGRadialGradientElement-dom-cx-attr-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGRadialGradientElement-dom-cx-attr-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGRadialGradientElement-dom-cy-attr-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGRadialGradientElement-dom-cy-attr-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGRadialGradientElement-dom-r-attr-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGRadialGradientElement-dom-r-attr-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGRadialGradientElement-svgdom-cx-prop-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGRadialGradientElement-svgdom-cx-prop-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGRadialGradientElement-svgdom-cy-prop-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGRadialGradientElement-svgdom-cy-prop-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGRadialGradientElement-svgdom-r-prop-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGRadialGradientElement-svgdom-r-prop-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGRectElement-dom-height-attr-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGRectElement-dom-height-attr-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGRectElement-dom-width-attr-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGRectElement-dom-width-attr-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGRectElement-dom-x-attr-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGRectElement-dom-x-attr-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGRectElement-dom-y-attr-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGRectElement-dom-y-attr-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGRectElement-svgdom-height-prop-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGRectElement-svgdom-height-prop-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGRectElement-svgdom-width-prop-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGRectElement-svgdom-width-prop-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGRectElement-svgdom-x-prop-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGRectElement-svgdom-x-prop-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGRectElement-svgdom-y-prop-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGRectElement-svgdom-y-prop-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGTRefElement-dom-href-attr-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGTRefElement-dom-href-attr-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGTextElement-dom-transform-attr-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGTextElement-dom-transform-attr-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGTextElement-svgdom-rotate-prop-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGTextElement-svgdom-rotate-prop-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGTextElement-svgdom-transform-prop-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGTextElement-svgdom-transform-prop-expected.png: Added.
+
+2010-07-16  Nikolas Zimmermann  <nzimmermann@rim.com>
+
         Reviewed by Dirk Schulze.
 
         Convolution computation causes bad alpha channel values
