@@ -1,3 +1,15 @@
+2010-07-16  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
+
+        Reviewed by Antonio Gomes.
+
+        [EFL] Build with MathML enabled. Fix build when MathML is enabled and
+        make it the default.
+        https://bugs.webkit.org/show_bug.cgi?id=42453
+
+        EFL port does not support automated tests, yet.
+
+        * CMakeLists.txt: add missing source file and sort.
+
 2010-07-16  Hans Wennborg  <hans@chromium.org>
 
         Reviewed by Steve Block.

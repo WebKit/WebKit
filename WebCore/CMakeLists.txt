@@ -526,8 +526,9 @@ SET(WebCore_SOURCES
     ${DERIVED_SOURCES_DIR}/HTMLElementFactory.cpp
     ${DERIVED_SOURCES_DIR}/HTMLEntityNames.cpp
     ${DERIVED_SOURCES_DIR}/HTMLNames.cpp
-    ${DERIVED_SOURCES_DIR}/MathMLNames.cpp
     ${DERIVED_SOURCES_DIR}/JSHTMLElementWrapperFactory.cpp
+    ${DERIVED_SOURCES_DIR}/MathMLElementFactory.cpp
+    ${DERIVED_SOURCES_DIR}/MathMLNames.cpp
     ${DERIVED_SOURCES_DIR}/UserAgentStyleSheetsData.cpp
     ${DERIVED_SOURCES_DIR}/XMLNames.cpp
     ${DERIVED_SOURCES_DIR}/XMLNSNames.cpp
