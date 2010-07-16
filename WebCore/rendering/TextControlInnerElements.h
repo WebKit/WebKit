@@ -90,11 +90,14 @@ private:
 
 class SpinButtonElement : public TextControlInnerElement {
 public:
-    static PassRefPtr<SpinButtonElement> create(Node*);
+    enum UpDownState {
+        Indeterminate, // Hovered, but the event is not handled.
+        Down,
+        Up,
+    };
 
-    // FIXME: "Spin button on up button" is not a phrase with a single clear meaning.
-    // Need a name for this that makes it clearer.
-    bool onUpButton() const { return m_onUpButton; }
+    static PassRefPtr<SpinButtonElement> create(Node*);
+    UpDownState upDownState() const { return m_upDownState; }
 
 private:
     SpinButtonElement(Node*);
@@ -104,9 +107,10 @@ private:
     virtual bool isEnabledFormControl() const { return static_cast<Element*>(const_cast<SpinButtonElement*>(this)->shadowAncestorNode())->isEnabledFormControl(); }
     virtual bool isReadOnlyFormControl() const { return static_cast<Element*>(const_cast<SpinButtonElement*>(this)->shadowAncestorNode())->isReadOnlyFormControl(); }
     virtual void defaultEventHandler(Event*);
+    virtual void setHovered(bool = true);
 
     bool m_capturing;
-    bool m_onUpButton;
+    UpDownState m_upDownState;
 };
 
 #if ENABLE(INPUT_SPEECH)

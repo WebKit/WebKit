@@ -1,3 +1,43 @@
+2010-07-16  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Improve hover state handling for spin buttons
+        https://bugs.webkit.org/show_bug.cgi?id=42260
+
+        Background:
+        When we move the mouse cursor to a node from the outside of the node,
+        the following steps are executed.
+         1. setHovered(true) is called.
+         2. The node is repainted for the hover state.
+         3. 'mousemove' event is dispatched for the node.
+        For a spin-button, RenderTheme::paint{Inner,Outer}SpinButton() is
+        called before the event handler of the spin-button. So we can't
+        detect which of the up part or the down part is hovered correctly.
+
+        Solution:
+        The hover state of a spin-button is one of three states;
+        Indeterminate, Up, and Down. The state is Indeterminate since
+        setHovered(true) is called and until 'mousemove' event is
+        dispatched.
+
+        No new tests because there are no implementation of spin-buttons
+        with hovered state yet.
+
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::isSpinUpButtonPartPressed):
+        (WebCore::RenderTheme::isHovered):
+         Return false if the node is a spin-button and the state is Indeterminate.
+        (WebCore::RenderTheme::isSpinUpButtonPartHovered):
+        * rendering/TextControlInnerElements.cpp:
+        (WebCore::SpinButtonElement::SpinButtonElement):
+         Initialize m_upDownState.
+        (WebCore::SpinButtonElement::defaultEventHandler):
+        (WebCore::SpinButtonElement::setHovered):
+         Set the state to Indeterminate.
+        * rendering/TextControlInnerElements.h:
+        (WebCore::SpinButtonElement::upDownState):
+
 2010-07-16  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Simon Fraser.
