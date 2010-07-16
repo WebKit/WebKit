@@ -1,3 +1,14 @@
+2010-07-16  Andrey Kosyakov  <caseq@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Check that end node of a range has a valid renderer in WebViewImpl::caretOrSelectionBounds()
+        to avoid crash in Position::getInlineBoxAndOffset() when start node has renderer but end one doesn't.
+        https://bugs.webkit.org/show_bug.cgi?id=42449
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::caretOrSelectionBounds):
+
 2010-07-16  Mikhail Naganov  <mnaganov@chromium.org>
 
         Reviewed by Pavel Feldman.
