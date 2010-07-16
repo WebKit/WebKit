@@ -1,5 +1,21 @@
 2010-07-16  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Alexey Proskuryakov. 
+
+        LayoutTests/http/tests/cookies/multiple-cookies.html sometimes fails because the cookies are returned in a different order
+        https://bugs.webkit.org/show_bug.cgi?id=42095
+
+        Normalize the cookie strings by splitting them into an array, sorting the array and then joining back.
+
+        * http/tests/cookies/multiple-cookies-expected.txt:
+        * http/tests/cookies/resources/cookies-test-pre.js:
+        (normalizeCookie):
+        (testCookies):
+        * websocket/tests/httponly-cookie-expected.txt:
+        * websocket/tests/httponly-cookie.pl:
+
+2010-07-16  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Simon Fraser.
 
         Remove fast/dynamic/flash-replacement-test.html

@@ -23,9 +23,17 @@ if (window.layoutTestController) {
 
 var cookie;
 
+// Normalize a cookie string
+function normalizeCookie(cookie)
+{
+    // Split the cookie string, sort it and then put it back together.
+    return cookie.split('; ').sort().join('; ');
+}
+
 function endTest()
 {
-    shouldBe("cookie", '"WK-websocket-test=1; WK-websocket-test-httponly=1"');
+    cookie = normalizeCookie(cookie);
+    shouldBe("cookie", '"WK-websocket-test-httponly=1; WK-websocket-test=1"');
     isSuccessfullyParsed();
     if (window.layoutTestController)
        layoutTestController.notifyDone();
