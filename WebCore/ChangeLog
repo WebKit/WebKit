@@ -1,3 +1,14 @@
+2010-07-16  Hans Wennborg  <hans@chromium.org>
+
+        Reviewed by Steve Block.
+
+        DeviceOrientationEvent.h should not forward-declare DeviceOrientation
+        https://bugs.webkit.org/show_bug.cgi?id=42447
+
+        When destructing m_orientation, DeviceOrientation cannot be an incomplete type.
+
+        * dom/DeviceOrientationEvent.h:
+
 2010-07-16  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Dirk Schulze.
