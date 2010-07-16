@@ -28,6 +28,7 @@
     IBOutlet NSButton *reloadButton;
     IBOutlet NSButton *backButton;
     IBOutlet NSButton *forwardButton;
+    IBOutlet NSToolbar *toolbar;
     IBOutlet NSTextField *urlText;
     IBOutlet NSView *containerView;
 

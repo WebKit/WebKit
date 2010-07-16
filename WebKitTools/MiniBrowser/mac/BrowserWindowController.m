@@ -121,6 +121,11 @@
     return YES;
 }
 
+- (void)validateToolbar
+{
+    [toolbar validateVisibleItems];
+}
+
 - (BOOL)windowShouldClose:(id)sender
 {
     LOG(@"windowShouldClose");
@@ -145,6 +150,7 @@
 static void _didStartProvisionalLoadForFrame(WKPageRef page, WKFrameRef frame, const void *clientInfo)
 {
     LOG(@"didStartProvisionalLoadForFrame");
+    [(BrowserWindowController *)clientInfo validateToolbar];
 }
 
 static void _didReceiveServerRedirectForProvisionalLoadForFrame(WKPageRef page, WKFrameRef frame, const void *clientInfo)
@@ -160,6 +166,7 @@ static void _didFailProvisionalLoadWithErrorForFrame(WKPageRef page, WKFrameRef 
 static void _didCommitLoadForFrame(WKPageRef page, WKFrameRef frame, const void *clientInfo)
 {
     LOG(@"didCommitLoadForFrame");
+    [(BrowserWindowController *)clientInfo validateToolbar];
 }
 
 static void _didFinishLoadForFrame(WKPageRef page, WKFrameRef frame, const void *clientInfo)
@@ -170,6 +177,7 @@ static void _didFinishLoadForFrame(WKPageRef page, WKFrameRef frame, const void 
 static void _didFailLoadWithErrorForFrame(WKPageRef page, WKFrameRef frame, const void *clientInfo)
 {
     LOG(@"didFailLoadWithErrorForFrame");
+    [(BrowserWindowController *)clientInfo validateToolbar];
 }
 
 static void _didReceiveTitleForFrame(WKPageRef page, WKStringRef title, WKFrameRef frame, const void *clientInfo)
