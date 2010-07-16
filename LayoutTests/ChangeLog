@@ -1,3 +1,14 @@
+2010-07-16  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Remove wrong test expectations for clip-path-child-changes.svg from chromium-mac
+        and mark it as flaky on mac.
+        https://bugs.webkit.org/show_bug.cgi?id=42445
+
+        * platform/chromium-mac/svg/custom/clip-path-child-changes-expected.txt: Removed.
+        * platform/chromium/test_expectations.txt:
+
 2010-07-16  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Dirk Schulze.
