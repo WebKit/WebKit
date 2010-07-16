@@ -133,6 +133,7 @@ committers_unable_to_review = [
     Committer("Keishi Hattori", "keishi@webkit.org", "keishi"),
     Committer("Kelly Norton", "knorton@google.com"),
     Committer("Kenneth Russell", "kbr@google.com"),
+    Committer("Kent Hansen", "kent.hansen@nokia.com", "khansen"),
     Committer("Kinuko Yasuda", "kinuko@chromium.org", "kinuko"),
     Committer("Krzysztof Kowalczyk", "kkowalczyk@gmail.com"),
     Committer("Leandro Pereira", ["leandro@profusion.mobi", "leandro@webkit.org"], "acidx"),
