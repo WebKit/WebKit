@@ -1,3 +1,14 @@
+2010-07-16  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: do not include SSL time into Waiting time.
+
+        https://bugs.webkit.org/show_bug.cgi?id=42458
+
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.ResourcesPanel.prototype._showPopover):
+
 2010-07-16  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Anders Carlsson.

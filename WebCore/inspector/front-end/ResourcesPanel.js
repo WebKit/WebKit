@@ -786,7 +786,11 @@ WebInspector.ResourcesPanel.prototype = {
         data.push(Number.secondsToString(resource.timing.sendDuration));
 
         data.push(WebInspector.UIString("Waiting"));
-        data.push(Number.secondsToString(resource.timing.waitDuration));
+        // Waiting includes SSL, subtract it here.
+        var waitDuration = resource.timing.waitDuration;
+        if (resource.timing.sslDuration !== -1)
+            waitDuration -= resource.timing.sslDuration;
+        data.push(Number.secondsToString(waitDuration));
 
         data.push(WebInspector.UIString("Receiving"));
         data.push(Number.secondsToString(resource.endTime - resource.responseReceivedTime));
