@@ -121,15 +121,18 @@ bool Path::contains(const FloatPoint& point, WindRule rule) const
     return contains;
 }
 
+static GraphicsContext* scratchContext()
+{
+    static ImageBuffer* scratch = ImageBuffer::create(IntSize(1, 1)).leakPtr();
+    return scratch->context();
+}
+
 bool Path::strokeContains(StrokeStyleApplier* applier, const FloatPoint& point) const
 {
     ASSERT(applier);
 
-    // FIXME: We should try to use a 'shared Context' instead of creating a new ImageBuffer
-    // on each call.
-    OwnPtr<ImageBuffer> scratchImage = ImageBuffer::create(IntSize(1, 1));
-    GraphicsContext* gc = scratchImage->context();
     QPainterPathStroker stroke;
+    GraphicsContext* gc = scratchContext();
     applier->strokeStyle(gc);
 
     QPen pen = gc->pen();
@@ -157,10 +160,7 @@ FloatRect Path::boundingRect() const
 
 FloatRect Path::strokeBoundingRect(StrokeStyleApplier* applier)
 {
-    // FIXME: We should try to use a 'shared Context' instead of creating a new ImageBuffer
-    // on each call.
-    OwnPtr<ImageBuffer> scratchImage = ImageBuffer::create(IntSize(1, 1));
-    GraphicsContext* gc = scratchImage->context();
+    GraphicsContext* gc = scratchContext();
     QPainterPathStroker stroke;
     if (applier) {
         applier->strokeStyle(gc);

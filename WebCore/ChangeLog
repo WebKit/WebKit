@@ -1,3 +1,16 @@
+2010-07-16  Andreas Kling  <andreas.kling@nokia.com>
+
+        Reviewed by Antonio Gomes.
+
+        [Qt] Path: Avoid creating a new GraphicsContext in strokeContains() and strokeBoundingRect()
+        https://bugs.webkit.org/show_bug.cgi?id=42456
+
+        * platform/graphics/qt/PathQt.cpp:
+        (WebCore::scratchContext): Added, provides a scratch GraphicsContext.
+        (WebCore::Path::strokeContains): Use the scratch context instead
+        of creating a new GraphicsContext.
+        (WebCore::Path::strokeBoundingRect): Ditto.
+
 2010-07-16  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Yury Semikhatsky.
