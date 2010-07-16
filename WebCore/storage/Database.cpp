@@ -147,7 +147,7 @@ public:
 
     virtual void performTask(ScriptExecutionContext* context)
     {
-        ASSERT(context == m_context);
+        ASSERT_UNUSED(context, context == m_context);
         m_context.clear();
     }
 
