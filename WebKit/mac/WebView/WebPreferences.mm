@@ -363,6 +363,7 @@ static WebCacheModel cacheModelForMainBundle(void)
         [NSNumber numberWithBool:YES],  WebKitHTML5ParserEnabledPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitHTML5TreeBuilderEnabledPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitDNSPrefetchingEnabledPreferenceKey,
+        [NSNumber numberWithBool:NO],   WebKitMemoryInfoEnabledPreferenceKey,
         nil];
 
     // This value shouldn't ever change, which is assumed in the initialization of WebKitPDFDisplayModePreferenceKey above
@@ -1279,6 +1280,16 @@ static NSString *classIBCreatorID = nil;
 - (void)setPaginateDuringLayoutEnabled:(BOOL)flag
 {
     [self _setBoolValue:flag forKey:WebKitPaginateDuringLayoutEnabledPreferenceKey];
+}
+
+- (BOOL)memoryInfoEnabled
+{
+    return [self _boolValueForKey:WebKitMemoryInfoEnabledPreferenceKey];
+}
+
+- (void)setMemoryInfoEnabled:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey:WebKitMemoryInfoEnabledPreferenceKey];
 }
 
 - (WebKitEditingBehavior)editingBehavior

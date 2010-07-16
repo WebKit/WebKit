@@ -136,6 +136,7 @@ Settings::Settings(Page* page)
     , m_html5TreeBuilderEnabled(false) // Will be deleted soon, do not use.
     , m_paginateDuringLayoutEnabled(false)
     , m_dnsPrefetchingEnabled(true)
+    , m_memoryInfoEnabled(false)
 {
     // A Frame may not have been created yet, so we initialize the AtomicString 
     // hash before trying to use it.

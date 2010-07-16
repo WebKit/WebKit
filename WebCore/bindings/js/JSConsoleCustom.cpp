@@ -28,9 +28,7 @@
 #include "JSConsole.h"
 
 #include "Console.h"
-#include "JSMemoryInfo.h"
 #include "JSScriptProfile.h"
-#include "MemoryInfo.h"
 #include "ScriptCallStack.h"
 #include "ScriptProfile.h"
 #include <runtime/JSArray.h>
@@ -56,10 +54,5 @@ JSValue JSConsole::profiles(ExecState* exec) const
 }
 
 #endif
-
-JSValue JSConsole::memory(ExecState* exec) const
-{
-    return toJS(exec, MemoryInfo::create());
-}
 
 } // namespace WebCore

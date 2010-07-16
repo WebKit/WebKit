@@ -61,7 +61,7 @@ module window {
         [CustomArgumentHandling] void groupCollapsed();
         void groupEnd();
 
-        readonly attribute [CustomGetter] MemoryInfo memory;
+        readonly attribute MemoryInfo memory;
     };
 
 }

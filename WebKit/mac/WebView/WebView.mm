@@ -1433,6 +1433,7 @@ static bool fastDocumentTeardownEnabled()
     settings->setHTML5ParserEnabled([preferences html5ParserEnabled]);
     settings->setHTML5TreeBuilderEnabled_DO_NOT_USE([preferences html5TreeBuilderEnabled]);
     settings->setPaginateDuringLayoutEnabled([preferences paginateDuringLayoutEnabled]);
+    settings->setMemoryInfoEnabled([preferences memoryInfoEnabled]);
 }
 
 static inline IMP getMethod(id o, SEL s)

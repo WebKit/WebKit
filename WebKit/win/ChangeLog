@@ -1,3 +1,27 @@
+2010-07-16  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Make JS memory stats available via 'Performance' object (Web Timing).
+        This statistics is populated only if 'WebKitMemoryInfoEnabled'
+        preference is set.
+
+        'console.memory' is kept until Web Timing object becomes visible by
+        default (currently it is hidden under compile-time flag).  These stats
+        are guarded with the same preference.
+
+        https://bugs.webkit.org/show_bug.cgi?id=41617
+
+        * Interfaces/IWebPreferencesPrivate.idl:
+        * WebPreferenceKeysPrivate.h:
+        * WebPreferences.cpp:
+        (WebPreferences::initializeDefaultSettings):
+        (WebPreferences::memoryInfoEnabled):
+        (WebPreferences::setMemoryInfoEnabled):
+        * WebPreferences.h:
+        * WebView.cpp:
+        (WebView::notifyPreferencesChanged):
+
 2010-07-14  Brent Fulgham  <bfulgham@webkit.org>
 
         Reviewed by Steve Falkenburg.

@@ -29,8 +29,8 @@
 #ifndef Console_h
 #define Console_h
 
+#include "MemoryInfo.h"
 #include "PlatformString.h"
-
 #include "ScriptProfile.h"
 
 #include <wtf/PassRefPtr.h>
@@ -43,7 +43,6 @@ typedef Vector<RefPtr<ScriptProfile> > ProfilesArray;
 #endif
 
 class Frame;
-class MemoryInfo;
 class Page;
 class String;
 class ScriptCallStack;
@@ -116,6 +115,8 @@ public:
     const ProfilesArray& profiles() const { return m_profiles; }
 #endif
 
+    MemoryInfo* memory() const;
+
 private:
     inline Page* page() const;
     void addMessage(MessageType, MessageLevel, ScriptCallStack*, bool acceptNoArguments = false);
@@ -126,6 +127,7 @@ private:
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     ProfilesArray m_profiles;
 #endif
+    mutable RefPtr<MemoryInfo> m_memory;
 };
 
 } // namespace WebCore

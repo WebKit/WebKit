@@ -31,17 +31,21 @@
 #include "config.h"
 #include "MemoryInfo.h"
 
+#include "Frame.h"
 #include "ScriptGCEvent.h"
+#include "Settings.h"
 
 namespace WebCore {
 
-MemoryInfo::MemoryInfo()
+MemoryInfo::MemoryInfo(Frame* frame)
         : m_totalJSHeapSize(0),
           m_usedJSHeapSize(0)
 {
+    if (frame && frame->settings() && frame->settings()->memoryInfoEnabled()) {
 #if ENABLE(INSPECTOR)
-    ScriptGCEvent::getHeapSize(m_usedJSHeapSize, m_totalJSHeapSize);
+        ScriptGCEvent::getHeapSize(m_usedJSHeapSize, m_totalJSHeapSize);
 #endif
+    }
 }
 
 } // namespace WebCore

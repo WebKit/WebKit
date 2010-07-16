@@ -4745,6 +4745,11 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
         return hr;
     settings->setDNSPrefetchingEnabled(enabled);
 
+    hr = prefsPrivate->memoryInfoEnabled(&enabled);
+    if (FAILED(hr))
+        return hr;
+    settings->setMemoryInfoEnabled(enabled);
+
     if (!m_closeWindowTimer)
         m_mainFrame->invalidate(); // FIXME
 

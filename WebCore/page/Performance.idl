@@ -34,6 +34,7 @@ module window {
     interface [Conditional=WEB_TIMING, OmitConstructor] Performance {
         readonly attribute Navigation navigation;
         readonly attribute Timing timing;
+        readonly attribute MemoryInfo memory;
     };
 
 }

@@ -191,6 +191,9 @@ extern NSString *WebPreferencesRemovedNotification;
 - (BOOL)usesProxiedOpenPanel;
 - (void)setUsesProxiedOpenPanel:(BOOL)enabled;
 
+- (BOOL)memoryInfoEnabled;
+- (void)setMemoryInfoEnabled:(BOOL)enabled;
+
 // Other private methods
 - (void)_postPreferencesChangesNotification;
 + (WebPreferences *)_getInstanceForIdentifier:(NSString *)identifier;

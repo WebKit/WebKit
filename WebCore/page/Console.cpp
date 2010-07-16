@@ -36,6 +36,7 @@
 #include "FrameLoader.h"
 #include "FrameTree.h"
 #include "InspectorController.h"
+#include "MemoryInfo.h"
 #include "Page.h"
 #include "PageGroup.h"
 #include "PlatformString.h"
@@ -61,6 +62,8 @@ Frame* Console::frame() const
 
 void Console::disconnectFrame()
 {
+    if (m_memory)
+        m_memory = 0;
     m_frame = 0;
 }
 
@@ -454,6 +457,12 @@ void Console::groupEnd()
 void Console::warn(ScriptCallStack* callStack)
 {
     addMessage(LogMessageType, WarningMessageLevel, callStack);
+}
+
+MemoryInfo* Console::memory() const
+{
+    m_memory = MemoryInfo::create(m_frame);
+    return m_memory.get();
 }
 
 static bool printExceptions = false;

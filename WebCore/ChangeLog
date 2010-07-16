@@ -1,3 +1,39 @@
+2010-07-16  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Make JS memory stats available via 'Performance' object (Web Timing).
+        This statistics is populated only if 'WebKitMemoryInfoEnabled'
+        preference is set.
+
+        'console.memory' is kept until Web Timing object becomes visible by
+        default (currently it is hidden under compile-time flag).  These stats
+        are guarded with the same preference.
+
+        https://bugs.webkit.org/show_bug.cgi?id=41617
+
+        * bindings/js/JSConsoleCustom.cpp:
+        * bindings/v8/custom/V8ConsoleCustom.cpp:
+        * page/Console.cpp:
+        (WebCore::Console::disconnectFrame):
+        (WebCore::Console::memory):
+        * page/Console.h:
+        * page/Console.idl:
+        * page/MemoryInfo.cpp:
+        (WebCore::MemoryInfo::MemoryInfo):
+        * page/MemoryInfo.h:
+        (WebCore::MemoryInfo::create):
+        * page/Performance.cpp:
+        (WebCore::Performance::disconnectFrame):
+        (WebCore::Performance::memory):
+        * page/Performance.h:
+        * page/Performance.idl:
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):
+        * page/Settings.h:
+        (WebCore::Settings::setMemoryInfoEnabled):
+        (WebCore::Settings::memoryInfoEnabled):
+
 2010-07-16  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Dirk Schulze.

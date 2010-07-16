@@ -33,6 +33,7 @@
 
 #if ENABLE(WEB_TIMING)
 
+#include "MemoryInfo.h"
 #include "Navigation.h"
 #include "Timing.h"
 #include <wtf/PassRefPtr.h>
@@ -48,12 +49,14 @@ public:
     Frame* frame() const;
     void disconnectFrame();
 
+    MemoryInfo* memory() const;
     Navigation* navigation() const;
     Timing* timing() const;
 
 private:
     Performance(Frame*);
 
+    mutable RefPtr<MemoryInfo> m_memory;
     mutable RefPtr<Navigation> m_navigation;
     mutable RefPtr<Timing> m_timing;
     Frame* m_frame;

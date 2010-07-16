@@ -36,15 +36,17 @@
 
 namespace WebCore {
 
+class Frame;
+
 class MemoryInfo : public RefCounted<MemoryInfo> {
 public:
-    static PassRefPtr<MemoryInfo> create() { return adoptRef(new MemoryInfo()); }
+    static PassRefPtr<MemoryInfo> create(Frame* frame) { return adoptRef(new MemoryInfo(frame)); }
 
     size_t totalJSHeapSize() const { return m_totalJSHeapSize; }
     size_t usedJSHeapSize() const { return m_usedJSHeapSize; }
 
 private:
-    MemoryInfo();
+    MemoryInfo(Frame*);
 
     size_t m_totalJSHeapSize;
     size_t m_usedJSHeapSize;
