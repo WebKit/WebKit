@@ -2,6 +2,15 @@
 
         Followup to https://bugs.webkit.org/show_bug.cgi?id=42214
 
+        Rebaseline GTK and Qt.
+
+        * platform/gtk/fast/canvas/toDataURL-alpha-expected.txt: Added.
+        * platform/qt/fast/canvas/toDataURL-alpha-expected.txt: Added.
+
+2010-07-15  Adam Barth  <abarth@webkit.org>
+
+        Followup to https://bugs.webkit.org/show_bug.cgi?id=42214
+
         Move toDataURL-alpha-expected.txt to the platform, where it belongs.
 
         * fast/canvas/toDataURL-alpha-expected.txt: Removed.
