@@ -1,3 +1,9 @@
+2010-07-15  Ojan Vafai  <ojan@chromium.org>
+
+        Unreviewed. Fix expected failure for test from r63494.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-07-13  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Nate Chapin.
