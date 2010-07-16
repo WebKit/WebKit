@@ -1,3 +1,23 @@
+2010-07-16  Nate Chapin  <japhet@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Regression in r63100: Don't clear m_loadType in
+        FrameLoader::handledOnloadEvents, as it is used
+        to make some decisions after the load has actually
+        completed.
+
+        Tickling this bug requires manipulation
+        via the API (layout tests don't appear to traverse
+        the correct codepath), so no layout test.
+
+        https://bugs.webkit.org/show_bug.cgi?id=42298
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::handledOnloadEvents): Don't reset m_loadType.
+        (WebCore::FrameLoader::addExtraFieldsToRequest): Set subresource cache
+           policy in one place and don't depend on m_loadType.
+
 2010-07-15  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Reviewed by Darin Adler.

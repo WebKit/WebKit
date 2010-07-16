@@ -266,10 +266,7 @@ static void do_test_webkit_web_view_adjustments(gboolean with_page_cache)
     g_assert_cmpfloat(lower, ==, gtk_adjustment_get_lower(adjustment));
     g_assert_cmpfloat(upper, ==, gtk_adjustment_get_upper(adjustment));
 
-    // This assert is temporarily disabled until we fix the following bug:
-    // https://bugs.webkit.org/show_bug.cgi?id=42114
-    // It should be re-enabled ASAP.
-    // g_assert_cmpfloat(gtk_adjustment_get_value(adjustment), ==, 100.0);
+    g_assert_cmpfloat(gtk_adjustment_get_value(adjustment), ==, 100.0);
 
     g_free(effective_uri);
     g_free(second_uri);

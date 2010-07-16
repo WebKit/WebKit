@@ -1,3 +1,13 @@
+2010-07-16  Nate Chapin  <japhet@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Uncomment an assert that broke due to r63100.
+
+        https://bugs.webkit.org/show_bug.cgi?id=42298
+
+        * tests/testwebview.c:
+
 2010-07-14  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin Adler.
