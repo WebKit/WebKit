@@ -801,7 +801,7 @@ void ThemeChromiumMac::inflateControlPaintRect(ControlPart part, ControlStates s
             break;
         }
         case OuterSpinButtonPart: {
-            static const int stepperMargin[4] = { 0, 0, 0, 0};
+            static const int stepperMargin[4] = { 0, 0, 0, 0 };
             ControlSize controlSize = controlSizeFromPixelSize(stepperSizes(), zoomedRect.size(), zoomFactor);
             IntSize zoomedSize = stepperSizes()[controlSize];
             zoomedSize.setHeight(zoomedSize.height() * zoomFactor);
