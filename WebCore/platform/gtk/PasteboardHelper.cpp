@@ -296,6 +296,7 @@ void PasteboardHelper::writeClipboardContents(GtkClipboard* clipboard, GClosure*
 
         gtk_clipboard_set_with_data(clipboard, table, numberOfTargets,
             getClipboardContentsCallback, clearClipboardContentsCallback, callback);
+        gtk_clipboard_set_can_store(clipboard, 0, 0);
 
         settingClipboardDataObject = 0;
 

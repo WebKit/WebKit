@@ -1,3 +1,20 @@
+2010-07-16  Sarah Strong  <sarah.e.strong@gmail.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        [GTK] Clipboard data is lost on exit
+        https://bugs.webkit.org/show_bug.cgi?id=27411
+
+        No new tests. To manually test the bug fixed by this patch:
+        1) Open an application that uses a webkit webview on a GNOME-based system
+        2) Copy some text from that application
+        3) Optional: paste it to another application. This should work properly with and without this patch.
+        4) Exit the application completely.
+        5) Paste:
+                  Without this patch, you cannot because your clipboard is empty.
+                  With this patch, pasting succeeds.
+        I have not included an automated test because of the difficulty of testing behaviour after application exit.
+
 2010-07-16  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Darin Fisher.
