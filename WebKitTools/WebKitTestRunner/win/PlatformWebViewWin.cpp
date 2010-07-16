@@ -27,14 +27,40 @@
 
 namespace WTR {
 
+static LPCWSTR hostWindowClassName = L"WTRWebViewHostWindow";
+
+static void registerWindowClass()
+{
+    static bool initialized;
+    if (initialized)
+        return;
+    initialized = true;
+
+    WNDCLASSEXW wndClass = {0};
+    wndClass.cbSize = sizeof(wndClass);
+    wndClass.style = CS_HREDRAW | CS_VREDRAW;
+    wndClass.lpfnWndProc = DefWindowProcW;
+    wndClass.hCursor = LoadCursor(0, IDC_ARROW);
+    wndClass.hInstance = GetModuleHandle(0);
+    wndClass.lpszClassName = hostWindowClassName;
+
+    RegisterClassExW(&wndClass);
+}
+
 PlatformWebView::PlatformWebView(WKPageNamespaceRef namespaceRef)
 {
-    // Implement
+    registerWindowClass();
+
+    RECT viewRect = {0, 0, 800, 600};
+    m_window = CreateWindowExW(0, hostWindowClassName, L"WebKitTestRunner", WS_OVERLAPPEDWINDOW, 0 /*XOFFSET*/, 0 /*YOFFSET*/, viewRect.right, viewRect.bottom, 0, 0, GetModuleHandle(0), 0);
+    m_view = WKViewCreate(viewRect, namespaceRef, m_window);
 }
 
 PlatformWebView::~PlatformWebView()
 {
-    // Implement
+    if (::IsWindow(m_window))
+        ::DestroyWindow(m_window);
+    WKViewRelease(m_view);
 }
 
 void PlatformWebView::resizeTo(unsigned width, unsigned height)
@@ -44,8 +70,7 @@ void PlatformWebView::resizeTo(unsigned width, unsigned height)
 
 WKPageRef PlatformWebView::page()
 {
-    // Implement
-    return 0;
+    return WKViewGetPage(m_view);
 }
 
 } // namespace WTR

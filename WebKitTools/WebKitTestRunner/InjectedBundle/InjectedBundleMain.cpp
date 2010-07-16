@@ -26,7 +26,12 @@
 #include "InjectedBundle.h"
 #include <WebKit2/WKBundleInitialize.h>
 
-extern "C" void WKBundleInitialize(WKBundleRef bundle)
+#if defined(WIN32) || defined(_WIN32)
+extern "C" __declspec(dllexport) 
+#else
+extern "C"
+#endif
+void WKBundleInitialize(WKBundleRef bundle)
 {
     WTR::InjectedBundle::shared().initialize(bundle);
 }

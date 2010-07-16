@@ -31,7 +31,15 @@ namespace WTR {
 
 void TestController::initializeInjectedBundlePath()
 {
-    // Implement
+    CFStringRef exeContainerPath = CFURLCopyFileSystemPath(CFURLCreateCopyDeletingLastPathComponent(0, CFBundleCopyExecutableURL(CFBundleGetMainBundle())), kCFURLWindowsPathStyle);
+    CFMutableStringRef bundlePath = CFStringCreateMutableCopy(0, 0, exeContainerPath);
+#ifndef NDEBUG
+    CFStringAppendCString(bundlePath, "\\InjectedBundle_debug.dll", kCFStringEncodingWindowsLatin1);
+#else
+    CFStringAppendCString(bundlePath, "\\InjectedBundle.dll", kCFStringEncodingWindowsLatin1);
+#endif
+    
+    m_injectedBundlePath.adopt(WKStringCreateWithCFString(bundlePath));
 }
 
 } // namespace WTR

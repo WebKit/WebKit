@@ -46,7 +46,11 @@ static WKURLRef createWKURL(const char* pathOrURL)
     if (CFStringHasPrefix(pathOrURLCFString.get(), CFSTR("http://")) || CFStringHasPrefix(pathOrURLCFString.get(), CFSTR("https://")))
         cfURL.adoptCF(CFURLCreateWithString(0, pathOrURLCFString.get(), 0));
     else
+#if defined(WIN32) || defined(_WIN32)
+        cfURL.adoptCF(CFURLCreateWithFileSystemPath(0, pathOrURLCFString.get(), kCFURLWindowsPathStyle, false));
+#else
         cfURL.adoptCF(CFURLCreateWithFileSystemPath(0, pathOrURLCFString.get(), kCFURLPOSIXPathStyle, false));
+#endif
     return WKURLCreateWithCFURL(cfURL.get());
 }
 

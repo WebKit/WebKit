@@ -1,3 +1,30 @@
+2010-07-16  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=42430
+        Make WebKitTestRunner on Windows actually load and run a test
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundleMain.cpp: Export WKBundleInitialize.
+        (WKBundleInitialize):
+        * WebKitTestRunner/InjectedBundle/win/InjectedBundle.vcproj: Added.  Output is a dll.
+        * WebKitTestRunner/TestInvocation.cpp: Create a Windows-style path on Windows
+        (WTR::createWKURL):
+        * WebKitTestRunner/WebKitTestRunnerPrefix.h: Change check for Windows platform to match
+        other existing checks, and avoid including Platform.h
+        * WebKitTestRunner/win/PlatformWebViewWin.cpp:
+        (WTR::registerWindowClass): Added.
+        (WTR::PlatformWebView::PlatformWebView): Implemented.
+        (WTR::PlatformWebView::~PlatformWebView): Implemented.
+        (WTR::PlatformWebView::page): Implemented.
+        * WebKitTestRunner/win/TestControllerWin.cpp:
+        (WTR::TestController::initializeInjectedBundlePath): Implemented. Provide build 
+        configuration specific path to InjectedBundle.dll.
+        * WebKitTestRunner/win/TestInvocationWin.cpp:
+        (WTR::TestInvocation::runUntil): Implemented.
+        * WebKitTestRunner/win/WebKitTestRunner.sln: Added InjectedBundle project.
+        * WebKitTestRunner/win/WebKitTestRunner.vcproj: Cleaned up unnecessary dependencies.
+
 2010-07-16  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Sam Weinig.
