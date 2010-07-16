@@ -1,5 +1,27 @@
 2010-07-16  Nikolas Zimmermann  <nzimmermann@rim.com>
 
+        Reviewed by Dirk Schulze.
+
+        gradientTransform + objectBoundingBox is wrong
+        https://bugs.webkit.org/show_bug.cgi?id=42446
+
+        Update pixel test results after fixing gradientTransform and gradientUnits="objectBoundingBox" usage for shapes & text.
+
+        * platform/mac/svg/dynamic-updates/SVGLinearGradientElement-dom-gradientTransform-attr-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGLinearGradientElement-dom-gradientTransform-attr-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGLinearGradientElement-svgdom-gradientTransform-prop-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGLinearGradientElement-svgdom-gradientTransform-prop-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGRadialGradientElement-dom-gradientTransform-attr-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGRadialGradientElement-dom-gradientTransform-attr-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGRadialGradientElement-svgdom-gradientTransform-prop-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGRadialGradientElement-svgdom-gradientTransform-prop-expected.png:
+        * platform/mac/svg/text/selection-background-color-expected.checksum:
+        * platform/mac/svg/text/selection-background-color-expected.png:
+        * platform/mac/svg/text/selection-styles-expected.checksum:
+        * platform/mac/svg/text/selection-styles-expected.png:
+
+2010-07-16  Nikolas Zimmermann  <nzimmermann@rim.com>
+
         Not reviewed. Forgot to land new pixel test result in r63535.
 
         * platform/mac/svg/custom/convolution-crash-expected.checksum:

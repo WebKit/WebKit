@@ -1,3 +1,14 @@
+2010-07-16  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Dirk Schulze.
+
+        gradientTransform + objectBoundingBox is wrong
+        https://bugs.webkit.org/show_bug.cgi?id=42446
+
+        gradientTransform + gradientUnits="objectBoundingBox" is wrong. Reverse multiplication order of both transforms.
+
+        * rendering/RenderSVGResourceGradient.cpp: s/multiply/multLeft/
+
 2010-07-16  Mikhail Naganov  <mnaganov@chromium.org>
 
         Reviewed by Pavel Feldman.

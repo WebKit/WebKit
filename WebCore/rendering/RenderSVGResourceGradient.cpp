@@ -128,7 +128,7 @@ static inline AffineTransform clipToTextMask(GraphicsContext* context,
         matrix.translate(maskBoundingBox.x(), maskBoundingBox.y());
         matrix.scaleNonUniform(maskBoundingBox.width(), maskBoundingBox.height());
     }
-    matrix.multiply(gradientData->transform);
+    matrix.multLeft(gradientData->transform);
     return matrix;
 }
 #endif
@@ -174,7 +174,7 @@ bool RenderSVGResourceGradient::applyResource(RenderObject* object, RenderStyle*
             gradientData->userspaceTransform.scaleNonUniform(objectBoundingBox.width(), objectBoundingBox.height());
         }
 
-        gradientData->userspaceTransform.multiply(gradientData->transform);
+        gradientData->userspaceTransform.multLeft(gradientData->transform);
         gradientData->gradient->setGradientSpaceTransform(gradientData->userspaceTransform);
     }
 
