@@ -1,5 +1,12 @@
 2010-07-16  Nikolas Zimmermann  <nzimmermann@rim.com>
 
+        Not reviewed. Forgot to land new pixel test result in r63535.
+
+        * platform/mac/svg/custom/convolution-crash-expected.checksum:
+        * platform/mac/svg/custom/convolution-crash-expected.png:
+
+2010-07-16  Nikolas Zimmermann  <nzimmermann@rim.com>
+
         Rubber-stamped by Dirk Schulze.
 
         Regenerated pixel test results for svg/dynamic-updates. Not enabling the actual dumping of pixel test results yet,
