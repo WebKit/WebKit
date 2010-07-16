@@ -1,3 +1,12 @@
+2010-07-16  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Printing test results differ between machines, we should use ImageDiff instead
+        https://bugs.webkit.org/show_bug.cgi?id=20011
+
+        * platform/chromium/test_expectations.txt:
+
 2010-07-15  Yuta Kitamura  <yutak@chromium.org>
 
         Reviewed by Kent Tamura.
