@@ -1,3 +1,23 @@
+2010-07-16  Tony Gentilcore  <tonyg@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Fix unit error in calculating timings from ResourceLoadTiming API
+        https://bugs.webkit.org/show_bug.cgi?id=42473
+
+        The start and end offsets are already in milliseconds so they should not be multiplied by 1000.0 like requestTime.
+
+        No new tests because, for a yet unknown reason, the ResourceLoadTiming API is not populated in the chromium test shell like it is in full chromium. This means the test that would have caught this bug (fast/dom/webtiming.html) currently has its expectation set to FAIL.
+
+        * page/Timing.cpp:
+        (WebCore::Timing::domainLookupStart):
+        (WebCore::Timing::domainLookupEnd):
+        (WebCore::Timing::connectStart):
+        (WebCore::Timing::connectEnd):
+        (WebCore::Timing::requestStart):
+        (WebCore::Timing::requestEnd):
+        (WebCore::Timing::responseStart):
+
 2010-07-16  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by David Levin.
