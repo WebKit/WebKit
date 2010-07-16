@@ -1,3 +1,19 @@
+2010-07-16  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        WebInspector: The current implementation of generator is not ready
+        for generation Backend part of Inspector interface. The full patch
+        with Backend is quite big and I've split it.
+        https://bugs.webkit.org/show_bug.cgi?id=42462
+
+        * inspector/CodeGeneratorInspector.pm:
+        * inspector/Inspector.idl:
+        * inspector/InspectorValues.cpp:
+        (WebCore::InspectorArray::get):
+        * inspector/InspectorValues.h:
+        (WebCore::InspectorArray::length):
+
 2010-07-15  Rob Buis  <rwlbuis@gmail.com>
 
         Reviewed by Darin Adler.

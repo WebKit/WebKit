@@ -32,15 +32,15 @@
 
 module core {
     interface [Conditional=INSPECTOR] Inspector {
-        [notify] void addRecordToTimeline(in Object record);
-        [notify] void addNodesToSearchResult(in Array nodeIds);
-        [notify] void attributesUpdated(in long id, in Array attributes);
-        [notify] void childNodeCountUpdated(in long id, in int newValue);
-        [notify] void childNodeInserted(in long parentId, in long prevId, in Object node);
-        [notify] void childNodeRemoved(in long parentId, in long id);
-        [notify] void setChildNodes(in long parentId, in Array nodes);
-        [notify] void setDetachedRoot(in Object root);
-        [notify] void setDocument(in Value root);
+        [notify] void addRecordToTimeline(out Object record);
+        [notify] void addNodesToSearchResult(out Array nodeIds);
+        [notify] void attributesUpdated(out long id, out Array attributes);
+        [notify] void childNodeCountUpdated(out long id, out int newValue);
+        [notify] void childNodeInserted(out long parentId, out long prevId, out Object node);
+        [notify] void childNodeRemoved(out long parentId, out long id);
+        [notify] void setChildNodes(out long parentId, out Array nodes);
+        [notify] void setDetachedRoot(out Object root);
+        [notify] void setDocument(out Value root);
 
         void storeLastActivePanel(in String panelName);
 
@@ -55,7 +55,7 @@ module core {
 
         void enableResourceTracking(in boolean always);
         void disableResourceTracking(in boolean always);
-        void getResourceContent(in unsigned long identifier);
+        void getResourceContent(in long callId, in unsigned long identifier);
         void reloadPage();
 
         void startTimelineProfiler();
@@ -65,7 +65,7 @@ module core {
         void enableDebugger(in boolean always);
         void disableDebugger(in boolean always);
 
-        void setBreakpoint(in String sourceID, in unsigned long lineNumber, in boolean enabled, in String condition);
+        void setBreakpoint(in long callId, in String sourceID, in unsigned long lineNumber, in boolean enabled, in String condition);
         void removeBreakpoint(in String sourceID, in unsigned long lineNumber);
         void activateBreakpoints();
         void deactivateBreakpoints();
@@ -79,8 +79,8 @@ module core {
 
         void setPauseOnExceptionsState(in long pauseOnExceptionsState);
 
-        void editScriptSource(in String sourceID, in String newContent);
-        void getScriptSource(in String sourceID);
+        void editScriptSource(in long callId, in String sourceID, in String newContent);
+        void getScriptSource(in long callId, in String sourceID);
 
         void enableProfiler(in boolean always);
         void disableProfiler(in boolean always);
@@ -88,8 +88,8 @@ module core {
         void startProfiling();
         void stopProfiling();
 
-        void getProfileHeaders();
-        void getProfile(in unsigned long uid);
+        void getProfileHeaders(in long callId);
+        void getProfile(in long callId, in unsigned long uid);
 
         void removeProfile(in unsigned long uid);
         void clearProfiles();
@@ -97,62 +97,62 @@ module core {
         void takeHeapSnapshot();
 #endif
         void setInjectedScriptSource(in String scriptSource);
-        void dispatchOnInjectedScript(in long injectedScriptId, in String methodName, in String arguments, in boolean async);
+        void dispatchOnInjectedScript(in long callId, in long injectedScriptId, in String methodName, in String arguments, in boolean async);
 
         void addScriptToEvaluateOnLoad(in String scriptSource);
         void removeAllScriptsToEvaluateOnLoad();
 
-        void getChildNodes(in long nodeId);
-        [customResponse=didApplyDomChange] void setAttribute(in long elementId, in String name, in String value, out boolean success);
-        [customResponse=didApplyDomChange] void removeAttribute(in long elementId, in String name, out boolean success);
-        void setTextNodeValue(in long nodeId, in String value);
-        void getEventListenersForNode(in long nodeId, out long nodeId, out Array listenersArray);
+        void getChildNodes(in long callId, in long nodeId);
+        [customResponse=didApplyDomChange] void setAttribute(in long callId, in long elementId, in String name, in String value, out boolean success);
+        [customResponse=didApplyDomChange] void removeAttribute(in long callId, in long elementId, in String name, out boolean success);
+        void setTextNodeValue(in long callId, in long nodeId, in String value);
+        void getEventListenersForNode(in long callId, in long nodeId, out long nodeId, out Array listenersArray);
         void copyNode(in long nodeId);
-        void removeNode(in long nodeId, out long nodeId);
-        void changeTagName(in long nodeId, in String newTagName, out long nodeId);
-        void getOuterHTML(in long nodeId, out String outerHTML);
-        void setOuterHTML(in long nodeId, in String outerHTML, out long nodeId);
+        void removeNode(in long callId, in long nodeId, out long nodeId);
+        void changeTagName(in long callId, in long nodeId, in String newTagName, out long nodeId);
+        void getOuterHTML(in long callId, in long nodeId, out String outerHTML);
+        void setOuterHTML(in long callId, in long nodeId, in String outerHTML, out long nodeId);
         void addInspectedNode(in long nodeId);
         void performSearch(in String query, in boolean runSynchronously);
         void searchCanceled();
-        void pushNodeByPathToFrontend(in String path, out long nodeId);
+        void pushNodeByPathToFrontend(in long callId, in String path, out long nodeId);
 
         void clearConsoleMessages();
 
         void highlightDOMNode(in long nodeId);
         void hideDOMNodeHighlight();
 
-        void getStyles(in long nodeId, in boolean authOnly, out Value styles);
-        void getAllStyles(out Array styles);
-        void getInlineStyle(in long nodeId, out Value style);
-        void getComputedStyle(in long nodeId, out Value style);
-        void getStyleSheet(in long styleSheetId, out Value styleSheet);
-        void getRuleRangesForStyleSheetId(in long styleSheetId);
-        void applyStyleText(in long styleId, in String styleText, in String propertyName, out boolean success, out Value style, out Array changedProperties);
-        void setStyleText(in long styleId, in String styleText, out boolean success);
-        void setStyleProperty(in long styleId, in String name, in String value, out boolean success);
-        void toggleStyleEnabled(in long styleId, in String propertyName, in boolean disabled, out Value style);
-        void setRuleSelector(in long ruleId, in String selector, in long selectedNodeId, out Value rule, out boolean selectorAffectsNode);
-        void addRule(in String selector, in long selectedNodeId, out Value rule, out boolean selectorAffectsNode);
+        void getStyles(in long callId, in long nodeId, in boolean authOnly, out Value styles);
+        void getAllStyles(in long callId, out Array styles);
+        void getInlineStyle(in long callId, in long nodeId, out Value style);
+        void getComputedStyle(in long callId, in long nodeId, out Value style);
+        void getStyleSheet(in long callId, in long styleSheetId, out Value styleSheet);
+        void getRuleRangesForStyleSheetId(in long callId, in long styleSheetId);
+        void applyStyleText(in long callId, in long styleId, in String styleText, in String propertyName, out boolean success, out Value style, out Array changedProperties);
+        void setStyleText(in long callId, in long styleId, in String styleText, out boolean success);
+        void setStyleProperty(in long callId, in long styleId, in String name, in String value, out boolean success);
+        void toggleStyleEnabled(in long callId, in long styleId, in String propertyName, in boolean disabled, out Value style);
+        void setRuleSelector(in long callId, in long ruleId, in String selector, in long selectedNodeId, out Value rule, out boolean selectorAffectsNode);
+        void addRule(in long callId, in String selector, in long selectedNodeId, out Value rule, out boolean selectorAffectsNode);
 
-        void getCookies();
+        void getCookies(in long callId);
         void deleteCookie(in String cookieName, in String domain);
 
 #if defined(ENABLE_OFFLINE_WEB_APPLICATIONS) && ENABLE_OFFLINE_WEB_APPLICATIONS
-        void getApplicationCaches();
+        void getApplicationCaches(in long callId);
 #endif
 
         void releaseWrapperObjectGroup(in long injectedScriptId, in String objectGroup);
-        void didEvaluateForTestInFrontend(in String jsonResult);
+        void didEvaluateForTestInFrontend(in long callId, in String jsonResult);
 
 #if defined(ENABLE_DATABASE) && ENABLE_DATABASE
-        void getDatabaseTableNames(in long databaseId);
+        void getDatabaseTableNames(in long callId, in long databaseId);
 #endif
 
 #if defined(ENABLE_DOM_STORAGE) && ENABLE_DOM_STORAGE
-        void getDOMStorageEntries(in long storageId);
-        void setDOMStorageItem(in long storageId, in String key, in String value);
-        void removeDOMStorageItem(in long storageId, in String key);
+        void getDOMStorageEntries(in long callId, in long storageId);
+        void setDOMStorageItem(in long callId, in long storageId, in String key, in String value);
+        void removeDOMStorageItem(in long callId, in long storageId, in String key);
 #endif
     };
 }

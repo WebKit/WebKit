@@ -198,7 +198,9 @@ public:
     void pushNumber(double);
     void pushString(const String&);
     void push(PassRefPtr<InspectorValue>);
-    unsigned length() { return m_data.size(); }
+    unsigned length() const { return m_data.size(); }
+
+    PassRefPtr<InspectorValue> get(size_t index);
 
     virtual void writeJSON(Vector<UChar>* output) const;
 

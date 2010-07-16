@@ -6,6 +6,7 @@ package CodeGeneratorInspector;
 
 use strict;
 
+use Class::Struct;
 use File::stat;
 
 my %typeTransform;
@@ -21,56 +22,56 @@ $typeTransform{"Object"} = {
     "retVal" => "PassRefPtr<InspectorObject>",
     "forward" => "InspectorObject",
     "header" => "InspectorValues.h",
-    "push" => "push"
+    "accessorSuffix" => ""
 };
 $typeTransform{"Array"} = {
     "param" => "PassRefPtr<InspectorArray>",
     "retVal" => "PassRefPtr<InspectorArray>",
     "forward" => "InspectorArray",
     "header" => "InspectorValues.h",
-    "push" => "push"
+    "accessorSuffix" => ""
 };
 $typeTransform{"Value"} = {
     "param" => "PassRefPtr<InspectorValue>",
     "retVal" => "PassRefPtr<InspectorValue>",
     "forward" => "InspectorValue",
     "header" => "InspectorValues.h",
-    "push" => "push"
+    "accessorSuffix" => ""
 };
 $typeTransform{"String"} = {
     "param" => "const String&",
     "retVal" => "String",
     "forward" => "String",
     "header" => "PlatformString.h",
-    "push" => "pushString"
+    "accessorSuffix" => "String"
 };
 $typeTransform{"long"} = {
     "param" => "long",
     "retVal" => "long",
     "forward" => "",
     "header" => "",
-    "push" => "pushNumber"
+    "accessorSuffix" => "Number"
 };
 $typeTransform{"int"} = {
     "param" => "int",
     "retVal" => "int",
     "forward" => "",
     "header" => "",
-    "push" => "pushNumber"
+    "accessorSuffix" => "Number",
 };
 $typeTransform{"unsigned long"} = {
     "param" => "unsigned long",
     "retVal" => "unsigned long",
     "forward" => "",
     "header" => "",
-    "push" => "pushNumber"
+    "accessorSuffix" => "Number"
 };
 $typeTransform{"boolean"} = {
     "param" => "bool",
     "retVal"=> "bool",
     "forward" => "",
     "header" => "",
-    "push" => "pushBool"
+    "accessorSuffix" => "Bool"
 };
 $typeTransform{"void"} = {
     "retVal" => "void",
@@ -92,23 +93,17 @@ my $writeDependencies;
 my $verbose;
 
 my $namespace;
+
 my $frontendClassName;
-my %discoveredTypes;
-my %generatedFunctions;
+my %frontendTypes;
+my %frontendMethods;
+my @frontendMethodsImpl;
+my $frontendConstructor;
+my $frontendFooter;
 
-my @frontendClassDeclaration;
-my @functionDefinitions;
-
-sub typeSpec
-{
-    my $param = shift;
-    my $retValue = shift;
-
-    my $type = $typeTransform{$param->type}->{$retValue ? "retVal" : "param"};
-    $discoveredTypes{$param->type} = 1;
-    $type or die "invalid type specification \"" . $param->type ."\"";
-    return $type;
-}
+my $callId = new domSignature(); # it is just structure for describing parameters from IDLStructure.pm.
+$callId->type("long");
+$callId->name("callId");
 
 # Default constructor
 sub new
@@ -145,127 +140,126 @@ sub GenerateInterface
     my $defines = shift;
 
     my $className = $interface->name;
+
     $frontendClassName = "Remote" . $className . "Frontend";
+    $frontendConstructor = "    ${frontendClassName}(InspectorClient* inspectorClient) : m_inspectorClient(inspectorClient) { }";
+    $frontendFooter = "    InspectorClient* m_inspectorClient;";
+    $frontendTypes{"String"} = 1;
+    $frontendTypes{"InspectorClient"} = 1;
+    $frontendTypes{"PassRefPtr"} = 1;
 
-    $discoveredTypes{"String"} = 1;
-    $discoveredTypes{"InspectorClient"} = 1;
-    $discoveredTypes{"PassRefPtr"} = 1;
-
-    push(@frontendClassDeclaration, "class $frontendClassName {");
-    push(@frontendClassDeclaration, "public:");
-    push(@frontendClassDeclaration, "    $frontendClassName(InspectorClient* inspectorClient) : m_inspectorClient(inspectorClient) { }");
-    push(@frontendClassDeclaration, "");
-    push(@frontendClassDeclaration, generateFunctions($interface, $frontendClassName));
-    push(@frontendClassDeclaration, "");
-    push(@frontendClassDeclaration, "private:");
-    push(@frontendClassDeclaration, "    InspectorClient* m_inspectorClient;");
-    push(@frontendClassDeclaration, "};");
+    generateFunctions($interface);
 }
 
 sub generateFunctions
 {
     my $interface = shift;
-    my $className = shift;
 
-    my @functionDeclarations;
     foreach my $function (@{$interface->functions}) {
-        my $functionName;
-        my $argumentsDirectionFilter;
-        my $arguments;
-        my @functionBody;
-        push(@functionBody, "    RefPtr<InspectorArray> arguments = InspectorArray::create();");
-        if ($function->signature->extendedAttributes->{"notify"}) {
-            $functionName = $function->signature->name;
-            $argumentsDirectionFilter = "in";
-            $arguments = "";
-            push(@functionBody, "    arguments->pushString(\"$functionName\");");
-        } else {
-            my $customResponse = $function->signature->extendedAttributes->{"customResponse"};
-            $functionName = $customResponse ? $customResponse : "did" . ucfirst($function->signature->name);
-            $argumentsDirectionFilter = "out";
-            $arguments = "long callId";
-            push(@functionBody, "    arguments->pushString(\"$functionName\");");
-            push(@functionBody, "    arguments->pushNumber(callId);");
-        }
-
-        foreach my $parameter (@{$function->parameters}) {
-            if ($parameter->direction eq $argumentsDirectionFilter) {
-                $parameter->name or die "empty argument name specified for function ${frontendClassName}::$functionName and argument type " . $parameter->type;
-                $arguments = $arguments . ", " if ($arguments);
-                $arguments = $arguments . typeSpec($parameter) . " " . $parameter->name;
-                my $pushFunctionName =  $typeTransform{$parameter->type}->{"push"};
-                push(@functionBody, "    arguments->$pushFunctionName(" . $parameter->name . ");");
-            }
-        }
-        push(@functionBody, "    m_inspectorClient->sendMessageToFrontend(arguments->toJSONString());");
-
-        my $signature = "    " . typeSpec($function->signature, 1) . " $functionName($arguments);";
-        if (!$generatedFunctions{${signature}}) {
-            $generatedFunctions{${signature}} = 1;
-            push(@functionDeclarations, $signature);
-
-            my @function;
-            push(@function, typeSpec($function->signature, 1) . " " . $className . "::" . $functionName . "(" . $arguments . ")");
-            push(@function, "{");
-            push(@function, @functionBody);
-            push(@function, "}");
-            push(@function, "");
-            push(@functionDefinitions, @function);
-        }
+        generateFrontendFunction($function);
     }
-    return @functionDeclarations;
+}
+
+sub generateFrontendFunction
+{
+    my $function = shift;
+
+    my $functionName;
+    my $notify = $function->signature->extendedAttributes->{"notify"};
+    if ($notify) {
+        $functionName = $function->signature->name;
+    } else {
+        my $customResponse = $function->signature->extendedAttributes->{"customResponse"};
+        $functionName = $customResponse ? $customResponse : "did" . ucfirst($function->signature->name);
+    }
+
+    my @argsFiltered = grep($_->direction eq "out", @{$function->parameters}); # just keep only out parameters for frontend interface.
+    unshift(@argsFiltered, $callId) if !$notify; # Add callId as the first argument for all frontend did* methods.
+    map($frontendTypes{$_->type} = 1, @argsFiltered); # register required types.
+    my $arguments = join(", ", map($typeTransform{$_->type}->{"param"} . " " . $_->name, @argsFiltered)); # prepare arguments for function signature.
+    my @pushArguments = map("    arguments->push" . $typeTransform{$_->type}->{"accessorSuffix"} . "(" . $_->name . ");", @argsFiltered);
+
+    my $signature = "    void ${functionName}(${arguments});";
+    if (!$frontendMethods{${signature}}) {
+        $frontendMethods{${signature}} = 1;
+
+        my @function;
+        push(@function, "void ${frontendClassName}::${functionName}(${arguments})");
+        push(@function, "{");
+        push(@function, "    RefPtr<InspectorArray> arguments = InspectorArray::create();");
+        push(@function, "    arguments->pushString(\"$functionName\");");
+        push(@function, @pushArguments);
+        push(@function, "    m_inspectorClient->sendMessageToFrontend(arguments->toJSONString());");
+        push(@function, "}");
+        push(@function, "");
+        push(@frontendMethodsImpl, @function);
+    }
 }
 
 sub generateHeader
 {
-    my @headerContent = split("\r", $licenseTemplate);
-    push(@headerContent, "#ifndef ${frontendClassName}_h");
-    push(@headerContent, "#define ${frontendClassName}_h");
-    push(@headerContent, "");
+    my $className = shift;
+    my $types = shift;
+    my $constructor = shift;
+    my $methods = shift;
+    my $footer = shift;
 
-    my @forwardHeaders;
-    foreach my $type (keys %discoveredTypes) {
-        push(@forwardHeaders, "#include <" . $typeTransform{$type}->{"forwardHeader"} . ">") if !$typeTransform{$type}->{"forwardHeader"} eq  "";
-    }
-    push(@headerContent, sort @forwardHeaders);
-    push(@headerContent, "");
-    push(@headerContent, "namespace $namespace {");
-    push(@headerContent, "");
+    my $forwardHeaders = join("\n", sort(map("#include <" . $typeTransform{$_}->{"forwardHeader"} . ">", grep($typeTransform{$_}->{"forwardHeader"}, keys %{$types}))));
+    my $forwardDeclarations = join("\n", sort(map("class " . $typeTransform{$_}->{"forward"} . ";", grep($typeTransform{$_}->{"forward"}, keys %{$types}))));
+    my $methodsDeclarations = join("\n", keys %{$methods});
 
-    my @forwardDeclarations;
-    foreach my $type (keys %discoveredTypes) {
-        push(@forwardDeclarations, "class " . $typeTransform{$type}->{"forward"} . ";") if !$typeTransform{$type}->{"forward"} eq  "";
-    }
-    push(@headerContent, sort @forwardDeclarations);
+    my $headerBody = << "EOF";
+// Copyright (c) 2010 The Chromium Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+#ifndef ${className}_h
+#define ${className}_h
 
-    push(@headerContent, "");
-    push(@headerContent, @frontendClassDeclaration);
-    push(@headerContent, "");
-    push(@headerContent, "} // namespace $namespace");
-    push(@headerContent, "");
-    push(@headerContent, "#endif // !defined(${frontendClassName}_h)");
-    push(@headerContent, "");
-    return @headerContent;
+${forwardHeaders}
+
+namespace $namespace {
+
+$forwardDeclarations
+
+class $className {
+public:
+$constructor
+
+$methodsDeclarations
+
+private:
+$footer
+};
+
+} // namespace $namespace
+#endif // !defined(${className}_h)
+
+EOF
+    return $headerBody;
 }
 
 sub generateSource
 {
+    my $className = shift;
+    my $types = shift;
+    my $methods = shift;
+
     my @sourceContent = split("\r", $licenseTemplate);
     push(@sourceContent, "\n#include \"config.h\"");
-    push(@sourceContent, "#include \"$frontendClassName.h\"");
+    push(@sourceContent, "#include \"$className.h\"");
     push(@sourceContent, "");
     push(@sourceContent, "#if ENABLE(INSPECTOR)");
     push(@sourceContent, "");
 
     my %headers;
-    foreach my $type (keys %discoveredTypes) {
+    foreach my $type (keys %{$types}) {
         $headers{"#include \"" . $typeTransform{$type}->{"header"} . "\""} = 1 if !$typeTransform{$type}->{"header"} eq  "";
     }
     push(@sourceContent, sort keys %headers);
     push(@sourceContent, "");
     push(@sourceContent, "namespace $namespace {");
     push(@sourceContent, "");
-    push(@sourceContent, @functionDefinitions);
+    push(@sourceContent, @{$methods});
     push(@sourceContent, "");
     push(@sourceContent, "} // namespace $namespace");
     push(@sourceContent, "");
@@ -279,15 +273,15 @@ sub finish
     my $object = shift;
 
     open(my $SOURCE, ">$outputDir/$frontendClassName.cpp") || die "Couldn't open file $outputDir/$frontendClassName.cpp";
-    open(my $HEADER, ">$outputDir/$frontendClassName.h") || die "Couldn't open file $outputDir/$frontendClassName.h";
-
-    print $SOURCE join("\n", generateSource());
+    print $SOURCE join("\n", generateSource($frontendClassName, \%frontendTypes, \@frontendMethodsImpl));
     close($SOURCE);
     undef($SOURCE);
 
-    print $HEADER join("\n", generateHeader());
+    open(my $HEADER, ">$outputDir/$frontendClassName.h") || die "Couldn't open file $outputDir/$frontendClassName.h";
+    print $HEADER generateHeader($frontendClassName, \%frontendTypes, $frontendConstructor, \%frontendMethods, $frontendFooter);
     close($HEADER);
     undef($HEADER);
+
 }
 
 1;

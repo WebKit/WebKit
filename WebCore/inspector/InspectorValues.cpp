@@ -650,6 +650,12 @@ void InspectorArray::writeJSON(Vector<UChar>* output) const
     output->append(']');
 }
 
+PassRefPtr<InspectorValue> InspectorArray::get(size_t index)
+{
+    ASSERT(index < m_data.size());
+    return m_data[index];
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(INSPECTOR)
