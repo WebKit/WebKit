@@ -1,5 +1,18 @@
 2010-07-16  Nikolas Zimmermann  <nzimmermann@rim.com>
 
+        Reviewed by Dirk Schulze.
+
+        Convolution computation causes bad alpha channel values
+        https://bugs.webkit.org/show_bug.cgi?id=42273
+
+        Unbreak the convolve matrix filter, fixing svg/W3C-SVG-1.1/filters-conv-01-f.svg.
+        Update convolution-crash.svg results.
+
+        * platform/mac/svg/custom/convolution-crash-expected.checksum:
+        * platform/mac/svg/custom/convolution-crash-expected.png:
+
+2010-07-16  Nikolas Zimmermann  <nzimmermann@rim.com>
+
         Not reviewed. Rebaseline two results which seemed to be corrupt (DRT warns).
 
         * platform/mac/svg/custom/convolution-crash-expected.checksum:
