@@ -57,20 +57,36 @@
 namespace WebCore {
 
 namespace {
-class ThemePainter : public TransparencyWin {
+class ThemePainter {
 public:
     ThemePainter(GraphicsContext* context, const IntRect& r)
     {
-        TransformMode transformMode = getTransformMode(context->getCTM());
-        init(context, getLayerMode(context, transformMode), transformMode, r);
+        TransparencyWin::TransformMode transformMode = getTransformMode(context->getCTM());
+        m_helper.init(context, getLayerMode(context, transformMode), transformMode, r);
+
+        if (!m_helper.context()) {
+            // TransparencyWin doesn't have well-defined copy-ctor nor op=()
+            // so we re-initialize it instead of assigning a fresh istance.
+            // On the reinitialization, we fallback to use NoLayer mode.
+            // Note that the original initialization failure can be caused by
+            // a failure of an internal buffer allocation and NoLayer mode
+            // does not have such buffer allocations.
+            m_helper.~TransparencyWin();
+            new (&m_helper) TransparencyWin();
+            m_helper.init(context, TransparencyWin::NoLayer, transformMode, r);
+        }
     }
 
     ~ThemePainter()
     {
-        composite();
+        m_helper.composite();
     }
 
+    GraphicsContext* context() { return m_helper.context(); }
+    const IntRect& drawRect() { return m_helper.drawRect(); }
+
 private:
+
     static bool canvasHasMultipleLayers(const SkCanvas* canvas)
     {
         SkCanvas::LayerIter iter(const_cast<SkCanvas*>(canvas), false);
@@ -78,25 +94,27 @@ private:
         return !iter.done();  // There is > 1 layer if the the iterator can stil advance.
     }
 
-    static LayerMode getLayerMode(GraphicsContext* context, TransformMode transformMode)
+    static TransparencyWin::LayerMode getLayerMode(GraphicsContext* context, TransparencyWin::TransformMode transformMode)
     {
         if (context->platformContext()->isDrawingToImageBuffer())  // Might have transparent background.
-            return WhiteLayer;
+            return TransparencyWin::WhiteLayer;
         else if (canvasHasMultipleLayers(context->platformContext()->canvas()))  // Needs antialiasing help.
-            return OpaqueCompositeLayer;
+            return TransparencyWin::OpaqueCompositeLayer;
         else  // Nothing interesting.
-            return transformMode == KeepTransform ? NoLayer : OpaqueCompositeLayer;
+            return transformMode == TransparencyWin::KeepTransform ? TransparencyWin::NoLayer : TransparencyWin::OpaqueCompositeLayer;
     }
 
-    static TransformMode getTransformMode(const AffineTransform& matrix)
+    static TransparencyWin::TransformMode getTransformMode(const AffineTransform& matrix)
     {
         if (matrix.b() != 0 || matrix.c() != 0)  // Skew.
-            return Untransform;
+            return TransparencyWin::Untransform;
         else if (matrix.a() != 1.0 || matrix.d() != 1.0)  // Scale.
-            return ScaleTransform;
+            return TransparencyWin::ScaleTransform;
         else  // Nothing interesting.
-            return KeepTransform;
+            return TransparencyWin::KeepTransform;
     }
+
+    TransparencyWin m_helper;
 };
 
 }  // namespace

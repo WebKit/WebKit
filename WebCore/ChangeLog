@@ -1,3 +1,23 @@
+2010-07-15  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by David Levin.
+
+        [Chromium][Win] Crashes with <keygen> with huge padding.
+        https://bugs.webkit.org/show_bug.cgi?id=41737
+
+        When we try to draw a large region, TransparencyWin can fail to
+        allocate a temporal buffer for composition.  This change adds a
+        fallback path to ThemePainter to handle the buffer allocation
+        failure.
+
+        ThemePainter is no longer a subclass of TransparencyWin.  It has
+        a TransparencyWin as a member.
+
+        Test: fast/forms/large-parts.html
+
+        * rendering/RenderThemeChromiumWin.cpp:
+        (WebCore::ThemePainter): Added a fallback path.
+
 2010-07-15  Yuzo Fujishima  <yuzo@google.com>
 
         Reviewed by Darin Adler.

@@ -1,3 +1,13 @@
+2010-07-15  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by David Levin.
+
+        [Chromium][Win] Crashes with <keygen> with huge padding.
+        https://bugs.webkit.org/show_bug.cgi?id=41737
+
+        * fast/forms/large-parts-expected.txt: Added.
+        * fast/forms/large-parts.html: Added.
+
 2010-07-13  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Nate Chapin.
