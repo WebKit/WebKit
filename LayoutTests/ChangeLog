@@ -1,3 +1,12 @@
+2010-07-15  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Add some tests that hang or crash, and remove some that don't any more
+        https://bugs.webkit.org/show_bug.cgi?id=42411
+
+        * platform/mac-wk2/Skipped:
+
 2010-07-15  Ojan Vafai  <ojan@chromium.org>
 
         Unreviewed.

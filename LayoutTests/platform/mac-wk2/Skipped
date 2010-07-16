@@ -59,6 +59,7 @@ compositing/animation/state-at-end-event-transform-layer.html
 # <https://bugs.webkit.org/show_bug.cgi?id=42139>
 canvas/philip/tests/security.pattern.canvas.timing.html 
 canvas/philip/tests/security.pattern.create.html
+fast/loader/null-request-after-willSendRequest.html
 
 # Support layoutTestController.layerTreeAsText in WebKitTestRunner
 # <https://bugs.webkit.org/show_bug.cgi?id=42145>
@@ -1373,11 +1374,6 @@ fast/repaint/no-caret-repaint-in-non-content-editable-element.html
 http/tests/appcache/disabled.html
 media/restore-from-page-cache.html
 
-
-# Repeated execCommand delete hangs an editing test in WebKit2
-# <https://bugs.webkit.org/show_bug.cgi?id=42316>
-editing/deleting/deletionUI-single-instance.html
-
 # Pasteboard doesn't work in WebKit2
 # <https://bugs.webkit.org/show_bug.cgi?id=42317>
 editing/pasteboard/copy-resolves-urls.html
@@ -1978,3 +1974,10 @@ platform/mac/editing/input/text-control-ime-input.html
 platform/mac/editing/selection/25228.html
 platform/mac/fast/text/attributed-substring-from-range-002.html
 platform/mac/fast/text/attributed-substring-from-range-in-textfield.html
+
+
+# WebKitTestRunner and WebProcess simultaneously stall in CoreIPC::Connection::sendOutgoingMessage
+# <https://bugs.webkit.org/show_bug.cgi?id=42356>
+fast/frames/cached-frame-counter.html
+fast/frames/sandboxed-iframe-navigation-parent.html
+
