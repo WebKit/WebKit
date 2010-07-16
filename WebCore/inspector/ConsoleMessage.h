@@ -32,6 +32,7 @@
 #define ConsoleMessage_h
 
 #include "Console.h"
+#include "KURL.h"
 #include "ScriptObject.h"
 #include "ScriptState.h"
 
