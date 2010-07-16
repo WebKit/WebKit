@@ -270,8 +270,10 @@ PassRefPtr<BitmapContext> createPagedBitmapContext()
     int pageWidthInPixels = LayoutTestController::maxViewWidth;
     int pageHeightInPixels = LayoutTestController::maxViewHeight;
     int numberOfPages = [mainFrame numberOfPages:pageWidthInPixels:pageHeightInPixels];
+    size_t rowBytes = 0;
+    void* buffer = 0;
 
-    RefPtr<BitmapContext> bitmapContext = createBitmapContext(pageWidthInPixels, numberOfPages * (pageHeightInPixels + 1) - 1);
+    RefPtr<BitmapContext> bitmapContext = createBitmapContext(pageWidthInPixels, numberOfPages * (pageHeightInPixels + 1) - 1, rowBytes, buffer);
     [mainFrame printToCGContext:bitmapContext->cgContext():pageWidthInPixels:pageHeightInPixels];
     return bitmapContext.release();
 }

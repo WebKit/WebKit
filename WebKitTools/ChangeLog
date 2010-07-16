@@ -1,5 +1,15 @@
 2010-07-16  Shinichiro Hamaji  <hamaji@chromium.org>
 
+        Another uneviewed attempt to fix build.
+
+        Printing test results differ between machines, we should use ImageDiff instead
+        https://bugs.webkit.org/show_bug.cgi?id=20011
+
+        * DumpRenderTree/mac/PixelDumpSupportMac.mm:
+        (createPagedBitmapContext):
+
+2010-07-16  Shinichiro Hamaji  <hamaji@chromium.org>
+
         Unreviewed tiger build fix.
 
         Printing test results differ between machines, we should use ImageDiff instead
