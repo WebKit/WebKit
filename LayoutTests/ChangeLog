@@ -1,3 +1,16 @@
+2010-07-15  MORITA Hajime  <morrita@google.com>
+
+        Unrviewed, added missing expectations.
+
+        [chromium] r63422 caused svg/custom/svg-fonts-without-missing-glyph.xhtml to fail on Linux and Windows
+        https://bugs.webkit.org/show_bug.cgi?id=42402
+
+        * platform/chromium-linux/svg/custom/svg-fonts-without-missing-glyph-expected.checksum: Added.
+        * platform/chromium-linux/svg/custom/svg-fonts-without-missing-glyph-expected.png: Added.
+        * platform/chromium-win/svg/custom/svg-fonts-without-missing-glyph-expected.checksum: Added.
+        * platform/chromium-win/svg/custom/svg-fonts-without-missing-glyph-expected.png: Added.
+        * platform/chromium-win/svg/custom/svg-fonts-without-missing-glyph-expected.txt: Added.
+
 2010-07-15  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Darin Adler.
