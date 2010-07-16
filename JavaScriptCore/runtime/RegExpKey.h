@@ -76,13 +76,8 @@ struct RegExpKey {
         return flagsValue;
     }
 };
-} // namespace JSC
 
-namespace WTF {
-template<typename T> struct DefaultHash;
-template<typename T> struct RegExpHash;
-
-inline bool operator==(const JSC::RegExpKey& a, const JSC::RegExpKey& b) 
+inline bool operator==(const RegExpKey& a, const RegExpKey& b) 
 {
     if (a.flagsValue != b.flagsValue)
         return false;
@@ -92,6 +87,12 @@ inline bool operator==(const JSC::RegExpKey& a, const JSC::RegExpKey& b)
         return false;
     return equal(a.pattern.get(), b.pattern.get());
 }
+
+} // namespace JSC
+
+namespace WTF {
+template<typename T> struct DefaultHash;
+template<typename T> struct RegExpHash;
 
 template<> struct RegExpHash<JSC::RegExpKey> {
     static unsigned hash(const JSC::RegExpKey& key) { return key.pattern->hash(); }

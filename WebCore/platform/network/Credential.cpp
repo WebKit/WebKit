@@ -114,7 +114,7 @@ CFArrayRef Credential::certificates() const
     return m_certificates.get();
 }
     
-const CredentialType Credential::type() const
+CredentialType Credential::type() const
 {
     return m_type;
 }

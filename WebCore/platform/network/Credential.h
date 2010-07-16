@@ -69,7 +69,7 @@ public:
 #if CERTIFICATE_CREDENTIALS_SUPPORTED
     SecIdentityRef identity() const;
     CFArrayRef certificates() const;
-    const CredentialType type() const;
+    CredentialType type() const;
 #endif    
     
 private:

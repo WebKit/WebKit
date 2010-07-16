@@ -24,6 +24,17 @@
 
 2010-07-16  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        clang++ build fixes for JavaScriptCore and WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=42478
+
+        * runtime/RegExpKey.h:
+        (JSC::operator==):
+        Move the RegExpKey equals operator into the JSC namespace so it can be found by ADL.
+
+2010-07-16  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by David Levin.
 
         Really add WARN_UNUSED_RESULT to leakRef
