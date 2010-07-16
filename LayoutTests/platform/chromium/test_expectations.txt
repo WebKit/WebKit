@@ -3124,3 +3124,6 @@ BUGWK42419 : fast/forms/input-file-directory-upload.html = CRASH
 BUGWK42428 MAC : svg/custom/convolution-crash.svg = IMAGE
 BUGWK42428 MAC : svg/W3C-SVG-1.1/filters-conv-01-f.svg = IMAGE
 BUGWK42428 LINUX WIN : svg/W3C-SVG-1.1/filters-conv-01-f.svg = IMAGE+TEXT
+
+# Need setPrinting.
+BUGWK20011 : printing/setPrinting.html = FAIL

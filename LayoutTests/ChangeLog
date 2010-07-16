@@ -1,5 +1,14 @@
 2010-07-15  Shinichiro Hamaji  <hamaji@chromium.org>
 
+        Unreviewed fix for chromium's expectation.
+
+        Printing test results differ between machines, we should use ImageDiff instead
+        https://bugs.webkit.org/show_bug.cgi?id=20011
+
+        * platform/chromium/test_expectations.txt:
+
+2010-07-15  Shinichiro Hamaji  <hamaji@chromium.org>
+
         Unreviewed fix for expected images.
 
         Printing test results differ between machines, we should use ImageDiff instead
