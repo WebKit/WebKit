@@ -83,6 +83,11 @@ void ScriptDebugServer::addListener(ScriptDebugListener* listener, Page* page)
 {
     if (!m_enabled)
         return;
+
+    V8Proxy* proxy = V8Proxy::retrieve(page->mainFrame());
+    if (!proxy)
+        return;
+
     v8::HandleScope scope;
     v8::Local<v8::Context> debuggerContext = v8::Debug::GetDebugContext();
     v8::Context::Scope contextScope(debuggerContext);
@@ -93,7 +98,7 @@ void ScriptDebugServer::addListener(ScriptDebugListener* listener, Page* page)
         v8::Debug::SetDebugEventListener2(&ScriptDebugServer::v8DebugEventCallback);
     }
     m_listenersMap.set(page, listener);
-    V8Proxy* proxy = V8Proxy::retrieve(page->mainFrame());
+
     v8::Local<v8::Context> context = proxy->mainWorldContext();
 
     v8::Handle<v8::Function> getScriptsFunction = v8::Local<v8::Function>::Cast(m_debuggerScript.get()->Get(v8::String::New("getScripts")));
