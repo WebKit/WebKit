@@ -1,5 +1,12 @@
 2010-07-16  Kent Tamura  <tkent@chromium.org>
 
+        Unreviewed, build fix.
+
+        * rendering/RenderThemeChromiumWin.cpp:
+        (WebCore::RenderThemeChromiumWin::getThemeData): Fix a typo.
+
+2010-07-16  Kent Tamura  <tkent@chromium.org>
+
         Reviewed by Darin Fisher.
 
         [Chromium] <input type=number> UI implementation for Windows

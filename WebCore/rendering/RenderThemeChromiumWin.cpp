@@ -629,7 +629,7 @@ ThemeData RenderThemeChromiumWin::getThemeData(RenderObject* o, ControlSubPart s
         result.m_state = determineState(o);
         break;
     case InnerSpinButtonPart:
-        result.m_part = subPart == SpnButtonUp ? SPNP_UP : SPNP_DOWN;
+        result.m_part = subPart == SpinButtonUp ? SPNP_UP : SPNP_DOWN;
         result.m_state = determineState(o, subPart);
         result.m_classicState = subPart == SpinButtonUp ? DFCS_SCROLLUP : DFCS_SCROLLDOWN;
         break;
