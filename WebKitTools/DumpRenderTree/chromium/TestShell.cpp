@@ -511,7 +511,7 @@ void TestShell::dump()
     if (dumpedAnything && m_params.printSeparators)
         m_printer->handleTextFooter();
 
-    if (m_params.dumpPixels && !shouldDumpAsText) {
+    if (m_params.dumpPixels && m_layoutTestController->shouldGeneratePixelResults()) {
         // Image output: we write the image data to the file given on the
         // command line (for the dump pixels argument), and the MD5 sum to
         // stdout.

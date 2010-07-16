@@ -57,7 +57,7 @@ public:
 
     // This function sets a flag that tells the test_shell to dump pages as
     // plain text, rather than as a text representation of the renderer's state.
-    // It takes no arguments, and ignores any that may be present.
+    // It takes an optional argument, whether to dump pixels results or not.
     void dumpAsText(const CppArgumentList&, CppVariant*);
 
     // This function should set a flag that tells the test_shell to print a line
@@ -305,6 +305,7 @@ public:
     bool shouldDumpTitleChanges() { return m_dumpTitleChanges; }
     bool shouldDumpChildFrameScrollPositions() { return m_dumpChildFrameScrollPositions; }
     bool shouldDumpChildFramesAsText() { return m_dumpChildFramesAsText; }
+    bool shouldGeneratePixelResults() { return m_generatePixelResults; }
     bool acceptsEditing() { return m_acceptsEditing; }
     bool canOpenWindows() { return m_canOpenWindows; }
     bool shouldAddFileToPasteboard() { return m_shouldAddFileToPasteboard; }
@@ -419,6 +420,9 @@ private:
 
     // If true, output a message when the page title is changed.
     bool m_dumpTitleChanges;
+
+    // If true, the test_shell will generate pixel results in dumpAsText mode
+    bool m_generatePixelResults;
 
     // If true, the element will be treated as editable.  This value is returned
     // from various editing callbacks that are called just before edit operations

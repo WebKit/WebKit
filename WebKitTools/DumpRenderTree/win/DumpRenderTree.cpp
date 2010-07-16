@@ -723,10 +723,11 @@ void dump()
         fflush(stderr);
     }
 
-    if (dumpPixels) {
-        if (!gLayoutTestController->dumpAsText() && !gLayoutTestController->dumpDOMAsWebArchive() && !gLayoutTestController->dumpSourceAsWebArchive())
-            dumpWebViewAsPixelsAndCompareWithExpected(gLayoutTestController->expectedPixelHash());
-    }
+    if (dumpPixels
+     && gLayoutTestController->generatePixelResults()
+     && !gLayoutTestController->dumpDOMAsWebArchive()
+     && !gLayoutTestController->dumpSourceAsWebArchive())
+        dumpWebViewAsPixelsAndCompareWithExpected(gLayoutTestController->expectedPixelHash());
 
     printf("#EOF\n");   // terminate the (possibly empty) pixels block
     fflush(stdout);

@@ -419,11 +419,11 @@ void dump()
         }
     }
 
-    if (dumpPixels) {
-        if (!gLayoutTestController->dumpAsText() && !gLayoutTestController->dumpDOMAsWebArchive() && !gLayoutTestController->dumpSourceAsWebArchive()) {
-            dumpWebViewAsPixelsAndCompareWithExpected(gLayoutTestController->expectedPixelHash());
-        }
-    }
+    if (dumpPixels
+     && gLayoutTestController->generatePixelResults()
+     && !gLayoutTestController->dumpDOMAsWebArchive()
+     && !gLayoutTestController->dumpSourceAsWebArchive())
+        dumpWebViewAsPixelsAndCompareWithExpected(gLayoutTestController->expectedPixelHash());
 
     // FIXME: call displayWebView here when we support --paint
 

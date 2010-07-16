@@ -230,9 +230,14 @@ void LayoutTestController::WorkQueue::addWork(WorkItem* work)
     m_queue.append(work);
 }
 
-void LayoutTestController::dumpAsText(const CppArgumentList&, CppVariant* result)
+void LayoutTestController::dumpAsText(const CppArgumentList& arguments, CppVariant* result)
 {
     m_dumpAsText = true;
+
+    // Optional paramater, describing whether it's allowed to dump pixel results in dumpAsText mode.
+    if (arguments.size() > 0 && arguments[0].isBool())
+        m_generatePixelResults = arguments[0].value.boolValue;
+
     result->setNull();
 }
 
@@ -475,6 +480,7 @@ void LayoutTestController::reset()
     m_dumpWindowStatusChanges = false;
     m_dumpSelectionRect = false;
     m_dumpTitleChanges = false;
+    m_generatePixelResults = true;
     m_acceptsEditing = true;
     m_waitUntilDone = false;
     m_canOpenWindows = false;

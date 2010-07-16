@@ -1129,7 +1129,7 @@ void dump()
         }            
     }
 
-    if (dumpPixels && !dumpAsText)
+    if (dumpPixels && gLayoutTestController->generatePixelResults())
         // FIXME: when isPrinting is set, dump the image with page separators.
         dumpWebViewAsPixelsAndCompareWithExpected(gLayoutTestController->expectedPixelHash());
 

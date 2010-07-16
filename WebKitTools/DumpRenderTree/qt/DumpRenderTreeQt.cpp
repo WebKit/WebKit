@@ -847,6 +847,7 @@ void DumpRenderTree::dump()
     fputs("#EOF\n", stdout);
     fputs("#EOF\n", stderr);
 
+    // FIXME: All other ports don't dump pixels, if generatePixelResults is false.
     if (m_dumpPixels) {
         QImage image(m_page->viewportSize(), QImage::Format_ARGB32);
         image.fill(Qt::white);

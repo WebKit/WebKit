@@ -201,13 +201,11 @@ void dump()
         }
     }
 
-    if (dumpPixels) {
-        if (!gLayoutTestController->dumpAsText() && 
-                !gLayoutTestController->dumpDOMAsWebArchive() && 
-                !gLayoutTestController->dumpSourceAsWebArchive()) {
-            // FIXME: Add support for dumping pixels
-        }
-
+    if (dumpPixels
+        && gLayoutTestController->generatePixelResults()
+        && !gLayoutTestController->dumpDOMAsWebArchive()
+        && !gLayoutTestController->dumpSourceAsWebArchive()) {
+        // FIXME: Add support for dumping pixels
         fflush(stdout);
     }
 

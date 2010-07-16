@@ -1,3 +1,45 @@
+2010-07-16  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Dirk Schulze.
+
+        Add possibility to dumpAsText and generate a pixel test result
+        https://bugs.webkit.org/show_bug.cgi?id=42374
+
+        Add optional parameter to setDumpAsText() to allow generating a pixel test result even if dumpAsText mode.
+        setDumpAsText(true) will also generate a pixel test result now, when running run-webkit-tests --pixel-tests.
+
+        This is needed for the svg/dynamic-updates tests, which don't want render tree dumps but text dumps + a pixel test result.
+        At some point DRT changed to not generate pixel test results when using dumpAsText - which makes sense, but breaks the svg/dynamic-updates test.
+
+        Implemented for all DRT platforms, except Qt, as it's not clear how arguments to functions like "setDumpAsText" are handled.
+        (Qt always dumps pixel tests when using --pixel-tests mode, so it does not break anything)
+
+        * DumpRenderTree/LayoutTestController.cpp:
+        (LayoutTestController::LayoutTestController):
+        (dumpAsTextAndPixelsCallback):
+        (LayoutTestController::staticFunctions):
+        * DumpRenderTree/LayoutTestController.h:
+        (LayoutTestController::dumpAsTextAndPixels):
+        (LayoutTestController::setDumpAsTextAndPixels):
+        * DumpRenderTree/chromium/LayoutTestController.cpp:
+        (LayoutTestController::LayoutTestController):
+        (LayoutTestController::dumpAsTextAndPixels):
+        (LayoutTestController::reset):
+        * DumpRenderTree/chromium/LayoutTestController.h:
+        (LayoutTestController::shouldDumpAsTextAndPixels):
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (TestShell::dump):
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (dump):
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (dump):
+        * DumpRenderTree/qt/DumpRenderTreeQt.cpp:
+        (WebCore::DumpRenderTree::dump):
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (dump):
+        * DumpRenderTree/wx/DumpRenderTreeWx.cpp:
+        (dump):
+
 2010-07-16  Kent Hansen  <kent.hansen@nokia.com>
 
         Unreviewed. Adding myself as committer.
