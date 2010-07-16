@@ -105,11 +105,11 @@ void setupMainDisplayColorProfile()
     signal(SIGTERM, restoreMainDisplayColorProfile);
 }
 
-static PassRefPtr<BitmapContext> createBitmapContext(size_t pixelsWide, size_t pixelsHigh)
+static PassRefPtr<BitmapContext> createBitmapContext(size_t pixelsWide, size_t pixelsHigh, size_t& rowBytes, void*& buffer)
 {
-    size_t rowBytes = (4 * pixelsWide + 63) & ~63; // Use a multiple of 64 bytes to improve CG performance
+    rowBytes = (4 * pixelsWide + 63) & ~63; // Use a multiple of 64 bytes to improve CG performance
 
-    void *buffer = calloc(pixelsHigh, rowBytes);
+    buffer = calloc(pixelsHigh, rowBytes);
     if (!buffer)
         return 0;
     
@@ -146,7 +146,9 @@ PassRefPtr<BitmapContext> createBitmapContextFromWebView(bool onscreen, bool inc
     NSSize webViewSize = [view frame].size;
     size_t pixelsWide = static_cast<size_t>(webViewSize.width);
     size_t pixelsHigh = static_cast<size_t>(webViewSize.height);
-    RefPtr<BitmapContext> bitmapContext = createBitmapContext(pixelsWide, pixelsHigh);
+    size_t rowBytes = 0;
+    void* buffer = 0;
+    RefPtr<BitmapContext> bitmapContext = createBitmapContext(pixelsWide, pixelsHigh, rowBytes, buffer);
     if (!bitmapContext)
         return 0;
     CGContextRef context = bitmapContext->cgContext();
