@@ -1,3 +1,13 @@
+2010-07-16  Antonio Gomes  <tonikitoo@webkit.org>
+
+        Reviewed by Simon Fraser.
+
+        Spatial navigation: do not consider outline for focusable element boundaries
+        https://bugs.webkit.org/show_bug.cgi?id=42474
+
+        * fast/events/spatial-navigation/snav-zero-margin-content-expected.txt: Added.
+        * fast/events/spatial-navigation/snav-zero-margin-content.html: Added.
+
 2010-07-16  Ojan Vafai  <ojan@chromium.org>
 
         Unreviewed. Add another expected chromium failure and the missing the text expectation in r63567.

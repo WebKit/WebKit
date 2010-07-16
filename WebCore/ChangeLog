@@ -1,3 +1,25 @@
+2010-07-16  Antonio Gomes  <tonikitoo@webkit.org>
+
+        Reviewed by Simon Fraser.
+
+        Spatial navigation: do not consider outline for focusable element boundaries
+        https://bugs.webkit.org/show_bug.cgi?id=42474
+
+        Test: fast/events/spatial-navigation/snav-zero-margin-content.html
+
+        Currently in WebCore::renderRectRelativeToRootDocument function, we are calling
+        RenderObject::absoluteClippedOverflowRect to obtain the rect boundary of a given
+        renderer/element. This method deals with outline, which is out of elements boundary.
+        It makes spatial navigation to fail on common sites like google.gom: "Web, Images, Map, etc"
+        are inaccessible.
+
+        Patch replaces RenderObject::absoluteClippedOverflowRect by Node::getRect,
+        which returns only the absolute bounding box rect of the Element.
+
+        * page/SpatialNavigation.cpp:
+        (WebCore::renderRectRelativeToRootDocument):
+        (WebCore::checkNegativeCoordsForNode):
+
 2010-07-15  Antonio Gomes  <tonikitoo@webkit.org>
 
         Reviewed by Gustavo Noronha.
