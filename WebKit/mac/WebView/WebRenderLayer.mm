@@ -45,7 +45,7 @@ using namespace WebCore;
 
 @implementation WebRenderLayer
 
-+ (NSString *)nameForLayer:(RenderLayer*)layer;
++ (NSString *)nameForLayer:(RenderLayer*)layer
 {
     RenderObject* renderer = layer->renderer();
     NSString *name = [NSString stringWithUTF8String:renderer->renderName()];
@@ -74,7 +74,7 @@ using namespace WebCore;
     return name;
 }
 
-+ (NSString *)compositingInfoForLayer:(RenderLayer*)layer;
++ (NSString *)compositingInfoForLayer:(RenderLayer*)layer
 {
     if (!layer->isComposited())
         return @"";

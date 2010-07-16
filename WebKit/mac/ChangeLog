@@ -1,3 +1,13 @@
+2010-07-16  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Remove semicolons from Objective-C method declarations.
+
+        * WebView/WebRenderLayer.mm:
+        (+[WebRenderLayer nameForLayer:]):
+        (+[WebRenderLayer compositingInfoForLayer:]):
+
 2010-07-16  Mikhail Naganov  <mnaganov@chromium.org>
 
         Reviewed by Pavel Feldman.
