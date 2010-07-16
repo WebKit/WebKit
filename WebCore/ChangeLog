@@ -1,3 +1,17 @@
+2010-07-16  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        <rdar://problem/7527532> Crash beneath setSelection() during detach()
+        https://bugs.webkit.org/show_bug.cgi?id=42020
+
+        No test because I am unable to reproduce the crash.
+
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::setSelection): In the clearSelection() case, where the repaint mode is
+        RepaintNewMinusOld, avoid making RenderBlockSelectionInfo instances, and thereby avoid calling
+        localToAbsolute() during detach().
+
 2010-07-16  Anders Carlsson  <andersca@apple.com>
 
         Fix release build.

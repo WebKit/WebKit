@@ -418,13 +418,15 @@ void RenderView::setSelection(RenderObject* start, int startPos, RenderObject* e
         if ((os->canBeSelectionLeaf() || os == m_selectionStart || os == m_selectionEnd) && os->selectionState() != SelectionNone) {
             // Blocks are responsible for painting line gaps and margin gaps.  They must be examined as well.
             oldSelectedObjects.set(os, new RenderSelectionInfo(os, true));
-            RenderBlock* cb = os->containingBlock();
-            while (cb && !cb->isRenderView()) {
-                RenderBlockSelectionInfo* blockInfo = oldSelectedBlocks.get(cb);
-                if (blockInfo)
-                    break;
-                oldSelectedBlocks.set(cb, new RenderBlockSelectionInfo(cb));
-                cb = cb->containingBlock();
+            if (blockRepaintMode == RepaintNewXOROld) {
+                RenderBlock* cb = os->containingBlock();
+                while (cb && !cb->isRenderView()) {
+                    RenderBlockSelectionInfo* blockInfo = oldSelectedBlocks.get(cb);
+                    if (blockInfo)
+                        break;
+                    oldSelectedBlocks.set(cb, new RenderBlockSelectionInfo(cb));
+                    cb = cb->containingBlock();
+                }
             }
         }
 
@@ -527,8 +529,7 @@ void RenderView::setSelection(RenderObject* start, int startPos, RenderObject* e
         RenderBlockSelectionInfo* newInfo = newSelectedBlocks.get(block);
         RenderBlockSelectionInfo* oldInfo = i->second;
         if (!newInfo || oldInfo->rects() != newInfo->rects() || oldInfo->state() != newInfo->state()) {
-            if (blockRepaintMode == RepaintNewXOROld)
-                oldInfo->repaint();
+            oldInfo->repaint();
             if (newInfo) {
                 newInfo->repaint();
                 newSelectedBlocks.remove(block);
