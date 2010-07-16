@@ -397,7 +397,7 @@ ScriptObject InspectorResource::buildObjectForTiming(InspectorFrontend* frontend
     jsonObject.set("proxyDuration", timing->proxyStart == -1 ? -1 : (timing->proxyEnd - timing->proxyStart) / 1000.0);
     jsonObject.set("dnsDuration", timing->dnsStart == -1 ? -1 : (timing->dnsEnd - timing->dnsStart) / 1000.0);
     jsonObject.set("connectDuration", timing->connectStart == -1 ? -1 : (timing->connectEnd - timing->connectStart) / 1000.0);
-    jsonObject.set("sslDuration", (timing->sslEnd - timing->sslStart) / 1000.0);
+    jsonObject.set("sslDuration", timing->sslStart == -1 ? -1 : (timing->sslEnd - timing->sslStart) / 1000.0);
     jsonObject.set("sendDuration", (timing->sendEnd - timing->sendStart) / 1000.0);
     jsonObject.set("waitDuration", (timing->receiveHeadersEnd - timing->sendEnd)  / 1000.0);
     return jsonObject;

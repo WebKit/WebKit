@@ -764,11 +764,22 @@ WebInspector.ResourcesPanel.prototype = {
         }
 
         if (resource.timing.connectDuration !== -1) {
-            if (resource.connectionReused)
+            if (resource.connectionReused) {
                 data.push(WebInspector.UIString("Blocking"));
-            else
+                data.push(Number.secondsToString(resource.timing.connectDuration));
+            } else {
                 data.push(WebInspector.UIString("Connecting"));
-            data.push(Number.secondsToString(resource.timing.connectDuration));
+                // Connection includes DNS, subtract it here.
+                var connectDuration = resource.timing.connectDuration;
+                if (resource.timing.dnsDuration !== -1)
+                    connectDuration -= resource.timing.dnsDuration;
+                data.push(Number.secondsToString(connectDuration));
+            }
+        }
+
+        if (resource.timing.sslDuration !== -1) {
+            data.push(WebInspector.UIString("SSL"));
+            data.push(Number.secondsToString(resource.timing.sslDuration));
         }
 
         data.push(WebInspector.UIString("Sending"));

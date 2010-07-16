@@ -32,6 +32,20 @@
 
         Reviewed by Yury Semikhatsky.
 
+        Web Inspector: add SSL time label into the resources popover.
+
+        https://bugs.webkit.org/show_bug.cgi?id=42458
+
+        * English.lproj/localizedStrings.js:
+        * inspector/InspectorResource.cpp:
+        (WebCore::InspectorResource::buildObjectForTiming):
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.ResourcesPanel.prototype._showPopover):
+
+2010-07-16  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
         Web Inspector: disable AppCache in chromium.
 
         https://bugs.webkit.org/show_bug.cgi?id=41858
