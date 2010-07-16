@@ -4,8 +4,9 @@ layer at (0,0) size 785x632
   RenderBlock {HTML} at (0,0) size 785x632
     RenderBody {BODY} at (8,8) size 769x616
       RenderTable {TABLE} at (0,0) size 332x46 [border: (1px outset #808080)]
-        RenderTableCol {COL} at (0,0) size 0x0
-        RenderTableCol {COL} at (0,0) size 0x0
+        RenderTableCol {COLGROUP} at (0,0) size 0x0
+          RenderTableCol {COL} at (0,0) size 0x0
+          RenderTableCol {COL} at (0,0) size 0x0
         RenderTableSection {TBODY} at (1,1) size 330x44
           RenderTableRow {TR} at (0,10) size 330x24
             RenderTableCell {TD} at (10,10) size 100x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
@@ -17,8 +18,9 @@ layer at (0,0) size 785x632
       RenderBlock (anonymous) at (0,46) size 769x20
         RenderBR {BR} at (0,0) size 0x19
       RenderTable {TABLE} at (0,66) size 400x26 [border: (1px outset #808080)]
-        RenderTableCol {COL} at (0,0) size 0x0
-        RenderTableCol {COL} at (0,0) size 0x0
+        RenderTableCol {COLGROUP} at (0,0) size 0x0
+          RenderTableCol {COL} at (0,0) size 0x0
+          RenderTableCol {COL} at (0,0) size 0x0
         RenderTableSection {TBODY} at (1,1) size 398x24
           RenderTableRow {TR} at (0,0) size 398x24
             RenderTableCell {TD} at (0,0) size 133x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
@@ -30,8 +32,9 @@ layer at (0,0) size 785x632
       RenderBlock (anonymous) at (0,92) size 769x20
         RenderBR {BR} at (0,0) size 0x19
       RenderTable {TABLE} at (0,112) size 302x26 [border: (1px outset #808080)]
-        RenderTableCol {COL} at (0,0) size 0x0
-        RenderTableCol {COL} at (0,0) size 0x0
+        RenderTableCol {COLGROUP} at (0,0) size 0x0
+          RenderTableCol {COL} at (0,0) size 0x0
+          RenderTableCol {COL} at (0,0) size 0x0
         RenderTableSection {TBODY} at (1,1) size 300x24
           RenderTableRow {TR} at (0,0) size 300x24
             RenderTableCell {TD} at (0,0) size 100x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
@@ -43,7 +46,8 @@ layer at (0,0) size 785x632
       RenderBlock (anonymous) at (0,138) size 769x20
         RenderBR {BR} at (0,0) size 0x19
       RenderTable {TABLE} at (0,158) size 336x46 [border: (1px outset #808080)]
-        RenderTableCol {COL} at (0,0) size 0x0
+        RenderTableCol {COLGROUP} at (0,0) size 0x0
+          RenderTableCol {COL} at (0,0) size 0x0
         RenderTableSection {TBODY} at (1,1) size 334x44
           RenderTableRow {TR} at (0,10) size 334x24
             RenderTableCell {TD} at (10,10) size 100x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
@@ -87,8 +91,9 @@ layer at (0,0) size 785x632
       RenderBlock (anonymous) at (0,382) size 769x20
         RenderBR {BR} at (0,0) size 0x19
       RenderTable {TABLE} at (0,402) size 769x102 [border: (1px outset #808080)]
-        RenderTableCol {COL} at (0,0) size 0x0
-        RenderTableCol {COL} at (0,0) size 0x0
+        RenderTableCol {COLGROUP} at (0,0) size 0x0
+          RenderTableCol {COL} at (0,0) size 0x0
+          RenderTableCol {COL} at (0,0) size 0x0
         RenderTableSection {TBODY} at (1,1) size 767x100
           RenderTableRow {TR} at (0,10) size 767x80
             RenderTableCell {TD} at (10,10) size 295x80 [border: (10px solid #000000)] [r=0 c=0 rs=1 cs=1]
@@ -100,8 +105,9 @@ layer at (0,0) size 785x632
       RenderBlock (anonymous) at (0,504) size 769x20
         RenderBR {BR} at (0,0) size 0x19
       RenderTable {TABLE} at (0,524) size 100x46 [border: (1px outset #808080)]
-        RenderTableCol {COL} at (0,0) size 0x0
-        RenderTableCol {COL} at (0,0) size 0x0
+        RenderTableCol {COLGROUP} at (0,0) size 0x0
+          RenderTableCol {COL} at (0,0) size 0x0
+          RenderTableCol {COL} at (0,0) size 0x0
         RenderTableSection {TBODY} at (1,1) size 98x44
           RenderTableRow {TR} at (0,10) size 98x24
             RenderTableCell {TD} at (10,10) size 16x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
@@ -116,8 +122,9 @@ layer at (0,0) size 785x632
       RenderBlock (anonymous) at (0,570) size 769x20
         RenderBR {BR} at (0,0) size 0x19
       RenderTable {TABLE} at (0,590) size 302x26 [border: (1px outset #808080)]
-        RenderTableCol {COL} at (0,0) size 0x0
-        RenderTableCol {COL} at (0,0) size 0x0
+        RenderTableCol {COLGROUP} at (0,0) size 0x0
+          RenderTableCol {COL} at (0,0) size 0x0
+          RenderTableCol {COL} at (0,0) size 0x0
         RenderTableSection {TBODY} at (1,1) size 300x24
           RenderTableRow {TR} at (0,0) size 300x24
             RenderTableCell {TD} at (0,0) size 100x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]

@@ -31,10 +31,11 @@ layer at (0,0) size 800x600
           RenderTableRow {TR} at (0,28) size 133x52
             RenderTableCell {TD} at (0,28) size 67x52 [border: none (1px solid #000000) none] [r=1 c=0 rs=1 cs=1]
               RenderTable {TABLE} at (4,4) size 58x44 [border: none (1px solid #0000FF) none (1px solid #FF0000)]
-                RenderTableCol {COL} at (0,0) size 0x0
-                RenderTableCol {COL} at (0,0) size 0x0
-                RenderTableCol {COL} at (0,0) size 0x0 [bgcolor=#FFFF00] [border: (2px dotted #008000) none (1px solid #000000)]
-                RenderTableCol {COL} at (0,0) size 0x0 [bgcolor=#C0C0C0]
+                RenderTableCol {COLGROUP} at (0,0) size 0x0
+                  RenderTableCol {COL} at (0,0) size 0x0
+                  RenderTableCol {COL} at (0,0) size 0x0
+                  RenderTableCol {COL} at (0,0) size 0x0 [bgcolor=#FFFF00] [border: (2px dotted #008000) none (1px solid #000000)]
+                  RenderTableCol {COL} at (0,0) size 0x0 [bgcolor=#C0C0C0]
                 RenderTableSection {TBODY} at (1,0) size 56x44
                   RenderTableRow {TR} at (0,0) size 56x22
                     RenderTableCell {TD} at (44,0) size 12x22 [border: none] [r=0 c=0 rs=1 cs=1]
@@ -67,10 +68,11 @@ layer at (0,0) size 800x600
                         text run at (2,1) width 8 RTL: "  "
             RenderTableCell {TD} at (67,28) size 66x52 [r=1 c=1 rs=1 cs=1]
               RenderTable {TABLE} at (4,4) size 58x44 [border: none (1px solid #FF0000) none (1px solid #0000FF)]
-                RenderTableCol {COL} at (0,0) size 0x0
-                RenderTableCol {COL} at (0,0) size 0x0
-                RenderTableCol {COL} at (0,0) size 0x0 [bgcolor=#FFFF00] [border: (1px solid #000000) none (2px dotted #008000)]
-                RenderTableCol {COL} at (0,0) size 0x0 [bgcolor=#C0C0C0]
+                RenderTableCol {COLGROUP} at (0,0) size 0x0
+                  RenderTableCol {COL} at (0,0) size 0x0
+                  RenderTableCol {COL} at (0,0) size 0x0
+                  RenderTableCol {COL} at (0,0) size 0x0 [bgcolor=#FFFF00] [border: (1px solid #000000) none (2px dotted #008000)]
+                  RenderTableCol {COL} at (0,0) size 0x0 [bgcolor=#C0C0C0]
                 RenderTableSection {TBODY} at (1,0) size 56x44
                   RenderTableRow {TR} at (0,0) size 56x22
                     RenderTableCell {TD} at (0,0) size 12x22 [border: none] [r=0 c=0 rs=1 cs=1]

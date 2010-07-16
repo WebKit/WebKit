@@ -4,11 +4,12 @@ layer at (0,0) size 800x88
   RenderBlock {HTML} at (0,0) size 800x88
     RenderBody {BODY} at (8,8) size 784x72
       RenderTable {TABLE} at (0,0) size 784x72
-        RenderTableCol {COL} at (0,0) size 0x0
-        RenderTableCol {COL} at (0,0) size 0x0
-        RenderTableCol {COL} at (0,0) size 0x0
-        RenderTableCol {COL} at (0,0) size 0x0
-        RenderTableCol {COL} at (0,0) size 0x0
+        RenderTableCol {COLGROUP} at (0,0) size 0x0
+          RenderTableCol {COL} at (0,0) size 0x0
+          RenderTableCol {COL} at (0,0) size 0x0
+          RenderTableCol {COL} at (0,0) size 0x0
+          RenderTableCol {COL} at (0,0) size 0x0
+          RenderTableCol {COL} at (0,0) size 0x0
         RenderTableSection {TBODY} at (0,0) size 784x72
           RenderTableRow {TR} at (0,0) size 784x72
             RenderTableCell {TD} at (0,36) size 26x0 [r=0 c=0 rs=1 cs=1]

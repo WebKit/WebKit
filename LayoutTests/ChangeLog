@@ -1,3 +1,44 @@
+2010-07-15  Ojan Vafai  <ojan@chromium.org>
+
+        Unreviewed.
+
+        Chromium expected results after r63472
+        https://bugs.webkit.org/show_bug.cgi?id=42425
+
+        * platform/chromium-linux/fast/invalid/residual-style-expected.txt:
+        * platform/chromium-mac/html5lib/runner-expected.txt:
+        * platform/chromium-win/fast/invalid/residual-style-expected.txt:
+        * platform/chromium-win/fast/table/border-collapsing/002-expected.txt:
+        * platform/chromium-win/fast/table/border-collapsing/rtl-border-collapsing-expected.txt:
+        * platform/chromium-win/fast/table/cell-width-auto-expected.txt:
+        * platform/chromium-win/fast/table/colgroup-preceded-by-caption-expected.txt:
+        * platform/chromium-win/html5lib/runner-expected.txt:
+        * platform/chromium-win/tables/mozilla/bugs/bug100334-expected.txt:
+        * platform/chromium-win/tables/mozilla/bugs/bug139524-1-expected.txt:
+        * platform/chromium-win/tables/mozilla/bugs/bug139524-4-expected.txt:
+        * platform/chromium-win/tables/mozilla/bugs/bug25367-expected.txt:
+        * platform/chromium-win/tables/mozilla/bugs/bug29058-3-expected.txt:
+        * platform/chromium-win/tables/mozilla/bugs/bug43039-expected.txt:
+        * platform/chromium-win/tables/mozilla/bugs/bug43854-1-expected.txt:
+        * platform/chromium-win/tables/mozilla/bugs/bug7471-expected.txt:
+        * platform/chromium-win/tables/mozilla/core/misc-expected.txt:
+        * platform/chromium-win/tables/mozilla/dom/deleteCol1-expected.txt:
+        * platform/chromium-win/tables/mozilla/dom/deleteCol2-expected.txt:
+        * platform/chromium-win/tables/mozilla/dom/deleteCol3-expected.txt:
+        * platform/chromium-win/tables/mozilla/dom/insertCols1-expected.txt:
+        * platform/chromium-win/tables/mozilla/dom/insertCols2-expected.txt:
+        * platform/chromium-win/tables/mozilla/dom/insertCols3-expected.txt:
+        * platform/chromium-win/tables/mozilla/marvin/col_span-expected.txt:
+        * platform/chromium-win/tables/mozilla_expected_failures/bugs/bug29058-2-expected.txt:
+        * platform/chromium-win/tables/mozilla_expected_failures/bugs/bug47163-expected.txt:
+        * platform/chromium-win/tables/mozilla_expected_failures/bugs/bug7243-expected.txt:
+        * platform/chromium-win/tables/mozilla_expected_failures/core/backgrounds-expected.txt:
+        * platform/chromium-win/tables/mozilla_expected_failures/core/col_span2-expected.txt:
+        * platform/chromium-win/tables/mozilla_expected_failures/core/cols1-expected.txt:
+        * platform/chromium-win/tables/mozilla_expected_failures/core/columns-expected.txt:
+        * platform/chromium-win/tables/mozilla_expected_failures/core/conflicts-expected.txt:
+        * platform/chromium-win/tables/mozilla_expected_failures/dom/appendCol1-expected.txt:
+
 2010-07-15  Nico Weber  <thakis@chromium.org>
 
         Reviewed by Ojan Vafai.

@@ -11,8 +11,9 @@ layer at (0,0) size 800x520
           RenderText {#text} at (0,0) size 154x19
             text run at (0,0) width 154: "Table 1: width in <COL>"
         RenderTable {TABLE} at (0,72) size 256x186
-          RenderTableCol {COL} at (0,0) size 0x0
-          RenderTableCol {COL} at (0,0) size 0x0
+          RenderTableCol {COLGROUP} at (0,0) size 0x0
+            RenderTableCol {COL} at (0,0) size 0x0
+            RenderTableCol {COL} at (0,0) size 0x0
           RenderTableSection {TBODY} at (0,0) size 256x186
             RenderTableRow {TR} at (0,2) size 256x182
               RenderTableCell {TD} at (2,2) size 150x182 [bgcolor=#FFFF00] [r=0 c=0 rs=1 cs=1]

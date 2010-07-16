@@ -187,7 +187,8 @@ layer at (0,0) size 785x3617
         RenderInline {FONT} at (0,0) size 164x19 [color=#008000]
           RenderInline {FONT} at (0,0) size 0x19 [color=#FF0000]
           RenderTable {TABLE} at (39,13) size 4x2
-            RenderTableCol {COL} at (0,0) size 0x0
+            RenderTableCol {COLGROUP} at (0,0) size 0x0
+              RenderTableCol {COL} at (0,0) size 0x0
             RenderTableSection {TBODY} at (0,0) size 4x2
           RenderText {#text} at (43,0) size 160x19
             text run at (43,0) width 160: "All of this should be green."

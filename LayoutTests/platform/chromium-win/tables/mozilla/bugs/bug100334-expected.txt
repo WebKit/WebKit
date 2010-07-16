@@ -4,8 +4,9 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderTable {TABLE} at (0,0) size 150x20 [bgcolor=#FFCCCC]
-        RenderTableCol {COL} at (0,0) size 0x0
-        RenderTableCol {COL} at (0,0) size 0x0
+        RenderTableCol {COLGROUP} at (0,0) size 0x0
+          RenderTableCol {COL} at (0,0) size 0x0
+          RenderTableCol {COL} at (0,0) size 0x0
         RenderTableSection {TBODY} at (0,0) size 150x20
           RenderTableRow {TR} at (0,0) size 150x20
             RenderTableCell {TD} at (0,0) size 150x20 [r=0 c=0 rs=1 cs=2]
@@ -16,8 +17,9 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (126,20) size 24x0 [r=1 c=1 rs=1 cs=1]
       RenderBlock {P} at (0,36) size 784x0
       RenderTable {TABLE} at (0,36) size 150x20 [bgcolor=#FFCCCC]
-        RenderTableCol {COL} at (0,0) size 0x0
-        RenderTableCol {COL} at (0,0) size 0x0
+        RenderTableCol {COLGROUP} at (0,0) size 0x0
+          RenderTableCol {COL} at (0,0) size 0x0
+          RenderTableCol {COL} at (0,0) size 0x0
         RenderTableSection {TBODY} at (0,0) size 150x20
           RenderTableRow {TR} at (0,0) size 150x20
             RenderTableCell {TD} at (0,0) size 150x20 [r=0 c=0 rs=1 cs=2]
