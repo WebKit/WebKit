@@ -50,10 +50,6 @@ SET(JavaScriptCore_SOURCES
     interpreter/RegisterFile.cpp
 
     jit/ExecutableAllocator.cpp
-    jit/ExecutableAllocatorFixedVMPool.cpp
-    jit/ExecutableAllocatorPosix.cpp
-    jit/ExecutableAllocatorSymbian.cpp
-    jit/ExecutableAllocatorWin.cpp
     jit/JITArithmetic32_64.cpp
     jit/JITArithmetic.cpp
     jit/JITCall32_64.cpp

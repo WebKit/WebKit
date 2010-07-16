@@ -238,8 +238,7 @@ SET(USER_AGENT_STYLE_SHEETS
   ${WEBCORE_DIR}/css/view-source.css
   ${WEBCORE_DIR}/css/svg.css
   ${WEBCORE_DIR}/css/wml.css
-  ${WEBCORE_DIR}/css/mediaControls.css
-  ${WEBCORE_DIR}/css/mediaControlsGtk.css)
+  ${WEBCORE_DIR}/css/mediaControls.css)
 SET(USER_AGENT_STYLE_SHEETS_GENERATOR ${WEBCORE_DIR}/css/make-css-file-arrays.pl)
 # - Create ${DERIVED_SOURCES_DIR}/UserAgentStyleSheetsData.cpp and
 #   ${DERIVED_SOURCES_DIR}/UserAgentStyleSheets.h

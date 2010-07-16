@@ -1,3 +1,11 @@
+2010-07-16  Leandro Pereira  <leandro@profusion.mobi>
+
+        [EFL] Unreviewed build system cleanup.
+
+        Remove reference to "mediaControlsGtk.css".
+
+        * cmake/WebKitGenerators.cmake:
+
 2010-07-16  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
 
         Reviewed by Antonio Gomes.

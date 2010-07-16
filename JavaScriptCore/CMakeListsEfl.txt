@@ -1,4 +1,5 @@
 LIST(APPEND JavaScriptCore_SOURCES
+    jit/ExecutableAllocatorPosix.cpp
     runtime/MarkStackPosix.cpp
 )
 

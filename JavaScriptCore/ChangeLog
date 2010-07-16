@@ -1,3 +1,13 @@
+2010-07-16  Leandro Pereira  <leandro@profusion.mobi>
+
+        [EFL] Unreviewed build system cleanup.
+
+        Move ExecutableAllocator{FixedVMPool,Posix,Symbian,Win}.cpp from
+        root CMakeLists.txt to the platform CMakeLists.txt.
+
+        * CMakeLists.txt:
+        * CMakeListsEfl.txt: Add ExecutableAllocatorPosix.cpp.
+
 2010-07-16  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Geoffrey Garen.
