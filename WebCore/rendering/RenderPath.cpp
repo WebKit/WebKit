@@ -111,6 +111,10 @@ void RenderPath::layout()
         m_needsTransformUpdate = false;
     }
 
+    // Invalidate all resources of this client, if we changed something.
+    if (m_everHadLayout && selfNeedsLayout())
+        RenderSVGResource::invalidateAllResourcesOfRenderer(this);
+
     // At this point LayoutRepainter already grabbed the old bounds,
     // recalculate them now so repaintAfterLayout() uses the new bounds
     if (needsPathUpdate || m_needsBoundariesUpdate) {

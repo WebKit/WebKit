@@ -80,12 +80,13 @@ public:
     static RenderSVGResourceSolidColor* sharedSolidPaintingResource();
 
     static void invalidateAllResourcesOfRenderer(RenderObject*);
+    static void markForLayoutAndParentResourceInvalidation(RenderObject*, bool needsLayout = true);
 
 private:
     static void adjustColorForPseudoRules(const RenderStyle*, bool useFillPaint, Color&);
     
 protected:
-    void markForLayoutAndResourceInvalidation(RenderObject*);
+    void markForLayoutAndResourceInvalidation(RenderObject*, bool needsBoundariesUpdate = true);
 };
 
 }

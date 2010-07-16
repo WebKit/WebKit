@@ -58,11 +58,8 @@ RenderSVGResourceMasker::~RenderSVGResourceMasker()
 void RenderSVGResourceMasker::invalidateClients()
 {
     HashMap<RenderObject*, MaskerData*>::const_iterator end = m_masker.end();
-    for (HashMap<RenderObject*, MaskerData*>::const_iterator it = m_masker.begin(); it != end; ++it) {
-        RenderObject* renderer = it->first;
-        renderer->setNeedsBoundariesUpdate();
-        renderer->setNeedsLayout(true);
-    }
+    for (HashMap<RenderObject*, MaskerData*>::const_iterator it = m_masker.begin(); it != end; ++it)
+        markForLayoutAndResourceInvalidation(it->first);
 
     deleteAllValues(m_masker);
     m_masker.clear();
@@ -72,11 +69,6 @@ void RenderSVGResourceMasker::invalidateClients()
 void RenderSVGResourceMasker::invalidateClient(RenderObject* object)
 {
     ASSERT(object);
-
-    // FIXME: The HashMap should always contain the object on calling invalidateClient. A race condition
-    // during the parsing can causes a call of invalidateClient right before the call of applyResource.
-    // We return earlier for the moment. This bug should be fixed in:
-    // https://bugs.webkit.org/show_bug.cgi?id=35181
     if (!m_masker.contains(object))
         return;
 
@@ -228,10 +220,6 @@ void RenderSVGResourceMasker::calculateMaskContentRepaintRect()
 
 FloatRect RenderSVGResourceMasker::resourceBoundingBox(RenderObject* object)
 {
-    // Save the reference to the calling object for relayouting it on changing resource properties.
-    if (!m_masker.contains(object))
-        m_masker.set(object, new MaskerData);
-
     // Resource was not layouted yet. Give back clipping rect of the mask.
     SVGMaskElement* maskElement = static_cast<SVGMaskElement*>(node());
     FloatRect objectBoundingBox = object->objectBoundingBox();

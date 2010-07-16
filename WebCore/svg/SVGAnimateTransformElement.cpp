@@ -30,6 +30,7 @@
 #include "AffineTransform.h"
 #include "Attribute.h"
 #include "RenderObject.h"
+#include "RenderSVGResource.h"
 #include "SVGAngle.h"
 #include "SVGElementInstance.h"
 #include "SVGGradientElement.h"
@@ -172,9 +173,12 @@ void SVGAnimateTransformElement::applyResultsToTarget()
         return;
     // We accumulate to the target element transform list so there is not much to do here.
     SVGElement* targetElement = this->targetElement();
+    if (!targetElement)
+        return;
+
     if (RenderObject* renderer = targetElement->renderer()) {
         renderer->setNeedsTransformUpdate();
-        renderer->setNeedsLayout(true);
+        RenderSVGResource::markForLayoutAndParentResourceInvalidation(renderer);
     }
 
     // ...except in case where we have additional instances in <use> trees.
@@ -192,7 +196,7 @@ void SVGAnimateTransformElement::applyResultsToTarget()
             static_cast<SVGGradientElement*>(shadowTreeElement)->setGradientTransformBaseValue(transformList.get());
         if (RenderObject* renderer = shadowTreeElement->renderer()) {
             renderer->setNeedsTransformUpdate();
-            renderer->setNeedsLayout(true);
+            RenderSVGResource::markForLayoutAndParentResourceInvalidation(renderer);
         }
     }
 }

@@ -65,7 +65,6 @@ namespace WebCore {
         PassRefPtr<RenderStyle> resolveStyle(RenderStyle* parentStyle);
 
         void invalidateResourceClients();
-        void invalidateResourcesInAncestorChain() const;
 
         bool instanceUpdatesBlocked() const;
         void setInstanceUpdatesBlocked(bool);

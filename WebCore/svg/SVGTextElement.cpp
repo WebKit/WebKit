@@ -26,6 +26,7 @@
 #include "AffineTransform.h"
 #include "Attribute.h"
 #include "FloatRect.h"
+#include "RenderSVGResource.h"
 #include "RenderSVGText.h"
 #include "SVGLengthList.h"
 #include "SVGRenderStyle.h"
@@ -120,7 +121,7 @@ void SVGTextElement::svgAttributeChanged(const QualifiedName& attrName)
 
     if (SVGTransformable::isKnownAttribute(attrName)) {
         renderer->setNeedsTransformUpdate();
-        renderer->setNeedsLayout(true);
+        RenderSVGResource::markForLayoutAndParentResourceInvalidation(renderer);
     }
 }
 

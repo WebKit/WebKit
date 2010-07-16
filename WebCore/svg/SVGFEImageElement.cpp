@@ -29,6 +29,7 @@
 #include "DocLoader.h"
 #include "Document.h"
 #include "RenderObject.h"
+#include "RenderSVGResource.h"
 #include "SVGLength.h"
 #include "SVGNames.h"
 #include "SVGPreserveAspectRatio.h"
@@ -107,7 +108,16 @@ void SVGFEImageElement::synchronizeProperty(const QualifiedName& attrName)
 
 void SVGFEImageElement::notifyFinished(CachedResource*)
 {
-    SVGStyledElement::invalidateResourcesInAncestorChain();
+    if (!inDocument())
+        return;
+
+    Element* parent = parentElement();
+    ASSERT(parent);
+
+    if (!parent->hasTagName(SVGNames::filterTag) || !parent->renderer())
+        return;
+
+    RenderSVGResource::markForLayoutAndParentResourceInvalidation(parent->renderer());
 }
 
 PassRefPtr<FilterEffect> SVGFEImageElement::build(SVGFilterBuilder*)

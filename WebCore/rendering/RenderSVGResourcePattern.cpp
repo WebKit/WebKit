@@ -48,7 +48,7 @@ void RenderSVGResourcePattern::invalidateClients()
 {
     const HashMap<RenderObject*, PatternData*>::const_iterator end = m_pattern.end();
     for (HashMap<RenderObject*, PatternData*>::const_iterator it = m_pattern.begin(); it != end; ++it)
-        markForLayoutAndResourceInvalidation(it->first);
+        markForLayoutAndResourceInvalidation(it->first, false);
 
     deleteAllValues(m_pattern);
     m_pattern.clear();
@@ -57,16 +57,11 @@ void RenderSVGResourcePattern::invalidateClients()
 void RenderSVGResourcePattern::invalidateClient(RenderObject* object)
 {
     ASSERT(object);
-
-    // FIXME: The HashMap should always contain the object on calling invalidateClient. A race condition
-    // during the parsing can causes a call of invalidateClient right before the call of applyResource.
-    // We return earlier for the moment. This bug should be fixed in:
-    // https://bugs.webkit.org/show_bug.cgi?id=35181
     if (!m_pattern.contains(object))
         return;
 
     delete m_pattern.take(object);
-    markForLayoutAndResourceInvalidation(object);
+    markForLayoutAndResourceInvalidation(object, false);
 }
 
 bool RenderSVGResourcePattern::childElementReferencesResource(const SVGRenderStyle* style, const String& referenceId) const

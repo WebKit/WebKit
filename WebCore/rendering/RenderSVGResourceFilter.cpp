@@ -67,11 +67,9 @@ RenderSVGResourceFilter::~RenderSVGResourceFilter()
 void RenderSVGResourceFilter::invalidateClients()
 {
     HashMap<RenderObject*, FilterData*>::const_iterator end = m_filter.end();
-    for (HashMap<RenderObject*, FilterData*>::const_iterator it = m_filter.begin(); it != end; ++it) {
-        RenderObject* renderer = it->first;
-        renderer->setNeedsBoundariesUpdate();
-        renderer->setNeedsLayout(true);
-    }
+    for (HashMap<RenderObject*, FilterData*>::const_iterator it = m_filter.begin(); it != end; ++it)
+        markForLayoutAndResourceInvalidation(it->first);
+
     deleteAllValues(m_filter);
     m_filter.clear();
 }
@@ -79,11 +77,6 @@ void RenderSVGResourceFilter::invalidateClients()
 void RenderSVGResourceFilter::invalidateClient(RenderObject* object)
 {
     ASSERT(object);
-
-    // FIXME: The HashMap should always contain the object on calling invalidateClient. A race condition
-    // during the parsing can causes a call of invalidateClient right before the call of applyResource.
-    // We return earlier for the moment. This bug should be fixed in:
-    // https://bugs.webkit.org/show_bug.cgi?id=35181
     if (!m_filter.contains(object))
         return;
 

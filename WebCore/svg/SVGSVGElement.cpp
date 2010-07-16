@@ -35,6 +35,7 @@
 #include "FloatRect.h"
 #include "FrameView.h"
 #include "HTMLNames.h"
+#include "RenderSVGResource.h"
 #include "RenderSVGRoot.h"
 #include "RenderSVGViewportContainer.h"
 #include "SMILTimeContainer.h"
@@ -204,8 +205,8 @@ void SVGSVGElement::setCurrentScale(float scale)
     }
 
     m_scale = scale;
-    if (renderer())
-        renderer()->setNeedsLayout(true);
+    if (RenderObject* object = renderer())
+        RenderSVGResource::markForLayoutAndParentResourceInvalidation(object);
 }
 
 FloatPoint SVGSVGElement::currentTranslate() const
@@ -320,7 +321,7 @@ void SVGSVGElement::svgAttributeChanged(const QualifiedName& attrName)
         || SVGExternalResourcesRequired::isKnownAttribute(attrName)
         || SVGZoomAndPan::isKnownAttribute(attrName)
         || SVGStyledLocatableElement::isKnownAttribute(attrName))
-        renderer()->setNeedsLayout(true);
+        RenderSVGResource::markForLayoutAndParentResourceInvalidation(renderer());
 }
 
 void SVGSVGElement::synchronizeProperty(const QualifiedName& attrName)
@@ -579,7 +580,9 @@ void SVGSVGElement::inheritViewAttributes(SVGViewElement* viewElement)
 
     if (viewElement->hasAttribute(SVGNames::zoomAndPanAttr))
         currentView()->setZoomAndPan(viewElement->zoomAndPan());
-    renderer()->setNeedsLayout(true);
+    
+    if (RenderObject* object = renderer())
+        RenderSVGResource::markForLayoutAndParentResourceInvalidation(object);
 }
     
 void SVGSVGElement::documentWillBecomeInactive()

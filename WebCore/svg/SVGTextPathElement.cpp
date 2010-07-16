@@ -25,6 +25,7 @@
 #include "AffineTransform.h"
 #include "Attribute.h"
 #include "FloatRect.h"
+#include "RenderSVGResource.h"
 #include "RenderSVGTextPath.h"
 #include "SVGLengthList.h"
 #include "SVGPathElement.h"
@@ -82,7 +83,7 @@ void SVGTextPathElement::svgAttributeChanged(const QualifiedName& attrName)
     if (attrName == SVGNames::startOffsetAttr
         || SVGTextContentElement::isKnownAttribute(attrName)
         || SVGURIReference::isKnownAttribute(attrName))
-        renderer()->setNeedsLayout(true);
+        RenderSVGResource::markForLayoutAndParentResourceInvalidation(renderer());
 }
 
 void SVGTextPathElement::synchronizeProperty(const QualifiedName& attrName)

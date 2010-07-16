@@ -87,6 +87,14 @@ void RenderSVGModelObject::destroy()
     RenderObject::destroy();
 }
 
+void RenderSVGModelObject::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
+{
+    RenderObject::styleDidChange(diff, oldStyle);
+
+    if (style() && (diff == StyleDifferenceLayout || diff == StyleDifferenceRepaint))
+        RenderSVGResource::markForLayoutAndParentResourceInvalidation(this, false);
+}
+
 bool RenderSVGModelObject::nodeAtPoint(const HitTestRequest&, HitTestResult&, int, int, int, int, HitTestAction)
 {
     ASSERT_NOT_REACHED();

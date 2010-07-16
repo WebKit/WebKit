@@ -24,6 +24,7 @@
 #include "SVGTRefElement.h"
 
 #include "RenderSVGInline.h"
+#include "RenderSVGResource.h"
 #include "SVGDocument.h"
 #include "SVGNames.h"
 #include "Text.h"
@@ -69,7 +70,7 @@ void SVGTRefElement::svgAttributeChanged(const QualifiedName& attrName)
         return;
 
     if (SVGURIReference::isKnownAttribute(attrName))
-        renderer()->setNeedsLayout(true);
+        RenderSVGResource::markForLayoutAndParentResourceInvalidation(renderer());
 }
 
 void SVGTRefElement::synchronizeProperty(const QualifiedName& attrName)

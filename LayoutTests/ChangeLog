@@ -1,3 +1,19 @@
+2010-07-16  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Dirk Schulze.
+
+        relative positioning does not work for radialGradient after window resize
+        https://bugs.webkit.org/show_bug.cgi?id=41249
+
+        * platform/mac/svg/custom/marker-child-changes-css-expected.checksum: Added.
+        * platform/mac/svg/custom/marker-child-changes-css-expected.png: Added.
+        * platform/mac/svg/custom/marker-child-changes-css-expected.txt: Added.
+        * platform/mac/svg/custom/relative-sized-content-with-resources-expected.checksum: Added.
+        * platform/mac/svg/custom/relative-sized-content-with-resources-expected.png: Added.
+        * platform/mac/svg/custom/relative-sized-content-with-resources-expected.txt: Added.
+        * svg/custom/marker-child-changes-css.svg: Added.
+        * svg/custom/relative-sized-content-with-resources.xhtml: Added.
+
 2010-07-16  Cosmin Truta  <ctruta@chromium.org>
 
         Reviewed by Eric Seidel.

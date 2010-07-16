@@ -27,6 +27,7 @@
 #include "Attribute.h"
 #include "CSSPropertyNames.h"
 #include "RenderSVGImage.h"
+#include "RenderSVGResource.h"
 #include "SVGDocument.h"
 #include "SVGLength.h"
 #include "SVGPreserveAspectRatio.h"
@@ -105,7 +106,7 @@ void SVGImageElement::svgAttributeChanged(const QualifiedName& attrName)
 
     if (SVGStyledTransformableElement::isKnownAttribute(attrName)) {
         renderer->setNeedsTransformUpdate();
-        renderer->setNeedsLayout(true);
+        RenderSVGResource::markForLayoutAndParentResourceInvalidation(renderer);
         return;
     }
 
@@ -114,7 +115,7 @@ void SVGImageElement::svgAttributeChanged(const QualifiedName& attrName)
         || SVGTests::isKnownAttribute(attrName)
         || SVGLangSpace::isKnownAttribute(attrName)
         || SVGExternalResourcesRequired::isKnownAttribute(attrName))
-        renderer->setNeedsLayout(true);
+        RenderSVGResource::markForLayoutAndParentResourceInvalidation(renderer);
 }
 
 void SVGImageElement::synchronizeProperty(const QualifiedName& attrName)

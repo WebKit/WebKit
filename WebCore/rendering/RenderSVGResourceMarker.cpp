@@ -62,11 +62,8 @@ void RenderSVGResourceMarker::addClient(const RenderObject* object)
 void RenderSVGResourceMarker::invalidateClients()
 {
     const HashSet<const RenderObject*>::const_iterator end = m_marker.end();
-    for (HashSet<const RenderObject*>::const_iterator it = m_marker.begin(); it != end; ++it) {
-        RenderObject* renderer = const_cast<RenderObject*>(*it);
-        renderer->setNeedsBoundariesUpdate();
-        renderer->setNeedsLayout(true);
-    }
+    for (HashSet<const RenderObject*>::const_iterator it = m_marker.begin(); it != end; ++it)
+        markForLayoutAndResourceInvalidation(const_cast<RenderObject*>(*it));
 
     m_marker.clear();
 }
@@ -74,11 +71,6 @@ void RenderSVGResourceMarker::invalidateClients()
 void RenderSVGResourceMarker::invalidateClient(RenderObject* object)
 {
     ASSERT(object);
-
-    // FIXME: The HashSet should always contain the object on calling invalidateClient. A race condition
-    // during the parsing can causes a call of invalidateClient right before the call of applyResource.
-    // We return earlier for the moment. This bug should be fixed in:
-    // https://bugs.webkit.org/show_bug.cgi?id=35181
     if (!m_marker.contains(object))
         return;
 

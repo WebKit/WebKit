@@ -246,14 +246,6 @@ void SVGStyledElement::svgAttributeChanged(const QualifiedName& attrName)
             object->toRenderSVGResourceContainer()->idChanged();
     }
 
-    if (!document()->parsing() && object) {
-        // If we're the child of a resource element, tell the resource (and eventually its resources) that we've changed.
-        invalidateResourcesInAncestorChain();
-
-        // If we're referencing resources, tell them we've changed.
-        RenderSVGResource::invalidateAllResourcesOfRenderer(object);
-    }
-
     // Invalidate all SVGElementInstances associated with us
     SVGElementInstance::invalidateAllInstancesOfElement(this);
 }
@@ -266,27 +258,11 @@ void SVGStyledElement::synchronizeProperty(const QualifiedName& attrName)
         synchronizeClassName();
 }
 
-void SVGStyledElement::invalidateResourcesInAncestorChain() const
-{
-    Node* node = parentNode();
-    while (node) {
-        if (!node->isSVGElement())
-            break;
-
-        SVGElement* element = static_cast<SVGElement*>(node);
-        if (SVGStyledElement* styledElement = static_cast<SVGStyledElement*>(element->isStyled() ? element : 0)) {
-            styledElement->invalidateResourceClients();
-
-            // If we found the first resource in the ancestor chain, immediately stop.
-            break;
-        }
-
-        node = node->parentNode();
-    }
-}
-
 void SVGStyledElement::invalidateResourceClients()
 {
+    if (document()->parsing())
+        return;
+
     RenderObject* object = renderer();
     if (!object)
         return;

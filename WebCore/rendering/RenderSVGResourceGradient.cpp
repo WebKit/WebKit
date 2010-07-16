@@ -51,7 +51,7 @@ void RenderSVGResourceGradient::invalidateClients()
 {
     const HashMap<RenderObject*, GradientData*>::const_iterator end = m_gradient.end();
     for (HashMap<RenderObject*, GradientData*>::const_iterator it = m_gradient.begin(); it != end; ++it)
-        markForLayoutAndResourceInvalidation(it->first);
+        markForLayoutAndResourceInvalidation(it->first, false);
 
     deleteAllValues(m_gradient);
     m_gradient.clear();
@@ -60,16 +60,11 @@ void RenderSVGResourceGradient::invalidateClients()
 void RenderSVGResourceGradient::invalidateClient(RenderObject* object)
 {
     ASSERT(object);
-
-    // FIXME: The HashMap should always contain the object on calling invalidateClient. A race condition
-    // during the parsing can causes a call of invalidateClient right before the call of applyResource.
-    // We return earlier for the moment. This bug should be fixed in:
-    // https://bugs.webkit.org/show_bug.cgi?id=35181
     if (!m_gradient.contains(object))
         return;
 
     delete m_gradient.take(object);
-    markForLayoutAndResourceInvalidation(object);
+    markForLayoutAndResourceInvalidation(object, false);
 }
 
 #if PLATFORM(CG)

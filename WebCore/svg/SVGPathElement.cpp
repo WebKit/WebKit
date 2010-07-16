@@ -25,6 +25,7 @@
 
 #include "Attribute.h"
 #include "RenderPath.h"
+#include "RenderSVGResource.h"
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"
 #include "SVGPathSegArc.h"
@@ -199,13 +200,13 @@ void SVGPathElement::svgAttributeChanged(const QualifiedName& attrName)
 
     if (attrName == SVGNames::dAttr) {
         renderer->setNeedsPathUpdate();
-        renderer->setNeedsLayout(true);
+        RenderSVGResource::markForLayoutAndParentResourceInvalidation(renderer);
         return;
     }
 
     if (SVGStyledTransformableElement::isKnownAttribute(attrName)) {
         renderer->setNeedsTransformUpdate();
-        renderer->setNeedsLayout(true);
+        RenderSVGResource::markForLayoutAndParentResourceInvalidation(renderer);
         return;
     }
 
@@ -213,7 +214,7 @@ void SVGPathElement::svgAttributeChanged(const QualifiedName& attrName)
         || SVGTests::isKnownAttribute(attrName)
         || SVGLangSpace::isKnownAttribute(attrName)
         || SVGExternalResourcesRequired::isKnownAttribute(attrName))
-        renderer->setNeedsLayout(true);
+        RenderSVGResource::markForLayoutAndParentResourceInvalidation(renderer);
 }
 
 void SVGPathElement::synchronizeProperty(const QualifiedName& attrName)

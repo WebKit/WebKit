@@ -1,3 +1,117 @@
+2010-07-16  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Dirk Schulze.
+
+        relative positioning does not work for radialGradient after window resize
+        https://bugs.webkit.org/show_bug.cgi?id=41249
+
+        Redesign the way resources are invalidated. No longer utilize the DOM tree, specifically SVGStyledElement::svgAttributeChanged(), to invalidate
+        all resources in the ancestor chain (including itself) when any attribute changes. rect.setAttribute("foo", "bar") should never invalidate the
+        resources. Also the old approach didn't work correctly if the root layout changed (eg. window size change) - we failed to invalidate the resources,
+        thus leading to wrong renderings.
+
+        Instead of calling setNeedsLayout(true) from the SVG*Element classes, call RenderSVGResource::markForLayoutAndParentResourceInvalidation(), which
+        does the same thing and invalidates all resources in the ancestor chain (removing the cached results from the HashMaps). This only happens from
+        the various svgAttributeChanged() methods, if we know which attribute changed, and what action has to be taken.
+
+        All SVG renderers now invalidate their own resources on layout() if the layout changed (selfNeedsLayout()=true). The resources will be recreated
+        and cached during the following paint() call.
+
+        Tests: svg/custom/marker-child-changes-css.svg
+               svg/custom/relative-sized-content-with-resources.xhtml
+
+        * rendering/RenderForeignObject.cpp:
+        (WebCore::RenderForeignObject::layout): If our layout changed, invalidate our resources, by calling RenderSVGResource::invalidateAllResourcesOfRenderer().
+        * rendering/RenderPath.cpp:
+        (WebCore::RenderPath::layout): Ditto.
+        * rendering/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::layout): Ditto.
+        * rendering/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::layout): Ditto.
+        * rendering/RenderSVGModelObject.cpp:
+        (WebCore::RenderSVGModelObject::styleDidChange): Added, to invalidate resources on CSS changes, covered by new svg/custom/marker-child-changes-css.svg test.
+        * rendering/RenderSVGModelObject.h:
+        * rendering/RenderSVGResource.cpp:
+        (WebCore::RenderSVGResource::markForLayoutAndResourceInvalidation): Add new "needsBoundaries" parameter, calling setNeedsBoundaries() on the target render object,
+                                                                            simplifying all RenderSVGResource* code.
+        (WebCore::RenderSVGResource::markForLayoutAndParentResourceInvalidation): New static method used from DOM tree to invalidate all cached resources in the ancestor chain
+                                                                                  for a render object. Also marks the renderer for layout, if needed. 
+        * rendering/RenderSVGResource.h:
+        * rendering/RenderSVGResourceClipper.cpp: Simplify code, remove no longer needed hacks, as invalidation is now carried out by render tree.
+        (WebCore::RenderSVGResourceClipper::RenderSVGResourceClipper): Add m_invalidationBlocked hack, to avoid invalidations, while we're mutating the render styles (which is a hack!).
+        (WebCore::RenderSVGResourceClipper::invalidateClients): Don't do anything if m_invalidationBlocked=true.
+        (WebCore::RenderSVGResourceClipper::invalidateClient): Ditto.
+        (WebCore::RenderSVGResourceClipper::createClipData): Set m_invalidationBlocked before mutating render styles, as they are restored immediately after creating the clip image.
+        (WebCore::RenderSVGResourceClipper::resourceBoundingBox): Remove no longer needed hack to initialize ClipperData earlier than applyResource() would do.
+        * rendering/RenderSVGResourceClipper.h:
+        * rendering/RenderSVGResourceFilter.cpp:
+        (WebCore::RenderSVGResourceFilter::invalidateClients): Simplify code using markForLayoutAndResourceInvalidation.
+        (WebCore::RenderSVGResourceFilter::invalidateClient): Remove wrong assertion.
+        * rendering/RenderSVGResourceGradient.cpp:
+        (WebCore::RenderSVGResourceGradient::invalidateClients): Simplify code using markForLayoutAndResourceInvalidation.
+        (WebCore::RenderSVGResourceGradient::invalidateClient): Remove wrong assertion.
+        * rendering/RenderSVGResourceMarker.cpp:
+        (WebCore::RenderSVGResourceMarker::invalidateClients): Simplify code using markForLayoutAndResourceInvalidation.
+        (WebCore::RenderSVGResourceMarker::invalidateClient): Remove wrong assertion.
+        * rendering/RenderSVGResourceMasker.cpp:
+        (WebCore::RenderSVGResourceMasker::invalidateClients): Simplify code using markForLayoutAndResourceInvalidation.
+        (WebCore::RenderSVGResourceMasker::invalidateClient): Remove wrong assertion.
+        (WebCore::RenderSVGResourceMasker::resourceBoundingBox): Remove no longer needed hack to initializer MaskerData earlier than applyResource() would do.
+        * rendering/RenderSVGResourcePattern.cpp:
+        (WebCore::RenderSVGResourcePattern::invalidateClients): Simplify code using markForLayoutAndResourceInvalidation.
+        (WebCore::RenderSVGResourcePattern::invalidateClient): Remove wrong assertion.
+        * rendering/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::layout): If our layout changed, invalidate our resources, by calling RenderSVGResource::invalidateAllResourcesOfRenderer().
+        * svg/SVGAnimateMotionElement.cpp:
+        (WebCore::SVGAnimateMotionElement::applyResultsToTarget): Call RenderSVGResource::markForLayoutAndParentResourceInvalidation(renderer) instead of renderer->setNeedsLayout(true).
+        * svg/SVGAnimateTransformElement.cpp:
+        (WebCore::SVGAnimateTransformElement::applyResultsToTarget): Ditto.
+        * svg/SVGCircleElement.cpp:
+        (WebCore::SVGCircleElement::svgAttributeChanged): Ditto.
+        * svg/SVGEllipseElement.cpp:
+        (WebCore::SVGEllipseElement::svgAttributeChanged): Ditto.
+        * svg/SVGFEImageElement.cpp:
+        (WebCore::SVGFEImageElement::notifyFinished): Ditto.
+        * svg/SVGForeignObjectElement.cpp:
+        (WebCore::SVGForeignObjectElement::svgAttributeChanged): Ditto.
+        * svg/SVGGElement.cpp:
+        (WebCore::SVGGElement::svgAttributeChanged): Ditto.
+        * svg/SVGImageElement.cpp:
+        (WebCore::SVGImageElement::svgAttributeChanged): Ditto.
+        * svg/SVGLineElement.cpp:
+        (WebCore::SVGLineElement::svgAttributeChanged): Ditto.
+        * svg/SVGPathElement.cpp:
+        (WebCore::SVGPathElement::svgAttributeChanged): Ditto.
+        * svg/SVGPolyElement.cpp:
+        (WebCore::SVGPolyElement::svgAttributeChanged): Ditto.
+        * svg/SVGRectElement.cpp:
+        (WebCore::SVGRectElement::svgAttributeChanged): Ditto.
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::setCurrentScale): Ditto.
+        (WebCore::SVGSVGElement::svgAttributeChanged): Ditto.
+        (WebCore::SVGSVGElement::inheritViewAttributes): Ditto.
+        * svg/SVGStopElement.cpp:
+        (WebCore::SVGStopElement::SVGStopElement): Changed m_offset initialization from 0.0f to 0.
+        (WebCore::SVGStopElement::svgAttributeChanged): Add missing implementation, calling RenderSVGResource::markForLayoutAndParentResourceInvalidation(renderer) on offsetAttr changes.
+        * svg/SVGStopElement.h:
+        * svg/SVGStyledElement.cpp:
+        (WebCore::SVGStyledElement::svgAttributeChanged): Don't call invalidateResourceInAncestorChain() on every attribute change, do it in all classes inheriting from us,
+                                                          for specific attributes. Also stop calling RenderSVGResource::invalidateAllResourcesOfRenderer(), all handled in the render tree now.
+        (WebCore::SVGStyledElement::invalidateResourceClients): Early exit, if document is still parsing.
+        * svg/SVGStyledElement.h:
+        * svg/SVGTRefElement.cpp:
+        (WebCore::SVGTRefElement::svgAttributeChanged): Call RenderSVGResource::markForLayoutAndParentResourceInvalidation(renderer) instead of renderer->setNeedsLayout(true).
+        * svg/SVGTextElement.cpp:
+        (WebCore::SVGTextElement::svgAttributeChanged): Ditto.
+        * svg/SVGTextPathElement.cpp:
+        (WebCore::SVGTextPathElement::svgAttributeChanged): Ditto.
+        * svg/SVGTextPositioningElement.cpp:
+        (WebCore::SVGTextPositioningElement::svgAttributeChanged): Ditto.
+        * svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::svgAttributeChanged): Ditto.
+        (WebCore::SVGUseElement::updateContainerSizes): Ditto.
+        (WebCore::SVGUseElement::updateContainerOffsets): Ditto.
+
 2010-07-16  Cosmin Truta  <ctruta@chromium.org>
 
         Reviewed by Eric Seidel.

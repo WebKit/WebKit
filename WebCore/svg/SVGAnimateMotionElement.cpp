@@ -28,6 +28,7 @@
 
 #include "Attribute.h"
 #include "RenderObject.h"
+#include "RenderSVGResource.h"
 #include "SVGElementInstance.h"
 #include "SVGMPathElement.h"
 #include "SVGParserUtilities.h"
@@ -214,9 +215,12 @@ void SVGAnimateMotionElement::applyResultsToTarget()
 {
     // We accumulate to the target element transform list so there is not much to do here.
     SVGElement* targetElement = this->targetElement();
-    if (targetElement && targetElement->renderer())
-        targetElement->renderer()->setNeedsLayout(true);
-    
+    if (!targetElement)
+        return;
+
+    if (RenderObject* renderer = targetElement->renderer())
+        RenderSVGResource::markForLayoutAndParentResourceInvalidation(renderer);
+
     // ...except in case where we have additional instances in <use> trees.
     const HashSet<SVGElementInstance*>& instances = targetElement->instancesForElement();
     const HashSet<SVGElementInstance*>::const_iterator end = instances.end();
@@ -228,7 +232,7 @@ void SVGAnimateMotionElement::applyResultsToTarget()
         transform->setMatrix(t->a(), t->b(), t->c(), t->d(), t->e(), t->f());
         if (RenderObject* renderer = shadowTreeElement->renderer()) {
             renderer->setNeedsTransformUpdate();
-            renderer->setNeedsLayout(true);
+            RenderSVGResource::markForLayoutAndParentResourceInvalidation(renderer);
         }
     }
 }
@@ -248,5 +252,3 @@ float SVGAnimateMotionElement::calculateDistance(const String& fromString, const
 }
 
 #endif // ENABLE(SVG)
-
-// vim:ts=4:noet

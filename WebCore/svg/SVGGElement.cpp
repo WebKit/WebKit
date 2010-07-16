@@ -24,6 +24,7 @@
 #include "SVGGElement.h"
 
 #include "RenderSVGHiddenContainer.h"
+#include "RenderSVGResource.h"
 #include "RenderSVGTransformableContainer.h"
 
 namespace WebCore {
@@ -62,14 +63,14 @@ void SVGGElement::svgAttributeChanged(const QualifiedName& attrName)
 
     if (SVGStyledTransformableElement::isKnownAttribute(attrName)) {
         renderer->setNeedsTransformUpdate();
-        renderer->setNeedsLayout(true);
+        RenderSVGResource::markForLayoutAndParentResourceInvalidation(renderer);
         return;
     }
 
     if (SVGTests::isKnownAttribute(attrName)
         || SVGLangSpace::isKnownAttribute(attrName)
         || SVGExternalResourcesRequired::isKnownAttribute(attrName))
-        renderer->setNeedsLayout(true);
+        RenderSVGResource::markForLayoutAndParentResourceInvalidation(renderer);
 }
 
 void SVGGElement::synchronizeProperty(const QualifiedName& attrName)

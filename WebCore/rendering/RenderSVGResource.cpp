@@ -184,21 +184,17 @@ RenderSVGResourceSolidColor* RenderSVGResource::sharedSolidPaintingResource()
     return s_sharedSolidPaintingResource;
 }
 
-void RenderSVGResource::markForLayoutAndResourceInvalidation(RenderObject* object)
+void RenderSVGResource::markForLayoutAndResourceInvalidation(RenderObject* object, bool needsBoundariesUpdate)
 {
     ASSERT(object);
     ASSERT(object->node());
     ASSERT(object->node()->isSVGElement());
 
-    // Mark the renderer for layout
-    object->setNeedsLayout(true);
+    // Eventually mark the renderer needing a boundaries update
+    if (needsBoundariesUpdate)
+        object->setNeedsBoundariesUpdate();
 
-    // Notify any resources in the ancestor chain, that we've been invalidated
-    SVGElement* element = static_cast<SVGElement*>(object->node());
-    if (!element->isStyled())
-        return;
-
-    static_cast<SVGStyledElement*>(element)->invalidateResourcesInAncestorChain();
+    markForLayoutAndParentResourceInvalidation(object);
 }
 
 static inline void invalidatePaintingResource(SVGPaint* paint, RenderObject* object)
@@ -252,6 +248,22 @@ void RenderSVGResource::invalidateAllResourcesOfRenderer(RenderObject* object)
         invalidatePaintingResource(svgStyle->fillPaint(), object);
     if (svgStyle->hasStroke())
         invalidatePaintingResource(svgStyle->strokePaint(), object);
+}
+
+void RenderSVGResource::markForLayoutAndParentResourceInvalidation(RenderObject* object, bool needsLayout)
+{
+    ASSERT(object);
+    if (needsLayout)
+        object->setNeedsLayout(true);
+
+    // Invalidate resources in ancestor chain, if needed.
+    RenderObject* current = object->parent();
+    while (current) {
+        if (current->isSVGResourceContainer()) 
+            current->toRenderSVGResourceContainer()->invalidateClients();
+
+        current = current->parent();
+    }
 }
 
 }

@@ -26,6 +26,7 @@
 #include "RenderForeignObject.h"
 
 #include "GraphicsContext.h"
+#include "RenderSVGResource.h"
 #include "RenderView.h"
 #include "SVGForeignObjectElement.h"
 #include "SVGRenderSupport.h"
@@ -117,6 +118,10 @@ void RenderForeignObject::layout()
     // FIXME: Investigate in location rounding issues - only affects RenderForeignObject & RenderSVGText
     setLocation(roundedIntPoint(viewportLocation));
     RenderBlock::layout();
+
+    // Invalidate all resources of this client, if we changed something.
+    if (m_everHadLayout && selfNeedsLayout())
+        RenderSVGResource::invalidateAllResourcesOfRenderer(this);
 
     repainter.repaintAfterLayout();
     setNeedsLayout(false);

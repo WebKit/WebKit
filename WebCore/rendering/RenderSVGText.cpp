@@ -98,6 +98,10 @@ void RenderSVGText::layout()
     ASSERT(childrenInline());
     forceLayoutInlineChildren();
 
+    // Invalidate all resources of this client, if we changed something.
+    if (m_everHadLayout && selfNeedsLayout())
+        RenderSVGResource::invalidateAllResourcesOfRenderer(this);
+
     repainter.repaintAfterLayout();
     setNeedsLayout(false);
 }

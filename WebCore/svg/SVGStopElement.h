@@ -33,6 +33,7 @@ namespace WebCore {
         virtual ~SVGStopElement();
 
         virtual void parseMappedAttribute(Attribute*);
+        virtual void svgAttributeChanged(const QualifiedName&);
         virtual void synchronizeProperty(const QualifiedName&);
 
         Color stopColorIncludingOpacity() const;
