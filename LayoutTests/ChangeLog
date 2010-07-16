@@ -1,5 +1,14 @@
 2010-07-16  Nikolas Zimmermann  <nzimmermann@rim.com>
 
+        Not reviewed. Rebaseline two results which seemed to be corrupt (DRT warns).
+
+        * platform/mac/svg/custom/convolution-crash-expected.checksum:
+        * platform/mac/svg/custom/convolution-crash-expected.png:
+        * platform/mac/svg/custom/mask-colorspace-expected.checksum:
+        * platform/mac/svg/custom/mask-colorspace-expected.png:
+
+2010-07-16  Nikolas Zimmermann  <nzimmermann@rim.com>
+
         Not reviewed. Add missing layout test results for fast/js/numeric-compare.html, which landed in r63515.
 
         * fast/js/numeric-compare-expected.txt: Added.
