@@ -2,30 +2,28 @@
 
 <head>
 
-	<title>Testing contentWindow on Frames</title>
+  <title>Testing contentWindow on Frames</title>
 
-	<script>
-		function putText()
-		{
-			var t = document.getElementById("t_frame");
-			var b = document.getElementById("b_frame");
-	
-			var dv = t.contentDocument.getElementById("my_div");
-			
-			dv.innerText = b.contentWindow.location;
+  <script>
+    function putText()
+    {
+      var t = document.getElementById("t_frame");
+      var b = document.getElementById("b_frame");
+  
+      var dv = t.contentDocument.getElementById("my_div");
+      
+      dv.innerText = b.contentWindow.location;
 
-		}
-	</script>
+    }
+
+    window.onload = putText;
+  </script>
 
 </head>
-
-<body onload="putText()">
 
   <FRAMESET rows="30%, 70%">
       <FRAME id="t_frame" name="top" src="resources/frame_top.html">
       <FRAME id="b_frame" name="bottom" src="about:blank">
  </FRAMESET>
-
-</body>
 
 </html>

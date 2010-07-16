@@ -1,5 +1,14 @@
 2010-07-15  Adam Barth  <abarth@webkit.org>
 
+        Reviewed by Darin Adler.
+
+        fast/frames/contentWindow_Frame.html shouldn't depend on <body> before <frameset>
+        https://bugs.webkit.org/show_bug.cgi?id=42349
+
+        * fast/frames/contentWindow_Frame.html:
+
+2010-07-15  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Eric Seidel.
 
         Update LegacyHTMLTreeBuilder to insert whitespace between </head> and <body>
