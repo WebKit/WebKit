@@ -1,3 +1,14 @@
+2010-07-16  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Keyboard operations for <input type=number>
+        https://bugs.webkit.org/show_bug.cgi?id=42076
+
+        * fast/forms/input-number-keyoperation-expected.txt: Added.
+        * fast/forms/input-number-keyoperation.html: Added.
+        * fast/forms/script-tests/input-number-keyoperation.js: Added.
+
 2010-07-16  Brian Weinstein  <bweinstein@apple.com>
 
         Land updated expected results for fast/dom/prototype-inheritance-2-expected.txt on Windows.

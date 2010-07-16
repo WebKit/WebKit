@@ -2,6 +2,27 @@
 
         Reviewed by Darin Fisher.
 
+        Keyboard operations for <input type=number>
+        https://bugs.webkit.org/show_bug.cgi?id=42076
+
+        - The up arrow key works as stepUp().
+        - The down arrow key works as stepDown().
+        - Reject characters other than + - 0-9 . e E
+
+        Test: fast/forms/input-number-keyoperation.html
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::defaultEventHandler):
+         Add up/down arrow keys support, and call handleBeforeTextInsertedEvent().
+        (WebCore::isNumberCharacter):
+        (WebCore::HTMLInputElement::handleBeforeTextInsertedEvent):
+         For type=number, remove unacceptable characters.
+        * html/HTMLInputElement.h:
+
+2010-07-16  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Darin Fisher.
+
         Improve hover state handling for spin buttons
         https://bugs.webkit.org/show_bug.cgi?id=42260
 
