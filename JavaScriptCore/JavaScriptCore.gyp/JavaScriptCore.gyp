@@ -142,6 +142,18 @@
           'include_dirs!': [
             '<(SHARED_INTERMEDIATE_DIR)/webkit',
           ],
+          'conditions': [
+            ['inside_chromium_build==1 and component=="shared_library"', {
+              # Chromium windows multi-dll build enables c++ exception and this
+              # causes wtf generates 4291 warning due to operator new/delete
+              # implementations. Disable the warning for chromium windows
+              # multi-dll build.
+              'msvs_disabled_warnings': [4291],
+              'direct_dependent_settings': {
+                'msvs_disabled_warnings': [4291],
+              },
+            }],
+          ],
         }],
       ],
     },
