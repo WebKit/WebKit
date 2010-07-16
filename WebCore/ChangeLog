@@ -1,3 +1,16 @@
+2010-07-15  Yuzo Fujishima  <yuzo@google.com>
+
+        Reviewed by Darin Adler.
+
+        Fix for Bug 42362 - CSSSegmentedFontFace::isLoaded() const is not used anywhere
+        Remove the method.
+        https://bugs.webkit.org/show_bug.cgi?id=42362
+
+        No new tests because of no behavior changes.
+
+        * css/CSSSegmentedFontFace.cpp:
+        * css/CSSSegmentedFontFace.h:
+
 2010-07-15  Erik Arvidsson  <arv@chromium.org>
 
         Reviewed by David Levin.

@@ -59,16 +59,6 @@ void CSSSegmentedFontFace::pruneTable()
     m_fontDataTable.clear();
 }
 
-bool CSSSegmentedFontFace::isLoaded() const
-{
-    unsigned size = m_fontFaces.size();
-    for (unsigned i = 0; i < size; i++) {
-        if (!m_fontFaces[i]->isLoaded())
-            return false;
-    }
-    return true;
-}
-
 bool CSSSegmentedFontFace::isValid() const
 {
     unsigned size = m_fontFaces.size();
