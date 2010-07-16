@@ -1,5 +1,11 @@
 2010-07-16  Nikolas Zimmermann  <nzimmermann@rim.com>
 
+        Not reviewed. Add missing layout test results for fast/js/numeric-compare.html, which landed in r63515.
+
+        * fast/js/numeric-compare-expected.txt: Added.
+
+2010-07-16  Nikolas Zimmermann  <nzimmermann@rim.com>
+
         Reviewed by Dirk Schulze.
 
         relative positioning does not work for radialGradient after window resize
