@@ -1,3 +1,20 @@
+2010-07-16  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by David Levin.
+
+        Really add WARN_UNUSED_RESULT to leakRef
+        https://bugs.webkit.org/show_bug.cgi?id=42464
+
+        * wtf/PassRefPtr.h:
+        (WTF::PassRefPtr::):
+        (WTF::NonNullPassRefPtr::):
+        Put the WARN_UNUSED_RESULT attribute at the right place.
+
+        * wtf/RetainPtr.h:
+        (WTF::RetainPtr::releaseRef):
+        Remove WARN_UNUSED_RESULT here for now, it leads to two warnings that need
+        to be fixed first.
+
 2010-07-15  Victor Wang  <victorw@chromium.org>
 
         Reviewed by David Levin.

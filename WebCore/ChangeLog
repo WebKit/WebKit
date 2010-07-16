@@ -1,3 +1,19 @@
+2010-07-16  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by David Levin.
+
+        Really add WARN_UNUSED_RESULT to leakRef
+        https://bugs.webkit.org/show_bug.cgi?id=42464
+
+        Get rid of a call to releaseRef here by passing the ScriptExecutionContext
+        reference through to the DerefContextTask.
+
+        * storage/Database.cpp:
+        (WebCore::DerefContextTask::create):
+        (WebCore::DerefContextTask::performTask):
+        (WebCore::DerefContextTask::DerefContextTask):
+        (WebCore::Database::~Database):
+
 2010-07-16  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Yury Semikhatsky.

@@ -140,25 +140,37 @@ Database::Database(ScriptExecutionContext* context, const String& name, const St
 
 class DerefContextTask : public ScriptExecutionContext::Task {
 public:
-    static PassOwnPtr<DerefContextTask> create()
+    static PassOwnPtr<DerefContextTask> create(PassRefPtr<ScriptExecutionContext> context)
     {
-        return new DerefContextTask();
+        return new DerefContextTask(context);
     }
 
     virtual void performTask(ScriptExecutionContext* context)
     {
-        context->deref();
+        ASSERT(context == m_context);
+        m_context.clear();
     }
 
     virtual bool isCleanupTask() const { return true; }
+
+private:
+    DerefContextTask(PassRefPtr<ScriptExecutionContext> context)
+        : m_context(context)
+    {
+    }
+    
+    RefPtr<ScriptExecutionContext> m_context;
 };
 
 Database::~Database()
 {
     // The reference to the ScriptExecutionContext needs to be cleared on the JavaScript thread.  If we're on that thread already, we can just let the RefPtr's destruction do the dereffing.
     if (!m_scriptExecutionContext->isContextThread()) {
-        m_scriptExecutionContext->postTask(DerefContextTask::create());
-        m_scriptExecutionContext.release().releaseRef();
+        // Grab a pointer to the script execution here because we're releasing it when we pass it to
+        // DerefContextTask::create.
+        ScriptExecutionContext* scriptExecutionContext = m_scriptExecutionContext.get();
+        
+        scriptExecutionContext->postTask(DerefContextTask::create(m_scriptExecutionContext.release()));
     }
 }
 
