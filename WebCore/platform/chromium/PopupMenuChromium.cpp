@@ -877,13 +877,17 @@ void PopupListBox::paintRow(GraphicsContext* gc, const IntRect& rect, int rowInd
     PopupMenuStyle style = m_popupClient->itemStyle(rowIndex);
 
     // Paint background
-    Color backColor, textColor;
+    Color backColor, textColor, labelColor;
     if (rowIndex == m_selectedIndex) {
         backColor = RenderTheme::defaultTheme()->activeListBoxSelectionBackgroundColor();
         textColor = RenderTheme::defaultTheme()->activeListBoxSelectionForegroundColor();
+        labelColor = textColor;
     } else {
         backColor = style.backgroundColor();
         textColor = style.foregroundColor();
+        // FIXME: for now the label color is hard-coded. It should be added to
+        // the PopupMenuStyle.
+        labelColor = Color(115, 115, 115);
     }
 
     // If we have a transparent background, make sure it has a color to blend
@@ -968,9 +972,7 @@ void PopupListBox::paintRow(GraphicsContext* gc, const IntRect& rect, int rowInd
         textX = rowRect.width() - rightPadding - itemFont.width(labelTextRun);
     }
 
-    // FIXME: for now the label color is hard-coded. It should be added to the
-    //        PopupMenuStyle.
-    gc->setFillColor(Color(115, 115, 115), DeviceColorSpace);
+    gc->setFillColor(labelColor, DeviceColorSpace);
     gc->drawBidiText(itemFont, labelTextRun, IntPoint(textX, textY));
 }
 
