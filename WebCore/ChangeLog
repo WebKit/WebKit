@@ -1,3 +1,18 @@
+2010-07-15  Antonio Gomes  <tonikitoo@webkit.org>
+
+        Reviewed by Gustavo Noronha.
+
+        [Qt] Remove unnecessary WebKit headers inclusion from WebCore files
+        https://bugs.webkit.org/show_bug.cgi?id=42416
+
+        There are some places in WebCore unnecessarily including WebKit headers.
+
+        Cleaning up only, no testing needed.
+
+        * platform/network/qt/ResourceHandleQt.cpp:
+        * platform/qt/RenderThemeQt.cpp:
+        * platform/qt/WidgetQt.cpp:
+
 2010-07-16  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Anders Carlsson.

@@ -41,14 +41,11 @@
 #include "QWebPageClient.h"
 #include "ScrollView.h"
 
-#include "qwebframe.h"
-#include "qwebframe_p.h"
-#include "qwebpage.h"
-
 #include <QCoreApplication>
 #include <QDebug>
 #include <QPaintEngine>
 #include <QPainter>
+#include <QWidget>
 
 namespace WebCore {
 

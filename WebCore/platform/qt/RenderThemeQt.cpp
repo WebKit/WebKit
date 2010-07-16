@@ -58,8 +58,6 @@
 #include "ScrollbarThemeQt.h"
 #include "TimeRanges.h"
 #include "UserAgentStyleSheets.h"
-#include "qwebpage.h"
-
 
 #include <QApplication>
 #include <QColor>
