@@ -32,7 +32,6 @@
 
 #ifdef HAVE_ECORE_X
 #include <Ecore_X.h>
-#include <X11/Xlib.h>
 #endif
 
 namespace WebCore {
@@ -40,8 +39,7 @@ namespace WebCore {
 void systemBeep()
 {
 #ifdef HAVE_ECORE_X
-    Display* display = (Display*) ecore_x_display_get();
-    XBell(display, 0);
+    ecore_x_bell(0);
 #endif
 }
 
