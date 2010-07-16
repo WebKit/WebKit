@@ -143,6 +143,7 @@ WebInspector.loaded = function()
     Preferences.debuggerAlwaysEnabled = true;
     Preferences.profilerAlwaysEnabled = true;
     Preferences.canEditScriptSource = true;
+    Preferences.appCacheEnabled = false;
 
     oldLoaded.call(this);
 
