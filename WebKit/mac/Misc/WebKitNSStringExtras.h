@@ -32,6 +32,7 @@ extern NSString *WebKitLocalCacheDefaultsKey;
 
 @interface NSString (WebKitExtras)
 
+- (void)_web_drawAtPoint:(NSPoint)point font:(NSFont *)font textColor:(NSColor *)textColor allowingFontSmoothing:(BOOL)fontSmoothingIsAllowed;
 - (void)_web_drawAtPoint:(NSPoint)point font:(NSFont *)font textColor:(NSColor *)textColor;
 - (void)_web_drawDoubledAtPoint:(NSPoint)textPoint withTopColor:(NSColor *)topColor bottomColor:(NSColor *)bottomColor font:(NSFont *)font;
 

@@ -62,12 +62,16 @@ static BOOL canUseFastRenderer(const UniChar *buffer, unsigned length)
 
 - (void)_web_drawAtPoint:(NSPoint)point font:(NSFont *)font textColor:(NSColor *)textColor
 {
-    // FIXME: Would be more efficient to change this to C++ and use Vector<UChar, 2048>.
+    [self _web_drawAtPoint:point font:font textColor:textColor allowingFontSmoothing:YES];
+}
+
+- (void)_web_drawAtPoint:(NSPoint)point font:(NSFont *)font textColor:(NSColor *)textColor allowingFontSmoothing:(BOOL)fontSmoothingIsAllowed
+{
     unsigned length = [self length];
     Vector<UniChar, 2048> buffer(length);
 
     [self getCharacters:buffer.data()];
-    
+
     if (canUseFastRenderer(buffer.data(), length)) {
         // The following is a half-assed attempt to match AppKit's rounding rules for drawAtPoint.
         // It's probably incorrect for high DPI.
@@ -84,7 +88,7 @@ static BOOL canUseFastRenderer(const UniChar *buffer, unsigned length)
         if (!flipped)
             CGContextScaleCTM(cgContext, 1, -1);
 
-        Font webCoreFont(FontPlatformData(font), ![nsContext isDrawingToScreen]);
+        Font webCoreFont(FontPlatformData(font), ![nsContext isDrawingToScreen], fontSmoothingIsAllowed ? AutoSmoothing : Antialiased);
         TextRun run(buffer.data(), length);
         run.disableRoundingHacks();
 
@@ -116,17 +120,10 @@ static BOOL canUseFastRenderer(const UniChar *buffer, unsigned length)
                      font:(NSFont *)font
 {
     // turn off font smoothing so translucent text draws correctly (Radar 3118455)
-    [NSGraphicsContext saveGraphicsState];
-    CGContextSetShouldSmoothFonts(static_cast<CGContextRef>([[NSGraphicsContext currentContext] graphicsPort]), false);
-    [self _web_drawAtPoint:textPoint
-                      font:font
-                 textColor:bottomColor];
+    [self _web_drawAtPoint:textPoint font:font textColor:bottomColor allowingFontSmoothing:NO];
 
     textPoint.y += 1;
-    [self _web_drawAtPoint:textPoint
-                      font:font
-                 textColor:topColor];
-    [NSGraphicsContext restoreGraphicsState];
+    [self _web_drawAtPoint:textPoint font:font textColor:topColor allowingFontSmoothing:NO];
 }
 
 - (float)_web_widthWithFont:(NSFont *)font

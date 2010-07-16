@@ -76,7 +76,7 @@ public:
     Font();
     Font(const FontDescription&, short letterSpacing, short wordSpacing);
     // This constructor is only used if the platform wants to start with a native font.
-    Font(const FontPlatformData&, bool isPrinting);
+    Font(const FontPlatformData&, bool isPrinting, FontSmoothingMode = AutoSmoothing);
     ~Font();
 
     Font(const Font&);

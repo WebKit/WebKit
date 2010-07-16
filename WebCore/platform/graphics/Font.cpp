@@ -72,7 +72,7 @@ Font::Font(const FontDescription& fd, short letterSpacing, short wordSpacing)
 {
 }
 
-Font::Font(const FontPlatformData& fontData, bool isPrinterFont)
+Font::Font(const FontPlatformData& fontData, bool isPrinterFont, FontSmoothingMode fontSmoothingMode)
     : m_fontList(FontFallbackList::create())
     , m_letterSpacing(0)
     , m_wordSpacing(0)
@@ -80,6 +80,7 @@ Font::Font(const FontPlatformData& fontData, bool isPrinterFont)
     , m_needsTranscoding(fontTranscoder().needsTranscoding(family().family().string()))
 {
     m_fontDescription.setUsePrinterFont(isPrinterFont);
+    m_fontDescription.setFontSmoothing(fontSmoothingMode);
     m_fontList->setPlatformFont(fontData);
 }
 

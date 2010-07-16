@@ -1,3 +1,16 @@
+2010-07-16  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Part of <rdar://problem/7233974> Deprecate +[WebView _setShouldUseFontSmoothing:]
+        https://bugs.webkit.org/show_bug.cgi?id=29355
+
+        * WebCore.exp.in: Updated.
+        * platform/graphics/Font.cpp:
+        (WebCore::Font::Font): Added a font smoothing mode parameter to the constructor.
+        Set the font smoothing mode in the font description.
+        * platform/graphics/Font.h:
+
 2010-07-16  Satish Sampath  <satish@chromium.org>
 
         Reviewed by Anders Carlsson.

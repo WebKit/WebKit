@@ -1,3 +1,23 @@
+2010-07-16  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Part of <rdar://problem/7233974> Deprecate +[WebView _setShouldUseFontSmoothing:]
+        https://bugs.webkit.org/show_bug.cgi?id=29355
+
+        * Misc/WebKitNSStringExtras.h:
+        * Misc/WebKitNSStringExtras.mm:
+        (-[NSString _web_drawAtPoint:font:textColor:]): Now calls through to
+        -_web_drawAtPoint:font:textColor:allowingFontSmoothing: passing YES for the last
+        parameter.
+        (-[NSString _web_drawAtPoint:font:textColor:allowingFontSmoothing:]): Added
+        allowingFontSmoothing:. If font smoothing is not allowed, sets the font smoothing
+        mode to antialiased. Otherwise, sets it to auto.
+        (-[NSString _web_drawDoubledAtPoint:withTopColor:bottomColor:font:]): Instead of
+        changing the font smoothing setting in the graphics context, call
+        -_web_drawAtPoint:font:textColor:allowingFontSmoothing: passing NO for the last
+        parameter.
+
 2010-07-16  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.
