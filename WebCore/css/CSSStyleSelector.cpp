@@ -2600,11 +2600,11 @@ bool CSSStyleSelector::SelectorChecker::checkOneSelector(CSSSelector* sel, Eleme
                 AtomicString value;
                 // The language property is inherited, so we iterate over the parents
                 // to find the first language.
-                while (n && value.isEmpty()) {
+                while (n && value.isNull()) {
                     if (n->isElementNode()) {
                         // Spec: xml:lang takes precedence -- http://www.w3.org/TR/xhtml1/#C_7
                         value = static_cast<Element*>(n)->fastGetAttribute(XMLNames::langAttr);
-                        if (value.isEmpty())
+                        if (value.isNull())
                             value = static_cast<Element*>(n)->fastGetAttribute(langAttr);
                     } else if (n->isDocumentNode())
                         // checking the MIME content-language
@@ -2613,7 +2613,7 @@ bool CSSStyleSelector::SelectorChecker::checkOneSelector(CSSSelector* sel, Eleme
                     n = n->parent();
                 }
                 const AtomicString& argument = sel->argument();
-                if (value.isEmpty() || !value.startsWith(argument, false))
+                if (value.isNull() || !value.startsWith(argument, false))
                     break;
                 if (value.length() != argument.length() && value[argument.length()] != '-')
                     break;

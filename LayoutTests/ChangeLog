@@ -1,3 +1,14 @@
+2010-07-15  Rob Buis  <rwlbuis@gmail.com>
+
+        Reviewed by Darin Adler.
+
+        Add test for:
+        An empty value for xml:lang isn't considered
+        https://bugs.webkit.org/show_bug.cgi?id=42042
+
+        * fast/css/lang-selector-empty-attribute-expected.txt: Added.
+        * fast/css/lang-selector-empty-attribute.xhtml: Added.
+
 2010-07-15  Tony Gentilcore  <tonyg@chromium.org>
 
         Reviewed by Darin Fisher.

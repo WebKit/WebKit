@@ -1,3 +1,18 @@
+2010-07-15  Rob Buis  <rwlbuis@gmail.com>
+
+        Reviewed by Darin Adler.
+
+        An empty value for xml:lang isn't considered
+        https://bugs.webkit.org/show_bug.cgi?id=42042
+
+        Allow :lang selector to match empty values for xml:lang and
+        lang attributes.
+
+        Test: fast/css/lang-selector-empty-attribute.xhtml
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::SelectorChecker::checkOneSelector):
+
 2010-07-16  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Pavel Feldman.
