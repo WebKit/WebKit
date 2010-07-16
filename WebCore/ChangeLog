@@ -1,3 +1,17 @@
+2010-07-16  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Refinement of r63556: moved the tab width computation back to Font, but added a
+        SimpleFontData parameter.
+
+        * platform/graphics/Font.h:
+        (WebCore::Font::tabWidth):
+        * platform/graphics/WidthIterator.cpp:
+        (WebCore::WidthIterator::advance):
+        * platform/graphics/mac/ComplexTextController.cpp:
+        (WebCore::ComplexTextController::adjustGlyphsAndAdvances):
+
 2010-07-16  Tony Gentilcore  <tonyg@chromium.org>
 
         Reviewed by Pavel Feldman.
