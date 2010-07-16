@@ -1,3 +1,47 @@
+2010-07-16  Ojan Vafai  <ojan@chromium.org>
+
+        Unreviewed. Add new chromium expectations and update expected failures. All updated expected
+        failures have the relevant details in the bugs.webkit.org bug.
+        
+        Below are the revisions that caused needing new expectations.
+
+        // http://trac.webkit.org/changeset/63531/
+        svg/custom/relative-sized-content-with-resources.xhtml
+        svg/custom/marker-child-changes-css.svg
+
+        // http://trac.webkit.org/changeset/63542/
+        svg/text/selection-background-color.xhtml
+        svg/text/selection-styles.xhtml
+
+        // http://trac.webkit.org/changeset/63517/
+        fast/css/empty-generated-content.html
+        css2.1/t1204-root-e.html
+
+        // http://trac.webkit.org/changeset/63517/
+        html5lib/runner.html
+
+        * platform/chromium-linux/svg/custom/marker-child-changes-css-expected.checksum: Copied from LayoutTests/platform/chromium-linux/svg/custom/marker-child-changes-expected.checksum.
+        * platform/chromium-linux/svg/custom/marker-child-changes-css-expected.png: Copied from LayoutTests/platform/chromium-linux/svg/custom/marker-child-changes-expected.png.
+        * platform/chromium-linux/svg/custom/relative-sized-content-with-resources-expected.checksum: Added.
+        * platform/chromium-linux/svg/custom/relative-sized-content-with-resources-expected.png: Added.
+        * platform/chromium-linux/svg/text/selection-background-color-expected.checksum:
+        * platform/chromium-linux/svg/text/selection-background-color-expected.png:
+        * platform/chromium-linux/svg/text/selection-styles-expected.checksum:
+        * platform/chromium-linux/svg/text/selection-styles-expected.png:
+        * platform/chromium-mac/html5lib/runner-expected.txt:
+        * platform/chromium-win/css2.1/t1204-root-e-expected.txt:
+        * platform/chromium-win/fast/css/empty-generated-content-expected.txt:
+        * platform/chromium-win/html5lib/runner-expected.txt:
+        * platform/chromium-win/svg/custom/marker-child-changes-css-expected.checksum: Copied from LayoutTests/platform/chromium-win/svg/custom/marker-child-changes-expected.checksum.
+        * platform/chromium-win/svg/custom/marker-child-changes-css-expected.png: Copied from LayoutTests/platform/chromium-win/svg/custom/marker-child-changes-expected.png.
+        * platform/chromium-win/svg/custom/relative-sized-content-with-resources-expected.checksum: Added.
+        * platform/chromium-win/svg/custom/relative-sized-content-with-resources-expected.png: Added.
+        * platform/chromium-win/svg/text/selection-background-color-expected.checksum:
+        * platform/chromium-win/svg/text/selection-background-color-expected.png:
+        * platform/chromium-win/svg/text/selection-styles-expected.checksum:
+        * platform/chromium-win/svg/text/selection-styles-expected.png:
+        * platform/chromium/test_expectations.txt:
+
 2010-07-16  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Geoffrey Garen.
