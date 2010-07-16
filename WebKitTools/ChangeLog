@@ -1,5 +1,15 @@
 2010-07-15  Shinichiro Hamaji  <hamaji@chromium.org>
 
+        Unreviewed build fix.
+
+        Printing test results differ between machines, we should use ImageDiff instead
+        https://bugs.webkit.org/show_bug.cgi?id=20011
+
+        * DumpRenderTree/PixelDumpSupport.cpp:
+        (dumpWebViewAsPixelsAndCompareWithExpected):
+
+2010-07-15  Shinichiro Hamaji  <hamaji@chromium.org>
+
         Reviewed by Darin Adler.
 
         Printing test results differ between machines, we should use ImageDiff instead
