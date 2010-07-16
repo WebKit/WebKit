@@ -1,3 +1,14 @@
+2010-07-16  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: [Chromium] A non-existent resource is referenced from devTools.css
+
+        The erroneous rule has been removed.
+        https://bugs.webkit.org/show_bug.cgi?id=42454
+
+        * src/js/devTools.css:
+
 2010-07-16  Andrey Kosyakov  <caseq@chromium.org>
 
         Reviewed by Pavel Feldman.
