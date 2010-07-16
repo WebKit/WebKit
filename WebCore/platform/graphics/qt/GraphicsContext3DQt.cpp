@@ -521,15 +521,20 @@ void GraphicsContext3D::makeContextCurrent()
 
 void GraphicsContext3D::beginPaint(WebGLRenderingContext* context)
 {
+    paintRenderingResultsToCanvas();
+}
+
+void GraphicsContext3D::endPaint()
+{
+}
+
+void GraphicsContext3D::paintRenderingResultsToCanvas(WebGLRenderingContext* context)
+{
     m_internal->m_glWidget->makeCurrent();
     HTMLCanvasElement* canvas = context->canvas();
     ImageBuffer* imageBuffer = canvas->buffer();
     QPainter* painter = imageBuffer->context()->platformContext();
     paint(painter, QRect(QPoint(0, 0), QSize(m_currentWidth, m_currentHeight)));
-}
-
-void GraphicsContext3D::endPaint()
-{
 }
 
 void GraphicsContext3D::paint(QPainter* painter, const QRect& rect) const

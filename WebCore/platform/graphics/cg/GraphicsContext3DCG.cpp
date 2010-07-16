@@ -36,6 +36,8 @@
 #include <CoreGraphics/CGContext.h>
 #include <CoreGraphics/CGImage.h>
 
+#include <wtf/RetainPtr.h>
+
 namespace WebCore {
 
 bool GraphicsContext3D::getImageData(Image* image,
@@ -104,6 +106,41 @@ bool GraphicsContext3D::getImageData(Image* image,
                       format, type, neededAlphaOp, outputVector.data());
 }
 
+void GraphicsContext3D::paintToCanvas(const unsigned char* imagePixels, int imageWidth, int imageHeight, int canvasWidth, int canvasHeight, CGContextRef context)
+{
+    if (!imagePixels || imageWidth <= 0 || imageHeight <= 0 || canvasWidth <= 0 || canvasHeight <= 0 || !context)
+        return;
+    int rowBytes = imageWidth * 4;
+    RetainPtr<CGDataProviderRef> dataProvider = CGDataProviderCreateWithData(0, imagePixels, rowBytes * imageHeight, 0);
+    RetainPtr<CGColorSpaceRef> colorSpace = CGColorSpaceCreateDeviceRGB();
+    RetainPtr<CGImageRef> cgImage = CGImageCreate(imageWidth,
+                                                  imageHeight,
+                                                  8,
+                                                  32,
+                                                  rowBytes,
+                                                  colorSpace.get(),
+                                                  kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host,
+                                                  dataProvider.get(),
+                                                  0,
+                                                  false,
+                                                  kCGRenderingIntentDefault);
+    // CSS styling may cause the canvas's content to be resized on
+    // the page. Go back to the Canvas to figure out the correct
+    // width and height to draw.
+    CGRect rect = CGRectMake(0, 0,
+                             canvasWidth,
+                             canvasHeight);
+    // We want to completely overwrite the previous frame's
+    // rendering results.
+    CGContextSaveGState(context);
+    CGContextSetBlendMode(context,
+                          kCGBlendModeCopy);
+    CGContextSetInterpolationQuality(context,
+                                     kCGInterpolationNone);
+    CGContextDrawImage(context,
+                       rect, cgImage.get());
+    CGContextRestoreGState(context);
+}
 
 } // namespace WebCore
 

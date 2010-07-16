@@ -39,10 +39,13 @@
 #include "WebGLBuffer.h"
 #include "Float32Array.h"
 #include "WebGLFramebuffer.h"
+#include "GraphicsContext.h"
+#include "HTMLCanvasElement.h"
 #include "Int32Array.h"
 #include "WebGLLayer.h"
 #include "WebGLProgram.h"
 #include "WebGLRenderbuffer.h"
+#include "WebGLRenderingContext.h"
 #include "WebGLShader.h"
 #include "WebGLTexture.h"
 #include "Uint8Array.h"
@@ -235,6 +238,54 @@ void GraphicsContext3D::validateAttributes()
 void GraphicsContext3D::makeContextCurrent()
 {
     CGLSetCurrentContext(m_contextObj);
+}
+
+void GraphicsContext3D::paintRenderingResultsToCanvas(WebGLRenderingContext* context)
+{
+    HTMLCanvasElement* canvas = context->canvas();
+    ImageBuffer* imageBuffer = canvas->buffer();
+
+    int rowBytes = m_currentWidth * 4;
+    int totalBytes = rowBytes * m_currentHeight;
+
+    OwnArrayPtr<unsigned char> pixels(new unsigned char[totalBytes]);
+    if (!pixels)
+        return;
+
+    CGLSetCurrentContext(m_contextObj);
+
+    bool mustRestoreFBO;
+    if (m_attrs.antialias) {
+        ::glBindFramebufferEXT(GL_READ_FRAMEBUFFER_EXT, m_multisampleFBO);
+        ::glBindFramebufferEXT(GL_DRAW_FRAMEBUFFER_EXT, m_fbo);
+        ::glBlitFramebufferEXT(0, 0, m_currentWidth, m_currentHeight, 0, 0, m_currentWidth, m_currentHeight, GL_COLOR_BUFFER_BIT, GL_LINEAR);
+        ::glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_fbo);
+        mustRestoreFBO = true;
+    } else {
+        if (m_boundFBO != m_fbo) {
+            mustRestoreFBO = true;
+            ::glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_fbo);
+        }
+    }
+
+    GLint packAlignment = 4;
+    bool mustRestorePackAlignment = false;
+    ::glGetIntegerv(GL_PACK_ALIGNMENT, &packAlignment);
+    if (packAlignment > 4) {
+        ::glPixelStorei(GL_PACK_ALIGNMENT, 4);
+        mustRestorePackAlignment = true;
+    }
+
+    ::glReadPixels(0, 0, m_currentWidth, m_currentHeight, GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, pixels.get());
+
+    if (mustRestorePackAlignment)
+        ::glPixelStorei(GL_PACK_ALIGNMENT, packAlignment);
+
+    if (mustRestoreFBO)
+        ::glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_boundFBO);
+
+    paintToCanvas(pixels.get(), m_currentWidth, m_currentHeight,
+                  canvas->width(), canvas->height(), imageBuffer->context()->platformContext());
 }
 
 void GraphicsContext3D::beginPaint(WebGLRenderingContext* context)

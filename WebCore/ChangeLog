@@ -1,3 +1,32 @@
+2010-07-13  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Nate Chapin.
+
+        WebGL rendering results must be made available to Canvas.toDataURL and 2D drawImage
+        https://bugs.webkit.org/show_bug.cgi?id=34719
+
+        Tests: fast/canvas/webgl/canvas-test.html
+               fast/canvas/webgl/gl-pixelstorei.html
+
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::makeRenderingResultsAvailable): Paint the WebGL rendering results to canvas if it's 3d.
+        (WebCore::HTMLCanvasElement::toDataURL): Paint the WebGL rendering results to canvas if it's 3d.
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::drawImage): Paint the WebGL rendering results to canvas if it's 3d before drawing.
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::markContextChanged): Mark it always for canvas2d.drawImage purpose.
+        (WebCore::WebGLRenderingContext::paintRenderingResultsToCanvas): Paint the WebGL rendering results to canvas if it's dirty.
+        * html/canvas/WebGLRenderingContext.h: Declare paintRenderingResultsToCanvas().
+        * platform/graphics/GraphicsContext3D.h: Declare paintRenderingResultsToCanvas() & paintToCanvas().
+        * platform/graphics/cg/GraphicsContext3DCG.cpp:
+        (WebCore::GraphicsContext3D::paintToCanvas): Paint the rendered image pixels to the canvas.
+        * platform/graphics/mac/GraphicsContext3DMac.mm:
+        (WebCore::GraphicsContext3D::paintRenderingResultsToCanvas): Implement paintRenderingResultsToCanvas().
+        * platform/graphics/qt/GraphicsContext3DQt.cpp:
+        (WebCore::GraphicsContext3D::beginPaint): Just call paintRenderingResultsToCanvas().
+        (WebCore::GraphicsContext3D::endPaint):
+        (WebCore::GraphicsContext3D::paintRenderingResultsToCanvas): Implement paintRenderingResultsToCanvas().
+
 2010-07-15  Nico Weber  <thakis@chromium.org>
 
         Reviewed by Ojan Vafai.

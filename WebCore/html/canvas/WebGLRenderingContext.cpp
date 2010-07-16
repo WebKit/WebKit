@@ -141,17 +141,23 @@ void WebGLRenderingContext::markContextChanged()
     RenderBox* renderBox = canvas()->renderBox();
     if (renderBox && renderBox->hasLayer() && renderBox->layer()->hasAcceleratedCompositing())
         renderBox->layer()->rendererContentChanged();
-    else {
 #endif
-        if (!m_markedCanvasDirty) {
-            // Make sure the canvas's image buffer is allocated.
-            canvas()->buffer();
-            canvas()->willDraw(FloatRect(0, 0, canvas()->width(), canvas()->height()));
-            m_markedCanvasDirty = true;
-        }
-#if USE(ACCELERATED_COMPOSITING)
+    if (!m_markedCanvasDirty) {
+        // Make sure the canvas's image buffer is allocated.
+        canvas()->buffer();
+        canvas()->willDraw(FloatRect(0, 0, canvas()->width(), canvas()->height()));
+        m_markedCanvasDirty = true;
     }
-#endif
+}
+
+bool WebGLRenderingContext::paintRenderingResultsToCanvas()
+{
+    if (m_markedCanvasDirty) {
+        m_markedCanvasDirty = false;
+        m_context->paintRenderingResultsToCanvas(this);
+        return true;
+    }
+    return false;
 }
 
 void WebGLRenderingContext::beginPaint()

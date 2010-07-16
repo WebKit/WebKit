@@ -306,6 +306,10 @@ class WebKitCSSMatrix;
     
         void reshape(int width, int height);
 
+        // Return value true indicates canvas is updated during the call,
+        // false indicates no updates.
+        bool paintRenderingResultsToCanvas();
+
         // Helpers for notification about paint events.
         void beginPaint();
         void endPaint();

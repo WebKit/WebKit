@@ -68,6 +68,10 @@ typedef int Platform3DObject;
 const Platform3DObject NullPlatform3DObject = 0;
 #endif
 
+#if PLATFORM(CG)
+#include <CoreGraphics/CGContext.h>
+#endif
+
 namespace WebCore {
     class WebGLActiveInfo;
     class ArrayBuffer;
@@ -710,7 +714,14 @@ namespace WebCore {
         void viewport(long x, long y, unsigned long width, unsigned long height);
 
         void reshape(int width, int height);
-        
+
+#if PLATFORM(CG)
+        void paintToCanvas(const unsigned char* imagePixels, int imageWidth, int imageHeight,
+                           int canvasWidth, int canvasHeight, CGContextRef context);
+#endif
+
+        void paintRenderingResultsToCanvas(WebGLRenderingContext* context);
+
         // Helpers for notification about paint events
         void beginPaint(WebGLRenderingContext* context);
         void endPaint();
