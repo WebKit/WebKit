@@ -1879,8 +1879,13 @@ WebInspector.performSearch = function(event)
     if (query === this.currentPanel.currentQuery && this.currentPanel.currentQuery === this.currentQuery) {
         // When this is the same query and a forced search, jump to the next
         // search result for a good user experience.
-        if (forceSearch && this.currentPanel.jumpToNextSearchResult)
-            this.currentPanel.jumpToNextSearchResult();
+        if (forceSearch) {
+            var backward = event.shiftKey;
+            if (!backward && this.currentPanel.jumpToNextSearchResult)
+                this.currentPanel.jumpToNextSearchResult();
+            else if (backward && this.currentPanel.jumpToPreviousSearchResult)
+                this.currentPanel.jumpToPreviousSearchResult();
+        }
         return;
     }
 
