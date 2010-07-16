@@ -1,3 +1,21 @@
+2010-07-16  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        ES5 allows use of reserved words as IdentifierName
+        https://bugs.webkit.org/show_bug.cgi?id=42471
+
+        Add tests to check for correct handling of reserved words with
+        the ES5 semantics.
+
+        * fast/js/reserved-words-as-property-expected.txt: Added.
+        * fast/js/reserved-words-as-property.html: Added.
+        * fast/js/script-tests/reserved-words-as-property.js: Added.
+        ():
+        * fast/js/sputnik/Conformance/11_Expressions/11.1_Primary_Expressions/11.1.5_Object_Initializer/S11.1.5_A4.1-expected.txt:
+        * fast/js/sputnik/Conformance/11_Expressions/11.1_Primary_Expressions/11.1.5_Object_Initializer/S11.1.5_A4.2-expected.txt:
+          These tests are wrong, unsure how to get sputnik tests corrected.
+
 2010-07-16  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Alexey Proskuryakov. 

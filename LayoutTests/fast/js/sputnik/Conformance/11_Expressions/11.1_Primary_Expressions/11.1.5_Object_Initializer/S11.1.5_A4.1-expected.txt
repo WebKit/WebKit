@@ -1,7 +1,6 @@
-CONSOLE MESSAGE: line 77: SyntaxError: Parse error
 S11.1.5_A4.1
 
-PASS Expected parsing failure
+FAIL No error detected
 
 TEST COMPLETE
 

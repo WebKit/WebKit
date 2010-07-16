@@ -50,7 +50,8 @@ namespace JSC {
         void setIsReparsing() { m_isReparsing = true; }
 
         // Functions for the parser itself.
-        JSTokenType lex(JSTokenData* lvalp, JSTokenInfo* llocp);
+        enum LexType { IdentifyReservedWords, IgnoreReservedWords };
+        JSTokenType lex(JSTokenData* lvalp, JSTokenInfo* llocp, LexType);
         int lineNumber() const { return m_lineNumber; }
         void setLastLineNumber(int lastLineNumber) { m_lastLineNumber = lastLineNumber; }
         int lastLineNumber() const { return m_lastLineNumber; }

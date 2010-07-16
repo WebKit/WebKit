@@ -1,3 +1,27 @@
+2010-07-16  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        ES5 allows use of reserved words as IdentifierName
+        https://bugs.webkit.org/show_bug.cgi?id=42471
+
+        Modify the lexer to allow us to avoid identifying reserved
+        words in those contexts where they are valid identifiers, and
+        we know it's safe.  Additionally tag the reserved word tokens
+        so we can easily identify them in those cases where we can't
+        guarantee that we've skipped reserved word identification.
+
+        * parser/JSParser.cpp:
+        (JSC::JSParser::next):
+        (JSC::JSParser::parseProperty):
+        (JSC::JSParser::parseMemberExpression):
+        * parser/JSParser.h:
+        (JSC::):
+        * parser/Lexer.cpp:
+        (JSC::Lexer::lex):
+        * parser/Lexer.h:
+        (JSC::Lexer::):
+
 2010-07-16  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by David Levin.

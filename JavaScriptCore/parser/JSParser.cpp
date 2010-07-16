@@ -85,12 +85,12 @@ private:
     };
 
     const JSToken& token() { return m_token; }
-    void next()
+    void next(Lexer::LexType lexType = Lexer::IdentifyReservedWords)
     {
         m_lastLine = token().m_info.line;
         m_lastTokenEnd = token().m_info.endOffset;
         m_lexer->setLastLineNumber(m_lastLine);
-        m_token.m_type = m_lexer->lex(&m_token.m_data, &m_token.m_info);
+        m_token.m_type = m_lexer->lex(&m_token.m_data, &m_token.m_info, lexType);
         m_tokenCount++;
     }
 
@@ -1091,11 +1091,12 @@ template <bool complete, class TreeBuilder> TreeProperty JSParser::parseProperty
 {
     bool wasIdent = false;
     switch (token().m_type) {
+    namedProperty:
     case IDENT:
         wasIdent = true;
     case STRING: {
         const Identifier* ident = token().m_data.ident;
-        next();
+        next(Lexer::IgnoreReservedWords);
         if (match(COLON)) {
             next();
             TreeExpression node = parseAssignmentExpression(context);
@@ -1129,7 +1130,8 @@ template <bool complete, class TreeBuilder> TreeProperty JSParser::parseProperty
         return context.template createProperty<complete>(m_globalData, propertyName, node, PropertyNode::Constant);
     }
     default:
-        fail();
+        failIfFalse(token().m_type & KeywordTokenFlag);
+        goto namedProperty;
     }
 }
 
@@ -1410,7 +1412,7 @@ template <class TreeBuilder> TreeExpression JSParser::parseMemberExpression(Tree
         }
         case DOT: {
             int expressionEnd = lastTokenEnd();
-            next();
+            next(Lexer::IgnoreReservedWords);
             matchOrFail(IDENT);
             base = context.createDotAccess(base, *token().m_data.ident, expressionStart, expressionEnd, tokenEnd());
             next();

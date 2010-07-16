@@ -481,7 +481,7 @@ ALWAYS_INLINE bool Lexer::parseString(JSTokenData* lvalp)
     return true;
 }
 
-JSTokenType Lexer::lex(JSTokenData* lvalp, JSTokenInfo* llocp)
+JSTokenType Lexer::lex(JSTokenData* lvalp, JSTokenInfo* llocp, LexType lexType)
 {
     ASSERT(!m_error);
     ASSERT(m_buffer8.isEmpty());
@@ -1022,9 +1022,11 @@ doneIdentifierOrKeyword: {
     m_atLineStart = false;
     m_delimited = false;
     m_buffer16.resize(0);
-    const HashEntry* entry = m_keywordTable.entry(m_globalData, *lvalp->ident);
-    token = entry ? static_cast<JSTokenType>(entry->lexerValue()) : IDENT;
-
+    if (lexType == IdentifyReservedWords) {
+        const HashEntry* entry = m_keywordTable.entry(m_globalData, *lvalp->ident);
+        token = entry ? static_cast<JSTokenType>(entry->lexerValue()) : IDENT;
+    } else
+        token = IDENT;
     // Fall through into returnToken.
 }
 
