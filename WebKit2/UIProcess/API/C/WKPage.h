@@ -69,6 +69,8 @@ typedef void (*WKPageDidFinishProgressCallback)(WKPageRef page, const void *clie
 typedef void (*WKPageDidBecomeUnresponsiveCallback)(WKPageRef page, const void *clientInfo);
 typedef void (*WKPageDidBecomeResponsiveCallback)(WKPageRef page, const void *clientInfo);
 
+typedef void (*WKPageDidChangeBackForwardListCallback)(WKPageRef page, const void *clientInfo);
+
 struct WKPageLoaderClient {
     int                                                                 version;
     const void *                                                        clientInfo;
@@ -90,6 +92,8 @@ struct WKPageLoaderClient {
     // FIXME: These two methods should not be part of this client.
     WKPageDidBecomeUnresponsiveCallback                                 didBecomeUnresponsive;
     WKPageDidBecomeResponsiveCallback                                   didBecomeResponsive;
+
+    WKPageDidChangeBackForwardListCallback                              didChangeBackForwardList;
 };
 typedef struct WKPageLoaderClient WKPageLoaderClient;
 

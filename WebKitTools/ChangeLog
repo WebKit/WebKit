@@ -1,3 +1,20 @@
+2010-07-16  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=42482
+        <rdar://problem/8197701>
+        Add notification of when the BackForwardList changes
+        to aid invalidation of Back/Forward related UI elements.
+
+        * MiniBrowser/mac/BrowserWindowController.m:
+        (_didStartProvisionalLoadForFrame):
+        (_didCommitLoadForFrame):
+        (_didFailLoadWithErrorForFrame):
+        (_didChangeBackForwardList):
+        (-[BrowserWindowController awakeFromNib]):
+        * WebKitTestRunner/WebKitTestRunner.xcodeproj/project.pbxproj:
+
 2010-07-16  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Darin Fisher.

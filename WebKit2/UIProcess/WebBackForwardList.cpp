@@ -25,6 +25,8 @@
 
 #include "WebBackForwardList.h"
 
+#include "WebPageProxy.h"
+
 namespace WebKit {
 
 static const unsigned DefaultCapacity = 100;
@@ -63,10 +65,16 @@ void WebBackForwardList::addItem(WebBackForwardListItem* newItem)
         RefPtr<WebBackForwardListItem> item = m_entries[0];
         m_entries.remove(0);
         m_current--;
+        
+        if (m_page)
+            m_page->didChangeBackForwardList();
     }
 
     m_entries.insert(m_current + 1, newItem);
     m_current++;
+
+    if (m_page)
+        m_page->didChangeBackForwardList();
 }
 
 void WebBackForwardList::goToItem(WebBackForwardListItem* item)
@@ -79,8 +87,11 @@ void WebBackForwardList::goToItem(WebBackForwardListItem* item)
         if (m_entries[index] == item)
             break;
     }
-    if (index < m_entries.size())
+    if (index < m_entries.size()) {
         m_current = index;
+        if (m_page)
+            m_page->didChangeBackForwardList();
+    }
 }
 
 WebBackForwardListItem* WebBackForwardList::currentItem()

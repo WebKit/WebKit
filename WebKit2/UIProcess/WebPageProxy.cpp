@@ -267,6 +267,11 @@ void WebPageProxy::goToBackForwardItem(WebBackForwardListItem* item)
     process()->send(WebPageMessage::GoToBackForwardItem, m_pageID, CoreIPC::In(item->itemID()));
 }
 
+void WebPageProxy::didChangeBackForwardList()
+{
+    m_loaderClient.didChangeBackForwardList(this);
+}
+
 void WebPageProxy::setFocused(bool isFocused)
 {
     if (!isValid())
@@ -366,6 +371,7 @@ void WebPageProxy::getStatistics(WKContextStatistics* statistics)
 {
     statistics->numberOfWKFrames += m_frameMap.size();
 }
+
 
 WebFrameProxy* WebPageProxy::webFrame(uint64_t frameID) const
 {

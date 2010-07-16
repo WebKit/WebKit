@@ -1,3 +1,28 @@
+2010-07-16  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=42482
+        <rdar://problem/8197701>
+        Add notification of when the BackForwardList changes
+        to aid invalidation of Back/Forward related UI elements.
+
+        * UIProcess/API/C/WKPage.h:
+        Add didChangeBackForwardList to the WKPageLoaderClient. This 
+        fires whenever an item is added or removed from the back forward
+        list or when the cursor changes position.
+
+        * UIProcess/WebBackForwardList.cpp:
+        (WebKit::WebBackForwardList::addItem):
+        (WebKit::WebBackForwardList::goToItem):
+        * UIProcess/WebLoaderClient.cpp:
+        (WebKit::WebLoaderClient::didChangeBackForwardList):
+        * UIProcess/WebLoaderClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didChangeBackForwardList):
+        * UIProcess/WebPageProxy.h:
+        Pipe changes to the WebBackForwardList up to the page load client.
+
 2010-07-16  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by Sam Weinig.

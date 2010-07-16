@@ -127,4 +127,10 @@ void WebLoaderClient::didBecomeResponsive(WebPageProxy* page)
         m_pageLoaderClient.didBecomeResponsive(toRef(page), m_pageLoaderClient.clientInfo);
 }
 
+void WebLoaderClient::didChangeBackForwardList(WebPageProxy* page)
+{
+    if (m_pageLoaderClient.didChangeBackForwardList)
+        m_pageLoaderClient.didChangeBackForwardList(toRef(page), m_pageLoaderClient.clientInfo);
+}
+
 } // namespace WebKit

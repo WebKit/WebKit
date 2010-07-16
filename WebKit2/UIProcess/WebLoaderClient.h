@@ -59,6 +59,8 @@ public:
     void didBecomeUnresponsive(WebPageProxy*);
     void didBecomeResponsive(WebPageProxy*);
 
+    void didChangeBackForwardList(WebPageProxy*);
+
 private:
     WKPageLoaderClient m_pageLoaderClient;
 };

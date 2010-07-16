@@ -171,15 +171,15 @@
 		BC25183511D1571D002EBC01 /* InjectedBundle */ = {
 			isa = PBXGroup;
 			children = (
-				BCC997A011D3C8F60017BCA2 /* InjectedBundle.cpp */,
-				65EB859D11EC67CC0034D300 /* ActivateFonts.h */,
 				65EB859E11EC67CC0034D300 /* mac */,
+				65EB859D11EC67CC0034D300 /* ActivateFonts.h */,
+				BCC997A011D3C8F60017BCA2 /* InjectedBundle.cpp */,
 				BCC997A111D3C8F60017BCA2 /* InjectedBundle.h */,
 				BC25184611D15767002EBC01 /* InjectedBundleMain.cpp */,
 				BCC997A211D3C8F60017BCA2 /* InjectedBundlePage.cpp */,
 				BCC997A311D3C8F60017BCA2 /* InjectedBundlePage.h */,
-				BCC9981611D3F51E0017BCA2 /* LayoutTestController.h */,
 				BCC9981711D3F51E0017BCA2 /* LayoutTestController.cpp */,
+				BCC9981611D3F51E0017BCA2 /* LayoutTestController.h */,
 			);
 			path = InjectedBundle;
 			sourceTree = "<group>";

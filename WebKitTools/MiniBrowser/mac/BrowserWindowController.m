@@ -150,7 +150,6 @@
 static void _didStartProvisionalLoadForFrame(WKPageRef page, WKFrameRef frame, const void *clientInfo)
 {
     LOG(@"didStartProvisionalLoadForFrame");
-    [(BrowserWindowController *)clientInfo validateToolbar];
 }
 
 static void _didReceiveServerRedirectForProvisionalLoadForFrame(WKPageRef page, WKFrameRef frame, const void *clientInfo)
@@ -166,7 +165,6 @@ static void _didFailProvisionalLoadWithErrorForFrame(WKPageRef page, WKFrameRef 
 static void _didCommitLoadForFrame(WKPageRef page, WKFrameRef frame, const void *clientInfo)
 {
     LOG(@"didCommitLoadForFrame");
-    [(BrowserWindowController *)clientInfo validateToolbar];
 }
 
 static void _didFinishLoadForFrame(WKPageRef page, WKFrameRef frame, const void *clientInfo)
@@ -177,7 +175,6 @@ static void _didFinishLoadForFrame(WKPageRef page, WKFrameRef frame, const void 
 static void _didFailLoadWithErrorForFrame(WKPageRef page, WKFrameRef frame, const void *clientInfo)
 {
     LOG(@"didFailLoadWithErrorForFrame");
-    [(BrowserWindowController *)clientInfo validateToolbar];
 }
 
 static void _didReceiveTitleForFrame(WKPageRef page, WKStringRef title, WKFrameRef frame, const void *clientInfo)
@@ -220,6 +217,11 @@ static void _didBecomeUnresponsive(WKPageRef page, const void *clientInfo)
 static void _didBecomeResponsive(WKPageRef page, const void *clientInfo)
 {
     LOG(@"didBecomeResponsive");
+}
+
+static void _didChangeBackForwardList(WKPageRef page, const void *clientInfo)
+{
+    [(BrowserWindowController *)clientInfo validateToolbar];
 }
 
 #pragma mark Policy Client Callbacks
@@ -348,7 +350,8 @@ static void _didUpdateHistoryTitle(WKPageRef page, WKStringRef title, WKURLRef U
         _didChangeProgress,
         _didFinishProgress,
         _didBecomeUnresponsive,
-        _didBecomeResponsive
+        _didBecomeResponsive,
+        _didChangeBackForwardList
     };
     WKPageSetPageLoaderClient(_webView.pageRef, &loadClient);
     
