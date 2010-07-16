@@ -152,7 +152,7 @@ bool NetscapePluginStream::start(const WebCore::String& responseURLString, uint3
     m_npStream.url = m_responseURL.data();
     m_npStream.end = streamLength;
     m_npStream.lastmodified = lastModifiedTime;
-    m_npStream.notifyData = 0;
+    m_npStream.notifyData = m_notificationData;
     m_npStream.headers = m_headers.length() == 0 ? 0 : m_headers.data();
 
     NPError error = m_plugin->NPP_NewStream(const_cast<char*>(m_mimeType.data()), &m_npStream, false, &m_transferMode);
