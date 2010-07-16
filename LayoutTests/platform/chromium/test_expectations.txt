@@ -2515,7 +2515,6 @@ BUG32675 LINUX : fast/repaint/trailing-floats-root-line-box-overflow.html = IMAG
 
 // Flaky tests found during the roll.
 BUG32679 LINUX DEBUG : http/tests/navigation/lockedhistory-iframe.html = TEXT PASS
-BUG32682 LINUX : svg/W3C-SVG-1.1/filters-conv-01-f.svg = IMAGE+TEXT TEXT PASS CRASH TIMEOUT
 BUG32684 WIN : inspector/timeline-layout.html = TEXT PASS
 BUG35519 WIN SKIP : http/tests/inspector/inspect-iframe-from-different-domain.html = PASS
 BUG32688 MAC DEBUG : fast/lists/inlineBoxWrapperNullCheck.html = TEXT PASS
@@ -2554,7 +2553,6 @@ BUG33538 : fast/dom/Window/anonymous-slot-with-changes.html = TEXT
 BUG35064 WIN DEBUG : fast/forms/restore-selection-after-layout.html = TEXT PASS
 
 // WebKit roll 54482 to 54493.
-BUG35242 WIN : svg/W3C-SVG-1.1/filters-conv-01-f.svg = IMAGE+TEXT TEXT CRASH TIMEOUT
 BUG35242 WIN : svg/W3C-SVG-1.1/text-intro-05-t.svg = IMAGE+TEXT TEXT
 
 // WebKit roll 54493 to 54530: new tests.
@@ -3121,5 +3119,8 @@ BUGWK42403 MAC WIN : svg/custom/mask-colorspace.svg = IMAGE
 
 BUGWK42402 LINUX WIN : svg/custom/svg-fonts-without-missing-glyph.xhtml = IMAGE+TEXT
 
-BUGWK42419 LINUX : fast/forms/input-file-directory-upload.html = CRASH
-BUGWK42419 WIN MAC : fast/forms/input-file-directory-upload.html = TIMEOUT
+BUGWK42419 : fast/forms/input-file-directory-upload.html = CRASH
+
+BUGWK42428 MAC : svg/custom/convolution-crash.svg = IMAGE
+BUGWK42428 MAC : svg/W3C-SVG-1.1/filters-conv-01-f.svg = IMAGE
+BUGWK42428 LINUX WIN : svg/W3C-SVG-1.1/filters-conv-01-f.svg = IMAGE+TEXT
