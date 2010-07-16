@@ -66,14 +66,14 @@ public:
     NPError NPP_DestroyStream(NPStream*, NPReason);
     int32_t NPP_WriteReady(NPStream*);
     int32_t NPP_Write(NPStream*, int32_t offset, int32_t len, void* buffer);
-
-    void NPP_URLNotify(const char* url, NPReason reason, void* notifyData);
+    void NPP_URLNotify(const char* url, NPReason, void* notifyData);
+    NPError NPP_GetValue(NPPVariable, void *value);
 
 private:
     NetscapePlugin(PassRefPtr<NetscapePluginModule> pluginModule);
 
     void callSetWindow();
-
+    bool shouldLoadSrcURL();
     NetscapePluginStream* streamFromID(uint64_t streamID);
 
     bool platformPostInitialize();

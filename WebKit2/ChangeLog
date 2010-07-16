@@ -9,6 +9,23 @@
 
         Reviewed by Sam Weinig.
 
+        If needed, NPN_GetURL the src URL
+        https://bugs.webkit.org/show_bug.cgi?id=42424
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::NPP_GetValue):
+        Add NPP_GetValue wrapper.
+
+        (WebKit::NetscapePlugin::shouldLoadSrcURL):
+        Check whether the src url should be cancelled.
+
+        (WebKit::NetscapePlugin::initialize):
+        If the src URL should be loaded, then load it.
+        
+2010-07-15  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
         Stop the plug-in stream when it's finished loading
         https://bugs.webkit.org/show_bug.cgi?id=42423
 
