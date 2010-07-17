@@ -39,7 +39,7 @@ _log = logging.getLogger("webkitpy.common.net.statusserver")
 
 
 class StatusServer:
-    default_host = "webkit-commit-queue.appspot.com"
+    default_host = "queues.webkit.org"
 
     def __init__(self, host=default_host):
         self.set_host(host)

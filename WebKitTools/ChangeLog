@@ -1,3 +1,12 @@
+2010-07-16  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Teach webkitpy about queues.webkit.org
+        https://bugs.webkit.org/show_bug.cgi?id=42492
+
+        * Scripts/webkitpy/common/net/statusserver.py:
+
 2010-07-16  Ada Chan  <adachan@apple.com>
 
         Reviewed by Alice Liu.
