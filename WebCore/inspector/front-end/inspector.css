@@ -1484,7 +1484,7 @@ body.inactive .placard.selected {
     outline: 1px solid rgb(66%, 66%, 66%) !important;
     background-color: white;
     -webkit-user-modify: read-write-plaintext-only;
-    text-overflow: clip;
+    text-overflow: clip !important;
     padding-left: 2px;
     margin-left: -2px;
     padding-right: 2px;

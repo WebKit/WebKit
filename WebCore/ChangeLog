@@ -1,3 +1,13 @@
+2010-07-17  Nikita Vasilyev  <me@elv1s.ru>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: [REGRESSION] Edit long CSS attributes works incorrect
+        https://bugs.webkit.org/show_bug.cgi?id=42476
+
+        * inspector/front-end/inspector.css:
+        (.editing):
+
 2010-07-16  Andreas Kling  <andreas.kling@nokia.com>
 
         Reviewed by Sam Weinig.
