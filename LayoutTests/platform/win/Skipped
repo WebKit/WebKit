@@ -539,7 +539,7 @@ http/tests/security/local-iFrame-from-remote.html
 http/tests/security/local-image-from-remote.html
 http/tests/security/local-user-CSS-from-remote.html
 http/tests/security/originHeader/origin-header-for-https.html
-plugins/npruntime.html
+plugins/npruntime/npruntime.html
 
 ################################################################################
 ######################### End list of r41995 failures ##########################

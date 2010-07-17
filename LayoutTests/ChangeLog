@@ -1,3 +1,53 @@
+2010-07-17  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Move NPRuntime related tests to plugins/npruntime
+        https://bugs.webkit.org/show_bug.cgi?id=42505
+
+        * platform/gtk/Skipped:
+        * platform/mac-snowleopard/Skipped:
+        * platform/win/Skipped:
+        Update skipped lists.
+
+        * plugins/netscape-identifier-conversion.html: Removed.
+        * plugins/npruntime/bindings-test-expected.txt: Renamed from LayoutTests/plugins/bindings-test-expected.txt.
+        * plugins/npruntime/bindings-test.html: Renamed from LayoutTests/plugins/bindings-test.html.
+        * plugins/npruntime/browser-object-identity-expected.txt: Renamed from LayoutTests/plugins/netscape-browser-object-identity-expected.txt.
+        * plugins/npruntime/browser-object-identity.html: Renamed from LayoutTests/plugins/netscape-browser-object-identity.html.
+        * plugins/npruntime/construct-expected.txt: Renamed from LayoutTests/plugins/netscape-construct-expected.txt.
+        * plugins/npruntime/construct.html: Renamed from LayoutTests/plugins/netscape-construct.html.
+        * plugins/npruntime/embed-property-expected.txt: Renamed from LayoutTests/plugins/embed-property-expected.txt.
+        * plugins/npruntime/embed-property.html: Renamed from LayoutTests/plugins/embed-property.html.
+        * plugins/npruntime/enumerate-expected.txt: Renamed from LayoutTests/plugins/netscape-enumerate-expected.txt.
+        * plugins/npruntime/enumerate.html: Renamed from LayoutTests/plugins/netscape-enumerate.html.
+        * plugins/npruntime/get-int-identifier-special-values-expected.txt: Renamed from LayoutTests/plugins/getintidentifier-special-values-expected.txt.
+        * plugins/npruntime/get-int-identifier-special-values.html: Renamed from LayoutTests/plugins/getintidentifier-special-values.html.
+        * plugins/npruntime/get-property-return-value-expected.txt: Renamed from LayoutTests/plugins/netscape-get-property-return-value-expected.txt.
+        * plugins/npruntime/get-property-return-value.html: Renamed from LayoutTests/plugins/netscape-get-property-return-value.html.
+        * plugins/npruntime/identifier-conversion-expected.txt: Renamed from LayoutTests/plugins/netscape-identifier-conversion-expected.txt.
+        * plugins/npruntime/identifier-conversion.html: Renamed from LayoutTests/plugins/netscape-identifier-conversion.html.
+        * plugins/npruntime/invoke-browserfuncs-expected.txt: Renamed from LayoutTests/plugins/netscape-invoke-browserfuncs-expected.txt.
+        * plugins/npruntime/invoke-browserfuncs.html: Renamed from LayoutTests/plugins/netscape-invoke-browserfuncs.html.
+        * plugins/npruntime/invoke-default-expected.txt: Renamed from LayoutTests/plugins/netscape-invoke-default-expected.txt.
+        * plugins/npruntime/invoke-default.html: Renamed from LayoutTests/plugins/netscape-invoke-default.html.
+        * plugins/npruntime/invoke-expected.txt: Renamed from LayoutTests/plugins/invoke-expected.txt.
+        * plugins/npruntime/invoke-failure-expected.txt: Renamed from LayoutTests/plugins/netscape-invoke-failure-expected.txt.
+        * plugins/npruntime/invoke-failure.html: Renamed from LayoutTests/plugins/netscape-invoke-failure.html.
+        * plugins/npruntime/invoke.html: Renamed from LayoutTests/plugins/invoke.html.
+        * plugins/npruntime/npruntime-expected.txt: Renamed from LayoutTests/plugins/npruntime-expected.txt.
+        * plugins/npruntime/npruntime.html: Renamed from LayoutTests/plugins/npruntime.html.
+        * plugins/npruntime/round-trip-npobject-expected.txt: Renamed from LayoutTests/plugins/round-trip-npobject-expected.txt.
+        * plugins/npruntime/round-trip-npobject.html: Renamed from LayoutTests/plugins/round-trip-npobject.html.
+        * plugins/npruntime/script-tests/TEMPLATE.html: Renamed from LayoutTests/plugins/script-tests/TEMPLATE.html.
+        * plugins/npruntime/script-tests/browser-object-identity.js: Renamed from LayoutTests/plugins/script-tests/netscape-browser-object-identity.js.
+        (description.gc):
+        * plugins/npruntime/script-tests/identifier-conversion.js: Renamed from LayoutTests/plugins/script-tests/netscape-identifier-conversion.js.
+        * plugins/npruntime/set-property-expected.txt: Renamed from LayoutTests/plugins/setProperty-expected.txt.
+        * plugins/npruntime/set-property.html: Renamed from LayoutTests/plugins/setProperty.html.
+        * plugins/npruntime/throw-exception-expected.txt: Renamed from LayoutTests/plugins/netscape-throw-exception-expected.txt.
+        * plugins/npruntime/throw-exception.html: Renamed from LayoutTests/plugins/netscape-throw-exception.html.
+
 2010-07-17  John Gregg  <johnnyg@google.com>
 
         Unreviewed, updating test expectations.
