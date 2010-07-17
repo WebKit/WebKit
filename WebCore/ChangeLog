@@ -1,3 +1,16 @@
+2010-07-16  Andreas Kling  <andreas.kling@nokia.com>
+
+        Reviewed by Oliver Hunt.
+
+        [Qt] Remove redundant logic in Path::addArcTo()
+        https://bugs.webkit.org/show_bug.cgi?id=42494
+
+        Bounds checking for arcTo() is now done in cross-platform code
+        thanks to <http://trac.webkit.org/changeset/63599>
+
+        * platform/graphics/qt/PathQt.cpp:
+        (WebCore::Path::addArcTo):
+
 2010-07-16  Zhe Su  <suzhe@chromium.org>
 
         Reviewed by Darin Adler.

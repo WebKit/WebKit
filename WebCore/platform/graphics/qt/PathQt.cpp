@@ -209,11 +209,6 @@ void Path::addArcTo(const FloatPoint& p1, const FloatPoint& p2, float radius)
 
     FloatPoint p0(m_path.currentPosition());
 
-    if ((p1.x() == p0.x() && p1.y() == p0.y()) || (p1.x() == p2.x() && p1.y() == p2.y()) || radius == 0.f) {
-        m_path.lineTo(p1);
-        return;
-    }
-
     FloatPoint p1p0((p0.x() - p1.x()), (p0.y() - p1.y()));
     FloatPoint p1p2((p2.x() - p1.x()), (p2.y() - p1.y()));
     float p1p0_length = sqrtf(p1p0.x() * p1p0.x() + p1p0.y() * p1p0.y());
