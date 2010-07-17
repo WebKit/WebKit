@@ -74,6 +74,11 @@ namespace WebCore {
         GraphicsContext* context() const;
 
         Image* image() const;
+#if PLATFORM(QT)
+        Image* imageForRendering() const;
+#else
+        Image* imageForRendering() const { return image(); }
+#endif
 
         void clearImage() { m_image.clear(); }
 

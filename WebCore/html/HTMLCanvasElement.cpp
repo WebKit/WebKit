@@ -278,7 +278,7 @@ void HTMLCanvasElement::paint(GraphicsContext* context, const IntRect& r)
     if (hasCreatedImageBuffer()) {
         ImageBuffer* imageBuffer = buffer();
         if (imageBuffer) {
-            Image* image = imageBuffer->image();
+            Image* image = imageBuffer->imageForRendering();
             if (image)
                 context->drawImage(image, DeviceColorSpace, r);
         }

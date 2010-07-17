@@ -2,6 +2,33 @@
 
         Reviewed by Oliver Hunt.
 
+        QtWebkit creates an unnecessary deep copy of images when canvas drawing is done
+        A https://bugs.webkit.org/show_bug.cgi?id=32530
+
+        Solve this by adding ImageBuffer::imageForRendering() which returns an image
+        that can be used for rendering now, but isn't a copy to be kept around.
+
+        * platform/graphics/ImageBuffer.h:
+        (WebCore::ImageBuffer::imageForRendering):
+        * platform/graphics/qt/ImageBufferQt.cpp:
+        (WebCore::ImageBuffer::imageForRendering): Added to provide an image that can
+        be used for rendering now, but may change in the future.
+        * platform/graphics/qt/StillImageQt.cpp:
+        (WebCore::StillImage::StillImage):
+        (WebCore::StillImage::~StillImage):
+        (WebCore::StillImage::size):
+        (WebCore::StillImage::nativeImageForCurrentFrame):
+        (WebCore::StillImage::draw):
+        * platform/graphics/qt/StillImageQt.h:
+        (WebCore::StillImage::createForRendering): Added for use in
+        ImageBuffer::imageForRendering(), provides a thin wrapper around a QPixmap*.
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::paint): Paint with ImageBuffer::imageForRendering()
+
+2010-07-16  Andreas Kling  <andreas.kling@nokia.com>
+
+        Reviewed by Oliver Hunt.
+
         [Qt] Remove redundant logic in Path::addArcTo()
         https://bugs.webkit.org/show_bug.cgi?id=42494
 

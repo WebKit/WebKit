@@ -98,6 +98,14 @@ GraphicsContext* ImageBuffer::context() const
     return m_context.get();
 }
 
+Image* ImageBuffer::imageForRendering() const
+{
+    if (!m_image)
+        m_image = StillImage::createForRendering(&m_data.m_pixmap);
+
+    return m_image.get();
+}
+
 Image* ImageBuffer::image() const
 {
     if (!m_image) {

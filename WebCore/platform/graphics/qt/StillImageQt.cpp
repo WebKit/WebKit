@@ -36,23 +36,35 @@
 namespace WebCore {
 
 StillImage::StillImage(const QPixmap& pixmap)
-    : m_pixmap(pixmap)
+    : m_pixmap(new QPixmap(pixmap))
+    , m_ownsPixmap(true)
 {}
+
+StillImage::StillImage(const QPixmap* pixmap)
+    : m_pixmap(pixmap)
+    , m_ownsPixmap(false)
+{}
+
+StillImage::~StillImage()
+{
+    if (m_ownsPixmap)
+        delete m_pixmap;
+}
 
 IntSize StillImage::size() const
 {
-    return IntSize(m_pixmap.width(), m_pixmap.height());
+    return IntSize(m_pixmap->width(), m_pixmap->height());
 }
 
 NativeImagePtr StillImage::nativeImageForCurrentFrame()
 {
-    return const_cast<NativeImagePtr>(&m_pixmap);
+    return const_cast<NativeImagePtr>(m_pixmap);
 }
 
 void StillImage::draw(GraphicsContext* ctxt, const FloatRect& dst,
                       const FloatRect& src, ColorSpace, CompositeOperator op)
 {
-    if (m_pixmap.isNull())
+    if (m_pixmap->isNull())
         return;
 
     ctxt->save();
@@ -93,7 +105,7 @@ void StillImage::draw(GraphicsContext* ctxt, const FloatRect& dst,
     FloatRect dstM(dx, dy, dw, dh);
     QPainter* painter(ctxt->platformContext());
 
-    painter->drawPixmap(dstM, m_pixmap, srcM);
+    painter->drawPixmap(dstM, *m_pixmap, srcM);
     ctxt->restore();
 }
 
