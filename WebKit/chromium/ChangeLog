@@ -1,3 +1,17 @@
+2010-07-17  John Gregg  <johnnyg@google.com>
+
+        Reviewed by Kent Tamura.
+
+        [chromium] directory upload: pass the attribute up to the chrome client        
+        https://bugs.webkit.org/show_bug.cgi?id=42475
+
+        This allows chromium to display the native system directory picker when
+        the directory attribute is present on the input element.
+
+        * public/WebFileChooserParams.h:
+        * src/ChromeClientImpl.cpp:
+        (WebKit::ChromeClientImpl::runOpenPanel):
+
 2010-07-16  Zhe Su  <suzhe@chromium.org>
 
         Reviewed by Darin Adler.

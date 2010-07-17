@@ -40,6 +40,8 @@ namespace WebKit {
 struct WebFileChooserParams {
     // If |multiSelect| is true, the dialog allow to select multiple files.
     bool multiSelect;
+    // If |directory| is true, the dialog allows the user to select a directory.
+    bool directory;
     // |title| is a title of a file chooser dialog. It can be an empty string.
     WebString title;
     // |initialValue| is a filename which the dialog should select by default.
