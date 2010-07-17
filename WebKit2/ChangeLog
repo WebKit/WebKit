@@ -1,3 +1,12 @@
+2010-07-16  Alice Liu  <alice.liu@apple.com>
+
+        Build fix, not reviewed.
+
+        Reverted http://trac.webkit.org/changeset/63585 because getopt isn't 
+        available in the OpenSource support libraries
+
+        * WebKit2.sln:
+
 2010-07-16  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.
