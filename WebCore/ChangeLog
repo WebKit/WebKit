@@ -1,5 +1,20 @@
 2010-07-16  Andreas Kling  <andreas.kling@nokia.com>
 
+        Reviewed by Sam Weinig.
+
+        Failing 2d.path.arcTo.ensuresubpath.* philip canvas tests
+        https://bugs.webkit.org/show_bug.cgi?id=42186
+
+        Move code from Qt's Path::addArcTo() up to CanvasRenderingContext2D.
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::arcTo): Behave as moveTo(x1,y1)
+        if the current path is empty.
+        * platform/graphics/qt/PathQt.cpp:
+        (WebCore::Path::addArcTo): Remove now-redundant code.
+
+2010-07-16  Andreas Kling  <andreas.kling@nokia.com>
+
         Reviewed by Oliver Hunt.
 
         QtWebkit creates an unnecessary deep copy of images when canvas drawing is done

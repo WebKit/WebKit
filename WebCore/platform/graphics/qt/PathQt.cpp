@@ -198,15 +198,6 @@ void Path::addBezierCurveTo(const FloatPoint& cp1, const FloatPoint& cp2, const 
 
 void Path::addArcTo(const FloatPoint& p1, const FloatPoint& p2, float radius)
 {
-    // Make sure there is a subpath for p1, the behavior depend on the last element of the subpath.
-    // When the user agent is to ensure there is a subpath  for a coordinate (x, y), the user agent must 
-    // check to see if the context has any subpaths, and if it does not, then the user agent must create 
-    // a new subpath with the point (x, y) as its first (and only) point, as if the moveTo()  method had been called.
-    if (!m_path.elementCount()) {
-        m_path.moveTo(p1);
-        return;
-    }
-
     FloatPoint p0(m_path.currentPosition());
 
     FloatPoint p1p0((p0.x() - p1.x()), (p0.y() - p1.y()));

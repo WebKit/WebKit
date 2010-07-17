@@ -1,3 +1,16 @@
+2010-07-16  Andreas Kling  <andreas.kling@nokia.com>
+
+        Reviewed by Sam Weinig.
+
+        Failing 2d.path.arcTo.ensuresubpath.* philip canvas tests
+        https://bugs.webkit.org/show_bug.cgi?id=42186
+
+        Unskip tests:
+        - canvas/philip/tests/2d.path.arcTo.ensuresubpath.1.html
+        - canvas/philip/tests/2d.path.arcTo.ensuresubpath.2.html
+
+        * platform/mac/Skipped:
+
 2010-07-16  Nico Weber  <thakis@chromium.org>
 
         Reviewed by Ojan Vafai.

@@ -621,8 +621,10 @@ void CanvasRenderingContext2D::arcTo(float x1, float y1, float x2, float y2, flo
     
     FloatPoint p1 = FloatPoint(x1, y1);
     FloatPoint p2 = FloatPoint(x2, y2);
-    
-    if (p1 == m_path.currentPoint() || p1 == p2 || !r)
+
+    if (!m_path.hasCurrentPoint())
+        m_path.moveTo(p1);
+    else if (p1 == m_path.currentPoint() || p1 == p2 || !r)
         lineTo(x1, y1);
     else
         m_path.addArcTo(p1, p2, r);
