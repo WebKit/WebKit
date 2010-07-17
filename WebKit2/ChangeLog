@@ -2,6 +2,26 @@
 
         Reviewed by Dan Bernstein.
 
+        Stop all NPStreams before destroying a plug-in
+        https://bugs.webkit.org/show_bug.cgi?id=42504
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::stopAllStreams):
+        Go through all streams and stop them.
+
+        (WebKit::NetscapePlugin::destroy):
+        Call stopAllStreams.
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.h:
+        Add stopAllStreams.
+        
+        * WebProcess/Plugins/Netscape/NetscapePluginStream.h:
+        Make stop public.
+
+2010-07-17  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dan Bernstein.
+
         Open streams should not keep a plug-in view alive
         https://bugs.webkit.org/show_bug.cgi?id=42503
 

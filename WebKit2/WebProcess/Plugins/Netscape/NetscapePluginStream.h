@@ -61,6 +61,7 @@ public:
 
     void sendJavaScriptStream(const WebCore::String& requestURLString, const WebCore::String& result);
 
+    void stop(NPReason);
     NPError destroy(NPReason);
 
 private:
@@ -68,7 +69,6 @@ private:
 
     bool start(const WebCore::String& responseURLString, uint32_t streamLength, 
                uint32_t lastModifiedTime, const WebCore::String& mimeType, const WebCore::String& headers);
-    void stop(NPReason);
 
     void cancel();
     void notifyAndDestroyStream(NPReason);

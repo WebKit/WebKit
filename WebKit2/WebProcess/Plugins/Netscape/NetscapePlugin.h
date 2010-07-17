@@ -79,6 +79,8 @@ private:
     bool platformPostInitialize();
     void platformPaint(WebCore::GraphicsContext*, const WebCore::IntRect& dirtyRect);
 
+    void stopAllStreams();
+
     // Plugin
     virtual bool initialize(PluginController*, const Parameters&);
     virtual void destroy();

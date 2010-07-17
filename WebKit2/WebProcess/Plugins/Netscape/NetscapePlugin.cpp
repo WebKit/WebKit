@@ -230,6 +230,15 @@ NetscapePluginStream* NetscapePlugin::streamFromID(uint64_t streamID)
     return m_streams.get(streamID).get();
 }
 
+void NetscapePlugin::stopAllStreams()
+{
+    Vector<RefPtr<NetscapePluginStream> > streams;
+    copyValuesToVector(m_streams, streams);
+
+    for (size_t i = 0; i < streams.size(); ++i)
+        streams[i]->stop(NPRES_USER_BREAK);
+}
+
 bool NetscapePlugin::initialize(PluginController* pluginController, const Parameters& parameters)
 {
     ASSERT(!m_pluginController);
@@ -287,6 +296,9 @@ bool NetscapePlugin::initialize(PluginController* pluginController, const Parame
 void NetscapePlugin::destroy()
 {
     ASSERT(m_isStarted);
+
+    // Stop all streams.
+    stopAllStreams();
 
     NPP_Destroy(0);
 
