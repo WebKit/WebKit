@@ -249,6 +249,11 @@ bool Path::hasCurrentPoint() const
 {
     return !isEmpty();
 }
+    
+FloatPoint Path::currentPoint() const 
+{
+    return CGPathGetCurrentPoint(m_path);
+}
 
 static void CGPathToCFStringApplierFunction(void* info, const CGPathElement *element)
 {

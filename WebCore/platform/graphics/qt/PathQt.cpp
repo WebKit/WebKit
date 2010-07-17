@@ -362,6 +362,11 @@ bool Path::hasCurrentPoint() const
     return !isEmpty();
 }
 
+FloatPoint Path::currentPoint() const 
+{
+    return m_path.currentPosition();
+}
+
 String Path::debugString() const
 {
     QString ret;

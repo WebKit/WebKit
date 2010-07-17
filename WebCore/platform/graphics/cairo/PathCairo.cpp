@@ -86,6 +86,15 @@ bool Path::hasCurrentPoint() const
     return !isEmpty();
 }
 
+FloatPoint Path::currentPoint() const 
+{
+    // FIXME: Is this the correct way?
+    double x;
+    double y;
+    cairo_get_current_point(platformPath()->m_cr, &x, &y);
+    return FloatPoint(x, y);
+}
+
 void Path::translate(const FloatSize& p)
 {
     cairo_t* cr = platformPath()->m_cr;

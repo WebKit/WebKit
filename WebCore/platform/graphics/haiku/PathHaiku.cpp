@@ -65,6 +65,14 @@ bool Path::hasCurrentPoint() const
     return !isEmpty();
 }
 
+FloatPoint Path::currentPoint() const 
+{
+    // FIXME: implement safe way to return current point of subpath.
+    notImplemented();
+    float quietNaN = std::numeric_limits<float>::quiet_NaN();
+    return FloatPoint(quietNaN, quietNaN);
+}
+
 bool Path::contains(const FloatPoint& point, WindRule rule) const
 {
     return m_path->Contains(point);

@@ -1,3 +1,32 @@
+2010-07-16  Matthew Delaney  <mdelaney@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Failing 2d.path.stroke.prune.arc philip canvas test
+        https://bugs.webkit.org/show_bug.cgi?id=42188
+
+        * html/canvas/CanvasRenderingContext2D.cpp: 
+        Note, updated parameter names to match spec.
+        (WebCore::CanvasRenderingContext2D::lineTo): Pulled bound checking code out of lower code to have checks for all platforms.
+        (WebCore::CanvasRenderingContext2D::arcTo): Bound checking per the spec for arcTo parameters. Updated parameter names to match spec.
+        * platform/graphics/Path.h: Added in new method to expose the current position.
+        * platform/graphics/cairo/PathCairo.cpp:
+        (WebCore::Path::currentPoint): Added in likely correct implementation for this call with a FIXME just in case.
+        * platform/graphics/cg/PathCG.cpp:
+        (WebCore::Path::currentPoint): Added in support for this call.
+        * platform/graphics/haiku/PathHaiku.cpp:
+        (WebCore::Path::currentPoint): Added in stub for this call.
+        * platform/graphics/openvg/PathOpenVG.cpp:
+        (WebCore::Path::currentPoint): Added in likely implementation for this call with a FIXME just in case.
+        * platform/graphics/qt/PathQt.cpp:
+        (WebCore::Path::currentPoint): Added in implementation for this call courtesy of Andrea Kling.
+        * platform/graphics/skia/PathSkia.cpp:
+        (WebCore::Path::currentPoint): Added in stub for this call.
+        * platform/graphics/wince/PathWince.cpp:
+        (WebCore::Path::currentPoint): Added in stub for this call.
+        * platform/graphics/wx/PathWx.cpp:
+        (WebCore::Path::currentPoint): Added in stub for this call.
+
 2010-07-16  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r63593.

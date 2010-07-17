@@ -123,6 +123,13 @@ Path& Path::operator=(const Path& other)
     return *this;
 }
 
+FloatPoint Path::currentPoint() const 
+{
+    // FIXME: is this the way to return the current point of the subpath?
+    return m_currentPoint;
+}
+
+
 bool Path::contains(const FloatPoint& point, WindRule rule) const
 {
     notImplemented();
