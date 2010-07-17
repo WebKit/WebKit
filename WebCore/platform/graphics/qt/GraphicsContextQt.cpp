@@ -712,28 +712,66 @@ void GraphicsContext::fillRect(const FloatRect& rect)
     if (paintingDisabled())
         return;
 
+    if (!(m_common->state.fillPattern || m_common->state.fillGradient || fillColor().alpha()))
+        return;
+
     QPainter* p = m_data->p();
+    FloatRect normalizedRect = rect.normalized();
 
-    if (m_common->state.fillPattern || m_common->state.fillGradient || fillColor().alpha()) {
-        if (m_common->state.shadowColor.isValid())
-            drawBorderlessRectShadow(this, p, rect);
-        if (m_common->state.fillPattern) {
-            AffineTransform affine;
-            FloatRect rectM(rect);
-            QBrush brush(m_common->state.fillPattern->createPlatformPattern(affine));
-            QPixmap* image = m_common->state.fillPattern->tileImage()->nativeImageForCurrentFrame();
+    FloatSize shadowSize;
+    float shadowBlur;
+    Color shadowColor;
+    bool hasShadow = getShadow(shadowSize, shadowBlur, shadowColor);
+    FloatRect shadowDestRect;
+    QImage* shadowImage = 0;
+    QPainter* pShadow = 0;
 
-            drawRepeatPattern(p, image, rect, m_common->state.fillPattern->repeatX(), m_common->state.fillPattern->repeatY());
-        } else if (m_common->state.fillGradient) {
-            QBrush brush(*m_common->state.fillGradient->platformGradient());
-            brush.setTransform(m_common->state.fillGradient->gradientSpaceTransform());
-            p->fillRect(rect, brush);
-        } else {
-            if (fillColor().alpha())
-                p->fillRect(rect, p->brush());
-        }
+    if (hasShadow) {
+        shadowImage = new QImage(roundedIntSize(normalizedRect.size()), QImage::Format_ARGB32_Premultiplied);
+        pShadow = new QPainter(shadowImage);
+        shadowDestRect = normalizedRect;
+        shadowDestRect.move(shadowSize.width(), shadowSize.height());
+
+        pShadow->setCompositionMode(QPainter::CompositionMode_Source);
+        pShadow->fillRect(shadowImage->rect(), shadowColor);
+        pShadow->setCompositionMode(QPainter::CompositionMode_DestinationIn);
     }
+
+    if (m_common->state.fillPattern) {
+        AffineTransform affine;
+        FloatRect rectM(rect);
+        QBrush brush(m_common->state.fillPattern->createPlatformPattern(affine));
+        QPixmap* image = m_common->state.fillPattern->tileImage()->nativeImageForCurrentFrame();
+
+        if (hasShadow) {
+            drawRepeatPattern(pShadow, image, FloatRect(static_cast<QRectF>(shadowImage->rect())), m_common->state.fillPattern->repeatX(), m_common->state.fillPattern->repeatY());
+            pShadow->end();
+            p->drawImage(shadowDestRect, *shadowImage, shadowImage->rect());
+        }
+        drawRepeatPattern(p, image, normalizedRect, m_common->state.fillPattern->repeatX(), m_common->state.fillPattern->repeatY());
+    } else if (m_common->state.fillGradient) {
+        QBrush brush(*m_common->state.fillGradient->platformGradient());
+        brush.setTransform(m_common->state.fillGradient->gradientSpaceTransform());
+
+        if (hasShadow) {
+            pShadow->fillRect(shadowImage->rect(), brush);
+            pShadow->end();
+            p->drawImage(shadowDestRect, *shadowImage, shadowImage->rect());
+        }
+        p->fillRect(normalizedRect, brush);
+    } else if (fillColor().alpha()) {
+        if (hasShadow) {
+            pShadow->fillRect(shadowImage->rect(), p->brush());
+            pShadow->end();
+            p->drawImage(shadowDestRect, *shadowImage, shadowImage->rect());
+        }
+        p->fillRect(normalizedRect, p->brush());
+    }
+
+    delete shadowImage;
+    delete pShadow;
 }
+
 
 void GraphicsContext::fillRect(const FloatRect& rect, const Color& color, ColorSpace colorSpace)
 {

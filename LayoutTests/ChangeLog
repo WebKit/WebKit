@@ -1,3 +1,20 @@
+2010-07-15  Qi Zhang  <qi.2.zhang@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] Failure on http://philip.html5.org/tests/canvas/suite/tests/2d.shadow.alpha.5.html
+        https://bugs.webkit.org/show_bug.cgi?id=38400
+
+        Remove the following test case from Skipped:
+        canvas/philip/tests/2d.shadow.alpha.5.html
+        canvas/philip/tests/2d.shadow.gradient.alpha.html
+        canvas/philip/tests/2d.shadow.gradient.transparent.1.html
+        canvas/philip/tests/2d.shadow.image.scale.html
+        canvas/philip/tests/2d.shadow.pattern.alpha.html
+        canvas/philip/tests/2d.shadow.pattern.transparent.1.html
+
+        * platform/qt/Skipped:
+
 2010-07-17  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Dan Bernstein.
