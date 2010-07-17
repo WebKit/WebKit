@@ -1,3 +1,14 @@
+2010-07-17  Andreas Kling  <andreas.kling@nokia.com>
+
+        Rubber-stamped by Simon Hausmann.
+
+        [Qt] Unskipped two canvas tests that are passing
+
+        - canvas/philip/tests/2d.path.arc.twopie.3.html
+        - canvas/philip/tests/2d.path.quadraticCurveTo.scaled.html
+
+        * platform/qt/Skipped:
+
 2010-07-17  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.
