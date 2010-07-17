@@ -2069,9 +2069,6 @@ BUG11613 LINUX : fast/forms/tabbing-input-iframe.html = FAIL
 BUG11613 LINUX RELEASE : fast/overflow/scrollRevealButton.html = FAIL
 BUG11613 LINUX DEBUG : fast/overflow/scrollRevealButton.html = FAIL
 
-// WebKit tests regressions 20529:20532
-BUG16675 MAC : fast/dynamic/flash-replacement-test.html = FAIL
-
 // WebKit merge 42738:45840
 // New test, needs baseline.
 BUG16690 SKIP MAC : fast/text/international/khmer-selection.html = FAIL
@@ -3136,4 +3133,4 @@ BUG49343 : fast/js/reserved-words-as-property.html = TEXT
 
 BUG42485 WIN : inspector/console-trace.html = TEXT
 
-BUG42486 LINUX MAC DEBUG : svg/filters/filter-empty-g.svg = CRASH
+BUG42486 MAC DEBUG : svg/filters/filter-empty-g.svg = CRASH
