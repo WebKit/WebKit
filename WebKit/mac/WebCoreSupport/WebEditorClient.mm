@@ -818,6 +818,10 @@ void WebEditorClient::getGuessesForWord(const String& word, WTF::Vector<String>&
     }
 }
 
+void WebEditorClient::willSetInputMethodState()
+{
+}
+
 void WebEditorClient::setInputMethodState(bool)
 {
 }

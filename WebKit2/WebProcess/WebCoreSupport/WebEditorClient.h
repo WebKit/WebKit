@@ -129,6 +129,7 @@ private:
     virtual void showSpellingUI(bool show);
     virtual bool spellingUIIsShowing();
     virtual void getGuessesForWord(const WebCore::String&, Vector<WebCore::String>& guesses);
+    virtual void willSetInputMethodState();
     virtual void setInputMethodState(bool enabled);
 
     WebPage* m_page;

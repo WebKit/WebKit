@@ -215,6 +215,10 @@ void EditorClient::updatePendingComposition(const gchar* newComposition)
         m_pendingComposition.set(g_strconcat(m_pendingComposition.get(), newComposition, NULL));
 }
 
+void EditorClient::willSetInputMethodState()
+{
+}
+
 void EditorClient::setInputMethodState(bool active)
 {
     WebKitWebViewPrivate* priv = m_webView->priv;

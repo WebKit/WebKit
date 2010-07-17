@@ -40,6 +40,11 @@ using namespace WebCore;
 
 namespace WebCore {
 
+void EditorClientEfl::willSetInputMethodState()
+{
+    notImplemented();
+}
+
 void EditorClientEfl::setInputMethodState(bool active)
 {
     notImplemented();

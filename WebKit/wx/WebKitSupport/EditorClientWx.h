@@ -110,6 +110,7 @@ public:
     virtual void getGuessesForWord(const String&, Vector<String>& guesses);
     virtual String getAutoCorrectSuggestionForMisspelledWord(const WebCore::String&);
     
+    virtual void willSetInputMethodState();
     virtual void setInputMethodState(bool enabled);
 
 private:

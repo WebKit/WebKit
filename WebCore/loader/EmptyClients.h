@@ -434,6 +434,7 @@ public:
     virtual void showSpellingUI(bool) { }
     virtual bool spellingUIIsShowing() { return false; }
     virtual void getGuessesForWord(const String&, Vector<String>&) { }
+    virtual void willSetInputMethodState() { }
     virtual void setInputMethodState(bool) { }
 
 
@@ -495,4 +496,3 @@ public:
 }
 
 #endif // EmptyClients_h
-

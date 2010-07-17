@@ -595,22 +595,21 @@ bool FocusController::setFocusedNode(Node* node, PassRefPtr<Frame> newFocusedFra
     if (oldFocusedNode && oldFocusedNode->rootEditableElement() == oldFocusedNode && !relinquishesEditingFocus(oldFocusedNode))
         return false;
 
-    // Set input method state before changing the focused node, so that the
-    // input method can still have a chance to finish the ongoing composition
-    // session.
-    m_page->editorClient()->setInputMethodState(node ? node->shouldUseInputMethod() : false);
+    m_page->editorClient()->willSetInputMethodState();
 
     clearSelectionIfNeeded(oldFocusedFrame.get(), newFocusedFrame.get(), node);
 
     if (!node) {
         if (oldDocument)
             oldDocument->setFocusedNode(0);
+        m_page->editorClient()->setInputMethodState(false);
         return true;
     }
 
     RefPtr<Document> newDocument = node->document();
 
     if (newDocument && newDocument->focusedNode() == node) {
+        m_page->editorClient()->setInputMethodState(node->shouldUseInputMethod());
         return true;
     }
     
@@ -622,6 +621,8 @@ bool FocusController::setFocusedNode(Node* node, PassRefPtr<Frame> newFocusedFra
     if (newDocument)
         newDocument->setFocusedNode(node);
     
+    m_page->editorClient()->setInputMethodState(node->shouldUseInputMethod());
+
     return true;
 }
 

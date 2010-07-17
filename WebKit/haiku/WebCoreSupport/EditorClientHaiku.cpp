@@ -466,6 +466,11 @@ void EditorClientHaiku::getGuessesForWord(const String&, Vector<String>&)
     notImplemented();
 }
 
+void EditorClientHaiku::willSetInputMethodState()
+{
+    notImplemented();
+}
+
 void EditorClientHaiku::setInputMethodState(bool enabled)
 {
     notImplemented();
@@ -477,4 +482,3 @@ bool EditorClientHaiku::isEditing() const
 }
 
 } // namespace WebCore
-

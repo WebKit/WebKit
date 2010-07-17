@@ -935,10 +935,14 @@ void EditorClientImpl::getGuessesForWord(const String&,
     notImplemented();
 }
 
-void EditorClientImpl::setInputMethodState(bool enabled)
+void EditorClientImpl::willSetInputMethodState()
 {
     if (m_webView->client())
         m_webView->client()->resetInputMethod();
+}
+
+void EditorClientImpl::setInputMethodState(bool)
+{
 }
 
 } // namesace WebKit

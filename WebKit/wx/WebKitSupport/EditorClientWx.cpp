@@ -538,6 +538,11 @@ String EditorClientWx::getAutoCorrectSuggestionForMisspelledWord(const WebCore::
     return String();
 }
 
+void EditorClientWx::willSetInputMethodState()
+{
+    notImplemented();
+}
+
 void EditorClientWx::setInputMethodState(bool enabled)
 {
     notImplemented();

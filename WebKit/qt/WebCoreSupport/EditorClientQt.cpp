@@ -587,6 +587,10 @@ bool EditorClientQt::isEditing() const
     return m_editing;
 }
 
+void EditorClientQt::willSetInputMethodState()
+{
+}
+
 void EditorClientQt::setInputMethodState(bool active)
 {
     QWebPageClient* webPageClient = m_page->d->client;

@@ -1,3 +1,18 @@
+2010-07-16  Zhe Su  <suzhe@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION(r61484): Broke focus behaviour on Qt and probably other platforms
+        https://bugs.webkit.org/show_bug.cgi?id=42253
+
+        Implement EditorClient::willSetInputMethodState which replaces
+        setInputMethodState method.
+
+        * src/EditorClientImpl.cpp:
+        (WebKit::EditorClientImpl::willSetInputMethodState):
+        (WebKit::EditorClientImpl::setInputMethodState):
+        * src/EditorClientImpl.h:
+
 2010-07-16  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Darin Fisher.

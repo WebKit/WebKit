@@ -415,10 +415,14 @@ void WebEditorClient::getGuessesForWord(const String&, Vector<String>&)
     notImplemented();
 }
 
+void WebEditorClient::willSetInputMethodState()
+{
+    notImplemented();
+}
+
 void WebEditorClient::setInputMethodState(bool)
 {
     notImplemented();
 }
 
 } // namespace WebKit
-

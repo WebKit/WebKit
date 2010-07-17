@@ -108,6 +108,7 @@ public:
     virtual bool spellingUIIsShowing();
     virtual void getGuessesForWord(const WebCore::String& word,
                                    WTF::Vector<WebCore::String>& guesses);
+    virtual void willSetInputMethodState();
     virtual void setInputMethodState(bool enabled);
 
     // Shows the form autofill popup for |node| if it is an HTMLInputElement and

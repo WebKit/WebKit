@@ -1,3 +1,23 @@
+2010-07-16  Zhe Su  <suzhe@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION(r61484): Broke focus behaviour on Qt and probably other platforms
+        https://bugs.webkit.org/show_bug.cgi?id=42253
+
+        This patch just reverts the change to WebCore/page/FocusController.cpp
+        made in changeset 61484, and add a new method named
+        willSetInputMethodState in EditorClient interface, which gets called
+        in FocusController just before changing the focused node.
+
+        No new tests, because no new functionality.
+
+        * loader/EmptyClients.h:
+        (WebCore::EmptyEditorClient::willSetInputMethodState):
+        * page/EditorClient.h:
+        * page/FocusController.cpp:
+        (WebCore::FocusController::setFocusedNode):
+
 2010-07-16  Matthew Delaney  <mdelaney@apple.com>
 
         Reviewed by Sam Weinig.
