@@ -73,7 +73,8 @@ private:
     class Stream;
     void addStream(Stream*);
     void removeStream(Stream*);
-    
+    void cancelAllStreams();
+
     // WebCore::Widget
     virtual void setFrameRect(const WebCore::IntRect&);
     virtual void paint(WebCore::GraphicsContext*, const WebCore::IntRect&);

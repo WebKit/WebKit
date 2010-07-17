@@ -72,6 +72,7 @@ public:
     {
         return adoptRef(new Stream(pluginView, streamID, request));
     }
+    ~Stream();
 
     void start();
     void cancel();
@@ -86,13 +87,14 @@ private:
         , m_streamWasCancelled(false)
     {
     }
+
     // NetscapePluginStreamLoaderClient
     virtual void didReceiveResponse(NetscapePlugInStreamLoader*, const ResourceResponse&);
     virtual void didReceiveData(NetscapePlugInStreamLoader*, const char*, int);
     virtual void didFail(NetscapePlugInStreamLoader*, const ResourceError&);
     virtual void didFinishLoading(NetscapePlugInStreamLoader*);
 
-    RefPtr<PluginView> m_pluginView;
+    PluginView* m_pluginView;
     uint64_t m_streamID;
     const ResourceRequest m_request;
     
@@ -103,6 +105,11 @@ private:
     RefPtr<NetscapePlugInStreamLoader> m_loader;
 };
 
+PluginView::Stream::~Stream()
+{
+    ASSERT(!m_pluginView);
+}
+    
 void PluginView::Stream::start()
 {
     ASSERT(!m_loader);
@@ -175,15 +182,15 @@ void PluginView::Stream::didReceiveData(NetscapePlugInStreamLoader*, const char*
 
 void PluginView::Stream::didFail(NetscapePlugInStreamLoader*, const ResourceError& error) 
 {
-    // We don't want to call streamDidFail if the stream was explicitly cancelled by the plug-in.
-    if (m_streamWasCancelled)
-        return;
-
     // Calling streamDidFail could cause us to be deleted, so we hold on to a reference here.
     RefPtr<Stream> protect(this);
 
-    m_pluginView->m_plugin->streamDidFail(m_streamID, error.isCancellation());
+    // We only want to call streamDidFail if the stream was not explicitly cancelled by the plug-in.
+    if (!m_streamWasCancelled)
+        m_pluginView->m_plugin->streamDidFail(m_streamID, error.isCancellation());
+
     m_pluginView->removeStream(this);
+    m_pluginView = 0;
 }
 
 void PluginView::Stream::didFinishLoading(NetscapePlugInStreamLoader*)
@@ -193,6 +200,7 @@ void PluginView::Stream::didFinishLoading(NetscapePlugInStreamLoader*)
 
     m_pluginView->m_plugin->streamDidFinishLoading(m_streamID);
     m_pluginView->removeStream(this);
+    m_pluginView = 0;
 }
 
 PluginView::PluginView(WebCore::HTMLPlugInElement* pluginElement, PassRefPtr<Plugin> plugin, const Plugin::Parameters& parameters)
@@ -210,12 +218,16 @@ PluginView::~PluginView()
     if (m_isWaitingUntilMediaCanStart)
         m_pluginElement->document()->removeMediaCanStartListener(this);
 
+    // Cancel all pending frame loads.
     FrameLoadMap::iterator end = m_pendingFrameLoads.end();
     for (FrameLoadMap::iterator it = m_pendingFrameLoads.begin(), end = m_pendingFrameLoads.end(); it != end; ++it)
         it->first->setLoadListener(0);
-    
+
     if (m_plugin && m_isInitialized)
         m_plugin->destroy();
+
+    // Cancel all streams.
+    cancelAllStreams();
 }
 
 void PluginView::initializePlugin()
@@ -452,6 +464,18 @@ void PluginView::removeStream(Stream* stream)
     ASSERT(m_streams.get(stream->streamID()) == stream);
     
     m_streams.remove(stream->streamID());
+}
+
+void PluginView::cancelAllStreams()
+{
+    Vector<RefPtr<Stream> > streams;
+    copyValuesToVector(m_streams, streams);
+    
+    for (size_t i = 0; i < streams.size(); ++i)
+        streams[i]->cancel();
+
+    // Cancelling a stream removes it from the m_streams map, so if we cancel all streams the map should be empty.
+    ASSERT(m_streams.isEmpty());
 }
 
 void PluginView::invalidateRect(const IntRect& dirtyRect)

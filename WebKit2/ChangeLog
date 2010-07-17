@@ -1,3 +1,30 @@
+2010-07-17  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Open streams should not keep a plug-in view alive
+        https://bugs.webkit.org/show_bug.cgi?id=42503
+
+        PluginView::Stream now has a weak reference to its PluginView.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::Stream::~Stream):
+        Assert that the plug-in view is null.
+
+        (WebKit::PluginView::Stream::didFail):
+        After calling removeStream, set the plug-in view member variable to 0. This is OK to do
+        since we keep a reference to the Stream, so we're sure that the call to removeStream does not
+        destroy the stream.
+
+        (WebKit::PluginView::Stream::didFinishLoading):
+        Ditto .
+
+        (WebKit::PluginView::~PluginView):
+        Cancel all streams.
+        
+        (WebKit::PluginView::cancelAllStreams):
+        Cancel all streams.
+
 2010-07-16  Zhe Su  <suzhe@chromium.org>
 
         Reviewed by Darin Adler.
