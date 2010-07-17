@@ -1,3 +1,16 @@
+2010-07-16  Nico Weber  <thakis@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        Add chromium/win and linux expectations for fast/canvas/toDataUrl-alpha.
+
+        * platform/chromium-linux/fast/canvas/toDataURL-alpha-expected.checksum: Added.
+        * platform/chromium-linux/fast/canvas/toDataURL-alpha-expected.png: Added.
+        * platform/chromium-win/fast/canvas/toDataURL-alpha-expected.checksum: Added.
+        * platform/chromium-win/fast/canvas/toDataURL-alpha-expected.png: Added.
+        * platform/chromium-win/fast/canvas/toDataURL-alpha-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
 2010-07-16  Tony Chang  <tony@chromium.org>
 
         Not reviewed, updating test expectations.
