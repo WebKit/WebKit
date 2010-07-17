@@ -3332,15 +3332,6 @@ media/video-poster-scale.html
 media/media-can-play-mpeg-audio.html
 
 # Tests in plugins/ directory
-#   These tests require ObjC plugin, do not bother trying to get them to work
-plugins/call-as-function-test.html
-plugins/jsobjc-dom-wrappers.html
-plugins/jsobjc-simple.html
-plugins/root-object-premature-delete-crash.html
-plugins/throw-on-dealloc.html
-plugins/undefined-property-crash.html
-#   These test require Qt Widgets
-plugins/qt-qwidget-plugin.html
 #   Tests failing
 plugins/embed-attributes-setting.html
 plugins/get-url-with-blank-target.html

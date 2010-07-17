@@ -55,12 +55,6 @@
 # =========================================================================== #
 
 # ----- tests that use Objective-C so can never be supported
-plugins/call-as-function-test.html
-plugins/jsobjc-dom-wrappers.html
-plugins/jsobjc-simple.html
-plugins/root-object-premature-delete-crash.html
-plugins/throw-on-dealloc.html
-plugins/undefined-property-crash.html
 editing/pasteboard/paste-RTFD.html
 editing/pasteboard/paste-TIFF.html
 

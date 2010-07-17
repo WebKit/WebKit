@@ -137,16 +137,10 @@ fast/js/kde/Number.html
 http/tests/navigation/anchor-frames.html
 
 # No built-in plugin in DRT <rdar://problem/5074411>
-plugins/call-as-function-test.html
 plugins/get-url-that-the-resource-load-delegate-will-disallow.html
 plugins/get-url-with-blank-target.html
-plugins/jsobjc-dom-wrappers.html
-plugins/jsobjc-simple.html
 plugins/open-and-close-window-with-plugin.html
 plugins/plugin-javascript-access.html
-plugins/root-object-premature-delete-crash.html
-plugins/throw-on-dealloc.html
-plugins/undefined-property-crash.html
 
 # String::Number prints floating point numbers differently on Win than X. <rdar://problem/5127993>
 svg/hixie/perf/001.xml
@@ -735,9 +729,6 @@ fast/forms/validationMessage.html
 # Need to implement this in plugins code in WebKit
 plugins/reloadplugins-and-pages.html
 plugins/reloadplugins-no-pages.html
-
-# These tests require Qt Widgets
-plugins/qt-qwidget-plugin.html
 
 # This test requires ogg codecs
 media/media-can-play-ogg.html
