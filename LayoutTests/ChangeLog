@@ -1,5 +1,20 @@
 2010-07-18  Dean Jackson  <dino@apple.com>
 
+        Unreviewed (although this was discussed with SimonF in
+        original review).
+
+        https://bugs.webkit.org/show_bug.cgi?id=41259
+
+        Unfortunately the test in the previous commit is platform
+        specific (I was hoping it would not be) and is failing
+        the bots. This update exercises the same thing, but doesn't
+        check for exact values.
+
+        * fast/transforms/scrollIntoView-transformed-expected.txt:
+        * fast/transforms/scrollIntoView-transformed.html:
+
+2010-07-18  Dean Jackson  <dino@apple.com>
+
         Reviewed by Simon Fraser.
 
         https://bugs.webkit.org/show_bug.cgi?id=41259
