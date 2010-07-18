@@ -61,11 +61,13 @@ typedef struct WKBundlePageLoaderClient WKBundlePageLoaderClient;
 
 // UI Client
 typedef void (*WKBundlePageAddMessageToConsoleCallback)(WKBundlePageRef page, WKStringRef message, uint32_t lineNumber, const void *clientInfo);
+typedef void (*WKBundlePageSetStatusbarTextCallback)(WKBundlePageRef page, WKStringRef statusbarText, const void *clientInfo);
 
 struct WKBundlePageUIClient {
     int                                                                 version;
     const void *                                                        clientInfo;
     WKBundlePageAddMessageToConsoleCallback                             addMessageToConsole;
+    WKBundlePageSetStatusbarTextCallback                                setStatusbarText;
 };
 typedef struct WKBundlePageUIClient WKBundlePageUIClient;
 

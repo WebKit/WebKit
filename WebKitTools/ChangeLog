@@ -1,3 +1,32 @@
+2010-07-18  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Add dumping of statusbar text to WebKitTestRunner
+        https://bugs.webkit.org/show_bug.cgi?id=42516
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::InjectedBundlePage):
+        (WTR::InjectedBundlePage::_setStatusbarText):
+        (WTR::InjectedBundlePage::setStatusbarText):
+        Dump the statusbar text.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.h:
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.cpp:
+        (WTR::LayoutTestController::LayoutTestController):
+        Initialize m_dumpStatusCallbacks to false.
+
+        (WTR::dumpStatusCallbacksCallback):
+        Implement JSC callback.
+
+        (WTR::LayoutTestController::staticFunctions):
+        Add dumpStatusCallbacks.
+
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.h:
+        (WTR::LayoutTestController::dumpStatusCallbacks):
+        (WTR::LayoutTestController::setDumpStatusCallbacks):
+        Add setter and getter for m_dumpStatusCallbacks.
+
 2010-07-17  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Maciej Stachowiak.

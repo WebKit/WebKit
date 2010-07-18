@@ -44,6 +44,9 @@ public:
     bool dumpAsText() const { return m_dumpAsText; }
     void setDumpAsText(bool dumpAsText) { m_dumpAsText = dumpAsText; }
 
+    bool dumpStatusCallbacks() const { return m_dumpStatusCallbacks; }
+    void setDumpStatusCallbacks(bool dumpStatusCallbacks) { m_dumpStatusCallbacks = dumpStatusCallbacks; }
+
     bool waitToDump() const { return m_waitToDump; }
     void setWaitToDump();
     void waitToDumpWatchdogTimerFired();
@@ -61,6 +64,7 @@ private:
     LayoutTestController(const std::string& testPathOrURL);
 
     bool m_dumpAsText;
+    bool m_dumpStatusCallbacks;
     bool m_waitToDump; // True if waitUntilDone() has been called, but notifyDone() has not yet been called.
     bool m_testRepaint;
     bool m_testRepaintSweepHorizontally;

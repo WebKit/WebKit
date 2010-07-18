@@ -42,6 +42,7 @@ public:
     void initialize(WKBundlePageUIClient*);
 
     void addMessageToConsole(WebPage*, const WebCore::String& message, int32_t lineNumber);
+    void setStatusbarText(WebPage*, const WebCore::String&);
 
 private:
     WKBundlePageUIClient m_client;

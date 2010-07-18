@@ -61,7 +61,10 @@ private:
 
     // UI Client
     static void _addMessageToConsole(WKBundlePageRef page, WKStringRef message, uint32_t lineNumber, const void *clientInfo);
+    static void _setStatusbarText(WKBundlePageRef page, WKStringRef statusbarText, const void *clientInfo);
+
     void addMessageToConsole(WKStringRef message, uint32_t lineNumber);
+    void setStatusbarText(WKStringRef statusbarText);
 
     WKBundlePageRef m_page;
     bool m_isLoading;

@@ -230,8 +230,11 @@ bool WebChromeClient::runJavaScriptPrompt(Frame*, const String& message, const S
     return false;
 }
 
-void WebChromeClient::setStatusbarText(const String&)
+void WebChromeClient::setStatusbarText(const String& statusbarText)
 {
+    // Notify the bundle client.
+    m_page->injectedBundleUIClient().setStatusbarText(m_page, statusbarText);
+
     notImplemented();
 }
 

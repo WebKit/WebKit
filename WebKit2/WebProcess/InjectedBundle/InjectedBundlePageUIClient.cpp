@@ -52,4 +52,10 @@ void InjectedBundlePageUIClient::addMessageToConsole(WebPage* page, const String
         m_client.addMessageToConsole(toRef(page), toRef(message.impl()), lineNumber, m_client.clientInfo);
 }
 
+void InjectedBundlePageUIClient::setStatusbarText(WebPage* page, const String& statusbarText)
+{
+    if (m_client.setStatusbarText)
+        m_client.setStatusbarText(toRef(page), toRef(statusbarText.impl()), m_client.clientInfo);
+}
+
 } // namespace WebKit

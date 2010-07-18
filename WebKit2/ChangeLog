@@ -1,3 +1,22 @@
+2010-07-18  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Add dumping of statusbar text to WebKitTestRunner
+        https://bugs.webkit.org/show_bug.cgi?id=42516
+
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.h:
+        Add setStatusbarText callback to WKBundlePageUIClient.
+
+        * WebProcess/InjectedBundle/InjectedBundlePageUIClient.cpp:
+        (WebKit::InjectedBundlePageUIClient::setStatusbarText):
+        Call setStatusbarText.
+
+        * WebProcess/InjectedBundle/InjectedBundlePageUIClient.h:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::setStatusbarText):
+        Call the bundle page UI client.
+
 2010-07-17  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Maciej Stachowiak.
