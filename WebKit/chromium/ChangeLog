@@ -1,3 +1,13 @@
+2010-07-16  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        [V8] Web Inspector: get actual breakpoint location from v8 and pass it
+        to ScripDebugServer.
+        https://bugs.webkit.org/show_bug.cgi?id=42452
+
+        * src/js/DebuggerScript.js:
+
 2010-07-17  John Gregg  <johnnyg@google.com>
 
         Reviewed by Kent Tamura.
