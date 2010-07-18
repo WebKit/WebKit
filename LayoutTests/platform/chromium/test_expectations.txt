@@ -288,7 +288,7 @@ WONTFIX : platform/mac = FAIL PASS TIMEOUT
 WONTFIX : platform/mac-leopard = FAIL PASS
 WONTFIX : platform/mac-tiger = FAIL PASS
 WONTFIX : platform/qt = FAIL PASS
-WONTFIX SKIP : plugins/qt-qwidget-plugin.html = FAIL
+WONTFIX SKIP : platform/qt/plugins/qt-qwidget-plugin.html = FAIL
 WONTFIX SKIP : platform/mac/fast/text/international/Geeza-Pro-vertical-metrics-adjustment.html = PASS
 
 WONTFIX LINUX MAC : platform/win = FAIL PASS
@@ -302,9 +302,9 @@ WONTFIX SKIP : editing/pasteboard/paste-RTFD.html = FAIL
 WONTFIX SKIP : editing/pasteboard/paste-TIFF.html = FAIL
 WONTFIX SKIP : plugins/jsobjc-dom-wrappers.html = FAIL
 WONTFIX SKIP : plugins/jsobjc-simple.html = FAIL
-WONTFIX SKIP : plugins/root-object-premature-delete-crash.html = FAIL
+WONTFIX SKIP : platform/mac/plugins/root-object-premature-delete-crash.html = FAIL
 WONTFIX SKIP : plugins/throw-on-dealloc.html = FAIL
-WONTFIX SKIP : plugins/undefined-property-crash.html = FAIL
+WONTFIX SKIP : platform/mac/plugins/undefined-property-crash.html = FAIL
 
 // Uses __apple_runtime_object
 WONTFIX SKIP : plugins/call-as-function-test.html = FAIL
@@ -693,7 +693,7 @@ BUG6139 : fast/forms/select-writing-direction-natural.html = FAIL
 
 // We don't support NPN_Enumerate, but don't know of any plugin
 // which depends on that functionality.  So we ignore this for beta.
-BUG21901 : plugins/netscape-enumerate.html = FAIL
+BUG21901 : plugins/npruntime/enumerate.html = FAIL
 
 // Expectations for this test changed upstream. We should fix this test, but
 // it doesn't need to block the current release
@@ -1021,7 +1021,7 @@ BUG24207 : fast/events/attempt-scroll-with-no-scrollbars.html = FAIL
 
 // The test may require a proper version of Java 6 RC 10 plugin
 // installed to run.
-BUG10313 : plugins/bindings-test.html = FAIL
+BUG10313 : plugins/npruntime/bindings-test.html = FAIL
 
 // No glyph for U+FFFD (Replacement Character : black diamond with
 // question mark) in them
@@ -2574,7 +2574,7 @@ BUG35387 : plugins/reentrant-update-widget-positions.html = TIMEOUT
 BUG35387 : plugins/update-widgets-crash.html = TIMEOUT
 
 // New test added in WebKit r54783
-BUG35822 : plugins/netscape-browser-object-identity.html = TEXT
+BUG35822 : plugins/npruntime/netscape-browser-object-identity.html = TEXT
 
 // Started failing during roll from 54848 -> 54898
 // Started failing with 54865. No rebaselines upstream but they don't run pixel tests.
@@ -2614,7 +2614,7 @@ BUG37962 MAC : plugins/iframe-shims.html = TEXT PASS
 // Flaky test
 BUG_JIANLI MAC : fast/forms/select-style.html = IMAGE PASS
 
-BUG38375 : plugins/round-trip-npobject.html = TEXT
+BUG38375 : plugins/npruntime/round-trip-npobject.html = TEXT
 BUG38376 WIN : editing/deleting/5390681-2.html = IMAGE+TEXT
 
 // WebKit roll 56004 -> 56026
