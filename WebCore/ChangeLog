@@ -1,3 +1,29 @@
+2010-07-18  Dean Jackson  <dino@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        https://bugs.webkit.org/show_bug.cgi?id=41259
+        Interacting with a <select> element within a transformed and clipped
+        container scrolls the container
+
+        The Node::getRect and ContainerNode::getRect functions were not
+        transform-aware. This fixes both, and has a test to make sure
+        we're not breaking any existing scrollToView code. This means
+        that a <select> popup will appear in the correct place if it
+        is within a transformed and scrolled container.
+
+        Test: fast/transforms/scrollIntoView-transformed.html
+
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::getUpperLeftCorner):
+        (WebCore::ContainerNode::getLowerRightCorner):
+        - make sure we call localToAbsolute in the right order
+        (after we've done a local move) and pass in the flags to
+        indicate it should look for transforms.
+        * dom/Node.cpp:
+        (WebCore::Node::getRect):
+        - make sure localToAbsolute gets told to look for transforms.
+
 2010-07-18  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

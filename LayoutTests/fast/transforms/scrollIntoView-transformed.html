@@ -1,0 +1,236 @@
+<title>Select element scrolling when in transformed container</title>
+<script>
+
+const expectedValues = [
+  ["a", 224],
+  ["b", 0],
+  ["c", 233],
+  ["d", 233],
+  ["e", 221],
+  ["f", 221],
+  ["g", 238],
+  ["h", 238],
+  ["i", 255],
+  ["j", 255]
+];
+
+function test()
+{
+    if (window.layoutTestController) {
+      layoutTestController.dumpAsText();
+      layoutTestController.waitUntilDone();
+    }
+  
+    var triggers = document.querySelectorAll(".scrollTrigger");
+    for (var i=0; i < triggers.length; i++) {
+      triggers[i].scrollIntoView();
+    }
+    
+    var selectElements = document.querySelectorAll("select");
+    for (i=0; i < selectElements.length; i++) {
+      selectElements[i].focus();
+    }
+
+    var resultString = "";
+    for (i=0; i < expectedValues.length; i++) {
+      var id = expectedValues[i][0];
+      var expectedScrollTop = expectedValues[i][1];
+      var element = document.getElementById(id);
+      var currentScrollTop = element.scrollTop;
+      if (expectedScrollTop != currentScrollTop) {
+        resultString += "FAIL - Element " + id + " had scrollTop: " + currentScrollTop + " should be " + expectedScrollTop + "<br>";
+      } else {
+        resultString += "PASS - Element " + id + " had scrollTop: " + currentScrollTop + "<br>";
+      }
+    }
+
+    var results = document.getElementById("results");
+    results.innerHTML = resultString;
+    
+    if (window.layoutTestController) {
+      layoutTestController.notifyDone();
+    }
+
+}
+</script>
+<style type="text/css" media="screen">
+  body {
+     margin: 0;
+   }
+
+   .container {
+     display: inline-block;
+     position: relative;
+     left: 0;
+     top: 0;
+     width: 200px;
+     height: 350px;
+     overflow: hidden;
+     background-color: blue;
+   }
+   
+   .scrolled {
+     position: relative;
+     left: 0;
+     top: 0;
+     font-size: 14px;
+     background-color: red;
+     color: white;
+   }
+
+   .offset {
+     -webkit-transform: translateY(-300px);
+   }
+   
+</style>
+<body onload="test()">
+<p id="message">
+  Testing the scrolling behaviour of elements when in a normal and transformed container.
+  On the left is the normal container. On the right is a transformed container.
+  To test this manually, click on the two select elements. The menu popup should
+  appear directly over the element - the content should not move.
+  Transforms on the container element should not change the location of the popup.</p>
+
+<div class="container" id="a">
+  <div class="scrolled">
+    <p>
+    Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+    </p>
+    <p>
+    Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+    </p>
+    <select>
+      <option>one</option>
+      <option>two</option>
+      <option>three</option>
+      <option>four</option>
+    </select>
+  </div>
+</div>
+
+<div class="container" id="b">
+  <div class="scrolled offset">
+    <p>
+    Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+    </p>
+    <p>
+    Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+    </p>
+    <select>
+      <option>one</option>
+      <option>two</option>
+      <option>three</option>
+      <option>four</option>
+    </select>
+  </div>
+</div>
+
+<br>
+
+<div class="container" id="c">
+  <div class="scrolled">
+    <p>
+    Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+    </p>
+    <p>
+    Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+    </p>
+    <p><span class="scrollTrigger">this is a span scroll trigger</span></p>
+  </div>
+</div>
+
+<div class="container" id="d">
+  <div class="scrolled offset">
+    <p>
+    Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+    </p>
+    <p>
+    Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+    </p>
+    <p><span class="scrollTrigger">this is a span scroll trigger</span></p>
+  </div>
+</div>
+
+<br>
+
+<div class="container" id="e">
+  <div class="scrolled">
+    <p>
+    Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+    </p>
+    <p>
+    Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+    </p>
+    <img class="scrollTrigger" src="../forms/resources/apple.gif">
+  </div>
+</div>
+
+<div class="container" id="f">
+  <div class="scrolled offset">
+    <p>
+    Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+    </p>
+    <p>
+    Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+    </p>
+    <img class="scrollTrigger" src="../forms/resources/apple.gif">
+  </div>
+</div>
+
+<br>
+
+<div class="container" id="g">
+  <div class="scrolled">
+    <p>
+    Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+    </p>
+    <p>
+    Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+    </p>
+    <div class="scrollTrigger"><img src="../forms/resources/apple.gif"><div>this is a div scroll trigger</div></div>
+  </div>
+</div>
+
+<div class="container" id="h">
+  <div class="scrolled offset">
+    <p>
+    Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+    </p>
+    <p>
+    Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+    </p>
+    <div class="scrollTrigger"><img src="../forms/resources/apple.gif"><div>this is a div scroll trigger</div></div>
+  </div>
+</div>
+
+<br>
+
+<div class="container" id="i">
+  <div class="scrolled">
+    <p>
+    Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+    </p>
+    <p>
+    Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+    </p>
+    <div class="scrollTrigger" style="-webkit-transform: translateY(40px) rotate(-5deg);"><img src="../forms/resources/apple.gif"><div>this is a div scroll trigger with a transform</div></div>
+  </div>
+</div>
+
+<div class="container" id="j">
+  <div class="scrolled offset">
+    <p>
+    Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+    </p>
+    <p>
+    Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+    </p>
+    <div class="scrollTrigger" style="-webkit-transform: translateY(40px) rotate(-5deg);"><img src="../forms/resources/apple.gif"><div>this is a div scroll trigger with a transform</div></div>
+  </div>
+</div>
+
+<div id="results">
+</div>
+
+
+</body>

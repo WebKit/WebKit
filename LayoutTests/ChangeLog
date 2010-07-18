@@ -1,3 +1,19 @@
+2010-07-18  Dean Jackson  <dino@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        https://bugs.webkit.org/show_bug.cgi?id=41259
+        Interacting with a <select> element within a transformed and clipped
+        container scrolls the container
+
+        The Node::getRect and ContainerNode::getRect methods were not
+        transform-aware. This test makes sure that existing scrollToView
+        code doesn't break, but also checks that a <select> popup will appear
+        in the correct place when inside a transformed, scrolled container.
+
+        * fast/transforms/scrollIntoView-transformed.html: Added.
+        * fast/transforms/scrollIntoView-transformed-expected.txt: Added.
+
 2010-07-18  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed. Chromium: fixed one more expectation to
