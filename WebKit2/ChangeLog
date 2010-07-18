@@ -2,6 +2,38 @@
 
         Reviewed by Sam Weinig.
 
+        Add NPJSObjectMap class
+        https://bugs.webkit.org/show_bug.cgi?id=42524
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Add files.
+
+        * WebProcess/Plugins/NPJSObjectMap.cpp: Added.
+        * WebProcess/Plugins/NPJSObjectMap.h: Added.
+        Add NPJSObjectMap, a map which contains NPObjects that wrap JavaScript objects.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::PluginView):
+        Initialize the map.
+
+        (WebKit::PluginView::~PluginView):
+        Invalidate the map.
+
+        (WebKit::PluginView::frame):
+        Add frame getter.
+
+        (WebKit::PluginView::windowScriptNPObject):
+        Wrap the window object.
+
+        (WebKit::PluginView::pluginElementNPObject):
+        Wrap the plug-in element object.
+
+        * WebProcess/Plugins/PluginView.h:
+
+2010-07-18  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
         Implement more NPRuntime related NPN_ functions
         https://bugs.webkit.org/show_bug.cgi?id=42520
 

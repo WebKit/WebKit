@@ -26,6 +26,7 @@
 #ifndef PluginView_h
 #define PluginView_h
 
+#include "NPJSObjectMap.h"
 #include "Plugin.h"
 #include "PluginController.h"
 #include "RunLoop.h"
@@ -38,6 +39,7 @@
 // FIXME: Eventually this should move to WebCore.
 
 namespace WebCore {
+    class Frame;
     class HTMLPlugInElement;
 }
 
@@ -49,6 +51,8 @@ public:
     {
         return adoptRef(new PluginView(pluginElement, plugin, parameters));
     }
+
+    WebCore::Frame* frame();
 
 private:
     PluginView(WebCore::HTMLPlugInElement*, PassRefPtr<Plugin>, const Plugin::Parameters& parameters);
@@ -114,6 +118,9 @@ private:
 
     // Streams that the plug-in has requested to load. 
     HashMap<uint64_t, RefPtr<Stream> > m_streams;
+
+    // NPObjects wrapping JavaScript objects.
+    NPJSObjectMap m_npJSObjectMap;
 };
 
 } // namespace WebKit
