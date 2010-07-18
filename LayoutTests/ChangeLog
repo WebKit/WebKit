@@ -1,3 +1,11 @@
+2010-07-17  Andreas Kling  <andreas.kling@nokia.com>
+
+        [Qt] Reskip 2d.path.quadraticCurveTo.scaled.html
+
+        This test fails with the Qt version running on the bot.
+
+        * platform/qt/Skipped:
+
 2010-07-17  Anders Carlsson  <andersca@apple.com>
 
         Another attempt at fixing this test.
