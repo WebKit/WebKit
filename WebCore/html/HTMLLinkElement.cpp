@@ -190,7 +190,7 @@ void HTMLLinkElement::process()
     if (m_relAttribute.m_isIcon && m_url.isValid() && !m_url.isEmpty())
         document()->setIconURL(m_url.string(), type);
 
-    if (m_relAttribute.m_isDNSPrefetch && m_url.isValid() && !m_url.isEmpty())
+    if (m_relAttribute.m_isDNSPrefetch && document()->isDNSPrefetchEnabled() && m_url.isValid() && !m_url.isEmpty())
         ResourceHandle::prepareForURL(m_url);
 
 #if ENABLE(LINK_PREFETCH)
