@@ -1,3 +1,28 @@
+2010-07-18  David Kilzer  <ddkilzer@apple.com>
+
+        <http://webkit.org/b/42522> Add missing (id) return type to Obj-C methods
+
+        Reviewed by Dan Bernstein.
+
+        * Carbon/CarbonWindowAdapter.mm:
+        (-[NSWindow(HIWebFrameView) _initContent:styleMask:backing:defer:contentView:]):
+        (-[CarbonWindowAdapter _destroyRealWindow:]):
+        (-[CarbonWindowAdapter _clearModalWindowLevel]):
+        * Misc/WebIconDatabase.mm:
+        (-[WebIconDatabase init]):
+        * Misc/WebNSPasteboardExtras.mm:
+        (-[NSFilePromiseDragSource initWithSource:]):
+        * WebView/WebHTMLRepresentation.mm:
+        (-[WebHTMLRepresentation init]):
+        * WebView/WebPreferences.mm:
+        (-[WebPreferences init]):
+        * WebView/WebView.mm:
+        (-[WebView UIDelegate]):
+        (-[WebView resourceLoadDelegate]):
+        (-[WebView downloadDelegate]):
+        (-[WebView policyDelegate]):
+        (-[WebView frameLoadDelegate]):
+
 2010-07-16  Zhe Su  <suzhe@chromium.org>
 
         Reviewed by Darin Adler.

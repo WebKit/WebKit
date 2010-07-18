@@ -176,7 +176,7 @@ static WebCacheModel cacheModelForMainBundle(void)
 
 @implementation WebPreferences
 
-- init
+- (id)init
 {
     // Create fake identifier
     static int instanceCount = 1;

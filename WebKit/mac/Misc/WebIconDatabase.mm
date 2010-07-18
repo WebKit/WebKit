@@ -104,7 +104,7 @@ static WebIconDatabaseClient* defaultClient()
     return database;
 }
 
-- init
+- (id)init
 {
     [super init];
     WebCoreThreadViolationCheckRoundOne();

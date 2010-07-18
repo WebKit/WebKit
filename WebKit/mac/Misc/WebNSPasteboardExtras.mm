@@ -48,7 +48,7 @@
 #import <wtf/StdLibExtras.h>
 
 @interface NSFilePromiseDragSource : NSObject
-- initWithSource:(id)draggingSource;
+- (id)initWithSource:(id)draggingSource;
 - (void)setTypes:(NSArray *)types onPasteboard:(NSPasteboard *)pboard;
 @end
 

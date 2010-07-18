@@ -3086,7 +3086,7 @@ static bool needsWebViewInitThreadWorkaround()
     _private->UIDelegateForwarder = nil;
 }
 
-- UIDelegate
+- (id)UIDelegate
 {
     return _private->UIDelegate;
 }
@@ -3097,7 +3097,7 @@ static bool needsWebViewInitThreadWorkaround()
     [self _cacheResourceLoadDelegateImplementations];
 }
 
-- resourceLoadDelegate
+- (id)resourceLoadDelegate
 {
     return _private->resourceProgressDelegate;
 }
@@ -3108,7 +3108,7 @@ static bool needsWebViewInitThreadWorkaround()
 }
 
 
-- downloadDelegate
+- (id)downloadDelegate
 {
     return _private->downloadDelegate;
 }
@@ -3120,7 +3120,7 @@ static bool needsWebViewInitThreadWorkaround()
     _private->policyDelegateForwarder = nil;
 }
 
-- policyDelegate
+- (id)policyDelegate
 {
     return _private->policyDelegate;
 }
@@ -3146,7 +3146,7 @@ static bool needsWebViewInitThreadWorkaround()
 #endif
 }
 
-- frameLoadDelegate
+- (id)frameLoadDelegate
 {
     return _private->frameLoadDelegate;
 }

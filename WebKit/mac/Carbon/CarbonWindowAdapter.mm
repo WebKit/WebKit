@@ -81,7 +81,7 @@
 #import "WebTypesInternal.h"
 
 @interface NSWindow(HIWebFrameView)
-- _initContent:(const NSRect *)contentRect styleMask:(unsigned int)aStyle backing:(NSBackingStoreType)bufferingType defer:(BOOL)flag contentView:aView;
+- (id)_initContent:(const NSRect *)contentRect styleMask:(unsigned int)aStyle backing:(NSBackingStoreType)bufferingType defer:(BOOL)flag contentView:aView;
 - (void)_oldPlaceWindow:(NSRect)frameRect;
 - (void)_windowMovedToRect:(NSRect)actualFrame;
 - (void)_setWindowNumber:(NSInteger)nativeWindow;
@@ -517,7 +517,7 @@ static OSStatus NSCarbonWindowHandleEvent(EventHandlerCallRef inEventHandlerCall
 
 
 // Do the right thing for a Carbon window.
-- _destroyRealWindow:(BOOL)orderingOut {
+- (id)_destroyRealWindow:(BOOL)orderingOut {
 
     // Complain, because this should never be called.  We don't support one-shot NSCarbonWindows.
     NSLog(@"-[NSCarbonWindow _destroyRealWindow:] is not implemented.");
@@ -804,7 +804,7 @@ static OSStatus NSCarbonWindowHandleEvent(EventHandlerCallRef inEventHandlerCall
     return;
 }
 
-- _clearModalWindowLevel {
+- (id)_clearModalWindowLevel {
     return nil;
 }
 

@@ -113,7 +113,7 @@ static NSArray *concatenateArrays(NSArray *first, NSArray *second)
     return staticSupportedImageMIMETypes.get();
 }
 
-- init
+- (id)init
 {
     self = [super init];
     if (!self)
