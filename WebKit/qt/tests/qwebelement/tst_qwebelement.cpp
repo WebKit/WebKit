@@ -887,7 +887,7 @@ void tst_QWebElement::nullSelect()
 
 void tst_QWebElement::firstChildNextSibling()
 {
-    m_mainFrame->setHtml("<body><!--comment--><p>Test</p><!--another commend><table>");
+    m_mainFrame->setHtml("<body><!--comment--><p>Test</p><!--another comment--><table>");
 
     QWebElement body = m_mainFrame->findFirstElement("body");
     QVERIFY(!body.isNull());
@@ -902,7 +902,7 @@ void tst_QWebElement::firstChildNextSibling()
 
 void tst_QWebElement::lastChildPreviousSibling()
 {
-    m_mainFrame->setHtml("<body><!--comment--><p>Test</p><!--another commend><table>");
+    m_mainFrame->setHtml("<body><!--comment--><p>Test</p><!--another comment--><table>");
 
     QWebElement body = m_mainFrame->findFirstElement("body");
     QVERIFY(!body.isNull());

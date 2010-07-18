@@ -1,3 +1,16 @@
+2010-07-18  Andreas Kling  <andreas.kling@nokia.com>
+
+        Reviewed by Antonio Gomes.
+
+        [Qt] tst_QWebElement fails firstChildNextSibling and lastChildPreviousSibling
+        https://bugs.webkit.org/show_bug.cgi?id=42527
+
+        Correct the HTML used by these tests.
+
+        * tests/qwebelement/tst_qwebelement.cpp:
+        (tst_QWebElement::firstChildNextSibling):
+        (tst_QWebElement::lastChildPreviousSibling):
+
 2010-07-16  Zhe Su  <suzhe@chromium.org>
 
         Reviewed by Darin Adler.
