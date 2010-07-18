@@ -272,7 +272,7 @@ Frame* SubframeLoader::loadSubframe(HTMLFrameOwnerElement* ownerElement, const K
     // FIXME: In this case the Frame will have finished loading before 
     // it's being added to the child list. It would be a good idea to
     // create the child first, then invoke the loader separately.
-    if (frame->loader()->state() == FrameStateComplete)
+    if (frame->loader()->state() == FrameStateComplete && !frame->loader()->policyDocumentLoader())
         frame->loader()->checkCompleted();
 
     return frame.get();

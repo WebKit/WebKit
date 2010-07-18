@@ -2333,6 +2333,9 @@ bool FrameLoader::subframeIsLoading() const
         documentLoader = childLoader->provisionalDocumentLoader();
         if (documentLoader && documentLoader->isLoadingInAPISense())
             return true;
+        documentLoader = childLoader->policyDocumentLoader();
+        if (documentLoader)
+            return true;
     }
     return false;
 }
