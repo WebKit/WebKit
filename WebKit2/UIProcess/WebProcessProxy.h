@@ -28,6 +28,7 @@
 
 #include "Connection.h"
 #include "PlatformProcessIdentifier.h"
+#include "PluginInfoStore.h"
 #include "ProcessLauncher.h"
 #include "ProcessModel.h"
 #include "ResponsivenessTimer.h"

@@ -1,5 +1,38 @@
 2010-07-17  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Maciej Stachowiak.
+
+        WebKitTestRunner should load the test plug-in
+        https://bugs.webkit.org/show_bug.cgi?id=42509
+
+        * UIProcess/API/C/WKContext.cpp:
+        (_WKContextSetAdditionalPluginPath):
+        Add a private function for setting a single additional plug-in path. the WebKit1 SPI that does the
+        same thing takes an array of paths, but this is good enough for now.
+
+        * UIProcess/Plugins/PluginInfoStore.cpp:
+        (WebKit::PluginInfoStore::setAdditionalPluginPaths):
+        Set the additional plug-in paths vector and refresh the database.
+        
+        (WebKit::PluginInfoStore::loadPluginsIfNecessary):
+        First try to load plug-ins in the additional plug-in paths.
+        
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::setAdditionalPluginPath):
+        Call PluginInfoStore::setAdditionalPluginPaths.
+
+        * UIProcess/WebContext.h:
+        (WebKit::WebContext::pluginInfoStore):
+        Make the plug-in info store per context instead of having a single shared info store.
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::getPlugins):
+        (WebKit::WebProcessProxy::getPluginHostConnection):
+        * UIProcess/WebProcessProxy.h:
+        Get the plug-in info store from the context.
+
+2010-07-17  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Dan Bernstein.
 
         Stop all NPStreams before destroying a plug-in

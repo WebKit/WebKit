@@ -44,6 +44,8 @@ WK_EXPORT void WKContextGetStatistics(WKContextRef context, WKContextStatistics*
 
 WK_EXPORT WKContextRef WKContextGetSharedThreadContext();
 
+WK_EXPORT void _WKContextSetAdditionalPluginPath(WKContextRef context, WKStringRef pluginPath);
+
 #ifdef __cplusplus
 }
 #endif

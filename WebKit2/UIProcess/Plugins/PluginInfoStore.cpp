@@ -34,15 +34,15 @@ using namespace WebCore;
 
 namespace WebKit {
 
-PluginInfoStore& PluginInfoStore::shared()
-{
-    DEFINE_STATIC_LOCAL(PluginInfoStore, pluginInfoStore, ());
-    return pluginInfoStore;
-}
-
 PluginInfoStore::PluginInfoStore()
     : m_pluginListIsUpToDate(false)
 {
+}
+
+void PluginInfoStore::setAdditionalPluginPaths(const Vector<WebCore::String>& paths)
+{
+    m_additionalPluginPaths = paths;
+    refresh();
 }
 
 void PluginInfoStore::refresh()
@@ -56,6 +56,10 @@ void PluginInfoStore::loadPluginsIfNecessary()
         return;
 
     m_plugins.clear();
+
+    // First, load plug-ins from the additional plug-in paths specified.
+    for (size_t i = 0; i < m_additionalPluginPaths.size(); ++i)
+        loadPluginsInDirectory(m_additionalPluginPaths[i]);
 
     Vector<String> directories = pluginDirectories();
     for (size_t i = 0; i < directories.size(); ++i)

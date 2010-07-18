@@ -62,6 +62,7 @@ private:
     void runTest(const char* pathOrURL);
     
     void initializeInjectedBundlePath();
+    WKRetainPtr<WKStringRef> testPluginPath();
 
     // WKContextInjectedBundleClient
     static void _didRecieveMessageFromInjectedBundle(WKContextRef context, WKStringRef message, const void*);

@@ -36,8 +36,10 @@ namespace WebKit {
 
 class PluginInfoStore {
 public:
-    static PluginInfoStore& shared();
-    
+    PluginInfoStore();
+
+    void setAdditionalPluginPaths(const Vector<WebCore::String>& paths);
+
     void refresh();
     void getPlugins(Vector<WebCore::PluginInfo>& plugins);
     
@@ -58,7 +60,6 @@ public:
     Plugin findPlugin(WebCore::String& mimeType, const WebCore::KURL& url);
     
 private:
-    PluginInfoStore();
 
     Plugin findPluginForMIMEType(const WebCore::String& mimeType);
     Plugin findPluginForExtension(const WebCore::String& extension, WebCore::String& mimeType);
@@ -74,6 +75,7 @@ private:
     static bool shouldUsePlugin(const Plugin& plugin, const Vector<Plugin>& loadedPlugins);
     static WebCore::String mimeTypeFromExtension(const WebCore::String& extension);
     
+    Vector<WebCore::String> m_additionalPluginPaths;
     Vector<Plugin> m_plugins;
     bool m_pluginListIsUpToDate;
 };

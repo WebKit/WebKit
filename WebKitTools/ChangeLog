@@ -1,3 +1,23 @@
+2010-07-17  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::initialize):
+        Get the test plug-in path and set it on the context.
+
+        * WebKitTestRunner/TestController.h:
+        * WebKitTestRunner/mac/TestControllerMac.mm:
+        (WTR::TestController::initializeInjectedBundlePath):
+        Simplify this code by using NSBundle.
+
+        (WTR::TestController::testPluginPath):
+        Return the test plug-in path.
+
+        * WebKitTestRunner/win/TestControllerWin.cpp:
+        (WTR::TestController::testPluginPath):
+        Ditto.
+
 2010-07-16  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

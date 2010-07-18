@@ -26,6 +26,7 @@
 #ifndef WebContext_h
 #define WebContext_h
 
+#include "PluginInfoStore.h"
 #include "ProcessModel.h"
 #include "WebContextInjectedBundleClient.h"
 #include <WebCore/PlatformString.h>
@@ -80,6 +81,9 @@ public:
     void postMessageToInjectedBundle(WebCore::StringImpl*);
 
     void getStatistics(WKContextStatistics* statistics);
+    void setAdditionalPluginPath(const WebCore::String&);
+
+    PluginInfoStore* pluginInfoStore() { return &m_pluginInfoStore; }
 
 private:
     WebContext(ProcessModel, const WebCore::String& injectedBundlePath);
@@ -96,6 +100,8 @@ private:
 
     WebCore::String m_injectedBundlePath;
     WebContextInjectedBundleClient m_injectedBundleClient;
+
+    PluginInfoStore m_pluginInfoStore;
 };
 
 } // namespace WebKit

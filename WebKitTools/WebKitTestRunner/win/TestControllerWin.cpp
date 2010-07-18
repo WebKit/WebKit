@@ -42,4 +42,11 @@ void TestController::initializeInjectedBundlePath()
     m_injectedBundlePath.adopt(WKStringCreateWithCFString(bundlePath));
 }
 
+WKRetainPtr<WKStringRef> TestController::testPluginPath()
+{
+    CFStringRef exeContainerPath = CFURLCopyFileSystemPath(CFURLCreateCopyDeletingLastPathComponent(0, CFBundleCopyExecutableURL(CFBundleGetMainBundle())), kCFURLWindowsPathStyle);
+    CFMutableStringRef bundlePath = CFStringCreateMutableCopy(0, 0, exeContainerPath);
+    return WKRetainPtr<WKStringRef>(AdoptWK, WKStringCreateWithCFString(bundlePath));
+}
+
 } // namespace WTR

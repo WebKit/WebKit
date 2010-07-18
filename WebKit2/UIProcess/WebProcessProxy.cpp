@@ -170,15 +170,15 @@ void WebProcessProxy::forwardMessageToWebContext(const String& message)
 void WebProcessProxy::getPlugins(bool refresh, Vector<PluginInfo>& plugins)
 {
     if (refresh)
-        PluginInfoStore::shared().refresh();
-    PluginInfoStore::shared().getPlugins(plugins);
+        m_context->pluginInfoStore()->refresh();
+    m_context->pluginInfoStore()->getPlugins(plugins);
 }
 
 void WebProcessProxy::getPluginHostConnection(const String& mimeType, const KURL& url, WebCore::String& pluginPath)
 {
     String newMimeType = mimeType.lower();
 
-    PluginInfoStore::Plugin plugin = PluginInfoStore::shared().findPlugin(newMimeType, url);
+    PluginInfoStore::Plugin plugin = m_context->pluginInfoStore()->findPlugin(newMimeType, url);
     if (!plugin.path)
         return;
 
