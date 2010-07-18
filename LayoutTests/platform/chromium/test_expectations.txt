@@ -2574,7 +2574,7 @@ BUG35387 : plugins/reentrant-update-widget-positions.html = TIMEOUT
 BUG35387 : plugins/update-widgets-crash.html = TIMEOUT
 
 // New test added in WebKit r54783
-BUG35822 : plugins/npruntime/netscape-browser-object-identity.html = TEXT
+BUG35822 : plugins/npruntime/browser-object-identity.html = TEXT
 
 // Started failing during roll from 54848 -> 54898
 // Started failing with 54865. No rebaselines upstream but they don't run pixel tests.

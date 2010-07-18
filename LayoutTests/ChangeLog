@@ -1,5 +1,12 @@
 2010-07-18  Pavel Feldman  <pfeldman@chromium.org>
 
+        Not reviewed. Chromium: fixed one more expectation to
+        reflect changes in r63616.
+
+        * platform/chromium/test_expectations.txt:
+
+2010-07-18  Pavel Feldman  <pfeldman@chromium.org>
+
         Not reviewed. Chromium: fixed test expectations (reflected changes
         in r63616).
 
