@@ -26,6 +26,8 @@
 #ifndef PluginController_h
 #define PluginController_h
 
+struct NPObject;
+
 namespace WebCore {
     class IntRect;
     class KURL;
@@ -53,6 +55,12 @@ public:
 
     /// Cancels the load of a stream that was requested by loadURL.
     virtual void cancelStreamLoad(uint64_t streamID) = 0;
+
+    // Get the NPObject that corresponds to the window JavaScript object. Returns a retained object.
+    virtual NPObject* windowScriptNPObject() = 0;
+
+    // Get the NPObject that corresponds to the plug-in's element. Returns a retained object.
+    virtual NPObject* pluginElementNPObject() = 0;
 
 protected:
     virtual ~PluginController() { }

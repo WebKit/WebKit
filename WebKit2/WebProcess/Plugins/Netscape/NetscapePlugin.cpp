@@ -143,6 +143,16 @@ NPError NetscapePlugin::destroyStream(NPStream* stream, NPReason reason)
     return pluginStream->destroy(reason);
 }
 
+NPObject* NetscapePlugin::windowScriptNPObject()
+{
+    return m_pluginController->windowScriptNPObject();
+}
+
+NPObject* NetscapePlugin::pluginElementNPObject()
+{
+    return m_pluginController->pluginElementNPObject();
+}
+
 void NetscapePlugin::cancelStreamLoad(NetscapePluginStream* pluginStream)
 {
     // Ask the plug-in controller to cancel this stream load.

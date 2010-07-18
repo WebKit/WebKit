@@ -55,6 +55,10 @@ public:
     void loadURL(const WebCore::String& urlString, const WebCore::String& target, bool sendNotification, void* notificationData);
     NPError destroyStream(NPStream*, NPReason);
 
+    // These return retained objects.
+    NPObject* windowScriptNPObject();
+    NPObject* pluginElementNPObject();
+
     void cancelStreamLoad(NetscapePluginStream*);
     void removePluginStream(NetscapePluginStream*);
 

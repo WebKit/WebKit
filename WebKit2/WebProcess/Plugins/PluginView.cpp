@@ -531,6 +531,18 @@ void PluginView::cancelStreamLoad(uint64_t streamID)
     removeStream(stream);
 }
 
+NPObject* PluginView::windowScriptNPObject()
+{
+    // FIXME: Implement.
+    return 0;
+}
+
+NPObject* PluginView::pluginElementNPObject()
+{
+    // FIXME: Implement.
+    return 0;
+}
+
 void PluginView::didFinishLoad(WebFrame* webFrame)
 {
     RefPtr<URLRequest> request = m_pendingFrameLoads.take(webFrame);

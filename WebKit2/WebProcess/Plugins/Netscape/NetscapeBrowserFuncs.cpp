@@ -148,9 +148,23 @@ static NPError NPN_PostURLNotify(NPP instance, const char* url, const char* targ
     return NPERR_GENERIC_ERROR;
 }
 
-static NPError NPN_GetValue(NPP instance, NPNVariable variable, void *value)
+static NPError NPN_GetValue(NPP npp, NPNVariable variable, void *value)
 {
     switch (variable) {
+        case NPNVWindowNPObject: {
+            RefPtr<NetscapePlugin> plugin = NetscapePlugin::fromNPP(npp);
+
+            NPObject* windowNPObject = plugin->windowScriptNPObject();
+            *(NPObject**)value = windowNPObject;
+            break;
+        }
+        case NPNVPluginElementNPObject: {
+            RefPtr<NetscapePlugin> plugin = NetscapePlugin::fromNPP(npp);
+
+            NPObject* pluginElementNPObject = plugin->pluginElementNPObject();
+            *(NPObject**)value = pluginElementNPObject;
+            break;
+        }
 #if PLATFORM(MAC)
         case NPNVsupportsCoreGraphicsBool:
             // Always claim to support the Core Graphics drawing model.

@@ -2,6 +2,30 @@
 
         Reviewed by Dan Bernstein.
 
+        Begin work on NPRuntime support
+        https://bugs.webkit.org/show_bug.cgi?id=42519
+
+        * WebProcess/Plugins/Netscape/NetscapeBrowserFuncs.cpp:
+        (WebKit::NPN_GetValue):
+        Handle NPNVWindowNPObject and NPNVPluginElementNPObject.
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::windowScriptNPObject):
+        (WebKit::NetscapePlugin::pluginElementNPObject):
+        Call the plug-in controller.
+
+        * WebProcess/Plugins/PluginController.h:
+        Add new windowScriptNPObject and pluginElementNPObject functions.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::windowScriptNPObject):
+        (WebKit::PluginView::pluginElementNPObject):
+        Add stubbed out functions.
+
+2010-07-18  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dan Bernstein.
+
         Implement some NPRuntime related NPN_ functions
         https://bugs.webkit.org/show_bug.cgi?id=42518
 
