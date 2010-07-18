@@ -27,6 +27,7 @@
 
 #include "NetscapePlugin.h"
 #include "NotImplemented.h"
+#include <WebCore/IdentifierRep.h>
 
 using namespace WebCore;
 
@@ -216,43 +217,64 @@ static void NPN_ForceRedraw(NPP instance)
 
 static NPIdentifier NPN_GetStringIdentifier(const NPUTF8 *name)
 {
-    notImplemented();
-    return 0;
+    return static_cast<NPIdentifier>(IdentifierRep::get(name));
 }
     
 static void NPN_GetStringIdentifiers(const NPUTF8 **names, int32_t nameCount, NPIdentifier *identifiers)
 {
-    notImplemented();
+    ASSERT(names);
+    ASSERT(identifiers);
+
+    if (!names || !identifiers)
+        return;
+
+    for (int32_t i = 0; i < nameCount; ++i)
+        identifiers[i] = NPN_GetStringIdentifier(names[i]);
 }
 
 static NPIdentifier NPN_GetIntIdentifier(int32_t intid)
 {
-    notImplemented();
-    return 0;
+    return static_cast<NPIdentifier>(IdentifierRep::get(intid));
 }
 
 static bool NPN_IdentifierIsString(NPIdentifier identifier)
 {
-    notImplemented();
-    return false;
+    return static_cast<IdentifierRep*>(identifier)->isString();
 }
 
 static NPUTF8 *NPN_UTF8FromIdentifier(NPIdentifier identifier)
 {
-    notImplemented();
-    return 0;
+    const char* string = static_cast<IdentifierRep*>(identifier)->string();
+    if (!string)
+        return 0;
+
+    uint32_t stringLength = strlen(string);
+    char* utf8String = static_cast<char*>(NPN_MemAlloc(stringLength + 1));
+    memcpy(utf8String, string, stringLength);
+    utf8String[stringLength] = '\0';
+    
+    return utf8String;
 }
 
 static int32_t NPN_IntFromIdentifier(NPIdentifier identifier)
 {
-    notImplemented();
-    return 0;
+    return static_cast<IdentifierRep*>(identifier)->number();
 }
 
-static NPObject *NPN_CreateObject(NPP npp, NPClass *aClass)
+static NPObject* NPN_CreateObject(NPP npp, NPClass *npClass)
 {
-    notImplemented();
-    return 0;
+    ASSERT(npClass);
+
+    NPObject* object;
+    if (npClass->allocate)
+        object = npClass->allocate(npp, npClass);
+    else
+        object = static_cast<NPObject*>(NPN_MemAlloc(sizeof(NPObject)));
+
+    object->_class = npClass;
+    object->referenceCount = 1;
+
+    return object;
 }
 
 static NPObject *NPN_RetainObject(NPObject *npobj)

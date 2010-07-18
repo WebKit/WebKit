@@ -2,6 +2,22 @@
 
         Reviewed by Dan Bernstein.
 
+        Implement some NPRuntime related NPN_ functions
+        https://bugs.webkit.org/show_bug.cgi?id=42518
+
+        * WebProcess/Plugins/Netscape/NetscapeBrowserFuncs.cpp:
+        (WebKit::NPN_GetStringIdentifier):
+        (WebKit::NPN_GetStringIdentifiers):
+        (WebKit::NPN_GetIntIdentifier):
+        (WebKit::NPN_IdentifierIsString):
+        (WebKit::NPN_UTF8FromIdentifier):
+        (WebKit::NPN_IntFromIdentifier):
+        (WebKit::NPN_CreateObject):
+
+2010-07-18  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dan Bernstein.
+
         Add dumping of statusbar text to WebKitTestRunner
         https://bugs.webkit.org/show_bug.cgi?id=42516
 

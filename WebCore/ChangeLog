@@ -1,3 +1,13 @@
+2010-07-18  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Implement some NPRuntime related NPN_ functions
+        https://bugs.webkit.org/show_bug.cgi?id=42518
+
+        * WebCore.exp.in:
+        Export IdentifierRep functions.
+
 2010-07-17  TJ Lee  <tjlee0909@gmail.com>
 
         Reviewed by Timothy Hatcher.
