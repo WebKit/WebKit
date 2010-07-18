@@ -81,5 +81,32 @@ void releaseNPObject(NPObject* npObject)
     if (!npObject->referenceCount)
         deallocateNPObject(npObject);
 }
+
+void releaseNPVariantValue(NPVariant* variant)
+{
+    ASSERT(variant);
     
+    switch (variant->type) {
+    case NPVariantType_Void:
+    case NPVariantType_Null:
+    case NPVariantType_Bool:
+    case NPVariantType_Int32:
+    case NPVariantType_Double:
+        // Nothing to do.
+        break;
+        
+    case NPVariantType_String:
+        free(const_cast<NPUTF8*>(variant->value.stringValue.UTF8Characters));
+        variant->value.stringValue.UTF8Characters = 0;
+        variant->value.stringValue.UTF8Length = 0;
+        break;
+    case NPVariantType_Object:
+        releaseNPObject(variant->value.objectValue);
+        variant->value.objectValue = 0;
+        break;
+    }
+
+    variant->type = NPVariantType_Void;
+}
+
 } // namespace WebKit

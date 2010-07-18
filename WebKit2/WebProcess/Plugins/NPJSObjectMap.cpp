@@ -26,12 +26,16 @@
 #include "NPJSObjectMap.h"
 
 #include "NPRuntimeUtilities.h"
+#include "PluginView.h"
+#include <WebCore/Frame.h>
+#include <WebCore/IdentifierRep.h>
 #include <JavaScriptCore/JSObject.h>
 #include <JavaScriptCore/Protect.h>
 #include <WebKit/npruntime.h>
 #include <wtf/Noncopyable.h>
 
 using namespace JSC;
+using namespace WebCore;
 
 namespace WebKit {
 
@@ -62,10 +66,15 @@ private:
 
     void initialize(NPJSObjectMap*, JSObject* jsObject);
 
+    bool hasProperty(NPIdentifier);
+    bool getProperty(NPIdentifier, NPVariant* result);
+
     static NPClass* npClass();
     static NPObject* NP_Allocate(NPP, NPClass*);
     static void NP_Deallocate(NPObject*);
-
+    static bool NP_HasProperty(NPObject* npobj, NPIdentifier name);
+    static bool NP_GetProperty(NPObject* npobj, NPIdentifier name, NPVariant* result);
+    
     NPJSObjectMap* m_objectMap;
     ProtectedPtr<JSObject> m_jsObject;
 };
@@ -92,6 +101,42 @@ void NPJSObject::initialize(NPJSObjectMap* objectMap, JSObject* jsObject)
     m_jsObject = jsObject;
 }
 
+static Identifier identifierFromIdentifierRep(ExecState* exec, IdentifierRep* identifierRep)
+{
+    ASSERT(identifierRep->isString());
+
+    const char* string = identifierRep->string();
+    int length = strlen(string);
+
+    return Identifier(exec, String::fromUTF8WithLatin1Fallback(string, length).impl());
+}
+
+bool NPJSObject::hasProperty(NPIdentifier identifier)
+{
+    IdentifierRep* identifierRep = static_cast<IdentifierRep*>(identifier);
+    
+    Frame* frame = m_objectMap->m_pluginView->frame();
+    if (!frame)
+        return false;
+
+    bool result;
+    ExecState* exec = frame->script()->globalObject(pluginWorld())->globalExec();
+    if (identifierRep->isString())
+        result = m_jsObject->hasProperty(exec, identifierFromIdentifierRep(exec, identifierRep));
+    else
+        result = m_jsObject->hasProperty(exec, identifierRep->number());
+
+    exec->clearException();
+
+    return result;
+}
+
+bool NPJSObject::getProperty(NPIdentifier identifier, NPVariant* result)
+{
+    // FIXME: Implement.
+    return false;
+}
+
 NPClass* NPJSObject::npClass()
 {
     static NPClass npClass = {
@@ -102,8 +147,8 @@ NPClass* NPJSObject::npClass()
         0,
         0,
         0,
-        0,
-        0,
+        NP_HasProperty,
+        NP_GetProperty,
         0,
         0,
         0,
@@ -124,6 +169,16 @@ void NPJSObject::NP_Deallocate(NPObject* npObject)
 {
     NPJSObject* npJSObject = toNPJSObject(npObject);
     delete npJSObject;
+}
+
+bool NPJSObject::NP_HasProperty(NPObject* npObject, NPIdentifier propertyName)
+{
+    return toNPJSObject(npObject)->hasProperty(propertyName);
+}
+    
+bool NPJSObject::NP_GetProperty(NPObject* npObject, NPIdentifier propertyName, NPVariant* result)
+{
+    return toNPJSObject(npObject)->getProperty(propertyName, result);
 }
 
 NPJSObjectMap::NPJSObjectMap(PluginView* pluginView)

@@ -39,6 +39,8 @@ void deallocateNPObject(NPObject*);
 void retainNPObject(NPObject*);
 void releaseNPObject(NPObject*);
 
+void releaseNPVariantValue(NPVariant*);
+
 }
 
 #endif // NPRuntimeUtilities_h
