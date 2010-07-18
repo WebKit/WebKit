@@ -5287,7 +5287,6 @@ canvas/philip/tests/2d.path.stroke.scale2.html
 canvas/philip/tests/2d.pattern.image.broken.html
 canvas/philip/tests/2d.pattern.image.incomplete.html
 canvas/philip/tests/2d.pattern.image.null.html
-canvas/philip/tests/2d.pattern.image.string.html
 canvas/philip/tests/2d.pattern.image.undefined.html
 canvas/philip/tests/2d.shadow.canvas.alpha.html
 canvas/philip/tests/2d.shadow.canvas.basic.html

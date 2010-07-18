@@ -1,5 +1,4 @@
-< [index] >
 2d.pattern.image.string
-References: 2d.pattern.wrongtype
+Spec references: 2d.pattern.wrongtype
 Actual output:
 Passed
