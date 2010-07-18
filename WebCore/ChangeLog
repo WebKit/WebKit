@@ -1,5 +1,14 @@
 2010-07-18  Dean Jackson  <dino@apple.com>
 
+        Unreviewed.
+
+        Remove the unwanted extra line that Xcode
+        added in my last commit.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
+2010-07-18  Dean Jackson  <dino@apple.com>
+
         Reviewed by Simon Fraser.
 
         https://bugs.webkit.org/show_bug.cgi?id=41259
