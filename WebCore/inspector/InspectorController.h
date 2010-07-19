@@ -151,7 +151,7 @@ public:
     void connectFrontend(const ScriptObject& webInspector);
     void disconnectFrontend();
 
-    void addMessageToConsole(MessageSource, MessageType, MessageLevel, ScriptCallStack*);
+    void addMessageToConsole(MessageSource, MessageType, MessageLevel, ScriptCallStack*, const String& message = String());
     void addMessageToConsole(MessageSource, MessageType, MessageLevel, const String& message, unsigned lineNumber, const String& sourceID);
     void clearConsoleMessages();
     const Vector<OwnPtr<ConsoleMessage> >& consoleMessages() const { return m_consoleMessages; }

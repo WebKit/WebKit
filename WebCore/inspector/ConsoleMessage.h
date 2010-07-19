@@ -48,7 +48,7 @@ class ScriptString;
 class ConsoleMessage : public Noncopyable {
 public:
     ConsoleMessage(MessageSource, MessageType, MessageLevel, const String& m, unsigned li, const String& u, unsigned g);
-    ConsoleMessage(MessageSource, MessageType, MessageLevel, ScriptCallStack*, unsigned g, bool storeTrace = false);
+    ConsoleMessage(MessageSource, MessageType, MessageLevel, const String& m, ScriptCallStack*, unsigned g, bool storeTrace = false);
 
 #if ENABLE(INSPECTOR)
     void addToFrontend(InspectorFrontend*, InjectedScriptHost*);

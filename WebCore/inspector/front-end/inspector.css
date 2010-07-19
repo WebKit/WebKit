@@ -711,14 +711,9 @@ body.platform-linux .monospace, body.platform-linux .source-code {
     content: url(Images/treeDownTriangleBlack.png);
 }
 
-.console-message > ol.stack-trace {
-    margin: 5px 0 5px -30px;
-    list-style: none;
-}
-
-.console-message.repeated-message > ol.stack-trace.trace-message {
-    margin-top: -9px;
-    margin-left: -12px;
+.console-message.repeated-message > ol.stack-trace {
+    margin-top: -14px;
+    margin-left: 18px;
 }
 
 .console-group-messages .section .header .title {
@@ -1174,6 +1169,7 @@ body.platform-linux .monospace, body.platform-linux .source-code {
     margin-left: -12px;
 }
 
+.stack-trace li.parent::before,
 .outline-disclosure li.parent::before {
     content: url(Images/treeRightTriangleBlack.png);
     float: left;
@@ -1183,26 +1179,32 @@ body.platform-linux .monospace, body.platform-linux .source-code {
     padding-right: 2px;
 }
 
+.stack-trace li.parent::before,
 .outline-disclosure li.parent::before {
     content: url(Images/treeRightTriangleBlack.png);
 }
 
+.stack-trace ol:focus li.parent.selected::before,
 .outline-disclosure ol:focus li.parent.selected::before {
     content: url(Images/treeRightTriangleWhite.png);
 }
 
+.stack-trace li.parent.expanded::before,
 .outline-disclosure li.parent.expanded::before {
     content: url(Images/treeDownTriangleBlack.png);
 }
 
+.stack-trace ol:focus li.parent.expanded.selected::before,
 .outline-disclosure ol:focus li.parent.expanded.selected::before {
     content: url(Images/treeDownTriangleWhite.png);
 }
 
+.stack-trace ol.children,
 .outline-disclosure ol.children {
     display: none;
 }
 
+.stack-trace ol.children.expanded,
 .outline-disclosure ol.children.expanded {
     display: block;
 }
@@ -1382,14 +1384,18 @@ body.inactive .placard.selected {
     margin-left: 1px;
 }
 
-.section .properties ol, .event-properties ol {
+.section .properties ol, .event-properties ol, .stack-trace ol, ol.stack-trace {
     display: none;
     margin: 0;
     -webkit-padding-start: 12px;
     list-style: none;
 }
 
-.section .properties ol.expanded, .event-properties ol.expanded {
+ol.stack-trace {
+    -webkit-padding-start: 0px;
+}
+
+.section .properties ol.expanded, .event-properties ol.expanded, .stack-trace ol, ol.stack-trace {
     display: block;
 }
 

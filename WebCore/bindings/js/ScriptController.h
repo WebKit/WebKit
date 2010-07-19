@@ -151,6 +151,10 @@ public:
 
     PassRefPtr<JSC::Bindings::RootObject> createRootObject(void* nativeHandle);
 
+#if ENABLE(INSPECTOR)
+    static void setCaptureCallStackForUncaughtExceptions(bool);
+#endif
+
 #if PLATFORM(MAC)
 #if ENABLE(JAVA_BRIDGE)
     static void initJavaJSBindings();

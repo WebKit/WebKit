@@ -144,7 +144,7 @@ static void printMessageSourceAndLevelPrefix(MessageSource source, MessageLevel 
     printf("%s %s:", sourceString, levelString);
 }
 
-void Console::addMessage(MessageSource source, MessageType type, MessageLevel level, const String& message, unsigned lineNumber, const String& sourceURL)
+void Console::addMessage(MessageSource source, MessageType type, MessageLevel level, const String& message, unsigned lineNumber, const String& sourceURL, ScriptCallStack* callStack)
 {
     Page* page = this->page();
     if (!page)
@@ -154,7 +154,10 @@ void Console::addMessage(MessageSource source, MessageType type, MessageLevel le
         page->chrome()->client()->addMessageToConsole(source, type, level, message, lineNumber, sourceURL);
 
 #if ENABLE(INSPECTOR)
-    page->inspectorController()->addMessageToConsole(source, type, level, message, lineNumber, sourceURL);
+    if (callStack)
+        page->inspectorController()->addMessageToConsole(source, type, level, callStack, message);
+    else
+        page->inspectorController()->addMessageToConsole(source, type, level, message, lineNumber, sourceURL);
 #endif
 
     if (!Console::shouldPrintExceptions())

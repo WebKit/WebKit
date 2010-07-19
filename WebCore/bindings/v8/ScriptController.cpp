@@ -451,6 +451,13 @@ void ScriptController::clearWindowShell(bool)
     m_proxy->clearForNavigation();
 }
 
+#if ENABLE(INSPECTOR)
+void ScriptController::setCaptureCallStackForUncaughtExceptions(bool)
+{
+    v8::V8::SetCaptureStackTraceForUncaughtExceptions(true, 200);
+}
+#endif
+
 void ScriptController::attachDebugger(void*)
 {
     notImplemented();

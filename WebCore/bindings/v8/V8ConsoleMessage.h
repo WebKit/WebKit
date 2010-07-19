@@ -36,8 +36,9 @@
 #include <wtf/Vector.h>
 
 namespace WebCore {
-    
+
     class Page;
+    class ScriptCallStack;
 
     // V8ConsoleMessage encapsulates everything needed to
     // log messages originating from JavaScript to the console.
@@ -79,6 +80,8 @@ namespace WebCore {
         const String m_string;
         const String m_sourceID;
         const unsigned m_lineNumber;
+
+        void dispatchNow(Page*, ScriptCallStack*);
 
         // All delayed messages are stored in this vector. If the vector
         // is 0, there are no delayed messages.
