@@ -1,3 +1,21 @@
+2010-07-19  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        <rdar://problem/7232109> Unpainted white area appears at the edge of the page when body has bg color
+        https://bugs.webkit.org/show_bug.cgi?id=34913
+
+        Tests: fast/repaint/view-background-from-body-1.html
+               fast/repaint/view-background-from-body-2.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::styleWillChange): If this is the body renderer and its current style is
+        null, repaint the view, similarly to how the view is repainted for any repaint-or-higher
+        style changes.
+        * rendering/RenderObjectChildList.cpp:
+        (WebCore::RenderObjectChildList::removeChildNode): If the removed child is the body renderer,
+        repaint the view, in case the body’s background was propagated to the view.
+
 2010-07-19  Adam Roben  <aroben@apple.com>
 
         Fix an assertion when a plugin returns -1 from NPP_Write

@@ -1,3 +1,19 @@
+2010-07-19  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        <rdar://problem/7232109> Unpainted white area appears at the edge of the page when body has bg color
+        https://bugs.webkit.org/show_bug.cgi?id=34913
+
+        * fast/repaint/view-background-from-body-1.html: Added.
+        * fast/repaint/view-background-from-body-2.html: Added.
+        * platform/mac/fast/repaint/view-background-from-body-1-expected.checksum: Added.
+        * platform/mac/fast/repaint/view-background-from-body-1-expected.png: Added.
+        * platform/mac/fast/repaint/view-background-from-body-1-expected.txt: Added.
+        * platform/mac/fast/repaint/view-background-from-body-2-expected.checksum: Added.
+        * platform/mac/fast/repaint/view-background-from-body-2-expected.png: Added.
+        * platform/mac/fast/repaint/view-background-from-body-2-expected.txt: Added.
+
 2010-07-19  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adam Roben.
