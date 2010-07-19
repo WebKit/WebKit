@@ -1,3 +1,20 @@
+2010-07-19  Hans Wennborg  <hans@chromium.org>
+
+        Reviewed by Steve Block.
+
+        Explicitly declare DeviceOrientationEvent destructor and define it in the .cpp file
+        https://bugs.webkit.org/show_bug.cgi?id=42466
+
+        (Original problem at https://bugs.webkit.org/show_bug.cgi?id=42447)
+
+        No new functionality so no new tests.
+
+        * dom/DeviceOrientationEvent.cpp:
+        (WebCore::DeviceOrientationEvent::~DeviceOrientationEvent):
+        Move here to avoid needing to have the full declaration of
+        DeviceOrientation in DeviceOrientationEvent.h.
+        * dom/DeviceOrientationEvent.h:
+
 2010-07-18  Anders Carlsson  <andersca@apple.com>
 
         Fix Build.

@@ -26,13 +26,15 @@
 #ifndef DeviceOrientationEvent_h
 #define DeviceOrientationEvent_h
 
-#include "DeviceOrientation.h"
 #include "Event.h"
 
 namespace WebCore {
 
+class DeviceOrientation;
+
 class DeviceOrientationEvent : public Event {
 public:
+    ~DeviceOrientationEvent();
     static PassRefPtr<DeviceOrientationEvent> create()
     {
         return adoptRef(new DeviceOrientationEvent);
