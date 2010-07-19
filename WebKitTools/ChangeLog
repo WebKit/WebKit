@@ -1,3 +1,47 @@
+2010-07-19  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r63671.
+        http://trac.webkit.org/changeset/63671
+        https://bugs.webkit.org/show_bug.cgi?id=42575
+
+        broke windows (Requested by weinig on #webkit).
+
+        * WebKitTestRunner/Configurations/Base.xcconfig:
+        * WebKitTestRunner/Configurations/DebugRelease.xcconfig:
+        * WebKitTestRunner/DerivedSources.make: Removed.
+        * WebKitTestRunner/ForwardingHeaders/wtf/GetPtr.h: Removed.
+        * WebKitTestRunner/InjectedBundle/Bindings/CodeGeneratorTestRunner.pm: Removed.
+        * WebKitTestRunner/InjectedBundle/Bindings/JSWrappable.h: Removed.
+        * WebKitTestRunner/InjectedBundle/Bindings/JSWrapper.cpp: Removed.
+        * WebKitTestRunner/InjectedBundle/Bindings/JSWrapper.h: Removed.
+        * WebKitTestRunner/InjectedBundle/Bindings/LayoutTestController.idl: Removed.
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::dump):
+        (WTR::InjectedBundlePage::setStatusbarText):
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.cpp:
+        (WTR::LayoutTestController::setWaitToDump):
+        (WTR::displayCallback):
+        (WTR::dumpAsTextCallback):
+        (WTR::dumpStatusCallbacksCallback):
+        (WTR::waitUntilDoneCallback):
+        (WTR::notifyDoneCallback):
+        (WTR::numberOfActiveAnimationsCallback):
+        (WTR::pauseAnimationAtTimeOnElementWithIdCallback):
+        (WTR::repaintSweepHorizontallyCallback):
+        (WTR::testRepaintCallback):
+        (WTR::layoutTestControllerObjectFinalize):
+        (WTR::LayoutTestController::makeWindowObject):
+        (WTR::LayoutTestController::getJSClass):
+        (WTR::LayoutTestController::staticFunctions):
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.h:
+        (WTR::LayoutTestController::dumpAsText):
+        (WTR::LayoutTestController::setDumpAsText):
+        (WTR::LayoutTestController::dumpStatusCallbacks):
+        (WTR::LayoutTestController::setDumpStatusCallbacks):
+        (WTR::LayoutTestController::setTestRepaint):
+        (WTR::LayoutTestController::setTestRepaintSweepHorizontally):
+        * WebKitTestRunner/WebKitTestRunner.xcodeproj/project.pbxproj:
+
 2010-07-19  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Adam Roben.
