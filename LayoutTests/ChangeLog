@@ -1,3 +1,56 @@
+2010-07-19  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed.
+
+        [Qt] Add platform specific expected results for new passing SVG tests.
+        Compared to Mac png files and Mac expected files.
+
+        * platform/qt/svg/custom/clone-element-with-animated-svg-properties-expected.checksum: Added.
+        * platform/qt/svg/custom/clone-element-with-animated-svg-properties-expected.png: Added.
+        * platform/qt/svg/custom/clone-element-with-animated-svg-properties-expected.txt: Added.
+        * platform/qt/svg/custom/convolution-crash-expected.checksum: Added.
+        * platform/qt/svg/custom/convolution-crash-expected.png: Added.
+        * platform/qt/svg/custom/convolution-crash-expected.txt: Added.
+        * platform/qt/svg/custom/marker-child-changes-css-expected.checksum: Added.
+        * platform/qt/svg/custom/marker-child-changes-css-expected.png: Added.
+        * platform/qt/svg/custom/marker-child-changes-css-expected.txt: Copied from LayoutTests/platform/qt/svg/custom/marker-strokeWidth-changes-expected.txt.
+        * platform/qt/svg/custom/recursive-gradient-expected.checksum: Added.
+        * platform/qt/svg/custom/recursive-gradient-expected.png: Added.
+        * platform/qt/svg/custom/recursive-gradient-expected.txt: Added.
+        * platform/qt/svg/custom/recursive-mask-expected.checksum: Added.
+        * platform/qt/svg/custom/recursive-mask-expected.png: Added.
+        * platform/qt/svg/custom/recursive-mask-expected.txt: Added.
+        * platform/qt/svg/custom/recursive-pattern-expected.checksum: Added.
+        * platform/qt/svg/custom/recursive-pattern-expected.png: Added.
+        * platform/qt/svg/custom/recursive-pattern-expected.txt: Added.
+        * platform/qt/svg/custom/relative-sized-content-with-resources-expected.checksum: Added.
+        * platform/qt/svg/custom/relative-sized-content-with-resources-expected.png: Added.
+        * platform/qt/svg/custom/relative-sized-content-with-resources-expected.txt: Added.
+        * platform/qt/svg/custom/relative-sized-inner-svg-expected.checksum: Added.
+        * platform/qt/svg/custom/relative-sized-inner-svg-expected.png: Added.
+        * platform/qt/svg/custom/relative-sized-inner-svg-expected.txt: Added.
+        * platform/qt/svg/custom/relative-sized-use-without-attributes-on-symbol-expected.checksum: Added.
+        * platform/qt/svg/custom/relative-sized-use-without-attributes-on-symbol-expected.png: Added.
+        * platform/qt/svg/custom/relative-sized-use-without-attributes-on-symbol-expected.txt: Added.
+        * platform/qt/svg/custom/repaint-moving-svg-and-div-expected.checksum: Added.
+        * platform/qt/svg/custom/repaint-moving-svg-and-div-expected.png: Added.
+        * platform/qt/svg/custom/repaint-moving-svg-and-div-expected.txt: Added.
+        * platform/qt/svg/custom/svg-fonts-without-missing-glyph-expected.checksum: Added.
+        * platform/qt/svg/custom/svg-fonts-without-missing-glyph-expected.png: Added.
+        * platform/qt/svg/custom/svg-fonts-without-missing-glyph-expected.txt: Added.
+        * platform/qt/svg/custom/text-rotated-gradient-expected.checksum: Added.
+        * platform/qt/svg/custom/text-rotated-gradient-expected.png: Added.
+        * platform/qt/svg/custom/text-rotated-gradient-expected.txt: Added.
+        * platform/qt/svg/custom/use-property-synchronization-crash-expected.checksum: Copied from LayoutTests/platform/mac/svg/custom/use-property-synchronization-crash-expected.checksum.
+        * platform/qt/svg/custom/use-property-synchronization-crash-expected.png: Copied from LayoutTests/platform/qt/svg/foreignObject/disallowed-svg-nodes-as-direct-children-expected.png.
+        * platform/qt/svg/custom/use-property-synchronization-crash-expected.txt: Copied from LayoutTests/platform/gtk/svg/custom/use-property-synchronization-crash-expected.txt.
+        * platform/qt/svg/filters/filter-empty-g-expected.checksum: Copied from LayoutTests/platform/mac/svg/filters/filter-empty-g-expected.checksum.
+        * platform/qt/svg/filters/filter-empty-g-expected.png: Copied from LayoutTests/platform/qt/svg/foreignObject/disallowed-svg-nodes-as-direct-children-expected.png.
+        * platform/qt/svg/filters/filter-empty-g-expected.txt: Copied from LayoutTests/platform/mac/svg/filters/filter-empty-g-expected.txt.
+        * platform/qt/svg/filters/filter-width-update-expected.checksum: Added.
+        * platform/qt/svg/filters/filter-width-update-expected.png: Added.
+        * platform/qt/svg/filters/filter-width-update-expected.txt: Added.
+
 2010-07-19  Andreas Kling  <andreas.kling@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
