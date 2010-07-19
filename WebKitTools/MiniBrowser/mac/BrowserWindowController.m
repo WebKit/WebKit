@@ -33,6 +33,11 @@
 - (void)didStartProgress;
 - (void)didChangeProgress:(double)value;
 - (void)didFinishProgress;
+- (void)didStartProvisionalLoadForFrame:(WKFrameRef)frame;
+- (void)didCommitLoadForFrame:(WKFrameRef)frame;
+- (void)didReceiveServerRedirectForProvisionalLoadForFrame:(WKFrameRef)frame;
+- (void)didFailProvisionalLoadWithErrorForFrame:(WKFrameRef)frame;
+- (void)didFailLoadWithErrorForFrame:(WKFrameRef)frame;
 @end
 
 @implementation BrowserWindowController
@@ -149,22 +154,22 @@
 
 static void _didStartProvisionalLoadForFrame(WKPageRef page, WKFrameRef frame, const void *clientInfo)
 {
-    LOG(@"didStartProvisionalLoadForFrame");
+    [(BrowserWindowController *)clientInfo didStartProvisionalLoadForFrame:frame];
 }
 
 static void _didReceiveServerRedirectForProvisionalLoadForFrame(WKPageRef page, WKFrameRef frame, const void *clientInfo)
 {
-    LOG(@"didReceiveServerRedirectForProvisionalLoadForFrame");
+    [(BrowserWindowController *)clientInfo didReceiveServerRedirectForProvisionalLoadForFrame:frame];
 }
 
 static void _didFailProvisionalLoadWithErrorForFrame(WKPageRef page, WKFrameRef frame, const void *clientInfo)
 {
-    LOG(@"didFailProvisionalLoadWithErrorForFrame");
+    [(BrowserWindowController *)clientInfo didFailProvisionalLoadWithErrorForFrame:frame];
 }
 
 static void _didCommitLoadForFrame(WKPageRef page, WKFrameRef frame, const void *clientInfo)
 {
-    LOG(@"didCommitLoadForFrame");
+    [(BrowserWindowController *)clientInfo didCommitLoadForFrame:frame];
 }
 
 static void _didFinishLoadForFrame(WKPageRef page, WKFrameRef frame, const void *clientInfo)
@@ -174,7 +179,7 @@ static void _didFinishLoadForFrame(WKPageRef page, WKFrameRef frame, const void 
 
 static void _didFailLoadWithErrorForFrame(WKPageRef page, WKFrameRef frame, const void *clientInfo)
 {
-    LOG(@"didFailLoadWithErrorForFrame");
+    [(BrowserWindowController *)clientInfo didFailLoadWithErrorForFrame:frame];
 }
 
 static void _didReceiveTitleForFrame(WKPageRef page, WKStringRef title, WKFrameRef frame, const void *clientInfo)
@@ -401,6 +406,53 @@ static void _didUpdateHistoryTitle(WKPageRef page, WKStringRef title, WKURLRef U
 {
     [progressIndicator setHidden:YES];
     [progressIndicator setDoubleValue:1.0];
+}
+
+- (void)updateProvisionalURLForFrame:(WKFrameRef)frame
+{
+    WKURLRef url = WKFrameGetProvisionalURL(frame);
+    if (!url)
+        return;
+
+    CFURLRef cfSourceURL = WKURLCopyCFURL(0, url);
+    [urlText setStringValue:(NSString*)CFURLGetString(cfSourceURL)];
+    CFRelease(cfSourceURL);
+}
+
+- (void)didStartProvisionalLoadForFrame:(WKFrameRef)frame
+{
+    if (!WKFrameIsMainFrame(frame))
+        return;
+
+    [self updateProvisionalURLForFrame:frame];
+}
+
+- (void)didReceiveServerRedirectForProvisionalLoadForFrame:(WKFrameRef)frame
+{
+    if (!WKFrameIsMainFrame(frame))
+        return;
+
+    [self updateProvisionalURLForFrame:frame];
+}
+
+- (void)didFailProvisionalLoadWithErrorForFrame:(WKFrameRef)frame
+{
+    if (!WKFrameIsMainFrame(frame))
+        return;
+
+    [self updateProvisionalURLForFrame:frame];
+}
+
+- (void)didFailLoadWithErrorForFrame:(WKFrameRef)frame
+{
+    if (!WKFrameIsMainFrame(frame))
+        return;
+
+    [self updateProvisionalURLForFrame:frame];
+}
+
+- (void)didCommitLoadForFrame:(WKFrameRef)frame
+{
 }
 
 - (void)loadURLString:(NSString *)urlString
