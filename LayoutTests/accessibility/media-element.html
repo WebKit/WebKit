@@ -58,7 +58,7 @@
                 
                 dumpChildren(vidAXObject);
 
-                if (window.layoutTestController && event.type == 'load')
+                if (window.layoutTestController && event.type == 'canplaythrough')
                     layoutTestController.notifyDone();     
             }
         </script>
@@ -66,10 +66,10 @@
 
 <body>
 
-    <video id=vid src="../media/content/test.mp4" controls onload="dumpVideoAX()">
+    <video id=vid src="../media/content/test.mp4" controls oncanplaythrough="dumpVideoAX()">
     </video>
 
-    <div>Dump &lt;video&gt; element controller accessibility object tree at 'loadstart' and 'load' events.</div>
+    <div>Dump &lt;video&gt; element controller accessibility object tree at 'canplaythrough' event.</div>
     
     <div id=console></div>
 
