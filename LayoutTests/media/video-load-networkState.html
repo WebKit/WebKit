@@ -24,7 +24,7 @@
         waitForEvent("canplay");
         waitForEventAndFail("play");
         waitForEventAndFail("playing");
-        waitForEvent("canplaythrough", function () { testNetworkState(HTMLMediaElement.NETWORK_LOADING, true, '>=' ); } );
+        waitForEvent("canplaythrough", function () { testNetworkState(HTMLMediaElement.NETWORK_IDLE, true, '>=' ); } );
     
         function waitUntilNotLoading()
         {

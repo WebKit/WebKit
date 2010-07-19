@@ -4,7 +4,7 @@ Test that setting src to an invalid url triggers load(), which sets networkState
 EXPECTED (video.networkState == '0') OK
 RUN(video.src = 'bogus/movie.mpg')
 EVENT(loadstart)
-EXPECTED (video.networkState == '4') OK
+EXPECTED (video.networkState == '3') OK
 
 RUN(video.src = 'content/test.mp4')
 EVENT(loadstart)
@@ -12,6 +12,6 @@ EVENT(loadedmetadata)
 EVENT(loadeddata)
 EVENT(canplay)
 EVENT(canplaythrough)
-EXPECTED (video.networkState >= '2') OK
+EXPECTED (video.networkState >= '1') OK
 END OF TEST
 
