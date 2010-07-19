@@ -121,24 +121,23 @@ PassRefPtr<CanvasStyle> CanvasStyle::create(PassRefPtr<CanvasPattern> pattern)
     return adoptRef(new CanvasStyle(pattern));
 }
 
-bool operator==(const CanvasStyle& s1, const CanvasStyle& s2)
+bool CanvasStyle::isEquivalentColor(const CanvasStyle& other) const
 {
-    if (s1.m_type != s2.m_type)
+    if (m_type != other.m_type)
         return false;
 
-    switch (s1.m_type) {
+    switch (m_type) {
     case CanvasStyle::RGBA:
-        return s1.m_rgba == s2.m_rgba;
+        return m_rgba == other.m_rgba;
+    case CanvasStyle::CMYKA:
+        return m_cmyka.c == other.m_cmyka.c
+            && m_cmyka.m == other.m_cmyka.m
+            && m_cmyka.y == other.m_cmyka.y
+            && m_cmyka.k == other.m_cmyka.k
+            && m_cmyka.a == other.m_cmyka.a;
     case CanvasStyle::Gradient:
-        return false;
     case CanvasStyle::ImagePattern:
         return false;
-    case CanvasStyle::CMYKA:
-        return s1.m_cmyka.c == s2.m_cmyka.c
-            && s1.m_cmyka.m == s2.m_cmyka.m
-            && s1.m_cmyka.y == s2.m_cmyka.y
-            && s1.m_cmyka.k == s2.m_cmyka.k
-            && s1.m_cmyka.a == s2.m_cmyka.a;
     }
 
     ASSERT_NOT_REACHED();

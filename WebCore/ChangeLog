@@ -1,3 +1,19 @@
+2010-07-14  Andreas Kling  <andreas.kling@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Canvas: Rename operator==(CanvasStyle,CanvasStyle) since it isn't a proper equality check
+        https://bugs.webkit.org/show_bug.cgi?id=42284
+
+        New name is isEquivalentColor(CanvasStyle).
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::setStrokeStyle):
+        (WebCore::CanvasRenderingContext2D::setFillStyle):
+        * html/canvas/CanvasStyle.cpp:
+        (WebCore::CanvasStyle::isEquivalentColor):
+        * html/canvas/CanvasStyle.h:
+
 2010-07-19  Andreas Kling  <andreas.kling@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

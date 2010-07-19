@@ -172,7 +172,7 @@ void CanvasRenderingContext2D::setStrokeStyle(PassRefPtr<CanvasStyle> style)
     if (!style)
         return;
 
-    if (state().m_strokeStyle && *style == *state().m_strokeStyle)
+    if (state().m_strokeStyle && state().m_strokeStyle->isEquivalentColor(*style))
         return;
 
     if (canvas()->originClean()) {
@@ -200,7 +200,7 @@ void CanvasRenderingContext2D::setFillStyle(PassRefPtr<CanvasStyle> style)
     if (!style)
         return;
 
-    if (state().m_fillStyle && *style == *state().m_fillStyle)
+    if (state().m_fillStyle && state().m_fillStyle->isEquivalentColor(*style))
         return;
  
     if (canvas()->originClean()) {
