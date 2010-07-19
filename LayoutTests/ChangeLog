@@ -1,3 +1,14 @@
+2010-07-19  Ojan Vafai  <ojan@chromium.org>
+
+        Unreviewed. Update expectations from http://trac.webkit.org/changeset/63672
+        and cleanup some unexpected passes.
+
+        * platform/chromium-linux/fast/forms/hidden-listbox-expected.checksum:
+        * platform/chromium-linux/fast/forms/hidden-listbox-expected.png:
+        * platform/chromium-win/fast/forms/hidden-listbox-expected.checksum:
+        * platform/chromium-win/fast/forms/hidden-listbox-expected.png:
+        * platform/chromium/test_expectations.txt:
+
 2010-07-19  Chang Shu  <chang.shu@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

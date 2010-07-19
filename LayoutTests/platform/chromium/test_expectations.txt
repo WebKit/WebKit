@@ -650,8 +650,7 @@ BUG8630 WIN LINUX : fast/repaint/overflow-outline-repaint.html = FAIL
 BUG8630 WIN LINUX : fast/backgrounds/solid-color-context-restore.html = FAIL
 BUG8630 WIN LINUX : fast/dynamic/containing-block-change.html = FAIL
 BUG8630 LINUX : fast/forms/listbox-clip.html = IMAGE+TEXT
-BUG8630 WIN LINUX RELEASE : fast/overflow/hidden-scrollbar-resize.html = FAIL
-BUG8630 LINUX WIN DEBUG : fast/overflow/hidden-scrollbar-resize.html = FAIL
+BUG8630 WIN LINUX : fast/overflow/hidden-scrollbar-resize.html = FAIL
 BUG8630 WIN LINUX RELEASE : fast/reflections/inline-crash.html = FAIL
 BUG8630 LINUX WIN DEBUG : fast/reflections/inline-crash.html = FAIL
 BUG8630 WIN LINUX : fast/text/font-initial.html = FAIL
@@ -1699,10 +1698,8 @@ BUG23477 MAC : fast/canvas/fill-stroke-clip-reset-path.html = IMAGE
 BUG23477 MAC : fast/dynamic/containing-block-change.html = IMAGE
 
 // Unexpected gray
-BUG23476 MAC : fast/forms/hidden-listbox.html = IMAGE
 BUG23476 MAC : fast/forms/listbox-clip.html = IMAGE
 BUG23476 MAC : fast/frames/inline-object-inside-frameset.html = IMAGE
-BUG23476 MAC : fast/overflow/hidden-scrollbar-resize.html = IMAGE
 BUG23476 MAC : fast/text/font-initial.html = IMAGE
 
 // Missing corner resize image
@@ -1748,9 +1745,10 @@ BUG23473 MAC : fast/repaint/line-flow-with-floats-7.html = PASS
 BUG23473 MAC : fast/repaint/line-flow-with-floats-8.html = PASS
 BUG23473 MAC : fast/repaint/line-flow-with-floats-9.html = PASS
 BUG23473 MAC : fast/repaint/list-marker.html = PASS
-// BUG23473 MAC : fast/repaint/moving-shadow-on-path.html = PASS
+BUG23473 MAC : fast/repaint/moving-shadow-on-path.html = PASS
 BUG23473 MAC : fast/repaint/overflow-scroll-body-appear.html = PASS
 BUG23473 MAC : fast/repaint/positioned-document-element.html = PASS
+BUG23473 MAC : fast/repaint/renderer-destruction-by-invalidateSelection-crash.html = PASS
 BUG23473 MAC : fast/repaint/repaint-during-scroll.html = PASS
 BUG23473 MAC : fast/repaint/selection-gap-overflow-scroll-2.html = PASS
 BUG23473 MAC : fast/repaint/shadow-multiple-horizontal.html = PASS
@@ -2499,7 +2497,7 @@ BUG32145 WIN : animations/3d/transform-origin-vs-functions.html = TEXT PASS
 BUG32149 WIN RELEASE : fast/dom/Document/early-document-access.html = TIMEOUT PASS
 
 BUG32195 LINUX : fast/repaint/renderer-destruction-by-invalidateSelection-crash.html = IMAGE TEXT
-BUG32195 WIN : fast/repaint/renderer-destruction-by-invalidateSelection-crash.html = IMAGE+TEXT IMAGE TEXT
+BUG32195 WIN : fast/repaint/renderer-destruction-by-invalidateSelection-crash.html = IMAGE+TEXT IMAGE
 
 // Expectations from roll to 53171:53194
 
@@ -2986,7 +2984,6 @@ BUG48737 WIN LINUX MAC : ietestcenter/Javascript/15.4.4.15-8-b-i-6.html = TEXT
 BUG48737 WIN LINUX MAC : ietestcenter/Javascript/15.5.4.20-4-10.html = TEXT
 BUG48737 WIN LINUX MAC : ietestcenter/Javascript/15.5.4.20-4-18.html = TEXT
 BUG48737 WIN LINUX MAC : ietestcenter/Javascript/15.5.4.20-4-34.html = TEXT
-BUG48737 WIN LINUX MAC : ietestcenter/Javascript/15.9.5.44-0-2.html = TEXT
 BUG48737 WIN LINUX MAC : ietestcenter/Javascript/15.10.6.html = TEXT
 BUG48737 WIN LINUX MAC : ietestcenter/Javascript/15.10.7.1-1.html = TEXT
 BUG48737 WIN LINUX MAC : ietestcenter/Javascript/15.10.7.2-1.html = TEXT
@@ -3007,9 +3004,6 @@ BUG48696 WIN LINUX MAC : fast/forms/tabs-with-modifiers.html = CRASH
 
 BUG49029 WIN LINUX MAC : fast/js/object-literal-syntax.html = TEXT
 
-// Likely from r62862. Probably just needs rebaseline.
-BUG49032 WIN LINUX MAC : fast/js/object-literal-direct-put.html = TEXT
-
 BUG48859 WIN : fast/inline/continuation-outlines-with-layers-2.html = IMAGE+TEXT
 
 // Somehow rebaseline in http://trac.webkit.org/changeset/63196 failed.
@@ -3026,7 +3020,6 @@ BUG49021 : userscripts/user-style-top-frame-only.html = TEXT
 BUGWK42241 LINUX : svg/custom/text-rotated-gradient.svg = IMAGE PASS
 
 BUGWK42249 : fast/repaint/moving-shadow-on-container.html = IMAGE
-BUGWK42249 : fast/repaint/moving-shadow-on-path.html = IMAGE
 
 // These tests all fail because the expected output is wrong. The
 // reason is that JSC does not currently implement Object.freeze and
@@ -3119,7 +3112,6 @@ BUGWK42403 : svg/custom/mask-colorspace.svg = IMAGE
 BUGWK42419 WIN : fast/forms/input-file-directory-upload.html = TEXT
 
 BUGWK42428 : svg/custom/convolution-crash.svg = IMAGE
-BUGWK42428 MAC : svg/W3C-SVG-1.1/filters-conv-01-f.svg = IMAGE
 BUGWK42428 LINUX WIN : svg/W3C-SVG-1.1/filters-conv-01-f.svg = IMAGE+TEXT
 
 // Need setPrinting.
