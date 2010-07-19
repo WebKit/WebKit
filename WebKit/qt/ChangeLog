@@ -2,6 +2,20 @@
 
         Reviewed by Antonio Gomes.
 
+        [Qt] tst_QWebPage fails cursorMovements and textSelection
+        https://bugs.webkit.org/show_bug.cgi?id=42531
+
+        Correct the HTML used by these tests.
+
+        * tests/qwebpage/tst_qwebpage.cpp:
+        (tst_QWebPage::cursorMovements):
+        (tst_QWebPage::textSelection):
+        (tst_QWebPage::textEditing):
+
+2010-07-18  Andreas Kling  <andreas.kling@nokia.com>
+
+        Reviewed by Antonio Gomes.
+
         [Qt] tst_QWebElement fails firstChildNextSibling and lastChildPreviousSibling
         https://bugs.webkit.org/show_bug.cgi?id=42527
 
