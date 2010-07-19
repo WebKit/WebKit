@@ -1,3 +1,12 @@
+2010-07-19  Chang Shu  <chang.shu@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Fix eol-style propety for the following file, otherwise svn-apply will fail.
+        https://bugs.webkit.org/show_bug.cgi?id=42573
+
+        * canvas/philip/tests.js: Added property svn:eol-style.
+
 2010-07-19  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Simon Fraser.
