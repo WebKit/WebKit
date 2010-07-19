@@ -1,3 +1,18 @@
+2010-07-19  Kent Hansen  <kent.hansen@nokia.com>
+
+        Reviewed by Sam Weinig.
+
+        Improve coverage of fast/dom/Window/window-properties test
+        https://bugs.webkit.org/show_bug.cgi?id=42258
+
+        Use Object.getOwnPropertyNames to cover ECMA properties
+        and other native properties.
+
+        * fast/dom/Window/window-properties-expected.txt:
+        * fast/dom/Window/window-properties.html:
+        * platform/gtk/fast/dom/Window/window-properties-expected.txt:
+        * platform/qt/fast/dom/Window/window-properties-expected.txt:
+
 2010-07-18  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Sam Weinig.

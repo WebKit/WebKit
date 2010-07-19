@@ -126,12 +126,28 @@ function logValue(valueName)
     }
 }
 
+function propertiesOnObject(o) {
+    var namesSet = {};
+    while (true) {
+        var names = Object.getOwnPropertyNames(o);
+        for (var i = 0; i < names.length; ++i)
+            namesSet[names[i]] = 1;
+        o = Object.getPrototypeOf(o);
+        if (!o)
+            break;
+        // Avoid polluting results with built-in prototype properties.
+        if ((o == Array.prototype) || (o == Object.prototype))
+            break;
+    }
+    var result = [];
+    for (var p in namesSet)
+        result.push(p);
+    return result;
+}
+
 function logProperties(object, objectName)
 {
-    var array = new Array;
-    for (var property in object) {
-        array.push(property);
-    }
+    var array = propertiesOnObject(object);
     array.sort();
     for (var i = 0; i < array.length; i++) {
         var property = array[i];
