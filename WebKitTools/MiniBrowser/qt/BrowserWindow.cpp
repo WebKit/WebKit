@@ -65,7 +65,11 @@ void BrowserView::resizeEvent(QResizeEvent* event)
 
 void BrowserView::load(const QUrl& url)
 {
-    m_item->load(url);
+#if QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)
+    return m_item->load(QUrl::fromUserInput(url.toString()));
+#else
+    return m_item->load(url);
+#endif
 }
 
 QGraphicsWKView* BrowserView::view() const
@@ -84,6 +88,8 @@ BrowserWindow::BrowserWindow()
     m_browser->setFocus(Qt::OtherFocusReason);
 
     connect(m_addressBar, SIGNAL(returnPressed()), SLOT(changeLocation()));
+    connect(m_browser->view(), SIGNAL(titleChanged(const QString&)), SLOT(titleChanged(const QString&)));
+    connect(m_browser->view(), SIGNAL(urlChanged(const QUrl&)), SLOT(urlChanged(const QUrl&)));
 
     QToolBar* bar = addToolBar("Navigation");
     bar->addAction(m_browser->view()->page()->action(QWKPage::Back));
@@ -108,6 +114,16 @@ void BrowserWindow::changeLocation()
 {
     QString string = m_addressBar->text();
     m_browser->load(string);
+}
+
+void BrowserWindow::titleChanged(const QString& title)
+{
+    setWindowTitle(title);
+}
+
+void BrowserWindow::urlChanged(const QUrl& url)
+{
+    m_addressBar->setText(url.toString());
 }
 
 BrowserWindow::~BrowserWindow()

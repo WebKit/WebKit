@@ -64,6 +64,8 @@ public:
 
 protected slots:
     void changeLocation();
+    void titleChanged(const QString&);
+    void urlChanged(const QUrl&);
 
 private:
     BrowserView* m_browser;

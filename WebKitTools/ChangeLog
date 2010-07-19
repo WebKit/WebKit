@@ -1,3 +1,17 @@
+2010-07-19  Diego Gonzalez  <diegohcg@webkit.org>
+
+        Reviewed by Antonio Gomes.
+
+        [Qt] Add MiniBrowser features: urlChanged, titleChanged and from user input load
+        https://bugs.webkit.org/show_bug.cgi?id=42564
+
+        * MiniBrowser/qt/BrowserWindow.cpp:
+        (BrowserView::load):
+        (BrowserWindow::BrowserWindow):
+        (BrowserWindow::titleChanged):
+        (BrowserWindow::urlChanged):
+        * MiniBrowser/qt/BrowserWindow.h:
+
 2010-07-19  Sam Weinig  <weinig@apple.com>
 
         Reviewed by Adam Roben.
