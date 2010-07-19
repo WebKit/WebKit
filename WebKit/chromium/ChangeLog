@@ -1,3 +1,12 @@
+2010-07-19  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Live edit is not working in chromium.
+        https://bugs.webkit.org/show_bug.cgi?id=42572
+
+        * src/js/DebuggerScript.js:
+
 2010-07-16  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Pavel Feldman.

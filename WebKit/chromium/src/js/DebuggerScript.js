@@ -182,7 +182,7 @@ DebuggerScript.editScriptSource = function(scriptId, newSource)
         throw("Script not found");
 
     var changeLog = [];
-    Debug.LiveEdit.SetScriptSource(scriptToEdit, newSource, changeLog);
+    Debug.LiveEdit.SetScriptSource(scriptToEdit, newSource, false, changeLog);
     return scriptToEdit.source;
 }
 
