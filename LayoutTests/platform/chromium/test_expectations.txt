@@ -3023,7 +3023,7 @@ BUG49021 : userscripts/simple-stylesheet.html = TEXT
 BUG49021 : userscripts/user-style-all-frames.html = TEXT
 BUG49021 : userscripts/user-style-top-frame-only.html = TEXT
 
-BUGWK42241 LINUX : svg/custom/text-rotated-gradient.svg = IMAGE
+BUGWK42241 LINUX : svg/custom/text-rotated-gradient.svg = IMAGE PASS
 
 BUGWK42249 : fast/repaint/moving-shadow-on-container.html = IMAGE
 BUGWK42249 : fast/repaint/moving-shadow-on-path.html = IMAGE
@@ -3124,8 +3124,6 @@ BUGWK42428 LINUX WIN : svg/W3C-SVG-1.1/filters-conv-01-f.svg = IMAGE+TEXT
 
 // Need setPrinting.
 BUGWK20011 : printing/setPrinting.html = FAIL
-
-BUGWK42450 MAC : svg/custom/clip-path-child-changes.svg = TEXT PASS
 
 // Needs V8 change.
 BUG49343 : fast/js/reserved-words-as-property.html = TEXT

@@ -1,3 +1,15 @@
+2010-07-19  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        [Chromium] Fix test expectations
+        https://bugs.webkit.org/show_bug.cgi?id=42556
+
+        text-rotated-gradient.svg is flaky on linux, and clip-path-child-changes.svg
+        isn't actually flaky.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-07-19  Mads Ager  <ager@chromium.org>
 
         Reviewed by Pavel Feldman.
