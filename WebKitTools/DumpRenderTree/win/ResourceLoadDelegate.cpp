@@ -333,10 +333,10 @@ HRESULT STDMETHODCALLTYPE ResourceLoadDelegate::didReceiveResponse(
         if (FAILED(response->URL(&urlBSTR)))
             E_FAIL;
     
-        wstring url = urlSuitableForTestResult(wstringFromBSTR(urlBSTR));
+        wstring url = wstringFromBSTR(urlBSTR);
         ::SysFreeString(urlBSTR);
 
-        printf("%S has MIME type %S\n", url.c_str(), mimeType.c_str());
+        printf("%S has MIME type %S\n", lastPathComponent(url).c_str(), mimeType.c_str());
     }
 
     return S_OK;

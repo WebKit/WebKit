@@ -1,3 +1,28 @@
+2010-07-19  Adam Roben  <aroben@apple.com>
+
+        When dumping a response's MIME type, print its URL's last path
+        component rather than its suitable-for-test-result form
+
+        This matches the Mac behavior.
+
+        Fixes <http://webkit.org/b/42276>
+        http/tests/loading/preload-slow-loading.php and
+        http/tests/mime/uppercase-mime-type.html fail on Windows
+
+        Reviewed by Anders Carlsson.
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (urlSuitableForTestResult): Moved code to actually extract the last
+        path component from here...
+        (lastPathComponent): ...to here.
+
+        * DumpRenderTree/win/DumpRenderTreeWin.h: Added lastPathComponent.
+
+        * DumpRenderTree/win/ResourceLoadDelegate.cpp:
+        (ResourceLoadDelegate::didReceiveResponse): Use the URL's last path
+        component, rather than its suitable-for-test-result form, to match
+        Mac.
+
 2010-07-19  Anders carlsson  <andersca@apple.com>
 
         Reviewed by Adam Roben.

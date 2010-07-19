@@ -134,7 +134,15 @@ bool setAlwaysAcceptCookies(bool alwaysAcceptCookies)
 
 wstring urlSuitableForTestResult(const wstring& url)
 {
-    if (!url.c_str() || url.find(L"file://") == wstring::npos)
+    if (url.find(L"file://") == wstring::npos)
+        return url;
+
+    return lastPathComponent(url);
+}
+
+wstring lastPathComponent(const wstring& url)
+{
+    if (url.empty())
         return url;
 
     return PathFindFileNameW(url.c_str());
