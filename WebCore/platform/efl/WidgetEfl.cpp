@@ -347,7 +347,9 @@ void Widget::setEvasObject(Evas_Object *o)
     m_data->m_evasObject = o;
     if (!o) {
         m_data->m_evas = 0;
+#ifdef HAVE_ECORE_X
         m_data->m_isUsingEcoreX = false;
+#endif
         return;
     }
 
