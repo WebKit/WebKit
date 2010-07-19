@@ -31,6 +31,8 @@ WebPreferencesStore::WebPreferencesStore()
     : javaScriptEnabled(true)
     , loadsImagesAutomatically(true)
     , pluginsEnabled(true)
+    , offlineWebApplicationCacheEnabled(false)
+    , localStorageEnabled(true)
     , minimumFontSize(9)
     , minimumLogicalFontSize(9)
     , defaultFontSize(16)
@@ -48,7 +50,9 @@ WebPreferencesStore::WebPreferencesStore(const WebPreferencesStore& other)
 {
     javaScriptEnabled = other.javaScriptEnabled;
     loadsImagesAutomatically = other.loadsImagesAutomatically;
-
+    pluginsEnabled = other.pluginsEnabled;
+    offlineWebApplicationCacheEnabled = other.offlineWebApplicationCacheEnabled;
+    localStorageEnabled = other.localStorageEnabled;
     minimumFontSize = other.minimumFontSize;
     minimumLogicalFontSize = other.minimumLogicalFontSize;
     defaultFontSize = other.defaultFontSize;
@@ -73,6 +77,9 @@ void WebPreferencesStore::swap(WebPreferencesStore& other)
 {
     std::swap(javaScriptEnabled, other.javaScriptEnabled);
     std::swap(loadsImagesAutomatically, other.loadsImagesAutomatically);
+    std::swap(pluginsEnabled, other.pluginsEnabled);
+    std::swap(offlineWebApplicationCacheEnabled, other.offlineWebApplicationCacheEnabled);
+    std::swap(localStorageEnabled, other.localStorageEnabled);
     std::swap(minimumFontSize, other.minimumFontSize);
     std::swap(minimumLogicalFontSize, other.minimumLogicalFontSize);
     std::swap(defaultFontSize, other.defaultFontSize);

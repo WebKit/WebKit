@@ -45,6 +45,7 @@ struct WebPreferencesStore {
         encoder.encode(loadsImagesAutomatically);
         encoder.encode(pluginsEnabled);
         encoder.encode(offlineWebApplicationCacheEnabled);
+        encoder.encode(localStorageEnabled);
         encoder.encode(minimumFontSize);
         encoder.encode(minimumLogicalFontSize);
         encoder.encode(defaultFontSize);
@@ -66,6 +67,8 @@ struct WebPreferencesStore {
         if (!decoder.decode(s.pluginsEnabled))
             return false;
         if (!decoder.decode(s.offlineWebApplicationCacheEnabled))
+            return false;
+        if (!decoder.decode(s.localStorageEnabled))
             return false;
         if (!decoder.decode(s.minimumFontSize))
             return false;
@@ -94,6 +97,7 @@ struct WebPreferencesStore {
     bool loadsImagesAutomatically;
     bool pluginsEnabled;
     bool offlineWebApplicationCacheEnabled;
+    bool localStorageEnabled;
 
     uint32_t minimumFontSize;
     uint32_t minimumLogicalFontSize;

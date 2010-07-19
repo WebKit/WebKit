@@ -89,6 +89,8 @@ WebPage::WebPage(uint64_t pageID, const IntSize& viewSize, const WebPreferencesS
     m_page->settings()->setJavaScriptEnabled(store.javaScriptEnabled);
     m_page->settings()->setLoadsImagesAutomatically(store.loadsImagesAutomatically);
     m_page->settings()->setPluginsEnabled(store.pluginsEnabled);
+    m_page->settings()->setOfflineWebApplicationCacheEnabled(store.offlineWebApplicationCacheEnabled);
+    m_page->settings()->setLocalStorageEnabled(store.localStorageEnabled);
     m_page->settings()->setMinimumFontSize(store.minimumFontSize);
     m_page->settings()->setMinimumLogicalFontSize(store.minimumLogicalFontSize);
     m_page->settings()->setDefaultFontSize(store.defaultFontSize);
@@ -328,6 +330,7 @@ void WebPage::preferencesDidChange(const WebPreferencesStore& store)
     m_page->settings()->setJavaScriptEnabled(store.javaScriptEnabled);
     m_page->settings()->setLoadsImagesAutomatically(store.loadsImagesAutomatically);
     m_page->settings()->setOfflineWebApplicationCacheEnabled(store.offlineWebApplicationCacheEnabled);
+    m_page->settings()->setLocalStorageEnabled(store.localStorageEnabled);
 }
 
 bool WebPage::handleEditingKeyboardEvent(KeyboardEvent* evt)

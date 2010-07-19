@@ -64,6 +64,9 @@ public:
     void setOfflineWebApplicationCacheEnabled(bool);
     bool offlineWebApplicationCacheEnabled() const;
 
+    void setLocalStorageEnabled(bool);
+    bool localStorageEnabled() const;
+
 private:
     WebPreferences();
     WebPreferences(WebPreferences*);

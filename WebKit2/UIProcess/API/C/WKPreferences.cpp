@@ -74,6 +74,16 @@ bool WKPreferencesGetOfflineWebApplicationCacheEnabled(WKPreferencesRef preferen
     return toWK(preferencesRef)->offlineWebApplicationCacheEnabled();
 }
 
+void WKPreferencesSetLocalStorageEnabled(WKPreferencesRef preferencesRef, bool localStorageEnabled)
+{
+    toWK(preferencesRef)->setLocalStorageEnabled(localStorageEnabled);
+}
+
+bool WKPreferencesGetLocalStorageEnabled(WKPreferencesRef preferencesRef)
+{
+    return toWK(preferencesRef)->localStorageEnabled();
+}
+
 WKPreferencesRef WKPreferencesRetain(WKPreferencesRef preferencesRef)
 {
     toWK(preferencesRef)->ref();

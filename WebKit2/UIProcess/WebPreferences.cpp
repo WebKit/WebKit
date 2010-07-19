@@ -97,4 +97,15 @@ bool WebPreferences::offlineWebApplicationCacheEnabled() const
     return m_store.offlineWebApplicationCacheEnabled;
 }
 
+void WebPreferences::setLocalStorageEnabled(bool b)
+{
+    m_store.localStorageEnabled = b;
+    update();
+}
+
+bool WebPreferences::localStorageEnabled() const
+{
+    return m_store.localStorageEnabled;
+}
+
 } // namespace WebKit

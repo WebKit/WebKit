@@ -1,3 +1,28 @@
+2010-07-19  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Add local storage support for WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=42584
+
+        * Shared/WebPreferencesStore.cpp:
+        (WebKit::WebPreferencesStore::WebPreferencesStore):
+        (WebKit::WebPreferencesStore::swap):
+        * Shared/WebPreferencesStore.h:
+        (WebKit::WebPreferencesStore::encode):
+        (WebKit::WebPreferencesStore::decode):
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetLocalStorageEnabled):
+        (WKPreferencesGetLocalStorageEnabled):
+        * UIProcess/API/C/WKPreferences.h:
+        * UIProcess/WebPreferences.cpp:
+        (WebKit::WebPreferences::setLocalStorageEnabled):
+        (WebKit::WebPreferences::localStorageEnabled):
+        * UIProcess/WebPreferences.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+        (WebKit::WebPage::preferencesDidChange):
+
 2010-07-19  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Anders Carlsson.
