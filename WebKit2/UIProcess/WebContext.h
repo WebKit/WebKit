@@ -84,6 +84,7 @@ public:
     void setAdditionalPluginPath(const WebCore::String&);
 
     PluginInfoStore* pluginInfoStore() { return &m_pluginInfoStore; }
+    WebCore::String applicationCacheDirectory();
 
 private:
     WebContext(ProcessModel, const WebCore::String& injectedBundlePath);

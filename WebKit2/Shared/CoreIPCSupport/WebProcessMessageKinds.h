@@ -34,6 +34,7 @@ namespace WebProcessMessage {
 
 enum Kind {
     LoadInjectedBundle,
+    SetApplicationCacheDirectory,
     Create,
     PostMessage,
 #if PLATFORM(MAC)

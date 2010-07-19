@@ -32,6 +32,7 @@
 		0F52667411DD4A490006D33C /* WebProcessProxyMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0F52667311DD4A490006D33C /* WebProcessProxyMac.mm */; };
 		1A10475A110A5AD500A43ECD /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AA1C7DE100E846E0078DEBC /* JavaScriptCore.framework */; };
 		1A1C4EC810D06099005E67E7 /* WebCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AA1C79A100E7FC50078DEBC /* WebCore.framework */; };
+		1A1C649B11F4174200553C19 /* WebContextMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A1C648611F415B700553C19 /* WebContextMac.mm */; };
 		1A2161B011F37664008AD0F5 /* NPJSObjectMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A2161AE11F37664008AD0F5 /* NPJSObjectMap.h */; };
 		1A2161B111F37664008AD0F5 /* NPJSObjectMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A2161AF11F37664008AD0F5 /* NPJSObjectMap.cpp */; };
 		1A2162B011F38971008AD0F5 /* NPRuntimeUtilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A2162AE11F38971008AD0F5 /* NPRuntimeUtilities.cpp */; };
@@ -301,6 +302,7 @@
 		0F5265BB11DD37860006D33C /* LayerBackedDrawingAreaProxyMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LayerBackedDrawingAreaProxyMac.mm; sourceTree = "<group>"; };
 		0F52667311DD4A490006D33C /* WebProcessProxyMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebProcessProxyMac.mm; sourceTree = "<group>"; };
 		1058C7B1FEA5585E11CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
+		1A1C648611F415B700553C19 /* WebContextMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebContextMac.mm; sourceTree = "<group>"; };
 		1A2161AE11F37664008AD0F5 /* NPJSObjectMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NPJSObjectMap.h; sourceTree = "<group>"; };
 		1A2161AF11F37664008AD0F5 /* NPJSObjectMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NPJSObjectMap.cpp; sourceTree = "<group>"; };
 		1A2162AE11F38971008AD0F5 /* NPRuntimeUtilities.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NPRuntimeUtilities.cpp; sourceTree = "<group>"; };
@@ -1121,6 +1123,7 @@
 				BC2651F511825EF800243E12 /* ChunkedUpdateDrawingAreaProxyMac.mm */,
 				0F5265BB11DD37860006D33C /* LayerBackedDrawingAreaProxyMac.mm */,
 				0F52667311DD4A490006D33C /* WebProcessProxyMac.mm */,
+				1A1C648611F415B700553C19 /* WebContextMac.mm */,
 			);
 			path = mac;
 			sourceTree = "<group>";
@@ -1440,6 +1443,7 @@
 				BC0092F8115837A300E0AE2A /* WorkQueueMac.cpp in Sources */,
 				1A2161B111F37664008AD0F5 /* NPJSObjectMap.cpp in Sources */,
 				1A2162B011F38971008AD0F5 /* NPRuntimeUtilities.cpp in Sources */,
+				1A1C649B11F4174200553C19 /* WebContextMac.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

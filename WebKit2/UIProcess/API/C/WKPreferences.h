@@ -43,6 +43,8 @@ WK_EXPORT void WKPreferencesSetJavaScriptEnabled(WKPreferencesRef preferences, b
 WK_EXPORT bool WKPreferencesGetJavaScriptEnabled(WKPreferencesRef preferences);
 WK_EXPORT void WKPreferencesSetLoadsImagesAutomatically(WKPreferencesRef preferences, bool loadsImagesAutomatically);
 WK_EXPORT bool WKPreferencesGetLoadsImagesAutomatically(WKPreferencesRef preferences);
+WK_EXPORT void WKPreferencesSetOfflineWebApplicationCacheEnabled(WKPreferencesRef preferences, bool offlineWebApplicationCacheEnabled);
+WK_EXPORT bool WKPreferencesGetOfflineWebApplicationCacheEnabled(WKPreferencesRef preferences);
 
 WK_EXPORT WKPreferencesRef WKPreferencesRetain(WKPreferencesRef preferences);
 WK_EXPORT void WKPreferencesRelease(WKPreferencesRef preferences);

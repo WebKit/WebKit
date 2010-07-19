@@ -1,3 +1,13 @@
+2010-07-19  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam Roben.
+
+        WebKit2 does not have application cache
+        https://bugs.webkit.org/show_bug.cgi?id=42552
+
+        * platform/mac-wk2/Skipped:
+        Remove http/tests/appcache from skipped list.
+
 2010-07-19  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.

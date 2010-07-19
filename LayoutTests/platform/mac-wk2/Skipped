@@ -2312,7 +2312,3 @@ transitions/transition-drt-api.html
 transitions/transition-hit-test.html
 transitions/transition-hit-test-transform.html
 transitions/transition-shorthand-delay.html
-
-# WebKit2 does not have application cache
-# <https://bugs.webkit.org/show_bug.cgi?id=42552>
-http/tests/appcache

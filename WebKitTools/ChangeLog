@@ -1,3 +1,19 @@
+2010-07-19  Anders carlsson  <andersca@apple.com>
+
+        Reviewed by Adam Roben.
+
+        WebKit2 does not have application cache
+        https://bugs.webkit.org/show_bug.cgi?id=42552
+
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::resetPreferencesToConsistentValues):
+        Set up default preferences. Right now just enables the web application cache.
+
+        (WTR::TestInvocation::invoke):
+        Call resetPreferencesToConsistentValues.
+
+        * WebKitTestRunner/TestInvocation.h:
+
 2010-07-19  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Adam Roben.

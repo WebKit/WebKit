@@ -23,78 +23,41 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "WebPreferences.h"
-
 #include "WebContext.h"
+
+#include <sys/param.h>
+
+using namespace WebCore;
+
+NSString *WebKitLocalCacheDefaultsKey = @"WebKitLocalCache";
 
 namespace WebKit {
 
-WebPreferences* WebPreferences::shared()
+String WebContext::applicationCacheDirectory()
 {
-    static WebPreferences* sharedPreferences = WebPreferences::create().releaseRef();
-    return sharedPreferences;
-}
-
-WebPreferences::WebPreferences()
-{
-}
-
-WebPreferences::WebPreferences(WebPreferences* preferences)
-    : m_store(preferences->m_store)
-{
-}
-
-WebPreferences::~WebPreferences()
-{
-}
-
-void WebPreferences::addContext(WebContext* context)
-{
-    m_contexts.add(context);
-}
-
-void WebPreferences::removeContext(WebContext* context)
-{
-    m_contexts.remove(context);
-}
-
-void WebPreferences::update()
-{
-    for (HashSet<WebContext*>::iterator it = m_contexts.begin(), end = m_contexts.end(); it != end; ++it)
-        (*it)->preferencesDidChange();
-}
-
-void WebPreferences::setJavaScriptEnabled(bool b)
-{
-    m_store.javaScriptEnabled = b;
-    update();
-}
-
-bool WebPreferences::javaScriptEnabled() const
-{
-    return m_store.javaScriptEnabled;
-}
-
-void WebPreferences::setLoadsImagesAutomatically(bool b)
-{
-    m_store.loadsImagesAutomatically = b;
-    update();
-}
-
-bool WebPreferences::loadsImagesAutomatically() const
-{
-    return m_store.loadsImagesAutomatically;
-}
-
-void WebPreferences::setOfflineWebApplicationCacheEnabled(bool b)
-{
-    m_store.offlineWebApplicationCacheEnabled = b;
-    update();
-}
+    NSString *appName = [[NSBundle mainBundle] bundleIdentifier];
+    if (!appName)
+        appName = [[NSProcessInfo processInfo] processName];
     
-bool WebPreferences::offlineWebApplicationCacheEnabled() const
-{
-    return m_store.offlineWebApplicationCacheEnabled;
+    ASSERT(appName);
+    
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    NSString *cacheDir = [defaults objectForKey:WebKitLocalCacheDefaultsKey];
+
+    if (!cacheDir || ![cacheDir isKindOfClass:[NSString class]]) {
+#ifdef BUILDING_ON_TIGER
+        cacheDir = [NSHomeDirectory() stringByAppendingPathComponent:@"Library/Caches"];
+#else
+        char cacheDirectory[MAXPATHLEN];
+        size_t cacheDirectoryLen = confstr(_CS_DARWIN_USER_CACHE_DIR, cacheDirectory, MAXPATHLEN);
+    
+        if (cacheDirectoryLen)
+            cacheDir = [[NSFileManager defaultManager] stringWithFileSystemRepresentation:cacheDirectory length:cacheDirectoryLen - 1];
+#endif
+    }
+
+    return [cacheDir stringByAppendingPathComponent:appName];
 }
 
 } // namespace WebKit
+

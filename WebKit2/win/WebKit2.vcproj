@@ -1193,6 +1193,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\UIProcess\win\WebContextWin.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\UIProcess\win\WebView.cpp"
 					>
 				</File>

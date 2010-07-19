@@ -64,6 +64,16 @@ bool WKPreferencesGetLoadsImagesAutomatically(WKPreferencesRef preferencesRef)
     return toWK(preferencesRef)->loadsImagesAutomatically();
 }
 
+void WKPreferencesSetOfflineWebApplicationCacheEnabled(WKPreferencesRef preferencesRef, bool offlineWebApplicationCacheEnabled)
+{
+    toWK(preferencesRef)->setOfflineWebApplicationCacheEnabled(offlineWebApplicationCacheEnabled);
+}
+
+bool WKPreferencesGetOfflineWebApplicationCacheEnabled(WKPreferencesRef preferencesRef)
+{
+    return toWK(preferencesRef)->offlineWebApplicationCacheEnabled();
+}
+
 WKPreferencesRef WKPreferencesRetain(WKPreferencesRef preferencesRef)
 {
     toWK(preferencesRef)->ref();

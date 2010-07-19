@@ -36,6 +36,7 @@
 #include "WebPlatformStrategies.h"
 #include "WebPreferencesStore.h"
 #include "WebProcessMessageKinds.h"
+#include <WebCore/ApplicationCacheStorage.h>
 #include <wtf/PassRefPtr.h>
 
 #ifndef NDEBUG
@@ -85,6 +86,11 @@ void WebProcess::loadInjectedBundle(const String& path)
         // Don't keep around the InjectedBundle reference if the load fails.
         m_injectedBundle.clear();
     }
+}
+
+void WebProcess::setApplicationCacheDirectory(const String& directory)
+{
+    cacheStorage().setCacheDirectory(directory);
 }
 
 void WebProcess::forwardMessageToInjectedBundle(const String& message)
@@ -157,6 +163,14 @@ void WebProcess::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::Mes
                     return;
 
                 loadInjectedBundle(path);
+                return;
+            }
+            case WebProcessMessage::SetApplicationCacheDirectory: {
+                String directory;
+                if (!arguments->decode(CoreIPC::Out(directory)))
+                    return;
+                
+                setApplicationCacheDirectory(directory);
                 return;
             }
             case WebProcessMessage::Create: {

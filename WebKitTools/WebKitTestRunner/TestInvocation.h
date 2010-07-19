@@ -42,6 +42,8 @@ public:
 private:
     void dump(const char*);
 
+    void resetPreferencesToConsistentValues();
+
     // Helper
     static void runUntil(bool& done);
 

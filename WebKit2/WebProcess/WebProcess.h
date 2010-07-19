@@ -67,6 +67,7 @@ private:
     void shutdown();
 
     void loadInjectedBundle(const WebCore::String&);
+    void setApplicationCacheDirectory(const WebCore::String&);
     void forwardMessageToInjectedBundle(const WebCore::String&);
 
     // CoreIPC::Connection::Client

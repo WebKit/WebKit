@@ -327,6 +327,7 @@ void WebPage::preferencesDidChange(const WebPreferencesStore& store)
 {
     m_page->settings()->setJavaScriptEnabled(store.javaScriptEnabled);
     m_page->settings()->setLoadsImagesAutomatically(store.loadsImagesAutomatically);
+    m_page->settings()->setOfflineWebApplicationCacheEnabled(store.offlineWebApplicationCacheEnabled);
 }
 
 bool WebPage::handleEditingKeyboardEvent(KeyboardEvent* evt)
@@ -374,7 +375,7 @@ void WebPage::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::Messag
                 return;
          
             setActive(active);
-            break;
+            return;
         }
         case WebPageMessage::SetFocused: {
             bool focused;
@@ -382,7 +383,7 @@ void WebPage::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::Messag
                 return;
             
             setFocused(focused);
-            break;
+            return;
         }
         case WebPageMessage::SetIsInWindow: {
             bool isInWindow;
@@ -390,7 +391,7 @@ void WebPage::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::Messag
                 return;
             
             setIsInWindow(isInWindow);
-            break;
+            return;
         }
         case WebPageMessage::MouseEvent: {
             WebMouseEvent event;
@@ -399,7 +400,15 @@ void WebPage::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::Messag
             connection->send(WebPageProxyMessage::DidReceiveEvent, m_pageID, CoreIPC::In((uint32_t)event.type()));
             PlatformMouseEvent platformEvent = platform(event);
             mouseEvent(platformEvent);
-            break;
+            return;
+        }
+        case WebPageMessage::PreferencesDidChange: {
+            WebPreferencesStore store;
+            if (!arguments.decode(store))
+                return;
+            
+            preferencesDidChange(store);
+            return;
         }
         case WebPageMessage::WheelEvent: {
             WebWheelEvent event;
@@ -408,7 +417,7 @@ void WebPage::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::Messag
             connection->send(WebPageProxyMessage::DidReceiveEvent, m_pageID, CoreIPC::In((uint32_t)event.type()));
             PlatformWheelEvent platformEvent = platform(event);
             wheelEvent(platformEvent);
-            break;
+            return;
         }
         case WebPageMessage::KeyEvent: {
             WebKeyboardEvent event;
@@ -417,7 +426,7 @@ void WebPage::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::Messag
             connection->send(WebPageProxyMessage::DidReceiveEvent, m_pageID, CoreIPC::In((uint32_t)event.type()));
             PlatformKeyboardEvent platformEvent = platform(event);
             keyEvent(platformEvent);
-            break;
+            return;
         }
         case WebPageMessage::LoadURL: {
             String url;
@@ -425,7 +434,7 @@ void WebPage::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::Messag
                 return;
             
             loadURL(url);
-            break;
+            return;
         }
         case WebPageMessage::StopLoading:
             stopLoading();
@@ -436,28 +445,28 @@ void WebPage::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::Messag
                 return;
 
             reload(reloadFromOrigin);
-            break;
+            return;
         }
         case WebPageMessage::GoForward: {
             uint64_t backForwardItemID;
             if (!arguments.decode(CoreIPC::Out(backForwardItemID)))
                 return;
             goForward(backForwardItemID);
-            break;
+            return;
         }
         case WebPageMessage::GoBack: {
             uint64_t backForwardItemID;
             if (!arguments.decode(CoreIPC::Out(backForwardItemID)))
                 return;
             goBack(backForwardItemID);
-            break;
+            return;
         }
        case WebPageMessage::GoToBackForwardItem: {
             uint64_t backForwardItemID;
             if (!arguments.decode(CoreIPC::Out(backForwardItemID)))
                 return;
             goToBackForwardItem(backForwardItemID);
-            break;
+            return;
         }
         case WebPageMessage::DidReceivePolicyDecision: {
             uint64_t frameID;
@@ -466,7 +475,7 @@ void WebPage::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::Messag
             if (!arguments.decode(CoreIPC::Out(frameID, listenerID, policyAction)))
                 return;
             didReceivePolicyDecision(webFrame(frameID), listenerID, (WebCore::PolicyAction)policyAction);
-            break;
+            return;
         }
         case WebPageMessage::RunJavaScriptInMainFrame: {
             String script;
@@ -474,27 +483,26 @@ void WebPage::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::Messag
             if (!arguments.decode(CoreIPC::Out(script, callbackID)))
                 return;
             runJavaScriptInMainFrame(script, callbackID);
-            break;
+            return;
         }
         case WebPageMessage::GetRenderTreeExternalRepresentation: {
             uint64_t callbackID;
             if (!arguments.decode(callbackID))
                 return;
             getRenderTreeExternalRepresentation(callbackID);
-            break;
+            return;
         }
         case WebPageMessage::Close: {
             close();
-            break;
+            return;
         }
         case WebPageMessage::TryClose: {
             tryClose();
-            break;
+            return;
         }
-        default:
-            ASSERT_NOT_REACHED();
-            break;
     }
+
+    ASSERT_NOT_REACHED();
 }
 
 } // namespace WebKit

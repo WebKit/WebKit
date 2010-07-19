@@ -1,3 +1,63 @@
+2010-07-19  Anders carlsson  <andersca@apple.com>
+
+        Reviewed by Adam Roben.
+
+        WebKit2 does not have application cache
+        https://bugs.webkit.org/show_bug.cgi?id=42552
+
+        * Shared/CoreIPCSupport/WebProcessMessageKinds.h:
+        (WebProcessMessage::):
+        Add SetApplicationCacheDirectory.
+
+        * Shared/WebPreferencesStore.h:
+        (WebKit::WebPreferencesStore::encode):
+        (WebKit::WebPreferencesStore::decode):
+        add offlineWebApplicationCacheEnabled.
+
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetOfflineWebApplicationCacheEnabled):
+        (WKPreferencesGetOfflineWebApplicationCacheEnabled):
+        * UIProcess/API/C/WKPreferences.h:
+        Add getters/setters for whether the application cache is enabled.
+
+        * UIProcess/WebContext.h:
+        * UIProcess/WebPreferences.cpp:
+        (WebKit::WebPreferences::setOfflineWebApplicationCacheEnabled):
+        Update the store and call update().
+        
+        * UIProcess/WebPreferences.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::WebProcessProxy):
+        Ask the web process to set the application cache directory.
+
+        * UIProcess/mac/WebContextMac.mm: Added.
+        (WebKit::WebContext::applicationCacheDirectory):
+        Return the application cache directory.
+
+        * UIProcess/win/WebContextWin.cpp: Added.
+        (WebKit::WebContext::applicationCacheDirectory):
+        Ditto.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Add WebContextMac.mm
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::preferencesDidChange):
+        
+        (WebKit::WebPage::didReceiveMessage):
+        Handle PreferencesDidChange. Get rid of the default: case statement so we'll
+        get warnings if we have unhandled message kinds.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::setApplicationCacheDirectory):
+        Set the application cache directory.
+
+        (WebKit::WebProcess::didReceiveMessage):
+        Handle SetApplicationCacheDirectory.
+
+        win/WebKit2.vcproj:
+        Add WebContextWin.cpp
+
 2010-07-18  Anders Carlsson  <andersca@apple.com>
 
         Another attempt at fixing the Windows build.

@@ -23,57 +23,18 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebPreferences_h
-#define WebPreferences_h
+#include "WebContext.h"
 
-#include "WebPreferencesStore.h"
-#include <wtf/HashSet.h>
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
+#include <WebCore/FileSystem.h>
+
+using namespace WebCore;
 
 namespace WebKit {
 
-class WebContext;
-
-class WebPreferences : public RefCounted<WebPreferences> {
-public:
-    static WebPreferences* shared();
-
-    static PassRefPtr<WebPreferences> create()
-    {
-        return adoptRef(new WebPreferences);
-    }
-    static PassRefPtr<WebPreferences> copy(WebPreferences* preferences)
-    {
-        return adoptRef(new WebPreferences(preferences));
-    }
-    ~WebPreferences();
-
-    void addContext(WebContext*);
-    void removeContext(WebContext*);
-
-    const WebPreferencesStore& store() const { return m_store; }
-
-    void setJavaScriptEnabled(bool);
-    bool javaScriptEnabled() const;
-
-    void setLoadsImagesAutomatically(bool);
-    bool loadsImagesAutomatically() const;
-
-    void setOfflineWebApplicationCacheEnabled(bool);
-    bool offlineWebApplicationCacheEnabled() const;
-
-private:
-    WebPreferences();
-    WebPreferences(WebPreferences*);
-
-    void update();
-
-    HashSet<WebContext*> m_contexts;
-    WebPreferencesStore m_store;
-};
+String WebContext::applicationCacheDirectory()
+{
+    return localUserSpecificStorageDirectory();
+}
 
 } // namespace WebKit
 
-#endif // WebPreferences_h
