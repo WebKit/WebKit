@@ -60,9 +60,9 @@ namespace WebCore {
         FrameLoadTypeBackWMLDeckNotAccessible
     };
 
-    // FIXME: Move this to a new header file.
-    struct FrameLoadTimeline {
-        FrameLoadTimeline()
+    // FIXME: Move to DocumentLoadTiming.h.
+    struct DocumentLoadTiming {
+        DocumentLoadTiming()
             : navigationStart(0.0)
             , unloadEventEnd(0.0)
             , redirectStart(0.0)

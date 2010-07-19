@@ -159,14 +159,15 @@ void MainResourceLoader::willSendRequest(ResourceRequest& newRequest, const Reso
     // reference to this object; one example of this is 3266216.
     RefPtr<MainResourceLoader> protect(this);
 
-    FrameLoadTimeline* frameLoadTimeline = frameLoader()->frameLoadTimeline();
-    double fetchTime = currentTime();
-    if (double fetchStart = frameLoadTimeline->fetchStart) {
-        if (!frameLoadTimeline->redirectCount++)
-            frameLoadTimeline->redirectStart = fetchStart;
-        frameLoadTimeline->redirectEnd = fetchTime;
+    ASSERT(documentLoader()->timing()->fetchStart);
+    if (!redirectResponse.isNull()) {
+        DocumentLoadTiming* documentLoadTiming = documentLoader()->timing();
+        documentLoadTiming->redirectCount++;
+        if (!documentLoadTiming->redirectStart)
+            documentLoadTiming->redirectStart = documentLoadTiming->fetchStart;
+        documentLoadTiming->redirectEnd = currentTime();
+        documentLoadTiming->fetchStart = documentLoadTiming->redirectEnd;
     }
-    frameLoadTimeline->fetchStart = fetchTime;
 
     // Update cookie policy base URL as URL changes, except for subframes, which use the
     // URL of the main frame which doesn't change when we redirect.
@@ -542,6 +543,9 @@ bool MainResourceLoader::load(const ResourceRequest& r, const SubstituteData& su
 
     m_substituteData = substituteData;
 
+    ASSERT(documentLoader()->timing()->navigationStart);
+    ASSERT(!documentLoader()->timing()->fetchStart);
+    documentLoader()->timing()->fetchStart = currentTime();
     ResourceRequest request(r);
 
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)

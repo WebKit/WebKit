@@ -1,3 +1,22 @@
+2010-07-17  Tony Gentilcore  <tonyg@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [Web Timing] Move times to DocumentLoader and fix bugs in mark points
+        https://bugs.webkit.org/show_bug.cgi?id=42512
+
+        * fast/dom/script-tests/webtiming-navigate-within-document.js: Added. Previously, navigating within a document via a fragment would reset navigationStart. This test verifies that no times are changed after navigating within a document.
+        (checkTimingNotChanged):
+        ():
+        (loadHandler):
+        * fast/dom/webtiming-expected.txt: Test now passes because when correcting for clock skew, requestTime is set to fetchStart when it is less than fetchStart. Previously it was 0, now it is fetchStart. This, unfortunately, hides the fact that test_shell isn't populating the ResourceLoadTiming API. I'll think of a way to test that when I make the change to cause test_shell to fill the ResourceLoadTiming.
+        * fast/dom/webtiming-navigate-within-document-expected.txt: Added.
+        * fast/dom/webtiming-navigate-within-document.html: Added.
+        * platform/gtk/Skipped: Skip new test on platform where Web Timing is not enabled.
+        * platform/mac/Skipped: Skip new test on platform where Web Timing is not enabled.
+        * platform/qt/Skipped: Skip new test on platform where Web Timing is not enabled.
+        * platform/win/Skipped: Skip new test on platform where Web Timing is not enabled.
+
 2010-07-19  Eric Carlson  <eric.carlson@apple.com>
 
         Unreviewed, build fix.

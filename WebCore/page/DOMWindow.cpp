@@ -35,6 +35,7 @@
 #include "CSSStyleSelector.h"
 #include "Chrome.h"
 #include "Console.h"
+#include "DocumentLoader.h"
 #include "DOMApplicationCache.h"
 #include "DOMSelection.h"
 #include "DOMTimer.h"
@@ -1438,11 +1439,11 @@ bool DOMWindow::removeEventListener(const AtomicString& eventType, EventListener
 
 void DOMWindow::dispatchLoadEvent()
 {
-    if (m_frame)
-        m_frame->loader()->frameLoadTimeline()->loadEventStart = currentTime();
+    if (DocumentLoader* documentLoader = m_frame ? m_frame->loader()->documentLoader() : 0)
+        documentLoader->timing()->loadEventStart = currentTime();
     dispatchEvent(Event::create(eventNames().loadEvent, false, false), document());
-    if (m_frame)
-        m_frame->loader()->frameLoadTimeline()->loadEventEnd = currentTime();
+    if (DocumentLoader* documentLoader = m_frame ? m_frame->loader()->documentLoader() : 0)
+        documentLoader->timing()->loadEventEnd = currentTime();
 
     // For load events, send a separate load event to the enclosing frame only.
     // This is a DOM extension and is independent of bubbling/capturing rules of

@@ -40,10 +40,31 @@
 
 namespace WebCore {
 
-static unsigned long long toIntegerMilliseconds(double milliseconds)
+static unsigned long long toIntegerMilliseconds(double seconds)
 {
-    ASSERT(milliseconds >= 0);
-    return static_cast<unsigned long long>(milliseconds * 1000.0);
+    ASSERT(seconds >= 0);
+    return static_cast<unsigned long long>(seconds * 1000.0);
+}
+
+static double getPossiblySkewedTimeInKnownRange(double skewedTime, double lowerBound, double upperBound)
+{
+#if PLATFORM(CHROMIUM)
+    // The chromium port's currentTime() implementation only syncs with the
+    // system clock every 60 seconds. So it is possible for timing marks
+    // collected in different threads or processes to have a small skew.
+    // FIXME: It may be possible to add a currentTimeFromSystemTime() method
+    // that eliminates the skew.
+    if (skewedTime <= lowerBound)
+        return lowerBound;
+
+    if (skewedTime >= upperBound)
+        return upperBound;
+#else
+    ASSERT_UNUSED(lowerBound, skewedTime >= lowerBound);
+    ASSERT_UNUSED(upperBound, skewedTime <= upperBound);
+#endif
+
+    return skewedTime;
 }
 
 Timing::Timing(Frame* frame)
@@ -63,42 +84,47 @@ void Timing::disconnectFrame()
 
 unsigned long long Timing::navigationStart() const
 {
-    if (!m_frame)
+    DocumentLoadTiming* timing = documentLoadTiming();
+    if (!timing)
         return 0;
 
-    return toIntegerMilliseconds(m_frame->loader()->frameLoadTimeline()->navigationStart);
+    return toIntegerMilliseconds(timing->navigationStart);
 }
 
 unsigned long long Timing::unloadEventEnd() const
 {
-    if (!m_frame)
+    DocumentLoadTiming* timing = documentLoadTiming();
+    if (!timing)
         return 0;
 
-    return toIntegerMilliseconds(m_frame->loader()->frameLoadTimeline()->unloadEventEnd);
+    return toIntegerMilliseconds(timing->unloadEventEnd);
 }
     
 unsigned long long Timing::redirectStart() const
 {
-    if (!m_frame)
+    DocumentLoadTiming* timing = documentLoadTiming();
+    if (!timing)
         return 0;
-        
-    return toIntegerMilliseconds(m_frame->loader()->frameLoadTimeline()->redirectStart);
+
+    return toIntegerMilliseconds(timing->redirectStart);
 }
     
 unsigned long long Timing::redirectEnd() const
 {
-    if (!m_frame)
+    DocumentLoadTiming* timing = documentLoadTiming();
+    if (!timing)
         return 0;
-        
-    return toIntegerMilliseconds(m_frame->loader()->frameLoadTimeline()->redirectEnd);
+
+    return toIntegerMilliseconds(timing->redirectEnd);
 }
 
 unsigned long long Timing::fetchStart() const
 {
-    if (!m_frame)
+    DocumentLoadTiming* timing = documentLoadTiming();
+    if (!timing)
         return 0;
 
-    return toIntegerMilliseconds(m_frame->loader()->frameLoadTimeline()->fetchStart);
+    return toIntegerMilliseconds(timing->fetchStart);
 }
 
 unsigned long long Timing::domainLookupStart() const
@@ -113,7 +139,7 @@ unsigned long long Timing::domainLookupStart() const
     if (dnsStart < 0)
         return fetchStart();
 
-    return toIntegerMilliseconds(timing->requestTime) + dnsStart;
+    return resourceLoadTimeRelativeToAbsolute(dnsStart);
 }
 
 unsigned long long Timing::domainLookupEnd() const
@@ -128,7 +154,7 @@ unsigned long long Timing::domainLookupEnd() const
     if (dnsEnd < 0)
         return domainLookupStart();
 
-    return toIntegerMilliseconds(timing->requestTime) + dnsEnd;
+    return resourceLoadTimeRelativeToAbsolute(dnsEnd);
 }
 
 unsigned long long Timing::connectStart() const
@@ -143,7 +169,7 @@ unsigned long long Timing::connectStart() const
     if (connectStart < 0)
         return domainLookupEnd();
 
-    return toIntegerMilliseconds(timing->requestTime) + connectStart;
+    return resourceLoadTimeRelativeToAbsolute(connectStart);
 }
 
 unsigned long long Timing::connectEnd() const
@@ -158,7 +184,7 @@ unsigned long long Timing::connectEnd() const
     if (connectEnd < 0)
         return connectStart();
 
-    return toIntegerMilliseconds(timing->requestTime) + connectEnd;
+    return resourceLoadTimeRelativeToAbsolute(connectEnd);
 }
 
 unsigned long long Timing::requestStart() const
@@ -168,7 +194,7 @@ unsigned long long Timing::requestStart() const
         return 0;
 
     ASSERT(timing->sendStart >= 0);
-    return toIntegerMilliseconds(timing->requestTime) + timing->sendStart;
+    return resourceLoadTimeRelativeToAbsolute(timing->sendStart);
 }
 
 unsigned long long Timing::requestEnd() const
@@ -178,7 +204,7 @@ unsigned long long Timing::requestEnd() const
         return 0;
 
     ASSERT(timing->sendEnd >= 0);
-    return toIntegerMilliseconds(timing->requestTime) + timing->sendEnd;
+    return resourceLoadTimeRelativeToAbsolute(timing->sendEnd);
 }
 
 unsigned long long Timing::responseStart() const
@@ -194,40 +220,78 @@ unsigned long long Timing::responseStart() const
     // is basically equivalent. But for some responses, particularly those with
     // headers larger than a single packet, this time will be too late.
     ASSERT(timing->receiveHeadersEnd >= 0);
-    return toIntegerMilliseconds(timing->requestTime) + timing->receiveHeadersEnd;
+    return resourceLoadTimeRelativeToAbsolute(timing->receiveHeadersEnd);
 }
 
 unsigned long long Timing::responseEnd() const
 {
-    if (!m_frame)
+    DocumentLoadTiming* timing = documentLoadTiming();
+    if (!timing)
         return 0;
 
-    return toIntegerMilliseconds(m_frame->loader()->frameLoadTimeline()->responseEnd);
+    return toIntegerMilliseconds(timing->responseEnd);
 }
 
 unsigned long long Timing::loadEventStart() const
 {
-    if (!m_frame)
+    DocumentLoadTiming* timing = documentLoadTiming();
+    if (!timing)
         return 0;
 
-    return toIntegerMilliseconds(m_frame->loader()->frameLoadTimeline()->loadEventStart);
+    return toIntegerMilliseconds(timing->loadEventStart);
 }
 
 unsigned long long Timing::loadEventEnd() const
 {
+    DocumentLoadTiming* timing = documentLoadTiming();
+    if (!timing)
+        return 0;
+
+    return toIntegerMilliseconds(timing->loadEventEnd);
+}
+
+DocumentLoader* Timing::documentLoader() const
+{
     if (!m_frame)
         return 0;
 
-    return toIntegerMilliseconds(m_frame->loader()->frameLoadTimeline()->loadEventEnd);
+    return m_frame->loader()->documentLoader();
+}
+
+DocumentLoadTiming* Timing::documentLoadTiming() const
+{
+    DocumentLoader* loader = documentLoader();
+    if (!loader)
+        return 0;
+
+    return loader->timing();
 }
 
 ResourceLoadTiming* Timing::resourceLoadTiming() const
 {
-    DocumentLoader* documentLoader = m_frame->loader()->documentLoader();
-    if (!documentLoader)
+    DocumentLoader* loader = documentLoader();
+    if (!loader)
         return 0;
 
-    return documentLoader->response().resourceLoadTiming();
+    return loader->response().resourceLoadTiming();
+}
+
+unsigned long long Timing::resourceLoadTimeRelativeToAbsolute(int relativeSeconds) const
+{
+    ASSERT(relativeSeconds >= 0);
+    ResourceLoadTiming* resourceTiming = resourceLoadTiming();
+    ASSERT(resourceTiming);
+    DocumentLoadTiming* documentTiming = documentLoadTiming();
+    ASSERT(documentTiming);
+
+    // The ResourceLoadTiming API's requestTime is the base time to which all
+    // other marks are relative. So to get an absolute time, we must add it to
+    // the relative marks.
+    //
+    // Since ResourceLoadTimings came from the network platform layer, we must
+    // check them for skew because they may be from another thread/process.
+    double baseTime = getPossiblySkewedTimeInKnownRange(resourceTiming->requestTime, documentTiming->fetchStart, documentTiming->responseEnd);
+    return toIntegerMilliseconds(baseTime) + relativeSeconds;
 }
 
 } // namespace WebCore

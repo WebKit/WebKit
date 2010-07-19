@@ -1,3 +1,52 @@
+2010-07-17  Tony Gentilcore  <tonyg@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [Web Timing] Move times to DocumentLoader and fix bugs in mark points
+        https://bugs.webkit.org/show_bug.cgi?id=42512
+
+        Test: fast/dom/webtiming-navigate-within-document.html
+
+        * loader/DocumentLoader.h: Move the FrameLoadTimeline (now call DocumentLoadTiming) to the DocumentLoader.
+        (WebCore::DocumentLoader::documentLoadTiming):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::stopLoading): Set unloadEventEnd on the provisional DocumentLoader. Add some ASSERTs to tighten things up.
+        (WebCore::FrameLoader::loadWithDocumentLoader): This was not the right place to set navigationStart. Setting it here caused it to be set before the unload form prompt and caused it to be reset when navigating within the document.
+        (WebCore::FrameLoader::finishedLoading): Set responseEnd on the active DocumentLoader.
+        (WebCore::FrameLoader::continueLoadAfterWillSubmitForm): This is the right place for navigationStart as defined by the spec.
+        * loader/FrameLoader.h: Get rid of FrameLoadTimeline.
+        * loader/FrameLoaderTypes.h: Rename FrameLoadTimeline to DocumentLoadTiming. It is even more apparent this doesn't belong in this file now. I am planning to submit a patch moving it out ASAP, but didn't want to muddy this patch with all those build files.
+        (WebCore::DocumentLoadTiming::DocumentLoadTiming):
+        * loader/MainResourceLoader.cpp:
+        (WebCore::MainResourceLoader::willSendRequest): Move fetchStart out of this method to load(), and rewrite setting of redirectStart, redirectEnd, and redirectCount to be more readable.
+        (WebCore::MainResourceLoader::load): Set fetchStart slightly earlier here and tighten it up with some ASSERTs.
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::dispatchLoadEvent): Set loadEventStart and loadEventEnd on the DocumentLoader.
+        * page/Navigation.cpp:
+        (WebCore::Navigation::redirectCount): Retrieve redirectCount from the DocumentLoader.
+        * page/Timing.cpp:
+        (WebCore::getPossiblySkewedTimeInKnownRange): The skew problem turned out to be due to the fact that chromium's currentTime() implementation only syncs to the system time every 60 seconds. So absolute times across threads may be skewed slightly. I resolved this temporarily by clipping the time from another thread into a known bound. A better long term solution is probably to add a currentTimeFromSystemTime() method and call that for web timing marks.
+        (WebCore::Timing::navigationStart):
+        (WebCore::Timing::unloadEventEnd):
+        (WebCore::Timing::redirectStart):
+        (WebCore::Timing::redirectEnd):
+        (WebCore::Timing::fetchStart):
+        (WebCore::Timing::domainLookupStart):
+        (WebCore::Timing::domainLookupEnd):
+        (WebCore::Timing::connectStart):
+        (WebCore::Timing::connectEnd):
+        (WebCore::Timing::requestStart):
+        (WebCore::Timing::requestEnd):
+        (WebCore::Timing::responseStart):
+        (WebCore::Timing::responseEnd):
+        (WebCore::Timing::loadEventStart):
+        (WebCore::Timing::loadEventEnd):
+        (WebCore::Timing::documentLoader):
+        (WebCore::Timing::documentLoadTiming):
+        (WebCore::Timing::resourceLoadTiming):
+        (WebCore::Timing::resourceLoadTimeRelativeToAbsolute): Ensure requestTime is in the range of fetchStart to responseEnd.
+        * page/Timing.h:
+
 2010-07-19  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Darin Adler.

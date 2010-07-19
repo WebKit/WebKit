@@ -79,7 +79,11 @@ unsigned short Navigation::redirectCount() const
     if (!m_frame)
         return 0;
 
-    return m_frame->loader()->frameLoadTimeline()->redirectCount;
+    DocumentLoader* loader = m_frame->loader()->documentLoader();
+    if (!loader)
+        return 0;
+
+    return loader->timing()->redirectCount;
 }
 
 } // namespace WebCore
