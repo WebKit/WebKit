@@ -1,3 +1,17 @@
+2010-07-18  Anders carlsson  <andersca@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Always set the current NSGraphicsContext before calling drawWithFrame
+        https://bugs.webkit.org/show_bug.cgi?id=42542
+
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::paintMeter):
+        (WebCore::RenderThemeMac::paintSearchField):
+        (WebCore::RenderThemeMac::paintSearchFieldCancelButton):
+        (WebCore::RenderThemeMac::paintSearchFieldResultsDecoration):
+        (WebCore::RenderThemeMac::paintSearchFieldResultsButton):
+
 2010-07-18  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

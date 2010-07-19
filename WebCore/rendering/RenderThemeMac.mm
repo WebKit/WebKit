@@ -826,6 +826,8 @@ bool RenderThemeMac::paintMeter(RenderObject* renderObject, const PaintInfo& pai
     if (!renderObject->isMeter())
         return true;
 
+    LocalCurrentGraphicsContext localContext(paintInfo.context);
+
     // Becaue NSLevelIndicatorCell doesn't support vertical gauge, we use a portable version 
     if (rect.width() < rect.height())
         return RenderTheme::paintMeter(renderObject, paintInfo, rect);
@@ -1379,8 +1381,8 @@ bool RenderThemeMac::paintSliderThumb(RenderObject* o, const PaintInfo& paintInf
 
 bool RenderThemeMac::paintSearchField(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
 {
-    NSSearchFieldCell* search = this->search();
     LocalCurrentGraphicsContext localContext(paintInfo.context);
+    NSSearchFieldCell* search = this->search();
 
     setSearchCellState(o, r);
 
@@ -1480,6 +1482,7 @@ bool RenderThemeMac::paintSearchFieldCancelButton(RenderObject* o, const PaintIn
     if (!input->renderer()->isBox())
         return false;
 
+    LocalCurrentGraphicsContext localContext(paintInfo.context);
     setSearchCellState(input->renderer(), r);
 
     NSSearchFieldCell* search = this->search();
@@ -1568,6 +1571,7 @@ bool RenderThemeMac::paintSearchFieldResultsDecoration(RenderObject* o, const Pa
     if (!input->renderer()->isBox())
         return false;
 
+    LocalCurrentGraphicsContext localContext(paintInfo.context);
     setSearchCellState(input->renderer(), r);
 
     NSSearchFieldCell* search = this->search();
@@ -1600,6 +1604,7 @@ bool RenderThemeMac::paintSearchFieldResultsButton(RenderObject* o, const PaintI
     if (!input->renderer()->isBox())
         return false;
 
+    LocalCurrentGraphicsContext localContext(paintInfo.context);
     setSearchCellState(input->renderer(), r);
 
     NSSearchFieldCell* search = this->search();
