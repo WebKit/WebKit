@@ -1,3 +1,15 @@
+2010-07-19  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [EFL] Fix build on 64-bit systems. According to
+        JavaScriptCore/wtf/Platform.h, x86_64 uses fixed allocator, which
+        needs jit/ExecutableAllocatorFixedVMPool.cpp to be included in build
+        system.
+        https://bugs.webkit.org/show_bug.cgi?id=42559
+
+        * CMakeListsEfl.txt: add missing file for x86_64.
+
 2010-07-16  Leandro Pereira  <leandro@profusion.mobi>
 
         [EFL] Unreviewed build system cleanup.
