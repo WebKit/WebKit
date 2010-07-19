@@ -356,6 +356,8 @@ void PluginStream::deliverData()
             deliveryBytes = m_pluginFuncs->write(m_instance, &m_stream, m_offset, dataLength, (void*)data);
             if (deliveryBytes < 0) {
                 LOG_PLUGIN_NET_ERROR();
+                if (m_loader)
+                    m_loader->setDefersLoading(false);
                 cancelAndDestroyStream(NPRES_NETWORK_ERR);
                 return;
             }

@@ -1,3 +1,24 @@
+2010-07-19  Adam Roben  <aroben@apple.com>
+
+        Fix an assertion when a plugin returns -1 from NPP_Write
+
+        We were forgetting to call setDefersLoading(false) before destroying
+        the PluginStream. In the process of destroying the stream, someone
+        would call setDefersLoading(true), and we would assert because we were
+        already deferring loads.
+
+        Fixes <http://webkit.org/b/42563> Assertion failure in
+        ResourceHandle::setDefersLoading when running
+        plugins/return-negative-one-from-write.html on Windows
+
+        Reviewed by Anders Carlsson.
+
+        * plugins/PluginStream.cpp:
+        (WebCore::PluginStream::deliverData): Call setDefersLoading(false)
+        before destroying the stream, to match the setDefersLoading(true) call
+        earlier in this function. (We already call setDefersLoading(false) in
+        the non-error case later on.)
+
 2010-07-19  Rafael Antognolli  <antognolli@profusion.mobi>
 
         Reviewed by Antonio Gomes.
