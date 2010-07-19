@@ -2605,7 +2605,6 @@ fast/text/in-rendered-text-rtl.html
 fast/text/large-text-composed-char-dos.html
 fast/text/international/002.html
 fast/block/positioning/absolute-in-inline-rtl-4.html
-fast/canvas/canvas-composite-alpha.html
 fast/canvas/canvas-gradient-addStop-error.html
 fast/css/zoom-body-scroll.html
 fast/dom/Element/getBoundingClientRect.html
