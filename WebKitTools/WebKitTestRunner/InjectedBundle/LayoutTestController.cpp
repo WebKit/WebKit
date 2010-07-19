@@ -24,9 +24,10 @@
  */
 
 #include "LayoutTestController.h"
+
 #include "InjectedBundle.h"
 #include "InjectedBundlePage.h"
-
+#include "JSLayoutTestController.h"
 #include <JavaScriptCore/JSRetainPtr.h>
 #include <WebKit2/WKBundleFrame.h>
 #include <WebKit2/WKRetainPtr.h>
@@ -54,6 +55,11 @@ LayoutTestController::~LayoutTestController()
 {
 }
 
+JSClassRef LayoutTestController::wrapperClass()
+{
+    return JSLayoutTestController::layoutTestControllerClass();
+}
+
 // This is lower than DumpRenderTree's timeout, to make it easier to work through the failures
 // Eventually it should be changed to match.
 static const CFTimeInterval waitToDumpWatchdogInterval = 6.0;
@@ -76,7 +82,7 @@ static void waitUntilDoneWatchdogFired(CFRunLoopTimerRef timer, void* info)
     InjectedBundle::shared().layoutTestController()->waitToDumpWatchdogTimerFired();
 }
 
-void LayoutTestController::setWaitToDump()
+void LayoutTestController::waitUntilDone()
 {
     m_waitToDump = true;
     if (!m_waitToDumpWatchdog) {
@@ -118,131 +124,12 @@ bool LayoutTestController::pauseAnimationAtTimeOnElementWithId(JSStringRef anima
     return WKBundleFramePauseAnimationOnElementWithId(mainFrame, nameWK.get(), idWK.get(), time);
 }
 
-static JSValueRef displayCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-{
-    // Has mac & windows implementation
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
-    controller->display();
-
-    return JSValueMakeUndefined(context);
-}
-
-static JSValueRef dumpAsTextCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-{
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
-    controller->setDumpAsText(true);
-    return JSValueMakeUndefined(context);
-}
-
-static JSValueRef dumpStatusCallbacksCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-{
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
-    controller->setDumpStatusCallbacks(true);
-    return JSValueMakeUndefined(context);
-}
-
-static JSValueRef waitUntilDoneCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-{
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
-    controller->setWaitToDump();
-    return JSValueMakeUndefined(context);
-}
-
-static JSValueRef notifyDoneCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-{
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
-    controller->notifyDone();
-    return JSValueMakeUndefined(context);
-}
-
-static JSValueRef numberOfActiveAnimationsCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-{
-    if (argumentCount)
-        return JSValueMakeUndefined(context);
-
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
-    return JSValueMakeNumber(context, controller->numberOfActiveAnimations());
-}
-
-static JSValueRef pauseAnimationAtTimeOnElementWithIdCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-{
-    if (argumentCount != 3)
-        return JSValueMakeUndefined(context);
-
-    JSRetainPtr<JSStringRef> animationName(Adopt, JSValueToStringCopy(context, arguments[0], exception));
-    ASSERT(!*exception);
-    double time = JSValueToNumber(context, arguments[1], exception);
-    ASSERT(!*exception);
-    JSRetainPtr<JSStringRef> elementId(Adopt, JSValueToStringCopy(context, arguments[2], exception));
-    ASSERT(!*exception);
-
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
-    return JSValueMakeBoolean(context, controller->pauseAnimationAtTimeOnElementWithId(animationName.get(), time, elementId.get()));
-}
-
-static JSValueRef repaintSweepHorizontallyCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-{
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
-    controller->setTestRepaintSweepHorizontally();
-    return JSValueMakeUndefined(context);
-}
-
-static JSValueRef testRepaintCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-{
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
-    controller->setTestRepaint();
-    return JSValueMakeUndefined(context);
-}
-
-// Object Finalization
-
-static void layoutTestControllerObjectFinalize(JSObjectRef object)
-{
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(object));
-    controller->deref();
-}
-
 // Object Creation
 
 void LayoutTestController::makeWindowObject(JSContextRef context, JSObjectRef windowObject, JSValueRef* exception)
 {
     JSRetainPtr<JSStringRef> layoutTestContollerStr(Adopt, JSStringCreateWithUTF8CString("layoutTestController"));
-    ref();
-
-    JSClassRef classRef = getJSClass();
-    JSValueRef layoutTestContollerObject = JSObjectMake(context, classRef, this);
-    JSClassRelease(classRef);
-
-    JSObjectSetProperty(context, windowObject, layoutTestContollerStr.get(), layoutTestContollerObject, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete, exception);
-}
-
-JSClassRef LayoutTestController::getJSClass()
-{
-    static JSStaticFunction* staticFunctions = LayoutTestController::staticFunctions();
-    static JSClassDefinition classDefinition = {
-        0, kJSClassAttributeNone, "LayoutTestController", 0, 0, staticFunctions,
-        0, layoutTestControllerObjectFinalize, 0, 0, 0, 0, 0, 0, 0, 0, 0
-    };
-
-    return JSClassCreate(&classDefinition);
-}
-
-JSStaticFunction* LayoutTestController::staticFunctions()
-{
-    static JSStaticFunction staticFunctions[] = {
-        { "display", displayCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
-        { "dumpAsText", dumpAsTextCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
-        { "dumpStatusCallbacks", dumpStatusCallbacksCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
-        { "notifyDone", notifyDoneCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
-        { "numberOfActiveAnimations", numberOfActiveAnimationsCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
-        { "pauseAnimationAtTimeOnElementWithId", pauseAnimationAtTimeOnElementWithIdCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
-        { "repaintSweepHorizontally", repaintSweepHorizontallyCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
-        { "testRepaint", testRepaintCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
-        { "waitUntilDone", waitUntilDoneCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
-        { 0, 0, 0 }
-    };
-
-    return staticFunctions;
+    JSObjectSetProperty(context, windowObject, layoutTestContollerStr.get(), JSWrapper::wrap(context, this), kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete, exception);
 }
 
 } // namespace WTR

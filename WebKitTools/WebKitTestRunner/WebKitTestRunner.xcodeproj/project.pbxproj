@@ -6,6 +6,20 @@
 	objectVersion = 45;
 	objects = {
 
+/* Begin PBXAggregateTarget section */
+		BC952D7711F3BF5D003398B4 /* Derived Sources */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = BC952D7D11F3BF6A003398B4 /* Build configuration list for PBXAggregateTarget "Derived Sources" */;
+			buildPhases = (
+				BC952D8211F3BF78003398B4 /* Generate Derived Sources */,
+			);
+			dependencies = (
+			);
+			name = "Derived Sources";
+			productName = "Derived Sources";
+		};
+/* End PBXAggregateTarget section */
+
 /* Begin PBXBuildFile section */
 		6510A78211EC643800410867 /* AHEM____.TTF in Resources */ = {isa = PBXBuildFile; fileRef = 6510A77711EC643800410867 /* AHEM____.TTF */; };
 		6510A78311EC643800410867 /* ColorBits.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6510A77811EC643800410867 /* ColorBits.ttf */; };
@@ -29,6 +43,8 @@
 		BC7934AC1190658C005EA8E2 /* WebKit2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC7934AB1190658C005EA8E2 /* WebKit2.framework */; };
 		BC7934E811906846005EA8E2 /* PlatformWebViewMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC7934E711906846005EA8E2 /* PlatformWebViewMac.mm */; };
 		BC8C795C11D2785D004535A1 /* TestControllerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC8C795B11D2785D004535A1 /* TestControllerMac.mm */; };
+		BC952C0D11F3B965003398B4 /* JSWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC952C0C11F3B965003398B4 /* JSWrapper.cpp */; };
+		BC952F1F11F3C652003398B4 /* JSLayoutTestController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC952F1D11F3C652003398B4 /* JSLayoutTestController.cpp */; };
 		BCC997A411D3C8F60017BCA2 /* InjectedBundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCC997A011D3C8F60017BCA2 /* InjectedBundle.cpp */; };
 		BCC997A511D3C8F60017BCA2 /* InjectedBundlePage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCC997A211D3C8F60017BCA2 /* InjectedBundlePage.cpp */; };
 		BCC9981811D3F51E0017BCA2 /* LayoutTestController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCC9981711D3F51E0017BCA2 /* LayoutTestController.cpp */; };
@@ -44,6 +60,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = BC25186111D15D54002EBC01;
 			remoteInfo = InjectedBundle;
+		};
+		BC952ED611F3C38B003398B4 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = BC952D7711F3BF5D003398B4 /* Derived Sources */;
+			remoteInfo = "Derived Sources";
 		};
 /* End PBXContainerItemProxy section */
 
@@ -78,6 +101,14 @@
 		BC7934DD119066EC005EA8E2 /* PlatformWebView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformWebView.h; sourceTree = "<group>"; };
 		BC7934E711906846005EA8E2 /* PlatformWebViewMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PlatformWebViewMac.mm; sourceTree = "<group>"; };
 		BC8C795B11D2785D004535A1 /* TestControllerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TestControllerMac.mm; sourceTree = "<group>"; };
+		BC952C0B11F3B965003398B4 /* JSWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWrapper.h; sourceTree = "<group>"; };
+		BC952C0C11F3B965003398B4 /* JSWrapper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWrapper.cpp; sourceTree = "<group>"; };
+		BC952C0E11F3B97B003398B4 /* JSWrappable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWrappable.h; sourceTree = "<group>"; };
+		BC952EC511F3C10F003398B4 /* DerivedSources.make */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DerivedSources.make; sourceTree = "<group>"; };
+		BC952ED211F3C29F003398B4 /* LayoutTestController.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LayoutTestController.idl; sourceTree = "<group>"; };
+		BC952ED311F3C318003398B4 /* CodeGeneratorTestRunner.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = CodeGeneratorTestRunner.pm; sourceTree = "<group>"; };
+		BC952F1D11F3C652003398B4 /* JSLayoutTestController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JSLayoutTestController.cpp; path = ../../WebKitBuild/Debug/DerivedSources/WebKitTestRunner/JSLayoutTestController.cpp; sourceTree = SOURCE_ROOT; };
+		BC952F1E11F3C652003398B4 /* JSLayoutTestController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSLayoutTestController.h; path = ../../WebKitBuild/Debug/DerivedSources/WebKitTestRunner/JSLayoutTestController.h; sourceTree = SOURCE_ROOT; };
 		BCC997A011D3C8F60017BCA2 /* InjectedBundle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedBundle.cpp; sourceTree = "<group>"; };
 		BCC997A111D3C8F60017BCA2 /* InjectedBundle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectedBundle.h; sourceTree = "<group>"; };
 		BCC997A211D3C8F60017BCA2 /* InjectedBundlePage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedBundlePage.cpp; sourceTree = "<group>"; };
@@ -117,6 +148,7 @@
 		08FB7794FE84155DC02AAC07 /* WebKitTestRunner */ = {
 			isa = PBXGroup;
 			children = (
+				BC952EC511F3C10F003398B4 /* DerivedSources.make */,
 				08FB7795FE84155DC02AAC07 /* Source */,
 				BC25183511D1571D002EBC01 /* InjectedBundle */,
 				BC793401118F7C8A005EA8E2 /* Configurations */,
@@ -171,6 +203,8 @@
 		BC25183511D1571D002EBC01 /* InjectedBundle */ = {
 			isa = PBXGroup;
 			children = (
+				BC952D3A11F3BF1F003398B4 /* Derived Sources */,
+				BC952C0A11F3B939003398B4 /* Bindings */,
 				65EB859E11EC67CC0034D300 /* mac */,
 				65EB859D11EC67CC0034D300 /* ActivateFonts.h */,
 				BCC997A011D3C8F60017BCA2 /* InjectedBundle.cpp */,
@@ -225,6 +259,27 @@
 			path = Configurations;
 			sourceTree = "<group>";
 		};
+		BC952C0A11F3B939003398B4 /* Bindings */ = {
+			isa = PBXGroup;
+			children = (
+				BC952ED311F3C318003398B4 /* CodeGeneratorTestRunner.pm */,
+				BC952C0E11F3B97B003398B4 /* JSWrappable.h */,
+				BC952C0C11F3B965003398B4 /* JSWrapper.cpp */,
+				BC952C0B11F3B965003398B4 /* JSWrapper.h */,
+				BC952ED211F3C29F003398B4 /* LayoutTestController.idl */,
+			);
+			path = Bindings;
+			sourceTree = "<group>";
+		};
+		BC952D3A11F3BF1F003398B4 /* Derived Sources */ = {
+			isa = PBXGroup;
+			children = (
+				BC952F1D11F3C652003398B4 /* JSLayoutTestController.cpp */,
+				BC952F1E11F3C652003398B4 /* JSLayoutTestController.h */,
+			);
+			name = "Derived Sources";
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -257,6 +312,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				BC952ED711F3C38B003398B4 /* PBXTargetDependency */,
 			);
 			name = InjectedBundle;
 			productName = InjectedBundle;
@@ -277,6 +333,7 @@
 			targets = (
 				8DD76F960486AA7600D96B5E /* WebKitTestRunner */,
 				BC25186111D15D54002EBC01 /* InjectedBundle */,
+				BC952D7711F3BF5D003398B4 /* Derived Sources */,
 			);
 		};
 /* End PBXProject section */
@@ -302,6 +359,23 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		BC952D8211F3BF78003398B4 /* Generate Derived Sources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Generate Derived Sources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "mkdir -p \"${BUILT_PRODUCTS_DIR}/DerivedSources/WebKitTestRunner\"\ncd \"${BUILT_PRODUCTS_DIR}/DerivedSources/WebKitTestRunner\"\n\nexport WebKitTestRunner=\"${SRCROOT}\"\nexport WebCoreScripts=\"${WEBCORE_PRIVATE_HEADERS_DIR}\"\n\nif [ \"${ACTION}\" = \"build\" -o \"${ACTION}\" = \"install\" -o \"${ACTION}\" = \"installhdrs\" ]; then\n    make -f \"${WebKitTestRunner}/DerivedSources.make\" -j `/usr/sbin/sysctl -n hw.availcpu`\nfi\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		8DD76F990486AA7600D96B5E /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -325,6 +399,8 @@
 				BCC997A511D3C8F60017BCA2 /* InjectedBundlePage.cpp in Sources */,
 				BCC9981811D3F51E0017BCA2 /* LayoutTestController.cpp in Sources */,
 				65EB85A011EC67CC0034D300 /* ActivateFonts.mm in Sources */,
+				BC952C0D11F3B965003398B4 /* JSWrapper.cpp in Sources */,
+				BC952F1F11F3C652003398B4 /* JSLayoutTestController.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -335,6 +411,11 @@
 			isa = PBXTargetDependency;
 			target = BC25186111D15D54002EBC01 /* InjectedBundle */;
 			targetProxy = BC25194111D15D94002EBC01 /* PBXContainerItemProxy */;
+		};
+		BC952ED711F3C38B003398B4 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = BC952D7711F3BF5D003398B4 /* Derived Sources */;
+			targetProxy = BC952ED611F3C38B003398B4 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -382,6 +463,27 @@
 			};
 			name = Release;
 		};
+		BC952D7811F3BF5E003398B4 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				PRODUCT_NAME = "Derived Sources";
+			};
+			name = Debug;
+		};
+		BC952D7911F3BF5E003398B4 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				PRODUCT_NAME = "Derived Sources";
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -408,6 +510,15 @@
 			buildConfigurations = (
 				BC25186411D15D55002EBC01 /* Debug */,
 				BC25186511D15D55002EBC01 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		BC952D7D11F3BF6A003398B4 /* Build configuration list for PBXAggregateTarget "Derived Sources" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BC952D7811F3BF5E003398B4 /* Debug */,
+				BC952D7911F3BF5E003398B4 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
