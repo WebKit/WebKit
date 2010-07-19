@@ -292,6 +292,7 @@ HRESULT STDMETHODCALLTYPE ResourceLoadDelegate::didReceiveAuthenticationChalleng
         return E_FAIL;
 
     if (!gLayoutTestController->handlesAuthenticationChallenges()) {
+        printf("%S - didReceiveAuthenticationChallenge - Simulating cancelled authentication sheet\n", descriptionSuitableForTestResult(identifier).c_str());
         sender->continueWithoutCredentialForAuthenticationChallenge(challenge);
         return S_OK;
     }

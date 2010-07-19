@@ -172,6 +172,9 @@ using namespace std;
 - (void)webView:(WebView *)wv resource:(id)identifier didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge fromDataSource:(WebDataSource *)dataSource
 {
     if (!gLayoutTestController->handlesAuthenticationChallenges()) {
+        NSString *string = [NSString stringWithFormat:@"%@ - didReceiveAuthenticationChallenge - Simulating cancelled authentication sheet", identifier];
+        printf("%s\n", [string UTF8String]);
+
         [[challenge sender] continueWithoutCredentialForAuthenticationChallenge:challenge];
         return;
     }
