@@ -91,6 +91,14 @@ compositing/tiling/huge-layer-with-layer-children.html
 compositing/tiling/huge-layer.html
 compositing/iframes/iframe-src-change.html
 compositing/iframes/leave-compositing-iframe.html
+compositing/geometry/limit-layer-bounds-clipping-ancestor.html
+compositing/geometry/limit-layer-bounds-fixed-positioned.html
+compositing/geometry/limit-layer-bounds-positioned.html
+compositing/geometry/limit-layer-bounds-positioned-transition.html
+compositing/geometry/limit-layer-bounds-transformed.html
+compositing/geometry/limit-layer-bounds-transformed-overflow.html
+compositing/animation/animation-compositing.html
+
 
 # Support layoutTestController.dumpEditingDelegates in WebKitTestRunner
 # <https://bugs.webkit.org/show_bug.cgi?id=42193>
@@ -1194,6 +1202,50 @@ fast/dom/HTMLTableColElement/resize-table-using-col-width.html
 fast/dom/replaced-image-map.html
 fast/dom/Window/window-postmessage-clone.html
 fast/dom/Window/window-postmessage-clone-frames.html
+compositing/iframes/layout-on-compositing-change.html
+svg/zoom/text/absolute-sized-document-no-scrollbars.svg
+svg/zoom/text/absolute-sized-document-scrollbars.svg
+svg/zoom/text/relative-sized-document-scrollbars.svg
+svg/zoom/text/zoom-coords-viewattr-01-b.svg
+svg/zoom/text/zoom-foreignObject.svg
+svg/zoom/page/absolute-sized-document-no-scrollbars.svg
+svg/zoom/page/absolute-sized-document-scrollbars.svg
+svg/zoom/page/relative-sized-document-scrollbars.svg
+svg/zoom/page/zoom-coords-viewattr-01-b.svg
+svg/zoom/page/zoom-foreignObject.svg
+svg/zoom/page/zoom-hixie-mixed-008.xml
+svg/zoom/page/zoom-hixie-mixed-009.xml
+svg/zoom/page/zoom-svg-float-border-padding.xml
+svg/zoom/text/zoom-hixie-mixed-008.xml
+svg/zoom/text/zoom-hixie-mixed-009.xml
+svg/zoom/text/zoom-svg-float-border-padding.xml
+svg/text/select-textLength-spacing-squeeze-1.svg
+svg/text/select-textLength-spacing-squeeze-2.svg
+svg/text/select-textLength-spacing-squeeze-3.svg
+svg/text/select-textLength-spacing-squeeze-4.svg
+svg/text/select-textLength-spacing-stretch-1.svg
+svg/text/select-textLength-spacing-stretch-2.svg
+svg/text/select-textLength-spacing-stretch-3.svg
+svg/text/select-textLength-spacing-stretch-4.svg
+svg/text/select-textLength-spacingAndGlyphs-squeeze-1.svg
+svg/text/select-textLength-spacingAndGlyphs-squeeze-2.svg
+svg/text/select-textLength-spacingAndGlyphs-squeeze-3.svg
+svg/text/select-textLength-spacingAndGlyphs-squeeze-4.svg
+svg/text/select-textLength-spacingAndGlyphs-stretch-1.svg
+svg/text/select-textLength-spacingAndGlyphs-stretch-2.svg
+svg/text/select-textLength-spacingAndGlyphs-stretch-3.svg
+svg/text/select-textLength-spacingAndGlyphs-stretch-4.svg
+svg/text/select-x-list-1.svg
+svg/text/select-x-list-2.svg
+svg/text/select-x-list-3.svg
+svg/text/select-x-list-4.svg
+svg/text/select-x-list-with-tspans-1.svg
+svg/text/select-x-list-with-tspans-2.svg
+svg/text/select-x-list-with-tspans-3.svg
+svg/text/select-x-list-with-tspans-4.svg
+fast/forms/textarea-textlength.html
+fast/forms/listbox-deselect-scroll.html
+fast/forms/input-number-keyoperation.html
 
 # WebKitTestRunner needs to support layoutTestController.setXSSAuditorEnabled
 # <https://bugs.webkit.org/show_bug.cgi?id=42195>
@@ -1330,12 +1382,10 @@ fast/canvas/webgl/index-validation-crash-with-buffer-sub-data.html
 fast/canvas/webgl/index-validation.html
 fast/canvas/webgl/index-validation-with-resized-buffer.html
 fast/canvas/webgl/invalid-UTF-16.html
-fast/canvas/webgl/invalidPassedParams.html
 fast/canvas/webgl/null-object-behaviour.html
 fast/canvas/webgl/null-uniform-location.html
 fast/canvas/webgl/point-size.html
 fast/canvas/webgl/program-test.html
-fast/canvas/webgl/read-pixels.html
 fast/canvas/webgl/renderbuffer-initialization.html
 fast/canvas/webgl/tex-image-and-sub-image-2d-with-array-buffer-view.html
 fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-data.html
@@ -1373,10 +1423,28 @@ fast/canvas/webgl/texture-transparent-pixels-initialized.html
 fast/repaint/no-caret-repaint-in-non-content-editable-element.html
 http/tests/appcache/disabled.html
 media/restore-from-page-cache.html
+fast/canvas/webgl/canvas-test.html
+fast/canvas/webgl/gl-pixelstorei.html
+fast/canvas/webgl/invalid-passed-params.html
+fast/canvas/webgl/read-pixels-pack-alignment.html
+
 
 # Pasteboard doesn't work in WebKit2
 # <https://bugs.webkit.org/show_bug.cgi?id=42317>
 editing/pasteboard/copy-resolves-urls.html
+editing/execCommand/4128080-2.html
+editing/execCommand/5939887.html
+editing/execCommand/copy-without-selection.html
+editing/execCommand/paste-and-match-style-event.html 
+editing/style/5065910.html
+editing/pasteboard/19644-2.html
+editing/pasteboard/19644-1.html 
+editing/pasteboard/4922709.html
+editing/pasteboard/4944770-1.html
+editing/pasteboard/4989774.html 
+editing/pasteboard/paste-visible-script.html
+editing/pasteboard/paste-unrendered-select.html 
+
 
 # WebKitTestRunner needs to support evaluateInWebInspector
 # <https://bugs.webkit.org/show_bug.cgi?id=42319>
@@ -1793,6 +1861,14 @@ userscripts/user-script-all-frames.html
 userscripts/user-script-top-frame-only.html
 userscripts/user-style-all-frames.html
 userscripts/user-style-top-frame-only.html
+fast/forms/form-and-frame-interaction-retains-values.html
+http/tests/xmlhttprequest/uri-resolution-opera-open-004.html
+http/tests/xmlhttprequest/uri-resolution-opera-open-005.html
+http/tests/xmlhttprequest/uri-resolution-opera-open-006.html
+http/tests/xmlhttprequest/uri-resolution-opera-open-007.html
+http/tests/xmlhttprequest/uri-resolution-opera-open-008.html
+http/tests/xmlhttprequest/uri-resolution-opera-open-009.html
+
 
 # WebKitTestRunner needs to support layoutTestController.dumpSelectionRect
 # <https://bugs.webkit.org/show_bug.cgi?id=42326>
@@ -1974,10 +2050,269 @@ platform/mac/editing/input/text-control-ime-input.html
 platform/mac/editing/selection/25228.html
 platform/mac/fast/text/attributed-substring-from-range-002.html
 platform/mac/fast/text/attributed-substring-from-range-in-textfield.html
+editing/selection/move-left-right.html
 
 
 # WebKitTestRunner and WebProcess simultaneously stall in CoreIPC::Connection::sendOutgoingMessage
 # <https://bugs.webkit.org/show_bug.cgi?id=42356>
 fast/frames/cached-frame-counter.html
 fast/frames/sandboxed-iframe-navigation-parent.html
+fast/dom/HTMLDocument/document-special-properties.html
 
+
+# WebKitTestRunner needs to support dumping of scroll position
+# <https://bugs.webkit.org/show_bug.cgi?id=42514>
+compositing/geometry/fixed-in-composited.html
+compositing/geometry/fixed-position.html
+compositing/geometry/horizontal-scroll-composited.html
+compositing/geometry/vertical-scroll-composited.html
+compositing/geometry/video-fixed-scrolling.html
+compositing/overflow/fixed-position-ancestor-clip.html
+fast/dom/focus-contenteditable.html
+fast/dynamic/anchor-lock.html
+fast/events/reveal-link-when-focused.html
+fast/layers/scroll-rect-to-visible.html
+fast/overflow/clip-rects-fixed-ancestor.html
+fast/overflow/position-fixed-transform-clipping.html
+fast/overflow/scrollRevealButton.html
+fast/repaint/fixed-child-move-after-scroll.html
+fast/repaint/fixed-child-of-fixed-move-after-scroll.html
+fast/repaint/fixed-child-of-transformed-move-after-scroll.html
+fast/repaint/fixed.html
+fast/repaint/fixed-move-after-scroll.html
+fast/repaint/fixed-tranformed.html
+fast/repaint/repaint-during-scroll.html
+svg/custom/scrolling-embedded-svg-file-image-repaint-problem.html
+transforms/2d/transform-fixed-container.html
+
+
+# WebKitTestRunner needs to support needsDeletionUI mechanism to show deletion UI
+# <https://bugs.webkit.org/show_bug.cgi?id=42535>
+editing/deleting/5408255.html
+editing/deleting/deletionUI-single-instance.html
+platform/mac/editing/deleting/deletionUI-borders.html
+platform/mac/editing/deleting/deletionUI-differing-background.html
+platform/mac/editing/deleting/deletionUI-minimum-size.html
+platform/mac/editing/deleting/deletionUI-successful-deletion.html
+
+
+# WebKitTestRunner needs to support layoutTestController.setFrameFlatteningEnabled
+# <https://bugs.webkit.org/show_bug.cgi?id=42536>
+fast/frames/flattening/frameset-flattening-advanced.html
+fast/frames/flattening/frameset-flattening-grid.html
+fast/frames/flattening/frameset-flattening-simple.html
+fast/frames/flattening/frameset-flattening-subframe-resize.html
+fast/frames/flattening/frameset-flattening-subframesets.html
+fast/frames/flattening/iframe-flattening-fixed-height.html
+fast/frames/flattening/iframe-flattening-fixed-width-and-height.html
+fast/frames/flattening/iframe-flattening-fixed-width-and-height-no-scrolling.html
+fast/frames/flattening/iframe-flattening-fixed-width.html
+fast/frames/flattening/iframe-flattening-offscreen.html
+fast/frames/flattening/iframe-flattening-simple.html
+
+
+# WebKitTestRunner needs to support layoutTestController.counterValueForElementById
+# <https://bugs.webkit.org/show_bug.cgi?id=42537>
+fast/css/counters/adding-nodes.html
+fast/css/counters/counter-reset-001.html
+fast/css/counters/counter-increment-000.html
+fast/css/counters/counter-reset-002.html
+fast/css/counters/counter-increment-001.html
+fast/css/counters/counterValueForElementById.html
+fast/css/counters/counter-increment-002.html
+fast/css/counters/invalidate-cached-counter-node.html
+fast/css/counters/counter-reset-000.html
+fast/css/counters/nesting.html
+
+
+# WebKitTestRunner needs to support layoutTestController.execCommand
+# <https://bugs.webkit.org/show_bug.cgi?id=42538>
+editing/deleting/5300379.html
+editing/deleting/smart-editing-disabled.html
+editing/execCommand/delete-image-in-anchor.html
+editing/selection/extend-forward-after-set-base-and-extent.html
+editing/selection/select-line.html
+
+
+# WebKitTestRunner needs to support printing ALERT, PROMPT and CONFIRM messages
+# <https://bugs.webkit.org/show_bug.cgi?id=42539>
+editing/pasteboard/paste-noscript-xhtml.xhtml
+editing/selection/5241148.html
+editing/selection/5497643.html
+fast/dom/Element/id-in-frameset.html
+fast/dom/Geolocation/notimer-after-unload.html
+fast/dom/script-element-gc.html
+fast/dom/serialize-nodes.xhtml
+fast/dom/set-inner-text-newlines.html
+fast/dom/Window/alert-undefined.html
+fast/events/attribute-listener-cloned-from-frameless-doc.xhtml
+fast/events/drag-outside-window.html
+fast/events/onload-webkit-before-webcore.html
+fast/events/onunload-clears-onbeforeunload.html
+fast/events/onunload.html
+fast/events/onunload-not-on-body.html
+fast/events/onunload-window-property.html
+fast/events/pageshow-pagehide-on-back-uncached.html
+fast/events/resize-subframe.html
+fast/frames/frame-dead-region.html
+fast/frames/frame-js-url-clientWidth.html
+fast/frames/frame-name-reset.html
+fast/frames/frameElement-widthheight.html
+fast/frames/iframe-display-none.html
+fast/frames/location-change.html
+fast/frames/location-change-no-file-access.html
+fast/frames/sandboxed-iframe-navigation-top-by-name-denied.html
+fast/frames/set-unloaded-frame-location.html
+fast/inspector-support/cssURLQuotes.html
+fast/loader/for-window-event-onload-scripts.html
+fast/loader/hashchange-event.html
+fast/loader/loadInProgress.html
+fast/loader/local-svg-parsed-as-svg.svg
+fast/loader/non-deferred-substitute-load.html
+fast/loader/onhashchange-attribute-listeners.html
+fast/loader/simultaneous-reloads-assert.html
+fast/loader/stateobjects/document-destroyed-navigate-back.html
+fast/parser/parseCommentsInTitles.html
+fast/xsl/subframe-location.html
+http/tests/cookies/third-party-cookie-relaxing.html
+http/tests/misc/DOMContentLoaded-event.html
+http/tests/misc/embedCrasher.html
+http/tests/misc/frame-default-enc-different-domain.html
+http/tests/misc/frame-default-enc-same-domain.html
+http/tests/misc/onload-remove-iframe-crash-2.html
+http/tests/navigation/history-back-across-form-submission-to-fragment.html
+http/tests/security/data-url-inline.css.html
+http/tests/security/popup-blocked-from-fake-event.html
+http/tests/security/popup-blocked-from-window-open.html
+http/tests/xmlhttprequest/readystatechange.html
+platform/mac/plugins/bindings-test-objc.html
+storage/open-database-creation-callback-isolated-world.html
+storage/statement-error-callback-isolated-world.html
+storage/statement-success-callback-isolated-world.html
+storage/transaction-callback-isolated-world.html
+storage/transaction-error-callback-isolated-world.html
+storage/transaction-success-callback-isolated-world.html
+svg/hixie/dynamic/001.xml
+websocket/tests/alert-in-event-handler.html
+websocket/tests/websocket-pending-activity.html
+
+# WebKitTestRunner needs layoutTestController.clearAllDatabases
+# <https://bugs.webkit.org/show_bug.cgi?id=42540>
+storage/change-version.html
+storage/executesql-accepts-only-one-statement.html
+storage/hash-change-with-xhr.html
+storage/null-callbacks.html
+storage/open-database-creation-callback.html
+storage/open-database-over-quota.html
+storage/open-database-set-empty-version.html
+storage/quota-tracking.html
+storage/sql-error-codes.html
+storage/statement-error-callback.html
+storage/success-callback.html
+storage/transaction-error-callback.html
+
+# WebKitTestRunner needs layoutTestController.pathToLocalResource
+# <https://bugs.webkit.org/show_bug.cgi?id=42541>
+fast/loader/local-CSS-from-local.html
+fast/loader/local-iFrame-source-from-local.html
+fast/loader/local-image-from-local.html
+fast/loader/local-JavaScript-from-local.html
+http/tests/security/local-CSS-from-remote.html
+http/tests/security/local-iFrame-from-remote.html
+http/tests/security/local-image-from-remote.html
+http/tests/security/local-JavaScript-from-remote.html
+http/tests/security/local-video-poster-from-remote.html
+http/tests/security/local-video-source-from-remote.html
+http/tests/security/local-video-src-from-remote.html
+
+# WebKitTestRunner needs layoutTestController.dumpResourceResponseMIMETypes
+# <https://bugs.webkit.org/show_bug.cgi?id=42543>
+fast/preloader/image.html
+fast/preloader/link.html
+fast/preloader/noscript.html
+fast/preloader/script.html
+fast/preloader/style.html
+http/tests/loading/preload-slow-loading.php
+http/tests/mime/uppercase-mime-type.html
+platform/mac/fast/loader/file-url-mimetypes-2.html
+platform/mac/fast/loader/file-url-mimetypes-3.html
+platform/mac/fast/loader/file-url-mimetypes.html
+
+
+# WebKitTestRunner needs layoutTestController.addOriginAccessWhitelistEntry
+# <https://bugs.webkit.org/show_bug.cgi?id=42544>
+http/tests/security/local-image-from-remote-whitelisted.html
+http/tests/xmlhttprequest/origin-whitelisting-all.html
+http/tests/xmlhttprequest/origin-whitelisting-exact-match.html
+http/tests/xmlhttprequest/origin-whitelisting-https.html
+http/tests/xmlhttprequest/origin-whitelisting-ip-addresses.html
+http/tests/xmlhttprequest/origin-whitelisting-ip-addresses-with-subdomains.html
+http/tests/xmlhttprequest/origin-whitelisting-removal.html
+http/tests/xmlhttprequest/origin-whitelisting-subdomains.html
+
+# WebKitTestRunner needs layoutTestController.setGeolocationPermission
+# <https://bugs.webkit.org/show_bug.cgi?id=42545>
+fast/dom/Geolocation/callback-exception.html
+fast/dom/Geolocation/callback-to-deleted-context.html
+fast/dom/Geolocation/callback-to-remote-context.html
+fast/dom/Geolocation/callback-to-remote-context2.html
+fast/dom/Geolocation/error.html
+fast/dom/Geolocation/multiple-requests.html
+fast/dom/Geolocation/permission-denied-already-clear-watch.html
+fast/dom/Geolocation/permission-denied-already-error.html
+fast/dom/Geolocation/permission-denied-already-success.html
+fast/dom/Geolocation/permission-denied.html
+fast/dom/Geolocation/permission-denied-stops-watches.html
+fast/dom/Geolocation/position-string.html
+fast/dom/Geolocation/reentrant-error.html
+fast/dom/Geolocation/reentrant-permission-denied.html
+fast/dom/Geolocation/reentrant-success.html
+fast/dom/Geolocation/success.html
+fast/dom/Geolocation/timeout.html
+fast/dom/Geolocation/watch.html
+
+# WebKitTestRunner needs layoutTestController.setCustomPolicyDelegate
+# <https://bugs.webkit.org/show_bug.cgi?id=42546>
+fast/loader/javascript-url-hierarchical-execution.html
+fast/loader/onload-policy-ignore-for-frame.html
+fast/loader/reload-policy-delegate.html
+http/tests/security/feed-urls-from-remote.html
+
+# WebKitTestRunner needs layoutTestController.setDashboardCompatibilityMode
+# <https://bugs.webkit.org/show_bug.cgi?id=42547>
+fast/canvas/canvas-gradient-addStop-error.html
+http/tests/xmlhttprequest/default-content-type-dashboard.html
+http/tests/xmlhttprequest/svg-created-by-xhr-disallowed-in-dashboard.html
+platform/mac/fast/events/pointer-events-dashboard.html
+svg/custom/embedded-svg-disallowed-in-dashboard.xml
+svg/custom/manually-parsed-embedded-svg-disallowed-in-dashboard.html
+svg/custom/manually-parsed-svg-disallowed-in-dashboard.html
+svg/custom/svg-disallowed-in-dashboard-object.html
+
+
+# WebKitTestRunner needs layoutTestController.dumpChildFrameScrollPositions
+# <https://bugs.webkit.org/show_bug.cgi?id=42548>
+http/tests/navigation/anchor-frames.html
+http/tests/navigation/anchor-subframeload.html
+http/tests/navigation/relativeanchor-frames.html
+
+# WebKitTestRunner needs layoutTestController.markerTextForListItem
+# <https://bugs.webkit.org/show_bug.cgi?id=42549>
+fast/lists/ol-nested-items.html
+fast/lists/ol-nested-items-dynamic-insert.html
+fast/lists/ol-nested-items-dynamic-remove.html
+fast/lists/ol-nested-list.html
+fast/lists/ol-nested-list-dynamic-insert.html
+fast/lists/ol-nested-list-dynamic-remove.html
+
+# WebKitTestRunner needs layoutTestController.pauseTransitionAtTimeOnElementWithId
+# <https://bugs.webkit.org/show_bug.cgi?id=42550>
+transitions/transition-drt-api-delay.html
+transitions/transition-drt-api.html
+transitions/transition-hit-test.html
+transitions/transition-hit-test-transform.html
+transitions/transition-shorthand-delay.html
+
+# WebKit2 does not have application cache
+# <https://bugs.webkit.org/show_bug.cgi?id=42552>
+http/tests/appcache
