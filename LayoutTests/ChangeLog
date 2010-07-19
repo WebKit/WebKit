@@ -1,3 +1,37 @@
+2010-07-19  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=40996
+        Progress event should not be fired during synchronous XMLHttpRequest
+
+        https://bugs.webkit.org/show_bug.cgi?id=17502
+        Assertion failure when trying to restart a sync XMLHttpRequest as an async one from onreadystatechange
+
+        * fast/xmlhttprequest/xmlhttprequest-recursive-sync-event-expected.txt: There is one less
+        event dispatched now.
+
+        * http/tests/xmlhttprequest/infoOnProgressEvent-expected.txt:
+        * http/tests/xmlhttprequest/infoOnProgressEvent.html:
+        * http/tests/xmlhttprequest/xmlhttprequest-no-content-length-onProgress.html:
+        Changed to use async requests, since sync ones no longer cause progress event dispatch.
+
+        * http/tests/xmlhttprequest/resources/access-control-basic-post-fail-non-simple.cgi: Added.
+        A script that only allows simple cross-origin requests.
+
+        * http/tests/xmlhttprequest/xmlhttprequest-addEventListener-onProgress-expected.txt:
+        * http/tests/xmlhttprequest/xmlhttprequest-addEventListener-onProgress.html:
+        Removed synchronous case (incorrectly called asynchronous in test comments).
+
+        * http/tests/xmlhttprequest/xmlhttprequest-sync-no-progress-events-expected.txt: Added.
+        * http/tests/xmlhttprequest/xmlhttprequest-sync-no-progress-events.html: Added.
+        Added a test that logs progress and readystatechange events.
+
+        * http/tests/xmlhttprequest/xmlhttprequest-sync-vs-async-assertion-failure-expected.txt: Added.
+        * http/tests/xmlhttprequest/xmlhttprequest-sync-vs-async-assertion-failure.html: Added.
+        Aded a test for assertion failure. The problem no longer occurs since we don't fire events
+        in intermediate states.
+
 2010-07-19  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed.

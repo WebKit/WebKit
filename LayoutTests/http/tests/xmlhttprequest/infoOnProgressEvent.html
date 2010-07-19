@@ -2,7 +2,7 @@
 <head/>
 <body>
 <p> Test case for bug 13596: Implement .onprogress handler on XMLHttpRequest objects to support progressive download content length information </p>
-<p> You should see type, bubble, cancelable, eventPhase, target and current target for synchronous and asynchronous cases </p>
+<p> You should see type, bubble, cancelable, eventPhase, target and current target.</p>
 <script type="text/javascript">
 function log (msg)
 {
@@ -23,7 +23,7 @@ function onProgress(e) {
     log("Target: " + e.target);
     log("Current target: " + e.currentTarget);
     e.currentTarget.onprogress = null;
-    if (shouldNotify && window.layoutTestController)
+    if (window.layoutTestController)
         layoutTestController.notifyDone();
 }
 
@@ -38,23 +38,10 @@ if (window.layoutTestController) {
     layoutTestController.waitUntilDone();
 }
 
-log("Synchronous case:");
-
-// Test synchronous
 var req = new XMLHttpRequest();
 req.onprogress = onProgress;
-req.open("GET", "resources/1251.html", false);
+req.open("GET", "resources/1251.html", true);
 req.send(null);
-
-insertNewLine();
-log("Asynchronous case:");
-
-// Test asynchronous
-var req2 = new XMLHttpRequest();
-req2.onprogress = onProgress;
-req2.open("GET", "resources/1251.html", true);
-shouldNotify = true;
-req2.send(null);
 </script>
 </body>
 </html>

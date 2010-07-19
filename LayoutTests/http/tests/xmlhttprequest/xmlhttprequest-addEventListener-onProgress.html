@@ -5,7 +5,7 @@
 <body>
 <p> Test case for Bug <a href="https://bugs.webkit.org/show_bug.cgi?id=18655">18655</a>: [XHR] OnProgress needs more test case </p>
 <p> This test verify that addEventListener("progress", XXX, XXX) works as expected. </p>
-<p> You should see PASSED 4 times. </p>
+<p> You should see PASSED 2 times. </p>
 <script type="text/javascript">
 var count = 1;
 
@@ -17,7 +17,7 @@ function log(msg)
 
 function onProgress(e) {
     log("PASSED (" + count + ")");
-    if (++count > 4 && window.layoutTestController)
+    if (++count > 2 && window.layoutTestController)
         layoutTestController.notifyDone();
 }
 
@@ -25,22 +25,6 @@ if (window.layoutTestController) {
     layoutTestController.waitUntilDone();
     layoutTestController.dumpAsText();
 }
-
-// Asynchronous case
-
-// Test for capture phase 
-var req = new XMLHttpRequest();
-req.addEventListener("progress", onProgress, true);
-req.open("GET", "resources/1251.html", false);
-req.send(null);
-
-// Test for bubble phase 
-var req2 = new XMLHttpRequest();
-req2.addEventListener("progress", onProgress, false);
-req2.open("GET", "resources/1251.html", false);
-req2.send(null);
-
-// Synchronous case
 
 // Test for capture phase 
 var req3 = new XMLHttpRequest();

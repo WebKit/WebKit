@@ -283,7 +283,8 @@ void XMLHttpRequest::callReadyStateChangeListener()
         timelineAgent->willChangeXHRReadyState(m_url.string(), m_state);
 #endif
 
-    m_progressEventThrottle.dispatchEvent(XMLHttpRequestProgressEvent::create(eventNames().readystatechangeEvent), m_state == DONE ? FlushProgressEvent : DoNotFlushProgressEvent);
+    if (m_async || (m_state <= OPENED || m_state == DONE))
+        m_progressEventThrottle.dispatchEvent(XMLHttpRequestProgressEvent::create(eventNames().readystatechangeEvent), m_state == DONE ? FlushProgressEvent : DoNotFlushProgressEvent);
 
 #if ENABLE(INSPECTOR)
     if (callTimelineAgentOnReadyStateChange && (timelineAgent = InspectorTimelineAgent::retrieve(scriptExecutionContext())))
@@ -978,8 +979,10 @@ void XMLHttpRequest::didReceiveData(const char* data, int len)
         long long expectedLength = m_response.expectedContentLength();
         m_receivedLength += len;
 
-        bool lengthComputable = expectedLength && m_receivedLength <= expectedLength;
-        m_progressEventThrottle.dispatchProgressEvent(lengthComputable, static_cast<unsigned>(m_receivedLength), static_cast<unsigned>(expectedLength));
+        if (m_async) {
+            bool lengthComputable = expectedLength && m_receivedLength <= expectedLength;
+            m_progressEventThrottle.dispatchProgressEvent(lengthComputable, static_cast<unsigned>(m_receivedLength), static_cast<unsigned>(expectedLength));
+        }
 
         if (m_state != LOADING)
             changeState(LOADING);

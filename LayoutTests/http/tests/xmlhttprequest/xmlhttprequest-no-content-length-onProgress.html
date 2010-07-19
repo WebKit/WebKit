@@ -10,6 +10,17 @@
 <p id="shouldBeCalled"> FAILED </p>
 <p id="shouldNotBeCalled"> PASSED </p>
 <script type="text/javascript">
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+}
+
+var count = 0;
+function checkDone() {
+    if (++count == 2 && window.layoutTestController)
+        layoutTestController.notifyDone();
+}
+
 function onProgressPassed(e) {
     document.getElementById("shouldBeCalled").innerHTML = "PASSED";
 }
@@ -18,24 +29,19 @@ function onProgressFailed(e) {
     document.getElementById("shouldNotBeCalled").innerHTML = "FAILED";
 }
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
-}
-
 var req = new XMLHttpRequest();
 req.onprogress = onProgressPassed;
+req.onload = checkDone;
 // Test that onProgress is called on a normal file
-req.open("GET", "resource/1251.html", false);
+req.open("GET", "resource/1251.html", true);
 req.send(null);
 
 // If content length is not given, it should not be called
-req.onprogress = onProgressFailed;
-req.open("GET", "resources/noContentLength.asis", false);
-req.send(null);
-
-if (window.layoutTestController)
-    layoutTestController.notifyDone();
+var req2 = new XMLHttpRequest();
+req2.onprogress = onProgressFailed;
+req2.onload = checkDone;
+req2.open("GET", "resources/noContentLength.asis", true);
+req2.send(null);
 
 </script>
 </body>
