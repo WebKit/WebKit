@@ -1,3 +1,44 @@
+2010-07-19  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        Patch for https://bugs.webkit.org/show_bug.cgi?id=42532
+        Auto-generate the JS bindings for WebKitTestRunner's script objects.
+
+        * WebKitTestRunner/Configurations/Base.xcconfig:
+        * WebKitTestRunner/Configurations/DebugRelease.xcconfig:
+        * WebKitTestRunner/DerivedSources.make: Added.
+        * WebKitTestRunner/ForwardingHeaders/wtf/GetPtr.h: Added.
+        * WebKitTestRunner/InjectedBundle/Bindings: Added.
+        * WebKitTestRunner/InjectedBundle/Bindings/CodeGeneratorTestRunner.pm: Added.
+        * WebKitTestRunner/InjectedBundle/Bindings/JSWrappable.h: Added.
+        (WTR::JSWrappable::~JSWrappable):
+        * WebKitTestRunner/InjectedBundle/Bindings/JSWrapper.cpp: Added.
+        (WTR::JSWrapper::wrap):
+        (WTR::JSWrapper::unwrap):
+        (WTR::unwrapObject):
+        (WTR::JSWrapper::initialize):
+        (WTR::JSWrapper::finalize):
+        * WebKitTestRunner/InjectedBundle/Bindings/JSWrapper.h: Added.
+        (WTR::toJS):
+        * WebKitTestRunner/InjectedBundle/Bindings/LayoutTestController.idl: Added.
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::dump):
+        (WTR::InjectedBundlePage::setStatusbarText):
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.cpp:
+        (WTR::LayoutTestController::wrapperClass):
+        (WTR::LayoutTestController::waitUntilDone):
+        (WTR::LayoutTestController::makeWindowObject):
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.h:
+        (WTR::LayoutTestController::shouldDumpAsText):
+        (WTR::LayoutTestController::dumpAsText):
+        (WTR::LayoutTestController::shouldDumpStatusCallbacks):
+        (WTR::LayoutTestController::dumpStatusCallbacks):
+        (WTR::LayoutTestController::waitToDump):
+        (WTR::LayoutTestController::testRepaint):
+        (WTR::LayoutTestController::repaintSweepHorizontally):
+        * WebKitTestRunner/WebKitTestRunner.xcodeproj/project.pbxproj:
+
 2010-07-19  Tony Chang  <tony@chromium.org>
 
         Reviewed by David Levin.

@@ -26,39 +26,42 @@
 #ifndef LayoutTestController_h
 #define LayoutTestController_h
 
+#include "JSWrappable.h"
 #include <JavaScriptCore/JavaScriptCore.h>
 #include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
 #include <wtf/RetainPtr.h>
 #include <string>
 
 namespace WTR {
 
-class LayoutTestController : public RefCounted<LayoutTestController> {
+class LayoutTestController : public JSWrappable {
 public:
     static PassRefPtr<LayoutTestController> create(const std::string& testPathOrURL);
     ~LayoutTestController();
 
+    // JSWrappable
+    JSClassRef wrapperClass();
+
     void makeWindowObject(JSContextRef context, JSObjectRef windowObject, JSValueRef* exception);
 
-    bool dumpAsText() const { return m_dumpAsText; }
-    void setDumpAsText(bool dumpAsText) { m_dumpAsText = dumpAsText; }
+    bool shouldDumpAsText() const { return m_dumpAsText; }
+    void dumpAsText() { m_dumpAsText = true; }
 
-    bool dumpStatusCallbacks() const { return m_dumpStatusCallbacks; }
-    void setDumpStatusCallbacks(bool dumpStatusCallbacks) { m_dumpStatusCallbacks = dumpStatusCallbacks; }
+    bool shouldDumpStatusCallbacks() const { return m_dumpStatusCallbacks; }
+    void dumpStatusCallbacks() { m_dumpStatusCallbacks = true; }
 
     bool waitToDump() const { return m_waitToDump; }
-    void setWaitToDump();
     void waitToDumpWatchdogTimerFired();
     void invalidateWaitToDumpWatchdog();
+    void waitUntilDone();
     void notifyDone();
+
+    void testRepaint() { m_testRepaint = true; }
+    void repaintSweepHorizontally() { m_testRepaintSweepHorizontally = true; }
     void display();
 
     unsigned numberOfActiveAnimations() const;
     bool pauseAnimationAtTimeOnElementWithId(JSStringRef animationName, double time, JSStringRef elementId);
-
-    void setTestRepaint() { m_testRepaint = true; }
-    void setTestRepaintSweepHorizontally() { m_testRepaintSweepHorizontally = true; }
 
 private:
     LayoutTestController(const std::string& testPathOrURL);
@@ -69,14 +72,9 @@ private:
     bool m_testRepaint;
     bool m_testRepaintSweepHorizontally;
 
-
     std::string m_testPathOrURL;
     
     RetainPtr<CFRunLoopTimerRef> m_waitToDumpWatchdog;
-
-    static JSClassRef getJSClass();
-    static JSStaticValue* staticValues();
-    static JSStaticFunction* staticFunctions();
 };
 
 } // namespace WTR
