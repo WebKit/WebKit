@@ -1,3 +1,15 @@
+2010-07-19  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed.
+
+        [Qt] Remove non-existent files from Skipped list.
+
+        * platform/qt/Skipped:
+         - Unskip fast/dynamic/flash-replacement-test.html, because it was removed by r61289
+         - Rename fast/js/sputnik/Conformance/11_Expressions/11.5_Multiplicative_Operators/11.5.3_Applying_the_percent_Operator/S11.5.3_A4_T2.html after r63284
+         - Unskip inspector/debugger-breakpoints-not-activated-on-reload.html, because it was removed by r63314
+         - Unskip media/video-src-empty.html, because it was removed by r63119
+
 2010-07-19  Andreas Kling  <andreas.kling@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

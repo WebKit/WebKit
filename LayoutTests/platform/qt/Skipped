@@ -570,7 +570,7 @@ fast/js/sputnik/Conformance/15_Native_Objects/15.8_Math/15.8.2/15.8.2.16_sin/S15
 fast/js/sputnik/Conformance/15_Native_Objects/15.8_Math/15.8.2/15.8.2.18_tan/S15.8.2.18_A7.html
 
 # Failing Sputnik test on 64 bit
-fast/js/sputnik/Conformance/11_Expressions/11.5_Multiplicative_Operators/11.5.3_Applying_the_percent_Operator/S11.5.3_A4_T2.html
+fast/js/sputnik/Conformance/11_Expressions/11.5_Multiplicative_Operators/11.5.3_Percent/S11.5.3_A4_T2.html
 
 # Timed out Sputnik tests on ARM
 fast/js/sputnik/Unicode/Unicode_218/S7.6_A3.1.html
@@ -736,7 +736,6 @@ media/video-source-none-supported.html
 media/video-source-type.html
 media/video-source-type-params.html
 media/video-src-change.html
-media/video-src-empty.html
 media/video-src.html
 media/video-src-invalid-remove.html
 media/video-src-none.html
@@ -3312,7 +3311,6 @@ fast/dynamic/015.html
 fast/dynamic/anonymous-block-orphaned-lines.html
 fast/dynamic/containing-block-change.html
 fast/dynamic/create-renderer-for-whitespace-only-text.html
-fast/dynamic/flash-replacement-test.html
 fast/dynamic/float-in-trailing-whitespace-after-last-line-break.html
 fast/dynamic/float-no-longer-overhanging.html
 fast/dynamic/float-withdrawal-2.html
@@ -5416,7 +5414,6 @@ inspector/debugger-pause-on-debugger-statement.html
 inspector/debugger-pause-in-eval-script.html
 inspector/debugger-proto-property.html
 inspector/debugger-eval-while-paused.html
-inspector/debugger-breakpoints-not-activated-on-reload.html
 
 # [Qt] fast/text/bidi-explicit-embedding-past-end.html fails
 # https://bugs.webkit.org/show_bug.cgi?id=41241
