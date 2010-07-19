@@ -186,8 +186,13 @@ PassRefPtr<ImageData> getImageData(const IntRect& rect, const ImageBufferData& i
     unsigned destBytesPerRow = 4 * rect.width();
     unsigned char* destRows = data + desty * destBytesPerRow + destx * 4;
     for (int y = 0; y < numRows; ++y) {
+#if QT_VERSION >= 0x040700
+        const quint32* scanLine = reinterpret_cast<const quint32*>(image.constScanLine(y + originy));
+#else
+        quint32* scanLine = reinterpret_cast<quint32*>(image.scanLine(y + originy));
+#endif
         for (int x = 0; x < numColumns; x++) {
-            QRgb value = image.pixel(x + originx, y + originy);
+            QRgb value = scanLine[x + originx];
             int basex = x * 4;
 
             destRows[basex] = qRed(value);
