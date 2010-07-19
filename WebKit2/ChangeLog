@@ -1,3 +1,12 @@
+2010-07-19  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Uae an OwnPtr for the drawing area in WebPage (fixes a leak!).
+
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::drawingArea):
+
 2010-07-19  Anders carlsson  <andersca@apple.com>
 
         Reviewed by Adam Roben.
