@@ -1,4 +1,11 @@
-2010-07-18  Anders carlsson  <andersca@apple.com>
+2010-07-18  Anders Carlsson  <andersca@apple.com>
+
+        Fix Build.
+
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::paintSearchFieldResultsDecoration):
+
+2010-07-18  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Dan Bernstein.
 
