@@ -28,7 +28,7 @@
 
 #include <wtf/HashMap.h>
 
-class NPObject;
+struct NPObject;
 
 namespace JSC {
     class JSObject;
