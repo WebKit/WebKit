@@ -88,7 +88,7 @@ void StillImage::draw(GraphicsContext* ctxt, const FloatRect& dst,
         p.setCompositionMode(QPainter::CompositionMode_Source);
         p.fillRect(shadowImage.rect(), shadowColor);
         p.setCompositionMode(QPainter::CompositionMode_DestinationIn);
-        p.drawPixmap(normalizedDst, *m_pixmap, normalizedSrc);
+        p.drawPixmap(QRect(0, 0, normalizedDst.width(), normalizedDst.height()), *m_pixmap, normalizedSrc);
         p.end();
         painter->drawImage(shadowImageRect, shadowImage, normalizedSrc);
     }
