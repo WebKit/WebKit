@@ -88,7 +88,9 @@ var __skip__ = {
     "window.webkitPerformance" : 1,
 
     // showModalDialog is not implemented on all platforms in DumpRenderTree.
-    "window.showModalDialog" : 1
+    "window.showModalDialog" : 1,
+    // Ignore this property because it only appears in debug builds.
+    "window.jscprint" : 1
 };
 
 function logValue(valueName)

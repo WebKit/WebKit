@@ -1,5 +1,13 @@
 2010-07-19  Kent Hansen  <kent.hansen@nokia.com>
 
+        Unreviewed, fix failure introduced in r63645.
+        Ignore jscprint property since it only appears in
+        debug builds (as per window-property-descriptors test).
+
+        * fast/dom/Window/window-properties.html:
+
+2010-07-19  Kent Hansen  <kent.hansen@nokia.com>
+
         Reviewed by Sam Weinig.
 
         Improve coverage of fast/dom/Window/window-properties test
