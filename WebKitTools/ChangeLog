@@ -1,3 +1,9 @@
+2010-07-19  Mark Rowe  <mrowe@apple.com>
+
+        Clean up the buildbot configuration a little.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+
 2010-07-19  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Darin Adler.
