@@ -1759,6 +1759,8 @@ BUG23473 MAC : fast/repaint/svg-layout-root-style-attr-update.html = PASS
 BUG23473 MAC : fast/repaint/table-cell-vertical-overflow.html = PASS
 BUG23473 MAC : fast/repaint/text-shadow.html = PASS
 BUG23473 MAC : fast/repaint/text-shadow-horizontal.html = PASS
+BUG23473 MAC : fast/repaint/view-background-from-body-1.html = PASS
+BUG23473 MAC : fast/repaint/view-background-from-body-2.html = PASS
 
 // Thicker shadow than expected
 BUG23471 MAC : fast/text/stroking.html = IMAGE
@@ -2544,8 +2546,7 @@ BUG33486 LINUX : fast/text/international/thai-line-breaks.html = IMAGE
 // WebKit roll 54059 -> 54075
 BUG33538 : fast/dom/Window/anonymous-slot-with-changes.html = TEXT
 
-// Flaky test
-BUG35064 WIN DEBUG : fast/forms/restore-selection-after-layout.html = TEXT PASS
+BUG35064 WIN : fast/forms/restore-selection-after-layout.html = TEXT PASS
 
 // WebKit roll 54482 to 54493.
 BUG35242 WIN : svg/W3C-SVG-1.1/text-intro-05-t.svg = IMAGE+TEXT TEXT
@@ -3019,7 +3020,7 @@ BUG49021 : userscripts/user-style-top-frame-only.html = TEXT
 
 BUGWK42241 LINUX : svg/custom/text-rotated-gradient.svg = IMAGE PASS
 
-BUGWK42249 : fast/repaint/moving-shadow-on-container.html = IMAGE
+BUGWK42249 MAC : fast/repaint/moving-shadow-on-container.html = IMAGE
 
 // These tests all fail because the expected output is wrong. The
 // reason is that JSC does not currently implement Object.freeze and

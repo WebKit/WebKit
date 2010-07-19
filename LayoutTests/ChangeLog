@@ -1,3 +1,14 @@
+2010-07-19  Ojan Vafai  <ojan@chromium.org>
+
+        Unreviewed.
+        
+        [chromium] Update test_expectations with passing/flaky tests.
+        Add new chromium expected result from r63680.
+
+        * platform/chromium-mac/fast/xmlhttprequest/xmlhttprequest-recursive-sync-event-expected.txt:
+        * platform/chromium-win/fast/xmlhttprequest/xmlhttprequest-recursive-sync-event-expected.txt:
+        * platform/chromium/test_expectations.txt:
+
 2010-07-19  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Darin Adler.
