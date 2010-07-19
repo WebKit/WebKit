@@ -5,7 +5,7 @@
 
 EVENT(error)
 EXPECTED (relativeURL(video.currentSrc) == 'bogus') OK
-EXPECTED (video.networkState == '4') OK
+EXPECTED (video.networkState == '3') OK
 EXPECTED (video.error.code == '4') OK
 
 

@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html>
     <head>
         <script src=video-test.js></script>
@@ -6,7 +7,7 @@
 
             function someTimeLater()
             {
-                testExpected("state", "load() with no 'src'");
+                testExpected("state", "load() with missing 'src'");
                 testExpected("videos[0].error", null);
                 testExpected("videos[0].networkState", HTMLMediaElement.NETWORK_EMPTY);
                 testExpected("videos[0].src", "");
@@ -21,7 +22,7 @@
                 testExpected("videos[1].error.code", MediaError.MEDIA_ERR_SRC_NOT_SUPPORTED);
                 testExpected("videos[1].networkState", HTMLMediaElement.NETWORK_NO_SOURCE);
 
-                consoleWrite("<i>Calling load() with no 'src' should NOT fire 'error' event, set network state to NETWORK_EMPTY.<" + "/i>");
+                consoleWrite("<br><i>Calling load() with no 'src' should NOT fire 'error' event, set network state to NETWORK_EMPTY.<" + "/i>");
                 state = "load() with missing 'src'";
                 videos[0].load();
 
@@ -54,7 +55,5 @@
         <video width=320 height=60 controls onerror="errorEvent()"></video>
         <br>
         <video width=320 height=60 controls src="" onerror="errorEvent()"></video>
-
-
     </body>
 </html>

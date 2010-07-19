@@ -2,6 +2,6 @@
 
 EVENT(error)
 EXPECTED (event.target.tagName == 'SOURCE') OK
-EXPECTED (video.networkState == '4') OK
+EXPECTED (video.networkState == '3') OK
 END OF TEST
 

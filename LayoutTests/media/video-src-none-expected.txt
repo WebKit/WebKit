@@ -15,9 +15,10 @@ Calling load() with empty 'src' should fire 'error' event, set network state to 
 EXPECTED (state == 'load() with empty 'src'') OK
 EXPECTED ([object HTMLVideoElement] == '[object HTMLVideoElement]') OK
 EXPECTED (videos[1].error.code == '4') OK
-EXPECTED (videos[1].networkState == '4') OK
+EXPECTED (videos[1].networkState == '3') OK
+
 Calling load() with no 'src' should NOT fire 'error' event, set network state to NETWORK_EMPTY.
-EXPECTED (state == 'load() with no 'src''), OBSERVED 'load() with missing 'src'' FAIL
+EXPECTED (state == 'load() with missing 'src'') OK
 EXPECTED (videos[0].error == 'null') OK
 EXPECTED (videos[0].networkState == '0') OK
 EXPECTED (videos[0].src == '') OK

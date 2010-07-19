@@ -88,7 +88,7 @@ public:
     void setSrc(const String&);
     String currentSrc() const;
 
-    enum NetworkState { NETWORK_EMPTY, NETWORK_IDLE, NETWORK_LOADING, NETWORK_LOADED, NETWORK_NO_SOURCE };
+    enum NetworkState { NETWORK_EMPTY, NETWORK_IDLE, NETWORK_LOADING, NETWORK_NO_SOURCE };
     NetworkState networkState() const;
     
     String preload() const;    
@@ -366,6 +366,7 @@ private:
 
     bool m_dispatchingCanPlayEvent : 1;
     bool m_loadInitiatedByUserGesture : 1;
+    bool m_completelyLoaded : 1;
 };
 
 } //namespace

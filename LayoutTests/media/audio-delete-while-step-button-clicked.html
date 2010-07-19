@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html>
     <head>
         <script src=media-file.js></script>
@@ -80,7 +81,7 @@
         <br>
         <input type="button" id="button" value="Click Me!" onmouseup="log('button click!')"> 
         <br>
-        <audio id="audio" ontimeupdate="log('timeupdate')" onload="step()" controls></audio><br><br>
+        <audio id="audio" ontimeupdate="log('timeupdate')" oncanplaythrough="step()" controls></audio><br><br>
         <div id="console"></div>
     </body>
 </html>

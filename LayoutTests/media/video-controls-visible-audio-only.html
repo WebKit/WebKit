@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html>
     <head>
         <style>
@@ -68,7 +69,7 @@
 
         <p><span id="mouse-parking">mouse parks here, am I blue?</span></p>
 
-        <video id="no-video-media" controls loop onload="start()"></video>
+        <video id="no-video-media" controls loop oncanplaythrough="start()"></video>
         <br><br><div id="console"></div>
         <script>
             setSrcById("no-video-media", findMediaFile("audio", "content/test"));

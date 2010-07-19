@@ -1,3 +1,31 @@
+2010-07-19  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Remove HTML5 media element 'load' event
+        https://bugs.webkit.org/show_bug.cgi?id=30464
+        <rdar://problem/5650561>
+
+        * media/audio-delete-while-slider-thumb-clicked.html: Trigger test on 'canplaythrough'
+        instead of 'load'.
+        * media/audio-delete-while-step-button-clicked.html: Ditto.
+        * media/event-attributes-expected.txt: 
+        * media/event-attributes.html: Correct logic to check that 'progress' event(s) are
+        fired while loading file, but not when src set to invalid file. 'abort' event is fired when
+        the src is changed.
+        * media/invalid-media-url-crash-expected.txt:
+        * media/media-constants-expected.txt: No more NETWORK_LOADED state.
+        * media/media-constants.html:  No more NETWORK_LOADED state. Clean up test.
+        * media/remove-from-document-expected.txt:
+        * media/remove-from-document.html: Ditto.
+        * media/video-controls-visible-audio-only.html: Trigger test on 'canplaythrough'
+        instead of 'load'.
+        * media/video-source-none-supported-expected.txt: No more NETWORK_LOADED state.
+        * media/video-src-change-expected.txt: Ditto.
+        * media/video-src-none-expected.txt:
+        * media/video-src-none.html: No more NETWORK_LOADED state. Fix bogus test that generated
+        "FAIL" in results.
+
 2010-07-19  Ojan Vafai  <ojan@chromium.org>
 
         Unreviewed.

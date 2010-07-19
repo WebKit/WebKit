@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html>
     <head>
         <script src=media-file.js></script>
@@ -16,6 +17,7 @@
                 switch (event.type)
                 {
                     case "canplaythrough":
+                        testExpected('progressEventCount', 1, '>=');
                         consoleWrite("<br>*** starting playback");
                         run("video.play()"); 
                         break;
@@ -46,13 +48,14 @@
                     case "ended":
                         var mediaFile = findMediaFile("video", "content/garbage");
                         consoleWrite("<br>*** played to end, setting 'src' to an invalid movie");
+                        run("progressEventCount = 0");
                         video.src = mediaFile;
                         break;
                     case "progress":
                         ++progressEventCount;
                         break;
                     case "error":
-                        testExpected('progressEventCount', 1, '>=');
+                        testExpected('progressEventCount', 0);
                         endTest();
                         break;
                     default:

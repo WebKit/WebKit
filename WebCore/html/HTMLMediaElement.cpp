@@ -130,6 +130,7 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document* doc)
 #endif
     , m_dispatchingCanPlayEvent(false)
     , m_loadInitiatedByUserGesture(false)
+    , m_completelyLoaded(false)
 {
     document()->registerForDocumentActivationCallbacks(this);
     document()->registerForMediaVolumeCallbacks(this);
@@ -226,8 +227,6 @@ void HTMLMediaElement::parseMappedAttribute(Attribute* attr)
         setAttributeEventListener(eventNames().endedEvent, createAttributeEventListener(this, attr));
     else if (attrName == onerrorAttr)
         setAttributeEventListener(eventNames().errorEvent, createAttributeEventListener(this, attr));
-    else if (attrName == onloadAttr)
-        setAttributeEventListener(eventNames().loadEvent, createAttributeEventListener(this, attr));
     else if (attrName == onloadeddataAttr)
         setAttributeEventListener(eventNames().loadeddataEvent, createAttributeEventListener(this, attr));
     else if (attrName == onloadedmetadataAttr)
@@ -482,6 +481,7 @@ void HTMLMediaElement::prepareForLoad()
     m_loadTimer.stop();
     m_sentStalledEvent = false;
     m_haveFiredLoadedData = false;
+    m_completelyLoaded = false;
 
     // 1 - Abort any already-running instance of the resource selection algorithm for this element.
     m_currentSourceNode = 0;
@@ -836,25 +836,15 @@ void HTMLMediaElement::setNetworkState(MediaPlayer::NetworkState state)
     }
 
     if (state == MediaPlayer::Loaded) {
-        NetworkState oldState = m_networkState;
-
-        m_networkState = NETWORK_LOADED;
-        if (oldState < NETWORK_LOADED || oldState == NETWORK_NO_SOURCE) {
+        if (m_networkState != NETWORK_IDLE) {
             m_progressEventTimer.stop();
 
             // Schedule one last progress event so we guarantee that at least one is fired
             // for files that load very quickly.
             scheduleEvent(eventNames().progressEvent);
-
-            // Check to see if readyState changes need to be dealt with before sending the 
-            // 'load' event so we report 'canplaythrough' first. This is necessary because a
-            //  media engine reports readyState and networkState changes separately
-            MediaPlayer::ReadyState currentState = m_player->readyState();
-            if (static_cast<ReadyState>(currentState) != m_readyState)
-                setReadyState(currentState);
-
-            scheduleEvent(eventNames().loadEvent);
         }
+        m_networkState = NETWORK_IDLE;
+        m_completelyLoaded = true;
     }
 }
 
@@ -967,7 +957,7 @@ void HTMLMediaElement::setReadyState(MediaPlayer::ReadyState state)
 void HTMLMediaElement::progressEventTimerFired(Timer<HTMLMediaElement>*)
 {
     ASSERT(m_player);
-    if (m_networkState == NETWORK_EMPTY || m_networkState >= NETWORK_LOADED)
+    if (m_networkState != NETWORK_LOADING)
         return;
 
     unsigned progress = m_player->bytesLoaded();
@@ -1809,7 +1799,7 @@ void HTMLMediaElement::stopPeriodicTimers()
 
 void HTMLMediaElement::userCancelledLoad()
 {
-    if (m_networkState == NETWORK_EMPTY || m_networkState >= NETWORK_LOADED)
+    if (m_networkState == NETWORK_EMPTY || m_completelyLoaded)
         return;
 
     // If the media data fetching process is aborted by the user:

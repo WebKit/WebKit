@@ -4,6 +4,7 @@ EVENT(loadedmetadata)
 EVENT(loadeddata)
 EVENT(canplay)
 EVENT(canplaythrough)
+EXPECTED (progressEventCount >= '1') OK
 
 *** starting playback
 RUN(video.play())
@@ -34,9 +35,11 @@ EVENT(playing)
 EVENT(ended)
 
 *** played to end, setting 'src' to an invalid movie
+RUN(progressEventCount = 0)
+EVENT(abort)
 EVENT(emptied)
 EVENT(loadstart)
 EVENT(error)
-EXPECTED (progressEventCount >= '1') OK
+EXPECTED (progressEventCount == '0') OK
 END OF TEST
 

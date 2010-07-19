@@ -1,3 +1,22 @@
+2010-07-19  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Remove HTML5 media element 'load' event
+        https://bugs.webkit.org/show_bug.cgi?id=30464
+        <rdar://problem/5650561>
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::HTMLMediaElement): Initialize m_completelyLoaded.
+        (WebCore::HTMLMediaElement::parseMappedAttribute): Don't deal with 'load' event.
+        (WebCore::HTMLMediaElement::prepareForLoad): Set m_completelyLoaded to false.
+        (WebCore::HTMLMediaElement::setNetworkState): Don't post 'load' event.
+        (WebCore::HTMLMediaElement::progressEventTimerFired): Bail if m_networkState != NETWORK_LOADING.
+        (WebCore::HTMLMediaElement::userCancelledLoad): No more NETWORK_LOADED state.
+        * html/HTMLMediaElement.h:
+        (WebCore::HTMLMediaElement::):
+        * html/HTMLMediaElement.idl: Remove NETWORK_LOADING.
+
 2010-07-19  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Darin Adler.
