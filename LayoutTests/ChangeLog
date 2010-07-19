@@ -1,3 +1,16 @@
+2010-07-19  Mads Ager  <ager@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Remove chromium rebaselines for document.all layout test.
+        https://bugs.webkit.org/show_bug.cgi?id=42557
+
+        V8 changed behavior to match JSC completely on document.all. Remove
+        chromium rebaseline.
+
+        * platform/chromium-mac/fast/dom/undetectable-document-all-expected.txt: Removed.
+        * platform/chromium-win/fast/dom/undetectable-document-all-expected.txt: Removed.
+
 2010-07-19  Kent Hansen  <kent.hansen@nokia.com>
 
         Unreviewed, fix failure introduced in r63645.
