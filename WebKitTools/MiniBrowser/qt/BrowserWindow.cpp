@@ -88,6 +88,7 @@ BrowserWindow::BrowserWindow()
     m_browser->setFocus(Qt::OtherFocusReason);
 
     connect(m_addressBar, SIGNAL(returnPressed()), SLOT(changeLocation()));
+    connect(m_browser->view(), SIGNAL(loadProgress(int)), SLOT(loadProgress(int)));
     connect(m_browser->view(), SIGNAL(titleChanged(const QString&)), SLOT(titleChanged(const QString&)));
     connect(m_browser->view(), SIGNAL(urlChanged(const QUrl&)), SLOT(urlChanged(const QUrl&)));
 
@@ -114,6 +115,25 @@ void BrowserWindow::changeLocation()
 {
     QString string = m_addressBar->text();
     m_browser->load(string);
+}
+
+void BrowserWindow::loadProgress(int progress)
+{
+    QColor backgroundColor = QApplication::palette().color(QPalette::Base);
+    QColor progressColor = QColor(120, 180, 240);
+    QPalette pallete = m_addressBar->palette();
+
+    if (progress <= 0 || progress >= 100)
+        pallete.setBrush(QPalette::Base, backgroundColor);
+    else {
+        QLinearGradient gradient(0, 0, width(), 0);
+        gradient.setColorAt(0, progressColor);
+        gradient.setColorAt(((double) progress) / 100, progressColor);
+        if (progress != 100)
+            gradient.setColorAt((double) progress / 100 + 0.001, backgroundColor);
+        pallete.setBrush(QPalette::Base, gradient);
+    }
+    m_addressBar->setPalette(pallete);
 }
 
 void BrowserWindow::titleChanged(const QString& title)
