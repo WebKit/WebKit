@@ -5288,7 +5288,7 @@ canvas/philip/tests/2d.pattern.image.incomplete.html
 canvas/philip/tests/2d.pattern.image.null.html
 canvas/philip/tests/2d.pattern.image.undefined.html
 canvas/philip/tests/2d.shadow.canvas.alpha.html
-canvas/philip/tests/2d.shadow.canvas.basic.html
+canvas/philip/tests/2d.shadow.canvas.transparent.1.html
 canvas/philip/tests/2d.shadow.canvas.transparent.2.html
 canvas/philip/tests/2d.shadow.image.alpha.html
 canvas/philip/tests/2d.shadow.image.transparent.1.html

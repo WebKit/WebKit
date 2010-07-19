@@ -67,46 +67,34 @@ void StillImage::draw(GraphicsContext* ctxt, const FloatRect& dst,
     if (m_pixmap->isNull())
         return;
 
-    ctxt->save();
+
+    FloatRect normalizedSrc = src.normalized();
+    FloatRect normalizedDst = dst.normalized();
+
+    QPainter* painter = ctxt->platformContext();
+    QPainter::CompositionMode oldCompositionMode = painter->compositionMode();
+
     ctxt->setCompositeOperation(op);
 
-    // To support width or height is negative
-    float sx = src.x();
-    float sy = src.y();
-    float sw = src.width();
-    float sh = src.height();
+    FloatSize shadowSize;
+    float shadowBlur;
+    Color shadowColor;
+    if (ctxt->getShadow(shadowSize, shadowBlur, shadowColor)) {
+        FloatRect shadowImageRect(normalizedDst);
+        shadowImageRect.move(shadowSize.width(), shadowSize.height());
 
-    if (sw < 0) {
-        sx = sx + sw;
-        sw = -sw;
+        QImage shadowImage(QSize(static_cast<int>(normalizedSrc.width()), static_cast<int>(normalizedSrc.height())), QImage::Format_ARGB32_Premultiplied);
+        QPainter p(&shadowImage);
+        p.setCompositionMode(QPainter::CompositionMode_Source);
+        p.fillRect(shadowImage.rect(), shadowColor);
+        p.setCompositionMode(QPainter::CompositionMode_DestinationIn);
+        p.drawPixmap(normalizedDst, *m_pixmap, normalizedSrc);
+        p.end();
+        painter->drawImage(shadowImageRect, shadowImage, normalizedSrc);
     }
 
-    if (sh < 0) {
-        sy = sy + sh;
-        sh = -sh;
-    }
-
-    float dx = dst.x();
-    float dy = dst.y();
-    float dw = dst.width();
-    float dh = dst.height();
-
-    if (dw < 0) {
-        dx = dx + dw;
-        dw = -dw;
-    }
-
-    if (dh < 0) {
-        dy = dy + dh;
-        dh = -dh;
-    }
-
-    FloatRect srcM(sx, sy, sw, sh);
-    FloatRect dstM(dx, dy, dw, dh);
-    QPainter* painter(ctxt->platformContext());
-
-    painter->drawPixmap(dstM, *m_pixmap, srcM);
-    ctxt->restore();
+    painter->drawPixmap(normalizedDst, *m_pixmap, normalizedSrc);
+    painter->setCompositionMode(oldCompositionMode);
 }
 
 }
