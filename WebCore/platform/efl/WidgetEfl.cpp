@@ -229,21 +229,16 @@ void Widget::applyFallbackCursor()
 
 void Widget::applyCursor()
 {
-    const char *file = 0;
-    Evas_Coord x, y;
-
-    String theme = edjeThemeRecursive();
-    if (!theme.isNull())
-        file = edjeThemeRecursive().utf8().data();
+    CString file = edjeThemeRecursive().utf8();
 
     m_data->m_cursorObject = edje_object_add(evas());
-    if (file && !edje_object_file_set(m_data->m_cursorObject, file, m_data->m_cursorGroup.utf8().data())) {
+    if (!file.isNull() && !edje_object_file_set(m_data->m_cursorObject, file.data(), m_data->m_cursorGroup.utf8().data())) {
         evas_object_del(m_data->m_cursorObject);
         m_data->m_cursorObject = 0;
         ecore_evas_object_cursor_set(ecoreEvas(), 0, 0, 0, 0);
         applyFallbackCursor();
     } else {
-        Evas_Coord w, h;
+        Evas_Coord x, y, w, h;
         const char *d;
 
         edje_object_size_min_get(m_data->m_cursorObject, &w, &h);
@@ -266,7 +261,7 @@ void Widget::applyCursor()
 
 void Widget::setCursor(const Cursor& cursor)
 {
-    if (!platformWidget() || !evas())
+    if (!evas())
          return;
 
     const char *group = cursor.impl();
