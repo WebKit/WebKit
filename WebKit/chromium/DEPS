@@ -32,7 +32,7 @@
 
 vars = {
   'chromium_svn': 'http://src.chromium.org/svn/trunk/src',
-  'chromium_rev': '52483',
+  'chromium_rev': '52869',
 }
 
 deps = {
@@ -89,6 +89,8 @@ deps = {
     Var('chromium_svn')+'/gpu@'+Var('chromium_rev'),
   'media':
     Var('chromium_svn')+'/media@'+Var('chromium_rev'),
+  'printing':
+    Var('chromium_svn')+'/printing@'+Var('chromium_rev'),
   'third_party/angle':  # needed by the gpu process
     From('chromium_deps', 'src/third_party/angle'),
   'third_party/ffmpeg': # needed by webkit/media

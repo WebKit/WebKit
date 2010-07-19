@@ -1,3 +1,15 @@
+2010-07-19  Tony Chang  <tony@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        [chromium] refactor npapi plugin copy step
+        https://bugs.webkit.org/show_bug.cgi?id=42493
+
+        This is to avoid duplicate copy rules in the Linux make build.
+
+        * WebKit.gyp:
+        * DEPS: 52483:52869
+
 2010-07-19  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Pavel Feldman.
