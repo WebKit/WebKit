@@ -1,3 +1,24 @@
+2010-07-19  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Jon Honeycutt.
+
+        Remove dependency on getopt from WebKitTestRunner.
+
+        - Simplify options parsing and eliminate unused options.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::TestController):
+        (WTR::TestController::initialize):
+        * WebKitTestRunner/TestController.h:
+        (WTR::TestController::testPluginPath):
+        * WebKitTestRunner/WebKitTestRunner.xcodeproj/project.pbxproj:
+        * WebKitTestRunner/mac/TestControllerMac.mm:
+        (WTR::TestController::platformInitialize):
+        (WTR::TestController::initializeTestPluginPath):
+        * WebKitTestRunner/win/TestControllerWin.cpp:
+        (WTR::TestController::platformInitialize):
+        (WTR::TestController::initializeTestPluginPath):
+
 2010-07-19  Diego Gonzalez  <diegohcg@webkit.org>
 
         Reviewed by Antonio Gomes.

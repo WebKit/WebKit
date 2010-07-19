@@ -25,9 +25,16 @@
 
 #include "TestController.h"
 
+#include <io.h>
 #include <WebKit2/WKStringCF.h>
 
 namespace WTR {
+
+void TestController::platformInitialize()
+{
+    _setmode(1, _O_BINARY);
+    _setmode(2, _O_BINARY);
+}
 
 void TestController::initializeInjectedBundlePath()
 {
@@ -42,11 +49,11 @@ void TestController::initializeInjectedBundlePath()
     m_injectedBundlePath.adopt(WKStringCreateWithCFString(bundlePath));
 }
 
-WKRetainPtr<WKStringRef> TestController::testPluginPath()
+void TestController::initializeTestPluginPath()
 {
     CFStringRef exeContainerPath = CFURLCopyFileSystemPath(CFURLCreateCopyDeletingLastPathComponent(0, CFBundleCopyExecutableURL(CFBundleGetMainBundle())), kCFURLWindowsPathStyle);
     CFMutableStringRef bundlePath = CFStringCreateMutableCopy(0, 0, exeContainerPath);
-    return WKRetainPtr<WKStringRef>(AdoptWK, WKStringCreateWithCFString(bundlePath));
+    m_testPluginPath.adopt(AdoptWK, WKStringCreateWithCFString(bundlePath));
 }
 
 } // namespace WTR

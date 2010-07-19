@@ -28,7 +28,6 @@
 #include "PlatformWebView.h"
 #include "TestInvocation.h"
 #include <WebKit2/WKContextPrivate.h>
-#include <getopt.h>
 
 namespace WTR {
 
@@ -39,62 +38,44 @@ TestController& TestController::shared()
 }
 
 TestController::TestController()
-    : m_dumpTree(false)
-    , m_dumpPixels(false)
-    , m_threaded(false)
-    , m_forceComplexText(false)    
+    : m_dumpPixels(false)
     , m_verbose(false)
     , m_printSeparators(false)
     , m_usingServerMode(false)
 {
 }
 
-void TestController::initialize(int argc, const char *argv[])
+void TestController::initialize(int argc, const char* argv[])
 {
-    int dumpTree = 0;
-    int dumpPixels = 0;
-    int threaded = 0;
-    int forceComplexText = 0;
-    int useHTML5Parser = 0;
-    int verbose = 0;
+    platformInitialize();
 
-    struct option options[] = {
-        {"notree", no_argument, &dumpTree, false},
-        {"pixel-tests", no_argument, &dumpPixels, true},
-        {"tree", no_argument, &dumpTree, true},
-        {"threaded", no_argument, &threaded, true},
-        {"complex-text", no_argument, &forceComplexText, true},
-        {"legacy-parser", no_argument, &useHTML5Parser, false},
-        {"verbose", no_argument, &verbose, true},
-        {0, 0, 0, 0}
-    };
-    
-    int option;
-    while ((option = getopt_long(argc, (char * const *)argv, "", options, 0)) != -1) {
-        switch (option) {
-            case '?':   // unknown or ambiguous option
-            case ':':   // missing argument
-                exit(1);
-                break;
+    for (int i = 1; i < argc; ++i) {
+        std::string argument(argv[i]);
+
+        if (argument == "--pixel-tests") {
+            m_dumpPixels = true;
+            continue;
         }
+        if (argument == "--verbose") {
+            m_verbose = true;
+            continue;
+        }
+        
+        // Skip any other arguments that begin with '--'.
+        if (argument.length() >= 2 && argument[0] == '-' && argument[1] == '-')
+            continue;
+
+        m_paths.push_back(argument);
     }
 
-    m_dumpTree = dumpTree;
-    m_dumpPixels = dumpPixels;
-    m_threaded = threaded;
-    m_forceComplexText = forceComplexText;
-    m_verbose = verbose;
-
-    m_usingServerMode = (argc == optind + 1 && strcmp(argv[optind], "-") == 0);
+    m_usingServerMode = (m_paths.size() == 1 && m_paths[0] == "-");
     if (m_usingServerMode)
         m_printSeparators = true;
-    else {
-        m_printSeparators = (optind < argc - 1 || (m_dumpPixels && m_dumpTree));
-        for (int i = optind; i != argc; ++i)
-            m_paths.push_back(std::string(argv[i]));
-    }
+    else
+        m_printSeparators = m_paths.size() > 1;
 
     initializeInjectedBundlePath();
+    initializeTestPluginPath();
 
     m_context.adopt(WKContextCreateWithInjectedBundlePath(injectedBundlePath()));
 
@@ -105,7 +86,7 @@ void TestController::initialize(int argc, const char *argv[])
     };
     WKContextSetInjectedBundleClient(m_context.get(), &injectedBundlePathClient);
 
-    _WKContextSetAdditionalPluginPath(m_context.get(), testPluginPath().get());
+    _WKContextSetAdditionalPluginPath(m_context.get(), testPluginPath());
     
     m_pageNamespace.adopt(WKPageNamespaceCreate(m_context.get()));
     m_mainWebView = new PlatformWebView(m_pageNamespace.get());

@@ -30,15 +30,19 @@
 
 namespace WTR {
 
+void TestController::platformInitialize()
+{
+}
+
 void TestController::initializeInjectedBundlePath()
 {
     NSString *nsBundlePath = [[[NSBundle mainBundle] bundlePath] stringByAppendingPathComponent:@"InjectedBundle.bundle"];
     m_injectedBundlePath.adopt(WKStringCreateWithCFString((CFStringRef)nsBundlePath));
 }
 
-WKRetainPtr<WKStringRef> TestController::testPluginPath()
+void TestController::initializeTestPluginPath()
 {
-    return WKRetainPtr<WKStringRef>(AdoptWK, WKStringCreateWithCFString((CFStringRef)[[NSBundle mainBundle] bundlePath]));
+    m_testPluginPath.adopt(WKStringCreateWithCFString((CFStringRef)[[NSBundle mainBundle] bundlePath]));
 }
 
 } // namespace WTR

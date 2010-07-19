@@ -65,7 +65,7 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = BC952D7711F3BF5D003398B4 /* Derived Sources */;
+			remoteGlobalIDString = BC952D7711F3BF5D003398B4;
 			remoteInfo = "Derived Sources";
 		};
 /* End PBXContainerItemProxy section */
