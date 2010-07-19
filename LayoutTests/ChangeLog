@@ -1,3 +1,13 @@
+2010-07-19  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        [chromium] inspector/console-trace.html failing on windows after r63548
+        https://bugs.webkit.org/show_bug.cgi?id=42485
+
+        * inspector/console-trace.html: call dumpConsoleMessages sycnhronously right after console.trace
+        * platform/chromium/test_expectations.txt:
+
 2010-07-19  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed.

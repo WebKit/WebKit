@@ -188,8 +188,9 @@ Element.prototype.removeStyleClass = function(className)
     if (index === -1)
         return;
 
-    var newClassName = " " + this.className + " ";
-    this.className = newClassName.replace(" " + className + " ", " ");
+    this.className = this.className.split(" ").filter(function(s) {
+        return s && s !== className;
+    }).join(" ");
 }
 
 Element.prototype.removeMatchingStyleClasses = function(classNameRegex)
