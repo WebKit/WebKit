@@ -1,3 +1,15 @@
+2010-07-19  Ojan Vafai  <ojan@chromium.org>
+
+        Unreviewed.
+        [chromium] Update test expectations after r63681.
+        Add new expected results for the clearly correct cases after r63684.
+
+        * platform/chromium-mac/media/video-load-networkState-expected.txt:
+        * platform/chromium-mac/media/video-src-change-expected.txt:
+        * platform/chromium-win/media/video-load-networkState-expected.txt:
+        * platform/chromium-win/media/video-src-change-expected.txt:
+        * platform/chromium/test_expectations.txt:
+
 2010-07-19  Eric Carlson  <eric.carlson@apple.com>
 
         Unreviewed, build fix.
