@@ -30,25 +30,20 @@
 
 namespace WebCore {
 
-class PluginWidget : public Widget {
-    
+// PluginViewBase is a widget that all plug-in views inherit from, both in Webkit and WebKit2.
+// It's intended as a stopgap measure until we can merge all plug-in views into a single plug-in view.
+class PluginViewBase : public Widget {
 public:
-    PluginWidget(PlatformWidget widget = 0) : Widget(widget) { }
 #if USE(ACCELERATED_COMPOSITING)
-    PlatformLayer* platformLayer() const;
+    virtual PlatformLayer* platformLayer() const { return 0; }
 #endif
+
+protected:
+    PluginViewBase(PlatformWidget widget) : Widget(widget) { }
     
 private:
-    virtual void invalidateRect(const IntRect&);
-    virtual bool isPluginWidget() const { return true; }
+    virtual bool isPluginViewBase() const { return true; }
 };
-
-#if USE(ACCELERATED_COMPOSITING) && !PLATFORM(MAC)
-inline PlatformLayer* PluginWidget::platformLayer() const
-{
-    return 0;
-}
-#endif
 
 } // namespace WebCore
 

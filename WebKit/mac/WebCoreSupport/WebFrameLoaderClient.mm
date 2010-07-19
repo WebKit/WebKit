@@ -103,7 +103,7 @@
 #import <WebCore/MouseEvent.h>
 #import <WebCore/Page.h>
 #import <WebCore/PlatformString.h>
-#import <WebCore/PluginWidget.h>
+#import <WebCore/PluginViewBase.h>
 #import <WebCore/ResourceError.h>
 #import <WebCore/ResourceHandle.h>
 #import <WebCore/ResourceLoader.h>
@@ -1502,6 +1502,20 @@ static NSView *pluginView(WebFrame *frame, WebPluginPackage *pluginPackage,
     return view;
 }
 
+class PluginWidget : public PluginViewBase {
+public:
+    PluginWidget(NSView *view = 0)
+        : PluginViewBase(view)
+    {
+    }
+    
+private:
+    virtual void invalidateRect(const IntRect& rect)
+    {
+        [platformWidget() setNeedsDisplayInRect:rect];
+    }
+};
+
 #if ENABLE(NETSCAPE_PLUGIN_API)
 
 class NetscapePluginWidget : public PluginWidget {
@@ -1511,6 +1525,13 @@ public:
     {
     }
     
+#if USE(ACCELERATED_COMPOSITING)
+    virtual PlatformLayer* platformLayer() const
+    {
+        return [(WebBaseNetscapePluginView *)platformWidget() pluginLayer];
+    }
+#endif
+
     virtual void handleEvent(Event* event)
     {
         Frame* frame = Frame::frameForWidget(this);

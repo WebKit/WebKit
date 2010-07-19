@@ -948,6 +948,14 @@ String WebHaltablePlugin::pluginName() const
     }
 }
 
+#ifndef BUILDING_ON_TIGER
+- (CALayer *)pluginLayer
+{
+    ASSERT_NOT_REACHED();
+    return nil;
+}
+#endif
+
 @end
 
 namespace WebKit {

@@ -140,6 +140,10 @@ class WebHaltablePlugin;
 
 - (void)invalidatePluginContentRect:(NSRect)rect;
 
+#ifndef BUILDING_ON_TIGER
+- (CALayer *)pluginLayer;
+#endif
+
 @end
 
 

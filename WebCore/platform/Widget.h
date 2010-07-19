@@ -182,8 +182,8 @@ public:
 
     virtual bool isFrameView() const { return false; }
     virtual bool isPluginView() const { return false; }
-    // FIXME: The Mac plug-in code should inherit from PluginView. When this happens PluginWidget and PluginView can become one class.
-    virtual bool isPluginWidget() const { return false; }
+    // FIXME: The Mac plug-in code should inherit from PluginView. When this happens PluginViewBase and PluginView can become one class.
+    virtual bool isPluginViewBase() const { return false; }
     virtual bool isScrollbar() const { return false; }
 
     void removeFromParent();

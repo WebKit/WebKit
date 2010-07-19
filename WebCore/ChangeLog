@@ -1,3 +1,41 @@
+2010-07-18  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Move PluginWidget to WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=42530
+
+        Rename the PluginWidget class to PluginViewBase and make it an abstract base class.
+        
+        This is a stopgap measure until we have a single PluginView class that we can use everywhere.
+
+        * WebCore.exp.in:
+        Remove PluginWidget symbols.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        Update.
+
+        * platform/Widget.h:
+        (WebCore::Widget::isPluginViewBase):
+        Return false.
+
+        * plugins/PluginViewBase.h: Added.
+        (WebCore::PluginViewBase::platformLayer):
+        Always return 0 here now.
+
+        (WebCore::PluginViewBase::isPluginViewBase):
+        Return true.
+
+        * plugins/PluginWidget.h: Removed.
+        * plugins/mac/PluginWidgetMac.mm: Removed.
+        * rendering/RenderEmbeddedObject.cpp:
+        (WebCore::RenderEmbeddedObject::allowsAcceleratedCompositing):
+        Cast to PluginWidgetBase instead.
+        
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateGraphicsLayerConfiguration):
+        Cast to PluginWidgetBase instead.
+
 2010-07-18  Dean Jackson  <dino@apple.com>
 
         Unreviewed.

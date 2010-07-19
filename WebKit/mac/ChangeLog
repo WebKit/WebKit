@@ -1,3 +1,23 @@
+2010-07-18  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Move PluginWidget to WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=42530
+
+        * Plugins/WebBaseNetscapePluginView.h:
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView pluginLayer]):
+        Add default pluginLayer implementation.
+
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (PluginWidget::PluginWidget):
+        (PluginWidget::invalidateRect):
+        Move the guts of PluginWidget here from WebCore.
+        
+        (NetscapePluginWidget::platformLayer):
+        Get the layer from the plug-in view.
+
 2010-07-18  David Kilzer  <ddkilzer@apple.com>
 
         <http://webkit.org/b/42522> Add missing (id) return type to Obj-C methods
