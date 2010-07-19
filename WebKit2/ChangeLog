@@ -1,5 +1,11 @@
 2010-07-18  Anders Carlsson  <andersca@apple.com>
 
+        Try to fix Windows build.
+
+        * win/WebKit2.vcproj:
+
+2010-07-18  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Sam Weinig.
 
         More NPRuntime work
