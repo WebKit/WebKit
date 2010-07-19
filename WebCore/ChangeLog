@@ -1,3 +1,15 @@
+2010-07-19  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by Mark Rowe.
+
+        Web Inspector: Do Not Copy *.re2js Inspector Resources in XCode Build Phase
+        https://bugs.webkit.org/show_bug.cgi?id=42601
+
+        Remove *.re2js files after copying them over in the Build Phase. We do
+        the same to remove the WebKit.qrc file.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 2010-07-17  Tony Gentilcore  <tonyg@chromium.org>
 
         Reviewed by Darin Fisher.
