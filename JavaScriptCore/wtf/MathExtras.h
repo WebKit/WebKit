@@ -54,6 +54,14 @@ const double piDouble = M_PI;
 const float piFloat = static_cast<float>(M_PI);
 #endif
 
+#ifndef M_PI_2
+const double piOverTwoDouble = 1.57079632679489661923;
+const float piOverTwoFloat = 1.57079632679489661923f;
+#else
+const double piOverTwoDouble = M_PI_2;
+const float piOverTwoFloat = static_cast<float>(M_PI_2);
+#endif
+
 #ifndef M_PI_4
 const double piOverFourDouble = 0.785398163397448309616;
 const float piOverFourFloat = 0.785398163397448309616f;

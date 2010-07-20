@@ -80,7 +80,16 @@ public:
 
     void setX(float x) { m_x = x; }
     void setY(float y) { m_y = y; }
-    void move(float dx, float dy) { m_x += dx; m_y += dy; }
+    void move(float dx, float dy)
+    {
+        m_x += dx;
+        m_y += dy;
+    }
+    void scale(float sx, float sy)
+    {
+        m_x *= sx;
+        m_y *= sy;
+    }
 
 #if PLATFORM(CG)
     FloatPoint(const CGPoint&);
@@ -122,6 +131,12 @@ inline FloatPoint& operator+=(FloatPoint& a, const FloatSize& b)
     return a;
 }
 
+inline FloatPoint& operator+=(FloatPoint& a, const FloatPoint& b)
+{
+    a.move(b.x(), b.y());
+    return a;
+}
+
 inline FloatPoint& operator-=(FloatPoint& a, const FloatSize& b)
 {
     a.move(-b.width(), -b.height());
@@ -131,6 +146,11 @@ inline FloatPoint& operator-=(FloatPoint& a, const FloatSize& b)
 inline FloatPoint operator+(const FloatPoint& a, const FloatSize& b)
 {
     return FloatPoint(a.x() + b.width(), a.y() + b.height());
+}
+
+inline FloatPoint operator+(const FloatPoint& a, const FloatPoint& b)
+{
+    return FloatPoint(a.x() + b.x(), a.y() + b.y());
 }
 
 inline FloatSize operator-(const FloatPoint& a, const FloatPoint& b)

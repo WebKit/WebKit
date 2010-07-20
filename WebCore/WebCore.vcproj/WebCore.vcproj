@@ -48908,8 +48908,20 @@
 				RelativePath="..\svg\SVGParserUtilities.h"
 				>
 			</File>
+ 			<File
+				RelativePath="..\svg\SVGPathBuilder.h"
+				>
+			</File>
+			<File
+				RelativePath="..\svg\SVGPathConsumer.h"
+				>
+			</File>
 			<File
 				RelativePath="..\svg\SVGPathElement.h"
+				>
+			</File>
+ 			<File
+				RelativePath="..\svg\SVGPathParser.h"
 				>
 			</File>
 			<File
@@ -48954,6 +48966,10 @@
 			</File>
 			<File
 				RelativePath="..\svg\SVGPathSegList.h"
+				>
+			</File>
+ 			<File
+				RelativePath="..\svg\SVGPathSegListBuilder.h"
 				>
 			</File>
 			<File

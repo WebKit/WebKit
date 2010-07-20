@@ -1412,6 +1412,13 @@
 		845E72F80FD261EE00A87D79 /* Filter.h in Headers */ = {isa = PBXBuildFile; fileRef = 845E72F70FD261EE00A87D79 /* Filter.h */; };
 		845E72FB0FD2623900A87D79 /* SVGFilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 845E72F90FD2623900A87D79 /* SVGFilter.cpp */; };
 		845E72FC0FD2623900A87D79 /* SVGFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = 845E72FA0FD2623900A87D79 /* SVGFilter.h */; };
+		8476C9E511DF6A0B00555B02 /* SVGPathSegListBuilder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8476C9E311DF6A0B00555B02 /* SVGPathSegListBuilder.cpp */; };
+		8476C9E611DF6A0B00555B02 /* SVGPathSegListBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = 8476C9E411DF6A0B00555B02 /* SVGPathSegListBuilder.h */; };
+		8476C9EA11DF6A2900555B02 /* SVGPathBuilder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8476C9E711DF6A2900555B02 /* SVGPathBuilder.cpp */; };
+		8476C9EB11DF6A2900555B02 /* SVGPathBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = 8476C9E811DF6A2900555B02 /* SVGPathBuilder.h */; };
+		8476C9EC11DF6A2900555B02 /* SVGPathConsumer.h in Headers */ = {isa = PBXBuildFile; fileRef = 8476C9E911DF6A2900555B02 /* SVGPathConsumer.h */; };
+		8476C9EF11DF6A5800555B02 /* SVGPathParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8476C9ED11DF6A5800555B02 /* SVGPathParser.cpp */; };
+		8476C9F011DF6A5800555B02 /* SVGPathParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 8476C9EE11DF6A5800555B02 /* SVGPathParser.h */; };
 		84801954108BAFB300CB2B1F /* FEGaussianBlur.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84801952108BAFB300CB2B1F /* FEGaussianBlur.cpp */; };
 		84801955108BAFB300CB2B1F /* FEGaussianBlur.h in Headers */ = {isa = PBXBuildFile; fileRef = 84801953108BAFB300CB2B1F /* FEGaussianBlur.h */; };
 		8485227B1190162C006EDC7F /* JSSVGHKernElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 848522771190162C006EDC7F /* JSSVGHKernElement.cpp */; };
@@ -7176,6 +7183,13 @@
 		845E72F70FD261EE00A87D79 /* Filter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Filter.h; path = filters/Filter.h; sourceTree = "<group>"; };
 		845E72F90FD2623900A87D79 /* SVGFilter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGFilter.cpp; sourceTree = "<group>"; };
 		845E72FA0FD2623900A87D79 /* SVGFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGFilter.h; sourceTree = "<group>"; };
+		8476C9E311DF6A0B00555B02 /* SVGPathSegListBuilder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGPathSegListBuilder.cpp; sourceTree = "<group>"; };
+		8476C9E411DF6A0B00555B02 /* SVGPathSegListBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGPathSegListBuilder.h; sourceTree = "<group>"; };
+		8476C9E711DF6A2900555B02 /* SVGPathBuilder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGPathBuilder.cpp; sourceTree = "<group>"; };
+		8476C9E811DF6A2900555B02 /* SVGPathBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGPathBuilder.h; sourceTree = "<group>"; };
+		8476C9E911DF6A2900555B02 /* SVGPathConsumer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGPathConsumer.h; sourceTree = "<group>"; };
+		8476C9ED11DF6A5800555B02 /* SVGPathParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGPathParser.cpp; sourceTree = "<group>"; };
+		8476C9EE11DF6A5800555B02 /* SVGPathParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGPathParser.h; sourceTree = "<group>"; };
 		84801952108BAFB300CB2B1F /* FEGaussianBlur.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FEGaussianBlur.cpp; path = filters/FEGaussianBlur.cpp; sourceTree = "<group>"; };
 		84801953108BAFB300CB2B1F /* FEGaussianBlur.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FEGaussianBlur.h; path = filters/FEGaussianBlur.h; sourceTree = "<group>"; };
 		848522771190162C006EDC7F /* JSSVGHKernElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGHKernElement.cpp; sourceTree = "<group>"; };
@@ -15081,9 +15095,14 @@
 				B22278BF0D00BF200071B782 /* SVGPaint.idl */,
 				B22278C00D00BF200071B782 /* SVGParserUtilities.cpp */,
 				B22278C10D00BF200071B782 /* SVGParserUtilities.h */,
+				8476C9E711DF6A2900555B02 /* SVGPathBuilder.cpp */,
+				8476C9E811DF6A2900555B02 /* SVGPathBuilder.h */,
+				8476C9E911DF6A2900555B02 /* SVGPathConsumer.h */,
 				B22278C20D00BF200071B782 /* SVGPathElement.cpp */,
 				B22278C30D00BF200071B782 /* SVGPathElement.h */,
 				B22278C40D00BF200071B782 /* SVGPathElement.idl */,
+				8476C9ED11DF6A5800555B02 /* SVGPathParser.cpp */,
+				8476C9EE11DF6A5800555B02 /* SVGPathParser.h */,
 				B22278C50D00BF200071B782 /* SVGPathSeg.h */,
 				B22278C60D00BF200071B782 /* SVGPathSeg.idl */,
 				B22278C70D00BF200071B782 /* SVGPathSegArc.cpp */,
@@ -15124,6 +15143,8 @@
 				B22278EA0D00BF200071B782 /* SVGPathSegList.cpp */,
 				B22278EB0D00BF200071B782 /* SVGPathSegList.h */,
 				B22278EC0D00BF210071B782 /* SVGPathSegList.idl */,
+				8476C9E311DF6A0B00555B02 /* SVGPathSegListBuilder.cpp */,
+				8476C9E411DF6A0B00555B02 /* SVGPathSegListBuilder.h */,
 				B22278ED0D00BF210071B782 /* SVGPathSegMoveto.cpp */,
 				B22278EE0D00BF210071B782 /* SVGPathSegMoveto.h */,
 				B22278EF0D00BF210071B782 /* SVGPathSegMovetoAbs.idl */,
@@ -19517,7 +19538,10 @@
 				B2227A510D00BF220071B782 /* SVGNumberList.h in Headers */,
 				B2227A540D00BF220071B782 /* SVGPaint.h in Headers */,
 				B2227A570D00BF220071B782 /* SVGParserUtilities.h in Headers */,
+				8476C9EB11DF6A2900555B02 /* SVGPathBuilder.h in Headers */,
+				8476C9EC11DF6A2900555B02 /* SVGPathConsumer.h in Headers */,
 				B2227A590D00BF220071B782 /* SVGPathElement.h in Headers */,
+				8476C9F011DF6A5800555B02 /* SVGPathParser.h in Headers */,
 				B2227A5B0D00BF220071B782 /* SVGPathSeg.h in Headers */,
 				B2227A5E0D00BF220071B782 /* SVGPathSegArc.h in Headers */,
 				B2227A620D00BF220071B782 /* SVGPathSegClosePath.h in Headers */,
@@ -19529,6 +19553,7 @@
 				B2227A780D00BF220071B782 /* SVGPathSegLinetoHorizontal.h in Headers */,
 				B2227A7D0D00BF220071B782 /* SVGPathSegLinetoVertical.h in Headers */,
 				B2227A810D00BF220071B782 /* SVGPathSegList.h in Headers */,
+				8476C9E611DF6A0B00555B02 /* SVGPathSegListBuilder.h in Headers */,
 				B2227A840D00BF220071B782 /* SVGPathSegMoveto.h in Headers */,
 				B2227A880D00BF220071B782 /* SVGPatternElement.h in Headers */,
 				B25599950D00D8BA00BB825C /* SVGPointLightSource.h in Headers */,
@@ -21948,7 +21973,9 @@
 				B2227A500D00BF220071B782 /* SVGNumberList.cpp in Sources */,
 				B2227A530D00BF220071B782 /* SVGPaint.cpp in Sources */,
 				B2227A560D00BF220071B782 /* SVGParserUtilities.cpp in Sources */,
+				8476C9EA11DF6A2900555B02 /* SVGPathBuilder.cpp in Sources */,
 				B2227A580D00BF220071B782 /* SVGPathElement.cpp in Sources */,
+				8476C9EF11DF6A5800555B02 /* SVGPathParser.cpp in Sources */,
 				B2227A5D0D00BF220071B782 /* SVGPathSegArc.cpp in Sources */,
 				B2227A610D00BF220071B782 /* SVGPathSegClosePath.cpp in Sources */,
 				B2227A640D00BF220071B782 /* SVGPathSegCurvetoCubic.cpp in Sources */,
@@ -21959,6 +21986,7 @@
 				B2227A770D00BF220071B782 /* SVGPathSegLinetoHorizontal.cpp in Sources */,
 				B2227A7C0D00BF220071B782 /* SVGPathSegLinetoVertical.cpp in Sources */,
 				B2227A800D00BF220071B782 /* SVGPathSegList.cpp in Sources */,
+				8476C9E511DF6A0B00555B02 /* SVGPathSegListBuilder.cpp in Sources */,
 				B2227A830D00BF220071B782 /* SVGPathSegMoveto.cpp in Sources */,
 				B2227A870D00BF220071B782 /* SVGPatternElement.cpp in Sources */,
 				B2227A8B0D00BF220071B782 /* SVGPointList.cpp in Sources */,

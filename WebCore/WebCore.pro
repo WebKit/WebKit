@@ -1995,7 +1995,10 @@ HEADERS += \
     svg/SVGNumberList.h \
     svg/SVGPaint.h \
     svg/SVGParserUtilities.h \
+    svg/SVGPathBuilder.h \
+    svg/SVGPathConsumer.h \
     svg/SVGPathElement.h \
+    svg/SVGPathParser.h \
     svg/SVGPathSegArc.h \
     svg/SVGPathSegClosePath.h \
     svg/SVGPathSegCurvetoCubic.h \
@@ -2006,6 +2009,7 @@ HEADERS += \
     svg/SVGPathSegLinetoHorizontal.h \
     svg/SVGPathSegLinetoVertical.h \
     svg/SVGPathSegList.h \
+    svg/SVGPathSegListBuilder.h \
     svg/SVGPathSegMoveto.h \
     svg/SVGPatternElement.h \
     svg/SVGPointList.h \
@@ -2807,7 +2811,9 @@ contains(DEFINES, ENABLE_SVG=1) {
         svg/SVGNumberList.cpp \
         svg/SVGPaint.cpp \
         svg/SVGParserUtilities.cpp \
+        svg/SVGPathBuilder.cpp \
         svg/SVGPathElement.cpp \
+        svg/SVGPathParser.cpp \
         svg/SVGPathSegArc.cpp \
         svg/SVGPathSegClosePath.cpp \
         svg/SVGPathSegCurvetoCubic.cpp \
@@ -2818,6 +2824,7 @@ contains(DEFINES, ENABLE_SVG=1) {
         svg/SVGPathSegLinetoHorizontal.cpp \
         svg/SVGPathSegLinetoVertical.cpp \
         svg/SVGPathSegList.cpp \
+        svg/SVGPathSegListBuilder.cpp \
         svg/SVGPathSegMoveto.cpp \
         svg/SVGPatternElement.cpp \
         svg/SVGPointList.cpp \

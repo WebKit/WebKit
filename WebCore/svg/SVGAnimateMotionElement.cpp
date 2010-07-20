@@ -32,6 +32,7 @@
 #include "SVGElementInstance.h"
 #include "SVGMPathElement.h"
 #include "SVGParserUtilities.h"
+#include "SVGPathBuilder.h"
 #include "SVGPathElement.h"
 #include "SVGTransformList.h"
 #include <math.h>
@@ -88,7 +89,9 @@ void SVGAnimateMotionElement::parseMappedAttribute(Attribute* attr)
 {
     if (attr->name() == SVGNames::pathAttr) {
         m_path = Path();
-        pathFromSVGData(m_path, attr->value());
+        SVGPathBuilder builder(m_path);
+        // FIXME: We should analyse the returned value.
+        builder.build(attr->value());
     } else
         SVGAnimationElement::parseMappedAttribute(attr);
 }

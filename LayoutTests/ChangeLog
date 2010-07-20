@@ -1,3 +1,56 @@
+2010-07-19  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        SVG CleanUp of SVGPathData parsing
+        https://bugs.webkit.org/show_bug.cgi?id=41410
+
+        Parsing values as float instead of double causes some minimal changes on DRT results and
+        pixel results. Even if the values get shrinked to float before the calculation of arc and
+        others. But the calculation itself transforms the values back to double and shrinks it to
+        floats again right before the drawing.
+
+        SVG Path with an arc with radius of 0 does not render
+        https://bugs.webkit.org/show_bug.cgi?id=40448
+
+        Extended svg/dom/path-parser.xhml to check the correct behavior. We draw a line from the
+        current point to the given end point.
+
+        * platform/mac-leopard/svg/W3C-SVG-1.1/animate-elem-40-t-expected.checksum:
+        * platform/mac-leopard/svg/W3C-SVG-1.1/animate-elem-40-t-expected.png:
+        * platform/mac-leopard/svg/W3C-SVG-1.1/filters-morph-01-f-expected.checksum:
+        * platform/mac-leopard/svg/W3C-SVG-1.1/filters-morph-01-f-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-03-t-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-03-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/extend-namespace-01-f-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/extend-namespace-01-f-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/filters-morph-01-f-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/metadata-example-01-b-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/metadata-example-01-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/metadata-example-01-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/paths-data-02-t-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/paths-data-02-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/paths-data-03-f-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/paths-data-03-f-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/paths-data-03-f-expected.txt:
+        * platform/mac/svg/batik/text/textEffect3-expected.checksum:
+        * platform/mac/svg/batik/text/textEffect3-expected.png:
+        * platform/mac/svg/custom/relative-sized-inner-svg-expected.checksum:
+        * platform/mac/svg/custom/relative-sized-inner-svg-expected.png:
+        * platform/mac/svg/custom/relative-sized-inner-svg-expected.txt:
+        * platform/mac/svg/custom/relative-sized-use-on-symbol-expected.txt:
+        * platform/mac/svg/custom/relative-sized-use-without-attributes-on-symbol-expected.checksum:
+        * platform/mac/svg/custom/relative-sized-use-without-attributes-on-symbol-expected.png:
+        * platform/mac/svg/custom/relative-sized-use-without-attributes-on-symbol-expected.txt:
+        * platform/mac/svg/custom/use-css-events-expected.txt:
+        * platform/mac/svg/custom/use-on-symbol-inside-pattern-expected.txt:
+        * platform/mac/svg/hixie/perf/007-expected.checksum:
+        * platform/mac/svg/hixie/perf/007-expected.png:
+        * platform/mac/svg/hixie/perf/007-expected.txt:
+        * svg/custom/path-getTotalLength-expected.txt:
+        * svg/dom/path-parser-expected.txt:
+        * svg/dom/script-tests/path-parser.js:
+
 2010-07-19  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed trivial fix after r63684.

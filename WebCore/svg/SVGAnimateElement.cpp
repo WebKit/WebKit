@@ -28,6 +28,7 @@
 #include "SVGColor.h"
 #include "SVGParserUtilities.h"
 #include "SVGPathSegList.h"
+#include "SVGPathSegListBuilder.h"
 #include "SVGPointList.h"
 #include <math.h>
 
@@ -189,9 +190,11 @@ bool SVGAnimateElement::calculateFromAndToValues(const String& fromString, const
         }
     } else if (m_propertyType == PathProperty) {
         m_fromPath = SVGPathSegList::create(SVGNames::dAttr);
-        if (pathSegListFromSVGData(m_fromPath.get(), fromString)) {
+        SVGPathSegListBuilder fromParser(m_fromPath.get());
+        if (fromParser.build(fromString, UnalteredParsing)) {
             m_toPath = SVGPathSegList::create(SVGNames::dAttr);
-            if (pathSegListFromSVGData(m_toPath.get(), toString))
+            SVGPathSegListBuilder toParser(m_toPath.get());
+            if (toParser.build(toString, UnalteredParsing))
                 return true;
         }
         m_fromPath.clear();

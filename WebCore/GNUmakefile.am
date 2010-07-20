@@ -4017,8 +4017,13 @@ webcore_sources += \
 	WebCore/svg/SVGPaint.h \
 	WebCore/svg/SVGParserUtilities.cpp \
 	WebCore/svg/SVGParserUtilities.h \
+	WebCore/svg/SVGPathBuilder.cpp \
+	WebCore/svg/SVGPathBuilder.h \
+	WebCore/svg/SVGPathConsumer.h \
 	WebCore/svg/SVGPathElement.cpp \
 	WebCore/svg/SVGPathElement.h \
+	WebCore/svg/SVGPathParser.cpp \
+	WebCore/svg/SVGPathParser.h \
 	WebCore/svg/SVGPathSeg.h \
 	WebCore/svg/SVGPathSegArc.cpp \
 	WebCore/svg/SVGPathSegArc.h \
@@ -4040,6 +4045,8 @@ webcore_sources += \
 	WebCore/svg/SVGPathSegLinetoVertical.h \
 	WebCore/svg/SVGPathSegList.cpp \
 	WebCore/svg/SVGPathSegList.h \
+	WebCore/svg/SVGPathSegListBuilder.cpp \
+	WebCore/svg/SVGPathSegListBuilder.h \
 	WebCore/svg/SVGPathSegMoveto.cpp \
 	WebCore/svg/SVGPathSegMoveto.h \
 	WebCore/svg/SVGPatternElement.cpp \

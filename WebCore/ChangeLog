@@ -1,3 +1,98 @@
+2010-07-19  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        SVG CleanUp of SVGPathData parsing
+        https://bugs.webkit.org/show_bug.cgi?id=41410
+
+        Cleanup the parsing code for SVG Paths. Move classes out of the convoluted SVGParserUtilities.cpp
+        in their own files. Make use of WebCore specific objects in parsing code like FloatPoint, AffineTransform,
+        etc. instead of using home-brewn solutions.
+        The SVGPathParser parses a path data string and delivers the parsed segments and values to the SVGPathConsumer.
+        SVGPathConsumer is the base class for SVGPathBuilder and SVGPathSegListBuilder, that either build the platform
+        Path object or a SVGPathSegList out of the segments.
+        We're now directly parsing floats instead of truncating precision to float afterwards.
+
+        SVG Path with an arc with radius of 0 does not render
+        https://bugs.webkit.org/show_bug.cgi?id=40448
+
+        If one of the radii on the elliptic arc are zero, we should draw a line from the starting point to
+        the end point according to the spec. Fixed this bug with this patch, because an is zero check and 
+        an DRT check was neccessary with the current clean-up.
+        Extended svg/dom/path-parser.xhml to check the correct behavior.
+
+        * Android.mk:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/FloatPoint.h:
+        (WebCore::FloatPoint::move): Follow WebKit style and use multiple lines for the function.
+        (WebCore::FloatPoint::scale): Scale FloatPoint.
+        (WebCore::operator+=):
+        (WebCore::operator+): Add two FloatPoints and give back the sum as FloatPoint.
+        * svg/SVGAllInOne.cpp: Added new created files.
+        * svg/SVGAnimateElement.cpp:
+        (WebCore::SVGAnimateElement::calculateFromAndToValues): Use new PathParser to create a PathSegList.
+        * svg/SVGAnimateMotionElement.cpp:
+        (WebCore::SVGAnimateMotionElement::parseMappedAttribute): Use new PathParser to create a Path.
+        * svg/SVGGlyphElement.cpp:
+        (WebCore::parsePathData): Use new PathParser to create a Path.
+        * svg/SVGParserUtilities.cpp:
+        (WebCore::parseArcFlag): Removed parseArcFlag(double&), we parse in float now.
+        * svg/SVGParserUtilities.h: Removed path parsing code and a lot of unneccessary includes.
+        * svg/SVGPathBuilder.cpp: Added.
+        (WebCore::SVGPathBuilder::SVGPathBuilder):
+        (WebCore::SVGPathBuilder::build): Builds a normalized Path.
+        (WebCore::SVGPathBuilder::moveTo):
+        (WebCore::SVGPathBuilder::lineTo):
+        (WebCore::SVGPathBuilder::curveToCubic):
+        (WebCore::SVGPathBuilder::closePath):
+        * svg/SVGPathBuilder.h: Added. We just create normalized Paths, so this functions should never be reached.
+        (WebCore::SVGPathBuilder::lineToHorizontal):
+        (WebCore::SVGPathBuilder::lineToVertical):
+        (WebCore::SVGPathBuilder::curveToCubicSmooth):
+        (WebCore::SVGPathBuilder::curveToQuadratic):
+        (WebCore::SVGPathBuilder::curveToQuadraticSmooth):
+        (WebCore::SVGPathBuilder::arcTo):
+        * svg/SVGPathConsumer.h: Added. Base class of SVGPathBuilder and SVGPathSegListBuilder.
+        (WebCore::):
+        (WebCore::SVGPathConsumer::SVGPathConsumer):
+        (WebCore::SVGPathConsumer::~SVGPathConsumer):
+        * svg/SVGPathElement.cpp:
+        (WebCore::SVGPathElement::parseMappedAttribute): Use new PathParser to create a PathSegList.
+        * svg/SVGPathParser.cpp: Added.
+        (WebCore::SVGPathParser::SVGPathParser):
+        (WebCore::SVGPathParser::~SVGPathParser):
+        (WebCore::SVGPathParser::parseClosePathSegment):
+        (WebCore::SVGPathParser::parseMoveToSegment):
+        (WebCore::SVGPathParser::parseLineToSegment):
+        (WebCore::SVGPathParser::parseLineToHorizontalSegment):
+        (WebCore::SVGPathParser::parseLineToVerticalSegment):
+        (WebCore::SVGPathParser::parseCurveToCubicSegment):
+        (WebCore::SVGPathParser::parseCurveToCubicSmoothSegment):
+        (WebCore::SVGPathParser::parseCurveToQuadraticSegment):
+        (WebCore::SVGPathParser::parseCurveToQuadraticSmoothSegment):
+        (WebCore::SVGPathParser::parseArcToSegment):
+        (WebCore::SVGPathParser::parsePathDataString):
+        (WebCore::SVGPathParser::decomposeArcToCubic): Normalizes an arc to multiple cubic curves.
+        * svg/SVGPathParser.h: Added.
+        * svg/SVGPathSegListBuilder.cpp: Added.
+        (WebCore::SVGPathSegListBuilder::SVGPathSegListBuilder):
+        (WebCore::SVGPathSegListBuilder::build):
+        (WebCore::SVGPathSegListBuilder::moveTo):
+        (WebCore::SVGPathSegListBuilder::lineTo):
+        (WebCore::SVGPathSegListBuilder::lineToHorizontal):
+        (WebCore::SVGPathSegListBuilder::lineToVertical):
+        (WebCore::SVGPathSegListBuilder::curveToCubic):
+        (WebCore::SVGPathSegListBuilder::curveToCubicSmooth):
+        (WebCore::SVGPathSegListBuilder::curveToQuadratic):
+        (WebCore::SVGPathSegListBuilder::curveToQuadraticSmooth):
+        (WebCore::SVGPathSegListBuilder::arcTo):
+        (WebCore::SVGPathSegListBuilder::closePath):
+        * svg/SVGPathSegListBuilder.h: Added.
+
 2010-07-15  Yuzo Fujishima  <yuzo@google.com>
 
         Reviewed by Dan Bernstein.
