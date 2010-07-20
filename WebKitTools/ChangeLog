@@ -1,5 +1,16 @@
 2010-07-20  Adam Roben  <aroben@apple.com>
 
+        Change build-webkit back to building WebKit.sln on Windows
+
+        WebKit.sln builds all the same projects as WebKit2.sln, and the latter
+        is being removed.
+
+        Rubber-stamped in advance by Steve Falkenburg.
+
+        * Scripts/build-webkit:
+
+2010-07-20  Adam Roben  <aroben@apple.com>
+
         Windows build fix
 
         * MiniBrowser/win/BrowserWindow.cpp: Added missing #include.
