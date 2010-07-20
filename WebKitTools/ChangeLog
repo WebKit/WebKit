@@ -1,5 +1,23 @@
 2010-07-20  Adam Roben  <aroben@apple.com>
 
+        Make run-webkit-tests --webkit-test-runner "work" on Windows
+
+        WebKitTestRunner crashes on launch, but at least the scripts build and
+        launch it!
+
+        Fixes <http://webkit.org/b/42709> run-webkit-tests
+        --webkit-test-runner bails with an error on Windows
+
+        Reviewed by Anders Carlsson.
+
+        * Scripts/build-webkittestrunner: Build WebKitTestRunner.sln on
+        Windows.
+        * WebKitTestRunner/WebKitTestRunner.sln: Added. Contains the following
+        projects (from first-built to last-built): FindSafari, ImageDiff,
+        InjectedBundleGenerated, InjectedBundle, WebKitTestRunner.
+
+2010-07-20  Adam Roben  <aroben@apple.com>
+
         Change build-webkit back to building WebKit.sln on Windows
 
         WebKit.sln builds all the same projects as WebKit2.sln, and the latter

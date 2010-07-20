@@ -61,6 +61,8 @@ chdir "WebKitTools/WebKitTestRunner" or die;
 my $result;
 if (isAppleMacWebKit()) {
     $result = buildXCodeProject("WebKitTestRunner", $clean, XcodeOptions(), @ARGV);
+} elsif (isAppleWinWebKit()) {
+    $result = buildVisualStudioProject("WebKitTestRunner.sln", $clean);
 } else {
     die "WebKitTestRunner is not supported on this platform.\n";
 }
