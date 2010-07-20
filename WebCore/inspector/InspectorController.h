@@ -428,20 +428,26 @@ private:
 
 inline void InspectorController::didInsertDOMNode(Node* node)
 {
+#if ENABLE(INSPECTOR)
     if (m_domAgent)
         m_domAgent->didInsertDOMNode(node);
+#endif
 }
 
 inline void InspectorController::didRemoveDOMNode(Node* node)
 {
+#if ENABLE(INSPECTOR)
     if (m_domAgent)
         m_domAgent->didRemoveDOMNode(node);
+#endif
 }
 
 inline void InspectorController::didModifyDOMAttr(Element* element)
 {
+#if ENABLE(INSPECTOR)
     if (m_domAgent)
         m_domAgent->didModifyDOMAttr(element);
+#endif
 }
 
 } // namespace WebCore

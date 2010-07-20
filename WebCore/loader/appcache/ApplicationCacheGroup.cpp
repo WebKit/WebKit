@@ -49,6 +49,8 @@
 #include "InspectorApplicationCacheAgent.h"
 #include "InspectorController.h"
 #include "ProgressTracker.h"
+#else
+#include <wtf/UnusedParam.h>
 #endif
 
 namespace WebCore {

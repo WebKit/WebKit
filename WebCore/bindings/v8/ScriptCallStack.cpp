@@ -129,6 +129,7 @@ unsigned ScriptCallStack::size()
 
 bool ScriptCallStack::stackTrace(int frameLimit, const RefPtr<InspectorArray>& stackTrace)
 {
+#if ENABLE(INSPECTOR)
     if (!v8::Context::InContext())
         return false;
     v8::Handle<v8::Context> context = v8::Context::GetCurrent();
@@ -152,6 +153,9 @@ bool ScriptCallStack::stackTrace(int frameLimit, const RefPtr<InspectorArray>& s
         stackTrace->push(frameObject);
     }
     return true;
+#else
+    return false;
+#endif
 }
 
 } // namespace WebCore

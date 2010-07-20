@@ -56,11 +56,14 @@ namespace WebCore {
     class CSSStyleSheet;
     class Element;
     class Event;
+    class InspectorDOMAgent;
     class RemoteInspectorFrontend;
     class MatchJob;
     class NameNodeMap;
     class Node;
     class Page;
+
+#if ENABLE(INSPECTOR)
 
     struct EventListenerInfo {
         EventListenerInfo(Node* node, const AtomicString& eventType, const EventListenerVector& eventListenerVector)
@@ -207,6 +210,8 @@ namespace WebCore {
         HashSet<RefPtr<Node> > m_searchResults;
         Vector<long> m_inspectedNodes;
     };
+
+#endif
 
 } // namespace WebCore
 
