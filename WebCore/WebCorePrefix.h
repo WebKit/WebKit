@@ -138,7 +138,6 @@
 #include <CoreServices/CoreServices.h>
 #define COREGRAPHICS_INCLUDES_CORESERVICES_HEADER
 #define OBSOLETE_COLORSYNC_API
-#endif
 /* Windows doesn't include CFNetwork.h via CoreServices.h, so we do
    it explicitly here to make Windows more consistent with Mac. */
 #include <CFNetwork/CFNetwork.h>
