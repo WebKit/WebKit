@@ -1,3 +1,19 @@
+2010-07-19  Tony Gentilcore  <tonyg@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Only set unloadEventEnd when the unload event is actually fired
+        https://bugs.webkit.org/show_bug.cgi?id=42607
+
+        r63689 introduced this ASSERT and it began failing on Qt and Mac debug.
+        For some reason, it did not fail on Windows (which is where I was
+        testing). The ASSERT was disabled in r63699.
+
+        Test: page-cache related layout tests don't crash in debug mode on Mac.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::stopLoading):
+
 2010-07-19  Andreas Kling  <andreas.kling@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
