@@ -1,5 +1,20 @@
 2010-07-20  Adam Roben  <aroben@apple.com>
 
+        Make the web process break into the debugger when Ctrl-Alt-Shift is
+        held during launch
+
+        Fixes <http://webkit.org/b/42670> Would like a way to break into the
+        debugger when the web process launches
+
+        Reviewed by Anders Carlsson.
+
+        * WebProcess/WebKitMain.cpp:
+        (WebKitMain): If the Control, Alt, and Shift keys are held down in a
+        Debug build, call DebugBreak() so that we will break into the
+        debugger.
+
+2010-07-20  Adam Roben  <aroben@apple.com>
+
         Teach Connection how to handle a slow receiver
 
         Fixes <http://webkit.org/b/42667> Assertion in

@@ -77,6 +77,14 @@ static void enableTerminationOnHeapCorruption()
 extern "C" __declspec(dllexport) 
 int WebKitMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpstrCmdLine, int nCmdShow)
 {
+#ifndef NDEBUG
+    // Break into the debugger when Ctrl-Alt-Shift is held down during launch. This makes it easier
+    // to debug problems that happen early in the web process's liftime.
+    const unsigned short highBitMaskShort = 0x8000;
+    if ((::GetKeyState(VK_CONTROL) & highBitMaskShort) && (::GetKeyState(VK_MENU) & highBitMaskShort) && (::GetKeyState(VK_SHIFT) & highBitMaskShort))
+        ::DebugBreak();
+#endif
+
     enableTerminationOnHeapCorruption();
 
     CommandLine commandLine;
