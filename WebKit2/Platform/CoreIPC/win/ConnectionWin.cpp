@@ -215,6 +215,11 @@ void Connection::sendOutgoingMessage(MessageID messageID, PassOwnPtr<ArgumentEnc
     }
 
     DWORD error = ::GetLastError();
+    if (error == ERROR_IO_PENDING) {
+        // The message will be sent soon.
+        return;
+    }
+
     ASSERT_NOT_REACHED();
 }
 

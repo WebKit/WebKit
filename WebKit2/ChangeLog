@@ -1,3 +1,18 @@
+2010-07-20  Adam Roben  <aroben@apple.com>
+
+        Teach Connection how to handle a slow receiver
+
+        Fixes <http://webkit.org/b/42667> Assertion in
+        Connection::sendOutgoingMessage when browser or web process is paused
+
+        Reviewed by Anders Carlsson.
+
+        * Platform/CoreIPC/win/ConnectionWin.cpp:
+        (CoreIPC::Connection::sendOutgoingMessage): If WriteFile returns FALSE
+        and the last error is ERROR_IO_PENDING, Windows will write the data as
+        soon as the current write operation is completed. We don't need to do
+        anything special in this case, so there's no need to assert about it.
+
 2010-07-20  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Dan Bernstein.
