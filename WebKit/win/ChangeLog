@@ -1,3 +1,23 @@
+2010-07-20  Adam Roben  <aroben@apple.com>
+
+        Add WebKitTestRunner and friends to WebKit.sln
+
+        We added these projects to WebKit2.sln in r63585, but removed them
+        again in r63600 because WebKitTestRunner required getopt, which
+        doesn't exist in WebKitAuxiliaryLibrary. r63700 and r63788 removed the
+        use of getopt in WebKitTestRunner, so we can now add it to WebKit.sln
+        (which has replaced WebKit2.sln).
+
+        Fixes <http://webkit.org/b/42711> WebKit.sln should build
+        WebKitTestRunner
+
+        Reviewed by Steve Falkenburg.
+
+        * WebKit.vcproj/WebKit.sln: Added the following projects to the end of
+        the build order (in first-built to last-built order):
+        InjectedBundleGenerated, InjectedBundle, WebKitTestRunner. Also
+        removed an unnecessary dependency from testapi on WebKit2WebProcess.
+
 2010-07-19  Daniel Bates  <dbates@rim.com>
 
         Reviewed by Adam Roben.
