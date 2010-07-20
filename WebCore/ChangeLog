@@ -1,5 +1,11 @@
 2010-07-19  Steve Falkenburg  <sfalken@apple.com>
 
+        Windows build fix.
+
+        * WebCorePrefix.h:
+
+2010-07-19  Steve Falkenburg  <sfalken@apple.com>
+
         Build fix.
 
         * WebCorePrefix.h:
