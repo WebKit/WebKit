@@ -183,7 +183,8 @@ void NotificationPresenterClientQt::displayNotification(Notification* notificati
 
     if (!wrapper->m_presenter) {
 #ifndef QT_NO_SYSTEMTRAYICON
-        wrapper->m_closeTimer.startOneShot(notificationTimeout);
+        if (!dumpNotification)
+            wrapper->m_closeTimer.startOneShot(notificationTimeout);
         QPixmap pixmap;
         if (bytes.length() && pixmap.loadFromData(bytes)) {
             QIcon icon(pixmap);

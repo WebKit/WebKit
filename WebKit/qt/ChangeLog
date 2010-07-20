@@ -1,3 +1,16 @@
+2010-07-20  Andreas Kling  <andreas.kling@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] DRT sideeffect revealed by r63657
+        https://bugs.webkit.org/show_bug.cgi?id=42578
+
+        Don't set an automatic timeout for notifications when running in DRT.
+        This fixes an issue with cancel() notifications in unrelated tests.
+
+        * WebCoreSupport/NotificationPresenterClientQt.cpp:
+        (WebCore::NotificationPresenterClientQt::displayNotification):
+
 2010-07-18  Andreas Kling  <andreas.kling@nokia.com>
 
         Reviewed by Antonio Gomes.
