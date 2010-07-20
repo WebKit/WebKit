@@ -2,6 +2,21 @@
 
         Reviewed by Pavel Feldman.
 
+        Inspector: Resources Search Should Search Only Filtered Resources
+        https://bugs.webkit.org/show_bug.cgi?id=28290
+
+        * inspector/front-end/AbstractTimelinePanel.js:
+        (WebInspector.AbstractTimelinePanel.prototype._updateFilter):
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.ResourcesPanel.prototype.get searchableViews):
+        * inspector/front-end/inspector.js:
+        (WebInspector.performSearch):
+        (WebInspector.doPerformSearch):
+
+2010-07-20  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
         Web Inspector: Incorrect absolute URLs in tooltips of links in the ElementsTreeOutline
         https://bugs.webkit.org/show_bug.cgi?id=42626
 

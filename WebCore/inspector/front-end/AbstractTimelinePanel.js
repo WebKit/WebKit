@@ -202,6 +202,9 @@ WebInspector.AbstractTimelinePanel.prototype = {
         // When we are updating our filtering, scroll to the top so we don't end up
         // in blank graph under all the resources.
         this.containerElement.scrollTop = 0;
+
+        var searchField = document.getElementById("search");
+        WebInspector.doPerformSearch(searchField.value, WebInspector.shortSearchWasForcedByKeyEvent, false, true);
     },
 
     updateGraphDividersIfNeeded: function(force)

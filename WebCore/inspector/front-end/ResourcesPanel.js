@@ -228,7 +228,7 @@ WebInspector.ResourcesPanel.prototype = {
         var resourcesLength = this._resources.length;
         for (var i = 0; i < resourcesLength; ++i) {
             var resource = this._resources[i];
-            if (!resource._itemsTreeElement)
+            if (!resource._itemsTreeElement || !resource._itemsTreeElement.selectable)
                 continue;
             var resourceView = this.resourceViewForResource(resource);
             if (!resourceView.performSearch || resourceView === visibleView)

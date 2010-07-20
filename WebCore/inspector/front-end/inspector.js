@@ -1843,8 +1843,12 @@ WebInspector._searchKeyDown = function(event)
 
 WebInspector.performSearch = function(event)
 {
-    var query = event.target.value;
     var forceSearch = event.keyIdentifier === "Enter";
+    this.doPerformSearch(event.target.value, forceSearch, event.shiftKey, false);
+}
+
+WebInspector.doPerformSearch = function(query, forceSearch, isBackwardSearch, repeatSearch)
+{
     var isShortSearch = (query.length < 3);
 
     // Clear a leftover short search flag due to a non-conflicting forced search.
@@ -1876,14 +1880,13 @@ WebInspector.performSearch = function(event)
         return;
     }
 
-    if (query === this.currentPanel.currentQuery && this.currentPanel.currentQuery === this.currentQuery) {
+    if (!repeatSearch && query === this.currentPanel.currentQuery && this.currentPanel.currentQuery === this.currentQuery) {
         // When this is the same query and a forced search, jump to the next
         // search result for a good user experience.
         if (forceSearch) {
-            var backward = event.shiftKey;
-            if (!backward && this.currentPanel.jumpToNextSearchResult)
+            if (!isBackwardSearch && this.currentPanel.jumpToNextSearchResult)
                 this.currentPanel.jumpToNextSearchResult();
-            else if (backward && this.currentPanel.jumpToPreviousSearchResult)
+            else if (isBackwardSearch && this.currentPanel.jumpToPreviousSearchResult)
                 this.currentPanel.jumpToPreviousSearchResult();
         }
         return;
