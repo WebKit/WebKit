@@ -1,3 +1,13 @@
+2010-07-19  Yuzo Fujishima  <yuzo@google.com>
+
+        Unreviewed test expectation fix.
+
+        fast/css/font-face-download-error.html should be skipped for Qt like
+        other @font-face tests.
+        https://bugs.webkit.org/show_bug.cgi?id=42342
+
+        * platform/qt/Skipped:
+
 2010-07-19  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Nikolas Zimmermann.

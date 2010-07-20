@@ -3141,6 +3141,7 @@ fast/css/first-letter-visibility.html
 fast/css/first-of-type-pseudo-class.html
 fast/css/font-face-default-font.html
 fast/css/font-face-descriptor-multiple-values.html
+fast/css/font-face-download-error.html
 fast/css/font-face-implicit-local-font.html
 fast/css/font-face-in-media-rule.html
 fast/css/font-face-locally-installed.html
