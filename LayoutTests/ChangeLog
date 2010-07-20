@@ -3,6 +3,21 @@
         SVG CleanUp of SVGPathData parsing
         https://bugs.webkit.org/show_bug.cgi?id=41410
 
+        Unreviewed update of Win baseline.
+
+        * platform/win/svg/W3C-SVG-1.1/paths-data-03-f-expected.txt: Added.
+        * platform/win/svg/custom/relative-sized-inner-svg-expected.txt: Added.
+        * platform/win/svg/custom/relative-sized-use-on-symbol-expected.txt: Added.
+        * platform/win/svg/custom/relative-sized-use-without-attributes-on-symbol-expected.txt: Added.
+        * platform/win/svg/custom/use-css-events-expected.txt: Added.
+        * platform/win/svg/dom: Added.
+        * platform/win/svg/dom/path-parser-expected.txt: Added.
+
+2010-07-19  Dirk Schulze  <krit@webkit.org>
+
+        SVG CleanUp of SVGPathData parsing
+        https://bugs.webkit.org/show_bug.cgi?id=41410
+
         Unreviewed update of Qt baseline.
 
         * platform/qt/svg/custom/relative-sized-inner-svg-expected.txt:
