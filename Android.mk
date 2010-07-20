@@ -91,6 +91,7 @@ LOCAL_C_INCLUDES := \
 LOCAL_C_INCLUDES := $(LOCAL_C_INCLUDES) \
 	$(LOCAL_PATH)/WebCore \
 	$(LOCAL_PATH)/WebCore/accessibility \
+	$(LOCAL_PATH)/WebCore/bindings/generic \
 	$(LOCAL_PATH)/WebCore/css \
 	$(LOCAL_PATH)/WebCore/dom \
 	$(LOCAL_PATH)/WebCore/editing \

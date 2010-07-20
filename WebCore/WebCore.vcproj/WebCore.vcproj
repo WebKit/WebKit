@@ -40620,6 +40620,17 @@
 				RelativePath="..\bindings\ScriptControllerBase.h"
 				>
 			</File>
+			<Filter name="generic"
+				>
+				<File
+					RelativePath="..\bindings\generic\RuntimeEnabledFeatures.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\bindings\generic\RuntimeEnabledFeatures.h"
+					>
+				</File>
+			</Filter>
 			<Filter
 				Name="js"
 				>

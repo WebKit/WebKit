@@ -78,8 +78,6 @@ static String encodeProtocolString(const String& protocol)
     return builder.toString();
 }
 
-#if USE(V8)
-
 static bool webSocketsAvailable = false;
 
 void WebSocket::setIsAvailable(bool available)
@@ -91,8 +89,6 @@ bool WebSocket::isAvailable()
 {
     return webSocketsAvailable;
 }
-
-#endif
 
 WebSocket::WebSocket(ScriptExecutionContext* context)
     : ActiveDOMObject(context, this)

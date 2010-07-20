@@ -172,6 +172,7 @@ INCLUDEPATH = \
     $$PWD \
     $$PWD/accessibility \
     $$PWD/bindings \
+    $$PWD/bindings/generic \
     $$PWD/bindings/js \
     $$PWD/bridge \
     $$PWD/bridge/c \
@@ -267,6 +268,7 @@ SOURCES += \
     accessibility/AccessibilityTableHeaderContainer.cpp \    
     accessibility/AccessibilityTableRow.cpp \    
     accessibility/AXObjectCache.cpp \
+    bindings/generic/RuntimeEnabledFeatures.cpp \
     bindings/js/GCController.cpp \
     bindings/js/DOMObjectHashTableMap.cpp \
     bindings/js/DOMWrapperWorld.cpp \

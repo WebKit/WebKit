@@ -50,10 +50,8 @@ namespace WebCore {
 
     class WebSocket : public RefCounted<WebSocket>, public EventTarget, public ActiveDOMObject, public WebSocketChannelClient {
     public:
-#if USE(V8)
         static void setIsAvailable(bool);
         static bool isAvailable();
-#endif
         static PassRefPtr<WebSocket> create(ScriptExecutionContext* context) { return adoptRef(new WebSocket(context)); }
         virtual ~WebSocket();
 

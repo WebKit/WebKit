@@ -2,6 +2,7 @@ SET(WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}"
     "${WEBCORE_DIR}/accessibility"
     "${WEBCORE_DIR}/bindings"
+    "${WEBCORE_DIR}/bindings/generic"
     "${WEBCORE_DIR}/bindings/js"
     "${WEBCORE_DIR}/bridge"
     "${WEBCORE_DIR}/bridge/c"
@@ -557,6 +558,8 @@ SET(WebCore_SOURCES
     accessibility/AccessibilityTableRow.cpp
 
     bindings/ScriptControllerBase.cpp
+
+    bindings/generic/RuntimeEnabledFeatures.cpp
 
     bindings/js/DOMObjectHashTableMap.cpp
     bindings/js/DOMWrapperWorld.cpp

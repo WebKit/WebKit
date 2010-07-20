@@ -24,6 +24,8 @@
 ##
 
 LOCAL_SRC_FILES := \
+	bindings/generic/RuntimeEnabledFeatures.cpp \
+	\
 	css/CSSBorderImageValue.cpp \
 	css/CSSCanvasValue.cpp \
 	css/CSSCharsetRule.cpp \

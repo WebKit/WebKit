@@ -1,3 +1,25 @@
+2010-07-20  Hans Wennborg  <hans@chromium.org>
+
+        Reviewed by Steve Block.
+
+        Add WebCore/bindings/generic/RuntimeEnabledFeatures.cpp to build files
+        https://bugs.webkit.org/show_bug.cgi?id=42380
+
+        RuntimeEnabledFeatures.cpp and .h were moved from bindings/v8 to
+        bindings/generic a while a go (in r54593), but need to
+        be added to the build in order to be used.
+
+        No new functionality so no new tests.
+
+        * Android.mk:
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * websockets/WebSocket.cpp: Remove #if USE(V8), as RuntimeEnabledFeatures.cpp is no longer V8-only.
+        * websockets/WebSocket.h: Ditto.
+
 2010-07-20  Tony Chang  <tony@chromium.org>
 
         Reviewed by Kent Tamura.

@@ -14,6 +14,7 @@ webcore_cppflags += \
 	-I$(srcdir)/WebKit/gtk/webkit \
 	-I$(srcdir)/WebCore \
 	-I$(srcdir)/WebCore/accessibility \
+	-I$(srcdir)/WebCore/bindings/generic \
 	-I$(srcdir)/WebCore/bindings/js \
 	-I$(srcdir)/WebCore/bindings/gobject \
 	-I$(srcdir)/WebCore/bridge \
@@ -620,6 +621,8 @@ webcore_sources += \
 	WebCore/accessibility/AccessibilityTableHeaderContainer.h \
 	WebCore/accessibility/AccessibilityTableRow.cpp \
 	WebCore/accessibility/AccessibilityTableRow.h \
+	WebCore/bindings/generic/RuntimeEnabledFeatures.cpp \
+	WebCore/bindings/generic/RuntimeEnabledFeatures.h \
 	WebCore/bindings/js/CachedScriptSourceProvider.h \
 	WebCore/bindings/js/DOMObjectHashTableMap.cpp \
 	WebCore/bindings/js/DOMObjectHashTableMap.h \
