@@ -240,14 +240,6 @@ canvas/philip/tests/2d.text.font.parse.size.percentage.html
 canvas/philip/tests/2d.text.font.parse.size.percentage.default.html
 canvas/philip/tests/2d.text.font.parse.system.html
 canvas/philip/tests/2d.text.measure.width.space.html
-canvas/philip/tests/security.drawImage.canvas.html
-canvas/philip/tests/security.drawImage.image.html
-canvas/philip/tests/security.pattern.canvas.fillStyle.html
-canvas/philip/tests/security.pattern.canvas.strokeStyle.html
-canvas/philip/tests/security.pattern.cross.html
-canvas/philip/tests/security.pattern.image.fillStyle.html
-canvas/philip/tests/security.pattern.image.strokeStyle.html
-canvas/philip/tests/security.reset.html
 canvas/philip/tests/toDataURL.jpeg.alpha.html
 canvas/philip/tests/type.prototype.html
 

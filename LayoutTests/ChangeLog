@@ -1,3 +1,62 @@
+2010-07-20  Chang Shu  <chang.shu@nokia.com>
+
+        Reviewed by Darin Adler.
+
+        Move the canvas security tests to http tests to simulate remote host
+        access and then pass the tests. Remove them from Mac and Qt's skipped files.
+        https://bugs.webkit.org/show_bug.cgi?id=41279
+
+        * canvas/philip/tests/security.drawImage.canvas-expected.txt: Removed.
+        * canvas/philip/tests/security.drawImage.canvas.html: Removed.
+        * canvas/philip/tests/security.drawImage.image-expected.txt: Removed.
+        * canvas/philip/tests/security.drawImage.image.html: Removed.
+        * canvas/philip/tests/security.pattern.canvas.fillStyle-expected.txt: Removed.
+        * canvas/philip/tests/security.pattern.canvas.fillStyle.html: Removed.
+        * canvas/philip/tests/security.pattern.canvas.strokeStyle-expected.txt: Removed.
+        * canvas/philip/tests/security.pattern.canvas.strokeStyle.html: Removed.
+        * canvas/philip/tests/security.pattern.canvas.timing-expected.txt: Removed.
+        * canvas/philip/tests/security.pattern.canvas.timing.html: Removed.
+        * canvas/philip/tests/security.pattern.create-expected.txt: Removed.
+        * canvas/philip/tests/security.pattern.create.html: Removed.
+        * canvas/philip/tests/security.pattern.cross-expected.txt: Removed.
+        * canvas/philip/tests/security.pattern.cross.html: Removed.
+        * canvas/philip/tests/security.pattern.image.fillStyle-expected.txt: Removed.
+        * canvas/philip/tests/security.pattern.image.fillStyle.html: Removed.
+        * canvas/philip/tests/security.pattern.image.strokeStyle-expected.txt: Removed.
+        * canvas/philip/tests/security.pattern.image.strokeStyle.html: Removed.
+        * canvas/philip/tests/security.reset-expected.txt: Removed.
+        * canvas/philip/tests/security.reset.html: Removed.
+        * http/tests/canvas: Added.
+        * http/tests/canvas/philip: Added.
+        * http/tests/canvas/philip/images: Added.
+        * http/tests/canvas/philip/images/yellow.png: Added.
+        * http/tests/canvas/philip/tests: Added.
+        * http/tests/canvas/philip/tests.css: Added.
+        * http/tests/canvas/philip/tests/security.drawImage.canvas-expected.txt: Copied from LayoutTests/canvas/philip/tests/security.drawImage.canvas-expected.txt.
+        * http/tests/canvas/philip/tests/security.drawImage.canvas.html: Copied from LayoutTests/canvas/philip/tests/security.drawImage.canvas.html.
+        * http/tests/canvas/philip/tests/security.drawImage.image-expected.txt: Copied from LayoutTests/canvas/philip/tests/security.drawImage.image-expected.txt.
+        * http/tests/canvas/philip/tests/security.drawImage.image.html: Copied from LayoutTests/canvas/philip/tests/security.drawImage.image.html.
+        * http/tests/canvas/philip/tests/security.pattern.canvas.fillStyle-expected.txt: Copied from LayoutTests/canvas/philip/tests/security.pattern.canvas.fillStyle-expected.txt.
+        * http/tests/canvas/philip/tests/security.pattern.canvas.fillStyle.html: Copied from LayoutTests/canvas/philip/tests/security.pattern.canvas.fillStyle.html.
+        * http/tests/canvas/philip/tests/security.pattern.canvas.strokeStyle-expected.txt: Copied from LayoutTests/canvas/philip/tests/security.pattern.canvas.strokeStyle-expected.txt.
+        * http/tests/canvas/philip/tests/security.pattern.canvas.strokeStyle.html: Copied from LayoutTests/canvas/philip/tests/security.pattern.canvas.strokeStyle.html.
+        * http/tests/canvas/philip/tests/security.pattern.canvas.timing-expected.txt: Copied from LayoutTests/canvas/philip/tests/security.pattern.canvas.timing-expected.txt.
+        * http/tests/canvas/philip/tests/security.pattern.canvas.timing.html: Copied from LayoutTests/canvas/philip/tests/security.pattern.canvas.timing.html.
+        * http/tests/canvas/philip/tests/security.pattern.create-expected.txt: Copied from LayoutTests/canvas/philip/tests/security.pattern.create-expected.txt.
+        * http/tests/canvas/philip/tests/security.pattern.create.html: Copied from LayoutTests/canvas/philip/tests/security.pattern.create.html.
+        * http/tests/canvas/philip/tests/security.pattern.cross-expected.txt: Copied from LayoutTests/canvas/philip/tests/security.pattern.cross-expected.txt.
+        * http/tests/canvas/philip/tests/security.pattern.cross.html: Copied from LayoutTests/canvas/philip/tests/security.pattern.cross.html.
+        * http/tests/canvas/philip/tests/security.pattern.image.fillStyle-expected.txt: Copied from LayoutTests/canvas/philip/tests/security.pattern.image.fillStyle-expected.txt.
+        * http/tests/canvas/philip/tests/security.pattern.image.fillStyle.html: Copied from LayoutTests/canvas/philip/tests/security.pattern.image.fillStyle.html.
+        * http/tests/canvas/philip/tests/security.pattern.image.strokeStyle-expected.txt: Copied from LayoutTests/canvas/philip/tests/security.pattern.image.strokeStyle-expected.txt.
+        * http/tests/canvas/philip/tests/security.pattern.image.strokeStyle.html: Copied from LayoutTests/canvas/philip/tests/security.pattern.image.strokeStyle.html.
+        * http/tests/canvas/philip/tests/security.reset-expected.txt: Copied from LayoutTests/canvas/philip/tests/security.reset-expected.txt.
+        * http/tests/canvas/philip/tests/security.reset.html: Copied from LayoutTests/canvas/philip/tests/security.reset.html.
+        * platform/chromium/test_expectations.txt:
+        * platform/gtk/Skipped:
+        * platform/mac/Skipped:
+        * platform/qt/Skipped:
+
 2010-07-20  Hayato Ito  <hayato@chromium.org>
 
         Reviewed by Darin Adler.

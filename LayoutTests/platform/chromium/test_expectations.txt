@@ -2803,6 +2803,7 @@ BUG44150 LINUX DEBUG : fast/forms/input-text-paste-maxlength.html = CRASH PASS
 
 // New canvas test suite from http://philip.html5.org/tests/canvas/suite/tests/
 BUG20553 SKIP DEFER : canvas/philip = TEXT
+BUG20553 SKIP DEFER : http/tests/canvas/philip = TEXT
 
 // Need to dump context menu items on eventSender.contextClick(true).
 BUGWK39105 : editing/spelling/context-menu-suggestions.html = TEXT

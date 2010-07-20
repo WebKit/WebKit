@@ -5676,6 +5676,7 @@ fast/loader/null-request-after-willSendRequest.html
 
 # New canvas test suite from http://philip.html5.org/tests/canvas/suite/tests/
 canvas/philip
+http/tests/canvas/philip
 
 # Skip this, it's pending on one patch in the commit queue
 accessibility/aria-controls-with-tabs.html
