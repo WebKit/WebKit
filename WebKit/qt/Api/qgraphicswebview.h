@@ -41,6 +41,7 @@ class QWEBKIT_EXPORT QGraphicsWebView : public QGraphicsWidget {
     Q_PROPERTY(QString title READ title NOTIFY titleChanged)
     Q_PROPERTY(QIcon icon READ icon NOTIFY iconChanged)
     Q_PROPERTY(qreal zoomFactor READ zoomFactor WRITE setZoomFactor)
+    Q_PROPERTY(QSize deviceSize READ deviceSize WRITE setDeviceSize)
 
     Q_PROPERTY(QUrl url READ url WRITE setUrl NOTIFY urlChanged)
 
@@ -64,9 +65,12 @@ public:
     qreal zoomFactor() const;
     void setZoomFactor(qreal);
 
+    QSize deviceSize() const;
+    void setDeviceSize(const QSize&);
+
     bool isModified() const;
 
-    void load(const QUrl &url);
+    void load(const QUrl& url);
     void load(const QNetworkRequest& request, QNetworkAccessManager::Operation operation = QNetworkAccessManager::GetOperation, const QByteArray& body = QByteArray());
 
     void setHtml(const QString& html, const QUrl& baseUrl = QUrl());

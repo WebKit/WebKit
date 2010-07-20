@@ -324,6 +324,9 @@ QStyle* PageClientQGraphicsWidget::style() const
 
 QRectF PageClientQGraphicsWidget::windowRect() const
 {
+    if (!view->deviceSize().isEmpty())
+        return QRectF(QRect(QPoint(0, 0), view->deviceSize()));
+
     if (!view->scene())
         return QRectF();
 

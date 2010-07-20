@@ -26,11 +26,11 @@
 #include "IntRect.h"
 #include "QWebPageClient.h"
 #include "TiledBackingStore.h"
+#include "qgraphicswebview.h"
 #include "qwebframe.h"
 #include "qwebframe_p.h"
 #include "qwebpage.h"
 #include "qwebpage_p.h"
-
 #include <QtCore/qmetaobject.h>
 #include <QtCore/qsharedpointer.h>
 #include <QtGui/qgraphicsscene.h>
@@ -41,7 +41,6 @@
 #include <QtGui/qwidget.h>
 
 #include <Settings.h>
-
 
 namespace WebCore {
 
@@ -122,7 +121,7 @@ class QGraphicsItemOverlay : public QGraphicsItem {
 
 class PageClientQGraphicsWidget : public QWebPageClient {
 public:
-    PageClientQGraphicsWidget(QGraphicsWidget* v, QWebPage* p)
+    PageClientQGraphicsWidget(QGraphicsWebView* v, QWebPage* p)
         : view(v)
         , page(p)
         , viewResizesToContents(false)
@@ -186,7 +185,7 @@ public:
 
     virtual QRectF windowRect() const;
 
-    QGraphicsWidget* view;
+    QGraphicsWebView* view;
     QWebPage* page;
     bool viewResizesToContents;
 

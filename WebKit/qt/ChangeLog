@@ -1,3 +1,22 @@
+2010-07-20  Kenneth Rohde Christiansen  <kenneth.christiansen@openbossa.org>
+
+        [Qt] Add API to define device-width and height for use with the viewport meta tag
+        https://bugs.webkit.org/show_bug.cgi?id=42597
+
+        Reviewed by Antonio Gomes.
+
+        Add a new API for setting the deviceSize for use in conjunction with
+        out viewport meta tag API.
+
+        * Api/qgraphicswebview.cpp:
+        (QGraphicsWebView::setDeviceSize):
+        (QGraphicsWebView::deviceSize):
+        * Api/qgraphicswebview.h:
+        * WebCoreSupport/PageClientQt.cpp:
+        (WebCore::PageClientQGraphicsWidget::windowRect):
+        * WebCoreSupport/PageClientQt.h:
+        (WebCore::PageClientQGraphicsWidget::PageClientQGraphicsWidget):
+
 2010-07-20  Andreas Kling  <andreas.kling@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
