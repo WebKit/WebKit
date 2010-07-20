@@ -42,7 +42,7 @@ class Element;
 
 class HTMLConstructionSite : public Noncopyable {
 public:
-    HTMLConstructionSite(Document*, FragmentScriptingPermission);
+    HTMLConstructionSite(Document*, FragmentScriptingPermission, bool isParsingFragment);
     ~HTMLConstructionSite();
 
     void insertDoctype(AtomicHTMLToken&);
@@ -124,13 +124,16 @@ private:
     PassRefPtr<Element> createElement(AtomicHTMLToken&, const AtomicString& namespaceURI);
 
     void mergeAttributesFromTokenIntoElement(AtomicHTMLToken&, Element*);
+    void dispatchDocumentElementAvailableIfNeeded();
 
     Document* m_document;
     RefPtr<Element> m_head;
     RefPtr<Element> m_form;
     mutable HTMLElementStack m_openElements;
     mutable HTMLFormattingElementList m_activeFormattingElements;
+
     FragmentScriptingPermission m_fragmentScriptingPermission;
+    bool m_isParsingFragment;
 
     // http://www.whatwg.org/specs/web-apps/current-work/multipage/tokenization.html#parsing-main-intable
     // In the "in table" insertion mode, we sometimes get into a state where

@@ -320,7 +320,7 @@ private:
 HTMLTreeBuilder::HTMLTreeBuilder(HTMLTokenizer* tokenizer, HTMLDocument* document, bool reportErrors)
     : m_framesetOk(true)
     , m_document(document)
-    , m_tree(document, FragmentScriptingAllowed)
+    , m_tree(document, FragmentScriptingAllowed, false)
     , m_reportErrors(reportErrors)
     , m_isPaused(false)
     , m_insertionMode(InitialMode)
@@ -340,7 +340,7 @@ HTMLTreeBuilder::HTMLTreeBuilder(HTMLTokenizer* tokenizer, HTMLDocument* documen
 HTMLTreeBuilder::HTMLTreeBuilder(HTMLTokenizer* tokenizer, DocumentFragment* fragment, FragmentScriptingPermission scriptingPermission)
     : m_framesetOk(true)
     , m_document(fragment->document())
-    , m_tree(fragment->document(), scriptingPermission)
+    , m_tree(fragment->document(), scriptingPermission, true)
     , m_reportErrors(false) // FIXME: Why not report errors in fragments?
     , m_isPaused(false)
     , m_insertionMode(InitialMode)

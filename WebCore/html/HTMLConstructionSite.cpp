@@ -129,9 +129,10 @@ void HTMLConstructionSite::attachAtSite(const AttachmentSite& site, PassRefPtr<N
         child->attach();
 }
 
-HTMLConstructionSite::HTMLConstructionSite(Document* document, FragmentScriptingPermission scriptingPermission)
+HTMLConstructionSite::HTMLConstructionSite(Document* document, FragmentScriptingPermission scriptingPermission, bool isParsingFragment)
     : m_document(document)
     , m_fragmentScriptingPermission(scriptingPermission)
+    , m_isParsingFragment(isParsingFragment)
     , m_redirectAttachToFosterParent(false)
 {
 }
@@ -140,11 +141,18 @@ HTMLConstructionSite::~HTMLConstructionSite()
 {
 }
 
+void HTMLConstructionSite::dispatchDocumentElementAvailableIfNeeded()
+{
+    if (m_document->frame() && !m_isParsingFragment)
+        m_document->frame()->loader()->dispatchDocumentElementAvailable();
+}
+
 void HTMLConstructionSite::insertHTMLHtmlStartTagBeforeHTML(AtomicHTMLToken& token)
 {
     RefPtr<Element> element = HTMLHtmlElement::create(m_document);
     element->setAttributeMap(token.takeAtributes(), m_fragmentScriptingPermission);
     m_openElements.pushHTMLHtmlElement(attach(m_document, element.release()));
+    dispatchDocumentElementAvailableIfNeeded();
 }
 
 void HTMLConstructionSite::mergeAttributesFromTokenIntoElement(AtomicHTMLToken& token, Element* element)
@@ -210,6 +218,7 @@ void HTMLConstructionSite::insertHTMLHtmlElement(AtomicHTMLToken& token)
 {
     ASSERT(!shouldFosterParent());
     m_openElements.pushHTMLHtmlElement(attachToCurrent(createHTMLElement(token)));
+    dispatchDocumentElementAvailableIfNeeded();
 }
 
 void HTMLConstructionSite::insertHTMLHeadElement(AtomicHTMLToken& token)
