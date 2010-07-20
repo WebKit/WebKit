@@ -557,7 +557,12 @@ void CanvasRenderingContext2D::beginPath()
 
 void CanvasRenderingContext2D::closePath()
 {
-    m_path.closeSubpath();
+    if (m_path.isEmpty())
+        return;
+
+    FloatRect boundRect = m_path.boundingRect();
+    if (boundRect.width() || boundRect.height())
+        m_path.closeSubpath();
 }
 
 void CanvasRenderingContext2D::moveTo(float x, float y)
@@ -575,7 +580,7 @@ void CanvasRenderingContext2D::lineTo(float x, float y)
         return;
     if (!state().m_invertibleCTM)
         return;
-    
+
     FloatPoint p1 = FloatPoint(x, y);
     if (!m_path.hasCurrentPoint())
         m_path.moveTo(p1);
@@ -591,7 +596,10 @@ void CanvasRenderingContext2D::quadraticCurveTo(float cpx, float cpy, float x, f
         return;
     if (!m_path.hasCurrentPoint())
         m_path.moveTo(FloatPoint(cpx, cpy));
-    m_path.addQuadCurveTo(FloatPoint(cpx, cpy), FloatPoint(x, y));
+
+    FloatPoint p1 = FloatPoint(x, y);
+    if (p1 != m_path.currentPoint())
+        m_path.addQuadCurveTo(FloatPoint(cpx, cpy), p1);
 }
 
 void CanvasRenderingContext2D::bezierCurveTo(float cp1x, float cp1y, float cp2x, float cp2y, float x, float y)
@@ -602,7 +610,10 @@ void CanvasRenderingContext2D::bezierCurveTo(float cp1x, float cp1y, float cp2x,
         return;
     if (!m_path.hasCurrentPoint())
         m_path.moveTo(FloatPoint(cp1x, cp1y));
-    m_path.addBezierCurveTo(FloatPoint(cp1x, cp1y), FloatPoint(cp2x, cp2y), FloatPoint(x, y));
+
+    FloatPoint p1 = FloatPoint(x, y);
+    if (p1 != m_path.currentPoint())
+        m_path.addBezierCurveTo(FloatPoint(cp1x, cp1y), FloatPoint(cp2x, cp2y), p1);
 }
 
 void CanvasRenderingContext2D::arcTo(float x1, float y1, float x2, float y2, float r, ExceptionCode& ec)

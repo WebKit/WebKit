@@ -1,3 +1,17 @@
+2010-07-20  Matthew Delaney  <mdelaney@apple.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Failing 2d.path.stroke.prune.curve philip canvas test
+        https://bugs.webkit.org/show_bug.cgi?id=42190
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::closePath): Added check to make sure there's a non-trivial path to close. Since there is currently no way to check if the current point is the start point, or similarly if there is only 1 point in the current subpath (since these are both sufficient conditions for a trivial subpath), then checking that the bounding rectangle has both zero width and height proves also to be a sufficient condition for a trivial path.
+        (WebCore::CanvasRenderingContext2D::quadraticCurveTo): Added in simple bounds as per the spec.
+        (WebCore::CanvasRenderingContext2D::bezierCurveTo): Added in simple bounds as per the spec.
+        * platform/graphics/cg/PathCG.cpp:
+        (WebCore::Path::closeSubpath): Moved the check for an empty path up on level to make it platform independent and remove redundancy.
+
 2010-07-19  Victoria Kirst  <vrk@google.com>
 
         Reviewed by David Levin.
