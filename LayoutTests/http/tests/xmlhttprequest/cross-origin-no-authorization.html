@@ -145,6 +145,7 @@ function test_async_auth_explicit()
     req.send();
     req.onload = function() {
         log((req.status == 401) ? "PASS: 401 Authorization required" : "FAIL: Loaded");
+        log("DONE");
         if (window.layoutTestController)
             layoutTestController.notifyDone();
     }

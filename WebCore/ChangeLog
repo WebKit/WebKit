@@ -1,3 +1,27 @@
+2010-07-20  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Brady Eidson.
+
+        https://bugs.webkit.org/show_bug.cgi?id=41531
+        Asynchronous cross origin XMLHttpRequest doesn't expose 401 response when withCredentials is false
+
+        This doesn't match Firefox, but it matches our sync case, XHR2 spec and common sense.
+
+        Test: http/tests/xmlhttprequest/cross-origin-no-authorization.html (updated results).
+
+        * loader/DocumentThreadableLoader.cpp:
+        (WebCore::DocumentThreadableLoader::didReceiveAuthenticationChallenge): Instead of canceling
+        the request, continue without credentials - if the platform has a necessary method on
+        ResourceHandle.
+
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::didReceiveAuthenticationChallenge): Don't ask resource loader
+        client for credentials if subresource loader client already took care of those.
+
+        * platform/network/ResourceHandle.cpp: (WebCore::ResourceHandle::hasAuthenticationChallenge):
+        * platform/network/ResourceHandle.h:
+        Added an accessor to check whether ResourceHandle is currently waiting for credentials.
+
 2010-07-20  Leandro Pereira  <leandro@profusion.mobi>
 
         [EFL] Unreviewed build fix.

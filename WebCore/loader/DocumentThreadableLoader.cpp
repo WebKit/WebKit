@@ -37,10 +37,12 @@
 #include "Document.h"
 #include "Frame.h"
 #include "FrameLoader.h"
+#include "ResourceHandle.h"
 #include "ResourceRequest.h"
 #include "SecurityOrigin.h"
 #include "SubresourceLoader.h"
 #include "ThreadableLoaderClient.h"
+#include <wtf/UnusedParam.h>
 
 namespace WebCore {
 
@@ -264,14 +266,20 @@ bool DocumentThreadableLoader::getShouldUseCredentialStorage(SubresourceLoader* 
     return false; // Only FrameLoaderClient can ultimately permit credential use.
 }
 
-void DocumentThreadableLoader::didReceiveAuthenticationChallenge(SubresourceLoader* loader, const AuthenticationChallenge&)
+void DocumentThreadableLoader::didReceiveAuthenticationChallenge(SubresourceLoader* loader, const AuthenticationChallenge& challenge)
 {
     ASSERT(loader == m_loader);
     // Users are not prompted for credentials for cross-origin requests.
     if (!m_sameOriginRequest) {
+#if PLATFORM(MAC) || USE(CFNETWORK) || USE(CURL)
+        loader->handle()->receivedRequestToContinueWithoutCredential(challenge);
+#else
+        // These platforms don't provide a way to continue without credentials, cancel the load altogether.
+        UNUSED_PARAM(challenge);
         RefPtr<DocumentThreadableLoader> protect(this);
         m_client->didFail(loader->blockedError());
         cancel();
+#endif
     }
 }
 

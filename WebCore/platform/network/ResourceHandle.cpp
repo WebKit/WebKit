@@ -113,6 +113,11 @@ const String& ResourceHandle::lastHTTPMethod() const
     return d->m_lastHTTPMethod;
 }
 
+bool ResourceHandle::hasAuthenticationChallenge() const
+{
+    return !d->m_currentWebChallenge.isNull();
+}
+
 void ResourceHandle::clearAuthentication()
 {
 #if PLATFORM(MAC)

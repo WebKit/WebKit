@@ -1,3 +1,21 @@
+2010-07-20  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Brady Eidson.
+
+        https://bugs.webkit.org/show_bug.cgi?id=41531
+        Asynchronous cross origin XMLHttpRequest doesn't expose 401 response when withCredentials is false
+
+        https://bugs.webkit.org/show_bug.cgi?id=30669
+        http/tests/xmlhttprequest/cross-origin-no-authorization.html has missing "DONE" in one branch
+
+        * http/tests/xmlhttprequest/cross-origin-no-authorization-expected.txt:
+        * http/tests/xmlhttprequest/cross-origin-no-authorization.html:
+        Updated for new results, added the missing "DONE".
+
+        * http/tests/xmlhttprequest/cross-origin-no-credential-prompt.html: Added.
+        * http/tests/xmlhttprequest/cross-origin-no-credential-prompt-expected.txt: Added.
+        Check that despite these changes, there is still no auth dialog displayed.
+
 2010-07-20  Joseph Pecoraro  <joepeck@webkit.org>
 
         Reviewed by Geoffrey Garen.

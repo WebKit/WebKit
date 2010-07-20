@@ -14,7 +14,7 @@ PASS: Got an exception. Error: NETWORK_ERR: XMLHttpRequest Exception 101
 Cross-origin XMLHttpRequest (sync), testing cookies.
 PASS
 Cross-origin XMLHttpRequest (async), authorization will not be sent, because withCredentials is false.
-PASS: Received error event.
+PASS: 401 Authorization required
 Cross-origin XMLHttpRequest (async), testing authorization that's not allowed by the server (withCredentials is true, but access control headers are not set).
 PASS: Received error event.
 Cross-origin XMLHttpRequest (async), testing cookies.
@@ -22,6 +22,6 @@ PASS
 Cross-origin XMLHttpRequest (sync), testing authorization with explicitly provided credentials that should be ignored.
 PASS: 401 Authorization required
 Cross-origin XMLHttpRequest (async), testing authorization with explicitly provided credentials that should be ignored.
-PASS: Received error event.
+PASS: 401 Authorization required
 DONE
 
