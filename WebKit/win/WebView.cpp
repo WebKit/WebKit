@@ -95,6 +95,7 @@
 #include <WebCore/HitTestRequest.h>
 #include <WebCore/HitTestResult.h>
 #include <WebCore/IntRect.h>
+#include <WebCore/JSElement.h>
 #include <WebCore/KeyboardEvent.h>
 #include <WebCore/Language.h>
 #include <WebCore/Logging.h>
@@ -112,6 +113,7 @@
 #include <WebCore/ProgressTracker.h>
 #include <WebCore/RenderLayer.h>
 #include <WebCore/RenderTheme.h>
+#include <WebCore/RenderTreeAsText.h>
 #include <WebCore/RenderView.h>
 #include <WebCore/RenderWidget.h>
 #include <WebCore/ResourceHandle.h>
@@ -5664,6 +5666,31 @@ HRESULT STDMETHODCALLTYPE WebView::reportException(
         return E_FAIL;
 
     WebCore::reportException(execState, toJS(execState, exception));
+    return S_OK;
+}
+
+HRESULT STDMETHODCALLTYPE WebView::elementFromJS(
+    /* [in] */ JSContextRef context,
+    /* [in] */ JSValueRef nodeObject,
+    /* [retval][out] */ IDOMElement **element)
+{
+    if (!element)
+        return E_POINTER;
+
+    *element = 0;
+
+    if (!context)
+        return E_FAIL;
+
+    if (!nodeObject)
+        return E_FAIL;
+
+    JSLock lock(JSC::SilenceAssertionsOnly);
+    Element* elt = toElement(toJS(toJS(context), nodeObject));
+    if (!elt)
+        return E_FAIL;
+
+    *element = DOMElement::createInstance(elt);
     return S_OK;
 }
 

@@ -47,6 +47,7 @@ interface IDOMElementPrivate : IUnknown
     HRESULT innerText([out, retval] BSTR* result);
     [local] HRESULT font(WebFontDescription* webFontDescription);
     HRESULT renderedImage([out, retval] HBITMAP* image);
+    [local] HRESULT markerTextForListItem([out, retval] BSTR* markerText);
 }
 
 /*

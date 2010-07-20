@@ -706,6 +706,11 @@ public:
         /* [in] */ JSContextRef context,
         /* [in] */ JSValueRef exception);
 
+    virtual HRESULT STDMETHODCALLTYPE elementFromJS(
+        /* [in] */ JSContextRef context,
+        /* [in] */ JSValueRef nodeObject,
+        /* [retval][out] */ IDOMElement **element);
+
     virtual HRESULT STDMETHODCALLTYPE setCustomHTMLTokenizerTimeDelay(
         /* [in] */ double timeDelay);
 

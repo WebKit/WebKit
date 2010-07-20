@@ -1,3 +1,15 @@
+2010-07-19  Daniel Bates  <dbates@rim.com>
+
+        Reviewed by Adam Roben.
+
+        [Win] Implement LayoutTestController::markerTextForListItem()
+        https://bugs.webkit.org/show_bug.cgi?id=37930
+
+        Implements DRT support for markerTextForListItem in the Windows port.
+
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp:
+        (LayoutTestController::markerTextForListItem): Implemented.
+
 2010-07-19  Jessie Berlin  <jberlin@apple.com>
 
         Windows build fix. Unreviewed.

@@ -1,3 +1,22 @@
+2010-07-19  Daniel Bates  <dbates@rim.com>
+
+        Reviewed by Adam Roben.
+
+        [Win] Implement LayoutTestController::markerTextForListItem()
+        https://bugs.webkit.org/show_bug.cgi?id=37930
+
+        Implements support for markerTextForListItem in the Windows port.
+
+        * DOMCoreClasses.cpp:
+        (DOMElement::markerTextForListItem): Added.
+        * DOMCoreClasses.h:
+        * Interfaces/DOMPrivate.idl: Added declaration for markerTextForListItem().
+        * Interfaces/IWebViewPrivate.idl: Added declaration for elementFromJS().
+        * Interfaces/WebKit.idl: Touch it to force a rebuild (and for good luck :-)).
+        * WebView.cpp:
+        (WebView::elementFromJS): Added.
+        * WebView.h:
+
 2010-07-16  Zhe Su  <suzhe@chromium.org>
 
         Reviewed by Darin Adler.

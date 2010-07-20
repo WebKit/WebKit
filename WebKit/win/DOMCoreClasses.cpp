@@ -48,6 +48,7 @@
 #include <WebCore/HTMLTextAreaElement.h>
 #include <WebCore/NodeList.h>
 #include <WebCore/RenderObject.h>
+#include <WebCore/RenderTreeAsText.h>
 #pragma warning(pop)
 
 #include <initguid.h>
@@ -1146,6 +1147,18 @@ HRESULT STDMETHODCALLTYPE DOMElement::renderedImage(HBITMAP* image)
     if (!*image)
         return E_FAIL;
 
+    return S_OK;
+}
+
+HRESULT STDMETHODCALLTYPE DOMElement::markerTextForListItem(
+    /* [retval][out] */ BSTR* markerText)
+{
+    if (!markerText)
+        return E_POINTER;
+
+    ASSERT(m_element);
+
+    *markerText = BString(WebCore::markerTextForListItem(m_element)).release();
     return S_OK;
 }
 

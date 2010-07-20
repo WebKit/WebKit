@@ -776,6 +776,9 @@ public:
     virtual HRESULT STDMETHODCALLTYPE renderedImage(
         /* [retval][out] */ HBITMAP* image);
 
+    virtual HRESULT STDMETHODCALLTYPE markerTextForListItem(
+        /* [retval][out] */ BSTR* markerText);
+
     // IDOMElementCSSInlineStyle
     virtual HRESULT STDMETHODCALLTYPE style(
         /* [retval][out] */ IDOMCSSStyleDeclaration** result);

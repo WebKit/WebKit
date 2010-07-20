@@ -1,3 +1,14 @@
+2010-07-19  Daniel Bates  <dbates@rim.com>
+
+        Reviewed by Adam Roben.
+
+        [Win] Implement LayoutTestController::markerTextForListItem()
+        https://bugs.webkit.org/show_bug.cgi?id=37930
+
+        Remove skipped layout tests now that we have DRT support.
+
+        * platform/win/Skipped:
+
 2010-07-19  Eric Carlson  <eric.carlson@apple.com>
 
         Unreviewed, build fix.
