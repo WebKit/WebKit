@@ -74,6 +74,7 @@ static int64_t generateFormDataIdentifier()
 
 HTMLFormElement::HTMLFormElement(const QualifiedName& tagName, Document* document)
     : HTMLElement(tagName, document)
+    , m_submissionTrigger(NotSubmittedByJavaScript)
     , m_autocomplete(true)
     , m_insubmit(false)
     , m_doingsubmit(false)
@@ -370,6 +371,7 @@ void HTMLFormElement::submit(Event* event, bool activateSubmitButton, bool lockH
     }
 
     m_insubmit = true;
+    m_submissionTrigger = formSubmissionTrigger;
 
     HTMLFormControlElement* firstSuccessfulSubmitButton = 0;
     bool needButtonActivation = activateSubmitButton; // do we need to activate a submit button?
@@ -557,6 +559,11 @@ void HTMLFormElement::setMethod(const String &value)
 String HTMLFormElement::target() const
 {
     return getAttribute(targetAttr);
+}
+
+FormSubmissionTrigger HTMLFormElement::submissionTrigger() const
+{
+    return m_submissionTrigger;
 }
 
 HTMLFormControlElement* HTMLFormElement::defaultButton() const

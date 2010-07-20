@@ -31,6 +31,7 @@
 #include "config.h"
 #include "WebFormElement.h"
 
+#include "FormState.h"
 #include "HTMLFormControlElement.h"
 #include "HTMLFormElement.h"
 #include "HTMLInputElement.h"
@@ -55,16 +56,21 @@ WebString WebFormElement::action() const
     return constUnwrap<HTMLFormElement>()->action();
 }
 
-WebString WebFormElement::name() const 
+WebString WebFormElement::name() const
 {
     return constUnwrap<HTMLFormElement>()->name();
 }
 
-WebString WebFormElement::method() const 
+WebString WebFormElement::method() const
 {
     return constUnwrap<HTMLFormElement>()->method();
 }
-    
+
+bool WebFormElement::wasUserSubmitted() const
+{
+    return constUnwrap<HTMLFormElement>()->submissionTrigger() == NotSubmittedByJavaScript;
+}
+
 void WebFormElement::submit()
 {
     unwrap<HTMLFormElement>()->submit();
@@ -77,7 +83,7 @@ void WebFormElement::getNamedElements(const WebString& name,
     unwrap<HTMLFormElement>()->getNamedElements(name, tempVector);
     result.assign(tempVector);
 }
-    
+
 void WebFormElement::getFormControlElements(WebVector<WebFormControlElement>& result) const
 {
     const HTMLFormElement* form = constUnwrap<HTMLFormElement>();

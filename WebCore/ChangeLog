@@ -1,3 +1,21 @@
+2010-07-16  James Hawkins  <jhawkins@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Expose the form submission trigger on the HTMLFormElement object. This
+        is used to verify that the user submitted the form instead of JS when
+        saving form data in Chrome AutoFill.
+        https://bugs.webkit.org/show_bug.cgi?id=42479
+
+        No new tests as this is only used by the Chromium WebKit API.
+
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::HTMLFormElement):
+        (WebCore::HTMLFormElement::submit):
+        (WebCore::HTMLFormElement::reset):
+        (WebCore::HTMLFormElement::submissionTrigger):
+        * html/HTMLFormElement.h:
+
 2010-07-20  Adam Barth  <abarth@webkit.org>
 
         Unreviewed.

@@ -1,3 +1,16 @@
+2010-07-16  James Hawkins  <jhawkins@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [Chromium] Implement WebFormElement::wasUserSubmitted(). This is used to
+        verify that the user submitted the form instead of JS when saving form
+        data in AutoFill.
+        https://bugs.webkit.org/show_bug.cgi?id=42479
+
+        * public/WebFormElement.h:
+        * src/WebFormElement.cpp:
+        (WebKit::WebFormElement::wasUserSubmitted):
+
 2010-07-20  Daniel Erat  <derat@chromium.org>
 
         Reviewed by Ojan Vafai.

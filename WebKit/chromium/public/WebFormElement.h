@@ -63,6 +63,7 @@ namespace WebKit {
         WEBKIT_API WebString action() const;
         WEBKIT_API WebString name() const;
         WEBKIT_API WebString method() const;
+        WEBKIT_API bool wasUserSubmitted() const;
         WEBKIT_API void submit();
         // FIXME: Deprecate and replace with WebVector<WebElement>.
         WEBKIT_API void getNamedElements(const WebString&, WebVector<WebNode>&);
