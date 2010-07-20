@@ -3693,6 +3693,15 @@ body.inactive .sidebar-tree-item.selected .bubble.search-matches {
 
 .timeline-details {
     -webkit-user-select: text;
+    vertical-align: top;
+}
+
+.timeline-function-name {
+    text-align: right;
+}
+
+.timeline-stacktrace-title {
+    padding-top: 4px;
 }
 
 .timeline-details-row-title {

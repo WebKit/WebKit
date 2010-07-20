@@ -1,3 +1,24 @@
+2010-07-20  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        WebInspector: It is possible to show full call stack instead of top frame for Caller
+        and Call Site properties in Timeline panel.
+        https://bugs.webkit.org/show_bug.cgi?id=42620
+
+        * English.lproj/localizedStrings.js:
+        * inspector/front-end/TimelinePanel.js:
+        (WebInspector.TimelinePanel.FormattedRecord):
+        (WebInspector.TimelinePanel.FormattedRecord.prototype._generatePopupContent):
+        (WebInspector.TimelinePanel.FormattedRecord.prototype._getRecordDetails):
+        (WebInspector.TimelinePanel.PopupContentHelper.prototype._appendElementRow):
+        (WebInspector.TimelinePanel.PopupContentHelper.prototype._appendLinkRow):
+        (WebInspector.TimelinePanel.PopupContentHelper.prototype._appendStackTrace):
+        * inspector/front-end/inspector.css:
+        (.timeline-details):
+        (.timeline-function-name):
+        (.timeline-stacktrace-title):
+
 2010-07-20  Leon Clarke  <leonclarke@google.com>
 
         Reviewed by Pavel Feldman.
