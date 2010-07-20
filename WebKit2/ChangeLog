@@ -1,5 +1,29 @@
 2010-07-19  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        WebKitTestRunner and WebProcess simultaneously stall in CoreIPC::Connection::sendOutgoingMessage
+        https://bugs.webkit.org/show_bug.cgi?id=42356
+
+        Up the port queue length from 5 to 1024. While this does solve the problem, we should still try to
+        make sendOutgoingMessage not block. I've filed https://bugs.webkit.org/show_bug.cgi?id=42611 to track 
+        doing this on Mac and Windows.
+
+        * Platform/CoreIPC/mac/ConnectionMac.cpp:
+        (CoreIPC::Connection::open):
+        Call setMachPortQueueLength.
+
+        * Platform/mac/MachUtilities.cpp: Added.
+        (setMachPortQueueLength):
+        Given a mach port receive right, sets the port queue length.
+
+        * Platform/mac/MachUtilities.h: Added.
+        
+        * WebKit2.xcodeproj/project.pbxproj:
+        Add MachUtilities.cpp and MachUtilities.h
+
+2010-07-19  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Darin Adler, Adam Roben, Dan Bernstein and Sam Weinig.
 
         Handle NP_ASFILE and NP_ASFILEONLY transfer modes

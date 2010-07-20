@@ -27,6 +27,7 @@
 
 #include "CoreIPCMessageKinds.h"
 #include "MachPort.h"
+#include "MachUtilities.h"
 #include "RunLoop.h"
 #include <mach/vm_map.h>
 
@@ -91,6 +92,9 @@ bool Connection::open()
         initializeDeadNameSource();
     }
     
+    // Change the message queue length for the receive port.
+    setMachPortQueueLength(m_receivePort, MACH_PORT_QLIMIT_LARGE);
+
     // Register the data available handler.
     m_connectionQueue.registerMachPortEventHandler(m_receivePort, WorkQueue::MachPortDataAvailable, 
                                                    WorkItem::create(this, &Connection::receiveSourceEventHandler));
