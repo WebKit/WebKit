@@ -3,6 +3,7 @@
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2007 David Smith (catfish.man@gmail.com)
  * Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) Research In Motion Limited 2010. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -934,6 +935,10 @@ static bool canMergeContiguousAnonymousBlocks(RenderObject* oldChild, RenderObje
 
     if ((prev && (!prev->isAnonymousBlock() || toRenderBlock(prev)->continuation()))
         || (next && (!next->isAnonymousBlock() || toRenderBlock(next)->continuation())))
+        return false;
+
+    // FIXME: This check isn't required when inline run-ins can't be split into continuations.
+    if (prev && prev->firstChild() && prev->firstChild()->isInline() && prev->firstChild()->isRunIn())
         return false;
 
 #if ENABLE(RUBY)

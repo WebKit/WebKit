@@ -1,3 +1,18 @@
+2010-07-20  Leo Yang  <leo.yang@torchmobile.com.cn>
+
+        Reviewed by David Hyatt.
+
+        Don't merge Anonymous block whose first child is inline run-in.
+        Make run-in recalculate its style after its renderer is destroyed.
+        https://bugs.webkit.org/show_bug.cgi?id=41375.
+
+        Test: fast/runin/crash-when-reparent-sibling.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::canMergeContiguousAnonymousBlocks):
+        * rendering/RenderObjectChildList.cpp:
+        (WebCore::RenderObjectChildList::destroyLeftoverChildren):
+
 2010-07-20  Steve Block  <steveblock@google.com>
 
         Unreviewed Qt test fix.
