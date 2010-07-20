@@ -1,3 +1,4 @@
+Tests basic dump-as-markup functionality.
 
 <HTML>
 <HEAD>
@@ -53,6 +54,7 @@ foo</#text>
 
 </#text>
 <SCRIPT>
+Markup.description("Tests basic dump-as-markup functionality.");
 window.getSelection().selectAllChildren(bar)
 </SCRIPT>
 <#text>
@@ -61,4 +63,31 @@ window.getSelection().selectAllChildren(bar)
 </HTML>
 
 FRAME 0:
-FIXME: Add method to layout test controller to get access to cross-origin frames.
+
+<HTML>
+<HEAD>
+<#text>
+</#text>
+<TITLE>
+<#text>Test</#text>
+</TITLE>
+<#text>
+</#text>
+<STYLE type="text/css">
+</STYLE>
+<#text>
+</#text>
+</HEAD>
+<#text>
+</#text>
+<BODY>
+<#text>
+</#text>
+<P>
+</P>
+<#text>
+
+
+</#text>
+</BODY>
+</HTML>

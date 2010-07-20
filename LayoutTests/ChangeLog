@@ -1,3 +1,18 @@
+2010-07-20  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        make dump-as-markup work better on subframes and allow dumping a subtree
+        https://bugs.webkit.org/show_bug.cgi?id=42673
+
+        * editing/selection/dump-as-markup-expected.txt:
+        * editing/selection/dump-as-markup.html:
+        * resources/dump-as-markup.js:
+        (Markup.description):
+        (Markup._getSelectionFromNode):
+        (Markup._getMarkupForTextNode):
+        (Markup._getSelectionMarker):
+
 2010-07-20  Daniel Erat  <derat@chromium.org>
 
         Reviewed by Ojan Vafai.

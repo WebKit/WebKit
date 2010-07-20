@@ -6,18 +6,26 @@ if (window.layoutTestController) {
 // Namespace
 var Markup = {};
 
-/**
- * Dumps the markup for the given node (HTML element if no node is given).
- * Over-writes the body's content with the markup in layout test mode. Appends
- * a pre element when loaded manually, in order to aid debugging.
- */
+// The description of what this test is testing. Gets prepended to the dumped markup.
+Markup.description = function(description)
+{
+    Markup._description = description;
+}
+
+// Dumps the markup for the given node (HTML element if no node is given).
+// Over-writes the body's content with the markup in layout test mode. Appends
+// a pre element when loaded manually, in order to aid debugging.
 Markup.dump = function(opt_node)
 {
     // Allow for using Markup.dump as an onload handler.
     if (opt_node instanceof Event)
         opt_node = undefined;
 
-    var markup = Markup.get(opt_node);
+    var node = opt_node || document.body.parentElement
+
+    var markup = Markup._description ? Markup._description + '\n' : "";
+    markup += Markup.get(node);
+
     var container;
     if (window.layoutTestController)
         container = document.body;
@@ -31,10 +39,12 @@ Markup.dump = function(opt_node)
     }
 
     // FIXME: Have this respect layoutTestController.dumpChildFramesAsText?
-    for (var i = 0; i < window.frames.length; i++) {
+    // FIXME: Should we care about framesets?
+    var iframes = node.getElementsByTagName('iframe');
+    for (var i = 0; i < iframes.length; i++) {
         markup += '\n\nFRAME ' + i + ':\n'
         try {
-            markup += Markup.get(window.frames[i].contentDocument.body.parentElement);
+            markup += Markup.get(iframes[i].contentDocument.body.parentElement);
         } catch (e) {
             markup += 'FIXME: Add method to layout test controller to get access to cross-origin frames.';
         }
@@ -56,13 +66,10 @@ Markup.notifyDone = function()
     Markup.dump();
 }
 
-/**
- * Returns the markup for the given node. To be used for cases where a test needs
- * to get the markup but not clobber the whole page.
- */
-Markup.get = function(opt_node, opt_depth)
+// Returns the markup for the given node. To be used for cases where a test needs
+// to get the markup but not clobber the whole page.
+Markup.get = function(node, opt_depth)
 {
-    var node = opt_node || document.body.parentElement
     var depth = opt_depth || 0;
 
     var attrs = Markup._getAttributes(node);
@@ -151,12 +158,17 @@ Markup._FORBIDS_END_TAG = {
     'DATAGRIDCOL': 1
 }
 
+Markup._getSelectionFromNode = function(node)
+{
+    return node.ownerDocument.defaultView.getSelection();
+}
+
 Markup._getMarkupForTextNode = function(node)
 {
     innerMarkup = node.nodeValue;
     var startOffset, endOffset, startText, endText;
 
-    var sel = window.getSelection();
+    var sel = Markup._getSelectionFromNode(node);
     if (node == sel.anchorNode && node == sel.focusNode) {
         if (sel.isCollapsed) {
             startOffset = sel.anchorOffset;
@@ -192,7 +204,7 @@ Markup._getMarkupForTextNode = function(node)
 
 Markup._getSelectionMarker = function(node, index)
 {
-    var sel = window.getSelection();
+    var sel = Markup._getSelectionFromNode(node);;
     if (index == sel.anchorOffset && node == sel.anchorNode) {
         if (sel.isCollapsed)
             return '<selection-caret>';
