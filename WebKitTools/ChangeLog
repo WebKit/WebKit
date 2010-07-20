@@ -1,5 +1,19 @@
 2010-07-20  Adam Roben  <aroben@apple.com>
 
+        Stop linking WebKitTestRunner against getopt
+
+        Use of getopt was removed in r63700.
+
+        Fixes <http://webkit.org/b/42714> WebKitTestRunner links against
+        getopt, but doesn't need to
+
+        Reviewed by Sam Weinig.
+
+        * WebKitTestRunner/win/WebKitTestRunner.vcproj: Removed getopt.lib
+        from all configurations.
+
+2010-07-20  Adam Roben  <aroben@apple.com>
+
         Make run-webkit-tests --webkit-test-runner "work" on Windows
 
         WebKitTestRunner crashes on launch, but at least the scripts build and
