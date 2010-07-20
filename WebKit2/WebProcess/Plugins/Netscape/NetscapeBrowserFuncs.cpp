@@ -209,6 +209,8 @@ static NPError parsePostBuffer(bool isFile, const char *buffer, uint32_t length,
 
         postBuffer = fileContents->data();
         postBufferSize = fileContents->size();
+
+        // FIXME: The NPAPI spec states that the file should be deleted here.
     } else {
         postBuffer = buffer;
         postBufferSize = length;
@@ -247,16 +249,43 @@ static NPError parsePostBuffer(bool isFile, const char *buffer, uint32_t length,
     return NPERR_NO_ERROR;
 }
 
-static NPError NPN_GetURL(NPP instance, const char* url, const char* target)
+static String makeURLString(const char* url)
 {
-    notImplemented();
+    String urlString(url);
+    
+    // Strip return characters.
+    urlString.replace('\r', "");
+    urlString.replace('\n', "");
+
+    return urlString;
+}
+
+static NPError NPN_GetURL(NPP npp, const char* url, const char* target)
+{
+    if (!url)
+        return NPERR_GENERIC_ERROR;
+    
+    RefPtr<NetscapePlugin> plugin = NetscapePlugin::fromNPP(npp);
+    plugin->loadURL("GET", makeURLString(url), target, HTTPHeaderMap(), Vector<char>(), false, 0);
+    
     return NPERR_GENERIC_ERROR;
 }
 
-static NPError NPN_PostURL(NPP instance, const char* url, const char* target, uint32_t len, const char* buf, NPBool file)
+static NPError NPN_PostURL(NPP npp, const char* url, const char* target, uint32_t len, const char* buf, NPBool file)
 {
-    notImplemented();
-    return NPERR_GENERIC_ERROR;
+    HTTPHeaderMap headerFields;
+    Vector<char> postData;
+    
+    // NPN_PostURL only allows headers if the post buffer points to a file.
+    bool parseHeaders = file;
+
+    NPError error = parsePostBuffer(file, buf, len, parseHeaders, headerFields, postData);
+    if (error != NPERR_NO_ERROR)
+        return error;
+
+    RefPtr<NetscapePlugin> plugin = NetscapePlugin::fromNPP(npp);
+    plugin->loadURL("POST", makeURLString(url), target, headerFields, postData, false, 0);
+    return NPERR_NO_ERROR;
 }
 
 static NPError NPN_RequestRead(NPStream* stream, NPByteRange* rangeList)
@@ -334,17 +363,6 @@ static jref NPN_GetJavaPeer(NPP instance)
     return 0;
 }
 
-static String makeURLString(const char* url)
-{
-    String urlString(url);
-    
-    // Strip return characters.
-    urlString.replace('\r', "");
-    urlString.replace('\n', "");
-
-    return urlString;
-}
-
 static NPError NPN_GetURLNotify(NPP npp, const char* url, const char* target, void* notifyData)
 {
     if (!url)
@@ -367,9 +385,6 @@ static NPError NPN_PostURLNotify(NPP npp, const char* url, const char* target, u
     RefPtr<NetscapePlugin> plugin = NetscapePlugin::fromNPP(npp);
     plugin->loadURL("POST", makeURLString(url), target, headerFields, postData, true, notifyData);
     return NPERR_NO_ERROR;
-    
-    notImplemented();
-    return NPERR_GENERIC_ERROR;
 }
 
 static NPError NPN_GetValue(NPP npp, NPNVariable variable, void *value)

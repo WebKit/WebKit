@@ -220,8 +220,8 @@ void NetscapePluginStream::deliverDataToPlugin()
 
         int32_t numBytesWritten = m_plugin->NPP_Write(&m_npStream, m_offset, dataLength, data);
         if (numBytesWritten < 0) {
-            // FIXME: Destroy the stream!
-            ASSERT_NOT_REACHED();
+            stop(NPRES_NETWORK_ERR);
+            return;
         }
 
         // NPP_Write could call NPN_DestroyStream and destroy the stream.

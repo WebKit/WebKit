@@ -1,3 +1,30 @@
+2010-07-20  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Implement NPN_GetURL and NPN_PostURL
+        https://bugs.webkit.org/show_bug.cgi?id=42650
+
+        * WebProcess/Plugins/Netscape/NetscapeBrowserFuncs.cpp:
+        (WebKit::parsePostBuffer):
+        Add a FIXME about deleting the file.
+
+        (WebKit::makeURLString):
+        Move this static method before NPN_GetURL.
+
+        (WebKit::NPN_GetURL):
+        Call NetscapePLugin::LoadURL.
+        
+        (WebKit::NPN_PostURL):
+        Ditto.
+
+        (WebKit::NPN_PostURLNotify):
+        * WebProcess/Plugins/Netscape/NetscapePluginStream.cpp:
+        Remove unreached code.
+
+        (WebKit::NetscapePluginStream::deliverDataToPlugin):
+        Stop the stream if the plug-in returns -1 from NPP_Write.
+
 2010-07-19  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.
