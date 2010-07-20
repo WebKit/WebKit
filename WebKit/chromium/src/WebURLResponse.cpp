@@ -362,6 +362,16 @@ void WebURLResponse::setIsMultipartPayload(bool value)
     m_private->m_resourceResponse->setIsMultipartPayload(value);
 }
 
+WebString WebURLResponse::downloadFilePath() const
+{
+    return m_private->m_downloadFilePath;
+}
+
+void WebURLResponse::setDownloadFilePath(const WebString& downloadFilePath)
+{
+    m_private->m_downloadFilePath = downloadFilePath;
+}
+
 void WebURLResponse::assign(WebURLResponsePrivate* p)
 {
     // Subclasses may call this directly so a self-assignment check is needed

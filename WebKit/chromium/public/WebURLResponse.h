@@ -158,6 +158,12 @@ public:
     WEBKIT_API bool isMultipartPayload() const;
     WEBKIT_API void setIsMultipartPayload(bool);
 
+    // This indicates the location of a downloaded response if the
+    // WebURLRequest had the downloadToFile flag set to true.  This file path
+    // remains valid for the lifetime of the WebURLLoader used to create it.
+    WEBKIT_API WebString downloadFilePath() const;
+    WEBKIT_API void setDownloadFilePath(const WebString&);
+
 protected:
     void assign(WebURLResponsePrivate*);
 

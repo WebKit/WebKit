@@ -151,6 +151,11 @@ public:
     WEBKIT_API int appCacheHostID() const;
     WEBKIT_API void setAppCacheHostID(int id);
 
+    // If true, the response body will be downloaded to a file managed by the
+    // WebURLLoader.  See WebURLResponse::downloadedFilePath.
+    WEBKIT_API bool downloadToFile() const;
+    WEBKIT_API void setDownloadToFile(bool);
+
 #if defined(WEBKIT_IMPLEMENTATION)
     WebCore::ResourceRequest& toMutableResourceRequest();
     const WebCore::ResourceRequest& toResourceRequest() const;

@@ -245,6 +245,16 @@ void WebURLRequest::setAppCacheHostID(int appCacheHostID)
     m_private->m_resourceRequest->setAppCacheHostID(appCacheHostID);
 }
 
+bool WebURLRequest::downloadToFile() const
+{
+    return m_private->m_downloadToFile;
+}
+
+void WebURLRequest::setDownloadToFile(bool downloadToFile)
+{
+    m_private->m_downloadToFile = downloadToFile;
+}
+
 ResourceRequest& WebURLRequest::toMutableResourceRequest()
 {
     ASSERT(m_private);
