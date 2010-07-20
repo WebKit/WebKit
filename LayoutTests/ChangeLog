@@ -1,3 +1,11 @@
+2010-07-19  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed trivial fix after r63684.
+        https://bugs.webkit.org/show_bug.cgi?id=30464
+
+        * fast/dom/Window/window-properties-expected.txt: Updated.
+        * platform/qt/fast/dom/Window/window-properties-expected.txt: Updated.
+
 2010-07-15  Yuzo Fujishima  <yuzo@google.com>
 
         Reviewed by Dan Bernstein.
