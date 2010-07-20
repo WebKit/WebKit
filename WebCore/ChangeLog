@@ -1,3 +1,20 @@
+2010-07-20  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Fix fast/dom/title-content-write-set.html for HTML5 tree builder
+        https://bugs.webkit.org/show_bug.cgi?id=42668
+
+        When I split parserAppendData from appendData, it was tempting to cut
+        the function at dispatchModifiedEvent, but that's not quite right.  We
+        still need to notify the parent that it's children have changed.
+
+        * dom/CharacterData.cpp:
+        (WebCore::CharacterData::appendDataCommon):
+        (WebCore::CharacterData::parserAppendData):
+        (WebCore::CharacterData::appendData):
+        * dom/CharacterData.h:
+
 2010-07-20  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin.

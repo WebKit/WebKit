@@ -59,7 +59,7 @@ String CharacterData::substringData(unsigned offset, unsigned count, ExceptionCo
     return m_data->substring(offset, count);
 }
 
-PassRefPtr<StringImpl> CharacterData::parserAppendData(const String& arg)
+PassRefPtr<StringImpl> CharacterData::appendDataCommon(const String& arg)
 {
     String newStr = m_data;
     newStr.append(arg);
@@ -76,9 +76,18 @@ PassRefPtr<StringImpl> CharacterData::parserAppendData(const String& arg)
     return oldStr.release();
 }
 
+void CharacterData::parserAppendData(const String& arg)
+{
+    appendDataCommon(arg);
+    // We don't call dispatchModifiedEvent here because we don't want the
+    // parser to dispatch DOM mutation events.
+    if (parentNode())
+        parentNode()->childrenChanged();
+}
+
 void CharacterData::appendData(const String& arg, ExceptionCode&)
 {
-    RefPtr<StringImpl> oldStr = parserAppendData(arg);
+    RefPtr<StringImpl> oldStr = appendDataCommon(arg);
     dispatchModifiedEvent(oldStr.get());
 }
 
