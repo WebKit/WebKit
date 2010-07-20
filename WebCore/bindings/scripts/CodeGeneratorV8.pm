@@ -30,7 +30,6 @@ use Digest::MD5;
 
 my $module = "";
 my $outputDir = "";
-my $outputHeadersDir = "";
 
 my @headerContent = ();
 my @implContentHeader = ();
@@ -72,7 +71,6 @@ sub new
 
     $codeGenerator = shift;
     $outputDir = shift;
-    $outputHeadersDir = shift;
 
     bless($reference, $object);
     return $reference;
@@ -112,7 +110,7 @@ sub GenerateInterface
     my $name = $dataNode->name;
 
     # Open files for writing
-    my $headerFileName = "$outputHeadersDir/V8$name.h";
+    my $headerFileName = "$outputDir/V8$name.h";
     my $implFileName = "$outputDir/V8$name.cpp";
 
     open($IMPL, ">$implFileName") || die "Couldn't open file $implFileName";

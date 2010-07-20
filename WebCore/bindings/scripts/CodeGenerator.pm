@@ -31,7 +31,6 @@ use File::Find;
 my $useDocument = "";
 my $useGenerator = "";
 my $useOutputDir = "";
-my $useOutputHeadersDir = "";
 my $useDirectories = "";
 my $useLayerOnTop = 0;
 my $preprocessor;
@@ -81,7 +80,6 @@ sub new
     $useDirectories = shift;
     $useGenerator = shift;
     $useOutputDir = shift;
-    $useOutputHeadersDir = shift;
     $useLayerOnTop = shift;
     $preprocessor = shift;
     $writeDependencies = shift;
@@ -109,7 +107,7 @@ sub ProcessDocument
     require $ifaceName . ".pm";
 
     # Dynamically load external code generation perl module
-    $codeGenerator = $ifaceName->new($object, $useOutputDir, $useOutputHeadersDir, $useLayerOnTop, $preprocessor, $writeDependencies, $verbose);
+    $codeGenerator = $ifaceName->new($object, $useOutputDir, $useLayerOnTop, $preprocessor, $writeDependencies, $verbose);
     unless (defined($codeGenerator)) {
         my $classes = $useDocument->classes;
         foreach my $class (@$classes) {

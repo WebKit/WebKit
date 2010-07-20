@@ -199,7 +199,6 @@ sub new
 
     $codeGenerator = shift;
     $outputDir = shift;
-    shift; # $outputHeadersDir
     shift; # $useLayerOnTop
     shift; # $preprocessor
     $writeDependencies = shift;
