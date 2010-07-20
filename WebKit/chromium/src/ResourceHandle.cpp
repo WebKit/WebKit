@@ -252,6 +252,11 @@ bool ResourceHandle::start(Frame* deprecated)
     return true;
 }
 
+bool ResourceHandle::hasAuthenticationChallenge() const
+{
+    return false;
+}
+
 void ResourceHandle::clearAuthentication()
 {
 }
