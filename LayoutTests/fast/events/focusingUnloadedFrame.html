@@ -20,15 +20,12 @@ function foo() {
     window.setTimeout('step2()', 100);
 }
 
-
+window.onload = foo;
 </script>
 
 </head>
-<body onload="foo()">
 <frameset>
     <frame src="resources/frontpage.html">  <!-- A page containing a link -->
-    <frame src="resources/notfound.html">	  <!-- A page that can't be found -->
+    <frame src="resources/notfound.html">   <!-- A page that can't be found -->
 </frameset>
-
-</body>
 </html>
