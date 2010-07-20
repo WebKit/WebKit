@@ -1,3 +1,23 @@
+2010-07-20  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        HTML5 tree builder should restore form state
+        https://bugs.webkit.org/show_bug.cgi?id=42644
+
+        We need to tell self-closing tags that we're done parsing their
+        children.  This patch fixes the following LayoutTests when run with
+        --html5-treebuilder:
+
+          fast/forms/button-state-restore.html
+          fast/forms/state-restore-to-non-autocomplete-form.html
+          fast/forms/state-restore-to-non-edited-controls.html
+          fast/history/saves-state-after-fragment-nav.html
+          http/tests/navigation/restore-form-state-https.html
+
+        * html/HTMLConstructionSite.cpp:
+        (WebCore::HTMLConstructionSite::insertSelfClosingHTMLElement):
+
 2010-07-20  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r63750.

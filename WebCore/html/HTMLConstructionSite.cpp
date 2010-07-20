@@ -233,7 +233,11 @@ void HTMLConstructionSite::insertHTMLElement(AtomicHTMLToken& token)
 void HTMLConstructionSite::insertSelfClosingHTMLElement(AtomicHTMLToken& token)
 {
     ASSERT(token.type() == HTMLToken::StartTag);
-    attachToCurrent(createHTMLElement(token));
+    RefPtr<Element> element = attachToCurrent(createHTMLElement(token));
+    // Normally HTMLElementStack is responsible for calling finishParsingChildren,
+    // but self-closing elements are never in the element stack so the stack
+    // doesn't get a chance to tell them that we're done parsing their children.
+    element->finishParsingChildren();
     // FIXME: Do we want to acknowledge the token's self-closing flag?
     // http://www.whatwg.org/specs/web-apps/current-work/multipage/tokenization.html#acknowledge-self-closing-flag
 }
