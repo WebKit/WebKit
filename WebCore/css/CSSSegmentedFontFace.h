@@ -45,7 +45,6 @@ public:
     static PassRefPtr<CSSSegmentedFontFace> create(CSSFontSelector* selector) { return adoptRef(new CSSSegmentedFontFace(selector)); }
     ~CSSSegmentedFontFace();
 
-    bool isValid() const;
     CSSFontSelector* fontSelector() const { return m_fontSelector; }
 
     void fontLoaded(CSSFontFace*);
@@ -58,6 +57,7 @@ private:
     CSSSegmentedFontFace(CSSFontSelector*);
 
     void pruneTable();
+    bool isValid() const;
 
     CSSFontSelector* m_fontSelector;
     HashMap<unsigned, SegmentedFontData*> m_fontDataTable;

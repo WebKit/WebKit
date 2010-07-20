@@ -1,3 +1,13 @@
+2010-07-15  Yuzo Fujishima  <yuzo@google.com>
+
+        Reviewed by Dan Bernstein.
+
+        Fix for Bug 42342 - Font download error for an @font-face rule invalidates other @font-face rules for the same font-family
+        https://bugs.webkit.org/show_bug.cgi?id=42342
+
+        * fast/css/font-face-download-error-expected.txt: Added.
+        * fast/css/font-face-download-error.html: Added.
+
 2010-07-19  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Maciej Stachowiak.
