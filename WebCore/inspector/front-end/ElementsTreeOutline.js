@@ -1205,8 +1205,9 @@ WebInspector.ElementsTreeElement.prototype = {
             html += "=&#8203;\"";
 
         if (linkify && (name === "src" || name === "href")) {
+            var rewrittenHref = this._rewriteAttrHref(node, value);
             value = value.replace(/([\/;:\)\]\}])/g, "$1\u200B");
-            html += linkify(this._rewriteAttrHref(node, value), value, "webkit-html-attribute-value", node.nodeName.toLowerCase() === "a");
+            html += linkify(rewrittenHref, value, "webkit-html-attribute-value", node.nodeName.toLowerCase() === "a");
         } else {
             value = value.escapeHTML().replace(/([\/;:\)\]\}])/g, "$1&#8203;");
             html += "<span class=\"webkit-html-attribute-value\">" + value + "</span>";

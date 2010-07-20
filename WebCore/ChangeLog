@@ -1,3 +1,13 @@
+2010-07-20  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Incorrect absolute URLs in tooltips of links in the ElementsTreeOutline
+        https://bugs.webkit.org/show_bug.cgi?id=42626
+
+        * inspector/front-end/ElementsTreeOutline.js:
+        (WebInspector.ElementsTreeElement.prototype._attributeHTML):
+
 2010-07-20  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Unreviewed comment fix. The comment in IDL should be //, not # .
