@@ -90,11 +90,11 @@ public:
 
     class RedirectToFosterParentGuard : public Noncopyable {
     public:
-        RedirectToFosterParentGuard(HTMLConstructionSite& tree, bool shouldRedirect)
+        RedirectToFosterParentGuard(HTMLConstructionSite& tree)
             : m_tree(tree)
             , m_wasRedirectingBefore(tree.m_redirectAttachToFosterParent)
         {
-            m_tree.m_redirectAttachToFosterParent = shouldRedirect;
+            m_tree.m_redirectAttachToFosterParent = true;
         }
 
         ~RedirectToFosterParentGuard()

@@ -289,7 +289,6 @@ resources/tables01.dat: PASS
 resources/tricky01.dat:
 2
 6
-7
 
 Test 2 of 9 in resources/tricky01.dat failed. Input:
 <html>
@@ -461,31 +460,4 @@ Expected:
 |           <td>
 |             "
 "
-
-Test 7 of 9 in resources/tricky01.dat failed. Input:
-<table><tr><p><a><p>You should see this text.
-Got:
-| <html>
-|   <head>
-|   <body>
-|     <p>
-|       <a>
-|     <table>
-|       <tbody>
-|         <tr>
-|           <p>
-|             <a>
-|               "You should see this text."
-Expected:
-| <html>
-|   <head>
-|   <body>
-|     <p>
-|       <a>
-|     <p>
-|       <a>
-|         "You should see this text."
-|     <table>
-|       <tbody>
-|         <tr>
 #EOF
