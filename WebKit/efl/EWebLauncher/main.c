@@ -413,6 +413,7 @@ on_viewport_changed(void* user_data, Evas_Object* webview, void* event_info)
     app->viewport.minScale = minScale;
     app->viewport.maxScale = maxScale;
     app->viewport.userScalable = (Eina_Bool)userScalable;
+    viewport_set();
 }
 
 static void

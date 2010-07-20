@@ -1,3 +1,21 @@
+2010-07-20  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Fix zoom in/out on EFL after r62666. The patch for adding viewport
+        missed the initialization of zoom_range.user_scalable. In case browser
+        doesn't care about the viewport and does not listen to the signal,
+        user_scalable will be always false, thus inhibiting zoom in/out.
+        https://bugs.webkit.org/show_bug.cgi?id=42656
+
+        * efl/EWebLauncher/main.c:
+        (on_viewport_changed): when listening to signal about viewport meta tag,
+        it's not sufficient to receive the parameters. One needs also to enforce
+        these parameters in WebKit.
+        * efl/ewk/ewk_view.cpp:
+        (_ewk_view_priv_new): initialize user_scalable parameter to allow
+        browser zooming in and out.
+
 2010-07-16  Zhe Su  <suzhe@chromium.org>
 
         Reviewed by Darin Adler.

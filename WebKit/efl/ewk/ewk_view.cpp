@@ -595,6 +595,7 @@ static Ewk_View_Private_Data* _ewk_view_priv_new(Ewk_View_Smart_Data* sd)
     // this functionality will be modified by the scale zoom patch.
     priv->settings.zoom_range.min_scale = ZOOM_MIN;
     priv->settings.zoom_range.max_scale = ZOOM_MAX;
+    priv->settings.zoom_range.user_scalable = EINA_TRUE;
 
     priv->main_frame = _ewk_view_core_frame_new(sd, priv, 0).get();
     if (!priv->main_frame) {
