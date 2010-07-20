@@ -1,3 +1,10 @@
+2010-07-19  Anders Carlsson  <andersca@apple.com>
+
+        Fix build.
+
+        * WebKitTestRunner/WebKitTestRunner.xcodeproj/project.pbxproj:
+        Paths of generated files should be relative to the build product.
+
 2010-07-19  Daniel Bates  <dbates@rim.com>
 
         Reviewed by Adam Roben.
