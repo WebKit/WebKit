@@ -371,7 +371,7 @@ void PluginView::performURLRequest(URLRequest* request)
     }
 
     // This request is to load a URL and create a stream.
-    RefPtr<PluginView::Stream> stream = PluginView::Stream::create(this, request->requestID(), request->request());
+    RefPtr<Stream> stream = PluginView::Stream::create(this, request->requestID(), request->request());
     addStream(stream.get());
     stream->start();
 }
@@ -536,12 +536,15 @@ void PluginView::loadURL(uint64_t requestID, const String& method, const String&
 
 void PluginView::cancelStreamLoad(uint64_t streamID)
 {
-    PluginView::Stream* stream = m_streams.get(streamID).get();
+    // Keep a reference to the stream. Stream::cancel might remove the stream from the map, and thus
+    // releasing its last reference.
+    RefPtr<Stream> stream = m_streams.get(streamID).get();
     if (!stream)
         return;
 
+    // Cancelling the stream here will remove it from the map.
     stream->cancel();
-    removeStream(stream);
+    ASSERT(!m_streams.contains(streamID));
 }
 
 NPObject* PluginView::windowScriptNPObject()

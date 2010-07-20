@@ -1070,7 +1070,7 @@
 		513F14540AB634C400094DDF /* IconLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 513F14520AB634C400094DDF /* IconLoader.h */; };
 		514185EE0CD65F0400763C99 /* ChangeVersionWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 514185EC0CD65F0400763C99 /* ChangeVersionWrapper.h */; };
 		514185EF0CD65F0400763C99 /* ChangeVersionWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 514185ED0CD65F0400763C99 /* ChangeVersionWrapper.cpp */; };
-		514B3F730C722047000530DF /* FileSystem.h in Headers */ = {isa = PBXBuildFile; fileRef = 514B3F720C722047000530DF /* FileSystem.h */; };
+		514B3F730C722047000530DF /* FileSystem.h in Headers */ = {isa = PBXBuildFile; fileRef = 514B3F720C722047000530DF /* FileSystem.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		514B3F760C722055000530DF /* FileSystemMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 514B3F750C722055000530DF /* FileSystemMac.mm */; };
 		514C76370CE9225E007EF3CD /* JSSQLError.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 514C76350CE9225E007EF3CD /* JSSQLError.cpp */; };
 		514C76380CE9225E007EF3CD /* JSSQLTransaction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 514C76360CE9225E007EF3CD /* JSSQLTransaction.cpp */; };

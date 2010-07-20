@@ -29,12 +29,37 @@
 #import "FileSystem.h"
 
 #import "PlatformString.h"
+#import <wtf/text/CString.h>
 
 namespace WebCore {
 
 String homeDirectoryPath()
 {
     return NSHomeDirectory();
+}
+
+CString openTemporaryFile(const char* prefix, PlatformFileHandle& platformFileHandle)
+{
+    platformFileHandle = invalidPlatformFileHandle;
+    
+    Vector<char> temporaryFilePath(PATH_MAX);
+    if (!confstr(_CS_DARWIN_USER_TEMP_DIR, temporaryFilePath.data(), temporaryFilePath.size()))
+        return CString();
+
+    // Shrink the vector.   
+    temporaryFilePath.shrink(strlen(temporaryFilePath.data()));
+    ASSERT(temporaryFilePath.last() == '/');
+
+    // Append the file name.    
+    temporaryFilePath.append(prefix, strlen(prefix));
+    temporaryFilePath.append("XXXXXX", 6);
+    temporaryFilePath.append('\0');
+
+    platformFileHandle = mkstemp(temporaryFilePath.data());
+    if (platformFileHandle == invalidPlatformFileHandle)
+        return CString();
+
+    return CString(temporaryFilePath.data());
 }
 
 } // namespace WebCore

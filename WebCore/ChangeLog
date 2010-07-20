@@ -1,5 +1,19 @@
 2010-07-19  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Darin Adler, Adam Roben, Dan Bernstein and Sam Weinig.
+
+        Handle NP_ASFILE and NP_ASFILEONLY transfer modes
+        https://bugs.webkit.org/show_bug.cgi?id=42587
+
+        * WebCore.exp.in:
+        Export functions from FileSystem.h
+        
+        * platform/mac/FileSystemMac.mm:
+        (WebCore::openTemporaryFile):
+        Try to create a temporary file using mkstemp.
+
+2010-07-19  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Sam Weinig.
 
         Implement NPN_PostURLNotify

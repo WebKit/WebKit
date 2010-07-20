@@ -190,6 +190,11 @@ NPError NetscapePlugin::NPP_DestroyStream(NPStream* stream, NPReason reason)
     return m_pluginModule->pluginFuncs().destroystream(&m_npp, stream, reason);
 }
 
+void NetscapePlugin::NPP_StreamAsFile(NPStream* stream, const char* filename)
+{
+    return m_pluginModule->pluginFuncs().asfile(&m_npp, stream, filename);
+}
+
 int32_t NetscapePlugin::NPP_WriteReady(NPStream* stream)
 {
     return m_pluginModule->pluginFuncs().writeready(&m_npp, stream);

@@ -1,5 +1,38 @@
 2010-07-19  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Darin Adler, Adam Roben, Dan Bernstein and Sam Weinig.
+
+        Handle NP_ASFILE and NP_ASFILEONLY transfer modes
+        https://bugs.webkit.org/show_bug.cgi?id=42587
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::NPP_StreamAsFile):
+        * WebProcess/Plugins/Netscape/NetscapePlugin.h:
+        Add NPP_ wrapper.
+
+        * WebProcess/Plugins/Netscape/NetscapePluginStream.cpp:
+        (WebKit::NetscapePluginStream::NetscapePluginStream):
+        Initialize m_fileHandle.
+
+        (WebKit::isSupportedTransferMode):
+        NP_ASFILE and NP_ASFILEONLY is now supported.
+
+        (WebKit::NetscapePluginStream::deliverData):
+        Call deliverDataToFile if necessary.
+
+        (WebKit::NetscapePluginStream::deliverDataToFile):
+        Create a temporary file and write the data into it.
+
+        (WebKit::NetscapePluginStream::stop):
+        If the transfer mode is either NP_ASFILE or NP_ASFILEONLY, make sure to
+        call NPP_StreamAsFile and close the file and delete it.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::cancelStreamLoad):
+        Keep a reference to the Stream since cancelling it will remove it from the map.
+
+2010-07-19  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Sam Weinig.
 
         Implement NPN_PostURLNotify

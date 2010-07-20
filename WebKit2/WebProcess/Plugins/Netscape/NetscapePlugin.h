@@ -73,6 +73,8 @@ public:
     NPError NPP_SetWindow(NPWindow*);
     NPError NPP_NewStream(NPMIMEType, NPStream*, NPBool seekable, uint16_t* stype);
     NPError NPP_DestroyStream(NPStream*, NPReason);
+    void NPP_StreamAsFile(NPStream*, const char* filename);
+
     int32_t NPP_WriteReady(NPStream*);
     int32_t NPP_Write(NPStream*, int32_t offset, int32_t len, void* buffer);
     void NPP_URLNotify(const char* url, NPReason, void* notifyData);

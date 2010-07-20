@@ -27,6 +27,7 @@
 #define NetscapePluginStream_h
 
 #include "RunLoop.h"
+#include <WebCore/FileSystem.h>
 #include <WebCore/npapi.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -75,6 +76,7 @@ private:
 
     void deliverData(const char* bytes, int length);
     void deliverDataToPlugin();
+    void deliverDataToFile(const char* bytes, int length);
 
     RefPtr<NetscapePlugin> m_plugin;
     uint64_t m_streamID;
@@ -86,6 +88,9 @@ private:
     uint16_t m_transferMode;
     int32_t m_offset;
 
+    CString m_filePath;
+    WebCore::PlatformFileHandle m_fileHandle;
+    
     // Whether NPP_NewStream has successfully been called.
     bool m_isStarted;
 
