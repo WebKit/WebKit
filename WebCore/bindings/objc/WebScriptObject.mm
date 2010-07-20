@@ -433,6 +433,27 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
     _didExecute(self);
 }
 
+- (BOOL)hasWebScriptKey:(NSString *)key
+{
+    if (![self _isSafeScript])
+        return NO;
+
+    ExecState* exec = [self _rootObject]->globalObject()->globalExec();
+    ASSERT(!exec->hadException());
+
+    JSLock lock(SilenceAssertionsOnly);
+    BOOL result = [self _imp]->hasProperty(exec, Identifier(exec, stringToUString(String(key))));
+
+    if (exec->hadException()) {
+        addExceptionToConsole(exec);
+        exec->clearException();
+    }
+
+    _didExecute(self);
+
+    return result;
+}
+
 - (NSString *)stringRepresentation
 {
     if (![self _isSafeScript]) {

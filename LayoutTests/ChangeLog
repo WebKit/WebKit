@@ -1,3 +1,15 @@
+2010-07-20  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by Geoffrey Garen.
+
+        WebScriptObject Should Allow Safely Checking For Key Existence
+        https://bugs.webkit.org/show_bug.cgi?id=42613
+
+        * platform/mac/fast/objc/script-tests/TEMPLATE.html: Added.
+        * platform/mac/fast/objc/script-tests/webScriptObject-hasWebScriptKey.js: Added.
+        * platform/mac/fast/objc/webScriptObject-hasWebScriptKey-expected.txt: Added.
+        * platform/mac/fast/objc/webScriptObject-hasWebScriptKey.html: Added.
+
 2010-07-20  Stephen White  <senorblanco@chromium.org>
 
         Unreviewed; pixel test results fix.

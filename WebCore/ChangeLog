@@ -1,3 +1,20 @@
+2010-07-20  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by Geoffrey Garen.
+
+        WebScriptObject Should Allow Safely Checking For Key Existence
+        https://bugs.webkit.org/show_bug.cgi?id=42613
+
+        Test: platform/mac/fast/objc/webScriptObject-hasWebScriptKey.html
+
+        Add private API "hasWebScriptKey" to check for key existence in
+        a WebScriptObject. Like JavaScript's `in` syntax. This is intended
+        to be made public eventually.
+
+        * bindings/objc/WebScriptObject.mm:
+        (-[WebScriptObject hasWebScriptKey:]):
+        * bindings/objc/WebScriptObjectPrivate.h:
+
 2010-07-20  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

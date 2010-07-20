@@ -36,6 +36,11 @@
 #import <pthread.h>
 #import <wtf/Assertions.h>
 
+// Remove this once hasWebScriptKey has been made public.
+@interface WebScriptObject (StagedForPublic)
+- (BOOL)hasWebScriptKey:(NSString *)name;
+@end
+
 static void* runJavaScriptThread(void* arg)
 {
     JSGlobalContextRef ctx = JSGlobalContextCreate(0);
@@ -66,6 +71,7 @@ static void* runJavaScriptThread(void* arg)
             || aSelector == @selector(accessStoredWebScriptObject)
             || aSelector == @selector(storeWebScriptObject:)
             || aSelector == @selector(testValueForKey)
+            || aSelector == @selector(testHasWebScriptKey:)
             || aSelector == @selector(testArray)
         )
         return NO;
@@ -92,6 +98,8 @@ static void* runJavaScriptThread(void* arg)
         return @"storeWebScriptObject";
     if (aSelector == @selector(testValueForKey))
         return @"testValueForKey";
+    if (aSelector == @selector(testHasWebScriptKey:))
+        return @"testHasWebScriptKey";
     if (aSelector == @selector(testArray))
         return @"testArray";
 
@@ -164,6 +172,12 @@ static void* runJavaScriptThread(void* arg)
     pthread_t pthread;
     pthread_create(&pthread, 0, &runJavaScriptThread, 0);
     pthread_join(pthread, 0);
+}
+
+- (BOOL)testHasWebScriptKey:(NSString *)key
+{
+    ASSERT(storedWebScriptObject);
+    return [storedWebScriptObject hasWebScriptKey:key];
 }
 
 - (BOOL)testWrapperRoundTripping:(WebScriptObject *)webScriptObject
