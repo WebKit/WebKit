@@ -1,3 +1,16 @@
+2010-07-19  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Nate Chapin.
+
+        WebGL rendering results must be made available to Canvas.toDataURL and 2D drawImage
+        https://bugs.webkit.org/show_bug.cgi?id=34719
+
+        Fixed compiler warning introduced by original patch. No new tests;
+        covered by existing tests.
+
+        * platform/graphics/mac/GraphicsContext3DMac.mm:
+        (WebCore::GraphicsContext3D::paintRenderingResultsToCanvas):
+
 2010-07-19  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin Adler, Adam Roben, Dan Bernstein and Sam Weinig.

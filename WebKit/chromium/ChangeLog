@@ -1,3 +1,15 @@
+2010-07-19  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Nate Chapin.
+
+        WebGL rendering results must be made available to Canvas.toDataURL and 2D drawImage
+        https://bugs.webkit.org/show_bug.cgi?id=34719
+
+        Fixed compiler warning introduced by original patch.
+
+        * src/WebGraphicsContext3DDefaultImpl.cpp:
+        (WebKit::WebGraphicsContext3DDefaultImpl::readBackFramebuffer):
+
 2010-07-19  Tony Chang  <tony@chromium.org>
 
         Reviewed by Kent Tamura.

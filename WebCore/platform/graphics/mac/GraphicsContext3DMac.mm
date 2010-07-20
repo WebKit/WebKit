@@ -254,7 +254,7 @@ void GraphicsContext3D::paintRenderingResultsToCanvas(WebGLRenderingContext* con
 
     CGLSetCurrentContext(m_contextObj);
 
-    bool mustRestoreFBO;
+    bool mustRestoreFBO = false;
     if (m_attrs.antialias) {
         ::glBindFramebufferEXT(GL_READ_FRAMEBUFFER_EXT, m_multisampleFBO);
         ::glBindFramebufferEXT(GL_DRAW_FRAMEBUFFER_EXT, m_fbo);

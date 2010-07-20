@@ -710,7 +710,7 @@ bool WebGraphicsContext3DDefaultImpl::readBackFramebuffer(unsigned char* pixels,
     // vertical flip is only a temporary solution anyway until Chrome
     // is fully GPU composited, it wasn't worth the complexity.
 
-    bool mustRestoreFBO;
+    bool mustRestoreFBO = false;
     if (m_attributes.antialias) {
         glBindFramebufferEXT(GL_READ_FRAMEBUFFER_EXT, m_multisampleFBO);
         glBindFramebufferEXT(GL_DRAW_FRAMEBUFFER_EXT, m_fbo);
