@@ -22,8 +22,8 @@
 #ifndef CSSSelector_h
 #define CSSSelector_h
 
-#include "RenderStyleConstants.h"
 #include "QualifiedName.h"
+#include "RenderStyleConstants.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
@@ -57,13 +57,7 @@ namespace WebCore {
         {
         }
 
-        ~CSSSelector()
-        {
-            if (m_hasRareData)
-                delete m_data.m_rareData;
-            else
-                delete m_data.m_tagHistory;
-        }
+        ~CSSSelector();
 
         /**
          * Re-create selector text from selector's data

@@ -1,3 +1,23 @@
+2010-07-20  Hayato Ito  <hayato@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Fixed a crash when deeply nested CSS selector is used.
+        https://bugs.webkit.org/show_bug.cgi?id=41129
+
+        This patch deletes CSSSelectors iteratively so that it doesn't cause stack overflow.
+
+        Test: fast/css/css-selector-deeply-nested.html
+
+        * css/CSSSelector.cpp:
+        (WebCore::CSSSelectorBag::~CSSSelectorBag):
+        (WebCore::CSSSelectorBag::isEmpty):
+        (WebCore::CSSSelectorBag::append):
+        (WebCore::CSSSelectorBag::takeAny):
+        (WebCore::CSSSelector::~CSSSelector):
+        (WebCore::CSSSelector::specificity):
+        * css/CSSSelector.h:
+
 2010-07-20  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.

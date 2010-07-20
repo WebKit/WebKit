@@ -31,10 +31,82 @@
 #include <wtf/Assertions.h>
 #include <wtf/HashMap.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
     
 using namespace HTMLNames;
+
+// A helper class to hold CSSSelectors.
+class CSSSelectorBag : public Noncopyable {
+public:
+    ~CSSSelectorBag()
+    {
+        deleteAllValues(m_stack);
+    }
+
+    bool isEmpty() const
+    {
+        return m_stack.isEmpty();
+    }
+
+    void append(PassOwnPtr<CSSSelector> selector)
+    {
+        if (selector)
+            m_stack.append(selector.leakPtr());
+    }
+
+    PassOwnPtr<CSSSelector> takeAny()
+    {
+        ASSERT(!isEmpty());
+        OwnPtr<CSSSelector> selector = adoptPtr(m_stack.last());
+        m_stack.removeLast();
+        return selector.release();
+    }
+
+private:
+    Vector<CSSSelector*, 16> m_stack;
+};
+
+CSSSelector::~CSSSelector()
+{
+    // We should avoid a recursive destructor call, which causes stack overflow
+    // if CSS Selectors are deeply nested.
+
+    // Early exit if we have already processed the children of this selector.
+    if (m_hasRareData) {
+        if (!m_data.m_rareData)
+            return;
+    } else if (!m_data.m_tagHistory)
+        return;
+
+    CSSSelectorBag selectorsToBeDeleted;
+    if (m_hasRareData) {
+        selectorsToBeDeleted.append(m_data.m_rareData->m_tagHistory.release());
+        selectorsToBeDeleted.append(m_data.m_rareData->m_simpleSelector.release());
+        delete m_data.m_rareData;
+    } else
+        selectorsToBeDeleted.append(adoptPtr(m_data.m_tagHistory));
+
+    // Traverse the tree of CSSSelector and delete each CSSSelector iteratively.
+    while (!selectorsToBeDeleted.isEmpty()) {
+        OwnPtr<CSSSelector> selector(selectorsToBeDeleted.takeAny());
+        ASSERT(selector);
+        if (selector->m_hasRareData) {
+            ASSERT(selector->m_data.m_rareData);
+            selectorsToBeDeleted.append(selector->m_data.m_rareData->m_tagHistory.release());
+            selectorsToBeDeleted.append(selector->m_data.m_rareData->m_simpleSelector.release());
+            delete selector->m_data.m_rareData;
+            // Clear the pointer so that a destructor of the selector, which is
+            // about to be called, can know the children are already processed.
+            selector->m_data.m_rareData = 0;
+        } else {
+            selectorsToBeDeleted.append(adoptPtr(selector->m_data.m_tagHistory));
+            // Clear the pointer for the same reason.
+            selector->m_data.m_tagHistory = 0;
+        }
+    }
+}
 
 unsigned int CSSSelector::specificity()
 {
@@ -63,6 +135,7 @@ unsigned int CSSSelector::specificity()
             break;
     }
 
+    // FIXME: Avoid recursive calls to prevent possible stack overflow.
     if (CSSSelector* tagHistory = this->tagHistory())
         s += tagHistory->specificity();
 
@@ -906,5 +979,5 @@ bool CSSSelector::RareData::matchNth(int count)
         return (m_b - count) % (-m_a) == 0;
     }
 }
-    
+
 } // namespace WebCore
