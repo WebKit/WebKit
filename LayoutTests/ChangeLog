@@ -1,3 +1,71 @@
+2010-07-20  Stephen White  <senorblanco@chromium.org>
+
+        Unreviewed; pixel test results fix.
+
+        Updated pixel test results after r63721.
+
+        * platform/chromium-linux/fast/backgrounds/svg-as-background-5-expected.checksum:
+        * platform/chromium-linux/fast/backgrounds/svg-as-background-5-expected.png:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/animate-elem-40-t-expected.checksum:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/animate-elem-40-t-expected.png:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/coords-viewattr-03-b-expected.checksum:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/coords-viewattr-03-b-expected.png:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/metadata-example-01-b-expected.checksum:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/metadata-example-01-b-expected.png:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/metadata-example-01-b-expected.txt:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/painting-marker-03-f-expected.checksum:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/painting-marker-03-f-expected.png:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/paths-data-03-f-expected.checksum:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/paths-data-03-f-expected.png:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/paths-data-03-f-expected.txt: Added.
+        * platform/chromium-linux/svg/custom/control-points-for-S-and-T-expected.checksum:
+        * platform/chromium-linux/svg/custom/path-getTotalLength-expected.txt: Removed.
+        * platform/chromium-linux/svg/custom/relative-sized-use-on-symbol-expected.checksum:
+        * platform/chromium-linux/svg/custom/relative-sized-use-on-symbol-expected.png:
+        * platform/chromium-linux/svg/custom/use-on-symbol-inside-pattern-expected.txt: Added.
+        * platform/chromium-linux/svg/dom: Added.
+        * platform/chromium-linux/svg/dom/path-parser-expected.txt: Added.
+        * platform/chromium-linux/svg/hixie/perf/001-expected.txt:
+        * platform/chromium-linux/svg/hixie/perf/002-expected.txt:
+        * platform/chromium-linux/svg/hixie/perf/007-expected.checksum:
+        * platform/chromium-linux/svg/hixie/perf/007-expected.png:
+        * platform/chromium-linux/svg/hixie/perf/007-expected.txt:
+        * platform/chromium-mac/fast/backgrounds/svg-as-background-5-expected.checksum: Removed.
+        * platform/chromium-win/fast/backgrounds/svg-as-background-5-expected.checksum:
+        * platform/chromium-win/fast/backgrounds/svg-as-background-5-expected.png:
+        * platform/chromium-win/svg/W3C-SVG-1.1/animate-elem-40-t-expected.checksum:
+        * platform/chromium-win/svg/W3C-SVG-1.1/animate-elem-40-t-expected.png:
+        * platform/chromium-win/svg/W3C-SVG-1.1/coords-viewattr-03-b-expected.checksum:
+        * platform/chromium-win/svg/W3C-SVG-1.1/coords-viewattr-03-b-expected.png:
+        * platform/chromium-win/svg/W3C-SVG-1.1/extend-namespace-01-f-expected.checksum:
+        * platform/chromium-win/svg/W3C-SVG-1.1/extend-namespace-01-f-expected.png:
+        * platform/chromium-win/svg/W3C-SVG-1.1/filters-morph-01-f-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/metadata-example-01-b-expected.checksum:
+        * platform/chromium-win/svg/W3C-SVG-1.1/metadata-example-01-b-expected.png:
+        * platform/chromium-win/svg/W3C-SVG-1.1/metadata-example-01-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/painting-marker-03-f-expected.checksum:
+        * platform/chromium-win/svg/W3C-SVG-1.1/painting-marker-03-f-expected.png:
+        * platform/chromium-win/svg/W3C-SVG-1.1/paths-data-03-f-expected.checksum:
+        * platform/chromium-win/svg/W3C-SVG-1.1/paths-data-03-f-expected.png:
+        * platform/chromium-win/svg/W3C-SVG-1.1/paths-data-03-f-expected.txt:
+        * platform/chromium-win/svg/batik/text/textEffect3-expected.checksum:
+        * platform/chromium-win/svg/batik/text/textEffect3-expected.png:
+        * platform/chromium-win/svg/custom/control-points-for-S-and-T-expected.checksum:
+        * platform/chromium-win/svg/custom/control-points-for-S-and-T-expected.png:
+        * platform/chromium-win/svg/custom/use-on-symbol-inside-pattern-expected.txt:
+        * platform/chromium-win/svg/hixie/perf/001-expected.txt:
+        * platform/chromium-win/svg/hixie/perf/002-expected.txt:
+        * platform/chromium-win/svg/hixie/perf/007-expected.checksum:
+        * platform/chromium-win/svg/hixie/perf/007-expected.png:
+        * platform/chromium-win/svg/hixie/perf/007-expected.txt:
+        * platform/chromium/test_expectations.txt:
+        * platform/mac/fast/backgrounds/svg-as-background-4-expected.checksum:
+        * platform/mac/fast/backgrounds/svg-as-background-4-expected.png:
+        * platform/mac/fast/backgrounds/svg-as-background-5-expected.checksum:
+        * platform/mac/fast/backgrounds/svg-as-background-5-expected.png:
+        * platform/mac/fast/backgrounds/svg-as-background-6-expected.checksum:
+        * platform/mac/fast/backgrounds/svg-as-background-6-expected.png:
+
 2010-07-20  Chang Shu  <chang.shu@nokia.com>
 
         Reviewed by Darin Adler.

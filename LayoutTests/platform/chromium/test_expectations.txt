@@ -74,8 +74,7 @@ BUG24182 SLOW DEBUG : fast/js/toString-and-valueOf-override.html = PASS
 BUG24182 SLOW WIN RELEASE : fast/dom/Window/webkitConvertPoint.html = PASS
 
 BUG24182 WIN RELEASE SLOW : http/tests/loading/redirect-methods.html = PASS
-// FIXME_SENORBLANCO:  Uncomment this once rebaselined.
-// BUG24182 WIN SLOW : svg/hixie/perf/007.xml = PASS
+BUG24182 WIN SLOW : svg/hixie/perf/007.xml = PASS
 BUG24182 SLOW MAC RELEASE : dom/html/level2/html/HTMLImageElement01.html = PASS
 BUG24182 SLOW WIN RELEASE : http/tests/local/file-url-sent-as-referer.html = PASS
 BUG24182 SLOW WIN DEBUG : svg/carto.net/window.svg = PASS
@@ -92,8 +91,7 @@ BUG24182 WIN RELEASE SLOW : http/tests/xmlhttprequest/connection-error-sync.html
 BUG24182 WIN RELEASE SLOW : http/tests/loading/onload-vs-immediate-refresh.pl = PASS
 //BUG24182 WIN LINUX SLOW : editing/selection/extend-selection.html = PASS
 BUG24182 SLOW WIN : fast/images/svg-as-background.html = PASS
-// FIXME_SENORBLANCO:  Uncomment this once rebaselined.
-// BUG24182 SLOW WIN : fast/backgrounds/svg-as-background-5.html = PASS
+BUG24182 SLOW WIN : fast/backgrounds/svg-as-background-5.html = PASS
 BUG24182 WIN DEBUG SLOW: inspector/console-dirxml.html = PASS
 BUG24182 DEBUG SLOW : fast/dom/Window/window-function-frame-getter-precedence.html = PASS
 BUG24182 SLOW DEBUG : fast/frames/frame-limit.html = PASS
@@ -3129,27 +3127,6 @@ BUG42486 MAC DEBUG : svg/filters/filter-empty-g.svg = CRASH
 
 BUG42598 : http/tests/misc/401-alternative-content.php = TEXT
 BUG42598 : http/tests/xmlhttprequest/failed-auth.html = TEXT
-
-// These tests need rebaselining after r63721.
-BUG_SENORBLANCO WIN LINUX : svg/W3C-SVG-1.1/metadata-example-01-b.svg = IMAGE+TEXT
-BUG_SENORBLANCO WIN LINUX : svg/W3C-SVG-1.1/paths-data-03-f.svg = IMAGE+TEXT
-BUG_SENORBLANCO WIN LINUX : svg/hixie/perf/007.xml = IMAGE+TEXT
-BUG_SENORBLANCO : fast/backgrounds/svg-as-background-5.html = IMAGE
-BUG_SENORBLANCO WIN LINUX : svg/W3C-SVG-1.1/animate-elem-40-t.svg = IMAGE
-BUG_SENORBLANCO WIN LINUX : svg/W3C-SVG-1.1/coords-viewattr-03-b.svg = IMAGE
-BUG_SENORBLANCO WIN : svg/W3C-SVG-1.1/extend-namespace-01-f.svg = IMAGE
-BUG_SENORBLANCO WIN LINUX : svg/W3C-SVG-1.1/painting-marker-03-f.svg = IMAGE
-BUG_SENORBLANCO WIN : svg/batik/text/textEffect3.svg = IMAGE
-BUG_SENORBLANCO WIN LINUX : svg/custom/control-points-for-S-and-T.svg = IMAGE
-BUG_SENORBLANCO WIN LINUX : svg/W3C-SVG-1.1/filters-morph-01-f.svg = TEXT
-BUG_SENORBLANCO WIN LINUX : svg/custom/use-on-symbol-inside-pattern.svg = TEXT
-BUG_SENORBLANCO WIN LINUX : svg/hixie/perf/001.xml = TEXT
-BUG_SENORBLANCO WIN LINUX : svg/hixie/perf/002.xml = TEXT
-BUG_SENORBLANCO LINUX : svg/custom/path-getTotalLength.svg = TEXT
-BUG_SENORBLANCO LINUX : svg/dom/path-parser.html = TEXT
-BUG_SENORBLANCO LINUX : svg/custom/relative-sized-use-on-symbol.xhtml = IMAGE
-BUG_SENORBLANCO MAC : fast/backgrounds/svg-as-background-4.html = IMAGE
-BUG_SENORBLANCO MAC : fast/backgrounds/svg-as-background-6.html = IMAGE
 
 // This one started failing at r63728.
 BUG_SENORBLANCO : html5lib/runner.html = TEXT
