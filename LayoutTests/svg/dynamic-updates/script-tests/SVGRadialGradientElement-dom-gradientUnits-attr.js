@@ -1,5 +1,5 @@
 // [Name] SVGRadialGradientElement-dom-gradientUnits-attr.js
-// [Expected rendering result] green ellipse, no red visible - and a series of PASS messages
+// [Expected rendering result] radial gradient filled from left edge to right edge of green ellipse - and a series of PASS messages
 
 description("Tests dynamic updates of the 'gradientUnits' attribute of the SVGRadialGradientElement object")
 createSVGTestCase();

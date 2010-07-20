@@ -16,6 +16,7 @@ rootSVGElement.appendChild(defsElement);
 
 var linearGradientElement = createSVGElement("linearGradient");
 linearGradientElement.setAttribute("id", "gradient");
+linearGradientElement.setAttribute("x2", "10");
 
 var firstStopElement = createSVGElement("stop");
 firstStopElement.setAttribute("offset", "0");

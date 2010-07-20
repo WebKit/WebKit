@@ -1,3 +1,99 @@
+2010-07-20  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        svg/dynamic-updates tests are broken - pixel test not generated/compared anymore
+        https://bugs.webkit.org/show_bug.cgi?id=42376
+
+        Finally generate pixel teset results again for svg/dynamic-updates. We have some regressions, tracked by master bug 42618.
+
+        * fast/js/resources/js-test-pre.js: Pass 'window.enablePixelTesting' as argument to setDumpAsText() - the svg/dynamic-updates tests set this value to true before importing js-test-pre.js
+        * platform/mac/svg/dynamic-updates/SVGAElement-dom-href-attr-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGAElement-dom-href-attr-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGAElement-dom-target-attr-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGAElement-dom-target-attr-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGAElement-svgdom-href-prop-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGAElement-svgdom-href-prop-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGAElement-svgdom-target-prop-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGAElement-svgdom-target-prop-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGCursorElement-dom-x-attr-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGCursorElement-dom-x-attr-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGCursorElement-dom-y-attr-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGCursorElement-dom-y-attr-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGCursorElement-svgdom-x-prop-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGCursorElement-svgdom-x-prop-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGCursorElement-svgdom-y-prop-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGCursorElement-svgdom-y-prop-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGForeignObjectElement-dom-height-attr-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGForeignObjectElement-dom-height-attr-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGForeignObjectElement-dom-width-attr-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGForeignObjectElement-dom-width-attr-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGForeignObjectElement-dom-x-attr-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGForeignObjectElement-dom-x-attr-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGForeignObjectElement-dom-y-attr-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGForeignObjectElement-dom-y-attr-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGForeignObjectElement-svgdom-height-prop-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGForeignObjectElement-svgdom-height-prop-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGForeignObjectElement-svgdom-width-prop-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGForeignObjectElement-svgdom-width-prop-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGForeignObjectElement-svgdom-x-prop-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGForeignObjectElement-svgdom-x-prop-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGForeignObjectElement-svgdom-y-prop-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGForeignObjectElement-svgdom-y-prop-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGLinearGradientElement-dom-gradientUnits-attr-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGLinearGradientElement-dom-gradientUnits-attr-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGLinearGradientElement-svgdom-gradientUnits-prop-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGLinearGradientElement-svgdom-gradientUnits-prop-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGMarkerElement-dom-markerHeight-attr-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGMarkerElement-dom-markerHeight-attr-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGMarkerElement-dom-markerWidth-attr-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGMarkerElement-dom-markerWidth-attr-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGMarkerElement-svgdom-markerHeight-prop-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGMarkerElement-svgdom-markerHeight-prop-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGMarkerElement-svgdom-markerWidth-prop-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGMarkerElement-svgdom-markerWidth-prop-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGMaskElement-dom-height-attr-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGMaskElement-dom-height-attr-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGMaskElement-dom-maskContentUnits-attr-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGMaskElement-dom-maskContentUnits-attr-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGMaskElement-dom-maskUnits-attr-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGMaskElement-dom-maskUnits-attr-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGMaskElement-dom-width-attr-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGMaskElement-dom-width-attr-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGMaskElement-dom-x-attr-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGMaskElement-dom-x-attr-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGMaskElement-dom-y-attr-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGMaskElement-dom-y-attr-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGMaskElement-svgdom-height-prop-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGMaskElement-svgdom-height-prop-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGMaskElement-svgdom-maskContentUnits-prop-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGMaskElement-svgdom-maskContentUnits-prop-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGMaskElement-svgdom-maskUnits-prop-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGMaskElement-svgdom-maskUnits-prop-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGMaskElement-svgdom-width-prop-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGMaskElement-svgdom-width-prop-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGMaskElement-svgdom-x-prop-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGMaskElement-svgdom-x-prop-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGMaskElement-svgdom-y-prop-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGMaskElement-svgdom-y-prop-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGRadialGradientElement-dom-fx-attr-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGRadialGradientElement-dom-fx-attr-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGRadialGradientElement-dom-fy-attr-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGRadialGradientElement-dom-fy-attr-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGRadialGradientElement-dom-gradientUnits-attr-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGRadialGradientElement-dom-gradientUnits-attr-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGRadialGradientElement-svgdom-fx-prop-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGRadialGradientElement-svgdom-fx-prop-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGRadialGradientElement-svgdom-fy-prop-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGRadialGradientElement-svgdom-fy-prop-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGRadialGradientElement-svgdom-gradientUnits-prop-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGRadialGradientElement-svgdom-gradientUnits-prop-expected.png:
+        * svg/dynamic-updates/resources/SVGTestCase.js: Set 'window.enablePixelTesting' to true, forcing setDumpAsText() to generate pixel test results. 
+        * svg/dynamic-updates/script-tests/SVGLinearGradientElement-dom-gradientUnits-attr.js: Tweak this test, to make it work as expected.
+        * svg/dynamic-updates/script-tests/SVGLinearGradientElement-svgdom-gradientUnits-prop.js: Ditto.
+        * svg/dynamic-updates/script-tests/SVGRadialGradientElement-dom-gradientUnits-attr.js: Update expected result description.
+        * svg/dynamic-updates/script-tests/SVGRadialGradientElement-svgdom-gradientUnits-prop.js: Ditto.
+
 2010-07-20  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Darin Adler.

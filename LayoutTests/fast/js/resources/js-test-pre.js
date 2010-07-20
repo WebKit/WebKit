@@ -1,5 +1,6 @@
+// svg/dynamic-updates tests set enablePixelTesting=true, as we want to dump text + pixel results
 if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+    layoutTestController.dumpAsText(window.enablePixelTesting);
 
 function description(msg)
 {
