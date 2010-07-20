@@ -1,3 +1,26 @@
+2010-07-19  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Shinichiro Hamaji.
+
+        [Chromium] Fix style errors of RenderThemeChromiumWin.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=42568
+
+        * rendering/RenderThemeChromiumWin.cpp:
+        (WebCore::):
+        (WebCore::getNonClientMetrics):
+        (WebCore::systemFontSize):
+        (WebCore::pointsToPixels):
+        (WebCore::querySystemBlinkInterval):
+        (WebCore::RenderThemeChromiumWin::platformActiveSelectionBackgroundColor):
+        (WebCore::RenderThemeChromiumWin::platformInactiveSelectionBackgroundColor):
+        (WebCore::RenderThemeChromiumWin::platformActiveSelectionForegroundColor):
+        (WebCore::RenderThemeChromiumWin::platformActiveTextSearchHighlightColor):
+        (WebCore::RenderThemeChromiumWin::paintButton):
+        (WebCore::RenderThemeChromiumWin::paintSliderTrack):
+        (WebCore::RenderThemeChromiumWin::paintMenuList):
+        (WebCore::RenderThemeChromiumWin::paintTextFieldInternal):
+        (WebCore::RenderThemeChromiumWin::paintInnerSpinButton):
+
 2010-07-19  Steve Falkenburg  <sfalken@apple.com>
 
         (Hopefully the last) Windows build fix.

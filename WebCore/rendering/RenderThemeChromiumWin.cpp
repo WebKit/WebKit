@@ -29,8 +29,8 @@
 #include <uxtheme.h>
 #include <vssym32.h>
 
-#include "ChromiumBridge.h"
 #include "CSSValueKeywords.h"
+#include "ChromiumBridge.h"
 #include "CurrentTime.h"
 #include "FontSelector.h"
 #include "FontUtilsChromiumWin.h"
@@ -90,38 +90,38 @@ private:
     static bool canvasHasMultipleLayers(const SkCanvas* canvas)
     {
         SkCanvas::LayerIter iter(const_cast<SkCanvas*>(canvas), false);
-        iter.next();  // There is always at least one layer.
-        return !iter.done();  // There is > 1 layer if the the iterator can stil advance.
+        iter.next(); // There is always at least one layer.
+        return !iter.done(); // There is > 1 layer if the the iterator can stil advance.
     }
 
     static TransparencyWin::LayerMode getLayerMode(GraphicsContext* context, TransparencyWin::TransformMode transformMode)
     {
-        if (context->platformContext()->isDrawingToImageBuffer())  // Might have transparent background.
+        if (context->platformContext()->isDrawingToImageBuffer()) // Might have transparent background.
             return TransparencyWin::WhiteLayer;
-        else if (canvasHasMultipleLayers(context->platformContext()->canvas()))  // Needs antialiasing help.
+        if (canvasHasMultipleLayers(context->platformContext()->canvas())) // Needs antialiasing help.
             return TransparencyWin::OpaqueCompositeLayer;
-        else  // Nothing interesting.
-            return transformMode == TransparencyWin::KeepTransform ? TransparencyWin::NoLayer : TransparencyWin::OpaqueCompositeLayer;
+        // Nothing interesting.
+        return transformMode == TransparencyWin::KeepTransform ? TransparencyWin::NoLayer : TransparencyWin::OpaqueCompositeLayer;
     }
 
     static TransparencyWin::TransformMode getTransformMode(const AffineTransform& matrix)
     {
-        if (matrix.b() != 0 || matrix.c() != 0)  // Skew.
+        if (matrix.b() || matrix.c()) // Skew.
             return TransparencyWin::Untransform;
-        else if (matrix.a() != 1.0 || matrix.d() != 1.0)  // Scale.
+        if (matrix.a() != 1.0 || matrix.d() != 1.0) // Scale.
             return TransparencyWin::ScaleTransform;
-        else  // Nothing interesting.
-            return TransparencyWin::KeepTransform;
+        // Nothing interesting.
+        return TransparencyWin::KeepTransform;
     }
 
     TransparencyWin m_helper;
 };
 
-}  // namespace
+} // namespace
 
 static void getNonClientMetrics(NONCLIENTMETRICS* metrics)
 {
-    static UINT size = WebCore::isVistaOrNewer() ?
+    static UINT size = isVistaOrNewer() ?
         sizeof(NONCLIENTMETRICS) : NONCLIENTMETRICS_SIZE_PRE_VISTA;
     metrics->cbSize = size;
     bool success = !!SystemParametersInfo(SPI_GETNONCLIENTMETRICS, size, metrics, 0);
@@ -157,7 +157,7 @@ static float systemFontSize(const LOGFONT& font)
     if (size < 0) {
         HFONT hFont = CreateFontIndirect(&font);
         if (hFont) {
-            HDC hdc = GetDC(0);  // What about printing?  Is this the right DC?
+            HDC hdc = GetDC(0); // What about printing?  Is this the right DC?
             if (hdc) {
                 HGDIOBJ hObject = SelectObject(hdc, hFont);
                 TEXTMETRIC tm;
@@ -188,8 +188,8 @@ static float pointsToPixels(float points)
 {
     static float pixelsPerInch = 0.0f;
     if (!pixelsPerInch) {
-        HDC hdc = GetDC(0);  // What about printing?  Is this the right DC?
-        if (hdc) {  // Can this ever actually be NULL?
+        HDC hdc = GetDC(0); // What about printing?  Is this the right DC?
+        if (hdc) { // Can this ever actually be NULL?
             pixelsPerInch = GetDeviceCaps(hdc, LOGPIXELSY);
             ReleaseDC(0, hdc);
         } else {
@@ -204,7 +204,7 @@ static float pointsToPixels(float points)
 static double querySystemBlinkInterval(double defaultInterval)
 {
     UINT blinkTime = GetCaretBlinkTime();
-    if (blinkTime == 0)
+    if (!blinkTime)
         return defaultInterval;
     if (blinkTime == INFINITE)
         return 0;
@@ -234,7 +234,7 @@ bool RenderThemeChromiumWin::supportsFocusRing(const RenderStyle* style) const
 Color RenderThemeChromiumWin::platformActiveSelectionBackgroundColor() const
 {
     if (ChromiumBridge::layoutTestMode())
-        return Color(0x00, 0x00, 0xff);  // Royal blue.
+        return Color(0x00, 0x00, 0xff); // Royal blue.
     COLORREF color = GetSysColor(COLOR_HIGHLIGHT);
     return Color(GetRValue(color), GetGValue(color), GetBValue(color), 0xff);
 }
@@ -242,7 +242,7 @@ Color RenderThemeChromiumWin::platformActiveSelectionBackgroundColor() const
 Color RenderThemeChromiumWin::platformInactiveSelectionBackgroundColor() const
 {
     if (ChromiumBridge::layoutTestMode())
-        return Color(0x99, 0x99, 0x99);  // Medium gray.
+        return Color(0x99, 0x99, 0x99); // Medium gray.
     COLORREF color = GetSysColor(COLOR_GRAYTEXT);
     return Color(GetRValue(color), GetGValue(color), GetBValue(color), 0xff);
 }
@@ -250,7 +250,7 @@ Color RenderThemeChromiumWin::platformInactiveSelectionBackgroundColor() const
 Color RenderThemeChromiumWin::platformActiveSelectionForegroundColor() const
 {
     if (ChromiumBridge::layoutTestMode())
-        return Color(0xff, 0xff, 0xcc);  // Pale yellow.
+        return Color(0xff, 0xff, 0xcc); // Pale yellow.
     COLORREF color = GetSysColor(COLOR_HIGHLIGHTTEXT);
     return Color(GetRValue(color), GetGValue(color), GetBValue(color), 0xff);
 }
@@ -262,7 +262,7 @@ Color RenderThemeChromiumWin::platformInactiveSelectionForegroundColor() const
 
 Color RenderThemeChromiumWin::platformActiveTextSearchHighlightColor() const
 {
-    return Color(0xff, 0x96, 0x32);  // Orange.
+    return Color(0xff, 0x96, 0x32); // Orange.
 }
 
 Color RenderThemeChromiumWin::platformInactiveTextSearchHighlightColor() const
@@ -405,7 +405,7 @@ bool RenderThemeChromiumWin::paintButton(RenderObject* o, const PaintInfo& i, co
 {
     const ThemeData& themeData = getThemeData(o);
 
-    WebCore::ThemePainter painter(i.context, r);
+    ThemePainter painter(i.context, r);
     ChromiumBridge::paintButton(painter.context(),
                                 themeData.m_part,
                                 themeData.m_state,
@@ -423,7 +423,7 @@ bool RenderThemeChromiumWin::paintSliderTrack(RenderObject* o, const PaintInfo& 
 {
     const ThemeData& themeData = getThemeData(o);
 
-    WebCore::ThemePainter painter(i.context, r);
+    ThemePainter painter(i.context, r);
     ChromiumBridge::paintTrackbar(painter.context(),
                                   themeData.m_part,
                                   themeData.m_state,
@@ -454,7 +454,7 @@ bool RenderThemeChromiumWin::paintMenuList(RenderObject* o, const PaintInfo& i, 
     // draw individual borders and then pass that to skia so we can avoid
     // drawing any borders that are set to 0. For non-zero borders, we draw the
     // border, but webkit just draws over it.
-    bool drawEdges = !(borderRight == 0 && borderLeft == 0 && borderTop == 0 && borderBottom == 0);
+    bool drawEdges = !(!borderRight && !borderLeft && !borderTop && !borderBottom);
 
     paintTextFieldInternal(o, i, r, drawEdges);
 
@@ -480,7 +480,7 @@ bool RenderThemeChromiumWin::paintMenuList(RenderObject* o, const PaintInfo& i, 
                  r.height() - (spacingTop + spacingBottom));
 
     // Get the correct theme data for a textfield and paint the menu.
-    WebCore::ThemePainter painter(i.context, rect);
+    ThemePainter painter(i.context, rect);
     ChromiumBridge::paintMenuList(painter.context(),
                                   CP_DROPDOWNBUTTON,
                                   determineState(o),
@@ -671,7 +671,7 @@ bool RenderThemeChromiumWin::paintTextFieldInternal(RenderObject* o,
     }
     {
         const ThemeData& themeData = getThemeData(o);
-        WebCore::ThemePainter painter(i.context, r);
+        ThemePainter painter(i.context, r);
         ChromiumBridge::paintTextField(painter.context(),
                                        themeData.m_part,
                                        themeData.m_state,
@@ -700,7 +700,7 @@ bool RenderThemeChromiumWin::paintInnerSpinButton(RenderObject* object, const Pa
 
     half.setHeight(rect.height() / 2);
     const ThemeData& upThemeData = getThemeData(object, SpinButtonUp);
-    WebCore::ThemePainter upPainter(info.context, half);
+    ThemePainter upPainter(info.context, half);
     ChromiumBridge::paintSpinButton(upPainter.context(),
                                     upThemeData.m_part,
                                     upThemeData.m_state,
@@ -709,7 +709,7 @@ bool RenderThemeChromiumWin::paintInnerSpinButton(RenderObject* object, const Pa
 
     half.setY(rect.y() + rect.height() / 2);
     const ThemeData& downThemeData = getThemeData(object, SpinButtonDown);
-    WebCore::ThemePainter downPainter(info.context, half);
+    ThemePainter downPainter(info.context, half);
     ChromiumBridge::paintSpinButton(downPainter.context(),
                                     downThemeData.m_part,
                                     downThemeData.m_state,
