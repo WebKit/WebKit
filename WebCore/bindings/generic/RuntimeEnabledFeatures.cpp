@@ -47,6 +47,7 @@ bool RuntimeEnabledFeatures::isIndexedDBEnabled = false;
 bool RuntimeEnabledFeatures::isWebGLEnabled = false;
 bool RuntimeEnabledFeatures::isPushStateEnabled = false;
 bool RuntimeEnabledFeatures::isTouchEnabled = true;
+bool RuntimeEnabledFeatures::isDeviceOrientationEnabled = true;
 
 #if ENABLE(VIDEO)
 
