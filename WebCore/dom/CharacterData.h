@@ -66,7 +66,7 @@ private:
     virtual bool offsetInCharacters() const;
 
     void checkCharDataOperation(unsigned offset, ExceptionCode&);
-    PassRefPtr<StringImpl> appendDataCommon(const String& arg);
+    PassRefPtr<StringImpl> appendDataCommon(const String&);
 
     RefPtr<StringImpl> m_data;
 };
