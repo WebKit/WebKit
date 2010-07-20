@@ -1,3 +1,14 @@
+2010-07-19  Mike Moretti  <mike.moretti@nokia.com>
+
+        Reviewed by Laszlo Gombos.
+
+        [Symbian] Build fix after r63404.
+
+        Implement isValid() function for the Symbian executable allocator.
+
+        * jit/ExecutableAllocatorSymbian.cpp:
+        (JSC::ExecutableAllocator::isValid):
+
 2010-07-19  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Darin Adler.

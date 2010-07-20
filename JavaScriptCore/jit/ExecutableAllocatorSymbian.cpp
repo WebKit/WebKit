@@ -66,6 +66,11 @@ void ExecutablePool::systemRelease(const ExecutablePool::Allocation& alloc)
     delete alloc.chunk;
 }
 
+bool ExecutableAllocator::isValid() const
+{
+    return true;
+}
+
 #if ENABLE(ASSEMBLER_WX_EXCLUSIVE)
 #error "ASSEMBLER_WX_EXCLUSIVE not yet suported on this platform."
 #endif
