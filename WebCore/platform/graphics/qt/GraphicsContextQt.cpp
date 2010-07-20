@@ -567,7 +567,7 @@ void GraphicsContext::fillPath()
         return;
 
     QPainter* p = m_data->p();
-    QPainterPath path = m_data->currentPath;
+    QPainterPath& path = m_data->currentPath; // Avoid detaching the QPainterPath
     path.setFillRule(toQtFillRule(fillRule()));
 
     drawFilledShadowPath(this, p, path);
@@ -591,7 +591,7 @@ void GraphicsContext::strokePath()
 
     QPainter* p = m_data->p();
     QPen pen(p->pen());
-    QPainterPath path = m_data->currentPath;
+    QPainterPath& path = m_data->currentPath; // Avoid detaching the QPainterPath
     path.setFillRule(toQtFillRule(fillRule()));
 
     FloatSize shadowSize;
