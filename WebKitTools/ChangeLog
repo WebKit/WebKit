@@ -1,3 +1,10 @@
+2010-07-19  Jessie Berlin  <jberlin@apple.com>
+
+        Windows build fix. Unreviewed.
+
+        * WebKitTestRunner/win/TestControllerWin.cpp:
+        (WTR::TestController::initializeTestPluginPath):
+
 2010-07-19  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Jon Honeycutt.
