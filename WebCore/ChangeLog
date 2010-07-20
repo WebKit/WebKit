@@ -1,3 +1,14 @@
+2010-07-20  Leandro Pereira  <leandro@profusion.mobi>
+
+        [EFL] Unreviewed build fix.
+
+        Build SVGPathBuilder, SVGPathParser and SVGPathSegListBuilder.
+        Add websockets include directory.
+
+        The EFL port doesn't yet support automated tests.
+
+        * CMakeLists.txt:
+
 2010-07-20  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Yury Semikhatsky.

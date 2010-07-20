@@ -48,6 +48,7 @@ SET(WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/svg/animation"
     "${WEBCORE_DIR}/svg/graphics"
     "${WEBCORE_DIR}/svg/graphics/filters"
+    "${WEBCORE_DIR}/websockets"
     "${WEBCORE_DIR}/workers"
     "${WEBCORE_DIR}/xml"
     "${JAVASCRIPTCORE_DIR}"
@@ -1653,7 +1654,9 @@ IF (ENABLE_SVG)
         svg/SVGNumberList.cpp
         svg/SVGPaint.cpp
         svg/SVGParserUtilities.cpp
+        svg/SVGPathBuilder.cpp
         svg/SVGPathElement.cpp
+        svg/SVGPathParser.cpp
         svg/SVGPathSegArc.cpp
         svg/SVGPathSegClosePath.cpp
         svg/SVGPathSegCurvetoCubic.cpp
@@ -1664,6 +1667,7 @@ IF (ENABLE_SVG)
         svg/SVGPathSegLinetoHorizontal.cpp
         svg/SVGPathSegLinetoVertical.cpp
         svg/SVGPathSegList.cpp
+        svg/SVGPathSegListBuilder.cpp
         svg/SVGPathSegMoveto.cpp
         svg/SVGPatternElement.cpp
         svg/SVGPointList.cpp
