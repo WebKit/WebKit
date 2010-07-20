@@ -1,3 +1,15 @@
+2010-07-19  Dirk Schulze  <krit@webkit.org>
+
+        SVG CleanUp of SVGPathData parsing
+        https://bugs.webkit.org/show_bug.cgi?id=41410
+
+        Unreviewed update of Qt baseline.
+
+        * platform/qt/svg/custom/relative-sized-inner-svg-expected.txt:
+        * platform/qt/svg/custom/relative-sized-use-on-symbol-expected.txt:
+        * platform/qt/svg/custom/relative-sized-use-without-attributes-on-symbol-expected.txt:
+        * platform/qt/svg/custom/use-on-symbol-inside-pattern-expected.txt:
+
 2010-07-19  Yuzo Fujishima  <yuzo@google.com>
 
         Unreviewed test expectation fix.
