@@ -1345,6 +1345,7 @@ http/tests/security/xssAuditor/script-tag-with-source-same-host-with-query.html
 plugins
 http/tests/plugins
 java
+platform/mac/plugins
 
 
 # WebKit2 needs layoutTestController.overridePreference
