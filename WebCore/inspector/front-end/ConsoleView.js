@@ -857,17 +857,17 @@ WebInspector.ConsoleMessage.prototype = {
         for (var i = 0; i < this._stackTrace.length; i++) {
             var frame = this._stackTrace[i];
 
-            var li = document.createElement("li");
+            var content = document.createElement("div");
             var messageTextElement = document.createElement("span");
             messageTextElement.className = "console-message-text source-code";
             var functionName = frame.functionName || WebInspector.UIString("(anonymous function)");
             messageTextElement.appendChild(document.createTextNode(functionName));
-            li.appendChild(messageTextElement);
+            content.appendChild(messageTextElement);
 
             var urlElement = WebInspector.linkifyResourceAsNode(frame.sourceURL, "scripts", frame.lineNumber, "console-message-url"); 
-            li.appendChild(urlElement);
+            content.appendChild(urlElement);
 
-            var treeElement = new TreeElement(li.innerHTML);
+            var treeElement = new TreeElement(content);
             parentTreeElement.appendChild(treeElement);
         }
     },

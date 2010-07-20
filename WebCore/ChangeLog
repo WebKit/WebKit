@@ -1,3 +1,18 @@
+2010-07-20  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: jump to source is broken for call frames logged by console.trace
+        https://bugs.webkit.org/show_bug.cgi?id=42619
+
+        * inspector/front-end/ConsoleView.js:
+        (WebInspector.ConsoleMessage.prototype._populateStackTraceTreeElement):
+        * inspector/front-end/treeoutline.js: allow passing HTML element as a title.
+        (TreeElement.prototype.set title):
+        (TreeElement.prototype.set shouldRefreshChildren):
+        (TreeElement.prototype._setListItemNodeContent):
+        (TreeElement.prototype._attach):
+
 2010-07-20  Tony Chang  <tony@chromium.org>
 
         Reviewed by Dan Bernstein.
