@@ -40,11 +40,6 @@ using namespace WebCore;
 
 namespace WebKit {
 
-WebIDBDatabaseError::~WebIDBDatabaseError()
-{
-    m_private.reset();
-}
-
 void WebIDBDatabaseError::assign(const WebIDBDatabaseError& value)
 {
     m_private = value.m_private;
@@ -53,6 +48,11 @@ void WebIDBDatabaseError::assign(const WebIDBDatabaseError& value)
 void WebIDBDatabaseError::assign(unsigned short code, const WebString& message)
 {
     m_private = IDBDatabaseError::create(code, message);
+}
+
+void WebIDBDatabaseError::reset()
+{
+    m_private.reset();
 }
 
 unsigned short WebIDBDatabaseError::code() const

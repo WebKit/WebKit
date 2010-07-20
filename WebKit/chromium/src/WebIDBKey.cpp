@@ -36,11 +36,6 @@ using namespace WebCore;
 
 namespace WebKit {
 
-WebIDBKey::~WebIDBKey()
-{
-    m_private.reset();
-}
-
 WebIDBKey WebIDBKey::createNull()
 {
     WebIDBKey key;
@@ -78,6 +73,11 @@ void WebIDBKey::assign(int32_t number)
 void WebIDBKey::assignInvalid()
 {
     m_private = 0;
+}
+
+void WebIDBKey::reset()
+{
+    m_private.reset();
 }
 
 WebIDBKey::Type WebIDBKey::type() const
