@@ -115,7 +115,7 @@ void V8ConsoleMessage::handler(v8::Handle<v8::Message> message, v8::Handle<v8::V
     v8::Handle<v8::StackTrace> stackTrace = message->GetStackTrace();
     OwnPtr<ScriptCallStack> callStack;
     // Currently stack trace is only collected when inspector is open.
-    if (!stackTrace.IsEmpty()) {
+    if (!stackTrace.IsEmpty() && stackTrace->GetFrameCount() > 0) {
         v8::Local<v8::Context> context = v8::Context::GetEntered();
         ScriptState* scriptState = ScriptState::forContext(context);
         callStack = ScriptCallStack::create(scriptState, stackTrace);
