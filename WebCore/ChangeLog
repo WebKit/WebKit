@@ -1,3 +1,20 @@
+2010-07-20  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        CrashTracer: [USER] 300 crashes in Safari at com.apple.WebCore: WebCore::AccessibilityTable::isTableExposableThroughAccessibility + 573
+        https://bugs.webkit.org/show_bug.cgi?id=42652
+
+        When a table cell accesses its parent table, we should not use getOrCreate, because creating an AXTable inspects its render tree state
+        which may be out of date, leading to a crash.
+        By using only get(), it implies that the AXTable must be created before AXTableCells. This should
+        always be the case when AT clients access a table.
+
+        Test: accessibility/updating-attribute-in-table-causes-crash.html
+
+        * accessibility/AccessibilityTableCell.cpp:
+        (WebCore::AccessibilityTableCell::parentTable):
+
 2010-07-20  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by David Hyatt.
