@@ -1,5 +1,15 @@
 2010-07-19  Steve Falkenburg  <sfalken@apple.com>
 
+        (Hopefully the last) Windows build fix.
+        
+        Version of CoreServices.h in WebKit Support Libraries uses
+        pragma once, unlike the version I have locally. Switch based
+        on __COLORSYNCDEPRECATED__ instead.
+
+        * WebCorePrefix.h:
+
+2010-07-19  Steve Falkenburg  <sfalken@apple.com>
+
         Windows build fix.
 
         * WebCorePrefix.h:
