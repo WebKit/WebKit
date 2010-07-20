@@ -2210,6 +2210,8 @@
             'platform/graphics/chromium/UniscribeHelper.h',
             'platform/graphics/chromium/UniscribeHelperTextRun.cpp',
             'platform/graphics/chromium/UniscribeHelperTextRun.h',
+            'platform/graphics/chromium/VideoLayerChromium.cpp',
+            'platform/graphics/chromium/VideoLayerChromium.h',
             'platform/graphics/chromium/WebGLLayerChromium.cpp',
             'platform/graphics/chromium/WebGLLayerChromium.h',
             'platform/graphics/filters/FEBlend.cpp',

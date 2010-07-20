@@ -1,3 +1,17 @@
+2010-07-19  Victoria Kirst  <vrk@google.com>
+
+        Reviewed by David Levin.
+
+        Updated WebMediaPlayer to support accelerated rendering and to
+        create and return a VideoChromiumLayer as its platform layer.
+        https://bugs.webkit.org/show_bug.cgi?id=42234
+
+        * src/WebMediaPlayerClientImpl.cpp:
+        (WebKit::WebMediaPlayerClientImpl::platformLayer):
+        (WebKit::WebMediaPlayerClientImpl::create):
+        * src/WebMediaPlayerClientImpl.h:
+        (WebKit::WebMediaPlayerClientImpl::supportsAcceleratedRendering):
+
 2010-07-19  Kenneth Russell  <kbr@google.com>
 
         Reviewed by Nate Chapin.

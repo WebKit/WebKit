@@ -363,9 +363,30 @@ void GraphicsLayerChromium::setContentsToWebGL(PlatformLayer* platformLayer)
 }
 #endif
 
-void GraphicsLayerChromium::setContentsToVideo(PlatformLayer* videoLayer)
+void GraphicsLayerChromium::setContentsToMedia(PlatformLayer* layer)
 {
-    // FIXME: Implement
+    bool childrenChanged = false;
+    if (layer) {
+        if (!m_contentsLayer.get() || m_contentsLayerPurpose != ContentsLayerForVideo) {
+            setupContentsLayer(layer);
+            m_contentsLayer = layer;
+            m_contentsLayerPurpose = ContentsLayerForVideo;
+            childrenChanged = true;
+        }
+        layer->setOwner(this);
+        layer->setNeedsDisplay();
+        updateContentsRect();
+    } else {
+        if (m_contentsLayer) {
+            childrenChanged = true;
+  
+            // The old contents layer will be removed via updateSublayerList.
+            m_contentsLayer = 0;
+        }
+    }
+  
+    if (childrenChanged)
+        updateSublayerList();
 }
 
 void GraphicsLayerChromium::setGeometryOrientation(CompositingCoordinatesOrientation orientation)

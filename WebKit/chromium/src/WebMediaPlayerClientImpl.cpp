@@ -14,7 +14,13 @@
 #include "KURL.h"
 #include "MediaPlayer.h"
 #include "NotImplemented.h"
+#include "RenderView.h"
 #include "TimeRanges.h"
+#include "VideoLayerChromium.h"
+
+#if USE(ACCELERATED_COMPOSITING)
+#include "RenderLayerCompositor.h"
+#endif
 
 #include "WebCanvas.h"
 #include "WebCString.h"
@@ -28,6 +34,7 @@
 #include "WebSize.h"
 #include "WebString.h"
 #include "WebURL.h"
+#include "WebViewImpl.h"
 
 // WebCommon.h defines WEBKIT_USING_SKIA so this has to be included last.
 #if WEBKIT_USING_SKIA
@@ -45,6 +52,7 @@ static WebMediaPlayer* createWebMediaPlayer(
     WebMediaPlayerClient* client, Frame* frame)
 {
     WebFrameImpl* webFrame = WebFrameImpl::fromFrame(frame);
+
     if (!webFrame->client())
         return 0;
     return webFrame->client()->createMediaPlayer(webFrame, client);
@@ -146,6 +154,7 @@ void WebMediaPlayerClientImpl::load(const String& url)
 {
     Frame* frame = static_cast<HTMLMediaElement*>(
         m_mediaPlayer->mediaPlayerClient())->document()->frame();
+
     m_webMediaPlayer.set(createWebMediaPlayer(this, frame));
     if (m_webMediaPlayer.get())
         m_webMediaPlayer->load(KURL(ParsedURLString, url));
@@ -156,6 +165,14 @@ void WebMediaPlayerClientImpl::cancelLoad()
     if (m_webMediaPlayer.get())
         m_webMediaPlayer->cancelLoad();
 }
+
+#if USE(ACCELERATED_COMPOSITING)
+WebCore::PlatformLayer* WebMediaPlayerClientImpl::platformLayer() const
+{
+    ASSERT(m_supportsAcceleratedCompositing);
+    return m_videoLayer.get();
+}
+#endif
 
 void WebMediaPlayerClientImpl::play()
 {
@@ -360,6 +377,13 @@ bool WebMediaPlayerClientImpl::hasSingleSecurityOrigin() const
     return false;
 }
 
+#if USE(ACCELERATED_COMPOSITING)
+bool WebMediaPlayerClientImpl::supportsAcceleratedRendering() const
+{
+    return m_supportsAcceleratedCompositing;
+}
+#endif
+
 MediaPlayer::MovieLoadType WebMediaPlayerClientImpl::movieLoadType() const
 {
     if (m_webMediaPlayer.get())
@@ -372,6 +396,22 @@ MediaPlayerPrivateInterface* WebMediaPlayerClientImpl::create(MediaPlayer* playe
 {
     WebMediaPlayerClientImpl* client = new WebMediaPlayerClientImpl();
     client->m_mediaPlayer = player;
+
+#if USE(ACCELERATED_COMPOSITING)
+    Frame* frame = static_cast<HTMLMediaElement*>(
+        client->m_mediaPlayer->mediaPlayerClient())->document()->frame();
+
+    // This does not actually check whether the hardware can support accelerated
+    // compositing, but only if the flag is set. However, this is checked lazily
+    // in WebViewImpl::setIsAcceleratedCompositingActive() and will fail there
+    // if necessary.
+    client->m_supportsAcceleratedCompositing =
+        frame->contentRenderer()->compositor()->hasAcceleratedCompositing();
+
+    if (client->m_supportsAcceleratedCompositing)
+        client->m_videoLayer = VideoLayerChromium::create(0);
+#endif
+
     return client;
 }
 
@@ -402,6 +442,10 @@ MediaPlayer::SupportsType WebMediaPlayerClientImpl::supportsType(const String& t
 
 WebMediaPlayerClientImpl::WebMediaPlayerClientImpl()
     : m_mediaPlayer(0)
+#if USE(ACCELERATED_COMPOSITING)
+    , m_videoLayer(0)
+    , m_supportsAcceleratedCompositing(false)
+#endif
 {
 }
 

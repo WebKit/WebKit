@@ -85,7 +85,7 @@ public:
     virtual void setContentsRect(const IntRect&);
 
     virtual void setContentsToImage(Image*);
-    virtual void setContentsToVideo(PlatformLayer*);
+    virtual void setContentsToMedia(PlatformLayer*);
     virtual void setContentsToWebGL(PlatformLayer*);
 
     virtual PlatformLayer* platformLayer() const;

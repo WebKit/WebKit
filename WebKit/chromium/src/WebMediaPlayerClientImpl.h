@@ -66,6 +66,9 @@ public:
     // MediaPlayerPrivateInterface methods:
     virtual void load(const WebCore::String& url);
     virtual void cancelLoad();
+#if USE(ACCELERATED_COMPOSITING)
+    virtual WebCore::PlatformLayer* platformLayer() const;
+#endif
     virtual void play();
     virtual void pause();
     virtual bool supportsFullscreen() const;
@@ -94,6 +97,10 @@ public:
     virtual void setSize(const WebCore::IntSize&);
     virtual void paint(WebCore::GraphicsContext*, const WebCore::IntRect&);
     virtual bool hasSingleSecurityOrigin() const;
+#if USE(ACCELERATED_COMPOSITING)
+    virtual bool supportsAcceleratedRendering() const;
+#endif
+
     virtual WebCore::MediaPlayer::MovieLoadType movieLoadType() const;
 
 private:
@@ -106,6 +113,10 @@ private:
 
     WebCore::MediaPlayer* m_mediaPlayer;
     OwnPtr<WebMediaPlayer> m_webMediaPlayer;
+#if USE(ACCELERATED_COMPOSITING)
+    RefPtr<WebCore::PlatformLayer> m_videoLayer;
+    bool m_supportsAcceleratedCompositing;
+#endif
     static bool m_isEnabled;
 };
 
