@@ -49,7 +49,7 @@ FORMATETC* htmlFormat();
 FORMATETC* cfHDropFormat();
 FORMATETC* smartPasteFormat();
 
-void markupToCF_HTML(const String& markup, const String& srcURL, Vector<char>& result);
+void markupToCFHTML(const String& markup, const String& srcURL, Vector<char>& result);
 
 void replaceNewlinesWithWindowsStyleNewlines(String&);
 void replaceNBSPWithSpace(String&);
@@ -59,12 +59,12 @@ bool containsHTML(IDataObject*);
 
 PassRefPtr<DocumentFragment> fragmentFromFilenames(Document*, const IDataObject*);
 PassRefPtr<DocumentFragment> fragmentFromHTML(Document*, IDataObject*);
-PassRefPtr<DocumentFragment> fragmentFromCF_HTML(Document*, const String& cf_html);
+PassRefPtr<DocumentFragment> fragmentFromCFHTML(Document*, const String& cfhtml);
 
 String getURL(IDataObject*, DragData::FilenameConversionPolicy, bool& success, String* title = 0);
 String getPlainText(IDataObject*, bool& success);
+String getTextHTML(IDataObject*, bool& success);
 
 } // namespace WebCore
 
 #endif // ClipboardUtilitiesWin_h
-

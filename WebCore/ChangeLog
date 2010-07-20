@@ -1,3 +1,44 @@
+2010-07-20  Tony Chang  <tony@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        clean up style in ClipboardWin and PasteboardWin
+        https://bugs.webkit.org/show_bug.cgi?id=42609
+
+        No new tests since this is just a style cleanup.
+
+        * platform/win/ClipboardUtilitiesWin.cpp:
+        (WebCore::createGlobalData):
+        (WebCore::markupToCFHTML):
+        (WebCore::getURL):
+        (WebCore::getPlainText):
+        (WebCore::getTextHTML):
+        (WebCore::fragmentFromFilenames):
+        (WebCore::containsFilenames):
+        (WebCore::fragmentFromCFHTML):
+        (WebCore::fragmentFromHTML):
+        * platform/win/ClipboardUtilitiesWin.h:
+        * platform/win/ClipboardWin.cpp:
+        (WebCore::pathRemoveBadFSCharacters):
+        (WebCore::createGlobalHDropContent):
+        (WebCore::createGlobalUrlFileDescriptor):
+        (WebCore::writeURL):
+        (WebCore::ClipboardWin::clearData):
+        (WebCore::ClipboardWin::clearAllData):
+        (WebCore::ClipboardWin::getData):
+        (WebCore::ClipboardWin::types):
+        (WebCore::ClipboardWin::declareAndWriteDragImage):
+        (WebCore::ClipboardWin::writeRange):
+        * platform/win/ClipboardWin.h:
+        (WebCore::ClipboardWin::create):
+        (WebCore::ClipboardWin::dataObject):
+        * platform/win/PasteboardWin.cpp:
+        (WebCore::PasteboardOwnerWndProc):
+        (WebCore::Pasteboard::writeSelection):
+        (WebCore::Pasteboard::writeURL):
+        (WebCore::Pasteboard::plainText):
+        (WebCore::Pasteboard::documentFragment):
+
 2010-07-20  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.

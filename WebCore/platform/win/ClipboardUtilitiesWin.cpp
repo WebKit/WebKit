@@ -32,10 +32,10 @@
 #include "TextEncoding.h"
 #include "markup.h"
 #include <CoreFoundation/CoreFoundation.h>
+#include <shlwapi.h>
+#include <wininet.h> // for INTERNET_MAX_URL_LENGTH
 #include <wtf/RetainPtr.h>
 #include <wtf/text/CString.h>
-#include <shlwapi.h>
-#include <wininet.h>    // for INTERNET_MAX_URL_LENGTH
 
 namespace WebCore {
 
@@ -97,7 +97,7 @@ static String extractURL(const String &inURL, String* title)
     return url;
 }
 
-//Firefox text/html
+// Firefox text/html
 static FORMATETC* texthtmlFormat() 
 {
     static UINT cf = RegisterClipboardFormat(L"text/html");
@@ -109,7 +109,7 @@ HGLOBAL createGlobalData(const KURL& url, const String& title)
 {
     String mutableURL(url.string());
     String mutableTitle(title);
-    SIZE_T size = mutableURL.length() + mutableTitle.length() + 2;  // +1 for "\n" and +1 for null terminator
+    SIZE_T size = mutableURL.length() + mutableTitle.length() + 2; // +1 for "\n" and +1 for null terminator
     HGLOBAL cbData = ::GlobalAlloc(GPTR, size * sizeof(UChar));
 
     if (cbData) {
@@ -155,7 +155,7 @@ static void append(Vector<char>& vector, const CString& string)
 }
 
 // Documentation for the CF_HTML format is available at http://msdn.microsoft.com/workshop/networking/clipboard/htmlclipboard.asp
-void markupToCF_HTML(const String& markup, const String& srcURL, Vector<char>& result)
+void markupToCFHTML(const String& markup, const String& srcURL, Vector<char>& result)
 {
     if (markup.isEmpty())
         return;
@@ -256,7 +256,7 @@ FORMATETC* filenameFormat()
     return &urlFormat;
 }
 
-//MSIE HTML Format
+// MSIE HTML Format
 FORMATETC* htmlFormat() 
 {
     static UINT cf = RegisterClipboardFormat(L"HTML Format");
@@ -294,18 +294,17 @@ String getURL(IDataObject* dataObject, DragData::FilenameConversionPolicy filena
     STGMEDIUM store;
     String url;
     success = false;
-    if (getWebLocData(dataObject, url, title)) {
+    if (getWebLocData(dataObject, url, title))
         success = true;
-        return url;
-    } else if (SUCCEEDED(dataObject->GetData(urlWFormat(), &store))) {
-        //URL using unicode
+    else if (SUCCEEDED(dataObject->GetData(urlWFormat(), &store))) {
+        // URL using Unicode
         UChar* data = (UChar*)GlobalLock(store.hGlobal);
         url = extractURL(String(data), title);
         GlobalUnlock(store.hGlobal);      
         ReleaseStgMedium(&store);
         success = true;
     } else if (SUCCEEDED(dataObject->GetData(urlFormat(), &store))) {
-        //URL using ascii
+        // URL using ASCII
         char* data = (char*)GlobalLock(store.hGlobal);
         url = extractURL(String(data), title);
         GlobalUnlock(store.hGlobal);      
@@ -349,14 +348,14 @@ String getPlainText(IDataObject* dataObject, bool& success)
     String text;
     success = false;
     if (SUCCEEDED(dataObject->GetData(plainTextWFormat(), &store))) {
-        //unicode text
+        // Unicode text
         UChar* data = (UChar*)GlobalLock(store.hGlobal);
         text = String(data);
         GlobalUnlock(store.hGlobal);
         ReleaseStgMedium(&store);
         success = true;
     } else if (SUCCEEDED(dataObject->GetData(plainTextFormat(), &store))) {
-        //ascii text
+        // ASCII text
         char* data = (char*)GlobalLock(store.hGlobal);
         text = String(data);
         GlobalUnlock(store.hGlobal);
@@ -372,40 +371,55 @@ String getPlainText(IDataObject* dataObject, bool& success)
     return text;
 }
 
+String getTextHTML(IDataObject* data, bool& success)
+{
+    STGMEDIUM store;
+    String html;
+    success = false;
+    if (SUCCEEDED(data->GetData(texthtmlFormat(), &store))) {
+        UChar* data = static_cast<UChar*>(GlobalLock(store.hGlobal));
+        html = String(data);
+        GlobalUnlock(store.hGlobal);
+        ReleaseStgMedium(&store);
+        success = true;
+    }
+    return html;
+}
+
 PassRefPtr<DocumentFragment> fragmentFromFilenames(Document*, const IDataObject*)
 {
-    //FIXME: We should be able to create fragments from files
+    // FIXME: We should be able to create fragments from files
     return 0;
 }
 
 bool containsFilenames(const IDataObject*)
 {
-    //FIXME: We'll want to update this once we can produce fragments from files
+    // FIXME: We'll want to update this once we can produce fragments from files
     return false;
 }
 
-//Convert a String containing CF_HTML formatted text to a DocumentFragment
-PassRefPtr<DocumentFragment> fragmentFromCF_HTML(Document* doc, const String& cf_html)
+// Convert a String containing CF_HTML formatted text to a DocumentFragment
+PassRefPtr<DocumentFragment> fragmentFromCFHTML(Document* doc, const String& cfhtml)
 {        
     // obtain baseURL if present
     String srcURLStr("sourceURL:");
     String srcURL;
-    unsigned lineStart = cf_html.find(srcURLStr, 0, false);
+    unsigned lineStart = cfhtml.find(srcURLStr, 0, false);
     if (lineStart != -1) {
-        unsigned srcEnd = cf_html.find("\n", lineStart, false);
+        unsigned srcEnd = cfhtml.find("\n", lineStart, false);
         unsigned srcStart = lineStart+srcURLStr.length();
-        String rawSrcURL = cf_html.substring(srcStart, srcEnd-srcStart);
+        String rawSrcURL = cfhtml.substring(srcStart, srcEnd-srcStart);
         replaceNBSPWithSpace(rawSrcURL);
         srcURL = rawSrcURL.stripWhiteSpace();
     }
 
     // find the markup between "<!--StartFragment -->" and "<!--EndFragment -->", accounting for browser quirks
-    unsigned markupStart = cf_html.find("<html", 0, false);
-    unsigned tagStart = cf_html.find("startfragment", markupStart, false);
-    unsigned fragmentStart = cf_html.find('>', tagStart) + 1;
-    unsigned tagEnd = cf_html.find("endfragment", fragmentStart, false);
-    unsigned fragmentEnd = cf_html.reverseFind('<', tagEnd);
-    String markup = cf_html.substring(fragmentStart, fragmentEnd - fragmentStart).stripWhiteSpace();
+    unsigned markupStart = cfhtml.find("<html", 0, false);
+    unsigned tagStart = cfhtml.find("startfragment", markupStart, false);
+    unsigned fragmentStart = cfhtml.find('>', tagStart) + 1;
+    unsigned tagEnd = cfhtml.find("endfragment", fragmentStart, false);
+    unsigned fragmentEnd = cfhtml.reverseFind('<', tagEnd);
+    String markup = cfhtml.substring(fragmentStart, fragmentEnd - fragmentStart).stripWhiteSpace();
 
     return createFragmentFromMarkup(doc, markup, srcURL, FragmentScriptingNotAllowed);
 }
@@ -420,23 +434,19 @@ PassRefPtr<DocumentFragment> fragmentFromHTML(Document* doc, IDataObject* data)
     String html;
     String srcURL;
     if (SUCCEEDED(data->GetData(htmlFormat(), &store))) {
-        //MS HTML Format parsing
+        // MS HTML Format parsing
         char* data = (char*)GlobalLock(store.hGlobal);
         SIZE_T dataSize = ::GlobalSize(store.hGlobal);
-        String cf_html(UTF8Encoding().decode(data, dataSize));         
+        String cfhtml(UTF8Encoding().decode(data, dataSize));         
         GlobalUnlock(store.hGlobal);
         ReleaseStgMedium(&store); 
-        if (PassRefPtr<DocumentFragment> fragment = fragmentFromCF_HTML(doc, cf_html))
+        if (PassRefPtr<DocumentFragment> fragment = fragmentFromCFHTML(doc, cfhtml))
             return fragment;
     } 
-    if (SUCCEEDED(data->GetData(texthtmlFormat(), &store))) {
-        //raw html
-        UChar* data = (UChar*)GlobalLock(store.hGlobal);
-        html = String(data);
-        GlobalUnlock(store.hGlobal);      
-        ReleaseStgMedium(&store);
+    bool success = false;
+    html = getTextHTML(data, success);
+    if (success)
         return createFragmentFromMarkup(doc, html, srcURL, FragmentScriptingNotAllowed);
-    } 
 
     return 0;
 }
