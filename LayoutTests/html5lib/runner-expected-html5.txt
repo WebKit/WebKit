@@ -285,4 +285,207 @@ resources/inbody01.dat: PASS
 resources/isindex.dat: PASS
 
 resources/tables01.dat: PASS
+
+resources/tricky01.dat:
+2
+6
+7
+
+Test 2 of 9 in resources/tricky01.dat failed. Input:
+<html>
+<font color=red><i>Italic and Red<p>Italic and Red </font> Just italic.</p> Italic only.</i> Plain
+<p>I should not be red. <font color=red>Red. <i>Italic and red.</p>
+<p>Italic and red. </i> Red.</font> I should not be red.</p>
+<b>Bold <i>Bold and italic</b> Only Italic </i> Plain
+Got:
+| <html>
+|   <head>
+|   <body>
+|     <font>
+|       color="red"
+|       <i>
+|         "Italic and Red"
+|     <i>
+|       <p>
+|         <font>
+|           "Italic and Red "
+|         " Just italic."
+|       " Italic only."
+|     " Plain
+"
+|     <p>
+|       "I should not be red. "
+|       <font>
+|         color="red"
+|         "Red. "
+|         <i>
+|           "Italic and red."
+|     <font>
+|       color="red"
+|       <i>
+|         "
+"
+|     <p>
+|       <font>
+|         <i>
+|           "Italic and red. "
+|         " Red."
+|       " I should not be red."
+|     "
+"
+|     <b>
+|       "Bold "
+|       <i>
+|         "Bold and italic"
+|     <i>
+|       " Only Italic "
+|     " Plain"
+Expected:
+| <html>
+|   <head>
+|   <body>
+|     <font>
+|       color="red"
+|       <i>
+|         "Italic and Red"
+|     <i>
+|       <p>
+|         <font>
+|           color="red"
+|           "Italic and Red "
+|         " Just italic."
+|       " Italic only."
+|     " Plain
+"
+|     <p>
+|       "I should not be red. "
+|       <font>
+|         color="red"
+|         "Red. "
+|         <i>
+|           "Italic and red."
+|     <font>
+|       color="red"
+|       <i>
+|         "
+"
+|     <p>
+|       <font>
+|         color="red"
+|         <i>
+|           "Italic and red. "
+|         " Red."
+|       " I should not be red."
+|     "
+"
+|     <b>
+|       "Bold "
+|       <i>
+|         "Bold and italic"
+|     <i>
+|       " Only Italic "
+|     " Plain"
+
+Test 6 of 9 in resources/tricky01.dat failed. Input:
+<TABLE>
+  <CENTER>
+  <FONT>You should see a 100x100 green Image below.
+  </CENTER>
+<IMG alt="Image" width=100 height=100 style="background-color:green">
+<tr><td>
+</td>
+</tr>
+</table>
+Got:
+| <html>
+|   <head>
+|   <body>
+|     <center>
+|       "
+  "
+|       <font>
+|         "You should see a 100x100 green Image below.
+  "
+|     <font>
+|       <img>
+|         alt="Image"
+|         height="100"
+|         style="background-color:green"
+|         width="100"
+|       "
+"
+|     <table>
+|       "
+  
+"
+|       <tbody>
+|         <tr>
+|           <td>
+|             "
+"
+|           "
+"
+|         "
+"
+Expected:
+| <html>
+|   <head>
+|   <body>
+|     <center>
+|       "
+  "
+|       <font>
+|         "You should see a 100x100 green Image below.
+  "
+|     <font>
+|       "
+"
+|       <img>
+|         alt="Image"
+|         height="100"
+|         style="background-color: green;"
+|         width="100"
+|       "
+"
+|     <font>
+|       "
+"
+|     <font>
+|       "
+"
+|     <table>
+|       "
+  "
+|       <tbody>
+|         <tr>
+|           <td>
+|             "
+"
+
+Test 7 of 9 in resources/tricky01.dat failed. Input:
+<table><tr><p><a><p>You should see this text.
+Got:
+| <html>
+|   <head>
+|   <body>
+|     <p>
+|       <a>
+|     <table>
+|       <tbody>
+|         <tr>
+|           <p>
+|             <a>
+|               "You should see this text."
+Expected:
+| <html>
+|   <head>
+|   <body>
+|     <p>
+|       <a>
+|     <p>
+|       <a>
+|         "You should see this text."
+|     <table>
+|       <tbody>
+|         <tr>
 #EOF
