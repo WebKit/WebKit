@@ -79,14 +79,25 @@ namespace WebCore {
     template<typename T>
     void DOMData::handleWeakObject(DOMDataStore::DOMWrapperMapType mapType, v8::Persistent<v8::Object> v8Object, T* domObject)
     {
+        WrapperTypeInfo* type = V8DOMWrapper::domWrapperType(v8Object);
         DOMDataList& list = DOMDataStore::allStores();
+        bool found = false;
         for (size_t i = 0; i < list.size(); ++i) {
             DOMDataStore* store = list[i];
             ASSERT(store->domData()->owningThread() == WTF::currentThread());
 
             DOMWrapperMap<T>* domMap = static_cast<DOMWrapperMap<T>*>(store->getDOMWrapperMap(mapType));
-            if (domMap->removeIfPresent(domObject, v8Object))
-                store->domData()->derefObject(V8DOMWrapper::domWrapperType(v8Object), domObject);
+            if (domMap->removeIfPresent(domObject, v8Object)) {
+                derefObject(type, domObject);
+                found = true;
+            }
+        }
+
+        // If not found, it means map for the wrapper has been already destroyed, just dispose the
+        // handle and deref the object to fight memory leak.
+        if (!found) {
+            v8Object.Dispose();
+            derefObject(type, domObject);
         }
     }
 
