@@ -28,6 +28,7 @@
 #include "NetscapePluginStream.h"
 #include "PluginController.h"
 #include <WebCore/GraphicsContext.h>
+#include <WebCore/HTTPHeaderMap.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/KURL.h>
 #include <utility>
@@ -101,14 +102,13 @@ const char* NetscapePlugin::userAgent()
     return m_userAgent.data();
 }
 
-void NetscapePlugin::loadURL(const String& urlString, const String& target, bool sendNotification, void* notificationData)
+void NetscapePlugin::loadURL(const String& method, const String& urlString, const String& target, const HTTPHeaderMap& headerFields, const Vector<char>& httpBody,
+                             bool sendNotification, void* notificationData)
 {
     uint64_t requestID = ++m_nextRequestID;
-
-    // FIXME: Handle popups.
-    bool allowPopups = false;
-    m_pluginController->loadURL(requestID, urlString, target, allowPopups);
     
+    m_pluginController->loadURL(requestID, method, urlString, target, headerFields, httpBody, allowPopups());
+
     if (target.isNull()) {
         // The browser is going to send the data in a stream, create a plug-in stream.
         RefPtr<NetscapePluginStream> pluginStream = NetscapePluginStream::create(this, requestID, sendNotification, notificationData);
@@ -249,6 +249,12 @@ void NetscapePlugin::stopAllStreams()
         streams[i]->stop(NPRES_USER_BREAK);
 }
 
+bool NetscapePlugin::allowPopups() const
+{
+    // FIXME: Handle popups.
+    return false;
+}
+
 bool NetscapePlugin::initialize(PluginController* pluginController, const Parameters& parameters)
 {
     ASSERT(!m_pluginController);
@@ -298,7 +304,7 @@ bool NetscapePlugin::initialize(PluginController* pluginController, const Parame
 
     // Load the src URL if needed.
     if (!parameters.url.isEmpty() && shouldLoadSrcURL())
-        loadURL(parameters.url.string(), String(), false, 0);
+        loadURL("GET", parameters.url.string(), String(), HTTPHeaderMap(), Vector<char>(), false, 0);
     
     return true;
 }

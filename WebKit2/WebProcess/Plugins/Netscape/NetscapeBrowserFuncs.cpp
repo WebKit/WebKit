@@ -28,12 +28,225 @@
 #include "NPRuntimeUtilities.h"
 #include "NetscapePlugin.h"
 #include "NotImplemented.h"
+#include <WebCore/HTTPHeaderMap.h>
 #include <WebCore/IdentifierRep.h>
+#include <WebCore/SharedBuffer.h>
+#include <utility>
 
 using namespace WebCore;
+using namespace std;
 
 namespace WebKit {
+
+static bool startsWithBlankLine(const char* bytes, unsigned length)
+{
+    return length > 0 && bytes[0] == '\n';
+}
+
+static int locationAfterFirstBlankLine(const char* bytes, unsigned length)
+{
+    for (unsigned i = 0; i < length - 4; i++) {
+        // Support for Acrobat. It sends "\n\n".
+        if (bytes[i] == '\n' && bytes[i + 1] == '\n')
+            return i + 2;
+        
+        // Returns the position after 2 CRLF's or 1 CRLF if it is the first line.
+        if (bytes[i] == '\r' && bytes[i + 1] == '\n') {
+            i += 2;
+            if (i == 2)
+                return i;
+
+            if (bytes[i] == '\n') {
+                // Support for Director. It sends "\r\n\n" (3880387).
+                return i + 1;
+            }
+
+            if (bytes[i] == '\r' && bytes[i + 1] == '\n') {
+                // Support for Flash. It sends "\r\n\r\n" (3758113).
+                return i + 2;
+            }
+        }
+    }
+
+    return -1;
+}
+
+static const char* findEndOfLine(const char* bytes, unsigned length)
+{
+    // According to the HTTP specification EOL is defined as
+    // a CRLF pair. Unfortunately, some servers will use LF
+    // instead. Worse yet, some servers will use a combination
+    // of both (e.g. <header>CRLFLF<body>), so findEOL needs
+    // to be more forgiving. It will now accept CRLF, LF or
+    // CR.
+    //
+    // It returns 0 if EOLF is not found or it will return
+    // a pointer to the first terminating character.
+    for (unsigned i = 0; i < length; i++) {
+        if (bytes[i] == '\n')
+            return bytes + i;
+        if (bytes[i] == '\r') {
+            // Check to see if spanning buffer bounds
+            // (CRLF is across reads). If so, wait for
+            // next read.
+            if (i + 1 == length)
+                break;
+
+            return bytes + i;
+        }
+    }
+
+    return 0;
+}
+
+static String capitalizeRFC822HeaderFieldName(const String& name)
+{
+    bool capitalizeCharacter = true;
+    String result;
+
+    for (unsigned i = 0; i < name.length(); i++) {
+        UChar c;
+
+        if (capitalizeCharacter && name[i] >= 'a' && name[i] <= 'z')
+            c = toASCIIUpper(name[i]);
+        else if (!capitalizeCharacter && name[i] >= 'A' && name[i] <= 'Z')
+            c = toASCIILower(name[i]);
+        else
+            c = name[i];
+
+        if (name[i] == '-')
+            capitalizeCharacter = true;
+        else
+            capitalizeCharacter = false;
+
+        result.append(c);
+    }
+
+    return result;
+}
+
+static HTTPHeaderMap parseRFC822HeaderFields(const char* bytes, unsigned length)
+{
+    String lastHeaderKey;
+    HTTPHeaderMap headerFields;
+
+    // Loop over lines until we're past the header, or we can't find any more end-of-lines
+    while (const char* endOfLine = findEndOfLine(bytes, length)) {
+        const char* line = bytes;
+        int lineLength = endOfLine - bytes;
+
+        // Move bytes to the character after the terminator as returned by findEndOfLine.
+        bytes = endOfLine + 1;
+        if ((*endOfLine == '\r') && (*bytes == '\n'))
+            bytes++; // Safe since findEndOfLine won't return a spanning CRLF.
+
+        length -= (bytes - line);
+        if (!lineLength) {
+            // Blank line; we're at the end of the header
+            break;
+        }
+
+        if (*line == ' ' || *line == '\t') {
+            // Continuation of the previous header
+            if (lastHeaderKey.isNull()) {
+                // malformed header; ignore it and continue
+                continue;
+            } 
+            
+            // Merge the continuation of the previous header
+            String currentValue = headerFields.get(lastHeaderKey);
+            String newValue(line, lineLength);
+            
+            headerFields.set(lastHeaderKey, currentValue + newValue);
+        } else {
+            // Brand new header
+            const char* colon = line;
+            while (*colon != ':' && colon != endOfLine)
+                colon++;
+
+            if (colon == endOfLine) {
+                // malformed header; ignore it and continue
+                continue;
+            }
+
+            lastHeaderKey = capitalizeRFC822HeaderFieldName(String(line, colon - line));
+            String value;
+            
+            for (colon++; colon != endOfLine; colon++) {
+                if (*colon != ' ' && *colon != '\t')
+                    break;
+            }
+            if (colon == endOfLine)
+                value = "";
+            else
+                value = String(colon, endOfLine - colon);
+            
+            String oldValue = headerFields.get(lastHeaderKey);
+            if (!oldValue.isNull()) {
+                String tmp = oldValue;
+                tmp += ", ";
+                tmp += value;
+                value = tmp;
+            }
+            
+            headerFields.set(lastHeaderKey, value);
+        }
+    }
+
+    return headerFields;
+}
     
+static NPError parsePostBuffer(bool isFile, const char *buffer, uint32_t length, bool parseHeaders, HTTPHeaderMap& headerFields, Vector<char>& bodyData)
+{
+    RefPtr<SharedBuffer> fileContents;
+    const char* postBuffer = 0;
+    uint32_t postBufferSize = 0;
+
+    if (isFile) {
+        fileContents = SharedBuffer::createWithContentsOfFile(String::fromUTF8(buffer));
+        if (!fileContents)
+            return NPERR_FILE_NOT_FOUND;
+
+        postBuffer = fileContents->data();
+        postBufferSize = fileContents->size();
+    } else {
+        postBuffer = buffer;
+        postBufferSize = length;
+    }
+
+    if (parseHeaders) {
+        if (startsWithBlankLine(postBuffer, postBufferSize)) {
+            postBuffer++;
+            postBufferSize--;
+        } else {
+            int location = locationAfterFirstBlankLine(postBuffer, postBufferSize);
+            if (location != -1) {
+                // If the blank line is somewhere in the middle of the buffer, everything before is the header
+                headerFields = parseRFC822HeaderFields(postBuffer, location);
+                unsigned dataLength = postBufferSize - location;
+                
+                // Sometimes plugins like to set Content-Length themselves when they post,
+                // but WebFoundation does not like that. So we will remove the header
+                // and instead truncate the data to the requested length.
+                String contentLength = headerFields.get("Content-Length");
+                
+                if (!contentLength.isNull())
+                    dataLength = min(contentLength.toInt(), (int)dataLength);
+                headerFields.remove("Content-Length");
+                
+                postBuffer += location;
+                postBufferSize = dataLength;
+                
+            }
+        }
+    }
+
+    ASSERT(bodyData.isEmpty());
+    bodyData.append(postBuffer, postBufferSize);
+
+    return NPERR_NO_ERROR;
+}
+
 static NPError NPN_GetURL(NPP instance, const char* url, const char* target)
 {
     notImplemented();
@@ -138,13 +351,23 @@ static NPError NPN_GetURLNotify(NPP npp, const char* url, const char* target, vo
         return NPERR_GENERIC_ERROR;
 
     RefPtr<NetscapePlugin> plugin = NetscapePlugin::fromNPP(npp);
-    plugin->loadURL(makeURLString(url), target, true, notifyData);
+    plugin->loadURL("GET", makeURLString(url), target, HTTPHeaderMap(), Vector<char>(), true, notifyData);
     
     return NPERR_NO_ERROR;
 }
 
-static NPError NPN_PostURLNotify(NPP instance, const char* url, const char* target, uint32_t len, const char* buf, NPBool file, void* notifyData)
+static NPError NPN_PostURLNotify(NPP npp, const char* url, const char* target, uint32_t len, const char* buf, NPBool file, void* notifyData)
 {
+    HTTPHeaderMap headerFields;
+    Vector<char> postData;
+    NPError error = parsePostBuffer(file, buf, len, true, headerFields, postData);
+    if (error != NPERR_NO_ERROR)
+        return error;
+
+    RefPtr<NetscapePlugin> plugin = NetscapePlugin::fromNPP(npp);
+    plugin->loadURL("POST", makeURLString(url), target, headerFields, postData, true, notifyData);
+    return NPERR_NO_ERROR;
+    
     notImplemented();
     return NPERR_GENERIC_ERROR;
 }

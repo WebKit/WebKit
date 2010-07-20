@@ -520,13 +520,16 @@ String PluginView::userAgent(const KURL& url)
     return frame->loader()->client()->userAgent(url);
 }
 
-void PluginView::loadURL(uint64_t requestID, const String& urlString, const String& target, bool allowPopups)
+void PluginView::loadURL(uint64_t requestID, const String& method, const String& urlString, const String& target, 
+                         const HTTPHeaderMap& headerFields, const Vector<char>& httpBody, bool allowPopups)
 {
     FrameLoadRequest frameLoadRequest;
     frameLoadRequest.setFrameName(target);
-    frameLoadRequest.resourceRequest().setHTTPMethod("GET");
+    frameLoadRequest.resourceRequest().setHTTPMethod(method);
     frameLoadRequest.resourceRequest().setURL(m_pluginElement->document()->completeURL(urlString));
-    
+    frameLoadRequest.resourceRequest().addHTTPHeaderFields(headerFields);
+    frameLoadRequest.resourceRequest().setHTTPBody(FormData::create(httpBody.data(), httpBody.size()));
+
     m_pendingURLRequests.append(URLRequest::create(requestID, frameLoadRequest, allowPopups));
     m_pendingURLRequestsTimer.startOneShot(0);
 }

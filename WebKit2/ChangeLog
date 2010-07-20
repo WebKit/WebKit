@@ -1,3 +1,38 @@
+2010-07-19  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Implement NPN_PostURLNotify
+        https://bugs.webkit.org/show_bug.cgi?id=42602
+
+        * WebProcess/Plugins/Netscape/NetscapeBrowserFuncs.cpp:
+        (WebKit::parsePostBuffer):
+        Read the buffer from a file if necessary and parse it.
+
+        (WebKit::NPN_GetURLNotify):
+        Add extra arguments.
+
+        (WebKit::NPN_PostURLNotify):
+        Parse the post buffer, then call NetscapePlugin::loadURL.
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::loadURL):
+        Pass the method, the header fields and form data along.
+
+        (WebKit::NetscapePlugin::allowPopups):
+        Just return false for now.
+
+        (WebKit::NetscapePlugin::initialize):
+        Pass extra arguments to loadURL.
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.h:
+        * WebProcess/Plugins/PluginController.h:
+        Add method, header fields and form data.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::loadURL):
+        Set the method, add the header fields and set the body.
+
 2010-07-19  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin Adler.
