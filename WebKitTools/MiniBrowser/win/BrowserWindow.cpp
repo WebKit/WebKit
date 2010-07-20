@@ -28,6 +28,7 @@
 #include "MiniBrowser.h"
 #include "Resource.h"
 
+#include <assert.h>
 #include <commctrl.h>
 #include <shlwapi.h>
 #include <vector>
