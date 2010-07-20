@@ -1,3 +1,15 @@
+2010-07-20  Mahesh Kulkarni  <mahesh.kulkarni@nokia.com>
+
+        Reviewed by Steve Block.
+
+        Need to be able to configure Geolocation policy regarding user permissions
+        https://bugs.webkit.org/show_bug.cgi?id=42068
+
+        If CLIENT_BASED_GEOLOCATION is enabled, enable preemtive permission policy
+        by default 
+
+        * wtf/Platform.h:
+        
 2010-07-20  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r63742.

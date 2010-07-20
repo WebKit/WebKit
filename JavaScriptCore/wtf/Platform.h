@@ -1116,4 +1116,11 @@ on MinGW. See https://bugs.webkit.org/show_bug.cgi?id=29268 */
 #define WTF_USE_PLATFORM_STRATEGIES 1
 #endif
 
+/* Geolocation request policy. pre-emptive policy is to acquire user permission before acquiring location.
+   Client based implementations will have option to choose between pre-emptive and nonpre-emptive permission policy.
+   pre-emptive permission policy is enabled by default for all client-based implementations. */
+#if ENABLE(CLIENT_BASED_GEOLOCATION)
+#define WTF_USE_PREEMPT_GEOLOCATION_PERMISSION 1
+#endif
+
 #endif /* WTF_Platform_h */

@@ -279,7 +279,7 @@ PassRefPtr<Geolocation::GeoNotifier> Geolocation::startRequest(PassRefPtr<Positi
     else if (haveSuitableCachedPosition(notifier->m_options.get()))
         notifier->setUseCachedPosition();
     else if (notifier->hasZeroTimeout() || startUpdating(notifier.get())) {
-#if ENABLE(CLIENT_BASED_GEOLOCATION)
+#if USE(PREEMPT_GEOLOCATION_PERMISSION)
         // Only start timer if we're not waiting for user permission.
         if (!m_startRequestPermissionNotifier)
 #endif            
@@ -400,18 +400,22 @@ void Geolocation::setIsAllowed(bool allowed)
     // position.
     m_allowGeolocation = allowed ? Yes : No;
     
-#if ENABLE(CLIENT_BASED_GEOLOCATION)
+#if USE(PREEMPT_GEOLOCATION_PERMISSION)
     if (m_startRequestPermissionNotifier) {
         if (isAllowed()) {
             // Permission request was made during the startUpdating process
             m_startRequestPermissionNotifier->startTimerIfNeeded();
             m_startRequestPermissionNotifier = 0;
+#if ENABLE(CLIENT_BASED_GEOLOCATION)
             if (!m_frame)
                 return;
             Page* page = m_frame->page();
             if (!page)
                 return;
             page->geolocationController()->addObserver(this);
+#else
+            // TODO: Handle startUpdate() for non-client based implementations using pre-emptive policy
+#endif
         } else {
             m_startRequestPermissionNotifier->setFatalError(PositionError::create(PositionError::PERMISSION_DENIED, permissionDeniedErrorMessage));
             m_oneShots.add(m_startRequestPermissionNotifier);
@@ -612,15 +616,15 @@ void Geolocation::geolocationServiceErrorOccurred(GeolocationService* service)
 
 bool Geolocation::startUpdating(GeoNotifier* notifier)
 {
-#if ENABLE(CLIENT_BASED_GEOLOCATION)
-    // FIXME: Pass options to client.
-
+#if USE(PREEMPT_GEOLOCATION_PERMISSION)
     if (!isAllowed()) {
         m_startRequestPermissionNotifier = notifier;
         requestPermission();
         return true;
     }
-    
+#endif
+
+#if ENABLE(CLIENT_BASED_GEOLOCATION)
     if (!m_frame)
         return false;
 
@@ -628,6 +632,7 @@ bool Geolocation::startUpdating(GeoNotifier* notifier)
     if (!page)
         return false;
 
+    // FIXME: Pass options to client.
     page->geolocationController()->addObserver(this);
     return true;
 #else
