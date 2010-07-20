@@ -135,10 +135,7 @@
 #else
 
 #if defined(WIN32) || defined(_WIN32)
-// FIXME <rdar://problem/8208868> Remove support for obsolete ColorSync API, CoreServices header in CoreGraphics
-// We can remove this once the new ColorSync APIs are available in an internal Safari SDK.
-#include <ColorSync/ColorSyncPriv.h>
-#ifdef COLORSYNC_CORE_SERVICES_H_
+#include <CoreServices/CoreServices.h>
 #define COREGRAPHICS_INCLUDES_CORESERVICES_HEADER
 #define OBSOLETE_COLORSYNC_API
 #endif

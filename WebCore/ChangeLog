@@ -1,5 +1,11 @@
 2010-07-19  Steve Falkenburg  <sfalken@apple.com>
 
+        Build fix.
+
+        * WebCorePrefix.h:
+
+2010-07-19  Steve Falkenburg  <sfalken@apple.com>
+
         Windows Build fixes for new ColorSync API.
         We support both new and old APIs, since the newer headers aren't in the tree yet.
 
