@@ -669,7 +669,7 @@ void GraphicsLayerCACF::updateLayerDrawsContent()
     if (m_drawsContent)
         m_layer->setNeedsDisplay();
     else
-        m_layer->setContents(nil);
+        m_layer->setContents(0);
 
     updateDebugIndicators();
 }

@@ -73,10 +73,14 @@ Color::Color(CGColorRef color)
 CGColorRef createCGColor(const Color& c)
 {
     CGColorRef color = NULL;
+#ifdef OBSOLETE_COLORSYNC_API
     CMProfileRef prof = NULL;
     CMGetSystemProfile(&prof);
-
     RetainPtr<CGColorSpaceRef> rgbSpace(AdoptCF, CGColorSpaceCreateWithPlatformColorSpace(prof));
+#else
+    ColorSyncProfileRef prof = ColorSyncProfileCreateWithDisplayID(0);
+    RetainPtr<CGColorSpaceRef> rgbSpace(AdoptCF, CGColorSpaceCreateWithPlatformColorSpace(const_cast<void*>(reinterpret_cast<const void*>(prof))));
+#endif
 
     if (rgbSpace) {
         CGFloat components[4] = { static_cast<CGFloat>(c.red()) / 255, static_cast<CGFloat>(c.green()) / 255,
@@ -84,7 +88,12 @@ CGColorRef createCGColor(const Color& c)
         color = CGColorCreate(rgbSpace.get(), components);
     }
 
+#ifdef OBSOLETE_COLORSYNC_API
     CMCloseProfile(prof);
+#else
+    if (prof)
+        CFRelease(prof);
+#endif
 
     return color;
 }

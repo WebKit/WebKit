@@ -1,3 +1,18 @@
+2010-07-19  Steve Falkenburg  <sfalken@apple.com>
+
+        Windows Build fixes for new ColorSync API.
+        We support both new and old APIs, since the newer headers aren't in the tree yet.
+
+        * WebCorePrefix.h: Removed include of CoreServices.h. Included via ColorSyncPriv.h instead, since header may not be present.
+        * platform/graphics/cg/ColorCG.cpp:
+        (WebCore::createCGColor): Conditionally use new ColorSync API.
+        * platform/graphics/opentype/OpenTypeUtilities.cpp: Define Fixed if CoreServices.h doesn't.
+        * platform/graphics/win/GraphicsLayerCACF.cpp:
+        (WebCore::GraphicsLayerCACF::updateLayerDrawsContent): Use 0 instead of nil, since nil is no longer present via CoreServices.h.
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeVisualContext.cpp: Include AssertMacros.h.
+        * platform/network/cf/ResourceErrorCF.cpp:
+        (WebCore::ResourceError::operator CFErrorRef): Use 0 instead of nil, since nil is no longer present via CoreServices.h.
+
 2010-07-19  Tony Gentilcore  <tonyg@chromium.org>
 
         Reviewed by Dimitri Glazkov.

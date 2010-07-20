@@ -133,12 +133,20 @@
 #include <windows.h>
 #include <stdio.h>
 #else
-#include <CoreServices/CoreServices.h>
 
 #if defined(WIN32) || defined(_WIN32)
-/* Including CoreServices.h on Windows doesn't include CFNetwork.h, so we do
+// FIXME <rdar://problem/8208868> Remove support for obsolete ColorSync API, CoreServices header in CoreGraphics
+// We can remove this once the new ColorSync APIs are available in an internal Safari SDK.
+#include <ColorSync/ColorSyncPriv.h>
+#ifdef COLORSYNC_CORE_SERVICES_H_
+#define COREGRAPHICS_INCLUDES_CORESERVICES_HEADER
+#define OBSOLETE_COLORSYNC_API
+#endif
+/* Windows doesn't include CFNetwork.h via CoreServices.h, so we do
    it explicitly here to make Windows more consistent with Mac. */
 #include <CFNetwork/CFNetwork.h>
+#else
+#include <CoreServices/CoreServices.h>
 #endif
 
 #endif

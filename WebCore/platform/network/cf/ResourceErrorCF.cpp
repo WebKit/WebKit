@@ -115,7 +115,7 @@ ResourceError::operator CFErrorRef() const
 {
     if (m_isNull) {
         ASSERT(!m_platformError);
-        return nil;
+        return 0;
     }
     
     if (!m_platformError) {
