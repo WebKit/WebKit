@@ -67,8 +67,8 @@ class HttpServerBase(object):
             try:
                 response = urllib.urlopen(url)
                 _log.debug("Server running at %s" % url)
-            except IOError:
-                _log.debug("Server NOT running at %s" % url)
+            except IOError, e:
+                _log.debug("Server NOT running at %s: %s" % (url, e))
                 return False
 
         return True
