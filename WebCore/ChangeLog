@@ -1,3 +1,9 @@
+2010-07-20  Adam Roben  <aroben@apple.com>
+
+        Windows build fix
+
+        * WebCore.vcproj/WebCore.vcproj: Fixed case of "Name" attribute.
+
 2010-07-20  Mahesh Kulkarni  <mahesh.kulkarni@nokia.com>
 
         Reviewed by Steve Block.

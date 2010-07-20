@@ -40620,7 +40620,7 @@
 				RelativePath="..\bindings\ScriptControllerBase.h"
 				>
 			</File>
-			<Filter name="generic"
+			<Filter Name="generic"
 				>
 				<File
 					RelativePath="..\bindings\generic\RuntimeEnabledFeatures.cpp"
