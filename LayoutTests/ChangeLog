@@ -1,3 +1,18 @@
+2010-07-20  Daniel Erat  <derat@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        Subpixel rendering always disabled for Chromium Linux
+        https://bugs.webkit.org/show_bug.cgi?id=42220
+
+        Layout test addition to check that Chromium Linux honors fontconfig
+        settings enabling or disabling subpixel rendering per-strike.
+
+        * platform/chromium-linux/platform/chromium/fast/text/chromium-linux-fontconfig-renderstyle-expected.checksum:
+        * platform/chromium-linux/platform/chromium/fast/text/chromium-linux-fontconfig-renderstyle-expected.png:
+        * platform/chromium-linux/platform/chromium/fast/text/chromium-linux-fontconfig-renderstyle-expected.txt:
+        * platform/chromium/fast/text/chromium-linux-fontconfig-renderstyle.html:
+
 2010-07-20  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin.

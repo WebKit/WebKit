@@ -43,7 +43,8 @@
 namespace WebCore {
 
 static SkPaint::Hinting skiaHinting = SkPaint::kNormal_Hinting;
-static bool isSkiaAntiAlias = true, isSkiaSubpixelGlyphs;
+static bool isSkiaAntiAlias = true;
+static bool isSkiaSubpixelGlyphs = false;
 
 void FontPlatformData::setHinting(SkPaint::Hinting hinting)
 {

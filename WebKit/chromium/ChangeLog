@@ -1,3 +1,15 @@
+2010-07-20  Daniel Erat  <derat@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        Subpixel rendering always disabled for Chromium Linux
+        https://bugs.webkit.org/show_bug.cgi?id=42220
+
+        Honor Fontconfig subpixel rendering setting on Chromium Linux.
+
+        * src/gtk/WebFontInfo.cpp:
+        (WebKit::WebFontInfo::renderStyleForStrike):
+
 2010-07-20  Darin Fisher  <darin@chromium.org>
 
         Fix Chromium build bustage.

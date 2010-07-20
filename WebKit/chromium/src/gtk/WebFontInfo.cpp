@@ -165,6 +165,23 @@ void WebFontInfo::renderStyleForStrike(const char* family, int sizeAndStyle, Web
         out->useHinting = b;
     if (FcPatternGetInteger(match, FC_HINT_STYLE, 0, &i) == FcResultMatch)
         out->hintStyle = i;
+    if (FcPatternGetInteger(match, FC_RGBA, 0, &i) == FcResultMatch) {
+        switch (i) {
+        case FC_RGBA_NONE:
+            out->useSubpixel = 0;
+            break;
+        case FC_RGBA_RGB:
+        case FC_RGBA_BGR:
+        case FC_RGBA_VRGB:
+        case FC_RGBA_VBGR:
+            out->useSubpixel = 1;
+            break;
+        default:
+            // This includes FC_RGBA_UNKNOWN.
+            out->useSubpixel = 2;
+            break;
+        }
+    }
 
     FcPatternDestroy(match);
 }
