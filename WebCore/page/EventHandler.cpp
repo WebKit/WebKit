@@ -2045,10 +2045,6 @@ bool EventHandler::sendContextMenuEventForKey()
     Position start = selectionController->selection().start();
 
     if (start.node() && (selectionController->rootEditableElement() || selectionController->isRange())) {
-        RenderObject* renderer = start.node()->renderer();
-        if (!renderer)
-            return false;
-
         RefPtr<Range> selection = selectionController->toNormalizedRange();
         IntRect firstRect = m_frame->firstRectForRange(selection.get());
 

@@ -294,24 +294,31 @@ String Frame::selectedText() const
 IntRect Frame::firstRectForRange(Range* range) const
 {
     int extraWidthToEndOfLine = 0;
-    ExceptionCode ec = 0;
-    ASSERT(range->startContainer(ec));
-    ASSERT(range->endContainer(ec));
+    ASSERT(range->startContainer());
+    ASSERT(range->endContainer());
 
     InlineBox* startInlineBox;
     int startCaretOffset;
-    range->startPosition().getInlineBoxAndOffset(DOWNSTREAM, startInlineBox, startCaretOffset);
+    Position startPosition = VisiblePosition(range->startPosition()).deepEquivalent();
+    if (startPosition.isNull())
+        return IntRect();
+    startPosition.getInlineBoxAndOffset(DOWNSTREAM, startInlineBox, startCaretOffset);
 
-    RenderObject* startRenderer = range->startContainer(ec)->renderer();
+    RenderObject* startRenderer = startPosition.node()->renderer();
+    ASSERT(startRenderer);
     IntRect startCaretRect = startRenderer->localCaretRect(startInlineBox, startCaretOffset, &extraWidthToEndOfLine);
     if (startCaretRect != IntRect())
         startCaretRect = startRenderer->localToAbsoluteQuad(FloatRect(startCaretRect)).enclosingBoundingBox();
 
     InlineBox* endInlineBox;
     int endCaretOffset;
-    range->endPosition().getInlineBoxAndOffset(UPSTREAM, endInlineBox, endCaretOffset);
+    Position endPosition = VisiblePosition(range->endPosition()).deepEquivalent();
+    if (endPosition.isNull())
+        return IntRect();
+    endPosition.getInlineBoxAndOffset(UPSTREAM, endInlineBox, endCaretOffset);
 
-    RenderObject* endRenderer = range->endContainer(ec)->renderer();
+    RenderObject* endRenderer = endPosition.node()->renderer();
+    ASSERT(endRenderer);
     IntRect endCaretRect = endRenderer->localCaretRect(endInlineBox, endCaretOffset);
     if (endCaretRect != IntRect())
         endCaretRect = endRenderer->localToAbsoluteQuad(FloatRect(endCaretRect)).enclosingBoundingBox();

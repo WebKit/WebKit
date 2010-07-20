@@ -1,3 +1,17 @@
+2010-07-20  Tony Chang  <tony@chromium.org>
+
+        Reviewed by Dan Bernstein.
+
+        [chromium] crash in Position::getInlineBoxAndOffset
+        https://bugs.webkit.org/show_bug.cgi?id=42202
+
+        * editing/selection/firstRect-crash-expected.txt: Added.
+        * editing/selection/firstRect-crash.html: Added.
+        * platform/mac/editing/input/caret-primary-bidi-expected.txt: Fix some negative ranges.
+        * platform/mac/editing/input/range-for-empty-document-expected.txt:
+        * platform/mac/editing/selection/move-left-right-expected.txt: Removed since we now match the shared expected results.
+        * platform/win/editing/selection/move-left-right-expected.txt: Removed since it's the same as the shared expected results.
+
 2010-07-20  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Maciej Stachowiak.

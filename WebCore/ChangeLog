@@ -1,3 +1,19 @@
+2010-07-20  Tony Chang  <tony@chromium.org>
+
+        Reviewed by Dan Bernstein.
+
+        [chromium] crash in Position::getInlineBoxAndOffset
+        https://bugs.webkit.org/show_bug.cgi?id=42202
+
+        Test: editing/selection/firstRect-crash.html
+        Manual test: win/contextmenu-key2.html
+
+        * page/EventHandler.cpp: Code no longer needed
+        * page/Frame.cpp:
+        (WebCore::Frame::firstRectForRange): Normalize Positions to VisiblePositions because
+            Positions may be pointing to nodes that have no renderer.  If there's no renderer,
+            getInlineBoxAndOffset will crash.
+
 2010-07-20  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Darin Adler.
