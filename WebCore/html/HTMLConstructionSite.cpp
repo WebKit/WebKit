@@ -341,7 +341,7 @@ PassRefPtr<Element> HTMLConstructionSite::createHTMLElementFromSavedElement(Elem
     // FIXME: This method is wrong.  We should be using the original token.
     // Using an Element* causes us to fail examples like this:
     // <b id="1"><p><script>document.getElementById("1").id = "2"</script></p>TEXT</b>
-    // When reconstructActiveFormattingElements calls this method to open
+    // When reconstructTheActiveFormattingElements calls this method to open
     // a second <b> tag to wrap TEXT, it will have id "2", even though the HTML5
     // spec implies it should be "1".  Minefield matches the HTML5 spec here.
 

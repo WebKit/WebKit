@@ -1712,7 +1712,15 @@ void HTMLTreeBuilder::callTheAdoptionAgency(AtomicHTMLToken& token)
         // 9
         reparentChildren(furthestBlock->element(), newElement.get());
         // 10
-        furthestBlock->element()->parserAddChild(newElement);
+        Element* furthestBlockElement = furthestBlock->element();
+        // FIXME: All this creation / parserAddChild / attach business should
+        //        be in HTMLConstructionSite.  My guess is that steps 8--12
+        //        should all be in some HTMLConstructionSite function.
+        furthestBlockElement->parserAddChild(newElement);
+        if (furthestBlockElement->attached()) {
+            ASSERT(!newElement->attached());
+            newElement->attach();
+        }
         // 11
         m_tree.activeFormattingElements()->remove(formattingElement);
         m_tree.activeFormattingElements()->insertAt(newElement.get(), bookmark);
