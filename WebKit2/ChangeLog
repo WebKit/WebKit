@@ -1,3 +1,9 @@
+2010-07-21  Anders Carlsson  <andersca@apple.com>
+
+        Land file I forgot to add.
+
+        * WebProcess/com.apple.WebProcess.sb: Added.
+
 2010-07-21  Adam Roben  <aroben@apple.com>
 
         Move WebKit2WebProcess's settings to a vsprops file

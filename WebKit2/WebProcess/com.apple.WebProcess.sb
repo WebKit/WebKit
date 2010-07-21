@@ -1,0 +1,59 @@
+(version 1)
+(deny default)
+
+(allow ipc-posix-shm sysctl-read system-audit system-socket file-read-metadata)
+
+(allow file-read*
+       ;; Basic system paths
+       (subpath "/System")
+       (subpath "/usr/share")
+       (subpath "/Library/Fonts")
+       (literal "/dev/dtracehelper")
+       (literal "/dev/urandom")
+       (literal "/private/var/db/mds/messages/se_SecurityMessages")
+
+       ;; System and user preferences
+       (literal "/Library/Preferences/.GlobalPreferences.plist")
+       (literal (string-append (param "_HOME") "/Library/Preferences/.GlobalPreferences.plist"))
+       (regex (string-append "^" (param "_HOME") "/Library/Preferences/ByHost/\.GlobalPreferences\."))
+       (literal (string-append (param "_HOME") "/Library/Preferences/com.apple.LaunchServices.plist"))
+
+       ;; On-disk WebKit2 framework location, to account for debug installations
+       ;; outside of /System/Library/Frameworks
+       (subpath (param "webkit2_framework_path"))
+
+       ;; Extensions from UIProcess
+       (extension))
+
+(allow file*
+       ;; Our caches are writable
+       (subpath (string-append (param "_HOME") "/Library/Caches/com.apple.WebProcess"))
+       (literal "/dev/dtracehelper"))
+
+(allow iokit-open
+       ;; This will need to be rethought once we're using accelerated graphics,
+       ;; since we probably can't pre-enumerate the client classes for graphics cards
+       (iokit-user-client-class "IOHIDParamUserClient")
+       (iokit-user-client-class "RootDomainUserClient"))
+
+(allow mach-lookup
+       ;; Various services required by AppKit and other frameworks
+       (global-name "com.apple.CoreServices.coreservicesd")
+       (global-name "com.apple.FontObjectsServer")
+       (global-name "com.apple.FontServer")
+       (global-name "com.apple.SystemConfiguration.configd")
+       (global-name "com.apple.cookied")
+       (global-name "com.apple.distributed_notifications.2")
+       (global-name "com.apple.dock.server")
+       (global-name "com.apple.system.logger")
+       (global-name "com.apple.system.notification_center")
+       (global-name "com.apple.window_proxies")
+       (global-name "com.apple.windowserver.active")
+       (global-name "com.apple.SecurityServer")
+       (global-name "com.apple.ocspd")
+       (local-name "com.apple.WebKit.WebProcess"))
+
+(allow network-outbound
+       ;; Local mDNSResponder for DNS, arbitrary outbound TCP
+       (literal "/private/var/run/mDNSResponder")
+       (remote tcp))
