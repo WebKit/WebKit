@@ -1,5 +1,22 @@
 2010-07-21  Adam Roben  <aroben@apple.com>
 
+        Move InjectedBundle's settings to a vsprops file
+
+        This will make it easier to change settings for all configurations,
+        and to add new configurations.
+
+        Fixes <http://webkit.org/b/42748> InjectedBundle should use vsprops
+        files
+
+        Reviewed by Darin Adler.
+
+        * WebKitTestRunner/Configurations/InjectedBundleCommon.vsprops: Added.
+        Moved settings here...
+        * WebKitTestRunner/InjectedBundle/win/InjectedBundle.vcproj: ...from
+        here.
+
+2010-07-21  Adam Roben  <aroben@apple.com>
+
         Give MiniBrowser our standard set of configurations (minus the *_Cairo
         variants)
 
