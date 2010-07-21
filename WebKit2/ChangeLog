@@ -1,3 +1,15 @@
+2010-07-21  Simon Fraser  <simon.fraser@apple.com>
+
+        Windows build fix.
+
+        Need to supply implementations of PageClient::pageDidEnterAcceleratedCompositing()
+        and pageDidLeaveAcceleratedCompositing() for WebView on Windows.
+
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::pageDidEnterAcceleratedCompositing):
+        (WebKit::WebView::pageDidLeaveAcceleratedCompositing):
+        * UIProcess/win/WebView.h:
+
 2010-07-21  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

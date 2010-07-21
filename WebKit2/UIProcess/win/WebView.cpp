@@ -553,6 +553,16 @@ void WebView::setCursor(const WebCore::Cursor& cursor)
     ::SetCursor(platformCursor);
 }
 
+#if USE(ACCELERATED_COMPOSITING)
+void WebView::pageDidEnterAcceleratedCompositing()
+{
+}
+
+void WebView::pageDidLeaveAcceleratedCompositing()
+{
+}
+#endif // USE(ACCELERATED_COMPOSITING)
+
 // WebCore::WindowMessageListener
 
 void WebView::windowReceivedMessage(HWND, UINT message, WPARAM wParam, LPARAM)

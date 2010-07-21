@@ -95,6 +95,10 @@ private:
     virtual void takeFocus(bool direction);
     virtual void toolTipChanged(const WebCore::String&, const WebCore::String&);
     virtual void setCursor(const WebCore::Cursor&);
+#if USE(ACCELERATED_COMPOSITING)
+    virtual void pageDidEnterAcceleratedCompositing();
+    virtual void pageDidLeaveAcceleratedCompositing();
+#endif
 
     // WebCore::WindowMessageListener
     virtual void windowReceivedMessage(HWND, UINT message, WPARAM, LPARAM);
