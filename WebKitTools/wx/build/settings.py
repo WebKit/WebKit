@@ -99,6 +99,7 @@ jscore_dirs = [
 webcore_dirs = [
     'accessibility',
     'bindings',
+    'bindings/generic',
     'bindings/js',
     'bridge', 
     'bridge/c',

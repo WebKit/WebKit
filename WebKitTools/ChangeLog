@@ -1,3 +1,9 @@
+2010-07-21  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Build fix, adding the WebCore/bindings/generic dir to the list of build dirs.
+
+        * wx/build/settings.py:
+
 2010-07-21  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.
