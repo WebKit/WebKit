@@ -1,3 +1,19 @@
+2010-07-21  Kristian Amlie <kristian.amlie@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Added automatic sqlite extraction for Symbian to QtWebKit.
+
+        Also added sqlite detection in case sqlite is not present in the SDK.
+        This is possible if WebKit is compiled standalone.
+
+        The inclusion part is a consequence of commit c578c6c1d6d in the Qt
+        repository. It will not work on Qt versions < 4.7.1, but that is ok,
+        since the only build system it will affect is marked as experimental
+        in the whole 4.7 series.
+
+        * WebCore.pro:
+
 2010-07-21  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
