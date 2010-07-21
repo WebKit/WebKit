@@ -5443,3 +5443,7 @@ fast/dom/webtiming.html
 fast/dom/webtiming-navigate-within-document.html
 http/tests/misc/webtiming-one-redirect.php
 http/tests/misc/webtiming-two-redirects.php
+
+# Advanced credential handling
+http/tests/security/401-logout/401-logout.php
+http/tests/xmlhttprequest/remember-bad-password.html

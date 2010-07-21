@@ -5872,3 +5872,7 @@ http/tests/misc/webtiming-two-redirects.php
 # Accuracy problems in the results
 # https://bugs.webkit.org/show_bug.cgi?id=42624
 svg/dom/path-parser.html
+
+# Advanced credential handling
+http/tests/security/401-logout/401-logout.php
+http/tests/xmlhttprequest/remember-bad-password.html
