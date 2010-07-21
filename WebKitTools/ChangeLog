@@ -1,5 +1,25 @@
 2010-07-21  Adam Roben  <aroben@apple.com>
 
+        Give MiniBrowser our standard set of configurations (minus the *_Cairo
+        variants)
+
+        MiniBrowser already had a configuration called "Release", but it was
+        using mostly the same settings as Debug. And its Debug configuration
+        was using the settings that Debug_Internal should be using.
+
+        Fixes <http://webkit.org/b/42746> MiniBrowser's build configurations
+        are screwy
+
+        Reviewed by Darin Adler.
+
+        * MiniBrowser/MiniBrowser.vcproj: Removed debug_internal.vsprops from
+        the Debug configuration. Remove debug.vsprops and
+        debug_internal.vsprops from the Release configuration and replace them
+        with release.vsprops. Added Debug_Internal and Debug_All
+        configurations.
+
+2010-07-21  Adam Roben  <aroben@apple.com>
+
         Move MiniBrowser's settings to a vsprops file
 
         This will make it easier to change settings for all configurations,
