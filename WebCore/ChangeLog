@@ -2,6 +2,18 @@
 
         Reviewed by Eric Seidel.
 
+        <input> elements with no type attribute should be foster parented
+        https://bugs.webkit.org/show_bug.cgi?id=42725
+
+        Fix spec transcription error.
+
+        * html/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::processStartTagForInTable):
+
+2010-07-21  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         Fix fast/css/last-child-style-sharing.html
         https://bugs.webkit.org/show_bug.cgi?id=42731
 

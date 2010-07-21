@@ -177,7 +177,6 @@ resources/html5test-com.dat:
 9
 10
 11
-20
 
 Test 7 of 24 in resources/html5test-com.dat failed. Input:
 &lang;&rang;
@@ -230,29 +229,6 @@ Expected:
 |   <head>
 |   <body>
 |     "∉"
-
-Test 20 of 24 in resources/html5test-com.dat failed. Input:
-<table><form><input type=hidden><input></form><div></div></table>
-Got:
-| <html>
-|   <head>
-|   <body>
-|     <div>
-|     <table>
-|       <form>
-|       <input>
-|         type="hidden"
-|       <input>
-Expected:
-| <html>
-|   <head>
-|   <body>
-|     <input>
-|     <div>
-|     <table>
-|       <form>
-|       <input>
-|         type="hidden"
 resources/entities01.dat:
 2
 5

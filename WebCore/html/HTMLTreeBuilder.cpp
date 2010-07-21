@@ -1131,7 +1131,7 @@ void HTMLTreeBuilder::processStartTagForInTable(AtomicHTMLToken& token)
     }
     if (token.name() == inputTag) {
         Attribute* typeAttribute = token.getAttributeItem(typeAttr);
-        if (!typeAttribute || equalIgnoringCase(typeAttribute->value(), "hidden")) {
+        if (typeAttribute && equalIgnoringCase(typeAttribute->value(), "hidden")) {
             parseError(token);
             m_tree.insertSelfClosingHTMLElement(token);
             return;
