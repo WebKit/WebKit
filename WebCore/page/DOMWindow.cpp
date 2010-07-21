@@ -673,6 +673,17 @@ NotificationCenter* DOMWindow::webkitNotifications() const
 }
 #endif
 
+void DOMWindow::pageDestroyed()
+{
+#if ENABLE(NOTIFICATIONS)
+    // Clearing Notifications requests involves accessing the client so it must be done
+    // before the frame is detached.
+    if (m_notifications)
+        m_notifications->disconnectFrame();
+    m_notifications = 0;
+#endif
+}
+
 #if ENABLE(INDEXED_DATABASE)
 IndexedDatabaseRequest* DOMWindow::indexedDB() const
 {

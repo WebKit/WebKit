@@ -228,6 +228,8 @@ namespace WebCore {
         NotificationCenter* webkitNotifications() const;
 #endif
 
+        void pageDestroyed();
+
 #if ENABLE(INDEXED_DATABASE)
         IndexedDatabaseRequest* indexedDB() const;
 #endif

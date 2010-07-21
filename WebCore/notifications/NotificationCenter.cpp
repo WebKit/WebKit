@@ -61,6 +61,11 @@ void NotificationCenter::requestPermission(PassRefPtr<VoidCallback> callback)
 
 void NotificationCenter::disconnectFrame()
 {
+    // m_notificationPresenter should never be 0. But just to be safe, we check it here.
+    // Due to the mysterious bug http://code.google.com/p/chromium/issues/detail?id=49323.
+    ASSERT(m_notificationPresenter);
+    if (!m_notificationPresenter)
+        return;
     m_notificationPresenter->cancelRequestsForPermission(m_scriptExecutionContext);
     m_notificationPresenter = 0;
 }

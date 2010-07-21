@@ -1347,6 +1347,9 @@ void Frame::pageDestroyed()
     if (Frame* parent = tree()->parent())
         parent->loader()->checkLoadComplete();
 
+    if (m_domWindow)
+        m_domWindow->pageDestroyed();
+
     // FIXME: It's unclear as to why this is called more than once, but it is,
     // so page() could be NULL.
     if (page() && page()->focusController()->focusedFrame() == this)

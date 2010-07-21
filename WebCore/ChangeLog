@@ -1,3 +1,22 @@
+2010-07-21  Yael Aharon  <yael.aharon@nokia.com>
+
+        Reviewed by Darin Adler.
+
+        Crash in Notification::disconnectFrame() triggered by Frame::lifeSupportTimerFired()
+        https://bugs.webkit.org/show_bug.cgi?id=42534
+
+        Call NotificationsCenter::disconnectFrame() when the frame is disconnected from the page.
+        Calling it from the destructor of Frame is too late and sometimes causes access violation.
+        I was not able to reproduce this crash, so did not add new tests.
+        This patch is based on the error reported in 
+        http://code.google.com/p/chromium/issues/detail?id=49323.
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::pageDestroyed):
+        * page/DOMWindow.h:
+        * page/Frame.cpp:
+        (WebCore::Frame::pageDestroyed):
+
 2010-07-21  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.
