@@ -233,6 +233,7 @@ void LayoutTestController::WorkQueue::addWork(WorkItem* work)
 void LayoutTestController::dumpAsText(const CppArgumentList& arguments, CppVariant* result)
 {
     m_dumpAsText = true;
+    m_generatePixelResults = false;
 
     // Optional paramater, describing whether it's allowed to dump pixel results in dumpAsText mode.
     if (arguments.size() > 0 && arguments[0].isBool())
