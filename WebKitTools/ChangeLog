@@ -1,5 +1,21 @@
 2010-07-21  Adam Roben  <aroben@apple.com>
 
+        Move MiniBrowser's settings to a vsprops file
+
+        This will make it easier to change settings for all configurations,
+        and to add new configurations.
+
+        MiniBrowser should use vsprops files
+        https://bugs.webkit.org/show_bug.cgi?id=42745
+
+        Reviewed by Darin Adler.
+
+        * MiniBrowser/Configurations/MiniBrowserCommon.vsprops: Added. Moved
+        settings here...
+        * MiniBrowser/MiniBrowser.vcproj: ...from here.
+
+2010-07-21  Adam Roben  <aroben@apple.com>
+
         Fix compiler warnings when building MiniBrowser
 
         Also cleaned up the .vcproj a bit.
