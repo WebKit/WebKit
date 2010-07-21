@@ -1,5 +1,18 @@
 2010-07-21  Adam Roben  <aroben@apple.com>
 
+        Update WebKit.sln for InjectedBundle's Debug_Internal configuration
+
+        Fixes <http://webkit.org/b/42749> InjectedBundle's build
+        configurations are screwy
+
+        Reviewed by Darin Adler.
+
+        * WebKit.vcproj/WebKit.sln: Build the Debug_Internal variant of
+        InjectedBundle when we're using the Debug_Internal solution
+        configuration.
+
+2010-07-21  Adam Roben  <aroben@apple.com>
+
         Add MiniBrowser to WebKit.sln
 
         It is the last project to build.

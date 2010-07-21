@@ -415,8 +415,8 @@ Global
 		{CBC3391C-F060-4BF5-A66E-81404168816B}.Debug_All|Win32.Build.0 = Debug_All|Win32
 		{CBC3391C-F060-4BF5-A66E-81404168816B}.Debug_Cairo|Win32.ActiveCfg = Debug|Win32
 		{CBC3391C-F060-4BF5-A66E-81404168816B}.Debug_Cairo|Win32.Build.0 = Debug|Win32
-		{CBC3391C-F060-4BF5-A66E-81404168816B}.Debug_Internal|Win32.ActiveCfg = Debug|Win32
-		{CBC3391C-F060-4BF5-A66E-81404168816B}.Debug_Internal|Win32.Build.0 = Debug|Win32
+		{CBC3391C-F060-4BF5-A66E-81404168816B}.Debug_Internal|Win32.ActiveCfg = Debug_Internal|Win32
+		{CBC3391C-F060-4BF5-A66E-81404168816B}.Debug_Internal|Win32.Build.0 = Debug_Internal|Win32
 		{CBC3391C-F060-4BF5-A66E-81404168816B}.Debug|Win32.ActiveCfg = Debug|Win32
 		{CBC3391C-F060-4BF5-A66E-81404168816B}.Debug|Win32.Build.0 = Debug|Win32
 		{CBC3391C-F060-4BF5-A66E-81404168816B}.Release_Cairo|Win32.ActiveCfg = Release|Win32

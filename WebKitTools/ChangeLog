@@ -1,5 +1,26 @@
 2010-07-21  Adam Roben  <aroben@apple.com>
 
+        Give InjectedBundle our standard set of configurations (minus the
+        *_Cairo variants)
+
+        InjectedBundle's Debug_All configuration was the same as is Debug
+        configuration, and it was missing a Debug_Internal configuration.
+
+        Fixes <http://webkit.org/b/42749> InjectedBundle's build
+        configurations are screwy
+
+        Reviewed by Darin Adler.
+
+        * WebKitTestRunner/InjectedBundle/win/InjectedBundle.vcproj: Added
+        debug_internal.vsprops and debug_all.vsprops to the Debug_All
+        configuration. Added a Debug_Internal configuration.
+
+        * WebKitTestRunner/WebKitTestRunner.sln: Build the Debug_Internal
+        variant of InjectedBundle when we're using the Debug_Internal solution
+        configuration.
+
+2010-07-21  Adam Roben  <aroben@apple.com>
+
         Move InjectedBundle's settings to a vsprops file
 
         This will make it easier to change settings for all configurations,
