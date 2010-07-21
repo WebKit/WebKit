@@ -113,6 +113,11 @@ public:
     static bool ontouchcancelEnabled() { return isTouchEnabled; }
 #endif
 
+    static void setDeviceOrientationEnabled(bool isEnabled) { isDeviceOrientationEnabled = isEnabled; }
+    static bool deviceOrientationEnabled() { return isDeviceOrientationEnabled; }
+    static bool deviceOrientationEventEnabled() { return isDeviceOrientationEnabled; }
+    static bool ondeviceorientationEnabled() { return isDeviceOrientationEnabled; }
+
 private:
     // Never instantiate.
     RuntimeEnabledFeatures() { }
@@ -126,6 +131,7 @@ private:
     static bool isWebGLEnabled;
     static bool isPushStateEnabled;
     static bool isTouchEnabled;
+    static bool isDeviceOrientationEnabled;
 };
 
 } // namespace WebCore

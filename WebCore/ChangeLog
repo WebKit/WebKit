@@ -1,3 +1,28 @@
+2010-07-21  Hans Wennborg  <hans@chromium.org>
+
+        Reviewed by Steve Block.
+
+        Runtime feature switch for device orientation
+        https://bugs.webkit.org/show_bug.cgi?id=42265
+
+        Add a runtime feature switch that decides whether device orientation
+        events are available or not. Defaults to true.
+
+        * WebCore.vcproj/WebCoreCommon.vsprops: Add bindings/generic to include path.
+        * bindings/generic/RuntimeEnabledFeatures.cpp:
+        * bindings/generic/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::setDeviceOrientationEnabled):
+        (WebCore::RuntimeEnabledFeatures::deviceOrientationEnabled):
+        (WebCore::RuntimeEnabledFeatures::deviceOrientationEventEnabled):
+        (WebCore::RuntimeEnabledFeatures::ondeviceorientationEnabled):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::addEventListener):
+        (WebCore::DOMWindow::removeEventListener):
+        (WebCore::DOMWindow::removeAllEventListeners):
+        * page/DOMWindow.idl:
+        * page/Page.cpp:
+        (WebCore::Page::Page):
+
 2010-07-21  Zoltan Herczeg  <zherczeg@webkit.org>
 
         Reviewed Nikolas Zimmermann.
