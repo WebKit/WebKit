@@ -70,36 +70,22 @@ HTMLFormattingElementList::Bookmark HTMLFormattingElementList::bookmarkFor(Eleme
 {
     size_t index = m_entries.reverseFind(element);
     ASSERT(index != notFound);
-    Element* elementBefore = (index > 1) ? m_entries[index - 1].element() : 0;
-    Element* elementAfter = (index < m_entries.size() - 1) ? m_entries[index + 1].element() : 0;
-    return Bookmark(elementBefore, elementAfter);
+    return Bookmark(&at(index));
 }
 
-void HTMLFormattingElementList::insertAt(Element* element, const Bookmark& bookmark)
+void HTMLFormattingElementList::swapTo(Element* oldElement, Element* newElement, const Bookmark& bookmark)
 {
-    size_t beforeIndex = notFound;
-    if (bookmark.elementBefore()) {
-        beforeIndex = m_entries.reverseFind(bookmark.elementBefore());
-        ASSERT(beforeIndex != notFound);
+    ASSERT(contains(oldElement));
+    ASSERT(!contains(newElement));
+    if (!bookmark.hasBeenMoved()) {
+        ASSERT(bookmark.mark()->element() == oldElement);
+        bookmark.mark()->replaceElement(newElement);
+        return;
     }
-    size_t afterIndex = notFound;
-    if (bookmark.elementAfter()) {
-        afterIndex = m_entries.reverseFind(bookmark.elementAfter());
-        ASSERT(afterIndex != notFound);
-    }
-
-    if (!bookmark.elementBefore()) {
-        if (bookmark.elementAfter())
-            ASSERT(!afterIndex);
-        m_entries.prepend(element);
-    } else {
-        if (bookmark.elementAfter()) {
-            // Bookmarks are not general purpose.  They're only for the Adoption
-            // Agency. Assume the bookmarked element was already removed.
-            ASSERT(beforeIndex + 1 == afterIndex);
-        }
-        m_entries.insert(beforeIndex + 1, element);
-    }
+    size_t index = bookmark.mark() - first();
+    ASSERT(index < size());
+    m_entries.insert(index + 1, newElement);
+    remove(oldElement);
 }
 
 void HTMLFormattingElementList::append(Element* element)

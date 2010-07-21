@@ -1688,7 +1688,7 @@ void HTMLTreeBuilder::callTheAdoptionAgency(AtomicHTMLToken& token)
             // was replaced in 6.5.
             // http://www.w3.org/Bugs/Public/show_bug.cgi?id=10096
             if (lastNode == furthestBlock)
-                bookmark.moveToAfter(node->element());
+                bookmark.moveToAfter(nodeEntry);
             // 6.6
             // Use appendChild instead of parserAddChild to handle possible reparenting.
             ExceptionCode ec;
@@ -1725,8 +1725,7 @@ void HTMLTreeBuilder::callTheAdoptionAgency(AtomicHTMLToken& token)
             newElement->attach();
         }
         // 11
-        m_tree.activeFormattingElements()->remove(formattingElement);
-        m_tree.activeFormattingElements()->insertAt(newElement.get(), bookmark);
+        m_tree.activeFormattingElements()->swapTo(formattingElement, newElement.get(), bookmark);
         // 12
         m_tree.openElements()->remove(formattingElement);
         m_tree.openElements()->insertAbove(newElement, furthestBlock);
