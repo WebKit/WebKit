@@ -1,3 +1,17 @@
+2010-07-21  Adam Roben  <aroben@apple.com>
+
+        Add MiniBrowser to WebKit.sln
+
+        It is the last project to build.
+
+        Fixes <http://webkit.org/b/42747> build-webkit should build
+        MiniBrowser
+
+        Reviewed by Darin Adler.
+
+        * WebKit.vcproj/WebKit.sln: Added MiniBrowser, and made it depend on
+        WebKitTestRunner.
+
 2010-07-20  Adam Roben  <aroben@apple.com>
 
         Add WebKitTestRunner and friends to WebKit.sln
