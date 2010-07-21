@@ -5315,28 +5315,25 @@ Expected:
 |         "You should see a 100x100 green Image below.
   "
 |     <font>
-|       "
-"
 |       <img>
 |         alt="Image"
 |         height="100"
-|         style="background-color: green;"
+|         style="background-color:green"
 |         width="100"
-|       "
-"
-|     <font>
-|       "
-"
-|     <font>
 |       "
 "
 |     <table>
 |       "
-  "
+  
+"
 |       <tbody>
 |         <tr>
 |           <td>
 |             "
+"
+|           "
+"
+|         "
 "
 
 Test 7 of 9 in resources/tricky01.dat failed. Input:
