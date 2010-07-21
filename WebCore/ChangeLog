@@ -1,3 +1,31 @@
+2010-07-21  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Assertion failure in AnimationBase::updateStateMachine() coming out of paused state
+        https://bugs.webkit.org/show_bug.cgi?id=37993
+        
+        Added logic to properly handle pausing and resuming when in the 
+        AnimationStateStartWaitStyleAvailable state. This was causing an
+        assert when going out of the pause state because the paused flag
+        was not set.
+        
+        The fix is a straightforward implementation, going into a new
+        AnimationStatePausedWaitStyleAvailable state and setting the paused
+        flag (actually setting the m_pauseTime variable to something other
+        than -1). Also added handling of the new state, both when the 
+        "style available" callback comes in while in this state and when
+        unpausing while in this state. 
+        
+        For now a LayoutTest is not possible since there's no way to go in
+        and out of the pause state. I've opened https://bugs.webkit.org/show_bug.cgi?id=42790
+        to track this.
+
+        * page/animation/AnimationBase.cpp:
+        (WebCore::AnimationBase::updateStateMachine):
+        * page/animation/AnimationBase.h:
+        (WebCore::AnimationBase::):
+
 2010-07-21  Bo Liu  <boliu@chromium.org>
 
         Reviewed by Darin Fisher.

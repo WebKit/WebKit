@@ -964,28 +964,33 @@ void AnimationBase::updateStateMachine(AnimStateInput input, double param)
         case AnimationStateStartWaitStyleAvailable:
             ASSERT(input == AnimationStateInputStyleAvailable || input == AnimationStateInputPlayStatePaused);
 
-            // Start timer has fired, tell the animation to start and wait for it to respond with start time
-            m_animState = AnimationStateStartWaitResponse;
-
-            overrideAnimations();
-
-            // Start the animation
-            if (overridden()) {
-                // We won't try to start accelerated animations if we are overridden and
-                // just move on to the next state.
+            if (input == AnimationStateInputStyleAvailable) {
+                // Start timer has fired, tell the animation to start and wait for it to respond with start time
                 m_animState = AnimationStateStartWaitResponse;
-                m_isAccelerated = false;
-                updateStateMachine(AnimationStateInputStartTimeSet, beginAnimationUpdateTime());
-            }
-            else {
-                double timeOffset = 0;
-                // If the value for 'animation-delay' is negative then the animation appears to have started in the past.
-                if (m_animation->delay() < 0)
-                    timeOffset = -m_animation->delay();
-                bool started = startAnimation(timeOffset);
 
-                m_compAnim->animationController()->addToStartTimeResponseWaitList(this, started);
-                m_isAccelerated = started;
+                overrideAnimations();
+
+                // Start the animation
+                if (overridden()) {
+                    // We won't try to start accelerated animations if we are overridden and
+                    // just move on to the next state.
+                    m_animState = AnimationStateStartWaitResponse;
+                    m_isAccelerated = false;
+                    updateStateMachine(AnimationStateInputStartTimeSet, beginAnimationUpdateTime());
+                } else {
+                    double timeOffset = 0;
+                    // If the value for 'animation-delay' is negative then the animation appears to have started in the past.
+                    if (m_animation->delay() < 0)
+                        timeOffset = -m_animation->delay();
+                    bool started = startAnimation(timeOffset);
+
+                    m_compAnim->animationController()->addToStartTimeResponseWaitList(this, started);
+                    m_isAccelerated = started;
+                }
+            } else {
+                // We're waiting for the style to be available and we got a pause. Pause and wait
+                m_pauseTime = beginAnimationUpdateTime();
+                m_animState = AnimationStatePausedWaitStyleAvailable;
             }
             break;
         case AnimationStateStartWaitResponse:
@@ -1075,17 +1080,51 @@ void AnimationBase::updateStateMachine(AnimStateInput input, double param)
             updateStateMachine(AnimationStateInputStartAnimation, 0);
             break;
         case AnimationStatePausedWaitResponse:
+        case AnimationStatePausedWaitStyleAvailable:
         case AnimationStatePausedRun:
             // We treat these two cases the same. The only difference is that, when we are in
             // AnimationStatePausedWaitResponse, we don't yet have a valid startTime, so we send 0 to startAnimation.
             // When the AnimationStateInputStartTimeSet comes in and we were in AnimationStatePausedRun, we will notice
             // that we have already set the startTime and will ignore it.
-            ASSERT(input == AnimationStateInputPlayStateRunning || input == AnimationStateInputStartTimeSet);
+            ASSERT(input == AnimationStateInputPlayStateRunning || input == AnimationStateInputStartTimeSet || input == AnimationStateInputStyleAvailable);
             ASSERT(paused());
             
-            // If we are paused, but we get the callback that notifies us that an accelerated animation started,
-            // then we ignore the start time and just move into the paused-run state.
-            if (m_animState == AnimationStatePausedWaitResponse && input == AnimationStateInputStartTimeSet) {
+            if (input == AnimationStateInputPlayStateRunning) {
+                // Update the times
+                if (m_animState == AnimationStatePausedRun)
+                    m_startTime += beginAnimationUpdateTime() - m_pauseTime;
+                else
+                    m_startTime = 0;
+                m_pauseTime = -1;
+
+                if (m_animState == AnimationStatePausedWaitStyleAvailable)
+                    m_animState = AnimationStateStartWaitStyleAvailable;
+                else {
+                    // We were either running or waiting for a begin time response from the animation.
+                    // Either way we need to restart the animation (possibly with an offset if we
+                    // had already been running) and wait for it to start.
+                    m_animState = AnimationStateStartWaitResponse;
+
+                    // Start the animation
+                    if (overridden()) {
+                        // We won't try to start accelerated animations if we are overridden and
+                        // just move on to the next state.
+                        updateStateMachine(AnimationStateInputStartTimeSet, beginAnimationUpdateTime());
+                        m_isAccelerated = true;
+                    } else {
+                        bool started = startAnimation(beginAnimationUpdateTime() - m_startTime);
+                        m_compAnim->animationController()->addToStartTimeResponseWaitList(this, started);
+                        m_isAccelerated = !started;
+                    }
+                }
+                break;
+            }
+            
+            if (input == AnimationStateInputStartTimeSet) {
+                ASSERT(m_animState == AnimationStatePausedWaitResponse);
+                
+                // We are paused but we got the callback that notifies us that an accelerated animation started.
+                // We ignore the start time and just move into the paused-run state.
                 m_animState = AnimationStatePausedRun;
                 ASSERT(m_startTime == 0);
                 m_startTime = param;
@@ -1093,27 +1132,11 @@ void AnimationBase::updateStateMachine(AnimStateInput input, double param)
                 break;
             }
             
-            // Update the times
-            if (m_animState == AnimationStatePausedRun)
-                m_startTime += beginAnimationUpdateTime() - m_pauseTime;
-            else
-                m_startTime = 0;
-            m_pauseTime = -1;
-
-            // We were waiting for a begin time response from the animation, go back and wait again
-            m_animState = AnimationStateStartWaitResponse;
-
-            // Start the animation
-            if (overridden()) {
-                // We won't try to start accelerated animations if we are overridden and
-                // just move on to the next state.
-                updateStateMachine(AnimationStateInputStartTimeSet, beginAnimationUpdateTime());
-                m_isAccelerated = false;
-            } else {
-                bool started = startAnimation(beginAnimationUpdateTime() - m_startTime);
-                m_compAnim->animationController()->addToStartTimeResponseWaitList(this, started);
-                m_isAccelerated = started;
-            }
+            ASSERT(m_animState == AnimationStatePausedWaitStyleAvailable);
+            // We are paused but we got the callback that notifies us that style has been updated.
+            // We move to the AnimationStatePausedWaitResponse state
+            m_animState = AnimationStatePausedWaitResponse;
+            overrideAnimations();
             break;
         case AnimationStateFillingForwards:
         case AnimationStateDone:

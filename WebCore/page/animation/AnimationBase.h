@@ -69,6 +69,7 @@ public:
         AnimationStateLooping,              // response received, animation running, loop timer running, waiting for fire
         AnimationStateEnding,               // received, animation running, end timer running, waiting for fire
         AnimationStatePausedWaitTimer,      // in pause mode when animation started
+        AnimationStatePausedWaitStyleAvailable, // in pause mode when waiting for style setup
         AnimationStatePausedWaitResponse,   // animation paused when in STARTING state
         AnimationStatePausedRun,            // animation paused when in LOOPING or ENDING state
         AnimationStateDone,                 // end timer fired, animation finished and removed
