@@ -27,7 +27,13 @@
 
 #include "WKBundleAPICast.h"
 #include "WKBundleInitialize.h"
+#include <WebCore/PlatformString.h>
+#include <wtf/text/CString.h>
 #include <wtf/RetainPtr.h>
+
+#if ENABLE(WEB_PROCESS_SANDBOX)
+#include <sandbox.h>
+#endif
 
 using namespace WebCore;
 
@@ -35,6 +41,18 @@ namespace WebKit {
 
 bool InjectedBundle::load()
 {
+#if ENABLE(WEB_PROCESS_SANDBOX)
+    if (!m_sandboxToken.isEmpty()) {
+        CString bundlePath = m_path.utf8();
+        CString sandboxToken = m_sandboxToken.utf8();
+        int rv = sandbox_consume_extension(bundlePath.data(), sandboxToken.data());
+        if (rv) {
+            fprintf(stderr, "InjectedBundle::load failed - Could not consume (%d) bundle sandbox extension [%s] for [%s].\n", rv, sandboxToken.data(), bundlePath.data());
+            return false;
+        }
+    }
+#endif
+    
     RetainPtr<CFStringRef> injectedBundlePathStr(AdoptCF, CFStringCreateWithCharacters(0, reinterpret_cast<const UniChar*>(m_path.characters()), m_path.length()));
     if (!injectedBundlePathStr) {
         fprintf(stderr, "InjectedBundle::load failed - Could not create the path string.\n");

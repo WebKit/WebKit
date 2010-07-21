@@ -29,12 +29,19 @@
 #import "RunLoop.h"
 #import "WebProcess.h"
 #import "WebSystemInterface.h"
+#import <WebKit2/WKView.h>
 #import <objc/objc-auto.h>
 #import <runtime/InitializeThreading.h>
 #import <servers/bootstrap.h>
 #import <signal.h>
+#import <stdio.h>
+#import <sysexits.h>
 #import <unistd.h>
 #import <wtf/Threading.h>
+
+#if ENABLE(WEB_PROCESS_SANDBOX)
+#import <sandbox.h>
+#endif
 
 // FIXME: We should be doing this another way.
 extern "C" kern_return_t bootstrap_look_up2(mach_port_t, const name_t, mach_port_t*, pid_t, uint64_t);
@@ -47,6 +54,20 @@ namespace WebKit {
 
 int WebProcessMain(CommandLine*)
 {
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+
+#if ENABLE(WEB_PROCESS_SANDBOX)
+    char* errorBuf;
+    const char* frameworkPath = [[[NSBundle bundleForClass:[WKView class]] bundlePath] UTF8String];
+    const char* profilePath = [[[NSBundle mainBundle] pathForResource:@"com.apple.WebProcess" ofType:@"sb"] UTF8String];
+    const char* const sandboxParam[] = { "webkit2_framework_path", frameworkPath, NULL };
+
+    if (sandbox_init_with_parameters(profilePath, SANDBOX_NAMED_EXTERNAL, sandboxParam, &errorBuf)) {
+        fprintf(stderr, "WebProcess: couldn't initialize sandbox profile [%s] with framework path [%s]: %s\n", profilePath, frameworkPath, errorBuf);
+        exit(EX_NOPERM);
+    }
+#endif
+
     mach_port_t serverPort;
     kern_return_t kr = bootstrap_look_up2(bootstrap_port, "com.apple.WebKit.WebProcess", &serverPort, getppid(), /* BOOTSTRAP_PER_PID_SERVICE */ 1);
     if (kr) {
@@ -54,7 +75,6 @@ int WebProcessMain(CommandLine*)
         return 2;
     }
     
-    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 
 #if !SHOW_CRASH_REPORTER
     // Installs signal handlers that exit on a crash so that CrashReporter does not show up.

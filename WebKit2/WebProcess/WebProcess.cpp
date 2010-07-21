@@ -76,12 +76,20 @@ void WebProcess::initialize(CoreIPC::Connection::Identifier serverIdentifier, Ru
     m_runLoop = runLoop;
 }
 
+#if ENABLE(WEB_PROCESS_SANDBOX)
+void WebProcess::loadInjectedBundle(const String& path, const String& token)
+#else
 void WebProcess::loadInjectedBundle(const String& path)
+#endif
 {
     ASSERT(m_pageMap.isEmpty());
     ASSERT(!path.isEmpty());
 
     m_injectedBundle = InjectedBundle::create(path);
+#if ENABLE(WEB_PROCESS_SANDBOX)
+    m_injectedBundle->setSandboxToken(token);
+#endif
+
     if (!m_injectedBundle->load()) {
         // Don't keep around the InjectedBundle reference if the load fails.
         m_injectedBundle.clear();
@@ -159,11 +167,21 @@ void WebProcess::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::Mes
         switch (messageID.get<WebProcessMessage::Kind>()) {
             case WebProcessMessage::LoadInjectedBundle: {
                 String path;
+
+#if ENABLE(WEB_PROCESS_SANDBOX)
+                String token;
+                if (!arguments->decode(CoreIPC::Out(path, token)))
+                    return;
+
+                loadInjectedBundle(path, token);
+                return;
+#else
                 if (!arguments->decode(CoreIPC::Out(path)))
                     return;
 
                 loadInjectedBundle(path);
                 return;
+#endif
             }
             case WebProcessMessage::SetApplicationCacheDirectory: {
                 String directory;

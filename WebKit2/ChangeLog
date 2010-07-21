@@ -1,3 +1,45 @@
+2010-07-20  Ivan Krstić  <ike@apple.com>
+
+        Reviewed and tweaked by Anders Carlsson and Sam Weinig.
+
+        Put WebProcess in a sandbox. All of the following changes are
+        Mac-only.
+        <rdar://problem/7865269>
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::WebProcessProxy):
+        Send Sandbox extension for injected bundle to WebProcess.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Add Sandbox profile to Resources for WebProcess.
+
+        * WebProcess/InjectedBundle/InjectedBundle.h:
+        New function InjectedBundle::setSandboxToken.
+
+        * WebProcess/InjectedBundle/mac/InjectedBundleMac.cpp:
+        (WebKit::InjectedBundle::load):
+        Consume Sandbox token for the bundle if present.
+
+        (WebKit::InjectedBundle::setSandboxToken):
+        Set Sandbox token for the bundle.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::loadInjectedBundle):
+        Extra function parameter for Sandbox token.
+
+        (WebKit::WebProcess::didReceiveMessage):
+        Pass Sandbox token to loadInjectedBundle().
+
+        * WebProcess/WebProcess.h:
+        Extra function parameter for Sandbox token in loadInjectedBundle().
+
+        * WebProcess/com.apple.WebProcess.sb: Added.
+        Sandbox profile for WebProcess.
+
+        * WebProcess/mac/WebProcessMainMac.mm:
+        (WebKit::WebProcessMain):
+        Initialize Sandbox, exit on failure.
+
 2010-07-20  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Brady Eidson.

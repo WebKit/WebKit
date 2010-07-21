@@ -53,6 +53,10 @@ public:
 
     bool load();
 
+#if ENABLE(WEB_PROCESS_SANDBOX)
+    void setSandboxToken(const WebCore::String& sandboxToken) { m_sandboxToken = sandboxToken; }
+#endif
+
     // API
     void initializeClient(WKBundleClient*);
     void postMessage(WebCore::StringImpl*);
@@ -67,6 +71,10 @@ private:
 
     WebCore::String m_path;
     PlatformBundle m_platformBundle; // This is leaked right now, since we never unload the bundle/module.
+
+#if ENABLE(WEB_PROCESS_SANDBOX)
+    WebCore::String m_sandboxToken;
+#endif
 
     WKBundleClient m_client;
 };

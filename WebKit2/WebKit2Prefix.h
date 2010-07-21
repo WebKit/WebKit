@@ -36,6 +36,10 @@
 
 #elif defined(__APPLE__)
 
+#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#define ENABLE_WEB_PROCESS_SANDBOX 1
+#endif
+
 #import <CoreGraphics/CoreGraphics.h>
 
 #ifdef __OBJC__

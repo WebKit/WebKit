@@ -36,6 +36,11 @@
 #include "WebProcessProxyMessageKinds.h"
 #include <WebCore/KURL.h>
 #include <WebCore/PlatformString.h>
+#include <wtf/text/CString.h>
+
+#if ENABLE(WEB_PROCESS_SANDBOX)
+#include <sandbox.h>
+#endif
 
 using namespace WebCore;
 
@@ -64,8 +69,18 @@ WebProcessProxy::WebProcessProxy(WebContext* context)
 
     // FIXME: We could instead send the bundle path as part of the arguments to process creation?
     // Would that be better than sending a connection?
-    if (!context->injectedBundlePath().isEmpty())
+    if (!context->injectedBundlePath().isEmpty()) {
+#if ENABLE(WEB_PROCESS_SANDBOX)
+        char *sandboxBundleToken = NULL;
+        CString injectedBundlePath = context->injectedBundlePath().utf8();
+        sandbox_issue_extension(injectedBundlePath.data(), &sandboxBundleToken);
+        send(WebProcessMessage::LoadInjectedBundle, 0, CoreIPC::In(context->injectedBundlePath(), String::fromUTF8(sandboxBundleToken)));
+        if (sandboxBundleToken)
+            free(sandboxBundleToken);
+#else
         send(WebProcessMessage::LoadInjectedBundle, 0, CoreIPC::In(context->injectedBundlePath()));
+#endif
+    }
 
 #if USE(ACCELERATED_COMPOSITING)
     setUpAcceleratedCompositing();
