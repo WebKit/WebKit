@@ -1,3 +1,15 @@
+2010-07-21  Ben Murdoch  <benm@google.com>
+
+        Unreviewed, build fix.
+
+        Forgot to update the role of HitTestRequest.h in
+        the xcode project after landing patch from
+        https://bugs.webkit.org/show_bug.cgi?id=39493
+
+        * WebCore.xcodeproj/project.pbxproj: Make HitTestRequest.h
+            private so it can be included in WebKit by EventHandler.h
+            which is already private..
+
 2010-07-20  Ben Murdoch  <benm@google.com>
 
         Reviewed by Steve Block.
