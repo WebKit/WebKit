@@ -87,7 +87,6 @@ public:
                          bool strictParsing, bool matchAuthorAndUserStyles);
         ~CSSStyleSelector();
 
-        void initForStyleResolve(Element*, RenderStyle* parentStyle = 0, PseudoId = NOPSEUDO);
         PassRefPtr<RenderStyle> styleForElement(Element* e, RenderStyle* parentStyle = 0, bool allowSharing = true, bool resolveForRootDefault = false, bool matchVisitedPseudoClass = false);
         
         void keyframeStylesForAnimation(Element*, const RenderStyle*, KeyframeList& list);
@@ -105,6 +104,7 @@ public:
 #endif
 
     private:
+        void initForStyleResolve(Element*, RenderStyle* parentStyle = 0, PseudoId = NOPSEUDO);
         void initElement(Element*);
         RenderStyle* locateSharedStyle();
         Node* locateCousinList(Element* parent, unsigned depth = 1);
@@ -119,11 +119,11 @@ public:
         PassRefPtr<CSSRuleList> styleRulesForElement(Element*, bool authorOnly);
         PassRefPtr<CSSRuleList> pseudoStyleRulesForElement(Element*, PseudoId, bool authorOnly);
 
+    private:
         // Given a CSS keyword in the range (xx-small to -webkit-xxx-large), this function will return
         // the correct font size scaled relative to the user's default (medium).
         static float fontSizeForKeyword(Document*, int keyword, bool monospace);
-        
-    private:
+
         // When the CSS keyword "larger" is used, this function will attempt to match within the keyword
         // table, and failing that, will simply multiply by 1.2.
         float largerFontSize(float size, bool quirksMode) const;
@@ -133,11 +133,11 @@ public:
 
     public:
         void setStyle(PassRefPtr<RenderStyle> s) { m_style = s; } // Used by the document when setting up its root style.
-        void setFontSize(FontDescription&, float size);
 
         void applyPropertyToStyle(int id, CSSValue*, RenderStyle*);
 
     private:
+        void setFontSize(FontDescription&, float size);
         static float getComputedSizeFromSpecifiedSize(Document*, RenderStyle*, bool isAbsoluteSize, float specifiedSize, bool useSVGZoomRules);
 
     public:
