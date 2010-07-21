@@ -3,11 +3,51 @@ CONSOLE MESSAGE: line 1: SyntaxError: Parse error
 CONSOLE MESSAGE: line 0: Warning: Problem parsing viewBox=""
 CONSOLE MESSAGE: line 0: Warning: Problem parsing viewBox=""
 CONSOLE MESSAGE: line 0: Warning: Problem parsing viewBox=""
+CONSOLE MESSAGE: line 1: SyntaxError: Parse error
+CONSOLE MESSAGE: line 1: SyntaxError: Parse error
+CONSOLE MESSAGE: line 1: SyntaxError: Parse error
+CONSOLE MESSAGE: line 1: SyntaxError: Parse error
 CONSOLE MESSAGE: line 2: PASS
 CONSOLE MESSAGE: line 2: FOO<span>BAR</span>BAZ
 Content-Type: text/plain
-resources/tests1.dat: PASS
+resources/tests1.dat:
+24
+98
 
+Test 24 of 114 in resources/tests1.dat failed. Input:
+<b><button>foo</b>bar
+Got:
+| <html>
+|   <head>
+|   <body>
+|     <b>
+|       <button>
+|         "foobar"
+Expected:
+| <html>
+|   <head>
+|   <body>
+|     <b>
+|     <button>
+|       <b>
+|         "foo"
+|       "bar"
+
+Test 98 of 114 in resources/tests1.dat failed. Input:
+<b><button></b></button></b>
+Got:
+| <html>
+|   <head>
+|   <body>
+|     <b>
+|       <button>
+Expected:
+| <html>
+|   <head>
+|   <body>
+|     <b>
+|     <button>
+|       <b>
 resources/tests2.dat: PASS
 
 resources/tests3.dat: PASS
@@ -166,10 +206,595 @@ resources/tests15.dat: PASS
 
 resources/tests16.dat: PASS
 
+resources/tests17.dat: PASS
+
+resources/tests18.dat: PASS
+
+resources/tests19.dat:
+1
+22
+24
+57
+58
+63
+77
+78
+80
+81
+99
+100
+101
+102
+
+Test 1 of 102 in resources/tests19.dat failed. Input:
+<!doctype html><math><mn DefinitionUrl="foo">
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <math math>
+|       <math mn>
+|         definitionurl="foo"
+Expected:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <math math>
+|       <math mn>
+|         definitionURL="foo"
+
+Test 22 of 102 in resources/tests19.dat failed. Input:
+<!doctype html><h1><div><h3><span></h1>foo
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <h1>
+|       <div>
+|         <h3>
+|           <span>
+|     "foo"
+Expected:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <h1>
+|       <div>
+|         <h3>
+|           <span>
+|         "foo"
+
+Test 24 of 102 in resources/tests19.dat failed. Input:
+<!doctype html><h3><li>abc</h2>foo
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <h3>
+|       <li>
+|         "abcfoo"
+Expected:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <h3>
+|       <li>
+|         "abc"
+|     "foo"
+
+Test 57 of 102 in resources/tests19.dat failed. Input:
+<!doctype html><basefont><frameset>
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <basefont>
+Expected:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|     <basefont>
+|   <frameset>
+
+Test 58 of 102 in resources/tests19.dat failed. Input:
+<!doctype html><bgsound><frameset>
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <bgsound>
+Expected:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|     <bgsound>
+|   <frameset>
+
+Test 63 of 102 in resources/tests19.dat failed. Input:
+<!doctype html><keygen><frameset>
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <keygen>
+|       <option>
+|         "2048 (High Grade)"
+|       <option>
+|         "1024 (Medium Grade)"
+|       <option>
+|         "512 (Low Grade)"
+Expected:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <keygen>
+
+Test 77 of 102 in resources/tests19.dat failed. Input:
+<html>�<frameset></frameset>
+Got:
+| <html>
+|   <head>
+|   <body>
+|     "�"
+Expected:
+| <html>
+|   <head>
+|   <frameset>
+
+Test 78 of 102 in resources/tests19.dat failed. Input:
+<html> � <frameset></frameset>
+Got:
+| <html>
+|   <head>
+|   <body>
+|     "� "
+Expected:
+| <html>
+|   <head>
+|   <frameset>
+
+Test 80 of 102 in resources/tests19.dat failed. Input:
+<html>��<frameset></frameset>
+Got:
+| <html>
+|   <head>
+|   <body>
+|     "��"
+Expected:
+| <html>
+|   <head>
+|   <frameset>
+
+Test 81 of 102 in resources/tests19.dat failed. Input:
+<html>�
+ <frameset></frameset>
+Got:
+| <html>
+|   <head>
+|   <body>
+|     "�
+ "
+Expected:
+| <html>
+|   <head>
+|   <frameset>
+
+Test 99 of 102 in resources/tests19.dat failed. Input:
+<!doctype html><a><b></a><basefont>
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <a>
+|       <b>
+|     <b>
+|       <basefont>
+Expected:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <a>
+|       <b>
+|     <basefont>
+
+Test 100 of 102 in resources/tests19.dat failed. Input:
+<!doctype html><a><b></a><bgsound>
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <a>
+|       <b>
+|     <b>
+|       <bgsound>
+Expected:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <a>
+|       <b>
+|     <bgsound>
+
+Test 101 of 102 in resources/tests19.dat failed. Input:
+<!doctype html><figcaption><article></figcaption>a
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <figcaption>
+|       <article>
+|         "a"
+Expected:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <figcaption>
+|       <article>
+|     "a"
+
+Test 102 of 102 in resources/tests19.dat failed. Input:
+<!doctype html><summary><article></summary>a
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <summary>
+|       <article>
+|         "a"
+Expected:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <summary>
+|       <article>
+|     "a"
+resources/tests20.dat:
+20
+21
+24
+25
+
+Test 20 of 25 in resources/tests20.dat failed. Input:
+<!doctype html><address><button></address>a
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <address>
+|       <button>
+|         "a"
+Expected:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <address>
+|       <button>
+|     "a"
+
+Test 21 of 25 in resources/tests20.dat failed. Input:
+<!doctype html><address><button></address>a
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <address>
+|       <button>
+|         "a"
+Expected:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <address>
+|       <button>
+|     "a"
+
+Test 24 of 25 in resources/tests20.dat failed. Input:
+<!doctype html><p><figcaption>
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <p>
+|       <figcaption>
+Expected:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <p>
+|     <figcaption>
+
+Test 25 of 25 in resources/tests20.dat failed. Input:
+<!doctype html><p><summary>
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <p>
+|       <summary>
+Expected:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <p>
+|     <summary>
 resources/webkit01.dat: PASS
 
-resources/doctype01.dat: PASS
+resources/doctype01.dat:
+14
+15
+16
+23
+24
+25
+26
+27
+29
+30
+32
+33
+34
+35
+36
+37
 
+Test 14 of 37 in resources/doctype01.dat failed. Input:
+<!DOCTYPE potato SYSTEM 'taco"'>Hello
+Got:
+| <!DOCTYPE potato>
+| <html>
+|   <head>
+|   <body>
+|     "Hello"
+Expected:
+| <!DOCTYPE potato "" "taco"">
+| <html>
+|   <head>
+|   <body>
+|     "Hello"
+
+Test 15 of 37 in resources/doctype01.dat failed. Input:
+<!DOCTYPE potato SYSTEM "taco">Hello
+Got:
+| <!DOCTYPE potato>
+| <html>
+|   <head>
+|   <body>
+|     "Hello"
+Expected:
+| <!DOCTYPE potato "" "taco">
+| <html>
+|   <head>
+|   <body>
+|     "Hello"
+
+Test 16 of 37 in resources/doctype01.dat failed. Input:
+<!DOCTYPE potato SYSTEM "tai'co">Hello
+Got:
+| <!DOCTYPE potato>
+| <html>
+|   <head>
+|   <body>
+|     "Hello"
+Expected:
+| <!DOCTYPE potato "" "tai'co">
+| <html>
+|   <head>
+|   <body>
+|     "Hello"
+
+Test 23 of 37 in resources/doctype01.dat failed. Input:
+<!DOCTYPE potato PUBLIC "go'of">Hello
+Got:
+| <!DOCTYPE potato>
+| <html>
+|   <head>
+|   <body>
+|     "Hello"
+Expected:
+| <!DOCTYPE potato "go'of" "">
+| <html>
+|   <head>
+|   <body>
+|     "Hello"
+
+Test 24 of 37 in resources/doctype01.dat failed. Input:
+<!DOCTYPE potato PUBLIC 'go'of'>Hello
+Got:
+| <!DOCTYPE potato>
+| <html>
+|   <head>
+|   <body>
+|     "Hello"
+Expected:
+| <!DOCTYPE potato "go" "">
+| <html>
+|   <head>
+|   <body>
+|     "Hello"
+
+Test 25 of 37 in resources/doctype01.dat failed. Input:
+<!DOCTYPE potato PUBLIC 'go:hh   of' >Hello
+Got:
+| <!DOCTYPE potato>
+| <html>
+|   <head>
+|   <body>
+|     "Hello"
+Expected:
+| <!DOCTYPE potato "go:hh   of" "">
+| <html>
+|   <head>
+|   <body>
+|     "Hello"
+
+Test 26 of 37 in resources/doctype01.dat failed. Input:
+<!DOCTYPE potato PUBLIC "W3C-//dfdf" SYSTEM ggg>Hello
+Got:
+| <!DOCTYPE potato>
+| <html>
+|   <head>
+|   <body>
+|     "Hello"
+Expected:
+| <!DOCTYPE potato "W3C-//dfdf" "">
+| <html>
+|   <head>
+|   <body>
+|     "Hello"
+
+Test 27 of 37 in resources/doctype01.dat failed. Input:
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+   "http://www.w3.org/TR/html4/strict.dtd">Hello
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     "Hello"
+Expected:
+| <!DOCTYPE html "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+| <html>
+|   <head>
+|   <body>
+|     "Hello"
+
+Test 29 of 37 in resources/doctype01.dat failed. Input:
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+Expected:
+| <!DOCTYPE html "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+| <html>
+|   <head>
+|   <body>
+
+Test 30 of 37 in resources/doctype01.dat failed. Input:
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd">
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+Expected:
+| <!DOCTYPE html "-//W3C//DTD XHTML 1.0 Frameset//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd">
+| <html>
+|   <head>
+|   <body>
+
+Test 32 of 37 in resources/doctype01.dat failed. Input:
+<!DOCTYPE html PUBLIC
+  "-//WAPFORUM//DTD XHTML Mobile 1.0//EN"
+    "http://www.wapforum.org/DTD/xhtml-mobile10.dtd">
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+Expected:
+| <!DOCTYPE html "-//WAPFORUM//DTD XHTML Mobile 1.0//EN" "http://www.wapforum.org/DTD/xhtml-mobile10.dtd">
+| <html>
+|   <head>
+|   <body>
+
+Test 33 of 37 in resources/doctype01.dat failed. Input:
+<!DOCTYPE HTML SYSTEM "http://www.w3.org/DTD/HTML4-strict.dtd"><body><b>Mine!</b></body>
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <b>
+|       "Mine!"
+Expected:
+| <!DOCTYPE html "" "http://www.w3.org/DTD/HTML4-strict.dtd">
+| <html>
+|   <head>
+|   <body>
+|     <b>
+|       "Mine!"
+
+Test 34 of 37 in resources/doctype01.dat failed. Input:
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN""http://www.w3.org/TR/html4/strict.dtd">
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+Expected:
+| <!DOCTYPE html "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+| <html>
+|   <head>
+|   <body>
+
+Test 35 of 37 in resources/doctype01.dat failed. Input:
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"'http://www.w3.org/TR/html4/strict.dtd'>
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+Expected:
+| <!DOCTYPE html "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+| <html>
+|   <head>
+|   <body>
+
+Test 36 of 37 in resources/doctype01.dat failed. Input:
+<!DOCTYPE HTML PUBLIC"-//W3C//DTD HTML 4.01//EN"'http://www.w3.org/TR/html4/strict.dtd'>
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+Expected:
+| <!DOCTYPE html "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+| <html>
+|   <head>
+|   <body>
+
+Test 37 of 37 in resources/doctype01.dat failed. Input:
+<!DOCTYPE HTML PUBLIC'-//W3C//DTD HTML 4.01//EN''http://www.w3.org/TR/html4/strict.dtd'>
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+Expected:
+| <!DOCTYPE html "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+| <html>
+|   <head>
+|   <body>
 resources/scriptdata01.dat: PASS
 
 resources/html5test-com.dat:
@@ -264,10 +889,9 @@ resources/comments01.dat: PASS
 
 resources/adoption01.dat:
 3
-11
-13
+12
 
-Test 3 of 13 in resources/adoption01.dat failed. Input:
+Test 3 of 12 in resources/adoption01.dat failed. Input:
 <a>1<button>2</a>3</button>
 Got:
 | <html>
@@ -283,38 +907,12 @@ Expected:
 |   <body>
 |     <a>
 |       "1"
-|       <button>
+|     <button>
+|       <a>
 |         "2"
-|     "3"
+|       "3"
 
-Test 11 of 13 in resources/adoption01.dat failed. Input:
-<p><b id="A"><script>document.getElementById("A").id = "B"</script></p>TEXT</b>
-Got:
-| <html>
-|   <head>
-|   <body>
-|     <p>
-|       <b>
-|         id="B"
-|         <script>
-|           "document.getElementById("A").id = "B""
-|     <b>
-|       id="B"
-|       "TEXT"
-Expected:
-| <html>
-|   <head>
-|   <body>
-|     <p>
-|       <b>
-|         id="B"
-|         <script>
-|           "document.getElementById("A").id = "B""
-|     <b>
-|       id="A"
-|       "TEXT"
-
-Test 13 of 13 in resources/adoption01.dat failed. Input:
+Test 12 of 12 in resources/adoption01.dat failed. Input:
 <table>A<td>B</td>C</table>
 Got:
 | <html>
@@ -387,4 +985,35 @@ resources/isindex.dat: PASS
 resources/tables01.dat: PASS
 
 resources/tricky01.dat: PASS
+
+resources/scripted/adoption01.dat:
+1
+
+Test 1 of 1 in resources/scripted/adoption01.dat failed. Input:
+<p><b id="A"><script>document.getElementById("A").id = "B"</script></p>TEXT</b>
+Got:
+| <html>
+|   <head>
+|   <body>
+|     <p>
+|       <b>
+|         id="B"
+|         <script>
+|           "document.getElementById("A").id = "B""
+|     <b>
+|       id="B"
+|       "TEXT"
+Expected:
+| <html>
+|   <head>
+|   <body>
+|     <p>
+|       <b>
+|         id="B"
+|         <script>
+|           "document.getElementById("A").id = "B""
+|     <b>
+|       id="A"
+|       "TEXT"
+resources/scripted/webkit01.dat: PASS
 #EOF

@@ -148,47 +148,27 @@ Also not bold."
 "
 
 #data
-<TABLE>
-  <CENTER>
-  <FONT>You should see a 100x100 green Image below.
-  </CENTER>
-<IMG alt="Image" width=100 height=100 style="background-color:green">
-<tr><td>
-</td>
-</tr>
-</table>
+<table><center> <font>a</center> <img> <tr><td> </td> </tr> </table>
 #errors
 #document
 | <html>
 |   <head>
 |   <body>
 |     <center>
-|       "
-  "
+|       " "
 |       <font>
-|         "You should see a 100x100 green Image below.
-  "
+|         "a"
 |     <font>
 |       <img>
-|         alt="Image"
-|         height="100"
-|         style="background-color:green"
-|         width="100"
-|       "
-"
+|       " "
 |     <table>
-|       "
-  
-"
+|       " "
 |       <tbody>
 |         <tr>
 |           <td>
-|             "
-"
-|           "
-"
-|         "
-"
+|             " "
+|           " "
+|         " "
 
 #data
 <table><tr><p><a><p>You should see this text.

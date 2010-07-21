@@ -259,7 +259,7 @@ Line: 1 Col: 24 End tag (a) violates step 1, paragraph 1 of the adoption agency 
 |       "Z"
 
 #data
-<b><button></b></button></b>
+<b><button>foo</b>bar
 #errors
 Line: 1 Col: 3 Unexpected start tag (b). Expected DOCTYPE.
 Line: 1 Col: 15 End tag (b) violates step 1, paragraph 1 of the adoption agency algorithm.
@@ -268,7 +268,23 @@ Line: 1 Col: 15 End tag (b) violates step 1, paragraph 1 of the adoption agency 
 |   <head>
 |   <body>
 |     <b>
+|     <button>
+|       <b>
+|         "foo"
+|       "bar"
+
+#data
+<!DOCTYPE html><span><button>foo</span>bar
+#errors
+39: End tag “span” seen but there were unclosed elements.
+#document
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <span>
 |       <button>
+|         "foobar"
 
 #data
 <p><b><div><marquee></p></b></div>X
@@ -1474,7 +1490,8 @@ Line: 1 Col: 15 End tag (b) violates step 1, paragraph 1 of the adoption agency 
 |   <head>
 |   <body>
 |     <b>
-|       <button>
+|     <button>
+|       <b>
 
 #data
 <p><b><div><marquee></p></b></div>

@@ -461,6 +461,19 @@ Line: 1 Col: 51 Expected closing tag. Unexpected end of file.
 |       <optgroup>
 
 #data
+<!DOCTYPE html><datalist><option>foo</datalist>bar
+#errors
+#document
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <datalist>
+|       <option>
+|         "foo"
+|     "bar"
+
+#data
 <!DOCTYPE html><font><input><input></font>
 #errors
 #document
@@ -736,3 +749,15 @@ Line: 1 Col: 35 Unexpected character in comment found.
 |     ">"
 |     <!-- <!--x -->
 |     "-->"
+
+#data
+<!doctype html><div><form></form><div></div></div>
+#errors
+#document
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <div>
+|       <form>
+|       <div>

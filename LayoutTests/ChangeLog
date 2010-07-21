@@ -1,3 +1,31 @@
+2010-07-21  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Pull HTML5lib test suite from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=42776
+
+        Grab a bunch of new tests from html5lib upstream.  Also, upstream
+        tweaked some of our tests, so I've updated our tests to match the
+        upstream tweaks.
+
+        * html5lib/resources/adoption01.dat:
+        * html5lib/resources/doctype01.dat:
+        * html5lib/resources/scripted/adoption01.dat: Added.
+        * html5lib/resources/scripted/webkit01.dat: Added.
+        * html5lib/resources/tests1.dat:
+        * html5lib/resources/tests17.dat: Added.
+        * html5lib/resources/tests18.dat: Added.
+        * html5lib/resources/tests19.dat: Added.
+        * html5lib/resources/tests2.dat:
+        * html5lib/resources/tests20.dat: Added.
+        * html5lib/resources/tricky01.dat:
+        * html5lib/resources/webkit01.dat:
+        * html5lib/runner-expected-html5.txt:
+        * html5lib/runner-expected.txt:
+        * html5lib/runner.html:
+        * html5lib/webkit-resumer-expected.txt:
+
 2010-07-21  Tony Chang  <tony@chromium.org>
 
         Reviewed by Adam Barth.

@@ -1,37 +1,84 @@
 CONSOLE MESSAGE: line 1: SyntaxError: Parse error
 CONSOLE MESSAGE: line 1: SyntaxError: Parse error
+CONSOLE MESSAGE: line 1: SyntaxError: Parse error
+CONSOLE MESSAGE: line 1: SyntaxError: Parse error
+CONSOLE MESSAGE: line 1: SyntaxError: Parse error
+CONSOLE MESSAGE: line 1: SyntaxError: Parse error
 CONSOLE MESSAGE: line 2: PASS
 CONSOLE MESSAGE: line 2: FOO<span>BAR</span>BAZ
 resources/tests1.dat:
+24
 25
-29
+26
 30
-32
+31
 33
 34
-50
+35
 51
 52
 53
 54
-78
+55
 79
 80
 81
 82
-87
-90
+83
+88
 91
 92
-96
+93
+97
 98
-101
-104
-106
-109
-113
+99
+102
+105
+107
+110
+114
 
-Test 25 of 113 in resources/tests1.dat failed. Input:
+Test 24 of 114 in resources/tests1.dat failed. Input:
+<b><button>foo</b>bar
+Got:
+| <html>
+|   <head>
+|   <body>
+|     <b>
+|       <button>
+|         "foo"
+|     "bar"
+Expected:
+| <html>
+|   <head>
+|   <body>
+|     <b>
+|     <button>
+|       <b>
+|         "foo"
+|       "bar"
+
+Test 25 of 114 in resources/tests1.dat failed. Input:
+<!DOCTYPE html><span><button>foo</span>bar
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <span>
+|       <button>
+|         "foo"
+|     "bar"
+Expected:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <span>
+|       <button>
+|         "foobar"
+
+Test 26 of 114 in resources/tests1.dat failed. Input:
 <p><b><div><marquee></p></b></div>X
 Got:
 | <html>
@@ -58,7 +105,7 @@ Expected:
 |           <p>
 |           "X"
 
-Test 29 of 113 in resources/tests1.dat failed. Input:
+Test 30 of 114 in resources/tests1.dat failed. Input:
 <select><b><option><select><option></b></select>X
 Got:
 | <html>
@@ -76,7 +123,7 @@ Expected:
 |     <option>
 |       "X"
 
-Test 30 of 113 in resources/tests1.dat failed. Input:
+Test 31 of 114 in resources/tests1.dat failed. Input:
 <a><table><td><a><table></table><a></tr><a></table><b>X</b>C<a>Y
 Got:
 | <html>
@@ -116,7 +163,7 @@ Expected:
 |     <a>
 |       "Y"
 
-Test 32 of 113 in resources/tests1.dat failed. Input:
+Test 33 of 114 in resources/tests1.dat failed. Input:
 <!-----><font><div>hello<table>excite!<b>me!<th><i>please!</tr><!--X-->
 Got:
 | <!-- - -->
@@ -154,7 +201,7 @@ Expected:
 |                   "please!"
 |             <!-- X -->
 
-Test 33 of 113 in resources/tests1.dat failed. Input:
+Test 34 of 114 in resources/tests1.dat failed. Input:
 <!DOCTYPE html><li>hello<li>world<ul>how<li>do</ul>you</body><!--do-->
 Got:
 | <!DOCTYPE html>
@@ -187,7 +234,7 @@ Expected:
 |       "you"
 |   <!-- do -->
 
-Test 34 of 113 in resources/tests1.dat failed. Input:
+Test 35 of 114 in resources/tests1.dat failed. Input:
 <!DOCTYPE html>A<option>B<optgroup>C<select>D</option>E
 Got:
 | <!DOCTYPE html>
@@ -210,7 +257,7 @@ Expected:
 |       <select>
 |         "DE"
 
-Test 50 of 113 in resources/tests1.dat failed. Input:
+Test 51 of 114 in resources/tests1.dat failed. Input:
 <!DOCTYPE html><script> <!-- </script> --> </script> EOF
 Got:
 | <!DOCTYPE html>
@@ -230,7 +277,7 @@ Expected:
 |   <body>
 |     "-->  EOF"
 
-Test 51 of 113 in resources/tests1.dat failed. Input:
+Test 52 of 114 in resources/tests1.dat failed. Input:
 <b><p></b>TEST
 Got:
 | <html>
@@ -248,7 +295,7 @@ Expected:
 |       <b>
 |       "TEST"
 
-Test 52 of 113 in resources/tests1.dat failed. Input:
+Test 53 of 114 in resources/tests1.dat failed. Input:
 <p id=a><b><p id=b></b>TEST
 Got:
 | <html>
@@ -272,7 +319,7 @@ Expected:
 |       id="b"
 |       "TEST"
 
-Test 53 of 113 in resources/tests1.dat failed. Input:
+Test 54 of 114 in resources/tests1.dat failed. Input:
 <b id=a><p><b id=b></p></b>TEST
 Got:
 | <html>
@@ -297,7 +344,7 @@ Expected:
 |           id="b"
 |       "TEST"
 
-Test 54 of 113 in resources/tests1.dat failed. Input:
+Test 55 of 114 in resources/tests1.dat failed. Input:
 <!DOCTYPE html><title>U-test</title><body><div><p>Test<u></p></div></body>
 Got:
 | <!DOCTYPE html>
@@ -324,7 +371,7 @@ Expected:
 |         "Test"
 |         <u>
 
-Test 78 of 113 in resources/tests1.dat failed. Input:
+Test 79 of 114 in resources/tests1.dat failed. Input:
 <a href="blah">aba<table><a href="foo">br<tr><td></td></tr>x</table>aoe
 Got:
 | <html>
@@ -363,7 +410,7 @@ Expected:
 |       href="foo"
 |       "aoe"
 
-Test 79 of 113 in resources/tests1.dat failed. Input:
+Test 80 of 114 in resources/tests1.dat failed. Input:
 <a href="blah">aba<table><tr><td><a href="foo">br</td></tr>x</table>aoe
 Got:
 | <html>
@@ -397,7 +444,7 @@ Expected:
 |                 "br"
 |       "aoe"
 
-Test 80 of 113 in resources/tests1.dat failed. Input:
+Test 81 of 114 in resources/tests1.dat failed. Input:
 <table><a href="blah">aba<tr><td><a href="foo">br</td></tr>x</table>aoe
 Got:
 | <html>
@@ -436,7 +483,7 @@ Expected:
 |       href="blah"
 |       "aoe"
 
-Test 81 of 113 in resources/tests1.dat failed. Input:
+Test 82 of 114 in resources/tests1.dat failed. Input:
 <a href=a>aa<marquee>aa<a href=b>bb</marquee>aa
 Got:
 | <html>
@@ -469,7 +516,7 @@ Expected:
 |           "bb"
 |       "aa"
 
-Test 82 of 113 in resources/tests1.dat failed. Input:
+Test 83 of 114 in resources/tests1.dat failed. Input:
 <wbr><strike><code></strike><code><strike></code>
 Got:
 | <html>
@@ -493,7 +540,7 @@ Expected:
 |       <code>
 |         <strike>
 
-Test 87 of 113 in resources/tests1.dat failed. Input:
+Test 88 of 114 in resources/tests1.dat failed. Input:
 <body><body><base><link><meta><title><p></title><body><p></body>
 Got:
 | <html>
@@ -516,7 +563,7 @@ Expected:
 |       "<p>"
 |     <p>
 
-Test 90 of 113 in resources/tests1.dat failed. Input:
+Test 91 of 114 in resources/tests1.dat failed. Input:
 <a><table><a></table><p><a><div><a>
 Got:
 | <html>
@@ -543,7 +590,7 @@ Expected:
 |     <div>
 |       <a>
 
-Test 91 of 113 in resources/tests1.dat failed. Input:
+Test 92 of 114 in resources/tests1.dat failed. Input:
 <head></p><meta><p>
 Got:
 | <html>
@@ -559,7 +606,7 @@ Expected:
 |   <body>
 |     <p>
 
-Test 92 of 113 in resources/tests1.dat failed. Input:
+Test 93 of 114 in resources/tests1.dat failed. Input:
 <head></html><meta><p>
 Got:
 | <html>
@@ -574,7 +621,7 @@ Expected:
 |     <meta>
 |     <p>
 
-Test 96 of 113 in resources/tests1.dat failed. Input:
+Test 97 of 114 in resources/tests1.dat failed. Input:
 <a><p><a></a></p></a>
 Got:
 | <html>
@@ -592,7 +639,23 @@ Expected:
 |       <a>
 |       <a>
 
-Test 98 of 113 in resources/tests1.dat failed. Input:
+Test 98 of 114 in resources/tests1.dat failed. Input:
+<b><button></b></button></b>
+Got:
+| <html>
+|   <head>
+|   <body>
+|     <b>
+|       <button>
+Expected:
+| <html>
+|   <head>
+|   <body>
+|     <b>
+|     <button>
+|       <b>
+
+Test 99 of 114 in resources/tests1.dat failed. Input:
 <p><b><div><marquee></p></b></div>
 Got:
 | <html>
@@ -617,7 +680,7 @@ Expected:
 |         <marquee>
 |           <p>
 
-Test 101 of 113 in resources/tests1.dat failed. Input:
+Test 102 of 114 in resources/tests1.dat failed. Input:
 <select><b><option><select><option></b></select>
 Got:
 | <html>
@@ -633,7 +696,7 @@ Expected:
 |       <option>
 |     <option>
 
-Test 104 of 113 in resources/tests1.dat failed. Input:
+Test 105 of 114 in resources/tests1.dat failed. Input:
 <ul><li></li><div><li></div><li><li><div><li><address><li><b><em></b><li></ul>
 Got:
 | <html>
@@ -673,7 +736,7 @@ Expected:
 |           <em>
 |       <li>
 
-Test 106 of 113 in resources/tests1.dat failed. Input:
+Test 107 of 114 in resources/tests1.dat failed. Input:
 <frameset><frame><frameset><frame></frameset><noframes></noframes></frameset>
 Got:
 | <html>
@@ -690,7 +753,7 @@ Expected:
 |       <frame>
 |     <noframes>
 
-Test 109 of 113 in resources/tests1.dat failed. Input:
+Test 110 of 114 in resources/tests1.dat failed. Input:
 <table><col><tbody><col><tr><col><td><col></table><col>
 Got:
 | <html>
@@ -724,7 +787,7 @@ Expected:
 |       <colgroup>
 |         <col>
 
-Test 113 of 113 in resources/tests1.dat failed. Input:
+Test 114 of 114 in resources/tests1.dat failed. Input:
 <frameset>
 Got:
 | <html>
@@ -740,11 +803,12 @@ resources/tests2.dat:
 9
 11
 36
-42
-44
+38
+43
 45
+46
 
-Test 6 of 59 in resources/tests2.dat failed. Input:
+Test 6 of 61 in resources/tests2.dat failed. Input:
 <!DOCTYPE html><frameset>test
 Got:
 | <!DOCTYPE html>
@@ -756,7 +820,7 @@ Expected:
 |   <head>
 |   <frameset>
 
-Test 7 of 59 in resources/tests2.dat failed. Input:
+Test 7 of 61 in resources/tests2.dat failed. Input:
 <!DOCTYPE html><frameset><!DOCTYPE html>
 Got:
 | <!DOCTYPE html>
@@ -768,7 +832,7 @@ Expected:
 |   <head>
 |   <frameset>
 
-Test 8 of 59 in resources/tests2.dat failed. Input:
+Test 8 of 61 in resources/tests2.dat failed. Input:
 <!DOCTYPE html><font><p><b>test</font>
 Got:
 | <!DOCTYPE html>
@@ -792,7 +856,7 @@ Expected:
 |         <b>
 |           "test"
 
-Test 9 of 59 in resources/tests2.dat failed. Input:
+Test 9 of 61 in resources/tests2.dat failed. Input:
 <!DOCTYPE html><dt><div><dd>
 Got:
 | <!DOCTYPE html>
@@ -811,7 +875,7 @@ Expected:
 |       <div>
 |     <dd>
 
-Test 11 of 59 in resources/tests2.dat failed. Input:
+Test 11 of 61 in resources/tests2.dat failed. Input:
 <table><plaintext><td>
 Got:
 | <html>
@@ -829,7 +893,7 @@ Expected:
 |       "<td>"
 |     <table>
 
-Test 36 of 59 in resources/tests2.dat failed. Input:
+Test 36 of 61 in resources/tests2.dat failed. Input:
 <!DOCTYPE html><select><optgroup><option></optgroup><option><select><option>
 Got:
 | <!DOCTYPE html>
@@ -851,7 +915,27 @@ Expected:
 |       <option>
 |     <option>
 
-Test 42 of 59 in resources/tests2.dat failed. Input:
+Test 38 of 61 in resources/tests2.dat failed. Input:
+<!DOCTYPE html><datalist><option>foo</datalist>bar
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <datalist>
+|       <option>
+|         "foobar"
+Expected:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <datalist>
+|       <option>
+|         "foo"
+|     "bar"
+
+Test 43 of 61 in resources/tests2.dat failed. Input:
 <isindex test=x name=x>
 Got:
 | <html>
@@ -870,7 +954,7 @@ Expected:
 |           test="x"
 |       <hr>
 
-Test 44 of 59 in resources/tests2.dat failed. Input:
+Test 45 of 61 in resources/tests2.dat failed. Input:
 <!DOCTYPE html><body><title>test</body></title>
 Got:
 | <!DOCTYPE html>
@@ -887,7 +971,7 @@ Expected:
 |     <title>
 |       "test</body>"
 
-Test 45 of 59 in resources/tests2.dat failed. Input:
+Test 46 of 61 in resources/tests2.dat failed. Input:
 <!DOCTYPE html><body><title>X</title><meta name=z><link rel=foo><style>
 x { content:"</style" } </style>
 Got:
@@ -4365,19 +4449,1912 @@ Expected:
 |     <noembed>
 |       "<!--<noembed>"
 |     "-->"
+resources/tests17.dat:
+5
+
+Test 5 of 13 in resources/tests17.dat failed. Input:
+<!doctype html><table><caption><select><tr>
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <table>
+|       <caption>
+|         <select>
+Expected:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <table>
+|       <caption>
+|         <select>
+|       <tbody>
+|         <tr>
+resources/tests18.dat:
+2
+8
+13
+15
+16
+17
+18
+20
+
+Test 2 of 20 in resources/tests18.dat failed. Input:
+<!doctype html><table><plaintext></plaintext>
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <plaintext>
+|       "</plaintext>"
+|     <table>
+|       <tbody>
+Expected:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <plaintext>
+|       "</plaintext>"
+|     <table>
+
+Test 8 of 20 in resources/tests18.dat failed. Input:
+<!doctype html><table><tr><style></script></style>abc
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|     <style>
+|       "</script>"
+|   <body>
+|     "abc"
+|     <table>
+|       <tbody>
+|         <tr>
+Expected:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     "abc"
+|     <table>
+|       <tbody>
+|         <tr>
+|           <style>
+|             "</script>"
+
+Test 13 of 20 in resources/tests18.dat failed. Input:
+<!doctype html><table><select><script></style></script>abc
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <select>
+|       <script>
+|         "</style>"
+|       "abc"
+|     <table>
+|       <tbody>
+Expected:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <select>
+|       <script>
+|         "</style>"
+|       "abc"
+|     <table>
+
+Test 15 of 20 in resources/tests18.dat failed. Input:
+<!doctype html><frameset></frameset><noframes>abc
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <frameset>
+|   <noframes>
+Expected:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <frameset>
+|   <noframes>
+|     "abc"
+
+Test 16 of 20 in resources/tests18.dat failed. Input:
+<!doctype html><frameset></frameset><noframes>abc</noframes><!--abc-->
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <frameset>
+|   <noframes>
+|   <!-- abc -->
+Expected:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <frameset>
+|   <noframes>
+|     "abc"
+|   <!-- abc -->
+
+Test 17 of 20 in resources/tests18.dat failed. Input:
+<!doctype html><frameset></frameset></html><noframes>abc
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <frameset>
+|   <noframes>
+Expected:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <frameset>
+|   <noframes>
+|     "abc"
+
+Test 18 of 20 in resources/tests18.dat failed. Input:
+<!doctype html><frameset></frameset></html><noframes>abc</noframes><!--abc-->
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <frameset>
+|   <noframes>
+|   <!-- abc -->
+Expected:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <frameset>
+|   <noframes>
+|     "abc"
+| <!-- abc -->
+
+Test 20 of 20 in resources/tests18.dat failed. Input:
+<!doctype html><table><td><svg></svg>abc<td>
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <table>
+|       <tbody>
+|         <tr>
+|           <td>
+|             <svg>
+|             "abc"
+|           <td>
+Expected:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <table>
+|       <tbody>
+|         <tr>
+|           <td>
+|             <svg svg>
+|             "abc"
+|           <td>
+resources/tests19.dat:
+1
+2
+3
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+24
+31
+32
+33
+35
+36
+37
+38
+39
+40
+41
+42
+43
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+90
+91
+93
+94
+95
+96
+99
+100
+101
+102
+
+Test 1 of 102 in resources/tests19.dat failed. Input:
+<!doctype html><math><mn DefinitionUrl="foo">
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <math>
+|       <mn>
+|         definitionurl="foo"
+Expected:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <math math>
+|       <math mn>
+|         definitionURL="foo"
+
+Test 2 of 102 in resources/tests19.dat failed. Input:
+<!doctype html><html></p><!--foo-->
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <p>
+|     <!-- foo -->
+Expected:
+| <!DOCTYPE html>
+| <html>
+|   <!-- foo -->
+|   <head>
+|   <body>
+
+Test 3 of 102 in resources/tests19.dat failed. Input:
+<!doctype html><head></head></p><!--foo-->
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <p>
+|     <!-- foo -->
+Expected:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <!-- foo -->
+|   <body>
+
+Test 8 of 102 in resources/tests19.dat failed. Input:
+<!doctype html><form><isindex>
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <form>
+|       <div>
+|         <hr>
+|         "This is a searchable index. Enter search keywords: "
+|         <isindex>
+|           type="khtml_isindex"
+|         <hr>
+Expected:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <form>
+
+Test 9 of 102 in resources/tests19.dat failed. Input:
+<!doctype html><isindex action="POST">
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+Expected:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <form>
+|       action="POST"
+|       <hr>
+|       <label>
+|         "This is a searchable index. Enter search keywords: "
+|         <input>
+|           name="isindex"
+|       <hr>
+
+Test 10 of 102 in resources/tests19.dat failed. Input:
+<!doctype html><isindex prompt="this is isindex">
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+Expected:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <form>
+|       <hr>
+|       <label>
+|         "this is isindex"
+|         <input>
+|           name="isindex"
+|       <hr>
+
+Test 11 of 102 in resources/tests19.dat failed. Input:
+<!doctype html><isindex type="hidden">
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+Expected:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <form>
+|       <hr>
+|       <label>
+|         "This is a searchable index. Enter search keywords: "
+|         <input>
+|           name="isindex"
+|           type="hidden"
+|       <hr>
+
+Test 12 of 102 in resources/tests19.dat failed. Input:
+<!doctype html><isindex name="foo">
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+Expected:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <form>
+|       <hr>
+|       <label>
+|         "This is a searchable index. Enter search keywords: "
+|         <input>
+|           name="isindex"
+|       <hr>
+
+Test 13 of 102 in resources/tests19.dat failed. Input:
+<!doctype html><ruby><p><rp>
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <ruby>
+|       <p>
+|         <rp>
+Expected:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <ruby>
+|       <p>
+|       <rp>
+
+Test 14 of 102 in resources/tests19.dat failed. Input:
+<!doctype html><ruby><div><span><rp>
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <ruby>
+|       <div>
+|         <span>
+|           <rp>
+Expected:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <ruby>
+|       <div>
+|         <span>
+|       <rp>
+
+Test 15 of 102 in resources/tests19.dat failed. Input:
+<!doctype html><ruby><div><p><rp>
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <ruby>
+|       <div>
+|         <p>
+|           <rp>
+Expected:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <ruby>
+|       <div>
+|         <p>
+|       <rp>
+
+Test 16 of 102 in resources/tests19.dat failed. Input:
+<!doctype html><ruby><p><rt>
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <ruby>
+|       <p>
+|         <rt>
+Expected:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <ruby>
+|       <p>
+|       <rt>
+
+Test 17 of 102 in resources/tests19.dat failed. Input:
+<!doctype html><ruby><div><span><rt>
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <ruby>
+|       <div>
+|         <span>
+|           <rt>
+Expected:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <ruby>
+|       <div>
+|         <span>
+|       <rt>
+
+Test 18 of 102 in resources/tests19.dat failed. Input:
+<!doctype html><ruby><div><p><rt>
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <ruby>
+|       <div>
+|         <p>
+|           <rt>
+Expected:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <ruby>
+|       <div>
+|         <p>
+|       <rt>
+
+Test 19 of 102 in resources/tests19.dat failed. Input:
+<!doctype html><math/><foo>
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <math>
+|       <foo>
+Expected:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <math math>
+|     <foo>
+
+Test 20 of 102 in resources/tests19.dat failed. Input:
+<!doctype html><svg/><foo>
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <svg>
+|       <foo>
+Expected:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <svg svg>
+|     <foo>
+
+Test 21 of 102 in resources/tests19.dat failed. Input:
+<!doctype html><div></body><!--foo-->
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <div>
+|       <!-- foo -->
+Expected:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <div>
+|   <!-- foo -->
+
+Test 22 of 102 in resources/tests19.dat failed. Input:
+<!doctype html><h1><div><h3><span></h1>foo
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <h1>
+|       <div>
+|         <h3>
+|           <span>
+|     "foo"
+Expected:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <h1>
+|       <div>
+|         <h3>
+|           <span>
+|         "foo"
+
+Test 24 of 102 in resources/tests19.dat failed. Input:
+<!doctype html><h3><li>abc</h2>foo
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <h3>
+|       <li>
+|         "abcfoo"
+Expected:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <h3>
+|       <li>
+|         "abc"
+|     "foo"
+
+Test 31 of 102 in resources/tests19.dat failed. Input:
+<!doctype html><p><math><mi><p><h1>
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <p>
+|       <math>
+|         <mi>
+|     <p>
+|     <h1>
+Expected:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <p>
+|       <math math>
+|         <math mi>
+|     <p>
+|     <h1>
+
+Test 32 of 102 in resources/tests19.dat failed. Input:
+<!doctype html><p><math><mi><p><h1>
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <p>
+|       <math>
+|         <mi>
+|     <p>
+|     <h1>
+Expected:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <p>
+|       <math math>
+|         <math mi>
+|     <p>
+|     <h1>
+
+Test 33 of 102 in resources/tests19.dat failed. Input:
+<!doctype html><frameset></noframes>
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <frameset>
+Expected:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <frameset>
+
+Test 35 of 102 in resources/tests19.dat failed. Input:
+<!doctype html><html c=d><frameset></frameset></html><html a=b>
+Got:
+| <!DOCTYPE html>
+| <html>
+|   a="b"
+|   c="d"
+|   <frameset>
+Expected:
+| <!DOCTYPE html>
+| <html>
+|   a="b"
+|   c="d"
+|   <head>
+|   <frameset>
+
+Test 36 of 102 in resources/tests19.dat failed. Input:
+<!doctype html><html><frameset></frameset></html><!--foo-->
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <frameset>
+|   <!-- foo -->
+Expected:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <frameset>
+| <!-- foo -->
+
+Test 37 of 102 in resources/tests19.dat failed. Input:
+<!doctype html><html><frameset></frameset></html>  
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <frameset>
+Expected:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <frameset>
+|   "  "
+
+Test 38 of 102 in resources/tests19.dat failed. Input:
+<!doctype html><html><frameset></frameset></html>abc
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <frameset>
+Expected:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <frameset>
+
+Test 39 of 102 in resources/tests19.dat failed. Input:
+<!doctype html><html><frameset></frameset></html><p>
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <frameset>
+Expected:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <frameset>
+
+Test 40 of 102 in resources/tests19.dat failed. Input:
+<!doctype html><html><frameset></frameset></html></p>
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <frameset>
+Expected:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <frameset>
+
+Test 41 of 102 in resources/tests19.dat failed. Input:
+<html><frameset></frameset></html><!doctype html>
+Got:
+| <html>
+|   <frameset>
+Expected:
+| <html>
+|   <head>
+|   <frameset>
+
+Test 42 of 102 in resources/tests19.dat failed. Input:
+<!doctype html><body><frameset>
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     style="display:none"
+|   <frameset>
+Expected:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+
+Test 43 of 102 in resources/tests19.dat failed. Input:
+<!doctype html><p><frameset><frame>
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     style="display:none"
+|     <p>
+|   <frameset>
+|     <frame>
+Expected:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <frameset>
+|     <frame>
+
+Test 45 of 102 in resources/tests19.dat failed. Input:
+<!doctype html><p> <frameset><frame>
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     style="display:none"
+|     <p>
+|       " "
+|   <frameset>
+|     <frame>
+Expected:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <frameset>
+|     <frame>
+
+Test 46 of 102 in resources/tests19.dat failed. Input:
+<!doctype html><pre><frameset>
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     style="display:none"
+|     <pre>
+|   <frameset>
+Expected:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <pre>
+
+Test 47 of 102 in resources/tests19.dat failed. Input:
+<!doctype html><listing><frameset>
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     style="display:none"
+|     <listing>
+|   <frameset>
+Expected:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <listing>
+
+Test 48 of 102 in resources/tests19.dat failed. Input:
+<!doctype html><li><frameset>
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     style="display:none"
+|     <li>
+|   <frameset>
+Expected:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <li>
+
+Test 49 of 102 in resources/tests19.dat failed. Input:
+<!doctype html><dd><frameset>
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     style="display:none"
+|     <dd>
+|   <frameset>
+Expected:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <dd>
+
+Test 50 of 102 in resources/tests19.dat failed. Input:
+<!doctype html><dt><frameset>
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     style="display:none"
+|     <dt>
+|   <frameset>
+Expected:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <dt>
+
+Test 51 of 102 in resources/tests19.dat failed. Input:
+<!doctype html><button><frameset>
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     style="display:none"
+|     <button>
+|   <frameset>
+Expected:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <button>
+
+Test 52 of 102 in resources/tests19.dat failed. Input:
+<!doctype html><applet><frameset>
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     style="display:none"
+|     <applet>
+|   <frameset>
+Expected:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <applet>
+
+Test 53 of 102 in resources/tests19.dat failed. Input:
+<!doctype html><marquee><frameset>
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     style="display:none"
+|     <marquee>
+|   <frameset>
+Expected:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <marquee>
+
+Test 54 of 102 in resources/tests19.dat failed. Input:
+<!doctype html><object><frameset>
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     style="display:none"
+|     <object>
+|   <frameset>
+Expected:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <object>
+
+Test 55 of 102 in resources/tests19.dat failed. Input:
+<!doctype html><table><frameset>
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     style="display:none"
+|     <table>
+|   <frameset>
+Expected:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <table>
+
+Test 56 of 102 in resources/tests19.dat failed. Input:
+<!doctype html><area><frameset>
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <frameset>
+Expected:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <area>
+
+Test 57 of 102 in resources/tests19.dat failed. Input:
+<!doctype html><basefont><frameset>
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     style="display:none"
+|     <basefont>
+|   <frameset>
+Expected:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|     <basefont>
+|   <frameset>
+
+Test 58 of 102 in resources/tests19.dat failed. Input:
+<!doctype html><bgsound><frameset>
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     style="display:none"
+|     <bgsound>
+|   <frameset>
+Expected:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|     <bgsound>
+|   <frameset>
+
+Test 59 of 102 in resources/tests19.dat failed. Input:
+<!doctype html><br><frameset>
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     style="display:none"
+|     <br>
+|   <frameset>
+Expected:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <br>
+
+Test 60 of 102 in resources/tests19.dat failed. Input:
+<!doctype html><embed><frameset>
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     style="display:none"
+|     <embed>
+|   <frameset>
+Expected:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <embed>
+
+Test 61 of 102 in resources/tests19.dat failed. Input:
+<!doctype html><img><frameset>
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     style="display:none"
+|     <img>
+|   <frameset>
+Expected:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <img>
+
+Test 62 of 102 in resources/tests19.dat failed. Input:
+<!doctype html><input><frameset>
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     style="display:none"
+|     <input>
+|   <frameset>
+Expected:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <input>
+
+Test 63 of 102 in resources/tests19.dat failed. Input:
+<!doctype html><keygen><frameset>
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     style="display:none"
+|     <keygen>
+|       <option>
+|         "2048 (High Grade)"
+|       <option>
+|         "1024 (Medium Grade)"
+|       <option>
+|         "512 (Low Grade)"
+|   <frameset>
+Expected:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <keygen>
+
+Test 64 of 102 in resources/tests19.dat failed. Input:
+<!doctype html><wbr><frameset>
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     style="display:none"
+|     <wbr>
+|   <frameset>
+Expected:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <wbr>
+
+Test 65 of 102 in resources/tests19.dat failed. Input:
+<!doctype html><hr><frameset>
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     style="display:none"
+|     <hr>
+|   <frameset>
+Expected:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <hr>
+
+Test 66 of 102 in resources/tests19.dat failed. Input:
+<!doctype html><textarea></textarea><frameset>
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     style="display:none"
+|     <textarea>
+|   <frameset>
+Expected:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <textarea>
+
+Test 67 of 102 in resources/tests19.dat failed. Input:
+<!doctype html><xmp></xmp><frameset>
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     style="display:none"
+|     <xmp>
+|   <frameset>
+Expected:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <xmp>
+
+Test 68 of 102 in resources/tests19.dat failed. Input:
+<!doctype html><iframe></iframe><frameset>
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     style="display:none"
+|     <iframe>
+|   <frameset>
+Expected:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <iframe>
+
+Test 69 of 102 in resources/tests19.dat failed. Input:
+<!doctype html><select></select><frameset>
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     style="display:none"
+|     <select>
+|   <frameset>
+Expected:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <select>
+
+Test 70 of 102 in resources/tests19.dat failed. Input:
+<!doctype html><svg></svg><frameset><frame>
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     style="display:none"
+|     <svg>
+|   <frameset>
+|     <frame>
+Expected:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <frameset>
+|     <frame>
+
+Test 71 of 102 in resources/tests19.dat failed. Input:
+<!doctype html><math></math><frameset><frame>
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     style="display:none"
+|     <math>
+|   <frameset>
+|     <frame>
+Expected:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <frameset>
+|     <frame>
+
+Test 72 of 102 in resources/tests19.dat failed. Input:
+<!doctype html><svg><foreignObject><div> <frameset><frame>
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     style="display:none"
+|     <svg>
+|       <foreignobject>
+|         <div>
+|           " "
+|   <frameset>
+|     <frame>
+Expected:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <frameset>
+|     <frame>
+
+Test 73 of 102 in resources/tests19.dat failed. Input:
+<!doctype html><svg>a</svg><frameset><frame>
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <svg>
+|       "a"
+Expected:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <svg svg>
+|       "a"
+
+Test 74 of 102 in resources/tests19.dat failed. Input:
+<!doctype html><svg> </svg><frameset><frame>
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     style="display:none"
+|     <svg>
+|       " "
+|   <frameset>
+|     <frame>
+Expected:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <frameset>
+|     <frame>
+
+Test 75 of 102 in resources/tests19.dat failed. Input:
+<html>aaa<frameset></frameset>
+Got:
+| <html>
+|   <head>
+|   <body>
+|     style="display:none"
+|     "aaa"
+|   <frameset>
+Expected:
+| <html>
+|   <head>
+|   <body>
+|     "aaa"
+
+Test 76 of 102 in resources/tests19.dat failed. Input:
+<html> a <frameset></frameset>
+Got:
+| <html>
+|   <head>
+|   <body>
+|     style="display:none"
+|     " a "
+|   <frameset>
+Expected:
+| <html>
+|   <head>
+|   <body>
+|     "a "
+
+Test 77 of 102 in resources/tests19.dat failed. Input:
+<html>�<frameset></frameset>
+Got:
+| <html>
+|   <head>
+|   <body>
+|     style="display:none"
+|     "�"
+|   <frameset>
+Expected:
+| <html>
+|   <head>
+|   <frameset>
+
+Test 78 of 102 in resources/tests19.dat failed. Input:
+<html> � <frameset></frameset>
+Got:
+| <html>
+|   <head>
+|   <body>
+|     style="display:none"
+|     " � "
+|   <frameset>
+Expected:
+| <html>
+|   <head>
+|   <frameset>
+
+Test 79 of 102 in resources/tests19.dat failed. Input:
+<html>a�a<frameset></frameset>
+Got:
+| <html>
+|   <head>
+|   <body>
+|     style="display:none"
+|     "a�a"
+|   <frameset>
+Expected:
+| <html>
+|   <head>
+|   <body>
+|     "a�a"
+
+Test 80 of 102 in resources/tests19.dat failed. Input:
+<html>��<frameset></frameset>
+Got:
+| <html>
+|   <head>
+|   <body>
+|     style="display:none"
+|     "��"
+|   <frameset>
+Expected:
+| <html>
+|   <head>
+|   <frameset>
+
+Test 81 of 102 in resources/tests19.dat failed. Input:
+<html>�
+ <frameset></frameset>
+Got:
+| <html>
+|   <head>
+|   <body>
+|     style="display:none"
+|     "�
+ "
+|   <frameset>
+Expected:
+| <html>
+|   <head>
+|   <frameset>
+
+Test 82 of 102 in resources/tests19.dat failed. Input:
+<!doctype html><p><math></p>a
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <p>
+|       <math>
+|     "a"
+Expected:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <p>
+|       <math math>
+|     "a"
+
+Test 83 of 102 in resources/tests19.dat failed. Input:
+<!doctype html><p><math><mn><span></p>a
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <p>
+|       <math>
+|         <mn>
+|           <span>
+|     "a"
+Expected:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <p>
+|       <math math>
+|         <math mn>
+|           <span>
+|     "a"
+
+Test 84 of 102 in resources/tests19.dat failed. Input:
+<!doctype html><math></html>
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <math>
+Expected:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <math math>
+
+Test 90 of 102 in resources/tests19.dat failed. Input:
+<!doctype html>a<i>b<table>c<b>d</i>e</b>f
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     "a"
+|     <i>
+|       "b"
+|       "c"
+|       <b>
+|         "de"
+|       "f"
+|       <table>
+|         <tbody>
+Expected:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     "a"
+|     <i>
+|       "bc"
+|       <b>
+|         "de"
+|       "f"
+|       <table>
+
+Test 91 of 102 in resources/tests19.dat failed. Input:
+<!doctype html><table><i>a<b>b<div>c<a>d</i>e</b>f
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <i>
+|       "a"
+|       <b>
+|         "b"
+|       <div>
+|         <b>
+|           "c"
+|           <a>
+|             "de"
+|         <a>
+|           "f"
+|     <table>
+|       <tbody>
+Expected:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <i>
+|       "a"
+|       <b>
+|         "b"
+|     <b>
+|     <div>
+|       <b>
+|         <i>
+|           "c"
+|           <a>
+|             "d"
+|         <a>
+|           "e"
+|       <a>
+|         "f"
+|     <table>
+
+Test 93 of 102 in resources/tests19.dat failed. Input:
+<!doctype html><table><i>a<b>b<div>c</i>
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <i>
+|       "a"
+|       <b>
+|         "b"
+|         <div>
+|           "c"
+|     <table>
+|       <tbody>
+Expected:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <i>
+|       "a"
+|       <b>
+|         "b"
+|     <b>
+|       <div>
+|         <i>
+|           "c"
+|     <table>
+
+Test 94 of 102 in resources/tests19.dat failed. Input:
+<!doctype html><table><i>a<b>b<div>c<a>d</i>e</b>f
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <i>
+|       "a"
+|       <b>
+|         "b"
+|       <div>
+|         <b>
+|           "c"
+|           <a>
+|             "de"
+|         <a>
+|           "f"
+|     <table>
+|       <tbody>
+Expected:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <i>
+|       "a"
+|       <b>
+|         "b"
+|     <b>
+|     <div>
+|       <b>
+|         <i>
+|           "c"
+|           <a>
+|             "d"
+|         <a>
+|           "e"
+|       <a>
+|         "f"
+|     <table>
+
+Test 95 of 102 in resources/tests19.dat failed. Input:
+<!doctype html><table><i>a<div>b<tr>c<b>d</i>e
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <i>
+|       "a"
+|       <div>
+|         "b"
+|     "c"
+|     <b>
+|       "de"
+|     <table>
+|       <tbody>
+|         <tr>
+Expected:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <i>
+|       "a"
+|       <div>
+|         "b"
+|     <i>
+|       "c"
+|       <b>
+|         "d"
+|     <b>
+|       "e"
+|     <table>
+|       <tbody>
+|         <tr>
+
+Test 96 of 102 in resources/tests19.dat failed. Input:
+<!doctype html><table><td><table><i>a<div>b<b>c</i>d
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <table>
+|       <tbody>
+|         <tr>
+|           <td>
+|             <i>
+|               "a"
+|               <div>
+|                 "b"
+|                 <b>
+|                   "cd"
+|             <table>
+|               <tbody>
+Expected:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <table>
+|       <tbody>
+|         <tr>
+|           <td>
+|             <i>
+|               "a"
+|             <div>
+|               <i>
+|                 "b"
+|                 <b>
+|                   "c"
+|               <b>
+|                 "d"
+|             <table>
+
+Test 99 of 102 in resources/tests19.dat failed. Input:
+<!doctype html><a><b></a><basefont>
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <a>
+|       <b>
+|     <b>
+|       <basefont>
+Expected:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <a>
+|       <b>
+|     <basefont>
+
+Test 100 of 102 in resources/tests19.dat failed. Input:
+<!doctype html><a><b></a><bgsound>
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <a>
+|       <b>
+|     <b>
+|       <bgsound>
+Expected:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <a>
+|       <b>
+|     <bgsound>
+
+Test 101 of 102 in resources/tests19.dat failed. Input:
+<!doctype html><figcaption><article></figcaption>a
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <figcaption>
+|       <article>
+|         "a"
+Expected:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <figcaption>
+|       <article>
+|     "a"
+
+Test 102 of 102 in resources/tests19.dat failed. Input:
+<!doctype html><summary><article></summary>a
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <summary>
+|       <article>
+|         "a"
+Expected:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <summary>
+|       <article>
+|     "a"
+resources/tests20.dat:
+19
+22
+23
+24
+25
+
+Test 19 of 25 in resources/tests20.dat failed. Input:
+<!doctype html><p><button></p>
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <p>
+|       <button>
+Expected:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <p>
+|       <button>
+|         <p>
+
+Test 22 of 25 in resources/tests20.dat failed. Input:
+<p><table></p>
+Got:
+| <html>
+|   <head>
+|   <body>
+|     <p>
+|       <p>
+|       <table>
+|         <tbody>
+Expected:
+| <html>
+|   <head>
+|   <body>
+|     <p>
+|       <p>
+|       <table>
+
+Test 23 of 25 in resources/tests20.dat failed. Input:
+<!doctype html><svg>
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <svg>
+Expected:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <svg svg>
+
+Test 24 of 25 in resources/tests20.dat failed. Input:
+<!doctype html><p><figcaption>
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <p>
+|       <figcaption>
+Expected:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <p>
+|     <figcaption>
+
+Test 25 of 25 in resources/tests20.dat failed. Input:
+<!doctype html><p><summary>
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <p>
+|       <summary>
+Expected:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <p>
+|     <summary>
 resources/webkit01.dat:
+18
 20
 22
 24
+25
 26
 27
 28
 29
-30
 31
-33
 
-Test 20 of 35 in resources/webkit01.dat failed. Input:
+Test 18 of 33 in resources/webkit01.dat failed. Input:
 <body></br foo="bar"></body>
 Got:
 | <html>
@@ -4391,7 +6368,7 @@ Expected:
 |   <body>
 |     <br>
 
-Test 22 of 35 in resources/webkit01.dat failed. Input:
+Test 20 of 33 in resources/webkit01.dat failed. Input:
 <body></body></br foo="bar">
 Got:
 | <html>
@@ -4405,7 +6382,7 @@ Expected:
 |   <body>
 |     <br>
 
-Test 24 of 35 in resources/webkit01.dat failed. Input:
+Test 22 of 33 in resources/webkit01.dat failed. Input:
 <html><body></body></html><!-- Hi there -->
 Got:
 | <html>
@@ -4418,7 +6395,7 @@ Expected:
 |   <body>
 | <!--  Hi there  -->
 
-Test 26 of 35 in resources/webkit01.dat failed. Input:
+Test 24 of 33 in resources/webkit01.dat failed. Input:
 <html><body></body></html>x<!-- Hi there --></html><!-- Again -->
 Got:
 | <html>
@@ -4435,7 +6412,7 @@ Expected:
 |     <!--  Hi there  -->
 | <!--  Again  -->
 
-Test 27 of 35 in resources/webkit01.dat failed. Input:
+Test 25 of 33 in resources/webkit01.dat failed. Input:
 <html><body></body></html>x<!-- Hi there --></body></html><!-- Again -->
 Got:
 | <html>
@@ -4452,7 +6429,7 @@ Expected:
 |     <!--  Hi there  -->
 | <!--  Again  -->
 
-Test 28 of 35 in resources/webkit01.dat failed. Input:
+Test 26 of 33 in resources/webkit01.dat failed. Input:
 <html><body><ruby><div><rp>xx</rp></div></ruby></body></html>
 Got:
 | <html>
@@ -4471,7 +6448,7 @@ Expected:
 |       <rp>
 |         "xx"
 
-Test 29 of 35 in resources/webkit01.dat failed. Input:
+Test 27 of 33 in resources/webkit01.dat failed. Input:
 <html><body><ruby><div><rt>xx</rt></div></ruby></body></html>
 Got:
 | <html>
@@ -4490,7 +6467,7 @@ Expected:
 |       <rt>
 |         "xx"
 
-Test 30 of 35 in resources/webkit01.dat failed. Input:
+Test 28 of 33 in resources/webkit01.dat failed. Input:
 <html><frameset><!--1--><noframes>A</noframes><!--2--></frameset><!--3--><noframes>B</noframes><!--4--></html><!--5--><noframes>C</noframes><!--6-->
 Got:
 | <html>
@@ -4520,7 +6497,7 @@ Expected:
 | <!-- 5 -->
 | <!-- 6 -->
 
-Test 31 of 35 in resources/webkit01.dat failed. Input:
+Test 29 of 33 in resources/webkit01.dat failed. Input:
 <select><option>A<select><option>B<select><option>C<select><option>D<select><option>E<select><option>F<select><option>G<select>
 Got:
 | <html>
@@ -4564,7 +6541,7 @@ Expected:
 |         <option>
 |           "G"
 
-Test 33 of 35 in resources/webkit01.dat failed. Input:
+Test 31 of 33 in resources/webkit01.dat failed. Input:
 <div><b></div><div><nobr>a<nobr>
 Got:
 | <html>
@@ -4589,7 +6566,172 @@ Expected:
 |           "a"
 |         <nobr>
 resources/doctype01.dat:
+14
+15
+16
+23
+24
+25
+26
+27
+29
+30
 31
+32
+33
+34
+35
+36
+37
+
+Test 14 of 37 in resources/doctype01.dat failed. Input:
+<!DOCTYPE potato SYSTEM 'taco"'>Hello
+Got:
+| <!DOCTYPE potato>
+| <html>
+|   <head>
+|   <body>
+|     "Hello"
+Expected:
+| <!DOCTYPE potato "" "taco"">
+| <html>
+|   <head>
+|   <body>
+|     "Hello"
+
+Test 15 of 37 in resources/doctype01.dat failed. Input:
+<!DOCTYPE potato SYSTEM "taco">Hello
+Got:
+| <!DOCTYPE potato>
+| <html>
+|   <head>
+|   <body>
+|     "Hello"
+Expected:
+| <!DOCTYPE potato "" "taco">
+| <html>
+|   <head>
+|   <body>
+|     "Hello"
+
+Test 16 of 37 in resources/doctype01.dat failed. Input:
+<!DOCTYPE potato SYSTEM "tai'co">Hello
+Got:
+| <!DOCTYPE potato>
+| <html>
+|   <head>
+|   <body>
+|     "Hello"
+Expected:
+| <!DOCTYPE potato "" "tai'co">
+| <html>
+|   <head>
+|   <body>
+|     "Hello"
+
+Test 23 of 37 in resources/doctype01.dat failed. Input:
+<!DOCTYPE potato PUBLIC "go'of">Hello
+Got:
+| <!DOCTYPE potato>
+| <html>
+|   <head>
+|   <body>
+|     "Hello"
+Expected:
+| <!DOCTYPE potato "go'of" "">
+| <html>
+|   <head>
+|   <body>
+|     "Hello"
+
+Test 24 of 37 in resources/doctype01.dat failed. Input:
+<!DOCTYPE potato PUBLIC 'go'of'>Hello
+Got:
+| <!DOCTYPE potato>
+| <html>
+|   <head>
+|   <body>
+|     "Hello"
+Expected:
+| <!DOCTYPE potato "go" "">
+| <html>
+|   <head>
+|   <body>
+|     "Hello"
+
+Test 25 of 37 in resources/doctype01.dat failed. Input:
+<!DOCTYPE potato PUBLIC 'go:hh   of' >Hello
+Got:
+| <!DOCTYPE potato>
+| <html>
+|   <head>
+|   <body>
+|     "Hello"
+Expected:
+| <!DOCTYPE potato "go:hh   of" "">
+| <html>
+|   <head>
+|   <body>
+|     "Hello"
+
+Test 26 of 37 in resources/doctype01.dat failed. Input:
+<!DOCTYPE potato PUBLIC "W3C-//dfdf" SYSTEM ggg>Hello
+Got:
+| <!DOCTYPE potato>
+| <html>
+|   <head>
+|   <body>
+|     "Hello"
+Expected:
+| <!DOCTYPE potato "W3C-//dfdf" "">
+| <html>
+|   <head>
+|   <body>
+|     "Hello"
+
+Test 27 of 37 in resources/doctype01.dat failed. Input:
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+   "http://www.w3.org/TR/html4/strict.dtd">Hello
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     "Hello"
+Expected:
+| <!DOCTYPE html "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+| <html>
+|   <head>
+|   <body>
+|     "Hello"
+
+Test 29 of 37 in resources/doctype01.dat failed. Input:
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+Expected:
+| <!DOCTYPE html "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+| <html>
+|   <head>
+|   <body>
+
+Test 30 of 37 in resources/doctype01.dat failed. Input:
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd">
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+Expected:
+| <!DOCTYPE html "-//W3C//DTD XHTML 1.0 Frameset//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd">
+| <html>
+|   <head>
+|   <body>
 
 Test 31 of 37 in resources/doctype01.dat failed. Input:
 <!DOCTYPE root-element [SYSTEM OR PUBLIC FPI] "uri" [ 
@@ -4608,6 +6750,90 @@ Expected:
 |   <head>
 |   <body>
 |     "]>"
+
+Test 32 of 37 in resources/doctype01.dat failed. Input:
+<!DOCTYPE html PUBLIC
+  "-//WAPFORUM//DTD XHTML Mobile 1.0//EN"
+    "http://www.wapforum.org/DTD/xhtml-mobile10.dtd">
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+Expected:
+| <!DOCTYPE html "-//WAPFORUM//DTD XHTML Mobile 1.0//EN" "http://www.wapforum.org/DTD/xhtml-mobile10.dtd">
+| <html>
+|   <head>
+|   <body>
+
+Test 33 of 37 in resources/doctype01.dat failed. Input:
+<!DOCTYPE HTML SYSTEM "http://www.w3.org/DTD/HTML4-strict.dtd"><body><b>Mine!</b></body>
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <b>
+|       "Mine!"
+Expected:
+| <!DOCTYPE html "" "http://www.w3.org/DTD/HTML4-strict.dtd">
+| <html>
+|   <head>
+|   <body>
+|     <b>
+|       "Mine!"
+
+Test 34 of 37 in resources/doctype01.dat failed. Input:
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN""http://www.w3.org/TR/html4/strict.dtd">
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+Expected:
+| <!DOCTYPE html "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+| <html>
+|   <head>
+|   <body>
+
+Test 35 of 37 in resources/doctype01.dat failed. Input:
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"'http://www.w3.org/TR/html4/strict.dtd'>
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+Expected:
+| <!DOCTYPE html "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+| <html>
+|   <head>
+|   <body>
+
+Test 36 of 37 in resources/doctype01.dat failed. Input:
+<!DOCTYPE HTML PUBLIC"-//W3C//DTD HTML 4.01//EN"'http://www.w3.org/TR/html4/strict.dtd'>
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+Expected:
+| <!DOCTYPE html "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+| <html>
+|   <head>
+|   <body>
+
+Test 37 of 37 in resources/doctype01.dat failed. Input:
+<!DOCTYPE HTML PUBLIC'-//W3C//DTD HTML 4.01//EN''http://www.w3.org/TR/html4/strict.dtd'>
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+Expected:
+| <!DOCTYPE html "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+| <html>
+|   <head>
+|   <body>
 resources/scriptdata01.dat: PASS
 
 resources/html5test-com.dat:
@@ -4786,14 +7012,14 @@ resources/comments01.dat: PASS
 
 resources/adoption01.dat:
 1
+3
 6
 7
 8
 9
 11
-12
 
-Test 1 of 13 in resources/adoption01.dat failed. Input:
+Test 1 of 12 in resources/adoption01.dat failed. Input:
 <a><p></a></p>
 Got:
 | <html>
@@ -4809,7 +7035,29 @@ Expected:
 |     <p>
 |       <a>
 
-Test 6 of 13 in resources/adoption01.dat failed. Input:
+Test 3 of 12 in resources/adoption01.dat failed. Input:
+<a>1<button>2</a>3</button>
+Got:
+| <html>
+|   <head>
+|   <body>
+|     <a>
+|       "1"
+|       <button>
+|         "2"
+|     "3"
+Expected:
+| <html>
+|   <head>
+|   <body>
+|     <a>
+|       "1"
+|     <button>
+|       <a>
+|         "2"
+|       "3"
+
+Test 6 of 12 in resources/adoption01.dat failed. Input:
 <table><a>1<p>2</a>3</p>
 Got:
 | <html>
@@ -4833,7 +7081,7 @@ Expected:
 |       "3"
 |     <table>
 
-Test 7 of 13 in resources/adoption01.dat failed. Input:
+Test 7 of 12 in resources/adoption01.dat failed. Input:
 <b><b><a><p></a>
 Got:
 | <html>
@@ -4853,7 +7101,7 @@ Expected:
 |         <p>
 |           <a>
 
-Test 8 of 13 in resources/adoption01.dat failed. Input:
+Test 8 of 12 in resources/adoption01.dat failed. Input:
 <b><a><b><p></a>
 Got:
 | <html>
@@ -4875,7 +7123,7 @@ Expected:
 |         <p>
 |           <a>
 
-Test 9 of 13 in resources/adoption01.dat failed. Input:
+Test 9 of 12 in resources/adoption01.dat failed. Input:
 <a><b><b><p></a>
 Got:
 | <html>
@@ -4899,34 +7147,7 @@ Expected:
 |         <p>
 |           <a>
 
-Test 11 of 13 in resources/adoption01.dat failed. Input:
-<p><b id="A"><script>document.getElementById("A").id = "B"</script></p>TEXT</b>
-Got:
-| <html>
-|   <head>
-|   <body>
-|     <p>
-|       <b>
-|         id="B"
-|         <script>
-|           "document.getElementById("A").id = "B""
-|     <b>
-|       id="B"
-|       "TEXT"
-Expected:
-| <html>
-|   <head>
-|   <body>
-|     <p>
-|       <b>
-|         id="B"
-|         <script>
-|           "document.getElementById("A").id = "B""
-|     <b>
-|       id="A"
-|       "TEXT"
-
-Test 12 of 13 in resources/adoption01.dat failed. Input:
+Test 11 of 12 in resources/adoption01.dat failed. Input:
 <table><a>1<td>2</td>3</table>
 Got:
 | <html>
@@ -5263,78 +7484,45 @@ Expected:
 "
 
 Test 6 of 9 in resources/tricky01.dat failed. Input:
-<TABLE>
-  <CENTER>
-  <FONT>You should see a 100x100 green Image below.
-  </CENTER>
-<IMG alt="Image" width=100 height=100 style="background-color:green">
-<tr><td>
-</td>
-</tr>
-</table>
+<table><center> <font>a</center> <img> <tr><td> </td> </tr> </table>
 Got:
 | <html>
 |   <head>
 |   <body>
 |     <center>
-|       "
-  "
+|       " "
 |       <font>
-|         "You should see a 100x100 green Image below.
-  "
+|         "a"
 |     <font>
-|       "
-"
+|       " "
 |       <img>
-|         alt="Image"
-|         height="100"
-|         style="background-color:green"
-|         width="100"
-|       "
-"
+|       " "
 |     <table>
-|       "
-  "
 |       <tbody>
 |         <tr>
 |           <td>
-|             "
-"
-|           "
-"
-|         "
-"
+|             " "
+|           " "
+|         " "
 Expected:
 | <html>
 |   <head>
 |   <body>
 |     <center>
-|       "
-  "
+|       " "
 |       <font>
-|         "You should see a 100x100 green Image below.
-  "
+|         "a"
 |     <font>
 |       <img>
-|         alt="Image"
-|         height="100"
-|         style="background-color:green"
-|         width="100"
-|       "
-"
+|       " "
 |     <table>
-|       "
-  
-"
+|       " "
 |       <tbody>
 |         <tr>
 |           <td>
-|             "
-"
-|           "
-"
-|         "
-"
+|             " "
+|           " "
+|         " "
 
 Test 7 of 9 in resources/tricky01.dat failed. Input:
 <table><tr><p><a><p>You should see this text.
@@ -5484,3 +7672,33 @@ nobr should have closed the div inside it implicitly. "
 |       "
 
 "
+resources/scripted/adoption01.dat:
+1
+
+Test 1 of 1 in resources/scripted/adoption01.dat failed. Input:
+<p><b id="A"><script>document.getElementById("A").id = "B"</script></p>TEXT</b>
+Got:
+| <html>
+|   <head>
+|   <body>
+|     <p>
+|       <b>
+|         id="B"
+|         <script>
+|           "document.getElementById("A").id = "B""
+|     <b>
+|       id="B"
+|       "TEXT"
+Expected:
+| <html>
+|   <head>
+|   <body>
+|     <p>
+|       <b>
+|         id="B"
+|         <script>
+|           "document.getElementById("A").id = "B""
+|     <b>
+|       id="A"
+|       "TEXT"
+resources/scripted/webkit01.dat: PASS

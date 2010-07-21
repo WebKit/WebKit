@@ -32,9 +32,10 @@
 |   <body>
 |     <a>
 |       "1"
-|       <button>
+|     <button>
+|       <a>
 |         "2"
-|     "3"
+|       "3"
 
 #data
 <a>1<b>2</a>3</b>
@@ -148,22 +149,6 @@
 |     <b>
 |       id="B"
 |       "5"
-
-#data
-<p><b id="A"><script>document.getElementById("A").id = "B"</script></p>TEXT</b>
-#errors
-#document
-| <html>
-|   <head>
-|   <body>
-|     <p>
-|       <b>
-|         id="B"
-|         <script>
-|           "document.getElementById("A").id = "B""
-|     <b>
-|       id="A"
-|       "TEXT"
 
 #data
 <table><a>1<td>2</td>3</table>
