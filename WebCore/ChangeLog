@@ -1,3 +1,19 @@
+2010-07-20  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        CSS rotation transform can cause elements with certain styles to vanish during rotation.
+        https://bugs.webkit.org/show_bug.cgi?id=42579
+        
+        Remove some untested, broken code that, as far as I can tell, could never get hit.
+        Use the correct rect for the PaintInfo so that zero-sized elements with overflow:hidden
+        but a border paint correctly.
+
+        Test: compositing/overflow/zero-size-overflow.html
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::paintIntoLayer):
+
 2010-07-21  Mahesh Kulkarni  <mahesh.kulkarni@nokia.com>
 
         Reviewed by Laszlo Gombos.

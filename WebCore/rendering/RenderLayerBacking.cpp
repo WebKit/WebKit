@@ -983,38 +983,11 @@ void RenderLayerBacking::paintIntoLayer(RenderLayer* rootLayer, GraphicsContext*
     bool shouldPaint = (m_owningLayer->hasVisibleContent() || m_owningLayer->hasVisibleDescendant()) && m_owningLayer->isSelfPaintingLayer();
 
     if (shouldPaint && (paintingPhase & GraphicsLayerPaintBackground)) {
-        // If this is the root then we need to send in a bigger bounding box
-        // because we'll be painting the background as well (see RenderBox::paintRootBoxDecorations()).
-        IntRect paintBox = clipRectToApply;
-        
-        // FIXME: do we need this code?
-        if (renderer()->node() && renderer()->node()->isDocumentNode() && renderer()->document()->isHTMLDocument()) {
-            RenderBox* box = toRenderBox(renderer());
-            int w = box->width();
-            int h = box->height();
-            
-            int rw;
-            int rh;
-            if (FrameView* frameView = box->view()->frameView()) {
-                rw = frameView->contentsWidth();
-                rh = frameView->contentsHeight();
-            } else {
-                rw = box->view()->width();
-                rh = box->view()->height();
-            }
-            
-            int bx = tx - box->marginLeft();
-            int by = ty - box->marginTop();
-            int bw = max(w + box->marginLeft() + box->marginRight() + box->borderLeft() + box->borderRight(), rw);
-            int bh = max(h + box->marginTop() + box->marginBottom() + box->borderTop() + box->borderBottom(), rh);
-            paintBox = IntRect(bx, by, bw, bh);
-        }
-
         // Paint our background first, before painting any child layers.
         // Establish the clip used to paint our background.
         setClip(context, paintDirtyRect, damageRect);
         
-        PaintInfo info(context, paintBox, PaintPhaseBlockBackground, false, paintingRootForRenderer, 0);
+        PaintInfo info(context, damageRect, PaintPhaseBlockBackground, false, paintingRootForRenderer, 0);
         renderer()->paint(info, tx, ty);
 
         // Our scrollbar widgets paint exactly when we tell them to, so that they work properly with
