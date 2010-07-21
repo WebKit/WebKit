@@ -1,3 +1,19 @@
+2010-07-21  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Fix fast/css/last-child-style-sharing.html
+        https://bugs.webkit.org/show_bug.cgi?id=42731
+
+        Prior to this patch, we weren't calling finishParsingChildren on the
+        body element.  We need a more systematic way of catching these bugs.
+
+        * html/HTMLElementStack.cpp:
+        (WebCore::HTMLElementStack::popAll):
+        * html/HTMLElementStack.h:
+        * html/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::processEndOfFile):
+
 2010-07-21  Hans Wennborg  <hans@chromium.org>
 
         Reviewed by Steve Block.

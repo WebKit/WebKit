@@ -137,6 +137,17 @@ void HTMLElementStack::popHTMLBodyElement()
     popCommon();
 }
 
+void HTMLElementStack::popAll()
+{
+    m_htmlElement = 0;
+    m_headElement = 0;
+    m_bodyElement = 0;
+    while (m_top) {
+        top()->finishParsingChildren();
+        m_top = m_top->releaseNext();
+    }
+}
+
 void HTMLElementStack::pop()
 {
     ASSERT(!top()->hasTagName(HTMLNames::headTag));

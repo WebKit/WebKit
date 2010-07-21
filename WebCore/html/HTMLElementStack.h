@@ -92,6 +92,7 @@ public:
     void popUntilTableRowScopeMarker(); // "clear the stack back to a table row context" in the spec.
     void popHTMLHeadElement();
     void popHTMLBodyElement();
+    void popAll();
 
     void remove(Element*);
     void removeHTMLHeadElement(Element*);
