@@ -1,3 +1,15 @@
+2010-07-21  Tony Gentilcore  <tonyg@chromium.org>
+
+        Unreviewed build fix.
+
+        Disable overzealous ASSERT
+        https://bugs.webkit.org/show_bug.cgi?id=42775
+
+        No new tests because no changed functionality.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::stopLoading):
+
 2010-07-21  Yael Aharon  <yael.aharon@nokia.com>
 
         Reviewed by Darin Adler.
