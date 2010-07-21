@@ -1,3 +1,28 @@
+2010-07-20  Ben Murdoch  <benm@google.com>
+
+        Reviewed by Steve Block.
+
+        Touch events do not affect the :active CSS state
+        https://bugs.webkit.org/show_bug.cgi?id=39493
+
+        Test: fast/events/touch/touch-active-state.html
+
+        * WebCore.exp.in: Update exports for new signature of
+            hitTestResultAtPoint.
+        * WebCore.order: ditto.
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::EventHandler):
+        (WebCore::EventHandler::hitTestResultAtPoint): Pass the type
+            of the hit test to perform as a parameter with a default
+            value rather than harcoding it in the function body.
+        (WebCore::EventHandler::handleMouseMoveEvent): Do not modiify
+            the active element during a mouse move if the user is
+            touching the screen.
+        (WebCore::EventHandler::handleTouchEvent): Set the correct
+            type of hit test to perform depending on the type of the
+            touch event we are handling.
+        * page/EventHandler.h: Update the signature of hitTestResultAtPoint.
+
 2010-07-20  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.

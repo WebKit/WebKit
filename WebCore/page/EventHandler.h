@@ -28,6 +28,7 @@
 
 #include "DragActions.h"
 #include "FocusDirection.h"
+#include "HitTestRequest.h"
 #include "PlatformMouseEvent.h"
 #include "ScrollTypes.h"
 #include "Timer.h"
@@ -105,7 +106,7 @@ public:
 
     void dispatchFakeMouseMoveEventSoonInQuad(const FloatQuad&);
 
-    HitTestResult hitTestResultAtPoint(const IntPoint&, bool allowShadowContent, bool ignoreClipping = false, HitTestScrollbars scrollbars = DontHitTestScrollbars);
+    HitTestResult hitTestResultAtPoint(const IntPoint&, bool allowShadowContent, bool ignoreClipping = false, HitTestScrollbars scrollbars = DontHitTestScrollbars, int hitType = HitTestRequest::ReadOnly | HitTestRequest::Active);
 
     bool mousePressed() const { return m_mousePressed; }
     void setMousePressed(bool pressed) { m_mousePressed = pressed; }
@@ -431,6 +432,7 @@ private:
 #if ENABLE(TOUCH_EVENTS)
     typedef HashMap<int, RefPtr<EventTarget> > TouchTargetMap;
     TouchTargetMap m_originatingTouchPointTargets;
+    bool m_touchPressed;
 #endif
 };
 

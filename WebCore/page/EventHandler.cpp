@@ -190,6 +190,9 @@ EventHandler::EventHandler(Frame* frame)
     , m_sendingEventToSubview(false)
     , m_activationEventNumber(0)
 #endif
+#if ENABLE(TOUCH_EVENTS)
+    , m_touchPressed(false)
+#endif
 {
 }
 
@@ -859,12 +862,11 @@ void EventHandler::allowDHTMLDrag(bool& flagDHTML, bool& flagUA) const
 }
 #endif // ENABLE(DRAG_SUPPORT)
     
-HitTestResult EventHandler::hitTestResultAtPoint(const IntPoint& point, bool allowShadowContent, bool ignoreClipping, HitTestScrollbars testScrollbars)
+HitTestResult EventHandler::hitTestResultAtPoint(const IntPoint& point, bool allowShadowContent, bool ignoreClipping, HitTestScrollbars testScrollbars, int hitType)
 {
     HitTestResult result(point);
     if (!m_frame->contentRenderer())
         return result;
-    int hitType = HitTestRequest::ReadOnly | HitTestRequest::Active;
     if (ignoreClipping)
         hitType |= HitTestRequest::IgnoreClipping;
     m_frame->contentRenderer()->layer()->hitTest(HitTestRequest(hitType), result);
@@ -1441,6 +1443,12 @@ bool EventHandler::handleMouseMoveEvent(const PlatformMouseEvent& mouseEvent, Hi
         hitType |= HitTestRequest::ReadOnly;
     if (m_mousePressed)
         hitType |= HitTestRequest::Active;
+
+#if ENABLE(TOUCH_EVENTS)
+    // Treat any mouse move events as readonly if the user is currently touching the screen.
+    if (m_touchPressed)
+        hitType |= HitTestRequest::Active | HitTestRequest::ReadOnly;
+#endif
     HitTestRequest request(hitType);
     MouseEventWithHitTestResults mev = prepareMouseEvent(request, mouseEvent);
     if (hoveredNode)
@@ -2838,7 +2846,29 @@ bool EventHandler::handleTouchEvent(const PlatformTouchEvent& event)
     for (unsigned i = 0; i < points.size(); ++i) {
         const PlatformTouchPoint& point = points[i];
         IntPoint pagePoint = documentPointForWindowPoint(m_frame, point.pos());
-        HitTestResult result = hitTestResultAtPoint(pagePoint, /*allowShadowContent*/ false);
+
+        int hitType = HitTestRequest::Active | HitTestRequest::ReadOnly;
+        // The HitTestRequest types used for mouse events map quite adequately
+        // to touch events. Note that in addition to meaning that the hit test
+        // should affect the active state of the current node if necessary,
+        // HitTestRequest::Active signifies that the hit test is taking place
+        // with the mouse (or finger in this case) being pressed.
+        switch (point.state()) {
+        case PlatformTouchPoint::TouchPressed:
+            hitType = HitTestRequest::Active;
+            break;
+        case PlatformTouchPoint::TouchMoved:
+            hitType = HitTestRequest::Active | HitTestRequest::MouseMove | HitTestRequest::ReadOnly;
+            break;
+        case PlatformTouchPoint::TouchReleased:
+        case PlatformTouchPoint::TouchCancelled:
+            hitType = HitTestRequest::MouseUp;
+            break;
+        default:
+            break;
+        }
+
+        HitTestResult result = hitTestResultAtPoint(pagePoint, /*allowShadowContent*/ false, false, DontHitTestScrollbars, hitType);
         Node* target = result.innerNode();
 
         // Touch events should not go to text nodes
@@ -2900,6 +2930,8 @@ bool EventHandler::handleTouchEvent(const PlatformTouchEvent& event)
         else if (point.state() == PlatformTouchPoint::TouchMoved)
             movedTouches->append(touch);
     }
+
+    m_touchPressed = touches->length() > 0;
 
     bool defaultPrevented = false;
     Touch* changedTouch = 0;
