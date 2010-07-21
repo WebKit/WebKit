@@ -61,7 +61,7 @@ private:
     // CoreIPC message handlers.
     void setSize(const WebCore::IntSize& viewSize);
     void suspendPainting();
-    void resumePainting();
+    void resumePainting(bool forceRepaint);
     void didUpdate();
 
     // Platform overrides
@@ -69,7 +69,7 @@ private:
 
     WebCore::IntRect m_dirtyRect;
     bool m_isWaitingForUpdate;
-    bool m_shouldPaint;
+    bool m_paintingIsSuspended;
     RunLoop::Timer<ChunkedUpdateDrawingArea> m_displayTimer;
 };
 

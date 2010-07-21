@@ -44,12 +44,13 @@ public:
 
     uint8_t* data() { return m_data; }
     const WebCore::IntRect& rect() const { return m_rect; }
+    bool isEmpty() const { return m_rect.isEmpty(); }
 
     void encode(CoreIPC::ArgumentEncoder&) const;
     static bool decode(CoreIPC::ArgumentDecoder&, UpdateChunk&);
 
     RetainPtr<CGImageRef> createImage();
-    
+
 private:
     size_t size() const { return m_rect.width() * 4 * m_rect.height(); }
 

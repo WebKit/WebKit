@@ -41,6 +41,7 @@ ChunkedUpdateDrawingAreaProxy::ChunkedUpdateDrawingAreaProxy(PlatformWebView* we
     : DrawingAreaProxy(ChunkedUpdateDrawingAreaType)
     , m_isWaitingForDidSetFrameNotification(false)
     , m_isVisible(true)
+    , m_forceRepaintWhenResumingPainting(false)
     , m_webView(webView)
 {
 }
@@ -104,10 +105,9 @@ void ChunkedUpdateDrawingAreaProxy::setPageIsVisible(bool isVisible)
         return;
     }
     
-    // The page is now visible.
-    page->process()->send(DrawingAreaMessage::ResumePainting, page->pageID(), CoreIPC::In());
-    
-    // FIXME: We should request a full repaint here if needed.
+    // The page is now visible, resume painting.
+    page->process()->send(DrawingAreaMessage::ResumePainting, page->pageID(), CoreIPC::In(m_forceRepaintWhenResumingPainting));
+    m_forceRepaintWhenResumingPainting = false;
 }
     
 void ChunkedUpdateDrawingAreaProxy::didSetSize(UpdateChunk* updateChunk)
@@ -121,7 +121,8 @@ void ChunkedUpdateDrawingAreaProxy::didSetSize(UpdateChunk* updateChunk)
         setSize(m_lastSetViewSize);
 
     invalidateBackingStore();
-    drawUpdateChunkIntoBackingStore(updateChunk);
+    if (!updateChunk->isEmpty())
+        drawUpdateChunkIntoBackingStore(updateChunk);
 
     WebPageProxy* page = this->page();
     page->process()->responsivenessTimer()->stop();
@@ -129,7 +130,15 @@ void ChunkedUpdateDrawingAreaProxy::didSetSize(UpdateChunk* updateChunk)
 
 void ChunkedUpdateDrawingAreaProxy::update(UpdateChunk* updateChunk)
 {
-    drawUpdateChunkIntoBackingStore(updateChunk);
+    if (!m_isVisible) {
+        // We got an update request that must have been sent before we told the web process to suspend painting.
+        // Don't paint this into the backing store, because that could leave the backing store in an inconsistent state.
+        // Instead, we will just tell the drawing area to repaint everything when we resume painting.
+        m_forceRepaintWhenResumingPainting = true;
+    } else {
+        // Just paint into backing store.
+        drawUpdateChunkIntoBackingStore(updateChunk);
+    }
 
     WebPageProxy* page = this->page();
     page->process()->send(DrawingAreaMessage::DidUpdate, page->pageID(), CoreIPC::In());

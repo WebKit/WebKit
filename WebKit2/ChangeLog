@@ -53,6 +53,52 @@
 
         Reviewed by Dan Bernstein.
 
+        Handle WKView visibility changes
+        <rdar://problem/7891077>
+    
+        * Shared/mac/UpdateChunk.h:
+        (WebKit::UpdateChunk::isEmpty):
+        Add convenience getter.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView viewDidMoveToWindow]):
+        Reorder the calls to _updateActiveState and _updateVisibility based on whether the view is moved to
+        a window or away from a window.
+
+        * UIProcess/ChunkedUpdateDrawingAreaProxy.cpp:
+        (WebKit::ChunkedUpdateDrawingAreaProxy::ChunkedUpdateDrawingAreaProxy):
+        Initialize m_forceRepaintWhenResumingPainting to false.
+
+        (WebKit::ChunkedUpdateDrawingAreaProxy::setPageIsVisible):
+        Pass the m_forceRepaintWhenResumingPainting along to the DrawingAreaMessage::ResumePainting message.
+
+        (WebKit::ChunkedUpdateDrawingAreaProxy::didSetSize):
+        Don't try to paint empty update chunks.
+
+        (WebKit::ChunkedUpdateDrawingAreaProxy::update):
+        Don't paint the update chunk if we're not visible. Instead, make sure that the entire page is being redrawn
+        when its shown again.
+
+        * UIProcess/ChunkedUpdateDrawingAreaProxy.h:
+        * WebProcess/WebPage/ChunkedUpdateDrawingArea.cpp:
+        (WebKit::ChunkedUpdateDrawingArea::ChunkedUpdateDrawingArea):
+        (WebKit::ChunkedUpdateDrawingArea::display):
+        (WebKit::ChunkedUpdateDrawingArea::suspendPainting):
+        Rename m_shouldPaint to m_isPaintingSuspended and invert its logic.
+        
+        (WebKit::ChunkedUpdateDrawingArea::scheduleDisplay):
+        Don't schedule a display timer if the dirty rect is empty.
+
+        (WebKit::ChunkedUpdateDrawingArea::setSize):
+        If painting is suspended, just send back an empty update chunk in the DidSetSize message.
+
+        (WebKit::ChunkedUpdateDrawingArea::resumePainting):
+        If forceRepaint is true, repaint the entire drawing area.
+
+2010-07-20  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dan Bernstein.
+
         Implement NPN_GetURL and NPN_PostURL
         https://bugs.webkit.org/show_bug.cgi?id=42650
 

@@ -89,6 +89,7 @@ private:
 
     bool m_isWaitingForDidSetFrameNotification;
     bool m_isVisible;
+    bool m_forceRepaintWhenResumingPainting;
 
     WebCore::IntSize m_viewSize; // Size of the BackingStore as well.
     WebCore::IntSize m_lastSetViewSize;
