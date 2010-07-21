@@ -2101,9 +2101,9 @@ int WebFrameImpl::ordinalOfFirstMatchForFrame(WebFrameImpl* frame) const
 
 bool WebFrameImpl::shouldScopeMatches(const String& searchText)
 {
-    // Don't scope if we can't find a frame or if the frame is not visible.
+    // Don't scope if we can't find a frame or a view or if the frame is not visible.
     // The user may have closed the tab/application, so abort.
-    if (!frame() || !hasVisibleContent())
+    if (!frame() || !frame()->view() || !hasVisibleContent())
         return false;
 
     ASSERT(frame()->document() && frame()->view());
