@@ -37,6 +37,7 @@ public:
     // WebCore session credential storage.
     static void set(const Credential&, const ProtectionSpace&, const KURL&);
     static Credential get(const ProtectionSpace&);
+    static void remove(const ProtectionSpace&);
 
     // OS persistent storage.
     static Credential getFromPersistentStorage(const ProtectionSpace&);
