@@ -550,6 +550,7 @@ void InspectorBasicValue::writeJSON(Vector<UChar>* output) const
             output->append(falseString, 5);
     } else if (type() == TypeDouble) {
         String value = String::format("%f", m_doubleValue);
+        value.replace(',', '.');
         output->append(value.characters(), value.length());
     }
 }

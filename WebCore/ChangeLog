@@ -1,3 +1,14 @@
+2010-07-21  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        WebInspector: Serialization to JSON in InspectorValue works incorrect
+        if comma is assigned as decimal separator. Windows with Russian locale.
+        https://bugs.webkit.org/show_bug.cgi?id=42755
+
+        * inspector/InspectorValues.cpp:
+        (WebCore::InspectorBasicValue::writeJSON):
+
 2010-07-20  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.
