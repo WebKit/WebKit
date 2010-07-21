@@ -1,3 +1,16 @@
+2010-07-21  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Don't assert when clicking on a plug-in in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=42762
+
+        Add stub for PluginView::handleEvent.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::handleEvent):
+        * WebProcess/Plugins/PluginView.h:
+
 2010-07-21  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Anders Carlsson.

@@ -85,6 +85,7 @@ private:
     virtual void invalidateRect(const WebCore::IntRect&);
     virtual void frameRectsChanged();
     virtual void setParent(WebCore::ScrollView*);
+    virtual void handleEvent(WebCore::Event*);
 
     // WebCore::MediaCanStartListener
     virtual void mediaCanStart();

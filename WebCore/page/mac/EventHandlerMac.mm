@@ -215,10 +215,14 @@ bool EventHandler::passMouseDownEventToWidget(Widget* pWidget)
         return true;
     }
 
+    // In WebKit2 we will never have an NSView. Just return early and let the regular event handler machinery take care of
+    // dispatching the event.
+    if (!widget->platformWidget())
+        return false;
+
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     
     NSView *nodeView = widget->platformWidget();
-    ASSERT(nodeView);
     ASSERT([nodeView superview]);
     NSView *view = [nodeView hitTest:[[nodeView superview] convertPoint:[currentNSEvent() locationInWindow] fromView:nil]];
     if (!view) {

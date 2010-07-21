@@ -27,6 +27,7 @@
 
 #include "Plugin.h"
 #include <WebCore/DocumentLoader.h>
+#include <WebCore/Event.h>
 #include <WebCore/FrameLoadRequest.h>
 #include <WebCore/FrameLoaderClient.h>
 #include <WebCore/FrameView.h>
@@ -317,6 +318,11 @@ void PluginView::setParent(ScrollView* scrollView)
     viewGeometryDidChange();
 }
 
+void PluginView::handleEvent(Event*)
+{
+    // FIXME: Implement.
+}
+    
 void PluginView::viewGeometryDidChange()
 {
     if (!parent() || !m_plugin || !m_isInitialized)
