@@ -1,3 +1,27 @@
+2010-07-21  Tony Chang  <tony@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        convert more layout tests from -khtml to -webkit
+        https://bugs.webkit.org/show_bug.cgi?id=42786
+
+        This is a follow up to r63854.
+
+        * fast/backgrounds/size/backgroundSize02.html:
+        * fast/backgrounds/size/backgroundSize03.html:
+        * fast/backgrounds/size/backgroundSize04.html:
+        * fast/backgrounds/size/backgroundSize05.html:
+        * fast/backgrounds/size/backgroundSize06.html:
+        * fast/backgrounds/size/backgroundSize07.html:
+        * fast/backgrounds/size/backgroundSize08.html:
+        * fast/backgrounds/size/backgroundSize09.html:
+        * fast/backgrounds/size/backgroundSize10.html:
+        * fast/backgrounds/size/backgroundSize11.html:
+        * fast/backgrounds/size/backgroundSize12.html:
+        * fast/backgrounds/size/backgroundSize13.html:
+        * fast/backgrounds/size/backgroundSize14.html:
+        * fast/backgrounds/size/backgroundSize15.html:
+
 2010-07-21  Peter Beverloo  <peter@lvp-media.com>
 
         Reviewed by Eric Carlson.
