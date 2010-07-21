@@ -4610,6 +4610,147 @@ Expected:
 |     "]>"
 resources/scriptdata01.dat: PASS
 
+resources/html5test-com.dat:
+7
+9
+10
+11
+20
+21
+23
+24
+
+Test 7 of 24 in resources/html5test-com.dat failed. Input:
+&lang;&rang;
+Got:
+| <html>
+|   <head>
+|   <body>
+|     "〈〉"
+Expected:
+| <html>
+|   <head>
+|   <body>
+|     "⟨⟩"
+
+Test 9 of 24 in resources/html5test-com.dat failed. Input:
+&ImaginaryI;
+Got:
+| <html>
+|   <head>
+|   <body>
+|     "&ImaginaryI;"
+Expected:
+| <html>
+|   <head>
+|   <body>
+|     "ⅈ"
+
+Test 10 of 24 in resources/html5test-com.dat failed. Input:
+&Kopf;
+Got:
+| <html>
+|   <head>
+|   <body>
+|     "&Kopf;"
+Expected:
+| <html>
+|   <head>
+|   <body>
+|     "𝕂"
+
+Test 11 of 24 in resources/html5test-com.dat failed. Input:
+&notinva;
+Got:
+| <html>
+|   <head>
+|   <body>
+|     "&notinva;"
+Expected:
+| <html>
+|   <head>
+|   <body>
+|     "∉"
+
+Test 20 of 24 in resources/html5test-com.dat failed. Input:
+<table><form><input type=hidden><input></form><div></div></table>
+Got:
+| <html>
+|   <head>
+|   <body>
+|     <input>
+|       type="hidden"
+|     <input>
+|     <div>
+|     <table>
+|       <form>
+|       <tbody>
+Expected:
+| <html>
+|   <head>
+|   <body>
+|     <input>
+|     <div>
+|     <table>
+|       <form>
+|       <input>
+|         type="hidden"
+
+Test 21 of 24 in resources/html5test-com.dat failed. Input:
+<i>A<b>B<p></i>C</b>D
+Got:
+| <html>
+|   <head>
+|   <body>
+|     <i>
+|       "A"
+|       <b>
+|         "B"
+|     <b>
+|     <p>
+|       <b>
+|         "C"
+|       "D"
+Expected:
+| <html>
+|   <head>
+|   <body>
+|     <i>
+|       "A"
+|       <b>
+|         "B"
+|     <b>
+|     <p>
+|       <b>
+|         <i>
+|         "C"
+|       "D"
+
+Test 23 of 24 in resources/html5test-com.dat failed. Input:
+<svg></svg>
+Got:
+| <html>
+|   <head>
+|   <body>
+|     <svg>
+Expected:
+| <html>
+|   <head>
+|   <body>
+|     <svg svg>
+
+Test 24 of 24 in resources/html5test-com.dat failed. Input:
+<math></math>
+Got:
+| <html>
+|   <head>
+|   <body>
+|     <math>
+Expected:
+| <html>
+|   <head>
+|   <body>
+|     <math math>
 resources/entities01.dat:
 2
 5

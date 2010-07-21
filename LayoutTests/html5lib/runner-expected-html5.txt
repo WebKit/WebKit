@@ -172,6 +172,87 @@ resources/doctype01.dat: PASS
 
 resources/scriptdata01.dat: PASS
 
+resources/html5test-com.dat:
+7
+9
+10
+11
+20
+
+Test 7 of 24 in resources/html5test-com.dat failed. Input:
+&lang;&rang;
+Got:
+| <html>
+|   <head>
+|   <body>
+|     "〈〉"
+Expected:
+| <html>
+|   <head>
+|   <body>
+|     "⟨⟩"
+
+Test 9 of 24 in resources/html5test-com.dat failed. Input:
+&ImaginaryI;
+Got:
+| <html>
+|   <head>
+|   <body>
+|     "&ImaginaryI;"
+Expected:
+| <html>
+|   <head>
+|   <body>
+|     "ⅈ"
+
+Test 10 of 24 in resources/html5test-com.dat failed. Input:
+&Kopf;
+Got:
+| <html>
+|   <head>
+|   <body>
+|     "&Kopf;"
+Expected:
+| <html>
+|   <head>
+|   <body>
+|     "𝕂"
+
+Test 11 of 24 in resources/html5test-com.dat failed. Input:
+&notinva;
+Got:
+| <html>
+|   <head>
+|   <body>
+|     "&notinva;"
+Expected:
+| <html>
+|   <head>
+|   <body>
+|     "∉"
+
+Test 20 of 24 in resources/html5test-com.dat failed. Input:
+<table><form><input type=hidden><input></form><div></div></table>
+Got:
+| <html>
+|   <head>
+|   <body>
+|     <div>
+|     <table>
+|       <form>
+|       <input>
+|         type="hidden"
+|       <input>
+Expected:
+| <html>
+|   <head>
+|   <body>
+|     <input>
+|     <div>
+|     <table>
+|       <form>
+|       <input>
+|         type="hidden"
 resources/entities01.dat:
 2
 5
