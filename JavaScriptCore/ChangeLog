@@ -1,3 +1,8 @@
+2010-07-20  Steve Falkenburg  <sfalken@apple.com>
+
+        Re-save vsprops files after no-op edits in Visual Studio
+        to fix manual edit issues.
+
 2010-07-20  Mahesh Kulkarni  <mahesh.kulkarni@nokia.com>
 
         Reviewed by Steve Block.
