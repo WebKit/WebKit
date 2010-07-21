@@ -211,8 +211,8 @@ void Widget::applyFallbackCursor()
         int shape = cursorStringMap.cursor(m_data->m_cursorGroup.utf8().data());
 
         if (shape < ECORE_X_CURSOR_X || shape > ECORE_X_CURSOR_XTERM) {
-            fprintf(stderr, "ERROR: cannot map an equivalent X cursor for"
-                    " cursor group %s", m_data->m_cursorGroup.utf8().data());
+            LOG_ERROR("cannot map an equivalent X cursor for"
+                      " c ursor group %s", m_data->m_cursorGroup.utf8().data());
             shape = ECORE_X_CURSOR_LEFT_PTR;
         }
 
@@ -221,10 +221,9 @@ void Widget::applyFallbackCursor()
         ecore_x_window_cursor_set(win, cur);
         return;
     }
-#else
-    fprintf(stderr, "ERROR: Ooops, no fallback to set cursor %s!\n",
-            m_data->m_cursorGroup.utf8().data());
 #endif
+    LOG("Ooops, no fallback to set cursor %s!\n",
+        m_data->m_cursorGroup.utf8().data());
 }
 
 void Widget::applyCursor()
