@@ -237,6 +237,8 @@ namespace WebCore {
         virtual void dispatchDidFailToStartPlugin(const PluginView*) const { }
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
         virtual PassRefPtr<Widget> createMediaPlayerProxyPlugin(const IntSize&, HTMLMediaElement*, const KURL&, const Vector<String>&, const Vector<String>&, const String&) = 0;
+        virtual void hideMediaPlayerProxyPlugin(Widget*) = 0;
+        virtual void showMediaPlayerProxyPlugin(Widget*) = 0;
 #endif
 
         virtual ObjectContentType objectContentType(const KURL& url, const String& mimeType) = 0;

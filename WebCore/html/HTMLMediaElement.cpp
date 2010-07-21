@@ -178,16 +178,19 @@ void HTMLMediaElement::attributeChanged(Attribute* attr, bool preserveDecls)
         if (!getAttribute(srcAttr).isEmpty())
             scheduleLoad();
     }
-#if !ENABLE(PLUGIN_PROXY_FOR_VIDEO)
     else if (attrName == controlsAttr) {
+#if !ENABLE(PLUGIN_PROXY_FOR_VIDEO)
         if (!isVideo() && attached() && (controls() != (renderer() != 0))) {
             detach();
             attach();
         }
         if (renderer())
             renderer()->updateFromElement();
-    }
+#else
+        if (m_player)
+            m_player->setControls(controls());
 #endif
+    }
 }
 
 void HTMLMediaElement::parseMappedAttribute(Attribute* attr)
@@ -284,8 +287,14 @@ RenderObject* HTMLMediaElement::createRenderer(RenderArena* arena, RenderStyle*)
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
     // Setup the renderer if we already have a proxy widget.
     RenderEmbeddedObject* mediaRenderer = new (arena) RenderEmbeddedObject(this);
-    if (m_proxyWidget)
+    if (m_proxyWidget) {
         mediaRenderer->setWidget(m_proxyWidget);
+
+        Frame* frame = document()->frame();
+        FrameLoader* loader = frame ? frame->loader() : 0;
+        if (loader)
+            loader->showMediaPlayerProxyPlugin(m_proxyWidget.get());
+    }
     return mediaRenderer;
 #else
     return new (arena) RenderMedia(this);
@@ -320,6 +329,14 @@ void HTMLMediaElement::attach()
 
     if (renderer())
         renderer()->updateFromElement();
+#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
+    else if (m_proxyWidget) {
+        Frame* frame = document()->frame();
+        FrameLoader* loader = frame ? frame->loader() : 0;
+        if (loader)
+            loader->hideMediaPlayerProxyPlugin(m_proxyWidget.get());
+    }
+#endif
 }
 
 void HTMLMediaElement::recalcStyle(StyleChange change)
@@ -1982,9 +1999,7 @@ void HTMLMediaElement::createMediaPlayerProxy()
 {
     ensureMediaPlayer();
 
-    if (!inDocument() && m_proxyWidget)
-        return;
-    if (inDocument() && !m_needWidgetUpdate)
+    if (m_proxyWidget || (inDocument() && !m_needWidgetUpdate))
         return;
 
     Frame* frame = document()->frame();

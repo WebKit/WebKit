@@ -2621,6 +2621,20 @@ static PassOwnPtr<Vector<String> > toStringVector(NSArray* patterns)
     return nil;
 }
 
+#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
+- (WebBasePluginPackage *)_videoProxyPluginForMIMEType:(NSString *)MIMEType
+{
+    WebBasePluginPackage *pluginPackage = [[WebPluginDatabase sharedDatabase] pluginForMIMEType:MIMEType];
+    if (pluginPackage)
+        return pluginPackage;
+
+    if (_private->pluginDatabase)
+        return [_private->pluginDatabase pluginForMIMEType:MIMEType];
+
+    return nil;
+}
+#endif
+
 - (WebBasePluginPackage *)_pluginForExtension:(NSString *)extension
 {
     if (![_private->preferences arePlugInsEnabled])

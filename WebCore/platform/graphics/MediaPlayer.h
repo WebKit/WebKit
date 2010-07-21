@@ -251,6 +251,9 @@ public:
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
     void deliverNotification(MediaPlayerProxyNotificationType notification);
     void setMediaPlayerProxy(WebMediaPlayerProxy* proxy);
+    void setControls(bool);
+    void enterFullscreen();
+    void exitFullscreen();
 #endif
 
 #if USE(ACCELERATED_COMPOSITING)

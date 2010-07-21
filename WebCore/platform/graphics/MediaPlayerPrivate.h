@@ -107,6 +107,9 @@ public:
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
     virtual void deliverNotification(MediaPlayerProxyNotificationType) = 0;
     virtual void setMediaPlayerProxy(WebMediaPlayerProxy*) = 0;
+    virtual void setControls(bool) { }
+    virtual void enterFullscreen() { }
+    virtual void exitFullscreen() { }
 #endif
 
 #if USE(ACCELERATED_COMPOSITING)

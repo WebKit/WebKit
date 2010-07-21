@@ -42,6 +42,9 @@
     NSMutableArray *_views;
     BOOL _started;
     NSMutableSet *_checksInProgress;
+#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
+    NSMutableArray *_viewsNotInDocument;
+#endif
 }
 
 + (NSView *)plugInViewWithArguments:(NSDictionary *)arguments fromPluginPackage:(WebPluginPackage *)plugin;
@@ -53,6 +56,10 @@
 
 - (void)addPlugin:(NSView *)view;
 - (void)destroyPlugin:(NSView *)view;
+#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
+- (void)pluginViewCreated:(NSView *)view;
++ (void)pluginViewHidden:(NSView *)view;
+#endif
 
 - (void)startAllPlugins;
 - (void)stopAllPlugins;

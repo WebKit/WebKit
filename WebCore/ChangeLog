@@ -1,3 +1,43 @@
+2010-07-21  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Update plug-in proxy backed <video> and <audio> elements.
+        https://bugs.webkit.org/show_bug.cgi?id=42770
+        <rdar://problem/7963467>
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::attributeChanged): Only call m_player->setControls when
+        the 'controls' attribute changes.
+        (WebCore::HTMLMediaElement::createRenderer): 
+        (WebCore::HTMLMediaElement::attach): If we have a proxy widget, call the WebFrameLoaderClient's 
+        'hide' and 'show' methods for the media proxy plug-in to make sure we remove and re-add the 
+        plug-in's view to the global list of plugin views.
+        (WebCore::HTMLMediaElement::createMediaPlayerProxy): Bail if m_proxyWidget is non-NULL
+
+        * loader/EmptyClients.h:
+        (WebCore::EmptyFrameLoaderClient::hideMediaPlayerProxyPlugin): Empty stub method.
+        (WebCore::EmptyFrameLoaderClient::showMediaPlayerProxyPlugin): Ditto.
+
+        * loader/FrameLoader.cpp:
+        * loader/FrameLoaderClient.h:
+        * loader/SubframeLoader.cpp:
+        (WebCore::FrameLoader::loadMediaPlayerProxyPlugin): Always set m_containsPlugIns in loadMediaPlayerProxyPlugin(),
+         even when we don't have a renderer.
+        (WebCore::FrameLoader::hideMediaPlayerProxyPlugin): New, call hideMediaPlayerProxyPlugin.
+        (WebCore::FrameLoader::showMediaPlayerProxyPlugin): New, call showMediaPlayerProxyPlugin.
+
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::NullMediaPlayerPrivate::setControls):
+        (WebCore::MediaPlayer::setControls): New, pass through to media engine.
+        (WebCore::MediaPlayer::enterFullscreen): Ditto.
+        (WebCore::MediaPlayer::exitFullscreen): Ditto.
+        * platform/graphics/MediaPlayer.h:
+        * platform/graphics/MediaPlayerPrivate.h:
+        (WebCore::MediaPlayerPrivateInterface::setControls):
+        (WebCore::MediaPlayerPrivateInterface::enterFullscreen):
+        (WebCore::MediaPlayerPrivateInterface::exitFullscreen):
+
 2010-07-21  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Darin Adler.

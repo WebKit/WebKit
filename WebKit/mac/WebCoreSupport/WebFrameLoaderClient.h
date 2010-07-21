@@ -201,6 +201,13 @@ private:
     virtual PassRefPtr<WebCore::Widget> createJavaAppletWidget(const WebCore::IntSize&, WebCore::HTMLAppletElement*, const WebCore::KURL& baseURL,
                                                     const Vector<WebCore::String>& paramNames, const Vector<WebCore::String>& paramValues);
     
+#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
+    virtual PassRefPtr<WebCore::Widget> createMediaPlayerProxyPlugin(const WebCore::IntSize&, WebCore::HTMLMediaElement*, const WebCore::KURL&, 
+                                        const Vector<WebCore::String>&, const Vector<WebCore::String>&, const WebCore::String&);
+    virtual void hideMediaPlayerProxyPlugin(WebCore::Widget*);
+    virtual void showMediaPlayerProxyPlugin(WebCore::Widget*);
+#endif
+    
     virtual WebCore::ObjectContentType objectContentType(const WebCore::KURL& url, const WebCore::String& mimeType);
     virtual WebCore::String overrideMediaType() const;
     
