@@ -1,5 +1,18 @@
 2010-07-21  Adam Roben  <aroben@apple.com>
 
+        Handle broken pipes in more places in CoreIPC
+
+        Fixes <http://webkit.org/b/42784> Assertion failure in
+        Connection::readEventHandler when WebKitTestRunner exits
+
+        Reviewed by Anders Carlsson.
+
+        * Platform/CoreIPC/win/ConnectionWin.cpp:
+        (CoreIPC::Connection::readEventHandler): Check for a broken pipe
+        whenever we call ::PeekNamedPipe.
+
+2010-07-21  Adam Roben  <aroben@apple.com>
+
         Teach CoreIPC how to handle messages that are larger than the pipe's
         buffer
 

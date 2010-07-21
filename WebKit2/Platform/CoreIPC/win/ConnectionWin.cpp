@@ -124,6 +124,10 @@ void Connection::readEventHandler()
                 DWORD bytesToRead = 0;
                 if (!::PeekNamedPipe(m_connectionPipe, 0, 0, 0, 0, &bytesToRead)) {
                     DWORD error = ::GetLastError();
+                    if (error == ERROR_BROKEN_PIPE) {
+                        connectionDidClose();
+                        return;
+                    }
                     ASSERT_NOT_REACHED();
                     return;
                 }
@@ -174,6 +178,10 @@ void Connection::readEventHandler()
         DWORD bytesToRead = 0;
         if (!::PeekNamedPipe(m_connectionPipe, 0, 0, 0, 0, &bytesToRead)) {
             DWORD error = ::GetLastError();
+            if (error == ERROR_BROKEN_PIPE) {
+                connectionDidClose();
+                return;
+            }
             ASSERT_NOT_REACHED();
         }
         if (!bytesToRead) {
