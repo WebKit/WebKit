@@ -89,6 +89,7 @@ EOF
 
 my $codeGenerator;
 my $outputDir;
+my $outputHeadersDir;
 my $writeDependencies;
 my $verbose;
 
@@ -113,6 +114,7 @@ sub new
 
     $codeGenerator = shift;
     $outputDir = shift;
+    $outputHeadersDir = shift;
     shift; # $useLayerOnTop
     shift; # $preprocessor
     $writeDependencies = shift;
@@ -277,7 +279,7 @@ sub finish
     close($SOURCE);
     undef($SOURCE);
 
-    open(my $HEADER, ">$outputDir/$frontendClassName.h") || die "Couldn't open file $outputDir/$frontendClassName.h";
+    open(my $HEADER, ">$outputHeadersDir/$frontendClassName.h") || die "Couldn't open file $outputHeadersDir/$frontendClassName.h";
     print $HEADER generateHeader($frontendClassName, \%frontendTypes, $frontendConstructor, \%frontendMethods, $frontendFooter);
     close($HEADER);
     undef($HEADER);

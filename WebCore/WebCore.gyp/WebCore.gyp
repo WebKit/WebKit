@@ -502,7 +502,6 @@
             '<@(_inputs)',
             '--',
             '--defines', '<(feature_defines) LANGUAGE_JAVASCRIPT',
-            '--filename', 'RemoteInspectorFrontend',
             '--generator', 'Inspector',
             '<@(generator_include_dirs)'
           ],
