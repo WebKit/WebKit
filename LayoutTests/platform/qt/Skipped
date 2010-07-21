@@ -5447,3 +5447,7 @@ http/tests/misc/webtiming-two-redirects.php
 # Advanced credential handling
 http/tests/security/401-logout/401-logout.php
 http/tests/xmlhttprequest/remember-bad-password.html
+
+# There's somethign strange going on with <keygen> that causes a
+# different DOM to be created.
+html5lib/runner.html

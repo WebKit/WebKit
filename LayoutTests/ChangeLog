@@ -1,5 +1,15 @@
 2010-07-21  Adam Barth  <abarth@webkit.org>
 
+        Skip html5lib/runner.html on these platforms because the
+        <keygen> element creates a different DOM.  I need to
+        investigate why they're getting a different DOM, but I don't
+        have time to do that right now.
+
+        * platform/gtk/Skipped:
+        * platform/qt/Skipped:
+
+2010-07-21  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Eric Seidel.
 
         Pull HTML5lib test suite from upstream
