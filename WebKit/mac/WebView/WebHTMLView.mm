@@ -1201,7 +1201,7 @@ static void _updateMouseoverTimerCallback(CFRunLoopTimerRef timer, void *info)
 #ifndef BUILDING_ON_TIGER
                 _private->inScrollPositionChanged = YES;
 #endif
-                coreView->scrollPositionChanged();
+                coreView->scrollPositionChangedViaPlatformWidget();
 #ifndef BUILDING_ON_TIGER
                 _private->inScrollPositionChanged = NO;
 #endif

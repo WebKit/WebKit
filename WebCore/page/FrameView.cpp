@@ -1102,7 +1102,7 @@ void FrameView::setScrollPosition(const IntPoint& scrollPoint)
     m_inProgrammaticScroll = wasInProgrammaticScroll;
 }
 
-void FrameView::scrollPositionChanged()
+void FrameView::scrollPositionChangedViaPlatformWidget()
 {
     frame()->eventHandler()->sendScrollEvent();
     repaintFixedElementsAfterScrolling();

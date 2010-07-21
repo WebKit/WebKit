@@ -143,7 +143,7 @@ public:
     virtual IntRect windowResizerRect() const;
 
     void setScrollPosition(const IntPoint&);
-    void scrollPositionChanged();
+    void scrollPositionChangedViaPlatformWidget();
     virtual void repaintFixedElementsAfterScrolling();
 
     String mediaType() const;
