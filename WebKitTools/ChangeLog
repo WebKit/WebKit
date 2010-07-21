@@ -1,3 +1,12 @@
+2010-07-20  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Jon Honeycutt.
+
+        Fix obvious typo.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::setStatusbarText): Need to call ->data() to actually get the string value.
+
 2010-07-20  Tony Chang  <tony@chromium.org>
 
         Reviewed by Kent Tamura.

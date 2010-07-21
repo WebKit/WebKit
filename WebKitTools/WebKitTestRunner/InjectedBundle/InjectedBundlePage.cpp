@@ -217,7 +217,7 @@ void InjectedBundlePage::setStatusbarText(WKStringRef statusbarText)
         return;
 
     OwnPtr<Vector<char> > utf8StatusbarText = WKStringToUTF8(statusbarText);
-    InjectedBundle::shared().os() << "UI DELEGATE STATUS CALLBACK: setStatusText:" << utf8StatusbarText << "\n";
+    InjectedBundle::shared().os() << "UI DELEGATE STATUS CALLBACK: setStatusText:" << utf8StatusbarText->data() << "\n";
 }
 
 } // namespace WTR
