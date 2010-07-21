@@ -33,6 +33,7 @@
 #include "Frame.h"
 #include "HTMLDocument.h"
 #include "HTMLElementFactory.h"
+#include "HTMLFormElement.h"
 #include "HTMLHtmlElement.h"
 #include "HTMLNames.h"
 #include "HTMLScriptElement.h"
@@ -845,8 +846,7 @@ void HTMLTreeBuilder::processStartTagForInBody(AtomicHTMLToken& token)
             return;
         }
         processFakePEndTagIfPInScope();
-        m_tree.insertHTMLElement(token);
-        m_tree.setForm(m_tree.currentElement());
+        m_tree.insertHTMLFormElement(token);
         return;
     }
     if (token.name() == liTag) {
@@ -1142,7 +1142,10 @@ void HTMLTreeBuilder::processStartTagForInTable(AtomicHTMLToken& token)
         parseError(token);
         if (m_tree.form())
             return;
-        m_tree.insertSelfClosingHTMLElement(token);
+        // FIXME: This deviates from the spec:
+        //        http://www.w3.org/Bugs/Public/show_bug.cgi?id=10216
+        m_tree.insertHTMLFormElement(token);
+        m_tree.openElements()->pop();
         return;
     }
     parseError(token);

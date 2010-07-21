@@ -55,6 +55,7 @@ public:
     void insertHTMLHtmlElement(AtomicHTMLToken&);
     void insertHTMLHeadElement(AtomicHTMLToken&);
     void insertHTMLBodyElement(AtomicHTMLToken&);
+    void insertHTMLFormElement(AtomicHTMLToken&);
     void insertScriptElement(AtomicHTMLToken&);
     void insertTextNode(const String&);
     void insertForeignElement(AtomicHTMLToken&, const AtomicString& namespaceURI);
@@ -83,10 +84,8 @@ public:
 
     Element* head() const { return m_head.get(); }
 
-    Element* form() const { return m_form.get(); }
-    PassRefPtr<Element> takeForm() { return m_form.release(); }
-
-    void setForm(PassRefPtr<Element> form) { m_form = form; }
+    HTMLFormElement* form() const { return m_form.get(); }
+    PassRefPtr<HTMLFormElement> takeForm();
 
     class RedirectToFosterParentGuard : public Noncopyable {
     public:
@@ -128,7 +127,7 @@ private:
 
     Document* m_document;
     RefPtr<Element> m_head;
-    RefPtr<Element> m_form;
+    RefPtr<HTMLFormElement> m_form;
     mutable HTMLElementStack m_openElements;
     mutable HTMLFormattingElementList m_activeFormattingElements;
 

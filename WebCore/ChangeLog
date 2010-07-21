@@ -2,6 +2,29 @@
 
         Reviewed by Eric Seidel.
 
+        Associate elements with the active form
+        https://bugs.webkit.org/show_bug.cgi?id=42728
+
+        This patch fixes fast/forms/formmove3.html.  The test still doesn't
+        pass due to some render tree differences, but it works as intended now.
+
+        To fix this test, I needed to deviate from the spec slight.  Minefield
+        seems to have the same deviation:
+          - http://www.w3.org/Bugs/Public/show_bug.cgi?id=10216
+
+        * html/HTMLConstructionSite.cpp:
+        (WebCore::HTMLConstructionSite::takeForm):
+        (WebCore::HTMLConstructionSite::setForm):
+        (WebCore::HTMLConstructionSite::createHTMLElement):
+        * html/HTMLConstructionSite.h:
+        (WebCore::HTMLConstructionSite::form):
+        * html/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::processStartTagForInBody):
+
+2010-07-21  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         The adoption agency doesn't properly attach()
         https://bugs.webkit.org/show_bug.cgi?id=42727
 
