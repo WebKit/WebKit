@@ -827,12 +827,20 @@ PassRefPtr<Widget> WebFrameLoaderClient::createJavaAppletWidget(const IntSize&, 
     return 0;
 }
 
-ObjectContentType WebFrameLoaderClient::objectContentType(const KURL& url, const String& mimeType)
+ObjectContentType WebFrameLoaderClient::objectContentType(const KURL& url, const String& mimeTypeIn)
 {
-    if (mimeType.isEmpty()) {
-        // FIXME: Try to find the MIME type based on the extension of the URL.
-        return ObjectContentNone;
-    }
+    // FIXME: This should be merged with WebCore::FrameLoader::defaultObjectContentType when the plugin code
+    // is consolidated.
+
+    String mimeType = mimeTypeIn;
+    if (mimeType.isEmpty())
+        mimeType = MIMETypeRegistry::getMIMETypeForExtension(url.path().substring(url.path().reverseFind('.') + 1));
+
+    if (mimeType.isEmpty())
+        return ObjectContentFrame;
+
+    if (MIMETypeRegistry::isSupportedImageMIMEType(mimeType))
+        return WebCore::ObjectContentImage;
 
     if (WebPage* webPage = m_frame->page()) {
         if (PluginData* pluginData = webPage->corePage()->pluginData()) {
@@ -841,10 +849,9 @@ ObjectContentType WebFrameLoaderClient::objectContentType(const KURL& url, const
         }
     }
 
-    if (MIMETypeRegistry::isSupportedImageMIMEType(mimeType))
-        return ObjectContentImage;
+    if (MIMETypeRegistry::isSupportedNonImageMIMEType(mimeType))
+        return ObjectContentFrame;
 
-    notImplemented();
     return ObjectContentNone;
 }
 
