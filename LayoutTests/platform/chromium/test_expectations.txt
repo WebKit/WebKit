@@ -300,14 +300,8 @@ WONTFIX MAC : platform/mac/editing/deleting/backward-delete.html = FAIL
 // Ignored because we do not have OBJC bindings
 WONTFIX SKIP : editing/pasteboard/paste-RTFD.html = FAIL
 WONTFIX SKIP : editing/pasteboard/paste-TIFF.html = FAIL
-WONTFIX SKIP : plugins/jsobjc-dom-wrappers.html = FAIL
-WONTFIX SKIP : plugins/jsobjc-simple.html = FAIL
 WONTFIX SKIP : platform/mac/plugins/root-object-premature-delete-crash.html = FAIL
-WONTFIX SKIP : plugins/throw-on-dealloc.html = FAIL
 WONTFIX SKIP : platform/mac/plugins/undefined-property-crash.html = FAIL
-
-// Uses __apple_runtime_object
-WONTFIX SKIP : plugins/call-as-function-test.html = FAIL
 
 // Ignore test because it tries to load .pdf files in <img> tags.
 WONTFIX LINUX WIN : fast/images/pdf-as-image-landscape.html = FAIL
