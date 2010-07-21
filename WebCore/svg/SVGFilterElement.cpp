@@ -62,8 +62,11 @@ SVGFilterElement::~SVGFilterElement()
 {
 }
 
-void SVGFilterElement::setFilterRes(unsigned long, unsigned long) const
+void SVGFilterElement::setFilterRes(unsigned long filterResX, unsigned long filterResY)
 {
+    setFilterResXBaseValue(filterResX);
+    setFilterResYBaseValue(filterResY);
+    invalidateResourceClients();
 }
 
 void SVGFilterElement::parseMappedAttribute(Attribute* attr)
@@ -122,10 +125,10 @@ void SVGFilterElement::svgAttributeChanged(const QualifiedName& attrName)
         || attrName == SVGNames::filterUnitsAttr
         || attrName == SVGNames::primitiveUnitsAttr
         || attrName == SVGNames::filterResAttr
+        || SVGStyledElement::isKnownAttribute(attrName)
         || SVGURIReference::isKnownAttribute(attrName)
         || SVGLangSpace::isKnownAttribute(attrName)
-        || SVGExternalResourcesRequired::isKnownAttribute(attrName)
-        || SVGStyledElement::isKnownAttribute(attrName))
+        || SVGExternalResourcesRequired::isKnownAttribute(attrName))
         invalidateResourceClients();
 }
 
@@ -166,6 +169,14 @@ void SVGFilterElement::synchronizeProperty(const QualifiedName& attrName)
         synchronizeExternalResourcesRequired();
     else if (SVGURIReference::isKnownAttribute(attrName))
         synchronizeHref();
+}
+
+void SVGFilterElement::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)
+{
+    SVGStyledElement::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
+
+    if (!changedByParser)
+        invalidateResourceClients();
 }
 
 FloatRect SVGFilterElement::filterBoundingBox(const FloatRect& objectBoundingBox) const

@@ -43,12 +43,13 @@ public:
     SVGFilterElement(const QualifiedName&, Document*);
     virtual ~SVGFilterElement();
 
-    void setFilterRes(unsigned long filterResX, unsigned long filterResY) const;
+    void setFilterRes(unsigned long filterResX, unsigned long filterResY);
     FloatRect filterBoundingBox(const FloatRect&) const;
 
     virtual void parseMappedAttribute(Attribute*);
     virtual void svgAttributeChanged(const QualifiedName&);
     virtual void synchronizeProperty(const QualifiedName&);
+    virtual void childrenChanged(bool changedByParser = false, Node* beforeChange = 0, Node* afterChange = 0, int childCountDelta = 0);
 
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
 

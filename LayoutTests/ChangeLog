@@ -1,3 +1,107 @@
+2010-07-21  Zoltan Herczeg  <zherczeg@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        SVGFilterElement & SVGFE*Element don't support dynamic invalidation, when attributes change
+        https://bugs.webkit.org/show_bug.cgi?id=42244
+
+        * platform/mac/svg/dynamic-updates/SVGFilterElement-dom-filterRes-attr-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGFilterElement-dom-filterRes-attr-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGFilterElement-dom-filterUnits-attr-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGFilterElement-dom-filterUnits-attr-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGFilterElement-dom-height-attr-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGFilterElement-dom-height-attr-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGFilterElement-dom-primitiveUnits-attr-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGFilterElement-dom-primitiveUnits-attr-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGFilterElement-dom-width-attr-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGFilterElement-dom-width-attr-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGFilterElement-dom-x-attr-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGFilterElement-dom-x-attr-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGFilterElement-dom-y-attr-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGFilterElement-dom-y-attr-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGFilterElement-svgdom-filterRes-call-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGFilterElement-svgdom-filterRes-call-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGFilterElement-svgdom-filterResX-prop-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGFilterElement-svgdom-filterResX-prop-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGFilterElement-svgdom-filterResY-prop-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGFilterElement-svgdom-filterResY-prop-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGFilterElement-svgdom-filterUnits-prop-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGFilterElement-svgdom-filterUnits-prop-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGFilterElement-svgdom-height-prop-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGFilterElement-svgdom-height-prop-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGFilterElement-svgdom-primitiveUnits-prop-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGFilterElement-svgdom-primitiveUnits-prop-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGFilterElement-svgdom-width-prop-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGFilterElement-svgdom-width-prop-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGFilterElement-svgdom-x-prop-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGFilterElement-svgdom-x-prop-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGFilterElement-svgdom-y-prop-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGFilterElement-svgdom-y-prop-expected.png: Added.
+        * svg/dynamic-updates/SVGFilterElement-dom-filterRes-attr-expected.txt: Added.
+        * svg/dynamic-updates/SVGFilterElement-dom-filterRes-attr.html: Added.
+        * svg/dynamic-updates/SVGFilterElement-dom-filterUnits-attr-expected.txt: Added.
+        * svg/dynamic-updates/SVGFilterElement-dom-filterUnits-attr.html: Added.
+        * svg/dynamic-updates/SVGFilterElement-dom-height-attr-expected.txt: Added.
+        * svg/dynamic-updates/SVGFilterElement-dom-height-attr.html: Added.
+        * svg/dynamic-updates/SVGFilterElement-dom-primitiveUnits-attr-expected.txt: Added.
+        * svg/dynamic-updates/SVGFilterElement-dom-primitiveUnits-attr.html: Added.
+        * svg/dynamic-updates/SVGFilterElement-dom-width-attr-expected.txt: Added.
+        * svg/dynamic-updates/SVGFilterElement-dom-width-attr.html: Added.
+        * svg/dynamic-updates/SVGFilterElement-dom-x-attr-expected.txt: Added.
+        * svg/dynamic-updates/SVGFilterElement-dom-x-attr.html: Added.
+        * svg/dynamic-updates/SVGFilterElement-dom-y-attr-expected.txt: Added.
+        * svg/dynamic-updates/SVGFilterElement-dom-y-attr.html: Added.
+        * svg/dynamic-updates/SVGFilterElement-svgdom-filterRes-call-expected.txt: Added.
+        * svg/dynamic-updates/SVGFilterElement-svgdom-filterRes-call.html: Added.
+        * svg/dynamic-updates/SVGFilterElement-svgdom-filterResX-prop-expected.txt: Added.
+        * svg/dynamic-updates/SVGFilterElement-svgdom-filterResX-prop.html: Added.
+        * svg/dynamic-updates/SVGFilterElement-svgdom-filterResY-prop-expected.txt: Added.
+        * svg/dynamic-updates/SVGFilterElement-svgdom-filterResY-prop.html: Added.
+        * svg/dynamic-updates/SVGFilterElement-svgdom-filterUnits-prop-expected.txt: Added.
+        * svg/dynamic-updates/SVGFilterElement-svgdom-filterUnits-prop.html: Added.
+        * svg/dynamic-updates/SVGFilterElement-svgdom-height-prop-expected.txt: Added.
+        * svg/dynamic-updates/SVGFilterElement-svgdom-height-prop.html: Added.
+        * svg/dynamic-updates/SVGFilterElement-svgdom-primitiveUnits-prop-expected.txt: Added.
+        * svg/dynamic-updates/SVGFilterElement-svgdom-primitiveUnits-prop.html: Added.
+        * svg/dynamic-updates/SVGFilterElement-svgdom-width-prop-expected.txt: Added.
+        * svg/dynamic-updates/SVGFilterElement-svgdom-width-prop.html: Added.
+        * svg/dynamic-updates/SVGFilterElement-svgdom-x-prop-expected.txt: Added.
+        * svg/dynamic-updates/SVGFilterElement-svgdom-x-prop.html: Added.
+        * svg/dynamic-updates/SVGFilterElement-svgdom-y-prop-expected.txt: Added.
+        * svg/dynamic-updates/SVGFilterElement-svgdom-y-prop.html: Added.
+        * svg/dynamic-updates/script-tests/SVGFilterElement-dom-filterRes-attr.js: Added.
+        (executeTest):
+        * svg/dynamic-updates/script-tests/SVGFilterElement-dom-filterUnits-attr.js: Added.
+        (executeTest):
+        * svg/dynamic-updates/script-tests/SVGFilterElement-dom-height-attr.js: Added.
+        (executeTest):
+        * svg/dynamic-updates/script-tests/SVGFilterElement-dom-primitiveUnits-attr.js: Added.
+        (executeTest):
+        * svg/dynamic-updates/script-tests/SVGFilterElement-dom-width-attr.js: Added.
+        (executeTest):
+        * svg/dynamic-updates/script-tests/SVGFilterElement-dom-x-attr.js: Added.
+        (executeTest):
+        * svg/dynamic-updates/script-tests/SVGFilterElement-dom-y-attr.js: Added.
+        (executeTest):
+        * svg/dynamic-updates/script-tests/SVGFilterElement-svgdom-filterRes-call.js: Added.
+        (executeTest):
+        * svg/dynamic-updates/script-tests/SVGFilterElement-svgdom-filterResX-prop.js: Added.
+        (executeTest):
+        * svg/dynamic-updates/script-tests/SVGFilterElement-svgdom-filterResY-prop.js: Added.
+        (executeTest):
+        * svg/dynamic-updates/script-tests/SVGFilterElement-svgdom-filterUnits-prop.js: Added.
+        (executeTest):
+        * svg/dynamic-updates/script-tests/SVGFilterElement-svgdom-height-prop.js: Added.
+        (executeTest):
+        * svg/dynamic-updates/script-tests/SVGFilterElement-svgdom-primitiveUnits-prop.js: Added.
+        (executeTest):
+        * svg/dynamic-updates/script-tests/SVGFilterElement-svgdom-width-prop.js: Added.
+        (executeTest):
+        * svg/dynamic-updates/script-tests/SVGFilterElement-svgdom-x-prop.js: Added.
+        (executeTest):
+        * svg/dynamic-updates/script-tests/SVGFilterElement-svgdom-y-prop.js: Added.
+        (executeTest):
+
 2010-07-20  Ben Murdoch  <benm@google.com>
 
         Reviewed by Steve Block.

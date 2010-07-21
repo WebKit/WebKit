@@ -1,3 +1,37 @@
+2010-07-21  Zoltan Herczeg  <zherczeg@webkit.org>
+
+        Reviewed Nikolas Zimmermann.
+
+        SVGFilterElement & SVGFE*Element don't support dynamic invalidation, when attributes change
+        https://bugs.webkit.org/show_bug.cgi?id=42244
+
+        The implementation was done by Nikolas Zimmermann before, but
+        there was no tests for it. The patch also implements the simple
+        setFilterRes method.
+
+        Tests: svg/dynamic-updates/SVGFilterElement-dom-filterRes-attr.html
+               svg/dynamic-updates/SVGFilterElement-dom-filterUnits-attr.html
+               svg/dynamic-updates/SVGFilterElement-dom-height-attr.html
+               svg/dynamic-updates/SVGFilterElement-dom-primitiveUnits-attr.html
+               svg/dynamic-updates/SVGFilterElement-dom-width-attr.html
+               svg/dynamic-updates/SVGFilterElement-dom-x-attr.html
+               svg/dynamic-updates/SVGFilterElement-dom-y-attr.html
+               svg/dynamic-updates/SVGFilterElement-svgdom-filterRes-call.html
+               svg/dynamic-updates/SVGFilterElement-svgdom-filterResX-prop.html
+               svg/dynamic-updates/SVGFilterElement-svgdom-filterResY-prop.html
+               svg/dynamic-updates/SVGFilterElement-svgdom-filterUnits-prop.html
+               svg/dynamic-updates/SVGFilterElement-svgdom-height-prop.html
+               svg/dynamic-updates/SVGFilterElement-svgdom-primitiveUnits-prop.html
+               svg/dynamic-updates/SVGFilterElement-svgdom-width-prop.html
+               svg/dynamic-updates/SVGFilterElement-svgdom-x-prop.html
+               svg/dynamic-updates/SVGFilterElement-svgdom-y-prop.html
+
+        * svg/SVGFilterElement.cpp:
+        (WebCore::SVGFilterElement::setFilterRes):
+        (WebCore::SVGFilterElement::svgAttributeChanged):
+        (WebCore::SVGFilterElement::childrenChanged):
+        * svg/SVGFilterElement.h:
+
 2010-07-21  Ben Murdoch  <benm@google.com>
 
         Unreviewed, build fix.
