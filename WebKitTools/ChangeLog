@@ -1,5 +1,12 @@
 2010-07-20  Adam Roben  <aroben@apple.com>
 
+        Windows build fix
+
+        * MiniBrowser/MiniBrowser.vcproj: Link against the new, shiny
+        WebKit.lib instead of the old, dusty WebKit2.lib.
+
+2010-07-20  Adam Roben  <aroben@apple.com>
+
         Stop linking WebKitTestRunner against getopt
 
         Use of getopt was removed in r63700.
