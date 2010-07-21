@@ -40,8 +40,6 @@
 
 namespace WebCore {
 
-typedef HashSet<String, CaseFoldingHash> URLSchemesMap;
-
 class Document;
 class KURL;
 
@@ -174,18 +172,6 @@ public:
     // (and whether it was set) but considering the host. It is used for postMessage.
     bool isSameSchemeHostPort(const SecurityOrigin*) const;
 
-    static void registerURLSchemeAsLocal(const String&);
-    static void removeURLSchemeRegisteredAsLocal(const String&);
-    static const URLSchemesMap& localURLSchemes();
-    static bool shouldTreatURLAsLocal(const String&);
-    static bool shouldTreatURLSchemeAsLocal(const String&);
-
-    // Secure schemes do not trigger mixed content warnings. For example,
-    // https and data are secure schemes because they cannot be corrupted by
-    // active network attackers.
-    static void registerURLSchemeAsSecure(const String&);
-    static bool shouldTreatURLSchemeAsSecure(const String&);
-
     static bool shouldHideReferrer(const KURL&, const String& referrer);
 
     enum LocalLoadPolicy {
@@ -196,9 +182,6 @@ public:
     static void setLocalLoadPolicy(LocalLoadPolicy);
     static bool restrictAccessToLocal();
     static bool allowSubstituteDataAccessToLocal();
-
-    static void registerURLSchemeAsNoAccess(const String&);
-    static bool shouldTreatURLSchemeAsNoAccess(const String&);
 
     static void addOriginAccessWhitelistEntry(const SecurityOrigin& sourceOrigin, const String& destinationProtocol, const String& destinationDomains, bool allowDestinationSubdomains);
     static void removeOriginAccessWhitelistEntry(const SecurityOrigin& sourceOrigin, const String& destinationProtocol, const String& destinationDomains, bool allowDestinationSubdomains);

@@ -1,3 +1,17 @@
+2010-07-21  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        Break out "scheme registration" functionality from SecurityOrigin to a SchemeRegistry
+        https://bugs.webkit.org/show_bug.cgi?id=42783
+
+        * Api/qwebpage.cpp:
+        (QWebPage::acceptNavigationRequest):
+        * Api/qwebsecurityorigin.cpp:
+        (QWebSecurityOrigin::addLocalScheme):
+        (QWebSecurityOrigin::removeLocalScheme):
+        (QWebSecurityOrigin::localSchemes):
+
 2010-07-20  Kenneth Rohde Christiansen  <kenneth.christiansen@openbossa.org>
 
         [Qt] Add API to define device-width and height for use with the viewport meta tag

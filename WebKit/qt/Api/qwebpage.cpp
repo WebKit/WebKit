@@ -49,6 +49,7 @@
 #include "DragController.h"
 #include "DragData.h"
 #include "EditorClientQt.h"
+#include "SchemeRegistry.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
 #include "Page.h"
@@ -2393,7 +2394,7 @@ bool QWebPage::acceptNavigationRequest(QWebFrame *frame, const QNetworkRequest &
                 return true;
 
             case DelegateExternalLinks:
-                if (WebCore::SecurityOrigin::shouldTreatURLSchemeAsLocal(request.url().scheme()))
+                if (WebCore::SchemeRegistry::shouldTreatURLSchemeAsLocal(request.url().scheme()))
                     return true;
                 emit linkClicked(request.url());
                 return false;

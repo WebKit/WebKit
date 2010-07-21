@@ -25,6 +25,7 @@
 
 #include "DatabaseTracker.h"
 #include "KURL.h"
+#include "SchemeRegistry.h"
 #include "SecurityOrigin.h"
 #include <QStringList>
 
@@ -222,7 +223,7 @@ QList<QWebDatabase> QWebSecurityOrigin::databases() const
 */
 void QWebSecurityOrigin::addLocalScheme(const QString& scheme)
 {
-    SecurityOrigin::registerURLSchemeAsLocal(scheme);
+    SchemeRegistry::registerURLSchemeAsLocal(scheme);
 }
 
 /*!
@@ -237,7 +238,7 @@ void QWebSecurityOrigin::addLocalScheme(const QString& scheme)
 */
 void QWebSecurityOrigin::removeLocalScheme(const QString& scheme)
 {
-    SecurityOrigin::removeURLSchemeRegisteredAsLocal(scheme);
+    SchemeRegistry::removeURLSchemeRegisteredAsLocal(scheme);
 }
 
 /*!
@@ -251,7 +252,7 @@ void QWebSecurityOrigin::removeLocalScheme(const QString& scheme)
 QStringList QWebSecurityOrigin::localSchemes()
 {
     QStringList list;
-    const URLSchemesMap& map = SecurityOrigin::localURLSchemes();
+    const URLSchemesMap& map = SchemeRegistry::localURLSchemes();
     URLSchemesMap::const_iterator end = map.end();
     for (URLSchemesMap::const_iterator i = map.begin(); i != end; ++i) {
         const QString scheme = *i;

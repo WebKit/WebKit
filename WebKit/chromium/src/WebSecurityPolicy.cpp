@@ -32,6 +32,7 @@
 #include "WebSecurityPolicy.h"
 
 #include "FrameLoader.h"
+#include "SchemeRegistry.h"
 #include "SecurityOrigin.h"
 
 #include "WebString.h"
@@ -43,17 +44,17 @@ namespace WebKit {
 
 void WebSecurityPolicy::registerURLSchemeAsLocal(const WebString& scheme)
 {
-    SecurityOrigin::registerURLSchemeAsLocal(scheme);
+    SchemeRegistry::registerURLSchemeAsLocal(scheme);
 }
 
 void WebSecurityPolicy::registerURLSchemeAsNoAccess(const WebString& scheme)
 {
-    SecurityOrigin::registerURLSchemeAsNoAccess(scheme);
+    SchemeRegistry::registerURLSchemeAsNoAccess(scheme);
 }
 
 void WebSecurityPolicy::registerURLSchemeAsSecure(const WebString& scheme)
 {
-    SecurityOrigin::registerURLSchemeAsSecure(scheme);
+    SchemeRegistry::registerURLSchemeAsSecure(scheme);
 }
 
 void WebSecurityPolicy::addOriginAccessWhitelistEntry(

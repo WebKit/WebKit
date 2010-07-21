@@ -1915,6 +1915,8 @@ webcore_sources += \
 	WebCore/platform/ScrollTypes.h \
 	WebCore/platform/ScrollView.cpp \
 	WebCore/platform/ScrollView.h \
+	WebCore/platform/SchemeRegistry.cpp \
+	WebCore/platform/SchemeRegistry.h \
 	WebCore/platform/Scrollbar.cpp \
 	WebCore/platform/Scrollbar.h \
 	WebCore/platform/ScrollbarClient.h \

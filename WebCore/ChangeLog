@@ -1,3 +1,44 @@
+2010-07-21  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        Break out "scheme registration" functionality from SecurityOrigin to a SchemeRegistry
+        https://bugs.webkit.org/show_bug.cgi?id=42783
+
+        No new tests. (No change in behavior)
+
+        * GNUmakefile.am:
+        * WebCore.exp.in:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::isMixedContent):
+        (WebCore::FrameLoader::loadFrameRequest):
+        
+        * page/SecurityOrigin.cpp:
+        (WebCore::SecurityOrigin::SecurityOrigin):
+        (WebCore::SecurityOrigin::canLoad):
+        (WebCore::SecurityOrigin::isLocal):
+        * page/SecurityOrigin.h:
+        
+        * platform/SchemeRegistry.cpp: Added.
+        (WebCore::localSchemes):
+        (WebCore::secureSchemes):
+        (WebCore::schemesWithUniqueOrigins):
+        (WebCore::SchemeRegistry::registerURLSchemeAsLocal):
+        (WebCore::SchemeRegistry::removeURLSchemeRegisteredAsLocal):
+        (WebCore::SchemeRegistry::localURLSchemes):
+        (WebCore::SchemeRegistry::shouldTreatURLAsLocal):
+        (WebCore::SchemeRegistry::shouldTreatURLSchemeAsLocal):
+        (WebCore::SchemeRegistry::registerURLSchemeAsNoAccess):
+        (WebCore::SchemeRegistry::shouldTreatURLSchemeAsNoAccess):
+        (WebCore::SchemeRegistry::registerURLSchemeAsSecure):
+        (WebCore::SchemeRegistry::shouldTreatURLSchemeAsSecure):
+        * platform/SchemeRegistry.h: Added.
+
 2010-07-21  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Simon Fraser.

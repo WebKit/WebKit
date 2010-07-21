@@ -925,6 +925,7 @@ SOURCES += \
     platform/network/ResourceRequestBase.cpp \
     platform/network/ResourceResponseBase.cpp \
     platform/text/RegularExpression.cpp \
+    platform/SchemeRegistry.cpp \
     platform/Scrollbar.cpp \
     platform/ScrollbarThemeComposite.cpp \
     platform/ScrollView.cpp \

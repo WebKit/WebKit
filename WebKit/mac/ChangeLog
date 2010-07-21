@@ -1,3 +1,14 @@
+2010-07-21  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        Break out "scheme registration" functionality from SecurityOrigin to a SchemeRegistry
+        https://bugs.webkit.org/show_bug.cgi?id=42783
+
+        * WebView/WebView.mm:
+        (+[WebView _registerURLSchemeAsSecure:]):
+        (+[WebView registerURLSchemeAsLocal:]):
+
 2010-07-21  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Anders Carlsson.

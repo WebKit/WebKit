@@ -32,6 +32,7 @@
 #include "Document.h"
 #include "KURL.h"
 #include "OriginAccessEntry.h"
+#include "SchemeRegistry.h"
 #include <wtf/StdLibExtras.h>
 
 namespace WebCore {
@@ -45,48 +46,6 @@ static OriginAccessMap& originAccessMap()
 {
     DEFINE_STATIC_LOCAL(OriginAccessMap, originAccessMap, ());
     return originAccessMap;
-}
-
-static URLSchemesMap& localSchemes()
-{
-    DEFINE_STATIC_LOCAL(URLSchemesMap, localSchemes, ());
-
-    if (localSchemes.isEmpty()) {
-        localSchemes.add("file");
-#if PLATFORM(MAC)
-        localSchemes.add("applewebdata");
-#endif
-#if PLATFORM(QT)
-        localSchemes.add("qrc");
-#endif
-    }
-
-    return localSchemes;
-}
-
-static URLSchemesMap& secureSchemes()
-{
-    DEFINE_STATIC_LOCAL(URLSchemesMap, secureSchemes, ());
-
-    if (secureSchemes.isEmpty()) {
-        secureSchemes.add("https");
-        secureSchemes.add("about");
-        secureSchemes.add("data");
-    }
-
-    return secureSchemes;
-}
-
-static URLSchemesMap& schemesWithUniqueOrigins()
-{
-    DEFINE_STATIC_LOCAL(URLSchemesMap, schemesWithUniqueOrigins, ());
-
-    // This is a willful violation of HTML5.
-    // See https://bugs.webkit.org/show_bug.cgi?id=11885
-    if (schemesWithUniqueOrigins.isEmpty())
-        schemesWithUniqueOrigins.add("data");
-
-    return schemesWithUniqueOrigins;
 }
 
 static bool schemeRequiresAuthority(const String& scheme)
@@ -108,7 +67,7 @@ SecurityOrigin::SecurityOrigin(const KURL& url, SandboxFlags sandboxFlags)
     , m_protocol(url.protocol().isNull() ? "" : url.protocol().lower())
     , m_host(url.host().isNull() ? "" : url.host().lower())
     , m_port(url.port())
-    , m_isUnique(isSandboxed(SandboxOrigin) || shouldTreatURLSchemeAsNoAccess(m_protocol))
+    , m_isUnique(isSandboxed(SandboxOrigin) || SchemeRegistry::shouldTreatURLSchemeAsNoAccess(m_protocol))
     , m_universalAccess(false)
     , m_domainWasSetInDOM(false)
     , m_enforceFilePathSeparation(false)
@@ -315,7 +274,7 @@ bool SecurityOrigin::isAccessWhiteListed(const SecurityOrigin* targetOrigin) con
   
 bool SecurityOrigin::canLoad(const KURL& url, const String& referrer, Document* document)
 {
-    if (!shouldTreatURLAsLocal(url.string()))
+    if (!SchemeRegistry::shouldTreatURLAsLocal(url.string()))
         return true;
 
     // If we were provided a document, we first check if the access has been white listed.
@@ -329,7 +288,7 @@ bool SecurityOrigin::canLoad(const KURL& url, const String& referrer, Document* 
         return documentOrigin->canLoadLocalResources();
     }
     if (!referrer.isEmpty())
-        return shouldTreatURLAsLocal(referrer);
+        return SchemeRegistry::shouldTreatURLAsLocal(referrer);
     return false;
 }
 
@@ -357,7 +316,7 @@ void SecurityOrigin::enforceFilePathSeparation()
 
 bool SecurityOrigin::isLocal() const
 {
-    return shouldTreatURLSchemeAsLocal(m_protocol);
+    return SchemeRegistry::shouldTreatURLSchemeAsLocal(m_protocol);
 }
 
 bool SecurityOrigin::isSecureTransitionTo(const KURL& url) const
@@ -555,85 +514,6 @@ bool SecurityOrigin::isSameSchemeHostPort(const SecurityOrigin* other) const
         return false;
 
     return true;
-}
-
-void SecurityOrigin::registerURLSchemeAsLocal(const String& scheme)
-{
-    localSchemes().add(scheme);
-}
-
-void SecurityOrigin::removeURLSchemeRegisteredAsLocal(const String& scheme)
-{
-    if (scheme == "file")
-        return;
-#if PLATFORM(MAC)
-    if (scheme == "applewebdata")
-        return;
-#endif
-    localSchemes().remove(scheme);
-}
-
-const URLSchemesMap& SecurityOrigin::localURLSchemes()
-{
-    return localSchemes();
-}
-
-bool SecurityOrigin::shouldTreatURLAsLocal(const String& url)
-{
-    // This avoids an allocation of another String and the HashSet contains()
-    // call for the file: and http: schemes.
-    if (url.length() >= 5) {
-        const UChar* s = url.characters();
-        if (s[0] == 'h' && s[1] == 't' && s[2] == 't' && s[3] == 'p' && s[4] == ':')
-            return false;
-        if (s[0] == 'f' && s[1] == 'i' && s[2] == 'l' && s[3] == 'e' && s[4] == ':')
-            return true;
-    }
-
-    int loc = url.find(':');
-    if (loc == -1)
-        return false;
-
-    String scheme = url.left(loc);
-    return localSchemes().contains(scheme);
-}
-
-bool SecurityOrigin::shouldTreatURLSchemeAsLocal(const String& scheme)
-{
-    // This avoids an allocation of another String and the HashSet contains()
-    // call for the file: and http: schemes.
-    if (scheme.length() == 4) {
-        const UChar* s = scheme.characters();
-        if (s[0] == 'h' && s[1] == 't' && s[2] == 't' && s[3] == 'p')
-            return false;
-        if (s[0] == 'f' && s[1] == 'i' && s[2] == 'l' && s[3] == 'e')
-            return true;
-    }
-
-    if (scheme.isEmpty())
-        return false;
-
-    return localSchemes().contains(scheme);
-}
-
-void SecurityOrigin::registerURLSchemeAsNoAccess(const String& scheme)
-{
-    schemesWithUniqueOrigins().add(scheme);
-}
-
-bool SecurityOrigin::shouldTreatURLSchemeAsNoAccess(const String& scheme)
-{
-    return schemesWithUniqueOrigins().contains(scheme);
-}
-
-void SecurityOrigin::registerURLSchemeAsSecure(const String& scheme)
-{
-    secureSchemes().add(scheme);
-}
-
-bool SecurityOrigin::shouldTreatURLSchemeAsSecure(const String& scheme)
-{
-    return secureSchemes().contains(scheme);
 }
 
 bool SecurityOrigin::shouldHideReferrer(const KURL& url, const String& referrer)

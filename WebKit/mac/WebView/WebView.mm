@@ -141,6 +141,7 @@
 #import <WebCore/RenderWidget.h>
 #import <WebCore/ResourceHandle.h>
 #import <WebCore/RuntimeApplicationChecks.h>
+#import <WebCore/SchemeRegistry.h>
 #import <WebCore/ScriptController.h>
 #import <WebCore/ScriptValue.h>
 #import <WebCore/SecurityOrigin.h>
@@ -2500,7 +2501,7 @@ static PassOwnPtr<Vector<String> > toStringVector(NSArray* patterns)
 
 + (void)_registerURLSchemeAsSecure:(NSString *)scheme
 {
-    SecurityOrigin::registerURLSchemeAsSecure(scheme);
+    SchemeRegistry::registerURLSchemeAsSecure(scheme);
 }
 
 @end
@@ -2734,7 +2735,7 @@ static PassOwnPtr<Vector<String> > toStringVector(NSArray* patterns)
 
 + (void)registerURLSchemeAsLocal:(NSString *)protocol
 {
-    SecurityOrigin::registerURLSchemeAsLocal(protocol);
+    SchemeRegistry::registerURLSchemeAsLocal(protocol);
 }
 
 - (id)_initWithArguments:(NSDictionary *) arguments

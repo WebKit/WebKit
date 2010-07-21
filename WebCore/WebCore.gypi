@@ -3029,6 +3029,8 @@
             'platform/ScrollTypes.h',
             'platform/ScrollView.cpp',
             'platform/ScrollView.h',
+            'platform/SchemeRegistry.cpp',
+            'platform/SchemeRegistry.h',
             'platform/Scrollbar.cpp',
             'platform/Scrollbar.h',
             'platform/ScrollbarClient.h',

@@ -1,3 +1,15 @@
+2010-07-21  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        Break out "scheme registration" functionality from SecurityOrigin to a SchemeRegistry
+        https://bugs.webkit.org/show_bug.cgi?id=42783
+
+        * src/WebSecurityPolicy.cpp:
+        (WebKit::WebSecurityPolicy::registerURLSchemeAsLocal):
+        (WebKit::WebSecurityPolicy::registerURLSchemeAsNoAccess):
+        (WebKit::WebSecurityPolicy::registerURLSchemeAsSecure):
+
 2010-07-21  Bo Liu  <boliu@chromium.org>
 
         Reviewed by Darin Fisher.

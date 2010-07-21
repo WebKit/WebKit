@@ -23457,6 +23457,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\platform\SchemeRegistry.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\platform\SchemeRegistry.h"
+				>
+			</File>
+			<File
 				RelativePath="..\platform\Scrollbar.cpp"
 				>
 			</File>
