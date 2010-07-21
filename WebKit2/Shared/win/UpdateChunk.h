@@ -43,6 +43,7 @@ public:
 
     const WebCore::IntRect& rect() const { return m_rect; }
     HANDLE memory() const { return m_bitmapSharedMemory; }
+    bool isEmpty() const { return m_rect.isEmpty(); }
 
     void encode(CoreIPC::ArgumentEncoder&) const;
     static bool decode(CoreIPC::ArgumentDecoder&, UpdateChunk&);
