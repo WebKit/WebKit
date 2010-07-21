@@ -469,16 +469,24 @@ void GraphicsContext::drawConvexPolygon(size_t npoints, const FloatPoint* points
         CGContextSetShouldAntialias(context, shouldAntialias());
 }
 
-void GraphicsContext::clipConvexPolygon(size_t numPoints, const FloatPoint* points)
+void GraphicsContext::clipConvexPolygon(size_t numPoints, const FloatPoint* points, bool antialias)
 {
     if (paintingDisabled())
         return;
 
     if (numPoints <= 1)
         return;
+
+    CGContextRef context = platformContext();
+
+    if (antialias != shouldAntialias())
+        CGContextSetShouldAntialias(context, antialias);
     
-    addConvexPolygonToContext(platformContext(), numPoints, points);
+    addConvexPolygonToContext(context, numPoints, points);
     clipPath(RULE_NONZERO);
+
+    if (antialias != shouldAntialias())
+        CGContextSetShouldAntialias(context, shouldAntialias());
 }
 
 void GraphicsContext::applyStrokePattern()

@@ -1,3 +1,41 @@
+2010-07-21  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=42605 New border-
+        radius path-based drawing code has some issues with corner-joins
+
+        GraphicsContext::clipConvexPolygon() now takes a boolean parameter 
+        indicating whether or not the clip should be antialiased.
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::clipConvexPolygon):
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::clipConvexPolygon):
+        * platform/graphics/haiku/GraphicsContextHaiku.cpp:
+        (WebCore::GraphicsContext::clipConvexPolygon):
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::GraphicsContext::clipConvexPolygon):
+        * platform/graphics/skia/GraphicsContextSkia.cpp:
+        (WebCore::GraphicsContext::clipConvexPolygon):
+        * platform/graphics/wince/GraphicsContextWince.cpp:
+        (WebCore::GraphicsContext::clipConvexPolygon):
+        * platform/graphics/wx/GraphicsContextWx.cpp:
+        (WebCore::GraphicsContext::clipConvexPolygon):
+
+        Compute 4 booleans determining if each edge is a "matching" edge of 
+        not. Send the two appropriate values to clipBorderSidePolygon() so 
+        we can decide there whether or not to antialias the clip based on 
+        matchy-ness.
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintBorder):
+
+        If both edges are matching, don't antialias. If neither edge 
+        matches, never antialias. If one edge matches and one does not, 
+        apply two clips to get the appropriate antialiasing in each corner.
+        (WebCore::RenderBoxModelObject::clipBorderSidePolygon):
+        * rendering/RenderBoxModelObject.h:
+
 2010-07-21  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Geoffrey Garen.

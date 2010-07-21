@@ -1008,13 +1008,18 @@ void RenderBoxModelObject::paintBorder(GraphicsContext* graphicsContext, int tx,
         graphicsContext->addPath(roundedPath);
     }
 
+    bool upperLeftBorderStylesMatch = renderLeft && (topStyle == leftStyle) && (topColor == leftColor);
+    bool upperRightBorderStylesMatch = renderRight && (topStyle == rightStyle) && (topColor == rightColor) && (topStyle != OUTSET) && (topStyle != RIDGE) && (topStyle != INSET) && (topStyle != GROOVE);
+    bool lowerLeftBorderStylesMatch = renderLeft && (bottomStyle == leftStyle) && (bottomColor == leftColor) && (bottomStyle != OUTSET) && (bottomStyle != RIDGE) && (bottomStyle != INSET) && (bottomStyle != GROOVE);
+    bool lowerRightBorderStylesMatch = renderRight && (bottomStyle == rightStyle) && (bottomColor == rightColor);
+
     if (renderTop) {
         int x = tx;
         int x2 = tx + w;
 
         if (renderRadii && borderWillArcInnerEdge(topLeft, topRight, style->borderLeftWidth(), style->borderRightWidth(), style->borderTopWidth())) {
             graphicsContext->save();
-            clipBorderSidePolygon(graphicsContext, borderRect, topLeft, topRight, bottomLeft, bottomRight, BSTop, style);
+            clipBorderSidePolygon(graphicsContext, borderRect, topLeft, topRight, bottomLeft, bottomRight, BSTop, upperLeftBorderStylesMatch, upperRightBorderStylesMatch, style);
             float thickness = max(max(style->borderTopWidth(), style->borderLeftWidth()), style->borderRightWidth());
             drawBoxSideFromPath(graphicsContext, borderRect, roundedPath, style->borderTopWidth(), thickness, BSTop, style, topColor, topStyle);
             graphicsContext->restore();
@@ -1035,7 +1040,7 @@ void RenderBoxModelObject::paintBorder(GraphicsContext* graphicsContext, int tx,
 
         if (renderRadii && borderWillArcInnerEdge(bottomLeft, bottomRight, style->borderLeftWidth(), style->borderRightWidth(), style->borderBottomWidth())) {
             graphicsContext->save();
-            clipBorderSidePolygon(graphicsContext, borderRect, topLeft, topRight, bottomLeft, bottomRight, BSBottom, style);
+            clipBorderSidePolygon(graphicsContext, borderRect, topLeft, topRight, bottomLeft, bottomRight, BSBottom, lowerLeftBorderStylesMatch, lowerRightBorderStylesMatch, style);
             float thickness = max(max(style->borderBottomWidth(), style->borderLeftWidth()), style->borderRightWidth());
             drawBoxSideFromPath(graphicsContext, borderRect, roundedPath, style->borderBottomWidth(), thickness, BSBottom, style, bottomColor, bottomStyle);
             graphicsContext->restore();
@@ -1058,7 +1063,7 @@ void RenderBoxModelObject::paintBorder(GraphicsContext* graphicsContext, int tx,
 
         if (renderRadii && borderWillArcInnerEdge(bottomLeft, topLeft, style->borderBottomWidth(), style->borderTopWidth(), style->borderLeftWidth())) {
             graphicsContext->save();
-            clipBorderSidePolygon(graphicsContext, borderRect, topLeft, topRight, bottomLeft, bottomRight, BSLeft, style);
+            clipBorderSidePolygon(graphicsContext, borderRect, topLeft, topRight, bottomLeft, bottomRight, BSLeft, upperLeftBorderStylesMatch, lowerLeftBorderStylesMatch, style);
             float thickness = max(max(style->borderLeftWidth(), style->borderTopWidth()), style->borderBottomWidth());
             drawBoxSideFromPath(graphicsContext, borderRect, roundedPath, style->borderLeftWidth(), thickness, BSLeft, style, leftColor, leftStyle);
             graphicsContext->restore();
@@ -1077,7 +1082,7 @@ void RenderBoxModelObject::paintBorder(GraphicsContext* graphicsContext, int tx,
     if (renderRight) {
         if (renderRadii && borderWillArcInnerEdge(bottomRight, topRight, style->borderBottomWidth(), style->borderTopWidth(), style->borderRightWidth())) {
             graphicsContext->save();
-            clipBorderSidePolygon(graphicsContext, borderRect, topLeft, topRight, bottomLeft, bottomRight, BSRight, style);
+            clipBorderSidePolygon(graphicsContext, borderRect, topLeft, topRight, bottomLeft, bottomRight, BSRight, upperRightBorderStylesMatch, lowerRightBorderStylesMatch, style);
             float thickness = max(max(style->borderRightWidth(), style->borderTopWidth()), style->borderBottomWidth());
             drawBoxSideFromPath(graphicsContext, borderRect, roundedPath, style->borderRightWidth(), thickness, BSRight, style, rightColor, rightStyle);
             graphicsContext->restore();
@@ -1455,7 +1460,7 @@ void RenderBoxModelObject::paintBorder(GraphicsContext* graphicsContext, int tx,
 }
 #endif
 
-void RenderBoxModelObject::clipBorderSidePolygon(GraphicsContext* graphicsContext, const IntRect& box, const IntSize& topLeft, const IntSize& topRight, const IntSize& bottomLeft, const IntSize& bottomRight, const BoxSide side, const RenderStyle* style)
+void RenderBoxModelObject::clipBorderSidePolygon(GraphicsContext* graphicsContext, const IntRect& box, const IntSize& topLeft, const IntSize& topRight, const IntSize& bottomLeft, const IntSize& bottomRight, const BoxSide side, bool firstEdgeMatches, bool secondEdgeMatches, const RenderStyle* style)
 {
     FloatPoint quad[4];
     int tx = box.x();
@@ -1510,7 +1515,28 @@ void RenderBoxModelObject::clipBorderSidePolygon(GraphicsContext* graphicsContex
         break;
     }
 
-    graphicsContext->clipConvexPolygon(4, quad);
+    // If the border matches both of its adjacent sides, don't anti-alias the clip, and
+    // if neither side matches, anti-alias the clip.
+    if (firstEdgeMatches == secondEdgeMatches) {
+        graphicsContext->clipConvexPolygon(4, quad, !firstEdgeMatches);
+        return;
+    }
+
+    FloatPoint firstQuad[4];
+    firstQuad[0] = quad[0];
+    firstQuad[1] = quad[1];
+    firstQuad[2] = side == BSTop || side == BSBottom ? FloatPoint(quad[3].x(), quad[2].y())
+        : firstQuad[2] = FloatPoint(quad[2].x(), quad[3].y());
+    firstQuad[3] = quad[3];
+    graphicsContext->clipConvexPolygon(4, firstQuad, !firstEdgeMatches);
+
+    FloatPoint secondQuad[4];
+    secondQuad[0] = quad[0];
+    secondQuad[1] = side == BSTop || side == BSBottom ? FloatPoint(quad[0].x(), quad[1].y())
+        : FloatPoint(quad[1].x(), quad[0].y());
+    secondQuad[2] = quad[2];
+    secondQuad[3] = quad[3];
+    graphicsContext->clipConvexPolygon(4, secondQuad, !secondEdgeMatches);
 }
 
 void RenderBoxModelObject::paintBoxShadow(GraphicsContext* context, int tx, int ty, int w, int h, const RenderStyle* s, ShadowStyle shadowStyle, bool begin, bool end)
