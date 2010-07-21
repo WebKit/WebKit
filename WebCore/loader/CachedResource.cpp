@@ -102,7 +102,7 @@ CachedResource::~CachedResource()
     if (m_docLoader)
         m_docLoader->removeCachedResource(this);
 }
-    
+
 void CachedResource::load(DocLoader* docLoader, bool incremental, SecurityCheckPolicy securityCheck, bool sendResourceLoadCallbacks)
 {
     m_sendResourceLoadCallbacks = sendResourceLoadCallbacks;

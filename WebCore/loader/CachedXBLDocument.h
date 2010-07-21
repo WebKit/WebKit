@@ -51,8 +51,6 @@ namespace WebCore {
         virtual void data(Vector<char>&, bool allDataReceived);
         virtual void error();
         
-        virtual bool schedule() const { return true; }
-        
         void checkNotify();
         
     protected:

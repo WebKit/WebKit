@@ -57,8 +57,6 @@ public:
 
     virtual void allClientsRemoved();
 
-    virtual bool schedule() const { return true; }
-
     void checkNotify();
 
     void beginLoadIfNeeded(DocLoader* dl);

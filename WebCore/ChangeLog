@@ -1,3 +1,24 @@
+2010-07-20  Gavin Peters  <gavinp@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        prefetch categorization is exactly wrong
+        https://bugs.webkit.org/show_bug.cgi?id=42651
+
+        While I was in the area, I saw that CachedResource::schedule() was dead, so I have removed it.
+
+        Test: fast/dom/HTMLLinkElement/onload-completion-test.html
+
+        * loader/CachedCSSStyleSheet.h:
+        * loader/CachedFont.h:
+        * loader/CachedImage.h:
+        * loader/CachedResource.cpp:
+        * loader/CachedResource.h:
+        (WebCore::CachedResource::isPrefetch):
+        * loader/CachedScript.h:
+        * loader/CachedXBLDocument.h:
+        * loader/CachedXSLStyleSheet.h:
+
 2010-07-16  James Hawkins  <jhawkins@chromium.org>
 
         Reviewed by Darin Fisher.

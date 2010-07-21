@@ -1,3 +1,18 @@
+2010-07-20  Gavin Peters  <gavinp@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        prefetch categorization is exactly wrong
+        https://bugs.webkit.org/show_bug.cgi?id=42651
+
+        The miscategorization caused onloads to issue early, so you see x,
+        y as 0, 0 in the buggy version.
+
+        * fast/dom/HTMLLinkElement/onload-completion-test-expected.txt: Added.
+        * fast/dom/HTMLLinkElement/onload-completion-test.html: Added.
+        * fast/dom/HTMLLinkElement/resources: Added.
+        * fast/dom/HTMLLinkElement/resources/nick.jpg: Added.
+
 2010-07-20  Brian Weinstein  <bweinstein@apple.com>
 
         Rubber-stamped by Adam Roben.

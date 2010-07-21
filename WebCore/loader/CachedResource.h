@@ -125,11 +125,14 @@ public:
     void setLoading(bool b) { m_loading = b; }
 
     virtual bool isImage() const { return false; }
+    bool isPrefetch() const
+    {
 #if ENABLE(LINK_PREFETCH)
-    virtual bool isPrefetch() const { return type() != LinkPrefetch; }
+        return type() == LinkPrefetch;
 #else
-    virtual bool isPrefetch() const { return false; }
+        return false;
 #endif
+    }
 
     unsigned accessCount() const { return m_accessCount; }
     void increaseAccessCount() { m_accessCount++; }
@@ -169,8 +172,6 @@ public:
     bool canDelete() const { return !hasClients() && !m_request && !m_preloadCount && !m_handleCount && !m_resourceToRevalidate && !m_proxyResource; }
 
     bool isExpired() const;
-
-    virtual bool schedule() const { return isPrefetch(); }
 
     // List of acceptable MIME types separated by ",".
     // A MIME type may contain a wildcard, e.g. "text/*".

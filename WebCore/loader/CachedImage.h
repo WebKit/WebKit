@@ -70,8 +70,6 @@ public:
     virtual void httpStatusCodeError() { m_httpStatusCodeErrorOccurred = true; }
     bool httpStatusCodeErrorOccurred() const { return m_httpStatusCodeErrorOccurred; }
     
-    virtual bool schedule() const { return true; }
-
     void checkNotify();
     
     virtual bool isImage() const { return true; }

@@ -48,8 +48,6 @@ namespace WebCore {
         virtual void data(PassRefPtr<SharedBuffer> data, bool allDataReceived);
         virtual void error();
         
-        virtual bool schedule() const { return true; }
-        
         void checkNotify();
         
     protected:
