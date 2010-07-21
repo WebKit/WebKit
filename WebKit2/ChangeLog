@@ -1,3 +1,28 @@
+2010-07-21  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Patch for https://bugs.webkit.org/show_bug.cgi?id=42539
+        WebKitTestRunner needs to support printing ALERT, PROMPT and CONFIRM messages
+
+        - Convert injected bundle UIClient functions to will-style, at least until we establish
+          more concrete use cases for them past the TestRunner.
+
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.h:
+        * WebProcess/InjectedBundle/InjectedBundlePageUIClient.cpp:
+        (WebKit::InjectedBundlePageUIClient::willAddMessageToConsole):
+        (WebKit::InjectedBundlePageUIClient::willSetStatusbarText):
+        (WebKit::InjectedBundlePageUIClient::willRunJavaScriptAlert):
+        (WebKit::InjectedBundlePageUIClient::willRunJavaScriptConfirm):
+        (WebKit::InjectedBundlePageUIClient::willRunJavaScriptPrompt):
+        * WebProcess/InjectedBundle/InjectedBundlePageUIClient.h:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::addMessageToConsole):
+        (WebKit::WebChromeClient::runJavaScriptAlert):
+        (WebKit::WebChromeClient::runJavaScriptConfirm):
+        (WebKit::WebChromeClient::runJavaScriptPrompt):
+        (WebKit::WebChromeClient::setStatusbarText):
+
 2010-07-21  Simon Fraser  <simon.fraser@apple.com>
 
         Windows build fix.

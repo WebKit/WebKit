@@ -1,3 +1,24 @@
+2010-07-21  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Patch for https://bugs.webkit.org/show_bug.cgi?id=42539
+        WebKitTestRunner needs to support printing ALERT, PROMPT and CONFIRM messages
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::InjectedBundlePage):
+        (WTR::InjectedBundlePage::_willAddMessageToConsole):
+        (WTR::InjectedBundlePage::_willSetStatusbarText):
+        (WTR::InjectedBundlePage::_willRunJavaScriptAlert):
+        (WTR::InjectedBundlePage::_willRunJavaScriptConfirm):
+        (WTR::InjectedBundlePage::_willRunJavaScriptPrompt):
+        (WTR::InjectedBundlePage::willAddMessageToConsole):
+        (WTR::InjectedBundlePage::willSetStatusbarText):
+        (WTR::InjectedBundlePage::willRunJavaScriptAlert):
+        (WTR::InjectedBundlePage::willRunJavaScriptConfirm):
+        (WTR::InjectedBundlePage::willRunJavaScriptPrompt):
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.h:
+
 2010-07-21  Adam Roben  <aroben@apple.com>
 
         Give InjectedBundle our standard set of configurations (minus the

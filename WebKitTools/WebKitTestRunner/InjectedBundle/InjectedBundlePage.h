@@ -60,11 +60,16 @@ private:
     void didClearWindowForFrame(WKBundleFrameRef frame, JSContextRef ctx, JSObjectRef window);
 
     // UI Client
-    static void _addMessageToConsole(WKBundlePageRef page, WKStringRef message, uint32_t lineNumber, const void *clientInfo);
-    static void _setStatusbarText(WKBundlePageRef page, WKStringRef statusbarText, const void *clientInfo);
-
-    void addMessageToConsole(WKStringRef message, uint32_t lineNumber);
-    void setStatusbarText(WKStringRef statusbarText);
+    static void _willAddMessageToConsole(WKBundlePageRef page, WKStringRef message, uint32_t lineNumber, const void* clientInfo);
+    static void _willSetStatusbarText(WKBundlePageRef page, WKStringRef statusbarText, const void* clientInfo);
+    static void _willRunJavaScriptAlert(WKBundlePageRef page, WKStringRef message, WKBundleFrameRef frame, const void* clientInfo);
+    static void _willRunJavaScriptConfirm(WKBundlePageRef page, WKStringRef message, WKBundleFrameRef frame, const void* clientInfo);
+    static void _willRunJavaScriptPrompt(WKBundlePageRef page, WKStringRef message, WKStringRef defaultValue, WKBundleFrameRef frame, const void* clientInfo);
+    void willAddMessageToConsole(WKStringRef message, uint32_t lineNumber);
+    void willSetStatusbarText(WKStringRef statusbarText);
+    void willRunJavaScriptAlert(WKStringRef message, WKBundleFrameRef);
+    void willRunJavaScriptConfirm(WKStringRef message, WKBundleFrameRef);
+    void willRunJavaScriptPrompt(WKStringRef message, WKStringRef defaultValue, WKBundleFrameRef);
 
     WKBundlePageRef m_page;
     bool m_isLoading;

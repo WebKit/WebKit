@@ -60,14 +60,20 @@ struct WKBundlePageLoaderClient {
 typedef struct WKBundlePageLoaderClient WKBundlePageLoaderClient;
 
 // UI Client
-typedef void (*WKBundlePageAddMessageToConsoleCallback)(WKBundlePageRef page, WKStringRef message, uint32_t lineNumber, const void *clientInfo);
-typedef void (*WKBundlePageSetStatusbarTextCallback)(WKBundlePageRef page, WKStringRef statusbarText, const void *clientInfo);
+typedef void (*WKBundlePageWillAddMessageToConsoleCallback)(WKBundlePageRef page, WKStringRef message, uint32_t lineNumber, const void *clientInfo);
+typedef void (*WKBundlePageWillSetStatusbarTextCallback)(WKBundlePageRef page, WKStringRef statusbarText, const void *clientInfo);
+typedef void (*WKBundlePageWillRunJavaScriptAlertCallback)(WKBundlePageRef page, WKStringRef alertText, WKBundleFrameRef frame, const void *clientInfo);
+typedef void (*WKBundlePageWillRunJavaScriptConfirmCallback)(WKBundlePageRef page, WKStringRef message, WKBundleFrameRef frame, const void *clientInfo);
+typedef void (*WKBundlePageWillRunJavaScriptPromptCallback)(WKBundlePageRef page, WKStringRef message, WKStringRef defaultValue, WKBundleFrameRef frame, const void *clientInfo);
 
 struct WKBundlePageUIClient {
     int                                                                 version;
     const void *                                                        clientInfo;
-    WKBundlePageAddMessageToConsoleCallback                             addMessageToConsole;
-    WKBundlePageSetStatusbarTextCallback                                setStatusbarText;
+    WKBundlePageWillAddMessageToConsoleCallback                         willAddMessageToConsole;
+    WKBundlePageWillSetStatusbarTextCallback                            willSetStatusbarText;
+    WKBundlePageWillRunJavaScriptAlertCallback                          willRunJavaScriptAlert;
+    WKBundlePageWillRunJavaScriptConfirmCallback                        willRunJavaScriptConfirm;
+    WKBundlePageWillRunJavaScriptPromptCallback                         willRunJavaScriptPrompt;
 };
 typedef struct WKBundlePageUIClient WKBundlePageUIClient;
 

@@ -187,7 +187,7 @@ void WebChromeClient::setResizable(bool)
 void WebChromeClient::addMessageToConsole(MessageSource, MessageType, MessageLevel, const String& message, unsigned int lineNumber, const String& sourceID)
 {
     // Notify the bundle client.
-    m_page->injectedBundleUIClient().addMessageToConsole(m_page, message, lineNumber);
+    m_page->injectedBundleUIClient().willAddMessageToConsole(m_page, message, lineNumber);
 
     notImplemented();
 }
@@ -212,28 +212,42 @@ void WebChromeClient::closeWindowSoon()
 void WebChromeClient::runJavaScriptAlert(Frame* frame, const String& alertText)
 {
     WebFrame* webFrame =  static_cast<WebFrameLoaderClient*>(frame->loader()->client())->webFrame();
+
+    // Notify the bundle client.
+    m_page->injectedBundleUIClient().willRunJavaScriptAlert(m_page, alertText, webFrame);
+
     WebProcess::shared().connection()->sendSync(WebPageProxyMessage::RunJavaScriptAlert, m_page->pageID(),
                                                 CoreIPC::In(webFrame->frameID(), alertText),
                                                 CoreIPC::Out(),
                                                 CoreIPC::Connection::NoTimeout);
 }
 
-bool WebChromeClient::runJavaScriptConfirm(Frame*, const String&)
+bool WebChromeClient::runJavaScriptConfirm(Frame* frame, const String& message)
 {
-    notImplemented();
+    WebFrame* webFrame =  static_cast<WebFrameLoaderClient*>(frame->loader()->client())->webFrame();
+
+    // Notify the bundle client.
+    m_page->injectedBundleUIClient().willRunJavaScriptConfirm(m_page, message, webFrame);
+
+    // Implement for UIProcess.
     return false;
 }
 
-bool WebChromeClient::runJavaScriptPrompt(Frame*, const String& message, const String& defaultValue, String& result)
+bool WebChromeClient::runJavaScriptPrompt(Frame* frame, const String& message, const String& defaultValue, String& result)
 {
-    notImplemented();
+    WebFrame* webFrame =  static_cast<WebFrameLoaderClient*>(frame->loader()->client())->webFrame();
+
+    // Notify the bundle client.
+    m_page->injectedBundleUIClient().willRunJavaScriptPrompt(m_page, message, defaultValue, webFrame);
+
+    // Implement for UIProcess.
     return false;
 }
 
 void WebChromeClient::setStatusbarText(const String& statusbarText)
 {
     // Notify the bundle client.
-    m_page->injectedBundleUIClient().setStatusbarText(m_page, statusbarText);
+    m_page->injectedBundleUIClient().willSetStatusbarText(m_page, statusbarText);
 
     notImplemented();
 }

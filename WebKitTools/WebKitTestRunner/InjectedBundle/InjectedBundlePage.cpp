@@ -37,6 +37,19 @@
 
 namespace WTR {
 
+static PassOwnPtr<Vector<char> > WKStringToUTF8(WKStringRef wkStringRef)
+{
+    RetainPtr<CFStringRef> cfString(AdoptCF, WKStringCopyCFString(0, wkStringRef));
+    CFIndex bufferLength = CFStringGetMaximumSizeForEncoding(CFStringGetLength(cfString.get()), kCFStringEncodingUTF8) + 1;
+    OwnPtr<Vector<char> > buffer(new Vector<char>(bufferLength));
+    if (!CFStringGetCString(cfString.get(), buffer->data(), bufferLength, kCFStringEncodingUTF8)) {
+        buffer->shrink(1);
+        (*buffer)[0] = 0;
+    } else
+        buffer->shrink(strlen(buffer->data()) + 1);
+    return buffer.release();
+}
+
 InjectedBundlePage::InjectedBundlePage(WKBundlePageRef page)
     : m_page(page)
     , m_isLoading(false)
@@ -58,11 +71,13 @@ InjectedBundlePage::InjectedBundlePage(WKBundlePageRef page)
     WKBundlePageUIClient uiClient = {
         0,
         this,
-        _addMessageToConsole,
-        _setStatusbarText
+        _willAddMessageToConsole,
+        _willSetStatusbarText,
+        _willRunJavaScriptAlert,
+        _willRunJavaScriptConfirm,
+        _willRunJavaScriptPrompt
     };
     WKBundlePageSetUIClient(m_page, &uiClient);
-
 }
 
 InjectedBundlePage::~InjectedBundlePage()
@@ -129,19 +144,6 @@ void InjectedBundlePage::didCommitLoadForFrame(WKBundleFrameRef frame)
 {
 }
 
-static PassOwnPtr<Vector<char> > WKStringToUTF8(WKStringRef wkStringRef)
-{
-    RetainPtr<CFStringRef> cfString(AdoptCF, WKStringCopyCFString(0, wkStringRef));
-    CFIndex bufferLength = CFStringGetMaximumSizeForEncoding(CFStringGetLength(cfString.get()), kCFStringEncodingUTF8) + 1;
-    OwnPtr<Vector<char> > buffer(new Vector<char>(bufferLength));
-    if (!CFStringGetCString(cfString.get(), buffer->data(), bufferLength, kCFStringEncodingUTF8)) {
-        buffer->shrink(1);
-        (*buffer)[0] = 0;
-    } else
-        buffer->shrink(strlen(buffer->data()) + 1);
-    return buffer.release();
-}
-
 void InjectedBundlePage::dump()
 {
     InjectedBundle::shared().layoutTestController()->invalidateWaitToDumpWatchdog();
@@ -194,30 +196,64 @@ void InjectedBundlePage::didClearWindowForFrame(WKBundleFrameRef frame, JSContex
 
 // UI Client Callbacks
 
-void InjectedBundlePage::_addMessageToConsole(WKBundlePageRef page, WKStringRef message, uint32_t lineNumber, const void *clientInfo)
+void InjectedBundlePage::_willAddMessageToConsole(WKBundlePageRef page, WKStringRef message, uint32_t lineNumber, const void *clientInfo)
 {
-    static_cast<InjectedBundlePage*>(const_cast<void*>(clientInfo))->addMessageToConsole(message, lineNumber);
+    static_cast<InjectedBundlePage*>(const_cast<void*>(clientInfo))->willAddMessageToConsole(message, lineNumber);
 }
 
-void InjectedBundlePage::_setStatusbarText(WKBundlePageRef page, WKStringRef statusbarText, const void *clientInfo)
+void InjectedBundlePage::_willSetStatusbarText(WKBundlePageRef page, WKStringRef statusbarText, const void *clientInfo)
 {
-    static_cast<InjectedBundlePage*>(const_cast<void*>(clientInfo))->setStatusbarText(statusbarText);
+    static_cast<InjectedBundlePage*>(const_cast<void*>(clientInfo))->willSetStatusbarText(statusbarText);
 }
 
-void InjectedBundlePage::addMessageToConsole(WKStringRef message, uint32_t lineNumber)
+void InjectedBundlePage::_willRunJavaScriptAlert(WKBundlePageRef page, WKStringRef message, WKBundleFrameRef frame, const void *clientInfo)
+{
+    static_cast<InjectedBundlePage*>(const_cast<void*>(clientInfo))->willRunJavaScriptAlert(message, frame);
+}
+
+void InjectedBundlePage::_willRunJavaScriptConfirm(WKBundlePageRef page, WKStringRef message, WKBundleFrameRef frame, const void *clientInfo)
+{
+    return static_cast<InjectedBundlePage*>(const_cast<void*>(clientInfo))->willRunJavaScriptConfirm(message, frame);
+}
+
+void InjectedBundlePage::_willRunJavaScriptPrompt(WKBundlePageRef page, WKStringRef message, WKStringRef defaultValue, WKBundleFrameRef frame, const void *clientInfo)
+{
+    static_cast<InjectedBundlePage*>(const_cast<void*>(clientInfo))->willRunJavaScriptPrompt(message, defaultValue, frame);
+}
+
+void InjectedBundlePage::willAddMessageToConsole(WKStringRef message, uint32_t lineNumber)
 {
     // FIXME: Strip file: urls.
     OwnPtr<Vector<char> > utf8Message = WKStringToUTF8(message);
     InjectedBundle::shared().os() << "CONSOLE MESSAGE: line " << lineNumber << ": " << utf8Message->data() << "\n";
 }
 
-void InjectedBundlePage::setStatusbarText(WKStringRef statusbarText)
+void InjectedBundlePage::willSetStatusbarText(WKStringRef statusbarText)
 {
     if (!InjectedBundle::shared().layoutTestController()->shouldDumpStatusCallbacks())
         return;
 
     OwnPtr<Vector<char> > utf8StatusbarText = WKStringToUTF8(statusbarText);
     InjectedBundle::shared().os() << "UI DELEGATE STATUS CALLBACK: setStatusText:" << utf8StatusbarText->data() << "\n";
+}
+
+void InjectedBundlePage::willRunJavaScriptAlert(WKStringRef message, WKBundleFrameRef)
+{
+    OwnPtr<Vector<char> > utf8Message = WKStringToUTF8(message);
+    InjectedBundle::shared().os() << "ALERT: " << utf8Message->data() << "\n";
+}
+
+void InjectedBundlePage::willRunJavaScriptConfirm(WKStringRef message, WKBundleFrameRef)
+{
+    OwnPtr<Vector<char> > utf8Message = WKStringToUTF8(message);
+    InjectedBundle::shared().os() << "CONFIRM: " << utf8Message->data() << "\n";
+}
+
+void InjectedBundlePage::willRunJavaScriptPrompt(WKStringRef message, WKStringRef defaultValue, WKBundleFrameRef)
+{
+    OwnPtr<Vector<char> > utf8Message = WKStringToUTF8(message);
+    OwnPtr<Vector<char> > utf8DefaultValue = WKStringToUTF8(defaultValue);
+    InjectedBundle::shared().os() << "PROMPT: " << utf8Message->data() << ", default text: " << utf8DefaultValue->data() <<  "\n";
 }
 
 } // namespace WTR

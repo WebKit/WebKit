@@ -46,16 +46,34 @@ void InjectedBundlePageUIClient::initialize(WKBundlePageUIClient* client)
         memset(&m_client, 0, sizeof(m_client));
 }
 
-void InjectedBundlePageUIClient::addMessageToConsole(WebPage* page, const String& message, int32_t lineNumber)
+void InjectedBundlePageUIClient::willAddMessageToConsole(WebPage* page, const String& message, int32_t lineNumber)
 {
-    if (m_client.addMessageToConsole)
-        m_client.addMessageToConsole(toRef(page), toRef(message.impl()), lineNumber, m_client.clientInfo);
+    if (m_client.willAddMessageToConsole)
+        m_client.willAddMessageToConsole(toRef(page), toRef(message.impl()), lineNumber, m_client.clientInfo);
 }
 
-void InjectedBundlePageUIClient::setStatusbarText(WebPage* page, const String& statusbarText)
+void InjectedBundlePageUIClient::willSetStatusbarText(WebPage* page, const String& statusbarText)
 {
-    if (m_client.setStatusbarText)
-        m_client.setStatusbarText(toRef(page), toRef(statusbarText.impl()), m_client.clientInfo);
+    if (m_client.willSetStatusbarText)
+        m_client.willSetStatusbarText(toRef(page), toRef(statusbarText.impl()), m_client.clientInfo);
+}
+
+void InjectedBundlePageUIClient::willRunJavaScriptAlert(WebPage* page, const String& alertText, WebFrame* frame)
+{
+    if (m_client.willRunJavaScriptAlert)
+        m_client.willRunJavaScriptAlert(toRef(page), toRef(alertText.impl()), toRef(frame), m_client.clientInfo);
+}
+
+void InjectedBundlePageUIClient::willRunJavaScriptConfirm(WebPage* page, const String& message, WebFrame* frame)
+{
+    if (m_client.willRunJavaScriptConfirm)
+        m_client.willRunJavaScriptConfirm(toRef(page), toRef(message.impl()), toRef(frame), m_client.clientInfo);
+}
+
+void InjectedBundlePageUIClient::willRunJavaScriptPrompt(WebPage* page, const String& message, const String& defaultValue, WebFrame* frame)
+{
+    if (m_client.willRunJavaScriptPrompt)
+        m_client.willRunJavaScriptPrompt(toRef(page), toRef(message.impl()), toRef(defaultValue.impl()), toRef(frame), m_client.clientInfo);
 }
 
 } // namespace WebKit
