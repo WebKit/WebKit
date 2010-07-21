@@ -108,9 +108,9 @@ void Connection::readEventHandler()
         sendOutgoingMessages();
     }
 
-    DWORD numberOfBytesRead = 0;
-    if (wasConnected) {
+    while (true) {
         // Check if we got some data.
+        DWORD numberOfBytesRead = 0;
         if (!::GetOverlappedResult(m_connectionPipe, &m_readState, &numberOfBytesRead, FALSE)) {
             DWORD error = ::GetLastError();
 
@@ -118,6 +118,30 @@ void Connection::readEventHandler()
             case ERROR_BROKEN_PIPE:
                 connectionDidClose();
                 return;
+            case ERROR_MORE_DATA: {
+                // Read the rest of the message out of the pipe.
+
+                DWORD bytesToRead = 0;
+                if (!::PeekNamedPipe(m_connectionPipe, 0, 0, 0, 0, &bytesToRead)) {
+                    DWORD error = ::GetLastError();
+                    ASSERT_NOT_REACHED();
+                    return;
+                }
+
+                // ::GetOverlappedResult told us there's more data. ::PeekNamedPipe shouldn't
+                // contradict it!
+                ASSERT(bytesToRead);
+                if (!bytesToRead)
+                    break;
+
+                m_readBuffer.grow(m_readBuffer.size() + bytesToRead);
+                if (!::ReadFile(m_connectionPipe, m_readBuffer.data() + numberOfBytesRead, bytesToRead, 0, &m_readState)) {
+                    DWORD error = ::GetLastError();
+                    ASSERT_NOT_REACHED();
+                    return;
+                }
+                continue;
+            }
 
             // FIXME: We should figure out why we're getting this error.
             case ERROR_IO_INCOMPLETE:
@@ -126,39 +150,69 @@ void Connection::readEventHandler()
                 ASSERT_NOT_REACHED();
             }
         }
-    }
 
-    while (true) {
-        if (numberOfBytesRead) {
+        if (!m_readBuffer.isEmpty()) {
             // We have a message, let's dispatch it.
 
             // The messageID is encoded at the end of the buffer.
-            size_t realBufferSize = numberOfBytesRead - sizeof(MessageID);
+            // Note that we assume here that the message is the same size as m_readBuffer. We can
+            // assume this because we always size m_readBuffer to exactly match the size of the message,
+            // either when receiving ERROR_MORE_DATA from ::GetOverlappedResult above or when
+            // ::PeekNamedPipe tells us the size below. We never set m_readBuffer to a size larger
+            // than the message.
+            size_t realBufferSize = m_readBuffer.size() - sizeof(MessageID);
 
             unsigned messageID = *reinterpret_cast<unsigned*>(m_readBuffer.data() + realBufferSize);
 
             processIncomingMessage(MessageID::fromInt(messageID), adoptPtr(new ArgumentDecoder(m_readBuffer.data(), realBufferSize)));
         }
 
-        // FIXME: Do this somewhere else.
-        m_readBuffer.resize(inlineMessageMaxSize);
-
-        // Read from the pipe.
-        BOOL result = ::ReadFile(m_connectionPipe, m_readBuffer.data(), m_readBuffer.size(), &numberOfBytesRead, &m_readState);
-
-        if (!result) {
+        // Find out the size of the next message in the pipe (if there is one) so that we can read
+        // it all in one operation. (This is just an optimization to avoid an extra pass through the
+        // loop (if we chose a buffer size that was too small) or allocating extra memory (if we
+        // chose a buffer size that was too large).)
+        DWORD bytesToRead = 0;
+        if (!::PeekNamedPipe(m_connectionPipe, 0, 0, 0, 0, &bytesToRead)) {
             DWORD error = ::GetLastError();
-
-            if (error == ERROR_IO_PENDING) {
-                // There's pending data - readEventHandler will be called again once the read is complete.
-                return;
-            }
-
-            // FIXME: We need to handle other errors here.
             ASSERT_NOT_REACHED();
         }
+        if (!bytesToRead) {
+            // There's no message waiting in the pipe. Schedule a read of the first byte of the
+            // next message. We'll find out the message's actual size when it arrives. (If we
+            // change this to read more than a single byte for performance reasons, we'll have to
+            // deal with m_readBuffer potentially being larger than the message we read after
+            // calling ::GetOverlappedResult above.)
+            bytesToRead = 1;
+        }
 
-        ASSERT(numberOfBytesRead);
+        m_readBuffer.resize(bytesToRead);
+
+        // Either read the next available message (which should occur synchronously), or start an
+        // asynchronous read of the next message that becomes available.
+        BOOL result = ::ReadFile(m_connectionPipe, m_readBuffer.data(), m_readBuffer.size(), 0, &m_readState);
+        if (result) {
+            // There was already a message waiting in the pipe, and we read it synchronously.
+            // Process it.
+            continue;
+        }
+
+        DWORD error = ::GetLastError();
+
+        if (error == ERROR_IO_PENDING) {
+            // There are no messages in the pipe currently. readEventHandler will be called again once there is a message.
+            return;
+        }
+
+        if (error == ERROR_MORE_DATA) {
+            // Either a message is available when we didn't think one was, or the message is larger
+            // than ::PeekNamedPipe told us. The former seems far more likely. Probably the message
+            // became available between our calls to ::PeekNamedPipe and ::ReadFile above. Go back
+            // to the top of the loop to use ::GetOverlappedResult to retrieve the available data.
+            continue;
+        }
+
+        // FIXME: We need to handle other errors here.
+        ASSERT_NOT_REACHED();
     }
 }
 

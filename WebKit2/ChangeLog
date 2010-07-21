@@ -1,3 +1,52 @@
+2010-07-21  Adam Roben  <aroben@apple.com>
+
+        Teach CoreIPC how to handle messages that are larger than the pipe's
+        buffer
+
+        ::GetOverlappedResult and ::ReadFile can fail with ERROR_MORE_DATA
+        when there is more data available on the pipe than was requested in
+        the read operation. In those cases, the appropriate response is to
+        perform another read operation to read the extra data. We now do this.
+
+        Also, MSDN says that, because we are doing asynchronous read
+        operations, we should not pass a pointer to ::ReadFile to find out how
+        many bytes were read. Instead we should always call
+        ::GetOverlappedResult to find this out. I've changed
+        Connection::readEventHandler to have a single loop that calls
+        ::GetOverlappedResult and ::ReadFile in alternation, rather than
+        sometimes calling ::ReadFile multiple times in a row, to satisfy this
+        requirement.
+
+        In order to simplify the logic in this function, I've made us request
+        only a single byte from the pipe when there are no messages already in
+        the pipe. (Previously we were requesting 4096 bytes in this case.)
+        This allows us not to have to consider the case where the received
+        message is smaller than our read buffer. If we decide that this has a
+        negative impact on performance, we can of course change it. I've
+        mitigated this somewhat by using ::PeekNamedMessage to find out the
+        size of the next message in the pipe (if any), so that we can read it
+        all in one read operation.
+
+        Fixes <http://webkit.org/b/42710> <rdar://problem/8197571> Assertion
+        in Connection::readEventHandler when launching WebKitTestRunner
+
+        Reviewed by Anders Carlsson.
+
+        * Platform/CoreIPC/win/ConnectionWin.cpp:
+        (CoreIPC::Connection::readEventHandler): Put the call to
+        ::GetOverlappedResult in the same loop as ::ReadFile so that we will
+        call them alternately. If ::GetOverlappedResult fails with
+        ERROR_MORE_DATA, use ::PeekNamedPipe to determine the size of the rest
+        of the message, then read it from the pipe. After dispatching the
+        message, use ::PeekNamedPipe to find out the size of the next message
+        in the pipe so we can read it all in one operation. If there's no
+        message in the pipe, we'll request just a single byte of the next
+        message that becomes available, and Windows will tell us when the rest
+        of the message is ready. If ::ReadFile fails with ERROR_MORE_DATA it
+        means there is data available now even though we didn't think there
+        was any. We go back to the top of the loop in this case and call
+        ::GetOverlappedResult again to retrieve the available data.
+
 2010-07-21  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.
