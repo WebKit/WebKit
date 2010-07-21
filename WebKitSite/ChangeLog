@@ -1,3 +1,16 @@
+2010-07-21  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Add a diagram explaining how a DOM element is attached to the site.
+        https://bugs.webkit.org/show_bug.cgi?id=42763
+
+        * coding/dom-element-attach.html: Added.
+        * coding/images/dom-element-attach-large.png: Added.
+        * coding/images/dom-element-attach-small.png: Added.
+        * coding/images/dom-element-attach.graffle: Added.
+        * coding/technical-articles.html: Added a link to the page with the diragram.
+
 2010-06-16  Jeremy Moskovich  <jeremy@chromium.org>
 
         Reviewed by Darin Adler.
