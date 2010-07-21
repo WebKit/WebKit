@@ -1,3 +1,15 @@
+2010-07-21  Adam Roben  <aroben@apple.com>
+
+        Move WebKit2WebProcess's settings to a vsprops file
+
+        Fixes <http://webkit.org/b/42751> WebKit2WebProcess should use vsprops
+        files
+
+        Reviewed by Darin Adler.
+
+        * win/WebKit2WebProcess.vcproj: Moved settings from here...
+        * win/WebKit2WebProcessCommon.vsprops: ...to here.
+
 2010-07-20  Ivan Krstić  <ike@apple.com>
 
         Reviewed and tweaked by Anders Carlsson and Sam Weinig.
