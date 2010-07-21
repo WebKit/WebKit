@@ -1,3 +1,10 @@
+2010-07-21  Tony Chang  <tony@chromium.org>
+
+        Not reviewed, updating chromiumg test expectations.
+
+        * platform/chromium/test_expectations.txt: Marking remember-bad-password.html and 
+            401-logout.php as failing.
+
 2010-07-21  Alexey Proskuryakov  <ap@apple.com>
 
         Unreviewed.
