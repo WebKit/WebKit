@@ -1,3 +1,13 @@
+2010-07-21  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: inspector/debugger-pause-in-eval-script.html fails on Chromium Win
+        https://bugs.webkit.org/show_bug.cgi?id=42735
+
+        * inspector/debugger-pause-in-eval-script.html:
+        * platform/chromium/test_expectations.txt:
+
 2010-07-21  Zoltan Herczeg  <zherczeg@webkit.org>
 
         Reviewed by Nikolas Zimmermann.

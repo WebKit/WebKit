@@ -2885,9 +2885,6 @@ BUG_HCLAM : fast/js/script-line-number.html = TEXT
 // LayoutTestController::isPageBoxVisible, pageAreaRectInPixels, and preferredPageSizeInPixels are not implemented yet for Chromium.
 BUGWK37538 : printing/page-format-data.html = TEXT
 
-// This failure is related to 61859.
-BUG_HCLAM : inspector/debugger-pause-in-eval-script.html = TIMEOUT CRASH FAIL PASS
-
 // First noticed on trybots after r61836, now in the tree.
 BUG_MNAGANOV LINUX : fast/js/Object-create.html = CRASH FAIL
 

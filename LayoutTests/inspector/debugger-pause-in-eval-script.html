@@ -14,13 +14,11 @@ function frontend_testPauseOnDebuggerStatement(testController)
     testController.waitUntilDone();
 
     WebInspector.showScriptsPanel();
-    frontend_ensureDebuggerEnabled(debuggerWasEnabledCallback);
 
     var scriptToEvaluate = "function testFunction() {\n" +
                            "    debugger;\n" +
                            "}\n" +
                            "setTimeout(testFunction, 0);\n";
-
     function debuggerWasEnabledCallback()
     {
         testController.results.push("Debugger was enabled.");
@@ -31,6 +29,8 @@ function frontend_testPauseOnDebuggerStatement(testController)
             testController.results.push("Evaluated script in console.");
         });
     }
+
+    frontend_ensureDebuggerEnabled(debuggerWasEnabledCallback);
 
     frontend_addSniffer(WebInspector, "pausedScript", function(callFrames)
     {
