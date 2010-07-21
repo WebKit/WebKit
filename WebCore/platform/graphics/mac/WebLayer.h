@@ -53,11 +53,11 @@ namespace WebCore {
 {
     WebCore::GraphicsLayer* m_layerOwner;
 }
-
-// Class method allows us to share implementation across TiledLayerMac and WebLayer
-+ (void)drawContents:(WebCore::GraphicsLayer*)layerContents ofLayer:(CALayer*)layer intoContext:(CGContextRef)context;
-
 @end
+
+// Functions allows us to share implementation across WebTiledLayer and WebLayer
+void drawLayerContents(CGContextRef, CALayer *, WebCore::GraphicsLayer*);
+void setLayerNeedsDisplayInRect(CALayer *, WebCore::GraphicsLayer*, CGRect);
 
 #endif // USE(ACCELERATED_COMPOSITING)
 

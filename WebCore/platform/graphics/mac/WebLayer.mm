@@ -31,6 +31,7 @@
 
 #import "GraphicsContext.h"
 #import "GraphicsLayer.h"
+#import <objc/objc-runtime.h>
 #import <QuartzCore/QuartzCore.h>
 #import <wtf/UnusedParam.h>
 
@@ -38,7 +39,7 @@ using namespace WebCore;
 
 @implementation WebLayer
 
-+ (void)drawContents:(WebCore::GraphicsLayer*)layerContents ofLayer:(CALayer*)layer intoContext:(CGContextRef)context
+void drawLayerContents(CGContextRef context, CALayer *layer, WebCore::GraphicsLayer* layerContents)
 {
     if (!layerContents)
         return;
@@ -110,6 +111,34 @@ using namespace WebCore;
     CGContextRestoreGState(context);
 }
 
+void setLayerNeedsDisplayInRect(CALayer *layer, WebCore::GraphicsLayer* layerContents, CGRect rect)
+{
+    if (layerContents && layerContents->client() && layerContents->drawsContent()) {
+        struct objc_super layerSuper = { layer, class_getSuperclass(object_getClass(layer)) };
+#if defined(BUILDING_ON_LEOPARD)
+        rect = CGRectApplyAffineTransform(rect, [layer contentsTransform]);
+#else
+        if (layerContents->contentsOrientation() == WebCore::GraphicsLayer::CompositingCoordinatesBottomUp)
+            rect.origin.y = [layer bounds].size.height - rect.origin.y - rect.size.height;
+#endif
+        objc_msgSendSuper(&layerSuper, @selector(setNeedsDisplayInRect:), rect);
+
+#ifndef NDEBUG
+        if (layerContents->showRepaintCounter()) {
+            CGRect bounds = [layer bounds];
+            CGRect indicatorRect = CGRectMake(bounds.origin.x, bounds.origin.y, 46, 25);
+#if defined(BUILDING_ON_LEOPARD)
+            indicatorRect = CGRectApplyAffineTransform(indicatorRect, [layer contentsTransform]);
+#else
+            if (layerContents->contentsOrientation() == WebCore::GraphicsLayer::CompositingCoordinatesBottomUp)
+                indicatorRect.origin.y = [layer bounds].size.height - indicatorRect.origin.y - indicatorRect.size.height;
+#endif
+            objc_msgSendSuper(&layerSuper, @selector(setNeedsDisplayInRect:), indicatorRect);
+        }
+#endif
+    }
+}
+
 // Disable default animations
 - (id<CAAction>)actionForKey:(NSString *)key
 {
@@ -134,23 +163,7 @@ using namespace WebCore;
 
 - (void)setNeedsDisplayInRect:(CGRect)dirtyRect
 {
-    if (m_layerOwner && m_layerOwner->client() && m_layerOwner->drawsContent()) {
-#if defined(BUILDING_ON_LEOPARD)
-        dirtyRect = CGRectApplyAffineTransform(dirtyRect, [self contentsTransform]);
-#endif
-        [super setNeedsDisplayInRect:dirtyRect];
-
-#ifndef NDEBUG
-        if (m_layerOwner->showRepaintCounter()) {
-            CGRect bounds = [self bounds];
-            CGRect indicatorRect = CGRectMake(bounds.origin.x, bounds.origin.y, 46, 25);
-#if defined(BUILDING_ON_LEOPARD)
-            indicatorRect = CGRectApplyAffineTransform(indicatorRect, [self contentsTransform]);
-#endif
-            [super setNeedsDisplayInRect:indicatorRect];
-        }
-#endif
-    }
+    setLayerNeedsDisplayInRect(self, m_layerOwner, dirtyRect);
 }
 
 - (void)display
@@ -162,7 +175,7 @@ using namespace WebCore;
 
 - (void)drawInContext:(CGContextRef)context
 {
-    [WebLayer drawContents:m_layerOwner ofLayer:self intoContext:context];
+    drawLayerContents(context, self, m_layerOwner);
 }
 
 @end // implementation WebLayer

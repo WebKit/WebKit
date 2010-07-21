@@ -2271,8 +2271,6 @@ void GraphicsLayerCA::updateContentsTransform()
         contentsTransform = CGAffineTransformTranslate(contentsTransform, 0, -[m_layer.get() bounds].size.height);
         [m_layer.get() setContentsTransform:contentsTransform];
     }
-#else
-    ASSERT(contentsOrientation() == CompositingCoordinatesTopDown);
 #endif
 }
 
