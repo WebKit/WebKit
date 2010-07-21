@@ -361,6 +361,49 @@ Expected:
 |         <tr>
 |           <td>
 |             "B"
+resources/adoption02.dat:
+2
+
+Test 2 of 2 in resources/adoption02.dat failed. Input:
+<b id="b">1<i id="i">2<p>3<script>document.getElementById("b").id = "c";document.getElementById("i").id = "j"</script></b>4
+Got:
+| <html>
+|   <head>
+|   <body>
+|     <b>
+|       id="c"
+|       "1"
+|       <i>
+|         id="j"
+|         "2"
+|     <i>
+|       id="j"
+|       <p>
+|         <b>
+|           id="c"
+|           "3"
+|           <script>
+|             "document.getElementById("b").id = "c";document.getElementById("i").id = "j""
+|         "4"
+Expected:
+| <html>
+|   <head>
+|   <body>
+|     <b>
+|       id="c"
+|       "1"
+|       <i>
+|         id="j"
+|         "2"
+|     <i>
+|       id="i"
+|       <p>
+|         <b>
+|           id="b"
+|           "3"
+|           <script>
+|             "document.getElementById("b").id = "c";document.getElementById("i").id = "j""
+|         "4"
 resources/inbody01.dat: PASS
 
 resources/isindex.dat: PASS
@@ -368,103 +411,7 @@ resources/isindex.dat: PASS
 resources/tables01.dat: PASS
 
 resources/tricky01.dat:
-2
 6
-
-Test 2 of 9 in resources/tricky01.dat failed. Input:
-<html>
-<font color=red><i>Italic and Red<p>Italic and Red </font> Just italic.</p> Italic only.</i> Plain
-<p>I should not be red. <font color=red>Red. <i>Italic and red.</p>
-<p>Italic and red. </i> Red.</font> I should not be red.</p>
-<b>Bold <i>Bold and italic</b> Only Italic </i> Plain
-Got:
-| <html>
-|   <head>
-|   <body>
-|     <font>
-|       color="red"
-|       <i>
-|         "Italic and Red"
-|     <i>
-|       <p>
-|         <font>
-|           "Italic and Red "
-|         " Just italic."
-|       " Italic only."
-|     " Plain
-"
-|     <p>
-|       "I should not be red. "
-|       <font>
-|         color="red"
-|         "Red. "
-|         <i>
-|           "Italic and red."
-|     <font>
-|       color="red"
-|       <i>
-|         "
-"
-|     <p>
-|       <font>
-|         <i>
-|           "Italic and red. "
-|         " Red."
-|       " I should not be red."
-|     "
-"
-|     <b>
-|       "Bold "
-|       <i>
-|         "Bold and italic"
-|     <i>
-|       " Only Italic "
-|     " Plain"
-Expected:
-| <html>
-|   <head>
-|   <body>
-|     <font>
-|       color="red"
-|       <i>
-|         "Italic and Red"
-|     <i>
-|       <p>
-|         <font>
-|           color="red"
-|           "Italic and Red "
-|         " Just italic."
-|       " Italic only."
-|     " Plain
-"
-|     <p>
-|       "I should not be red. "
-|       <font>
-|         color="red"
-|         "Red. "
-|         <i>
-|           "Italic and red."
-|     <font>
-|       color="red"
-|       <i>
-|         "
-"
-|     <p>
-|       <font>
-|         color="red"
-|         <i>
-|           "Italic and red. "
-|         " Red."
-|       " I should not be red."
-|     "
-"
-|     <b>
-|       "Bold "
-|       <i>
-|         "Bold and italic"
-|     <i>
-|       " Only Italic "
-|     " Plain"
 
 Test 6 of 9 in resources/tricky01.dat failed. Input:
 <TABLE>
