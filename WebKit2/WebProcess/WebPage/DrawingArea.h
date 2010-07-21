@@ -48,7 +48,9 @@ class WebPage;
 
 class DrawingArea {
 public:
+    // This has to match DrawingAreaProxy::Type.
     enum Type {
+        None,
         ChunkedUpdateDrawingAreaType,
 #if USE(ACCELERATED_COMPOSITING)
         LayerBackedDrawingAreaType,
@@ -59,6 +61,8 @@ public:
     static DrawingArea* create(Type, WebPage*);
     virtual ~DrawingArea();
     
+    Type type() const { return m_type; }
+    
     virtual void invalidateWindow(const WebCore::IntRect& rect, bool immediate) = 0;
     virtual void invalidateContentsAndWindow(const WebCore::IntRect& rect, bool immediate) = 0;
     virtual void invalidateContentsForSlowScroll(const WebCore::IntRect& rect, bool immediate) = 0;
@@ -68,8 +72,9 @@ public:
     virtual void display() = 0;
 
 #if USE(ACCELERATED_COMPOSITING)
-    virtual void attachCompositingContext(WebCore::GraphicsLayer*) = 0;
+    virtual void attachCompositingContext() = 0;
     virtual void detachCompositingContext() = 0;
+    virtual void setRootCompositingLayer(WebCore::GraphicsLayer*) = 0;
     virtual void scheduleCompositingLayerSync() = 0;
     virtual void syncCompositingLayers() = 0;
 #endif

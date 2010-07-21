@@ -107,6 +107,9 @@ void LayerBackedDrawingAreaProxy::setPageIsVisible(bool isVisible)
 void LayerBackedDrawingAreaProxy::didSetSize()
 {
     m_isWaitingForDidSetFrameNotification = false;
+
+    WebPageProxy* page = this->page();
+    page->process()->responsivenessTimer()->stop();
 }
 
 void LayerBackedDrawingAreaProxy::update()
@@ -126,16 +129,20 @@ void LayerBackedDrawingAreaProxy::didReceiveMessage(CoreIPC::Connection*, CoreIP
             didSetSize();
             break;
         }
+        default:
+            ASSERT_NOT_REACHED();
+    }
+}
+
+void LayerBackedDrawingAreaProxy::didReceiveSyncMessage(CoreIPC::Connection*, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder& arguments, CoreIPC::ArgumentEncoder&)
+{
+    switch (messageID.get<DrawingAreaProxyMessage::Kind>()) {
 #if USE(ACCELERATED_COMPOSITING)
         case DrawingAreaProxyMessage::AttachCompositingContext: {
             uint32_t contextID;
             if (!arguments.decode(CoreIPC::Out(contextID)))
                 return;
             attachCompositingContext(contextID);
-            break;
-        }
-        case DrawingAreaProxyMessage::DetachCompositingContext: {
-            detachCompositingContext();
             break;
         }
 #endif

@@ -465,6 +465,10 @@ static bool isViewVisible(NSView *view)
     // Make a container layer, which will get sized/positioned by AppKit and CA.
     CALayer *viewLayer = [CALayer layer];
 
+#ifndef NDEBUG
+    [viewLayer setName:@"hosting layer"];
+#endif
+
 #if defined(BUILDING_ON_LEOPARD)
     // Turn off default animations.
     NSNull *nullValue = [NSNull null];
@@ -504,6 +508,43 @@ static bool isViewVisible(NSView *view)
         [_data->_layerHostingView removeFromSuperview];
         _data->_layerHostingView = nil;
     }
+}
+
+- (void)_switchToDrawingAreaTypeIfNecessary:(DrawingAreaProxy::Type)type
+{
+    DrawingAreaProxy::Type existingDrawingAreaType = _data->_page->drawingArea() ? _data->_page->drawingArea()->type() : DrawingAreaProxy::None;
+    if (existingDrawingAreaType == type)
+        return;
+
+    OwnPtr<DrawingAreaProxy> newDrawingArea;
+    switch (type) {
+        case DrawingAreaProxy::None:
+            break;
+        case DrawingAreaProxy::ChunkedUpdateDrawingAreaType: {
+            newDrawingArea = new ChunkedUpdateDrawingAreaProxy(self);
+            break;
+        }
+        case DrawingAreaProxy::LayerBackedDrawingAreaType: {
+            newDrawingArea = new LayerBackedDrawingAreaProxy(self);
+            break;
+        }
+    }
+
+    newDrawingArea->setSize(IntSize([self frame].size));
+
+    _data->_page->drawingArea()->detachCompositingContext();
+    _data->_page->setDrawingArea(newDrawingArea.release());
+}
+
+- (void)_pageDidEnterAcceleratedCompositing
+{
+    [self _switchToDrawingAreaTypeIfNecessary:DrawingAreaProxy::LayerBackedDrawingAreaType];
+}
+
+- (void)_pageDidLeaveAcceleratedCompositing
+{
+    // FIXME: we may want to avoid flipping back to the non-layer-backed drawing area until the next page load, to avoid thrashing.
+    [self _switchToDrawingAreaTypeIfNecessary:DrawingAreaProxy::ChunkedUpdateDrawingAreaType];
 }
 #endif // USE(ACCELERATED_COMPOSITING)
 

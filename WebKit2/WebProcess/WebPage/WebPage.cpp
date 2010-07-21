@@ -138,6 +138,41 @@ String WebPage::renderTreeExternalRepresentation() const
     return externalRepresentation(m_mainFrame->coreFrame(), RenderAsTextBehaviorNormal);
 }
 
+#if USE(ACCELERATED_COMPOSITING)
+void WebPage::changeAcceleratedCompositingMode(WebCore::GraphicsLayer* layer)
+{
+    bool compositing = layer;
+    
+    // Tell the UI process that accelerated compositing changed. It may respond by changing
+    // drawing area types.
+    uint32_t newDrawingAreaType;
+    WebProcess::shared().connection()->sendSync(WebPageProxyMessage::DidChangeAcceleratedCompositing,
+                                                m_pageID, CoreIPC::In(compositing),
+                                                CoreIPC::Out(newDrawingAreaType),
+                                                CoreIPC::Connection::NoTimeout);
+    
+    DrawingArea::Type newType = static_cast<DrawingArea::Type>(newDrawingAreaType);
+    if (newType != drawingArea()->type()) {
+        m_drawingArea = DrawingArea::create(newType, this);
+        m_drawingArea->setNeedsDisplay(IntRect(IntPoint(0, 0), m_viewSize));
+    }
+}
+
+void WebPage::enterAcceleratedCompositingMode(GraphicsLayer* layer)
+{
+    changeAcceleratedCompositingMode(layer);
+    
+#if USE(ACCELERATED_COMPOSITING)
+    m_drawingArea->setRootCompositingLayer(layer);
+#endif
+}
+
+void WebPage::exitAcceleratedCompositingMode()
+{
+    changeAcceleratedCompositingMode(0);
+}
+#endif
+
 WebFrame* WebPage::webFrame(uint64_t frameID) const
 {
     return m_frameMap.get(frameID);

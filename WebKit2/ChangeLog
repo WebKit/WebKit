@@ -1,3 +1,75 @@
+2010-07-21  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Get accelerated compositing working with webkit2
+        https://bugs.webkit.org/show_bug.cgi?id=41084
+        
+        Hook up dynamic DrawingArea switching, so that when the WebProcess hits a page
+        that requires accelerated compositing, we switch to the LayerBackedDrawingArea.
+        
+        * Shared/CoreIPCSupport/DrawingAreaProxyMessageKinds.h:
+        (DrawingAreaProxyMessage::):
+        * Shared/CoreIPCSupport/WebPageProxyMessageKinds.h:
+        (WebPageProxyMessage::):
+        * UIProcess/API/mac/PageClientImpl.h:
+        * UIProcess/API/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::pageDidEnterAcceleratedCompositing):
+        (WebKit::PageClientImpl::pageDidLeaveAcceleratedCompositing):
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _startAcceleratedCompositing:]):
+        (-[WKView _switchToDrawingAreaTypeIfNecessary:DrawingAreaProxy::]):
+        (-[WKView _pageDidEnterAcceleratedCompositing]):
+        (-[WKView _pageDidLeaveAcceleratedCompositing]):
+        * UIProcess/API/mac/WKViewInternal.h:
+        * UIProcess/ChunkedUpdateDrawingAreaProxy.cpp:
+        (WebKit::ChunkedUpdateDrawingAreaProxy::didReceiveSyncMessage):
+        * UIProcess/ChunkedUpdateDrawingAreaProxy.h:
+        * UIProcess/DrawingAreaProxy.h:
+        (WebKit::DrawingAreaProxy::):
+        (WebKit::DrawingAreaProxy::type):
+        * UIProcess/LayerBackedDrawingAreaProxy.cpp:
+        (WebKit::LayerBackedDrawingAreaProxy::didSetSize):
+        (WebKit::LayerBackedDrawingAreaProxy::didReceiveMessage):
+        (WebKit::LayerBackedDrawingAreaProxy::didReceiveSyncMessage):
+        * UIProcess/LayerBackedDrawingAreaProxy.h:
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::setDrawingArea):
+        (WebKit::WebPageProxy::didReceiveSyncMessage):
+        (WebKit::WebPageProxy::didEnterAcceleratedCompositing):
+        (WebKit::WebPageProxy::didLeaveAcceleratedCompositing):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/mac/LayerBackedDrawingAreaProxyMac.mm:
+        (WebKit::LayerBackedDrawingAreaProxy::attachCompositingContext):
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::attachRootGraphicsLayer):
+        * WebProcess/WebPage/ChunkedUpdateDrawingArea.h:
+        (WebKit::ChunkedUpdateDrawingArea::attachCompositingContext):
+        (WebKit::ChunkedUpdateDrawingArea::setRootCompositingLayer):
+        * WebProcess/WebPage/DrawingArea.cpp:
+        (WebKit::DrawingArea::create):
+        * WebProcess/WebPage/DrawingArea.h:
+        (WebKit::DrawingArea::):
+        (WebKit::DrawingArea::type):
+        * WebProcess/WebPage/LayerBackedDrawingArea.cpp:
+        (WebKit::LayerBackedDrawingArea::LayerBackedDrawingArea):
+        (WebKit::LayerBackedDrawingArea::setNeedsDisplay):
+        (WebKit::LayerBackedDrawingArea::setSize):
+        (WebKit::LayerBackedDrawingArea::didUpdate):
+        (WebKit::LayerBackedDrawingArea::setRootCompositingLayer):
+        * WebProcess/WebPage/LayerBackedDrawingArea.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::changeAcceleratedCompositingMode):
+        (WebKit::WebPage::enterAcceleratedCompositingMode):
+        (WebKit::WebPage::exitAcceleratedCompositingMode):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/mac/LayerBackedDrawingAreaMac.mm:
+        (WebKit::LayerBackedDrawingArea::platformInit):
+        (WebKit::LayerBackedDrawingArea::attachCompositingContext):
+        (WebKit::LayerBackedDrawingArea::detachCompositingContext):
+        (WebKit::LayerBackedDrawingArea::setRootCompositingLayer):
+
 2010-07-20  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Adam Roben.

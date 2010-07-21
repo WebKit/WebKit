@@ -73,6 +73,10 @@ enum Kind {
     BackForwardItemAtIndex,
     BackForwardBackListCount,
     BackForwardForwardListCount,
+
+#if USE(ACCELERATED_COMPOSITING)
+    DidChangeAcceleratedCompositing,
+#endif
 };
 
 }

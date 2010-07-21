@@ -35,5 +35,7 @@
 #if USE(ACCELERATED_COMPOSITING)
 - (void)_startAcceleratedCompositing:(CALayer *)rootLayer;
 - (void)_stopAcceleratedCompositing;
+- (void)_pageDidEnterAcceleratedCompositing;
+- (void)_pageDidLeaveAcceleratedCompositing;
 #endif
 @end

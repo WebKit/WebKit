@@ -75,4 +75,16 @@ void PageClientImpl::setCursor(const WebCore::Cursor& cursor)
     [m_wkView _setCursor:cursor.platformCursor()];
 }
 
+#if USE(ACCELERATED_COMPOSITING)
+void PageClientImpl::pageDidEnterAcceleratedCompositing()
+{
+    [m_wkView _pageDidEnterAcceleratedCompositing];
+}
+
+void PageClientImpl::pageDidLeaveAcceleratedCompositing()
+{
+    [m_wkView _pageDidLeaveAcceleratedCompositing];
+}
+#endif // USE(ACCELERATED_COMPOSITING)
+
 } // namespace WebKit

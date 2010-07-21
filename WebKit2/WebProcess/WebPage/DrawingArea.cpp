@@ -37,6 +37,9 @@ DrawingArea* DrawingArea::create(Type type, WebPage* webPage)
 {
     DrawingArea* drawingArea = 0;
     switch (type) {
+        case None:
+            ASSERT_NOT_REACHED();
+            break;
         case ChunkedUpdateDrawingAreaType:
             drawingArea = new ChunkedUpdateDrawingArea(webPage);
             break;

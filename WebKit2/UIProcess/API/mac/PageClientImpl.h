@@ -48,6 +48,11 @@ private:
     virtual void toolTipChanged(const WebCore::String& oldToolTip, const WebCore::String& newToolTip);
     virtual void setCursor(const WebCore::Cursor&);
 
+#if USE(ACCELERATED_COMPOSITING)
+    void pageDidEnterAcceleratedCompositing();
+    void pageDidLeaveAcceleratedCompositing();
+#endif
+
     WKView* m_wkView;
 };
 

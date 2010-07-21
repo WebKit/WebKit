@@ -449,9 +449,9 @@ PassOwnPtr<HTMLParserQuirks> WebChromeClient::createHTMLParserQuirks()
 void WebChromeClient::attachRootGraphicsLayer(Frame*, GraphicsLayer* layer)
 {
     if (layer)
-        m_page->drawingArea()->attachCompositingContext(layer);
+        m_page->enterAcceleratedCompositingMode(layer);
     else
-        m_page->drawingArea()->detachCompositingContext();
+        m_page->exitAcceleratedCompositingMode();
 }
 
 void WebChromeClient::setNeedsOneShotDrawingSynchronization()

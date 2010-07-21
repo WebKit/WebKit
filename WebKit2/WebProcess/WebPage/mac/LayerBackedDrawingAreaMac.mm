@@ -42,6 +42,10 @@ namespace WebKit {
 
 void LayerBackedDrawingArea::platformInit()
 {
+#if HAVE(HOSTED_CORE_ANIMATION)
+    attachCompositingContext();
+#endif
+
     setUpUpdateLayoutRunLoopObserver();
 }
 
@@ -58,18 +62,12 @@ void LayerBackedDrawingArea::platformClear()
 #endif
 }
 
-void LayerBackedDrawingArea::attachCompositingContext(GraphicsLayer* layer)
+void LayerBackedDrawingArea::attachCompositingContext()
 {
-    m_backingLayer->removeAllChildren();
-    if (layer)
-        m_backingLayer->addChild(layer);
-
-    m_backingLayer->syncCompositingState();     // FIXME: hack
-    
-    m_backingLayer->setDebugBorder(Color(0, 0, 255, 0.6), 4);
-    
     if (m_attached)
         return;
+
+    m_backingLayer->syncCompositingStateForThisLayerOnly();
         
     m_attached = true;
 
@@ -79,14 +77,22 @@ void LayerBackedDrawingArea::attachCompositingContext(GraphicsLayer* layer)
     WKCARemoteLayerClientSetLayer(m_remoteLayerRef.get(), m_backingLayer->platformLayer());
     
     uint32_t contextID = WKCARemoteLayerClientGetClientId(m_remoteLayerRef.get());
-    WebProcess::shared().connection()->send(DrawingAreaProxyMessage::AttachCompositingContext, m_webPage->pageID(), CoreIPC::In(contextID));
+    WebProcess::shared().connection()->sendSync(DrawingAreaProxyMessage::AttachCompositingContext, m_webPage->pageID(), CoreIPC::In(contextID), CoreIPC::Out(), CoreIPC::Connection::NoTimeout);
 #endif
 }
 
 void LayerBackedDrawingArea::detachCompositingContext()
 {
     m_backingLayer->removeAllChildren();
-    m_backingLayer->syncCompositingState();     // FIXME: hack
+    m_backingLayer->syncCompositingStateForThisLayerOnly();
+}
+
+void LayerBackedDrawingArea::setRootCompositingLayer(WebCore::GraphicsLayer* layer)
+{
+    m_backingLayer->removeAllChildren();
+    if (layer)
+        m_backingLayer->addChild(layer);
+    m_backingLayer->syncCompositingStateForThisLayerOnly();
 }
 
 void LayerBackedDrawingArea::scheduleCompositingLayerSync()

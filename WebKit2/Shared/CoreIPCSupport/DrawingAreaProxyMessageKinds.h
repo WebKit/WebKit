@@ -37,7 +37,6 @@ enum Kind {
     DidSetSize,
 #if USE(ACCELERATED_COMPOSITING)
     AttachCompositingContext,
-    DetachCompositingContext,
 #endif
 };
 

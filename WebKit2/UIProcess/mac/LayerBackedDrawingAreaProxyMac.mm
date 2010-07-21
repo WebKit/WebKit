@@ -71,8 +71,13 @@ void LayerBackedDrawingAreaProxy::attachCompositingContext(uint32_t contextID)
     [m_compositingRootLayer.get() setAnchorPoint:CGPointZero];
     [m_compositingRootLayer.get() setBounds:CGRectMake(0, 0, m_viewSize.width(), m_viewSize.height())];
     
-    // This is required to anchor the layer at the top, to avoid jiggle during window resize.
-    [m_compositingRootLayer.get() setGeometryFlipped:YES];
+    // FIXME: this fixes the layer jiggle when resizing the window, but breaks layer flipping because
+    // CA doesn't propagate the kCALayerFlagFlippedAbove through the remote layer.
+    // [m_compositingRootLayer.get() setGeometryFlipped:YES];
+
+#ifndef NDEBUG
+    [m_compositingRootLayer.get() setName:@"Compositing root layer"];
+#endif
 
     [m_webView _startAcceleratedCompositing:m_compositingRootLayer.get()];
 #endif

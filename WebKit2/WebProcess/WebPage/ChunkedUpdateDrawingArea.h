@@ -47,8 +47,9 @@ public:
     virtual void display();
 
 #if USE(ACCELERATED_COMPOSITING)
-    virtual void attachCompositingContext(WebCore::GraphicsLayer*) { }
+    virtual void attachCompositingContext() { }
     virtual void detachCompositingContext() { }
+    virtual void setRootCompositingLayer(WebCore::GraphicsLayer*) { }
     virtual void scheduleCompositingLayerSync() { }
     virtual void syncCompositingLayers() { }
 #endif

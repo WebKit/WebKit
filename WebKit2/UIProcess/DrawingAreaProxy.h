@@ -55,7 +55,9 @@ typedef QPainter* PlatformDrawingContext;
 
 class DrawingAreaProxy {
 public:
+    // This has to match DrawingArea::Type.
     enum Type {
+        None,
         ChunkedUpdateDrawingAreaType,
 #if USE(ACCELERATED_COMPOSITING)
         LayerBackedDrawingAreaType,
@@ -64,7 +66,10 @@ public:
 
     virtual ~DrawingAreaProxy();
 
+    Type type() const { return m_type; }
+
     virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder&) = 0;
+    virtual void didReceiveSyncMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder&, CoreIPC::ArgumentEncoder&) = 0;
 
     virtual void paint(const WebCore::IntRect&, PlatformDrawingContext) = 0;
     virtual void setSize(const WebCore::IntSize&) = 0;

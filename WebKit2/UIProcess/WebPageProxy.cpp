@@ -104,6 +104,14 @@ void WebPageProxy::setPageClient(PageClient* pageClient)
 #endif
 }
 
+void WebPageProxy::setDrawingArea(PassOwnPtr<DrawingAreaProxy> drawingArea)
+{
+    if (drawingArea == m_drawingArea)
+        return;
+
+    m_drawingArea = drawingArea;
+}
+
 void WebPageProxy::initializeLoaderClient(WKPageLoaderClient* loadClient)
 {
     m_loaderClient.initialize(loadClient);
@@ -616,8 +624,13 @@ void WebPageProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::M
     }
 }
 
-void WebPageProxy::didReceiveSyncMessage(CoreIPC::Connection*, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder& arguments, CoreIPC::ArgumentEncoder& reply)
+void WebPageProxy::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder& arguments, CoreIPC::ArgumentEncoder& reply)
 {
+    if (messageID.is<CoreIPC::MessageClassDrawingAreaProxy>()) {
+        m_drawingArea->didReceiveSyncMessage(connection, messageID, arguments, reply);
+        return;
+    }
+
     switch (messageID.get<WebPageProxyMessage::Kind>()) {
         case WebPageProxyMessage::CreateNewPage: {
             WebPageProxy* newPage = createNewPage();
@@ -667,6 +680,17 @@ void WebPageProxy::didReceiveSyncMessage(CoreIPC::Connection*, CoreIPC::MessageI
             reply.encode(CoreIPC::In(forwardListCount));
             break;
         }
+#if USE(ACCELERATED_COMPOSITING)
+        case WebPageProxyMessage::DidChangeAcceleratedCompositing: {
+            bool compositing;
+            if (!arguments.decode(CoreIPC::Out(compositing)))
+                return;
+
+            didChangeAcceleratedCompositing(compositing);
+            reply.encode(CoreIPC::In(static_cast<uint32_t>(drawingArea()->type())));
+            break;
+        }
+#endif // USE(ACCELERATED_COMPOSITING)
 
         default:
             ASSERT_NOT_REACHED();
@@ -905,6 +929,16 @@ void WebPageProxy::didGetRenderTreeExternalRepresentation(const String& resultSt
     callback->performCallbackWithReturnValue(resultString.impl());
 }
 
+#if USE(ACCELERATED_COMPOSITING)
+void WebPageProxy::didChangeAcceleratedCompositing(bool compositing)
+{
+    if (compositing)
+        didEnterAcceleratedCompositing();
+    else
+        didLeaveAcceleratedCompositing();
+}
+#endif
+
 void WebPageProxy::processDidBecomeUnresponsive()
 {
     m_loaderClient.didBecomeUnresponsive(this);
@@ -956,5 +990,17 @@ void WebPageProxy::processDidRevive()
     ASSERT(m_pageClient);
     m_pageClient->processDidRevive();
 }
+
+#if USE(ACCELERATED_COMPOSITING)
+void WebPageProxy::didEnterAcceleratedCompositing()
+{
+    m_pageClient->pageDidEnterAcceleratedCompositing();
+}
+
+void WebPageProxy::didLeaveAcceleratedCompositing()
+{
+    m_pageClient->pageDidLeaveAcceleratedCompositing();
+}
+#endif // USE(ACCELERATED_COMPOSITING)
 
 } // namespace WebKit

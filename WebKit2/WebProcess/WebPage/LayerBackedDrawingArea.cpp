@@ -54,6 +54,7 @@ LayerBackedDrawingArea::LayerBackedDrawingArea(WebPage* webPage)
     m_backingLayer->setName("DrawingArea backing layer");
 #endif
     m_backingLayer->syncCompositingStateForThisLayerOnly();
+    m_backingLayer->setContentsOrientation(GraphicsLayer::CompositingCoordinatesBottomUp);
     
     platformInit();
 }
@@ -86,11 +87,6 @@ void LayerBackedDrawingArea::scroll(const IntSize& scrollDelta, const IntRect& r
 
 void LayerBackedDrawingArea::setNeedsDisplay(const IntRect& rect)
 {
-#if PLATFORM(MAC) && HAVE(HOSTED_CORE_ANIMATION)
-    if (!m_remoteLayerRef)
-        attachCompositingContext(0);
-#endif
-
     m_backingLayer->setNeedsDisplayInRect(rect);
     m_backingLayer->syncCompositingStateForThisLayerOnly();
 
@@ -122,7 +118,7 @@ void LayerBackedDrawingArea::setSize(const IntSize& viewSize)
     // Layout if necessary.
     m_webPage->layoutIfNeeded();
 
-    WebProcess::shared().connection()->send(DrawingAreaProxyMessage::DidSetSize, m_webPage->pageID(), CoreIPC::In(0));
+    WebProcess::shared().connection()->send(DrawingAreaProxyMessage::DidSetSize, m_webPage->pageID(), CoreIPC::In());
 }
 
 void LayerBackedDrawingArea::suspendPainting()
@@ -144,7 +140,6 @@ void LayerBackedDrawingArea::resumePainting()
 
 void LayerBackedDrawingArea::didUpdate()
 {
-
     // Display if needed.
     display();
 }
@@ -205,6 +200,12 @@ void LayerBackedDrawingArea::attachCompositingContext(GraphicsLayer*)
 void LayerBackedDrawingArea::detachCompositingContext()
 {
 }
+
+#if !PLATFORM(MAC)
+void LayerBackedDrawingArea::setRootCompositingLayer(WebCore::GraphicsLayer*)
+{
+}
+#endif
 
 void LayerBackedDrawingArea::scheduleCompositingLayerSync()
 {

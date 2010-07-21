@@ -100,6 +100,12 @@ public:
     WebFrame* mainFrame() const { return m_mainFrame.get(); }
     WebCore::String renderTreeExternalRepresentation() const;
 
+#if USE(ACCELERATED_COMPOSITING)
+    void changeAcceleratedCompositingMode(WebCore::GraphicsLayer*);
+    void enterAcceleratedCompositingMode(WebCore::GraphicsLayer*);
+    void exitAcceleratedCompositingMode();
+#endif
+
 private:
     WebPage(uint64_t pageID, const WebCore::IntSize& viewSize, const WebPreferencesStore&, DrawingArea::Type);
 
