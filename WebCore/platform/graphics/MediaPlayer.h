@@ -55,6 +55,7 @@ class QTMovieVisualContext;
 namespace WebCore {
 
 class GStreamerGWorld;
+class MediaPlayerPrivateInterface;
 
 // Structure that will hold every native
 // types supported by the current media player.
@@ -67,6 +68,7 @@ struct PlatformMedia {
         QTMovieGWorldType,
         QTMovieVisualContextType,
         GStreamerGWorldType,
+        ChromiumMediaPlayerType,
     } type;
 
     union {
@@ -74,6 +76,7 @@ struct PlatformMedia {
         QTMovieGWorld* qtMovieGWorld;
         QTMovieVisualContext* qtMovieVisualContext;
         GStreamerGWorld* gstreamerGWorld;
+        MediaPlayerPrivateInterface* chromiumMediaPlayer;
     } media;
 };
 
@@ -85,7 +88,6 @@ class GraphicsContext;
 class IntRect;
 class IntSize;
 class MediaPlayer;
-class MediaPlayerPrivateInterface;
 class String;
 class TimeRanges;
 

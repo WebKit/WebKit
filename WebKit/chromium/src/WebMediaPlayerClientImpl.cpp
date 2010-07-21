@@ -28,6 +28,7 @@
 #include "WebFrameImpl.h"
 #include "WebKit.h"
 #include "WebKitClient.h"
+#include "WebMediaElement.h"
 #include "WebMediaPlayer.h"
 #include "WebMimeRegistry.h"
 #include "WebRect.h"
@@ -77,6 +78,17 @@ void WebMediaPlayerClientImpl::registerSelf(MediaEngineRegistrar registrar)
                   WebMediaPlayerClientImpl::getSupportedTypes,
                   WebMediaPlayerClientImpl::supportsType);
     }
+}
+
+WebMediaPlayerClientImpl* WebMediaPlayerClientImpl::fromMediaElement(const WebMediaElement* element)
+{
+    PlatformMedia pm = element->constUnwrap<HTMLMediaElement>()->platformMedia();
+    return static_cast<WebMediaPlayerClientImpl*>(pm.media.chromiumMediaPlayer);
+}
+
+WebMediaPlayer* WebMediaPlayerClientImpl::mediaPlayer() const
+{
+    return m_webMediaPlayer.get();
 }
 
 // WebMediaPlayerClient --------------------------------------------------------
@@ -167,12 +179,20 @@ void WebMediaPlayerClientImpl::cancelLoad()
 }
 
 #if USE(ACCELERATED_COMPOSITING)
-WebCore::PlatformLayer* WebMediaPlayerClientImpl::platformLayer() const
+PlatformLayer* WebMediaPlayerClientImpl::platformLayer() const
 {
     ASSERT(m_supportsAcceleratedCompositing);
     return m_videoLayer.get();
 }
 #endif
+
+PlatformMedia WebMediaPlayerClientImpl::platformMedia() const
+{
+    PlatformMedia pm;
+    pm.type = PlatformMedia::ChromiumMediaPlayerType;
+    pm.media.chromiumMediaPlayer = const_cast<WebMediaPlayerClientImpl*>(this);
+    return pm;
+}
 
 void WebMediaPlayerClientImpl::play()
 {

@@ -39,6 +39,7 @@
 
 namespace WebKit {
 
+class WebMediaElement;
 class WebMediaPlayer;
 
 // This class serves as a bridge between WebCore::MediaPlayer and
@@ -49,6 +50,11 @@ public:
     static bool isEnabled();
     static void setIsEnabled(bool);
     static void registerSelf(WebCore::MediaEngineRegistrar);
+
+    static WebMediaPlayerClientImpl* fromMediaElement(const WebMediaElement* element);
+
+    // Returns the encapsulated WebKit::WebMediaPlayer.
+    WebMediaPlayer* mediaPlayer() const;
 
     // WebMediaPlayerClient methods:
     virtual void networkStateChanged();
@@ -69,6 +75,7 @@ public:
 #if USE(ACCELERATED_COMPOSITING)
     virtual WebCore::PlatformLayer* platformLayer() const;
 #endif
+    virtual WebCore::PlatformMedia platformMedia() const;
     virtual void play();
     virtual void pause();
     virtual bool supportsFullscreen() const;

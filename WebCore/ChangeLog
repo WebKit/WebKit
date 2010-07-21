@@ -1,3 +1,13 @@
+2010-07-21  Bo Liu  <boliu@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [Chromium] Add chromium WebMediaPlayer to PlatformMedia
+        https://bugs.webkit.org/show_bug.cgi?id=41295
+
+        * platform/graphics/MediaPlayer.h:
+        (WebCore::PlatformMedia::):
+
 2010-07-21  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Anders Carlsson.
