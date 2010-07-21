@@ -55,6 +55,7 @@ GeolocationServiceQt::GeolocationServiceQt(GeolocationServiceClient* client)
 
 GeolocationServiceQt::~GeolocationServiceQt()
 {
+    delete m_location;
 }
 
 void GeolocationServiceQt::positionUpdated(const QGeoPositionInfo &geoPosition)
@@ -65,20 +66,19 @@ void GeolocationServiceQt::positionUpdated(const QGeoPositionInfo &geoPosition)
     QGeoCoordinate coord = geoPosition.coordinate();
     double latitude = coord.latitude();
     double longitude = coord.longitude();
-    bool providesAltitude = true;
+    bool providesAltitude = (geoPosition.coordinate().type() == QGeoCoordinate::Coordinate3D);
     double altitude = coord.altitude();
 
-    double accuracy = geoPosition.hasAttribute(QGeoPositionInfo::HorizontalAccuracy) ?
-                        geoPosition.attribute(QGeoPositionInfo::HorizontalAccuracy) : 0.0;
+    double accuracy = geoPosition.attribute(QGeoPositionInfo::HorizontalAccuracy);
 
     bool providesAltitudeAccuracy = geoPosition.hasAttribute(QGeoPositionInfo::VerticalAccuracy);
-    double altitudeAccuracy = providesAltitudeAccuracy ? geoPosition.attribute(QGeoPositionInfo::VerticalAccuracy) : 0.0;
+    double altitudeAccuracy = geoPosition.attribute(QGeoPositionInfo::VerticalAccuracy);
 
     bool providesHeading =  geoPosition.hasAttribute(QGeoPositionInfo::Direction);
-    double heading = providesHeading ? geoPosition.attribute(QGeoPositionInfo::Direction) : 0.0;
+    double heading = geoPosition.attribute(QGeoPositionInfo::Direction);
 
     bool providesSpeed = geoPosition.hasAttribute(QGeoPositionInfo::GroundSpeed);
-    double speed = providesSpeed ? geoPosition.attribute(QGeoPositionInfo::GroundSpeed) : 0.0;
+    double speed = geoPosition.attribute(QGeoPositionInfo::GroundSpeed);
 
     RefPtr<Coordinates> coordinates = Coordinates::create(latitude, longitude, providesAltitude, altitude,
                                                           accuracy, providesAltitudeAccuracy, altitudeAccuracy,

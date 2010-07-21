@@ -1,3 +1,18 @@
+2010-07-21  Mahesh Kulkarni  <mahesh.kulkarni@nokia.com>
+
+        Reviewed by Laszlo Gombos.
+
+        [QT] Leak and few more fixes to qt port of geolocation
+        https://bugs.webkit.org/show_bug.cgi?id=42753
+
+        Fixes memory leak and default values set to attributes. 
+        
+        Memory leak fix no new test case added. 
+
+        * platform/qt/GeolocationServiceQt.cpp: Added.
+        (WebCore::GeolocationServiceQt::~GeolocationServiceQt):
+        (WebCore::GeolocationServiceQt::positionUpdated):
+
 2010-07-21  Kristian Amlie <kristian.amlie@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
