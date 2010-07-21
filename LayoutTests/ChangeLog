@@ -1,3 +1,50 @@
+2010-07-21  Peter Beverloo  <peter@lvp-media.com>
+
+        Reviewed by Eric Carlson.
+
+        Removed support for the -khtml CSS vendor prefix and limit the
+        -apple prefix to two properties (dashboard-region and line-clamp).
+        
+        Listed properties in these updated have been changed to -webkit.
+
+        * fast/block/positioning/height-change.html: -apple-box
+        * fast/block/positioning/resources/window-height-change-frame-flex.html: -apple-box
+        * fast/borders/border-image-omit-right-slice.html: -khtml-border-image
+        * fast/css/apple-prefix.html: -khtml-box-orient
+        * fast/css/legacy-opacity-styles-expected.txt: -*-opacity
+        * fast/css/legacy-opacity-styles.html: -*-opacity
+        * fast/css/limited-vendor-prefix-behavior-expected.txt: Added.
+        * fast/css/limited-vendor-prefix-behavior.html: Added.
+        * fast/flexbox/001.html: -khtml-box-flex
+        * fast/flexbox/002.html: -khtml-box, -khtml-box-align, -khtml-box-orient
+        * fast/flexbox/003.html: -khtml-box, -khtml-box-align, -khtml-box-orient
+        * fast/flexbox/004.html: -khtml-box
+        * fast/flexbox/005.html: -khtml-box
+        * fast/flexbox/006.html: -khtml-box
+        * fast/flexbox/007.html: -khtml-box
+        * fast/flexbox/008.html: -khtml-box
+        * fast/flexbox/009.html: -khtml-box
+        * fast/flexbox/010.html: -khtml-box
+        * fast/flexbox/011.html: -khtml-box, -khtml-box-flex
+        * fast/flexbox/012.html: -khtml-box, -khtml-box-orient, -khtml-box-align
+        * fast/flexbox/013.html: -khtml-box, -khtml-box-flex
+        * fast/flexbox/014.html: -khtml-box, -khtml-box-orient, -khtml-box-flex
+        * fast/flexbox/015.html: -khtml-box, -khtml-box-flex, -khtml-box-flex
+        * fast/flexbox/016.html: -khtml-box-flex, -khtml-box, -khtml-box-orient
+        * fast/flexbox/017.html: -khtml-box, -khtml-box-orient, -webkit-box-pack, -khtml-box-direction
+        * fast/flexbox/018.html: -khtml-box, -khtml-box-orient, -khtml-box-pack
+        * fast/flexbox/019.html: -khtml-box, -khtml-box-pack, -khtml-box-orient
+        * fast/flexbox/020.html: -khtml-box, -khtml-box-flex-group, -khtml-box-flex
+        * fast/flexbox/021.html: -khtml-box, -khtml-box-flex
+        * fast/flexbox/022.html: -khtml-box, -khtml-box-flex
+        * fast/flexbox/023.html: -khtml-box
+        * fast/flexbox/024.html: -khtml-box, -khtml-box-orient
+        * fast/flexbox/025.html: -khtml-box, -khtml-box-flex
+        * fast/flexbox/026.html: -khtml-box, -khtml-box-flex
+        * fast/flexbox/child-flexing.html: -khtml-box, -khtml-box-align, -khtml-box-orient
+        * fast/repaint/flexible-box-overflow-horizontal.html: -khtml-box, -khtml-box-align, -khtml-box-orient
+        * fast/repaint/flexible-box-overflow.html: -khtml-box, -khtml-box-align, -khtml-box-orient
+
 2010-07-21  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

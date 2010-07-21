@@ -6,8 +6,6 @@
 </head>
 <body>
 <div id="test-opacity" style="opacity: 0.2;"></div>
-<div id="test-apple-opacity" style="-apple-opacity: 0.4;"></div>
-<div id="test-khtml-opacity" style="-khtml-opacity: 0.6;"></div>
 <div id="test-webkit-opacity" style="-webkit-opacity: 0.8;"></div>
 <p id="description"></p>
 <div id="console"></div>
@@ -15,23 +13,9 @@
 description("This test checks that the legacy -apple-opacity, -khtml-opacity and -webkit-opacity styles are mapped to the opacity style.");
 
 shouldBe("document.getElementById('test-opacity').style.getPropertyValue('opacity')", "'0.2'");
-shouldBe("document.getElementById('test-opacity').style.getPropertyValue('-apple-opacity')", "'0.2'");
-shouldBe("document.getElementById('test-opacity').style.getPropertyValue('-khtml-opacity')", "'0.2'");
 shouldBe("document.getElementById('test-opacity').style.getPropertyValue('-webkit-opacity')", "'0.2'");
 
-shouldBe("document.getElementById('test-apple-opacity').style.getPropertyValue('opacity')", "'0.4'");
-shouldBe("document.getElementById('test-apple-opacity').style.getPropertyValue('-apple-opacity')", "'0.4'");
-shouldBe("document.getElementById('test-apple-opacity').style.getPropertyValue('-khtml-opacity')", "'0.4'");
-shouldBe("document.getElementById('test-apple-opacity').style.getPropertyValue('-webkit-opacity')", "'0.4'");
-
-shouldBe("document.getElementById('test-khtml-opacity').style.getPropertyValue('opacity')", "'0.6'");
-shouldBe("document.getElementById('test-khtml-opacity').style.getPropertyValue('-apple-opacity')", "'0.6'");
-shouldBe("document.getElementById('test-khtml-opacity').style.getPropertyValue('-khtml-opacity')", "'0.6'");
-shouldBe("document.getElementById('test-khtml-opacity').style.getPropertyValue('-webkit-opacity')", "'0.6'");
-
 shouldBe("document.getElementById('test-webkit-opacity').style.getPropertyValue('opacity')", "'0.8'");
-shouldBe("document.getElementById('test-webkit-opacity').style.getPropertyValue('-apple-opacity')", "'0.8'");
-shouldBe("document.getElementById('test-webkit-opacity').style.getPropertyValue('-khtml-opacity')", "'0.8'");
 shouldBe("document.getElementById('test-webkit-opacity').style.getPropertyValue('-webkit-opacity')", "'0.8'");
 
 var successfullyParsed = true;

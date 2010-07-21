@@ -1,3 +1,15 @@
+2010-07-21  Peter Beverloo  <peter@lvp-media.com>
+
+        Reviewed by Eric Carlson.
+
+        Removed support for the -khtml CSS vendor prefix and limit the
+        -apple prefix to two properties (dashboard-region and line-clamp).
+
+        Test: fast/css/limited-vendor-prefix-behavior.html
+
+        * css/CSSParser.cpp:
+        (WebCore::cssPropertyID):
+
 2010-07-21  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
