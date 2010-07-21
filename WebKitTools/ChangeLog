@@ -1,3 +1,22 @@
+2010-07-21  Adam Roben  <aroben@apple.com>
+
+        Fix compiler warnings when building MiniBrowser
+
+        Also cleaned up the .vcproj a bit.
+
+        Fixes <http://webkit.org/b/42743>.
+
+        Reviewed by Darin Adler.
+
+        * MiniBrowser/MiniBrowser.vcproj: Removed all settings that are
+        already defined in .vsprops files. This also fixes a warning about
+        /EDITANDCONTINUE being incompatible with /SAFESEH.
+
+        * MiniBrowser/win/MiniBrowser.rc: Replaced afxres.h with winresrc.h so
+        that we stop getting warnings about ID_FILE_OPEN and ID_FILE_CLOSE
+        being redefined. (I think this will also get us closer to building
+        with VC++ Express.)
+
 2010-07-20  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Jon Honeycutt.
