@@ -105,9 +105,9 @@ WebDevToolsFrontendImpl::WebDevToolsFrontendImpl(
     InspectorController* ic = m_webViewImpl->page()->inspectorController();
     ic->setInspectorFrontendClient(new InspectorFrontendClientImpl(m_webViewImpl->page(), m_client, this));
 
-    // Put DevTools frontend Page into its own group so that it's not
-    // deferred along with inspected page.
-    m_webViewImpl->page()->setGroupName("DevToolsFrontend");
+    // Put each DevTools frontend Page into its own (single page) group so that it's not
+    // deferred along with the inspected page.
+    m_webViewImpl->page()->setGroupName(String());
 
     WebFrameImpl* frame = m_webViewImpl->mainFrameImpl();
     v8::HandleScope scope;
