@@ -1,5 +1,12 @@
 2010-07-20  Steve Falkenburg  <sfalken@apple.com>
 
+        Re-save vsprops file after no-op edit in Visual Studio
+        to fix manual edit issues.
+
+        * WebCore.vcproj/WebCoreCommon.vsprops:
+
+2010-07-20  Steve Falkenburg  <sfalken@apple.com>
+
         Re-save vcproj file after no-op edit in Visual Studio
         to fix manual edit issues.
 
