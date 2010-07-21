@@ -48,7 +48,9 @@ class InspectorArray;
 
 class ScriptCallStack : public Noncopyable {
 public:
-    static PassOwnPtr<ScriptCallStack> create(const v8::Arguments&, unsigned skipArgumentCount = 0);
+    static const int maxCallStackSizeToCapture;
+
+    static PassOwnPtr<ScriptCallStack> create(const v8::Arguments&, unsigned skipArgumentCount = 0, int framCountLimit = 1);
     static PassOwnPtr<ScriptCallStack> create(ScriptState*, v8::Handle<v8::StackTrace>);
     ~ScriptCallStack();
 
@@ -70,7 +72,7 @@ public:
     ScriptState* globalState() const { return m_scriptState; }
 
 private:
-    ScriptCallStack(const v8::Arguments& arguments, unsigned skipArgumentCount, String sourceName, int sourceLineNumber, String funcName);
+    ScriptCallStack(ScriptState* scriptState, PassOwnPtr<ScriptCallFrame> topFrame, Vector<OwnPtr<ScriptCallFrame> >& scriptCallFrames);
     ScriptCallStack(ScriptState* scriptState, v8::Handle<v8::StackTrace> stackTrace);
 
     OwnPtr<ScriptCallFrame> m_topFrame;

@@ -672,6 +672,7 @@ WebInspector.ConsoleMessage.prototype = {
     _formatMessage: function()
     {
         switch (this.type) {
+            case WebInspector.ConsoleMessage.MessageType.Assert:
             case WebInspector.ConsoleMessage.MessageType.Trace:
             case WebInspector.ConsoleMessage.MessageType.UncaughtException:
                 var ol = document.createElement("ol");
@@ -681,10 +682,18 @@ WebInspector.ConsoleMessage.prototype = {
                 var treeOutline = new TreeOutline(ol);
 
                 var root = treeOutline;
-                if (this.type === WebInspector.ConsoleMessage.MessageType.UncaughtException) {
-                    var li = document.createElement("li");
-                    this._addMessageHeader(li, document.createTextNode(this._messageText));
-                    root = new TreeElement(li.innerHTML, null, true);
+                if (this.type === WebInspector.ConsoleMessage.MessageType.UncaughtException ||
+                    this.type === WebInspector.ConsoleMessage.MessageType.Assert) {
+                    var messageText;
+                    if (this.type === WebInspector.ConsoleMessage.MessageType.Assert)
+                        messageText = this._format(this._parameters);
+                    else
+                        messageText = document.createTextNode(this._messageText);
+
+                    var content = document.createElement("div");
+                    this._addMessageHeader(content, messageText);
+                    root = new TreeElement(content, null, true);
+                    content.treeElementForTest = root;
                     treeOutline.appendChild(root);
                 }
 
@@ -841,6 +850,7 @@ WebInspector.ConsoleMessage.prototype = {
         }
 
         if (this.type === WebInspector.ConsoleMessage.MessageType.Trace ||
+            this.type === WebInspector.ConsoleMessage.MessageType.Assert ||
             this.type === WebInspector.ConsoleMessage.MessageType.UncaughtException)
             element.appendChild(this.formattedMessage);
         else

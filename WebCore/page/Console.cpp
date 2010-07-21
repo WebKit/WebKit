@@ -300,15 +300,15 @@ String Console::lastWMLErrorMessage() const
     if (!page)
         return String();
 
-    const Vector<ConsoleMessage*>& consoleMessages = page->inspectorController()->consoleMessages();
+    const Vector<OwnPtr<ConsoleMessage> >& consoleMessages = page->inspectorController()->consoleMessages();
     if (consoleMessages.isEmpty())
         return String();
 
-    Vector<ConsoleMessage*>::const_iterator it = consoleMessages.begin();
-    const Vector<ConsoleMessage*>::const_iterator end = consoleMessages.end();
+    Vector<OwnPtr<ConsoleMessage> >::const_iterator it = consoleMessages.begin();
+    const Vector<OwnPtr<ConsoleMessage> >::const_iterator end = consoleMessages.end();
 
     for (; it != end; ++it) {
-        ConsoleMessage* message = *it;
+        ConsoleMessage* message = it->get();
         if (message->source() != WMLMessageSource)
             continue;
 

@@ -97,9 +97,6 @@ ConsoleMessage::ConsoleMessage(MessageSource s, MessageType t, MessageLevel l, c
     m_line = lastCaller.lineNumber();
     m_url = lastCaller.sourceURL().string();
 
-    // FIXME: For now, just store function names as strings.
-    // As ScriptCallStack start storing line number and source URL for all
-    // frames, refactor to use that, as well.
     if (storeTrace) {
         for (unsigned i = 0; i < callStack->size(); ++i)
             m_frames[i] = ConsoleMessage::CallFrame(callStack->at(i));

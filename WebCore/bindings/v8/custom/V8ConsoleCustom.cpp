@@ -64,9 +64,20 @@ v8::Handle<v8::Value> V8Console::traceCallback(const v8::Arguments& args)
     Console* imp = V8Console::toNative(args.Holder());
     v8::HandleScope handleScope;
     ScriptState* scriptState = ScriptState::current();
-    v8::Local<v8::StackTrace> stackTrace = v8::StackTrace::CurrentStackTrace(200);
+    v8::Local<v8::StackTrace> stackTrace = v8::StackTrace::CurrentStackTrace(ScriptCallStack::maxCallStackSizeToCapture);
     OwnPtr<ScriptCallStack> callStack(ScriptCallStack::create(scriptState, stackTrace));
     imp->trace(callStack.get());
     return v8::Handle<v8::Value>();
 }
+
+v8::Handle<v8::Value> V8Console::assertCallback(const v8::Arguments& args)
+{
+    INC_STATS("DOM.Console.assertCallback");
+    Console* imp = V8Console::toNative(args.Holder());
+    OwnPtr<ScriptCallStack> callStack(ScriptCallStack::create(args, 1, ScriptCallStack::maxCallStackSizeToCapture));
+    bool condition = args[0]->BooleanValue();
+    imp->assertCondition(condition, callStack.get());
+    return v8::Handle<v8::Value>();
+}
+
 } // namespace WebCore

@@ -343,7 +343,8 @@ void InspectorController::addMessageToConsole(MessageSource source, MessageType 
     if (!enabled())
         return;
 
-    addConsoleMessage(callStack->state(), new ConsoleMessage(source, type, level, message, callStack, m_groupLevel, type == TraceMessageType || type == UncaughtExceptionMessageType));
+    bool storeStackTrace = type == TraceMessageType || type == UncaughtExceptionMessageType || type == AssertMessageType;
+    addConsoleMessage(callStack->state(), new ConsoleMessage(source, type, level, message, callStack, m_groupLevel, storeStackTrace));
 }
 
 void InspectorController::addMessageToConsole(MessageSource source, MessageType type, MessageLevel level, const String& message, unsigned lineNumber, const String& sourceID)
