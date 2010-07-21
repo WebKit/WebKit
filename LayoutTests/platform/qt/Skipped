@@ -5443,12 +5443,3 @@ fast/dom/webtiming.html
 fast/dom/webtiming-navigate-within-document.html
 http/tests/misc/webtiming-one-redirect.php
 http/tests/misc/webtiming-two-redirects.php
-
-# [Qt] DRT sideeffect revealed by r63657
-# https://bugs.webkit.org/show_bug.cgi?id=42578
-canvas/philip/tests/2d.shadow.canvas.alpha.html
-canvas/philip/tests/2d.shadow.canvas.transparent.1.html
-canvas/philip/tests/2d.shadow.canvas.transparent.2.html
-canvas/philip/tests/2d.shadow.image.alpha.html
-canvas/philip/tests/2d.shadow.image.transparent.1.html
-canvas/philip/tests/2d.shadow.image.transparent.2.html
