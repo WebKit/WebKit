@@ -11,12 +11,13 @@
 		UsePrecompiledHeader="2"
 		PrecompiledHeaderThrough="WebKit2Prefix.h"
 		DisableSpecificWarnings="4819"
-		ForcedIncludeFiles="WebKit2Prefix.h"
+		ForcedIncludeFiles="WebKit2Prefix.h;ICUVersion.h"
 	/>
 	<Tool
 		Name="VCLinkerTool"
-		AdditionalDependencies="delayimp.lib kernel32.lib user32.lib gdi32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib usp10.lib comctl32.lib version.lib shlwapi.lib libxml2$(LibraryConfigSuffix).lib libxslt$(LibraryConfigSuffix).lib icuin$(LibraryConfigSuffix).lib icuuc$(LibraryConfigSuffix).lib SQLite3$(LibraryConfigSuffix).lib pthreadVC2$(LibraryConfigSuffix).lib JavaScriptCore$(WebKitDLLConfigSuffix).lib WebCore$(WebKitConfigSuffix).lib WebKitLib$(WebKitConfigSuffix).lib WebKitGUID$(WebKitConfigSuffix).lib msimg32.lib crypt32.lib iphlpapi.lib winmm.lib comsuppw.lib rpcrt4.lib"
+		AdditionalDependencies="delayimp.lib kernel32.lib user32.lib gdi32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib usp10.lib comctl32.lib version.lib shlwapi.lib libxml2$(LibraryConfigSuffix).lib libxslt$(LibraryConfigSuffix).lib libicuin$(LibraryConfigSuffix).lib libicuuc$(LibraryConfigSuffix).lib SQLite3$(LibraryConfigSuffix).lib pthreadVC2$(LibraryConfigSuffix).lib JavaScriptCore$(WebKitDLLConfigSuffix).lib WebCore$(WebKitConfigSuffix).lib WebKitLib$(WebKitConfigSuffix).lib WebKitGUID$(WebKitConfigSuffix).lib msimg32.lib crypt32.lib iphlpapi.lib winmm.lib comsuppw.lib rpcrt4.lib"
 		OutputFile="$(OutDir)\$(ProjectName)$(WebKitDLLConfigSuffix).dll"
+		AdditionalLibraryDirectories="&quot;$(IntDir)\lib&quot;"
 		DelayLoadDLLs="usp10.dll;comctl32.dll;version.dll;libxslt$(LibraryConfigSuffix).dll;SQLite3$(LibraryConfigSuffix).dll;msimg32.dll;iphlpapi.dll"
 	/>
 	<Tool
@@ -26,6 +27,10 @@
 	<Tool
 		Name="VCPreBuildEventTool"
 		CommandLine="%SystemDrive%\cygwin\bin\which.exe bash&#x0D;&#x0A;if errorlevel 1 set PATH=%SystemDrive%\cygwin\bin;%PATH%&#x0D;&#x0A;cmd /c&#x0D;&#x0A;if exist &quot;$(WebKitOutputDir)\buildfailed&quot; grep XX$(ProjectName)XX &quot;$(WebKitOutputDir)\buildfailed&quot;&#x0D;&#x0A;if errorlevel 1 exit 1&#x0D;&#x0A;echo XX$(ProjectName)XX &gt; &quot;$(WebKitOutputDir)\buildfailed&quot;&#x0D;&#x0A;&#x0D;&#x0A;touch &quot;$(WebKitOutputDir)\tmp.cpp&quot;&#x0D;&#x0A;cl /analyze /nologo /c &quot;$(WebKitOutputDir)\tmp.cpp&quot; /Fo&quot;$(IntDir)\tmp.obj&quot; 2&gt;&amp;1 | findstr D9040&#x0D;&#x0A;if ERRORLEVEL 1 (set EnablePREfast=&quot;true&quot;) else (set EnablePREfast=&quot;false&quot;)&#x0D;&#x0A;if ERRORLEVEL 1 (set AnalyzeWithLargeStack=&quot;/analyze:65536&quot;) else (set AnalyzeWithLargeStack=&quot;&quot;)&#x0D;&#x0A;&#x0D;&#x0A;mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(WebKitLibrariesDir)\include\JavaScriptCore\*&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;&#x0D;&#x0A;bash &quot;$(WebKitLibrariesDir)\tools\scripts\auto-version.sh&quot; &quot;$(IntDir)&quot;&#x0D;&#x0A;"
+	/>
+	<Tool
+		Name="VCPreLinkEventTool"
+		CommandLine="mkdir 2&gt;NUL &quot;$(IntDir)\lib&quot;&#x0D;&#x0A;&#x0D;&#x0A;if exist &quot;$(WebKitLibrariesDir)\lib\icuuc$(LibraryConfigSuffix).lib&quot; copy /y &quot;$(WebKitLibrariesDir)\lib\icuuc$(LibraryConfigSuffix).lib&quot; &quot;$(IntDir)\lib\libicuuc$(LibraryConfigSuffix).lib&quot;&#x0D;&#x0A;if exist &quot;$(WebKitLibrariesDir)\lib\icuin$(LibraryConfigSuffix).lib&quot; copy /y &quot;$(WebKitLibrariesDir)\lib\icuin$(LibraryConfigSuffix).lib&quot; &quot;$(IntDir)\lib\libicuin$(LibraryConfigSuffix).lib&quot;&#x0D;&#x0A;&#x0D;&#x0A;if exist &quot;$(WebKitLibrariesDir)\lib\libicuuc$(LibraryConfigSuffix).lib&quot; copy /y &quot;$(WebKitLibrariesDir)\lib\libicuuc$(LibraryConfigSuffix).lib&quot; &quot;$(IntDir)\lib&quot;&#x0D;&#x0A;if exist &quot;$(WebKitLibrariesDir)\lib\libicuin$(LibraryConfigSuffix).lib&quot; copy /y &quot;$(WebKitLibrariesDir)\lib\libicuin$(LibraryConfigSuffix).lib&quot; &quot;$(IntDir)\lib&quot;&#x0D;&#x0A;&#x0D;&#x0A;cmd /c&#x0D;&#x0A;"
 	/>
 	<Tool
 		Name="VCResourceCompilerTool"

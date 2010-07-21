@@ -364,7 +364,7 @@
 						Name="VCCLCompilerTool"
 						UsePrecompiledHeader="0"
 						DisableSpecificWarnings="4065;4273;4565;4701;4702"
-						ForcedIncludeFiles="$(NOINHERIT)"
+						ForcedIncludeFiles="$(NOINHERIT);ICUVersion.h"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -374,7 +374,7 @@
 						Name="VCCLCompilerTool"
 						UsePrecompiledHeader="0"
 						DisableSpecificWarnings="4065;4273;4565;4701;4702"
-						ForcedIncludeFiles="$(NOINHERIT)"
+						ForcedIncludeFiles="$(NOINHERIT);ICUVersion.h"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -384,7 +384,7 @@
 						Name="VCCLCompilerTool"
 						UsePrecompiledHeader="0"
 						DisableSpecificWarnings="4065;4273;4565;4701;4702"
-						ForcedIncludeFiles="$(NOINHERIT)"
+						ForcedIncludeFiles="$(NOINHERIT);ICUVersion.h"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -394,7 +394,7 @@
 						Name="VCCLCompilerTool"
 						UsePrecompiledHeader="0"
 						DisableSpecificWarnings="4065;4273;4565;4701;4702"
-						ForcedIncludeFiles="$(NOINHERIT)"
+						ForcedIncludeFiles="$(NOINHERIT);ICUVersion.h"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -404,7 +404,7 @@
 						Name="VCCLCompilerTool"
 						UsePrecompiledHeader="0"
 						DisableSpecificWarnings="4065;4273;4565;4701;4702"
-						ForcedIncludeFiles="$(NOINHERIT)"
+						ForcedIncludeFiles="$(NOINHERIT);ICUVersion.h"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -414,7 +414,7 @@
 						Name="VCCLCompilerTool"
 						UsePrecompiledHeader="0"
 						DisableSpecificWarnings="4065;4273;4565;4701;4702"
-						ForcedIncludeFiles="$(NOINHERIT)"
+						ForcedIncludeFiles="$(NOINHERIT);ICUVersion.h"
 					/>
 				</FileConfiguration>
 			</File>
@@ -20910,7 +20910,7 @@
 						Name="VCCLCompilerTool"
 						UsePrecompiledHeader="0"
 						DisableSpecificWarnings="4065;4273;4565;4701;4702"
-						ForcedIncludeFiles="$(NOINHERIT)"
+						ForcedIncludeFiles="$(NOINHERIT);ICUVersion.h"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -20920,7 +20920,7 @@
 						Name="VCCLCompilerTool"
 						UsePrecompiledHeader="0"
 						DisableSpecificWarnings="4065;4273;4565;4701;4702"
-						ForcedIncludeFiles="$(NOINHERIT)"
+						ForcedIncludeFiles="$(NOINHERIT);ICUVersion.h"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -20930,7 +20930,7 @@
 						Name="VCCLCompilerTool"
 						UsePrecompiledHeader="0"
 						DisableSpecificWarnings="4065;4273;4565;4701;4702"
-						ForcedIncludeFiles="$(NOINHERIT)"
+						ForcedIncludeFiles="$(NOINHERIT);ICUVersion.h"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -20940,7 +20940,7 @@
 						Name="VCCLCompilerTool"
 						UsePrecompiledHeader="0"
 						DisableSpecificWarnings="4065;4273;4565;4701;4702"
-						ForcedIncludeFiles="$(NOINHERIT)"
+						ForcedIncludeFiles="$(NOINHERIT);ICUVersion.h"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -20950,7 +20950,7 @@
 						Name="VCCLCompilerTool"
 						UsePrecompiledHeader="0"
 						DisableSpecificWarnings="4065;4273;4565;4701;4702"
-						ForcedIncludeFiles="$(NOINHERIT)"
+						ForcedIncludeFiles="$(NOINHERIT);ICUVersion.h"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -20960,7 +20960,7 @@
 						Name="VCCLCompilerTool"
 						UsePrecompiledHeader="0"
 						DisableSpecificWarnings="4065;4273;4565;4701;4702"
-						ForcedIncludeFiles="$(NOINHERIT)"
+						ForcedIncludeFiles="$(NOINHERIT);ICUVersion.h"
 					/>
 				</FileConfiguration>
 			</File>
@@ -23824,7 +23824,7 @@
 						<Tool
 							Name="VCCLCompilerTool"
 							UsePrecompiledHeader="0"
-							ForcedIncludeFiles="$(NOINHERIT)"
+							ForcedIncludeFiles="$(NOINHERIT);ICUVersion.h"
 						/>
 					</FileConfiguration>
 					<FileConfiguration
@@ -23833,7 +23833,7 @@
 						<Tool
 							Name="VCCLCompilerTool"
 							UsePrecompiledHeader="0"
-							ForcedIncludeFiles="$(NOINHERIT)"
+							ForcedIncludeFiles="$(NOINHERIT);ICUVersion.h"
 						/>
 					</FileConfiguration>
 					<FileConfiguration
@@ -23842,7 +23842,7 @@
 						<Tool
 							Name="VCCLCompilerTool"
 							UsePrecompiledHeader="0"
-							ForcedIncludeFiles="$(NOINHERIT)"
+							ForcedIncludeFiles="$(NOINHERIT);ICUVersion.h"
 						/>
 					</FileConfiguration>
 					<FileConfiguration
@@ -23851,7 +23851,7 @@
 						<Tool
 							Name="VCCLCompilerTool"
 							UsePrecompiledHeader="0"
-							ForcedIncludeFiles="$(NOINHERIT)"
+							ForcedIncludeFiles="$(NOINHERIT);ICUVersion.h"
 						/>
 					</FileConfiguration>
 					<FileConfiguration
@@ -23860,7 +23860,7 @@
 						<Tool
 							Name="VCCLCompilerTool"
 							UsePrecompiledHeader="0"
-							ForcedIncludeFiles="$(NOINHERIT)"
+							ForcedIncludeFiles="$(NOINHERIT);ICUVersion.h"
 						/>
 					</FileConfiguration>
 					<FileConfiguration
@@ -23869,7 +23869,7 @@
 						<Tool
 							Name="VCCLCompilerTool"
 							UsePrecompiledHeader="0"
-							ForcedIncludeFiles="$(NOINHERIT)"
+							ForcedIncludeFiles="$(NOINHERIT);ICUVersion.h"
 						/>
 					</FileConfiguration>
 				</File>
@@ -32067,7 +32067,7 @@
 					<Tool
 						Name="VCCLCompilerTool"
 						UsePrecompiledHeader="0"
-						ForcedIncludeFiles="$(NOINHERIT)"
+						ForcedIncludeFiles="$(NOINHERIT);ICUVersion.h"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -32076,7 +32076,7 @@
 					<Tool
 						Name="VCCLCompilerTool"
 						UsePrecompiledHeader="0"
-						ForcedIncludeFiles="$(NOINHERIT)"
+						ForcedIncludeFiles="$(NOINHERIT);ICUVersion.h"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -32085,7 +32085,7 @@
 					<Tool
 						Name="VCCLCompilerTool"
 						UsePrecompiledHeader="0"
-						ForcedIncludeFiles="$(NOINHERIT)"
+						ForcedIncludeFiles="$(NOINHERIT);ICUVersion.h"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -32094,7 +32094,7 @@
 					<Tool
 						Name="VCCLCompilerTool"
 						UsePrecompiledHeader="0"
-						ForcedIncludeFiles="$(NOINHERIT)"
+						ForcedIncludeFiles="$(NOINHERIT);ICUVersion.h"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -32103,7 +32103,7 @@
 					<Tool
 						Name="VCCLCompilerTool"
 						UsePrecompiledHeader="0"
-						ForcedIncludeFiles="$(NOINHERIT)"
+						ForcedIncludeFiles="$(NOINHERIT);ICUVersion.h"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -32112,7 +32112,7 @@
 					<Tool
 						Name="VCCLCompilerTool"
 						UsePrecompiledHeader="0"
-						ForcedIncludeFiles="$(NOINHERIT)"
+						ForcedIncludeFiles="$(NOINHERIT);ICUVersion.h"
 					/>
 				</FileConfiguration>
 			</File>

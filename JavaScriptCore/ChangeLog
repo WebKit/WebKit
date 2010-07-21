@@ -1,5 +1,43 @@
 2010-07-20  Steve Falkenburg  <sfalken@apple.com>
 
+        Reviewed by Adam Roben.
+
+        WebKit on Windows should build optionally with an unversioned ICU DLL
+        https://bugs.webkit.org/show_bug.cgi?id=42722
+        <rdar://problem/8211743> JavaScriptCore needs to link against unversioned ICU
+        
+        Dynamically create a new header, ICUVersion.h, as part of build-generated-files.sh.
+        Header contains a preprocessor define (U_DISABLE_RENAMING) indicating to ICU whether the ICU API
+        should be namespaced with the current ICU version number. Proper value is determined
+        by checking for the presence of libicuuc.lib, the unversioned copy of ICU.
+        
+        To get the proper value for U_DISABLE_RENAMING into all source files, we force
+        the include of ICUVersion.h (our generated header) via the compiler options.
+        
+        Since the versioned and unversioned ICU have different filenames (libicuuc.lib vs icuuc.lib)
+        we copy the ICU lib to an intermediate location under obj with a common name. This
+        allows us to link properly with either without adding a new build configuration.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreCommon.vsprops:
+        Copy ICU libs into a common location with a common name.
+        Add additional library search path to pick up icu lib.
+        Change ICU library filename specified to linker.
+        Add forced include of ICUVersion.h.
+        * JavaScriptCore.vcproj/JavaScriptCore/build-generated-files.sh: Generate ICUVersion.h
+        * JavaScriptCore.vcproj/WTF/WTFCommon.vsprops: Add forced include of ICUVersion.h.
+        * JavaScriptCore.vcproj/jsc/jscCommon.vsprops:
+        Copy ICU libs into a common location with a common name.
+        Add additional library search path to pick up icu lib.
+        Change ICU library filename specified to linker.
+        Add forced include of ICUVersion.h.
+        * JavaScriptCore.vcproj/testapi/testapiCommon.vsprops:
+        Copy ICU libs into a common location with a common name.
+        Add additional library search path to pick up icu lib.
+        Change ICU library filename specified to linker.
+        Add forced include of ICUVersion.h.
+
+2010-07-20  Steve Falkenburg  <sfalken@apple.com>
+
         Re-save vsprops files after no-op edits in Visual Studio
         to fix manual edit issues.
 

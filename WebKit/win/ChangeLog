@@ -1,3 +1,16 @@
+2010-07-20  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Adam Roben.
+
+        WebKit on Windows should build optionally with an unversioned ICU DLL
+        https://bugs.webkit.org/show_bug.cgi?id=42722
+        <rdar://problem/8211767> WebKit needs to link against unversioned ICU
+
+        To get the proper value for U_DISABLE_RENAMING into all source files, we force
+        the include of ICUVersion.h (our generated header) via the compiler options.
+
+        * WebKit.vcproj/WebKit.vcproj: Add forced include of ICUVersion.h.        
+
 2010-07-21  Adam Roben  <aroben@apple.com>
 
         Update WebKit.sln for InjectedBundle's Debug_Internal configuration

@@ -12,7 +12,7 @@
 		UsePrecompiledHeader="2"
 		PrecompiledHeaderThrough="WebCorePrefix.h"
 		ProgramDataBaseFileName="$(OutDir)\$(TargetName).vc80.pdb"
-		ForcedIncludeFiles="WebCorePrefix.h"
+		ForcedIncludeFiles="WebCorePrefix.h;ICUVersion.h"
 	/>
 	<Tool
 		Name="VCPostBuildEventTool"

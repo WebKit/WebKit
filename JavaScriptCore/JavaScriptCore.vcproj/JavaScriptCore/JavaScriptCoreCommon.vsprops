@@ -8,12 +8,13 @@
 		Name="VCCLCompilerTool"
 		AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\obj\JavaScriptCore\DerivedSources\&quot;;../../;../../API/;../../pcre/;../../parser/;../../bytecompiler/;../../jit/;../../runtime/;../../bytecode/;../../interpreter/;../../wtf/;../../profiler;../../assembler/;../../debugger/;&quot;$(WebKitLibrariesDir)\include&quot;;&quot;$(WebKitLibrariesDir)\include\private&quot;;&quot;$(WebKitOutputDir)\include&quot;;&quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;;&quot;$(WebKitOutputDir)\include\private&quot;;&quot;$(WebKitLibrariesDir)\include\pthreads&quot;"
 		PreprocessorDefinitions="__STD_C"
-		ForcedIncludeFiles=""
+		ForcedIncludeFiles="ICUVersion.h"
 	/>
 	<Tool
 		Name="VCLinkerTool"
-		AdditionalDependencies="gdi32.lib oleaut32.lib winmm.lib icuin$(LibraryConfigSuffix).lib icuuc$(LibraryConfigSuffix).lib pthreadVC2$(LibraryConfigSuffix).lib WTF$(WebKitConfigSuffix).lib"
+		AdditionalDependencies="gdi32.lib oleaut32.lib winmm.lib libicuin$(LibraryConfigSuffix).lib libicuuc$(LibraryConfigSuffix).lib pthreadVC2$(LibraryConfigSuffix).lib WTF$(WebKitConfigSuffix).lib"
 		OutputFile="$(OutDir)\$(ProjectName)$(WebKitDLLConfigSuffix).dll"
+		AdditionalLibraryDirectories="&quot;$(IntDir)\lib&quot;"
 		ModuleDefinitionFile="JavaScriptCore.def"
 	/>
 	<Tool
@@ -23,5 +24,9 @@
 	<Tool
 		Name="VCPreBuildEventTool"
 		CommandLine="%SystemDrive%\cygwin\bin\which.exe bash&#x0D;&#x0A;if errorlevel 1 set PATH=%SystemDrive%\cygwin\bin;%PATH%&#x0D;&#x0A;cmd /c&#x0D;&#x0A;if exist &quot;$(WebKitOutputDir)\buildfailed&quot; grep XX$(ProjectName)XX &quot;$(WebKitOutputDir)\buildfailed&quot;&#x0D;&#x0A;if errorlevel 1 exit 1&#x0D;&#x0A;echo XX$(ProjectName)XX &gt; &quot;$(WebKitOutputDir)\buildfailed&quot;&#x0D;&#x0A;&#x0D;&#x0A;bash &quot;$(WebKitLibrariesDir)\tools\scripts\auto-version.sh&quot; &quot;$(IntDir)&quot;&#x0D;&#x0A;"
+	/>
+	<Tool
+		Name="VCPreLinkEventTool"
+		CommandLine="mkdir 2&gt;NUL &quot;$(IntDir)\lib&quot;&#x0D;&#x0A;&#x0D;&#x0A;if exist &quot;$(WebKitLibrariesDir)\lib\icuuc$(LibraryConfigSuffix).lib&quot; copy /y &quot;$(WebKitLibrariesDir)\lib\icuuc$(LibraryConfigSuffix).lib&quot; &quot;$(IntDir)\lib\libicuuc$(LibraryConfigSuffix).lib&quot;&#x0D;&#x0A;if exist &quot;$(WebKitLibrariesDir)\lib\icuin$(LibraryConfigSuffix).lib&quot; copy /y &quot;$(WebKitLibrariesDir)\lib\icuin$(LibraryConfigSuffix).lib&quot; &quot;$(IntDir)\lib\libicuin$(LibraryConfigSuffix).lib&quot;&#x0D;&#x0A;&#x0D;&#x0A;if exist &quot;$(WebKitLibrariesDir)\lib\libicuuc$(LibraryConfigSuffix).lib&quot; copy /y &quot;$(WebKitLibrariesDir)\lib\libicuuc$(LibraryConfigSuffix).lib&quot; &quot;$(IntDir)\lib&quot;&#x0D;&#x0A;if exist &quot;$(WebKitLibrariesDir)\lib\libicuin$(LibraryConfigSuffix).lib&quot; copy /y &quot;$(WebKitLibrariesDir)\lib\libicuin$(LibraryConfigSuffix).lib&quot; &quot;$(IntDir)\lib&quot;&#x0D;&#x0A;&#x0D;&#x0A;cmd /c&#x0D;&#x0A;"
 	/>
 </VisualStudioPropertySheet>

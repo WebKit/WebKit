@@ -46,7 +46,7 @@
 				PrecompiledHeaderThrough="WebKitPrefix.h"
 				ProgramDataBaseFileName="$(OutDir)\$(TargetName).vc80.pdb"
 				DisableSpecificWarnings="4819"
-				ForcedIncludeFiles="WebKitPrefix.h"
+				ForcedIncludeFiles="WebKitPrefix.h;ICUVersion.h"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -111,7 +111,7 @@
 				PrecompiledHeaderThrough="WebKitPrefix.h"
 				ProgramDataBaseFileName="$(OutDir)\$(TargetName).vc80.pdb"
 				DisableSpecificWarnings="4819"
-				ForcedIncludeFiles="WebKitPrefix.h"
+				ForcedIncludeFiles="WebKitPrefix.h;ICUVersion.h"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -176,7 +176,7 @@
 				ProgramDataBaseFileName="$(OutDir)\$(TargetName).vc80.pdb"
 				Detect64BitPortabilityProblems="false"
 				DisableSpecificWarnings="4819"
-				ForcedIncludeFiles="WebKitPrefix.h"
+				ForcedIncludeFiles="WebKitPrefix.h;ICUVersion.h"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -240,7 +240,7 @@
 				PrecompiledHeaderThrough="WebKitPrefix.h"
 				ProgramDataBaseFileName="$(OutDir)\$(TargetName).vc80.pdb"
 				DisableSpecificWarnings="4819"
-				ForcedIncludeFiles="WebKitPrefix.h"
+				ForcedIncludeFiles="WebKitPrefix.h;ICUVersion.h"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -306,7 +306,7 @@
 				PrecompiledHeaderThrough="WebKitPrefix.h"
 				ProgramDataBaseFileName="$(OutDir)\$(TargetName).vc80.pdb"
 				DisableSpecificWarnings="4819"
-				ForcedIncludeFiles="WebKitPrefix.h"
+				ForcedIncludeFiles="WebKitPrefix.h;ICUVersion.h"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -371,7 +371,7 @@
 				ProgramDataBaseFileName="$(OutDir)\$(TargetName).vc80.pdb"
 				Detect64BitPortabilityProblems="false"
 				DisableSpecificWarnings="4819"
-				ForcedIncludeFiles="WebKitPrefix.h"
+				ForcedIncludeFiles="WebKitPrefix.h;ICUVersion.h"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
