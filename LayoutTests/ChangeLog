@@ -1,3 +1,11 @@
+2010-07-21  Justin Schuh  <jschuh@chromium.org>
+
+        Unreviewed. Build fix.
+
+        Added platform test to account for qt's xml parser
+
+        * platform/qt/svg/custom/use-invalid-html-expected.txt: Added.
+
 2010-07-21  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Ojan Vafai.
