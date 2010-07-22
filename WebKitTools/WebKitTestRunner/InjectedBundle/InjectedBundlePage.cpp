@@ -26,6 +26,8 @@
 #include "InjectedBundlePage.h"
 
 #include "InjectedBundle.h"
+#include <JavaScriptCore/JSRetainPtr.h>
+#include <WebKit2/WKArray.h>
 #include <WebKit2/WKBundleFrame.h>
 #include <WebKit2/WKBundlePagePrivate.h>
 #include <WebKit2/WKRetainPtr.h>
@@ -144,6 +146,52 @@ void InjectedBundlePage::didCommitLoadForFrame(WKBundleFrameRef frame)
 {
 }
 
+static double numericWindowPropertyValue(WKBundleFrameRef frame, const char* propertyName)
+{
+    JSGlobalContextRef context = WKBundleFrameGetJavaScriptContext(frame);
+    JSObjectRef window = JSContextGetGlobalObject(context);
+    JSValueRef exception = 0;
+    JSRetainPtr<JSStringRef> propertyNameString(Adopt, JSStringCreateWithUTF8CString(propertyName));
+    JSValueRef value = JSObjectGetProperty(context, window, propertyNameString.get(), &exception);
+    if (exception)
+        return 0;
+    return JSValueToNumber(context, value, &exception);
+}
+
+enum FrameNamePolicy { ShouldNotIncludeFrameName, ShouldIncludeFrameName };
+
+static void dumpFrameScrollPosition(WKBundleFrameRef frame, FrameNamePolicy shouldIncludeFrameName = ShouldNotIncludeFrameName)
+{
+    double x = numericWindowPropertyValue(frame, "pageXOffset");
+    double y = numericWindowPropertyValue(frame, "pageYOffset");
+    if (fabs(x) > 0.00000001 || fabs(y) > 0.00000001) {
+        if (shouldIncludeFrameName) {
+            WKRetainPtr<WKStringRef> name(AdoptWK, WKBundleFrameCopyName(frame));
+            InjectedBundle::shared().os() << "frame '" << WKStringToUTF8(name.get())->data() << "' ";
+        }
+        InjectedBundle::shared().os() << "scrolled to " << x << "," << y << "\n";
+    }
+}
+
+static void dumpDescendantFrameScrollPositions(WKBundleFrameRef frame)
+{
+    WKRetainPtr<WKArrayRef> childFrames(AdoptWK, WKBundleFrameCopyChildFrames(frame));
+    size_t size = WKArrayGetSize(childFrames.get());
+    for (size_t i = 0; i < size; ++i) {
+        // FIXME: I don't like that we have to const_cast here. Can we change WKArray?
+        WKBundleFrameRef subframe = static_cast<WKBundleFrameRef>(const_cast<void*>(WKArrayGetItemAtIndex(childFrames.get(), i)));
+        dumpFrameScrollPosition(subframe, ShouldIncludeFrameName);
+        dumpDescendantFrameScrollPositions(subframe);
+    }
+}
+
+void InjectedBundlePage::dumpAllFrameScrollPositions()
+{
+    WKBundleFrameRef frame = WKBundlePageGetMainFrame(m_page);
+    dumpFrameScrollPosition(frame);
+    dumpDescendantFrameScrollPositions(frame);
+}
+
 void InjectedBundlePage::dump()
 {
     InjectedBundle::shared().layoutTestController()->invalidateWaitToDumpWatchdog();
@@ -151,39 +199,18 @@ void InjectedBundlePage::dump()
     if (InjectedBundle::shared().layoutTestController()->shouldDumpAsText()) {
         // FIXME: Support dumping subframes when layoutTestController()->dumpChildFramesAsText() is true.
         WKRetainPtr<WKStringRef> innerText(AdoptWK, WKBundleFrameCopyInnerText(WKBundlePageGetMainFrame(m_page)));
-        OwnPtr<Vector<char> > utf8InnerText = WKStringToUTF8(innerText.get());
-        InjectedBundle::shared().os() << utf8InnerText->data() << "\n";
+        InjectedBundle::shared().os() << WKStringToUTF8(innerText.get())->data() << "\n";
     } else {
         WKRetainPtr<WKStringRef> externalRepresentation(AdoptWK, WKBundlePageCopyRenderTreeExternalRepresentation(m_page));
-        OwnPtr<Vector<char> > utf8externalRepresentation = WKStringToUTF8(externalRepresentation.get());
-        InjectedBundle::shared().os() << utf8externalRepresentation->data();
+        InjectedBundle::shared().os() << WKStringToUTF8(externalRepresentation.get())->data();
     }
 
-    if (InjectedBundle::shared().layoutTestController()->shouldDumpFrameScrollPositions())
+    if (InjectedBundle::shared().layoutTestController()->shouldDumpAllFrameScrollPositions())
+        dumpAllFrameScrollPositions();
+    else if (InjectedBundle::shared().layoutTestController()->shouldDumpMainFrameScrollPosition())
         dumpFrameScrollPosition(WKBundlePageGetMainFrame(m_page));
 
     InjectedBundle::shared().done();
-}
-
-static double numericWindowProperty(WKBundleFrameRef frame, const char* propertyName)
-{
-    JSGlobalContextRef context = WKBundleFrameGetJavaScriptContext(frame);
-    JSObjectRef window = JSContextGetGlobalObject(context);
-    JSValueRef exception = 0;
-    JSStringRef propertyNameString = JSStringCreateWithUTF8CString(propertyName);
-    JSValueRef value = JSObjectGetProperty(context, window, propertyNameString, &exception);
-    JSStringRelease(propertyNameString);
-    if (exception)
-        return 0;
-    return JSValueToNumber(context, value, &exception);
-}
-
-void InjectedBundlePage::dumpFrameScrollPosition(WKBundleFrameRef frame)
-{
-    double x = numericWindowProperty(frame, "pageXOffset");
-    double y = numericWindowProperty(frame, "pageYOffset");
-    if (fabs(x) > 0.00000001 || fabs(y) > 0.00000001)
-        InjectedBundle::shared().os() << "scrolled to " << x << "," << y << "\n";
 }
 
 void InjectedBundlePage::didFinishLoadForFrame(WKBundleFrameRef frame)
@@ -249,8 +276,7 @@ void InjectedBundlePage::_willRunJavaScriptPrompt(WKBundlePageRef page, WKString
 void InjectedBundlePage::willAddMessageToConsole(WKStringRef message, uint32_t lineNumber)
 {
     // FIXME: Strip file: urls.
-    OwnPtr<Vector<char> > utf8Message = WKStringToUTF8(message);
-    InjectedBundle::shared().os() << "CONSOLE MESSAGE: line " << lineNumber << ": " << utf8Message->data() << "\n";
+    InjectedBundle::shared().os() << "CONSOLE MESSAGE: line " << lineNumber << ": " << WKStringToUTF8(message)->data() << "\n";
 }
 
 void InjectedBundlePage::willSetStatusbarText(WKStringRef statusbarText)
@@ -258,27 +284,22 @@ void InjectedBundlePage::willSetStatusbarText(WKStringRef statusbarText)
     if (!InjectedBundle::shared().layoutTestController()->shouldDumpStatusCallbacks())
         return;
 
-    OwnPtr<Vector<char> > utf8StatusbarText = WKStringToUTF8(statusbarText);
-    InjectedBundle::shared().os() << "UI DELEGATE STATUS CALLBACK: setStatusText:" << utf8StatusbarText->data() << "\n";
+    InjectedBundle::shared().os() << "UI DELEGATE STATUS CALLBACK: setStatusText:" << WKStringToUTF8(statusbarText)->data() << "\n";
 }
 
 void InjectedBundlePage::willRunJavaScriptAlert(WKStringRef message, WKBundleFrameRef)
 {
-    OwnPtr<Vector<char> > utf8Message = WKStringToUTF8(message);
-    InjectedBundle::shared().os() << "ALERT: " << utf8Message->data() << "\n";
+    InjectedBundle::shared().os() << "ALERT: " << WKStringToUTF8(message)->data() << "\n";
 }
 
 void InjectedBundlePage::willRunJavaScriptConfirm(WKStringRef message, WKBundleFrameRef)
 {
-    OwnPtr<Vector<char> > utf8Message = WKStringToUTF8(message);
-    InjectedBundle::shared().os() << "CONFIRM: " << utf8Message->data() << "\n";
+    InjectedBundle::shared().os() << "CONFIRM: " << WKStringToUTF8(message)->data() << "\n";
 }
 
 void InjectedBundlePage::willRunJavaScriptPrompt(WKStringRef message, WKStringRef defaultValue, WKBundleFrameRef)
 {
-    OwnPtr<Vector<char> > utf8Message = WKStringToUTF8(message);
-    OwnPtr<Vector<char> > utf8DefaultValue = WKStringToUTF8(defaultValue);
-    InjectedBundle::shared().os() << "PROMPT: " << utf8Message->data() << ", default text: " << utf8DefaultValue->data() <<  "\n";
+    InjectedBundle::shared().os() << "PROMPT: " << WKStringToUTF8(message)->data() << ", default text: " << WKStringToUTF8(defaultValue)->data() <<  "\n";
 }
 
 } // namespace WTR

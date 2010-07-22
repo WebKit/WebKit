@@ -43,6 +43,7 @@ PassRefPtr<LayoutTestController> LayoutTestController::create(const std::string&
 
 LayoutTestController::LayoutTestController(const std::string& testPathOrURL)
     : m_dumpAsText(false)
+    , m_shouldDumpAllFrameScrollPositions(false)
     , m_dumpStatusCallbacks(false)
     , m_waitToDump(false)
     , m_testRepaint(false)
@@ -134,7 +135,7 @@ bool LayoutTestController::shouldDumpSourceAsWebArchive() const
     return false;
 }
 
-bool LayoutTestController::shouldDumpFrameScrollPositions() const
+bool LayoutTestController::shouldDumpMainFrameScrollPosition() const
 {
     return !shouldDumpAsText() && !shouldDumpDOMAsWebArchive() && !shouldDumpSourceAsWebArchive();
 }

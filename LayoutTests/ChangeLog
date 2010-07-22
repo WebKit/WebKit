@@ -1,3 +1,14 @@
+2010-07-21  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        WebKitTestRunner needs layoutTestController.dumpChildFrameScrollPositions
+        https://bugs.webkit.org/show_bug.cgi?id=42548
+
+        * platform/mac-wk2/Skipped: Moved some tests into the correct section
+        now that dumpChildFrameScrollPositions is no longer the reason they
+        fail. Removed now-passing test. Resorted some of the tests.
+
 2010-07-21  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Darin Adler.

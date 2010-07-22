@@ -52,6 +52,8 @@ WK_EXPORT unsigned WKBundleFrameGetNumberOfActiveAnimations(WKBundleFrameRef fra
 
 WK_EXPORT bool WKBundleFramePauseAnimationOnElementWithId(WKBundleFrameRef frame, WKStringRef name, WKStringRef elementID, double time);
 
+WK_EXPORT WKStringRef WKBundleFrameCopyName(WKBundleFrameRef frame);
+
 #ifdef __cplusplus
 }
 #endif

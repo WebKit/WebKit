@@ -37,39 +37,47 @@ namespace WTR {
 class LayoutTestController : public JSWrappable {
 public:
     static PassRefPtr<LayoutTestController> create(const std::string& testPathOrURL);
-    ~LayoutTestController();
+    virtual ~LayoutTestController();
 
     // JSWrappable
-    JSClassRef wrapperClass();
+    virtual JSClassRef wrapperClass();
 
-    void makeWindowObject(JSContextRef context, JSObjectRef windowObject, JSValueRef* exception);
+    void makeWindowObject(JSContextRef, JSObjectRef windowObject, JSValueRef* exception);
 
+    // The basics.
     void dumpAsText() { m_dumpAsText = true; }
+    void waitUntilDone();
+    void notifyDone();
+
+    // Other kinds of dumping.
+    void dumpChildFrameScrollPositions() { m_shouldDumpAllFrameScrollPositions = true; }
     void dumpStatusCallbacks() { m_dumpStatusCallbacks = true; }
 
+    // Repaint testing.
+    void testRepaint() { m_testRepaint = true; }
+    void repaintSweepHorizontally() { m_testRepaintSweepHorizontally = true; }
+    void display();
+
+    // Animation testing.
+    unsigned numberOfActiveAnimations() const;
+    bool pauseAnimationAtTimeOnElementWithId(JSStringRef animationName, double time, JSStringRef elementId);
+
+    bool shouldDumpAllFrameScrollPositions() const { return m_shouldDumpAllFrameScrollPositions; }
     bool shouldDumpAsText() const { return m_dumpAsText; }
     bool shouldDumpDOMAsWebArchive() const;
-    bool shouldDumpFrameScrollPositions() const;
+    bool shouldDumpMainFrameScrollPosition() const;
     bool shouldDumpSourceAsWebArchive() const;
     bool shouldDumpStatusCallbacks() const { return m_dumpStatusCallbacks; }
 
     bool waitToDump() const { return m_waitToDump; }
     void waitToDumpWatchdogTimerFired();
     void invalidateWaitToDumpWatchdog();
-    void waitUntilDone();
-    void notifyDone();
-
-    void testRepaint() { m_testRepaint = true; }
-    void repaintSweepHorizontally() { m_testRepaintSweepHorizontally = true; }
-    void display();
-
-    unsigned numberOfActiveAnimations() const;
-    bool pauseAnimationAtTimeOnElementWithId(JSStringRef animationName, double time, JSStringRef elementId);
 
 private:
     LayoutTestController(const std::string& testPathOrURL);
 
     bool m_dumpAsText;
+    bool m_shouldDumpAllFrameScrollPositions;
     bool m_dumpStatusCallbacks;
     bool m_waitToDump; // True if waitUntilDone() has been called, but notifyDone() has not yet been called.
     bool m_testRepaint;

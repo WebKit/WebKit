@@ -163,6 +163,14 @@ bool WebFrame::isMainFrame() const
     return m_page->mainFrame() == this;
 }
 
+String WebFrame::name() const
+{
+    if (!m_coreFrame)
+        return String();
+
+    return m_coreFrame->tree()->name();
+}
+
 String WebFrame::url() const
 {
     if (!m_coreFrame)

@@ -2,6 +2,40 @@
 
         Reviewed by Sam Weinig.
 
+        WebKitTestRunner needs layoutTestController.dumpChildFrameScrollPositions
+        https://bugs.webkit.org/show_bug.cgi?id=42548
+
+        * WebKitTestRunner/InjectedBundle/Bindings/LayoutTestController.idl:
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::numericWindowPropertyValue): Renamed this and moved it up higher in the file.
+        (WTR::dumpFrameScrollPosition): Added argument telling whether to dump the frame name.
+        Changed to a file-internal function instead of a member function.
+        (WTR::dumpDescendantFrameScrollPositions): Added.
+        (WTR::InjectedBundlePage::dumpAllFrameScrollPositions): Added.
+        (WTR::InjectedBundlePage::dump): Changed to call dumpAllFrameScrollPositions when
+        appropriate. Also streamlined all the WKStringToUTF8 call sites.
+        (WTR::InjectedBundlePage::willAddMessageToConsole): Streamlined use of WKStringToUTF8.
+        (WTR::InjectedBundlePage::willSetStatusbarText): Ditto.
+        (WTR::InjectedBundlePage::willRunJavaScriptAlert): Ditto.
+        (WTR::InjectedBundlePage::willRunJavaScriptConfirm): Ditto.
+        (WTR::InjectedBundlePage::willRunJavaScriptPrompt): Ditto.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.h: Updated for above changes.
+
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.cpp:
+        (WTR::LayoutTestController::LayoutTestController): Initialize
+        m_shouldDumpAllFrameScrollPositions.
+        (WTR::LayoutTestController::shouldDumpMainFrameScrollPosition): Renamed from
+        shouldDumpFrameScrollPositions.
+
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.h: Reorganized the file a
+        bit, added dumpChildFrameScrollPositions and shouldDumpAllFrameScrollPositions,
+        and renamed shouldDumpFrameScrollPositions to shouldDumpMainFrameScrollPosition.
+
+2010-07-21  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
         WebKitTestRunner needs to support dumping of scroll position
         https://bugs.webkit.org/show_bug.cgi?id=42514
 

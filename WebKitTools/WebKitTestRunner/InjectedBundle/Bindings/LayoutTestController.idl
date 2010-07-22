@@ -26,18 +26,21 @@
 module WTR {
 
     interface LayoutTestController {
+        // The basics.
         void dumpAsText();
-        void dumpStatusCallbacks();
-
         void waitUntilDone();
         void notifyDone();
 
-        // Repaint testing
+        // Other kinds of dumping.
+        void dumpChildFrameScrollPositions();
+        void dumpStatusCallbacks();
+
+        // Repaint testing.
         void testRepaint();
         void repaintSweepHorizontally();
         void display();
 
-        // Animation testing
+        // Animation testing.
         int numberOfActiveAnimations();
         boolean pauseAnimationAtTimeOnElementWithId(in DOMString animationName, in double time, in DOMString elementId);
     };

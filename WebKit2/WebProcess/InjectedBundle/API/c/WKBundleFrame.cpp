@@ -72,3 +72,10 @@ JSGlobalContextRef WKBundleFrameGetJavaScriptContext(WKBundleFrameRef frameRef)
     // The const_cast here is a bit ugly.
     return const_cast<JSGlobalContextRef>(toRef(toWK(frameRef)->coreFrame()->script()->globalObject(mainThreadNormalWorld())->globalExec()));
 }
+
+WKStringRef WKBundleFrameCopyName(WKBundleFrameRef frameRef)
+{
+    WebCore::String string = toWK(frameRef)->name();
+    string.impl()->ref();
+    return toRef(string.impl());
+}
