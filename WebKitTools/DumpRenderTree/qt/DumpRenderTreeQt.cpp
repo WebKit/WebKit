@@ -130,16 +130,6 @@ public:
 };
 #endif
 
-void checkPermissionCallback(QObject* receiver, const QUrl& url, NotificationPermission& permission)
-{
-    qobject_cast<DumpRenderTree*>(receiver)->checkPermission(url, permission);
-}
-
-void requestPermissionCallback(QObject* receiver, const QString& origin)
-{
-    qobject_cast<DumpRenderTree*>(receiver)->requestPermission(origin);
-}
-
 WebPage::WebPage(QObject* parent, DumpRenderTree* drt)
     : QWebPage(parent)
     , m_webInspector(0)
@@ -167,10 +157,9 @@ WebPage::WebPage(QObject* parent, DumpRenderTree* drt)
     setNetworkAccessManager(m_drt->networkAccessManager());
     setPluginFactory(new TestPlugin(this));
 
-    DumpRenderTreeSupportQt::setNotificationsReceiver(m_drt);
-    DumpRenderTreeSupportQt::setCheckPermissionFunction(checkPermissionCallback);
-    DumpRenderTreeSupportQt::setRequestPermissionFunction(requestPermissionCallback);
-
+    connect(this, SIGNAL(requestPermissionFromUser(QWebFrame*, QWebPage::PermissionDomain)), this, SLOT(requestPermission(QWebFrame*, QWebPage::PermissionDomain)));
+    connect(this, SIGNAL(checkPermissionFromUser(QWebFrame*, QWebPage::PermissionDomain, QWebPage::PermissionPolicy&)), this, SLOT(checkPermission(QWebFrame*, QWebPage::PermissionDomain, QWebPage::PermissionPolicy&)));
+    connect(this, SIGNAL(cancelRequestsForPermissionFromUser(QWebFrame*, QWebPage::PermissionDomain)), this, SLOT(cancelRequestsForPermissionFromUser(QWebFrame*, QWebPage::PermissionDomain)));
 }
 
 WebPage::~WebPage()
@@ -226,6 +215,36 @@ void WebPage::javaScriptAlert(QWebFrame*, const QString& message)
         return;
 
     fprintf(stdout, "ALERT: %s\n", message.toUtf8().constData());
+}
+
+void WebPage::requestPermission(QWebFrame* frame, QWebPage::PermissionDomain domain)
+{
+    switch (domain) {
+    case NotificationsPermissionDomain:
+        if (!m_drt->layoutTestController()->ignoreReqestForPermission())
+            setUserPermission(frame, domain, PermissionGranted);
+        break;
+    default:
+        break;
+    }
+}
+
+void WebPage::checkPermission(QWebFrame* frame, QWebPage::PermissionDomain domain, QWebPage::PermissionPolicy& policy)
+{
+    switch (domain) {
+    case NotificationsPermissionDomain:
+        {
+        QUrl url = frame->url();
+        policy = m_drt->layoutTestController()->checkDesktopNotificationPermission(url.scheme() + "://" + url.host()) ? PermissionGranted : PermissionDenied;
+        break;
+        }
+    default:
+        break;
+    }
+}
+
+void WebPage::cancelRequestsForPermission(QWebFrame*, QWebPage::PermissionDomain)
+{
 }
 
 static QString urlSuitableForTestResult(const QString& url)
@@ -990,16 +1009,6 @@ void DumpRenderTree::switchFocus(bool focused)
             view->scene()->sendEvent(view->graphicsView(), &event);
     }
 
-}
-
-void DumpRenderTree::checkPermission(const QUrl& url, NotificationPermission& permission)
-{
-    permission = m_controller->checkDesktopNotificationPermission(url.scheme() + "://" + url.host()) ? NotificationAllowed : NotificationDenied;
-}
-
-void DumpRenderTree::requestPermission(const QString& origin)
-{
-    DumpRenderTreeSupportQt::allowNotificationForOrigin(origin);
 }
 
 #if defined(Q_WS_X11)

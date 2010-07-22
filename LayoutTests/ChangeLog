@@ -1,3 +1,20 @@
+2010-07-22  Yael Aharon  <yael.aharon@nokia.com>
+
+        Reviewed by Laszlo Gombos.
+
+        [Qt] QtWebKit needs public API for Notifications.
+        https://bugs.webkit.org/show_bug.cgi?id=41413
+
+        Add a DRT API to set a flag so that notification requests are ignored,
+        and add a test for cancelling a pending notification request.
+        New API and test are disabled for Chromium port.
+
+        * fast/notifications/notifications-cancel-request-permission-expected.txt: Added.
+        * fast/notifications/notifications-cancel-request-permission.html: Added.
+        * fast/notifications/resources: Added.
+        * fast/notifications/resources/notifications-cancel-request-permission.html: Added.
+        * platform/chromium/test_expectations.txt:
+
 2010-07-22  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Ojan Vafai.

@@ -67,6 +67,7 @@ void LayoutTestController::reset()
     m_globalFlag = false;
     m_userStyleSheetEnabled = false;
     m_desktopNotificationAllowedOrigins.clear();
+    m_ignoreDesktopNotification = false;
 
     DumpRenderTreeSupportQt::dumpEditingCallbacks(false);
     DumpRenderTreeSupportQt::dumpFrameLoader(false);
@@ -193,9 +194,14 @@ void LayoutTestController::grantDesktopNotificationPermission(const QString& ori
     m_desktopNotificationAllowedOrigins.append(origin);
 }
 
+void LayoutTestController::ignoreDesktopNotificationPermissionRequests()
+{
+    m_ignoreDesktopNotification = true;
+}
+
 bool LayoutTestController::checkDesktopNotificationPermission(const QString& origin)
 {
-    return m_desktopNotificationAllowedOrigins.contains(origin);
+    return !m_ignoreDesktopNotification && m_desktopNotificationAllowedOrigins.contains(origin);
 }
 
 void LayoutTestController::display()

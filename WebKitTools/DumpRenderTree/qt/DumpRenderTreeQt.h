@@ -119,8 +119,6 @@ public Q_SLOTS:
     void dumpDatabaseQuota(QWebFrame* frame, const QString& dbName);
     void statusBarMessage(const QString& message);
     void windowCloseRequested();
-    void checkPermission(const QUrl&, NotificationPermission&);
-    void requestPermission(const QString&);
 
 Q_SIGNALS:
     void quit();
@@ -193,6 +191,9 @@ public:
 public slots:
     bool shouldInterruptJavaScript() { return false; }
     bool allowGeolocationRequest(QWebFrame *frame);
+    void requestPermission(QWebFrame* frame, QWebPage::PermissionDomain domain);
+    void checkPermission(QWebFrame* frame, QWebPage::PermissionDomain domain, QWebPage::PermissionPolicy& policy);
+    void cancelRequestsForPermission(QWebFrame* frame, QWebPage::PermissionDomain domain);
 
 protected:
     bool acceptNavigationRequest(QWebFrame* frame, const QNetworkRequest& request, NavigationType type);

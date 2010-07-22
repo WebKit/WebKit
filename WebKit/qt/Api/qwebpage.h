@@ -195,6 +195,16 @@ public:
         WebModalDialog
     };
 
+    enum PermissionPolicy {
+        PermissionGranted,
+        PermissionUnknown,
+        PermissionDenied
+    };
+
+    enum PermissionDomain {
+        NotificationsPermissionDomain
+    };
+
     class ViewportHints {
     public:
         ViewportHints();
@@ -290,6 +300,8 @@ public:
 
     QMenu *createStandardContextMenu();
 
+    void setUserPermission(QWebFrame* frame, PermissionDomain domain, PermissionPolicy policy);
+
     enum Extension {
         ChooseMultipleFilesExtension,
         ErrorPageExtension
@@ -370,6 +382,10 @@ Q_SIGNALS:
     void restoreFrameStateRequested(QWebFrame* frame);
 
     void viewportChangeRequested(const QWebPage::ViewportHints& hints);
+
+    void requestPermissionFromUser(QWebFrame* frame, QWebPage::PermissionDomain domain);
+    void checkPermissionFromUser(QWebFrame* frame, QWebPage::PermissionDomain domain, QWebPage::PermissionPolicy& policy);
+    void cancelRequestsForPermission(QWebFrame* frame, QWebPage::PermissionDomain domain);
 
 protected:
     virtual QWebPage *createWindow(WebWindowType type);

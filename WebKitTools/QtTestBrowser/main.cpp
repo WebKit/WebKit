@@ -92,29 +92,6 @@ static bool gUseFrameFlattening = false;
 static bool gUseQGLWidgetViewport = false;
 #endif
 
-class NotificationsPermissionController : public QObject {
-    Q_OBJECT
-public:
-    NotificationsPermissionController(QObject* parent) : QObject(parent) 
-    {
-        DumpRenderTreeSupportQt::setNotificationsReceiver(this);
-        DumpRenderTreeSupportQt::setCheckPermissionFunction(checkPermission);
-        DumpRenderTreeSupportQt::setRequestPermissionFunction(requestPermission);
-    }
-
-    static void checkPermission(QObject*, const QUrl&, NotificationPermission& permission)
-    {
-        permission = NotificationAllowed;
-    }
-
-    static void requestPermission(QObject*, const QString& origin)
-    {
-        DumpRenderTreeSupportQt::allowNotificationForOrigin(origin);
-    }
-};
-
-NotificationsPermissionController* notificationsPermissionController = 0;
-
 class LauncherWindow : public MainWindow {
     Q_OBJECT
 
@@ -233,8 +210,6 @@ LauncherWindow::LauncherWindow(LauncherWindow* other, bool shareScene)
     }
 
     createChrome();
-    if (!notificationsPermissionController)
-        notificationsPermissionController = new NotificationsPermissionController(QCoreApplication::instance());
 }
 
 LauncherWindow::~LauncherWindow()

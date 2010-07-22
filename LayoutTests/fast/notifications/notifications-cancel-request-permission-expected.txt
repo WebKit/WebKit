@@ -1,0 +1,5 @@
+DESKTOP NOTIFICATION PERMISSION REQUESTED: file://
+DESKTOP NOTIFICATION PERMISSION REQUEST CANCELLED: file://
+Requesting and cancelling notification permission...
+
+Pass if notification is cancelled

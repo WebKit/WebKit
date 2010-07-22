@@ -1,0 +1,28 @@
+<html>
+<head>
+    <script type="text/javascript">
+        function log(message)
+        {
+            parent.document.getElementById("result").innerHTML += message + "<br>";
+        }
+        
+        function runTests()
+        {
+            if (window.layoutTestController) {
+                layoutTestController.dumpAsText();
+            }
+
+            if (window.layoutTestController) {
+                layoutTestController.ignoreDesktopNotificationPermissionRequests();
+            }
+
+            window.webkitNotifications.requestPermission(
+                function() { log("FAIL: Permission callback invoked."); }
+            );
+
+        }
+    </script>
+</head>
+<body onload="runTests();">
+</body>
+</html>

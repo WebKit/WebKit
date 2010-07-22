@@ -1,3 +1,27 @@
+2010-07-22  Yael Aharon  <yael.aharon@nokia.com>
+
+        Reviewed by Laszlo Gombos.
+
+        [Qt] QtWebKit needs public API for Notifications.
+        https://bugs.webkit.org/show_bug.cgi?id=41413
+
+        Remove DumpRenderTree private API and introduce new API.
+        Also add support for informing the UI when a notification request is cancelled.
+
+        * Api/qwebpage.cpp:
+        (QWebPage::setUserPermission):
+        * Api/qwebpage.h:
+        * WebCoreSupport/DumpRenderTreeSupportQt.cpp:
+        * WebCoreSupport/DumpRenderTreeSupportQt.h:
+        * WebCoreSupport/NotificationPresenterClientQt.cpp:
+        (WebCore::NotificationPresenterClientQt::requestPermission):
+        (WebCore::NotificationPresenterClientQt::checkPermission):
+        (WebCore::NotificationPresenterClientQt::cancelRequestsForPermission):
+        (WebCore::NotificationPresenterClientQt::allowNotificationForFrame):
+        (WebCore::NotificationPresenterClientQt::toPage):
+        (WebCore::NotificationPresenterClientQt::toFrame):
+        * WebCoreSupport/NotificationPresenterClientQt.h:
+
 2010-07-22  Jamey Hicks  <jamey.hicks@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

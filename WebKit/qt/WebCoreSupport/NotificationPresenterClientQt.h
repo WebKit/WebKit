@@ -42,6 +42,9 @@
 #include <QMultiHash>
 #include <QSystemTrayIcon>
 
+class QWebFrame;
+class QWebPage;
+
 namespace WebCore {
 
 class Document;
@@ -90,11 +93,9 @@ public:
 
     void cancel(NotificationWrapper*);
 
-    void allowNotificationForOrigin(const QString& origin);
+    void allowNotificationForFrame(QWebFrame*);
 
     static bool dumpNotification;
-
-    void setReceiver(QObject* receiver) { m_receiver = receiver; }
 
     void addClient() { m_clientCount++; }
     void removeClient();
@@ -109,11 +110,17 @@ private:
     void detachNotification(Notification*);
     void dumpReplacedIdText(Notification*);
     void dumpShowText(Notification*);
+    QWebPage* toPage(ScriptExecutionContext*);
+    QWebFrame* toFrame(ScriptExecutionContext*);
 
     int m_clientCount;
-    QHash<QString,  QList<RefPtr<VoidCallback> > > m_pendingPermissionRequests;
+    struct CallbacksInfo {
+        QWebFrame* m_frame;
+        QList<RefPtr<VoidCallback> > m_callbacks;
+    };
+    QHash<ScriptExecutionContext*,  CallbacksInfo > m_pendingPermissionRequests;
+
     NotificationsQueue m_notifications;
-    QObject* m_receiver;
     QtPlatformPlugin m_platformPlugin;
 };
 

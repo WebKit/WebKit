@@ -36,11 +36,14 @@
 #include "DumpRenderTreeSupportQt.h"
 #include "EventNames.h"
 #include "KURL.h"
+#include "Page.h"
 #include "QtPlatformPlugin.h"
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
 
+#include "qwebframe_p.h"
 #include "qwebkitglobal.h"
+#include "qwebpage.h"
 #include <QtGui>
 
 namespace WebCore {
@@ -259,53 +262,77 @@ void NotificationPresenterClientQt::requestPermission(ScriptExecutionContext* co
     if (dumpNotification)
         printf("DESKTOP NOTIFICATION PERMISSION REQUESTED: %s\n", QString(context->securityOrigin()->toString()).toUtf8().constData());
 
-    QString originString = context->securityOrigin()->toString();
-    QHash<QString, QList<RefPtr<VoidCallback> > >::iterator iter = m_pendingPermissionRequests.find(originString);
+    QHash<ScriptExecutionContext*, CallbacksInfo >::iterator iter = m_pendingPermissionRequests.find(context);
     if (iter != m_pendingPermissionRequests.end())
-        iter.value().append(callback);
+        iter.value().m_callbacks.append(callback);
     else {
-        QList<RefPtr<VoidCallback> > callbacks;
         RefPtr<VoidCallback> cb = callback;
-        callbacks.append(cb);
-        m_pendingPermissionRequests.insert(originString, callbacks);
-        if (requestPermissionFunction)
-            requestPermissionFunction(m_receiver, originString);
+        CallbacksInfo info;
+        info.m_frame = toFrame(context);
+        info.m_callbacks.append(cb);
+        m_pendingPermissionRequests.insert(context, info);
+
+        if (toPage(context) && toFrame(context)) {
+            m_pendingPermissionRequests.insert(context, info);
+            emit toPage(context)->requestPermissionFromUser(toFrame(context), QWebPage::NotificationsPermissionDomain);
+        }
     }
 }
 
 NotificationPresenter::Permission NotificationPresenterClientQt::checkPermission(ScriptExecutionContext* context)
 {
-    NotificationPermission permission = NotificationNotAllowed;
-    QString origin = context->url().string();
-    if (checkPermissionFunction)
-        checkPermissionFunction(m_receiver, origin, permission);
-    switch (permission) {
-    case NotificationAllowed:
+    QWebPage::PermissionPolicy policy = QWebPage::PermissionUnknown;
+    if (toPage(context) && toFrame(context))
+        emit toPage(context)->checkPermissionFromUser(toFrame(context), QWebPage::NotificationsPermissionDomain, policy);
+
+    switch (policy) {
+    case QWebPage::PermissionGranted:
         return NotificationPresenter::PermissionAllowed;
-    case NotificationNotAllowed:
+    case QWebPage::PermissionUnknown:
         return NotificationPresenter::PermissionNotAllowed;
-    case NotificationDenied:
+    case QWebPage::PermissionDenied:
         return NotificationPresenter::PermissionDenied;
     }
     ASSERT_NOT_REACHED();
     return NotificationPresenter::PermissionNotAllowed;
 }
 
-void NotificationPresenterClientQt::cancelRequestsForPermission(ScriptExecutionContext*)
+void NotificationPresenterClientQt::cancelRequestsForPermission(ScriptExecutionContext* context)
 {
-    // FIXME: This will be implemented for https://bugs.webkit.org/show_bug.cgi?id=41413
-    // to avoid adding and removing new private API
+    QHash<ScriptExecutionContext*, CallbacksInfo >::iterator iter = m_pendingPermissionRequests.find(context);
+    if (iter == m_pendingPermissionRequests.end())
+        return;
+
+    QWebFrame* frame = iter.value().m_frame;
+    if (!frame)
+        return;
+    QWebPage* page = frame->page();
+    m_pendingPermissionRequests.erase(iter);
+
+    if (!page)
+        return;
+
+    if (dumpNotification)
+        printf("DESKTOP NOTIFICATION PERMISSION REQUEST CANCELLED: %s\n", QString(context->securityOrigin()->toString()).toUtf8().constData());
+
+    emit page->cancelRequestsForPermission(frame, QWebPage::NotificationsPermissionDomain);
 }
 
-void NotificationPresenterClientQt::allowNotificationForOrigin(const QString& origin)
+void NotificationPresenterClientQt::allowNotificationForFrame(QWebFrame* frame)
 {
-    QHash<QString, QList<RefPtr<VoidCallback> > >::iterator iter = m_pendingPermissionRequests.find(origin);
-    if (iter != m_pendingPermissionRequests.end()) {
-        QList<RefPtr<VoidCallback> >& callbacks = iter.value();
-        for (int i = 0; i < callbacks.size(); i++)
-            callbacks.at(i)->handleEvent();
-        m_pendingPermissionRequests.remove(origin);
+    QHash<ScriptExecutionContext*,  CallbacksInfo>::iterator iter = m_pendingPermissionRequests.begin();
+    while (iter != m_pendingPermissionRequests.end()) {
+        if (toFrame(iter.key()) == frame)
+            break;
     }
+
+    if (iter == m_pendingPermissionRequests.end())
+        return;
+
+    QList<RefPtr<VoidCallback> >& callbacks = iter.value().m_callbacks;
+    for (int i = 0; i < callbacks.size(); i++)
+        callbacks.at(i)->handleEvent();
+    m_pendingPermissionRequests.remove(iter.key());
 }
 
 void NotificationPresenterClientQt::sendEvent(Notification* notification, const AtomicString& eventName)
@@ -360,6 +387,34 @@ void NotificationPresenterClientQt::dumpShowText(Notification* notification)
             QString(notification->contents().icon().string()).toUtf8().constData(), QString(notification->contents().title()).toUtf8().constData(),
             QString(notification->contents().body()).toUtf8().constData());
     }
+}
+
+QWebPage* NotificationPresenterClientQt::toPage(ScriptExecutionContext* context)
+{
+    if (!context || context->isWorkerContext())
+        return 0;
+
+    Document* document = static_cast<Document*>(context);
+    if (!document)
+        return 0;
+
+    Page* page = document->page();
+    if (!page || !page->mainFrame())
+        return 0;
+
+    return QWebFramePrivate::kit(page->mainFrame())->page();
+}
+
+QWebFrame* NotificationPresenterClientQt::toFrame(ScriptExecutionContext* context)
+{
+    if (!context || context->isWorkerContext())
+        return 0;
+
+    Document* document = static_cast<Document*>(context);
+    if (!document || !document->frame())
+        return 0;
+
+    return QWebFramePrivate::kit(document->frame());
 }
 
 #endif // ENABLE(NOTIFICATIONS)

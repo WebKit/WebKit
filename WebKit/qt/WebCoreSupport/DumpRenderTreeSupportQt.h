@@ -32,17 +32,6 @@ class QWebPage;
 class QWebHistoryItem;
 class QWebScriptWorld;
 
-enum NotificationPermission {
-    NotificationAllowed,
-    NotificationNotAllowed,
-    NotificationDenied
-};
-
-typedef void (CheckPermissionFunctionType) (QObject* receiver, const QUrl&, NotificationPermission&);
-typedef void (RequestPermissionFunctionType) (QObject* receiver, const QString&);
-
-extern CheckPermissionFunctionType* checkPermissionFunction;
-extern RequestPermissionFunctionType* requestPermissionFunction;
 extern QMap<int, QWebScriptWorld*> m_worldMap;
 
 class QWEBKIT_EXPORT DumpRenderTreeSupportQt {
@@ -122,13 +111,6 @@ public:
     static void dumpSetAcceptsEditing(bool b);
 
     static void dumpNotification(bool b);
-
-    // These functions should eventually turn into public API
-    // and the "receiver" concept would go away
-    static void setNotificationsReceiver(QObject* receiver);
-    static void allowNotificationForOrigin(const QString& origin);
-    static void setCheckPermissionFunction(CheckPermissionFunctionType*);
-    static void setRequestPermissionFunction(RequestPermissionFunctionType*);
 
     static QMap<QString, QWebHistoryItem> getChildHistoryItems(const QWebHistoryItem& historyItem);
     static bool isTargetItem(const QWebHistoryItem& historyItem);
