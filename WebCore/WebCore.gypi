@@ -2906,8 +2906,6 @@
             'platform/win/PasteboardWin.cpp',
             'platform/win/PlatformMouseEventWin.cpp',
             'platform/win/PlatformScreenWin.cpp',
-            'platform/win/PlatformScrollBar.h',
-            'platform/win/PlatformScrollBarWin.cpp',
             'platform/win/PopupMenuWin.cpp',
             'platform/win/ScrollbarThemeSafari.cpp',
             'platform/win/ScrollbarThemeSafari.h',
