@@ -1,3 +1,14 @@
+2010-07-22  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Don't assert when Connection::invalidate is called before Connection::dispatchConnectionDidClose
+        https://bugs.webkit.org/show_bug.cgi?id=42851
+
+        * Platform/CoreIPC/Connection.cpp:
+        (CoreIPC::Connection::dispatchConnectionDidClose):
+        Just return early if m_client is 0.
+
 2010-07-22  Adam Roben  <aroben@apple.com>
 
         Use ::MessageBox instead of ::DebugBreak to make the web process wait

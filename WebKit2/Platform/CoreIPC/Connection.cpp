@@ -196,6 +196,11 @@ void Connection::connectionDidClose()
 
 void Connection::dispatchConnectionDidClose()
 {
+    // If the connection has been explicitly invalidated before dispatchConnectionDidClose was called,
+    // then the client will be null here.
+    if (!m_client)
+        return;
+
     m_client->didClose(this);
     
     // Reset the client.
