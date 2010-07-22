@@ -1,3 +1,19 @@
+2010-07-22  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Modifying settings actually modifies defaultValues
+        https://bugs.webkit.org/show_bug.cgi?id=42816
+
+        Avoid using live modifiable objects as property default values.
+
+        * inspector/front-end/Settings.js:
+        (WebInspector.Settings):
+        (WebInspector.Settings.prototype.reset):
+        (WebInspector.Settings.prototype._load):
+        (WebInspector.Settings.prototype.installSetting):
+        (WebInspector.Settings.prototype._get):
+
 2010-07-22  Ben Murdoch  <benm@google.com>
 
         Reviewed by Simon Fraser.

@@ -71,38 +71,42 @@ WebInspector.populateSessionSettings = function(settingsString)
 WebInspector.Settings = function(sessionScope)
 {
     this._sessionScope = sessionScope;
-    this._defaultValues = {};
+    this._store = {};
 }
 
 WebInspector.Settings.prototype = {
     reset: function()
     {
         this._store = {};
+        // FIXME: restore default values (bug 42820)
         this.dispatchEventToListeners("loaded");
     },
 
     _load: function(settingsString)
     {
         try {
-            this._store = JSON.parse(settingsString);
+            var loadedStore = JSON.parse(settingsString);
         } catch (e) {
             // May fail;
-            this._store = {};
+            loadedStore = {};
         }
+        if (!loadedStore)
+            return;
+        for (var propertyName in loadedStore)
+            this._store[propertyName] = loadedStore[propertyName];
     },
 
     installSetting: function(name, propertyName, defaultValue)
     {
         this.__defineGetter__(name, this._get.bind(this, propertyName));
         this.__defineSetter__(name, this._set.bind(this, propertyName));
-        this._defaultValues[propertyName] = defaultValue;
+        if (!(propertyName in this._store))
+            this._store[propertyName] = defaultValue;
     },
 
     _get: function(propertyName)
     {
-        if (propertyName in this._store)
-            return this._store[propertyName];
-        return this._defaultValues[propertyName];
+        return this._store[propertyName];
     },
 
     _set: function(propertyName, newValue)
