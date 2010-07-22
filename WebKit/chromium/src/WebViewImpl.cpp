@@ -489,10 +489,10 @@ void WebViewImpl::mouseUp(const WebMouseEvent& event)
 #endif
 }
 
-void WebViewImpl::mouseWheel(const WebMouseWheelEvent& event)
+bool WebViewImpl::mouseWheel(const WebMouseWheelEvent& event)
 {
     PlatformWheelEventBuilder platformEvent(mainFrameImpl()->frameView(), event);
-    mainFrameImpl()->frame()->eventHandler()->handleWheelEvent(platformEvent);
+    return mainFrameImpl()->frame()->eventHandler()->handleWheelEvent(platformEvent);
 }
 
 bool WebViewImpl::keyEvent(const WebKeyboardEvent& event)
@@ -1018,7 +1018,7 @@ bool WebViewImpl::handleInputEvent(const WebInputEvent& inputEvent)
         break;
 
     case WebInputEvent::MouseWheel:
-        mouseWheel(*static_cast<const WebMouseWheelEvent*>(&inputEvent));
+        handled = mouseWheel(*static_cast<const WebMouseWheelEvent*>(&inputEvent));
         break;
 
     case WebInputEvent::MouseDown:
