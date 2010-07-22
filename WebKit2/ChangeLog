@@ -1,3 +1,12 @@
+2010-07-22  Ivan Krstić  <ike@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Adapt sandbox for new WebProcess bootstrap service naming scheme.
+        <rdar://problem/8225000>
+
+        * WebProcess/com.apple.WebProcess.sb:
+
 2010-07-22  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adam Roben.

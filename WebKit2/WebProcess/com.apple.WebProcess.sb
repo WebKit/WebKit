@@ -51,7 +51,7 @@
        (global-name "com.apple.windowserver.active")
        (global-name "com.apple.SecurityServer")
        (global-name "com.apple.ocspd")
-       (local-name "com.apple.WebKit.WebProcess"))
+       (global-name-regex #"^com.apple.WebKit.WebProcess-"))
 
 (allow network-outbound
        ;; Local mDNSResponder for DNS, arbitrary outbound TCP
