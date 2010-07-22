@@ -1,3 +1,30 @@
+2010-07-22  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Small refactoring for input value sanitization
+        https://bugs.webkit.org/show_bug.cgi?id=42807
+
+        Rename some functions to clarify their roles.
+
+        * dom/InputElement.cpp:
+        (WebCore::replaceEOLAndLimitLength):
+          Renamed from sanitizeUserInputValue().
+        (WebCore::InputElement::sanitizeValueForTextField):
+          Renamed from sanitizeValue(), and call replaceEOLAndLimitLength()
+          instead of sanitizeUserInputValue().
+        (WebCore::InputElement::sanitizeUserInputValue):
+          Just call replaceEOLAndLimitLength().
+        (WebCore::InputElement::updateValueIfNeeded):
+          Use non-static sanitizeValue() for consistency.
+        * dom/InputElement.h:
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::setInputType):
+          Revert the change of r63876. It is not needed because of the
+          updateValueIfNeeded() change.
+        (WebCore::HTMLInputElement::sanitizeValue):
+          Apply the sanitizeValue() renaming.
+
 2010-07-22  Tony Gentilcore  <tonyg@chromium.org>
 
         Reviewed by Darin Fisher.

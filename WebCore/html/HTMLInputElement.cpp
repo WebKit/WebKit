@@ -863,12 +863,8 @@ void HTMLInputElement::setInputType(const String& t)
             }
             if (!didStoreValue && willStoreValue)
                 m_data.setValue(sanitizeValue(getAttribute(valueAttr)));
-            else {
-                String oldValue = m_data.value();
-                String newValue = sanitizeValue(oldValue);
-                if (newValue != oldValue)
-                    setValue(newValue);
-            }
+            else
+                InputElement::updateValueIfNeeded(m_data, this);
 
             if (wasPasswordField && !isPasswordField)
                 unregisterForActivationCallbackIfNeeded();
@@ -2566,7 +2562,7 @@ FileList* HTMLInputElement::files()
 String HTMLInputElement::sanitizeValue(const String& proposedValue) const
 {
     if (isTextField())
-        return InputElement::sanitizeValue(this, proposedValue);
+        return InputElement::sanitizeValueForTextField(this, proposedValue);
 
     // If the proposedValue is null than this is a reset scenario and we
     // want the range input's value attribute to take priority over the

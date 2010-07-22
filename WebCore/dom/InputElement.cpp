@@ -145,20 +145,7 @@ void InputElement::setValueFromRenderer(InputElementData& data, InputElement* in
     notifyFormStateChanged(element);
 }
 
-String InputElement::sanitizeValue(const InputElement* inputElement, const String& proposedValue)
-{
-#if ENABLE(WCSS)
-    InputElementData data = const_cast<InputElement*>(inputElement)->data();
-    if (!isConformToInputMask(data, proposedValue)) {
-        if (isConformToInputMask(data, data.value()))
-            return data.value();
-        return String();
-    }
-#endif
-    return InputElement::sanitizeUserInputValue(inputElement, proposedValue, s_maximumLength);
-}
-
-String InputElement::sanitizeUserInputValue(const InputElement* inputElement, const String& proposedValue, int maxLength)
+static String replaceEOLAndLimitLength(const InputElement* inputElement, const String& proposedValue, int maxLength)
 {
     if (!inputElement->isTextField())
         return proposedValue;
@@ -177,6 +164,24 @@ String InputElement::sanitizeUserInputValue(const InputElement* inputElement, co
         }
     }
     return string.left(newLength);
+}
+
+String InputElement::sanitizeValueForTextField(const InputElement* inputElement, const String& proposedValue)
+{
+#if ENABLE(WCSS)
+    InputElementData data = const_cast<InputElement*>(inputElement)->data();
+    if (!isConformToInputMask(data, proposedValue)) {
+        if (isConformToInputMask(data, data.value()))
+            return data.value();
+        return String();
+    }
+#endif
+    return replaceEOLAndLimitLength(inputElement, proposedValue, s_maximumLength);
+}
+
+String InputElement::sanitizeUserInputValue(const InputElement* inputElement, const String& proposedValue, int maxLength)
+{
+    return replaceEOLAndLimitLength(inputElement, proposedValue, maxLength);
 }
 
 void InputElement::handleBeforeTextInsertedEvent(InputElementData& data, InputElement* inputElement, Element* element, Event* event)
@@ -245,7 +250,7 @@ void InputElement::parseMaxLengthAttribute(InputElementData& data, InputElement*
 void InputElement::updateValueIfNeeded(InputElementData& data, InputElement* inputElement)
 {
     String oldValue = data.value();
-    String newValue = sanitizeValue(inputElement, oldValue);
+    String newValue = inputElement->sanitizeValue(oldValue);
     if (newValue != oldValue)
         inputElement->setValue(newValue);
 }
