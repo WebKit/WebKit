@@ -1,3 +1,13 @@
+2010-07-22  Andrey Kosyakov  <caseq@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: Stop granting universal access to inspector front-end page.
+        https://bugs.webkit.org/show_bug.cgi?id=42817
+
+        * inspector/InspectorFrontendClientLocal.cpp:
+        (WebCore::InspectorFrontendClientLocal::windowObjectCleared):
+
 2010-07-22  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed. Fix inspector console tests crashes.

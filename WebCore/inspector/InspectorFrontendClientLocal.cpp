@@ -70,8 +70,6 @@ InspectorFrontendClientLocal::~InspectorFrontendClientLocal()
     
 void InspectorFrontendClientLocal::windowObjectCleared()
 {
-    // Grant the inspector the ability to script the inspected page.
-    m_frontendPage->mainFrame()->document()->securityOrigin()->grantUniversalAccess();
     // FIXME: don't keep reference to the script state
     m_frontendScriptState = scriptStateFromPage(debuggerWorld(), m_frontendPage);
     ScriptGlobalObject::set(m_frontendScriptState, "InspectorBackend", m_inspectorController->inspectorBackend());

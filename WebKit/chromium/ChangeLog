@@ -1,3 +1,13 @@
+2010-07-22  Andrey Kosyakov  <caseq@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: Stop granting universal access to inspector front-end page.
+        https://bugs.webkit.org/show_bug.cgi?id=42817
+
+        * src/WebDevToolsFrontendImpl.cpp:
+        (WebKit::WebDevToolsFrontendImpl::frontendLoaded):
+
 2010-07-22  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Pavel Feldman.

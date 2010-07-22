@@ -150,10 +150,6 @@ void WebDevToolsFrontendImpl::frontendLoaded()
 {
     m_loaded = true;
 
-    // Grant the devtools page the ability to have source view iframes.
-    SecurityOrigin* origin = m_webViewImpl->page()->mainFrame()->domWindow()->securityOrigin();
-    origin->grantUniversalAccess();
-
     for (Vector<Vector<String> >::iterator it = m_pendingIncomingMessages.begin();
          it != m_pendingIncomingMessages.end();
          ++it) {
