@@ -1,3 +1,30 @@
+2010-07-22  Zoltan Herczeg  <zherczeg@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        SVGFilterElement & SVGFE*Element don't support dynamic invalidation, when attributes change
+        https://bugs.webkit.org/show_bug.cgi?id=42244
+
+        Implementing svgAttributeChanged and childrenChanged for the base class of all filters,
+        called SVGFilterPrimitiveStandardAttributes.
+
+        Tests: svg/dynamic-updates/SVGFilterPrimitiveStandardAttributes-dom-height-attr.html
+               svg/dynamic-updates/SVGFilterPrimitiveStandardAttributes-dom-result-attr.html
+               svg/dynamic-updates/SVGFilterPrimitiveStandardAttributes-dom-width-attr.html
+               svg/dynamic-updates/SVGFilterPrimitiveStandardAttributes-dom-x-attr.html
+               svg/dynamic-updates/SVGFilterPrimitiveStandardAttributes-dom-y-attr.html
+               svg/dynamic-updates/SVGFilterPrimitiveStandardAttributes-svgdom-height-prop.html
+               svg/dynamic-updates/SVGFilterPrimitiveStandardAttributes-svgdom-result-prop.html
+               svg/dynamic-updates/SVGFilterPrimitiveStandardAttributes-svgdom-width-prop.html
+               svg/dynamic-updates/SVGFilterPrimitiveStandardAttributes-svgdom-x-prop.html
+               svg/dynamic-updates/SVGFilterPrimitiveStandardAttributes-svgdom-y-prop.html
+
+        * svg/SVGFilterPrimitiveStandardAttributes.cpp:
+        (WebCore::SVGFilterPrimitiveStandardAttributes::svgAttributeChanged):
+        (WebCore::SVGFilterPrimitiveStandardAttributes::childrenChanged):
+        * svg/SVGFilterPrimitiveStandardAttributes.h:
+        (WebCore::SVGFilterPrimitiveStandardAttributes::invalidateFilter):
+
 2010-07-22  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Darin Adler.

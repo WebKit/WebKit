@@ -24,6 +24,7 @@
 #if ENABLE(SVG) && ENABLE(FILTERS)
 #include "FilterEffect.h"
 #include "SVGFilterBuilder.h"
+#include "SVGFilterElement.h"
 #include "SVGNames.h"
 #include "SVGStyledElement.h"
 
@@ -40,12 +41,22 @@ public:
     virtual bool isFilterEffect() const { return true; }
 
     virtual void parseMappedAttribute(Attribute*);
+    virtual void svgAttributeChanged(const QualifiedName&);
     virtual void synchronizeProperty(const QualifiedName&);
+    virtual void childrenChanged(bool changedByParser = false, Node* beforeChange = 0, Node* afterChange = 0, int childCountDelta = 0);
     virtual PassRefPtr<FilterEffect> build(SVGFilterBuilder*) = 0;
 
     virtual bool rendererIsNeeded(RenderStyle*) { return false; }
 
     void setStandardAttributes(bool, FilterEffect*) const;
+
+protected:
+    void invalidateFilter()
+    {
+        if (!inDocument() || !parentNode()->hasTagName(SVGNames::filterTag))
+            return;
+        static_cast<SVGFilterElement*>(parentNode())->invalidateResourceClients();
+    }
 
 private:
     DECLARE_ANIMATED_PROPERTY(SVGFilterPrimitiveStandardAttributes, SVGNames::xAttr, SVGLength, X, x)
