@@ -823,6 +823,11 @@
                         '../../WebKitTools/DumpRenderTree/fonts/WebKitWeightWatcher900.ttf',
                         '<(SHARED_INTERMEDIATE_DIR)/webkit/textAreaResizeCorner.png',
                     ],
+                    # Workaround for http://code.google.com/p/gyp/issues/detail?id=160
+                    'copies': [{
+                        'destination': '<(PRODUCT_DIR)/DumpRenderTree.app/Contents/PlugIns/',
+                        'files': ['<(PRODUCT_DIR)/TestNetscapePlugIn.plugin/'],
+                    }],
                 },{ # OS!="mac"
                     'sources/': [
                         # .mm is already excluded by common.gypi
