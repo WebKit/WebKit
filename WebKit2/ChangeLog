@@ -1,3 +1,11 @@
+2010-07-22  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Build fix. Unreviewed.
+
+        * win/WebKit2WebProcess.vcproj:
+        Remove the pre- and post-build events, so that they will use the value
+        inherited from the vsprops.
+
 2010-07-21  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam Weinig.
