@@ -3348,6 +3348,7 @@ SOURCES += \
     ../WebKit2/WebProcess/InjectedBundle/qt/InjectedBundleQt.cpp \
     ../WebKit2/UIProcess/API/qt/ClientImpl.cpp \
     ../WebKit2/UIProcess/qt/ChunkedUpdateDrawingAreaProxyQt.cpp \
+    ../WebKit2/UIProcess/qt/WebContextQt.cpp \
     ../WebKit2/WebProcess/WebCoreSupport/WebChromeClient.cpp \
     ../WebKit2/WebProcess/WebCoreSupport/WebContextMenuClient.cpp \
     ../WebKit2/WebProcess/WebCoreSupport/WebDragClient.cpp \

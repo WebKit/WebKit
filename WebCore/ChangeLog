@@ -1,3 +1,15 @@
+2010-07-22  Andras Becsi  <abecsi@webkit.org>
+
+        Reviewed by Antonio Gomes.
+
+        [Qt] Implement WebContext::applicationCacheDirectory() for the Qt port of WebKit2.
+        https://bugs.webkit.org/show_bug.cgi?id=42830
+
+        No new tests needed.
+
+        * WebCore.pri: add ApplicationCacheStorage.h to wk2 headers
+        * WebCore.pro: add WebContextQt.cpp to sources
+
 2010-07-22  Joone Hur  <joone.hur@samsung.com>
 
         Reviewed by Antonio Gomes.

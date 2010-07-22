@@ -681,6 +681,7 @@ WEBCORE_HEADERS_FOR_WEBKIT2 += \
     html/HTMLFormElement.h \
     html/HTMLFrameOwnerElement.h \
     inspector/InspectorClient.h \
+    loader/appcache/ApplicationCacheStorage.h \
     loader/DocumentLoader.h \
     loader/FormState.h \
     loader/FrameLoader.h \
