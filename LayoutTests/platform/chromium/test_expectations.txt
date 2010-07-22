@@ -97,7 +97,8 @@ BUG24182 DEBUG SLOW : fast/dom/Window/window-function-frame-getter-precedence.ht
 BUG24182 SLOW DEBUG : fast/frames/frame-limit.html = PASS
 BUG24182 SLOW : http/tests/cache/subresource-failover-to-network.html = PASS
 BUG24182 WIN DEBUG : animations/play-state.html = PASS TEXT
-BUG24182 SLOW WIN RELEASE : animations/play-state.html = PASS
+BUG24182 SLOW WIN RELEASE : animations/play-state.html = PASS TEXT
+BUG24182 LINUX : animations/play-state.html = PASS TEXT
 
 // Usually <1s in release, ~1s in debug, but occasionally >5s in release.
 BUG27335 WIN RELEASE : plugins/embed-attributes-setting.html = PASS TIMEOUT
@@ -2038,10 +2039,7 @@ BUG14207 LINUX : tables/mozilla/bugs/bug28341.html = FAIL
 BUG32231 WIN DEBUG : tables/mozilla/bugs/bug28341.html = IMAGE PASS
 
 // Newly added test http://trac.webkit.org/changeset/44816
-BUG18733 WIN SLOW : http/tests/xmlhttprequest/cross-origin-no-authorization.html = FAIL
-BUG18733 MAC DEBUG : http/tests/xmlhttprequest/cross-origin-no-authorization.html = FAIL TIMEOUT
-BUG18733 LINUX MAC RELEASE : http/tests/xmlhttprequest/cross-origin-no-authorization.html = FAIL
-BUG18733 LINUX DEBUG : http/tests/xmlhttprequest/cross-origin-no-authorization.html = FAIL
+BUG18733 WIN SLOW : http/tests/xmlhttprequest/cross-origin-no-authorization.html = PASS
 
 BUG14832 : editing/selection/user-drag-element-and-user-select-none.html = FAIL
 
@@ -2075,7 +2073,9 @@ BUG14752 LINUX SLOW : http/tests/cache/subresource-expiration.html = PASS
 
 // New tests with WebKit merge 46288:46363
 BUG18116 : fast/dom/constructed-objects-prototypes.html = TEXT
-BUG18116 : fast/dom/prototype-inheritance-2.html = TEXT
+BUG18116 WIN RELEASE : fast/dom/prototype-inheritance-2.html = TEXT
+BUG18116 WIN DEBUG : fast/dom/prototype-inheritance-2.html = CRASH
+BUG18116 MAC LINUX : fast/dom/prototype-inheritance-2.html = TEXT
 // New in WebKit r52559
 BUG18116 : svg/custom/global-constructors.html = TEXT
 
@@ -2859,8 +2859,6 @@ BUG46872 : http/tests/loading/preload-slow-loading.php = TEXT
 BUG46974 WIN : inspector/audits-panel-functional.html = CRASH PASS
 
 BUG47035 WIN DEBUG : fast/loader/stateobjects/document-destroyed-navigate-back-with-fragment-scroll.html = PASS TEXT
-// FIXME_SENORBLANCO:  Uncomment this once rebaselined.
-// BUG47036 WIN SLOW : html5lib/runner.html = PASS
 
 // CSS3 Hyphenation landed in http://trac.webkit.org/changeset/61548
 // We don't implement it yet.
@@ -3120,7 +3118,10 @@ BUG42598 : http/tests/misc/401-alternative-content.php = TEXT
 BUG42598 : http/tests/xmlhttprequest/failed-auth.html = TEXT
 
 // This one started failing at r63728.
-BUG_SENORBLANCO : html5lib/runner.html = TEXT
+BUGWK42845 : html5lib/runner.html = TEXT
 
 BUGWK42769 : http/tests/xmlhttprequest/remember-bad-password.html = TEXT
 BUGWK42769 : http/tests/security/401-logout/401-logout.php = TIMEOUT
+
+// Flaky since at least chromium r52834, WebKit r63615.
+BUG49970 : platform/chromium/plugins/call-as-function.html = PASS TEXT

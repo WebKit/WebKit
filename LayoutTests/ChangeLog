@@ -1,3 +1,10 @@
+2010-07-22  Stephen White  <senorblanco@chromium.org>
+
+        Unreviewed; test expectations fix.
+
+        * platform/chromium/test_expectations.txt:
+        Updated expectations to match reality on the bots.
+
 2010-07-22  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam Weinig.
