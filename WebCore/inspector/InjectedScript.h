@@ -38,6 +38,7 @@
 
 namespace WebCore {
 
+class InspectorValue;
 class SerializedScriptValue;
 class String;
 
@@ -52,7 +53,7 @@ public:
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     PassRefPtr<SerializedScriptValue> callFrames();
 #endif
-    PassRefPtr<SerializedScriptValue> wrapForConsole(ScriptValue);
+    PassRefPtr<InspectorValue> wrapForConsole(ScriptValue);
     void releaseWrapperObjectGroup(const String&);
 
 private:

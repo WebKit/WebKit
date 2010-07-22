@@ -107,7 +107,7 @@ module core {
         void searchCanceled();
         void pushNodeByPathToFrontend(in long callId, in DOMString path);
 
-        void clearConsoleMessages();
+        void clearConsoleMessages(in long callId);
 
         void highlightDOMNode(in long nodeId);
         void hideDOMNodeHighlight();

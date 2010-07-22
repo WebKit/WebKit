@@ -32,6 +32,7 @@
 
 module core {
     interface [Conditional=INSPECTOR] Inspector {
+        [notify] void addConsoleMessage(out Object messageObj);
         [notify] void addRecordToTimeline(out Object record);
         [notify] void addNodesToSearchResult(out Array nodeIds);
         [notify] void attributesUpdated(out long id, out Array attributes);
@@ -41,6 +42,8 @@ module core {
         [notify] void setChildNodes(out long parentId, out Array nodes);
         [notify] void setDetachedRoot(out Object root);
         [notify] void setDocument(out Value root);
+        [notify] void updateConsoleMessageExpiredCount(out unsigned long count);
+        [notify] void updateConsoleMessageRepeatCount(out unsigned long count);
 
         void storeLastActivePanel(in String panelName);
 
@@ -117,7 +120,7 @@ module core {
         void searchCanceled();
         void pushNodeByPathToFrontend(in long callId, in String path, out long nodeId);
 
-        void clearConsoleMessages();
+        void clearConsoleMessages(in long callId);
 
         void highlightDOMNode(in long nodeId);
         void hideDOMNodeHighlight();

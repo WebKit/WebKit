@@ -1129,11 +1129,6 @@ WebInspector.showAuditsPanel = function()
     this.currentPanel = this.panels.audits;
 }
 
-WebInspector.clearConsoleMessages = function()
-{
-    WebInspector.console.clearMessages();
-}
-
 WebInspector.selectDatabase = function(o)
 {
     WebInspector.showStoragePanel();

@@ -31,6 +31,7 @@
 #include "config.h"
 #include "ScriptValue.h"
 
+#include "InspectorValues.h"
 #include "ScriptScope.h"
 #include "SerializedScriptValue.h"
 #include "V8Binding.h"
@@ -64,6 +65,62 @@ bool ScriptValue::getString(String& result) const
 String ScriptValue::toString(ScriptState*) const
 {
     return toWebCoreString(m_value);
+}
+
+static PassRefPtr<InspectorValue> v8ToInspectorValue(v8::Handle<v8::Value> value)
+{
+    if (value.IsEmpty()) {
+        ASSERT_NOT_REACHED();
+        return 0;
+    }
+    if (value->IsNull() || value->IsUndefined())
+        return InspectorValue::null();
+    if (value->IsBoolean())
+        return InspectorBasicValue::create(value->BooleanValue());
+    if (value->IsNumber())
+        return InspectorBasicValue::create(value->NumberValue());
+    if (value->IsString())
+        return InspectorString::create(toWebCoreString(value));
+    if (value->IsArray()) {
+        v8::HandleScope handleScope;
+        v8::Handle<v8::Array> array = v8::Handle<v8::Array>::Cast(value);
+        RefPtr<InspectorArray> inspectorArray = InspectorArray::create();
+        uint32_t length = array->Length();
+        for (uint32_t i = 0; i < length; i++) {
+            v8::Local<v8::Value> value = array->Get(v8::Int32::New(i));
+            RefPtr<InspectorValue> element = v8ToInspectorValue(value);
+            if (!element) {
+                ASSERT_NOT_REACHED();
+                element = InspectorValue::null();
+            }
+            inspectorArray->push(element);
+        }
+        return inspectorArray;
+    }
+    if (value->IsObject()) {
+        RefPtr<InspectorObject> inspectorObject = InspectorObject::create();
+
+        v8::HandleScope handleScope;
+        v8::Handle<v8::Object> object = v8::Handle<v8::Object>::Cast(value);
+        v8::Local<v8::Array> propertyNames = object->GetPropertyNames();
+        uint32_t length = propertyNames->Length();
+        for (uint32_t i = 0; i < length; i++) {
+            v8::Local<v8::Value> name = propertyNames->Get(v8::Int32::New(i));
+            RefPtr<InspectorValue> propertyValue = v8ToInspectorValue(object->Get(name));
+            if (!propertyValue) {
+                ASSERT_NOT_REACHED();
+                continue;
+            }
+            inspectorObject->set(toWebCoreStringWithNullCheck(name), propertyValue);
+        }
+        return inspectorObject;
+    }
+    return 0;
+}
+
+PassRefPtr<InspectorValue> ScriptValue::toInspectorValue(ScriptState*) const
+{
+    return v8ToInspectorValue(m_value);
 }
 
 } // namespace WebCore

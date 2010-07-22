@@ -43,6 +43,7 @@ class InspectorApplicationCacheAgent;
 class InspectorDOMAgent;
 class InspectorFrontend;
 class Node;
+class RemoteInspectorFrontend;
 class Storage;
 
 class InspectorBackend : public RefCounted<InspectorBackend>
@@ -133,7 +134,7 @@ public:
     void searchCanceled();
     void pushNodeByPathToFrontend(long callId, const String& path);
 
-    void clearConsoleMessages();
+    void clearConsoleMessages(long callId);
 
     void getStyles(long callId, long nodeId, bool authOnly);
     void getAllStyles(long callId);
@@ -179,6 +180,7 @@ private:
     InspectorApplicationCacheAgent* inspectorApplicationCacheAgent();
 #endif
     InspectorFrontend* inspectorFrontend();
+    RemoteInspectorFrontend* remoteFrontend();
     Node* nodeForId(long nodeId);
 
     InspectorController* m_inspectorController;

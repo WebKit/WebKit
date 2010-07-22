@@ -40,7 +40,8 @@
 
 namespace WebCore {
 class InjectedScriptHost;
-class InspectorFrontend;
+class InspectorObject;
+class RemoteInspectorFrontend;
 class ScriptCallFrame;
 class ScriptCallStack;
 class ScriptString;
@@ -51,8 +52,8 @@ public:
     ConsoleMessage(MessageSource, MessageType, MessageLevel, const String& m, ScriptCallStack*, unsigned g, bool storeTrace = false);
 
 #if ENABLE(INSPECTOR)
-    void addToFrontend(InspectorFrontend*, InjectedScriptHost*);
-    void updateRepeatCountInConsole(InspectorFrontend* frontend);
+    void addToFrontend(RemoteInspectorFrontend*, InjectedScriptHost*);
+    void updateRepeatCountInConsole(RemoteInspectorFrontend* frontend);
 #endif
     void incrementCount() { ++m_repeatCount; }
     bool isEqual(ScriptState*, ConsoleMessage* msg) const;
@@ -66,7 +67,7 @@ private:
         explicit CallFrame(const ScriptCallFrame& frame);
         CallFrame();
         bool isEqual(const CallFrame& o) const;
-        ScriptObject buildObject(InspectorFrontend* frontend) const;
+        PassRefPtr<InspectorObject> buildInspectorObject() const;
 
     private:
         String m_functionName;

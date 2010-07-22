@@ -1,3 +1,43 @@
+2010-07-22  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: should be possible to convert console message arguments to InspectorValues
+        https://bugs.webkit.org/show_bug.cgi?id=42457
+
+        Now it is possible to convert simple JavaScript objects to
+        InspectorValues.
+
+        * bindings/js/ScriptValue.cpp:
+        (WebCore::jsToInspectorValue):
+        (WebCore::ScriptValue::toInspectorValue):
+        * bindings/js/ScriptValue.h:
+        * bindings/v8/ScriptValue.cpp:
+        (WebCore::v8ToInspectorValue):
+        (WebCore::ScriptValue::toInspectorValue):
+        * bindings/v8/ScriptValue.h:
+        * inspector/ConsoleMessage.cpp: console notifications are pushed to RemoteInspectorFrontend instead of InspectorFrontend.
+        (WebCore::ConsoleMessage::CallFrame::buildInspectorObject):
+        (WebCore::ConsoleMessage::addToFrontend):
+        (WebCore::ConsoleMessage::updateRepeatCountInConsole):
+        * inspector/ConsoleMessage.h:
+        * inspector/InjectedScript.cpp:
+        (WebCore::InjectedScript::wrapForConsole): return InspectorValue instead of SerializedScriptValue
+        * inspector/InjectedScript.h:
+        * inspector/Inspector.idl:
+        * inspector/InspectorBackend.cpp:
+        (WebCore::InspectorBackend::clearConsoleMessages): send response directly from the backend
+        (WebCore::InspectorBackend::remoteFrontend):
+        * inspector/InspectorBackend.h:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::addConsoleMessage):
+        (WebCore::InspectorController::clearConsoleMessages): don't send notification to the front end,
+        it will be send either from InspectorBackend.cpp if it was a user request or reset message will
+        be send to the front end if the messages are cleared due to page navigation.
+        (WebCore::InspectorController::populateScriptObjects):
+        * inspector/front-end/ConsoleView.js:
+        * inspector/front-end/inspector.js:
+
 2010-07-22  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Pavel Feldman.

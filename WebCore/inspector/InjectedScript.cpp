@@ -33,6 +33,7 @@
 
 #if ENABLE(INSPECTOR)
 
+#include "InspectorValues.h"
 #include "PlatformString.h"
 #include "SerializedScriptValue.h"
 #include "ScriptFunctionCall.h"
@@ -73,7 +74,7 @@ PassRefPtr<SerializedScriptValue> InjectedScript::callFrames()
 }
 #endif
 
-PassRefPtr<SerializedScriptValue> InjectedScript::wrapForConsole(ScriptValue value)
+PassRefPtr<InspectorValue> InjectedScript::wrapForConsole(ScriptValue value)
 {
     ASSERT(!hasNoValue());
     ScriptFunctionCall wrapFunction(m_injectedScriptObject, "wrapObjectForConsole");
@@ -82,8 +83,8 @@ PassRefPtr<SerializedScriptValue> InjectedScript::wrapForConsole(ScriptValue val
     bool hadException = false;
     ScriptValue r = wrapFunction.call(hadException);
     if (hadException)
-        return SerializedScriptValue::create("<exception>");
-    return r.serialize(m_injectedScriptObject.scriptState());
+        return InspectorString::create("<exception>");
+    return r.toInspectorValue(m_injectedScriptObject.scriptState());
 }
 
 void InjectedScript::releaseWrapperObjectGroup(const String& objectGroup)

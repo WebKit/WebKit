@@ -363,12 +363,12 @@ void InspectorController::addConsoleMessage(ScriptState* scriptState, PassOwnPtr
     if (m_previousMessage && m_previousMessage->isEqual(scriptState, consoleMessage.get())) {
         m_previousMessage->incrementCount();
         if (m_frontend)
-            m_previousMessage->updateRepeatCountInConsole(m_frontend.get());
+            m_previousMessage->updateRepeatCountInConsole(m_remoteFrontend.get());
     } else {
         m_previousMessage = consoleMessage.get();
         m_consoleMessages.append(consoleMessage);
         if (m_frontend)
-            m_previousMessage->addToFrontend(m_frontend.get(), m_injectedScriptHost.get());
+            m_previousMessage->addToFrontend(m_remoteFrontend.get(), m_injectedScriptHost.get());
     }
 
     if (!m_frontend && m_consoleMessages.size() >= maximumConsoleMessages) {
@@ -386,8 +386,6 @@ void InspectorController::clearConsoleMessages()
     m_injectedScriptHost->releaseWrapperObjectGroup(0 /* release the group in all scripts */, "console");
     if (m_domAgent)
         m_domAgent->releaseDanglingNodes();
-    if (m_frontend)
-        m_frontend->clearConsoleMessages();
 }
 
 void InspectorController::startGroup(MessageSource source, ScriptCallStack* callStack, bool collapsed)
@@ -656,10 +654,10 @@ void InspectorController::populateScriptObjects()
     m_domAgent->setDocument(m_inspectedPage->mainFrame()->document());
 
     if (m_expiredConsoleMessageCount)
-        m_frontend->updateConsoleMessageExpiredCount(m_expiredConsoleMessageCount);
+        m_remoteFrontend->updateConsoleMessageExpiredCount(m_expiredConsoleMessageCount);
     unsigned messageCount = m_consoleMessages.size();
     for (unsigned i = 0; i < messageCount; ++i)
-        m_consoleMessages[i]->addToFrontend(m_frontend.get(), m_injectedScriptHost.get());
+        m_consoleMessages[i]->addToFrontend(m_remoteFrontend.get(), m_injectedScriptHost.get());
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     if (m_debuggerEnabled)
