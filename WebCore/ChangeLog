@@ -1,3 +1,23 @@
+2010-07-22  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        Make db.changeVersion()'s third parameter optional, as required by the spec.
+        https://bugs.webkit.org/show_bug.cgi?id=42787
+
+        * bindings/js/JSDatabaseCustom.cpp:
+        (WebCore::JSDatabase::changeVersion):
+        * bindings/js/JSDatabaseSyncCustom.cpp:
+        (WebCore::JSDatabaseSync::changeVersion):
+        * bindings/v8/custom/V8DatabaseCustom.cpp:
+        (WebCore::V8Database::changeVersionCallback):
+        * bindings/v8/custom/V8DatabaseSyncCustom.cpp:
+        (WebCore::V8DatabaseSync::changeVersionCallback):
+        * storage/SQLTransaction.cpp:
+        (WebCore::SQLTransaction::deliverTransactionCallback):
+        * storage/SQLTransactionSync.cpp:
+        (WebCore::SQLTransactionSync::execute):
+
 2010-07-20  Jessie Berlin  <jberlin@apple.com>
 
         Reviewed by Darin Adler.

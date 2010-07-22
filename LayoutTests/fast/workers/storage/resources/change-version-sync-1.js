@@ -1,13 +1,11 @@
 var EXPECTED_VERSION_AFTER_HIXIE_TEST = "2";
 var EXPECTED_VERSION_AFTER_RELOAD = "3";
 
-function emptyFunction() { }
-
 var db1 = openDatabaseSync("ChangeVersionTest", "1", "Test for the database.changeVersion() function", 1);
 var db2 = openDatabaseSync("ChangeVersionTest", "1", "Test for the database.changeVersion() function", 1);
 
 // First run Hixie's test to ensure basic changeVersion() functionality works (see bug 28418).
-db1.changeVersion("1", EXPECTED_VERSION_AFTER_HIXIE_TEST, emptyFunction);
+db1.changeVersion("1", EXPECTED_VERSION_AFTER_HIXIE_TEST);
 if (db2.version != db1.version) {
     postMessage("FAIL: changing db1's version (" + db1.version + ") did not change db2's version (" + db2.version + ") as expected.");
     postMessage("fail");

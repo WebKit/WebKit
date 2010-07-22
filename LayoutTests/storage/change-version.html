@@ -44,6 +44,10 @@ function runTest()
     if (window.location.search == "?2") {
         db1 = window.openDatabase("changeversion-test", "", "Test for the database.changeVersion() function", 1024);
         log("Finished tests with version " + db1.version + "; expected version: " + EXPECTED_VERSION_AFTER_RELOAD);
+
+        // Reset the DB version or the next run might fail.
+        db1.changeVersion(db1.version, "1");
+
         finishTest();
     } else
         testPart1();
@@ -60,7 +64,7 @@ function testPart1() {
     var db2 = window.openDatabase("changeversion-test", "1", "Test for the database.changeVersion() function", 1024);
 
     // First run Hixie's test to ensure basic changeVersion functionality works (see bug 28418).
-    db1.changeVersion("1", EXPECTED_VERSION_AFTER_HIXIE_TEST, emptyFunction, function (e) {
+    db1.changeVersion("1", EXPECTED_VERSION_AFTER_HIXIE_TEST, null, function (e) {
         log("FAIL in changeVersion:" + e);
         finishTest();
     }, function () {

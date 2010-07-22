@@ -7,6 +7,6 @@ else
     postMessage("FAIL: db.version is " + db.version + "; expected " + EXPECTED_VERSION_AFTER_RELOAD);
 
 // Reset the version; otherwise this test will fail the next time it's run
-db.changeVersion(db.version, "1", function(tx) { });
+db.changeVersion(db.version, "1");
 
 postMessage("done");

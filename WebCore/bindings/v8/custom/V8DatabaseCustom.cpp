@@ -61,7 +61,7 @@ v8::Handle<v8::Value> V8Database::changeVersionCallback(const v8::Arguments& arg
         return v8::Undefined();
 
     RefPtr<V8SQLTransactionCallback> callback;
-    if (args.Length() > 2) {
+    if (args.Length() > 2 && !isUndefinedOrNull(args[2])) {
         if (!args[2]->IsObject())
             return throwError(TYPE_MISMATCH_ERR);
 
@@ -69,7 +69,7 @@ v8::Handle<v8::Value> V8Database::changeVersionCallback(const v8::Arguments& arg
     }
 
     RefPtr<V8SQLTransactionErrorCallback> errorCallback;
-    if (args.Length() > 3) {
+    if (args.Length() > 3 && !isUndefinedOrNull(args[3])) {
         if (!args[3]->IsObject())
             return throwError(TYPE_MISMATCH_ERR);
 
@@ -77,7 +77,7 @@ v8::Handle<v8::Value> V8Database::changeVersionCallback(const v8::Arguments& arg
     }
 
     RefPtr<V8CustomVoidCallback> successCallback;
-    if (args.Length() > 4) {
+    if (args.Length() > 4 && !isUndefinedOrNull(args[4])) {
         if (!args[4]->IsObject())
             return throwError(TYPE_MISMATCH_ERR);
 

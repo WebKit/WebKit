@@ -57,17 +57,20 @@ JSValue JSDatabase::changeVersion(ExecState* exec)
     if (exec->hadException())
         return jsUndefined();
 
-    JSObject* object = exec->argument(2).getObject();
-    if (!object) {
-        setDOMException(exec, TYPE_MISMATCH_ERR);
-        return jsUndefined();
+    RefPtr<SQLTransactionCallback> callback;
+    if (exec->argumentCount() > 2 && !exec->argument(2).isNull()) {
+        JSObject* object = exec->argument(2).getObject();
+        if (!object) {
+            setDOMException(exec, TYPE_MISMATCH_ERR);
+            return jsUndefined();
+        }
+
+        callback = JSSQLTransactionCallback::create(object, static_cast<JSDOMGlobalObject*>(globalObject()));
     }
 
-    RefPtr<SQLTransactionCallback> callback(JSSQLTransactionCallback::create(object, static_cast<JSDOMGlobalObject*>(globalObject())));
-
     RefPtr<SQLTransactionErrorCallback> errorCallback;
-    if (!exec->argument(3).isNull()) {
-        object = exec->argument(3).getObject();
+    if (exec->argumentCount() > 3 && !exec->argument(3).isNull()) {
+        JSObject* object = exec->argument(3).getObject();
         if (!object) {
             setDOMException(exec, TYPE_MISMATCH_ERR);
             return jsUndefined();
@@ -77,8 +80,8 @@ JSValue JSDatabase::changeVersion(ExecState* exec)
     }
 
     RefPtr<VoidCallback> successCallback;
-    if (!exec->argument(4).isNull()) {
-        object = exec->argument(4).getObject();
+    if (exec->argumentCount() > 4 && !exec->argument(4).isNull()) {
+        JSObject* object = exec->argument(4).getObject();
         if (!object) {
             setDOMException(exec, TYPE_MISMATCH_ERR);
             return jsUndefined();

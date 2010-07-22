@@ -55,7 +55,7 @@ v8::Handle<v8::Value> V8DatabaseSync::changeVersionCallback(const v8::Arguments&
     DatabaseSync* database = V8DatabaseSync::toNative(args.Holder());
 
     RefPtr<V8SQLTransactionSyncCallback> callback;
-    if (args.Length() > 2) {
+    if (args.Length() > 2 && !isUndefinedOrNull(args[2])) {
         if (!args[2]->IsObject())
             return throwError(TYPE_MISMATCH_ERR);
 

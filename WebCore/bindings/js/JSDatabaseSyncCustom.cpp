@@ -52,13 +52,16 @@ JSValue JSDatabaseSync::changeVersion(ExecState* exec)
     if (exec->hadException())
         return jsUndefined();
 
-    JSObject* object = exec->argument(2).getObject();
-    if (!object) {
-        setDOMException(exec, TYPE_MISMATCH_ERR);
-        return jsUndefined();
-    }
+    RefPtr<SQLTransactionSyncCallback> callback;
+    if (exec->argumentCount() > 2 && !exec->argument(2).isNull()) {
+        JSObject* object = exec->argument(2).getObject();
+        if (!object) {
+            setDOMException(exec, TYPE_MISMATCH_ERR);
+            return jsUndefined();
+        }
 
-    RefPtr<SQLTransactionSyncCallback> callback(JSSQLTransactionSyncCallback::create(object, static_cast<JSDOMGlobalObject*>(globalObject())));
+        callback = JSSQLTransactionSyncCallback::create(object, static_cast<JSDOMGlobalObject*>(globalObject()));
+    }
 
     ExceptionCode ec = 0;
     m_impl->changeVersion(oldVersion, newVersion, callback.release(), ec);
