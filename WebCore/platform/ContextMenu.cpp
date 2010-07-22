@@ -815,6 +815,8 @@ void ContextMenu::checkOrEnableIfNeeded(ContextMenuItem& item) const
         case ContextMenuItemTagInspectElement:
 #endif
         case ContextMenuItemBaseCustomTag:
+        case ContextMenuItemCustomTagNoAction:
+        case ContextMenuItemLastCustomTag:
         case ContextMenuItemBaseApplicationTag:
             break;
     }

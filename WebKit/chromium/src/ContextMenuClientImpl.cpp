@@ -277,7 +277,7 @@ void ContextMenuClientImpl::populateCustomMenuItems(WebCore::ContextMenu* defaul
     Vector<WebMenuItemInfo> customItems;
     for (size_t i = 0; i < defaultMenu->itemCount(); ++i) {
         ContextMenuItem* inputItem = defaultMenu->itemAtIndex(i, defaultMenu->platformDescription());
-        if (inputItem->action() < ContextMenuItemBaseCustomTag || inputItem->action() >=  ContextMenuItemBaseApplicationTag)
+        if (inputItem->action() < ContextMenuItemBaseCustomTag || inputItem->action() >  ContextMenuItemLastCustomTag)
             continue;
 
         WebMenuItemInfo outputItem;

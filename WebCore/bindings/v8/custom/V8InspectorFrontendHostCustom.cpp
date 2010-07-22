@@ -80,7 +80,7 @@ v8::Handle<v8::Value> V8InspectorFrontendHost::showContextMenuCallback(const v8:
         v8::Local<v8::Value> id = item->Get(v8::String::New("id"));
         if (label->IsUndefined() || id->IsUndefined()) {
           items.append(new ContextMenuItem(SeparatorType,
-                                           ContextMenuItemTagNoAction,
+                                           ContextMenuItemCustomTagNoAction,
                                            String()));
         } else {
           ContextMenuAction typedId = static_cast<ContextMenuAction>(
