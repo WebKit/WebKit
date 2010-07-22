@@ -1,3 +1,23 @@
+2010-07-22  Adam Roben  <aroben@apple.com>
+
+        Make WorkQueue aware of potential errors with ::WaitForMultipleObjects
+
+        Fixes <http://webkit.org/b/42846> WorkQueue should detect
+        ::WaitForMultipleObject failures
+
+        Reviewed by Anders Carlsson.
+
+        * Platform/win/WorkQueueWin.cpp:
+        (WorkQueue::workQueueThreadBody): Added some assertions about the
+        various things that can fail with ::WaitForMultipleObjects,
+        specifically:
+          - Passing too many objects
+          - Timeouts (which shouldn't happen since we pass a timeout interval
+            of INFINITE)
+          - Abandoned mutexes (which shouldn't happen since we don't wait on
+            any mutexes currently)
+          - Miscellaneous failures
+
 2010-07-22  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

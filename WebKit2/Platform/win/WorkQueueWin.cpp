@@ -59,8 +59,19 @@ void WorkQueue::workQueueThreadBody()
         // Add the "perform work" event handle.
         handles.append(m_performWorkEvent);
 
+        ASSERT(handles.size() <= MAXIMUM_WAIT_OBJECTS);
+
         // Now we wait.
         DWORD result = ::WaitForMultipleObjects(handles.size(), handles.data(), FALSE, INFINITE);
+        if (result == WAIT_FAILED) {
+            DWORD error = ::GetLastError();
+            ASSERT_NOT_REACHED();
+        }
+
+        // The wait should never time out since we passed INFINITE for the timeout interval.
+        ASSERT(result != WAIT_TIMEOUT);
+        // We don't know how (or need) to handle abandoned mutexes yet.
+        ASSERT(result < WAIT_ABANDONED_0 || result >= WAIT_ABANDONED_0 + handles.size());
 
         if (result == handles.size() - 1)
             performWork();
