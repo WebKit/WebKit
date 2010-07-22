@@ -140,7 +140,7 @@ public:
     void getInlineStyle(long callId, long nodeId);
     void getComputedStyle(long callId, long nodeId);
     void getStyleSheet(long callId, long styleSheetId);
-    void getRuleRangesForStyleSheetId(long callId, long styleSheetId);
+    void getRuleRanges(long callId, long styleSheetId);
     void applyStyleText(long callId, long styleId, const String& styleText, const String& propertyName);
     void setStyleText(long callId, long styleId, const String& cssText);
     void setStyleProperty(long callId, long styleId, const String& name, const String& value);

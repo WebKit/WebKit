@@ -66,7 +66,7 @@ public:
     InspectorCSSStore(InspectorController* inspectorController);
     ~InspectorCSSStore();
     void reset();
-    HashMap<long, SourceRange> getRuleRangesForStyleSheet(CSSStyleSheet*);
+    HashMap<long, SourceRange> getRuleRanges(CSSStyleSheet*);
     CSSStyleDeclaration* styleForId(long styleId);
     CSSStyleSheet* styleSheetForId(long styleSheetId);
     CSSStyleRule* ruleForId(long styleRuleId);

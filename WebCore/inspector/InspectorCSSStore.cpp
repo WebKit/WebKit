@@ -109,13 +109,12 @@ CSSStyleSheet* InspectorCSSStore::inspectorStyleSheet(Document* ownerDocument, b
     return inspectorStyleSheet;
 }
 
-HashMap<long, SourceRange> InspectorCSSStore::getRuleRangesForStyleSheet(CSSStyleSheet* styleSheet)
+HashMap<long, SourceRange> InspectorCSSStore::getRuleRanges(CSSStyleSheet* styleSheet)
 {
     if (!styleSheet)
         return HashMap<long, SourceRange>();
     RefPtr<CSSRuleList> originalRuleList = CSSRuleList::create(styleSheet, false);
     StyleSheetToOffsetsMap::iterator it = m_styleSheetToOffsets.find(styleSheet);
-    HashMap<long, SourceRange> result;
     Vector<SourceRange>* offsetVector = 0;
     if (it == m_styleSheetToOffsets.end()) {
         InspectorResource* resource = m_inspectorController->resourceForURL(styleSheet->finalURL().string());
@@ -139,13 +138,16 @@ HashMap<long, SourceRange> InspectorCSSStore::getRuleRangesForStyleSheet(CSSStyl
         offsetVector = it->second;
     if (!offsetVector)
         return HashMap<long, SourceRange>();
+
     unsigned ruleIndex = 0;
+    HashMap<long, SourceRange> result;
     for (unsigned i = 0, length = styleSheet->length(); i < length; ++i) {
         ASSERT(ruleIndex < offsetVector->size());
         CSSStyleRule* rule = asCSSStyleRule(styleSheet->item(i));
         if (!rule)
             continue;
-        result.set(bindRule(rule), offsetVector->at(ruleIndex));
+        // This maps the style id to the rule body range.
+        result.set(bindStyle(rule->style()), offsetVector->at(ruleIndex));
         ruleIndex++;
     }
     return result;

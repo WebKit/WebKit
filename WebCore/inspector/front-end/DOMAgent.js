@@ -698,6 +698,7 @@ WebInspector.didGetEventListenersForNode = WebInspector.Callback.processCallback
 WebInspector.didGetStyles = WebInspector.Callback.processCallback;
 WebInspector.didGetAllStyles = WebInspector.Callback.processCallback;
 WebInspector.didGetStyleSheet = WebInspector.Callback.processCallback;
+WebInspector.didGetRuleRanges = WebInspector.Callback.processCallback;
 WebInspector.didGetInlineStyle = WebInspector.Callback.processCallback;
 WebInspector.didGetComputedStyle = WebInspector.Callback.processCallback;
 WebInspector.didApplyStyleText = WebInspector.Callback.processCallback;

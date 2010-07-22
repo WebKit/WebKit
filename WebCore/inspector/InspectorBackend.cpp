@@ -448,10 +448,10 @@ void InspectorBackend::getStyleSheet(long callId, long styleSheetId)
         domAgent->getStyleSheet(callId, styleSheetId);
 }
 
-void InspectorBackend::getRuleRangesForStyleSheetId(long callId, long styleSheetId)
+void InspectorBackend::getRuleRanges(long callId, long styleSheetId)
 {
     if (InspectorDOMAgent* domAgent = inspectorDOMAgent())
-        domAgent->getRuleRangesForStyleSheetId(callId, styleSheetId);
+        domAgent->getRuleRanges(callId, styleSheetId);
 }
 
 void InspectorBackend::applyStyleText(long callId, long styleId, const String& styleText, const String& propertyName)

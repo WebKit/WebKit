@@ -1075,11 +1075,11 @@ void InspectorDOMAgent::getStyleSheet(long callId, long styleSheetId)
         m_frontend->didGetStyleSheet(callId, InspectorObject::create());
 }
 
-void InspectorDOMAgent::getRuleRangesForStyleSheetId(long callId, long styleSheetId)
+void InspectorDOMAgent::getRuleRanges(long callId, long styleSheetId)
 {
     CSSStyleSheet* styleSheet = cssStore()->styleSheetForId(styleSheetId);
     if (styleSheet && styleSheet->doc()) {
-        HashMap<long, SourceRange> ruleRanges = cssStore()->getRuleRangesForStyleSheet(styleSheet);
+        HashMap<long, SourceRange> ruleRanges = cssStore()->getRuleRanges(styleSheet);
         if (!ruleRanges.size()) {
             m_frontend->didGetStyleSheet(callId, InspectorObject::create());
             return;
@@ -1095,9 +1095,9 @@ void InspectorDOMAgent::getRuleRangesForStyleSheetId(long callId, long styleShee
                 bodyRange->setNumber("end", it->second.second);
             }
         }
-        m_frontend->didGetStyleSheet(callId, result);
+        m_frontend->didGetRuleRanges(callId, result);
     } else
-        m_frontend->didGetStyleSheet(callId, InspectorValue::null());
+        m_frontend->didGetRuleRanges(callId, InspectorValue::null());
 }
 
 void InspectorDOMAgent::getInlineStyle(long callId, long nodeId)

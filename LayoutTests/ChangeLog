@@ -1,3 +1,12 @@
+2010-07-22  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Rename method for CSS rule source range retrieval and fix return object format
+        https://bugs.webkit.org/show_bug.cgi?id=42379
+
+        * inspector/styles-source-offsets.html:
+
 2010-07-22  Zoltan Herczeg  <zherczeg@webkit.org>
 
         Reviewed by Nikolas Zimmermann.
