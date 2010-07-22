@@ -1,3 +1,37 @@
+2010-07-21  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Ojan Vafai.
+
+        dumpAsMarkup test conversion: create-list-from-range-selection.html and insert-list-empty-div.html
+        https://bugs.webkit.org/show_bug.cgi?id=42608
+
+        Converted the tests and removed the platform specific expected results.
+
+        * editing/execCommand/create-list-from-range-selection-expected.txt: Added.
+        * editing/execCommand/create-list-from-range-selection.html: Use dumpAsMarkup
+        * editing/execCommand/insert-list-empty-div-expected.txt: Added.
+        * editing/execCommand/insert-list-empty-div.html: Use dumpAsMarkup
+        * platform/chromium-linux/editing/execCommand/create-list-from-range-selection-expected.checksum: Removed.
+        * platform/chromium-linux/editing/execCommand/create-list-from-range-selection-expected.png: Removed.
+        * platform/chromium-linux/editing/execCommand/insert-list-empty-div-expected.checksum: Removed.
+        * platform/chromium-win/editing/execCommand/create-list-from-range-selection-expected.checksum: Removed.
+        * platform/chromium-win/editing/execCommand/create-list-from-range-selection-expected.png: Removed.
+        * platform/chromium-win/editing/execCommand/create-list-from-range-selection-expected.txt: Removed.
+        * platform/chromium-win/editing/execCommand/insert-list-empty-div-expected.checksum: Removed.
+        * platform/chromium-win/editing/execCommand/insert-list-empty-div-expected.png: Removed.
+        * platform/chromium-win/editing/execCommand/insert-list-empty-div-expected.txt: Removed.
+        * platform/gtk/editing/execCommand/insert-list-empty-div-expected.txt: Removed.
+        * platform/mac/editing/execCommand/create-list-from-range-selection-expected.checksum: Removed.
+        * platform/mac/editing/execCommand/create-list-from-range-selection-expected.png: Removed.
+        * platform/mac/editing/execCommand/create-list-from-range-selection-expected.txt: Removed.
+        * platform/mac/editing/execCommand/insert-list-empty-div-expected.checksum: Removed.
+        * platform/mac/editing/execCommand/insert-list-empty-div-expected.png: Removed.
+        * platform/mac/editing/execCommand/insert-list-empty-div-expected.txt: Removed.
+        * platform/qt/editing/execCommand/create-list-from-range-selection-expected.txt: Removed.
+        * platform/qt/editing/execCommand/insert-list-empty-div-expected.txt: Removed.
+        * resources/dump-as-markup.js: Added setNodeToDump.
+        (Markup.setNodeToDump):
+
 2010-07-21  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Darin Adler.

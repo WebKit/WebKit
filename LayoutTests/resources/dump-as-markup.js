@@ -1,3 +1,21 @@
+/**
+ * There are three basic use cases of dumpAsMarkup
+ *
+ * 1. Dump the entire DOM when the page is loaded
+ *    When this script is included but no method of Markup is called,
+ *    it dumps the DOM of each frame loaded.
+ *
+ * 2. Dump the content of a specific element when the page is loaded
+ *    When Markup.setNodeToDump is called with some element or the id of some element,
+ *    it dumps the content of the specified element as supposed to the entire DOM tree.
+ *
+ * 3. Dump the content of a specific element multiple times while the page is loading
+ *    Calling Markup.dump would dump the content of the specified element or the entire DOM.
+ *    On the page load, it dumps the content of the current node (set by setNodeToDump)
+ *    or the entire DOM if the node was never set.
+ */
+
+
 if (window.layoutTestController) {
     layoutTestController.dumpAsText();
     layoutTestController.waitUntilDone();
@@ -17,11 +35,7 @@ Markup.description = function(description)
 // a pre element when loaded manually, in order to aid debugging.
 Markup.dump = function(opt_node)
 {
-    // Allow for using Markup.dump as an onload handler.
-    if (opt_node instanceof Event)
-        opt_node = undefined;
-
-    var node = opt_node || document.body.parentElement
+    var node = opt_node || Markup._node || document.body.parentElement
 
     var markup = Markup._description ? Markup._description + '\n' : "";
     markup += Markup.get(node);
@@ -51,19 +65,26 @@ Markup.dump = function(opt_node)
     }
 
     container.innerText = markup;
-
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
 }
 
 Markup.waitUntilDone = function()
 {
-    window.removeEventListener('load', Markup.dump, false);
+    window.removeEventListener('load', Markup.notifyDone, false);
 }
 
 Markup.notifyDone = function()
 {
     Markup.dump();
+
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+}
+
+Markup.setNodeToDump = function(node)
+{
+  if (typeof node == "string")
+    node = document.getElementById(node);
+  Markup._node = node
 }
 
 // Returns the markup for the given node. To be used for cases where a test needs
@@ -216,4 +237,4 @@ Markup._getSelectionMarker = function(node, index)
     return '';
 }
 
-window.addEventListener('load', Markup.dump, false);
+window.addEventListener('load', Markup.notifyDone, false);
