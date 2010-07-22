@@ -1996,8 +1996,11 @@ void HTMLInputElement::setFileListFromRenderer(const Vector<String>& paths)
         }
         rootPath = directoryName(rootPath);
         ASSERT(rootPath.length());
-        for (int i = 0; i < size; i++)
-            m_fileList->append(File::create(paths[i].substring(1 + rootPath.length()), paths[i]));
+        for (int i = 0; i < size; i++) {
+            // Normalize backslashes to slashes before exposing the relative path to script.
+            String relativePath = paths[i].substring(1 + rootPath.length()).replace('\\','/');
+            m_fileList->append(File::create(relativePath, paths[i]));
+        }
     } else {
         for (int i = 0; i < size; i++)
             m_fileList->append(File::create(paths[i]));

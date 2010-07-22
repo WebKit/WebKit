@@ -1,3 +1,17 @@
+2010-07-22  John Gregg  <johnnyg@google.com>
+
+        Reviewed by Kent Tamura.
+
+        [chromium] fast/forms/input-file-directory-upload.html fails on win after r63454
+        https://bugs.webkit.org/show_bug.cgi?id=42768
+
+        Normalize path separators for the script API by convering \'s to /'s.
+
+        Covered by input-file-directory-upload.html
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::setFileListFromRenderer):
+
 2010-07-22  Dmitry Titov  <dimich@chromium.org>
 
         Rubberstamped by Simon Fraser.
