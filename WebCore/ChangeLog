@@ -1,3 +1,11 @@
+2010-07-22  Yury Semikhatsky  <yurys@chromium.org>
+
+        Unreviewed. Fix inspector console tests crashes.
+
+        * bindings/v8/ScriptValue.cpp:
+        (WebCore::v8ToInspectorValue):
+        (WebCore::ScriptValue::toInspectorValue): enter v8 context before calling GetPropertyNames
+
 2010-07-22  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Unreviewed build fix.

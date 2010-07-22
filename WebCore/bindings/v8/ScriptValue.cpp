@@ -82,7 +82,6 @@ static PassRefPtr<InspectorValue> v8ToInspectorValue(v8::Handle<v8::Value> value
     if (value->IsString())
         return InspectorString::create(toWebCoreString(value));
     if (value->IsArray()) {
-        v8::HandleScope handleScope;
         v8::Handle<v8::Array> array = v8::Handle<v8::Array>::Cast(value);
         RefPtr<InspectorArray> inspectorArray = InspectorArray::create();
         uint32_t length = array->Length();
@@ -99,8 +98,6 @@ static PassRefPtr<InspectorValue> v8ToInspectorValue(v8::Handle<v8::Value> value
     }
     if (value->IsObject()) {
         RefPtr<InspectorObject> inspectorObject = InspectorObject::create();
-
-        v8::HandleScope handleScope;
         v8::Handle<v8::Object> object = v8::Handle<v8::Object>::Cast(value);
         v8::Local<v8::Array> propertyNames = object->GetPropertyNames();
         uint32_t length = propertyNames->Length();
@@ -118,8 +115,11 @@ static PassRefPtr<InspectorValue> v8ToInspectorValue(v8::Handle<v8::Value> value
     return 0;
 }
 
-PassRefPtr<InspectorValue> ScriptValue::toInspectorValue(ScriptState*) const
+PassRefPtr<InspectorValue> ScriptValue::toInspectorValue(ScriptState* scriptState) const
 {
+    v8::HandleScope handleScope;
+    // v8::Object::GetPropertyNames() expects current context to be not null.
+    v8::Context::Scope contextScope(scriptState->context());
     return v8ToInspectorValue(m_value);
 }
 
