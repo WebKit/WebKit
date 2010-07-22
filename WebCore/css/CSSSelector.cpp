@@ -37,12 +37,11 @@ namespace WebCore {
     
 using namespace HTMLNames;
 
-// A helper class to hold CSSSelectors.
 class CSSSelectorBag : public Noncopyable {
 public:
     ~CSSSelectorBag()
     {
-        deleteAllValues(m_stack);
+        ASSERT(isEmpty());
     }
 
     bool isEmpty() const
@@ -50,7 +49,7 @@ public:
         return m_stack.isEmpty();
     }
 
-    void append(PassOwnPtr<CSSSelector> selector)
+    void add(PassOwnPtr<CSSSelector> selector)
     {
         if (selector)
             m_stack.append(selector.leakPtr());
@@ -67,46 +66,6 @@ public:
 private:
     Vector<CSSSelector*, 16> m_stack;
 };
-
-CSSSelector::~CSSSelector()
-{
-    // We should avoid a recursive destructor call, which causes stack overflow
-    // if CSS Selectors are deeply nested.
-
-    // Early exit if we have already processed the children of this selector.
-    if (m_hasRareData) {
-        if (!m_data.m_rareData)
-            return;
-    } else if (!m_data.m_tagHistory)
-        return;
-
-    CSSSelectorBag selectorsToBeDeleted;
-    if (m_hasRareData) {
-        selectorsToBeDeleted.append(m_data.m_rareData->m_tagHistory.release());
-        selectorsToBeDeleted.append(m_data.m_rareData->m_simpleSelector.release());
-        delete m_data.m_rareData;
-    } else
-        selectorsToBeDeleted.append(adoptPtr(m_data.m_tagHistory));
-
-    // Traverse the tree of CSSSelector and delete each CSSSelector iteratively.
-    while (!selectorsToBeDeleted.isEmpty()) {
-        OwnPtr<CSSSelector> selector(selectorsToBeDeleted.takeAny());
-        ASSERT(selector);
-        if (selector->m_hasRareData) {
-            ASSERT(selector->m_data.m_rareData);
-            selectorsToBeDeleted.append(selector->m_data.m_rareData->m_tagHistory.release());
-            selectorsToBeDeleted.append(selector->m_data.m_rareData->m_simpleSelector.release());
-            delete selector->m_data.m_rareData;
-            // Clear the pointer so that a destructor of the selector, which is
-            // about to be called, can know the children are already processed.
-            selector->m_data.m_rareData = 0;
-        } else {
-            selectorsToBeDeleted.append(adoptPtr(selector->m_data.m_tagHistory));
-            // Clear the pointer for the same reason.
-            selector->m_data.m_tagHistory = 0;
-        }
-    }
-}
 
 unsigned int CSSSelector::specificity()
 {
@@ -977,6 +936,35 @@ bool CSSSelector::RareData::matchNth(int count)
         if (count > m_b)
             return false;
         return (m_b - count) % (-m_a) == 0;
+    }
+}
+
+inline void CSSSelector::releaseOwnedSelectorsToBag(CSSSelectorBag& bag)
+{
+    if (m_hasRareData) {
+        ASSERT(m_data.m_rareData);
+        bag.add(m_data.m_rareData->m_tagHistory.release());
+        bag.add(m_data.m_rareData->m_simpleSelector.release());
+        delete m_data.m_rareData;
+        // Clear the pointer so that a destructor of this selector will not
+        // traverse this chain.
+        m_data.m_rareData = 0;
+    } else {
+        bag.add(adoptPtr(m_data.m_tagHistory));
+        // Clear the pointer for the same reason.
+        m_data.m_tagHistory = 0;
+    }
+}
+
+void CSSSelector::deleteReachableSelectors()
+{
+    // Traverse the chain of selectors and delete each iteratively.
+    CSSSelectorBag selectorsToBeDeleted;
+    releaseOwnedSelectorsToBag(selectorsToBeDeleted);
+    while (!selectorsToBeDeleted.isEmpty()) {
+        OwnPtr<CSSSelector> selector(selectorsToBeDeleted.takeAny());
+        ASSERT(selector);
+        selector->releaseOwnedSelectorsToBag(selectorsToBeDeleted);
     }
 }
 

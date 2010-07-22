@@ -30,6 +30,8 @@
 
 namespace WebCore {
 
+    class CSSSelectorBag;
+
     // this class represents a selector for a StyleRule
     class CSSSelector : public Noncopyable {
     public:
@@ -57,7 +59,21 @@ namespace WebCore {
         {
         }
 
-        ~CSSSelector();
+        ~CSSSelector()
+        {
+            // Exit if this selector does not own any objects to be deleted.
+            if (m_hasRareData) {
+                if (!m_data.m_rareData)
+                    return;
+            } else if (!m_data.m_tagHistory)
+                return;
+
+            // We can not delete the owned object(s) by simply calling delete
+            // directly on them. That would lead to recursive destructor calls
+            // which might cause stack overflow. We have to delete them
+            // iteratively.
+            deleteReachableSelectors();
+        }
 
         /**
          * Re-create selector text from selector's data
@@ -274,6 +290,9 @@ namespace WebCore {
         bool m_isLastInSelectorList   : 1;
         bool m_hasRareData            : 1;
         bool m_isForPage              : 1;
+
+        void releaseOwnedSelectorsToBag(CSSSelectorBag&);
+        void deleteReachableSelectors();
 
         unsigned specificityForPage();
         void extractPseudoType() const;

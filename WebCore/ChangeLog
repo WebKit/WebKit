@@ -1,3 +1,21 @@
+2010-07-22  Hayato Ito  <hayato@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Refactor CSSSelector's destructor and make it inline.
+
+        https://bugs.webkit.org/show_bug.cgi?id=42726
+
+        Refactor with no behavior change, thus no new tests.
+
+        * css/CSSSelector.cpp:
+        (WebCore::CSSSelectorBag::~CSSSelectorBag): Make sure the bag is empty.
+        (WebCore::CSSSelectorBag::add): Renamed from append().
+        (WebCore::CSSSelector::releaseOwnedSelectorsToBag):
+        (WebCore::CSSSelector::deleteReachableSelectors):
+        * css/CSSSelector.h:
+        (WebCore::CSSSelector::~CSSSelector):
+
 2010-07-22  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.
