@@ -1,3 +1,13 @@
+2010-07-21  Justin Schuh  <jschuh@chromium.org>
+
+        Reviewed by Oliver Hunt.
+
+        Prevent DeleteButtonController enable state from changing when not editing
+        https://bugs.webkit.org/show_bug.cgi?id=42659
+
+        * svg/custom/use-invalid-html-expected.txt: Added.
+        * svg/custom/use-invalid-html.xhtml: Added.
+
 2010-07-21  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Dan Bernstein.
