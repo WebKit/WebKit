@@ -1,5 +1,30 @@
 2010-07-22  Adam Roben  <aroben@apple.com>
 
+        Use ::MessageBox instead of ::DebugBreak to make the web process wait
+        for a debugger
+
+        While ::DebugBreak can make it easier to attach a debugger (because it
+        brings up the Just-in-Time debugger window), using ::MessageBox has
+        two advantages:
+          1) It explains to the user what's going on, so it's harder to
+             mistake this debugging aid for a bug.
+          2) It allows you to debug the UI process and the web process using
+             the same debugger, if desired.
+
+        Special thanks to John Sullivan for help with the text that's shown in
+        the alert.
+
+        Fixes <http://webkit.org/b/42848> WebKit2's wait-for-debugger
+        debugging aid should explain to the user what's happening
+
+        Reviewed by John Sullivan and Anders Carlsson.
+
+        * WebProcess/WebKitMain.cpp:
+        (WebKitMain): Use a ::MessageBox instead of a ::DebugBreak to wait for
+        the debugger. The alert explains to the user what's going on.
+
+2010-07-22  Adam Roben  <aroben@apple.com>
+
         Make WorkQueue aware of potential errors with ::WaitForMultipleObjects
 
         Fixes <http://webkit.org/b/42846> WorkQueue should detect

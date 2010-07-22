@@ -55,6 +55,12 @@ int WebKitMain(int argc, char** argv)
 
 #elif PLATFORM(WIN)
 
+#ifndef DEBUG_ALL
+#define PROCESS_NAME L"WebKit2WebKitProcess.exe"
+#else
+#define PROCESS_NAME L"WebKit2WebProcess_debug.exe"
+#endif
+
 static void enableTerminationOnHeapCorruption()
 {
     // Enable termination on heap corruption on OSes that support it (Vista and XPSP3).
@@ -78,11 +84,11 @@ extern "C" __declspec(dllexport)
 int WebKitMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpstrCmdLine, int nCmdShow)
 {
 #ifndef NDEBUG
-    // Break into the debugger when Ctrl-Alt-Shift is held down during launch. This makes it easier
-    // to debug problems that happen early in the web process's liftime.
+    // Show an alert when Ctrl-Alt-Shift is held down during launch to give the user time to attach a
+    // debugger. This is useful for debugging problems that happen early in the web process's lifetime.
     const unsigned short highBitMaskShort = 0x8000;
     if ((::GetKeyState(VK_CONTROL) & highBitMaskShort) && (::GetKeyState(VK_MENU) & highBitMaskShort) && (::GetKeyState(VK_SHIFT) & highBitMaskShort))
-        ::DebugBreak();
+        ::MessageBoxW(0, L"You can now attach a debugger to " PROCESS_NAME L". You can use\nthe same debugger for WebKit2WebProcessand the UI process, if desired.\nClick OK when you are ready for WebKit2WebProcess to continue.", L"WebKit2WebProcess has launched", MB_OK | MB_ICONINFORMATION);
 #endif
 
     enableTerminationOnHeapCorruption();
