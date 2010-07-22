@@ -1,5 +1,17 @@
 2010-07-22  Andras Becsi  <abecsi@webkit.org>
 
+        Unreviewed trivial build fix.
+
+        [Qt] Mend remaining issues to fix the WebKit2 build.
+
+        * Shared/qt/UpdateChunk.h: add missing function
+        (WebKit::UpdateChunk::isEmpty):
+        * UIProcess/API/qt/qwkpage_p.h: Add stub implementation
+        (QWKPagePrivate::pageDidEnterAcceleratedCompositing):
+        (QWKPagePrivate::pageDidLeaveAcceleratedCompositing):
+
+2010-07-22  Andras Becsi  <abecsi@webkit.org>
+
         Reviewed by Antonio Gomes.
 
         [Qt] Implement WebContext::applicationCacheDirectory() for the Qt port of WebKit2.
