@@ -1,3 +1,14 @@
+2010-07-22  Adam Roben  <aroben@apple.com>
+
+        Windows build fix
+
+        Inspired by r63881.
+
+        * MiniBrowser/MiniBrowser.vcproj:
+        * WebKitTestRunner/InjectedBundle/win/InjectedBundle.vcproj:
+        Removed pre- and post-build events so they will be inherited from the
+        vsprops files.
+
 2010-07-21  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam Weinig.
