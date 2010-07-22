@@ -2221,8 +2221,6 @@ void FrameLoader::finishedLoading()
     RefPtr<Frame> protect(m_frame);
 
     RefPtr<DocumentLoader> dl = activeDocumentLoader();
-    ASSERT(!dl->timing()->responseEnd);
-    dl->timing()->responseEnd = currentTime();
     dl->finishedLoading();
     if (!dl->mainDocumentError().isNull() || !dl->frameLoader())
         return;

@@ -290,7 +290,7 @@ unsigned long long Timing::resourceLoadTimeRelativeToAbsolute(int relativeSecond
     //
     // Since ResourceLoadTimings came from the network platform layer, we must
     // check them for skew because they may be from another thread/process.
-    double baseTime = getPossiblySkewedTimeInKnownRange(resourceTiming->requestTime, documentTiming->fetchStart, documentTiming->responseEnd);
+    double baseTime = getPossiblySkewedTimeInKnownRange(resourceTiming->requestTime, documentTiming->fetchStart, documentTiming->responseEnd - (resourceTiming->receiveHeadersEnd / 1000.0));
     return toIntegerMilliseconds(baseTime) + relativeSeconds;
 }
 

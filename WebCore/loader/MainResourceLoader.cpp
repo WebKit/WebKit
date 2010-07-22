@@ -413,6 +413,8 @@ void MainResourceLoader::didReceiveData(const char* data, int length, long long 
     // reference to this object; one example of this is 3266216.
     RefPtr<MainResourceLoader> protect(this);
 
+    m_timeOfLastDataReceived = currentTime();
+
     ResourceLoader::didReceiveData(data, length, lengthReceived, allAtOnce);
 }
 
@@ -432,6 +434,8 @@ void MainResourceLoader::didFinishLoading()
     RefPtr<DocumentLoader> dl = documentLoader();
 #endif
 
+    ASSERT(!documentLoader()->timing()->responseEnd);
+    documentLoader()->timing()->responseEnd = m_timeOfLastDataReceived;
     frameLoader()->finishedLoading();
     ResourceLoader::didFinishLoading();
     

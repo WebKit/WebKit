@@ -1,3 +1,21 @@
+2010-07-22  Tony Gentilcore  <tonyg@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        webkitPerformance.timing.responseEnd should not include document parse time
+        https://bugs.webkit.org/show_bug.cgi?id=42797
+
+        No new tests because timing based test would be flaky.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::finishedLoading): finishedLoading() is called by the platform at the right time, but didReceiveData() synchronously invokes parsing without returning to the event loop prior to this. So by the time the didFinishLoading() method is executed, parsing is finished. The solution is to move this time to didReceiveData() prior to parsing.
+        * loader/MainResourceLoader.cpp:
+        (WebCore::MainResourceLoader::didReceiveData): Update the time each time didReceiveData() is called.
+        (WebCore::MainResourceLoader::didFinishLoading): When finished, and after parsing, set responseEnd appropriately.
+        * loader/MainResourceLoader.h:
+        * page/Timing.cpp:
+        (WebCore::Timing::resourceLoadTimeRelativeToAbsolute): Now that responseEnd is set correctly, it can be much shorter for very fast loads (like local files). This exposed the fact that this skew check was not tight enough. We need to make sure that the whole range of values from the ResourceLoadTiming API fit within fetchStart-responseEnd, not just that requestTime fits in this range.
+
 2010-07-21  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Darin Adler.
