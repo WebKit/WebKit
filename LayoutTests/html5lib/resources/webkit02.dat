@@ -1,0 +1,9 @@
+#data
+<foo bar=qux/>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <foo>
+|       bar="qux/"

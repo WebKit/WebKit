@@ -6551,6 +6551,8 @@ Expected:
 |         <nobr>
 |           "a"
 |         <nobr>
+resources/webkit02.dat: PASS
+
 resources/doctype01.dat:
 31
 

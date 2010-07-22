@@ -366,6 +366,8 @@ Expected:
 |         <table>
 resources/webkit01.dat: PASS
 
+resources/webkit02.dat: PASS
+
 resources/doctype01.dat: PASS
 
 resources/scriptdata01.dat: PASS
