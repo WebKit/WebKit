@@ -89,6 +89,7 @@ public:
         MouseMove,
         MouseEnter,
         MouseLeave,
+        ContextMenu,
 
         // WebMouseWheelEvent
         MouseWheel,
@@ -135,7 +136,8 @@ public:
             || type == MouseUp
             || type == MouseMove
             || type == MouseEnter
-            || type == MouseLeave;
+            || type == MouseLeave
+            || type == ContextMenu;
     }
 
     // Returns true if the WebInputEvent |type| is a keyboard event.

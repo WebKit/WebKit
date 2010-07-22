@@ -253,6 +253,8 @@ WebMouseEventBuilder::WebMouseEventBuilder(const ScrollView* view, const MouseEv
         type = WebInputEvent::MouseDown;
     else if (event.type() == eventNames().mouseupEvent)
         type = WebInputEvent::MouseUp;
+    else if (event.type() == eventNames().contextmenuEvent)
+        type = WebInputEvent::ContextMenu;
     else
         return; // Skip all other mouse events.
     timeStampSeconds = event.timeStamp() * 1.0e-3;
