@@ -88,10 +88,10 @@ void InjectedBundlePageLoaderClient::didReceiveTitleForFrame(WebPage* page, cons
         m_client.didReceiveTitleForFrame(toRef(page), toRef(title.impl()), toRef(frame), m_client.clientInfo);
 }
 
-void InjectedBundlePageLoaderClient::didClearWindowObjectForFrame(WebPage* page, WebFrame* frame, JSContextRef ctx, JSObjectRef window)
+void InjectedBundlePageLoaderClient::didClearWindowObjectForFrame(WebPage* page, WebFrame* frame, JSGlobalContextRef context, JSObjectRef window)
 {
     if (m_client.didClearWindowObjectForFrame)
-        m_client.didClearWindowObjectForFrame(toRef(page), toRef(frame), ctx, window, m_client.clientInfo);
+        m_client.didClearWindowObjectForFrame(toRef(page), toRef(frame), context, window, m_client.clientInfo);
 }
 
 } // namespace WebKit

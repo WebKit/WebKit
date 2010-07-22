@@ -28,8 +28,10 @@
 #include "WKAPICast.h"
 #include "WKBundleAPICast.h"
 #include "WebFrame.h"
-#include <WebCore/PlatformString.h>
+#include <JavaScriptCore/APICast.h>
+#include <WebCore/Frame.h>
 
+using namespace WebCore;
 using namespace WebKit;
 
 bool WKBundleFrameIsMainFrame(WKBundleFrameRef frameRef)
@@ -62,4 +64,11 @@ unsigned WKBundleFrameGetNumberOfActiveAnimations(WKBundleFrameRef frameRef)
 bool WKBundleFramePauseAnimationOnElementWithId(WKBundleFrameRef frameRef, WKStringRef name, WKStringRef elementID, double time)
 {
     return toWK(frameRef)->pauseAnimationOnElementWithId(toWK(name), toWK(elementID), time);
+}
+
+JSGlobalContextRef WKBundleFrameGetJavaScriptContext(WKBundleFrameRef frameRef)
+{
+    // FIXME: Is there a way to get this and know that it's a JSGlobalContextRef?
+    // The const_cast here is a bit ugly.
+    return const_cast<JSGlobalContextRef>(toRef(toWK(frameRef)->coreFrame()->script()->globalObject(mainThreadNormalWorld())->globalExec()));
 }

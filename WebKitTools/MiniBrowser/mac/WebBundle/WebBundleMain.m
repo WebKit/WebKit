@@ -65,7 +65,7 @@ void _didReceiveTitleForFrame(WKBundlePageRef page, WKStringRef title, WKBundleF
 {
 }
 
-void _didClearWindowForFrame(WKBundlePageRef page, WKBundleFrameRef frame, JSContextRef ctx, JSObjectRef window, const void *clientInfo)
+void _didClearWindowForFrame(WKBundlePageRef page, WKBundleFrameRef frame, JSGlobalContextRef context, JSObjectRef window, const void *clientInfo)
 {
     CFURLRef cfURL = WKURLCopyCFURL(0, WKBundleFrameGetURL(WKBundlePageGetMainFrame(page)));
     LOG(@"WKBundlePageClient - _didClearWindowForFrame %@", [(NSURL *)cfURL absoluteString]);

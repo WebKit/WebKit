@@ -1,3 +1,26 @@
+2010-07-21  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        WebKitTestRunner needs to support dumping of scroll position
+        https://bugs.webkit.org/show_bug.cgi?id=42514
+
+        Added WKBundleFrameGetJavaScriptContext function.
+
+        * WebKit2.xcodeproj: Added property svn:ignore.
+
+        * WebProcess/InjectedBundle/API/c/WKBundleFrame.cpp:
+        (WKBundleFrameGetJavaScriptContext): Added.
+        * WebProcess/InjectedBundle/API/c/WKBundleFrame.h: Ditto.
+
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.h:
+        * WebProcess/InjectedBundle/InjectedBundlePageLoaderClient.cpp:
+        (WebKit::InjectedBundlePageLoaderClient::didClearWindowObjectForFrame):
+        * WebProcess/InjectedBundle/InjectedBundlePageLoaderClient.h:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDidClearWindowObjectInWorld):
+        Use JSGlobalContextRef instead of JSContextRef and context instead of ct.
+
 2010-07-21  Adam Roben  <aroben@apple.com>
 
         Handle broken pipes in more places in CoreIPC

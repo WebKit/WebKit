@@ -121,9 +121,9 @@ void InjectedBundlePage::_didReceiveTitleForFrame(WKBundlePageRef page, WKString
     static_cast<InjectedBundlePage*>(const_cast<void*>(clientInfo))->didReceiveTitleForFrame(title, frame);
 }
 
-void InjectedBundlePage::_didClearWindowForFrame(WKBundlePageRef page, WKBundleFrameRef frame, JSContextRef ctx, JSObjectRef window, const void *clientInfo)
+void InjectedBundlePage::_didClearWindowForFrame(WKBundlePageRef page, WKBundleFrameRef frame, JSGlobalContextRef context, JSObjectRef window, const void *clientInfo)
 {
-    static_cast<InjectedBundlePage*>(const_cast<void*>(clientInfo))->didClearWindowForFrame(frame, ctx, window);
+    static_cast<InjectedBundlePage*>(const_cast<void*>(clientInfo))->didClearWindowForFrame(frame, context, window);
 }
 
 void InjectedBundlePage::didStartProvisionalLoadForFrame(WKBundleFrameRef frame)
@@ -158,7 +158,32 @@ void InjectedBundlePage::dump()
         OwnPtr<Vector<char> > utf8externalRepresentation = WKStringToUTF8(externalRepresentation.get());
         InjectedBundle::shared().os() << utf8externalRepresentation->data();
     }
+
+    if (InjectedBundle::shared().layoutTestController()->shouldDumpFrameScrollPositions())
+        dumpFrameScrollPosition(WKBundlePageGetMainFrame(m_page));
+
     InjectedBundle::shared().done();
+}
+
+static double numericWindowProperty(WKBundleFrameRef frame, const char* propertyName)
+{
+    JSGlobalContextRef context = WKBundleFrameGetJavaScriptContext(frame);
+    JSObjectRef window = JSContextGetGlobalObject(context);
+    JSValueRef exception = 0;
+    JSStringRef propertyNameString = JSStringCreateWithUTF8CString(propertyName);
+    JSValueRef value = JSObjectGetProperty(context, window, propertyNameString, &exception);
+    JSStringRelease(propertyNameString);
+    if (exception)
+        return 0;
+    return JSValueToNumber(context, value, &exception);
+}
+
+void InjectedBundlePage::dumpFrameScrollPosition(WKBundleFrameRef frame)
+{
+    double x = numericWindowProperty(frame, "pageXOffset");
+    double y = numericWindowProperty(frame, "pageYOffset");
+    if (fabs(x) > 0.00000001 || fabs(y) > 0.00000001)
+        InjectedBundle::shared().os() << "scrolled to " << x << "," << y << "\n";
 }
 
 void InjectedBundlePage::didFinishLoadForFrame(WKBundleFrameRef frame)
@@ -188,10 +213,10 @@ void InjectedBundlePage::didReceiveTitleForFrame(WKStringRef title, WKBundleFram
 {
 }
 
-void InjectedBundlePage::didClearWindowForFrame(WKBundleFrameRef frame, JSContextRef ctx, JSObjectRef window)
+void InjectedBundlePage::didClearWindowForFrame(WKBundleFrameRef frame, JSGlobalContextRef context, JSObjectRef window)
 {
     JSValueRef exception = 0;
-    InjectedBundle::shared().layoutTestController()->makeWindowObject(ctx, window, &exception);
+    InjectedBundle::shared().layoutTestController()->makeWindowObject(context, window, &exception);
 }
 
 // UI Client Callbacks

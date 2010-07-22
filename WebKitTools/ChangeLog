@@ -1,3 +1,37 @@
+2010-07-21  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        WebKitTestRunner needs to support dumping of scroll position
+        https://bugs.webkit.org/show_bug.cgi?id=42514
+
+        * MiniBrowser/mac/WebBundle/WebBundleMain.m:
+        (_didClearWindowForFrame): Use JSGlobalContextRef instead of JSContextRef.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::_didClearWindowForFrame): Use JSGlobalContextRef
+        instead of JSContextRef.
+        (WTR::InjectedBundlePage::dump): Call dumpFrameScrollPosition when appropriate.
+        (WTR::numericWindowProperty): Added. Helper for dumpFrameScrollPosition.
+        (WTR::InjectedBundlePage::dumpFrameScrollPosition): Added.
+        (WTR::InjectedBundlePage::didClearWindowForFrame): Use JSGlobalContextRef
+        instead of JSContextRef.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.h: Removed names from
+        arguments that simply repeat the argument type. Added dumpFrameScrollPosition.
+
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.cpp:
+        (WTR::LayoutTestController::shouldDumpDOMAsWebArchive): Added. Currently
+        returns false.
+        (WTR::LayoutTestController::shouldDumpSourceAsWebArchive): Added. Currently
+        returns false.
+        (WTR::LayoutTestController::shouldDumpFrameScrollPositions): Added. Matches
+        the logic in DumpRenderTree.
+
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.h: Updated for above changes.
+
+        * WebKitTestRunner/WebKitTestRunner.xcodeproj: Added property svn:ignore.
+
 2010-07-21  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Build fix, adding the WebCore/bindings/generic dir to the list of build dirs.

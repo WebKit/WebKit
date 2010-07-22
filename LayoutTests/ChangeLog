@@ -1,3 +1,13 @@
+2010-07-21  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        WebKitTestRunner needs to support dumping of scroll position
+        https://bugs.webkit.org/show_bug.cgi?id=42514
+
+        * platform/mac-wk2/Skipped: Removed now-passing tests from
+        skipped list and moved one miscategorized test.
+
 2010-07-21  Justin Schuh  <jschuh@chromium.org>
 
         Reviewed by Oliver Hunt.

@@ -124,6 +124,21 @@ bool LayoutTestController::pauseAnimationAtTimeOnElementWithId(JSStringRef anima
     return WKBundleFramePauseAnimationOnElementWithId(mainFrame, nameWK.get(), idWK.get(), time);
 }
 
+bool LayoutTestController::shouldDumpDOMAsWebArchive() const
+{
+    return false;
+}
+
+bool LayoutTestController::shouldDumpSourceAsWebArchive() const
+{
+    return false;
+}
+
+bool LayoutTestController::shouldDumpFrameScrollPositions() const
+{
+    return !shouldDumpAsText() && !shouldDumpDOMAsWebArchive() && !shouldDumpSourceAsWebArchive();
+}
+
 // Object Creation
 
 void LayoutTestController::makeWindowObject(JSContextRef context, JSObjectRef windowObject, JSValueRef* exception)

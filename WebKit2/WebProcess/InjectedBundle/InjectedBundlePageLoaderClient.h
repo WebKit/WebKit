@@ -50,7 +50,7 @@ public:
     void didFinishLoadForFrame(WebPage*, WebFrame*);
     void didFailLoadWithErrorForFrame(WebPage*, WebFrame*);
     void didReceiveTitleForFrame(WebPage*, const WebCore::String&, WebFrame*);
-    void didClearWindowObjectForFrame(WebPage*, WebFrame*, JSContextRef, JSObjectRef);
+    void didClearWindowObjectForFrame(WebPage*, WebFrame*, JSGlobalContextRef, JSObjectRef);
 
 private:
     WKBundlePageLoaderClient m_client;

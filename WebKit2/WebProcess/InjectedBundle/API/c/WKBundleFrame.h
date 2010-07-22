@@ -26,6 +26,7 @@
 #ifndef WKBundleFrame_h
 #define WKBundleFrame_h
 
+#include <JavaScriptCore/JavaScript.h>
 #include <WebKit2/WKBase.h>
 #include <WebKit2/WKBundleBase.h>
 
@@ -38,6 +39,8 @@ extern "C" {
 #endif
 
 WK_EXPORT bool WKBundleFrameIsMainFrame(WKBundleFrameRef frame);
+
+WK_EXPORT JSGlobalContextRef WKBundleFrameGetJavaScriptContext(WKBundleFrameRef frame);
 
 WK_EXPORT WKURLRef WKBundleFrameGetURL(WKBundleFrameRef frame);
 

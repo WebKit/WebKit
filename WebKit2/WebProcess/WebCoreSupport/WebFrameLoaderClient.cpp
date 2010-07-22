@@ -870,7 +870,9 @@ void WebFrameLoaderClient::dispatchDidClearWindowObjectInWorld(DOMWrapperWorld* 
     if (world != mainThreadNormalWorld())
         return;
 
-    JSContextRef context = toRef(m_frame->coreFrame()->script()->globalObject(world)->globalExec());
+    // FIXME: Is there a way to get this and know that it's a JSGlobalContextRef?
+    // The const_cast here is a bit ugly.
+    JSGlobalContextRef context = const_cast<JSGlobalContextRef>(toRef(m_frame->coreFrame()->script()->globalObject(world)->globalExec()));
     JSObjectRef windowObject = toRef(m_frame->coreFrame()->script()->globalObject(world));
 
     webPage->injectedBundleLoaderClient().didClearWindowObjectForFrame(webPage, m_frame, context, windowObject);
