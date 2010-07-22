@@ -28,13 +28,16 @@
 #include "RunLoop.h"
 #include "WebProcess.h"
 #include "WebSystemInterface.h"
-
+#include <WebCore/PlatformString.h>
 #include <crt_externs.h>
 #include <runtime/InitializeThreading.h>
 #include <servers/bootstrap.h>
 #include <spawn.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/Threading.h>
+#include <wtf/text/CString.h>
+
+using namespace WebCore;
 
 // FIXME: We should be doing this another way.
 extern "C" kern_return_t bootstrap_register2(mach_port_t, name_t, mach_port_t, uint64_t);
@@ -53,11 +56,14 @@ void ProcessLauncher::launchProcess()
     NSString *webProcessAppPath = [[NSBundle bundleWithIdentifier:@"com.apple.WebKit2"] pathForAuxiliaryExecutable:@"WebProcess.app"];
     NSString *webProcessAppExecutablePath = [[NSBundle bundleWithPath:webProcessAppPath] executablePath];
 
+    // Make a unique, per pid, per process launcher web process service name.
+    CString serviceName = String::format("com.apple.WebKit.WebProcess-%d-%p", getpid(), this).utf8();
+
     const char* path = [webProcessAppExecutablePath fileSystemRepresentation];
-    const char* args[] = { path, "-mode", "legacywebprocess", 0 };
+    const char* args[] = { path, "-mode", "legacywebprocess", "-servicename", serviceName.data(), 0 };
 
     // Register ourselves.
-    kern_return_t kr = bootstrap_register2(bootstrap_port, (char*)"com.apple.WebKit.WebProcess", listeningPort, /* BOOTSTRAP_PER_PID_SERVICE */ 1);
+    kern_return_t kr = bootstrap_register2(bootstrap_port, const_cast<char*>(serviceName.data()), listeningPort, 0);
     if (kr)
         NSLog(@"bootstrap_register2 result: %x", kr);
     

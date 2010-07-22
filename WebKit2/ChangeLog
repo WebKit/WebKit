@@ -1,5 +1,21 @@
 2010-07-22  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Adam Roben.
+
+        It should be possible to attach to the WebProcess in gdb during startup
+        https://bugs.webkit.org/show_bug.cgi?id=42853
+
+        Create an unique bootstrap service name and pass it to the web process, instead of registering a per process
+        name (which was incorrect anyway). This lets us get rid of the requirement that the UI process always should be
+        the parent process of the web process, something which is false when running under the debugger.
+
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+        (WebKit::ProcessLauncher::launchProcess):
+        * WebProcess/mac/WebProcessMainMac.mm:
+        (WebKit::WebProcessMain):
+
+2010-07-22  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Sam Weinig.
 
         Don't assert when Connection::invalidate is called before Connection::dispatchConnectionDidClose

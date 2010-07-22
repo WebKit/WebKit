@@ -38,6 +38,7 @@
 #import <sysexits.h>
 #import <unistd.h>
 #import <wtf/Threading.h>
+#import <wtf/text/CString.h>
 
 #if ENABLE(WEB_PROCESS_SANDBOX)
 #import <sandbox.h>
@@ -52,7 +53,7 @@ using namespace WebCore;
 
 namespace WebKit {
 
-int WebProcessMain(CommandLine*)
+int WebProcessMain(CommandLine* commandLine)
 {
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 
@@ -68,8 +69,13 @@ int WebProcessMain(CommandLine*)
     }
 #endif
 
+    String serviceName = (*commandLine)["servicename"];
+    if (serviceName.isEmpty())
+        return EXIT_FAILURE;
+
+    // Get the server port.
     mach_port_t serverPort;
-    kern_return_t kr = bootstrap_look_up2(bootstrap_port, "com.apple.WebKit.WebProcess", &serverPort, getppid(), /* BOOTSTRAP_PER_PID_SERVICE */ 1);
+    kern_return_t kr = bootstrap_look_up2(bootstrap_port, serviceName.utf8().data(), &serverPort, 0, 0);
     if (kr) {
         printf("bootstrap_look_up2 result: %x", kr);
         return 2;
