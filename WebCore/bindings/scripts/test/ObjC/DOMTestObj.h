@@ -39,7 +39,13 @@ enum {
     DOM_CONST_VALUE_1 = 1,
     DOM_CONST_VALUE_2 = 2,
     DOM_CONST_VALUE_4 = 4,
-    DOM_CONST_VALUE_8 = 8
+    DOM_CONST_VALUE_8 = 8,
+    DOM_CONST_VALUE_9 = -1,
+    DOM_CONST_VALUE_10 = "my constant string",
+    DOM_CONST_VALUE_11 = 0xffffffff,
+    DOM_CONST_VALUE_12 = 0x01,
+    DOM_CONST_VALUE_13 = 0X20,
+    DOM_CONST_VALUE_14 = 0x1abc
 };
 
 @interface DOMTestObj : DOMObject

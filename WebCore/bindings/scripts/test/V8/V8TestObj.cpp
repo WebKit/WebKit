@@ -1021,6 +1021,12 @@ static const BatchedConstant TestObjConsts[] = {
     {"CONST_VALUE_2", static_cast<signed int>(2)},
     {"CONST_VALUE_4", static_cast<signed int>(4)},
     {"CONST_VALUE_8", static_cast<signed int>(8)},
+    {"CONST_VALUE_9", static_cast<signed int>(-1)},
+    {"CONST_VALUE_10", static_cast<signed int>("my constant string")},
+    {"CONST_VALUE_11", static_cast<signed int>(0xffffffff)},
+    {"CONST_VALUE_12", static_cast<signed int>(0x01)},
+    {"CONST_VALUE_13", static_cast<signed int>(0X20)},
+    {"CONST_VALUE_14", static_cast<signed int>(0x1abc)},
 };
 
 COMPILE_ASSERT(0 == TestObj::CONST_VALUE_0, TestObjEnumCONST_VALUE_0IsWrongUseDontCheckEnums);
@@ -1028,6 +1034,12 @@ COMPILE_ASSERT(1 == TestObj::CONST_VALUE_1, TestObjEnumCONST_VALUE_1IsWrongUseDo
 COMPILE_ASSERT(2 == TestObj::CONST_VALUE_2, TestObjEnumCONST_VALUE_2IsWrongUseDontCheckEnums);
 COMPILE_ASSERT(4 == TestObj::CONST_VALUE_4, TestObjEnumCONST_VALUE_4IsWrongUseDontCheckEnums);
 COMPILE_ASSERT(8 == TestObj::CONST_VALUE_8, TestObjEnumCONST_VALUE_8IsWrongUseDontCheckEnums);
+COMPILE_ASSERT(-1 == TestObj::CONST_VALUE_9, TestObjEnumCONST_VALUE_9IsWrongUseDontCheckEnums);
+COMPILE_ASSERT("my constant string" == TestObj::CONST_VALUE_10, TestObjEnumCONST_VALUE_10IsWrongUseDontCheckEnums);
+COMPILE_ASSERT(0xffffffff == TestObj::CONST_VALUE_11, TestObjEnumCONST_VALUE_11IsWrongUseDontCheckEnums);
+COMPILE_ASSERT(0x01 == TestObj::CONST_VALUE_12, TestObjEnumCONST_VALUE_12IsWrongUseDontCheckEnums);
+COMPILE_ASSERT(0X20 == TestObj::CONST_VALUE_13, TestObjEnumCONST_VALUE_13IsWrongUseDontCheckEnums);
+COMPILE_ASSERT(0x1abc == TestObj::CONST_VALUE_14, TestObjEnumCONST_VALUE_14IsWrongUseDontCheckEnums);
 
 static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestObjTemplate(v8::Persistent<v8::FunctionTemplate> desc)
 {

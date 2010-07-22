@@ -136,5 +136,11 @@ module test {
         const unsigned short CONST_VALUE_2 = 2;
         const unsigned short CONST_VALUE_4 = 4;
         const unsigned short CONST_VALUE_8 = 8;
+        const short CONST_VALUE_9 = -1;
+        const DOMString CONST_VALUE_10 = "my constant string";
+        const unsigned short CONST_VALUE_11 = 0xffffffff;
+        const unsigned short CONST_VALUE_12 = 0x01;
+        const unsigned short CONST_VALUE_13 = 0X20;
+        const unsigned short CONST_VALUE_14 = 0x1abc;
     };
 }

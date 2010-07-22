@@ -1977,7 +1977,11 @@ sub GenerateImplementation
             # FIXME: this casts into int to match our previous behavior which turned 0xFFFFFFFF in -1 for NodeFilter.SHOW_ALL
             push(@implContent, "JSValue ${getter}(ExecState* exec, JSValue, const Identifier&)\n");
             push(@implContent, "{\n");
-            push(@implContent, "    return jsNumber(exec, static_cast<int>(" . $constant->value . "));\n");
+            if ($constant->type eq "DOMString") {
+                push(@implContent, "    return jsStringOrNull(exec, String(" . $constant->value . "));\n");
+            } else {
+                push(@implContent, "    return jsNumber(exec, static_cast<int>(" . $constant->value . "));\n");
+            }
             push(@implContent, "}\n\n");
         }
     }

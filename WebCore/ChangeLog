@@ -1,3 +1,34 @@
+2010-07-20  Jessie Berlin  <jberlin@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Code Generator: Allow negative and string constants.
+        Also add tests for hexadecimal numbers.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        If it is a string, do not try to cast it to an int.
+
+        * bindings/scripts/IDLStructure.pm:
+        Add a regex just for constant values that allows strings, hexadecimal numbers, and integral numbers.
+
+        * bindings/scripts/test/CPP/WebDOMTestObj.h:
+        Update the tests.
+
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        Ditto.
+
+        * bindings/scripts/test/JS/JSTestObj.h:
+        Ditto.
+
+        * bindings/scripts/test/ObjC/DOMTestObj.h:
+        Ditto.
+
+        * bindings/scripts/test/TestObj.idl:
+        Add tests for negative numbers, strings, and hexadecimal numbers.
+
+        * bindings/scripts/test/V8/V8TestObj.cpp:
+        Update the tests.
+
 2010-07-22  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Darin Adler.
