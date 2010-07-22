@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003, 2006, 2009 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2003, 2006, 2009, 2010 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,813 +26,514 @@
 #import "config.h"
 #import "LocalizedStrings.h"
 
-#import "BlockExceptions.h"
 #import "IntSize.h"
+#import "LocalizationStrategy.h"
+#import "PlatformStrategies.h"
 #import "PlatformString.h"
-#import "WebCoreViewFactory.h"
 
 namespace WebCore {
 
 String inputElementAltText()
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return [[WebCoreViewFactory sharedFactory] inputElementAltText];
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return String();
+    return platformStrategies()->localizationStrategy()->inputElementAltText();
 }
 
 String resetButtonDefaultLabel()
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return [[WebCoreViewFactory sharedFactory] resetButtonDefaultLabel];
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return String();
+    return platformStrategies()->localizationStrategy()->resetButtonDefaultLabel();
 }
 
 String searchableIndexIntroduction()
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return [[WebCoreViewFactory sharedFactory] searchableIndexIntroduction];
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return String();
+    return platformStrategies()->localizationStrategy()->searchableIndexIntroduction();
 }
 
 String submitButtonDefaultLabel()
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return [[WebCoreViewFactory sharedFactory] submitButtonDefaultLabel];
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return String();
+    return platformStrategies()->localizationStrategy()->submitButtonDefaultLabel();
 }
 
 String fileButtonChooseFileLabel()
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return [[WebCoreViewFactory sharedFactory] fileButtonChooseFileLabel];
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return String();
+    return platformStrategies()->localizationStrategy()->fileButtonChooseFileLabel();
 }
 
 String fileButtonNoFileSelectedLabel()
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return [[WebCoreViewFactory sharedFactory] fileButtonNoFileSelectedLabel];
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return String();
+    return platformStrategies()->localizationStrategy()->fileButtonNoFileSelectedLabel();
 }
 
 String copyImageUnknownFileLabel()
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return [[WebCoreViewFactory sharedFactory] copyImageUnknownFileLabel];
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return String();
+    return platformStrategies()->localizationStrategy()->copyImageUnknownFileLabel();
 }
 
 #if ENABLE(CONTEXT_MENUS)
 String contextMenuItemTagOpenLinkInNewWindow()
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return [[WebCoreViewFactory sharedFactory] contextMenuItemTagOpenLinkInNewWindow];
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return String();
+    return platformStrategies()->localizationStrategy()->contextMenuItemTagOpenLinkInNewWindow();
 }
 
 String contextMenuItemTagDownloadLinkToDisk()
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return [[WebCoreViewFactory sharedFactory] contextMenuItemTagDownloadLinkToDisk];
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return String();
+    return platformStrategies()->localizationStrategy()->contextMenuItemTagDownloadLinkToDisk();
 }
 
 String contextMenuItemTagCopyLinkToClipboard()
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return [[WebCoreViewFactory sharedFactory] contextMenuItemTagCopyLinkToClipboard];
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return String();
+    return platformStrategies()->localizationStrategy()->contextMenuItemTagCopyLinkToClipboard();
 }
 
 String contextMenuItemTagOpenImageInNewWindow()
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return [[WebCoreViewFactory sharedFactory] contextMenuItemTagOpenImageInNewWindow];
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return String();
+    return platformStrategies()->localizationStrategy()->contextMenuItemTagOpenImageInNewWindow();
 }
 
 String contextMenuItemTagDownloadImageToDisk()
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return [[WebCoreViewFactory sharedFactory] contextMenuItemTagDownloadImageToDisk];
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return String();
+    return platformStrategies()->localizationStrategy()->contextMenuItemTagDownloadImageToDisk();
 }
 
 String contextMenuItemTagCopyImageToClipboard()
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return [[WebCoreViewFactory sharedFactory] contextMenuItemTagCopyImageToClipboard];
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return String();
+    return platformStrategies()->localizationStrategy()->contextMenuItemTagCopyImageToClipboard();
 }
 
 String contextMenuItemTagOpenFrameInNewWindow()
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return [[WebCoreViewFactory sharedFactory] contextMenuItemTagOpenFrameInNewWindow];
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return String();
+    return platformStrategies()->localizationStrategy()->contextMenuItemTagOpenFrameInNewWindow();
 }
 
 String contextMenuItemTagCopy()
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return [[WebCoreViewFactory sharedFactory] contextMenuItemTagCopy];
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return String();
+    return platformStrategies()->localizationStrategy()->contextMenuItemTagCopy();
 }
 
 String contextMenuItemTagGoBack()
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return [[WebCoreViewFactory sharedFactory] contextMenuItemTagGoBack];
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return String();
+    return platformStrategies()->localizationStrategy()->contextMenuItemTagGoBack();
 }
 
 String contextMenuItemTagGoForward()
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return [[WebCoreViewFactory sharedFactory] contextMenuItemTagGoForward];
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return String();
+    return platformStrategies()->localizationStrategy()->contextMenuItemTagGoForward();
 }
 
 String contextMenuItemTagStop()
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return [[WebCoreViewFactory sharedFactory] contextMenuItemTagStop];
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return String();
+    return platformStrategies()->localizationStrategy()->contextMenuItemTagStop();
 }
 
 String contextMenuItemTagReload()
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return [[WebCoreViewFactory sharedFactory] contextMenuItemTagReload];
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return String();
+    return platformStrategies()->localizationStrategy()->contextMenuItemTagReload();
 }
 
 String contextMenuItemTagCut()
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return [[WebCoreViewFactory sharedFactory] contextMenuItemTagCut];
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return String();
+    return platformStrategies()->localizationStrategy()->contextMenuItemTagCut();
 }
 
 String contextMenuItemTagPaste()
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return [[WebCoreViewFactory sharedFactory] contextMenuItemTagPaste];
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return String();
+    return platformStrategies()->localizationStrategy()->contextMenuItemTagPaste();
 }
 
 String contextMenuItemTagNoGuessesFound()
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return [[WebCoreViewFactory sharedFactory] contextMenuItemTagNoGuessesFound];
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return String();
+    return platformStrategies()->localizationStrategy()->contextMenuItemTagNoGuessesFound();
 }
 
 String contextMenuItemTagIgnoreSpelling()
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return [[WebCoreViewFactory sharedFactory] contextMenuItemTagIgnoreSpelling];
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return String();
+    return platformStrategies()->localizationStrategy()->contextMenuItemTagIgnoreSpelling();
 }
 
 String contextMenuItemTagLearnSpelling()
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return [[WebCoreViewFactory sharedFactory] contextMenuItemTagLearnSpelling];
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return String();
+    return platformStrategies()->localizationStrategy()->contextMenuItemTagLearnSpelling();
 }
 
 String contextMenuItemTagSearchInSpotlight()
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return [[WebCoreViewFactory sharedFactory] contextMenuItemTagSearchInSpotlight];
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return String();
+    return platformStrategies()->localizationStrategy()->contextMenuItemTagSearchInSpotlight();
 }
 
 String contextMenuItemTagSearchWeb()
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return [[WebCoreViewFactory sharedFactory] contextMenuItemTagSearchWeb];
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return String();
+    return platformStrategies()->localizationStrategy()->contextMenuItemTagSearchWeb();
 }
 
 String contextMenuItemTagLookUpInDictionary()
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return [[WebCoreViewFactory sharedFactory] contextMenuItemTagLookUpInDictionary];
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return String();
+    return platformStrategies()->localizationStrategy()->contextMenuItemTagLookUpInDictionary();
 }
 
 String contextMenuItemTagOpenLink()
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return [[WebCoreViewFactory sharedFactory] contextMenuItemTagOpenLink];
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return String();
+    return platformStrategies()->localizationStrategy()->contextMenuItemTagOpenLink();
 }
 
 String contextMenuItemTagIgnoreGrammar()
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return [[WebCoreViewFactory sharedFactory] contextMenuItemTagIgnoreGrammar];
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return String();
+    return platformStrategies()->localizationStrategy()->contextMenuItemTagIgnoreGrammar();
 }
 
 String contextMenuItemTagSpellingMenu()
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return [[WebCoreViewFactory sharedFactory] contextMenuItemTagSpellingMenu];
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return String();
+    return platformStrategies()->localizationStrategy()->contextMenuItemTagSpellingMenu();
 }
 
 String contextMenuItemTagShowSpellingPanel(bool show)
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return [[WebCoreViewFactory sharedFactory] contextMenuItemTagShowSpellingPanel:show];
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return String();
+    return platformStrategies()->localizationStrategy()->contextMenuItemTagShowSpellingPanel(show);
 }
 
 String contextMenuItemTagCheckSpelling()
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return [[WebCoreViewFactory sharedFactory] contextMenuItemTagCheckSpelling];
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return String();
+    return platformStrategies()->localizationStrategy()->contextMenuItemTagCheckSpelling();
 }
 
 String contextMenuItemTagCheckSpellingWhileTyping()
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return [[WebCoreViewFactory sharedFactory] contextMenuItemTagCheckSpellingWhileTyping];
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return String();
+    return platformStrategies()->localizationStrategy()->contextMenuItemTagCheckSpellingWhileTyping();
 }
 
 String contextMenuItemTagCheckGrammarWithSpelling()
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return [[WebCoreViewFactory sharedFactory] contextMenuItemTagCheckGrammarWithSpelling];
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return String();
+    return platformStrategies()->localizationStrategy()->contextMenuItemTagCheckGrammarWithSpelling();
 }
 
 String contextMenuItemTagFontMenu()
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return [[WebCoreViewFactory sharedFactory] contextMenuItemTagFontMenu];
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return String();
+    return platformStrategies()->localizationStrategy()->contextMenuItemTagFontMenu();
 }
 
 String contextMenuItemTagShowFonts()
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return [[WebCoreViewFactory sharedFactory] contextMenuItemTagShowFonts];
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return String();
+    return platformStrategies()->localizationStrategy()->contextMenuItemTagShowFonts();
 }
 
 String contextMenuItemTagBold()
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return [[WebCoreViewFactory sharedFactory] contextMenuItemTagBold];
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return String();
+    return platformStrategies()->localizationStrategy()->contextMenuItemTagBold();
 }
 
 String contextMenuItemTagItalic()
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return [[WebCoreViewFactory sharedFactory] contextMenuItemTagItalic];
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return String();
+    return platformStrategies()->localizationStrategy()->contextMenuItemTagItalic();
 }
 
 String contextMenuItemTagUnderline()
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return [[WebCoreViewFactory sharedFactory] contextMenuItemTagUnderline];
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return String();
+    return platformStrategies()->localizationStrategy()->contextMenuItemTagUnderline();
 }
 
 String contextMenuItemTagOutline()
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return [[WebCoreViewFactory sharedFactory] contextMenuItemTagOutline];
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return String();
+    return platformStrategies()->localizationStrategy()->contextMenuItemTagOutline();
 }
 
 String contextMenuItemTagStyles()
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return [[WebCoreViewFactory sharedFactory] contextMenuItemTagStyles];
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return String();
+    return platformStrategies()->localizationStrategy()->contextMenuItemTagStyles();
 }
 
 String contextMenuItemTagShowColors()
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return [[WebCoreViewFactory sharedFactory] contextMenuItemTagShowColors];
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return String();
+    return platformStrategies()->localizationStrategy()->contextMenuItemTagShowColors();
 }
 
 String contextMenuItemTagSpeechMenu()
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return [[WebCoreViewFactory sharedFactory] contextMenuItemTagSpeechMenu];
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return String();
+    return platformStrategies()->localizationStrategy()->contextMenuItemTagSpeechMenu();
 }
 
 String contextMenuItemTagStartSpeaking()
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return [[WebCoreViewFactory sharedFactory] contextMenuItemTagStartSpeaking];
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return String();
+    return platformStrategies()->localizationStrategy()->contextMenuItemTagStartSpeaking();
 }
 
 String contextMenuItemTagStopSpeaking()
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return [[WebCoreViewFactory sharedFactory] contextMenuItemTagStopSpeaking];
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return String();
+    return platformStrategies()->localizationStrategy()->contextMenuItemTagStopSpeaking();
 }
 
 String contextMenuItemTagWritingDirectionMenu()
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return [[WebCoreViewFactory sharedFactory] contextMenuItemTagWritingDirectionMenu];
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return String();
+    return platformStrategies()->localizationStrategy()->contextMenuItemTagWritingDirectionMenu();
 }
 
 String contextMenuItemTagTextDirectionMenu()
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return [[WebCoreViewFactory sharedFactory] contextMenuItemTagTextDirectionMenu];
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return String();
+    return platformStrategies()->localizationStrategy()->contextMenuItemTagTextDirectionMenu();
 }
 
 String contextMenuItemTagDefaultDirection()
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return [[WebCoreViewFactory sharedFactory] contextMenuItemTagDefaultDirection];
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return String();
+    return platformStrategies()->localizationStrategy()->contextMenuItemTagDefaultDirection();
 }
 
 String contextMenuItemTagLeftToRight()
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return [[WebCoreViewFactory sharedFactory] contextMenuItemTagLeftToRight];
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return String();
+    return platformStrategies()->localizationStrategy()->contextMenuItemTagLeftToRight();
 }
 
 String contextMenuItemTagRightToLeft()
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return [[WebCoreViewFactory sharedFactory] contextMenuItemTagRightToLeft];
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return String();
+    return platformStrategies()->localizationStrategy()->contextMenuItemTagRightToLeft();
 }
 
 String contextMenuItemTagCorrectSpellingAutomatically()
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return [[WebCoreViewFactory sharedFactory] contextMenuItemTagCorrectSpellingAutomatically];
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return String();
+    return platformStrategies()->localizationStrategy()->contextMenuItemTagCorrectSpellingAutomatically();
 }
 
 String contextMenuItemTagSubstitutionsMenu()
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return [[WebCoreViewFactory sharedFactory] contextMenuItemTagSubstitutionsMenu];
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return String();
+    return platformStrategies()->localizationStrategy()->contextMenuItemTagSubstitutionsMenu();
 }
 
 String contextMenuItemTagShowSubstitutions(bool show)
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return [[WebCoreViewFactory sharedFactory] contextMenuItemTagShowSubstitutions:show];
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return String();
+    return platformStrategies()->localizationStrategy()->contextMenuItemTagShowSubstitutions(show);
 }
 
 String contextMenuItemTagSmartCopyPaste()
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return [[WebCoreViewFactory sharedFactory] contextMenuItemTagSmartCopyPaste];
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return String();
+    return platformStrategies()->localizationStrategy()->contextMenuItemTagSmartCopyPaste();
 }
 
 String contextMenuItemTagSmartQuotes()
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return [[WebCoreViewFactory sharedFactory] contextMenuItemTagSmartQuotes];
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return String();
+    return platformStrategies()->localizationStrategy()->contextMenuItemTagSmartQuotes();
 }
 
 String contextMenuItemTagSmartDashes()
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return [[WebCoreViewFactory sharedFactory] contextMenuItemTagSmartDashes];
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return String();
+    return platformStrategies()->localizationStrategy()->contextMenuItemTagSmartDashes();
 }
 
 String contextMenuItemTagSmartLinks()
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return [[WebCoreViewFactory sharedFactory] contextMenuItemTagSmartLinks];
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return String();
+    return platformStrategies()->localizationStrategy()->contextMenuItemTagSmartLinks();
 }
 
 String contextMenuItemTagTextReplacement()
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return [[WebCoreViewFactory sharedFactory] contextMenuItemTagTextReplacement];
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return String();
+    return platformStrategies()->localizationStrategy()->contextMenuItemTagTextReplacement();
 }
 
 String contextMenuItemTagTransformationsMenu()
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return [[WebCoreViewFactory sharedFactory] contextMenuItemTagTransformationsMenu];
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return String();
+    return platformStrategies()->localizationStrategy()->contextMenuItemTagTransformationsMenu();
 }
 
 String contextMenuItemTagMakeUpperCase()
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return [[WebCoreViewFactory sharedFactory] contextMenuItemTagMakeUpperCase];
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return String();
+    return platformStrategies()->localizationStrategy()->contextMenuItemTagMakeUpperCase();
 }
 
 String contextMenuItemTagMakeLowerCase()
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return [[WebCoreViewFactory sharedFactory] contextMenuItemTagMakeLowerCase];
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return String();
+    return platformStrategies()->localizationStrategy()->contextMenuItemTagMakeLowerCase();
 }
 
 String contextMenuItemTagCapitalize()
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return [[WebCoreViewFactory sharedFactory] contextMenuItemTagCapitalize];
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return String();
+    return platformStrategies()->localizationStrategy()->contextMenuItemTagCapitalize();
 }
 
 String contextMenuItemTagChangeBack(const String& replacedString)
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return [[WebCoreViewFactory sharedFactory] contextMenuItemTagChangeBack:replacedString];
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return replacedString;
+    return platformStrategies()->localizationStrategy()->contextMenuItemTagChangeBack(replacedString);
 }
     
 String contextMenuItemTagInspectElement()
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return [[WebCoreViewFactory sharedFactory] contextMenuItemTagInspectElement];
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return String();
+    return platformStrategies()->localizationStrategy()->contextMenuItemTagInspectElement();
 }
+
 #endif // ENABLE(CONTEXT_MENUS)
 
 String searchMenuNoRecentSearchesText()
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return [[WebCoreViewFactory sharedFactory] searchMenuNoRecentSearchesText];
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return String();
+    return platformStrategies()->localizationStrategy()->searchMenuNoRecentSearchesText();
 }
 
 String searchMenuRecentSearchesText ()
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return [[WebCoreViewFactory sharedFactory] searchMenuRecentSearchesText];
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return String();
+    return platformStrategies()->localizationStrategy()->searchMenuRecentSearchesText ();
 }
 
 String searchMenuClearRecentSearchesText()
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return [[WebCoreViewFactory sharedFactory] searchMenuClearRecentSearchesText];
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return String();
+    return platformStrategies()->localizationStrategy()->searchMenuClearRecentSearchesText();
 }
 
 String AXWebAreaText()
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return [[WebCoreViewFactory sharedFactory] AXWebAreaText];
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return String();
+    return platformStrategies()->localizationStrategy()->AXWebAreaText();
 }
 
 String AXLinkText()
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return [[WebCoreViewFactory sharedFactory] AXLinkText];
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return String();
+    return platformStrategies()->localizationStrategy()->AXLinkText();
 }
 
 String AXListMarkerText()
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return [[WebCoreViewFactory sharedFactory] AXListMarkerText];
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return String();
+    return platformStrategies()->localizationStrategy()->AXListMarkerText();
 }
 
 String AXImageMapText()
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return [[WebCoreViewFactory sharedFactory] AXImageMapText];
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return String();
+    return platformStrategies()->localizationStrategy()->AXImageMapText();
 }
 
 String AXHeadingText()
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return [[WebCoreViewFactory sharedFactory] AXHeadingText];
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return String();
+    return platformStrategies()->localizationStrategy()->AXHeadingText();
 }
 
 String AXDefinitionListTermText()
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return [[WebCoreViewFactory sharedFactory] AXDefinitionListTermText];
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return String();
+    return platformStrategies()->localizationStrategy()->AXDefinitionListTermText();
 }
-    
+
 String AXDefinitionListDefinitionText()
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return [[WebCoreViewFactory sharedFactory] AXDefinitionListDefinitionText];
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return String();
+    return platformStrategies()->localizationStrategy()->AXDefinitionListDefinitionText();
 }
-    
+
 String AXARIAContentGroupText(const String& ariaType)
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return [[WebCoreViewFactory sharedFactory] AXARIAContentGroupText:ariaType];
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return String();        
+    return platformStrategies()->localizationStrategy()->AXARIAContentGroupText(ariaType);
 }
     
 String AXButtonActionVerb()
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return [[WebCoreViewFactory sharedFactory] AXButtonActionVerb];
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return String();
+    return platformStrategies()->localizationStrategy()->AXButtonActionVerb();
 }
 
 String AXRadioButtonActionVerb()
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return [[WebCoreViewFactory sharedFactory] AXRadioButtonActionVerb];
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return String();
+    return platformStrategies()->localizationStrategy()->AXRadioButtonActionVerb();
 }
 
 String AXTextFieldActionVerb()
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return [[WebCoreViewFactory sharedFactory] AXTextFieldActionVerb];
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return String();
+    return platformStrategies()->localizationStrategy()->AXTextFieldActionVerb();
 }
 
 String AXCheckedCheckBoxActionVerb()
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return [[WebCoreViewFactory sharedFactory] AXCheckedCheckBoxActionVerb];
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return String();
+    return platformStrategies()->localizationStrategy()->AXCheckedCheckBoxActionVerb();
 }
 
 String AXUncheckedCheckBoxActionVerb()
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return [[WebCoreViewFactory sharedFactory] AXUncheckedCheckBoxActionVerb];
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return String();
+    return platformStrategies()->localizationStrategy()->AXUncheckedCheckBoxActionVerb();
 }
 
 String AXLinkActionVerb()
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return [[WebCoreViewFactory sharedFactory] AXLinkActionVerb];
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return String();
+    return platformStrategies()->localizationStrategy()->AXLinkActionVerb();
 }
 
 String AXMenuListPopupActionVerb()
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return [[WebCoreViewFactory sharedFactory] AXMenuListPopupActionVerb];
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return String();
+    return platformStrategies()->localizationStrategy()->AXMenuListPopupActionVerb();
 }
 
 String AXMenuListActionVerb()
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return [[WebCoreViewFactory sharedFactory] AXMenuListActionVerb];
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return String();
+    return platformStrategies()->localizationStrategy()->AXMenuListActionVerb();
 }
 
 String missingPluginText()
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return [[WebCoreViewFactory sharedFactory] missingPluginText];
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return String();
+    return platformStrategies()->localizationStrategy()->missingPluginText();
 }
 
 String crashedPluginText()
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return [[WebCoreViewFactory sharedFactory] crashedPluginText];
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return String();
+    return platformStrategies()->localizationStrategy()->crashedPluginText();
 }
 
 String multipleFileUploadText(unsigned numberOfFiles)
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return [[WebCoreViewFactory sharedFactory] multipleFileUploadTextForNumberOfFiles:numberOfFiles];
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return String();
+    return platformStrategies()->localizationStrategy()->multipleFileUploadText(numberOfFiles);
 }
 
 String unknownFileSizeText()
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return [[WebCoreViewFactory sharedFactory] unknownFileSizeText];
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return String();
+    return platformStrategies()->localizationStrategy()->unknownFileSizeText();
 }
 
 String imageTitle(const String& filename, const IntSize& size)
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return [[WebCoreViewFactory sharedFactory] imageTitleForFilename:filename width:size.width() height:size.height()];
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return String();
+    return platformStrategies()->localizationStrategy()->imageTitle(filename, size);
 }
 
 String mediaElementLoadingStateText()
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return [[WebCoreViewFactory sharedFactory] mediaElementLoadingStateText];
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return String();
+    return platformStrategies()->localizationStrategy()->mediaElementLoadingStateText();
 }
 
 String mediaElementLiveBroadcastStateText()
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return [[WebCoreViewFactory sharedFactory] mediaElementLiveBroadcastStateText];
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return String();
+    return platformStrategies()->localizationStrategy()->mediaElementLiveBroadcastStateText();
 }
 
 String localizedMediaControlElementString(const String& controlName)
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return [[WebCoreViewFactory sharedFactory] localizedMediaControlElementString:controlName];
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return String();
+    return platformStrategies()->localizationStrategy()->localizedMediaControlElementString(controlName);
 }
 
 String localizedMediaControlElementHelpText(const String& controlName)
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return [[WebCoreViewFactory sharedFactory] localizedMediaControlElementHelpText:controlName];
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return String();
+    return platformStrategies()->localizationStrategy()->localizedMediaControlElementHelpText(controlName);
 }
 
 String localizedMediaTimeDescription(float time)
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return [[WebCoreViewFactory sharedFactory] localizedMediaTimeDescription:time];
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return String();
+    return platformStrategies()->localizationStrategy()->localizedMediaTimeDescription(time);
 }
 
 String validationMessageValueMissingText()
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return [[WebCoreViewFactory sharedFactory] validationMessageValueMissingText];
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return String();
+    return platformStrategies()->localizationStrategy()->validationMessageValueMissingText();
 }
 
 String validationMessageTypeMismatchText()
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return [[WebCoreViewFactory sharedFactory] validationMessageTypeMismatchText];
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return String();
+    return platformStrategies()->localizationStrategy()->validationMessageTypeMismatchText();
 }
 
 String validationMessagePatternMismatchText()
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return [[WebCoreViewFactory sharedFactory] validationMessagePatternMismatchText];
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return String();
+    return platformStrategies()->localizationStrategy()->validationMessagePatternMismatchText();
 }
 
 String validationMessageTooLongText()
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return [[WebCoreViewFactory sharedFactory] validationMessageTooLongText];
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return String();
+    return platformStrategies()->localizationStrategy()->validationMessageTooLongText();
 }
 
 String validationMessageRangeUnderflowText()
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return [[WebCoreViewFactory sharedFactory] validationMessageRangeUnderflowText];
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return String();
+    return platformStrategies()->localizationStrategy()->validationMessageRangeUnderflowText();
 }
 
 String validationMessageRangeOverflowText()
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return [[WebCoreViewFactory sharedFactory] validationMessageRangeOverflowText];
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return String();
+    return platformStrategies()->localizationStrategy()->validationMessageRangeOverflowText();
 }
 
 String validationMessageStepMismatchText()
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return [[WebCoreViewFactory sharedFactory] validationMessageStepMismatchText];
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return String();
+    return platformStrategies()->localizationStrategy()->validationMessageStepMismatchText();
 }
 
-}
+} // namespace WebCore

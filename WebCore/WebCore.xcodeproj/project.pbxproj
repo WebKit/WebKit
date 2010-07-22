@@ -2450,7 +2450,7 @@
 		934F71420D5A6F4400018D69 /* ResourceError.h in Headers */ = {isa = PBXBuildFile; fileRef = 934F71410D5A6F4400018D69 /* ResourceError.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		934F71440D5A6F5300018D69 /* AuthenticationChallenge.h in Headers */ = {isa = PBXBuildFile; fileRef = 934F71430D5A6F5300018D69 /* AuthenticationChallenge.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		934FE9E50B5CA539003E4A73 /* FileChooser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 934FE9E40B5CA539003E4A73 /* FileChooser.cpp */; };
-		935207BE09BD410A00F2038D /* LocalizedStrings.h in Headers */ = {isa = PBXBuildFile; fileRef = 935207BD09BD410A00F2038D /* LocalizedStrings.h */; };
+		935207BE09BD410A00F2038D /* LocalizedStrings.h in Headers */ = {isa = PBXBuildFile; fileRef = 935207BD09BD410A00F2038D /* LocalizedStrings.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		935207C009BD412100F2038D /* LocalizedStringsMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 935207BF09BD412000F2038D /* LocalizedStringsMac.mm */; };
 		9352084509BD43B900F2038D /* Language.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9352084409BD43B900F2038D /* Language.mm */; };
 		9352087709BD453400F2038D /* CookieJar.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9352087609BD453400F2038D /* CookieJar.mm */; };
@@ -4503,6 +4503,7 @@
 		BC5A86850C33676000EEA649 /* DOMSelection.h in Headers */ = {isa = PBXBuildFile; fileRef = BC5A86820C33676000EEA649 /* DOMSelection.h */; };
 		BC5A86B50C3367E800EEA649 /* JSDOMSelection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC5A86B30C3367E800EEA649 /* JSDOMSelection.cpp */; };
 		BC5A86B60C3367E800EEA649 /* JSDOMSelection.h in Headers */ = {isa = PBXBuildFile; fileRef = BC5A86B40C3367E800EEA649 /* JSDOMSelection.h */; };
+		BC5CFCA911F793320099ED09 /* LocalizationStrategy.h in Headers */ = {isa = PBXBuildFile; fileRef = BC5CFCA811F793320099ED09 /* LocalizationStrategy.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC5EB5DB0E81B7EA00B25965 /* BorderValue.h in Headers */ = {isa = PBXBuildFile; fileRef = BC5EB5DA0E81B7EA00B25965 /* BorderValue.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC5EB5DD0E81B8DD00B25965 /* OutlineValue.h in Headers */ = {isa = PBXBuildFile; fileRef = BC5EB5DC0E81B8DD00B25965 /* OutlineValue.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC5EB5DF0E81B9AB00B25965 /* CollapsedBorderValue.h in Headers */ = {isa = PBXBuildFile; fileRef = BC5EB5DE0E81B9AB00B25965 /* CollapsedBorderValue.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -10125,6 +10126,7 @@
 		BC5A86830C33676000EEA649 /* DOMSelection.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = DOMSelection.idl; sourceTree = "<group>"; };
 		BC5A86B30C3367E800EEA649 /* JSDOMSelection.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMSelection.cpp; sourceTree = "<group>"; };
 		BC5A86B40C3367E800EEA649 /* JSDOMSelection.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSDOMSelection.h; sourceTree = "<group>"; };
+		BC5CFCA811F793320099ED09 /* LocalizationStrategy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocalizationStrategy.h; sourceTree = "<group>"; };
 		BC5EB5DA0E81B7EA00B25965 /* BorderValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BorderValue.h; path = style/BorderValue.h; sourceTree = "<group>"; };
 		BC5EB5DC0E81B8DD00B25965 /* OutlineValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OutlineValue.h; path = style/OutlineValue.h; sourceTree = "<group>"; };
 		BC5EB5DE0E81B9AB00B25965 /* CollapsedBorderValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CollapsedBorderValue.h; path = style/CollapsedBorderValue.h; sourceTree = "<group>"; };
@@ -16222,6 +16224,7 @@
 				A7AD2F850EC89D07008AB002 /* LinkHash.cpp */,
 				A7AD2F860EC89D07008AB002 /* LinkHash.h */,
 				935207BD09BD410A00F2038D /* LocalizedStrings.h */,
+				BC5CFCA811F793320099ED09 /* LocalizationStrategy.h */,
 				A8239DFE09B3CF8A00B60641 /* Logging.cpp */,
 				A8239DFF09B3CF8A00B60641 /* Logging.h */,
 				BC772C4C0C4EB3040083285F /* MIMETypeRegistry.cpp */,
@@ -19838,6 +19841,7 @@
 				97DD4D870FDF4D6E00ECF9A4 /* XSSAuditor.h in Headers */,
 				CE172E011136E8CE0062A533 /* ZoomMode.h in Headers */,
 				8C6EA61A11EF7E0400FD8EE3 /* RuntimeEnabledFeatures.h in Headers */,
+				BC5CFCA911F793320099ED09 /* LocalizationStrategy.h in Headers */,
 				5162C7F511F77EFB00612EFE /* SchemeRegistry.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

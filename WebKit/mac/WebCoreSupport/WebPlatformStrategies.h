@@ -28,8 +28,9 @@
 
 #include <WebCore/PlatformStrategies.h>
 #include <WebCore/PluginStrategy.h>
+#include <WebCore/LocalizationStrategy.h>
 
-class WebPlatformStrategies : public WebCore::PlatformStrategies, private WebCore::PluginStrategy {
+class WebPlatformStrategies : public WebCore::PlatformStrategies, private WebCore::PluginStrategy, private WebCore::LocalizationStrategy {
 public:
     static void initialize();
     
@@ -38,10 +39,115 @@ private:
     
     // WebCore::PlatformStrategies
     virtual WebCore::PluginStrategy* createPluginStrategy();
+    virtual WebCore::LocalizationStrategy* createLocalizationStrategy();
 
     // WebCore::PluginStrategy
     virtual void refreshPlugins();
     virtual void getPluginInfo(Vector<WebCore::PluginInfo>&);
+
+    // WebCore::LocalizationStrategy    
+    virtual WebCore::String inputElementAltText();
+    virtual WebCore::String resetButtonDefaultLabel();
+    virtual WebCore::String searchableIndexIntroduction();
+    virtual WebCore::String submitButtonDefaultLabel();
+    virtual WebCore::String fileButtonChooseFileLabel();
+    virtual WebCore::String fileButtonNoFileSelectedLabel();
+    virtual WebCore::String copyImageUnknownFileLabel();
+#if ENABLE(CONTEXT_MENUS)
+    virtual WebCore::String contextMenuItemTagOpenLinkInNewWindow();
+    virtual WebCore::String contextMenuItemTagDownloadLinkToDisk();
+    virtual WebCore::String contextMenuItemTagCopyLinkToClipboard();
+    virtual WebCore::String contextMenuItemTagOpenImageInNewWindow();
+    virtual WebCore::String contextMenuItemTagDownloadImageToDisk();
+    virtual WebCore::String contextMenuItemTagCopyImageToClipboard();
+    virtual WebCore::String contextMenuItemTagOpenFrameInNewWindow();
+    virtual WebCore::String contextMenuItemTagCopy();
+    virtual WebCore::String contextMenuItemTagGoBack();
+    virtual WebCore::String contextMenuItemTagGoForward();
+    virtual WebCore::String contextMenuItemTagStop();
+    virtual WebCore::String contextMenuItemTagReload();
+    virtual WebCore::String contextMenuItemTagCut();
+    virtual WebCore::String contextMenuItemTagPaste();
+    virtual WebCore::String contextMenuItemTagNoGuessesFound();
+    virtual WebCore::String contextMenuItemTagIgnoreSpelling();
+    virtual WebCore::String contextMenuItemTagLearnSpelling();
+    virtual WebCore::String contextMenuItemTagSearchWeb();
+    virtual WebCore::String contextMenuItemTagLookUpInDictionary();
+    virtual WebCore::String contextMenuItemTagOpenLink();
+    virtual WebCore::String contextMenuItemTagIgnoreGrammar();
+    virtual WebCore::String contextMenuItemTagSpellingMenu();
+    virtual WebCore::String contextMenuItemTagShowSpellingPanel(bool show);
+    virtual WebCore::String contextMenuItemTagCheckSpelling();
+    virtual WebCore::String contextMenuItemTagCheckSpellingWhileTyping();
+    virtual WebCore::String contextMenuItemTagCheckGrammarWithSpelling();
+    virtual WebCore::String contextMenuItemTagFontMenu();
+    virtual WebCore::String contextMenuItemTagBold();
+    virtual WebCore::String contextMenuItemTagItalic();
+    virtual WebCore::String contextMenuItemTagUnderline();
+    virtual WebCore::String contextMenuItemTagOutline();
+    virtual WebCore::String contextMenuItemTagWritingDirectionMenu();
+    virtual WebCore::String contextMenuItemTagTextDirectionMenu();
+    virtual WebCore::String contextMenuItemTagDefaultDirection();
+    virtual WebCore::String contextMenuItemTagLeftToRight();
+    virtual WebCore::String contextMenuItemTagRightToLeft();
+    virtual WebCore::String contextMenuItemTagSearchInSpotlight();
+    virtual WebCore::String contextMenuItemTagShowFonts();
+    virtual WebCore::String contextMenuItemTagStyles();
+    virtual WebCore::String contextMenuItemTagShowColors();
+    virtual WebCore::String contextMenuItemTagSpeechMenu();
+    virtual WebCore::String contextMenuItemTagStartSpeaking();
+    virtual WebCore::String contextMenuItemTagStopSpeaking();
+    virtual WebCore::String contextMenuItemTagCorrectSpellingAutomatically();
+    virtual WebCore::String contextMenuItemTagSubstitutionsMenu();
+    virtual WebCore::String contextMenuItemTagShowSubstitutions(bool show);
+    virtual WebCore::String contextMenuItemTagSmartCopyPaste();
+    virtual WebCore::String contextMenuItemTagSmartQuotes();
+    virtual WebCore::String contextMenuItemTagSmartDashes();
+    virtual WebCore::String contextMenuItemTagSmartLinks();
+    virtual WebCore::String contextMenuItemTagTextReplacement();
+    virtual WebCore::String contextMenuItemTagTransformationsMenu();
+    virtual WebCore::String contextMenuItemTagMakeUpperCase();
+    virtual WebCore::String contextMenuItemTagMakeLowerCase();
+    virtual WebCore::String contextMenuItemTagCapitalize();
+    virtual WebCore::String contextMenuItemTagChangeBack(const WebCore::String& replacedString);
+    virtual WebCore::String contextMenuItemTagInspectElement();
+#endif // ENABLE(CONTEXT_MENUS)
+    virtual WebCore::String searchMenuNoRecentSearchesText();
+    virtual WebCore::String searchMenuRecentSearchesText();
+    virtual WebCore::String searchMenuClearRecentSearchesText();
+    virtual WebCore::String AXWebAreaText();
+    virtual WebCore::String AXLinkText();
+    virtual WebCore::String AXListMarkerText();
+    virtual WebCore::String AXImageMapText();
+    virtual WebCore::String AXHeadingText();
+    virtual WebCore::String AXDefinitionListTermText();
+    virtual WebCore::String AXDefinitionListDefinitionText();
+    virtual WebCore::String AXARIAContentGroupText(const WebCore::String& ariaType);
+    virtual WebCore::String AXButtonActionVerb();
+    virtual WebCore::String AXRadioButtonActionVerb();
+    virtual WebCore::String AXTextFieldActionVerb();
+    virtual WebCore::String AXCheckedCheckBoxActionVerb();
+    virtual WebCore::String AXUncheckedCheckBoxActionVerb();
+    virtual WebCore::String AXMenuListActionVerb();
+    virtual WebCore::String AXMenuListPopupActionVerb();
+    virtual WebCore::String AXLinkActionVerb();
+    virtual WebCore::String missingPluginText();
+    virtual WebCore::String crashedPluginText();
+    virtual WebCore::String multipleFileUploadText(unsigned numberOfFiles);
+    virtual WebCore::String unknownFileSizeText();
+    virtual WebCore::String imageTitle(const WebCore::String& filename, const WebCore::IntSize& size);
+    virtual WebCore::String mediaElementLoadingStateText();
+    virtual WebCore::String mediaElementLiveBroadcastStateText();
+    virtual WebCore::String localizedMediaControlElementString(const WebCore::String&);
+    virtual WebCore::String localizedMediaControlElementHelpText(const WebCore::String&);
+    virtual WebCore::String localizedMediaTimeDescription(float);
+    virtual WebCore::String validationMessageValueMissingText();
+    virtual WebCore::String validationMessageTypeMismatchText();
+    virtual WebCore::String validationMessagePatternMismatchText();
+    virtual WebCore::String validationMessageTooLongText();
+    virtual WebCore::String validationMessageRangeUnderflowText();
+    virtual WebCore::String validationMessageRangeOverflowText();
+    virtual WebCore::String validationMessageStepMismatchText();
 };
 
 #endif // WebPlatformStrategies_h

@@ -43,6 +43,7 @@
 #import "WebViewInternal.h"
 #import <WebCore/ContextMenu.h>
 #import <WebCore/KURL.h>
+#import <WebCore/LocalizedStrings.h>
 #import <WebCore/RuntimeApplicationChecks.h>
 #import <WebKit/DOMPrivate.h>
 
@@ -168,77 +169,77 @@ static void fixMenusReceivedFromOldClients(NSMutableArray *newMenuItems, NSMutab
         if (tag == WebMenuItemTagOther) {
             // Restore the specific tag for items on which we temporarily set WebMenuItemTagOther to match old behavior.
             NSString *title = [item title];
-            if ([title isEqualToString:[[WebViewFactory sharedFactory] contextMenuItemTagOpenLink]])
+            if ([title isEqualToString:contextMenuItemTagOpenLink()])
                 modernTag = WebMenuItemTagOpenLink;
-            else if ([title isEqualToString:[[WebViewFactory sharedFactory] contextMenuItemTagIgnoreGrammar]])
+            else if ([title isEqualToString:contextMenuItemTagIgnoreGrammar()])
                 modernTag = WebMenuItemTagIgnoreGrammar;
-            else if ([title isEqualToString:[[WebViewFactory sharedFactory] contextMenuItemTagSpellingMenu]])
+            else if ([title isEqualToString:contextMenuItemTagSpellingMenu()])
                 modernTag = WebMenuItemTagSpellingMenu;
-            else if ([title isEqualToString:[[WebViewFactory sharedFactory] contextMenuItemTagShowSpellingPanel:true]]
-                     || [title isEqualToString:[[WebViewFactory sharedFactory] contextMenuItemTagShowSpellingPanel:false]])
+            else if ([title isEqualToString:contextMenuItemTagShowSpellingPanel(true)]
+                     || [title isEqualToString:contextMenuItemTagShowSpellingPanel(false)])
                 modernTag = WebMenuItemTagShowSpellingPanel;
-            else if ([title isEqualToString:[[WebViewFactory sharedFactory] contextMenuItemTagCheckSpelling]])
+            else if ([title isEqualToString:contextMenuItemTagCheckSpelling()])
                 modernTag = WebMenuItemTagCheckSpelling;
-            else if ([title isEqualToString:[[WebViewFactory sharedFactory] contextMenuItemTagCheckSpellingWhileTyping]])
+            else if ([title isEqualToString:contextMenuItemTagCheckSpellingWhileTyping()])
                 modernTag = WebMenuItemTagCheckSpellingWhileTyping;
-            else if ([title isEqualToString:[[WebViewFactory sharedFactory] contextMenuItemTagCheckGrammarWithSpelling]])
+            else if ([title isEqualToString:contextMenuItemTagCheckGrammarWithSpelling()])
                 modernTag = WebMenuItemTagCheckGrammarWithSpelling;
-            else if ([title isEqualToString:[[WebViewFactory sharedFactory] contextMenuItemTagFontMenu]])
+            else if ([title isEqualToString:contextMenuItemTagFontMenu()])
                 modernTag = WebMenuItemTagFontMenu;
-            else if ([title isEqualToString:[[WebViewFactory sharedFactory] contextMenuItemTagShowFonts]])
+            else if ([title isEqualToString:contextMenuItemTagShowFonts()])
                 modernTag = WebMenuItemTagShowFonts;
-            else if ([title isEqualToString:[[WebViewFactory sharedFactory] contextMenuItemTagBold]])
+            else if ([title isEqualToString:contextMenuItemTagBold()])
                 modernTag = WebMenuItemTagBold;
-            else if ([title isEqualToString:[[WebViewFactory sharedFactory] contextMenuItemTagItalic]])
+            else if ([title isEqualToString:contextMenuItemTagItalic()])
                 modernTag = WebMenuItemTagItalic;
-            else if ([title isEqualToString:[[WebViewFactory sharedFactory] contextMenuItemTagUnderline]])
+            else if ([title isEqualToString:contextMenuItemTagUnderline()])
                 modernTag = WebMenuItemTagUnderline;
-            else if ([title isEqualToString:[[WebViewFactory sharedFactory] contextMenuItemTagOutline]])
+            else if ([title isEqualToString:contextMenuItemTagOutline()])
                 modernTag = WebMenuItemTagOutline;
-            else if ([title isEqualToString:[[WebViewFactory sharedFactory] contextMenuItemTagStyles]])
+            else if ([title isEqualToString:contextMenuItemTagStyles()])
                 modernTag = WebMenuItemTagStyles;
-            else if ([title isEqualToString:[[WebViewFactory sharedFactory] contextMenuItemTagShowColors]])
+            else if ([title isEqualToString:contextMenuItemTagShowColors()])
                 modernTag = WebMenuItemTagShowColors;
-            else if ([title isEqualToString:[[WebViewFactory sharedFactory] contextMenuItemTagSpeechMenu]])
+            else if ([title isEqualToString:contextMenuItemTagSpeechMenu()])
                 modernTag = WebMenuItemTagSpeechMenu;
-            else if ([title isEqualToString:[[WebViewFactory sharedFactory] contextMenuItemTagStartSpeaking]])
+            else if ([title isEqualToString:contextMenuItemTagStartSpeaking()])
                 modernTag = WebMenuItemTagStartSpeaking;
-            else if ([title isEqualToString:[[WebViewFactory sharedFactory] contextMenuItemTagStopSpeaking]])
+            else if ([title isEqualToString:contextMenuItemTagStopSpeaking()])
                 modernTag = WebMenuItemTagStopSpeaking;
-            else if ([title isEqualToString:[[WebViewFactory sharedFactory] contextMenuItemTagWritingDirectionMenu]])
+            else if ([title isEqualToString:contextMenuItemTagWritingDirectionMenu()])
                 modernTag = WebMenuItemTagWritingDirectionMenu;
-            else if ([title isEqualToString:[[WebViewFactory sharedFactory] contextMenuItemTagDefaultDirection]])
+            else if ([title isEqualToString:contextMenuItemTagDefaultDirection()])
                 modernTag = WebMenuItemTagDefaultDirection;
-            else if ([title isEqualToString:[[WebViewFactory sharedFactory] contextMenuItemTagLeftToRight]])
+            else if ([title isEqualToString:contextMenuItemTagLeftToRight()])
                 modernTag = WebMenuItemTagLeftToRight;
-            else if ([title isEqualToString:[[WebViewFactory sharedFactory] contextMenuItemTagRightToLeft]])
+            else if ([title isEqualToString:contextMenuItemTagRightToLeft()])
                 modernTag = WebMenuItemTagRightToLeft;
-            else if ([title isEqualToString:[[WebViewFactory sharedFactory] contextMenuItemTagInspectElement]])
+            else if ([title isEqualToString:contextMenuItemTagInspectElement()])
                 modernTag = WebMenuItemTagInspectElement;
-            else if ([title isEqualToString:[[WebViewFactory sharedFactory] contextMenuItemTagCorrectSpellingAutomatically]])
+            else if ([title isEqualToString:contextMenuItemTagCorrectSpellingAutomatically()])
                 modernTag = WebMenuItemTagCorrectSpellingAutomatically;
-            else if ([title isEqualToString:[[WebViewFactory sharedFactory] contextMenuItemTagSubstitutionsMenu]])
+            else if ([title isEqualToString:contextMenuItemTagSubstitutionsMenu()])
                 modernTag = WebMenuItemTagSubstitutionsMenu;
-            else if ([title isEqualToString:[[WebViewFactory sharedFactory] contextMenuItemTagShowSubstitutions:true]]
-                     || [title isEqualToString:[[WebViewFactory sharedFactory] contextMenuItemTagShowSubstitutions:false]])
+            else if ([title isEqualToString:contextMenuItemTagShowSubstitutions(true)]
+                     || [title isEqualToString:contextMenuItemTagShowSubstitutions(false)])
                 modernTag = WebMenuItemTagShowSubstitutions;
-            else if ([title isEqualToString:[[WebViewFactory sharedFactory] contextMenuItemTagSmartCopyPaste]])
+            else if ([title isEqualToString:contextMenuItemTagSmartCopyPaste()])
                 modernTag = WebMenuItemTagSmartCopyPaste;
-            else if ([title isEqualToString:[[WebViewFactory sharedFactory] contextMenuItemTagSmartQuotes]])
+            else if ([title isEqualToString:contextMenuItemTagSmartQuotes()])
                 modernTag = WebMenuItemTagSmartQuotes;
-            else if ([title isEqualToString:[[WebViewFactory sharedFactory] contextMenuItemTagSmartDashes]])
+            else if ([title isEqualToString:contextMenuItemTagSmartDashes()])
                 modernTag = WebMenuItemTagSmartDashes;
-            else if ([title isEqualToString:[[WebViewFactory sharedFactory] contextMenuItemTagSmartLinks]])
+            else if ([title isEqualToString:contextMenuItemTagSmartLinks()])
                 modernTag = WebMenuItemTagSmartLinks;
-            else if ([title isEqualToString:[[WebViewFactory sharedFactory] contextMenuItemTagTextReplacement]])
+            else if ([title isEqualToString:contextMenuItemTagTextReplacement()])
                 modernTag = WebMenuItemTagTextReplacement;
-            else if ([title isEqualToString:[[WebViewFactory sharedFactory] contextMenuItemTagTransformationsMenu]])
+            else if ([title isEqualToString:contextMenuItemTagTransformationsMenu()])
                 modernTag = WebMenuItemTagTransformationsMenu;
-            else if ([title isEqualToString:[[WebViewFactory sharedFactory] contextMenuItemTagMakeUpperCase]])
+            else if ([title isEqualToString:contextMenuItemTagMakeUpperCase()])
                 modernTag = WebMenuItemTagMakeUpperCase;
-            else if ([title isEqualToString:[[WebViewFactory sharedFactory] contextMenuItemTagMakeLowerCase]])
+            else if ([title isEqualToString:contextMenuItemTagMakeLowerCase()])
                 modernTag = WebMenuItemTagMakeLowerCase;
-            else if ([title isEqualToString:[[WebViewFactory sharedFactory] contextMenuItemTagCapitalize]])
+            else if ([title isEqualToString:contextMenuItemTagCapitalize()])
                 modernTag = WebMenuItemTagCapitalize;
             else {
             // We don't expect WebMenuItemTagOther for any items other than the ones we explicitly handle.

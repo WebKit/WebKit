@@ -1,3 +1,27 @@
+2010-07-22  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Patch for https://bugs.webkit.org/show_bug.cgi?id=42836
+        Add localized strings stubs for WebKit2.
+
+        - Convert WebKit (mac) to use a LocalizationStrategy rather than the WebCoreViewFactory
+          for localized strings.
+
+        Gets us below 200 tests failing in WebKitTestRunner.
+
+        * WebCore.exp.in:
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/mac/WebCoreViewFactory.h:
+        * platform/LocalizationStrategy.h: Added.
+        (WebCore::LocalizationStrategy::~LocalizationStrategy):
+        * platform/PlatformStrategies.h:
+        (WebCore::PlatformStrategies::pluginStrategy):
+        (WebCore::PlatformStrategies::localizationStrategy):
+        (WebCore::PlatformStrategies::PlatformStrategies):
+        (WebCore::PlatformStrategies::~PlatformStrategies):
+        * platform/mac/LocalizedStringsMac.mm:
+
 2010-07-22  Andras Becsi  <abecsi@webkit.org>
 
         Reviewed by Antonio Gomes.
