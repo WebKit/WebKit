@@ -10,11 +10,9 @@
  *    it dumps the content of the specified element as supposed to the entire DOM tree.
  *
  * 3. Dump the content of a specific element multiple times while the page is loading
- *    Calling Markup.dump would dump the content of the specified element or the entire DOM.
- *    On the page load, it dumps the content of the current node (set by setNodeToDump)
- *    or the entire DOM if the node was never set.
+ *    Calling Markup.dump would dump the content of the element set by setNodeToDump or the entire DOM.
+ *    Optionally specify the node to dump and the description for each call of dump.
  */
-
 
 if (window.layoutTestController) {
     layoutTestController.dumpAsText();
@@ -27,29 +25,41 @@ var Markup = {};
 // The description of what this test is testing. Gets prepended to the dumped markup.
 Markup.description = function(description)
 {
-    Markup._description = description;
+    Markup._test_description = description;
 }
 
 // Dumps the markup for the given node (HTML element if no node is given).
 // Over-writes the body's content with the markup in layout test mode. Appends
 // a pre element when loaded manually, in order to aid debugging.
-Markup.dump = function(opt_node)
+Markup.dump = function(opt_node, opt_description)
 {
-    var node = opt_node || Markup._node || document.body.parentElement
+    if (typeof opt_node == 'string')
+        opt_node = document.getElementById(opt_node);
 
-    var markup = Markup._description ? Markup._description + '\n' : "";
+    var node = opt_node || Markup._node || document.body.parentElement
+    var markup = "";
+
+    if (Markup._test_description && !Markup._dumpCalls)
+        markup += Markup._test_description + '\n';
+
+    Markup._dumpCalls++;
+
+    // If dump is not called by notifyDone, then print out optional description
+    // because this test is manually calling dump.
+    if (!Markup._done || opt_description) {
+        if (!opt_description)
+            opt_description = "Dump of markup " + Markup._dumpCalls
+        if (Markup._dumpCalls > 1)
+            markup += '\n';
+        markup += '\n' + opt_description + ':';
+    }
+
     markup += Markup.get(node);
 
-    var container;
-    if (window.layoutTestController)
-        container = document.body;
-    else {
-        // In non-layout test mode, append the results in a pre so that we don't
-        // clobber the test itself. But when in layout test mode, we don't want
-        // side effects from the test to be included in the results.
-        container = document.createElement('pre');
-        container.style.cssText = 'width:100%';
-        document.body.appendChild(container);
+    if (!Markup._container) {
+        Markup._container = document.createElement('pre');
+        Markup._container.style.width = '100%';
+        document.body.appendChild(Markup._container);
     }
 
     // FIXME: Have this respect layoutTestController.dumpChildFramesAsText?
@@ -64,7 +74,7 @@ Markup.dump = function(opt_node)
         }
     }
 
-    container.innerText = markup;
+    Markup._container.innerText += markup;
 }
 
 Markup.waitUntilDone = function()
@@ -74,7 +84,17 @@ Markup.waitUntilDone = function()
 
 Markup.notifyDone = function()
 {
-    Markup.dump();
+    Markup._done = true;
+
+    // If dump has already been called, don't bother to dump again
+    if (!Markup._dumpCalls)
+        Markup.dump();
+
+    // In non-layout test mode, append the results in a pre so that we don't
+    // clobber the test itself. But when in layout test mode, we don't want
+    // side effects from the test to be included in the results.
+    if (window.layoutTestController)
+        document.body.innerText = Markup._container.innerText;
 
     if (window.layoutTestController)
         layoutTestController.notifyDone();
@@ -82,9 +102,9 @@ Markup.notifyDone = function()
 
 Markup.setNodeToDump = function(node)
 {
-  if (typeof node == "string")
-    node = document.getElementById(node);
-  Markup._node = node
+    if (typeof node == "string")
+        node = document.getElementById(node);
+    Markup._node = node
 }
 
 // Returns the markup for the given node. To be used for cases where a test needs
@@ -132,6 +152,8 @@ Markup.get = function(node, opt_depth)
 
     return markup;
 }
+
+Markup._dumpCalls = 0
 
 Markup._spaces = function(multiplier)
 {

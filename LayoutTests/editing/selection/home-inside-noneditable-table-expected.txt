@@ -1,0 +1,33 @@
+Tests whether home moves the caret to the beginning of line inside a content-editable in an uneditable table.
+
+Dump of markup 1:
+<DIV id="test" contentEditable="true">
+<#text>
+</#text>
+<DIV id="l1">
+<#text>The caret is initially <selection-caret>here but should move to the beginning of the line.</#text>
+</DIV>
+<#text>
+</#text>
+<DIV>
+<#text>dummy text</#text>
+</DIV>
+<#text>
+</#text>
+</DIV>
+
+Dump of markup 2:
+<DIV id="test" contentEditable="true">
+<#text>
+</#text>
+<DIV id="l1">
+<#text><selection-caret>The caret is initially here but should move to the beginning of the line.</#text>
+</DIV>
+<#text>
+</#text>
+<DIV>
+<#text>dummy text</#text>
+</DIV>
+<#text>
+</#text>
+</DIV>
