@@ -20,7 +20,9 @@ var skippedProperties = [
     "ArrayBuffer",
     "Int8Array", "Uint8Array", "Int16Array", "Uint16Array", "Int32Array", "Uint32Array", "Float32Array",
     "FileError", "FileReader",
-    "indexedDB", "showModalDialog"
+    "indexedDB", "showModalDialog",
+    // Ignore this property because it only appears in debug builds.
+    "jscprint"
 ];
 
 var skippedPropertiesSet = {};
@@ -31,11 +33,21 @@ for (var i = 0; i < skippedProperties.length; i++)
 window.Object.prototype.isInner = false;
 inner.Object.prototype.isInner = true;
 
-var windowProperites = [];
-for (property in window) {
-    windowProperites.push(property);
+function propertiesOnObject(o) {
+    var namesSet = {};
+    while (o && typeof o == "object") {
+        var names = Object.getOwnPropertyNames(o);
+        for (var i = 0; i < names.length; ++i)
+            namesSet[names[i]] = 1;
+        o = Object.getPrototypeOf(o);
+    }
+    var result = [];
+    for (var p in namesSet)
+        result.push(p);
+    return result;
 }
-windowProperties = windowProperites.sort();
+
+windowProperites = propertiesOnObject(window).sort();
 
 for (var x = 0; x < windowProperites.length; x++) {
     var property = windowProperites[x];
