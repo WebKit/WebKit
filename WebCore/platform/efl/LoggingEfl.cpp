@@ -23,10 +23,41 @@
 #include "config.h"
 #include "Logging.h"
 
+#include "PlatformString.h"
+#include <Eina.h>
+
 namespace WebCore {
 
 void InitializeLoggingChannelsIfNecessary()
 {
+    static bool didInitializeLoggingChannels = false;
+    if (didInitializeLoggingChannels)
+        return;
+
+    didInitializeLoggingChannels = true;
+
+    char* logEnv = getenv("WEBKIT_DEBUG");
+    if (!logEnv)
+        return;
+
+#if defined(NDEBUG)
+    EINA_LOG_WARN("WEBKIT_DEBUG is not empty, but this is a release build. Notice that many log messages will only appear in a debug build.");
+#endif
+
+    char** logv = eina_str_split(logEnv, ",", -1);
+
+    EINA_SAFETY_ON_NULL_RETURN(logv);
+
+    for (int i = 0; logv[i]; i++) {
+        if (WTFLogChannel* channel = getChannelFromName(logv[i]))
+            channel->state = WTFLogChannelOn;
+    }
+
+    free(*logv);
+    free(logv);
+
+    // To disable logging notImplemented set the DISABLE_NI_WARNING
+    // environment variable to 1.
     LogNotYetImplemented.state = WTFLogChannelOn;
 }
 
