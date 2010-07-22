@@ -1,3 +1,10 @@
+2010-07-22  Dmitry Titov  <dimich@chromium.org>
+
+        Rubberstamped by Simon Fraser.
+
+        * platform/PlatformStrategies.h:
+        (WebCore::PlatformStrategies::PlatformStrategies): Add initialization of m_localizationStrategy.
+
 2010-07-22  Dumitru Daniliuc  <dumi@chromium.org>
 
         Reviewed by Ojan Vafai.

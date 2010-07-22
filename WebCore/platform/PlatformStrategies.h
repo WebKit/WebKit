@@ -51,7 +51,8 @@ public:
 
 protected:
     PlatformStrategies()
-        : m_pluginStrategy(0)
+        : m_pluginStrategy(0),
+          m_localizationStrategy(0)
     {
     }
 
