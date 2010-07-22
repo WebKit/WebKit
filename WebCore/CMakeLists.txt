@@ -1201,6 +1201,7 @@ SET(WebCore_SOURCES
     platform/ScrollbarThemeComposite.cpp
     platform/ScrollView.cpp
     platform/SharedBuffer.cpp
+    platform/SchemeRegistry.cpp
     platform/ThreadGlobalData.cpp
     platform/ThreadTimers.cpp
     platform/Timer.cpp
