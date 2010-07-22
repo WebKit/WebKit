@@ -1,3 +1,18 @@
+2010-07-21  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Assertion failure by changing the type of an input element with a
+        non-number value to 'range'.
+        https://bugs.webkit.org/show_bug.cgi?id=42643
+
+        Test: fast/forms/input-value-sanitization.html
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::setInputType):
+        Update the value by HTMLInputElement::sanitizeValue() in a case that
+        storesValueSeparateFromAttribute() state is not changed.
+
 2010-07-21  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

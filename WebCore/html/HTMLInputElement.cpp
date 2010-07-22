@@ -863,8 +863,12 @@ void HTMLInputElement::setInputType(const String& t)
             }
             if (!didStoreValue && willStoreValue)
                 m_data.setValue(sanitizeValue(getAttribute(valueAttr)));
-            else
-                InputElement::updateValueIfNeeded(m_data, this);
+            else {
+                String oldValue = m_data.value();
+                String newValue = sanitizeValue(oldValue);
+                if (newValue != oldValue)
+                    setValue(newValue);
+            }
 
             if (wasPasswordField && !isPasswordField)
                 unregisterForActivationCallbackIfNeeded();

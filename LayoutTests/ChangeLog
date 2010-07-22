@@ -1,3 +1,15 @@
+2010-07-21  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Assertion failure by changing the type of an input element with a
+        non-number value to 'range'.
+        https://bugs.webkit.org/show_bug.cgi?id=42643
+
+        * fast/forms/input-value-sanitization-expected.txt: Added.
+        * fast/forms/input-value-sanitization.html: Added.
+        * fast/forms/script-tests/input-value-sanitization.js: Added.
+
 2010-07-21  Justin Schuh  <jschuh@chromium.org>
 
         Unreviewed. Build fix.
