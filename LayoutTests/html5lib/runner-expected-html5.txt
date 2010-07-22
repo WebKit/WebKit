@@ -10,44 +10,8 @@ CONSOLE MESSAGE: line 1: SyntaxError: Parse error
 CONSOLE MESSAGE: line 2: PASS
 CONSOLE MESSAGE: line 2: FOO<span>BAR</span>BAZ
 Content-Type: text/plain
-resources/tests1.dat:
-24
-98
+resources/tests1.dat: PASS
 
-Test 24 of 114 in resources/tests1.dat failed. Input:
-<b><button>foo</b>bar
-Got:
-| <html>
-|   <head>
-|   <body>
-|     <b>
-|       <button>
-|         "foobar"
-Expected:
-| <html>
-|   <head>
-|   <body>
-|     <b>
-|     <button>
-|       <b>
-|         "foo"
-|       "bar"
-
-Test 98 of 114 in resources/tests1.dat failed. Input:
-<b><button></b></button></b>
-Got:
-| <html>
-|   <head>
-|   <body>
-|     <b>
-|       <button>
-Expected:
-| <html>
-|   <head>
-|   <body>
-|     <b>
-|     <button>
-|       <b>
 resources/tests2.dat: PASS
 
 resources/tests3.dat: PASS
@@ -467,48 +431,29 @@ Expected:
 |       <article>
 |     "a"
 resources/tests20.dat:
-20
-21
+16
 24
 25
 
-Test 20 of 25 in resources/tests20.dat failed. Input:
-<!doctype html><address><button></address>a
+Test 16 of 25 in resources/tests20.dat failed. Input:
+<!doctype html><p><button><table>
 Got:
 | <!DOCTYPE html>
 | <html>
 |   <head>
 |   <body>
-|     <address>
+|     <p>
 |       <button>
-|         "a"
+|         <p>
+|         <table>
 Expected:
 | <!DOCTYPE html>
 | <html>
 |   <head>
 |   <body>
-|     <address>
+|     <p>
 |       <button>
-|     "a"
-
-Test 21 of 25 in resources/tests20.dat failed. Input:
-<!doctype html><address><button></address>a
-Got:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <address>
-|       <button>
-|         "a"
-Expected:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <address>
-|       <button>
-|     "a"
+|         <table>
 
 Test 24 of 25 in resources/tests20.dat failed. Input:
 <!doctype html><p><figcaption>
@@ -888,29 +833,7 @@ resources/entities02.dat: PASS
 resources/comments01.dat: PASS
 
 resources/adoption01.dat:
-3
 12
-
-Test 3 of 12 in resources/adoption01.dat failed. Input:
-<a>1<button>2</a>3</button>
-Got:
-| <html>
-|   <head>
-|   <body>
-|     <a>
-|       "1"
-|       <button>
-|         "23"
-Expected:
-| <html>
-|   <head>
-|   <body>
-|     <a>
-|       "1"
-|     <button>
-|       <a>
-|         "2"
-|       "3"
 
 Test 12 of 12 in resources/adoption01.dat failed. Input:
 <table>A<td>B</td>C</table>

@@ -1,3 +1,25 @@
+2010-07-21  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        HTMLTreeBuilder needs to update to match new spec behavior for <button>
+        https://bugs.webkit.org/show_bug.cgi?id=42233
+
+        The spec has some typos in this area, but this is my best guess for
+        what Ian means.  I've filed bugs against the spec for each typo.
+
+        * html/HTMLElementStack.cpp:
+        (WebCore::HTMLNames::isScopeMarker):
+        (WebCore::HTMLNames::isButtonScopeMarker):
+        (WebCore::HTMLElementStack::inButtonScope):
+        * html/HTMLElementStack.h:
+        * html/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::processFakePEndTagIfPInButtonScope):
+        (WebCore::HTMLTreeBuilder::processCloseWhenNestedTag):
+        (WebCore::HTMLTreeBuilder::processStartTagForInBody):
+        (WebCore::HTMLTreeBuilder::processEndTagForInBody):
+        * html/HTMLTreeBuilder.h:
+
 2010-07-21  Justin Schuh  <jschuh@chromium.org>
 
         Reviewed by Oliver Hunt.

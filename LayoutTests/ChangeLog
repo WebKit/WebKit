@@ -1,3 +1,15 @@
+2010-07-21  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        HTMLTreeBuilder needs to update to match new spec behavior for <button>
+        https://bugs.webkit.org/show_bug.cgi?id=42233
+
+        Test progression.  There's one regression mixed in here.  I'll
+        investigate in the next patch.
+
+        * html5lib/runner-expected-html5.txt:
+
 2010-07-21  Justin Schuh  <jschuh@chromium.org>
 
         Unreviewed. Build fix.
