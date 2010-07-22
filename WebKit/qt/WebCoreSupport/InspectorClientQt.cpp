@@ -44,6 +44,7 @@
 #include "qwebview.h"
 #include <QtCore/QCoreApplication>
 #include <QtCore/QSettings>
+#include <QtCore/QVariant>
 
 namespace WebCore {
 
@@ -60,6 +61,7 @@ public:
     InspectorClientWebPage(QObject* parent = 0)
         : QWebPage(parent)
     {
+        connect(mainFrame(), SIGNAL(javaScriptWindowObjectCleared()), SLOT(javaScriptWindowObjectCleared()));
     }
 
     QWebPage* createWindow(QWebPage::WebWindowType)
@@ -69,6 +71,25 @@ public:
         view->setPage(page);
         view->setAttribute(Qt::WA_DeleteOnClose);
         return page;
+    }
+
+public slots:
+    void javaScriptWindowObjectCleared() 
+    {
+#ifndef QT_NO_PROPERTIES
+        QVariant inspectorJavaScriptWindowObjects = property("_q_inspectorJavaScriptWindowObjects");
+        if (!inspectorJavaScriptWindowObjects.isValid())
+            return;
+        QMap<QString, QVariant> javaScriptNameObjectMap = inspectorJavaScriptWindowObjects.toMap();
+        QWebFrame* frame = mainFrame();
+        QMap<QString, QVariant>::const_iterator it = javaScriptNameObjectMap.constBegin();
+        for ( ; it != javaScriptNameObjectMap.constEnd(); ++it) {
+            QString name = it.key();
+            QVariant value = it.value();
+            QObject* obj = value.value<QObject*>();
+            frame->addToJavaScriptWindowObject(name, obj);
+        }
+#endif
     }
 };
 
@@ -100,6 +121,12 @@ void InspectorClientQt::openInspectorFrontend(WebCore::InspectorController*)
 #endif
     if (!inspectorUrl.isValid())
         inspectorUrl = QUrl("qrc:/webkit/inspector/inspector.html");
+
+#ifndef QT_NO_PROPERTIES
+    QVariant inspectorJavaScriptWindowObjects = inspector->property("_q_inspectorJavaScriptWindowObjects");
+    if (inspectorJavaScriptWindowObjects.isValid())
+        inspectorPage->setProperty("_q_inspectorJavaScriptWindowObjects", inspectorJavaScriptWindowObjects);
+#endif
     inspectorView->page()->mainFrame()->load(inspectorUrl);
     m_inspectedWebPage->d->inspectorFrontend = inspectorView;
     inspector->d->setFrontend(inspectorView);
