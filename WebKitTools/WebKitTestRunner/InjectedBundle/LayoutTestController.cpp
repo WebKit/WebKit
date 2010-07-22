@@ -42,7 +42,7 @@ PassRefPtr<LayoutTestController> LayoutTestController::create(const std::string&
 }
 
 LayoutTestController::LayoutTestController(const std::string& testPathOrURL)
-    : m_dumpAsText(false)
+    : m_whatToDump(RenderTree)
     , m_shouldDumpAllFrameScrollPositions(false)
     , m_dumpStatusCallbacks(false)
     , m_waitToDump(false)
@@ -123,21 +123,6 @@ bool LayoutTestController::pauseAnimationAtTimeOnElementWithId(JSStringRef anima
 
     WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(InjectedBundle::shared().page()->page());
     return WKBundleFramePauseAnimationOnElementWithId(mainFrame, nameWK.get(), idWK.get(), time);
-}
-
-bool LayoutTestController::shouldDumpDOMAsWebArchive() const
-{
-    return false;
-}
-
-bool LayoutTestController::shouldDumpSourceAsWebArchive() const
-{
-    return false;
-}
-
-bool LayoutTestController::shouldDumpMainFrameScrollPosition() const
-{
-    return !shouldDumpAsText() && !shouldDumpDOMAsWebArchive() && !shouldDumpSourceAsWebArchive();
 }
 
 // Object Creation

@@ -71,6 +71,7 @@ private:
     void willRunJavaScriptConfirm(WKStringRef message, WKBundleFrameRef);
     void willRunJavaScriptPrompt(WKStringRef message, WKStringRef defaultValue, WKBundleFrameRef);
 
+    void dumpAllFramesText();
     void dumpAllFrameScrollPositions();
 
     WKBundlePageRef m_page;

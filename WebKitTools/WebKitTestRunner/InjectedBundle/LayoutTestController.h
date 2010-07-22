@@ -45,11 +45,12 @@ public:
     void makeWindowObject(JSContextRef, JSObjectRef windowObject, JSValueRef* exception);
 
     // The basics.
-    void dumpAsText() { m_dumpAsText = true; }
+    void dumpAsText() { m_whatToDump = MainFrameText; }
+    void dumpChildFramesAsText() { m_whatToDump = AllFramesText; }
     void waitUntilDone();
     void notifyDone();
 
-    // Other kinds of dumping.
+    // Other dumping.
     void dumpChildFrameScrollPositions() { m_shouldDumpAllFrameScrollPositions = true; }
     void dumpStatusCallbacks() { m_dumpStatusCallbacks = true; }
 
@@ -62,11 +63,12 @@ public:
     unsigned numberOfActiveAnimations() const;
     bool pauseAnimationAtTimeOnElementWithId(JSStringRef animationName, double time, JSStringRef elementId);
 
+    enum WhatToDump { RenderTree, MainFrameText, AllFramesText };
+    WhatToDump whatToDump() const { return m_whatToDump; }
+
     bool shouldDumpAllFrameScrollPositions() const { return m_shouldDumpAllFrameScrollPositions; }
-    bool shouldDumpAsText() const { return m_dumpAsText; }
-    bool shouldDumpDOMAsWebArchive() const;
-    bool shouldDumpMainFrameScrollPosition() const;
-    bool shouldDumpSourceAsWebArchive() const;
+    bool shouldDumpMainFrameScrollPosition() const { return m_whatToDump == RenderTree; }
+
     bool shouldDumpStatusCallbacks() const { return m_dumpStatusCallbacks; }
 
     bool waitToDump() const { return m_waitToDump; }
@@ -76,7 +78,7 @@ public:
 private:
     LayoutTestController(const std::string& testPathOrURL);
 
-    bool m_dumpAsText;
+    WhatToDump m_whatToDump;
     bool m_shouldDumpAllFrameScrollPositions;
     bool m_dumpStatusCallbacks;
     bool m_waitToDump; // True if waitUntilDone() has been called, but notifyDone() has not yet been called.

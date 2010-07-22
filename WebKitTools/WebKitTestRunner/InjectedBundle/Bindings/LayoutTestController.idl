@@ -28,10 +28,11 @@ module WTR {
     interface LayoutTestController {
         // The basics.
         void dumpAsText();
+        void dumpChildFramesAsText();
         void waitUntilDone();
         void notifyDone();
 
-        // Other kinds of dumping.
+        // Other dumping.
         void dumpChildFrameScrollPositions();
         void dumpStatusCallbacks();
 

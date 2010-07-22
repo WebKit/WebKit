@@ -97,8 +97,7 @@ compositing/geometry/limit-layer-bounds-transformed.html
 compositing/geometry/limit-layer-bounds-transformed-overflow.html
 compositing/animation/animation-compositing.html
 
-
-# Support layoutTestController.dumpEditingDelegates in WebKitTestRunner
+# Support layoutTestController.dumpEditingCallbacks in WebKitTestRunner
 # <https://bugs.webkit.org/show_bug.cgi?id=42193>
 editing/deleting/4845371.html
 editing/deleting/5546763.html
@@ -981,7 +980,6 @@ fast/forms/textarea-arrow-navigation.html
 fast/forms/textarea-live-pseudo-selectors.html
 fast/forms/textarea-scrolled-endline-caret.html
 fast/forms/textarea-textlength.html
-fast/forms/textarea-textlength.html
 fast/forms/textarea-type-spaces.html
 fast/forms/textfield-drag-into-disabled.html
 fast/forms/textfield-inside-anchor.html
@@ -1277,33 +1275,46 @@ svg/zoom/text/zoom-svg-float-border-padding.xml
 
 # WebKitTestRunner needs to support layoutTestController.setXSSAuditorEnabled
 # <https://bugs.webkit.org/show_bug.cgi?id=42195>
-http/tests/security/xssAuditor/anchor-url-dom-write-location.html
-http/tests/security/xssAuditor/anchor-url-dom-write-location-inline-event.html
 http/tests/security/xssAuditor/anchor-url-dom-write-location-inline-event-null-char.html
+http/tests/security/xssAuditor/anchor-url-dom-write-location-inline-event.html
 http/tests/security/xssAuditor/anchor-url-dom-write-location-javascript-URL.html
+http/tests/security/xssAuditor/anchor-url-dom-write-location.html
 http/tests/security/xssAuditor/base-href-control-char.html
-http/tests/security/xssAuditor/base-href.html
 http/tests/security/xssAuditor/base-href-direct.html
 http/tests/security/xssAuditor/base-href-null-char.html
 http/tests/security/xssAuditor/base-href-safe.html
 http/tests/security/xssAuditor/base-href-safe2.html
 http/tests/security/xssAuditor/base-href-safe3.html
 http/tests/security/xssAuditor/base-href-scheme-relative.html
+http/tests/security/xssAuditor/base-href.html
+http/tests/security/xssAuditor/dom-write-URL.html
 http/tests/security/xssAuditor/dom-write-innerHTML.html
-http/tests/security/xssAuditor/dom-write-location.html
 http/tests/security/xssAuditor/dom-write-location-inline-event.html
 http/tests/security/xssAuditor/dom-write-location-javascript-URL.html
-http/tests/security/xssAuditor/dom-write-URL.html
+http/tests/security/xssAuditor/dom-write-location.html
 http/tests/security/xssAuditor/embed-tag-control-char.html
-http/tests/security/xssAuditor/embed-tag.html
 http/tests/security/xssAuditor/embed-tag-javascript-url.html
 http/tests/security/xssAuditor/embed-tag-null-char.html
+http/tests/security/xssAuditor/embed-tag.html
+http/tests/security/xssAuditor/faux-script1.html
+http/tests/security/xssAuditor/faux-script2.html
+http/tests/security/xssAuditor/faux-script3.html
+http/tests/security/xssAuditor/full-block-base-href.html
+http/tests/security/xssAuditor/full-block-get-from-iframe.html
+http/tests/security/xssAuditor/full-block-iframe-javascript-url.html
+http/tests/security/xssAuditor/full-block-iframe-no-inherit.php
+http/tests/security/xssAuditor/full-block-javascript-link.html
+http/tests/security/xssAuditor/full-block-link-onclick.html
+http/tests/security/xssAuditor/full-block-object-tag.html
+http/tests/security/xssAuditor/full-block-post-from-iframe.html
+http/tests/security/xssAuditor/full-block-script-tag-with-source.html
+http/tests/security/xssAuditor/full-block-script-tag.html
 http/tests/security/xssAuditor/get-from-iframe.html
-http/tests/security/xssAuditor/iframe-javascript-url.html
 http/tests/security/xssAuditor/iframe-javascript-url-twice-url-encode.html
 http/tests/security/xssAuditor/iframe-javascript-url-twice-url-encode2.html
 http/tests/security/xssAuditor/iframe-javascript-url-twice-url-encode3.html
 http/tests/security/xssAuditor/iframe-javascript-url-url-encoded.html
+http/tests/security/xssAuditor/iframe-javascript-url.html
 http/tests/security/xssAuditor/img-onerror-accented-char.html
 http/tests/security/xssAuditor/img-onerror-non-ASCII-char-default-encoding.html
 http/tests/security/xssAuditor/img-onerror-non-ASCII-char.html
@@ -1311,34 +1322,36 @@ http/tests/security/xssAuditor/img-onerror-non-ASCII-char2-default-encoding.html
 http/tests/security/xssAuditor/img-onerror-non-ASCII-char2.html
 http/tests/security/xssAuditor/img-onerror-tricky.html
 http/tests/security/xssAuditor/inline-event-HTML-entities.html
-http/tests/security/xssAuditor/javascript-link-ampersand.html
-http/tests/security/xssAuditor/javascript-link-control-char.html
-http/tests/security/xssAuditor/javascript-link.html
 http/tests/security/xssAuditor/javascript-link-HTML-entities-control-char.html
-http/tests/security/xssAuditor/javascript-link-HTML-entities.html
 http/tests/security/xssAuditor/javascript-link-HTML-entities-named.html
 http/tests/security/xssAuditor/javascript-link-HTML-entities-null-char.html
+http/tests/security/xssAuditor/javascript-link-HTML-entities.html
+http/tests/security/xssAuditor/javascript-link-ampersand.html
+http/tests/security/xssAuditor/javascript-link-control-char.html
 http/tests/security/xssAuditor/javascript-link-null-char.html
 http/tests/security/xssAuditor/javascript-link-safe.html
 http/tests/security/xssAuditor/javascript-link-url-encoded.html
+http/tests/security/xssAuditor/javascript-link.html
 http/tests/security/xssAuditor/link-onclick-ampersand.html
 http/tests/security/xssAuditor/link-onclick-control-char.html
-http/tests/security/xssAuditor/link-onclick.html
 http/tests/security/xssAuditor/link-onclick-entities.html
 http/tests/security/xssAuditor/link-onclick-null-char.html
+http/tests/security/xssAuditor/link-onclick.html
 http/tests/security/xssAuditor/link-opens-new-window.html
+http/tests/security/xssAuditor/malformed-HTML.html
+http/tests/security/xssAuditor/malformed-xss-protection-header.html
 http/tests/security/xssAuditor/meta-tag-http-refresh-javascript-url.html
 http/tests/security/xssAuditor/no-protection-script-tag.html
 http/tests/security/xssAuditor/object-embed-tag-control-char.html
-http/tests/security/xssAuditor/object-embed-tag.html
 http/tests/security/xssAuditor/object-embed-tag-null-char.html
+http/tests/security/xssAuditor/object-embed-tag.html
 http/tests/security/xssAuditor/object-src-inject.html
-http/tests/security/xssAuditor/object-tag.html
 http/tests/security/xssAuditor/object-tag-javascript-url.html
+http/tests/security/xssAuditor/object-tag.html
 http/tests/security/xssAuditor/post-from-iframe.html
-http/tests/security/xssAuditor/property-escape.html
-http/tests/security/xssAuditor/property-escape-noquotes.html
 http/tests/security/xssAuditor/property-escape-noquotes-tab-slash-chars.html
+http/tests/security/xssAuditor/property-escape-noquotes.html
+http/tests/security/xssAuditor/property-escape.html
 http/tests/security/xssAuditor/property-inject.html
 http/tests/security/xssAuditor/script-tag-addslashes-backslash.html
 http/tests/security/xssAuditor/script-tag-addslashes-double-quote.html
@@ -1346,27 +1359,28 @@ http/tests/security/xssAuditor/script-tag-addslashes-null-char.html
 http/tests/security/xssAuditor/script-tag-addslashes-single-quote.html
 http/tests/security/xssAuditor/script-tag-control-char.html
 http/tests/security/xssAuditor/script-tag-convoluted.html
-http/tests/security/xssAuditor/script-tag.html
 http/tests/security/xssAuditor/script-tag-entities.html
 http/tests/security/xssAuditor/script-tag-null-char.html
 http/tests/security/xssAuditor/script-tag-open-redirect.html
 http/tests/security/xssAuditor/script-tag-post-control-char.html
-http/tests/security/xssAuditor/script-tag-post.html
 http/tests/security/xssAuditor/script-tag-post-null-char.html
+http/tests/security/xssAuditor/script-tag-post.html
 http/tests/security/xssAuditor/script-tag-redirect.html
 http/tests/security/xssAuditor/script-tag-safe.html
 http/tests/security/xssAuditor/script-tag-safe2.html
 http/tests/security/xssAuditor/script-tag-safe3.html
 http/tests/security/xssAuditor/script-tag-src-redirect-safe.html
 http/tests/security/xssAuditor/script-tag-with-source-control-char.html
-http/tests/security/xssAuditor/script-tag-with-source.html
 http/tests/security/xssAuditor/script-tag-with-source-double-quote.html
 http/tests/security/xssAuditor/script-tag-with-source-entities.html
 http/tests/security/xssAuditor/script-tag-with-source-no-quote.html
 http/tests/security/xssAuditor/script-tag-with-source-null-char.html
 http/tests/security/xssAuditor/script-tag-with-source-relative-scheme.html
-http/tests/security/xssAuditor/script-tag-with-source-same-host.html
 http/tests/security/xssAuditor/script-tag-with-source-same-host-with-query.html
+http/tests/security/xssAuditor/script-tag-with-source-same-host.html
+http/tests/security/xssAuditor/script-tag-with-source.html
+http/tests/security/xssAuditor/script-tag.html
+http/tests/security/xssAuditor/xss-protection-parsing-01.html
 
 # WebKit2 needs plugins support
 # <https://bugs.webkit.org/show_bug.cgi?id=42196>
@@ -1457,23 +1471,48 @@ fast/canvas/webgl/gl-pixelstorei.html
 fast/canvas/webgl/invalid-passed-params.html
 fast/canvas/webgl/read-pixels-pack-alignment.html
 
-
 # Pasteboard doesn't work in WebKit2
 # <https://bugs.webkit.org/show_bug.cgi?id=42317>
-editing/pasteboard/copy-resolves-urls.html
 editing/execCommand/4128080-2.html
 editing/execCommand/5939887.html
 editing/execCommand/copy-without-selection.html
 editing/execCommand/paste-and-match-style-event.html 
-editing/style/5065910.html
-editing/pasteboard/19644-2.html
 editing/pasteboard/19644-1.html 
+editing/pasteboard/19644-2.html
 editing/pasteboard/4922709.html
 editing/pasteboard/4944770-1.html
 editing/pasteboard/4989774.html 
-editing/pasteboard/paste-visible-script.html
+editing/pasteboard/5006779.html
+editing/pasteboard/5027857.html
+editing/pasteboard/5028447.html
+editing/pasteboard/5065605.html
+editing/pasteboard/5071074.html
+editing/pasteboard/5075944-2.html
+editing/pasteboard/5075944.html
+editing/pasteboard/5247341.html
+editing/pasteboard/5368833.html
+editing/pasteboard/5478250.html
+editing/pasteboard/5601583-1.html
+editing/pasteboard/5665299.html
+editing/pasteboard/5761530-1.html
+editing/pasteboard/5780697-2.html
+editing/pasteboard/copy-backslash-with-euc.html
+editing/pasteboard/copy-paste-bidi.html
+editing/pasteboard/copy-paste-float.html
+editing/pasteboard/copy-resolves-urls.html
+editing/pasteboard/get-data-text-plain-paste.html
+editing/pasteboard/page-zoom.html
+editing/pasteboard/paste-blockquote-before-blockquote.html
+editing/pasteboard/paste-double-nested-blockquote-before-blockquote.html
+editing/pasteboard/paste-list-002.html
+editing/pasteboard/paste-list-003.html
+editing/pasteboard/paste-list-004.html
+editing/pasteboard/paste-noscript-svg.html
+editing/pasteboard/paste-noscript-xhtml.xhtml
+editing/pasteboard/paste-noscript.html
 editing/pasteboard/paste-unrendered-select.html 
-
+editing/pasteboard/paste-visible-script.html
+editing/style/5065910.html
 
 # WebKitTestRunner needs to support evaluateInWebInspector
 # <https://bugs.webkit.org/show_bug.cgi?id=42319>
@@ -1533,8 +1572,6 @@ http/tests/inspector/resource-har-conversion.html
 http/tests/inspector/resource-parameters.html
 http/tests/inspector-enabled/console-log-before-frame-navigation.html
 
-
-
 # Need to support unsafe access console messages in WebKitTestRunner
 # <https://bugs.webkit.org/show_bug.cgi?id=42320>
 http/tests/security/cross-frame-access-call.html
@@ -1577,50 +1614,16 @@ http/tests/security/xss-DENIED-sandboxed-iframe.html
 
 # WebKitTestRunner needs to support layoutTestController.setCanOpenWindows
 # <https://bugs.webkit.org/show_bug.cgi?id=42321>
-http/tests/appcache/crash-when-navigating-away-then-back.html
-http/tests/media/video-cancel-load.html
-http/tests/misc/set-window-opener-to-null.html
-http/tests/misc/slow-preload-cancel.html
-http/tests/misc/window-open-then-write.html
-http/tests/navigation/new-window-redirect-history.html
-http/tests/navigation/no-referrer-reset.html
-http/tests/navigation/no-referrer-target-blank.html
-http/tests/navigation/target-frame-from-window.html
-http/tests/security/aboutBlank/security-context-window-open.html
-http/tests/security/aboutBlank/window-open-self-about-blank.html
-http/tests/security/aboutBlank/xss-DENIED-navigate-opener-document-write.html
-http/tests/security/aboutBlank/xss-DENIED-navigate-opener-javascript-url.html
-http/tests/security/aboutBlank/xss-DENIED-set-opener.html
-http/tests/security/cross-frame-access-call.html
-http/tests/security/dataURL/xss-DENIED-from-data-url-in-foreign-domain-window-open.html
-http/tests/security/dataURL/xss-DENIED-from-javascript-url-window-open.html
-http/tests/security/dataURL/xss-DENIED-to-data-url-in-foreign-domain-window-open.html
-http/tests/security/dataURL/xss-DENIED-to-data-url-window-open.html
-http/tests/security/frameNavigation/cross-origin-opener.html
-http/tests/security/frameNavigation/not-opener.html
-http/tests/security/frameNavigation/opener.html
-http/tests/security/isolatedWorld/userGestureEvents.html
-http/tests/security/javascriptURL/xss-ALLOWED-from-javascript-url-window-open.html
-http/tests/security/javascriptURL/xss-ALLOWED-to-javascript-url-window-open.html
-http/tests/security/javascriptURL/xss-DENIED-from-javascript-url-in-foreign-domain-window-open.html
-http/tests/security/javascriptURL/xss-DENIED-to-javascript-url-in-foreign-domain-window-open.html
-http/tests/security/originHeader/origin-header-for-empty.html
-http/tests/security/window-events-clear-domain.html
-http/tests/security/window-events-clear-port.html
-http/tests/security/window-events-pass.html
-http/tests/xmlhttprequest/close-window.html
-http/tests/xmlhttprequest/cross-origin-authorization.html
-http/tests/xmlhttprequest/cross-origin-authorization-with-embedder.html
-http/tests/xmlhttprequest/cross-origin-no-authorization.html
-http/tests/xmlhttprequest/request-from-popup.html
 fast/dom/Document/early-document-access.html
-fast/dom/location-new-window-no-crash.html
-fast/dom/open-and-close-by-DOM.html
 fast/dom/Window/closure-access-after-navigation-window.html
 fast/dom/Window/dom-access-from-closure-window.html
 fast/dom/Window/new-window-opener.html
 fast/dom/Window/setting-properties-on-closed-window.html
 fast/dom/Window/window-early-properties.html
+fast/dom/Window/window-open-pending-url.html
+fast/dom/Window/window-open-self-from-other-frame.html
+fast/dom/location-new-window-no-crash.html
+fast/dom/open-and-close-by-DOM.html
 fast/events/popup-allowed-from-gesture-initiated-event.html
 fast/events/popup-allowed-from-gesture-initiated-form-submit.html
 fast/events/popup-blocked-from-fake-button-click.html
@@ -1636,20 +1639,56 @@ fast/harness/show-modal-dialog.html
 fast/history/history_reload.html
 fast/loader/cancel-load-during-port-block-timer.html
 fast/loader/crash-copying-backforwardlist.html
+fast/loader/stateobjects/pushstate-without-history.html
 fast/loader/stateobjects/replacestate-in-iframe.html
 fast/loader/stateobjects/replacestate-then-pushstate.html
-fast/loader/stateobjects/pushstate-without-history.html
 fast/loader/stateobjects/replacestate-updates-location.html
 fast/parser/xhtml-close-while-parsing.xhtml
+http/tests/appcache/crash-when-navigating-away-then-back.html
+http/tests/media/video-cancel-load.html
+http/tests/misc/set-window-opener-to-null.html
+http/tests/misc/slow-preload-cancel.html
+http/tests/misc/window-open-then-write.html
+http/tests/navigation/new-window-redirect-history.html
+http/tests/navigation/no-referrer-reset.html
+http/tests/navigation/no-referrer-target-blank.html
+http/tests/navigation/target-frame-from-window.html
+http/tests/security/aboutBlank/security-context-window-open.html
+http/tests/security/aboutBlank/window-open-self-about-blank.html
+http/tests/security/aboutBlank/xss-DENIED-navigate-opener-document-write.html
+http/tests/security/aboutBlank/xss-DENIED-navigate-opener-javascript-url.html
+http/tests/security/aboutBlank/xss-DENIED-set-opener.html
+http/tests/security/dataURL/xss-DENIED-from-data-url-in-foreign-domain-window-open.html
+http/tests/security/dataURL/xss-DENIED-from-javascript-url-window-open.html
+http/tests/security/dataURL/xss-DENIED-to-data-url-in-foreign-domain-window-open.html
+http/tests/security/dataURL/xss-DENIED-to-data-url-window-open.html
+http/tests/security/frameNavigation/cross-origin-opener.html
+http/tests/security/frameNavigation/not-opener.html
+http/tests/security/frameNavigation/opener.html
+http/tests/security/frameNavigation/xss-DENIED-plugin-navigation.html
+http/tests/security/frameNavigation/xss-DENIED-targeted-link-navigation.html
+http/tests/security/isolatedWorld/userGestureEvents.html
+http/tests/security/javascriptURL/xss-ALLOWED-from-javascript-url-window-open.html
+http/tests/security/javascriptURL/xss-ALLOWED-to-javascript-url-window-open.html
+http/tests/security/javascriptURL/xss-DENIED-from-javascript-url-in-foreign-domain-window-open.html
+http/tests/security/javascriptURL/xss-DENIED-to-javascript-url-in-foreign-domain-window-open.html
+http/tests/security/originHeader/origin-header-for-empty.html
+http/tests/security/window-events-clear-domain.html
+http/tests/security/window-events-clear-port.html
+http/tests/security/window-events-pass.html
+http/tests/xmlhttprequest/close-window.html
+http/tests/xmlhttprequest/cross-origin-authorization-with-embedder.html
+http/tests/xmlhttprequest/cross-origin-authorization.html
+http/tests/xmlhttprequest/cross-origin-no-authorization.html
+http/tests/xmlhttprequest/request-from-popup.html
 storage/domstorage/localstorage/window-open.html
 storage/domstorage/sessionstorage/window-open.html
-fast/dom/Window/window-open-self-from-other-frame.html
-fast/dom/Window/window-open-pending-url.html
 
 # WebKitTestRunner needs to support layoutTestController.dumpBackForwardList
 # <https://bugs.webkit.org/show_bug.cgi?id=42322>
 fast/loader/fragment-after-redirect-gets-back-entry.html
 fast/loader/frame-location-change-not-added-to-history.html
+fast/loader/frame-src-change-added-to-history.html
 fast/loader/frame-src-change-not-added-to-history.html
 fast/loader/stateobjects/pushstate-object-types.html
 fast/loader/subframe-navigate-during-main-frame-load.html
@@ -1785,127 +1824,6 @@ webarchive/test-script-src.html
 webarchive/test-table-background.html
 webarchive/test-td-background.html
 webarchive/test-xml-stylesheet.xml
-
-
-# WebKitTestRunner needs to support layoutTestController.dumpChildFramesAsText
-# <https://bugs.webkit.org/show_bug.cgi?id=42325>
-fast/dom/javascript-url-crash-function.html
-fast/dom/xss-DENIED-javascript-variations.html
-fast/events/onbeforeunload-focused-iframe.html
-fast/frames/sandboxed-iframe-noscript.html
-fast/frames/sandboxed-iframe-storage.html
-fast/frames/viewsource-empty-attribute-value.html
-fast/loader/frame-src-change-added-to-history.html
-fast/loader/grandparent-completion-starts-redirect.html
-fast/loader/plain-text-document.html
-fast/loader/subframe-self-close.html
-fast/parser/xml-declaration-missing-ending-mark.html
-fast/xsl/xslt-text.html
-http/tests/loading/basic-auth-resend-wrong-credentials.html
-http/tests/loading/basic-credentials-sent-automatically.html
-http/tests/misc/isindex-with-no-form-base-href.html
-http/tests/misc/policy-delegate-called-twice.html
-http/tests/misc/redirect-to-external-url.html
-http/tests/navigation/reload-subframe-frame.html
-http/tests/navigation/reload-subframe-iframe.html
-http/tests/navigation/reload-subframe-object.html
-http/tests/security/cross-frame-access-callback-explicit-domain-DENY.html
-http/tests/security/cross-frame-access-child-explicit-domain.html
-http/tests/security/cross-frame-access-delete.html
-http/tests/security/cross-frame-access-document-direct.html
-http/tests/security/cross-frame-access-history-put.html
-http/tests/security/cross-frame-access-location-put.html
-http/tests/security/cross-frame-access-object-prototype.html
-http/tests/security/cross-frame-access-parent-explicit-domain.html
-http/tests/security/cross-frame-access-port.html
-http/tests/security/cross-frame-access-port-explicit-domain.html
-http/tests/security/cross-frame-access-private-browsing.html
-http/tests/security/cross-frame-access-protocol.html
-http/tests/security/cross-frame-access-protocol-explicit-domain.html
-http/tests/security/cross-origin-xsl-BLOCKED.html
-http/tests/security/dataURL/xss-DENIED-from-data-url-in-foreign-domain-subframe.html
-http/tests/security/dataURL/xss-DENIED-from-data-url-sub-frame-2-level.html
-http/tests/security/dataURL/xss-DENIED-from-data-url-sub-frame.html
-http/tests/security/dataURL/xss-DENIED-from-data-url-sub-frame-to-data-url-sub-frame.html
-http/tests/security/dataURL/xss-DENIED-from-data-url-to-data-url.html
-http/tests/security/dataURL/xss-DENIED-to-data-url-from-data-url.html
-http/tests/security/dataURL/xss-DENIED-to-data-url-in-foreign-domain-subframe.html
-http/tests/security/dataURL/xss-DENIED-to-data-url-in-foreign-domain-subframe-location-change.html
-http/tests/security/dataURL/xss-DENIED-to-data-url-sub-frame-2-level.html
-http/tests/security/dataURL/xss-DENIED-to-data-url-sub-frame.html
-http/tests/security/dataURL/xss-DENIED-to-data-url-sub-frame-uppercase.html
-http/tests/security/frame-loading-via-document-write.html
-http/tests/security/frameNavigation/xss-ALLOWED-targeted-subframe-navigation-change.html
-http/tests/security/frameNavigation/xss-DENIED-plugin-navigation.html
-http/tests/security/frameNavigation/xss-DENIED-targeted-link-navigation.html
-http/tests/security/host-compare-case-insensitive.html
-http/tests/security/javascriptURL/javascriptURL-execution-context-frame-location-htmldom.html
-http/tests/security/javascriptURL/javascriptURL-execution-context-frame-src-getAttribute-value.html
-http/tests/security/javascriptURL/javascriptURL-execution-context-frame-src-htmldom.html
-http/tests/security/javascriptURL/javascriptURL-execution-context-frame-src-setAttribute.html
-http/tests/security/javascriptURL/javascriptURL-execution-context-frame-src-setAttributeNode.html
-http/tests/security/javascriptURL/javascriptURL-execution-context-frame-src-setAttributeNodeNS.html
-http/tests/security/javascriptURL/javascriptURL-execution-context-frame-src-setAttributeNS.html
-http/tests/security/javascriptURL/javascriptURL-execution-context-iframe-src-getAttribute-value.html
-http/tests/security/javascriptURL/javascriptURL-execution-context-iframe-src-htmldom.html
-http/tests/security/javascriptURL/javascriptURL-execution-context-iframe-src-setAttribute.html
-http/tests/security/javascriptURL/javascriptURL-execution-context-iframe-src-setAttributeNode.html
-http/tests/security/javascriptURL/javascriptURL-execution-context-iframe-src-setAttributeNodeNS.html
-http/tests/security/javascriptURL/javascriptURL-execution-context-iframe-src-setAttributeNS.html
-http/tests/security/javascriptURL/xss-ALLOWED-from-javascript-url-sub-frame-2-level.html
-http/tests/security/javascriptURL/xss-ALLOWED-from-javascript-url-sub-frame.html
-http/tests/security/javascriptURL/xss-ALLOWED-from-javascript-url-sub-frame-to-javascript-url-sub-frame.html
-http/tests/security/javascriptURL/xss-ALLOWED-from-javascript-url-to-javscript-url.html
-http/tests/security/javascriptURL/xss-ALLOWED-to-javascript-url-from-javscript-url.html
-http/tests/security/javascriptURL/xss-ALLOWED-to-javascript-url-sub-frame-2-level.html
-http/tests/security/javascriptURL/xss-ALLOWED-to-javascript-url-sub-frame.html
-http/tests/security/javascriptURL/xss-DENIED-from-javascript-url-in-foreign-domain-subframe.html
-http/tests/security/javascriptURL/xss-DENIED-to-javascript-url-in-foreign-domain-subframe.html
-http/tests/security/protocol-compare-case-insensitive.html
-http/tests/security/sandboxed-iframe-document-cookie.html
-http/tests/security/window-properties-clear-domain.html
-http/tests/security/window-properties-clear-port.html
-http/tests/security/window-properties-pass.html
-http/tests/security/XFrameOptions/x-frame-options-deny.html
-http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag.html
-http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-in-body.html
-http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-parent-same-origin-allow.html
-http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-parent-same-origin-deny.html
-http/tests/security/XFrameOptions/x-frame-options-parent-same-origin-allow.html
-http/tests/security/XFrameOptions/x-frame-options-parent-same-origin-deny.html
-http/tests/security/xss-DENIED-assign-location-href-javascript.html
-http/tests/security/xssAuditor/faux-script1.html
-http/tests/security/xssAuditor/faux-script2.html
-http/tests/security/xssAuditor/faux-script3.html
-http/tests/security/xssAuditor/full-block-base-href.html
-http/tests/security/xssAuditor/full-block-get-from-iframe.html
-http/tests/security/xssAuditor/full-block-iframe-javascript-url.html
-http/tests/security/xssAuditor/full-block-iframe-no-inherit.php
-http/tests/security/xssAuditor/full-block-javascript-link.html
-http/tests/security/xssAuditor/full-block-link-onclick.html
-http/tests/security/xssAuditor/full-block-object-tag.html
-http/tests/security/xssAuditor/full-block-post-from-iframe.html
-http/tests/security/xssAuditor/full-block-script-tag.html
-http/tests/security/xssAuditor/full-block-script-tag-with-source.html
-http/tests/security/xssAuditor/malformed-HTML.html
-http/tests/security/xssAuditor/malformed-xss-protection-header.html
-http/tests/security/xssAuditor/xss-protection-parsing-01.html
-http/tests/xmlhttprequest/access-control-sandboxed-iframe-allow.html
-http/tests/xmlhttprequest/access-control-sandboxed-iframe-denied.html
-http/tests/xmlhttprequest/access-control-sandboxed-iframe-denied-without-wildcard.html
-http/tests/xmlhttprequest/uri-resolution-opera-open-010.html
-userscripts/user-script-all-frames.html
-userscripts/user-script-top-frame-only.html
-userscripts/user-style-all-frames.html
-userscripts/user-style-top-frame-only.html
-fast/forms/form-and-frame-interaction-retains-values.html
-http/tests/xmlhttprequest/uri-resolution-opera-open-004.html
-http/tests/xmlhttprequest/uri-resolution-opera-open-005.html
-http/tests/xmlhttprequest/uri-resolution-opera-open-006.html
-http/tests/xmlhttprequest/uri-resolution-opera-open-007.html
-http/tests/xmlhttprequest/uri-resolution-opera-open-008.html
-http/tests/xmlhttprequest/uri-resolution-opera-open-009.html
-
 
 # WebKitTestRunner needs to support layoutTestController.dumpSelectionRect
 # <https://bugs.webkit.org/show_bug.cgi?id=42326>
@@ -2051,12 +1969,19 @@ http/tests/misc/favicon-loads-with-images-disabled.html
 http/tests/misc/will-send-request-returns-null-on-redirect.html
 http/tests/misc/willCacheResponse-delegate-callback.html
 http/tests/misc/window-dot-stop.html
+http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-in-body.html
+http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-parent-same-origin-allow.html
+http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-parent-same-origin-deny.html
+http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag.html
+http/tests/security/XFrameOptions/x-frame-options-deny.html
+http/tests/security/XFrameOptions/x-frame-options-parent-same-origin-allow.html
+http/tests/security/XFrameOptions/x-frame-options-parent-same-origin-deny.html
 http/tests/xmlhttprequest/abort-should-cancel-load.html
-security/block-test.html
 security/block-test-no-port.html
+security/block-test.html
 webarchive/loading/cache-expired-subresource.html
 
-# WebKitTestrunner needs layoutTestController.clearBackForwardList
+# WebKitTestRunner needs layoutTestController.clearBackForwardList
 # <https://bugs.webkit.org/show_bug.cgi?id=42333>
 fast/dom/location-hash.html
 fast/history/history-length.html
@@ -2078,20 +2003,24 @@ http/tests/loading/state-object-security-exception.html
 # <https://bugs.webkit.org/show_bug.cgi?id=42337>
 editing/selection/5825350-1.html
 editing/selection/5825350-2.html
+editing/selection/move-left-right.html
 fast/events/ime-composition-events-001.html
 fast/forms/input-maxlength-ime-completed.html
 fast/forms/input-maxlength-ime-preedit.html
 fast/text/international/thai-cursor-position.html
+platform/mac/editing/input/NSBackgroundColor-transparent.html
 platform/mac/editing/input/caret-primary-bidi.html
 platform/mac/editing/input/hangul-enter-confirms-and-sends-keypress.html
 platform/mac/editing/input/kotoeri-enter-to-confirm-and-newline.html
-platform/mac/editing/input/NSBackgroundColor-transparent.html
 platform/mac/editing/input/secure-input.html
 platform/mac/editing/input/text-control-ime-input.html
 platform/mac/editing/selection/25228.html
+platform/mac/fast/dom/character-index-for-point.html
+platform/mac/fast/forms/attributed-strings.html
+platform/mac/fast/text/attributed-substring-from-range-001.html
 platform/mac/fast/text/attributed-substring-from-range-002.html
 platform/mac/fast/text/attributed-substring-from-range-in-textfield.html
-editing/selection/move-left-right.html
+platform/mac/fast/text/attributed-substring-from-range.html
 
 # WebKitTestRunner needs to support needsDeletionUI mechanism to show deletion UI
 # <https://bugs.webkit.org/show_bug.cgi?id=42535>
@@ -2136,6 +2065,7 @@ editing/deleting/smart-editing-disabled.html
 editing/execCommand/delete-image-in-anchor.html
 editing/selection/extend-forward-after-set-base-and-extent.html
 editing/selection/select-line.html
+
 # WebKitTestRunner needs layoutTestController.clearAllDatabases
 # <https://bugs.webkit.org/show_bug.cgi?id=42540>
 storage/change-version.html
@@ -2160,13 +2090,14 @@ storage/transaction-success-callback-isolated-world.html
 # WebKitTestRunner needs layoutTestController.pathToLocalResource
 # <https://bugs.webkit.org/show_bug.cgi?id=42541>
 fast/loader/local-CSS-from-local.html
+fast/loader/local-JavaScript-from-local.html
 fast/loader/local-iFrame-source-from-local.html
 fast/loader/local-image-from-local.html
-fast/loader/local-JavaScript-from-local.html
+http/tests/security/frame-loading-via-document-write.html
 http/tests/security/local-CSS-from-remote.html
+http/tests/security/local-JavaScript-from-remote.html
 http/tests/security/local-iFrame-from-remote.html
 http/tests/security/local-image-from-remote.html
-http/tests/security/local-JavaScript-from-remote.html
 http/tests/security/local-video-poster-from-remote.html
 http/tests/security/local-video-source-from-remote.html
 http/tests/security/local-video-src-from-remote.html
@@ -2183,7 +2114,6 @@ http/tests/mime/uppercase-mime-type.html
 platform/mac/fast/loader/file-url-mimetypes-2.html
 platform/mac/fast/loader/file-url-mimetypes-3.html
 platform/mac/fast/loader/file-url-mimetypes.html
-
 
 # WebKitTestRunner needs layoutTestController.addOriginAccessWhitelistEntry
 # <https://bugs.webkit.org/show_bug.cgi?id=42544>
@@ -2227,6 +2157,8 @@ fast/dom/Geolocation/timeout-zero.html
 fast/loader/javascript-url-hierarchical-execution.html
 fast/loader/onload-policy-ignore-for-frame.html
 fast/loader/reload-policy-delegate.html
+http/tests/misc/policy-delegate-called-twice.html
+http/tests/misc/redirect-to-external-url.html
 http/tests/security/feed-urls-from-remote.html
 
 # WebKitTestRunner needs layoutTestController.setDashboardCompatibilityMode
@@ -2275,6 +2207,9 @@ fast/frames/frame-display-none-focus.html
 fast/frames/frame-navigation.html
 fast/history/go-back-to-changed-name.html
 http/tests/navigation/redirect-cycle.html
+http/tests/navigation/reload-subframe-frame.html
+http/tests/navigation/reload-subframe-iframe.html
+http/tests/navigation/reload-subframe-object.html
 
 # WebKitTestRunner needs layoutTestController.queueLoadingScript
 # <https://bugs.webkit.org/show_bug.cgi?id=42675>
@@ -2297,12 +2232,16 @@ platform/mac/fast/loader/user-stylesheet-fast-path.html
 printing/page-rule-selection.html
 userscripts/mixed-case-stylesheet.html
 userscripts/simple-stylesheet.html
+userscripts/user-style-all-frames.html
+userscripts/user-style-top-frame-only.html
 
 # WebKitTestRunner needs layoutTestController.addUserScript
 # <https://bugs.webkit.org/show_bug.cgi?id=42681>
 userscripts/script-not-run-for-fragments.html
 userscripts/script-run-at-end.html
 userscripts/script-run-at-start.html
+userscripts/user-script-all-frames.html
+userscripts/user-script-top-frame-only.html
 
 # WebKitTestRunner needs layoutTestController.setPOSIXLocale
 # <https://bugs.webkit.org/show_bug.cgi?id=42682>
@@ -2409,13 +2348,6 @@ http/tests/security/popup-blocked-from-window-open.html
 fast/dom/gc-10.html
 fast/dom/StyleSheet/ownerNode-lifetime-2.html
 
-# WebKitTestRunner needs textInputController
-# <https://bugs.webkit.org/show_bug.cgi?id=42702>
-platform/mac/fast/dom/character-index-for-point.html
-platform/mac/fast/forms/attributed-strings.html
-platform/mac/fast/text/attributed-substring-from-range-001.html
-platform/mac/fast/text/attributed-substring-from-range.html
-
 # WebKitTestRunner needs to print onunload handler information
 # <https://bugs.webkit.org/show_bug.cgi?id=42703>
 fast/events/onunload-clears-onbeforeunload.html
@@ -2467,6 +2399,57 @@ http/tests/loading/simple-subframe.html
 http/tests/loading/slow-parsing-subframe.html
 http/tests/loading/text-content-type-with-binary-extension.html
 
+########################################
+
+# NOT YET TRACKED BY BUG REPORTS
+
+# WebKitTestRunner needs layoutTestController.callShouldCloseOnWebView
+fast/events/onbeforeunload-focused-iframe.html
+
+# WebKitTestRunner needs layoutTestController.setHandlesAuthenticationChallenges
+http/tests/loading/basic-auth-resend-wrong-credentials.html
+http/tests/loading/basic-credentials-sent-automatically.html
+http/tests/security/401-logout/401-logout.php
+
+# Unexplained failures that were formerly in the dumpChildFramesAsText list.
+fast/frames/sandboxed-iframe-noscript.html
+fast/frames/sandboxed-iframe-storage.html
+http/tests/misc/isindex-with-no-form-base-href.html
+http/tests/security/cross-frame-access-port-explicit-domain.html
+http/tests/security/cross-frame-access-private-browsing.html
+http/tests/security/cross-origin-xsl-BLOCKED.html
+http/tests/security/dataURL/xss-DENIED-from-data-url-in-foreign-domain-subframe.html
+http/tests/security/dataURL/xss-DENIED-from-data-url-sub-frame-2-level.html
+http/tests/security/dataURL/xss-DENIED-from-data-url-sub-frame-to-data-url-sub-frame.html
+http/tests/security/dataURL/xss-DENIED-from-data-url-sub-frame.html
+http/tests/security/dataURL/xss-DENIED-from-data-url-to-data-url.html
+http/tests/security/dataURL/xss-DENIED-to-data-url-from-data-url.html
+http/tests/security/dataURL/xss-DENIED-to-data-url-in-foreign-domain-subframe-location-change.html
+http/tests/security/dataURL/xss-DENIED-to-data-url-in-foreign-domain-subframe.html
+http/tests/security/dataURL/xss-DENIED-to-data-url-sub-frame-2-level.html
+http/tests/security/dataURL/xss-DENIED-to-data-url-sub-frame-uppercase.html
+http/tests/security/dataURL/xss-DENIED-to-data-url-sub-frame.html
+http/tests/security/frameNavigation/xss-ALLOWED-targeted-subframe-navigation-change.html
+http/tests/security/host-compare-case-insensitive.html
+http/tests/security/javascriptURL/javascriptURL-execution-context-frame-location-htmldom.html
+http/tests/security/javascriptURL/javascriptURL-execution-context-frame-src-getAttribute-value.html
+http/tests/security/javascriptURL/javascriptURL-execution-context-frame-src-htmldom.html
+http/tests/security/javascriptURL/javascriptURL-execution-context-frame-src-setAttribute.html
+http/tests/security/javascriptURL/javascriptURL-execution-context-frame-src-setAttributeNS.html
+http/tests/security/javascriptURL/javascriptURL-execution-context-frame-src-setAttributeNode.html
+http/tests/security/javascriptURL/javascriptURL-execution-context-frame-src-setAttributeNodeNS.html
+http/tests/security/javascriptURL/javascriptURL-execution-context-iframe-src-getAttribute-value.html
+http/tests/security/javascriptURL/javascriptURL-execution-context-iframe-src-htmldom.html
+http/tests/security/javascriptURL/javascriptURL-execution-context-iframe-src-setAttribute.html
+http/tests/security/javascriptURL/javascriptURL-execution-context-iframe-src-setAttributeNS.html
+http/tests/security/javascriptURL/javascriptURL-execution-context-iframe-src-setAttributeNode.html
+http/tests/security/javascriptURL/javascriptURL-execution-context-iframe-src-setAttributeNodeNS.html
+http/tests/security/javascriptURL/xss-ALLOWED-from-javascript-url-sub-frame-2-level.html
+http/tests/security/javascriptURL/xss-ALLOWED-from-javascript-url-sub-frame.html
+http/tests/security/javascriptURL/xss-DENIED-to-javascript-url-in-foreign-domain-subframe.html
+http/tests/security/protocol-compare-case-insensitive.html
+
+########################################
 
 # THINGS WE DON'T HAVE AND DON'T WANT
 

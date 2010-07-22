@@ -1,3 +1,14 @@
+2010-07-22  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        WebKitTestRunner needs to support layoutTestController.dumpChildFramesAsText
+        https://bugs.webkit.org/show_bug.cgi?id=42325
+
+        * platform/mac-wk2/Skipped: Removed a duplicate and sorted lists of tests.
+        Added some tests to the pasteboard list. Removed the tests from the
+        dumpChildFramesAsText list that now pass, and moved others to other lists.
+
 2010-07-22  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed.

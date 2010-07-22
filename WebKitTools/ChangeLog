@@ -1,3 +1,30 @@
+2010-07-22  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        WebKitTestRunner needs to support layoutTestController.dumpChildFramesAsText
+        https://bugs.webkit.org/show_bug.cgi?id=42325
+
+        * WebKitTestRunner/InjectedBundle/Bindings/LayoutTestController.idl:
+        Added dumpChildFramesAsText.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::dumpFrameText): Added.
+        (WTR::dumpDescendantFramesText): Added.
+        (WTR::InjectedBundlePage::dumpAllFramesText): Added.
+        (WTR::InjectedBundlePage::dump): Changed to use the new whatToDump function
+        instead of the shouldDumpAsText function, and added a case for AllFramesText.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.h: Added dumpAllFramesText.
+
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.cpp:
+        (WTR::LayoutTestController::LayoutTestController): Replaced m_dumpAsText with
+        m_whatToDump.
+
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.h: Added
+        dumpChildFramesAsText. Removed shouldDumpAsText, shouldDumpDOMAsWebArchive,
+        and shouldDumpSourceAsWebArchive. Added whatToDump.
+
 2010-07-22  Adam Roben  <aroben@apple.com>
 
         Windows build fix

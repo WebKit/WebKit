@@ -192,17 +192,49 @@ void InjectedBundlePage::dumpAllFrameScrollPositions()
     dumpDescendantFrameScrollPositions(frame);
 }
 
+static void dumpFrameText(WKBundleFrameRef frame)
+{
+    WKRetainPtr<WKStringRef> text(AdoptWK, WKBundleFrameCopyInnerText(frame));
+    InjectedBundle::shared().os() << WKStringToUTF8(text.get())->data() << "\n";
+}
+
+static void dumpDescendantFramesText(WKBundleFrameRef frame)
+{
+    WKRetainPtr<WKArrayRef> childFrames(AdoptWK, WKBundleFrameCopyChildFrames(frame));
+    size_t size = WKArrayGetSize(childFrames.get());
+    for (size_t i = 0; i < size; ++i) {
+        // FIXME: I don't like that we have to const_cast here. Can we change WKArray?
+        WKBundleFrameRef subframe = static_cast<WKBundleFrameRef>(const_cast<void*>(WKArrayGetItemAtIndex(childFrames.get(), i)));
+        WKRetainPtr<WKStringRef> subframeName(AdoptWK, WKBundleFrameCopyName(subframe));
+        InjectedBundle::shared().os() << "\n--------\nFrame: '" << WKStringToUTF8(subframeName.get())->data() << "'\n--------\n";
+        dumpFrameText(subframe);
+        dumpDescendantFramesText(subframe);
+    }
+}
+
+void InjectedBundlePage::dumpAllFramesText()
+{
+    WKBundleFrameRef frame = WKBundlePageGetMainFrame(m_page);
+    dumpFrameText(frame);
+    dumpDescendantFramesText(frame);
+}
+
 void InjectedBundlePage::dump()
 {
     InjectedBundle::shared().layoutTestController()->invalidateWaitToDumpWatchdog();
 
-    if (InjectedBundle::shared().layoutTestController()->shouldDumpAsText()) {
-        // FIXME: Support dumping subframes when layoutTestController()->dumpChildFramesAsText() is true.
-        WKRetainPtr<WKStringRef> innerText(AdoptWK, WKBundleFrameCopyInnerText(WKBundlePageGetMainFrame(m_page)));
-        InjectedBundle::shared().os() << WKStringToUTF8(innerText.get())->data() << "\n";
-    } else {
-        WKRetainPtr<WKStringRef> externalRepresentation(AdoptWK, WKBundlePageCopyRenderTreeExternalRepresentation(m_page));
-        InjectedBundle::shared().os() << WKStringToUTF8(externalRepresentation.get())->data();
+    switch (InjectedBundle::shared().layoutTestController()->whatToDump()) {
+    case LayoutTestController::RenderTree: {
+        WKRetainPtr<WKStringRef> text(AdoptWK, WKBundlePageCopyRenderTreeExternalRepresentation(m_page));
+        InjectedBundle::shared().os() << WKStringToUTF8(text.get())->data();
+        break;
+    }
+    case LayoutTestController::MainFrameText:
+        dumpFrameText(WKBundlePageGetMainFrame(m_page));
+        break;
+    case LayoutTestController::AllFramesText:
+        dumpAllFramesText();
+        break;
     }
 
     if (InjectedBundle::shared().layoutTestController()->shouldDumpAllFrameScrollPositions())
