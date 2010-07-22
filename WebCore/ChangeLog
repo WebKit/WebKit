@@ -1,3 +1,22 @@
+2010-07-22  Ben Murdoch  <benm@google.com>
+
+        Reviewed by Simon Fraser.
+
+        Touch events do not affect the :active CSS state
+        https://bugs.webkit.org/show_bug.cgi?id=39493
+
+        Clean the code up by using a typedef based on comments
+        post landing of the original patch.
+
+        No change in functionality so no new tests.
+
+        * rendering/HitTestRequest.h: Typedef the HitTestRequestType to unsigned.
+        * WebCore.exp.in: Update export signature.
+        * WebCore.order: Ditto.
+        * page/EventHandler.cpp: use the new typedef.
+        * page/EventHandler.h: ditto.
+
+
 2010-07-22  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Pavel Feldman.

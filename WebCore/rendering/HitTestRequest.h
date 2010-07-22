@@ -35,7 +35,9 @@ public:
         SVGClipContent = 1 << 6
     };
 
-    HitTestRequest(int requestType)
+    typedef unsigned HitTestRequestType;
+
+    HitTestRequest(HitTestRequestType requestType)
         : m_requestType(requestType)
     {
     }
@@ -48,7 +50,7 @@ public:
     bool svgClipContent() const { return m_requestType & SVGClipContent; }
 
 private:
-    int m_requestType;
+    HitTestRequestType m_requestType;
 };
 
 } // namespace WebCore
