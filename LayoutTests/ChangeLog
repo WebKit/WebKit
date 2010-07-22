@@ -2,6 +2,21 @@
 
         Reviewed by Eric Seidel.
 
+        Let's pass the doctype01.dat tests again, please
+        https://bugs.webkit.org/show_bug.cgi?id=42794
+
+        The upstream results check the publicId and the systemId, so we need to
+        make dom2string smarter and print them.
+
+        * html5lib/resources/dom2string.js:
+        (dom2string):
+        * html5lib/runner-expected-html5.txt:
+        * html5lib/runner-expected.txt:
+
+2010-07-21  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         Implement spec changes for basefont and bgsound
         https://bugs.webkit.org/show_bug.cgi?id=42792
 

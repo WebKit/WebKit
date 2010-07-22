@@ -33,7 +33,12 @@ function dom2string(node, ancestors) {
     str += "\n| " + indent(ancestors);
     switch (current.nodeType) {
       case 10:
-        str += '<!DOCTYPE ' + current.nodeName + '>';
+        str += '<!DOCTYPE ' + current.nodeName;
+        if (current.publicId || current.systemId) {
+            str += ' "' + current.publicId + '"';
+            str += ' "' + current.systemId + '"';
+        }
+        str += '>';
         break;
       case 8:
         try {
