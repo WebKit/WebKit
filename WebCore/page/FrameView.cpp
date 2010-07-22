@@ -1104,8 +1104,20 @@ void FrameView::setScrollPosition(const IntPoint& scrollPoint)
 
 void FrameView::scrollPositionChangedViaPlatformWidget()
 {
+    scrollPositionChanged();
+}
+
+void FrameView::scrollPositionChanged()
+{
     frame()->eventHandler()->sendScrollEvent();
     repaintFixedElementsAfterScrolling();
+
+#if USE(ACCELERATED_COMPOSITING)
+    if (RenderView* root = m_frame->contentRenderer()) {
+        if (root->usesCompositing())
+            root->compositor()->updateContentLayerScrollPosition(scrollPosition());
+    }
+#endif
 }
 
 void FrameView::repaintFixedElementsAfterScrolling()
@@ -1121,13 +1133,6 @@ void FrameView::repaintFixedElementsAfterScrolling()
 #endif
         }
     }
-
-#if USE(ACCELERATED_COMPOSITING)
-    if (RenderView* root = m_frame->contentRenderer()) {
-        if (root->usesCompositing())
-            root->compositor()->updateContentLayerScrollPosition(scrollPosition());
-    }
-#endif
 }
 
 HostWindow* FrameView::hostWindow() const
@@ -1707,7 +1712,7 @@ void FrameView::valueChanged(Scrollbar* bar)
     IntSize offset = scrollOffset();
     ScrollView::valueChanged(bar);
     if (offset != scrollOffset())
-        frame()->eventHandler()->sendScrollEvent();
+        scrollPositionChanged();
     frame()->loader()->client()->didChangeScrollOffset();
 }
 

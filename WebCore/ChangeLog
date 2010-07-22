@@ -1,3 +1,22 @@
+2010-07-22  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Composited layers don't scroll in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=42771
+
+        More prep work: make a single scrollPositionChanged() bottleneck method, and use it to 
+        send the scroll event, repaint fixed elements, and update compositing layers.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::scrollPositionChangedViaPlatformWidget):
+        (WebCore::FrameView::scrollPositionChanged):
+        (WebCore::FrameView::repaintFixedElementsAfterScrolling):
+        (WebCore::FrameView::valueChanged):
+        * page/FrameView.h:
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::valueChanged):
+
 2010-07-22  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

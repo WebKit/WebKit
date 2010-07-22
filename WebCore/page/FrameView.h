@@ -279,6 +279,7 @@ private:
 
     bool updateWidgets();
     void scrollToAnchor();
+    void scrollPositionChanged();
 
 #if ENABLE(INSPECTOR)
     InspectorTimelineAgent* inspectorTimelineAgent() const;
