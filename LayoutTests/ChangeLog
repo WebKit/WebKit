@@ -1,5 +1,18 @@
 2010-07-22  Kent Hansen  <kent.hansen@nokia.com>
 
+        Reviewed by Kent Tamura.
+
+        Error properties of the Global Object are missing the DontEnum attribute
+        https://bugs.webkit.org/show_bug.cgi?id=28771
+
+        Update expected results for tests that now pass.
+
+        * fast/js/sputnik/Conformance/10_Execution_Contexts/10.1_Definitions/10.1.5_Global_Object/S10.1.5_A2.1_T3-expected.txt:
+        * fast/js/sputnik/Conformance/10_Execution_Contexts/10.1_Definitions/10.1.5_Global_Object/S10.1.5_A2.2_T3-expected.txt:
+        * fast/js/sputnik/Conformance/10_Execution_Contexts/10.1_Definitions/10.1.5_Global_Object/S10.1.5_A2.3_T3-expected.txt:
+
+2010-07-22  Kent Hansen  <kent.hansen@nokia.com>
+
         Reviewed by Sam Weinig.
 
         Improve coverage of fast/dom/prototype-inheritance test

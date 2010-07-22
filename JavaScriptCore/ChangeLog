@@ -1,3 +1,15 @@
+2010-07-22  Kent Hansen  <kent.hansen@nokia.com>
+
+        Reviewed by Kent Tamura.
+
+        Error properties of the Global Object are missing the DontEnum attribute
+        https://bugs.webkit.org/show_bug.cgi?id=28771
+
+        Add the attributes to become spec compliant.
+
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::reset):
+
 2010-07-20  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Adam Roben.

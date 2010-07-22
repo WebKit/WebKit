@@ -291,12 +291,12 @@ void JSGlobalObject::reset(JSValue prototype)
     putDirectFunctionWithoutTransition(Identifier(exec, "Date"), dateConstructor, DontEnum);
     putDirectFunctionWithoutTransition(Identifier(exec, "RegExp"), d()->regExpConstructor, DontEnum);
     putDirectFunctionWithoutTransition(Identifier(exec, "Error"), d()->errorConstructor, DontEnum);
-    putDirectFunctionWithoutTransition(Identifier(exec, "EvalError"), d()->evalErrorConstructor);
-    putDirectFunctionWithoutTransition(Identifier(exec, "RangeError"), d()->rangeErrorConstructor);
-    putDirectFunctionWithoutTransition(Identifier(exec, "ReferenceError"), d()->referenceErrorConstructor);
-    putDirectFunctionWithoutTransition(Identifier(exec, "SyntaxError"), d()->syntaxErrorConstructor);
-    putDirectFunctionWithoutTransition(Identifier(exec, "TypeError"), d()->typeErrorConstructor);
-    putDirectFunctionWithoutTransition(Identifier(exec, "URIError"), d()->URIErrorConstructor);
+    putDirectFunctionWithoutTransition(Identifier(exec, "EvalError"), d()->evalErrorConstructor, DontEnum);
+    putDirectFunctionWithoutTransition(Identifier(exec, "RangeError"), d()->rangeErrorConstructor, DontEnum);
+    putDirectFunctionWithoutTransition(Identifier(exec, "ReferenceError"), d()->referenceErrorConstructor, DontEnum);
+    putDirectFunctionWithoutTransition(Identifier(exec, "SyntaxError"), d()->syntaxErrorConstructor, DontEnum);
+    putDirectFunctionWithoutTransition(Identifier(exec, "TypeError"), d()->typeErrorConstructor, DontEnum);
+    putDirectFunctionWithoutTransition(Identifier(exec, "URIError"), d()->URIErrorConstructor, DontEnum);
 
     // Set global values.
     GlobalPropertyInfo staticGlobals[] = {
