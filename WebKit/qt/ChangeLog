@@ -1,3 +1,12 @@
+2010-07-22  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Library versioning.
+
+        2.1 is branched, trunk will become 2.2.
+
+        * Api/qwebkitglobal.h:
+        * qt_webkit_version.pri:
+
 2010-07-21  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Geoffrey Garen.
