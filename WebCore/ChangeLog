@@ -1,3 +1,14 @@
+2010-07-22  Balazs Kelemen  <kb@inf.u-szeged.hu>
+
+        Ureviewed build fix.
+
+        [Qt] Fix WebKit2 build
+
+        https://bugs.webkit.org/show_bug.cgi?id=42638
+
+        * WebCore.pri:
+        * WebCore.pro:
+
 2010-07-22  Andrey Kosyakov  <caseq@chromium.org>
 
         Reviewed by Yury Semikhatsky.

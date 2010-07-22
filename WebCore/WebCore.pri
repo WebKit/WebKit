@@ -702,11 +702,17 @@ WEBCORE_HEADERS_FOR_WEBKIT2 += \
     page/Page.h \
     page/Settings.h \
     page/WindowFeatures.h \
+    platform/Cursor.h \
     platform/PlatformKeyboardEvent.h \
     platform/PlatformMouseEvent.h \
     platform/PlatformWheelEvent.h \
     platform/Widget.h \
     platform/KURL.h \
+    platform/graphics/Color.h \
+    platform/graphics/ColorSpace.h \
+    platform/graphics/GraphicsTypes.h \
+    platform/graphics/Image.h \
+    platform/graphics/ImageSource.h \
     platform/graphics/FloatRect.h \
     platform/graphics/GraphicsContext.h \
     platform/graphics/GraphicsLayerClient.h \
@@ -716,6 +722,7 @@ WEBCORE_HEADERS_FOR_WEBKIT2 += \
     platform/graphics/Tile.h \
     platform/graphics/TiledBackingStore.h \
     platform/graphics/TiledBackingStoreClient.h \
+    platform/sql/SQLiteDatabase.h \
     platform/text/PlatformString.h \
     platform/text/StringImpl.h \
     platform/MIMETypeRegistry.h \
