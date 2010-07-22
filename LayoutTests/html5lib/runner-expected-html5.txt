@@ -178,15 +178,11 @@ resources/tests19.dat:
 1
 22
 24
-57
-58
 63
 77
 78
 80
 81
-99
-100
 101
 102
 
@@ -251,36 +247,6 @@ Expected:
 |       <li>
 |         "abc"
 |     "foo"
-
-Test 57 of 102 in resources/tests19.dat failed. Input:
-<!doctype html><basefont><frameset>
-Got:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <basefont>
-Expected:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|     <basefont>
-|   <frameset>
-
-Test 58 of 102 in resources/tests19.dat failed. Input:
-<!doctype html><bgsound><frameset>
-Got:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <bgsound>
-Expected:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|     <bgsound>
-|   <frameset>
 
 Test 63 of 102 in resources/tests19.dat failed. Input:
 <!doctype html><keygen><frameset>
@@ -352,46 +318,6 @@ Expected:
 | <html>
 |   <head>
 |   <frameset>
-
-Test 99 of 102 in resources/tests19.dat failed. Input:
-<!doctype html><a><b></a><basefont>
-Got:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <a>
-|       <b>
-|     <b>
-|       <basefont>
-Expected:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <a>
-|       <b>
-|     <basefont>
-
-Test 100 of 102 in resources/tests19.dat failed. Input:
-<!doctype html><a><b></a><bgsound>
-Got:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <a>
-|       <b>
-|     <b>
-|       <bgsound>
-Expected:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <a>
-|       <b>
-|     <bgsound>
 
 Test 101 of 102 in resources/tests19.dat failed. Input:
 <!doctype html><figcaption><article></figcaption>a

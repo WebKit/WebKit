@@ -2,6 +2,15 @@
 
         Reviewed by Eric Seidel.
 
+        Implement spec changes for basefont and bgsound
+        https://bugs.webkit.org/show_bug.cgi?id=42792
+
+        * html5lib/runner-expected-html5.txt:
+
+2010-07-21  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         Update a list of tags to match changes in the HTML5 spec
         https://bugs.webkit.org/show_bug.cgi?id=42791
 

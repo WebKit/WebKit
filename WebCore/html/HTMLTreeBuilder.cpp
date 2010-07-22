@@ -769,6 +769,8 @@ void HTMLTreeBuilder::processStartTagForInBody(AtomicHTMLToken& token)
         return;
     }
     if (token.name() == baseTag
+        || token.name() == basefontTag
+        || token.name() == "bgsound"
         || token.name() == "command"
         || token.name() == linkTag
         || token.name() == metaTag
@@ -928,8 +930,6 @@ void HTMLTreeBuilder::processStartTagForInBody(AtomicHTMLToken& token)
         // Note the fall through to the imgTag handling below!
     }
     if (token.name() == areaTag
-        || token.name() == basefontTag
-        || token.name() == "bgsound"
         || token.name() == brTag
         || token.name() == embedTag
         || token.name() == imgTag
@@ -1232,6 +1232,8 @@ void HTMLTreeBuilder::processStartTag(AtomicHTMLToken& token)
             return;
         }
         if (token.name() == baseTag
+            || token.name() == basefontTag
+            || token.name() == "bgsound"
             || token.name() == linkTag
             || token.name() == metaTag
             || token.name() == noframesTag
@@ -1377,7 +1379,9 @@ void HTMLTreeBuilder::processStartTag(AtomicHTMLToken& token)
             m_tree.insertHTMLHtmlStartTagInBody(token);
             return;
         }
-        if (token.name() == linkTag
+        if (token.name() == basefontTag
+            || token.name() == "bgsound"
+            || token.name() == linkTag
             || token.name() == metaTag
             || token.name() == noframesTag
             || token.name() == styleTag) {
@@ -2738,6 +2742,8 @@ bool HTMLTreeBuilder::processStartTagForInHead(AtomicHTMLToken& token)
     }
     // FIXME: Atomize "command".
     if (token.name() == baseTag
+        || token.name() == basefontTag
+        || token.name() == "bgsound"
         || token.name() == "command"
         || token.name() == linkTag
         || token.name() == metaTag) {
