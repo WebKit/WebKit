@@ -809,6 +809,7 @@ void HTMLTreeBuilder::processStartTagForInBody(AtomicHTMLToken& token)
         || token.name() == divTag
         || token.name() == dlTag
         || token.name() == fieldsetTag
+        || token.name() == "figcaption"
         || token.name() == "figure"
         || token.name() == footerTag
         || token.name() == headerTag
@@ -818,6 +819,7 @@ void HTMLTreeBuilder::processStartTagForInBody(AtomicHTMLToken& token)
         || token.name() == olTag
         || token.name() == pTag
         || token.name() == sectionTag
+        || token.name() == "summary"
         || token.name() == ulTag) {
         processFakePEndTagIfPInButtonScope();
         m_tree.insertHTMLElement(token);

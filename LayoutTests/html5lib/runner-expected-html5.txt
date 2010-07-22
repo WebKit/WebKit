@@ -432,8 +432,6 @@ Expected:
 |     "a"
 resources/tests20.dat:
 16
-24
-25
 
 Test 16 of 25 in resources/tests20.dat failed. Input:
 <!doctype html><p><button><table>
@@ -454,40 +452,6 @@ Expected:
 |     <p>
 |       <button>
 |         <table>
-
-Test 24 of 25 in resources/tests20.dat failed. Input:
-<!doctype html><p><figcaption>
-Got:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <p>
-|       <figcaption>
-Expected:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <p>
-|     <figcaption>
-
-Test 25 of 25 in resources/tests20.dat failed. Input:
-<!doctype html><p><summary>
-Got:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <p>
-|       <summary>
-Expected:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <p>
-|     <summary>
 resources/webkit01.dat: PASS
 
 resources/doctype01.dat:
