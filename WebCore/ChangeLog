@@ -1,3 +1,14 @@
+2010-07-22  Antonio Gomes  <tonikitoo@webkit.org>
+
+        Reviewed by Laszlo Gombos.
+
+        Fix build warning for missing parentheses.
+
+        WebCore/html/HTMLInputElement.cpp:113: warning: suggest parentheses around '&&' within '||'
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::isNumberCharacter):
+
 2010-07-22  John Gregg  <johnnyg@google.com>
 
         Reviewed by Kent Tamura.

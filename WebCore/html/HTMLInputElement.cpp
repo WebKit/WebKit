@@ -110,7 +110,7 @@ static const double msecPerSecond = 1000;
 static bool isNumberCharacter(UChar ch)
 {
     return ch == '+' || ch == '-' || ch == '.' || ch == 'e' || ch == 'E'
-        || ch >= '0' && ch <= '9';
+        || (ch >= '0' && ch <= '9');
 }
 
 HTMLInputElement::HTMLInputElement(const QualifiedName& tagName, Document* document, HTMLFormElement* form)
