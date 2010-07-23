@@ -673,6 +673,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\WebProcess\InjectedBundle\InjectedBundlePageEditorClient.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\WebProcess\InjectedBundle\InjectedBundlePageEditorClient.h"
+					>
+				</File>
+				<File
 					RelativePath="..\WebProcess\InjectedBundle\InjectedBundlePageLoaderClient.cpp"
 					>
 				</File>
@@ -723,6 +731,14 @@
 							>
 						</File>
 						<File
+							RelativePath="..\WebProcess\InjectedBundle\API\c\WKBundleNode.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\WebProcess\InjectedBundle\API\c\WKBundleNode.h"
+							>
+						</File>
+						<File
 							RelativePath="..\WebProcess\InjectedBundle\API\c\WKBundlePage.cpp"
 							>
 						</File>
@@ -732,6 +748,14 @@
 						</File>
 						<File
 							RelativePath="..\WebProcess\InjectedBundle\API\c\WKBundlePagePrivate.h"
+							>
+						</File>
+						<File
+							RelativePath="..\WebProcess\InjectedBundle\API\c\WKBundleRange.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\WebProcess\InjectedBundle\API\c\WKBundleRange.h"
 							>
 						</File>
 					</Filter>
