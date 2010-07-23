@@ -41,9 +41,10 @@
 #include <WebCore/HTMLInputElement.h>
 #include <WebCore/HTMLNames.h>
 #include <WebCore/KeyboardEvent.h>
-#include <WebCore/PlatformKeyboardEvent.h>
 #include <WebCore/NotImplemented.h>
+#include <WebCore/PlatformKeyboardEvent.h>
 #include <WebCore/Range.h>
+#include <WebCore/UserTypingGestureIndicator.h>
 #pragma warning(pop)
 
 using namespace WebCore;
@@ -347,6 +348,9 @@ void WebEditorClient::textFieldDidEndEditing(Element* e)
 
 void WebEditorClient::textDidChangeInTextField(Element* e)
 {
+    if (!UserTypingGestureIndicator::processingUserTypingGesture() || UserTypingGestureIndicator::focusedElementAtGestureStart() != e)
+        return;
+
     IWebFormDelegate* formDelegate;
     if (SUCCEEDED(m_webView->formDelegate(&formDelegate)) && formDelegate) {
         IDOMElement* domElement = DOMElement::createInstance(e);

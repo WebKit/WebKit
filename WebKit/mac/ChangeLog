@@ -1,5 +1,18 @@
 2010-07-22  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Maciej Stachowiak.
+
+        Fix for <rdar://problem/8222626>
+        Send textDidChangeInTextField delegate callback only in response to typing or other forms of user text input.
+
+        The function name no longer perfectly matches the behavior, but I didn't want to break any existing clients. Maybe we
+        should migrate to a new function name eventually
+
+        * WebCoreSupport/WebEditorClient.mm:
+        (WebEditorClient::textDidChangeInTextField):
+
+2010-07-22  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Anders Carlsson.
 
         Patch for https://bugs.webkit.org/show_bug.cgi?id=42836

@@ -69,6 +69,7 @@
 #include "TextEvent.h"
 #include "TextIterator.h"
 #include "UserGestureIndicator.h"
+#include "UserTypingGestureIndicator.h"
 #include "WheelEvent.h"
 #include "htmlediting.h" // for comparePositions()
 #include <wtf/CurrentTime.h>
@@ -2266,6 +2267,7 @@ bool EventHandler::keyEvent(const PlatformKeyboardEvent& initialKeyEvent)
         return false;
 
     UserGestureIndicator gestureIndicator(DefinitelyProcessingUserGesture);
+    UserTypingGestureIndicator typingGestureIndicator(m_frame);
 
     if (FrameView* view = m_frame->view())
         view->resetDeferredRepaintDelay();

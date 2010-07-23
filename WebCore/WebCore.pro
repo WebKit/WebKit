@@ -549,6 +549,7 @@ SOURCES += \
     dom/UIEvent.cpp \
     dom/UIEventWithKeyState.cpp \
     dom/UserGestureIndicator.cpp \
+    dom/UserTypingGestureIndicator.cpp \
     dom/ViewportArguments.cpp \
     dom/WebKitAnimationEvent.cpp \
     dom/WebKitTransitionEvent.cpp \

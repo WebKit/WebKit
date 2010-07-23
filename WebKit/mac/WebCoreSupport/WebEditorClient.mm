@@ -59,6 +59,7 @@
 #import <WebCore/LegacyWebArchive.h>
 #import <WebCore/PlatformKeyboardEvent.h>
 #import <WebCore/PlatformString.h>
+#import <WebCore/UserTypingGestureIndicator.h>
 #import <WebCore/WebCoreObjCExtras.h>
 #import <runtime/InitializeThreading.h>
 #import <wtf/PassRefPtr.h>
@@ -557,10 +558,13 @@ void WebEditorClient::textFieldDidEndEditing(Element* element)
     FormDelegateLog(inputElement);
     CallFormDelegate(m_webView, @selector(textFieldDidEndEditing:inFrame:), inputElement, kit(element->document()->frame()));
 }
-    
+
 void WebEditorClient::textDidChangeInTextField(Element* element)
 {
     if (!element->hasTagName(inputTag))
+        return;
+
+    if (!UserTypingGestureIndicator::processingUserTypingGesture() || UserTypingGestureIndicator::focusedElementAtGestureStart() != element)
         return;
 
     DOMHTMLInputElement* inputElement = kit(static_cast<HTMLInputElement*>(element));
