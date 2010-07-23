@@ -294,7 +294,7 @@ private:
 
     // For StartTag and EndTag
     bool m_selfClosing;
-    AttributeList m_attributes; // Old tokenizer reserves 10.
+    AttributeList m_attributes;
 
     // A pointer into m_attributes used during lexing.
     Attribute* m_currentAttribute;
@@ -328,8 +328,13 @@ public:
                     String name(iter->m_name.data(), iter->m_name.size());
                     String value(iter->m_value.data(), iter->m_value.size());
                     RefPtr<Attribute> mappedAttribute = Attribute::createMapped(name, value);
-                    if (!m_attributes)
+                    if (!m_attributes) {
                         m_attributes = NamedNodeMap::create();
+                        // Reserving capacity here improves the parser
+                        // benchmark.  It might be worth experimenting with
+                        // the constant to see where the optimal point is.
+                        m_attributes->reserveInitialCapacity(10);
+                    }
                     m_attributes->insertAttribute(mappedAttribute.release(), false);
                 }
             }
