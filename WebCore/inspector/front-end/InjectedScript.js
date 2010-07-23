@@ -411,6 +411,7 @@ InjectedScript.CallFrameProxy = function(id, callFrame)
     this.sourceID = callFrame.sourceID;
     this.line = callFrame.line;
     this.scopeChain = this._wrapScopeChain(callFrame);
+    this.injectedScriptId = injectedScriptId;
 }
 
 InjectedScript.CallFrameProxy.prototype = {
