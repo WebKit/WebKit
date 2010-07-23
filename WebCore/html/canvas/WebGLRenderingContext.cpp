@@ -141,18 +141,22 @@ void WebGLRenderingContext::markContextChanged()
     RenderBox* renderBox = canvas()->renderBox();
     if (renderBox && renderBox->hasLayer() && renderBox->layer()->hasAcceleratedCompositing())
         renderBox->layer()->rendererContentChanged();
+    else {
 #endif
-    if (!m_markedCanvasDirty) {
-        // Make sure the canvas's image buffer is allocated.
-        canvas()->buffer();
-        canvas()->willDraw(FloatRect(0, 0, canvas()->width(), canvas()->height()));
-        m_markedCanvasDirty = true;
+        if (!m_markedCanvasDirty)
+            canvas()->willDraw(FloatRect(0, 0, canvas()->width(), canvas()->height()));
+#if USE(ACCELERATED_COMPOSITING)
     }
+#endif
+    m_markedCanvasDirty = true;
 }
 
 bool WebGLRenderingContext::paintRenderingResultsToCanvas()
 {
     if (m_markedCanvasDirty) {
+        // FIXME: It should not be necessary to clear the image before doing a readback.
+        // Investigate why this is needed and remove if possible.
+        canvas()->buffer()->clearImage();
         m_markedCanvasDirty = false;
         m_context->paintRenderingResultsToCanvas(this);
         return true;
