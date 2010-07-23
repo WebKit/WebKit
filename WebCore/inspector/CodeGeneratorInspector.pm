@@ -259,8 +259,9 @@ sub generateBackendFunction
     push(@function, "{");
     my $i = 1; # zero element is the method name.
     my $expectedParametersCount = scalar(@argsFiltered);
-    push(@function, "    if (args->length() != $expectedParametersCount) {");
-    push(@function, "        *exception = formatWrongArgumentsCountMessage(args->length(), $expectedParametersCount);");
+    my $expectedParametersCountWithMethodName = scalar(@argsFiltered) + 1;
+    push(@function, "    if (args->length() != $expectedParametersCountWithMethodName) {");
+    push(@function, "        *exception = formatWrongArgumentsCountMessage(args->length() - 1, $expectedParametersCount);");
     push(@function, "        ASSERT_NOT_REACHED();");
     push(@function, "        return;");
     push(@function, "    }");
