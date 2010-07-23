@@ -100,6 +100,7 @@ struct _Ewk_View_Smart_Class {
     unsigned long version;
 
     Evas_Object *(*window_create)(Ewk_View_Smart_Data *sd, Eina_Bool javascript, const Ewk_Window_Features *window_features); /**< creates a new window, requested by webkit */
+    void (*window_close)(Ewk_View_Smart_Data *sd); /**< creates a new window, requested by webkit */
     // hooks to allow different backing stores
     Evas_Object *(*backing_store_add)(Ewk_View_Smart_Data *sd); /**< must be defined */
     Eina_Bool (*scrolls_process)(Ewk_View_Smart_Data *sd); /**< must be defined */
@@ -146,7 +147,7 @@ struct _Ewk_View_Smart_Class {
  * @see EWK_VIEW_SMART_CLASS_INIT_VERSION
  * @see EWK_VIEW_SMART_CLASS_INIT_NAME_VERSION
  */
-#define EWK_VIEW_SMART_CLASS_INIT(smart_class_init) {smart_class_init, EWK_VIEW_SMART_CLASS_VERSION, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
+#define EWK_VIEW_SMART_CLASS_INIT(smart_class_init) {smart_class_init, EWK_VIEW_SMART_CLASS_VERSION, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
 
 /**
  * Initializer to zero a whole Ewk_View_Smart_Class structure.

@@ -1,3 +1,24 @@
+2010-07-23  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Notify browser when window shall be closed.
+
+        This is used for window.close() events Javascript, though it would be
+        triggered for any event on WebCore that might ask for the window to be
+        closed.
+
+        https://bugs.webkit.org/show_bug.cgi?id=42890
+
+        * WebCoreSupport/ChromeClientEfl.cpp:
+        (WebCore::ChromeClientEfl::closeWindowSoon): call new function and moves its
+        previous functionality there.
+        * ewk/ewk_private.h:
+        * ewk/ewk_view.cpp:
+        (ewk_view_window_close): stop all loaders as was being done previously and
+        notify browser afterwards.
+        * ewk/ewk_view.h: declare new virtual method.
+
 2010-07-23  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Reviewed by Kenneth Rohde Christiansen.

@@ -3292,6 +3292,27 @@ Evas_Object* ewk_view_window_create(Evas_Object* o, Eina_Bool javascript, const 
 
 /**
  * @internal
+ * Reports a window should be closed. It's client responsibility to decide if
+ * the window should in fact be closed. So, if only windows created by javascript
+ * are allowed to be closed by this call, browser needs to save the javascript
+ * flag when the window is created. Since a window can close itself (for example
+ * with a 'self.close()' in Javascript) browser must postpone the deletion to an
+ * idler.
+ *
+ * @param o View to be closed.
+ */
+void ewk_view_window_close(Evas_Object* o)
+{
+    EWK_VIEW_SD_GET_OR_RETURN(o, sd);
+
+    ewk_view_stop(o);
+    if (!sd->api->window_close)
+        return;
+    sd->api->window_close(sd);
+}
+
+/**
+ * @internal
  * Reports mouse has moved over a link.
  *
  * Emits signal: "link,hover,in"

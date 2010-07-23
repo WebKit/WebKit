@@ -63,6 +63,7 @@ void ewk_view_load_progress_changed(Evas_Object *o);
 void ewk_view_load_show(Evas_Object* o);
 void ewk_view_restore_state(Evas_Object *o, Evas_Object *frame);
 Evas_Object *ewk_view_window_create(Evas_Object *o, Eina_Bool javascript, const WebCore::WindowFeatures* coreFeatures);
+void ewk_view_window_close(Evas_Object *o);
 
 void ewk_view_mouse_link_hover_in(Evas_Object *o, void *data);
 void ewk_view_mouse_link_hover_out(Evas_Object *o);

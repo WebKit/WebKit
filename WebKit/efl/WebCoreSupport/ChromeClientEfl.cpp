@@ -231,7 +231,7 @@ void ChromeClientEfl::setResizable(bool)
 
 void ChromeClientEfl::closeWindowSoon()
 {
-    ewk_view_stop(m_view);
+    ewk_view_window_close(m_view);
 }
 
 bool ChromeClientEfl::canTakeFocus(FocusDirection)
