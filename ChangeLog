@@ -1,3 +1,11 @@
+2010-07-23  Andras Becsi  <abecsi@webkit.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] Enable the build of MiniBrowser.
+
+        * WebKit.pro: add MiniBrowser.pro to SUBDIRS.
+
 2010-07-23  Balazs Kelemen  <kb@inf.u-szeged.hu>
 
         Reviewed by Kenneth Rohde Christiansen.

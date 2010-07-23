@@ -30,6 +30,7 @@ build-qtscript {
 
 webkit2 {
     exists($$PWD/WebKit2/WebKit2.pro): SUBDIRS += WebKit2/WebKit2.pro
+    exists($$PWD/WebKitTools/MiniBrowser/qt/MiniBrowser.pro): SUBDIRS += WebKitTools/MiniBrowser/qt/MiniBrowser.pro
 }
 
 symbian {
