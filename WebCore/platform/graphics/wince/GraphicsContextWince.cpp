@@ -1513,7 +1513,7 @@ void GraphicsContext::fillRect(const FloatRect& r, const Gradient* gradient)
     int width = rect.width();
     int height = rect.height();
     FloatSize d = gradient->p1() - gradient->p0();
-    bool vertical = abs(d.height()) > abs(d.width());
+    bool vertical = fabs(d.height()) > fabs(d.width());
     for (size_t i = 0; i < numStops; ++i) {
         const Gradient::ColorStop& stop = stops[i];
         int iTv = i ? 2 * i - 1 : 0;

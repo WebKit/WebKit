@@ -671,7 +671,7 @@ void PlatformPath::addArcTo(const FloatPoint& fp1, const FloatPoint& fp2, float 
 
     double d01 = v01.length();
     double d21 = v21.length();
-    double angle = (piDouble - abs(asin(cross / (d01 * d21)))) * 0.5;
+    double angle = (piDouble - fabs(asin(cross / (d01 * d21)))) * 0.5;
     double span = radius * tan(angle);
     double rate = span / d01;
     PathPoint startPoint;
