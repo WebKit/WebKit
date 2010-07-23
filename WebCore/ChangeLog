@@ -1,3 +1,30 @@
+2010-07-22  Patrick Gansterer  <paroga@paroga.com>
+
+        Reviewed by Adam Roben.
+
+        [WINCE] Add additonal methods to BitmapInfo.
+        https://bugs.webkit.org/show_bug.cgi?id=42071
+
+        Added a parameter to create 16bit BitmapInfo and
+        some additional accessors for the WinCE port.
+
+        Set bmiHeader.biSize only at constructor.
+
+        * platform/win/BitmapInfo.cpp: Added property svn:eol-style.
+        (WebCore::bitmapInfoForSize):
+        (WebCore::BitmapInfo::create):
+        (WebCore::BitmapInfo::createBottomUp):
+        * platform/win/BitmapInfo.h: Added property svn:eol-style.
+        (WebCore::BitmapInfo::is16bit):
+        (WebCore::BitmapInfo::is32bit):
+        (WebCore::BitmapInfo::width):
+        (WebCore::BitmapInfo::height):
+        (WebCore::BitmapInfo::size):
+        (WebCore::BitmapInfo::paddedWidth):
+        (WebCore::BitmapInfo::numPixels):
+        (WebCore::BitmapInfo::paddedBytesPerLine):
+        (WebCore::BitmapInfo::bytesPerLine):
+
 2010-07-22  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Ojan Vafai.
