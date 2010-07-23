@@ -1160,12 +1160,12 @@ void GraphicsContext::concatCTM(const AffineTransform& transform)
     m_data->concatCTM(transform);
 }
 
-TransformationMatrix& GraphicsContext::affineTransform()
+AffineTransform& GraphicsContext::affineTransform()
 {
     return m_data->m_transform;
 }
 
-const TransformationMatrix& GraphicsContext::affineTransform() const
+const AffineTransform& GraphicsContext::affineTransform() const
 {
     return m_data->m_transform;
 }
@@ -1268,8 +1268,8 @@ void GraphicsContext::fillRoundedRect(const IntRect& fillRect, const IntSize& to
     
     IntRect dstRect = fillRect;
     
-    dstRect.move(shadowSize);
-    dstRect.inflate(shadowBlur);
+    dstRect.move(stableRound(shadowSize.width()), stableRound(shadowSize.height()));
+    dstRect.inflate(stableRound(shadowBlur));
     dstRect = m_data->mapRect(dstRect);
   
     FloatSize newTopLeft(m_data->mapSize(topLeft));
@@ -1868,7 +1868,7 @@ void GraphicsContext::paintTextField(const IntRect& rect, unsigned state)
     FillRect(dc, &rectWin, reinterpret_cast<HBRUSH>(((state & DFCS_INACTIVE) ? COLOR_BTNFACE : COLOR_WINDOW) + 1));
 }
 
-void GraphicsContext::drawBitmap(SharedBitmap* bmp, const IntRect& dstRectIn, const IntRect& srcRect, CompositeOperator compositeOp)
+void GraphicsContext::drawBitmap(SharedBitmap* bmp, const IntRect& dstRectIn, const IntRect& srcRect, ColorSpace styleColorSpace, CompositeOperator compositeOp)
 {
     if (!m_data->m_opacity)
         return;
@@ -1891,7 +1891,7 @@ void GraphicsContext::drawBitmap(SharedBitmap* bmp, const IntRect& dstRectIn, co
 }
 
 void GraphicsContext::drawBitmapPattern(SharedBitmap* bmp, const FloatRect& tileRectIn, const AffineTransform& patternTransform,
-                const FloatPoint& phase, CompositeOperator op, const FloatRect& destRectIn, const IntSize& origSourceSize)
+                const FloatPoint& phase, ColorSpace styleColorSpace, CompositeOperator op, const FloatRect& destRectIn, const IntSize& origSourceSize)
 {
     if (!m_data->m_opacity)
         return;
@@ -1912,7 +1912,7 @@ void GraphicsContext::drawBitmapPattern(SharedBitmap* bmp, const FloatRect& tile
     AffineTransform transform = m_data->m_transform;
     transform.translate(moved.width(), moved.height());
 
-    bmp->drawPattern(dc, transform, tileRectIn, patternTransform, phase, op, destRectIn, origSourceSize);
+    bmp->drawPattern(dc, transform, tileRectIn, patternTransform, phase, styleColorSpace, op, destRectIn, origSourceSize);
 
     if (!bmp->hasAlpha())
         transparentDC.fillAlphaChannel();

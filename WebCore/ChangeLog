@@ -1,3 +1,20 @@
+2010-07-23  Patrick Gansterer  <paroga@paroga.com>
+
+        Reviewed by Adam Roben.
+
+        [WINCE] Buildfix for GraphicsContext
+        https://bugs.webkit.org/show_bug.cgi?id=42888
+
+        Use AffineTransform insted of TransformationMatrix and
+        add ColorSpace parameter to the drawBitmap methods.
+
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/wince/GraphicsContextWince.cpp:
+        (WebCore::GraphicsContext::affineTransform):
+        (WebCore::GraphicsContext::fillRoundedRect):
+        (WebCore::GraphicsContext::drawBitmap):
+        (WebCore::GraphicsContext::drawBitmapPattern):
+
 2010-07-23  Rafael Antognolli  <antognolli@profusion.mobi>
 
         Reviewed by Antonio Gomes.
