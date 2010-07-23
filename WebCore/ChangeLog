@@ -1,3 +1,12 @@
+2010-07-23  Alex Milowski  <alex@milowski.com>
+
+        Reviewed by Darin Adler.
+
+        Moved the 'mathml' group back to where it belongs as
+        siblings of the other major folders.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 2010-07-23  Patrick Gansterer  <paroga@paroga.com>
 
         Reviewed by Adam Roben.

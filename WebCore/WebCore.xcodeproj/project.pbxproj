@@ -11024,6 +11024,7 @@
 				93EEC1EC09C2877700C515D1 /* html */,
 				1C81B94D0E9732D900266E07 /* inspector */,
 				BCB16BFB0979C38700467741 /* loader */,
+				FABE72EC1059C1EB00D999DD /* mathml */,
 				333F703D0FB49C16008E12A6 /* notifications */,
 				65BF02180974806300C43196 /* page */,
 				BCF1A5BA097832090061A123 /* platform */,
@@ -16021,7 +16022,6 @@
 				512DD8E80D91E691000F89EE /* archive */,
 				5126E6B60A2E3AEF005C29FA /* icon */,
 				93A1EAA20A5634D8006960A0 /* mac */,
-				FABE72EC1059C1EB00D999DD /* mathml */,
 				BCB16BFE0979C3BD00467741 /* Cache.cpp */,
 				BCB16BFF0979C3BD00467741 /* Cache.h */,
 				BCB16C000979C3BD00467741 /* CachedCSSStyleSheet.cpp */,
@@ -17193,8 +17193,7 @@
 				FA7EFB031120D25400CF79C7 /* RenderMathMLUnderOver.cpp */,
 				FA7EFB041120D25400CF79C7 /* RenderMathMLUnderOver.h */,
 			);
-			name = mathml;
-			path = ../mathml;
+			path = mathml;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
