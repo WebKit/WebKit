@@ -1,4 +1,5 @@
 // Copyright (c) 2005, 2006, Google Inc.
+// Copyright (c) 2010, Patrick Gansterer <paroga@paroga.com>
 // All rights reserved.
 // 
 // Redistribution and use in source and binary forms, with or without
@@ -187,6 +188,44 @@ static void TCMalloc_SlowLock(volatile unsigned int* lockword) {
     nanosleep(&tm, NULL);
 #endif
   }
+}
+
+#elif OS(WINDOWS)
+
+#ifndef WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN
+#endif
+#include <windows.h>
+
+static void TCMalloc_SlowLock(LPLONG lockword);
+
+// The following is a struct so that it can be initialized at compile time
+struct TCMalloc_SpinLock {
+
+    inline void Lock() {
+        if (InterlockedExchange(&m_lockword, 1))
+            TCMalloc_SlowLock(&m_lockword);
+    }
+
+    inline void Unlock() {
+        InterlockedExchange(&m_lockword, 0);
+    }
+
+    inline bool IsHeld() const {
+        return m_lockword != 0;
+    }
+
+    inline void Init() { m_lockword = 0; }
+
+    LONG m_lockword;
+};
+
+#define SPINLOCK_INITIALIZER { 0 }
+
+static void TCMalloc_SlowLock(LPLONG lockword) {
+    Sleep(0);        // Yield immediately since fast path failed
+    while (InterlockedExchange(lockword, 1))
+        Sleep(2);
 }
 
 #else
