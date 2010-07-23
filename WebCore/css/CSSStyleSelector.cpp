@@ -4623,8 +4623,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             
             FontDescription fontDescription;
             RenderTheme::defaultTheme()->systemFont(primitiveValue->getIdent(), fontDescription);
-            fontDescription.setIsSpecifiedFont(true);
- 
+
             // Double-check and see if the theme did anything.  If not, don't bother updating the font.
             if (fontDescription.isAbsoluteSize()) {
                 // Make sure the rendering mode and printer font settings are updated.

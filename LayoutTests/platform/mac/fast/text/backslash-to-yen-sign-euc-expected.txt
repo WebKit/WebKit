@@ -261,95 +261,95 @@ layer at (0,0) size 785x729
           RenderText {#text} at (368,0) size 4x18
             text run at (368,0) width 4: "\\"
       RenderBlock {DIV} at (0,389) size 769x18
-        RenderInline {SPAN} at (0,0) size 338x16
-          RenderText {#text} at (0,1) size 324x16
-            text run at (0,1) width 324: "Using font \"caption\". expected: backslash, actual: \\"
-          RenderInline {SPAN} at (0,0) size 7x16
-            RenderText {#text} at (324,1) size 7x16
-              text run at (324,1) width 7: "\\"
-          RenderInline {SPAN} at (0,0) size 7x16
-            RenderText {#text} at (331,1) size 7x16
-              text run at (331,1) width 7: "\\"
+        RenderInline {SPAN} at (0,0) size 344x16
+          RenderText {#text} at (0,1) size 326x16
+            text run at (0,1) width 326: "Using font \"caption\". expected: backslash, actual: \x{A5}"
+          RenderInline {SPAN} at (0,0) size 9x16
+            RenderText {#text} at (326,1) size 9x16
+              text run at (326,1) width 9: "\x{A5}"
+          RenderInline {SPAN} at (0,0) size 9x16
+            RenderText {#text} at (335,1) size 9x16
+              text run at (335,1) width 9: "\x{A5}"
       RenderBlock {DIV} at (0,407) size 769x18
-        RenderInline {SPAN} at (0,0) size 318x16
-          RenderText {#text} at (0,1) size 304x16
-            text run at (0,1) width 304: "Using font \"icon\". expected: backslash, actual: \\"
-          RenderInline {SPAN} at (0,0) size 7x16
-            RenderText {#text} at (304,1) size 7x16
-              text run at (304,1) width 7: "\\"
-          RenderInline {SPAN} at (0,0) size 7x16
-            RenderText {#text} at (311,1) size 7x16
-              text run at (311,1) width 7: "\\"
+        RenderInline {SPAN} at (0,0) size 324x16
+          RenderText {#text} at (0,1) size 306x16
+            text run at (0,1) width 306: "Using font \"icon\". expected: backslash, actual: \x{A5}"
+          RenderInline {SPAN} at (0,0) size 9x16
+            RenderText {#text} at (306,1) size 9x16
+              text run at (306,1) width 9: "\x{A5}"
+          RenderInline {SPAN} at (0,0) size 9x16
+            RenderText {#text} at (315,1) size 9x16
+              text run at (315,1) width 9: "\x{A5}"
       RenderBlock {DIV} at (0,425) size 769x18
-        RenderInline {SPAN} at (0,0) size 327x16
-          RenderText {#text} at (0,1) size 313x16
-            text run at (0,1) width 313: "Using font \"menu\". expected: backslash, actual: \\"
-          RenderInline {SPAN} at (0,0) size 7x16
-            RenderText {#text} at (313,1) size 7x16
-              text run at (313,1) width 7: "\\"
-          RenderInline {SPAN} at (0,0) size 7x16
-            RenderText {#text} at (320,1) size 7x16
-              text run at (320,1) width 7: "\\"
+        RenderInline {SPAN} at (0,0) size 333x16
+          RenderText {#text} at (0,1) size 315x16
+            text run at (0,1) width 315: "Using font \"menu\". expected: backslash, actual: \x{A5}"
+          RenderInline {SPAN} at (0,0) size 9x16
+            RenderText {#text} at (315,1) size 9x16
+              text run at (315,1) width 9: "\x{A5}"
+          RenderInline {SPAN} at (0,0) size 9x16
+            RenderText {#text} at (324,1) size 9x16
+              text run at (324,1) width 9: "\x{A5}"
       RenderBlock {DIV} at (0,443) size 769x18
-        RenderInline {SPAN} at (0,0) size 380x16
-          RenderText {#text} at (0,1) size 366x16
-            text run at (0,1) width 366: "Using font \"message-box\". expected: backslash, actual: \\"
-          RenderInline {SPAN} at (0,0) size 7x16
-            RenderText {#text} at (366,1) size 7x16
-              text run at (366,1) width 7: "\\"
-          RenderInline {SPAN} at (0,0) size 7x16
-            RenderText {#text} at (373,1) size 7x16
-              text run at (373,1) width 7: "\\"
+        RenderInline {SPAN} at (0,0) size 386x16
+          RenderText {#text} at (0,1) size 368x16
+            text run at (0,1) width 368: "Using font \"message-box\". expected: backslash, actual: \x{A5}"
+          RenderInline {SPAN} at (0,0) size 9x16
+            RenderText {#text} at (368,1) size 9x16
+              text run at (368,1) width 9: "\x{A5}"
+          RenderInline {SPAN} at (0,0) size 9x16
+            RenderText {#text} at (377,1) size 9x16
+              text run at (377,1) width 9: "\x{A5}"
       RenderBlock {DIV} at (0,461) size 769x18
-        RenderInline {SPAN} at (0,0) size 322x13
-          RenderText {#text} at (0,3) size 310x13
-            text run at (0,3) width 310: "Using font \"small-caption\". expected: backslash, actual: \\"
-          RenderInline {SPAN} at (0,0) size 6x13
-            RenderText {#text} at (310,3) size 6x13
-              text run at (310,3) width 6: "\\"
-          RenderInline {SPAN} at (0,0) size 6x13
-            RenderText {#text} at (316,3) size 6x13
-              text run at (316,3) width 6: "\\"
+        RenderInline {SPAN} at (0,0) size 325x13
+          RenderText {#text} at (0,3) size 311x13
+            text run at (0,3) width 311: "Using font \"small-caption\". expected: backslash, actual: \x{A5}"
+          RenderInline {SPAN} at (0,0) size 7x13
+            RenderText {#text} at (311,3) size 7x13
+              text run at (311,3) width 7: "\x{A5}"
+          RenderInline {SPAN} at (0,0) size 7x13
+            RenderText {#text} at (318,3) size 7x13
+              text run at (318,3) width 7: "\x{A5}"
       RenderBlock {DIV} at (0,479) size 769x18
-        RenderInline {SPAN} at (0,0) size 279x12
-          RenderText {#text} at (0,4) size 267x12
-            text run at (0,4) width 267: "Using font \"status-bar\". expected: backslash, actual: \\"
-          RenderInline {SPAN} at (0,0) size 6x12
-            RenderText {#text} at (267,4) size 6x12
-              text run at (267,4) width 6: "\\"
-          RenderInline {SPAN} at (0,0) size 6x12
-            RenderText {#text} at (273,4) size 6x12
-              text run at (273,4) width 6: "\\"
+        RenderInline {SPAN} at (0,0) size 282x12
+          RenderText {#text} at (0,4) size 268x12
+            text run at (0,4) width 268: "Using font \"status-bar\". expected: backslash, actual: \x{A5}"
+          RenderInline {SPAN} at (0,0) size 7x12
+            RenderText {#text} at (268,4) size 7x12
+              text run at (268,4) width 7: "\x{A5}"
+          RenderInline {SPAN} at (0,0) size 7x12
+            RenderText {#text} at (275,4) size 7x12
+              text run at (275,4) width 7: "\x{A5}"
       RenderBlock {DIV} at (0,497) size 769x18
-        RenderInline {SPAN} at (0,0) size 303x11
-          RenderText {#text} at (0,5) size 293x11
-            text run at (0,5) width 293: "Using font \"-webkit-mini-control\". expected: backslash, actual: \\"
-          RenderInline {SPAN} at (0,0) size 5x11
-            RenderText {#text} at (293,5) size 5x11
-              text run at (293,5) width 5: "\\"
-          RenderInline {SPAN} at (0,0) size 5x11
-            RenderText {#text} at (298,5) size 5x11
-              text run at (298,5) width 5: "\\"
+        RenderInline {SPAN} at (0,0) size 306x11
+          RenderText {#text} at (0,5) size 294x11
+            text run at (0,5) width 294: "Using font \"-webkit-mini-control\". expected: backslash, actual: \x{A5}"
+          RenderInline {SPAN} at (0,0) size 6x11
+            RenderText {#text} at (294,5) size 6x11
+              text run at (294,5) width 6: "\x{A5}"
+          RenderInline {SPAN} at (0,0) size 6x11
+            RenderText {#text} at (300,5) size 6x11
+              text run at (300,5) width 6: "\x{A5}"
       RenderBlock {DIV} at (0,515) size 769x18
-        RenderInline {SPAN} at (0,0) size 371x13
-          RenderText {#text} at (0,3) size 359x13
-            text run at (0,3) width 359: "Using font \"-webkit-small-control\". expected: backslash, actual: \\"
-          RenderInline {SPAN} at (0,0) size 6x13
-            RenderText {#text} at (359,3) size 6x13
-              text run at (359,3) width 6: "\\"
-          RenderInline {SPAN} at (0,0) size 6x13
-            RenderText {#text} at (365,3) size 6x13
-              text run at (365,3) width 6: "\\"
+        RenderInline {SPAN} at (0,0) size 374x13
+          RenderText {#text} at (0,3) size 360x13
+            text run at (0,3) width 360: "Using font \"-webkit-small-control\". expected: backslash, actual: \x{A5}"
+          RenderInline {SPAN} at (0,0) size 7x13
+            RenderText {#text} at (360,3) size 7x13
+              text run at (360,3) width 7: "\x{A5}"
+          RenderInline {SPAN} at (0,0) size 7x13
+            RenderText {#text} at (367,3) size 7x13
+              text run at (367,3) width 7: "\x{A5}"
       RenderBlock {DIV} at (0,533) size 769x18
-        RenderInline {SPAN} at (0,0) size 394x16
-          RenderText {#text} at (0,1) size 380x16
-            text run at (0,1) width 380: "Using font \"-webkit-control\". expected: backslash, actual: \\"
-          RenderInline {SPAN} at (0,0) size 7x16
-            RenderText {#text} at (380,1) size 7x16
-              text run at (380,1) width 7: "\\"
-          RenderInline {SPAN} at (0,0) size 7x16
-            RenderText {#text} at (387,1) size 7x16
-              text run at (387,1) width 7: "\\"
+        RenderInline {SPAN} at (0,0) size 400x16
+          RenderText {#text} at (0,1) size 382x16
+            text run at (0,1) width 382: "Using font \"-webkit-control\". expected: backslash, actual: \x{A5}"
+          RenderInline {SPAN} at (0,0) size 9x16
+            RenderText {#text} at (382,1) size 9x16
+              text run at (382,1) width 9: "\x{A5}"
+          RenderInline {SPAN} at (0,0) size 9x16
+            RenderText {#text} at (391,1) size 9x16
+              text run at (391,1) width 9: "\x{A5}"
       RenderBlock {DIV} at (0,551) size 769x18
         RenderInline {SPAN} at (0,0) size 404x18
           RenderText {#text} at (0,0) size 388x18
