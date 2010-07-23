@@ -1,3 +1,17 @@
+2010-07-23  Rafael Antognolli  <antognolli@profusion.mobi>
+
+        Reviewed by Antonio Gomes.
+
+        [EFL] Add support for using libcurl network backend.
+        https://bugs.webkit.org/show_bug.cgi?id=42286
+
+        Instead of just libsoup, the EFL port now can use libcurl backend.
+        This is a step in the direction of removing dependency on glib. Just
+        need to pass the option -DNETWORK_BACKEND=curl to cmake in order to
+        enable it.
+
+        * cmake/OptionsEfl.cmake:
+
 2010-07-23  Andras Becsi  <abecsi@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.

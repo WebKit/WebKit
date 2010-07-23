@@ -1,3 +1,23 @@
+2010-07-23  Rafael Antognolli  <antognolli@profusion.mobi>
+
+        Reviewed by Antonio Gomes.
+
+        [EFL] Add support for using libcurl network backend.
+        https://bugs.webkit.org/show_bug.cgi?id=42286
+
+        Put some ifdefs around soup calls.
+
+        * ewk/ewk_cookies.cpp:
+        (ewk_cookies_file_set):
+        (ewk_cookies_clear):
+        (ewk_cookies_get_all):
+        (ewk_cookies_cookie_del):
+        (ewk_cookies_cookie_free):
+        (ewk_cookies_policy_set):
+        (ewk_cookies_policy_get):
+        * ewk/ewk_main.cpp:
+        (ewk_init):
+
 2010-07-23  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
 
         Reviewed by Kenneth Rohde Christiansen.

@@ -47,9 +47,11 @@
 
 #endif
 
+#ifdef WTF_USE_SOUP
 // REMOVE-ME: see todo below
 #include "ResourceHandle.h"
 #include <libsoup/soup.h>
+#endif
 
 static int _ewk_init_count = 0;
 int _ewk_log_dom = -1;
@@ -119,10 +121,12 @@ int ewk_init(void)
     ewk_settings_web_database_path_set(getenv("HOME"));
 
     // TODO: this should move to WebCore, already reported to webkit-gtk folks:
+#ifdef WTF_USE_SOUP
     if (1) {
         SoupSession* session = WebCore::ResourceHandle::defaultSession();
         soup_session_add_feature_by_type(session, SOUP_TYPE_CONTENT_SNIFFER);
     }
+#endif
 
     return ++_ewk_init_count;
 
