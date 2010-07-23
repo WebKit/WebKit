@@ -3105,8 +3105,6 @@ BUGWK42403 LINUX WIN : svg/css/circle-in-mask-with-shadow.svg = IMAGE
 BUGWK42403 LINUX WIN : svg/custom/grayscale-gradient-mask.svg = IMAGE
 BUGWK42403 : svg/custom/mask-colorspace.svg = IMAGE
 
-BUGWK42419 WIN : fast/forms/input-file-directory-upload.html = TEXT
-
 BUGWK42428 : svg/custom/convolution-crash.svg = IMAGE
 BUGWK42428 LINUX WIN : svg/W3C-SVG-1.1/filters-conv-01-f.svg = IMAGE+TEXT
 
