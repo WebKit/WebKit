@@ -373,6 +373,21 @@ on_tooltip_text_set(void* user_data, Evas_Object* webview, void* event_info)
         info("%s\n", text);
 }
 
+static void
+on_inputmethod_changed(void* user_data, Evas_Object* webview, void* event_info)
+{
+    Eina_Bool active = (Eina_Bool)(long)event_info;
+    unsigned int imh;
+    info("Keyboard changed: %d\n", active);
+
+    if (!active)
+        return;
+
+    imh = ewk_view_imh_get(webview);
+    info("    Keyboard flags: %#.2x\n", imh);
+
+}
+
 /**
  * "viewport,changed" signal will be always emitted regardless of the viewport existence.
  *
@@ -661,6 +676,7 @@ browserCreate(const char *url, const char *theme, const char *userAgent, Eina_Re
     evas_object_smart_callback_add(app->browser, "menubar,visible,set", on_menubar_visible_set, app);
     evas_object_smart_callback_add(app->browser, "menubar,visible,get", on_menubar_visible_get, app);
     evas_object_smart_callback_add(app->browser, "tooltip,text,set", on_tooltip_text_set, app);
+    evas_object_smart_callback_add(app->browser, "inputmethod,changed", on_inputmethod_changed, app);
 
 /*     ewk_callback_resize_requested_add(app->browser, on_resize_requested, app->ee); */
 

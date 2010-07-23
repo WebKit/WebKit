@@ -1,3 +1,31 @@
+2010-07-22  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
+
+        Reviewed by Antonio Gomes.
+
+        [EFL] Implement input method notification
+        https://bugs.webkit.org/show_bug.cgi?id=42640
+
+        Notify browser when keyboard should be shown/hidden. Input method
+        hints are updated before sending the signal. Client should be able to
+        determine the input type by calling ewk_view_imh_get().
+
+        * efl/EWebLauncher/main.c:
+        (on_inputmethod_changed): example implementation that just prints to
+        stdout if keyboard should be shown or hidden and the imh flags.
+        (browserCreate): listen to signal about input method changing its
+        state.
+        * efl/WebCoreSupport/EditorClientEfl.cpp:
+        (WebCore::EditorClientEfl::setInputMethodState): call new function
+        responsible for implementing this notification.
+        * efl/ewk/ewk_private.h: ewk_view_input_method_state_set() is called
+        only from inside WebKit.
+        * efl/ewk/ewk_view.cpp: implement setters and getters
+        (ewk_view_imh_get):
+        (ewk_view_input_method_state_set):
+        * efl/ewk/ewk_view.h: introduce Ewk_Imh enum which contains the
+        possible input types.
+        (_Ewk_View_Smart_Class::):
+
 2010-07-20  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
 
         Reviewed by Kenneth Rohde Christiansen.

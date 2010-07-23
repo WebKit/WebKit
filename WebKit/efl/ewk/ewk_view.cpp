@@ -34,6 +34,9 @@
 #include "FrameLoaderClientEfl.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
+#include "HTMLElement.h"
+#include "HTMLInputElement.h"
+#include "HTMLNames.h"
 #include "InspectorClientEfl.h"
 #include "PlatformMouseEvent.h"
 #include "PopupMenuClient.h"
@@ -79,6 +82,7 @@ struct _Ewk_View_Private_Data {
         size_t count;
         size_t allocated;
     } scrolls;
+    unsigned int imh; /**< input method hints */
     struct {
         const char* user_agent;
         const char* user_stylesheet;
@@ -2150,6 +2154,20 @@ Eina_Bool ewk_view_pre_render_region(Evas_Object* o, Evas_Coord x, Evas_Coord y,
 }
 
 /**
+ * Get input method hints
+ *
+ * @param o View.
+ *
+ * @return input method hints
+ */
+unsigned int ewk_view_imh_get(Evas_Object *o)
+{
+    EWK_VIEW_SD_GET_OR_RETURN(o, sd, 0);
+    EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, 0);
+    return priv->imh;
+}
+
+/**
  * Cancel (clear) previous pre-render requests.
  *
  * @param o view to clear pre-render requests.
@@ -3022,6 +3040,46 @@ void ewk_view_ready(Evas_Object* o)
 {
     DBG("o=%p", o);
     evas_object_smart_callback_call(o, "ready", 0);
+}
+
+/**
+ * @internal
+ * Reports the state of input method changed. This is triggered, for example
+ * when a input field received/lost focus
+ *
+ * Emits signal: "inputmethod,changed" with a boolean indicating whether it's
+ * enabled or not.
+ */
+void ewk_view_input_method_state_set(Evas_Object* o, Eina_Bool active)
+{
+    EWK_VIEW_SD_GET_OR_RETURN(o, sd);
+    EWK_VIEW_PRIV_GET(sd, priv);
+    WebCore::Frame* focusedFrame = priv->page->focusController()->focusedOrMainFrame();
+
+    if (focusedFrame
+        && focusedFrame->document()
+        && focusedFrame->document()->focusedNode()
+        && focusedFrame->document()->focusedNode()->hasTagName(WebCore::HTMLNames::inputTag)) {
+        WebCore::HTMLInputElement* inputElement;
+
+        inputElement = static_cast<WebCore::HTMLInputElement*>(focusedFrame->document()->focusedNode());
+        if (inputElement) {
+            priv->imh = 0;
+            // for password fields, active == false
+            if (!active) {
+                active = inputElement->isPasswordField();
+                priv->imh = inputElement->isPasswordField() * EWK_IMH_PASSWORD;
+            } else {
+                // Set input method hints for "number", "tel", "email", and "url" input elements.
+                priv->imh |= inputElement->isTelephoneField() * EWK_IMH_TELEPHONE;
+                priv->imh |= inputElement->isNumberField() * EWK_IMH_NUMBER;
+                priv->imh |= inputElement->isEmailField() * EWK_IMH_EMAIL;
+                priv->imh |= inputElement->isUrlField() * EWK_IMH_URL;
+            }
+        }
+    }
+
+    evas_object_smart_callback_call(o, "inputmethod,changed", (void*)active);
 }
 
 /**
