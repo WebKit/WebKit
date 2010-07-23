@@ -1,3 +1,14 @@
+2010-07-23  Stephen White  <senorblanco@chromium.org>
+
+        Unreviewed; chromium test expectations fix.
+
+        * platform/chromium-win/fast/borders/different-color-borders-expected.checksum: Added.
+        * platform/chromium-win/fast/borders/different-color-borders-expected.png: Added.
+        * platform/chromium-win/fast/borders/different-color-borders-expected.txt: Added.
+        New baseline for new test.
+        * platform/chromium/test_expectations.txt:
+        Remove passing tests from expectations.
+
 2010-07-23  Hans Wennborg  <hans@chromium.org>
 
         Reviewed by Ojan Vafai.

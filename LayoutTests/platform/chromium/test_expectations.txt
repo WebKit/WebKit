@@ -781,8 +781,6 @@ BUG16779 WONTFIX SKIP : media/media-can-play-mpeg-audio.html = TEXT
 BUG16779 WONTFIX SKIP : media/video-can-play-type.html = FAIL TIMEOUT
 BUG16779 WONTFIX SKIP : media/video-document-types.html = FAIL TIMEOUT
 BUG16779 WONTFIX SKIP : media/video-size-intrinsic-scale.html = FAIL TIMEOUT
-// GStreamer - disabled in Chromium
-WONTFIX : media/video-duration-known-after-eos.html = TEXT TIMEOUT
 
 // We haven't implemented the WebKit fullscreen extension.
 BUG16735 : media/media-fullscreen-inline.html = TIMEOUT
