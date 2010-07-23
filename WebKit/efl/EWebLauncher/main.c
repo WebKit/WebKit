@@ -772,6 +772,7 @@ main(int argc, char *argv[])
     char *url = NULL;
     char *userAgent = NULL;
     const char *tmp;
+    const char *proxyUri;
     char path[PATH_MAX];
 
     char *engine = NULL;
@@ -833,6 +834,10 @@ main(int argc, char *argv[])
     ecore_file_mkpath(path);
     ewk_settings_icon_database_path_set(path);
     ewk_settings_web_database_path_set(path);
+
+    proxyUri = getenv("http_proxy");
+    if (proxyUri)
+        ewk_settings_proxy_uri_set(proxyUri);
 
     browserCreate(url, theme, userAgent, geometry, engine, isFullscreen);
     ecore_event_handler_add(ECORE_EVENT_SIGNAL_EXIT, main_signal_exit, &windows);

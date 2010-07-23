@@ -1,3 +1,19 @@
+2010-07-23  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [EFL] Set proxy address for Soup
+        https://bugs.webkit.org/show_bug.cgi?id=42721
+
+        Sets the given proxy URI for libsoup network backend. This method will
+        support libcurl network backend later.
+
+        * EWebLauncher/main.c:
+        (main): Invoke proxy set method
+        * ewk/ewk_settings.cpp:
+        (ewk_settings_proxy_uri_set): Sets proxy URI.
+        * ewk/ewk_settings.h:
+
 2010-07-16  Leandro Pereira  <leandro@profusion.mobi>
 
         Reviewed by Gustavo Noronha Silva.
