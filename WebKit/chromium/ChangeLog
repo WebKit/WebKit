@@ -1,5 +1,19 @@
 2010-07-23  Pavel Feldman  <pfeldman@chromium.org>
 
+        Not reviewed: rolling out r63963.
+
+        * src/ToolsAgent.h:
+        * src/WebDevToolsAgentImpl.cpp:
+        (WebKit::WebDevToolsAgentImpl::dispatchOnInjectedScript):
+        * src/WebDevToolsAgentImpl.h:
+        * src/js/DevToolsHostStub.js:
+        (.window.dispatchOnInjectedScript):
+        * src/js/InspectorControllerImpl.js:
+        (devtools.InspectorBackendImpl):
+        (devtools.InspectorBackendImpl.prototype.dispatchOnInjectedScript):
+
+2010-07-23  Pavel Feldman  <pfeldman@chromium.org>
+
         Reviewed by Reviewed by Yury Semikhatsky.
 
         Chromium DevTools: migrate from utility context-based injected

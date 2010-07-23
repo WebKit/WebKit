@@ -37,6 +37,7 @@ if (!window["RemoteDebuggerCommandExecutor"]) {
     window["RemoteDebuggerCommandExecutor"] = {};
     window["RemoteProfilerAgent"] = {};
     window["RemoteToolsAgent"] = {
+        dispatchOnInjectedScript: function() {},
         dispatchOnInspectorController: function() {}
     };
 }

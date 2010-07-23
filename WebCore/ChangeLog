@@ -1,5 +1,15 @@
 2010-07-23  Pavel Feldman  <pfeldman@chromium.org>
 
+        Not reviewed: rolling out r63963.
+
+        * bindings/v8/ScriptProfile.cpp:
+        (WebCore::ScriptProfile::title):
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::getProfile):
+        * inspector/front-end/InjectedScriptAccess.js:
+
+2010-07-23  Pavel Feldman  <pfeldman@chromium.org>
+
         Reviewed by Yury Semikhatsky.
 
         Chromium DevTools: migrate from utility context-based injected
