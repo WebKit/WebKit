@@ -1,3 +1,13 @@
+2010-07-22  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Bug 42818 - [Qt] REGRESSION(63348): jsc is broken
+        Speculative fix, need fastcall conventions on Qt/Win.
+
+        * jit/JITStubs.cpp:
+        * jit/JITStubs.h:
+
 2010-07-22  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.
