@@ -1,3 +1,25 @@
+2010-07-22  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Kent Tamura.
+
+        [cleanup] logic to extract adjacent lists and list children in listifyParagraph and unlistifyParagraph should be isolated
+        https://bugs.webkit.org/show_bug.cgi?id=42841
+
+        Added enclosingListChild that takes the list node containing the node for the second argument
+        to ensure that it only returns the enclosing list child of the specified list node.
+
+        Added adjacentEnclosingList that finds adjacent lists of the specified position.
+        It takes the current position, the adjacent position that may or may not have a list, and the list type,
+        and avoids a list that belongs to a different table cell or an outer list that contains the current position.
+
+        No new tests needed.
+
+        * editing/InsertListCommand.cpp:
+        (WebCore::enclosingListChild): Added. See above.
+        (WebCore::InsertListCommand::unlistifyParagraph): Uses enclosingListChild.
+        (WebCore::adjacentEnclosingList): Added. See above.
+        (WebCore::InsertListCommand::listifyParagraph): Uses adjacentEnclosingList.
+
 2010-07-22  Patrick Gansterer  <paroga@paroga.com>
 
         Reviewed by Adam Roben.
