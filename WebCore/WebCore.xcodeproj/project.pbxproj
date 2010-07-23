@@ -4612,6 +4612,8 @@
 		BCDBB8AD0E088CA500C60FF6 /* FileList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCDBB8AB0E088CA500C60FF6 /* FileList.cpp */; };
 		BCDBB8CD0E08958400C60FF6 /* File.h in Headers */ = {isa = PBXBuildFile; fileRef = BCDBB8CB0E08958400C60FF6 /* File.h */; };
 		BCDBB8CE0E08958400C60FF6 /* File.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCDBB8CC0E08958400C60FF6 /* File.cpp */; };
+		BCDF317B11F8D683003C5BF8 /* UserTypingGestureIndicator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCDF317911F8D683003C5BF8 /* UserTypingGestureIndicator.cpp */; };
+		BCDF317C11F8D683003C5BF8 /* UserTypingGestureIndicator.h in Headers */ = {isa = PBXBuildFile; fileRef = BCDF317A11F8D683003C5BF8 /* UserTypingGestureIndicator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCDFD48E0E305290009D10AD /* XMLHttpRequestUpload.h in Headers */ = {isa = PBXBuildFile; fileRef = BCDFD48C0E305290009D10AD /* XMLHttpRequestUpload.h */; };
 		BCDFD48F0E305290009D10AD /* XMLHttpRequestUpload.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCDFD48D0E305290009D10AD /* XMLHttpRequestUpload.cpp */; };
 		BCDFD4920E3056BD009D10AD /* JSXMLHttpRequestUploadCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCDFD4910E3056BD009D10AD /* JSXMLHttpRequestUploadCustom.cpp */; };
@@ -10008,6 +10010,8 @@
 		BCDBB8AB0E088CA500C60FF6 /* FileList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FileList.cpp; sourceTree = "<group>"; };
 		BCDBB8CB0E08958400C60FF6 /* File.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = File.h; sourceTree = "<group>"; };
 		BCDBB8CC0E08958400C60FF6 /* File.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = File.cpp; sourceTree = "<group>"; };
+		BCDF317911F8D683003C5BF8 /* UserTypingGestureIndicator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UserTypingGestureIndicator.cpp; sourceTree = "<group>"; };
+		BCDF317A11F8D683003C5BF8 /* UserTypingGestureIndicator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserTypingGestureIndicator.h; sourceTree = "<group>"; };
 		BCDFD48C0E305290009D10AD /* XMLHttpRequestUpload.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XMLHttpRequestUpload.h; sourceTree = "<group>"; };
 		BCDFD48D0E305290009D10AD /* XMLHttpRequestUpload.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XMLHttpRequestUpload.cpp; sourceTree = "<group>"; };
 		BCDFD4900E305644009D10AD /* XMLHttpRequestUpload.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = XMLHttpRequestUpload.idl; sourceTree = "<group>"; };
@@ -16369,6 +16373,8 @@
 				85031B390A44EFC700F992E0 /* UIEventWithKeyState.h */,
 				2542F4D81166C25A00E89A86 /* UserGestureIndicator.cpp */,
 				2542F4D91166C25A00E89A86 /* UserGestureIndicator.h */,
+				BCDF317911F8D683003C5BF8 /* UserTypingGestureIndicator.cpp */,
+				BCDF317A11F8D683003C5BF8 /* UserTypingGestureIndicator.h */,
 				CEF418CC1179678C009D112C /* ViewportArguments.cpp */,
 				CEF418CD1179678C009D112C /* ViewportArguments.h */,
 				31C0FF1B0E4CEB6E007D6FE5 /* WebKitAnimationEvent.cpp */,
@@ -18960,6 +18966,7 @@
 				B59DD6A911902A71007E9684 /* JSSQLStatementErrorCallback.h in Headers */,
 				51327D6011A33A2B004F9D65 /* SinkDocument.h in Headers */,
 				62C1217D11AB9E77003C462C /* SuspendableTimer.h in Headers */,
+				BCDF317C11F8D683003C5BF8 /* UserTypingGestureIndicator.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -21203,6 +21210,7 @@
 				51327D6111A33A2B004F9D65 /* SinkDocument.cpp in Sources */,
 				BCF34A3711A231CD00C71804 /* NamedNodeMap.cpp in Sources */,
 				62C1217C11AB9E77003C462C /* SuspendableTimer.cpp in Sources */,
+				BCDF317B11F8D683003C5BF8 /* UserTypingGestureIndicator.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

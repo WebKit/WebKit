@@ -29685,6 +29685,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\dom\UserTypingGestureIndicator.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\dom\UserTypingGestureIndicator.h"
+				>
+			</File>
+			<File
 				RelativePath="..\dom\ViewportArguments.cpp"
 				>
 			</File>

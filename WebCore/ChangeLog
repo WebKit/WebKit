@@ -1,5 +1,40 @@
 2010-07-22  Mark Rowe  <mrowe@apple.com>
 
+        Merge r63927.
+
+    2010-07-22  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Maciej Stachowiak.
+
+        Fix for <rdar://problem/8222626>
+        Send textDidChangeInTextField delegate callback only in response to typing or other forms of user text input.
+
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        Update project files.
+        
+        * dom/UserTypingGestureIndicator.cpp: Copied from dom/UserGestureIndicator.cpp.
+        (WebCore::UserTypingGestureIndicator::processingUserTypingGesture):
+        (WebCore::focusedNode):
+        (WebCore::UserTypingGestureIndicator::focusedElementAtGestureStart):
+        (WebCore::UserTypingGestureIndicator::UserTypingGestureIndicator):
+        (WebCore::UserTypingGestureIndicator::~UserTypingGestureIndicator):
+        * dom/UserTypingGestureIndicator.h: Copied from dom/UserGestureIndicator.h.
+        Version of UserGestureIndicator that just tracks keyboard gestures and the focused
+        node they were targeting.
+        
+        * editing/Editor.cpp:
+        (WebCore::Editor::confirmComposition):
+        (WebCore::Editor::setComposition):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::keyEvent):
+        Put UserTypingGestureIndicator on the stack for user generated keyboard events.
+
+2010-07-22  Mark Rowe  <mrowe@apple.com>
+
         Merge r63924.
 
     2010-07-22  Andy Estes  <aestes@apple.com>
