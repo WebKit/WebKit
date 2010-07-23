@@ -232,7 +232,13 @@ void SearchFieldCancelButtonElement::defaultEventHandler(Event* event)
                 m_capturing = false;
             }
             if (hovered()) {
+                RefPtr<HTMLInputElement> protector(input);
+                String oldValue = input->value();
                 input->setValue("");
+                if (!oldValue.isEmpty()) {
+                    toRenderTextControl(input->renderer())->setChangedSinceLastChangeEvent(true);
+                    input->dispatchEvent(Event::create(eventNames().inputEvent, true, false));
+                }
                 input->onSearch();
                 event->setDefaultHandled();
             }
