@@ -36,7 +36,6 @@
 #include "FormData.h"
 #include "FormDataList.h"
 #include "FormState.h"
-#include "FormSubmission.h"
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
@@ -50,8 +49,6 @@
 #include "ScriptEventListener.h"
 #include "ValidityState.h"
 #include <limits>
-#include <wtf/CurrentTime.h>
-#include <wtf/RandomNumber.h>
 
 #if PLATFORM(WX)
 #include <wx/defs.h>
@@ -63,14 +60,6 @@ using namespace std;
 namespace WebCore {
 
 using namespace HTMLNames;
-
-static int64_t generateFormDataIdentifier()
-{
-    // Initialize to the current time to reduce the likelihood of generating
-    // identifiers that overlap with those from past/future browser sessions.
-    static int64_t nextIdentifier = static_cast<int64_t>(currentTime() * 1000000.0);
-    return ++nextIdentifier;
-}
 
 HTMLFormElement::HTMLFormElement(const QualifiedName& tagName, Document* document)
     : HTMLElement(tagName, document)
@@ -191,79 +180,6 @@ void HTMLFormElement::submitImplicitly(Event* event, bool fromImplicitSubmission
     }
     if (fromImplicitSubmissionTrigger && submissionTriggerCount == 1)
         prepareSubmit(event);
-}
-
-static void appendMailtoPostFormDataToURL(KURL& url, const FormData& data, const String& encodingType)
-{
-    String body = data.flattenToString();
-
-    if (equalIgnoringCase(encodingType, "text/plain")) {
-        // Convention seems to be to decode, and s/&/\r\n/. Also, spaces are encoded as %20.
-        body = decodeURLEscapeSequences(body.replace('&', "\r\n").replace('+', ' ') + "\r\n");
-    }
-
-    Vector<char> bodyData;
-    bodyData.append("body=", 5);
-    FormDataBuilder::encodeStringAsFormData(bodyData, body.utf8());
-    body = String(bodyData.data(), bodyData.size()).replace('+', "%20");
-
-    String query = url.query();
-    if (!query.isEmpty())
-        query.append('&');
-    query.append(body);
-    url.setQuery(query);
-}
-
-PassRefPtr<FormSubmission> HTMLFormElement::prepareFormSubmission(Event* event, bool lockHistory, FormSubmissionTrigger trigger)
-{
-    KURL actionURL = document()->completeURL(m_formDataBuilder.action().isEmpty() ? document()->url().string() : m_formDataBuilder.action());
-    bool isMailtoForm = actionURL.protocolIs("mailto");
-
-    if (m_formDataBuilder.isPostMethod()) {
-        if (m_formDataBuilder.isMultiPartForm() && isMailtoForm) {
-            m_formDataBuilder.parseEncodingType("application/x-www-form-urlencoded");
-            ASSERT(!m_formDataBuilder.isMultiPartForm());
-        }
-    } else
-        m_formDataBuilder.setIsMultiPartForm(false);
-
-    TextEncoding dataEncoding = isMailtoForm ? UTF8Encoding() : m_formDataBuilder.dataEncoding(document());
-    RefPtr<DOMFormData> domFormData = DOMFormData::create(dataEncoding.encodingForFormSubmission());
-    Vector<pair<String, String> > formValues;
-
-    for (unsigned i = 0; i < m_associatedElements.size(); ++i) {
-        HTMLFormControlElement* control = m_associatedElements[i];
-        if (!control->disabled())
-            control->appendFormData(*domFormData, m_formDataBuilder.isMultiPartForm());
-        if (control->hasLocalName(inputTag)) {
-            HTMLInputElement* input = static_cast<HTMLInputElement*>(control);
-            if (input->isTextField()) {
-                formValues.append(pair<String, String>(input->name(), input->value()));
-                if (input->isSearchField())
-                    input->addSearchResult();
-            }
-        }
-    }
-
-    RefPtr<FormData> formData;
-    String boundary;
-
-    if (m_formDataBuilder.isMultiPartForm()) {
-        formData = FormData::createMultiPart(domFormData->items(), domFormData->encoding(), document());
-        boundary = formData->boundary().data();
-    } else {
-        formData = FormData::create(domFormData->items(), domFormData->encoding());
-        if (m_formDataBuilder.isPostMethod() && isMailtoForm) {
-            // Convert the form data into a string that we put into the URL.
-            appendMailtoPostFormDataToURL(actionURL, *formData, m_formDataBuilder.encodingType());
-            formData = FormData::create();
-        }
-    }
-
-    formData->setIdentifier(generateFormDataIdentifier());
-    FormSubmission::Method method = m_formDataBuilder.isPostMethod() ? FormSubmission::PostMethod : FormSubmission::GetMethod;
-    String targetOrBaseTarget = m_formDataBuilder.target().isEmpty() ? document()->baseTarget() : m_formDataBuilder.target();
-    return FormSubmission::create(method, actionURL, targetOrBaseTarget, m_formDataBuilder.encodingType(), FormState::create(this, formValues, document()->frame(), trigger), formData.release(), boundary, lockHistory, event);
 }
 
 static inline HTMLFormControlElement* submitElementFromEvent(const Event* event)
@@ -389,7 +305,7 @@ void HTMLFormElement::submit(Event* event, bool activateSubmitButton, bool lockH
     if (needButtonActivation && firstSuccessfulSubmitButton)
         firstSuccessfulSubmitButton->setActivatedSubmit(true);
 
-    frame->loader()->submitForm(prepareFormSubmission(event, lockHistory, formSubmissionTrigger));
+    frame->loader()->submitForm(FormSubmission::create(this, m_attributes, event, lockHistory, formSubmissionTrigger));
 
     if (needButtonActivation && firstSuccessfulSubmitButton)
         firstSuccessfulSubmitButton->setActivatedSubmit(false);
@@ -421,17 +337,17 @@ void HTMLFormElement::reset()
 void HTMLFormElement::parseMappedAttribute(Attribute* attr)
 {
     if (attr->name() == actionAttr)
-        m_formDataBuilder.parseAction(attr->value());
+        m_attributes.parseAction(attr->value());
     else if (attr->name() == targetAttr)
-        m_formDataBuilder.setTarget(attr->value());
+        m_attributes.setTarget(attr->value());
     else if (attr->name() == methodAttr)
-        m_formDataBuilder.parseMethodType(attr->value());
+        m_attributes.parseMethodType(attr->value());
     else if (attr->name() == enctypeAttr)
-        m_formDataBuilder.parseEncodingType(attr->value());
+        m_attributes.parseEncodingType(attr->value());
     else if (attr->name() == accept_charsetAttr)
         // space separated list of charsets the server
         // accepts - see rfc2045
-        m_formDataBuilder.setAcceptCharset(attr->value());
+        m_attributes.setAcceptCharset(attr->value());
     else if (attr->name() == acceptAttr) {
         // ignore this one for the moment...
     } else if (attr->name() == autocompleteAttr) {

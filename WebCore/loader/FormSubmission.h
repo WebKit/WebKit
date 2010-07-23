@@ -31,34 +31,69 @@
 #ifndef FormSubmission_h
 #define FormSubmission_h
 
+#include "FormState.h"
 #include "KURL.h"
 
 namespace WebCore {
 
+class Document;
 class Event;
 class FormData;
-class FormState;
 struct FrameLoadRequest;
+class HTMLFormElement;
+class TextEncoding;
 
 class FormSubmission : public RefCounted<FormSubmission> {
 public:
-    enum Method {
-        GetMethod,
-        PostMethod
+    enum Method { GetMethod, PostMethod };
+
+    class Attributes : public Noncopyable {
+    public:
+        Attributes()
+            : m_method(GetMethod)
+            , m_isMultiPartForm(false)
+            , m_encodingType("application/x-www-form-urlencoded")
+        {
+        }
+
+        Method method() const { return m_method; }
+        void parseMethodType(const String&);
+
+        const String& action() const { return m_action; }
+        void parseAction(const String&);
+
+        const String& target() const { return m_target; }
+        void setTarget(const String& target) { m_target = target; }
+
+        const String& encodingType() const { return m_encodingType; }
+        void parseEncodingType(const String&);
+        bool isMultiPartForm() const { return m_isMultiPartForm; }
+
+        const String& acceptCharset() const { return m_acceptCharset; }
+        void setAcceptCharset(const String& value) { m_acceptCharset = value; }
+
+    private:
+        Method m_method;
+        bool m_isMultiPartForm;
+
+        String m_action;
+        String m_target;
+        String m_encodingType;
+        String m_acceptCharset;
     };
 
-    static PassRefPtr<FormSubmission> create(Method, const KURL& action, const String& target, const String& contentType, PassRefPtr<FormState>, PassRefPtr<FormData>, const String& boundary, bool lockHistory, PassRefPtr<Event>);
+    static PassRefPtr<FormSubmission> create(HTMLFormElement*, const Attributes&, PassRefPtr<Event> event, bool lockHistory, FormSubmissionTrigger);
 
     void populateFrameLoadRequest(FrameLoadRequest&);
 
     Method method() const { return m_method; }
     const KURL& action() const { return m_action; }
-    String target() const { return m_target; }
+    const String& target() const { return m_target; }
     void clearTarget() { m_target = String(); }
-    String contentType() const { return m_contentType; }
+    const String& contentType() const { return m_contentType; }
     FormState* state() const { return m_formState.get(); }
     FormData* data() const { return m_formData.get(); }
-    String boundary() const { return m_boundary; }
+    const String boundary() const { return m_boundary; }
     bool lockHistory() const { return m_lockHistory; }
     Event* event() const { return m_event.get(); }
 
@@ -70,6 +105,7 @@ public:
 private:
     FormSubmission(Method, const KURL& action, const String& target, const String& contentType, PassRefPtr<FormState>, PassRefPtr<FormData>, const String& boundary, bool lockHistory, PassRefPtr<Event>);
 
+    // FIXME: Hold an instance of Attributes instead of individual members.
     Method m_method;
     KURL m_action;
     String m_target;

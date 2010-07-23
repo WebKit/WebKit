@@ -25,7 +25,6 @@
 #include "config.h"
 #include "FormDataBuilder.h"
 
-#include "CSSHelper.h"
 #include "Document.h"
 #include "Frame.h"
 #include "FrameLoader.h"
@@ -37,67 +36,6 @@
 #include <wtf/RandomNumber.h>
 
 namespace WebCore {
-
-FormDataBuilder::FormDataBuilder()
-    : m_isPostMethod(false)
-    , m_isMultiPartForm(false)
-    , m_encodingType("application/x-www-form-urlencoded")
-{
-}
-
-FormDataBuilder::~FormDataBuilder()
-{
-}
-
-void FormDataBuilder::parseAction(const String& action)
-{
-    // FIXME: Can we parse into a KURL?
-    m_action = deprecatedParseURL(action);
-}
-
-void FormDataBuilder::parseEncodingType(const String& type)
-{
-    if (type.contains("multipart", false) || type.contains("form-data", false)) {
-        m_encodingType = "multipart/form-data";
-        m_isMultiPartForm = true;
-    } else if (type.contains("text", false) || type.contains("plain", false)) {
-        m_encodingType = "text/plain";
-        m_isMultiPartForm = false;
-    } else {
-        m_encodingType = "application/x-www-form-urlencoded";
-        m_isMultiPartForm = false;
-    }
-}
-
-void FormDataBuilder::parseMethodType(const String& type)
-{
-    if (equalIgnoringCase(type, "post"))
-        m_isPostMethod = true;
-    else if (equalIgnoringCase(type, "get"))
-        m_isPostMethod = false;
-}
-
-TextEncoding FormDataBuilder::dataEncoding(Document* document) const
-{
-    String acceptCharset = m_acceptCharset;
-    acceptCharset.replace(',', ' ');
-
-    Vector<String> charsets;
-    acceptCharset.split(' ', charsets);
-
-    TextEncoding encoding;
-
-    Vector<String>::const_iterator end = charsets.end();
-    for (Vector<String>::const_iterator it = charsets.begin(); it != end; ++it) {
-        if ((encoding = TextEncoding(*it)).isValid())
-            return encoding;
-    }
-
-    if (Frame* frame = document->frame())
-        return frame->loader()->writer()->encoding();
-
-    return Latin1Encoding();
-}
 
 // Helper functions
 static inline void append(Vector<char>& buffer, char string)
@@ -138,6 +76,28 @@ static void appendQuotedString(Vector<char>& buffer, const CString& string)
             append(buffer, c);
         }
     }
+}
+
+TextEncoding FormDataBuilder::encodingFromAcceptCharset(const String& acceptCharset, Document* document)
+{
+    String normalizedAcceptCharset = acceptCharset;
+    normalizedAcceptCharset.replace(',', ' ');
+
+    Vector<String> charsets;
+    normalizedAcceptCharset.split(' ', charsets);
+
+    TextEncoding encoding;
+
+    Vector<String>::const_iterator end = charsets.end();
+    for (Vector<String>::const_iterator it = charsets.begin(); it != end; ++it) {
+        if ((encoding = TextEncoding(*it)).isValid())
+            return encoding;
+    }
+
+    if (Frame* frame = document->frame())
+        return frame->loader()->writer()->encoding();
+
+    return Latin1Encoding();
 }
 
 Vector<char> FormDataBuilder::generateUniqueBoundaryString()

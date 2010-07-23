@@ -1,3 +1,57 @@
+2010-06-24  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        Move more form submission logic into FormSubmission.
+        https://bugs.webkit.org/show_bug.cgi?id=41110
+
+        Two major moves:
+        * Fold HTMLFormElement::prepareFormSubmission into FormSubmission::create
+        * Move non-static (non-FormData-building) methods of FormDataBuilder
+            to FormSubmission::Attributes.
+
+        Mechanical moving, no change in behavior, so no new tests.
+
+        * WebCore.xcodeproj/project.pbxproj: Gave FormDataBuilder.h "project" and
+            FormSubmission.h "private" visibility.
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::submit): Changed to use FormSubmission::create.
+        (WebCore::HTMLFormElement::parseMappedAttribute): Changed to use m_attributes.
+        * html/HTMLFormElement.h:
+        (WebCore::HTMLFormElement::enctype): Ditto.
+        (WebCore::HTMLFormElement::encoding): Ditto.
+        (WebCore::HTMLFormElement::acceptCharset): Ditto.
+        * loader/FormSubmission.cpp:
+        (WebCore::generateFormDataIdentifier): Moved from HTMLFormElement.
+        (WebCore::appendMailtoPostFormDataToURL): Ditto.
+        (WebCore::FormSubmission::Attributes::parseAction): Moved from FormDataBuilder.
+        (WebCore::FormSubmission::Attributes::parseEncodingType): Ditto.
+        (WebCore::FormSubmission::Attributes::parseMethodType): Ditto.
+        (WebCore::FormSubmission::FormSubmission): Made inline.
+        (WebCore::FormSubmission::create): Added logic that used to be in
+            HTMLFormElement::prepareFormSubmission.
+        * loader/FormSubmission.h:
+        (WebCore::FormSubmission::):
+        (WebCore::FormSubmission::Attributes::Attributes): Added new class.
+        (WebCore::FormSubmission::Attributes::method): Moved from FormDataBuilder.
+        (WebCore::FormSubmission::Attributes::isMultiPartForm): Ditto.
+        (WebCore::FormSubmission::Attributes::action): Ditto.
+        (WebCore::FormSubmission::Attributes::target): Ditto.
+        (WebCore::FormSubmission::Attributes::setTarget): Ditto.
+        (WebCore::FormSubmission::Attributes::encodingType): Ditto.
+        (WebCore::FormSubmission::Attributes::acceptCharset): Ditto.
+        (WebCore::FormSubmission::Attributes::setAcceptCharset): Ditto.
+        (WebCore::FormSubmission::target): Ditto.
+        (WebCore::FormSubmission::contentType): Const-ified return type.
+        (WebCore::FormSubmission::boundary): Ditto.
+        * platform/network/FormDataBuilder.cpp:
+        (WebCore::FormDataBuilder::encodingFromAcceptCharset): Renamed method for clarity,
+            made it use param instead of a class member.
+        * platform/network/FormDataBuilder.h:
+        (WebCore::FormDataBuilder::FormDataBuilder): Made constructor private.
+        * wml/WMLGoElement.cpp: Changed to use FormSubmision::Attributes.
+        * wml/WMLGoElement.h: Ditto.
+
 2010-07-23  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

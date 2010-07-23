@@ -36,31 +36,7 @@ class TextEncoding;
 
 class FormDataBuilder : public Noncopyable {
 public:
-    FormDataBuilder();
-    ~FormDataBuilder();
-
-    bool isPostMethod() const { return m_isPostMethod; }
-    void setIsPostMethod(bool value) { m_isPostMethod = value; }
-
-    bool isMultiPartForm() const { return m_isMultiPartForm; }
-    void setIsMultiPartForm(bool value) { m_isMultiPartForm = value; }
-
-    const String& action() const { return m_action; }
-
-    const String& target() const { return m_target; }
-    void setTarget(const String& target) { m_target = target; }
-
-    String encodingType() const { return m_encodingType; }
-    void setEncodingType(const String& value) { m_encodingType = value; }
-
-    String acceptCharset() const { return m_acceptCharset; }
-    void setAcceptCharset(const String& value) { m_acceptCharset = value; }
-
-    void parseAction(const String&);
-    void parseEncodingType(const String&);
-    void parseMethodType(const String&);
-
-    TextEncoding dataEncoding(Document*) const;
+    static TextEncoding encodingFromAcceptCharset(const String& acceptCharset, Document* document);
 
     // Helper functions used by HTMLFormElement/WMLGoElement for multi-part form data
     static Vector<char> generateUniqueBoundaryString();
@@ -75,13 +51,7 @@ public:
     static void encodeStringAsFormData(Vector<char>&, const WTF::CString&);
 
 private:
-    bool m_isPostMethod;
-    bool m_isMultiPartForm;
-
-    String m_action;
-    String m_target;
-    String m_encodingType;
-    String m_acceptCharset;
+    FormDataBuilder() {}
 };
 
 }
