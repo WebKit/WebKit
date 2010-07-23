@@ -1,3 +1,12 @@
+2010-07-23  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Build fix for Qt apps
+
+        Add webkit to QT_CONFIG. qconfig.pri will read qt_webkit_version.pri and
+        that's how it will pick up webkit in QT_CONFIG.
+
+        * qt_webkit_version.pri:
+
 2010-07-22  Yael Aharon  <yael.aharon@nokia.com>
 
         Reviewed by Laszlo Gombos.
