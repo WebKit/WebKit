@@ -1,5 +1,21 @@
 2010-07-23  Pavel Feldman  <pfeldman@chromium.org>
 
+        Reviewed by Reviewed by Yury Semikhatsky.
+
+        Chromium DevTools: migrate from utility context-based injected
+        script dispatch to upstream schema.
+
+        https://bugs.webkit.org/show_bug.cgi?id=42883
+
+        * src/ToolsAgent.h:
+        * src/WebDevToolsAgentImpl.cpp:
+        * src/WebDevToolsAgentImpl.h:
+        * src/js/DevToolsHostStub.js:
+        * src/js/InspectorControllerImpl.js:
+        (devtools.InspectorBackendImpl):
+
+2010-07-23  Pavel Feldman  <pfeldman@chromium.org>
+
         Not reviewed: rolling out r63963.
 
         * src/ToolsAgent.h:

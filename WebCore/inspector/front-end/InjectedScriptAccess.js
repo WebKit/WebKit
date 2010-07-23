@@ -35,7 +35,11 @@ function InjectedScriptAccess(injectedScriptId) {
 
 InjectedScriptAccess.get = function(injectedScriptId)
 {
-    return new InjectedScriptAccess(injectedScriptId);
+    if (typeof injectedScriptId === "number")
+        return new InjectedScriptAccess(injectedScriptId);
+
+    console.error("Access to injected script with no id");
+    console.trace();
 }
 
 InjectedScriptAccess.getDefault = function()

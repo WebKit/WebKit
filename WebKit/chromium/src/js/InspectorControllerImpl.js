@@ -49,6 +49,7 @@ devtools.InspectorBackendImpl = function()
     this.installInspectorControllerDelegate_("disableResourceTracking");
     this.installInspectorControllerDelegate_("disableSearchingForNode");
     this.installInspectorControllerDelegate_("disableTimeline");
+    this.installInspectorControllerDelegate_("dispatchOnInjectedScript");
     this.installInspectorControllerDelegate_("enableMonitoringXHR");
     this.installInspectorControllerDelegate_("enableResourceTracking");
     this.installInspectorControllerDelegate_("enableSearchingForNode");
@@ -122,18 +123,6 @@ devtools.InspectorBackendImpl.prototype.__proto__ = WebInspector.InspectorBacken
 devtools.InspectorBackendImpl.prototype.pause = function()
 {
     RemoteDebuggerCommandExecutor.DebuggerPauseScript();
-};
-
-
-/**
- * @override
- */
-devtools.InspectorBackendImpl.prototype.dispatchOnInjectedScript = function(callId, injectedScriptId, methodName, argsString, async)
-{
-    // Encode injectedScriptId into callId
-    if (typeof injectedScriptId !== "number")
-        injectedScriptId = 0;
-    RemoteToolsAgent.dispatchOnInjectedScript(callId, injectedScriptId, methodName, argsString, async);
 };
 
 

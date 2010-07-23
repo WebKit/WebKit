@@ -113,6 +113,7 @@
 #include <runtime/UString.h>
 #include "JSScriptProfile.h"
 #else
+#include "ScriptScope.h"
 #include "V8ScriptProfile.h"
 #endif
 #endif
@@ -1560,12 +1561,14 @@ void InspectorController::getProfile(long callId, unsigned uid)
     if (!m_frontend)
         return;
     ProfilesMap::iterator it = m_profiles.find(uid);
-    if (it != m_profiles.end())
+    if (it != m_profiles.end()) {
 #if USE(JSC)
         m_frontend->didGetProfile(callId, toJS(m_frontend->scriptState(), it->second.get()));
 #else
+        ScriptScope scope(m_frontend->scriptState());
         m_frontend->didGetProfile(callId, toV8(it->second.get()));
 #endif
+    }
 }
 
 ScriptObject InspectorController::createProfileHeader(const ScriptProfile& profile)

@@ -316,16 +316,6 @@ void WebDevToolsAgentImpl::dispatchOnInspectorController(int callId, const Strin
     m_toolsAgentDelegateStub->didDispatchOn(callId, "", exception);
 }
 
-void WebDevToolsAgentImpl::dispatchOnInjectedScript(int callId, int injectedScriptId, const String& functionName, const String& jsonArgs, bool async)
-{
-    inspectorController()->inspectorBackend()->dispatchOnInjectedScript(
-        callId,
-        injectedScriptId,
-        functionName,
-        jsonArgs,
-        async);
-}
-
 void WebDevToolsAgentImpl::dispatchMessageFromFrontend(const WebDevToolsMessageData& data)
 {
     if (ToolsAgentDispatch::dispatch(this, data))
