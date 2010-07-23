@@ -1,5 +1,11 @@
 2010-07-22  Gavin Barraclough  <barraclough@apple.com>
 
+        Eeeep! r63947 hosed all non-x86 builds!
+
+        * jit/JITStubs.h:
+
+2010-07-22  Gavin Barraclough  <barraclough@apple.com>
+
         Reviewed by Oliver Hunt.
 
         Bug 42818 - [Qt] REGRESSION(63348): jsc is broken
