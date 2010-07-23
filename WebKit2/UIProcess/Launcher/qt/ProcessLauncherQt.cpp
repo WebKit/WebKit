@@ -35,10 +35,6 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/Threading.h>
 
-#if USE(MEEGOTOUCH)
-#include <meegotouch/MComponentData>
-#endif
-
 #include <QApplication>
 #include <QDebug>
 #include <QLocalServer>
@@ -48,14 +44,6 @@
 
 #include <sys/resource.h>
 #include <unistd.h>
-
-#if !defined(QWEBKIT_EXPORT)
-#  if defined(QT_SHARED)
-#    define QWEBKIT_EXPORT Q_DECL_EXPORT
-#  else
-#    define QWEBKIT_EXPORT
-#  endif
-#endif
 
 using namespace WebCore;
 
@@ -172,30 +160,5 @@ CoreIPC::Connection::Identifier ProcessLauncher::createWebThread()
 }
 
 } // namespace WebKit
-
-QWEBKIT_EXPORT int webProcessMain(int argc, char** argv)
-{
-    QApplication* app = new QApplication(argc, argv);
-
-#if USE(MEEGOTOUCH)
-    new MComponentData(argc, argv);
-#endif
-
-    srandom(time(0));
-
-    JSC::initializeThreading();
-    WTF::initializeMainThread();
-    RunLoop::initializeMainRunLoop();
-
-    // Create the connection.
-    QString identifier(app->arguments().size() > 1 ? app->arguments().at(1) : "");
-    WebKit::WebProcess::shared().initialize(identifier, RunLoop::main());
-
-    RunLoop::run();
-
-    // FIXME: Do more cleanup here.
-
-    return 0;
-}
 
 #include "ProcessLauncherQt.moc"

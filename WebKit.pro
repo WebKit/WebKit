@@ -28,6 +28,10 @@ build-qtscript {
         JavaScriptCore/qt/benchmarks
 }
 
+webkit2 {
+    exists($$PWD/WebKit2/WebKit2.pro): SUBDIRS += WebKit2/WebKit2.pro
+}
+
 symbian {
     # Forward the install target to WebCore. A workaround since INSTALLS is not implemented for symbian
     install.commands = $(MAKE) -C WebCore install

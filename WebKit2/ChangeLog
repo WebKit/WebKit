@@ -1,3 +1,19 @@
+2010-07-19 Balazs Kelemen <kb@inf.u-szeged.hu>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] Setup the QtWebProcess
+
+        https://bugs.webkit.org/show_bug.cgi?id=42623
+
+        * UIProcess/Launcher/qt/ProcessLauncherQt.cpp:
+        Remove the framework entry point from here to WebProcess/qt/WebProcessMainQt.cpp to match with with the mac and the win port.
+        * WebKit2.pro: Added.
+        * WebProcess/qt/WebProcessMainQt.cpp: Added.
+        (WebKit::WebProcessMainQt): Framework entry point for Qt.
+        * qt/MainQt.cpp: Added.
+        (main):
+
 2010-07-22  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam Weinig.

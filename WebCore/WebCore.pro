@@ -3366,6 +3366,7 @@ SOURCES += \
     ../WebKit2/WebProcess/WebPage/qt/ChunkedUpdateDrawingAreaQt.cpp \
     ../WebKit2/WebProcess/WebPage/qt/WebPageQt.cpp \
     ../WebKit2/WebProcess/WebProcess.cpp \
+    ../WebKit2/WebProcess/qt/WebProcessMainQt.cpp
 
 }
 
