@@ -1,3 +1,13 @@
+2010-07-23  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Shinichiro Hamaji.
+
+        Roll Chromium revision
+        https://bugs.webkit.org/show_bug.cgi?id=42876
+
+        * DEPS: Roll Chromium revision to r53434 in order to have the
+        logger initialization change (r53303)
+
 2010-07-22  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Yury Semikhatsky.
