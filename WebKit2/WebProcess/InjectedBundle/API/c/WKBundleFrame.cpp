@@ -44,13 +44,6 @@ WKURLRef WKBundleFrameGetURL(WKBundleFrameRef frameRef)
     return toURLRef(toWK(frameRef)->url().impl());
 }
 
-WKStringRef WKBundleFrameCopyInnerText(WKBundleFrameRef frameRef)
-{
-    WebCore::String string = toWK(frameRef)->innerText();
-    string.impl()->ref();
-    return toRef(string.impl());
-}
-
 WKArrayRef WKBundleFrameCopyChildFrames(WKBundleFrameRef frameRef)
 {
     return toRef(toWK(frameRef)->childFrames().releaseRef());    

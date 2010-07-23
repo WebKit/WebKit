@@ -43,35 +43,60 @@ using namespace std;
 
 namespace WTR {
 
-static PassOwnPtr<Vector<char> > WKStringToUTF8(WKStringRef wkStringRef)
+static ostream& operator<<(ostream& out, CFStringRef stringRef)
 {
-    RetainPtr<CFStringRef> cfString(AdoptCF, WKStringCopyCFString(0, wkStringRef));
-    CFIndex bufferLength = CFStringGetMaximumSizeForEncoding(CFStringGetLength(cfString.get()), kCFStringEncodingUTF8) + 1;
-    OwnPtr<Vector<char> > buffer(new Vector<char>(bufferLength));
-    if (!CFStringGetCString(cfString.get(), buffer->data(), bufferLength, kCFStringEncodingUTF8)) {
-        buffer->shrink(1);
-        (*buffer)[0] = 0;
-    } else
-        buffer->shrink(strlen(buffer->data()) + 1);
-    return buffer.release();
+    if (!stringRef)
+        return out;
+    CFIndex bufferLength = CFStringGetMaximumSizeForEncoding(CFStringGetLength(stringRef), kCFStringEncodingUTF8) + 1;
+    Vector<char> buffer(bufferLength);
+    if (!CFStringGetCString(stringRef, buffer.data(), bufferLength, kCFStringEncodingUTF8))
+        return out;
+    return out << buffer.data();
 }
 
+static ostream& operator<<(ostream& out, const RetainPtr<CFStringRef>& stringRef)
+{
+    return out << stringRef.get();
+}
+
+static ostream& operator<<(ostream& out, WKStringRef stringRef)
+{
+    if (!stringRef)
+        return out;
+    RetainPtr<CFStringRef> cfString(AdoptCF, WKStringCopyCFString(0, stringRef));
+    return out << cfString;
+}
+
+static ostream& operator<<(ostream& out, const WKRetainPtr<WKStringRef>& stringRef)
+{
+    return out << stringRef.get();
+}
+
+static ostream& operator<<(ostream& out, JSStringRef stringRef)
+{
+    if (!stringRef)
+        return out;
+    CFIndex bufferLength = JSStringGetMaximumUTF8CStringSize(stringRef) + 1;
+    Vector<char> buffer(bufferLength);
+    JSStringGetUTF8CString(stringRef, buffer.data(), bufferLength);
+    return out << buffer.data();
+}
+
+static ostream& operator<<(ostream& out, const JSRetainPtr<JSStringRef>& stringRef)
+{
+    return out << stringRef.get();
+}
 
 static string dumpPath(WKBundleNodeRef node)
 {
     if (!node)
         return "(null)";
-
     WKRetainPtr<WKStringRef> nodeName(AdoptWK, WKBundleNodeCopyNodeName(node));
-    OwnPtr<Vector<char> > str = WKStringToUTF8(nodeName.get());
-    str->shrink(str->size() - 1);
-    WKBundleNodeRef parent = WKBundleNodeGetParent(node);
-    if (parent) {
-        str->append(" > ", 3);
-        string parentPath = dumpPath(parent);
-        str->append(parentPath.data(), parentPath.length());
-    }
-    return string(str->data(), str->size());
+    ostringstream out;
+    out << nodeName;
+    if (WKBundleNodeRef parent = WKBundleNodeGetParent(node))
+        out << " > " << dumpPath(parent);
+    return out.str();
 }
 
 static ostream& operator<<(ostream& out, WKBundleRangeRef rangeRef)
@@ -181,15 +206,39 @@ void InjectedBundlePage::didCommitLoadForFrame(WKBundleFrameRef frame)
 {
 }
 
+static JSValueRef propertyValue(JSContextRef context, JSObjectRef object, const char* propertyName)
+{
+    if (!object)
+        return 0;
+    JSRetainPtr<JSStringRef> propertyNameString(Adopt, JSStringCreateWithUTF8CString(propertyName));
+    JSValueRef exception;
+    return JSObjectGetProperty(context, object, propertyNameString.get(), &exception);
+}
+
+static JSObjectRef propertyObject(JSContextRef context, JSObjectRef object, const char* propertyName)
+{
+    JSValueRef value = propertyValue(context, object, propertyName);
+    if (!value || !JSValueIsObject(context, value))
+        return 0;
+    return const_cast<JSObjectRef>(value);
+}
+
+static JSRetainPtr<JSStringRef> propertyString(JSContextRef context, JSObjectRef object, const char* propertyName)
+{
+    JSValueRef value = propertyValue(context, object, propertyName);
+    if (!value)
+        return 0;
+    JSValueRef exception;
+    return JSRetainPtr<JSStringRef>(Adopt, JSValueToStringCopy(context, value, &exception));
+}
+
 static double numericWindowPropertyValue(WKBundleFrameRef frame, const char* propertyName)
 {
     JSGlobalContextRef context = WKBundleFrameGetJavaScriptContext(frame);
-    JSObjectRef window = JSContextGetGlobalObject(context);
-    JSValueRef exception = 0;
-    JSRetainPtr<JSStringRef> propertyNameString(Adopt, JSStringCreateWithUTF8CString(propertyName));
-    JSValueRef value = JSObjectGetProperty(context, window, propertyNameString.get(), &exception);
-    if (exception)
+    JSValueRef value = propertyValue(context, JSContextGetGlobalObject(context), propertyName);
+    if (!value)
         return 0;
+    JSValueRef exception;
     return JSValueToNumber(context, value, &exception);
 }
 
@@ -202,7 +251,7 @@ static void dumpFrameScrollPosition(WKBundleFrameRef frame, FrameNamePolicy shou
     if (fabs(x) > 0.00000001 || fabs(y) > 0.00000001) {
         if (shouldIncludeFrameName) {
             WKRetainPtr<WKStringRef> name(AdoptWK, WKBundleFrameCopyName(frame));
-            InjectedBundle::shared().os() << "frame '" << WKStringToUTF8(name.get())->data() << "' ";
+            InjectedBundle::shared().os() << "frame '" << name << "' ";
         }
         InjectedBundle::shared().os() << "scrolled to " << x << "," << y << "\n";
     }
@@ -229,8 +278,10 @@ void InjectedBundlePage::dumpAllFrameScrollPositions()
 
 static void dumpFrameText(WKBundleFrameRef frame)
 {
-    WKRetainPtr<WKStringRef> text(AdoptWK, WKBundleFrameCopyInnerText(frame));
-    InjectedBundle::shared().os() << WKStringToUTF8(text.get())->data() << "\n";
+    JSGlobalContextRef context = WKBundleFrameGetJavaScriptContext(frame);
+    JSObjectRef document = propertyObject(context, JSContextGetGlobalObject(context), "document");
+    JSObjectRef documentElement = propertyObject(context, document, "documentElement");
+    InjectedBundle::shared().os() << propertyString(context, documentElement, "innerText") << "\n";
 }
 
 static void dumpDescendantFramesText(WKBundleFrameRef frame)
@@ -241,7 +292,7 @@ static void dumpDescendantFramesText(WKBundleFrameRef frame)
         // FIXME: I don't like that we have to const_cast here. Can we change WKArray?
         WKBundleFrameRef subframe = static_cast<WKBundleFrameRef>(const_cast<void*>(WKArrayGetItemAtIndex(childFrames.get(), i)));
         WKRetainPtr<WKStringRef> subframeName(AdoptWK, WKBundleFrameCopyName(subframe));
-        InjectedBundle::shared().os() << "\n--------\nFrame: '" << WKStringToUTF8(subframeName.get())->data() << "'\n--------\n";
+        InjectedBundle::shared().os() << "\n--------\nFrame: '" << subframeName << "'\n--------\n";
         dumpFrameText(subframe);
         dumpDescendantFramesText(subframe);
     }
@@ -261,7 +312,7 @@ void InjectedBundlePage::dump()
     switch (InjectedBundle::shared().layoutTestController()->whatToDump()) {
     case LayoutTestController::RenderTree: {
         WKRetainPtr<WKStringRef> text(AdoptWK, WKBundlePageCopyRenderTreeExternalRepresentation(m_page));
-        InjectedBundle::shared().os() << WKStringToUTF8(text.get())->data();
+        InjectedBundle::shared().os() << text;
         break;
     }
     case LayoutTestController::MainFrameText:
@@ -343,7 +394,7 @@ void InjectedBundlePage::_willRunJavaScriptPrompt(WKBundlePageRef page, WKString
 void InjectedBundlePage::willAddMessageToConsole(WKStringRef message, uint32_t lineNumber)
 {
     // FIXME: Strip file: urls.
-    InjectedBundle::shared().os() << "CONSOLE MESSAGE: line " << lineNumber << ": " << WKStringToUTF8(message)->data() << "\n";
+    InjectedBundle::shared().os() << "CONSOLE MESSAGE: line " << lineNumber << ": " << message << "\n";
 }
 
 void InjectedBundlePage::willSetStatusbarText(WKStringRef statusbarText)
@@ -351,22 +402,22 @@ void InjectedBundlePage::willSetStatusbarText(WKStringRef statusbarText)
     if (!InjectedBundle::shared().layoutTestController()->shouldDumpStatusCallbacks())
         return;
 
-    InjectedBundle::shared().os() << "UI DELEGATE STATUS CALLBACK: setStatusText:" << WKStringToUTF8(statusbarText)->data() << "\n";
+    InjectedBundle::shared().os() << "UI DELEGATE STATUS CALLBACK: setStatusText:" << statusbarText << "\n";
 }
 
 void InjectedBundlePage::willRunJavaScriptAlert(WKStringRef message, WKBundleFrameRef)
 {
-    InjectedBundle::shared().os() << "ALERT: " << WKStringToUTF8(message)->data() << "\n";
+    InjectedBundle::shared().os() << "ALERT: " << message << "\n";
 }
 
 void InjectedBundlePage::willRunJavaScriptConfirm(WKStringRef message, WKBundleFrameRef)
 {
-    InjectedBundle::shared().os() << "CONFIRM: " << WKStringToUTF8(message)->data() << "\n";
+    InjectedBundle::shared().os() << "CONFIRM: " << message << "\n";
 }
 
 void InjectedBundlePage::willRunJavaScriptPrompt(WKStringRef message, WKStringRef defaultValue, WKBundleFrameRef)
 {
-    InjectedBundle::shared().os() << "PROMPT: " << WKStringToUTF8(message)->data() << ", default text: " << WKStringToUTF8(defaultValue)->data() <<  "\n";
+    InjectedBundle::shared().os() << "PROMPT: " << message << ", default text: " << defaultValue <<  "\n";
 }
 
 // Editor Client Callbacks
@@ -382,6 +433,5 @@ bool InjectedBundlePage::shouldBeginEditing(WKBundleRangeRef range)
         InjectedBundle::shared().os() << "EDITING DELEGATE: shouldBeginEditingInDOMRange:" << range << "\n";
     return InjectedBundle::shared().layoutTestController()->acceptsEditing();
 }
-
 
 } // namespace WTR

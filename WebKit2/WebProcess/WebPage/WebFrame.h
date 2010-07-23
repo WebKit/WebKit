@@ -67,7 +67,6 @@ public:
     bool isMainFrame() const;
     WebCore::String name() const;
     WebCore::String url() const;
-    WebCore::String innerText() const;
     PassRefPtr<ImmutableArray> childFrames();
 
     unsigned numberOfActiveAnimations();

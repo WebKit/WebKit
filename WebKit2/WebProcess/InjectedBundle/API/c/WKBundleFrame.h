@@ -44,8 +44,6 @@ WK_EXPORT JSGlobalContextRef WKBundleFrameGetJavaScriptContext(WKBundleFrameRef 
 
 WK_EXPORT WKURLRef WKBundleFrameGetURL(WKBundleFrameRef frame);
 
-WK_EXPORT WKStringRef WKBundleFrameCopyInnerText(WKBundleFrameRef frame);
-
 WK_EXPORT WKArrayRef WKBundleFrameCopyChildFrames(WKBundleFrameRef frame);
 
 WK_EXPORT unsigned WKBundleFrameGetNumberOfActiveAnimations(WKBundleFrameRef frame);
