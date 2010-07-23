@@ -1,3 +1,20 @@
+2010-07-22  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Ojan Vafai.
+
+        Autoscroll on selection should take scrollbars into account as outside of the content.
+        https://bugs.webkit.org/show_bug.cgi?id=40403
+
+        ScrollView's scroll-bar was considered as a part of content rect,
+        that prevents autoscroll to happen when the pointer is over the
+        scroll-bar.  This change excluded scroll-bar region from scrolling
+        delta calculation.
+        
+        Test: WebCore/manual-tests/autoscroll-over-scrollbar.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::scrollRectToVisible):
+
 2010-07-22  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Darin Adler.
