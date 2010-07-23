@@ -1,11 +1,11 @@
 <html>
 <body>
-PASS
+FAIL
 <script>
 if (window.layoutTestController)
     layoutTestController.dumpAsText();
 
-setTimeout("document.write('FAIL');document.close();", 100);
+setTimeout("document.write('PASS');document.close();", 100);
 </script>
 <script src="resources/script-slow1.pl"></script>
 </body>

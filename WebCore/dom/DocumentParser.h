@@ -40,6 +40,9 @@ public:
 
     virtual ScriptableDocumentParser* asScriptableDocumentParser() { return 0; }
 
+    // http://www.whatwg.org/specs/web-apps/current-work/#insertion-point
+    virtual bool hasInsertionPoint() { return true; }
+
     // insert is used by document.write
     virtual void insert(const SegmentedString&) = 0;
 

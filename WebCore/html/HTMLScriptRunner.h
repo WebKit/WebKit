@@ -53,7 +53,7 @@ public:
     bool hasScriptsWaitingForStylesheets() const { return m_hasScriptsWaitingForStylesheets; }
     bool executeScriptsWaitingForStylesheets();
 
-    bool inScriptExecution() { return !!m_scriptNestingLevel; }
+    bool isExecutingScript() { return !!m_scriptNestingLevel; }
 
 private:
     // A container for an external script which may be loaded and executed.

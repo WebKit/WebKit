@@ -1,3 +1,35 @@
+2010-07-23  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        HTML5 Parser: document.write in a asynchronous script which is specified to load before page finish blows away document
+        https://bugs.webkit.org/show_bug.cgi?id=42365
+
+        This patch implements the changes Ian made to HTML5 to address these
+        issues.  Let's try it and see how well it works.
+
+        Test: http/tests/misc/write-from-dom-script.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        (WebCore::Document::write):
+        * dom/Document.h:
+        (WebCore::Document::writeDisabled):
+        (WebCore::Document::setWriteDisabled):
+        * dom/DocumentParser.h:
+        (WebCore::DocumentParser::hasInsertionPoint):
+        * dom/ScriptElement.cpp:
+        (WebCore::ScriptElement::insertedIntoDocument):
+        (WebCore::ScriptElementData::ScriptElementData):
+        (WebCore::ScriptElementData::evaluateScript):
+        * dom/ScriptElement.h:
+        (WebCore::ScriptElementData::writeDisabled):
+        (WebCore::ScriptElementData::setWriteDisabled):
+        * html/HTMLDocumentParser.cpp:
+        (WebCore::HTMLDocumentParser::hasInsertionPoint):
+        (WebCore::HTMLDocumentParser::insert):
+        * html/HTMLDocumentParser.h:
+
 2010-07-23  Patrick Gansterer  <paroga@paroga.com>
 
         Reviewed by Adam Roben.

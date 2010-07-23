@@ -1,3 +1,19 @@
+2010-07-23  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        HTML5 Parser: document.write in a asynchronous script which is specified to load before page finish blows away document
+        https://bugs.webkit.org/show_bug.cgi?id=42365
+
+        * http/tests/misc/write-from-dom-script-expected.txt: Added.
+        * http/tests/misc/write-from-dom-script.html: Added.
+          - Test the scenario where a script added to the DOM asynchronously
+            while the nesting level is >0.  It's supposed to have its calls to
+            document.write blocked.
+        * http/tests/misc/write-while-waiting.html:
+          - Writes are only prevented from scripts that are added to the DOM.
+            Scripts that run via setTimeout do not have their writes blocked.
+
 2010-07-23  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Unreviewed. Land the expectation for win.

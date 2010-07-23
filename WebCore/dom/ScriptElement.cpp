@@ -27,6 +27,7 @@
 #include "CachedScript.h"
 #include "DocLoader.h"
 #include "Document.h"
+#include "DocumentParser.h"
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "HTMLNames.h"
@@ -52,6 +53,16 @@ void ScriptElement::insertedIntoDocument(ScriptElementData& data, const String& 
 {
     if (data.createdByParser())
         return;
+
+    // http://www.whatwg.org/specs/web-apps/current-work/#script
+
+    // If the element's Document has an active parser, and the parser's script
+    // nesting level is non-zero, but this script element does not have the
+    // "parser-inserted" flag set, the user agent must set the element's
+    // "write-neutralised" flag.
+    DocumentParser* parser = data.element()->document()->parser();
+    if (parser && parser->hasInsertionPoint())
+        data.setWriteDisabled(true);
 
     if (!sourceUrl.isEmpty()) {
         data.requestScript(sourceUrl);
@@ -82,13 +93,6 @@ void ScriptElement::childrenChanged(ScriptElementData& data)
     // we evaluate the script.
     if (element->inDocument() && element->firstChild())
         data.evaluateScript(ScriptSourceCode(data.scriptContent(), element->document()->url())); // FIXME: Provide a real starting line number here
-}
-
-static inline bool useHTML5Parser(Document* document)
-{
-    ASSERT(document);
-    Settings* settings = document->page() ? document->page()->settings() : 0;
-    return settings && settings->html5ParserEnabled();
 }
 
 void ScriptElement::finishParsingChildren(ScriptElementData& data, const String& sourceUrl)
@@ -137,6 +141,7 @@ ScriptElementData::ScriptElementData(ScriptElement* scriptElement, Element* elem
     , m_element(element)
     , m_cachedScript(0)
     , m_createdByParser(false)
+    , m_writeDisabled(false)
     , m_requested(false)
     , m_evaluated(false)
     , m_firedLoad(false)
@@ -191,7 +196,29 @@ void ScriptElementData::evaluateScript(const ScriptSourceCode& sourceCode)
 
         m_evaluated = true;
 
+        // http://www.whatwg.org/specs/web-apps/current-work/#script
+
+        // If the script element's "write-neutralised" flag is set, then flag
+        // the Document the script element was in when the "write-neutralised"
+        // flag was set as being itself "write-neutralised". Let neutralised doc
+        // be that Document.
+        if (m_writeDisabled) {
+            ASSERT(!m_element->document()->writeDisabled());
+            m_element->document()->setWriteDisabled(true);
+        }
+
+        // Create a script from the script element node, using the script
+        // block's source and the script block's type.
+        // Note: This is where the script is compiled and actually executed.
         frame->script()->evaluate(sourceCode);
+
+        // Remove the "write-neutralised" flag from neutralised doc, if it was
+        // set in the earlier step.
+        if (m_writeDisabled) {
+            ASSERT(m_element->document()->writeDisabled());
+            m_element->document()->setWriteDisabled(false);
+        }
+
         Document::updateStyleForAllDocuments();
     }
 }
