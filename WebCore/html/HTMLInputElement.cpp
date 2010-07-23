@@ -247,87 +247,34 @@ bool HTMLInputElement::valueMissing() const
 
 bool HTMLInputElement::patternMismatch() const
 {
-    switch (inputType()) {
-    case BUTTON:
-    case CHECKBOX:
-    case COLOR:
-    case DATE:
-    case DATETIME:
-    case DATETIMELOCAL:
-    case FILE:
-    case HIDDEN:
-    case IMAGE:
-    case ISINDEX:
-    case MONTH:
-    case NUMBER:
-    case RADIO:
-    case RANGE:
-    case RESET:
-    case SUBMIT:
-    case TIME:
-    case WEEK:
+    if (!isTextType())
         return false;
-    case EMAIL:
-    case PASSWORD:
-    case SEARCH:
-    case TELEPHONE:
-    case TEXT:
-    case URL:
-        const AtomicString& pattern = getAttribute(patternAttr);
-        String value = this->value();
-         // Empty values can't be mismatched
-        if (pattern.isEmpty() || value.isEmpty())
-            return false;
-        RegularExpression patternRegExp(pattern, TextCaseSensitive);
-        int matchLength = 0;
-        int valueLength = value.length();
-        int matchOffset = patternRegExp.match(value, 0, &matchLength);
-        return matchOffset || matchLength != valueLength;
-    }
-    ASSERT_NOT_REACHED();
-    return false;
+    const AtomicString& pattern = getAttribute(patternAttr);
+    String value = this->value();
+    // Empty values can't be mismatched
+    if (pattern.isEmpty() || value.isEmpty())
+        return false;
+    RegularExpression patternRegExp(pattern, TextCaseSensitive);
+    int matchLength = 0;
+    int valueLength = value.length();
+    int matchOffset = patternRegExp.match(value, 0, &matchLength);
+    return matchOffset || matchLength != valueLength;
 }
 
 bool HTMLInputElement::tooLong() const
 {
-    switch (inputType()) {
-    case EMAIL:
-    case PASSWORD:
-    case SEARCH:
-    case TELEPHONE:
-    case TEXT:
-    case URL: {
-        int max = maxLength();
-        if (max < 0)
-            return false;
-        // Return false for the default value even if it is longer than maxLength.
-        bool userEdited = !m_data.value().isNull();
-        if (!userEdited)
-            return false;
-        return numGraphemeClusters(value()) > static_cast<unsigned>(max);
-    }
-    case BUTTON:
-    case CHECKBOX:
-    case COLOR:
-    case DATE:
-    case DATETIME:
-    case DATETIMELOCAL:
-    case FILE:
-    case HIDDEN:
-    case IMAGE:
-    case ISINDEX:
-    case MONTH:
-    case NUMBER:
-    case RADIO:
-    case RANGE:
-    case RESET:
-    case SUBMIT:
-    case TIME:
-    case WEEK:
+    // We use isTextType() instead of supportsMaxLength() because of the
+    // 'virtual' overhead.
+    if (!isTextType())
         return false;
-    }
-    ASSERT_NOT_REACHED();
-    return false;
+    int max = maxLength();
+    if (max < 0)
+        return false;
+    // Return false for the default value even if it is longer than maxLength.
+    bool userEdited = !m_data.value().isNull();
+    if (!userEdited)
+        return false;
+    return numGraphemeClusters(value()) > static_cast<unsigned>(max);
 }
 
 bool HTMLInputElement::rangeUnderflow() const
@@ -1444,6 +1391,40 @@ bool HTMLInputElement::isTextField() const
     case RANGE:
     case RESET:
     case SUBMIT:
+        return false;
+    }
+    ASSERT_NOT_REACHED();
+    return false;
+}
+
+bool HTMLInputElement::isTextType() const
+{
+    switch (inputType()) {
+    case EMAIL:
+    case PASSWORD:
+    case SEARCH:
+    case TELEPHONE:
+    case TEXT:
+    case URL:
+        return true;
+    case BUTTON:
+    case CHECKBOX:
+    case COLOR:
+    case DATE:
+    case DATETIME:
+    case DATETIMELOCAL:
+    case FILE:
+    case HIDDEN:
+    case IMAGE:
+    case ISINDEX:
+    case MONTH:
+    case NUMBER:
+    case RADIO:
+    case RANGE:
+    case RESET:
+    case SUBMIT:
+    case TIME:
+    case WEEK:
         return false;
     }
     ASSERT_NOT_REACHED();

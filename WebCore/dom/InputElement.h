@@ -43,6 +43,7 @@ public:
     virtual bool isPasswordField() const = 0;
     virtual bool isSearchField() const = 0;
     virtual bool isTextField() const = 0;
+    virtual bool supportsMaxLength() const = 0;
     virtual bool hasSpinButton() const { return false; }
 #if ENABLE(INPUT_SPEECH)
     virtual bool isSpeechEnabled() const = 0;

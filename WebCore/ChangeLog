@@ -1,3 +1,35 @@
+2010-07-22  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        maxLength should not be applied to non-text types
+        https://bugs.webkit.org/show_bug.cgi?id=42814
+
+        According to the HTML5 specification, maxLength attribute should
+        be applied to text, search, url, tel, email, and password types.
+
+        Test: fast/forms/input-maxlength-unsupported.html
+
+        * dom/InputElement.cpp:
+        (WebCore::InputElement::handleBeforeTextInsertedEvent):
+         Apply maxLength() only if supportsMaxLength() is true.
+        * dom/InputElement.h:
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::patternMismatch):
+         Code cleanup by isTextType().
+        (WebCore::HTMLInputElement::tooLong):
+         ditto.
+        (WebCore::HTMLInputElement::isTextType):
+         Added. This returns true for types with maxLength/pattern/placeholder.
+        * html/HTMLInputElement.h:
+        (WebCore::HTMLInputElement::supportsMaxLength):
+         Added. Just calls isTextType().
+        (WebCore::HTMLInputElement::supportsPlaceholder):
+         Code cleanup by isTextType().
+        * wml/WMLInputElement.h:
+        (WebCore::WMLInputElement::supportsMaxLength):
+         Added. Always returns true.
+
 2010-07-22  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Kent Tamura.

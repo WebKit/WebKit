@@ -290,7 +290,10 @@ private:
     void registerForActivationCallbackIfNeeded();
     void unregisterForActivationCallbackIfNeeded();
 
-    virtual bool supportsPlaceholder() const { return isTextField(); }
+    virtual bool supportsMaxLength() const { return isTextType(); }
+    bool isTextType() const;
+
+    virtual bool supportsPlaceholder() const { return isTextType() || inputType() == ISINDEX; }
     virtual bool isEmptyValue() const { return value().isEmpty(); }
     virtual void handleFocusEvent();
     virtual void handleBlurEvent();

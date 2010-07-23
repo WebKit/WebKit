@@ -1,3 +1,14 @@
+2010-07-22  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        maxLength should not be applied to non-text types
+        https://bugs.webkit.org/show_bug.cgi?id=42814
+
+        * fast/forms/input-maxlength-unsupported-expected.txt: Added.
+        * fast/forms/input-maxlength-unsupported.html: Added.
+        * fast/forms/script-tests/input-maxlength-unsupported.js: Added.
+
 2010-07-22  Cosmin Truta  <ctruta@chromium.org>
 
         Reviewed by Darin Adler.
