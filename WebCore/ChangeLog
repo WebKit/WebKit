@@ -1,3 +1,13 @@
+2010-07-23  Andras Becsi  <abecsi@webkit.org>
+
+        Unreviewed build fix.
+
+        [Qt] Fix WebKit2 linkage.
+
+        No new tests needed.
+
+        * WebCore.pro: add InjectedBundlePageEditorClient.cpp to WK2 sources
+
 2010-07-23  Balazs Kelemen  <kb@inf.u-szeged.hu>
 
         Reviewed by Kenneth Rohde Christiansen.

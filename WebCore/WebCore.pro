@@ -3344,6 +3344,7 @@ SOURCES += \
     ../WebKit2/UIProcess/WebProcessProxy.cpp \
     ../WebKit2/UIProcess/WebUIClient.cpp \
     ../WebKit2/WebProcess/InjectedBundle/InjectedBundle.cpp \
+    ../WebKit2/WebProcess/InjectedBundle/InjectedBundlePageEditorClient.cpp \
     ../WebKit2/WebProcess/InjectedBundle/InjectedBundlePageUIClient.cpp \
     ../WebKit2/WebProcess/InjectedBundle/InjectedBundlePageLoaderClient.cpp \
     ../WebKit2/WebProcess/InjectedBundle/qt/InjectedBundleQt.cpp \
