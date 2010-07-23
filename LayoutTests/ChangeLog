@@ -1,3 +1,13 @@
+2010-07-23  Marcus Bulach  <bulach@chromium.org>
+
+        Unreviewed. Adds expectations for chromium.
+
+        [chromium] Updates baselines following changes in history (http://trac.webkit.org/changeset/63925)
+        https://bugs.webkit.org/show_bug.cgi?id=42884
+
+        * platform/chromium-mac/fast/history/history-replace-illegal-expected.txt: Added.
+        * platform/chromium-win/fast/history/history-replace-illegal-expected.txt: Added.
+
 2010-07-22  Marcus Bulach  <bulach@chromium.org>
 
         Reviewed by Dimitri Glazkov.
