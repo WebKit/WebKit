@@ -77,6 +77,8 @@ PASS inner.DOMStringList.isInner is true
 PASS inner.DOMStringList.constructor.isInner is true
 PASS inner.Date.isInner is true
 PASS inner.Date.constructor.isInner is true
+PASS inner.DeviceOrientationEvent.isInner is true
+PASS inner.DeviceOrientationEvent.constructor.isInner is true
 PASS inner.Document.isInner is true
 PASS inner.Document.constructor.isInner is true
 PASS inner.DocumentFragment.isInner is true
