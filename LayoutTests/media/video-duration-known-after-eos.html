@@ -14,11 +14,17 @@
                 endTest();
             }
 
+            function playing()
+            {
+                run("video.currentTime = video.duration - 0.2");
+            }
+
             function start()
             {
                 findMediaElement();
 
                 video.addEventListener("ended", ended);
+                video.addEventListener("playing", playing);
 
                 video.src = findMediaFile("video", "content/test");
                 consoleWrite("");

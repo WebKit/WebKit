@@ -1,3 +1,15 @@
+2010-07-22  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Eric Carlson.
+
+        media/video-duration-known-after-eos.html test is slow
+        https://bugs.webkit.org/show_bug.cgi?id=42809
+
+        Seek near the end of the media to speed the test up.
+
+        * media/video-duration-known-after-eos-expected.txt:
+        * media/video-duration-known-after-eos.html:
+
 2010-07-22  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Unreviewed. Add expectations for Qt and Gtk.
