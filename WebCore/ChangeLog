@@ -1,3 +1,14 @@
+2010-07-23  Justin Schuh  <jschuh@chromium.org>
+
+        Unreviewed, rolling out r63925.
+        http://trac.webkit.org/changeset/63925
+        https://bugs.webkit.org/show_bug.cgi?id=42858
+
+        Introduced a regression in history state.
+
+        * page/History.cpp:
+        (WebCore::History::urlForState):
+
 2010-07-23  Martin Robinson  <mrobinson@igalia.com>
 
         Unreviewed build fix.
