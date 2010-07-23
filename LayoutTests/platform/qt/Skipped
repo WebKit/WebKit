@@ -5456,3 +5456,7 @@ html5lib/runner.html
 # [Qt] REGRESSION(63862): animations/play-state.html fails intermittently
 # https://bugs.webkit.org/show_bug.cgi?id=42821
 animations/play-state.html
+
+# [Qt] Search input field doesn't have cancel button
+# https://bugs.webkit.org/show_bug.cgi?id=42887
+fast/forms/search-cancel-button-events.html
