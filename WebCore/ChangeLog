@@ -1,3 +1,18 @@
+2010-07-23  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Inline HTMLElementStack::top
+        https://bugs.webkit.org/show_bug.cgi?id=42879
+
+        According to sampling, HTMLElementStack::top is the hotest function in
+        the treebuilder.  Inlining it is about a 0.3% improvement to the
+        parsing benchmark.  This squares with how often it occurs in samples.
+
+        * html/HTMLElementStack.cpp:
+        * html/HTMLElementStack.h:
+        (WebCore::HTMLElementStack::top):
+
 2010-07-23  Patrick Gansterer  <paroga@paroga.com>
 
         Reviewed by Adam Roben.

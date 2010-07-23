@@ -278,12 +278,6 @@ HTMLElementStack::ElementRecord* HTMLElementStack::topRecord() const
     return m_top.get();
 }
 
-Element* HTMLElementStack::top() const
-{
-    ASSERT(m_top->element());
-    return m_top->element();
-}
-
 Element* HTMLElementStack::oneBelowTop() const
 {
     // We should never be calling this if it could be 0.

@@ -66,8 +66,15 @@ public:
         RefPtr<Element> m_element;
         OwnPtr<ElementRecord> m_next;
     };
-    
-    Element* top() const;
+
+    // Inlining this function is a (small) performance win on the parsing
+    // benchmark.
+    Element* top() const
+    {
+        ASSERT(m_top->element());
+        return m_top->element();
+    }
+
     Element* oneBelowTop() const;
     ElementRecord* topRecord() const;
     Element* bottom() const;
