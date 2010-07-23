@@ -1,0 +1,5 @@
+CONSOLE MESSAGE: line 1: SyntaxError: Parse error
+Tests that syntax errors are logged into console and doesn't cause browser crash.
+
+resources/syntax-error.js:1SyntaxError: Parse error
+

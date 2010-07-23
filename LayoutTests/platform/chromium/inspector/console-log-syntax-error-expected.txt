@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: line 1: Uncaught SyntaxError: Unexpected token )
+Tests that syntax errors are logged into console and doesn't cause browser crash.
+
+resources/syntax-error.js:1Uncaught SyntaxError: Unexpected token )

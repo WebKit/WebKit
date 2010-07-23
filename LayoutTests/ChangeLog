@@ -1,3 +1,15 @@
+2010-07-22  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Joseph Pecoraro.
+
+        Web Inspector: test that inspector will log syntax error in console without crashing
+        https://bugs.webkit.org/show_bug.cgi?id=42831
+
+        * inspector/console-log-syntax-error-expected.txt: Added.
+        * inspector/console-log-syntax-error.html: Added.
+        * inspector/resources/syntax-error.js: Added.
+        * platform/chromium/inspector/console-log-syntax-error-expected.txt: Added.
+
 2010-07-22  Yael Aharon  <yael.aharon@nokia.com>
 
         Reviewed by Laszlo Gombos.
