@@ -1,3 +1,18 @@
+2010-07-23  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Inline HTMLTokenizer::InputStreamPreprocessor::peek
+        https://bugs.webkit.org/show_bug.cgi?id=42880
+
+        According to sampling HTMLTokenizer::InputStreamPreprocessor::peek is
+        the hotest function in the tokenizer.  Inlining this function is about
+        a 2.2% speedup on the parser benchmark.  Turns out the tokenizer is
+        much hotter than the tree builder.  :)
+
+        * html/HTMLTokenizer.h:
+        (WebCore::HTMLTokenizer::InputStreamPreprocessor::peek):
+
 2010-07-23  Andras Becsi  <abecsi@webkit.org>
 
         Unreviewed build fix.
