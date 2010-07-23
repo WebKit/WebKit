@@ -172,6 +172,7 @@ sub GenerateInterface
     $backendTypes{"PassRefPtr"} = 1;
     $backendTypes{"Array"} = 1;
 
+    generateBackendPrivateFunctions();
     generateFunctions($interface);
 }
 
@@ -222,6 +223,22 @@ sub generateFrontendFunction
     }
 }
 
+sub generateBackendPrivateFunctions
+{
+    my $privateFunctions = << "EOF";
+static String formatWrongArgumentsCountMessage(unsigned expected, unsigned actual)
+{
+    return String::format(\"Wrong number of parameters: %d (expected: %d)\", actual, expected);
+}
+
+static String formatWrongArgumentTypeMessage(unsigned position, const char* name, const char* expectedType)
+{
+    return String::format(\"Failed to convert parameter %d (%s) to %s\", position, name, expectedType);
+}
+EOF
+    push(@backendMethodsImpl, $privateFunctions);
+}
+
 sub generateBackendFunction
 {
     my $function = shift;
@@ -233,18 +250,26 @@ sub generateBackendFunction
     map($backendTypes{$_->type} = 1, @argsFiltered); # register required types
     my $arguments = join(", ", map($typeTransform{$_->type}->{"param"} . " " . $_->name, @argsFiltered));
 
-    my $signature = "    void ${functionName}(PassRefPtr<InspectorArray> args);";
+    my $signature = "    void ${functionName}(PassRefPtr<InspectorArray> args, String* exception);";
     !$backendMethods{${signature}} || die "Duplicate function was detected for signature '$signature'.";
     $backendMethods{${signature}} = $functionName;
 
     my @function;
-    # Skip parameter name if no arguments in the array. Just to avoid unused parameter warning.
-    push(@function, "void ${backendClassName}::${functionName}(PassRefPtr<InspectorArray>" . ( scalar(@argsFiltered) ? " args)" : ")"));
+    push(@function, "void ${backendClassName}::${functionName}(PassRefPtr<InspectorArray> args, String* exception)");
     push(@function, "{");
     my $i = 1; # zero element is the method name.
+    my $expectedParametersCount = scalar(@argsFiltered);
+    push(@function, "    if (args->length() != $expectedParametersCount) {");
+    push(@function, "        *exception = formatWrongArgumentsCountMessage(args->length(), $expectedParametersCount);");
+    push(@function, "        ASSERT_NOT_REACHED();");
+    push(@function, "        return;");
+    push(@function, "    }");
+
     foreach my $parameter (@argsFiltered) {
-        push(@function, "    " . $typeTransform{$parameter->type}->{"retVal"} . " " . $parameter->name . ";");
-        push(@function, "    if (!args->get(" . $i . ")->as" . $typeTransform{$parameter->type}->{"accessorSuffix"} . "(&" . $parameter->name . ")) {");
+        my $parameterType = $parameter->type;
+        push(@function, "    " . $typeTransform{$parameterType}->{"retVal"} . " " . $parameter->name . ";");
+        push(@function, "    if (!args->get(" . $i . ")->as" . $typeTransform{$parameterType}->{"accessorSuffix"} . "(&" . $parameter->name . ")) {");
+        push(@function, "        *exception = formatWrongArgumentTypeMessage($i, \"" . $parameter->name . "\", \"$parameterType\");");
         push(@function, "        ASSERT_NOT_REACHED();");
         push(@function, "        return;");
         push(@function, "    }");
@@ -264,7 +289,7 @@ sub generateBackendDispatcher
 
     push(@body, "void ${backendClassName}::dispatch(const String& message, String* exception)");
     push(@body, "{");
-    push(@body, "    typedef void (${backendClassName}::*CallHandler)(PassRefPtr<InspectorArray> args);");
+    push(@body, "    typedef void (${backendClassName}::*CallHandler)(PassRefPtr<InspectorArray> args, String* exception);");
     push(@body, "    typedef HashMap<String, CallHandler> DispatchMap;");
     push(@body, "    DEFINE_STATIC_LOCAL(DispatchMap, dispatchMap, );");
     push(@body, "    if (dispatchMap.isEmpty()) {");
@@ -301,11 +326,11 @@ sub generateBackendDispatcher
     push(@body, "    HashMap<String, CallHandler>::iterator it = dispatchMap.find(methodName);");
     push(@body, "    if (it == dispatchMap.end()) {");
     push(@body, "        ASSERT_NOT_REACHED();");
-    push(@body, "        String::format(\"Error: Invalid method name. '%s' wasn't found.\", methodName.utf8().data());");
+    push(@body, "        *exception = String::format(\"Error: Invalid method name. '%s' wasn't found.\", methodName.utf8().data());");
     push(@body, "        return;");
     push(@body, "    }");
     push(@body, "");
-    push(@body, "    ((*this).*it->second)(messageArray);");
+    push(@body, "    ((*this).*it->second)(messageArray, exception);");
     push(@body, "}");
     return @body;
 }

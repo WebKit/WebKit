@@ -1,3 +1,13 @@
+2010-07-23  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: error info propagation in InspectorBackendDispatch should be improved
+        https://bugs.webkit.org/show_bug.cgi?id=42873
+
+        * inspector/CodeGeneratorInspector.pm: report wrong parameter count and wrong
+        parametere type errror to the dispatch method caller
+
 2010-07-23  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Yury Semikhatsky.
