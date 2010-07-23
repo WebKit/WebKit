@@ -578,7 +578,7 @@ void PopupMenu::paint(const IntRect& damageRect, HDC hdc)
     }
     if (!m_bmp) {
 #if OS(WINCE)
-        BitmapInfo bitmapInfo(true, clientRect().width(), clientRect().height());
+        BitmapInfo bitmapInfo = BitmapInfo::createBottomUp(clientRect().size(), 16);
 #else
         BitmapInfo bitmapInfo = BitmapInfo::createBottomUp(clientRect().size());
 #endif
