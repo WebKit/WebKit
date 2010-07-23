@@ -38,6 +38,7 @@
 #include "EventListener.h"
 #include "InjectedScriptHost.h"
 #include "InspectorBackend.h"
+#include "InspectorBackendDispatcher.h"
 #include "InspectorController.h"
 #include "InspectorFrontend.h"
 #include "InspectorResource.h"
@@ -308,13 +309,11 @@ void WebDevToolsAgentImpl::forceRepaint()
     m_client->forceRepaint();
 }
 
-void WebDevToolsAgentImpl::dispatchOnInspectorController(int callId, const String& functionName, const String& jsonArgs)
+void WebDevToolsAgentImpl::dispatchOnInspectorController(int callId, const String& message)
 {
-    String result;
     String exception;
-    result = m_debuggerAgentImpl->executeUtilityFunction(m_utilityContext, callId,
-        "InspectorControllerDispatcher", functionName, jsonArgs, false /* is sync */, &exception);
-    m_toolsAgentDelegateStub->didDispatchOn(callId, result, exception);
+    inspectorController()->inspectorBackendDispatcher()->dispatch(message, &exception);
+    m_toolsAgentDelegateStub->didDispatchOn(callId, "", exception);
 }
 
 void WebDevToolsAgentImpl::dispatchOnInjectedScript(int callId, int injectedScriptId, const String& functionName, const String& jsonArgs, bool async)

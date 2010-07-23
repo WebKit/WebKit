@@ -476,15 +476,20 @@
         },
         {
           'action_name': 'RemoteInspectorFrontend',
+          # The second input item will be used as item name in vcproj.
+          # It is not possible to put Inspector.idl there because
+          # all idl files are marking as excluded by gyp generator.
           'inputs': [
             '../bindings/scripts/generate-bindings.pl',
+            '../inspector/CodeGeneratorInspector.pm',
             '../bindings/scripts/CodeGenerator.pm',
             '../bindings/scripts/IDLParser.pm',
             '../bindings/scripts/IDLStructure.pm',
-            '../inspector/CodeGeneratorInspector.pm',
             '../inspector/Inspector.idl',
           ],
           'outputs': [
+            '<(SHARED_INTERMEDIATE_DIR)/webcore/bindings/InspectorBackendDispatcher.cpp',
+            '<(SHARED_INTERMEDIATE_DIR)/webkit/bindings/InspectorBackendDispatcher.h',
             '<(SHARED_INTERMEDIATE_DIR)/webcore/bindings/RemoteInspectorFrontend.cpp',
             '<(SHARED_INTERMEDIATE_DIR)/webkit/bindings/RemoteInspectorFrontend.h',
           ],
@@ -505,7 +510,7 @@
             '--generator', 'Inspector',
             '<@(generator_include_dirs)'
           ],
-          'message': 'Generating RemoteInspectorFrontend class from Inspector.idl',
+          'message': 'Generating Inspector interface classes from Inspector.idl',
         },
         {
           'action_name': 'XMLNames',
@@ -714,6 +719,7 @@
 
         # Additional .cpp files from the webcore_inspector_sources list.
         '<(SHARED_INTERMEDIATE_DIR)/webcore/bindings/RemoteInspectorFrontend.cpp',
+        '<(SHARED_INTERMEDIATE_DIR)/webcore/bindings/InspectorBackendDispatcher.cpp',
       ],
       'conditions': [
         ['javascript_engine=="v8"', {

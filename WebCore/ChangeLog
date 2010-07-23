@@ -1,3 +1,28 @@
+2010-07-22  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        WebInspector: CodeGeneratorInspector was extended and now it can
+        generate InspectorBackedDispatcher's code. This dispatcher will
+        validate and dispatch incoming inspector commands only by native
+        code without using javaScript. That is necessary step for
+        RemoteDebugging support.
+        https://bugs.webkit.org/show_bug.cgi?id=42588
+
+        * GNUmakefile.am:
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.gypi:
+        * WebCore.pri:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * inspector/CodeGeneratorInspector.pm:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::InspectorController):
+        * inspector/InspectorController.h:
+        (WebCore::InspectorController::inspectorBackendDispatcher):
+        * inspector/front-end/ElementsPanel.js:
+        (WebInspector.ElementsPanel.prototype.setDocument):
+
 2010-07-22  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Reviewed by Kent Tamura.

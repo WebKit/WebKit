@@ -14,6 +14,10 @@ $typeTransform{"InspectorClient"} = {
     "forward" => "InspectorClient",
     "header" => "InspectorClient.h",
 };
+$typeTransform{"InspectorBackend"} = {
+    "forward" => "InspectorBackend",
+    "header" => "InspectorBackend.h",
+};
 $typeTransform{"PassRefPtr"} = {
     "forwardHeader" => "wtf/PassRefPtr.h",
 };
@@ -95,6 +99,13 @@ my $verbose;
 
 my $namespace;
 
+my $backendClassName;
+my %backendTypes;
+my %backendMethods;
+my @backendMethodsImpl;
+my $backendConstructor;
+my $backendFooter;
+
 my $frontendClassName;
 my %frontendTypes;
 my %frontendMethods;
@@ -150,6 +161,17 @@ sub GenerateInterface
     $frontendTypes{"InspectorClient"} = 1;
     $frontendTypes{"PassRefPtr"} = 1;
 
+    $backendClassName = $className . "BackendDispatcher";
+    my @backendHead;
+    push(@backendHead, "    ${backendClassName}(InspectorBackend* inspectorBackend) : m_inspectorBackend(inspectorBackend) { }");
+    push(@backendHead, "    void dispatch(const String& message, String* exception);");
+    push(@backendHead, "private:");
+    $backendConstructor = join("\n", @backendHead);
+    $backendFooter = "    InspectorBackend* m_inspectorBackend;";
+    $backendTypes{"InspectorBackend"} = 1;
+    $backendTypes{"PassRefPtr"} = 1;
+    $backendTypes{"Array"} = 1;
+
     generateFunctions($interface);
 }
 
@@ -159,7 +181,9 @@ sub generateFunctions
 
     foreach my $function (@{$interface->functions}) {
         generateFrontendFunction($function);
+        generateBackendFunction($function);
     }
+    push(@backendMethodsImpl, generateBackendDispatcher());
 }
 
 sub generateFrontendFunction
@@ -196,6 +220,94 @@ sub generateFrontendFunction
         push(@function, "");
         push(@frontendMethodsImpl, @function);
     }
+}
+
+sub generateBackendFunction
+{
+    my $function = shift;
+    return if $function->signature->extendedAttributes->{"notify"};
+
+    my $functionName = $function->signature->name;
+
+    my @argsFiltered = grep($_->direction eq "in", @{$function->parameters});
+    map($backendTypes{$_->type} = 1, @argsFiltered); # register required types
+    my $arguments = join(", ", map($typeTransform{$_->type}->{"param"} . " " . $_->name, @argsFiltered));
+
+    my $signature = "    void ${functionName}(PassRefPtr<InspectorArray> args);";
+    !$backendMethods{${signature}} || die "Duplicate function was detected for signature '$signature'.";
+    $backendMethods{${signature}} = $functionName;
+
+    my @function;
+    # Skip parameter name if no arguments in the array. Just to avoid unused parameter warning.
+    push(@function, "void ${backendClassName}::${functionName}(PassRefPtr<InspectorArray>" . ( scalar(@argsFiltered) ? " args)" : ")"));
+    push(@function, "{");
+    my $i = 1; # zero element is the method name.
+    foreach my $parameter (@argsFiltered) {
+        push(@function, "    " . $typeTransform{$parameter->type}->{"retVal"} . " " . $parameter->name . ";");
+        push(@function, "    if (!args->get(" . $i . ")->as" . $typeTransform{$parameter->type}->{"accessorSuffix"} . "(&" . $parameter->name . ")) {");
+        push(@function, "        ASSERT_NOT_REACHED();");
+        push(@function, "        return;");
+        push(@function, "    }");
+        ++$i;
+    }
+    push(@function, "    m_inspectorBackend->$functionName(" . join(", ", map($_->name, @argsFiltered)) . ");");
+    push(@function, "}");
+    push(@function, "");
+    push(@backendMethodsImpl, @function);
+}
+
+sub generateBackendDispatcher
+{
+    my @body;
+    my @methods = map($backendMethods{$_}, keys %backendMethods);
+    my @mapEntries = map("dispatchMap.add(\"$_\", &${backendClassName}::$_);", @methods);
+
+    push(@body, "void ${backendClassName}::dispatch(const String& message, String* exception)");
+    push(@body, "{");
+    push(@body, "    typedef void (${backendClassName}::*CallHandler)(PassRefPtr<InspectorArray> args);");
+    push(@body, "    typedef HashMap<String, CallHandler> DispatchMap;");
+    push(@body, "    DEFINE_STATIC_LOCAL(DispatchMap, dispatchMap, );");
+    push(@body, "    if (dispatchMap.isEmpty()) {");
+    push(@body, map("        $_", @mapEntries));
+    push(@body, "    }");
+    push(@body, "");
+    push(@body, "    RefPtr<InspectorValue> parsedMessage = InspectorValue::parseJSON(message);");
+    push(@body, "    if (!parsedMessage) {");
+    push(@body, "        ASSERT_NOT_REACHED();");
+    push(@body, "        *exception = \"Error: Invalid message format. Message should be in JSON format.\";");
+    push(@body, "        return;");
+    push(@body, "    }");
+    push(@body, "");
+    push(@body, "    RefPtr<InspectorArray> messageArray = parsedMessage->asArray();");
+    push(@body, "    if (!messageArray) {");
+    push(@body, "        ASSERT_NOT_REACHED();");
+    push(@body, "        *exception = \"Error: Invalid message format. The message should be a JSONified array of arguments.\";");
+    push(@body, "        return;");
+    push(@body, "    }");
+    push(@body, "");
+    push(@body, "    if (!messageArray->length()) {");
+    push(@body, "        ASSERT_NOT_REACHED();");
+    push(@body, "        *exception = \"Error: Invalid message format. Empty message was received.\";");
+    push(@body, "        return;");
+    push(@body, "    }");
+    push(@body, "");
+    push(@body, "    String methodName;");
+    push(@body, "    if (!messageArray->get(0)->asString(&methodName)) {");
+    push(@body, "        ASSERT_NOT_REACHED();");
+    push(@body, "        *exception = \"Error: Invalid message format. The first element of the message should be method name.\";");
+    push(@body, "        return;");
+    push(@body, "    }");
+    push(@body, "");
+    push(@body, "    HashMap<String, CallHandler>::iterator it = dispatchMap.find(methodName);");
+    push(@body, "    if (it == dispatchMap.end()) {");
+    push(@body, "        ASSERT_NOT_REACHED();");
+    push(@body, "        String::format(\"Error: Invalid method name. '%s' wasn't found.\", methodName.utf8().data());");
+    push(@body, "        return;");
+    push(@body, "    }");
+    push(@body, "");
+    push(@body, "    ((*this).*it->second)(messageArray);");
+    push(@body, "}");
+    return @body;
 }
 
 sub generateHeader
@@ -284,6 +396,15 @@ sub finish
     close($HEADER);
     undef($HEADER);
 
+    open($SOURCE, ">$outputDir/$backendClassName.cpp") || die "Couldn't open file $outputDir/$backendClassName.cpp";
+    print $SOURCE join("\n", generateSource($backendClassName, \%backendTypes, \@backendMethodsImpl));
+    close($SOURCE);
+    undef($SOURCE);
+
+    open($HEADER, ">$outputHeadersDir/$backendClassName.h") || die "Couldn't open file $outputHeadersDir/$backendClassName.h";
+    print $HEADER join("\n", generateHeader($backendClassName, \%backendTypes, $backendConstructor, \%backendMethods, $backendFooter));
+    close($HEADER);
+    undef($HEADER);
 }
 
 1;

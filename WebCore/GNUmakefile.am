@@ -99,6 +99,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/HTMLEntityNames.cpp \
 	DerivedSources/WebCore/HTMLNames.cpp \
 	DerivedSources/WebCore/HTMLNames.h \
+	DerivedSources/WebCore/InspectorBackendDispatcher.cpp \
+	DerivedSources/WebCore/InspectorBackendDispatcher.h \
 	DerivedSources/WebCore/JSAbstractWorker.cpp \
 	DerivedSources/WebCore/JSAbstractWorker.h \
 	DerivedSources/WebCore/JSArrayBuffer.cpp \
@@ -4396,8 +4398,8 @@ DerivedSources/WebCore/XMLNSNames.cpp DerivedSources/WebCore/XMLNSNames.h: $(Web
 DerivedSources/WebCore/XMLNames.cpp DerivedSources/WebCore/XMLNames.h: $(WebCore)/dom/make_names.pl $(WebCore)/xml/xmlattrs.in
 	$(AM_V_GEN)$(PERL) -I$(WebCore)/bindings/scripts $< --attrs $(WebCore)/xml/xmlattrs.in --outputDir "$(GENSOURCES_WEBCORE)"
 
-# Remote Inspector frontend
-DerivedSources/WebCore/RemoteInspectorFrontend.cpp DerivedSources/WebCore/RemoteInspectorFrontend.h: $(WebCore)/inspector/Inspector.idl $(SCRIPTS_BINDINGS) $(WebCore)/inspector/CodeGeneratorInspector.pm
+# RemoteInspectorFrontend and InspectorBackendDispatcher
+DerivedSources/WebCore/RemoteInspectorFrontend.cpp DerivedSources/WebCore/RemoteInspectorFrontend.h DerivedSources/WebCore/InspectorBackendDispatcher.cpp DerivedSources/WebCore/InspectorBackendDispatcher.h: $(WebCore)/inspector/Inspector.idl $(SCRIPTS_BINDINGS) $(WebCore)/inspector/CodeGeneratorInspector.pm
 	$(AM_V_GEN)$(PERL) -I$(WebCore)/bindings/scripts -I$(WebCore)/inspector $(WebCore)/bindings/scripts/generate-bindings.pl $(IDL_PATH:%=--include "%") --outputDir "$(GENSOURCES_WEBCORE)" --defines "LANGUAGE_JAVASCRIPT=1 $(FEATURE_DEFINES)" --generator Inspector $<
 
 IDL_PATH := \

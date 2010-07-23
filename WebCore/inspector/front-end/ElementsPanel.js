@@ -222,7 +222,7 @@ WebInspector.ElementsPanel.prototype = {
 
         if (this._selectedPathOnReset) {
             var callId = WebInspector.Callback.wrap(selectLastSelectedNode.bind(this));
-            InspectorBackend.pushNodeByPathToFrontend(callId, this._selectedPathOnReset);
+            InspectorBackend.pushNodeByPathToFrontend(callId, this._selectedPathOnReset.join(","));
         } else
             selectNode.call(this);
         delete this._selectedPathOnReset;

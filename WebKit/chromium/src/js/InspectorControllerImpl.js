@@ -154,7 +154,8 @@ devtools.InspectorBackendImpl.prototype.installInspectorControllerDelegate_ = fu
 devtools.InspectorBackendImpl.prototype.callInspectorController_ = function(methodName, var_arg)
 {
     var args = Array.prototype.slice.call(arguments, 1);
-    RemoteToolsAgent.dispatchOnInspectorController(WebInspector.Callback.wrap(function(){}), methodName, JSON.stringify(args));
+    args.unshift(methodName);
+    RemoteToolsAgent.dispatchOnInspectorController(WebInspector.Callback.wrap(function(){}), JSON.stringify(args));
 };
 
 

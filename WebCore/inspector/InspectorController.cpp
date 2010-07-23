@@ -55,6 +55,7 @@
 #include "InjectedScript.h"
 #include "InjectedScriptHost.h"
 #include "InspectorBackend.h"
+#include "InspectorBackendDispatcher.h"
 #include "InspectorCSSStore.h"
 #include "InspectorClient.h"
 #include "InspectorFrontendClient.h"
@@ -192,6 +193,7 @@ InspectorController::InspectorController(Page* page, InspectorClient* client)
     , m_resourceTrackingEnabled(false)
     , m_settingsLoaded(false)
     , m_inspectorBackend(InspectorBackend::create(this))
+    , m_inspectorBackendDispatcher(new InspectorBackendDispatcher(m_inspectorBackend.get()))
     , m_injectedScriptHost(InjectedScriptHost::create(this))
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     , m_debuggerEnabled(false)

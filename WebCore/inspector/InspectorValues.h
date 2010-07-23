@@ -69,6 +69,8 @@ public:
 
     virtual bool asBool(bool* output) const;
     virtual bool asNumber(double* output) const;
+    virtual bool asNumber(long* output) const;
+    virtual bool asNumber(unsigned long* output) const;
     virtual bool asString(String* output) const;
     virtual PassRefPtr<InspectorObject> asObject();
     virtual PassRefPtr<InspectorArray> asArray();
@@ -105,6 +107,8 @@ public:
 
     virtual bool asBool(bool* output) const;
     virtual bool asNumber(double* output) const;
+    virtual bool asNumber(long* output) const;
+    virtual bool asNumber(unsigned long* output) const;
 
     virtual void writeJSON(Vector<UChar>* output) const;
 
