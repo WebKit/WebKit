@@ -25,6 +25,7 @@
 
 base_directory = ENV['TARGET_BUILD_DIR'] or throw "Unable to find TARGET_BUILD_DIR in the environment!"
 project_name = ENV['PROJECT_NAME'] or throw "Unable to find PROJECT_NAME in the environment!"
+is_shallow_bundle = (ENV['SHALLOW_BUNDLE'] || "NO").upcase == "YES"
 
 $INAPPROPRIATE_FILES = { "WebCore" => { "Resources" => ["*.css", "*.in", "*.idl"] } }
 
@@ -41,12 +42,13 @@ def print_inappropriate_file_error framework, relative_path
   print_error "#{framework}.framework/#{relative_path} should not be present in the framework."
 end
 
-def check_framework framework
+def check_framework framework, is_shallow_bundle
   $INAPPROPRIATE_FILES[framework].each do |directory, patterns|
-    Dir.chdir "#{framework}.framework/Versions/A/#{directory}" do
+    framework_bundle_path = is_shallow_bundle ? "#{framework}.framework" : "#{framework}.framework/Versions/A/#{directory}"
+    Dir.chdir framework_bundle_path do
       patterns.each do |pattern|
         Dir.glob(pattern).each do |inappropriate_file|
-          print_inappropriate_file_error framework, "Resources/#{inappropriate_file}"
+          print_inappropriate_file_error framework, is_shallow_bundle ? inappropriate_file : "#{directory}/#{inappropriate_file}"
           File.unlink inappropriate_file
         end
       end
@@ -54,7 +56,7 @@ def check_framework framework
   end
 end
 
-check_framework project_name
+check_framework project_name, is_shallow_bundle
 
 if $error_printed
   STDERR.puts

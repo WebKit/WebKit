@@ -24,7 +24,8 @@
 # THE POSSIBILITY OF SUCH DAMAGE.
 
 
-base_directory = ENV['TARGET_BUILD_DIR']
+base_directory = ENV['TARGET_BUILD_DIR'] or throw "Unable to find TARGET_BUILD_DIR in the environment!"
+is_shallow_bundle = (ENV['SHALLOW_BUNDLE'] || "NO").upcase == "YES"
 
 unless base_directory
   throw "Unable to find TARGET_BUILD_DIR in the environment!"
@@ -44,8 +45,9 @@ def print_error msg
   STDERR.puts "ERROR: #{msg}"
 end
 
-def build_header_maps
-  all_headers = `find WebKit.framework/Versions/A/{,Private}Headers -type f -name '*.h'`.split
+def build_header_maps is_shallow_bundle
+  current_version_path = is_shallow_bundle ? "" : "Versions/A/"
+  all_headers = `find WebKit.framework/#{current_version_path}{,Private}Headers -type f -name '*.h'`.split
 
   all_headers.each do |header|
     if /\/Headers\/(.*)/.match(header)
@@ -97,7 +99,7 @@ def verify_includes(header, permitted_types)
   end
 end
 
-build_header_maps
+build_header_maps is_shallow_bundle
 
 $HEADERS_BY_TYPE.each do |header_type, headers|
   permitted_types = $PERMITTED_INCLUDE_TYPES[header_type]

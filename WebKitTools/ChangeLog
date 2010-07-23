@@ -1,3 +1,14 @@
+2010-07-23  David Kilzer  <ddkilzer@apple.com>
+
+        <http://webkit.org/b/42911> Update ruby tools to work with shallow framework bundles
+
+        Reviewed by Mark Rowe.
+
+        * Scripts/check-for-inappropriate-files-in-framework: Added
+        check for the SHALLOW_BUNDLE environment variable so that the
+        script will work with iOS WebKit builds.
+        * Scripts/check-for-webkit-framework-include-consistency: Ditto.
+
 2010-07-22  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam Weinig.
