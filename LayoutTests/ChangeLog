@@ -1,3 +1,84 @@
+2010-07-22  Marcus Bulach  <bulach@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [chromium] Updates baselines following changes in border drawing code (http://trac.webkit.org/changeset/63864).
+        https://bugs.webkit.org/show_bug.cgi?id=42822
+
+        * platform/chromium-linux/fast/borders/different-color-borders-expected.checksum: Added.
+        * platform/chromium-linux/fast/borders/different-color-borders-expected.png: Added.
+        * platform/chromium-linux/fast/borders/different-color-borders-expected.txt: Added.
+        * platform/chromium-mac/fast/borders/border-radius-constraints-expected.checksum:
+        * platform/chromium-mac/fast/borders/border-radius-constraints-expected.png:
+        * platform/chromium-mac/fast/borders/border-radius-huge-assert-expected.checksum:
+        * platform/chromium-mac/fast/borders/border-radius-huge-assert-expected.png:
+        * platform/chromium-mac/fast/borders/border-radius-split-inline-expected.checksum:
+        * platform/chromium-mac/fast/borders/border-radius-split-inline-expected.png:
+        * platform/chromium-mac/fast/borders/borderRadiusAllStylesAllCorners-expected.checksum:
+        * platform/chromium-mac/fast/borders/borderRadiusAllStylesAllCorners-expected.png:
+        * platform/chromium-mac/fast/borders/borderRadiusArcs01-expected.checksum: Removed.
+        * platform/chromium-mac/fast/borders/borderRadiusArcs01-expected.png:
+        * platform/chromium-mac/fast/borders/borderRadiusDashed01-expected.checksum:
+        * platform/chromium-mac/fast/borders/borderRadiusDashed01-expected.png:
+        * platform/chromium-mac/fast/borders/borderRadiusDashed04-expected.checksum:
+        * platform/chromium-mac/fast/borders/borderRadiusDashed04-expected.png: Added.
+        * platform/chromium-mac/fast/borders/borderRadiusDotted06-expected.checksum:
+        * platform/chromium-mac/fast/borders/borderRadiusDotted06-expected.png: Added.
+        * platform/chromium-mac/fast/borders/borderRadiusDouble02-expected.checksum: Removed.
+        * platform/chromium-mac/fast/borders/borderRadiusDouble02-expected.png:
+        * platform/chromium-mac/fast/borders/borderRadiusDouble03-expected.checksum: Removed.
+        * platform/chromium-mac/fast/borders/borderRadiusDouble03-expected.png:
+        * platform/chromium-mac/fast/borders/borderRadiusGroove01-expected.checksum: Removed.
+        * platform/chromium-mac/fast/borders/borderRadiusGroove01-expected.png:
+        * platform/chromium-mac/fast/borders/borderRadiusGroove02-expected.checksum: Removed.
+        * platform/chromium-mac/fast/borders/borderRadiusGroove02-expected.png:
+        * platform/chromium-mac/fast/borders/borderRadiusInset01-expected.checksum: Removed.
+        * platform/chromium-mac/fast/borders/borderRadiusInset01-expected.png:
+        * platform/chromium-mac/fast/borders/borderRadiusInvalidColor-expected.checksum:
+        * platform/chromium-mac/fast/borders/borderRadiusInvalidColor-expected.png:
+        * platform/chromium-mac/fast/borders/borderRadiusOutset01-expected.checksum: Removed.
+        * platform/chromium-mac/fast/borders/borderRadiusOutset01-expected.png:
+        * platform/chromium-mac/fast/borders/borderRadiusRidge01-expected.checksum: Removed.
+        * platform/chromium-mac/fast/borders/borderRadiusRidge01-expected.png:
+        * platform/chromium-mac/fast/borders/borderRadiusSolid01-expected.checksum: Removed.
+        * platform/chromium-mac/fast/borders/borderRadiusSolid01-expected.png:
+        * platform/chromium-mac/fast/borders/borderRadiusSolid02-expected.checksum: Removed.
+        * platform/chromium-mac/fast/borders/borderRadiusSolid02-expected.png:
+        * platform/chromium-mac/fast/borders/borderRadiusSolid03-expected.checksum: Removed.
+        * platform/chromium-mac/fast/borders/borderRadiusSolid03-expected.png:
+        * platform/chromium-mac/fast/borders/borderRadiusSolid04-expected.checksum: Removed.
+        * platform/chromium-mac/fast/borders/borderRadiusSolid04-expected.png:
+        * platform/chromium-mac/fast/borders/different-color-borders-expected.checksum: Added.
+        * platform/chromium-mac/fast/borders/different-color-borders-expected.png: Added.
+        * platform/chromium-mac/fast/borders/fieldsetBorderRadius-expected.checksum: Removed.
+        * platform/chromium-mac/fast/borders/fieldsetBorderRadius-expected.png:
+        * platform/chromium-mac/fast/css/nested-rounded-corners-expected.checksum: Added.
+        * platform/chromium-mac/fast/css/nested-rounded-corners-expected.png: Added.
+        * platform/chromium-mac/fast/forms/basic-selects-expected.checksum:
+        * platform/chromium-mac/fast/forms/basic-selects-expected.png:
+        * platform/chromium-mac/fast/forms/menulist-clip-expected.checksum:
+        * platform/chromium-mac/fast/forms/menulist-clip-expected.png:
+        * platform/chromium-mac/fast/forms/menulist-narrow-width-expected.checksum:
+        * platform/chromium-mac/fast/forms/menulist-narrow-width-expected.png:
+        * platform/chromium-mac/fast/forms/menulist-option-wrap-expected.checksum:
+        * platform/chromium-mac/fast/forms/menulist-option-wrap-expected.png:
+        * platform/chromium-mac/fast/forms/menulist-restrict-line-height-expected.checksum:
+        * platform/chromium-mac/fast/forms/menulist-restrict-line-height-expected.png:
+        * platform/chromium-mac/fast/forms/menulist-separator-painting-expected.checksum:
+        * platform/chromium-mac/fast/forms/menulist-separator-painting-expected.png:
+        * platform/chromium-mac/fast/forms/menulist-style-color-expected.checksum:
+        * platform/chromium-mac/fast/forms/menulist-style-color-expected.png:
+        * platform/chromium-mac/fast/forms/select-baseline-expected.checksum:
+        * platform/chromium-mac/fast/forms/select-baseline-expected.png:
+        * platform/chromium-mac/fast/overflow/border-radius-clipping-expected.checksum:
+        * platform/chromium-mac/fast/overflow/border-radius-clipping-expected.png:
+        * platform/chromium-mac/svg/custom/svg-fonts-in-html-expected.checksum:
+        * platform/chromium-mac/svg/custom/svg-fonts-in-html-expected.png:
+        * platform/chromium-win-xp/fast/css/nested-rounded-corners-expected.png: Added.
+        * platform/chromium-win/fast/css/nested-rounded-corners-expected.checksum: Added.
+        * platform/chromium-win/fast/css/nested-rounded-corners-expected.png: Added.
+        * platform/chromium/test_expectations.txt:
+
 2010-07-23  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Reviewed by Kent Tamura.
