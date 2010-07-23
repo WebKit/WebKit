@@ -165,7 +165,7 @@ AccessibilityObject* AccessibilityTableCell::titleUIElement() const
     if (!section)
         return 0;
     
-    RenderTableCell* headerCell = section->cellAt(row, 0).cell;
+    RenderTableCell* headerCell = section->primaryCellAt(row, 0);
     if (!headerCell || headerCell == renderCell)
         return 0;
 

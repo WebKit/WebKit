@@ -54,8 +54,30 @@ public:
     RenderTable* table() const { return toRenderTable(parent()); }
 
     struct CellStruct {
-        RenderTableCell* cell;
+        Vector<RenderTableCell*, 1> cells; 
         bool inColSpan; // true for columns after the first in a colspan
+        bool empty;
+
+        CellStruct():
+          inColSpan(false),
+          empty(false) {}
+
+        CellStruct(const CellStruct& other):
+            cells(other.cells),
+            inColSpan(other.inColSpan),
+            empty(other.empty) {}
+        
+        RenderTableCell* primaryCell()
+        {
+            return hasCells() ? cells[cells.size() - 1] : 0;
+        }
+
+        const RenderTableCell* primaryCell() const
+        {
+            return hasCells() ? cells[cells.size() - 1] : 0;
+        }
+
+        bool hasCells() const { return cells.size() > 0; }
     };
 
     typedef Vector<CellStruct> Row;
@@ -69,9 +91,14 @@ public:
 
     CellStruct& cellAt(int row,  int col) { return (*m_grid[row].row)[col]; }
     const CellStruct& cellAt(int row, int col) const { return (*m_grid[row].row)[col]; }
+    RenderTableCell* primaryCellAt(int row, int col)
+    {
+        CellStruct& c = (*m_grid[row].row)[col];
+        return c.primaryCell();
+    }
 
     void appendColumn(int pos);
-    void splitColumn(int pos, int newSize);
+    void splitColumn(int pos, int first);
 
     int calcOuterBorderTop() const;
     int calcOuterBorderBottom() const;
@@ -121,6 +148,7 @@ private:
     virtual int leftmostPosition(bool includeOverflowInterior, bool includeSelf) const;
 
     virtual void paint(PaintInfo&, int tx, int ty);
+    virtual void paintCell(RenderTableCell*, PaintInfo&, int tx, int ty);
     virtual void paintObject(PaintInfo&, int tx, int ty);
 
     virtual void imageChanged(WrappedImagePtr, const IntRect* = 0);
@@ -150,6 +178,8 @@ private:
 
     bool m_needsCellRecalc;
     bool m_hasOverflowingCell;
+
+    bool m_hasMultipleCellLevels;
 };
 
 inline RenderTableSection* toRenderTableSection(RenderObject* object)

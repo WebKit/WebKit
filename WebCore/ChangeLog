@@ -1,3 +1,58 @@
+2010-07-23  fsamuel@chromium.org  <fsamuel@chromium.org>
+
+        Reviewed by David Hyatt.
+
+        Updated table painting to draw cell layers in the correct order.
+
+        Table Cell Layering
+        https://bugs.webkit.org/show_bug.cgi?id=40775
+
+        Tests: tables/layering/paint-test-layering-1.html
+               tables/layering/paint-test-layering-2.html
+
+        * accessibility/AccessibilityTable.cpp:
+        (WebCore::AccessibilityTable::isTableExposableThroughAccessibility):
+        (WebCore::AccessibilityTable::addChildren):
+        (WebCore::AccessibilityTable::cellForColumnAndRow):
+        * accessibility/AccessibilityTableCell.cpp:
+        (WebCore::AccessibilityTableCell::titleUIElement):
+        * accessibility/AccessibilityTableColumn.cpp:
+        (WebCore::AccessibilityTableColumn::headerObjectForSection):
+        * rendering/AutoTableLayout.cpp:
+        (WebCore::AutoTableLayout::recalcColumn):
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::splitColumn):
+        (WebCore::RenderTable::calcBorderLeft):
+        (WebCore::RenderTable::calcBorderRight):
+        (WebCore::RenderTable::cellAbove):
+        (WebCore::RenderTable::cellBelow):
+        (WebCore::RenderTable::cellBefore):
+        (WebCore::RenderTable::cellAfter):
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::RenderTableSection):
+        (WebCore::RenderTableSection::ensureRows):
+        (WebCore::RenderTableSection::addCell):
+        (WebCore::RenderTableSection::setCellWidths):
+        (WebCore::RenderTableSection::calcRowHeight):
+        (WebCore::RenderTableSection::layoutRows):
+        (WebCore::RenderTableSection::calcOuterBorderTop):
+        (WebCore::RenderTableSection::calcOuterBorderBottom):
+        (WebCore::RenderTableSection::calcOuterBorderLeft):
+        (WebCore::RenderTableSection::calcOuterBorderRight):
+        (WebCore::RenderTableSection::firstLineBoxBaseline):
+        (WebCore::compareCellPositions):
+        (WebCore::RenderTableSection::paintCell):
+        (WebCore::RenderTableSection::paintObject):
+        (WebCore::RenderTableSection::numColumns):
+        (WebCore::RenderTableSection::appendColumn):
+        (WebCore::RenderTableSection::splitColumn):
+        (WebCore::RenderTableSection::nodeAtPoint):
+        * rendering/RenderTableSection.h:
+        (WebCore::RenderTableSection::CellStruct::CellStruct):
+        (WebCore::RenderTableSection::CellStruct::primaryCell):
+        (WebCore::RenderTableSection::CellStruct::hasCells):
+        (WebCore::RenderTableSection::primaryCellAt):
+
 2010-07-23  Patrick Gansterer  <paroga@paroga.com>
 
         Reviewed by Adam Roben.

@@ -66,9 +66,9 @@ void AutoTableLayout::recalcColumn(int effCol)
             int numRows = section->numRows();
             for (int i = 0; i < numRows; i++) {
                 RenderTableSection::CellStruct current = section->cellAt(i, effCol);
-                RenderTableCell* cell = current.cell;
+                RenderTableCell* cell = current.primaryCell();
                 
-                bool cellHasContent = cell && (cell->firstChild() || cell->style()->hasBorder() || cell->style()->hasPadding());
+                bool cellHasContent = cell && !current.inColSpan && (cell->firstChild() || cell->style()->hasBorder() || cell->style()->hasPadding());
                 if (cellHasContent)
                     l.emptyCellsOnly = false;
                     
@@ -125,7 +125,7 @@ void AutoTableLayout::recalcColumn(int effCol)
                         break;
                     }
                 } else {
-                    if (cell && (!effCol || section->cellAt(i, effCol-1).cell != cell)) {
+                    if (cell && (!effCol || cell->section()->primaryCellAt(i, effCol-1) != cell)) {
                         // This spanning cell originates in this column.  Ensure we have
                         // a min/max width of at least 1px for this column now.
                         l.minWidth = max(l.minWidth, cellHasContent ? 1 : 0);

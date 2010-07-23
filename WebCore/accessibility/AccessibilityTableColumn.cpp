@@ -136,7 +136,7 @@ AccessibilityObject* AccessibilityTableColumn::headerObjectForSection(RenderTabl
     RenderTableCell* cell = 0;
     // also account for cells that have a span
     for (int testCol = m_columnIndex; testCol >= 0; --testCol) {
-        RenderTableCell* testCell = section->cellAt(0, testCol).cell;
+        RenderTableCell* testCell = section->primaryCellAt(0, testCol);
         if (!testCell)
             continue;
         

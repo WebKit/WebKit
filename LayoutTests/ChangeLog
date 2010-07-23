@@ -1,3 +1,39 @@
+2010-07-23  fsamuel@chromium.org  <fsamuel@chromium.org>
+
+        Reviewed by David Hyatt.
+
+        Updated table painting to draw cell layers in the correct order.
+
+        Table Cell Layering
+        https://bugs.webkit.org/show_bug.cgi?id=40775
+
+        * platform/chromium-linux/tables/layering/paint-test-layering-1-expected.checksum: Added.
+        * platform/chromium-linux/tables/layering/paint-test-layering-1-expected.png: Added.
+        * platform/chromium-linux/tables/layering/paint-test-layering-1-expected.txt: Added.
+        * platform/chromium-linux/tables/layering/paint-test-layering-2-expected.checksum: Added.
+        * platform/chromium-linux/tables/layering/paint-test-layering-2-expected.png: Added.
+        * platform/chromium-linux/tables/layering/paint-test-layering-2-expected.txt: Added.
+        * platform/chromium-mac/tables/layering/paint-test-layering-1-expected.checksum: Added.
+        * platform/chromium-mac/tables/layering/paint-test-layering-1-expected.png: Added.
+        * platform/chromium-mac/tables/layering/paint-test-layering-1-expected.txt: Added.
+        * platform/chromium-mac/tables/layering/paint-test-layering-2-expected.checksum: Added.
+        * platform/chromium-mac/tables/layering/paint-test-layering-2-expected.png: Added.
+        * platform/chromium-mac/tables/layering/paint-test-layering-2-expected.txt: Added.
+        * platform/gtk/tables/layering/paint-test-layering-1-expected.checksum: Added.
+        * platform/gtk/tables/layering/paint-test-layering-1-expected.png: Added.
+        * platform/gtk/tables/layering/paint-test-layering-1-expected.txt: Added.
+        * platform/gtk/tables/layering/paint-test-layering-2-expected.checksum: Added.
+        * platform/gtk/tables/layering/paint-test-layering-2-expected.png: Added.
+        * platform/gtk/tables/layering/paint-test-layering-2-expected.txt: Added.
+        * platform/mac/tables/layering/paint-test-layering-1-expected.checksum: Added.
+        * platform/mac/tables/layering/paint-test-layering-1-expected.png: Added.
+        * platform/mac/tables/layering/paint-test-layering-1-expected.txt: Added.
+        * platform/mac/tables/layering/paint-test-layering-2-expected.checksum: Added.
+        * platform/mac/tables/layering/paint-test-layering-2-expected.png: Added.
+        * platform/mac/tables/layering/paint-test-layering-2-expected.txt: Added.
+        * tables/layering/paint-test-layering-1.html: Added.
+        * tables/layering/paint-test-layering-2.html: Added.
+
 2010-07-23  Stephen White  <senorblanco@chromium.org>
 
         Unreviewed; chromium test expectations fix.
