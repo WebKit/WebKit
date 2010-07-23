@@ -2834,13 +2834,20 @@ void HTMLInputElement::stepUpFromRenderer(int n)
         return;
 
     const double nan = numeric_limits<double>::quiet_NaN();
-    double current = parseToDouble(value(), nan);
-    if (!isfinite(current)) {
+    String currentStringValue = value();
+    double current = parseToDouble(currentStringValue, nan);
+    if (!isfinite(current))
         setValue(serialize(n > 0 ? minimum() : maximum()));
-        return;
+    else {
+        ExceptionCode ec;
+        stepUp(n, ec);
     }
-    ExceptionCode ec;
-    stepUp(n, ec);
+
+    if (currentStringValue != value()) {
+        if (renderer() && renderer()->isTextField())
+            toRenderTextControl(renderer())->setChangedSinceLastChangeEvent(true);
+        dispatchEvent(Event::create(eventNames().inputEvent, true, false));
+    }
 }
 
 #if ENABLE(WCSS)

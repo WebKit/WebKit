@@ -1,3 +1,18 @@
+2010-07-22  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        <input type=number> stepper buttons should dispatch input/change events
+        https://bugs.webkit.org/show_bug.cgi?id=42440
+
+        * fast/forms/input-number-events-expected.txt: Added.
+        * fast/forms/input-number-events.html: Added.
+        * fast/forms/script-tests/input-number-events.js: Added.
+        * platform/chromium/test_expectations.txt:
+        * platform/gtk/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+
 2010-07-22  Justin Schuh  <jschuh@chromium.org>
 
         Reviewed by Adam Barth.

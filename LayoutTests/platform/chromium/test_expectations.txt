@@ -716,7 +716,8 @@ BUG20226 DEFER : fast/forms/input-list.html = FAIL
 BUG20226 DEFER : fast/forms/input-selectedoption.html = FAIL
 
 // Need to implement inner-spin-button or outer-spin-button
-BUGWK38570 DEFER SKIP : fast/forms/input-appearance-spinbutton-disabled-readonly.html = FAIL
+BUGWK38570 : fast/forms/input-appearance-spinbutton-disabled-readonly.html = FAIL
+BUGWK38570 : fast/forms/input-number-events.html = FAIL
 
 // Add support for inspector layout tests.
 BUG26734 LINUX MAC SKIP : inspector = PASS
