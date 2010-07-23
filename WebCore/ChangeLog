@@ -1,3 +1,30 @@
+2010-07-22  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        Backslash is transcoded into yen sign even when non japanese font is specified
+        https://bugs.webkit.org/show_bug.cgi?id=39654
+
+        Test: fast/text/backslash-to-yen-sign-euc.html
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty): Call FontDescriptor::setIsSpecifiedFont.
+        * platform/graphics/Font.cpp:
+        (WebCore::Font::Font):
+        * platform/graphics/FontDescription.h: Added m_isSpecifiedFont and its accessors.
+        (WebCore::FontDescription::FontDescription):
+        (WebCore::FontDescription::isSpecifiedFont):
+        (WebCore::FontDescription::setIsSpecifiedFont):
+        (WebCore::FontDescription::operator==):
+        * platform/text/transcoder/FontTranscoder.cpp:
+        (WebCore::FontTranscoder::converterType): Don't transcode backslashes if a font family is explicitly specified.
+        (WebCore::FontTranscoder::convert):
+        (WebCore::FontTranscoder::needsTranscoding):
+        * platform/text/transcoder/FontTranscoder.h: Change the arguments from AtomicString fontFamily to Font.
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::updateNeedsTranscoding):
+        (WebCore::RenderText::setTextInternal):
+
 2010-07-22  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Windows build fix.

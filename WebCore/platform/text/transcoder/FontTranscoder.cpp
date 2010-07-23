@@ -32,6 +32,7 @@
 #include "FontTranscoder.h"
 
 #include "CharacterNames.h"
+#include "FontDescription.h"
 #include "TextEncoding.h"
 
 namespace WebCore {
@@ -59,8 +60,9 @@ FontTranscoder::FontTranscoder()
     m_converterTypes.add(AtomicString(unicodeNameMeiryo, sizeof(unicodeNameMeiryo) / sizeof(UChar)), BackslashToYenSign);
 }
 
-FontTranscoder::ConverterType FontTranscoder::converterType(const AtomicString& fontFamily, const TextEncoding* encoding) const
+FontTranscoder::ConverterType FontTranscoder::converterType(const FontDescription& fontDescription, const TextEncoding* encoding) const
 {
+    const AtomicString& fontFamily = fontDescription.family().family().string();
     if (!fontFamily.isNull()) {
         HashMap<AtomicString, ConverterType>::const_iterator found = m_converterTypes.find(fontFamily);
         if (found != m_converterTypes.end())
@@ -68,17 +70,16 @@ FontTranscoder::ConverterType FontTranscoder::converterType(const AtomicString& 
     }
 
     // IE's default fonts for Japanese encodings change backslashes into yen signs.
-    // FIXME: We don't need transcoding when the document explicitly
-    // specifies a font which doesn't change backslashes into yen signs.
-    if (encoding && encoding->backslashAsCurrencySymbol() != '\\')
+    // We emulate this behavior only when no font is explicitly specified.
+    if (encoding && encoding->backslashAsCurrencySymbol() != '\\' && !fontDescription.isSpecifiedFont())
         return BackslashToYenSign;
 
     return NoConversion;
 }
 
-void FontTranscoder::convert(String& text, const AtomicString& fontFamily, const TextEncoding* encoding) const
+void FontTranscoder::convert(String& text, const FontDescription& fontDescription, const TextEncoding* encoding) const
 {
-    switch (converterType(fontFamily, encoding)) {
+    switch (converterType(fontDescription, encoding)) {
     case BackslashToYenSign: {
         // FIXME: TextEncoding.h has similar code. We need to factor them out.
         text.replace('\\', yenSign);
@@ -90,9 +91,9 @@ void FontTranscoder::convert(String& text, const AtomicString& fontFamily, const
     }
 }
 
-bool FontTranscoder::needsTranscoding(const AtomicString& fontFamily, const TextEncoding* encoding) const
+bool FontTranscoder::needsTranscoding(const FontDescription& fontDescription, const TextEncoding* encoding) const
 {
-    ConverterType type = converterType(fontFamily, encoding);
+    ConverterType type = converterType(fontDescription, encoding);
     return type != NoConversion;
 }
 

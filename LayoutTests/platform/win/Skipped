@@ -954,4 +954,3 @@ fast/dom/webtiming.html
 fast/dom/webtiming-navigate-within-document.html
 http/tests/misc/webtiming-one-redirect.php
 http/tests/misc/webtiming-two-redirects.php
-
