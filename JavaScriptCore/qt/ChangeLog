@@ -1,3 +1,21 @@
+2010-07-23  Jedrzej Nowacki  <jedrzej.nowacki@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        QScriptValue::equals benchmark crash fix.
+
+        Patch changes QScriptValue::equals implementation to cover
+        more edge cases.
+
+        Problem exposes an issue in our autotests (all values got
+        bound to an engine too fast - bug 42366).
+
+        [Qt] QScriptValue::equals asserts
+        https://bugs.webkit.org/show_bug.cgi?id=42363
+
+        * api/qscriptvalue_p.h:
+        (QScriptValuePrivate::equals):
+
 2010-07-14  Jedrzej Nowacki  <jedrzej.nowacki@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

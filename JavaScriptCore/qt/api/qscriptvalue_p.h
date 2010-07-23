@@ -699,15 +699,47 @@ bool QScriptValuePrivate::equals(QScriptValuePrivate* other)
     if (!other->isValid())
         return false;
 
-    if ((m_state == other->m_state) && !isJSBased()) {
-        if (isNumberBased())
-            return u.m_number == other->u.m_number;
-        Q_ASSERT(isStringBased());
-        return *u.m_string == *(other->u.m_string);
+    if (!isJSBased() && !other->isJSBased()) {
+        switch (m_state) {
+        case CNull:
+        case CUndefined:
+            return other->isUndefined() || other->isNull();
+        case CNumber:
+            switch (other->m_state) {
+            case CBool:
+            case CString:
+                return u.m_number == other->toNumber();
+            case CNumber:
+                return u.m_number == other->u.m_number;
+            default:
+                return false;
+            }
+        case CBool:
+            switch (other->m_state) {
+            case CBool:
+                return u.m_bool == other->u.m_bool;
+            case CNumber:
+                return toNumber() == other->u.m_number;
+            case CString:
+                return toNumber() == other->toNumber();
+            default:
+                return false;
+            }
+        case CString:
+            switch (other->m_state) {
+            case CBool:
+                return toNumber() == other->toNumber();
+            case CNumber:
+                return toNumber() == other->u.m_number;
+            case CString:
+                return *u.m_string == *other->u.m_string;
+            default:
+                return false;
+            }
+        default:
+            Q_ASSERT_X(false, "equals()", "Not all states are included in the previous switch statement.");
+        }
     }
-
-    if (!isJSBased() && !other->isJSBased())
-        return false;
 
     if (isJSBased() && !other->isJSBased()) {
         if (!other->assignEngine(engine())) {
