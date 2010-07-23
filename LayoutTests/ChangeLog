@@ -1,3 +1,12 @@
+2010-07-22  Cosmin Truta  <ctruta@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        SVG: Temporarily disable the layout test for the bug 41175 on Leopard.
+        https://bugs.webkit.org/show_bug.cgi?id=42802
+
+        * platform/mac-leopard/Skipped: svg/filters/filter-empty-g.svg skipped until fix.
+
 2010-07-22  John Gregg  <johnnyg@google.com>
 
         Unreviewed; chromium test expectation change.

@@ -77,3 +77,7 @@ storage/indexeddb
 # Disable the tests until the mesa renderer is integrated.
 # https://bugs.webkit.org/show_bug.cgi?id=41545
 fast/canvas/webgl/texture-npot.html
+
+# Disable an SVG test that causes an assertion failure in debug-mode WebKit under 10.5.
+# https://bugs.webkit.org/show_bug.cgi?id=41808
+svg/filters/filter-empty-g.svg
