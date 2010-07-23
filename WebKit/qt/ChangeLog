@@ -1,3 +1,11 @@
+2010-07-23  David Boddie  <dboddie@trolltech.com>
+
+        Reviewed by Simon Hausmann.
+
+        Doc: Fixed incorrect QML property type.
+
+        * declarative/qdeclarativewebview.cpp:
+
 2010-07-23  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Build fix for Qt apps

@@ -612,7 +612,7 @@ QAction* QDeclarativeWebView::stopAction() const
 #endif // QT_NO_ACTION
 
 /*!
-    \qmlproperty real WebView::title
+    \qmlproperty string WebView::title
     This property holds the title of the web page currently viewed
 
     By default, this property contains an empty string.
