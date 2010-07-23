@@ -2160,9 +2160,9 @@ webcore_sources += \
 	WebCore/plugins/PluginQuirkSet.h \
 	WebCore/plugins/PluginStream.cpp \
 	WebCore/plugins/PluginStream.h \
-	WebCore/plugins/PluginWidget.h \
 	WebCore/plugins/PluginView.cpp \
 	WebCore/plugins/PluginView.h \
+	WebCore/plugins/PluginViewBase.h \
 	WebCore/plugins/npapi.cpp \
 	WebCore/plugins/npfunctions.h \
 	WebCore/rendering/AutoTableLayout.cpp \

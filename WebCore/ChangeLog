@@ -1,3 +1,11 @@
+2010-07-23  Martin Robinson  <mrobinson@igalia.com>
+
+        Unreviewed build fix.
+
+        Fix make dist by aligning the source list with currently used headers.
+
+        * GNUmakefile.am:
+
 2010-07-23  Alex Milowski  <alex@milowski.com>
 
         Reviewed by Darin Adler.
