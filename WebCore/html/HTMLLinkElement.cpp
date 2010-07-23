@@ -246,8 +246,13 @@ void HTMLLinkElement::insertedIntoDocument()
     // to fire, it is possible for JavaScript to remove the element in the midst
     // of it being inserted into the DOM, which can lead to assertion failures
     // and crashes. Avoid this by postponing the beforeload/load until after
-    // attach.
-    m_shouldProcessAfterAttach = true;
+    // attach if there are beforeload listeners.
+    if (document()->hasListenerType(Document::BEFORELOAD_LISTENER)) {
+        m_shouldProcessAfterAttach = true;
+        return;
+    }
+
+    process();
 }
 
 void HTMLLinkElement::removedFromDocument()

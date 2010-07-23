@@ -1,3 +1,25 @@
+2010-07-22  Mark Rowe  <mrowe@apple.com>
+
+        Merge r63924.
+
+    2010-07-22  Andy Estes  <aestes@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        When there are no beforeload listeners on a document,
+        HTMLLinkElement::process() should be called immediately when the node is
+        inserted into the document, rather than waiting until after attach is
+        performed.
+        <https://bugs.webkit.org/show_bug.cgi?id=42859>
+        <rdar://problem/8194528>
+
+        No new tests.
+
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::insertedIntoDocument): If there are no
+        beforeload listeners, call process() immediately.  Otherwise, add it as
+        a post-attach callback.
+
 2010-07-15  Mark Rowe  <mrowe@apple.com>
 
         Merge r63452.
