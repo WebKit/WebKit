@@ -1,3 +1,12 @@
+2010-07-23  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Unreviewed. Put a failing result for now.
+
+        Backslash is transcoded into yen sign even when non japanese font is specified
+        https://bugs.webkit.org/show_bug.cgi?id=39654
+
+        * editing/selection/find-yensign-and-backslash-expected.txt:
+
 2010-07-22  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Eric Carlson.
