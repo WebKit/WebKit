@@ -124,10 +124,15 @@ public:
     ExpressionNode* makeBitwiseNotNode(ExpressionNode*);
     ExpressionNode* makeMultNode(ExpressionNode* left, ExpressionNode* right, bool rightHasAssignments);
     ExpressionNode* makeDivNode(ExpressionNode* left, ExpressionNode* right, bool rightHasAssignments);
+    ExpressionNode* makeModNode(ExpressionNode* left, ExpressionNode* right, bool rightHasAssignments);
     ExpressionNode* makeAddNode(ExpressionNode* left, ExpressionNode* right, bool rightHasAssignments);
     ExpressionNode* makeSubNode(ExpressionNode* left, ExpressionNode* right, bool rightHasAssignments);
+    ExpressionNode* makeBitXOrNode(ExpressionNode* left, ExpressionNode* right, bool rightHasAssignments);
+    ExpressionNode* makeBitAndNode(ExpressionNode* left, ExpressionNode* right, bool rightHasAssignments);
+    ExpressionNode* makeBitOrNode(ExpressionNode* left, ExpressionNode* right, bool rightHasAssignments);
     ExpressionNode* makeLeftShiftNode(ExpressionNode* left, ExpressionNode* right, bool rightHasAssignments);
     ExpressionNode* makeRightShiftNode(ExpressionNode* left, ExpressionNode* right, bool rightHasAssignments);
+    ExpressionNode* makeURightShiftNode(ExpressionNode* left, ExpressionNode* right, bool rightHasAssignments);
 
     ExpressionNode* createLogicalNot(ExpressionNode* expr) { return new (m_globalData) LogicalNotNode(m_globalData, expr); }
     ExpressionNode* createUnaryPlus(ExpressionNode* expr) { return new (m_globalData) UnaryPlusNode(m_globalData, expr); }
@@ -690,6 +695,16 @@ ExpressionNode* ASTBuilder::makeDivNode(ExpressionNode* expr1, ExpressionNode* e
     return new (m_globalData) DivNode(m_globalData, expr1, expr2, rightHasAssignments);
 }
 
+ExpressionNode* ASTBuilder::makeModNode(ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
+{
+    expr1 = expr1->stripUnaryPlus();
+    expr2 = expr2->stripUnaryPlus();
+    
+    if (expr1->isNumber() && expr2->isNumber())
+        return createNumber(fmod(static_cast<NumberNode*>(expr1)->value(), static_cast<NumberNode*>(expr2)->value()));
+    return new (m_globalData) ModNode(m_globalData, expr1, expr2, rightHasAssignments);
+}
+
 ExpressionNode* ASTBuilder::makeAddNode(ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
 {
     if (expr1->isNumber() && expr2->isNumber())
@@ -719,6 +734,34 @@ ExpressionNode* ASTBuilder::makeRightShiftNode(ExpressionNode* expr1, Expression
     if (expr1->isNumber() && expr2->isNumber())
         return createNumber(toInt32(static_cast<NumberNode*>(expr1)->value()) >> (toUInt32(static_cast<NumberNode*>(expr2)->value()) & 0x1f));
     return new (m_globalData) RightShiftNode(m_globalData, expr1, expr2, rightHasAssignments);
+}
+
+ExpressionNode* ASTBuilder::makeURightShiftNode(ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
+{
+    if (expr1->isNumber() && expr2->isNumber())
+        return createNumber(toUInt32(static_cast<NumberNode*>(expr1)->value()) >> (toUInt32(static_cast<NumberNode*>(expr2)->value()) & 0x1f));
+    return new (m_globalData) UnsignedRightShiftNode(m_globalData, expr1, expr2, rightHasAssignments);
+}
+
+ExpressionNode* ASTBuilder::makeBitOrNode(ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
+{
+    if (expr1->isNumber() && expr2->isNumber())
+        return createNumber(toInt32(static_cast<NumberNode*>(expr1)->value()) | toInt32(static_cast<NumberNode*>(expr2)->value()));
+    return new (m_globalData) BitOrNode(m_globalData, expr1, expr2, rightHasAssignments);
+}
+
+ExpressionNode* ASTBuilder::makeBitAndNode(ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
+{
+    if (expr1->isNumber() && expr2->isNumber())
+        return createNumber(toInt32(static_cast<NumberNode*>(expr1)->value()) & toInt32(static_cast<NumberNode*>(expr2)->value()));
+    return new (m_globalData) BitAndNode(m_globalData, expr1, expr2, rightHasAssignments);
+}
+
+ExpressionNode* ASTBuilder::makeBitXOrNode(ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
+{
+    if (expr1->isNumber() && expr2->isNumber())
+        return createNumber(toInt32(static_cast<NumberNode*>(expr1)->value()) ^ toInt32(static_cast<NumberNode*>(expr2)->value()));
+    return new (m_globalData) BitXOrNode(m_globalData, expr1, expr2, rightHasAssignments);
 }
 
 ExpressionNode* ASTBuilder::makeFunctionCallNode(ExpressionNode* func, ArgumentsNode* args, int start, int divot, int end)
@@ -763,13 +806,13 @@ ExpressionNode* ASTBuilder::makeBinaryNode(int token, pair<ExpressionNode*, Bina
         return new (m_globalData) LogicalOpNode(m_globalData, lhs.first, rhs.first, OpLogicalAnd);
 
     case BITOR:
-        return new (m_globalData) BitOrNode(m_globalData, lhs.first, rhs.first, rhs.second.hasAssignment);
+        return makeBitOrNode(lhs.first, rhs.first, rhs.second.hasAssignment);
 
     case BITXOR:
-        return new (m_globalData) BitXOrNode(m_globalData, lhs.first, rhs.first, rhs.second.hasAssignment);
+        return makeBitXOrNode(lhs.first, rhs.first, rhs.second.hasAssignment);
 
     case BITAND:
-        return new (m_globalData) BitAndNode(m_globalData, lhs.first, rhs.first, rhs.second.hasAssignment);
+        return makeBitAndNode(lhs.first, rhs.first, rhs.second.hasAssignment);
 
     case EQEQ:
         return new (m_globalData) EqualNode(m_globalData, lhs.first, rhs.first, rhs.second.hasAssignment);
@@ -814,7 +857,7 @@ ExpressionNode* ASTBuilder::makeBinaryNode(int token, pair<ExpressionNode*, Bina
         return makeRightShiftNode(lhs.first, rhs.first, rhs.second.hasAssignment);
 
     case URSHIFT:
-        return new (m_globalData) UnsignedRightShiftNode(m_globalData, lhs.first, rhs.first, rhs.second.hasAssignment);
+        return makeURightShiftNode(lhs.first, rhs.first, rhs.second.hasAssignment);
 
     case PLUS:
         return makeAddNode(lhs.first, rhs.first, rhs.second.hasAssignment);
@@ -829,7 +872,7 @@ ExpressionNode* ASTBuilder::makeBinaryNode(int token, pair<ExpressionNode*, Bina
         return makeDivNode(lhs.first, rhs.first, rhs.second.hasAssignment);
 
     case MOD:
-        return new (m_globalData) ModNode(m_globalData, lhs.first, rhs.first, rhs.second.hasAssignment);
+        return makeModNode(lhs.first, rhs.first, rhs.second.hasAssignment);
     }
     CRASH();
     return 0;

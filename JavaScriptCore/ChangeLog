@@ -1,3 +1,21 @@
+2010-07-22  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Do more constant folding
+        https://bugs.webkit.org/show_bug.cgi?id=42867
+
+        Constant fold a few more operations.  SunSpider says this is
+        a win but I suspect that's just code motion at play.
+
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::makeModNode):
+        (JSC::ASTBuilder::makeURightShiftNode):
+        (JSC::ASTBuilder::makeBitOrNode):
+        (JSC::ASTBuilder::makeBitAndNode):
+        (JSC::ASTBuilder::makeBitXOrNode):
+        (JSC::ASTBuilder::makeBinaryNode):
+
 2010-07-22  Kent Hansen  <kent.hansen@nokia.com>
 
         Reviewed by Kent Tamura.
