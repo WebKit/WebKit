@@ -1,3 +1,15 @@
+2010-07-22  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
+
+        Reviewed by Antonio Gomes.
+
+        [EFL] Log function is incorrectly used.
+        r63804 used LOG function, but it should receive one more parameter.
+        Used LOG_ERROR instead, since this is an error message.
+        https://bugs.webkit.org/show_bug.cgi?id=42842
+
+        * platform/efl/WidgetEfl.cpp:
+        (WebCore::Widget::applyFallbackCursor): use LOG_ERROR in place of LOG
+
 2010-07-22  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Ojan Vafai.
