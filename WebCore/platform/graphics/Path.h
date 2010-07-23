@@ -59,6 +59,7 @@ typedef BRegion PlatformPath;
 namespace WebCore {
     class PlatformPath;
 }
+typedef WebCore::PlatformPath PlatformPath;
 #else
 typedef void PlatformPath;
 #endif
