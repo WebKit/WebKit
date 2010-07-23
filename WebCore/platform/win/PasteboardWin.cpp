@@ -216,31 +216,29 @@ void Pasteboard::writeImage(Node* node, const KURL&, const String&)
     HDC dc = GetDC(0);
     HDC compatibleDC = CreateCompatibleDC(0);
     HDC sourceDC = CreateCompatibleDC(0);
-    HBITMAP resultBitmap = CreateCompatibleBitmap(dc, image->width(), image->height());
-    HBITMAP oldBitmap = (HBITMAP)SelectObject(compatibleDC, resultBitmap);
+    OwnPtr<HBITMAP> resultBitmap(CreateCompatibleBitmap(dc, image->width(), image->height()));
+    HGDIOBJ oldBitmap = SelectObject(compatibleDC, resultBitmap.get());
 
     BitmapInfo bmInfo = BitmapInfo::create(image->size());
 
     HBITMAP coreBitmap = CreateDIBSection(dc, &bmInfo, DIB_RGB_COLORS, 0, 0, 0);
-    HBITMAP oldSource = (HBITMAP)SelectObject(sourceDC, coreBitmap);
+    HGDIOBJ oldSource = SelectObject(sourceDC, coreBitmap);
     image->getHBITMAP(coreBitmap);
 
     BLENDFUNCTION bf = {AC_SRC_OVER, 0, 255, AC_SRC_ALPHA};
     AlphaBlend(compatibleDC, 0, 0, image->width(), image->height(),
         sourceDC, 0, 0, image->width(), image->height(), bf);
 
-    SelectObject(compatibleDC, oldBitmap);
     SelectObject(sourceDC, oldSource);
-
-    DeleteObject(oldBitmap);
-    DeleteObject(oldSource);
     DeleteObject(coreBitmap);
-    ReleaseDC(0, dc);
-    DeleteDC(compatibleDC);
+
+    SelectObject(compatibleDC, oldBitmap);
     DeleteDC(sourceDC);
+    DeleteDC(compatibleDC);
+    ReleaseDC(0, dc);
 
     if (::OpenClipboard(m_owner)) {
-        ::SetClipboardData(CF_BITMAP, resultBitmap);
+        ::SetClipboardData(CF_BITMAP, resultBitmap.leakPtr());
         ::CloseClipboard();
     }
 }
