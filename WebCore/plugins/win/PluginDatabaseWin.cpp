@@ -40,7 +40,9 @@
 
 #if OS(WINCE)
 // WINCE doesn't support Registry Key Access Rights. The parameter should always be 0
+#ifndef KEY_ENUMERATE_SUB_KEYS
 #define KEY_ENUMERATE_SUB_KEYS 0
+#endif
 
 DWORD SHGetValue(HKEY hkey, LPCWSTR pszSubKey, LPCWSTR pszValue, LPDWORD pdwType, LPVOID pvData, LPDWORD pcbData)
 {
