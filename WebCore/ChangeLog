@@ -1,3 +1,15 @@
+2010-07-22  Justin Schuh  <jschuh@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Make history state methods validate against document URL
+        https://bugs.webkit.org/show_bug.cgi?id=42858
+
+        Test: fast/history/history-replace-illegal.html
+
+        * page/History.cpp:
+        (WebCore::History::urlForState):
+
 2010-07-22  Andy Estes  <aestes@apple.com>
 
         Reviewed by Maciej Stachowiak.

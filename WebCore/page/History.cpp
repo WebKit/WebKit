@@ -82,7 +82,7 @@ void History::go(int distance)
 
 KURL History::urlForState(const String& urlString)
 {
-    KURL baseURL = m_frame->loader()->baseURL();
+    KURL baseURL = m_frame->document()->url();
     if (urlString.isEmpty())
         return baseURL;
         
