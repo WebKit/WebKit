@@ -23,30 +23,31 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module WTR {
+#include "WKBundleRange.h"
 
-    interface LayoutTestController {
-        // The basics.
-        void dumpAsText();
-        void dumpChildFramesAsText();
-        void waitUntilDone();
-        void notifyDone();
+#include "WKBundleAPICast.h"
+#include "WKBundleNode.h"
+#include <WebCore/Range.h>
 
-        // Other dumping.
-        void dumpChildFrameScrollPositions();
-        void dumpEditingCallbacks();
-        void dumpStatusCallbacks();
+using namespace WebCore;
+using namespace WebKit;
 
-        // Repaint testing.
-        void testRepaint();
-        void repaintSweepHorizontally();
-        void display();
+unsigned WKBundleRangeGetStartOffset(WKBundleRangeRef range)
+{
+    return toWK(range)->startOffset();
+}
 
-        // Animation testing.
-        int numberOfActiveAnimations();
-        boolean pauseAnimationAtTimeOnElementWithId(in DOMString animationName, in double time, in DOMString elementId);
+WKBundleNodeRef WKBundleRangeGetStartContainer(WKBundleRangeRef range)
+{
+    return toRef(toWK(range)->startContainer());
+}
 
-        void setAcceptsEditing(in boolean value);
-    };
+unsigned WKBundleRangeGetEndOffset(WKBundleRangeRef range)
+{
+    return toWK(range)->endOffset();
+}
 
+WKBundleNodeRef WKBundleRangeGetEndContainer(WKBundleRangeRef range)
+{
+    return toRef(toWK(range)->endContainer());
 }

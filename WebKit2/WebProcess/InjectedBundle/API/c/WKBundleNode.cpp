@@ -23,30 +23,23 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module WTR {
+#include "WKBundleNode.h"
 
-    interface LayoutTestController {
-        // The basics.
-        void dumpAsText();
-        void dumpChildFramesAsText();
-        void waitUntilDone();
-        void notifyDone();
+#include "WKAPICast.h"
+#include "WKBundleAPICast.h"
+#include "WKBundleNode.h"
+#include <WebCore/Node.h>
 
-        // Other dumping.
-        void dumpChildFrameScrollPositions();
-        void dumpEditingCallbacks();
-        void dumpStatusCallbacks();
+using namespace WebCore;
+using namespace WebKit;
 
-        // Repaint testing.
-        void testRepaint();
-        void repaintSweepHorizontally();
-        void display();
+WKStringRef WKBundleNodeCopyNodeName(WKBundleNodeRef node)
+{
+    RefPtr<StringImpl> name = toWK(node)->nodeName().impl();
+    return toRef(name.release().releaseRef());
+}
 
-        // Animation testing.
-        int numberOfActiveAnimations();
-        boolean pauseAnimationAtTimeOnElementWithId(in DOMString animationName, in double time, in DOMString elementId);
-
-        void setAcceptsEditing(in boolean value);
-    };
-
+WKBundleNodeRef WKBundleNodeGetParent(WKBundleNodeRef node)
+{
+    return toRef(toWK(node)->parent());
 }

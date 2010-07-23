@@ -23,30 +23,26 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module WTR {
+#ifndef WKBundleNode_h
+#define WKBundleNode_h
 
-    interface LayoutTestController {
-        // The basics.
-        void dumpAsText();
-        void dumpChildFramesAsText();
-        void waitUntilDone();
-        void notifyDone();
+#include <WebKit2/WKBase.h>
+#include <WebKit2/WKBundleBase.h>
 
-        // Other dumping.
-        void dumpChildFrameScrollPositions();
-        void dumpEditingCallbacks();
-        void dumpStatusCallbacks();
+#ifndef __cplusplus
+#include <stdbool.h>
+#endif
 
-        // Repaint testing.
-        void testRepaint();
-        void repaintSweepHorizontally();
-        void display();
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-        // Animation testing.
-        int numberOfActiveAnimations();
-        boolean pauseAnimationAtTimeOnElementWithId(in DOMString animationName, in double time, in DOMString elementId);
+WK_EXPORT WKStringRef WKBundleNodeCopyNodeName(WKBundleNodeRef node);
 
-        void setAcceptsEditing(in boolean value);
-    };
+WK_EXPORT WKBundleNodeRef WKBundleNodeGetParent(WKBundleNodeRef node);
 
+#ifdef __cplusplus
 }
+#endif
+
+#endif /* WKBundleNode_h */

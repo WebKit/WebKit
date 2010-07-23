@@ -77,8 +77,18 @@ struct WKBundlePageUIClient {
 };
 typedef struct WKBundlePageUIClient WKBundlePageUIClient;
 
-WK_EXPORT void WKBundlePageSetLoaderClient(WKBundlePageRef page, WKBundlePageLoaderClient * client);
-WK_EXPORT void WKBundlePageSetUIClient(WKBundlePageRef page, WKBundlePageUIClient * client);
+// Editor client
+typedef bool (*WKBundlePageShouldBeginEditingCallback)(WKBundlePageRef page, WKBundleRangeRef range, const void* clientInfo);
+struct WKBundlePageEditorClient {
+    int                                                                 version;
+    const void *                                                        clientInfo;
+    WKBundlePageShouldBeginEditingCallback                              shouldBeginEditing;
+};
+typedef struct WKBundlePageEditorClient WKBundlePageEditorClient;
+
+WK_EXPORT void WKBundlePageSetEditorClient(WKBundlePageRef page, WKBundlePageEditorClient* client);
+WK_EXPORT void WKBundlePageSetLoaderClient(WKBundlePageRef page, WKBundlePageLoaderClient* client);
+WK_EXPORT void WKBundlePageSetUIClient(WKBundlePageRef page, WKBundlePageUIClient* client);
 
 WK_EXPORT WKBundleFrameRef WKBundlePageGetMainFrame(WKBundlePageRef page);
 

@@ -26,9 +26,11 @@
 #ifndef WKBundleBase_h
 #define WKBundleBase_h
 
-typedef struct OpaqueWKBundlePage* WKBundlePageRef;
-typedef struct OpaqueWKBundleFrame* WKBundleFrameRef;
 typedef struct OpaqueWKBundle* WKBundleRef;
+typedef struct OpaqueWKBundleFrame* WKBundleFrameRef;
+typedef struct OpaqueWKBundleNode* WKBundleNodeRef;
+typedef struct OpaqueWKBundlePage* WKBundlePageRef;
+typedef struct OpaqueWKBundleRange* WKBundleRangeRef;
 
 #undef WK_EXPORT
 #if defined(WK_NO_EXPORT)

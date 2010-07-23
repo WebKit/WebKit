@@ -29,13 +29,17 @@
 #include <JavaScriptCore/JSRetainPtr.h>
 #include <WebKit2/WKArray.h>
 #include <WebKit2/WKBundleFrame.h>
+#include <WebKit2/WKBundleNode.h>
 #include <WebKit2/WKBundlePagePrivate.h>
 #include <WebKit2/WKRetainPtr.h>
+#include <WebKit2/WKBundleRange.h>
 #include <WebKit2/WKString.h>
 #include <WebKit2/WKStringCF.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/Vector.h>
+
+using namespace std;
 
 namespace WTR {
 
@@ -50,6 +54,30 @@ static PassOwnPtr<Vector<char> > WKStringToUTF8(WKStringRef wkStringRef)
     } else
         buffer->shrink(strlen(buffer->data()) + 1);
     return buffer.release();
+}
+
+
+static string dumpPath(WKBundleNodeRef node)
+{
+    if (!node)
+        return "(null)";
+
+    WKRetainPtr<WKStringRef> nodeName(AdoptWK, WKBundleNodeCopyNodeName(node));
+    OwnPtr<Vector<char> > str = WKStringToUTF8(nodeName.get());
+    str->shrink(str->size() - 1);
+    WKBundleNodeRef parent = WKBundleNodeGetParent(node);
+    if (parent) {
+        str->append(" > ", 3);
+        string parentPath = dumpPath(parent);
+        str->append(parentPath.data(), parentPath.length());
+    }
+    return string(str->data(), str->size());
+}
+
+static ostream& operator<<(ostream& out, WKBundleRangeRef rangeRef)
+{
+    out << "range from " << WKBundleRangeGetStartOffset(rangeRef) << " of " << dumpPath(WKBundleRangeGetStartContainer(rangeRef)) << " to " << WKBundleRangeGetEndOffset(rangeRef) << " of " << dumpPath(WKBundleRangeGetEndContainer(rangeRef));
+    return out;
 }
 
 InjectedBundlePage::InjectedBundlePage(WKBundlePageRef page)
@@ -80,6 +108,13 @@ InjectedBundlePage::InjectedBundlePage(WKBundlePageRef page)
         _willRunJavaScriptPrompt
     };
     WKBundlePageSetUIClient(m_page, &uiClient);
+
+    WKBundlePageEditorClient editorClient = {
+        0,
+        this,
+        _shouldBeginEditing,
+    };
+    WKBundlePageSetEditorClient(m_page, &editorClient);
 }
 
 InjectedBundlePage::~InjectedBundlePage()
@@ -333,5 +368,20 @@ void InjectedBundlePage::willRunJavaScriptPrompt(WKStringRef message, WKStringRe
 {
     InjectedBundle::shared().os() << "PROMPT: " << WKStringToUTF8(message)->data() << ", default text: " << WKStringToUTF8(defaultValue)->data() <<  "\n";
 }
+
+// Editor Client Callbacks
+
+bool InjectedBundlePage::_shouldBeginEditing(WKBundlePageRef page, WKBundleRangeRef range, const void* clientInfo)
+{
+    return static_cast<InjectedBundlePage*>(const_cast<void*>(clientInfo))->shouldBeginEditing(range);
+}
+
+bool InjectedBundlePage::shouldBeginEditing(WKBundleRangeRef range)
+{
+    if (InjectedBundle::shared().layoutTestController()->shouldDumpEditingCallbacks())
+        InjectedBundle::shared().os() << "EDITING DELEGATE: shouldBeginEditingInDOMRange:" << range << "\n";
+    return InjectedBundle::shared().layoutTestController()->acceptsEditing();
+}
+
 
 } // namespace WTR

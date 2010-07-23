@@ -1,3 +1,35 @@
+2010-07-22  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Sam Weinig and Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=42193
+        Support layoutTestController.dumpEditingDelegates in WebKitTestRunner
+
+        Step 1: Add the method, and implement one actual delegate call as proof of concept. No tests
+        fixed, but this makes difference one line smaller on many editing tests.
+
+        * WebKitTestRunner/InjectedBundle/Bindings/LayoutTestController.idl:
+        Added dumpEditingCallbacks() and setAcceptsEditing().
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::dumpPath): Dump path to a node in a format that's compatible with DumpRenderTree.
+        (WTR::operator<<): Print a range.
+        (WTR::InjectedBundlePage::InjectedBundlePage): Set editor client in addition to existing
+        clients.
+        (WTR::InjectedBundlePage::_shouldBeginEditing): The only client method implemented so far.
+        (WTR::InjectedBundlePage::shouldBeginEditing): Ditto.
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.h: Added a section for editor client
+        calls.
+
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.cpp:
+        (WTR::LayoutTestController::LayoutTestController):
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.h:
+        (WTR::LayoutTestController::dumpEditingCallbacks):
+        (WTR::LayoutTestController::setAcceptsEditing):
+        (WTR::LayoutTestController::acceptsEditing):
+        (WTR::LayoutTestController::shouldDumpEditingCallbacks):
+        Store m_acceptsEditing and m_dumpEditingCallbacks.
+
 2010-07-22  Yael Aharon  <yael.aharon@nokia.com>
 
         Reviewed by Laszlo Gombos.

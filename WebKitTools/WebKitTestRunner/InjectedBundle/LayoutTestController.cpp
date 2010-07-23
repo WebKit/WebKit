@@ -44,6 +44,8 @@ PassRefPtr<LayoutTestController> LayoutTestController::create(const std::string&
 LayoutTestController::LayoutTestController(const std::string& testPathOrURL)
     : m_whatToDump(RenderTree)
     , m_shouldDumpAllFrameScrollPositions(false)
+    , m_acceptsEditing(true)
+    , m_dumpEditingCallbacks(false)
     , m_dumpStatusCallbacks(false)
     , m_waitToDump(false)
     , m_testRepaint(false)

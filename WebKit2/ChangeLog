@@ -1,3 +1,46 @@
+2010-07-22  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Sam Weinig and Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=42193
+        Support layoutTestController.dumpEditingDelegates in WebKitTestRunner
+
+        Step 1: Add the method, and implement one actual delegate call as proof of concept. No tests
+        fixed, but this makes difference one line smaller on many editing tests.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/InjectedBundle/API/c/WKBundleAPICast.h:
+        * WebProcess/InjectedBundle/API/c/WKBundleBase.h:
+        * WebProcess/InjectedBundle/API/c/WKBundleNode.cpp: Added.
+        (WKBundleNodeCopyNodeName):
+        (WKBundleNodeGetParent):
+        * WebProcess/InjectedBundle/API/c/WKBundleNode.h: Added.
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        (WKBundlePageSetEditorClient):
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.h:
+        * WebProcess/InjectedBundle/API/c/WKBundleRange.cpp: Added.
+        (WKBundleRangeGetStartOffset):
+        (WKBundleRangeGetStartContainer):
+        (WKBundleRangeGetEndOffset):
+        (WKBundleRangeGetEndContainer):
+        * WebProcess/InjectedBundle/API/c/WKBundleRange.h: Added.
+        Added WKBundleRangeRef and WKBundleNodeRef types for injected bundles. These are just pointers
+        to respective WebCore objects, without any WebKit2 wrappers.
+
+        * WebProcess/InjectedBundle/InjectedBundlePageEditorClient.cpp: Added.
+        (WebKit::InjectedBundlePageEditorClient::InjectedBundlePageEditorClient):
+        (WebKit::InjectedBundlePageEditorClient::initialize):
+        (WebKit::InjectedBundlePageEditorClient::shouldBeginEditing):
+        * WebProcess/InjectedBundle/InjectedBundlePageEditorClient.h: Added.
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+        (WebKit::WebEditorClient::shouldBeginEditing):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::initializeInjectedBundleEditorClient):
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::injectedBundleEditorClient):
+        Added the plumbing for invoking injected bundle code for editor client. There is no real API
+        for editor client yet.
+
 2010-07-22  Ivan Krstić  <ike@apple.com>
 
         Reviewed by Anders Carlsson.

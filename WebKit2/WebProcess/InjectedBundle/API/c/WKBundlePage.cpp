@@ -33,6 +33,12 @@
 
 using namespace WebKit;
 
+void WKBundlePageSetEditorClient(WKBundlePageRef pageRef, WKBundlePageEditorClient * wkClient)
+{
+    if (wkClient && !wkClient->version)
+        toWK(pageRef)->initializeInjectedBundleEditorClient(wkClient);
+}
+
 void WKBundlePageSetLoaderClient(WKBundlePageRef pageRef, WKBundlePageLoaderClient * wkClient)
 {
     if (wkClient && !wkClient->version)

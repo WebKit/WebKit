@@ -23,30 +23,34 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module WTR {
+#include "InjectedBundlePageEditorClient.h"
 
-    interface LayoutTestController {
-        // The basics.
-        void dumpAsText();
-        void dumpChildFramesAsText();
-        void waitUntilDone();
-        void notifyDone();
+#include "WKAPICast.h"
+#include "WKBundleAPICast.h"
+#include <WebCore/PlatformString.h>
 
-        // Other dumping.
-        void dumpChildFrameScrollPositions();
-        void dumpEditingCallbacks();
-        void dumpStatusCallbacks();
+using namespace WebCore;
 
-        // Repaint testing.
-        void testRepaint();
-        void repaintSweepHorizontally();
-        void display();
+namespace WebKit {
 
-        // Animation testing.
-        int numberOfActiveAnimations();
-        boolean pauseAnimationAtTimeOnElementWithId(in DOMString animationName, in double time, in DOMString elementId);
-
-        void setAcceptsEditing(in boolean value);
-    };
-
+InjectedBundlePageEditorClient::InjectedBundlePageEditorClient()
+{
+    initialize(0);
 }
+
+void InjectedBundlePageEditorClient::initialize(WKBundlePageEditorClient* client)
+{
+    if (client && !client->version)
+        m_client = *client;
+    else 
+        memset(&m_client, 0, sizeof(m_client));
+}
+
+bool InjectedBundlePageEditorClient::shouldBeginEditing(WebPage* page, WebCore::Range* range)
+{
+    if (m_client.shouldBeginEditing)
+        return m_client.shouldBeginEditing(toRef(page), toRef(range), m_client.clientInfo);
+    return true;
+}
+
+} // namespace WebKit

@@ -23,30 +23,31 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module WTR {
+#ifndef InjectedBundlePageEditorClient_h
+#define InjectedBundlePageEditorClient_h
 
-    interface LayoutTestController {
-        // The basics.
-        void dumpAsText();
-        void dumpChildFramesAsText();
-        void waitUntilDone();
-        void notifyDone();
+#include "WKBundlePage.h"
 
-        // Other dumping.
-        void dumpChildFrameScrollPositions();
-        void dumpEditingCallbacks();
-        void dumpStatusCallbacks();
-
-        // Repaint testing.
-        void testRepaint();
-        void repaintSweepHorizontally();
-        void display();
-
-        // Animation testing.
-        int numberOfActiveAnimations();
-        boolean pauseAnimationAtTimeOnElementWithId(in DOMString animationName, in double time, in DOMString elementId);
-
-        void setAcceptsEditing(in boolean value);
-    };
-
+namespace WebCore {
+    class Range;
 }
+
+namespace WebKit {
+
+class WebFrame;
+class WebPage;
+
+class InjectedBundlePageEditorClient {
+public:
+    InjectedBundlePageEditorClient();
+    void initialize(WKBundlePageEditorClient*);
+
+    bool shouldBeginEditing(WebPage*, WebCore::Range*);
+
+private:
+    WKBundlePageEditorClient m_client;
+};
+
+} // namespace WebKit
+
+#endif // InjectedBundlePageEditorClient_h

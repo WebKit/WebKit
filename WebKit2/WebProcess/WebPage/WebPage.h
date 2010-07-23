@@ -27,6 +27,7 @@
 #define WebPage_h
 
 #include "DrawingArea.h"
+#include "InjectedBundlePageEditorClient.h"
 #include "InjectedBundlePageLoaderClient.h"
 #include "InjectedBundlePageUIClient.h"
 #include <WebCore/FrameLoaderTypes.h>
@@ -91,9 +92,11 @@ public:
     void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder&);
 
     // -- InjectedBundle methods
+    void initializeInjectedBundleEditorClient(WKBundlePageEditorClient*);
     void initializeInjectedBundleLoaderClient(WKBundlePageLoaderClient*);
     void initializeInjectedBundleUIClient(WKBundlePageUIClient*);
 
+    InjectedBundlePageEditorClient& injectedBundleEditorClient() { return m_editorClient; }
     InjectedBundlePageLoaderClient& injectedBundleLoaderClient() { return m_loaderClient; }
     InjectedBundlePageUIClient& injectedBundleUIClient() { return m_uiClient; }
 
@@ -138,6 +141,7 @@ private:
     WebCore::IntSize m_viewSize;
     OwnPtr<DrawingArea> m_drawingArea;
 
+    InjectedBundlePageEditorClient m_editorClient;
     InjectedBundlePageLoaderClient m_loaderClient;
     InjectedBundlePageUIClient m_uiClient;
 
