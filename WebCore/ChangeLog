@@ -1,3 +1,17 @@
+2010-07-24  Andreas Kling  <andreas.kling@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] tst_QWebFrame::callQtInvokable() fails
+        https://bugs.webkit.org/show_bug.cgi?id=41065
+
+        Converting JS objects to QVariantMaps was broken.
+        This is a partial revert of <http://trac.webkit.org/changeset/61478>
+
+        * bridge/qt/qt_runtime.cpp:
+        (JSC::Bindings::convertValueToQVariant): Remove erroneous crash guard
+        around JSObject::getPropertyNames()
+
 2010-07-24  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
