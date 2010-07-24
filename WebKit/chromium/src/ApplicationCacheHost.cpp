@@ -37,11 +37,15 @@
 #include "DocumentLoader.h"
 #include "DOMApplicationCache.h"
 #include "Frame.h"
+#include "InspectorApplicationCacheAgent.h"
+#include "InspectorController.h"
+#include "Page.h"
 #include "ProgressEvent.h"
 #include "Settings.h"
 #include "WebURL.h"
 #include "WebURLError.h"
 #include "WebURLResponse.h"
+#include "WebVector.h"
 #include "WrappedResourceRequest.h"
 #include "WrappedResourceResponse.h"
 
@@ -205,6 +209,32 @@ void ApplicationCacheHost::notifyDOMApplicationCache(EventID id, int total, int 
     }
     dispatchDOMEvent(id, total, done);
 }
+
+#if ENABLE(INSPECTOR)
+ApplicationCacheHost::CacheInfo ApplicationCacheHost::applicationCacheInfo()
+{
+    if (!m_internal)
+        return CacheInfo(KURL(), 0, 0, 0);
+
+    WebKit::WebApplicationCacheHost::CacheInfo webInfo;
+    m_internal->m_outerHost->getAssociatedCacheInfo(&webInfo);
+    return CacheInfo(webInfo.manifestURL, webInfo.creationTime, webInfo.updateTime, webInfo.totalSize);
+}
+
+void ApplicationCacheHost::fillResourceList(ResourceInfoList* resources)
+{
+    if (!m_internal)
+        return;
+
+    WebKit::WebVector<WebKit::WebApplicationCacheHost::ResourceInfo> webResources;
+    m_internal->m_outerHost->getResourceList(&webResources);
+    for (int i = 0; i < webResources.size(); ++i) {
+        resources->append(ResourceInfo(
+            webResources[i].url, webResources[i].isMaster, webResources[i].isManifest, webResources[i].isFallback,
+            webResources[i].isForeign, webResources[i].isExplicit, webResources[i].size));
+    }
+}
+#endif
 
 void ApplicationCacheHost::stopDeferringEvents()
 {

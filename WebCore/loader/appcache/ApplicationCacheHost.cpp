@@ -250,6 +250,37 @@ void ApplicationCacheHost::stopDeferringEvents()
     m_defersEvents = false;
 }
 
+#if ENABLE(INSPECTOR)
+void ApplicationCacheHost::fillResourceList(ResourceInfoList* resources)
+{
+    ApplicationCache* cache = applicationCache();
+    if (!cache || !cache->isComplete())
+        return;
+     
+    ApplicationCache::ResourceMap::const_iterator end = cache->end();
+    for (ApplicationCache::ResourceMap::const_iterator it = cache->begin(); it != end; ++it) {
+        RefPtr<ApplicationCacheResource> resource = it->second;
+        unsigned type = resource->type();
+        bool isMaster   = type & ApplicationCacheResource::Master;
+        bool isManifest = type & ApplicationCacheResource::Manifest;
+        bool isExplicit = type & ApplicationCacheResource::Explicit;
+        bool isForeign  = type & ApplicationCacheResource::Foreign;
+        bool isFallback = type & ApplicationCacheResource::Fallback;
+        resources->append(ResourceInfo(resource->url(), isMaster, isManifest, isFallback, isForeign, isExplicit, resource->estimatedSizeInStorage()));
+    }
+}
+ 
+ApplicationCacheHost::CacheInfo ApplicationCacheHost::applicationCacheInfo()
+{
+    ApplicationCache* cache = applicationCache();
+    if (!cache || !cache->isComplete())
+        return CacheInfo(KURL(), 0, 0, 0);
+  
+    // FIXME: Add "Creation Time" and "Update Time" to Application Caches.
+    return CacheInfo(cache->manifestResource()->url(), 0, 0, cache->estimatedSizeInStorage());
+}
+#endif
+
 void ApplicationCacheHost::dispatchDOMEvent(EventID id, int total, int done)
 {
     if (m_domApplicationCache) {

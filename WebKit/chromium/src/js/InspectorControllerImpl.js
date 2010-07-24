@@ -56,6 +56,7 @@ devtools.InspectorBackendImpl = function()
     this.installInspectorControllerDelegate_("enableTimeline");
     this.installInspectorControllerDelegate_("getChildNodes");
     this.installInspectorControllerDelegate_("getCookies");
+    this.installInspectorControllerDelegate_("getApplicationCaches");
     this.installInspectorControllerDelegate_("getDatabaseTableNames");
     this.installInspectorControllerDelegate_("getDOMStorageEntries");
     this.installInspectorControllerDelegate_("getEventListenersForNode");

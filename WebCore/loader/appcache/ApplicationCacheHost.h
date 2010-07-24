@@ -33,6 +33,7 @@
 
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
 
+#include "KURL.h"
 #include <wtf/Deque.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassRefPtr.h>
@@ -40,10 +41,8 @@
 #include <wtf/Vector.h>
 
 namespace WebCore {
-    class ApplicationCache;
     class DOMApplicationCache;
     class DocumentLoader;
-    class KURL;
     class ResourceLoader;
     class ResourceError;
     class ResourceRequest;
@@ -52,6 +51,7 @@ namespace WebCore {
 #if PLATFORM(CHROMIUM)
     class ApplicationCacheHostInternal;
 #else
+    class ApplicationCache;
     class ApplicationCacheGroup;
     class ApplicationCacheResource;
     class ApplicationCacheStorage;
@@ -79,6 +79,40 @@ namespace WebCore {
             CACHED_EVENT,
             OBSOLETE_EVENT  // Must remain the last value, this is used to size arrays.
         };
+
+#if ENABLE(INSPECTOR)
+        struct CacheInfo {
+            CacheInfo(const KURL& manifest, double creationTime, double updateTime, long long size)
+                : m_manifest(manifest)
+                , m_creationTime(creationTime)
+                , m_updateTime(updateTime)
+                , m_size(size) { }
+            KURL m_manifest;
+            double m_creationTime;
+            double m_updateTime;
+            long long m_size;
+        };
+
+        struct ResourceInfo {
+            ResourceInfo(const KURL& resource, bool isMaster, bool isManifest, bool isFallback, bool isForeign, bool isExplicit, long long size)
+                : m_resource(resource)
+                , m_isMaster(isMaster)
+                , m_isManifest(isManifest)
+                , m_isFallback(isFallback)
+                , m_isForeign(isForeign)
+                , m_isExplicit(isExplicit)
+                , m_size(size) { }
+            KURL m_resource;
+            bool m_isMaster;
+            bool m_isManifest;
+            bool m_isFallback;
+            bool m_isForeign;
+            bool m_isExplicit;
+            long long m_size;
+        };
+
+        typedef Vector<ResourceInfo> ResourceInfoList;
+#endif
 
         ApplicationCacheHost(DocumentLoader*);
         ~ApplicationCacheHost();
@@ -112,7 +146,10 @@ namespace WebCore {
 
         void stopDeferringEvents(); // Also raises the events that have been queued up.
 
-        ApplicationCache* applicationCacheForInspector() const { return applicationCache(); }
+#if ENABLE(INSPECTOR)
+        void fillResourceList(ResourceInfoList*);
+        CacheInfo applicationCacheInfo();
+#endif
 
     private:
         bool isApplicationCacheEnabled();
@@ -135,7 +172,6 @@ namespace WebCore {
 #if PLATFORM(CHROMIUM)
         friend class ApplicationCacheHostInternal;
         OwnPtr<ApplicationCacheHostInternal> m_internal;
-        ApplicationCache* applicationCache() const { return 0; } // FIXME: Implement for Chromium Web Inspector Support.
 #else
         friend class ApplicationCacheGroup;
         friend class ApplicationCacheStorage;

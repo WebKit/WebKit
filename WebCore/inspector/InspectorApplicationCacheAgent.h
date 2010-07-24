@@ -28,13 +28,10 @@
 #if ENABLE(INSPECTOR) && ENABLE(OFFLINE_WEB_APPLICATIONS)
 
 #include "ApplicationCacheHost.h"
-#include "KURL.h"
-#include "PlatformString.h"
 #include <wtf/Noncopyable.h>
 
 namespace WebCore {
 
-class ApplicationCache;
 class InspectorController;
 class InspectorFrontend;
 class ResourceResponse;
@@ -43,44 +40,6 @@ class ScriptObject;
 
 class InspectorApplicationCacheAgent : public Noncopyable {
 public:
-    struct ApplicationCacheInfo {
-        ApplicationCacheInfo(const KURL& manifest, const String& creationTime, const String& updateTime, long long size)
-            : m_manifest(manifest)
-            , m_creationTime(creationTime)
-            , m_updateTime(updateTime)
-            , m_size(size)
-        {
-        }
-
-        KURL m_manifest;
-        String m_creationTime;
-        String m_updateTime;
-        long long m_size;
-    };
-
-    struct ResourceInfo {
-        ResourceInfo(const KURL& resource, bool isMaster, bool isManifest, bool isFallback, bool isForeign, bool isExplicit, long long size)
-            : m_resource(resource)
-            , m_isMaster(isMaster)
-            , m_isManifest(isManifest)
-            , m_isFallback(isFallback)
-            , m_isForeign(isForeign)
-            , m_isExplicit(isExplicit)
-            , m_size(size)
-        {
-        }
-
-        KURL m_resource;
-        bool m_isMaster;
-        bool m_isManifest;
-        bool m_isFallback;
-        bool m_isForeign;
-        bool m_isExplicit;
-        long long m_size;
-    };
-
-    typedef Vector<ResourceInfo> ResourceInfoList;
-
     InspectorApplicationCacheAgent(InspectorController* inspectorController, InspectorFrontend* frontend);
     ~InspectorApplicationCacheAgent() { }
 
@@ -93,11 +52,9 @@ public:
     void getApplicationCaches(long callId);
 
 private:
-    ScriptObject buildObjectForApplicationCache(const ResourceInfoList&, const ApplicationCacheInfo&);
-    ScriptArray buildArrayForApplicationCacheResources(const ResourceInfoList&);
-    ScriptObject buildObjectForApplicationCacheResource(const ResourceInfo&);
-
-    void fillResourceList(ApplicationCache*, ResourceInfoList*);
+    ScriptObject buildObjectForApplicationCache(const ApplicationCacheHost::ResourceInfoList&, const ApplicationCacheHost::CacheInfo&);
+    ScriptArray buildArrayForApplicationCacheResources(const ApplicationCacheHost::ResourceInfoList&);
+    ScriptObject buildObjectForApplicationCacheResource(const ApplicationCacheHost::ResourceInfo&);
 
     InspectorController* m_inspectorController;
     InspectorFrontend* m_frontend;

@@ -28,8 +28,7 @@
 
 #if ENABLE(INSPECTOR) && ENABLE(OFFLINE_WEB_APPLICATIONS)
 
-#include "ApplicationCache.h"
-#include "ApplicationCacheResource.h"
+#include "ApplicationCacheHost.h"
 #include "DocumentLoader.h"
 #include "Frame.h"
 #include "FrameLoader.h"
@@ -63,29 +62,6 @@ void InspectorApplicationCacheAgent::updateNetworkState(bool isNowOnline)
     m_frontend->updateNetworkState(isNowOnline);
 }
 
-void InspectorApplicationCacheAgent::fillResourceList(ApplicationCache* cache, ResourceInfoList* resources)
-{
-#if !PLATFORM(CHROMIUM)
-    ASSERT(cache && cache->isComplete());
-#endif
-    ApplicationCache::ResourceMap::const_iterator end = cache->end();
-    for (ApplicationCache::ResourceMap::const_iterator it = cache->begin(); it != end; ++it) {
-        RefPtr<ApplicationCacheResource> resource = it->second;
-        unsigned type = resource->type();
-        bool isMaster   = type & ApplicationCacheResource::Master;
-        bool isManifest = type & ApplicationCacheResource::Manifest;
-        bool isExplicit = type & ApplicationCacheResource::Explicit;
-        bool isForeign  = type & ApplicationCacheResource::Foreign;
-        bool isFallback = type & ApplicationCacheResource::Fallback;
-#if PLATFORM(CHROMIUM)
-        int64_t estimatedSizeInStorage = 0;
-#else
-        int64_t estimatedSizeInStorage = resource->estimatedSizeInStorage();
-#endif
-        resources->append(InspectorApplicationCacheAgent::ResourceInfo(resource->url(), isMaster, isManifest, isFallback, isForeign, isExplicit, estimatedSizeInStorage));
-    }
-}
-
 void InspectorApplicationCacheAgent::getApplicationCaches(long callId)
 {
     DocumentLoader* documentLoader = m_inspectorController->inspectedPage()->mainFrame()->loader()->documentLoader();
@@ -95,25 +71,15 @@ void InspectorApplicationCacheAgent::getApplicationCaches(long callId)
     }
 
     ApplicationCacheHost* host = documentLoader->applicationCacheHost();
-    ApplicationCache* cache = host->applicationCacheForInspector();
-    if (!cache
-#if !PLATFORM(CHROMIUM)
-        || !cache->isComplete()
-#endif
-        ) {
-        m_frontend->didGetApplicationCaches(callId, ScriptValue::undefined());
-        return;        
-    }
-
-    // FIXME: Add "Creation Time" and "Update Time" to Application Caches.
-    ApplicationCacheInfo info(cache->manifestResource()->url(), String(), String(), cache->estimatedSizeInStorage());
-    ResourceInfoList resources;
-    fillResourceList(cache, &resources);
+    ApplicationCacheHost::CacheInfo info = host->applicationCacheInfo();
+ 
+    ApplicationCacheHost::ResourceInfoList resources;
+    host->fillResourceList(&resources);
 
     m_frontend->didGetApplicationCaches(callId, buildObjectForApplicationCache(resources, info));
 }
 
-ScriptObject InspectorApplicationCacheAgent::buildObjectForApplicationCache(const ResourceInfoList& applicationCacheResources, const ApplicationCacheInfo& applicationCacheInfo)
+ScriptObject InspectorApplicationCacheAgent::buildObjectForApplicationCache(const ApplicationCacheHost::ResourceInfoList& applicationCacheResources, const ApplicationCacheHost::CacheInfo& applicationCacheInfo)
 {
     ScriptObject value = m_frontend->newScriptObject();
     value.set("size", applicationCacheInfo.m_size);
@@ -125,19 +91,19 @@ ScriptObject InspectorApplicationCacheAgent::buildObjectForApplicationCache(cons
     return value;
 }
 
-ScriptArray InspectorApplicationCacheAgent::buildArrayForApplicationCacheResources(const ResourceInfoList& applicationCacheResources)
+ScriptArray InspectorApplicationCacheAgent::buildArrayForApplicationCacheResources(const ApplicationCacheHost::ResourceInfoList& applicationCacheResources)
 {
     ScriptArray resources = m_frontend->newScriptArray();
 
-    ResourceInfoList::const_iterator end = applicationCacheResources.end();
-    ResourceInfoList::const_iterator it = applicationCacheResources.begin();
+    ApplicationCacheHost::ResourceInfoList::const_iterator end = applicationCacheResources.end();
+    ApplicationCacheHost::ResourceInfoList::const_iterator it = applicationCacheResources.begin();
     for (int i = 0; it != end; ++it, i++)
         resources.set(i, buildObjectForApplicationCacheResource(*it));
 
     return resources;
 }
 
-ScriptObject InspectorApplicationCacheAgent::buildObjectForApplicationCacheResource(const ResourceInfo& resourceInfo)
+ScriptObject InspectorApplicationCacheAgent::buildObjectForApplicationCacheResource(const ApplicationCacheHost::ResourceInfo& resourceInfo)
 {
     ScriptObject value = m_frontend->newScriptObject();
     value.set("name", resourceInfo.m_resource.string());

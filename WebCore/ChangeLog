@@ -1,3 +1,24 @@
+2010-07-23  Kavita Kanetkar  <kkanetkar@chromium.org>
+
+        Reviewed by Joseph Pecoraro.
+
+        Implement remaining Inspector support for chrome's appcache
+        https://bugs.webkit.org/show_bug.cgi?id=42426
+
+        * inspector/InspectorApplicationCacheAgent.cpp:
+        (WebCore::InspectorApplicationCacheAgent::getApplicationCaches):
+        (WebCore::InspectorApplicationCacheAgent::buildObjectForApplicationCache):
+        (WebCore::InspectorApplicationCacheAgent::buildArrayForApplicationCacheResources):
+        (WebCore::InspectorApplicationCacheAgent::buildObjectForApplicationCacheResource):
+        * inspector/InspectorApplicationCacheAgent.h:
+        (WebCore::InspectorController::connectFrontend):
+        * loader/appcache/ApplicationCacheHost.cpp:
+        (WebCore::ApplicationCacheHost::fillResourceList):
+        (WebCore::ApplicationCacheHost::applicationCacheInfo):
+        * loader/appcache/ApplicationCacheHost.h: Changed creation + update times to double and moved appcache info here from InspectorApplicationCacheAgent.h
+        (WebCore::ApplicationCacheHost::CacheInfo::CacheInfo):
+        (WebCore::ApplicationCacheHost::ResourceInfo::ResourceInfo):
+
 2010-07-23  Rafael Antognolli  <antognolli@profusion.mobi>
 
         Reviewed by Antonio Gomes.
