@@ -1,3 +1,10 @@
+2010-07-24  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed: chromium build fix.
+
+        * src/ApplicationCacheHost.cpp:
+        (WebCore::ApplicationCacheHost::fillResourceList):
+
 2010-07-23  Kavita Kanetkar  <kkanetkar@chromium.org>
 
         Reviewed by Joseph Pecoraro.

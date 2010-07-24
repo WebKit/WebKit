@@ -228,7 +228,7 @@ void ApplicationCacheHost::fillResourceList(ResourceInfoList* resources)
 
     WebKit::WebVector<WebKit::WebApplicationCacheHost::ResourceInfo> webResources;
     m_internal->m_outerHost->getResourceList(&webResources);
-    for (int i = 0; i < webResources.size(); ++i) {
+    for (size_t i = 0; i < webResources.size(); ++i) {
         resources->append(ResourceInfo(
             webResources[i].url, webResources[i].isMaster, webResources[i].isManifest, webResources[i].isFallback,
             webResources[i].isForeign, webResources[i].isExplicit, webResources[i].size));
