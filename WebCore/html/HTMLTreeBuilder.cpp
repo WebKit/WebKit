@@ -2439,10 +2439,6 @@ void HTMLTreeBuilder::processComment(AtomicHTMLToken& token)
 void HTMLTreeBuilder::processCharacter(AtomicHTMLToken& token)
 {
     ASSERT(token.type() == HTMLToken::Character);
-    // FIXME: Currently this design has an extra memcpy because we copy the
-    // characters out of the HTMLTokenizer's buffer into the AtomicHTMLToken
-    // and then into the text node.  What we'd really like is to copy directly
-    // from the HTMLTokenizer's buffer into the text node.
     ExternalCharacterTokenBuffer buffer(token);
     processCharacterBuffer(buffer);
 }

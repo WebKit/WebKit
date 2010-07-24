@@ -1,3 +1,10 @@
+2010-07-23  Adam Barth  <abarth@webkit.org>
+
+        Remove FIXME that we already fixed.
+
+        * html/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::processCharacter):
+
 2010-06-24  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Kent Tamura.
