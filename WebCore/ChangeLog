@@ -1,3 +1,15 @@
+2010-07-24  Patrick Gansterer  <paroga@paroga.com>
+
+        Reviewed by Darin Adler.
+
+        Buildfix for !ENABLE(INSPECTOR) after r63891.
+        https://bugs.webkit.org/show_bug.cgi?id=42925
+
+        * bindings/js/ScriptValue.cpp: Added property svn:eol-style.
+        * bindings/js/ScriptValue.h: Added property svn:eol-style.
+        * inspector/ConsoleMessage.cpp: Added property svn:eol-style.
+        * inspector/ConsoleMessage.h: Added property svn:eol-style.
+
 2010-07-24  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

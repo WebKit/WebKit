@@ -67,7 +67,9 @@ private:
         explicit CallFrame(const ScriptCallFrame& frame);
         CallFrame();
         bool isEqual(const CallFrame& o) const;
+#if ENABLE(INSPECTOR)
         PassRefPtr<InspectorObject> buildInspectorObject() const;
+#endif
 
     private:
         String m_functionName;

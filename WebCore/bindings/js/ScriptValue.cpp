@@ -94,6 +94,7 @@ ScriptValue ScriptValue::deserialize(ScriptState* scriptState, SerializedScriptV
     return ScriptValue(value->deserialize(scriptState, scriptState->lexicalGlobalObject()));
 }
 
+#if ENABLE(INSPECTOR)
 static PassRefPtr<InspectorValue> jsToInspectorValue(ScriptState* scriptState, JSValue value)
 {
     if (!value) {
@@ -149,5 +150,6 @@ PassRefPtr<InspectorValue> ScriptValue::toInspectorValue(ScriptState* scriptStat
 {
     return jsToInspectorValue(scriptState, m_value.get());
 }
+#endif // ENABLE(INSPECTOR)
 
 } // namespace WebCore
