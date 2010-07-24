@@ -1,3 +1,15 @@
+2010-07-24  Riccardo Magliocchetti  <riccardo.magliocchetti@gmail.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] Enable jit compilation on arm
+        https://bugs.webkit.org/show_bug.cgi?id=42856
+
+        Add missing bits to configure.ac to build the arm jit.
+        Compile and tested on debian sid armel on a qemu vm.
+
+        * configure.ac:
+
 2010-07-23  Rafael Antognolli  <antognolli@profusion.mobi>
 
         Reviewed by Antonio Gomes.

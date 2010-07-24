@@ -677,6 +677,11 @@ AC_ARG_ENABLE([jit],
               [],[enable_jit="yes"])
 if test "$enable_jit" = "yes"; then
     case "$host_cpu" in
+        arm*)
+            AC_DEFINE([ENABLE_JIT], [1], [Define to enable JIT])
+            AC_DEFINE([ENABLE_YARR], [1], [Define to enable YARR])
+            AC_DEFINE([ENABLE_YARR_JIT], [1], [Define to enable YARR JIT])
+        ;;
         i*86|x86_64)
             AC_DEFINE([ENABLE_JIT], [1], [Define to enable JIT])
             AC_DEFINE([ENABLE_YARR], [1], [Define to enable YARR])
