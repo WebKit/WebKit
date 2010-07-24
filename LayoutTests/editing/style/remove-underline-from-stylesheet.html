@@ -1,6 +1,5 @@
 <html> 
 <head>
-
 <style>
 .editing { 
     border: 2px solid red; 
@@ -9,8 +8,8 @@
     text-decoration: underline;
 }
 </style>
+<script src="../../resources/dump-as-markup.js"></script>
 <script src=../editing.js language="JavaScript" type="text/JavaScript" ></script>
-
 <script>
 
 function editingTest() {
@@ -32,18 +31,16 @@ function editingTest() {
 }
 
 </script>
-
-<title>Editing Test</title> 
+<title>Editing Test</title>
 </head> 
 <body>
-<p>This tests removing underline from stylesheet.  For consistency, underline should NOT be removed (see bug 27809).</p>
 <div contenteditable id="root" class="editing">
 <span id="test"></span>
 </div>
-
 <script>
+Markup.description('This tests removing underline from stylesheet (.editing has underline). Because text-decoration that comes from a style rule cannot be pushed down, the underline should stay. (see bug 27809).');
+Markup.setNodeToDump('root');
 runEditingTest();
 </script>
-
 </body>
 </html>

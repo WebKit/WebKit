@@ -1,3 +1,25 @@
+2010-07-23  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        editing/execCommand/hilitecolor.html and editing/style/remove-underline-from-stylesheet.html should be dumpAsMarkup tests
+        https://bugs.webkit.org/show_bug.cgi?id=42793
+
+        Converted the tests and removed the platform specific expected results.
+
+        * editing/execCommand/hilitecolor-expected.txt: Added.
+        * editing/execCommand/hilitecolor.html: Converted.
+        * editing/style/remove-underline-from-stylesheet-expected.txt: Converted.
+        * editing/style/remove-underline-from-stylesheet.html: Converted.
+        * platform/chromium-linux/editing/execCommand/hilitecolor-expected.checksum: Removed.
+        * platform/chromium-win/editing/execCommand/hilitecolor-expected.checksum: Removed.
+        * platform/chromium-win/editing/execCommand/hilitecolor-expected.png: Removed.
+        * platform/chromium-win/editing/execCommand/hilitecolor-expected.txt: Removed.
+        * platform/mac/editing/execCommand/hilitecolor-expected.checksum: Removed.
+        * platform/mac/editing/execCommand/hilitecolor-expected.png: Removed.
+        * platform/mac/editing/execCommand/hilitecolor-expected.txt: Removed.
+        * platform/qt/editing/execCommand/hilitecolor-expected.txt: Removed.
+
 2010-07-23  James Robinson  <jamesr@chromium.org>
 
         Unreviewed.  Add chromium expectations for new tests.
