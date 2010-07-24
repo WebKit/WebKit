@@ -855,6 +855,37 @@ JSStringRef AccessibilityUIElement::stringForRange(unsigned location, unsigned l
     return 0;
 }
 
+JSStringRef AccessibilityUIElement::attributedStringForRange(unsigned location, unsigned length)
+{
+    NSRange range = NSMakeRange(location, length);
+    BEGIN_AX_OBJC_EXCEPTIONS
+    NSAttributedString* string = [m_element accessibilityAttributeValue:NSAccessibilityAttributedStringForRangeParameterizedAttribute forParameter:[NSValue valueWithRange:range]];
+    if (![string isKindOfClass:[NSAttributedString class]])
+        return 0;
+    
+    NSString* stringWithAttrs = [string description];
+    return [stringWithAttrs createJSStringRef];
+    END_AX_OBJC_EXCEPTIONS
+    
+    return 0;
+}
+
+bool AccessibilityUIElement::attributedStringRangeIsMisspelled(unsigned location, unsigned length)
+{
+    NSRange range = NSMakeRange(location, length);
+    BEGIN_AX_OBJC_EXCEPTIONS
+    NSAttributedString* string = [m_element accessibilityAttributeValue:NSAccessibilityAttributedStringForRangeParameterizedAttribute forParameter:[NSValue valueWithRange:range]];
+    if (![string isKindOfClass:[NSAttributedString class]])
+        return false;
+
+    NSDictionary* attrs = [string attributesAtIndex:0 effectiveRange:nil];
+    if([[attrs objectForKey:NSAccessibilityMisspelledTextAttribute] boolValue])
+        return true;    
+    END_AX_OBJC_EXCEPTIONS
+    
+    return false;
+}
+
 JSStringRef AccessibilityUIElement::attributesOfColumnHeaders()
 {
     // not yet defined in AppKit... odd

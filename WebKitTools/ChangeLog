@@ -1,3 +1,25 @@
+2010-07-24  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by David Kilzer.
+
+        AX: need a layout test testing misspelled words in attributed strings
+        https://bugs.webkit.org/show_bug.cgi?id=42899
+
+        * DumpRenderTree/AccessibilityUIElement.cpp:
+        (attributedStringForRangeCallback):
+        (attributedStringRangeIsMisspelledCallback):
+        (AccessibilityUIElement::getJSClass):
+        * DumpRenderTree/AccessibilityUIElement.h:
+        * DumpRenderTree/gtk/AccessibilityUIElementGtk.cpp:
+        (AccessibilityUIElement::attributedStringForRange):
+        (AccessibilityUIElement::attributedStringRangeIsMisspelled):
+        * DumpRenderTree/mac/AccessibilityUIElementMac.mm:
+        (AccessibilityUIElement::attributedStringForRange):
+        (AccessibilityUIElement::attributedStringRangeIsMisspelled):
+        * DumpRenderTree/win/AccessibilityUIElementWin.cpp:
+        (AccessibilityUIElement::attributedStringForRange):
+        (AccessibilityUIElement::attributedStringRangeIsMisspelled):
+
 2010-07-23  David Kilzer  <ddkilzer@apple.com>
 
         <http://webkit.org/b/42911> Update ruby tools to work with shallow framework bundles

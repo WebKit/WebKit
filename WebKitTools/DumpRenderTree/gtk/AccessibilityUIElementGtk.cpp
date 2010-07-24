@@ -499,6 +499,18 @@ JSStringRef AccessibilityUIElement::stringForRange(unsigned, unsigned)
     return JSStringCreateWithCharacters(0, 0);
 } 
 
+JSStringRef AccessibilityUIElement::attributedStringForRange(unsigned, unsigned)
+{
+    // FIXME: implement
+    return JSStringCreateWithCharacters(0, 0);
+}
+
+bool AccessibilityUIElement::attributedStringRangeIsMisspelled(unsigned location, unsigned length)
+{
+    // FIXME: implement
+    return false;
+}
+
 AccessibilityUIElement AccessibilityUIElement::cellForColumnAndRow(unsigned column, unsigned row)
 {
     // FIXME: implement
