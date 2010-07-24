@@ -37,7 +37,7 @@
 #include <Evas.h>
 #include <stdlib.h>
 
-#ifdef ENABLE_GLIB_SUPPORT
+#if ENABLE(GLIB_SUPPORT)
 #include <glib-object.h>
 #include <glib.h>
 
@@ -90,7 +90,7 @@ int ewk_init(void)
         goto error_edje;
     }
 
-#ifdef ENABLE_GLIB_SUPPORT
+#if ENABLE(GLIB_SUPPORT)
     g_type_init();
 
     if (!g_thread_supported())

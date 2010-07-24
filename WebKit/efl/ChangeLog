@@ -2,6 +2,18 @@
 
         Reviewed by Antonio Gomes.
 
+        [EFL] Cleanup glib support (make it optional)
+        https://bugs.webkit.org/show_bug.cgi?id=42480
+
+        Put some ifdefs on glib calls.
+
+        * ewk/ewk_main.cpp:
+        (ewk_init):
+
+2010-07-23  Rafael Antognolli  <antognolli@profusion.mobi>
+
+        Reviewed by Antonio Gomes.
+
         [EFL] Add support for using libcurl network backend.
         https://bugs.webkit.org/show_bug.cgi?id=42286
 

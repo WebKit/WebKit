@@ -1,3 +1,14 @@
+2010-07-23  Rafael Antognolli  <antognolli@profusion.mobi>
+
+        Reviewed by Antonio Gomes.
+
+        [EFL] Cleanup glib support (make it optional)
+        https://bugs.webkit.org/show_bug.cgi?id=42480
+
+        Remove gobject/GRefPtr.cpp if not using soup/glib.
+
+        * wtf/CMakeListsEfl.txt:
+
 2010-07-23  Patrick Gansterer  <paroga@paroga.com>
 
         Reviewed by Adam Roben.

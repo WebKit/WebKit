@@ -3,14 +3,18 @@ ADD_DEFINITIONS(-DUSE_SYSTEM_MALLOC=1)
 LIST(APPEND WTF_SOURCES
     efl/MainThreadEfl.cpp
 
-    gobject/GOwnPtr.cpp
-    gobject/GRefPtr.cpp
-
     ThreadIdentifierDataPthreads.cpp
     ThreadingPthreads.cpp
 
     unicode/icu/CollatorICU.cpp
 )
+
+IF (ENABLE_GLIB_SUPPORT)
+  LIST(APPEND WTF_SOURCES
+    gobject/GOwnPtr.cpp
+    gobject/GRefPtr.cpp
+  )
+ENDIF ()
 
 LIST(APPEND WTF_LIBRARIES
     pthread

@@ -1,3 +1,18 @@
+2010-07-23  Rafael Antognolli  <antognolli@profusion.mobi>
+
+        Reviewed by Antonio Gomes.
+
+        [EFL] Cleanup glib support (make it optional)
+        https://bugs.webkit.org/show_bug.cgi?id=42480
+
+        No new tests, no new features added.
+        Just add flags and directories for glib if necessary.
+        Put some ifdefs on glib calls.
+
+        * CMakeListsEfl.txt:
+        * platform/graphics/cairo/FontPlatformDataCairo.cpp:
+        (WebCore::FontPlatformData::FontPlatformData):
+
 2010-07-23  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Dimitri Glazkov.

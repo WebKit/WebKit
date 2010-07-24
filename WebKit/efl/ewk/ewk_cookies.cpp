@@ -29,8 +29,8 @@
 
 #include <Eina.h>
 #include <eina_safety_checks.h>
-#include <glib.h>
 #ifdef WTF_USE_SOUP
+#include <glib.h>
 #include <libsoup/soup.h>
 #endif
 #include <wtf/text/CString.h>

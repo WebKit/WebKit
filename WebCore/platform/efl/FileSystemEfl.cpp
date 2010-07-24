@@ -42,7 +42,9 @@
 #include <dlfcn.h>
 #include <errno.h>
 #include <fnmatch.h>
+#if ENABLE(GLIB_SUPPORT)
 #include <glib.h> // TODO: remove me after following TODO is solved.
+#endif
 #include <limits.h>
 #include <stdio.h>
 #include <sys/stat.h>
