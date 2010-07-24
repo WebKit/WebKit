@@ -1,3 +1,40 @@
+2010-07-23  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        CanvasRenderingContext2D has lots of style errors
+        https://bugs.webkit.org/show_bug.cgi?id=42918
+
+        CanvasRenderingContext2D.h and .cpp have lots of style errors.  I'm planning to post patches
+        to both of these files soon, so to minimize merge conflicts and additional style violations
+        it seems best to fix all of these errors in bulk before posting any functional changes.  In
+        particular the header file is incorrectly indented so any correctly formatted addition will
+        be out of place.
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::CanvasRenderingContext2D):
+        (WebCore::CanvasRenderingContext2D::setFillStyle):
+        (WebCore::CanvasRenderingContext2D::transform):
+        (WebCore::CanvasRenderingContext2D::setTransform):
+        (WebCore::CanvasRenderingContext2D::arcTo):
+        (WebCore::CanvasRenderingContext2D::arc):
+        (WebCore::validateRectForCanvas):
+        (WebCore::CanvasRenderingContext2D::strokeRect):
+        (WebCore::CanvasRenderingContext2D::drawImage):
+        (WebCore::CanvasRenderingContext2D::createRadialGradient):
+        (WebCore::CanvasRenderingContext2D::createPattern):
+        (WebCore::CanvasRenderingContext2D::willDraw):
+        (WebCore::CanvasRenderingContext2D::createImageData):
+        (WebCore::CanvasRenderingContext2D::putImageData):
+        (WebCore::CanvasRenderingContext2D::setFont):
+        (WebCore::CanvasRenderingContext2D::drawTextInternal):
+        * html/canvas/CanvasRenderingContext2D.h:
+        (WebCore::CanvasRenderingContext2D::is2d):
+        (WebCore::CanvasRenderingContext2D::getLineCap):
+        (WebCore::CanvasRenderingContext2D::getLineJoin):
+        (WebCore::CanvasRenderingContext2D::state):
+        (WebCore::CanvasRenderingContext2D::):
+
 2010-07-23  Adam Barth  <abarth@webkit.org>
 
         Remove FIXME that we already fixed.
