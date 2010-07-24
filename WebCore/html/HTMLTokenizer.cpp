@@ -1608,10 +1608,7 @@ inline bool HTMLTokenizer::isAppropriateEndTag()
 inline void HTMLTokenizer::bufferCharacter(UChar character)
 {
     ASSERT(character != InputStreamPreprocessor::endOfFileMarker);
-    if (m_token->type() != HTMLToken::Character) {
-        m_token->beginCharacter(character);
-        return;
-    }
+    m_token->ensureIsCharacterToken();
     m_token->appendToCharacter(character);
 }
 
