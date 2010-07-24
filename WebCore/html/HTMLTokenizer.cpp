@@ -58,7 +58,7 @@ inline UChar toLowerCase(UChar cc)
 
 inline bool isTokenizerWhitespace(UChar cc)
 {
-    return cc == '\x09' || cc == '\x0A' || cc == '\x0C' || cc == ' ';
+    return cc == ' ' || cc == '\x0A' || cc == '\x09' || cc == '\x0C';
 }
 
 inline void advanceStringAndASSERTIgnoringCase(SegmentedString& source, const char* expectedCharacters)

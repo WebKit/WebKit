@@ -1,3 +1,14 @@
+2010-07-24  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Re-order whitespace checks in the tokenizer
+        https://bugs.webkit.org/show_bug.cgi?id=42923
+
+        This saves about 0.5% on the parsing benchmark.
+
+        * html/HTMLTokenizer.cpp:
+
 2010-07-24  Andreas Kling  <andreas.kling@nokia.com>
 
         Reviewed by Simon Hausmann.
