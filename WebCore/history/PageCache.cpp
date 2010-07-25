@@ -269,7 +269,7 @@ bool PageCache::canCachePageContainingThisFrame(Frame* frame)
 #endif
 #if ENABLE(WML)
         && !frame->document()->containsWMLContent()
-        && !frame->document()->isWMLDocument();
+        && !frame->document()->isWMLDocument()
 #endif
         && frame->loader()->client()->canCachePage();
 }
