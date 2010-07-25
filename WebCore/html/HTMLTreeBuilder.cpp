@@ -119,7 +119,7 @@ bool isSpecialTag(const AtomicString& tagName)
         || tagName == asideTag
         || tagName == baseTag
         || tagName == basefontTag
-        || tagName == "bgsound"
+        || tagName == bgsoundTag
         || tagName == blockquoteTag
         || tagName == bodyTag
         || tagName == brTag
@@ -127,16 +127,16 @@ bool isSpecialTag(const AtomicString& tagName)
         || tagName == centerTag
         || tagName == colTag
         || tagName == colgroupTag
-        || tagName == "command"
+        || tagName == commandTag
         || tagName == ddTag
-        || tagName == "details"
+        || tagName == detailsTag
         || tagName == dirTag
         || tagName == divTag
         || tagName == dlTag
         || tagName == dtTag
         || tagName == embedTag
         || tagName == fieldsetTag
-        || tagName == "figure"
+        || tagName == figureTag
         || tagName == footerTag
         || tagName == formTag
         || tagName == frameTag
@@ -770,8 +770,8 @@ void HTMLTreeBuilder::processStartTagForInBody(AtomicHTMLToken& token)
     }
     if (token.name() == baseTag
         || token.name() == basefontTag
-        || token.name() == "bgsound"
-        || token.name() == "command"
+        || token.name() == bgsoundTag
+        || token.name() == commandTag
         || token.name() == linkTag
         || token.name() == metaTag
         || token.name() == noframesTag
@@ -806,13 +806,13 @@ void HTMLTreeBuilder::processStartTagForInBody(AtomicHTMLToken& token)
         || token.name() == asideTag
         || token.name() == blockquoteTag
         || token.name() == centerTag
-        || token.name() == "details"
+        || token.name() == detailsTag
         || token.name() == dirTag
         || token.name() == divTag
         || token.name() == dlTag
         || token.name() == fieldsetTag
-        || token.name() == "figcaption"
-        || token.name() == "figure"
+        || token.name() == figcaptionTag
+        || token.name() == figureTag
         || token.name() == footerTag
         || token.name() == headerTag
         || token.name() == hgroupTag
@@ -821,7 +821,7 @@ void HTMLTreeBuilder::processStartTagForInBody(AtomicHTMLToken& token)
         || token.name() == olTag
         || token.name() == pTag
         || token.name() == sectionTag
-        || token.name() == "summary"
+        || token.name() == summaryTag
         || token.name() == ulTag) {
         processFakePEndTagIfPInButtonScope();
         m_tree.insertHTMLElement(token);
@@ -943,7 +943,7 @@ void HTMLTreeBuilder::processStartTagForInBody(AtomicHTMLToken& token)
     }
     if (token.name() == paramTag
         || token.name() == sourceTag
-        || token.name() == "track") {
+        || token.name() == trackTag) {
         m_tree.insertSelfClosingHTMLElement(token);
         return;
     }
@@ -1233,7 +1233,7 @@ void HTMLTreeBuilder::processStartTag(AtomicHTMLToken& token)
         }
         if (token.name() == baseTag
             || token.name() == basefontTag
-            || token.name() == "bgsound"
+            || token.name() == bgsoundTag
             || token.name() == linkTag
             || token.name() == metaTag
             || token.name() == noframesTag
@@ -1380,7 +1380,7 @@ void HTMLTreeBuilder::processStartTag(AtomicHTMLToken& token)
             return;
         }
         if (token.name() == basefontTag
-            || token.name() == "bgsound"
+            || token.name() == bgsoundTag
             || token.name() == linkTag
             || token.name() == metaTag
             || token.name() == noframesTag
@@ -1940,12 +1940,12 @@ void HTMLTreeBuilder::processEndTagForInBody(AtomicHTMLToken& token)
         || token.name() == blockquoteTag
         || token.name() == buttonTag
         || token.name() == centerTag
-        || token.name() == "details"
+        || token.name() == detailsTag
         || token.name() == dirTag
         || token.name() == divTag
         || token.name() == dlTag
         || token.name() == fieldsetTag
-        || token.name() == "figure"
+        || token.name() == figureTag
         || token.name() == footerTag
         || token.name() == headerTag
         || token.name() == hgroupTag
@@ -2736,11 +2736,10 @@ bool HTMLTreeBuilder::processStartTagForInHead(AtomicHTMLToken& token)
         m_tree.insertHTMLHtmlStartTagInBody(token);
         return true;
     }
-    // FIXME: Atomize "command".
     if (token.name() == baseTag
         || token.name() == basefontTag
-        || token.name() == "bgsound"
-        || token.name() == "command"
+        || token.name() == bgsoundTag
+        || token.name() == commandTag
         || token.name() == linkTag
         || token.name() == metaTag) {
         m_tree.insertSelfClosingHTMLElement(token);

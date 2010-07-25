@@ -15,6 +15,7 @@ b interfaceName=HTMLElement
 base
 basefont interfaceName=HTMLBaseFontElement
 bdo interfaceName=HTMLElement
+bgsound interfaceName=HTMLElement
 big interfaceName=HTMLElement
 blockquote
 body
@@ -27,6 +28,7 @@ cite interfaceName=HTMLElement
 code interfaceName=HTMLElement
 col interfaceName=HTMLTableColElement
 colgroup interfaceName=HTMLTableColElement
+command interfaceName=HTMLElement
 datagrid interfaceName=HTMLDataGridElement, conditional=DATAGRID
 datalist interfaceName=HTMLDataListElement, conditional=DATALIST
 dcell interfaceName=HTMLDataGridCellElement, conditional=DATAGRID
@@ -34,6 +36,7 @@ dcol interfaceName=HTMLDataGridColElement, conditional=DATAGRID
 drow interfaceName=HTMLDataGridRowElement, conditional=DATAGRID
 dd interfaceName=HTMLElement
 del interfaceName=HTMLModElement
+details interfaceName=HTMLElement
 dfn interfaceName=HTMLElement
 dir interfaceName=HTMLDirectoryElement
 div
@@ -42,6 +45,8 @@ dt interfaceName=HTMLElement
 em interfaceName=HTMLElement
 embed
 fieldset interfaceName=HTMLFieldSetElement, constructorNeedsFormElement
+figcaption interfaceName=HTMLElement
+figure interfaceName=HTMLElement
 font
 footer interfaceName=HTMLElement
 form
@@ -109,6 +114,7 @@ strike interfaceName=HTMLElement
 strong interfaceName=HTMLElement
 style constructorNeedsCreatedByParser
 sub interfaceName=HTMLElement
+summary interfaceName=HTMLElement
 sup interfaceName=HTMLElement
 table
 tbody interfaceName=HTMLTableSectionElement
@@ -119,6 +125,7 @@ th interfaceName=HTMLTableCellElement
 thead interfaceName=HTMLTableSectionElement
 title
 tr interfaceName=HTMLTableRowElement
+track interfaceName=HTMLElement
 tt interfaceName=HTMLElement
 u interfaceName=HTMLElement
 ul interfaceName=HTMLUListElement
