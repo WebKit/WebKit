@@ -42,10 +42,11 @@ void WebEditorClient::pageDestroyed()
     delete this;
 }
 
-bool WebEditorClient::shouldDeleteRange(Range*)
+bool WebEditorClient::shouldDeleteRange(Range* range)
 {
+    bool result = m_page->injectedBundleEditorClient().shouldDeleteRange(m_page, range);
     notImplemented();
-    return true;
+    return result;
 }
 
 bool WebEditorClient::shouldShowDeleteInterface(HTMLElement*)
@@ -109,32 +110,39 @@ bool WebEditorClient::shouldBeginEditing(Range* range)
     return result;
 }
 
-bool WebEditorClient::shouldEndEditing(Range*)
+bool WebEditorClient::shouldEndEditing(Range* range)
 {
+    bool result = m_page->injectedBundleEditorClient().shouldEndEditing(m_page, range);
     notImplemented();
-    return true;
+    return result;
 }
 
-bool WebEditorClient::shouldInsertNode(Node*, Range*, EditorInsertAction)
+bool WebEditorClient::shouldInsertNode(Node* node, Range* rangeToReplace, EditorInsertAction action)
 {
+    bool result = m_page->injectedBundleEditorClient().shouldInsertNode(m_page, node, rangeToReplace, action);
     notImplemented();
-    return true;
+    return result;
 }
 
-bool WebEditorClient::shouldInsertText(const String&, Range*, EditorInsertAction)
+bool WebEditorClient::shouldInsertText(const String& text, Range* rangeToReplace, EditorInsertAction action)
 {
-    return true;
+    bool result = m_page->injectedBundleEditorClient().shouldInsertText(m_page, text.impl(), rangeToReplace, action);
+    notImplemented();
+    return result;
 }
 
-bool WebEditorClient::shouldChangeSelectedRange(Range* fromRange, Range* toRange, EAffinity, bool stillSelecting)
+bool WebEditorClient::shouldChangeSelectedRange(Range* fromRange, Range* toRange, EAffinity affinity, bool stillSelecting)
 {
-    return true;
+    bool result = m_page->injectedBundleEditorClient().shouldChangeSelectedRange(m_page, fromRange, toRange, affinity, stillSelecting);
+    notImplemented();
+    return result;
 }
     
-bool WebEditorClient::shouldApplyStyle(CSSStyleDeclaration*, Range*)
+bool WebEditorClient::shouldApplyStyle(CSSStyleDeclaration* style, Range* range)
 {
+    bool result = m_page->injectedBundleEditorClient().shouldApplyStyle(m_page, style, range);
     notImplemented();
-    return true;
+    return result;
 }
 
 bool WebEditorClient::shouldMoveRangeAfterDelete(Range*, Range*)
@@ -145,21 +153,30 @@ bool WebEditorClient::shouldMoveRangeAfterDelete(Range*, Range*)
 
 void WebEditorClient::didBeginEditing()
 {
+    // FIXME: What good is a notification name, if it's always the same?
+    static const String WebViewDidBeginEditingNotification = "WebViewDidBeginEditingNotification";
+    m_page->injectedBundleEditorClient().didBeginEditing(m_page, WebViewDidBeginEditingNotification.impl());
     notImplemented();
 }
 
 void WebEditorClient::respondToChangedContents()
 {
+    static const String WebViewDidChangeNotification = "WebViewDidChangeNotification";
+    m_page->injectedBundleEditorClient().didChange(m_page, WebViewDidChangeNotification.impl());
     notImplemented();
 }
 
 void WebEditorClient::respondToChangedSelection()
 {
+    static const String WebViewDidChangeSelectionNotification = "WebViewDidChangeSelectionNotification";
+    m_page->injectedBundleEditorClient().didChangeSelection(m_page, WebViewDidChangeSelectionNotification.impl());
     notImplemented();
 }
 
 void WebEditorClient::didEndEditing()
 {
+    static const String WebViewDidEndEditingNotification = "WebViewDidEndEditingNotification";
+    m_page->injectedBundleEditorClient().didEndEditing(m_page, WebViewDidEndEditingNotification.impl());
     notImplemented();
 }
 

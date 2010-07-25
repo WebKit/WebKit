@@ -35,6 +35,19 @@
 extern "C" {
 #endif
 
+enum {
+    kWKInsertActionTyped = 0,
+    kWKInsertActionPasted = 1,
+    kWKInsertActionDropped = 2
+};
+typedef uint32_t WKInsertActionType;
+
+enum {
+    kWKAffinityUpstream,
+    kWKAffinityDownstream
+};
+typedef uint32_t WKAffinityType;
+
 // Loader Client
 typedef void (*WKBundlePageDidStartProvisionalLoadForFrameCallback)(WKBundlePageRef page, WKBundleFrameRef frame, const void *clientInfo);
 typedef void (*WKBundlePageDidReceiveServerRedirectForProvisionalLoadForFrameCallback)(WKBundlePageRef page, WKBundleFrameRef frame, const void *clientInfo);
@@ -78,11 +91,30 @@ struct WKBundlePageUIClient {
 typedef struct WKBundlePageUIClient WKBundlePageUIClient;
 
 // Editor client
+// FIXME: Objective-C API provides a WebView pointer in callbacks, what should the injected bundle API do?
 typedef bool (*WKBundlePageShouldBeginEditingCallback)(WKBundlePageRef page, WKBundleRangeRef range, const void* clientInfo);
+typedef bool (*WKBundlePageShouldEndEditingCallback)(WKBundlePageRef page, WKBundleRangeRef range, const void* clientInfo);
+typedef bool (*WKBundlePageShouldInsertNodeCallback)(WKBundlePageRef page, WKBundleNodeRef node, WKBundleRangeRef rangeToReplace, WKInsertActionType action, const void* clientInfo);
+typedef bool (*WKBundlePageShouldInsertTextCallback)(WKBundlePageRef page, WKStringRef string, WKBundleRangeRef rangeToReplace, WKInsertActionType action, const void* clientInfo);
+typedef bool (*WKBundlePageShouldDeleteRangeCallback)(WKBundlePageRef page, WKBundleRangeRef range, const void* clientInfo);
+typedef bool (*WKBundlePageShouldChangeSelectedRange)(WKBundlePageRef page, WKBundleRangeRef fromRange, WKBundleRangeRef toRange, WKAffinityType affinity, bool stillSelecting, const void* clientInfo);
+typedef bool (*WKBundlePageShouldApplyStyle)(WKBundlePageRef page, WKBundleCSSStyleDeclarationRef style, WKBundleRangeRef range, const void* clientInfo);
+typedef void (*WKBundlePageEditingNotification)(WKBundlePageRef page, WKStringRef notificationName, const void* clientInfo);
+
 struct WKBundlePageEditorClient {
     int                                                                 version;
     const void *                                                        clientInfo;
     WKBundlePageShouldBeginEditingCallback                              shouldBeginEditing;
+    WKBundlePageShouldEndEditingCallback                                shouldEndEditing;
+    WKBundlePageShouldInsertNodeCallback                                shouldInsertNode;
+    WKBundlePageShouldInsertTextCallback                                shouldInsertText;
+    WKBundlePageShouldDeleteRangeCallback                               shouldDeleteRange;
+    WKBundlePageShouldChangeSelectedRange                               shouldChangeSelectedRange;
+    WKBundlePageShouldApplyStyle                                        shouldApplyStyle;
+    WKBundlePageEditingNotification                                     didBeginEditing;
+    WKBundlePageEditingNotification                                     didEndEditing;
+    WKBundlePageEditingNotification                                     didChange;
+    WKBundlePageEditingNotification                                     didChangeSelection;
 };
 typedef struct WKBundlePageEditorClient WKBundlePageEditorClient;
 

@@ -1,3 +1,44 @@
+2010-07-25  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=42193
+        Support layoutTestController.dumpEditingDelegates in WebKitTestRunner
+
+        Step 2 - add the rest of editing delegates.
+
+        * WebProcess/InjectedBundle/API/c/WKBundleAPICast.h:
+        * WebProcess/InjectedBundle/API/c/WKBundleBase.h:
+        Added enums for EditorInsertAction and EAffinity. Also added a dummy type for
+        CSSStyleDeclaration - neither DumpRenderTree not WebKitTestRunner actually use that.
+
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.h:
+        * WebProcess/InjectedBundle/InjectedBundlePageEditorClient.cpp:
+        (WebKit::InjectedBundlePageEditorClient::shouldBeginEditing):
+        (WebKit::InjectedBundlePageEditorClient::shouldEndEditing):
+        (WebKit::InjectedBundlePageEditorClient::shouldInsertNode):
+        (WebKit::InjectedBundlePageEditorClient::shouldInsertText):
+        (WebKit::InjectedBundlePageEditorClient::shouldDeleteRange):
+        (WebKit::InjectedBundlePageEditorClient::shouldChangeSelectedRange):
+        (WebKit::InjectedBundlePageEditorClient::shouldApplyStyle):
+        (WebKit::InjectedBundlePageEditorClient::didBeginEditing):
+        (WebKit::InjectedBundlePageEditorClient::didEndEditing):
+        (WebKit::InjectedBundlePageEditorClient::didChange):
+        (WebKit::InjectedBundlePageEditorClient::didChangeSelection):
+        * WebProcess/InjectedBundle/InjectedBundlePageEditorClient.h:
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+        (WebKit::WebEditorClient::shouldDeleteRange):
+        (WebKit::WebEditorClient::shouldEndEditing):
+        (WebKit::WebEditorClient::shouldInsertNode):
+        (WebKit::WebEditorClient::shouldInsertText):
+        (WebKit::WebEditorClient::shouldChangeSelectedRange):
+        (WebKit::WebEditorClient::shouldApplyStyle):
+        (WebKit::WebEditorClient::didBeginEditing):
+        (WebKit::WebEditorClient::respondToChangedContents):
+        (WebKit::WebEditorClient::respondToChangedSelection):
+        (WebKit::WebEditorClient::didEndEditing):
+        Added remaining delagates that are needed for WebKitTestRunner.
+
 2010-07-19 Balazs Kelemen <kb@inf.u-szeged.hu>
 
         Reviewed by Kenneth Rohde Christiansen.

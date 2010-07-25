@@ -73,7 +73,27 @@ private:
 
     // Editor client
     static bool _shouldBeginEditing(WKBundlePageRef, WKBundleRangeRef, const void* clientInfo);
+    static bool _shouldEndEditing(WKBundlePageRef, WKBundleRangeRef, const void* clientInfo);
+    static bool _shouldInsertNode(WKBundlePageRef, WKBundleNodeRef, WKBundleRangeRef rangeToReplace, WKInsertActionType, const void* clientInfo);
+    static bool _shouldInsertText(WKBundlePageRef, WKStringRef, WKBundleRangeRef rangeToReplace, WKInsertActionType, const void* clientInfo);
+    static bool _shouldDeleteRange(WKBundlePageRef, WKBundleRangeRef, const void* clientInfo);
+    static bool _shouldChangeSelectedRange(WKBundlePageRef, WKBundleRangeRef fromRange, WKBundleRangeRef toRange, WKAffinityType, bool stillSelecting, const void* clientInfo);
+    static bool _shouldApplyStyle(WKBundlePageRef, WKBundleCSSStyleDeclarationRef style, WKBundleRangeRef range, const void* clientInfo);
+    static void _didBeginEditing(WKBundlePageRef, WKStringRef notificationName, const void* clientInfo);
+    static void _didEndEditing(WKBundlePageRef, WKStringRef notificationName, const void* clientInfo);
+    static void _didChange(WKBundlePageRef, WKStringRef notificationName, const void* clientInfo);
+    static void _didChangeSelection(WKBundlePageRef, WKStringRef notificationName, const void* clientInfo);
     bool shouldBeginEditing(WKBundleRangeRef);
+    bool shouldEndEditing(WKBundleRangeRef);
+    bool shouldInsertNode(WKBundleNodeRef, WKBundleRangeRef rangeToReplace, WKInsertActionType);
+    bool shouldInsertText(WKStringRef, WKBundleRangeRef rangeToReplace, WKInsertActionType);
+    bool shouldDeleteRange(WKBundleRangeRef);
+    bool shouldChangeSelectedRange(WKBundleRangeRef fromRange, WKBundleRangeRef toRange, WKAffinityType, bool stillSelecting);
+    bool shouldApplyStyle(WKBundleCSSStyleDeclarationRef style, WKBundleRangeRef range);
+    void didBeginEditing(WKStringRef notificationName);
+    void didEndEditing(WKStringRef notificationName);
+    void didChange(WKStringRef notificationName);
+    void didChangeSelection(WKStringRef notificationName);
 
     void dumpAllFramesText();
     void dumpAllFrameScrollPositions();

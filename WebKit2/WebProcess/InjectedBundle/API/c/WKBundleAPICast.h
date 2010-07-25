@@ -27,8 +27,12 @@
 #define WKBundleAPICast_h
 
 #include "WKBundleBase.h"
+#include "WKBundlePage.h"
+#include <WebCore/EditorInsertAction.h>
+#include <WebCore/TextAffinity.h>
 
 namespace WebCore {
+    class CSSStyleDeclaration;
     class Node;
     class Range;
 }
@@ -40,18 +44,20 @@ class WebFrame;
 class WebPage;
 
 template<typename APIType> struct BundleAPITypeInfo { };
-template<> struct BundleAPITypeInfo<WKBundleFrameRef>           { typedef WebFrame* ImplType; };
-template<> struct BundleAPITypeInfo<WKBundleNodeRef>            { typedef WebCore::Node* ImplType; };
-template<> struct BundleAPITypeInfo<WKBundlePageRef>            { typedef WebPage* ImplType; };
-template<> struct BundleAPITypeInfo<WKBundleRangeRef>           { typedef WebCore::Range* ImplType; };
-template<> struct BundleAPITypeInfo<WKBundleRef>                { typedef InjectedBundle* ImplType; };
+template<> struct BundleAPITypeInfo<WKBundleCSSStyleDeclarationRef>     { typedef WebCore::CSSStyleDeclaration* ImplType; };
+template<> struct BundleAPITypeInfo<WKBundleFrameRef>                   { typedef WebFrame* ImplType; };
+template<> struct BundleAPITypeInfo<WKBundleNodeRef>                    { typedef WebCore::Node* ImplType; };
+template<> struct BundleAPITypeInfo<WKBundlePageRef>                    { typedef WebPage* ImplType; };
+template<> struct BundleAPITypeInfo<WKBundleRangeRef>                   { typedef WebCore::Range* ImplType; };
+template<> struct BundleAPITypeInfo<WKBundleRef>                        { typedef InjectedBundle* ImplType; };
 
 template<typename ImplType> struct BundleImplTypeInfo { };
-template<> struct BundleImplTypeInfo<InjectedBundle*>           { typedef WKBundleRef APIType; };
-template<> struct BundleImplTypeInfo<WebCore::Node*>            { typedef WKBundleNodeRef APIType; };
-template<> struct BundleImplTypeInfo<WebCore::Range*>           { typedef WKBundleRangeRef APIType; };
-template<> struct BundleImplTypeInfo<WebFrame*>                 { typedef WKBundleFrameRef APIType; };
-template<> struct BundleImplTypeInfo<WebPage*>                  { typedef WKBundlePageRef APIType; };
+template<> struct BundleImplTypeInfo<InjectedBundle*>                   { typedef WKBundleRef APIType; };
+template<> struct BundleImplTypeInfo<WebCore::CSSStyleDeclaration*>     { typedef WKBundleCSSStyleDeclarationRef APIType; };
+template<> struct BundleImplTypeInfo<WebCore::Node*>                    { typedef WKBundleNodeRef APIType; };
+template<> struct BundleImplTypeInfo<WebCore::Range*>                   { typedef WKBundleRangeRef APIType; };
+template<> struct BundleImplTypeInfo<WebFrame*>                         { typedef WKBundleFrameRef APIType; };
+template<> struct BundleImplTypeInfo<WebPage*>                          { typedef WKBundlePageRef APIType; };
 
 } // namespace WebKit
 
@@ -67,6 +73,37 @@ template<typename T>
 inline typename WebKit::BundleImplTypeInfo<T>::APIType toRef(T t)
 {
     return reinterpret_cast<typename WebKit::BundleImplTypeInfo<T>::APIType>(t);
+}
+
+inline WKInsertActionType toWK(WebCore::EditorInsertAction action)
+{
+    switch (action) {
+    case WebCore::EditorInsertActionTyped:
+        return kWKInsertActionTyped;
+        break;
+    case WebCore::EditorInsertActionPasted:
+        return kWKInsertActionPasted;
+        break;
+    case WebCore::EditorInsertActionDropped:
+        return kWKInsertActionDropped;
+        break;
+    }
+    ASSERT_NOT_REACHED();
+    return kWKInsertActionTyped;
+}
+
+inline WKAffinityType toWK(WebCore::EAffinity affinity)
+{
+    switch (affinity) {
+    case WebCore::UPSTREAM:
+        return kWKAffinityUpstream;
+        break;
+    case WebCore::DOWNSTREAM:
+        return kWKAffinityDownstream;
+        break;
+    }
+    ASSERT_NOT_REACHED();
+    return kWKAffinityUpstream;
 }
 
 #endif // WKBundleAPICast_h

@@ -27,6 +27,7 @@
 #define WKBundleBase_h
 
 typedef struct OpaqueWKBundle* WKBundleRef;
+typedef struct OpaqueWKBundleDOMCSSStyleDeclaration* WKBundleCSSStyleDeclarationRef;
 typedef struct OpaqueWKBundleFrame* WKBundleFrameRef;
 typedef struct OpaqueWKBundleNode* WKBundleNodeRef;
 typedef struct OpaqueWKBundlePage* WKBundlePageRef;

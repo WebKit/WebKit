@@ -97,8 +97,8 @@ compositing/geometry/limit-layer-bounds-transformed.html
 compositing/geometry/limit-layer-bounds-transformed-overflow.html
 compositing/animation/animation-compositing.html
 
-# Support layoutTestController.dumpEditingCallbacks in WebKitTestRunner
-# <https://bugs.webkit.org/show_bug.cgi?id=42193>
+# WebEditorClient::didBeginEditing is never called in WebKit2
+# <https://bugs.webkit.org/show_bug.cgi?id=42939>
 editing/deleting/4845371.html
 editing/deleting/5546763.html
 editing/deleting/collapse-whitespace-3587601-fix.html

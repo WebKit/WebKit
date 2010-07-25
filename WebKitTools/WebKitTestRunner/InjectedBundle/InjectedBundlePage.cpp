@@ -101,7 +101,20 @@ static string dumpPath(WKBundleNodeRef node)
 
 static ostream& operator<<(ostream& out, WKBundleRangeRef rangeRef)
 {
-    out << "range from " << WKBundleRangeGetStartOffset(rangeRef) << " of " << dumpPath(WKBundleRangeGetStartContainer(rangeRef)) << " to " << WKBundleRangeGetEndOffset(rangeRef) << " of " << dumpPath(WKBundleRangeGetEndContainer(rangeRef));
+    if (rangeRef)
+        out << "range from " << WKBundleRangeGetStartOffset(rangeRef) << " of " << dumpPath(WKBundleRangeGetStartContainer(rangeRef)) << " to " << WKBundleRangeGetEndOffset(rangeRef) << " of " << dumpPath(WKBundleRangeGetEndContainer(rangeRef));
+    else
+        out << "(null)";
+
+    return out;
+}
+
+static ostream& operator<<(ostream& out, WKBundleCSSStyleDeclarationRef style)
+{
+    // DumpRenderTree calls -[DOMCSSStyleDeclaration description], which just dumps class name and object address.
+    // No existing tests actually hit this code path at the time of this writing, because WebCore doesn't call
+    // the editing client if the styling operation source is CommandFromDOM or CommandFromDOMWithUserInterface.
+    out << "<DOMCSSStyleDeclaration ADDRESS>";
     return out;
 }
 
@@ -138,6 +151,16 @@ InjectedBundlePage::InjectedBundlePage(WKBundlePageRef page)
         0,
         this,
         _shouldBeginEditing,
+        _shouldEndEditing,
+        _shouldInsertNode,
+        _shouldInsertText,
+        _shouldDeleteRange,
+        _shouldChangeSelectedRange,
+        _shouldApplyStyle,
+        _didBeginEditing,
+        _didEndEditing,
+        _didChange,
+        _didChangeSelection
     };
     WKBundlePageSetEditorClient(m_page, &editorClient);
 }
@@ -427,11 +450,149 @@ bool InjectedBundlePage::_shouldBeginEditing(WKBundlePageRef page, WKBundleRange
     return static_cast<InjectedBundlePage*>(const_cast<void*>(clientInfo))->shouldBeginEditing(range);
 }
 
+bool InjectedBundlePage::_shouldEndEditing(WKBundlePageRef page, WKBundleRangeRef range, const void* clientInfo)
+{
+    return static_cast<InjectedBundlePage*>(const_cast<void*>(clientInfo))->shouldEndEditing(range);
+}
+
+bool InjectedBundlePage::_shouldInsertNode(WKBundlePageRef page, WKBundleNodeRef node, WKBundleRangeRef rangeToReplace, WKInsertActionType action, const void* clientInfo)
+{
+    return static_cast<InjectedBundlePage*>(const_cast<void*>(clientInfo))->shouldInsertNode(node, rangeToReplace, action);
+}
+
+bool InjectedBundlePage::_shouldInsertText(WKBundlePageRef page, WKStringRef text, WKBundleRangeRef rangeToReplace, WKInsertActionType action, const void* clientInfo)
+{
+    return static_cast<InjectedBundlePage*>(const_cast<void*>(clientInfo))->shouldInsertText(text, rangeToReplace, action);
+}
+
+bool InjectedBundlePage::_shouldDeleteRange(WKBundlePageRef page, WKBundleRangeRef range, const void* clientInfo)
+{
+    return static_cast<InjectedBundlePage*>(const_cast<void*>(clientInfo))->shouldDeleteRange(range);
+}
+
+bool InjectedBundlePage::_shouldChangeSelectedRange(WKBundlePageRef page, WKBundleRangeRef fromRange, WKBundleRangeRef toRange, WKAffinityType affinity, bool stillSelecting, const void* clientInfo)
+{
+    return static_cast<InjectedBundlePage*>(const_cast<void*>(clientInfo))->shouldChangeSelectedRange(fromRange, toRange, affinity, stillSelecting);
+}
+
+bool InjectedBundlePage::_shouldApplyStyle(WKBundlePageRef page, WKBundleCSSStyleDeclarationRef style, WKBundleRangeRef range, const void* clientInfo)
+{
+    return static_cast<InjectedBundlePage*>(const_cast<void*>(clientInfo))->shouldApplyStyle(style, range);
+}
+
+void InjectedBundlePage::_didBeginEditing(WKBundlePageRef page, WKStringRef notificationName, const void* clientInfo)
+{
+    static_cast<InjectedBundlePage*>(const_cast<void*>(clientInfo))->didBeginEditing(notificationName);
+}
+
+void InjectedBundlePage::_didEndEditing(WKBundlePageRef page, WKStringRef notificationName, const void* clientInfo)
+{
+    static_cast<InjectedBundlePage*>(const_cast<void*>(clientInfo))->didEndEditing(notificationName);
+}
+
+void InjectedBundlePage::_didChange(WKBundlePageRef page, WKStringRef notificationName, const void* clientInfo)
+{
+    static_cast<InjectedBundlePage*>(const_cast<void*>(clientInfo))->didChange(notificationName);
+}
+
+void InjectedBundlePage::_didChangeSelection(WKBundlePageRef page, WKStringRef notificationName, const void* clientInfo)
+{
+    static_cast<InjectedBundlePage*>(const_cast<void*>(clientInfo))->didChangeSelection(notificationName);
+}
+
 bool InjectedBundlePage::shouldBeginEditing(WKBundleRangeRef range)
 {
     if (InjectedBundle::shared().layoutTestController()->shouldDumpEditingCallbacks())
         InjectedBundle::shared().os() << "EDITING DELEGATE: shouldBeginEditingInDOMRange:" << range << "\n";
     return InjectedBundle::shared().layoutTestController()->acceptsEditing();
 }
+
+bool InjectedBundlePage::shouldEndEditing(WKBundleRangeRef range)
+{
+    if (InjectedBundle::shared().layoutTestController()->shouldDumpEditingCallbacks())
+        InjectedBundle::shared().os() << "EDITING DELEGATE: shouldEndEditingInDOMRange:" << range << "\n";
+    return InjectedBundle::shared().layoutTestController()->acceptsEditing();
+}
+
+bool InjectedBundlePage::shouldInsertNode(WKBundleNodeRef node, WKBundleRangeRef rangeToReplace, WKInsertActionType action)
+{
+    static const char *insertactionstring[] = {
+        "WebViewInsertActionTyped",
+        "WebViewInsertActionPasted",
+        "WebViewInsertActionDropped",
+    };
+
+    if (InjectedBundle::shared().layoutTestController()->shouldDumpEditingCallbacks())
+        InjectedBundle::shared().os() << "EDITING DELEGATE: shouldInsertNode:" << dumpPath(node) << " replacingDOMRange:" << rangeToReplace << " givenAction:" << insertactionstring[action] << "\n";
+    return InjectedBundle::shared().layoutTestController()->acceptsEditing();
+}
+
+bool InjectedBundlePage::shouldInsertText(WKStringRef text, WKBundleRangeRef rangeToReplace, WKInsertActionType action)
+{
+    static const char *insertactionstring[] = {
+        "WebViewInsertActionTyped",
+        "WebViewInsertActionPasted",
+        "WebViewInsertActionDropped",
+    };
+
+    if (InjectedBundle::shared().layoutTestController()->shouldDumpEditingCallbacks())
+        InjectedBundle::shared().os() << "EDITING DELEGATE: shouldInsertText:" << text << " replacingDOMRange:" << rangeToReplace << " givenAction:" << insertactionstring[action] << "\n";
+    return InjectedBundle::shared().layoutTestController()->acceptsEditing();
+}
+
+bool InjectedBundlePage::shouldDeleteRange(WKBundleRangeRef range)
+{
+    if (InjectedBundle::shared().layoutTestController()->shouldDumpEditingCallbacks())
+        InjectedBundle::shared().os() << "EDITING DELEGATE: shouldDeleteDOMRange:" << range << "\n";
+    return InjectedBundle::shared().layoutTestController()->acceptsEditing();
+}
+
+bool InjectedBundlePage::shouldChangeSelectedRange(WKBundleRangeRef fromRange, WKBundleRangeRef toRange, WKAffinityType affinity, bool stillSelecting)
+{
+    static const char *affinitystring[] = {
+        "NSSelectionAffinityUpstream",
+        "NSSelectionAffinityDownstream"
+    };
+    static const char *boolstring[] = {
+        "FALSE",
+        "TRUE"
+    };
+
+    if (InjectedBundle::shared().layoutTestController()->shouldDumpEditingCallbacks())
+        InjectedBundle::shared().os() << "EDITING DELEGATE: shouldChangeSelectedDOMRange:" << fromRange << " toDOMRange:" << toRange << " affinity:" << affinitystring[affinity] << " stillSelecting:" << boolstring[stillSelecting] << "\n";
+    return InjectedBundle::shared().layoutTestController()->acceptsEditing();
+}
+
+bool InjectedBundlePage::shouldApplyStyle(WKBundleCSSStyleDeclarationRef style, WKBundleRangeRef range)
+{
+    if (InjectedBundle::shared().layoutTestController()->shouldDumpEditingCallbacks())
+        InjectedBundle::shared().os() << "EDITING DELEGATE: shouldApplyStyle:" << style << " toElementsInDOMRange:" << range << "\n";
+    return InjectedBundle::shared().layoutTestController()->acceptsEditing();
+}
+
+void InjectedBundlePage::didBeginEditing(WKStringRef notificationName)
+{
+    if (InjectedBundle::shared().layoutTestController()->shouldDumpEditingCallbacks())
+        InjectedBundle::shared().os() << "EDITING DELEGATE: webViewDidBeginEditing:" << notificationName << "\n";
+}
+
+void InjectedBundlePage::didEndEditing(WKStringRef notificationName)
+{
+    if (InjectedBundle::shared().layoutTestController()->shouldDumpEditingCallbacks())
+        InjectedBundle::shared().os() << "EDITING DELEGATE: webViewDidEndEditing:" << notificationName << "\n";
+}
+
+void InjectedBundlePage::didChange(WKStringRef notificationName)
+{
+    if (InjectedBundle::shared().layoutTestController()->shouldDumpEditingCallbacks())
+        InjectedBundle::shared().os() << "EDITING DELEGATE: webViewDidChange:" << notificationName << "\n";
+}
+
+void InjectedBundlePage::didChangeSelection(WKStringRef notificationName)
+{
+    if (InjectedBundle::shared().layoutTestController()->shouldDumpEditingCallbacks())
+        InjectedBundle::shared().os() << "EDITING DELEGATE: webViewDidChangeSelection:" << notificationName << "\n";
+}
+
 
 } // namespace WTR

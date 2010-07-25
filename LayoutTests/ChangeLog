@@ -1,3 +1,15 @@
+2010-07-25  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=42193
+        Support layoutTestController.dumpEditingDelegates in WebKitTestRunner
+
+        Step 2 - add the rest of editing delegates.
+
+        * platform/mac-wk2/Skipped: Changed the bug tracking why the tests are skipped - the delegates
+        are now implemented, but one of them isn't called for some reason.
+
 2010-07-24  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by David Kilzer.

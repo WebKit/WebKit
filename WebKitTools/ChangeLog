@@ -1,3 +1,37 @@
+2010-07-25  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=42193
+        Support layoutTestController.dumpEditingDelegates in WebKitTestRunner
+
+        Step 2 - add the rest of editing delegates.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::operator<<): Fixed to not crash when range is null.
+        (WTR::InjectedBundlePage::InjectedBundlePage):
+        (WTR::InjectedBundlePage::_shouldEndEditing):
+        (WTR::InjectedBundlePage::_shouldInsertNode):
+        (WTR::InjectedBundlePage::_shouldInsertText):
+        (WTR::InjectedBundlePage::_shouldDeleteRange):
+        (WTR::InjectedBundlePage::_shouldChangeSelectedRange):
+        (WTR::InjectedBundlePage::_shouldApplyStyle):
+        (WTR::InjectedBundlePage::_didBeginEditing):
+        (WTR::InjectedBundlePage::_didEndEditing):
+        (WTR::InjectedBundlePage::_didChange):
+        (WTR::InjectedBundlePage::_didChangeSelection):
+        (WTR::InjectedBundlePage::shouldEndEditing):
+        (WTR::InjectedBundlePage::shouldInsertNode):
+        (WTR::InjectedBundlePage::shouldInsertText):
+        (WTR::InjectedBundlePage::shouldDeleteRange):
+        (WTR::InjectedBundlePage::shouldChangeSelectedRange):
+        (WTR::InjectedBundlePage::shouldApplyStyle):
+        (WTR::InjectedBundlePage::didBeginEditing):
+        (WTR::InjectedBundlePage::didEndEditing):
+        (WTR::InjectedBundlePage::didChange):
+        (WTR::InjectedBundlePage::didChangeSelection):
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.h:
+
 2010-07-24  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by David Kilzer.
