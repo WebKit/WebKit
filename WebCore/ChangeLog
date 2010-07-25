@@ -1,3 +1,14 @@
+2010-07-25  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: check of jQuery object type prior to treating it as an array.
+
+        https://bugs.webkit.org/show_bug.cgi?id=42946
+
+        * inspector/front-end/InjectedScript.js:
+        (injectedScriptConstructor):
+
 2010-07-24  Daniel Bates  <dbates@rim.com>
 
         Unreviewed, build fix when building with WML support.

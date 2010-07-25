@@ -545,7 +545,7 @@ InjectedScript._type = function(obj)
         return "array";
     if (obj instanceof inspectedWindow.HTMLCollection)
         return "array";
-    if (inspectedWindow.jQuery && obj instanceof inspectedWindow.jQuery)
+    if (typeof inspectedWindow.jQuery === "function" && obj instanceof inspectedWindow.jQuery)
         return "array";
     if (obj instanceof inspectedWindow.Error)
         return "error";
