@@ -392,27 +392,6 @@ static void convertToOldStyle(AtomicHTMLToken& token, Token& oldStyleToken)
     }
 }
 
-void HTMLTreeBuilder::handleScriptStartTag()
-{
-    notImplemented(); // The HTML frgment case?
-    m_tokenizer->setState(HTMLTokenizer::ScriptDataState);
-    notImplemented(); // Save insertion mode.
-}
-
-void HTMLTreeBuilder::handleScriptEndTag(Element* scriptElement, int scriptStartLine)
-{
-    ASSERT(!m_scriptToProcess); // Caller never called takeScriptToProcess!
-    ASSERT(m_scriptToProcessStartLine == uninitializedLineNumberValue); // Caller never called takeScriptToProcess!
-    notImplemented(); // Save insertion mode and insertion point?
-
-    // Pause ourselves so that parsing stops until the script can be processed by the caller.
-    m_isPaused = true;
-    m_scriptToProcess = scriptElement;
-    // Lexer line numbers are 0-based, ScriptSourceCode expects 1-based lines,
-    // so we convert here before passing the line number off to HTMLScriptRunner.
-    m_scriptToProcessStartLine = scriptStartLine + 1;
-}
-
 PassRefPtr<Element> HTMLTreeBuilder::takeScriptToProcess(int& scriptStartLine)
 {
     // Unpause ourselves, callers may pause us again when processing the script.
@@ -470,7 +449,7 @@ void HTMLTreeBuilder::passTokenToLegacyParser(HTMLToken& token)
         // This work is supposed to be done by the parser, but
         // when using the old parser for we have to do this manually.
         if (oldStyleToken.tagName == scriptTag) {
-            handleScriptStartTag();
+            m_tokenizer->setState(HTMLTokenizer::ScriptDataState);
             m_lastScriptElement = static_pointer_cast<Element>(result);
             m_lastScriptElementStartLine = m_tokenizer->lineNumber();
         } else if (oldStyleToken.tagName == preTag || oldStyleToken.tagName == listingTag)
@@ -487,8 +466,16 @@ void HTMLTreeBuilder::passTokenToLegacyParser(HTMLToken& token)
                     // a DocumentFragment for pasting so that javascript content
                     // does not show up in pasted HTML.
                     m_lastScriptElement->removeChildren();
-                } else if (insertionMode() != AfterFramesetMode)
-                    handleScriptEndTag(m_lastScriptElement.get(), m_lastScriptElementStartLine);
+                } else if (insertionMode() != AfterFramesetMode) {
+                    ASSERT(!m_scriptToProcess); // Caller never called takeScriptToProcess!
+                    ASSERT(m_scriptToProcessStartLine == uninitializedLineNumberValue); // Caller never called takeScriptToProcess!
+                    // Pause ourselves so that parsing stops until the script can be processed by the caller.
+                    m_isPaused = true;
+                    m_scriptToProcess = m_lastScriptElement.get();
+                    // Lexer line numbers are 0-based, ScriptSourceCode expects 1-based lines,
+                    // so we convert here before passing the line number off to HTMLScriptRunner.
+                    m_scriptToProcessStartLine = m_lastScriptElementStartLine + 1;
+                }
                 m_lastScriptElement = 0;
                 m_lastScriptElementStartLine = uninitializedLineNumberValue;
             }

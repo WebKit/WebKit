@@ -2,6 +2,23 @@
 
         Reviewed by Eric Seidel.
 
+        Functions supporting the legacy tree builder are confusing
+        https://bugs.webkit.org/show_bug.cgi?id=42951
+
+        This patch just inlines these functions into their one call site and
+        removes the notImplemented() calls.  We thought we were going to grow
+        these to support the new tree builder, but we took a different path.
+        Previous to this patch, these functions were confusing because they
+        looked like part of the new tree builder.
+
+        * html/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::passTokenToLegacyParser):
+        * html/HTMLTreeBuilder.h:
+
+2010-07-25  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         Recent HTML5 TreeBuilder Regression?  All canvas tests ASSERT
         https://bugs.webkit.org/show_bug.cgi?id=42948
 
