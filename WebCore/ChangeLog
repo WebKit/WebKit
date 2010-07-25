@@ -1,3 +1,16 @@
+2010-07-25  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Recent HTML5 TreeBuilder Regression?  All canvas tests ASSERT
+        https://bugs.webkit.org/show_bug.cgi?id=42948
+
+        Remove ASSERT and replace with correct branch.  I put this ASSERT in
+        to make sure we had test coverage for this branch.  I guess we do.  :)
+
+        * html/HTMLConstructionSite.cpp:
+        (WebCore::HTMLConstructionSite::attach):
+
 2010-07-25  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.

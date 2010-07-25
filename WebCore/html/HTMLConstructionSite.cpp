@@ -103,10 +103,8 @@ PassRefPtr<ChildType> HTMLConstructionSite::attach(Node* parent, PassRefPtr<Chil
     // |parent| to hold a ref at this point.  In the common case (at least
     // for elements), however, we'll get to use this ref in the stack of
     // open elements.
-    if (parent->attached()) {
-        ASSERT(!child->attached());
+    if (parent->attached() && !child->attached())
         child->attach();
-    }
     return child.release();
 }
 
