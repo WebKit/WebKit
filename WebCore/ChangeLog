@@ -2,6 +2,19 @@
 
         Reviewed by Eric Seidel.
 
+        Implement adjustMathMLAttributes
+        https://bugs.webkit.org/show_bug.cgi?id=42952
+
+        This is kind of mechanical overkill for adjusting one attribute name,
+        but it's nice to use the same machinery as SVG.
+
+        * html/HTMLTreeBuilder.cpp:
+        * mathml/mathattrs.in:
+
+2010-07-25  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         Functions supporting the legacy tree builder are confusing
         https://bugs.webkit.org/show_bug.cgi?id=42951
 

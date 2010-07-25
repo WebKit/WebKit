@@ -4,6 +4,7 @@ guardFactoryWith="ENABLE(MATHML)"
 attrsNullNamespace
 
 close
+definitionURL
 denomalign
 linethickness
 mathbackground

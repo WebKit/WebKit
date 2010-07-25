@@ -161,7 +161,6 @@ resources/tests17.dat: PASS
 resources/tests18.dat: PASS
 
 resources/tests19.dat:
-1
 22
 24
 63
@@ -171,25 +170,6 @@ resources/tests19.dat:
 81
 101
 102
-
-Test 1 of 102 in resources/tests19.dat failed. Input:
-<!doctype html><math><mn DefinitionUrl="foo">
-Got:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <math math>
-|       <math mn>
-|         definitionurl="foo"
-Expected:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <math math>
-|       <math mn>
-|         definitionURL="foo"
 
 Test 22 of 102 in resources/tests19.dat failed. Input:
 <!doctype html><h1><div><h3><span></h1>foo

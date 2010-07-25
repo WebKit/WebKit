@@ -680,14 +680,15 @@ void adjustSVGTagNameCase(AtomicHTMLToken& token)
     token.setName(casedName.localName());
 }
 
-void adjustSVGAttributes(AtomicHTMLToken& token)
+template<QualifiedName** getAttrs(size_t* length)>
+void adjustAttributes(AtomicHTMLToken& token)
 {
     static PrefixedNameToQualifiedNameMap* caseMap = 0;
     if (!caseMap) {
         caseMap = new PrefixedNameToQualifiedNameMap;
         size_t length = 0;
-        QualifiedName** svgAttrs = SVGNames::getSVGAttrs(&length);
-        mapLoweredLocalNameToName(caseMap, svgAttrs, length);
+        QualifiedName** attrs = getAttrs(&length);
+        mapLoweredLocalNameToName(caseMap, attrs, length);
     }
 
     NamedNodeMap* attributes = token.attributes();
@@ -702,9 +703,14 @@ void adjustSVGAttributes(AtomicHTMLToken& token)
     }
 }
 
-void adjustMathMLAttributes(AtomicHTMLToken&)
+void adjustSVGAttributes(AtomicHTMLToken& token)
 {
-    notImplemented();
+    adjustAttributes<SVGNames::getSVGAttrs>(token);
+}
+
+void adjustMathMLAttributes(AtomicHTMLToken& token)
+{
+    adjustAttributes<MathMLNames::getMathMLAttrs>(token);
 }
 
 void addNamesWithPrefix(PrefixedNameToQualifiedNameMap* map, const AtomicString& prefix, QualifiedName** names, size_t length)

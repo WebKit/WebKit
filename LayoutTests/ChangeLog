@@ -1,3 +1,14 @@
+2010-07-25  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Implement adjustMathMLAttributes
+        https://bugs.webkit.org/show_bug.cgi?id=42952
+
+        Yay test progression.
+
+        * html5lib/runner-expected-html5.txt:
+
 2010-07-25  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Sam Weinig.
