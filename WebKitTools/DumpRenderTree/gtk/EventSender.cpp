@@ -45,8 +45,6 @@
 #include <gdk/gdkkeysyms.h>
 #include <string.h>
 
-// FIXME: Implement support for synthesizing drop events.
-
 extern "C" {
     extern void webkit_web_frame_layout(WebKitWebFrame* frame);
 }
@@ -62,6 +60,7 @@ static int lastClickTimeOffset;
 static int lastClickButton;
 static int buttonCurrentlyDown;
 static int clickCount;
+GdkDragContext* currentDragSourceContext;
 
 struct DelayedMessage {
     GdkEvent event;
@@ -359,13 +358,36 @@ static void dispatchEvent(GdkEvent event)
         return;
 
     gtk_main_do_event(&event);
+
+    if (!currentDragSourceContext)
+        return;
+
+    if (event.type == GDK_MOTION_NOTIFY) {
+        // WebKit has called gtk_drag_start(), but because the main loop isn't
+        // running GDK internals don't know that the drag has started yet. Pump
+        // the main loop a little bit so that GDK is in the correct state.
+        while (gtk_events_pending())
+            gtk_main_iteration();
+
+        // Simulate a drag motion on the top-level GDK window.
+        GtkWidget* parentWidget = gtk_widget_get_parent(GTK_WIDGET(view));
+        GdkWindow* parentWidgetWindow = parentWidget->window;
+        gdk_drag_motion(currentDragSourceContext, parentWidgetWindow, GDK_DRAG_PROTO_XDND,
+            event.motion.x_root, event.motion.y_root,
+            currentDragSourceContext->action, currentDragSourceContext->actions, GDK_CURRENT_TIME);
+
+    } else if (currentDragSourceContext && event.type == GDK_BUTTON_RELEASE) {
+        // We've released the mouse button, we should just be able to spin the
+        // event loop here and have GTK+ send the appropriate notifications for
+        // the end of the drag.
+        while (gtk_events_pending())
+            gtk_main_iteration();
+    }
+
 }
 
 void replaySavedEvents()
 {
-    // FIXME: Eventually we may need to have more sophisticated logic to
-    // track drag-and-drop operations.
-
     // First send all the events that are ready to be sent
     while (startOfQueue < endOfQueue) {
         if (msgQueue[startOfQueue].delay) {
@@ -631,7 +653,26 @@ JSObjectRef makeEventSender(JSContextRef context, bool isTopFrame)
 
         endOfQueue = 0;
         startOfQueue = 0;
+
+        currentDragSourceContext = 0;
     }
 
     return JSObjectMake(context, getClass(context), 0);
+}
+
+void dragBeginCallback(GtkWidget*, GdkDragContext* context, gpointer)
+{
+    currentDragSourceContext = context;
+}
+
+void dragEndCallback(GtkWidget*, GdkDragContext* context, gpointer)
+{
+    currentDragSourceContext = 0;
+}
+
+gboolean dragFailedCallback(GtkWidget*, GdkDragContext* context, gpointer)
+{
+    // Return TRUE here to disable the stupid GTK+ drag failed animation,
+    // which introduces asynchronous behavior into our drags.
+    return TRUE;
 }

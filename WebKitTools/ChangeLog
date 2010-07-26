@@ -1,3 +1,25 @@
+2010-07-26  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        [GTK] The EventSender should support simulating drop events
+        https://bugs.webkit.org/show_bug.cgi?id=39844
+
+        Add initial dropping support to the GTK+ EventSender.
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (createWebView): Listen for some new drag-and-drop signals.
+        * DumpRenderTree/gtk/EventSender.cpp: Add currentDragSourceContext.
+        (dispatchEvent):
+        Detect situations where a drag is either starting or ending and massage
+        GTK+ into sending the appropriate signals to the WebView.
+        (replaySavedEvents): Remove comment.
+        (makeEventSender): Clear the currentDragSourceContext when creating a new EventSender.
+        (dragBeginCallback): Capture the new currentDragSourceContext when a drag begins.
+        (dragEndCallback): Clear the currentDragSourceContext when a drag ends.
+        (dragFailedCallback): Disable the GTK+ drag failed animation.
+        * DumpRenderTree/gtk/EventSender.h: Add declarations for new signal callbacks.
+
 2010-07-26  Daniel Bates  <dbates@rim.com>
 
         Reviewed by Darin Adler.
