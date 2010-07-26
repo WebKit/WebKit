@@ -1,3 +1,15 @@
+2010-07-26  Andreas Kling  <andreas.kling@nokia.com>
+
+        Reviewed by Tor Arne Vestbø.
+
+        [Qt] Canvas: Optimize GraphicsContext::addPath()
+
+        Avoid "deep concatenating" the canvas path onto the GC path
+        if the GC path has no elements.
+
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::GraphicsContext::addPath):
+
 2010-07-23  Stephen White  <senorblanco@chromium.org>
 
         Reviewed by Darin Fisher.
