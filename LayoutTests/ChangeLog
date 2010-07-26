@@ -1,3 +1,14 @@
+2010-07-25  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        WebKitTestRunner needs to support layoutTestController.dumpSelectionRect
+        https://bugs.webkit.org/show_bug.cgi?id=42326
+
+        * platform/mac-wk2/Skipped: Removed all the tests from the list
+        that were there only because they called dumpSelectionRect. Most of
+        them pass now.
+
 2010-07-23  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Eric Carlson.

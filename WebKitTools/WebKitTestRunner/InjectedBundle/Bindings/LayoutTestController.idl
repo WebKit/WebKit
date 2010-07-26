@@ -35,6 +35,7 @@ module WTR {
         // Other dumping.
         void dumpChildFrameScrollPositions();
         void dumpEditingCallbacks();
+        void dumpSelectionRect();
         void dumpStatusCallbacks();
 
         // Special options.

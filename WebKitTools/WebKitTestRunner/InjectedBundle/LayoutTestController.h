@@ -53,6 +53,7 @@ public:
     // Other dumping.
     void dumpChildFrameScrollPositions() { m_shouldDumpAllFrameScrollPositions = true; }
     void dumpEditingCallbacks() { m_dumpEditingCallbacks = true; }
+    void dumpSelectionRect() { } // Will need to do something when we support pixel tests.
     void dumpStatusCallbacks() { m_dumpStatusCallbacks = true; }
 
     // Special options.
