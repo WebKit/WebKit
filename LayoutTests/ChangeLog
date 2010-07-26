@@ -2,6 +2,18 @@
 
         Reviewed by Maciej Stachowiak.
 
+        Need to support unsafe access console messages in WebKitTestRunner
+        https://bugs.webkit.org/show_bug.cgi?id=42320
+
+        * platform/mac-wk2/Skipped: Since unsafe access console messages are
+        working properly, moved the failing tests listed under this bug to
+        other sections in the file based on the reason they are failing.
+        Removed the tests that are passing.
+
+2010-07-25  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
         WebKitTestRunner needs to support layoutTestController.keepWebHistory
         https://bugs.webkit.org/show_bug.cgi?id=42323
 

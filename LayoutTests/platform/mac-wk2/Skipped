@@ -1572,46 +1572,6 @@ http/tests/inspector/resource-har-conversion.html
 http/tests/inspector/resource-parameters.html
 http/tests/inspector-enabled/console-log-before-frame-navigation.html
 
-# Need to support unsafe access console messages in WebKitTestRunner
-# <https://bugs.webkit.org/show_bug.cgi?id=42320>
-http/tests/security/cross-frame-access-call.html
-http/tests/security/cross-frame-access-callback-explicit-domain-DENY.html
-http/tests/security/cross-frame-access-child-explicit-domain.html
-http/tests/security/cross-frame-access-delete.html
-http/tests/security/cross-frame-access-enumeration.html
-http/tests/security/cross-frame-access-first-time.html
-http/tests/security/cross-frame-access-get-custom-property-cached.html
-http/tests/security/cross-frame-access-get.html
-http/tests/security/cross-frame-access-getOwnPropertyDescriptor.html
-http/tests/security/cross-frame-access-history-get.html
-http/tests/security/cross-frame-access-history-put.html
-http/tests/security/cross-frame-access-location-get.html
-http/tests/security/cross-frame-access-location-put.html
-http/tests/security/cross-frame-access-object-prototype.html
-http/tests/security/cross-frame-access-parent-explicit-domain.html
-http/tests/security/cross-frame-access-port.html
-http/tests/security/cross-frame-access-protocol.html
-http/tests/security/cross-frame-access-protocol-explicit-domain.html
-http/tests/security/cross-frame-access-put.html
-http/tests/security/cross-frame-access-selection.html
-http/tests/security/xss-DENIED-assign-location-hash.html
-http/tests/security/xss-DENIED-assign-location-host.html
-http/tests/security/xss-DENIED-assign-location-hostname.html
-http/tests/security/xss-DENIED-assign-location-href-javascript.html
-http/tests/security/xss-DENIED-assign-location-nonstandardProperty.html
-http/tests/security/xss-DENIED-assign-location-pathname.html
-http/tests/security/xss-DENIED-assign-location-protocol.html
-http/tests/security/xss-DENIED-assign-location-reload.html
-http/tests/security/xss-DENIED-assign-location-search.html
-http/tests/security/xss-DENIED-defineProperty.html
-http/tests/security/xss-DENIED-getSVGDocument-object.html
-http/tests/security/xss-DENIED-htmlelelment-with-iframe-proto.html
-http/tests/security/xss-DENIED-iframe-src-alias.html
-http/tests/security/xss-DENIED-invalid-domain-change.html
-http/tests/security/xss-DENIED-javascript-with-spaces.html
-http/tests/security/xss-DENIED-method-with-iframe-proto.html
-http/tests/security/xss-DENIED-sandboxed-iframe.html
-
 # WebKitTestRunner needs to support layoutTestController.setCanOpenWindows
 # <https://bugs.webkit.org/show_bug.cgi?id=42321>
 fast/dom/Document/early-document-access.html
@@ -1659,6 +1619,7 @@ http/tests/security/aboutBlank/window-open-self-about-blank.html
 http/tests/security/aboutBlank/xss-DENIED-navigate-opener-document-write.html
 http/tests/security/aboutBlank/xss-DENIED-navigate-opener-javascript-url.html
 http/tests/security/aboutBlank/xss-DENIED-set-opener.html
+http/tests/security/cross-frame-access-call.html
 http/tests/security/dataURL/xss-DENIED-from-data-url-in-foreign-domain-window-open.html
 http/tests/security/dataURL/xss-DENIED-from-javascript-url-window-open.html
 http/tests/security/dataURL/xss-DENIED-to-data-url-in-foreign-domain-window-open.html
@@ -2441,6 +2402,20 @@ http/tests/security/javascriptURL/xss-ALLOWED-from-javascript-url-sub-frame-2-le
 http/tests/security/javascriptURL/xss-ALLOWED-from-javascript-url-sub-frame.html
 http/tests/security/javascriptURL/xss-DENIED-to-javascript-url-in-foreign-domain-subframe.html
 http/tests/security/protocol-compare-case-insensitive.html
+
+# Unexplained failures that were formerly in the "unsafe access" list.
+http/tests/security/cross-frame-access-child-explicit-domain.html
+http/tests/security/cross-frame-access-enumeration.html
+http/tests/security/cross-frame-access-get-custom-property-cached.html
+http/tests/security/cross-frame-access-get.html
+http/tests/security/cross-frame-access-getOwnPropertyDescriptor.html
+http/tests/security/cross-frame-access-history-get.html
+http/tests/security/cross-frame-access-location-get.html
+http/tests/security/cross-frame-access-parent-explicit-domain.html
+http/tests/security/cross-frame-access-port.html
+http/tests/security/cross-frame-access-protocol-explicit-domain.html
+http/tests/security/cross-frame-access-protocol.html
+http/tests/security/cross-frame-access-selection.html
 
 ########################################
 
