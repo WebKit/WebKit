@@ -175,32 +175,53 @@ PassRefPtr<ImageData> getImageData(const IntRect& rect, const ImageBufferData& i
         endy = size.height();
     int numRows = endy - originy;
 
-    QImage image = imageData.m_pixmap.toImage();
-    if (multiplied == Unmultiplied)
-        image = image.convertToFormat(QImage::Format_ARGB32);
-    else
-        image = image.convertToFormat(QImage::Format_ARGB32_Premultiplied);
+    // NOTE: For unmultiplied data, we undo the premultiplication below.
+    QImage image = imageData.m_pixmap.toImage().convertToFormat(QImage::Format_ARGB32_Premultiplied);
 
     ASSERT(!image.isNull());
 
-    unsigned destBytesPerRow = 4 * rect.width();
-    unsigned char* destRows = data + desty * destBytesPerRow + destx * 4;
-    for (int y = 0; y < numRows; ++y) {
+    const int bytesPerLine = image.bytesPerLine();
 #if QT_VERSION >= 0x040700
-        const quint32* scanLine = reinterpret_cast<const quint32*>(image.constScanLine(y + originy));
+    const uchar* bits = image.constBits();
 #else
-        quint32* scanLine = reinterpret_cast<quint32*>(image.scanLine(y + originy));
+    const uchar* bits = image.bits();
 #endif
-        for (int x = 0; x < numColumns; x++) {
-            QRgb value = scanLine[x + originx];
-            int basex = x * 4;
 
-            destRows[basex] = qRed(value);
-            destRows[basex + 1] = qGreen(value);
-            destRows[basex + 2] = qBlue(value);
-            destRows[basex + 3] = qAlpha(value);
+    quint32* destRows = reinterpret_cast<quint32*>(&data[desty * rect.width() + destx]);
+
+    if (multiplied == Unmultiplied) {
+        for (int y = 0; y < numRows; ++y) {
+            const quint32* scanLine = reinterpret_cast<const quint32*>(bits + (y + originy) * bytesPerLine);
+            for (int x = 0; x < numColumns; x++) {
+                QRgb pixel = scanLine[x + originx];
+                int alpha = qAlpha(pixel);
+                // Un-premultiply and convert RGB to BGR.
+                if (alpha == 255)
+                    destRows[x] = (0xFF000000
+                                | (qBlue(pixel) << 16)
+                                | (qGreen(pixel) << 8)
+                                | (qRed(pixel)));
+                else if (alpha > 0)
+                    destRows[x] = ((alpha << 24)
+                                | (((255 * qBlue(pixel)) / alpha)) << 16)
+                                | (((255 * qGreen(pixel)) / alpha) << 8)
+                                | ((255 * qRed(pixel)) / alpha);
+                else
+                    destRows[x] = 0;
+            }
+            destRows += rect.width();
         }
-        destRows += destBytesPerRow;
+    } else {
+        for (int y = 0; y < numRows; ++y) {
+            const quint32* scanLine = reinterpret_cast<const quint32*>(bits + (y + originy) * bytesPerLine);
+            for (int x = 0; x < numColumns; x++) {
+                QRgb pixel = scanLine[x + originx];
+                // Convert RGB to BGR.
+                destRows[x] = ((pixel << 16) & 0xff0000) | ((pixel >> 16) & 0xff) | (pixel & 0xff00ff00);
+
+            }
+            destRows += rect.width();
+        }
     }
 
     return result;
