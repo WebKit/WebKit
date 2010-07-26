@@ -1,3 +1,19 @@
+2010-07-26  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Gmail compose is upside-down after r64054
+        https://bugs.webkit.org/show_bug.cgi?id=43000
+        
+        We need to call setGeometryOrientation() whenever the iframe compositing layer attachment changes,
+        not just when requiresScrollLayer() returns false. This ensures that the orientation is updated
+        correctly.
+
+        Test: compositing/iframes/iframe-content-flipping.html
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::ensureRootPlatformLayer):
+
 2010-07-26  Justin Schuh  <jschuh@chromium.org>
 
         Reviewed by Darin Fisher.

@@ -1325,11 +1325,11 @@ void RenderLayerCompositor::ensureRootPlatformLayer()
             m_scrollLayer->removeAllChildren();
             m_scrollLayer = 0;
         }
-
-        // The root layer does geometry flipping if we need it.
-        m_rootPlatformLayer->setGeometryOrientation(expectedAttachment == RootLayerAttachedViaEnclosingIframe
-            ? GraphicsLayer::CompositingCoordinatesTopDown : GraphicsLayer::compositingCoordinatesOrientation());
     }
+
+    // The root layer does geometry flipping if we need it.
+    m_rootPlatformLayer->setGeometryOrientation(expectedAttachment == RootLayerAttachedViaEnclosingIframe
+        ? GraphicsLayer::CompositingCoordinatesTopDown : GraphicsLayer::compositingCoordinatesOrientation());
 
     // Check to see if we have to change the attachment
     if (m_rootLayerAttachment != RootLayerUnattached)

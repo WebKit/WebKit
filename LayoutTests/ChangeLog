@@ -1,3 +1,19 @@
+2010-07-26  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Gmail compose is upside-down after r64054
+        https://bugs.webkit.org/show_bug.cgi?id=43000
+        
+        Testcase that hooks up compositing layers across the iframe boundary, and tests
+        whether the iframe contents are right way up.
+
+        * compositing/iframes/iframe-content-flipping-expected.checksum: Added.
+        * compositing/iframes/iframe-content-flipping-expected.png: Added.
+        * compositing/iframes/iframe-content-flipping-expected.txt: Added.
+        * compositing/iframes/iframe-content-flipping.html: Added.
+        * compositing/iframes/resources/red-green-subframe.html: Added.
+
 2010-07-26  Justin Schuh  <jschuh@chromium.org>
 
         Reviewed by Darin Fisher.
