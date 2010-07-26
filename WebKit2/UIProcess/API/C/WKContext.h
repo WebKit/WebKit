@@ -33,12 +33,12 @@ extern "C" {
 #endif
 
 // Policy Client.
-typedef void (*WKContextDidRecieveMessageFromInjectedBundleCallback)(WKContextRef page, WKStringRef message, const void *clientInfo);
+typedef void (*WKContextDidReceiveMessageFromInjectedBundleCallback)(WKContextRef page, WKStringRef message, const void *clientInfo);
 
 struct WKContextInjectedBundleClient {
     int                                                                 version;
     const void *                                                        clientInfo;
-    WKContextDidRecieveMessageFromInjectedBundleCallback                didRecieveMessageFromInjectedBundle;
+    WKContextDidReceiveMessageFromInjectedBundleCallback                didReceiveMessageFromInjectedBundle;
 };
 typedef struct WKContextInjectedBundleClient WKContextInjectedBundleClient;
 

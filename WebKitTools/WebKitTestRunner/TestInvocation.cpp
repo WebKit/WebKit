@@ -139,7 +139,7 @@ void TestInvocation::dump(const char* stringToDump)
     fflush(stderr);
 }
 
-void TestInvocation::didRecieveMessageFromInjectedBundle(WKStringRef message)
+void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef message)
 {
     RetainPtr<CFStringRef> cfMessage(AdoptCF, WKStringCopyCFString(0, message));
     

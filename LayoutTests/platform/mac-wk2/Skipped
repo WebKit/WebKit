@@ -1637,6 +1637,7 @@ fast/frames/sandboxed-iframe-navigation-windowopen.html
 fast/harness/page-cache-crash-on-data-urls.html
 fast/harness/show-modal-dialog.html
 fast/history/history_reload.html
+fast/history/window-open.html
 fast/loader/cancel-load-during-port-block-timer.html
 fast/loader/crash-copying-backforwardlist.html
 fast/loader/stateobjects/pushstate-without-history.html
@@ -1692,12 +1693,32 @@ fast/loader/frame-src-change-added-to-history.html
 fast/loader/frame-src-change-not-added-to-history.html
 fast/loader/stateobjects/pushstate-object-types.html
 fast/loader/subframe-navigate-during-main-frame-load.html
+http/tests/history/redirect-200-refresh-0-seconds.pl
 http/tests/history/redirect-200-refresh-2-seconds.pl
 http/tests/history/redirect-301.pl
 http/tests/history/redirect-302.pl
 http/tests/history/redirect-303.pl
 http/tests/history/redirect-307.pl
+http/tests/history/redirect-js-document-location-0-seconds.html
+http/tests/history/redirect-js-document-location-2-seconds.html
+http/tests/history/redirect-js-document-location-before-load.html
+http/tests/history/redirect-js-form-submit-0-seconds.html
+http/tests/history/redirect-js-form-submit-2-seconds.html
+http/tests/history/redirect-js-form-submit-before-load.html
+http/tests/history/redirect-js-location-0-seconds.html
 http/tests/history/redirect-js-location-2-seconds.html
+http/tests/history/redirect-js-location-assign-0-seconds.html
+http/tests/history/redirect-js-location-assign-2-seconds.html
+http/tests/history/redirect-js-location-assign-before-load.html
+http/tests/history/redirect-js-location-before-load.html
+http/tests/history/redirect-js-location-href-0-seconds.html
+http/tests/history/redirect-js-location-href-2-seconds.html
+http/tests/history/redirect-js-location-href-before-load.html
+http/tests/history/redirect-js-location-replace-0-seconds.html
+http/tests/history/redirect-js-location-replace-2-seconds.html
+http/tests/history/redirect-js-location-replace-before-load.html
+http/tests/history/redirect-meta-refresh-0-seconds.html
+http/tests/history/redirect-meta-refresh-2-seconds.html
 http/tests/incremental/frame-focus-before-load.html
 http/tests/navigation/anchor-basic.html
 http/tests/navigation/anchor-frames.html
@@ -1765,34 +1786,6 @@ http/tests/navigation/timerredirect-goback.html
 http/tests/navigation/timerredirect-subframeload.html
 http/tests/navigation/window-open-adds-history-item.html
 http/tests/navigation/window-open-adds-history-item2.html
-
-# WebKitTestRunner needs to support layoutTestController.keepWebHistory
-# <https://bugs.webkit.org/show_bug.cgi?id=42323>
-fast/history/multiple-classes-visited.html
-fast/history/nested-visited-test.html
-fast/history/self-is-visited.html
-fast/history/sibling-visited-test.html
-fast/history/window-open.html
-http/tests/history/redirect-200-refresh-0-seconds.pl
-http/tests/history/redirect-js-document-location-0-seconds.html
-http/tests/history/redirect-js-document-location-2-seconds.html
-http/tests/history/redirect-js-document-location-before-load.html
-http/tests/history/redirect-js-form-submit-0-seconds.html
-http/tests/history/redirect-js-form-submit-before-load.html
-http/tests/history/redirect-js-location-0-seconds.html
-http/tests/history/redirect-js-location-assign-0-seconds.html
-http/tests/history/redirect-js-location-assign-2-seconds.html
-http/tests/history/redirect-js-location-assign-before-load.html
-http/tests/history/redirect-js-location-before-load.html
-http/tests/history/redirect-js-location-href-0-seconds.html
-http/tests/history/redirect-js-location-href-2-seconds.html
-http/tests/history/redirect-js-location-href-before-load.html
-http/tests/history/redirect-js-location-replace-0-seconds.html
-http/tests/history/redirect-js-location-replace-2-seconds.html
-http/tests/history/redirect-js-location-replace-before-load.html
-http/tests/history/redirect-meta-refresh-0-seconds.html
-http/tests/history/redirect-meta-refresh-2-seconds.html
-http/tests/history/redirect-js-form-submit-2-seconds.html
 
 # WebKitTestRunner needs to support layoutTestController.dumpDOMAsWebArchive
 # <https://bugs.webkit.org/show_bug.cgi?id=42324>

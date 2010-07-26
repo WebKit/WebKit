@@ -28,6 +28,7 @@
 
 #include "ImmutableArray.h"
 #include "WebFrameLoaderClient.h"
+#include <JavaScriptCore/JSBase.h>
 #include <WebCore/FrameLoaderClient.h>
 #include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/PolicyChecker.h>
@@ -68,6 +69,8 @@ public:
     WebCore::String name() const;
     WebCore::String url() const;
     PassRefPtr<ImmutableArray> childFrames();
+    JSValueRef computedStyleIncludingVisitedInfo(JSObjectRef element);
+    JSGlobalContextRef jsContext();
 
     unsigned numberOfActiveAnimations();
     bool pauseAnimationOnElementWithId(const WebCore::String& animationName, const WebCore::String& elementID, double time);

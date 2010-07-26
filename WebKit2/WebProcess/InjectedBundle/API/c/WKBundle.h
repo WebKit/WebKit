@@ -36,20 +36,23 @@ extern "C" {
 // Client
 typedef void (*WKBundleDidCreatePageCallback)(WKBundleRef bundle, WKBundlePageRef page, const void *clientInfo);
 typedef void (*WKBundleWillDestroyPageCallback)(WKBundleRef bundle, WKBundlePageRef page, const void *clientInfo);
-typedef void (*WKBundleDidRecieveMessageCallback)(WKBundleRef bundle, WKStringRef message, const void *clientInfo);
+typedef void (*WKBundleDidReceiveMessageCallback)(WKBundleRef bundle, WKStringRef message, const void *clientInfo);
 
 struct WKBundleClient {
     int                                                                 version;
     const void *                                                        clientInfo;
     WKBundleDidCreatePageCallback                                       didCreatePage;
     WKBundleWillDestroyPageCallback                                     willDestroyPage;
-    WKBundleDidRecieveMessageCallback                                   didRecieveMessage;
+    WKBundleDidReceiveMessageCallback                                   didReceiveMessage;
 };
 typedef struct WKBundleClient WKBundleClient;
 
 WK_EXPORT void WKBundleSetClient(WKBundleRef bundle, WKBundleClient * client);
 
 WK_EXPORT void WKBundlePostMessage(WKBundleRef bundle, WKStringRef message);
+
+WK_EXPORT void WKBundleSetShouldTrackVisitedLinks(WKBundleRef bundle, bool shouldTrackVisitedLinks);
+WK_EXPORT void WKBundleRemoveAllVisitedLinks(WKBundleRef bundle);
 
 #ifdef __cplusplus
 }

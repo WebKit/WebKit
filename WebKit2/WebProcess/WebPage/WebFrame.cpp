@@ -26,15 +26,21 @@
 #include "WebFrame.h"
 
 #include "WebPage.h"
+#include <JavaScriptCore/APICast.h>
+#include <JavaScriptCore/JSLock.h>
 #include <WebCore/AnimationController.h>
+#include <WebCore/CSSComputedStyleDeclaration.h>
 #include <WebCore/Frame.h>
 #include <WebCore/HTMLFrameOwnerElement.h>
+#include <WebCore/JSCSSStyleDeclaration.h>
+#include <WebCore/JSElement.h>
 #include <WebCore/PlatformString.h>
 
 #ifndef NDEBUG
 #include <wtf/RefCountedLeakCounter.h>
 #endif
 
+using namespace JSC;
 using namespace WebCore;
 
 namespace WebKit {
@@ -244,5 +250,28 @@ bool WebFrame::pauseAnimationOnElementWithId(const String& animationName, const 
     return controller->pauseAnimationAtTime(coreNode->renderer(), animationName, time);
 }
 
+JSGlobalContextRef WebFrame::jsContext()
+{
+    // FIXME: Is there a way to get this and know that it's a JSGlobalContextRef?
+    // The const_cast here is a bit ugly.
+    return const_cast<JSGlobalContextRef>(toRef(m_coreFrame->script()->globalObject(mainThreadNormalWorld())->globalExec()));
+}
+
+JSValueRef WebFrame::computedStyleIncludingVisitedInfo(JSObjectRef elementJSObject)
+{
+    if (!m_coreFrame)
+        return 0;
+
+    JSDOMWindow* globalObject = m_coreFrame->script()->globalObject(mainThreadNormalWorld());
+    ExecState* exec = globalObject->globalExec();
+
+    if (!toJS(elementJSObject)->inherits(&JSElement::s_info))
+        return JSValueMakeUndefined(toRef(exec));
+
+    RefPtr<CSSComputedStyleDeclaration> style = computedStyle(static_cast<JSElement*>(toJS(elementJSObject))->impl(), true);
+
+    JSLock lock(SilenceAssertionsOnly);
+    return toRef(exec, toJS(exec, globalObject, style.get()));
+}
 
 } // namespace WebKit

@@ -82,7 +82,7 @@ void TestController::initialize(int argc, const char* argv[])
     WKContextInjectedBundleClient injectedBundlePathClient = {
         0,
         this,
-        _didRecieveMessageFromInjectedBundle
+        _didReceiveMessageFromInjectedBundle
     };
     WKContextSetInjectedBundleClient(m_context.get(), &injectedBundlePathClient);
 
@@ -126,14 +126,14 @@ bool TestController::run()
     return true;
 }
 
-void TestController::_didRecieveMessageFromInjectedBundle(WKContextRef context, WKStringRef message, const void *clientInfo)
+void TestController::_didReceiveMessageFromInjectedBundle(WKContextRef context, WKStringRef message, const void *clientInfo)
 {
-    static_cast<TestController*>(const_cast<void*>(clientInfo))->didRecieveMessageFromInjectedBundle(message);
+    static_cast<TestController*>(const_cast<void*>(clientInfo))->didReceiveMessageFromInjectedBundle(message);
 }
 
-void TestController::didRecieveMessageFromInjectedBundle(WKStringRef message)
+void TestController::didReceiveMessageFromInjectedBundle(WKStringRef message)
 {
-    m_currentInvocation->didRecieveMessageFromInjectedBundle(message);
+    m_currentInvocation->didReceiveMessageFromInjectedBundle(message);
 }
 
 } // namespace WTR

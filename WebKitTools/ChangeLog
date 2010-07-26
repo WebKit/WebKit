@@ -1,3 +1,70 @@
+2010-07-25  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        WebKitTestRunner needs to support layoutTestController.keepWebHistory
+        https://bugs.webkit.org/show_bug.cgi?id=42323
+
+        Added keepWebHistory and computedStyleIncludingVisitedInfo.
+
+        Also fixed misspellings of the word "receive".
+
+        Also tweaked the names of some of the LayoutTestController members.
+
+        * WebKitTestRunner/InjectedBundle/Bindings/CodeGeneratorTestRunner.pm:
+        Added support for a type named "object" that is passed and returns as
+        a JSValueRef.
+
+        * WebKitTestRunner/InjectedBundle/Bindings/LayoutTestController.idl:
+        Added keepWebHistory and computedStyleIncludingVisitedInfo. Also
+        put setAcceptsEditing up nearer the top.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::_didReceiveMessage): Fixed mispellings of receive.
+        (WTR::InjectedBundle::initialize): Ditto.
+        (WTR::InjectedBundle::didReceiveMessage): Ditto.
+        (WTR::InjectedBundle::reset): Reset the state of visited links between
+        tests. Also eliminated the unused argument to the LayoutTestController
+        create function.
+        (WTR::InjectedBundle::setShouldTrackVisitedLinks): Added.
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.h: Ditto.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::shouldBeginEditing): Call shouldAllowEditing
+        instead of acceptsEditing.
+        (WTR::InjectedBundlePage::shouldEndEditing): Ditto.
+        (WTR::InjectedBundlePage::shouldInsertNode): Ditto.
+        (WTR::InjectedBundlePage::shouldInsertText): Ditto.
+        (WTR::InjectedBundlePage::shouldDeleteRange): Ditto.
+        (WTR::InjectedBundlePage::shouldChangeSelectedRange): Ditto.
+        (WTR::InjectedBundlePage::shouldApplyStyle): Ditto.
+
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.cpp:
+        (WTR::LayoutTestController::create): Removed uneeded argument.
+        (WTR::LayoutTestController::LayoutTestController): Removed unneeded
+        argument. Updated for rename of m_acceptsEditing to m_shouldAllowEditing.
+        (WTR::LayoutTestController::numberOfActiveAnimations): Added some FIXMEs
+        about the fact that this works on the main frame.
+        (WTR::LayoutTestController::pauseAnimationAtTimeOnElementWithId): Ditto.
+        (WTR::LayoutTestController::keepWebHistory): Added.
+        (WTR::LayoutTestController::computedStyleIncludingVisitedInfo): Added.
+        (WTR::JSObjectSetProperty): Added. Helper to make the function below
+        cleaner.
+        (WTR::LayoutTestController::makeWindowObject): Changed to use the
+        overload of JSObjectSetProperty above.
+
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.h: Changes to
+        match above.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::initialize): Fixed mispellings of receive.
+        (WTR::TestController::_didReceiveMessageFromInjectedBundle): Ditto.
+        (WTR::TestController::didReceiveMessageFromInjectedBundle): Ditto.
+        * WebKitTestRunner/TestController.h: Ditto.
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::didReceiveMessageFromInjectedBundle): Ditto.
+        * WebKitTestRunner/TestInvocation.h: Ditto.
+
 2010-07-25  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Sam Weinig.

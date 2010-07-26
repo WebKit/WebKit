@@ -106,7 +106,7 @@ void WebProcess::forwardMessageToInjectedBundle(const String& message)
     if (!m_injectedBundle)
         return;
 
-    m_injectedBundle->didRecieveMessage(message);
+    m_injectedBundle->didReceiveMessage(message);
 }
 
 WebPage* WebProcess::webPage(uint64_t pageID) const

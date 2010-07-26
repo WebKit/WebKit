@@ -184,7 +184,7 @@ WebBackForwardListItem* WebProcessProxy::webBackForwardItem(uint64_t itemID) con
 
 void WebProcessProxy::forwardMessageToWebContext(const String& message)
 {
-    m_context->didRecieveMessageFromInjectedBundle(message);
+    m_context->didReceiveMessageFromInjectedBundle(message);
 }
 
 void WebProcessProxy::getPlugins(bool refresh, Vector<PluginInfo>& plugins)

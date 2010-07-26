@@ -37,6 +37,13 @@ module WTR {
         void dumpEditingCallbacks();
         void dumpStatusCallbacks();
 
+        // Special options.
+        void keepWebHistory();
+        void setAcceptsEditing(in boolean value);
+
+        // Special DOM functions.
+        object computedStyleIncludingVisitedInfo(in object element);
+
         // Repaint testing.
         void testRepaint();
         void repaintSweepHorizontally();
@@ -45,8 +52,6 @@ module WTR {
         // Animation testing.
         int numberOfActiveAnimations();
         boolean pauseAnimationAtTimeOnElementWithId(in DOMString animationName, in double time, in DOMString elementId);
-
-        void setAcceptsEditing(in boolean value);
     };
 
 }

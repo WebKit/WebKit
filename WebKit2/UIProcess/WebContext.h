@@ -76,7 +76,7 @@ public:
     const WebCore::String& injectedBundlePath() const { return m_injectedBundlePath; }
 
     // InjectedBundle client
-    void didRecieveMessageFromInjectedBundle(const WebCore::String&);
+    void didReceiveMessageFromInjectedBundle(const WebCore::String&);
 
     void postMessageToInjectedBundle(WebCore::StringImpl*);
 

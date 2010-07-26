@@ -28,7 +28,6 @@
 #include "WKAPICast.h"
 #include "WKBundleAPICast.h"
 #include "WebFrame.h"
-#include <JavaScriptCore/APICast.h>
 #include <WebCore/Frame.h>
 
 using namespace WebCore;
@@ -61,9 +60,7 @@ bool WKBundleFramePauseAnimationOnElementWithId(WKBundleFrameRef frameRef, WKStr
 
 JSGlobalContextRef WKBundleFrameGetJavaScriptContext(WKBundleFrameRef frameRef)
 {
-    // FIXME: Is there a way to get this and know that it's a JSGlobalContextRef?
-    // The const_cast here is a bit ugly.
-    return const_cast<JSGlobalContextRef>(toRef(toWK(frameRef)->coreFrame()->script()->globalObject(mainThreadNormalWorld())->globalExec()));
+    return toWK(frameRef)->jsContext();
 }
 
 WKStringRef WKBundleFrameCopyName(WKBundleFrameRef frameRef)
@@ -71,4 +68,9 @@ WKStringRef WKBundleFrameCopyName(WKBundleFrameRef frameRef)
     WebCore::String string = toWK(frameRef)->name();
     string.impl()->ref();
     return toRef(string.impl());
+}
+
+JSValueRef WKBundleFrameGetComputedStyleIncludingVisitedInfo(WKBundleFrameRef frameRef, JSObjectRef element)
+{
+    return toWK(frameRef)->computedStyleIncludingVisitedInfo(element);
 }

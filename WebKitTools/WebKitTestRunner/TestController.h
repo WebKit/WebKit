@@ -67,8 +67,8 @@ private:
     void initializeTestPluginPath();
 
     // WKContextInjectedBundleClient
-    static void _didRecieveMessageFromInjectedBundle(WKContextRef context, WKStringRef message, const void*);
-    void didRecieveMessageFromInjectedBundle(WKStringRef message);
+    static void _didReceiveMessageFromInjectedBundle(WKContextRef context, WKStringRef message, const void*);
+    void didReceiveMessageFromInjectedBundle(WKStringRef message);
 
     OwnPtr<TestInvocation> m_currentInvocation;
 

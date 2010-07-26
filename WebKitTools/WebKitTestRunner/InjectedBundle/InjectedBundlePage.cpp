@@ -504,14 +504,14 @@ bool InjectedBundlePage::shouldBeginEditing(WKBundleRangeRef range)
 {
     if (InjectedBundle::shared().layoutTestController()->shouldDumpEditingCallbacks())
         InjectedBundle::shared().os() << "EDITING DELEGATE: shouldBeginEditingInDOMRange:" << range << "\n";
-    return InjectedBundle::shared().layoutTestController()->acceptsEditing();
+    return InjectedBundle::shared().layoutTestController()->shouldAllowEditing();
 }
 
 bool InjectedBundlePage::shouldEndEditing(WKBundleRangeRef range)
 {
     if (InjectedBundle::shared().layoutTestController()->shouldDumpEditingCallbacks())
         InjectedBundle::shared().os() << "EDITING DELEGATE: shouldEndEditingInDOMRange:" << range << "\n";
-    return InjectedBundle::shared().layoutTestController()->acceptsEditing();
+    return InjectedBundle::shared().layoutTestController()->shouldAllowEditing();
 }
 
 bool InjectedBundlePage::shouldInsertNode(WKBundleNodeRef node, WKBundleRangeRef rangeToReplace, WKInsertActionType action)
@@ -524,7 +524,7 @@ bool InjectedBundlePage::shouldInsertNode(WKBundleNodeRef node, WKBundleRangeRef
 
     if (InjectedBundle::shared().layoutTestController()->shouldDumpEditingCallbacks())
         InjectedBundle::shared().os() << "EDITING DELEGATE: shouldInsertNode:" << dumpPath(node) << " replacingDOMRange:" << rangeToReplace << " givenAction:" << insertactionstring[action] << "\n";
-    return InjectedBundle::shared().layoutTestController()->acceptsEditing();
+    return InjectedBundle::shared().layoutTestController()->shouldAllowEditing();
 }
 
 bool InjectedBundlePage::shouldInsertText(WKStringRef text, WKBundleRangeRef rangeToReplace, WKInsertActionType action)
@@ -537,14 +537,14 @@ bool InjectedBundlePage::shouldInsertText(WKStringRef text, WKBundleRangeRef ran
 
     if (InjectedBundle::shared().layoutTestController()->shouldDumpEditingCallbacks())
         InjectedBundle::shared().os() << "EDITING DELEGATE: shouldInsertText:" << text << " replacingDOMRange:" << rangeToReplace << " givenAction:" << insertactionstring[action] << "\n";
-    return InjectedBundle::shared().layoutTestController()->acceptsEditing();
+    return InjectedBundle::shared().layoutTestController()->shouldAllowEditing();
 }
 
 bool InjectedBundlePage::shouldDeleteRange(WKBundleRangeRef range)
 {
     if (InjectedBundle::shared().layoutTestController()->shouldDumpEditingCallbacks())
         InjectedBundle::shared().os() << "EDITING DELEGATE: shouldDeleteDOMRange:" << range << "\n";
-    return InjectedBundle::shared().layoutTestController()->acceptsEditing();
+    return InjectedBundle::shared().layoutTestController()->shouldAllowEditing();
 }
 
 bool InjectedBundlePage::shouldChangeSelectedRange(WKBundleRangeRef fromRange, WKBundleRangeRef toRange, WKAffinityType affinity, bool stillSelecting)
@@ -560,14 +560,14 @@ bool InjectedBundlePage::shouldChangeSelectedRange(WKBundleRangeRef fromRange, W
 
     if (InjectedBundle::shared().layoutTestController()->shouldDumpEditingCallbacks())
         InjectedBundle::shared().os() << "EDITING DELEGATE: shouldChangeSelectedDOMRange:" << fromRange << " toDOMRange:" << toRange << " affinity:" << affinitystring[affinity] << " stillSelecting:" << boolstring[stillSelecting] << "\n";
-    return InjectedBundle::shared().layoutTestController()->acceptsEditing();
+    return InjectedBundle::shared().layoutTestController()->shouldAllowEditing();
 }
 
 bool InjectedBundlePage::shouldApplyStyle(WKBundleCSSStyleDeclarationRef style, WKBundleRangeRef range)
 {
     if (InjectedBundle::shared().layoutTestController()->shouldDumpEditingCallbacks())
         InjectedBundle::shared().os() << "EDITING DELEGATE: shouldApplyStyle:" << style << " toElementsInDOMRange:" << range << "\n";
-    return InjectedBundle::shared().layoutTestController()->acceptsEditing();
+    return InjectedBundle::shared().layoutTestController()->shouldAllowEditing();
 }
 
 void InjectedBundlePage::didBeginEditing(WKStringRef notificationName)

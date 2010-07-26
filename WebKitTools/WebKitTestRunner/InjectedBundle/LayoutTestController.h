@@ -36,7 +36,7 @@ namespace WTR {
 
 class LayoutTestController : public JSWrappable {
 public:
-    static PassRefPtr<LayoutTestController> create(const std::string& testPathOrURL);
+    static PassRefPtr<LayoutTestController> create();
     virtual ~LayoutTestController();
 
     // JSWrappable
@@ -55,6 +55,13 @@ public:
     void dumpEditingCallbacks() { m_dumpEditingCallbacks = true; }
     void dumpStatusCallbacks() { m_dumpStatusCallbacks = true; }
 
+    // Special options.
+    void keepWebHistory();
+    void setAcceptsEditing(bool value) { m_shouldAllowEditing = value; }
+
+    // Special DOM functions.
+    JSValueRef computedStyleIncludingVisitedInfo(JSValueRef);
+
     // Repaint testing.
     void testRepaint() { m_testRepaint = true; }
     void repaintSweepHorizontally() { m_testRepaintSweepHorizontally = true; }
@@ -63,9 +70,6 @@ public:
     // Animation testing.
     unsigned numberOfActiveAnimations() const;
     bool pauseAnimationAtTimeOnElementWithId(JSStringRef animationName, double time, JSStringRef elementId);
-
-    void setAcceptsEditing(bool value) { m_acceptsEditing = value; }
-    bool acceptsEditing() const { return m_acceptsEditing; }
 
     enum WhatToDump { RenderTree, MainFrameText, AllFramesText };
     WhatToDump whatToDump() const { return m_whatToDump; }
@@ -80,20 +84,20 @@ public:
     void waitToDumpWatchdogTimerFired();
     void invalidateWaitToDumpWatchdog();
 
+    bool shouldAllowEditing() const { return m_shouldAllowEditing; }
+
 private:
-    LayoutTestController(const std::string& testPathOrURL);
+    LayoutTestController();
 
     WhatToDump m_whatToDump;
     bool m_shouldDumpAllFrameScrollPositions;
-    bool m_acceptsEditing;
+    bool m_shouldAllowEditing;
     bool m_dumpEditingCallbacks;
     bool m_dumpStatusCallbacks;
     bool m_waitToDump; // True if waitUntilDone() has been called, but notifyDone() has not yet been called.
     bool m_testRepaint;
     bool m_testRepaintSweepHorizontally;
 
-    std::string m_testPathOrURL;
-    
     RetainPtr<CFRunLoopTimerRef> m_waitToDumpWatchdog;
 };
 

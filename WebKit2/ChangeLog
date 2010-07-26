@@ -1,3 +1,53 @@
+2010-07-25  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        WebKitTestRunner needs to support layoutTestController.keepWebHistory
+        https://bugs.webkit.org/show_bug.cgi?id=42323
+
+        Added WKBundleSetShouldTrackVisitedLinks, WKBundleRemoveAllVisitedLinks,
+        and WKBundleFrameGetComputedStyleIncludingVisitedInfo.
+
+        Also fixed misspellings of the word "receive".
+
+        * WebProcess/InjectedBundle/API/c/WKBundle.cpp:
+        (WKBundleSetShouldTrackVisitedLinks): Added.
+        (WKBundleRemoveAllVisitedLinks): Added.
+        * WebProcess/InjectedBundle/API/c/WKBundle.h: Added functions and
+        fixed mispellings of receive.
+
+        * WebProcess/InjectedBundle/API/c/WKBundleFrame.cpp:
+        (WKBundleFrameGetJavaScriptContext): Moved the code from here into WebFrame,
+        to be consistent with the rest of the functions in this file.
+        (WKBundleFrameGetComputedStyleIncludingVisitedInfo): Added.
+        * WebProcess/InjectedBundle/API/c/WKBundleFrame.h: Added
+        WKBundleFrameGetComputedStyleIncludingVisitedInfo and tried to rearrange the
+        file to be more logically ordered and grouped.
+
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::setShouldTrackVisitedLinks): Added.
+        (WebKit::InjectedBundle::removeAllVisitedLinks): Added.
+        (WebKit::InjectedBundle::didReceiveMessage): Fixed mispellings of receive.
+        * WebProcess/InjectedBundle/InjectedBundle.h: Ditto.
+
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::jsContext): Added. Contains the code that used to be in
+        WKBundleFrameGetJavaScriptContext.
+        (WebKit::WebFrame::computedStyleIncludingVisitedInfo): Added.
+        * WebProcess/WebPage/WebFrame.h: Ditto.
+
+        * UIProcess/API/C/WKContext.h: Fixed misspellings of receive.
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::didReceiveMessageFromInjectedBundle): Ditto.
+        * UIProcess/WebContext.h: Ditto.
+        * UIProcess/WebContextInjectedBundleClient.cpp:
+        (WebKit::WebContextInjectedBundleClient::didReceiveMessageFromInjectedBundle): Ditto.
+        * UIProcess/WebContextInjectedBundleClient.h: Ditto.
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::forwardMessageToWebContext): Ditto.
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::forwardMessageToInjectedBundle): Ditto.
+
 2010-07-25  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Sam Weinig.

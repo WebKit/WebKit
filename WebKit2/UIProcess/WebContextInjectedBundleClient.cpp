@@ -45,12 +45,12 @@ void WebContextInjectedBundleClient::initialize(WKContextInjectedBundleClient* c
         memset(&m_client, 0, sizeof(m_client));
 }
 
-void WebContextInjectedBundleClient::didRecieveMessageFromInjectedBundle(WebContext* context, const String& message)
+void WebContextInjectedBundleClient::didReceiveMessageFromInjectedBundle(WebContext* context, const String& message)
 {
-    if (!m_client.didRecieveMessageFromInjectedBundle)
+    if (!m_client.didReceiveMessageFromInjectedBundle)
         return;
 
-    m_client.didRecieveMessageFromInjectedBundle(toRef(context), toRef(message.impl()), m_client.clientInfo);
+    m_client.didReceiveMessageFromInjectedBundle(toRef(context), toRef(message.impl()), m_client.clientInfo);
 }
 
 } // namespace WebKit

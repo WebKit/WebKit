@@ -37,7 +37,7 @@ public:
     ~TestInvocation();
 
     void invoke();
-    void didRecieveMessageFromInjectedBundle(WKStringRef message);
+    void didReceiveMessageFromInjectedBundle(WKStringRef message);
 
 private:
     void dump(const char*);

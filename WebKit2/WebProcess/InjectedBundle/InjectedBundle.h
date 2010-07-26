@@ -60,11 +60,13 @@ public:
     // API
     void initializeClient(WKBundleClient*);
     void postMessage(WebCore::StringImpl*);
+    void setShouldTrackVisitedLinks(bool);
+    void removeAllVisitedLinks();
 
     // Callback hooks
     void didCreatePage(WebPage*);
     void willDestroyPage(WebPage*);
-    void didRecieveMessage(const WebCore::String&);
+    void didReceiveMessage(const WebCore::String&);
 
 private:
     InjectedBundle(const WebCore::String&);

@@ -36,21 +36,20 @@
 
 namespace WTR {
 
-PassRefPtr<LayoutTestController> LayoutTestController::create(const std::string& testPathOrURL)
+PassRefPtr<LayoutTestController> LayoutTestController::create()
 {
-    return adoptRef(new LayoutTestController(testPathOrURL));
+    return adoptRef(new LayoutTestController);
 }
 
-LayoutTestController::LayoutTestController(const std::string& testPathOrURL)
+LayoutTestController::LayoutTestController()
     : m_whatToDump(RenderTree)
     , m_shouldDumpAllFrameScrollPositions(false)
-    , m_acceptsEditing(true)
+    , m_shouldAllowEditing(true)
     , m_dumpEditingCallbacks(false)
     , m_dumpStatusCallbacks(false)
     , m_waitToDump(false)
     , m_testRepaint(false)
     , m_testRepaintSweepHorizontally(false)
-    , m_testPathOrURL(testPathOrURL)
 {
 }
 
@@ -112,12 +111,17 @@ void LayoutTestController::notifyDone()
 
 unsigned LayoutTestController::numberOfActiveAnimations() const
 {
+    // FIXME: Is it OK this works only for the main frame?
+    // FIXME: If this is needed only for the main frame, then why is the function on WKBundleFrame instead of WKBundlePage?
     WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(InjectedBundle::shared().page()->page());
     return WKBundleFrameGetNumberOfActiveAnimations(mainFrame);
 }
 
 bool LayoutTestController::pauseAnimationAtTimeOnElementWithId(JSStringRef animationName, double time, JSStringRef elementId)
 {
+    // FIXME: Is it OK this works only for the main frame?
+    // FIXME: If this is needed only for the main frame, then why is the function on WKBundleFrame instead of WKBundlePage?
+
     RetainPtr<CFStringRef> idCF(AdoptCF, JSStringCopyCFString(kCFAllocatorDefault, elementId));
     WKRetainPtr<WKStringRef> idWK(AdoptWK, WKStringCreateWithCFString(idCF.get()));
     RetainPtr<CFStringRef> nameCF(AdoptCF, JSStringCopyCFString(kCFAllocatorDefault, animationName));
@@ -127,12 +131,35 @@ bool LayoutTestController::pauseAnimationAtTimeOnElementWithId(JSStringRef anima
     return WKBundleFramePauseAnimationOnElementWithId(mainFrame, nameWK.get(), idWK.get(), time);
 }
 
+void LayoutTestController::keepWebHistory()
+{
+    InjectedBundle::shared().setShouldTrackVisitedLinks();
+}
+
+JSValueRef LayoutTestController::computedStyleIncludingVisitedInfo(JSValueRef element)
+{
+    // FIXME: Is it OK this works only for the main frame?
+    WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(InjectedBundle::shared().page()->page());
+    JSContextRef context = WKBundleFrameGetJavaScriptContext(mainFrame);
+    if (!JSValueIsObject(context, element))
+        return JSValueMakeUndefined(context);
+    JSValueRef value = WKBundleFrameGetComputedStyleIncludingVisitedInfo(mainFrame, const_cast<JSObjectRef>(element));
+    if (!value)
+        return JSValueMakeUndefined(context);
+    return value;
+}
+
 // Object Creation
+
+static void JSObjectSetProperty(JSContextRef context, JSObjectRef object, const char* propertyName, JSWrappable* value, JSPropertyAttributes attributes, JSValueRef* exception)
+{
+    JSRetainPtr<JSStringRef> propertyNameString(Adopt, JSStringCreateWithUTF8CString(propertyName));
+    JSObjectSetProperty(context, object, propertyNameString.get(), JSWrapper::wrap(context, value), attributes, exception);
+}
 
 void LayoutTestController::makeWindowObject(JSContextRef context, JSObjectRef windowObject, JSValueRef* exception)
 {
-    JSRetainPtr<JSStringRef> layoutTestContollerStr(Adopt, JSStringCreateWithUTF8CString("layoutTestController"));
-    JSObjectSetProperty(context, windowObject, layoutTestContollerStr.get(), JSWrapper::wrap(context, this), kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete, exception);
+    JSObjectSetProperty(context, windowObject, "layoutTestController", this, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete, exception);
 }
 
 } // namespace WTR
