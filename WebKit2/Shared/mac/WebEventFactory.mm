@@ -963,11 +963,14 @@ WebMouseEvent WebEventFactory::createWebMouseEvent(NSEvent *event, NSView *windo
     int positionY                           = position.y;
     int globalPositionX                     = globalPosition.x;
     int globalPositionY                     = globalPosition.y;
+    float deltaX                            = [event deltaX];
+    float deltaY                            = [event deltaY];
+    float deltaZ                            = [event deltaZ];
     int clickCount                          = clickCountForEvent(event);
     WebEvent::Modifiers modifiers           = modifiersForEvent(event);
     double timestamp                        = [event timestamp];
 
-    return WebMouseEvent(type, button, positionX, positionY, globalPositionX, globalPositionY, clickCount, modifiers, timestamp);
+    return WebMouseEvent(type, button, positionX, positionY, globalPositionX, globalPositionY, deltaX, deltaY, deltaZ, clickCount, modifiers, timestamp);
 }
 
 WebWheelEvent WebEventFactory::createWebWheelEvent(NSEvent *event, NSView *windowView)

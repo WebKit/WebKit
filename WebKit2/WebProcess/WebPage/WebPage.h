@@ -54,6 +54,7 @@ namespace WebCore {
 namespace WebKit {
 
 class DrawingArea;
+class WebEvent;
 class WebFrame;
 class WebKeyboardEvent;
 class WebMouseEvent;
@@ -108,6 +109,8 @@ public:
     void enterAcceleratedCompositingMode(WebCore::GraphicsLayer*);
     void exitAcceleratedCompositingMode();
 #endif
+
+    static const WebEvent* currentEvent();
 
 private:
     WebPage(uint64_t pageID, const WebCore::IntSize& viewSize, const WebPreferencesStore&, DrawingArea::Type);

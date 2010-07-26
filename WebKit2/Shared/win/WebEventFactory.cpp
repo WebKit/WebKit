@@ -403,7 +403,7 @@ WebMouseEvent WebEventFactory::createWebMouseEvent(HWND hWnd, UINT message, WPAR
     int clickCount = WebKit::clickCount(type, button, positionX, positionY, timestamp);
     WebEvent::Modifiers modifiers = modifiersForEvent(wParam);
 
-    return WebMouseEvent(type, button, positionX, positionY, globalPositionX, globalPositionY, clickCount, modifiers, timestamp);
+    return WebMouseEvent(type, button, positionX, positionY, globalPositionX, globalPositionY, 0, 0, 0, clickCount, modifiers, timestamp);
 }
 
 WebWheelEvent WebEventFactory::createWebWheelEvent(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)

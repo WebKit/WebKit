@@ -120,13 +120,16 @@ public:
     {
     }
 
-    WebMouseEvent(Type type, Button button, int x, int y, int globalX, int globalY, int clickCount, Modifiers modifiers, double timestamp)
+    WebMouseEvent(Type type, Button button, int x, int y, int globalX, int globalY, float deltaX, float deltaY, float deltaZ, int clickCount, Modifiers modifiers, double timestamp)
         : WebEvent(type, modifiers, timestamp)
         , m_button(button)
         , m_positionX(x)
         , m_positionY(y)
         , m_globalPositionX(globalX)
         , m_globalPositionY(globalY)
+        , m_deltaX(deltaX)
+        , m_deltaY(deltaY)
+        , m_deltaZ(deltaZ)
         , m_clickCount(clickCount)
     {
         ASSERT(isMouseEventType(type));
@@ -137,6 +140,9 @@ public:
     int positionY() const { return m_positionY; }
     int globalPositionX() const { return m_globalPositionX; }
     int globalPositionY() const { return m_globalPositionY; }
+    float deltaX() const { return m_deltaX; }
+    float deltaY() const { return m_deltaY; }
+    float deltaZ() const { return m_deltaZ; }
     int clickCount() const { return m_clickCount; }
 
     void encode(CoreIPC::ArgumentEncoder& encoder) const
@@ -160,6 +166,9 @@ private:
     int m_positionY;
     int m_globalPositionX;
     int m_globalPositionY;
+    float m_deltaX;
+    float m_deltaY;
+    float m_deltaZ;
     int m_clickCount;
 };
 

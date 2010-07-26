@@ -27,6 +27,57 @@
 
         Reviewed by Sam Weinig.
 
+        Deliver mouse and wheel events to plug-ins
+        https://bugs.webkit.org/show_bug.cgi?id=42988
+
+        * Shared/WebEvent.h:
+        (WebKit::WebMouseEvent::WebMouseEvent):
+        (WebKit::WebMouseEvent::deltaX):
+        (WebKit::WebMouseEvent::deltaY):
+        (WebKit::WebMouseEvent::deltaZ):
+        * Shared/mac/WebEventFactory.mm:
+        (WebKit::WebEventFactory::createWebMouseEvent):
+        Add deltaX, deltaY and deltaZ member variables to WebMosueEvent.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Rename NetscapePluginMac.cpp to NetscapePluginMac.mm.
+        
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::NPP_HandleEvent):
+        Add NPP_ wrapper.
+
+        (WebKit::NetscapePlugin::handleMouseEvent):
+        (WebKit::NetscapePlugin::handleWheelEvent):
+        Call the platform variants.
+    
+        * WebProcess/Plugins/Netscape/mac/NetscapePluginMac.mm: Added.
+        (WebKit::modifierFlags):        
+        (WebKit::buttonNumber):
+        (WebKit::initializeMouseEvent):
+        (WebKit::NetscapePlugin::platformHandleMouseEvent):
+        Create an NPCocoaEvent and send it to the plug-in.
+        
+        (WebKit::NetscapePlugin::platformHandleWheelEvent):
+        Ditto.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::handleEvent):
+        Get the current WebEvent and send it to the plug-in if necessary.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::currentEvent):
+        (WebKit::CurrentEvent::CurrentEvent):
+        (WebKit::CurrentEvent::~CurrentEvent):
+        (WebKit::WebPage::mouseEvent):
+        (WebKit::WebPage::wheelEvent):
+        (WebKit::WebPage::keyEvent):
+        * WebProcess/WebPage/WebPage.h:
+        Add RAII object for keeping track of the current event.
+
+2010-07-26  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
         Clean up event handling functions
         https://bugs.webkit.org/show_bug.cgi?id=42977
 

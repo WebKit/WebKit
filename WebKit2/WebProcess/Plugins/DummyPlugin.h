@@ -54,7 +54,9 @@ private:
     virtual void streamDidReceiveData(uint64_t streamID, const char* bytes, int length);
     virtual void streamDidFinishLoading(uint64_t streamID);
     virtual void streamDidFail(uint64_t streamID, bool wasCancelled);
-
+    virtual bool handleMouseEvent(const WebMouseEvent&);
+    virtual bool handleWheelEvent(const WebWheelEvent&);
+    
     virtual PluginController* controller();
 };
 

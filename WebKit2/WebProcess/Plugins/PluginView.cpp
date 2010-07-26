@@ -26,6 +26,8 @@
 #include "PluginView.h"
 
 #include "Plugin.h"
+#include "WebEvent.h"
+#include "WebPage.h"
 #include <WebCore/DocumentLoader.h>
 #include <WebCore/Event.h>
 #include <WebCore/FrameLoadRequest.h>
@@ -318,9 +320,26 @@ void PluginView::setParent(ScrollView* scrollView)
     viewGeometryDidChange();
 }
 
-void PluginView::handleEvent(Event*)
+void PluginView::handleEvent(Event* event)
 {
-    // FIXME: Implement.
+    const WebEvent* currentEvent = WebPage::currentEvent();
+    if (!currentEvent)
+        return;
+
+    bool didHandleEvent = false;
+
+    if ((event->type() == eventNames().mousemoveEvent && currentEvent->type() == WebEvent::MouseMove) 
+        || (event->type() == eventNames().mousedownEvent && currentEvent->type() == WebEvent::MouseDown)
+        || (event->type() == eventNames().mouseupEvent && currentEvent->type() == WebEvent::MouseUp)) {
+        // We have a mouse event.
+        didHandleEvent = m_plugin->handleMouseEvent(static_cast<const WebMouseEvent&>(*currentEvent));
+    } else if (event->type() == eventNames().mousewheelEvent && currentEvent->type() == WebEvent::Wheel) {
+        // We have a wheel event.
+        didHandleEvent = m_plugin->handleWheelEvent(static_cast<const WebWheelEvent&>(*currentEvent));
+    }
+
+    if (didHandleEvent)
+        event->setDefaultHandled();
 }
     
 void PluginView::viewGeometryDidChange()

@@ -25,6 +25,8 @@
 
 #include "NetscapePlugin.h"
 
+#include <AppKit/AppKit.h>
+#include "WebEvent.h"
 #include <WebCore/GraphicsContext.h>
 
 using namespace WebCore;
@@ -136,7 +138,7 @@ void NetscapePlugin::platformPaint(GraphicsContext* context, const IntRect& dirt
             event.data.draw.width = dirtyRect.width();
             event.data.draw.height = dirtyRect.height();
             
-            m_pluginModule->pluginFuncs().event(&m_npp, &event);
+            NPP_HandleEvent(&event);
             break;
         }
         
@@ -145,4 +147,112 @@ void NetscapePlugin::platformPaint(GraphicsContext* context, const IntRect& dirt
     }
 }
 
+static uint32_t modifierFlags(const WebEvent& event)
+{
+    uint32_t modifiers = 0;
+
+    if (event.shiftKey())
+        modifiers |= NSShiftKeyMask;
+    if (event.controlKey())
+        modifiers |= NSControlKeyMask;
+    if (event.altKey())
+        modifiers |= NSAlternateKeyMask;
+    if (event.metaKey())
+        modifiers |= NSCommandKeyMask;
+    
+    return modifiers;
+}
+    
+static int32_t buttonNumber(WebMouseEvent::Button button)
+{
+    switch (button) {
+    case WebMouseEvent::NoButton:
+    case WebMouseEvent::LeftButton:
+        return 0;
+    case WebMouseEvent::RightButton:
+        return 1;
+    case WebMouseEvent::MiddleButton:
+        return 2;
+    }
+
+    ASSERT_NOT_REACHED();
+    return -1;
+}
+
+static NPCocoaEvent initializeMouseEvent(const WebMouseEvent& mouseEvent, const WebCore::IntPoint& pluginLocation)
+{
+    NPCocoaEventType eventType;
+
+    switch (mouseEvent.type()) {
+    case WebEvent::MouseDown:
+        eventType = NPCocoaEventMouseDown;
+        break;
+    case WebEvent::MouseUp:
+        eventType = NPCocoaEventMouseUp;
+        break;
+    case WebEvent::MouseMove:
+        if (mouseEvent.button() == WebMouseEvent::NoButton)
+            eventType = NPCocoaEventMouseMoved;
+        else
+            eventType = NPCocoaEventMouseDragged;
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+        return NPCocoaEvent();
+    }
+
+    NPCocoaEvent event = initializeEvent(eventType);
+    
+    event.data.mouse.modifierFlags = modifierFlags(mouseEvent);
+    event.data.mouse.pluginX = mouseEvent.positionX() - pluginLocation.x();
+    event.data.mouse.pluginY = mouseEvent.positionY() - pluginLocation.y();
+    event.data.mouse.buttonNumber = buttonNumber(mouseEvent.button());
+    event.data.mouse.clickCount = mouseEvent.clickCount();
+    event.data.mouse.deltaX = mouseEvent.deltaX();
+    event.data.mouse.deltaY = mouseEvent.deltaY();
+    event.data.mouse.deltaZ = mouseEvent.deltaZ();
+
+    return event;
+}
+
+bool NetscapePlugin::platformHandleMouseEvent(const WebMouseEvent& mouseEvent)
+{
+    switch (m_eventModel) {
+        case NPEventModelCocoa: {
+            NPCocoaEvent event = initializeMouseEvent(mouseEvent, m_frameRect.location());
+            return NPP_HandleEvent(&event);
+        }
+
+        default:
+            ASSERT_NOT_REACHED();
+    }
+    
+    return false;
+}
+
+bool NetscapePlugin::platformHandleWheelEvent(const WebWheelEvent& wheelEvent)
+{
+    switch (m_eventModel) {
+        case NPEventModelCocoa: {
+            NPCocoaEvent event = initializeEvent(NPCocoaEventScrollWheel);
+            
+            event.data.mouse.modifierFlags = modifierFlags(wheelEvent);
+            event.data.mouse.pluginX = wheelEvent.positionX() - m_frameRect.x();
+            event.data.mouse.pluginY = wheelEvent.positionY() - m_frameRect.y();
+            event.data.mouse.buttonNumber = 0;
+            event.data.mouse.clickCount = 0;
+            event.data.mouse.deltaX = wheelEvent.deltaX();
+            event.data.mouse.deltaY = wheelEvent.deltaY();
+            event.data.mouse.deltaZ = 0;
+            
+            return NPP_HandleEvent(&event);
+        }
+
+        default:
+            ASSERT_NOT_REACHED();
+    }
+
+    return false;
+}
+    
 } // namespace WebKit

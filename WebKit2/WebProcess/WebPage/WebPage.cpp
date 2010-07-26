@@ -277,8 +277,37 @@ void WebPage::drawRect(GraphicsContext& graphicsContext, const IntRect& rect)
 
 // Events 
 
+static const WebEvent* g_currentEvent = 0;
+
+// FIXME: WebPage::currentEvent is used by the plug-in code to avoid having to convert from DOM events back to
+// WebEvents. When we get the event handling sorted out, this should go away and the Widgets should get the correct
+// platform events passed to the event handler code.
+const WebEvent* WebPage::currentEvent()
+{
+    return g_currentEvent;
+}
+
+class CurrentEvent {
+public:
+    explicit CurrentEvent(const WebEvent& event)
+        : m_previousCurrentEvent(g_currentEvent)
+    {
+        g_currentEvent = &event;
+    }
+
+    ~CurrentEvent()
+    {
+        g_currentEvent = m_previousCurrentEvent;
+    }
+
+private:
+    const WebEvent* m_previousCurrentEvent;
+};
+
 void WebPage::mouseEvent(const WebMouseEvent& mouseEvent)
 {
+    CurrentEvent currentEvent(mouseEvent);
+
     WebProcess::shared().connection()->send(WebPageProxyMessage::DidReceiveEvent, m_pageID, CoreIPC::In(static_cast<uint32_t>(mouseEvent.type())));
 
     if (!m_mainFrame->coreFrame()->view())
@@ -304,6 +333,8 @@ void WebPage::mouseEvent(const WebMouseEvent& mouseEvent)
 
 void WebPage::wheelEvent(const WebWheelEvent& wheelEvent)
 {
+    CurrentEvent currentEvent(wheelEvent);
+
     WebProcess::shared().connection()->send(WebPageProxyMessage::DidReceiveEvent, m_pageID, CoreIPC::In(static_cast<uint32_t>(wheelEvent.type())));
     if (!m_mainFrame->coreFrame()->view())
         return;
@@ -314,6 +345,8 @@ void WebPage::wheelEvent(const WebWheelEvent& wheelEvent)
 
 void WebPage::keyEvent(const WebKeyboardEvent& keyboardEvent)
 {
+    CurrentEvent currentEvent(keyboardEvent);
+
     WebProcess::shared().connection()->send(WebPageProxyMessage::DidReceiveEvent, m_pageID, CoreIPC::In(static_cast<uint32_t>(keyboardEvent.type())));
 
     if (!m_mainFrame->coreFrame()->view())
