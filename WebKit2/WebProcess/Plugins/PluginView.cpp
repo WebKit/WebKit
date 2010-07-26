@@ -30,6 +30,7 @@
 #include "WebPage.h"
 #include <WebCore/DocumentLoader.h>
 #include <WebCore/Event.h>
+#include <WebCore/FocusController.h>
 #include <WebCore/FrameLoadRequest.h>
 #include <WebCore/FrameLoaderClient.h>
 #include <WebCore/FrameView.h>
@@ -332,10 +333,19 @@ void PluginView::handleEvent(Event* event)
         || (event->type() == eventNames().mousedownEvent && currentEvent->type() == WebEvent::MouseDown)
         || (event->type() == eventNames().mouseupEvent && currentEvent->type() == WebEvent::MouseUp)) {
         // We have a mouse event.
+        if (currentEvent->type() == WebEvent::MouseDown)
+            focusPluginElement();
+
         didHandleEvent = m_plugin->handleMouseEvent(static_cast<const WebMouseEvent&>(*currentEvent));
     } else if (event->type() == eventNames().mousewheelEvent && currentEvent->type() == WebEvent::Wheel) {
         // We have a wheel event.
         didHandleEvent = m_plugin->handleWheelEvent(static_cast<const WebWheelEvent&>(*currentEvent));
+    } else if (event->type() == eventNames().mouseoverEvent && currentEvent->type() == WebEvent::MouseMove) {
+        // We have a mouse enter event.
+        didHandleEvent = m_plugin->handleMouseEnterEvent(static_cast<const WebMouseEvent&>(*currentEvent));
+    } else if (event->type() == eventNames().mouseoutEvent && currentEvent->type() == WebEvent::MouseMove) {
+        // We have a mouse leave event.
+        didHandleEvent = m_plugin->handleMouseLeaveEvent(static_cast<const WebMouseEvent&>(*currentEvent));
     }
 
     if (didHandleEvent)
@@ -367,6 +377,15 @@ IntRect PluginView::clipRectInWindowCoordinates() const
 
     // Intersect the two rects to get the view clip rect in window coordinates.
     return intersection(frameRectInWindowCoordinates, windowClipRect);
+}
+
+void PluginView::focusPluginElement()
+{
+    ASSERT(frame());
+    
+    if (Page* page = frame()->page())
+        page->focusController()->setFocusedFrame(frame());
+    frame()->document()->setFocusedNode(m_pluginElement);
 }
 
 void PluginView::pendingURLRequestsTimerFired()
@@ -521,6 +540,13 @@ void PluginView::invalidateRect(const IntRect& dirtyRect)
     IntRect dirtyRectInWindowCoordinates = convertToContainingWindow(dirtyRect);
 
     parent()->hostWindow()->invalidateContentsAndWindow(intersection(dirtyRectInWindowCoordinates, clipRectInWindowCoordinates()), false);
+}
+
+void PluginView::setFocus(bool hasFocus)
+{
+    Widget::setFocus(hasFocus);
+    
+    m_plugin->setFocus(hasFocus);
 }
 
 void PluginView::mediaCanStart()

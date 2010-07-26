@@ -179,6 +179,18 @@ static int32_t buttonNumber(WebMouseEvent::Button button)
     return -1;
 }
 
+static void fillInCocoaEventFromMouseEvent(NPCocoaEvent& event, const WebMouseEvent& mouseEvent, const WebCore::IntPoint& pluginLocation)
+{
+    event.data.mouse.modifierFlags = modifierFlags(mouseEvent);
+    event.data.mouse.pluginX = mouseEvent.positionX() - pluginLocation.x();
+    event.data.mouse.pluginY = mouseEvent.positionY() - pluginLocation.y();
+    event.data.mouse.buttonNumber = buttonNumber(mouseEvent.button());
+    event.data.mouse.clickCount = mouseEvent.clickCount();
+    event.data.mouse.deltaX = mouseEvent.deltaX();
+    event.data.mouse.deltaY = mouseEvent.deltaY();
+    event.data.mouse.deltaZ = mouseEvent.deltaZ();
+}
+    
 static NPCocoaEvent initializeMouseEvent(const WebMouseEvent& mouseEvent, const WebCore::IntPoint& pluginLocation)
 {
     NPCocoaEventType eventType;
@@ -202,15 +214,7 @@ static NPCocoaEvent initializeMouseEvent(const WebMouseEvent& mouseEvent, const 
     }
 
     NPCocoaEvent event = initializeEvent(eventType);
-    
-    event.data.mouse.modifierFlags = modifierFlags(mouseEvent);
-    event.data.mouse.pluginX = mouseEvent.positionX() - pluginLocation.x();
-    event.data.mouse.pluginY = mouseEvent.positionY() - pluginLocation.y();
-    event.data.mouse.buttonNumber = buttonNumber(mouseEvent.button());
-    event.data.mouse.clickCount = mouseEvent.clickCount();
-    event.data.mouse.deltaX = mouseEvent.deltaX();
-    event.data.mouse.deltaY = mouseEvent.deltaY();
-    event.data.mouse.deltaZ = mouseEvent.deltaZ();
+    fillInCocoaEventFromMouseEvent(event, mouseEvent, pluginLocation);
 
     return event;
 }
@@ -226,7 +230,7 @@ bool NetscapePlugin::platformHandleMouseEvent(const WebMouseEvent& mouseEvent)
         default:
             ASSERT_NOT_REACHED();
     }
-    
+
     return false;
 }
 
@@ -244,7 +248,6 @@ bool NetscapePlugin::platformHandleWheelEvent(const WebWheelEvent& wheelEvent)
             event.data.mouse.deltaX = wheelEvent.deltaX();
             event.data.mouse.deltaY = wheelEvent.deltaY();
             event.data.mouse.deltaZ = 0;
-            
             return NPP_HandleEvent(&event);
         }
 
@@ -254,5 +257,55 @@ bool NetscapePlugin::platformHandleWheelEvent(const WebWheelEvent& wheelEvent)
 
     return false;
 }
-    
+
+bool NetscapePlugin::platformHandleMouseEnterEvent(const WebMouseEvent& mouseEvent)
+{
+    switch (m_eventModel) {
+        case NPEventModelCocoa: {
+            NPCocoaEvent event = initializeEvent(NPCocoaEventMouseEntered);
+            
+            fillInCocoaEventFromMouseEvent(event, mouseEvent, m_frameRect.location());
+            return NPP_HandleEvent(&event);
+        }
+
+        default:
+            ASSERT_NOT_REACHED();
+    }
+
+    return false;
+}
+        
+bool NetscapePlugin::platformHandleMouseLeaveEvent(const WebMouseEvent& mouseEvent)
+{
+    switch (m_eventModel) {
+        case NPEventModelCocoa: {
+            NPCocoaEvent event = initializeEvent(NPCocoaEventMouseExited);
+            
+            fillInCocoaEventFromMouseEvent(event, mouseEvent, m_frameRect.location());
+            return NPP_HandleEvent(&event);
+        }
+
+        default:
+            ASSERT_NOT_REACHED();
+    }
+
+    return false;
+}
+
+void NetscapePlugin::platformSetFocus(bool hasFocus)
+{
+    switch (m_eventModel) {
+        case NPEventModelCocoa: {
+            NPCocoaEvent event = initializeEvent(NPCocoaEventFocusChanged);
+            
+            event.data.focus.hasFocus = hasFocus;
+            NPP_HandleEvent(&event);
+            break;
+        }
+
+        default:
+            ASSERT_NOT_REACHED();
+    }
+}
+
 } // namespace WebKit

@@ -1,3 +1,47 @@
+2010-07-26  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Handle mouseenter/mouseleave + focus events
+        https://bugs.webkit.org/show_bug.cgi?id=42997
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::handleMouseEnterEvent):
+        Call platformHandleMouseEnterEvent.
+        
+        (WebKit::NetscapePlugin::handleMouseLeaveEvent):
+        Call platformHandleMouseExitEvent.
+
+        (WebKit::NetscapePlugin::setFocus):
+        Call platformSetFocus.
+
+        * WebProcess/Plugins/Netscape/mac/NetscapePluginMac.mm:
+        (WebKit::fillInCocoaEventFromMouseEvent):
+        Factor out code that fills in an NPCocoaEvent from a WebMouseEvent.
+
+        (WebKit::initializeMouseEvent):
+        Call fillInCocoaEventFromMouseEvent.
+        
+        (WebKit::NetscapePlugin::platformHandleMouseEnterEvent):
+        Send an NPCocoaEventMouseEntered event.
+    
+        (WebKit::NetscapePlugin::platformHandleMouseLeaveEvent):
+        Send an NPCocoaEventMouseExited event.
+
+        (WebKit::NetscapePlugin::platformSetFocus):
+        Send an NPCocoaEventFocusChanged.
+
+        * WebProcess/Plugins/Plugin.h:
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::handleEvent):
+        Dispatch mouse enter and mouse leave events. Call focusPluginElement on mousedown.
+
+        (WebKit::PluginView::focusPluginElement):
+        Focus the plug-in's containing frame and its element.
+
+        (WebKit::PluginView::setFocus):
+        Call Plugin::setFocus.
+
 2010-07-26  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Sam Weinig.

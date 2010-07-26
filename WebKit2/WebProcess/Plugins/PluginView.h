@@ -63,7 +63,8 @@ private:
 
     void viewGeometryDidChange();
     WebCore::IntRect clipRectInWindowCoordinates() const;
-
+    void focusPluginElement();
+    
     void pendingURLRequestsTimerFired();
     class URLRequest;
     void performURLRequest(URLRequest*);
@@ -83,6 +84,7 @@ private:
     virtual void setFrameRect(const WebCore::IntRect&);
     virtual void paint(WebCore::GraphicsContext*, const WebCore::IntRect&);
     virtual void invalidateRect(const WebCore::IntRect&);
+    virtual void setFocus(bool);
     virtual void frameRectsChanged();
     virtual void setParent(WebCore::ScrollView*);
     virtual void handleEvent(WebCore::Event*);

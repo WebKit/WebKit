@@ -423,6 +423,21 @@ bool NetscapePlugin::handleWheelEvent(const WebWheelEvent& wheelEvent)
     return platformHandleWheelEvent(wheelEvent);
 }
 
+bool NetscapePlugin::handleMouseEnterEvent(const WebMouseEvent& mouseEvent)
+{
+    return platformHandleMouseEnterEvent(mouseEvent);
+}
+
+bool NetscapePlugin::handleMouseLeaveEvent(const WebMouseEvent& mouseEvent)
+{
+    return platformHandleMouseLeaveEvent(mouseEvent);
+}
+
+void NetscapePlugin::setFocus(bool hasFocus)
+{
+    platformSetFocus(hasFocus);
+}
+
 PluginController* NetscapePlugin::controller()
 {
     return m_pluginController;
