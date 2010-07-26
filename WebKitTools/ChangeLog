@@ -2,6 +2,15 @@
 
         Reviewed by Anders Carlsson.
 
+        Move some non-APIish functions into private headers.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.cpp:
+
+2010-07-26  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
         Fix for https://bugs.webkit.org/show_bug.cgi?id=42986
         Add prompt and confirm client functions to WebKit2
 

@@ -23,32 +23,21 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "WKBundle.h"
-#include "WKBundlePrivate.h"
+#ifndef WKBundlePrivate_h
+#define WKBundlePrivate_h
 
-#include "InjectedBundle.h"
-#include "WKAPICast.h"
-#include "WKBundleAPICast.h"
+#include <WebKit2/WKBase.h>
+#include <WebKit2/WKBundleBase.h>
 
-using namespace WebKit;
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-void WKBundleSetClient(WKBundleRef bundleRef, WKBundleClient * wkClient)
-{
-    if (wkClient && !wkClient->version)
-        toWK(bundleRef)->initializeClient(wkClient);
+WK_EXPORT void WKBundleSetShouldTrackVisitedLinks(WKBundleRef bundle, bool shouldTrackVisitedLinks);
+WK_EXPORT void WKBundleRemoveAllVisitedLinks(WKBundleRef bundle);
+
+#ifdef __cplusplus
 }
+#endif
 
-void WKBundlePostMessage(WKBundleRef bundleRef, WKStringRef messageRef)
-{
-    toWK(bundleRef)->postMessage(toWK(messageRef));
-}
-
-void WKBundleSetShouldTrackVisitedLinks(WKBundleRef bundleRef, bool shouldTrackVisitedLinks)
-{
-    toWK(bundleRef)->setShouldTrackVisitedLinks(shouldTrackVisitedLinks);
-}
-
-void WKBundleRemoveAllVisitedLinks(WKBundleRef bundleRef)
-{
-    toWK(bundleRef)->removeAllVisitedLinks();
-}
+#endif /* WKBundlePrivate_h */

@@ -51,9 +51,6 @@ WK_EXPORT void WKBundleSetClient(WKBundleRef bundle, WKBundleClient * client);
 
 WK_EXPORT void WKBundlePostMessage(WKBundleRef bundle, WKStringRef message);
 
-WK_EXPORT void WKBundleSetShouldTrackVisitedLinks(WKBundleRef bundle, bool shouldTrackVisitedLinks);
-WK_EXPORT void WKBundleRemoveAllVisitedLinks(WKBundleRef bundle);
-
 #ifdef __cplusplus
 }
 #endif

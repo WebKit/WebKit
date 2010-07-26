@@ -23,32 +23,27 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "WKBundle.h"
-#include "WKBundlePrivate.h"
+#ifndef WKBundleFramePrivate_h
+#define WKBundleFramePrivate_h
 
-#include "InjectedBundle.h"
-#include "WKAPICast.h"
-#include "WKBundleAPICast.h"
+#include <JavaScriptCore/JavaScript.h>
+#include <WebKit2/WKBase.h>
+#include <WebKit2/WKBundleBase.h>
 
-using namespace WebKit;
+#ifndef __cplusplus
+#include <stdbool.h>
+#endif
 
-void WKBundleSetClient(WKBundleRef bundleRef, WKBundleClient * wkClient)
-{
-    if (wkClient && !wkClient->version)
-        toWK(bundleRef)->initializeClient(wkClient);
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+WK_EXPORT JSValueRef WKBundleFrameGetComputedStyleIncludingVisitedInfo(WKBundleFrameRef frame, JSObjectRef element);
+WK_EXPORT unsigned WKBundleFrameGetNumberOfActiveAnimations(WKBundleFrameRef frame);
+WK_EXPORT bool WKBundleFramePauseAnimationOnElementWithId(WKBundleFrameRef frame, WKStringRef name, WKStringRef elementID, double time);
+
+#ifdef __cplusplus
 }
+#endif
 
-void WKBundlePostMessage(WKBundleRef bundleRef, WKStringRef messageRef)
-{
-    toWK(bundleRef)->postMessage(toWK(messageRef));
-}
-
-void WKBundleSetShouldTrackVisitedLinks(WKBundleRef bundleRef, bool shouldTrackVisitedLinks)
-{
-    toWK(bundleRef)->setShouldTrackVisitedLinks(shouldTrackVisitedLinks);
-}
-
-void WKBundleRemoveAllVisitedLinks(WKBundleRef bundleRef)
-{
-    toWK(bundleRef)->removeAllVisitedLinks();
-}
+#endif /* WKBundleFramePrivate_h */

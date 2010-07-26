@@ -27,11 +27,12 @@
 
 #include "ActivateFonts.h"
 #include "InjectedBundlePage.h"
+#include <WebKit2/WebKit2.h>
 #include <WebKit2/WKBundle.h>
 #include <WebKit2/WKBundlePage.h>
+#include <WebKit2/WKBundlePrivate.h>
 #include <WebKit2/WKRetainPtr.h>
 #include <WebKit2/WKStringCF.h>
-#include <WebKit2/WebKit2.h>
 #include <wtf/RetainPtr.h>
 
 namespace WTR {

@@ -682,6 +682,10 @@
 							>
 						</File>
 						<File
+							RelativePath="..\WebProcess\InjectedBundle\API\c\WKBundlePrivate.h"
+							>
+						</File>
+						<File
 							RelativePath="..\WebProcess\InjectedBundle\API\c\WKBundleAPICast.h"
 							>
 						</File>
@@ -695,6 +699,10 @@
 						</File>
 						<File
 							RelativePath="..\WebProcess\InjectedBundle\API\c\WKBundleFrame.h"
+							>
+						</File>
+						<File
+							RelativePath="..\WebProcess\InjectedBundle\API\c\WKBundleFramePrivate.h"
 							>
 						</File>
 						<File

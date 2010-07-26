@@ -30,6 +30,7 @@
 #include "JSLayoutTestController.h"
 #include <JavaScriptCore/JSRetainPtr.h>
 #include <WebKit2/WKBundleFrame.h>
+#include <WebKit2/WKBundleFramePrivate.h>
 #include <WebKit2/WKRetainPtr.h>
 #include <WebKit2/WKStringCF.h>
 #include <WebKit2/WebKit2.h>

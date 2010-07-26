@@ -30,10 +30,6 @@
 #include <WebKit2/WKBase.h>
 #include <WebKit2/WKBundleBase.h>
 
-#ifndef __cplusplus
-#include <stdbool.h>
-#endif
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -45,10 +41,6 @@ WK_EXPORT WKStringRef WKBundleFrameCopyName(WKBundleFrameRef frame);
 WK_EXPORT WKURLRef WKBundleFrameGetURL(WKBundleFrameRef frame);
 
 WK_EXPORT JSGlobalContextRef WKBundleFrameGetJavaScriptContext(WKBundleFrameRef frame);
-WK_EXPORT JSValueRef WKBundleFrameGetComputedStyleIncludingVisitedInfo(WKBundleFrameRef frame, JSObjectRef element);
-
-WK_EXPORT unsigned WKBundleFrameGetNumberOfActiveAnimations(WKBundleFrameRef frame);
-WK_EXPORT bool WKBundleFramePauseAnimationOnElementWithId(WKBundleFrameRef frame, WKStringRef name, WKStringRef elementID, double time);
 
 #ifdef __cplusplus
 }

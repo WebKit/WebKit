@@ -24,6 +24,7 @@
  */
 
 #include "WKBundleFrame.h"
+#include "WKBundleFramePrivate.h"
 
 #include "WKAPICast.h"
 #include "WKBundleAPICast.h"

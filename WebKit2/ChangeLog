@@ -2,6 +2,21 @@
 
         Reviewed by Anders Carlsson.
 
+        Move some non-APIish functions into private headers.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/InjectedBundle/API/c/WKBundle.cpp:
+        * WebProcess/InjectedBundle/API/c/WKBundle.h:
+        * WebProcess/InjectedBundle/API/c/WKBundleFrame.cpp:
+        * WebProcess/InjectedBundle/API/c/WKBundleFrame.h:
+        * WebProcess/InjectedBundle/API/c/WKBundleFramePrivate.h: Copied from WebProcess/InjectedBundle/API/c/WKBundleFrame.h.
+        * WebProcess/InjectedBundle/API/c/WKBundlePrivate.h: Copied from WebProcess/InjectedBundle/API/c/WKBundle.h.
+        * win/WebKit2.vcproj:
+
+2010-07-26  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
         Fix for https://bugs.webkit.org/show_bug.cgi?id=42986
         Add prompt and confirm client functions to WebKit2
 
