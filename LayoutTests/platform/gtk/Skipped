@@ -5639,9 +5639,6 @@ scrollbars/scrollbar-click-does-not-blur-content.html
 # multiple tests fail on different platforms, need to find the cause(s)
 fast/js/sputnik
 
-# https://bugs.webkit.org/show_bug.cgi?id=38376
-media/media-document-audio-size.html
-
 # https://bugs.webkit.org/show_bug.cgi?id=38509
 inspector/timeline-parse-html.html
 

@@ -1270,6 +1270,7 @@ static HashSet<String> mimeTypeCache()
 
                 if (g_str_equal(name, "audio/x-wav")) {
                     cache.add(String("audio/wav"));
+                    cache.add(String("audio/x-wav"));
                     cached = true;
                 }
 
