@@ -1,5 +1,23 @@
 2010-07-26  Patrick Gansterer  <paroga@paroga.com>
 
+        Reviewed by Kent Tamura.
+
+        [WINCE] Port ClipboardUtilities to WinCE
+        https://bugs.webkit.org/show_bug.cgi?id=42929
+
+        Make ClipboardUtilitiesWin more portable and remove the global namespace prefix
+        from GlobalLock/GlobalUnlock, since they are only macros on WinCE.
+
+        * platform/win/ClipboardUtilitiesWin.cpp:
+        (WebCore::urlFromPath):
+        (WebCore::getWebLocData):
+        (WebCore::createGlobalData):
+        (WebCore::getURL):
+        (WebCore::getPlainText):
+        (WebCore::fragmentFromHTML):
+
+2010-07-26  Patrick Gansterer  <paroga@paroga.com>
+
         Reviewed by Adam Roben.
 
         [WINCE] Buildfix for BitmapImage.h
