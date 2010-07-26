@@ -1,5 +1,18 @@
 2010-07-26  Simon Fraser  <simon.fraser@apple.com>
 
+        Fix tests on Leopard.
+
+        No need for these Leopard-specific results any more.
+
+        * platform/mac-leopard/compositing/iframes/connect-compositing-iframe-delayed-expected.txt: Removed.
+        * platform/mac-leopard/compositing/iframes/connect-compositing-iframe3-expected.txt: Removed.
+        * platform/mac-leopard/compositing/iframes/iframe-resize-expected.txt: Removed.
+        * platform/mac-leopard/compositing/iframes/iframe-size-from-zero-expected.txt: Removed.
+        * platform/mac-leopard/compositing/iframes/overlapped-iframe-expected.txt: Removed.
+        * platform/mac-leopard/compositing/iframes/scrolling-iframe-expected.txt: Removed.
+
+2010-07-26  Simon Fraser  <simon.fraser@apple.com>
+
         Reviewed by Anders Carlsson.
 
         Gmail compose is upside-down after r64054
