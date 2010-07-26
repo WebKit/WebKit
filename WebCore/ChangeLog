@@ -1,3 +1,59 @@
+2010-07-23  Stephen White  <senorblanco@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Implement OpenGLES2 helper classes.
+        https://bugs.webkit.org/show_bug.cgi?id=42905
+
+        GLES2Canvas and GLES2Texture are some simple OpenGLES2 helper classes
+        for managing state, samplers and textures.
+
+        When this is hooked up, it will be covered by many layout tests.
+
+        * WebCore.gypi:
+        Add new files to chromium build (contents are protected by #if's for now).
+        * platform/graphics/chromium/GLES2Canvas.cpp: Added.
+        (WebCore::affineTo3x3):
+        (WebCore::GLES2Canvas::State::State):
+        (WebCore::GLES2Canvas::GLES2Canvas):
+        (WebCore::GLES2Canvas::~GLES2Canvas):
+        (WebCore::GLES2Canvas::clearRect):
+        (WebCore::GLES2Canvas::fillRect):
+        (WebCore::GLES2Canvas::setFillColor):
+        (WebCore::GLES2Canvas::setAlpha):
+        (WebCore::GLES2Canvas::translate):
+        (WebCore::GLES2Canvas::rotate):
+        (WebCore::GLES2Canvas::scale):
+        (WebCore::GLES2Canvas::concatCTM):
+        (WebCore::GLES2Canvas::save):
+        (WebCore::GLES2Canvas::restore):
+        (WebCore::GLES2Canvas::drawTexturedRect):
+        (WebCore::GLES2Canvas::setCompositeOperation):
+        (WebCore::GLES2Canvas::applyCompositeOperator):
+        (WebCore::GLES2Canvas::getQuadVertices):
+        (WebCore::GLES2Canvas::getQuadIndices):
+        (WebCore::loadShader):
+        (WebCore::GLES2Canvas::getSimpleProgram):
+        (WebCore::GLES2Canvas::getTexProgram):
+        (WebCore::GLES2Canvas::createTexture):
+        (WebCore::GLES2Canvas::getTexture):
+        (WebCore::GLES2Canvas::checkGLError):
+        * platform/graphics/chromium/GLES2Canvas.h: Added.
+        (WebCore::GLES2Canvas::gles2Context):
+        * platform/graphics/chromium/GLES2Texture.cpp: Added.
+        (WebCore::GLES2Texture::GLES2Texture):
+        (WebCore::GLES2Texture::~GLES2Texture):
+        (WebCore::GLES2Texture::create):
+        (WebCore::convertFormat):
+        (WebCore::GLES2Texture::load):
+        (WebCore::GLES2Texture::bind):
+        * platform/graphics/chromium/GLES2Texture.h: Added.
+        (WebCore::GLES2Texture::):
+        (WebCore::GLES2Texture::format):
+        (WebCore::GLES2Texture::width):
+        (WebCore::GLES2Texture::height):
+
+
 2010-07-26  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Steve Block.
