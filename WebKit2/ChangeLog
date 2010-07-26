@@ -1,3 +1,13 @@
+2010-07-26  Adam Roben  <aroben@apple.com>
+
+        Windows build fix
+
+        * win/WebKit2.vcproj:
+        * win/WebKit2WebProcess.vcproj:
+        Removed empty attributes so the values will be picked up from the
+        vsprops files. (Also removed a couple of attributes that accidentally
+        duplicated values from the vsprops files.)
+
 2010-07-26  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Anders Carlsson.

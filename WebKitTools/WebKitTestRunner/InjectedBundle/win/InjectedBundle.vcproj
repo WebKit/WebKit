@@ -38,8 +38,6 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories=""
-				ForcedIncludeFiles=""
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -52,7 +50,6 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				OutputFile=""
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -103,8 +100,6 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories=""
-				ForcedIncludeFiles=""
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -117,7 +112,6 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				OutputFile=""
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -167,9 +161,6 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories=""
-				RuntimeLibrary="3"
-				ForcedIncludeFiles=""
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -182,7 +173,6 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				OutputFile=""
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -232,8 +222,6 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories=""
-				ForcedIncludeFiles=""
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -246,7 +234,6 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				OutputFile=""
 			/>
 			<Tool
 				Name="VCALinkTool"

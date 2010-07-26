@@ -39,14 +39,12 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories=""
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
 			/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				AdditionalIncludeDirectories=""
 			/>
 			<Tool
 				Name="VCPreLinkEventTool"
@@ -59,8 +57,6 @@
 			/>
 			<Tool
 				Name="VCManifestTool"
-				TypeLibraryFile=""
-				ComponentFileName=""
 			/>
 			<Tool
 				Name="VCXDCMakeTool"
@@ -106,14 +102,12 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories=""
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
 			/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				AdditionalIncludeDirectories=""
 			/>
 			<Tool
 				Name="VCPreLinkEventTool"
@@ -170,14 +164,12 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories=""
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
 			/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				AdditionalIncludeDirectories=""
 			/>
 			<Tool
 				Name="VCPreLinkEventTool"
@@ -190,8 +182,6 @@
 			/>
 			<Tool
 				Name="VCManifestTool"
-				TypeLibraryFile=""
-				ComponentFileName=""
 			/>
 			<Tool
 				Name="VCXDCMakeTool"
@@ -236,14 +226,12 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories=""
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
 			/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				AdditionalIncludeDirectories=""
 			/>
 			<Tool
 				Name="VCPreLinkEventTool"
@@ -256,8 +244,6 @@
 			/>
 			<Tool
 				Name="VCManifestTool"
-				TypeLibraryFile=""
-				ComponentFileName=""
 			/>
 			<Tool
 				Name="VCXDCMakeTool"
