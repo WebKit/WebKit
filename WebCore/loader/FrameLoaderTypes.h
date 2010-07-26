@@ -60,32 +60,6 @@ namespace WebCore {
         FrameLoadTypeBackWMLDeckNotAccessible
     };
 
-    // FIXME: Move to DocumentLoadTiming.h.
-    struct DocumentLoadTiming {
-        DocumentLoadTiming()
-            : navigationStart(0.0)
-            , unloadEventEnd(0.0)
-            , redirectStart(0.0)
-            , redirectEnd(0.0)
-            , redirectCount(0)
-            , fetchStart(0.0)
-            , responseEnd(0.0)
-            , loadEventStart(0.0)
-            , loadEventEnd(0.0)
-        {
-        }
-
-        double navigationStart;
-        double unloadEventEnd;
-        double redirectStart;
-        double redirectEnd;
-        short redirectCount;
-        double fetchStart;
-        double responseEnd;
-        double loadEventStart;
-        double loadEventEnd;
-    };
-
     enum NavigationType {
         NavigationTypeLinkClicked,
         NavigationTypeFormSubmitted,

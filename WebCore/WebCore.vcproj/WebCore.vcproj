@@ -22765,6 +22765,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\loader\DocumentLoadTiming.h"
+				>
+			</File>
+			<File
 				RelativePath="..\loader\DocumentLoader.cpp"
 				>
 			</File>

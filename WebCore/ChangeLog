@@ -1,3 +1,26 @@
+2010-07-26  Tony Gentilcore  <tonyg@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Move DocumentLoadTiming struct to a new file
+        https://bugs.webkit.org/show_bug.cgi?id=42917
+
+        Also makes DocumentLoadTiming Noncopyable.
+
+        No new tests because no new functionality.
+
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * loader/DocumentLoadTiming.h: Added.
+        (WebCore::DocumentLoadTiming::DocumentLoadTiming):
+        * loader/DocumentLoader.h:
+        * loader/FrameLoader.cpp:
+        * loader/FrameLoaderTypes.h:
+        * loader/MainResourceLoader.cpp:
+        * page/Timing.cpp:
+
 2010-07-26  Mark Rowe  <mrowe@apple.com>
 
         Fix an #if in WebCore.exp.in to correctly detect whether SVG filters are enabled.

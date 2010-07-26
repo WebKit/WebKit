@@ -45,6 +45,7 @@
 #include "DOMWindow.h"
 #include "DocLoader.h"
 #include "Document.h"
+#include "DocumentLoadTiming.h"
 #include "DocumentLoader.h"
 #include "Editor.h"
 #include "EditorClient.h"

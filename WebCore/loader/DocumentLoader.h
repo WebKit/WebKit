@@ -29,6 +29,7 @@
 #ifndef DocumentLoader_h
 #define DocumentLoader_h
 
+#include "DocumentLoadTiming.h"
 #include "NavigationAction.h"
 #include "ResourceError.h"
 #include "ResourceRequest.h"

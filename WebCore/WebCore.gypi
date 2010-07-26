@@ -1826,6 +1826,7 @@
             'loader/CrossOriginPreflightResultCache.h',
             'loader/DocLoader.cpp',
             'loader/DocLoader.h',
+            'loader/DocumentLoadTiming.h',
             'loader/DocumentLoader.cpp',
             'loader/DocumentLoader.h',
             'loader/DocumentThreadableLoader.cpp',
