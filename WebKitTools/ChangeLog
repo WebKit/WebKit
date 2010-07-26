@@ -1,3 +1,13 @@
+2010-07-26  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Fix feature detection regexp
+
+        We were missing the last feature
+
+        * Scripts/webkitdirs.pm:
+
 2010-07-25  Darin Adler  <darin@apple.com>
 
         Reviewed by Dan Bernstein.

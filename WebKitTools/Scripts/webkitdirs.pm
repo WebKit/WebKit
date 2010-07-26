@@ -674,7 +674,7 @@ sub determineQtFeatureDefaults()
     my $defaults = `qmake CONFIG+=compute_defaults 2>&1`;
     chdir $originalCwd;
 
-    while ($defaults =~ m/(\S*?)=(.*?)( |$)/gi) {
+    while ($defaults =~ m/(\S+?)=(\S+?)/gi) {
         $qtFeatureDefaults{$1}=$2;
     }
 }
