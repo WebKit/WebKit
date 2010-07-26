@@ -1,3 +1,16 @@
+2010-07-23  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        crash in insertParagraph in a contentEditable list
+        https://bugs.webkit.org/show_bug.cgi?id=42919
+
+        Don't try to break out of a list item if the list it's in
+        is the rootEditableElement.
+
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::breakOutOfEmptyListItem):
+
 2010-07-26  Marcus Bulach  <bulach@chromium.org>
 
         Reviewed by Jeremy Orlow.

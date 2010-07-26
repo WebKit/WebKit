@@ -1,0 +1,34 @@
+
+<HTML>
+<HEAD>
+<SCRIPT src="../../resources/dump-as-markup.js"></SCRIPT>
+<#text>
+</#text>
+</HEAD>
+<BODY>
+<DIV>
+<#text>This test passes if it doesn't crash.</#text>
+</DIV>
+<#text>
+</#text>
+<UL contentEditable="">
+<#text>
+</#text>
+<LI id="foo">
+</LI>
+<LI id="foo"><selection-caret>
+<BR>
+</LI>
+<#text>
+</#text>
+</UL>
+<#text>
+</#text>
+<SCRIPT>
+window.getSelection().selectAllChildren(foo);
+document.execCommand('insertParagraph');
+</SCRIPT>
+<#text>
+</#text>
+</BODY>
+</HTML>

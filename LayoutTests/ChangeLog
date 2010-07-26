@@ -1,3 +1,13 @@
+2010-07-23  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        crash in insertParagraph in a contentEditable list
+        https://bugs.webkit.org/show_bug.cgi?id=42919
+
+        * editing/execCommand/crash-on-enter-in-contentEditable-list-expected.txt: Added.
+        * editing/execCommand/crash-on-enter-in-contentEditable-list.html: Added.
+
 2010-07-26  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Ojan Vafai.
