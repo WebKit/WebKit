@@ -1,5 +1,13 @@
 2010-07-26  Anders Carlsson  <andersca@apple.com>
 
+        Fix Windows build.
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.h:
+        (WebKit::NetscapePlugin::platformHandleMouseEnterEvent):
+        (WebKit::NetscapePlugin::platformHandleMouseLeaveEvent):
+
+2010-07-26  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Sam Weinig.
 
         Handle mouseenter/mouseleave + focus events
