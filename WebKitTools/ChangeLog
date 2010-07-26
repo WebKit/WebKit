@@ -1,3 +1,13 @@
+2010-07-26  Hayato Ito  <hayato@chromium.org>
+
+        Reviewed by Shinichiro Hamaji.
+
+        Add pretty printer of WTF::Vector for GDB 7.
+
+        https://bugs.webkit.org/show_bug.cgi?id=40909
+
+        * gdb/wtf.py: Added.
+
 2010-07-26  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         Reviewed by Simon Hausmann.
