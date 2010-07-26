@@ -48,9 +48,6 @@ namespace WebCore {
     class GraphicsContext;
     class KeyboardEvent;
     class Page;
-    class PlatformKeyboardEvent;
-    class PlatformMouseEvent;
-    class PlatformWheelEvent;
     class String;
 }
 
@@ -58,6 +55,9 @@ namespace WebKit {
 
 class DrawingArea;
 class WebFrame;
+class WebKeyboardEvent;
+class WebMouseEvent;
+class WebWheelEvent;
 struct WebPreferencesStore;
 
 class WebPage : public RefCounted<WebPage> {
@@ -126,9 +126,9 @@ private:
     void setActive(bool);
     void setFocused(bool);
     void setIsInWindow(bool);
-    void mouseEvent(const WebCore::PlatformMouseEvent&);
-    void wheelEvent(WebCore::PlatformWheelEvent&);
-    void keyEvent(const WebCore::PlatformKeyboardEvent&);
+    void mouseEvent(const WebMouseEvent&);
+    void wheelEvent(const WebWheelEvent&);
+    void keyEvent(const WebKeyboardEvent&);
     void runJavaScriptInMainFrame(const WebCore::String&, uint64_t callbackID);
     void getRenderTreeExternalRepresentation(uint64_t callbackID);
     void preferencesDidChange(const WebPreferencesStore&);

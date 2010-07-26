@@ -1,3 +1,17 @@
+2010-07-26  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Clean up event handling functions
+        https://bugs.webkit.org/show_bug.cgi?id=42977
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::mouseEvent):
+        (WebKit::WebPage::wheelEvent):
+        (WebKit::WebPage::keyEvent):
+        (WebKit::WebPage::didReceiveMessage):
+        * WebProcess/WebPage/WebPage.h:
+
 2010-07-25  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej Stachowiak.
