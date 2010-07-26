@@ -66,7 +66,6 @@ BUG24182 SLOW LINUX MAC RELEASE : http/tests/navigation/multiple-back-forward-en
 BUG24182 SLOW LINUX DEBUG : http/tests/navigation/multiple-back-forward-entries.html = PASS
 BUG24182 SLOW : http/tests/xmlhttprequest/simple-cross-origin-progress-events.html = PASS
 BUG24182 SLOW WIN MAC : svg/custom/invisible-text-after-scrolling.xhtml = PASS
-BUG24182 SLOW : tables/mozilla/other/slashlogo.html = PASS
 BUG24182 SLOW WIN RELEASE : tables/mozilla/bugs/bug113235-1.html = PASS
 BUG24182 SLOW DEBUG : fast/js/toString-and-valueOf-override.html = PASS
 
@@ -3125,3 +3124,6 @@ BUG49970 : platform/chromium/plugins/call-as-function.html = PASS TEXT
 
 // Need rebaseline
 BUGWK24906 : fast/text/backslash-to-yen-sign-euc.html = FAIL
+
+// Fails since WebKit r63994
+BUGWK42964 SLOW : tables/mozilla/other/slashlogo.html = FAIL
