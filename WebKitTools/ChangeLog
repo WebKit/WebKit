@@ -1,3 +1,11 @@
+2010-07-26  Brian Weinstein  <bweinstein@apple.com>
+
+        Rubber-stamped by Adam Roben.
+        
+        Touch MiniBrowser's stdafx to fix the build.
+
+        * MiniBrowser/win/stdafx.h:
+
 2010-07-26  Hayato Ito  <hayato@chromium.org>
 
         Reviewed by Shinichiro Hamaji.
