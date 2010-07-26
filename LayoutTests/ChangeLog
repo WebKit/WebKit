@@ -1,3 +1,10 @@
+2010-07-26  Mark Rowe  <mrowe@apple.com>
+
+        Disable a test that was added to verify the vendor prefix change that I rolled out in r64071.
+        It can be reenabled when the vendor prefix change is reintroduced in a more limited fashion.
+
+        * fast/css/limited-vendor-prefix-behavior.html-disabled: Renamed from LayoutTests/fast/css/limited-vendor-prefix-behavior.html.
+
 2010-07-26  Simon Fraser  <simon.fraser@apple.com>
 
         Fix compositing iframe tests on Leopard.
