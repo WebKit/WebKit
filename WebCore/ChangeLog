@@ -1,3 +1,13 @@
+2010-07-26  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Steve Block.
+
+        Fix IndexedDB release build on mac
+        https://bugs.webkit.org/show_bug.cgi?id=42377
+
+        * storage/IDBDatabaseImpl.cpp:
+        (WebCore::IDBDatabaseImpl::objectStore):
+
 2010-07-26  Satish Sampath  <satish@chromium.org>
 
         Reviewed by Steve Block.

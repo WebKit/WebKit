@@ -68,7 +68,7 @@ void IDBDatabaseImpl::createObjectStore(const String& name, const String& keyPat
 PassRefPtr<IDBObjectStore> IDBDatabaseImpl::objectStore(const String& name, unsigned short mode)
 {
     // FIXME: If no transaction is running, this should implicitly start one.
-    ASSERT(!mode); // FIXME: Handle non-standard modes.
+    ASSERT_UNUSED(mode, !mode); // FIXME: Handle non-standard modes.
     return m_objectStores.get(name);
 }
 
