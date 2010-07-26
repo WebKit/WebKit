@@ -46,6 +46,8 @@ WK_EXPORT WKContextRef WKContextGetSharedThreadContext();
 
 WK_EXPORT void _WKContextSetAdditionalPluginPath(WKContextRef context, WKStringRef pluginPath);
 
+WK_EXPORT void _WKContextRegisterURLSchemeAsEmptyDocument(WKContextRef context, WKStringRef urlScheme);
+
 #ifdef __cplusplus
 }
 #endif

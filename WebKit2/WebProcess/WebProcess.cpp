@@ -37,6 +37,7 @@
 #include "WebPreferencesStore.h"
 #include "WebProcessMessageKinds.h"
 #include <WebCore/ApplicationCacheStorage.h>
+#include <WebCore/SchemeRegistry.h>
 #include <wtf/PassRefPtr.h>
 
 #ifndef NDEBUG
@@ -107,6 +108,11 @@ void WebProcess::forwardMessageToInjectedBundle(const String& message)
         return;
 
     m_injectedBundle->didReceiveMessage(message);
+}
+
+void WebProcess::registerURLSchemeAsEmptyDocument(const WebCore::String& urlScheme)
+{
+    SchemeRegistry::registerURLSchemeAsEmptyDocument(urlScheme);
 }
 
 WebPage* WebProcess::webPage(uint64_t pageID) const
@@ -208,6 +214,14 @@ void WebProcess::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::Mes
                     return;
 
                 forwardMessageToInjectedBundle(message);
+                return;
+            }
+            case WebProcessMessage::RegisterURLSchemeAsEmptyDocument: {
+                String message;
+                if (!arguments->decode(CoreIPC::Out(message)))
+                    return;
+
+                registerURLSchemeAsEmptyDocument(message);
                 return;
             }
 #if USE(ACCELERATED_COMPOSITING) && PLATFORM(MAC)

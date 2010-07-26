@@ -1,3 +1,23 @@
+2010-07-26  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Add ability for WK2 to register a scheme to always be displayed as an empty document
+        https://bugs.webkit.org/show_bug.cgi?id=42995
+
+        No new tests. (Currently not possible to test in WebKit1 DRT, can be testing in future WK2 tester)
+
+        * WebCore.exp.in:
+        
+        * loader/MainResourceLoader.cpp:
+        (WebCore::shouldLoadAsEmptyDocument):
+        
+        * platform/SchemeRegistry.cpp:
+        (WebCore::emptyDocumentSchemes):
+        (WebCore::SchemeRegistry::registerURLSchemeAsEmptyDocument):
+        (WebCore::SchemeRegistry::shouldLoadURLSchemeAsEmptyDocument):
+        * platform/SchemeRegistry.h:
+
 2010-07-26  Patrick Gansterer  <paroga@paroga.com>
 
         Reviewed by Kent Tamura.

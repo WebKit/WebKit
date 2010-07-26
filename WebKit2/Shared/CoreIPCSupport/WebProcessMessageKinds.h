@@ -37,6 +37,7 @@ enum Kind {
     SetApplicationCacheDirectory,
     Create,
     PostMessage,
+    RegisterURLSchemeAsEmptyDocument,
 #if PLATFORM(MAC)
     SetupAcceleratedCompositingPort
 #endif

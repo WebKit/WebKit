@@ -85,6 +85,8 @@ public:
 
     PluginInfoStore* pluginInfoStore() { return &m_pluginInfoStore; }
     WebCore::String applicationCacheDirectory();
+    
+    void registerURLSchemeAsEmptyDocument(WebCore::StringImpl*);
 
 private:
     WebContext(ProcessModel, const WebCore::String& injectedBundlePath);

@@ -51,6 +51,9 @@ public:
 
     static void registerURLSchemeAsNoAccess(const String&);
     static bool shouldTreatURLSchemeAsNoAccess(const String&);
+    
+    static void registerURLSchemeAsEmptyDocument(const String&);
+    static bool shouldLoadURLSchemeAsEmptyDocument(const String&);
 };
 
 } // namespace WebCore

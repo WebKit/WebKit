@@ -73,6 +73,7 @@ private:
 #endif
     void setApplicationCacheDirectory(const WebCore::String&);
     void forwardMessageToInjectedBundle(const WebCore::String&);
+    void registerURLSchemeAsEmptyDocument(const WebCore::String&);
 
     // CoreIPC::Connection::Client
     void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);

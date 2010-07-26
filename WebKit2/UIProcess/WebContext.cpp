@@ -180,4 +180,11 @@ void WebContext::setAdditionalPluginPath(const WebCore::String& pluginPath)
     m_pluginInfoStore.setAdditionalPluginPaths(pluginPaths);
 }
 
+void WebContext::registerURLSchemeAsEmptyDocument(WebCore::StringImpl* urlScheme)
+{
+    ensureWebProcess();
+
+    m_process->send(WebProcessMessage::RegisterURLSchemeAsEmptyDocument, 0, CoreIPC::In(String(urlScheme)));
+}
+
 } // namespace WebKit

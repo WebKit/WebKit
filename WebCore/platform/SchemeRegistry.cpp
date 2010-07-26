@@ -70,6 +70,16 @@ static URLSchemesMap& schemesWithUniqueOrigins()
     return schemesWithUniqueOrigins;
 }
 
+static URLSchemesMap& emptyDocumentSchemes()
+{
+    DEFINE_STATIC_LOCAL(URLSchemesMap, emptyDocumentSchemes, ());
+
+    if (emptyDocumentSchemes.isEmpty())
+        emptyDocumentSchemes.add("about");
+
+    return emptyDocumentSchemes;
+}
+
 void SchemeRegistry::registerURLSchemeAsLocal(const String& scheme)
 {
     WebCore::localURLSchemes().add(scheme);
@@ -147,6 +157,16 @@ void SchemeRegistry::registerURLSchemeAsSecure(const String& scheme)
 bool SchemeRegistry::shouldTreatURLSchemeAsSecure(const String& scheme)
 {
     return secureSchemes().contains(scheme);
+}
+
+void SchemeRegistry::registerURLSchemeAsEmptyDocument(const String& scheme)
+{
+    emptyDocumentSchemes().add(scheme);
+}
+
+bool SchemeRegistry::shouldLoadURLSchemeAsEmptyDocument(const String& scheme)
+{
+    return emptyDocumentSchemes().contains(scheme);
 }
 
 } // namespace WebCore

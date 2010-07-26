@@ -1,3 +1,26 @@
+2010-07-26  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Add ability for WK2 to register a scheme to always be displayed as an empty document
+        https://bugs.webkit.org/show_bug.cgi?id=42995
+
+        * Shared/CoreIPCSupport/WebProcessMessageKinds.h:
+        (WebProcessMessage::):
+        
+        * UIProcess/API/C/WKContext.cpp:
+        (_WKContextRegisterURLSchemeAsEmptyDocument):
+        * UIProcess/API/C/WKContextPrivate.h:
+        
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::registerURLSchemeAsEmptyDocument):
+        * UIProcess/WebContext.h:
+        
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::registerURLSchemeAsEmptyDocument):
+        (WebKit::WebProcess::didReceiveMessage):
+        * WebProcess/WebProcess.h:
+
 2010-07-26  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adam Roben.

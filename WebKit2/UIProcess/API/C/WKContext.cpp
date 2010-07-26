@@ -98,3 +98,8 @@ void _WKContextSetAdditionalPluginPath(WKContextRef contextRef, WKStringRef plug
 {
     toWK(contextRef)->setAdditionalPluginPath(toWK(pluginPath));
 }
+
+void _WKContextRegisterURLSchemeAsEmptyDocument(WKContextRef contextRef, WKStringRef urlScheme)
+{
+    toWK(contextRef)->registerURLSchemeAsEmptyDocument(toWK(urlScheme));
+}
