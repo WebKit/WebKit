@@ -2362,7 +2362,6 @@ BUG29748 LINUX : tables/mozilla_expected_failures/bugs/bug106966.html = IMAGE
 BUG29748 LINUX : tables/mozilla_expected_failures/bugs/bug22122.html = IMAGE
 //BUG29748 LINUX : tables/mozilla_expected_failures/bugs/bug2479-5.html = IMAGE
 BUG29748 LINUX : tables/mozilla_expected_failures/bugs/bug80762-2.html = IMAGE
-BUG29748 LINUX : tables/mozilla_expected_failures/bugs/bug89315.html = IMAGE
 BUG29748 LINUX : tables/mozilla_expected_failures/bugs/bug91057.html = IMAGE
 BUG29748 LINUX : tables/mozilla_expected_failures/core/backgrounds.html = IMAGE
 BUG29748 LINUX : tables/mozilla_expected_failures/core/captions1.html = IMAGE
@@ -3128,4 +3127,4 @@ BUGWK24906 : fast/text/backslash-to-yen-sign-euc.html = FAIL
 // Fails since WebKit r63994
 BUGWK42964 SLOW : tables/mozilla/other/slashlogo.html = FAIL
 // Flaky since WebKit r63994
-BUGWK42964 WIN : tables/mozilla_expected_failures/bugs/bug89315.html = PASS FAIL
+BUGWK42964 WIN LINUX : tables/mozilla_expected_failures/bugs/bug89315.html = PASS FAIL

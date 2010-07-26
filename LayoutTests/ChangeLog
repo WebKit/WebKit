@@ -1,3 +1,10 @@
+2010-07-26  Victor Wang  <victorw@chromium.org>
+
+        Unreviewed. Update chromium test expectations for flaky test on linux:
+        tables/mozilla_expected_failures/bugs/bug89315.html
+
+        * platform/chromium/test_expectations.txt:
+
 2010-07-26  Simon Fraser  <simon.fraser@apple.com>
 
         Fix tests on Leopard.
