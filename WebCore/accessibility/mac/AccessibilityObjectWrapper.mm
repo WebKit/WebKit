@@ -1515,8 +1515,17 @@ static NSString* roleValueToNSString(AccessibilityRole value)
         }
         if (m_object->isProgressIndicator() || m_object->isSlider() || m_object->isScrollbar())
             return [NSNumber numberWithFloat:m_object->valueForRange()];
-        if (m_object->hasIntValue())
-            return [NSNumber numberWithInt:m_object->intValue()];
+        if (m_object->isHeading())
+            return [NSNumber numberWithInt:m_object->headingLevel()];
+        
+        if (m_object->isCheckboxOrRadio()) {
+            switch (m_object->checkboxOrRadioValue()) {
+            case ButtonStateOff:
+                return [NSNumber numberWithInt:0];
+            case ButtonStateOn:
+                return [NSNumber numberWithInt:1];
+            }
+        }
 
         // radio groups return the selected radio button as the AXValue
         if (m_object->isRadioGroup()) {
