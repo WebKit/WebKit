@@ -1,3 +1,14 @@
+2010-07-26  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed.
+
+        [Qt] DRT sideeffect revealed by r63657
+        https://bugs.webkit.org/show_bug.cgi?id=42578
+
+        * platform/qt/Skipped: Add tests to the Skipped list until fix.
+         - http/tests/xmlhttprequest/authorization-header.html
+         - http/tests/xmlhttprequest/null-auth.php
+
 2010-07-25  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Darin Adler.
