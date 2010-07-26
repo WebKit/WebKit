@@ -1384,7 +1384,7 @@ __ZNK7WebCore15ProtectionSpace20authenticationSchemeEv
 .objc_class_name_DOMSVGZoomEvent
 #endif
 
-#if ENABLE(SVG_FILTERS) && ENABLE(SVG_DOM_OBJC_BINDINGS)
+#if ENABLE(FILTERS) && ENABLE(SVG_DOM_OBJC_BINDINGS)
 .objc_class_name_DOMSVGComponentTransferFunctionElement
 .objc_class_name_DOMSVGFEBlendElement
 .objc_class_name_DOMSVGFEColorMatrixElement

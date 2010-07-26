@@ -1,3 +1,9 @@
+2010-07-26  Mark Rowe  <mrowe@apple.com>
+
+        Fix an #if in WebCore.exp.in to correctly detect whether SVG filters are enabled.
+
+        * WebCore.exp.in:
+
 2010-07-26  Steve Block  <steveblock@google.com>
 
         Reviewed by Jeremy Orlow.
