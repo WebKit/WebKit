@@ -26,6 +26,7 @@
 #include "WebUIClient.h"
 
 #include "WKAPICast.h"
+#include <WebCore/PlatformString.h>
 #include <string.h>
 
 using namespace WebCore;
@@ -69,13 +70,35 @@ void WebUIClient::close(WebPageProxy* page)
     m_pageUIClient.close(toRef(page), m_pageUIClient.clientInfo);
 }
 
-void WebUIClient::runJavaScriptAlert(WebPageProxy* page, StringImpl* alertText, WebFrameProxy* frame)
+void WebUIClient::runJavaScriptAlert(WebPageProxy* page, const String& message, WebFrameProxy* frame)
 {
     if (!m_pageUIClient.runJavaScriptAlert)
         return;
     
-    m_pageUIClient.runJavaScriptAlert(toRef(page), toRef(alertText), toRef(frame), m_pageUIClient.clientInfo);
+    m_pageUIClient.runJavaScriptAlert(toRef(page), toRef(message.impl()), toRef(frame), m_pageUIClient.clientInfo);
 }
 
+bool WebUIClient::runJavaScriptConfirm(WebPageProxy* page, const String& message, WebFrameProxy* frame)
+{
+    if (!m_pageUIClient.runJavaScriptConfirm)
+        return false;
+
+    return m_pageUIClient.runJavaScriptConfirm(toRef(page), toRef(message.impl()), toRef(frame), m_pageUIClient.clientInfo);
+}
+
+String WebUIClient::runJavaScriptPrompt(WebPageProxy* page, const String& message, const String& defaultValue, WebFrameProxy* frame)
+{
+    if (!m_pageUIClient.runJavaScriptPrompt)
+        return String();
+
+    StringImpl* impl = toWK(m_pageUIClient.runJavaScriptPrompt(toRef(page), toRef(message.impl()), toRef(defaultValue.impl()), toRef(frame), m_pageUIClient.clientInfo));
+    if (!impl)
+        return String();
+
+    String result = impl;
+    impl->deref();
+
+    return result;
+}
 
 } // namespace WebKit

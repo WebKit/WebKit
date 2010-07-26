@@ -29,7 +29,7 @@
 #include "WKPage.h"
 
 namespace WebCore {
-    class StringImpl;
+    class String;
 }
 
 namespace WebKit {
@@ -45,7 +45,9 @@ public:
     WebPageProxy* createNewPage(WebPageProxy*);
     void showPage(WebPageProxy*);
     void close(WebPageProxy*);
-    void runJavaScriptAlert(WebPageProxy*, WebCore::StringImpl*, WebFrameProxy*);
+    void runJavaScriptAlert(WebPageProxy*, const WebCore::String&, WebFrameProxy*);
+    bool runJavaScriptConfirm(WebPageProxy*, const WebCore::String&, WebFrameProxy*);
+    WebCore::String runJavaScriptPrompt(WebPageProxy*, const WebCore::String&, const WebCore::String&, WebFrameProxy*);
 
 private:
     WKPageUIClient m_pageUIClient;

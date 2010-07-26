@@ -152,105 +152,105 @@
 
 #pragma mark Loader Client Callbacks
 
-static void _didStartProvisionalLoadForFrame(WKPageRef page, WKFrameRef frame, const void *clientInfo)
+static void didStartProvisionalLoadForFrame(WKPageRef page, WKFrameRef frame, const void *clientInfo)
 {
     [(BrowserWindowController *)clientInfo didStartProvisionalLoadForFrame:frame];
 }
 
-static void _didReceiveServerRedirectForProvisionalLoadForFrame(WKPageRef page, WKFrameRef frame, const void *clientInfo)
+static void didReceiveServerRedirectForProvisionalLoadForFrame(WKPageRef page, WKFrameRef frame, const void *clientInfo)
 {
     [(BrowserWindowController *)clientInfo didReceiveServerRedirectForProvisionalLoadForFrame:frame];
 }
 
-static void _didFailProvisionalLoadWithErrorForFrame(WKPageRef page, WKFrameRef frame, const void *clientInfo)
+static void didFailProvisionalLoadWithErrorForFrame(WKPageRef page, WKFrameRef frame, const void *clientInfo)
 {
     [(BrowserWindowController *)clientInfo didFailProvisionalLoadWithErrorForFrame:frame];
 }
 
-static void _didCommitLoadForFrame(WKPageRef page, WKFrameRef frame, const void *clientInfo)
+static void didCommitLoadForFrame(WKPageRef page, WKFrameRef frame, const void *clientInfo)
 {
     [(BrowserWindowController *)clientInfo didCommitLoadForFrame:frame];
 }
 
-static void _didFinishLoadForFrame(WKPageRef page, WKFrameRef frame, const void *clientInfo)
+static void didFinishLoadForFrame(WKPageRef page, WKFrameRef frame, const void *clientInfo)
 {
     LOG(@"didFinishLoadForFrame");
 }
 
-static void _didFailLoadWithErrorForFrame(WKPageRef page, WKFrameRef frame, const void *clientInfo)
+static void didFailLoadWithErrorForFrame(WKPageRef page, WKFrameRef frame, const void *clientInfo)
 {
     [(BrowserWindowController *)clientInfo didFailLoadWithErrorForFrame:frame];
 }
 
-static void _didReceiveTitleForFrame(WKPageRef page, WKStringRef title, WKFrameRef frame, const void *clientInfo)
+static void didReceiveTitleForFrame(WKPageRef page, WKStringRef title, WKFrameRef frame, const void *clientInfo)
 {
     CFStringRef cfTitle = WKStringCopyCFString(0, title);
     LOG(@"didReceiveTitleForFrame \"%@\"", (NSString *)cfTitle);
     CFRelease(cfTitle);
 }
 
-static void _didFirstLayoutForFrame(WKPageRef page, WKFrameRef frame, const void *clientInfo)
+static void didFirstLayoutForFrame(WKPageRef page, WKFrameRef frame, const void *clientInfo)
 {
     LOG(@"didFirstLayoutForFrame");
 }
 
-static void _didFirstVisuallyNonEmptyLayoutForFrame(WKPageRef page, WKFrameRef frame, const void *clientInfo)
+static void didFirstVisuallyNonEmptyLayoutForFrame(WKPageRef page, WKFrameRef frame, const void *clientInfo)
 {
     LOG(@"didFirstVisuallyNonEmptyLayoutForFrame");
 }
 
-static void _didStartProgress(WKPageRef page, const void *clientInfo)
+static void didStartProgress(WKPageRef page, const void *clientInfo)
 {
     [(BrowserWindowController *)clientInfo didStartProgress];
 }
 
-static void _didChangeProgress(WKPageRef page, const void *clientInfo)
+static void didChangeProgress(WKPageRef page, const void *clientInfo)
 {
     [(BrowserWindowController *)clientInfo didChangeProgress:WKPageGetEstimatedProgress(page)];
 }
 
-static void _didFinishProgress(WKPageRef page, const void *clientInfo)
+static void didFinishProgress(WKPageRef page, const void *clientInfo)
 {
     [(BrowserWindowController *)clientInfo didFinishProgress];
 }
 
-static void _didBecomeUnresponsive(WKPageRef page, const void *clientInfo)
+static void didBecomeUnresponsive(WKPageRef page, const void *clientInfo)
 {
     LOG(@"didBecomeUnresponsive");
 }
 
-static void _didBecomeResponsive(WKPageRef page, const void *clientInfo)
+static void didBecomeResponsive(WKPageRef page, const void *clientInfo)
 {
     LOG(@"didBecomeResponsive");
 }
 
-static void _didChangeBackForwardList(WKPageRef page, const void *clientInfo)
+static void didChangeBackForwardList(WKPageRef page, const void *clientInfo)
 {
     [(BrowserWindowController *)clientInfo validateToolbar];
 }
 
 #pragma mark Policy Client Callbacks
 
-static void _decidePolicyForNavigationAction(WKPageRef page, WKFrameNavigationType navigationType, WKURLRef url, WKFrameRef frame, WKFramePolicyListenerRef listener, const void *clientInfo)
+static void decidePolicyForNavigationAction(WKPageRef page, WKFrameNavigationType navigationType, WKURLRef url, WKFrameRef frame, WKFramePolicyListenerRef listener, const void *clientInfo)
 {
     LOG(@"decidePolicyForNavigationAction");
     WKFramePolicyListenerUse(listener);
 }
 
-static void _decidePolicyForNewWindowAction(WKPageRef page, WKFrameNavigationType navigationType, WKURLRef url, WKFrameRef frame, WKFramePolicyListenerRef listener, const void *clientInfo)
+static void decidePolicyForNewWindowAction(WKPageRef page, WKFrameNavigationType navigationType, WKURLRef url, WKFrameRef frame, WKFramePolicyListenerRef listener, const void *clientInfo)
 {
     LOG(@"decidePolicyForNewWindowAction");
     WKFramePolicyListenerUse(listener);
 }
 
-static void _decidePolicyForMIMEType(WKPageRef page, WKStringRef MIMEType, WKURLRef url, WKFrameRef frame, WKFramePolicyListenerRef listener, const void *clientInfo)
+static void decidePolicyForMIMEType(WKPageRef page, WKStringRef MIMEType, WKURLRef url, WKFrameRef frame, WKFramePolicyListenerRef listener, const void *clientInfo)
 {
     WKFramePolicyListenerUse(listener);
 }
 
 #pragma mark UI Client Callbacks
 
-static WKPageRef _createNewPage(WKPageRef page, const void* clientInfo)
+static WKPageRef createNewPage(WKPageRef page, const void* clientInfo)
 {
     LOG(@"createNewPage");
     BrowserWindowController *controller = [[BrowserWindowController alloc] initWithPageNamespace:WKPageGetPageNamespace(page)];
@@ -259,13 +259,13 @@ static WKPageRef _createNewPage(WKPageRef page, const void* clientInfo)
     return controller->_webView.pageRef;
 }
 
-static void _showPage(WKPageRef page, const void *clientInfo)
+static void showPage(WKPageRef page, const void *clientInfo)
 {
     LOG(@"showPage");
     [[(BrowserWindowController *)clientInfo window] orderFront:nil];
 }
 
-static void _closePage(WKPageRef page, const void *clientInfo)
+static void closePage(WKPageRef page, const void *clientInfo)
 {
     LOG(@"closePage");
     WKPageClose(page);
@@ -273,17 +273,17 @@ static void _closePage(WKPageRef page, const void *clientInfo)
     WKPageRelease(page);
 }
 
-static void _runJavaScriptAlert(WKPageRef page, WKStringRef alertText, WKFrameRef frame, const void* clientInfo)
+static void runJavaScriptAlert(WKPageRef page, WKStringRef message, WKFrameRef frame, const void* clientInfo)
 {
     NSAlert* alert = [[NSAlert alloc] init];
 
     CFURLRef cfURL = WKURLCopyCFURL(0, WKFrameGetURL(frame));
-    [alert setMessageText:[NSString stringWithFormat:@"JavaScript Alert from %@.", [(NSURL *)cfURL absoluteString]]];
+    [alert setMessageText:[NSString stringWithFormat:@"JavaScript alert dialog from %@.", [(NSURL *)cfURL absoluteString]]];
     CFRelease(cfURL);
 
-    CFStringRef cfAlertText = WKStringCopyCFString(0, alertText);
-    [alert setInformativeText:(NSString *)alertText];
-    CFRelease(cfAlertText);
+    CFStringRef cfMessage = WKStringCopyCFString(0, message);
+    [alert setInformativeText:(NSString *)cfMessage];
+    CFRelease(cfMessage);
 
     [alert addButtonWithTitle:@"OK"];
 
@@ -291,10 +291,67 @@ static void _runJavaScriptAlert(WKPageRef page, WKStringRef alertText, WKFrameRe
     [alert release];
 }
 
+static bool runJavaScriptConfirm(WKPageRef page, WKStringRef message, WKFrameRef frame, const void* clientInfo)
+{
+    NSAlert* alert = [[NSAlert alloc] init];
+
+    CFURLRef cfURL = WKURLCopyCFURL(0, WKFrameGetURL(frame));
+    [alert setMessageText:[NSString stringWithFormat:@"JavaScript confirm dialog from %@.", [(NSURL *)cfURL absoluteString]]];
+    CFRelease(cfURL);
+
+    CFStringRef cfMessage = WKStringCopyCFString(0, message);
+    [alert setInformativeText:(NSString *)cfMessage];
+    CFRelease(cfMessage);
+
+    [alert addButtonWithTitle:@"OK"];
+    [alert addButtonWithTitle:@"Cancel"];
+
+    NSInteger button = [alert runModal];
+    [alert release];
+
+    return button == NSAlertFirstButtonReturn;
+}
+
+static WKStringRef runJavaScriptPrompt(WKPageRef page, WKStringRef message, WKStringRef defaultValue, WKFrameRef frame, const void* clientInfo)
+{
+    NSAlert* alert = [[NSAlert alloc] init];
+
+    CFURLRef cfURL = WKURLCopyCFURL(0, WKFrameGetURL(frame));
+    [alert setMessageText:[NSString stringWithFormat:@"JavaScript prompt dialog from %@.", [(NSURL *)cfURL absoluteString]]];
+    CFRelease(cfURL);
+
+    CFStringRef cfMessage = WKStringCopyCFString(0, message);
+    [alert setInformativeText:(NSString *)cfMessage];
+    CFRelease(cfMessage);
+
+    [alert addButtonWithTitle:@"OK"];
+    [alert addButtonWithTitle:@"Cancel"];
+
+    NSTextField* input = [[NSTextField alloc] initWithFrame:NSMakeRect(0, 0, 200, 24)];
+    CFStringRef cfDefaultValue = WKStringCopyCFString(0, defaultValue);
+    [input setStringValue:(NSString *)cfDefaultValue];
+    CFRelease(cfDefaultValue);
+
+    [alert setAccessoryView:input];
+
+    NSInteger button = [alert runModal];
+
+    NSString* result = nil;
+    if (button == NSAlertFirstButtonReturn) {
+        [input validateEditing];
+        result = [input stringValue];
+    }
+
+    [alert release];
+
+    if (!result)
+        return 0;
+    return WKStringCreateWithCFString((CFStringRef)result);
+}
 
 #pragma mark History Client Callbacks
 
-static void _didNavigateWithNavigationData(WKPageRef page, WKNavigationDataRef navigationData, WKFrameRef frame, const void *clientInfo)
+static void didNavigateWithNavigationData(WKPageRef page, WKNavigationDataRef navigationData, WKFrameRef frame, const void *clientInfo)
 {
     CFStringRef title = WKStringCopyCFString(0, WKNavigationDataGetTitle(navigationData));
     CFURLRef url = WKURLCopyCFURL(0, WKNavigationDataGetURL(navigationData));
@@ -303,7 +360,7 @@ static void _didNavigateWithNavigationData(WKPageRef page, WKNavigationDataRef n
     CFRelease(url);
 }
 
-static void _didPerformClientRedirect(WKPageRef page, WKURLRef sourceURL, WKURLRef destinationURL, WKFrameRef frame, const void *clientInfo)
+static void didPerformClientRedirect(WKPageRef page, WKURLRef sourceURL, WKURLRef destinationURL, WKFrameRef frame, const void *clientInfo)
 {
     CFURLRef cfSourceURL = WKURLCopyCFURL(0, sourceURL);
     CFURLRef cfDestinationURL = WKURLCopyCFURL(0, destinationURL);
@@ -312,7 +369,7 @@ static void _didPerformClientRedirect(WKPageRef page, WKURLRef sourceURL, WKURLR
     CFRelease(cfDestinationURL);
 }
 
-static void _didPerformServerRedirect(WKPageRef page, WKURLRef sourceURL, WKURLRef destinationURL, WKFrameRef frame, const void *clientInfo)
+static void didPerformServerRedirect(WKPageRef page, WKURLRef sourceURL, WKURLRef destinationURL, WKFrameRef frame, const void *clientInfo)
 {
     CFURLRef cfSourceURL = WKURLCopyCFURL(0, sourceURL);
     CFURLRef cfDestinationURL = WKURLCopyCFURL(0, destinationURL);
@@ -321,7 +378,7 @@ static void _didPerformServerRedirect(WKPageRef page, WKURLRef sourceURL, WKURLR
     CFRelease(cfDestinationURL);
 }
 
-static void _didUpdateHistoryTitle(WKPageRef page, WKStringRef title, WKURLRef URL, WKFrameRef frame, const void *clientInfo)
+static void didUpdateHistoryTitle(WKPageRef page, WKStringRef title, WKURLRef URL, WKFrameRef frame, const void *clientInfo)
 {
     CFStringRef cfTitle = WKStringCopyCFString(0, title);
     CFURLRef cfURL = WKURLCopyCFURL(0, URL);
@@ -342,50 +399,52 @@ static void _didUpdateHistoryTitle(WKPageRef page, WKStringRef title, WKURLRef U
     WKPageLoaderClient loadClient = {
         0,      /* version */
         self,   /* clientInfo */
-        _didStartProvisionalLoadForFrame,
-        _didReceiveServerRedirectForProvisionalLoadForFrame,
-        _didFailProvisionalLoadWithErrorForFrame,
-        _didCommitLoadForFrame,
-        _didFinishLoadForFrame,
-        _didFailLoadWithErrorForFrame,
-        _didReceiveTitleForFrame,
-        _didFirstLayoutForFrame,
-        _didFirstVisuallyNonEmptyLayoutForFrame,
-        _didStartProgress,
-        _didChangeProgress,
-        _didFinishProgress,
-        _didBecomeUnresponsive,
-        _didBecomeResponsive,
-        _didChangeBackForwardList
+        didStartProvisionalLoadForFrame,
+        didReceiveServerRedirectForProvisionalLoadForFrame,
+        didFailProvisionalLoadWithErrorForFrame,
+        didCommitLoadForFrame,
+        didFinishLoadForFrame,
+        didFailLoadWithErrorForFrame,
+        didReceiveTitleForFrame,
+        didFirstLayoutForFrame,
+        didFirstVisuallyNonEmptyLayoutForFrame,
+        didStartProgress,
+        didChangeProgress,
+        didFinishProgress,
+        didBecomeUnresponsive,
+        didBecomeResponsive,
+        didChangeBackForwardList
     };
     WKPageSetPageLoaderClient(_webView.pageRef, &loadClient);
     
     WKPagePolicyClient policyClient = {
         0,          /* version */
         self,       /* clientInfo */
-        _decidePolicyForNavigationAction,
-        _decidePolicyForNewWindowAction,
-        _decidePolicyForMIMEType
+        decidePolicyForNavigationAction,
+        decidePolicyForNewWindowAction,
+        decidePolicyForMIMEType
     };
     WKPageSetPagePolicyClient(_webView.pageRef, &policyClient);
 
     WKPageUIClient uiClient = {
         0,          /* version */
         self,       /* clientInfo */
-        _createNewPage,
-        _showPage,
-        _closePage,
-        _runJavaScriptAlert
+        createNewPage,
+        showPage,
+        closePage,
+        runJavaScriptAlert,
+        runJavaScriptConfirm,
+        runJavaScriptPrompt
     };
     WKPageSetPageUIClient(_webView.pageRef, &uiClient);
 
     WKPageHistoryClient historyClient = {
         0,
         self,
-        _didNavigateWithNavigationData,
-        _didPerformClientRedirect,
-        _didPerformServerRedirect,
-        _didUpdateHistoryTitle,
+        didNavigateWithNavigationData,
+        didPerformClientRedirect,
+        didPerformServerRedirect,
+        didUpdateHistoryTitle,
     };
 
     WKPageSetPageHistoryClient(_webView.pageRef, &historyClient);

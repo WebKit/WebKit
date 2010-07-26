@@ -1,3 +1,29 @@
+2010-07-26  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=42986
+        Add prompt and confirm client functions to WebKit2
+
+        * Shared/CoreIPCSupport/WebPageProxyMessageKinds.h:
+        (WebPageProxyMessage::):
+        * UIProcess/API/C/WKPage.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didReceiveSyncMessage):
+        (WebKit::WebPageProxy::runJavaScriptAlert):
+        (WebKit::WebPageProxy::runJavaScriptConfirm):
+        (WebKit::WebPageProxy::runJavaScriptPrompt):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebUIClient.cpp:
+        (WebKit::WebUIClient::runJavaScriptAlert):
+        (WebKit::WebUIClient::runJavaScriptConfirm):
+        (WebKit::WebUIClient::runJavaScriptPrompt):
+        * UIProcess/WebUIClient.h:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::runJavaScriptConfirm):
+        (WebKit::WebChromeClient::runJavaScriptPrompt):
+
 2010-07-26  Adam Roben  <aroben@apple.com>
 
         Windows build fix

@@ -36,6 +36,8 @@ enum Kind {
     CreateNewPage,
     ShowPage,
     RunJavaScriptAlert,
+    RunJavaScriptConfirm,
+    RunJavaScriptPrompt,
     
     ClosePage,
     DecidePolicyForMIMEType,

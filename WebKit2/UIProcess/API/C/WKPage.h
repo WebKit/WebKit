@@ -116,6 +116,8 @@ typedef WKPageRef (*WKPageCreateNewPageCallback)(WKPageRef page, const void *cli
 typedef void (*WKPageShowPageCallback)(WKPageRef page, const void *clientInfo);
 typedef void (*WKPageCloseCallback)(WKPageRef page, const void *clientInfo);
 typedef void (*WKPageRunJavaScriptAlertCallback)(WKPageRef page, WKStringRef alertText, WKFrameRef frame, const void *clientInfo);
+typedef bool (*WKPageRunJavaScriptConfirmCallback)(WKPageRef page, WKStringRef message, WKFrameRef frame, const void *clientInfo);
+typedef WKStringRef (*WKPageRunJavaScriptPromptCallback)(WKPageRef page, WKStringRef message, WKStringRef defaultValue, WKFrameRef frame, const void *clientInfo);
 
 struct WKPageUIClient {
     int                                                                 version;
@@ -124,6 +126,8 @@ struct WKPageUIClient {
     WKPageShowPageCallback                                              showPage;
     WKPageCloseCallback                                                 close;
     WKPageRunJavaScriptAlertCallback                                    runJavaScriptAlert;
+    WKPageRunJavaScriptConfirmCallback                                  runJavaScriptConfirm;
+    WKPageRunJavaScriptPromptCallback                                   runJavaScriptPrompt;
 };
 typedef struct WKPageUIClient WKPageUIClient;
 

@@ -649,13 +649,35 @@ void WebPageProxy::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIP
         }
         case WebPageProxyMessage::RunJavaScriptAlert: {
             uint64_t frameID;
-            String alertText;
-            if (!arguments.decode(CoreIPC::Out(frameID, alertText)))
+            String message;
+            if (!arguments.decode(CoreIPC::Out(frameID, message)))
                 return;
-            runJavaScriptAlert(webFrame(frameID), alertText);
+            runJavaScriptAlert(webFrame(frameID), message);
             break;
         }
+        case WebPageProxyMessage::RunJavaScriptConfirm: {
+            // FIXME: We should probably encode something in the case that the arguments do not decode correctly.
+            uint64_t frameID;
+            String message;
+            if (!arguments.decode(CoreIPC::Out(frameID, message)))
+                return;
 
+            bool result = runJavaScriptConfirm(webFrame(frameID), message);
+            reply.encode(CoreIPC::In(result));
+            break;
+        }
+        case WebPageProxyMessage::RunJavaScriptPrompt: {
+            // FIXME: We should probably encode something in the case that the arguments do not decode correctly.
+            uint64_t frameID;
+            String message;
+            String defaultValue;
+            if (!arguments.decode(CoreIPC::Out(frameID, message, defaultValue)))
+                return;
+
+            String result = runJavaScriptPrompt(webFrame(frameID), message, defaultValue);
+            reply.encode(CoreIPC::In(result));
+            break;
+        }
         case WebPageProxyMessage::BackForwardCurrentItem: {
             WebBackForwardListItem* currentItem = m_backForwardList->currentItem();
             uint64_t currentItemID = currentItem ? currentItem->itemID() : 0;
@@ -832,11 +854,20 @@ void WebPageProxy::closePage()
     m_uiClient.close(this);
 }
 
-void WebPageProxy::runJavaScriptAlert(WebFrameProxy* frame, const WebCore::String& alertText)
+void WebPageProxy::runJavaScriptAlert(WebFrameProxy* frame, const String& message)
 {
-    m_uiClient.runJavaScriptAlert(this, alertText.impl(), frame);
+    m_uiClient.runJavaScriptAlert(this, message, frame);
 }
 
+bool WebPageProxy::runJavaScriptConfirm(WebFrameProxy* frame, const String& message)
+{
+    return m_uiClient.runJavaScriptConfirm(this, message, frame);
+}
+
+String WebPageProxy::runJavaScriptPrompt(WebFrameProxy* frame, const String& message, const String& defaultValue)
+{
+    return m_uiClient.runJavaScriptPrompt(this, message, defaultValue, frame);
+}
 
 // HistoryClient
 

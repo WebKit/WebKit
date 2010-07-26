@@ -1,4 +1,4 @@
-MODULES = DumpRenderTree MiniBrowser
+MODULES = DumpRenderTree WebKitTestRunner MiniBrowser
 
 all:
 	@for dir in $(MODULES); do ${MAKE} $@ -C $$dir; exit_status=$$?; \

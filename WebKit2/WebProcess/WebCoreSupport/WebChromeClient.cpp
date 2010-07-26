@@ -229,8 +229,15 @@ bool WebChromeClient::runJavaScriptConfirm(Frame* frame, const String& message)
     // Notify the bundle client.
     m_page->injectedBundleUIClient().willRunJavaScriptConfirm(m_page, message, webFrame);
 
-    // Implement for UIProcess.
-    return false;
+    bool result = false;
+    if (!WebProcess::shared().connection()->sendSync(WebPageProxyMessage::RunJavaScriptConfirm, m_page->pageID(),
+                                                     CoreIPC::In(webFrame->frameID(), message),
+                                                     CoreIPC::Out(result),
+                                                     CoreIPC::Connection::NoTimeout)) {
+        return false;
+    }
+
+    return result;
 }
 
 bool WebChromeClient::runJavaScriptPrompt(Frame* frame, const String& message, const String& defaultValue, String& result)
@@ -240,8 +247,14 @@ bool WebChromeClient::runJavaScriptPrompt(Frame* frame, const String& message, c
     // Notify the bundle client.
     m_page->injectedBundleUIClient().willRunJavaScriptPrompt(m_page, message, defaultValue, webFrame);
 
-    // Implement for UIProcess.
-    return false;
+    if (!WebProcess::shared().connection()->sendSync(WebPageProxyMessage::RunJavaScriptPrompt, m_page->pageID(),
+                                                     CoreIPC::In(webFrame->frameID(), message, defaultValue),
+                                                     CoreIPC::Out(result),
+                                                     CoreIPC::Connection::NoTimeout)) {
+        return false;
+    }
+
+    return !result.isNull();
 }
 
 void WebChromeClient::setStatusbarText(const String& statusbarText)
