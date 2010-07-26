@@ -91,10 +91,11 @@ private:
     void applyInlineStyleToRange(CSSMutableStyleDeclaration*, const Position& start, const Position& end);
     void addBlockStyle(const StyleChange&, HTMLElement*);
     void addInlineStyleIfNeeded(CSSMutableStyleDeclaration*, Node* start, Node* end);
-    bool splitTextAtStartIfNeeded(const Position& start, const Position& end);
-    bool splitTextAtEndIfNeeded(const Position& start, const Position& end);
-    bool splitTextElementAtStartIfNeeded(const Position& start, const Position& end);
-    bool splitTextElementAtEndIfNeeded(const Position& start, const Position& end);
+    void splitTextAtStart(const Position& start, const Position& end);
+    void splitTextAtEnd(const Position& start, const Position& end);
+    void splitTextElementAtStart(const Position& start, const Position& end);
+    void splitTextElementAtEnd(const Position& start, const Position& end);
+    bool isValidCaretPositionInTextNode(const Position& position);
     bool mergeStartWithPreviousIfIdentical(const Position& start, const Position& end);
     bool mergeEndWithNextIfIdentical(const Position& start, const Position& end);
     void cleanupUnstyledAppleStyleSpans(Node* dummySpanAncestor);
