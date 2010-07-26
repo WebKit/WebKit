@@ -258,6 +258,9 @@ WebViewImpl::WebViewImpl(WebViewClient* client, WebDevToolsAgentClient* devTools
     , m_layerRenderer(0)
     , m_isAcceleratedCompositingActive(false)
 #endif
+#if ENABLE(INPUT_SPEECH)
+    , m_speechInputClient(client)
+#endif
     , m_gles2Context(0)
 {
     // WebKit/win/WebView.cpp does the same thing, except they call the
@@ -278,6 +281,9 @@ WebViewImpl::WebViewImpl(WebViewClient* client, WebDevToolsAgentClient* devTools
 
     m_page->backForwardList()->setClient(&m_backForwardListClientImpl);
     m_page->setGroupName(pageGroupName);
+#if ENABLE(INPUT_SPEECH)
+    m_page->setSpeechInputClient(&m_speechInputClient);
+#endif
 
     m_inspectorSettingsMap.set(new SettingsMap);
 }

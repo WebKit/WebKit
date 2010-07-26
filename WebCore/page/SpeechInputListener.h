@@ -40,7 +40,13 @@ class String;
 // Interface to be implemented by the element which invokes SpeechInput.
 class SpeechInputListener {
 public:
-    virtual void recordingComplete() = 0;
+    // Informs that audio recording has completed and recognition is underway.
+    virtual void didCompleteRecording() = 0;
+
+    // Gives results from speech recognition, either partial or the final results.
+    // This method can potentially get called multiple times if there are partial results
+    // available as the user keeps speaking. If the speech could not be recognized properly
+    // or if there was any other errors in the process, this method may never be called.
     virtual void setRecognitionResult(const String& result) = 0;
 
 protected:

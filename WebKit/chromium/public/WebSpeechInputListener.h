@@ -28,33 +28,43 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SpeechInputClientListener_h
-#define SpeechInputClientListener_h
+#ifndef WebSpeechInputListener_h
+#define WebSpeechInputListener_h
 
-#if ENABLE(INPUT_SPEECH)
+namespace WebKit {
 
-namespace WebCore {
+class WebString;
 
-class String;
-
-// Provides an interface for the embedder to call into WebCore.
-class SpeechInputClientListener {
+// Provides a WebKit API called by the embedder.
+// A typical sequence of calls to the listener would be
+//   1 call to didCompleteRecording
+//   0 or more calls to setRecognitionResult
+//   1 call to didCompleteRecognition
+class WebSpeechInputListener {
 public:
-    // Informs that audio recording has completed and recognition is underway.
+    // Informs that audio recording has completed and recognition is underway. This gets invoked
+    // irrespective of whether recording was stopped automatically by the 'endpointer' or if
+    // WebSpeechInputController::stopRecording() was called.
+    // Typically after this call the listener would update the UI to reflect that recognition is
+    // in progress.
     virtual void didCompleteRecording() = 0;
 
     // Gives results from speech recognition, either partial or the final results.
     // This method can potentially get called multiple times if there are partial results
     // available as the user keeps speaking. If the speech could not be recognized properly
     // or if there was any other errors in the process, this method may never be called.
-    virtual void setRecognitionResult(const String& result) = 0;
+    virtual void setRecognitionResult(const WebString&) = 0;
+
+    // Informs that speech recognition has completed. This gets invoked irrespective of whether
+    // recognition was succesful or not, whether setRecognitionResult() was invoked or not. The
+    // handler typically frees up any temporary resources allocated and waits for the next speech
+    // recognition request.
+    virtual void didCompleteRecognition() = 0;
 
 protected:
-    virtual ~SpeechInputClientListener() { }
+    ~WebSpeechInputListener() { }
 };
 
-} // namespace WebCore
+} // namespace WebKit
 
-#endif // ENABLE(INPUT_SPEECH)
-
-#endif // SpeechInputClientListener_h
+#endif // WebSpeechInputListener_h

@@ -55,6 +55,8 @@ class WebKeyboardEvent;
 class WebNode;
 class WebNotificationPresenter;
 class WebRange;
+class WebSpeechInputController;
+class WebSpeechInputListener;
 class WebStorageNamespace;
 class WebURL;
 class WebView;
@@ -331,7 +333,13 @@ public:
     // Geolocation ---------------------------------------------------------
 
     // Access the embedder API for geolocation services.
-    virtual WebKit::WebGeolocationService* geolocationService() { return 0; }
+    virtual WebGeolocationService* geolocationService() { return 0; }
+
+    // Speech --------------------------------------------------------------
+
+    // Access the embedder API for speech input services.
+    virtual WebSpeechInputController* speechInputController(
+        WebSpeechInputListener*) { return 0; }
 
 protected:
     ~WebViewClient() { }

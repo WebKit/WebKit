@@ -5,7 +5,7 @@
  * modification, are permitted provided that the following conditions are
  * met:
  *
- *     * Redistributions of source code must retain the above copyright
+ * Redistributions of source code must retain the above copyright
  * notice, this list of conditions and the following disclaimer.
  *     * Redistributions in binary form must reproduce the above
  * copyright notice, this list of conditions and the following disclaimer
@@ -28,33 +28,46 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SpeechInputClientListener_h
-#define SpeechInputClientListener_h
+#ifndef SpeechInputClientImpl_h
+#define SpeechInputClientImpl_h
 
 #if ENABLE(INPUT_SPEECH)
 
+#include "WebSpeechInputListener.h"
+#include "page/SpeechInputClient.h"
+
 namespace WebCore {
+class SpeechInputClientListener;
+}
 
-class String;
+namespace WebKit {
 
-// Provides an interface for the embedder to call into WebCore.
-class SpeechInputClientListener {
+class WebSpeechInputController;
+class WebViewClient;
+
+class SpeechInputClientImpl
+    : public WebCore::SpeechInputClient,
+      public WebSpeechInputListener {
 public:
-    // Informs that audio recording has completed and recognition is underway.
-    virtual void didCompleteRecording() = 0;
+    SpeechInputClientImpl(WebViewClient*);
+    virtual ~SpeechInputClientImpl();
 
-    // Gives results from speech recognition, either partial or the final results.
-    // This method can potentially get called multiple times if there are partial results
-    // available as the user keeps speaking. If the speech could not be recognized properly
-    // or if there was any other errors in the process, this method may never be called.
-    virtual void setRecognitionResult(const String& result) = 0;
+    // SpeechInputClient methods.
+    bool startRecognition(WebCore::SpeechInputClientListener*);
+    void stopRecording();
 
-protected:
-    virtual ~SpeechInputClientListener() { }
+    // WebSpeechInputListener methods.
+    void didCompleteRecording();
+    void setRecognitionResult(const WebString&);
+    void didCompleteRecognition();
+
+private:
+    WebSpeechInputController* m_controller; // To call into the embedder.
+    WebCore::SpeechInputClientListener* m_listener; // Valid when recognition is in progress.
 };
 
-} // namespace WebCore
+} // namespace WebKit
 
 #endif // ENABLE(INPUT_SPEECH)
 
-#endif // SpeechInputClientListener_h
+#endif // SpeechInputClientImpl_h

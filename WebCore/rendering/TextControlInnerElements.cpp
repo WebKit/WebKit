@@ -397,7 +397,7 @@ SpeechInput* InputFieldSpeechButtonElement::speechInput()
     return m_speechInput.get();
 }
 
-void InputFieldSpeechButtonElement::recordingComplete()
+void InputFieldSpeechButtonElement::didCompleteRecording()
 {
     // FIXME: Add UI feedback here to indicate that audio recording stopped and recognition is
     // in progress.

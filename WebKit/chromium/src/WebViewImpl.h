@@ -47,6 +47,7 @@
 #include "InspectorClientImpl.h"
 #include "LayerRendererChromium.h"
 #include "NotificationPresenterImpl.h"
+#include "SpeechInputClientImpl.h"
 #include <wtf/OwnPtr.h>
 #include <wtf/RefCounted.h>
 
@@ -510,6 +511,10 @@ private:
     bool m_isAcceleratedCompositingActive;
 #endif
     static const WebInputEvent* m_currentInputEvent;
+
+#if ENABLE(INPUT_SPEECH)
+    SpeechInputClientImpl m_speechInputClient;
+#endif
 
     OwnPtr<WebGLES2Context> m_gles2Context;
 };

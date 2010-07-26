@@ -28,33 +28,40 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SpeechInputClientListener_h
-#define SpeechInputClientListener_h
+#ifndef WebSpeechInputController_h
+#define WebSpeechInputController_h
 
-#if ENABLE(INPUT_SPEECH)
+#include "WebCommon.h"
 
-namespace WebCore {
+namespace WebKit {
 
-class String;
-
-// Provides an interface for the embedder to call into WebCore.
-class SpeechInputClientListener {
+// Provides an embedder API called by WebKit.
+class WebSpeechInputController {
 public:
-    // Informs that audio recording has completed and recognition is underway.
-    virtual void didCompleteRecording() = 0;
+    // Starts speech recognition. Speech will get recorded until the endpointer detects silence,
+    // runs to the limit or stopRecording is called. Progress indications and the recognized
+    // text are returned via the listener interface.
+    virtual bool startRecognition()
+    {
+         WEBKIT_ASSERT_NOT_REACHED();
+         return false;
+    }
 
-    // Gives results from speech recognition, either partial or the final results.
-    // This method can potentially get called multiple times if there are partial results
-    // available as the user keeps speaking. If the speech could not be recognized properly
-    // or if there was any other errors in the process, this method may never be called.
-    virtual void setRecognitionResult(const String& result) = 0;
+    // Cancels an ongoing recognition and discards any audio recorded so far. No partial
+    // recognition results are returned to the listener.
+    virtual void cancelRecognition() { WEBKIT_ASSERT_NOT_REACHED(); }
+
+    // Stops audio recording and performs recognition with the audio recorded until now
+    // (does not discard audio). This is an optional call and is typically invoked if the user
+    // wants to stop recording audio as soon as they finished speaking. Otherwise, the speech
+    // recording 'endpointer' should detect silence in the input and stop recording automatically.
+    // Call startRecognition() to record audio and recognize speech again.
+    virtual void stopRecording() { WEBKIT_ASSERT_NOT_REACHED(); }
 
 protected:
-    virtual ~SpeechInputClientListener() { }
+    virtual ~WebSpeechInputController() { }
 };
 
-} // namespace WebCore
+} // namespace WebKit
 
-#endif // ENABLE(INPUT_SPEECH)
-
-#endif // SpeechInputClientListener_h
+#endif // WebSpeechInputController_h

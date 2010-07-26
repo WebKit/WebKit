@@ -1,3 +1,32 @@
+2010-07-26  Satish Sampath  <satish@chromium.org>
+
+        Reviewed by Steve Block.
+
+        Add WebKit plumbing to connect speech requests and callbacks between WebCore and the embedder.
+        https://bugs.webkit.org/show_bug.cgi?id=42367
+
+        No new tests, the relevant LayoutTestController bindings and tests will be added in the next patch.
+
+        * public/WebSpeechInputController.h: Added new interface, implemented by embedder and called by WebKit
+        (WebKit::WebSpeechInputController::~WebSpeechInputController):
+        * public/WebSpeechInputListener.h: Added new interface, implemented by WebKit and called by embedder.
+        (WebKit::WebSpeechInputListener::~WebSpeechInputListener):
+        * public/WebViewClient.h:
+        (WebKit::WebViewClient::createSpeechInputClient): New method to get the embedder's speech input client interface.
+        * src/SpeechInputClientImpl.cpp: Added new class, implementation of a two way connector between WebCore
+        and the embedder for requests and responses.
+        (WebKit::SpeechInputClientImpl::SpeechInputClientImpl):
+        (WebKit::SpeechInputClientImpl::~SpeechInputClientImpl):
+        (WebKit::SpeechInputClientImpl::startRecognition):
+        (WebKit::SpeechInputClientImpl::stopRecording):
+        (WebKit::SpeechInputClientImpl::didCompleteRecording):
+        (WebKit::SpeechInputClientImpl::setRecognitionResult):
+        (WebKit::SpeechInputClientImpl::didCompleteRecognition):
+        * src/SpeechInputClientImpl.h: Added.
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::WebViewImpl): Pass on the above mentioned speech input connector to WebCore.
+        * src/WebViewImpl.h:
+
 2010-07-26  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Pavel Feldman.

@@ -42,6 +42,10 @@ class SpeechInputClient {
 public:
     virtual bool startRecognition(SpeechInputClientListener* listener) = 0;
 
+    // Stops audio recording and performs recognition with the audio recorded until now
+    // (does not discard audio).
+    virtual void stopRecording() = 0;
+
 protected:
     virtual ~SpeechInputClient() { }
 };

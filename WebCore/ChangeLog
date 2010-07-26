@@ -1,3 +1,18 @@
+2010-07-26  Satish Sampath  <satish@chromium.org>
+
+        Reviewed by Steve Block.
+
+        Add WebKit plumbing to connect speech requests and callbacks between WebCore and the embedder.
+        https://bugs.webkit.org/show_bug.cgi?id=42367
+
+        No new tests, the relevant LayoutTestController bindings will be added in the next patch.
+
+        * page/SpeechInput.cpp: renamed a method.
+        * page/SpeechInput.h: renamed a method.
+        * page/SpeechInputClient.h: added an extra method to optionally let users stop recording once they have spoken.
+        * page/SpeechInputClientListener.h: renamed a method.
+        * page/SpeechInputListener.h: renamed a method.
+
 2010-07-26  Andreas Kling  <andreas.kling@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

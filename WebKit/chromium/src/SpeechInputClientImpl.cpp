@@ -28,33 +28,66 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SpeechInputClientListener_h
-#define SpeechInputClientListener_h
+#include "config.h"
+#include "SpeechInputClientImpl.h"
+
+#include "PlatformString.h"
+#include "WebSpeechInputController.h"
+#include "WebString.h"
+#include "WebViewClient.h"
+#include "page/SpeechInputClientListener.h"
 
 #if ENABLE(INPUT_SPEECH)
 
-namespace WebCore {
+namespace WebKit {
 
-class String;
+SpeechInputClientImpl::SpeechInputClientImpl(WebViewClient* web_view_client)
+    : m_controller(web_view_client->speechInputController(this))
+    , m_listener(0)
+{
+    ASSERT(m_controller);
+}
 
-// Provides an interface for the embedder to call into WebCore.
-class SpeechInputClientListener {
-public:
-    // Informs that audio recording has completed and recognition is underway.
-    virtual void didCompleteRecording() = 0;
+SpeechInputClientImpl::~SpeechInputClientImpl()
+{
+}
 
-    // Gives results from speech recognition, either partial or the final results.
-    // This method can potentially get called multiple times if there are partial results
-    // available as the user keeps speaking. If the speech could not be recognized properly
-    // or if there was any other errors in the process, this method may never be called.
-    virtual void setRecognitionResult(const String& result) = 0;
+bool SpeechInputClientImpl::startRecognition(WebCore::SpeechInputClientListener* listener)
+{
+    // Cancel any ongoing recognition first. No callbacks will be issued to that listener.
+    if (m_listener)
+        m_controller->cancelRecognition();
 
-protected:
-    virtual ~SpeechInputClientListener() { }
-};
+    m_listener = listener;
+    return m_controller->startRecognition();
+}
 
-} // namespace WebCore
+void SpeechInputClientImpl::stopRecording()
+{
+    ASSERT(m_listener);
+    m_controller->stopRecording();
+}
+
+void SpeechInputClientImpl::didCompleteRecording()
+{
+    ASSERT(m_listener);
+    if (m_listener)
+        m_listener->didCompleteRecording();
+}
+
+void SpeechInputClientImpl::didCompleteRecognition()
+{
+    ASSERT(m_listener);
+    m_listener = 0;
+}
+
+void SpeechInputClientImpl::setRecognitionResult(const WebString& result)
+{
+    ASSERT(m_listener);
+    if (m_listener)
+        m_listener->setRecognitionResult(result);
+}
+
+} // namespace WebKit
 
 #endif // ENABLE(INPUT_SPEECH)
-
-#endif // SpeechInputClientListener_h

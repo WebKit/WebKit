@@ -124,7 +124,7 @@ public:
     virtual void defaultEventHandler(Event*);
 
     // SpeechInputListener methods.
-    void recordingComplete();
+    void didCompleteRecording();
     void setRecognitionResult(const String& result);
 
 private:
