@@ -1,3 +1,19 @@
+2009-10-30  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] Use the default timeout interval for JS as the HTML tokenizer delay for setHtml()
+
+        This ensures that long-running JavaScript (for example due to a modal alert() dialog),
+        will not trigger a deferred load after only 500ms (the default tokenizer delay) while
+        still giving a reasonable timeout (10 seconds) to prevent deadlock.
+
+        https://bugs.webkit.org/show_bug.cgi?id=29381
+
+        * Api/qwebframe.cpp: Document the behaviour
+        * WebCoreSupport/FrameLoaderClientQt.cpp: set the custom tokenizer delay for substitute loads
+        * tests/qwebframe/tst_qwebframe.cpp: Add test
+
 2010-07-23  David Boddie  <dboddie@trolltech.com>
 
         Reviewed by Simon Hausmann.

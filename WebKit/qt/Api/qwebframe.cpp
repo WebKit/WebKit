@@ -784,6 +784,10 @@ void QWebFrame::load(const QNetworkRequest &req,
 
   The \a html is loaded immediately; external objects are loaded asynchronously.
 
+  If a script in the \a html runs longer than the default script timeout (currently 10 seconds),
+  for example due to being blocked by a modal JavaScript alert dialog, this method will return
+  as soon as possible after the timeout and any subsequent \a html will be loaded asynchronously.
+
   When using this method WebKit assumes that external resources such as JavaScript programs or style
   sheets are encoded in UTF-8 unless otherwise specified. For example, the encoding of an external
   script can be specified through the charset attribute of the HTML script tag. It is also possible
