@@ -1,3 +1,19 @@
+2010-07-26  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Patch for https://bugs.webkit.org/show_bug.cgi?id=43013
+        Part of <rdar://problem/8152434>
+        Add support for scrolling using the keyboard in WebKit2
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::getScrollMapping):
+        (WebKit::WebPage::keyEvent):
+        Scroll the page in response to keyDown.
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        Use WindowsKeyboardCodes.h instead of redefining the constants.
+
 2010-07-26  Ada Chan  <adachan@apple.com>
 
         Fix Windows build.

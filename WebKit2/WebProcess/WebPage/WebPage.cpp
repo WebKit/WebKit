@@ -57,6 +57,7 @@
 #include <WebCore/RenderTreeAsText.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/Settings.h>
+#include <WebCore/WindowsKeyboardCodes.h>
 #include <runtime/JSLock.h>
 #include <runtime/JSValue.h>
 
@@ -343,6 +344,51 @@ void WebPage::wheelEvent(const WebWheelEvent& wheelEvent)
     m_mainFrame->coreFrame()->eventHandler()->handleWheelEvent(platformWheelEvent);
 }
 
+static bool getScrollMapping(const WebKeyboardEvent& event, ScrollDirection& direction, ScrollGranularity& granularity)
+{
+    if (event.type() != WebEvent::KeyDown && event.type() != WebEvent::RawKeyDown)
+        return false;
+
+    switch (event.windowsVirtualKeyCode()) {
+    case VK_LEFT:
+        granularity = ScrollByLine;
+        direction = ScrollLeft;
+        break;
+    case VK_RIGHT:
+        granularity = ScrollByLine;
+        direction = ScrollRight;
+        break;
+    case VK_UP:
+        granularity = ScrollByLine;
+        direction = ScrollUp;
+        break;
+    case VK_DOWN:
+        granularity = ScrollByLine;
+        direction = ScrollDown;
+        break;
+    case VK_HOME:
+        granularity = ScrollByDocument;
+        direction = ScrollUp;
+        break;
+    case VK_END:
+        granularity = ScrollByDocument;
+        direction = ScrollDown;
+        break;
+    case VK_PRIOR:
+        granularity = ScrollByPage;
+        direction = ScrollUp;
+        break;
+    case VK_NEXT:
+        granularity = ScrollByPage;
+        direction = ScrollDown;
+        break;
+    default:
+        return false;
+    }
+
+    return true;
+}
+
 void WebPage::keyEvent(const WebKeyboardEvent& keyboardEvent)
 {
     CurrentEvent currentEvent(keyboardEvent);
@@ -353,7 +399,14 @@ void WebPage::keyEvent(const WebKeyboardEvent& keyboardEvent)
         return;
 
     PlatformKeyboardEvent platformKeyboardEvent = platform(keyboardEvent);
-    m_page->focusController()->focusedOrMainFrame()->eventHandler()->keyEvent(platformKeyboardEvent);
+
+    Frame* frame = m_page->focusController()->focusedOrMainFrame();
+    frame->eventHandler()->keyEvent(platformKeyboardEvent);
+
+    ScrollDirection direction;
+    ScrollGranularity granularity;
+    if (getScrollMapping(keyboardEvent, direction, granularity))
+        frame->eventHandler()->scrollRecursively(direction, granularity);
 }
 
 void WebPage::setActive(bool isActive)

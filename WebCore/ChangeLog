@@ -1,3 +1,16 @@
+2010-07-26  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Patch for https://bugs.webkit.org/show_bug.cgi?id=43013
+        Part of <rdar://problem/8152434>
+        Add support for scrolling using the keyboard in WebKit2
+
+        Add a new export and make WindowsKeyboardCodes private.
+
+        * WebCore.exp.in:
+        * WebCore.xcodeproj/project.pbxproj:
+
 2010-07-26  Darin Adler  <darin@apple.com>
 
         Reviewed by Eric Carlson.
