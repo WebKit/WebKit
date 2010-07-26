@@ -68,8 +68,9 @@ function test()
     checkBoundKeyRange("'aad'", "'abd'", false, true);
     checkBoundKeyRange("'aae'", "'abe'", true, false);
     checkBoundKeyRange("'aaf'", "'abf'", true, true);
-
-    done();
 }
 
 test();
+
+var successfullyParsed = true;
+done();

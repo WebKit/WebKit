@@ -1,4 +1,4 @@
-description("Test IndexedDB's IDBDatabaseRequest.");
+description("Test the basics of IndexedDB's IDBDatabase.");
 if (window.layoutTestController) 
     layoutTestController.waitUntilDone();
 
@@ -29,3 +29,5 @@ function test()
 }
 
 test();
+
+var successfullyParsed = true;

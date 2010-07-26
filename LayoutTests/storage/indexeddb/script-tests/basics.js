@@ -1,5 +1,5 @@
-description("Test IndexedDB's IndexedDatabaseRequest.");
-if (window.layoutTestController)    
+description("Test IndexedDB's basics.");
+if (window.layoutTestController)
     layoutTestController.waitUntilDone();
 
 function openCallback()
@@ -22,3 +22,5 @@ function test()
 }
 
 test();
+
+var successfullyParsed = true;

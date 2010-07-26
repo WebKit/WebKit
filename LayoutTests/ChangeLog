@@ -1,3 +1,33 @@
+2010-07-26  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        Rename indexedDB tests to match new scheme
+        https://bugs.webkit.org/show_bug.cgi?id=42375
+
+        No changes to the tests themselves.
+
+        * storage/indexeddb/script-tests/basics.js: Added.
+        (openCallback):
+        (test):
+        * storage/indexeddb/script-tests/database-basics.js: Added.
+        (openSuccess):
+        (test):
+        * storage/indexeddb/script-tests/idb-database-request.js: Removed.
+        * storage/indexeddb/script-tests/idb-objectstore-request.js: Removed.
+        * storage/indexeddb/script-tests/indexed-database-request.js: Removed.
+        * storage/indexeddb/script-tests/keyrange.js: Renamed from LayoutTests/storage/indexeddb/script-tests/idb-keyrange.js.
+        (checkSingleKeyRange):
+        (checkLeftBoundKeyRange):
+        ():
+        * storage/indexeddb/script-tests/objectstore-basics.js: Added.
+        (test):
+        (openSuccess):
+        (createSuccess):
+        (addSuccess):
+        (getSuccess):
+        (removeSuccess):
+
 2010-07-26  Marcus Bulach  <bulach@chromium.org>
 
         Unreviewed.  Add chromium expectations for failing tests.

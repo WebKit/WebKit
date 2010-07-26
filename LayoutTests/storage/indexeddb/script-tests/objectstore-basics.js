@@ -1,4 +1,4 @@
-description("Test IndexedDB's IDBObjectStoreRequest.");
+description("Test the basics of IndexedDB's IDBObjectStore.");
 if (window.layoutTestController) 
     layoutTestController.waitUntilDone();
 
@@ -76,3 +76,5 @@ function removeSuccess()
 }
 
 test();
+
+var successfullyParsed = true;

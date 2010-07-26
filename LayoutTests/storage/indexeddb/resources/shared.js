@@ -1,6 +1,5 @@
 function done()
 {
-    window.successfullyParsed = true;
     isSuccessfullyParsed();
     if (window.layoutTestController)
         layoutTestController.notifyDone()
