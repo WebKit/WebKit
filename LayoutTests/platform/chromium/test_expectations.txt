@@ -3127,6 +3127,5 @@ BUGWK24906 : fast/text/backslash-to-yen-sign-euc.html = FAIL
 
 // Fails since WebKit r63994
 BUGWK42964 SLOW : tables/mozilla/other/slashlogo.html = FAIL
-
-// Flaky since WebKit roll r63036:63992
-BUGWK42989 WIN : tables/mozilla_expected_failures/bugs/bug89315.html = PASS FAIL
+// Flaky since WebKit r63994
+BUGWK42964 WIN : tables/mozilla_expected_failures/bugs/bug89315.html = PASS FAIL
