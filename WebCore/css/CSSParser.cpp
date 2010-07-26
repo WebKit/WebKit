@@ -5610,27 +5610,31 @@ static int cssPropertyID(const UChar* propertyName, unsigned length)
 
     const char* name = buffer;
     if (buffer[0] == '-') {
-        if (!strcmp(buffer, "-apple-dashboard-region") || !strcmp(buffer, "-apple-line-clamp")) {
-            // Support two Apple-specific CSS properties previously used for
-            // the Dashboard and Safari RSS line clamping.
+        // If the prefix is -apple- or -khtml-, change it to -webkit-.
+        // This makes the string one character longer.
+        if (hasPrefix(buffer, length, "-apple-") || hasPrefix(buffer, length, "-khtml-")) {
             memmove(buffer + 7, buffer + 6, length + 1 - 6);
             memcpy(buffer, "-webkit", 7);
             ++length;
-        } else if (!strcmp(buffer, "-webkit-opacity")) {
-            // Honor -webkit-opacity as a synonym for opacity. This was the only
-            // syntax that worked in Safari 1.1, and may be in use on some websites and widgets.
-            const char* const opacity = "opacity";
-            name = opacity;
-            length = 7;
-        } else if (hasPrefix(buffer, length, "-webkit-border-")) {
-            // -webkit-border-*-*-radius worked in Safari 4 and earlier. -webkit-border-radius syntax
-            // differs from border-radius, so it remains as a distinct property.
-            if (!strcmp(buffer + 15, "top-left-radius")
-                    || !strcmp(buffer + 15, "top-right-radius")
-                    || !strcmp(buffer + 15, "bottom-right-radius")
-                    || !strcmp(buffer + 15, "bottom-left-radius")) {
-                name = buffer + 8;
-                length -= 8;
+        }
+
+        if (hasPrefix(buffer, length, "-webkit")) {
+            if (strcmp(buffer, "-webkit-opacity") == 0) {
+                // Honor -webkit-opacity as a synonym for opacity.
+                // This was the only syntax that worked in Safari 1.1, and may be in use on some websites and widgets.
+                const char* const opacity = "opacity";
+                name = opacity;
+                length = strlen(opacity);
+            } else if (hasPrefix(buffer + 7, length - 7, "-border-")) {
+                // -webkit-border-*-*-radius worked in Safari 4 and earlier. -webkit-border-radius syntax
+                // differs from border-radius, so it is remains as a distinct property.
+                if (!strcmp(buffer + 15, "top-left-radius")
+                        || !strcmp(buffer + 15, "top-right-radius")
+                        || !strcmp(buffer + 15, "bottom-right-radius")
+                        || !strcmp(buffer + 15, "bottom-left-radius")) {
+                    name = buffer + 8;
+                    length -= 8;
+                }
             }
         }
     }

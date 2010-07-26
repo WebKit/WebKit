@@ -1,3 +1,17 @@
+2010-07-26  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        <http://webkit.org/b/42990> REGRESSION (r63854): Safari RSS layout is broken due to changes in vendor prefix handling
+
+        In r63854 support for properties with the -khtml vendor prefix was removed. This breaks the layout of
+        Safari's RSS interface, several Dashboard widgets that are included with Mac OS X, and at least one
+        popular third-party Mac OS X application. This change will need to be revisited in a manner that has
+        a clearer backwards-compatibility strategy. <http://webkit.org/b/42093> will be reopened to track that.
+
+        * css/CSSParser.cpp:
+        (WebCore::cssPropertyID): Revert the WebCore change from r63854.
+
 2010-07-26  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Sam Weinig.
