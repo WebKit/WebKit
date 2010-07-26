@@ -1,3 +1,14 @@
+2010-07-26  David Kilzer  <ddkilzer@apple.com>
+
+        <http://webkit.org/b/42982> Streamline Inspector Source build phase script should use CONFIGURATION not BUILD_STYLE
+        <rdar://problem/6341764>
+
+        Reviewed by Mark Rowe.
+
+        * WebCore.xcodeproj/project.pbxproj: Switched Streamline
+        Inspector Source build phase script to use CONFIGURATION instead
+        of BUILD_STYLE.
+
 2010-07-23  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Darin Adler.
