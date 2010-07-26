@@ -1,3 +1,23 @@
+2010-07-25  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Redo fails after text node is split by SplitTextNodeCommand
+        https://bugs.webkit.org/show_bug.cgi?id=42941
+
+        The bug was caused by SplitTextNodeCommand not implementing doReapply.
+        Implemented doReapply and added insertText1AndTrimText2 to share the code between doApply and doReapply.
+
+        Test: editing/undo/redo-split-text-node.html
+              editing/undo/redo-split-text-node-with-removal.html
+
+        * editing/SplitTextNodeCommand.cpp:
+        (WebCore::SplitTextNodeCommand::doApply): Calls executeApply.
+        (WebCore::SplitTextNodeCommand::doUnapply): Don't delete m_text1, which is later used in doReapply.
+        (WebCore::SplitTextNodeCommand::doReapply): Added.
+        (WebCore::SplitTextNodeCommand::insertText1AndTrimText2): Added.
+        * editing/SplitTextNodeCommand.h:
+
 2010-07-23  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Eric Carlson.

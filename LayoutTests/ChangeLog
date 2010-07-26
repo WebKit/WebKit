@@ -1,3 +1,20 @@
+2010-07-25  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Added a test that splits a text node by inserting a paragraph and applies inline style.
+        The test then ensures that the style is preserved after undos and redos.
+
+        Also added a test in which the text node is removed by the script after undo.
+
+        Redo fails after text node is split by SplitTextNodeCommand
+        https://bugs.webkit.org/show_bug.cgi?id=42941
+
+        * editing/undo/redo-split-text-node-expected.txt: Added.
+        * editing/undo/redo-split-text-node.html: Added.
+        * editing/undo/redo-split-text-with-removal-expected.txt: Added.
+        * editing/undo/redo-split-text-with-removal.html: Added.
+
 2010-07-25  Darin Adler  <darin@apple.com>
 
         Reviewed by Dan Bernstein.

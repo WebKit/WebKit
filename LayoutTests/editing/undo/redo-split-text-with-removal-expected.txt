@@ -1,0 +1,28 @@
+This test splits a text node by inserting a new paragraph and bolds the the first half.
+After undoing these two steps, it removes the text node, and then redo. The test should not crash. (See bug 42941).
+
+before undo:
+<DIV id="test" contentEditable="">
+<B>
+<#text><selection-anchor>he<selection-focus></#text>
+</B>
+<DIV>
+<#text>llo</#text>
+</DIV>
+</DIV>
+
+after undo:
+<DIV id="test" contentEditable="">
+<#text>he<selection-caret>llo</#text>
+</DIV>
+
+after node removal:
+<DIV id="test" contentEditable="">
+</DIV>
+
+after redo:
+<DIV id="test" contentEditable="">
+<DIV>
+<#text>hello</#text>
+</DIV>
+</DIV>

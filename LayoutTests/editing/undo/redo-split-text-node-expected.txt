@@ -1,0 +1,27 @@
+This test splits a text node by inserting a new paragraph and bolds the the first half.
+If splitTextNode correctly reapplied the split, undo and redo should preserve the style. (See bug 42941).
+
+before undo:
+<DIV id="test" contentEditable="">
+<B>
+<#text><selection-anchor>he<selection-focus></#text>
+</B>
+<DIV>
+<#text>llo</#text>
+</DIV>
+</DIV>
+
+after undo:
+<DIV id="test" contentEditable="">
+<#text>he<selection-caret>llo</#text>
+</DIV>
+
+after redo:
+<DIV id="test" contentEditable="">
+<B>
+<#text><selection-anchor>he<selection-focus></#text>
+</B>
+<DIV>
+<#text>llo</#text>
+</DIV>
+</DIV>

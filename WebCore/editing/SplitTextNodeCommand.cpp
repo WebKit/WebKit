@@ -54,21 +54,15 @@ void SplitTextNodeCommand::doApply()
         return;
 
     ExceptionCode ec = 0;
-
     String prefixText = m_text2->substringData(0, m_offset, ec);
     if (prefixText.isEmpty())
         return;
 
-    RefPtr<Text> prefixTextNode = Text::create(document(), prefixText);
-    ASSERT(prefixTextNode);
-    document()->copyMarkers(m_text2.get(), 0, m_offset, prefixTextNode.get(), 0);
+    m_text1 = Text::create(document(), prefixText);
+    ASSERT(m_text1);
+    document()->copyMarkers(m_text2.get(), 0, m_offset, m_text1.get(), 0);
 
-    parent->insertBefore(prefixTextNode.get(), m_text2.get(), ec);
-    if (ec)
-        return;
-
-    m_text2->deleteData(0, m_offset, ec);
-    m_text1 = prefixTextNode.release();
+    insertText1AndTrimText2();
 }
 
 void SplitTextNodeCommand::doUnapply()
@@ -78,16 +72,35 @@ void SplitTextNodeCommand::doUnapply()
 
     ASSERT(m_text1->document() == document());
 
-    RefPtr<Text> prefixTextNode = m_text1.release();
-    String prefixText = prefixTextNode->data();
+    String prefixText = m_text1->data();
 
     ExceptionCode ec = 0;
     m_text2->insertData(0, prefixText, ec);
-    if (ec)
-        return;
+    ASSERT(!ec);
 
-    document()->copyMarkers(prefixTextNode.get(), 0, prefixText.length(), m_text2.get(), 0);
-    prefixTextNode->remove(ec);
+    document()->copyMarkers(m_text1.get(), 0, prefixText.length(), m_text2.get(), 0);
+    m_text1->remove(ec);
 }
 
+void SplitTextNodeCommand::doReapply()
+{
+    if (!m_text1 || !m_text2)
+        return;
+
+    Node* parent = m_text2->parentNode();
+    if (!parent || !parent->isContentEditable())
+        return;
+
+    insertText1AndTrimText2();
+}
+
+void SplitTextNodeCommand::insertText1AndTrimText2()
+{
+    ExceptionCode ec = 0;
+    m_text2->parentNode()->insertBefore(m_text1.get(), m_text2.get(), ec);
+    if (ec)
+        return;
+    m_text2->deleteData(0, m_offset, ec);
+}
+    
 } // namespace WebCore
