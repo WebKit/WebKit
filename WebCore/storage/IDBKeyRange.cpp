@@ -26,14 +26,13 @@
 #include "config.h"
 #include "IDBKeyRange.h"
 
-#include "IDBAny.h"
-#include "SerializedScriptValue.h"
+#include "IDBKey.h"
 
 #if ENABLE(INDEXED_DATABASE)
 
 namespace WebCore {
 
-IDBKeyRange::IDBKeyRange(PassRefPtr<SerializedScriptValue> left, PassRefPtr<SerializedScriptValue> right, unsigned short flags)
+IDBKeyRange::IDBKeyRange(PassRefPtr<IDBKey> left, PassRefPtr<IDBKey> right, unsigned short flags)
     : m_left(left)
     , m_right(right)
     , m_flags(flags)

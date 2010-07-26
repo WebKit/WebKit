@@ -1,3 +1,27 @@
+2010-07-26  Marcus Bulach  <bulach@chromium.org>
+
+        Reviewed by Jeremy Orlow.
+
+        Moves IDBKeyRange to use IDBKey rather than SerializedScriptValue / IDBAny.
+        https://bugs.webkit.org/show_bug.cgi?id=42583
+
+        Tests: existing storage/indexeddb/idb-keyrange.html must pass.
+
+        * storage/IDBKeyRange.cpp:
+        (WebCore::IDBKeyRange::IDBKeyRange):
+        * storage/IDBKeyRange.h:
+        (WebCore::IDBKeyRange::create):
+        (WebCore::IDBKeyRange::left):
+        (WebCore::IDBKeyRange::right):
+        * storage/IDBKeyRange.idl:
+        * storage/IndexedDatabaseRequest.cpp:
+        (WebCore::IndexedDatabaseRequest::makeSingleKeyRange):
+        (WebCore::IndexedDatabaseRequest::makeLeftBoundKeyRange):
+        (WebCore::IndexedDatabaseRequest::makeRightBoundKeyRange):
+        (WebCore::IndexedDatabaseRequest::makeBoundKeyRange):
+        * storage/IndexedDatabaseRequest.h:
+        * storage/IndexedDatabaseRequest.idl:
+
 2010-07-26  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Anders Carlsson.

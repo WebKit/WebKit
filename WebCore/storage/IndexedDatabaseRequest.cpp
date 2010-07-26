@@ -68,23 +68,23 @@ PassRefPtr<IDBRequest> IndexedDatabaseRequest::open(ScriptExecutionContext* cont
     return request;
 }
 
-PassRefPtr<IDBKeyRange> IndexedDatabaseRequest::makeSingleKeyRange(PassRefPtr<SerializedScriptValue> prpValue)
+PassRefPtr<IDBKeyRange> IndexedDatabaseRequest::makeSingleKeyRange(PassRefPtr<IDBKey> prpValue)
 {
-    RefPtr<SerializedScriptValue> value = prpValue;
+    RefPtr<IDBKey> value = prpValue;
     return IDBKeyRange::create(value, value, IDBKeyRange::SINGLE);
 }
 
-PassRefPtr<IDBKeyRange> IndexedDatabaseRequest::makeLeftBoundKeyRange(PassRefPtr<SerializedScriptValue> bound, bool open)
+PassRefPtr<IDBKeyRange> IndexedDatabaseRequest::makeLeftBoundKeyRange(PassRefPtr<IDBKey> bound, bool open)
 {
-    return IDBKeyRange::create(bound, SerializedScriptValue::create(), open ? IDBKeyRange::LEFT_OPEN : IDBKeyRange::LEFT_BOUND);
+    return IDBKeyRange::create(bound, IDBKey::create(), open ? IDBKeyRange::LEFT_OPEN : IDBKeyRange::LEFT_BOUND);
 }
 
-PassRefPtr<IDBKeyRange> IndexedDatabaseRequest::makeRightBoundKeyRange(PassRefPtr<SerializedScriptValue> bound, bool open)
+PassRefPtr<IDBKeyRange> IndexedDatabaseRequest::makeRightBoundKeyRange(PassRefPtr<IDBKey> bound, bool open)
 {
-    return IDBKeyRange::create(SerializedScriptValue::create(), bound, open ? IDBKeyRange::RIGHT_OPEN : IDBKeyRange::RIGHT_BOUND);
+    return IDBKeyRange::create(IDBKey::create(), bound, open ? IDBKeyRange::RIGHT_OPEN : IDBKeyRange::RIGHT_BOUND);
 }
 
-PassRefPtr<IDBKeyRange> IndexedDatabaseRequest::makeBoundKeyRange(PassRefPtr<SerializedScriptValue> left, PassRefPtr<SerializedScriptValue> right, bool openLeft, bool openRight)
+PassRefPtr<IDBKeyRange> IndexedDatabaseRequest::makeBoundKeyRange(PassRefPtr<IDBKey> left, PassRefPtr<IDBKey> right, bool openLeft, bool openRight)
 {
     unsigned short flags = openLeft ? IDBKeyRange::LEFT_OPEN : IDBKeyRange::LEFT_BOUND;
     flags |= openRight ? IDBKeyRange::RIGHT_OPEN : IDBKeyRange::RIGHT_BOUND;

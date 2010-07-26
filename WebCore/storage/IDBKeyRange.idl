@@ -35,8 +35,8 @@ module storage {
         const unsigned short LEFT_BOUND = 4;
         const unsigned short RIGHT_BOUND = 8;
 
-        readonly attribute IDBAny left;
-        readonly attribute IDBAny right;
+        readonly attribute IDBKey left;
+        readonly attribute IDBKey right;
         readonly attribute unsigned short flags;
     };
 
