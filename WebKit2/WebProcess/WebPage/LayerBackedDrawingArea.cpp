@@ -54,7 +54,9 @@ LayerBackedDrawingArea::LayerBackedDrawingArea(WebPage* webPage)
     m_backingLayer->setName("DrawingArea backing layer");
 #endif
     m_backingLayer->syncCompositingStateForThisLayerOnly();
-    m_backingLayer->setContentsOrientation(GraphicsLayer::CompositingCoordinatesBottomUp);
+    
+    // Do geometry flipping on this layer.
+    m_backingLayer->setGeometryOrientation(GraphicsLayer::CompositingCoordinatesBottomUp);
     
     platformInit();
 }

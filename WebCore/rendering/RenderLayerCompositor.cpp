@@ -783,7 +783,7 @@ void RenderLayerCompositor::rebuildCompositingLayerTree(RenderLayer* layer, cons
     }
 }
 
-void RenderLayerCompositor::updateContentLayerOffset(const IntPoint& contentsOffset)
+void RenderLayerCompositor::frameViewDidChangeSize(const IntPoint& contentsOffset)
 {
     if (m_clipLayer) {
         FrameView* frameView = m_renderView->frameView();
@@ -795,7 +795,7 @@ void RenderLayerCompositor::updateContentLayerOffset(const IntPoint& contentsOff
     }
 }
 
-void RenderLayerCompositor::updateContentLayerScrollPosition(const IntPoint& scrollPosition)
+void RenderLayerCompositor::frameViewDidScroll(const IntPoint& scrollPosition)
 {
     if (m_scrollLayer)
         m_scrollLayer->setPosition(FloatPoint(-scrollPosition.x(), -scrollPosition.y()));
@@ -1039,6 +1039,10 @@ bool RenderLayerCompositor::shouldPropagateCompositingToEnclosingIFrame() const
     // On non-Mac platforms, let compositing propagate for all iframes.
     return true;
 #else
+    // If we're viewless (i.e. WebKit2), we always propagate compositing.
+    if (!m_renderView->frameView()->platformWidget())
+        return true;
+
     // On Mac, only propagate compositing if the iframe is overlapped in the parent
     // document, or the parent is already compositing.
     RenderIFrame* iframeRenderer = toRenderIFrame(renderer);
@@ -1259,6 +1263,20 @@ bool RenderLayerCompositor::needsContentsCompositingLayer(const RenderLayer* lay
     return (layer->m_negZOrderList && layer->m_negZOrderList->size() > 0);
 }
 
+bool RenderLayerCompositor::requiresScrollLayer(RootLayerAttachment attachment) const
+{
+    if (attachment == RootLayerAttachedViaEnclosingIframe)
+        return true;
+
+#if PLATFORM(MAC)
+    // If we're viewless (i.e. WebKit2), we need to scroll ourselves.
+    // FIXME: eventually we should do this on other platforms too.
+    if (!m_renderView->frameView()->platformWidget())
+        return true;
+#endif
+    return false;
+}
+
 void RenderLayerCompositor::ensureRootPlatformLayer()
 {
     RootLayerAttachment expectedAttachment = shouldPropagateCompositingToEnclosingIFrame() ? RootLayerAttachedViaEnclosingIframe : RootLayerAttachedViaChromeClient;
@@ -1277,10 +1295,7 @@ void RenderLayerCompositor::ensureRootPlatformLayer()
         m_rootPlatformLayer->setMasksToBounds(true);
     }
 
-    // The root layer does flipping if we need it on this platform.
-    m_rootPlatformLayer->setGeometryOrientation(expectedAttachment == RootLayerAttachedViaEnclosingIframe ? GraphicsLayer::CompositingCoordinatesTopDown : GraphicsLayer::compositingCoordinatesOrientation());
-    
-    if (expectedAttachment == RootLayerAttachedViaEnclosingIframe) {
+    if (requiresScrollLayer(expectedAttachment)) {
         if (!m_clipLayer) {
             ASSERT(!m_scrollLayer);
             // Create a clipping layer if this is an iframe
@@ -1298,15 +1313,22 @@ void RenderLayerCompositor::ensureRootPlatformLayer()
             m_clipLayer->addChild(m_scrollLayer.get());
             m_scrollLayer->addChild(m_rootPlatformLayer.get());
             
-            updateContentLayerScrollPosition(m_renderView->frameView()->scrollPosition());
+            frameViewDidChangeSize();
+            frameViewDidScroll(m_renderView->frameView()->scrollPosition());
         }
-    } else if (m_clipLayer) {
-        m_clipLayer->removeAllChildren();
-        m_clipLayer->removeFromParent();
-        m_clipLayer = 0;
-        
-        m_scrollLayer->removeAllChildren();
-        m_scrollLayer = 0;
+    } else {
+        if (m_clipLayer) {
+            m_clipLayer->removeAllChildren();
+            m_clipLayer->removeFromParent();
+            m_clipLayer = 0;
+            
+            m_scrollLayer->removeAllChildren();
+            m_scrollLayer = 0;
+        }
+
+        // The root layer does geometry flipping if we need it.
+        m_rootPlatformLayer->setGeometryOrientation(expectedAttachment == RootLayerAttachedViaEnclosingIframe
+            ? GraphicsLayer::CompositingCoordinatesTopDown : GraphicsLayer::compositingCoordinatesOrientation());
     }
 
     // Check to see if we have to change the attachment
@@ -1348,7 +1370,7 @@ void RenderLayerCompositor::attachRootPlatformLayer(RootLayerAttachment attachme
             if (!page)
                 return;
 
-            page->chrome()->client()->attachRootGraphicsLayer(frame, m_rootPlatformLayer.get());
+            page->chrome()->client()->attachRootGraphicsLayer(frame, rootPlatformLayer());
             break;
         }
         case RootLayerAttachedViaEnclosingIframe: {

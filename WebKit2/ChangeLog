@@ -1,3 +1,18 @@
+2010-07-26  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Composited layers don't scroll in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=42771
+        
+        In WebKit2, do the compositing layer geometry flipping on the drawing area's main 
+        backing layer. This both avoids us having to flip the layer contents, and also avoids issues
+        with the positioning of the root platform layer, which we want top-left. Doing the flipping
+        lower down would require that the root platform layer know where the scrollbar is.
+
+        * WebProcess/WebPage/LayerBackedDrawingArea.cpp:
+        (WebKit::LayerBackedDrawingArea::LayerBackedDrawingArea):
+
 2010-07-26  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

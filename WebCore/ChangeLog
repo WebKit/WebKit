@@ -1,3 +1,35 @@
+2010-07-26  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Composited layers don't scroll in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=42771
+
+        Rename two methods on RenderLayerCompositor to make their use more clear, and call them
+        when the FrameView gets resized and scrolled.
+
+        * page/FrameView.h:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::setFrameRect): override so we know when the size of the FrameView changes, so that the
+        RenderLayerCompositor can update its clipping layer.
+        (WebCore::FrameView::scrollPositionChanged): Call compositor()->frameViewDidScroll().
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateAfterWidgetResize): updateContentLayerOffset() was renamed.
+
+        * rendering/RenderLayerCompositor.h:
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::frameViewDidChangeSize): Renamed from updateContentLayerOffset().
+        (WebCore::RenderLayerCompositor::frameViewDidScroll): Renamed from updateContentLayerScrollPosition().
+        (WebCore::RenderLayerCompositor::shouldPropagateCompositingToEnclosingIFrame): Propagate compositing on Mac
+        for any FrameView that doesn't have a native widget, which is the case with WebKit2.
+        (WebCore::RenderLayerCompositor::requiresScrollLayer): New method to tell us whether we need to handle
+        scrolling (and clipping) ourselves.
+        (WebCore::RenderLayerCompositor::ensureRootPlatformLayer): Do geometry flipping on the root platform
+        layer only if we're not doing our own scrolling, and use the new requiresScrollLayer() method.
+        (WebCore::RenderLayerCompositor::attachRootPlatformLayer): Send out the rootPlatformLayer(),
+        so that it returns the clipping layer if we have one.
+
 2010-07-26  Tony Gentilcore  <tonyg@chromium.org>
 
         Reviewed by Darin Fisher.

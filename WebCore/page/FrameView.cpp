@@ -328,6 +328,22 @@ void FrameView::invalidateRect(const IntRect& rect)
     renderer->repaintRectangle(repaintRect);
 }
 
+void FrameView::setFrameRect(const IntRect& newRect)
+{
+    IntRect oldRect = frameRect();
+    if (newRect == oldRect)
+        return;
+
+    ScrollView::setFrameRect(newRect);
+
+#if USE(ACCELERATED_COMPOSITING)
+    if (RenderView* root = m_frame->contentRenderer()) {
+        if (root->usesCompositing())
+            root->compositor()->frameViewDidChangeSize();
+    }
+#endif
+}
+
 void FrameView::setMarginWidth(int w)
 {
     // make it update the rendering area when set
@@ -1115,7 +1131,7 @@ void FrameView::scrollPositionChanged()
 #if USE(ACCELERATED_COMPOSITING)
     if (RenderView* root = m_frame->contentRenderer()) {
         if (root->usesCompositing())
-            root->compositor()->updateContentLayerScrollPosition(scrollPosition());
+            root->compositor()->frameViewDidScroll(scrollPosition());
     }
 #endif
 }
