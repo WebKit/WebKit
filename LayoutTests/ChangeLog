@@ -1,3 +1,16 @@
+2010-07-26  Shimeng (Simon) Wang  <swang@google.com>
+
+        Reviewed by Darin Adler.
+
+        Add android specific expected test results for auto hyphenation
+        tests.
+
+        * platform/android: Added.
+        * platform/android/fast: Added.
+        * platform/android/fast/text: Added.
+        * platform/android/fast/text/hyphenate-character-expected.txt: Added.
+        * platform/android/fast/text/hyphens-expected.txt: Added.
+
 2010-07-26  Darin Adler  <darin@apple.com>
 
         Reviewed by Eric Carlson.

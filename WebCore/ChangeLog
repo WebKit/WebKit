@@ -1,3 +1,14 @@
+2010-07-26  Shimeng (Simon) Wang  <swang@google.com>
+
+        Reviewed by Darin Adler.
+
+        Add auto hyphenation support for Android.
+        https://bugs.webkit.org/show_bug.cgi?id=42800
+
+        * platform/text/android/HyphenationAndroid.cpp: Added.
+        (WebCore::loadHyphenationDictionary):
+        (WebCore::lastHyphenLocation):
+
 2010-07-26  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.
