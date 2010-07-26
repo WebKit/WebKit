@@ -1,3 +1,11 @@
+2010-07-26  Victor Wang  <victorw@chromium.org>
+
+        Unreviewed. Update chromium test expectations fro flaky test.
+
+        https://bugs.webkit.org/show_bug.cgi?id=42989
+
+        * platform/chromium/test_expectations.txt:
+
 2010-07-23  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Darin Adler.
