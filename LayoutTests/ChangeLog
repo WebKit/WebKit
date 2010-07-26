@@ -1,3 +1,21 @@
+2010-07-26  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Applying inline style to a text node whose parent is an inline editable root causes crash
+        https://bugs.webkit.org/show_bug.cgi?id=39989
+
+        Added a test to apply inline styles to a text node which is a editable root's child.
+        The test should not crash.
+
+        Two tests require rebaseline for the editing delegates. However, the final selection is kept same.
+
+        * editing/execCommand/hilitecolor-expected.txt:
+        * editing/style/remove-underline-from-stylesheet-expected.txt:
+        * editing/style/style-text-node-without-editable-parent-expected.txt: Added.
+        * editing/style/style-text-node-without-editable-parent.html: Added.
+        * resources/dump-as-markup.js:
+
 2010-07-26  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Gustavo Noronha Silva.

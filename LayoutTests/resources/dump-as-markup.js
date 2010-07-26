@@ -161,7 +161,7 @@ Markup._spaces = function(multiplier)
 }
 
 // FIXME: Is there a better way to do this than a hard coded list?
-Markup._DUMP_AS_MARKUP_PROPERTIES = ['src', 'type', 'href', 'style', 'class', 'id', 'contentEditable'];
+Markup._DUMP_AS_MARKUP_PROPERTIES = ['src', 'type', 'href', 'style', 'class', 'id', 'color', 'bgcolor', 'contentEditable'];
 
 Markup._getAttributes = function(node)
 {
