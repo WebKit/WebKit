@@ -1,3 +1,14 @@
+2010-07-26  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Get rid of the dummy plug-in.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/Plugins/DummyPlugin.cpp: Removed.
+        * WebProcess/Plugins/DummyPlugin.h: Removed.
+        * win/WebKit2.vcproj:
+
 2010-07-26  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

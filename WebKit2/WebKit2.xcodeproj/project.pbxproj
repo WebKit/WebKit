@@ -57,8 +57,6 @@
 		1A6FB7AF11E64B6800DB1371 /* PluginView.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A6FB7AD11E64B6800DB1371 /* PluginView.h */; };
 		1A6FB7D211E651E200DB1371 /* Plugin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A6FB7D011E651E200DB1371 /* Plugin.cpp */; };
 		1A6FB7D311E651E200DB1371 /* Plugin.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A6FB7D111E651E200DB1371 /* Plugin.h */; };
-		1A6FB7E611E6530500DB1371 /* DummyPlugin.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A6FB7E411E6530500DB1371 /* DummyPlugin.h */; };
-		1A6FB7E711E6530500DB1371 /* DummyPlugin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A6FB7E511E6530500DB1371 /* DummyPlugin.cpp */; };
 		1A6FB90B11E66FBC00DB1371 /* NetscapePluginModule.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A6FB90911E66FBC00DB1371 /* NetscapePluginModule.h */; };
 		1A6FB90C11E66FBC00DB1371 /* NetscapePluginModule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A6FB90A11E66FBC00DB1371 /* NetscapePluginModule.cpp */; };
 		1A6FBA0311E6813E00DB1371 /* NetscapePluginModuleMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A6FBA0211E6813E00DB1371 /* NetscapePluginModuleMac.cpp */; };
@@ -342,8 +340,6 @@
 		1A6FB7AD11E64B6800DB1371 /* PluginView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginView.h; sourceTree = "<group>"; };
 		1A6FB7D011E651E200DB1371 /* Plugin.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Plugin.cpp; sourceTree = "<group>"; };
 		1A6FB7D111E651E200DB1371 /* Plugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Plugin.h; sourceTree = "<group>"; };
-		1A6FB7E411E6530500DB1371 /* DummyPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DummyPlugin.h; sourceTree = "<group>"; };
-		1A6FB7E511E6530500DB1371 /* DummyPlugin.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DummyPlugin.cpp; sourceTree = "<group>"; };
 		1A6FB90911E66FBC00DB1371 /* NetscapePluginModule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetscapePluginModule.h; sourceTree = "<group>"; };
 		1A6FB90A11E66FBC00DB1371 /* NetscapePluginModule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetscapePluginModule.cpp; sourceTree = "<group>"; };
 		1A6FBA0211E6813E00DB1371 /* NetscapePluginModuleMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetscapePluginModuleMac.cpp; sourceTree = "<group>"; };
@@ -677,8 +673,6 @@
 			isa = PBXGroup;
 			children = (
 				1A6FB90811E66FB100DB1371 /* Netscape */,
-				1A6FB7E511E6530500DB1371 /* DummyPlugin.cpp */,
-				1A6FB7E411E6530500DB1371 /* DummyPlugin.h */,
 				1A2161AF11F37664008AD0F5 /* NPJSObjectMap.cpp */,
 				1A2161AE11F37664008AD0F5 /* NPJSObjectMap.h */,
 				1A2162AE11F38971008AD0F5 /* NPRuntimeUtilities.cpp */,
@@ -1181,7 +1175,6 @@
 				BC9E969C11457F3F00870E71 /* DrawingAreaMessageKinds.h in Headers */,
 				BC2652171182608100243E12 /* DrawingAreaProxy.h in Headers */,
 				BC9E969A11457EDE00870E71 /* DrawingAreaProxyMessageKinds.h in Headers */,
-				1A6FB7E611E6530500DB1371 /* DummyPlugin.h in Headers */,
 				BC17753F118BABF0007D9E9A /* GenericCallback.h in Headers */,
 				BC64697011DBE603006455B0 /* ImmutableArray.h in Headers */,
 				BC204EE311C83E98008F3375 /* InjectedBundle.h in Headers */,
@@ -1395,7 +1388,6 @@
 				1A30EAC6115D7DA30053E937 /* ConnectionMac.cpp in Sources */,
 				BC8452A71162C80900CAB9B5 /* DrawingArea.cpp in Sources */,
 				BC2652161182608100243E12 /* DrawingAreaProxy.cpp in Sources */,
-				1A6FB7E711E6530500DB1371 /* DummyPlugin.cpp in Sources */,
 				BC64696F11DBE603006455B0 /* ImmutableArray.cpp in Sources */,
 				BC204EE211C83E98008F3375 /* InjectedBundle.cpp in Sources */,
 				BC204EE611C83EA9008F3375 /* InjectedBundleMac.cpp in Sources */,

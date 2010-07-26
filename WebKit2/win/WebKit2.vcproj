@@ -752,14 +752,6 @@
 				Name="Plugins"
 				>
 				<File
-					RelativePath="..\WebProcess\Plugins\DummyPlugin.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\WebProcess\Plugins\DummyPlugin.h"
-					>
-				</File>
-				<File
 					RelativePath="..\WebProcess\Plugins\NPJSObjectMap.cpp"
 					>
 				</File>
