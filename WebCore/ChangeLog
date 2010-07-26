@@ -1,3 +1,14 @@
+2010-07-26  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] Get rid of libgdom
+        https://bugs.webkit.org/show_bug.cgi?id=42378
+
+        Remove all build steps for building GObject DOM bindings.
+
+        * GNUmakefile.am: Remove GObject DOM bindings build.
+
 2010-07-26  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Dan Bernstein.
