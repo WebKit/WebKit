@@ -141,11 +141,15 @@ devtools.InspectorBackendImpl.prototype.installInspectorControllerDelegate_ = fu
  * Bound function with the installInjectedScriptDelegate_ actual
  * implementation.
  */
-devtools.InspectorBackendImpl.prototype.callInspectorController_ = function(methodName, var_arg)
+devtools.InspectorBackendImpl.prototype.callInspectorController_ = function()
 {
-    var args = Array.prototype.slice.call(arguments, 1);
-    args.unshift(methodName);
-    RemoteToolsAgent.dispatchOnInspectorController(WebInspector.Callback.wrap(function(){}), JSON.stringify(args));
+    var args = Array.prototype.slice.call(arguments);
+    var message = JSON.stringify(args);
+    var callbackId = WebInspector.Callback.wrap(function(){});
+    if ("page" in WebInspector._paramsObject)
+        WebInspector.socket.send(callbackId + " " + message);
+    else
+        RemoteToolsAgent.dispatchOnInspectorController(callbackId, message);
 };
 
 

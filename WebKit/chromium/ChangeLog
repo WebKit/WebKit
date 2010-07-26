@@ -1,3 +1,19 @@
+2010-07-26  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Chromium DevTools: refactor query params, add basic
+        support for WebSocket-based backend.
+
+        https://bugs.webkit.org/show_bug.cgi?id=42893
+
+        * src/js/DevTools.js:
+        (devtools.ToolsAgent.prototype.dispatchOnClient_):
+        (WebInspector.loaded):
+        (WebInspector.doLoadedDone):
+        (devtools.domContentLoaded):
+        * src/js/InspectorControllerImpl.js:
+
 2010-07-24  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed: chromium build fix.

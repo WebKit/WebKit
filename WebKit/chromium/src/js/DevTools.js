@@ -93,7 +93,7 @@ devtools.ToolsAgent.prototype.getProfilerAgent = function()
  */
 devtools.ToolsAgent.prototype.dispatchOnClient_ = function(message)
 {
-    var args = JSON.parse(message);
+    var args = typeof message === "string" ? JSON.parse(message) : message;
     var methodName = args[0];
     var parameters = args.slice(1);
     WebInspector[methodName].apply(WebInspector, parameters);
@@ -129,6 +129,28 @@ devtools.tools = null;
 
 var context = {};  // Used by WebCore's inspector routines.
 
+(function() {
+    WebInspector._paramsObject = {};
+
+    var queryParams = window.location.search;
+    if (queryParams) {
+        var params = queryParams.substring(1).split("&");
+        for (var i = 0; i < params.length; ++i) {
+            var pair = params[i].split("=");
+            WebInspector._paramsObject[pair[0]] = pair[1];
+        }
+    }
+    if ("page" in WebInspector._paramsObject) {
+        WebInspector.socket = new WebSocket("ws://" + window.location.host + "/devtools/page/" + WebInspector._paramsObject.page);
+        WebInspector.socket.onmessage = function(message) { eval(message.data); }
+        WebInspector.socket.onerror = function(error) { console.err(error); }
+        WebInspector.socket.onopen = function() {
+            WebInspector.socketOpened = true;
+            if (WebInspector.loadedDone)
+                WebInspector.doLoadedDone();
+        };
+    }
+})();
 ///////////////////////////////////////////////////////////////////////////////
 // Here and below are overrides to existing WebInspector methods only.
 // TODO(pfeldman): Patch WebCore and upstream changes.
@@ -145,25 +167,25 @@ WebInspector.loaded = function()
     Preferences.canEditScriptSource = true;
     Preferences.appCacheEnabled = false;
 
-    oldLoaded.call(this);
+    if ("page" in WebInspector._paramsObject) {
+        WebInspector.loadedDone = true;
+        if (WebInspector.socketOpened)
+            WebInspector.doLoadedDone();
+        return;
+    }
+    WebInspector.doLoadedDone();
+}
 
+WebInspector.doLoadedDone = function() {
+    oldLoaded.call(this);
     InspectorFrontendHost.loaded();
-};
+}
 
 devtools.domContentLoaded = function()
 {
-    var queryParams = window.location.search;
-    if (queryParams) {
-        var params = queryParams.substring(1).split("&");
-        var paramsObject = {};
-        for (var i = 0; i < params.length; ++i) {
-            var pair = params[i].split("=");
-            paramsObject[pair[0]] = pair[1];
-        }
-        WebInspector.setAttachedWindow(paramsObject.docked === "true");
-        if (paramsObject.toolbar_color && paramsObject.text_color)
-            WebInspector.setToolbarColors(paramsObject.toolbar_color, paramsObject.text_color);
-    }
+    WebInspector.setAttachedWindow(WebInspector._paramsObject.docked === "true");
+    if (WebInspector._paramsObject.toolbar_color && WebInspector._paramsObject.text_color)
+        WebInspector.setToolbarColors(WebInspector._paramsObject.toolbar_color, WebInspector._paramsObject.text_color);
 }
 document.addEventListener("DOMContentLoaded", devtools.domContentLoaded, false);
 
