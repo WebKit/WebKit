@@ -2,6 +2,18 @@
 
         Reviewed by Eric Carlson.
 
+        [GTK] media/media-can-play-mpeg-audio.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=42895
+
+        Fixed advertizing of mp3, mpeg and mp4 mime-types in the player.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::mimeTypeCache):
+
+2010-07-23  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Eric Carlson.
+
         LayoutTests/media/media-document-audio-size.html failure
         https://bugs.webkit.org/show_bug.cgi?id=38376
 
