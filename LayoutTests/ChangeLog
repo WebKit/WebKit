@@ -1,3 +1,16 @@
+2010-07-26  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix compositing iframe tests on Leopard.
+
+        Add Leopard-specific results where geometry flipping causes a different test output.
+
+        * platform/mac-leopard/compositing/iframes/connect-compositing-iframe-delayed-expected.txt: Added.
+        * platform/mac-leopard/compositing/iframes/connect-compositing-iframe3-expected.txt: Added.
+        * platform/mac-leopard/compositing/iframes/iframe-resize-expected.txt: Added.
+        * platform/mac-leopard/compositing/iframes/iframe-size-from-zero-expected.txt: Added.
+        * platform/mac-leopard/compositing/iframes/overlapped-iframe-expected.txt: Added.
+        * platform/mac-leopard/compositing/iframes/scrolling-iframe-expected.txt: Added.
+
 2010-07-26  Victor Wang  <victorw@chromium.org>
 
         Unreviewed. Update chromium test expectations fro flaky test.
