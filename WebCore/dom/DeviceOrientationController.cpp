@@ -37,21 +37,38 @@ namespace WebCore {
 DeviceOrientationController::DeviceOrientationController(Page* page, DeviceOrientationClient* client)
     : m_page(page)
     , m_client(client)
+    , m_timer(this, &DeviceOrientationController::timerFired)
 {
+}
+
+void DeviceOrientationController::timerFired(Timer<DeviceOrientationController>* timer)
+{
+    ASSERT_UNUSED(timer, timer == &m_timer);
+    ASSERT(!m_client || m_client->lastOrientation());
+
+    RefPtr<DeviceOrientation> orientation = m_client ?  m_client->lastOrientation() : DeviceOrientation::create();
+    RefPtr<DeviceOrientationEvent> event = DeviceOrientationEvent::create(eventNames().deviceorientationEvent, orientation.get());
+
+    Vector<DOMWindow*> listenersVector;
+    copyToVector(m_newListeners, listenersVector);
+    m_newListeners.clear();
+    for (size_t i = 0; i < listenersVector.size(); ++i)
+        listenersVector[i]->dispatchEvent(event);
 }
 
 void DeviceOrientationController::addListener(DOMWindow* window)
 {
-    // If no client is present, signal that no orientation data is available.
-    // If the client already has an orientation, call back to this new listener
-    // immediately.
-    if (!m_client) {
-        RefPtr<DeviceOrientation> emptyOrientation = DeviceOrientation::create();
-        window->dispatchEvent(DeviceOrientationEvent::create(eventNames().deviceorientationEvent, emptyOrientation.get()));
-    } else if (m_client && m_client->lastOrientation())
-        window->dispatchEvent(DeviceOrientationEvent::create(eventNames().deviceorientationEvent, m_client->lastOrientation()));
+    // If no client is present, we should fire an event with all parameters null. If
+    // the client already has an orientation, we should fire an event with that
+    // orientation. In both cases, the event is fired asynchronously, but without
+    // waiting for the client to get a new orientation.
+    if (!m_client || m_client->lastOrientation()) {
+        m_newListeners.add(window);
+        if (!m_timer.isActive())
+            m_timer.startOneShot(0);
+    }
 
-    // The client may call back synchronously.
+    // The client must not call back synchronously.
     bool wasEmpty = m_listeners.isEmpty();
     m_listeners.add(window);
     if (wasEmpty && m_client)
@@ -61,6 +78,7 @@ void DeviceOrientationController::addListener(DOMWindow* window)
 void DeviceOrientationController::removeListener(DOMWindow* window)
 {
     m_listeners.remove(window);
+    m_newListeners.remove(window);
     if (m_listeners.isEmpty() && m_client)
         m_client->stopUpdating();
 }
@@ -72,6 +90,7 @@ void DeviceOrientationController::removeAllListeners(DOMWindow* window)
         return;
 
     m_listeners.removeAll(window);
+    m_newListeners.remove(window);
     if (m_listeners.isEmpty() && m_client)
         m_client->stopUpdating();
 }

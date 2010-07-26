@@ -1,3 +1,22 @@
+2010-07-26  Steve Block  <steveblock@google.com>
+
+        Reviewed by Jeremy Orlow.
+
+        DeviceOrientation event listeners should never be called synchronously from addEventListener()
+        https://bugs.webkit.org/show_bug.cgi?id=42304
+
+        No new tests as there are currently no implementations to test. Tests will be
+        added once LayoutTestController methods for providing a mock implementation are
+        in place, see Bug 39589.
+
+        * dom/DeviceOrientationController.cpp:
+        (WebCore::DeviceOrientationController::DeviceOrientationController):
+        (WebCore::DeviceOrientationController::timerFired):
+        (WebCore::DeviceOrientationController::addListener):
+        (WebCore::DeviceOrientationController::removeListener):
+        (WebCore::DeviceOrientationController::removeAllListeners):
+        * dom/DeviceOrientationController.h:
+
 2010-07-26  Andreas Kling  <andreas.kling@nokia.com>
 
         Reviewed by Tor Arne Vestbø.

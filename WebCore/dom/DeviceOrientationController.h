@@ -27,6 +27,8 @@
 #define DeviceOrientationController_h
 
 #include "DOMWindow.h"
+#include "Timer.h"
+
 #include <wtf/HashCountedSet.h>
 
 namespace WebCore {
@@ -46,10 +48,15 @@ public:
     void didChangeDeviceOrientation(DeviceOrientation*);
 
 private:
+    void timerFired(Timer<DeviceOrientationController>*);
+
     Page* m_page;
     DeviceOrientationClient* m_client;
-    typedef HashCountedSet<DOMWindow*> ListenersSet;
-    ListenersSet m_listeners;
+    typedef HashCountedSet<DOMWindow*> ListenersCountedSet;
+    ListenersCountedSet m_listeners;
+    typedef HashSet<DOMWindow*> ListenersSet;
+    ListenersSet m_newListeners;
+    Timer<DeviceOrientationController> m_timer;
 };
 
 } // namespace WebCore
