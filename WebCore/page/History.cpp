@@ -86,14 +86,7 @@ KURL History::urlForState(const String& urlString)
     if (urlString.isEmpty())
         return baseURL;
         
-    KURL absoluteURL(baseURL, urlString);
-    if (!absoluteURL.isValid())
-        return KURL();
-    
-    if (absoluteURL.string().left(absoluteURL.pathStart()) != baseURL.string().left(baseURL.pathStart()))
-        return KURL();
-    
-    return absoluteURL;
+    return KURL(baseURL, urlString);
 }
 
 void History::stateObjectAdded(PassRefPtr<SerializedScriptValue> data, const String& title, const String& urlString, StateObjectType stateObjectType, ExceptionCode& ec)
@@ -102,7 +95,8 @@ void History::stateObjectAdded(PassRefPtr<SerializedScriptValue> data, const Str
         return;
     
     KURL fullURL = urlForState(urlString);
-    if (!fullURL.isValid()) {
+    RefPtr<SecurityOrigin> origin = SecurityOrigin::create(fullURL);
+    if (!fullURL.isValid() || !m_frame->document()->securityOrigin()->isSameSchemeHostPort(origin.get())) {
         ec = SECURITY_ERR;
         return;
     }

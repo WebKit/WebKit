@@ -1,3 +1,17 @@
+2010-07-26  Justin Schuh  <jschuh@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Check history state against origin before setting
+        https://bugs.webkit.org/show_bug.cgi?id=42858
+
+        Tests: fast/loader/stateobjects/replacestate-base-illegal.html
+               fast/loader/stateobjects/replacestate-base-legal.html
+
+        * page/History.cpp:
+        (WebCore::History::urlForState):
+        (WebCore::History::stateObjectAdded):
+
 2010-07-26  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Xan Lopez.
