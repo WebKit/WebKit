@@ -569,6 +569,15 @@ bool AccessibilityRenderObject::isIndeterminate() const
     return inputElement->isIndeterminate();
 }
 
+bool AccessibilityRenderObject::isNativeCheckboxOrRadio() const
+{
+    Node* elementNode = node();
+    if (elementNode && elementNode->isElementNode())
+        return toInputElement(static_cast<Element*>(elementNode));
+    
+    return false;
+}
+    
 bool AccessibilityRenderObject::isChecked() const
 {
     ASSERT(m_renderer);
@@ -1011,7 +1020,10 @@ Node* AccessibilityRenderObject::node() const
     
 AccessibilityButtonState AccessibilityRenderObject::checkboxOrRadioValue() const
 {
-    return isChecked() ? ButtonStateOn : ButtonStateOff;
+    if (isNativeCheckboxOrRadio())
+        return isChecked() ? ButtonStateOn : ButtonStateOff;
+    
+    return AccessibilityObject::checkboxOrRadioValue();
 }
 
 String AccessibilityRenderObject::valueDescription() const

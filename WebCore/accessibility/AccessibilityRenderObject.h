@@ -283,6 +283,7 @@ private:
     AccessibilityRole determineAriaRoleAttribute() const;
 
     bool isTabItemSelected() const;
+    bool isNativeCheckboxOrRadio() const;
     IntRect checkboxOrRadioRect() const;
     void addRadioButtonGroupMembers(AccessibilityChildrenVector& linkedUIElements) const;
     AccessibilityObject* internalLinkElement() const;

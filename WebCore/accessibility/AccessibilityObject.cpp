@@ -985,6 +985,8 @@ AccessibilityButtonState AccessibilityObject::checkboxOrRadioValue() const
     const AtomicString& result = getAttribute(aria_checkedAttr);
     if (equalIgnoringCase(result, "true"))
         return ButtonStateOn;
+    if (equalIgnoringCase(result, "mixed"))
+        return ButtonStateMixed;
     
     return ButtonStateOff;
 }

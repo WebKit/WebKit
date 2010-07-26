@@ -1524,6 +1524,8 @@ static NSString* roleValueToNSString(AccessibilityRole value)
                 return [NSNumber numberWithInt:0];
             case ButtonStateOn:
                 return [NSNumber numberWithInt:1];
+            case ButtonStateMixed:
+                return [NSNumber numberWithInt:2];
             }
         }
 

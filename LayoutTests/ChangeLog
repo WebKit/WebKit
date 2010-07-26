@@ -1,3 +1,13 @@
+2010-07-26  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Darin Adler.
+
+        AX: Safari does not support ARIA mixed checkboxes
+        https://bugs.webkit.org/show_bug.cgi?id=43016
+
+        * platform/mac/accessibility/mixed-checkbox-expected.txt: Added.
+        * platform/mac/accessibility/mixed-checkbox.html: Added.
+
 2010-07-26  Shimeng (Simon) Wang  <swang@google.com>
 
         Reviewed by Darin Adler.

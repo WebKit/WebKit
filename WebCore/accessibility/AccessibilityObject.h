@@ -213,6 +213,7 @@ enum AccessibilityObjectInclusion {
 enum AccessibilityButtonState {
     ButtonStateOff = 0,
     ButtonStateOn, 
+    ButtonStateMixed,
 };
 
 struct VisiblePositionRange {
