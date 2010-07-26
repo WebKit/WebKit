@@ -1,3 +1,9 @@
+2010-07-26  Ada Chan  <adachan@apple.com>
+
+        Fix Windows build.
+
+        * win/WebKit2Generated.make:
+
 2010-07-26  Anders Carlsson  <andersca@apple.com>
 
         Fix Windows build.
