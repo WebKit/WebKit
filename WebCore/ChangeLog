@@ -1,3 +1,25 @@
+2010-07-26  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Joseph Pecoraro.
+
+        Inspector should remember resources sorting set by the user
+        https://bugs.webkit.org/show_bug.cgi?id=19208
+
+        Sorting options both for time and size graphs are memorized in a single property,
+        which makes them possible to retrieve in a single message (e.g. useful for remote debugging).
+
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.ResourcesPanel.prototype.populateSidebar):
+        (WebInspector.ResourcesPanel.prototype._settingsLoaded):
+        (WebInspector.ResourcesPanel.prototype._loadSortOptions):
+        (WebInspector.ResourcesPanel.prototype._loadSortOptionForGraph):
+        (WebInspector.ResourcesPanel.prototype._graphSelected):
+        (WebInspector.ResourcesPanel.prototype._changeSortingFunction):
+        (WebInspector.ResourcesPanel.prototype._selectedOptionNameForGraph):
+        (WebInspector.ResourcesPanel.prototype._doChangeSortingFunction):
+        * inspector/front-end/Settings.js:
+        (WebInspector.populateApplicationSettings):
+
 2010-07-25  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Darin Adler.

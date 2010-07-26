@@ -58,6 +58,7 @@ WebInspector.populateApplicationSettings = function(settingsString)
     WebInspector.applicationSettings.installSetting("showUserAgentStyles", "show-user-agent-styles", true);
     WebInspector.applicationSettings.installSetting("resourceViewTab", "resource-view-tab", "content");
     WebInspector.applicationSettings.installSetting("consoleHistory", "console-history", []);
+    WebInspector.applicationSettings.installSetting("resourcesSortOptions", "resources-sort-options", {timeOption: "responseTime", sizeOption: "transferSize"});
 
     WebInspector.applicationSettings.dispatchEventToListeners("loaded");
 }
