@@ -1,3 +1,20 @@
+2010-07-26  Darin Adler  <darin@apple.com>
+
+        Reviewed by Eric Carlson.
+
+        Don’t handle empty URL attributes specially in reflection, even in cases such as <img src="">
+        https://bugs.webkit.org/show_bug.cgi?id=42087
+
+        * fast/dom/URL-attribute-reflection-expected.txt: Updated.
+        * fast/dom/script-tests/URL-attribute-reflection.js: Updated test expectations so that even
+        for URLs where "" is invalid, we reflect the empty string resolved to the base URL.
+
+        * media/video-poster-expected.txt: Updated.
+        * media/video-poster.html: Updated to expect poster="" to reflect as the base URL.
+        * media/video-source-error-no-candidate-expected.txt: Updated.
+        * media/video-src-none-expected.txt: Updated.
+        * media/video-src-none.html: Updated to expect src="" to reflect as the base URL.
+
 2010-07-26  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Darin Adler.

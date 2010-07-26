@@ -36,35 +36,35 @@ shouldBe("testURLReflection('attribute', 'element')", "'none'");
 shouldBe("testURLReflection('id', 'element')", "'non-URL'");
 
 // The following list comes from the HTML5 document’s attributes index.
-// The expected results are based on what the table there says.
+// These are the URL attributes from that list.
 
 shouldBe("testURLReflection('action', 'form')", "'URL'");
 shouldBe("testURLReflection('cite', 'blockquote')", "'URL'");
 shouldBe("testURLReflection('cite', 'del')", "'URL'");
 shouldBe("testURLReflection('cite', 'ins')", "'URL'");
 shouldBe("testURLReflection('cite', 'q')", "'URL'");
-shouldBe("testURLReflection('data', 'object')", "'non-empty URL'");
+shouldBe("testURLReflection('data', 'object')", "'URL'");
 shouldBe("testURLReflection('formaction', 'button')", "'URL'");
 shouldBe("testURLReflection('formaction', 'input')", "'URL'");
 shouldBe("testURLReflection('href', 'a')", "'URL'");
 shouldBe("testURLReflection('href', 'area')", "'URL'");
-shouldBe("testURLReflection('href', 'link')", "'non-empty URL'");
+shouldBe("testURLReflection('href', 'link')", "'URL'");
 shouldBe("testURLReflection('href', 'base')", "'URL'");
-shouldBe("testURLReflection('icon', 'command')", "'non-empty URL'");
-shouldBe("testURLReflection('manifest', 'html')", "'non-empty URL'");
-shouldBe("testURLReflection('poster', 'video')", "'non-empty URL'");
-shouldBe("testURLReflection('src', 'audio')", "'non-empty URL'");
-shouldBe("testURLReflection('src', 'embed')", "'non-empty URL'");
-shouldBe("testURLReflection('src', 'iframe')", "'non-empty URL'");
-shouldBe("testURLReflection('src', 'img')", "'non-empty URL'");
-shouldBe("testURLReflection('src', 'input')", "'non-empty URL'");
-shouldBe("testURLReflection('src', 'script')", "'non-empty URL'");
-shouldBe("testURLReflection('src', 'source')", "'non-empty URL'");
-shouldBe("testURLReflection('src', 'video')", "'non-empty URL'");
+shouldBe("testURLReflection('icon', 'command')", "'URL'");
+shouldBe("testURLReflection('manifest', 'html')", "'URL'");
+shouldBe("testURLReflection('poster', 'video')", "'URL'");
+shouldBe("testURLReflection('src', 'audio')", "'URL'");
+shouldBe("testURLReflection('src', 'embed')", "'URL'");
+shouldBe("testURLReflection('src', 'iframe')", "'URL'");
+shouldBe("testURLReflection('src', 'img')", "'URL'");
+shouldBe("testURLReflection('src', 'input')", "'URL'");
+shouldBe("testURLReflection('src', 'script')", "'URL'");
+shouldBe("testURLReflection('src', 'source')", "'URL'");
+shouldBe("testURLReflection('src', 'video')", "'URL'");
 
 // Other reflected URL attributes.
 
-shouldBe("testURLReflection('longDesc', 'img')", "'non-empty URL'");
-shouldBe("testURLReflection('lowsrc', 'img')", "'non-empty URL'");
+shouldBe("testURLReflection('longDesc', 'img')", "'URL'");
+shouldBe("testURLReflection('lowsrc', 'img')", "'URL'");
 
 var successfullyParsed = true;

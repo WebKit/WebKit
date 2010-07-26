@@ -44,8 +44,6 @@ public:
     unsigned videoWidth() const;
     unsigned videoHeight() const;
     
-    virtual const KURL poster() const { return m_posterURL; }
-
     // Fullscreen
     void webkitEnterFullscreen(bool isUserGesture, ExceptionCode&);
     void webkitExitFullscreen();
@@ -84,7 +82,6 @@ private:
     virtual void willMoveToNewOwnerDocument();
 
     OwnPtr<HTMLImageLoader> m_imageLoader;
-    KURL m_posterURL;
     bool m_shouldDisplayPosterImage;
 };
 

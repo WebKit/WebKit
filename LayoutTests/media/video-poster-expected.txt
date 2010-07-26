@@ -5,7 +5,7 @@ EXPECTED (relativeURL(video.poster) == 'content/greenbox.png') OK
 
 Set 'poster' to ''.
 EXPECTED (video.getAttribute('poster') == '') OK
-EXPECTED (relativeURL(video.poster) == '') OK
+EXPECTED (relativeURL(video.poster) == 'video-poster.html') OK
 
 Set 'poster' to 'content/abe.png'.
 EXPECTED (video.getAttribute('poster') == 'content/abe.png') OK

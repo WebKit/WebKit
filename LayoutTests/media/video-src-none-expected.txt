@@ -8,7 +8,7 @@ EXPECTED (videos[0].src == '') OK
 ** <video> with empty src attribute **
 EXPECTED (videos[1].error == 'null') OK
 EXPECTED (videos[1].networkState == '0') OK
-EXPECTED (videos[1].src == '') OK
+EXPECTED (relativeURL(videos[1].src) == 'video-src-none.html') OK
 
 Calling load() with empty 'src' should fire 'error' event, set network state to NETWORK_NO_SOURCE, and set error to MEDIA_ERR_SRC_NOT_SUPPORTED.
 'error' event:

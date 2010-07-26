@@ -42,7 +42,7 @@
                 consoleWrite("** &lt;video&gt; with empty src attribute **");
                 testExpected("videos[1].error", null);
                 testExpected("videos[1].networkState", HTMLMediaElement.NETWORK_EMPTY);
-                testExpected("videos[1].src", "");
+                testExpected("relativeURL(videos[1].src)", "video-src-none.html");
 
                 consoleWrite("<br><" + "i>Calling load() with empty 'src' should fire 'error' event, set network state to NETWORK_NO_SOURCE, and set error to MEDIA_ERR_SRC_NOT_SUPPORTED.<" + "/i>");
                 state = "load() with empty 'src'";

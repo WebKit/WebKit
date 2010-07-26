@@ -18,7 +18,8 @@
 
                 consoleWrite("<br><i>Set 'poster' to ''.<" + "/i>");
                 video.setAttribute('poster', '');
-                testPoster('');
+                testExpected("video.getAttribute('poster')", '');
+                testExpected("relativeURL(video.poster)", 'video-poster.html');
 
                 consoleWrite("<br><i>Set 'poster' to 'content/abe.png'.<" + "/i>");
                 video.setAttribute('poster', 'content/abe.png');

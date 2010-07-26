@@ -1,3 +1,49 @@
+2010-07-26  Darin Adler  <darin@apple.com>
+
+        Reviewed by Eric Carlson.
+
+        Don't handle empty URL attributes specially in reflection, even in cases such as <img src="">
+        https://bugs.webkit.org/show_bug.cgi?id=42087
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::insertedIntoDocument): Check if the src attribute is empty
+        by calling getAttribute instead of calling the src function. This keeps the behavior
+        correct with the reflection change, and has a side benefit of being more efficient as
+        well since there is no reason to resolve the URL.
+        (WebCore::HTMLMediaElement::loadResource): Call getNonEmptyURLAttribute directly here
+        instead of using the poster function.
+        (WebCore::HTMLMediaElement::getPluginProxyParams): Ditto.
+
+        * html/HTMLMediaElement.h: Removed the poster virtual function. The code that gets the
+        poster attribute is already video-specific and uses generic attribute fetching code, so
+        we no longer need a virtual function. Removed the src function. Since this would give
+        a different result from the JavaScript reflected src attribute, it's safer not to have
+        it, and it was easy to convert all the callers.
+
+        * html/HTMLMediaElement.idl: Removed the NonEmpty extended attribute from the src
+        attribute.
+
+        * html/HTMLSourceElement.cpp: Removed the src function for the same reason as above.
+        * html/HTMLSourceElement.h: Ditto.
+
+        * html/HTMLSourceElement.idl: Removed the NonEmpty extended attribute from the src
+        attribute.
+
+        * html/HTMLVideoElement.cpp:
+        (WebCore::HTMLVideoElement::parseMappedAttribute): Removed code to update m_posterURL,
+        which is no longer needed. Changed call site that used the poster() function to instead
+        use getNonEmptyURLAttribute.
+        (WebCore::HTMLVideoElement::updatePosterImage): Check if the poster attribute is empty
+        by calling getAttribute instead of calling the poster function. This keeps the behavior
+        correct with the reflection change, and has a side benefit of being more efficient as
+        well since there is no reason to resolve the URL.
+
+        * html/HTMLVideoElement.h: Removed the poster function for the same reason we removed
+        the src function above. Also removed now-unneeded m_posterURL data member.
+
+        * html/HTMLVideoElement.idl: Removed the NonEmpty extended attribute from the poster
+        attribute.
+
 2010-07-26  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler.

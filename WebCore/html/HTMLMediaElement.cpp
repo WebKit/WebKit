@@ -304,7 +304,7 @@ RenderObject* HTMLMediaElement::createRenderer(RenderArena* arena, RenderStyle*)
 void HTMLMediaElement::insertedIntoDocument()
 {
     HTMLElement::insertedIntoDocument();
-    if (!src().isEmpty() && m_networkState == NETWORK_EMPTY)
+    if (!getAttribute(srcAttr).isEmpty() && m_networkState == NETWORK_EMPTY)
         scheduleLoad();
 }
 
@@ -436,11 +436,6 @@ void HTMLMediaElement::setTimeOffsetAttribute(const QualifiedName& name, float v
 PassRefPtr<MediaError> HTMLMediaElement::error() const 
 {
     return m_error;
-}
-
-KURL HTMLMediaElement::src() const
-{
-    return getNonEmptyURLAttribute(srcAttr);
 }
 
 void HTMLMediaElement::setSrc(const String& url)
@@ -671,9 +666,9 @@ void HTMLMediaElement::loadResource(const KURL& initialURL, ContentType& content
     m_player->load(m_currentSrc, contentType);
 
     if (isVideo() && m_player->canLoadPoster()) {
-        KURL posterUrl = poster();
-        if (!posterUrl.isEmpty())
-            m_player->setPoster(posterUrl);
+        KURL posterURL = getNonEmptyURLAttribute(posterAttr);
+        if (!posterURL.isEmpty())
+            m_player->setPoster(posterURL);
     }
 
     if (renderer())
@@ -1962,13 +1957,10 @@ void HTMLMediaElement::getPluginProxyParams(KURL& url, Vector<String>& names, Ve
     FrameLoader* loader = frame ? frame->loader() : 0;
 
     if (isVideo()) {
-        String poster = poster();
-        if (!poster.isEmpty() && loader) {
-            KURL posterURL = loader->completeURL(poster);
-            if (posterURL.isValid() && loader->willLoadMediaElementURL(posterURL)) {
-                names.append("_media_element_poster_");
-                values.append(posterURL.string());
-            }
+        KURL posterURL = getNonEmptyURLAttribute(posterAttr);
+        if (!posterURL.isEmpty() && loader && loader->willLoadMediaElementURL(posterURL)) {
+            names.append("_media_element_poster_");
+            values.append(posterURL.string());
         }
     }
 

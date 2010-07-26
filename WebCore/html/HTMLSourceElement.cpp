@@ -62,11 +62,6 @@ void HTMLSourceElement::insertedIntoDocument()
     }
 }
 
-KURL HTMLSourceElement::src() const
-{
-    return getNonEmptyURLAttribute(srcAttr);
-}
-
 void HTMLSourceElement::setSrc(const String& url)
 {
     setAttribute(srcAttr, url);

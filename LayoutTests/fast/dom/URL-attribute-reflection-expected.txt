@@ -10,26 +10,26 @@ FAIL testURLReflection('cite', 'blockquote') should be URL. Was non-URL.
 FAIL testURLReflection('cite', 'del') should be URL. Was non-URL.
 FAIL testURLReflection('cite', 'ins') should be URL. Was non-URL.
 FAIL testURLReflection('cite', 'q') should be URL. Was non-URL.
-FAIL testURLReflection('data', 'object') should be non-empty URL. Was URL.
+PASS testURLReflection('data', 'object') is 'URL'
 FAIL testURLReflection('formaction', 'button') should be URL. Was none.
 FAIL testURLReflection('formaction', 'input') should be URL. Was none.
 PASS testURLReflection('href', 'a') is 'URL'
 PASS testURLReflection('href', 'area') is 'URL'
-FAIL testURLReflection('href', 'link') should be non-empty URL. Was URL.
+PASS testURLReflection('href', 'link') is 'URL'
 FAIL testURLReflection('href', 'base') should be URL. Was non-URL.
-FAIL testURLReflection('icon', 'command') should be non-empty URL. Was none.
-FAIL testURLReflection('manifest', 'html') should be non-empty URL. Was none.
-PASS testURLReflection('poster', 'video') is 'non-empty URL'
-PASS testURLReflection('src', 'audio') is 'non-empty URL'
-FAIL testURLReflection('src', 'embed') should be non-empty URL. Was non-URL.
-FAIL testURLReflection('src', 'iframe') should be non-empty URL. Was non-URL.
-FAIL testURLReflection('src', 'img') should be non-empty URL. Was URL.
-FAIL testURLReflection('src', 'input') should be non-empty URL. Was URL.
-FAIL testURLReflection('src', 'script') should be non-empty URL. Was URL.
-PASS testURLReflection('src', 'source') is 'non-empty URL'
-PASS testURLReflection('src', 'video') is 'non-empty URL'
-FAIL testURLReflection('longDesc', 'img') should be non-empty URL. Was URL.
-FAIL testURLReflection('lowsrc', 'img') should be non-empty URL. Was URL.
+FAIL testURLReflection('icon', 'command') should be URL. Was none.
+FAIL testURLReflection('manifest', 'html') should be URL. Was none.
+PASS testURLReflection('poster', 'video') is 'URL'
+PASS testURLReflection('src', 'audio') is 'URL'
+FAIL testURLReflection('src', 'embed') should be URL. Was non-URL.
+FAIL testURLReflection('src', 'iframe') should be URL. Was non-URL.
+PASS testURLReflection('src', 'img') is 'URL'
+PASS testURLReflection('src', 'input') is 'URL'
+PASS testURLReflection('src', 'script') is 'URL'
+PASS testURLReflection('src', 'source') is 'URL'
+PASS testURLReflection('src', 'video') is 'URL'
+PASS testURLReflection('longDesc', 'img') is 'URL'
+PASS testURLReflection('lowsrc', 'img') is 'URL'
 PASS successfullyParsed is true
 
 TEST COMPLETE
