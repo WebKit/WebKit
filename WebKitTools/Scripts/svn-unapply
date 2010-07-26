@@ -139,7 +139,9 @@ sub patch($)
 {
     my ($diffHashRef) = @_;
 
-    my $patch = $diffHashRef->{svnConvertedText};
+    # Make sure $patch is initialized to some value.  There is no
+    # svnConvertedText when reversing an svn copy/move.
+    my $patch = $diffHashRef->{svnConvertedText} || "";
 
     my $fullPath = $diffHashRef->{indexPath};
     my $isSvnBinary = $diffHashRef->{isBinary} && $diffHashRef->{isSvn};
@@ -201,7 +203,7 @@ sub patch($)
             # FIXME: This should use the same logic as svn-apply's deletion
             #        code.  In particular, svn-apply's scmRemove() subroutine
             #        should be used here.
-            unapplyPatch($patch, $fullPath, ["--force"]);
+            unapplyPatch($patch, $fullPath, ["--force"]) if $patch;
             unlink($fullPath) if -z $fullPath;
             system "svn", "revert", $fullPath;
         }

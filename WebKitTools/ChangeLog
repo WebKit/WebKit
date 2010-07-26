@@ -1,3 +1,19 @@
+2010-07-26  Daniel Bates  <dbates@rim.com>
+
+        Reviewed by Darin Adler.
+
+        svn-unapply warns of uninitialized variable when unapplying
+        a patch that describes an svn move operation
+        https://bugs.webkit.org/show_bug.cgi?id=42036
+
+        Fixes Perl uninitialized variable warnings when un-applying
+        a patch that moves a file.
+
+        * Scripts/svn-unapply:
+          - Modified patch() so that it initializes $patch to the empty
+            string when we don't have svnConvertedText (such as when
+            reversing a diff that represents a svn copy/move operation).
+
 2010-07-26  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.
