@@ -33,6 +33,11 @@
 #include <wtf/PassOwnPtr.h>
 #include <wtf/unicode/Unicode.h>
 
+namespace WTF {
+class BumpPointerAllocator;
+}
+using WTF::BumpPointerAllocator;
+
 namespace JSC { namespace Yarr {
 
 class ByteDisjunction;
@@ -293,10 +298,11 @@ public:
 };
 
 struct BytecodePattern : FastAllocBase {
-    BytecodePattern(PassOwnPtr<ByteDisjunction> body, Vector<ByteDisjunction*> allParenthesesInfo, RegexPattern& pattern)
+    BytecodePattern(PassOwnPtr<ByteDisjunction> body, Vector<ByteDisjunction*> allParenthesesInfo, RegexPattern& pattern, BumpPointerAllocator* allocator)
         : m_body(body)
         , m_ignoreCase(pattern.m_ignoreCase)
         , m_multiline(pattern.m_multiline)
+        , m_allocator(allocator)
     {
         newlineCharacterClass = pattern.newlineCharacterClass();
         wordcharCharacterClass = pattern.wordcharCharacterClass();
@@ -318,7 +324,10 @@ struct BytecodePattern : FastAllocBase {
     OwnPtr<ByteDisjunction> m_body;
     bool m_ignoreCase;
     bool m_multiline;
-    
+    // Each BytecodePattern is associated with a RegExp, each RegExp is associated
+    // with a JSGlobalData.  Cache a pointer to out JSGlobalData's m_regexAllocator.
+    BumpPointerAllocator* m_allocator;
+
     CharacterClass* newlineCharacterClass;
     CharacterClass* wordcharCharacterClass;
 private:
@@ -326,7 +335,7 @@ private:
     Vector<CharacterClass*> m_userCharacterClasses;
 };
 
-PassOwnPtr<BytecodePattern> byteCompileRegex(const UString& pattern, unsigned& numSubpatterns, const char*& error, bool ignoreCase = false, bool multiline = false);
+PassOwnPtr<BytecodePattern> byteCompileRegex(const UString& pattern, unsigned& numSubpatterns, const char*& error, BumpPointerAllocator*, bool ignoreCase = false, bool multiline = false);
 int interpretRegex(BytecodePattern* v_regex, const UChar* input, unsigned start, unsigned length, int* output);
 
 } } // namespace JSC::Yarr

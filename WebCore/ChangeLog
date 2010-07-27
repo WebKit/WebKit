@@ -1,3 +1,15 @@
+2010-07-27  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Bug 42621 - Add a bump allocator for the YARR interpreter
+
+        The regex engine requires lifo allocation, however currently uses the general purpose
+        malloc/free memory allocation.  A simple bump pointer allocator should provide a lower
+        overhead allocation solution.
+
+        * ForwardingHeaders/wtf/BumpPointerAllocator.h: Added.
+
 2010-07-27  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Joseph Pecoraro.

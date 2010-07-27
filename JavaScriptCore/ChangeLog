@@ -1,3 +1,46 @@
+2010-07-27  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Bug 42621 - Add a bump allocator for the YARR interpreter
+
+        The regex engine requires lifo allocation, however currently uses the general purpose
+        malloc/free memory allocation.  A simple bump pointer allocator should provide a lower
+        overhead allocation solution.
+
+        When using YARR interpreter, 15% progression on v8-regex.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * runtime/JSGlobalData.h:
+        * runtime/RegExp.cpp:
+        (JSC::RegExp::compile):
+        * wtf/BumpPointerAllocator.h: Added.
+        (WTF::BumpPointerPool::ensureCapacity):
+        (WTF::BumpPointerPool::alloc):
+        (WTF::BumpPointerPool::dealloc):
+        (WTF::BumpPointerPool::operator new):
+        (WTF::BumpPointerPool::BumpPointerPool):
+        (WTF::BumpPointerPool::create):
+        (WTF::BumpPointerPool::shrink):
+        (WTF::BumpPointerPool::destroy):
+        (WTF::BumpPointerPool::ensureCapacityCrossPool):
+        (WTF::BumpPointerPool::deallocCrossPool):
+        (WTF::BumpPointerAllocator::BumpPointerAllocator):
+        (WTF::BumpPointerAllocator::~BumpPointerAllocator):
+        (WTF::BumpPointerAllocator::startAllocator):
+        (WTF::BumpPointerAllocator::stopAllocator):
+        * yarr/RegexInterpreter.cpp:
+        (JSC::Yarr::Interpreter::allocDisjunctionContext):
+        (JSC::Yarr::Interpreter::freeDisjunctionContext):
+        (JSC::Yarr::Interpreter::allocParenthesesDisjunctionContext):
+        (JSC::Yarr::Interpreter::freeParenthesesDisjunctionContext):
+        (JSC::Yarr::Interpreter::interpret):
+        (JSC::Yarr::Interpreter::Interpreter):
+        (JSC::Yarr::ByteCompiler::compile):
+        (JSC::Yarr::byteCompileRegex):
+        * yarr/RegexInterpreter.h:
+        (JSC::Yarr::BytecodePattern::BytecodePattern):
+
 2010-07-26  Gavin Barraclough  <barraclough@apple.com>
 
         Windows build fix from Chromium/GTK build fix!
