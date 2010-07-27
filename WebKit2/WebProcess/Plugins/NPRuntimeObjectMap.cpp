@@ -28,6 +28,7 @@
 #include "JSNPObject.h"
 #include "NPJSObject.h"
 #include "NPRuntimeUtilities.h"
+#include "NotImplemented.h"
 #include "PluginView.h"
 #include <WebCore/Frame.h>
 
@@ -67,6 +68,41 @@ JSObject* NPRuntimeObjectMap::getOrCreateJSObject(ExecState* exec, JSGlobalObjec
 {
     // FIXME: Check if we already have a wrapper for this NPObject!
     return new (exec) JSNPObject(exec, globalObject, this, npObject);
+}
+
+void NPRuntimeObjectMap::jsNPObjectDestroyed(JSNPObject* jsNPObject)
+{
+    // FIXME: Implement.
+}
+
+JSValue NPRuntimeObjectMap::convertNPVariantToValue(JSC::ExecState* exec, const NPVariant& variant)
+{
+    switch (variant.type) {
+    case NPVariantType_Void:
+        return jsUndefined();
+
+    case NPVariantType_Null:
+        return jsNull();
+
+    case NPVariantType_Bool:
+        return jsBoolean(variant.value.boolValue);
+
+    case NPVariantType_Int32:
+        return jsNumber(exec, variant.value.intValue);
+
+    case NPVariantType_Double:
+        return jsNumber(exec, variant.value.doubleValue);
+
+    case NPVariantType_String:
+        return jsString(exec, String::fromUTF8WithLatin1Fallback(variant.value.stringValue.UTF8Characters, 
+                                                                 variant.value.stringValue.UTF8Length));
+    case NPVariantType_Object:
+    default:
+        notImplemented();
+        break;
+    }
+    
+    return jsUndefined();
 }
 
 void NPRuntimeObjectMap::invalidate()

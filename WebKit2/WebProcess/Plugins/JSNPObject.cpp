@@ -25,9 +25,11 @@
 
 #include "JSNPObject.h"
 
+#include "NPRuntimeObjectMap.h"
 #include "NPRuntimeUtilities.h"
 #include <JavaScriptCore/Error.h>
 #include <JavaScriptCore/JSGlobalObject.h>
+#include <JavaScriptCore/JSLock.h>
 #include <JavaScriptCore/ObjectPrototype.h>
 #include <WebCore/IdentifierRep.h>
 
@@ -71,8 +73,33 @@ bool JSNPObject::getOwnPropertySlot(ExecState* exec, const Identifier& propertyN
     return false;
 }
 
-JSValue JSNPObject::propertyGetter(ExecState*, JSValue, const Identifier&)
+JSValue JSNPObject::propertyGetter(ExecState* exec, JSValue slotBase, const Identifier& propertyName)
 {
+    JSNPObject* thisObj = static_cast<JSNPObject*>(asObject(slotBase));
+
+    if (!thisObj->m_npObject)
+        return throwInvalidAccessError(exec);
+
+    if (!thisObj->m_npObject->_class->getProperty)
+        return jsUndefined();
+
+    NPVariant property;
+    VOID_TO_NPVARIANT(property);
+
+    bool result;
+    {
+        JSLock::DropAllLocks dropAllLocks(SilenceAssertionsOnly);
+        NPIdentifier npIdentifier = npIdentifierFromIdentifier(propertyName);
+        result = thisObj->m_npObject->_class->getProperty(thisObj->m_npObject, npIdentifier, &property);
+        
+        // FIXME: Handle getProperty setting an exception.
+        // FIXME: Find out what happens if calling getProperty causes the plug-in to go away.
+    }
+
+    if (!result)
+        return jsUndefined();
+
+    return thisObj->m_objectMap->convertNPVariantToValue(exec, property);
     // FIXME: Implement.
     return jsUndefined();
 }

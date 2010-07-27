@@ -1388,6 +1388,7 @@ fast/loader/loadInProgress.html
 http/tests/plugins
 java
 platform/mac/plugins
+plugins/attach-during-destroy.html
 plugins/clicking-missing-plugin-fires-delegate.html
 plugins/destroy-during-npp-new.html
 plugins/destroy-reentry.html
@@ -1411,7 +1412,6 @@ plugins/netscape-plugin-map-data-to-src.html
 plugins/netscape-plugin-setwindow-size-2.html
 plugins/netscape-plugin-setwindow-size.html
 plugins/npruntime/bindings-test.html
-plugins/npruntime/embed-property.html
 plugins/npruntime/enumerate.html
 plugins/npruntime/get-int-identifier-special-values.html
 plugins/npruntime/get-property-return-value.html
