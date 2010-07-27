@@ -394,6 +394,8 @@
             'wtf/OwnFastMallocPtr.h',
             'wtf/OwnPtr.h',
             'wtf/OwnPtrCommon.h',
+            'wtf/PageAllocation.cpp',
+            'wtf/PageAllocation.h',
             'wtf/PassOwnPtr.h',
             'wtf/PassRefPtr.h',
             'wtf/Platform.h',

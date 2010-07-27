@@ -1,5 +1,16 @@
 2010-07-26  Gavin Barraclough  <barraclough@apple.com>
 
+        Build fix for !Mac platforms.
+
+        * Android.mk:
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * JavaScriptCore.gypi:
+        * JavaScriptCore.pro:
+        * JavaScriptCore.vcproj/WTF/WTF.vcproj:
+
+2010-07-26  Gavin Barraclough  <barraclough@apple.com>
+
         Reviewed by Oliver Hunt.
 
         Bug 43009 - Abstract out page allocation from executable allocators

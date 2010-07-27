@@ -429,6 +429,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\wtf\PageAllocation.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\wtf\PageAllocation.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\wtf\PassOwnPtr.h"
 			>
 		</File>

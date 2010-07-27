@@ -456,6 +456,8 @@ javascriptcore_sources += \
 	JavaScriptCore/wtf/OwnFastMallocPtr.h \
 	JavaScriptCore/wtf/OwnPtrCommon.h \
 	JavaScriptCore/wtf/OwnPtr.h \
+	JavaScriptCore/wtf/PageAllocation.cpp \
+	JavaScriptCore/wtf/PageAllocation.h \
 	JavaScriptCore/wtf/PassOwnPtr.h \
 	JavaScriptCore/wtf/PassRefPtr.h \
 	JavaScriptCore/wtf/Platform.h \
