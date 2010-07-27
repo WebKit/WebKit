@@ -541,10 +541,10 @@ bool FrameView::syncCompositingStateRecursive()
     if (!contentRenderer)
         return true;    // We don't want to keep trying to update layers if we have no renderer.
 
-    if (m_layoutTimer.isActive()) {
-        // Don't sync layers if there's a layout pending.
+    // If we sync compositing layers when a layout is pending, we may cause painting of compositing
+    // layer content to occur before layout has happened, which will cause paintContents() to bail.
+    if (needsLayout())
         return false;
-    }
     
     if (GraphicsLayer* rootLayer = contentRenderer->compositor()->rootPlatformLayer())
         rootLayer->syncCompositingState();

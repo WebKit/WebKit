@@ -1,3 +1,20 @@
+2010-07-27  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Incomplete repaint of some Safari extension content which falls into a composited iframe
+        <rdar://problem/8235044>
+        
+        syncCompositingStateRecursive() bails if it thinks that a layout is pending, because
+        the layout may update layers and make this sync obsolete. However, it only checked for an
+        active layout timer. This ignores other sources of pending style changes and layouts, like
+        the document's style recalc timer. So use needsLayout(), which does check this.
+
+        Unable to create a test because it depends on Safari extension behavior.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::syncCompositingStateRecursive):
+
 2010-07-27  Andreas Kling  <andreas.kling@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
