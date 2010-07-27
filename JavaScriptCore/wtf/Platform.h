@@ -919,7 +919,7 @@ on MinGW. See https://bugs.webkit.org/show_bug.cgi?id=29268 */
 #define ENABLE_REPAINT_THROTTLING 0
 #endif
 
-// Disable the JIT on versiond of GCC prior to 4.1.
+// Disable the JIT on versiond of GCC prior to 4.1
 #if !defined(ENABLE_JIT) && COMPILER(GCC) && !GCC_VERSION_AT_LEAST(4,1,0)
 #define ENABLE_JIT 0
 #endif
