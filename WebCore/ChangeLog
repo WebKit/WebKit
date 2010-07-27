@@ -1,3 +1,15 @@
+2010-07-27  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Expose interface for returning the plug-in script JSObject
+        https://bugs.webkit.org/show_bug.cgi?id=43074
+
+        PluginViewBase::scriptObject should be a virtual function.
+
+        * plugins/PluginViewBase.h:
+        (WebCore::PluginViewBase::scriptObject):
+
 2010-07-27  Jian Li  <jianli@chromium.org>
 
         Reviewed by David Levin.

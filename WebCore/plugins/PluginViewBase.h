@@ -44,7 +44,7 @@ public:
     virtual PlatformLayer* platformLayer() const { return 0; }
 #endif
 
-    JSC::JSObject* scriptObject(JSC::ExecState*, JSC::JSGlobalObject*) { return 0; }
+    virtual JSC::JSObject* scriptObject(JSC::ExecState*, JSC::JSGlobalObject*) { return 0; }
 
 protected:
     PluginViewBase(PlatformWidget widget) : Widget(widget) { }

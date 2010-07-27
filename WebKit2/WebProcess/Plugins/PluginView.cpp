@@ -25,6 +25,7 @@
 
 #include "PluginView.h"
 
+#include "NPRuntimeUtilities.h"
 #include "Plugin.h"
 #include "WebEvent.h"
 #include "WebPage.h"
@@ -209,7 +210,8 @@ void PluginView::Stream::didFinishLoading(NetscapePlugInStreamLoader*)
 }
 
 PluginView::PluginView(WebCore::HTMLPlugInElement* pluginElement, PassRefPtr<Plugin> plugin, const Plugin::Parameters& parameters)
-    : m_pluginElement(pluginElement)
+    : PluginViewBase(0)
+    , m_pluginElement(pluginElement)
     , m_plugin(plugin)
     , m_parameters(parameters)
     , m_isInitialized(false)
@@ -277,6 +279,18 @@ void PluginView::initializePlugin()
     }
     
     m_isInitialized = true;
+}
+
+JSObject* PluginView::scriptObject(ExecState* exec, JSGlobalObject* globalObject)
+{
+    NPObject* scriptableNPObject = m_plugin->pluginScriptableNPObject();
+    if (!scriptableNPObject)
+        return 0;
+
+    JSObject* jsObject = m_npRuntimeObjectMap.getOrCreateJSObject(scriptableNPObject, exec, globalObject);
+    releaseNPObject(scriptableNPObject);
+
+    return jsObject;
 }
 
 void PluginView::setFrameRect(const WebCore::IntRect& rect)

@@ -1,5 +1,35 @@
 2010-07-27  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        Expose interface for returning the plug-in script JSObject
+        https://bugs.webkit.org/show_bug.cgi?id=43074
+
+        * WebProcess/Plugins/NPRuntimeObjectMap.cpp:
+        (WebKit::NPRuntimeObjectMap::getOrCreateJSObject):
+        Add empty stub.
+
+        * WebProcess/Plugins/NPRuntimeObjectMap.h:
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::pluginScriptableNPObject):
+        Ask the plug-in for it's scriptable NPObject.
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.h:
+        * WebProcess/Plugins/Plugin.h:
+        Add pluginScritableNPObject.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::PluginView):
+        Call PluginViewBase constructor.
+
+        (WebKit::PluginView::scriptObject):
+        Ask the plug-in for its scriptable object and wrap it.
+
+        * WebProcess/Plugins/PluginView.h:
+        PluginView now inherits from PluginViewBase.
+
+2010-07-27  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Adam Roben.
 
         Move NPJSObject out into separate files

@@ -438,6 +438,16 @@ void NetscapePlugin::setFocus(bool hasFocus)
     platformSetFocus(hasFocus);
 }
 
+NPObject* NetscapePlugin::pluginScriptableNPObject()
+{
+    NPObject* scriptableNPObject = 0;
+    
+    if (NPP_GetValue(NPPVpluginScriptableNPObject, &scriptableNPObject) != NPERR_NO_ERROR)
+        return 0;
+    
+    return scriptableNPObject;
+}
+
 PluginController* NetscapePlugin::controller()
 {
     return m_pluginController;

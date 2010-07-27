@@ -62,6 +62,12 @@ void NPRuntimeObjectMap::npJSObjectDestroyed(NPJSObject* npJSObject)
     m_objects.remove(npJSObject->jsObject());
 }
 
+JSObject* NPRuntimeObjectMap::getOrCreateJSObject(NPObject*, ExecState*, JSGlobalObject*)
+{
+    // FIXME: Implement.
+    return 0;
+}
+
 void NPRuntimeObjectMap::invalidate()
 {
     Vector<NPJSObject*> npJSObjects;

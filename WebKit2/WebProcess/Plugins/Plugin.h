@@ -30,6 +30,8 @@
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 
+struct NPObject;
+
 namespace WebCore {
     class GraphicsContext;
     class IntRect;
@@ -103,6 +105,9 @@ public:
 
     // Tells the focus about focus changes.
     virtual void setFocus(bool) = 0;
+
+    // Get the NPObject that corresponds to the plug-in's scriptable object. Returns a retained object.
+    virtual NPObject* pluginScriptableNPObject() = 0;
 
     // Returns the plug-in controller for this plug-in.
     // FIXME: We could just have the controller be a member variable of Plugin.
