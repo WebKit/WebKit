@@ -45,6 +45,8 @@ public:
 
     inline bool isArray(JSValueRef value) const;
     inline bool isError(JSValueRef value) const;
+
+    inline JSValueRef functionPrototype() const;
 private:
     inline bool isType(JSValueRef value, JSObjectRef constructor, JSValueRef prototype) const;
     inline void initializeMember(JSObjectRef globalObject, JSStringRef prototypeName, const char* type, JSObjectRef& constructor, JSValueRef& prototype);
@@ -57,6 +59,8 @@ private:
     JSValueRef m_arrayPrototype;
     JSObjectRef m_errorConstructor;
     JSValueRef m_errorPrototype;
+    JSObjectRef m_functionConstructor;
+    JSValueRef m_functionPrototype;
 
     // Reference to standard JS functions that are not exposed by JSC C API.
     JSObjectRef m_hasOwnPropertyFunction;
@@ -73,6 +77,7 @@ QScriptOriginalGlobalObject::QScriptOriginalGlobalObject(JSGlobalContextRef cont
     propertyName.adopt(JSStringCreateWithUTF8CString("prototype"));
     initializeMember(globalObject, propertyName.get(), "Array", m_arrayConstructor, m_arrayPrototype);
     initializeMember(globalObject, propertyName.get(), "Error", m_errorConstructor, m_errorPrototype);
+    initializeMember(globalObject, propertyName.get(), "Function", m_functionConstructor, m_functionPrototype);
 
     propertyName.adopt(JSStringCreateWithUTF8CString("hasOwnProperty"));
     m_hasOwnPropertyFunction = const_cast<JSObjectRef>(JSObjectGetProperty(m_context, globalObject, propertyName.get(), &exception));
@@ -119,6 +124,8 @@ QScriptOriginalGlobalObject::~QScriptOriginalGlobalObject()
     JSValueUnprotect(m_context, m_arrayPrototype);
     JSValueUnprotect(m_context, m_errorConstructor);
     JSValueUnprotect(m_context, m_errorPrototype);
+    JSValueUnprotect(m_context, m_functionConstructor);
+    JSValueUnprotect(m_context, m_functionPrototype);
     JSValueUnprotect(m_context, m_hasOwnPropertyFunction);
     JSValueUnprotect(m_context, m_getOwnPropertyNamesFunction);
     JSGlobalContextRelease(m_context);
@@ -171,6 +178,11 @@ inline bool QScriptOriginalGlobalObject::isArray(JSValueRef value) const
 inline bool QScriptOriginalGlobalObject::isError(JSValueRef value) const
 {
     return isType(value, m_errorConstructor, m_errorPrototype);
+}
+
+inline JSValueRef QScriptOriginalGlobalObject::functionPrototype() const
+{
+    return m_functionPrototype;
 }
 
 inline bool QScriptOriginalGlobalObject::isType(JSValueRef value, JSObjectRef constructor, JSValueRef prototype) const

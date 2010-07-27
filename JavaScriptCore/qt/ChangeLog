@@ -1,3 +1,56 @@
+2010-07-27  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] Implement QScriptEngine::newFunction() parts that doesn't depend on QScriptContext
+        https://bugs.webkit.org/show_bug.cgi?id=42174
+
+        Since our function can be called in Javascript both as a function
+        and as a constructor, we couldn't use the existing
+        JSObjectMakeFunctionWithCallback() and JSObjectMakeConstructor().
+
+        Instead, a JSClassRef was created, implementing the needed
+        callbacks (the callAsConstructor is not there yet because its
+        behaviour depends on QScriptContext).
+
+        For the moment, QScriptContext is defined as a void type, since we
+        still don't use it.
+
+        The variant of newFunction() that also takes an external argument
+        was also implemented. The details of implementation were added to
+        the qscriptfunction{.c,_p.h} files.
+
+        This commit also adds tests, some of them from Qt's upstream.
+
+        * api/QtScript.pro:
+        * api/qscriptengine.cpp:
+        (QScriptEngine::newFunction):
+        * api/qscriptengine.h:
+        * api/qscriptengine_p.cpp:
+        (QScriptEnginePrivate::QScriptEnginePrivate):
+        (QScriptEnginePrivate::~QScriptEnginePrivate):
+        (QScriptEnginePrivate::newFunction):
+        * api/qscriptengine_p.h:
+        * api/qscriptfunction.cpp: Added.
+        (qt_NativeFunction_finalize):
+        (qt_NativeFunction_callAsFunction):
+        (qt_NativeFunctionWithArg_finalize):
+        (qt_NativeFunctionWithArg_callAsFunction):
+        * api/qscriptfunction_p.h: Added.
+        (QNativeFunctionData::QNativeFunctionData):
+        (QNativeFunctionWithArgData::QNativeFunctionWithArgData):
+        * api/qscriptoriginalglobalobject_p.h:
+        (QScriptOriginalGlobalObject::QScriptOriginalGlobalObject):
+        (QScriptOriginalGlobalObject::~QScriptOriginalGlobalObject):
+        (QScriptOriginalGlobalObject::functionPrototype):
+        * tests/qscriptengine/tst_qscriptengine.cpp:
+        (myFunction):
+        (myFunctionWithArg):
+        (myFunctionThatReturns):
+        (myFunctionThatReturnsWithoutEngine):
+        (myFunctionThatReturnsWrongEngine):
+        (tst_QScriptEngine::newFunction):
+
 2010-07-23  Jedrzej Nowacki  <jedrzej.nowacki@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

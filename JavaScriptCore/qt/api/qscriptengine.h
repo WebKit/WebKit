@@ -30,6 +30,9 @@
 class QScriptValue;
 class QScriptEnginePrivate;
 
+// FIXME: Remove this once QScriptContext is properly defined.
+typedef void QScriptContext;
+
 // Internal typedef
 typedef QExplicitlySharedDataPointer<QScriptEnginePrivate> QScriptEnginePtr;
 
@@ -56,6 +59,14 @@ public:
 
     QScriptValue nullValue();
     QScriptValue undefinedValue();
+
+    typedef QScriptValue (*FunctionSignature)(QScriptContext *, QScriptEngine *);
+    typedef QScriptValue (*FunctionWithArgSignature)(QScriptContext *, QScriptEngine *, void *);
+
+    QScriptValue newFunction(FunctionSignature fun, int length = 0);
+    QScriptValue newFunction(FunctionSignature fun, const QScriptValue& prototype, int length = 0);
+    QScriptValue newFunction(FunctionWithArgSignature fun, void* arg);
+
     QScriptValue newObject();
     QScriptValue newArray(uint length = 0);
     QScriptValue globalObject() const;

@@ -21,6 +21,7 @@
 
 #include "qscriptengine_p.h"
 
+#include "qscriptfunction_p.h"
 #include "qscriptprogram_p.h"
 #include "qscriptvalue_p.h"
 
@@ -33,11 +34,15 @@ QScriptEnginePrivate::QScriptEnginePrivate(const QScriptEngine* engine)
     , m_context(JSGlobalContextCreate(0))
     , m_exception(0)
     , m_originalGlobalObject(m_context)
+    , m_nativeFunctionClass(JSClassCreate(&qt_NativeFunctionClass))
+    , m_nativeFunctionWithArgClass(JSClassCreate(&qt_NativeFunctionWithArgClass))
 {
 }
 
 QScriptEnginePrivate::~QScriptEnginePrivate()
 {
+    JSClassRelease(m_nativeFunctionClass);
+    JSClassRelease(m_nativeFunctionWithArgClass);
     if (m_exception)
         JSValueUnprotect(m_context, m_exception);
     JSGlobalContextRelease(m_context);
@@ -84,6 +89,37 @@ QScriptValuePrivate* QScriptEnginePrivate::evaluate(const QScriptProgramPrivate*
 QScriptValuePrivate* QScriptEnginePrivate::uncaughtException() const
 {
     return m_exception ? new QScriptValuePrivate(this, m_exception) : new QScriptValuePrivate();
+}
+
+QScriptValuePrivate* QScriptEnginePrivate::newFunction(QScriptEngine::FunctionSignature fun, QScriptValuePrivate* prototype, int length)
+{
+    // Note that this private data will be deleted in the object finalize function.
+    QNativeFunctionData* data = new QNativeFunctionData(this, fun);
+    JSObjectRef funJS = JSObjectMake(m_context, m_nativeFunctionClass, reinterpret_cast<void*>(data));
+    QScriptValuePrivate* proto = prototype ? prototype : newObject();
+    return newFunction(funJS, proto);
+}
+
+QScriptValuePrivate* QScriptEnginePrivate::newFunction(QScriptEngine::FunctionWithArgSignature fun, void* arg)
+{
+    // Note that this private data will be deleted in the object finalize function.
+    QNativeFunctionWithArgData* data = new QNativeFunctionWithArgData(this, fun, arg);
+    JSObjectRef funJS = JSObjectMake(m_context, m_nativeFunctionWithArgClass, reinterpret_cast<void*>(data));
+    QScriptValuePrivate* proto = newObject();
+    return newFunction(funJS, proto);
+}
+
+QScriptValuePrivate* QScriptEnginePrivate::newFunction(JSObjectRef funJS, QScriptValuePrivate* prototype)
+{
+    JSObjectSetPrototype(m_context, funJS, m_originalGlobalObject.functionPrototype());
+
+    QScriptValuePrivate* result = new QScriptValuePrivate(this, funJS);
+    static JSStringRef protoName = QScriptConverter::toString("prototype");
+    static JSStringRef constructorName = QScriptConverter::toString("constructor");
+    result->setProperty(protoName, prototype, QScriptValue::Undeletable);
+    prototype->setProperty(constructorName, result, QScriptValue::PropertyFlags(QScriptValue::Undeletable | QScriptValue::SkipInEnumeration));
+
+    return result;
 }
 
 QScriptValuePrivate* QScriptEnginePrivate::newObject() const

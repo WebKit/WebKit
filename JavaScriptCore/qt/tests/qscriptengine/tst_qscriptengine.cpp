@@ -35,6 +35,7 @@ public slots:
     void cleanup() {}
 
 private slots:
+    void newFunction();
     void newObject();
     void globalObject();
     void evaluate();
@@ -57,6 +58,146 @@ void tst_QScriptEngine::evaluate()
     QScriptEngine engine;
     QVERIFY2(engine.evaluate("1+1").isValid(), "the expression should be evaluated and an valid result should be returned");
     QVERIFY2(engine.evaluate("ping").isValid(), "Script throwing an unhandled exception should return an exception value");
+}
+
+static QScriptValue myFunction(QScriptContext*, QScriptEngine* eng)
+{
+    return eng->nullValue();
+}
+
+static QScriptValue myFunctionWithArg(QScriptContext*, QScriptEngine* eng, void* arg)
+{
+    int* result = reinterpret_cast<int*>(arg);
+    return QScriptValue(eng, *result);
+}
+
+static QScriptValue myFunctionThatReturns(QScriptContext*, QScriptEngine* eng)
+{
+    return QScriptValue(eng, 42);
+}
+
+static QScriptValue myFunctionThatReturnsWithoutEngine(QScriptContext*, QScriptEngine*)
+{
+    return QScriptValue(1024);
+}
+
+static QScriptValue myFunctionThatReturnsWrongEngine(QScriptContext*, QScriptEngine*, void* arg)
+{
+    QScriptEngine* wrongEngine = reinterpret_cast<QScriptEngine*>(arg);
+    return QScriptValue(wrongEngine, 42);
+}
+
+void tst_QScriptEngine::newFunction()
+{
+    QScriptEngine eng;
+    {
+        QScriptValue fun = eng.newFunction(myFunction);
+        QCOMPARE(fun.isValid(), true);
+        QCOMPARE(fun.isFunction(), true);
+        QCOMPARE(fun.isObject(), true);
+        // QCOMPARE(fun.scriptClass(), (QScriptClass*)0);
+        // a prototype property is automatically constructed
+        {
+            QScriptValue prot = fun.property("prototype", QScriptValue::ResolveLocal);
+            QVERIFY(prot.isObject());
+            QVERIFY(prot.property("constructor").strictlyEquals(fun));
+            QEXPECT_FAIL("", "JSCallbackObject::getOwnPropertyDescriptor() doesn't return correct information yet", Continue);
+            QCOMPARE(fun.propertyFlags("prototype"), QScriptValue::Undeletable);
+            QEXPECT_FAIL("", "WebKit bug: 40613 (The JSObjectSetProperty doesn't overwrite property flags)", Continue);
+            QCOMPARE(prot.propertyFlags("constructor"), QScriptValue::PropertyFlags(QScriptValue::Undeletable | QScriptValue::SkipInEnumeration));
+        }
+        // prototype should be Function.prototype
+        QCOMPARE(fun.prototype().isValid(), true);
+        QCOMPARE(fun.prototype().isFunction(), true);
+        QCOMPARE(fun.prototype().strictlyEquals(eng.evaluate("Function.prototype")), true);
+
+        QCOMPARE(fun.call().isNull(), true);
+        // QCOMPARE(fun.construct().isObject(), true);
+    }
+    // the overload that takes an extra argument
+    {
+        int expectedResult = 42;
+        QScriptValue fun = eng.newFunction(myFunctionWithArg, reinterpret_cast<void*>(&expectedResult));
+        QVERIFY(fun.isFunction());
+        // QCOMPARE(fun.scriptClass(), (QScriptClass*)0);
+        // a prototype property is automatically constructed
+        {
+            QScriptValue prot = fun.property("prototype", QScriptValue::ResolveLocal);
+            QVERIFY(prot.isObject());
+            QVERIFY(prot.property("constructor").strictlyEquals(fun));
+            QEXPECT_FAIL("", "JSCallbackObject::getOwnPropertyDescriptor() doesn't return correct information yet", Continue);
+            QCOMPARE(fun.propertyFlags("prototype"), QScriptValue::Undeletable);
+            QEXPECT_FAIL("", "WebKit bug: 40613 (The JSObjectSetProperty doesn't overwrite property flags)", Continue);
+            QCOMPARE(prot.propertyFlags("constructor"), QScriptValue::PropertyFlags(QScriptValue::Undeletable | QScriptValue::SkipInEnumeration));
+        }
+        // prototype should be Function.prototype
+        QCOMPARE(fun.prototype().isValid(), true);
+        QCOMPARE(fun.prototype().isFunction(), true);
+        QCOMPARE(fun.prototype().strictlyEquals(eng.evaluate("Function.prototype")), true);
+
+        QScriptValue result = fun.call();
+        QCOMPARE(result.isNumber(), true);
+        QCOMPARE(result.toInt32(), expectedResult);
+    }
+    // the overload that takes a prototype
+    {
+        QScriptValue proto = eng.newObject();
+        QScriptValue fun = eng.newFunction(myFunction, proto);
+        QCOMPARE(fun.isValid(), true);
+        QCOMPARE(fun.isFunction(), true);
+        QCOMPARE(fun.isObject(), true);
+        // internal prototype should be Function.prototype
+        QCOMPARE(fun.prototype().isValid(), true);
+        QCOMPARE(fun.prototype().isFunction(), true);
+        QCOMPARE(fun.prototype().strictlyEquals(eng.evaluate("Function.prototype")), true);
+        // public prototype should be the one we passed
+        QCOMPARE(fun.property("prototype").strictlyEquals(proto), true);
+        QEXPECT_FAIL("", "JSCallbackObject::getOwnPropertyDescriptor() doesn't return correct information yet", Continue);
+        QCOMPARE(fun.propertyFlags("prototype"), QScriptValue::Undeletable);
+        QCOMPARE(proto.property("constructor").strictlyEquals(fun), true);
+        QEXPECT_FAIL("", "WebKit bug: 40613 (The JSObjectSetProperty doesn't overwrite property flags)", Continue);
+        QCOMPARE(proto.propertyFlags("constructor"), QScriptValue::PropertyFlags(QScriptValue::Undeletable | QScriptValue::SkipInEnumeration));
+
+        QCOMPARE(fun.call().isNull(), true);
+        // QCOMPARE(fun.construct().isObject(), true);
+    }
+    // whether the return value is correct
+    {
+        QScriptValue fun = eng.newFunction(myFunctionThatReturns);
+        QCOMPARE(fun.isValid(), true);
+        QCOMPARE(fun.isFunction(), true);
+        QCOMPARE(fun.isObject(), true);
+
+        QScriptValue result = fun.call();
+        QCOMPARE(result.isNumber(), true);
+        QCOMPARE(result.toInt32(), 42);
+    }
+    // whether the return value is assigned to the correct engine
+    {
+        QScriptValue fun = eng.newFunction(myFunctionThatReturnsWithoutEngine);
+        QCOMPARE(fun.isValid(), true);
+        QCOMPARE(fun.isFunction(), true);
+        QCOMPARE(fun.isObject(), true);
+
+        QScriptValue result = fun.call();
+        QCOMPARE(result.engine(), &eng);
+        QCOMPARE(result.isNumber(), true);
+        QCOMPARE(result.toInt32(), 1024);
+    }
+    // whether the return value is undefined when returning a value with wrong engine
+    {
+        QScriptEngine wrongEngine;
+
+        QScriptValue fun = eng.newFunction(myFunctionThatReturnsWrongEngine, reinterpret_cast<void*>(&wrongEngine));
+        QCOMPARE(fun.isValid(), true);
+        QCOMPARE(fun.isFunction(), true);
+        QCOMPARE(fun.isObject(), true);
+
+        QTest::ignoreMessage(QtWarningMsg, "Value from different engine returned from native function, returning undefined value instead.");
+        QScriptValue result = fun.call();
+        QCOMPARE(result.isValid(), true);
+        QCOMPARE(result.isUndefined(), true);
+    }
 }
 
 void tst_QScriptEngine::newObject()
