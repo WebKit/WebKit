@@ -1,3 +1,10 @@
+2010-07-27  Kent Tamura  <tkent@chromium.org>
+
+        Unreviewed, trivial typo fix.
+
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+          Fix a wrong method name committed by r64109.
+
 2010-07-27  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

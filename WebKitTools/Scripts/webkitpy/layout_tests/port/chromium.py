@@ -385,7 +385,7 @@ class ChromiumDriver(base.Driver):
                 if uri != actual_uri:
                     # GURL capitalizes the drive letter of a file URL.
                     if (not re.search("^file:///[a-z]:", uri) or
-                        uri.tolower() != actual_uri.tolower()):
+                        uri.lower() != actual_uri.lower()):
                         _log.fatal("Test got out of sync:\n|%s|\n|%s|" %
                                    (uri, actual_uri))
                         raise AssertionError("test out of sync")
