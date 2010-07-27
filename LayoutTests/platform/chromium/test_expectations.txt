@@ -2681,9 +2681,6 @@ BUG_JIANLI LINUX : http/tests/local/formdata/send-form-data-with-sliced-file.htm
 
 BUG33812 SKIP : fast/dom/icon-url-property.html = FAIL
 
-// As long as the Chromium issue 37986 is unresolved, this may crash.
-BUG41808 LINUX : svg/filters/filter-empty-g.svg = CRASH PASS
-
 // Failing with webkit roll 57659 -> 57677.
 BUG41817 WIN LINUX : fast/backgrounds/svg-as-background-1.html = IMAGE PASS
 BUG41817 WIN LINUX : fast/backgrounds/svg-as-background-3.html = IMAGE PASS

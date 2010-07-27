@@ -1,3 +1,22 @@
+2010-07-26  Cosmin Truta  <ctruta@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Some SVGs with empty <g> elements crash Chromium on Linux
+        https://bugs.webkit.org/show_bug.cgi?id=41175
+
+        Redo the old fix using a different approach, to avoid regressing
+        svg/batik/filters/filterRegions.svg with Chromium on Linux.
+        Specifically, handle empty SkBitmap objects by exiting early upon
+        encountering unconfigured (i.e. empty) bitmaps.
+
+        No new tests. This bug's old test (svg/filters/filter-empty-g.svg)
+        and the above-mentioned regressed test are expected to pass.
+
+        * WebCore/platform/graphics/skia/ImageBufferSkia.cpp:
+        (ImageBuffer::ImageBuffer): Undo the old fix.
+        (getImageData): The new fix.
+
 2010-07-26  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.

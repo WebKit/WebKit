@@ -74,10 +74,7 @@ ImageBuffer::ImageBuffer(const IntSize& size, ImageColorSpace imageColorSpace, b
     // Make the background transparent. It would be nice if this wasn't
     // required, but the canvas is currently filled with the magic transparency
     // color. Can we have another way to manage this?
-    //
-    // Avoid drawing on a zero-sized canvas. Skia can't handle it.
-    if (!size.isZero())
-        m_data.m_canvas.drawARGB(0, 0, 0, 0, SkXfermode::kClear_Mode);
+    m_data.m_canvas.drawARGB(0, 0, 0, 0, SkXfermode::kClear_Mode);
     success = true;
 }
 
@@ -131,6 +128,13 @@ PassRefPtr<ImageData> getImageData(const IntRect& rect, const SkBitmap& bitmap,
                                    const IntSize& size)
 {
     RefPtr<ImageData> result = ImageData::create(rect.width(), rect.height());
+
+    if (bitmap.config() == SkBitmap::kNo_Config) {
+        // This is an empty SkBitmap that could not be configured.
+        ASSERT(size.width() == 0 || size.height() == 0);
+        return result;
+    }
+
     unsigned char* data = result->data()->data()->data();
 
     if (rect.x() < 0 || rect.y() < 0 ||

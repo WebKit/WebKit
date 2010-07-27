@@ -1,3 +1,15 @@
+2010-07-26  Cosmin Truta  <ctruta@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Some SVGs with empty <g> elements crash Chromium on Linux
+        https://bugs.webkit.org/show_bug.cgi?id=41175
+
+        Remove the suppression of this bug's test on Chromium. The new fix in WebKit no longer requires
+        an update in Chromium, making this test safe to expose.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-07-26  Simon Fraser  <simon.fraser@apple.com>
 
         Fix a couple of test results after r64095.
