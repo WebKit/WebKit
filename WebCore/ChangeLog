@@ -1,5 +1,22 @@
 2010-07-27  Chris Fleizach  <cfleizach@apple.com>
 
+        Reviewed by Darin Adler.
+
+        AX: consolidate parentObjectIfExists() and parentObject() code
+        https://bugs.webkit.org/show_bug.cgi?id=42981
+
+        Consolidate duplicate code in parentObject and parentObjectIfExists
+
+        No tests. No functionality changed.
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::renderParentObject):
+        (WebCore::AccessibilityRenderObject::parentObjectIfExists):
+        (WebCore::AccessibilityRenderObject::parentObject):
+        * accessibility/AccessibilityRenderObject.h:
+
+2010-07-27  Chris Fleizach  <cfleizach@apple.com>
+
         Reviewed by Adam Barth.
 
         AX: replace m_renderer->document->axObjectCache() with just axObjectCache()

@@ -357,7 +357,7 @@ AccessibilityObject* AccessibilityRenderObject::nextSibling() const
     return axObjectCache()->getOrCreate(nextSibling);
 }
 
-AccessibilityObject* AccessibilityRenderObject::parentObjectIfExists() const
+RenderObject* AccessibilityRenderObject::renderParentObject() const
 {
     if (!m_renderer)
         return 0;
@@ -374,11 +374,13 @@ AccessibilityObject* AccessibilityRenderObject::parentObjectIfExists() const
     // the earliest node in the continuation chain.
     else if (parent && parent->isRenderInline() && (startOfConts = startOfContinuations(parent)))
         parent = startOfConts;
-
-    if (!parent)
-        return 0;
-
-    return axObjectCache()->get(parent);
+    
+    return parent;
+}
+    
+AccessibilityObject* AccessibilityRenderObject::parentObjectIfExists() const
+{
+    return axObjectCache()->get(renderParentObject());
 }
     
 AccessibilityObject* AccessibilityRenderObject::parentObject() const
@@ -386,24 +388,8 @@ AccessibilityObject* AccessibilityRenderObject::parentObject() const
     if (!m_renderer)
         return 0;
     
-    RenderObject* parent = m_renderer->parent();
-
-    // Case 1: node is a block and is an inline's continuation. Parent
-    // is the start of the continuation chain.
-    RenderInline* startOfConts = 0;
-    if (m_renderer->isRenderBlock() && (startOfConts = startOfContinuations(m_renderer)))
-        parent = startOfConts;
-
-    // Case 2: node's parent is an inline which is some node's continuation; parent is 
-    // the earliest node in the continuation chain.
-    else if (parent && parent->isRenderInline() && (startOfConts = startOfContinuations(parent)))
-        parent = startOfConts;
-
-    if (!parent)
-        return 0;
-    
     if (ariaRoleAttribute() == MenuBarRole)
-        return axObjectCache()->getOrCreate(parent);
+        return axObjectCache()->getOrCreate(m_renderer->parent());
 
     // menuButton and its corresponding menu are DOM siblings, but Accessibility needs them to be parent/child
     if (ariaRoleAttribute() == MenuRole) {
@@ -412,7 +398,7 @@ AccessibilityObject* AccessibilityRenderObject::parentObject() const
             return parent;
     }
     
-    return axObjectCache()->getOrCreate(parent);
+    return axObjectCache()->getOrCreate(renderParentObject());
 }
 
 bool AccessibilityRenderObject::isWebArea() const
