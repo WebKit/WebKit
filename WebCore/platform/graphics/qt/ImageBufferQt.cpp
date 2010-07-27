@@ -240,6 +240,8 @@ PassRefPtr<ImageData> ImageBuffer::getPremultipliedImageData(const IntRect& rect
 static inline unsigned int premultiply(unsigned int x)
 {
     unsigned int a = x >> 24;
+    if (a == 255)
+        return x;
     unsigned int t = (x & 0xff00ff) * a;
     t = (t + ((t >> 8) & 0xff00ff) + 0x800080) >> 8;
     t &= 0xff00ff;
