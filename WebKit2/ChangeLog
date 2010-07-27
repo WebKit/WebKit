@@ -1,3 +1,25 @@
+2010-07-27  Adam Roben  <aroben@apple.com>
+
+        Add a ProcessDidExit callback to the WKPageLoaderClient
+
+        Fixes <http://webkit.org/b/43048> UI process needs a way to find out
+        when the web process crashes
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/C/WKPage.h: Added WKPageProcessDidExitCallback, and a
+        processDidExit member of that type to WKPageLoaderClient.
+
+        * UIProcess/WebLoaderClient.cpp:
+        (WebKit::WebLoaderClient::processDidExit): Added. Calls through to the
+        WKPageLoaderClient.
+
+        * UIProcess/WebLoaderClient.h: Added processDidExit.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::processDidExit): Tell the loader client the
+        process exited.
+
 2010-07-27  Andras Becsi  <abecsi@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.

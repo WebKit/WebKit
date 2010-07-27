@@ -1014,8 +1014,9 @@ void WebPageProxy::processDidExit()
     m_renderTreeExternalRepresentationCallbacks.clear();
 
     m_estimatedProgress = 0.0;
-    
+
     m_pageClient->processDidExit();
+    m_loaderClient.processDidExit(this);
 }
 
 void WebPageProxy::processDidRevive()

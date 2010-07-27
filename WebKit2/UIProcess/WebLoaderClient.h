@@ -55,9 +55,10 @@ public:
     void didChangeProgress(WebPageProxy*);
     void didFinishProgress(WebPageProxy*);
 
-    // FIXME: These two methods should not be part of this client. 
+    // FIXME: These three functions should not be part of this client.
     void didBecomeUnresponsive(WebPageProxy*);
     void didBecomeResponsive(WebPageProxy*);
+    void processDidExit(WebPageProxy*);
 
     void didChangeBackForwardList(WebPageProxy*);
 
